@@ -105,11 +105,11 @@ void dll_6_ctor(s32 arg0) {
     mmFree(tab);
 
     //AUDIO.bin
-    _bss_128 = acache_init(AUDIO_BIN, 0x40U, 0xE, 0x40U, 0);
+    _bss_128 = acache_init(AUDIO_BIN, 0x40, sizeof(SoundDef), 0x40, 0);
     queue_alloc_load_file((void*)&tab, AUDIO_TAB);
     _bss_C = tab[0];
     _bss_10 = tab[1] - _bss_C;
-    _bss_10 = _bss_10 / 14;
+    _bss_10 = _bss_10 / sizeof(SoundDef);
     mmFree(tab);
 
     _bss_8 = 65;
