@@ -476,7 +476,7 @@ void dll_702_free(Object* self, s32 a1) {
     sBaddie = (Baddie* ) self->data;
     sKTData = sBaddie->objdata;
     obj_free_object_type(self, 4);
-    gDLL_33_BaddieControl->vtbl->func15(self, sBaddie, 0);
+    gDLL_33_BaddieControl->vtbl->free(self, sBaddie, 0);
     generic_stack_free(sKTData->stateStack);
     if (_data_E4 != NULL) {
         dll_unload(_data_E4);
@@ -752,8 +752,8 @@ static void dll_702_fx_tick(Object *self) {
     if (sKTData->fxFlags & KTFX_Sound_Explosion) {
         // explosion sound, when he falls on the ground. also during intro
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-        func_800013BC();
-        func_80003B70(2.0f * sp48);
+        camera_enable_y_offset();
+        camera_set_shake_offset(2.0f * sp48);
     }
     if (sKTData->fxFlags & KTFX_Sound_Breathing1) {
         // breathing
@@ -769,8 +769,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            func_800013BC();
-            func_80003B70(sp48);
+            camera_enable_y_offset();
+            camera_set_shake_offset(sp48);
             main_set_bits(BIT_554, 1);
         }
     }
@@ -778,8 +778,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            func_800013BC();
-            func_80003B70(2.0f * sp48);
+            camera_enable_y_offset();
+            camera_set_shake_offset(2.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }
@@ -787,8 +787,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            func_800013BC();
-            func_80003B70(3.0f * sp48);
+            camera_enable_y_offset();
+            camera_set_shake_offset(3.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }

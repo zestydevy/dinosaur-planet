@@ -296,6 +296,9 @@ enum SoundID {
     SOUND_76D_Log_Bump = 0x76D, // used by DFlog, BWlog
 
     SOUND_775_Timer_Countdown = 0x775,
+    
+    SOUND_77C_Capy_Sniff = 0x77C,
+    SOUND_77D_Capy_Eat = 0x77D,
 
     SOUND_796 = 0x796,
 

@@ -84,7 +84,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*0*/ void (*ctor)(void *dll); // This DLL exports the ctor/dtor for some reason, don't call these
 /*1*/ void (*dtor)(void *dll);
 /*2*/ f32 (*func2)(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4);
-/*3*/ void (*func3)(Object* arg0, Baddie* baddie, u32 arg2, f32 arg3, f32 arg4);
+/*3*/ void (*func3)(Object *obj, ObjFSA_Data *fsa, Baddie *baddie, f32 arg3, f32 arg4);
 /*4*/ void (*func4)(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5);
 /*5*/ s32 (*func5)(Object* arg0, Baddie* baddie, f32 arg2);
 /*6*/ s32 (*func6)(UNK_PTR *arg0, UNK_PTR *arg1);
@@ -97,12 +97,12 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*13*/ s32 (*func13)(Object* arg0, Baddie* baddie, ObjFSA_StateCallback *arg2, ObjFSA_StateCallback *arg3, s16 arg4, f32* arg5, f32* arg6, s32* arg7);
 // TODO: arg count might be off
 /*14*/ void (*func14)(Object* arg0, Baddie* baddie, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-/*15*/ void (*func15)(Object* arg0, Baddie* baddie, u8 arg2);
+/*15*/ void (*free)(Object* arg0, Baddie* baddie, u8 arg2);
 /*16*/ s32 (*func16)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
 /*17*/ Object *(*func17)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
 /*18*/ Object *(*func18)(Object* arg0, s32 arg1, s32 arg2, u8 arg3);
 /*19*/ s32 (*check_hit)(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT); // Returns hit type
-/*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s16 arg7);
+/*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7);
 /*21*/ void (*setup)(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7);
 /*22*/ void (*change_weapon)(Object* obj, Baddie* baddie);
 /*23*/ f32 (*get_health_ratio)(Object* obj); // Gets current health on a scale from 0-1

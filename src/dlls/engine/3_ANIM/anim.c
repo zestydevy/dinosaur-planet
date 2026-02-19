@@ -990,7 +990,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
         break;
     case 7:                                     /* switch 2 */
         if (arg4 == 0) {
-            func_800013BC();
+            camera_enable_y_offset();
             temp_v0_3 = get_player();
             if (temp_v0_3 != NULL) {
                 temp_fv0 = vec3_distance_xz(&temp_v0_3->positionMirror, &arg0->positionMirror);
@@ -1000,7 +1000,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
                         temp_fv0 = (temp_fv0 - 50.0f) / 150.0f;
                         var_fa0 *= 1.0f - temp_fv0;
                     }
-                    func_80003B70(var_fa0);
+                    camera_set_shake_offset(var_fa0);
                 }
             }
         }

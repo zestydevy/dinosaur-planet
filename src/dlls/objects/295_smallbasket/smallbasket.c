@@ -217,8 +217,8 @@ void dll_295_control(Object* self) {
                 if ((smallBasketData->unk21 == 2) && (self->unkE0 == 0) && (sp6C->curModAnimId != 0x447)) {
                     smallBasketData->unk21 = 0;
                     smallBasketData->unk23 = 1;
-                    self->speed.f[1] = (sp44->unk290 * 0.75f) + 2.2f;
-                    self->speed.f[2] = (sp44->unk290 * -0.75f) + -2.2f;
+                    self->speed.f[1] = (sp44->analogInputPower * 0.75f) + 2.2f;
+                    self->speed.f[2] = (sp44->analogInputPower * -0.75f) + -2.2f;
                     sp48.roll = 0;
                     sp48.pitch = 0;
                     sp48.transl.x = 0.0f;

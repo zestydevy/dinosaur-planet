@@ -177,22 +177,22 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
 }
 
 // offset: 0x768 | func: 4 | export: 3
-void BaddieControl_func_768(Object* arg0, Baddie* arg1, u32 arg2, f32 arg3, f32 arg4) {
-    if (arg1->fsa.unk290 < 0.005f) {
-        arg1->fsa.unk328 = 0;
-        arg1->fsa.unk32A = 0;
-        arg1->fsa.unk290 = 0.0f;
-        arg1->fsa.unk278 = 0.0f;
+void BaddieControl_func_768(Object *obj, ObjFSA_Data *fsa, Baddie *baddie, f32 arg3, f32 arg4) {
+    if (fsa->analogInputPower < 0.005f) {
+        fsa->unk328 = 0;
+        fsa->unk32A = 0;
+        fsa->analogInputPower = 0.0f;
+        fsa->unk278 = 0.0f;
     }
-    arg1->fsa.unk27C = 0.0f;
-    arg0->srt.yaw = ((f32) arg0->srt.yaw + ((((f32) arg1->fsa.unk32A * gUpdateRateF) / arg4) * 182.0f));
-    arg1->fsa.speed += ((arg1->fsa.unk290 - arg1->fsa.speed) / arg1->fsa.unk2B0) * gUpdateRateF;
-    arg1->fsa.unk278 += ((arg1->fsa.unk290 - arg1->fsa.unk278) / arg1->fsa.unk2B0) * gUpdateRateF;
-    if (arg3 < arg1->fsa.speed) {
-        arg1->fsa.speed = arg3;
+    fsa->unk27C = 0.0f;
+    obj->srt.yaw += (((f32) fsa->unk32A * gUpdateRateF) / arg4) * 182.0f;
+    fsa->speed += ((fsa->analogInputPower - fsa->speed) / fsa->unk2B0) * gUpdateRateF;
+    fsa->unk278 += ((fsa->analogInputPower - fsa->unk278) / fsa->unk2B0) * gUpdateRateF;
+    if (arg3 < fsa->speed) {
+        fsa->speed = arg3;
     }
-    if (arg3 < arg1->fsa.unk278) {
-        arg1->fsa.unk278 = arg3;
+    if (arg3 < fsa->unk278) {
+        fsa->unk278 = arg3;
     }
 }
 
@@ -233,8 +233,8 @@ s32 BaddieControl_func_8B4(Object* arg0, AnimObj_Data* arg1, Baddie* arg2, ObjFS
     arg2->fsa.unk324 = 0;
     // @fake
     if (1) {}
-    arg2->fsa.unk288 = 0.0f;
-    arg2->fsa.unk284 = 0.0f;
+    arg2->fsa.xAnalogInput = 0.0f;
+    arg2->fsa.yAnalogInput = 0.0f;
     if (arg1->unk62 != 1) {
         arg1->unk4C.x = arg0->srt.transl.x;
         arg1->unk4C.f[1] = arg0->srt.transl.f[1];
@@ -279,8 +279,8 @@ s32 BaddieControl_func_8B4(Object* arg0, AnimObj_Data* arg1, Baddie* arg2, ObjFS
     } else {
         sp38 /= temp_fv0_2;
         sp34 /= temp_fv0_2;
-        arg2->fsa.unk288 = -sp38 * var_fv1;
-        arg2->fsa.unk284 = sp34 * var_fv1;
+        arg2->fsa.xAnalogInput = -sp38 * var_fv1;
+        arg2->fsa.yAnalogInput = sp34 * var_fv1;
         arg0->srt.transl.x = arg1->unk4C.x + (sp30 * sp38);
         arg0->srt.transl.z = arg1->unk4C.z + (sp30 * sp34);
         gDLL_18_objfsa->vtbl->tick(arg0, &arg2->fsa, gUpdateRateF, gUpdateRateF, arg3, arg4);
@@ -308,8 +308,8 @@ s32 BaddieControl_func_C88(Object* arg0, Baddie* arg1, ObjFSA_StateCallback *arg
         arg1->fsa.unk30C = 0;
         arg1->fsa.unk310 = 0;
         arg1->fsa.unk324 = 0;
-        arg1->fsa.unk288 = 0.0f;
-        arg1->fsa.unk284 = 0.0f;
+        arg1->fsa.xAnalogInput = 0.0f;
+        arg1->fsa.yAnalogInput = 0.0f;
         *arg7 = 1;
         sp2C = *arg5 - arg0->srt.transl.x;
         sp28 = *arg6 - arg0->srt.transl.z;
@@ -319,8 +319,8 @@ s32 BaddieControl_func_C88(Object* arg0, Baddie* arg1, ObjFSA_StateCallback *arg
         } else {
             sp2C = sp2C / temp_fv0;
             sp28 = sp28 / temp_fv0;
-            arg1->fsa.unk288 = -sp2C * 50.0f;
-            arg1->fsa.unk284 = sp28 * 50.0f;
+            arg1->fsa.xAnalogInput = -sp2C * 50.0f;
+            arg1->fsa.yAnalogInput = sp28 * 50.0f;
             arg0->srt.transl.x += temp_fv0 * sp2C;
             arg0->srt.transl.z += temp_fv0 * sp28;
             gDLL_18_objfsa->vtbl->tick(arg0, &arg1->fsa, gUpdateRateF, gUpdateRateF, arg2, arg3);
@@ -349,8 +349,8 @@ void BaddieControl_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
         fsa->unk4.mode = arg3;
     }
     fsa->unk29C = arg2;
-    fsa->unk288 = 0.0f;
-    fsa->unk284 = 0.0f;
+    fsa->xAnalogInput = 0.0f;
+    fsa->yAnalogInput = 0.0f;
     fsa->unk310 = 0;
     fsa->unk30C = 0;
 }
@@ -438,7 +438,7 @@ Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 ar
                 var_v1 -= (arg0->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(var_v1)
             }
-            if ((var_v1 < arg3) && (-arg3 < var_v1)) {
+            if ((var_v1 < arg3) && (-arg3 < var_v1)) { // FOV check?
                 stop = TRUE;
             }
             if (((DLL_210_Player*)curObj->dll)->vtbl->func66(curObj, 1) == 0) {
@@ -473,7 +473,7 @@ Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 ar
 }
 
 // offset: 0x148C | func: 13 | export: 9
-void BaddieControl_func_148C(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s32 arg7, s8 arg8) {
+void BaddieControl_func_148C(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s32 arg7, s8 arg8) {
     if (arg2 != 0) {
         arg2->unk24 = 0;
         arg2->unk25 = 0;
@@ -720,7 +720,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
 }
 
 // offset: 0x1D88 | func: 16 | export: 20
-s32 BaddieControl_func_1D88(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s16 arg7) {
+s32 BaddieControl_func_1D88(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7) {
     Object* sp64;
     u32 sp60;
     u32 sp5C;
@@ -887,24 +887,24 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
 }
 
 // offset: 0x24FC | func: 19 | export: 15
-void BaddieControl_func_24FC(Object* arg0, Baddie* arg1, u8 arg2) {
-    if (arg1->unk3A8 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(arg1->unk3A8);
+void BaddieControl_free(Object* obj, Baddie* baddie, u8 arg2) {
+    if (baddie->unk3A8 != 0) {
+        gDLL_6_AMSFX->vtbl->func_A1C(baddie->unk3A8);
     }
-    if (!(arg1->unk3B0 & arg2)) {
-        if (arg1->unk3A6 != 0) {
+    if (!(baddie->unk3B0 & arg2)) {
+        if (baddie->unk3A6 != 0) {
             // "baddie->fightlockbreakmusic" (default.dol)
-            gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A6, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->free(obj, baddie->unk3A6, 0, 0, 0);
         }
-        if (arg1->unk3A4 != 0) {
+        if (baddie->unk3A4 != 0) {
             // "baddie->fightlockmusic" (default.dol)
-            gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A4, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->free(obj, baddie->unk3A4, 0, 0, 0);
         }
     }
-    func_80008E08(&arg1->unk374);
-    if (arg1->unk3F8 != NULL) {
-        mmFree(arg1->unk3F8);
-        arg1->unk3F8 = NULL;
+    func_80008E08(&baddie->unk374);
+    if (baddie->unk3F8 != NULL) {
+        mmFree(baddie->unk3F8);
+        baddie->unk3F8 = NULL;
     }
 }
 

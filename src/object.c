@@ -177,7 +177,7 @@ void update_objects() {
 
     for (obj = (Object*)node; node != NULL && obj->def->flags & 0x40; obj = (Object*)node) {
         update_object(obj);
-        obj->matrixIdx = func_80004258(obj);
+        obj->matrixIdx = camera_alloc_object_matrix(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
     }
 

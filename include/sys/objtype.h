@@ -34,8 +34,10 @@ enum ObjType {
     OBJTYPE_51 = 51, // sidekick-related? //also used in SHbluemushroom
     OBJTYPE_52 = 52,
     OBJTYPE_53 = 53,
+    OBJTYPE_54 = 54,
     OBJTYPE_56 = 56,
     OBJTYPE_59 = 59,
+    OBJTYPE_62 = 62, 
     OBJTYPE_64 = 64
 };
 

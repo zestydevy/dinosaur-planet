@@ -520,16 +520,16 @@ void init_maps(void) {
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         D_800B9700[i] = D_800B9700[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
     }
-    queue_alloc_load_file((void **) &gFile_MAPS_TAB, 0x20);
-    queue_alloc_load_file((void** ) &gFile_HITS_TAB, 0x2D);
+    queue_alloc_load_file((void **) &gFile_MAPS_TAB, MAPS_TAB);
+    queue_alloc_load_file((void** ) &gFile_HITS_TAB, HITS_TAB);
     for (i = 0; i < 120; i++) { gLoadedMapsDataTable[i] = NULL; }
-    queue_alloc_load_file((void** ) &gFile_TRKBLK, 0x2B);
+    queue_alloc_load_file((void** ) &gFile_TRKBLK, TRKBLK_BIN);
     gNumTRKBLKEntries = 0;
     while (gFile_TRKBLK[gNumTRKBLKEntries] != 0xFFFF) {
         gNumTRKBLKEntries++;
     }
     gNumTRKBLKEntries--;
-    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, 0x2A);
+    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, BLOCKS_TAB);
     gNumTotalBlocks = 0;
     while (gFile_BLOCKS_TAB[gNumTotalBlocks] != -1) {
         gNumTotalBlocks++;
@@ -579,7 +579,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
     mtx = get_some_model_view_mtx();
     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
-    func_800021A0(&gMainDL, 0);
+    camera_setup_viewport_and_matrices(&gMainDL, 0);
     func_80044BEC();
     if (func_80010048() != 0) {
         if (!(UINT_80092a98 & 8)) {
@@ -596,7 +596,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
         } else {
             camera_set_aspect(1.3333334f);
         }
-        func_80001D58(get_camera_selector(), 0U);
+        viewport_disable(get_camera_selector(), 0U);
         vi_some_video_setup(0);
         UINT_80092a98 &= ~0x10000;
     }
@@ -625,7 +625,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     func_80048F58();
     track_c_func();
     gDLL_9_Newclouds->vtbl->func4(&gMainDL);
-    func_8000302C(&gMainDL);
+    camera_setup_fullscreen_viewport(&gMainDL);
     *gdl = gMainDL;
     *mtxs = gWorldRSPMatrices;
     *vtxs = D_800B51D4;
@@ -1772,7 +1772,7 @@ u8 func_800456AC(Object* obj) {
         if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_PLAYER_RELATIVE) && (playerObj = get_player(), (playerObj != NULL))) {
             dist = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
         } else {
-            dist = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+            dist = camera_get_distance_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
         }
         if (fadeDist < dist) {
             obj->opacityWithFade = 0;
@@ -2653,8 +2653,8 @@ void map_func_8004773C(void) {
         D_80092A78 = 8;
     }
     gDLL_3_Animation->vtbl->func0();
-    func_80001A3C();
-    func_80001A3C();
+    camera_apply_alternate_trigger();
+    camera_apply_alternate_trigger();
     func_80053300();
 
     for (i = 0; i < MAP_LAYER_COUNT; i++) {

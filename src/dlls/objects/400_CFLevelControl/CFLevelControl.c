@@ -422,7 +422,7 @@ void CFLevelControl_func_BB8(Data6C *data, s32 count) {
         if ((data->gamebit2 == NO_GAMEBIT) || (main_get_bits(data->gamebit2))) {
             objPos = CFLevelControl_get_position_of_saved_obj(data->uID);
             if (objPos) {
-                distance = func_80001884(objPos->x, objPos->y, objPos->z);
+                distance = camera_get_distance_to_point(objPos->x, objPos->y, objPos->z);
                 obj_get_nearest_type(OBJTYPE_53, objPos, &distance);
                 chestOrGuardian = func_800211B4(data->uID);
                 if (chestOrGuardian) {

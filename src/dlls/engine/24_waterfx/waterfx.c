@@ -467,7 +467,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.yaw = temp_s0->unk14;
                 spAC.roll = 0;
                 spAC.pitch = 0;
-                func_800032C4(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
+                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
                 {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);
@@ -491,7 +491,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.yaw = 0;
                 spAC.roll = 0;
                 spAC.pitch = 0;
-                func_800032C4(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
+                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
                 {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);
@@ -515,7 +515,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.yaw = 0;
                 spAC.roll = 0;
                 spAC.pitch = 0;
-                func_800032C4(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
+                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
                 {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);
@@ -539,7 +539,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.yaw = temp_s0_3->unk16;
                 spAC.roll = 0;
                 spAC.pitch = 0;
-                func_800032C4(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
+                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
                 {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);

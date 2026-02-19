@@ -2662,10 +2662,10 @@ void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
 
     //Camera-related
     if (parent != NULL) {
-        func_800042A8(parent);
+        camera_update_object_matrix(parent);
     }
     if (arg1 != NULL) {
-        func_800042A8(arg1);
+        camera_update_object_matrix(arg1);
     }
 
     arg0->parent = arg1;

@@ -104,8 +104,8 @@ void kamerian_flame_control(Object* self) {
     if (self->objhitInfo->unk48 && 
         ((get_player()) == self->objhitInfo->unk48 || (get_sidekick()) == self->objhitInfo->unk48)) {
 
-        func_800013BC();
-        func_80003B70(1.0f);
+        camera_enable_y_offset();
+        camera_set_shake_offset(1.0f);
 
         //Create particles (@bug: particles don't seem to show up?)
         impactSoundID = SOUND_9B5_Explosion;
@@ -152,7 +152,7 @@ void kamerian_flame_free(Object* self, s32 arg1) {
         _bss_4 = 0;
     }
     gDLL_6_AMSFX->vtbl->play_sound(self, impactSoundID, MAX_VOLUME, NULL, 0, 0, 0);
-    func_800013D0();
+    camera_disable_y_offset();
 }
 
 // offset: 0x668 | func: 6 | export: 5

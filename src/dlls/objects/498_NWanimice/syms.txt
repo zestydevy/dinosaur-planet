@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_498_ctor = 0x0;
+dll_498_dtor = 0xC;
+dll_498_setup = 0x18;
+dll_498_control = 0x74;
+dll_498_update = 0x80;
+dll_498_print = 0x8C;
+dll_498_free = 0xA4;
+dll_498_get_model_flags = 0xE4;
+dll_498_get_data_size = 0xF4;
+dll_498_func_108 = 0x108;
+
+.rodata = 0x15C:
