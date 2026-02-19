@@ -3,23 +3,23 @@
 #include "dlls/engine/6_amsfx.h"
 
 typedef struct {
-    s16 unk0;
-    s16 _unk2;
-    f32 unk4;
-    s16 unk8;
-    s16 unkA;
-    s32 unkC;
+/*0*/ s16 unk0;
+/*4*/ f32 unk4;
+/*8*/ s16 unk8;
+/*A*/ s16 unkA;
+/*C*/ s32 unkC;
 } DLL525_Data;
 
 typedef struct {
- ObjSetup base;
-    s8 _unk19;
-    s8 unk1A;
-    u8 unk1B;
+/*00*/ ObjSetup base;
+/*18*/ s8 _unk18;
+/*19*/ s8 _unk19;
+/*1A*/ s8 unk1A;
+/*1B*/ u8 unk1B;
 }DLL525_Setup;
 
 static s32 dll_525_func_684(Object* arg0, void* arg1);
-// static s32 dll_525_func_81C(Object* arg0, Object* arg1, AnimObj_Data*arg2, s8 arg3); //forward declare when matched
+static int dll_525_func_81C(Object* arg0, Object* arg1, AnimObj_Data*arg2, s8 arg3);
 
 // offset: 0x0 | ctor
 void dll_525_ctor(void *dll) { }
@@ -28,23 +28,17 @@ void dll_525_ctor(void *dll) { }
 void dll_525_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_525_setup(Object *self, DLL525_Setup *setup, s32 arg2);
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/525_SCtotempuzzle/dll_525_setup.s")
-#else
-
-//i only put this in the file for permuter use
 void dll_525_setup(Object* self, DLL525_Setup* setup, s32 arg2) {
     DLL525_Data* DLL515Data;
     s16 temp_v1;
 
     DLL515Data = self->data;
     self->modelInstIdx = setup->unk1B;
-    self->srt.yaw = -0x7FFF;
     if (self->modelInstIdx < 0 || self->modelInstIdx >= 6) {
         self->modelInstIdx = 0;
     }
-    DLL515Data->unk8 = (self->srt.yaw & 0xFFFF) / 8192;
+    self->srt.yaw = -0x7FFF;
+    DLL515Data->unk8 = ((u16)self->srt.yaw) / 8192; // TODO: that cast is sus
     temp_v1 = rand_next(7, 0xA) * 0xA;
     DLL515Data->unk0 = temp_v1;
     DLL515Data->unk4 = temp_v1;
@@ -54,7 +48,7 @@ void dll_525_setup(Object* self, DLL525_Setup* setup, s32 arg2) {
     self->animCallback = dll_525_func_81C;
     self->unkB0 |= 0x6000;
 }
-#endif
+
 // offset: 0x114 | func: 1 | export: 1
 void dll_525_control(Object* self) {
     s32 pad;
@@ -63,7 +57,7 @@ void dll_525_control(Object* self) {
     Object* sp40;
     DLL525_Data* dll525Data;
     
-    if (&self){}
+    if (1){}
 
     dll525Data = self->data;
     if (self->modelInstIdx == 5) {
@@ -133,13 +127,11 @@ void dll_525_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 // offset: 0x5F8 | func: 4 | export: 4
 void dll_525_free(Object* self, s32 a1) {
     DLL525_Data* dll525Data;
-    void* sp24;
     u32 temp_a1;
 
     dll525Data = self->data;
     temp_a1 = dll525Data->unkC;
     if (temp_a1 != 0) {
-        sp24 = dll525Data;
         gDLL_6_AMSFX->vtbl->func_A1C(temp_a1);
         dll525Data->unkC = 0U;
     }
@@ -194,7 +186,7 @@ static s32 dll_525_func_684(Object* arg0, void* arg1) {
 }
 
 // offset: 0x81C | func: 8
- s32 dll_525_func_81C(Object* arg0, Object* arg1, AnimObj_Data*arg2, s8 arg3) {
+static int dll_525_func_81C(Object* arg0, Object* arg1, AnimObj_Data*arg2, s8 arg3) {
     s32 var_v1;
 
     if (main_get_bits(BIT_639) != 0) {

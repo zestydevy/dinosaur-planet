@@ -15,11 +15,11 @@ void dll_605_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_605_setup(Object *self, ObjSetup *setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/605_WL_Worm/dll_605_setup.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/605_WLworm/dll_605_setup.s")
 
 // offset: 0x88 | func: 1 | export: 1
 void dll_605_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/605_WL_Worm/dll_605_control.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/605_WLworm/dll_605_control.s")
 
 // offset: 0x388 | func: 2 | export: 2
 void dll_605_update(Object *self) { }

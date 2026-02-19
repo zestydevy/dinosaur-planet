@@ -47,7 +47,7 @@
 # objects
 210 = objects/210_player
 211 = objects/211_Tricky
-213 = objects/213_Unknown
+213 = objects/213
 214 = objects/214_animobj
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
@@ -146,7 +146,7 @@
 501 = objects/501_SHtricky
 502 = objects/502_SHmushroom
 505 = objects/505_SHspore
-506 = objects/506_SH_PlantSpore
+506 = objects/506_SHPlantSpore
 507 = objects/507_SHqueenearthwalker
 509 = objects/509_SHwaterLily
 510 = objects/510_SHroot
@@ -154,7 +154,7 @@
 513 = objects/513_SHflowers
 514 = objects/514_SHswaplift
 515 = objects/515_SHswapstone
-517 = objects/517_SCBabyLightFoot
+517 = objects/517_SCbabyLightFoot
 519 = objects/519_SC_levelcontrol
 525 = objects/525_SCtotempuzzle
 530 = objects/530_DIMLavaBallGenerator
@@ -183,7 +183,7 @@
 589 = objects/589_SB_ShipGunBroke
 590 = objects/590_WL_Galleon
 596 = objects/596_WLpressureswitch
-605 = objects/605_WL_Worm
+605 = objects/605_WLworm
 607 = objects/607_WL_LevelControl
 610 = objects/610_WL_spiritplace
 612 = objects/612_WL_Crystal
@@ -199,7 +199,7 @@
 652 = objects/652_DFP_SpellPlace
 661 = objects/661_DBPlaceHolder
 663 = objects/663_DBlevelControl
-668 = objects/668_db_diamond
+668 = objects/668_DBdiamond
 697 = objects/697_BossDrakor
 698 = objects/698_BossDrakor_Laser
 701 = objects/701_KT_RexLevel
@@ -217,7 +217,7 @@
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
 729 = objects/729_CRCloudRace
-730 = objects/730_CRSpellStone
+730 = objects/730_CRspellStone
 731 = objects/731_CRFuelTank
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
