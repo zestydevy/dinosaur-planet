@@ -1606,7 +1606,7 @@ typedef enum {
     BIT_63F = 0x63F, // len:3 group:2
     BIT_640 = 0x640, // len:3 group:2
     BIT_641 = 0x641, // len:3 group:2
-    BIT_642 = 0x642, // len:1 group:0
+    BIT_Damaged_a_Tumbleweed = 0x642, // len:1 group:0 Set upon striking any Tumbleweed
     BIT_643 = 0x643, // len:1 group:0
     BIT_644 = 0x644, // len:1 group:1
     BIT_645 = 0x645, // len:1 group:1

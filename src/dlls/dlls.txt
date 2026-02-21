@@ -51,6 +51,7 @@
 214 = objects/214_animobj
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
+226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie

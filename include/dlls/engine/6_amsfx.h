@@ -214,6 +214,8 @@ enum SoundID {
 
     SOUND_53C = 0x53C, //used by SHbluemushroom
 
+    SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
+
     SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
 
     SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
