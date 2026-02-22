@@ -1,0 +1,21 @@
+.text = 0x0:
+SidekickToy_ctor = 0x0;
+SidekickToy_dtor = 0xC;
+SidekickToy_setup = 0x18;
+SidekickToy_tick_collision = 0x1A4;
+SidekickToy_tick_flight = 0x250;
+SidekickToy_control = 0x664;
+SidekickToy_update = 0x954;
+SidekickToy_print = 0x960;
+SidekickToy_free = 0x9B4;
+SidekickToy_get_model_flags = 0xA64;
+SidekickToy_get_data_size = 0xA74;
+SidekickToy_throw = 0xA88;
+SidekickToy_carry = 0xADC;
+SidekickToy_is_stopped = 0xB3C;
+
+.rodata = 0xBE0:
+str_0 = 0x0; // absolute:0xBE0
+
+.data = 0xC30:
+_data_0 = 0x0; // absolute:0xC30
