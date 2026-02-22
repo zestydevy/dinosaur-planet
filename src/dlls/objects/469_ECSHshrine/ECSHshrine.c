@@ -165,24 +165,24 @@ void ECSHshrine_control(Object* self) {
 
         //If player ahead of door (in shrine corridor)
         if (dz <= 0.0f) {
-            //Get absolute distance
+            //Get absolute distance along z
             if (dz < 0.0f) {
                 dz *= -1.0f;
             }
 
-            if (objdata->musCorridorVol != 30) {
-                objdata->musCorridorVol = 30;
+            if (objdata->musCorridorVol != CORRIDOR_VOL_INIT) {
+                objdata->musCorridorVol = CORRIDOR_VOL_INIT;
             }
 
             //Cross-fade music tracks as player approaches door
             volume = ((f32) objdata->musCorridorVol * ((dz - 100.0f) / 200.0f));
-            if (volume <= 0) {
+            if (volume < 1) {
                 volume = 1;
             }
             gDLL_5_AMSEQ->vtbl->set_volume(Shrine_MUSICTRACK_Corridor, volume); //fade out corridor music
 
             volume = ((f32) objdata->musWhispersVol * ((200.0f - (dz - 100.0f)) / 200.0f));
-            if (volume <= 0) {
+            if (volume < 1) {
                 volume = 1;
             }
             gDLL_5_AMSEQ->vtbl->set_volume(Shrine_MUSICTRACK_Whispering, volume); //fade in Krazoa whispering
