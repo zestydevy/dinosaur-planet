@@ -1,19 +1,19 @@
 .text = 0x0:
-dll_730_ctor = 0x0;
-dll_730_dtor = 0xC;
-dll_730_setup = 0x18;
-dll_730_control = 0x80;
-dll_730_update = 0x218;
-dll_730_print = 0x224;
-dll_730_free = 0x288;
-dll_730_get_model_flags = 0x2C8;
-dll_730_get_data_size = 0x2D8;
-dll_730_func_2EC = 0x2EC;
-dll_730_func_334 = 0x334;
-dll_730_func_34C = 0x34C;
+CRSpellStone_ctor = 0x0;
+CRSpellStone_dtor = 0xC;
+CRSpellStone_setup = 0x18;
+CRSpellStone_control = 0x80;
+CRSpellStone_update = 0x218;
+CRSpellStone_print = 0x224;
+CRSpellStone_free = 0x288;
+CRSpellStone_get_model_flags = 0x2C8;
+CRSpellStone_get_data_size = 0x2D8;
+CRSpellStone_set_state = 0x2EC;
+CRSpellStone_is_not_rescued = 0x334;
+CRSpellStone_anim_callback = 0x34C;
 
 .rodata = 0x3C4:
 str_0 = 0x0; // absolute:0x3C4
 
 .data = 0x3F4:
-_data_0 = 0x0; // absolute:0x3F4
+dWinBits = 0x0; // absolute:0x3F4
