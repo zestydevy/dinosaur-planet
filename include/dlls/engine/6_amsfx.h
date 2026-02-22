@@ -98,6 +98,8 @@ enum SoundID {
 
     SOUND_Sabre_Freezing_B = 0x184,     //"That's too cold for me!"
 
+    SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
+
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
 
     SOUND_1e1_Stone_Moving_Loop = 0x1e1,
@@ -230,6 +232,7 @@ enum SoundID {
     SOUND_5F6_Tumbleweed_Roll = 0x5F6, // used in DLL 227
     SOUND_5F7_Tumbleweed_Disintegrate = 0x5F7, // used in DLL 227
 
+    SOUND_613_Gold_Bounce = 0x613,  // used in SCcollectables
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
 
@@ -263,7 +266,7 @@ enum SoundID {
     SOUND_6AC_Electric_Zap = 0x6AC,
     SOUND_6AD_Electric_Crackle = 0x6AD,
 
-    SOUND_6B4_Illusion_Spell = 0x6B4, 
+    SOUND_6B4_Basket_Carry = 0x6B4, // used by player
     SOUND_6B5_Crate_Struck = 0x6B5, // used by MediumCrate
     SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate
     SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate
@@ -372,6 +375,14 @@ enum SoundID {
 
     SOUND_9C5_Vanish = 0x9C5,               //WCpushblock
     SOUND_9C6_Appear = 0x9C6,               //WCpushblock
+
+    SOUND_A20_Electric_Surge_Quieter = 0xA20,       //DBdustgeezer
+    SOUND_A21_Whoosh_Echoey = 0xA21,                //DBdustgeezer
+    SOUND_A22_Electric_Surge = 0xA22,               //DBdustgeezer
+
+    SOUND_A28_Blade_Impact = 0xA28, //DBSpike
+    SOUND_A29_Wooden_Ratcheting_Loop = 0xA29, //DBSpike
+    SOUND_A2A_Heavy_Swing = 0xA2A, //DBSpike
 
     SOUND_A71_Rattling_1 = 0xA71, // used by MoonSeeds
     SOUND_A72_Rattling_2 = 0xA72, // used by MoonSeeds

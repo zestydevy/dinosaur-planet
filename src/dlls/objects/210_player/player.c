@@ -2669,7 +2669,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
                 *_data_0 = 0;
                 gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, PLAYER_ASTATE_Standing);
             }
-            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Illusion_Spell, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Basket_Carry, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
         case 0x1D7:
             if (objdata->unk87C == 0x1D7) {
@@ -4310,7 +4310,7 @@ s32 dll_210_func_B4E0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_700_Krystal_Ugh, 0x25U, NULL, NULL, 0, NULL);
         }
         gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_633, 0x61U, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Illusion_Spell, 0x61U, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Basket_Carry, 0x61U, NULL, NULL, 0, NULL);
     }
     return 0;
 }
@@ -4322,7 +4322,7 @@ s32 dll_210_func_B73C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     objdata = player->data;
     if (fsa->enteredAnimState != 0) {
         func_80023D30(player, 0x447, 0.0f, 0U);
-        gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Illusion_Spell, 0x61U, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Basket_Carry, 0x61U, NULL, NULL, 0, NULL);
     }
     fsa->unk278 = 0.0f;
     fsa->animTickDelta = 0.02f;
@@ -4346,7 +4346,7 @@ s32 dll_210_func_B864(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState != 0) {
         func_8002681C(objdata->unk868);
         func_80023D30(player, 0x443, 0.3f, 0U);
-        gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Illusion_Spell, 0x61U, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Basket_Carry, 0x61U, NULL, NULL, 0, NULL);
     }
     fsa->unk278 = 0.0f;
     fsa->animTickDelta = 0.015f;
