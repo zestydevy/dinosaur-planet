@@ -16,8 +16,8 @@ enum ObjType {
     OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop (also used by WCLevelControl)
     OBJTYPE_11 = 11, // BWlog, DFlog, IMSnowBike
     OBJTYPE_12 = 12,
-    OBJTYPE_13 = 13,
-    OBJTYPE_16 = 16,
+    OBJTYPE_13 = 13, // Krazoa shrine main (ECSH_Shrine etc.)
+    OBJTYPE_16 = 16, // Krazoa shrine doors (CSSH_Door1 etc.)
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
     OBJTYPE_22 = 22, // DFriverflow

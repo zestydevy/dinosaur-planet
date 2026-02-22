@@ -9996,20 +9996,22 @@ void dll_210_func_1D380(Object* player, s32 arg1) {
 }
 
 // offset: 0x1D390 | func: 187 | export: 38
-s32 dll_210_func_1D390(Object* player, s32 arg1) {
+/** Get Krazoa Spirit bit value (spirit index provided as mask, e.g. 4th spirit queried via 0x8) */
+s32 dll_210_func_1D390(Object* player, s32 spiritIndex) {
     Player_Data* objdata = player->data;
-    return objdata->unk8BA & arg1;
+    return objdata->unk8BA & spiritIndex;
 }
 
 // offset: 0x1D3A4 | func: 188 | export: 39
-void dll_210_func_1D3A4(Object* player, s32 arg1, s32 arg2) {
+/** Set Krazoa Spirit bit value (spirit indexindex provided as mask, e.g. 4th spirit edited via 0x8) */
+void dll_210_func_1D3A4(Object* player, s32 spiritIndex, s32 value) {
     Player_Data* objdata;
 
     objdata = player->data;
-    if (arg2 != 0) {
-        objdata->unk8BA |= arg1;
+    if (value != 0) {
+        objdata->unk8BA |= spiritIndex;
     } else {
-        objdata->unk8BA &= ~arg1;
+        objdata->unk8BA &= ~spiritIndex;
     }
     main_set_bits(BIT_Spirit_Bits, objdata->unk8BA);
 }

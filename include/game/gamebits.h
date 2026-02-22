@@ -257,7 +257,7 @@ typedef enum {
     BIT_FA = 0xFA, // len:1 group:0
     BIT_FB = 0xFB, // len:1 group:0
     BIT_FC = 0xFC, // len:1 group:1
-    BIT_FD = 0xFD, // len:1 group:0
+    BIT_Shrine_Do_Exit_Warp = 0xFD, // len:1 group:0 (set by Krazoa Shrines to warp player away immediately)
     BIT_Krystal_Dino_Bag_L = 0xFE, // len:1 group:1 (not listed in shop items, so must've been obtained elsewhere!)  [INVENTORY]
     BIT_FF = 0xFF, // len:1 group:1
     BIT_100 = 0x100, // len:1 group:0

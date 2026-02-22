@@ -154,10 +154,12 @@ enum SoundID {
 
     SOUND_304_Burning_Loop = 0x304, // flame blast
 
-    SOUND_33E = 0x33E,
+    SOUND_33E_Reverse_Magic_Hiss = 0x33E, //ECSHshrine (when cups rise)
+    SOUND_33F_Cup_Slide_Loop = 0x33F, //ECSH_Cup
 
     SOUND_342_Low_Whoosh = 0x342, // used in DLL 466
 
+    SOUND_343_Eerie_Ringing = 0x343, // ECSH_Cup (when Krazoa Spirit enters it)
     SOUND_344_Chime = 0x344,
 
     SOUND_35A_Low_Whoosh = 0x35A, // WMrock
