@@ -47,7 +47,7 @@ typedef enum {
     Shrine_MUSICTRACK_Corridor = 3
 } ECSHshrine_MusicTracks;
 
-static int ECSHshrine_anim_callback(Object *self, Object *a1, AnimObj_Data *a2, s8 a3);
+static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data *aData, s8 a3);
 static void ECSHshrine_handle_messages(Object *self);
 
 // offset: 0x0 | ctor
@@ -563,7 +563,7 @@ void ECSHshrine_choose_cup(u8 chosenCupIndex) {
 }
 
 // offset: 0x15E0 | func: 12
-static int ECSHshrine_anim_callback(Object *self, Object *a1, AnimObj_Data *aData, s8 a3) {
+static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data *aData, s8 a3) {
     ECSHshrine_Data *objdata;
     s32 i;
 
