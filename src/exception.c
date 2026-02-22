@@ -25,7 +25,7 @@ typedef struct {
 	xx	11 00 11
 	xx	00 11 00
 */
-char CrashFont[] = { 
+char gCrashFont[] = { 
     0x0c, 0x0c, 0x0c, 0x00, 0x0c, 
 	0x33, 0x33, 0x00, 0x00, 0x00,
 	0x26, 0x3f, 0x26, 0x3f, 0x26, 
@@ -119,14 +119,15 @@ char CrashFont[] = {
 };
 // 2 bytes {RRRRR-GGGGG-BBBBB-0} 
 // broken into 8 sub-palettes
-u16 CrashPaletteTable[] = { 
+// each palette is a single color with 4 shades for anti-alias
+u16 gCrashPaletteTable[] = { 
     0x0000, 0x5294, 0xa528, 0xfffe, // 0 = white
     0x0000, 0x0014, 0x0028, 0x003e, // 1 = blue
     0x0000, 0x0294, 0x0528, 0x07fe, // 2 = cyan
     0x0000, 0x0280, 0x0500, 0x07c0, // 3 = green
     0x0000, 0x5280, 0xa500, 0xffc0, // 4 = yellow
     0x0000, 0x5000, 0xa000, 0xf800, // 5 = red
-    0x0000, 0x5014, 0xa028, 0xf83e, // 6 = mangenta
+    0x0000, 0x5014, 0xa028, 0xf83e, // 6 = magenta
     0x0000, 0x0000, 0x0000, 0x0000  // 7 = black/empty
 };
 CrashErrString errStringArray_cause[] = {
@@ -224,7 +225,17 @@ char *crash_screen_strings[] = {
     "update",
     "free"
 };
-s32 CrashPaletteSelector = 0; // enum?
+typedef enum {
+    CRASH_TEXTCOLOR_WHITE = 0,
+    CRASH_TEXTCOLOR_BLUE = 1,
+    CRASH_TEXTCOLOR_CYAN = 2,
+    CRASH_TEXTCOLOR_GREEN = 3,
+    CRASH_TEXTCOLOR_YELLOW = 4,
+    CRASH_TEXTCOLOR_RED = 5,
+    CRASH_TEXTCOLOR_MAGENTA = 6,
+    CRASH_TEXTCOLOR_BLACK = 7
+} CrashTextColor;
+s32 gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
 s32 gSomeCrashVideoFlag = 0;
 s32 D_800937f8[3] = {0};
 u8 gCFileLabelIndex = 0;
@@ -399,21 +410,21 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
         var_s2 = find_executing_dll((u32)thread->context.ra, (void **) &raDllStart, (void **) &raDllEnd);
         temp_s1 = find_executing_dll(thread->context.pc, (void **) &pcDllStart, (void **) &pcDllEnd);
         clear_framebuffer_current();
-        CrashPaletteSelector = 6;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
         crash_print_line(0xCC, 0xD6, "CPU + DLL INFO");
-        CrashPaletteSelector = 0;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
         ctx = &thread->context;
         crash_print_line(0x10, 0x18, "fault in thread %d", thread->id);
-        CrashPaletteSelector = 3;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
         crash_print_line(0x10, 0x22, "epc\t\t\t\t%08x", ctx->pc);
         if (temp_s1 != -1) {
-            CrashPaletteSelector = 5;
+            gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
             var_a3 = thread->context.pc;
             if ((var_a3 >= (u32) pcDllStart) && ((u32) pcDllEnd >= var_a3)) {
                 var_a3 -= (u32)pcDllStart;
             }
             crash_print_line(0x10, 0x28, "dll epc\t\t%08x  (in DLL #%d)", var_a3, temp_s1);
-            CrashPaletteSelector = 3;
+            gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
         }
         temp_a3 = ctx->cause;
         if (temp_a3 == -1U) {
@@ -424,7 +435,7 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
         }
         crash_print_line(0x10, 0x34, "sr\t\t\t\t%08x", ctx->sr);
         crash_print_line(0x10, 0x3A, "badvaddr\t%08x", ctx->badvaddr);
-        CrashPaletteSelector = 5;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
         if (var_s2 != -1) {
             var_a3 = (u32)thread->context.ra;
             if ((var_a3 >= (u32) raDllStart) && ((u32) raDllEnd >= var_a3)) {
@@ -434,10 +445,10 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
             crash_print_line(0x10, 0x4C, "dll start\t%08x", raDllStart);
             crash_print_line(0x10, 0x52, "dll end\t\t%08x", raDllEnd);
         } else {
-            CrashPaletteSelector = 3;
+            gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
             crash_print_line(0x10, 0x40, "ra\t\t\t\t%08x", (u32)ctx->ra);
         }
-        CrashPaletteSelector = 4;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_YELLOW;
         var_s2 = 0x5E;
         for (j = 0; j < 5; j++) {
             if (gPiManagerArray[j] != -1) {
@@ -445,7 +456,7 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
                 var_s2 += 6;
             }
         }
-        CrashPaletteSelector = 2;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
         var_s2 += 6;
         crash_print_line(0x10, var_s2, "at %08x v0 %08x v1 %08x", (u32)ctx->at, (u32)ctx->v0, (u32)ctx->v1);
         var_s2 += 6;
@@ -466,7 +477,7 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
         crash_print_line(0x10, var_s2, "t9 %08x gp %08x sp %08x", (u32)ctx->t9, (u32)ctx->gp, (u32)ctx->sp);
         var_s2 += 6;
         crash_print_line(0x10, var_s2, "s8 %08x", (u32)ctx->s8);
-        CrashPaletteSelector = 0;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
         crash_print_line(0x60, 0xDC, "press button for stack trace");
         while (1) {
             crash_copy_control_inputs();
@@ -508,27 +519,27 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
     sp60 = 0x1C;
     thread = threads[arg2];
     clear_framebuffer_current();
-    CrashPaletteSelector = 6;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
     crash_print_line(0xDC, 0xD6, "STACK TRACE");
-    CrashPaletteSelector = 0;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
     crash_print_line(0x10, 0x18, "Fault in thread %d", thread->id);
-    CrashPaletteSelector = 0;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
     ctx = &thread->context;
     crash_print_line(0x50, 0xDC, "press button for FPU registers");
     var_s1 = (u32*) ctx->ra;
     var_s0 = (u32*) ctx->pc;
     var_s2 = (u32*) ctx->sp;
-    CrashPaletteSelector = 3;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
     crash_print_line(0x10, 0x24, "J#\tPC\t\t\t\tSP");
     crash_print_line(0xC8, 0x24, "DLL#\tDLL ADDR");
-    CrashPaletteSelector = 2;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
     crash_print_line(0x10, 0x2A, "%02d\t%08x\t%08x", 0, var_s0, var_s2);
     temp_v0_2 = find_executing_dll(var_s1, &sp54, &sp50);
     if (temp_v0_2 != -1) {
-        CrashPaletteSelector = 5;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
         crash_print_line(0xC8, 0x2A, "%d", temp_v0_2);
         crash_print_line(0xF0, 0x2A, "%08x", sp54);
-        CrashPaletteSelector = 2;
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
     }
     var_s3 = 0x30;
     var_s4 = 1;
@@ -565,10 +576,10 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
                     crash_print_line(0x10, var_s3, "%02d\t%08x\t%08x", var_s4, var_s1, var_s2);
                     temp_v0_2 = find_executing_dll(var_s1, &sp54, &sp50);
                     if (temp_v0_2 != -1) {
-                        CrashPaletteSelector = 5;
+                        gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
                         crash_print_line(0xC8, var_s3, "%d", temp_v0_2);
                         crash_print_line(0xF0, var_s3, "%08x", sp54);
-                        CrashPaletteSelector = 2;
+                        gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
                     }
                     var_s3 += 6;
                     var_s4 += 1;
@@ -598,20 +609,20 @@ void other_crash_print(OSThread **threads, s32 count, s32 threadIdx) {
 
     clear_framebuffer_current();
 
-    CrashPaletteSelector = 6;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
     crash_print_line(244, 214, "FPU INFO");
 
-    CrashPaletteSelector = 0;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
     crash_print_line(16, 24, "Fault in thread %d", thread->id);
 
-    CrashPaletteSelector = 3;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
     crash_print_line(16, 34, "fpcsr : %08x", context->fpcsr);
     get_err_string(16, 40, context->fpcsr, &errStringArray_cause[59]);
 
-    CrashPaletteSelector = 2;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
     crash_print_line(16, 50, "FPU Register dump diabled");
 
-    CrashPaletteSelector = 0;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
     crash_print_line(80, 220, "press button for CPU registers");
 
     while (1) {
@@ -637,7 +648,7 @@ void crash_copy_control_inputs(void) {
 void check_video_mode_crash_and_clear_framebuffer() {
     int i;
 
-    CrashPaletteSelector = 0;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
 
     // Set a video crash flag if video mode is between 4-6
     if (vi_get_mode() > 3 && vi_get_mode() < 7) {
@@ -664,12 +675,12 @@ void crash_blit_glyph(s32 col, s32 row, u8* glyph) {
 
     width = vi_get_current_size() & 0xFFFF;
     fb = &gFrontFramebuffer[(row * width) + col]; // get a pixel index into the framebuffer
-    palette = (u16*)&((u8*)CrashPaletteTable)[CrashPaletteSelector * 8];
+    palette = (u16*)&((u8*)gCrashPaletteTable)[gCrashPaletteSelector * 8];
     i = MAXCONTROLLERS + 1; // 5
     while (i--) { // iteratate over the glyph, row by row
         var_a3 = 1;
-        if (gSomeCrashVideoFlag != 0) { // ?
-            var_a3 = 2;
+        if (gSomeCrashVideoFlag != 0) {
+            var_a3 = 2; // if VI res is 640 by 480, blit this row twice
         }
         while (var_a3--) {
             tempFb = fb; // copy the framebuffer reference
@@ -702,7 +713,7 @@ void crash_display_line(s32 x, s32 y, char *str) {
         } else if (c <= ' ') {
             x += 4;
         } else if (c > ' ' && c <= 'z') {
-            crash_blit_glyph(x, y, &CrashFont[c * 5 - 165]);
+            crash_blit_glyph(x, y, &gCrashFont[c * 5 - 165]);
             x += 8;
         }
     }
