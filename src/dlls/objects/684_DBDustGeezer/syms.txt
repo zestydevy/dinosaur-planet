@@ -1,0 +1,19 @@
+.text = 0x0:
+DBDustGeezer_ctor = 0x0;
+DBDustGeezer_dtor = 0xC;
+DBDustGeezer_setup = 0x18;
+DBDustGeezer_control = 0x154;
+DBDustGeezer_update = 0x5EC;
+DBDustGeezer_print = 0x5F8;
+DBDustGeezer_free = 0x660;
+DBDustGeezer_get_model_flags = 0x750;
+DBDustGeezer_get_data_size = 0x760;
+DBDustGeezer_dug_up = 0x774;
+DBDustGeezer_is_in_cooldown = 0x854;
+DBDustGeezer_func_870 = 0x870;
+DBDustGeezer_launch_gem = 0x880;
+DBDustGeezer_create_gem = 0xB8C;
+DBDustGeezer_scroll_texture_uvs = 0xC40;
+
+.rodata = 0xD38:
+str_0 = 0x0; // absolute:0xD38
