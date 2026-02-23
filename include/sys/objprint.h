@@ -6,5 +6,6 @@
 #include "game/objects/object.h"
 
 void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, s32 param_6);
+void func_80034FF0(MtxF* arg0);
 
 #endif

@@ -222,6 +222,7 @@
 683 = objects/683_DBSupShield
 684 = objects/684_DBDustGeezer
 685 = objects/685_DBbonedust
+691 = objects/691_DB_FakeHorizon
 697 = objects/697_BossDrakor
 698 = objects/698_BossDrakor_Laser
 701 = objects/701_KT_RexLevel

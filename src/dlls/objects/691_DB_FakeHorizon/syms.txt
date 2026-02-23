@@ -1,0 +1,13 @@
+.text = 0x0:
+DBFakeHorizon_ctor = 0x0;
+DBFakeHorizon_dtor = 0xC;
+DBFakeHorizon_setup = 0x18;
+DBFakeHorizon_control = 0xA0;
+DBFakeHorizon_update = 0xAC;
+DBFakeHorizon_print = 0xB8;
+DBFakeHorizon_free = 0x200;
+DBFakeHorizon_get_model_flags = 0x210;
+DBFakeHorizon_get_data_size = 0x220;
+
+.rodata = 0x278:
+str_0 = 0x0; // absolute:0x278
