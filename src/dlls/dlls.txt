@@ -91,6 +91,7 @@
 319 = objects/319_fishingnet
 321 = objects/321_Duster
 322 = objects/322_coldWaterControl
+323 = objects/323_waterfallControl
 325 = objects/325_trigger
 331 = objects/331_genprops
 332 = objects/332_FXEmit
