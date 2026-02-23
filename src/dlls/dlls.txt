@@ -212,6 +212,7 @@
 638 = objects/638_DFPlevcontrol
 641 = objects/641_DFPLift
 652 = objects/652_DFP_SpellPlace
+654 = objects/654_textblock
 661 = objects/661_DBPlaceHolder
 663 = objects/663_DBlevelControl
 668 = objects/668_DBdiamond
