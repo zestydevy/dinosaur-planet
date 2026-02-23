@@ -150,6 +150,7 @@
 475 = objects/475_GPSH_flybaddie
 481 = objects/481_NWSH_Shrine
 488 = objects/488_WGSH_Shrine
+494 = objects/494_NWtreebridge
 496 = objects/496_snowhorn
 497 = objects/497_NWtricky
 498 = objects/498_NWanimice

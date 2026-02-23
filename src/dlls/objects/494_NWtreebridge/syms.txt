@@ -1,0 +1,13 @@
+.text = 0x0:
+NWtreebridge_ctor = 0x0;
+NWtreebridge_dtor = 0xC;
+NWtreebridge_setup = 0x18;
+NWtreebridge_control = 0xD4;
+NWtreebridge_update = 0x1CC;
+NWtreebridge_print = 0x1D8;
+NWtreebridge_free = 0x298;
+NWtreebridge_get_model_flags = 0x2A8;
+NWtreebridge_get_data_size = 0x2B8;
+NWtreebridge_anim_callback = 0x2CC;
+
+.rodata = 0x658:
