@@ -18,4 +18,4 @@ SidekickToy_is_stopped = 0xB3C;
 str_0 = 0x0; // absolute:0xBE0
 
 .data = 0xC30:
-_data_0 = 0x0; // absolute:0xC30
+data_collisionPoint = 0x0; // absolute:0xC30
