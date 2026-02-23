@@ -105,6 +105,7 @@
 348 = objects/348_texscroll
 353 = objects/353_HitAnimator
 354 = objects/354_VisAnimator
+357 = objects/357_ExplodeAnimator
 361 = objects/361_TexFrameAnimator
 362 = objects/362_portaltexanimator
 363 = objects/363_FElevControl
