@@ -161,6 +161,7 @@
 507 = objects/507_SHqueenearthwalker
 509 = objects/509_SHwaterLily
 510 = objects/510_SHroot
+511 = objects/511_SHboulder
 512 = objects/512_SHLevelControl
 513 = objects/513_SHflowers
 514 = objects/514_SHswaplift
