@@ -1,0 +1,21 @@
+.text = 0x0:
+curve_ctor = 0x0;
+curve_dtor = 0x24;
+curve_setup = 0x30;
+curve_control = 0xC4;
+curve_update = 0xD0;
+curve_print = 0xDC;
+curve_free = 0x130;
+curve_get_model_flags = 0x140;
+curve_get_data_size = 0x150;
+curve_func_164 = 0x164;
+curve_func_170 = 0x170;
+
+.rodata = 0x1C0:
+
+.data = 0x1D0:
+_data_0 = 0x0; // absolute:0x1D0
+
+.bss = 0x1E0:
+_bss_0 = 0x0; // absolute:0x1E0
+_bss_4 = 0x4; // absolute:0x1E4
