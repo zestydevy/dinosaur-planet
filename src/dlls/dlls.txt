@@ -98,6 +98,7 @@
 332 = objects/332_FXEmit
 334 = objects/334_Transporter
 339 = objects/339
+344 = objects/344_SpellOverlay
 345 = objects/345_WaterFallSpray
 346 = objects/346_animator
 347 = objects/347_texscroll2
