@@ -26,6 +26,7 @@
 33 = engine/33_BaddieControl
 54 = engine/54_pickup
 56 = engine/56_putdown
+59 = engine/59_minimap
 60 = engine/60_post
 61 = engine/61_rareware
 62 = engine/62_mainmenu

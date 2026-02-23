@@ -448,7 +448,7 @@ int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
 
     for (i = 0; i < animObjdata->unk98; i++){
         if (animObjdata->unk8E[i] == 3) {
-            main_set_bits(BIT_5A0, 1);
+            main_set_bits(BIT_Map_SW, 1);
             continue;
         }        
     }
