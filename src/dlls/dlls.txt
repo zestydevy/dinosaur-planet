@@ -197,6 +197,7 @@
 596 = objects/596_WLpressureswitch
 603 = objects/603_WL_Vein
 605 = objects/605_WLworm
+606 = objects/606_WL_Wallpower
 607 = objects/607_WL_LevelControl
 610 = objects/610_WL_spiritplace
 612 = objects/612_WL_Crystal

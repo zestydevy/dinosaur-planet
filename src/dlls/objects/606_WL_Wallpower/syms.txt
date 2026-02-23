@@ -1,0 +1,17 @@
+.text = 0x0:
+WMwallpower_ctor = 0x0;
+WMwallpower_dtor = 0xC;
+WMwallpower_setup = 0x18;
+WMwallpower_control = 0x12C;
+WMwallpower_update = 0x420;
+WMwallpower_print = 0x42C;
+WMwallpower_free = 0x444;
+WMwallpower_get_model_flags = 0x4E0;
+WMwallpower_get_data_size = 0x4F0;
+
+.rodata = 0x554:
+
+.data = 0x554:
+dataTickCounter = 0x0; // absolute:0x554
+dataDLLProjGfx = 0x4; // absolute:0x558
+dataDLLModGfx = 0x8; // absolute:0x55C
