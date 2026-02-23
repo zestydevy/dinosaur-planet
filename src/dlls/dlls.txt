@@ -215,6 +215,7 @@
 654 = objects/654_textblock
 658 = objects/658_DBPointMum
 659 = objects/659_DBTrigger
+660 = objects/660_DBSpike
 661 = objects/661_DBPlaceHolder
 663 = objects/663_DBlevelControl
 668 = objects/668_DBdiamond

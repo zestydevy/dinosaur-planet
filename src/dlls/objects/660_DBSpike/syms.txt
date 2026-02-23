@@ -1,0 +1,16 @@
+.text = 0x0:
+DBSpike_ctor = 0x0;
+DBSpike_dtor = 0xC;
+DBSpike_setup = 0x18;
+DBSpike_control = 0x84;
+DBSpike_update = 0x328;
+DBSpike_print = 0x3AC;
+DBSpike_free = 0x400;
+DBSpike_get_model_flags = 0x410;
+DBSpike_get_data_size = 0x420;
+
+.rodata = 0x490:
+
+.data = 0x490:
+dRollGoals = 0x0; // absolute:0x490
+dRollSpeeds = 0x4; // absolute:0x494
