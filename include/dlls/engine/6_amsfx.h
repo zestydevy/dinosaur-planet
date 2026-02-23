@@ -384,9 +384,13 @@ enum SoundID {
     SOUND_A29_Wooden_Ratcheting_Loop = 0xA29, //DBSpike
     SOUND_A2A_Heavy_Swing = 0xA2A, //DBSpike
 
+    SOUND_A4E_Dinosaur_Grunt = 0xA4E, // used by PointBack
+    SOUND_A4F_Dinosaur_Grunt = 0xA4F, // used by PointBack
+    SOUND_A50_Dinosaur_Grunt = 0xA50, // used by PointBack
+
     SOUND_A71_Rattling_1 = 0xA71, // used by MoonSeeds
     SOUND_A72_Rattling_2 = 0xA72, // used by MoonSeeds
-
+    SOUND_A73 = 0xA73, // used by PointBack
     SOUND_A74 = 0xA74, // used by BWlog
     SOUND_A75 = 0xA75, // used by BWlog
     SOUND_A77 = 0xA77, // used by BWlog
@@ -400,6 +404,9 @@ enum SoundID {
     SOUND_AAE = 0xAAE, // VFP_lavastar sound (Empty)
 
     SOUND_AB4_Magic_Barrier_Deflect = 0xAB4, //Lunaimar
+
+    SOUND_AC8_Ground_Impact = 0xAC8, // used by PointBack
+    SOUND_AC9_Impact_Crumbling = 0xAC9, // used by PointBack
 
     SOUND_B1C_Ladder_Climb_A = 0xB1C,
     SOUND_B1D_Ladder_Climb_B = 0xB1D,
