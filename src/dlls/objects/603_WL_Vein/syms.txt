@@ -1,0 +1,15 @@
+.text = 0x0:
+WMvein_ctor = 0x0;
+WMvein_dtor = 0xC;
+WMvein_setup = 0x18;
+WMvein_control = 0xEC;
+WMvein_update = 0x2A4;
+WMvein_print = 0x2B0;
+WMvein_free = 0x2C8;
+WMvein_get_model_flags = 0x338;
+WMvein_get_data_size = 0x348;
+
+.rodata = 0x3A8:
+
+.data = 0x3A8:
+_data_0 = 0x0; // absolute:0x3A8
