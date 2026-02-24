@@ -47,6 +47,11 @@ MANUAL_FUNCTION_DEFS = {
     0x8001C8A0: { "name": "func_8001C8A0", "size": 0x34 }, # synthetic
 }
 
+SYMBOL_RENAMES = {
+    "memset": "_memset",
+    "memcpy": "_memcpy"
+}
+
 def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     text_start = 0x80000400
     text_size = 0x89350
@@ -70,9 +75,12 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
             st_shndx = sym.entry["st_shndx"]
             st_info_type = sym.entry["st_info"]["type"]
 
-            if sym.name.startswith("L8"):
+            sym_name: str = sym.name
+            sym_name = SYMBOL_RENAMES.get(sym_name, sym_name)
+
+            if sym_name.startswith("L8"):
                 continue
-            if sym.name.endswith(".NON_MATCHING"):
+            if sym_name.endswith(".NON_MATCHING"):
                 # Non-matching functions have a duplicate symbol with a .NON_MATCHING suffix, ignore these
                 continue
 
@@ -82,11 +90,11 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
                 # Apply size overrides
                 manual_def = MANUAL_FUNCTION_DEFS.get(value)
                 if manual_def != None:
-                    assert manual_def["name"] == sym.name
+                    assert manual_def["name"] == sym_name
                     size = manual_def["size"]
-                    print("Overriding function {} definition to 0x{:X}".format(sym.name, size))
+                    print("Overriding function {} definition to 0x{:X}".format(sym_name, size))
             
-                func = { "name": sym.name, "vram": value, "size": size if size != 0 else None }
+                func = { "name": sym_name, "vram": value, "size": size if size != 0 else None }
 
                 idx = vrams.get(value)
                 if idx == None:
@@ -98,7 +106,7 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
             elif value >= text_end:
                 # Data
                 if (st_info_type == "STT_NOTYPE" and st_shndx == "SHN_ABS") or (st_info_type == "STT_OBJECT"):
-                    data_global = { "name": sym.name, "vram": value }
+                    data_global = { "name": sym_name, "vram": value }
                     data_globals.append(data_global)
     
     # Add any functions defined in the manual funcs table that weren't found in the .elf
