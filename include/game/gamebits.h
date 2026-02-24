@@ -477,7 +477,7 @@ typedef enum {
     BIT_Dino_Bag_Blue_Grubs = 0x1D6, // len:6 group:1   [INVENTORY]
     BIT_Spell_Forcefield = 0x1D7, // len:1 group:1      [INVENTORY]
     BIT_1D8 = 0x1D8, // len:1 group:0
-    BIT_Player_Immune_to_Rainbow_Scarabs = 0x1D9, // len:1 group:0
+    BIT_Player_Immune_to_Rainbow_Scarabs = 0x1D9, // len:1 group:0 (immune to Rainbow Scarab attacks, OBJ_NWSH_rock, OBJ_WMrock)
     BIT_1DA = 0x1DA, // len:1 group:0
     BIT_1DB = 0x1DB, // len:1 group:1
     BIT_1DC = 0x1DC, // len:1 group:1

@@ -455,7 +455,7 @@ void dll_331_control(Object* self) {
         self->objhitInfo->unkC = 10.0f;
         self->objhitInfo->unk50 = 30;
         self->objhitInfo->unk58 |= 1;
-        if (main_get_bits(BIT_1D9) != 0) {
+        if (main_get_bits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
             self->objhitInfo->unk58 &= ~1;
         }
         if (objData->unk3E == 2) {
