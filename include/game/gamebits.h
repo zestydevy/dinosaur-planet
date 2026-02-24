@@ -477,7 +477,7 @@ typedef enum {
     BIT_Dino_Bag_Blue_Grubs = 0x1D6, // len:6 group:1   [INVENTORY]
     BIT_Spell_Forcefield = 0x1D7, // len:1 group:1      [INVENTORY]
     BIT_1D8 = 0x1D8, // len:1 group:0
-    BIT_1D9 = 0x1D9, // len:1 group:0
+    BIT_Player_Immune_to_Rainbow_Scarabs = 0x1D9, // len:1 group:0
     BIT_1DA = 0x1DA, // len:1 group:0
     BIT_1DB = 0x1DB, // len:1 group:1
     BIT_1DC = 0x1DC, // len:1 group:1
@@ -2323,7 +2323,7 @@ typedef enum {
     BIT_90D = 0x90D, // len:1 group:2
     BIT_90E = 0x90E, // len:1 group:2
     BIT_90F = 0x90F, // len:1 group:2
-    BIT_910 = 0x910, // len:1 group:2
+    BIT_Tutorial_Collected_Scarab = 0x910, // len:1 group:2
     BIT_911 = 0x911, // len:1 group:2
     BIT_Shown_ZLock_Interact_Message = 0x912, // len:1 group:2
     BIT_913 = 0x913, // len:1 group:2

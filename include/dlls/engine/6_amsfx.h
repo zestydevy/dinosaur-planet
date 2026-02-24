@@ -243,6 +243,8 @@ enum SoundID {
     SOUND_64C_Wicker_Rattle = 0x64C, // used by MediumCrate
     SOUND_64D_Wooden_Rattle = 0x64D, // used by MediumCrate
 
+    SOUND_669_Insect_Scurry_Loop = 0x669, // Scarab
+
     SOUND_677_Metal_Clang = 0x677, // snowhorn related
 
     SOUND_688_KT_Rex_Stomp = 0x688,
@@ -273,7 +275,9 @@ enum SoundID {
     SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate
     SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate
 
-    SOUND_6BC_Creature_Cry = 0x6BC, // Duster
+    SOUND_6BB_Creature_Cry = 0x6BB, // Scarab
+    SOUND_6BC_Creature_Cry = 0x6BC, // Duster, Scarab
+    SOUND_6BD_Creature_Death_Cry = 0x6BD, // Scarab
 
     SOUND_6CA_Chime = 0x6CA, // Duster
 
@@ -432,6 +436,10 @@ enum SoundID {
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
+    SOUND_B6E_Green_Scarab_Collected = 0xB6E,
+    SOUND_B6F_Red_Scarab_Collected = 0xB6F,
+    SOUND_B70_Gold_Scarab_Collected = 0xB70,
+    SOUND_B71_Rainbow_Scarab_Collected = 0xB71,
     SOUND_B72_Game_Saved = 0xB72,
     SOUND_B73_Option_Selected = 0xB73,
     SOUND_B74_Gentle_Magic_Loop = 0xB74,
