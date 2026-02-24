@@ -184,8 +184,10 @@ enum SoundID {
     SOUND_386_Squelched_Impact = 0x386, //DRbullet
 
     SOUND_3D6 = 0x3D6, // used in SHroot (DLL 510)
-    SOUND_3D7 = 0x3D7, //used in SHroot (DLL 510)
-    SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274) and SHroot (DLL 510)
+    SOUND_3D7_Whoosh = 0x3D7, //used in SHroot (DLL 510), DIM2Icicle (DLL 562) 
+    SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274), SHroot (DLL 510), DIM2Icicle (DLL 562)
+    
+    SOUND_3E3_Ice_Cracking = 0x3E3, //DIM2Icicle
 
     SOUND_3EC_Water_Wade_Slow_A = 0x3EC,
     SOUND_3ED_Water_Wade_Slow_B = 0x3ED,
