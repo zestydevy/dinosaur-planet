@@ -265,7 +265,7 @@ typedef enum {
     BIT_Garunda_Te_Fed = 0x102, // len:1 group:2
     BIT_103 = 0x103, // len:1 group:1
     BIT_104 = 0x104, // len:1 group:2 task:29
-    BIT_105 = 0x105, // len:1 group:1
+    BIT_DF_Whirlpool_Cave_Wall_Demolished = 0x105, // len:1 group:1
     BIT_106 = 0x106, // len:1 group:1
     BIT_Spell_Glitched_1 = 0x107, // len:1 group:1 [INVENTORY]
     BIT_108 = 0x108, // len:1 group:0

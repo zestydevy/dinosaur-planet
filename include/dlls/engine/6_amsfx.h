@@ -304,6 +304,9 @@ enum SoundID {
 
     SOUND_775_Timer_Countdown = 0x775,
     
+    SOUND_779_Water_Rushing_Loop = 0x779,  //DFwhirlpool, babbling river-like sound
+    SOUND_77A_Water_Draining_Loop = 0x77A, //DFwhirlpool, static-y waterfall-like sound
+
     SOUND_77C_Capy_Sniff = 0x77C,
     SOUND_77D_Capy_Eat = 0x77D,
 
