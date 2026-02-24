@@ -317,27 +317,32 @@ enum SoundID {
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
+    
     SOUND_83F = 0x83F, 
-
+    
     SOUND_840 = 0x840, 
     SOUND_841 = 0x841,
     SOUND_842 = 0x842, 
-
+    
     SOUND_851_Laser_Blast = 0x851, // DRbullet
 
+    SOUND_860_Explosion_Mid = 0x860, //DRexplodeDoor
+    
     SOUND_87B_Ting = 0x87B, // Duster
-
+    
     SOUND_87E_Duster_Cry = 0x87E, // Duster "Hey look at this!!"
-
+    
     SOUND_883_Footstep_Mud_1 = 0x883, //player 
     SOUND_884_Footstep_Mud_2 = 0x884, //player 
-
+    
     SOUND_88D = 0x88D,
-
+    
     SOUND_8A2_Spore_Disintegrate = 0x8A2, // used in SHspore
+    
+    SOUND_8C7_Explosion_High = 0x8C7, //DRexplodeDoor
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
-
+    
     SOUND_912_Object_Refused = 0x912,
 
     SOUND_927_Harsh_Electric_Loop = 0x927, // DRbullet

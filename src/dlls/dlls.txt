@@ -244,6 +244,7 @@
 731 = objects/731_CRFuelTank
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
+742 = objects/742_DR_ExplodeDoor
 762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem
 768 = objects/768_SPShop

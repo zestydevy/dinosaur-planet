@@ -1,0 +1,16 @@
+.text = 0x0:
+DRExplodeDoor_ctor = 0x0;
+DRExplodeDoor_dtor = 0xC;
+DRExplodeDoor_setup = 0x18;
+DRExplodeDoor_control = 0x120;
+DRExplodeDoor_update = 0x244;
+DRExplodeDoor_print = 0x3EC;
+DRExplodeDoor_free = 0x440;
+DRExplodeDoor_get_model_flags = 0x450;
+DRExplodeDoor_get_data_size = 0x460;
+
+.rodata = 0x4DC:
+
+.data = 0x4DC:
+_data_0 = 0x0; // absolute:0x4DC
+_data_8 = 0x8; // absolute:0x4E4

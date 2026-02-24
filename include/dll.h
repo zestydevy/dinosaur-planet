@@ -128,6 +128,7 @@ enum DLL_ID {
     DLL_ID_155 = 0x1033,
     DLL_ID_170 = 0x1042,
     DLL_ID_177 = 0x1049,
+    DLL_ID_180 = 0x104C,
     DLL_ID_182 = 0x104E,
 
     // Proj gfx
