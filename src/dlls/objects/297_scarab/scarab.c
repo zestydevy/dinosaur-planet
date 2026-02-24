@@ -60,7 +60,7 @@ f32 unkC;
     0, 0, 0
 };
 
-/*0x0*/ static u8 _bss_0[0x10];
+static Vec4f _bss_0;
 
 // offset: 0x0 | ctor
 void dll_297_ctor(void *dll) { }
@@ -231,7 +231,78 @@ void dll_297_func_1304(Object* self, ScarabFunc1304Arg1* arg1, u8 arg2, ScarabFu
 }
 
 // offset: 0x1544 | func: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/297_scarab/dll_297_func_1544.s")
+s32 dll_297_func_1544(Object* self) {
+    Vec3f spF0[4];
+    Vec3f spC0[4];
+    Unk80027934 sp54;
+    AABBs32 sp3C;
+    ObjectHitInfo* objHits;
+    u8 i;
+    f32* temp;
+
+    objHits = self->objhitInfo;
+    if (objHits != NULL) {
+        spF0[0].f[0] = self->srt.transl.x;
+        spF0[0].f[1] = self->srt.transl.y;
+        spF0[0].f[2] = self->srt.transl.z;
+        spC0[0].f[0] = self->positionMirror2.x;
+        spC0[0].f[1] = self->positionMirror2.y;
+        spC0[0].f[2] = self->positionMirror2.z;
+        sp54.unk40[0] = objHits->unk52;
+        sp54.unk50[0] = -1;
+        sp54.unk54[0] = 3;
+    } else {
+        return 0;
+    }
+        
+    fit_aabb_around_cubes(&sp3C, spC0, spF0, sp54.unk40, 1);
+    func_80053750(self, &sp3C, objHits->unkA1);
+    i = func_8005509C(self, (f32*)&spC0, (f32*)&spF0, 1, &sp54, 0);
+    if (i) {
+        if (i & 1) {
+            i = 0;
+        } else if (i & 2) {
+            i = 1;
+        } else if (i & 4) {
+            i = 2;
+        } else {
+            i = 3;
+        }
+
+        objHits->unk9C = sp54.unk50[i];
+        temp = (f32*)spF0;
+        objHits->unk34 = temp[i * 3 + 0];
+        objHits->unk38 = temp[i * 3 + 1];
+        objHits->unk3C = temp[i * 3 + 2];
+
+        _bss_0.f[0] = sp54.unk0[i].f[0];
+        _bss_0.f[1] = sp54.unk0[i].f[1];
+        _bss_0.f[2] = sp54.unk0[i].f[2];
+        _bss_0.f[3] = sp54.unk0[i].f[3];
+        
+        if (sp54.unk58[i] != 0) {
+            objHits->unk9D |= 2;
+            self->srt.transl.f[0] = objHits->unk34;
+            self->srt.transl.f[1] = objHits->unk38;
+            self->srt.transl.f[2] = objHits->unk3C;
+            objHits->unk10.f[0] = self->positionMirror2.f[0];
+            objHits->unk10.f[1] = self->positionMirror2.f[1];
+            objHits->unk10.f[2] = self->positionMirror2.f[2];
+            return 1;
+        } else {
+            objHits->unk9D |= 1;
+            self->srt.transl.f[0] = objHits->unk34;
+            self->srt.transl.f[1] = objHits->unk38;
+            self->srt.transl.f[2] = objHits->unk3C;
+            objHits->unk10.f[0] = self->positionMirror2.f[0];
+            objHits->unk10.f[1] = self->positionMirror2.f[1];
+            objHits->unk10.f[2] = self->positionMirror2.f[2];
+            return 1;
+        }
+    } else {
+        return 0;
+    }
+}
 
 /*0x0*/ static const char str_0[] = "fy %f %f\n";
 /*0xC*/ static const char str_C[] = "Crashed\n";
