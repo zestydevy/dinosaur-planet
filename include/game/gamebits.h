@@ -1512,8 +1512,8 @@ typedef enum {
     BIT_5E1 = 0x5E1, // len:1 group:0
     BIT_5E2 = 0x5E2, // len:1 group:0
     BIT_5E3 = 0x5E3, // len:1 group:1
-    BIT_5E4 = 0x5E4, // len:1 group:0
-    BIT_5E5 = 0x5E5, // len:1 group:0
+    BIT_DFPT_Puzzle_Pad_Show_Solution = 0x5E4, // len:1 group:0 (while standing on the pad that resets the rows of electrified tiles)
+    BIT_DFPT_Zapped_by_Floor_Tiles = 0x5E5, // len:1 group:0
     BIT_5E6 = 0x5E6, // len:8 group:3
     BIT_5E7 = 0x5E7, // len:1 group:0
     BIT_5E8 = 0x5E8, // len:1 group:1
@@ -1525,7 +1525,7 @@ typedef enum {
     BIT_5EE = 0x5EE, // len:1 group:0
     BIT_5EF = 0x5EF, // len:1 group:0
     BIT_5F0 = 0x5F0, // len:1 group:0
-    BIT_5F1 = 0x5F1, // len:1 group:1
+    BIT_DFPT_Load_SpellStone_Holder_1_Interior = 0x5F1, // len:1 group:1 (loads Object Group 5, mostly containing objects for the small electrified room under SpellStone Holder 1)
     BIT_5F2 = 0x5F2, // len:1 group:1
     BIT_DFP_Place_Spellstone_One = 0x5F3, // len:1 group:1
     BIT_5F4 = 0x5F4, // len:1 group:1
@@ -1593,7 +1593,7 @@ typedef enum {
     BIT_632 = 0x632, // len:1 group:1
     BIT_633 = 0x633, // len:8 group:3
     BIT_634 = 0x634, // len:1 group:1
-    BIT_635 = 0x635, // len:1 group:0
+    BIT_DFPT_Puzzle_Pad_Pressed = 0x635, // len:1 group:0
     BIT_636 = 0x636, // len:1 group:0
     BIT_637 = 0x637, // len:1 group:0
     BIT_638 = 0x638, // len:1 group:0
@@ -1669,7 +1669,7 @@ typedef enum {
     BIT_67E = 0x67E, // len:1 group:0
     BIT_67F = 0x67F, // len:1 group:1
     BIT_680 = 0x680, // len:1 group:1
-    BIT_681 = 0x681, // len:1 group:1
+    BIT_DFPT_Load_Block_Slide_Puzzle_1 = 0x681, // len:1 group:1
     BIT_682 = 0x682, // len:1 group:0
     BIT_683 = 0x683, // len:3 group:1
     BIT_684 = 0x684, // len:1 group:1
@@ -1957,7 +1957,7 @@ typedef enum {
     BIT_79E = 0x79E, // len:1 group:0
     BIT_79F = 0x79F, // len:1 group:0
     BIT_7A0 = 0x7A0, // len:1 group:1
-    BIT_7A1 = 0x7A1, // len:1 group:1
+    DFPT_Load_Block_Slide_Puzzle_2 = 0x7A1, // len:1 group:1
     BIT_7A2 = 0x7A2, // len:1 group:1
     BIT_7A3 = 0x7A3, // len:1 group:1
     BIT_7A4 = 0x7A4, // len:1 group:1

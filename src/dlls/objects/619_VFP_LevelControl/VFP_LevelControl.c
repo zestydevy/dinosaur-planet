@@ -32,8 +32,8 @@ void VFP_LevelControl_setup(Object* self, ObjSetup* setup, s32 a2) {
     u8 mapSetupID;
 
     obj_add_object_type(self, OBJTYPE_10);
-    gDLL_29_Gplay->vtbl->set_map_setup((s32) self->mapID, 1);
-    mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup((s32) self->mapID);
+    gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
+    mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
     switch (mapSetupID) {
     case 1:
     case 2:

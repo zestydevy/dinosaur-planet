@@ -316,6 +316,10 @@ enum SoundID {
     SOUND_77C_Capy_Sniff = 0x77C,
     SOUND_77D_Capy_Eat = 0x77D,
 
+    SOUND_78C = 0x78C, //DFPLevelControl (empty?)
+    
+    SOUND_793 = 0x793, //DFPLevelControl (empty?)
+
     SOUND_796 = 0x796,
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
@@ -357,6 +361,8 @@ enum SoundID {
     SOUND_927_Harsh_Electric_Loop = 0x927, // DRbullet
 
     SOUND_95A_Frigid_Air_Loop = 0x95A, //used by Ice Blast Spell
+
+    SOUND_96B_Magic_Whir = 0x96B, //DFPLevelControl
 
     SOUND_986_Waterfall_Low_Loop = 0x986,   // used in DLL 6
     SOUND_987_Waterfall_High_Loop = 0x987,  // used in DLL 6
