@@ -212,6 +212,7 @@
 637 = objects/637_VFP_SpellPlace
 638 = objects/638_DFPlevcontrol
 641 = objects/641_DFPLift
+644 = objects/644_DFP_floorbar
 652 = objects/652_DFP_SpellPlace
 654 = objects/654_textblock
 658 = objects/658_DBPointMum
