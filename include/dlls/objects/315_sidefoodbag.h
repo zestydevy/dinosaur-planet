@@ -4,6 +4,15 @@
 #include "dlls/engine/56_putdown.h"
 #include "dlls/objects/314_foodbag.h"
 
+typedef enum {
+    SIDEFOOD_Blue_Mushrooms = FOOD_TYPE(1), //1
+    SIDEFOOD_Red_Mushrooms  = FOOD_TYPE(2), //2
+    SIDEFOOD_Old_Mushrooms  = FOOD_TYPE(3), //4
+    SIDEFOOD_Blue_Grubs     = FOOD_TYPE(4), //8
+    SIDEFOOD_Red_Grubs      = FOOD_TYPE(5), //0x10
+    SIDEFOOD_Old_Grubs      = FOOD_TYPE(6), //0x20
+} SideFoodTypes;
+
 typedef struct {
     ObjSetup base;
 } SideFoodbag_Setup;
