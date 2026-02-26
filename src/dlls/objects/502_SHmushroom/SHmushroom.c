@@ -187,7 +187,7 @@ void dll_502_control(Object* self) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_744, MAX_VOLUME, NULL, NULL, 0, NULL);
             if (spCC->id == 0x416) {
                 temp_s3->unk136 = 8U;
-                ((DLL_Unknown*)spCC->dll)->vtbl->func[20].withThreeArgs(spCC, 1, self); // func20
+                ((DLL_Unknown*)spCC->dll)->vtbl->func[20].withThreeArgsCustom3(spCC, 1, self); // func20
                 self->srt.flags |= 0x4000;
                 func_800267A4(self);
             } else {
