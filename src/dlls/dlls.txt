@@ -169,6 +169,7 @@
 515 = objects/515_SHswapstone
 517 = objects/517_SCbabyLightFoot
 519 = objects/519_SC_levelcontrol
+523 = objects/523_SCcollectables
 525 = objects/525_SCtotempuzzle
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall

@@ -1,0 +1,16 @@
+.text = 0x0:
+SCcollectables_ctor = 0x0;
+SCcollectables_dtor = 0xC;
+SCcollectables_setup = 0x18;
+SCcollectables_control = 0x224;
+SCcollectables_update = 0x548;
+SCcollectables_print = 0x554;
+SCcollectables_free = 0x684;
+SCcollectables_get_model_flags = 0x6C4;
+SCcollectables_get_data_size = 0x6D4;
+SCcollectables_handle_motion = 0x6E8;
+SCcollectables_collect = 0xA2C;
+SCcollectables_start_falling = 0xAF8;
+SCcollectables_copy_object_position = 0xB10;
+
+.rodata = 0xBD0:

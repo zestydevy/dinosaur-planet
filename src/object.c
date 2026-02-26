@@ -1338,8 +1338,8 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
         def->pTextures = (UNK_PTR*)((u32)def + (u32)def->pTextures);
         def->pSequenceBones = (UNK_PTR*)((u32)def + (u32)def->pSequenceBones);
 
-        if (def->unk18 != 0) {
-            def->unk18 = (u32*)((u32)def + (u32)def->unk18);
+        if (def->collectableDef != 0) {
+            def->collectableDef = (CollectableDef*)((u32)def + (u32)def->collectableDef);
         }
 
         if (def->unk40 != 0) {

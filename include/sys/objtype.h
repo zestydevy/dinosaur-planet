@@ -9,7 +9,7 @@ enum ObjType {
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
     OBJTYPE_4 = 4, // Tumbleweed
-    OBJTYPE_5 = 5, // SCcollectables
+    OBJTYPE_5 = 5, // collectable, SCcollectables (OBJTYPE_COLLECTABLE?)
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7, // CFScalesGalleon
     OBJTYPE_9 = 9,
@@ -17,7 +17,7 @@ enum ObjType {
     OBJTYPE_11 = 11, // BWlog, DFlog, IMSnowBike
     OBJTYPE_12 = 12,
     OBJTYPE_13 = 13, // Krazoa shrine main (ECSH_Shrine etc.)
-    OBJTYPE_16 = 16, // Krazoa shrine doors (CSSH_Door1 etc.)
+    OBJTYPE_16 = 16, // Krazoa shrine doors (ECSH_Door1 etc.)
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
     OBJTYPE_22 = 22, // DFriverflow

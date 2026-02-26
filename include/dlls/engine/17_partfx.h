@@ -6,6 +6,7 @@
 #include "types.h"
 
 enum ParticleID {
+    PARTICLE_42 = 0x42,
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
     PARTICLE_75 = 0x75,

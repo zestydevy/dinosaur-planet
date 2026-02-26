@@ -25,6 +25,7 @@
 #include "game/objects/object.h"
 #include "types.h"
 
+#include "dlls/objects/523_SCcollectables.h"
 #include "dlls/objects/211_tricky.h"
 #include "dlls/objects/227_tumbleweed.h"
 
@@ -132,8 +133,7 @@ void Tumbleweed_control(Object* self) {
     
     shiny = objData->goldenNugget;
     if (shiny) {
-        //TODO: update with SCcollectables DLL interface
-        ((DLL_Unknown*)shiny->dll)->vtbl->func[8].withTwoArgs((s32)shiny, (s32)self); 
+        ((DLL_523_SCCollectables*)shiny->dll)->vtbl->copy_object_position(shiny, self); 
     }
 }
 

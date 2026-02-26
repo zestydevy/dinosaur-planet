@@ -141,6 +141,17 @@ union {
 /*0e*/    s16 unkE;
 } ModLineReencoded;
 
+typedef struct {
+    s16 unk0;             //always 0 in ROM
+    s16 type;             //see Collectable_Types
+    s16 unk4;             //always 0 in ROM
+    s16 seqObjectID;      //objectID to display during item collection sequence (usually an Anim object like OBJ_AnimSpellstone)
+    s8 interactionRadius; //radius for picking up
+    s8 collectMessage;    //byte1 of message sent to player DLL when collected
+    s8 unkA;              //always 0 in ROM
+    s8 amountRestored;    //magic restored (Food collectables also have a value here, but it's unused)
+} CollectableDef;
+
 /**
  * Object definition.
  * 
@@ -156,7 +167,7 @@ typedef struct {
 /*0c*/ UNK_PTR *pTextures;      // list of texture IDs? (offset in file, pointer after load)
 /*10*/ u8 *pSequenceBones; // list of sequenceBoneID + jointIDs (one for each modelIndex) that ANIMCURVES use to apply additive head/jaw animation
 /*14*/ UNK_PTR *unk14;
-/*18*/ u32 *unk18;              // [optional] pickup obj related? (offset in file, pointer after load)
+/*18*/ CollectableDef *collectableDef;              // [optional] pickup obj related? (offset in file, pointer after load)
 /*1c*/ s16 *pSeq;               // [optional] sequenceIDs (offset in file, pointer after load)
 /*20*/ ObjDefEvent *pEvent;     // [optional] table of OBJEVENT offsets (offset in file, pointer after load)
 /*24*/ ObjDefHit *pHits;       // [optional] table of OBJHITS offsets (offset in file, pointer after load)
@@ -206,7 +217,7 @@ typedef struct {
 /*84*/ s8 unk84;
 /*85*/ u8 unk85;
 /*86*/ u8 unk86;
-/*87*/ u8 unk87;
+/*87*/ u8 unk87; //lighting-related flags?
 /*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads? // TODO: confirm
 /*8c*/ u8 nLights; // TODO: confirm
 /*8d*/ u8 lightIdx; // TODO: confirm
