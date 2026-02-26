@@ -21,7 +21,7 @@ void curve_setup(Object* self, CurveSetup* curveSetup, s32 arg2) {
     self->srt.pitch = curveSetup->unk2D << 8;
     
     if (curveSetup->unk19 == CURVE_TYPE_8 || curveSetup->unk19 == CURVE_TYPE_Camera_1A) {
-        self->srt.roll = *((s16*)((s8*)curveSetup + 0x38)); //TO-DO: update struct
+        self->srt.roll = curveSetup->type8.unk38;
     }
     
     if (curveSetup->unk19 == CURVE_TYPE_15) {
