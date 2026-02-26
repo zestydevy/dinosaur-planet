@@ -339,10 +339,8 @@ class BuildNinjaWriter:
             self.writer.build(obj_build_path, command, src_build_path, variables=variables)
             self.link_deps.append(obj_build_path)
 
-            # Run GCC syntax check alongside compilation (skip libultra and libnaudio)
-            if file.type == BuildFileType.C and \
-                not Path(file.src_path).is_relative_to("src/libultra") and \
-                not Path(file.src_path).is_relative_to("src/libnaudio"):
+            # Run GCC syntax check alongside compilation
+            if file.type == BuildFileType.C:
                 syntax_check_path = f"$BUILD_DIR/{Path(file.obj_path).with_suffix('.syntax_checked').as_posix()}"
                 self.writer.build(syntax_check_path, "gcc_syntax_only", src_build_path)
                 self.syntax_check_targets.append(syntax_check_path)
