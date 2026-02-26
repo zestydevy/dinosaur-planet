@@ -12,12 +12,12 @@ typedef struct {
 /*1C*/ f32 unk1C;
 /*20*/ s32 _unk20;
 /*24*/ f32 unk24;
-/*28*/ u8 unk28[0x2E-0x28];
+/*28*/ u8 unk28[0x2E - 0x28];
 /*2E*/ s16 unk2E;
 /*30*/ s16 unk30;
 /*32*/ u8 _unk32;
 /*33*/ u8 unk33;
-/*34*/ u8 _pad[0x40-0x34];
+/*34*/ u8 _pad[0x40 - 0x34];
 } SB_Lamp_Data;
 
 /*0x0*/ static void *sDLL107 = NULL;

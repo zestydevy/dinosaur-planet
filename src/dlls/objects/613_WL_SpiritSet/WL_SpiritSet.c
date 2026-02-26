@@ -11,7 +11,7 @@ typedef struct {
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s8 yaw;
-/*19*/ s8 _unk19[0x1E-0x19];
+/*19*/ s8 _unk19[0x1E - 0x19];
 /*1E*/ s16 gamebit;
 } WL_SpiritSet_Setup;
 

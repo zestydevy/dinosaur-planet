@@ -10,7 +10,7 @@
 
 typedef struct {
     s32 unk0;
-    u8 _unk4[0x8-0x4];
+    u8 _unk4[0x8 - 0x4];
     s16 unk8;
     s16 unkA;
 } Struct_800348A0;
