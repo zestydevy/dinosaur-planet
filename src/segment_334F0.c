@@ -428,7 +428,7 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
         }
     }
 
-    (u8)D_800B2E00 &= 0xFF7F;
+    D_800B2E00 &= 0xFF7F;
     return sp84[0];
 }
 #endif

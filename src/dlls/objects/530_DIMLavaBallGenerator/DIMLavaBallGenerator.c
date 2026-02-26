@@ -20,7 +20,7 @@ typedef struct {
     u8 unk19;
     s16 unk1A;
     s16 unk1C;
-    u8 unk1E[0x24-0x1E];
+    u8 unk1E[0x24 - 0x1E];
 } DIMLavaBall_Setup;
 
 typedef struct {

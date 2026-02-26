@@ -1547,9 +1547,9 @@ s32 func_80057F1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Func_80057F1C_Stru
 
 void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005341C* arg2, f32 arg3, f32 arg4, s32 arg5) {
     s32 sp134;
-    u8 pad_sp118[0x134-0x118];
+    u8 pad_sp118[0x134 - 0x118];
     Vec4f sp108;
-    u8 pad_spFC[0x108-0xFC];
+    u8 pad_spFC[0x108 - 0xFC];
     Vec4f spEC;
     UnkFunc80051D68Arg3* var_s4;
     Func_80057F1C_Struct *temp_a0;

@@ -13,7 +13,7 @@
 
 typedef struct {
 s32 unk0;
-s8 unk4[0x25B - 4];
+s8 unk4[0x25B - 0x4];
 s8 unk25B;
 s8 unk25C[0x272 - 0x25C];
 s8 unk272;

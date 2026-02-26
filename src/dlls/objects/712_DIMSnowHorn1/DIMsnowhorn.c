@@ -121,42 +121,55 @@ u32 dll_712_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_FA0.s")
 
 // offset: 0x1150 | func: 12 | export: 7
+s32 dll_712_func_1150(Object *self, Object *rider);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_1150.s")
 
 // offset: 0x124C | func: 13 | export: 8
+s32 dll_712_func_124C(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_124C.s")
 
 // offset: 0x1274 | func: 14 | export: 9
+void dll_712_func_1274(Object *self, f32 *a1, f32 *a2, f32 *a3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_1274.s")
 
 // offset: 0x1298 | func: 15 | export: 10
+s32 dll_712_func_1298(Object *self, Object *rider);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_1298.s")
 
 // offset: 0x1310 | func: 16 | export: 11
+s32 dll_712_func_1310(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_1310.s")
 
 // offset: 0x1338 | func: 17 | export: 12
+void dll_712_func_1338(Object *self, f32 *a1, f32 *a2, f32 *a3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_1338.s")
 
 // offset: 0x13FC | func: 18 | export: 13
+s32 dll_712_func_13FC(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_13FC.s")
 
 // offset: 0x140C | func: 19 | export: 14
+void dll_712_func_140C(Object *self, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_140C.s")
 
 // offset: 0x141C | func: 20 | export: 15
+void dll_712_func_141C(Object *self, f32 *arg1, s32 *arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_141C.s")
 
 // offset: 0x1444 | func: 21 | export: 16
+f32 dll_712_func_1444(Object *self, f32 *arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_1444.s")
 
 // offset: 0x148C | func: 22 | export: 17
+s32 dll_712_func_148C(Object *self); // get_race_position?
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_148C.s")
 
 // offset: 0x149C | func: 23 | export: 18
+void dll_712_func_149C(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_149C.s")
 
 // offset: 0x14A8 | func: 24 | export: 19
+void dll_712_func_14A8(Object *self, f32 scale);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_14A8.s")
 
 // offset: 0x159C | func: 25
@@ -329,4 +342,5 @@ s32 dll_712_func_2EEC(Object* self, DIMSnowHorn_Data* objData, f32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_3430.s")
 
 // offset: 0x3448 | func: 43 | export: 20
+void dll_712_func_3448(s32 a0, s32 a1, s32 a2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_3448.s")

@@ -1,8 +1,7 @@
 #ifndef _DLLS_315_H
 #define _DLLS_315_H
 
-#include "dlls/engine/56_putdown.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 
 typedef enum {
     SIDEFOOD_Blue_Mushrooms = FOOD_TYPE(1), //1
@@ -10,12 +9,12 @@ typedef enum {
     SIDEFOOD_Old_Mushrooms  = FOOD_TYPE(3), //4
     SIDEFOOD_Blue_Grubs     = FOOD_TYPE(4), //8
     SIDEFOOD_Red_Grubs      = FOOD_TYPE(5), //0x10
-    SIDEFOOD_Old_Grubs      = FOOD_TYPE(6) //0x20
+    SIDEFOOD_Old_Grubs      = FOOD_TYPE(6)  //0x20
 } SideFoodTypes;
 
 typedef struct {
     ObjSetup base;
-} SideFoodbag_Setup;
+} SideFoodbag_ObjSetup;
 
 typedef struct {
     DLL_56_Putdown *dllPutdown;         //Handles removing/updating food bag items

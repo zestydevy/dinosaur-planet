@@ -44,7 +44,7 @@ typedef struct {
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 unk18[0x2A-0x18];
+/*18*/ u8 unk18[0x2A - 0x18];
 /*2A*/ s8 yaw;
 } KamerianBoss_Setup;
 

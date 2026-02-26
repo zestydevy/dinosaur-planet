@@ -1,7 +1,7 @@
 #include "common.h"
 
 #include "dlls/engine/56_putdown.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 
 void putdown_delete_food_from_bag(u8 arg0, u16 arg1, FoodbagContents* bagSlots, FoodbagItem* foodItems);
 void putdown_update_food_quantity_gamebits(FoodbagContents* bagSlots, FoodbagItem* food);
@@ -78,7 +78,7 @@ Object* putdown_get_nearest_placed_food_of_type(Object* foodbag, Object* target,
             foodPosition.z = placedObjects->objects[index]->srt.transl.z;
             if (!func_80059C40(&target->srt.transl, &foodPosition, 0.1f, 0, 0, foodbag, 8, -1, 0xFF, 0)){
                 //TODO: verify DLL interface used by placed food
-                if (((DLL_314_Foodbag*) placedObjects->objects[index]->dll)->vtbl->is_obtained(placedObjects->objects[index]) == 0){
+                if (((DLL_IFoodbag*) placedObjects->objects[index]->dll)->vtbl->is_obtained(placedObjects->objects[index]) == 0){
                     placed_objects[index] = placedObjects->objects[index];
                 }
             }

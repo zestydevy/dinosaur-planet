@@ -9,7 +9,8 @@
 #include "sys/newshadows.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 #include "types.h"
 
 #include "dlls/objects/common/collectable.h"
@@ -597,7 +598,7 @@ void collectable_collect(Object* self) {
         case OBJ_foodbagMedium:
         case OBJ_foodbagLarge:
             foodbag = (Object*)((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
-            (0, ((DLL_314_Foodbag*)foodbag->dll)->vtbl->set_capacity)(foodbag);
+            (0, ((DLL_IFoodbag*)foodbag->dll)->vtbl->set_capacity)(foodbag);
             break;
         }
         break;
@@ -606,16 +607,16 @@ void collectable_collect(Object* self) {
         id = self->id;
         switch (id) {  
         case OBJ_meatPickup:      
-            ((DLL_314_Foodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Dino_Egg);
-            obj_free_object_type(self, OBJTYPE_5);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Dino_Egg);
+            obj_free_object_type(self, 5);
             return;
         case OBJ_applePickup:
-            ((DLL_314_Foodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
-            obj_free_object_type(self, OBJTYPE_5);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
+            obj_free_object_type(self, 5);
             obj_destroy_object(self);
             return;
         case OBJ_beanPickup:
-            ((DLL_314_Foodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Blue_Bean);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Blue_Bean);
             break;
         }
         break;
