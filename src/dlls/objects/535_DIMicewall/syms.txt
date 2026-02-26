@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_535_ctor = 0x0;
+dll_535_dtor = 0xC;
+dll_535_setup = 0x18;
+dll_535_control = 0xA4;
+dll_535_update = 0x1D0;
+dll_535_print = 0x1DC;
+dll_535_free = 0x1F4;
+dll_535_get_model_flags = 0x254;
+dll_535_get_data_size = 0x264;
+dll_535_func_278 = 0x278;
+
+.rodata = 0x2F0:
+_oob_rodata_0 = 0x0; // absolute:0x2F0

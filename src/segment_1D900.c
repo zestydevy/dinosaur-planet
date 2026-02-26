@@ -8,13 +8,13 @@ typedef struct {
     s16 x;
     s16 y;
     s16 z;
-    u8 pad6[0x10-0x6];
+    u8 pad6[0x10 - 0x6];
     Vec3f pos;
 } Unk800B1858;
 // size: 0x1C?
 typedef struct {
     s16 yaw;
-    u8 pad6[0xC-0x2];
+    u8 pad6[0xC - 0x2];
     Vec3f pos;
     u32 pad1C;
 } Unk800B1860;

@@ -96,13 +96,13 @@ typedef struct {
 } IMSnowBike_Setup;
 
 enum IMSnowBikeFlags {
-    SNOWBIKEFLAG_NONE = 0,
-    SNOWBIKEFLAG_1 = 1 << 0,
-    SNOWBIKEFLAG_2 = 1 << 1,
-    SNOWBIKEFLAG_GROUNDED = 1 << 2, // at least one test point touching the ground
-    SNOWBIKEFLAG_8 = 1 << 3,
-    SNOWBIKEFLAG_10 = 1 << 4, // currently in sequence?
-    SNOWBIKEFLAG_IS_CPU = 1 << 5 // is SharpClaw
+    SNOWBIKEFLAG_NONE = 0x0,
+    SNOWBIKEFLAG_1 = 0x1,
+    SNOWBIKEFLAG_2 = 0x2,
+    SNOWBIKEFLAG_GROUNDED = 0x4, // at least one test point touching the ground
+    SNOWBIKEFLAG_8 = 0x8,
+    SNOWBIKEFLAG_10 = 0x10, // currently in sequence?
+    SNOWBIKEFLAG_IS_CPU = 0x20 // is SharpClaw
 };
 
 /*0x0*/ static Vec3f _data_0[] = {

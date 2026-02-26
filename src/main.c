@@ -685,7 +685,8 @@ OSSched *get_ossched(void) {
 }
 
 void init_bittable(void) {
-    queue_alloc_load_file((void **)&gFile_BITTABLE, 0x37);
+    queue_alloc_load_file((void **)&gFile_BITTABLE, BITTABLE_BIN);
+    // @bug: This should be dividing by 4 (not 2) since each entry is 4 bytes long
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
     gGplayState = gDLL_29_Gplay->vtbl->get_state();
 }

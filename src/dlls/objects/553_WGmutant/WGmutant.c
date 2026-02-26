@@ -6,12 +6,12 @@
 typedef struct {
 /*00*/ u8 unk0;
 /*01*/ u8 unk1;
-/*02*/ u8 _unk2[0x8-0x2];
+/*02*/ u8 _unk2[0x8 - 0x2];
 } WGmutant_Data;
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 _unk18[0x1F-0x18];
+/*18*/ u8 _unk18[0x1F - 0x18];
 /*1F*/ u8 yaw;
 } WGmutant_Setup;
 

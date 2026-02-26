@@ -20,7 +20,7 @@ BaddieControl_check_hit = 0x18E4;
 BaddieControl_func_1D88 = 0x1D88;
 BaddieControl_func_1FAC = 0x1FAC;
 BaddieControl_setup = 0x2000;
-BaddieControl_func_24FC = 0x24FC;
+BaddieControl_free = 0x24FC;
 BaddieControl_change_weapon = 0x2624;
 BaddieControl_get_health_ratio = 0x2718;
 

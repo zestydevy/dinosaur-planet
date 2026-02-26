@@ -212,6 +212,8 @@ enum SoundID {
     SOUND_50C_Low_Rumble_Loop = 0x50C, //IMSnowBike
     SOUND_50D_Jet_Loop = 0x50D,        //IMSnowBike
 
+    SOUND_53C = 0x53C, //used by SHbluemushroom
+
     SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
 
     SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
@@ -283,6 +285,9 @@ enum SoundID {
     SOUND_72F_Harsh_Magical_Thrum_Loop = 0x72F, // used in DLL 475 GPSH_flybaddie
     SOUND_730_Electrified_Blast = 0x730, // used in DLL 475 GPSH_flybaddie
 
+    SOUND_744 = 0x744, //used by SHbluemushroom
+    SOUND_745 = 0x745, //used by SHbluemushroom
+
     SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy = 0x74B,
 
     SOUND_768_Rope_Climb = 0x768, // used by player DLL
@@ -291,6 +296,11 @@ enum SoundID {
     SOUND_76D_Log_Bump = 0x76D, // used by DFlog, BWlog
 
     SOUND_775_Timer_Countdown = 0x775,
+    
+    SOUND_77C_Capy_Sniff = 0x77C,
+    SOUND_77D_Capy_Eat = 0x77D,
+
+    SOUND_796 = 0x796,
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
 
@@ -299,6 +309,12 @@ enum SoundID {
 
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
+
+    SOUND_83F = 0x83F, 
+
+    SOUND_840 = 0x840, 
+    SOUND_841 = 0x841,
+    SOUND_842 = 0x842, 
 
     SOUND_851_Laser_Blast = 0x851, // DRbullet
 

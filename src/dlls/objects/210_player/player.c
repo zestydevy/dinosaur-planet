@@ -1280,10 +1280,10 @@ void dll_210_update(Object* player) {
     f32 sp50;
     f32 sp4C;
     Object* temp_a1;
-    f32 deltatime;
+    f32 updateRate;
 
     objdata = player->data;
-    deltatime = gUpdateRateF;
+    updateRate = gUpdateRateF;
     gDLL_18_objfsa->vtbl->func2(player, &objdata->unk0, _bss_58);
     if ((objdata->unk0.unk341 == 1) && (player->linkedObject->objhitInfo->unk48 != NULL || player->linkedObject->objhitInfo->unk9D != 0)) {
         player->objhitInfo->unk61 = 1;
@@ -1305,7 +1305,7 @@ void dll_210_update(Object* player) {
     }
     if (objdata->unk0.unk4.mode == 1) {
         if (!(objdata->flags & 0x2000) && (objdata->unk0.unk4.unk25C != 0)) {
-            temp_fv0 = (player->positionMirror.y - player->positionMirror3.y) / deltatime;
+            temp_fv0 = (player->positionMirror.y - player->positionMirror3.y) / updateRate;
             player->speed.y = temp_fv0;
             if (temp_fv0 < -4.0f) {
                 player->speed.y = -4.0f;
@@ -1316,11 +1316,11 @@ void dll_210_update(Object* player) {
         }
         if (objdata->unk0.flags & 0x800000) {
             if (player->parent != NULL) {
-                player->speed.x = (player->srt.transl.x - player->positionMirror2.x) / deltatime;
-                player->speed.z = (player->srt.transl.z - player->positionMirror2.z) / deltatime;
+                player->speed.x = (player->srt.transl.x - player->positionMirror2.x) / updateRate;
+                player->speed.z = (player->srt.transl.z - player->positionMirror2.z) / updateRate;
             } else {
-                player->speed.x = (player->positionMirror.x - player->positionMirror3.x) / deltatime;
-                player->speed.z = (player->positionMirror.z - player->positionMirror3.z) / deltatime;
+                player->speed.x = (player->positionMirror.x - player->positionMirror3.x) / updateRate;
+                player->speed.z = (player->positionMirror.z - player->positionMirror3.z) / updateRate;
             }
             if (((objdata->unk0.unk4.unk25C & 6) && !(objdata->unk0.unk4.unk25C & 0x60)) || (objdata->unk0.unk4.hitsTouchBits != 0)) {
                 sp4C = fsin16_precise(player->srt.yaw);
@@ -2075,8 +2075,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     arg0->curModAnimIdLayered = -1;
                     spC8 = 0;
                 } else {
-                    objdata->unk0.unk288 = 0.0f;
-                    objdata->unk0.unk284 = 0.0f;
+                    objdata->unk0.xAnalogInput = 0.0f;
+                    objdata->unk0.yAnalogInput = 0.0f;
                     gDLL_18_objfsa->vtbl->func3(&arg1->srt);
                     objdata->unk0.unk310 = 0;
                     objdata->unk0.unk30C = 0;
@@ -2089,8 +2089,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             } else {
                 spAC /= temp_fv0_4;
                 spA8 /= temp_fv0_4;
-                objdata->unk0.unk288 = -spAC * 40.0f;
-                objdata->unk0.unk284 = spA8 * 40.0f;
+                objdata->unk0.xAnalogInput = -spAC * 40.0f;
+                objdata->unk0.yAnalogInput = spA8 * 40.0f;
                 arg0->srt.transl.x = arg2->unk4C.x + (sp9C * spAC);
                 arg0->srt.transl.z = arg2->unk4C.z + (sp9C * spA8);
                 gDLL_18_objfsa->vtbl->func3(&arg1->srt);
@@ -2114,8 +2114,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         objdata->unk0.unk310 = 0;
         objdata->unk0.unk30C = 0;
         objdata->unk0.unk4.mode = 0;
-        objdata->unk0.unk288 = 0.0f;
-        objdata->unk0.unk284 = 0.0f;
+        objdata->unk0.xAnalogInput = 0.0f;
+        objdata->unk0.yAnalogInput = 0.0f;
         for (var_s1 = 0; var_s1 < arg2->unk98; var_s1++) {
             switch (arg2->unk8E[var_s1]) {
             case 3:
@@ -2333,8 +2333,8 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
     Player_Data3B4 sp34;
 
     arg1->unk0.unk29C = 0.14f;
-    arg1->unk0.unk288 = arg1->unk760;
-    arg1->unk0.unk284 = arg1->unk75C;
+    arg1->unk0.xAnalogInput = arg1->unk760;
+    arg1->unk0.yAnalogInput = arg1->unk75C;
     arg1->unk0.unk310 = arg1->unk766;
     arg1->unk0.unk30C = arg1->unk764;
     if (arg1->unk0.unk304 & 0x100) {
@@ -2997,7 +2997,7 @@ static s32 dll_210_func_7BC4(Object* player, Player_Data* arg1, u32* arg2, UnkAr
 static void dll_210_func_7CF8(ObjFSA_Data* fsa, Vec3f* arg1) {
     s32 sp20;
 
-    sp20 = arctan2_f(fsa->unk288, -fsa->unk284) - fsa->unk324;
+    sp20 = arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) - fsa->unk324;
     arg1->x = -fsin16_precise(sp20);
     arg1->y = 0.0f;
     arg1->z = -fcos16_precise(sp20);
@@ -3157,12 +3157,12 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                 case 4:
                 case 6:
                 case 11:
-                    if ((fsa->unk4.unk25C & 0x10) && ((fsa->unk290 < 0.1f) || (spCC > -0.8f) || ((spD0.unk38.y - 10.0f) < player->srt.transl.y))) {
+                    if ((fsa->unk4.unk25C & 0x10) && ((fsa->analogInputPower < 0.1f) || (spCC > -0.8f) || ((spD0.unk38.y - 10.0f) < player->srt.transl.y))) {
                         var_v1 = FALSE;
                     }
                     break;
                 case 2:
-                    if ((fsa->unk4.unk25C & 0x10) && ((fsa->unk290 < 0.1f) || (spCC > -0.8f) || ((spD0.unk38.y - 10.0f) < player->srt.transl.y))) {
+                    if ((fsa->unk4.unk25C & 0x10) && ((fsa->analogInputPower < 0.1f) || (spCC > -0.8f) || ((spD0.unk38.y - 10.0f) < player->srt.transl.y))) {
                         var_v1 = FALSE;
                     }
                     break;
@@ -3208,7 +3208,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                         break;
                     }
 
-                    if ((((DLL_Unknown*)sp88->dll)->vtbl->func[10].withOneArgS32((s32)sp88) != 0) && (fsa->unk290 >= 0.1f) && (spCC < 10.5f)) {
+                    if ((((DLL_Unknown*)sp88->dll)->vtbl->func[10].withOneArgS32((s32)sp88) != 0) && (fsa->analogInputPower >= 0.1f) && (spCC < 10.5f)) {
                         switch (dll_210_func_7300(player, arg1, &spD0, &arg1->unk490, &sp140, spCC)) {
                         case 2:
                             return 4;
@@ -3962,13 +3962,13 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80023D30(player, sp4C->modAnims[0], 0.0f, 0U);
         fsa->animTickDelta = 0.005f;
     }
-    if (fsa->unk290 < 0.05f) {
+    if (fsa->analogInputPower < 0.05f) {
         fsa->unk328 = 0;
         fsa->unk32A = 0;
-        fsa->unk290 = 0.0f;
+        fsa->analogInputPower = 0.0f;
     }
-    if ((fsa->unk294 > 0.0f) && (fsa->unk294 < 0.38f)) {
-        if ((fsa->unk290 > 0.0f) && (fsa->unk290 < 0.38f) && (fsa->unk328 > 0)) {
+    if ((fsa->prevAnalogInputPower > 0.0f) && (fsa->prevAnalogInputPower < 0.38f)) {
+        if ((fsa->analogInputPower > 0.0f) && (fsa->analogInputPower < 0.38f) && (fsa->unk328 > 0)) {
             return 4;
         }
     }
@@ -3978,7 +3978,7 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         return -0x43;
     }
-    var_fv0 = (fsa->unk290 - 0.4f) / 0.6f;
+    var_fv0 = (fsa->analogInputPower - 0.4f) / 0.6f;
     if (var_fv0 < 0.0f) {
         var_fv0 = 0.0f;
     }
@@ -3986,7 +3986,7 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         var_fv0 = 1.0f;
     }
     fsa->speed += (((var_fv0 * 1.6f) - fsa->speed) / fsa->unk2B0) * arg2;
-    if ((fsa->unk294 >= 0.42000002f) && (fsa->unk290 >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
+    if ((fsa->prevAnalogInputPower >= 0.42000002f) && (fsa->analogInputPower >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
         return 5;
     }
     return 0;
@@ -4022,7 +4022,7 @@ s32 dll_210_func_A8CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (player->animProgress > 0.99f) {
             return 2;
         }
-        if ((fsa->unk288 != 0.0f) || (fsa->unk284 != 0.0f)) {
+        if ((fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f)) {
             return 2;
         }
     }
@@ -4057,14 +4057,14 @@ s32 dll_210_func_AA80(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80023D30(player, (s32) sp20->modAnims[0x14], 0.0f, 0U);
     }
     // @bug, _data_6F8 only has one element, probably should use _data_6FC
-    if (fsa->unk290 < (&_data_6F8)[2]) {
+    if (fsa->analogInputPower < (&_data_6F8)[2]) {
         fsa->unk328 = 0;
-        fsa->unk290 = 0.0f;
+        fsa->analogInputPower = 0.0f;
     }
-    if ((fsa->unk328 == 0) || fsa->unk290 == 0.0f) {
+    if ((fsa->unk328 == 0) || fsa->analogInputPower == 0.0f) {
         return 2;
     }
-    var_fv0 = (fsa->unk290 - 0.4f) / 0.6f;
+    var_fv0 = (fsa->analogInputPower - 0.4f) / 0.6f;
     if (var_fv0 < 0.0f) {
         var_fv0 = 0.0f;
     }
@@ -4076,7 +4076,7 @@ s32 dll_210_func_AA80(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->speed = 1.65f;
     }
     // @bug, _data_6F8 only has one element, probably should use _data_6FC
-    if ((fsa->unk294 >= 0.42000002f) && (fsa->unk290 >= 0.42000002f) && ((&_data_6F8)[1] <= fsa->speed)) {
+    if ((fsa->prevAnalogInputPower >= 0.42000002f) && (fsa->analogInputPower >= 0.42000002f) && ((&_data_6F8)[1] <= fsa->speed)) {
         return 5;
     }
     var_v1 = fsa->unk328;
@@ -4164,12 +4164,12 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             fsa->unk32A = 0;
         }
     }
-    if (fsa->unk290 < 0.05f){
+    if (fsa->analogInputPower < 0.05f){
         fsa->unk328 = 0;
         fsa->unk32A = 0;
-        fsa->unk290 = 0.0f;
+        fsa->analogInputPower = 0.0f;
     }
-    var_fv0 = (fsa->unk290 - 0.4f) / 0.6f;
+    var_fv0 = (fsa->analogInputPower - 0.4f) / 0.6f;
     if (var_fv0 < 0.0f){
         var_fv0 = 0.0f;
     }
@@ -4178,7 +4178,7 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     var_fa0 = (objdata->unk3C8 - 0.05f) * var_fv0;
     if (fsa->unk328 < 0x5A){
-        player->srt.yaw = (s16) (player->srt.yaw + (((fsa->unk32A * arg2) / 9.0f) * 182.0f));
+        player->srt.yaw += ((fsa->unk32A * arg2) / 9.0f) * 182.0f;
     } else {
         var_fa0 = -var_fa0;
     }
@@ -4580,7 +4580,7 @@ s32 dll_210_func_C264(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     dll_210_func_D510(fsa, arg2);
     if (player->curModAnimId == 0x426) {
         if (player->animProgress > 0.95f) {
-            if ((fsa->unk294 >= 0.42000002f) && (fsa->unk290 >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
+            if ((fsa->prevAnalogInputPower >= 0.42000002f) && (fsa->analogInputPower >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
                 if (fsa->unk328 < 0x5A) {
                     return 5;
                 }
@@ -4681,7 +4681,7 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
             spA4 = fsin16_precise(player->srt.yaw);
             spA0 = fcos16_precise(player->srt.yaw);
-            temp_v1 = arctan2_f(fsa->unk288, -fsa->unk284) - fsa->unk324;
+            temp_v1 = arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) - fsa->unk324;
             sp9C = fsin16_precise(temp_v1);
             var_fv0 = fcos16_precise(temp_v1);
             temp_fv0 = (spA4 * sp9C) + (spA0 * var_fv0);
@@ -4690,7 +4690,7 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 var_fa0 = -temp_fv0;
             }
             temp_fv0 = var_fa0;
-            var_fv0 = fsa->unk290;
+            var_fv0 = fsa->analogInputPower;
             if (var_fv0 < 0.4f) {
                 var_fv0 = 0;
             }
@@ -4717,7 +4717,7 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
             break;
         default:
-            if (fsa->unk290 < *_data_4) {
+            if (fsa->analogInputPower < *_data_4) {
                 *_bss_14 = 1;
             } else {
                 *_bss_14 = 0;
@@ -4779,7 +4779,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 dll_210_func_4634(player, 9, 0);
                 return 0x10;
             }
-            if ((fsa->unk294 >= 0.42000002f) && (fsa->unk290 >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
+            if ((fsa->prevAnalogInputPower >= 0.42000002f) && (fsa->analogInputPower >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
                 func_80023D30(player, 0x418, 0.0f, 0U);
                 fsa->animTickDelta = 0.08f;
             } else {
@@ -4810,7 +4810,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
         player->speed.f[1] = 0.0f;
         if (player->animProgress > 0.99f) {
-            if ((fsa->unk294 >= 0.42000002f) && (fsa->unk290 >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
+            if ((fsa->prevAnalogInputPower >= 0.42000002f) && (fsa->analogInputPower >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
                 return 5;
             }
             return 2;
@@ -4918,12 +4918,12 @@ s32 dll_210_func_D480(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 static void dll_210_func_D510(ObjFSA_Data* fsa, f32 arg1) {
     f32 var_fv1;
 
-    if (fsa->unk290 < 0.05f) {
+    if (fsa->analogInputPower < 0.05f) {
         fsa->unk328 = 0;
         fsa->unk32A = 0;
-        fsa->unk290 = 0.0f;
+        fsa->analogInputPower = 0.0f;
     }
-    var_fv1 = (fsa->unk290 - 0.4f) / 0.6f;
+    var_fv1 = (fsa->analogInputPower - 0.4f) / 0.6f;
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     }
@@ -5253,7 +5253,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     case 3:
         if (fsa->unk33A != 0) {
-            temp_fv0 = fsa->unk284;
+            temp_fv0 = fsa->yAnalogInput;
             if (temp_fv0 > 5.0f) {
                 _bss_200 = 5;
                 sp6C = 0.014f;
@@ -5270,11 +5270,11 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         shadows_set_custom_obj_pos(player, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
         break;
     case 6:
-        if (fsa->unk284 > 5.0f) {
+        if (fsa->yAnalogInput > 5.0f) {
             _bss_200 = 5;
             sp6C = 0.014f;
             gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[rand_next(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        } else if ((fsa->unk284 < -5.0f) && (objdata->unk490.unk46 != 0x11)) {
+        } else if ((fsa->yAnalogInput < -5.0f) && (objdata->unk490.unk46 != 0x11)) {
             return 0x15;
         }
         gDLL_2_Camera->vtbl->func10(objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
@@ -5623,7 +5623,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0x21;
     }
     player->speed.y = 0.0f;
-    sp9C = fsa->unk284 / 60.0f;
+    sp9C = fsa->yAnalogInput / 60.0f;
     if (sp9C < 0.0f) {
         sp9C = -sp9C;
     }
@@ -5684,10 +5684,10 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     case 4:
     case 5:
-        if (fsa->unk284 > 5.0f) {
+        if (fsa->yAnalogInput > 5.0f) {
             goto dummy_label_201559; dummy_label_201559: ;
             func_800240BC(player, 0.0f);
-        } else if (fsa->unk284 < -5.0f) {
+        } else if (fsa->yAnalogInput < -5.0f) {
             goto dummy_label_201558; dummy_label_201558: ;
             func_800240BC(player, 0.0f);
         } else if ((fsa->unk310 & 0x8000) && (temp_s0->unk3CC.unk0 >= 4)) {
@@ -5704,7 +5704,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             return -0x19;
         }
         if (player->animProgress == 1.0f) {
-            if (fsa->unk284 < -5.0f) {
+            if (fsa->yAnalogInput < -5.0f) {
                 temp_s0->unk3CC.unk2 = 0;
                 sp94 = -((sp9C * 0.01f) + 0.025f);
                 if (_bss_200 < 2) {
@@ -5724,7 +5724,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
         if (player->animProgress == 0.0f) {
-            if (fsa->unk284 > 5.0f) {
+            if (fsa->yAnalogInput > 5.0f) {
                 temp_s0->unk3CC.unk2 = 1;
                 sp98 = 0.0f;
                 if (temp_s0->unk3CC.unk0 >= (temp_s0->unk3CC.unk1 - 3)) {
@@ -5747,7 +5747,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                         _bss_200 = 0;
                     }
                 }
-            } else if (fsa->unk284 < -5.0f) {
+            } else if (fsa->yAnalogInput < -5.0f) {
                 temp_s0->unk3CC.unk2 = 0;
                 temp_s0->unk3CC.unk0 -= 1;
                 if (temp_s0->unk3CC.unk0 <= 0) {
@@ -6138,7 +6138,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s0->unk430.unk18.f[1] = 0.0f;
         temp_s0->unk430.unk18.f[0] = 0.0f;
         temp_s0->unk430.unk18.f[2] = 0.0f;
-        if (!(fsa->unk290 <= 0.1f)) {
+        if (!(fsa->analogInputPower <= 0.1f)) {
             sp114 = player->animProgress;
             player->animProgress = 1.0f;
         } else {
@@ -6184,8 +6184,8 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             if ((_bss_200 != 0x15) && (_bss_200 != 0x16)) {
                 player->srt.transl.f[1] = temp_s0->unk7EC.y;
             }
-            if (fsa->unk290 > 0.1f) {
-                _bss_200 = ((arctan2_f(fsa->unk288, -fsa->unk284) + 0x1000) >> 0xD) & 7;
+            if (fsa->analogInputPower > 0.1f) {
+                _bss_200 = ((arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) + 0x1000) >> 0xD) & 7;
                 _bss_202 = -1;
                 if ((_bss_200 == 4) || (_bss_200 == 0)) {
                     temp_s0->unk430.unk5E ^= 1;
@@ -6369,7 +6369,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
         if (_bss_200 != 0x15 && _bss_200 != 0x16) {
-            var_fv0 = fsa->unk290;
+            var_fv0 = fsa->analogInputPower;
             if (sp124 < 0.0f) {
                 sp124 = -((var_fv0 * 0.003999997f) + 0.034f);
             } else if (sp124 > 0.0f) {
@@ -6688,7 +6688,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (player->speed.f[1] > 1.4f) {
             player->speed.f[1] = 1.4f;
         }
-        if (fsa->unk290 > 0.1f) {
+        if (fsa->analogInputPower > 0.1f) {
             player->srt.yaw += ((fsa->unk32A * arg2) / 24.0f) * 182.0f;
         }
         if (var_fa0 < 25.0f) {
@@ -6735,12 +6735,12 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         dll_210_func_128F4(player->speed.f, &player->speed.f[2], arg2, player);
         player->speed.f[0] *= 0.98f;
         player->speed.f[2] *= 0.98f;
-        if (fsa->unk290 < 0.05f) {
+        if (fsa->analogInputPower < 0.05f) {
             fsa->unk328 = 0;
             fsa->unk32A = 0;
-            fsa->unk290 = 0.0f;
+            fsa->analogInputPower = 0.0f;
         }
-        var_fv0 = (fsa->unk290 - 0.4f) / 0.6f;
+        var_fv0 = (fsa->analogInputPower - 0.4f) / 0.6f;
         if (var_fv0 < 0.0f) {
             var_fv0 = 0.0f;
         }
@@ -6751,7 +6751,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->speed > 1.65f) {
             fsa->speed = 1.65f;
         }
-        if ((fsa->unk294 >= 0.42000002f) && (fsa->unk290 >= 0.42000002f) && (*_data_724 <= fsa->speed)) {
+        if ((fsa->prevAnalogInputPower >= 0.42000002f) && (fsa->analogInputPower >= 0.42000002f) && (*_data_724 <= fsa->speed)) {
             return 0x22;
         }
     }
@@ -6815,12 +6815,12 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (player->speed.f[1] > 1.4f) {
             player->speed.f[1] = 1.4f;
         }
-        if (fsa->unk290 < 0.05f) {
+        if (fsa->analogInputPower < 0.05f) {
             fsa->unk328 = 0;
             fsa->unk32A = 0;
-            fsa->unk290 = 0.0f;
+            fsa->analogInputPower = 0.0f;
         }
-        var_fv0 = (fsa->unk290 - 0.4f) / 0.6f;
+        var_fv0 = (fsa->analogInputPower - 0.4f) / 0.6f;
         if (var_fv0 < 0.0f) {
             var_fv0 = 0.0f;
         }
@@ -7313,7 +7313,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     player->speed.y = 0.0f;
     switch (player->curModAnimId) {
     case 0x40D:
-        var_fv0 = fsa->unk284 / 60.0f;
+        var_fv0 = fsa->yAnalogInput / 60.0f;
         if (var_fv0 < 0.0f) {
             var_fv0 = -var_fv0;
         }
@@ -7323,9 +7323,9 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (var_fv0 > 1.0f) {
             var_fv0 = 1.0f;
         }
-        if (fsa->unk284 > 10.0f) {
+        if (fsa->yAnalogInput > 10.0f) {
             fsa->unk278 = (var_fv0 * 0.1f) + 0.1f;
-        } else if (fsa->unk284 < -10.0f) {
+        } else if (fsa->yAnalogInput < -10.0f) {
             fsa->unk278 = -0.1f - (var_fv0 * 0.1f);
         } else {
             fsa->unk278 = 0.0f;
@@ -7501,7 +7501,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     case 0x73:
         break;
     case 0x5F:
-        temp_fv0_2 = arg1->unk284;
+        temp_fv0_2 = arg1->yAnalogInput;
         arg1->animTickDelta = 0.01f;
         arg1->unk278 = 0.0f;
         if (temp_fv0_2 > 10.0f) {
@@ -7544,7 +7544,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         }
         gDLL_18_objfsa->vtbl->func7(player, arg1, arg2, var_a3);
         if ((arg1->unk33A != 0) || (objdata->unk680.unk2D != 0)) {
-            if ((arg1->unk284 > 10.0f) && (objdata->unk680.unk2D == 0)) {
+            if ((arg1->yAnalogInput > 10.0f) && (objdata->unk680.unk2D == 0)) {
                 if (player->curModAnimId == 0x4A) {
                     sp50++;
                     sp54 = 0x4B;
@@ -7582,7 +7582,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         }
         gDLL_18_objfsa->vtbl->func7(player, arg1, arg2, var_a3);
         if (arg1->unk33A != 0) {
-            if (arg1->unk284 < -10.0f) {
+            if (arg1->yAnalogInput < -10.0f) {
                 if (player->curModAnimId == 0x63) {
                     sp50--;
                     sp54 = 0x64;
@@ -7827,7 +7827,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     case 2:
         if (fsa->unk33A != 0) {
-            if (fsa->unk284 > 5.0f) {
+            if (fsa->yAnalogInput > 5.0f) {
                 player->positionMirror.f[0] = objdata->unk7EC.x;
                 player->positionMirror.f[1] = objdata->unk7EC.y;
                 player->positionMirror.f[2] = objdata->unk7EC.z;
@@ -7836,7 +7836,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 func_80023D30(player, _data_6C0[0], 0.0f, 1U);
                 return 0x2E;
             }
-            if (fsa->unk284 < -5.0f) {
+            if (fsa->yAnalogInput < -5.0f) {
                 return 0x2F;
             }
             _bss_200 = 3;
@@ -7844,7 +7844,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         break;
     case 3:
-        if (fsa->unk284 > 5.0f) {
+        if (fsa->yAnalogInput > 5.0f) {
             player->positionMirror.f[0] = objdata->unk7EC.x;
             player->positionMirror.f[1] = objdata->unk7EC.y;
             player->positionMirror.f[2] = objdata->unk7EC.z;
@@ -7853,7 +7853,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             func_80023D30(player, _data_6C0[0], 0.0f, 1U);
             return 0x2E;
         }
-        if (fsa->unk284 < -5.0f) {
+        if (fsa->yAnalogInput < -5.0f) {
             return 0x2F;
         }
         break;
@@ -7920,7 +7920,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp60 = player->srt.transl.y;
     sp5C = player->srt.transl.z;
     player->speed.f[1] = 0.0f;
-    sp94 = fsa->unk284 / 60.0f;
+    sp94 = fsa->yAnalogInput / 60.0f;
     if (sp94 < 0.0f) {
         sp94 = -sp94;
     }
@@ -7960,9 +7960,9 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 5:
         temp_a0 = temp_s0->unk6B0.unk38;
         ((DLL_Unknown *)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, temp_s0->unk6B0.unk48, &player->srt.transl.f[0], &player->srt.transl.f[1], &player->srt.transl.f[2]);
-        if (fsa->unk284 > 5.0f) {
+        if (fsa->yAnalogInput > 5.0f) {
             func_800240BC(player, 0.0f);
-        } else if (fsa->unk284 < -5.0f) {
+        } else if (fsa->yAnalogInput < -5.0f) {
             func_800240BC(player, 0.0f);
         } else if ((fsa->unk310 & 0x8000) && (main_get_bits(0x1F6) == 0)) {
             func_80023D30(player, 0x12, 0.0f, 1);
@@ -7975,7 +7975,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
     default:
         if (player->animProgress == 0.0f) {
-            if (fsa->unk284 > 5.0f) {
+            if (fsa->yAnalogInput > 5.0f) {
                 if (((temp_s0->unk6B0.unk48 < 0.3f) && (temp_s0->unk6B0.unk45 == 1)) || ((temp_s0->unk6B0.unk48 > 6.7f) && (temp_s0->unk6B0.unk45 == 0))) {
                     func_80023D30(player, 0x12, 0.0f, 1U);
                     fsa->animTickDelta = 0.2f;
@@ -7991,7 +7991,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                         _bss_200 = 0;
                     }
                 }
-            } else if (fsa->unk284 < -5.0f) {
+            } else if (fsa->yAnalogInput < -5.0f) {
                 pad_sp6A = temp_s0->unk6B0.unk45;
                 temp_s0->unk6B0.unk45 = pad_sp6A == 0;
                 temp_s0->unk6B0.unk50 = -temp_s0->unk6B0.unk50;
@@ -8014,7 +8014,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
         if (player->animProgress == 1.0f) {
-            if (fsa->unk284 < -5.0f) {
+            if (fsa->yAnalogInput < -5.0f) {
                 pad_sp6A = temp_s0->unk6B0.unk45;
                 temp_s0->unk6B0.unk45 = pad_sp6A == 0;
                 temp_s0->unk6B0.unk50 = -temp_s0->unk6B0.unk50;
@@ -8237,7 +8237,7 @@ s32 dll_210_func_17F90(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->animTickDelta = 0.012f;
     fsa->unk2B0 = 4.0f;
     gDLL_18_objfsa->vtbl->func16(player, fsa, arg2, 1.65f);
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 4);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
     if (fsa->speed > 0.0f) {
         return 0x37;
     }
@@ -8271,10 +8271,10 @@ s32 dll_210_func_180D4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (sp56 & 1) {
         sp56--;
     }
-    sp3A = arctan2_f(fsa->unk288, -fsa->unk284) - (fsa->unk324 & 0xFFFF & 0xFFFF);
-    sp50 = -fsin16_precise(sp3A) * fsa->unk290 * 1.65f;
-    var_ft4 = -fcos16_precise(sp3A) * fsa->unk290 * 1.65f;
-    if (fsa->unk290 < 0.02f) {
+    sp3A = arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) - (fsa->unk324 & 0xFFFF & 0xFFFF);
+    sp50 = -fsin16_precise(sp3A) * fsa->analogInputPower * 1.65f;
+    var_ft4 = -fcos16_precise(sp3A) * fsa->analogInputPower * 1.65f;
+    if (fsa->analogInputPower < 0.02f) {
         sp50 = 0.0f;
         var_ft4 = 0.0f;
     }
@@ -8290,7 +8290,7 @@ s32 dll_210_func_180D4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     temp_fv0 = fcos16_precise(player->srt.yaw);
     fsa->unk27C = (player->speed.x * temp_fv0) - (player->speed.z * sp48);
     fsa->unk278 = (-player->speed.z * temp_fv0) - (player->speed.x * sp48);
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 4);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
     temp_t4 = (sp56 >> 1);
     if (fsa->speed < _data_748[temp_t4]) {
         if (sp56 == 4) {
@@ -8404,13 +8404,13 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->unk34A = 0;
         fsa->unk27C = 0.0f;
         if (fsa->target == NULL) {
-            if (fsa->unk290 > 0.3f) {
+            if (fsa->analogInputPower > 0.3f) {
                 player->srt.yaw += fsa->unk32A * 0xB6;
                 fsa->unk328 = 0;
                 fsa->unk32A = 0;
             }
         } else {
-            gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 2);
+            gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 2);
         }
         if (player->objhitInfo != NULL) {
             player->objhitInfo->unk61 = 0;
@@ -8435,10 +8435,10 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if ((player->animProgress > 0.7f) && (sp3C->unk3B4[sp3C->unk8A1].unk9 < 0) && (fsa->unk310 & 0x8000)) {
         player->objhitInfo->unk61 = 0;
         if (fsa->target != NULL) {
-            gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 2);
+            gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 2);
             return 0x3C;
         }
-        if (fsa->unk290 > 0.3f) {
+        if (fsa->analogInputPower > 0.3f) {
             player->srt.yaw += fsa->unk32A * 0xB6;
             fsa->unk328 = 0;
             fsa->unk32A = 0;
@@ -8611,14 +8611,14 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             _bss_28 = var_fv1;
         } else {
             if (*_bss_220 == 0x777) {
-                var_fa0 = fsa->unk284 / 50.0f;
+                var_fa0 = fsa->yAnalogInput / 50.0f;
                 if (var_fa0 < -1.45f) {
                     var_fa0 = -1.45f;
                 } else if (var_fa0 > 1.45f) {
                     var_fa0 = 1.45f;
                 }
             } else {
-                var_fa0 = fsa->unk284 / 60.0f;
+                var_fa0 = fsa->yAnalogInput / 60.0f;
                 if (var_fa0 < -1.0f) {
                     var_fa0 = -1.0f;
                 } else if (var_fa0 > 1.0f) {
@@ -8627,7 +8627,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
             var_fa0 -= temp_s1->unk830;
             temp_s1->unk830 += var_fa0 * 0.1f * arg2;
-            var_fv1 = fsa->unk288 / 60.0f;
+            var_fv1 = fsa->xAnalogInput / 60.0f;
             if (var_fv1 < -1.0f) {
                 var_fv1 = -1.0f;
             } else if (var_fv1 > 1.0f) {
@@ -8906,7 +8906,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
     }
     if (fsa->target != NULL) {
-        gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 4);
+        gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
     }
     return 0;
 }
@@ -8972,19 +8972,19 @@ s32 dll_210_func_1AC3C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0x3B;
     }
 
-    if (fsa->unk33F == 2 && fsa->unk290 > 0.3f) {
+    if (fsa->unk33F == 2 && fsa->analogInputPower > 0.3f) {
         func_80023D30(player, temp_s0->unk3B4->unk0, 0.0f, 0U);
         temp_s0->unk8A1 = 0;
         return 0x38;
     }
 
-    if (fsa->unk33F == 3 && fsa->unk290 > 0.3f) {
+    if (fsa->unk33F == 3 && fsa->analogInputPower > 0.3f) {
         func_80023D30(player, temp_s0->unk3B4[3].unk0, 0.0f, 0U);
         temp_s0->unk8A1 = 3;
         return 0x38;
     }
 
-    if (fsa->unk33F == 1 && fsa->unk290 > 0.3f) {
+    if (fsa->unk33F == 1 && fsa->analogInputPower > 0.3f) {
         func_80023D30(player, temp_s0->unk3B4[1].unk0, 0.0f, 0U);
         temp_s0->unk8A1 = 1;
         return 0x38;
@@ -9048,7 +9048,7 @@ s32 dll_210_func_1ADA4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp3E = 3;
         }
     }
-    if ((fsa->unk33F == 2) && (fsa->unk290 > 0.3f)) {
+    if ((fsa->unk33F == 2) && (fsa->analogInputPower > 0.3f)) {
         func_80023D30(player, temp_s0->unk3B4[sp3F].unk2, 0.0f, 0U);
         temp_s0->unk8A1 = sp3F;
         return 0x38;
@@ -9089,7 +9089,7 @@ s32 dll_210_func_1B0A8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         dll_210_func_A024(player, fsa);
     }
 
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 1);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 1);
     gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 2);
     if (fsa->unk33A != 0) {
         return 0x4C;
@@ -9120,7 +9120,7 @@ s32 dll_210_func_1B1E8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->unk34A = 0;
         dll_210_func_A024(player, fsa);
     }
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 1);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 1);
     gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 2);
     if (fsa->unk308 & 1) {
         gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[5], MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -9156,7 +9156,7 @@ s32 dll_210_func_1B414(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->unk34A = 0;
         dll_210_func_A024(player, fsa);
     }
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 1);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 1);
     gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 2);
     if (fsa->unk308 & 1) {
         gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[5], MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -9189,7 +9189,7 @@ s32 dll_210_func_1B640(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->animTickDelta = 0.025f;
         dll_210_func_A024(player, fsa);
     }
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 0x10);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 0x10);
     gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 1);
     if (!(fsa->unk34A & 1) && player->animProgress > 0.2f) {
         gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[6], MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -9225,7 +9225,7 @@ s32 dll_210_func_1B878(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->animTickDelta = 0.018f;
         dll_210_func_A024(player, fsa);
     }
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 0x10);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 0x10);
     gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 1);
     if (!(fsa->unk34A & 1) && (player->animProgress > 0.2f)) {
         gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[7], MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -9269,7 +9269,7 @@ s32 dll_210_func_1BAE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->animTickDelta = 0.012f;
     fsa->unk2B0 = 4.0f;
     gDLL_18_objfsa->vtbl->func16(player, fsa, arg2, 1.65f);
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 4);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
     if (fsa->speed > 0.0f) {
         return 0x46;
     }
@@ -9302,7 +9302,7 @@ s32 dll_210_func_1BC2C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
 
     gDLL_18_objfsa->vtbl->func16(player, fsa, arg2, 1.65f);
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 4);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
     temp_t4 = (i >> 1);
     if (fsa->speed < _data_760[temp_t4]) {
         if (i == 4) {
@@ -9439,7 +9439,7 @@ s32 dll_210_func_1C460(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80023D30(player, 0x89, 0.0f, 0U);
         fsa->unk33A = 0;
     }
-    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 4);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
     fsa->animTickDelta = 0.0f;
     {
         s32 temp_v0 = dll_210_func_18E10(player, fsa, arg2);
@@ -9462,7 +9462,7 @@ s32 dll_210_func_1C564(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         func_80023D30(player, 0x89, 0.0f, 0U);
         arg1->unk33A = 0;
     }
-    gDLL_18_objfsa->vtbl->func11(player, arg1, arg2, 4);
+    gDLL_18_objfsa->vtbl->turn_to_target(player, arg1, arg2, 4);
     gDLL_18_objfsa->vtbl->func17(player, arg1);
     return 0x36;
 }

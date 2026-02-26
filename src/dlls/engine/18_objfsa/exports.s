@@ -19,7 +19,7 @@ _exports:
 /*8*/ .dword objfsa_func_E60
 /*9*/ .dword objfsa_func_ED4
 /*10*/ .dword objfsa_func_F78
-/*11*/ .dword objfsa_func_1008
+/*11*/ .dword objfsa_turn_to_target
 /*12*/ .dword objfsa_func_1120
 /*13*/ .dword objfsa_func_11BC
 /*14*/ .dword objfsa_func_1280
