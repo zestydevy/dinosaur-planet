@@ -35,7 +35,7 @@ typedef struct {
 /*18*/ u8 yaw;
 /*19*/ u8 unk19;
 /*1A*/ s8 warpID;
-/*1B*/ u8 unk1B[0x20-0x1B];
+/*1B*/ u8 unk1B[0x20 - 0x1B];
 /*20*/ s16 gamebit;
 } Transporter_Setup;
 

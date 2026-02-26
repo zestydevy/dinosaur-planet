@@ -95,6 +95,7 @@ class BuildNinjaWriter:
             "undefined_syms_auto.txt", 
         ]
         self.expected_targets: "list[str]" = []
+        self.syntax_check_targets: "list[str]" = []
 
     def write(self):
         # Write prelude (variables, rules)
@@ -111,7 +112,8 @@ class BuildNinjaWriter:
 
         # Write default target
         self.writer.build("expected", "phony", self.expected_targets)
-        self.writer.default(["$BUILD_DIR/$TARGET.z64", "expected"])
+        self.writer.build("syntax_check", "phony", self.syntax_check_targets)
+        self.writer.default(["$BUILD_DIR/$TARGET.z64", "expected", "syntax_check"])
     
     def close(self):
         self.writer.close()
@@ -215,6 +217,16 @@ class BuildNinjaWriter:
             "-m $LD_EMULATION",
         ]))
 
+        self.writer.variable("CC_CHECK_FLAGS", " ".join([
+            "-fsyntax-only",
+            "-fno-builtin",
+            "-funsigned-char",
+            "-fdiagnostics-color=always",
+            "-std=gnu90",
+            "$CC_DEFINES",
+            "$INCLUDES",
+        ]))
+
         self.writer.newline()
 
         # Write tools
@@ -228,6 +240,7 @@ class BuildNinjaWriter:
         self.writer.variable("IDO_53", f"tools/ido_static_recomp/5.3/cc{exe_suffix}")
         self.writer.variable("IDO_71", f"tools/ido_static_recomp/7.1/cc{exe_suffix}")
         self.writer.variable("CC", "$IDO_53")
+        self.writer.variable("CC_CHECK", "gcc")
         self.writer.variable("ASM_PROCESSOR", f"{sys.executable} tools/asm_processor/build.py")
         self.writer.variable("HEADER_DEPS", f"{sys.executable} tools/header_deps.py")
         self.writer.variable("ELF2DLL", f"{sys.executable} tools/elf2dll.py")
@@ -239,6 +252,10 @@ class BuildNinjaWriter:
 
         # Write rules
         self.writer.comment("Rules")
+        self.writer.rule("gcc_syntax_only",
+            "$CC_CHECK $CC_CHECK_FLAGS $in",
+            "Checking syntax of $in...",
+            depfile="$out.d")
         self.writer.rule("cc", 
             "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
@@ -313,6 +330,12 @@ class BuildNinjaWriter:
             self.writer.build(obj_build_path, command, src_build_path, variables=variables)
             self.link_deps.append(obj_build_path)
 
+            # Run GCC syntax check alongside compilation
+            if file.type == BuildFileType.C:
+                syntax_check_path = f"$BUILD_DIR/{Path(file.obj_path).with_suffix('.syntax_checked').as_posix()}"
+                self.writer.build(syntax_check_path, "gcc_syntax_only", src_build_path)
+                self.syntax_check_targets.append(syntax_check_path)
+
             # Build expected object file from asm
             exp_obj_build_path = f"$EXPECTED_BUILD_DIR/{Path(file.obj_path).as_posix()}"
             exp_src_path: Path | None = None
@@ -376,6 +399,12 @@ class BuildNinjaWriter:
                     src_build_path = Path(file.src_path).as_posix()
                     self.writer.build(obj_build_path, command, src_build_path, variables=variables)
                     dll_link_deps.append(obj_build_path)
+
+                    # Run GCC syntax check alongside compilation
+                    if file.type == BuildFileType.C:
+                        syntax_check_path = f"$BUILD_DIR/{Path(file.obj_path).with_suffix('.syntax_checked').as_posix()}"
+                        self.writer.build(syntax_check_path, "gcc_syntax_only", src_build_path)
+                        self.syntax_check_targets.append(syntax_check_path)
                 
                 # One C file is required per DLL with a src dir
                 assert(c_file != None)
