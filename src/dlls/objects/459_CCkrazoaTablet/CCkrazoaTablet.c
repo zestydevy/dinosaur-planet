@@ -136,7 +136,7 @@ s32 CCkrazoaTablet_func_3F8(void) {
 
 // offset: 0x48C | func: 9
 void CCkrazoaTablet_func_48C(Object *self, CCkrazoaTablet_Data *objdata) {
-    s32 *temp_v0;
+    TextureAnimator *animator;
 
     if (objdata->unk0 & 1) {
         objdata->unk4 += gUpdateRateF * 5.0f;
@@ -150,11 +150,11 @@ void CCkrazoaTablet_func_48C(Object *self, CCkrazoaTablet_Data *objdata) {
         }
     }
 
-    temp_v0 = func_800348A0(self, 0, 0);
+    animator = func_800348A0(self, 0, 0);
 
     if (objdata->unk4 >= 256.5f) {
-        *temp_v0 = (512.0f - objdata->unk4);
+        animator->frame = (512.0f - objdata->unk4);
     } else {
-        *temp_v0 = objdata->unk4;
+        animator->frame = objdata->unk4;
     }
 }
