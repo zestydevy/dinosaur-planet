@@ -60,17 +60,17 @@ typedef struct AttachPoint { //copied from SFA; may be incorrect
 } AttachPoint;
 
 typedef struct {
-/*00*/ s16 unk00;
-/*02*/ s16 unk02;
-/*04*/ s16 unk04;
+/*00*/ s16 unk00; //arrowCoordX
+/*02*/ s16 unk02; //arrowCoordY
+/*04*/ s16 unk04; //arrowCoordZ
 /*06*/ s16 unk06;
 /*08*/ s16 unk08;
 /*0a*/ s16 unk0a;
-/*0c*/ u8 unk0c;
-/*0d*/ u8 unk0d;
-/*0e*/ u8 unk0e;
-/*0f*/ u8 unk0f;
-/*10*/ u8 unk10;
+/*0c*/ u8 unk0c; //arrow interact radius (can press A)
+/*0d*/ u8 unk0d; //lock-on exit radius
+/*0e*/ u8 unk0e; //arrow highlight radius (greyed out)
+/*0f*/ u8 unk0f; //interaction height (cylinder height for arrow zone)
+/*10*/ u8 unk10; //colourIndex for arrow
 /*11*/ s8 unk11[4];
 /*15*/ UNK_TYPE_8 unk15;
 /*16*/ UNK_TYPE_8 unk16;
