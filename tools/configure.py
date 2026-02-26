@@ -231,6 +231,7 @@ class BuildNinjaWriter:
             "-Wno-unused-variable",
             "-Wno-unused-value",
             "-Wno-unused-but-set-variable",
+            "-Wno-unused-label", # Some unused labels are required for matching.
             # "-Werror-implicit-function-declaration", # Currently causes lots of errors due to many implicitly declared functions, Should be enabled eventually though.
             "$CC_DEFINES",
             "$INCLUDES",

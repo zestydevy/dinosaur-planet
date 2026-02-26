@@ -138,6 +138,8 @@ void CCgrub_control(Object* self) {
                 self->srt.yaw = objdata->unk13C;
             } else if (self->animProgress > 0.5f) {
                 var_v1 = (objdata->unk13C & 0xFFFF) - objdata->unk13E;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtype-limits"
                 CIRCLE_WRAP(var_v1);
                 var_v0_2 = var_v1 >= 0 ? var_v1 : -var_v1;
                 if (var_v0_2 < 0x4000) {
@@ -167,6 +169,7 @@ void CCgrub_control(Object* self) {
                 }
                 var_v1 = objdata->unk13C - (objdata->unk13E & 0xFFFF);
                 CIRCLE_WRAP(var_v1);
+#pragma GCC diagnostic pop
                 var_fv0 = (self->animProgress - 0.05f) / 0.3f;
                 self->srt.yaw = objdata->unk13C - (var_fv0 * var_v1);
             }
