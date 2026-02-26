@@ -573,64 +573,64 @@ Gfx D_800924C0[] = {
 
 struct PointersInts pointersIntsArray[52] = {
        // normal
-/*00*/ { D_80091910, D_80091920, 0xF, 0x0 },
-/*01*/ { D_80091AB0, D_80091AC0, 0x7, 0x4 }, // no fog, force translucent
-/*02*/ { D_80091BD0, D_80091BE0, 0x7, 0x0 }, // no fog
-/*03*/ { D_80091C70, D_80091C80, 0x7, 0x0 }, // no fog
-/*04*/ { D_80091DA0, D_80091DB0, 0xF, 0x0 }, // texture blend
-/*05*/ { D_80091E30, D_80091DB0, 0x7, 0x4 }, // no fog, texture blend, force translucent
-/*06*/ { D_80091E40, D_80091DB0, 0x7, 0x0 }, // no fog, texture blend
-/*07*/ { D_80091E50, D_80091DB0, 0x7, 0x0 }, // no fog, texture blend
+/*00*/ { { D_80091910, D_80091920 }, 0xF, 0x0 },
+/*01*/ { { D_80091AB0, D_80091AC0 }, 0x7, 0x4 }, // no fog, force translucent
+/*02*/ { { D_80091BD0, D_80091BE0 }, 0x7, 0x0 }, // no fog
+/*03*/ { { D_80091C70, D_80091C80 }, 0x7, 0x0 }, // no fog
+/*04*/ { { D_80091DA0, D_80091DB0 }, 0xF, 0x0 }, // texture blend
+/*05*/ { { D_80091E30, D_80091DB0 }, 0x7, 0x4 }, // no fog, texture blend, force translucent
+/*06*/ { { D_80091E40, D_80091DB0 }, 0x7, 0x0 }, // no fog, texture blend
+/*07*/ { { D_80091E50, D_80091DB0 }, 0x7, 0x0 }, // no fog, texture blend
        // decal
-/*08*/ { D_80092110, D_80092120, 0xF, 0x2 }, // decal, force z-compare
-/*09*/ { D_80092110, D_80092120, 0xF, 0x2 }, // decal, force z-compare
-/*10*/ { D_80092110, D_80092120, 0xF, 0x2 }, // decal, force z-compare
-/*11*/ { D_80092110, D_80092120, 0xF, 0x2 }, // decal, force z-compare
-/*12*/ { D_80091DA0, D_80092120, 0xF, 0x2 }, // decal, force z-compare, texture blend
-/*13*/ { D_80091E30, D_80092120, 0xF, 0x6 }, // decal, force z-compare & translucent, texture blend
-/*14*/ { D_80091E40, D_80092120, 0xF, 0x2 }, // decal, force z-compare, texture blend
-/*15*/ { D_80091E50, D_80092120, 0xF, 0x2 }, // decal, force z-compare, texture blend
+/*08*/ { { D_80092110, D_80092120 }, 0xF, 0x2 }, // decal, force z-compare
+/*09*/ { { D_80092110, D_80092120 }, 0xF, 0x2 }, // decal, force z-compare
+/*10*/ { { D_80092110, D_80092120 }, 0xF, 0x2 }, // decal, force z-compare
+/*11*/ { { D_80092110, D_80092120 }, 0xF, 0x2 }, // decal, force z-compare
+/*12*/ { { D_80091DA0, D_80092120 }, 0xF, 0x2 }, // decal, force z-compare, texture blend
+/*13*/ { { D_80091E30, D_80092120 }, 0xF, 0x6 }, // decal, force z-compare & translucent, texture blend
+/*14*/ { { D_80091E40, D_80092120 }, 0xF, 0x2 }, // decal, force z-compare, texture blend
+/*15*/ { { D_80091E50, D_80092120 }, 0xF, 0x2 }, // decal, force z-compare, texture blend
        // cutout
-/*16*/ { D_800921A0, D_800921B0, 0xF, 0x0 },
-/*17*/ { D_800921A0, D_800921B0, 0xF, 0x0 },
-/*18*/ { D_800921A0, D_800921B0, 0xF, 0x0 },
-/*19*/ { D_800921A0, D_800921B0, 0xF, 0x0 },
-/*20*/ { D_80091DA0, D_80092230, 0x7, 0x0 }, // always fog?, texture blend
-/*21*/ { D_80091E30, D_80092230, 0x7, 0x4 }, // texture blend
-/*22*/ { D_80091E40, D_80092230, 0x7, 0x0 }, // texture blend
-/*23*/ { D_80091E50, D_80092230, 0x7, 0x0 }, // texture blend
+/*16*/ { { D_800921A0, D_800921B0 }, 0xF, 0x0 },
+/*17*/ { { D_800921A0, D_800921B0 }, 0xF, 0x0 },
+/*18*/ { { D_800921A0, D_800921B0 }, 0xF, 0x0 },
+/*19*/ { { D_800921A0, D_800921B0 }, 0xF, 0x0 },
+/*20*/ { { D_80091DA0, D_80092230 }, 0x7, 0x0 }, // always fog?, texture blend
+/*21*/ { { D_80091E30, D_80092230 }, 0x7, 0x4 }, // texture blend
+/*22*/ { { D_80091E40, D_80092230 }, 0x7, 0x0 }, // texture blend
+/*23*/ { { D_80091E50, D_80092230 }, 0x7, 0x0 }, // texture blend
        // subsurface
-/*24*/ { D_80092390, D_800923A0, 0xF, 0x0 }, // subsurface
-/*25*/ { D_80091AB0, D_800923A0, 0xF, 0x4 }, // subsurface, force translucent
-/*26*/ { D_80091BD0, D_800923A0, 0xF, 0x0 }, // subsurface
-/*27*/ { D_80091C70, D_800923A0, 0xF, 0x0 }, // subsurface
-/*28*/ { D_80091DA0, D_800923A0, 0xF, 0x0 }, // subsurface, texture blend
-/*29*/ { D_80091E30, D_800923A0, 0xF, 0x4 }, // subsurface, texture blend
-/*30*/ { D_80091E40, D_800923A0, 0xF, 0x0 }, // subsurface, texture blend
-/*31*/ { D_80091E50, D_800923A0, 0xF, 0x0 }, // subsurface, texture blend
+/*24*/ { { D_80092390, D_800923A0 }, 0xF, 0x0 }, // subsurface
+/*25*/ { { D_80091AB0, D_800923A0 }, 0xF, 0x4 }, // subsurface, force translucent
+/*26*/ { { D_80091BD0, D_800923A0 }, 0xF, 0x0 }, // subsurface
+/*27*/ { { D_80091C70, D_800923A0 }, 0xF, 0x0 }, // subsurface
+/*28*/ { { D_80091DA0, D_800923A0 }, 0xF, 0x0 }, // subsurface, texture blend
+/*29*/ { { D_80091E30, D_800923A0 }, 0xF, 0x4 }, // subsurface, texture blend
+/*30*/ { { D_80091E40, D_800923A0 }, 0xF, 0x0 }, // subsurface, texture blend
+/*31*/ { { D_80091E50, D_800923A0 }, 0xF, 0x0 }, // subsurface, texture blend
        // special?
-/*32*/ { D_80091D10, D_80091D20, 0xF, 0x0 }, // mipmap, trilinear
-/*33*/ { D_80092420, D_80092430, 0x7, 0x0 }, // mipmap, trilinear subsurface
-/*34*/ { D_80092270, D_80092280, 0x7, 0x2 }, // decal
-/*35*/ { D_80092300, D_80092310, 0x7, 0x2 }, // mipmap, trilinear, decal
-/*36*/ { D_800924B0, D_800924C0, 0xB, 0x0 }, // no transparency
-/*37*/ { D_80091910, D_800919A0, 0xF, 0x0 },
+/*32*/ { { D_80091D10, D_80091D20 }, 0xF, 0x0 }, // mipmap, trilinear
+/*33*/ { { D_80092420, D_80092430 }, 0x7, 0x0 }, // mipmap, trilinear subsurface
+/*34*/ { { D_80092270, D_80092280 }, 0x7, 0x2 }, // decal
+/*35*/ { { D_80092300, D_80092310 }, 0x7, 0x2 }, // mipmap, trilinear, decal
+/*36*/ { { D_800924B0, D_800924C0 }, 0xB, 0x0 }, // no transparency
+/*37*/ { { D_80091910, D_800919A0 }, 0xF, 0x0 },
        // no texture
-/*38*/ { D_80091A20, D_80091A30, 0xF, 0x0 }, // no texture, point sampling
-/*39*/ { D_80091B40, D_80091B50, 0x7, 0x4 }, // no texture, point sampling, 1-cycle
-/*40*/ { D_80091C20, D_80091C30, 0x7, 0x0 }, // no texture, point sampling
-/*41*/ { D_80091CC0, D_80091CD0, 0x7, 0x0 }, // no texture, point sampling
-/*42*/ { D_80091A20, D_80091A30, 0xF, 0x0 }, // no texture, point sampling
-/*43*/ { D_80091B40, D_80091B50, 0x7, 0x4 }, // no texture, point sampling, 1-cycle
-/*44*/ { D_80091C20, D_80091C30, 0x7, 0x0 }, // no texture, point sampling
-/*45*/ { D_80091CC0, D_80091CD0, 0x7, 0x0 }, // no texture, point sampling
+/*38*/ { { D_80091A20, D_80091A30 }, 0xF, 0x0 }, // no texture, point sampling
+/*39*/ { { D_80091B40, D_80091B50 }, 0x7, 0x4 }, // no texture, point sampling, 1-cycle
+/*40*/ { { D_80091C20, D_80091C30 }, 0x7, 0x0 }, // no texture, point sampling
+/*41*/ { { D_80091CC0, D_80091CD0 }, 0x7, 0x0 }, // no texture, point sampling
+/*42*/ { { D_80091A20, D_80091A30 }, 0xF, 0x0 }, // no texture, point sampling
+/*43*/ { { D_80091B40, D_80091B50 }, 0x7, 0x4 }, // no texture, point sampling, 1-cycle
+/*44*/ { { D_80091C20, D_80091C30 }, 0x7, 0x0 }, // no texture, point sampling
+/*45*/ { { D_80091CC0, D_80091CD0 }, 0x7, 0x0 }, // no texture, point sampling
        // unused?
-/*46*/ { D_80091E60, D_80091E80, 0xF, 0x0 }, // no texture, 1-cycle/2-cycle
-/*47*/ { D_80092000, D_80092010, 0xF, 0x0 }, // texture blend
-/*48*/ { D_80091E60, D_80091F00, 0xF, 0x0 }, // no texture, point sampling, 1-cycle/2-cycle
-/*49*/ { D_80092000, D_80092090, 0xF, 0x0 }, // texture blend, point sampling
-/*50*/ { D_80091E70, D_80091E80, 0xF, 0x0 }, // 1-cycle/2-cycle
-/*51*/ { D_80091E70, D_80091F80, 0xF, 0x0 }  // noise dither, 1-cycle/2-cycle
+/*46*/ { { D_80091E60, D_80091E80 }, 0xF, 0x0 }, // no texture, 1-cycle/2-cycle
+/*47*/ { { D_80092000, D_80092010 }, 0xF, 0x0 }, // texture blend
+/*48*/ { { D_80091E60, D_80091F00 }, 0xF, 0x0 }, // no texture, point sampling, 1-cycle/2-cycle
+/*49*/ { { D_80092000, D_80092090 }, 0xF, 0x0 }, // texture blend, point sampling
+/*50*/ { { D_80091E70, D_80091E80 }, 0xF, 0x0 }, // 1-cycle/2-cycle
+/*51*/ { { D_80091E70, D_80091F80 }, 0xF, 0x0 }  // noise dither, 1-cycle/2-cycle
 };
 
 // RGBA16 mipmaps (wrap T, wrap S)

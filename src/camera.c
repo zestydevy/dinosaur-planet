@@ -103,8 +103,8 @@ Vp gRSPViewports[20] = {
     { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
 };
 SRT gStaticCameraSRT[2] = {
-    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, -281.0f }},
-    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, 0.0f }}
+    { 0, 0, 0, 0, 1.0f, {{{ 0.0f, 0.0f, -281.0f }}} },
+    { 0, 0, 0, 0, 1.0f, {{{ 0.0f, 0.0f, 0.0f }}} }
 };
 MtxF g2DProjectionMtx = {
     {
