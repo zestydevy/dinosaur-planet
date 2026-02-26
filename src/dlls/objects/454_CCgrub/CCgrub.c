@@ -93,7 +93,7 @@ void CCgrub_control(Object* self) {
             temp_v0 = get_player();
             sp54 = ((DLL_210_Player*)temp_v0->dll)->vtbl->func66(temp_v0, 16);
             if (((DLL_IFoodbag*)sp54->dll)->vtbl->is_obtained(sp54) != 0) {
-                ((DLL_IFoodbag*)sp54->dll)->vtbl->collect_food(sp54, FOOD_Fish);
+                ((DLL_IFoodbag*)sp54->dll)->vtbl->collect_food(sp54, SIDEFOOD_Blue_Grubs);
             } else {
                 gDLL_1_UI->vtbl->func_69F8(0x23, 0x12c, main_increment_bits(0x23));
             }

@@ -31,6 +31,15 @@ typedef enum {
     FOOD_Blue_Bean   = FOOD_TYPE(11)
 } FoodTypes;
 
+typedef enum {
+    SIDEFOOD_Blue_Mushrooms = FOOD_TYPE(1), //1
+    SIDEFOOD_Red_Mushrooms  = FOOD_TYPE(2), //2
+    SIDEFOOD_Old_Mushrooms  = FOOD_TYPE(3), //4
+    SIDEFOOD_Blue_Grubs     = FOOD_TYPE(4), //8
+    SIDEFOOD_Red_Grubs      = FOOD_TYPE(5), //0x10
+    SIDEFOOD_Old_Grubs      = FOOD_TYPE(6), //0x20
+} SideFoodTypes;
+
 /** ObjSetup struct for food Objects placed in the world
   * 
   * (e.g. OBJ_foodbagRedApple, OBJ_foodbagNewFish, OBJ_foodbagBlueMush)
