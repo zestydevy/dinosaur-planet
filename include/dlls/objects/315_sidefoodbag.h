@@ -10,7 +10,7 @@ typedef enum {
     SIDEFOOD_Old_Mushrooms  = FOOD_TYPE(3), //4
     SIDEFOOD_Blue_Grubs     = FOOD_TYPE(4), //8
     SIDEFOOD_Red_Grubs      = FOOD_TYPE(5), //0x10
-    SIDEFOOD_Old_Grubs      = FOOD_TYPE(6), //0x20
+    SIDEFOOD_Old_Grubs      = FOOD_TYPE(6) //0x20
 } SideFoodTypes;
 
 typedef struct {
