@@ -86,7 +86,7 @@ static void SPShop_set_random_prices(void);
     EMPTY_ITEM,
     EMPTY_ITEM,
 
-    {8,  {10, 12, 15}, 5,  0, {BIT_ALWAYS_1, BIT_Map_Dark_Ice_Mines},   {BIT_ALWAYS_0, BIT_Map_Dark_Ice_Mines},     SPText_Dark_Ice_Mines_Map},
+    {8,  {10, 12, 15}, 5,  0, {BIT_ALWAYS_1, BIT_Map_DIM_Exterior},     {BIT_ALWAYS_0, BIT_Map_DIM_Exterior},       SPText_Dark_Ice_Mines_Map},
     {30, {35, 38, 40}, 0,  0, {BIT_SP_Map_DR, NONE},                    {BIT_ALWAYS_0, NONE},                       SPText_Dragon_Rock_Map},
     {30, {35, 38, 40}, 0,  0, {BIT_ALWAYS_0, NONE},                     {BIT_ALWAYS_1, NONE},                       SPText_SwapStone_Circle_Map},
     {20, {20, 22, 25}, 0,  0, {BIT_ALWAYS_0, NONE},                     {BIT_SP_Map_MMP, NONE},                     SPText_Moon_Mountain_Map},

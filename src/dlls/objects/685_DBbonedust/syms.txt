@@ -1,0 +1,15 @@
+.text = 0x0:
+DBBoneDust_ctor = 0x0;
+DBBoneDust_dtor = 0xC;
+DBBoneDust_setup = 0x18;
+DBBoneDust_control = 0xB0;
+DBBoneDust_update = 0x488;
+DBBoneDust_print = 0x494;
+DBBoneDust_free = 0x4F8;
+DBBoneDust_get_model_flags = 0x508;
+DBBoneDust_get_data_size = 0x518;
+DBBoneDust_is_hidden = 0x52C;
+DBBoneDust_launch = 0x544;
+
+.rodata = 0x618:
+str_0 = 0x0; // absolute:0x618

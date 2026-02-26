@@ -374,6 +374,8 @@ typedef struct UnkFunc80051D68Arg3 {
 /** The X/Z size of the world grid cells, in vertex position units */
 #define BLOCKS_GRID_UNIT 640
 #define BLOCKS_GRID_UNIT_F 640.0f
+#define BLOCKS_GRID_UNIT_HALF 320
+#define BLOCKS_GRID_UNIT_HALF_F 320.0f
 #define BLOCKS_GRID_SPAN 16
 #define BLOCKS_GRID_TOTAL_CELLS 256
 #define MAP_ID_MAX 80

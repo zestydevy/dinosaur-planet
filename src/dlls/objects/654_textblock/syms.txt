@@ -1,0 +1,17 @@
+.text = 0x0:
+Textblock_ctor = 0x0;
+Textblock_dtor = 0xC;
+Textblock_setup = 0x18;
+Textblock_control = 0xD0;
+Textblock_update = 0x114;
+Textblock_print = 0x120;
+Textblock_free = 0x138;
+Textblock_get_model_flags = 0x1AC;
+Textblock_get_data_size = 0x1BC;
+Textblock_tick = 0x1D0;
+Textblock_anim_callback = 0x3A0;
+
+.rodata = 0x4F8:
+
+.data = 0x4F8:
+modGfxDLL = 0x0; // absolute:0x4F8

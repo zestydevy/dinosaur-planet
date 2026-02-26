@@ -18,27 +18,18 @@
 #define FOOD_GONE 0
 
 typedef enum {
-    FOOD_Green_Apple = FOOD_TYPE(1),
-    FOOD_Red_Apple   = FOOD_TYPE(2),
-    FOOD_Brown_Apple = FOOD_TYPE(3),
-    FOOD_Fish        = FOOD_TYPE(4),
-    FOOD_Smoked_Fish = FOOD_TYPE(5),
-    FOOD_Dino_Egg    = FOOD_TYPE(6),
-    FOOD_Moldy_Meat  = FOOD_TYPE(7),
-    FOOD_Green_Bean  = FOOD_TYPE(8),
-    FOOD_Red_Bean    = FOOD_TYPE(9),
-    FOOD_Brown_Bean  = FOOD_TYPE(10),
-    FOOD_Blue_Bean   = FOOD_TYPE(11)
+    FOOD_Green_Apple = FOOD_TYPE(1),  //1
+    FOOD_Red_Apple   = FOOD_TYPE(2),  //2
+    FOOD_Brown_Apple = FOOD_TYPE(3),  //4
+    FOOD_Fish        = FOOD_TYPE(4),  //8
+    FOOD_Smoked_Fish = FOOD_TYPE(5),  //0x10
+    FOOD_Dino_Egg    = FOOD_TYPE(6),  //0x20
+    FOOD_Moldy_Meat  = FOOD_TYPE(7),  //0x40
+    FOOD_Green_Bean  = FOOD_TYPE(8),  //0x80
+    FOOD_Red_Bean    = FOOD_TYPE(9),  //0x100
+    FOOD_Brown_Bean  = FOOD_TYPE(10), //0x200
+    FOOD_Blue_Bean   = FOOD_TYPE(11)  //0x400
 } FoodTypes;
-
-typedef enum {
-    SIDEFOOD_Blue_Mushrooms = FOOD_TYPE(1), //1
-    SIDEFOOD_Red_Mushrooms  = FOOD_TYPE(2), //2
-    SIDEFOOD_Old_Mushrooms  = FOOD_TYPE(3), //4
-    SIDEFOOD_Blue_Grubs     = FOOD_TYPE(4), //8
-    SIDEFOOD_Red_Grubs      = FOOD_TYPE(5), //0x10
-    SIDEFOOD_Old_Grubs      = FOOD_TYPE(6), //0x20
-} SideFoodTypes;
 
 /** ObjSetup struct for food Objects placed in the world
   * 
@@ -52,7 +43,6 @@ typedef struct {
     s16 unk1C;
     s16 unk1E;
 } PlacedFood_Setup;
-
 
 typedef struct {
     ObjSetup base;

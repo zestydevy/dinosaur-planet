@@ -1,13 +1,13 @@
 .text = 0x0:
-dll_605_ctor = 0x0;
-dll_605_dtor = 0xC;
-dll_605_setup = 0x18;
-dll_605_control = 0x88;
-dll_605_update = 0x388;
-dll_605_print = 0x394;
-dll_605_free = 0x3AC;
-dll_605_get_model_flags = 0x3F4;
-dll_605_get_data_size = 0x404;
+WLWorm_ctor = 0x0;
+WLWorm_dtor = 0xC;
+WLWorm_setup = 0x18;
+WLWorm_control = 0x88;
+WLWorm_update = 0x388;
+WLWorm_print = 0x394;
+WLWorm_free = 0x3AC;
+WLWorm_get_model_flags = 0x3F4;
+WLWorm_get_data_size = 0x404;
 
 .rodata = 0x45C:
 

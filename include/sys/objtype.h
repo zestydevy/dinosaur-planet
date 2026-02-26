@@ -8,21 +8,23 @@ enum ObjType {
     OBJTYPE_PLAYER = 0,
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
-    OBJTYPE_4 = 4,
-    OBJTYPE_5 = 5,
+    OBJTYPE_4 = 4, // Tumbleweed
+    OBJTYPE_5 = 5, // collectable, SCcollectables (OBJTYPE_COLLECTABLE?)
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7, // CFScalesGalleon
     OBJTYPE_9 = 9,
-    OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop (also used by WCLevelControl)
+    OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop (also used by WCLevelControl, DFPLevelControl)
     OBJTYPE_11 = 11, // BWlog, DFlog, IMSnowBike
     OBJTYPE_12 = 12,
-    OBJTYPE_13 = 13,
-    OBJTYPE_16 = 16,
+    OBJTYPE_13 = 13, // Krazoa shrine main (ECSH_Shrine etc.)
+    OBJTYPE_16 = 16, // Krazoa shrine doors (ECSH_Door1 etc.)
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
     OBJTYPE_22 = 22, // DFriverflow
     OBJTYPE_23 = 23, // DFdockpoint
     OBJTYPE_24 = 24,
+    OBJTYPE_25 = 25, // DFropenode
+    OBJTYPE_28 = 28, // ExplodeAnimator
     OBJTYPE_29 = 29,
     OBJTYPE_32 = 32,
     OBJTYPE_33 = 33,
@@ -30,14 +32,16 @@ enum ObjType {
     OBJTYPE_37 = 37,
     OBJTYPE_39 = 39,
     OBJTYPE_40 = 40,
+    OBJTYPE_44 = 44, // DBBoneGeezer
     OBJTYPE_48 = 48, // perchobject
-    OBJTYPE_51 = 51, // sidekick-related? //also used in SHbluemushroom
+    OBJTYPE_51 = 51, // SHbluemushroom, DBBoneGeezer, Tumbleweed (sidekick/Find-related?)
     OBJTYPE_52 = 52,
     OBJTYPE_53 = 53,
     OBJTYPE_54 = 54,
     OBJTYPE_56 = 56,
     OBJTYPE_59 = 59,
     OBJTYPE_62 = 62, 
+    OBJTYPE_63 = 63,
     OBJTYPE_64 = 64
 };
 

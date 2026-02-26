@@ -1,0 +1,13 @@
+.text = 0x0:
+DFriverflow_ctor = 0x0;
+DFriverflow_dtor = 0xC;
+DFriverflow_setup = 0x18;
+DFriverflow_control = 0x108;
+DFriverflow_update = 0x1C0;
+DFriverflow_print = 0x1CC;
+DFriverflow_free = 0x1E4;
+DFriverflow_get_model_flags = 0x234;
+DFriverflow_get_data_size = 0x244;
+
+.rodata = 0x294:
+str_0 = 0x0; // absolute:0x294

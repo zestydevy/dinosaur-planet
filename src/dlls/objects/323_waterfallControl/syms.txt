@@ -1,0 +1,13 @@
+.text = 0x0:
+WaterfallControl_ctor = 0x0;
+WaterfallControl_dtor = 0xC;
+WaterfallControl_setup = 0x18;
+WaterfallControl_control = 0x34;
+WaterfallControl_update = 0x7C;
+WaterfallControl_print = 0x88;
+WaterfallControl_free = 0xA0;
+WaterfallControl_get_model_flags = 0xB0;
+WaterfallControl_get_data_size = 0xC0;
+
+.rodata = 0x104:
+_oob_rodata_0 = 0x0; // absolute:0x104

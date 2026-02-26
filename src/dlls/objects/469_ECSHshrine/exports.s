@@ -4,19 +4,19 @@
 _exports:
 
 # ctor/dtor
-.dword dll_469_ctor
-.dword dll_469_dtor
+.dword ECSHshrine_ctor
+.dword ECSHshrine_dtor
 
 # export table
-/*0*/ .dword dll_469_setup
-/*1*/ .dword dll_469_control
-/*2*/ .dword dll_469_update
-/*3*/ .dword dll_469_print
-/*4*/ .dword dll_469_free
-/*5*/ .dword dll_469_get_model_flags
-/*6*/ .dword dll_469_get_data_size
-/*7*/ .dword dll_469_func_1454
-/*8*/ .dword dll_469_func_1484
-/*9*/ .dword dll_469_func_14F4
-/*10*/ .dword dll_469_func_152C
-/*11*/ .dword dll_469_func_1590
+/*0*/ .dword ECSHshrine_setup
+/*1*/ .dword ECSHshrine_control
+/*2*/ .dword ECSHshrine_update
+/*3*/ .dword ECSHshrine_print
+/*4*/ .dword ECSHshrine_free
+/*5*/ .dword ECSHshrine_get_model_flags
+/*6*/ .dword ECSHshrine_get_data_size
+/*7*/ .dword ECSHshrine_func_1454
+/*8*/ .dword ECSHshrine_get_cup_coords
+/*9*/ .dword ECSHshrine_get_minigame_state
+/*10*/ .dword ECSHshrine_set_cup_coords
+/*11*/ .dword ECSHshrine_choose_cup

@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_297_ctor
-.dword dll_297_dtor
+.dword scarab_ctor
+.dword scarab_dtor
 
 # export table
-/*0*/ .dword dll_297_setup
-/*1*/ .dword dll_297_control
-/*2*/ .dword dll_297_update
-/*3*/ .dword dll_297_print
-/*4*/ .dword dll_297_free
-/*5*/ .dword dll_297_get_model_flags
-/*6*/ .dword dll_297_get_data_size
+/*0*/ .dword scarab_setup
+/*1*/ .dword scarab_control
+/*2*/ .dword scarab_update
+/*3*/ .dword scarab_print
+/*4*/ .dword scarab_free
+/*5*/ .dword scarab_get_model_flags
+/*6*/ .dword scarab_get_data_size

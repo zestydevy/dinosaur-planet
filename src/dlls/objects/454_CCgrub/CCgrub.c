@@ -1,5 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/foodbag.h"
+#include "dlls/objects/315_sidefoodbag.h"
 #include "game/gamebits.h"
 #include "sys/curves.h"
 #include "sys/objanim.h"
@@ -95,7 +96,7 @@ void CCgrub_control(Object* self) {
             if (((DLL_IFoodbag*)sp54->dll)->vtbl->is_obtained(sp54) != 0) {
                 ((DLL_IFoodbag*)sp54->dll)->vtbl->collect_food(sp54, SIDEFOOD_Blue_Grubs);
             } else {
-                gDLL_1_UI->vtbl->func_69F8(0x23, 0x12c, main_increment_bits(0x23));
+                gDLL_1_UI->vtbl->func_69F8(0x23, 0x12c, main_increment_bits(BIT_CloudRunner_Grubs));
             }
             objdata->unk109 = 0xA;
         }

@@ -448,7 +448,7 @@ int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
 
     for (i = 0; i < animObjdata->unk98; i++){
         if (animObjdata->unk8E[i] == 3) {
-            main_set_bits(BIT_5A0, 1);
+            main_set_bits(BIT_Map_SW, 1);
             continue;
         }        
     }
@@ -982,8 +982,8 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             frostWeed = obj_get_nearest_type_to(OBJTYPE_4, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
             if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < setup->unkRadius * setup->unkRadius) {
-                if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func11(frostWeed)) {
-                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func10(frostWeed, &objdata->playerPositionCopy);
+                if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {
+                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->gravitate_towards_point(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
                     if (FROSTWEED_QUEST_CHEAT){
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;

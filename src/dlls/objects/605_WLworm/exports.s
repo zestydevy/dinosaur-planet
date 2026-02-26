@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_605_ctor
-.dword dll_605_dtor
+.dword WLWorm_ctor
+.dword WLWorm_dtor
 
 # export table
-/*0*/ .dword dll_605_setup
-/*1*/ .dword dll_605_control
-/*2*/ .dword dll_605_update
-/*3*/ .dword dll_605_print
-/*4*/ .dword dll_605_free
-/*5*/ .dword dll_605_get_model_flags
-/*6*/ .dword dll_605_get_data_size
+/*0*/ .dword WLWorm_setup
+/*1*/ .dword WLWorm_control
+/*2*/ .dword WLWorm_update
+/*3*/ .dword WLWorm_print
+/*4*/ .dword WLWorm_free
+/*5*/ .dword WLWorm_get_model_flags
+/*6*/ .dword WLWorm_get_data_size

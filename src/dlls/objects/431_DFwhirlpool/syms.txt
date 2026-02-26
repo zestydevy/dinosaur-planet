@@ -1,0 +1,12 @@
+.text = 0x0:
+DFwhirlpool_ctor = 0x0;
+DFwhirlpool_dtor = 0xC;
+DFwhirlpool_setup = 0x18;
+DFwhirlpool_control = 0xD4;
+DFwhirlpool_update = 0x2D4;
+DFwhirlpool_print = 0x2E0;
+DFwhirlpool_free = 0x334;
+DFwhirlpool_get_model_flags = 0x344;
+DFwhirlpool_get_data_size = 0x354;
+
+.rodata = 0x3A8:

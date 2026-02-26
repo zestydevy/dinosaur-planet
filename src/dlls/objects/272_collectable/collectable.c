@@ -1,6 +1,8 @@
 #include "common.h"
+#include "dlls/engine/17_partfx.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
@@ -11,39 +13,17 @@
 #include "dlls/objects/common/foodbag.h"
 #include "types.h"
 
+#include "dlls/objects/common/collectable.h"
+
 extern u16 func_80031BBC(f32 x, f32 y, f32 z);
 
-#define COLLECT_OFF 1
-
 typedef struct {
-    ObjSetup base;
-    s8 unused18;
-    s8 messageArgBase;      //Base arg value used for sidekick-related collectables
-    u8 unk1A;               //Stored to Collectable_Data, but seems to be unused 
-    u8 yaw;
-    s16 gamebitCollected;   //Set when collected: collectable vanishes when set
-    s16 animMessage;
-    s8 unused20;
-    s8 unused21;    
-    u8 pitch;
-    u8 roll;
-    s16 gamebitShow;        //(Optional) Only show collectable once this gamebit is set
-    u8 modelIdx;
-    u8 applyColourMultiplier;
-    u8 multiplyR;           //Colour multiplier for model
-    u8 multiplyG;           //Colour multiplier for model
-    u8 multiplyB;           //Colour multiplier for model
-    u8 unused2B;
-    s16 gamebitCount;
-} Collectable_Setup;
-
-typedef struct {
-    u32 soundHandle;            //Cleared on free, but not actaully used for any sound calls
+    u32 soundHandle;            //Cleared on free, but not used for any sound calls
     f32 distanceToPlayer;  
     f32 interactionRadius;
     f32 timerDestroy;           //Countdown after receiving collection message from sender
     s8 sidekickArgBase;         //Base arg value used for sidekick-related collectables
-    u8 unk11;
+    u8 objHitsValue;
     u8 unused12;
     u8 pause;                   //Control function ends early when this is set
     s16 gamebitCollected;       //Set when collected: collectable vanishes when set
@@ -68,31 +48,11 @@ typedef struct {
     u8 unused3F;
     s16 rootTimer;              //Affects opacity of Alpine Root
     u16 unused42;
-} Collectable_Data; //0x44
-
-typedef struct {
-    s8 unk0;
-    s8 unk1;
-    s16 category;           //see Collectable_Types
-    s8 unk4;
-    s8 unk5;
-    s16 unk6;               // object ID of item in pickup sequence animation (the thing being held)
-    s8 interactionRadius;   //radius for picking up
-    s8 unk9;
-    s8 unkA;
-    s8 unkB;                //amount of magic restored?
-} CollectableDef;
+} Collectable_Data;
 
 typedef enum {
-    Collectable_Type_1 = 0x1,
-    Collectable_Type_2 = 0x2,
-    Collectable_Type_Food = 0x4,
-    Collectable_Type_8_Sidekick = 0x8,
-    Collectable_Type_10_Sidekick = 0x10,
-    Collectable_Type_20 = 0x20,
-    Collectable_Type_Magic = 0x40,
-    Collectable_Type_80_Sidekick = 0x80
-} Collectable_Types;
+    Collectable_FLAG_Interaction_Off = 1
+} Collectable_Flags;
 
 static int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData);
 static void collectable_handle_animation_and_fx(Object* self);
@@ -116,7 +76,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     Collectable_Data* objData;
 
     objData = self->data;
-    obj_add_object_type(self, 5);
+    obj_add_object_type(self, OBJTYPE_5);
     obj_init_mesg_queue(self, 2);
 
     self->srt.yaw = objSetup->yaw << 8;
@@ -128,14 +88,14 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     self->modelInstIdx = objSetup->modelIdx;
     self->unkB0 |= 0x2000;
 
-    bzero(objData, sizeof(Collectable_Data));
+    bzero(objData, sizeof(Collectable_Data));    
     objData->sidekickArgBase = objSetup->messageArgBase;
-    objData->unk11 = objSetup->unk1A;
+    objData->objHitsValue = objSetup->objHitsValue;
     objData->pause = 0;
     objData->areaValue = -2;
     objData->moving = 0;
     objData->delayCollect = 60;
-    objData->gamebitShow = objSetup->gamebitShow;
+    objData->gamebitShow = objSetup->gamebitSecondary;
     objData->uID = objSetup->base.uID;
     objData->savedPosition.x = self->srt.transl.x;
     objData->savedPosition.y = self->srt.transl.y;
@@ -159,14 +119,14 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         return;
     }
 
-    collectableDef = (CollectableDef*)self->def->unk18;
-    if (collectableDef && collectableDef->category == Collectable_Type_Magic) {
+    collectableDef = self->def->collectableDef;
+    if (collectableDef && collectableDef->type == Collectable_Type_Magic) {
         if (arg2 == 0) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         for (index = 10; index > 0; index--){
-            gDLL_17_partfx->vtbl->spawn(self, 0x42, 0, 4, -1, 0);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_42, 0, 4, -1, 0);
         }
 
         self->speed.y = -1.2f;
@@ -242,7 +202,7 @@ void collectable_control(Object* self) {
     objdata = self->data;
     objsetup = (Collectable_Setup*)self->setup;
 
-    collectableDef = (CollectableDef*)self->def->unk18;
+    collectableDef = self->def->collectableDef;
 
     newdayValue = 1.0f;
 
@@ -296,7 +256,7 @@ void collectable_control(Object* self) {
             objdata->rootTimer -= gUpdateRate;
             if (objdata->rootTimer <= 0) {
                 objdata->rootTimer = 0;
-                self->opacity = 0xFF;
+                self->opacity = OBJECT_OPACITY_MAX;
                 self->unkDC = 0;
             }
         }
@@ -323,7 +283,7 @@ void collectable_control(Object* self) {
     }
 
     player = get_player();
-    if (!player || objdata->interactFlags & COLLECT_OFF || !self->def->unk18) {
+    if (!player || objdata->interactFlags & Collectable_FLAG_Interaction_Off || !self->def->collectableDef) {
         return;
     }
 
@@ -333,7 +293,7 @@ void collectable_control(Object* self) {
     if ((distance < objdata->interactionRadius) && (objdata->delayCollect == 0)) {
         switch (self->id) {
         case OBJ_meatPickup:
-            objdata->interactFlags |= COLLECT_OFF;
+            objdata->interactFlags |= Collectable_FLAG_Interaction_Off;
             gDLL_13_Expgfx->vtbl->func5(self);
 
             for (index = 10; index > 0; index--){
@@ -341,7 +301,7 @@ void collectable_control(Object* self) {
             }
 
             if (main_get_bits(BIT_90E) == 0) {
-                gDLL_3_Animation->vtbl->func30(collectableDef->unk6, 0, 0);
+                gDLL_3_Animation->vtbl->func30(collectableDef->seqObjectID, 0, 0);
                 outMessage = 0;
                 obj_send_mesg(
                     player, 
@@ -360,14 +320,14 @@ void collectable_control(Object* self) {
         case OBJ_beanPickup:
         case OBJ_DIMAlpineRoot2:
         case OBJ_applePickup:
-            objdata->interactFlags |= COLLECT_OFF;
+            objdata->interactFlags |= Collectable_FLAG_Interaction_Off;
             collectable_collect(self);
             break;
         default:
             //Check for A button press when highlighted with arrow
             messageArg = objsetup->animMessage;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
-                gDLL_3_Animation->vtbl->func30(collectableDef->unk6, 0, 0);
+                gDLL_3_Animation->vtbl->func30(collectableDef->seqObjectID, 0, 0);
                 obj_send_mesg(
                     player,
                     0x7000A,
@@ -403,7 +363,7 @@ void collectable_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 // offset: 0xA88 | func: 4 | export: 4
 void collectable_free(Object* self, s32 arg1) {
     Collectable_Data* objdata = self->data;
-    obj_free_object_type(self, 5);
+    obj_free_object_type(self, OBJTYPE_5);
     if (objdata->soundHandle) {
         gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
         objdata->soundHandle = 0;
@@ -446,7 +406,7 @@ void collectable_handle_animation_and_fx(Object* self) {
     CollectableDef* collectableDef;
     s32 temp;
 
-    collectableDef = (CollectableDef*)self->def->unk18;
+    collectableDef = (CollectableDef*)self->def->collectableDef;
     if (collectableDef == NULL) {
         return;
     }
@@ -454,7 +414,7 @@ void collectable_handle_animation_and_fx(Object* self) {
     objdata = self->data;
 
     //Handle magic (@framerate-dependent)
-    if (collectableDef->category == Collectable_Type_Magic) {
+    if (collectableDef->type == Collectable_Type_Magic) {
         //Spin 
         self->srt.yaw += 50;
         self->srt.pitch += 50;
@@ -605,7 +565,7 @@ void collectable_collect(Object* self) {
     objsetup = (Collectable_Setup*)self->setup;
     player = get_player();
     sidekick = get_sidekick();
-    collectableDef = (CollectableDef*)self->def->unk18;
+    collectableDef = (CollectableDef*)self->def->collectableDef;
 
     if (collectableDef == NULL) {
         return;
@@ -621,11 +581,11 @@ void collectable_collect(Object* self) {
         main_increment_bits(objsetup->gamebitCount);
     }
 
-    switch (collectableDef->category) {
-    case Collectable_Type_1:
+    switch (collectableDef->type) {
+    case Collectable_Type_Inventory:
         id = self->id;
         switch (id) {
-        case OBJ_Duster:   
+        case OBJ_Duster: //NOTE: suggests Dusters were once inventory items, and used this DLL!
         default:
             break;
         case OBJ_DIMAlpineRoot2: 
@@ -660,19 +620,19 @@ void collectable_collect(Object* self) {
             break;
         }
         break;
-    case Collectable_Type_8_Sidekick:
-        obj_send_mesg(sidekick, 0x70004, self, (void*)(collectableDef->unkB + objdata->sidekickArgBase));
+    case Collectable_Type_SidekickA:
+        obj_send_mesg(sidekick, 0x70004, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
-    case Collectable_Type_10_Sidekick:
-        obj_send_mesg(sidekick, 0x70005, self, (void*)(collectableDef->unkB + objdata->sidekickArgBase));
+    case Collectable_Type_SidekickB:
+        obj_send_mesg(sidekick, 0x70005, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     case Collectable_Type_Magic:
-        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, collectableDef->unkB);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, collectableDef->amountRestored);
         gDLL_13_Expgfx->vtbl->func5(self);
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         break;
-    case Collectable_Type_80_Sidekick:
-        obj_send_mesg(sidekick, 0x70008, self, (void*)(collectableDef->unkB + objdata->sidekickArgBase));
+    case Collectable_Type_Upgrade:
+        obj_send_mesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     }
 

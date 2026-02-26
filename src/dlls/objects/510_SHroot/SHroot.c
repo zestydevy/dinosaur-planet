@@ -91,12 +91,12 @@ void dll_510_control(Object* self) {
                     }
                 }
             }
-            SHrootData->unk13 = (u8) (SHrootData->unk13 & 0xFFFE);
+            SHrootData->unk13 &= ~1;
         }
         if (SHrootData->unk14 > 0) {
-            SHrootData->unk14 = (s16) (SHrootData->unk14 - gUpdateRate);
+            SHrootData->unk14 -= gUpdateRate;
             if (SHrootData->unk14 <= 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D7, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         self->speed.f[1] -= 0.1f * gUpdateRateF;
@@ -110,11 +110,10 @@ void dll_510_control(Object* self) {
                 gDLL_24_Waterfx->vtbl->func_1CC8(self->srt.transl.f[0], SHrootData->unk8, self->srt.transl.f[2], 0, 0.0f, 2);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
                 SHrootData->unk13 |= 1 ;
-               // SHrootData->unk13 = SHrootData->unk13 ;
             }
         }
         if ((SHrootData->unk13 & 2) && (self->srt.transl.f[1] < (SHrootData->unk4 + 40.0f))) {
-            main_set_bits((s32) sp54->unk1E, 1U);
+            main_set_bits(sp54->unk1E, 1);
             SHrootData->unk12 = 2;
             return;
         }

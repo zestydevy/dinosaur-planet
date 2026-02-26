@@ -289,7 +289,7 @@ typedef struct {
 /*8B7*/ u8 unk8B7;
 /*8B8*/ s8 unk8B8;
 /*8B9*/ s8 unk8B9;
-/*8BA*/ u8 unk8BA;
+/*8BA*/ u8 unk8BA; //Krazoa Spirit bitfield
 /*8BB*/ u8 unk8BB; // player has magic? (bitfield for magic spells obtained?)
 /*8BC*/ u8 unk8BC;
 /*8BD*/ u8 unk8BD;
@@ -415,8 +415,8 @@ DLL_INTERFACE(DLL_210_Player) {
     /*35*/ s32 (*func35)(s32 player);
     /*36*/ u8 (*func36)(Object* player, f32* arg1);
     /*37*/ void (*func37)(Object* player, s32 arg1);
-    /*38*/ s32 (*func38)(Object* player, s32 arg1);
-    /*39*/ void (*func39)(Object* player, s32 arg1, s32 arg2);
+    /*38*/ s32 (*func38)(Object* player, s32 spiritIndex); //Get Krazoa Spirit bit value
+    /*39*/ void (*func39)(Object* player, s32 spiritIndex, s32 value); //Set Krazoa Spirit bit value
     /*40*/ s32 (*func40)(Object* player, u32 arg1);
     /*41*/ void (*func41)(Object* player, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
     /*42*/ u8 (*func42)(Object* player);

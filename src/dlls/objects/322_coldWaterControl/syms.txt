@@ -1,0 +1,12 @@
+.text = 0x0:
+ColdWaterControl_ctor = 0x0;
+ColdWaterControl_dtor = 0xC;
+ColdWaterControl_setup = 0x18;
+ColdWaterControl_control = 0x54;
+ColdWaterControl_update = 0x1E0;
+ColdWaterControl_print = 0x1EC;
+ColdWaterControl_free = 0x204;
+ColdWaterControl_get_model_flags = 0x214;
+ColdWaterControl_get_data_size = 0x224;
+
+.rodata = 0x270:

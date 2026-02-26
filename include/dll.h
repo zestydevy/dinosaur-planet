@@ -110,6 +110,7 @@ enum DLL_ID {
     DLL_ID_76 = 76,
 
     // Mod gfx
+    DLL_ID_MODGFX_BASE = 0x1000,
     DLL_ID_106 = 0x1002,
     DLL_ID_107 = 0x1003,
     DLL_ID_122 = 0x1012,
@@ -127,11 +128,14 @@ enum DLL_ID {
     DLL_ID_155 = 0x1033,
     DLL_ID_170 = 0x1042,
     DLL_ID_177 = 0x1049,
+    DLL_ID_180 = 0x104C,
     DLL_ID_182 = 0x104E,
 
     // Proj gfx
+    DLL_ID_PROJGFX_BASE = 0x2000,
     DLL_ID_190 = 0x2004,
     DLL_ID_194 = 0x2008,
+    DLL_ID_202 = 0x2010,
 
     // Objects
     DLL_ID_CANNON_CLAW = 0x800E

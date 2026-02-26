@@ -46,6 +46,12 @@ typedef struct {
 // TODO: some of this depends on the curve type
 /*30*/ union {
     struct {
+        /*30*/ s32 pad30;
+        /*34*/ s16 unk34;
+        /*36*/ s16 unk36;
+        /*38*/ s16 unk38;
+    } type8;
+    struct {
         s32 pad30;
         s16 unk34;
     } type15;
