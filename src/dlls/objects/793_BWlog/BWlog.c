@@ -375,7 +375,7 @@ void dll_793_func_E80(Object *self) { }
 void dll_793_func_E8C(Object *self, f32 scale) { }
 
 // offset: 0xE9C | func: 20 | export: 20
-void dll_793_func_E9C(UNK_TYPE_32 a0, UNK_TYPE_32 a1, UNK_TYPE_32 a2) { }
+void dll_793_func_E9C(s32 a0, s32 a1, s32 a2) { }
 
 // offset: 0xEB0 | func: 21
 static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {

@@ -80,7 +80,7 @@ typedef struct {
 /*3DC*/ u8 unk3DC;
 /*3DD*/ u8 flags;
 /*3DE*/ s8 unk3DE; // state?
-/*3DF*/ s8 unk3DF;
+/*3DF*/ s8 unk3DF; // race position?
 /*3E0*/ s8 unk3E0;
 /*3E1*/ s8 unk3E1;
 } IMSnowBike_Data;
@@ -1532,6 +1532,6 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
 }
 
 // offset: 0x4780 | func: 32 | export: 20
-void dll_711_func_4780(UNK_TYPE_32 a0, UNK_TYPE_32 a1, UNK_TYPE_32 a2) { }
+void dll_711_func_4780(s32 a0, s32 a1, s32 a2) { }
 
 /*0x0*/ static const char str_0[] = "Finished Is SEt for Some Reason \n";

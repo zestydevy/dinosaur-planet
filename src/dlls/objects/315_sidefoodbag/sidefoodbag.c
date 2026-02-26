@@ -37,7 +37,7 @@ void SideFoodbag_ctor(void *dll) { }
 void SideFoodbag_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SideFoodbag_setup(Object* self, SideFoodbag_Setup *objSetup, s32 arg2) {
+void SideFoodbag_setup(Object* self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     s32 pad[2];
     s32 playerNo;
     SideFoodbag_Data* objData;
@@ -45,7 +45,7 @@ void SideFoodbag_setup(Object* self, SideFoodbag_Setup *objSetup, s32 arg2) {
 
     objData = self->data;
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
-    objData->dllPutdown = dll_load_deferred(56, 10);
+    objData->dllPutdown = dll_load_deferred(DLL_ID_56, 10);
     objData->placedObjects.nextIndex = 0;
     
     for (index = 0; index < 20; index++){

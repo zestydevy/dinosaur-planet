@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/common/foodbag.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -251,16 +252,16 @@ static void WL_LevelControl_setup2_tick(Object* self) {
     if (main_get_bits(BIT_Krystal_Foodbag_M) != 0) {
         temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         if ((temp_v0 != NULL) && (main_get_bits(BIT_Green_Apple_Count) == 0)) {
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-            ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
         }
     }
 }
@@ -412,19 +413,19 @@ static void WL_LevelControl_setup6_tick(Object* self) {
     player = get_player();
     if ((_data_18 != 0) && (main_get_bits(BIT_Play_Seq_020D) == 0)) {
         temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[10].withOneArg((s32)temp_v0);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 2);
-        ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 4);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->set_capacity(temp_v0);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Red_Apple);
+        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Brown_Apple);
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 0x20, 1);
