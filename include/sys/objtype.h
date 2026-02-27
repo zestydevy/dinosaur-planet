@@ -38,8 +38,10 @@ enum ObjType {
     OBJTYPE_52 = 52,
     OBJTYPE_53 = 53,
     OBJTYPE_54 = 54,
+    OBJTYPE_55 = 55,
     OBJTYPE_56 = 56,
     OBJTYPE_59 = 59,
+    OBJTYPE_61 = 61, 
     OBJTYPE_62 = 62, 
     OBJTYPE_63 = 63,
     OBJTYPE_64 = 64

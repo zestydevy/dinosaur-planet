@@ -317,8 +317,8 @@ s32 func_80031DD8(Object*, Object*, s32);
 };
 
 //Sidekick command soundIDs
-/*0x4C0*/ static s16 _data_4C0[] = { SOUND_Krystal_Heel, SOUND_Krystal_Find, SOUND_Krystal_Distract, SOUND_Krystal_Guard, SOUND_Krystal_Flame, SOUND_Krystal_Fetch };
-/*0x4CC*/ static s16 _data_4CC[] = { SOUND_Sabre_Heel, SOUND_Sabre_Find, SOUND_Sabre_Distract, SOUND_Sabre_Guard, SOUND_Sabre_Flame, SOUND_Sabre_Fetch };
+/*0x4C0*/ static s16 _data_4C0[] = { SOUND_E9_Krystal_Heel, SOUND_EA_Krystal_Find, SOUND_EC_Krystal_Distract, SOUND_ED_Krystal_Guard, SOUND_EB_Krystal_Flame, SOUND_EE_Krystal_Fetch };
+/*0x4CC*/ static s16 _data_4CC[] = { SOUND_20_Sabre_Heel, SOUND_21_Sabre_Find, SOUND_23_Sabre_Distract, SOUND_24_Sabre_Guard, SOUND_22_Sabre_Flame, SOUND_25_Sabre_Fetch };
 
 /*0x4D8*/ static u16 _data_4D8[] = { SOUND_B22_Climb_Sound_A, SOUND_B1E_Climb_Sound_B, SOUND_B22_Climb_Sound_A, 0x0000 };
 /*0x4E0*/ static s16 _data_4E0[] = { BIT_Spell_Projectile, BIT_Spell_Illusion, BIT_Spell_Forcefield, BIT_Spell_Portal, BIT_Spell_Ice_Blast, BIT_Spell_Mind_Read, BIT_Spell_Grenade, BIT_0 };
@@ -1041,7 +1041,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             player->speed.y = 2.5f;
             player->speed.x = -var_fs0 * 2.5f;
             player->speed.z = -var_fs1 * 2.5f;
-            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_Krystal_Hurt_Ough, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_DA_Krystal_Hurt_Ough, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Hurt_Knocked_Down);
             func_80023D30(player, 0x450, 0.0f, 0);
             dll_210_add_health(player, -messageArgument);
@@ -1175,7 +1175,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         sp7C = arg1->stats->health;
         break;
     case 20:
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
         break;
     case 21:
         aState = PLAYER_ASTATE_Hurt_Stunned;
@@ -1184,7 +1184,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         aState = PLAYER_ASTATE_51;
         break;
     case 24:
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
         camera_enable_y_offset();
         camera_set_shake_offset(1.0f);
         break;

@@ -1,0 +1,19 @@
+.text = 0x0:
+dll_246_ctor = 0x0;
+dll_246_dtor = 0xC;
+dll_246_setup = 0x18;
+dll_246_control = 0x1CC;
+dll_246_update = 0x5B0;
+dll_246_print = 0x5BC;
+dll_246_free = 0x5D4;
+dll_246_get_model_flags = 0x6A4;
+dll_246_get_data_size = 0x6B4;
+dll_246_func_6C8 = 0x6C8;
+
+.rodata = 0xAFC:
+
+.data = 0xB1C:
+_data_0 = 0x0; // absolute:0xB1C
+
+.bss = 0xB2C:
+_bss_0 = 0x0; // absolute:0xB2C

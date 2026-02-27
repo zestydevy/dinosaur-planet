@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_426_ctor = 0x0;
+dll_426_dtor = 0xC;
+dll_426_setup = 0x18;
+dll_426_control = 0x48;
+dll_426_update = 0xB0;
+dll_426_print = 0xBC;
+dll_426_free = 0x110;
+dll_426_get_model_flags = 0x120;
+dll_426_get_data_size = 0x130;
+
+.rodata = 0x17C:

@@ -56,8 +56,11 @@
 227 = objects/227_tumbleweed
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie
+246 = objects/246_SwarmBaddie
 248 = objects/248_PirahnaBaddie
+250 = objects/250_TurtleBaddie
 254 = objects/254_PineCone
+260 = objects/260_Pollen
 264 = objects/264_kamerian_flame
 266 = objects/266_sfxplayer
 267 = objects/267_checkpoint4
@@ -68,6 +71,7 @@
 275 = objects/275_WarpPoint
 277 = objects/277_iceblast
 278 = objects/278_flameblast
+279 = objects/279_Door
 280 = objects/280_SidekickBall
 281 = objects/281_area
 283 = objects/283_krazoatext
@@ -89,6 +93,7 @@
 315 = objects/315_sidefoodbag
 318 = objects/318_fish
 319 = objects/319_fishingnet
+320 = objects/320_Crate2
 321 = objects/321_Duster
 322 = objects/322_coldWaterControl
 323 = objects/323_waterfallControl
@@ -97,6 +102,7 @@
 331 = objects/331_genprops
 332 = objects/332_FXEmit
 334 = objects/334_Transporter
+336 = objects/336_FirePole
 339 = objects/339
 344 = objects/344_SpellOverlay
 345 = objects/345_WaterFallSpray
@@ -123,6 +129,7 @@
 417 = objects/417_DFlog
 418 = objects/418_DFriverflow
 419 = objects/419_DFdockpoint
+426 = objects/426_DFcavedoor
 427 = objects/427_DFlevelcontrol
 428 = objects/428_DFmole
 431 = objects/431_DFwhirlpool
@@ -155,6 +162,7 @@
 496 = objects/496_snowhorn
 497 = objects/497_NWtricky
 498 = objects/498_NWanimice
+499 = objects/499_NWice
 501 = objects/501_SHtricky
 502 = objects/502_SHmushroom
 505 = objects/505_SHspore
@@ -238,6 +246,7 @@
 712 = objects/712_DIMSnowHorn1
 713 = objects/713_DR_EarthWarrior
 714 = objects/714_DR_CloudRunner
+716 = objects/716_kyteFireFlys
 718 = objects/718_PerchObject
 720 = objects/720_FindKyteObject
 722 = objects/722_MMP_mseedrecept
@@ -263,3 +272,5 @@
 787 = objects/787_WCApertureSymbol
 793 = objects/793_BWlog
 795 = objects/795_BWLevelControl
+
+796 = objects/796_AMLevelControl
