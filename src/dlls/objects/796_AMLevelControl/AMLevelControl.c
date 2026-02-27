@@ -37,14 +37,15 @@ void dll_796_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
 // offset: 0xB8 | func: 1 | export: 1
 void dll_796_control(Object* self) {
-    s32 temp_a0;
+    u8 temp_a0;
 
     if (self->unkDC != 0) {
-        temp_a0 = main_demo_next() & 0xFF;
+        temp_a0 = main_demo_next();
         main_demo_start(_data_18[temp_a0].x, _data_18[temp_a0].y, _data_18[temp_a0].z, _data_C[temp_a0]);
         self->unkDC = 0;
     }
 }
+
 
 // offset: 0x154 | func: 2 | export: 2
 void dll_796_update(Object *self) { }

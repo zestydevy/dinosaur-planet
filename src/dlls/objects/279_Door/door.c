@@ -23,37 +23,7 @@ void dll_279_dtor(void *dll) { }
 void dll_279_setup(Object *self, ObjSetup *setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/279_Door/dll_279_setup.s")
 
-//void dll_279_setup(Object* self, DLL279_Setup* setup, s32 arg2) {
- //   DLL279_Data* objdata; 
- //   s16 temp_v0; 
-//
- ///   objdata = self->data;
- //   obj_init_mesg_queue(self, 4U);
- //   self->srt.yaw = setup->unk18 << 8;
- //   self->animCallback = dll_279_func_39C;
- //   self->unkAF |= 8;
- //   self->unkB0 |= 0x6000;
- //   objdata->unkC = (s32) setup->unk1E;
- //   objdata->unk14 = (s32) setup->unk20;
- //   temp_v0 = self->id;
- //   switch (temp_v0) {                              /* irregular */
- //   default:
- //       objdata->unk10 = -1;
- //       break;
- //   case 0xC1:
- //   case 0xC4:
- //       objdata->unk10 = 0x44;
-//        break;
-//case 0x11B:
-//    case 0x11C:
-//        objdata->unk10 = 0x98;
-//        break;
-//    }
-//    obj_add_object_type(self, 0x10);
- //   objdata->unk0 = fsin16_precise(self->srt.yaw);
-  //  objdata->unk4 = fcos16_precise(self->srt.yaw);
- //   objdata->unk8 = (f32) -((objdata->unk0 * self->srt.transl.x) + (objdata->unk4 * self->srt.transl.z));
-//}
+
 
 // offset: 0x16C | func: 1 | export: 1
 void dll_279_control(Object* self) {

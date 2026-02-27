@@ -86,12 +86,12 @@ u32 dll_716_get_data_size(Object *self, u32 a1) {
 // offset: 0x49C | func: 8 | export: 8
 s32 dll_716_func_49C(s32 arg0, s32 arg1, s32 arg2) {
     return 0;
-} //bs'd the s32s here
+}
 
 // offset: 0x4B4 | func: 9 | export: 9
 s32 dll_716_func_4B4(s32 arg0, s32 arg1, s32 arg2) {
     return 0;
-} //bs'd the s32s here
+}
 
 // offset: 0x4CC | func: 10 | export: 10
 s32 dll_716_func_4CC(s32 arg0) {
