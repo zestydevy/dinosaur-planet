@@ -847,7 +847,7 @@ Texture* tex_load(s32 id, s32 param2) {
         read_file_region(binFileID, gTexLoadBuffer, offset, (numFrames + 1) << 3);
     } else {
         gTexLoadBuffer[0] = 0;
-        gTexLoadBuffer[1] = rarezip_uncompress_size_rom(binFileID, offset, 1);
+        gTexLoadBuffer[1] = rarezip_uncompress_size_rom(binFileID, offset, TRUE);
         gTexLoadBuffer[2] = compressedSize;
     }
     
