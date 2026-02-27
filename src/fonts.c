@@ -796,6 +796,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                 text++;
                 curChar = *text;
             } while (wordCharCount < 128 && ((s32) curChar > 0x20) && ((s32) curChar < 0x100));
+            // curChar < 0x100 is always true since curChar is u8
             PRAGMA_IGNORE_POP()
 
             if (((xpos + wordWidth) >= window->width) && (xpos != 0)) {
