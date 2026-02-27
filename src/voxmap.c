@@ -131,7 +131,7 @@ s32 voxmap_reload_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockInd
     return 1;
 }
 
-u8 *voxmap_load_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex) {
+u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, UNUSED s32 blockIndex) {
     s32 size;
     s32 fileSize;
     u32 offset;
@@ -153,7 +153,7 @@ u8 *voxmap_load_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex
     sp2C = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
     read_file_region(TEXPRE_BIN, sp2C, offset, size);
     rarezip_uncompress(sp2C, temp_v0, fileSize + 0x80);
-    temp_v0 = mmRealloc(temp_v0, fileSize, NULL);
+    temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
         ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
         ((s32*)temp_v0)[temp_v1 + 9] = ((s32*)temp_v0)[temp_v1 + 9] + (s32)temp_v0;
@@ -172,7 +172,7 @@ s32 func_800075B0(s32 arg0, s32 arg1) {
     return 1;
 }
 
-u8 *func_80007620(s32 arg0, s32 arg1) {
+u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
     s32 size;
     u8* temp_v0;
     u32 offset;
@@ -180,24 +180,24 @@ u8 *func_80007620(s32 arg0, s32 arg1) {
     u8* sp24;
     s32 temp_v1;
 
-    if (arg0 < 0 || arg0 >= D_800A7D0C) {
+    if (blockID < 0 || blockID >= D_800A7D0C) {
         return 0;
     }
-    offset = gVoxmapObjectIndices[arg0];
-    size = gVoxmapObjectIndices[arg0 + 1] - offset;
+    offset = gVoxmapObjectIndices[blockID];
+    size = gVoxmapObjectIndices[blockID + 1] - offset;
     if (size == 0) {
         return 0;
     }
-    fileSize = rarezip_uncompress_size_rom(VOXOBJ_BIN, gVoxmapObjectIndices[arg0], TRUE);
+    fileSize = rarezip_uncompress_size_rom(VOXOBJ_BIN, gVoxmapObjectIndices[blockID], TRUE);
     if (fileSize > 0x5000) {
         return 0;
     }
-    temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, NULL);
+    temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
     temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
     sp24 = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
     read_file_region(VOXOBJ_BIN, sp24, offset, size);
     rarezip_uncompress(sp24, temp_v0, fileSize);
-    temp_v0 = mmRealloc(temp_v0, fileSize, NULL);
+    temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
         ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
         ((s32*)temp_v0)[temp_v1 + 9] = ((s32*)temp_v0)[temp_v1 + 9] + (s32)temp_v0;
