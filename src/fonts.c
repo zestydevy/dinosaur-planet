@@ -779,6 +779,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
             wordCharCount = 0;
             wordWidth = 0;
 
+            PRAGMA_IGNORE_PUSH("-Wtype-limits")
             do {
                 charBuffer[wordCharCount] = curChar;
                 curChar = (curChar - 0x20);
@@ -795,6 +796,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                 text++;
                 curChar = *text;
             } while (wordCharCount < 128 && ((s32) curChar > 0x20) && ((s32) curChar < 0x100));
+            PRAGMA_IGNORE_POP()
 
             if (((xpos + wordWidth) >= window->width) && (xpos != 0)) {
                 xpos = window->xpos;
@@ -848,9 +850,9 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
     }
 }
 
-static const char str_17[] = "FONTS - can't add a string to window %d, out of range./n";
 FontString *font_window_add_string(s32 windowID, char *text, s32 priority, AlignmentFlags alignmentFlags) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
         return NULL;
     } else {
         return font_window_add_string_xy(windowID, 
@@ -989,6 +991,8 @@ void font_window_flush_strings(s32 windowID) {
             string = string->next;
         }
         window->strings = NULL;
+    } else {
+        STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
     }
 }
 
@@ -997,7 +1001,7 @@ void font_window_scroll_string(s32 windowID, FontString *string, s32 x, s32 y, s
     FontWindow *window;
 
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
-        STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
+        STUBBED_PRINTF("FONTS - can't scroll a string in window %d, out of range./n", windowID);
         return;
     }
 
@@ -1024,8 +1028,6 @@ void font_window_scroll_string(s32 windowID, FontString *string, s32 x, s32 y, s
         }
     }
 }
-
-static const char str_23[] = "FONTS - can't scroll a string in window %d, out of range./n";
 
 void font_window_enable(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
