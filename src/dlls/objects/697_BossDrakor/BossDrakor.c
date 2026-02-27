@@ -24,7 +24,7 @@ enum DrakorAnimStates {
 };
 
 typedef struct {
-/*0*/ s16 unk0;
+/*0*/ u16 unk0;
 /*2*/ s16 unk2; // rate of yaw spin in logic state 0
 /*4*/ u16 unk4; // dist to target?
 /*6*/ u16 animIndex; // not a mod anim index, index into below anim related statics
