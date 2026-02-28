@@ -16,10 +16,10 @@ typedef struct {
     f32 unkC;
     s16 unk10;
     s16 unk12;
-}DLL260_Setup;
+}DLL260_Data;
 
 void dll_260_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    DLL260_Setup* objdata; 
+    DLL260_Data* objdata; 
 
     objdata = self->data;
     objdata->unk0 = rand_next(-0x8000, 0x7FFF);
@@ -32,7 +32,7 @@ void dll_260_setup(Object* self, ObjSetup* setup, s32 arg2) {
     self->opacity = 0xFF;
     func_800267A4(self);
     if (self->shadow != NULL) {
-        self->shadow->flags |= 0x810;
+        self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
         self->shadow->maxDistScale = self->shadow->scale * 2.5f;
     }
 }
@@ -45,7 +45,7 @@ void dll_260_func_13C(Object* arg0) {
 
     i = 6;
     while (i--) {
-        setup = obj_alloc_create_info(0x24, 0x482);
+        setup = obj_alloc_create_info(0x24, OBJ_PollenFragment);
         setup->x = arg0->srt.transl.x;
         setup->y = arg0->srt.transl.y;
         setup->z = arg0->srt.transl.z;
@@ -53,7 +53,7 @@ void dll_260_func_13C(Object* arg0) {
         setup->byte5 = 1;
         setup->byte6 = 0xFF;
         setup->fadeDistance = 0xFF;
-        temp_v0_3 = obj_create(setup, 5U, -1, -1, NULL);
+        temp_v0_3 = obj_create(setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
         if (temp_v0_3 != NULL) {
             temp_v0_3->srt.pitch = 0;
             temp_v0_3->srt.yaw = 0;

@@ -56,7 +56,7 @@ void dll_499_control(Object* self) {
         }
         return;
     }
-    objList = obj_get_all_of_type(0x3E, &numObjs);
+    objList = obj_get_all_of_type(OBJTYPE_62, &numObjs);
     setup = (UnkObjType3E_Setup*)self->setup;
     for (i = 0; i < numObjs; i++) {
         if (self != objList[i]) {

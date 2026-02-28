@@ -53,7 +53,7 @@ void dll_716_control(Object* self) {
             if (vec3_distance_squared(&get_player()-> positionMirror, &objdata->unk38->pos) <= SQ(setup->unk18)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
                 if (gDLL_1_UI->vtbl->func_DF4(1) != 0) {
-                    main_set_bits(0x46E, (u32) setup->unk1A);
+                    main_set_bits(BIT_Kyte_Flight_Curve, (u32) setup->unk1A);
                 }
             }
         }

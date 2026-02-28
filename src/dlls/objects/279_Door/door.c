@@ -40,13 +40,13 @@ void dll_279_control(Object* self) {
         self->srt.transl.f[1] = setup->base.y;
         self->srt.transl.f[2] = setup->base.z;
         self->srt.yaw = setup->unk18 << 8;
-        if (temp_v1 == 0x13E) {
+        if (temp_v1 == OBJ_WL_Door1) {
             if (main_get_bits(objdata->unkC) != 0) {
                 gDLL_3_Animation->vtbl->func20(self, 0x82);
                 objdata->unk19 = 1;
             }
             gDLL_3_Animation->vtbl->func17(0, self, -1);
-        } else if (temp_v1 == 0x151) {
+        } else if (temp_v1 == OBJ_WL_WarpDoor) {
             if (main_get_bits(objdata->unkC) != 0) {
                 gDLL_3_Animation->vtbl->func20(self, 0x75);
                 objdata->unk19 = 1;

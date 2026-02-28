@@ -31,7 +31,7 @@ void dll_796_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
     self->animCallback = dll_796_func_1E8;
     sp27 = main_demo_state();
-    gDLL_29_Gplay->vtbl->set_obj_group_status(5, sp27 & 0xFF, 1);
+    gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_ROLLING_DEMO, sp27 & 0xFF, 1);
     main_set_bits(_data_0[sp27], 1U);
 }
 
