@@ -199,6 +199,7 @@ enum SoundID {
     SOUND_406 = 0x406,
     SOUND_407 = 0x407,
 
+    SOUND_43C_Target_Highlighted = 0x43C, // camera DLL [Interaction Arrow]
     SOUND_43D_Transporter_Fire = 0x43D,
 
     SOUND_WM_Sun_Whoosh = 0x487, //used by WMsun
@@ -283,6 +284,8 @@ enum SoundID {
 
     SOUND_6E2 = 0x6E2, // used by KT_RexFloorSwitch
 
+    SOUND_6E6_Interaction_Refused = 0x6E6, // camera DLL
+
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
 
     SOUND_6F9_Explosion = 0x6F9, // used by KT_Rex
@@ -294,6 +297,9 @@ enum SoundID {
 
     SOUND_700_Krystal_Ugh = 0x700,      //player hurt sfx
     SOUND_701_Sabre_Ugh_EMPTY = 0x701,  //NOTE: seems to be empty, but intended as Sabre's counterpart to 0x700
+
+    SOUND_72D_Lock_On = 0x72D,          //Z-targetting
+    SOUND_72E_Lock_Disengage = 0x72E,   //Z-targetting
 
     SOUND_72F_Harsh_Magical_Thrum_Loop = 0x72F, // used in DLL 475 GPSH_flybaddie
     SOUND_730_Electrified_Blast = 0x730, // used in DLL 475 GPSH_flybaddie

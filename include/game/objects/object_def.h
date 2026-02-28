@@ -234,8 +234,7 @@ typedef struct {
 /*9d*/ u8 unk9d; // camera-related angle?
 /*9e*/ u8 _unk9e[2];
 /*a0*/ s16 unka0;
-/*a2*/ s16 gametextIndex; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
-/*a4*/ u8 _unka4[0xAA - 0xA4];
+/*a2*/ s16 gametextIndex[4]; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
 /*aa*/ s16 unkAA;
 } ObjDef;
 

@@ -216,7 +216,7 @@ typedef struct {
 /*0000*/    u8 unk0; //arrow interact radius (can press A)
 /*0001*/    u8 unk1; //lock-on exit radius
 /*0002*/    u8 unk2; //arrow highlight radius (greyed out)
-/*0003*/    u8 unk3; //interaction height (cylinder height for arrow visibility zone)
+/*0003*/    u8 unk3; //angular range of interaction
 /*0004*/    u8 colourIndex; //InteractionArrowColour for arrow
 } ObjectStruct78;
 
