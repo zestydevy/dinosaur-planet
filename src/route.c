@@ -416,16 +416,16 @@ s32 route_is_goal(Route* route, RoutePoint* point) {
             if (route->routePoints[point->prevPointIdx].curve) {}
 
             temp_a1 = route->routePoints[point->prevPointIdx].curve;
-            if (point->curve->uID == temp_a1->unk1C[0]) {
+            if (point->curve->uID == (u32)temp_a1->unk1C[0]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk4;
             }
-            if (point->curve->uID == temp_a1->unk1C[1]) {
+            if (point->curve->uID == (u32)temp_a1->unk1C[1]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk5;
             }
-            if (point->curve->uID == temp_a1->unk1C[2]) {
+            if (point->curve->uID == (u32)temp_a1->unk1C[2]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk6;
             }
-            if (point->curve->uID == temp_a1->unk1C[3]) {
+            if (point->curve->uID == (u32)temp_a1->unk1C[3]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk7;
             }
 

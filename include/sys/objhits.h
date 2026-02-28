@@ -22,7 +22,7 @@ typedef struct Unk80027934 {
     f32 unk40[4];
     s8 unk50[4];
     s8 unk54[4];
-    s32 unk58[4];
+    Object* unk58[4];
     s16 unk68;
 } Unk80027934;
 
