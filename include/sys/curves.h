@@ -32,7 +32,7 @@ typedef struct {
 	} base_type22;
 };
 /*08*/ Vec3f pos;
-/*14*/ s32 uID;
+/*14*/ u32 uID;
 /*18*/ s8 unk18;
 /*19*/ s8 unk19; // curveType?  2) KTrex, 3) RedEye, 1A) camera?, 1B) camera?, 1D) ThornTail, 1F) crawlSpace, 22) Kyte, 24) Tricky
 /*1A*/ s8 unk1A;

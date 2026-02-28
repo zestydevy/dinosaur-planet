@@ -11,6 +11,7 @@
 #include "dll.h"
 #include "constants.h"
 #include "libc/string.h"
+#include "macros.h"
 
 /* 0x0 */ static const char errorMsg[] = "Error in isPointWithinPatchGroup\n";
 
@@ -123,7 +124,7 @@ void dll_25_func_D8(void)
                     {
                         for (var_s0 = 0; var_s0 < 4; var_s0++)
                         {
-                            if (temp_s4->uID == temp_v0_2->unk1C[var_s0])
+                            if ((s32)temp_s4->uID == temp_v0_2->unk1C[var_s0])
                             {
                                 break;
                             }
@@ -485,7 +486,7 @@ s32 dll_25_func_16D4(Vec3f *arg0, Vec3f *arg1, s32 arg2)
     u8 i;
     f32 tempDistance;
     s32 pad;
-
+    PRAGMA_IGNORE_PUSH("-Wtype-limits");
     for (i = 0; i < 256; i++) // @bug: This condition is always true!
     {
         if (arg2 == _bss_E0[i].unk1C)
@@ -493,6 +494,7 @@ s32 dll_25_func_16D4(Vec3f *arg0, Vec3f *arg1, s32 arg2)
             break;
         }
     }
+    PRAGMA_IGNORE_POP()
     arg1->x = _bss_E0[i].unk1E;
     arg1->y = arg0->y;
     arg1->z = _bss_E0[i].unk20;

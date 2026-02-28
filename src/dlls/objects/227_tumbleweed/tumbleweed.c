@@ -364,7 +364,7 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objData) {
 
     samples = NULL;
     minimum = 10000.0f;
-    sampleCount = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &samples, 0, 0);
+    sampleCount = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, (Func_80057F1C_Struct***) &samples, 0, 0);
 
     for (i = 0, minimumIndex = 0; i < sampleCount; i++){
         sampleValue = self->srt.transl.y - *samples[i];

@@ -781,7 +781,7 @@ void BaddieControl_func_1FAC(Object* arg0, Baddie* arg1, s32 arg2, s32 arg3, s32
 
 // offset: 0x2000 | func: 18 | export: 21
 void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7) {
-    s32 sp4C[] = {{ 0x2 }};
+    s32 sp4C[] = { 0x2 };
     u8 sp4B;
     u8 hitpoints;
     s32 sp3C;

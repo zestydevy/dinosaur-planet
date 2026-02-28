@@ -8,6 +8,7 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
+#include "sys/objhits.h"
 #include "functions.h"
 #include "types.h"
 

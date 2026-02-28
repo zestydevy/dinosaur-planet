@@ -1232,7 +1232,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         sp7C = 0;
         gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_25B_Magic_Attack_Deflected, MAX_VOLUME, NULL, NULL, 0, NULL);
         new_var3 = arg0->modelInsts[arg0->modelInstIdx];
-        temp = new_var3->unk24;
+        temp = (MtxF *)new_var3->unk24;
         sp48.transl.x = temp->m[sp80][1] + gWorldX;
         sp48.transl.y = temp->m[sp80][2];
         sp48.transl.z = temp->m[sp80][3] + gWorldZ;
@@ -1247,7 +1247,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         sp48.pitch = 0;
         sp48.roll = 0;
         sp48.scale = 1.0f;
-        if (&sp70) {} // @fake
+        if ((s32)&sp70) {} // @fake
         sp70->vtbl->func0(arg0, 0, &sp48, 1, -1, &sp60);
         if (sp70 != NULL) {
             dll_unload(sp70);
@@ -2719,21 +2719,21 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
 
 // offset: 0x7180 | func: 34
 void dll_210_func_7180(Object* player, Player_Data* arg1, f32 updateRate) {
-    s32* sp2C;
-    s32* temp_v0;
+    TextureAnimator* animator;
+    TextureAnimator* animator2;
 
     func_800328F0(player, &arg1->unk354, arg1->unk0.unk278);
     if (arg1->stats->health > 0) {
         func_80032A08(player, &arg1->unk354);
         return;
     }
-    sp2C = func_800348A0(player, 5, 0);
-    temp_v0 = func_800348A0(player, 4, 0);
-    if (sp2C != NULL) {
-        *sp2C = 0x200;
+    animator = func_800348A0(player, 5, 0);
+    animator2 = func_800348A0(player, 4, 0);
+    if (animator != NULL) {
+        animator->frame = 0x200;
     }
-    if (temp_v0 != NULL) {
-        *temp_v0 = 0x200;
+    if (animator2 != NULL) {
+        animator2->frame = 0x200;
     }
 }
 
@@ -2971,7 +2971,7 @@ static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, UnkArg
 }
 
 // offset: 0x7BC4 | func: 42
-static s32 dll_210_func_7BC4(Object* player, Player_Data* arg1, u32* arg2, UnkArg4* arg3) {
+static s32 dll_210_func_7BC4(Object* player, Player_Data* arg1, UNUSED Player_Data3B4* arg2, UnkArg4* arg3) {
     Object* temp_a0;
     s32 var_v1;
     s32 temp;
@@ -4374,7 +4374,7 @@ s32 dll_210_func_B864(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     Player_Data *v1objdata = player->data;
     Player_Data* spC4;
-    u32 sp90[12];
+    u32 sp90[12]; // Should be Player_Data3B4 but I can't get it to match with that.
     s8 temp_v0_4;
     s8 sp8E;
     s16 sp8C;
@@ -4382,7 +4382,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     Object* temp_v0_5;
     f32 sp80 = 200.0f;
     s32 temp_v0;
-    u32 sp38[17] = {
+    s32 sp38[17] = {
         0x0166, 0x0167, 0x0256, 0x036e, 0x037f, 0x0380, 0x0381, 0x0543, 
         0x0544, 0x0545, 0x0546, 0x012e, 0x0169, 0x01d0, 0x01d6, 0x01ed, 
         0x01fd
@@ -4410,7 +4410,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0;
     }
 
-    temp_v0_4 = dll_210_func_7E6C(player, v1objdata, fsa, sp90, arg2, -0x81);
+    temp_v0_4 = dll_210_func_7E6C(player, v1objdata, fsa, (Player_Data3B4 *) sp90, arg2, -0x81);
     if (temp_v0_4 == -1) {
         v1objdata->unk8B5 = -1;
         v1objdata->unk8B6 = 0U;
@@ -4463,7 +4463,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0x23;
     case 7:
         _bss_200 = -1;
-        if (dll_210_func_7BC4(player, v1objdata, sp90, &v1objdata->unk6B0) == 1) {
+        if (dll_210_func_7BC4(player, v1objdata, (Player_Data3B4 *) sp90, &v1objdata->unk6B0) == 1) {
             return -0x2C;
         }
         break;
@@ -7631,7 +7631,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     }
 
     if (sp58 != NULL) {
-        temp_v1 = ((DLL_Unknown *)sp58->dll)->vtbl->func[7].withFiveArgsS32(sp58, player, (s8) objdata->unk680.unk2C, &sp60, &sp5C);
+        temp_v1 = ((DLL_Unknown *)sp58->dll)->vtbl->func[7].withFiveArgsCustom3(sp58, player, (s8) objdata->unk680.unk2C, &sp60, &sp5C);
         if (temp_v1 == 1) {
             player->srt.transl.f[0] = sp58->srt.transl.f[0] + sp60;
             player->srt.transl.f[2] = sp58->srt.transl.f[2] + sp5C;
@@ -8454,7 +8454,7 @@ static void dll_210_func_18DB0(Object* player, ObjFSA_Data* fsa) {
 
     temp_a2 = player->linkedObject;
     if (temp_a2->group == 0x30) {
-        ((DLL_Unknown *)temp_a2->dll)->vtbl->func[12].withTwoArgs(temp_a2, 0);
+        ((DLL_Unknown *)temp_a2->dll)->vtbl->func[12].withTwoArgsCustom(temp_a2, 0);
     }
 }
 
@@ -10262,20 +10262,20 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
     s32 i;
     s32 counter;
     s32 var_v1;
-    s32* result;
-    s32* var_s1;
+    TextureAnimator* result;
+    TextureAnimator* var_s1;
 
     counter = 0;
     var_s1 = NULL;
     if (arg1->unk8BF == 1) {
         for (i = 6; i < 0xF; i++) {
             result = func_800348A0(player, i, 0);
-            if (var_s1 == NULL || *var_s1 >= _data_7C8[i - 6]) {
-                var_v1 = *result + (_data_7D4[i - 6] * arg2);
+            if (var_s1 == NULL || var_s1->frame >= _data_7C8[i - 6]) {
+                var_v1 = result->frame + (_data_7D4[i - 6] * arg2);
                 if (var_v1 > 0xFF) {
                     var_v1 = 0xFF;
                 }
-                *result = var_v1;
+                result->frame = var_v1;
             }
             var_s1 = result;
         }
@@ -10285,12 +10285,12 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
     if (arg1->unk8BF == -1) {
         for (i = 6; i < 0xF; i++) {
             result = func_800348A0(player, i, 0);
-            if (var_s1 == NULL || _data_7C8[i - 6] >= *var_s1) {
-                var_v1 = *result - (_data_7D4[i - 6] * arg2);
+            if (var_s1 == NULL || _data_7C8[i - 6] >= var_s1->frame) {
+                var_v1 = result->frame - (_data_7D4[i - 6] * arg2);
                 if (var_v1 <= 0) {
                     var_v1 = 0;
                 }
-                *result = var_v1;
+                result->frame = var_v1;
                 if (var_v1 != 0) {
                     counter++;
                 }
