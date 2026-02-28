@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_260_ctor = 0x0;
+dll_260_dtor = 0xC;
+dll_260_setup = 0x18;
+dll_260_func_13C = 0x13C;
+dll_260_control = 0x2A4;
+dll_260_update = 0x5C0;
+dll_260_print = 0x634;
+dll_260_free = 0x688;
+dll_260_get_model_flags = 0x6C8;
+dll_260_get_data_size = 0x6D8;
+
+.rodata = 0x76C:

@@ -113,6 +113,7 @@ enum DLL_ID {
     DLL_ID_MODGFX_BASE = 0x1000,
     DLL_ID_106 = 0x1002,
     DLL_ID_107 = 0x1003,
+    DLL_ID_121 = 0x1011,
     DLL_ID_122 = 0x1012,
     DLL_ID_129 = 0x1019,
     DLL_ID_130 = 0x101A,

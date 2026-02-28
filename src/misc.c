@@ -38,23 +38,23 @@ u16 gFootstepSfxBank2[36] = {
     0, 0, 0, 0
 };
 u16 gFootstepSfxBank3[36] = {
-    SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
-    SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
-    SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
-    SOUND_65, SOUND_66, SOUND_368, SOUND_369, 
+    SOUND_61_Footstep, SOUND_62_Footstep, SOUND_61_Footstep, SOUND_62_Footstep, 
+    SOUND_61_Footstep, SOUND_62_Footstep, SOUND_61_Footstep, SOUND_62_Footstep, 
+    SOUND_61_Footstep, SOUND_62_Footstep, SOUND_61_Footstep, SOUND_62_Footstep, 
+    SOUND_65_Footstep, SOUND_66_Footstep, SOUND_368, SOUND_369, 
     SOUND_27C, SOUND_27D, SOUND_27C, SOUND_27D, 
-    SOUND_6D, SOUND_6E, SOUND_6D, SOUND_6E, 
+    SOUND_6D_Water_Footstep, SOUND_6E_Water_Footstep, SOUND_6D_Water_Footstep, SOUND_6E_Water_Footstep, 
     SOUND_280, SOUND_281, SOUND_280, SOUND_281, 
     SOUND_406, SOUND_404, SOUND_406, SOUND_404, 
     0, SOUND_88D, 0, SOUND_88D
 };
 u16 gFootstepSfxBank4[36] = {
-    SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
-    SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
-    SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
-    SOUND_67, SOUND_68, SOUND_36A, SOUND_36B, 
+    SOUND_63_Footstep, SOUND_64_Footstep, SOUND_63_Footstep, SOUND_64_Footstep, 
+    SOUND_63_Footstep, SOUND_64_Footstep, SOUND_63_Footstep, SOUND_64_Footstep, 
+    SOUND_63_Footstep, SOUND_64_Footstep, SOUND_63_Footstep, SOUND_64_Footstep, 
+    SOUND_67_Footstep, SOUND_68_Footstep, SOUND_36A, SOUND_36B, 
     SOUND_27E, SOUND_27F, SOUND_27E, SOUND_27F, 
-    SOUND_6F, SOUND_70, SOUND_6F, SOUND_70, 
+    SOUND_6F_Water_Footstep, SOUND_70_Water_Footstep, SOUND_6F_Water_Footstep, SOUND_70_Water_Footstep, 
     SOUND_282, SOUND_283, SOUND_282, SOUND_283, 
     SOUND_407, SOUND_402, SOUND_407, SOUND_402, 
     0, SOUND_88D, 0, SOUND_88D

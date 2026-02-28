@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_499_ctor = 0x0;
+dll_499_dtor = 0xC;
+dll_499_setup = 0x18;
+dll_499_control = 0x74;
+dll_499_update = 0x21C;
+dll_499_print = 0x228;
+dll_499_free = 0x240;
+dll_499_get_model_flags = 0x280;
+dll_499_get_data_size = 0x290;
+
+.rodata = 0x2F0:

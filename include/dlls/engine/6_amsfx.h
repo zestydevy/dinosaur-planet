@@ -20,44 +20,116 @@ typedef struct {
 } SoundDef;
 
 enum SoundID {
-    SOUND_15_Heavy_Stone_Moving = 0x15, // used by door to Randorn's hall
+    //0x02 loops
+    //0x03 loops
+    //0x04 loops
+    //0x05 loops
+    //0x06 loops
+    SOUND_7 = 0x07,                        //Some wood cracking followed by water splashing?
+    SOUND_8_Shivering = 0x08,              //Shivering Cold or Scared 
 
-    SOUND_Sabre_Heel = 0x20,            //"*whistle* Here boy!"
-    SOUND_Sabre_Find = 0x21,            //"Seek it out!"
-    SOUND_Sabre_Flame = 0x22,           //"Chase!"
-    SOUND_Sabre_Distract = 0x23,        //"Distract 'em!"
-    SOUND_Sabre_Guard = 0x24,           //"Look after it!"
-    SOUND_Sabre_Fetch = 0x25,           //"Fetch!" (play command) 
+    SOUND_0D_Keep_Quiet = 0x0D,            //"Shh, keep quiet!" (SHW intro)
+    SOUND_0E_Sneak_By = 0x0E,              //"He's on his own! Maybe we can sneak by."
 
-    SOUND_40 = 0x40,
-    SOUND_41 = 0x41,
-    SOUND_42 = 0x42,
-    SOUND_43 = 0x43,
-    SOUND_44 = 0x44,
-    SOUND_45 = 0x45,
+    SOUND_10 = 0x10,            
+    SOUND_11 = 0x11,      
 
-    SOUND_61 = 0x61,
-    SOUND_62 = 0x62,
-    SOUND_63 = 0x63,
-    SOUND_64 = 0x64,
-    SOUND_65 = 0x65,
-    SOUND_66 = 0x66,
-    SOUND_67 = 0x67,
-    SOUND_68 = 0x68,
+    SOUND_15_Heavy_Stone_Moving = 0x15,    // used by door to Randorn's hall
 
-    SOUND_6D = 0x6D,
-    SOUND_6E = 0x6E,
-    SOUND_6F = 0x6F,
-    SOUND_70 = 0x70,
+    SOUND_1A = 0x1A,        
+    SOUND_1B = 0x1B,     
+    SOUND_1C = 0x1C,          
 
-    SOUND_73_Thunder = 0x73,
+    SOUND_20_Sabre_Heel = 0x20,            //"*whistle* Here boy!"
+    SOUND_21_Sabre_Find = 0x21,            //"Seek it out!"
+    SOUND_22_Sabre_Flame = 0x22,           //"Chase!"
+    SOUND_23_Sabre_Distract = 0x23,        //"Distract 'em!"
+    SOUND_24_Sabre_Guard = 0x24,           //"Look after it!"
+    SOUND_25_Sabre_Fetch = 0x25,           //"Fetch!" (play command) 
 
-    SOUND_86 = 0x86,
-    SOUND_87 = 0x87,
-    SOUND_88 = 0x88,
-    SOUND_89 = 0x89,
-    SOUND_8A = 0x8A,
-    SOUND_8B = 0x8B,
+    SOUND_27 = 0x27,      
+
+    SOUND_32_Sniff = 0x32,                 //(?) Tricky sniff while using Find? 
+    
+    SOUND_34_Tricky_Low_Growl = 0x34,      //Tricky growl, don't hit him!
+    SOUND_35_Tricky_Growl = 0x35,          //Tricky growl, stop hitting him!
+    SOUND_36_Tricky_Aggro = 0x36,          //Tricky growl, now you've done it...
+    SOUND_37_Tricky_Snarl = 0x37,          //Tricky RRow!!!! He's going to bite you
+    SOUND_38_Tricky_Quick_Snarl = 0x38,    //Tricky quick RRow!! why does he have so many mad sounds ??
+    SOUND_39_Tricky_Slow_Snarl = 0x39,     //Tricky low & slow, starting to think he's all talk
+    SOUND_3A_Tricky_Quick_Whimper = 0x3A,  //Tricky whimper fast
+    SOUND_3B_Tricky_Whimper = 0x3B,        //Tricky whimper
+    SOUND_3C_Tricky_Cry = 0x3C,            //Tricky Cry
+    SOUND_3D_Tricky_Long_Cry = 0x3D,       //Tricky Cry  a lot
+    SOUND_3E_Tricky_Whine = 0x3E,          //Tricky dog-like whine
+    SOUND_3F_Tricky_Roar = 0x3F,           //Tricky failed wimpy roar       
+    SOUND_40 = 0x40,               
+    SOUND_41 = 0x41,              
+    SOUND_42 = 0x42,                   
+    SOUND_43 = 0x43,                   
+    SOUND_44 = 0x44,                       //very gentle water splash?
+    SOUND_45 = 0x45,                       //very gentle water splash?
+    SOUND_46_Bark = 0x46,                  //high pitched bark
+    SOUND_47_Shuffling_Loop = 0x47,        //quick, light shuffling sound
+    SOUND_48_Dig_Loop = 0x48,              //Tricky digging sound looped
+    SOUND_49 = 0x49,                   //silent
+    SOUND_4A_Tricky_Snarl = 0x4A,          //Tricky RRow!!!! He's going to bite you 
+    SOUND_4B_Tricky_Quick_Snarl = 0x4B,    //Tricky quick RRow!! why does he have so many mad sounds ??
+    SOUND_4C_Tricky_Growl = 0x4C,          //Tricky growl, stop hitting him!
+    SOUND_4D_Tricky_Growl = 0x4D,          //same sound as above?
+    SOUND_4E_Tricky_Slow_Snarl = 0x4E,     //Tricky low & slow, starting to think he's all talk
+    SOUND_4F_Bassy_Pulse_Loop = 0X4F,      //wWwWwWwWwWwWwWwWwWwWwWwWwWw
+
+    SOUND_58_Water_Splash = 0x58,          //Water Splash
+    SOUND_59_Rattling = 0x59,              //sounds like 0x08 but higher pitch kinda
+    SOUND_5A = 0X5A,                       //some worm roar
+    SOUND_5B = 0X5B,                       //some worm roar
+    SOUND_5C = 0X5C,                       //
+    SOUND_5D = 0x5D,                       //
+    SOUND_5E_Bubbling = 0x5E,              //does not loop
+    SOUND_5F = 0X5F,                       //distant and long roar
+    SOUND_60 = 0X60,                       //some kind of creature bellowing?
+    SOUND_61_Footstep = 0x61,              //Normal footstep
+    SOUND_62_Footstep = 0x62,              //Normal footstep
+    SOUND_63_Footstep = 0x63,              //Normal footstep
+    SOUND_64_Footstep = 0x64,              //Normal footstep
+    SOUND_65_Footstep = 0x65,              //Crunchy footstep
+    SOUND_66_Footstep = 0x66,              //Crunchy footstep
+    SOUND_67_Footstep = 0x67,              //Crunchy footstep
+    SOUND_68_Footstep = 0x68,              //Crunchy footstep
+    SOUND_69_Creaky_Step = 0x69,           //Creaky footstep
+    SOUND_6A_Creaky_Step = 0x6A,           //Creaky footstep
+    SOUND_6B_Creaky_Step = 0x6B,           //Creaky footstep
+    SOUND_6C_Creaky_Step = 0x6C,           //Creaky footstep
+    SOUND_6D_Water_Footstep = 0x6D,        //Soggy footstep
+    SOUND_6E_Water_Footstep = 0x6E,        //Soggy footstep
+    SOUND_6F_Water_Footstep = 0x6F,        //Soggy footstep
+    SOUND_70_Water_Footstep = 0x70,        //Soggy footstep
+    SOUND_71_Water_Move = 0x71,            //Water is moved 
+    SOUND_72_Water_Wave = 0x72,            //Water is moved So hard it makes a wave
+    SOUND_73_Thunder = 0x73,               //
+    SOUND_74_Windy_Loop = 0x74,            //I am blown away
+    SOUND_75 = 0x75,                       //sounds like a quick splash
+    SOUND_76 = 0X76,                       //
+    SOUND_77_Chime_Loop = 0x77,            //The ice cream truck is here!
+    
+    SOUND_7C_CloudRunner_Hurt = 0x7C,      //during galleon fight
+    SOUND_7D_CloudRunner_Hurt = 0x7D,      //during galleon fight
+    SOUND_7E_Wooden_Creaking = 0x7E,       //galleon ambiance, i think?
+    SOUND_7F_Wooden_Creaking = 0x7F,       //galleon ambiance, i think?
+    SOUND_80 = 0x80,                       //some kind of Loud crash/cannot shot sound
+    SOUND_81_QEarthWalker_Thanks = 0x81,   //"Thank you, Fox"
+    SOUND_82_Bassy_Pulse_Loop = 0X82,      //wWwWwWwWwWwWwWwWwWwWwWwWwWw
+    SOUND_83_Snore = 0x83,                 //      
+    SOUND_84_Breathy_Snore = 0x84,         //
+    SOUND_85_Waking_Groan = 0x85,          //
+    SOUND_86 = 0x86,                       //step
+    SOUND_87 = 0x87,                       //step
+    SOUND_88 = 0x88,                       //step
+    SOUND_89 = 0x89,                       //step
+    SOUND_8A = 0x8A,                       //step
+    SOUND_8B = 0x8B,                       //step
+    SOUND_8C_Baby_CloudRunner = 0x8C,      //baby CloudRunner chirp
 
     SOUND_8E_Magic_Chime = 0x8E,  // used by collectable DLL
     SOUND_8F_Water_Paddle = 0x8F, // used by DFlog
@@ -66,16 +138,41 @@ enum SoundID {
 
     SOUND_9B_Transporter_Hiss = 0x9B,
 
-    SOUND_Krystal_Hurt_Agh = 0xD9,      //player hurt sfx
-    SOUND_Krystal_Hurt_Ough = 0xDA,     //player hurt sfx
+    SOUND_9D_Fire_Loop = 0x9D,          //10 HOURS of Relaxing Fireplace Sounds - Burning Fireplace & Crackling Fire Sounds
 
-    SOUND_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
-    SOUND_Krystal_Find = 0xEA,          //"Seek it out!"
-    SOUND_Krystal_Flame = 0xEB,         //"Fight!"
-    SOUND_Krystal_Distract = 0xEC,      //"Distract them!"
-    SOUND_Krystal_Guard = 0xED,         //"Look after it."
-    SOUND_Krystal_Fetch = 0xEE,         //"Go play!"
+    SOUND_A4_Blocked_Attack = 0xA4, 
 
+    SOUND_AB_Death_Chant = 0xAB,        //unused death chant (see hour footage)
+
+    SOUND_AF_Take_Out_Staff = 0xAF,
+    SOUND_B0_Put_Back_Staff = 0xB0,
+
+    SOUND_C8 = 0xC8,   
+    SOUND_C9 = 0xC9,    
+    SOUND_CA = 0xCA,    
+    SOUND_CB = 0xCB,        
+
+    SOUND_D9_Krystal_Hurt_Agh = 0xD9,      //player hurt sfx
+    SOUND_DA_Krystal_Hurt_Ough = 0xDA,     //player hurt sfx
+    SOUND_DB_Krystal_Hurt_Ack = 0xDB,      //player hurt sfx
+    SOUND_DC_Krystal_Hurt_Ogh = 0xDC,      //player hurt sfx
+    SOUND_DD_Krystal_Hurt_Augh = 0xDD,     //player hurt sfx
+    SOUND_DE_Krystal_Hurt_Ugh = 0xDE,      //player hurt sfx 
+
+    SOUND_E2_Krystal_Yuh = 0xE2,
+    SOUND_E3_Krystal_Yaahh = 0xE3,
+    SOUND_E4_Krystal_Yeah = 0xE4,
+
+    
+    SOUND_E9_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
+    SOUND_EA_Krystal_Find = 0xEA,          //"Seek it out!"
+    SOUND_EB_Krystal_Flame = 0xEB,         //"Fight!"
+    SOUND_EC_Krystal_Distract = 0xEC,      //"Distract them!"
+    SOUND_ED_Krystal_Guard = 0xED,         //"Look after it."
+    SOUND_EE_Krystal_Fetch = 0xEE,         //"Go play!"
+    
+    SOUND_F2_Garbled_Message = 0xF2,    //(sped up)I'veHadAGarbledMessageFromTheWizardSomethingAboutAFloatingMountainHiddenWithinAStorm
+   
     SOUND_10A_Galleon_Roar = 0x10A,
 
     SOUND_129_SnowHorn_Yawn_1 = 0x129,
@@ -155,6 +252,8 @@ enum SoundID {
     SOUND_2F9_Door_Closing = 0x2f9, // used by doors in Krazoa Shrines
 
     SOUND_304_Burning_Loop = 0x304, // flame blast
+
+    SOUND_336 = 0x336,
 
     SOUND_33E_Reverse_Magic_Hiss = 0x33E, //ECSHshrine (when cups rise)
     SOUND_33F_Cup_Slide_Loop = 0x33F, //ECSH_Cup
@@ -298,8 +397,8 @@ enum SoundID {
     SOUND_72F_Harsh_Magical_Thrum_Loop = 0x72F, // used in DLL 475 GPSH_flybaddie
     SOUND_730_Electrified_Blast = 0x730, // used in DLL 475 GPSH_flybaddie
 
-    SOUND_744 = 0x744, //used by SHbluemushroom
-    SOUND_745 = 0x745, //used by SHbluemushroom
+    SOUND_744 = 0x744, //used by SHmushroom
+    SOUND_745 = 0x745, //used by SHmushroom
 
     SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy = 0x74B,
 
@@ -451,6 +550,8 @@ enum SoundID {
     SOUND_B73_Option_Selected = 0xB73,
     SOUND_B74_Gentle_Magic_Loop = 0xB74,
     SOUND_B75_Water_Splash_Big = 0xB75, //Used by Balloon Baddie??
+
+    SOUND_B83 = 0xB83, //used by swarm_baddie
 
     SOUND_B89_Puzzle_Solved = 0xB89, // "puzzle complete" jingle
 
