@@ -368,7 +368,7 @@ u32 dll_295_get_data_size(Object *self, u32 a1) {
 s32 dll_295_func_DC0(Object* arg0, Object* arg1, SmallBasket_Data* arg2) {
     s32 var_v1;
 
-    gDLL_2_Camera->vtbl->func14();
+    gDLL_2_Camera->vtbl->get_target_object();
     var_v1 = 0;
     if ((arg0->unkAF & 1) && (arg0->unkE0 == 0)) {
         joy_set_button_mask(0, 0x8000U);

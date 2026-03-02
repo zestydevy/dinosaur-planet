@@ -553,35 +553,35 @@ void func_80036438(Object* arg0) {
             temp_fs0 = sp11C[i].unk00 * 2;
             temp_fs1 = sp11C[i].unk02 * 2;
             temp_fs2 = sp11C[i].unk04 * 2;
-            if (sp11C->unk10 & 0x10) {
-                vec3_transform(temp_s4, 0.0f, 0.0f, 0.0f, &sp118[i].unk0.f[0], &sp118[i].unk0.f[1], &sp118[i].unk0.f[2]);
-                sp118[i].unkC.f[0] += temp_fs0;
-                sp118[i].unkC.f[1] += temp_fs1;
-                sp118[i].unkC.f[2] += temp_fs2;
+            if (sp11C->flags & 0x10) {
+                vec3_transform(temp_s4, 0.0f, 0.0f, 0.0f, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
+                sp118[i].refPoint.f[0] += temp_fs0;
+                sp118[i].refPoint.f[1] += temp_fs1;
+                sp118[i].refPoint.f[2] += temp_fs2;
             } else {
-                vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unk0.f[0], &sp118[i].unk0.f[1], &sp118[i].unk0.f[2]);
+                vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
             }
             if (arg0->parent == NULL) {
-                sp118[i].unk0.f[0] += gWorldX;
-                sp118[i].unk0.f[2] += gWorldZ;
+                sp118[i].drawPoint.f[0] += gWorldX;
+                sp118[i].drawPoint.f[2] += gWorldZ;
             } else {
-                transform_point_by_object_matrix(&sp118[i].unk0, &sp118[i].unk0, arg0->parent->matrixIdx);
+                transform_point_by_object_matrix(&sp118[i].drawPoint, &sp118[i].drawPoint, arg0->parent->matrixIdx);
             }
             temp_fs0 = sp11C[i].unk06 * 2;
             temp_fs1 = sp11C[i].unk08 * 2;
             temp_fs2 = sp11C[i].unk0a * 2;
-            vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unkC.f[0], &sp118[i].unkC.f[1], &sp118[i].unkC.f[2]);
+            vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
             if (arg0->parent == NULL) {
-                sp118[i].unkC.f[0] += gWorldX;
-                sp118[i].unkC.f[2] += gWorldZ;
+                sp118[i].refPoint.f[0] += gWorldX;
+                sp118[i].refPoint.f[2] += gWorldZ;
             } else {
-                transform_point_by_object_matrix(&sp118[i].unkC, &sp118[i].unkC, arg0->parent->matrixIdx);
+                transform_point_by_object_matrix(&sp118[i].refPoint, &sp118[i].refPoint, arg0->parent->matrixIdx);
             }
         } else {
             spA8.transl.f[0] = arg0->positionMirror.f[0];
             spA8.transl.f[1] = arg0->positionMirror.f[1];
             spA8.transl.f[2] = arg0->positionMirror.f[2];
-            if (sp11C->unk10 & 0x10) {
+            if (sp11C->flags & 0x10) {
                 spA8.yaw = 0;
                 spA8.pitch = 0;
                 spA8.roll = 0;
@@ -595,11 +595,11 @@ void func_80036438(Object* arg0) {
             temp_fs0 = sp11C[i].unk00 * 2;
             temp_fs1 = sp11C[i].unk02 * 2;
             temp_fs2 = sp11C[i].unk04 * 2;
-            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unk0.f[0], &sp118[i].unk0.f[1], &sp118[i].unk0.f[2]);
+            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
             temp_fs0 = sp11C[i].unk06 * 2;
             temp_fs1 = sp11C[i].unk08 * 2;
             temp_fs2 = sp11C[i].unk0a * 2;
-            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unkC.f[0], &sp118[i].unkC.f[1], &sp118[i].unkC.f[2]);
+            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
         }
     }
 }

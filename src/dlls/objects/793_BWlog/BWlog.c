@@ -340,11 +340,11 @@ void dll_793_func_D18(Object *self, s32 a1) {
     if (a1 != 0) {
         obj_clear_map_id(self);
         ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
-        gDLL_2_Camera->vtbl->func8(0, 0x2B);
+        gDLL_2_Camera->vtbl->change_mode(0, 0x2B);
     } else {
         obj_infer_map_id(self);
         ((DLL_210_Player*)player->dll)->vtbl->func29(player, 1);
-        gDLL_2_Camera->vtbl->func8(0, 1);
+        gDLL_2_Camera->vtbl->change_mode(0, 1);
     }
 
     objdata->unk32E = a1;

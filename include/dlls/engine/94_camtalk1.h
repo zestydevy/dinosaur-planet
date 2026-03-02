@@ -5,6 +5,7 @@
 #include "types.h"
 #include "game/objects/object.h"
 #include "sys/camera.h"
+#include "dlls/engine/2_camcontrol.h"
 
 typedef struct {
 /*0000*/    Camera camera;
@@ -36,7 +37,7 @@ DLL_INTERFACE(DLL_94_camtalk1) {
 /*0*/ void (*func0)(TalkCamera* camA, UNK_TYPE_32 unused, TalkCamera* camB);
 /*1*/ void (*func1)(UNK_TYPE_32 arg0);
 /*2*/ void (*func2)(UNK_TYPE_32 arg0);
-/*3*/ void (*func3)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1);
+/*3*/ void (*func3)(CameraAction* camAction, s32 arg1);
 };
 
 #endif //_DLLS_94_H

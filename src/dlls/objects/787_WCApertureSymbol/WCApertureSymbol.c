@@ -1,5 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/objects/object.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
@@ -73,7 +74,7 @@ void dll_787_control(Object *self) {
     case 0:
         break;
     case 1:
-        if (gDLL_2_Camera->vtbl->func3() == 0x56) {
+        if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM1STPERSON) {
             if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21) && (vec3_distance(&player->positionMirror, &self->positionMirror) < 200.0f)) {
                 gDLL_7_Newday->vtbl->func4(&sp48);
                 if (setup->unk19 == 0) {
@@ -84,7 +85,7 @@ void dll_787_control(Object *self) {
                 if (setup->unk1A < (s32) self->opacity) {
                     main_set_bits(setup->unk1E, 1);
                     objdata->state = 2;
-                    objdata->targetOpacity = 0xFF;
+                    objdata->targetOpacity = OBJECT_OPACITY_MAX;
                 }
             }
         }
