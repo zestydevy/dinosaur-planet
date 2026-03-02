@@ -15,7 +15,7 @@ typedef enum {
     ARROW_11 = 11
 } InteractionArrowColour;
 
-/** For use with Object->unkAF */
+/** For use with Object->unkAF, and OBJ_LockIcon (DLL 2) */
 typedef enum {
     ARROW_FLAG_None = 0,
     ARROW_FLAG_1_Interacted = 1,            //set for 1 tick when player presses A
