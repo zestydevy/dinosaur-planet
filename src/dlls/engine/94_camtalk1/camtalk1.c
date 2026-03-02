@@ -1,31 +1,31 @@
-#include "dlls/engine/94_camtalk1.h"
-
 #include "dlls/engine/2_camcontrol.h"
+#include "dlls/engine/94_camtalk1.h"
+#include "unktypes.h"
 
 // offset: 0x0 | ctor
-void dll_94_ctor(s32 arg0) { }
+void camtalk1_ctor(s32 arg0) { }
 
 // offset: 0xC | dtor
-void dll_94_dtor(s32 arg0) { }
+void camtalk1_dtor(s32 arg0) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_94_func_18(TalkCamera* camA, UNK_TYPE_32 unused, TalkCamera* camB) {
-    if (camB != NULL) {
-        camA->camera.srt.transl.x = camB->camera.srt.transl.x;
-        camA->camera.srt.transl.y = camB->camera.srt.transl.y;
-        camA->camera.srt.transl.z = camB->camera.srt.transl.z;
-        camA->camera.srt.yaw = camB->camera.srt.yaw;
-        camA->camera.srt.pitch = camB->camera.srt.pitch;
-        camA->camera.srt.roll = camB->camera.srt.roll;
-        camA->fov = camB->fov;
+void camtalk1_setup(CamControl_Data* camData, UNK_TYPE_32 unused, CamControl_Data* arg2) {
+    if (arg2 != NULL) {
+        camData->srt.transl.x = arg2->srt.transl.x;
+        camData->srt.transl.y = arg2->srt.transl.y;
+        camData->srt.transl.z = arg2->srt.transl.z;
+        camData->srt.yaw = arg2->srt.yaw;
+        camData->srt.pitch = arg2->srt.pitch;
+        camData->srt.roll = arg2->srt.roll;
+        camData->fov = arg2->fov;
     }
 }
 
 // offset: 0x64 | func: 1 | export: 1
-void dll_94_func_64(UNK_TYPE_32 arg0) { }
+void camtalk1_control(CamControl_Data* camData) { }
 
 // offset: 0x70 | func: 2 | export: 2
-void dll_94_func_70(UNK_TYPE_32 arg0) { }
+void camtalk1_free(CamControl_Data* camData) { }
 
 // offset: 0x7C | func: 3 | export: 3
-void dll_94_func_7C(CameraAction* camAction, s32 arg1) { }
+void camtalk1_func_7C(UNK_PTR* arg0, s32 arg1) { }

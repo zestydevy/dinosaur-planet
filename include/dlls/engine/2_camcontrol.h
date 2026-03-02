@@ -6,6 +6,7 @@
 #include "dll_def.h"
 #include "sys/camera.h"
 #include "types.h"
+#include "unktypes.h"
 
 typedef enum {
     Camera_MODE_0_CameraAction = 0,
@@ -62,9 +63,9 @@ typedef struct {
 } CamControl_Data;
 
 typedef struct {
-    u16 id;             //DLL ID
-    DLL_Unknown* dll;   //Camera module DLL (CAMNORMAL, ATTENTIONCAM1, CAM1STPERSON, etc.)
-    u8 doDeferredFree;  //frees cam module DLL when set to 1 
+    u16 id;         //DLL ID
+    struct DLL_ICamControlModule* dll;   //Camera module DLL (CAMNORMAL, ATTENTIONCAM1, CAM1STPERSON, etc.)
+    u8 doDeferredFree;  	//when set to 1, the cam module and its DLL are freed when the module is no longer active
 } CamControl_Module;
 
 typedef struct {
@@ -115,6 +116,14 @@ DLL_INTERFACE(DLL_2_camera) {
 /*24*/ void (*apply_highlight_flags)(s32 flags); 			//Can be used to prevent searching for nearby Objects to highlight with the LockIcon (when highlightFlags has bit 2 set)
 /*25*/ void (*apply_target_flags)(s32 bits4and5); 			//Can set bits 4 and/or 5 of `sCamData->targetFlags` (affects LockIcon being greyed out?)
 /*26*/ void (*revert_camera_module)(s32 easeDuration, u8 easeFlags); //Switches back to the previously-used camera module
+};
+
+DLL_INTERFACE(DLL_ICamControlModule) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
+/*0*/ void (*setup)(CamControl_Data* camData, s32 arg1, void* action);	//TODO: figure out what's going on with the variable typing of arg2 (sometimes CameraAction*, other times CamControl_Data*, other times something 8 bytes long, etc.), and figure out the purpose of arg1 (seems to be either 0, 1, 2)
+/*1*/ void (*control)(CamControl_Data* camData);
+/*2*/ void (*free)(CamControl_Data* camData);
+/*3*/ void (*func3)(UNK_PTR* arg0, s32 arg1); //TODO: figure out a func name, arg1, and type for arg0 (it's CameraAction* sometimes, but f32* when called in SB_Galleon)
 };
 
 #endif //_DLLS_2_H

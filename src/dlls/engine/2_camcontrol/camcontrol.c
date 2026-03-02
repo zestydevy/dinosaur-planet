@@ -6,6 +6,7 @@
 #include "sys/menu.h"
 #include "sys/voxmap.h"
 #include "dlls/engine/2_camcontrol.h"
+#include "unktypes.h"
 
 /** Related to gametext that appears when holding R? */
 static s16 _data_0[] = {
@@ -192,18 +193,20 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
         }
     }
 
+    //Advance the camera
     if (sActiveModule != NULL) {
-        sActiveModule->dll->vtbl->func[1].withOneArg(sCamData);
+        sActiveModule->dll->vtbl->control(sCamData);
         CamControl_update_camera(sCamData);
     }
 
+    //Update the LockIcon and related flags
     if (onTitleScreen == FALSE) {
         if (sCamData->target == NULL) {
             sCamData->highlight = CamControl_find_highlight_object(sCamData, player);
         }
         
         if (sActiveID != DLL_ID_ATTENTIONCAM1) {
-            sCamData->targetFlags &= ~1;
+            sCamData->targetFlags &= ~ARROW_FLAG_1_Interacted;
         }
     }
     
@@ -285,9 +288,9 @@ void CamControl_revert_camera_module(s32 easeDuration, u8 easeFlags) {
 }
 
 // offset: 0x7B4 | func: 8 | export: 22
-void CamControl_func_7B4(void* arg0, s32 arg1) { //NOTE: unsure of type for arg0 - sometimes seems to be CameraAction* (other times f32*?)
+void CamControl_func_7B4(UNK_PTR* arg0, s32 arg1) { //TODO: figure out type for arg0 (it's CameraAction* sometimes, but f32* when called in SB_Galleon)
     if (sActiveModule != NULL) {
-        sActiveModule->dll->vtbl->func[3].withTwoArgs((s32)arg0, arg1);
+        sActiveModule->dll->vtbl->func3(arg0, arg1);
     }
 }
 
@@ -343,7 +346,7 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
         if (camAction != NULL) {
             gDLL_29_Gplay->vtbl->func_F60()->unk12 = params;
             if ((sActiveID == DLL_ID_CAMSHIPBATTLE1) || (sActiveID == DLL_ID_CAMTALK1)) {
-                CamControl_get_camnormal_module()->dll->vtbl->func[3].withTwoArgs((s32)camAction, 16); //TO-DO: interface
+                CamControl_get_camnormal_module()->dll->vtbl->func3(camAction, 16);
             } else {
                 if ((camAction->unk0 == 0) || (camAction->unk0 != 1)) {
                     CamControl_change_camera_module(DLL_ID_CAMNORMAL, 0, 2, sizeof(CameraAction), camAction, 0, 0xFF);
@@ -780,7 +783,7 @@ static void CamControl_update_camera(CamControl_Data* camData) {
 void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction) {   
     //Call the existing camera module's free method (if it's a different DLL ID)
     if ((sActiveModule != NULL) && (sActiveID != camDLLID)){
-        ((DLL_Unknown*)sActiveModule->dll)->vtbl->func[2].withOneArg((s32)sCamData); //TO-DO: interface
+        sActiveModule->dll->vtbl->free(sCamData);
         if (sActiveModule->doDeferredFree == TRUE){
             CamControl_free_module(sActiveLoadedIndex);
             sActiveModule = NULL;
@@ -799,7 +802,7 @@ void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction) {
     if (sActiveLoadedIndex != DLL_NONE) {
         sActiveModule = sCamModules[sActiveLoadedIndex];
         sActiveID = sActiveModule->id;
-        sActiveModule->dll->vtbl->func[0].withThreeArgs((s32)sCamData, sNextSetupVal, camAction); //TO-DO: interface
+        sActiveModule->dll->vtbl->setup(sCamData, sNextSetupVal, camAction);
     } else {
         sActiveModule = NULL;
         sActiveID = DLL_NONE;
