@@ -1,5 +1,4 @@
 #include "dlls/engine/2_camcontrol.h"
-#include "dlls/engine/94_camtalk1.h"
 #include "unktypes.h"
 
 // offset: 0x0 | ctor
