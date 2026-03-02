@@ -139,7 +139,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     }
 
     if (self->def->unk40) {
-        objData->interactionRadius = self->def->unk40->unk0c * 4;
+        objData->interactionRadius = self->def->unk40->interactRadius * 4;
     }
 
     if (self->def->unk87 & 0x10) {

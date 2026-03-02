@@ -13,7 +13,6 @@
 
 static s32 data_0 = 0;
 static s8 data_4 = 0;
-static u32 data_8 = 0xe49c44ff;
 
 static s8 bss_0;
 static s8 bss_1;
@@ -26,8 +25,7 @@ static Texture *bss_14;
 static Texture *bss_18;
 
 void dll_61_ctor(void *dll) {
-    u8 temp[4];
-    *((u32*)temp) = data_8; // wat
+    u8 dColourUnused[4] = {0xe4, 0x9c, 0x44, 0xff};
 
     rcp_set_border_color(0, 0, 0);
     func_80010018(0);

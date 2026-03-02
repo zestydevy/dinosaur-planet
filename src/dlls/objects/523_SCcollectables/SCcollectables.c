@@ -3,6 +3,7 @@
 #include "dlls/objects/common/collectable.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
@@ -87,12 +88,12 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
         objdata->interactionRadius = 50.0f;
     }
     if (self->def->unk40) {
-        objdata->interactionRadius = self->def->unk40->unk0c * 4;
+        objdata->interactionRadius = self->def->unk40->interactRadius * 4;
     }
 
     //Set shadow flags
     if (self->shadow) {
-        self->shadow->flags |= 0x800 | 0x10;
+        self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
     }
 }
 

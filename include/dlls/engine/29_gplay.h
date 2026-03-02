@@ -39,7 +39,7 @@ typedef struct {
     s16 unkC;
     s16 unkE;
     s16 unk10;
-    s16 unk12;
+    s16 unk12; //cameraActionID?
 } GplayStruct6;
 
 // size: 0xB4

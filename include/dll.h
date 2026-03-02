@@ -2,7 +2,7 @@
 #define _DLL_H
 
 #include "dlls/engine/1_ui.h"
-#include "dlls/engine/2_camera.h"
+#include "dlls/engine/2_camcontrol.h"
 #include "dlls/engine/3_animation.h"
 #include "dlls/engine/4_race.h"
 #include "dlls/engine/5_amseq.h"
@@ -66,6 +66,7 @@ enum DLL_ID {
     DLL_ID_16 = 16,
     DLL_ID_PARTFX = 17,
     DLL_ID_18 = 18,
+
     DLL_ID_SCREENS = 20,
     DLL_ID_TEXT = 21,
     DLL_ID_SUBTITLES = 22,
@@ -101,13 +102,44 @@ enum DLL_ID {
     DLL_ID_52 = 52, // partfx related
     DLL_ID_53 = 53,
     DLL_ID_54 = 54,
+    
     DLL_ID_56 = 56,
     DLL_ID_57 = 57,
     DLL_ID_58 = 58,
     DLL_ID_MINIMAP = 59,
+    DLL_ID_POST = 60, //Boot screen
+    DLL_ID_RAREWARE = 61, //Boot credits
+    DLL_ID_MAINMENU = 62, //Rolling Demo
+    DLL_ID_GAMESELECT = 63,
+    DLL_ID_NAMEENTRY = 64,
+    DLL_ID_OPTIONS = 65,
+    DLL_ID_PAUSEMENU = 66,
+    DLL_ID_GAMEOVER = 67,
+
     DLL_ID_PICMENU = 74,
     DLL_ID_75 = 75,
     DLL_ID_76 = 76,
+
+    DLL_ID_CAMNORMAL = 84,              //Start of camera module DLLs
+    DLL_ID_ATTENTIONCAM1 = 85,
+    DLL_ID_CAM1STPERSON = 86,
+    DLL_ID_CAMSLIDE = 87,
+    DLL_ID_CAMPATH = 88,
+    DLL_ID_CAMSTATIC = 89,
+    DLL_ID_CAMLOCKON = 90,
+    DLL_ID_CAMSHIPBATTLE1 = 91,
+    DLL_ID_CAMCLIMB = 92,
+    DLL_ID_CAM93 = 93,
+    DLL_ID_CAMTALK1 = 94,
+    DLL_ID_CAM95 = 95,
+    DLL_ID_CAMSHIPBATTLE2 = 96,
+    DLL_ID_ATTENTIONCAM2 = 97,
+    DLL_ID_CAMCANNON = 98,
+    DLL_ID_CAM99 = 99,
+    DLL_ID_CAMTALK2 = 100,
+    DLL_ID_CAMDRAKOR = 101,
+    DLL_ID_CAMDROP = 102,
+    DLL_ID_CAM103 = 103,
 
     // Mod gfx
     DLL_ID_MODGFX_BASE = 0x1000,

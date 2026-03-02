@@ -1,6 +1,6 @@
 # engine
 1 = engine/1_cmdmenu
-2 = engine/2_camera
+2 = engine/2_camcontrol
 3 = engine/3_ANIM
 4 = engine/4_race
 5 = engine/5_AMSEQ
@@ -38,6 +38,7 @@
 82 = engine/82
 83 = engine/83
 94 = engine/94_camtalk1
+98 = engine/98_camcannon
 
 # modgfx
 

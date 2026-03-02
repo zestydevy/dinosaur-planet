@@ -892,7 +892,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
             gDLL_6_AMSFX->vtbl->play_sound(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_2_Camera->vtbl->func8(2, 0);
+            gDLL_2_Camera->vtbl->change_mode(2, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B2, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B3, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             sKTData->flags &= ~KTFLAG_VULNERABLE;
@@ -1285,7 +1285,7 @@ static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate)
         ktflags = sKTData->flags;
         sKTData->standingUpSegment = KTFLAG_GET_SEGMENT(ktflags);
         sKTData->timer = 300.0f;
-        gDLL_2_Camera->vtbl->func8(2, 0);
+        gDLL_2_Camera->vtbl->change_mode(2, 0);
         return KT_LSTATE_10_FULL_CHARGE + 1;
     }
     return 0;
@@ -1324,7 +1324,7 @@ static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate
         } else {
             dll_702_push_state(KT_LSTATE_2_WALK);
         }
-        gDLL_2_Camera->vtbl->func8(3, 0);
+        gDLL_2_Camera->vtbl->change_mode(3, 0);
         main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         return KT_LSTATE_6_CHARGE_END + 1;
     }

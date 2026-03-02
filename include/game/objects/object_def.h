@@ -66,11 +66,11 @@ typedef struct {
 /*06*/ s16 unk06;
 /*08*/ s16 unk08;
 /*0a*/ s16 unk0a;
-/*0c*/ u8 unk0c; //arrow interact radius (can press A)
-/*0d*/ u8 unk0d; //lock-on exit radius
-/*0e*/ u8 unk0e; //arrow highlight radius (greyed out)
-/*0f*/ u8 unk0f; //interaction height (cylinder height for arrow zone)
-/*10*/ u8 unk10; //colourIndex for arrow
+/*0c*/ u8 interactRadius;   //Interact radius (LockIcon over Object, can interact with A) (stored divided by 4)
+/*0d*/ u8 lockExitRadius;   //Lock-on exit radius (lock-on auto-released)
+/*0e*/ u8 hlRadius;         //Highlight radius (LockIcon over Object, but greyed out) (stored divided by 4)
+/*0f*/ u8 hlAngularRange;   //Highlight angular range (LockIcon only appears over Object while player within angular slice)
+/*10*/ u8 flags;            //LockIcon colour, and bit 6 also related to VoxMaps (TO-DO: figure out purpose)
 /*11*/ s8 unk11[4];
 /*15*/ UNK_TYPE_8 unk15;
 /*16*/ UNK_TYPE_8 unk16;
@@ -234,8 +234,7 @@ typedef struct {
 /*9d*/ u8 unk9d; // camera-related angle?
 /*9e*/ u8 _unk9e[2];
 /*a0*/ s16 unka0;
-/*a2*/ s16 gametextIndex; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
-/*a4*/ u8 _unka4[0xAA - 0xA4];
+/*a2*/ s16 gametextIndex[4]; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
 /*aa*/ s16 unkAA;
 } ObjDef;
 

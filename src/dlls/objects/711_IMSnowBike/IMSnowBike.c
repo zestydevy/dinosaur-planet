@@ -12,7 +12,7 @@
 #include "sys/rand.h"
 #include "dll.h"
 #include "functions.h"
-#include "prevent_bss_reordering.h"
+#include "prevent_bss_reordering2.h"
 
 typedef struct {
 /*00*/ Vec3f unk0;
