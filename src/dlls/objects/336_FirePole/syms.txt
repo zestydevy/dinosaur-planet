@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_336_ctor = 0x0;
+dll_336_dtor = 0xC;
+dll_336_setup = 0x18;
+dll_336_control = 0x13C;
+dll_336_update = 0x144;
+dll_336_print = 0x150;
+dll_336_free = 0x1A4;
+dll_336_get_model_flags = 0x22C;
+dll_336_get_data_size = 0x23C;
+
+.rodata = 0x294:

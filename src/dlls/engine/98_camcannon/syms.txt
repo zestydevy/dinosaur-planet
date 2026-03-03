@@ -1,0 +1,12 @@
+.text = 0x0:
+camcannon_ctor = 0x0;
+camcannon_dtor = 0xC;
+camcannon_setup = 0x18;
+camcannon_control = 0x68;
+camcannon_free = 0x1A8;
+camcannon_func_1E8 = 0x1E8;
+
+.rodata = 0x244:
+
+.bss = 0x244:
+_bss_0 = 0x0; // absolute:0x244

@@ -51,7 +51,7 @@ DLL_INTERFACE(DLL_1_UI) {
 /*2*/ UnknownDLLFunc func_BB8;
 /*3*/ void (*func_1290)(void);
 /*4*/ void (*func_12EC)(void);
-/*5*/ UnknownDLLFunc func_F5C;
+/*5*/ s32 (*func5)(Object** a0, s32 a1, s32 a2, s32 a3, f32 a4); //unsure of types
 /*6*/ s32 (*func_DC4)(void);
 /*7*/ s32 (*func_DF4)(s32 itemGamebitID); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
 /*8*/ s32 (*func_E2C)(s32 *arg0, s32 arg1);

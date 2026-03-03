@@ -1,9 +1,9 @@
 .text = 0x0:
-dll_94_ctor = 0x0;
-dll_94_dtor = 0xC;
-dll_94_func_18 = 0x18;
-dll_94_func_64 = 0x64;
-dll_94_func_70 = 0x70;
-dll_94_func_7C = 0x7C;
+camtalk1_ctor = 0x0;
+camtalk1_dtor = 0xC;
+camtalk1_setup = 0x18;
+camtalk1_control = 0x64;
+camtalk1_free = 0x70;
+camtalk1_func_7C = 0x7C;
 
 .bss = 0x90:

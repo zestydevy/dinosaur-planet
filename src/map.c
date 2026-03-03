@@ -2768,7 +2768,7 @@ void map_func_8004773C(void) {
                 }
             }
             if (sp40->unk12 != -1) {
-                gDLL_2_Camera->vtbl->func8(0, sp40->unk12);
+                gDLL_2_Camera->vtbl->change_mode(0, sp40->unk12);
             }
             sp4C.parent = NULL;
             sp4C.srt.transl.x = 0.0f;

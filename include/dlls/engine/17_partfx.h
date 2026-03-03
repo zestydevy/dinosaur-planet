@@ -75,6 +75,7 @@ enum ParticleID {
     PARTICLE_333 = 0x333,
     PARTICLE_334 = 0x334,
     PARTICLE_Green_Slime_Drop = 0x335,
+    PARTICLE_336 = 0x336,
     PARTICLE_340 = 0x340,
     PARTICLE_343 = 0x343,
     PARTICLE_34C = 0x34C,

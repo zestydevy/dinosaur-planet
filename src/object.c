@@ -227,7 +227,7 @@ void update_objects() {
 
     gDLL_3_Animation->vtbl->func9();
     gDLL_3_Animation->vtbl->func5();
-    gDLL_2_Camera->vtbl->func1(gUpdateRate);
+    gDLL_2_Camera->vtbl->tick(gUpdateRate);
 
     write_c_file_label_pointers("objects/objects.c", 0x169);
 }
@@ -315,7 +315,7 @@ void obj_free_all() {
 
     obj_clear_all();
 
-    gDLL_2_Camera->vtbl->func9(0, 0);
+    gDLL_2_Camera->vtbl->store_player(NULL, 0);
 }
 
 void obj_clear_all() {
@@ -732,11 +732,11 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         obj->unk78 = (ObjectStruct78*)mmAlign4(addr);
 
         for (j = 0; j < def->unk9b; j++) {
-            obj->unk78[j].colourIndex = def->unk40[j].unk10;
-            obj->unk78[j].unk0 = def->unk40[j].unk0c;
-            obj->unk78[j].unk3 = def->unk40[j].unk0f;
-            obj->unk78[j].unk1 = def->unk40[j].unk0d;
-            obj->unk78[j].unk2 = def->unk40[j].unk0e;
+            obj->unk78[j].flags = def->unk40[j].flags;
+            obj->unk78[j].interactRadius = def->unk40[j].interactRadius;
+            obj->unk78[j].hlAngularRange = def->unk40[j].hlAngularRange;
+            obj->unk78[j].lockExitRadius = def->unk40[j].lockExitRadius;
+            obj->unk78[j].hlRadius = def->unk40[j].hlRadius;
         }
 
         // addr = (u32)obj->unk78 + (def->unk9b * sizeof(ObjectStruct78)); // default.dol
@@ -1691,7 +1691,7 @@ void func_80023464(s32 playerno) {
             newPlayer = obj_create(&playerSetup, OBJ_INIT_FLAG1, -1, -1, NULL);
         }
 
-        gDLL_2_Camera->vtbl->func0(newPlayer, x - 50.0f, y, z - 50.0f);
+        gDLL_2_Camera->vtbl->init_data(newPlayer, x - 50.0f, y, z - 50.0f);
         gDLL_6_AMSFX->vtbl->func_480(newPlayer);
         gDLL_5_AMSEQ->vtbl->set_focus_obj(newPlayer);
     }
@@ -1741,9 +1741,9 @@ void func_80023628() {
     D_80091668.unkC = y + 40.0f;
     D_80091668.unk10 = fcos16_precise(savedPlayerLocation->rotationY << 8) * 60.0f + z;
 
-    gDLL_2_Camera->vtbl->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
-    gDLL_2_Camera->vtbl->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
-    gDLL_2_Camera->vtbl->func1(1);
+    gDLL_2_Camera->vtbl->init_data(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
+    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 0, sizeof(D_80091668), &D_80091668, 0, 0xFF);
+    gDLL_2_Camera->vtbl->tick(1);
     gDLL_6_AMSFX->vtbl->func_480(player);
     gDLL_5_AMSEQ->vtbl->set_focus_obj(player);
 
@@ -1914,23 +1914,23 @@ void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
             dst += obj->unkD4;
 
             if (param2 != 0) {
-                dst->unk0 = param2 >> 2;
+                dst->interactRadius = param2 >> 2;
             }
 
             if (param4 != 0) {
-                dst->unk1 = param4 >> 2;
+                dst->lockExitRadius = param4 >> 2;
             }
 
             if (param3 != 0) {
-                dst->unk2 = param3 >> 2;
+                dst->hlRadius = param3 >> 2;
             }
 
             if (param5 != 0) {
-                dst->unk3 = param5;
+                dst->hlAngularRange = param5;
             }
 
             if (colourIndex != 0) {
-                dst->colourIndex = colourIndex ;
+                dst->flags = colourIndex ;
             }
         }
     }
@@ -1947,11 +1947,11 @@ void func_80023C6C(Object *obj) {
             src = &obj->def->unk40[obj->unkD4];
             dst += obj->unkD4;
 
-            dst->unk0 = src->unk0c;
-            dst->unk1 = src->unk0d;
-            dst->unk2 = src->unk0e;
-            dst->unk3 = src->unk0f;
-            dst->colourIndex = src->unk10;
+            dst->interactRadius = src->interactRadius;
+            dst->lockExitRadius = src->lockExitRadius;
+            dst->hlRadius = src->hlRadius;
+            dst->hlAngularRange = src->hlAngularRange;
+            dst->flags = src->flags;
         }
     }
 }

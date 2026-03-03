@@ -412,7 +412,7 @@ void func_80013D80(void) {
     s32 button;
 
     joy_set_button_mask(0, U_JPAD | R_JPAD);
-    gDLL_2_Camera->vtbl->func19();
+    gDLL_2_Camera->vtbl->lock_icon_tick();
     gDLL_22_Subtitles->vtbl->func_4C0();
 
     if (menu_update1() == 0) {

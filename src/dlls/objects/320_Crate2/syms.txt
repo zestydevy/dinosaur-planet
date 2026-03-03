@@ -1,0 +1,15 @@
+.text = 0x0:
+dll_320_ctor = 0x0;
+dll_320_dtor = 0xC;
+dll_320_setup = 0x18;
+dll_320_control = 0x1BC;
+dll_320_update = 0x3D4;
+dll_320_print = 0x3E0;
+dll_320_free = 0x498;
+dll_320_get_model_flags = 0x4DC;
+dll_320_get_data_size = 0x4EC;
+
+.rodata = 0x554:
+
+.data = 0x564:
+_data_0 = 0x0; // absolute:0x564
