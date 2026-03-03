@@ -5,7 +5,7 @@
 #include "sys/rand.h"
 
 typedef struct {
-    s16 unk0;
+    u16 unk0;
     s16 unk2;
     u16 unk4;
     u16 unk6;

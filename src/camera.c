@@ -103,8 +103,8 @@ Vp gRSPViewports[20] = {
     { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
 };
 SRT gStaticCameraSRT[2] = {
-    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, -281.0f }},
-    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, 0.0f }}
+    { 0, 0, 0, 0, 1.0f, {{{ 0.0f, 0.0f, -281.0f }}} },
+    { 0, 0, 0, 0, 1.0f, {{{ 0.0f, 0.0f, 0.0f }}} }
 };
 MtxF g2DProjectionMtx = {
     {
@@ -1489,7 +1489,9 @@ void camera_build_object_matrix(Object *object, int matrixIdx)
         object = objectList[objectCount];
 
         // @fake
+        PRAGMA_IGNORE_PUSH("-Waddress")
         if (gObjectMatrices) {}
+        PRAGMA_IGNORE_POP()
         invsrt.transl.x = -object->srt.transl.x;
         invsrt.transl.y = -object->srt.transl.y;
         invsrt.transl.z = -object->srt.transl.z;

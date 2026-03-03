@@ -344,6 +344,7 @@ void fbfx_func_8003F4C0(s32 arg0) {
 }
 
 #ifndef NON_MATCHING
+void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003F660.s")
 #else
 // https://decomp.me/scratch/wArrS

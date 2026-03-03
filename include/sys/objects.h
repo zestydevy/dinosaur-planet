@@ -55,4 +55,6 @@ void func_80036F6C(s16 r, s16 g, s16 b);
 /** Sets a blend colour for models (can increase brightness) */
 void func_80036FBC(s16 r, s16 g, s16 b, u8 a);
 
+void func_80023D08(Object *obj, u16 param2);
+
 #endif

@@ -31,9 +31,9 @@ typedef struct Player_Data3B4 {
     s16 unk2C; //soundID?
     s16 unk2E;
     u8 unk30;
-    u8 pad31;
-    u8 pad32;
-    u8 pad33;
+    // u8 pad31;
+    // u8 pad32;
+    // u8 pad33;
     BinFileEntry unk34;
 } Player_Data3B4;
 

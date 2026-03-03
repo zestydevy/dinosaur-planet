@@ -75,7 +75,7 @@ void func_80012584(
     if (!generic_queue_is_full(gAssetThreadQueue)) {
         element.unk0 = param2;
         element.unk4 = param3;
-        element.unk8 = param4;
+        element.unk8ObjSetup = param4;
         element.unkC = param5;
         element.unk10 = param6;
         element.unk14 = param7;
@@ -213,7 +213,7 @@ void func_80012A4C(void) {
 
         switch (sp24.unk0) {
             case 5:
-                obj_add_object(sp24.unk4, sp24.unk8);
+                obj_add_object(sp24.unk4Object, sp24.unk8);
                 break;
             case 3:
                 if (sp24.unk4 != NULL) {
@@ -221,7 +221,7 @@ void func_80012A4C(void) {
                 }
                 break;
             case 1:
-                block_emplace(sp24.unk4, sp24.unk8, sp24.unkC, sp24.unk10);
+                block_emplace(sp24.unk4Ptr, sp24.unk8, sp24.unkC, sp24.unk10);
                 break;
             case 6:
                 if (1) {};
@@ -256,7 +256,7 @@ void func_80012B54(s32 param1, s32 param2) {
         if (param1 != elementTemp.unk0) {
             generic_queue_enqueue(qptr, &elementTemp);
         } else {
-            if ((param1 == 4) && ((new_var = ((0, elementTemp)).unk8)->uID != param2)) {
+            if ((param1 == 4) && ((new_var = ((0, elementTemp)).unk8ObjSetup)->uID != param2)) {
                 generic_queue_enqueue(qptr, &elementTemp);
             }
         }
@@ -283,7 +283,7 @@ void func_80012B54(s32 param1, s32 param2) {
 }
 
 // FIXME: should be a different name?
-void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 param5) {
+void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5) {
     s32 prevIE;
     AssetThreadStackElement element;
 
@@ -292,7 +292,7 @@ void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 pa
     if ((gAssetThreadGenericStack->count + 1) != gAssetThreadGenericStack->capacity) { // !is_stack_empty
         element.unk0 = (u8)param1;
         element.unk4 = param2;
-        element.unk8 = param3;
+        element.unk8ptr = param3;
         element.unkC = param4;
         element.unk10 = param5;
 
@@ -353,22 +353,22 @@ void asset_thread_load_single(void) {
 
         switch (sp2C.unk0) {
             case 5:
-                queue_block_emplace(5, obj_setup_object(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
+                queue_block_emplace(5, (u32*)obj_setup_object(sp2C.unk8ObjSetup, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), (u8*)1, 0, 0);
                 break;
             case 3:
-                tmp = tex_load(sp2C.unk8, 0);
+                tmp = tex_load(sp2C.blockId, 0);
                 if (sp2C.unk4 != 0) {
-                    queue_block_emplace(3, sp2C.unk4, tmp, 0, 0);
+                    queue_block_emplace(3, sp2C.unk4, (u8*)tmp, 0, 0);
                 }
                 break;
             case 1:
-                block_load(sp2C.unk8, sp2C.unkC, sp2C.unk10, 1);
+                block_load(sp2C.blockId, sp2C.unkC, sp2C.unk10, 1);
                 break;
             case 0:
-                queue_block_emplace(0, sp2C.unk4, voxmap_load_slot(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
+                queue_block_emplace(0, sp2C.unk4, voxmap_load_slot(sp2C.blockId, sp2C.unkC, sp2C.unk10, sp2C.unk14int), 0, 0);
                 break;
             case 6:
-                queue_block_emplace(6, sp2C.unk4, func_80007620(sp2C.unk8, sp2C.unkC), 0, 0);
+                queue_block_emplace(6, sp2C.unk4, func_80007620(sp2C.blockId, sp2C.unkC), 0, 0);
                 break;
             default:
                 break;
@@ -410,7 +410,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             break;
         case ASSET_TYPE_ANIMATION:
             *load->p.animation.dest = anim_load((s16)load->p.animation.id,
-                (s16)load->p.animation.arg2, load->p.animation.arg3, load->p.animation.arg4);
+                (s16)load->p.animation.arg2, (AmapPlusAnimation *) load->p.animation.arg3, (Model *) load->p.animation.arg4);
     }
     osSendMesg(&gAssetLoadThreadRecvQueue, NULL, 0);
 }

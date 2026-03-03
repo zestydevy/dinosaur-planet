@@ -866,7 +866,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     func_80040FF8();
     tex_render_save_state();
     // @fake
-    if (&dl) {}
+    if ((s32)&dl) {}
     gSPGeometryMode(dl, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
     dl_apply_geometry_mode(&dl);
     if (sp1D4 != 0) {

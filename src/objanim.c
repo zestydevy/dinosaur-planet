@@ -114,7 +114,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         if (changed) {
             animState->unk62[0] = (1 - animState->unk62[0]);
             animState->animIndexes[0] = animState->unk62[0] & 0xFFFF;
-            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
+            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, (u8*)animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
         }
         anim = &animState->anims[animState->animIndexes[0]]->anim;
     } else {
@@ -262,7 +262,7 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
         if (curModanim_layered) {
             animState->unk62[0] = 1 - animState->unk62[0];
             animState->animIndexes[0] = animState->unk62[0];
-            func_80019118(model->modAnim[modanimIndex], modanimIndex, animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
+            func_80019118(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
         }
         anim = (Animation*)(&animState->anims[animState->animIndexes[0]]->anim);
     } else {

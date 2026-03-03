@@ -340,7 +340,7 @@ void func_80037F9C(Gfx** gdl, Func_80037F9C_Struct* arg1, s32 arg2, s32 arg3, u8
                 var_v0 = var_v0->next;
             }
             sp68->words.w0 = var_v0->gdl->words.w0;
-            sp68->words.w1 = OS_PHYSICAL_TO_K0(var_v0 + 1);
+            sp68->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(var_v0 + 1);
             
             sp68++;
             gSPDisplayList(sp68++, OS_PHYSICAL_TO_K0(var_v0->gdl + 1));

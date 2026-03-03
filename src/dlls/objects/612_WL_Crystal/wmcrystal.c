@@ -506,8 +506,8 @@ u32 WL_Crystal_get_data_size(Object *self, u32 a1) {
 void WL_Crystal_handle_sun_flare_effects(Object* self) {
     static f32 dataEffectScale = 0.0f;
     static f32 dimRoomEffect = 0.0f;
-    Vec3f unitVector = { 0.0f, 0.0f, -1.0f };
-    Vec3f vCameraLook = { 0.0f, 0.0f, -1.0f };
+    Vec3f unitVector = {{{0.0f, 0.0f, -1.0f}}};
+    Vec3f vCameraLook = {{{0.0f, 0.0f, -1.0f}}};
     Vec3f vSunToCamera;
     f32 distanceToCamera2D;
     f32 dotProduct;

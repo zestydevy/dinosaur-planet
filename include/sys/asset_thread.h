@@ -75,17 +75,31 @@ struct AssetLoadThreadMsg {
 typedef struct {
     u8 unk0;
     u32 *unk4;
-    ObjSetup *unk8;
+    union {
+        s32 blockId;
+        void *unk8ptr;
+        ObjSetup *unk8ObjSetup;
+    };
     u32 unkC;
     u32 unk10;
-    Object* unk14;
+    union {
+        Object *unk14;
+        s32 unk14int;
+    };
     u32 unk18;
 } UnkStructAssetThreadSingle;
 
 typedef struct {
     u8 unk0;
-    u32 *unk4;
-    u32 unk8;
+    union {
+        u32 *unk4;
+        void *unk4Ptr;
+        Object *unk4Object;
+    };
+    union {
+        u32 unk8;
+        void *unk8ptr;
+    };
     u32 unkC;
     u32 unk10;
 } AssetThreadStackElement;
@@ -101,7 +115,7 @@ void queue_load_texture(Texture **dest, s32 id);
 void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount);
 void queue_load_model(void **dest, s32 id, s32 arg2);
 void queue_load_anim(void **dest, s16 animID, s16 modAnimID, s32 amap, s32 model);
-void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 param5);
+void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5);
 void func_800129E4();
 
 #endif //_SYS_ASSET_THREAD_H

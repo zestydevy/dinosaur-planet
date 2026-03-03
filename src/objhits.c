@@ -3028,6 +3028,7 @@ s32 func_8002DC58(Unk8002F498* arg0, Unk8002F498* arg1, Unk8002F498* arg2, Unk80
                 f0 = spDC[j];
                 f2 = spDC[temp_s1];
                 // temp assignment below required for match
+                PRAGMA_IGNORE_PUSH("-Wsequence-point")
                 if (func_8002C278(
                     (pad_spD8 = &sp104[i])[0], (pad_spD8 = &sp104[temp_s7])[0],
                     temp_fs1, temp_fs2,
@@ -3041,6 +3042,7 @@ s32 func_8002DC58(Unk8002F498* arg0, Unk8002F498* arg1, Unk8002F498* arg2, Unk80
                     arg0->unk18[temp_s7] = 1;
                     arg1->unk18[temp_s1] = 1;
                 }
+                PRAGMA_IGNORE_POP()
             }
         }
     }

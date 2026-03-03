@@ -72,7 +72,7 @@ void ECSHCup_setup(Object* self, ECSHCup_Setup* objSetup, s32 arg2) {
 void ECSHCup_control(Object* self) {
     ECSHCup_Data *objData = self->data;
     s32 state = Cup_STATE_Unknown;
-    Vec3f goal = {0, 0, 0};
+    Vec3f goal = {{{0, 0, 0}}};
     u8 cupWithSpirit = 0;
     s16 opacity;
     f32 objectDistance = 500.0f;

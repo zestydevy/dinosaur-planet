@@ -2,11 +2,6 @@
 
 #include "dlls/objects/453_CCfirecrystalin.h"
 
-typedef struct {
-    s8 unk0[0xA - 0x0];
-    s16 unkA; //UV scroll offset?
-} UnkStruct_func_800348A0; //TODO: verify/use correct struct
-
 // offset: 0x0 | ctor
 void CCfirecrystalin_ctor(void *dll) { }
 
@@ -24,20 +19,20 @@ void CCfirecrystalin_control(Object* self) {
     s32 pad[2];
     CCfirecrystalin_Setup *objSetup;
     Object *fireCrystal;
-    UnkStruct_func_800348A0 *unkStruct;
+    TextureAnimator *animator;
     s16 scroll;
     f32 scaleFactor;
     
     objSetup = (CCfirecrystalin_Setup *) self->setup;
-    unkStruct = func_800348A0(self, 0, 0);
+    animator = func_800348A0(self, 0, 0);
 
     //Update model texture UV scroll, maybe?
-    scroll = -unkStruct->unkA;
+    scroll = -animator->positionV;
     scroll += gUpdateRateF * objSetup->scrollSpeed;
     if (scroll > 2048){
         scroll -= 2048;
     }
-    unkStruct->unkA = -scroll;
+    animator->positionV = -scroll;
 
     //Update Object's transform
     self->srt.yaw += gUpdateRateF * objSetup->rotateSpeed;
