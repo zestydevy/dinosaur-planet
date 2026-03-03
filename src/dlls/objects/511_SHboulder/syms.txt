@@ -1,0 +1,12 @@
+.text = 0x0:
+SHboulder_ctor = 0x0;
+SHboulder_dtor = 0xC;
+SHboulder_setup = 0x18;
+SHboulder_control = 0x2C;
+SHboulder_update = 0xC8;
+SHboulder_print = 0xD4;
+SHboulder_free = 0x128;
+SHboulder_get_model_flags = 0x138;
+SHboulder_get_data_size = 0x148;
+
+.rodata = 0x190:

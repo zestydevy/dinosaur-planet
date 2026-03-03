@@ -1,0 +1,13 @@
+.text = 0x0:
+ExplodeAnimator_ctor = 0x0;
+ExplodeAnimator_dtor = 0xC;
+ExplodeAnimator_setup = 0x18;
+ExplodeAnimator_control = 0x94;
+ExplodeAnimator_update = 0x140;
+ExplodeAnimator_print = 0x14C;
+ExplodeAnimator_free = 0x164;
+ExplodeAnimator_get_model_flags = 0x1A4;
+ExplodeAnimator_get_data_size = 0x1B4;
+ExplodeAnimator_create_partfx = 0x1C8;
+
+.rodata = 0x394:

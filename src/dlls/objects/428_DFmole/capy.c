@@ -6,7 +6,7 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 #include "dlls/objects/210_player.h"
 #include "functions.h"
 #include "dll.h"
@@ -207,7 +207,7 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     if ((player == fsa->target) || ((fsa->target != NULL) && (fsa->target->id == OBJ_foodbagNewMeat))) {
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         if (foodbag != NULL) {
-            dinoEgg = ((DLL_314_Foodbag*)foodbag->dll)->vtbl->get_nearest_placed_food_of_type(foodbag, self, FOOD_Dino_Egg);
+            dinoEgg = ((DLL_IFoodbag*)foodbag->dll)->vtbl->get_nearest_placed_food_of_type(foodbag, self, FOOD_Dino_Egg);
         }
         if ((dinoEgg != NULL) && (vec3_distance(&self->positionMirror, &dinoEgg->positionMirror) < 150.0f)) {
             fsa->target = dinoEgg;
@@ -422,7 +422,7 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
                 player = get_player();
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
                 if (foodbag != NULL) {
-                    ((DLL_314_Foodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, target);
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, target);
                 }
             }
             fsa->target = NULL;

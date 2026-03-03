@@ -13,6 +13,11 @@
 #define M_90_DEGREES  0x4000    // 90 degrees in the game's angle system
 #define M_180_DEGREES 0x8000    //180 degrees in the game's angle system
 
+#define M_45_DEGREES_F 8192.0f   //45 degrees in the game's angle system
+#define M_90_DEGREES_F 16384.0f  //90 degrees in the game's angle system
+#define M_180_DEGREES_F 32768.0f //180 degrees in the game's angle system
+#define M_360_DEGREES_F 65535.0f //360 degrees in the game's angle system
+
 /**
  * Keeps the value within the range.
  */
@@ -65,6 +70,10 @@
 
 #define VECTOR_MAGNITUDE(v) sqrtf(VECTOR_MAGNITUDE_SQUARED(v))
 
+#define VECTOR_MULTIPLY_BY_SCALAR(v, scalar) v.x *= scalar;\
+    v.y *= scalar;\
+    v.z *= scalar;
+    
 #define VECTOR_DIVIDE_BY_SCALAR(v, scalar) if (scalar != 0.0f) {\
     v.x /= scalar;\
     v.y /= scalar;\

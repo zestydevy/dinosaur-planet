@@ -15,6 +15,8 @@
 #include "sys/rcp.h"
 #include "types.h"
 
+#include "prevent_bss_reordering.h"
+
 // Size: 0x18
 typedef struct InnerBss38 {
     Texture *unk0;

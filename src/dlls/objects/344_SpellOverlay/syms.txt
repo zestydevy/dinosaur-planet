@@ -1,0 +1,19 @@
+.text = 0x0:
+SpellOverlay_ctor = 0x0;
+SpellOverlay_dtor = 0x40;
+SpellOverlay_setup = 0x7C;
+SpellOverlay_control = 0x190;
+SpellOverlay_update = 0x1D4;
+SpellOverlay_print = 0x1E0;
+SpellOverlay_free = 0x494;
+SpellOverlay_get_model_flags = 0x4F0;
+SpellOverlay_get_data_size = 0x500;
+SpellOverlay_fade_out = 0x514;
+SpellOverlay_animate_texture = 0x5AC;
+
+.rodata = 0x6EC:
+str_0 = 0x0; // absolute:0x6EC
+
+.data = 0x71C:
+dSpellOverlayConfig = 0x0; // absolute:0x71C
+dCameraNearPlane = 0x8; // absolute:0x724

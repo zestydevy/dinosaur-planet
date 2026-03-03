@@ -4,20 +4,20 @@
 _exports:
 
 # ctor/dtor
-.dword dll_227_ctor
-.dword dll_227_dtor
+.dword Tumbleweed_ctor
+.dword Tumbleweed_dtor
 
 # export table
-.dword dll_227_setup
-.dword dll_227_control
-.dword dll_227_update
-.dword dll_227_print
-.dword dll_227_free
-.dword dll_227_get_model_flags
-.dword dll_227_get_data_size
-.dword dll_227_func_171C
-.dword dll_227_func_172C
-.dword dll_227_func_174C
-.dword dll_227_func_17C0
-.dword dll_227_func_1828
-.dword dll_227_func_1840
+.dword Tumbleweed_setup
+.dword Tumbleweed_control
+.dword Tumbleweed_update
+.dword Tumbleweed_print
+.dword Tumbleweed_free
+.dword Tumbleweed_get_model_flags
+.dword Tumbleweed_get_data_size
+.dword Tumbleweed_get_state
+.dword Tumbleweed_set_home
+.dword Tumbleweed_fall
+.dword Tumbleweed_gravitate_towards_point
+.dword Tumbleweed_is_gravitating
+.dword Tumbleweed_store_player

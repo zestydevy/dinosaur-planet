@@ -1,7 +1,7 @@
 #ifndef _SYS_GAME_INVENTORY_ITEMS_H
 #define _SYS_GAME_INVENTORY_ITEMS_H
 
-enum InventoryItemIndicesKrystal {
+typedef enum {
     INVENTORY_ITEM_KRYSTAL_0_WM_WARP_CRYSTAL = 0,
     INVENTORY_ITEM_KRYSTAL_1_CRF_PRISON_KEY_CRF = 1,
     INVENTORY_ITEM_KRYSTAL_2_CRF_POWER_ROOM_KEY = 2,
@@ -38,9 +38,9 @@ enum InventoryItemIndicesKrystal {
     INVENTORY_ITEM_KRYSTAL_33_MOONSEEDS = 33,
     INVENTORY_ITEM_KRYSTAL_34_CRF_CONSTRUCTION_ENGINEERS_KEY = 34,
     INVENTORY_ITEM_KRYSTAL_35_GOLD_NUGGET_3_CC = 35
-};
+} InventoryItemIndicesKrystal;
 
-enum InventoryItemIndicesSabre {
+typedef enum {
     INVENTORY_ITEM_SABRE_0_NW_GATE_KEY = 0, //unused
     INVENTORY_ITEM_SABRE_1_SW_ALPINE_ROOT = 1,
     INVENTORY_ITEM_SABRE_2_BLUE_MUSHROOM = 2,
@@ -77,9 +77,9 @@ enum InventoryItemIndicesSabre {
     INVENTORY_ITEM_SABRE_33_SPELLSTONE_DR_ACTIVATED = 33,
     INVENTORY_ITEM_SABRE_34_DB_POINTBACK_EGG = 34,
     INVENTORY_ITEM_SABRE_35_DB_BAY_DIAMOND = 35
-};
+} InventoryItemIndicesSabre;
 
-enum InventorySpellIndices {
+typedef enum {
     INVENTORY_SPELL_0_PROJECTILE = 0,
     INVENTORY_SPELL_1_ICE_BLAST = 1,
     INVENTORY_SPELL_2_GRENADE = 2,
@@ -89,9 +89,9 @@ enum InventorySpellIndices {
     INVENTORY_SPELL_6_GLITCHED = 6,
     INVENTORY_SPELL_7_PORTAL = 7,
     INVENTORY_SPELL_8_MIND_READ = 8
-};
+}  InventorySpellIndices;
 
-enum InventoryIcons {
+typedef enum {
     ICON_WARP_CRYSTAL = 0x0245,
     ICON_KEY = 0x0175,
     ICON_MOON_MOUNTAIN_PASS_KEY = 0x0568, //unused?
@@ -108,7 +108,7 @@ enum InventoryIcons {
     ICON_UPGRADED_DINO_BAG = 0x0560,
     ICON_GOLD_NUGGET = 0x0257,
     ICON_FIRE_CRYSTAL = 0x04f7,
-    ICON_KRAZOA_ARTIFACT = 0x0496, //shared by the Translator & Tablets
+    ICON_KRAZOA_ARTIFACT = 0x0496,      //shared by the Translator & Tablets
     ICON_HORN_OF_TRUTH = 0x0258,
     ICON_TREASURE_CHEST_KEY = 0x0568,
     ICON_BLUE_MUSHROOM = 0x01a5,
@@ -117,7 +117,7 @@ enum InventoryIcons {
     ICON_PURPLE_MUSHROOM = 0x0498,
     ICON_WHITE_MUSHROOM = 0x0497,
     ICON_SILVER_TOOTH = 0x052b,
-    ICON_TREX_TOOTH = 0x025b, //unused?
+    ICON_TREX_TOOTH = 0x025b,           //unused?
     ICON_GOLD_TOOTH = 0x052a,
     ICON_SUN_STONE = 0x03a8,
     ICON_MOON_STONE = 0x03d6,
@@ -125,6 +125,7 @@ enum InventoryIcons {
     ICON_BAY_DIAMOND = 0x055f,
     ICON_SPELLSTONE_INACTIVE = 0x0562,
     ICON_SPELLSTONE_ACTIVE = 0x0563,
+    ICON_SCARAB = 0x0475,               //unused
 
     ICON_EAT_FOOD = 0x02c7,
     ICON_PLACE_FOOD = 0x02c8,
@@ -155,6 +156,6 @@ enum InventoryIcons {
     ICON_FLAME = 0x01cf,
     ICON_DISTRACT = 0x01d0,
     ICON_GUARD = 0x01d2
-};
+} InventoryIcons;
 
 #endif

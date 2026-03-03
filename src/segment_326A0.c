@@ -98,24 +98,32 @@ u16 func_80031BBC(f32 x, f32 y, f32 z) {
     return out;
 }
 
-s16 func_80031DD8(Object* arg0, Object* arg1, f32* arg2) {
-    s16 sp26;
-    s32 var_v1;
-    f32 sp1C;
-    f32 sp18;
+//aim_object_at_object_get_yaw_diff?
+s16 func_80031DD8(Object* objA, Object* objB, f32* distance) {
+    s16 angle;
+    s32 angle16;
+    f32 dx;
+    f32 dz;
 
-    if ((arg0 == NULL) || (arg1 == NULL)) {
+    if ((objA == NULL) || (objB == NULL)) {
         return 0;
     }
-    sp1C = arg0->srt.transl.x - arg1->srt.transl.x;
-    sp18 = arg0->srt.transl.z - arg1->srt.transl.z;
-    sp26 = arctan2_f(sp1C, sp18);
-    if (arg2 != NULL) {
-        *arg2 = sqrtf(SQ(sp1C) + SQ(sp18));
+
+    //Get 2D vector from objB to objA
+    dx = objA->srt.transl.x - objB->srt.transl.x;
+    dz = objA->srt.transl.z - objB->srt.transl.z;
+
+    angle = arctan2_f(dx, dz);
+
+    //(Optional) Store distance
+    if (distance != NULL) {
+        *distance = sqrtf(SQ(dx) + SQ(dz));
     }
-    var_v1 = sp26 - (arg0->srt.yaw & 0xFFFF);
-    CIRCLE_WRAP(var_v1)
-    return var_v1;
+
+    //Return angular difference needed for objA to point towards objB
+    angle16 = angle - (objA->srt.yaw & 0xFFFF);
+    CIRCLE_WRAP(angle16)
+    return angle16;
 }
 
 void func_80031EBC(Vec4f* arg0, Vec4f* arg1) {
@@ -125,23 +133,25 @@ void func_80031EBC(Vec4f* arg0, Vec4f* arg1) {
     arg1->w = arg0->y;
 }
 
-s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg5) {
+s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 useInputCoords) {
     s32 boneIdx;
-    ModelInstance* temp_v1;
-    MtxF* sp9C;
-    MtxF sp5C;
+    ModelInstance* modelInstance;
+    MtxF* boneMtx;
+    MtxF attachPointMtx;
     SRT srt;
 
-    temp_v1 = obj->modelInsts[obj->modelInstIdx];
-    if (!(temp_v1->unk34 & 8)) {
+    modelInstance = obj->modelInsts[obj->modelInstIdx];
+    if (!(modelInstance->unk34 & 8)) {
         *ox = obj->srt.transl.x;
         *oy = obj->srt.transl.y;
         *oz = obj->srt.transl.z;
         return 1;
     }
+
+    //Get the attach point's untransformed position (or use the argument coords' current location)
     boneIdx = obj->def->pAttachPoints[attachIdx].bones[obj->modelInstIdx];
-    sp9C = (MtxF *) &(((f32 **)temp_v1->matrices)[(temp_v1->unk34 & 1)][boneIdx << 4]);
-    if (arg5 != 0) {
+    boneMtx = (MtxF *) &(((f32 **)modelInstance->matrices)[(modelInstance->unk34 & 1)][boneIdx << 4]);
+    if (useInputCoords) {
         srt.transl.x = *ox;
         srt.transl.y = *oy;
         srt.transl.z = *oz;
@@ -156,11 +166,15 @@ s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg
         srt.pitch = obj->def->pAttachPoints[attachIdx].rot.y;
         srt.roll = obj->def->pAttachPoints[attachIdx].rot.z;
     }
-    matrix_from_srt_reversed(&sp5C, (SRT* ) &srt);
-    matrix_concat_4x3(&sp5C, sp9C, &sp5C);
-    *ox = sp5C.m[3][0];
-    *oy = sp5C.m[3][1];
-    *oz = sp5C.m[3][2];
+    matrix_from_srt_reversed(&attachPointMtx, (SRT* ) &srt);
+
+    //Transform attach point by its bone's matrix
+    matrix_concat_4x3(&attachPointMtx, boneMtx, &attachPointMtx);
+
+    //Store the transformed coords
+    *ox = attachPointMtx.m[3][0];
+    *oy = attachPointMtx.m[3][1];
+    *oz = attachPointMtx.m[3][2];
     if (obj->parent != NULL) {
         transform_point_by_object(*ox, *oy, *oz, ox, oy, oz, obj->parent);
     } else {
@@ -190,7 +204,7 @@ void func_800321E4(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz) {
     *oz = obj->def->pAttachPoints[arg1].pos.z;
 }
 
-void func_80032238(Object* obj, s32 arg1, s32 arg2, Vec3f* arg3) {
+void func_80032238(Object* obj, s32 attachBaseIdx, s32 arg2, Vec3f* position) {
     ModelInstance* modelInst;
     MtxF* mtx;
     ObjDef* objDef;
@@ -198,26 +212,26 @@ void func_80032238(Object* obj, s32 arg1, s32 arg2, Vec3f* arg3) {
     s32 boneIdx;
 
     objDef = obj->def;
-    if (objDef->numAttachPoints < (arg1 + arg2)) {
+    if (objDef->numAttachPoints < (attachBaseIdx + arg2)) {
         return;
     }
 
     modelInst = obj->modelInsts[obj->modelInstIdx];
     for (i = 0; i < arg2; i++) {
         if (modelInst->unk34 & 8) {
-            boneIdx = objDef->pAttachPoints[arg1 + i].bones[obj->modelInstIdx];
+            boneIdx = objDef->pAttachPoints[attachBaseIdx + i].bones[obj->modelInstIdx];
             mtx = (MtxF *) &((f32 **)modelInst->matrices)[modelInst->unk34 & 1][boneIdx << 4];
-            arg3[i].x = mtx->m[3][0];
-            arg3[i].y = mtx->m[3][1];
-            arg3[i].z = mtx->m[3][2];
+            position[i].x = mtx->m[3][0];
+            position[i].y = mtx->m[3][1];
+            position[i].z = mtx->m[3][2];
             if (obj->parent == NULL) {
-                arg3[i].x += gWorldX;
-                arg3[i].z += gWorldZ;
+                position[i].x += gWorldX;
+                position[i].z += gWorldZ;
             }
         } else {
-            arg3[i].x = obj->srt.transl.x;
-            arg3[i].y = obj->srt.transl.y;
-            arg3[i].z = obj->srt.transl.z;
+            position[i].x = obj->srt.transl.x;
+            position[i].y = obj->srt.transl.y;
+            position[i].z = obj->srt.transl.z;
         }
     }
 }

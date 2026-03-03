@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_562_ctor
-.dword dll_562_dtor
+.dword DIM2Icicle_ctor
+.dword DIM2Icicle_dtor
 
 # export table
-/*0*/ .dword dll_562_setup
-/*1*/ .dword dll_562_control
-/*2*/ .dword dll_562_update
-/*3*/ .dword dll_562_print
-/*4*/ .dword dll_562_free
-/*5*/ .dword dll_562_get_model_flags
-/*6*/ .dword dll_562_get_data_size
+/*0*/ .dword DIM2Icicle_setup
+/*1*/ .dword DIM2Icicle_control
+/*2*/ .dword DIM2Icicle_update
+/*3*/ .dword DIM2Icicle_print
+/*4*/ .dword DIM2Icicle_free
+/*5*/ .dword DIM2Icicle_get_model_flags
+/*6*/ .dword DIM2Icicle_get_data_size

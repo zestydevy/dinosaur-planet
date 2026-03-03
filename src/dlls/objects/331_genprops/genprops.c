@@ -258,7 +258,7 @@ void dll_331_control(Object* self) {
     Object* player;
     ObjectPolyhits* temp_v0;
     s16 id;
-    Object** new_var;
+    Object** collidedObject;
     GenProps_Setup *objSetup;
     s32 temp_t3;
     GenProps_Data* objData;
@@ -322,14 +322,12 @@ void dll_331_control(Object* self) {
         gDLL_3_Animation->vtbl->func17(0, self, -1);
         break;
     case OBJ_DFturbinelever: //0xae
-        
-        new_var = &self->polyhits->unk100[0];
-        if ((self->unkDC == 0) && (new_var != NULL) && (*(s16*)(((s32)self->polyhits) + 0x146) == 0x2B)) {
+        collidedObject = &self->polyhits->unk100[0];
+        if ((self->unkDC == 0) && (collidedObject != NULL) && (*(s16*)(((s32)self->polyhits) + 0x146) == 0x2B)) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
             self->unkDC = 1;
         }
         break;
-        
     case OBJ_DFdebris1: //0xab
         objData->roll -= gUpdateRate;
         if (objData->roll < 0) {
@@ -455,7 +453,7 @@ void dll_331_control(Object* self) {
         self->objhitInfo->unkC = 10.0f;
         self->objhitInfo->unk50 = 30;
         self->objhitInfo->unk58 |= 1;
-        if (main_get_bits(BIT_1D9) != 0) {
+        if (main_get_bits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
             self->objhitInfo->unk58 &= ~1;
         }
         if (objData->unk3E == 2) {

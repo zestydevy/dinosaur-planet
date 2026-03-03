@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 #include "sys/objanim.h"
 
 typedef struct {
@@ -228,8 +229,8 @@ static void dll_294_func_968(Object* self) {
         main_set_bits(BIT_Gold_Nugget_LFV, 1);
     } else {
         player = get_player();
-        foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
-        ((DLL_314_Foodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
+        foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
     }
     curvefishdata->unk124 = 0.0f;
     curvefishdata->unk10C = 0;

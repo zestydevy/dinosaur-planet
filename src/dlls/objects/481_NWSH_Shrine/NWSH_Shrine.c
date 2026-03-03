@@ -225,8 +225,8 @@ void dll_481_control(Object *self) {
             objdata->unk12 = 5;
             return;
         case 5:
-            if (main_get_bits(BIT_FD) == 0) {
-                main_set_bits(BIT_FD, 1);
+            if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {
+                main_set_bits(BIT_Shrine_Do_Exit_Warp, 1);
             }
             main_set_bits(BIT_15F, 0);
             main_set_bits(BIT_DB_Entered_Shrine_2, 0);

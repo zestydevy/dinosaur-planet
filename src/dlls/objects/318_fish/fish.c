@@ -6,7 +6,7 @@
 #include "sys/objhits.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 #include "functions.h"
 #include "dll.h"
 
@@ -642,7 +642,7 @@ static void fish_func_2150(Object *self) {
     } else {
         player = get_player();
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
-        ((DLL_314_Foodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
     }
     objdata->unk18 = 0;
     objdata->unk4 = 0.0f;

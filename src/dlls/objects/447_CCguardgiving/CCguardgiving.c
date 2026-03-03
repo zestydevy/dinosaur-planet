@@ -44,7 +44,7 @@ void CCguardgiving_setup(Object *self, ObjSetup *setup, s32 arg2) {
     CCguardgiving_Data *objdata = self->data;
 
     objdata->guardClaw = NULL;
-    if (main_get_bits(BIT_CC_Bought_GuardClaw_Map)) {
+    if (main_get_bits(BIT_Map_CC)) {
         objdata->state = STATE_Finished;
         objdata->stepAside = TRUE;
     } else if (main_get_bits(BIT_CC_Bribed_GuardClaw)) {
@@ -144,7 +144,7 @@ void CCguardgiving_control(Object *self) {
                 gDLL_3_Animation->vtbl->func17(SeqIndex_Selling_Map, self, -1);
                 objdata->state = STATE_Finished;
                 func_80023BF8(self, 0, 0, 0, 0, 2);
-                main_set_bits(BIT_CC_Bought_GuardClaw_Map, 1);
+                main_set_bits(BIT_Map_CC, 1);
             }
         } else if (gDLL_1_UI->vtbl->func_F24() != PAGE_Inventory) {
             //If the object inventory closes, go back to waiting

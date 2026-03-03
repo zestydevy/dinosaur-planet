@@ -1,0 +1,13 @@
+.text = 0x0:
+WL_VConsole_ctor = 0x0;
+WL_VConsole_dtor = 0xC;
+WL_VConsole_setup = 0x18;
+WL_VConsole_control = 0x30;
+WL_VConsole_update = 0x3C;
+WL_VConsole_print = 0x48;
+WL_VConsole_free = 0x9C;
+WL_VConsole_get_model_flags = 0xAC;
+WL_VConsole_get_data_size = 0xBC;
+
+.rodata = 0xF4:
+_oob_rodata_0 = 0x0; // absolute:0xF4

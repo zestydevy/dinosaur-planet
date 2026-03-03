@@ -75,6 +75,7 @@ void func_80025E58(void) {
 
 /** Checks for collisions (Projectile/Ice Blast Spell, etc.) 
   * Lower collisionType values have higher priority.
+  * arg2 seems to store model hitSphere index
   */
 s32 func_80025F40(Object* obj, Object **hitBy, s32 *arg2, s32 *damage) {
     ObjectHitInfo* objHitInfo;

@@ -98,6 +98,8 @@ enum SoundID {
 
     SOUND_Sabre_Freezing_B = 0x184,     //"That's too cold for me!"
 
+    SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
+
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
 
     SOUND_1e1_Stone_Moving_Loop = 0x1e1,
@@ -154,10 +156,12 @@ enum SoundID {
 
     SOUND_304_Burning_Loop = 0x304, // flame blast
 
-    SOUND_33E = 0x33E,
+    SOUND_33E_Reverse_Magic_Hiss = 0x33E, //ECSHshrine (when cups rise)
+    SOUND_33F_Cup_Slide_Loop = 0x33F, //ECSH_Cup
 
     SOUND_342_Low_Whoosh = 0x342, // used in DLL 466
 
+    SOUND_343_Eerie_Ringing = 0x343, // ECSH_Cup (when Krazoa Spirit enters it)
     SOUND_344_Chime = 0x344,
 
     SOUND_35A_Low_Whoosh = 0x35A, // WMrock
@@ -180,8 +184,10 @@ enum SoundID {
     SOUND_386_Squelched_Impact = 0x386, //DRbullet
 
     SOUND_3D6 = 0x3D6, // used in SHroot (DLL 510)
-    SOUND_3D7 = 0x3D7, //used in SHroot (DLL 510)
-    SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274) and SHroot (DLL 510)
+    SOUND_3D7_Whoosh = 0x3D7, //used in SHroot (DLL 510), DIM2Icicle (DLL 562) 
+    SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274), SHroot (DLL 510), DIM2Icicle (DLL 562)
+    
+    SOUND_3E3_Ice_Cracking = 0x3E3, //DIM2Icicle
 
     SOUND_3EC_Water_Wade_Slow_A = 0x3EC,
     SOUND_3ED_Water_Wade_Slow_B = 0x3ED,
@@ -214,6 +220,8 @@ enum SoundID {
 
     SOUND_53C = 0x53C, //used by SHbluemushroom
 
+    SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
+
     SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
 
     SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
@@ -226,6 +234,7 @@ enum SoundID {
     SOUND_5F6_Tumbleweed_Roll = 0x5F6, // used in DLL 227
     SOUND_5F7_Tumbleweed_Disintegrate = 0x5F7, // used in DLL 227
 
+    SOUND_613_Gold_Bounce = 0x613,  // used in SCcollectables
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
 
@@ -233,6 +242,8 @@ enum SoundID {
 
     SOUND_64C_Wicker_Rattle = 0x64C, // used by MediumCrate
     SOUND_64D_Wooden_Rattle = 0x64D, // used by MediumCrate
+
+    SOUND_669_Insect_Scurry_Loop = 0x669, // Scarab
 
     SOUND_677_Metal_Clang = 0x677, // snowhorn related
 
@@ -259,12 +270,14 @@ enum SoundID {
     SOUND_6AC_Electric_Zap = 0x6AC,
     SOUND_6AD_Electric_Crackle = 0x6AD,
 
-    SOUND_6B4_Illusion_Spell = 0x6B4, 
+    SOUND_6B4_Basket_Carry = 0x6B4, // used by player
     SOUND_6B5_Crate_Struck = 0x6B5, // used by MediumCrate
     SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate
     SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate
 
-    SOUND_6BC_Creature_Cry = 0x6BC, // Duster
+    SOUND_6BB_Creature_Cry = 0x6BB, // Scarab
+    SOUND_6BC_Creature_Cry = 0x6BC, // Duster, Scarab
+    SOUND_6BD_Creature_Death_Cry = 0x6BD, // Scarab
 
     SOUND_6CA_Chime = 0x6CA, // Duster
 
@@ -297,8 +310,15 @@ enum SoundID {
 
     SOUND_775_Timer_Countdown = 0x775,
     
+    SOUND_779_Water_Rushing_Loop = 0x779,  //DFwhirlpool, babbling river-like sound
+    SOUND_77A_Water_Draining_Loop = 0x77A, //DFwhirlpool, static-y waterfall-like sound
+
     SOUND_77C_Capy_Sniff = 0x77C,
     SOUND_77D_Capy_Eat = 0x77D,
+
+    SOUND_78C = 0x78C, //DFPLevelControl (empty?)
+    
+    SOUND_793 = 0x793, //DFPLevelControl (empty?)
 
     SOUND_796 = 0x796,
 
@@ -310,32 +330,39 @@ enum SoundID {
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
+    
     SOUND_83F = 0x83F, 
-
+    
     SOUND_840 = 0x840, 
     SOUND_841 = 0x841,
     SOUND_842 = 0x842, 
-
+    
     SOUND_851_Laser_Blast = 0x851, // DRbullet
 
+    SOUND_860_Explosion_Mid = 0x860, //DRexplodeDoor
+    
     SOUND_87B_Ting = 0x87B, // Duster
-
+    
     SOUND_87E_Duster_Cry = 0x87E, // Duster "Hey look at this!!"
-
+    
     SOUND_883_Footstep_Mud_1 = 0x883, //player 
     SOUND_884_Footstep_Mud_2 = 0x884, //player 
-
+    
     SOUND_88D = 0x88D,
-
+    
     SOUND_8A2_Spore_Disintegrate = 0x8A2, // used in SHspore
+    
+    SOUND_8C7_Explosion_High = 0x8C7, //DRexplodeDoor
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
-
+    
     SOUND_912_Object_Refused = 0x912,
 
     SOUND_927_Harsh_Electric_Loop = 0x927, // DRbullet
 
     SOUND_95A_Frigid_Air_Loop = 0x95A, //used by Ice Blast Spell
+
+    SOUND_96B_Magic_Whir = 0x96B, //DFPLevelControl
 
     SOUND_986_Waterfall_Low_Loop = 0x986,   // used in DLL 6
     SOUND_987_Waterfall_High_Loop = 0x987,  // used in DLL 6
@@ -343,6 +370,7 @@ enum SoundID {
     SOUND_98F = 0x98F,
     SOUND_990 = 0x990,
 
+    SOUND_999_Mechanical_Ratcheting = 0x999,
     SOUND_99a_Mechanical_Ratcheting = 0x99a,
 
     SOUND_9A0 = 0x9A0,
@@ -369,9 +397,21 @@ enum SoundID {
     SOUND_9C5_Vanish = 0x9C5,               //WCpushblock
     SOUND_9C6_Appear = 0x9C6,               //WCpushblock
 
+    SOUND_A20_Electric_Surge_Quieter = 0xA20,       //DBdustgeezer
+    SOUND_A21_Whoosh_Echoey = 0xA21,                //DBdustgeezer
+    SOUND_A22_Electric_Surge = 0xA22,               //DBdustgeezer
+
+    SOUND_A28_Blade_Impact = 0xA28, //DBSpike
+    SOUND_A29_Wooden_Ratcheting_Loop = 0xA29, //DBSpike
+    SOUND_A2A_Heavy_Swing = 0xA2A, //DBSpike
+
+    SOUND_A4E_Dinosaur_Grunt = 0xA4E, // used by PointBack
+    SOUND_A4F_Dinosaur_Grunt = 0xA4F, // used by PointBack
+    SOUND_A50_Dinosaur_Grunt = 0xA50, // used by PointBack
+
     SOUND_A71_Rattling_1 = 0xA71, // used by MoonSeeds
     SOUND_A72_Rattling_2 = 0xA72, // used by MoonSeeds
-
+    SOUND_A73 = 0xA73, // used by PointBack
     SOUND_A74 = 0xA74, // used by BWlog
     SOUND_A75 = 0xA75, // used by BWlog
     SOUND_A77 = 0xA77, // used by BWlog
@@ -385,6 +425,9 @@ enum SoundID {
     SOUND_AAE = 0xAAE, // VFP_lavastar sound (Empty)
 
     SOUND_AB4_Magic_Barrier_Deflect = 0xAB4, //Lunaimar
+
+    SOUND_AC8_Ground_Impact = 0xAC8, // used by PointBack
+    SOUND_AC9_Impact_Crumbling = 0xAC9, // used by PointBack
 
     SOUND_B1C_Ladder_Climb_A = 0xB1C,
     SOUND_B1D_Ladder_Climb_B = 0xB1D,
@@ -400,6 +443,10 @@ enum SoundID {
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
+    SOUND_B6E_Green_Scarab_Collected = 0xB6E,
+    SOUND_B6F_Red_Scarab_Collected = 0xB6F,
+    SOUND_B70_Gold_Scarab_Collected = 0xB70,
+    SOUND_B71_Rainbow_Scarab_Collected = 0xB71,
     SOUND_B72_Game_Saved = 0xB72,
     SOUND_B73_Option_Selected = 0xB73,
     SOUND_B74_Gentle_Magic_Loop = 0xB74,
