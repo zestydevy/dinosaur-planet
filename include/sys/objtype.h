@@ -8,7 +8,7 @@ enum ObjType {
     OBJTYPE_PLAYER = 0,
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
-    OBJTYPE_4 = 4, // Tumbleweed
+    OBJTYPE_4 = 4, // Tumbleweed, WG_Triffid
     OBJTYPE_5 = 5, // collectable, SCcollectables (OBJTYPE_COLLECTABLE?)
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7, // CFScalesGalleon
@@ -37,13 +37,13 @@ enum ObjType {
     OBJTYPE_51 = 51, // SHbluemushroom, DBBoneGeezer, Tumbleweed (sidekick/Find-related?)
     OBJTYPE_52 = 52,
     OBJTYPE_53 = 53,
-    OBJTYPE_54 = 54,
+    OBJTYPE_54 = 54, // MagicPlant
     OBJTYPE_55 = 55,
     OBJTYPE_56 = 56,
     OBJTYPE_59 = 59,
     OBJTYPE_61 = 61, 
     OBJTYPE_62 = 62, 
-    OBJTYPE_63 = 63,
+    OBJTYPE_63 = 63, //MagicPlant
     OBJTYPE_64 = 64
 };
 

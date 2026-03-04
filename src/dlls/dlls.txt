@@ -51,10 +51,12 @@
 211 = objects/211_Tricky
 213 = objects/213
 214 = objects/214_animobj
+220 = objects/220_Chuka
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
+236 = objects/236_WG_Triffid
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie
 246 = objects/246_SwarmBaddie
@@ -79,12 +81,15 @@
 284 = objects/284_levelname
 287 = objects/287_pressureswitch
 289 = objects/289_CClogpush
+290 = objects/290_MagicPlant
+291 = objects/291_MagicDust
 292 = objects/292_TrickyWarp
 293 = objects/293_TrickyGuard
 294 = objects/294_curveFish
 295 = objects/295_smallbasket
 296 = objects/296_medium_crate
 297 = objects/297_scarab
+299 = objects/299_EndObject
 305 = objects/305_PortalSpellDoor
 307 = objects/307
 308 = objects/308_USEOBJ
@@ -120,6 +125,9 @@
 365 = objects/365
 376 = objects/376_CFPrisonUncle
 378 = objects/378_CFScalesGalleon
+379 = objects/379_CF_ObjCreator
+382 = objects/382_CFIllusionClaw
+385 = objects/385
 393 = objects/393_CFMainSlideDoor
 396 = objects/396_CFSupTreasureCh
 398 = objects/398_CFMagicWall
@@ -135,6 +143,7 @@
 428 = objects/428_DFmole
 431 = objects/431_DFwhirlpool
 435 = objects/435_KrazoaSpirit
+438 = objects/438_RobotBeam
 441 = objects/441_MMP_levelcontrol
 447 = objects/447_CCguardgiving
 448 = objects/448_CCcage
@@ -152,6 +161,7 @@
 461 = objects/461_CCsandwormBoss
 463 = objects/463_CCgasvent
 464 = objects/464_CCgasventControl
+465 = objects/465_CCdockDoor
 466 = objects/466_mmshrine
 469 = objects/469_ECSHshrine
 470 = objects/470_ECSH_Cup
@@ -166,6 +176,7 @@
 499 = objects/499_NWice
 501 = objects/501_SHtricky
 502 = objects/502_SHmushroom
+503 = objects/503_SHkillermushroom
 505 = objects/505_SHspore
 506 = objects/506_SHPlantSpore
 507 = objects/507_SHqueenearthwalker
@@ -183,10 +194,12 @@
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
 544 = objects/544_DIM_LevelControl
+546 = objects/546_DIMBikeDoor
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
 553 = objects/553_WGmutant
 562 = objects/562_DIM2Icicle
+566 = objects/566_DIM_BossGut
 569 = objects/569_MAGICMaker
 570 = objects/570_DIM_BossSpit
 571 = objects/571_DIMbosscrackparticles
@@ -206,6 +219,7 @@
 589 = objects/589_SB_ShipGunBroke
 590 = objects/590_WL_Galleon
 596 = objects/596_WLpressureswitch
+602 = objects/602_WLTorch
 603 = objects/603_WL_Vein
 605 = objects/605_WLworm
 606 = objects/606_WL_Wallpower
@@ -231,12 +245,14 @@
 661 = objects/661_DBPlaceHolder
 663 = objects/663_DBlevelControl
 668 = objects/668_DBdiamond
+670 = objects/670_DBExpbit
 683 = objects/683_DBSupShield
 684 = objects/684_DBDustGeezer
 685 = objects/685_DBbonedust
 691 = objects/691_DB_FakeHorizon
 697 = objects/697_BossDrakor
 698 = objects/698_BossDrakor_Laser
+700 = objects/700_BossDrakor_Dumm
 701 = objects/701_KT_RexLevel
 702 = objects/702_KTrex
 703 = objects/703_KT_RexFloorSwitch
@@ -247,6 +263,7 @@
 712 = objects/712_DIMSnowHorn1
 713 = objects/713_DR_EarthWarrior
 714 = objects/714_DR_CloudRunner
+715 = objects/715_StaticCamera
 716 = objects/716_kyteFireFlys
 718 = objects/718_PerchObject
 720 = objects/720_FindKyteObject
@@ -261,6 +278,7 @@
 762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem
 768 = objects/768_SPShop
+772 = objects/772_SPitemBeam
 776 = objects/776_WCbouncycrate
 777 = objects/777_WCTrexChase
 778 = objects/778_WCSabreChase

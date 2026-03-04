@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_385_ctor = 0x0;
+dll_385_dtor = 0xC;
+dll_385_setup = 0x18;
+dll_385_control = 0x70;
+dll_385_update = 0x7C;
+dll_385_print = 0x88;
+dll_385_free = 0xDC;
+dll_385_get_model_flags = 0xEC;
+dll_385_get_data_size = 0xFC;
+dll_385_func_110 = 0x110;
+
+.rodata = 0x16C:

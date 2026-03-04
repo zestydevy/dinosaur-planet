@@ -1,0 +1,16 @@
+.text = 0x0:
+dll_291_ctor = 0x0;
+dll_291_dtor = 0xC;
+dll_291_setup = 0x18;
+dll_291_control = 0x3F0;
+dll_291_update = 0xEFC;
+dll_291_print = 0xF08;
+dll_291_free = 0xF68;
+dll_291_get_model_flags = 0xF78;
+dll_291_get_data_size = 0xF88;
+dll_291_func_F9C = 0xF9C;
+
+.rodata = 0x10A4:
+
+.data = 0x10C4:
+_data_0 = 0x0; // absolute:0x10C4

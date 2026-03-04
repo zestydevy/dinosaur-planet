@@ -197,6 +197,7 @@ enum SoundID {
 
     SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
 
+    SOUND_1D3 = 0X1D3,
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
 
     SOUND_1e1_Stone_Moving_Loop = 0x1e1,
@@ -337,6 +338,11 @@ enum SoundID {
     SOUND_613_Gold_Bounce = 0x613,  // used in SCcollectables
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
+
+    SOUND_618 = 0x618, //magicplant
+    SOUND_619 = 0x619, //magicplant
+    SOUND_61A = 0x61A, //magicplant
+
 
     SOUND_633 = 0x633, // empty? used by player DLL
 

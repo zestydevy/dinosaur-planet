@@ -1,0 +1,22 @@
+.text = 0x0:
+dll_220_ctor = 0x0;
+dll_220_dtor = 0xC;
+dll_220_setup = 0x18;
+dll_220_control = 0x118;
+dll_220_update = 0x670;
+dll_220_print = 0x67C;
+dll_220_free = 0x6D0;
+dll_220_get_model_flags = 0x6E0;
+dll_220_get_data_size = 0x6F0;
+dll_220_func_704 = 0x704;
+dll_220_func_778 = 0x778;
+dll_220_func_8A4 = 0x8A4;
+
+.rodata = 0x970:
+str_0 = 0x0; // absolute:0x970
+
+.data = 0x9A0:
+_data_0 = 0x0; // absolute:0x9A0
+_data_12 = 0x12; // absolute:0x9B2
+_data_1A = 0x1A; // absolute:0x9BA
+_data_1E = 0x1E; // absolute:0x9BE

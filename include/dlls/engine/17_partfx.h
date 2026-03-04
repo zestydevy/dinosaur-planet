@@ -50,6 +50,7 @@ enum ParticleID {
     /* --- DLL 37 END --- */
     /* --- DLL 36 START --- */
     PARTICLE_1F4 = 0x1F4,
+    PARTICLE_1F7 = 0x1F7,
     PARTICLE_202 = 0x202,
     PARTICLE_257 = 0x257,
     /* --- DLL 36 END --- */
@@ -180,6 +181,7 @@ enum ParticleID {
     /* --- DLL 50 START --- */
     PARTICLE_73A = 0x73A,
     PARTICLE_73B = 0x73B,
+    PARTICLE_741 = 0x741,
     PARTICLE_76B = 0x76B,
     /* --- DLL 50 END --- */
     /* --- DLL 52 START --- */
@@ -193,6 +195,7 @@ enum PartfxFlags {
     PARTFXFLAG_1 = 0x1,
     PARTFXFLAG_2 = 0x2,
     PARTFXFLAG_4 = 0x4,
+    PARTFXFLAG_10 = 0x10,
     PARTFXFLAG_800 = 0x800,
     PARTFXFLAG_10000 = 0x10000,
     PARTFXFLAG_200000 = 0x200000

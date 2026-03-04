@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_772_ctor = 0x0;
+dll_772_dtor = 0xC;
+dll_772_setup = 0x18;
+dll_772_control = 0x88;
+dll_772_update = 0x170;
+dll_772_print = 0x17C;
+dll_772_free = 0x194;
+dll_772_get_model_flags = 0x1A4;
+dll_772_get_data_size = 0x1B4;
+
+.rodata = 0x1FC:
