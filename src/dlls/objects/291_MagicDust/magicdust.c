@@ -54,12 +54,12 @@ void dll_291_setup(Object* self, MagicDustSetup* setup, s32 arg2) {
     sp50 = (rand_next(0x27, 0x2C) / 100.0f);
     self->speed.f[0] = fsin16_precise(sp54) * sp50;
     self->speed.f[2] = fcos16_precise(sp54) * sp50;
-    self->speed.f[1] = (f32) rand_next(0x28, 0x32) / 50.0f;
+    self->speed.f[1] = rand_next(0x28, 0x32) / 50.0f;
     if (setup->unk2E == 1) {
-        objdata->unk272 = (u8) (objdata->unk272 | 1);
+        objdata->unk272 |= 1;
         self->opacity = 1;
     } else if (setup->unk2E == 2) {
-        objdata->unk272 = (u8) (objdata->unk272 | 1);
+        objdata->unk272 |= 1;
         self->opacity = 1;
         func_800267A4(self);
         temp = 120.0f;
@@ -109,15 +109,15 @@ void dll_291_setup(Object* self, MagicDustSetup* setup, s32 arg2) {
     objdata->unk260 = (f32) self->objhitInfo->unk52;
     if (self->srt.flags & 0x2000) {
         gDLL_27->vtbl->init(&objdata->unk0, 0, 0x40007, 0);
-        gDLL_27->vtbl->setup_terrain_collider((DLL27_Data* ) objdata, 1, (Vec3f* ) _data_0, &objdata->unk260, &sp47);
-        gDLL_27->vtbl->reset(self, (DLL27_Data* ) objdata);
+        gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, (Vec3f* ) _data_0, &objdata->unk260, &sp47);
+        gDLL_27->vtbl->reset(self, &objdata->unk0);
     }
     self->unkB0 |= 0x2000;
     if (objdata->unk272 & 1) {
         objdata->unk264 = 60.0f;
         return;
     }
-    objdata->unk272 = (u8) (objdata->unk272 | 4);
+    objdata->unk272 |= 4;
     objdata->unk264 = 1800.0f;
 }
 

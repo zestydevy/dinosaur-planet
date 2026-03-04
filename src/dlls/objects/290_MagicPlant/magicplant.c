@@ -4,8 +4,7 @@
 #include "sys/objprint.h"
 #include "functions.h"
 #include "dlls/objects/210_player.h"
-
-extern void func_800321E4(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz);
+#include "sys/gfx/modgfx.h"
 
 typedef struct {
 /*00*/ Object *magic;
@@ -28,14 +27,14 @@ typedef struct {
 
 typedef struct {
     ObjSetup base;
-    u16 unk18; //
+    u16 unk18;
     u8 unk1A;
-    u8 unk1B; //
-    s16 unk1C;//
-    u16 _unk1E; //
-    s32 _unk20; //
+    u8 unk1B;
+    s16 unk1C;
+    u16 _unk1E;
+    s32 _unk20;
     s16 unk24;
-    s16 _unk26; //
+    s16 _unk26;
     s32 _unk28;
     s16 unk2C;
 }MagicDustSetup;
@@ -89,7 +88,6 @@ void dll_290_setup(Object* self, DLL290_Setup* setup, s32 arg2) {
 
 
 // offset: 0x160 | func: 1 | export: 1
-// #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/290_MagicPlant/dll_290_control.s")
 void dll_290_control(Object* self) {
     DLL290_Setup* setup;
     DLL290_Data* objdata;
@@ -226,7 +224,7 @@ static void dll_290_func_5F8(Object* self, s32 arg1) {
     temp_v0->base.byte5 = setup->byte5;
     temp_v0->base.byte6 = setup->byte6;
     temp_v0->base.fadeDistance = setup->fadeDistance - 0xF;
-    magicDust = obj_create((ObjSetup*)temp_v0, 5U, self->mapID, -1, self->parent);
+    magicDust = obj_create(&temp_v0->base, 5U, self->mapID, -1, self->parent);
     magicDust->unkC4 = self;
     objdata->magic = magicDust;
 }
@@ -256,9 +254,9 @@ void dll_290_func_7E8(Object *self, DLL290_Setup* setup, DLL290_Data* objdata) {
     Object *hitBy;
     f32 distanceToPlayer;
     s32 random;
-    Object *player = get_player(); // 68
-    u32 sp58[4] = { 8, 0xff, 0xff, 0x78 }; // 58 (NOTE: becomes _data_18, which needs to be commented out/deleted outside this function when placing!)
-    DLL_Unknown* dll; // 54
+    Object *player = get_player();
+    u32 sp58[4] = { 8, 0xff, 0xff, 0x78 }; 
+    DLL_IModgfx* dll;
     SRT transform;
 
     self->unkAF &= ~8;
@@ -278,7 +276,7 @@ void dll_290_func_7E8(Object *self, DLL290_Setup* setup, DLL290_Data* objdata) {
         transform.yaw = 0;
         transform.scale = 1.0f;
         dll = dll_load(DLL_ID_106, 1, FALSE);
-        ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs(0, 1, &transform, 0x401, -1, (s32*)sp58);
+        ((DLL_IModgfx*)dll)->vtbl->func0(NULL, 1, &transform, 0x401, -1, sp58);
         if (dll) {
             dll_unload(dll);
         }

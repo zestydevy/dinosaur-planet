@@ -1,18 +1,18 @@
 #include "common.h"
 
 typedef struct {
-    s32 _unk0;
-    s16 _unk4;
-    s16 unk6;
-    s16 unk8;
+    f32 unk0;
+    u8 unk4;
+    u8 _unk5;
+    u16 unk6;
+    u16 unk8;
     s16 unkA;
-    s8 unkC;
+    u8 unkC;
     u8 unkD;
     u8 unkE;
     u8 _unkF;
     s16 unk10;
-    s16 _unk12;
-    //[0x14];
+    u16 unk12;
 } DLL220_Data;
 
 typedef struct {
@@ -38,11 +38,13 @@ typedef struct {
     u8 unk32;
 }DLL220_Setup;
 
-static void dll_220_func_8A4(Object* self, ObjSetup* setup);
+static u8 _data_0[16] = {
+    0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0
+}; 
+static u32 _data_10[4] = {0x00000491, 0x00000492, 0x00000493, 0x000004b1}; 
 
-/*0x0*/ static u32 _data_0[] = {
-    0x00010102, 0x02020202, 0x02020202, 0x02010100, 0x00000491, 0x00000492, 0x00000493, 0x000004b1
-};
+static void dll_220_func_8A4(Object* self, ObjSetup* setup);
+static void dll_220_func_778(Object* self);
 
 // offset: 0x0 | ctor
 void dll_220_ctor(void *dll) { }
@@ -74,8 +76,88 @@ void dll_220_setup(Object* self, DLL220_Setup* setup, s32 arg2) {
 
 
 // offset: 0x118 | func: 1 | export: 1
-void dll_220_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/220_Chuka/dll_220_control.s")
+void dll_220_control(Object* self) {
+    DLL220_Data* objdata;
+    TextureAnimator* texAnim;
+    f32 dx;
+    f32 dz;
+    u16 distance2D;
+    Object* player;
+    Object* hitBy;
+    f32 pad;
+    s32 hitSphereID;
+    s32 hitDamage;
+    s32 angle;
+    Vec3f vPlayer;
+
+    objdata = self->data;
+    if (objdata->unk4 & 2) {
+        return;
+    }
+
+    //Blink behaviour?
+    texAnim = func_800348A0(self, 0, 0);
+    if (objdata->unk0 < 16.0f) {
+        if ((s32)objdata->unk0 == 0xA) {
+            objdata->unk4 |= 1;
+        }
+        texAnim->frame = _data_0[(s32)objdata->unk0] << 8;
+        objdata->unk0 += 1.0f;
+        if (objdata->unk0 == 16.0f) {
+            objdata->unk0 = (f32) rand_next(0x10, 0xF5);
+        }
+    } else {
+        if (gUpdateRateF <= (255.0f - objdata->unk0)) {
+            objdata->unk0 += gUpdateRateF;
+        } else {
+            objdata->unk0 = 0.0f;
+        }
+        texAnim->frame = 0;
+    }
+    
+    player = get_player();
+    dx = player->srt.transl.f[0] - self->srt.transl.f[0];
+    dz = player->srt.transl.f[2] - self->srt.transl.f[2];
+    distance2D = sqrtf(SQ(dx) + SQ(dz));
+    if (distance2D < objdata->unk6) {
+        if (objdata->unk12 >= objdata->unk6) {
+            objdata->unk4 = 5;
+            objdata->unk0 = 0.0f;
+        }
+        if (objdata->unk4 & 5) {
+            //Get vector to player, and angle to player
+            VECTOR_SUBTRACT(player->positionMirror, self->positionMirror, vPlayer); 
+            angle = arctan2_f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
+            CIRCLE_WRAP(angle);
+            if (((u16)angle < objdata->unk8) || (((0xFFFF - objdata->unk8) & 0xFFFF) < (u16)angle)) {
+                if ((rand_next(0, 0x63) < objdata->unkD) || (objdata->unk4 & 4)) {
+                    gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_220_func_778(self);
+                } else {
+                    gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+                }
+            } else {
+                gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+            }
+        }
+    } else if (objdata->unk4 & 1) {
+        gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+    }
+    objdata->unk12 = distance2D;
+
+    //Check for Projectile Spell attacks
+    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == 0xF) {
+        objdata->unkC--; //Lose health
+        if (objdata->unkC <= 0) {
+            dll_220_func_8A4(self, objdata); //Suggests arg1 of dll_220_func_8A4 might be a DLL220_Data*
+            gDLL_33_BaddieControl->vtbl->func18(self, objdata->unkA, -1, 1);
+            gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[3], MAX_VOLUME, NULL, NULL, 0, NULL);
+            main_set_bits(objdata->unk10, 1);
+        }
+    }
+    objdata->unk4 &= ~5;
+}
+
 
 // offset: 0x670 | func: 2 | export: 2
 void dll_220_update(Object *self) { }
@@ -109,7 +191,7 @@ void dll_220_func_704(Object* self, u8 arg1) {
 }
 
 // offset: 0x778 | func: 8
-void dll_220_func_778(Object* self) {
+static void dll_220_func_778(Object* self) {
     DLL220_Data* objdata;
     Object* sp2C;
     Object* temp_v0_2;
@@ -117,7 +199,7 @@ void dll_220_func_778(Object* self) {
     Object* player;
 
     objdata = self->data;
-    temp_v0 = obj_alloc_create_info(0x24, 0x2CB);
+    temp_v0 = obj_alloc_create_info(0x24, OBJ_ChukaChuck);
     temp_v0->x = self->srt.transl.f[0];
     temp_v0->y = self->srt.transl.f[1];
     temp_v0->z = self->srt.transl.f[2];
@@ -139,7 +221,7 @@ void dll_220_func_778(Object* self) {
 static void dll_220_func_8A4(Object* self, ObjSetup* setup) {
     func_800267A4(self);
     self->srt.flags |= 0x4000;
-    setup->loadFlags = (setup->loadFlags | 2);
+    setup->loadFlags |= 2;
 }
 
 /*0x0*/ static const char str_0[] = "BADDIE:Chuka Unknown message [%d]\n";

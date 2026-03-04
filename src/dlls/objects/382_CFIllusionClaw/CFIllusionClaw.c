@@ -22,12 +22,9 @@ void dll_382_control(Object* self) {
         func_80024108(self, 0.01f, gUpdateRateF, NULL);
     }
     var_v0 = self->srt.yaw - (temp_v0->srt.yaw & 0xFFFF);
-    if (var_v0 >= 0x8001) {
-        var_v0 += 0xFFFF0001;
-    }
-    if (var_v0 < -0x8000) {
-        var_v0 += 0xFFFF;
-    }
+    
+    CIRCLE_WRAP(var_v0);
+
     self->srt.yaw = self->srt.yaw - (var_v0 * gUpdateRate >> 3);
 }
 

@@ -197,8 +197,8 @@ enum SoundID {
 
     SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
 
-    SOUND_1D3 = 0X1D3,
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
+    SOUND_1D3 = 0x1D3,
 
     SOUND_1e1_Stone_Moving_Loop = 0x1e1,
 

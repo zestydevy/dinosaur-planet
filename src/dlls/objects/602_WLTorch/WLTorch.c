@@ -34,7 +34,7 @@ void dll_602_setup(Object* self, DLL602_Setup* setup, s32 arg2) {
 
     objdata = self->data;
     if (setup->unk1A != 0) {
-        objdata->unk4 = (f32) setup->unk1A;
+        objdata->unk4 = setup->unk1A;
     } else {
         objdata->unk4 = 75.0f;
     }
@@ -153,7 +153,7 @@ void dll_602_free(Object* self, s32 a1) {
 
 // offset: 0x68C | func: 5 | export: 5
 s32 dll_602_get_model_flags(s32 arg0) {
-    return 1;
+    return MODFLAGS_1;
 }
 
 // offset: 0x69C | func: 6 | export: 6

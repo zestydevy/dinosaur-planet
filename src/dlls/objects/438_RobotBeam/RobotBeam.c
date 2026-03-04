@@ -23,7 +23,7 @@ void dll_438_free(Object *self, s32 a1) { }
 
 // offset: 0x6C | func: 5 | export: 5
 s32 dll_438_get_model_flags(s32 arg0) {
-    return 3;
+    return MODFLAGS_1 | MODFLAGS_SHADOW;
 }
 
 // offset: 0x7C | func: 6 | export: 6

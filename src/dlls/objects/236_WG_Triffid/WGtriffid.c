@@ -48,7 +48,7 @@ void dll_236_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0x730 | func: 5 | export: 4
 void dll_236_free(Object* self, s32 a1) {
-    void* sp24;
+    Baddie* sp24;
     Object* temp_a0;
 
     sp24 = self->data;
@@ -58,12 +58,12 @@ void dll_236_free(Object* self, s32 a1) {
         obj_destroy_object(temp_a0);
         self->linkedObject = NULL;
     }
-    gDLL_33_BaddieControl->vtbl->free(self, (Baddie* ) sp24, 0x20U);
+    gDLL_33_BaddieControl->vtbl->free(self, sp24, 0x20U);
 }
 
 // offset: 0x7D4 | func: 6 | export: 5
 u32 dll_236_get_model_flags(Object* self) {
-    return 9U;
+    return MODFLAGS_1 | MODFLAGS_8;
 }
 
 // offset: 0x7E4 | func: 7 | export: 6
