@@ -1,0 +1,10 @@
+.text = 0x0:
+dll_299_ctor = 0x0;
+dll_299_dtor = 0xC;
+dll_299_setup = 0x18;
+dll_299_control = 0x2C;
+dll_299_update = 0x38;
+dll_299_print = 0x44;
+dll_299_free = 0x5C;
+dll_299_get_model_flags = 0x6C;
+dll_299_get_data_size = 0x7C;

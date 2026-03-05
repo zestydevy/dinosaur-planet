@@ -8,10 +8,11 @@ enum ObjType {
     OBJTYPE_PLAYER = 0,
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
-    OBJTYPE_4 = 4, // Tumbleweed
+    OBJTYPE_4 = 4, // Tumbleweed, WG_Triffid
     OBJTYPE_5 = 5, // collectable, SCcollectables (OBJTYPE_COLLECTABLE?)
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7, // CFScalesGalleon
+    OBJTYPE_8 = 8, // StaticCamera.c
     OBJTYPE_9 = 9,
     OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop (also used by WCLevelControl, DFPLevelControl)
     OBJTYPE_11 = 11, // BWlog, DFlog, IMSnowBike
@@ -32,12 +33,13 @@ enum ObjType {
     OBJTYPE_37 = 37,
     OBJTYPE_39 = 39,
     OBJTYPE_40 = 40,
+    OBJTYPE_41 = 41, // DBExpBit
     OBJTYPE_44 = 44, // DBBoneGeezer
     OBJTYPE_48 = 48, // perchobject
     OBJTYPE_51 = 51, // SHbluemushroom, DBBoneGeezer, Tumbleweed (sidekick/Find-related?)
     OBJTYPE_52 = 52,
     OBJTYPE_53 = 53,
-    OBJTYPE_54 = 54,
+    OBJTYPE_54 = 54, // MagicPlant
     OBJTYPE_55 = 55,
     OBJTYPE_56 = 56,
     OBJTYPE_59 = 59,

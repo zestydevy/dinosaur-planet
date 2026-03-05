@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_602_ctor = 0x0;
+dll_602_dtor = 0xC;
+dll_602_setup = 0x18;
+dll_602_control = 0x224;
+dll_602_update = 0x594;
+dll_602_print = 0x5A0;
+dll_602_free = 0x5B8;
+dll_602_get_model_flags = 0x68C;
+dll_602_get_data_size = 0x69C;
+
+.rodata = 0x71C:

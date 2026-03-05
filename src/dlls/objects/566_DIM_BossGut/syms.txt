@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_566_ctor = 0x0;
+dll_566_dtor = 0xC;
+dll_566_setup = 0x18;
+dll_566_control = 0xB4;
+dll_566_update = 0xC0;
+dll_566_print = 0xCC;
+dll_566_free = 0x160;
+dll_566_get_model_flags = 0x170;
+dll_566_get_data_size = 0x180;
+dll_566_func_194 = 0x194;
+
+.rodata = 0x1F8:
