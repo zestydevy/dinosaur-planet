@@ -40,7 +40,7 @@ typedef struct {
 }MagicDustSetup;
 
 /*0x0*/ static s16 _data_0[] = {
-    0x02c4, 0x02cd, 0x02ce, 0x02cf
+    OBJ_MagicDustSmall, OBJ_MagicDustMid, OBJ_MagicDustLarge, OBJ_MagicDustHuge
 };
 /*0x8*/ static f32 _data_8[] = {
     -40, -35, -30, -25
@@ -194,7 +194,7 @@ u32 dll_290_get_model_flags(Object* self) {
     DLL290_Setup* setup;
 
     setup = (DLL290_Setup*)self->setup;
-    return (setup->modelInstIdx << 0xB) | 0x400;
+    return MODFLAGS_MODEL_INDEX(setup->modelInstIdx) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
 // offset: 0x5E4 | func: 6 | export: 6
@@ -212,7 +212,7 @@ static void dll_290_func_5F8(Object* self, s32 arg1) {
     setup = self->setup;
     objdata = self->data;
     
-    temp_v0 = obj_alloc_create_info(0x30, arg1);
+    temp_v0 = obj_alloc_create_info(sizeof(MagicDustSetup), arg1);
     temp_v0->unk1A = 0x14;
     temp_v0->unk2C = -1;
     temp_v0->unk1C = -1;
@@ -224,7 +224,7 @@ static void dll_290_func_5F8(Object* self, s32 arg1) {
     temp_v0->base.byte5 = setup->byte5;
     temp_v0->base.byte6 = setup->byte6;
     temp_v0->base.fadeDistance = setup->fadeDistance - 0xF;
-    magicDust = obj_create(&temp_v0->base, 5U, self->mapID, -1, self->parent);
+    magicDust = obj_create(&temp_v0->base, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
     magicDust->unkC4 = self;
     objdata->magic = magicDust;
 }
@@ -267,7 +267,7 @@ void dll_290_func_7E8(Object *self, DLL290_Setup* setup, DLL290_Data* objdata) {
         objdata->unk8 = 0.03f;
         func_80023D30(self, 3, 0.0f, 0);
         for (i = 20; i > 0; i--) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x34E, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_34E, NULL, 2, -1, NULL);
         }
         transform.transl.x += gWorldX;
         transform.transl.z += gWorldZ;

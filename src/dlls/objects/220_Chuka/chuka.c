@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/engine/6_amsfx.h"
 
 typedef struct {
     f32 unk0;
@@ -41,9 +42,9 @@ typedef struct {
 static u8 _data_0[16] = {
     0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0
 }; 
-static u32 _data_10[4] = {0x00000491, 0x00000492, 0x00000493, 0x000004b1}; 
+static u32 _data_10[4] = {SOUND_491, SOUND_492, SOUND_493, SOUND_4B1}; 
 
-static void dll_220_func_8A4(Object* self, ObjSetup* setup);
+static void dll_220_func_8A4(Object* self, DLL220_Data* arg1);
 static void dll_220_func_778(Object* self);
 
 // offset: 0x0 | ctor
@@ -61,7 +62,7 @@ void dll_220_setup(Object* self, DLL220_Setup* setup, s32 arg2) {
     objdata->unk10 =  setup->unk18;
     if (objdata->unk10 != -1) {
         if (main_get_bits( objdata->unk10) != 0) {
-            dll_220_func_8A4(self, (ObjSetup* ) objdata);
+            dll_220_func_8A4(self, objdata);
             return;
         }
     }
@@ -146,7 +147,7 @@ void dll_220_control(Object* self) {
     objdata->unk12 = distance2D;
 
     //Check for Projectile Spell attacks
-    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == 0xF) {
+    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == Collision_Type_Projectile) {
         objdata->unkC--; //Lose health
         if (objdata->unkC <= 0) {
             dll_220_func_8A4(self, objdata); //Suggests arg1 of dll_220_func_8A4 might be a DLL220_Data*
@@ -186,7 +187,7 @@ u32 dll_220_get_data_size(Object *self, u32 a1) {
 void dll_220_func_704(Object* self, u8 arg1) {
     
     if (arg1 == 0x80) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x492U, 0x7FU, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 
@@ -206,7 +207,7 @@ static void dll_220_func_778(Object* self) {
     temp_v0->loadFlags = 2;
     temp_v0->byte5 = 4;
     temp_v0->fadeDistance = 0xFF;
-    temp_v0_2 = obj_create(temp_v0, 5U, -1, -1, NULL);
+    temp_v0_2 = obj_create(temp_v0, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);;
     if (temp_v0_2 != NULL) {
         sp2C = temp_v0_2;
         player = get_player();
@@ -218,11 +219,12 @@ static void dll_220_func_778(Object* self) {
 }
 
 // offset: 0x8A4 | func: 9
-static void dll_220_func_8A4(Object* self, ObjSetup* setup) {
+static void dll_220_func_8A4(Object* self, DLL220_Data* arg1) {
     func_800267A4(self);
     self->srt.flags |= 0x4000;
-    setup->loadFlags |= 2;
+    arg1->unk4 |= 2;
 }
+
 
 /*0x0*/ static const char str_0[] = "BADDIE:Chuka Unknown message [%d]\n";
 /*0x24*/ static const char str_24[] = "";

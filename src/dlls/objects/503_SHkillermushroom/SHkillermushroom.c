@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/engine/6_amsfx.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
@@ -70,7 +71,7 @@ void dll_503_setup(Object* self, DLL503_Setup* setup, s32 arg2) {
     self->srt.transl.f[1] = setup->base.y - 2.0f;
     temp_v0 = self->shadow;
     if (temp_v0 != NULL) {
-        temp_v0->flags |= 0x810;
+        temp_v0->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
     }
     if (arg2 == 0) {
         dll_503_func_DE4(self, objdata, 0);
@@ -104,7 +105,7 @@ void dll_503_control(Object* self) {
     switch (objdata->unk3A) {
     case 6:
         if (objdata->unk34 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x53BU, 0x7FU, &objdata->unk34, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B, MAX_VOLUME, &objdata->unk34, NULL, 0, NULL);
         }
         objdata->unk3B &= ~4;
         objdata->unk2C = (f32) (objdata->unk2C + (2.5f * gUpdateRateF));
@@ -129,7 +130,7 @@ void dll_503_control(Object* self) {
         sp40.transl.f[1] = objdata->unk24;
         sp40.transl.f[2] = objdata->unk28;
         for (sp5D = 5; sp5D != 0; sp5D--) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x3EB, &sp40, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &sp40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
         break;
     case 2:
@@ -155,7 +156,7 @@ void dll_503_control(Object* self) {
         break;
     case 4:
         if (objdata->unk34 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x53BU, 0x7FU, &objdata->unk34, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B, MAX_VOLUME, &objdata->unk34, NULL, 0, NULL);
         }
         self->unkAF &= ~8;
         objdata->unk2C = (f32) (objdata->unk2C + (2.5f * gUpdateRateF));
@@ -181,7 +182,7 @@ void dll_503_control(Object* self) {
         sp40.transl.f[1] = objdata->unk24;
         sp40.transl.f[2] = objdata->unk28;
         for (sp5D = 5; sp5D != 0; sp5D--) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x3EB, &sp40, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &sp40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
         break;
     case 5:
@@ -212,7 +213,7 @@ void dll_503_control(Object* self) {
     case 9:
         if (objdata->unk0 <= 0.0f) {
             func_80023BF8(self, 0x19, 0, 0, 0U, 6U);
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x745U, 0x7FU, &objdata->unk34, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_745, MAX_VOLUME, &objdata->unk34, NULL, 0, NULL);
             objdata->unk0 = (f32) rand_next(0xF0, 0x12C);
         }
         objdata->unk0 = (f32) (objdata->unk0 - gUpdateRateF);
@@ -227,9 +228,9 @@ void dll_503_control(Object* self) {
         } else {
             objdata->unk30 -= gUpdateRateF;
             if (objdata->unk30 <= 0.0f) {
-                sp40.transl.f[0] = 14.0f; //might not be 0, could be 2
+                sp40.transl.f[0] = 14.0f;
                 sp40.transl.f[1] = 25.0f;
-                gDLL_17_partfx->vtbl->spawn(self, 0x51D, &sp40, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51D, &sp40, PARTFXFLAG_2, -1, NULL);
                 objdata->unk30 = 20.0f;
             }
             if (self->unkAF & 1) {
@@ -265,12 +266,12 @@ void dll_503_control(Object* self) {
             objdata->unk3B &= ~1;
             objdata->unk3A = 3U;
             objdata->unk0 = 0.0f;
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x53AU, 0x7FU, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53A, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     }
     if ((func_80025F40(self, &sp7C, &sp78, &sp74) != 0) && (objdata->unk3B & 4)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x744U, 0x7FU, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_744, MAX_VOLUME, NULL, NULL, 0, NULL);
         objdata->unk3B &= ~1;
         if (sp58->unk1C != -1) {
             main_set_bits((s32) sp58->unk1C, 1U);
@@ -316,7 +317,7 @@ u32 dll_503_get_model_flags(Object* self) {
     DLL503_Setup* setup;
 
     setup = (DLL503_Setup*)self->setup;
-    return (setup->unk1F << 0xB) | 0x400;
+    return MODFLAGS_MODEL_INDEX(setup->unk1F) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 // offset: 0xDD0 | func: 6 | export: 6
 u32 dll_503_get_data_size(Object *self, u32 a1) {

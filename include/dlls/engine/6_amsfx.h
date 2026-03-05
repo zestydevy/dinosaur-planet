@@ -301,14 +301,19 @@ enum SoundID {
 
     SOUND_43C_Target_Highlighted = 0x43C, // camera DLL [Interaction Arrow]
     SOUND_43D_Transporter_Fire = 0x43D,
+    SOUND_43E_Stone_Block_Moving = 0x43e,
 
     SOUND_WM_Sun_Whoosh = 0x487, //used by WMsun
 
-    SOUND_4BC_Tricky_Dig_EMPTY = 0x4BC, //NWtricky (empty)
+    SOUND_491 = 0x491,
+    SOUND_492 = 0x492,
+    SOUND_493 = 0x493,
 
-    SOUND_43E_Stone_Block_Moving = 0x43e,
-
+    SOUND_4B1 = 0x4B1,
+    
     SOUND_LightFoot_Shout = 0x4B7,
+    
+    SOUND_4BC_Tricky_Dig_EMPTY = 0x4BC, //NWtricky (empty)
 
     SOUND_506_Chomping_Food = 0x506, //collectable
 
@@ -319,6 +324,8 @@ enum SoundID {
     SOUND_50C_Low_Rumble_Loop = 0x50C, //IMSnowBike
     SOUND_50D_Jet_Loop = 0x50D,        //IMSnowBike
 
+    SOUND_53A = 0x53A, //used by SHkillermushroom
+    SOUND_53B = 0x53B, //used by SHkillermushroom
     SOUND_53C = 0x53C, //used by SHbluemushroom
 
     SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
@@ -409,8 +416,8 @@ enum SoundID {
     SOUND_72F_Harsh_Magical_Thrum_Loop = 0x72F, // used in DLL 475 GPSH_flybaddie
     SOUND_730_Electrified_Blast = 0x730, // used in DLL 475 GPSH_flybaddie
 
-    SOUND_744 = 0x744, //used by SHmushroom
-    SOUND_745 = 0x745, //used by SHmushroom
+    SOUND_744 = 0x744, //used by SHmushroom, SHkillermushroom
+    SOUND_745 = 0x745, //used by SHmushroom, SHkillermushroom
 
     SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy = 0x74B,
 

@@ -3,8 +3,15 @@
 typedef struct {
     ObjSetup base;
     s8 unk18;
-    
+    s8 _unk19;
+    s16 _unk1A;
+    s16 _unk1C;
+    s16 unk1E; 
 }DLL465_Setup;
+
+typedef struct {
+    u8 unk0;    
+} DLL465_Data;
 
 // offset: 0x0 | ctor
 void dll_465_ctor(void *dll) { }
@@ -19,8 +26,20 @@ void dll_465_setup(Object* self, DLL465_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x3C | func: 1 | export: 1
-void dll_465_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/465_CCdockDoor/dll_465_control.s")
+void dll_465_control(Object* self) {
+    DLL465_Data* objData;
+    DLL465_Setup* objSetup;
+
+    objData = self->data;
+    objSetup = (DLL465_Setup*)self->setup;
+    
+    objData->unk0 = main_get_bits(objSetup->unk1E);
+    if (objData->unk0 == 1) {
+        self->srt.flags |= 0x4000;
+        self->unkB0 |= 0x8000;
+        func_800267A4(self);
+    }
+}
 
 // offset: 0xCC | func: 2 | export: 2
 void dll_465_update(Object *self) { }

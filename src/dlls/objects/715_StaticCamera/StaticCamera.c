@@ -38,7 +38,7 @@ void dll_715_setup(Object* self, DLL715_Setup* setup, s32 arg2) {
     objdata->unk4 = setup->unk1A;
     objdata->unk1 = 0;
     if (arg2 == 0) {
-        obj_add_object_type(self, 8);
+        obj_add_object_type(self, OBJTYPE_8);
     }
 }
 
@@ -57,7 +57,7 @@ void dll_715_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle
 
 // offset: 0x11C | func: 4 | export: 4
 void dll_715_free(Object* self, s32 a1) {
-    obj_free_object_type(self, 8);
+    obj_free_object_type(self, OBJTYPE_8);
 }
 
 // offset: 0x15C | func: 5 | export: 5

@@ -98,7 +98,7 @@ typedef enum {
     Collision_Type_Sword_Staff_Strike1 = 0xA,
     Collision_Type_Sword_Staff_Strike2 = 0xB,
     Collision_Type_Sword_Strike = 0xC,
-    Collision_Type_Projectile_Spell = 0xF,  // Also grenade (impact only, not explosion)
+    Collision_Type_Projectile = 0xF,  // Projectile & grenade, (impact only, not explosion), also Chuka
     Collision_Type_Fishingnet = 0x11,
     Collision_Type_Ice_Spell = 0x19,        //Speeder bike checks this type, strangely?
     Collision_Type_15 = 0x21,               //Speeder bike checks for this

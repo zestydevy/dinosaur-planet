@@ -29,9 +29,7 @@ typedef struct {
     s16 unk2E;
 }MagicDustSetup;
 
-/*0x0*/ static u32 _data_0[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
-};
+/*0x0*/ static Vec3f _data_0 = { 0.0f, 0.0f, 0.0f };
 
 // offset: 0x0 | ctor
 void dll_291_ctor(void *dll) { }
@@ -80,26 +78,26 @@ void dll_291_setup(Object* self, MagicDustSetup* setup, s32 arg2) {
         self->shadow->maxDistScale *= 2.0f;
     }
     switch (self->id) {                            /* irregular */
-    case 0x2C4:
+    case OBJ_MagicDustSmall:
         objdata->unk26A = 0x54D;
         objdata->unk268 = 0x549;
         objdata->unk26C = 0xB2A;
         objdata->unk26E = 0x5B0;
         break;
-    case 0x2CD:
+    case OBJ_MagicDustMid:
         objdata->unk26A = 0x54E;
         objdata->unk268 = 0x54A;
         objdata->unk26C = 0xB6B;
         objdata->unk26E = 0x5B1;
         break;
-    case 0x2CE:
+    case OBJ_MagicDustLarge:
         objdata->unk26A = 0x54F;
         objdata->unk268 = 0x54B;
         objdata->unk26C = 0xB6C;
         objdata->unk26E = 0x5B2;
         break;
     default:
-    case 0x2CF:
+    case OBJ_MagicDustHuge:
         objdata->unk26A = 0x550;
         objdata->unk268 = 0x54C;
         objdata->unk26C = 0xB6D;
@@ -108,8 +106,11 @@ void dll_291_setup(Object* self, MagicDustSetup* setup, s32 arg2) {
     }
     objdata->unk260 = (f32) self->objhitInfo->unk52;
     if (self->srt.flags & 0x2000) {
-        gDLL_27->vtbl->init(&objdata->unk0, 0, 0x40007, 0);
-        gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, (Vec3f* ) _data_0, &objdata->unk260, &sp47);
+        gDLL_27->vtbl->init(&objdata->unk0, 
+    DLL27FLAG_NONE, 
+    DLL27FLAG_1 | DLL27FLAG_2 | DLL27FLAG_4 | DLL27FLAG_40000, 
+    DLL27MODE_DISABLED);
+        gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, &_data_0, &objdata->unk260, &sp47);
         gDLL_27->vtbl->reset(self, &objdata->unk0);
     }
     self->unkB0 |= 0x2000;

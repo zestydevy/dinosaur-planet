@@ -81,6 +81,7 @@ enum ParticleID {
     PARTICLE_343 = 0x343,
     PARTICLE_34C = 0x34C,
     PARTICLE_34D = 0x34D,
+    PARTICLE_34E = 0x34E,
     PARTICLE_350 = 0x350,
     /* --- DLL 43 END --- */
     PARTICLE_351 = 0x351,
@@ -105,6 +106,7 @@ enum ParticleID {
     /* --- DLL 48 START --- */
     PARTICLE_3E8 = 0x3E8,
     PARTICLE_3EA = 0x3EA,
+    PARTICLE_3EB = 0x3EB,
     PARTICLE_3EC = 0x3EC,
     PARTICLE_3ED = 0x3ED,
     PARTICLE_3F1 = 0x3F1,
