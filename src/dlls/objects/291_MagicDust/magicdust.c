@@ -107,9 +107,9 @@ void dll_291_setup(Object* self, MagicDustSetup* setup, s32 arg2) {
     objdata->unk260 = (f32) self->objhitInfo->unk52;
     if (self->srt.flags & 0x2000) {
         gDLL_27->vtbl->init(&objdata->unk0, 
-    DLL27FLAG_NONE, 
-    DLL27FLAG_1 | DLL27FLAG_2 | DLL27FLAG_4 | DLL27FLAG_40000, 
-    DLL27MODE_DISABLED);
+            DLL27FLAG_NONE, 
+            DLL27FLAG_1 | DLL27FLAG_2 | DLL27FLAG_4 | DLL27FLAG_40000, 
+            DLL27MODE_DISABLED);
         gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, &_data_0, &objdata->unk260, &sp47);
         gDLL_27->vtbl->reset(self, &objdata->unk0);
     }
