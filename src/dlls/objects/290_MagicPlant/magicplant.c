@@ -1,271 +1,292 @@
 #include "common.h"
+#include "functions.h"
+#include "macros.h"
+#include "game/objects/interaction_arrow.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"
-#include "functions.h"
-#include "dlls/objects/210_player.h"
 #include "sys/gfx/modgfx.h"
+#include "dlls/objects/210_player.h"
+#include "dlls/objects/290_magicplant.h"
+#include "dlls/objects/291_magicdust.h"
 
-typedef struct {
-/*00*/ Object *magic;
-/*04*/ f32 progress;
-/*08*/ f32 unk8;
-/*0C*/ u32 soundHandle;
-/*10*/ s16 unk10;
-/*12*/ s8 _unk12;
-/*13*/ s8 unk13;
-} DLL290_Data;
+#define TWINKLE_START_DISTANCE 50.0f
+#define TWINKLE_STOP_DISTANCE 70.0f
+#define ATTACH_JOINT_ID 5
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u16 time;
-/*1A*/ s8 _unk1A;
-/*1B*/ u8 id;
-/*1C*/ u8 modelInstIdx;
-/*1D*/ u8 yaw;
-}DLL290_Setup;
-
-typedef struct {
-    ObjSetup base;
-    u16 unk18;
-    u8 unk1A;
-    u8 unk1B;
-    s16 unk1C;
-    u16 _unk1E;
-    s32 _unk20;
-    s16 unk24;
-    s16 _unk26;
-    s32 _unk28;
-    s16 unk2C;
-}MagicDustSetup;
-
-/*0x0*/ static s16 _data_0[] = {
+/*0x0*/ static s16 dMagicDustObjIDs[] = {
     OBJ_MagicDustSmall, OBJ_MagicDustMid, OBJ_MagicDustLarge, OBJ_MagicDustHuge
 };
-/*0x8*/ static f32 _data_8[] = {
+/*0x8*/ static f32 dMagicDustY[] = {
     -40, -35, -30, -25
 };
 
-static f32 dll_290_func_F94(DLL290_Setup* setup);
-static void dll_290_func_ED8(Object* self, DLL290_Setup* setup, DLL290_Data* objdata);
-static void dll_290_func_E04(Object* self, DLL290_Setup* setup, DLL290_Data* objdata);
-static void dll_290_func_C00(Object* self, DLL290_Setup* setup, DLL290_Data* objdata);
-static void dll_290_func_7E8(Object* self, DLL290_Setup* setup, DLL290_Data* objdata);
-static void dll_290_func_6CC(Object* self, DLL290_Setup* setup, DLL290_Data* objdata);
+static void MagicPlant_handle_state_growing(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData);
+static void MagicPlant_handle_state_idle(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData);
+static void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData);
+static void MagicPlant_handle_state_wilting(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData);
+static void MagicPlant_handle_state_bud(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData);
+static f32 MagicPlant_get_growth_tvalue(MagicPlant_Setup* objSetup);
 
 // offset: 0x0 | ctor
-void dll_290_ctor(void *dll) { }
+void MagicPlant_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_290_dtor(void *dll) { }
+void MagicPlant_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_290_setup(Object* self, DLL290_Setup* setup, s32 arg2) {
-    ObjectShadow* temp_v0;
-    DLL290_Data* objdata;
+void MagicPlant_setup(Object* self, MagicPlant_Setup* objSetup, s32 arg2) {
+    MagicPlant_Data* objData = self->data;
 
-    objdata = self->data;
     obj_add_object_type(self, OBJTYPE_54);
     obj_add_object_type(self, OBJTYPE_63);
-    if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID) == 0) {
-        objdata->progress = dll_290_func_F94(setup);
+
+    if (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->base.uID) == FALSE) {
+        objData->growProgress = MagicPlant_get_growth_tvalue(objSetup);
     } else {
-        objdata->progress = 1.0f;
+        objData->growProgress = 1.0f;
     }
-    objdata->unk8 = 0.0f;
-    objdata->unk13 = 0;
-    func_800240BC(self, objdata->progress);
-    self->srt.yaw = setup->yaw << 8;
+
+    objData->animProgress = 0.0f;
+    objData->state = MagicPlant_STATE_Growing;
+    func_800240BC(self, objData->growProgress);
+    self->srt.yaw = objSetup->yaw << 8;
     self->unkB0 |= 0x2000;
-    self->modelInstIdx = setup->modelInstIdx;
+
+    self->modelInstIdx = objSetup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
+        STUBBED_PRINTF("MAGICPLANT: modelno error\n");
         self->modelInstIdx = 0;
     }
+
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
     }
 }
 
-
 // offset: 0x160 | func: 1 | export: 1
-void dll_290_control(Object* self) {
-    DLL290_Setup* setup;
-    DLL290_Data* objdata;
+void MagicPlant_control(Object* self) {
+    MagicPlant_Setup* objSetup;
+    MagicPlant_Data* objData;
 
-    setup = (DLL290_Setup*)self->setup;
-    objdata = self->data;
-    self->unkAF |= 8;
-    if (self->unkAF & 4) {
-        if (main_get_bits(BIT_914) == 0) {
+    objSetup = (MagicPlant_Setup*)self->setup;
+    objData = self->data;
+
+    //Handle LockIcon behaviours
+    self->unkAF |= ARROW_FLAG_8_No_Targetting;
+    if (self->unkAF & ARROW_FLAG_4_Highlighted) {
+        //Display a tutorial box when the player first approaches a Magic Plant
+        if (main_get_bits(BIT_Tutorial_Magic_Plant) == 0) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
-            main_set_bits(BIT_914, 1U);
+            main_set_bits(BIT_Tutorial_Magic_Plant, 1);
             return;
         }
     }
-    switch (objdata->unk13) {
-    case 0:
-        dll_290_func_6CC(self, setup, objdata);
+
+    //State Machine
+    switch (objData->state) {
+    case MagicPlant_STATE_Growing:
+        MagicPlant_handle_state_growing(self, objSetup, objData);
         break;
-    case 1:
-        dll_290_func_7E8(self, setup, objdata);
+    case MagicPlant_STATE_Idle:
+        MagicPlant_handle_state_idle(self, objSetup, objData);
         break;
-    case 4:
-        dll_290_func_C00(self, setup, objdata);
+    case MagicPlant_STATE_Damaged:
+        MagicPlant_handle_state_damaged(self, objSetup, objData);
         break;
-    case 2:
-        dll_290_func_E04(self, setup, objdata);
+    case MagicPlant_STATE_Wilting:
+        MagicPlant_handle_state_wilting(self, objSetup, objData);
         break;
-    case 3:
-        dll_290_func_ED8(self, setup, objdata);
+    case MagicPlant_STATE_Bud:
+        MagicPlant_handle_state_bud(self, objSetup, objData);
         break;
     }
-    func_80024108(self, objdata->unk8, gUpdateRateF, NULL);
+
+    //Advance current animation's tValue
+    func_80024108(self, objData->animProgress, gUpdateRateF, NULL);
 }
 
 // offset: 0x300 | func: 2 | export: 2
-void dll_290_update(Object *self) { }
+void MagicPlant_update(Object *self) { }
 
 // offset: 0x30C | func: 3 | export: 3
-void dll_290_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    MtxF* spAC;
-    f32 spA8;
-    f32 spA4;
-    f32 spA0;
-    MtxF sp60;
+void MagicPlant_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    MtxF* jointMtx;
+    f32 x;
+    f32 y;
+    f32 z;
+    MtxF mtx;
     SRT srt;
-    Object* temp_v0;
-    DLL290_Setup* setup;
-    DLL290_Data* objdata;
+    Object* pad;
+    MagicPlant_Setup* objSetup;
+    MagicPlant_Data* objData;
     ModelInstance *modelInstance;
-    s32 temp_v0_2;
+    s32 dustIdx;
 
-    objdata = self->data;
-    setup = (DLL290_Setup*)self->setup;
+    objData = self->data;
+    objSetup = (MagicPlant_Setup*)self->setup;
     if (visibility == 0) {
         return;
     }
 
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     modelInstance = self->modelInsts[self->modelInstIdx];
-    if ((objdata->magic != NULL) && (modelInstance->unk34 & 8) && (objdata->magic->unkC4 != NULL)) {
-        spAC = func_80032170(self, 5);
-        if (spAC == NULL) {
+
+    //Position the MagicDust gem at the centre of the plant's petals
+    if ((objData->magic != NULL) && (modelInstance->unk34 & 8) && (objData->magic->unkC4 != NULL)) {
+        //Get the matrix for the end joint of the main joint chain
+        jointMtx = func_80032170(self, ATTACH_JOINT_ID);
+        if (jointMtx == NULL) {
             return;
         }
 
-        func_800321E4(self, 5, &spA8, &spA4, &spA0);
+        //Get coords for the end joint of the main joint chain
+        func_800321E4(self, ATTACH_JOINT_ID, &x, &y, &z);
 
-        temp_v0_2 = setup->id;
-        srt.transl.x = spA8;
-        srt.transl.y = _data_8[temp_v0_2 & 3];
-        srt.transl.z = spA0;
+        dustIdx = objSetup->dustIdx;
+        srt.transl.x = x;
+        srt.transl.y = dMagicDustY[dustIdx & 3];
+        srt.transl.z = z;
         srt.yaw = 0;
         srt.pitch = 0;
         srt.roll = 0;
-        srt.scale = objdata->magic->srt.scale / self->srt.scale;
-        matrix_from_srt(&sp60, &srt);
-        matrix_concat_4x3(&sp60, spAC, &sp60);
-        objdata->magic->srt.transl.f[0] = sp60.m[3][0] + gWorldX;
-        objdata->magic->srt.transl.f[1] = sp60.m[3][1];
-        objdata->magic->srt.transl.f[2] = sp60.m[3][2] + gWorldZ;
-        func_80034FF0(&sp60);
-        draw_object(objdata->magic, gdl, mtxs, vtxs, pols, 1.0f);
+        srt.scale = objData->magic->srt.scale / self->srt.scale;
+        matrix_from_srt(&mtx, &srt);
+        matrix_concat_4x3(&mtx, jointMtx, &mtx);
+
+        objData->magic->srt.transl.x = mtx.m[3][0] + gWorldX;
+        objData->magic->srt.transl.y = mtx.m[3][1];
+        objData->magic->srt.transl.z = mtx.m[3][2] + gWorldZ;
+
+        func_80034FF0(&mtx);
+        draw_object(objData->magic, gdl, mtxs, vtxs, pols, 1.0f);
         func_80034FF0(NULL);
     }
 }
 
 // offset: 0x52C | func: 4 | export: 4
-void dll_290_free(Object* self, s32 a1) {
-    DLL290_Data* objdata;
-    u32 temp_a1;
+void MagicPlant_free(Object* self, s32 a1) {
+    MagicPlant_Data* objData = self->data;
+    u32 soundHandle;
 
-    objdata = self->data;
-    temp_a1 = objdata->soundHandle;
-    if (temp_a1 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(temp_a1);
-        objdata->soundHandle = 0U;
+    //Stop twinkling loop
+    soundHandle = objData->soundHandle;
+    if (soundHandle != 0) {
+        gDLL_6_AMSFX->vtbl->func_A1C(soundHandle);
+        objData->soundHandle = 0;
     }
+
     obj_free_object_type(self, OBJTYPE_54);
     obj_free_object_type(self, OBJTYPE_63);
 }
 
 // offset: 0x5CC | func: 5 | export: 5
-u32 dll_290_get_model_flags(Object* self) {
-    DLL290_Setup* setup;
-
-    setup = (DLL290_Setup*)self->setup;
-    return MODFLAGS_MODEL_INDEX(setup->modelInstIdx) | MODFLAGS_LOAD_SINGLE_MODEL;
+u32 MagicPlant_get_model_flags(Object* self) {
+    MagicPlant_Setup* objSetup = (MagicPlant_Setup*)self->setup;
+    return MODFLAGS_MODEL_INDEX(objSetup->modelInstIdx) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
 // offset: 0x5E4 | func: 6 | export: 6
-u32 dll_290_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL290_Data);
+u32 MagicPlant_get_data_size(Object *self, u32 a1) {
+    return sizeof(MagicPlant_Data);
 }
 
 // offset: 0x5F8 | func: 7
-static void dll_290_func_5F8(Object* self, s32 arg1) {
-    MagicDustSetup* temp_v0;
-    ObjSetup* setup;
-    Object* magicDust; 
-    DLL290_Data* objdata;
-    
-    setup = self->setup;
-    objdata = self->data;
-    
-    temp_v0 = obj_alloc_create_info(sizeof(MagicDustSetup), arg1);
-    temp_v0->unk1A = 0x14;
-    temp_v0->unk2C = -1;
-    temp_v0->unk1C = -1;
-    temp_v0->base.x = self->srt.transl.f[0];
-    temp_v0->base.y = self->srt.transl.f[1];
-    temp_v0->base.z = self->srt.transl.f[2];
-    temp_v0->unk24 = -1;
-    temp_v0->base.loadFlags = setup->loadFlags;
-    temp_v0->base.byte5 = setup->byte5;
-    temp_v0->base.byte6 = setup->byte6;
-    temp_v0->base.fadeDistance = setup->fadeDistance - 0xF;
-    magicDust = obj_create(&temp_v0->base, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
+static void MagicPlant_create_magic_dust(Object* self, s32 objectID) {
+    MagicDust_Setup* dustSetup;
+    MagicPlant_Setup* objSetup;
+    Object* magicDust;
+    MagicPlant_Data* objData;
+
+    objSetup = (MagicPlant_Setup*)self->setup;
+    objData = self->data;
+
+    dustSetup = obj_alloc_create_info(sizeof(MagicDust_Setup), objectID);
+    dustSetup->unk1A = 20;
+    dustSetup->unk2C = -1;
+    dustSetup->unk1C = -1;
+    dustSetup->base.x = self->srt.transl.x;
+    dustSetup->base.y = self->srt.transl.y;
+    dustSetup->base.z = self->srt.transl.z;
+    dustSetup->unk24 = -1;
+    dustSetup->base.loadFlags = objSetup->base.loadFlags;
+    dustSetup->base.byte5 = objSetup->base.byte5;
+    dustSetup->base.byte6 = objSetup->base.byte6;
+    dustSetup->base.fadeDistance = objSetup->base.fadeDistance - 15;
+
+    magicDust = obj_create(
+        &dustSetup->base,
+        OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4,
+        self->mapID,
+        -1,
+        self->parent
+    );
     magicDust->unkC4 = self;
-    objdata->magic = magicDust;
+    objData->magic = magicDust;
 }
 
 // offset: 0x6CC | func: 8
-void dll_290_func_6CC(Object* self, DLL290_Setup* setup, DLL290_Data* objdata) {
-    if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID) != 0) {
-        dll_290_func_5F8(self, _data_0[setup->id & 3]);
-        objdata->unk13 = 1;
-        objdata->unk10 = rand_next(0x12C, 0x258);
+/**
+  * Bud waits for a gplay regrowth timer to expire (if active),
+  * then grows up into the idle state and creates a new MagicDust gem Object.
+  */
+void MagicPlant_handle_state_growing(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData) {
+    //Wait for the regrowth timer to expire (if it's active), then create a new MagicDust gem
+    if (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->base.uID)) {
+        MagicPlant_create_magic_dust(self, dMagicDustObjIDs[objSetup->dustIdx & 3]);
+        objData->state = MagicPlant_STATE_Idle;
+        objData->idleAnimDelay = rand_next(300, 600);
     } else {
-        objdata->progress = dll_290_func_F94(setup);
+        objData->growProgress = MagicPlant_get_growth_tvalue(objSetup);
     }
-    if (self->curModAnimId != 0) {
-        func_80023D30(self, 0, objdata->progress, 0U);
+
+    //Use the growing-from-bud animation
+    if (self->curModAnimId != MagicPlant_MODANIM_Growing) {
+        func_80023D30(self, MagicPlant_MODANIM_Growing, objData->growProgress, 0);
     }
-    func_800240BC(self, objdata->progress);
-} 
+
+    //Set animation tValue
+    func_800240BC(self, objData->growProgress);
+}
 
 
 // offset: 0x7E8 | func: 9
-void dll_290_func_7E8(Object *self, DLL290_Setup* setup, DLL290_Data* objdata) {
+/**
+  * Plant sways in the wind, reacts to damage, and plays twinkling sound when nearby.
+  */
+void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData) {
     s32 hitType;
     s32 hitDamage;
     s32 i;
     s32 hitSphereID;
     Object *hitBy;
-    f32 distanceToPlayer;
+    f32 playerDistance;
     s32 random;
     Object *player = get_player();
-    u32 sp58[4] = { 8, 0xff, 0xff, 0x78 }; 
+    u32 dModGfxParams[4] = { 8, 0xff, 0xff, 0x78 };
     DLL_IModgfx* dll;
     SRT transform;
 
-    self->unkAF &= ~8;
-    hitType = func_8002601C(self, &hitBy, &hitSphereID, &hitDamage, &transform.transl.x, &transform.transl.y, &transform.transl.z);
+    //Allow targetting
+    self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+
+    //Check for damage
+    hitType = func_8002601C(
+        self,
+        &hitBy,
+        &hitSphereID,
+        &hitDamage,
+        &transform.transl.x,
+        &transform.transl.y,
+        &transform.transl.z
+    );
+
+    //React to damage
     if ((hitType != 0) && (hitDamage != 0) && (hitType != 0)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_618, MAX_VOLUME, 0, NULL, 0, NULL);
-        objdata->unk13 = 4;
-        objdata->unk8 = 0.03f;
-        func_80023D30(self, 3, 0.0f, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_618_Slice_Impact, MAX_VOLUME, 0, NULL, 0, NULL);
+        objData->state = MagicPlant_STATE_Damaged;
+        objData->animProgress = 0.03f;
+        func_80023D30(self, MagicPlant_MODANIM_Damage_Shake, 0.0f, 0);
         for (i = 20; i > 0; i--) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_34E, NULL, 2, -1, NULL);
         }
@@ -276,135 +297,166 @@ void dll_290_func_7E8(Object *self, DLL290_Setup* setup, DLL290_Data* objdata) {
         transform.yaw = 0;
         transform.scale = 1.0f;
         dll = dll_load(DLL_ID_106, 1, FALSE);
-        ((DLL_IModgfx*)dll)->vtbl->func0(NULL, 1, &transform, 0x401, -1, sp58);
+        ((DLL_IModgfx*)dll)->vtbl->func0(NULL, 1, &transform, 0x401, -1, dModGfxParams);
         if (dll) {
             dll_unload(dll);
         }
     }
-    
-    if (objdata->unk13 == 1) {
-        if (self->curModAnimId == 1) {
+
+    //Handle animations
+    if (objData->state == MagicPlant_STATE_Idle) {
+        if (self->curModAnimId == MagicPlant_MODANIM_Rustled) {
+            //Return to idle loop after playing (unused?) heavy sway idle variant!
             if (self->animProgress >= 1.0f) {
-                objdata->unk8 = 0.005f;
-                func_80023D30(self, 4, 0.0f, 0);
+                objData->animProgress = 0.005f;
+                func_80023D30(self, MagicPlant_MODANIM_Sway_Loop, 0.0f, 0);
             } else {
-                objdata->unk8 = 0.01f;
+                objData->animProgress = 0.01f;
             }
         } else {
-            objdata->unk10 -= gUpdateRate;
-            if (objdata->unk10 <= 0) {
-                objdata->unk10 = rand_next(300, 600);
-            } else if (self->curModAnimId != 4) {
-                objdata->unk8 = 0.005f;
-                random = rand_next(0, 99);
-                func_80023D30(self, 4, random * 0.01f, 0);
+            //Start idle loop after a random delay
+            objData->idleAnimDelay -= gUpdateRate;
+            if (objData->idleAnimDelay <= 0) {
+                objData->idleAnimDelay = rand_next(300, 600);
+            } else if (self->curModAnimId != MagicPlant_MODANIM_Sway_Loop) {
+                objData->animProgress = 0.005f;
+                random = rand_next(0, 99); //Start at random point in animation (likely to desync nearby idling plants)
+                func_80023D30(self, MagicPlant_MODANIM_Sway_Loop, random * 0.01f, 0);
             }
         }
     }
-    
-    distanceToPlayer = vec3_distance(&self->positionMirror, &player->positionMirror);
-    if (objdata->soundHandle == 0) {
-        if (distanceToPlayer < 50.0f) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_619, 96, &objdata->soundHandle, NULL, 0, NULL);
+
+    //Start/stop twinkling sound loop as player approaches/leaves
+    playerDistance = vec3_distance(&self->positionMirror, &player->positionMirror);
+    if (objData->soundHandle == 0) {
+        if (playerDistance < TWINKLE_START_DISTANCE) {
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_619_Twinkle_Loop, 96, &objData->soundHandle, NULL, 0, NULL);
         }
-    } else if (distanceToPlayer > 70.0f) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
-        objdata->soundHandle = 0;
+    } else if (playerDistance > TWINKLE_STOP_DISTANCE) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        objData->soundHandle = 0;
     }
 }
 
 // offset: 0xC00 | func: 10
-void dll_290_func_C00(Object* self, DLL290_Setup *setup, DLL290_Data* objdata) {
-    Object* temp_s0;
+/**
+  * Plant shakes and drops the MagicDust gem.
+  */
+void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup *objSetup, MagicPlant_Data* objData) {
+    Object* magicDust;
     Object* player;
-    f32 sp3C;
-    s16 temp_v0_2;
-    f32 xdiff;
-    f32 zdiff;
+    f32 speed;
+    s16 angle;
+    f32 dx;
+    f32 dz;
 
     player = get_player();
-    if (objdata->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
-        objdata->soundHandle = 0;
+
+    //Stop twinkling sound
+    if (objData->soundHandle != 0) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        objData->soundHandle = 0;
     }
-    temp_s0 = objdata->magic;
-    if ((temp_s0 != NULL) && (temp_s0->unkC4 != 0)) {
-        if ((self->animProgress >= 0.8f)) {
-            objdata->magic = NULL;
-            temp_s0->unkC4 = 0;
-            sp3C = (f32) rand_next(0x27, 0x2C) / 100.0f;
-            xdiff = self->srt.transl.x - player->srt.transl.x;
-            zdiff = self->srt.transl.z - player->srt.transl.z;
-            temp_v0_2 = arctan2_f(xdiff, zdiff);
-            rand_next(temp_v0_2 - 0x1000, temp_v0_2 + 0x1000);
-            temp_s0->speed.x = (f32) (fsin16_precise(self->srt.yaw) * sp3C);
-            temp_s0->speed.z = (f32) (fcos16_precise(self->srt.yaw) * sp3C);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_61A, MAX_VOLUME, NULL, NULL, 0, NULL);
+
+    //Drop crystal gem (MagicDust)
+    magicDust = objData->magic;
+    if ((magicDust != NULL) && (magicDust->unkC4 != NULL)) {
+        if (self->animProgress >= 0.8f) {
+            //Clear plant's reference to gem, and gem's reference to plant
+            objData->magic = NULL;
+            magicDust->unkC4 = NULL;
+
+            //Set gem's speed so it flies in direction plant was facing (with slight variance)
+            speed = rand_next(39, 44) / 100.0f;
+            dx = self->srt.transl.x - player->srt.transl.x;
+            dz = self->srt.transl.z - player->srt.transl.z;
+            angle = arctan2_f(dx, dz);
+            rand_next(angle - 0x1000, angle + 0x1000); //@bug? result not used
+            magicDust->speed.x = fsin16_precise(self->srt.yaw) * speed;
+            magicDust->speed.z = fcos16_precise(self->srt.yaw) * speed;
+
+            //Play ringing sound
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_61A_Crystal_Ringing, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
+
+    //Advance state when hit shake animation finished
     if (self->animProgress >= 1.0f) {
-        objdata->unk13 = 2;
-        objdata->unk8 = 0.004f;
-        func_80023D30(self, 2, 0.0f, 0U);
+        objData->state = MagicPlant_STATE_Wilting;
+        objData->animProgress = 0.004f;
+        func_80023D30(self, MagicPlant_MODANIM_Wilting, 0.0f, 0);
     }
 }
 
 
 // offset: 0xE04 | func: 11
-void dll_290_func_E04(Object* self, DLL290_Setup* setup, DLL290_Data* objdata) {
-    s32 sp24;
+/**
+  * Plant falls over and fades out.
+  */
+void MagicPlant_handle_state_wilting(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData) {
+    s32 opacity;
 
+    //Fade out when wilting animation finished
     if (self->animProgress >= 1.0f) {
-        sp24 = self->opacity;
-        sp24 -= (gUpdateRate * 2);
-        
-        if (sp24 < 0) {
-            sp24 = 0;
-            objdata->unk13 = 3; 
-            objdata->progress = 0.0f;
-            objdata->unk8 = 0.0f;
-            func_80023D30(self, 0, 0.0f, 0U);
+        opacity = self->opacity;
+        opacity -= (gUpdateRate * 2);
+
+        //Advance state when fully faded out
+        if (opacity < 0) {
+            opacity = 0;
+            objData->state = MagicPlant_STATE_Bud;
+            objData->growProgress = 0.0f;
+            objData->animProgress = 0.0f;
+            func_80023D30(self, MagicPlant_MODANIM_Growing, 0.0f, 0);
             func_800240BC(self, 0.0f);
         }
-        self->opacity = sp24;
+        self->opacity = opacity;
     }
+
     self->objhitInfo->unk58 &= ~1;
 }
 
 // offset: 0xED8 | func: 12
-void dll_290_func_ED8(Object* self, DLL290_Setup* setup, DLL290_Data* objdata) {
+/**
+  * Bud fades in, and starts a gplay regrowth timer.
+  */
+void MagicPlant_handle_state_bud(Object* self, MagicPlant_Setup* objSetup, MagicPlant_Data* objData) {
     s32 opacity;
 
+    //Fade in and set a gplay regrowth timer
     opacity = self->opacity;
     opacity += gUpdateRate;
-    if (opacity >= 0xFF) { 
-        objdata->unk13 = 0;
-        opacity = 0xFF;
-        gDLL_29_Gplay->vtbl->add_time(setup->base.uID, setup->time);
+    if (opacity >= OBJECT_OPACITY_MAX) {
+        objData->state = MagicPlant_STATE_Growing;
+        opacity = OBJECT_OPACITY_MAX;
+        gDLL_29_Gplay->vtbl->add_time(objSetup->base.uID, objSetup->regrowthTime);
     }
     self->opacity = opacity;
     self->objhitInfo->unk58 |= 1;
 }
 
 // offset: 0xF94 | func: 13
-f32 dll_290_func_F94(DLL290_Setup* setup) {
-    f32 temp_fa0;
-    f32 temp_fv0;
-    s32 var_v0;
+/**
+  * Returns the animation tValue to use while the plant's growing
+  */
+f32 MagicPlant_get_growth_tvalue(MagicPlant_Setup* objSetup) {
+    f32 tValue;
+    f32 remaining;
+    s32 duration;
 
-    temp_fv0 = gDLL_29_Gplay->vtbl->get_time_remaining(setup->base.uID);
-    var_v0 = setup->time;
-    if ((s32) var_v0 < 0x64) {
-        var_v0 = 0x64;
+    remaining = gDLL_29_Gplay->vtbl->get_time_remaining(objSetup->base.uID);
+
+    duration = objSetup->regrowthTime;
+    if (duration < 100) {
+        duration = 100;
     }
-    temp_fa0 = temp_fv0 /  var_v0;
-    if (temp_fa0 > 1.0f) {
-        temp_fa0 = 1.0f;
-    } else if (temp_fa0 < 0.0f) {
-        temp_fa0 = 0.0f;
+
+    tValue = remaining / duration;
+    if (tValue > 1.0f) {
+        tValue = 1.0f;
+    } else if (tValue < 0.0f) {
+        tValue = 0.0f;
     }
-    return temp_fa0 = 1.0f - temp_fa0;
+
+    return tValue = 1.0f - tValue;
 }
-
-
-/*0x0*/ static const char str_0[] = "MAGICPLANT: modelno error\n";

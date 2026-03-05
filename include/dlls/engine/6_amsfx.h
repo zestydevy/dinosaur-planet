@@ -346,9 +346,9 @@ enum SoundID {
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
 
-    SOUND_618 = 0x618, //magicplant
-    SOUND_619 = 0x619, //magicplant
-    SOUND_61A = 0x61A, //magicplant
+    SOUND_618_Slice_Impact = 0x618, //magicplant
+    SOUND_619_Twinkle_Loop = 0x619, //magicplant
+    SOUND_61A_Crystal_Ringing = 0x61A, //magicplant
 
 
     SOUND_633 = 0x633, // empty? used by player DLL
@@ -357,6 +357,8 @@ enum SoundID {
     SOUND_64D_Wooden_Rattle = 0x64D, // used by MediumCrate
 
     SOUND_669_Insect_Scurry_Loop = 0x669, // Scarab
+
+    SOUND_66E_Ting = 0x66E, // MagicDust
 
     SOUND_677_Metal_Clang = 0x677, // snowhorn related
 
@@ -556,11 +558,17 @@ enum SoundID {
     SOUND_B21_Dissipating_Hiss = 0xB21,     //Lunaimar, Balloon Baddie 
     SOUND_B22_Climb_Sound_A = 0xB22,
     SOUND_B23_Teeth_Chattering = 0xB23, //rarely heard when leaving icy water?
+    
+    SOUND_B2A_Magic_Gliss_Small = 0xB2A, //MagicDust (when collected)
+    SOUND_B2B_Magic_Chime = 0xB2B, //MagicDust (when vanishing)
 
     SOUND_B31_Item_Collection_Chime = 0xB31,
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
+    SOUND_B6B_Magic_Gliss_Mid = 0xB6B, //MagicDust (when collected)
+    SOUND_B6C_Magic_Gliss_Large = 0xB6C, //MagicDust (when collected)
+    SOUND_B6D_Magic_Gliss_Huge = 0xB6D, //MagicDust (when collected)
     SOUND_B6E_Green_Scarab_Collected = 0xB6E,
     SOUND_B6F_Red_Scarab_Collected = 0xB6F,
     SOUND_B70_Gold_Scarab_Collected = 0xB70,
@@ -576,6 +584,8 @@ enum SoundID {
 
     SOUND_B95_Gasvent_Uncovered = 0xB95,
     SOUND_B96_Gasvent_Covered = 0xB96,
+
+    SOUND_BA1_MagicDust_Twinkle = 0xBA1, //MagicDust
 
     SOUND_BA3_Burning_Loop = 0xBA3,
     SOUND_BA4_Spell_Aim_Hum_Loop = 0xBA4,

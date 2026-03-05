@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_290_ctor
-.dword dll_290_dtor
+.dword MagicPlant_ctor
+.dword MagicPlant_dtor
 
 # export table
-/*0*/ .dword dll_290_setup
-/*1*/ .dword dll_290_control
-/*2*/ .dword dll_290_update
-/*3*/ .dword dll_290_print
-/*4*/ .dword dll_290_free
-/*5*/ .dword dll_290_get_model_flags
-/*6*/ .dword dll_290_get_data_size
+/*0*/ .dword MagicPlant_setup
+/*1*/ .dword MagicPlant_control
+/*2*/ .dword MagicPlant_update
+/*3*/ .dword MagicPlant_print
+/*4*/ .dword MagicPlant_free
+/*5*/ .dword MagicPlant_get_model_flags
+/*6*/ .dword MagicPlant_get_data_size
