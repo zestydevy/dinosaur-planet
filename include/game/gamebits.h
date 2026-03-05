@@ -2320,14 +2320,14 @@ typedef enum {
     BIT_90A = 0x90A, // len:1 group:0
     BIT_90B = 0x90B, // len:1 group:2
     BIT_90C = 0x90C, // len:1 group:2
-    BIT_90D = 0x90D, // len:1 group:2
+    BIT_Tutorial_Magic_Crystal = 0x90D, // len:1 group:2 [TUTORIAL]
     BIT_90E = 0x90E, // len:1 group:2
     BIT_90F = 0x90F, // len:1 group:2
-    BIT_Tutorial_Collected_Scarab = 0x910, // len:1 group:2
+    BIT_Tutorial_Collected_Scarab = 0x910, // len:1 group:2 [TUTORIAL]
     BIT_911 = 0x911, // len:1 group:2
     BIT_Shown_ZLock_Interact_Message = 0x912, // len:1 group:2
     BIT_913 = 0x913, // len:1 group:2
-    BIT_914 = 0x914, // len:1 group:2
+    BIT_Tutorial_Magic_Plant = 0x914, // len:1 group:2 [TUTORIAL]
     BIT_915 = 0x915, // len:1 group:2
     BIT_916 = 0x916, // len:1 group:2
     BIT_GP_Bonfire_Kindling_Placed = 0x917, // len:1 group:0
