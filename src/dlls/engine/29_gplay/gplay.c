@@ -14,6 +14,7 @@
 #include "sys/memory.h"
 #include "functions.h"
 #include "dll.h"
+#include "prevent_bss_reordering.h"
 
 #include "prevent_bss_reordering.h"
 
@@ -162,7 +163,6 @@ static u16 sMapObjGroupBitKeys[120] = {
 /*113*/ 0x0000, /*114*/ 0x0000, /*115*/ 0x0000, /*116*/ 0x0000, 
 /*117*/ 0x0000, /*118*/ 0x0000, /*119*/ 0x0000
 };
-static Vec3f sPlayerStartPos = { -14149.352f, -82.0f, -15569.178f };
 
 typedef struct {
     s8 mapID;
@@ -223,13 +223,11 @@ void gplay_erase_save(s8 idx) {
 
 void gplay_init_save(s8 idx, char *filename) {
     u8 _pad[0x10];
-    Vec3f startPos;
+    Vec3f startPos = {{{ -14149.352f, -82.0f, -15569.178f }}};
     s32 i;
     s32 k;
     char *dst;
     char var;
-
-    startPos = sPlayerStartPos;
 
     gplay_reset_state();
 

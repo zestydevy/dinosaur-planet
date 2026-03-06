@@ -17,6 +17,21 @@
 #define STUBBED_PRINTF 
 #endif
 
+#define DO_PRAGMA(x) _Pragma(#x)
+
+#ifdef __sgi
+#define PRAGMA_IGNORE_PUSH(warning)
+#define PRAGMA_IGNORE_POP()
+#elif __GNUC__
+#define PRAGMA_IGNORE_PUSH(warning) _Pragma("GCC diagnostic push") \
+                            DO_PRAGMA(GCC diagnostic ignored warning)
+#define PRAGMA_IGNORE_POP() _Pragma("GCC diagnostic pop")
+#elif __clang__
+#define PRAGMA_IGNORE_PUSH(warning) _Pragma("clang diagnostic push") \
+                            DO_PRAGMA(clang diagnostic ignored warning)
+#define PRAGMA_IGNORE_POP() _Pragma("clang diagnostic pop")
+#endif
+
 #define UNUSED __attribute__((unused))
 
 #define STACKSIZE(x) (x / sizeof(u64))

@@ -31,7 +31,7 @@
 
 void func_8002674C(Object* obj);
 
-/*0x0*/ static Vec3f dHitsTestPoint = {0.0, 0.0, 0.0};
+/*0x0*/ static Vec3f dHitsTestPoint = {{{0.0, 0.0, 0.0}}};
 /*0xC*/ static f32 dHitsTestRadius = 25.0;
 
 #define SPEED_CAP_X 1.0f
@@ -631,7 +631,7 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
 
     samples = NULL;
     groundY = 10000.0f;
-    sampleCount = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &samples, 0, 0);
+    sampleCount = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, (Func_80057F1C_Struct***) &samples, 0, 0);
 
     //Find minimum height in collision samples
     for (i = 0, minimumIndex = 0; i < sampleCount; i++) {

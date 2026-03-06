@@ -88,7 +88,7 @@ extern u8 gViUpdateRateTarget;
 extern u8 D_800BCE58;
 extern u8 gViUpdateRate;
 
-extern u8 *D_800BCE18[];
+extern Vec3s32 *D_800BCE18[];
 extern u8 D_800BCE20; // index of D_800BCE22?
 extern u8 D_800BCE22[2];
 

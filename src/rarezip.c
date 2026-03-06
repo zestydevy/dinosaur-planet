@@ -32,11 +32,11 @@ s32 rarezip_uncompress_size(u8 *b) {
     return result;
 }
 
-s32 rarezip_uncompress_size_rom(s32 arg0, s32 arg1, s32 arg2) {
-    if (arg2 != 0) {
-        read_file_region(arg0, gPackedHeader, arg1, 8);
+s32 rarezip_uncompress_size_rom(s32 fileId, s32 offset, s32 readImmediate) {
+    if (readImmediate) {
+        read_file_region(fileId, gPackedHeader, offset, 8);
     } else {
-        queue_load_file_region_to_ptr((void**)gPackedHeader, arg0, arg1, 8);
+        queue_load_file_region_to_ptr((void**)gPackedHeader, fileId, offset, 8);
     }
     
     return rarezip_uncompress_size(gPackedHeader);

@@ -34,13 +34,13 @@ typedef enum {
 
 /** Coordinates of Courtyard well's two Blocks (with Krazoa symbol) */
 /*0x0*/ static Vec3f data_coords_well_blocks[] = {
-    {4488, 0, 17606}, 
-    {4344, 0, 17606}
+    {{{4488, 0, 17606}}}, 
+    {{{4344, 0, 17606}}}
 };
 /** Coordinates of Courtyard's two ocean-front Blocks (with lever columns) */
 /*0x18*/ static Vec3f data_coords_lever_blocks[] = {
-    {5506.7002, -93, 17574}, 
-    {5587.5, -93, 18058}
+    {{{5506.7002, -93, 17574}}}, 
+    {{{5587.5, -93, 18058}}}
 };
 /*0x30*/ static u8 data_krazoa_symbol_shape_animatorIDs[] = {
     11, 14, 15, 16, 13, 12
@@ -158,7 +158,8 @@ void CCkrazoabright_colour_krazoa_symbol_tablet_quest(Object* self) {
         objData->prevPoints[index] = gamebitValueInverted;
         objData->pointsLit[index] = gamebitValueInverted;
 
-        if (&objData->prevPoints[0]) {
+        // @bug? Checking the address of prevPoints instead of its value. This will always be true.
+        if ((s32)&objData->prevPoints[0]) {
             colours[index] = 0;
         } else {
             colours[index] = 0xFF;

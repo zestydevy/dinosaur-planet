@@ -118,7 +118,7 @@ u32 dll_307_get_data_size(Object *self, u32 a1) {
 static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
     DLL307_Data *objdata;
     DLL307_Setup *setup;
-    s32 *temp_v0;
+    TextureAnimator *animator;
     u32 temp_v0_3;
     s32 var_s1;
     s32 var_s1_2;
@@ -127,15 +127,15 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
     setup = (DLL307_Setup*)self->setup;
     if (self->def->numAnimatedFrames != 0) {
         if (objdata->unkE & 1) {
-            temp_v0 = func_800348A0(self, 0, 0);
-            if (temp_v0 != NULL) {
-                *temp_v0 = 0x100;
+            animator = func_800348A0(self, 0, 0);
+            if (animator != NULL) {
+                animator->frame = 0x100;
             }
         }
         if (objdata->unkE & 2) {
-            temp_v0 = func_800348A0(self, 1, 0);
-            if (temp_v0 != NULL) {
-                *temp_v0 = 0x100;
+            animator = func_800348A0(self, 1, 0);
+            if (animator != NULL) {
+                animator->frame = 0x100;
             }
         }
     }

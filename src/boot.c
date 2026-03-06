@@ -70,8 +70,7 @@ void func_80001178(s32 a0, s32 *a1)
         a1[1] = count;
     } else if (a1[0] == 2) {
         // matches with any local var, not just a1
-        if (a1)
-            ;
+        if (a1) { }
     }
 }
 

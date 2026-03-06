@@ -144,7 +144,7 @@ void levelname_control(Object* self) {
 void levelname_update(Object* self){ }
 
 // offset: 0x310 | func: 3 | export: 3
-void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx) {
+void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     s32 index;
     s32 yCoord;
     LevelName_Data* objdata;

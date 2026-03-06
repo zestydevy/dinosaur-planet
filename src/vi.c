@@ -95,7 +95,7 @@ u16 *gFramebufferEnd;
 u32 gCurrFramebufferIdx;
 s32 gVideoMode;
 u32 gViBlackTimer;
-u8 *D_800BCE18[2];
+Vec3s32 *D_800BCE18[2];
 u8 D_800BCE20; // index of D_800BCE22?
 u8 D_800BCE22[2];
 s8 gHStartMod;
@@ -171,8 +171,8 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE2C = 5;
 
     if (someBool) {
-        D_800BCE18[0] = mmAlloc(960, ALLOC_TAG_SCREEN_COL, NULL);
-        D_800BCE18[1] = &D_800BCE18[0][480];
+        D_800BCE18[0] = (Vec3s32 *) mmAlloc(960, ALLOC_TAG_SCREEN_COL, NULL);
+        D_800BCE18[1] = (Vec3s32 *) &D_800BCE18[0][40];
     }
 
     bzero(D_800BCE18[0], 960);

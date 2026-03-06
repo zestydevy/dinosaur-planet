@@ -380,8 +380,7 @@ void dll_unused_8000C648(void) {
         DLLState *dll = gLoadedDLLList;
         do {
             v0 += sizeof(DLLState);
-            if (dll++)
-                ;
+            if (dll++) {}
 
         } while (v0 < count * 16);
     }

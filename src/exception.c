@@ -713,7 +713,7 @@ void crash_display_line(s32 x, s32 y, char *str) {
         } else if (c <= ' ') {
             x += 4;
         } else if (c > ' ' && c <= 'z') {
-            crash_blit_glyph(x, y, &gCrashFont[c * 5 - 165]);
+            crash_blit_glyph(x, y, (u8 *)&gCrashFont[c * 5 - 165]);
             x += 8;
         }
     }
@@ -828,7 +828,7 @@ s32 func_800631E0(void) {
 
     labelsIndex = gCFileLabelIndex;
     for (i = 0; i < C_FILE_LABELS_LENGTH; i++) {
-        u8 *label;
+        const char *label;
 
         labelsIndex++;
         if ((labelsIndex ^ 0) == (max = C_FILE_LABELS_LENGTH)) {
