@@ -48,8 +48,7 @@ MANUAL_FUNCTION_DEFS = {
 }
 
 SYMBOL_RENAMES = {
-    "memset": "_memset",
-    "memcpy": "_memcpy"
+
 }
 
 def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
