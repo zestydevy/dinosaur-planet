@@ -549,6 +549,8 @@ enum SoundID {
     SOUND_AC8_Ground_Impact = 0xAC8, // used by PointBack
     SOUND_AC9_Impact_Crumbling = 0xAC9, // used by PointBack
 
+    SOUND_B01_Success_Chime = 0xB01, //NWtreebridge (via seq 0x92)
+
     SOUND_B1C_Ladder_Climb_A = 0xB1C,
     SOUND_B1D_Ladder_Climb_B = 0xB1D,
 
