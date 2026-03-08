@@ -274,7 +274,7 @@ enum SoundID {
 
     SOUND_36E_Lever_Clunk = 0x36e, // used by many levers (e.g. ones leading to Cape Claw courtyard)
 
-    SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat
+    SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat, SmallBasket
     SOUND_372_Crate_Struck = 0x372, // used by MediumMetalCrat
 
     SOUND_377_Metal_Smack = 0x377,
@@ -352,9 +352,11 @@ enum SoundID {
 
 
     SOUND_633 = 0x633, // empty? used by player DLL
+    SOUND_634 = 0x634, // empty? used by SmallBasket
+    SOUND_637_Heavy_Whoosh = 0x637,
 
-    SOUND_64C_Wicker_Rattle = 0x64C, // used by MediumCrate
-    SOUND_64D_Wooden_Rattle = 0x64D, // used by MediumCrate
+    SOUND_64C_Wicker_Rattle = 0x64C, // used by MediumCrate, SmallBasket
+    SOUND_64D_Wooden_Rattle = 0x64D, // used by MediumCrate, SmallBasket
 
     SOUND_669_Insect_Scurry_Loop = 0x669, // Scarab
 
@@ -387,8 +389,10 @@ enum SoundID {
 
     SOUND_6B4_Basket_Carry = 0x6B4, // used by player
     SOUND_6B5_Crate_Struck = 0x6B5, // used by MediumCrate
-    SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate
-    SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate
+    SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate, SmallBasket
+    SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate, SmallBasket
+    SOUND_6B8_Crate_Hiss = 0x6B7,   // used by SmallBasket
+    SOUND_6B9_Crate_Hiss = 0x6B7,   // used by SmallBasket
 
     SOUND_6BB_Creature_Cry = 0x6BB, // Scarab
     SOUND_6BC_Creature_Cry = 0x6BC, // Duster, Scarab

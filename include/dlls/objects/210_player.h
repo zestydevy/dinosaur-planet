@@ -299,6 +299,12 @@ typedef struct {
 } Player_Data;
 
 typedef enum {
+    Player_MODANIM_0_Idle = 0,
+
+    Player_MODANIM_447_Carrying_Idle = 0x447
+} Player_Modanims;
+
+typedef enum {
     PLAYER_ASTATE_Standing = 1,
     PLAYER_ASTATE_Idle_Fidget = 2,
     PLAYER_ASTATE_Turning_On_Spot = 3,

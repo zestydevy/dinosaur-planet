@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/dll.h"
@@ -12,6 +13,10 @@
 #include "sys/math.h"
 #include "sys/rand.h"
 #include "types.h"
+
+#include "dlls/objects/common/collectable.h"
+#include "dlls/objects/297_scarab.h"
+#include "dlls/objects/615_crawler.h"
 
 typedef struct {
     ObjSetup base;
@@ -307,36 +312,6 @@ u32 medium_crate_get_data_size(Object *self, u32 currentSize) {
     return sizeof(MediumCrate_Data);
 }
 
-// TODO: move to headers
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    s16 unk1A;
-    u8 _unk1C[8];
-} Scorpion_Setup;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    s16 unk1A;
-    u8 _unk1C[8];
-} Scarab_Setup;
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[2];
-    u8 unk1A;
-    u8 unk1B;
-    s16 unk1C;
-    u8 _unk1E[6];
-    s16 unk24;
-    u8 _unk26[6];
-    s16 unk2C;
-    u8 _unk2E[2];
-} FoodPickup_Setup;
-
 s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
     s32 spawnsLeft;
     Object *obj;
@@ -345,7 +320,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
     s32 temp;
     Scorpion_Setup *scorpionSetup;
     Scarab_Setup *scarabSetup;
-    FoodPickup_Setup *foodPickupSetup;
+    Collectable_Setup *foodPickupSetup;
     
     spawnsLeft = objdata->unk16;
     while (spawnsLeft != 0) {
@@ -368,7 +343,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
-                scarabSetup->unk1A = 400;
+                scarabSetup->lifetime = 400;
                 obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
@@ -401,7 +376,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
-                scarabSetup->unk1A = 400;
+                scarabSetup->lifetime = 400;
                 obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
@@ -434,7 +409,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
-                scarabSetup->unk1A = 2000;
+                scarabSetup->lifetime = 2000;
                 obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
@@ -467,7 +442,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
-                scarabSetup->unk1A = 2000;
+                scarabSetup->lifetime = 2000;
                 obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = player->srt.transl.x - self->srt.transl.x;
                 obj->speed.z = player->srt.transl.z - self->srt.transl.z;
@@ -497,17 +472,17 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             case 5:
             case 6: {
                 if (objdata->unk15 == 5) {
-                    foodPickupSetup = obj_alloc_create_info(sizeof(FoodPickup_Setup), OBJ_meatPickup);
+                    foodPickupSetup = obj_alloc_create_info(sizeof(Collectable_Setup), OBJ_meatPickup);
                 } else {
-                    foodPickupSetup = obj_alloc_create_info(sizeof(FoodPickup_Setup), OBJ_applePickup);
+                    foodPickupSetup = obj_alloc_create_info(sizeof(Collectable_Setup), OBJ_applePickup);
                 }
-                foodPickupSetup->unk1A = 20;
-                foodPickupSetup->unk2C = -1;
-                foodPickupSetup->unk1C = -1;
+                foodPickupSetup->objHitsValue = 20;
+                foodPickupSetup->gamebitCount = NO_GAMEBIT;
+                foodPickupSetup->gamebitCollected = NO_GAMEBIT;
                 foodPickupSetup->base.x = self->srt.transl.x;
                 foodPickupSetup->base.y = self->srt.transl.y + 5.0f;
                 foodPickupSetup->base.z = self->srt.transl.z;
-                foodPickupSetup->unk24 = -1;
+                foodPickupSetup->gamebitSecondary = NO_GAMEBIT;
                 obj = obj_create((ObjSetup*)foodPickupSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->unkE0 = 21600;
                 break;
