@@ -63,13 +63,14 @@ typedef enum {
 DLL_INTERFACE(DLL_721_SCbeacon) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
 
-    /*7*/ int (*handle_kyte_flame_seqs)(Object* self, s32 finishLighting);     /*
-    * Returns TRUE when the beacon is in its "lighting" state (emitting embers/smoke while Kyte is using Flame on it).
-    * 
-    * `finishLighting` == 0: advances beacon to "lighting" state, plays seq where Kyte begins lighting the beacon
-    *
-    * `finishLighting` == 1: advances beacon to "lit" state, and (if all beacons are lit) plays the DF entrance pool seq 
-    */
+    /*
+     * Returns TRUE when the beacon is in its "lighting" state (emitting embers/smoke while Kyte is using Flame on it).
+     * 
+     * `finishLighting` == 0: advances beacon to "lighting" state, plays seq where Kyte begins lighting the beacon
+     *
+     * `finishLighting` == 1: advances beacon to "lit" state, and (if all beacons are lit) plays the DF entrance pool seq 
+     */
+    /*7*/ int (*handle_kyte_flame_seqs)(Object* self, s32 finishLighting);
     
     /*8*/ s32 (*func8)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2); //returns 0 (TO-DO: does anything call this?)
     /*9*/ s32 (*func9)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2); //returns 0 (TO-DO: does anything call this?)
