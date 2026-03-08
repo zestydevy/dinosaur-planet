@@ -25,24 +25,17 @@ typedef struct VideoResolution {
     u32 v;
 } VideoResolution;
 
-typedef struct UnkVidStruct3 {
-    s32 unk0;
-    s32 unk4;
-} UnkVidStruct3;
-
 typedef struct {
-    s32 unk0;
-    s32 unk4;
-    Object *unk8;
-} UnkViStruct;
+    s32 zValue;
+    s32 zPixelIdx;
+    Object *obj;
+} ViObjDepth;
 
 // Length of gResolutionArray
 #define VIDEO_RESOLUTIONS_COUNT 8
 
 extern f32 gWorldX;
 extern f32 gWorldZ;
-
-extern UnkVidStruct3 D_80093068[];
 
 extern OSViMode gTvViMode;
 
@@ -130,6 +123,6 @@ s32 vi_frame_sync(s32);
 
 int vi_contains_point(s32 x, s32 y);
 
-s32 vi_func_8005DD4C(s32 x, s32 y, Object *arg2);
+s32 vi_obj_depth(s32 x, s32 y, Object *arg2);
 
 #endif //_SYS_GFX_GX_H

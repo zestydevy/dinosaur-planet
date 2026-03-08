@@ -43,7 +43,7 @@ void vi_set_mode(s32 mode);
 void vi_init_framebuffers(int someBool, s32 width, s32 height);
 void vi_swap_buffers(void);
 void vi_update_mode(void);
-void vi_func_8005DEE8(void);
+void vi_calc_obj_depths(void);
 int vi_contains_point(s32 x, s32 y);
 
 extern OSDevMgr __osViDevMgr;
@@ -65,7 +65,15 @@ VideoResolution gResolutionArray[VIDEO_RESOLUTIONS_COUNT] = {
 };
 s8 D_80093060 = 0;
 s8 D_80093064 = 0;
-UnkVidStruct3 D_80093068[8] = {
+// From N64 Programming Manual Chapter 15.5.9
+/*
+ * Convert 11 bit mantissa and 3 bit exponent
+ * to 0,15.3 number
+ */
+struct {
+    int shift;
+    long add;
+} gZConvTable[8] = {
     {6, 0x00000},
     {5, 0x20000},
     {4, 0x30000},
@@ -95,9 +103,9 @@ u16 *gFramebufferEnd;
 u32 gCurrFramebufferIdx;
 s32 gVideoMode;
 u32 gViBlackTimer;
-UnkViStruct *D_800BCE18[2];
-u8 D_800BCE20; // index of D_800BCE22?
-u8 D_800BCE22[2];
+ViObjDepth *gViObjDepthLists[2];
+u8 gViObjDepthListIdx;
+u8 gViObjDepthListLens[2];
 s8 gHStartMod;
 s8 gVScaleMod;
 s32 gDisplayHertz;
@@ -171,15 +179,15 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE2C = 5;
 
     if (someBool) {
-        D_800BCE18[0] = mmAlloc(sizeof(UnkViStruct) * 80, ALLOC_TAG_SCREEN_COL, NULL);
-        D_800BCE18[1] = &D_800BCE18[0][80 / 2];
+        gViObjDepthLists[0] = mmAlloc(sizeof(ViObjDepth) * 80, ALLOC_TAG_SCREEN_COL, NULL);
+        gViObjDepthLists[1] = &gViObjDepthLists[0][80 / 2];
     }
 
-    bzero(D_800BCE18[0], sizeof(UnkViStruct) * 80);
+    bzero(gViObjDepthLists[0], sizeof(ViObjDepth) * 80);
+    gViObjDepthListIdx = 0;
+    gViObjDepthListLens[0] = 0;
+    gViObjDepthListLens[1] = 0;
 
-    D_800BCE20 = 0;
-    D_800BCE22[0] = 0;
-    D_800BCE22[1] = 0;
     gViUpdateRateTarget = 1;
 }
 
@@ -399,7 +407,7 @@ s32 vi_frame_sync(s32 param1) {
     }
 
     joy_read_nonblocking();
-    vi_func_8005DEE8();
+    vi_calc_obj_depths();
     osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_BLOCK);
 
     return updateRate;
@@ -434,37 +442,38 @@ u16 *vi_get_framebuffer_end() {
     return gFramebufferEnd;
 }
 
-s32 vi_func_8005DD4C(s32 x, s32 y, Object *arg2) {
-    s32 sp2C;
-    s32 var_v1;
-    UnkViStruct* sp24;
-    u8 temp;
-    u8 temp2;
+s32 vi_obj_depth(s32 x, s32 y, Object *obj) {
+    s32 zvalue;
+    s32 i;
+    ViObjDepth* list;
+    u8 prevListIdx;
+    u8 currListIdx;
     
-    temp2 = D_800BCE20;
-    temp = (D_800BCE20 ^ 1);
-    sp24 = D_800BCE18[temp];
+    currListIdx = gViObjDepthListIdx;
+    prevListIdx = gViObjDepthListIdx ^ 1;
+    list = gViObjDepthLists[prevListIdx];
     
-    sp2C = 0;
-    for (var_v1 = 0; var_v1 < D_800BCE22[temp]; var_v1++) {
-        if (arg2 == sp24[var_v1].unk8) {
-            sp2C = sp24[var_v1].unk0;
+    // Find screen Z of object from previous frame
+    zvalue = 0;
+    for (i = 0; i < gViObjDepthListLens[prevListIdx]; i++) {
+        if (obj == list[i].obj) {
+            zvalue = list[i].zValue;
             break;
         }
     }
 
-    sp24 = D_800BCE18[temp2];
-    sp24[D_800BCE22[temp2]].unk8 = arg2;
-    sp24[D_800BCE22[temp2]].unk0 = 0;
+    list = gViObjDepthLists[currListIdx];
+    list[gViObjDepthListLens[currListIdx]].obj = obj;
+    list[gViObjDepthListLens[currListIdx]].zValue = 0;
     if (vi_contains_point(x, y) == 0) {
-        var_v1 = -1;
+        i = -1;
     } else {
-        var_v1 = (gCurrentResolutionH[gCurrFramebufferIdx] * y) + x;
+        i = (gCurrentResolutionH[gCurrFramebufferIdx] * y) + x;
     }
 
-    sp24[D_800BCE22[temp2]].unk4 = var_v1;
-    D_800BCE22[temp2] += 1;
-    return sp2C;
+    list[gViObjDepthListLens[currListIdx]].zPixelIdx = i;
+    gViObjDepthListLens[currListIdx] += 1;
+    return zvalue;
 }
 
 /**
@@ -477,35 +486,33 @@ int vi_contains_point(s32 x, s32 y) {
         && (u32)y < gCurrentResolutionV[gCurrFramebufferIdx];
 }
 
-void vi_func_8005DEE8(void) {
+void vi_calc_obj_depths(void) {
     s32 i;
-    u8 new_var;
-    s32 new_var2;
-    u32 temp_t5;
-    u8 *temp;
-    UnkVidStruct3* temp_a3;
-    Vec3s32 *temp2;
+    u8 listIdx;
+    s32 idx;
+    u32 zfloat;
+    ViObjDepth *list;
+    u32 exponent;
+    u32 mantissa;
 
-    new_var = D_800BCE20;
-    temp2 = D_800BCE18[new_var];
-    i = 0;
-    temp = &D_800BCE22[D_800BCE20];
-    for (; *temp > i; i++) {
-        new_var2 = temp2[i].y;
-        temp_t5 = new_var2;
-        if (new_var2 >= 0) {
-            temp_t5 = gDepthBuffer[new_var2] >> 2;
-            // temp_t5 >> 0xB loads the first 21 bits
-            temp_a3 = &D_80093068[((temp_t5 >> 0xB) & 7)];
-            // temp_t5 & 0x7FF loads the last 11 bits
-            temp2[i].x = (temp_a3->unk4 + ((temp_t5 & 0x7FF) << temp_a3->unk0)) >> 3;
+    listIdx = gViObjDepthListIdx;
+    list = gViObjDepthLists[listIdx];
+    for (i = 0; i < gViObjDepthListLens[listIdx]; i++) {
+        idx = list[i].zPixelIdx;
+        if (idx >= 0) {
+            // 16-bit depth buffer bit format: 15-13 (Zexp), 12-2 (Zmantissa), 1-0 (hidden)
+            zfloat = gDepthBuffer[idx] >> 2; // skip hidden bits
+            exponent = (zfloat >> 11) & 7;
+            mantissa = zfloat & 0x7FF;
+            // Convert to 15.3 fixed point, then extract the integer portion
+            list[i].zValue = ((mantissa << gZConvTable[exponent].shift) + gZConvTable[exponent].add) >> 3;
         } else {
-            temp2[i].x = 0;
+            list[i].zValue = 0;
         }
     }
 
-    D_800BCE20 ^= 1;
-    D_800BCE22[D_800BCE20] = 0;
+    gViObjDepthListIdx ^= 1;
+    gViObjDepthListLens[gViObjDepthListIdx] = 0;
 }
 
 /**
