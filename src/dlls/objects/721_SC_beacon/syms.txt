@@ -1,0 +1,19 @@
+.text = 0x0:
+SCbeacon_ctor = 0x0;
+SCbeacon_dtor = 0xC;
+SCbeacon_setup = 0x18;
+SCbeacon_control = 0x110;
+SCbeacon_update = 0x4F0;
+SCbeacon_print = 0x4FC;
+SCbeacon_free = 0x550;
+SCbeacon_get_model_flags = 0x5D8;
+SCbeacon_get_data_size = 0x5E8;
+SCbeacon_handle_kyte_flame_seqs = 0x5FC;
+SCbeacon_func_7D4 = 0x7D4;
+SCbeacon_func_7EC = 0x7EC;
+SCbeacon_func_804 = 0x804;
+SCbeacon_attempt_to_light = 0x814;
+SCbeacon_anim_callback = 0x9E0;
+
+.rodata = 0xCD8:
+str_0 = 0x0; // absolute:0xCD8
