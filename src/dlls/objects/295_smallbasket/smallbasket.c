@@ -57,7 +57,7 @@ s8 dll_295_func_E78(Object* a0);
 s8 dll_295_func_1104(Object* a0, Object* a1, void* a2);
 void dll_295_func_2024(Object* arg0, Object* arg1, SmallBasket_Data* arg2);
 
-/*0x0*/ static u8 _bss_0[0x10];
+/*0x0*/ static Vec4f _bss_0;
 
 // offset: 0x0 | ctor
 void dll_295_ctor(void *dll) { }
@@ -381,7 +381,92 @@ s32 dll_295_func_DC0(Object* arg0, Object* arg1, SmallBasket_Data* arg2) {
 }
 
 // offset: 0xE78 | func: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_func_E78.s")
+/**
+  * Checks if basket touched the ground?
+  */
+s8 dll_295_func_E78(Object* self) {
+    Vec3f spF8[4];
+    Vec3f spC8[4];
+    Unk80027934 sp5C;
+    AABBs32 sp44;
+    ObjectHitInfo* objHits;
+    f32* pad;
+    u8 i;
+    u32 temp2;
+    f32* temp;
+
+    objHits = self->objhitInfo;
+
+    temp2 = objHits->unk40;
+    if ((temp2 >> 4) && (objHits->unk61 == 0)) {
+        spF8[0].x = self->srt.transl.x;
+        spF8[0].y = self->srt.transl.y;
+        spF8[0].z = self->srt.transl.z;
+        spC8[0].x = self->positionMirror2.x;
+        spC8[0].y = self->positionMirror2.y;
+        spC8[0].z = self->positionMirror2.z;
+        sp5C.unk40[0] = objHits->unk52;
+        sp5C.unk50[0] = -1;
+        sp5C.unk54[0] = 3;
+    } else {
+        return FALSE;
+    }
+        
+    fit_aabb_around_cubes(&sp44, (Vec3f*)&spC8, (Vec3f*)&spF8, &sp5C.unk40[0], 1);
+    func_80053750(self, &sp44, objHits->unkA1);
+    i = func_8005509C(self, (f32*)&spC8, (f32*)&spF8, 1, &sp5C, 0);
+    
+    if (i) {
+        if (i & 1) {
+            i = 0;
+        } else if (i & 2) {
+            i = 1;
+        } else if (i & 4) {
+            i = 2;
+        } else {
+            i = 3;
+        }
+        
+        objHits->unk9C = sp5C.unk50[i];       
+        temp = (f32*)spF8;            
+        objHits->unk34 = temp[i * 3 + 0];
+        objHits->unk38 = temp[i * 3 + 1];
+        objHits->unk3C = temp[i * 3 + 2];
+        
+        _bss_0.x = sp5C.unk0[i].x;
+        _bss_0.y = sp5C.unk0[i].y;
+        _bss_0.z = sp5C.unk0[i].z;
+        _bss_0.w = sp5C.unk0[i].w;
+        
+        if (sp5C.unk58[i] != 0) {
+            objHits->unk9D |= 2;
+            self->srt.transl.x = objHits->unk34;
+            self->srt.transl.y = objHits->unk38;
+            self->srt.transl.z = objHits->unk3C;
+            objHits->unk10.f[0] = self->positionMirror2.x;
+            objHits->unk10.f[1] = self->positionMirror2.y;
+            objHits->unk10.f[2] = self->positionMirror2.z;
+            self->speed.x = 0.0f;
+            self->speed.y = 0.0f;
+            self->speed.z = 0.0f;
+            return TRUE;
+        } else {
+            objHits->unk9D |= 1;
+            self->srt.transl.x = objHits->unk34;
+            self->srt.transl.y = objHits->unk38;
+            self->srt.transl.z = objHits->unk3C;
+            objHits->unk10.f[0] = self->positionMirror2.x;
+            objHits->unk10.f[1] = self->positionMirror2.y;
+            objHits->unk10.f[2] = self->positionMirror2.z;
+            self->speed.x = 0.0f;
+            self->speed.y = 0.0f;
+            self->speed.z = 0.0f;
+            return TRUE;
+        }
+    } else {
+        return FALSE;
+    }
+}
 
 // offset: 0x1104 | func: 9
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_func_1104.s")
