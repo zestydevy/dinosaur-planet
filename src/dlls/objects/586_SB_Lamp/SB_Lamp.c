@@ -134,7 +134,7 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     y = self->positionMirror.y;
     camera_project_point(x, y, z, &ox1, &oy1, &oz1);
     camera_clip_to_screen(ox1, oy1, oz1, &ox, &oy, NULL);
-    sp30 = vi_func_8005DD4C(ox, oy, (s32)self);
+    sp30 = vi_func_8005DD4C(ox, oy, self);
     get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
     x += (pdx * 20.0f);
     y += (pdy * 20.0f);

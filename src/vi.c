@@ -95,7 +95,7 @@ u16 *gFramebufferEnd;
 u32 gCurrFramebufferIdx;
 s32 gVideoMode;
 u32 gViBlackTimer;
-u8 *D_800BCE18[2];
+UnkViStruct *D_800BCE18[2];
 u8 D_800BCE20; // index of D_800BCE22?
 u8 D_800BCE22[2];
 s8 gHStartMod;
@@ -108,7 +108,7 @@ u8 _bss_800bce38[0x20];
 u8 D_800BCE58;
 u8 gViUpdateRate;
 OSScClient gVideoSched;
-static u8 _bss_pad[0x10];
+//static u8 _bss_pad[0x10];
 /* -------- .bss end 800bce70 -------- */
 
 void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
@@ -171,11 +171,11 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE2C = 5;
 
     if (someBool) {
-        D_800BCE18[0] = mmAlloc(960, ALLOC_TAG_SCREEN_COL, NULL);
-        D_800BCE18[1] = &D_800BCE18[0][480];
+        D_800BCE18[0] = mmAlloc(sizeof(UnkViStruct) * 80, ALLOC_TAG_SCREEN_COL, NULL);
+        D_800BCE18[1] = &D_800BCE18[0][80 / 2];
     }
 
-    bzero(D_800BCE18[0], 960);
+    bzero(D_800BCE18[0], sizeof(UnkViStruct) * 80);
 
     D_800BCE20 = 0;
     D_800BCE22[0] = 0;
@@ -434,40 +434,38 @@ u16 *vi_get_framebuffer_end() {
     return gFramebufferEnd;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/vi/vi_func_8005DD4C.s")
-#else
-s32 vi_func_8005DD4C(s32 x, s32 y, s32 arg2) {
+s32 vi_func_8005DD4C(s32 x, s32 y, Object *arg2) {
     s32 sp2C;
     s32 var_v1;
-    Vec3s32* sp24;
-    s32 temp_t6;
-    u8* sp1C;
-
-    temp_t6 = (D_800BCE20 ^ 1) & 0xFF;
-    sp24 = D_800BCE18[temp_t6];
-    for (sp2C = 0, var_v1 = 0; var_v1 < D_800BCE22[temp_t6]; var_v1++) {
-        if (arg2 == sp24[var_v1].z) {
-            sp2C = sp24[var_v1].x;
+    UnkViStruct* sp24;
+    u8 temp;
+    u8 temp2;
+    
+    temp2 = D_800BCE20;
+    temp = (D_800BCE20 ^ 1);
+    sp24 = D_800BCE18[temp];
+    
+    sp2C = 0;
+    for (var_v1 = 0; var_v1 < D_800BCE22[temp]; var_v1++) {
+        if (arg2 == sp24[var_v1].unk8) {
+            sp2C = sp24[var_v1].unk0;
             break;
         }
     }
 
-    sp1C = &D_800BCE22[D_800BCE20];
-    sp24 = D_800BCE18[D_800BCE20];
-    sp24[*sp1C].z = arg2;
-    sp24[*sp1C].x = 0;
+    sp24 = D_800BCE18[temp2];
+    sp24[D_800BCE22[temp2]].unk8 = arg2;
+    sp24[D_800BCE22[temp2]].unk0 = 0;
     if (vi_contains_point(x, y) == 0) {
-        temp_t6 = -1;
+        var_v1 = -1;
     } else {
-        temp_t6 = (gCurrentResolutionH[gCurrFramebufferIdx] * y) + x;
+        var_v1 = (gCurrentResolutionH[gCurrFramebufferIdx] * y) + x;
     }
 
-    sp24[*sp1C].y = temp_t6;
-    *sp1C += 1;
+    sp24[D_800BCE22[temp2]].unk4 = var_v1;
+    D_800BCE22[temp2] += 1;
     return sp2C;
 }
-#endif
 
 /**
  * Whether a 2D point is within the current framebuffer's bounds.

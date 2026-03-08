@@ -30,6 +30,12 @@ typedef struct UnkVidStruct3 {
     s32 unk4;
 } UnkVidStruct3;
 
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+    Object *unk8;
+} UnkViStruct;
+
 // Length of gResolutionArray
 #define VIDEO_RESOLUTIONS_COUNT 8
 
@@ -88,10 +94,6 @@ extern u8 gViUpdateRateTarget;
 extern u8 D_800BCE58;
 extern u8 gViUpdateRate;
 
-extern u8 *D_800BCE18[];
-extern u8 D_800BCE20; // index of D_800BCE22?
-extern u8 D_800BCE22[2];
-
 extern f32 gAspectRatio; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
 extern OSScClient gVideoSched;
@@ -128,6 +130,6 @@ s32 vi_frame_sync(s32);
 
 int vi_contains_point(s32 x, s32 y);
 
-s32 vi_func_8005DD4C(s32 x, s32 y, s32 arg2);
+s32 vi_func_8005DD4C(s32 x, s32 y, Object *arg2);
 
 #endif //_SYS_GFX_GX_H
