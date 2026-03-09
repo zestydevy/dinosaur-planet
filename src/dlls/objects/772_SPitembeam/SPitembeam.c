@@ -16,7 +16,7 @@ void SPitembeam_ctor(void *dll) { }
 void SPitembeam_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SPitembeam_setup(Object* self, ObjSetup* setup, s32 arg2) {
+void SPitembeam_setup(Object* self, SPitembeam_Setup* setup, s32 arg2) {
     f32 distance;
 
     distance = 10000.0f;
@@ -34,12 +34,12 @@ void SPitembeam_control(Object* self) {
     TextureAnimator* texAnim;
 
     objSetup = (SPitembeam_Setup*)self->setup;
-    shop = (Object*)self->unkDC; 
-    
+    shop = (Object*)self->unkDC;
+
     //@bug: no NULL check for the SPShop object
 
     //Check if the beam's item isn't visible (and shouldn't be spotlighted)
-    if ((((DLL_768_SPShop*)shop->dll)->vtbl->is_item_shown(shop, objSetup->itemIndex) == FALSE) || 
+    if ((((DLL_768_SPShop*)shop->dll)->vtbl->is_item_shown(shop, objSetup->itemIndex) == FALSE) ||
         (((DLL_768_SPShop*)shop->dll)->vtbl->is_item_hidden(shop, objSetup->itemIndex))
     ) {
         self->srt.flags |= 0x4000;
@@ -74,4 +74,3 @@ u32 SPitembeam_get_model_flags(Object *self) {
 s32 SPitembeam_get_data_size(s32 arg0, s32 arg1) {
     return 0;
 }
- 
