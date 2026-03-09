@@ -1,0 +1,12 @@
+.text = 0x0:
+SPitembeam_ctor = 0x0;
+SPitembeam_dtor = 0xC;
+SPitembeam_setup = 0x18;
+SPitembeam_control = 0x88;
+SPitembeam_update = 0x170;
+SPitembeam_print = 0x17C;
+SPitembeam_free = 0x194;
+SPitembeam_get_model_flags = 0x1A4;
+SPitembeam_get_data_size = 0x1B4;
+
+.rodata = 0x1FC:

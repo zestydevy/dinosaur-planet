@@ -279,7 +279,7 @@
 762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem
 768 = objects/768_SPShop
-772 = objects/772_SPitemBeam
+772 = objects/772_SPitembeam
 776 = objects/776_WCbouncycrate
 777 = objects/777_WCTrexChase
 778 = objects/778_WCSabreChase
