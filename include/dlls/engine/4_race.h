@@ -15,7 +15,7 @@ typedef struct {
     u8 unk6;
     u8 unk7;
     Vec3f pos;
-    s32 uID;
+    u32 uID;
     s32 unk18[2]; // prev checkpoints
     s32 unk20[2]; // next checkpoints
     s8 unk28;

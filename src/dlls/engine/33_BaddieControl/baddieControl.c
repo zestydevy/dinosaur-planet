@@ -93,7 +93,7 @@ s32 BaddieControl_func_264(UNK_PTR *arg0, UNK_PTR *arg1) {
 }
 
 // offset: 0x278 | func: 2 | export: 4
-void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5) {
+void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, u16* arg3, s16* arg4, u16* arg5) {
     Baddie* sp2C;
     Vec3f sp20;
     Object* temp_v1;
@@ -774,9 +774,9 @@ void BaddieControl_func_1FAC(Object* arg0, Baddie* arg1, s32 arg2, s32 arg3, s32
     gDLL_2_Camera->vtbl->get_target_object(); //TO-DO: maybe should be returning this Object?
 }
 
-/*0x8*/ static Vec3f _data_8 = { 0.0f, 0.0f, 0.0f };
+/*0x8*/ static Vec3f _data_8 = VEC3F(0.0f, 0.0f, 0.0f);
 /*0x14*/ static f32 _data_14 = 0.0f;
-/*0x18*/ static Vec3f _data_18 = { 0.0f, 0.0f, 0.0f };
+/*0x18*/ static Vec3f _data_18 = VEC3F(0.0f, 0.0f, 0.0f);
 /*0x24*/ static f32 _data_24 = 25.0f;
 
 // offset: 0x2000 | func: 18 | export: 21

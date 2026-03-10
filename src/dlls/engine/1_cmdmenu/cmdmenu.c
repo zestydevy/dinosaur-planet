@@ -349,19 +349,19 @@ s32 unk24;
     (InventoryItem*)&_data_128, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
 
 //Sabre
-/*0x900*/ static UIUnknownCharacterStruct _data_900[] = {
-    (InventoryItem*)&_data_2E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
+/*0x900*/ static UIUnknownCharacterStruct _data_900[] = {{
+    (InventoryItem*)&_data_2E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
 
-/*0x910*/ static UIUnknownCharacterStruct _data_910[] = {
-    (InventoryItem*)&_data_4A0, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x920*/ static UIUnknownCharacterStruct _data_920[] = {
-    (InventoryItem*)&_data_4E8, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x930*/ static UIUnknownCharacterStruct _data_930[] = {
-    (InventoryItem*)&_data_530, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x940*/ static UIUnknownCharacterStruct _data_940[] = {
-    (InventoryItem*)&_data_5E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x950*/ static UIUnknownCharacterStruct _data_950[] = {
-    (InventoryItem*)&_data_698, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0002 };
+/*0x910*/ static UIUnknownCharacterStruct _data_910[] = {{
+    (InventoryItem*)&_data_4A0, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x920*/ static UIUnknownCharacterStruct _data_920[] = {{
+    (InventoryItem*)&_data_4E8, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x930*/ static UIUnknownCharacterStruct _data_930[] = {{
+    (InventoryItem*)&_data_530, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x940*/ static UIUnknownCharacterStruct _data_940[] = {{
+    (InventoryItem*)&_data_5E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x950*/ static UIUnknownCharacterStruct _data_950[] = {{
+    (InventoryItem*)&_data_698, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0002 }};
 
 /*0x960*/ static u32 _data_960 = (u32)&_data_710;
 /*0x964*/ static u32 _data_964[] = {

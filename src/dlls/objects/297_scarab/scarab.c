@@ -129,8 +129,8 @@ void scarab_control(Object* self) {
     f32 pad;
     f32 minValue;
     s16 id;
-    Vec3f pointNow = {0, 0, 0};
-    Vec3f pointFuture = {0, 0, 0};
+    Vec3f pointNow = VEC3F(0, 0, 0);
+    Vec3f pointFuture = VEC3F(0, 0, 0);
     s32 collided = 0;
     s32 i;
     s32 yaw;

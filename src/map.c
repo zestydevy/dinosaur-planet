@@ -885,6 +885,7 @@ void func_800436DC(Object* obj, s32 arg1) {
             someBool = FALSE;
         }
     }
+    // @bug: sp37 is uninitialized if someBool is false
     if (someBool != FALSE) {
         sp37 = gDLL_13_Expgfx->vtbl->func10(obj);
     }
@@ -1117,7 +1118,7 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
         }
     }
 
-    if (((oldRenderListLength & 0xFFFFFFFFu) != gRenderListLength) && gBlocksToDrawIdx < MAX_BLOCKS) {
+    if (((oldRenderListLength & 0xFFFFFFFF) != (u32) gRenderListLength) && gBlocksToDrawIdx < MAX_BLOCKS) {
         gBlocksToDraw[gBlocksToDrawIdx] = block;
         gBlocksToDrawIdx++;
 
@@ -2086,6 +2087,7 @@ void func_80046320(s32 arg0, Object *obj) {
 }
 
 #ifndef NON_MATCHING
+void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 #else
 void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {

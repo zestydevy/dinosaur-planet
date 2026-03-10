@@ -460,10 +460,10 @@ static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
     numHitsTestPoints = data->numTestPoints & 0xF;
     data->hitsTouchBits = 0;
 
-    for (i = 0, i2 = 0; i < numHitsTestPoints; i++, i2 += 3) {
+    for (i = 0, i2 = 0; i < numHitsTestPoints; i++, i2++) {
         temp_t5 = func_80059C40(
-            &data->unk110[0].f[i2], 
-            &data->unkE0[0].f[i2], 
+            &data->unk110[i2], 
+            &data->unkE0[i2], 
             data->hitsTestRadii[i], 
             (data->flags & 0x200000) ? 2 : 0, 
             &data->unk140, 

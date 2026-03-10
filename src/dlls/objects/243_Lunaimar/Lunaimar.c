@@ -246,7 +246,7 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     Object *temp_a0;
     s32 i;
     u16 sp62;
-    u16 sp60;
+    s16 sp60;
     u16 sp5E;
     s32 var_v1;
 
@@ -301,13 +301,13 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     Object *sidekick;
     Vec3f sp44;
     f32 sp40;
-    s32 *sp3C;
+    TextureAnimator *animator;
 
     objdata = (Lunaimar_ActualData*)baddie->objdata;
     sidekick = get_sidekick();
-    sp3C = func_800348A0(self, 0, 0);
+    animator = func_800348A0(self, 0, 0);
     objdata->unk12 += 0x1000;
-    *sp3C = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
+    animator->frame = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
     VECTOR_SUBTRACT(sidekick->positionMirror, self->positionMirror, sp44);
     sp40 = VECTOR_MAGNITUDE(sp44);
     if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < baddie->unk3E2)) {

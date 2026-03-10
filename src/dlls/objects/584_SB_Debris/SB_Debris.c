@@ -9,8 +9,6 @@ typedef struct {
 /*00*/ f32 unk0;
 } SB_Debris_Data;
 
-/*0x0*/ static Vec3f sSpeed = { 1.8f, 0.0f, 0.0f };
-
 // offset: 0x0 | ctor
 void SB_Debris_ctor(void *dll) { }
 
@@ -20,10 +18,9 @@ void SB_Debris_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SB_Debris_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SRT transform;
-    Vec3f speed;
+    Vec3f speed = VEC3F(1.8f, 0.0f, 0.0f);
     SB_Debris_Data *objdata;
 
-    speed = sSpeed;
     objdata = self->data;
     speed.x *= rand_next(3, 5);
     self->unkDC = 75;
@@ -35,7 +32,7 @@ void SB_Debris_setup(Object *self, ObjSetup *setup, s32 arg2) {
     transform.roll = 0;
     transform.pitch = rand_next(-0x2EE0, 0x2EE0);
     transform.yaw = rand_next(0, 0xFFFE);
-    rotate_vec3(&transform, (f32*)&speed);
+    rotate_vec3(&transform, speed.f);
     self->speed.x = speed.x;
     self->speed.y = speed.y;
     self->speed.z = speed.z;

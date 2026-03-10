@@ -32,7 +32,7 @@
 
 void func_8002674C(Object* obj);
 
-/*0x0*/ static Vec3f dHitsTestPoint = {0.0, 0.0, 0.0};
+/*0x0*/ static Vec3f dHitsTestPoint = VEC3F(0.0, 0.0, 0.0);
 /*0xC*/ static f32 dHitsTestRadius = 25.0;
 
 #define SPEED_CAP_X 1.0f
@@ -625,7 +625,7 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
     f32 sampleHeight;
     s32 sampleCount;
     s32 minimumIndex;
-    f32 **samples;
+    Func_80057F1C_Struct **samples;
     f32 groundY;
     s32 volume;
     s32 i;
@@ -636,7 +636,7 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
 
     //Find minimum height in collision samples
     for (i = 0, minimumIndex = 0; i < sampleCount; i++) {
-        sampleHeight = self->srt.transl.y - *samples[i];
+        sampleHeight = self->srt.transl.y - samples[i]->unk0[0];
         if (sampleHeight < 0.0f) {
             sampleHeight = (sampleHeight * -1.0f) + 10.0f;
         }
@@ -685,7 +685,7 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
     
     //Handle ground plane collisions
     if (samples) {        
-        groundY = *samples[minimumIndex] + 7.0f;
+        groundY = samples[minimumIndex]->unk0[0] + 7.0f;
 
         //Apply gravity when tumbleweed above ground
         if (groundY < self->srt.transl.y) {

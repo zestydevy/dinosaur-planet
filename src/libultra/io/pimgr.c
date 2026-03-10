@@ -53,6 +53,19 @@ void osCreatePiManager(OSPri pri, OSMesgQueue *cmdQ, OSMesg *cmdBuf, s32 cmdMsgC
 			osSetThreadPri(NULL, pri);
 		}
 		savedMask = __osDisableInt();
+#ifndef AVOID_UB
+		__osPiDevMgr.active = 1;
+		__osPiDevMgr.thread = (OSThread*)&piThread;
+		__osPiDevMgr.cmdQueue = cmdQ;
+		__osPiDevMgr.evtQueue = &piEventQueue;
+		__osPiDevMgr.acsQueue = &__osPiAccessQueue;
+		__osPiDevMgr.dma = osPiRawStartDma;
+		__osPiDevMgr.edma = osEPiRawStartDma;
+		osCreateThread((OSThread*)&piThread, 0, __osDevMgrMain, &__osPiDevMgr, STACK_START(piThreadStack), pri);
+		osStartThread((OSThread*)&piThread);
+        osCreateThread((OSThread*)&piRamRomThread, 0, pi_ramrom_thread_main, NULL, STACK_START(piRamRomThreadStack), pri - 1);
+		osStartThread((OSThread*)&piRamRomThread);
+#else
 		__osPiDevMgr.active = 1;
 		__osPiDevMgr.thread = &piThread;
 		__osPiDevMgr.cmdQueue = cmdQ;
@@ -64,6 +77,7 @@ void osCreatePiManager(OSPri pri, OSMesgQueue *cmdQ, OSMesg *cmdBuf, s32 cmdMsgC
 		osStartThread(&piThread);
         osCreateThread(&piRamRomThread, 0, pi_ramrom_thread_main, NULL, STACK_START(piRamRomThreadStack), pri - 1);
 		osStartThread(&piRamRomThread);
+#endif
 		__osRestoreInt(savedMask);
 		if (oldPri != -1)
 		{

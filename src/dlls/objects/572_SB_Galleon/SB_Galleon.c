@@ -349,7 +349,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
                 objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
             // @fake
-            if (&self) {}
+            if ((s32)&self) {}
         case 7:
             if (objdata->soundHandle) {
                 gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);

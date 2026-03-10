@@ -13,7 +13,7 @@ void dll_772_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
     sp24 = 10000.0f;
     self->unkB0 |= 0x6000;
-    self->unkDC = obj_get_nearest_type_to(OBJTYPE_10, self, &sp24);
+    self->unkDC = (s32)obj_get_nearest_type_to(OBJTYPE_10, self, &sp24);
 }
 
 // offset: 0x88 | func: 1 | export: 1
