@@ -64,9 +64,17 @@ typedef struct {
 /*0004*/    u32 d1;
 } EncodedTri;
 
+// Same as Vtx_t, but flag is signed
+typedef struct {
+	short ob[3];	/* x, y, z */
+	short flag;
+	short tc[2];	/* texture coord */
+	unsigned char cn[4];	/* color & alpha */
+} BlockVertex;
+
 typedef struct {
 /*0000*/    Block_0x0Struct *tiles;
-/*0004*/    Vtx_t *vertices;
+/*0004*/    BlockVertex *vertices;
 /*0008*/    EncodedTri *encodedTris;
 /*000C*/    BlockShape *shapes;
 /*0010*/    void *unk10;

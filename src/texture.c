@@ -799,7 +799,7 @@ Texture *tex_load_deferred(s32 id) {
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_load.s")
 #else
 // https://decomp.me/scratch/ht6r3
-Texture* tex_load(s32 id, s32 param2) {
+Texture* tex_load(s32 id, u8 param2) {
     u32 binFileID; // sp74
     Texture* tex;
     s32 temp;
