@@ -257,29 +257,26 @@ class BuildNinjaWriter:
         self.writer.variable("ELF2DLL_WRAPPER", f"{sys.executable} tools/elf2dll_wrapper.py")
         self.writer.variable("DINODLL", f"{sys.executable} tools/dino_dll.py")
         self.writer.variable("DLLSYMS2LD", f"{sys.executable} tools/dllsyms2ld.py")
+        self.writer.variable("SYNTAX_CHECK", f"{sys.executable} tools/syntax_check.py")
         
         self.writer.newline()
 
         # Write rules
         self.writer.comment("Rules")
-        self.writer.rule("gcc_syntax_only",
-            "$CC_CHECK $CC_CHECK_FLAGS $in",
-            "Checking syntax of $in...",
-            depfile="$out.d")
         self.writer.rule("cc", 
-            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in; CC_RESULT=$$?; $CC_CHECK $CC_CHECK_FLAGS $in || true; exit $$CC_RESULT", 
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_noasmproc", 
-            "$HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in; CC_RESULT=$$?; $CC_CHECK $CC_CHECK_FLAGS $in || true; exit $$CC_RESULT", 
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in; CC_RESULT=$$?; $CC_CHECK $CC_CHECK_FLAGS $in || true; exit $$CC_RESULT",  
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in",  
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll_noasmproc", 
-            "$HEADER_DEPS $CC -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in; CC_RESULT=$$?; $CC_CHECK $CC_CHECK_FLAGS $in || true; exit $$CC_RESULT", 
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $CC -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
