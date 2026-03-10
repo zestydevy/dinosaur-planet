@@ -2204,7 +2204,7 @@ typedef enum {
     BIT_896 = 0x896, // len:3 group:2
     BIT_897 = 0x897, // len:3 group:2
     BIT_898 = 0x898, // len:1 group:0
-    BIT_899 = 0x899, // len:1 group:1
+    BIT_WM_Sabre_Transporter_Visible = 0x899, // len:1 group:1
     BIT_89A = 0x89A, // len:1 group:0
     BIT_89B = 0x89B, // len:1 group:2
     BIT_89C = 0x89C, // len:1 group:0
