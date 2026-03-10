@@ -10,6 +10,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #define SNDSTATEFLAG_01 0x01
+        // loop
 #define SNDSTATEFLAG_02 0x02
 #define SNDSTATEFLAG_04 0x04
 #define SNDSTATEFLAG_10 0x10

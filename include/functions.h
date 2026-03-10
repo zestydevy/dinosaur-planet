@@ -73,7 +73,6 @@ void func_80042174(s32);
 void func_8004225C(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
 void func_800591EC();
 void map_update_streaming();
-void map_func_80048034();
 void map_func_800483BC(f32, f32, f32);
 
 f32 _depth2Cents(u8 arg0);

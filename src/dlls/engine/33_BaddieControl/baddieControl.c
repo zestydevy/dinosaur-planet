@@ -680,7 +680,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
             hitSRT->transl.y = hitY;
             hitSRT->transl.z = hitZ + gWorldZ;
         }
-        if (hitDamageMap != 0) {
+        if (hitDamageMap != NULL) {
             if (hitDamageMap[hitType - 2] != -1) {
                 damage = (s32) hitDamageMap[hitType - 2];
             }
@@ -769,9 +769,8 @@ s32 BaddieControl_func_1D88(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, 
 }
 
 // offset: 0x1FAC | func: 17 | export: 14
-// TODO: arg count might be off
-void BaddieControl_func_1FAC(Object* arg0, Baddie* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
-    gDLL_2_Camera->vtbl->get_target_object(); //TO-DO: maybe should be returning this Object?
+Object* BaddieControl_func_1FAC(Object* arg0, Baddie* baddie, u16 *arg2, s32 arg3, s32 arg4, s16 arg5, s16 arg6) {
+    return gDLL_2_Camera->vtbl->get_target_object();
 }
 
 /*0x8*/ static Vec3f _data_8 = VEC3F(0.0f, 0.0f, 0.0f);

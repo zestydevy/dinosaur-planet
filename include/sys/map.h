@@ -391,43 +391,14 @@ extern s16 D_800B4A5E; //gFadeDelayTimerStarted
 extern f32 gWorldX;
 extern f32 gWorldZ;
 
-extern s8 gMapNumStreamMaps;
-
-extern s8 gMapLayer;
-
-extern s32 D_80092BBC;
-
 extern s8 D_80092A78; //gFadeDelayTimer
 
-extern f32 D_8009A950;
-extern f32 D_8009A954;
-extern f32 D_8009A958;
-extern f32 D_8009A95C;
-
-extern Unk80092BC0 D_80092BC0;
-extern u8 D_800B1847;
-
-extern f32 D_8009AA28;
-extern f32 D_8009AA2C;
-
-extern f32 D_8009AA38; // = -0.200000003f;
-
-extern f32 D_8009AA20;
-extern f32 D_8009AA24;
-extern u8 D_8009A614;
-extern f32 D_80092AAC[24];
-
-extern f32 D_8009AA1C;
-extern f32 D_8009AA30;
-extern f32 D_8009AA34;
-extern f32 D_8009AA3C;
 extern s32 D_80092A60; // something x-coordinate related
 extern s32 D_80092A64; // something z-coordinate related
 
 extern s32 D_80092A7C[2];
 extern s32 D_80092A84[2];
 
-// Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 s32 func_80041DBC(void);
 s32 func_80041E08(void);
@@ -435,73 +406,11 @@ void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
 MapHeader** func_80044A10(void);
 BlocksModel* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
 GlobalMapCell* func_80046698(s32 gridX, s32 gridZ);
-
-// defined in map.c but used before declared
-void func_800441F4(u32* arg0, s32 arg1);
 void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
-void func_80048B14(Block *block);
-void func_80048C24(Block *block);
-u32 hits_get_size(s32 id);
-void block_setup_vertices(Block *block);
-void block_setup_gdl_groups(Block *block);
-s32 block_setup_textures(Block *block);
-void block_setup_xz_bitmap(Block *block);
 void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
-void block_compute_vertex_colors(Block*,s32,s32,s32);
-void func_80049D38(u32 arg0);
-void func_80049FA8(BlocksModel*);
-void func_800499BC(void);
-void func_80049D88(void);
-void func_80044BEC(void);
-void func_80048F58(void);
-void track_c_func(void);
 u8 func_800456AC(Object* obj);
-u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
-void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
-void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
-MapHeader *map_load_streammap(s32, s32);
-void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
 void map_func_80048034(void);
-void map_update_objects_streaming(s32);
-s32 map_func_800485FC(s32, s32, s32, s32, s32);
-void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
-void func_800496E4(s32 blockIndex);
 void map_update_streaming(void);
-s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
-s32 map_should_obj_unload(Object*);
-void func_8004B548(MapHeader*, s32, s32, Object*);
-s32 map_should_stream_load_object(ObjSetup*, s8, s32);
-s32 map_check_some_mapobj_flag(s32, u32);
-void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
-s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
-s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
-void block_add_to_render_list(Block *block, f32 x, f32 z);
-void func_800436DC(Object* arg0, s32 arg1);
-s32 func_80045DC0(s32, s32, s32); //unsure of last arg
-s32 map_find_streammap_index(s32);
-s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
-
-// other funcs that are used
-void func_80058F3C(void);
-void func_800143A4(void);
-void func_8001EB80(void);
-s32 func_80010048(void);
-void vi_some_video_setup(s32 param1);
-void func_80012B54(s32 param1, s32 param2);
-void func_800307C4(f32, f32);
-s32 func_80000608(Object*, Object*, u16, s8, s32, s32);
-s32 func_800009C8(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
-void func_80023628(void);
-s32 func_80048E04(u8, u8, u8, u8);
-u8 map_get_is_object_streaming_disabled(void);
-void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s8);
-void func_8001F81C(u8*, u8*, u8*);
-u8 map_get_is_object_streaming_disabled(void);
-void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
-void func_800533D8(s32*, UnkFunc80051D68Arg3**);
-void func_80053408(Vec3s32 **);
-void func_80053750(Object*, AABBs32*, u8);
-Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
 Block* func_80044BB0(s32 blockIndex);
 Texture* func_8004A1E8(s32 match_value);

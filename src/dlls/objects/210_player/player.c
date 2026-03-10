@@ -29,6 +29,7 @@
 #include "sys/joypad.h"
 #include "sys/newshadows.h"
 #include "sys/footstep.h"
+#include "sys/segment_53F00.h"
 #include "functions.h"
 #include "dll.h"
 #include "types.h"

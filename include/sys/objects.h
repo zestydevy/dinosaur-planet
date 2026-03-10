@@ -57,5 +57,6 @@ void func_80036FBC(s16 r, s16 g, s16 b, u8 a);
 void func_80023C6C(Object *obj);
 
 void func_80023D08(Object *obj, u16 param2);
+void func_80023628(void);
 
 #endif

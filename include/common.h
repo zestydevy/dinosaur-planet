@@ -32,6 +32,7 @@
 #include "sys/generic_stack.h"
 #include "sys/generic_queue.h"
 #include "sys/rcp.h"
+#include "sys/segment_53F00.h"
 #include "game/gamebits.h"
 #include "game/objects/object_def.h"
 #include "game/objects/object_id.h"

@@ -3,6 +3,12 @@
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
 #include "sys/oldshadows.h"
+#include "sys/menu.h"
+#include "sys/objprint.h"
+#include "sys/segment_1D900.h"
+#include "sys/segment_53F00.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
@@ -124,6 +130,45 @@ Unk80092BC0 D_80092BC0 = {0};
 void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
 HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
+void func_800441F4(u32* arg0, s32 arg1);
+void func_80048B14(Block *block);
+void func_80048C24(Block *block);
+u32 hits_get_size(s32 id);
+void block_setup_vertices(Block *block);
+void block_setup_gdl_groups(Block *block);
+s32 block_setup_textures(Block *block);
+void block_setup_xz_bitmap(Block *block);
+void block_compute_vertex_colors(Block*,s32,s32,s32);
+void func_80049D38(u32 arg0);
+void func_80049FA8(BlocksModel*);
+void func_800499BC(void);
+void func_80049D88(void);
+void func_80044BEC(void);
+void func_80048F58(void);
+void track_c_func(void);
+u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
+void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
+void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
+MapHeader *map_load_streammap(s32, s32);
+void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
+void map_update_objects_streaming(s32);
+s32 map_func_800485FC(s32, s32, s32, s32, s32);
+void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
+void func_800496E4(s32 blockIndex);
+s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
+s32 map_should_obj_unload(Object*);
+void func_8004B548(MapHeader*, s32, s32, Object*);
+s32 map_should_stream_load_object(ObjSetup*, s8, s32);
+s32 map_check_some_mapobj_flag(s32, u32);
+void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
+s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
+s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
+void block_add_to_render_list(Block *block, f32 x, f32 z);
+void func_800436DC(Object* arg0, s32 arg1);
+s32 func_80045DC0(s32, s32, s32); //unsure of last arg
+s32 map_find_streammap_index(s32);
+s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
+s32 func_80048E04(u8, u8, u8, u8);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -3014,7 +3059,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     tempLoadAddr -= tempLoadAddr % 16;
     read_file_region(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
     rarezip_uncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
-    block->vertices = (Vtx_t*)((u32)block->vertices + (u32)block);
+    block->vertices = (BlockVertex*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
     block->unk10 = (void*)((u32)block->unk10 + (u32)block);
@@ -3029,7 +3074,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     addr += block->gdlGroupsOffset;
     block->gdlGroups = (Gfx*)addr;
     block_setup_gdl_groups(block);
-    addr += (block->shapeCount * 12 << 1);
+    addr += (3 * block->shapeCount * sizeof(Gfx));
     func_80048B14(block);
     if (block->vtxFlags & 8) {
         addr = mmAlign8(addr);
@@ -3043,8 +3088,8 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
         vtxIdx = 0;
         shape = block->shapes;
         fileVertsEnd = fileVerts;
-        if (block->vertices) {}
-        if (block->vtxCount && block->vtxCount){}
+        if (block->vertices) {} // @fake
+        if (block->vtxCount && block->vtxCount){} // @fake
         fileVertsEnd += block->vtxCount;
         while (fileVerts < fileVertsEnd) {
             if (shape->flags & 0x20000000) {
@@ -3083,7 +3128,12 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     addr += block->unk34 * 2;
     block_setup_xz_bitmap(block);
     addr = mmAlign8(addr);
-    block_load_hits(block, id, queue, (HitsLine*)addr);
+    addr = (u32)block_load_hits(block, id, queue, (HitsLine*)addr);
+
+    // if ((addr - (u32)block) != size) {
+    //     STUBBED_PRINTF("Blocksize error(1): %d should be %d\n", (addr - (u32)block), size);
+    // }
+
     if (queue != 0) {
         queue_block_emplace(1, (u32* ) block, id, param_2, globalMapIdx);
     } else {
@@ -3245,7 +3295,6 @@ void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
 
     func_80058F3C();
 }
-
 
 void block_setup_gdl_groups(Block *block)
 {
@@ -3501,11 +3550,11 @@ HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* 
     //Potential optimisation: skip this by pre-processing the HITS.bin folder & ensuring all points are inbounds? (They are in Dec 2000's files, I think!)
     for (lineIndex = 0; lineIndex < block->hits_line_count; lineIndex++){
         line = &block->ptr_hits_lines[lineIndex];
-
         if (line->Ax < 0 || line->Bx < 0 || line->Ax > BLOCKS_GRID_UNIT || line->Bx > BLOCKS_GRID_UNIT) {
             line->settingsB = 0x40;
-            line = &block->ptr_hits_lines[lineIndex];
-        } 
+        }
+
+        line = &block->ptr_hits_lines[lineIndex];
         if (line->Az < 0 || line->Bz < 0 || line->Az > BLOCKS_GRID_UNIT || line->Bz > BLOCKS_GRID_UNIT) {
             line->settingsB = 0x40;
         }

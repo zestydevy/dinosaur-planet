@@ -11,6 +11,7 @@
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/rand.h"
+#include "sys/segment_53F00.h"
 #include "types.h"
 
 #include "dlls/objects/210_player.h"

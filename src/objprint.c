@@ -2,6 +2,7 @@
 #include "dlls/objects/common/group48.h"
 #include "game/objects/object.h"
 #include "sys/rsp_segment.h"
+#include "sys/segment_1D900.h"
 
 // -------- .data start 80091750 -------- //
 s32 D_80091750 = 0; // unused bytes

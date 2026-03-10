@@ -125,4 +125,6 @@ int vi_contains_point(s32 x, s32 y);
 
 s32 vi_obj_depth(s32 x, s32 y, Object *arg2);
 
+void vi_some_video_setup(s32 param1);
+
 #endif //_SYS_GFX_GX_H

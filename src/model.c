@@ -140,7 +140,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     sp42 = gAuxBuffer[0];
     sp3E = gAuxBuffer[2];
     sp40 = ((u16)mmAlign8(gAuxBuffer[1]) & 0xFFFF) + 0x90;
-    uncompressedSize = rarezip_uncompress_size((u8*)(gAuxBuffer + 4));
+    uncompressedSize = rarezip_uncompress_size((u8*)gAuxBuffer + 8);
     sp28 = model_load_anim_remap_table(id, sp3E, sp42);
     sp28 += uncompressedSize + 500;
     model = mmAlloc(sp28, 9, NULL);

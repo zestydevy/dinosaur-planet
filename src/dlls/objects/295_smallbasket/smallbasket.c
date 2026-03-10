@@ -8,6 +8,7 @@
 #include "sys/objects.h"
 #include "sys/main.h"
 #include "sys/objtype.h"
+#include "sys/segment_53F00.h"
 #include "functions.h"
 #include "sys/joypad.h"
 #include "sys/objmsg.h"

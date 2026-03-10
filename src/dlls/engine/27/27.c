@@ -2,6 +2,7 @@
 #include "PR/os.h"
 #include "sys/main.h"
 #include "sys/objhits.h"
+#include "sys/segment_53F00.h"
 #include "functions.h"
 
 /*0x0*/ static Object *bss_0;

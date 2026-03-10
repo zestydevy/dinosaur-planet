@@ -7,5 +7,6 @@
 
 void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, s32 param_6);
 void func_80034FF0(MtxF* arg0);
+void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s8);
 
 #endif

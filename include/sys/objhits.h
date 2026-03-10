@@ -152,5 +152,6 @@ void func_80026B84(Object* obj);
 void func_800269CC(Object* obj, ObjectHitInfo* objHitInfo, s32 arg2);
 void func_80026160(Object* obj);
 void func_8002683C(Object* arg0, s16 arg1, s16 arg2, s16 arg3);
+void func_800307C4(f32, f32);
 
 #endif

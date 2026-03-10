@@ -69,14 +69,6 @@ Object *gEffectBoxes[20];
 s32 D_800B1988;
 // -------- .bss end 800b1990 -------- //
 
-enum FILE_ID {
-    FILE_TABLES_BIN   = 0x16,
-    FILE_TABLES_TAB   = 0x17,
-    FILE_BITTABLE     = 0x37,
-    FILE_OBJECTS_TAB  = 0x41,
-    FILE_OBJINDEX_BIN = 0x43
-};
-
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void alloc_some_object_arrays(void); //related to objects
@@ -121,34 +113,34 @@ void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gObjDeferredFreeList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
-    D_800B1918     = mmAlloc(0x60, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
-    D_800B18E4     = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
+    gObjDeferredFreeList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
+    D_800B1918 = mmAlloc(sizeof(Object*) * 24, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
+    D_800B18E4 = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
 
     //load OBJINDEX.BIN and count number of entries
-    queue_alloc_load_file((void **) (&gFile_OBJINDEX), FILE_OBJINDEX_BIN);
-    gObjIndexCount = (get_file_size(FILE_OBJINDEX_BIN) >> 1) - 1;
+    queue_alloc_load_file((void **) (&gFile_OBJINDEX), OBJINDEX_BIN);
+    gObjIndexCount = (get_file_size(OBJINDEX_BIN) >> 1) - 1;
     while(!gFile_OBJINDEX[gObjIndexCount]) gObjIndexCount--;
 
     //load OBJECTS.TAB and count number of entries
-    queue_alloc_load_file((void **)&gFile_OBJECTS_TAB, FILE_OBJECTS_TAB);
+    queue_alloc_load_file((void **)&gFile_OBJECTS_TAB, OBJECTS_TAB);
     gNumObjectsTabEntries = 0;
     while(gFile_OBJECTS_TAB[gNumObjectsTabEntries] != -1) gNumObjectsTabEntries++;
     gNumObjectsTabEntries--;
 
     //init ref count and pointers
     gLoadedObjDefs = mmAlloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:deflist"));
-    gObjDefRefCount   = mmAlloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:defno"));
+    gObjDefRefCount = mmAlloc(gNumObjectsTabEntries, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:defno"));
     for(i = 0; i < gNumObjectsTabEntries; i++) gObjDefRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
-    queue_alloc_load_file((void **) (&gFile_TABLES_BIN), FILE_TABLES_BIN);
-    queue_alloc_load_file((void **) (&gFile_TABLES_TAB), FILE_TABLES_TAB);
+    queue_alloc_load_file((void **) (&gFile_TABLES_BIN), TABLES_BIN);
+    queue_alloc_load_file((void **) (&gFile_TABLES_TAB), TABLES_TAB);
     gNumTablesTabEntries = 0;
     while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
     //allocate global object list and some other buffers
-    gObjList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
+    gObjList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
     alloc_some_object_arrays();
     obj_clear_all();
 }
