@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_670_ctor = 0x0;
+dll_670_dtor = 0xC;
+dll_670_setup = 0x18;
+dll_670_control = 0x98;
+dll_670_update = 0xA8;
+dll_670_print = 0xB4;
+dll_670_free = 0x12C;
+dll_670_get_model_flags = 0x16C;
+dll_670_get_data_size = 0x17C;
+
+.rodata = 0x1C8:

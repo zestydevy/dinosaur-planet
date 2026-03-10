@@ -27,6 +27,7 @@
 
 #include "dlls/objects/523_SCcollectables.h"
 #include "dlls/objects/211_tricky.h"
+#include "dlls/objects/226_tumbleweedbush.h"
 #include "dlls/objects/227_tumbleweed.h"
 
 void func_8002674C(Object* obj);
@@ -535,7 +536,7 @@ void Tumbleweed_free(Object* self, s32 arg1) {
     for (objects = get_world_objects(&i, &count); i < count; i++) {
         object = objects[i];
         if (id == object->id) {
-            ((DLL_Unknown*)object->dll)->vtbl->func[7].withTwoArgs((s32)object, (s32)self);
+            ((DLL_226_TumbleweedBush*)object->dll)->vtbl->remove_tumbleweed(object, self);
         }
     }
     

@@ -1,0 +1,16 @@
+.text = 0x0:
+MagicDust_ctor = 0x0;
+MagicDust_dtor = 0xC;
+MagicDust_setup = 0x18;
+MagicDust_control = 0x3F0;
+MagicDust_update = 0xEFC;
+MagicDust_print = 0xF08;
+MagicDust_free = 0xF68;
+MagicDust_get_model_flags = 0xF78;
+MagicDust_get_data_size = 0xF88;
+MagicDust_collect = 0xF9C;
+
+.rodata = 0x10A4:
+
+.data = 0x10C4:
+dCollisionPoint = 0x0; // absolute:0x10C4

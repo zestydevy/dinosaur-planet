@@ -1,0 +1,27 @@
+.text = 0x0:
+dll_236_func_0 = 0x0;
+dll_236_ctor = 0x5C;
+dll_236_dtor = 0x9C;
+dll_236_setup = 0xA8;
+dll_236_control = 0x1EC;
+dll_236_update = 0x6C4;
+dll_236_print = 0x6D0;
+dll_236_free = 0x730;
+dll_236_get_model_flags = 0x7D4;
+dll_236_get_data_size = 0x7E4;
+dll_236_func_7F8 = 0x7F8;
+dll_236_func_A20 = 0xA20;
+dll_236_func_B44 = 0xB44;
+dll_236_func_C60 = 0xC60;
+dll_236_func_D64 = 0xD64;
+dll_236_func_EA0 = 0xEA0;
+
+.rodata = 0xF68:
+
+.data = 0xF78:
+_data_0 = 0x0; // absolute:0xF78
+_data_1C = 0x1C; // absolute:0xF94
+
+.bss = 0xFA8:
+_bss_0 = 0x0; // absolute:0xFA8
+_bss_10 = 0x10; // absolute:0xFB8

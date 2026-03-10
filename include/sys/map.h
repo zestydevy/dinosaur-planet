@@ -26,6 +26,7 @@ typedef enum {
     WARP_WM_SABRE_KRAZOA_CORRIDOR = 57, // Warlock Mountain | Sabre-side | Krazoa statue corridor
     WARP_SC_TOTEM_POLE = 80,
     WARP_VFP_CALDERA_LOWER = 81, // Volcano Force Point Temple | Caldera (Lower Floor) 
+    WARP_SC_DISCOVERY_FALLS_ENTRANCE_POND = 85, // SwapStone Circle | Pond outside Discovery Falls
     WARP_SWAPSTONE_SHOP_ENTRANCE = 86
 } WarpID;
 

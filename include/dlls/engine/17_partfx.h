@@ -50,6 +50,7 @@ enum ParticleID {
     /* --- DLL 37 END --- */
     /* --- DLL 36 START --- */
     PARTICLE_1F4 = 0x1F4,
+    PARTICLE_1F7 = 0x1F7,
     PARTICLE_202 = 0x202,
     PARTICLE_257 = 0x257,
     /* --- DLL 36 END --- */
@@ -80,6 +81,7 @@ enum ParticleID {
     PARTICLE_343 = 0x343,
     PARTICLE_34C = 0x34C,
     PARTICLE_34D = 0x34D,
+    PARTICLE_34E = 0x34E,
     PARTICLE_350 = 0x350,
     /* --- DLL 43 END --- */
     PARTICLE_351 = 0x351,
@@ -104,6 +106,7 @@ enum ParticleID {
     /* --- DLL 48 START --- */
     PARTICLE_3E8 = 0x3E8,
     PARTICLE_3EA = 0x3EA,
+    PARTICLE_3EB = 0x3EB,
     PARTICLE_3EC = 0x3EC,
     PARTICLE_3ED = 0x3ED,
     PARTICLE_3F1 = 0x3F1,
@@ -112,8 +115,8 @@ enum ParticleID {
     /* --- DLL 48 END --- */
     /* --- DLL 39 START --- */
     PARTICLE_41A = 0x41A,
-    PARTICLE_425 = 0x425,
-    PARTICLE_426 = 0x426,
+    PARTICLE_425 = 0x425, //smoke
+    PARTICLE_426 = 0x426, //embers
     PARTICLE_427 = 0x427,
     PARTICLE_44B = 0x44B,
     /* --- DLL 39 END --- */
@@ -152,6 +155,14 @@ enum ParticleID {
     PARTICLE_525 = 0x525,
     PARTICLE_526 = 0x526,
     PARTICLE_529 = 0x529,
+    PARTICLE_549 = 0x549,
+    PARTICLE_54A = 0x54A,
+    PARTICLE_54B = 0x54B,
+    PARTICLE_54C = 0x54C,
+    PARTICLE_54D = 0x54D,
+    PARTICLE_54E = 0x54E,
+    PARTICLE_54F = 0x54F,
+    PARTICLE_550 = 0x550,
     /* --- DLL 34 START --- */
     PARTICLE_5DD = 0x5DD,
     PARTICLE_640 = 0x640,
@@ -180,6 +191,7 @@ enum ParticleID {
     /* --- DLL 50 START --- */
     PARTICLE_73A = 0x73A,
     PARTICLE_73B = 0x73B,
+    PARTICLE_741 = 0x741,
     PARTICLE_76B = 0x76B,
     /* --- DLL 50 END --- */
     /* --- DLL 52 START --- */
@@ -193,6 +205,7 @@ enum PartfxFlags {
     PARTFXFLAG_1 = 0x1,
     PARTFXFLAG_2 = 0x2,
     PARTFXFLAG_4 = 0x4,
+    PARTFXFLAG_10 = 0x10,
     PARTFXFLAG_800 = 0x800,
     PARTFXFLAG_10000 = 0x10000,
     PARTFXFLAG_200000 = 0x200000

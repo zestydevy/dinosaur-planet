@@ -1,32 +1,8 @@
 #include "common.h"
 #include "sys/objhits.h"
 
+#include "dlls/objects/226_tumbleweedbush.h"
 #include "dlls/objects/227_tumbleweed.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-    u8 growWeedsRadius;             //Tumbleweeds grow on tree when player inside this radius (stored halved)
-    f32 scale;
-    u8 multiplyColourR;             //Colour multiplier for the tree
-    u8 multiplyColourG;             //Colour multiplier for the tree
-    u8 multiplyColourB;             //Colour multiplier for the tree
-    u8 carryingGold;                //Bitfield flags: carrying a Shiny Nugget when bit0 is set
-} TumbleweedBush_Setup;
-
-typedef struct {
-    f32 unk0;                       //Set to 0.0f in setup, but otherwise unused
-    f32 unused4;
-    u16 growWeedsRadius;            //Tumbleweeds grow on tree when player inside this radius
-    Object* heldWeeds[4];           //Array of Tumbleweed Objects growing in the tree
-    Vec3f heldWeedCoords[4];        //Positions for Tumbleweeds to grow at (relative to the tree)
-    u8 carryingGold;                //Bitfield flags: carrying a Shiny Nugget when bit0 is set
-    u8 pad4D;
-    u16 tumbleweedsGrown;           //The total number of Tumbleweeds grown by this tree
-    u8 heldWeedCount;               //The number of Tumbleweed objects referenced in the heldWeeds array
-} TumbleweedBush_Data;
 
 /** Positions for weeds to grow at (relative to the tree)
   *
