@@ -23,7 +23,11 @@ typedef struct {
 } CClightfoot_Data;
 
 // @bug: no arg3?
+#ifndef AVOID_UB
 static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData);
+#else
+static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
+#endif
 
 // offset: 0x0 | ctor
 void CClightfoot_ctor(void *self) { }
@@ -36,7 +40,11 @@ void CClightfoot_setup(Object *self, CClightfoot_Setup *setup, s32 arg2) {
     CClightfoot_Data *objdata;
 
     objdata = self->data;
-    self->animCallback = (AnimationCallback)(void (*)(void))CClightfoot_anim_callback; // NOLINT
+#ifndef AVOID_UB
+    self->animCallback = (AnimationCallback)(void (*)(void))CClightfoot_anim_callback;
+#else
+    self->animCallback = CClightfoot_anim_callback;
+#endif
     objdata->spokeToPlayer = main_get_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage);
     self->srt.yaw = setup->yaw << 8;
     obj_add_object_type(self, OBJTYPE_40);
@@ -96,7 +104,11 @@ u32 CClightfoot_get_data_size(Object *self, u32 arg1) {
 }
 
 // offset: 0x2B8 | func: 7
+#ifndef AVOID_UB
 static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData) {
+#else
+static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
+#endif
     CClightfoot_Data *objdata = self->data;
     if (self->unkAF & 1) {
         gDLL_3_Animation->vtbl->func18(animObjData->unk63);

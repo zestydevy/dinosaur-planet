@@ -93,7 +93,7 @@ s32 BaddieControl_func_264(UNK_PTR *arg0, UNK_PTR *arg1) {
 }
 
 // offset: 0x278 | func: 2 | export: 4
-void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5) {
+void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, u16* arg3, s16* arg4, u16* arg5) {
     Baddie* sp2C;
     Vec3f sp20;
     Object* temp_v1;

@@ -7,8 +7,12 @@ typedef struct {
 /*04*/ s32 opacityCounter;
 } CFScalesGalleon_Data;
 
+#ifndef AVOID_UB
 // @bug: no arg3?
 static int CFScalesGalleon_func_16C(Object *self, Object *animObj, AnimObj_Data *animObjData);
+#else
+static int CFScalesGalleon_func_16C(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
+#endif
 
 // offset: 0x0 | ctor
 void CFScalesGalleon_ctor(void *dll) { }
@@ -24,7 +28,11 @@ void CFScalesGalleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata = self->data;
     objdata->opacityCounter = 30;
     self->opacityWithFade = OBJECT_OPACITY_MAX;
+#ifndef AVOID_UB
     self->animCallback = (AnimationCallback)(void (*)(void))CFScalesGalleon_func_16C;
+#else
+    self->animCallback = CFScalesGalleon_func_16C;
+#endif
     self->unkB0 |= 0x4000;
 }
 
@@ -70,7 +78,11 @@ u32 CFScalesGalleon_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x16C | func: 7
+#ifndef AVOID_UB
 int CFScalesGalleon_func_16C(Object *self, Object *animObj, AnimObj_Data *animObjData) {
+#else
+int CFScalesGalleon_func_16C(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
+#endif
     CFScalesGalleon_Data *objdata;
 
     objdata = self->data;

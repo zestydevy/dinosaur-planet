@@ -29,6 +29,9 @@
 #include "constants.h"
 #include "functions.h"
 
+#define DONGLE_LSFS 0x4C534653
+#define DONGLE_MPFS 0x4D504653
+
 /* -------- .data start -------- */
 const char *gGameBuildVersion = "1.3623";
 const char *gGameBuildDateTime = "01/12/00 09:19";
@@ -667,9 +670,8 @@ void check_dongle(void) {
      * It is not known which one the original dongle for this ROM
      * was intended to use.
      */
-    #define LSFS 0x4C534653
-    #define MPFS 0x4D504653
-    if ((head == LSFS) || (head == MPFS)) {
+    
+    if ((head == DONGLE_LSFS) || (head == DONGLE_MPFS)) {
         return;
     } else {
         int *write = (int *)(u32)EXPANSION_RAM_START;
@@ -680,8 +682,6 @@ void check_dongle(void) {
             write -= 2; // hmm...
         }
     }
-    #undef LSFS
-    #undef MPFS
 }
 
 OSSched *get_ossched(void) {

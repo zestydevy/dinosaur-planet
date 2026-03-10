@@ -159,7 +159,7 @@ void CCkrazoabright_colour_krazoa_symbol_tablet_quest(Object* self) {
         objData->pointsLit[index] = gamebitValueInverted;
 
         // @bug? Checking the address of prevPoints instead of its value. This will always be true.
-        if ((s32)&objData->prevPoints[0]) {
+        if ((s32)objData->prevPoints) {
             colours[index] = 0;
         } else {
             colours[index] = 0xFF;
