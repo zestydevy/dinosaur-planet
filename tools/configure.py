@@ -267,6 +267,10 @@ class BuildNinjaWriter:
             "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
+        self.writer.rule("cc_nosyntax", 
+            "$HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
+            "Compiling $in...",
+            depfile="$out.d")
         self.writer.rule("cc_noasmproc", 
             "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
@@ -323,7 +327,11 @@ class BuildNinjaWriter:
                 if with_asmproc:
                     command = "cc"
                 else:
-                    command = "cc_noasmproc"
+                    if file.src_path.startswith("src/libultra"):
+                        # Don't run GCC syntax check on completed libultra files
+                        command = "cc_nosyntax"
+                    else:
+                        command = "cc_noasmproc"
             elif file.type == BuildFileType.ASM:
                 command = "as"
             elif file.type == BuildFileType.BIN:

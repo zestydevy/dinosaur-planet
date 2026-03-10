@@ -885,6 +885,7 @@ void func_800436DC(Object* obj, s32 arg1) {
             someBool = FALSE;
         }
     }
+    // @bug: sp37 is uninitialized if someBool is false
     if (someBool != FALSE) {
         sp37 = gDLL_13_Expgfx->vtbl->func10(obj);
     }

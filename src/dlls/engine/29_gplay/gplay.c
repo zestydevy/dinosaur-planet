@@ -16,8 +16,6 @@
 #include "dll.h"
 #include "prevent_bss_reordering.h"
 
-#include "prevent_bss_reordering.h"
-
 static const char str1[] = "gplayLoadGame error: savegame and backup failed to load.\n";
 static const char str2[] = "gplayLoadOptions error: saveoptions failed to load.\n";
 static const char str3[] = " WARNING : Not Enough Memort for Restart Point ";
@@ -223,7 +221,7 @@ void gplay_erase_save(s8 idx) {
 
 void gplay_init_save(s8 idx, char *filename) {
     u8 _pad[0x10];
-    Vec3f startPos = {{{ -14149.352f, -82.0f, -15569.178f }}};
+    Vec3f startPos = VEC3F(-14149.352f, -82.0f, -15569.178f);
     s32 i;
     s32 k;
     char *dst;

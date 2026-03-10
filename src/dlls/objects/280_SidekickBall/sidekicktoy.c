@@ -8,9 +8,7 @@
 
 #include "dlls/objects/280_sidekicktoy.h"
 
-/*0x0*/ static Vec3f data_collisionPoint = {{{
-    0, 0, 0
-}}};
+/*0x0*/ static Vec3f data_collisionPoint = VEC3F(0.0f, 0.0f, 0.0f);
 
 // offset: 0x0 | ctor
 void SidekickToy_ctor(void *dll) { }

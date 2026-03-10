@@ -32,7 +32,7 @@
 
 void func_8002674C(Object* obj);
 
-/*0x0*/ static Vec3f dHitsTestPoint = {{{0.0, 0.0, 0.0}}};
+/*0x0*/ static Vec3f dHitsTestPoint = VEC3F(0.0, 0.0, 0.0);
 /*0xC*/ static f32 dHitsTestRadius = 25.0;
 
 #define SPEED_CAP_X 1.0f

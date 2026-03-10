@@ -18,7 +18,7 @@ void SB_Debris_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SB_Debris_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SRT transform;
-    Vec3f speed = {{{1.8f, 0.0f, 0.0f}}};
+    Vec3f speed = VEC3F(1.8f, 0.0f, 0.0f);
     SB_Debris_Data *objdata;
 
     objdata = self->data;

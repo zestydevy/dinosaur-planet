@@ -55,7 +55,7 @@ void WMPlanets_setup(Object* self, WMPlanets_Setup* objsetup, s32 arg2) {
 void WMPlanets_control(Object* self) {
     WMPlanets_Data* objdata = self->data;
     SRT srt;
-    Vec3f v = {{{0,0,0}}};
+    Vec3f v = VEC3F(0,0,0);
 
     v.z = objdata->orbitRadius;
 

@@ -488,7 +488,7 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
     s16 var_v0;
     s16 var_v1;
     u8 temp;
-    Vec3f sp2C = {{{ 0.0f, 198.0f, 19.0f }}};
+    Vec3f sp2C = VEC3F(0.0f, 198.0f, 19.0f);
     f32 new_var;
 
     if (D_80090CA8 != 0) {

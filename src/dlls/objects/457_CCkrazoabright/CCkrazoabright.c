@@ -34,13 +34,13 @@ typedef enum {
 
 /** Coordinates of Courtyard well's two Blocks (with Krazoa symbol) */
 /*0x0*/ static Vec3f data_coords_well_blocks[] = {
-    {{{4488, 0, 17606}}}, 
-    {{{4344, 0, 17606}}}
+    VEC3F(4488, 0, 17606), 
+    VEC3F(4344, 0, 17606)
 };
 /** Coordinates of Courtyard's two ocean-front Blocks (with lever columns) */
 /*0x18*/ static Vec3f data_coords_lever_blocks[] = {
-    {{{5506.7002, -93, 17574}}}, 
-    {{{5587.5, -93, 18058}}}
+    VEC3F(5506.7002, -93, 17574), 
+    VEC3F(5587.5, -93, 18058)
 };
 /*0x30*/ static u8 data_krazoa_symbol_shape_animatorIDs[] = {
     11, 14, 15, 16, 13, 12
