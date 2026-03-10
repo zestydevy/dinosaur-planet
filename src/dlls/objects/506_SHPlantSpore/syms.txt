@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_506_ctor = 0x0;
+dll_506_dtor = 0xC;
+dll_506_setup = 0x18;
+dll_506_control = 0x34;
+dll_506_update = 0x184;
+dll_506_print = 0x190;
+dll_506_free = 0x1A8;
+dll_506_get_model_flags = 0x1B8;
+dll_506_get_data_size = 0x1C8;
+
+.rodata = 0x214:
+_oob_rodata_0 = 0x0; // absolute:0x214

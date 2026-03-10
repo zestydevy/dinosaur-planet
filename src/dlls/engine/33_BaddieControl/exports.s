@@ -23,7 +23,7 @@ _exports:
 /*12*/ .dword BaddieControl_func_8B4
 /*13*/ .dword BaddieControl_func_C88
 /*14*/ .dword BaddieControl_func_1FAC
-/*15*/ .dword BaddieControl_func_24FC
+/*15*/ .dword BaddieControl_free
 /*16*/ .dword BaddieControl_func_F60
 /*17*/ .dword BaddieControl_func_10F4
 /*18*/ .dword BaddieControl_func_15CC

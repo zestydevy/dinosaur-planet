@@ -22,6 +22,7 @@
 #include "sys/print.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
+#include "sys/gfx/textable.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/map.h"

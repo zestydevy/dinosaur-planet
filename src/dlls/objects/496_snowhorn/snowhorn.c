@@ -171,10 +171,10 @@ static Unk80026DF4 _data_0[] = {
 };
 
 static Vec3f _data_230[] = {
-    { -12, 0, -20 },
-    { 12, 0, -20 },
-    { 12, 0, 20 },
-    { -12, 0, 20 }
+    VEC3F(-12, 0, -20),
+    VEC3F(12, 0, -20),
+    VEC3F(12, 0, 20),
+    VEC3F(-12, 0, 20)
 };
 static f32 _data_260[] = {
     0, 0, 0, 0
@@ -448,7 +448,7 @@ int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
 
     for (i = 0; i < animObjdata->unk98; i++){
         if (animObjdata->unk8E[i] == 3) {
-            main_set_bits(BIT_5A0, 1);
+            main_set_bits(BIT_Map_SW, 1);
             continue;
         }        
     }
@@ -461,8 +461,8 @@ int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
 s32 dll_496_func_980(Object* snowhorn) {
     UnkFunc_80024108Struct sp4c;
     SnowHorn_Data* objdata;
-    s32* temp1;
-    s32* temp2;
+    TextureAnimator* temp1;
+    TextureAnimator* temp2;
     s32 animIsFinished;
     s32 playSound; //toggles between 0 and 1 (when ready to play sound another time)
 
@@ -487,10 +487,10 @@ s32 dll_496_func_980(Object* snowhorn) {
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
                 if (temp1 != NULL) {
-                    *temp1 = 0x200;
+                    temp1->frame = 0x200;
                 }
                 if (temp2 != NULL) {
-                    *temp2 = 0x200;
+                    temp2->frame = 0x200;
                 }
                 objdata->sleepTimer = rand_next(0, 300);
             }
@@ -503,10 +503,10 @@ s32 dll_496_func_980(Object* snowhorn) {
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
                 if (temp1 != NULL) {
-                    *temp1 = 0;
+                    temp1->frame = 0;
                 }
                 if (temp2 != NULL) {
-                    *temp2 = 0;
+                    temp2->frame = 0;
                 }
             }
             break;
@@ -821,8 +821,8 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
 
     result = gDLL_26_Curves->vtbl->func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
     if (!result){
-        snowhorn->srt.transl.x = objdata->unk60.unk68;
-        snowhorn->srt.transl.z = objdata->unk60.unk70;
+        snowhorn->srt.transl.x = objdata->unk60.unk68.x;
+        snowhorn->srt.transl.z = objdata->unk60.unk68.z;
         
         objdata->flags = 1;
         objdata->walkSpeed = 0.5f;
@@ -907,15 +907,15 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
             gDLL_26_Curves->vtbl->func_4704(curveStruct);
         }
-        dx = curveStruct->unk68 - snowhorn->srt.transl.x;
-        dz = curveStruct->unk70 - snowhorn->srt.transl.z;
+        dx = curveStruct->unk68.x - snowhorn->srt.transl.x;
+        dz = curveStruct->unk68.z - snowhorn->srt.transl.z;
 
         //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
         speed = sqrtf((dx * dx) + (dz * dz)) * gUpdateRateInverseF;
         func_8002493C(snowhorn, speed, &objdata->unk50);
         snowhorn->srt.yaw = arctan2_f(curveStruct->unk74, curveStruct->unk7C) + 0x8000;
-        snowhorn->srt.transl.x = curveStruct->unk68;
-        snowhorn->srt.transl.z = curveStruct->unk70;
+        snowhorn->srt.transl.x = curveStruct->unk68.x;
+        snowhorn->srt.transl.z = curveStruct->unk68.z;
         objdata->unk424 &= 0xFFFB;
         
         if (objdata->walkSpeed <= 0.0f) {
@@ -982,8 +982,8 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             frostWeed = obj_get_nearest_type_to(OBJTYPE_4, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
             if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < setup->unkRadius * setup->unkRadius) {
-                if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func11(frostWeed)) {
-                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func10(frostWeed, &objdata->playerPositionCopy);
+                if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {
+                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->gravitate_towards_point(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
                     if (FROSTWEED_QUEST_CHEAT){
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;

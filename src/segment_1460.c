@@ -36,7 +36,7 @@ s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3)
 
     tmp = mmAlloc(0x60, COLOUR_TAG_WHITE, ALLOC_NAME("envfx:action1"));
 	// load from ENVFXACT
-    queue_load_file_region_to_ptr (tmp, 0x49, arg2 * 0x60, 0x60);
+    queue_load_file_region_to_ptr ((void **)tmp, 0x49, arg2 * 0x60, 0x60);
     if (tmp != NULL)
 	{
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4))
@@ -66,7 +66,7 @@ s32 func_800009C8(Object *arg0, Object *arg1, u16 arg2, s32 arg3)
 
     tmp = mmAlloc(0x60, COLOUR_TAG_WHITE, ALLOC_NAME("envfx:action1"));
 	// load from ENVFXACT
-    queue_load_file_region_to_ptr(tmp, 0x49, arg2 * 0x60, 0x60);
+    queue_load_file_region_to_ptr((void **)tmp, 0x49, arg2 * 0x60, 0x60);
     if (tmp != NULL)
 	{
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4))

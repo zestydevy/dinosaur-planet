@@ -16,9 +16,12 @@ mips
 -Wno-incompatible-library-redeclaration
 -Wno-unused-parameter
 -Wno-unknown-pragmas
+-Wno-switch
 -Wno-unused-variable
--Wno-missing-braces
--Wno-unsupported-floating-point-opt
+-Wno-unused-value
+-Wno-unused-but-set-variable
+-Wno-unused-label
+-Werror-implicit-function-declaration
 -nostdlib
 -nostdinc
 -nostdlibinc

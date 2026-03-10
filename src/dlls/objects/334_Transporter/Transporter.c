@@ -35,7 +35,7 @@ typedef struct {
 /*18*/ u8 yaw;
 /*19*/ u8 unk19;
 /*1A*/ s8 warpID;
-/*1B*/ u8 unk1B[0x20-0x1B];
+/*1B*/ u8 unk1B[0x20 - 0x1B];
 /*20*/ s16 gamebit;
 } Transporter_Setup;
 
@@ -77,7 +77,7 @@ void Transporter_control(Object *self) {
     Camera *camera;
     s16 i;
     Object *player;
-    f32 delta[3];
+    Vec3f delta;
     f32 distToPlayer;
     f32 mag1;
     SRT transform;
@@ -91,7 +91,7 @@ void Transporter_control(Object *self) {
         main_set_bits(BIT_Shown_ZLock_Interact_Message, 1);
         return;
     }
-    func_800013BC();
+    camera_enable_y_offset();
     player = get_player();
     if (player) {
         distToPlayer = vec3_distance_xz(&player->positionMirror, &self->positionMirror);
@@ -146,14 +146,14 @@ void Transporter_control(Object *self) {
                 objdata->unk18 = objdata->unk12;
             }
             camera = get_camera();
-            delta[0] = self->positionMirror.x - camera->tx;
-            delta[1] = self->positionMirror.y - camera->ty;
-            delta[2] = self->positionMirror.z - camera->tz;
-            mag1 = sqrtf(SQ(delta[0]) + SQ(delta[1]) + SQ(delta[2]));
+            delta.f[0] = self->positionMirror.x - camera->tx;
+            delta.f[1] = self->positionMirror.y - camera->ty;
+            delta.f[2] = self->positionMirror.z - camera->tz;
+            mag1 = VECTOR_MAGNITUDE(delta);
             if (mag1 != 0.0f) {
-                delta[0] /= mag1; delta[0] *= 20.0f;
-                delta[1] /= mag1; delta[1] *= 20.0f;
-                delta[2] /= mag1; delta[2] *= 20.0f;
+                delta.f[0] /= mag1; delta.f[0] *= 20.0f;
+                delta.f[1] /= mag1; delta.f[1] *= 20.0f;
+                delta.f[2] /= mag1; delta.f[2] *= 20.0f;
             }
             transform.transl.x = player->positionMirror.x;
             transform.transl.y = player->positionMirror.y;
@@ -167,13 +167,13 @@ void Transporter_control(Object *self) {
                     for (i = 0; i < objdata->unk14; i++) {
                         gDLL_17_partfx->vtbl->spawn(player, PARTICLE_79, NULL, PARTFXFLAG_4, -1, NULL);
                     }
-                    func_80003B70(rand_next(0, 10) * 0.1f);
+                    camera_set_shake_offset(rand_next(0, 10) * 0.1f);
                 } else if ((objdata->unk25 == 0) && (self->unkDC < 200)) {
-                    func_80003B70(rand_next(0, 10) * 0.05f);
+                    camera_set_shake_offset(rand_next(0, 10) * 0.05f);
                 }
-                transform.transl.x = delta[0] + self->positionMirror.x;
-                transform.transl.y = delta[1] + self->positionMirror.y;
-                transform.transl.z = delta[2] + self->positionMirror.z;
+                transform.transl.x = delta.f[0] + self->positionMirror.x;
+                transform.transl.y = delta.f[1] + self->positionMirror.y;
+                transform.transl.z = delta.f[2] + self->positionMirror.z;
                 if ((self->unkDC % 10) < (s16)(s32)gUpdateRateF) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_78, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 }
@@ -187,7 +187,7 @@ void Transporter_control(Object *self) {
                     transform.yaw = 0;
                     transform.roll = 0;
                     transform.pitch = 0;
-                    func_80003B70(8.0f);
+                    camera_set_shake_offset(8.0f);
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 }
@@ -202,7 +202,7 @@ void Transporter_control(Object *self) {
             transform.pitch = 0;
             transform.scale = 1.0f;
             if (objdata->unk25 != 0) {
-                func_80003B70(8.0f);
+                camera_set_shake_offset(8.0f);
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 for (i = 0; i < 80; i++) {

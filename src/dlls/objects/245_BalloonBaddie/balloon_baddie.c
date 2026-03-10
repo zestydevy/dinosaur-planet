@@ -153,16 +153,12 @@ void BalloonBaddie_control(Object* self) {
         }
         objdata->player = get_player();
         if (objdata->player) {
-            delta.x = objdata->player->positionMirror.x - self->positionMirror.x;
-            delta.y = objdata->player->positionMirror.y - self->positionMirror.y;
-            delta.z = objdata->player->positionMirror.z - self->positionMirror.z;
-            objdata->distToPlayer = sqrtf(SQ(delta.x) + SQ(delta.y) + SQ(delta.f[2]));
+            VECTOR_SUBTRACT(objdata->player->positionMirror, self->positionMirror, delta);
+            objdata->distToPlayer = VECTOR_MAGNITUDE(delta);
         }
         if (curveStruct) {
-            delta.x = curveStruct->unk68 - self->positionMirror.x;
-            delta.y = curveStruct->unk6C - self->positionMirror.y;
-            delta.z = curveStruct->unk70 - self->positionMirror.z;
-            objdata->distToCurve = sqrtf(SQ(delta.x) + SQ(delta.y) + SQ(delta.f[2]));
+            VECTOR_SUBTRACT(*((Vec3f*)&curveStruct->unk68), self->positionMirror, delta);
+            objdata->distToCurve = VECTOR_MAGNITUDE(delta);
         }
         // start retreating
         if (objdata->flags & BALLOONBADDIE_CHASE) {
@@ -267,18 +263,16 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->speed.y += ((objdata->player->srt.transl.y + 60.0f) - self->srt.transl.y) * 0.001f;
         self->speed.z += (objdata->player->srt.transl.z - self->srt.transl.z) * 0.001f;
     } else if (objdata->flags & BALLOONBADDIE_RETREAT) {
-        self->speed.x += (curveStruct->unk68 - self->srt.transl.x) * 0.001f;
-        self->speed.y += (curveStruct->unk6C - self->srt.transl.y) * 0.001f;
-        self->speed.z += (curveStruct->unk70 - self->srt.transl.z) * 0.001f;
+        self->speed.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
+        self->speed.y += (curveStruct->unk68.y - self->srt.transl.y) * 0.001f;
+        self->speed.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
     } else {
-        self->speed.x += (curveStruct->unk68 - self->srt.transl.x) * _rodata_10;
-        self->speed.y += (curveStruct->unk6C + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * _rodata_18;
-        self->speed.z += (curveStruct->unk70 - self->srt.transl.z) * _rodata_18;
+        self->speed.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
+        self->speed.y += (curveStruct->unk68.y + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
+        self->speed.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
     }
 
-    self->speed.x *= _rodata_1C;
-    self->speed.y *= _rodata_1C;
-    self->speed.z *= _rodata_1C;
+    VECTOR_SCALE(self->speed, 0.9f);
 
     if (self->speed.x > BALLOONBADDIE_MAX_SPEED) {
         self->speed.x = BALLOONBADDIE_MAX_SPEED;

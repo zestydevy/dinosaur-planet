@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_796_ctor = 0x0;
+dll_796_dtor = 0xC;
+dll_796_setup = 0x18;
+dll_796_control = 0xB8;
+dll_796_update = 0x154;
+dll_796_print = 0x160;
+dll_796_free = 0x1B4;
+dll_796_get_model_flags = 0x1C4;
+dll_796_get_data_size = 0x1D4;
+dll_796_func_1E8 = 0x1E8;
+
+.rodata = 0x250:
+
+.data = 0x250:
+_data_0 = 0x0; // absolute:0x250
+_data_C = 0xC; // absolute:0x25C
+_data_18 = 0x18; // absolute:0x268

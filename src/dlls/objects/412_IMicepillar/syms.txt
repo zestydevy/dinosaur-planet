@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_412_ctor = 0x0;
+dll_412_dtor = 0xC;
+dll_412_setup = 0x18;
+dll_412_control = 0x2C;
+dll_412_update = 0x38;
+dll_412_print = 0x44;
+dll_412_free = 0x98;
+dll_412_get_model_flags = 0xA8;
+dll_412_get_data_size = 0xB8;
+
+.rodata = 0xF4:
+_oob_rodata_0 = 0x0; // absolute:0xF4

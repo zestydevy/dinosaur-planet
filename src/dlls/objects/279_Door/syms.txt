@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_279_ctor = 0x0;
+dll_279_dtor = 0xC;
+dll_279_setup = 0x18;
+dll_279_control = 0x16C;
+dll_279_update = 0x308;
+dll_279_print = 0x314;
+dll_279_free = 0x368;
+dll_279_get_model_flags = 0x378;
+dll_279_get_data_size = 0x388;
+dll_279_func_39C = 0x39C;
+dll_279_func_1034 = 0x1034;
+
+.rodata = 0x11D0:

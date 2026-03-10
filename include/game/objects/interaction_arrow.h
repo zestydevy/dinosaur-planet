@@ -15,7 +15,7 @@ typedef enum {
     ARROW_11 = 11
 } InteractionArrowColour;
 
-/** For use with Object->unkAF */
+/** For use with Object->unkAF, and OBJ_LockIcon (DLL 2) */
 typedef enum {
     ARROW_FLAG_None = 0,
     ARROW_FLAG_1_Interacted = 1,            //set for 1 tick when player presses A
@@ -25,7 +25,7 @@ typedef enum {
     ARROW_FLAG_10_Greyed_Out = 0x10,        //grey arrow, plays "unsuccessful" sound when pressing A
     ARROW_FLAG_20_Removed = 0x20,           //arrow floats/fades away, lock-on ends, arrow doesn't appear when in range
     ARROW_FLAG_40_Unlock_Disabled = 0x40,   //player can't dismiss lock-on
-    ARROW_FLAG_80 = 0x80
+    ARROW_FLAG_80_Ignore_TranslateY = 0x80  //ignore height difference between player and target
 } InteractionArrowFlags;
 
 #endif

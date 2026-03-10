@@ -54,14 +54,14 @@ typedef struct {
     0x00000000, 0x00000000, 0x00000000
 };
 /*0xC8*/ static Vec3f _data_C8[] = {
-    {0.0f, 0.0f, -30.0f}, 
-    {0.0f, 0.0f, 30.0f}
+    VEC3F(0.0f, 0.0f, -30.0f), 
+    VEC3F(0.0f, 0.0f, 30.0f)
 };
 /*0xE0*/ static f32 _data_E0[] = {8.0f, 8.0f};
 /*0xE8*/ static u8 _data_E8[] = {1, 1};
 /*0xEC*/ static Vec3f _data_EC[] = {
-    {0.0f, 0.0f, -30.0f}, 
-    {0.0f, 0.0f, 30.0f}
+    VEC3F(0.0f, 0.0f, -30.0f), 
+    VEC3F(0.0f, 0.0f, 30.0f)
 };
 /*0x104*/ static f32 _data_104[] = {8.0f, 8.0f};
 
@@ -212,13 +212,13 @@ void dll_417_func_5D8(Object *self, f32 *a1, f32 *a2, f32 *a3) {
 s32 dll_417_func_5F8(Object* arg0, Object* arg1) {
     DFlog_Data* objdata;
     f32 var_fs0;
-    s32 temp_v0;
+    s32 camDLLID;
     s32 i;
 
     objdata = (DFlog_Data*)arg0->data;
     if ((objdata->unk4F4 != 0) && (objdata->unk4EC == 2)) {
-        temp_v0 = gDLL_2_Camera->vtbl->func3();
-        if ((temp_v0 != 0x56) && (temp_v0 != 0x60) && (gDLL_1_UI->vtbl->func_DC4() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
+        camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
+        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAMSHIPBATTLE2) && (gDLL_1_UI->vtbl->func_DC4() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
             var_fs0 = 0.0f;
             for (i = 0; i < 2; i++) {
                 var_fs0 += sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
@@ -270,10 +270,10 @@ void dll_417_func_86C(Object *self, s32 a1) {
     objdata->unk4EC = (s8) a1;
     if (a1 != 0) {
         ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
-        gDLL_2_Camera->vtbl->func8(0, 0x2B);
+        gDLL_2_Camera->vtbl->change_mode(0, 0x2B);
     } else {
         ((DLL_210_Player*)player->dll)->vtbl->func29(player, 1);
-        gDLL_2_Camera->vtbl->func8(0, 1);
+        gDLL_2_Camera->vtbl->change_mode(0, 1);
     }
 }
 
@@ -458,7 +458,7 @@ static void dll_417_func_E8C(Object* arg0) {
             objdata->unk4F4 = NULL;
         }
     }
-    if ((objdata->unk4EC == 2) && (gDLL_2_Camera->vtbl->func3() != 0x60)) {
+    if ((objdata->unk4EC == 2) && (gDLL_2_Camera->vtbl->get_dll_ID() != 0x60)) {
         objdata->unk280 = (f32) ((f32) joy_get_stick_x(0) * 0.01f);
         if (joy_get_pressed(0) & A_BUTTON) {
             var_fa0 = ((1.3f - objdata->unk288) / 1.3f) * 0.8f;

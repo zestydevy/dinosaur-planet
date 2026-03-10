@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_294_ctor = 0x0;
+dll_294_dtor = 0xC;
+dll_294_setup = 0x18;
+dll_294_func_6C = 0x6C;
+dll_294_control = 0x280;
+dll_294_update = 0x8C8;
+dll_294_print = 0x8D4;
+dll_294_free = 0x934;
+dll_294_get_model_flags = 0x944;
+dll_294_get_data_size = 0x954;
+dll_294_func_968 = 0x968;
+
+.rodata = 0xAAC:
+str_0 = 0x0; // absolute:0xAAC
+
+.data = 0xAFC:
+_data_0 = 0x0; // absolute:0xAFC

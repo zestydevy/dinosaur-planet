@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_509_ctor = 0x0;
+dll_509_dtor = 0xC;
+dll_509_setup = 0x18;
+dll_509_control = 0x110;
+dll_509_update = 0x2C8;
+dll_509_print = 0x2D4;
+dll_509_free = 0x328;
+dll_509_get_model_flags = 0x338;
+dll_509_get_data_size = 0x348;
+
+.rodata = 0x398:
+str_0 = 0x0; // absolute:0x398

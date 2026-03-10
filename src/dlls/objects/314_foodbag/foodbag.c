@@ -1,7 +1,7 @@
 #include "common.h"
 
 #include "dlls/engine/56_putdown.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 
 /*0x0*/ static s16 food_anim_gamebitIDs[] = {
     BIT_Green_Apple_Count,
@@ -75,7 +75,7 @@ void Foodbag_ctor(void *dll) { }
 void Foodbag_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Foodbag_setup(Object *self, Foodbag_Setup *objSetup, s32 arg2) {
+void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     s32 pad[2];
     s32 playerNo;
     PlayerStats* playerStats;

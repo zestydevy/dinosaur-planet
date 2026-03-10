@@ -22,7 +22,7 @@ typedef struct Unk80027934 {
     f32 unk40[4];
     s8 unk50[4];
     s8 unk54[4];
-    s32 unk58[4];
+    Object* unk58[4];
     s16 unk68;
 } Unk80027934;
 
@@ -98,7 +98,7 @@ typedef enum {
     Collision_Type_Sword_Staff_Strike1 = 0xA,
     Collision_Type_Sword_Staff_Strike2 = 0xB,
     Collision_Type_Sword_Strike = 0xC,
-    Collision_Type_Projectile_Spell = 0xF,  // Also grenade (impact only, not explosion)
+    Collision_Type_Projectile = 0xF,  // Projectile & Grenade impact (not explosion)
     Collision_Type_Fishingnet = 0x11,
     Collision_Type_Ice_Spell = 0x19,        //Speeder bike checks this type, strangely?
     Collision_Type_15 = 0x21,               //Speeder bike checks for this
@@ -116,7 +116,7 @@ void func_8001943C(Object *object, MtxF *mf, f32 yPrescale, f32 arg3);
 void func_8001A1D4(Model *model, AnimState *animState, s32 count);
 void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHitInfo *objHitInfo, s32 arg4, s32 arg5);
 void func_8002B5C0(Object *obj);
-u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
+s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
 void func_80032804(Object*,Object*);
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
@@ -146,9 +146,11 @@ void func_80026940(Object* obj, s16 arg1);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 void func_80026184(Object* arg0, Object* arg1);
 void func_8002681C(Object* obj);
+void func_800264D0(Object* arg0);
 void func_80028D2C(Object* obj);
 void func_80026B84(Object* obj);
 void func_800269CC(Object* obj, ObjectHitInfo* objHitInfo, s32 arg2);
 void func_80026160(Object* obj);
+void func_8002683C(Object* arg0, s16 arg1, s16 arg2, s16 arg3);
 
 #endif

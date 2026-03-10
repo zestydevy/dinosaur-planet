@@ -1,0 +1,18 @@
+.text = 0x0:
+TumbleweedBush_ctor = 0x0;
+TumbleweedBush_dtor = 0xC;
+TumbleweedBush_setup = 0x18;
+TumbleweedBush_control = 0x24C;
+TumbleweedBush_update = 0x50C;
+TumbleweedBush_print = 0x518;
+TumbleweedBush_free = 0x5A8;
+TumbleweedBush_get_model_flags = 0x5B8;
+TumbleweedBush_get_data_size = 0x5C8;
+TumbleweedBush_remove_tumbleweed = 0x5DC;
+TumbleweedBush_create_tumbleweed = 0x620;
+
+.rodata = 0xA30:
+str_0 = 0x0; // absolute:0xA30
+
+.data = 0xA80:
+dWeedCoords = 0x0; // absolute:0xA80

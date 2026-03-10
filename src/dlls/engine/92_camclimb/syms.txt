@@ -1,0 +1,12 @@
+.text = 0x0:
+camclimb_ctor = 0x0;
+camclimb_dtor = 0xC;
+camclimb_setup = 0x18;
+camclimb_control = 0xF4;
+camclimb_free = 0x4CC;
+camclimb_func_50C = 0x50C;
+
+.rodata = 0x558:
+
+.bss = 0x578:
+_bss_0 = 0x0; // absolute:0x578

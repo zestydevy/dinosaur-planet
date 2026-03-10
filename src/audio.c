@@ -98,11 +98,11 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     size = audioTab[D_800AB960 + 4] - offset;
     
     c.fxTypes[0] = AL_FX_CUSTOM;
-    c.params[0] = mmAlloc(size, 0xB, NULL);
+    c.params[0] = mmAlloc(size, ALLOC_TAG_AUDIO_COL, NULL);
     queue_load_file_region_to_ptr((void**)c.params[0], AUDIO_BIN, offset, size);
     
     c.fxTypes[1] = AL_FX_CUSTOM;
-    c.params[1] = mmAlloc(size, 0xB, NULL);
+    c.params[1] = mmAlloc(size, ALLOC_TAG_AUDIO_COL, NULL);
     queue_load_file_region_to_ptr((void**)c.params[1], AUDIO_BIN, offset, size);
     
     n_alInit(&__am_g, &c);

@@ -5,6 +5,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "sys/menu.h"
+#include "prevent_bss_reordering.h"
 
 s32* func_800349B0(void);
 
@@ -52,10 +53,9 @@ typedef enum {
 } AnimCurvesEvents;
 
 typedef struct {
-Vec3f unk0; 
+Vec3f coord; 
 s8 unkC;
-} CameraFunc15Unk_unk74;
-
+} CameraFunc15Unk_unk74; //Related to CameraAction and Unk_DLL2_Func888? TO-DO: figure out
 
 typedef struct {
     s32 unk0;
@@ -990,7 +990,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
         break;
     case 7:                                     /* switch 2 */
         if (arg4 == 0) {
-            func_800013BC();
+            camera_enable_y_offset();
             temp_v0_3 = get_player();
             if (temp_v0_3 != NULL) {
                 temp_fv0 = vec3_distance_xz(&temp_v0_3->positionMirror, &arg0->positionMirror);
@@ -1000,7 +1000,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
                         temp_fv0 = (temp_fv0 - 50.0f) / 150.0f;
                         var_fa0 *= 1.0f - temp_fv0;
                     }
-                    func_80003B70(var_fa0);
+                    camera_set_shake_offset(var_fa0);
                 }
             }
         }
@@ -1454,27 +1454,27 @@ void dll_3_func_9C94(s32 index, Object* object, Object* overrideObject) {
 
 // offset: 0x9CE8 | func: 68
 void dll_3_func_9CE8(s32 arg0) {
-    Object* temp_v0;
-    CameraFunc15Unk_unk74 sp34;
+    Object* hlObject;
+    CameraFunc15Unk_unk74 action;
 
-    if (gDLL_2_Camera->vtbl->func3() == 0x5F) {
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM95) {
         return;
     }
     
-    temp_v0 = gDLL_2_Camera->vtbl->func15();
-    if ((temp_v0 != NULL) && (temp_v0->unk74 != NULL)) {
-        sp34.unk0.x = temp_v0->unk74->unk0.x;
-        sp34.unk0.y = temp_v0->unk74->unk0.y;
-        sp34.unk0.z = temp_v0->unk74->unk0.z;
-        sp34.unkC = arg0;
-        gDLL_2_Camera->vtbl->func6(0x5F, 1, 0, 0x10, &sp34, 0x3C, 0xFF);
+    hlObject = gDLL_2_Camera->vtbl->get_highlighted_object();
+    if ((hlObject != NULL) && (hlObject->unk74 != NULL)) {
+        action.coord.x = hlObject->unk74->drawPoint.x;
+        action.coord.y = hlObject->unk74->drawPoint.y;
+        action.coord.z = hlObject->unk74->drawPoint.z;
+        action.unkC = arg0;
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM95, 1, 0, sizeof(CameraFunc15Unk_unk74), &action, 60, 0xFF);
     }
 }
 
 // offset: 0x9DD4 | func: 69
 void dll_3_func_9DD4(void) {
-    if (gDLL_2_Camera->vtbl->func3() == 0x5F) {
-        gDLL_2_Camera->vtbl->func6(0x54, 0, 3, 0, NULL, 0, 0);
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM95) {
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 3, 0, NULL, 0, 0);
     }
 }
 

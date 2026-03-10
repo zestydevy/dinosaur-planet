@@ -36,7 +36,7 @@ Acmd *n_alAdpcmPull(N_PVoice *filter, s16 *outp, s32 outCount, Acmd *p) {
 
 	aLoadADPCM(ptr++, f->dc_bookSize, K0_TO_PHYS(f->dc_table->waveInfo.adpcmWave.book->book));
 
-	looped = (outCount + f->dc_sample > f->dc_loop.end) && (f->dc_loop.count != 0);
+	looped = ((u32)(outCount + f->dc_sample) > f->dc_loop.end) && (f->dc_loop.count != 0);
 
 	if (looped) {
 		nSam = f->dc_loop.end - f->dc_sample;
@@ -99,14 +99,14 @@ Acmd *n_alAdpcmPull(N_PVoice *filter, s16 *outp, s32 outCount, Acmd *p) {
 			 * -1 is loop forever - the loop count is not exact now
 			 * for small loops!
 			 */
-			if (f->dc_loop.count != -1 && f->dc_loop.count != 0) {
+			if (f->dc_loop.count != -1u && f->dc_loop.count != 0) {
 				f->dc_loop.count--;
 			}
 
 			/*
 			 * What's left to compute.
 			 */
-			nSam = MIN(outCount, f->dc_loop.end - f->dc_loop.start);
+			nSam = MIN((u32)outCount, f->dc_loop.end - f->dc_loop.start);
 			tsam = nSam - ADPCMFSIZE + f->dc_lastsam;
 
 			if (tsam < 0) {

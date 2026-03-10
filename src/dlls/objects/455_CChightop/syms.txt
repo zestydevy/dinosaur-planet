@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_455_ctor = 0x0;
+dll_455_dtor = 0xC;
+dll_455_setup = 0x18;
+dll_455_control = 0x6C;
+dll_455_update = 0x628;
+dll_455_print = 0x634;
+dll_455_free = 0x688;
+dll_455_get_model_flags = 0x698;
+dll_455_get_data_size = 0x6A8;
+dll_455_func_6BC = 0x6BC;
+
+.rodata = 0x76C:
+str_0 = 0x0; // absolute:0x76C

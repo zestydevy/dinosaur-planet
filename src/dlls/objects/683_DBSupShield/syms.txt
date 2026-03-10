@@ -1,0 +1,13 @@
+.text = 0x0:
+DBSupShield_ctor = 0x0;
+DBSupShield_dtor = 0xC;
+DBSupShield_setup = 0x18;
+DBSupShield_control = 0x68;
+DBSupShield_update = 0x74;
+DBSupShield_print = 0xF4;
+DBSupShield_free = 0x10C;
+DBSupShield_get_model_flags = 0x11C;
+DBSupShield_get_data_size = 0x12C;
+
+.rodata = 0x16C:
+str_0 = 0x0; // absolute:0x16C

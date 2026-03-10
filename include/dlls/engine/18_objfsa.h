@@ -55,13 +55,13 @@ typedef struct ObjFSA_Data {
 /*278*/ f32 unk278; // rate of turning (yaw only)?
 /*27C*/ f32 unk27C; // rate of turning (yaw only)?
 /*280*/ f32 unk280;
-/*284*/ f32 unk284;
-/*288*/ f32 unk288;
+/*284*/ f32 yAnalogInput; // y-axis analog input (-backward/+forward) [-65, 65] (player overflows to [-70, 70])
+/*288*/ f32 xAnalogInput; // x-axis analog input (-left/+right) [-65, 65] (player overflows to [-70, 70])
 /*28C*/ f32 speed;
-/*290*/ f32 unk290;
-/*294*/ f32 unk294;
+/*290*/ f32 analogInputPower; // analog input power [0, 1]
+/*294*/ f32 prevAnalogInputPower; // prev analog input power (from last tick)
 /*298*/ f32 animTickDelta; // How much the object's animation progresses per fsa tick.
-/*29C*/ f32 unk29C;
+/*29C*/ f32 unk29C; // gravity?
 /*2A0*/ f32 unk2A0;
 /*2A4*/ f32 unk2A4;
 /*2A8*/ s32 unk2A8;
@@ -79,7 +79,7 @@ typedef struct ObjFSA_Data {
 /*2FC*/ ObjFSA_ExitCallback animExitAction;
 /*300*/ u8 _unk300[0x304 - 0x300];
 /*304*/ s32 unk304;
-/*308*/ u32 unk308;
+/*308*/ u32 unk308; // model anim event bits
 /*30C*/ s32 unk30C;
 /*310*/ s32 unk310;
 /*314*/ u8 _unk314[0x322 - 0x314];
@@ -120,10 +120,11 @@ DLL_INTERFACE(DLL_18_objfsa) {
 /*5*/ void (*func5)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
 /*6*/ void (*func6)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
 /*7*/ void (*func7)(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 arg3);
-/*8*/ void (*func8)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4);
+/*8*/ void (*func8)(Object *obj, ObjFSA_Data *data, f32 updateRate, f32 turnRate, f32 arg4);
 /*9*/ void (*func9)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
 /*10*/ void (*func10)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
-/*11*/ void (*func11)(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3);
+       // turnDuration = duration of the turn in 3rds of a second.
+/*11*/ void (*turn_to_target)(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 turnDuration);
 /*12*/ void (*func12)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4);
 /*13*/ void (*func13)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4, f32 arg5, u8 volume);
 /*14*/ void (*func14)(Object *obj, ObjFSA_Data *data, s32 arg2);

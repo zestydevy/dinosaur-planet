@@ -2,7 +2,6 @@
 #include "sys/map.h"
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
-#include "prevent_bss_reordering.h"
 #include "sys/oldshadows.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
@@ -124,6 +123,7 @@ Unk80092BC0 D_80092BC0 = {0};
 
 void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
+HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -521,16 +521,16 @@ void init_maps(void) {
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         D_800B9700[i] = D_800B9700[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
     }
-    queue_alloc_load_file((void **) &gFile_MAPS_TAB, 0x20);
-    queue_alloc_load_file((void** ) &gFile_HITS_TAB, 0x2D);
+    queue_alloc_load_file((void **) &gFile_MAPS_TAB, MAPS_TAB);
+    queue_alloc_load_file((void** ) &gFile_HITS_TAB, HITS_TAB);
     for (i = 0; i < 120; i++) { gLoadedMapsDataTable[i] = NULL; }
-    queue_alloc_load_file((void** ) &gFile_TRKBLK, 0x2B);
+    queue_alloc_load_file((void** ) &gFile_TRKBLK, TRKBLK_BIN);
     gNumTRKBLKEntries = 0;
     while (gFile_TRKBLK[gNumTRKBLKEntries] != 0xFFFF) {
         gNumTRKBLKEntries++;
     }
     gNumTRKBLKEntries--;
-    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, 0x2A);
+    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, BLOCKS_TAB);
     gNumTotalBlocks = 0;
     while (gFile_BLOCKS_TAB[gNumTotalBlocks] != -1) {
         gNumTotalBlocks++;
@@ -580,7 +580,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
     mtx = get_some_model_view_mtx();
     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
-    func_800021A0(&gMainDL, 0);
+    camera_setup_viewport_and_matrices(&gMainDL, 0);
     func_80044BEC();
     if (func_80010048() != 0) {
         if (!(UINT_80092a98 & 8)) {
@@ -597,7 +597,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
         } else {
             camera_set_aspect(1.3333334f);
         }
-        func_80001D58(get_camera_selector(), 0U);
+        viewport_disable(get_camera_selector(), 0U);
         vi_some_video_setup(0);
         UINT_80092a98 &= ~0x10000;
     }
@@ -626,7 +626,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     func_80048F58();
     track_c_func();
     gDLL_9_Newclouds->vtbl->func4(&gMainDL);
-    func_8000302C(&gMainDL);
+    camera_setup_fullscreen_viewport(&gMainDL);
     *gdl = gMainDL;
     *mtxs = gWorldRSPMatrices;
     *vtxs = D_800B51D4;
@@ -885,6 +885,7 @@ void func_800436DC(Object* obj, s32 arg1) {
             someBool = FALSE;
         }
     }
+    // @bug: sp37 is uninitialized if someBool is false
     if (someBool != FALSE) {
         sp37 = gDLL_13_Expgfx->vtbl->func10(obj);
     }
@@ -1101,11 +1102,11 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
     oldRenderListLength = gRenderListLength;
 
     for (i = 0; i < block->shapeCount; i++) {
-        if ((block->shapes[i].flags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
-            if (block->shapes[i].flags & 0x4) {
+        if ((block->shapes[i].flags & RENDER_UNK10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
+            if (block->shapes[i].flags & RENDER_SEMI_TRANSPARENT) {
                 param = 100000 - (gBlocksToDrawIdx * 400) - i;
 
-                if (block->shapes[i].flags & 0x2000) {
+                if (block->shapes[i].flags & RENDER_UNK2000) {
                     param -= 200;
                 }
             } else {
@@ -1117,7 +1118,7 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
         }
     }
 
-    if (((oldRenderListLength & 0xFFFFFFFFu) != gRenderListLength) && gBlocksToDrawIdx < MAX_BLOCKS) {
+    if (((oldRenderListLength & 0xFFFFFFFF) != (u32) gRenderListLength) && gBlocksToDrawIdx < MAX_BLOCKS) {
         gBlocksToDraw[gBlocksToDrawIdx] = block;
         gBlocksToDrawIdx++;
 
@@ -1773,7 +1774,7 @@ u8 func_800456AC(Object* obj) {
         if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_PLAYER_RELATIVE) && (playerObj = get_player(), (playerObj != NULL))) {
             dist = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
         } else {
-            dist = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+            dist = camera_get_distance_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
         }
         if (fadeDist < dist) {
             obj->opacityWithFade = 0;
@@ -2086,6 +2087,7 @@ void func_80046320(s32 arg0, Object *obj) {
 }
 
 #ifndef NON_MATCHING
+void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 #else
 void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {
@@ -2654,8 +2656,8 @@ void map_func_8004773C(void) {
         D_80092A78 = 8;
     }
     gDLL_3_Animation->vtbl->func0();
-    func_80001A3C();
-    func_80001A3C();
+    camera_apply_alternate_trigger();
+    camera_apply_alternate_trigger();
     func_80053300();
 
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
@@ -2768,7 +2770,7 @@ void map_func_8004773C(void) {
                 }
             }
             if (sp40->unk12 != -1) {
-                gDLL_2_Camera->vtbl->func8(0, sp40->unk12);
+                gDLL_2_Camera->vtbl->change_mode(0, sp40->unk12);
             }
             sp4C.parent = NULL;
             sp4C.srt.transl.x = 0.0f;
@@ -2981,135 +2983,113 @@ s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     return 1;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_load.s")
-#else
-extern u32 *gFile_BLOCKS_TAB;
-extern u8 *gMapReadBuffer;
-void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
-{
-    u32 allocSize;
-    u32 offset;
-    u32 compressedSize;
-    u32 uncompressedSize;
-    u8 *compressedData;
-    Block *block;
-    u8 *p;
-    s32 n;
-    s32 i;
+void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
+    s32 texIdx;
+    s32 binOffset;
+    s32 binSize;
+    s32 size;
+    s32 vtxIdx;
+    Vtx_t* verts;
+    Block* block;
+    BlockShape* shape;
+    BlockVertex* fileVerts;
+    BlockVertex* fileVertsEnd;
+    u32 addr;
+    s32 pad[3];
+    s32 tempLoadAddr;
 
-    offset = gFile_BLOCKS_TAB[id];
-    compressedSize = gFile_BLOCKS_TAB[id + 1] - offset;
-    read_file_region(BLOCKS_BIN, gMapReadBuffer, offset, 0x10);
-
-    uncompressedSize = *(u32*)gMapReadBuffer;
-    allocSize = uncompressedSize + hits_get_size(id) + 0x8;
-    block = mmAlloc(allocSize, ALLOC_TAG_TRACK_COL, NULL);
+    binOffset = gFile_BLOCKS_TAB[id];
+    binSize = gFile_BLOCKS_TAB[id + 1] - binOffset;
+    read_file_region(BLOCKS_BIN, gMapReadBuffer, binOffset, 0x10);
+    size = ((s32*)gMapReadBuffer)[0];
+    size += hits_get_size(id) + 8;
+    block = mmAlloc(size, ALLOC_TAG_TRACK_COL, NULL);
     if (block == NULL) {
         return;
     }
 
-    compressedData = (u8*)block + allocSize - compressedSize - 0x10;
-    compressedData = (u8*)((s32)compressedData - ((s32)compressedData % 16));
-    // if ((s32)compressedData < 0) {
-    //     // Align to 16 bytes
-    //     u32 align = (u32)compressedData & 0xf;
-    //     if (align != 0) {
-    //         align -= 16;
-    //     }
-    //     compressedData -= align;
-    // }
+    if (0) { if ((s32)&size) {} } // @fake
 
-    read_file_region(BLOCKS_BIN, compressedData, offset, compressedSize);
-    rarezip_uncompress(compressedData + 4, (u8*)block, allocSize);
-
-    // Convert offsets to pointers
+    tempLoadAddr = (((u32)block + size) - binSize) - 0x10;
+    tempLoadAddr -= tempLoadAddr % 16;
+    read_file_region(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
+    rarezip_uncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
     block->vertices = (Vtx_t*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
     block->unk10 = (void*)((u32)block->unk10 + (u32)block);
     block->tiles = (Block_0x0Struct*)((u32)block->tiles + (u32)block);
-
-    tex_set_alloc_tag(7);
-
-    for (i = 0; i < block->textureCount; i++) {
-        block->tiles[i].texture = tex_load(-((s32)block->tiles[i].texture | 0x8000), queue);
+    tex_set_alloc_tag(ALLOC_TAG_TRACKTEX_COL);
+    for (texIdx = 0; texIdx < block->textureCount; texIdx++) {
+        block->tiles[texIdx].texture = tex_load(-((u32)block->tiles[texIdx].texture | 0x8000), queue);
     }
-
-    tex_set_alloc_tag(6);
-
+    tex_set_alloc_tag(ALLOC_TAG_TEX_COL);
     block_setup_vertices(block);
-
-    block->gdlGroups = (Gfx*)(block->gdlGroupsOffset + (u32)block);
+    addr = (u32)block;
+    addr += block->gdlGroupsOffset;
+    block->gdlGroups = (Gfx*)addr;
     block_setup_gdl_groups(block);
-
-    p = block->gdlGroups + block->shapeCount * 3;
+    addr += (block->shapeCount * 12 << 1);
     func_80048B14(block);
-
-    if (block->vtxFlags & 0x8)
-    {
-        Vtx_t *vtx = mmAlign8(p);
-        Vtx_t *srcvtx = block->vertices;
-        BlockShape *shape;
-
-        block->vertices2[0] = vtx;
-        block->vertices2[1] = &vtx[block->vtxCount];
-
-        p = vtx + block->vtxCount * 2;
-
+    if (block->vtxFlags & 8) {
+        addr = mmAlign8(addr);
+        fileVerts = block->vertices;
+        block->vertices2[0] = (Vtx_t*)addr;
+        addr += (sizeof(Vtx_t) * block->vtxCount);
+        block->vertices2[1] = (Vtx_t*)addr;
+        addr += (sizeof(Vtx_t) * block->vtxCount);
+        
+        verts = block->vertices2[0];
+        vtxIdx = 0;
         shape = block->shapes;
-        for (i = 0; i < block->vtxCount; i++)
-        {
+        fileVertsEnd = fileVerts;
+        if (block->vertices) {}
+        if (block->vtxCount && block->vtxCount){}
+        fileVertsEnd += block->vtxCount;
+        while (fileVerts < fileVertsEnd) {
             if (shape->flags & 0x20000000) {
-                vtx[i].ob[0] = (f32)srcvtx[i].ob[0];
-                vtx[i].ob[1] = (srcvtx[i].ob[1] - block->elevation) * 20.0f;
-                vtx[i].ob[2] = (f32)srcvtx[i].ob[2];
+                verts->ob[0] = (f32) fileVerts->ob[0];
+                verts->ob[1] = (fileVerts->ob[1] - block->elevation) * 20.0f;
+                verts->ob[2] = (f32) fileVerts->ob[2];
             } else {
-                vtx[i].ob[0] = srcvtx[i].ob[0];
-                vtx[i].ob[1] = srcvtx[i].ob[1];
-                vtx[i].ob[2] = srcvtx[i].ob[2];
+                verts->ob[0] = fileVerts->ob[0];
+                verts->ob[1] = fileVerts->ob[1];
+                verts->ob[2] = fileVerts->ob[2];
             }
-
-            vtx[i].cn[0] = srcvtx[i].cn[0];
-            vtx[i].cn[1] = srcvtx[i].cn[1];
-            vtx[i].cn[2] = srcvtx[i].cn[2];
-            vtx[i].cn[3] = srcvtx[i].cn[3];
-            vtx[i].tc[0] = srcvtx[i].tc[0];
-            vtx[i].tc[1] = srcvtx[i].tc[1];
-            vtx[i].flag = srcvtx[i].flag;
-
-            if (i >= shape[1].vtxBase) {
-                shape++;
+            verts->cn[0] = fileVerts->cn[0];
+            verts->cn[1] = fileVerts->cn[1];
+            verts->cn[2] = fileVerts->cn[2];
+            verts->cn[3] = fileVerts->cn[3];
+            verts->tc[0] = fileVerts->tc[0];
+            verts->tc[1] = fileVerts->tc[1];
+            verts->flag = fileVerts->flag;
+            vtxIdx += 1;
+            fileVerts += 1;
+            verts += 1;
+            if (vtxIdx >= (shape + 1)->vtxBase) {
+                shape += 1;
             }
         }
-
-        bcopy(block->vertices2[0], block->vertices2[1], block->vtxCount * sizeof(Vtx_t));
+        bcopy(block->vertices2[0], block->vertices2[1], sizeof(Vtx_t) * block->vtxCount);
+    } else {
+        block->vertices2[0] = (Vtx_t*)block->vertices;
+        block->vertices2[1] = (Vtx_t*)block->vertices;
     }
-    else
-    {
-        block->vertices2[0] = block->vertices;
-        block->vertices2[1] = block->vertices;
-    }
-
-    p = mmAlign4(p);
-    block->unk28 = p;
-
-    n = block_setup_textures(block);
-
-    p = mmAlign2(p + n);
-    block->xzBitmap = p;
+    addr = mmAlign4(addr);
+    block->unk28 = (Block_0x28Struct*)addr;
+    addr += block_setup_textures(block);
+    addr = mmAlign2(addr);
+    block->xzBitmap = (s16*)addr;
+    addr += block->unk34 * 2;
     block_setup_xz_bitmap(block);
-
-    p = mmAlign8(p + block->unk34 * sizeof(s16));
-    block_load_hits(block, id, queue, p);
-
-    if (queue) {
-        queue_block_emplace(1, block, id, param_2, globalMapIdx);
+    addr = mmAlign8(addr);
+    block_load_hits(block, id, queue, (HitsLine*)addr);
+    if (queue != 0) {
+        queue_block_emplace(1, (u32* ) block, id, param_2, globalMapIdx);
     } else {
         block_emplace(block, id, param_2, globalMapIdx);
     }
 }
-#endif
 
 void func_80048B14(Block* block) {
     s32 targetVertexIndex;
@@ -3276,7 +3256,7 @@ void block_setup_gdl_groups(Block *block)
         BlockShape *shape;
         Texture *texture;
         s32 texFlags = 0;
-        s32 flags2;
+        s32 aa;
         s32 flags;
         Gfx *mygdl;
 
@@ -3284,7 +3264,7 @@ void block_setup_gdl_groups(Block *block)
         
         shape = &block->shapes[i];
         flags = shape->flags;
-        flags2 = flags & 1;
+        aa = flags & RENDER_ANTI_ALIASING;
 
         if (shape->tileIdx0 == 0xff) {
             texture = NULL;
@@ -3295,49 +3275,54 @@ void block_setup_gdl_groups(Block *block)
             }
         }
 
-        if ((flags & 0x400) == 0) {
-            if ((flags & 0x1000000) != 0) {
-                flags |= 0x1a;
+        if ((flags & RENDER_DECAL_SIMPLE) == 0) {
+            if ((flags & RENDER_UNK1000000) != 0) {
+                flags |= (RENDER_Z_COMPARE | RENDER_FOG_ACTIVE | RENDER_UNK10);
             }
         }
 
-        if (texFlags & 0x80) {
-            flags |= 0x2;
+        if (texFlags & RENDER_CUTOUT) {
+            flags |= RENDER_Z_COMPARE;
         }
 
-        if (flags2 != 0) {
-            flags &= ~0x1;
+        if (aa != 0) {
+            flags &= ~RENDER_ANTI_ALIASING;
         } else {
-            flags |= 0x1;
+            flags |= RENDER_ANTI_ALIASING;
         }
 
-        flags |= 0x2;
+        flags |= RENDER_Z_COMPARE;
 
-        if (flags & 0x400)
+        if (flags & RENDER_DECAL_SIMPLE)
         {
-            if (flags & 0x200)
+            if (flags & RENDER_SUBSURFACE)
             {
-                flags &= ~0x200;
-                tex_disable_modes(0x4);
+                flags &= ~RENDER_SUBSURFACE;
+                tex_disable_modes(RENDER_SEMI_TRANSPARENT);
             }
             else
             {
-                if ((flags & 0x2000) || (flags & 0x4) || (flags & 0x100000)) {
-                    flags |= 0x4;
+                if ((flags & RENDER_UNK2000) || (flags & RENDER_SEMI_TRANSPARENT) || (flags & RENDER_DECAL)) {
+                    flags |= RENDER_SEMI_TRANSPARENT;
                 } else {
-                    tex_disable_modes(0x4);
+                    tex_disable_modes(RENDER_SEMI_TRANSPARENT);
                 }
             }
         }
 
         mygdl = &block->gdlGroups[i * 3];
-        tex_gdl_set_texture_simple(&mygdl, texture, flags | 0x80000000, 0, 1, 5);
+        // only set modes, don't set texture!
+        tex_gdl_set_texture_simple(&mygdl, texture, 
+            flags | RENDER_NO_CULL, 
+            TEX_FRAME(0),
+            TRUE, // force
+            TEXOPT_INVISIBLE | TEXOPT_SET_MODES | TEXOPT_SKIP_MODE_CACHE);
 
-        if ((flags & 0x2000) && texture != NULL && (texture->flags & 0xc000))
+        if ((flags & RENDER_UNK2000) && texture != NULL && (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)))
         {
             mygdl = &block->gdlGroups[i * 3];
             gSPLoadGeometryMode(mygdl++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH);
-            if (texture->flags & 0xc000) {
+            if (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
                 gDPSetCombineLERP(
                     mygdl++, 
                     TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, // a0 - d0
@@ -3361,8 +3346,8 @@ void block_setup_gdl_groups(Block *block)
             );
         }
 
-        if (flags & 0x400) {
-            tex_enable_modes(0x4);
+        if (flags & RENDER_DECAL_SIMPLE) {
+            tex_enable_modes(RENDER_SEMI_TRANSPARENT);
         }
     }
 }
@@ -3496,7 +3481,7 @@ u32 hits_get_size(s32 id) {
     return size;
 }
 
-HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine* hits_ptr) {
+HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
     s32 hits_start;
     s32 hits_size;
     s32 lineIndex;
@@ -3741,10 +3726,10 @@ s32 block_setup_textures(Block* block) {
     var_s6 = 0;
     for (i = 0; i < block->shapeCount; i++) {
         temp_a3 = &block->shapes[i];
-        if (temp_a3->flags & 0x4000) {
+        if (temp_a3->flags & RENDER_COMPOSITE_BASE) {
             var_s6++;
         }
-        if (temp_a3->flags & 0x10000 && temp_a3->animatorID != 0) {
+        if (temp_a3->flags & RENDER_UNK10000 && temp_a3->animatorID != 0) {
             var_a1 = FALSE;
             for (j = 0; j < var_s1; j++) {
                 if (block->unk28[j].unk2 == temp_a3->animatorID) {
@@ -3788,7 +3773,7 @@ void func_80049FA8(BlocksModel* block) {
     }
 }
 
-s32 func_8004A058(Texture* tex, u32 flags, s32 arg2) {
+s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
     s32 index;
     s32 indexOfUnref;
     
@@ -3796,7 +3781,7 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 arg2) {
     for (index = 0; index < 0x14; index++){
         if ((&gBlockTextures[index])->refCount != 0 && 
             tex == (&gBlockTextures[index])->texture && 
-            arg2 == (&gBlockTextures[index])->unkE){
+            animatorID == (&gBlockTextures[index])->unkE){
             
             indexOfUnref = index;
             break;
@@ -3821,7 +3806,7 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 arg2) {
         gBlockTextures[indexOfUnref].unk4 = 0;
         gBlockTextures[indexOfUnref].flags = flags;
         gBlockTextures[indexOfUnref].texture = tex;
-        gBlockTextures[indexOfUnref].unkE = arg2;
+        gBlockTextures[indexOfUnref].unkE = animatorID;
         return indexOfUnref;
     }
     return 0;

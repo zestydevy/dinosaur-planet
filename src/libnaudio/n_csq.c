@@ -229,7 +229,7 @@ void n_csq_func_8007B418(ALCSeq *seq, ALCSeqMarker *m, u32 ticks, u32 arg3) {
 
 	n_alCSeqNew(&tempSeq, (u8*)seq->base);
 
-	for (j = 0; j < ticks; j++) {
+	for (j = 0; (u32)j < ticks; j++) {
 		m[j].lastTicks = 0;
 	}
 
@@ -249,7 +249,7 @@ void n_csq_func_8007B418(ALCSeq *seq, ALCSeqMarker *m, u32 ticks, u32 arg3) {
 		n_alCSeqNextEvent(&tempSeq, &evt, 0);
 
 		if (evt.type == AL_CSP_LOOPSTART) {
-			if ((evt.msg.loop.count >> 8) >= arg3 && (evt.msg.loop.count >> 8) < arg3 + ticks) {
+			if ((u32)(evt.msg.loop.count >> 8) >= arg3 && (u32)(evt.msg.loop.count >> 8) < arg3 + ticks) {
 				if (m[(evt.msg.loop.count >> 8) - arg3].lastTicks == 0) {
 					m[(evt.msg.loop.count >> 8) - arg3] = m2;
 

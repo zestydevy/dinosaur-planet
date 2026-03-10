@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_715_ctor = 0x0;
+dll_715_dtor = 0xC;
+dll_715_setup = 0x18;
+dll_715_control = 0xB0;
+dll_715_update = 0xBC;
+dll_715_print = 0xC8;
+dll_715_free = 0x11C;
+dll_715_get_model_flags = 0x15C;
+dll_715_get_data_size = 0x16C;
+
+.rodata = 0x1B4:
+_oob_rodata_0 = 0x0; // absolute:0x1B4

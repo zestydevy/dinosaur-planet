@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "game/gamebits.h"
+#include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/menu.h"
@@ -12,7 +13,6 @@
 
 static s32 data_0 = 0;
 static s8 data_4 = 0;
-static u32 data_8 = 0xe49c44ff;
 
 static s8 bss_0;
 static s8 bss_1;
@@ -25,8 +25,7 @@ static Texture *bss_14;
 static Texture *bss_18;
 
 void dll_61_ctor(void *dll) {
-    u8 temp[4];
-    *((u32*)temp) = data_8; // wat
+    u8 dColourUnused[4] = {0xe4, 0x9c, 0x44, 0xff};
 
     rcp_set_border_color(0, 0, 0);
     func_80010018(0);
@@ -35,10 +34,10 @@ void dll_61_ctor(void *dll) {
     bss_0 = 0;
     bss_1 = 0;
     bss_2 = 0;
-    bss_C = tex_load_deferred(0x2d6);
-    bss_10 = tex_load_deferred(0x2d7);
-    bss_14 = tex_load_deferred(0x2d4);
-    bss_18 = tex_load_deferred(0x2d5);
+    bss_C = tex_load_deferred(TEXTABLE_2D6_RareLogo);
+    bss_10 = tex_load_deferred(TEXTABLE_2D7_RareLogo_Shadow);
+    bss_14 = tex_load_deferred(TEXTABLE_2D4_RarewareTextLogo);
+    bss_18 = tex_load_deferred(TEXTABLE_2D5_RarewareTextLogo_Shadow);
 }
 
 void dll_61_dtor(void *dll) {

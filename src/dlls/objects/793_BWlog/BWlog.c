@@ -50,8 +50,8 @@ typedef struct {
 } BWlog_Data;
 
 /*0x0*/ static Vec3f _data_0[] = {
-    {0.0f, 0.0f, -30.0f}, 
-    {0.0f, 0.0f, 30.0f}
+    VEC3F(0.0f, 0.0f, -30.0f),
+    VEC3F(0.0f, 0.0f, 30.0f)
 };
 /*0x18*/ static f32 _data_18[] = {8.0f, 8.0f};
 /*0x20*/ static u8 _data_20[] = {1, 1};
@@ -106,7 +106,7 @@ void dll_793_control(Object* self) {
     BWlog_Data* objdata;
     f32 var_fv1;
     f32 sp184[3];
-    f32 sp178[3];
+    Vec3f sp178;
     SRT sp160;
     MtxF sp120;
     MtxF spE0;
@@ -196,16 +196,12 @@ void dll_793_control(Object* self) {
         objdata->unk260[i].y = objdata->unk260[i].y + sp184[1];
         objdata->unk260[i].z = objdata->unk260[i].z + sp184[2];
     }
-    sp178[0] = objdata->unk260[0].x + objdata->unk260[1].x;
-    sp178[1] = objdata->unk260[0].y + objdata->unk260[1].y;
-    sp178[2] = objdata->unk260[0].z + objdata->unk260[1].z;
-    self->srt.transl.x = sp178[0] * 0.5f;
-    self->srt.transl.y = sp178[1] * 0.5f;
-    self->srt.transl.z = sp178[2] * 0.5f;
-    sp178[0] = objdata->unk260[1].x - objdata->unk260[0].x;
-    sp178[1] = objdata->unk260[1].y - objdata->unk260[0].y;
-    sp178[2] = objdata->unk260[1].z - objdata->unk260[0].z;
-    self->srt.pitch = -arctan2_f(sp178[1], sqrtf(SQ(sp178[2]) + SQ(sp178[0])));
+    VECTOR_ADD(objdata->unk260[0], objdata->unk260[1], sp178);
+    self->srt.transl.x = sp178.f[0] * 0.5f;
+    self->srt.transl.y = sp178.f[1] * 0.5f;
+    self->srt.transl.z = sp178.f[2] * 0.5f;
+    VECTOR_SUBTRACT(objdata->unk260[1], objdata->unk260[0], sp178);
+    self->srt.pitch = -arctan2_f(sp178.f[1], sqrtf(SQ(sp178.f[2]) + SQ(sp178.f[0])));
     gDLL_27->vtbl->func_1E8(self, &objdata->unk0, gUpdateRateF);
     gDLL_27->vtbl->func_5A8(self, &objdata->unk0);
     gDLL_27->vtbl->func_624(self, &objdata->unk0, gUpdateRateF);
@@ -344,11 +340,11 @@ void dll_793_func_D18(Object *self, s32 a1) {
     if (a1 != 0) {
         obj_clear_map_id(self);
         ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
-        gDLL_2_Camera->vtbl->func8(0, 0x2B);
+        gDLL_2_Camera->vtbl->change_mode(0, 0x2B);
     } else {
         obj_infer_map_id(self);
         ((DLL_210_Player*)player->dll)->vtbl->func29(player, 1);
-        gDLL_2_Camera->vtbl->func8(0, 1);
+        gDLL_2_Camera->vtbl->change_mode(0, 1);
     }
 
     objdata->unk32E = a1;
@@ -379,7 +375,7 @@ void dll_793_func_E80(Object *self) { }
 void dll_793_func_E8C(Object *self, f32 scale) { }
 
 // offset: 0xE9C | func: 20 | export: 20
-void dll_793_func_E9C(UNK_TYPE_32 a0, UNK_TYPE_32 a1, UNK_TYPE_32 a2) { }
+void dll_793_func_E9C(s32 a0, s32 a1, s32 a2) { }
 
 // offset: 0xEB0 | func: 21
 static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {

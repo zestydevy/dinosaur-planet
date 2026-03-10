@@ -4,6 +4,7 @@
 
 #include "sys/camera.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/textable.h"
 #include "sys/joypad.h"
 #include "sys/fonts.h"
 #include "sys/gfx/texture.h"
@@ -13,6 +14,8 @@
 #include "functions.h"
 #include "sys/rcp.h"
 #include "types.h"
+
+#include "prevent_bss_reordering.h"
 
 // Size: 0x18
 typedef struct InnerBss38 {
@@ -71,7 +74,7 @@ typedef struct StructData1C {
 /*0x4*/ static s32 sWindowID;
 /*0x8*/ static s32 _bss_8;
 /*0xC*/ static s32 _bss_C;
-/*0x10*/ static Func_80037F9C_Struct _bss_10;
+/*0x10*/ static Func_80037F9C_Struct _bss_10[3];
 /*0x38*/ static StructBss38 _bss_38[3];
 /*0x77C*/ static u8 _bss_77C[0x4];
 /*0x780*/ static StructBss38 *_bss_780[3];
@@ -139,16 +142,16 @@ void dll_22_ctor(s32 arg0) {
             var_v0->unkC8[1][j].unkA = NULL;
         }
     }
-    _bss_10.unk0 = tex_load_deferred(0x27B);
-    _bss_10.unkC = tex_load_deferred(0x27C);
-    _bss_10.unk18 = 0;
-    _bss_10.unk8 = 0;
-    _bss_10.unk14 = _bss_10.unk0->width;
-    _bss_7A3 = _bss_10.unkC->width + _bss_10.unk0->width;
-    _bss_10.unkA = -2;
-    _bss_10.unk16 = -2;
-    _bss_10.pad4 = 0;
-    _bss_10.unk10 = 0;
+    _bss_10[0].unk0 = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
+    _bss_10[1].unk0 = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
+    _bss_10[2].unk0 = NULL;
+    _bss_10[0].unk8 = 0;
+    _bss_10[1].unk8 = _bss_10[0].unk0->width;
+    _bss_7A3 = _bss_10[0].unk0->width + _bss_10[1].unk0->width;
+    _bss_10[0].unkA = -2;
+    _bss_10[1].unkA = -2;
+    _bss_10[0].unk4 = 0;
+    _bss_10[1].unk4 = 0;
 }
 
 // offset: 0x1D4 | dtor
@@ -172,8 +175,8 @@ void dll_22_dtor(s32 arg0) {
             }
         }
     }
-    tex_free(_bss_10.unk0);
-    tex_free(_bss_10.unkC);
+    tex_free(_bss_10[0].unk0);
+    tex_free(_bss_10[1].unk0);
 }
 
 // offset: 0x2D0 | func: 0 | export: 0
@@ -452,7 +455,7 @@ void dll_22_func_D9C(Gfx **gdl) {
     if ((_bss_794 + 0x18) < _bss_C) {
         _bss_C = (_bss_794 + 0x18);
     }
-    if (func_80004A4C() == 0) {
+    if (camera_get_letterbox() == 0) {
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, (_bss_8 - 2), (_bss_7A0 - 1), (_bss_C + 2));
         for (i = 0; i < _bss_7A0; i += _bss_7A3) {
             func_80037F9C(gdl, &_bss_10, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);

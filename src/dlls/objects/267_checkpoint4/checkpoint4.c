@@ -11,14 +11,14 @@ typedef struct {
     f32 z;
     f32 unk1C;
     f32 scale;
-    u8 _unk24[0x34-0x24];
+    u8 _unk24[0x34 - 0x24];
     s16 unk34[SOME_COUNT];
-    u8 _unk3C[0x40-0x3C];
+    u8 _unk3C[0x40 - 0x3C];
 } checkpoint4_Data;
 
 typedef struct {
     ObjSetup base;
-    u8 unk18[0x28-0x18];
+    u8 unk18[0x28 - 0x18];
     s8 unk28;
     u8 yaw;
     u8 scale;

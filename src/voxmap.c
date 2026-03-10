@@ -131,33 +131,33 @@ s32 voxmap_reload_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockInd
     return 1;
 }
 
-u8 *voxmap_load_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex) {
-    s32 sp3C;
-    s32 sp38;
-    s32 sp34;
+u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, UNUSED s32 blockIndex) {
+    s32 size;
+    s32 fileSize;
+    u32 offset;
     s32 temp_v1;
     u8* sp2C;
     u8* temp_v0;
 
-    sp34 = gVoxmapTextureIndices[blockID];
-    sp3C = gVoxmapTextureIndices[blockID + 1] - sp34;
-    if (sp3C == 0) {
+    offset = gVoxmapTextureIndices[blockID];
+    size = gVoxmapTextureIndices[blockID + 1] - offset;
+    if (size == 0) {
         return 0;
     }
-    sp38 = rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[blockID], 1);
-    if (sp38 > 0x5000) {
+    fileSize = rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[blockID], TRUE);
+    if (fileSize > 0x5000) {
         return 0;
     }
-    temp_v0 = mmAlloc(sp38 + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
-    temp_v1 = ((temp_v0 + sp38) - sp3C) + 0x80;
-    sp2C = (u8*)(temp_v1 - (temp_v1 % 16));
-    read_file_region(TEXPRE_BIN, sp2C, sp34, sp3C);
-    rarezip_uncompress(sp2C, temp_v0, sp38 + 0x80);
-    temp_v0 = mmRealloc(temp_v0, sp38, NULL);
+    temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
+    temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
+    sp2C = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
+    read_file_region(TEXPRE_BIN, sp2C, offset, size);
+    rarezip_uncompress(sp2C, temp_v0, fileSize + 0x80);
+    temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
-        ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + temp_v0;
-        ((s32*)temp_v0)[temp_v1 + 9] = ((s32*)temp_v0)[temp_v1 + 9] + temp_v0;
-        ((s32*)temp_v0)[temp_v1 + 5] = ((s32*)temp_v0)[temp_v1 + 5] + temp_v0;
+        ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
+        ((s32*)temp_v0)[temp_v1 + 9] = ((s32*)temp_v0)[temp_v1 + 9] + (s32)temp_v0;
+        ((s32*)temp_v0)[temp_v1 + 5] = ((s32*)temp_v0)[temp_v1 + 5] + (s32)temp_v0;
         temp_v1++;
     }
     return temp_v0;
@@ -172,36 +172,36 @@ s32 func_800075B0(s32 arg0, s32 arg1) {
     return 1;
 }
 
-u8 *func_80007620(s32 arg0, s32 arg1) {
-    s32 sp34;
+u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
+    s32 size;
     u8* temp_v0;
-    s32 sp2C;
-    s32 temp_v0_3;
+    u32 offset;
+    s32 fileSize;
     u8* sp24;
     s32 temp_v1;
 
-    if (arg0 < 0 || arg0 >= D_800A7D0C) {
+    if (blockID < 0 || blockID >= D_800A7D0C) {
         return 0;
     }
-    sp2C = gVoxmapObjectIndices[arg0];
-    sp34 = gVoxmapObjectIndices[arg0 + 1] - sp2C;
-    if (sp34 == 0) {
+    offset = gVoxmapObjectIndices[blockID];
+    size = gVoxmapObjectIndices[blockID + 1] - offset;
+    if (size == 0) {
         return 0;
     }
-    temp_v0_3 = rarezip_uncompress_size_rom(VOXOBJ_BIN, gVoxmapObjectIndices[arg0], 1);
-    if (temp_v0_3 > 0x5000) {
+    fileSize = rarezip_uncompress_size_rom(VOXOBJ_BIN, gVoxmapObjectIndices[blockID], TRUE);
+    if (fileSize > 0x5000) {
         return 0;
     }
-    temp_v0 = mmAlloc(temp_v0_3 + 0x80, ALLOC_TAG_VOX_COL, NULL);
-    temp_v1 = ((temp_v0 + temp_v0_3) - sp34) + 0x80;
-    sp24 = (u8*)(temp_v1 - (temp_v1 % 16));
-    read_file_region(VOXOBJ_BIN, sp24, (u32) sp2C, sp34);
-    rarezip_uncompress(sp24, temp_v0, temp_v0_3);
-    temp_v0 = mmRealloc(temp_v0, temp_v0_3, NULL);
+    temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
+    temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
+    sp24 = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
+    read_file_region(VOXOBJ_BIN, sp24, offset, size);
+    rarezip_uncompress(sp24, temp_v0, fileSize);
+    temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
-        ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + temp_v0;
-        ((s32*)temp_v0)[temp_v1 + 9] = ((s32*)temp_v0)[temp_v1 + 9] + temp_v0;
-        ((s32*)temp_v0)[temp_v1 + 5] = ((s32*)temp_v0)[temp_v1 + 5] + temp_v0;
+        ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
+        ((s32*)temp_v0)[temp_v1 + 9] = ((s32*)temp_v0)[temp_v1 + 9] + (s32)temp_v0;
+        ((s32*)temp_v0)[temp_v1 + 5] = ((s32*)temp_v0)[temp_v1 + 5] + (s32)temp_v0;
         temp_v1++;
     }
     return temp_v0;
@@ -333,7 +333,7 @@ VoxmapSlot* voxmap_get_last_found_slot(void) {
 }
 
 void func_80007CCC(s32 arg0) {
-    rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[arg0], 1);
+    rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[arg0], TRUE);
 }
 
 u8 *func_80007D08(u8 *arg0, u8 *arg1, u8 *arg2, s32 arg3, s32 arg4, s32 arg5) {
@@ -1029,7 +1029,7 @@ void func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics, Unk
     gfx = *gdl;
     tex_gdl_set_textures(&gfx, NULL, NULL, 3, 0, 0, 1);
     dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
-    func_80003168(&gfx, matrics, 0, 0, 0, 1.0f);
+    camera_setup_world_matrix(&gfx, matrics, 0, 0, 0, 1.0f);
     var_fp = 1;
     var_s4 = 0;
     temp_v0 = 0;

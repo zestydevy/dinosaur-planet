@@ -30,7 +30,9 @@ typedef enum {
 
 typedef struct {
 /*0000*/    Texture *texture; //textureID in ROM
-/*0004*/    u32 unk4;
+/*0004*/    u16 unk4;
+/*0004*/    u8 pad6;
+/*0004*/    u8 unk7;
 } ModelTexture;
 
 typedef struct {
@@ -106,9 +108,18 @@ typedef struct {
 typedef struct {
 /*0000*/ u32 pad0;
 /*0004*/ s32 unk4; // display list index?
-/*0008*/ u8 pad8[0xB-8];
+/*0008*/ u8 pad8[0xB - 0x8];
 /*000B*/ u8 unkB;
 } TextureAnimation;
+
+typedef struct {
+    s16 minX;
+    s16 maxX;
+    s16 minY;
+    s16 maxY;
+    s16 minZ;
+    s16 maxZ;
+} FacebatchBound;
 
 typedef struct{
     // TODO
@@ -123,9 +134,9 @@ typedef struct{
 /*0020*/    ModelJoint *joints;
 /*0024*/    u8 *amap;
 /*0028*/    HitSphere *hitSpheres;
-/*002C*/    void *edgeVectors; //only on mobile map models?
+/*002C*/    s16 *edgeVectors; //only on mobile map models?
 /*0030*/    s16 *modAnim;
-/*0034*/    void *facebatchBounds; //bounding boxes for each facebatch
+/*0034*/    FacebatchBound *facebatchBounds; //bounding boxes for each facebatch
 /*0038*/    ModelDLInfo *drawModes; //stores command indices of f3dex2 block's EF command settings, plus 2 settings to swap between
 /*003C*/    TextureAnimation *textureAnimations; //for animating pupil UVs/eyelid flipbooks
 /*0040*/    s16 modAnimBankBases[8]; //the base modanim index of each modanim bank
@@ -191,7 +202,7 @@ typedef struct {
 /*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;
 /*001C*/    void *unk1C[2];
-/*0024*/    Vec4f *unk24;
+/*0024*/    Vec4f *unk24; // Could be a MtxF
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstanceBlendshape *blendshapes;

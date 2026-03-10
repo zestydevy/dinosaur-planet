@@ -236,8 +236,8 @@ void SB_ShipGun_control(Object *self) {
             cannonballObj->srt.yaw = arctan2_f(cannonballObj->speed.x, cannonballObj->speed.z);
             cannonballObj->unkDC = 0xB4;
             cannonballObj->unkE0 = (s32) objdata->cloudrunner;
-            func_800013BC();
-            func_80003B70(0.1f);
+            camera_enable_y_offset();
+            camera_set_shake_offset(0.1f);
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk10++;
             if (objdata->unk10 == 3) {

@@ -9,7 +9,7 @@ typedef struct {
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 unk18[0x1E-0x18];
+/*18*/ u8 unk18[0x1E - 0x18];
 /*1E*/ s16 gunDestroyedGamebit;
 } SB_ShipGunBroke_Setup;
 

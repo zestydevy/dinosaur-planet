@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_525_ctor = 0x0;
+dll_525_dtor = 0xC;
+dll_525_setup = 0x18;
+dll_525_control = 0x114;
+dll_525_update = 0x598;
+dll_525_print = 0x5A4;
+dll_525_free = 0x5F8;
+dll_525_get_model_flags = 0x660;
+dll_525_get_data_size = 0x670;
+dll_525_func_684 = 0x684;
+dll_525_func_81C = 0x81C;
+
+.rodata = 0x8DC:

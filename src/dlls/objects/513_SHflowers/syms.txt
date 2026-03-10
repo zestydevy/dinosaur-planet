@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_513_ctor = 0x0;
+dll_513_dtor = 0xC;
+dll_513_setup = 0x18;
+dll_513_control = 0x74;
+dll_513_update = 0x80;
+dll_513_print = 0x8C;
+dll_513_free = 0x18C;
+dll_513_get_model_flags = 0x19C;
+dll_513_get_data_size = 0x1AC;
+
+.rodata = 0x1F4:

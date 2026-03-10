@@ -43,7 +43,7 @@ def remove_big_comments(text: str):
         i = end + 2
         comment = text[start + 1:end + 2]
         if "\n" in comment or text[end + 2] == "\n":
-            text = text[0:start] + text[end + 2:]
+            text = text[0:start + 1] + text[end + 2:]
             i = start
     return text
 
@@ -84,7 +84,7 @@ def import_c_file(in_file) -> str:
             sym = line.split()[1]
             if sym in defines:
                 del defines[sym]
-        else:
+        elif line != "\n":
             source_lines.append(line)
 
     for line in stock_macros.strip().splitlines():

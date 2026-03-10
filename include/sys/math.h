@@ -13,6 +13,11 @@
 #define M_90_DEGREES  0x4000    // 90 degrees in the game's angle system
 #define M_180_DEGREES 0x8000    //180 degrees in the game's angle system
 
+#define M_45_DEGREES_F 8192.0f   //45 degrees in the game's angle system
+#define M_90_DEGREES_F 16384.0f  //90 degrees in the game's angle system
+#define M_180_DEGREES_F 32768.0f //180 degrees in the game's angle system
+#define M_360_DEGREES_F 65535.0f //360 degrees in the game's angle system
+
 /**
  * Keeps the value within the range.
  */
@@ -45,18 +50,30 @@
 
 #define DOT_PRODUCT(vA, vB) ((vA.f[0] * vB.f[0]) + (vA.f[1] * vB.f[1]) + (vA.f[2] * vB.f[2]))
 
-#define VECTOR_ADD(vInA, vInB, vOut) vOut.f[0] = vInA.f[0] + vInB.f[0];\
-    vOut.f[1] = vInA.f[1] + vInB.f[1];\
-    vOut.f[2] = vInA.f[2] + vInB.f[2];
+#define VECTOR_ADD(vInA, vInB, vOut) (vOut).f[0] = (vInA).f[0] + (vInB).f[0];\
+    (vOut).f[1] = (vInA).f[1] + (vInB).f[1];\
+    (vOut).f[2] = (vInA).f[2] + (vInB).f[2];
 
-#define VECTOR_SUBTRACT(vInA, vInB, vOut) vOut.f[0] = vInA.f[0] - vInB.f[0];\
-    vOut.f[1] = vInA.f[1] - vInB.f[1];\
-    vOut.f[2] = vInA.f[2] - vInB.f[2];
+#define VECTOR_SUBTRACT(vInA, vInB, vOut) (vOut).f[0] = (vInA).f[0] - (vInB).f[0];\
+    (vOut).f[1] = (vInA).f[1] - (vInB).f[1];\
+    (vOut).f[2] = (vInA).f[2] - (vInB).f[2];
 
-#define VECTOR_MAGNITUDE_SQUARED(v) (SQ(v.f[0]) + SQ(v.f[1]) + SQ(v.f[2]))
+#define VECTOR_MULTIPLY(vInA, vInB, vOut) (vOut).f[0] = (vInA).f[0] * (vInB).f[0];\
+    (vOut).f[1] = (vInA).f[1] * (vInB).f[1];\
+    (vOut).f[2] = (vInA).f[2] * (vInB).f[2];
+
+#define VECTOR_SCALE(vIn, factor) (vIn).f[0] *= (factor);\
+    (vIn).f[1] *= (factor);\
+    (vIn).f[2] *= (factor);
+
+#define VECTOR_MAGNITUDE_SQUARED(v) (SQ((v).f[0]) + SQ((v).f[1]) + SQ((v).f[2]))
 
 #define VECTOR_MAGNITUDE(v) sqrtf(VECTOR_MAGNITUDE_SQUARED(v))
 
+#define VECTOR_MULTIPLY_BY_SCALAR(v, scalar) v.x *= scalar;\
+    v.y *= scalar;\
+    v.z *= scalar;
+    
 #define VECTOR_DIVIDE_BY_SCALAR(v, scalar) if (scalar != 0.0f) {\
     v.x /= scalar;\
     v.y /= scalar;\
@@ -79,38 +96,38 @@ typedef struct {
 
 typedef f32 quartic[5];
 
-typedef struct Vec2f {
-    union {
-        struct {
-            f32 x;
-            f32 y;
-        };
-        f32 f[2];
+typedef union Vec2f {
+    struct {
+        f32 x;
+        f32 y;
     };
+    f32 f[2];
 } Vec2f;
 
-typedef struct Vec3f {
-    union {
-        struct {
-            f32 x;
-            f32 y;
-            f32 z;
-        };
-        f32 f[3];
+#define VEC2F(x, y) {{ x, y }}
+
+typedef union Vec3f {
+    struct {
+        f32 x;
+        f32 y;
+        f32 z;
     };
+    f32 f[3];
 } Vec3f;
 
-typedef struct Vec4f {
-    union {
-        struct {
-            f32 x;
-            f32 y;
-            f32 z;
-            f32 w;
-        };
-        f32 f[4];
+#define VEC3F(x, y, z) {{ x, y, z }}
+
+typedef union Vec4f {
+    struct {
+        f32 x;
+        f32 y;
+        f32 z;
+        f32 w;
     };
+    f32 f[4];
 } Vec4f;
+
+#define VEC4F(x, y, z, w) {{ x, y, z, w }}
 
 typedef union {
     struct { s32 x, y, z; };

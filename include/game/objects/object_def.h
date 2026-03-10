@@ -60,17 +60,17 @@ typedef struct AttachPoint { //copied from SFA; may be incorrect
 } AttachPoint;
 
 typedef struct {
-/*00*/ s16 unk00;
-/*02*/ s16 unk02;
-/*04*/ s16 unk04;
+/*00*/ s16 unk00; //arrowCoordX
+/*02*/ s16 unk02; //arrowCoordY
+/*04*/ s16 unk04; //arrowCoordZ
 /*06*/ s16 unk06;
 /*08*/ s16 unk08;
 /*0a*/ s16 unk0a;
-/*0c*/ u8 unk0c;
-/*0d*/ u8 unk0d;
-/*0e*/ u8 unk0e;
-/*0f*/ u8 unk0f;
-/*10*/ u8 unk10;
+/*0c*/ u8 interactRadius;   //Interact radius (LockIcon over Object, can interact with A) (stored divided by 4)
+/*0d*/ u8 lockExitRadius;   //Lock-on exit radius (lock-on auto-released)
+/*0e*/ u8 hlRadius;         //Highlight radius (LockIcon over Object, but greyed out) (stored divided by 4)
+/*0f*/ u8 hlAngularRange;   //Highlight angular range (LockIcon only appears over Object while player within angular slice)
+/*10*/ u8 flags;            //LockIcon colour, and bit 6 also related to VoxMaps (TO-DO: figure out purpose)
 /*11*/ s8 unk11[4];
 /*15*/ UNK_TYPE_8 unk15;
 /*16*/ UNK_TYPE_8 unk16;
@@ -97,17 +97,60 @@ typedef struct {
 
 // size: 0x14
 typedef struct {
-/*0000*/    s16 unk0;
-/*0002*/    u8 unk2[0x4 - 0x2];
-/*0004*/    s16 unk4;
-/*0006*/    u8 unk6[0xC - 0x6];
-/*000C*/    u8 unkC;
-/*000D*/    u8 unkD;
-/*000E*/    u8 unkE;
-/*000F*/    u8 unkF;
-/*0010*/    s16 unk10;
-/*0012*/    u8 unk12[0x14 - 0x12];
+    union {
+        struct {
+/*00*/    s16 Ax;
+/*02*/    s16 Bx;
+/*04*/    s16 Ay;
+/*06*/    s16 By;
+/*08*/    s16 Az;
+/*0a*/    s16 Bz;
+        };
+
+        s16 somePos[6];
+    };
+/*0c*/    s8 heightA; //height can be treated as a single value "(heightA << 8) + heightB", depending on top settings bit
+/*0d*/    s8 heightB;
+/*0e*/    s8 settingsA;
+/*0f*/    s8 settingsB;
+/*10*/    s16 animatorID;
+/*12*/    s16 pad;
 } ModLine;
+
+/** ModLine seem to end up reencoded into this format
+  * The point data seems to be missing and index values are introduced,
+  * so maybe they're combining coincident points across different lines,
+  * and referencing those verts by index?
+*/
+// size: 0x10
+typedef struct{
+/*00*/    s8 heightA;
+/*01*/    s8 heightB;
+/*02*/    s8 settingsA;
+/*03*/    s8 settingsB;
+union {
+    struct {
+    /*04*/    s16 indexA; 
+    /*06*/    s16 indexB; 
+    /*08*/    s16 indexC; 
+    /*0a*/    s16 indexD;
+    };
+    s16 indexes[4];
+};
+/*0c*/    s16 animatorID;
+/*0e*/    s16 unkE;
+} ModLineReencoded;
+
+typedef struct {
+    s16 unk0;             //always 0 in ROM
+    s16 type;             //see Collectable_Types
+    s16 unk4;             //always 0 in ROM
+    s16 seqObjectID;      //objectID to display during item collection sequence (usually an Anim object like OBJ_AnimSpellstone)
+    s8 interactionRadius; //radius for picking up
+    s8 collectMessage;    //byte1 of message sent to player DLL when collected
+    s8 unkA;              //always 0 in ROM
+    s8 amountRestored;    //magic restored (Food collectables also have a value here, but it's unused)
+} CollectableDef;
 
 /**
  * Object definition.
@@ -124,16 +167,16 @@ typedef struct {
 /*0c*/ UNK_PTR *pTextures;      // list of texture IDs? (offset in file, pointer after load)
 /*10*/ u8 *pSequenceBones; // list of sequenceBoneID + jointIDs (one for each modelIndex) that ANIMCURVES use to apply additive head/jaw animation
 /*14*/ UNK_PTR *unk14;
-/*18*/ u32 *unk18;              // [optional] pickup obj related? (offset in file, pointer after load)
+/*18*/ CollectableDef *collectableDef;              // [optional] pickup obj related? (offset in file, pointer after load)
 /*1c*/ s16 *pSeq;               // [optional] sequenceIDs (offset in file, pointer after load)
 /*20*/ ObjDefEvent *pEvent;     // [optional] table of OBJEVENT offsets (offset in file, pointer after load)
 /*24*/ ObjDefHit *pHits;       // [optional] table of OBJHITS offsets (offset in file, pointer after load)
 /*28*/ ObjDefWeaponData *pWeaponData;   // [optional] table of WEAPONDATA offsets (offset in file, pointer after load)
 /*2c*/ AttachPoint *pAttachPoints;      // (offset in file, pointer after load)
 /*30*/ ModLine *pModLines; //ignored in file (zeroed on load) // TODO: confirm
-/*34*/ UNK_PTR *pIntersectPoints; //ignored in file (zeroed on load) (wObjList?) // TODO: confirm
-/*38*/ UNK_PTR *nextIntersectPoint; // TODO: confirm
-/*3c*/ UNK_PTR *nextIntersectLine; // TODO: confirm
+/*34*/ ModLineReencoded* pIntersectPoints; //ignored in file (zeroed on load) (wObjList?) // TODO: confirm
+/*38*/ u8 *nextIntersectPoint; // TODO: confirm
+/*3c*/ Vec3f *nextIntersectLine; // TODO: confirm
 /*40*/ ObjDefStruct40 *unk40; //z-targetting data
 /*44*/ u32 flags; //ObjDataFlags44 // TODO: confirm (0x10000: uses colour multiplier?)
 /*48*/ s16 shadowType; //ObjShadowType // TODO: confirm
@@ -174,7 +217,7 @@ typedef struct {
 /*84*/ s8 unk84;
 /*85*/ u8 unk85;
 /*86*/ u8 unk86;
-/*87*/ u8 unk87;
+/*87*/ u8 unk87; //lighting-related flags?
 /*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads? // TODO: confirm
 /*8c*/ u8 nLights; // TODO: confirm
 /*8d*/ u8 lightIdx; // TODO: confirm
@@ -191,8 +234,7 @@ typedef struct {
 /*9d*/ u8 unk9d; // camera-related angle?
 /*9e*/ u8 _unk9e[2];
 /*a0*/ s16 unka0;
-/*a2*/ s16 gametextIndex; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
-/*a4*/ u8 _unka4[0xAA - 0xA4];
+/*a2*/ s16 gametextIndex[4]; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
 /*aa*/ s16 unkAA;
 } ObjDef;
 

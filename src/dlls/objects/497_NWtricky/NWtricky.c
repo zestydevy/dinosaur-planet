@@ -18,7 +18,7 @@ typedef struct {
 
 typedef struct {
     ObjSetup base;
-    u8 unk18[0x23-0x18];
+    u8 unk18[0x23 - 0x18];
     u8 unk23;
 } GroundAnimator_Setup;
 

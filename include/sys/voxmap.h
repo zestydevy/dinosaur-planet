@@ -1,6 +1,7 @@
 #ifndef _SYS_VOXMAP_H
 #define _SYS_VOXMAP_H
 
+#include "game/objects/object.h"
 #include "sys/math.h"
 #include "unktypes.h"
 
@@ -95,5 +96,10 @@ VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16 *position);
 void func_80008DC0(Unk80008E40*); // init/alloc struct
 void func_80008E08(Unk80008E40*); // free struct
 s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1);
+
+void func_80008D90(Object* arg0);
+
+void voxmap_init(void);
+void voxmap_free(void);
 
 #endif

@@ -8,13 +8,13 @@ typedef struct {
     s16 x;
     s16 y;
     s16 z;
-    u8 pad6[0x10-0x6];
+    u8 pad6[0x10 - 0x6];
     Vec3f pos;
 } Unk800B1858;
 // size: 0x1C?
 typedef struct {
     s16 yaw;
-    u8 pad6[0xC-0x2];
+    u8 pad6[0xC - 0x2];
     Vec3f pos;
     u32 pad1C;
 } Unk800B1860;
@@ -53,7 +53,7 @@ Struct80090CE8 D_80090CE8[16] = {0};
 u8 D_80090D18 = 0;
 u8 D_80090D1C = 0;
 u8 D_80090D20 = 0;
-Vec3s32 D_80090D24 = {0, 0, 0};
+Vec3s32 D_80090D24 = {{0, 0, 0}};
 // func statics start here
 // -------- .data end -------- // 80090D50
 
@@ -488,7 +488,7 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
     s16 var_v0;
     s16 var_v1;
     u8 temp;
-    Vec3f sp2C = { 0.0f, 198.0f, 19.0f };
+    Vec3f sp2C = VEC3F(0.0f, 198.0f, 19.0f);
     f32 new_var;
 
     if (D_80090CA8 != 0) {
@@ -673,7 +673,7 @@ void func_8001F094(ModelInstance* arg0) {
                     temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(temp_fa1) + SQ(temp_ft4));
                 }
                 vec3_transform_no_translate(spBC, &spD8, &spD8);
-                temp_fv0 = sqrtf(SQ(spD8.f[0]) + SQ(spD8.f[1]) + SQ(spD8.f[2]));
+                temp_fv0 = VECTOR_MAGNITUDE(spD8);
                 if (temp_fv0 != 0.0f) {
                     var_fv1 = 1.0f / temp_fv0;
                 } else {
@@ -681,9 +681,7 @@ void func_8001F094(ModelInstance* arg0) {
                 }
                 // @fake
                 if (1) {}
-                spD8.f[0] *= var_fv1;
-                spD8.f[1] *= var_fv1;
-                spD8.f[2] *= var_fv1;
+                VECTOR_SCALE(spD8, var_fv1);
                 var_fv1 = 2.0f * ((spD8.f[0] * spD4) + (spD8.f[1] * spD0) + (spD8.f[2] * spCC));
                 temp_fa0 = ((spD8.f[0] * var_fv1) - spD4);
                 pad = ((spD8.f[1] * var_fv1) - spD0);
@@ -762,7 +760,7 @@ void func_8001F4C0(Block* arg0, s32 arg1, s32 arg2) {
 
                 // @fake
                 if (1) {}
-                temp_fv0 = sqrtf(SQ(sp88.f[0]) + SQ(sp88.f[1]) + SQ(sp88.f[2]));
+                temp_fv0 = VECTOR_MAGNITUDE(sp88);
                 if (temp_fv0 != 0.0f) {
                     var_fv1 = 1.0f / temp_fv0;
                 } else {
@@ -770,9 +768,7 @@ void func_8001F4C0(Block* arg0, s32 arg1, s32 arg2) {
                 }
                 // @fake
                 if (1) {}
-                sp88.f[0] *= var_fv1;
-                sp88.f[1] *= var_fv1;
-                sp88.f[2] *= var_fv1;
+                VECTOR_SCALE(sp88, var_fv1);
 
                 var_fv1 = 2.0f * ((sp88.f[0] * sp84) + (sp88.f[1] * sp80) + (sp88.f[2] * sp7C));
                 temp_fa0 = ((sp88.f[0] * var_fv1) - sp84);

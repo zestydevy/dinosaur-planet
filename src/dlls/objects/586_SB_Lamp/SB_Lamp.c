@@ -12,12 +12,12 @@ typedef struct {
 /*1C*/ f32 unk1C;
 /*20*/ s32 _unk20;
 /*24*/ f32 unk24;
-/*28*/ u8 unk28[0x2E-0x28];
+/*28*/ u8 unk28[0x2E - 0x28];
 /*2E*/ s16 unk2E;
 /*30*/ s16 unk30;
 /*32*/ u8 _unk32;
 /*33*/ u8 unk33;
-/*34*/ u8 _pad[0x40-0x34];
+/*34*/ u8 _pad[0x40 - 0x34];
 } SB_Lamp_Data;
 
 /*0x0*/ static void *sDLL107 = NULL;
@@ -132,15 +132,15 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     x = self->positionMirror.x - gWorldX;
     z = self->positionMirror.z - gWorldZ;
     y = self->positionMirror.y;
-    func_80002D14(x, y, z, &ox1, &oy1, &oz1);
-    func_80002E94(ox1, oy1, oz1, &ox, &oy, NULL);
-    sp30 = vi_func_8005DD4C(ox, oy, (s32)self);
+    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
+    camera_clip_to_screen(ox1, oy1, oz1, &ox, &oy, NULL);
+    sp30 = vi_obj_depth(ox, oy, self);
     get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
     x += (pdx * 20.0f);
     y += (pdy * 20.0f);
     z += (pdz * 20.0f);
-    func_80002D14(x, y, z, &ox1, &oy1, &oz1);
-    func_80002E94(ox1, oy1, oz1, NULL, NULL, &oz);
+    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
+    camera_clip_to_screen(ox1, oy1, oz1, NULL, NULL, &oz);
     if ((vi_contains_point(ox, oy)) && (oz > 0) && (oz < sp30)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }

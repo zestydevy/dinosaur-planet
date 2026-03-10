@@ -55,7 +55,7 @@ void WMPlanets_setup(Object* self, WMPlanets_Setup* objsetup, s32 arg2) {
 void WMPlanets_control(Object* self) {
     WMPlanets_Data* objdata = self->data;
     SRT srt;
-    Vec3f v = {0,0,0};
+    Vec3f v = VEC3F(0,0,0);
 
     v.z = objdata->orbitRadius;
 
@@ -81,9 +81,7 @@ void WMPlanets_control(Object* self) {
     rotate_vec3(&srt, v.f);
 
     //Set planet's coords in world
-    self->srt.transl.x = objdata->orbitOrigin.x + v.x;
-    self->srt.transl.y = objdata->orbitOrigin.y + v.y;
-    self->srt.transl.z = objdata->orbitOrigin.z + v.z;
+    VECTOR_ADD(v, objdata->orbitOrigin, self->srt.transl);
 
     //Advance planet's axial rotation
     self->srt.yaw += objdata->spinSpeed * (s16)gUpdateRateF;

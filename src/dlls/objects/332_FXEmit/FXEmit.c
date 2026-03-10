@@ -165,9 +165,7 @@ void FXEmit_control(Object* self) {
         }
 
         if ((objdata->fxRate >= 0) || ((objdata->fxRate < 0) && (self->unkDC <= 0))) {
-            vectorToPlayer.f[0] = self->positionMirror.x - player->positionMirror.x;
-            vectorToPlayer.f[1] = self->positionMirror.y - player->positionMirror.y;
-            vectorToPlayer.f[2] = self->positionMirror.z - player->positionMirror.z;
+            VECTOR_SUBTRACT(self->positionMirror, player->positionMirror, vectorToPlayer);
             if (objdata->fxRate == 0) {
                 objdata->disabled = TRUE;
             }

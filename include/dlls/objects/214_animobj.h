@@ -27,7 +27,7 @@ typedef s32 (*AnimObj_DataF8Callback)(Object *actor, Object *override, s32 arg2)
 typedef struct AnimObj_Data {
 /*000*/ Object* actor;
 /*004*/ s32 unk4;
-/*008*/ s8 unk8[0x1A - 8];
+/*008*/ s8 unk8[0x1A - 0x8];
 /*01A*/ s16 unk1A; //angle
 /*004*/ s8 unk1C[0x20 - 0x1C];
 /*020*/ f32 unk20;

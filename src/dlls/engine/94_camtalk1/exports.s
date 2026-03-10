@@ -4,11 +4,11 @@
 _exports:
 
 # ctor/dtor
-.dword dll_94_ctor
-.dword dll_94_dtor
+.dword camtalk1_ctor
+.dword camtalk1_dtor
 
 # export table
-.dword dll_94_func_18
-.dword dll_94_func_64
-.dword dll_94_func_70
-.dword dll_94_func_7C
+.dword camtalk1_setup
+.dword camtalk1_control
+.dword camtalk1_free
+.dword camtalk1_func_7C

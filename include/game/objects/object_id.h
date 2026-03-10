@@ -788,7 +788,7 @@ enum ObjID {
     OBJ_RD_palmleaf = 922,
     OBJ_SC_totblocks = 923,
     OBJ_SC_totemstrengt = 924,
-    OBJ_Tumbleweed1 = 925,
+    OBJ_Tumbleweed1 = 925, //Tumbleweed (leafy), used in SwapStone Circle and the tree near the sand arches in Golden Plains (chases player)
     OBJ_KyteCurveCreate = 926,
     OBJ_VFP_MiniFire = 928,
     OBJ_DFSH_Door2Speci = 929,
@@ -877,7 +877,7 @@ enum ObjID {
     OBJ_CFBrickTest2 = 1016,
     OBJ_CF_DFBackGround = 1017,
     OBJ_CF_MMPBackGroun = 1018,
-    OBJ_Tumbleweed2 = 1019,
+    OBJ_Tumbleweed2 = 1019, //FrostWeed (leafy) (flees from player)
     OBJ_WGSH_projball = 1020,
     OBJ_TumbleWeedBush2 = 1021,
     OBJ_VampireBat = 1022,
@@ -891,8 +891,8 @@ enum ObjID {
     OBJ_DustDevil = 1031,
     OBJ_GPSH_Colrise = 1032,
     OBJ_GPSHswapstone = 1033,
-    OBJ_Tumbleweed1twig = 1034,
-    OBJ_Tumbleweed2twig = 1035,
+    OBJ_Tumbleweed1twig = 1034, //Tumbleweed (leafy), used in SwapStone Circle and the tree near the sand arches in Golden Plains
+    OBJ_Tumbleweed2twig = 1035, //FrostWeed (twigs)
     OBJ_NWMultiSeq = 1036,
     OBJ_SC_steppingston = 1037,
     OBJ_CFliftGate = 1039,
@@ -1049,8 +1049,8 @@ enum ObjID {
     OBJ_DRPlatformColla = 1207, // name may be incorrect
     OBJ_DRPlatformColla_ = 1208, // name may be incorrect
     OBJ_TumbleWeedBush3 = 1209,
-    OBJ_Tumbleweed3 = 1210,
-    OBJ_Tumbleweed3twig = 1211,
+    OBJ_Tumbleweed3 = 1210,     //Tumbleweed (leafy), used for the tree near the Chimney Swipe bonfire in Golden Plains (flees from player)
+    OBJ_Tumbleweed3twig = 1211, //Tumbleweed (twigs), used for the tree near the Chimney Swipe bonfire in Golden Plains
     OBJ_DR_CollapseCont = 1212,
     OBJ_DR_PartSeqobj = 1213,
     OBJ_GP_ShrinePillar = 1214,

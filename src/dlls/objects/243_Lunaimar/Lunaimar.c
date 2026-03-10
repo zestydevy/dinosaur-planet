@@ -213,7 +213,7 @@ void dll_243_free(Object *self, s32 a1) {
 
     baddie = self->data;
     obj_free_object_type(self, OBJTYPE_4);
-    gDLL_33_BaddieControl->vtbl->func15(self, baddie, 0x20);
+    gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20);
 }
 
 // offset: 0x6B4 | func: 6 | export: 5
@@ -246,16 +246,14 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     Object *temp_a0;
     s32 i;
     u16 sp62;
-    u16 sp60;
+    s16 sp60;
     u16 sp5E;
     s32 var_v1;
 
     player = get_player();
     if (fsa->target != NULL) {
-        sp6C.f[0] = fsa->target->positionMirror.x - self->positionMirror.x;
-        sp6C.f[1] = fsa->target->positionMirror.y - self->positionMirror.y;
-        sp6C.f[2] = fsa->target->positionMirror.z - self->positionMirror.z;
-        fsa->targetDist = sqrtf(SQ(sp6C.f[0]) + SQ(sp6C.f[1]) + SQ(sp6C.f[2]));
+        VECTOR_SUBTRACT(fsa->target->positionMirror, self->positionMirror, sp6C);
+        fsa->targetDist = VECTOR_MAGNITUDE(sp6C);
     }
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 4);
     gDLL_33_BaddieControl->vtbl->func4(self, player, 4, &sp62, &sp60, &sp5E);
@@ -303,18 +301,16 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     Object *sidekick;
     Vec3f sp44;
     f32 sp40;
-    s32 *sp3C;
+    TextureAnimator *animator;
 
     objdata = (Lunaimar_ActualData*)baddie->objdata;
     sidekick = get_sidekick();
-    sp3C = func_800348A0(self, 0, 0);
+    animator = func_800348A0(self, 0, 0);
     objdata->unk12 += 0x1000;
-    *sp3C = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
-    sp44.f[0] = sidekick->positionMirror.x - self->positionMirror.x;
-    sp44.f[1] = sidekick->positionMirror.y - self->positionMirror.y;
-    sp44.f[2] = sidekick->positionMirror.z - self->positionMirror.z;
-    sp40 = sqrtf(SQ(sp44.f[0]) + SQ(sp44.f[1]) + SQ(sp44.f[2]));
-    if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < (f32) baddie->unk3E2)) {
+    animator->frame = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
+    VECTOR_SUBTRACT(sidekick->positionMirror, self->positionMirror, sp44);
+    sp40 = VECTOR_MAGNITUDE(sp44);
+    if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < baddie->unk3E2)) {
         baddie->unk3B2 |= 4;
     } else {
         baddie->unk3B2 &= ~0x4;
@@ -326,7 +322,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     }
     dll_243_func_11C0(self, baddie, fsa);
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
-    gDLL_18_objfsa->vtbl->func11(self, fsa, gUpdateRateF, 5);
+    gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 5);
     baddie->unk3AC = self->unkC0;
     self->unkC0 = NULL;
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);

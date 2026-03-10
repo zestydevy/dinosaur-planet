@@ -5,12 +5,16 @@
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
 #include "game/gamebits.h"
+#include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/rcp.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
-#include "prevent_bss_reordering.h"
+#include "sys/main.h"
+#include "dlls/objects/210_player.h"
+#include "sys/fonts.h"
+#include "sys/rcp.h"
 
 typedef struct {
 /*0*/ Texture* unk0;
@@ -346,19 +350,19 @@ s32 unk24;
     (InventoryItem*)&_data_128, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
 
 //Sabre
-/*0x900*/ static UIUnknownCharacterStruct _data_900[] = {
-    (InventoryItem*)&_data_2E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
+/*0x900*/ static UIUnknownCharacterStruct _data_900[] = {{
+    (InventoryItem*)&_data_2E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
 
-/*0x910*/ static UIUnknownCharacterStruct _data_910[] = {
-    (InventoryItem*)&_data_4A0, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x920*/ static UIUnknownCharacterStruct _data_920[] = {
-    (InventoryItem*)&_data_4E8, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x930*/ static UIUnknownCharacterStruct _data_930[] = {
-    (InventoryItem*)&_data_530, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x940*/ static UIUnknownCharacterStruct _data_940[] = {
-    (InventoryItem*)&_data_5E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-/*0x950*/ static UIUnknownCharacterStruct _data_950[] = {
-    (InventoryItem*)&_data_698, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0002 };
+/*0x910*/ static UIUnknownCharacterStruct _data_910[] = {{
+    (InventoryItem*)&_data_4A0, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x920*/ static UIUnknownCharacterStruct _data_920[] = {{
+    (InventoryItem*)&_data_4E8, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x930*/ static UIUnknownCharacterStruct _data_930[] = {{
+    (InventoryItem*)&_data_530, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x940*/ static UIUnknownCharacterStruct _data_940[] = {{
+    (InventoryItem*)&_data_5E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+/*0x950*/ static UIUnknownCharacterStruct _data_950[] = {{
+    (InventoryItem*)&_data_698, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0002 }};
 
 /*0x960*/ static u32 _data_960 = (u32)&_data_710;
 /*0x964*/ static u32 _data_964[] = {
@@ -500,12 +504,12 @@ void dll_1_ctor(s32 arg0) {
         _bss_6B8[i].unkC = 0;
     }
 
-    _bss_C34 = tex_load_deferred(0x500);
+    _bss_C34 = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
     _bss_C34->animSpeed = 0x28;
     _bss_5B8 = 0x80000;
     _bss_5C0[0] = 0;
-    _bss_6B0[0] = tex_load_deferred(0x3A7);
-    _bss_5A0 = tex_load_deferred(0x274);
+    _bss_6B0[0] = tex_load_deferred(TEXTABLE_3A7_InventoryStackNumbers);
+    _bss_5A0 = tex_load_deferred(TEXTABLE_274_AButton_Anim);
     _bss_5A0->animSpeed = 0x28;
     
     dll_1_func_69CC(&_bss_C88);
@@ -611,7 +615,7 @@ s32 dll_1_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
     for (var_s1 = sp84; var_s1 < sp88; var_s1++) {
         temp_s0 = temp_v0[var_s1];
         if ((temp_s0->def->unk40 != NULL) && (temp_s0->opacity == 0xFF) && !(temp_s0->unkAF & 8) && 
-                (temp_s0->def->unk40->unk10 & arg2) && (var_s4 < arg1) && (arg3 & 1)) {
+                (temp_s0->def->unk40->flags & arg2) && (var_s4 < arg1) && (arg3 & 1)) {
             get_object_child_position(temp_s0, &sp9C, &sp98, &sp94);
             temp_fa0 = sp9C - temp_s2->srt.transl.x;
             temp_fv0 = sp98 - temp_s2->srt.transl.y;
@@ -770,7 +774,7 @@ void dll_1_func_474C(Gfx** gfx) {
     s32 resolution;
 
     resolution = vi_get_current_size();
-    gDPSetScissor((*gfx)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution))
+    gDPSetScissor((*gfx)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution));
 }
 
 // offset: 0x47E8 | func: 33

@@ -39,15 +39,15 @@ typedef struct {
 static void SPShop_set_random_prices(void);
 
 #define NONE 0xffff
-#define EMPTY_ITEM {0, {0, 0, 0}, 0, 0, NONE, NONE, NONE, NONE, NONE}
+#define EMPTY_ITEM {{0, {0, 0, 0}, 0, 0}, {NONE, NONE}, {NONE, NONE}, NONE}
 
 /*0x0*/ static ShopItem shopItemData[TOTAL_ITEMS] = {
-    {3,  {3,  4,  5},  1, 0, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Fruit},
-    {5,  {5,  7,  10}, 3, 0, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Energy_Egg},
-    {10, {13, 15, 18}, 0, 0, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_0, NONE},       SPText_Red_Mushroom},
-    {10, {13, 15, 18}, 0, 0, {BIT_ALWAYS_0, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Red_Maggot},
-    {8,  {8,  10, 12}, 6, 0, {BIT_SP_Green_Magic, NONE}, {BIT_SP_Green_Magic, NONE}, SPText_Green_Magic},
-    {15, {18, 20, 25}, 0, 0, {BIT_SP_Blue_Magic, NONE},  {BIT_SP_Blue_Magic, NONE},  SPText_Blue_Magic},
+    {{3,  {3,  4,  5},  1, 0}, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Fruit},
+    {{5,  {5,  7,  10}, 3, 0}, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Energy_Egg},
+    {{10, {13, 15, 18}, 0, 0}, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_0, NONE},       SPText_Red_Mushroom},
+    {{10, {13, 15, 18}, 0, 0}, {BIT_ALWAYS_0, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Red_Maggot},
+    {{8,  {8,  10, 12}, 6, 0}, {BIT_SP_Green_Magic, NONE}, {BIT_SP_Green_Magic, NONE}, SPText_Green_Magic},
+    {{15, {18, 20, 25}, 0, 0}, {BIT_SP_Blue_Magic, NONE},  {BIT_SP_Blue_Magic, NONE},  SPText_Blue_Magic},
 
     EMPTY_ITEM,
     EMPTY_ITEM,
@@ -64,16 +64,16 @@ static void SPShop_set_random_prices(void);
     EMPTY_ITEM,
     EMPTY_ITEM,
 
-    {25,  {28,  30,  35},  0,  0, {BIT_ALWAYS_1, NONE},                         {BIT_ALWAYS_1, NONE},                          SPText_Fishing_Net},
-    {35,  {38,  40,  45},  30, 0, {BIT_ALWAYS_1, BIT_Bought_Firefly_Lantern},   {BIT_ALWAYS_1, BIT_Bought_Firefly_Lantern},    SPText_Firefly_Lantern},
-    {100, {100, 100, 100}, 0,  0, {BIT_SP_Krazoa_Translator, NONE},             {BIT_SP_Krazoa_Translator, NONE},              SPText_Translator},
-    {18,  {18,  20,  23},  15, 0, {BIT_ALWAYS_1, BIT_Sabre_Dino_Bag_S},         {BIT_ALWAYS_1, BIT_Krystal_Dino_Bag_S},        SPText_Sidekick_Foodbag_S},
-    {35,  {38,  40,  45},  0,  0, {BIT_SP_Dino_Bag_M, BIT_Sabre_Dino_Bag_M},    {BIT_SP_Dino_Bag_M, BIT_Krystal_Dino_Bag_M},   SPText_Sidekick_Foodbag_M},
-    {22,  {25,  28,  30},  20, 0, {BIT_SP_Magic_Chest_Medium, NONE},            {BIT_SP_Magic_Chest_Medium, NONE},             SPText_Magic_Chest_M},
-    {50,  {50,  55,  60},  0,  0, {BIT_SP_Magic_Chest_Large, NONE},             {BIT_SP_Magic_Chest_Large, NONE},              SPText_Magic_Chest_L},
-    {18,  {20,  23,  25},  0,  0, {BIT_SP_Foodbag_S, BIT_Sabre_Foodbag_S},      {BIT_SP_Foodbag_S, BIT_Krystal_Foodbag_S},     SPText_Player_Foodbag_Small},
-    {35,  {38,  40,  45},  0,  0, {BIT_SP_Foodbag_M, BIT_Sabre_Foodbag_M},      {BIT_SP_Foodbag_M, BIT_Krystal_Foodbag_M},     SPText_Player_Foodbag_Medium},
-    {57,  {60,  65,  70},  55, 0, {BIT_SP_Foodbag_L, BIT_Sabre_Foodbag_L},      {BIT_SP_Foodbag_L, BIT_Krystal_Foodbag_L},     SPText_Player_Foodbag_Large},
+    {{25,  {28,  30,  35},  0,  0}, {BIT_ALWAYS_1, NONE},                         {BIT_ALWAYS_1, NONE},                          SPText_Fishing_Net},
+    {{35,  {38,  40,  45},  30, 0}, {BIT_ALWAYS_1, BIT_Bought_Firefly_Lantern},   {BIT_ALWAYS_1, BIT_Bought_Firefly_Lantern},    SPText_Firefly_Lantern},
+    {{100, {100, 100, 100}, 0,  0}, {BIT_SP_Krazoa_Translator, NONE},             {BIT_SP_Krazoa_Translator, NONE},              SPText_Translator},
+    {{18,  {18,  20,  23},  15, 0}, {BIT_ALWAYS_1, BIT_Sabre_Dino_Bag_S},         {BIT_ALWAYS_1, BIT_Krystal_Dino_Bag_S},        SPText_Sidekick_Foodbag_S},
+    {{35,  {38,  40,  45},  0,  0}, {BIT_SP_Dino_Bag_M, BIT_Sabre_Dino_Bag_M},    {BIT_SP_Dino_Bag_M, BIT_Krystal_Dino_Bag_M},   SPText_Sidekick_Foodbag_M},
+    {{22,  {25,  28,  30},  20, 0}, {BIT_SP_Magic_Chest_Medium, NONE},            {BIT_SP_Magic_Chest_Medium, NONE},             SPText_Magic_Chest_M},
+    {{50,  {50,  55,  60},  0,  0}, {BIT_SP_Magic_Chest_Large, NONE},             {BIT_SP_Magic_Chest_Large, NONE},              SPText_Magic_Chest_L},
+    {{18,  {20,  23,  25},  0,  0}, {BIT_SP_Foodbag_S, BIT_Sabre_Foodbag_S},      {BIT_SP_Foodbag_S, BIT_Krystal_Foodbag_S},     SPText_Player_Foodbag_Small},
+    {{35,  {38,  40,  45},  0,  0}, {BIT_SP_Foodbag_M, BIT_Sabre_Foodbag_M},      {BIT_SP_Foodbag_M, BIT_Krystal_Foodbag_M},     SPText_Player_Foodbag_Medium},
+    {{57,  {60,  65,  70},  55, 0}, {BIT_SP_Foodbag_L, BIT_Sabre_Foodbag_L},      {BIT_SP_Foodbag_L, BIT_Krystal_Foodbag_L},     SPText_Player_Foodbag_Large},
 
     EMPTY_ITEM,
     EMPTY_ITEM,
@@ -86,13 +86,13 @@ static void SPShop_set_random_prices(void);
     EMPTY_ITEM,
     EMPTY_ITEM,
 
-    {8,  {10, 12, 15}, 5,  0, {BIT_ALWAYS_1, BIT_Map_Dark_Ice_Mines},   {BIT_ALWAYS_0, BIT_Map_Dark_Ice_Mines},     SPText_Dark_Ice_Mines_Map},
-    {30, {35, 38, 40}, 0,  0, {BIT_SP_Map_DR, NONE},                    {BIT_ALWAYS_0, NONE},                       SPText_Dragon_Rock_Map},
-    {30, {35, 38, 40}, 0,  0, {BIT_ALWAYS_0, NONE},                     {BIT_ALWAYS_1, NONE},                       SPText_SwapStone_Circle_Map},
-    {20, {20, 22, 25}, 0,  0, {BIT_ALWAYS_0, NONE},                     {BIT_SP_Map_MMP, NONE},                     SPText_Moon_Mountain_Map},
-    {45, {50, 55, 60}, 40, 0, {BIT_ALWAYS_0, NONE},                     {BIT_SP_Replay_Disk_WM, NONE},              SPText_Warlock_Replay_Disk},
-    {35, {38, 40, 43}, 0,  0, {BIT_SP_Replay_Disk_IM, NONE},            {BIT_ALWAYS_0, NONE},                       SPText_Ice_Mountain_Replay_Disk},
-    {35, {38, 40, 43}, 0,  0, {BIT_ALWAYS_1, NONE},                     {BIT_ALWAYS_0, NONE},                       SPText_Ice_Mountain_Map},
+    {{8,  {10, 12, 15}, 5,  0}, {BIT_ALWAYS_1, BIT_Map_DIM_Exterior},     {BIT_ALWAYS_0, BIT_Map_DIM_Exterior},       SPText_Dark_Ice_Mines_Map},
+    {{30, {35, 38, 40}, 0,  0}, {BIT_SP_Map_DR, NONE},                    {BIT_ALWAYS_0, NONE},                       SPText_Dragon_Rock_Map},
+    {{30, {35, 38, 40}, 0,  0}, {BIT_ALWAYS_0, NONE},                     {BIT_ALWAYS_1, NONE},                       SPText_SwapStone_Circle_Map},
+    {{20, {20, 22, 25}, 0,  0}, {BIT_ALWAYS_0, NONE},                     {BIT_SP_Map_MMP, NONE},                     SPText_Moon_Mountain_Map},
+    {{45, {50, 55, 60}, 40, 0}, {BIT_ALWAYS_0, NONE},                     {BIT_SP_Replay_Disk_WM, NONE},              SPText_Warlock_Replay_Disk},
+    {{35, {38, 40, 43}, 0,  0}, {BIT_SP_Replay_Disk_IM, NONE},            {BIT_ALWAYS_0, NONE},                       SPText_Ice_Mountain_Replay_Disk},
+    {{35, {38, 40, 43}, 0,  0}, {BIT_ALWAYS_1, NONE},                     {BIT_ALWAYS_0, NONE},                       SPText_Ice_Mountain_Map},
 
     EMPTY_ITEM,
     EMPTY_ITEM,

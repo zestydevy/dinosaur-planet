@@ -711,7 +711,7 @@ s16 dll_13_func_5068(s32 textureID) {
                     if (_bss_370[i].unk0 != NULL) {
                         _bss_370[i].unk4 = 1000;
                         _bss_370[i].unk8 = textureID;
-                        _bss_370[i].unkC = (s32) (_bss_370[i].unk0->animDuration * _bss_370[i].unk0->unk18) >> 3;
+                        _bss_370[i].unkC = (s32) (_bss_370[i].unk0->animDuration * _bss_370[i].unk0->sizeBytes) >> 3;
                         return (s16) i;
                     }
                     return -2;
@@ -734,7 +734,7 @@ s16 dll_13_func_5068(s32 textureID) {
                     if (_bss_370[var_a3].unk0 != NULL) {
                         _bss_370[var_a3].unk4 = 1000;
                         _bss_370[var_a3].unk8 = textureID;
-                        _bss_370[var_a3].unkC = (s32) (_bss_370[var_a3].unk0->animDuration * _bss_370[var_a3].unk0->unk18) >> 3;
+                        _bss_370[var_a3].unkC = (s32) (_bss_370[var_a3].unk0->animDuration * _bss_370[var_a3].unk0->sizeBytes) >> 3;
                         return (s16) var_a3;
                     }
                     return -3;

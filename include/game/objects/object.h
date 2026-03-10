@@ -100,6 +100,7 @@ typedef struct ObjSetup {
 /*08*/  f32 x;
 /*0c*/  f32 y;
 /*10*/  f32 z;
+        // Unique ID within map (not globally unique across all maps).
 /*14*/  s32 uID;
 } ObjSetup;
 
@@ -207,17 +208,18 @@ typedef struct {
 } ObjectPolyhits;
 
 typedef struct {
-    Vec3f unk0;
-    Vec3f unkC;
-} ObjectStruct74;
+    Vec3f drawPoint; //Coord to draw the LockIcon at (worldSpace)
+    Vec3f refPoint;  //Coord to use for player-to-Object distance check (worldSpace)
+} ObjectStruct74; //maybe "LockIconCoords"?
 
+//Parameters for the Object's LockIcon
 typedef struct {
-/*0000*/    u8 unk0;
-/*0001*/    u8 unk1;
-/*0002*/    u8 unk2;
-/*0003*/    u8 unk3;
-/*0004*/    u8 colourIndex; //InteractionArrowColour for arrow
-} ObjectStruct78;
+/*0000*/    u8 interactRadius;  //Interact radius (LockIcon over Object, can interact with A) (stored divided by 4)
+/*0001*/    u8 lockExitRadius;  //Lock-on exit radius (lock-on auto-released)
+/*0002*/    u8 hlRadius;        //Highlight radius (LockIcon over Object, but greyed out) (stored divided by 4)
+/*0003*/    u8 hlAngularRange;  //Highlight angular range (LockIcon only appears over Object while player within angular slice)
+/*0004*/    u8 flags;           //LockIcon colour, and bit 6 also related to VoxMaps (TO-DO: figure out purpose)
+} ObjectStruct78; //maybe "LockIconData"?
 
 typedef struct {
 /*0000*/    u32 id;

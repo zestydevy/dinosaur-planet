@@ -131,7 +131,7 @@ s32 dll_54_func_838(Object* arg0, s32 arg1, DLL54Unk_Func798* arg2) {
     s32 returnVal;
 
     returnVal = 0;
-    if (((arg0->unk78[arg0->unkD4].colourIndex & 0xF) == 6) && (arg0->unkAF & 1) && (arg0->unkE0 == 0)) {
+    if (((arg0->unk78[arg0->unkD4].flags & 0xF) == 6) && (arg0->unkAF & 1) && (arg0->unkE0 == 0)) {
         arg2->unk0 = 0;
         joy_set_button_mask(0, A_BUTTON);
         returnVal = 1;

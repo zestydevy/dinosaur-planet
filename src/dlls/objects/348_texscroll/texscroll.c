@@ -65,7 +65,7 @@ void TexScroll_control(Object* self) {
     TexScroll_Data* objData;
     BlockShape* shapes;
     Texture* texture;
-    Vtx_t* verts;
+    BlockVertex* verts;
     Vtx_t* vertsAnimated;
     Vtx_t* vertexAnimated;
     s32 shapeIndex;

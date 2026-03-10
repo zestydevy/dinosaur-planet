@@ -42,7 +42,7 @@ void fbfx_tick(Gfx **gdl, s32 updateRate) {
         if (gFbfxEffectID == FBFX_MOTION_BLUR && gFbfxTimer == 0) {
             gFbfxTimer = gFbfxEffectDuration;
         }
-        fbfx_do_effect(gdl, gFbfxEffectDuration, gFbfxEffectID, func_80004A4C());
+        fbfx_do_effect(gdl, gFbfxEffectDuration, gFbfxEffectID, camera_get_letterbox());
         if (gFbfxEffectID == FBFX_MOTION_BLUR) {
             gFbfxTimer -= updateRate;
             if (gFbfxTimer <= 0) {
@@ -344,6 +344,7 @@ void fbfx_func_8003F4C0(s32 arg0) {
 }
 
 #ifndef NON_MATCHING
+void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003F660.s")
 #else
 // https://decomp.me/scratch/wArrS

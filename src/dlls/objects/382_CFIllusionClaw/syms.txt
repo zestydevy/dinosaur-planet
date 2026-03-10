@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_382_ctor = 0x0;
+dll_382_dtor = 0xC;
+dll_382_setup = 0x18;
+dll_382_control = 0x2C;
+dll_382_update = 0xF4;
+dll_382_print = 0x100;
+dll_382_free = 0x118;
+dll_382_get_model_flags = 0x128;
+dll_382_get_data_size = 0x138;
+
+.rodata = 0x180:

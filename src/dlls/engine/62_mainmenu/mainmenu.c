@@ -8,6 +8,7 @@
 #include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/menu.h"
@@ -106,7 +107,7 @@ void mainmenu_ctor(void *dll) {
 
     total_strings = 8;
     
-    logoDinosaurPlanet = tex_load_deferred(0xC5);
+    logoDinosaurPlanet = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
     rcp_set_border_color(0, 0, 0);
 
     //Set language and get text

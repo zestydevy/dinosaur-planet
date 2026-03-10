@@ -150,6 +150,7 @@ class BuildNinjaWriter:
         cc_ignore_warnings = [
             "838", # Microsoft extension
             "649", # Missing member name in structure / union
+            "763", # Float value outside range
         ]
 
         cc_flags = [
@@ -215,6 +216,27 @@ class BuildNinjaWriter:
             "-m $LD_EMULATION",
         ]))
 
+        self.writer.variable("CC_CHECK_FLAGS", " ".join([
+            "-fsyntax-only",
+            "-fno-builtin",
+            "-funsigned-char",
+            "-fdiagnostics-color=always",
+            "-std=gnu90",
+            "-m32",
+            "-Wall",
+            "-Wextra",
+            "-Wno-unknown-pragmas",
+            "-Wno-unused-parameter",
+            "-Wno-switch",
+            "-Wno-unused-variable",
+            "-Wno-unused-value",
+            "-Wno-unused-but-set-variable",
+            "-Wno-unused-label", # Some unused labels are required for matching.
+            "-Werror-implicit-function-declaration",
+            "$CC_DEFINES",
+            "$INCLUDES",
+        ]))
+
         self.writer.newline()
 
         # Write tools
@@ -228,31 +250,37 @@ class BuildNinjaWriter:
         self.writer.variable("IDO_53", f"tools/ido_static_recomp/5.3/cc{exe_suffix}")
         self.writer.variable("IDO_71", f"tools/ido_static_recomp/7.1/cc{exe_suffix}")
         self.writer.variable("CC", "$IDO_53")
+        self.writer.variable("CC_CHECK", "gcc")
         self.writer.variable("ASM_PROCESSOR", f"{sys.executable} tools/asm_processor/build.py")
         self.writer.variable("HEADER_DEPS", f"{sys.executable} tools/header_deps.py")
         self.writer.variable("ELF2DLL", f"{sys.executable} tools/elf2dll.py")
         self.writer.variable("ELF2DLL_WRAPPER", f"{sys.executable} tools/elf2dll_wrapper.py")
         self.writer.variable("DINODLL", f"{sys.executable} tools/dino_dll.py")
         self.writer.variable("DLLSYMS2LD", f"{sys.executable} tools/dllsyms2ld.py")
+        self.writer.variable("SYNTAX_CHECK", f"{sys.executable} tools/syntax_check.py")
         
         self.writer.newline()
 
         # Write rules
         self.writer.comment("Rules")
         self.writer.rule("cc", 
-            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
-        self.writer.rule("cc_noasmproc", 
+        self.writer.rule("cc_nosyntax", 
             "$HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
+        self.writer.rule("cc_noasmproc", 
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
+            "Compiling $in...",
+            depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in",  
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in",  
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll_noasmproc", 
-            "$HEADER_DEPS $CC -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
+            "$SYNTAX_CHECK $CC_CHECK $CC_CHECK_FLAGS -- $HEADER_DEPS $CC -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
@@ -299,7 +327,11 @@ class BuildNinjaWriter:
                 if with_asmproc:
                     command = "cc"
                 else:
-                    command = "cc_noasmproc"
+                    if file.src_path.startswith("src/libultra"):
+                        # Don't run GCC syntax check on completed libultra files
+                        command = "cc_nosyntax"
+                    else:
+                        command = "cc_noasmproc"
             elif file.type == BuildFileType.ASM:
                 command = "as"
             elif file.type == BuildFileType.BIN:

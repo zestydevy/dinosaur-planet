@@ -87,9 +87,10 @@ void func_80041E24(s32 arg0);
 void map_increment_layer(void);
 void map_decrement_layer(void);
 
-/** Applies envFxAction */
-s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
-s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
+/** Applies EnvFxAction */
+s32 func_80000860(Object *arg0, Object *arg1, u16 actionIndex, s32 arg3);
+/** Applies LightAction? */
+s32 func_80000450(Object* arg0, Object* arg1, u16 actionIndex, s8, s32, s32);
 
 void func_80036438(Object*);
 
@@ -103,10 +104,11 @@ MtxF *func_80032170(Object* obj, s32 arg1);
 
 s16 func_80000824(s32 arg0);
 
-void func_80058680(Object*, f32, f32, f32, f32*, s32);
+s32 func_80058680(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
 void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3);
 s32 func_80056BCC(Vec3f*, Vec3f*, Vec3f*, Vec4f*, Vec3f*, f32);
 
 s32 func_80058B1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
+extern void func_800321E4(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz);
 
 #endif //_FUNCTIONS_H

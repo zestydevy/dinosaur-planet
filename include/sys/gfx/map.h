@@ -19,7 +19,7 @@ typedef struct {
 typedef struct {
 /*0000*/    Texture *texture;
 /*0004*/    u32 unk4;
-/*0008*/    u32 flags;
+/*0008*/    u32 flags; // RenderFlags
 /*000C*/    s16 refCount;
 /*000E*/    u8 unkE;
 /*000F*/    u8 unkF;
@@ -37,7 +37,7 @@ typedef struct {
 } Block_0x28Struct;
 
 typedef struct {
-/*0000*/    u32 flags;
+/*0000*/    u32 flags; // RenderFlags
 /*0004*/    s16 vtxBase;
 /*0006*/    s16 triBase;
 /*0008*/    u8 unk8[0x12 - 0x8];    //bounds
@@ -64,9 +64,17 @@ typedef struct {
 /*0004*/    u32 d1;
 } EncodedTri;
 
+// Same as Vtx_t, but flag is signed
+typedef struct {
+	short ob[3];	/* x, y, z */
+	short flag;
+	short tc[2];	/* texture coord */
+	unsigned char cn[4];	/* color & alpha */
+} BlockVertex;
+
 typedef struct {
 /*0000*/    Block_0x0Struct *tiles;
-/*0004*/    Vtx_t *vertices;
+/*0004*/    BlockVertex *vertices;
 /*0008*/    EncodedTri *encodedTris;
 /*000C*/    BlockShape *shapes;
 /*0010*/    void *unk10;

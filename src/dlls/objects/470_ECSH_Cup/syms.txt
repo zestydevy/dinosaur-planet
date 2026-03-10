@@ -1,0 +1,16 @@
+.text = 0x0:
+ECSHCup_ctor = 0x0;
+ECSHCup_dtor = 0xC;
+ECSHCup_setup = 0x18;
+ECSHCup_control = 0x13C;
+ECSHCup_update = 0x8E8;
+ECSHCup_print = 0x8F4;
+ECSHCup_free = 0x948;
+ECSHCup_get_model_flags = 0x990;
+ECSHCup_get_data_size = 0x9A0;
+
+.rodata = 0xA18:
+
+.data = 0xA28:
+dShrine = 0x0; // absolute:0xA28
+_data_4 = 0x4; // absolute:0xA2C

@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_776_ctor = 0x0;
+dll_776_dtor = 0xC;
+dll_776_setup = 0x18;
+dll_776_control = 0x38;
+dll_776_update = 0x190;
+dll_776_print = 0x19C;
+dll_776_free = 0x1F0;
+dll_776_get_model_flags = 0x200;
+dll_776_get_data_size = 0x210;
+dll_776_func_224 = 0x224;
+
+.rodata = 0x324:

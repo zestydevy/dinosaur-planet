@@ -570,8 +570,8 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
     s32 pad;
     ModelInstance* temp_s3;
     f32 spB4;
-    Vec3f spA8 = { -1.0f, 0.0f, 0.0f }; // _data_184C
-    Vec3f sp9C = { 0.0f, 0.0f, 1.0f }; // _data_1858
+    Vec3f spA8 = VEC3F(-1.0f, 0.0f, 0.0f); // _data_184C
+    Vec3f sp9C = VEC3F(0.0f, 0.0f, 1.0f); // _data_1858
     Camera* camera;
     Vtx* temp_a3;
     s32 sp90;
@@ -593,10 +593,8 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
     spD8.scale = 1.0f;
     camera = get_camera();
     if (camera != NULL) {
-        spA8.x = camera->srt.transl.x - a2->srt.transl.x;
-        spA8.y = camera->srt.transl.y - a2->srt.transl.y;
-        spA8.z = camera->srt.transl.z - a2->srt.transl.z;
-        var_fs0 = SQ(spA8.f[0]) + SQ(spA8.f[1]) + SQ(spA8.f[2]);
+        VECTOR_SUBTRACT(camera->srt.transl, a2->srt.transl, spA8);
+        var_fs0 = VECTOR_MAGNITUDE_SQUARED(spA8);
         if (var_fs0 != 0) {
             var_fs0 = sqrtf(var_fs0);
         }

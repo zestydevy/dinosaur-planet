@@ -4,9 +4,9 @@
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 unk18[0x1A-0x18];
+/*18*/ u8 unk18[0x1A - 0x18];
 /*1A*/ s16 partidx; // 0 or 1
-/*1C*/ u8 unk1C[0x1E-0x1C];
+/*1C*/ u8 unk1C[0x1E - 0x1C];
 /*1E*/ s16 gamebit;
 /*20*/ s16 unk20;
 /*22*/ s8 roll;

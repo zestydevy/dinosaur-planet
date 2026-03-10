@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_376_ctor = 0x0;
+dll_376_dtor = 0xC;
+dll_376_setup = 0x18;
+dll_376_control = 0xC4;
+dll_376_update = 0x590;
+dll_376_print = 0x59C;
+dll_376_free = 0x8C0;
+dll_376_get_model_flags = 0x8D0;
+dll_376_get_data_size = 0x8E0;
+dll_376_func_8F4 = 0x8F4;
+dll_376_func_9F8 = 0x9F8;
+dll_376_func_A3C = 0xA3C;
+
+.rodata = 0xB10:
+
+.data = 0xB10:
+_data_0 = 0x0; // absolute:0xB10

@@ -64,7 +64,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*28*/ void (*func28)(s32 arg0, s32 arg1);
 // Unmatched
 /*29*/ s32 (*func29)(Object *arg0, void *state, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
-/*30*/ s32 (*func30)(s32 arg0, Object *arg1, s32 arg2);
+/*30*/ s32 (*func30)(s32 arg0, Object *arg1, s32 arg2); //Assigns an objectID to use for VariableObject in the item collection sequence?
 /*31*/ s32 (*func31)(f32 arg0, f32 arg1, f32 arg2);
 /*32*/ s32 (*func32)(s32 arg0, s32 arg1);
 };

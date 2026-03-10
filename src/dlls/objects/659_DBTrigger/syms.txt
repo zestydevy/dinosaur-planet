@@ -1,0 +1,18 @@
+.text = 0x0:
+DBTrigger_ctor = 0x0;
+DBTrigger_dtor = 0xC;
+DBTrigger_setup = 0x18;
+DBTrigger_control = 0x84;
+DBTrigger_update = 0x330;
+DBTrigger_print = 0x33C;
+DBTrigger_free = 0x390;
+DBTrigger_get_model_flags = 0x3A0;
+DBTrigger_get_data_size = 0x3B0;
+DBTrigger_anim_callback = 0x3C4;
+DBTrigger_get_model_bounds = 0x57C;
+
+.rodata = 0x794:
+str_0 = 0x0; // absolute:0x794
+
+.data = 0x7B4:
+sequenceIndices = 0x0; // absolute:0x7B4

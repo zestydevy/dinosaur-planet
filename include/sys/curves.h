@@ -32,7 +32,7 @@ typedef struct {
 	} base_type22;
 };
 /*08*/ Vec3f pos;
-/*14*/ s32 uID;
+/*14*/ u32 uID;
 /*18*/ s8 unk18;
 /*19*/ s8 unk19; // curveType?  2) KTrex, 3) RedEye, 1A) camera?, 1B) camera?, 1D) ThornTail, 1F) crawlSpace, 22) Kyte, 24) Tricky
 /*1A*/ s8 unk1A;
@@ -45,6 +45,12 @@ typedef struct {
 /*2E*/ s8 unk2F; 
 // TODO: some of this depends on the curve type
 /*30*/ union {
+    struct {
+        /*30*/ s32 pad30;
+        /*34*/ s16 unk34;
+        /*36*/ s16 unk36;
+        /*38*/ s16 unk38;
+    } type8;
     struct {
         s32 pad30;
         s16 unk34;
@@ -76,9 +82,7 @@ typedef struct {
     /* 0010 */ s32 unk10;
     /* 0014 */ f32 unk14[20];
     /* 0064 */ f32 unk64;
-    /* 0068 */ f32 unk68; //lerp_result_x?
-    /* 006C */ f32 unk6C; //lerp_result_y?
-    /* 0070 */ f32 unk70; //lerp_result_z?
+    /* 0068 */ Vec3f unk68; //lerp_result_x?
     /* 0074 */ f32 unk74; //some x component
     /* 0078 */ f32 unk78; //some y component
     /* 007C */ f32 unk7C; //some z component

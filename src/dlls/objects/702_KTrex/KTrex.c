@@ -476,7 +476,7 @@ void dll_702_free(Object* self, s32 a1) {
     sBaddie = (Baddie* ) self->data;
     sKTData = sBaddie->objdata;
     obj_free_object_type(self, 4);
-    gDLL_33_BaddieControl->vtbl->func15(self, sBaddie, 0);
+    gDLL_33_BaddieControl->vtbl->free(self, sBaddie, 0);
     generic_stack_free(sKTData->stateStack);
     if (_data_E4 != NULL) {
         dll_unload(_data_E4);
@@ -752,8 +752,8 @@ static void dll_702_fx_tick(Object *self) {
     if (sKTData->fxFlags & KTFX_Sound_Explosion) {
         // explosion sound, when he falls on the ground. also during intro
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-        func_800013BC();
-        func_80003B70(2.0f * sp48);
+        camera_enable_y_offset();
+        camera_set_shake_offset(2.0f * sp48);
     }
     if (sKTData->fxFlags & KTFX_Sound_Breathing1) {
         // breathing
@@ -769,8 +769,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            func_800013BC();
-            func_80003B70(sp48);
+            camera_enable_y_offset();
+            camera_set_shake_offset(sp48);
             main_set_bits(BIT_554, 1);
         }
     }
@@ -778,8 +778,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            func_800013BC();
-            func_80003B70(2.0f * sp48);
+            camera_enable_y_offset();
+            camera_set_shake_offset(2.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }
@@ -787,8 +787,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            func_800013BC();
-            func_80003B70(3.0f * sp48);
+            camera_enable_y_offset();
+            camera_set_shake_offset(3.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }
@@ -892,7 +892,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
             gDLL_6_AMSFX->vtbl->play_sound(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_2_Camera->vtbl->func8(2, 0);
+            gDLL_2_Camera->vtbl->change_mode(2, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B2, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B3, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             sKTData->flags &= ~KTFLAG_VULNERABLE;
@@ -1285,7 +1285,7 @@ static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate)
         ktflags = sKTData->flags;
         sKTData->standingUpSegment = KTFLAG_GET_SEGMENT(ktflags);
         sKTData->timer = 300.0f;
-        gDLL_2_Camera->vtbl->func8(2, 0);
+        gDLL_2_Camera->vtbl->change_mode(2, 0);
         return KT_LSTATE_10_FULL_CHARGE + 1;
     }
     return 0;
@@ -1324,7 +1324,7 @@ static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate
         } else {
             dll_702_push_state(KT_LSTATE_2_WALK);
         }
-        gDLL_2_Camera->vtbl->func8(3, 0);
+        gDLL_2_Camera->vtbl->change_mode(3, 0);
         main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         return KT_LSTATE_6_CHARGE_END + 1;
     }

@@ -15,7 +15,7 @@ typedef struct MusicAction {
 /*06*/ u16 distFalloffEnd; // zero volume more than this dist
 /*08*/ u32 unk8; // unused, always 0
 /*0C*/ u32 unkC; // unused, always 0
-/*10*/ u8 playerNo; // amseq channel? 0-3?
+/*10*/ u8 playerNo; // amseq player 0-3
 /*11*/ u8 seqID; // music/ambient ID
 /*12*/ u8 volume; // 0-127
 /*13*/ u8 bpm;

@@ -18,7 +18,7 @@ typedef struct huft {
 
 void rarezip_init();
 s32 rarezip_uncompress_size(u8 *b);
-s32 rarezip_uncompress_size_rom(s32 arg0, s32 arg1, s32 arg2);
+s32 rarezip_uncompress_size_rom(s32 fileId, s32 offset, s32 readImmediate);
 u8 *rarezip_uncompress(u8 *compressedInput, u8 *decompressedOutput, s32 outputSize);
 void rarezip_huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m);
 

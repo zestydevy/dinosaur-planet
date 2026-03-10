@@ -68,9 +68,7 @@ void SB_MiniFire_control(Object *self) {
     transform.transl.y = dy / 3.0f;
     transform.transl.z = dz / 3.0f;
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A0, &transform, PARTFXFLAG_1, -1, NULL);
-    transform.transl.x *= 2.0f;
-    transform.transl.y *= 2.0f;
-    transform.transl.z *= 2.0f;
+    VECTOR_SCALE(transform.transl, 2.0f);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A0, &transform, PARTFXFLAG_1, -1, NULL);
     self->srt.yaw += gUpdateRate * 0x374;
     self->srt.pitch += gUpdateRate * 0x12C;
@@ -86,9 +84,9 @@ void SB_MiniFire_update(Object *self) { }
 // offset: 0x3E8 | func: 3 | export: 3
 void SB_MiniFire_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        tex_disable_modes(8);
+        tex_disable_modes(RENDER_FOG_ACTIVE);
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        tex_enable_modes(8);
+        tex_enable_modes(RENDER_FOG_ACTIVE);
     }
 }
 

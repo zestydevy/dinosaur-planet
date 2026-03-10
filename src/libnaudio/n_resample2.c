@@ -2,6 +2,7 @@
 // @DECOMP_IDO_VERSION=7.1
 #include <PR/ultratypes.h>
 #include <PR/gu.h>
+#include <PR/os.h>
 #include "libnaudio/n_synthInternals.h"
 
 void func_8006AEC4(struct fx *fx, f32 outputRate);
@@ -62,7 +63,7 @@ s32 n_alResampleParam2(N_PVoice *filter, s32 paramID, void *param) {
 		filter->unkb8 |= 2;
 		break;
 	case (AL_FILTER_0x11):
-		filter->unk8c = (u8)param;
+		filter->unk8c = (u8)((s32) param);
 		break;
 	default:
 		n_alLoadParam(filter, paramID, param);

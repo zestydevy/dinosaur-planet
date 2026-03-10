@@ -9,13 +9,6 @@
 #include "macros.h"
 
 typedef struct {
-    s32 unk0;
-    u8 _unk4[0x8-0x4];
-    s16 unk8;
-    s16 unkA;
-} Struct_800348A0;
-
-typedef struct {
 /*00*/ f32 yMin;
 /*04*/ s32 objectSeqIndex;
 /*08*/ u8 flags;
@@ -290,7 +283,7 @@ void CFSupTreasureCh_func_9B8(Object *arg0, Object *arg1, s16 *arg2) {
     ObjDef *temp_v0;
     f32 s1;
     f32 var_fa0;
-    Struct_800348A0 *unkstruct;
+    TextureAnimator *animator;
 
     s1 = arg0->def->scale * 0.6f;
     if (s1 != arg0->srt.scale) {
@@ -306,11 +299,11 @@ void CFSupTreasureCh_func_9B8(Object *arg0, Object *arg1, s16 *arg2) {
             arg0->srt.scale = s1;
         }
     }
-    unkstruct = func_800348A0(arg0, 0, 0);
-    if (unkstruct) {
-        unkstruct->unkA = ((unkstruct->unkA + 0x40)               % 2048);
-        unkstruct->unk8 = ((unkstruct->unkA + 8)                  % 2048);
-        unkstruct->unk0 = ((unkstruct->unk0 + (gUpdateRate << 6)) % 2048);
+    animator = func_800348A0(arg0, 0, 0);
+    if (animator) {
+        animator->positionV = ((animator->positionV + 0x40)           % 2048);
+        animator->positionU = ((animator->positionV + 8)              % 2048);
+        animator->frame     = ((animator->frame + (gUpdateRate << 6)) % 2048);
     }
     x1 = arg1->srt.transl.x;
     y1 = (fsin16_precise(*arg2) * 5.0f) + (arg1->srt.transl.y - 30.0f);

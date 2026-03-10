@@ -105,11 +105,11 @@ void dll_6_ctor(s32 arg0) {
     mmFree(tab);
 
     //AUDIO.bin
-    _bss_128 = acache_init(AUDIO_BIN, 0x40U, 0xE, 0x40U, 0);
+    _bss_128 = acache_init(AUDIO_BIN, 0x40, sizeof(SoundDef), 0x40, 0);
     queue_alloc_load_file((void*)&tab, AUDIO_TAB);
     _bss_C = tab[0];
     _bss_10 = tab[1] - _bss_C;
-    _bss_10 = _bss_10 / 14;
+    _bss_10 = _bss_10 / sizeof(SoundDef);
     mmFree(tab);
 
     _bss_8 = 65;
@@ -257,7 +257,7 @@ void dll_6_func_860(u32 soundHandle, u8 volume) {
     u8 vol;
 
     if (1) {
-        if (_bss_8 < soundHandle) {
+        if ((u32)_bss_8 < soundHandle) {
             STUBBED_PRINTF("amSfxSetVol: Warning,sound handle '%d' out of range.\n", soundHandle);
             return;
         }
@@ -835,7 +835,7 @@ static void dll_6_func_1F78(void) {
             if (temp_s0 == (sndstate* )-2) {
                 mp3_set_pan(pan, FALSE);
             } else {
-                audioPostEvent(temp_s0, AL_SNDP_PAN_EVT, (void *)pan);
+                audioPostEvent(temp_s0, AL_SNDP_PAN_EVT, (void *)(s32)pan);
             }
         }
         vol = (s32) (_bss_4[i].unk16 * _bss_4[i].unk17) >> 7;
@@ -854,7 +854,7 @@ static void dll_6_func_1F78(void) {
         if (fx != _bss_4[i].unk15) {
             _bss_4[i].unk15 = fx;
             if (temp_s0 != (sndstate* )-2) {
-                audioPostEvent(temp_s0, AL_SNDP_FX_EVT, (void*)(fx));
+                audioPostEvent(temp_s0, AL_SNDP_FX_EVT, (void*)(s32)(fx));
             }
         }
     }

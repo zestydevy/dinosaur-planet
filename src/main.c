@@ -29,6 +29,9 @@
 #include "constants.h"
 #include "functions.h"
 
+#define DONGLE_LSFS 0x4C534653
+#define DONGLE_MPFS 0x4D504653
+
 /* -------- .data start -------- */
 const char *gGameBuildVersion = "1.3623";
 const char *gGameBuildDateTime = "01/12/00 09:19";
@@ -334,7 +337,7 @@ void game_tick(void) {
     mmFreeTick();
 
     if (gPauseState == 0) {
-        func_80001A3C();
+        camera_apply_alternate_trigger();
     }
 
     gUpdateRate = vi_frame_sync(0);
@@ -412,7 +415,7 @@ void func_80013D80(void) {
     s32 button;
 
     joy_set_button_mask(0, U_JPAD | R_JPAD);
-    gDLL_2_Camera->vtbl->func19();
+    gDLL_2_Camera->vtbl->lock_icon_tick();
     gDLL_22_Subtitles->vtbl->func_4C0();
 
     if (menu_update1() == 0) {
@@ -426,7 +429,7 @@ void func_80013D80(void) {
             update_objects();
             func_80042174(0);
 
-            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
+            if ((camera_is_alternate_active() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
                 gPauseState = 1;
                 joy_set_button_mask(0, START_BUTTON);
                 menu_set(MENU_PAUSE);
@@ -667,7 +670,8 @@ void check_dongle(void) {
      * It is not known which one the original dongle for this ROM
      * was intended to use.
      */
-    if ((head == 'LSFS') || (head == 'MPFS')) {
+    
+    if ((head == DONGLE_LSFS) || (head == DONGLE_MPFS)) {
         return;
     } else {
         int *write = (int *)(u32)EXPANSION_RAM_START;
@@ -685,7 +689,8 @@ OSSched *get_ossched(void) {
 }
 
 void init_bittable(void) {
-    queue_alloc_load_file((void **)&gFile_BITTABLE, 0x37);
+    queue_alloc_load_file((void **)&gFile_BITTABLE, BITTABLE_BIN);
+    // @bug: This should be dividing by 4 (not 2) since each entry is 4 bytes long
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
     gGplayState = gDLL_29_Gplay->vtbl->get_state();
 }

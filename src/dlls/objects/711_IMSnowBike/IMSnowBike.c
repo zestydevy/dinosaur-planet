@@ -12,7 +12,7 @@
 #include "sys/rand.h"
 #include "dll.h"
 #include "functions.h"
-#include "prevent_bss_reordering.h"
+#include "prevent_bss_reordering2.h"
 
 typedef struct {
 /*00*/ Vec3f unk0;
@@ -80,7 +80,7 @@ typedef struct {
 /*3DC*/ u8 unk3DC;
 /*3DD*/ u8 flags;
 /*3DE*/ s8 unk3DE; // state?
-/*3DF*/ s8 unk3DF;
+/*3DF*/ s8 unk3DF; // race position?
 /*3E0*/ s8 unk3E0;
 /*3E1*/ s8 unk3E1;
 } IMSnowBike_Data;
@@ -106,27 +106,27 @@ enum IMSnowBikeFlags {
 };
 
 /*0x0*/ static Vec3f _data_0[] = {
-    {-6.5f, 0.0f, -7.0f}, 
-    { 6.5f, 0.0f, -7.0f}, 
-    { 6.5f, 0.0f,  7.0f}, 
-    {-6.5f, 0.0f,  7.0f}
+    VEC3F(-6.5f, 0.0f, -7.0f), 
+    VEC3F( 6.5f, 0.0f, -7.0f), 
+    VEC3F( 6.5f, 0.0f,  7.0f), 
+    VEC3F(-6.5f, 0.0f,  7.0f)
 };
 /*0x30*/ static f32 _data_30[] = {
     0.0f, 0.0f, 0.0f, 0.0f
 };
 /*0x40*/ static Vec3f _data_40[] = {
-    {0.0f, 1.0f, -18.0f}, 
-    {-6.5f, 1.0f, -7.0f}, 
-    {6.5f, 1.0f, -7.0f}, 
-    {-6.0f, 1.0f, 11.0f}, 
-    {6.0f, 1.0f, 11.0f}
+    VEC3F(0.0f, 1.0f, -18.0f), 
+    VEC3F(-6.5f, 1.0f, -7.0f), 
+    VEC3F(6.5f, 1.0f, -7.0f), 
+    VEC3F(-6.0f, 1.0f, 11.0f), 
+    VEC3F(6.0f, 1.0f, 11.0f)
 };
 /*0x7C*/ static f32 _data_7C[] = {
     5.0f, 4.0f, 4.0f, 4.5f, 4.5f
 };
 /*0x90*/ static Vec3f _data_90[] = {
-    {14.5f, 0.0f, 9.0f}, 
-    {-14.5f, 0.0f, 9.0f}
+    VEC3F(14.5f, 0.0f, 9.0f), 
+    VEC3F(-14.5f, 0.0f, 9.0f)
 };
 /*0xA8*/ static DLL_IModgfx *_data_A8 = NULL;
 
@@ -644,7 +644,7 @@ f32 dll_711_func_16C4(Object *self, f32 *arg1) {
 
     objdata = self->data;
     *arg1 = 5.0f;
-    magnitude = sqrtf(SQ(objdata->unk2AC.unkC.f[0]) + SQ(objdata->unk2AC.unkC.f[1]) + SQ(objdata->unk2AC.unkC.f[2])) * 0.2f;
+    magnitude = VECTOR_MAGNITUDE(objdata->unk2AC.unkC) * 0.2f;
     if (magnitude > 1.0f) {
         magnitude = 1.0f;
     }
@@ -824,9 +824,7 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
 
     dll27Data = &objdata->unk4C;
     if (objdata->unk3DA != 0) {
-        arg2->unkC.x *= objdata->unk380;
-        arg2->unkC.y *= objdata->unk380;
-        arg2->unkC.z *= objdata->unk380;
+        VECTOR_SCALE(arg2->unkC, objdata->unk380);
         objdata->unk3DA--;
         if (objdata->unk3DA < 0) {
             objdata->unk3DA = 0;
@@ -972,9 +970,7 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         arg2->unkC.z = var_fa0;
     }
     vec3_transform(&sp140, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->speed.f, &self->speed.y, &self->speed.z);
-    self->speed.x *= 1.0666667f;
-    self->speed.y *= 1.0666667f;
-    self->speed.z *= 1.0666667f;
+    VECTOR_SCALE(self->speed, 1.0666667f);
     obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
     if (arg4 != 0) {
         spA4 = 1.0f / updateRate;
@@ -1007,14 +1003,10 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
             }
         }
 
-        sp7C.x *= 0.25f;
-        sp7C.y *= 0.25f;
-        sp7C.z *= 0.25f;
+        VECTOR_SCALE(sp7C, 0.25f);
         if (var_a0 != 0) {
             var_fv0 = 1.0f / var_a0;
-            sp7C.x *= var_fv0;
-            sp7C.y *= var_fv0;
-            sp7C.z *= var_fv0;
+            VECTOR_SCALE(sp7C, var_fv0);
         } else {
             sp7C.x = 0.0f;
             sp7C.y = 1.0f;
@@ -1080,9 +1072,7 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     dll27Data = &objdata->unk4C;
 
     if (objdata->unk3DA != 0) {
-        arg2->unkC.x *= objdata->unk380;
-        arg2->unkC.y *= objdata->unk380;
-        arg2->unkC.z *= objdata->unk380;
+        VECTOR_SCALE(arg2->unkC, objdata->unk380);
         objdata->unk3DA--;
         if (objdata->unk3DA < 0) {
             objdata->unk3DA = 0;
@@ -1152,9 +1142,7 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         arg2->unkC.z = temp_fv0;
     }
     vec3_transform(&sp11C, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->speed.f, &self->speed.y, &self->speed.z);
-    self->speed.x *= 1.0666667f;
-    self->speed.y *= 1.0666667f;
-    self->speed.z *= 1.0666667f;
+    VECTOR_SCALE(self->speed, 1.0666667f);
     obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
     if (arg4 != 0) {
         sp8C = (1.0f / updateRate);
@@ -1187,9 +1175,7 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         }
         if (var_a0 != 0) {
             temp_fv0 = 1.0f / var_a0;
-            sp70.x *= temp_fv0;
-            sp70.y *= temp_fv0;
-            sp70.z *= temp_fv0;
+            VECTOR_SCALE(sp70, temp_fv0);
         } else {
             sp70.x = 0.0f;
             sp70.y = 1.0f;
@@ -1546,6 +1532,6 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
 }
 
 // offset: 0x4780 | func: 32 | export: 20
-void dll_711_func_4780(UNK_TYPE_32 a0, UNK_TYPE_32 a1, UNK_TYPE_32 a2) { }
+void dll_711_func_4780(s32 a0, s32 a1, s32 a2) { }
 
 /*0x0*/ static const char str_0[] = "Finished Is SEt for Some Reason \n";
