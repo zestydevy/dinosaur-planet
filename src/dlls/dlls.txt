@@ -77,6 +77,7 @@
 279 = objects/279_Door
 280 = objects/280_SidekickBall
 281 = objects/281_area
+282 = objects/282_Crate
 283 = objects/283_krazoatext
 284 = objects/284_levelname
 287 = objects/287_pressureswitch
