@@ -261,8 +261,8 @@ vi_func_8005DC68 = 0x8005DC68; // type:func
 vi_func_8005DC70 = 0x8005DC70; // type:func
 vi_get_current_frame_rate = 0x8005DC7C; // type:func
 vi_swap_buffers = 0x8005dcc8; // type:func
-vi_func_8005DD4C = 0x8005DD4C; // type:func
-vi_func_8005DEE8 = 0x8005DEE8; // type:func
+vi_obj_depth = 0x8005DD4C; // type:func
+vi_calc_obj_depths = 0x8005DEE8; // type:func
 vi_some_video_setup = 0x8005dfbc; // type:func
 osCreateViManager = 0x8005e200; // type:func
 guPerspectiveF = 0x8005E550; // type:func
@@ -2053,3 +2053,8 @@ gProjectionScaleX = 0x8008c52c; // size:0x4
 
 gFarPlaneStart = 0x800a6270; // size:0x4
 gFarPlaneTarget = 0x800a6274; // size:0x4
+
+gZConvTable = 0x80093068; // size:0x40
+gViObjDepthLists = 0x800BCE18; // size:0x8
+gViObjDepthListIdx = 0x800BCE20; // size:0x1
+gViObjDepthListLens = 0x800BCE22; // size:0x2

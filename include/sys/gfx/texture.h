@@ -214,7 +214,7 @@ void tex_set_alloc_tag(s32 tag);
  * Loads a texture via the asset thread.
  */
 Texture *tex_load_deferred(s32 id);
-Texture *tex_load(s32 id, s32 param2);
+Texture *tex_load(s32 id, u8 param2);
 void tex_free(Texture *texture);
 void tex_render_reset(void);
 void tex_render_save_state(void);

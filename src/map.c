@@ -123,6 +123,7 @@ Unk80092BC0 D_80092BC0 = {0};
 
 void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
+HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -2980,135 +2981,113 @@ s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     return 1;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_load.s")
-#else
-extern u32 *gFile_BLOCKS_TAB;
-extern u8 *gMapReadBuffer;
-void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
-{
-    u32 allocSize;
-    u32 offset;
-    u32 compressedSize;
-    u32 uncompressedSize;
-    u8 *compressedData;
-    Block *block;
-    u8 *p;
-    s32 n;
-    s32 i;
+void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
+    s32 texIdx;
+    s32 binOffset;
+    s32 binSize;
+    s32 size;
+    s32 vtxIdx;
+    Vtx_t* verts;
+    Block* block;
+    BlockShape* shape;
+    BlockVertex* fileVerts;
+    BlockVertex* fileVertsEnd;
+    u32 addr;
+    s32 pad[3];
+    s32 tempLoadAddr;
 
-    offset = gFile_BLOCKS_TAB[id];
-    compressedSize = gFile_BLOCKS_TAB[id + 1] - offset;
-    read_file_region(BLOCKS_BIN, gMapReadBuffer, offset, 0x10);
-
-    uncompressedSize = *(u32*)gMapReadBuffer;
-    allocSize = uncompressedSize + hits_get_size(id) + 0x8;
-    block = mmAlloc(allocSize, ALLOC_TAG_TRACK_COL, NULL);
+    binOffset = gFile_BLOCKS_TAB[id];
+    binSize = gFile_BLOCKS_TAB[id + 1] - binOffset;
+    read_file_region(BLOCKS_BIN, gMapReadBuffer, binOffset, 0x10);
+    size = ((s32*)gMapReadBuffer)[0];
+    size += hits_get_size(id) + 8;
+    block = mmAlloc(size, ALLOC_TAG_TRACK_COL, NULL);
     if (block == NULL) {
         return;
     }
 
-    compressedData = (u8*)block + allocSize - compressedSize - 0x10;
-    compressedData = (u8*)((s32)compressedData - ((s32)compressedData % 16));
-    // if ((s32)compressedData < 0) {
-    //     // Align to 16 bytes
-    //     u32 align = (u32)compressedData & 0xf;
-    //     if (align != 0) {
-    //         align -= 16;
-    //     }
-    //     compressedData -= align;
-    // }
+    if (0) { if ((s32)&size) {} } // @fake
 
-    read_file_region(BLOCKS_BIN, compressedData, offset, compressedSize);
-    rarezip_uncompress(compressedData + 4, (u8*)block, allocSize);
-
-    // Convert offsets to pointers
+    tempLoadAddr = (((u32)block + size) - binSize) - 0x10;
+    tempLoadAddr -= tempLoadAddr % 16;
+    read_file_region(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
+    rarezip_uncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
     block->vertices = (Vtx_t*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
     block->unk10 = (void*)((u32)block->unk10 + (u32)block);
     block->tiles = (Block_0x0Struct*)((u32)block->tiles + (u32)block);
-
-    tex_set_alloc_tag(7);
-
-    for (i = 0; i < block->textureCount; i++) {
-        block->tiles[i].texture = tex_load(-((s32)block->tiles[i].texture | 0x8000), queue);
+    tex_set_alloc_tag(ALLOC_TAG_TRACKTEX_COL);
+    for (texIdx = 0; texIdx < block->textureCount; texIdx++) {
+        block->tiles[texIdx].texture = tex_load(-((u32)block->tiles[texIdx].texture | 0x8000), queue);
     }
-
-    tex_set_alloc_tag(6);
-
+    tex_set_alloc_tag(ALLOC_TAG_TEX_COL);
     block_setup_vertices(block);
-
-    block->gdlGroups = (Gfx*)(block->gdlGroupsOffset + (u32)block);
+    addr = (u32)block;
+    addr += block->gdlGroupsOffset;
+    block->gdlGroups = (Gfx*)addr;
     block_setup_gdl_groups(block);
-
-    p = block->gdlGroups + block->shapeCount * 3;
+    addr += (block->shapeCount * 12 << 1);
     func_80048B14(block);
-
-    if (block->vtxFlags & 0x8)
-    {
-        Vtx_t *vtx = mmAlign8(p);
-        Vtx_t *srcvtx = block->vertices;
-        BlockShape *shape;
-
-        block->vertices2[0] = vtx;
-        block->vertices2[1] = &vtx[block->vtxCount];
-
-        p = vtx + block->vtxCount * 2;
-
+    if (block->vtxFlags & 8) {
+        addr = mmAlign8(addr);
+        fileVerts = block->vertices;
+        block->vertices2[0] = (Vtx_t*)addr;
+        addr += (sizeof(Vtx_t) * block->vtxCount);
+        block->vertices2[1] = (Vtx_t*)addr;
+        addr += (sizeof(Vtx_t) * block->vtxCount);
+        
+        verts = block->vertices2[0];
+        vtxIdx = 0;
         shape = block->shapes;
-        for (i = 0; i < block->vtxCount; i++)
-        {
+        fileVertsEnd = fileVerts;
+        if (block->vertices) {}
+        if (block->vtxCount && block->vtxCount){}
+        fileVertsEnd += block->vtxCount;
+        while (fileVerts < fileVertsEnd) {
             if (shape->flags & 0x20000000) {
-                vtx[i].ob[0] = (f32)srcvtx[i].ob[0];
-                vtx[i].ob[1] = (srcvtx[i].ob[1] - block->elevation) * 20.0f;
-                vtx[i].ob[2] = (f32)srcvtx[i].ob[2];
+                verts->ob[0] = (f32) fileVerts->ob[0];
+                verts->ob[1] = (fileVerts->ob[1] - block->elevation) * 20.0f;
+                verts->ob[2] = (f32) fileVerts->ob[2];
             } else {
-                vtx[i].ob[0] = srcvtx[i].ob[0];
-                vtx[i].ob[1] = srcvtx[i].ob[1];
-                vtx[i].ob[2] = srcvtx[i].ob[2];
+                verts->ob[0] = fileVerts->ob[0];
+                verts->ob[1] = fileVerts->ob[1];
+                verts->ob[2] = fileVerts->ob[2];
             }
-
-            vtx[i].cn[0] = srcvtx[i].cn[0];
-            vtx[i].cn[1] = srcvtx[i].cn[1];
-            vtx[i].cn[2] = srcvtx[i].cn[2];
-            vtx[i].cn[3] = srcvtx[i].cn[3];
-            vtx[i].tc[0] = srcvtx[i].tc[0];
-            vtx[i].tc[1] = srcvtx[i].tc[1];
-            vtx[i].flag = srcvtx[i].flag;
-
-            if (i >= shape[1].vtxBase) {
-                shape++;
+            verts->cn[0] = fileVerts->cn[0];
+            verts->cn[1] = fileVerts->cn[1];
+            verts->cn[2] = fileVerts->cn[2];
+            verts->cn[3] = fileVerts->cn[3];
+            verts->tc[0] = fileVerts->tc[0];
+            verts->tc[1] = fileVerts->tc[1];
+            verts->flag = fileVerts->flag;
+            vtxIdx += 1;
+            fileVerts += 1;
+            verts += 1;
+            if (vtxIdx >= (shape + 1)->vtxBase) {
+                shape += 1;
             }
         }
-
-        bcopy(block->vertices2[0], block->vertices2[1], block->vtxCount * sizeof(Vtx_t));
+        bcopy(block->vertices2[0], block->vertices2[1], sizeof(Vtx_t) * block->vtxCount);
+    } else {
+        block->vertices2[0] = (Vtx_t*)block->vertices;
+        block->vertices2[1] = (Vtx_t*)block->vertices;
     }
-    else
-    {
-        block->vertices2[0] = block->vertices;
-        block->vertices2[1] = block->vertices;
-    }
-
-    p = mmAlign4(p);
-    block->unk28 = p;
-
-    n = block_setup_textures(block);
-
-    p = mmAlign2(p + n);
-    block->xzBitmap = p;
+    addr = mmAlign4(addr);
+    block->unk28 = (Block_0x28Struct*)addr;
+    addr += block_setup_textures(block);
+    addr = mmAlign2(addr);
+    block->xzBitmap = (s16*)addr;
+    addr += block->unk34 * 2;
     block_setup_xz_bitmap(block);
-
-    p = mmAlign8(p + block->unk34 * sizeof(s16));
-    block_load_hits(block, id, queue, p);
-
-    if (queue) {
-        queue_block_emplace(1, block, id, param_2, globalMapIdx);
+    addr = mmAlign8(addr);
+    block_load_hits(block, id, queue, (HitsLine*)addr);
+    if (queue != 0) {
+        queue_block_emplace(1, (u32* ) block, id, param_2, globalMapIdx);
     } else {
         block_emplace(block, id, param_2, globalMapIdx);
     }
 }
-#endif
 
 void func_80048B14(Block* block) {
     s32 targetVertexIndex;
@@ -3500,7 +3479,7 @@ u32 hits_get_size(s32 id) {
     return size;
 }
 
-HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine* hits_ptr) {
+HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
     s32 hits_start;
     s32 hits_size;
     s32 lineIndex;
