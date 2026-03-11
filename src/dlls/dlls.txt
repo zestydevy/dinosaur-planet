@@ -106,6 +106,7 @@
 323 = objects/323_waterfallControl
 324 = objects/324_curve
 325 = objects/325_trigger
+327 = objects/327
 331 = objects/331_genprops
 332 = objects/332_FXEmit
 334 = objects/334_Transporter
