@@ -3,9 +3,11 @@
 #include "dlls/objects/210_player.h"
 #include "dll.h"
 #include "sys/objects.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "game/gamebits.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "dlls/objects/common/vehicle.h"
 
 typedef struct {

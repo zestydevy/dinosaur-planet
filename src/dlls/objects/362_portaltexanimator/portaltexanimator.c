@@ -1,14 +1,13 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "functions.h"
 #include "game/objects/object.h"
-#include "sys/gfx/map.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "types.h"
 
 Block* func_80044BB0(s32 blockIndex);

@@ -1,7 +1,7 @@
 #include "dlls/objects/210_player.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
     f32 unk0;

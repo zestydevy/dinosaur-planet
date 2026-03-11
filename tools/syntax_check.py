@@ -18,6 +18,9 @@ def main():
         sys.exit(retcode)
 
     # Run check command
+    # HACK: Add -fsyntax-only here so that permuter doesn't ignore our compile
+    #       commands due to that flag being in the build.ninja file.
+    check_cmd.insert(1, "-fsyntax-only")
     in_file_path = sys.argv[-1]
     retcode = subprocess.call(check_cmd + [in_file_path])
 

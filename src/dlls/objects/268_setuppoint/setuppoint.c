@@ -1,7 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "functions.h"
 #include "game/objects/object.h"
+#include "sys/objprint.h"
 #include "types.h"
 #include "sys/gfx/model.h"
 

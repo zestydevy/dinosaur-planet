@@ -3,8 +3,10 @@
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
     f32 unk0;

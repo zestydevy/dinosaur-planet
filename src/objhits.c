@@ -5,7 +5,9 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/objanim.h"
+#include "sys/segment_53F00.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/gfx/model_asm.h"
 #include "dll.h"
 
 // -------- .data start 800916e0 -------- //
@@ -32,7 +34,7 @@ u8 _bss_800B23C0[0xF8];
 Unk80030A24 D_800B24B8[21]; // TODO: unknown length
 // -------- .bss end 800b28b0 -------- //
 
-void alloc_some_object_arrays(void) {
+void objhits_init(void) {
     D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitmods"));
     D_800B199C = mmAlloc(0x708, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:lasthits"));
     D_800B20A0 = mmAlloc(0x1900, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitvols"));

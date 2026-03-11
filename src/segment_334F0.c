@@ -1,4 +1,4 @@
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 #include "dlls/objects/210_player.h"
 #include "sys/curves.h"
 #include "dll.h"

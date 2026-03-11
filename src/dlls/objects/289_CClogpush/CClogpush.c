@@ -1,6 +1,6 @@
 #include "sys/objtype.h"
 #include "sys/main.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "dll.h"
 
 typedef struct {

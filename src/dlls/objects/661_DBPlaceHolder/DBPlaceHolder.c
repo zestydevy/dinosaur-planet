@@ -5,8 +5,8 @@
 #include "dll.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/main.h"
-#include "functions.h"
 #include "dlls/objects/214_animobj.h"
 
 typedef struct {

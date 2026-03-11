@@ -2,13 +2,13 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
-#include "functions.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/rand.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "types.h"
 
 typedef struct {

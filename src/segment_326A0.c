@@ -1,9 +1,9 @@
 #include "common.h"
 #include "dll.h"
 #include "dlls/objects/210_player.h"
-#include "sys/map.h"
-
 #include "dlls/objects/281_area.h"
+#include "sys/map.h"
+#include "sys/segment_326A0.h"
 
 typedef struct ObjectPairCallback {
     Object *primary;

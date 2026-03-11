@@ -1,6 +1,12 @@
-#include "common.h"
 #include "sys/voxmap.h"
+#include "sys/asset_thread.h"
+#include "sys/camera.h"
+#include "sys/curves.h"
+#include "sys/fs.h"
 #include "sys/map.h"
+#include "sys/memory.h"
+#include "sys/rarezip.h"
+#include "macros.h"
 
 static const char str_80098510[] = "VOXMAP: Size overflow on load->Ignoring defined voxmap\n";
 static const char str_80098548[] = "VOXMAP: attempt to load invalid object voxmap '%d'\n";

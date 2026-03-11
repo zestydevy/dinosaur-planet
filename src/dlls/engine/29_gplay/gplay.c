@@ -12,7 +12,7 @@
 #include "sys/fs.h"
 #include "sys/menu.h"
 #include "sys/memory.h"
-#include "functions.h"
+#include "sys/segment_1D900.h"
 #include "dll.h"
 #include "prevent_bss_reordering.h"
 

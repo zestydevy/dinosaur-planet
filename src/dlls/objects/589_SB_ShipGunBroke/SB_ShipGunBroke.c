@@ -1,6 +1,6 @@
 #include "dll.h"
-#include "functions.h"
 #include "sys/main.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ u32 soundHandle;

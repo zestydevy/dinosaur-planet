@@ -1,6 +1,6 @@
 #include "game/objects/object.h"
 #include "sys/rand.h"
-#include "functions.h"
+#include "sys/objprint.h"
 
 #define SOME_COUNT 4
 

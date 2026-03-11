@@ -1,6 +1,9 @@
 #include "dll.h"
-#include "functions.h"
+#include "sys/map_enums.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "game/gamebits.h"
 #include "dlls/objects/210_player.h"
 

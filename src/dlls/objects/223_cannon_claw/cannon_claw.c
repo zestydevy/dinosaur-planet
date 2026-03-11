@@ -9,7 +9,7 @@
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "types.h"
 
 static void cannon_claw_func_1B4(Object *self);

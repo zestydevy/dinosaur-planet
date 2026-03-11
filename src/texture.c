@@ -10,9 +10,14 @@
 #include "sys/rand.h"
 #include "sys/rarezip.h"
 #include "gbi_extra.h"
-#include "variables.h"
-#include "functions.h"
+#include "macros.h"
 #include "prevent_bss_reordering.h"
+
+struct PointersInts{
+	Gfx *prts[2];
+	u32 valA;
+	u32 valB;
+};
 
 static const char str_8009a370[] = "Error: Texture no %d out of range on load -> max=%d.!!\n";
 static const char str_8009a3a8[] = "Multiple texture fail!!\n";

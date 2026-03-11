@@ -3,7 +3,7 @@
 #include "PR/gbi.h"
 
 #include "sys/camera.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/textable.h"
 #include "sys/joypad.h"
 #include "sys/fonts.h"
@@ -11,7 +11,6 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
-#include "functions.h"
 #include "sys/rcp.h"
 #include "types.h"
 

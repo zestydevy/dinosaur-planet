@@ -1,8 +1,9 @@
 #include "dlls/engine/27.h"
 #include "PR/os.h"
+#include "sys/camera.h"
 #include "sys/main.h"
 #include "sys/objhits.h"
-#include "functions.h"
+#include "sys/segment_53F00.h"
 
 /*0x0*/ static Object *bss_0;
 /*0x8*/ static Func_80057F1C_Struct bss_8[15];

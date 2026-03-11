@@ -7,6 +7,7 @@
 #include "sys/voxmap.h"
 #include "dlls/engine/2_camcontrol.h"
 #include "unktypes.h"
+#include "prevent_bss_reordering.h"
 
 /** Related to gametext that appears when holding R? */
 static s16 _data_0[] = {
@@ -974,7 +975,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
 /** Creates an `OBJ_LockIcon` and stores a reference to it in `sLockIcon` */
 void CamControl_create_LockIcon(void) {
     sLockIcon = obj_create(
-        obj_alloc_create_info(sizeof(ObjSetup), OBJ_LockIcon),
+        obj_alloc_setup(sizeof(ObjSetup), OBJ_LockIcon),
         0,
         -1,
         -1,

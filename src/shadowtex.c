@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object_id.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/camera.h"
 #include "sys/map.h"
 #include "sys/memory.h"
@@ -9,7 +9,6 @@
 #include "sys/objprint.h"
 #include "sys/shadowtex.h"
 #include "sys/segment_535C0.h"
-#include "functions.h"
 #include "macros.h"
 
 static const char str_8009ac70[] = "maketex: buffer out of range\n";

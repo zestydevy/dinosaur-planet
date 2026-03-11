@@ -1,7 +1,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "dll.h"
 
 typedef struct {

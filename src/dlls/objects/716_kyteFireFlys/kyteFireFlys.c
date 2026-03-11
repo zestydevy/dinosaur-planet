@@ -104,7 +104,7 @@ void dll_716_func_4DC(Object* self, s32 arg1, s32 arg2) {
     DLL716_Setup* setup;
 
     objSetup = self->setup;
-    setup = obj_alloc_create_info(0x24, 0x259);
+    setup = obj_alloc_setup(0x24, 0x259);
     setup->base.fadeDistance = objSetup->fadeDistance;
     setup->base.loadFlags = 2;
     setup->base.byte5 = objSetup->byte5;

@@ -1,8 +1,5 @@
 #include "common.h"
 
-extern Block_0x28Struct* func_8004A284(Block*, s32);
-extern BlockTexture* func_8004A2CC(s32);
-
 typedef struct {
     s32 materialID;     //Index within object's local Blocks model's materials (the frame of the material's texture animation will be manipulated)
     u8 speed;           //Playback rate when advancing through the texture animation
@@ -59,7 +56,7 @@ void TexFrameAnimator_setup(Object* self, TexFrameAnimator_Setup* objSetup, s32 
 void TexFrameAnimator_control(Object* self) {
     TexFrameAnimator_Data* objData;
     Block* block;
-    Block_0x28Struct* blockMaterialInfo;
+    BlocksTextureIndexData* blockMaterialInfo;
     BlockTexture* blockTexture;
     TexFrameAnimator_Setup* objSetup;
 
@@ -93,7 +90,7 @@ void TexFrameAnimator_control(Object* self) {
     }
 
     //Get Block Material's Texture
-    blockTexture = func_8004A2CC(blockMaterialInfo->texIdx);
+    blockTexture = func_8004A2CC(blockMaterialInfo->textureIndex);
 
     //Advance texture animation frame
     objData->frame += objData->speed * gUpdateRate;

@@ -1,7 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -10,7 +9,9 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
+#include "sys/segment_53F00.h"
 #include "types.h"
 
 #include "dlls/objects/210_player.h"

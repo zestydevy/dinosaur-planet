@@ -2,7 +2,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
-#include "functions.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ s16 gamebit;

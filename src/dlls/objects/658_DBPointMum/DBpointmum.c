@@ -2,6 +2,7 @@
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/segment_326A0.h"
 
 typedef s32 (*PointBackBSSUnk0_UnkC)(void*, s32, s32);
 

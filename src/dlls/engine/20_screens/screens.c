@@ -3,9 +3,8 @@
 #include "PR/gbi.h"
 #include "sys/asset_thread.h"
 #include "sys/fs.h"
-#include "sys/gfx/map.h"
+#include "sys/map.h"
 #include "sys/memory.h"
-#include "functions.h"
 #include "macros.h"
 
 static s32 sLoadedScreenNo;

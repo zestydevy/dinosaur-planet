@@ -4,9 +4,9 @@
 #include "game/objects/object.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "dll.h"
 #include "dlls/objects/210_player.h"
-#include "functions.h"
 #include "game/gamebits.h"
 
 typedef struct {

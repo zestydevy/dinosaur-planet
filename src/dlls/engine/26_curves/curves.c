@@ -4,7 +4,7 @@
 #include "sys/objects.h"
 #include "sys/rand.h"
 #include "sys/voxmap.h"
-#include "functions.h"
+#include "sys/segment_53F00.h"
 
 /*0x0*/ static CurveSetup *_bss_0;
 /*0x4*/ static CurveSetup *_bss_4;

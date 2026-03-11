@@ -4,13 +4,13 @@
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
 #include "libnaudio/n_libaudio.h"
+#include "sys/audio/amAudio.h"
 #include "sys/asset_thread.h"
 #include "sys/audio.h"
 #include "sys/fs.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
-#include "functions.h"
 #include "prevent_bss_reordering.h"
 
 extern s32 D_800967A0[127];
