@@ -5,7 +5,10 @@
 
 
 typedef struct {
-    u8 _unk0[0x404];
+    f32 unk0;
+    s8 _unk4;
+    u8 unk5;
+    u8 _unk6[0x404-0x06];
 } DLL236_Data;
 
 /*0x0*/ static u32 _data_0[] = {
@@ -75,7 +78,29 @@ u32 dll_236_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_func_7F8.s")
 
 // offset: 0xA20 | func: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_func_A20.s")
+s32 dll_236_func_A20(Object* self, ObjFSA_Data* fsa, s8 arg2) {
+    DLL236_Data* triffid;
+    Baddie* baddie;
+
+    baddie = self->data;
+    triffid = baddie->objdata;
+    fsa->unk341 = 0;
+    if (triffid->unk5 != 0) {
+        triffid->unk5 = 0U;
+        triffid->unk0 = 0.0f;
+        func_80023D30(self, 0, 0.5f, 0U);
+        func_8002674C(self);
+    }
+    func_80026128(self, 0xA, 1, -1);
+    self->objhitInfo->unk5D = 0xA;
+    self->objhitInfo->unk5E = 1;
+    func_80028D2C(self);
+    if (fsa->target != NULL) {
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+        triffid->unk5 = 1U;
+    }
+    return 0;
+}
 
 // offset: 0xB44 | func: 10
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_func_B44.s")
@@ -84,7 +109,31 @@ u32 dll_236_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_func_C60.s")
 
 // offset: 0xD64 | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_func_D64.s")
+s32 dll_236_func_D64(Object* self, ObjFSA_Data* arg1, s8 arg2) {
+    Baddie* baddie;
+    DLL236_Data* triffid;
+
+    baddie = self->data;
+    triffid = baddie->objdata;
+    arg1->unk341 = 0;
+    if (triffid->unk5 != 0) {
+        triffid->unk5 = 0U;
+        obj_send_mesg_many(0, 3U, self, 0xE0000U, self);
+        gDLL_33_BaddieControl->vtbl->func18(self, (s32) baddie->unk3E0, -1, 0U);
+        gDLL_18_objfsa->vtbl->func21(self, arg1, 0x3C, 0xA, 0U);
+        baddie->unk3B4 = 0;
+    }
+    self->objhitInfo->unk5E = 0;
+    if (self->opacity >= gUpdateRate * 2) {
+        self->opacity -= gUpdateRate * 2;
+    } else {
+        self->opacity = 0;
+    }
+    if (self->opacity == 0) {
+        obj_destroy_object(self);
+    }
+    return 0;
+}
 
 // offset: 0xEA0 | func: 13
 s32 dll_236_func_EA0(s32 arg0, s32 arg1, s32 arg2) {

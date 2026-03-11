@@ -1,0 +1,15 @@
+.text = 0x0:
+dll_257_ctor = 0x0;
+dll_257_dtor = 0xC;
+dll_257_setup = 0x18;
+dll_257_control = 0xB8;
+dll_257_update = 0x1018;
+dll_257_print = 0x1024;
+dll_257_free = 0x108C;
+dll_257_get_model_flags = 0x1120;
+dll_257_get_data_size = 0x1130;
+dll_257_func_1144 = 0x1144;
+dll_257_func_11C8 = 0x11C8;
+
+.rodata = 0x1248:
+str_0 = 0x0; // absolute:0x1248

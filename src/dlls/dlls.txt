@@ -56,13 +56,16 @@
 225 = objects/225_SabreBaddie
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
+232 = objects/232_VampireBat
 236 = objects/236_WG_Triffid
+241 = objects/241_SkeetlaWall
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie
 246 = objects/246_SwarmBaddie
 248 = objects/248_PirahnaBaddie
 250 = objects/250_TurtleBaddie
 254 = objects/254_PineCone
+257 = objects/257_tesla
 260 = objects/260_Pollen
 264 = objects/264_kamerian_flame
 266 = objects/266_sfxplayer
@@ -132,6 +135,7 @@
 396 = objects/396_CFSupTreasureCh
 398 = objects/398_CFMagicWall
 400 = objects/400_CFLevelControl
+405 = objects/405_CF_Lamp
 408 = objects/408_IMIceMountain
 412 = objects/412_IMicepillar
 413 = objects/413_IMspacecraft
@@ -142,6 +146,7 @@
 427 = objects/427_DFlevelcontrol
 428 = objects/428_DFmole
 431 = objects/431_DFwhirlpool
+433 = objects/433_DFSH_Shrine
 435 = objects/435_KrazoaSpirit
 438 = objects/438_RobotBeam
 441 = objects/441_MMP_levelcontrol
@@ -218,7 +223,9 @@
 588 = objects/588_SB_ShipFlag
 589 = objects/589_SB_ShipGunBroke
 590 = objects/590_WL_Galleon
+593 = objects/593_WL_DeadDino
 596 = objects/596_WLpressureswitch
+598 = objects/598_WM_Wizard
 602 = objects/602_WLTorch
 603 = objects/603_WL_Vein
 605 = objects/605_WLworm
@@ -243,6 +250,7 @@
 659 = objects/659_DBTrigger
 660 = objects/660_DBSpike
 661 = objects/661_DBPlaceHolder
+662 = objects/662_DBEgg
 663 = objects/663_DBlevelControl
 668 = objects/668_DBdiamond
 670 = objects/670_DBExpbit
@@ -292,5 +300,4 @@
 787 = objects/787_WCApertureSymbol
 793 = objects/793_BWlog
 795 = objects/795_BWLevelControl
-
 796 = objects/796_AMLevelControl

@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_405_ctor = 0x0;
+dll_405_dtor = 0xC;
+dll_405_setup = 0x18;
+dll_405_control = 0x84;
+dll_405_update = 0xF0;
+dll_405_func_FC = 0xFC;
+dll_405_print = 0x534;
+dll_405_free = 0x588;
+dll_405_get_model_flags = 0x634;
+dll_405_get_data_size = 0x644;
+
+.rodata = 0x6D4:
+_oob_rodata_0 = 0x0; // absolute:0x6D4
