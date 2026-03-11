@@ -4,6 +4,7 @@
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
+#include "sys/segment_1D900.h"
 #include "sys/segment_53F00.h"
 #include "macros.h"
 

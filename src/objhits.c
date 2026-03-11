@@ -5,6 +5,7 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/objanim.h"
+#include "sys/segment_53F00.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/model_asm.h"
 #include "dll.h"
