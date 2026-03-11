@@ -1,7 +1,7 @@
 #include "sys/fonts.h"
 #include "sys/asset_thread.h"
 #include "sys/fs.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "sys/map.h"

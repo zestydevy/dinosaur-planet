@@ -7,7 +7,7 @@
 #include "game/gamebits.h"
 #include "game/gametexts.h"
 #include "sys/fonts.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"

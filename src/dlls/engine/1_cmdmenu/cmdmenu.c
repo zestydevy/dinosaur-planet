@@ -7,7 +7,7 @@
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "dlls/objects/210_player.h"

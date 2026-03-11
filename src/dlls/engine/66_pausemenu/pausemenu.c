@@ -9,7 +9,7 @@
 #include "sys/camera.h"
 #include "sys/joypad.h"
 #include "sys/fonts.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"

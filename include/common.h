@@ -22,7 +22,7 @@
 #include "sys/objanim.h"
 #include "sys/objprint.h"
 #include "sys/print.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/gfx/textable.h"
 #include "sys/gfx/animation.h"

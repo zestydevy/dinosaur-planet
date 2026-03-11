@@ -9,7 +9,7 @@
 #include "sys/main.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
-#include "sys/gfx/gx.h"
+#include "sys/map.h"
 #include "sys/dll.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"

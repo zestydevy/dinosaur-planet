@@ -4,7 +4,7 @@
 #include "game/objects/object.h"
 #include "sys/dll.h"
 #include "sys/fonts.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/main.h"
 #include "dll.h"
 #include "dll_def.h"

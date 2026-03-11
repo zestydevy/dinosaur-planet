@@ -1,7 +1,7 @@
 #include "PR/gbi.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object_id.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/textable.h"
 #include "sys/main.h"
 #include "sys/map.h"

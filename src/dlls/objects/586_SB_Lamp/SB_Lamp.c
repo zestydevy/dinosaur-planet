@@ -3,7 +3,7 @@
 #include "sys/rand.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/segment_1050.h"
 
 typedef struct {

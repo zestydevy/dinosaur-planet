@@ -4,7 +4,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/segment_1050.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"

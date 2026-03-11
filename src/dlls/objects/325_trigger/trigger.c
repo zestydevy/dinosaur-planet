@@ -8,7 +8,7 @@
 #include "sys/dll.h"
 #include "sys/objmsg.h"
 #include "sys/gfx/model.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/math.h"

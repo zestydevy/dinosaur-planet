@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object_id.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/camera.h"
 #include "sys/map.h"
 #include "sys/memory.h"

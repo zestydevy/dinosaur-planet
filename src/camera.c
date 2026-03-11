@@ -4,7 +4,7 @@
 #include "libultra/io/piint.h"
 #include "game/objects/object.h"
 #include "macros.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/model_asm.h"
 #include "sys/main.h"
 #include "sys/math.h"

@@ -2,7 +2,7 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "sys/fonts.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/menu.h"
 #include "sys/objects.h"

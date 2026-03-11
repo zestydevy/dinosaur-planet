@@ -1,7 +1,7 @@
 #include "PR/os.h"
 #include "PR/sched.h"
 #include "PR/ultratypes.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -33,6 +33,29 @@
 #define HEIGHT_RATIO_NTSC (LOW_RES_NTSC_HEIGHT / LOW_RES_NTSC_HEIGHT)
 #define HEIGHT_RATIO_MPAL (LOW_RES_MPAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
 
+/**
+ * Memory address of the framebuffers when an N64 Expansion Pak IS NOT detected.
+ */
+#define FRAMEBUFFER_ADDRESS_NO_EXP_PAK 0x802d4000
+/**
+ * Memory address of the framebuffers when an N64 Expansion Pak IS detected.
+ */
+#define FRAMEBUFFER_ADDRESS_EXP_PAK 0x80119000
+
+/**
+ * Holds the horizontal and vertical resolution for video related functions.
+ */
+typedef struct VideoResolution {
+    u32 h;
+    u32 v;
+} VideoResolution;
+
+typedef struct {
+    s32 zValue;
+    s32 zPixelIdx;
+    Object *obj;
+} ViObjDepth;
+
 static const char str_8009ace0[] = "320 by 240 Anti-aliased, Non interlaced.\n";
 static const char str_8009ad0c[] = "640 by 480 Anti-aliased, Interlaced, De-flickered.\n";
 static const char str_8009ad40[] = "vi sizes %d %d %d %d  w %d h %d\n";
@@ -52,7 +75,7 @@ u16 *gDepthBuffer = NULL;
 s32 D_80093014 = 0; // unused
 s32 D_80093018 = 0x02000000; // unused
 s32 D_8009301C = 0; // unused
-VideoResolution gResolutionArray[VIDEO_RESOLUTIONS_COUNT] = {
+VideoResolution gResolutionArray[8] = {
     {320, 240},
     {320, 240},
     {512, 240},
@@ -138,7 +161,7 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     }
 
     if (someBool && osTvType == OS_TV_PAL) {
-        for (i = 0; i < VIDEO_RESOLUTIONS_COUNT; i++) {
+        for (i = 0; i < (s32)ARRAYCOUNT(gResolutionArray); i++) {
             gResolutionArray[i].v += 20;
         }
     }

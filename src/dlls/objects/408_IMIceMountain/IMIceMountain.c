@@ -7,7 +7,7 @@
 #include "sys/segment_1050.h"
 #include "sys/segment_1460.h"
 #include "game/gamebits.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "dlls/objects/common/vehicle.h"
 
 typedef struct {

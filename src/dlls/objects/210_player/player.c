@@ -16,7 +16,7 @@
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/rand.h"
 #include "sys/camera.h"
