@@ -56,7 +56,7 @@ void TexFrameAnimator_setup(Object* self, TexFrameAnimator_Setup* objSetup, s32 
 void TexFrameAnimator_control(Object* self) {
     TexFrameAnimator_Data* objData;
     Block* block;
-    Block_0x28Struct* blockMaterialInfo;
+    BlocksTextureIndexData* blockMaterialInfo;
     BlockTexture* blockTexture;
     TexFrameAnimator_Setup* objSetup;
 
@@ -90,7 +90,7 @@ void TexFrameAnimator_control(Object* self) {
     }
 
     //Get Block Material's Texture
-    blockTexture = func_8004A2CC(blockMaterialInfo->texIdx);
+    blockTexture = func_8004A2CC(blockMaterialInfo->textureIndex);
 
     //Advance texture animation frame
     objData->frame += objData->speed * gUpdateRate;

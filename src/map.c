@@ -52,7 +52,7 @@ MapObjSetupList gMapObjSetupLists[120];
 s8 gMapType;
 MapHeader* gMapActiveStreamMap;
 SavedObject* D_800B96B0;
-BlocksModel **gLoadedBlocks;
+Block **gLoadedBlocks;
 u8 gLoadedBlockCount;
 s16 *gLoadedBlockIds;
 s16 gNumTRKBLKEntries;
@@ -146,7 +146,7 @@ Unk80092BC0 D_80092BC0 = {0};
 
 void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
-HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
+HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
 void func_800441F4(u32* arg0, s32 arg1);
 void func_80048B14(Block *block);
 void func_80048C24(Block *block);
@@ -157,7 +157,7 @@ s32 block_setup_textures(Block *block);
 void block_setup_xz_bitmap(Block *block);
 void block_compute_vertex_colors(Block*,s32,s32,s32);
 void func_80049D38(u32 arg0);
-void func_80049FA8(BlocksModel*);
+void func_80049FA8(Block*);
 void func_800499BC(void);
 void func_80049D88(void);
 void func_80044BEC(void);
@@ -572,7 +572,7 @@ void init_maps(void) {
 
     UINT_80092a98 = 0;
     D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:cblocks"));
-    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blknos"));
+    gLoadedBlocks = mmAlloc(sizeof(Block*) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blknos"));
     gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blkusage"));
     gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:mapinfo"));
     gMapReadBuffer = mmAlloc(sizeof(u8) * 700, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:tempbuf"));
@@ -836,8 +836,8 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
                 SHORT_800b51dc = -1;
             }
 
-            if (shape->tileIdx1 != 0xff) {
-                tex1 = block->tiles[shape->tileIdx1].texture;
+            if (shape->blendTextureIndex != 0xff) {
+                tex1 = block->tiles[shape->blendTextureIndex].texture;
             } else {
                 tex1 = NULL;
             }
@@ -1190,7 +1190,7 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
 
         gWorldRSPMatrices++;
 
-        mf.m[3][1] = block->elevation;
+        mf.m[3][1] = block->minY;
 
         matrix_scaling(&mf2, 1.0f, 0.05f, 1.0f);
         matrix_concat(&mf2, &mf, &mf);
@@ -1351,7 +1351,7 @@ ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, 
 s32 func_8004454C(f32 x, f32 y, f32 z) {
     s32 gridX;
     s32 gridZ;
-    BlocksModel *currentBlock;
+    Block *currentBlock;
     s32 i;
     s8 *temp;
     
@@ -1497,7 +1497,7 @@ s32 func_80044A7C(s32 worldX, s32 worldZ, s32* blockIndex) {
 }
 
 /** Get Block from visGrid cell */
-BlocksModel* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer) { 
+Block* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer) { 
     s8 *blocksLayer;
     s8 blockIndex;
 
@@ -1650,7 +1650,7 @@ void func_80044BEC(void) {
 }
 #endif
 
-s32 func_800451A0(s32 xPos, s32 zPos, BlocksModel* blocks) {
+s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks) {
     Plane* currentPlane;
     f32 scaledXPos;
     f32 scaledZPos;
@@ -1727,7 +1727,7 @@ void some_cell_func(BitStream* stream) {
     s32 cellX;
     s32 temp;
     s32 cellZ;
-    BlocksModel* sp28;
+    Block* sp28;
 
     if (D_800B9794 == 0) {
         return;
@@ -3076,16 +3076,16 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     block->vertices = (BlockVertex*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
-    block->unk10 = (void*)((u32)block->unk10 + (u32)block);
-    block->tiles = (BlocksMaterial*)((u32)block->tiles + (u32)block);
+    block->ptr_faceEdgeVectors = (s16*)((u32)block->ptr_faceEdgeVectors + (u32)block);
+    block->materials = (BlocksMaterial*)((u32)block->materials + (u32)block);
     tex_set_alloc_tag(ALLOC_TAG_TRACKTEX_COL);
-    for (texIdx = 0; texIdx < block->textureCount; texIdx++) {
-        block->tiles[texIdx].texture = tex_load(-((u32)block->tiles[texIdx].texture | 0x8000), queue);
+    for (texIdx = 0; texIdx < block->materialCount; texIdx++) {
+        block->materials[texIdx].texture = tex_load(-((u32)block->materials[texIdx].texture | 0x8000), queue);
     }
     tex_set_alloc_tag(ALLOC_TAG_TEX_COL);
     block_setup_vertices(block);
     addr = (u32)block;
-    addr += block->gdlGroupsOffset;
+    addr += block->modelSize;
     block->gdlGroups = (Gfx*)addr;
     block_setup_gdl_groups(block);
     addr += (3 * block->shapeCount * sizeof(Gfx));
@@ -3108,7 +3108,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
         while (fileVerts < fileVertsEnd) {
             if (shape->flags & 0x20000000) {
                 verts->ob[0] = (f32) fileVerts->ob[0];
-                verts->ob[1] = (fileVerts->ob[1] - block->elevation) * 20.0f;
+                verts->ob[1] = (fileVerts->ob[1] - block->minY) * 20.0f;
                 verts->ob[2] = (f32) fileVerts->ob[2];
             } else {
                 verts->ob[0] = fileVerts->ob[0];
@@ -3135,7 +3135,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
         block->vertices2[1] = (Vtx_t*)block->vertices;
     }
     addr = mmAlign4(addr);
-    block->unk28 = (Block_0x28Struct*)addr;
+    block->unk28 = (BlocksTextureIndexData*)addr;
     addr += block_setup_textures(block);
     addr = mmAlign2(addr);
     block->xzBitmap = (s16*)addr;
@@ -3172,7 +3172,7 @@ void func_80048B14(Block* block) {
                     block->vertices[vertexIndex].cn[0],
                     block->vertices[vertexIndex].cn[1],
                     block->vertices[vertexIndex].cn[2],
-                    block->shapes[i].alpha
+                    block->shapes[i].envColourMode
                 );
                 if (result != -1) {
                     block->vertices[vertexIndex].flag =  ((s16)block->vertices[vertexIndex].flag | ((result & 0xFF) * 4));
@@ -3280,7 +3280,7 @@ void func_80048F58(void)
     }
 }
 
-void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
+void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
 {
     s32 slot;
     s8 *ptr;
@@ -3329,10 +3329,10 @@ void block_setup_gdl_groups(Block *block)
         flags = shape->flags;
         aa = flags & RENDER_ANTI_ALIASING;
 
-        if (shape->tileIdx0 == 0xff) {
+        if (shape->materialIndex == 0xff) {
             texture = NULL;
         } else {
-            texture = block->tiles[shape->tileIdx0].texture;
+            texture = block->materials[shape->materialIndex].texture;
             if (texture != NULL) {
                 texFlags = texture->flags;
             }
@@ -3423,7 +3423,7 @@ void block_setup_vertices(Block *block)
     s32 i;
     BlockShape *shape;
     s32 v0[3]; // spC4 - spCC
-    Vtx_t *pverts;
+    BlockVertex *pverts;
     EncodedTri *ptri;
     EncodedTri *ptriend;
     s32 pad;
@@ -3433,7 +3433,7 @@ void block_setup_vertices(Block *block)
     s16 vz[3]; // sp90 - sp96
     s16 inx, iny, inz;
     s32 j;
-    Vtx_t *verts[3];
+    BlockVertex *verts[3];
     f32 mag;
 
     for (i = 0; i < block->shapeCount; i++)
@@ -3441,7 +3441,7 @@ void block_setup_vertices(Block *block)
         shape = &block->shapes[i];
         pverts = shape->vtxBase + block->vertices;
         ptri = shape->triBase + block->encodedTris;
-        if (verts) {}
+        if ((s32)verts) {}
         ptriend = &block->encodedTris[shape[1].triBase];
 
         while (ptri < ptriend)
@@ -3498,7 +3498,7 @@ void block_setup_vertices(Block *block)
  * blocks_free?
  */
 void func_800496E4(s32 blockIndex) {
-    BlocksModel *block;
+    Block *block;
     s32 i;
     u8 runtimeValue;
     s32* temp_a0_2;
@@ -3510,24 +3510,24 @@ void func_800496E4(s32 blockIndex) {
     gBlockRefCounts[blockIndex] -= 1;
     if (gBlockRefCounts[blockIndex] == 0) {
         block = gLoadedBlocks[blockIndex];
-        func_80048C24((Block *) block);
+        func_80048C24(block);
         gLoadedBlockIds[blockIndex] = -1;
         gLoadedBlocks[blockIndex] = NULL;
         if (block->unk48 != 0) {
             func_80049FA8(block);
         }
 
-        //Loop over facebatches and free them
-        for (i = 0; i < block->faceBatch_count; i++){
-            runtimeValue = (&block->ptr_faceBatches[i])->runtimeValue;
+        //Loop over shapes and free them
+        for (i = 0; i < block->shapeCount; i++){
+            runtimeValue = (&block->shapes[i])->unk16;
             if (runtimeValue != 0xFF) {
                 func_80049D38(runtimeValue);
             }
         }
 
         //Loop over materials and free their textures
-        for (i = 0; i < block->material_count; i++){
-            tex_free(block->ptr_materials[i].texture);
+        for (i = 0; i < block->materialCount; i++){
+            tex_free(block->materials[i].texture);
         }
         
         if ((u32*)block->unk1C != NULL) {
@@ -3544,7 +3544,7 @@ u32 hits_get_size(s32 id) {
     return size;
 }
 
-HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
+HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
     s32 hits_start;
     s32 hits_size;
     s32 lineIndex;
@@ -3576,7 +3576,7 @@ HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u8 unused, HitsLine* 
                 
     block->unk1C = 0;
     block->unk3C = 0;
-    block->flags &= ~0x40;
+    block->vtxFlags &= ~0x40;
     
     return hits_ptr;
 }
@@ -3803,12 +3803,12 @@ s32 block_setup_textures(Block* block) {
             var_a2 = temp_a3->animatorID;
             if (var_a1 == FALSE) {
                 var_a1 = temp_a3->flags;
-                block->unk28[var_s1].texIdx = func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
+                block->unk28[var_s1].textureIndex = func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
                 block->unk28[var_s1].unk2 = block->shapes[i].animatorID;
                 var_s1++;
             } else {
                 var_a1 = temp_a3->flags;
-                func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
+                func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
             }
         }
     }
@@ -3818,17 +3818,17 @@ s32 block_setup_textures(Block* block) {
 }
 #endif
 
-void func_80049FA8(BlocksModel* block) {
+void func_80049FA8(Block* block) {
     s32 index;
     u8 animatorID;
-    FaceBatch* facebatch;
+    BlockShape* shape;
 
-    for (index = 0; index < block->faceBatch_count; index++){
-        facebatch = &block->ptr_faceBatches[index];
-        if (facebatch->renderSettingBitfield & 0x10000) {
-            animatorID = facebatch->animatorID;
+    for (index = 0; index < block->shapeCount; index++){
+        shape = &block->shapes[index];
+        if (shape->flags & 0x10000) {
+            animatorID = shape->animatorID;
             if (animatorID){
-                func_8004A164(block->ptr_materials[facebatch->materialID].texture, animatorID);
+                func_8004A164(block->materials[shape->materialIndex].texture, animatorID);
             }
         }
     }
@@ -3887,7 +3887,7 @@ void func_8004A164(Texture *matchTexture, s32 matchParam) {
 /** blocks_get_texture_by_some_value? */
 Texture* func_8004A1E8(s32 match_value) {
     s32 blockIndex;
-    BlocksModel *block;
+    Block *block;
     s32 textureIndex;
     
     for (blockIndex = 0; blockIndex < gLoadedBlockCount; blockIndex++){
@@ -3895,7 +3895,7 @@ Texture* func_8004A1E8(s32 match_value) {
         
         if (block){
             for (textureIndex = 0; textureIndex < block->unk48; textureIndex++){
-                if (match_value == (&block->unk28[textureIndex])->unk02){
+                if (match_value == (&block->unk28[textureIndex])->unk2){
                     textureIndex = (&block->unk28[textureIndex])->textureIndex;
                     return gBlockTextures[textureIndex].texture;
                 }
@@ -3905,7 +3905,7 @@ Texture* func_8004A1E8(s32 match_value) {
     return NULL;
 }
 
-Block_0x28Struct *func_8004A284(Block *block, s32 param_2)
+BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2)
 {
     s32 i;
 
@@ -3941,7 +3941,7 @@ void block_setup_xz_bitmap(Block* block) {
     s32 var_t2;
     s32 pad2;
     s32 i;
-    Vtx_t *sp38[3];
+    BlockVertex *sp38[3];
 
     for (var_t2 = 0; var_t2 < block->shapeCount; var_t2++) {
         tempTriBase = block->shapes[var_t2 + 0].triBase;
@@ -4895,11 +4895,11 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
         var_a1_2 = 0;
         blockShape = &arg0->shapes[i];
         temp_v1 = blockShape->flags;
-        if (arg0->tiles[blockShape->tileIdx0].texture == NULL) {
+        if (arg0->materials[blockShape->materialIndex].texture == NULL) {
             continue;
         }
         sp120 = 0;
-        if (((temp_v1 & 0x120) || (arg0->tiles[blockShape->tileIdx0].texture->flags & 0xC000)) && !(temp_v1 & 0x46C00000)) {
+        if (((temp_v1 & 0x120) || (arg0->materials[blockShape->materialIndex].texture->flags & 0xC000)) && !(temp_v1 & 0x46C00000)) {
             var_a1_2 = 1;
         } else if (temp_v1 & 0x46400000) {
             var_a1_2 = 2;
@@ -4915,7 +4915,7 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
             continue;
         }
 
-        if (blockShape->alpha == 0xFF) {
+        if (blockShape->envColourMode == 0xFF) {
             if (temp_v1 & 0x400000) {
                 sp7B = sp158[0];
                 sp7A = sp150[0];
@@ -4925,7 +4925,7 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                 sp7A = sp154[0];
                 sp79 = sp14C[0];
             }
-        } else if (blockShape->alpha == 0xFE) {
+        } else if (blockShape->envColourMode == 0xFE) {
             sp7B = 0xFF;
             sp7A = 0xFF;
             sp79 = 0xFF;
@@ -4977,10 +4977,10 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                         if (var_s0 != NULL) {
                             var_v0 = &sp8C[var_s3];
                             if (
-                                ((blockShape->unk8[4] - 0x32) << 2) < var_v0->unk0 &&
-                                var_v0->unk0 < ((blockShape->unk8[5] + 0x32) << 2) &&
-                                ((blockShape->unk8[6] - 0x32) << 2) < var_v0->unk8 &&
-                                var_v0->unk8 < ((blockShape->unk8[7] + 0x32) << 2)
+                                ((blockShape->Xmin - 0x32) << 2) < var_v0->unk0 &&
+                                var_v0->unk0 < ((blockShape->Xmax + 0x32) << 2) &&
+                                ((blockShape->Zmin - 0x32) << 2) < var_v0->unk8 &&
+                                var_v0->unk8 < ((blockShape->Zmax + 0x32) << 2)
                             ) {
                                 sp120 = 1;
                             }
@@ -5207,7 +5207,7 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                             var_s1++;
                         }
                     }
-                    if ((sp78 == 0)) {
+                    if (sp78 == 0) {
                        while ((u32) var_s1 < (u32) sp124) {
                             if (arg0->shapes[i].flags & 0x40400000) {
                                 if (arg0->shapes[i].flags & 0x400000) {

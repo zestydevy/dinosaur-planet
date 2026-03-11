@@ -485,7 +485,7 @@ void CCkrazoabright_apply_blending_krazoa_symbol(u8* colours) {
             //If the shape has any of the 6 relevant animatorIDs, apply its new texture blend value
             for (a = 0; a < 6; a++){
                 if (data_krazoa_symbol_shape_animatorIDs[a] == shapes[s].animatorID){
-                    func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->texIdx)->unk4 = colours[a];
+                    func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->textureIndex)->unk4 = colours[a];
                     break;
                 }
             }
@@ -529,7 +529,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
             //If the shape's animatorIDs is 11 (used by lever icons), apply new texture blend value
             if (shapes[s].animatorID == 11) {
                 colourToSet = colour;
-                func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->texIdx)->unk4 = colourToSet;
+                func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->textureIndex)->unk4 = colourToSet;
             }
         }
     }

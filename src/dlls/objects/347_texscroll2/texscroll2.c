@@ -129,13 +129,13 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     }
 
     //Iterate over Block's materials until finding one that uses the texture
-    for (materialIndex = 0; materialIndex < block->textureCount; materialIndex++){
-        if (texture == block->tiles[materialIndex].texture){
+    for (materialIndex = 0; materialIndex < block->materialCount; materialIndex++){
+        if (texture == block->materials[materialIndex].texture){
             break;
         }
     }
     //Bail if material not found
-    if (materialIndex == block->textureCount) {
+    if (materialIndex == block->materialCount) {
         return;
     }
 
@@ -150,12 +150,12 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     if (objSetup->blendTextureIndex != -1) {
         textureBlended = tex_get_cached(-scrollTable[objSetup->blendTextureIndex]);
         if (textureBlended != NULL) {
-            for (materialIndex = 0; materialIndex < block->textureCount; materialIndex++) {
-                if (textureBlended == block->tiles[materialIndex].texture) {
+            for (materialIndex = 0; materialIndex < block->materialCount; materialIndex++) {
+                if (textureBlended == block->materials[materialIndex].texture) {
                     break;
                 }
             }
-            if (materialIndex == block->textureCount) {
+            if (materialIndex == block->materialCount) {
                 return;
             }
             widthB = textureBlended->width << 6;
@@ -166,10 +166,10 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
 
     //Iterate over Block's shapes and enable UV scrolling on any that use the relevant materials
     for (shapeIndex = 0; shapeIndex < block->shapeCount; shapeIndex++){
-        if (block->shapes[shapeIndex].tileIdx0 == objData->materialIndex) {
+        if (block->shapes[shapeIndex].materialIndex == objData->materialIndex) {
             //If blend material is specified, only apply scrolling if the shape uses it as its secondary multitexture material
             if (objData->blendMaterialIndex == -1 || 
-                objData->blendMaterialIndex == block->shapes[shapeIndex].tileIdx1) {
+                objData->blendMaterialIndex == block->shapes[shapeIndex].blendMaterialIndex) {
                 if (block->shapes[shapeIndex].unk16 != 0xFF) {
                     func_80049CE4(block->shapes[shapeIndex].unk16, 
                         objData->uSpeedA, objData->vSpeedA, widthA, heightA, 

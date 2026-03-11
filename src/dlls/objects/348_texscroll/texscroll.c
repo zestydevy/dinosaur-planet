@@ -108,11 +108,11 @@ void TexScroll_control(Object* self) {
         objData->searchForMaterial = FALSE;
     }
 
-    if (objData->materialIndex >= block->textureCount) {
+    if (objData->materialIndex >= block->materialCount) {
         objData->materialIndex = 0;
     }
 
-    texture = block->tiles[objData->materialIndex].texture;
+    texture = block->materials[objData->materialIndex].texture;
     width = texture->width << 6;
     height = texture->height << 6;
     speedU = objData->speedU;
@@ -148,7 +148,7 @@ void TexScroll_control(Object* self) {
     vertsAnimated = block->vertices2[block->vtxFlags & 1];
     if (1) { }
     for (shapeIndex = 0; shapeIndex < block->shapeCount; shapeIndex++){
-        if (objData->materialIndex == shapes[shapeIndex].tileIdx0) {
+        if (objData->materialIndex == shapes[shapeIndex].materialIndex) {
             wrapAllVertsBitfield = 0;
             wrapVertexBitfieldU = 0;
             wrapVertexBitfieldV = 0;
@@ -269,14 +269,14 @@ void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objDat
     }
 
     //Iterate over Block's materials until finding one that uses the texture
-    for (index = 0; index < block->textureCount; index++){
-        if (texture == block->tiles[index].texture) {
+    for (index = 0; index < block->materialCount; index++){
+        if (texture == block->materials[index].texture) {
             break;
         }
     }           
 
     //Store material index of UV-scrolled texture
-    if (index != block->textureCount) {
+    if (index != block->materialCount) {
         objData->materialIndex = index;
     }
 }

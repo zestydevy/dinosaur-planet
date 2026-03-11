@@ -61,32 +61,32 @@ typedef struct {
 } BlockTexture; // FIXME: better name
 
 typedef struct {
-/*0000*/    s16 texIdx;
-/*0002*/    u8 unk2;
-/*0003*/    u8 unk3;
-} Block_0x28Struct;
+/*00*/ s16 textureIndex;
+/*02*/ u8 unk2;
+/*03*/ u8 unk3;
+} BlocksTextureIndexData;
 
 typedef struct {
-/*0000*/    u32 flags; // RenderFlags
-/*0004*/    s16 vtxBase;
-/*0006*/    s16 triBase;
-/*0008*/    u8 unk8[0x12 - 0x8];    //bounds
-                                    //s16 Ymin;
-                                    //s16 Ymax;
-                                    //s8 Xmin; //Divided by 4
-                                    //s8 Xmax; //Divided by 4
-                                    //s8 Zmin; //Divided by 4
-                                    //s8 Zmax; //Divided by 4
-/*0012*/    u8 tileIdx0;    //materialIdx
-/*0013*/    u8 alpha;       //envColourMode 
-                            //00 = use ambient envFX colour
-                            //FE = ignore ambient envFX colour
-                            //FF = use flickering vertices' colour
-                            //    (used very rarely, in blocks 327 & 0843)
-/*0014*/    u8 animatorID;
-/*0015*/    u8 tileIdx1;    //blendMaterialIdx
-/*0016*/    u8 unk16;       //texture scroll effect handler index? (at runtime)
-/*0017*/    u8 unk17;
+/*00*/    u32 flags; // RenderFlags
+/*04*/    s16 vtxBase;
+/*06*/    s16 triBase; // TODO: faceBase?
+/*08*/    s16 Ymin;
+/*0a*/    s16 Ymax;
+/*0c*/    u8 Xmin; // Divided by 4
+/*0d*/    u8 Xmax; // Divided by 4
+/*0e*/    u8 Zmin; // Divided by 4
+/*0f*/    u8 Zmax; // Divided by 4
+/*10*/    s8 unk10;
+/*11*/    s8 unk11;
+/*12*/    u8 materialIndex;
+/*13*/    s8 envColourMode; // 00 = use ambient envFX colour
+                            // FE = ignore ambient envFX colour
+                            // FF = use flickering vertices' colour
+                            //     (used very rarely, in blocks 327 & 0843)
+/*14*/    u8 animatorID; // Used to mark facebatches that can be removed/animated
+/*15*/    u8 blendMaterialIndex; // Used for multitextured water
+/*16*/    u8 unk16; // texture scroll effect handler index? (at runtime)
+/*17*/    u8 unk_cull; // The function responsible for face culling reads this
 } BlockShape;
 
 typedef struct {
@@ -118,33 +118,6 @@ typedef struct{
                             //or force water behaviour - overriding facebatch water setting!)
 } BlocksMaterial;
 
-typedef struct {
-/*0000*/    BlocksMaterial *tiles;
-/*0004*/    BlockVertex *vertices;
-/*0008*/    EncodedTri *encodedTris;
-/*000C*/    BlockShape *shapes;
-/*0010*/    void *unk10;
-/*0014*/    s16 *xzBitmap;
-/*0018*/    u8 unk18[0x20 - 0x18];
-/*0020*/    Vtx_t *vertices2[2];
-/*0028*/    Block_0x28Struct *unk28;
-/*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
-/*0030*/    s16 vtxFlags;
-/*0032*/    s16 vtxCount;
-/*0034*/    s16 unk34;
-/*0036*/    s16 shapeCount;
-/*0038*/    u8 unk38[0x3e - 0x38];
-/*003E*/    s16 unk3E;
-/*0040*/    s16 elevation;
-/*0042*/    u16 unk42;
-/*0044*/    u16 gdlGroupsOffset;
-/*0046*/    u8 unk46;
-/*0047*/    u8 unk47;
-/*0048*/    u8 unk48;
-/*0049*/    u8 unk49;
-/*004A*/    u8 textureCount;
-} Block;
-
 typedef struct{
 /*00*/    s16 Ax;
 /*02*/    s16 Bx;
@@ -161,76 +134,39 @@ typedef struct{
 } HitsLine;
 
 typedef struct {
-/*00*/    u32 renderSettingBitfield; //TODO: split into bits
-/*04*/    s16 baseVertexID;
-/*06*/    s16 baseFaceID;
-/*08*/    s16 Ymin;
-/*0a*/    s16 Ymax;
-/*0c*/    u8 Xmin; //Divided by 4
-/*0d*/    u8 Xmax; //Divided by 4
-/*0e*/    u8 Zmin; //Divided by 4
-/*0f*/    u8 Zmax; //Divided by 4
-/*10*/    s8 unk10;
-/*11*/    s8 unk11;
-/*12*/    u8 materialID;
-/*13*/    s8 envColourMode;     //00 = use ambient envFX colour
-                                //FE = ignore ambient envFX colour
-                                //FF = use flickering vertices' colour
-                                //    (used very rarely, in blocks 327 & 0843)
-/*14*/    u8 animatorID;        //Used to mark facebatches that can be removed/animated
-/*15*/    u8 blendMaterialID;   //Used for multitextured water
-/*16*/    s8 runtimeValue;      //0 in ROM, but -1 gets written here at runtime
-/*17*/    s8 unk_cull;          //The function responsible for face culling reads this
-} FaceBatch; //NOTE: this is describing the same thing as the "BlockShape" struct (TODO: consolidate!)
-
-typedef struct {
-/*00*/ s16 textureIndex;
-/*02*/ u8 unk02;
-/*03*/ u8 unk03;
-} BlocksTextureIndexData;
-
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-} PtrFace;
-
-typedef struct {
-/*00*/    BlocksMaterial *ptr_materials;
-/*04*/    u32 ptr_vertices;
-/*08*/    PtrFace *ptr_faces;
-/*0c*/    FaceBatch *ptr_faceBatches;
-/*10*/    s16 *ptr_faceEdgeVectors;
-/*14*/    s16 *unk14; // in ROM, sometimes matches grid row
-/*18*/    HitsLine *ptr_hits_lines; // in ROM, sometimes matches grid column (HITS.bin data pointer at runtime)
-/*1c*/    s32 unk1C;
-/*20*/    Vtx *unk20[2]; // unknnown size, 2 is probably correct
-/*28*/    BlocksTextureIndexData *unk28; //textureIDs_ptr
-/*2c*/    s16 unk2C;
-/*2e*/    s16 unk2E;  
-/*30*/    s16 flags; //Typical values: 0x10, 0x18 (affects malloc size - more needed needed for blocks with animated verts)
-/*32*/    s16 vertex_count;
-/*34*/    s16 face_count;
-/*36*/    s16 faceBatch_count;
-/*38*/    s16 hits_line_count; //value only present at runtime
-/*3a*/    s8  unk3A;
-/*3b*/    s8  unk3B;
-/*3c*/    s16 unk3C;
-/*3e*/    s16 unk3E; //pointer to animated vertices, maybe?
-/*40*/    s16 minY; //lowest vertex elevation
-/*42*/    s16 maxY; //highest vertex elevation
-/*44*/    s16 modelSize; //length of decompressed model
-    
-//unconfirmed, but seems to be something like
-//the number of times the texture/material settings
-//change while going through the block's F3DEX2 commands
-/*46*/    s16 textureLoadCount;
-
-/*48*/    u8 unk48; //texture_count (at runtime, distinct from material count since different materials can use same texture)
-/*49*/    s8 unk49;
-/*4a*/    u8  material_count;
-/*4b*/    s32 unk4B;
-/*4e*/    s8  unk4E;
-} BlocksModel; //NOTE: this is describing the same thing as the "Block" struct (TODO: consolidate!)
+/*0000*/    BlocksMaterial *materials;
+/*0004*/    BlockVertex *vertices;
+/*0008*/    EncodedTri *encodedTris;
+/*000C*/    BlockShape *shapes;
+/*0010*/    s16 *ptr_faceEdgeVectors;
+/*0014*/    s16 *xzBitmap;
+/*0018*/    HitsLine *ptr_hits_lines; // in ROM, sometimes matches grid column (HITS.bin data pointer at runtime)
+/*001C*/    s32 unk1C;
+/*0020*/    Vtx_t *vertices2[2];
+/*0028*/    BlocksTextureIndexData *unk28;
+/*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
+/*0030*/    s16 vtxFlags;
+/*0032*/    s16 vtxCount;
+/*0034*/    s16 unk34;
+/*0036*/    s16 shapeCount;
+/*0038*/    s16 hits_line_count; //value only present at runtime
+/*003A*/    s8 unk3A;
+/*003B*/    s8 unk3B;
+/*003C*/    s16 unk3C;
+/*003E*/    s16 unk3E; // pointer to animated vertices, maybe?
+/*0040*/    s16 minY; // lowest vertex elevation
+/*0042*/    s16 maxY; // highest vertex elevation
+/*0044*/    u16 modelSize; // length of decompressed model
+            // unconfirmed, but seems to be something like
+            // the number of times the texture/material settings
+            // change while going through the block's F3DEX2 commands
+/*0046*/    s16 textureLoadCount;
+/*0048*/    u8 unk48; // texture_count (at runtime, distinct from material count since different materials can use same texture)
+/*0049*/    u8 unk49;
+/*004A*/    u8 materialCount;
+/*004B*/    s32 unk4B;
+/*004E*/    s8 unk4E;
+} Block;
 
 // Size: 0x22
 typedef struct {
@@ -560,7 +496,7 @@ void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
 
 // Blocks (map)
 
-BlocksModel* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
+Block* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
 s8* func_80044B98(s32 arg0);
 Block* func_80044BB0(s32 blockIndex);
 
@@ -597,11 +533,11 @@ void map_func_800484A8(void);
 // Blocks (again)
 
 void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
-void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
+void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
 s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
 void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
 Texture* func_8004A1E8(s32 match_value);
-Block_0x28Struct *func_8004A284(Block *block, s32 param_2);
+BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2);
 BlockTexture *func_8004A2CC(s32 idx);
 s32 func_8004A528(Object* obj, u8 animatorID);
 s32 func_8004A5D8(Object* obj, u8 animatorID);

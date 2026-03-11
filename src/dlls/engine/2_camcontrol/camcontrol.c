@@ -7,6 +7,7 @@
 #include "sys/voxmap.h"
 #include "dlls/engine/2_camcontrol.h"
 #include "unktypes.h"
+#include "prevent_bss_reordering.h"
 
 /** Related to gametext that appears when holding R? */
 static s16 _data_0[] = {
