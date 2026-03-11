@@ -7,7 +7,6 @@
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/rcp.h"
-#include "functions.h"
 #include "dll.h"
 #include "types.h"
 

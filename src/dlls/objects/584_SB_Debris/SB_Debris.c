@@ -1,9 +1,9 @@
 #include "dlls/engine/17_partfx.h"
-#include "functions.h"
 #include "dll.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ f32 unk0;

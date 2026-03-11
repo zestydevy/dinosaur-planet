@@ -4,8 +4,8 @@
 #include "sys/gfx/gx.h"
 #include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
+#include "sys/map.h"
 #include "sys/memory.h"
-#include "functions.h"
 #include "macros.h"
 
 /* -------- .bss start 800a7d30 -------- */

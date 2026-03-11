@@ -1,12 +1,12 @@
 #include "dll.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/338_LFXEmitter.h"
-#include "functions.h"
 #include "game/objects/object_id.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
 
 typedef struct {

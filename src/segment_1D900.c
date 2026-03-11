@@ -1,5 +1,6 @@
 #include "common.h"
 #include "unktypes.h"
+#include "sys/segment_1D900.h"
 
 typedef struct { u8 unk0[0x3300]; } Unk800B1848;
 

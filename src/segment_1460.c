@@ -1,5 +1,5 @@
 #include "common.h"
-
+#include "sys/segment_1460.h"
 
 typedef struct {
     u8  pad0[0x2A];

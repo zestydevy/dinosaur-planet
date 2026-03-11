@@ -6,9 +6,9 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
+#include "sys/objprint.h"
 #include "segment_334F0.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

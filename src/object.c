@@ -6,6 +6,7 @@
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 #include "sys/newshadows.h"
+#include "sys/segment_326A0.h"
 
 typedef struct {
 /*00*/  u8 _unk0[0x8 - 0x0];

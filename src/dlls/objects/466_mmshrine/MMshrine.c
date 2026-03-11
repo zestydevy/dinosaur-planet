@@ -15,7 +15,8 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_1460.h"
 #include "types.h"
 #include "dll.h"
 

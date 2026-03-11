@@ -1,7 +1,6 @@
 #include "common.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
-#include "functions.h"
 #include "sys/rand.h"
 
 typedef struct {

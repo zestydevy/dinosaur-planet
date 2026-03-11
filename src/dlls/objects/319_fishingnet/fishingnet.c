@@ -2,7 +2,8 @@
 #include "dlls/objects/210_player.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
 
 typedef struct {
     u8 unk0;

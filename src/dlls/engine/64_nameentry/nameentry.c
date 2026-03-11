@@ -10,7 +10,6 @@
 #include "sys/memory.h"
 #include "sys/menu.h"
 #include "dll.h"
-#include "functions.h"
 #include "macros.h"
 #include "sys/rcp.h"
 #include "types.h"

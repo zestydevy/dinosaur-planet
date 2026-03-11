@@ -5,6 +5,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "sys/map_enums.h"
 #include "sys/objtype.h"
+#include "sys/segment_1050.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/common/sidekick.h"

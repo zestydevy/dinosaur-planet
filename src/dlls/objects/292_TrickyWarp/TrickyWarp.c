@@ -1,8 +1,8 @@
 #include "PR/ultratypes.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/main.h"
-#include "functions.h"
 #include "dlls/objects/211_tricky.h"
 
 typedef struct {

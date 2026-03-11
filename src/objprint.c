@@ -3,6 +3,7 @@
 #include "game/objects/object.h"
 #include "sys/rsp_segment.h"
 #include "sys/segment_1D900.h"
+#include "sys/objprint.h"
 
 // -------- .data start 80091750 -------- //
 s32 D_80091750 = 0; // unused bytes
@@ -325,7 +326,7 @@ void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
     }
 }
 
-void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs,Vertex **vtxs, Triangle **pols, u32 param_6)
+void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, u32 param_6)
 {
     Gfx *mygdl;
     Mtx *outRspMtxs;

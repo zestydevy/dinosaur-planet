@@ -2,6 +2,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "dll.h"
 #include "constants.h"
 

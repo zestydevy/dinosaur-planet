@@ -7,6 +7,7 @@
 #include "libnaudio/n_seqp.h"
 #include "libultra/audio/cseq.h"
 #include "intrinsics.h"
+#include "sys/audio/amAudio.h"
 #include "sys/mpeg.h"
 
 s32 D_800967A0[127] = {
@@ -64,7 +65,6 @@ u32 D_800CD2E0[16];
 
 u8 n_seqplayer_func_80079e1c(N_ALVoiceState *vs, N_ALCSPlayer *seqp);
 f32 func_8006AE34(s32 arg0);
-f32 _depth2Cents(u8 arg0);
 struct auxbus44 *func_8007A8B8(s16 bus);
 void func_8007A974(struct fx *fx, s16 arg1, void *param);
 void func_800794B0(N_ALCSPlayer *seqp);

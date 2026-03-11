@@ -8,7 +8,7 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "types.h"
 
 typedef struct {

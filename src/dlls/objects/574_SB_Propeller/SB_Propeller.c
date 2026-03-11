@@ -2,8 +2,8 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/main.h"
-#include "functions.h"
 #include "dlls/objects/572_SB_Galleon.h"
 
 /*0x0*/ static u32 _data_0[] = { 0x00000258, 0x00000000, 0x00000000, 0x00000000 }; // ?

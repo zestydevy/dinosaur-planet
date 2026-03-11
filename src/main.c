@@ -4,6 +4,7 @@
 #include "PR/sched.h"
 #include "game/gamebits.h"
 #include "libnaudio/n_unkfuncs.h"
+#include "sys/audio/amAudio.h"
 #include "sys/asset_thread.h"
 #include "sys/audio.h"
 #include "sys/joypad.h"
@@ -25,9 +26,10 @@
 #include "sys/rsp_segment.h"
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
+#include "sys/segment_1D900.h"
+#include "sys/segment_53F00.h"
 #include "dll.h"
 #include "constants.h"
-#include "functions.h"
 
 #define DONGLE_LSFS 0x4C534653
 #define DONGLE_MPFS 0x4D504653

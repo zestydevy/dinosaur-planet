@@ -1,6 +1,7 @@
 #include "common.h"
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
+#include "sys/segment_53F00.h"
 
 static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
 static const char str_8009aaa0[] = "1: track/intersect.c: OVERFLOW error\n";

@@ -2,7 +2,6 @@
 #include "PR/gbi.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"

@@ -8,7 +8,6 @@
 #include "sys/main.h"
 #include "dll.h"
 #include "dll_def.h"
-#include "functions.h"
 
 /* -------- .data start -------- */
 s32 gMenuDLLIDs[] = {

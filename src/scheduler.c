@@ -7,7 +7,6 @@
 #include "sys/rsp_segment.h"
 #include "sys/thread.h"
 #include "sys/scheduler.h"
-#include "functions.h"
 
 GfxTaskMesg D_800918D0 = {0, 0};
 GfxTaskMesg D_800918D8 = {0, 8};

@@ -9,9 +9,10 @@
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
 /*00*/ Object *cloudrunner;

@@ -2,10 +2,10 @@
 #include "game/objects/object.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/main.h"
 #include "game/gamebits.h"
 #include "dll.h"
-#include "functions.h"
 #include "game/objects/object_id.h"
 
 typedef struct {

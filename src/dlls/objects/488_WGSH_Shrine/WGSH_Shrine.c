@@ -4,9 +4,10 @@
 #include "sys/dll.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/print.h"
-#include "functions.h"
+#include "sys/segment_1460.h"
 #include "dll.h"
 
 typedef struct {

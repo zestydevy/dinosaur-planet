@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/segment_13D0.h"
 
 typedef struct {
     s16 unk0;

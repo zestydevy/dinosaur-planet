@@ -5,7 +5,6 @@
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
 #include "sys/segment_53F00.h"
-#include "functions.h"
 #include "macros.h"
 
 static const char str_8009a9d0[] = "shadows: group overflow error\n";

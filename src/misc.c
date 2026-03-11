@@ -8,7 +8,6 @@
 #include "sys/memory.h"
 #include "sys/newshadows.h"
 #include "sys/oldshadows.h"
-#include "functions.h"
 #include "macros.h"
 
 /** This file contains both an older shadow renderer and a table of player footstep audio. */

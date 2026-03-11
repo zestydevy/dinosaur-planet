@@ -1,7 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/1_ui.h"
-#include "functions.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
 #include "game/gamebits.h"

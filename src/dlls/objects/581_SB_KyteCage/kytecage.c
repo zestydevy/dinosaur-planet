@@ -1,7 +1,6 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dlls/objects/214_animobj.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -14,6 +13,8 @@
 #include "sys/dll.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
 #include "types.h"
 
 void func_80034FF0(MtxF* arg0);

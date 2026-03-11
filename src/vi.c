@@ -6,7 +6,6 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
-#include "functions.h"
 #include "macros.h"
 
 #define REFRESH_50HZ 50

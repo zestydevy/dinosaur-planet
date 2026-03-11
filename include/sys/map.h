@@ -399,7 +399,18 @@ extern s32 D_80092A64; // something z-coordinate related
 extern s32 D_80092A7C[2];
 extern s32 D_80092A84[2];
 
+void dl_set_all_dirty(void);
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dl_apply_geometry_mode(Gfx **gdl);
+void dl_apply_combine(Gfx **gdl);
+void dl_set_fill_color(Gfx **gdl, u32 color);
+void dl_apply_other_mode(Gfx **gdl);
+void init_maps(void);
+void init_global_map(void);
 s32 func_80041DBC(void);
 s32 func_80041E08(void);
 void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
@@ -418,10 +429,30 @@ ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, 
 void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
 void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
 u32 func_80041D8C(void);
-void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 u32 func_80041DA4(void);
 void func_80041028(void);
 void func_80040FF8(void);
+s8 map_get_layer(void);
+s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
+void func_80045F48(s32);
+s32 map_get_type(void);
+void func_8004A67C(void);
+void map_func_80046B58(f32 x, f32 y, f32 z);
+s32 func_8004454C(f32 x, f32 y, f32 z);
+void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
+void map_func_800484A8(void);
+void map_func_8004773C(void);
+void func_80041C6C(s32);
+void func_80041D20(s32);
+s32 func_80041D5C(void);
+u32 func_80041D74(void);
+void func_80042174(s32);
+void func_8004225C(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
+void map_func_800483BC(f32, f32, f32);
+void func_80041CA8(s32 arg0);
+void func_80041CE4(s32 arg0);
+void func_80041E24(s32 arg0);
+void map_increment_layer(void);
+void map_decrement_layer(void);
 
 #endif

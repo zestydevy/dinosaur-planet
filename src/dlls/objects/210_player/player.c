@@ -30,7 +30,7 @@
 #include "sys/newshadows.h"
 #include "sys/footstep.h"
 #include "sys/segment_53F00.h"
-#include "functions.h"
+#include "sys/segment_326A0.h"
 #include "dll.h"
 #include "types.h"
 #include "dlls/objects/common/vehicle.h"
@@ -192,16 +192,6 @@ s32 dll_210_func_1D2A8(Object* player, Object* arg1);
 void dll_210_add_health(Object* player, s32 amount);
 void dll_210_add_scarab(Object *player, s32 amount);
 void dll_210_add_magic(Object* player, s32 amount);
-
-s32 func_80025140(Object*, f32, f32, s32);
-MtxF* func_80032170(Object*, s32);
-s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
-void func_80032238(Object* player, s32 arg1, s32 arg2, Vec3f* arg3);
-void func_80034FF0(MtxF* arg0);
-void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32, void*, s32, s32);
-void func_8005B5B8(Object*, Object*, s32);
-void func_80023894(Object* playerect, s32 objectId);
-s32 func_80031DD8(Object*, Object*, s32);
 
 /*0x0*/ static const DLTri _rodata_0[] = {
     { 0x40, 0x02, 0x01, 0x00, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x03, 0x01, 0x02, { 0, 0, 0, 0, 0, 0 }},

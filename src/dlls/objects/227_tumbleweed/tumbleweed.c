@@ -10,7 +10,6 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
@@ -20,8 +19,10 @@
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
 #include "sys/joypad.h"
+#include "sys/segment_53F00.h"
 #include "game/objects/object.h"
 #include "types.h"
 

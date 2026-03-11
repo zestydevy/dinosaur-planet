@@ -12,9 +12,10 @@
 #include "sys/map_enums.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
+#include "sys/objprint.h"
 #include "sys/menu.h"
+#include "sys/segment_326A0.h"
 #include "dll.h"
-#include "functions.h"
 #include "types.h"
 
 typedef enum {

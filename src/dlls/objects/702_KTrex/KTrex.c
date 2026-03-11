@@ -13,10 +13,11 @@
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
 #include "segment_334F0.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "functions.h"
 #include "prevent_bss_reordering.h"
 
 enum KTLogicStates {

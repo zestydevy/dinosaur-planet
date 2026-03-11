@@ -7,9 +7,9 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
 #include "unktypes.h"
-#include "functions.h"
 #include "dll.h"
 
 typedef struct {

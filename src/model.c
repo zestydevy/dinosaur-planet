@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/gfx/model_asm.h"
 #include "sys/rarezip.h"
 
 #define ALIGN8(a)  (((u32) (a) & ~0x7) + 0x8)
@@ -48,7 +49,6 @@ void func_8001A640(Object* object, ModelInstance* modelInst, Model* model);
 
 // model_asm funcs
 void func_800202E8(Vtx*, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
-void func_8001CAA4(AnimState*, s16*, s16*);
 
 void init_models() {
     u32* temp_v0;    

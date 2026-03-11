@@ -18,9 +18,10 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
+#include "sys/objprint.h"
 #include "sys/print.h"
 #include "sys/rand.h"
-#include "functions.h"
+#include "sys/segment_326A0.h"
 #include "types.h"
 #include "segment_334F0.h"
 

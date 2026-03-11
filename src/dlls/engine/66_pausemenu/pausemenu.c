@@ -5,7 +5,6 @@
 #include "dlls/engine/74_picmenu.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/21_gametext.h"
-#include "functions.h"
 #include "game/gametexts.h"
 #include "sys/camera.h"
 #include "sys/joypad.h"

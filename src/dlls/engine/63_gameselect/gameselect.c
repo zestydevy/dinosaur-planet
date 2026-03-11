@@ -19,7 +19,6 @@
 #include "dll.h"
 #include "sys/rcp.h"
 #include "types.h"
-#include "functions.h"
 #include "macros.h"
 
 #include "prevent_bss_reordering.h"

@@ -9,7 +9,6 @@
 #include "sys/objprint.h"
 #include "sys/shadowtex.h"
 #include "sys/segment_535C0.h"
-#include "functions.h"
 #include "macros.h"
 
 static const char str_8009ac70[] = "maketex: buffer out of range\n";

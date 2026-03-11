@@ -11,8 +11,8 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/voxmap.h"
+#include "sys/segment_53F00.h"
 #include "dll.h"
-#include "functions.h"
 
 // baddieControl.c (default.dol)
 

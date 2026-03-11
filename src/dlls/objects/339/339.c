@@ -1,4 +1,5 @@
-#include "functions.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

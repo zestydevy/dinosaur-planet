@@ -4,7 +4,6 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/74_picmenu.h"
-#include "functions.h"
 #include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"

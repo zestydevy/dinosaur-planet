@@ -2,8 +2,8 @@
 #include "segment_334F0.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/objprint.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
 /*0*/ f32 unk0;

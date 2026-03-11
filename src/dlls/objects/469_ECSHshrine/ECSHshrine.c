@@ -6,8 +6,9 @@
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
+#include "sys/segment_1460.h"
 #include "dll.h"
-#include "functions.h"
 
 #include "dlls/objects/469_ECSHshrine.h"
 

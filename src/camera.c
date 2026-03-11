@@ -5,9 +5,10 @@
 #include "game/objects/object.h"
 #include "macros.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/model_asm.h"
 #include "sys/main.h"
 #include "sys/math.h"
-#include "functions.h"
+#include "sys/map.h"
 
 static const char str_80098290[] = "Camera Error: Illegal mode!\n";
 static const char str_800982b0[] = "Camera Error: Illegal player no!\n";

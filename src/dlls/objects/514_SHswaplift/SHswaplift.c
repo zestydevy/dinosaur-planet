@@ -1,9 +1,10 @@
 #include "game/objects/object.h"
 #include "sys/main.h"
+#include "sys/map.h"
 #include "sys/map_enums.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "sys/joypad.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

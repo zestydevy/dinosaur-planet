@@ -1,8 +1,10 @@
 #include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "dll.h"
-#include "functions.h"
 
 static int MMP_levelcontrol_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 

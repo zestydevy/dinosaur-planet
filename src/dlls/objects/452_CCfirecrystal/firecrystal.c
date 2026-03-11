@@ -3,6 +3,7 @@
 #include "dlls/objects/453_CCfirecrystalin.h"
 #include "game/objects/object.h"
 #include "sys/objmsg.h"
+#include "sys/segment_326A0.h"
 
 typedef struct {
     ObjSetup base;

@@ -1,9 +1,10 @@
 #include "dll.h"
-#include "functions.h"
 #include "sys/dll.h"
 #include "sys/rand.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/gfx/gx.h"
+#include "sys/segment_1050.h"
 
 typedef struct {
 /*00*/ s32 _unk0;

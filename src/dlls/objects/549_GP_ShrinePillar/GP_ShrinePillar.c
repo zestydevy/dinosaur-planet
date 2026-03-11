@@ -5,7 +5,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "sys/gfx/model.h"
 #include "segment_334F0.h"
 #include "sys/print.h"

@@ -10,7 +10,8 @@
 #include "sys/objanim.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
 #include "dll.h"
 
 enum DrakorLogicStates {

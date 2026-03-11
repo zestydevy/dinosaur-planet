@@ -1,8 +1,8 @@
 #include "PR/ultratypes.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "game/objects/object_id.h"
-#include "functions.h"
 #include "dlls/objects/793_BWLog.h"
 
 typedef struct {

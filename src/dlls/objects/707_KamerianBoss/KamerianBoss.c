@@ -9,8 +9,9 @@
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
 /*00:0*/ u32 pad0_0 : 8;

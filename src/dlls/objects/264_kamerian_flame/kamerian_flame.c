@@ -2,7 +2,6 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
-#include "functions.h"
 #include "game/objects/object.h"
 #include "sys/camera.h"
 #include "sys/gfx/model.h"

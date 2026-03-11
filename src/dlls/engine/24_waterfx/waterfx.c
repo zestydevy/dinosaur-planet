@@ -12,7 +12,6 @@
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "sys/map.h"
-#include "functions.h"
 
 // size: 0x10
 typedef struct StructBss8

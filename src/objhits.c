@@ -6,6 +6,7 @@
 #include "sys/memory.h"
 #include "sys/objanim.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/gfx/model_asm.h"
 #include "dll.h"
 
 // -------- .data start 800916e0 -------- //

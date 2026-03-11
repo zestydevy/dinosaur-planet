@@ -7,9 +7,10 @@
 #include "sys/main.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
+#include "sys/segment_1460.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
     s16 unk0;

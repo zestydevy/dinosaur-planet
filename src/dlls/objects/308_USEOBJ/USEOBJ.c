@@ -1,10 +1,10 @@
 #include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/main.h"
 #include "dll.h"
 #include "sys/joypad.h"
-#include "functions.h"
 
 typedef struct {
     u8 unk0;
