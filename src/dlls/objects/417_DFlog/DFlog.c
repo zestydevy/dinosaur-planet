@@ -8,7 +8,8 @@
 #include "sys/dll.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_53F00.h"
 #include "dll.h"
 
 typedef struct {

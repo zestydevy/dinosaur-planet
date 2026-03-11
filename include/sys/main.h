@@ -73,5 +73,6 @@ s32 main_demo_next(void);
 u8 main_demo_state(void);
 u8 main_demo_finished(void);
 void func_80014D34(f32 param1, f32 *outX, f32 *outY, f32 *outZ);
+void func_800143A4(void);
 
 #endif

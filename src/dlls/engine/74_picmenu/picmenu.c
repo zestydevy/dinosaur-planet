@@ -11,7 +11,6 @@
 #include "sys/fonts.h"
 #include "sys/gfx/texture.h"
 #include "game/gamebits.h"
-#include "functions.h"
 #include "macros.h"
 #include "sys/rcp.h"
 

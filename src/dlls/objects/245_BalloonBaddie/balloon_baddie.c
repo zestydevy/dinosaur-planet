@@ -6,9 +6,9 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "functions.h"
 
 /*0x0*/ static u32 _data_0[] = { // how many?
     0x00000002, 0x00000003, 0x00000000, 0x00000000

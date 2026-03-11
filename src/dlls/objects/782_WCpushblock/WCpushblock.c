@@ -7,8 +7,8 @@
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/main.h"
-#include "functions.h"
 #include "types.h"
 #include "dll.h"
 

@@ -1,8 +1,10 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "functions.h"
 #include "dll.h"
 #include "sys/main.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "game/gamebits.h"
 
 /*0x0*/ static u32 _data_0[] = { 0x00000002, 0x00000003, 0x00000000, 0x00000000 };

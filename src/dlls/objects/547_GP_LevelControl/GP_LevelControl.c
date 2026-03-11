@@ -8,7 +8,8 @@
 #include "dlls/objects/210_player.h"
 #include "sys/math.h"
 #include "sys/objects.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_1460.h"
 #include "sys/map_enums.h"
 #include "types.h"
 

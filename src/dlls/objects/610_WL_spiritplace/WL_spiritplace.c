@@ -11,8 +11,8 @@
 #include "sys/rand.h"
 #include "sys/math.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "types.h"
-#include "functions.h"
 #include "sys/gfx/model.h"
 
 /*0x0*/ static DLL_155 *_data_0 = NULL;

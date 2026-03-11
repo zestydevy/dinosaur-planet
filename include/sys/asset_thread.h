@@ -117,5 +117,7 @@ void queue_load_model(void **dest, s32 id, s32 arg2);
 void queue_load_anim(void **dest, s16 animID, s16 modAnimID, s32 amap, s32 model);
 void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5);
 void func_800129E4();
+void func_80012B54(s32 param1, s32 param2);
+u8 map_get_is_object_streaming_disabled(void);
 
 #endif //_SYS_ASSET_THREAD_H

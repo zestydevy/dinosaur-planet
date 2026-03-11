@@ -239,7 +239,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
     }    
 
     //Create a Tumbleweed
-    weedSetup = (Tumbleweed_Setup*)obj_alloc_create_info(sizeof(Tumbleweed_Setup), objID);
+    weedSetup = (Tumbleweed_Setup*)obj_alloc_setup(sizeof(Tumbleweed_Setup), objID);
     weedSetup->base.x = objData->heldWeedCoords[weedIdx].x + self->srt.transl.x;
     weedSetup->base.y = objData->heldWeedCoords[weedIdx].y + self->srt.transl.y;
     weedSetup->base.z = objData->heldWeedCoords[weedIdx].z + self->srt.transl.z;

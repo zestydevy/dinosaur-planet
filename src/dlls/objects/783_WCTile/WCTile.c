@@ -2,8 +2,8 @@
 #include "game/gamebits.h"
 #include "sys/main.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
     Object *levelCtrl;

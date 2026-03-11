@@ -2,6 +2,7 @@
 #include "game/gamebits.h"
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
+#include "sys/segment_1050.h"
 
 /*0x0*/ static Object* _data_0 = NULL;
 /*0x4*/ static u16 _data_4[] = {

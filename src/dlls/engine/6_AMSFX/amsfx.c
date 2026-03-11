@@ -3,7 +3,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dlls/engine/6_amsfx.h"
-#include "functions.h"
 #include "libnaudio/n_libaudio.h"
 #include "libnaudio/n_sndp.h"
 #include "libnaudio/n_sndplayer.h"

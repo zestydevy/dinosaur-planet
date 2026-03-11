@@ -3,8 +3,6 @@
 #include "sys/camera.h"
 #include "sys/main.h"
 #include "dll.h"
-#include "sys/gfx/map.h"
-#include "functions.h"
 #include "sys/objects.h"
 #include "types.h"
 #include "dlls/engine/28_screen_fade.h"

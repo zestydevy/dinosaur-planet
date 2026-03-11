@@ -3,6 +3,9 @@
 #include "game/objects/object_id.h"
 #include "sys/map.h"
 #include "sys/objtype.h"
+#include "sys/segment_1D900.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "dlls/objects/210_player.h"
 
 #include "dlls/objects/768_SPshop.h"

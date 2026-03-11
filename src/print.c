@@ -1,6 +1,13 @@
-#include "common.h"
+#include "PR/gbi.h"
+#include "PR/mbi.h"
 #include "libc/stdarg.h"
+#include "sys/print.h"
+#include "sys/gfx/textable.h"
+#include "sys/gfx/texture.h"
+#include "sys/map.h"
 #include "sys/string.h"
+#include "sys/vi.h"
+#include "macros.h"
 
 /* -------- .bss start 800be1d0 -------- */
 char gDebugPrintBufferStart[0x900];

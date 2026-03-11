@@ -11,6 +11,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
+#include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
@@ -18,21 +19,18 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
+#include "sys/objprint.h"
 #include "sys/print.h"
 #include "sys/rand.h"
-#include "functions.h"
+#include "sys/segment_326A0.h"
 #include "types.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 
 #ifdef DEBUG
 #define FROSTWEED_QUEST_CHEAT 1  
 #else  
 #define FROSTWEED_QUEST_CHEAT 0  
 #endif 
-
-s32 func_80031BBC(f32, f32, f32);
-s32 func_80032538(Object* self);
-void joy_set_button_mask(int port, u16 mask);
 
 enum SnowHornAnims {
     MODANIM_SnowHorn_Idle = 0,

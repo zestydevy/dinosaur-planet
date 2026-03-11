@@ -1,5 +1,5 @@
 #include "sys/objmsg.h"
-#include "functions.h"
+#include "sys/objprint.h"
 
 // offset: 0x0 | ctor
 void FElevControl_ctor(void *dll) { }

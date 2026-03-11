@@ -1,4 +1,4 @@
-#include "common.h"
+#include "sys/segment_13D0.h"
 
 s32 D_8008C500 = 0;
 u8 D_8008C504 = 0;

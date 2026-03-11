@@ -1,6 +1,5 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "functions.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -8,6 +7,7 @@
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "types.h"
 
 s16* func_80034804(Object* obj, s32 sequenceBoneID);

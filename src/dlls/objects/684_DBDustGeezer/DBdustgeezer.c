@@ -299,7 +299,7 @@ int DBDustGeezer_launch_gem(Object* self) {
 Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
     DBBoneDust_Setup* dustSetup;
 
-    dustSetup = (DBBoneDust_Setup*)obj_alloc_create_info(sizeof(DBBoneDust_Setup), objectID);
+    dustSetup = (DBBoneDust_Setup*)obj_alloc_setup(sizeof(DBBoneDust_Setup), objectID);
     dustSetup->unk1E = -1;
     dustSetup->base.x = self->srt.transl.x;
     dustSetup->base.y = self->srt.transl.y - 30.0f;

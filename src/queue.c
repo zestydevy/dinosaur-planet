@@ -6,7 +6,6 @@
 #include "sys/map.h"
 #include "sys/objects.h"
 #include "sys/voxmap.h"
-#include "functions.h"
 #include "macros.h"
 
 /* -------- .bss start 800ab970 -------- */

@@ -1,9 +1,17 @@
 #include "common.h"
+#include "sys/gfx/model_asm.h"
 #include "sys/rarezip.h"
+#include "sys/segment_20490.h"
 
 #define ALIGN8(a)  (((u32) (a) & ~0x7) + 0x8)
 #define ALIGN16(a)  ((u32) (a) & ~0xF)
 #define PAD16(a) while (a & 7){a++;}
+
+#define ANIM_SLOT_RC(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[0]
+#define ANIM_SLOT_ANIM(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[1]
+
+#define MODEL_SLOT_ID(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[0]
+#define MODEL_SLOT_MODEL(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[1]
 
 static const char str_80099240[] = "Error: Model no. %d out of range on load. !!\n";
 static const char str_80099270[] = "TEXTURE ERROR!!\n%d,%d\n";
@@ -30,25 +38,11 @@ s32 gNumLoadedAnims;
 s16 SHORT_ARRAY_800b17d0[48]; // TODO: check length, it's at most 48
 /* -------- .bss end 800b1830 -------- */
 
-extern s16 D_800903DC; // = 0;
-extern s16 D_800903DE; // = 0;
-extern s16 D_800903E0; // = 0;
-
-#define ANIM_SLOT_RC(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[0]
-#define ANIM_SLOT_ANIM(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[1]
-
-#define MODEL_SLOT_ID(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[0]
-#define MODEL_SLOT_MODEL(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[1]
-
 void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 void anim_destroy(Animation*);
 void model_destroy(Model* model);
 void func_8001A640(Object* object, ModelInstance* modelInst, Model* model);
-
-// model_asm funcs
-void func_800202E8(Vtx*, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
-void func_8001CAA4(AnimState*, s16*, s16*);
 
 void init_models() {
     u32* temp_v0;    
@@ -140,7 +134,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     sp42 = gAuxBuffer[0];
     sp3E = gAuxBuffer[2];
     sp40 = ((u16)mmAlign8(gAuxBuffer[1]) & 0xFFFF) + 0x90;
-    uncompressedSize = rarezip_uncompress_size((u8*)(gAuxBuffer + 4));
+    uncompressedSize = rarezip_uncompress_size((u8*)gAuxBuffer + 8);
     sp28 = model_load_anim_remap_table(id, sp3E, sp42);
     sp28 += uncompressedSize + 500;
     model = mmAlloc(sp28, 9, NULL);
@@ -520,7 +514,7 @@ void destroy_model_instance(ModelInstance* modelInst) {
     }
 
     if (i == gNumLoadedModels) {
-        *(u8*)0x0 = 0; // CRASH!
+        *(volatile u8*)0x0 = 0; // CRASH!
     } else {
         gFreeModelSlots[gNumFreeModelSlots++] = i;
 

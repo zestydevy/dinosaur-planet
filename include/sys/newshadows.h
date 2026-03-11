@@ -8,6 +8,7 @@
 #include "types.h"
 #include "game/objects/object.h"
 #include "sys/map.h"
+#include "sys/segment_53F00.h"
 
 // Might be incorrect definition but size should be correct
 typedef struct Unk8004FA58 {
@@ -82,6 +83,8 @@ extern Unk80092C48 D_80092C48;
 extern Unk80092C48 D_80092C74;
 extern s32 D_80092CA0;
 extern s32 D_80092CA4;
+
+extern Vec3f D_800BB198;
 
 void shadows_init(void);
 s32 shadows_update_obj_geom(Object *obj, s32 arg1, s32 arg2, s32 updateRate);

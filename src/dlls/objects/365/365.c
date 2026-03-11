@@ -4,7 +4,7 @@
 #include "game/objects/object.h"
 #include "types.h"
 #include "sys/gfx/model.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "dlls/objects/214_animobj.h"
 
 static int dll_365_func_E4(Object *arg0, Object *arg1, AnimObj_Data *arg2, s8 arg3);

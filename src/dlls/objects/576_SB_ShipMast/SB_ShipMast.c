@@ -1,7 +1,7 @@
 #include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/objanim.h"
-#include "functions.h"
+#include "sys/objprint.h"
 
 // offset: 0x0 | ctor
 void SB_ShipMast_ctor(void *dll) { }

@@ -200,7 +200,7 @@ static void dll_220_func_778(Object* self) {
     Object* player;
 
     objdata = self->data;
-    temp_v0 = obj_alloc_create_info(0x24, OBJ_ChukaChuck);
+    temp_v0 = obj_alloc_setup(0x24, OBJ_ChukaChuck);
     temp_v0->x = self->srt.transl.f[0];
     temp_v0->y = self->srt.transl.f[1];
     temp_v0->z = self->srt.transl.f[2];

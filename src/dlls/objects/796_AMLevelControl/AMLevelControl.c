@@ -1,4 +1,11 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "dlls/objects/214_animobj.h"
+#include "game/objects/object.h"
+#include "sys/main.h"
+#include "sys/map_enums.h"
+#include "sys/math.h"
+#include "sys/objprint.h"
+#include "dll.h"
 
 /*0x0*/ static s16 _data_0[] = {
     0x07d7, 0x07d8, 0x07d9, 0x07da, 0x07db, 0x0000
