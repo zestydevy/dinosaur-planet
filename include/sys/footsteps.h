@@ -1,5 +1,5 @@
-#ifndef _SYS_OLDSHADOWS_H
-#define _SYS_OLDSHADOWS_H
+#ifndef _SYS_FOOTSTEPS_H
+#define _SYS_FOOTSTEPS_H
 
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
@@ -16,18 +16,19 @@ typedef struct {
 /*80*/ Object *obj;
 /*84*/ s32 unk84;
 /*88*/ s16 unk88;
-} UnkOldShadowStruct;
+} UnkFootstepsStruct;
 
 // size: 0x14
 typedef struct {
 /*00*/ Vec3f unk0;
 /*0C*/ u8 unkC;
 /*10*/ Object *unk10;
-} UnkOldShadowStruct2;
+} UnkFootstepsStruct2;
 
-void oldshadow_init(void);
-void oldshadow_toggle(u32 enabled);
-void oldshadow_func_8005CA88(Object *obj, Vec3f *a1, u8 a2);
-void oldshadow_func_8005CC74(Gfx **gdl, Object *arg1);
+void footsteps_init(void);
+void footsteps_toggle(u32 enabled);
+void footsteps_func_8005CA88(Object *obj, Vec3f *a1, u8 a2);
+void footsteps_func_8005CC74(Gfx **gdl, Object *arg1);
+u16 *footsteps_get_sfx_bank(s32 bank);
 
 #endif

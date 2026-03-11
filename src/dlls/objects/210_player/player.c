@@ -6,6 +6,7 @@
 #include "game/objects/object_id.h"
 #include "game/objects/unknown_setups.h"
 #include "game/gamebits.h"
+#include "sys/footsteps.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/animation.h"
 #include "sys/joypad.h"
@@ -28,7 +29,6 @@
 #include "sys/memory.h"
 #include "sys/joypad.h"
 #include "sys/newshadows.h"
-#include "sys/footstep.h"
 #include "sys/segment_53F00.h"
 #include "sys/segment_326A0.h"
 #include "dll.h"
@@ -492,9 +492,9 @@ void dll_210_setup(Object* player, u32 arg1) {
     player->srt.yaw = gDLL_29_Gplay->vtbl->get_player_saved_location()->rotationY << 8;
     data->unk87C = -1;
     data->unk800 = 1.0f;
-    data->unk890 = footstep_get_sfx_bank(3);
-    data->unk894 = footstep_get_sfx_bank(4);
-    data->unk898 = footstep_get_sfx_bank(5);
+    data->unk890 = footsteps_get_sfx_bank(3);
+    data->unk894 = footsteps_get_sfx_bank(4);
+    data->unk898 = footsteps_get_sfx_bank(5);
     data->unk89C = data->unk890;
     if (player->id == OBJ_Krystal) {
         data->unk8B4 = 0;

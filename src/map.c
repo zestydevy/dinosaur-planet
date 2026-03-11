@@ -9,7 +9,7 @@
 #include "sys/newshadows.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "sys/oldshadows.h"
+#include "sys/footsteps.h"
 #include "sys/menu.h"
 #include "sys/objprint.h"
 #include "sys/print.h"
@@ -2767,7 +2767,7 @@ void map_func_8004773C(void) {
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
     gDLL_10_Newstars->vtbl->func0();
-    oldshadow_init();
+    footsteps_init();
     UINT_80092a98 &= 0x2010;
     UINT_80092a98 |= 0x81E0;
     UINT_80092a98 |= 0x804;

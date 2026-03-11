@@ -7,10 +7,8 @@
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
-#include "sys/oldshadows.h"
+#include "sys/footsteps.h"
 #include "macros.h"
-
-/** This file contains both an older shadow renderer and a table of player footstep audio. */
 
 /* -------- .data start 80092ec0 -------- */
 s32 D_80092EC0 = 0; // unused
@@ -67,9 +65,9 @@ u16 gFootstepSfxBank5[10] = {
 /* -------- .data end 80093010 -------- */
 
 /* -------- .bss start 800bb590 -------- */
-UnkOldShadowStruct gUnkOldShadowStructs[40];
+UnkFootstepsStruct gUnkFootstepStructs[40];
 Vec3f *D_800BCC10;
-UnkOldShadowStruct2 D_800BCC18[4]; // size:0x50
+UnkFootstepsStruct2 D_800BCC18[4]; // size:0x50
 Texture *D_800BCC68;
 Texture *D_800BCC6C;
 Texture *D_800BCC70;
@@ -78,10 +76,10 @@ u8 D_800BCC78;
 f32 D_800BCC80[2];
 /* -------- .bss end 800bcc90 -------- */
 
-void oldshadow_func_8005CF4C(Object *, UnkOldShadowStruct2*);
-void oldshadow_func_8005CDFC(s32 _);
+void footsteps_func_8005CF4C(Object *, UnkFootstepsStruct2*);
+void footsteps_func_8005CDFC(s32 _);
 
-void oldshadow_init(void) {
+void footsteps_init(void) {
     s32 i;
 
     if (D_800BCC10 != NULL) {
@@ -90,10 +88,10 @@ void oldshadow_init(void) {
 
     D_800BCC10 = mmAlloc(sizeof(Vec3f) * 8, ALLOC_TAG_GFX_COL, ALLOC_NAME("foot:vol"));
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
-        gSPEndDisplayList(&gUnkOldShadowStructs[i].dl);
-        gUnkOldShadowStructs[i].unk84 = 0;
-        gUnkOldShadowStructs[i].unk88 = 0;
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+        gSPEndDisplayList(&gUnkFootstepStructs[i].dl);
+        gUnkFootstepStructs[i].unk84 = 0;
+        gUnkFootstepStructs[i].unk88 = 0;
     }
 
     for (i = 0; i < 4; i++) {
@@ -139,13 +137,13 @@ void oldshadow_init(void) {
     D_800BCC78 = (u8)0;
 }
 
-void oldshadow_clear(void) {
+void footsteps_clear(void) {
     s32 i;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
-        gSPEndDisplayList(&gUnkOldShadowStructs[i].dl);
-        gUnkOldShadowStructs[i].unk84 = 0;
-        gUnkOldShadowStructs[i].unk88 = 0;
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+        gSPEndDisplayList(&gUnkFootstepStructs[i].dl);
+        gUnkFootstepStructs[i].unk84 = 0;
+        gUnkFootstepStructs[i].unk88 = 0;
     }
 
     for (i = 0; i < 4; i++) {
@@ -158,16 +156,16 @@ void oldshadow_clear(void) {
 }
 
 // officialName: footstepsTurnOn
-void oldshadow_toggle(u32 enabled) {
+void footsteps_toggle(u32 enabled) {
     D_800BCC78 = enabled;
 
     if (enabled == 0) {
-        oldshadow_clear();
+        footsteps_clear();
     }
 }
 
 // unused
-void oldshadow_func_8005CA88(Object *obj, Vec3f *a1, u8 a2) {
+void footsteps_func_8005CA88(Object *obj, Vec3f *a1, u8 a2) {
     static s32 D_80092FF8 = 0;
 
     if (D_800BCC78 != 0) {
@@ -185,7 +183,7 @@ void oldshadow_func_8005CA88(Object *obj, Vec3f *a1, u8 a2) {
     }
 }
 
-void oldshadow_func_8005CB10(Gfx **gdl, Object *obj) {
+void footsteps_func_8005CB10(Gfx **gdl, Object *obj) {
     s32 i;
     Texture *tex;
 
@@ -205,9 +203,9 @@ void oldshadow_func_8005CB10(Gfx **gdl, Object *obj) {
 
     i = 0;
 
-    while (i < (s32)ARRAYCOUNT(gUnkOldShadowStructs)) {
-        if (obj == gUnkOldShadowStructs[i].obj) {
-            gSPDisplayList((*gdl)++, &gUnkOldShadowStructs[i].dl);
+    while (i < (s32)ARRAYCOUNT(gUnkFootstepStructs)) {
+        if (obj == gUnkFootstepStructs[i].obj) {
+            gSPDisplayList((*gdl)++, &gUnkFootstepStructs[i].dl);
         }
 
         i++;
@@ -217,7 +215,7 @@ void oldshadow_func_8005CB10(Gfx **gdl, Object *obj) {
 static s32 D_80092FFC = 1;
 
 // unused
-void oldshadow_func_8005CC74(Gfx **gdl, Object *arg1) {
+void footsteps_func_8005CC74(Gfx **gdl, Object *arg1) {
     s32 i;
 
     if (D_800BCC78 == 0) {
@@ -232,41 +230,41 @@ void oldshadow_func_8005CC74(Gfx **gdl, Object *arg1) {
     if ((gWorldX != D_800BCC80[0]) || (gWorldZ != D_800BCC80[1])) {
         D_800BCC80[0] = gWorldX;
         D_800BCC80[1] = gWorldZ;
-        oldshadow_func_8005CDFC(0);
+        footsteps_func_8005CDFC(0);
     }
 
     for (i = 0; i < 4; i++) {
         if ((D_800BCC18[i].unk10 != 0) && (arg1 == D_800BCC18[i].unk10)) {
-            oldshadow_func_8005CF4C(arg1, &D_800BCC18[i]);
+            footsteps_func_8005CF4C(arg1, &D_800BCC18[i]);
         }
     }
-    oldshadow_func_8005CB10(gdl, arg1);
+    footsteps_func_8005CB10(gdl, arg1);
     D_80092FFC = 0;
 }
 
-void oldshadow_func_8005CD80(void) {
+void footsteps_func_8005CD80(void) {
     s32 i;
     s32 k;
     Vtx_t *ptr;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
-        ptr = &gUnkOldShadowStructs[i].unk18[0];
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+        ptr = &gUnkFootstepStructs[i].unk18[0];
         
-        if (gUnkOldShadowStructs[i].unk84 != 0) {
-            gUnkOldShadowStructs[i].unk88 -= 5;
+        if (gUnkFootstepStructs[i].unk84 != 0) {
+            gUnkFootstepStructs[i].unk88 -= 5;
 
-            if (gUnkOldShadowStructs[i].unk88 < 0) {
-                gUnkOldShadowStructs[i].unk88 = 0;
+            if (gUnkFootstepStructs[i].unk88 < 0) {
+                gUnkFootstepStructs[i].unk88 = 0;
             }
 
             for (k = 0; k < 4; k++) {
-                (ptr++)->cn[3] = gUnkOldShadowStructs[i].unk88;
+                (ptr++)->cn[3] = gUnkFootstepStructs[i].unk88;
             }
         }
     }
 }
 
-void oldshadow_func_8005CDFC(s32 _) {
+void footsteps_func_8005CDFC(s32 _) {
     f32 var1;
     f32 var2;
     s32 i;
@@ -276,15 +274,15 @@ void oldshadow_func_8005CDFC(s32 _) {
     var1 = 0;
     var2 = 0;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
-        if (gUnkOldShadowStructs[i].unk84 != 0) {
-            ptr = &gUnkOldShadowStructs[i].unk18[0];
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+        if (gUnkFootstepStructs[i].unk84 != 0) {
+            ptr = &gUnkFootstepStructs[i].unk18[0];
             
-            var1 = gWorldX - gUnkOldShadowStructs[i].unk78;
-            var2 = gWorldZ - gUnkOldShadowStructs[i].unk7C;
+            var1 = gWorldX - gUnkFootstepStructs[i].unk78;
+            var2 = gWorldZ - gUnkFootstepStructs[i].unk7C;
 
-            gUnkOldShadowStructs[i].unk78 += var1;
-            gUnkOldShadowStructs[i].unk7C += var2;
+            gUnkFootstepStructs[i].unk78 += var1;
+            gUnkFootstepStructs[i].unk7C += var2;
 
             for (k = 0; k < 4; k++) {
                 ptr->ob[0] -= var1;
@@ -295,7 +293,7 @@ void oldshadow_func_8005CDFC(s32 _) {
     }
 }
 
-void oldshadow_func_8005CF4C(Object* arg0, UnkOldShadowStruct2* arg1) {
+void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
     static s32 D_80093000 = 0;
     s16 var_s2;
     s16 var_s3;
@@ -339,14 +337,14 @@ void oldshadow_func_8005CF4C(Object* arg0, UnkOldShadowStruct2* arg1) {
         }
     }
 
-    gUnkOldShadowStructs[D_80093000].obj = arg0;
-    var_s0 = gUnkOldShadowStructs[D_80093000].unk18;
-    var_s5 = gUnkOldShadowStructs[D_80093000].unk58;
-    dl = gUnkOldShadowStructs[D_80093000].dl;
-    gUnkOldShadowStructs[D_80093000].unk88 = 200;
-    gUnkOldShadowStructs[D_80093000].unk84 = 1;
-    gUnkOldShadowStructs[D_80093000].unk78 = gWorldX;
-    gUnkOldShadowStructs[D_80093000].unk7C = gWorldZ;
+    gUnkFootstepStructs[D_80093000].obj = arg0;
+    var_s0 = gUnkFootstepStructs[D_80093000].unk18;
+    var_s5 = gUnkFootstepStructs[D_80093000].unk58;
+    dl = gUnkFootstepStructs[D_80093000].dl;
+    gUnkFootstepStructs[D_80093000].unk88 = 200;
+    gUnkFootstepStructs[D_80093000].unk84 = 1;
+    gUnkFootstepStructs[D_80093000].unk78 = gWorldX;
+    gUnkFootstepStructs[D_80093000].unk7C = gWorldZ;
 
     sp94.transl.x = 0.0f;
     sp94.transl.y = 0.0f;
@@ -375,7 +373,7 @@ void oldshadow_func_8005CF4C(Object* arg0, UnkOldShadowStruct2* arg1) {
         var_s0->cn[0] = 0xFF;
         var_s0->cn[1] = 0xE1;
         var_s0->cn[2] = 0xE1;
-        var_s0->cn[3] = gUnkOldShadowStructs[D_80093000].unk88;
+        var_s0->cn[3] = gUnkFootstepStructs[D_80093000].unk88;
     }
     var_s0 -= 4;
     var_s0[0].tc[0] = 0;
@@ -409,14 +407,14 @@ void oldshadow_func_8005CF4C(Object* arg0, UnkOldShadowStruct2* arg1) {
     gSPEndDisplayList(dl++);
     D_80093000 = D_80093000 + 1;
     if (D_80093000 == 39) {
-        gUnkOldShadowStructs->unk84 = 0;
+        gUnkFootstepStructs->unk84 = 0;
     } else {
-        gUnkOldShadowStructs[D_80093000].unk84 = 0;
+        gUnkFootstepStructs[D_80093000].unk84 = 0;
     }
-    oldshadow_func_8005CD80();
+    footsteps_func_8005CD80();
 }
 
-u16 *footstep_get_sfx_bank(s32 bank) {
+u16 *footsteps_get_sfx_bank(s32 bank) {
     switch (bank) {
         case 1:
             return gFootstepSfxBank1;

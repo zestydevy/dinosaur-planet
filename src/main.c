@@ -14,7 +14,7 @@
 #include "sys/memory.h"
 #include "sys/newshadows.h"
 #include "sys/objects.h"
-#include "sys/oldshadows.h"
+#include "sys/footsteps.h"
 #include "sys/print.h"
 #include "sys/rarezip.h"
 #include "sys/rcp.h"
@@ -209,7 +209,7 @@ void game_init(void) {
     diPrintfInit();
     func_80053300();
     shadows_init();
-    oldshadow_init();
+    footsteps_init();
     fonts_init();
     menu_init();
     init_audio(&osscheduler_, /*threadPriority=*/14);

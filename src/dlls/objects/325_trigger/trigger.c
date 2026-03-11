@@ -14,7 +14,7 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "sys/oldshadows.h"
+#include "sys/footsteps.h"
 #include "sys/segment_1D900.h"
 #include "sys/segment_1050.h"
 #include "sys/segment_1460.h"
@@ -598,7 +598,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 5:
-                oldshadow_toggle((u32) cmd->param2);
+                footsteps_toggle((u32) cmd->param2);
                 // "Trigger [%d], footstepsTurnOn %d" (default.dol)
                 break;
             case 6:
