@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_433_ctor = 0x0;
+dll_433_dtor = 0xC;
+dll_433_setup = 0x18;
+dll_433_control = 0x1A8;
+dll_433_update = 0xE04;
+dll_433_print = 0xE10;
+dll_433_free = 0xE64;
+dll_433_get_model_flags = 0xEF4;
+dll_433_get_data_size = 0xF04;
+dll_433_func_F18 = 0xF18;
+dll_433_func_12AC = 0x12AC;
+
+.rodata = 0x1438:
+
+.data = 0x1498:
+_data_0 = 0x0; // absolute:0x1498
+_data_4 = 0x4; // absolute:0x149C

@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_593_ctor = 0x0;
+dll_593_dtor = 0xC;
+dll_593_setup = 0x18;
+dll_593_control = 0xD8;
+dll_593_update = 0x61C;
+dll_593_print = 0x628;
+dll_593_free = 0x7BC;
+dll_593_get_model_flags = 0x7CC;
+dll_593_get_data_size = 0x7DC;
+dll_593_func_7F0 = 0x7F0;
+dll_593_func_8E4 = 0x8E4;
+dll_593_func_8EC = 0x8EC;
+
+.rodata = 0xA40:
+
+.data = 0xA50:
+_data_0 = 0x0; // absolute:0xA50
