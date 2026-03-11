@@ -5,6 +5,7 @@
 
 #include "game/objects/object.h"
 
+u16 func_80031BBC(f32 x, f32 y, f32 z);
 /** check if object talked to by player? */
 s32 func_80032538(Object* arg0);
 void func_8003273C(Object *obj);

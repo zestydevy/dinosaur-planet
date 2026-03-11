@@ -84,6 +84,8 @@ extern Unk80092C48 D_80092C74;
 extern s32 D_80092CA0;
 extern s32 D_80092CA4;
 
+extern Vec3f D_800BB198;
+
 void shadows_init(void);
 s32 shadows_update_obj_geom(Object *obj, s32 arg1, s32 arg2, s32 updateRate);
 void shadows_update_obj_box(Object* arg0);

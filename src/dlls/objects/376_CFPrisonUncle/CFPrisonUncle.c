@@ -8,9 +8,6 @@ static s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 
 static void dll_376_func_A3C(Object* self, Object* player);
 static void dll_376_func_9F8(Object* self);
 
-extern void func_80034B94(Object* arg0, HeadAnimation* arg1, s32 soundID);
-extern void func_80034BC0(Object* obj, HeadAnimation* arg1);
-
 typedef struct {
     Object* unk0;
     HeadAnimation unk4; 

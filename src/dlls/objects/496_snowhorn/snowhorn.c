@@ -11,6 +11,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
+#include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
@@ -30,10 +31,6 @@
 #else  
 #define FROSTWEED_QUEST_CHEAT 0  
 #endif 
-
-s32 func_80031BBC(f32, f32, f32);
-s32 func_80032538(Object* self);
-void joy_set_button_mask(int port, u16 mask);
 
 enum SnowHornAnims {
     MODANIM_SnowHorn_Idle = 0,
