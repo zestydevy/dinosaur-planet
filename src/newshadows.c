@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "sys/newshadows.h"
+#include "sys/camera.h"
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"

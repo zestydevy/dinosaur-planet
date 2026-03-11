@@ -4,7 +4,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object.h"
-#include "sys/gfx/map.h"
+#include "sys/map.h"
 
 // size: 0x90
 typedef struct {

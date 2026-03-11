@@ -2,7 +2,7 @@
 #define _SYS_SEGMENT_53F00_H
 
 #include "PR/ultratypes.h"
-#include "sys/map.h"
+#include "game/objects/object.h"
 #include "sys/math.h"
 
 // size: 0x18
@@ -33,6 +33,31 @@ typedef struct Func_80059C40_Struct {
     s8 unk52;
 } Func_80059C40_Struct;
 
+// size: 0x10
+typedef struct Unk8005341C {
+    Object *unk0;
+    s16 unk4;
+    MtxF *unk8;
+    MtxF *unkC;
+} Unk8005341C;
+
+typedef struct UnkFunc80051D68Arg3 {
+    f32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA[3]; // x pos?
+    s16 unk10[3]; // y pos?
+    s16 unk16[3]; // z pos?
+    s16 unk1C[8];
+    UNK_TYPE_8 unk2E;
+    UNK_TYPE_8 unk2F;
+    s8 unk30;
+    s8 unk31;
+    u8 unk32;
+    u8 pad33;
+} UnkFunc80051D68Arg3;
+
 void func_80058F3C(void);
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
 void func_800533D8(s32*, UnkFunc80051D68Arg3**);
@@ -48,5 +73,6 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
 s32 func_80058680(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
 s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg4, f32 arg5);
 s32 func_80058B1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
+s32 func_800588D4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
 
 #endif

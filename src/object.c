@@ -76,8 +76,7 @@ void obj_clear_all(void);
 
 void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3);
 
-void func_80046320(s16 param1, Object *object);
-
+// TODO: remove externs
 extern void func_80058FE8();
 extern void update_obj_hitboxes(s32);
 extern void func_80025E58();

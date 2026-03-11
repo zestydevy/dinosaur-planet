@@ -13,6 +13,7 @@
 #include "dlls/objects/210_player.h"
 #include "sys/fonts.h"
 #include "sys/rcp.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 /*0*/ Texture* unk0;

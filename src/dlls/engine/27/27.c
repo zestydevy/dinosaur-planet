@@ -1,5 +1,6 @@
 #include "dlls/engine/27.h"
 #include "PR/os.h"
+#include "sys/camera.h"
 #include "sys/main.h"
 #include "sys/objhits.h"
 #include "sys/segment_53F00.h"

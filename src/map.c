@@ -1,14 +1,24 @@
-#include "common.h"
 #include "sys/map.h"
+#include "dlls/engine/29_gplay.h"
+#include "game/objects/object_id.h"
+#include "sys/asset_thread.h"
+#include "sys/bitstream.h"
+#include "sys/fs.h"
+#include "sys/main.h"
+#include "sys/memory.h"
 #include "sys/newshadows.h"
+#include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/oldshadows.h"
 #include "sys/menu.h"
 #include "sys/objprint.h"
+#include "sys/print.h"
+#include "sys/rarezip.h"
 #include "sys/segment_1D900.h"
 #include "sys/segment_53F00.h"
 #include "sys/segment_1050.h"
 #include "sys/segment_1460.h"
+#include "dll.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
@@ -91,6 +101,13 @@ s32 D_80092A84[2] = {0};
 s8 gMapLayer = 0;
 DLBuilder *gDLBuilder = &D_800B49F0;
 s32 D_80092A94 = -1;
+/** Flags
+ * 0x10 - Whether the sky renders
+ * 0x80 - Whether shadows render
+ * 0x2000 - Freaks out depth testing?
+ * 0x10000 - Runs vi_init_framebuffers then toggles off, i guess
+ * 0x20000 - Spawns an FXEmit object and turns the fog a tan-ish color, renders a different sun??
+ */
 u32 UINT_80092a98 = 0;
 s8 D_80092A9C[8] = {0, -2, -1, 1, 2, 0, 0, 0};
 s8 gMapNumStreamMaps = 0;
@@ -169,6 +186,7 @@ s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
 s32 func_80048E04(u8, u8, u8, u8);
+void func_8004A164(Texture*, s32);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -828,10 +846,10 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 
             if (shape->unk16 != 0xff)
             {
-                Struct0x22 *s = func_80049D68(shape->unk16);
-                gDPSetTileSize(gMainDL++, 0, s->uls0, s->ult0, tex0->width - 1, (tex0->height - 1) * 4);
+                BlockTextureScroller *s = func_80049D68(shape->unk16);
+                gDPSetTileSize(gMainDL++, 0, s->uOffsetA, s->vOffsetA, tex0->width - 1, (tex0->height - 1) * 4);
                 if (tex1 != NULL) {
-                    gDPSetTileSize(gMainDL++, 1, s->uls1, s->ult1, tex1->width - 1, (tex1->height - 1) * 4);
+                    gDPSetTileSize(gMainDL++, 1, s->uOffsetB, s->vOffsetB, tex1->width - 1, (tex1->height - 1) * 4);
                 }
             }
             else
@@ -2100,9 +2118,6 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     }
 }
 
-extern s32 D_800B4A50;
-extern s32 D_800B5468;
-
 void func_80046320(s32 arg0, Object *obj) {
     s32 sp24;
     s32 t0;
@@ -2237,7 +2252,6 @@ MapHeader* func_800466C0() {
     return map;
 }
 
-extern s16 gNumTRKBLKEntries;
 s16 func_80046718() {
     return gNumTRKBLKEntries;
 }
@@ -3063,7 +3077,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
     block->unk10 = (void*)((u32)block->unk10 + (u32)block);
-    block->tiles = (Block_0x0Struct*)((u32)block->tiles + (u32)block);
+    block->tiles = (BlocksMaterial*)((u32)block->tiles + (u32)block);
     tex_set_alloc_tag(ALLOC_TAG_TRACKTEX_COL);
     for (texIdx = 0; texIdx < block->textureCount; texIdx++) {
         block->tiles[texIdx].texture = tex_load(-((u32)block->tiles[texIdx].texture | 0x8000), queue);
@@ -3513,7 +3527,7 @@ void func_800496E4(s32 blockIndex) {
 
         //Loop over materials and free their textures
         for (i = 0; i < block->material_count; i++){
-            tex_free((&block->ptr_materials[i])->textureID);
+            tex_free(block->ptr_materials[i].texture);
         }
         
         if ((u32*)block->unk1C != NULL) {
@@ -3736,8 +3750,8 @@ void func_80049D38(u32 arg0) {
     }
 }
 
-s32 func_80049D68(s32 arg0) {
-    return (s32)&D_800B97A8[arg0];
+BlockTextureScroller* func_80049D68(s32 arg0) {
+    return &D_800B97A8[arg0];
 }
 
 void func_80049D88(void)
@@ -3804,8 +3818,6 @@ s32 block_setup_textures(Block* block) {
 }
 #endif
 
-void func_8004A164(Texture*, s32);
-
 void func_80049FA8(BlocksModel* block) {
     s32 index;
     u8 animatorID;
@@ -3816,7 +3828,7 @@ void func_80049FA8(BlocksModel* block) {
         if (facebatch->renderSettingBitfield & 0x10000) {
             animatorID = facebatch->animatorID;
             if (animatorID){
-                func_8004A164(block->ptr_materials[facebatch->materialID].textureID, animatorID);
+                func_8004A164(block->ptr_materials[facebatch->materialID].texture, animatorID);
             }
         }
     }
@@ -3893,7 +3905,7 @@ Texture* func_8004A1E8(s32 match_value) {
     return NULL;
 }
 
-Block_0x28Struct *func_8004A284(Block *block, u32 param_2)
+Block_0x28Struct *func_8004A284(Block *block, s32 param_2)
 {
     s32 i;
 

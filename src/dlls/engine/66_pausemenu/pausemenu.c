@@ -10,7 +10,6 @@
 #include "sys/joypad.h"
 #include "sys/fonts.h"
 #include "sys/vi.h"
-#include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/memory.h"

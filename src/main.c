@@ -11,7 +11,6 @@
 #include "sys/crash.h"
 #include "sys/exception.h"
 #include "sys/fs.h"
-#include "sys/gfx/map.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
 #include "sys/objects.h"

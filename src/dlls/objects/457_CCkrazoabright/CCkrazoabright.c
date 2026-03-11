@@ -1,7 +1,12 @@
-#include "common.h"
-
-extern Block_0x28Struct* func_8004A284(Block*, s32);
-extern BlockTexture* func_8004A2CC(s32);
+#include "PR/ultratypes.h"
+#include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
+#include "game/objects/object.h"
+#include "sys/main.h"
+#include "sys/map.h"
+#include "sys/math.h"
+#include "sys/objanim.h"
+#include "dll.h"
 
 typedef struct {
     f32 timer;          //manages delay and blending strength for updating the Krazoa symbol

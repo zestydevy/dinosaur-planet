@@ -5,13 +5,14 @@
 
 #include "macros.h"
 #include "sys/camera.h"
-#include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "sys/map.h"
+
+#include "prevent_bss_reordering.h"
 
 // size: 0x10
 typedef struct StructBss8

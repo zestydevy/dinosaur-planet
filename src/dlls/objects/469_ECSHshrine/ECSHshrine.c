@@ -3,6 +3,7 @@
 #include "game/gamebits.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/map_enums.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"

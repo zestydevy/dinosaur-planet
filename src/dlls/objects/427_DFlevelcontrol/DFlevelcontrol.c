@@ -1,4 +1,5 @@
 #include "dll.h"
+#include "sys/map_enums.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/segment_1050.h"

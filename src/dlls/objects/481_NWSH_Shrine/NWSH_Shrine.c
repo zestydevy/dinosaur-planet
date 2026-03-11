@@ -5,6 +5,7 @@
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
+#include "sys/map_enums.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"

@@ -1,5 +1,6 @@
 #include "dll.h"
 #include "sys/main.h"
+#include "sys/map_enums.h"
 #include "sys/print.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"

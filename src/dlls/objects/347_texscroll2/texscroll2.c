@@ -1,9 +1,6 @@
 #include "common.h"
 #include "macros.h"
 
-s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-
 typedef struct {
     ObjSetup base;
     s16 textureIndex;       //Primary material: index in TABLES.bin subfile #14 ("scroll table")

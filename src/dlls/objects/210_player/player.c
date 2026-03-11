@@ -24,7 +24,6 @@
 #include "sys/menu.h"
 #include "sys/math.h"
 #include "sys/map.h"
-#include "sys/gfx/map.h"
 #include "sys/dll.h"
 #include "sys/memory.h"
 #include "sys/joypad.h"

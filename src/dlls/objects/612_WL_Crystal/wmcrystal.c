@@ -1,11 +1,9 @@
 #include "common.h"
 #include "sys/segment_334F0.h"
+#include "sys/segment_1D900.h"
 #include "sys/memory.h"
 #include "sys/segment_1460.h"
-
-void dl_clear_geometry_mode(Gfx **gdl, u32 mode);
-void dl_set_geometry_mode(Gfx **gdl, u32 mode);
-void func_8001EAA4(s32, s32, s32, f32);
+#include "sys/map.h"
 
 typedef struct {
 /*00*/    ObjSetup base;

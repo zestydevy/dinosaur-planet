@@ -1,7 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "sys/gfx/map.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/map.h"

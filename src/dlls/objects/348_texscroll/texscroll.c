@@ -239,7 +239,7 @@ u32 TexScroll_get_data_size(Object *self, u32 a1) {
 */
 void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objData) {
     Block* block;
-    Block_0x0Struct* material;
+    s32 _pad;
     Texture* texture;
     s32 index;
     TexScroll_Setup* objSetup;

@@ -27,7 +27,6 @@
 #include "sys/gfx/textable.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
-#include "sys/gfx/map.h"
 #include "sys/exception.h"
 #include "sys/crash.h"
 #include "sys/asset_thread.h"

@@ -1,8 +1,5 @@
 #include "common.h"
 
-extern Block_0x28Struct* func_8004A284(Block*, s32);
-extern BlockTexture* func_8004A2CC(s32);
-
 typedef struct {
     s32 materialID;     //Index within object's local Blocks model's materials (the frame of the material's texture animation will be manipulated)
     u8 speed;           //Playback rate when advancing through the texture animation

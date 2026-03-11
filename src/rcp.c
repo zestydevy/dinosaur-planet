@@ -1,7 +1,6 @@
 #include "PR/gbi.h"
 #include "common.h"
 #include "sys/map.h"
-#include "sys/gfx/map.h"
 #include "sys/rcp.h"
 #include "sys/rsp_segment.h"
 

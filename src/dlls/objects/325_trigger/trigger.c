@@ -24,6 +24,7 @@
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/325_trigger.h"
+#include "prevent_bss_reordering.h"
 
 static const char str_1[] = "triggers: unknown trigger object %d.\n";
 static const char str_2[] = "TRIGGER: warning Script overflow\n";

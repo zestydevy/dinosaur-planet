@@ -2,40 +2,148 @@
 #define _SYS_MAP_H
 
 #include "PR/ultratypes.h"
-#include "dlls/engine/29_gplay.h"
-#include "ultra64.h"
 #include "PR/gbi.h"
 
-#include "types.h"
-#include "sys/dl_debug.h"
+#include "game/objects/object.h"
+#include "sys/gfx/texture.h"
 #include "sys/math.h"
-#include "sys/camera.h"
-#include "sys/rarezip.h"
-#include "sys/gfx/map.h"
-#include "sys/bitstream.h"
+#include "types.h"
 
-#include "sys/map_enums.h"
 
-typedef enum {
-    WARP_ICE_MOUNTAIN_CAMPSITE = 2, // Sabre's campsite cave
-    WARP_WM_SABRE_SIDE = 5,
-    WARP_WM_KRYSTAL_SIDE = 6,
-    WARP_SC_RUBBLE_PODIUM = 14, // SwapStone Circle
-    WARP_SH_ROCKY_PODIUM = 15, // SwapStone Hollow
-    WARP_IM_RACE_START = 26,
-    WARP_WM_SABRE_KRAZOA_CORRIDOR = 57, // Warlock Mountain | Sabre-side | Krazoa statue corridor
-    WARP_SC_TOTEM_POLE = 80,
-    WARP_VFP_CALDERA_LOWER = 81, // Volcano Force Point Temple | Caldera (Lower Floor) 
-    WARP_SC_DISCOVERY_FALLS_ENTRANCE_POND = 85, // SwapStone Circle | Pond outside Discovery Falls
-    WARP_SWAPSTONE_SHOP_ENTRANCE = 86
-} WarpID;
+#define RGBA8(r, g, b, a) (((u32)(r) << 24) | ((u32)(g) << 16) | ((u32)(b) << 8) | (u32)(a))
+
+
+/* *********************************************** */
+// MARK: DL Builder
+
+#define DIRTY_FLAGS_COMBINE (1 << 0) // 1
+#define DIRTY_FLAGS_OTHER_MODE (1 << 1) // 2
+#define DIRTY_FLAGS_SET_PRIMARY_COLOR (1 << 2) // 4
+#define DIRTY_FLAGS_SET_ENV_COLOR (1 << 3) // 8
+#define DIRTY_FLAGS_SET_FILL_COLOR (1 << 4) // 0x10
+#define DIRTY_FLAGS_SET_FOG_COLOR (1 << 5) // 0x20
+#define DIRTY_FLAGS_GEOMETRY_MODE (1 << 6) // 0x40
+#define DIRTY_FLAGS_BLEND_MODE (1 << 7) // 0x80
+#define DIRTY_FLAGS_ALL 0xFF
 
 typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 mapSetupID;
-/*19*/ u8 unk19;
-/*1C*/ u32 objGroupStatusBits;
-} SetupPoint_Setup;
+/*0000*/    Gfx combine;
+/*0008*/    Gfx otherMode;
+/*0010*/    u32 geometryMode;
+/*0014*/    u32 primColor;
+/*0018*/    u32 envColor;
+/*001C*/    u32 fogColor;
+/*0020*/    u32 fillColor;
+/*0024*/    u32 blendColor;
+/*0028*/    u8 needsPipeSync;
+/*0029*/    u8 dirtyFlags;
+} DLBuilder;
+
+typedef struct {
+/*0000*/    u8 unk0;
+/*0001*/    u8 v0;
+/*0002*/    u8 v1;
+/*0003*/    u8 v2;
+/*0004*/    u8 unk4[0x10 - 0x4];
+} DLTri;
+
+
+/* *********************************************** */
+// MARK: Blocks
+
+typedef struct {
+/*0000*/    Texture *texture;
+/*0004*/    u32 unk4;
+/*0008*/    u32 flags; // RenderFlags
+/*000C*/    s16 refCount;
+/*000E*/    u8 unkE;
+/*000F*/    u8 unkF;
+} BlockTexture; // FIXME: better name
+
+typedef struct {
+/*0000*/    s16 texIdx;
+/*0002*/    u8 unk2;
+/*0003*/    u8 unk3;
+} Block_0x28Struct;
+
+typedef struct {
+/*0000*/    u32 flags; // RenderFlags
+/*0004*/    s16 vtxBase;
+/*0006*/    s16 triBase;
+/*0008*/    u8 unk8[0x12 - 0x8];    //bounds
+                                    //s16 Ymin;
+                                    //s16 Ymax;
+                                    //s8 Xmin; //Divided by 4
+                                    //s8 Xmax; //Divided by 4
+                                    //s8 Zmin; //Divided by 4
+                                    //s8 Zmax; //Divided by 4
+/*0012*/    u8 tileIdx0;    //materialIdx
+/*0013*/    u8 alpha;       //envColourMode 
+                            //00 = use ambient envFX colour
+                            //FE = ignore ambient envFX colour
+                            //FF = use flickering vertices' colour
+                            //    (used very rarely, in blocks 327 & 0843)
+/*0014*/    u8 animatorID;
+/*0015*/    u8 tileIdx1;    //blendMaterialIdx
+/*0016*/    u8 unk16;       //texture scroll effect handler index? (at runtime)
+/*0017*/    u8 unk17;
+} BlockShape;
+
+typedef struct {
+/*0000*/    u32 d0;
+/*0004*/    u32 d1;
+} EncodedTri;
+
+// Same as Vtx_t, but flag is signed
+typedef struct {
+	short ob[3];	/* x, y, z */
+	short flag;
+	short tc[2];	/* texture coord */
+	unsigned char cn[4];	/* color & alpha */
+} BlockVertex;
+
+typedef struct{
+/*00*/    Texture *texture; //textureID in ROM, but a pointer to the Texture object at runtime
+/*04*/    u32 pad4;
+/*08*/    u8  width;
+/*09*/    u8  height;
+
+            //bits 6-7: unused
+            //bit  5:   greyscale
+            //bit  4:   opaque
+            //bit  0-3: type (RGBA/CI/IA/etc.)
+/*0A*/    u8  format;
+/*0B*/    u8  terrain_type; //Affects footstep/weapon foley sfx 
+                            //(some values create dust/snow particles too, 
+                            //or force water behaviour - overriding facebatch water setting!)
+} BlocksMaterial;
+
+typedef struct {
+/*0000*/    BlocksMaterial *tiles;
+/*0004*/    BlockVertex *vertices;
+/*0008*/    EncodedTri *encodedTris;
+/*000C*/    BlockShape *shapes;
+/*0010*/    void *unk10;
+/*0014*/    s16 *xzBitmap;
+/*0018*/    u8 unk18[0x20 - 0x18];
+/*0020*/    Vtx_t *vertices2[2];
+/*0028*/    Block_0x28Struct *unk28;
+/*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
+/*0030*/    s16 vtxFlags;
+/*0032*/    s16 vtxCount;
+/*0034*/    s16 unk34;
+/*0036*/    s16 shapeCount;
+/*0038*/    u8 unk38[0x3e - 0x38];
+/*003E*/    s16 unk3E;
+/*0040*/    s16 elevation;
+/*0042*/    u16 unk42;
+/*0044*/    u16 gdlGroupsOffset;
+/*0046*/    u8 unk46;
+/*0047*/    u8 unk47;
+/*0048*/    u8 unk48;
+/*0049*/    u8 unk49;
+/*004A*/    u8 textureCount;
+} Block;
 
 typedef struct{
 /*00*/    s16 Ax;
@@ -74,22 +182,6 @@ typedef struct {
 /*16*/    s8 runtimeValue;      //0 in ROM, but -1 gets written here at runtime
 /*17*/    s8 unk_cull;          //The function responsible for face culling reads this
 } FaceBatch; //NOTE: this is describing the same thing as the "BlockShape" struct (TODO: consolidate!)
-
-typedef struct{
-/*00*/    Texture *textureID; //textureID in ROM, but a pointer to the Texture object at runtime
-/*04*/    u32 pad4;
-/*08*/    u8  width;
-/*09*/    u8  height;
-
-            //bits 6-7: unused
-            //bit  5:   greyscale
-            //bit  4:   opaque
-            //bit  0-3: type (RGBA/CI/IA/etc.)
-/*0A*/    u8  format;
-/*0B*/    u8  terrain_type; //Affects footstep/weapon foley sfx 
-                            //(some values create dust/snow particles too, 
-                            //or force water behaviour - overriding facebatch water setting!)
-} BlocksMaterial;
 
 typedef struct {
 /*00*/ s16 textureIndex;
@@ -139,6 +231,41 @@ typedef struct {
 /*4b*/    s32 unk4B;
 /*4e*/    s8  unk4E;
 } BlocksModel; //NOTE: this is describing the same thing as the "Block" struct (TODO: consolidate!)
+
+// Size: 0x22
+typedef struct {
+/** Primary scroll material */
+/*00*/ s16 uOffsetA;    //scroll position for U component
+/*02*/ s16 vOffsetA;    //scroll position for V component
+/*04*/ s16 uSpeedA;     //scroll speed for U component
+/*06*/ s16 vSpeedA;     //scroll speed for V component
+/*08*/ s16 uRemainderA; //accumulated dU remainders from previous ticks
+/*0A*/ s16 vRemainderA; //accumulated dV remainders from previous ticks
+/*0C*/ s16 widthA;      //texture tile width
+/*0E*/ s16 heightA;     //texture tile height
+
+/** Secondary scroll material (used by texture-blended water, etc.)*/
+/*10*/ s16 uOffsetB;    //scroll position for U component 
+/*12*/ s16 vOffsetB;    //scroll position for V component 
+/*14*/ s16 uSpeedB;     //scroll speed for U component
+/*16*/ s16 vSpeedB;     //scroll speed for V component
+/*18*/ s16 uRemainderB; //accumulated dU remainders from previous ticks
+/*1A*/ s16 vRemainderB; //accumulated dV remainders from previous ticks
+/*1C*/ s16 widthB;      //texture tile width
+/*1E*/ s16 heightB;     //texture tile height
+
+/** Stats */
+/*20*/ u8 refCount;     //how many BlockShapes make use of this scroll handler
+/*21*/ u8 animating;    //Boolean - scrolling can be paused
+} BlockTextureScroller;
+
+typedef struct Unk80092BC0 {
+    s16 unk0[3];
+} Unk80092BC0;
+
+
+/* *********************************************** */
+// MARK: Map
 
 typedef struct {
 /*00*/  s16 gridSizeX;
@@ -203,33 +330,6 @@ typedef struct {
   Vec3f coord;
   s8 layer[2];
 } SimilarToWarp;
-
-// Size: 0x22
-typedef struct {
-/** Primary scroll material */
-/*00*/ s16 uOffsetA;    //scroll position for U component
-/*02*/ s16 vOffsetA;    //scroll position for V component
-/*04*/ s16 uSpeedA;     //scroll speed for U component
-/*06*/ s16 vSpeedA;     //scroll speed for V component
-/*08*/ s16 uRemainderA; //accumulated dU remainders from previous ticks
-/*0A*/ s16 vRemainderA; //accumulated dV remainders from previous ticks
-/*0C*/ s16 widthA;      //texture tile width
-/*0E*/ s16 heightA;     //texture tile height
-
-/** Secondary scroll material (used by texture-blended water, etc.)*/
-/*10*/ s16 uOffsetB;    //scroll position for U component 
-/*12*/ s16 vOffsetB;    //scroll position for V component 
-/*14*/ s16 uSpeedB;     //scroll speed for U component
-/*16*/ s16 vSpeedB;     //scroll speed for V component
-/*18*/ s16 uRemainderB; //accumulated dU remainders from previous ticks
-/*1A*/ s16 vRemainderB; //accumulated dV remainders from previous ticks
-/*1C*/ s16 widthB;      //texture tile width
-/*1E*/ s16 heightB;     //texture tile height
-
-/** Stats */
-/*20*/ u8 refCount;     //how many BlockShapes make use of this scroll handler
-/*21*/ u8 animating;    //Boolean - scrolling can be paused
-} BlockTextureScroller;
 
 // size: 0xA
 typedef struct Struct_D_800B9768_unk4 {
@@ -329,17 +429,34 @@ typedef struct {
 /*0x8*/ s16 unk8; // some sort of index?
 } MapsUnk_800B97C0;
 
-// size: 0x10
-typedef struct Unk8005341C {
-    Object *unk0;
-    s16 unk4;
-    MtxF *unk8;
-    MtxF *unkC;
-} Unk8005341C;
+typedef struct {
+/*0000*/    f32 x;
+/*0004*/    f32 y;
+/*0008*/    f32 z;
+/*000C*/    f32 d;
+/*0010*/    u8 unk14[4];
+} Plane;
 
-typedef struct Unk80092BC0 {
-    s16 unk0[3];
-} Unk80092BC0;
+typedef enum {
+    WARP_ICE_MOUNTAIN_CAMPSITE = 2, // Sabre's campsite cave
+    WARP_WM_SABRE_SIDE = 5,
+    WARP_WM_KRYSTAL_SIDE = 6,
+    WARP_SC_RUBBLE_PODIUM = 14, // SwapStone Circle
+    WARP_SH_ROCKY_PODIUM = 15, // SwapStone Hollow
+    WARP_IM_RACE_START = 26,
+    WARP_WM_SABRE_KRAZOA_CORRIDOR = 57, // Warlock Mountain | Sabre-side | Krazoa statue corridor
+    WARP_SC_TOTEM_POLE = 80,
+    WARP_VFP_CALDERA_LOWER = 81, // Volcano Force Point Temple | Caldera (Lower Floor) 
+    WARP_SC_DISCOVERY_FALLS_ENTRANCE_POND = 85, // SwapStone Circle | Pond outside Discovery Falls
+    WARP_SWAPSTONE_SHOP_ENTRANCE = 86
+} WarpID;
+
+typedef struct {
+/*00*/ ObjSetup base;
+/*18*/ u8 mapSetupID;
+/*19*/ u8 unk19;
+/*1C*/ u32 objGroupStatusBits;
+} SetupPoint_Setup;
 
 typedef struct MapObjSetupList {
        // Byte offset to the list of each object setup group
@@ -351,23 +468,6 @@ typedef struct MapObjSetupList {
        // Byte offset to the first setups that are in object groups
 /*88*/ s32 groupsStart;
 } MapObjSetupList;
-
-typedef struct UnkFunc80051D68Arg3 {
-    f32 unk0;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-    s16 unkA[3]; // x pos?
-    s16 unk10[3]; // y pos?
-    s16 unk16[3]; // z pos?
-    s16 unk1C[8];
-    UNK_TYPE_8 unk2E;
-    UNK_TYPE_8 unk2F;
-    s8 unk30;
-    s8 unk31;
-    u8 unk32;
-    u8 pad33;
-} UnkFunc80051D68Arg3;
 
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
@@ -386,6 +486,12 @@ typedef struct UnkFunc80051D68Arg3 {
 
 #define GRID_INDEX(z, x) (((z) * BLOCKS_GRID_SPAN + (x)))
 
+
+/* *********************************************** */
+// MARK: Globals
+
+extern DLBuilder *gDLBuilder;
+
 extern s16 D_800B4A5E; //gFadeDelayTimerStarted
 
 extern f32 gWorldX;
@@ -399,60 +505,115 @@ extern s32 D_80092A64; // something z-coordinate related
 extern s32 D_80092A7C[2];
 extern s32 D_80092A84[2];
 
+
+/* *********************************************** */
+// MARK: Functions
+
+// DL Builder
+
 void dl_set_all_dirty(void);
-void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+void func_80040FF8(void);
+void func_80041028(void);
+void dl_apply_combine(Gfx **gdl);
+void dl_apply_other_mode(Gfx **gdl);
+void dl_apply_geometry_mode(Gfx **gdl);
+void dl_set_geometry_mode(Gfx **gdl, u32 mode);
+void dl_clear_geometry_mode(Gfx **gdl, u32 mode);
 void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_apply_geometry_mode(Gfx **gdl);
-void dl_apply_combine(Gfx **gdl);
+void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void dl_set_fill_color(Gfx **gdl, u32 color);
-void dl_apply_other_mode(Gfx **gdl);
-void init_maps(void);
-void init_global_map(void);
-s32 func_80041DBC(void);
-s32 func_80041E08(void);
-void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
-MapHeader** func_80044A10(void);
-BlocksModel* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
-GlobalMapCell* func_80046698(s32 gridX, s32 gridZ);
-void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
-void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
-u8 func_800456AC(Object* obj);
-void map_func_80048034(void);
-void map_update_streaming(void);
-void warpPlayer(s32 warpID, s8 fadeToBlack);
-Block* func_80044BB0(s32 blockIndex);
-Texture* func_8004A1E8(s32 match_value);
-ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
-void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
-void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
-u32 func_80041D8C(void);
-u32 func_80041DA4(void);
-void func_80041028(void);
-void func_80040FF8(void);
-s8 map_get_layer(void);
-s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
-void func_80045F48(s32);
-s32 map_get_type(void);
-void func_8004A67C(void);
-void map_func_80046B58(f32 x, f32 y, f32 z);
-s32 func_8004454C(f32 x, f32 y, f32 z);
-void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
-void map_func_800484A8(void);
-void map_func_8004773C(void);
+void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+
+// Render Settings
+
+void func_80041C30(s32 arg0);
 void func_80041C6C(s32);
+void func_80041CA8(s32 arg0);
+void func_80041CE4(s32 arg0);
 void func_80041D20(s32);
 s32 func_80041D5C(void);
 u32 func_80041D74(void);
+u32 func_80041D8C(void);
+u32 func_80041DA4(void);
+s32 func_80041DBC(void);
+s32 func_80041DD4(void);
+void func_80041DEC(void);
+s32 func_80041E08(void);
+void func_80041E24(s32 arg0);
+s32 func_80041E68(void);
+
+// Map/Track
+
+void init_maps(void);
 void func_80042174(s32);
 void func_8004225C(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
-void map_func_800483BC(f32, f32, f32);
-void func_80041CA8(s32 arg0);
-void func_80041CE4(s32 arg0);
-void func_80041E24(s32 arg0);
+ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
+s32 func_8004454C(f32 x, f32 y, f32 z);
+void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
+s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
+MapHeader** func_80044A10(void);
+void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
+
+// Blocks (map)
+
+BlocksModel* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
+s8* func_80044B98(s32 arg0);
+Block* func_80044BB0(s32 blockIndex);
+
+// Map/Track (again)
+
+u8 func_800456AC(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
+u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
+
+// streaming stuff starts here
+
+s32 func_80045D58(void);
+void func_80045F48(s32);
+void func_80046320(s32 arg0, Object *obj);
+GlobalMapCell* func_80046698(s32 gridX, s32 gridZ);
+
+// Global Map
+
+void init_global_map(void);
+void map_func_80046B58(f32 x, f32 y, f32 z);
+void map_update_streaming(void);
 void map_increment_layer(void);
 void map_decrement_layer(void);
+void map_func_8004773C(void);
+s32 map_get_type(void);
+void map_func_80048034(void);
+void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
+void map_func_800483BC(f32, f32, f32);
+s8 map_get_layer(void);
+
+// something else
+
+void map_func_800484A8(void);
+
+// Blocks (again)
+
+void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
+void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
+s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+Texture* func_8004A1E8(s32 match_value);
+Block_0x28Struct *func_8004A284(Block *block, s32 param_2);
+BlockTexture *func_8004A2CC(s32 idx);
+s32 func_8004A528(Object* obj, u8 animatorID);
+s32 func_8004A5D8(Object* obj, u8 animatorID);
+
+// something else
+
+void func_8004A67C(void);
+void func_8004B948(s32 arg0);
+void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
+
+// Warp
+
+void warpPlayer(s32 warpID, s8 fadeToBlack);
 
 #endif

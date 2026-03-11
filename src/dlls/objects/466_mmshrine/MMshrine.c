@@ -11,6 +11,7 @@
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/map.h"
+#include "sys/map_enums.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
