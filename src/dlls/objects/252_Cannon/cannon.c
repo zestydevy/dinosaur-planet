@@ -37,7 +37,9 @@ void dll_252_setup(Object* self, Cannon_Setup* objSetup, s32 arg2) {
     self->srt.transl.y -= 100.0f;
     self->unkDC = objSetup->unk19;
     
-    if (!(objData->unk18 = 0)) { //@bug? should this be "if (objData->unk18 != 0)"?
+    objData->unk18 = 0;
+
+    if (objData->unk18 == 0) { //NOTE: always true
         objData->unk12 = _data_0;
         _data_0 = 70 - _data_0;
         
