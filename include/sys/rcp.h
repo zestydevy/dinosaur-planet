@@ -32,5 +32,6 @@ void func_8003825C(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
 void func_800382AC(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
 void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8);
 void draw_pause_screen_freeze_frame(Gfx** gdl);
+void func_800390A4(Gfx** arg0, Func_80037F9C_Struct* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s32 arg6, s32 arg7, f32 arg8, f32 arg9, u32 arg10, s32 arg11);
 
 #endif
