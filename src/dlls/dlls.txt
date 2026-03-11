@@ -62,6 +62,7 @@
 246 = objects/246_SwarmBaddie
 248 = objects/248_PirahnaBaddie
 250 = objects/250_TurtleBaddie
+252 = objects/252_Cannon
 254 = objects/254_PineCone
 260 = objects/260_Pollen
 264 = objects/264_kamerian_flame
