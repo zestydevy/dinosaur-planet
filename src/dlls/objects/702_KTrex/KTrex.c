@@ -15,7 +15,7 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/segment_326A0.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 #include "sys/rand.h"
 #include "dll.h"
 #include "prevent_bss_reordering.h"

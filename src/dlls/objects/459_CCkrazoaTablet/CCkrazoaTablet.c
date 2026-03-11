@@ -6,7 +6,7 @@
 #include "sys/segment_326A0.h"
 #include "dll.h"
 #include "dlls/objects/214_animobj.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

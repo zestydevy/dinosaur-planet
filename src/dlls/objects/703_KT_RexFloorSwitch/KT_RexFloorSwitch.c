@@ -4,7 +4,7 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 #include "dll.h"
 #include "macros.h"
 

@@ -5,7 +5,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/objects/object_def.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 #include "sys/main.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"

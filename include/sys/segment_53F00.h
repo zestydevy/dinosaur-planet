@@ -5,6 +5,34 @@
 #include "sys/map.h"
 #include "sys/math.h"
 
+// size: 0x18
+typedef struct {
+    f32 unk0[4]; // maybe Vec4f and not an array
+    struct Object *unk10;
+    s8 unk14;
+} Func_80057F1C_Struct;
+
+// size: 0x54
+typedef struct Func_80059C40_Struct {
+    struct Object *unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    Vec4f unk1C;
+    Vec3f unk2C;
+    Vec3f unk38;
+    f32 unk44;
+    f32 unk48;
+    s16 unk4C;
+    s16 unk4E;
+    s8 unk50;
+    s8 unk51;
+    s8 unk52;
+} Func_80059C40_Struct;
+
 void func_80058F3C(void);
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
 void func_800533D8(s32*, UnkFunc80051D68Arg3**);

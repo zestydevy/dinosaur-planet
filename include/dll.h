@@ -42,9 +42,6 @@
 #include "dlls/engine/75.h"
 #include "dlls/engine/76.h"
 
-#include "dll_def.h"
-#include "types.h"
-
 // Note: These are DLL IDs not indices
 enum DLL_ID {
     // Engine

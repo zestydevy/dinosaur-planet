@@ -1,6 +1,5 @@
 #include "common.h"
 #include "macros.h"
-#include "variables.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"

@@ -7,7 +7,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "types.h"

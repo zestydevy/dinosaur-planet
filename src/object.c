@@ -1,5 +1,4 @@
 #include "common.h"
-#include "variables.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
 #include "sys/objects.h"

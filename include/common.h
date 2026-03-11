@@ -40,7 +40,6 @@
 #include "game/objects/object_id.h"
 #include "game/objects/hitbox.h"
 #include "game/objects/object.h"
-#include "variables.h"
 #include "types.h"
 #include "macros.h"
 #include "dll.h"
