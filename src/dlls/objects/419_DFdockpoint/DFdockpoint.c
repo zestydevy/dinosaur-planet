@@ -34,7 +34,7 @@ void DFdockpoint_control(Object *self) {
     if (!setup->spawnLogDisabled) {
         obj_get_all_of_type(OBJTYPE_11, &logCount);
         if (logCount == 0) {
-            logsetup = obj_alloc_create_info(sizeof(BWLog_Setup), OBJ_BWLog);
+            logsetup = obj_alloc_setup(sizeof(BWLog_Setup), OBJ_BWLog);
             logsetup->base.quarterSize = 9;
             logsetup->base.loadFlags = OBJSETUP_LOAD_FLAG4;
             logsetup->base.loadDistance = 50;

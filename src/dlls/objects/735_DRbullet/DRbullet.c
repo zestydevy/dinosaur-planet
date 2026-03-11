@@ -306,7 +306,7 @@ s32 DRbullet_tick_impact(Object* self) {
 Object* DRbullet_create_lfxEmitter(Object* self, s32 arg1) {
     LFXEmitter_Setup* lfxSetup;
 
-    lfxSetup = obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     lfxSetup->base.loadFlags = 2;
     lfxSetup->base.x = self->srt.transl.x;
     lfxSetup->base.y = self->srt.transl.y;

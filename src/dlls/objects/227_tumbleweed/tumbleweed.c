@@ -812,13 +812,13 @@ void Tumbleweed_create_twigs(Object* self) {
 
     switch (self->id) {
         case OBJ_Tumbleweed1:
-            setup = obj_alloc_create_info(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed1twig);
+            setup = obj_alloc_setup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed1twig);
             break;
         case OBJ_Tumbleweed2:
-            setup = obj_alloc_create_info(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed2twig);
+            setup = obj_alloc_setup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed2twig);
             break;
         case OBJ_Tumbleweed3:
-            setup = obj_alloc_create_info(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed3twig);
+            setup = obj_alloc_setup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed3twig);
             break;
     }
     

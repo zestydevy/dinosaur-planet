@@ -119,7 +119,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     FXEmit_Setup *setup;
     Object *fxEmit;
 
-    setup = obj_alloc_create_info(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    setup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
@@ -153,7 +153,7 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     ObjSetup *setup;
     Object *projectile;
 
-    setup = obj_alloc_create_info(0x24, objID); // KamerianFlame/KamerianAcid
+    setup = obj_alloc_setup(0x24, objID); // KamerianFlame/KamerianAcid
     setup->x = x;
     setup->y = y;
     setup->z = z;

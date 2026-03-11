@@ -190,7 +190,7 @@ void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objDa
 Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
     LFXEmitter_Setup* setup;
 
-    setup = (LFXEmitter_Setup*)obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    setup = (LFXEmitter_Setup*)obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     
     setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
     setup->base.fadeFlags = OBJSETUP_FADE_DISABLE;

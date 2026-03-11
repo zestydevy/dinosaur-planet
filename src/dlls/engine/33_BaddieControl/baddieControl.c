@@ -521,16 +521,16 @@ Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
     }
     switch (arg1) {
     case 1:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         break;
     case 2:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_EnergyGem1);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_EnergyGem1);
         break;
     case 3:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_meatPickup);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_meatPickup);
         break;
     case 4:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         if (arg2 != -1) {
             var_v0->unk1C = arg2;
         }
@@ -567,16 +567,16 @@ Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
         _bss_0 = temp_v0;
         return temp_v0;
     case 6:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustSmall);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustSmall);
         break;
     case 7:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         break;
     case 8:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustLarge);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustLarge);
         break;
     case 9:
-        var_v0 = obj_alloc_create_info(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustHuge);
+        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustHuge);
         break;
     default:
         return NULL;
@@ -924,7 +924,7 @@ void BaddieControl_change_weapon(Object *obj, Baddie *baddie) {
         }
         if (baddie->nextWeaponID > 0) {
             obj->linkedObject = obj_create(
-                obj_alloc_create_info(sizeof(ObjSetup), weaponObjIDs[baddie->nextWeaponID - 1]), 
+                obj_alloc_setup(sizeof(ObjSetup), weaponObjIDs[baddie->nextWeaponID - 1]), 
                 OBJ_INIT_FLAG4, 
                 -1, 
                 -1, 

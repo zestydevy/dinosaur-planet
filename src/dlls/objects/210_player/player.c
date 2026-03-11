@@ -519,8 +519,8 @@ void dll_210_setup(Object* player, u32 arg1) {
         player->shadow->maxDistScale = player->shadow->scale * 0.5f;
     }
     gDLL_1_UI->vtbl->func_12EC();
-    data->foodbag = obj_create(obj_alloc_create_info(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
-    data->sidekickFoodbag = obj_create(obj_alloc_create_info(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
+    data->foodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
+    data->sidekickFoodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
     data->modAnims = _data_98;
     if (player->id == 0) {
         data->unk3B4 = _data_2F8;
@@ -647,7 +647,7 @@ void dll_210_control(Object* player) {
     }
     tempObj = player->linkedObject;
     if (tempObj == NULL) {
-        player->linkedObject = obj_create(obj_alloc_create_info(0x18, _data_24[data->unk8B4]), OBJ_INIT_FLAG4, -1, -1, player->parent);
+        player->linkedObject = obj_create(obj_alloc_setup(0x18, _data_24[data->unk8B4]), OBJ_INIT_FLAG4, -1, -1, player->parent);
     } else {
         tempObj->parent = player->parent;
     }
@@ -1607,7 +1607,7 @@ s32 dll_210_func_3F64(Object* player) {
     Player_Data *data = player->data;
 
     if (player->linkedObject == NULL) {
-        player->linkedObject = obj_create(obj_alloc_create_info(sizeof(ObjSetup), _data_24[data->unk8B4]), OBJ_INIT_FLAG4, -1, -1, player->parent);
+        player->linkedObject = obj_create(obj_alloc_setup(sizeof(ObjSetup), _data_24[data->unk8B4]), OBJ_INIT_FLAG4, -1, -1, player->parent);
         player->unkB0 &= ~3;
         player->unkB0 |= 3;
         func_80023D30(player->linkedObject, 0, 1.0f, 0U);
@@ -1929,7 +1929,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         return 1;
     }
     if (arg0->linkedObject == NULL) {
-        arg0->linkedObject = obj_create(obj_alloc_create_info(0x18, _data_24[objdata->unk8B4]), OBJ_INIT_FLAG4, -1, -1, arg0->parent);
+        arg0->linkedObject = obj_create(obj_alloc_setup(0x18, _data_24[objdata->unk8B4]), OBJ_INIT_FLAG4, -1, -1, arg0->parent);
     } else {
         arg0->linkedObject->parent = arg0->parent;
     }
@@ -3517,7 +3517,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     mainCam = get_main_camera();
     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
-        objsetup = obj_alloc_create_info(0x24, OBJ_projball);
+        objsetup = obj_alloc_setup(0x24, OBJ_projball);
         objsetup->loadFlags = OBJSETUP_LOAD_FLAG2;
         objsetup->fadeFlags = OBJSETUP_FADE_DISABLE;
         objsetup->loadDistance = 0xFF;
@@ -3622,7 +3622,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     var_s4 = 1;
     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
-        temp_v0 = obj_alloc_create_info(0x24, OBJ_grenade);
+        temp_v0 = obj_alloc_setup(0x24, OBJ_grenade);
         temp_v0->loadFlags = OBJSETUP_LOAD_FLAG2;
         temp_v0->fadeFlags = OBJSETUP_FADE_DISABLE;
         temp_v0->loadDistance = 0xFF;
@@ -3698,7 +3698,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     DLL_Unknown* dll;
 
     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
-    temp_v0 = obj_alloc_create_info(0x24, OBJ_icebeam);
+    temp_v0 = obj_alloc_setup(0x24, OBJ_icebeam);
     temp_v0->loadFlags = OBJSETUP_LOAD_FLAG2;
     temp_v0->fadeFlags = OBJSETUP_FADE_DISABLE;
     temp_v0->loadDistance = 0xFF;
@@ -10301,7 +10301,7 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
 static void dll_210_func_1DAB0(Object* player) {
     ObjSetup* temp_v0;
 
-    temp_v0 = obj_alloc_create_info(0x24, 0x43B);
+    temp_v0 = obj_alloc_setup(0x24, 0x43B);
     temp_v0->objId = 0x43B;
     temp_v0->quarterSize = 9;
     temp_v0->loadFlags = 2;
@@ -10342,7 +10342,7 @@ void dll_210_func_1DC48(Object* player) {
             continue;
         }
 
-        objsetup = obj_alloc_create_info(sizeof(Iceblast_Setup), OBJ_iceblast);
+        objsetup = obj_alloc_setup(sizeof(Iceblast_Setup), OBJ_iceblast);
         if (objsetup == NULL) {
             break;
         }
@@ -10368,7 +10368,7 @@ void dll_210_func_1DC48(Object* player) {
 Object *dll_210_func_1DD94(Object* player, s32 arg1) {
     LFXEmitter_Setup* objsetup;
 
-    objsetup = obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    objsetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     objsetup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
     objsetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
     objsetup->base.loadDistance = 0xFF;

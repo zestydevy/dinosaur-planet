@@ -1,11 +1,22 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "dlls/engine/29_gplay.h"
+#include "sys/camera.h"
+#include "sys/fs.h"
 #include "sys/gfx/model.h"
+#include "sys/asset_thread.h"
+#include "sys/dll.h"
+#include "sys/exception.h"
 #include "sys/linked_list.h"
+#include "sys/main.h"
+#include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/objhits.h"
 #include "sys/newshadows.h"
 #include "sys/segment_326A0.h"
+#include "macros.h"
+#include "dll.h"
 
 typedef struct {
 /*00*/  u8 _unk0[0x8 - 0x0];
@@ -69,43 +80,22 @@ Object *gEffectBoxes[20];
 s32 D_800B1988;
 // -------- .bss end 800b1990 -------- //
 
-void queue_alloc_load_file(void **dest, s32 fileId);
-void queue_load_file_to_ptr(void **dest, s32 fileId);
-void alloc_some_object_arrays(void); //related to objects
 void obj_clear_all(void);
-
 void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3);
-
-// TODO: remove externs
-extern void func_80058FE8();
-extern void update_obj_hitboxes(s32);
-extern void func_80025E58();
-extern void obj_do_hit_detection(s32);
-extern void func_8002B6EC();
-
 void update_obj_models();
 void update_object(Object *obj);
 void func_8002272C(Object *obj);
-
-extern void func_80025DF0();
-
 ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount);
-
-extern void func_800596BC(ObjDef*);
-
 ObjDef *obj_load_objdef(s32 tabIdx);
 u32 obj_get_model_flags(Object *obj);
 u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags);
 void obj_free_objdef(s32 tabIdx);
-
 void func_80021E74(f32 scale, ModelInstance *modelInst);
 void func_80022200(Object *obj, s32 param2, s32 param3);
 u32 obj_alloc_object_state(Object *obj, u32 addr);
 u32 obj_init_event_data(s32 param1, Object *obj, u32 addr);
 u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
-
 f32 func_80022150(Object *obj);
-
 void obj_free_object(Object *obj, s32 param2);
 
 void init_objects(void) {
@@ -140,7 +130,7 @@ void init_objects(void) {
 
     //allocate global object list and some other buffers
     gObjList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
-    alloc_some_object_arrays();
+    objhits_init();
     obj_clear_all();
 }
 
@@ -1623,7 +1613,7 @@ void obj_free_object(Object *obj, s32 param2) {
     mmFree(obj);
 }
 
-void *obj_alloc_create_info(s32 size, s32 objId) {
+void *obj_alloc_setup(s32 size, s32 objId) {
     ObjSetup *setup;
 
     setup = (ObjSetup*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("romdef"));

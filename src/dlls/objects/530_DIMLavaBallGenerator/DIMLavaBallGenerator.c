@@ -108,7 +108,7 @@ void DIMLavaBallGenerator_control(Object *self) {
         }
     }
     if (objdata->lavaball == NULL) {
-        lavaballSetup = obj_alloc_create_info(sizeof(DIMLavaBall_Setup), OBJ_DIMLavaBall);
+        lavaballSetup = obj_alloc_setup(sizeof(DIMLavaBall_Setup), OBJ_DIMLavaBall);
         lavaballSetup->base.quarterSize = 9;
         lavaballSetup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
         lavaballSetup->base.loadDistance = 0xFF;

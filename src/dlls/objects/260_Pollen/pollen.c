@@ -45,7 +45,7 @@ void dll_260_func_13C(Object* arg0) {
 
     i = 6;
     while (i--) {
-        setup = obj_alloc_create_info(0x24, OBJ_PollenFragment);
+        setup = obj_alloc_setup(0x24, OBJ_PollenFragment);
         setup->x = arg0->srt.transl.x;
         setup->y = arg0->srt.transl.y;
         setup->z = arg0->srt.transl.z;

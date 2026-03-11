@@ -60,7 +60,7 @@ void MAGICMaker_control(Object *self) {
                 }
             }
             if (foundObjs < 5) {
-                bonedustSetup = obj_alloc_create_info(sizeof(BoneDust_Setup), OBJ_BoneDust);
+                bonedustSetup = obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust);
                 bonedustSetup->unk1A = 0x14;
                 bonedustSetup->unk2C = -1;
                 bonedustSetup->unk1C = -1;

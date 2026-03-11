@@ -201,7 +201,7 @@ static void MagicPlant_create_magic_dust(Object* self, s32 objectID) {
     objSetup = (MagicPlant_Setup*)self->setup;
     objData = self->data;
 
-    dustSetup = obj_alloc_create_info(sizeof(MagicDust_Setup), objectID);
+    dustSetup = obj_alloc_setup(sizeof(MagicDust_Setup), objectID);
     dustSetup->unk1A = 20;
     dustSetup->unk2C = -1;
     dustSetup->unk1C = -1;

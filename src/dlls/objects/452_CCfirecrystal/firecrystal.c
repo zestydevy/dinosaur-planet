@@ -166,7 +166,7 @@ Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scro
 
     objSetup = (CCfirecrystal_Setup*)self->setup;
 
-    lightSetup = obj_alloc_create_info(sizeof(CCfirecrystalin_Setup), OBJ_CCfirecrystalin);
+    lightSetup = obj_alloc_setup(sizeof(CCfirecrystalin_Setup), OBJ_CCfirecrystalin);
     lightSetup->base.x = objSetup->base.x;
     lightSetup->base.y = objSetup->base.y;
     lightSetup->base.z = objSetup->base.z;

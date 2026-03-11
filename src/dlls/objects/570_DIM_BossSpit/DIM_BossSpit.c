@@ -98,7 +98,7 @@ void DIM_BossSpit_func_2AC(Object *self) {
     LFXEmitter_Setup *lfxemitterSetup;
 
     objdata = self->data;
-    lfxemitterSetup = obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    lfxemitterSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     lfxemitterSetup->base.x = self->srt.transl.x;
     lfxemitterSetup->base.y = self->srt.transl.y;
     lfxemitterSetup->base.z = self->srt.transl.z;

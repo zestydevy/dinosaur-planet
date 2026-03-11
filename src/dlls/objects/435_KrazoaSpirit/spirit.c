@@ -126,7 +126,7 @@ void Spirit_control(Object* self) {
     }
     
     if ((objData->base.unk8D == 1) || (objData->base.unk8D == 3)) {
-        lfxSetup = obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+        lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
         lfxSetup->base.loadDistance = 0xFF;
         lfxSetup->base.fadeDistance = 0xFF;
         lfxSetup->base.x = self->srt.transl.x;

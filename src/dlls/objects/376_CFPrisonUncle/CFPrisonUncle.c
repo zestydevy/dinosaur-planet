@@ -249,7 +249,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         objData->unk60 = 1;
        
         
-        dustSetup = (BoneDust_Setup*)obj_alloc_create_info(sizeof(BoneDust_Setup), OBJ_BoneDust); 
+        dustSetup = (BoneDust_Setup*)obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
         dustSetup->unk1A = 2;
         dustSetup->unk2C = -1;
         dustSetup->unk1C = -1;

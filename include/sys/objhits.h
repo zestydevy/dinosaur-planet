@@ -105,6 +105,9 @@ typedef enum {
     Collision_Type_None = 0x7F
 } CollisionTypes;
 
+void objhits_init(void);
+void func_80025DF0(void);
+void obj_do_hit_detection(s32 numObjs);
 s32 func_80025F40(Object*,Object **,s32 *,s32 *);
 s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
@@ -156,5 +159,8 @@ void func_800267A4(Object *obj);
 u32 func_8002667C(Object *obj, u32 addr);
 u32 func_80026BD8(Object *obj, u32 addr);
 u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHitInfo, u32 arg3, Object* obj);
+void update_obj_hitboxes(s32 arg0);
+void func_80025E58(void);
+void func_8002B6EC(void);
 
 #endif

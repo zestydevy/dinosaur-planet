@@ -185,7 +185,7 @@ static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata
     Baddie_Setup *drakorSetup;
 
     drakorSetup = (Baddie_Setup*)self->setup;
-    laserSetup = obj_alloc_create_info(0x24, OBJ_BossDrakor_Lase);
+    laserSetup = obj_alloc_setup(0x24, OBJ_BossDrakor_Lase);
     laserSetup->x = self->srt.transl.x;
     laserSetup->y = self->srt.transl.y;
     laserSetup->z = self->srt.transl.z;

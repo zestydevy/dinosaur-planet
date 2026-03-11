@@ -210,7 +210,7 @@ void SB_ShipGun_control(Object *self) {
             sp84.y = 135.f;
             sp84.z = 0.0f;
             rotate_vec3(&transform, (f32*)(&sp84));
-            cannonballSetup = obj_alloc_create_info(sizeof(ObjSetup), OBJ_SB_CannonBall);
+            cannonballSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_CannonBall);
             cannonballSetup->x = sp84.x + sp98;
             cannonballSetup->y = sp84.y + sp94;
             cannonballSetup->z = sp84.z + sp90;
@@ -254,7 +254,7 @@ void SB_ShipGun_control(Object *self) {
         if (self->curModAnimId != 1) {
             for (i = 0; i != 6; i++) {
                 if (objdata->unkE == 1) {
-                    debrisSetup = obj_alloc_create_info(sizeof(ObjSetup), OBJ_SB_Debris);
+                    debrisSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_Debris);
                     debrisSetup->x = sp98;
                     debrisSetup->y = sp94 + 135.0f;
                     debrisSetup->z = sp90;

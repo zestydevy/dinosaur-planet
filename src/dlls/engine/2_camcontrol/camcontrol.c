@@ -975,7 +975,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
 /** Creates an `OBJ_LockIcon` and stores a reference to it in `sLockIcon` */
 void CamControl_create_LockIcon(void) {
     sLockIcon = obj_create(
-        obj_alloc_create_info(sizeof(ObjSetup), OBJ_LockIcon),
+        obj_alloc_setup(sizeof(ObjSetup), OBJ_LockIcon),
         0,
         -1,
         -1,
