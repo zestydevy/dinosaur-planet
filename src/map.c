@@ -19,8 +19,16 @@
 #include "sys/segment_1050.h"
 #include "sys/segment_1460.h"
 #include "dll.h"
+#include "macros.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
+
+typedef struct UnkStruct {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+} UnkStruct;
 
 // -------- .bss start 800b49f0 -------- //
 DLBuilder D_800B49F0;
@@ -1528,9 +1536,6 @@ Block* func_80044BB0(s32 blockIndex) {
 }
 
 //Camera and frustum related?
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044BEC.s")
-#else
 void func_80044BEC(void) {
     f32 spDC;
     f32 spD8;
@@ -1648,7 +1653,6 @@ void func_80044BEC(void) {
         }
     }
 }
-#endif
 
 s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks) {
     Plane* currentPlane;
@@ -2151,7 +2155,7 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 #else
 void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {
-    s32 pad;
+    Struct_D_800B9768_unk4 *temp;
     s32 sp30;
     s32 temp_v1_2;
     s32 mapIndex;
@@ -2186,8 +2190,9 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
             ((s8 *)&gMapStreamMapTable[mapIndex])[2] = 1;
         }
 
-        worldGridX -= D_800B9768.unk4[sp30].xMin;
-        worldGridZ -= D_800B9768.unk4[sp30].zMin;
+        temp = &D_800B9768.unk4[sp30];
+        worldGridX -= temp->xMin;
+        worldGridZ -= temp->zMin;
         temp_v1_2 = ((s32*) &((s8 *)sp24->blockIDs_ptr)[worldGridX * 4 + ((worldGridZ *  sp24->gridSizeX) * 4)])[0];
         cell->loadedBlockIndex = (temp_v1_2 >> 0x11) & 0x3F;
         cell->trkBlkIndex = (temp_v1_2 >> 0x17) & 0x3F;
@@ -2214,7 +2219,6 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         cell->loadedBlockIndex = 0;
     }
 }
-
 #endif
 
 void func_80046688(s32 arg0, s32 arg1) {
@@ -2369,17 +2373,8 @@ void map_func_80046B58(f32 x, f32 y, f32 z) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_update_streaming.s")
-#else
-typedef struct UnkStruct {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    s16 unk6;
-} UnkStruct;
 void map_update_streaming(void) {
-    GlobalMapCell **var_a1;
+    f32 f14;
     f32 sp308;
     GlobalMapCell *var_v1;
     s32 pad2;
@@ -2392,7 +2387,7 @@ void map_update_streaming(void) {
     s32 var_s3;
     s32 var_s5;
     s8* temp_a3;
-    s8* s1_bytes;
+    f32 f2;
     s32 sp2C8[4];
     s32 sp2B8[4];
     s32 sp2A8[4];
@@ -2404,11 +2399,8 @@ void map_update_streaming(void) {
     s32 sp284;
     UnkStruct sp84[64]; // Unknown size, although 64 sounds reasonable
     f32 f0;
-    f32 f2;
-    f32 f14;
-    s32 pad;
-    s8** sp70;
-    s32** sp6C;
+    s32 xTemp;
+    s32 zTemp;
 
     if (!(UINT_80092a98 & 2)) {
         return;
@@ -2427,31 +2419,28 @@ void map_update_streaming(void) {
         shadows_func_8004D974(1);
         func_80012B54(1, 0);
         var_fp = 0;
-        var_a1 = (GlobalMapCell **) &gDecodedGlobalMap;
-        for (sp70 = gBlockIndices, sp6C = &D_800B9700, var_s7 = 0; var_s7 < 5; sp70++, sp6C++, var_s7++) {
-            s1_bytes = *sp70;
-            D_800B9714 = (s8 *) *sp6C;
-            var_v1 = &*var_a1[var_s7];
+        for (var_s7 = 0; var_s7 < 5; var_s7++) {
+            var_v1 = gDecodedGlobalMap[var_s7];
+            temp_a3 = gBlockIndices[var_s7];
+            D_800B9714 = D_800B9700[var_s7];
             var_s3 = 0;
-            for (var_s2 = 0; var_s2 < 16; var_s2++) {
-                for (var_s0 = 0; var_s0 != 16; var_s0++) {
-                    if (s1_bytes[0] >= 0) {
+            for (var_s2 = 0; var_s2 < BLOCKS_GRID_SPAN; var_s2++) {
+                for (var_s0 = 0; var_s0 < BLOCKS_GRID_SPAN; var_s0++) {
+                    if (temp_a3[var_s3] >= 0) {
                         sp84[var_fp].unk6 = var_s7;
                         sp84[var_fp].unk0 = gMapCurrentStreamCoordsX + var_s0;
                         sp84[var_fp].unk2 = gMapCurrentStreamCoordsZ + var_s2;
-                        sp84[var_fp].unk4 = s1_bytes[0];
-                        // @fake
-                        if (var_s2 && var_s2) {}
+                        sp84[var_fp].unk4 = temp_a3[var_s3];
                         var_fp++;
                     }
-                    s1_bytes[0] = -2;
+                    temp_a3[var_s3] = -2;
                     D_800B9714[var_s3] = -1;
-                    var_v1[var_s3].blockID = -3;
-                    var_v1[var_s3].mapIDs[0] = -1;
-                    var_v1[var_s3].mapIDs[1] = -1;
-                    var_v1[var_s3].mapIDs[2] = -1;
+                    var_v1->blockID = -3;
+                    var_v1->mapIDs[0] = -1;
+                    var_v1->mapIDs[1] = -1;
+                    var_v1->mapIDs[2] = -1;
+                    var_v1++;
                     var_s3++;
-                    s1_bytes++;
                 }
             }
         }
@@ -2476,60 +2465,49 @@ void map_update_streaming(void) {
             }
             gMapStreamMapTable[sp284].unk06 = 1;
             D_800B4A54 = sp284;
-            for (sp70 = gBlockIndices, sp6C = &D_800B9700, var_s7 = 0; var_s7 < 5; sp70++, sp6C++, var_s7++) {
+            for (var_s7 = 0; var_s7 < ARRAYCOUNT(gBlockIndices); var_s7++) {
                 func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
-                temp_a3 = *sp70;
-                var_s2 = sp2C8[2];
-                D_800B9714 = (s8 *) *sp6C;
-                while (sp2C8[3] >= var_s2) {
-                    var_s0 = sp2C8[0];
-                    while (sp2C8[1] >= var_s0) {
-                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
-                        var_s0++;
+                temp_a3 = gBlockIndices[var_s7];
+                D_800B9714 = D_800B9700[var_s7];
+                for (var_s2 = sp2C8[2]; sp2C8[3] >= var_s2; var_s2++) {
+                    for (var_s0 = sp2C8[0]; sp2C8[1] >= var_s0; var_s0++) {
+                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
                     }
-                    var_s2++;
                 }
-                var_s2 = sp2B8[2];
-                s1_bytes = temp_a3;
-                while (sp2B8[3] >= var_s2) {
-                    var_s0 = sp2B8[0];
-                    while (sp2B8[1] >= var_s0) {
-                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
-                        var_s0++;
+
+                for (var_s2 = sp2B8[2]; sp2B8[3] >= var_s2; var_s2++) {
+                    for (var_s0 = sp2B8[0]; sp2B8[1] >= var_s0; var_s0++) {
+                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
                     }
-                    var_s2++;
                 }
-                var_s2 = sp2A8[2];
-                while (sp2A8[3] >= var_s2) {
-                    var_s0 = sp2A8[0];
-                    while (sp2A8[1] >= var_s0) {
-                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
-                        var_s0++;
+
+                for (var_s2 = sp2A8[2]; sp2A8[3] >= var_s2; var_s2++) {
+                    for (var_s0 = sp2A8[0]; sp2A8[1] >= var_s0; var_s0++) {
+                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
                     }
-                    var_s2++;
                 }
-                var_s2 = sp298[2];
-                while (sp298[3] >= var_s2) {
-                    var_s0 = sp298[0];
-                    while (sp298[1] >= var_s0) {
-                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
-                        var_s0++;
+
+                for (var_s2 = sp298[2]; sp298[3] >= var_s2; var_s2++) {
+                    for (var_s0 = sp298[0]; sp298[1] >= var_s0; var_s0++) {
+                if (var_s2) {}
+                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
                     }
-                    var_s2++;
                 }
+
                 var_s3 = 0;
                 var_s5 = 0;
-                for (var_s2 = 0; var_s2 < 16; var_s2++) {
-                    for (var_s0 = 0; var_s0 != 16; ) {
-                        if (s1_bytes[0] == -3) {
-                            if (map_func_800485FC(var_s0, var_s2, gMapCurrentStreamCoordsX + var_s0, gMapCurrentStreamCoordsZ + var_s2, var_s7) == 0) {
-                                s1_bytes[0] = -2;
+                for (var_s2 = 0; var_s2 < BLOCKS_GRID_SPAN; var_s2++) {
+                    for (var_s0 = 0; var_s0 < BLOCKS_GRID_SPAN; var_s0++) {
+                        xTemp = gMapCurrentStreamCoordsX + var_s0;
+                        zTemp = gMapCurrentStreamCoordsZ + var_s2;
+                        if (temp_a3[var_s3] == -3) {
+                            if (map_func_800485FC(var_s0, var_s2, xTemp, zTemp, var_s7) == 0) {
+                                temp_a3[var_s3] = -2;
                             } else {
-                                D_800B9714[var_s3] = var_s5;
-                                var_s5++;
+                                D_800B9714[var_s3] = var_s5++;
                             }
                         }
-                        var_s3++; s1_bytes++; var_s0++;
+                        var_s3++;
                     }
                 }
             }
@@ -2562,7 +2540,6 @@ void map_update_streaming(void) {
     map_update_objects_streaming(sp294);
     UINT_80092a98 &= ~0x4000;
 }
-#endif
 
 void map_increment_layer(void) {
     gMapLayer += 1;
