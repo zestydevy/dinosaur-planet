@@ -3,6 +3,7 @@
 #include "game/objects/object_id.h"
 #include "sys/asset_thread.h"
 #include "sys/bitstream.h"
+#include "sys/dl_debug.h"
 #include "sys/fs.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -130,7 +131,7 @@ f32 D_80092AAC[24] = {
      1.0f,  1.0f, -1.0f,
      1.0f, -1.0f, -1.0f
 };
-u8 D_80092B0C[] = { 
+s8 D_80092B0C[] = {
     0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00, 0x08, 0x09, 0x0a, 
     0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 
     0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 
@@ -195,6 +196,11 @@ s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
 s32 func_80048E04(u8, u8, u8, u8);
 void func_8004A164(Texture*, s32);
+/* static */ void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
+/* static */ void func_80043950(Block*, s16, s16, s16);
+/* static */ void func_80043FD8(s8* arg0);
+/* static */ s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
+/* static */ void some_cell_func(BitStream* stream);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -707,18 +713,138 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     if (1) { } if (1) { } if (1) { } if (1) { }
 }
 
-// https://decomp.me/scratch/9mgpH
-// static const char str_8009a510[] = "track/track.c";
-// static const char str_8009a520[] = "track/track.c";
-// static const char str_8009a530[] = "track/track.c";
-// static const char str_8009a540[] = "track/track.c";
-// static const char str_8009a550[] = "track/track.c";
-#pragma GLOBAL_ASM("asm/nonmatchings/map/track_c_func.s")
+static const char D_8009A510[] = "track/track.c";
+static const char D_8009A520[] = "track/track.c";
+static const char D_8009A530[] = "track/track.c";
+static const char D_8009A540[] = "track/track.c";
+static const char D_8009A550[] = "track/track.c";
+
+void track_c_func(void) {
+    s32 sp294;
+    Block* var_s0;
+    s32 temp_t2_2;
+    s32 temp_t3;
+    s32 temp_v1;
+    s32 sp274[4];
+    s32 sp264[4];
+    s32 sp254[4];
+    s32 sp244[4];
+    s32 sp240;
+    s32 var_s2;
+    s32 var_s3;
+    s32 temp_s1;
+    s8* sp230;
+    u8 sp130[BLOCKS_GRID_TOTAL_CELLS];
+    u8 _pad[0x130-0x90];
+    s8 *var_s8;
+    s32 temp_v0;
+    s32 i;
+    s32 var_v0;
+    s8 pad_sp7F;
+    s8 pad_sp7E;
+    s8 pad_sp7D;
+    s8 sp7C;
+    Mtx* sp78;
+
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x52B);
+    some_cell_func(&D_800B9780);
+    shadows_func_8004D9B8();
+    shadows_func_8004DABC();
+    gRenderListLength = 1;
+    gBlocksToDrawIdx = 0;
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x53D);
+    gDLL_9_Newclouds->vtbl->func6(&gMainDL, gUpdateRate, 0);
+    gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 3);
+    if (UINT_80092a98 & 0x10) {
+        gDLL_12_Minic->vtbl->func3(&gMainDL, &gWorldRSPMatrices);
+    }
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x545);
+    var_s8 = D_80092B0C;
+    sp78 = gWorldRSPMatrices;
+    sp240 = ARRAYCOUNT(gBlockIndices);
+    while (--sp240 >= 0) {
+        sp230 = gBlockIndices[sp240];
+        D_800B9714 = D_800B9700[sp240];
+        func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp274, sp264, sp254, sp244, sp240, 1, D_800B4A54);
+        for (i = 0; i < ARRAYCOUNT(sp130); i++) { sp130[i] = 0; }
+        
+        for (var_s2 = sp274[2]; sp274[3] >= var_s2; var_s2++) {
+            for (temp_s1 = sp274[0]; sp274[1] >= temp_s1; temp_s1++) {
+                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+            }
+        }
+        for (var_s2 = sp264[2]; sp264[3] >= var_s2; var_s2++) {
+            for (temp_s1 = sp264[0]; sp264[1] >= temp_s1; temp_s1++) {
+                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+            }
+        }
+        for (var_s2 = sp254[2]; sp254[3] >= var_s2; var_s2++) {
+            for (temp_s1 = sp254[0]; sp254[1] >= temp_s1; temp_s1++) {
+                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+            }
+        }
+        for (var_s2 = sp244[2]; sp244[3] >= var_s2; var_s2++) {
+            for (temp_s1 = sp244[0]; sp244[1] >= temp_s1; temp_s1++) {
+                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+            }
+        }
+        // @fake
+        if (sp240){}
+
+        for (sp294 = 0; sp294 < BLOCKS_GRID_SPAN; sp294++) {
+            temp_s1 = var_s8[sp294];
+            for (var_s3 = 0; var_s3 < BLOCKS_GRID_SPAN; var_s3++) {
+                var_s2 = var_s8[var_s3];
+                temp_v1 = GRID_INDEX(var_s2, temp_s1);
+                temp_v0 = sp230[temp_v1];
+                if (temp_v0 < 0) {
+                    var_s0 = NULL;
+                } else {
+                    var_s0 = gLoadedBlocks[temp_v0];
+                    var_s0->vtxFlags ^= 1;
+                    if (sp130[temp_v1] == 0) {
+                        continue;
+                    }
+                }
+                if (temp_v0 < 0 || func_800451A0(temp_s1, var_s2, var_s0) == 0) {
+                    continue;
+                }
+                D_800B97B8 = temp_s1 * 640.0f;
+                D_800B97BC = var_s2 * 640.0f;
+                func_80043950(var_s0, temp_s1, var_s2, sp240);
+                if (UINT_80092a98 & 0x8000) {
+                    if (var_s0->unk3E != 0) {
+                        block_compute_vertex_colors(var_s0, temp_s1, var_s2, 0);
+                    }
+                    if ((var_s0->unk49 != 0) && (UINT_80092a98 & 0x100)) {
+                        func_8001F4C0(var_s0, temp_s1, var_s2);
+                    }
+                }
+                block_add_to_render_list(var_s0, D_800B97B8, D_800B97BC);
+            }
+        }
+    }
+    func_80043FD8(&sp7C);
+    draw_render_list(sp78, &sp7C);
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x5B2);
+    gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 2);
+    gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1);
+    gDLL_14_Modgfx->vtbl->func11(&sp7C);
+    gDLL_14_Modgfx->vtbl->func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0);
+    gDLL_24_Waterfx->vtbl->func_C7C(&gMainDL, &gWorldRSPMatrices);
+    gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0);
+    gDLL_2_Camera->vtbl->lock_icon_print(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8);
+    gDLL_59_Minimap->vtbl->func1(&gMainDL, &gWorldRSPMatrices);
+    shadows_func_8004D974(0);
+    D_800B1847 = 0;
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x5C6);
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/draw_render_list.s")
 #else
 
+// static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
 // static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
 // static const char str_8009a590[] = "found on map %d\n";
 // static const char str_8009a5a4[] = "mapno not found\n";
