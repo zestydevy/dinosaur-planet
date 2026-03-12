@@ -713,12 +713,6 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     if (1) { } if (1) { } if (1) { } if (1) { }
 }
 
-static const char D_8009A510[] = "track/track.c";
-static const char D_8009A520[] = "track/track.c";
-static const char D_8009A530[] = "track/track.c";
-static const char D_8009A540[] = "track/track.c";
-static const char D_8009A550[] = "track/track.c";
-
 void track_c_func(void) {
     s32 sp294;
     Block* var_s0;
@@ -840,15 +834,15 @@ void track_c_func(void) {
     dl_add_debug_info(gMainDL, 0, "track/track.c", 0x5C6);
 }
 
+static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
+static const char str_8009a590[] = "found on map %d\n";
+static const char str_8009a5a4[] = "mapno not found\n";
+static const char str_8009a5b8[] = "error\n";
+
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/draw_render_list.s")
 #else
 
-// static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
-// static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
-// static const char str_8009a590[] = "found on map %d\n";
-// static const char str_8009a5a4[] = "mapno not found\n";
-// static const char str_8009a5b8[] = "error\n";
 extern Gfx *gMainDL;
 extern BlockTexture *gBlockTextures;
 typedef void (*DLL57Func)(u32*, u32*, u32*, u32*, u32*, u32*);
