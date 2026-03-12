@@ -1,6 +1,7 @@
 #include "sys/map.h"
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/texture.h"
 #include "sys/asset_thread.h"
 #include "sys/bitstream.h"
 #include "sys/fs.h"
@@ -1759,7 +1760,7 @@ void some_cell_func(BitStream* stream) {
     } else {
         var_t0 = 80;
     }
-    cellY = var_v0 / var_t0;;
+    cellY = var_v0 / var_t0;
     cellX = temp_t2 / 80;
     cellZ = temp_t3 / 80;
     diPrintf(" cellx %i celly %i cellz %i ", cellX, cellY, cellZ);
@@ -1767,7 +1768,7 @@ void some_cell_func(BitStream* stream) {
     if (D_800B979E & 7) {
         var_v1 += 1;
     }
-    temp = ((cellY << 6) + (cellZ * 8) + cellX);
+    temp = ((cellY * (8 * 8)) + (cellZ * 8) + cellX);
     bitstream_init(stream, &D_800B9798[(var_v1 * temp)], D_800B979E, D_800B979E);
 }
 
@@ -1794,26 +1795,7 @@ static const char str_8009a618[] = "trackFreeMap: Error no map!!\n";
 static const char str_8009a638[] = "WORLD MAP LIST OVERFLOW\n";
 static const char str_8009a654[] = "entry->gamno >= max_gam\n";
 static const char str_8009a670[] = "entry->block > max gam\n";
-static const char str_8009a688[] = "Blocksize error(1): %d should be %d\n";
-static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
-static const char str_8009a6e0[] = "trackLoadBlockEnd: track block overrun\n";
-static const char str_8009a708[] = "TEXSCROLL: table is full\n";
-static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
-static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
-static const char str_8009a770[] = "MISMATCH on global texanim free\n";
-static const char str_8009a794[] = " Map not Loaded %i ";
-static const char str_8009a7a8[] = "OBJECT error: obj %d, has no romdef\n";
-static const char str_8009a7d0[] = "WARNING: trackSetLoaded bit overflow\n";
-static const char str_8009a7f8[] = "WARNING: trackGetLoaded bit overflow\n";
-static const char str_8009a820[] = "Cannot move object with an ident of -1!!!\n";
-static const char str_8009a84c[] = " OVer FLOW FLOW in RD saves for moving romdefs ";
-static const char str_8009a87c[] = " Error in moving of romdef ";
-static const char str_8009a898[] = " Saving Romdef for for %i tab no %i \n";
-static const char str_8009a8c0[] = "Cannot move object with an ident of -1!!!\n";
-static const char str_8009a8ec[] = " Removed Restored Num %i ";
-static const char str_8009a908[] = "%i ";
-static const char str_8009a90c[] = "romdefMove_Set: Mapno overflow!!\n";
-static const char str_8009a930[] = "######  DOING WARP  ########\n";
+
 u8 func_800456AC(Object* obj) {
     f32 fadeDist;
     Object* playerObj;
@@ -2189,8 +2171,8 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         worldGridX -= D_800B9768.unk4[sp30].xMin;
         worldGridZ -= D_800B9768.unk4[sp30].zMin;
         temp_v1_2 = ((s32*) &((s8 *)sp24->blockIDs_ptr)[worldGridX * 4 + ((worldGridZ *  sp24->gridSizeX) * 4)])[0];
-        cell->loadedBlockIndex = (temp_v1_2 >> 0x11) & 0x3F;
-        cell->trkBlkIndex = (temp_v1_2 >> 0x17) & 0x3F;
+        cell->loadedBlockIndex = (temp_v1_2 >> 17) & 0x3F;
+        cell->trkBlkIndex = (temp_v1_2 >> 23) & 0x3F;
         if (cell->trkBlkIndex == 0x3F) {
             cell->trkBlkIndex = -1;
         }
@@ -3042,6 +3024,7 @@ s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     return 1;
 }
 
+static const char str_8009a688[] = "Blocksize error(1): %d should be %d\n";
 void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     s32 texIdx;
     s32 binOffset;
@@ -3144,16 +3127,32 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     addr = mmAlign8(addr);
     addr = (u32)block_load_hits(block, id, queue, (HitsLine*)addr);
 
-    // if ((addr - (u32)block) != size) {
-    //     STUBBED_PRINTF("Blocksize error(1): %d should be %d\n", (addr - (u32)block), size);
-    // }
-
     if (queue != 0) {
-        queue_block_emplace(1, (u32* ) block, id, param_2, globalMapIdx);
+        queue_block_emplace(1, (u32* ) block, (u8*) id, param_2, globalMapIdx);
     } else {
         block_emplace(block, id, param_2, globalMapIdx);
     }
 }
+
+static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
+static const char str_8009a6e0[] = "trackLoadBlockEnd: track block overrun\n";
+static const char str_8009a708[] = "TEXSCROLL: table is full\n";
+static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
+static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
+static const char str_8009a770[] = "MISMATCH on global texanim free\n";
+static const char str_8009a794[] = " Map not Loaded %i ";
+static const char str_8009a7a8[] = "OBJECT error: obj %d, has no romdef\n";
+static const char str_8009a7d0[] = "WARNING: trackSetLoaded bit overflow\n";
+static const char str_8009a7f8[] = "WARNING: trackGetLoaded bit overflow\n";
+static const char str_8009a820[] = "Cannot move object with an ident of -1!!!\n";
+static const char str_8009a84c[] = " OVer FLOW FLOW in RD saves for moving romdefs ";
+static const char str_8009a87c[] = " Error in moving of romdef ";
+static const char str_8009a898[] = " Saving Romdef for for %i tab no %i \n";
+static const char str_8009a8c0[] = "Cannot move object with an ident of -1!!!\n";
+static const char str_8009a8ec[] = " Removed Restored Num %i ";
+static const char str_8009a908[] = "%i ";
+static const char str_8009a90c[] = "romdefMove_Set: Mapno overflow!!\n";
+static const char str_8009a930[] = "######  DOING WARP  ########\n";
 
 void func_80048B14(Block* block) {
     s32 targetVertexIndex;
@@ -3386,21 +3385,17 @@ void block_setup_gdl_groups(Block *block)
             mygdl = &block->gdlGroups[i * 3];
             gSPLoadGeometryMode(mygdl++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH);
             if (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
-                gDPSetCombineLERP(
+                gDPSetCombineMode(
                     mygdl++, 
-                    TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, // a0 - d0
-                    TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, // Aa0 - Ad0
-                    COMBINED, SHADE, COMBINED_ALPHA, SHADE, // a1 - d1
-                    COMBINED, 0, SHADE, 0 // Aa1 - Ad1
-                )
+                    G_CC_DINO_BLENDTEX_ENV,
+                    G_CC_DINO_LERP_FROM_SHADE2
+                );
             } else {
-                gDPSetCombineLERP(
+                gDPSetCombineMode(
                     mygdl++, 
-                    SHADE, TEXEL0, SHADE_ALPHA, TEXEL0, // a0 - d0
-                    ENVIRONMENT, 0, TEXEL0, 0, COMBINED, // Aa0 - Ad0
-                    SHADE, COMBINED_ALPHA, SHADE, // a1 - d1
-                    COMBINED, 1, PRIMITIVE, 1 // Aa1 - Ad1
-                )
+                    G_CC_DINO_BLEND_TEX_SHADE_ENVA,
+                    G_CC_DINO_LERP_FROM_SHADE_INVA2
+                );
             }
             gDPSetOtherMode(
                 mygdl++,

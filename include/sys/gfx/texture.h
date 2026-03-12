@@ -3,6 +3,7 @@
 #ifndef _SYS_GFX_TEXTURE_H
 #define _SYS_GFX_TEXTURE_H
 #include "PR/ultratypes.h"
+#include "PR/mbi.h"
 #include "PR/gbi.h"
 
 /** Custom render mode. RM_AA_ZB_XLU_INTER with Z_UPD */
@@ -116,6 +117,21 @@
  * A   = 1
  */
 #define G_CC_DINO_MODULATERGB_1A2 COMBINED, 0, SHADE, 0,  0, 0, 0, 1
+/**
+ * RGB = (COMBINED - SHADE) * COMBINED_ALPHA + SHADE
+ * A   = COMBINED * SHADE
+ */
+#define G_CC_DINO_LERP_FROM_SHADE2 COMBINED, SHADE, COMBINED_ALPHA,  SHADE, COMBINED, 0, SHADE, 0
+/**
+ * RGB = (SHADE - TEXEL0) * SHADE_ALPHA + TEXEL0
+ * A   = ENVIRONMENT * TEXEL0
+ */
+#define G_CC_DINO_BLEND_TEX_SHADE_ENVA SHADE, TEXEL0, SHADE_ALPHA, TEXEL0,  ENVIRONMENT, 0, TEXEL0, 0
+/**
+ * RGB = (COMBINED - SHADE) * COMBINED_ALPHA + SHADE
+ * A   = (COMBINED - 1) * PRIMITIVE + 1
+ */
+#define G_CC_DINO_LERP_FROM_SHADE_INVA2 COMBINED, SHADE, COMBINED_ALPHA, SHADE,  COMBINED, 1, PRIMITIVE, 1
 
 // Gets the texture type. E.g: rgba16
 #define TEX_FORMAT(x) (x & 0xF)
