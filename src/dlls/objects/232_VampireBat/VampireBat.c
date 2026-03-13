@@ -2,7 +2,6 @@
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
-#include "functions.h"
 #include "types.h"
 
 typedef struct {

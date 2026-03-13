@@ -1,7 +1,6 @@
 #include "common.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
-#include "functions.h"
 
 typedef struct {
     s32 _unk0;
@@ -118,7 +117,7 @@ void dll_593_func_8E4(void) {
 static void dll_593_func_8EC(Object* arg0) {
     DeadDino_Setup* setup;
 
-    setup = obj_alloc_create_info(sizeof(DeadDino_Setup), OBJ_MagicDustMid);
+    setup = obj_alloc_setup(sizeof(DeadDino_Setup), OBJ_MagicDustMid);
     setup->unk1A = 0x14;
     setup->unk2C = -1;
     setup->unk1C = -1;

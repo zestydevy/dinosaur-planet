@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/objtype.h"
+#include "sys/segment_1050.h"
 
 typedef struct{
     s32 _unk0;
@@ -124,7 +125,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     sp4C = self->positionMirror.y;
     camera_project_point(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
     camera_clip_to_screen(sp44, sp40, sp3C, &sp38, &sp34, NULL);
-    sp2C = vi_func_8005DD4C(sp38, sp34, (s32) self);
+    sp2C = vi_obj_depth(sp38, sp34, self);
     get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp7C, &sp74, &sp78);
     sp50 += (sp7C * 20.0f);
     sp4C += (sp74 * 20.0f); 

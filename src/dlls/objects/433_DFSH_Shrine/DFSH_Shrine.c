@@ -3,6 +3,8 @@
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/210_player.h"
+#include "sys/segment_1460.h"
+
 
 typedef struct {
     s16 unk0;
