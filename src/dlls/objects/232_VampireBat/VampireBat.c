@@ -183,7 +183,7 @@ void dll_232_control(Object* self) {
                 sp54.scale = sp90[var_v1];
                 sp50 = 4;
                 while (sp50--) {
-                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, &sp54, 2, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, &sp54, PARTFXFLAG_2, -1, NULL);
                 }
             }
             gDLL_33_BaddieControl->vtbl->func10(self, &baddie->fsa, 0.0f, -1);
@@ -211,7 +211,7 @@ void dll_232_free(Object* self, s32 a1) {
     Object* temp_a0;
 
     baddie = self->data;
-    obj_free_object_type(self, 4);
+    obj_free_object_type(self, OBJTYPE_4);
     temp_a0 = self->linkedObject;
     if (temp_a0 != NULL) {
         obj_destroy_object(temp_a0);
@@ -222,7 +222,7 @@ void dll_232_free(Object* self, s32 a1) {
 
 // offset: 0x938 | func: 6 | export: 5
 u32 dll_232_get_model_flags(Object* self) {
-    return 9U;
+    return MODFLAGS_8 | MODFLAGS_1;
 }
 
 // offset: 0x948 | func: 7 | export: 6

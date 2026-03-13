@@ -282,7 +282,7 @@ void dll_433_control(Object* self) {
             main_set_bits(BIT_FB, 0U);
             main_set_bits(BIT_589, 1U);
             objdata->unkE = 0;
-            modgfxDLL = dll_load_deferred(0x1012U, 1U);
+            modgfxDLL = dll_load_deferred(DLL_ID_122, 1U);
             objdata->unkC = modgfxDLL->vtbl->func0(self, 0, 0, 0x402, -1, 0);
             dll_unload(modgfxDLL);
             break;

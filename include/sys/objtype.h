@@ -9,7 +9,7 @@ enum ObjType {
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
     OBJTYPE_3 = 3, // tesla.c
-    OBJTYPE_4 = 4, // Tumbleweed, WG_Triffid, tesla.c, DFSH_Shrine
+    OBJTYPE_4 = 4, // Tumbleweed, WG_Triffid, DFSH_Shrine
     OBJTYPE_5 = 5, // collectable, SCcollectables (OBJTYPE_COLLECTABLE?)
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7, // CFScalesGalleon

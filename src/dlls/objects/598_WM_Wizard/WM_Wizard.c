@@ -2,6 +2,8 @@
 #include "dlls/objects/210_player.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
+#include "dlls/objects/common/foodbag.h"
+#include "game/objects/interaction_arrow.h"
 
 typedef struct {
     u8 _unk0[0x29];
@@ -109,43 +111,44 @@ void dll_598_func_1124(Object* self) {
 
 // offset: 0x11C8 | func: 15
 void dll_598_func_11C8(Object* self) {
-    Wizard_Data* objdata= self->data;
+    Wizard_Data* objdata = self->data;
     Object* player = get_player();
-    s32 temp_v0;
-    Object* temp_v0_2; 
-    s32 sp24 [3] = {0x00000166, 0x00000167, 0x00000256};
+    s32 bit;
+    Object* foodbag; 
+    s32 sp24[3] = {BIT_Green_Apple_Count, BIT_Red_Apple_Count, BIT_Brown_Apple_Count};
 
-    if (self->unkAF & 8) {
-        self->unkAF ^= 8;
+    if (self->unkAF & ARROW_FLAG_8_No_Targetting) {
+        self->unkAF ^= ARROW_FLAG_8_No_Targetting;
     }
     if (main_get_bits(BIT_2FB) == 0) {
         if (self->curModAnimId != 7) {
-            func_80023D30(self, 7, 0.0f, 0U);
+            func_80023D30(self, 7, 0.0f, 0);
         }
 
         func_80024108(self, 0.005f, gUpdateRate, NULL);
     } else {
         if (self->curModAnimId != 2) {
-            func_80023D30(self, 2, 0.0f, 0U); 
+            func_80023D30(self, 2, 0.0f, 0); 
         }
     
         func_80024108(self, 0.005f, gUpdateRate, NULL);
     }
     if ((self->unkAF & 1) && (main_get_bits(BIT_2FB) == 0)) {
-        main_set_bits(BIT_2FB, 1U);
-        objdata->unk29 = 0U;
+        main_set_bits(BIT_2FB, 1);
+        objdata->unk29 = 0;
         joy_set_button_mask(0, A_BUTTON);
     } else if ((self->unkAF & 1) && (gDLL_1_UI->vtbl->func_F40() == BIT_Foodbag_Give)) {
-        temp_v0 = gDLL_1_UI->vtbl->func_E2C(sp24, 3);
+        bit = gDLL_1_UI->vtbl->func_E2C(sp24, ARRAYCOUNT(sp24));
 
         // @fake
         if (objdata) {}
-        if (temp_v0 >= 0) {
-            main_set_bits(BIT_310, 1U);
+        if (bit >= 0) {
+            main_set_bits(BIT_310, 1);
             objdata->unk29++;
-            temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
-            ((DLL_210_Player*)temp_v0_2->dll)->vtbl->set_magic(temp_v0_2, (s16) temp_v0);
+            foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, bit);
             joy_set_button_mask(0, A_BUTTON);
         }
     }
 }
+

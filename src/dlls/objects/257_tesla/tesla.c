@@ -147,7 +147,7 @@ void dll_257_control(Object* self) {
             objdata->unkA = 2;
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
             sp64 = setup->unk19;
-            var_s0 = obj_get_nearest_type_to(4, self, &sp64);
+            var_s0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp64);
             if (var_s0 == NULL || sp68 <= sp64) {
                 if (sp68 < setup->unk19) {
                     func_8002635C(player, self, 0xB, setup->unk21, 0);
@@ -161,7 +161,7 @@ void dll_257_control(Object* self) {
         if (objdata->unkA != 0) {
             if (var_s0 == NULL) {
                 sp64 = setup->unk19;
-                var_s0 = obj_get_nearest_type_to(4, self, &sp64);
+                var_s0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp64);
             }
             objdata->unkA--;
             if (var_s0 == NULL || sp68 <= sp64) {
