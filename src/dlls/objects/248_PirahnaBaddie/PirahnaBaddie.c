@@ -5,7 +5,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/rand.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "dll.h"
 
 typedef struct {

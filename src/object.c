@@ -1,11 +1,22 @@
-#include "common.h"
-#include "variables.h"
+#include "PR/ultratypes.h"
+#include "dlls/engine/29_gplay.h"
+#include "sys/camera.h"
+#include "sys/fs.h"
 #include "sys/gfx/model.h"
+#include "sys/asset_thread.h"
+#include "sys/dll.h"
+#include "sys/exception.h"
 #include "sys/linked_list.h"
+#include "sys/main.h"
+#include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/objhits.h"
 #include "sys/newshadows.h"
+#include "sys/segment_326A0.h"
+#include "macros.h"
+#include "dll.h"
 
 typedef struct {
 /*00*/  u8 _unk0[0x8 - 0x0];
@@ -69,87 +80,57 @@ Object *gEffectBoxes[20];
 s32 D_800B1988;
 // -------- .bss end 800b1990 -------- //
 
-enum FILE_ID {
-    FILE_TABLES_BIN   = 0x16,
-    FILE_TABLES_TAB   = 0x17,
-    FILE_BITTABLE     = 0x37,
-    FILE_OBJECTS_TAB  = 0x41,
-    FILE_OBJINDEX_BIN = 0x43
-};
-
-void queue_alloc_load_file(void **dest, s32 fileId);
-void queue_load_file_to_ptr(void **dest, s32 fileId);
-void alloc_some_object_arrays(void); //related to objects
 void obj_clear_all(void);
-
 void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3);
-
-void func_80046320(s16 param1, Object *object);
-
-extern void func_80058FE8();
-extern void update_obj_hitboxes(s32);
-extern void func_80025E58();
-extern void obj_do_hit_detection(s32);
-extern void func_8002B6EC();
-
 void update_obj_models();
 void update_object(Object *obj);
 void func_8002272C(Object *obj);
-
-extern void func_80025DF0();
-
 ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount);
-
-extern void func_800596BC(ObjDef*);
-
 ObjDef *obj_load_objdef(s32 tabIdx);
 u32 obj_get_model_flags(Object *obj);
 u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags);
 void obj_free_objdef(s32 tabIdx);
-
 void func_80021E74(f32 scale, ModelInstance *modelInst);
 void func_80022200(Object *obj, s32 param2, s32 param3);
 u32 obj_alloc_object_state(Object *obj, u32 addr);
 u32 obj_init_event_data(s32 param1, Object *obj, u32 addr);
 u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
-
 f32 func_80022150(Object *obj);
-
 void obj_free_object(Object *obj, s32 param2);
 
 void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gObjDeferredFreeList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
-    D_800B1918     = mmAlloc(0x60, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
-    D_800B18E4     = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
+    gObjDeferredFreeList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
+    D_800B1918 = mmAlloc(sizeof(Object*) * 24, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
+    D_800B18E4 = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
 
     //load OBJINDEX.BIN and count number of entries
-    queue_alloc_load_file((void **) (&gFile_OBJINDEX), FILE_OBJINDEX_BIN);
-    gObjIndexCount = (get_file_size(FILE_OBJINDEX_BIN) >> 1) - 1;
+    queue_alloc_load_file((void **) (&gFile_OBJINDEX), OBJINDEX_BIN);
+    gObjIndexCount = (get_file_size(OBJINDEX_BIN) >> 1) - 1;
     while(!gFile_OBJINDEX[gObjIndexCount]) gObjIndexCount--;
 
     //load OBJECTS.TAB and count number of entries
-    queue_alloc_load_file((void **)&gFile_OBJECTS_TAB, FILE_OBJECTS_TAB);
+    queue_alloc_load_file((void **)&gFile_OBJECTS_TAB, OBJECTS_TAB);
     gNumObjectsTabEntries = 0;
     while(gFile_OBJECTS_TAB[gNumObjectsTabEntries] != -1) gNumObjectsTabEntries++;
     gNumObjectsTabEntries--;
 
     //init ref count and pointers
     gLoadedObjDefs = mmAlloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:deflist"));
-    gObjDefRefCount   = mmAlloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:defno"));
+    gObjDefRefCount = mmAlloc(gNumObjectsTabEntries, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:defno"));
     for(i = 0; i < gNumObjectsTabEntries; i++) gObjDefRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
-    queue_alloc_load_file((void **) (&gFile_TABLES_BIN), FILE_TABLES_BIN);
-    queue_alloc_load_file((void **) (&gFile_TABLES_TAB), FILE_TABLES_TAB);
+    queue_alloc_load_file((void **) (&gFile_TABLES_BIN), TABLES_BIN);
+    queue_alloc_load_file((void **) (&gFile_TABLES_TAB), TABLES_TAB);
     gNumTablesTabEntries = 0;
     while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
     //allocate global object list and some other buffers
-    gObjList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
-    alloc_some_object_arrays();
+    gObjList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
+    objhits_init();
     obj_clear_all();
 }
 
@@ -1632,7 +1613,7 @@ void obj_free_object(Object *obj, s32 param2) {
     mmFree(obj);
 }
 
-void *obj_alloc_create_info(s32 size, s32 objId) {
+void *obj_alloc_setup(s32 size, s32 objId) {
     ObjSetup *setup;
 
     setup = (ObjSetup*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("romdef"));

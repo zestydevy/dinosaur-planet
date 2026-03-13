@@ -1,7 +1,8 @@
 #include "common.h"
+#include "sys/newshadows.h"
 #include "unktypes.h"
-
-typedef struct { u8 unk0[0x3300]; } Unk800B1848;
+#include "sys/segment_1D900.h"
+#include "sys/segment_20490.h"
 
 // size: 0x1C
 typedef struct {
@@ -81,10 +82,7 @@ Unk800B1858 *D_800B1858;
 Unk800B1860 *D_800B1860[30];
 // -------- .bss end 800b18e0 -------- //
 
-extern Vec3f D_800BB198;
-
-void func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7); /* extern */
-void func_8001F890(Vtx *, void *, s32, MtxF *, s32, s32, Unk800B1848*, void *, f32);
+void func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7);
 
 void func_8001CD00(void) {
     s32 j;

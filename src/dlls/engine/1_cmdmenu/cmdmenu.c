@@ -1,19 +1,19 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/1_ui.h"
-#include "functions.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
 #include "game/gamebits.h"
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "dlls/objects/210_player.h"
 #include "sys/fonts.h"
 #include "sys/rcp.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 /*0*/ Texture* unk0;

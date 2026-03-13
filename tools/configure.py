@@ -217,7 +217,7 @@ class BuildNinjaWriter:
         ]))
 
         self.writer.variable("CC_CHECK_FLAGS", " ".join([
-            "-fsyntax-only",
+            # "-fsyntax-only", # Added by syntax_check.py (don't add here or else permuter will ignore compile rules)
             "-fno-builtin",
             "-funsigned-char",
             "-fdiagnostics-color=always",

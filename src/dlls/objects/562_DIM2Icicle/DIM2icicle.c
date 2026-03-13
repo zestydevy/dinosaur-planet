@@ -2,8 +2,9 @@
 #include "dll.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
-#include "functions.h"
 #include "sys/rand.h"
+#include "sys/objprint.h"
+#include "sys/segment_53F00.h"
 
 typedef struct {
     f32 groundHeight;

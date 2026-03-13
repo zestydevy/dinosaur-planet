@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 #include "sys/camera.h"
 #include "sys/framebuffer_fx.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/rand.h"
 #include "sys/rcp.h"
 #include "sys/rsp_segment.h"

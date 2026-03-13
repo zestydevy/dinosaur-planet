@@ -1,10 +1,12 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "sys/newshadows.h"
+#include "sys/camera.h"
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
-#include "functions.h"
+#include "sys/segment_1D900.h"
+#include "sys/segment_53F00.h"
 #include "macros.h"
 
 static const char str_8009a9d0[] = "shadows: group overflow error\n";

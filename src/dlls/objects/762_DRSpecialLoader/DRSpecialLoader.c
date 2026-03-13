@@ -1,6 +1,6 @@
 #include "dll.h"
-#include "functions.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
 #include "dlls/objects/210_player.h"

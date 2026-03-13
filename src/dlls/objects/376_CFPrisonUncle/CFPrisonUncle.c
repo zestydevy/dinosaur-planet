@@ -1,5 +1,5 @@
 #include "common.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
@@ -7,9 +7,6 @@
 static s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3);
 static void dll_376_func_A3C(Object* self, Object* player);
 static void dll_376_func_9F8(Object* self);
-
-extern void func_80034B94(Object* arg0, HeadAnimation* arg1, s32 soundID);
-extern void func_80034BC0(Object* obj, HeadAnimation* arg1);
 
 typedef struct {
     Object* unk0;
@@ -249,7 +246,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         objData->unk60 = 1;
        
         
-        dustSetup = (BoneDust_Setup*)obj_alloc_create_info(sizeof(BoneDust_Setup), OBJ_BoneDust); 
+        dustSetup = (BoneDust_Setup*)obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
         dustSetup->unk1A = 2;
         dustSetup->unk2C = -1;
         dustSetup->unk1C = -1;

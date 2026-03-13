@@ -1,6 +1,7 @@
 #include "common.h"
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
+#include "sys/segment_53F00.h"
 
 static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
 static const char str_8009aaa0[] = "1: track/intersect.c: OVERFLOW error\n";
@@ -276,11 +277,11 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
 #else
 // https://decomp.me/scratch/s5P5f
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 upperY, s32 arg3, s32 arg4, s32 lowerY, s32 arg6, u8 arg7) {
-    BlocksModel* temp_s0;
-    BlocksModel* temp_v0;
-    FaceBatch* temp_t9;
-    FaceBatch* var_s3;
-    BlocksModel *sp138[6]; // unknown size, max 10
+    Block* temp_s0;
+    Block* temp_v0;
+    BlockShape* temp_t9;
+    BlockShape* var_s3;
+    Block *sp138[6]; // unknown size, max 10
     f32 temp_fs1;
     Vtx_t* sp128[3];
     Vtx_t *sp124;
@@ -320,7 +321,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     u8 lowestYIndex;
     u8 highestYIndex;
     s32 temp;
-    FaceBatch* sp9C;
+    BlockShape* sp9C;
 
     arg1 -= D_80092A60;
     arg4 -= D_80092A60;
@@ -418,17 +419,17 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
             }
             var_v0 <<= 1;
         }
-        sp9C = &temp_s0->ptr_faceBatches[temp_s0->faceBatch_count];
-        for (var_s3 = temp_s0->ptr_faceBatches; var_s3 < sp9C; var_s3++) {
-            if (var_s3->renderSettingBitfield & 0x2000) {
-                if (!(var_s3->renderSettingBitfield & 0x300000)) {
+        sp9C = &temp_s0->shapes[temp_s0->shapeCount];
+        for (var_s3 = temp_s0->shapes; var_s3 < sp9C; var_s3++) {
+            if (var_s3->flags & 0x2000) {
+                if (!(var_s3->flags & 0x300000)) {
                     spA6 = 4;
                     if (!(arg7 & 0x20)) {
                         spA6 |= 0x10;
                     }
                     goto block_55;
                 }
-            } else if (!(var_s3->renderSettingBitfield & 0x800) || (arg7 & 0x20)) {
+            } else if (!(var_s3->flags & 0x800) || (arg7 & 0x20)) {
                 spA6 = 2;
 block_55:
                 if (
@@ -439,15 +440,15 @@ block_55:
                     (upperZ >> 2) >= var_s3->Zmin &&
                     var_s3->Zmax >= (lowerZ >> 2)
                 ) {
-                    if (var_s3->renderSettingBitfield & 0x1000) {
+                    if (var_s3->flags & 0x1000) {
                         spA6 |= 8;
                     }
-                    sp124 = &temp_s0->unk20[temp_s0->flags & 1][var_s3->baseVertexID];
-                    sp11C = var_s3->baseFaceID;
-                    sp10C = var_s3[1].baseFaceID;
+                    sp124 = &temp_s0->vertices2[temp_s0->vtxFlags & 1][var_s3->vtxBase];
+                    sp11C = var_s3->triBase;
+                    sp10C = var_s3[1].triBase;
                     for (; sp11C < sp10C; sp11C++) {
                         if ((!temp_s0) && (!temp_s0)) {}
-                        var_t0 = temp_s0->unk14[sp11C] & sp122;
+                        var_t0 = temp_s0->xzBitmap[sp11C] & sp122;
                         if ((var_t0 & 0xFF) && (var_t0 & 0xFF00)) {
                             minX = SOME_MIN;
                             maxX = SOME_MAX;
@@ -455,14 +456,14 @@ block_55:
                             maxY = SOME_MAX;
                             minZ = SOME_MIN;
                             maxZ = SOME_MAX;
-                            sp128[0] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 13) & 0x1F];
-                            sp128[1] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 7) & 0x1F];
-                            sp128[2] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 1) & 0x1F];
+                            sp128[0] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 13) & 0x1F];
+                            sp128[1] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 7) & 0x1F];
+                            sp128[2] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 1) & 0x1F];
                             for (var_t0 = 0; var_t0 < 3; var_t0++) {
                                 var_a0_3 = sp128[var_t0]->ob[0];
                                 var_v1_2 = sp128[var_t0]->ob[1];
                                 var_a1_3 = sp128[var_t0]->ob[2];
-                                if (var_s3->renderSettingBitfield & 0x20000000) {
+                                if (var_s3->flags & 0x20000000) {
                                     var_a0_3 *= 1.0f; // not necessary, forces a float cast tho
                                     var_v1_2 *= 0.05f;
                                     var_a1_3 *= 1.0f; // not necessary, forces a float cast tho
@@ -514,9 +515,9 @@ block_55:
                                         arg0->unk8 = temp_fs2 * temp_fv1;
                                     }
                                 } else {
-                                    arg0->unk4 = temp_s0->ptr_faces[sp11C].unk0 >> 0x12;
-                                    arg0->unk6 = (temp_s0->ptr_faces[sp11C].unk4 << 0xE) >> 0x12;
-                                    arg0->unk8 = temp_s0->ptr_faces[sp11C].unk4 >> 0x12;
+                                    arg0->unk4 = temp_s0->encodedTris[sp11C].d0 >> 0x12;
+                                    arg0->unk6 = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
+                                    arg0->unk8 = temp_s0->encodedTris[sp11C].d1 >> 0x12;
                                 }
                                 if (((arg7 & 8) == 0 || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
                                     arg0->unk0 = (f32) -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * (1.0f / 8191.0f);
@@ -524,18 +525,18 @@ block_55:
                                     for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
                                         arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
                                     }
-                                    if (var_s3->renderSettingBitfield & 0x2000) {
+                                    if (var_s3->flags & 0x2000) {
                                         var_v0_3 = 0xE;
                                     } else {
-                                        if (var_s3->materialID == 0xFF) {
+                                        if (var_s3->materialIndex == 0xFF) {
                                             var_v0_3 = 0;
                                         } else {
-                                            var_v0_3 = temp_s0->ptr_materials[var_s3->materialID].terrain_type;
+                                            var_v0_3 = temp_s0->materials[var_s3->materialIndex].terrain_type;
                                         }
                                     }
                                     arg0->unk2E = var_v0_3;
                                     arg0->unk30 = (highestYIndex * 0x10) | lowestYIndex;
-                                    arg0->unk2F = (temp_s0->ptr_faces[sp11C].unk4 & 1) | spA6;
+                                    arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
                                     arg0++;
                                 }
                             }
@@ -1831,7 +1832,7 @@ void func_80059038(s32 animatorID, Object* parentObject, s32 enableLines) {
 void func_800591EC(void) {
     s32 a3;
     f32 f0;
-    BlocksModel* temp_v0_2;
+    Block* temp_v0_2;
     s32 sp700;
     s32 sp6FC;
     s32 sp6F8;
@@ -1871,7 +1872,7 @@ void func_800591EC(void) {
             for (sp700 = 0; sp700 < BLOCKS_GRID_SPAN; sp700++) {
                 gridIndex = GRID_INDEX(sp6FC, sp700);
                 if (sp6D0[gridIndex] >= 0) {
-                    temp_v0_2 = (BlocksModel *)func_80044BB0(sp6D0[gridIndex]);
+                    temp_v0_2 = func_80044BB0(sp6D0[gridIndex]);
                     for (var_s6 = 0; var_s6 < temp_v0_2->hits_line_count; var_s6++) {
                         var_s0 = &temp_v0_2->ptr_hits_lines[var_s6];
                         var_s2 = &D_80092E74[D_800BB4D6];

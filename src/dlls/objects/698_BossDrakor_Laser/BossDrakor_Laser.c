@@ -10,8 +10,8 @@
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/newshadows.h"
+#include "sys/segment_53F00.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
 /*00*/ s16 unk0;

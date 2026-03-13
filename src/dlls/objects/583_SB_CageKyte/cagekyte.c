@@ -3,12 +3,12 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/214_animobj.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
 #include "types.h"
 

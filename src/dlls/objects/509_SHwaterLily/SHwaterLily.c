@@ -1,7 +1,7 @@
 #include "sys/curves.h"
 #include "sys/main.h"
+#include "sys/objprint.h"
 #include "dll.h"
-#include "functions.h"
 
 // size:0x118
 typedef struct {

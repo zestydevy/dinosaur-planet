@@ -9,7 +9,7 @@
 #include "sys/map.h"
 #include "sys/map_enums.h"
 #include "sys/objanim.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "types.h"
 #include "dll.h"
 

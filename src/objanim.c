@@ -1,9 +1,6 @@
-#include "game/objects/object.h"
-#include "common.h"
-
 #include "common.h"
 #include "macros.h"
-#include "variables.h"
+#include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
 #include "sys/objects.h"
@@ -161,21 +158,6 @@ s32 func_800240BC(Object* object, f32 progress) {
 
 //advances current animation playback
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80024108.s")
-
-typedef struct {
-    /*00*/    s16 X;
-    /*02*/    s16 Y;
-    /*04*/    s16 Z;
-} AnimationRootMotionComponents;
-
-typedef struct {
-    /*00*/    f32 speed;
-    /*04*/    s16 totalKeyframes;
-    /*06*/    AnimationRootMotionComponents components;
-    /*0C*/    s16 keyframes; //array
-} AnimationRootMotion;
-
-// extern f32 gAnimBlendDivisor; //1023
 
 //https://decomp.me/scratch/zIGpo
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_8002493C.s")

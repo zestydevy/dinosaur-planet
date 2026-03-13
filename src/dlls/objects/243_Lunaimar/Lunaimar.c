@@ -7,9 +7,9 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
 #include "unktypes.h"
-#include "functions.h"
 #include "dll.h"
 
 typedef struct {
@@ -406,7 +406,7 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     Object *spit;
     f32 temp_fv0;
 
-    spitSetup = obj_alloc_create_info(0x24, OBJ_LunaimarSpit);
+    spitSetup = obj_alloc_setup(0x24, OBJ_LunaimarSpit);
     spitSetup->x = self->srt.transl.x;
     spitSetup->y = self->srt.transl.y + 20.0f;
     spitSetup->z = self->srt.transl.z;
@@ -438,7 +438,7 @@ static void dll_243_func_1614(Object *self, Lunaimar_ActualData *objdata) {
     }
     if (objdata->unk14 == NULL) {
         setup = self->setup;
-        shieldSetup = obj_alloc_create_info(0x24, OBJ_LunaimarShield);
+        shieldSetup = obj_alloc_setup(0x24, OBJ_LunaimarShield);
         shieldSetup->x = self->srt.transl.x;
         shieldSetup->y = self->srt.transl.y + 10.0f;
         shieldSetup->z = self->srt.transl.z;

@@ -1,5 +1,5 @@
 #include "sys/objtype.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "dll.h"
 
 // offset: 0x0 | ctor

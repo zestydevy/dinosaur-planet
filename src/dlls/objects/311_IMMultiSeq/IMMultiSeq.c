@@ -3,7 +3,7 @@
 #include "sys/objtype.h"
 #include "dll.h"
 #include "sys/main.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "macros.h"
 
 #define IMMULTISEQ_GAMEBIT_COUNT 4

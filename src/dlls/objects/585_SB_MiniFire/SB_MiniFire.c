@@ -1,8 +1,8 @@
 #include "sys/main.h"
-#include "functions.h"
 #include "dll.h"
 #include "sys/dll.h"
 #include "sys/rand.h"
+#include "sys/objprint.h"
 #include "dlls/modgfx/133.h"
 
 typedef struct {

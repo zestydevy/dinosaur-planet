@@ -42,9 +42,6 @@
 #include "dlls/engine/75.h"
 #include "dlls/engine/76.h"
 
-#include "dll_def.h"
-#include "types.h"
-
 // Note: These are DLL IDs not indices
 enum DLL_ID {
     // Engine
@@ -143,6 +140,7 @@ enum DLL_ID {
 
     // Mod gfx
     DLL_ID_MODGFX_BASE = 0x1000,
+    DLL_ID_104 = 0x1000,
     DLL_ID_106 = 0x1002,
     DLL_ID_107 = 0x1003,
     DLL_ID_114 = 0x100A,
@@ -169,12 +167,14 @@ enum DLL_ID {
 
     // Proj gfx
     DLL_ID_PROJGFX_BASE = 0x2000,
+    DLL_ID_186 = 0x2000,
     DLL_ID_190 = 0x2004,
     DLL_ID_194 = 0x2008,
     DLL_ID_202 = 0x2010,
     DLL_ID_205 = 0x2013,
 
     // Objects
+    DLL_ID_210_Player = 0x8001,
     DLL_ID_CANNON_CLAW = 0x800E
 };
 

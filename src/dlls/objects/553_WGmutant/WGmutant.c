@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "functions.h"
 #include "dlls/objects/214_animobj.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ u8 unk0;

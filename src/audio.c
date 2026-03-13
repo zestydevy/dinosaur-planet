@@ -6,7 +6,7 @@
 #include "sys/audio/speaker.h"
 #include "sys/audio.h"
 #include "sys/fs.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"

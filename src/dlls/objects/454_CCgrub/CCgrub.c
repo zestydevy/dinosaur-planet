@@ -6,8 +6,8 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 #include "dll.h"
-#include "functions.h"
 #include "macros.h"
 
 typedef struct {

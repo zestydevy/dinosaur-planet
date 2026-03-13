@@ -5,8 +5,6 @@
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
 
-extern f32 gAnimBlendDivisor; //1023
-
 typedef struct {
     /*00*/    s16 X;
     /*02*/    s16 Y;
@@ -43,5 +41,6 @@ void func_8002559C(Object* object, s32 modAnimBankAndIndex, s32 arg2);
 void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3);
 void func_80025780(Object*, f32 updateRate, UnkFunc_80024108Struct*, void*);
 u8 func_80025CD4(s32 arg0);
+s32 func_80025140(Object*, f32, f32, s32);
 
 #endif

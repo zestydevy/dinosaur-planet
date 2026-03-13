@@ -5,8 +5,8 @@
 #include "sys/objhits.h"
 #include "sys/math.h"
 #include "game/objects/object.h"
+#include "sys/segment_53F00.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef enum {
     DLL27FLAG_NONE = 0x0,

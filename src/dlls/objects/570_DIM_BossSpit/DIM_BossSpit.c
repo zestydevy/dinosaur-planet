@@ -1,8 +1,8 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "dll.h"
-#include "functions.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/main.h"
 #include "dlls/objects/338_LFXEmitter.h"
 
@@ -98,7 +98,7 @@ void DIM_BossSpit_func_2AC(Object *self) {
     LFXEmitter_Setup *lfxemitterSetup;
 
     objdata = self->data;
-    lfxemitterSetup = obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    lfxemitterSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     lfxemitterSetup->base.x = self->srt.transl.x;
     lfxemitterSetup->base.y = self->srt.transl.y;
     lfxemitterSetup->base.z = self->srt.transl.z;

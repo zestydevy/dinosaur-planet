@@ -1,10 +1,9 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+#include "PR/ultratypes.h"
 #include "sys/math.h"
-#include "ultra64.h"
 #include "dll_def.h"
-#include "sys/gfx/texture.h"
 
 typedef union {
     void (*asVoid)(void);
@@ -135,34 +134,6 @@ typedef struct {
 /*0023*/ u8 unk23;
 /*0024*/ u8 unk24[0x28 - 0x24];
 } LightAction; //LActions.bin structs used by NewLfx DLL
-
-// size: 0x18
-typedef struct {
-    f32 unk0[4]; // maybe Vec4f and not an array
-    struct Object *unk10;
-    s8 unk14;
-} Func_80057F1C_Struct;
-
-// size: 0x54
-typedef struct Func_80059C40_Struct {
-    struct Object *unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    f32 unk14;
-    f32 unk18;
-    Vec4f unk1C;
-    Vec3f unk2C;
-    Vec3f unk38;
-    f32 unk44;
-    f32 unk48;
-    s16 unk4C;
-    s16 unk4E;
-    s8 unk50;
-    s8 unk51;
-    s8 unk52;
-} Func_80059C40_Struct;
 
 //used for PlayerPosBuffer and something else
 struct Vec3_Int{
