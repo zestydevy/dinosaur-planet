@@ -5,32 +5,35 @@
 
 #define MASK_SPEED 0.1f
 
-#define MASK_MAX 82.0f 
-#define MASK_MIN -5.0f 
+#define MASK_MAX 82.0f
+#define MASK_MIN -5.0f
 
 #define MASK_TOP_Y 20
 #define MASK_BASE_Y -7
 #define MASK_WIDTH_TOP 2.0
 #define MASK_WIDTH_BASE 34.5
 
-#define SCALE_Y 20
+#define SCALE_Y 20.0f
 #define SCALE_X 20.0f
 #define SCALE_Z 20.0f
+
+#define THRESHOLD_SNOW_EVAPORATE 60.0f
+#define THRESHOLD_END_FADEOUT 68.0f
 
 typedef struct {
     ObjSetup base;
     s8 yaw;
-    s16 tentIndex;
-    u16 unk1C;
-    s16 gamebitBurnt;
-} DLL545_Setup;
+    s16 tentIndex;     //An index (0-11 inclusive) for deciding which tent holds the bridge cog
+    u16 unused1C;
+    s16 gamebitBurnt;  //Set when the tent's been destroyed, prevents it reappearing
+} DIMTent_Setup;
 
 typedef struct {
-    f32 maskY;
-    f32 maskSpeed;
-    u8 isBurning;
-    s8 hitPoints;
-} DLL545_Data;
+    f32 maskY;      //Progress of the burn masking effect
+    f32 maskSpeed;  //Speed/direction of the burn masking effect
+    u8 isBurning;   //Starts the burn mask animation
+    s8 hitPoints;   //Attacks needed until the tent begins burning (always starts at 1)
+} DIMTent_Data;
 
 /*0x0*/ static DLL_IModgfx* dModGfxDLL = NULL;
 
@@ -76,8 +79,8 @@ void DIMTent_ctor(void *dll) { }
 void DIMTent_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMTent_setup(Object* self, DLL545_Setup* objSetup, s32 arg2) {
-    DLL545_Data* objData = self->data;
+void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
+    DIMTent_Data* objData = self->data;
 
     self->srt.yaw = objSetup->yaw << 8;
     self->unkB0 |= 0x2000;
@@ -98,12 +101,12 @@ void DIMTent_setup(Object* self, DLL545_Setup* objSetup, s32 arg2) {
 // offset: 0xD4 | func: 1 | export: 1
 void DIMTent_control(Object* self) {
     Object* listedObject;
-    DLL545_Setup* objSetup;
-    DLL545_Data* objData;
+    DIMTent_Setup* objSetup;
+    DIMTent_Data* objData;
     s32 index;
     s8 damaged;
 
-    objSetup = (DLL545_Setup*)self->setup;
+    objSetup = (DIMTent_Setup*)self->setup;
     objData = self->data;
 
     //Do nothing if invisible / already burnt
@@ -111,9 +114,11 @@ void DIMTent_control(Object* self) {
         return;
     }
 
-    //Handle burn mask speeds/limits (@bug: can ping-pong and continue burning in reverse)
+    //When burning, remove collision and gradually mask the model away
     if (objData->hitPoints <= 0) {
         self->objhitInfo->unk58 &= ~1;
+
+        //Handle burn mask speeds/progress (@bug: can ping-pong and continue burning in reverse)
         if (objData->isBurning == TRUE) {
             objData->maskY += objData->maskSpeed * gUpdateRateF;
             if (objData->maskY > MASK_MAX) {
@@ -146,7 +151,7 @@ void DIMTent_control(Object* self) {
 
     //Handle being damaged
     if (damaged) {
-        //Decrement the tent's health (it starts at 1, so it begins burning after any hit anyway!)
+        //Decrement the tent's health (health starts at 1, so it begins burning after any hit anyway)
         objData->hitPoints--;
         if (objData->hitPoints > 0) {
             return;
@@ -182,10 +187,10 @@ void DIMTent_update(Object *self) { }
 
 // offset: 0x388 | func: 3 | export: 3
 void DIMTent_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    DLL545_Data* objData = self->data;
+    DIMTent_Data* objData = self->data;
 
     if (visibility) {
-        if (objData->isBurning == 1) {
+        if (objData->isBurning == TRUE) {
             DIMTent_draw_mask(self, gdl, mtxs, (Vtx_t**)vtxs, pols);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
@@ -206,13 +211,13 @@ u32 DIMTent_get_model_flags(Object *self) {
 
 // offset: 0x490 | func: 6 | export: 6
 u32 DIMTent_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL545_Data);
+    return sizeof(DIMTent_Data);
 }
 
 // offset: 0x4A4 | func: 7
 void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols) {
     Vtx_t* initVtx;
-    DLL545_Data* objData;
+    DIMTent_Data* objData;
     s32 index;
     Vtx_t* vtx;
     f32 maskY;
@@ -230,7 +235,7 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
 
     if (vtx && 1) { } //fake?
 
-    maskProgress /= MASK_MAX;
+    maskProgress /= MASK_MAX; //tValue for the mask animation (0 at top, 1 at bottom)
 
     //Set up mesh masking draw configs
     dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0x80);
@@ -242,19 +247,19 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     //Position the cube's vertices (forming a section of a pyramid)
     for (i = 0; i < ARRAYCOUNT(sMaskVertCoords); i++) {
         if (i < 4) {
-            vtx->ob[1] = 1640;
+            vtx->ob[1] = MASK_MAX * SCALE_Y;
         } else {
             //Move the base of the cube with maskY
-            vtx->ob[1] = (MASK_MAX - maskY) * 20.0f;
+            vtx->ob[1] = (MASK_MAX - maskY) * SCALE_Y;
         }
 
         if (i < 4) {
-            vtx->ob[0] = sMaskVertCoords[i].x * 20.0f;
-            vtx->ob[2] = sMaskVertCoords[i].z * 20.0f;
+            vtx->ob[0] = sMaskVertCoords[i].x * SCALE_X;
+            vtx->ob[2] = sMaskVertCoords[i].z * SCALE_Z;
         } else {
-            //Taper the top of the cube inwards to a point
-            vtx->ob[0] = sMaskVertCoords[i].x * maskProgress * 20.0f;
-            vtx->ob[2] = sMaskVertCoords[i].z * maskProgress * 20.0f;
+            //Expand the bottom of the cube outwards as the mask moves down
+            vtx->ob[0] = sMaskVertCoords[i].x * maskProgress * SCALE_X;
+            vtx->ob[2] = sMaskVertCoords[i].z * maskProgress * SCALE_Z;
         }
 
         vtx->cn[0] = 0xFF;
@@ -283,26 +288,25 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
     dl_triangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
 
+    //Set transform for particles
     srt.transl.x = (30.0f * maskProgress) + 2.0f;
     srt.transl.y = (MASK_MAX - maskY) - 4.0f;
-
     if ((i = 0)) { } //fake
-    
     srt.transl.z = (30.0f * maskProgress) + 2.0f;
     srt.yaw = self->srt.yaw;
     srt.pitch = 0;
     srt.roll = 0;
     srt.scale = 0.001f;
 
-    //Create fire particles until nearly fully burnt
-    if (objData->maskY < 68.0f) {
-        for (index = 0; index < (s32) (objData->maskY / 10.0f); index++){
+    //Create fire particles until nearly fully burnt (particle count scales with maskY)
+    if (objData->maskY < THRESHOLD_END_FADEOUT) {
+        for (index = 0; index < (s32)(objData->maskY / 10.0f); index++) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_203, &srt, 4, -1, NULL);
         }
     }
 
-    //Create snow evaporation particles when nearly fully burnt
-    if (objData->maskY > 60.0f) {
+    //Randomly create snow evaporation particles approaching the end of the burning
+    if (objData->maskY > THRESHOLD_SNOW_EVAPORATE) {
         if (rand_next(0, 2) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_206, &srt, 4, -1, NULL);
         }
@@ -315,7 +319,9 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     }
 
     //Fade out the tent when nearly fully burnt
-    if (objData->maskY >= 68.0f) {
+    /*@bug: this won't run when the tent is off-screen since this function is called
+            by print instead of control, which can cause the burn anim to ping-pong) */
+    if (objData->maskY >= THRESHOLD_END_FADEOUT) {
         opacity = self->opacity - (gUpdateRate * 4);
         if (opacity < 0) {
             opacity = 0;
