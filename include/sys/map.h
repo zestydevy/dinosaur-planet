@@ -79,7 +79,7 @@ typedef struct {
 /*10*/    s8 unk10;
 /*11*/    s8 unk11;
 /*12*/    u8 materialIndex;
-/*13*/    s8 envColourMode; // 00 = use ambient envFX colour
+/*13*/    u8 envColourMode; // 00 = use ambient envFX colour
                             // FE = ignore ambient envFX colour
                             // FF = use flickering vertices' colour
                             //     (used very rarely, in blocks 327 & 0843)

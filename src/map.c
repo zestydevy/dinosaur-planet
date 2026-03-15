@@ -196,11 +196,12 @@ s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
 s32 func_80048E04(u8, u8, u8, u8);
 void func_8004A164(Texture*, s32);
-/* static */ void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
-/* static */ void func_80043950(Block*, s16, s16, s16);
-/* static */ void func_80043FD8(s8* arg0);
-/* static */ s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
-/* static */ void some_cell_func(BitStream* stream);
+void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
+void func_80043950(Block*, s16, s16, s16);
+void func_80043FD8(s8* arg0);
+s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
+void some_cell_func(BitStream* stream);
+BlockTextureScroller* func_80049D68(s32 arg0);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -839,230 +840,208 @@ static const char str_8009a590[] = "found on map %d\n";
 static const char str_8009a5a4[] = "mapno not found\n";
 static const char str_8009a5b8[] = "error\n";
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/draw_render_list.s")
-#else
-
-extern Gfx *gMainDL;
-extern BlockTexture *gBlockTextures;
-typedef void (*DLL57Func)(u32*, u32*, u32*, u32*, u32*, u32*);
-void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
-{
-    u32 oldBlockIdx = (u32)-1;
-    Object **objects = get_world_objects(NULL, NULL);
+// same as original macro but requires the second and third shiftl swapped for w0?
+# define gSPVertex2(pkt, v, n, v0)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+	_g->words.w0 = _SHIFTL(G_VTX,24,8)|_SHIFTL((v0)+(n),1,7)|_SHIFTL((n),12,8);	\
+	_g->words.w1 = (unsigned int)(v);				\
+}
+void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
+    BlockShape* shape;
+    Vtx_t *tempVtx;
+    s32 shapeIdx;
+    BlockTextureScroller* temp_v0_7;
     s32 i;
-    u32 r, g, b;
-    u32 unk0, unk1, unk2;
-    s8 matrixStatus;
+    BlocksTextureIndexData* temp_v0_4;
+    u32 spE4;
+    s32 spE0;
+    s32 spDC;
+    s32 spD8;
+    s32 spD4;
+    s32 spD0;
+    s32 spCC;
+    EncodedTri* temp_a1;
+    s32 spC4;
+    EncodedTri* var_a0;
+    EncodedTri* var_s2;
+    Gfx* temp_s5;
+    Texture* tex1;
+    Texture* tex0;
+    s32 temp_s0_2;
+    s32 temp_v1;
+    Mtx* spA4;
+    s8 spA3;
+    s8 temp2;
+    s32 temp_t6;
+    s32 var_s7;
+    s32 var_t0;
+    Block* block;
+    Object** sp8C;
+    Object *obj;
 
-    ((DLL57Func)(*gDLL_57)[3])(&r, &g, &b, &unk0, &unk1, &unk2);
-
-    for (i = 1; i < gRenderListLength; i++)
-    {
-        u32 renderItem = gRenderList[i];
-        u32 index = (renderItem & 0x3f80) >> 7;
-
-        if (renderItem & 0x40)
-        {
-            // Draw object
-            func_800436DC(objects[index], visibilities[index]);
-        }
-        else
-        {
-            // Draw block
-            Block *block;
-            BlockShape *shape;
-            Mtx *rspMtx;
-            Texture *tex0;
-            Texture *tex1;
-            EncodedTri *ptri;
-            EncodedTri *ptriend;
-            Gfx *mygdl;
-            u32 shapeIdx;
-            u32 flags;
-            s32 level;
-            Vtx_t *pVerts;
-            u32 blockIdx = renderItem & 0x3f;
-            u32 force = 0;
-            EncodedTri *ptrilast = NULL;
-
-            if (blockIdx != oldBlockIdx)
-            {
-                matrixStatus = -1;
-                block = gBlocksToDraw[blockIdx];
-                oldBlockIdx = blockIdx;
-                rspMtx = &rspMtxs[blockIdx * 2];
+    spC4 = -1;
+    sp8C = get_world_objects(NULL, NULL);
+    gDLL_57->vtbl->func2(&spE0, &spDC, &spD8, &spD4, &spD0, &spCC);
+    for (i = 1; i < gRenderListLength; i++) {
+        temp_t6 = shapeIdx = (gRenderList[i] & 0x3F80) >> 7;
+        if (gRenderList[i] & 0x40) {
+            obj = sp8C[temp_t6];
+            func_800436DC(obj, visibilities[temp_t6]);
+            spA3 = 0;
+        } else {
+            // @fake
+            if (i) {}
+            temp_v1 = gRenderList[i] & 0x3F;
+            spE4 = 0;
+            if (temp_v1 != spC4) {
+                spA3 = -1;
                 SHORT_800b51dc = -1;
+                spC4 = temp_v1;
                 UINT_800b51e0 = 0;
+                spA4 = (temp_v1 * 2) + rspMtxs;
+                block = gBlocksToDraw[temp_v1];
             }
-
-            shape = &block->shapes[index];
-
-            if (shape->flags & 0x20000000)
-            {
-                if (matrixStatus != 2) {
-                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&rspMtx[1]), G_MTX_LOAD);
-                    matrixStatus = 2;
+            shape = &block->shapes[temp_t6];
+            if (shape->flags & 0x20000000) {
+                if (spA3 != 2) {
+                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&spA4[1]), G_MTX_LOAD);
+                    spA3 = 2;
                 }
+            } else if (spA3 != 1) {
+                gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(spA4), G_MTX_LOAD);
+                spA3 = 1;
             }
-            else
-            {
-                if (matrixStatus != 1) {
-                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(rspMtx), G_MTX_LOAD);
-                    matrixStatus = 1;
-                }
-            }
-
-            if (shape->tileIdx0 == 0xff) {
+            if (shape->materialIndex == 0xFF) {
                 tex0 = NULL;
             } else {
-                tex0 = block->tiles[shape->tileIdx0].texture;
+                tex0 = block->materials[shape->materialIndex].texture;
             }
-
-            if (shape->flags & 0x2000)
-            {
-                if (tex0->flags & 0xc000) {
-                    dl_set_prim_color(&gMainDL, 0xff, 0xff, 0xff, 0xa0);
+            if (shape->flags & 0x2000) {
+                if (tex0->flags & 0xC000) {
+                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xA0);
                 } else {
-                    dl_set_prim_color(&gMainDL, 0xff, 0xff, 0xff, 0x64);
+                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0x64);
                 }
-            }
-            else
-            {
-                if (shape->alpha == 0xff) {
-                    dl_set_prim_color(&gMainDL, r, g, b, 0xff);
-                } else if (shape->alpha == 0xfe) {
-                    dl_set_prim_color(&gMainDL, 0xff, 0xff, 0xff, 0xff);
-                } else if (shape->flags & 0x46c00000) {
-                    dl_set_prim_color(&gMainDL, 0xff, 0xff, 0xff, 0xff);
+            } else {
+                if (shape->envColourMode == 0xFF) {
+                    dl_set_prim_color(&gMainDL, spE0, spDC, spD8, 0xFF);
+                } else if (shape->envColourMode == 0xFE) {
+                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
+                } else if (shape->flags & 0x46C00000) {
+                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
                 } else {
                     func_8001F848(&gMainDL);
                 }
             }
-
-            flags = shape->flags;
-            level = 0;
-            if (shape->flags & 0x10000)
-            {
-                Block_0x28Struct *bs = func_8004A284(block, shape->unk14);
-                if (bs != NULL) {
-                    level = gBlockTextures[bs->texIdx].unk4 << 8;
-                    flags |= gBlockTextures[bs->texIdx].flags;
+            var_s7 = shape->flags;
+            if (var_s7 & 0x10000) {
+                temp_v0_4 = func_8004A284(block, shape->animatorID);
+                if (temp_v0_4 != NULL) {
+                    var_t0 = gBlockTextures[temp_v0_4->textureIndex].unk4 << 8;
+                    var_s7 |= gBlockTextures[temp_v0_4->textureIndex].flags;
                 } else {
-                    level = 0;
+                    var_t0 = 0;
                 }
-
-                if (SHORT_800b51dc != shape->unk14 || level != UINT_800b51e0)
-                {
-                    force = 1;
-                    SHORT_800b51dc = shape->unk14;
-                    UINT_800b51e0 = level;
+                if ((shape->animatorID != SHORT_800b51dc) || (var_t0 != UINT_800b51e0)) {
+                    SHORT_800b51dc = shape->animatorID;
+                    UINT_800b51e0 = var_t0;
+                    spE4 = 1;
                 }
-            }
-            else
-            {
+            } else {
                 SHORT_800b51dc = -1;
+                var_t0 = 0;
             }
-
-            if (shape->blendTextureIndex != 0xff) {
-                tex1 = block->tiles[shape->blendTextureIndex].texture;
+            if (shape->blendMaterialIndex != 0xFF) {
+                tex1 = block->materials[shape->blendMaterialIndex].texture;
             } else {
                 tex1 = NULL;
             }
-
-            tex_gdl_set_textures(&gMainDL, tex0, tex1, flags, level, force, 0);
-
-            if (shape->unk16 != 0xff)
-            {
-                BlockTextureScroller *s = func_80049D68(shape->unk16);
-                gDPSetTileSize(gMainDL++, 0, s->uOffsetA, s->vOffsetA, tex0->width - 1, (tex0->height - 1) * 4);
+            tex_gdl_set_textures(&gMainDL, tex0, tex1, var_s7, var_t0, spE4, 0);
+            if (shape->unk16 != 0xFF) {
+                temp_v0_7 = func_80049D68(shape->unk16);
+                gDPSetTileSize(gMainDL++, 0, temp_v0_7->uOffsetA, temp_v0_7->vOffsetA, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
                 if (tex1 != NULL) {
-                    gDPSetTileSize(gMainDL++, 1, s->uOffsetB, s->vOffsetB, tex1->width - 1, (tex1->height - 1) * 4);
+                    gDPSetTileSize(gMainDL++, 1, temp_v0_7->uOffsetB, temp_v0_7->vOffsetB, (tex1->width - 1) << 2, (tex1->height - 1) << 2);
+                }
+            } else if ((tex0 != NULL) && (tex0->flags & 0xC000)) {
+                gDPSetTileSize(gMainDL++, 0, 0, 0, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
+                if (tex1 != NULL) {
+                    gDPSetTileSize(gMainDL++, 1, 0, 0, (tex1->width - 1) << 2, (tex1->height - 1) << 2);
                 }
             }
-            else
-            {
-                if (tex0 != NULL && (tex0->flags & 0xc000))
-                {
-                    gDPSetTileSize(gMainDL++, 0, 0, 0, tex0->width - 1, (tex0->height - 1) * 4);
-                    if (tex1 != NULL) {
-                        gDPSetTileSize(gMainDL++, 1, 0, 0, tex1->width - 1, (tex1->height - 1) * 4);
-                    }
-                }
-            }
-
             shapeIdx = (shape - block->shapes) * 3;
-            *gMainDL = block->gdlGroups[shapeIdx++];
-            func_80041210(&gMainDL);
-            *gMainDL = block->gdlGroups[shapeIdx++];
+            gMainDL->words.w0 = block->gdlGroups[shapeIdx].words.w0;
+            gMainDL->words.w1 = block->gdlGroups[shapeIdx].words.w1;
+            shapeIdx++;
+            dl_apply_geometry_mode(&gMainDL);
+            gMainDL->words.w0 = block->gdlGroups[shapeIdx].words.w0;
+            gMainDL->words.w1 = block->gdlGroups[shapeIdx].words.w1;
+            shapeIdx++;
             dl_apply_combine(&gMainDL);
-            *gMainDL = block->gdlGroups[shapeIdx++];
+            gMainDL->words.w0 = block->gdlGroups[shapeIdx].words.w0;
+            gMainDL->words.w1 = block->gdlGroups[shapeIdx].words.w1;
             dl_apply_other_mode(&gMainDL);
+            tempVtx = block->vertices2[(block->vtxFlags & 1) ^ 1];
+            var_a0 = block->encodedTris;
+            var_a0 += shape->triBase;
+            temp_a1 = block->encodedTris;
+            temp_a1 += shape[1].triBase;
+            temp_s5 = gMainDL;
 
-            mygdl = gMainDL;
-            pVerts = block->vertices2[(block->vtxFlags & 0x1) ^ 0x1];
-            ptri = &block->encodedTris[shape->triBase];
-            ptriend = &block->encodedTris[shape[1].triBase];
+            gSPVertex2(gMainDL++, OS_K0_TO_PHYSICAL(&tempVtx[shape->vtxBase]), shape[1].vtxBase - shape->vtxBase, 0);
 
-            gSPVertex(gMainDL++, OS_K0_TO_PHYSICAL(&pVerts[shape->vtxBase]), shape[1].vtxBase - shape->vtxBase, 0);
-
-            for (; ptri < ptriend; ptri++)
-            {
-                if (ptri->d1 & 0x1)
-                {
-                    if (ptrilast == NULL)
-                    {
-                        ptrilast = ptri;
-                    }
-                    else
-                    {
+            var_s2 = NULL;
+            while ((u32) var_a0 < (u32) temp_a1) {
+                if (var_a0->d1 & 1) {
+                    if (var_s2 == NULL) {
+                        var_s2 = var_a0;
+                    } else {
                         // This appears to be a hand-optimized version of gSP2Triangles.
-                        gMainDL->words.w0 = (G_TRI2 << 24) | ((ptrilast->d0 & 0x3f000) << 4) | ((ptrilast->d0 & 0xfc0) << 2) | (ptrilast->d0 & 0x3f);
-                        gMainDL->words.w1 = ((ptri->d0 & 0x3f000) << 4) | ((ptri->d0 & 0xfc0) << 2) | (ptri->d0 & 0x3f);
+                        gMainDL->words.w0 = ((var_s2->d0 & 0x3F000) << 4) | 0x06000000 | ((var_s2->d0 & 0xFC0) << 2) | (var_s2->d0 & 0x3F);
+                        gMainDL->words.w1 = ((var_a0->d0 & 0x3F000) << 4) | ((var_a0->d0 & 0xFC0) << 2) | (var_a0->d0 & 0x3F);
                         gMainDL++;
-                        ptrilast = NULL;
+                        var_s2 = NULL;
                     }
                 }
+                var_a0++;
             }
-
-            if (ptrilast != NULL && (ptrilast->d1 & 0x1))
-            {
+            if ((var_s2 != NULL) && (var_s2->d1 & 1)) {
                 // This appears to be a hand-optimized version of gSP1Triangle.
-                gMainDL->words.w0 = (G_TRI1 << 24) | ((ptrilast->d0 & 0x3f000) << 4) | ((ptrilast->d0 & 0xfc0) << 2) | (ptrilast->d0 & 0x3f);
+                gMainDL->words.w0 = ((var_s2->d0 & 0x3F000) << 4) | 0x05000000 | ((var_s2->d0 & 0xFC0) << 2) | (var_s2->d0 & 0x3F);
                 gMainDL++;
             }
-
-            gDLBuilder->needsPipeSync = TRUE;
-
-            if ((flags & 0x100408) == 0x100408)
-            {
-                u32 gfxCount = gMainDL - mygdl;
-
+            gDLBuilder->needsPipeSync = 1;
+            if ((var_s7 & 0x100408) == 0x100408) {
+                temp_s0_2 = gMainDL - temp_s5;
                 dl_set_geometry_mode(&gMainDL, 0x10000);
-                if (flags & 0x2004)
-                {
-                    gDPSetCombine(gMainDL, 0xffffff, 0xffff7dbe);
+                if (var_s7 & 0x2004) {
+                    gDPSetCombineLERP(gMainDL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
                     dl_apply_combine(&gMainDL);
-                    gDPSetOtherMode(gMainDL, 0x080c00, 0xfa504a50);
+                    gDPSetOtherMode(
+                        gMainDL, 
+                        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
+                        G_AC_NONE | G_ZS_PIXEL | Z_CMP | IM_RD | CVG_DST_FULL | ZMODE_XLU | FORCE_BL | GBL_c1(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA) | GBL_c2(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA)
+                    );
+                    dl_apply_other_mode(&gMainDL);
+                } else {
+                    gDPSetCombineLERP(gMainDL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
+                    dl_apply_combine(&gMainDL);
+                    
+                    gDPSetOtherMode(
+                        gMainDL, 
+                        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
+                        G_AC_NONE | G_ZS_PIXEL | AA_EN | Z_CMP | IM_RD | CLR_ON_CVG | CVG_DST_WRAP | ZMODE_DEC | FORCE_BL | GBL_c1(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA) | GBL_c2(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA)
+                    );
                     dl_apply_other_mode(&gMainDL);
                 }
-                else
-                {
-                    gDPSetCombine(gMainDL, 0xffffff, 0xffff7dbe);
-                    dl_apply_combine(&gMainDL);
-                    gDPSetOtherMode(gMainDL, 0x080c00, 0xfa504dd8);
-                    dl_apply_other_mode(&gMainDL);
-                }
-
-                bcopy(mygdl, gMainDL, gfxCount * sizeof(Gfx));
-                gMainDL += gfxCount;
-
-                gDLBuilder->needsPipeSync = TRUE;
+                bcopy(temp_s5, gMainDL, temp_s0_2 * sizeof(Gfx));
+                gMainDL += temp_s0_2;
+                gDLBuilder->needsPipeSync = 1;
             }
         }
     }
 }
-#endif
 
 void func_800436DC(Object* obj, s32 arg1) {
     s8 sp37;
