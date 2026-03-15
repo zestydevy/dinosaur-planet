@@ -96,38 +96,38 @@ typedef struct {
 
 typedef f32 quartic[5];
 
-typedef struct Vec2f {
-    union {
-        struct {
-            f32 x;
-            f32 y;
-        };
-        f32 f[2];
+typedef union Vec2f {
+    struct {
+        f32 x;
+        f32 y;
     };
+    f32 f[2];
 } Vec2f;
 
-typedef struct Vec3f {
-    union {
-        struct {
-            f32 x;
-            f32 y;
-            f32 z;
-        };
-        f32 f[3];
+#define VEC2F(x, y) {{ x, y }}
+
+typedef union Vec3f {
+    struct {
+        f32 x;
+        f32 y;
+        f32 z;
     };
+    f32 f[3];
 } Vec3f;
 
-typedef struct Vec4f {
-    union {
-        struct {
-            f32 x;
-            f32 y;
-            f32 z;
-            f32 w;
-        };
-        f32 f[4];
+#define VEC3F(x, y, z) {{ x, y, z }}
+
+typedef union Vec4f {
+    struct {
+        f32 x;
+        f32 y;
+        f32 z;
+        f32 w;
     };
+    f32 f[4];
 } Vec4f;
+
+#define VEC4F(x, y, z, w) {{ x, y, z, w }}
 
 typedef union {
     struct { s32 x, y, z; };

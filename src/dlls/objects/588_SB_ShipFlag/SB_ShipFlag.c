@@ -1,6 +1,6 @@
 #include "sys/main.h"
 #include "sys/objanim.h"
-#include "functions.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

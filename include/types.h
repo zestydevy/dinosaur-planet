@@ -1,14 +1,14 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+#include "PR/ultratypes.h"
 #include "sys/math.h"
-#include "ultra64.h"
 #include "dll_def.h"
-#include "sys/gfx/texture.h"
 
 typedef union {
     void (*asVoid)(void);
     void (*withOneArg)(s32);
+    
     void (*withTwoArgs)(s32, s32);
     void (*withThreeArgs)(s32, s32, s32);
     void (*withFourArgs)(s32, s32, s32, s32);
@@ -25,6 +25,7 @@ typedef union {
     u16 (*withSevenArgsU16)(s32, s32, s32, s32, s32, s32, s32);
     u32 (*asVoidS32)(void);
     s32 (*withOneArgS32)(s32);
+    s32 (*withOneVoidArgS32)(void*);
     s32 (*withTwoArgsS32)(s32, s32);
     s32 (*withThreeArgsS32)(s32, s32, s32);
     s32 (*withFourArgsS32)(s32, s32, s32, s32);
@@ -41,10 +42,13 @@ typedef union {
     f32 (*withSevenArgsF32)(s32, s32, s32, s32, s32, s32, s32);
     void (*withThreeArgsCustom)(void *, void *, f32);
     void (*withThreeArgsCustom2)(void *, f32, f32);
+    void (*withThreeArgsCustom3)(void *, s32, void *);
     void (*withOneS32OneF32)(s32, f32);
+    void (*withTwoArgsCustom)(void *, s32);
     void (*withFourArgsCustom)(void *, void *, f32, s32);
     void (*withFiveArgsCustom)(void *, f32, f32 *, f32 *, f32 *);
     void (*withFiveArgsCustom2)(void *, void *, f32, s32, f32);
+    s32 (*withFiveArgsCustom3)(void *, void *, s8, f32 *, f32 *);
     void (*withSixArgsCustom)(void *, s32, void *, s32, s32, s32);
     s32 (*withSevenArgsCustom)(void *, f32, f32, f32, void*, void*, void*);
 } UnknownDLLFunc;
@@ -130,34 +134,6 @@ typedef struct {
 /*0023*/ u8 unk23;
 /*0024*/ u8 unk24[0x28 - 0x24];
 } LightAction; //LActions.bin structs used by NewLfx DLL
-
-// size: 0x18
-typedef struct {
-    f32 unk0[4]; // maybe Vec4f and not an array
-    struct Object *unk10;
-    s8 unk14;
-} Func_80057F1C_Struct;
-
-// size: 0x54
-typedef struct Func_80059C40_Struct {
-    struct Object *unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    f32 unk14;
-    f32 unk18;
-    Vec4f unk1C;
-    Vec3f unk2C;
-    Vec3f unk38;
-    f32 unk44;
-    f32 unk48;
-    s16 unk4C;
-    s16 unk4E;
-    s8 unk50;
-    s8 unk51;
-    s8 unk52;
-} Func_80059C40_Struct;
 
 //used for PlayerPosBuffer and something else
 struct Vec3_Int{

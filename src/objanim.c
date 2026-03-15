@@ -1,9 +1,6 @@
-#include "game/objects/object.h"
-#include "common.h"
-
 #include "common.h"
 #include "macros.h"
-#include "variables.h"
+#include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
 #include "sys/objects.h"
@@ -114,7 +111,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         if (changed) {
             animState->unk62[0] = (1 - animState->unk62[0]);
             animState->animIndexes[0] = animState->unk62[0] & 0xFFFF;
-            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
+            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, (u8*)animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
         }
         anim = &animState->anims[animState->animIndexes[0]]->anim;
     } else {
@@ -161,21 +158,6 @@ s32 func_800240BC(Object* object, f32 progress) {
 
 //advances current animation playback
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80024108.s")
-
-typedef struct {
-    /*00*/    s16 X;
-    /*02*/    s16 Y;
-    /*04*/    s16 Z;
-} AnimationRootMotionComponents;
-
-typedef struct {
-    /*00*/    f32 speed;
-    /*04*/    s16 totalKeyframes;
-    /*06*/    AnimationRootMotionComponents components;
-    /*0C*/    s16 keyframes; //array
-} AnimationRootMotion;
-
-// extern f32 gAnimBlendDivisor; //1023
 
 //https://decomp.me/scratch/zIGpo
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_8002493C.s")
@@ -262,7 +244,7 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
         if (curModanim_layered) {
             animState->unk62[0] = 1 - animState->unk62[0];
             animState->animIndexes[0] = animState->unk62[0];
-            func_80019118(model->modAnim[modanimIndex], modanimIndex, animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
+            func_80019118(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
         }
         anim = (Animation*)(&animState->anims[animState->animIndexes[0]]->anim);
     } else {

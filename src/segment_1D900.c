@@ -1,7 +1,8 @@
 #include "common.h"
+#include "sys/newshadows.h"
 #include "unktypes.h"
-
-typedef struct { u8 unk0[0x3300]; } Unk800B1848;
+#include "sys/segment_1D900.h"
+#include "sys/segment_20490.h"
 
 // size: 0x1C
 typedef struct {
@@ -53,7 +54,7 @@ Struct80090CE8 D_80090CE8[16] = {0};
 u8 D_80090D18 = 0;
 u8 D_80090D1C = 0;
 u8 D_80090D20 = 0;
-Vec3s32 D_80090D24 = {0, 0, 0};
+Vec3s32 D_80090D24 = {{0, 0, 0}};
 // func statics start here
 // -------- .data end -------- // 80090D50
 
@@ -81,10 +82,7 @@ Unk800B1858 *D_800B1858;
 Unk800B1860 *D_800B1860[30];
 // -------- .bss end 800b18e0 -------- //
 
-extern Vec3f D_800BB198;
-
-void func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7); /* extern */
-void func_8001F890(Vtx *, void *, s32, MtxF *, s32, s32, Unk800B1848*, void *, f32);
+void func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7);
 
 void func_8001CD00(void) {
     s32 j;
@@ -488,7 +486,7 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
     s16 var_v0;
     s16 var_v1;
     u8 temp;
-    Vec3f sp2C = { 0.0f, 198.0f, 19.0f };
+    Vec3f sp2C = VEC3F(0.0f, 198.0f, 19.0f);
     f32 new_var;
 
     if (D_80090CA8 != 0) {

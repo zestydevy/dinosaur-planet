@@ -6,9 +6,9 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "dlls/objects/common/foodbag.h"
 #include "dlls/objects/210_player.h"
-#include "functions.h"
 #include "dll.h"
 
 // size:0x14

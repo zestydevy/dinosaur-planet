@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/fs.h"
+#include "sys/segment_1050.h"
 
 s32 func_80000450(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 arg4, s32 arg5) {
     LightAction* lAction;

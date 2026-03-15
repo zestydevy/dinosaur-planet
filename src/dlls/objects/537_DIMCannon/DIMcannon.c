@@ -3,8 +3,10 @@
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/segment_326A0.h"
+#include "sys/gfx/modgfx.h"
 
-/*0x0*/ static DLL_Unknown* _data_0 = NULL;
+/*0x0*/ static DLL_IModgfx* _data_0 = NULL;
 
 typedef struct {
     ObjSetup base;
@@ -97,7 +99,7 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
         self->unkAF |= 8;
         self->animCallback = dll_537_func_A94;
         self->srt.yaw = objSetup->unk28 << 8;
-        _data_0 = dll_load_deferred(0x1021, 1);
+        _data_0 = dll_load_deferred(DLL_ID_137, 1);
         
         if (main_get_bits(objSetup->unk1A)) {
             objData->unk27 = 60;
@@ -162,7 +164,7 @@ void dll_537_control(Object* self) {
         objData->unk26 = var_v0;
     }
     
-    if (var_v0 = objData->unk26) {
+    if ((var_v0 = objData->unk26)) {
         objData->unk0 = sidekick;
     } else {
         player = get_player();
@@ -542,7 +544,7 @@ void dll_537_func_1150(Object* self) {
     if (objData->unk25 && (objData->unk20 <= 0)) {
         angle = func_80034804(self, 0);
         
-        shotSetup = (DIMCannonBall_Setup*)obj_alloc_create_info(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
+        shotSetup = (DIMCannonBall_Setup*)obj_alloc_setup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
         shotSetup->base.loadFlags = objSetup->base.loadFlags;
         shotSetup->base.byte6 = objSetup->base.byte6;
         shotSetup->base.byte5 = objSetup->base.byte5;
@@ -640,7 +642,7 @@ void dll_537_func_1430(Object* self) {
     self->srt.pitch = arctan2_f(self->speed.y, sqrtf(SQ(self->speed.x) + SQ(self->speed.z)));
     
     if (objData->unk0 != 0) {
-        ((DLL_Unknown*)_data_0)->vtbl->func[0].withSixArgs(self, 2, 0, 0x10002, -1, 0);
+        _data_0->vtbl->func0(self, 2, 0, 0x10002, -1, 0);
         objData->unk0 = 0;
     }
 }
@@ -658,7 +660,7 @@ void dll_537_func_16AC(Object* self) {
 
     objData = self->data;
     
-    shotSetup = (DIMCannonBall_Setup*)obj_alloc_create_info(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+    shotSetup = (DIMCannonBall_Setup*)obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
     shotSetup->base.loadFlags = objData->unk4;
     shotSetup->base.byte6 = objData->unk6;
     shotSetup->base.byte5 = objData->unk5;

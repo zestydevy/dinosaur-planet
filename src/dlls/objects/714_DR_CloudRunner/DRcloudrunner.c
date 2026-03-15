@@ -6,7 +6,6 @@
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "dll.h"
-#include "functions.h"
 
 #include "dlls/objects/745_DR_Cage.h"
 #include "types.h"

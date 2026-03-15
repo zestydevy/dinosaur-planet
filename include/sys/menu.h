@@ -2,7 +2,7 @@
 #define _SYS_MENU_H
 
 #include "PR/ultratypes.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "dll_def.h"
 #include "types.h"
 

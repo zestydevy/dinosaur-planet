@@ -4,10 +4,11 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
+#include "sys/objprint.h"
+#include "sys/segment_53F00.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/common/foodbag.h"
-#include "functions.h"
 #include "dll.h"
 
 typedef struct {
@@ -346,7 +347,7 @@ static s32 fish_func_F74(Object *self) {
     sp4C.x = objdata->unk38 + objdata->unk44 + 10.0f;
     sp4C.y = 0.0f;
     sp4C.z = 0.0f;
-    rotate_vec3(&sp64, sp4C.f);
+    rotate_vec3((const SRT *)&sp64, sp4C.f);
     sp4C.x += self->srt.transl.f[0];
     sp4C.y += self->srt.transl.f[1];
     sp4C.z += self->srt.transl.f[2];
@@ -426,7 +427,7 @@ static void fish_func_11C8(Object *self, s16 a1, u8 a2) {
     sp50.x = gUpdateRateF * 10.0f;
     sp50.y = 0.0f;
     sp50.z = 0.0f;
-    rotate_vec3(&sp5C, sp50.f);
+    rotate_vec3((const SRT *)&sp5C, sp50.f);
     sp50.x += self->srt.transl.f[0];
     sp50.y += self->srt.transl.f[1];
     sp50.z += self->srt.transl.f[2];
@@ -451,14 +452,14 @@ static void fish_func_11C8(Object *self, s16 a1, u8 a2) {
     sp44.x = gUpdateRateF * 30.0f * 5.0f;
     sp44.y = 0.0f;
     sp44.z = 0.0f;
-    rotate_vec3(&sp5C, sp44.f);
+    rotate_vec3((const SRT *)&sp5C, sp44.f);
     sp44.x += self->srt.transl.f[0];
     sp44.y += self->srt.transl.f[1];
     sp44.z += self->srt.transl.f[2];
     sp50.x = objdata->unk28 * gUpdateRateF;
     sp50.y = 0.0f;
     sp50.z = 0.0f;
-    rotate_vec3(&sp5C, sp50.f);
+    rotate_vec3((const SRT *)&sp5C, sp50.f);
     self->srt.transl.f[0] += sp50.x;
     self->srt.transl.f[1] += sp50.y;
     self->srt.transl.f[2] += sp50.z;
@@ -491,7 +492,7 @@ static s32 fish_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2) {
         arg1->f[1] -= self->srt.transl.f[1];
         arg1->f[2] -= self->srt.transl.f[2];
         arg2->x = -self->srt.yaw;
-        rotate_vec3(arg2, arg1->f);
+        rotate_vec3((const SRT *)arg2, arg1->f);
         objdata->unk19 = 1U;
         if (arg1->f[2] > 0.0f) {
             objdata->unk1A = -0x100;
@@ -527,7 +528,7 @@ static s32 fish_func_1978(Object *self) {
             sp54.f[0] = objdata->unk64 * objdata->unk50;
             sp54.f[1] = 0.0f;
             sp54.f[2] = 0.0f;
-            rotate_vec3((SRT*)&sp64, sp54.f);
+            rotate_vec3((const SRT *)&sp64, sp54.f);
             sp54.f[0] = sp54.f[0] + objdata->unk58;
             sp54.f[1] = (f32) setup->unk28 + objdata->unk2C;
             sp54.f[2] = sp54.f[2] + objdata->unk60;
@@ -543,7 +544,7 @@ static s32 fish_func_1978(Object *self) {
             sp48.f[0] = objdata->unk68 * objdata->unk50;
             sp48.f[1] = 0.0f;
             sp48.f[2] = 0.0f;
-            rotate_vec3((SRT*)&sp64, sp48.f);
+            rotate_vec3((const SRT*)&sp64, sp48.f);
             sp48.f[0] = sp48.f[0] + objdata->unk58;
             sp48.f[1] = (f32) setup->unk28 + objdata->unk2C;
             sp48.f[2] = sp48.f[2] + objdata->unk60;
@@ -575,7 +576,7 @@ static s32 fish_func_1978(Object *self) {
         }
         objdata->unk54 = (f32) objdata->unk4;
     }
-    rotate_vec3((SRT*)&sp64, sp6C.f);
+    rotate_vec3((const SRT*)&sp64, sp6C.f);
     self->srt.transl.f[0] = objdata->unk58 + sp6C.f[0];
     self->srt.transl.f[1] = objdata->unk5C + sp6C.f[1];
     self->srt.transl.f[2] = objdata->unk60 + sp6C.f[2];
@@ -620,7 +621,7 @@ static s32 fish_func_1EF4(Object* self) {
         objdata->unk54 = (f32) objdata->unk4;
         objdata->unk0 = 0.12f;
     }
-    rotate_vec3(sp2C.s, sp34.f);
+    rotate_vec3((const SRT *)&sp2C, sp34.f);
     self->srt.transl.f[0] = objdata->unk58 + sp34.f[0];
     self->srt.transl.f[1] = objdata->unk5C - sp34.f[1];
     self->srt.transl.f[2] = objdata->unk60 + sp34.f[2];

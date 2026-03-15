@@ -1,3 +1,3 @@
 Diagnostics:
    UnusedIncludes: None
-   Suppress: ["-Wunused-function"]
+   Suppress: ["-Wunused-function", "bugprone-integer-division"]

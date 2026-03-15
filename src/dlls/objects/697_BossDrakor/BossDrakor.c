@@ -10,7 +10,8 @@
 #include "sys/objanim.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
 #include "dll.h"
 
 enum DrakorLogicStates {
@@ -24,7 +25,7 @@ enum DrakorAnimStates {
 };
 
 typedef struct {
-/*0*/ s16 unk0;
+/*0*/ u16 unk0;
 /*2*/ s16 unk2; // rate of yaw spin in logic state 0
 /*4*/ u16 unk4; // dist to target?
 /*6*/ u16 animIndex; // not a mod anim index, index into below anim related statics
@@ -184,7 +185,7 @@ static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata
     Baddie_Setup *drakorSetup;
 
     drakorSetup = (Baddie_Setup*)self->setup;
-    laserSetup = obj_alloc_create_info(0x24, OBJ_BossDrakor_Lase);
+    laserSetup = obj_alloc_setup(0x24, OBJ_BossDrakor_Lase);
     laserSetup->x = self->srt.transl.x;
     laserSetup->y = self->srt.transl.y;
     laserSetup->z = self->srt.transl.z;

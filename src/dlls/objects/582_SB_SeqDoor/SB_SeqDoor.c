@@ -1,5 +1,5 @@
-#include "functions.h"
 #include "dlls/objects/214_animobj.h"
+#include "sys/objprint.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

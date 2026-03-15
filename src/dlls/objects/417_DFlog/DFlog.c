@@ -8,7 +8,8 @@
 #include "sys/dll.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_53F00.h"
 #include "dll.h"
 
 typedef struct {
@@ -54,14 +55,14 @@ typedef struct {
     0x00000000, 0x00000000, 0x00000000
 };
 /*0xC8*/ static Vec3f _data_C8[] = {
-    {0.0f, 0.0f, -30.0f}, 
-    {0.0f, 0.0f, 30.0f}
+    VEC3F(0.0f, 0.0f, -30.0f), 
+    VEC3F(0.0f, 0.0f, 30.0f)
 };
 /*0xE0*/ static f32 _data_E0[] = {8.0f, 8.0f};
 /*0xE8*/ static u8 _data_E8[] = {1, 1};
 /*0xEC*/ static Vec3f _data_EC[] = {
-    {0.0f, 0.0f, -30.0f}, 
-    {0.0f, 0.0f, 30.0f}
+    VEC3F(0.0f, 0.0f, -30.0f), 
+    VEC3F(0.0f, 0.0f, 30.0f)
 };
 /*0x104*/ static f32 _data_104[] = {8.0f, 8.0f};
 

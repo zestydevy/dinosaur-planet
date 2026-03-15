@@ -2,7 +2,7 @@
 #include "dlls/engine/17_partfx.h"
 #include "sys/dll.h"
 #include "sys/main.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/modgfx/133.h"
 #include "dlls/objects/573_SB_Cloudrunner.h"

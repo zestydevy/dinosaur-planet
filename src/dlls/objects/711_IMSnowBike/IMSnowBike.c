@@ -9,10 +9,12 @@
 #include "sys/main.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
+#include "sys/segment_53F00.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "functions.h"
-#include "prevent_bss_reordering2.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 /*00*/ Vec3f unk0;
@@ -106,27 +108,27 @@ enum IMSnowBikeFlags {
 };
 
 /*0x0*/ static Vec3f _data_0[] = {
-    {-6.5f, 0.0f, -7.0f}, 
-    { 6.5f, 0.0f, -7.0f}, 
-    { 6.5f, 0.0f,  7.0f}, 
-    {-6.5f, 0.0f,  7.0f}
+    VEC3F(-6.5f, 0.0f, -7.0f), 
+    VEC3F( 6.5f, 0.0f, -7.0f), 
+    VEC3F( 6.5f, 0.0f,  7.0f), 
+    VEC3F(-6.5f, 0.0f,  7.0f)
 };
 /*0x30*/ static f32 _data_30[] = {
     0.0f, 0.0f, 0.0f, 0.0f
 };
 /*0x40*/ static Vec3f _data_40[] = {
-    {0.0f, 1.0f, -18.0f}, 
-    {-6.5f, 1.0f, -7.0f}, 
-    {6.5f, 1.0f, -7.0f}, 
-    {-6.0f, 1.0f, 11.0f}, 
-    {6.0f, 1.0f, 11.0f}
+    VEC3F(0.0f, 1.0f, -18.0f), 
+    VEC3F(-6.5f, 1.0f, -7.0f), 
+    VEC3F(6.5f, 1.0f, -7.0f), 
+    VEC3F(-6.0f, 1.0f, 11.0f), 
+    VEC3F(6.0f, 1.0f, 11.0f)
 };
 /*0x7C*/ static f32 _data_7C[] = {
     5.0f, 4.0f, 4.0f, 4.5f, 4.5f
 };
 /*0x90*/ static Vec3f _data_90[] = {
-    {14.5f, 0.0f, 9.0f}, 
-    {-14.5f, 0.0f, 9.0f}
+    VEC3F(14.5f, 0.0f, 9.0f), 
+    VEC3F(-14.5f, 0.0f, 9.0f)
 };
 /*0xA8*/ static DLL_IModgfx *_data_A8 = NULL;
 

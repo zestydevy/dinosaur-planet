@@ -9,8 +9,10 @@
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
+#include "sys/rcp.h"
+#include "sys/segment_326A0.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
 /*00:0*/ u32 pad0_0 : 8;
@@ -63,25 +65,12 @@ enum KDModAnims {
     KD_MODANIM_MELT = 11
 };
 
-typedef struct {
-    Texture *texture;
-    s32 unk4;
-    s16 unk8;
-    s16 unkA;
-    s32 unkC;
-    s32 unk10;
-    s32 unk14;
-} BSS8;
-
-// TODO: the 2nd arg is something else, see rcp.c
-extern void func_800390A4(Gfx**, BSS8*, f32, f32, f32, f32, s32, s32, f32, f32, s32, s32);
-
 /*0x0*/ static u8 _data_0[] = {0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x04};
 /*0x8*/ static Model *sModel = NULL;
 /*0xC*/ static s16 sHealthBarTextureIDs[2] = {0x042d, 0x0422};
 
 /*0x0*/ static Texture *sHealthBarTextures[2];
-/*0x8*/ static BSS8 _bss_8[2];
+/*0x8*/ static Func_80037F9C_Struct _bss_8[2][2];
 /*0x38*/ static s32 sHealthBarAlpha;
 /*0x3C*/ static u8 _bss_3C[4];
 /*0x40*/ static u8 _bss_40[0x4c0];
@@ -118,7 +107,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     FXEmit_Setup *setup;
     Object *fxEmit;
 
-    setup = obj_alloc_create_info(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    setup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
@@ -152,7 +141,7 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     ObjSetup *setup;
     Object *projectile;
 
-    setup = obj_alloc_create_info(0x24, objID); // KamerianFlame/KamerianAcid
+    setup = obj_alloc_setup(0x24, objID); // KamerianFlame/KamerianAcid
     setup->x = x;
     setup->y = y;
     setup->z = z;
@@ -198,11 +187,11 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     for (i = 0; i < 2; i++) {
         texture = tex_load_deferred(sHealthBarTextureIDs[i]);
         sHealthBarTextures[i] = texture;
-        _bss_8[i].texture = texture;
-        _bss_8[i].unk4 = 0;
-        _bss_8[i].unk8 = 0;
-        _bss_8[i].unkA = 0;
-        _bss_8[i].unkC = 0;
+        _bss_8[i][0].unk0 = texture;
+        _bss_8[i][0].unk4 = 0;
+        _bss_8[i][0].unk8 = 0;
+        _bss_8[i][0].unkA = 0;
+        _bss_8[i][1].unk0 = NULL;
     }
 
     // load fxemit objects
@@ -749,7 +738,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         // Draw health bar
         if (sHealthBarAlpha != 0) {
-            func_800390A4(gdl, &_bss_8[0], 
+            func_800390A4(gdl, _bss_8[0], 
                 /*x*/96.0f, 
                 /*y*/24.0f, 
                 /*width*/(f32) hpBarWidth, 
@@ -761,7 +750,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                 /*color*/sHealthBarAlpha - 256, 
                 /*flags*/0x4002);
             
-            func_800390A4(gdl, &_bss_8[1], 
+            func_800390A4(gdl, _bss_8[1], 
                 /*x*/(f32) ((hpBarWidth * 4) + 96), 
                 /*y*/24.0f, 
                 /*width*/(f32) (32 - hpBarWidth), 

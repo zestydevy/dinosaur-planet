@@ -129,7 +129,7 @@ dummy_label1: ;
     case 3:
     
         get_object_child_position(self, &sp50, &sp4C, &sp48);
-        cannonballSetup = obj_alloc_create_info(0x18, OBJ_CannonBall);
+        cannonballSetup = obj_alloc_setup(0x18, OBJ_CannonBall);
         cannonballSetup->x = sp50;
         cannonballSetup->y = sp4C + 30.0f;
         cannonballSetup->z = sp48;

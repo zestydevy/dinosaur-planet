@@ -202,7 +202,7 @@ typedef struct {
 /*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;
 /*001C*/    void *unk1C[2];
-/*0024*/    Vec4f *unk24;
+/*0024*/    Vec4f *unk24; // Could be a MtxF
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstanceBlendshape *blendshapes;
@@ -232,6 +232,7 @@ typedef struct {
 /*0004*/    Model *model;
 } ModelSlot;
 
+void init_models(void);
 void func_8001AF04(ModelInstance *modelInst, s32 param2, s32 param3, f32 param4, s32 param5, s32 param6);
 void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3);
 void func_8001B084(ModelInstance *modelInst, f32 updateRate);
@@ -249,5 +250,8 @@ s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount);
 void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState);
 ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2);
 u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting);
+ModelInstance *model_load_create_instance(s32 id, u32 flags);
+void destroy_model_instance(ModelInstance *modelInst);
+ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
 
 #endif //_SYS_GFX_MODEL_H

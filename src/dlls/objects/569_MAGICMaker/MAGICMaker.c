@@ -2,8 +2,8 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
+#include "sys/objprint.h"
 #include "sys/objects.h"
-#include "functions.h"
 #include "sys/objtype.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
@@ -60,7 +60,7 @@ void MAGICMaker_control(Object *self) {
                 }
             }
             if (foundObjs < 5) {
-                bonedustSetup = obj_alloc_create_info(sizeof(BoneDust_Setup), OBJ_BoneDust);
+                bonedustSetup = obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust);
                 bonedustSetup->unk1A = 0x14;
                 bonedustSetup->unk2C = -1;
                 bonedustSetup->unk1C = -1;

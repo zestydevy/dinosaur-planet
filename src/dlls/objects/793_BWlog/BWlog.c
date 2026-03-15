@@ -3,9 +3,9 @@
 #include "sys/joypad.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/print.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
     DLL27_Data unk0;
@@ -50,8 +50,8 @@ typedef struct {
 } BWlog_Data;
 
 /*0x0*/ static Vec3f _data_0[] = {
-    {0.0f, 0.0f, -30.0f}, 
-    {0.0f, 0.0f, 30.0f}
+    VEC3F(0.0f, 0.0f, -30.0f),
+    VEC3F(0.0f, 0.0f, 30.0f)
 };
 /*0x18*/ static f32 _data_18[] = {8.0f, 8.0f};
 /*0x20*/ static u8 _data_20[] = {1, 1};

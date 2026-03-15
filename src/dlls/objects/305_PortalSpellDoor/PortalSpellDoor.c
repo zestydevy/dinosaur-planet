@@ -153,7 +153,7 @@ Object* PortalSpellDoor_create_anim_obj(Object* self) {
     ObjSetup* animObjSetup;
     Object* portalDoorAnim;
 
-    animObjSetup = obj_alloc_create_info(sizeof(ObjSetup), OBJ_PortalDoorAnim);
+    animObjSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_PortalDoorAnim);
     animObjSetup->loadFlags = 2;
     animObjSetup->byte5 = 1;
     animObjSetup->x = self->srt.transl.x;

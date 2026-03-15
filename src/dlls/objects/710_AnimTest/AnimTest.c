@@ -1,7 +1,7 @@
 #include "dll.h"
-#include "functions.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 
 // offset: 0x0 | ctor
 void AnimTest_ctor(void *dll) { }

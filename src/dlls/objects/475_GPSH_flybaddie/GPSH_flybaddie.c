@@ -11,8 +11,8 @@
 #include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
-#include "functions.h"
 #include "dll.h"
 #include "types.h"
 

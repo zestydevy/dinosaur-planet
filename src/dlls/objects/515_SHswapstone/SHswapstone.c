@@ -12,9 +12,10 @@
 #include "sys/map_enums.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
+#include "sys/objprint.h"
 #include "sys/menu.h"
+#include "sys/segment_326A0.h"
 #include "dll.h"
-#include "functions.h"
 #include "types.h"
 
 typedef enum {
@@ -48,8 +49,8 @@ typedef struct {
 static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a3);
 static s32 SHswapstone_get_held_spirit(void);
 static s32 SHswapstone_has_spellstone(void);
-static void SHswapstone_func_A8C(Object* self, s32 arg1, s32 arg2);
-static s32 SHswapstone_func_AD4(Object* self, s32 arg1, s32 arg2);
+static void SHswapstone_func_A8C(Object* self, Object *override, struct AnimObj_Data* arg2);
+static s32 SHswapstone_func_AD4(Object* self, Object *override, s32 arg2);
 
 // offset: 0x0 | ctor
 void SHswapstone_ctor(void *dll) { }
@@ -272,12 +273,12 @@ static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a
 }
 
 // offset: 0xA8C | func: 8
-static void SHswapstone_func_A8C(Object* self, s32 arg1, s32 arg2) {
+static void SHswapstone_func_A8C(Object* self, Object *override, struct AnimObj_Data* arg2) {
     menu_set(MENU_GAMEPLAY);
 }
 
 // offset: 0xAD4 | func: 9
-static s32 SHswapstone_func_AD4(Object* self, s32 arg1, s32 arg2) {
+static s32 SHswapstone_func_AD4(Object* self, Object *override, s32 arg2) {
     SHswapstone_Data* objdata;
     s8 joyXSign;
     s8 joyYSign;

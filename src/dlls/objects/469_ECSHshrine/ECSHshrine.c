@@ -3,11 +3,13 @@
 #include "game/gamebits.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/map_enums.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
+#include "sys/segment_1460.h"
 #include "dll.h"
-#include "functions.h"
 
 #include "dlls/objects/469_ECSHshrine.h"
 
@@ -29,12 +31,12 @@
   * and the other indices proceed anticlockwise from there (when viewed from above)
   */
 /*0x0*/ static Vec2f dCupCoords[] = {
-    {0.0f, 0.0f}, 
-    {0.0f, 0.0f}, 
-    {0.0f, 0.0f}, 
-    {0.0f, 0.0f},
-    {0.0f, 0.0f},
-    {0.0f, 0.0f}
+    VEC2F(0.0f, 0.0f), 
+    VEC2F(0.0f, 0.0f), 
+    VEC2F(0.0f, 0.0f), 
+    VEC2F(0.0f, 0.0f),
+    VEC2F(0.0f, 0.0f),
+    VEC2F(0.0f, 0.0f)
 };
 
 /** 6 slots for the cups: stores the index of the cup at each slot. */

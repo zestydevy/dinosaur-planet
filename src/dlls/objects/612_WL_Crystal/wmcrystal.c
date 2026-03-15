@@ -1,10 +1,9 @@
 #include "common.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
+#include "sys/segment_1D900.h"
 #include "sys/memory.h"
-
-void dl_clear_geometry_mode(Gfx **gdl, u32 mode);
-void dl_set_geometry_mode(Gfx **gdl, u32 mode);
-void func_8001EAA4(s32, s32, s32, f32);
+#include "sys/segment_1460.h"
+#include "sys/map.h"
 
 typedef struct {
 /*00*/    ObjSetup base;
@@ -506,8 +505,8 @@ u32 WL_Crystal_get_data_size(Object *self, u32 a1) {
 void WL_Crystal_handle_sun_flare_effects(Object* self) {
     static f32 dataEffectScale = 0.0f;
     static f32 dimRoomEffect = 0.0f;
-    Vec3f unitVector = { 0.0f, 0.0f, -1.0f };
-    Vec3f vCameraLook = { 0.0f, 0.0f, -1.0f };
+    Vec3f unitVector = VEC3F(0.0f, 0.0f, -1.0f);
+    Vec3f vCameraLook = VEC3F(0.0f, 0.0f, -1.0f);
     Vec3f vSunToCamera;
     f32 distanceToCamera2D;
     f32 dotProduct;

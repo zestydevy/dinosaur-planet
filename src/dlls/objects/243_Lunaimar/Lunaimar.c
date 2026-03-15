@@ -7,9 +7,9 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
 #include "unktypes.h"
-#include "functions.h"
 #include "dll.h"
 
 typedef struct {
@@ -246,7 +246,7 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     Object *temp_a0;
     s32 i;
     u16 sp62;
-    u16 sp60;
+    s16 sp60;
     u16 sp5E;
     s32 var_v1;
 
@@ -301,13 +301,13 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     Object *sidekick;
     Vec3f sp44;
     f32 sp40;
-    s32 *sp3C;
+    TextureAnimator *animator;
 
     objdata = (Lunaimar_ActualData*)baddie->objdata;
     sidekick = get_sidekick();
-    sp3C = func_800348A0(self, 0, 0);
+    animator = func_800348A0(self, 0, 0);
     objdata->unk12 += 0x1000;
-    *sp3C = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
+    animator->frame = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
     VECTOR_SUBTRACT(sidekick->positionMirror, self->positionMirror, sp44);
     sp40 = VECTOR_MAGNITUDE(sp44);
     if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < baddie->unk3E2)) {
@@ -406,7 +406,7 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     Object *spit;
     f32 temp_fv0;
 
-    spitSetup = obj_alloc_create_info(0x24, OBJ_LunaimarSpit);
+    spitSetup = obj_alloc_setup(0x24, OBJ_LunaimarSpit);
     spitSetup->x = self->srt.transl.x;
     spitSetup->y = self->srt.transl.y + 20.0f;
     spitSetup->z = self->srt.transl.z;
@@ -438,7 +438,7 @@ static void dll_243_func_1614(Object *self, Lunaimar_ActualData *objdata) {
     }
     if (objdata->unk14 == NULL) {
         setup = self->setup;
-        shieldSetup = obj_alloc_create_info(0x24, OBJ_LunaimarShield);
+        shieldSetup = obj_alloc_setup(0x24, OBJ_LunaimarShield);
         shieldSetup->x = self->srt.transl.x;
         shieldSetup->y = self->srt.transl.y + 10.0f;
         shieldSetup->z = self->srt.transl.z;

@@ -8,20 +8,23 @@
 #include "sys/dll.h"
 #include "sys/objmsg.h"
 #include "sys/gfx/model.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "sys/oldshadows.h"
+#include "sys/footsteps.h"
+#include "sys/segment_1D900.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "dll.h"
 #include "dll_def.h"
 #include "types.h"
-#include "functions.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/325_trigger.h"
+#include "prevent_bss_reordering.h"
 
 static const char str_1[] = "triggers: unknown trigger object %d.\n";
 static const char str_2[] = "TRIGGER: warning Script overflow\n";
@@ -595,7 +598,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 5:
-                oldshadow_toggle((u32) cmd->param2);
+                footsteps_toggle((u32) cmd->param2);
                 // "Trigger [%d], footstepsTurnOn %d" (default.dol)
                 break;
             case 6:

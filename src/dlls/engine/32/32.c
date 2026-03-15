@@ -570,8 +570,8 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
     s32 pad;
     ModelInstance* temp_s3;
     f32 spB4;
-    Vec3f spA8 = { -1.0f, 0.0f, 0.0f }; // _data_184C
-    Vec3f sp9C = { 0.0f, 0.0f, 1.0f }; // _data_1858
+    Vec3f spA8 = VEC3F(-1.0f, 0.0f, 0.0f); // _data_184C
+    Vec3f sp9C = VEC3F(0.0f, 0.0f, 1.0f); // _data_1858
     Camera* camera;
     Vtx* temp_a3;
     s32 sp90;

@@ -332,6 +332,12 @@ enum SoundID {
 
     SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
 
+    SOUND_57A = 0x57A, //tesla.c
+
+    SOUND_57C = 0x57C, //tesla.c
+    SOUND_57D = 0x57D, //tesla.c
+    SOUND_57E = 0x57E, //tesla.c
+
     SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
 
     SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag

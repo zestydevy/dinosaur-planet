@@ -2,6 +2,7 @@
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/segment_326A0.h"
 
 typedef s32 (*PointBackBSSUnk0_UnkC)(void*, s32, s32);
 
@@ -78,27 +79,31 @@ typedef struct {
 } PointBack_Data10;
 
 /*0x10*/ static PointBack_Data10 _data_10 = {
-    SOUND_A4E_Dinosaur_Grunt, 0x1000, 
-    SOUND_A4F_Dinosaur_Grunt, 0x1000, 
-    SOUND_A50_Dinosaur_Grunt, 0x1000, 
-    0, 
-    0, 
-    -30, 
-    0, 
-    0, 
-    0, 
-    30, 
-    0, 
-    0, 
-    0, 
-    -30, 
-    0, 
-    0, 
-    0, 
-    30, 
-    0, 
-    7.5, 
-    7.5
+    {
+        {SOUND_A4E_Dinosaur_Grunt, 0x1000}, 
+        {SOUND_A4F_Dinosaur_Grunt, 0x1000}, 
+        {SOUND_A50_Dinosaur_Grunt, 0x1000}
+    }, 
+    {
+        0, 
+        0, 
+        -30, 
+        0, 
+        0, 
+        0, 
+        30, 
+        0, 
+        0, 
+        0, 
+        -30, 
+        0, 
+        0, 
+        0, 
+        30, 
+        0, 
+        7.5, 
+        7.5
+    }
 };
 
 /*0x64*/ static u32 _data_64[] = {

@@ -11,18 +11,18 @@
 /*0x0*/ static Vec3f dWeedCoords[2][4] = {
     //Tumbleweeds
     {
-        {-22, 56, 0}, 
-        {0, 95, 54}, 
-        {18, 90, -12}, 
-        {0, 0, 0}
+        VEC3F(-22, 56, 0), 
+        VEC3F(0, 95, 54), 
+        VEC3F(18, 90, -12), 
+        VEC3F(0, 0, 0)
     }, 
 
     //Frost Weeds
     {
-        {0, 90, 56},
-        {4, 135, -70}, 
-        {34, 94, 0}, 
-        {-60, 88, 0}
+        VEC3F(0, 90, 56),
+        VEC3F(4, 135, -70), 
+        VEC3F(34, 94, 0), 
+        VEC3F(-60, 88, 0)
     }
 };
 
@@ -239,7 +239,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
     }    
 
     //Create a Tumbleweed
-    weedSetup = (Tumbleweed_Setup*)obj_alloc_create_info(sizeof(Tumbleweed_Setup), objID);
+    weedSetup = (Tumbleweed_Setup*)obj_alloc_setup(sizeof(Tumbleweed_Setup), objID);
     weedSetup->base.x = objData->heldWeedCoords[weedIdx].x + self->srt.transl.x;
     weedSetup->base.y = objData->heldWeedCoords[weedIdx].y + self->srt.transl.y;
     weedSetup->base.z = objData->heldWeedCoords[weedIdx].z + self->srt.transl.z;

@@ -2,7 +2,6 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -44,7 +43,7 @@ typedef struct {
 static void SHspore_change_flight_direction(Object* self, SHSpore_Data* objData);
 static void SHspore_jitter_flight_direction(Object* self, SHSpore_Data* objData);
 
-/*0x0*/ static Vec3f data_collision_test_point = { 0, 0, 0 };
+/*0x0*/ static Vec3f data_collision_test_point = VEC3F(0, 0, 0);
 /*0xC*/ static f32 data_collision_radius = 5.0f;
 
 // offset: 0x0 | ctor

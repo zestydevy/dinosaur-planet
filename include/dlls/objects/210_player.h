@@ -7,7 +7,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "types.h"
@@ -31,9 +31,6 @@ typedef struct Player_Data3B4 {
     s16 unk2C; //soundID?
     s16 unk2E;
     u8 unk30;
-    u8 pad31;
-    u8 pad32;
-    u8 pad33;
     BinFileEntry unk34;
 } Player_Data3B4;
 
@@ -348,8 +345,8 @@ typedef enum {
     PLAYER_ASTATE_Block_Pushing = 41,
     PLAYER_ASTATE_42 = 42, //crash?
     PLAYER_ASTATE_Collecting = 43, //crashes if there's no object (e.g. Blue Mushrooms)
-    PLAYER_ASTATE_44 = 44,
-    PLAYER_ASTATE_45 = 45,
+    PLAYER_ASTATE_Rope_Grab_From_Jump = 44,
+    PLAYER_ASTATE_Rope_Climb = 45,
     PLAYER_ASTATE_46 = 46,
     PLAYER_ASTATE_47 = 47,
     PLAYER_ASTATE_Hurt_Tumbling = 48,

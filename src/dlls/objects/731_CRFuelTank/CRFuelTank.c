@@ -1,5 +1,4 @@
 #include "dll.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "sys/main.h"
 #include "game/objects/object_id.h"

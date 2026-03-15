@@ -1,6 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "functions.h"
+#include "sys/objprint.h"
 
 // offset: 0x0 | ctor
 void WCSabreChase_ctor(void *dll) { }

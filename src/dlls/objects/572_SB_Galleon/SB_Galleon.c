@@ -5,8 +5,10 @@
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "game/objects/object_id.h"
-#include "functions.h"
 #include "dll.h"
 #include "sys/main.h"
 #include "sys/map_enums.h"
@@ -349,7 +351,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
                 objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
             // @fake
-            if (&self) {}
+            if ((s32)&self) {}
         case 7:
             if (objdata->soundHandle) {
                 gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);

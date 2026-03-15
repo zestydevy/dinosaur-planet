@@ -1,13 +1,12 @@
 #include "PR/os_internal.h"
 #include "sys/audio.h"
 #include "sys/dl_debug.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
 #include "sys/main.h"
 #include "sys/print.h"
 #include "sys/rsp_segment.h"
 #include "sys/thread.h"
 #include "sys/scheduler.h"
-#include "functions.h"
 
 GfxTaskMesg D_800918D0 = {0, 0};
 GfxTaskMesg D_800918D8 = {0, 8};
@@ -234,8 +233,8 @@ static const char str_8009a254[] = "scheduler: Looks like the DP has crashed %s"
 void some_dummied_task_func(OSScTask *task) { }
 
 Gfx *sc_func_8003BAD0(OSSched *sc, 
-    char **retFile, u32 *retunkC, s32 *retunk10,
-    char **retFile_2, u32 *retunkC_2, s32 *retunk10_2) {
+    const char **retFile, u32 *retunkC, Gfx **retunk10,
+    const char **retFile_2, u32 *retunkC_2, Gfx **retunk10_2) {
 
     OSMesg queueBuffer[8];
     OSMesg queueMsg;
@@ -243,10 +242,10 @@ Gfx *sc_func_8003BAD0(OSSched *sc,
     s64 tempCmds[2];
     Gfx *displayListPtr;
     OSTask *task;
-    s32 dldi_unk10_2;
-    s32 dldi_unk10;
-    char *dldi_file_2;
-    char *dldi_file;
+    Gfx *dldi_unk10_2;
+    Gfx *dldi_unk10;
+    const char *dldi_file_2;
+    const char *dldi_file;
     s32 done;
     s32 numRetraces;
     s32 gotRdpDone;
@@ -389,14 +388,14 @@ void __scHandleRetrace(OSSched *sc) {
     u8 setRDPTaskToNull = FALSE;
     Gfx *displayListPtr1;
     Gfx *displayListPtr2;
-    s32 sp_dldi_unk10;
-    s32 sp_dldi_unk10_2;
-    s32 dp_dldi_unk10;
-    s32 dp_dldi_unk10_2;
-    char *sp_dldi_file;
-    char *sp_dldi_file_2;
-    char *dp_dldi_file;
-    char *dp_dldi_file_2;
+    Gfx *sp_dldi_unk10;
+    Gfx *sp_dldi_unk10_2;
+    Gfx *dp_dldi_unk10;
+    Gfx *dp_dldi_unk10_2;
+    const char *sp_dldi_file;
+    const char *sp_dldi_file_2;
+    const char *dp_dldi_file;
+    const char *dp_dldi_file_2;
     u32 sp_dldi_unkC;
     u32 sp_dldi_unkC_2;
     u32 dp_dldi_unkC;

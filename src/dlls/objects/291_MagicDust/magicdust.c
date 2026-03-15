@@ -11,7 +11,7 @@
 #define DURATION_LIFETIME 1800.0f
 #define DURATION_VANISH 180.0f
 
-/*0x0*/ static Vec3f dCollisionPoint = { 0.0f, 0.0f, 0.0f };
+/*0x0*/ static Vec3f dCollisionPoint = VEC3F(0.0f, 0.0f, 0.0f);
 
 static void MagicDust_collect(Object* self, Object* player, MagicDust_Data* objData);
 

@@ -12,7 +12,7 @@
 #define SCALE_Z 20.0f
 
 #define TRI_FLAGS (0x40 | 0x1)
-#define MASK_TRI(v0, v1, v2) {TRI_FLAGS, v0, v1, v2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define MASK_TRI(v0, v1, v2) {TRI_FLAGS, v0, v1, v2, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 
 /*0x0*/ static const DLTri sMaskTris[12] = {
     MASK_TRI(2, 0, 1),
@@ -30,14 +30,14 @@
 };
 
 /*0xC0*/ static const Vec3f sMaskVertCoords[8] = {
-    {-MASK_WIDTH,   0,            -MASK_DEPTH},
-    { MASK_WIDTH,   0,            -MASK_DEPTH},
-    {-MASK_WIDTH,   0,             MASK_DEPTH},
-    { MASK_WIDTH,   0,             MASK_DEPTH},
-    {-MASK_WIDTH,   MASK_HEIGHT,  -MASK_DEPTH},
-    { MASK_WIDTH,   MASK_HEIGHT,  -MASK_DEPTH},
-    {-MASK_WIDTH,   MASK_HEIGHT,   MASK_DEPTH},
-    { MASK_WIDTH,   MASK_HEIGHT,   MASK_DEPTH}
+    {{-MASK_WIDTH,   0,            -MASK_DEPTH}},
+    {{ MASK_WIDTH,   0,            -MASK_DEPTH}},
+    {{-MASK_WIDTH,   0,             MASK_DEPTH}},
+    {{ MASK_WIDTH,   0,             MASK_DEPTH}},
+    {{-MASK_WIDTH,   MASK_HEIGHT,  -MASK_DEPTH}},
+    {{ MASK_WIDTH,   MASK_HEIGHT,  -MASK_DEPTH}},
+    {{-MASK_WIDTH,   MASK_HEIGHT,   MASK_DEPTH}},
+    {{ MASK_WIDTH,   MASK_HEIGHT,   MASK_DEPTH}}
 };
 
 typedef struct {

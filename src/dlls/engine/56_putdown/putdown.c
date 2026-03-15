@@ -35,7 +35,7 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
             obj_destroy_object(food);
         }
         
-        foodSetup = obj_alloc_create_info(sizeof(PlacedFood_Setup),
+        foodSetup = obj_alloc_setup(sizeof(PlacedFood_Setup),
                                            foodDefs[foodIndex].objectID);
         foodSetup->base.fadeDistance = 0xFF;
         foodSetup->base.loadFlags = 2;

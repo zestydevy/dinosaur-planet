@@ -2,7 +2,6 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
-#include "functions.h"
 #include "dll.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -12,6 +11,9 @@
 #include "sys/map_enums.h"
 #include "sys/menu.h"
 #include "sys/map.h"
+#include "sys/objprint.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "types.h"
 #include "sys/rand.h"
 

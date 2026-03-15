@@ -1,4 +1,11 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "dlls/objects/214_animobj.h"
+#include "game/objects/object.h"
+#include "sys/main.h"
+#include "sys/map_enums.h"
+#include "sys/math.h"
+#include "sys/objprint.h"
+#include "dll.h"
 
 /*0x0*/ static s16 _data_0[] = {
     0x07d7, 0x07d8, 0x07d9, 0x07da, 0x07db, 0x0000
@@ -9,12 +16,12 @@
 };
 
 /*0x18*/ static Vec3f _data_18[] = {
-    12457.1f, -1474.9f, -6690.4f,
-    12457.1f, -1474.9f, -6690.4f,
-    11181.0f, -1211.4f, -7948.7f,
-    12691.3f, -1.9f, -8580.6f,
-    12691.3f, -1.9f, -8580.6f,
-    0.0f, 0.0f, 0.0f
+    VEC3F(12457.1f, -1474.9f, -6690.4f),
+    VEC3F(12457.1f, -1474.9f, -6690.4f),
+    VEC3F(11181.0f, -1211.4f, -7948.7f),
+    VEC3F(12691.3f, -1.9f, -8580.6f),
+    VEC3F(12691.3f, -1.9f, -8580.6f),
+    VEC3F(0.0f, 0.0f, 0.0f)
 };
 
 static int dll_796_func_1E8(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3);

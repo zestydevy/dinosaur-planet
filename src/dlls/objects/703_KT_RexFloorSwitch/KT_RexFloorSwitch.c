@@ -3,8 +3,8 @@
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
-#include "segment_334F0.h"
-#include "functions.h"
+#include "sys/objprint.h"
+#include "sys/segment_334F0.h"
 #include "dll.h"
 #include "macros.h"
 
@@ -60,7 +60,7 @@ void dll_703_control(Object* self) {
     s8 sp4B;
     f32 temp_fv0;
     u8 temp_v0_3;
-    s32* sp3C;
+    TextureAnimator* sp3C;
 
     objsetup = (KT_RexFloorSwitch_Setup*)self->setup;
     objdata = (KT_RexFloorSwitch_Data*)self->data;
@@ -68,7 +68,7 @@ void dll_703_control(Object* self) {
     self->unkDC = main_get_bits(objsetup->unk1C);
     sp3C = func_800348A0(self, 0, 0);
     if (self->unkDC < 2) {
-        *sp3C = 0;
+        sp3C->frame = 0;
         if ((self->unkDC == 0) && (self->unkE0 != 0)) {
             objdata->unk14 |= 4;
         }
@@ -82,7 +82,7 @@ void dll_703_control(Object* self) {
         }
     } else {
         if (self->unkE0 != 0) {
-            *sp3C = 0x100;
+            sp3C->frame = 0x100;
             objdata->unk14 &= ~0x1;
         } else {
             objdata->unk14 |= 2;
@@ -178,7 +178,7 @@ void dll_703_control(Object* self) {
             if (objdata->unk10 == 0.0f) {
                 objdata->unk10 = 8.0f;
             }
-            var_v0 = (s32) ((f32) *sp3C + (gUpdateRateF * objdata->unk10));
+            var_v0 = (s32) ((f32) sp3C->frame + (gUpdateRateF * objdata->unk10));
             if (var_v0 >= 0x201) {
                 var_v0 = 0x400 - var_v0;
                 objdata->unk10 = -objdata->unk10;
@@ -186,9 +186,9 @@ void dll_703_control(Object* self) {
                 var_v0 = 0x200 - var_v0;
                 objdata->unk10 = -objdata->unk10;
             }
-            *sp3C = var_v0;
+            sp3C->frame = var_v0;
         } else {
-            var_v0 = (s32) ((f32) *sp3C + (gUpdateRateF * objdata->unk10));
+            var_v0 = (s32) ((f32) sp3C->frame + (gUpdateRateF * objdata->unk10));
             if (var_v0 >= 0x201) {
                 var_v0 = 0x400 - var_v0;
                 objdata->unk10 = -objdata->unk10;
@@ -196,21 +196,21 @@ void dll_703_control(Object* self) {
                 var_v0 = 0x100;
                 objdata->unk10 = 0.0f;
             }
-            *sp3C = var_v0;
+            sp3C->frame = var_v0;
         }
         if (!(objdata->unk14 & 6)) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_486, NULL, PARTFXFLAG_2, -1, NULL);
         }
     } else {
-        if (*sp3C != 0) {
-            var_v0 = (s32) ((f32) *sp3C + (gUpdateRateF * objdata->unk10));
+        if (sp3C->frame != 0) {
+            var_v0 = (s32) ((f32) sp3C->frame + (gUpdateRateF * objdata->unk10));
             if (var_v0 >= 0x201) {
                 var_v0 = 0x400 - var_v0;
                 objdata->unk10 = -objdata->unk10;
             } else if (var_v0 < 0x100) {
                 var_v0 = 0;
             }
-            *sp3C = var_v0;
+            sp3C->frame = var_v0;
         }
     }
     objdata->unk9 = objdata->unk8;

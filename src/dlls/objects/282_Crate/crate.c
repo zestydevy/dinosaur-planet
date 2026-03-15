@@ -150,7 +150,7 @@ void crate_control(Object* self) {
         
         //Create an Energy Egg
         if (objData->useNearbyCollectable == FALSE) {
-            foodSetup = (Collectable_Setup*)obj_alloc_create_info(
+            foodSetup = (Collectable_Setup*)obj_alloc_setup(
                 sizeof(Collectable_Setup), 
                 OBJ_meatPickup
             );

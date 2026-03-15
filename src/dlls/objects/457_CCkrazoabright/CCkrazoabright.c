@@ -1,7 +1,12 @@
-#include "common.h"
-
-extern Block_0x28Struct* func_8004A284(Block*, s32);
-extern BlockTexture* func_8004A2CC(s32);
+#include "PR/ultratypes.h"
+#include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
+#include "game/objects/object.h"
+#include "sys/main.h"
+#include "sys/map.h"
+#include "sys/math.h"
+#include "sys/objanim.h"
+#include "dll.h"
 
 typedef struct {
     f32 timer;          //manages delay and blending strength for updating the Krazoa symbol
@@ -34,13 +39,13 @@ typedef enum {
 
 /** Coordinates of Courtyard well's two Blocks (with Krazoa symbol) */
 /*0x0*/ static Vec3f data_coords_well_blocks[] = {
-    {4488, 0, 17606}, 
-    {4344, 0, 17606}
+    VEC3F(4488, 0, 17606), 
+    VEC3F(4344, 0, 17606)
 };
 /** Coordinates of Courtyard's two ocean-front Blocks (with lever columns) */
 /*0x18*/ static Vec3f data_coords_lever_blocks[] = {
-    {5506.7002, -93, 17574}, 
-    {5587.5, -93, 18058}
+    VEC3F(5506.7002, -93, 17574), 
+    VEC3F(5587.5, -93, 18058)
 };
 /*0x30*/ static u8 data_krazoa_symbol_shape_animatorIDs[] = {
     11, 14, 15, 16, 13, 12
@@ -158,7 +163,8 @@ void CCkrazoabright_colour_krazoa_symbol_tablet_quest(Object* self) {
         objData->prevPoints[index] = gamebitValueInverted;
         objData->pointsLit[index] = gamebitValueInverted;
 
-        if (&objData->prevPoints[0]) {
+        // @bug? Checking the address of prevPoints instead of its value. This will always be true.
+        if ((s32)objData->prevPoints) {
             colours[index] = 0;
         } else {
             colours[index] = 0xFF;
@@ -479,7 +485,7 @@ void CCkrazoabright_apply_blending_krazoa_symbol(u8* colours) {
             //If the shape has any of the 6 relevant animatorIDs, apply its new texture blend value
             for (a = 0; a < 6; a++){
                 if (data_krazoa_symbol_shape_animatorIDs[a] == shapes[s].animatorID){
-                    func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->texIdx)->unk4 = colours[a];
+                    func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->textureIndex)->unk4 = colours[a];
                     break;
                 }
             }
@@ -523,7 +529,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
             //If the shape's animatorIDs is 11 (used by lever icons), apply new texture blend value
             if (shapes[s].animatorID == 11) {
                 colourToSet = colour;
-                func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->texIdx)->unk4 = colourToSet;
+                func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->textureIndex)->unk4 = colourToSet;
             }
         }
     }

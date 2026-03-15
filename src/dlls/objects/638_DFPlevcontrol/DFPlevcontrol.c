@@ -2,13 +2,14 @@
 
 #include "PR/ultratypes.h"
 #include "dll.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "sys/main.h"
 #include "sys/map_enums.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
+#include "sys/segment_1050.h"
+#include "sys/segment_1460.h"
 #include "dlls/engine/17_partfx.h"
 #include "dlls/objects/210_player.h"
 

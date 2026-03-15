@@ -4,17 +4,17 @@
 #include "PR/sched.h"
 #include "game/gamebits.h"
 #include "libnaudio/n_unkfuncs.h"
+#include "sys/audio/amAudio.h"
 #include "sys/asset_thread.h"
 #include "sys/audio.h"
 #include "sys/joypad.h"
 #include "sys/crash.h"
 #include "sys/exception.h"
 #include "sys/fs.h"
-#include "sys/gfx/map.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
 #include "sys/objects.h"
-#include "sys/oldshadows.h"
+#include "sys/footsteps.h"
 #include "sys/print.h"
 #include "sys/rarezip.h"
 #include "sys/rcp.h"
@@ -25,9 +25,13 @@
 #include "sys/rsp_segment.h"
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
+#include "sys/segment_1D900.h"
+#include "sys/segment_53F00.h"
 #include "dll.h"
 #include "constants.h"
-#include "functions.h"
+
+#define DONGLE_LSFS 0x4C534653
+#define DONGLE_MPFS 0x4D504653
 
 /* -------- .data start -------- */
 const char *gGameBuildVersion = "1.3623";
@@ -205,7 +209,7 @@ void game_init(void) {
     diPrintfInit();
     func_80053300();
     shadows_init();
-    oldshadow_init();
+    footsteps_init();
     fonts_init();
     menu_init();
     init_audio(&osscheduler_, /*threadPriority=*/14);
@@ -667,7 +671,8 @@ void check_dongle(void) {
      * It is not known which one the original dongle for this ROM
      * was intended to use.
      */
-    if ((head == 'LSFS') || (head == 'MPFS')) {
+    
+    if ((head == DONGLE_LSFS) || (head == DONGLE_MPFS)) {
         return;
     } else {
         int *write = (int *)(u32)EXPANSION_RAM_START;

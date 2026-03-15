@@ -1,8 +1,6 @@
 #include "PR/gbi.h"
 #include "common.h"
-#include "functions.h"
 #include "sys/map.h"
-#include "sys/gfx/map.h"
 #include "sys/rcp.h"
 #include "sys/rsp_segment.h"
 
@@ -340,7 +338,7 @@ void func_80037F9C(Gfx** gdl, Func_80037F9C_Struct* arg1, s32 arg2, s32 arg3, u8
                 var_v0 = var_v0->next;
             }
             sp68->words.w0 = var_v0->gdl->words.w0;
-            sp68->words.w1 = OS_PHYSICAL_TO_K0(var_v0 + 1);
+            sp68->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(var_v0 + 1);
             
             sp68++;
             gSPDisplayList(sp68++, OS_PHYSICAL_TO_K0(var_v0->gdl + 1));
@@ -706,25 +704,11 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/rcp/func_800390A4.s")
-#else
-// https://decomp.me/scratch/vcSVM
-typedef struct Unk2 {
-    void *unk0;
-    s32 unk4;
-    union {
-        struct {
-            s16 unk8;
-            s16 unkA;
-        } shorts;
-        Gfx *gdl;
-    };
-} Unk2;
-void func_800390A4(Gfx** arg0, Unk2* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s32 arg6, s32 arg7, f32 arg8, f32 arg9, s32 arg10, s32 arg11) {
-    Unk2* var_s4;
+void func_800390A4(Gfx** arg0, Func_80037F9C_Struct* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s32 arg6, s32 arg7, f32 arg8, f32 arg9, u32 arg10, s32 arg11) {
     s32 temp_a0;
     s32 resolution;
+    Texture* var_s7;
+    Gfx* temp_s0;
     s32 width; // cpCC
     s32 height; // spC8
     s32 minWidth;
@@ -733,88 +717,76 @@ void func_800390A4(Gfx** arg0, Unk2* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg
     s32 spB8;
     s32 spB4;
     s32 var_s5;
-    Gfx* temp_s0;
+    s32 j;
     Gfx* spA8;
-    Unk2* var_s7;
 
     spA8 = *arg0;
     resolution = vi_get_current_size();
     height = ((u16)GET_VIDEO_HEIGHT(resolution)) * 4;
     width = GET_VIDEO_WIDTH(resolution) * 4;
-    if (arg11 & 0x4000) {
-        temp_s0 = &D_80091868[(arg11 & 0xFF) * 3];
-    } else {
-        temp_s0 = &D_80091828[(arg11 & 0xFF) * 3];
-    }
+    temp_s0 = (arg11 & 0x4000)
+        ? &D_80091868[(arg11 & 0xFF) * 3]
+        : &D_80091828[(arg11 & 0xFF) * 3];
     gSPGeometryMode(spA8, 0xFFFFFF, G_SHADING_SMOOTH | G_SHADE);
     dl_apply_geometry_mode(&spA8);
     bcopy(temp_s0, spA8, 8);
     dl_apply_combine(&spA8);
     bcopy(temp_s0 + 1, spA8, 8);
     dl_apply_other_mode(&spA8);
-    dl_set_prim_color(&spA8, ((u32) arg10 >> 0x18) & 0xFF, ((u32) arg10 >> 0x10) & 0xFF, ((u32) arg10 >> 8) & 0xFF, (u8) (arg10 & 0xFF));
-    var_s7 = arg1->unk0;
+    dl_set_prim_color(&spA8, (arg10 >> 0x18) & 0xFF, (arg10 >> 0x10) & 0xFF, (arg10 >> 8) & 0xFF, arg10 & 0xFF);
     arg8 *= 4.0f;
     arg9 *= 4.0f;
-    if (var_s7 != NULL) {
-        var_s4 = arg1;
-        do {
-            minWidth = (s32) ((f32) var_s4->shorts.unk8 * arg8) + (s32) (arg2 * 4.0f);
-            minHeight = (s32) ((f32) var_s4->shorts.unkA * arg9) + (s32) (arg3 * 4.0f);
-            if ((minWidth < width) && (minHeight < height)) {
-                spB8 = (s32) (arg4 * arg8) + minWidth;
-                spB4 = (s32) (arg5 * arg9) + minHeight;
-                if ((spB8 > 0) && (spB4 > 0) && (minWidth < spB8) && (minHeight < spB4)) {
-                    temp_a0 = (s32) arg4 - 1;
-                    var_s5 = (temp_a0 << 12);
-                    var_s5 /= (spB8 - minWidth);
-                    if (arg11 & 0x1000) {
-                        arg6 += temp_a0 << 5;
-                        var_s5 = -var_s5;
-                    }
-                    temp_a0 = (s32) arg5 - 1;
-                    var_s3 = temp_a0 << 12;
-                    var_s3 /= spB4 - minHeight;
-                    if (arg11 & 0x2000) {
-                        arg7 = temp_a0 << 5;
-                        var_s3 = -var_s3;
-                    }
-                    if (minWidth < 0) {
-                        arg6 += (-minWidth * var_s5) >> 7;
-                        minWidth = 0;
-                    }
-                    if (minHeight < 0) {
-                        arg7 += (-minHeight * var_s3) >> 7;
-                        minHeight = 0;
-                    }
-                    temp_s0 = (Gfx *)var_s7->gdl;
-                    spA8->words.w0 = temp_s0->words.w0;
-                    spA8->words.w1 = OS_PHYSICAL_TO_K0(tex_get_frame_img((Texture* ) var_s7, var_s4->unk4));
-                    spA8++;
-                    temp_s0++;
-                    gSPDisplayList(spA8++, OS_PHYSICAL_TO_K0(temp_s0));
-                    gSPTextureRectangle(spA8++, 
-                    /* xl */ minWidth,
-                    /* xl */ minHeight,
-                    /* xh */ spB8,
-                    /* yh */ spB4,
-                    /* tile */ 0,
-                    /* s */ arg6,
-                    /* t */ arg7,
-                    /* dsdx */ var_s5, 
-                    /* dsdy */ var_s3
-                    );
-                    gDLBuilder->needsPipeSync = 1;
+    for (j = 0, var_s7 = arg1[j].unk0;var_s7 != NULL; j++, var_s7 = arg1[j].unk0) {
+        var_s3 = (s32) (arg2 * 4.0f);
+        var_s5 = (s32) (arg3 * 4.0f);
+        minWidth = (s32) (arg1[j].unk8 * arg8) + var_s3;
+        minHeight = (s32) (arg1[j].unkA * arg9) + var_s5;
+        if ((minWidth < width) && (minHeight < height)) {
+            spB8 = (s32) (arg4 * arg8) + minWidth;
+            spB4 = (s32) (arg5 * arg9) + minHeight;
+            if ((spB8 > 0) && (spB4 > 0) && (minWidth < spB8) && (minHeight < spB4)) {
+                var_s5 = (((s32) arg4 - 1) << 12) / (spB8 - minWidth);
+                if (arg11 & 0x1000) {
+                    arg6 += ((s32) arg4 - 1) << 5;
+                    var_s5 = -var_s5;
                 }
+                var_s3 = (((s32) arg5 - 1) << 12) / (spB4 - minHeight);
+                if (arg11 & 0x2000) {
+                    arg7 = ((s32) arg5 - 1) << 5;
+                    var_s3 = -var_s3;
+                }
+                if (minWidth < 0) {
+                    arg6 += (-minWidth * var_s5) >> 7;
+                    minWidth = 0;
+                }
+                if (minHeight < 0) {
+                    arg7 += (-minHeight * var_s3) >> 7;
+                    minHeight = 0;
+                }
+                temp_s0 = var_s7->gdl;
+                spA8->words.w0 = temp_s0->words.w0;
+                spA8->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tex_get_frame_img(var_s7, arg1[j].unk4));
+                spA8++;
+                temp_s0++;
+                gSPDisplayList(spA8++, OS_PHYSICAL_TO_K0(temp_s0));
+                gSPTextureRectangle(spA8++, 
+                /* xl */ minWidth,
+                /* xl */ minHeight,
+                /* xh */ spB8,
+                /* yh */ spB4,
+                /* tile */ 0,
+                /* s */ arg6,
+                /* t */ arg7,
+                /* dsdx */ var_s5, 
+                /* dsdy */ var_s3
+                );
+                gDLBuilder->needsPipeSync = 1;
             }
-            var_s7 = var_s4[1].unk0;
-            var_s4 += 1;
-        } while (var_s7 != NULL);
+        }
     }
     tex_render_reset();
     *arg0 = spA8;
 }
-#endif
 
 void func_80039560(s32 a0, s32 a1, s32 a2, s32 a3) {
 

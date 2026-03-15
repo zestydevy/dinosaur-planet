@@ -1,7 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
-#include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -10,6 +9,7 @@
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/math.h"
 #include "sys/rand.h"
 #include "types.h"
@@ -328,7 +328,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
 
         switch (objdata->unk15) {
             case 0: {
-                scorpionSetup = obj_alloc_create_info(sizeof(Scorpion_Setup), OBJ_Scorpion);
+                scorpionSetup = obj_alloc_setup(sizeof(Scorpion_Setup), OBJ_Scorpion);
                 scorpionSetup->unk18 = rand_next(-127, 126);
                 scorpionSetup->base.x = rand_next(-10, 10) + self->srt.transl.x;
                 scorpionSetup->base.y = self->srt.transl.y;
@@ -339,7 +339,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 1: {
-                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Green_scarab);
+                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Green_scarab);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
@@ -371,7 +371,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 2: {
-                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Red_scarab);
+                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Red_scarab);
                 scarabSetup->unk18 = rand_next(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
@@ -404,7 +404,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 3: {
-                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Gold_scarab);
+                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
                 scarabSetup->unk18 = rand_next(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
@@ -437,7 +437,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 4: {
-                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Rain_scarab);
+                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
                 scarabSetup->unk18 = rand_next(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
@@ -472,9 +472,9 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             case 5:
             case 6: {
                 if (objdata->unk15 == 5) {
-                    foodPickupSetup = obj_alloc_create_info(sizeof(Collectable_Setup), OBJ_meatPickup);
+                    foodPickupSetup = obj_alloc_setup(sizeof(Collectable_Setup), OBJ_meatPickup);
                 } else {
-                    foodPickupSetup = obj_alloc_create_info(sizeof(Collectable_Setup), OBJ_applePickup);
+                    foodPickupSetup = obj_alloc_setup(sizeof(Collectable_Setup), OBJ_applePickup);
                 }
                 foodPickupSetup->objHitsValue = 20;
                 foodPickupSetup->gamebitCount = NO_GAMEBIT;

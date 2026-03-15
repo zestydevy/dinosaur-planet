@@ -1,0 +1,27 @@
+.text = 0x0:
+dll_598_ctor = 0x0;
+dll_598_dtor = 0xC;
+dll_598_setup = 0x18;
+dll_598_control = 0xE4;
+dll_598_update = 0x238;
+dll_598_print = 0x244;
+dll_598_free = 0x330;
+dll_598_get_model_flags = 0x340;
+dll_598_get_data_size = 0x350;
+dll_598_func_364 = 0x364;
+dll_598_func_470 = 0x470;
+dll_598_func_610 = 0x610;
+dll_598_func_62C = 0x62C;
+dll_598_func_650 = 0x650;
+dll_598_func_72C = 0x72C;
+dll_598_func_A20 = 0xA20;
+dll_598_func_1124 = 0x1124;
+dll_598_func_11C8 = 0x11C8;
+
+.rodata = 0x1530:
+
+.data = 0x1590:
+_data_0 = 0x0; // absolute:0x1590
+_data_DC = 0xDC; // absolute:0x166C
+_data_154 = 0x154; // absolute:0x16E4
+_data_160 = 0x160; // absolute:0x16F0

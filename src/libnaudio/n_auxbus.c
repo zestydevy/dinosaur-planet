@@ -17,7 +17,7 @@ Acmd *n_alAuxBusPull(s32 sampleOffset, Acmd *cmdptr, s32 fxBus, s32 *numpulls) {
 
 	*numpulls = 0;
 
-	for (i = 0; i < bus->sourceCount; i++) {
+	for (i = 0; i < (u32)bus->sourceCount; i++) {
 		if (sources[i]->vvoice && sources[i]->vvoice->fxBus == fxBus && sources[i]->vvoice->pvoice && sources[i]->vvoice->pvoice->unk8c >= 64) {
 			cmd = n_alEnvmixerPull(sources[i], sampleOffset, cmd);
 			*numpulls = *numpulls + 1;
@@ -42,7 +42,7 @@ Acmd *n_alAuxBusPull(s32 sampleOffset, Acmd *cmdptr, s32 fxBus, s32 *numpulls) {
 		n_aNoop(cmd++, 1616, sp2c, sp30);
 	}
 
-	for (i = 0; i < bus->sourceCount; i++) {
+	for (i = 0; i < (u32)bus->sourceCount; i++) {
 		if ((sources[i]->vvoice && sources[i]->vvoice->fxBus == fxBus && (sources[i]->vvoice->pvoice == NULL || sources[i]->vvoice->pvoice->unk8c < 64))
 				|| (sources[i]->vvoice == 0 && !fxBus)) {
 			Acmd *prev = cmd;

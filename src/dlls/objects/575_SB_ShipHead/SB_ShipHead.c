@@ -9,9 +9,10 @@
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
+#include "sys/objprint.h"
+#include "sys/segment_326A0.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "functions.h"
 
 typedef struct {
 /*00*/ Object *cloudrunner;
@@ -129,7 +130,7 @@ void SB_ShipHead_control(Object *self) {
         get_object_child_position(self, &ox, &oy, &oz);
         self->srt.transl.y -= 50.0f;
         self->srt.transl.z += 300.0f;
-        fireballSetup = obj_alloc_create_info(sizeof(ObjSetup), OBJ_SB_FireBall);
+        fireballSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_FireBall);
         fireballSetup->loadDistance = 0xFF;
         fireballSetup->fadeDistance = 0xFF;
         fireballSetup->loadFlags = 2;
@@ -152,7 +153,7 @@ void SB_ShipHead_control(Object *self) {
     if (sp3B == 1) {
         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_17A_Galleon_Roar, 43, NULL, NULL, 0, NULL);
         player = get_player();
-        minifireSetup = obj_alloc_create_info(sizeof(ObjSetup), OBJ_SB_MiniFire);
+        minifireSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_MiniFire);
         minifireSetup->x = player->positionMirror.x + 100.0f;
         minifireSetup->y = rand_next(-6, 6) + player->positionMirror.y + 50.0f;
         minifireSetup->z = rand_next(-6, 6) + player->positionMirror.z + 45.0f;

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sys/gfx/map.h"
+#include "sys/map.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/common/collectable.h"
 
@@ -38,7 +38,7 @@ typedef struct {
 /*0x0*/ static DLL_IModgfx* dModGfxDLL = NULL;
 
 #define TRI_FLAG (0x40)
-#define MASK_TRI(v0, v1, v2) {TRI_FLAG, v0, v1, v2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define MASK_TRI(v0, v1, v2) {TRI_FLAG, v0, v1, v2, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 
 /*0x0*/ static const DLTri sMaskTris[12] = {
     MASK_TRI(2, 1, 0),
@@ -52,18 +52,18 @@ typedef struct {
     MASK_TRI(4, 0, 1),
     MASK_TRI(4, 1, 5),
     MASK_TRI(0, 4, 2),
-    MASK_TRI(2, 4, 6),
+    MASK_TRI(2, 4, 6)
 };
 
 /*0xC0*/ static const Vec3f sMaskVertCoords[8] = {
-   {-MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP},
-   { MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP},
-   {-MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP},
-   { MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP},
-   {-MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE},
-   { MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE},
-   {-MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE},
-   { MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE}
+   {{-MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP}},
+   {{ MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP}},
+   {{-MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP}},
+   {{ MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP}},
+   {{-MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE}},
+   {{ MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE}},
+   {{-MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE}},
+   {{ MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE}}
 };
 
 /*0x120*/ static const f32 sMaskSpeeds[1] = {
@@ -164,7 +164,7 @@ void DIMTent_control(Object* self) {
         //Drop the bridge cog if this tent's index matches the random one picked by DIMLevelControl
         if (main_get_bits(BIT_DIM_Gear_3_Random_Tent) == (u32)objSetup->tentIndex) {
             Collectable_Setup* cogSetup;
-            cogSetup = (Collectable_Setup*)obj_alloc_create_info(sizeof(Collectable_Setup), OBJ_DIMBridgeCogCol);
+            cogSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_DIMBridgeCogCol);
             cogSetup->base.x = objSetup->base.x;
             cogSetup->base.y = objSetup->base.y + 8.0f;
             cogSetup->base.z = objSetup->base.z;

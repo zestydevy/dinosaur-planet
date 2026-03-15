@@ -2,13 +2,12 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "sys/camera.h"
-#include "sys/gfx/map.h"
 #include "sys/gfx/model.h"
 #include "sys/map.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "functions.h"
+#include "sys/objprint.h"
 #include "types.h"
 
 typedef struct {

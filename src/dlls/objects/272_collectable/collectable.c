@@ -7,6 +7,7 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/newshadows.h"
+#include "sys/segment_326A0.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/foodbag.h"
@@ -14,8 +15,6 @@
 #include "types.h"
 
 #include "dlls/objects/common/collectable.h"
-
-extern u16 func_80031BBC(f32 x, f32 y, f32 z);
 
 typedef struct {
     u32 soundHandle;            //Cleared on free, but not used for any sound calls

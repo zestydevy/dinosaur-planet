@@ -1,7 +1,6 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dll.h"
-#include "functions.h"
 #include "types.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
@@ -14,6 +13,7 @@
 #include "sys/gfx/modgfx.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "sys/rand.h"
 
@@ -585,7 +585,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
         
         switch (type) {
         case SmallBasket_ITEM_Scorpion:
-            scorpionSetup = (Scorpion_Setup*)obj_alloc_create_info(sizeof(Scorpion_Setup), OBJ_Scorpion);
+            scorpionSetup = (Scorpion_Setup*)obj_alloc_setup(sizeof(Scorpion_Setup), OBJ_Scorpion);
             scorpionSetup->unk18 = rand_next(-0x7F, 0x7E);
             scorpionSetup->base.x = rand_next(-10, 10) + self->srt.transl.x;
             scorpionSetup->base.y = self->srt.transl.y;
@@ -595,7 +595,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj_create((ObjSetup*)scorpionSetup, 5, self->mapID, -1, self->parent);
             break;
         case SmallBasket_ITEM_Scarab_Green:
-            scarabSetup = (Scarab_Setup*)obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Green_scarab);
+            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Green_scarab);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
@@ -636,7 +636,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Red:
-            scarabSetup = (Scarab_Setup*)obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Red_scarab);
+            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Red_scarab);
             scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
@@ -677,7 +677,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Gold:
-            scarabSetup = (Scarab_Setup*)obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Gold_scarab);
+            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
             scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
@@ -719,7 +719,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Rainbow:
-            scarabSetup = (Scarab_Setup*)obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Rain_scarab);
+            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
             scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
@@ -763,9 +763,9 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
         case SmallBasket_ITEM_Energy_Egg:
         case SmallBasket_ITEM_Apple:
             if (objData->storedItemType == SmallBasket_ITEM_Energy_Egg) {
-                foodSetup = (Collectable_Setup*)obj_alloc_create_info(sizeof(Collectable_Setup), OBJ_meatPickup);
+                foodSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_meatPickup);
             } else {
-                foodSetup = (Collectable_Setup*)obj_alloc_create_info(sizeof(Collectable_Setup), OBJ_applePickup);
+                foodSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_applePickup);
             }
             foodSetup->objHitsValue = 20;
             foodSetup->gamebitCount = NO_GAMEBIT;

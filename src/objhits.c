@@ -5,7 +5,9 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/objanim.h"
+#include "sys/segment_53F00.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/gfx/model_asm.h"
 #include "dll.h"
 
 // -------- .data start 800916e0 -------- //
@@ -32,7 +34,7 @@ u8 _bss_800B23C0[0xF8];
 Unk80030A24 D_800B24B8[21]; // TODO: unknown length
 // -------- .bss end 800b28b0 -------- //
 
-void alloc_some_object_arrays(void) {
+void objhits_init(void) {
     D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitmods"));
     D_800B199C = mmAlloc(0x708, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:lasthits"));
     D_800B20A0 = mmAlloc(0x1900, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitvols"));
@@ -3028,6 +3030,7 @@ s32 func_8002DC58(Unk8002F498* arg0, Unk8002F498* arg1, Unk8002F498* arg2, Unk80
                 f0 = spDC[j];
                 f2 = spDC[temp_s1];
                 // temp assignment below required for match
+                PRAGMA_IGNORE_PUSH("-Wsequence-point")
                 if (func_8002C278(
                     (pad_spD8 = &sp104[i])[0], (pad_spD8 = &sp104[temp_s7])[0],
                     temp_fs1, temp_fs2,
@@ -3041,6 +3044,7 @@ s32 func_8002DC58(Unk8002F498* arg0, Unk8002F498* arg1, Unk8002F498* arg2, Unk80
                     arg0->unk18[temp_s7] = 1;
                     arg1->unk18[temp_s1] = 1;
                 }
+                PRAGMA_IGNORE_POP()
             }
         }
     }

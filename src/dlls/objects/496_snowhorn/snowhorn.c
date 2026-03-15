@@ -11,6 +11,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
+#include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
@@ -18,21 +19,18 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
+#include "sys/objprint.h"
 #include "sys/print.h"
 #include "sys/rand.h"
-#include "functions.h"
+#include "sys/segment_326A0.h"
 #include "types.h"
-#include "segment_334F0.h"
+#include "sys/segment_334F0.h"
 
 #ifdef DEBUG
 #define FROSTWEED_QUEST_CHEAT 1  
 #else  
 #define FROSTWEED_QUEST_CHEAT 0  
 #endif 
-
-s32 func_80031BBC(f32, f32, f32);
-s32 func_80032538(Object* self);
-void joy_set_button_mask(int port, u16 mask);
 
 enum SnowHornAnims {
     MODANIM_SnowHorn_Idle = 0,
@@ -171,10 +169,10 @@ static Unk80026DF4 _data_0[] = {
 };
 
 static Vec3f _data_230[] = {
-    { -12, 0, -20 },
-    { 12, 0, -20 },
-    { 12, 0, 20 },
-    { -12, 0, 20 }
+    VEC3F(-12, 0, -20),
+    VEC3F(12, 0, -20),
+    VEC3F(12, 0, 20),
+    VEC3F(-12, 0, 20)
 };
 static f32 _data_260[] = {
     0, 0, 0, 0
@@ -461,8 +459,8 @@ int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
 s32 dll_496_func_980(Object* snowhorn) {
     UnkFunc_80024108Struct sp4c;
     SnowHorn_Data* objdata;
-    s32* temp1;
-    s32* temp2;
+    TextureAnimator* temp1;
+    TextureAnimator* temp2;
     s32 animIsFinished;
     s32 playSound; //toggles between 0 and 1 (when ready to play sound another time)
 
@@ -487,10 +485,10 @@ s32 dll_496_func_980(Object* snowhorn) {
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
                 if (temp1 != NULL) {
-                    *temp1 = 0x200;
+                    temp1->frame = 0x200;
                 }
                 if (temp2 != NULL) {
-                    *temp2 = 0x200;
+                    temp2->frame = 0x200;
                 }
                 objdata->sleepTimer = rand_next(0, 300);
             }
@@ -503,10 +501,10 @@ s32 dll_496_func_980(Object* snowhorn) {
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
                 if (temp1 != NULL) {
-                    *temp1 = 0;
+                    temp1->frame = 0;
                 }
                 if (temp2 != NULL) {
-                    *temp2 = 0;
+                    temp2->frame = 0;
                 }
             }
             break;

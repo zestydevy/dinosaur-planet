@@ -3,7 +3,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dlls/engine/6_amsfx.h"
-#include "functions.h"
 #include "libnaudio/n_libaudio.h"
 #include "libnaudio/n_sndp.h"
 #include "libnaudio/n_sndplayer.h"
@@ -257,7 +256,7 @@ void dll_6_func_860(u32 soundHandle, u8 volume) {
     u8 vol;
 
     if (1) {
-        if (_bss_8 < soundHandle) {
+        if ((u32)_bss_8 < soundHandle) {
             STUBBED_PRINTF("amSfxSetVol: Warning,sound handle '%d' out of range.\n", soundHandle);
             return;
         }
@@ -835,7 +834,7 @@ static void dll_6_func_1F78(void) {
             if (temp_s0 == (sndstate* )-2) {
                 mp3_set_pan(pan, FALSE);
             } else {
-                audioPostEvent(temp_s0, AL_SNDP_PAN_EVT, (void *)pan);
+                audioPostEvent(temp_s0, AL_SNDP_PAN_EVT, (void *)(s32)pan);
             }
         }
         vol = (s32) (_bss_4[i].unk16 * _bss_4[i].unk17) >> 7;
@@ -854,7 +853,7 @@ static void dll_6_func_1F78(void) {
         if (fx != _bss_4[i].unk15) {
             _bss_4[i].unk15 = fx;
             if (temp_s0 != (sndstate* )-2) {
-                audioPostEvent(temp_s0, AL_SNDP_FX_EVT, (void*)(fx));
+                audioPostEvent(temp_s0, AL_SNDP_FX_EVT, (void*)(s32)(fx));
             }
         }
     }

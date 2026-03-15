@@ -1,7 +1,5 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "types.h"
-#include "functions.h"
 #include "dll.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
@@ -11,7 +9,10 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 #include "sys/rand.h"
+#include "sys/segment_53F00.h"
+#include "types.h"
 
 #include "dlls/objects/210_player.h"
 
@@ -86,8 +87,8 @@ void scarab_control(Object* self) {
     f32 pad;
     f32 minValue;
     s16 id;
-    Vec3f pointNow = {0, 0, 0};
-    Vec3f pointFuture = {0, 0, 0};
+    Vec3f pointNow = VEC3F(0, 0, 0);
+    Vec3f pointFuture = VEC3F(0, 0, 0);
     s32 collided = 0;
     s32 i;
     s32 yaw;

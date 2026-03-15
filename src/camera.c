@@ -4,10 +4,11 @@
 #include "libultra/io/piint.h"
 #include "game/objects/object.h"
 #include "macros.h"
-#include "sys/gfx/gx.h"
+#include "sys/vi.h"
+#include "sys/gfx/model_asm.h"
 #include "sys/main.h"
 #include "sys/math.h"
-#include "functions.h"
+#include "sys/map.h"
 
 static const char str_80098290[] = "Camera Error: Illegal mode!\n";
 static const char str_800982b0[] = "Camera Error: Illegal player no!\n";
@@ -103,8 +104,8 @@ Vp gRSPViewports[20] = {
     { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
 };
 SRT gStaticCameraSRT[2] = {
-    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, -281.0f }},
-    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, 0.0f }}
+    { 0, 0, 0, 0, 1.0f, VEC3F(0.0f, 0.0f, -281.0f) },
+    { 0, 0, 0, 0, 1.0f, VEC3F(0.0f, 0.0f, 0.0f) }
 };
 MtxF g2DProjectionMtx = {
     {
@@ -1489,7 +1490,9 @@ void camera_build_object_matrix(Object *object, int matrixIdx)
         object = objectList[objectCount];
 
         // @fake
+        PRAGMA_IGNORE_PUSH("-Waddress")
         if (gObjectMatrices) {}
+        PRAGMA_IGNORE_POP()
         invsrt.transl.x = -object->srt.transl.x;
         invsrt.transl.y = -object->srt.transl.y;
         invsrt.transl.z = -object->srt.transl.z;

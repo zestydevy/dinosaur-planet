@@ -1,11 +1,12 @@
 #include "sys/fonts.h"
 #include "sys/asset_thread.h"
+#include "sys/camera.h"
 #include "sys/fs.h"
-#include "sys/gfx/gx.h"
-#include "sys/gfx/map.h"
+#include "sys/vi.h"
 #include "sys/gfx/texture.h"
+#include "sys/map.h"
 #include "sys/memory.h"
-#include "functions.h"
+#include "macros.h"
 
 /* -------- .bss start 800a7d30 -------- */
 s32 gNumFonts;
@@ -117,7 +118,6 @@ void fonts_set_squash(s32 enabled) {
     gFontSquash = enabled;
 }
 
-static const char str_1[] = "FONTS - unable to load font number %d, out of range\n";
 void font_load(s32 fontID) {
     if (fontID < gNumFonts) {
         FontData *fontData = &gFile_FONTS_BIN[fontID];
@@ -130,6 +130,8 @@ void font_load(s32 fontID) {
                 i++;
             }
         }
+    } else {
+        STUBBED_PRINTF("FONTS - unable to load font number %d, out of range\n", fontID);
     }
 }
 
@@ -152,7 +154,6 @@ void font_unload(s32 fontID) {
     }
 }
 
-static const char str_2[] = "FONTS - trying to print a string to a no existent window!\n";
 void font_window_set_text_coords(s32 windowID, s32 xPos, s32 yPos, s32 param4) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
@@ -168,20 +169,21 @@ void font_window_set_text_coords(s32 windowID, s32 xPos, s32 yPos, s32 param4) {
         } else {
             window->ypos = yPos;
         }
+    } else {
+        STUBBED_PRINTF("FONTS - trying to print a string to a no existent window!\n");
     }
 }
 
-
-static const char str_3[] = "FONTS - trying to print a string to a no existent window!\n";
 void font_print_window(Gfx **gdl, s32 windowID, char *text, AlignmentFlags alignmentFlags) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
 
         font_render_text(gdl, window, text, alignmentFlags, 1.0f);
+    } else {
+        STUBBED_PRINTF("FONTS - trying to print a string to a no existent window!\n");
     }
 }
 
-static const char str_4[] = "FONTS - trying to print a string to a no existent window!\n";
 void font_print_window_xy(Gfx **gdl, s32 windowID, s32 xPos, s32 yPos, char *text, AlignmentFlags alignmentFlags) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
@@ -203,10 +205,11 @@ void font_print_window_xy(Gfx **gdl, s32 windowID, s32 xPos, s32 yPos, char *tex
         } else {
             font_render_text_wordwrap(gdl, window, text, 1.0f);
         }
+    } else {
+        STUBBED_PRINTF("FONTS - trying to print a string to a no existent window!\n");
     }
 }
 
-static const char str_5[] = "FONTS - You must specify a font to use before attempting to print anything\n";
 void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags alignmentFlags, f32 scisScale) {
     s32 charIndex; // spDC
     s32 charSpace;
@@ -234,6 +237,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
     xAlignmentDiff = -1;
     lastTextureIndex = -1;
     if (window->font == 0xFF) {
+        STUBBED_PRINTF("FONTS - You must specify a font to use before attempting to print anything\n");
         return;
     }
 
@@ -536,7 +540,6 @@ s32 font_get_text_width_internal(FontWindow *window, const char *text, s32 x, s3
     return diffX - x;
 }
 
-static const char str_6[] = "FONTS - Window being set must be in range 1 to %d.\n";
 void font_window_set_coords(s32 windowID, s32 x1, s32 y1, s32 x2, s32 y2) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
@@ -559,37 +562,36 @@ void font_window_set_coords(s32 windowID, s32 x1, s32 y1, s32 x2, s32 y2) {
         window->width = (window->x2 - window->x1) + 1;
         window->height = (window->y2 - window->y1) + 1;
         window->extraCharacterSpacing = 0.0f;
+    } else {
+        STUBBED_PRINTF("FONTS - Window being set must be in range 1 to %d.\n", FONT_WINDOW_COUNT);
     }
 }
 
-static const char str_7[] = "FONTS - font number %d is not loaded, but in use in window %d.\n";
-static const char str_8[] = "FONTS - attempting to use font %d, font out of range.\n";
-static const char str_9[] = "FONTS - window %d out of range.\n";
 void font_window_use_font(s32 windowID, s32 fontID) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         if (fontID < gNumFonts) {
             window->font = fontID;
             if (gFile_FONTS_BIN[fontID].referenceCount == 0) {
-            
+                STUBBED_PRINTF("FONTS - font number %d is not loaded, but in use in window %d.\n", fontID, windowID);
             }
         } else {
-
+            STUBBED_PRINTF("FONTS - attempting to use font %d, font out of range.\n", fontID);
         }
     } else {
-        
+        STUBBED_PRINTF("FONTS - window %d out of range.\n", windowID);
     }
 }
 
-static const char str_10[] = "FONTS - window %d out of range.\n";
 void font_window_set_extra_char_spacing(s32 windowID, f32 spacing) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->extraCharacterSpacing = spacing;
+    } else {
+        STUBBED_PRINTF("FONTS - window %d out of range.\n", windowID);
     }
 }
 
-static const char str_11[] = "FONTS - Window being set must be in range 1 to %d\n";
 void font_window_set_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
@@ -597,10 +599,11 @@ void font_window_set_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 a
         window->backgroundColourG = green;
         window->backgroundColourB = blue;
         window->backgroundColourA = alpha;
+    } else {
+        STUBBED_PRINTF("FONTS - Window being set must be in range 1 to %d\n", FONT_WINDOW_COUNT);
     }
 }
 
-static const char str_12[] = "FONTS - Window being set must be in range 1 to %d\n";
 void font_window_set_text_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha, s32 opacity) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
@@ -609,10 +612,11 @@ void font_window_set_text_colour(s32 windowID, s32 red, s32 green, s32 blue, s32
         window->textColourB = blue;
         window->textColourA = alpha;
         window->opacity = opacity;
+    } else {
+        STUBBED_PRINTF("FONTS - Window being set must be in range 1 to %d\n", FONT_WINDOW_COUNT);
     }
 }
 
-static const char str_13[] = "FONTS - Window being set must be in range 1 to %d\n";
 void font_window_set_text_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
@@ -620,28 +624,31 @@ void font_window_set_text_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, 
         window->textBGColourG = green;
         window->textBGColourB = blue;
         window->textBGColourA = alpha;
+    } else {
+        STUBBED_PRINTF("FONTS - Window being set must be in range 1 to %d\n", FONT_WINDOW_COUNT);
     }
 }
 
-static const char str_14[] = "FONTS - Window being set must be in range 1 to %d\n";
 void font_window_add_text_offset(s32 windowID, s32 x, s32 y) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->textOffsetX += x;
         window->textOffsetY += y;
+    } else {
+        STUBBED_PRINTF("FONTS - Window being set must be in range 1 to %d\n", FONT_WINDOW_COUNT);
     }
 }
 
-static const char str_15[] = "FONTS - Window being set must be in range 1 to %d\n";
 void font_window_reset_text_offset(s32 windowID) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->textOffsetX = 0;
         window->textOffsetY = 0;
+    } else {
+        STUBBED_PRINTF("FONTS - Window being set must be in range 1 to %d\n", FONT_WINDOW_COUNT);
     }
 }
 
-static const char str_16[] = "FONTS - cannot word wrap a string using an unspecified font.\n";
 void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 scisScale) {
     s32 loopCond;
     FontData* fontData;
@@ -672,6 +679,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
         return;
     }
     if (window->font == 0xFF) {
+        STUBBED_PRINTF("FONTS - cannot word wrap a string using an unspecified font.\n");
         return;
     }
     
@@ -771,6 +779,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
             wordCharCount = 0;
             wordWidth = 0;
 
+            PRAGMA_IGNORE_PUSH("-Wtype-limits")
             do {
                 charBuffer[wordCharCount] = curChar;
                 curChar = (curChar - 0x20);
@@ -787,6 +796,8 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                 text++;
                 curChar = *text;
             } while (wordCharCount < 128 && ((s32) curChar > 0x20) && ((s32) curChar < 0x100));
+            // curChar < 0x100 is always true since curChar is u8
+            PRAGMA_IGNORE_POP()
 
             if (((xpos + wordWidth) >= window->width) && (xpos != 0)) {
                 xpos = window->xpos;
@@ -840,9 +851,9 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
     }
 }
 
-static const char str_17[] = "FONTS - can't add a string to window %d, out of range./n";
 FontString *font_window_add_string(s32 windowID, char *text, s32 priority, AlignmentFlags alignmentFlags) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
         return NULL;
     } else {
         return font_window_add_string_xy(windowID, 
@@ -852,8 +863,6 @@ FontString *font_window_add_string(s32 windowID, char *text, s32 priority, Align
     }
 }
 
-static const char str_18[] = "FONTS - can't add a string to window %d, out of range./n";
-static const char str_19[] = "FONTS - string priority should be greater than -1 and less than 255 (%d)\n";
 FontString *font_window_add_string_xy(s32 windowID, s32 posX, s32 posY, char *text, s32 priority, AlignmentFlags alignmentFlags) {
     s32 width;
     FontString *stringTemp;
@@ -869,10 +878,12 @@ FontString *font_window_add_string_xy(s32 windowID, s32 posX, s32 posY, char *te
     }
 
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
         return NULL;
     }
 
     if (priority < 0 || priority >= 255) {
+        STUBBED_PRINTF("FONTS - string priority should be greater than -1 and less than 255 (%d)\n", priority);
         priority = 0;
     }
 
@@ -941,13 +952,13 @@ FontString *font_window_add_string_xy(s32 windowID, s32 posX, s32 posY, char *te
     return string;
 }
 
-static const char str_20[] = "FONTS - can't add a string to window %d, out of range./n";
 void font_window_add_font_string(s32 windowID, FontString *string) {
     FontWindow *window;
     FontString *curString;
     FontString **nextFieldPtr;
 
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
         return;
     }
 
@@ -964,12 +975,12 @@ void font_window_add_font_string(s32 windowID, FontString *string) {
     }
 }
 
-static const char str_21[] = "FONTS - cannot delete entry form window %d,not found.\n";
 void font_window_flush_strings(s32 windowID) {
     FontWindow *window;
     FontString *string;
 
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot delete entry form window %d,not found.\n", windowID);
         return;
     }
 
@@ -981,16 +992,17 @@ void font_window_flush_strings(s32 windowID) {
             string = string->next;
         }
         window->strings = NULL;
+    } else {
+        STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
     }
 }
 
-static const char str_22[] = "FONTS - can't add a string to window %d, out of range./n";
-static const char str_23[] = "FONTS - can't scroll a string in window %d, out of range./n";
 void font_window_scroll_string(s32 windowID, FontString *string, s32 x, s32 y, s32 flags) {
     FontData *fontData;
     FontWindow *window;
 
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - can't scroll a string in window %d, out of range./n", windowID);
         return;
     }
 
@@ -1010,27 +1022,26 @@ void font_window_scroll_string(s32 windowID, FontString *string, s32 x, s32 y, s
                 }
                 string->offsetX += x;
                 string->offsetY += y;
-                return;
+            } else {
+                string->offsetX = 0;
+                string->offsetY = 0;
             }
-            string->offsetX = 0;
-            string->offsetY = 0;
-            return;
         }
     }
 }
 
-static const char str_24[] = "FONTS - cannot render a window which is out of range!\n";
 void font_window_enable(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
     }
 
     gFontWindows[windowID].flags |= FONT_WINDOW_ENABLED;
 }
 
-static const char str_25[] = "FONTS - cannot render a window which is out of range!\n";
 void font_window_disable(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
     }
 
@@ -1041,18 +1052,18 @@ s32 font_get_y_spacing(s32 fontID) {
     return gFile_FONTS_BIN[fontID].y;
 }
 
-static const char str_26[] = "FONTS - cannot word wrap a window which is out of range!\n";
 void font_window_enable_wordwrap(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot word wrap a window which is out of range!\n", windowID);
         return;
     }
 
     gFontWindows[windowID].flags |= FONT_WINDOW_WORDWRAP;
 }
 
-static const char str_27[] = "FONTS - cannot disable word wrap in a window which is out of range!\n";
 void font_window_disable_wordwrap(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot disable word wrap in a window which is out of range!\n", windowID);
         return;
     }
 
@@ -1061,6 +1072,7 @@ void font_window_disable_wordwrap(s32 windowID) {
 
 void font_window_enable_verts(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
     }
 
@@ -1069,6 +1081,7 @@ void font_window_enable_verts(s32 windowID) {
 
 void font_window_disable_verts(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
     }
 
@@ -1146,9 +1159,6 @@ void font_render_fill_rect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
     }
 }
 
-static const char str_28[] = "FONTS - cannot render a window which is out of range!\n";
-static const char str_29[] = "FONTS - cannot render a window which is out of range!\n";
-static const char str_30[] = "FONTS - cannot render a window which is out of range!\n";
 void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
     FontWindow *window;
     FontString *string;
@@ -1162,6 +1172,7 @@ void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
     s32 height;
     
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
+        STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
     }
 

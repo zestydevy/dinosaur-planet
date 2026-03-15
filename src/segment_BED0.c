@@ -12,7 +12,7 @@ void func_8000B798(u8 *, s32, s32);
 void func_8000B6D0(u8 *, s32);
 
 // create / init func?
-UnkStruct_8000B2D0* func_8000B2D0(UnkStruct_8000B2D0* arg0, u8* arg1, s32 arg2, s32 arg3, s32 arg4) {
+UnkStruct_8000B2D0* func_8000B2D0(UnkStruct_8000B2D0* arg0, u8* arg1, s8* arg2, s32 arg3, s32 arg4) {
     arg0->unk8 = arg1;
     arg0->unkC = arg2;
     arg0->unk0 = 0;
@@ -28,8 +28,8 @@ UnkStruct_8000B2D0 *func_8000B334(s32 arg0, s32 arg1) {
     UnkStruct_8000B2D0* sp1C;
 
     sp1C = (UnkStruct_8000B2D0 *) mmAlloc((arg0 * 2) + (arg1 * arg0) + 0x12, ALLOC_TAG_TEST_COL, NULL);
-    sp1C->unk8 = sp1C + 1;
-    sp1C->unkC = (sp1C->unk8 + 2 + (arg0 * 2));
+    sp1C->unk8 = (u8*)(sp1C + 1);
+    sp1C->unkC = (s8*)(sp1C->unk8 + 2 + (arg0 * 2));
     sp1C->unk0 = 0;
     sp1C->unk2 = arg0;
     sp1C->unk4 = arg1;
