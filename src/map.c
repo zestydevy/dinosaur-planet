@@ -21,6 +21,7 @@
 #include "sys/segment_1460.h"
 #include "dll.h"
 #include "macros.h"
+#include "gbi_extra.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
@@ -462,14 +463,6 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-// for some reason this function requires an extra or'ing of _SHIFTL(G_TRI2, 24, 8) in w1
-// Otherwise it's the same as calling gSP2Triangles
-#define gSP2Triangles2(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)	\
-{ \
-	Gfx *_g = (Gfx *)(pkt); \
-	_g->words.w0 = (_SHIFTL(G_TRI2, 24, 8)| __gsSP1Triangle_w1f(v00, v01, v02, flag0)); \
-    _g->words.w1 = (_SHIFTL(G_TRI2, 24, 8)| __gsSP1Triangle_w1f(v10, v11, v12, flag1)); \
-}
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 {
     s32 n;
@@ -841,13 +834,6 @@ static const char str_8009a590[] = "found on map %d\n";
 static const char str_8009a5a4[] = "mapno not found\n";
 static const char str_8009a5b8[] = "error\n";
 
-// same as original macro but requires the second and third shiftl swapped for w0?
-# define gSPVertex2(pkt, v, n, v0)				\
-{									\
-	Gfx *_g = (Gfx *)(pkt);						\
-	_g->words.w0 = _SHIFTL(G_VTX,24,8)|_SHIFTL((v0)+(n),1,7)|_SHIFTL((n),12,8);	\
-	_g->words.w1 = (unsigned int)(v);				\
-}
 void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     BlockShape* shape;
     Vtx_t *tempVtx;
@@ -998,9 +984,7 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                     if (var_s2 == NULL) {
                         var_s2 = var_a0;
                     } else {
-                        // This appears to be a hand-optimized version of gSP2Triangles.
-                        gMainDL->words.w0 = ((var_s2->d0 & 0x3F000) << 4) | 0x06000000 | ((var_s2->d0 & 0xFC0) << 2) | (var_s2->d0 & 0x3F);
-                        gMainDL->words.w1 = ((var_a0->d0 & 0x3F000) << 4) | ((var_a0->d0 & 0xFC0) << 2) | (var_a0->d0 & 0x3F);
+                        gSP2TrianglesBlock(gMainDL, var_s2->d0, var_a0->d0);
                         gMainDL++;
                         var_s2 = NULL;
                     }
@@ -1008,8 +992,7 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                 var_a0++;
             }
             if ((var_s2 != NULL) && (var_s2->d1 & 1)) {
-                // This appears to be a hand-optimized version of gSP1Triangle.
-                gMainDL->words.w0 = ((var_s2->d0 & 0x3F000) << 4) | 0x05000000 | ((var_s2->d0 & 0xFC0) << 2) | (var_s2->d0 & 0x3F);
+                gSP1TriangleBlock(gMainDL, var_s2->d0);
                 gMainDL++;
             }
             gDLBuilder->needsPipeSync = 1;
