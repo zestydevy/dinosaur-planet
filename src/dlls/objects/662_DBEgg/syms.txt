@@ -1,0 +1,20 @@
+.text = 0x0:
+dll_662_ctor = 0x0;
+dll_662_dtor = 0xC;
+dll_662_setup = 0x18;
+dll_662_control = 0x7C;
+dll_662_update = 0xD28;
+dll_662_print = 0xED0;
+dll_662_free = 0xF44;
+dll_662_get_model_flags = 0xF84;
+dll_662_get_data_size = 0xF94;
+dll_662_func_FA8 = 0xFA8;
+dll_662_func_1240 = 0x1240;
+dll_662_func_1670 = 0x1670;
+dll_662_func_1744 = 0x1744;
+dll_662_func_1954 = 0x1954;
+
+.rodata = 0x1C08:
+
+.data = 0x1D18:
+_data_0 = 0x0; // absolute:0x1D18
