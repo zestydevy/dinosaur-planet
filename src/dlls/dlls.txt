@@ -196,6 +196,7 @@
 525 = objects/525_SCtotempuzzle
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
+541 = objects/541_DIMExplosion
 544 = objects/544_DIM_LevelControl
 545 = objects/545_DIMTent
 546 = objects/546_DIMBikeDoor
