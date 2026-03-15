@@ -1,0 +1,19 @@
+.text = 0x0:
+DIMTent_ctor = 0x0;
+DIMTent_dtor = 0xC;
+DIMTent_setup = 0x18;
+DIMTent_control = 0xD4;
+DIMTent_update = 0x37C;
+DIMTent_print = 0x388;
+DIMTent_free = 0x430;
+DIMTent_get_model_flags = 0x480;
+DIMTent_get_data_size = 0x490;
+DIMTent_draw_mask = 0x4A4;
+
+.rodata = 0xA74:
+sMaskTris = 0x0; // absolute:0xA74
+sMaskVertCoords = 0xC0; // absolute:0xB34
+sMaskSpeeds = 0x120; // absolute:0xB94
+
+.data = 0xBB4:
+dModGfxDLL = 0x0; // absolute:0xBB4

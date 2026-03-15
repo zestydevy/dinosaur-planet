@@ -47,7 +47,7 @@ enum ObjType {
     OBJTYPE_59 = 59,
     OBJTYPE_61 = 61, 
     OBJTYPE_62 = 62, 
-    OBJTYPE_63 = 63, // MagicPlant
+    OBJTYPE_63 = 63, // MagicPlant, Crate
     OBJTYPE_64 = 64
 };
 

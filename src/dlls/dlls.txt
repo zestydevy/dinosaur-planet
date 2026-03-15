@@ -64,6 +64,8 @@
 246 = objects/246_SwarmBaddie
 248 = objects/248_PirahnaBaddie
 250 = objects/250_TurtleBaddie
+252 = objects/252_Cannon
+253 = objects/253_CannonBall
 254 = objects/254_PineCone
 257 = objects/257_tesla
 260 = objects/260_Pollen
@@ -80,6 +82,7 @@
 279 = objects/279_Door
 280 = objects/280_SidekickBall
 281 = objects/281_area
+282 = objects/282_Crate
 283 = objects/283_krazoatext
 284 = objects/284_levelname
 287 = objects/287_pressureswitch
@@ -108,6 +111,7 @@
 323 = objects/323_waterfallControl
 324 = objects/324_curve
 325 = objects/325_trigger
+327 = objects/327
 331 = objects/331_genprops
 332 = objects/332_FXEmit
 334 = objects/334_Transporter
@@ -198,7 +202,10 @@
 525 = objects/525_SCtotempuzzle
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
+537 = objects/537_DIMCannon
+541 = objects/541_DIMExplosion
 544 = objects/544_DIM_LevelControl
+545 = objects/545_DIMTent
 546 = objects/546_DIMBikeDoor
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
@@ -237,6 +244,7 @@
 614 = objects/614_WM_Planets
 615 = objects/615_crawler
 617 = objects/617_WL_VConsole
+618 = objects/618_WM_TransTop
 619 = objects/619_VFP_LevelControl
 633 = objects/633_VFP_PodiumPoint
 636 = objects/636_VFP_lavastar
@@ -287,7 +295,7 @@
 762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem
 768 = objects/768_SPShop
-772 = objects/772_SPitemBeam
+772 = objects/772_SPitembeam
 776 = objects/776_WCbouncycrate
 777 = objects/777_WCTrexChase
 778 = objects/778_WCSabreChase
