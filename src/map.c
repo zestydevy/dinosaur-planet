@@ -153,52 +153,54 @@ s32 D_80092BBC = -1;
 Unk80092BC0 D_80092BC0 = {0};
 // -------- .data end 80092bd0 -------- //
 
-static void func_8004D328(void);
-static void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
-static HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
-static void func_800441F4(u32* arg0, s32 arg1);
-static void func_80048B14(Block *block);
-static void func_80048C24(Block *block);
-static u32 hits_get_size(s32 id);
-/* static */ void block_setup_vertices(Block *block);
-static void block_setup_gdl_groups(Block *block);
-/* static */ s32 block_setup_textures(Block *block);
-static void block_setup_xz_bitmap(Block *block);
-/* static */ void block_compute_vertex_colors(Block*,s32,s32,s32);
-static void func_80049D38(u32 arg0);
-static void func_80049FA8(Block*);
-static void func_800499BC(void);
-static void func_80049D88(void);
-static void func_80044BEC(void);
-static void func_80048F58(void);
-static void track_c_func(void);
-/* static */ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
-static void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
-static void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
-static void map_update_objects_streaming(s32);
-static s32 map_func_800485FC(s32, s32, s32, s32, s32);
-/* static */ void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
-static void func_800496E4(s32 blockIndex);
-/* static */ s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
-static s32 map_should_obj_unload(Object*);
-static void func_8004B548(MapHeader*, s32, s32, Object*);
-static s32 map_should_stream_load_object(ObjSetup*, s8, s32);
-static s32 map_check_some_mapobj_flag(s32, u32);
-static void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
-static s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
-static s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
-static void block_add_to_render_list(Block *block, f32 x, f32 z);
-/* static */ void func_800436DC(Object* arg0, s32 arg1);
-static s32 func_80045DC0(s32, s32, s32); //unsure of last arg
-static s32 map_find_streammap_index(s32);
-/* static */ s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
-static s32 func_80048E04(u8, u8, u8, u8);
-static void func_8004A164(Texture*, s32);
+void func_8004D328(void);
+void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
+HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
+void func_800441F4(u32* arg0, s32 arg1);
+void func_80048B14(Block *block);
+void func_80048C24(Block *block);
+u32 hits_get_size(s32 id);
+void block_setup_vertices(Block *block);
+void block_setup_gdl_groups(Block *block);
+s32 block_setup_textures(Block *block);
+void block_setup_xz_bitmap(Block *block);
+void block_compute_vertex_colors(Block*,s32,s32,s32);
+void func_80049D38(u32 arg0);
+void func_80049FA8(Block*);
+void func_800499BC(void);
+void func_80049D88(void);
+void func_80044BEC(void);
+void func_80048F58(void);
+void track_c_func(void);
+u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
+void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
+void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
+MapHeader *map_load_streammap(s32, s32);
+void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
+void map_update_objects_streaming(s32);
+s32 map_func_800485FC(s32, s32, s32, s32, s32);
+void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
+void func_800496E4(s32 blockIndex);
+s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
+s32 map_should_obj_unload(Object*);
+void func_8004B548(MapHeader*, s32, s32, Object*);
+s32 map_should_stream_load_object(ObjSetup*, s8, s32);
+s32 map_check_some_mapobj_flag(s32, u32);
+void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
+s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
+s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
+void block_add_to_render_list(Block *block, f32 x, f32 z);
+void func_800436DC(Object* arg0, s32 arg1);
+s32 func_80045DC0(s32, s32, s32); //unsure of last arg
+s32 map_find_streammap_index(s32);
+s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
+s32 func_80048E04(u8, u8, u8, u8);
+void func_8004A164(Texture*, s32);
 /* static */ void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
 /* static */ void func_80043950(Block*, s16, s16, s16);
-static void func_80043FD8(s8* arg0);
-static s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
-static void some_cell_func(BitStream* stream);
+/* static */ void func_80043FD8(s8* arg0);
+/* static */ s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
+/* static */ void some_cell_func(BitStream* stream);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -711,7 +713,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     if (1) { } if (1) { } if (1) { } if (1) { }
 }
 
-static void track_c_func(void) {
+void track_c_func(void) {
     s32 sp294;
     Block* var_s0;
     s32 temp_t2_2;
@@ -801,8 +803,8 @@ static void track_c_func(void) {
                 if (temp_v0 < 0 || func_800451A0(temp_s1, var_s2, var_s0) == 0) {
                     continue;
                 }
-                D_800B97B8 = temp_s1 * BLOCKS_GRID_UNIT_F;
-                D_800B97BC = var_s2 * BLOCKS_GRID_UNIT_F;
+                D_800B97B8 = temp_s1 * 640.0f;
+                D_800B97BC = var_s2 * 640.0f;
                 func_80043950(var_s0, temp_s1, var_s2, sp240);
                 if (UINT_80092a98 & 0x8000) {
                     if (var_s0->unk3E != 0) {
@@ -1278,7 +1280,7 @@ void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
 }
 #endif
 
-static void block_add_to_render_list(Block *block, f32 x, f32 z)
+void block_add_to_render_list(Block *block, f32 x, f32 z)
 {
     s32 unused;
     s32 oldRenderListLength;
@@ -1326,7 +1328,7 @@ static void block_add_to_render_list(Block *block, f32 x, f32 z)
     }
 }
 
-static void func_80043FD8(s8* arg0) {
+void func_80043FD8(s8* arg0) {
     Object* object;
     Object** objects;
     s32 numObjs;
@@ -1372,7 +1374,7 @@ static void func_80043FD8(s8* arg0) {
     }
 }
 
-static void func_800441F4(u32* arg0, s32 arg1) {
+void func_800441F4(u32* arg0, s32 arg1) {
     u32 temp_a0;
     s32 var_t0;
     s32 var_v0;
@@ -1772,7 +1774,7 @@ void func_80044BEC(void) {
     }
 }
 
-static s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks) {
+s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks) {
     Plane* currentPlane;
     f32 scaledXPos;
     f32 scaledZPos;
@@ -1837,7 +1839,7 @@ void func_8004530C(void) {
     D_800B9794 = 0;
 }
 
-static void some_cell_func(BitStream* stream) {
+void some_cell_func(BitStream* stream) {
     f32 var_fv1;
     s32 var_v0;
     s32 temp_t3;
@@ -2091,7 +2093,7 @@ s32 func_80045D58(void) {
     return D_80092A94;
 }
 
-static s32 map_find_streammap_index(s32 mapID_to_find) {
+s32 map_find_streammap_index(s32 mapID_to_find) {
     s32 index;
     
     for (index = 0; index < gMapNumStreamMaps; index++){
@@ -2103,7 +2105,7 @@ static s32 map_find_streammap_index(s32 mapID_to_find) {
     return -1;
 }
 
-static s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
+s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
     Struct_D_800B9768_unk4* var_v0;
     s32 temp_a2;
     s32 temp_t3;
@@ -2140,7 +2142,7 @@ void func_80045F48(s32 mapID) {
     }
 }
 
-static void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 param4) {
+void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 param4) {
     s32 _pad;
     s32 objSetupFileLength;
     s32 groupsStart;
@@ -2441,7 +2443,7 @@ void init_global_map(void)
     mmFree(buf);
 }
 
-static void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 mapID) {
+void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 mapID) {
     MapsBinStruct* mapbinstruct;
     s32 temp_v1;
     s32 var_v0;
@@ -2529,8 +2531,8 @@ void map_update_streaming(void) {
     f2 = D_800B97B4;
     f14 = f0 - gWorldX;
     sp308 = f2 - gWorldZ;
-    sp2F4 = floor_f(f14 / BLOCKS_GRID_UNIT_F);
-    sp2F0 = floor_f(sp308 / BLOCKS_GRID_UNIT_F);
+    sp2F4 = floor_f(f14 / 640.0f);
+    sp2F0 = floor_f(sp308 / 640.0f);
     sp294 = UINT_80092a98 & 0x800;
     UINT_80092a98 &= ~0x800;
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (UINT_80092a98 & 0x4000)) {
@@ -2566,8 +2568,8 @@ void map_update_streaming(void) {
         tempZ = gWorldZ;
         gMapCurrentStreamCoordsX = (gMapCurrentStreamCoordsX + sp2F4) - 7;
         gMapCurrentStreamCoordsZ = (gMapCurrentStreamCoordsZ + sp2F0) - 7;
-        gWorldX = gMapCurrentStreamCoordsX * BLOCKS_GRID_UNIT_F;
-        gWorldZ = gMapCurrentStreamCoordsZ * BLOCKS_GRID_UNIT_F;
+        gWorldX = gMapCurrentStreamCoordsX * 640.0f;
+        gWorldZ = gMapCurrentStreamCoordsZ * 640.0f;
         D_80092A60 = gWorldX;
         D_80092A64 = gWorldZ;
         func_800307C4(tempX - gWorldX, tempZ - gWorldZ);
@@ -3105,7 +3107,7 @@ void map_func_800484A8(void) {
     mmSetDelay(2);
 }
 
-static s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     GlobalMapCell* currentMap;
     s16 blockID;
     s32 fieldIndex;
@@ -3250,7 +3252,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     }
 }
 
-static void func_80048B14(Block* block) {
+void func_80048B14(Block* block) {
     s32 targetVertexIndex;
     s32 vertexIndex;
     s32 result;
@@ -3278,7 +3280,7 @@ static void func_80048B14(Block* block) {
     }
 }
 
-static void func_80048C24(Block* block) {
+void func_80048C24(Block* block) {
     s32 index;
     s32 i;
     s32 targetVertexIndex;
@@ -3321,7 +3323,8 @@ s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
     return -1;
 }
 
-static s32 func_80048E04(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
+s32 func_80048E04(u8 arg0, u8 arg1, u8 arg2, u8 arg3)
+{
     s32 i;
 
     // try to get the index from another function
@@ -3358,7 +3361,7 @@ static s32 func_80048E04(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
     return i;
 }
 
-static void func_80048F58(void)
+void func_80048F58(void)
 {
     s32 i;
     u8 r, g, b;
@@ -3404,7 +3407,7 @@ void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
     func_80058F3C();
 }
 
-static void block_setup_gdl_groups(Block *block)
+void block_setup_gdl_groups(Block *block)
 {
     s32 i;
 
@@ -3591,7 +3594,7 @@ void block_setup_vertices(Block *block)
 /*
  * blocks_free?
  */
-static void func_800496E4(s32 blockIndex) {
+void func_800496E4(s32 blockIndex) {
     Block *block;
     s32 i;
     u8 runtimeValue;
@@ -3633,12 +3636,12 @@ static void func_800496E4(s32 blockIndex) {
     }
 }
 
-static u32 hits_get_size(s32 id) {
+u32 hits_get_size(s32 id) {
     u32 size = gFile_HITS_TAB[id + 1] - gFile_HITS_TAB[id];
     return size;
 }
 
-static HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
+HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
     s32 hits_start;
     s32 hits_size;
     s32 lineIndex;
@@ -3679,7 +3682,7 @@ void func_800499B4(){
 }
 
 /** Updates all the block texture scrollers */
-static void func_800499BC(void) {
+void func_800499BC(void) {
     BlockTextureScroller *scroll;
     s32 i;
     s32 dU;
@@ -3838,7 +3841,7 @@ void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 hei
     scroll->heightB = heightB; 
 }
 
-static void func_80049D38(u32 arg0) {
+void func_80049D38(u32 arg0) {
     if (D_800B97A8[arg0].refCount > 0) {
         D_800B97A8[arg0].refCount--;
     }
@@ -3848,7 +3851,7 @@ BlockTextureScroller* func_80049D68(s32 arg0) {
     return &D_800B97A8[arg0];
 }
 
-static void func_80049D88(void)
+void func_80049D88(void)
 {
     s32 i;
     Texture *texture;
@@ -3912,7 +3915,7 @@ s32 block_setup_textures(Block* block) {
 }
 #endif
 
-static void func_80049FA8(Block* block) {
+void func_80049FA8(Block* block) {
     s32 index;
     u8 animatorID;
     BlockShape* shape;
@@ -3967,7 +3970,7 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
     return 0;
 }
 
-static void func_8004A164(Texture *matchTexture, s32 matchParam) {
+void func_8004A164(Texture *matchTexture, s32 matchParam) {
     s32 index;
     for (index = 0; index < 0x14; index++){
         if (matchTexture == gBlockTextures[index].texture && matchParam == gBlockTextures[index].unkE){
@@ -4018,7 +4021,7 @@ BlockTexture *func_8004A2CC(s32 idx)
     return &gBlockTextures[idx];
 }
 
-static void block_setup_xz_bitmap(Block* block) {
+void block_setup_xz_bitmap(Block* block) {
     s16 tempTriBase;
     s16 pad;
     s32 triIndex;
@@ -4041,10 +4044,10 @@ static void block_setup_xz_bitmap(Block* block) {
         tempTriBase = block->shapes[var_t2 + 0].triBase;
         temp_a2 = block->shapes[var_t2 + 0].vtxBase;
         for (triIndex = tempTriBase, nextTriIndex = block->shapes[var_t2 + 1].triBase; triIndex < nextTriIndex; triIndex++) {
-            var_t3 = -32000;
-            var_t4 = 32000;
-            var_t5 = -32000;
-            var_s0 = 32000;
+            var_t3 = -0x7D00;
+            var_t4 = 0x7D00;
+            var_t5 = -0x7D00;
+            var_s0 = 0x7D00;
             sp38[0] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 0xD) & 0x1F) + temp_a2];
             sp38[1] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 7) & 0x1F) + temp_a2];
             sp38[2] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 1) & 0x1F) + temp_a2];
@@ -4188,7 +4191,7 @@ void func_8004A67C(void) {
     }
 }
 
-static void map_update_objects_streaming(s32 arg0) {
+void map_update_objects_streaming(s32 arg0) {
     GlobalMapCell* var_a3;
     s32 spB8;
     MapHeader* temp_s6;
@@ -4358,7 +4361,7 @@ static void map_update_objects_streaming(s32 arg0) {
     }
 }
 
-static s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
+s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     s16 searchIndex;
 
     for (searchIndex = 0; searchIndex < searchLimit; searchIndex++){
@@ -4370,7 +4373,7 @@ static s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     return 0;
 }
 
-static s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
+s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     s32 scaledX;
     Object* player;
     s32 scaledZOrFlag;
@@ -4453,7 +4456,7 @@ static s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     return 0;
 }
 
-static s32 map_should_obj_unload(Object *obj) {
+s32 map_should_obj_unload(Object *obj) {
     s32 sp54;
     s32 pad[6];
     f32 loadDist;
@@ -4549,7 +4552,7 @@ static s32 map_should_obj_unload(Object *obj) {
 
 /** map_should_object_load? */
 // is_obj_in_current_map_setup
-static s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
+s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     s32 setupID;
 
     setupID = gDLL_29_Gplay->vtbl->get_map_setup(mapID);
@@ -4569,7 +4572,7 @@ static s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     return 1;
 }
 
-static void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
+void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
     s8 *s4;
     s8 *s3;
     s8 *s0;
@@ -4622,7 +4625,7 @@ static void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* ar
 /**
  * Seems to be called when camera moves between grid cells?
  */
-static void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
+ void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
     s32 cell_offset;
     s32 bit_at_index;
     MapHeader *map;
@@ -4642,7 +4645,7 @@ static void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) 
     }
 }
 
-static s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
+s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     MapHeader *map;
     s32 bit_at_index;
     u32 cell_offset;
@@ -4822,7 +4825,7 @@ void func_8004BC20(SavedObject* arg0, s32 uID) {
 }
 
 // official name: romdefMove_Set ?
-static void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
+void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
     s32 i;
     s32 uID;
     s32 numFound;
@@ -5382,7 +5385,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Called every frame!
     Seems to start a fade-out followed by a warp
 */
-static void func_8004D328(void) {
+void func_8004D328(void) {
     SimilarToWarp* var_a2;
     Warp* var_v0;
     u8 temp2;

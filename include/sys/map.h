@@ -504,7 +504,6 @@ Block* func_80044BB0(s32 blockIndex);
 
 u8 func_800456AC(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
-MapHeader *map_load_streammap(s32, s32);
 
 // streaming stuff starts here
 
@@ -526,7 +525,6 @@ void map_func_80048034(void);
 void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
 void map_func_800483BC(f32, f32, f32);
 s8 map_get_layer(void);
-
 
 // something else
 
