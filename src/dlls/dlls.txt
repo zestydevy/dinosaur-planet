@@ -197,6 +197,7 @@
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
 544 = objects/544_DIM_LevelControl
+545 = objects/545_DIMTent
 546 = objects/546_DIMBikeDoor
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar

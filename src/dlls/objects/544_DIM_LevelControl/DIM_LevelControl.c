@@ -17,17 +17,23 @@ void DIM_LevelControl_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void DIM_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     DIM_LevelControl_Data *objdata;
-    u8 rand;
+    u8 tentIndex;
 
-    rand = rand_next(0, 11);
+    //Pick which tent holds the bridge cog
+    //@bug: doesn't check if the chosen tent has already been burnt, so you could potentially miss the gear
+    tentIndex = rand_next(0, 11);
+
     objdata = self->data;
     objdata->unk0 = 0;
-    main_set_bits(BIT_DIM_Gear_3_Random_Tent, rand);
+    
+    main_set_bits(BIT_DIM_Gear_3_Random_Tent, tentIndex);
+
     if (main_get_bits(BIT_42C)) {
         gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 2);
     } else {
         gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
     }
+    
     self->unkB0 |= 0x6000;
 }
 

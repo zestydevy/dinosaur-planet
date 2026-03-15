@@ -52,6 +52,10 @@ enum ParticleID {
     PARTICLE_1F4 = 0x1F4,
     PARTICLE_1F7 = 0x1F7,
     PARTICLE_202 = 0x202,
+    PARTICLE_203 = 0x203, //fire
+    PARTICLE_204 = 0x204, //floating ember
+    PARTICLE_205 = 0x205, //smoke rising
+    PARTICLE_206 = 0x206, //snow evaporating
     PARTICLE_257 = 0x257,
     /* --- DLL 36 END --- */
     /* --- DLL 35 START --- */
