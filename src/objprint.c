@@ -46,7 +46,6 @@ void func_800357B4(Object*, ModelInstance*, Model*);
 ModelInstance *func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
 void func_80036890(Object*, s32);
 void func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
-void func_8001F848(Gfx**);
 // should be in model.h
 void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
 void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2);

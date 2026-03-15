@@ -97,5 +97,8 @@ u32 shadows_init_obj_shadow(Object *obj, u32 addr, s32);
 f32 shadows_func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
 s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow);
 void shadows_func_8004D974(s32 arg0);
+void shadows_func_8004D9B8(void);
+void shadows_func_8004DABC(void);
+void shadows_func_8004D974(s32 arg0);
 
 #endif
