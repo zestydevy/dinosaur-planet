@@ -6,10 +6,14 @@
 #include "types.h"
 
 enum ParticleID {
+    PARTICLE_2 = 0x2, //cannon blast
+    PARTICLE_5 = 0x5,
+    PARTICLE_9 = 0x9, //debris explosion
     PARTICLE_3C = 0x3C,
     PARTICLE_42 = 0x42,
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
+    PARTICLE_69 = 0x69, //nothing?
     PARTICLE_75 = 0x75,
     PARTICLE_77 = 0x77,
     PARTICLE_78 = 0x78,

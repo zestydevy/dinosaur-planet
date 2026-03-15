@@ -65,6 +65,7 @@
 248 = objects/248_PirahnaBaddie
 250 = objects/250_TurtleBaddie
 252 = objects/252_Cannon
+253 = objects/253_CannonBall
 254 = objects/254_PineCone
 257 = objects/257_tesla
 260 = objects/260_Pollen

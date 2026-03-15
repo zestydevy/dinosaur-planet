@@ -36,6 +36,8 @@ enum SoundID {
 
     SOUND_15_Heavy_Stone_Moving = 0x15,    // used by door to Randorn's hall
 
+    SOUND_18 = 0x18, //empty?
+
     SOUND_1A = 0x1A,        
     SOUND_1B = 0x1B,     
     SOUND_1C = 0x1C,          
@@ -134,6 +136,7 @@ enum SoundID {
     SOUND_8E_Magic_Chime = 0x8E,  // used by collectable DLL
     SOUND_8F_Water_Paddle = 0x8F, // used by DFlog
 
+    SOUND_95_Explosion = 0x95, //Cannon
     SOUND_96_Cannon = 0x96, //SB_ShipGun
 
     SOUND_9B_Transporter_Hiss = 0x9B,
