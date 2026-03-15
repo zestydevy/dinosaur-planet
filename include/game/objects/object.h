@@ -23,9 +23,11 @@ enum ObjectGroup {
 	GROUP_NONE = 0,
 	GROUP_UNK1 = 1, // player?
 	GROUP_UNK16 = 16,
+	GROUP_UNK29 = 29,
 	GROUP_UNK41 = 41,
 	GROUP_UNK46 = 46,
-	GROUP_UNK48 = 48
+	GROUP_UNK48 = 48,
+	GROUP_UNK54 = 54
 };
 
 // base objdata of objects in group 16?

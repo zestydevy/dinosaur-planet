@@ -150,7 +150,7 @@ dummy_label1: ;
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
 
             //Send an object message, then destroy both the attacking object and the cannon
-            obj_send_mesg_many(0x36, 0, 0, 0xE0000, self);
+            obj_send_mesg_many(GROUP_UNK54, 0, 0, 0xE0000, self);
             obj_destroy_object(obj);
             obj_destroy_object(self);
             return;
@@ -232,7 +232,7 @@ dummy_label3: ;
             dObjectRef = obj;
 
             //Send an object message, then destroy both the attacking object and the cannon
-            obj_send_mesg_many(0x36, 0, 0, 0xE0000, self);
+            obj_send_mesg_many(GROUP_UNK54, 0, 0, 0xE0000, self);
             obj_destroy_object(obj);
             obj_destroy_object(self);
             return;
