@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_252_ctor
-.dword dll_252_dtor
+.dword Cannon_ctor
+.dword Cannon_dtor
 
 # export table
-/*0*/ .dword dll_252_setup
-/*1*/ .dword dll_252_control
-/*2*/ .dword dll_252_update
-/*3*/ .dword dll_252_print
-/*4*/ .dword dll_252_free
-/*5*/ .dword dll_252_get_model_flags
-/*6*/ .dword dll_252_get_data_size
+/*0*/ .dword Cannon_setup
+/*1*/ .dword Cannon_control
+/*2*/ .dword Cannon_update
+/*3*/ .dword Cannon_print
+/*4*/ .dword Cannon_free
+/*5*/ .dword Cannon_get_model_flags
+/*6*/ .dword Cannon_get_data_size
