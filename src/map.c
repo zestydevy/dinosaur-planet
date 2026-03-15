@@ -202,6 +202,7 @@ void func_80043FD8(s8* arg0);
 s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
 void some_cell_func(BitStream* stream);
 BlockTextureScroller* func_80049D68(s32 arg0);
+s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -804,8 +805,8 @@ void track_c_func(void) {
                 if (temp_v0 < 0 || func_800451A0(temp_s1, var_s2, var_s0) == 0) {
                     continue;
                 }
-                D_800B97B8 = temp_s1 * 640.0f;
-                D_800B97BC = var_s2 * 640.0f;
+                D_800B97B8 = temp_s1 * BLOCKS_GRID_UNIT_F;
+                D_800B97BC = var_s2 * BLOCKS_GRID_UNIT_F;
                 func_80043950(var_s0, temp_s1, var_s2, sp240);
                 if (UINT_80092a98 & 0x8000) {
                     if (var_s0->unk3E != 0) {
@@ -1082,182 +1083,143 @@ void func_800436DC(Object* obj, s32 arg1) {
     }
 }
 
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
-#else
-typedef struct {
-    /*0x0*/  u8 *data;
-    /*0x4*/  s32 byteLength;
-    /*0x8*/  s32 bitLength;
-    /*0xC*/  s32 capacity;
-    /*0x10*/ s32 bitPos;
-} BitStream;
-typedef struct Arg0Unk4 {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    u8 pad6[0xF - 0x6];
-} Arg0Unk4;
-typedef struct Arg0Unk8 {
-    s32 unk0;
-    s32 unk4;
-} Arg0Unk8;
-typedef struct Arg0UnkC {
-    s32 unk0;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-    s16 unkA;
-    u8 unkC;
-    u8 unkD;
-    u8 unkE;
-    u8 unkF;
-    u8 pad10[0x17 - 0x10];
-    u8 unk17;
-} Arg0UnkC;
-
-typedef struct UnkArg0 {
-    s32 pad0;
-    Arg0Unk4 *unk4;
-    Arg0Unk8 *unk8;
-    Arg0UnkC *unkC;
-    u8 pad10[0x36 - 0x10];
-    s16 unk36;
-} UnkArg0;
-void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3);
-s32 func_80045600(s32, BitStream*, s16, s16, s32);          /* extern */
-extern Plane D_800B4ADC; // ????? unsure about the type of this
-void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
-    s32 i;
-    Arg0Unk8* temp_v0;
-    Arg0Unk8* var_a1;
-    Arg0UnkC* var_s0;
+void func_80043950(Block* arg0, s16 arg1, s16 arg2, s16 arg3) {
+    BlockShape* var_s0;
+    BlockVertex* temp_v0_2;
+    EncodedTri* temp_t5;
+    EncodedTri* temp_v0;
+    EncodedTri* var_a1;
     Plane* var_v0;
-    Arg0Unk4* unk4;
+    f32 temp_fa1;
+    f32 temp_fs0;
+    f32 temp_fs5;
+    f32 temp_ft2;
+    f32 temp_ft4;
+    f32 temp_ft5;
     f32 var_fa0;
+    BlockShape* sp98;
     f32 var_fs1;
-    f32 var_fs2;
-    f32 var_fs3;
-    f32 var_fs4;
-    f32 var_fv1;
-    f32 var_f0;
-    Arg0UnkC *sp98[1];
-    Arg0Unk4* temp_v0_2;
     f32 sp90;
     f32 sp8C;
     f32 sp88;
-    f32 sp84;
+    f32 var_fs2;
     f32 sp80;
     f32 sp7C;
-    s32 var_s1;
-    s32 pad[4];
+    f32 var_fs3;
+    f32 var_fs4;
+    f32 var_fv1;
     s32 temp_s2;
     s32 temp_s3;
     s32 temp_s4;
+    s32 var_s1;
+    u32 temp_a0_3;
+    u32 temp_t8;
+    s32 i;
+    f32 var_fv0;
+    f32 var_fa1;
+    BlockVertex  *tempVtx;
 
-    temp_s2 = D_800B51E4->tx - gWorldX - D_800B97B8;
+    temp_s2 = (D_800B51E4->tx - gWorldX) - D_800B97B8;
     temp_s3 = D_800B51E4->ty;
-    temp_s4 = D_800B51E4->tz - gWorldZ - D_800B97BC;
-    var_s0 = &arg0->unkC[0];
-    if ((u32)var_s0 >= (u32)&arg0->unkC[arg0->unk36]) {
-        return;
-    }
-
-    sp98[0] = &arg0->unkC[arg0->unk36];
-    do {
-        if (var_s0->unk0 & 0x200000) {
-            var_s0->unk0 &= 0xEFFFFFFF;
+    temp_s4 = (D_800B51E4->tz - gWorldZ) - D_800B97BC;
+    var_s0 = arg0->shapes;
+    sp98 = &arg0->shapes[arg0->shapeCount];
+    while ((u32) var_s0 < (u32) sp98) {
+        if (var_s0->flags & 0x200000) {
+            var_s0->flags &= ~0x10000000;
             var_s0++;
             continue;
         }
-        if (
-            ((u8) D_800B9794 != 0) &&
-            ((D_800B979C & 1) || !(var_s0->unk0 & 0x2404)) &&
-            // var_s0 - arg0->unkC is just current "index"
-            (func_80045600((var_s0 - arg0->unkC) / 24, &D_800B9780, arg1, arg2, arg3) == 0)
-        ) {
-            var_s0->unk0 &= 0xEFFFFFFF;
+        if ((D_800B9794 != 0) && ((D_800B979C & 1) || !(var_s0->flags & 0x2404)) && (func_80045600((var_s0 - arg0->shapes), &D_800B9780, arg1, arg2, arg3) == 0)) {
+            var_s0->flags &= ~0x10000000;
             var_s0++;
             continue;
-        } 
+        }
 
         var_s1 = 1;
-        sp84 = ((var_s0->unkD * 4) | ((var_s0->unk17 >> 4) & 3)) + D_800B97B8;
-        sp90 = ((var_s0->unkC * 4) | (var_s0->unk17 & 3)) + D_800B97B8;
-        sp8C = var_s0->unk8;
-        sp80 = var_s0->unkA;
-        sp7C = ((var_s0->unkF * 4) | ((var_s0->unk17 >> 6) & 3)) + D_800B97BC;
-        sp88 = ((var_s0->unkE * 4) | ((var_s0->unk17 >> 2) & 3)) + D_800B97BC;
-        for (i = 0; i < MAP_LAYER_COUNT; i++) {
-            var_v0 = &gFrustumPlanes[i];
-            if (var_v0->unk14[0] & 1) {
-                var_fs1 = sp84;
+        temp_fs5 = ((var_s0->Xmax * 4) | ((var_s0->unk_cull >> 4) & 3)) + D_800B97B8;
+        sp90 = ((var_s0->Xmin * 4) | (var_s0->unk_cull & 3)) + D_800B97B8;
+        sp8C = var_s0->Ymin;
+        sp80 = var_s0->Ymax;
+        sp7C = ((var_s0->Zmax * 4) | ((var_s0->unk_cull >> 6) & 3)) + D_800B97BC;
+        sp88 = ((var_s0->Zmin * 4) | ((var_s0->unk_cull >> 2) & 3)) + D_800B97BC;
+        for (i = 0; i < ARRAYCOUNT(gFrustumPlanes); i++) {
+            if (gFrustumPlanes[i].unk14[0] & 1) {
+                var_fs1 = temp_fs5;
                 var_fs4 = sp90;
             } else {
                 var_fs1 = sp90;
-                var_fs4 = sp84;
+                var_fs4 = temp_fs5;
             }
-            if (var_v0->unk14[0] & 2) {
+            if (gFrustumPlanes[i].unk14[0] & 2) {
                 var_fs2 = sp80;
                 var_fs3 = sp8C;
             } else {
                 var_fs2 = sp8C;
                 var_fs3 = sp80;
             }
-            if (var_v0->unk14[0] & 4) {
+            if (gFrustumPlanes[i].unk14[0] & 4) {
                 var_fv1 = sp7C;
                 var_fa0 = sp88;
             } else {
                 var_fv1 = sp88;
                 var_fa0 = sp7C;
             }
-            var_f0 = (var_v0->d + ((var_fs1 * var_v0->x) + (var_fs2 * var_v0->y) + (var_fv1 * var_v0->z)));
-            if (var_f0 < 0.0f) {
-                var_f0 = (var_v0->d + ((var_fs4 * var_v0->x) + (var_fs3 * var_v0->y) + (var_fa0 * var_v0->z)));
-                if (var_f0 < 0.0f) {
+            var_fa1 =  gFrustumPlanes[i].d; // not used but required to be loaded here
+            temp_ft4 = gFrustumPlanes[i].x;
+            temp_ft5 = gFrustumPlanes[i].y;
+            temp_fs0 = gFrustumPlanes[i].z;
+            var_fv0 = gFrustumPlanes[i].d + ((var_fs1 * temp_ft4) + (var_fs2 * temp_ft5) + (var_fv1 * temp_fs0));
+            if (var_fv0 < 0.0f) {
+                var_fv0 = gFrustumPlanes[i].d + ((var_fs4 * temp_ft4) + (var_fs3 * temp_ft5) + (var_fa0 * temp_fs0));
+                if (var_fv0 < 0.0f) {
                     var_s1 = 0;
                     break;
                 }
             }
         }
+
         if (var_s1 == 0) {
-            var_s0->unk0 &= 0xEFFFFFFF;
+            var_s0->flags &= ~0x10000000;
             var_s0++;
             continue;
-        } 
-        if (!(var_s0->unk0 & 0x80000000)) {
+        }
+        if (!(var_s0->flags & 0x80000000)) {
             var_s1 = 0;
-            unk4 = &arg0->unk4[var_s0->unk4];
-            var_a1 = &arg0->unk8[var_s0->unk6];
-            temp_v0 = arg0->unk8;
-            temp_v0 += var_s0[1].unk6;
-            while ((u32) var_a1 < (u32)temp_v0) {
-                temp_v0_2 = &unk4[((var_a1->unk0 >> 0xD) & 0x1F)];
-                if (
-                    (
-                        ((temp_v0_2->unk0 - temp_s2) * (var_a1->unk0 >> 0x12)) +
-                        ((temp_v0_2->unk2 - temp_s3) * ((var_a1->unk4 << 0xE) >> 0x12)) +
-                        ((temp_v0_2->unk4 - temp_s4) * (var_a1->unk4 >> 0x12))
-                    ) < 0) {
-                    var_a1->unk4 |=1;
+            tempVtx = &arg0->vertices[var_s0->vtxBase];
+            var_a1 = arg0->encodedTris;
+            var_a1 += var_s0->triBase;
+            temp_t5 = arg0->encodedTris;
+            temp_t5 += var_s0[1].triBase;
+            while ((u32) var_a1 < (u32) temp_t5) {
+                s32 a2 = (s32)var_a1->d0 >> 0xD;
+                s32 temp0, temp1, temp2;
+                s32 temp3, temp4, temp5;
+                temp0 = (tempVtx[a2 & 0x1F].ob[0] - temp_s2);
+                temp1 = (tempVtx[a2 & 0x1F].ob[1] - temp_s3);
+                temp2 = (tempVtx[a2 & 0x1F].ob[2] - temp_s4);
+                temp3 = (s32)var_a1->d0 >> 0x12;
+                temp4 = (s32) (var_a1->d1 << 0xE) >> 0x12;
+                temp5 = (s32) var_a1->d1 >> 0x12;
+                if ((temp0 * temp3) + (temp1 * temp4) + (temp2 * temp5) < 0) {
+                    var_a1->d1 |= 1;
                     var_s1 = 1;
                 } else {
-                    var_a1->unk4 &= ~1;
+                    var_a1->d1 &= ~1;
                 }
                 var_a1++;
             }
             if (var_s1 == 0) {
-                var_s0->unk0 &= 0xEFFFFFFF;
+                var_s0->flags &= ~0x10000000;
                 var_s0++;
                 continue;
-            } 
+            }
         }
-        var_s0->unk0 |= 0x10000000;
+        var_s0->flags |= 0x10000000;
         var_s0++;
-    } while ((u32)var_s0 < (u32)sp98[0]);
+    }
 }
-#endif
+
 
 void block_add_to_render_list(Block *block, f32 x, f32 z)
 {
@@ -1732,22 +1694,22 @@ void func_80044BEC(void) {
             gFrustumPlanes[var_s0].unk14[0] = 2;
             break;
         case 6:
-            gFrustumPlanes[var_s0].unk14[0] = 5;
+            gFrustumPlanes[var_s0].unk14[0] = 4|1;
             break;
         case 9:
-            gFrustumPlanes[var_s0].unk14[0] = 7;
+            gFrustumPlanes[var_s0].unk14[0] = 4|2|1;
             break;
         case 12:
             gFrustumPlanes[var_s0].unk14[0] = 1;
             break;
         case 15:
-            gFrustumPlanes[var_s0].unk14[0] = 3;
+            gFrustumPlanes[var_s0].unk14[0] = 2|1;
             break;
         case 18:
             gFrustumPlanes[var_s0].unk14[0] = 4;
             break;
         case 21:
-            gFrustumPlanes[var_s0].unk14[0] = 6;
+            gFrustumPlanes[var_s0].unk14[0] = 4|2;
             break;
         }
     }
@@ -2510,8 +2472,8 @@ void map_update_streaming(void) {
     f2 = D_800B97B4;
     f14 = f0 - gWorldX;
     sp308 = f2 - gWorldZ;
-    sp2F4 = floor_f(f14 / 640.0f);
-    sp2F0 = floor_f(sp308 / 640.0f);
+    sp2F4 = floor_f(f14 / BLOCKS_GRID_UNIT_F);
+    sp2F0 = floor_f(sp308 / BLOCKS_GRID_UNIT_F);
     sp294 = UINT_80092a98 & 0x800;
     UINT_80092a98 &= ~0x800;
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (UINT_80092a98 & 0x4000)) {
@@ -2547,8 +2509,8 @@ void map_update_streaming(void) {
         tempZ = gWorldZ;
         gMapCurrentStreamCoordsX = (gMapCurrentStreamCoordsX + sp2F4) - 7;
         gMapCurrentStreamCoordsZ = (gMapCurrentStreamCoordsZ + sp2F0) - 7;
-        gWorldX = gMapCurrentStreamCoordsX * 640.0f;
-        gWorldZ = gMapCurrentStreamCoordsZ * 640.0f;
+        gWorldX = gMapCurrentStreamCoordsX * BLOCKS_GRID_UNIT_F;
+        gWorldZ = gMapCurrentStreamCoordsZ * BLOCKS_GRID_UNIT_F;
         D_80092A60 = gWorldX;
         D_80092A64 = gWorldZ;
         func_800307C4(tempX - gWorldX, tempZ - gWorldZ);
