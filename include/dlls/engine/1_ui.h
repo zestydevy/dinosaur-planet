@@ -26,24 +26,6 @@ typedef enum {
     PAGE_Foodbag = 6
 } Cmdmenu_Pages;
 
-typedef struct {
-/*00*/ s32 unk0;
-/*04*/ s32 unk4;
-/*08*/ u32 unk8;
-/*0C*/ s32 unkC;
-/*10*/ f32 unk10;
-/*14*/ s8 unk14;
-/*15*/ s8 unk15;
-/*16*/ s16 unk16;
-/*18*/ Texture* unk18;
-/*1C*/ s32 unk1C;
-/*20*/ s32 unk20;
-/*24*/ s32 unk24;
-/*28*/ s32 unk28;
-/*2C*/ s32 unk2C;
-/*30*/ Texture* unk30;
-} EnergyBar;
-
 DLL_INTERFACE(DLL_1_UI) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ s32 (*func_308)(void);
