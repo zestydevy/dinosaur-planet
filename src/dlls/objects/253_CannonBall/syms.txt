@@ -1,0 +1,12 @@
+.text = 0x0:
+CannonBall_ctor = 0x0;
+CannonBall_dtor = 0xC;
+CannonBall_setup = 0x18;
+CannonBall_control = 0x2C;
+CannonBall_update = 0x2C4;
+CannonBall_print = 0x2D0;
+CannonBall_free = 0x324;
+CannonBall_get_model_flags = 0x36C;
+CannonBall_get_data_size = 0x37C;
+
+.rodata = 0x3E4:

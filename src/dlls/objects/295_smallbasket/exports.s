@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_295_ctor
-.dword dll_295_dtor
+.dword smallbasket_ctor
+.dword smallbasket_dtor
 
 # export table
-/*0*/ .dword dll_295_setup
-/*1*/ .dword dll_295_control
-/*2*/ .dword dll_295_update
-/*3*/ .dword dll_295_print
-/*4*/ .dword dll_295_free
-/*5*/ .dword dll_295_get_model_flags
-/*6*/ .dword dll_295_get_data_size
+/*0*/ .dword smallbasket_setup
+/*1*/ .dword smallbasket_control
+/*2*/ .dword smallbasket_update
+/*3*/ .dword smallbasket_print
+/*4*/ .dword smallbasket_free
+/*5*/ .dword smallbasket_get_model_flags
+/*6*/ .dword smallbasket_get_data_size

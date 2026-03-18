@@ -1,0 +1,15 @@
+.text = 0x0:
+WM_TransTop_ctor = 0x0;
+WM_TransTop_dtor = 0xC;
+WM_TransTop_setup = 0x18;
+WM_TransTop_control = 0x90;
+WM_TransTop_update = 0x9C;
+WM_TransTop_print = 0xA8;
+WM_TransTop_free = 0x184;
+WM_TransTop_get_model_flags = 0x1CC;
+WM_TransTop_get_data_size = 0x1DC;
+WM_TransTop_draw_mask = 0x1F0;
+
+.rodata = 0x544:
+sMaskTris = 0x0; // absolute:0x544
+sMaskVertCoords = 0xC0; // absolute:0x604

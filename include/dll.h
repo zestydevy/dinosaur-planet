@@ -151,6 +151,7 @@ enum DLL_ID {
     DLL_ID_130 = 0x101A,
     DLL_ID_133 = 0x101D,
     DLL_ID_136 = 0x1020,
+    DLL_ID_137 = 0x1021,
     DLL_ID_139 = 0x1023,
     DLL_ID_140 = 0x1024,
     DLL_ID_141 = 0x1025,
@@ -159,6 +160,8 @@ enum DLL_ID {
     DLL_ID_148 = 0x102C,
     DLL_ID_149 = 0x102D,
     DLL_ID_155 = 0x1033,
+    DLL_ID_157 = 0x1035,
+    DLL_ID_165 = 0x103D,
     DLL_ID_170 = 0x1042,
     DLL_ID_177 = 0x1049,
     DLL_ID_180 = 0x104C,
@@ -170,6 +173,7 @@ enum DLL_ID {
     DLL_ID_190 = 0x2004,
     DLL_ID_194 = 0x2008,
     DLL_ID_202 = 0x2010,
+    DLL_ID_205 = 0x2013,
 
     // Objects
     DLL_ID_210_Player = 0x8001,

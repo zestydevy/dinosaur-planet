@@ -1,0 +1,22 @@
+.text = 0x0:
+dll_537_ctor = 0x0;
+dll_537_dtor = 0xC;
+dll_537_setup = 0x18;
+dll_537_control = 0x178;
+dll_537_update = 0x8F0;
+dll_537_print = 0x8FC;
+dll_537_free = 0x9BC;
+dll_537_get_model_flags = 0xA48;
+dll_537_get_data_size = 0xA6C;
+dll_537_func_A94 = 0xA94;
+dll_537_func_DAC = 0xDAC;
+dll_537_func_1150 = 0x1150;
+dll_537_func_1314 = 0x1314;
+dll_537_func_1430 = 0x1430;
+dll_537_func_1640 = 0x1640;
+dll_537_func_16AC = 0x16AC;
+
+.rodata = 0x1838:
+
+.data = 0x1888:
+_data_0 = 0x0; // absolute:0x1888

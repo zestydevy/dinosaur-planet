@@ -8,7 +8,8 @@ enum ObjType {
     OBJTYPE_PLAYER = 0,
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
-    OBJTYPE_4 = 4, // Tumbleweed, WG_Triffid
+    OBJTYPE_3 = 3, // tesla.c
+    OBJTYPE_4 = 4, // Tumbleweed, WG_Triffid, DFSH_Shrine
     OBJTYPE_5 = 5, // collectable, SCcollectables (OBJTYPE_COLLECTABLE?)
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7, // CFScalesGalleon
@@ -31,6 +32,7 @@ enum ObjType {
     OBJTYPE_33 = 33,
     OBJTYPE_34 = 34,
     OBJTYPE_37 = 37,
+    OBJTYPE_38 = 38,
     OBJTYPE_39 = 39,
     OBJTYPE_40 = 40,
     OBJTYPE_41 = 41, // DBExpBit
@@ -45,7 +47,7 @@ enum ObjType {
     OBJTYPE_59 = 59,
     OBJTYPE_61 = 61, 
     OBJTYPE_62 = 62, 
-    OBJTYPE_63 = 63, // MagicPlant
+    OBJTYPE_63 = 63, // MagicPlant, Crate
     OBJTYPE_64 = 64
 };
 

@@ -1,0 +1,30 @@
+.text = 0x0:
+dll_232_func_0 = 0x0;
+dll_232_ctor = 0x78;
+dll_232_dtor = 0xB8;
+dll_232_setup = 0xC4;
+dll_232_control = 0x23C;
+dll_232_update = 0x828;
+dll_232_print = 0x834;
+dll_232_free = 0x894;
+dll_232_get_model_flags = 0x938;
+dll_232_get_data_size = 0x948;
+dll_232_func_95C = 0x95C;
+dll_232_func_978 = 0x978;
+dll_232_func_A88 = 0xA88;
+dll_232_func_AB8 = 0xAB8;
+dll_232_func_CF0 = 0xCF0;
+dll_232_func_E3C = 0xE3C;
+dll_232_func_EC8 = 0xEC8;
+dll_232_func_100C = 0x100C;
+
+.rodata = 0x1164:
+
+.data = 0x1194:
+_data_0 = 0x0; // absolute:0x1194
+_data_70 = 0x70; // absolute:0x1204
+_data_8C = 0x8C; // absolute:0x1220
+
+.bss = 0x1234:
+_bss_0 = 0x0; // absolute:0x1234
+_bss_8 = 0x8; // absolute:0x123C

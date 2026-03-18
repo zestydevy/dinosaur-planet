@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_241_ctor = 0x0;
+dll_241_dtor = 0xC;
+dll_241_setup = 0x18;
+dll_241_control = 0x60;
+dll_241_update = 0x6C;
+dll_241_print = 0x78;
+dll_241_free = 0xD8;
+dll_241_get_model_flags = 0xE8;
+dll_241_get_data_size = 0xF8;
+dll_241_func_10C = 0x10C;
+
+.rodata = 0x268:
