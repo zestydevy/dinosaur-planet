@@ -3,6 +3,8 @@
 #include "dlls/engine/1_ui.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
+#include "dlls/objects/210_player.h"
+#include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
@@ -11,7 +13,6 @@
 #include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
-#include "dlls/objects/210_player.h"
 #include "sys/fonts.h"
 #include "sys/rcp.h"
 #include "macros.h"
@@ -58,17 +59,20 @@ typedef struct {
 /*14*/ s32 unk14;
 } CmdmenuItemUnkBSS6B8;
 
-typedef struct {
-s32 unk0;
-s32 unk4; //magic
-s32 unk8; //scarabCount
-s32 unkC;
-s32 unk10;
-s32 unk14;
-s32 unk18; //maxHealth
-s32 unk1C; //maxMagic
-s32 unk20;
-s32 unk24;
+typedef union { 
+    struct {
+        s32 unk0;
+        s32 unk4; //magic
+        s32 unk8; //scarabCount
+        s32 unkC;
+        s32 unk10;
+        s32 unk14;
+        s32 unk18; //maxHealth
+        s32 unk1C; //maxMagic
+        s32 unk20;
+        s32 unk24;
+    };
+    s32 items[10];
 } CmdmenuPlayerSidekickData;
 
 typedef struct {
@@ -86,15 +90,18 @@ typedef struct {
 /*4C*/ u32 unk4C_0 : 1;
 } EnergyBar;
 
-typedef struct {
-    f32 unk0;
-    u8 _unk4[0x8 - 0x4];
-    f32 unk8;
-    f32 unkC;
-    u8 _unk10[0x14 - 0x10];
-    f32 unk14;
-    u8 _unk18[0x1C - 0x18];
-    f32 unk1C;
+typedef union {
+    struct {
+        f32 unk0;
+        u8 _unk4[0x8 - 0x4];
+        f32 unk8;
+        f32 unkC;
+        u8 _unk10[0x14 - 0x10];
+        f32 unk14;
+        u8 _unk18[0x1C - 0x18];
+        f32 unk1C;
+    };
+    f32 items[10];
 } BSS60;
 
 /*0x0*/ static s8 _data_0 = 0;
@@ -144,10 +151,26 @@ typedef struct {
 /*0xAC*/ static u16 _data_AC[] = {
     0x057f, 0x057f, 0x0581, 0x0580, 0x0582, 0x0583
 };
-/*0xB8*/ static u16 _data_B8[] = {
-    0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0d05, 0x1310, 0x040a, 0x0c16, 0x0416, 0x0c20, 0x0d16, 0x1328, 0x140a, 0x1c16, 0x1416, 0x1c20, 
-    0x0b00, 0x150a, 0x0204, 0x0c10, 0x0417, 0x0c28, 0x0b20, 0x152c, 0x1417, 0x1c28, 0x1404, 0x1e10, 0x080e, 0x1812, 0x0812, 0x1818
+/*0xB8*/ static s16 _data_B8[10][2] = {
+    {-1, -1}, 
+    {-1, -1}, 
+    {-1, -1}, 
+    {-1, -1}, 
+    {-1, -1}, 
+    {-1, -1}, 
+    {-1, -1}, 
+    {-1, -1}, 
+    {0, 0}, 
+    {0, 0}
+};
+/*0xE0*/ static u16 _data_E0[] = {
+    0x0d05, 0x1310, 0x040a, 0x0c16, 
+    0x0416, 0x0c20, 0x0d16, 0x1328, 
+    0x140a, 0x1c16, 0x1416, 0x1c20, 
+    0x0b00, 0x150a, 0x0204, 0x0c10, 
+    0x0417, 0x0c28, 0x0b20, 0x152c, 
+    0x1417, 0x1c28, 0x1404, 0x1e10, 
+    0x080e, 0x1812, 0x0812, 0x1818
 };
 /*0x118*/ static u32 _data_118 = 0x00000000;
 /*0x11C*/ static u32 _data_11C = 0x00000000;
@@ -433,17 +456,13 @@ typedef struct {
 /*0x8*/ static f32 _bss_8;
 /*0xC*/ static s32 _bss_C;
 /*0x10*/ static CmdmenuPlayerSidekickData _bss_10; //Tricky food level is stored in here! Maybe a struct?
-/*0x38*/ static u8 _bss_38[0x8];
-/*0x40*/ static u8 _bss_40[0xc];
-/*0x4C*/ static u8 _bss_4C[0x4];
-/*0x50*/ static u8 _bss_50[0x10];
+/*0x38*/ static CmdmenuPlayerSidekickData _bss_38;
 /*0x60*/ static BSS60 _bss_60;
-/*0x70*/ static u8 _bss_80[0x8];
-/*0x88*/ static s8 _bss_88;
+/*0x88*/ static u8 _bss_88;
 /*0x89*/ static u8 _bss_89;
 /*0x8A*/ static u8 _bss_8A;
 /*0x8B*/ static u8 _bss_8B;
-/*0x8C*/ static u8 _bss_8C[0x4];
+/*0x8C*/ static f32 _bss_8C;
 /*0x90*/ static EnergyBar* _bss_90; 
 /*0x98*/ static u8 _bss_98[0x8]; //Pointers to inventory icon textures
 /*0xA0*/ static u8 _bss_A0[0xf8];
@@ -492,9 +511,10 @@ typedef struct {
 /*0xC44*/ static u8 _bss_C44[0x4];
 /*0xC48*/ static s8 _bss_C48;
 /*0xC4C*/ static u8 _bss_C4C[0x4];
-/*0xC50*/ static u8 _bss_C50[0x4];
+/*0xC50*/ static s32 _bss_C50;
 /*0xC54*/ static s32 _bss_C54; //controllerButtons
-/*0xC58*/ static u8 _bss_C58[0x8];
+/*0xC58*/ static s32 _bss_C58;
+/*0xC5C*/ static u8 _bss_C5C[0x4];
 /*0xC60*/ static Func_80037F9C_Struct _bss_C60[2];
 /*0xC78*/ static s8 _bss_C78;
 /*0xC7A*/ static s16 _bss_C7A;
@@ -853,7 +873,98 @@ void dll_1_func_484C(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_4AD4.s")
 
 // offset: 0x5608 | func: 38
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_5608.s")
+void dll_1_func_5608(void) {
+    Object* player;
+    Object* sidekick;
+    CmdmenuPlayerSidekickData sp80;
+    f32 temp_fv0;
+    s16 temp_v0;
+    u8 var_s2;
+    u8 i;
+
+    player = get_player();
+    sidekick = get_sidekick();
+    var_s2 = 0;
+    sp80.items[0] = ((DLL_210_Player*)player->dll)->vtbl->get_health(player);
+    sp80.items[7] = ((DLL_210_Player*)player->dll)->vtbl->get_health_max(player);
+    if (sidekick != NULL) {
+        sp80.items[1] = ((DLL_ISidekick*)sidekick->dll)->vtbl->func15(sidekick);
+        sp80.items[4] = ((DLL_ISidekick*)sidekick->dll)->vtbl->func16(sidekick);
+        sp80.items[9] = 8;
+    } else {
+        sp80.items[1] = 0;
+        sp80.items[4] = 0;
+        sp80.items[9] = 0;
+    }
+    sp80.items[2] = ((DLL_210_Player*)player->dll)->vtbl->get_magic(player);
+    sp80.items[8] = ((DLL_210_Player*)player->dll)->vtbl->get_magic_max(player);
+    sp80.items[3] = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
+    if (((DLL_210_Player*)player->dll)->vtbl->func21(player) != 0) {
+        var_s2 = 7;
+    }
+    if (_bss_8B < var_s2) {
+        _bss_8B = var_s2;
+    }
+    if (_bss_C50 & 0x10) {
+        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EA, MAX_VOLUME, NULL, NULL, 0, NULL);
+    }
+    if ((_bss_C58 & 0x10) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || ((_data_80 != 0) && (camera_get_letterbox() == 0))) {
+        sp80.items[5] = _bss_38.unk14 + 1;
+    } else {
+        sp80.items[5] = _bss_38.unk14;
+    }
+    if (_bss_C58 & 0x10) {
+        _bss_8C += 8.5f * gUpdateRateF;
+        if (_bss_8C > 255.0f) {
+            _bss_8C = 255.0f;
+        }
+    } else {
+        _bss_8C -= 8.5f * gUpdateRateF;
+        if (_bss_8C < 0.0f) {
+            _bss_8C = 0.0f;
+        }
+    }
+    _bss_8C = _bss_8C < _bss_0 ? _bss_8C : _bss_0;
+    sp80.items[6] = 0;
+    if (_bss_88 & 1) {
+        _bss_88 &= ~1;
+        for (i = 0; i < 10; i++) {
+            _bss_10.items[i] = sp80.items[i];
+            _bss_38.items[i] = sp80.items[i];
+            _bss_60.items[i] = -30.0f;
+        }
+        _bss_0 = 0.0f;
+        return;
+    }
+
+    for (i = 0; i < 10; i++) {
+        temp_fv0 = _bss_60.items[i];
+        _bss_60.items[i] = temp_fv0 - gUpdateRateF;
+        if (temp_fv0 > 60.0f) {
+            if (_bss_60.items[i] <= 60.0f) {
+                if (_bss_10.items[i] < sp80.items[i]) {
+                    if (_data_B8[i][0] != -1) {
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, _data_B8[i][0], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    }
+                } else {
+                    if (_data_B8[i][1] != -1) {
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, _data_B8[i][1], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    }
+                }
+                _bss_10.items[i] = sp80.items[i];
+            }
+        }
+        if (sp80.items[i] != _bss_38.items[i]) {
+            _bss_38.items[i] = sp80.items[i];
+            if (_bss_60.items[i] <= 60.0f) {
+                _bss_60.items[i] = 90.0f - gUpdateRateF;
+            }
+        }
+        if (_bss_60.items[i] < -30.0f) {
+            _bss_60.items[i] = -30.0f;
+        }
+    }
+}
 
 // offset: 0x5BBC | func: 39
 void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {

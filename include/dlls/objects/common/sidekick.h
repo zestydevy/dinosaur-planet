@@ -15,8 +15,8 @@ DLL_INTERFACE(DLL_ISidekick) {
 	/*12*/ UnknownDLLFunc func12;
 	/*13*/ UnknownDLLFunc func13;
 	/*14*/ void (*func14)(Object *, s32);
-	/*15*/ UnknownDLLFunc func15;
-	/*16*/ UnknownDLLFunc func16;
+	/*15*/ s32 (*func15)(Object *);
+	/*16*/ s32 (*func16)(Object *);
 	/*17*/ UnknownDLLFunc func17;
 	/*18*/ UnknownDLLFunc func18;
 	/*19*/ UnknownDLLFunc func19;
