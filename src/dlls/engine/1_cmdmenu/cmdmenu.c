@@ -16,6 +16,7 @@
 #include "sys/fonts.h"
 #include "sys/rcp.h"
 #include "macros.h"
+#include "gbi_extra.h"
 #include "prevent_bss_reordering2.h"
 
 // 9slcommandmenu.c (default.dol)
@@ -27,8 +28,6 @@ typedef struct {
 /*C*/ s16 unkC;
 } CmdmenuItemUnkBSS;
 
-static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
-
 typedef struct {
 /*0*/ InventoryItem* characterItems;
 /*4*/ s16 unk4;
@@ -38,7 +37,6 @@ typedef struct {
 /*C*/ s16 unkC;
 /*E*/ s16 unkE;
 } UIUnknownCharacterStruct;
-
 
 typedef struct {
     f32 unk0; //scarabUIOpacity
@@ -105,19 +103,19 @@ typedef union {
 } BSS60;
 
 /*0x0*/ static s8 _data_0 = 0;
-/*0x4*/ static u32 _data_4 = 0x00000000;
-/*0x8*/ static u32 _data_8 = 0x01000000;
+/*0x4*/ static s8 _data_4 = 0x00;
+/*0x8*/ static s8 _data_8 = 0x01;
 /*0xC*/ static s16 _data_C = 0x0048;
-/*0x10*/ static u32 _data_10 = 0x00000000;
+/*0x10*/ static s16 _data_10 = 0x0000;
 /*0x14*/ static u32 _data_14 = 0x00000000;
 /*0x18*/ static s16 _data_18 = 0xffff;
 /*0x1C*/ static s8 _data_1C = 0;
-/*0x20*/ static s16 _data_20 = 0x003c;
-/*0x24*/ static s16 _data_24 = 0x0032;
-/*0x28*/ static s16 _data_28 = 0x0014;
-/*0x2C*/ static s16 _data_2C = 0x00a0;
-/*0x30*/ static u32 _data_30 = 0x00000000;
-/*0x34*/ static u32 _data_34[] = {
+/*0x20*/ static s16 _data_20 = 60;
+/*0x24*/ static s16 _data_24 = 50;
+/*0x28*/ static s16 _data_28 = 20;
+/*0x2C*/ static s16 _data_2C = 160;
+/*0x30*/ static s16 _data_30 = 0;
+/*0x34*/ static char* _data_34[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 /*0x44*/ static s16 _data_44 = 0xffff;
@@ -138,7 +136,7 @@ typedef union {
 /*0x78*/ static u32 _data_78 = 0x00000000;
 /*0x7C*/ static u32 _data_7C = 0x00000000;
 /*0x80*/ static u8 _data_80 = 0;
-/*0x84*/ static u32 _data_84 = 0x00000000;
+/*0x84*/ static s16 _data_84 = 0x0000;
 /*0x88*/ static s8 _data_88 = 1;
 /*0x8C*/ static u16 _data_8C[] = {0x002d, 0x0040};
 /*0x90*/ static u16 _data_90[] = {
@@ -172,10 +170,10 @@ typedef union {
     0x1417, 0x1c28, 0x1404, 0x1e10, 
     0x080e, 0x1812, 0x0812, 0x1818
 };
-/*0x118*/ static u32 _data_118 = 0x00000000;
-/*0x11C*/ static u32 _data_11C = 0x00000000;
-/*0x120*/ static u32 _data_120 = 0x00000000;
-/*0x124*/ static u32 _data_124 = 0x00000000;
+/*0x118*/ static s8 _data_118 = 0x00;
+/*0x11C*/ static s8 _data_11C = 0x00;
+/*0x120*/ static s8 _data_120 = 0x00;
+/*0x124*/ static s8 _data_124 = 0x00;
 
 #define NONE 0xFFFF
 #define END {NONE, NONE, NONE, NONE, 0x0000, 0x00, 0x00}
@@ -400,22 +398,22 @@ typedef union {
 
 //Krystal
 /*0x8F0*/ static UIUnknownCharacterStruct _data_8F0 = {
-    (InventoryItem*)&_data_128, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
+    _data_128, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
 
 //Sabre
 /*0x900*/ static UIUnknownCharacterStruct _data_900[] = {{
-    (InventoryItem*)&_data_2E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+    _data_2E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
 
 /*0x910*/ static UIUnknownCharacterStruct _data_910[] = {{
-    (InventoryItem*)&_data_4A0, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+    _data_4A0, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
 /*0x920*/ static UIUnknownCharacterStruct _data_920[] = {{
-    (InventoryItem*)&_data_4E8, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+    _data_4E8, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
 /*0x930*/ static UIUnknownCharacterStruct _data_930[] = {{
-    (InventoryItem*)&_data_530, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+    _data_530, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
 /*0x940*/ static UIUnknownCharacterStruct _data_940[] = {{
-    (InventoryItem*)&_data_5E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
+    _data_5E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
 /*0x950*/ static UIUnknownCharacterStruct _data_950[] = {{
-    (InventoryItem*)&_data_698, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0002 }};
+    _data_698, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0002 }};
 
 /*0x960*/ static u32 _data_960 = (u32)&_data_710;
 /*0x964*/ static u32 _data_964[] = {
@@ -524,6 +522,7 @@ typedef union {
 /*0xC88*/ static CmdmenuItemUnkBSS _bss_C88;
 // /*0xC90*/ static u8 _bss_C90[0x10];
 
+static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
 void dll_1_func_7550(void);
 
 // offset: 0x0 | ctor
@@ -781,20 +780,69 @@ void dll_1_func_13F4(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_325C.s")
 
 // offset: 0x3718 | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_3718.s")
+s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1) {
+    Object* sidekick;
+    s32 var_s1;
+    s32 var_v1;
+    s32 i;
+
+    var_s1 = 0;
+    i = 0;
+    if (arg1 == 0) {
+        while (arg0[i].flagObtained >= 0) {
+            if (main_get_bits(arg0[i].flagObtained) != 0) {
+                if (arg0 == _data_698) {
+                    var_s1 += 1;
+                } else if ((arg0[i].flagHide < 0) || (main_get_bits(arg0[i].flagHide) == 0)) {
+                    var_s1 += 1;
+                }
+            }
+            i++;
+        }
+    } else {
+        sidekick = get_sidekick();
+        if (sidekick != NULL) {
+            var_v1 = ((DLL_ISidekick*)sidekick->dll)->vtbl->func13(sidekick);
+        } else {
+            var_v1 = 0;
+        }
+        if (var_v1 > 0) {
+            while (arg0[i].flagObtained >= 0) {
+                if (arg0[i].flagObtained != 0) {
+                    var_s1 += 1;
+                }
+                i++;
+            }
+        }
+    }
+    return var_s1;
+}
 
 // offset: 0x3880 | func: 23
 void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
-    InventoryItem* item;
-
-    item = (InventoryItem*)((s8*)items + 0xC*itemIndex);
-    _bss_418[loadedItemIndex] = item->textID;
-    _bss_498[loadedItemIndex] = item->openPage;
-    _bss_4D8[loadedItemIndex] = item->unkB;
+    _bss_418[loadedItemIndex] = items[itemIndex].textID;
+    _bss_498[loadedItemIndex] = items[itemIndex].openPage;
+    _bss_4D8[loadedItemIndex] = items[itemIndex].unkB;
 }
 
 // offset: 0x38E4 | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_38E4.s")
+static void dll_1_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
+    Gfx* dl;
+    s32 i;
+
+    dl = *gdl;
+    for (i = 0; i < frame; i++) {
+        if (tex->next != NULL) {
+            tex = tex->next;
+        }
+    }
+    dl->words.w0 = tex->gdl->words.w0;
+    dl->words.w1 = (u32) (OS_PHYSICAL_TO_K0(tex + 1));
+    dl++;
+    gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(tex->gdl + 1));
+    tex_render_reset();
+    *gdl = dl;
+}
 
 // offset: 0x39FC | func: 25
 s32 dll_1_func_39FC(void) {
@@ -829,13 +877,78 @@ void dll_1_func_3AB0(void) {
 }
 
 // offset: 0x3AD0 | func: 29
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_3AD0.s")
+void dll_1_func_3AD0(void) {
+    _data_4 -= gUpdateRate << _data_8;
+    if (_data_4 < 0) {
+        _data_4 = 0;
+    }
+    if (_data_0 != 0) {
+        _data_10 += gUpdateRate * 8;
+        if (_data_10 > 255) {
+            _data_10 = 255;
+        }
+    } else if (_bss_C28 == 0) {
+        _data_10 -= gUpdateRate * 8;
+        if (_data_10 < 0) {
+            _data_10 = 0;
+        }
+    }
+    if ((_data_0 != 0) && (_data_10 > 64)) {
+        _bss_C28 += gUpdateRate * 4;
+        if (_data_C < _bss_C28) {
+            _bss_C28 = _data_C;
+        } else {
+            _data_118 += 1;
+            _data_11C -= 1;
+        }
+    } else {
+        _bss_C28 -= gUpdateRate * 4;
+        if (_bss_C28 < 0) {
+            _bss_C28 = 0;
+        } else {
+            _data_118 -= 1;
+            _data_11C += 1;
+        }
+    }
+    if (_data_10 != 0) {
+        if (_data_4 > 0) {
+            _data_118 += 1;
+            _data_11C += 1;
+        }
+        while (_data_118 >= 3) {
+            _data_118 -= 3;
+        }
+        while (_data_118 < 0) {
+            _data_118 += 3;
+        }
+        while (_data_11C >= 3) {
+            _data_11C -= 3;
+        }
+        while (_data_11C < 0) {
+            _data_11C += 3;
+        }
+    }
+}
 
 // offset: 0x3D28 | func: 30
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_3D28.s")
 
 // offset: 0x4630 | func: 31
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_4630.s")
+void dll_1_func_4630(Gfx **gdl) {
+    if (func_80041E08() != 0) {
+        gDPSetScissorFrac((*gdl)++, G_SC_NON_INTERLACE, 
+            qu102(314.75), 
+            qu102(48.25), 
+            qu102(366.75), 
+            (((f32) _bss_C28 * 0.82f) + 48.38f + 2.0f) * 4.0f);
+    } else {
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
+            262, 
+            59, 
+            294, 
+            _bss_C28 + 0x3D);
+    }
+}
 
 // offset: 0x474C | func: 32
 void dll_1_func_474C(Gfx** gfx) {
@@ -867,10 +980,273 @@ void dll_1_func_484C(void) {
 }
 
 // offset: 0x486C | func: 36
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_486C.s")
+void dll_1_func_486C(void) {
+    if ((_data_1C != 0) && (_data_84 == 0)) {
+        _data_30 += gUpdateRate * 32;
+        if (_data_30 > 160) {
+            _data_30 = 160;
+        }
+    } else if (_bss_C2A == 0) {
+        _data_30 -= gUpdateRate * 32;
+        if (_data_30 < 0) {
+            _data_30 = 0;
+        }
+    }
+    if ((_data_1C != 0) && (_data_30 == 160)) {
+        _bss_C2A += gUpdateRate * 4;
+        if (_data_24 < _bss_C2A) {
+            _bss_C2A = _data_24;
+        } else {
+            _data_120 += 1;
+            _data_124 -= 1;
+        }
+    } else {
+        _bss_C2A -= gUpdateRate * 4;
+        if (_bss_C2A < 0) {
+            _bss_C2A = 0;
+        } else {
+            _data_120 -= 1;
+            _data_124 += 1;
+        }
+    }
+    if (_data_30 == 0) {
+        if (*_data_34 != NULL) {
+            mmFree(*_data_34);
+            *_data_34 = NULL;
+        }
+    } else {
+        while (_data_120 >= 3) {
+            _data_120 -= 3;
+        }
+        while (_data_120 < 0) {
+            _data_120 += 3;
+        }
+        while (_data_124 >= 3) {
+            _data_124 -= 3;
+        }
+        while (_data_124 < 0) {
+            _data_124 += 3;
+        }
+        _data_120 = 0;
+        _data_124 = 0;
+    }
+}
 
 // offset: 0x4AD4 | func: 37
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_4AD4.s")
+// Draws the info box at the top of the screen describing the highlighted/z-locked item.
+void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+    s32 sp10C;
+    s32 y;
+    s32 sp104;
+    s32 height;
+    s32 tempY;
+    s32 i;
+    Gfx* dl;
+
+    if (_data_30 == 0) {
+        return;
+    }
+    dl = *gdl;
+    gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+    dl_apply_combine(&dl);
+    gDPSetOtherMode(dl,
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
+        G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
+    dl_apply_other_mode(&dl);
+    gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
+    dl_apply_geometry_mode(&dl);
+    dl_set_prim_color(&dl, 255, 255, 255, _data_30);
+    sp10C = _data_2C << 2;
+    sp104 = _data_20 << 2;
+    sp104 -= (16 << 2);
+    y = _data_28 << 2;
+    height = _bss_C2A << 2;
+
+    dll_1_func_38E4(&dl, _bss_5C8[6], 0);
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C - sp104,
+        /*uly*/ y,
+        /*lrx*/ sp10C + sp104,
+        /*lry*/ y + height,
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(0), /*t*/ qs105(0), 
+        /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+
+    dll_1_func_38E4(&dl, _bss_5C8[5], 0);
+    gSPTextureRectangle(dl++, 
+        /*lrx*/ sp10C - sp104 - (16 << 2),
+        /*lry*/ y,
+        /*ulx*/ sp10C - sp104,
+        /*uly*/ y + height,
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(0), /*t*/ qs105(0), 
+        /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C + sp104,
+        /*uly*/ y,
+        /*lrx*/ sp10C + sp104 + (16 << 2),
+        /*lry*/ y + height,
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(15), /*t*/ qs105(0),
+        /*dsdx*/ qs510(-1), /*dtdy*/ qs510(1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+
+    sp104 += (16 << 2);
+
+    if (_bss_C2A >= 9) {
+        dll_1_func_38E4(&dl, _bss_5C8[7], 0);
+        dl_set_prim_color(&dl, 255, 128, 128, 128);
+        
+        tempY = y;
+        gSPTextureRectangle(dl++, 
+            /*ulx*/ sp10C - sp104,
+            /*uly*/ tempY,
+            /*lrx*/ sp10C + sp104,
+            /*lry*/ tempY + (8 << 2),
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(7), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+        );
+        gDLBuilder->needsPipeSync = 1;
+
+        tempY = (y + height) - (6 << 2);
+        gSPTextureRectangle(dl++, 
+            /*ulx*/ sp10C - sp104,
+            /*uly*/ tempY,
+            /*lrx*/ sp10C + sp104,
+            /*lry*/ tempY + (8 << 2),
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(0), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = 1;
+
+        dl_set_prim_color(&dl, 255, 255, 255, _data_30);
+    }
+
+    tempY = y - (11 << 2);
+    dll_1_func_38E4(&dl, _bss_5C8[4], _data_120);
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C - sp104,
+        /*uly*/ tempY,
+        /*lrx*/ sp10C + sp104,
+        /*lry*/ tempY + (16 << 2),
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+
+    tempY = (y + height) - (4 << 2);
+    dll_1_func_38E4(&dl, _bss_5C8[4], _data_124);
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C - sp104,
+        /*uly*/ tempY,
+        /*lrx*/ sp10C + sp104,
+        /*lry*/ tempY + (16 << 2),
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+
+    dll_1_func_38E4(&dl, _bss_5C8[3], 0);
+    tempY = y - (11 << 2);
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C - sp104 - (16 << 2),
+        /*uly*/ tempY,
+        /*lrx*/ sp10C - sp104,
+        /*lry*/ tempY + (16 << 2),
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C + sp104,
+        /*uly*/ tempY,
+        /*lrx*/ sp10C + sp104 + (16 << 2),
+        /*lry*/ tempY + (16 << 2),
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(15), /*t*/ qs105(15.9688), 
+        /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+    tempY = (y + height) - (4 << 2);
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C - sp104 - (16 << 2),
+        /*uly*/ tempY,
+        /*lrx*/ sp10C - sp104,
+        /*lry*/ tempY + (16 << 2),
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+    gSPTextureRectangle(dl++, 
+        /*ulx*/ sp10C + sp104,
+        /*uly*/ tempY,
+        /*lrx*/ sp10C + sp104 + (16 << 2),
+        /*lry*/ tempY + (16 << 2),
+        /*tile*/ G_TX_RENDERTILE,
+        /*s*/ qs105(15), /*t*/ qs105(15.9688), 
+        /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
+    );
+    gDLBuilder->needsPipeSync = 1;
+
+    dl_set_prim_color(&dl, 255, 255, 255, 255);
+
+    if (_data_44 < 0) {
+        return;
+    }
+    if (_data_34[0] == NULL) {
+        _data_34[0] = _data_44 >= 256 
+            ? gDLL_21_Gametext->vtbl->get_text(568, _data_44 - 256) 
+            : gDLL_21_Gametext->vtbl->get_text(3, _data_44);
+        _data_34[1] = NULL;
+        _data_34[2] = NULL;
+        _data_34[3] = NULL;
+        sp10C = 0;
+        i = 1;
+        while (_data_34[0][sp10C] != '\0') {
+            if (_data_34[0][sp10C] == '|') {
+                _data_34[0][sp10C] = '\0';
+                sp10C += 2;
+                _data_34[i] = &_data_34[0][sp10C];
+                i += 1;
+            }
+            sp10C += 1;
+        }
+    }
+    if (_bss_C2A > 0) {
+        font_window_set_coords(3, 
+            /*x1*/ _data_2C - _data_20, 
+            /*y1*/ _data_28, 
+            /*x2*/ _data_2C + _data_20, 
+            /*y2*/ _data_28 + _bss_C2A);
+        font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
+        font_window_set_bg_colour(3, 0, 0, 0, 0);
+        font_window_flush_strings(3);
+        font_window_set_text_colour(3, 0, 0, 255, 255, 255);
+        y = 3;
+        for (i = 0; i < 4; i++) {
+            if (_data_34[i] == NULL) {
+                break;
+            }
+            font_window_add_string_xy(3, -0x8000, y, _data_34[i], 1, ALIGN_TOP_CENTER);
+            font_window_set_text_colour(3, 20, 20, 20, 255, 255);
+            font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
+            y += 16;
+        }
+        font_window_draw(&dl, mtxs, vtxs, 3);
+    }
+    *gdl = dl;
+}
 
 // offset: 0x5608 | func: 38
 void dll_1_func_5608(void) {
@@ -1110,13 +1486,13 @@ void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         func_800390A4(&sp74, _bss_6B8[_bss_89+18], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
         sprintf(sp68, "%d", (int)_bss_10.unkC);
         font_window_set_coords(3, 0, 0, 0x140, 0xF0);
-        font_window_use_font(3, 1);
+        font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
         font_window_set_bg_colour(3, 0, 0, 0, 0);
         font_window_flush_strings(3);
         font_window_set_text_colour(3, 0xFF, 0xFF, 0xFF, 0xFF, sp7E);
         font_window_add_string_xy(3, 0x10E, 0xCA, sp68, 1, ALIGN_TOP_LEFT);
         font_window_set_text_colour(3, 0x14, 0x14, 0x14, 0xFF, 0xFF);
-        font_window_use_font(3, 1);
+        font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
         font_window_draw(&sp74, mtxs, vtxs, 3);
     }
     *gdl = sp74;
