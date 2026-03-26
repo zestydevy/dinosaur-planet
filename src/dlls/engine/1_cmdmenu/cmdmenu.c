@@ -6,6 +6,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
+#include "game/objects/object_id.h"
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
@@ -91,7 +92,7 @@ typedef struct {
 typedef union {
     struct {
         f32 unk0;
-        u8 _unk4[0x8 - 0x4];
+        f32 unk4;
         f32 unk8;
         f32 unkC;
         u8 _unk10[0x14 - 0x10];
@@ -107,7 +108,7 @@ typedef union {
 /*0x8*/ static s8 _data_8 = 0x01;
 /*0xC*/ static s16 _data_C = 0x0048;
 /*0x10*/ static s16 _data_10 = 0x0000;
-/*0x14*/ static u32 _data_14 = 0x00000000;
+/*0x14*/ static s16 _data_14 = 0x0000;
 /*0x18*/ static s16 _data_18 = 0xffff;
 /*0x1C*/ static s8 _data_1C = 0;
 /*0x20*/ static s16 _data_20 = 60;
@@ -396,57 +397,86 @@ typedef union {
     END
 };
 
-//Krystal
-/*0x8F0*/ static UIUnknownCharacterStruct _data_8F0 = {
-    _data_128, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 };
-
-//Sabre
-/*0x900*/ static UIUnknownCharacterStruct _data_900[] = {{
-    _data_2E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
-
-/*0x910*/ static UIUnknownCharacterStruct _data_910[] = {{
-    _data_4A0, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
-/*0x920*/ static UIUnknownCharacterStruct _data_920[] = {{
-    _data_4E8, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
-/*0x930*/ static UIUnknownCharacterStruct _data_930[] = {{
-    _data_530, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
-/*0x940*/ static UIUnknownCharacterStruct _data_940[] = {{
-    _data_5E4, 0x0000, 0x0000, 0x0008, 0x0001, 0x0000, 0x0001 }};
-/*0x950*/ static UIUnknownCharacterStruct _data_950[] = {{
-    _data_698, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0002 }};
-
-/*0x960*/ static u32 _data_960 = (u32)&_data_710;
-/*0x964*/ static u32 _data_964[] = {
-    0x00000000, 0x00080009, 0x00000004
-};
-/*0x970*/ static u32 _data_970 = (u32)&_data_764;
-/*0x974*/ static u32 _data_974[] = {
-    0x00000000, 0x00080009, 0x00000004
-};
-/*0x980*/ static u32 _data_980[] = {
-    (u32)&_data_7B8, 0x00000000, 0x00080001, 0x00000001
-};
-/*0x990*/ static u32 _data_990[] = {
-    (u32)&_data_7DC, 0x00000000, 0x00080001, 0x00000001
-};
-/*0x9A0*/ static u32 _data_9A0[] = {
-    (u32)&_data_800, 0x00000000, 0x00080001, 0x00000001
-};
-/*0x9B0*/ static u32 _data_9B0[] = {
-    (u32)&_data_878, 0x00000000, 0x00080001, 0x00000001, 0x00000000, 0x00000000, 0x00000000, 0x00000000
+/*0x8F0*/ static UIUnknownCharacterStruct _data_8F0[] = {
+    /*0*/  { _data_128, 0, 0, 8, 1, 0, 1 }, // Krystal items
+    /*1*/  { _data_2E4, 0, 0, 8, 1, 0, 1 }, // Sabre items
+    /*2*/  { _data_4A0, 0, 0, 8, 1, 0, 1 }, // Foodbag actions (Krystal)
+    /*3*/  { _data_4E8, 0, 0, 8, 1, 0, 1 }, // Foodbag actions (Sabre)
+    /*4*/  { _data_530, 0, 0, 8, 1, 0, 1 }, // Foodbag items (Krystal)
+    /*5*/  { _data_5E4, 0, 0, 8, 1, 0, 1 }, // Foodbag items (Sabre)
+    /*6*/  { _data_698, 0, 0, 8, 2, 0, 2 }, // Magic spells
+    /*7*/  { _data_710, 0, 0, 8, 9, 0, 4 }, // Sidekick commands (Kyte)
+    /*8*/  { _data_764, 0, 0, 8, 9, 0, 4 }, // Sidekick commands (Tricky)
+    /*9*/  { _data_7B8, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag actions (Krystal)
+    /*10*/ { _data_7DC, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag actions (Sabre)
+    /*11*/ { _data_800, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag items (Krystal)
+    /*12*/ { _data_878, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag items (Sabre)
+    /*13*/ { NULL,      0, 0, 0, 0, 0, 0 }
 };
 
 /*0x9D0*/ static s8 _data_9D0 = 0; //index of cmdmenu page currently open
 /*0x9D4*/ static u32 _data_9D4 = 0x00000000;
 /*0x9D8*/ static s16 _data_9D8[] = {
-    0x01be, 0x01bf, 0x1c0, 0x01c2, 0x01c3, 0x01c4, 0x01c5, 0x01c6, 
-    0x03e2, 0x03e3, 0x03e4, 0x03e5, 0x0421, 0x01c9, 0x03ea, 0x03eb, 
-    0x01cb, 0x03e6, 0x03e7, 0x03f5, 0x03f6, 0x03f7, 0x03f8, 0x03f9,
-    0x03fa, 0x03fb, 0x03fc, 0x03fd, 0x03fe, 0x0422, 0x0423, 0x0429, 
-    0x042a, 0x042b, 0x042c, 0x0424, 0x042d, 0x0431, 0x01d4, 0x042f,
-    0x0432, 0x0430, 0x0433, 0x042e, 0x0435, 0x0436, 0x0438, 0x043a, 
-    0x043b, 0x043d, 0x043e, 0x0434, 0x0437, 0x0267, 0x0268, 0x0476,
-    0x0477, 0x0478, 0x0000, 0x0000
+/*00*/ 0x1be,
+/*01*/ 0x1bf,
+/*02*/ 0x1c0,
+/*03*/ 0x1c2,
+/*04*/ 0x1c3,
+/*05*/ 0x1c4,
+/*06*/ 0x1c5,
+/*07*/ 0x1c6,
+/*08*/ 0x3e2,
+/*09*/ 0x3e3,
+/*10*/ 0x3e4,
+/*11*/ 0x3e5,
+/*12*/ 0x421,
+/*13*/ 0x1c9,
+/*14*/ 0x3ea,
+/*15*/ 0x3eb,
+/*16*/ 0x1cb,
+/*17*/ 0x3e6,
+/*18*/ 0x3e7,
+/*19*/ 0x3f5,
+/*20*/ 0x3f6,
+/*21*/ 0x3f7,
+/*22*/ 0x3f8,
+/*23*/ 0x3f9,
+/*24*/ 0x3fa,
+/*25*/ 0x3fb,
+/*26*/ 0x3fc,
+/*27*/ 0x3fd,
+/*28*/ 0x3fe,
+/*29*/ 0x422,
+/*30*/ 0x423,
+/*31*/ 0x429,
+/*32*/ 0x42a,
+/*33*/ 0x42b,
+/*34*/ 0x42c,
+/*35*/ 0x424,
+/*36*/ 0x42d,
+/*37*/ 0x431,
+/*38*/ 0x1d4,
+/*39*/ 0x42f,
+/*40*/ 0x432,
+/*41*/ 0x430,
+/*42*/ 0x433,
+/*43*/ 0x42e,
+/*44*/ 0x435,
+/*45*/ 0x436,
+/*46*/ 0x438,
+/*47*/ 0x43a,
+/*48*/ 0x43b,
+/*49*/ 0x43d,
+/*50*/ 0x43e,
+/*51*/ 0x434,
+/*52*/ 0x437,
+/*53*/ 0x267,
+/*54*/ 0x268,
+/*55*/ 0x476,
+/*56*/ 0x477,
+/*57*/ 0x478,
+/*58*/ 0x000,
+/*59*/ 0x000
 };
 
 /*0x0*/ static f32 _bss_0; //scarabUIOpacity
@@ -504,7 +534,8 @@ typedef union {
 /*0xC3A*/ static s16 _bss_C3A;
 /*0xC3C*/ static s8 _bss_C3C; //set to 0 when item selection successful
 /*0xC3D*/ static s8 _bss_C3D;
-/*0xC3E*/ static u8 _bss_C3E[0x2];
+/*0xC3E*/ static s8 _bss_C3E;
+/*0xC3F*/ static u8 _bss_C3F;
 /*0xC40*/ static u8 _bss_C40[0x4];
 /*0xC44*/ static u8 _bss_C44[0x4];
 /*0xC48*/ static s8 _bss_C48;
@@ -722,7 +753,7 @@ void dll_1_func_1290(void) {
     s32 i;
     UIUnknownCharacterStruct *temp;
 
-    temp = &_data_8F0;
+    temp = _data_8F0;
 
     for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
     usedItemGamebitID = -1;
@@ -780,7 +811,7 @@ void dll_1_func_13F4(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_325C.s")
 
 // offset: 0x3718 | func: 22
-s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1) {
+static s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1) {
     Object* sidekick;
     s32 var_s1;
     s32 var_v1;
@@ -931,7 +962,143 @@ void dll_1_func_3AD0(void) {
 }
 
 // offset: 0x3D28 | func: 30
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_3D28.s")
+void dll_1_func_3D28(Gfx** gdl, s32 arg1, s32 arg2) {
+    Gfx* dl;
+    Object* sidekick;
+    Object* player;
+    u8 sp4B;
+    u8 pad_sp4A;
+    u8 isKyte;
+    u8 var_v0;
+    u8 sp47;
+    u8 sp46;
+    u8 sp45;
+    u8 sp44;
+    u8 pad_sp43;
+    u8 sp42;
+    u8 pad_sp41;
+
+    sidekick = get_sidekick();
+    player = get_player();
+    isKyte = FALSE;
+    sp44 = 0;
+    if (sidekick != NULL) {
+        isKyte = (sidekick->id == OBJ_Kyte);
+    }
+    if (_data_10 == 0) {
+        if (_bss_8C != 0.0f) {
+            if (player != NULL) {
+                var_v0 = player->id == OBJ_Krystal ? 0 : 1;
+                sp44 = 0;
+                if (dll_1_func_3718(_data_8F0[var_v0].characterItems, 0) != 0) {
+                    sp44 = 2;
+                }
+            }
+            if (sidekick != NULL) {
+                var_v0 = sidekick->id == OBJ_Kyte ? 8 : 7;
+                if (dll_1_func_3718(_data_8F0[var_v0].characterItems, 1) != 0) {
+                    sp44 |= 4;
+                }
+            }
+            if (dll_1_func_3718(_data_8F0[6].characterItems, 0) != 0) {
+                sp44 |= 1;
+            }
+            if (sp44 & 2) {
+                sp4B = 0x2F;
+                _data_68 = tex_load_deferred(_data_9D8[47]);
+                func_8003825C(gdl, _data_68, 0x113, 0x19, 0, 0, (s32) _bss_8C, 0);
+                tex_free(_data_68);
+            } else {
+                sp4B = 0x29;
+                func_80037F9C(gdl, _bss_6B8[41], 0x112, 0x22, 255, 255, 255, _bss_8C);
+            }
+            if (((sp44 & 4) && (sidekick != NULL)) || (sp44 & 1)) {
+                if ((sp44 & 4) && (sidekick != NULL) && (sp44 & 1)) {
+                    if (isKyte) {
+                        sp4B = 0x26;
+                    } else {
+                        sp4B = 0x2B;
+                    }
+                } else if (sp44 & 2) {
+                    sp4B = 0x30;
+                }
+                _data_68 = tex_load_deferred(_data_9D8[sp4B]);
+                func_8003825C(gdl, _data_68, 0xF5, 0x11, 0, 0, (s32) _bss_8C, 0);
+                tex_free(_data_68);
+            } else {
+                func_80037F9C(gdl, _bss_6B8[37], 0xFC, 0x2B, 255, 255, 255, (u8) _bss_8C);
+                func_80037F9C(gdl, _bss_6B8[39], 0xF6, 0x1A, 255, 255, 255, (u8) _bss_8C);
+            }
+        }
+    } else {
+        _bss_8C = 0.0f;
+    }
+    dl = *gdl;
+    if (_data_10 != 0) {
+        func_80037F9C(&dl, _bss_6B8[2], 0x102, 0x33, 255, 255, 255, (u8) _data_10);
+        func_80037F9C(&dl, _bss_6B8[1], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
+    }
+    if (sidekick != NULL) {
+        if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (_bss_60.unk4 >= 0.0f)) {
+            _data_14 += gUpdateRate * 8;
+            if (_data_14 > 255) {
+                _data_14 = 255;
+            }
+        } else {
+            _data_14 -= gUpdateRate * 8;
+            if (_data_14 < 0) {
+                _data_14 = 0;
+            }
+        }
+        if (_data_14 != 0) {
+            _bss_10.items[4] = 3;
+            _bss_10.items[1] = 3;
+            pad_sp43 = _bss_10.items[4] >> 1;
+            sp47 = _bss_10.items[4] & 1;
+            sp46 = (_bss_10.items[1] >> 1) + pad_sp43 + sp47;
+            sp45 = _bss_10.items[1] & 1;
+            for (sp42 = 0; sp42 < _bss_10.items[9]; sp42++) {
+                if (sp42 < pad_sp43) {
+                    if (isKyte) {
+                        var_v0 = 0x38; // red grub
+                    } else {
+                        var_v0 = 0x2D; // red mushroom
+                    }
+                } else if (sp42 == pad_sp43 && sp47) {
+                    if (isKyte) {
+                        var_v0 = 0x39; // half red grub
+                    } else {
+                        var_v0 = 0x2E; // half red mushroom
+                    }
+                } else if (sp42 < sp46) {
+                    if (isKyte) {
+                        var_v0 = 0xD; // blue grub
+                    } else {
+                        var_v0 = 0xC; // blue mushroom
+                    }
+                } else if (sp42 == sp46 && sp45) {
+                    if (isKyte) {
+                        var_v0 = 0x10; // half blue grub
+                    } else {
+                        var_v0 = 0x33; // half blue mushroom
+                    }
+                } else {
+                    if (isKyte) {
+                        var_v0 = 0x37; // empty grub
+                    } else {
+                        var_v0 = 0x2C; // empty mushroom
+                    }
+                }
+                func_80037F9C(&dl, _bss_6B8[var_v0], 
+                    250 - ((sp42 / 4) * 9), 
+                    21  + ((sp42 % 4) * 8), 
+                    255, 255, 255, _data_14);
+            }
+        }
+    }
+    dl_set_prim_color(&dl, 255, 255, 255, 255);
+    *gdl = dl;
+}
 
 // offset: 0x4630 | func: 31
 void dll_1_func_4630(Gfx **gdl) {
@@ -1522,7 +1689,7 @@ void dll_1_func_69F8(s16 arg0, s32 arg1, s32 arg2) {
     InventoryItem *var_v0;
     UIUnknownCharacterStruct *var_s2;
 
-    var_s2 = &_data_8F0;
+    var_s2 = _data_8F0;
     STUBBED_PRINTF("qInfoShow\n");
     _bss_C88.unk0 = NULL;
     while (var_s2->characterItems != NULL) {
