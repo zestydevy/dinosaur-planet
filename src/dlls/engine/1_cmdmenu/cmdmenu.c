@@ -10,12 +10,14 @@
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
+#include "sys/objmsg.h"
 #include "sys/rcp.h"
 #include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/fonts.h"
 #include "sys/rcp.h"
+#include "sys/joypad.h"
 #include "macros.h"
 #include "gbi_extra.h"
 #include "prevent_bss_reordering2.h"
@@ -32,11 +34,9 @@ typedef struct {
 typedef struct {
 /*0*/ InventoryItem* characterItems;
 /*4*/ s16 unk4;
-/*6*/ s16 unk6;
-/*8*/ s16 unk8;
-/*A*/ s16 unkA;
-/*C*/ s16 unkC;
-/*E*/ s16 unkE;
+/*6*/ s16 unk6; // TODO: might not exist
+/*8*/ u32 unk8;
+/*C*/ s32 unkC;
 } UIUnknownCharacterStruct;
 
 typedef struct {
@@ -194,9 +194,9 @@ enum CmdMenuTextures {
 /*0x6C*/ static u32 _data_6C[] = {
     0x3f800000, 0xff000000
 };
-/*0x74*/ static u8 _data_74 = 0;
-/*0x78*/ static u32 _data_78 = 0x00000000;
-/*0x7C*/ static u32 _data_7C = 0x00000000;
+/*0x74*/ static s8 _data_74 = 0;
+/*0x78*/ static s16 _data_78 = 0x0000;
+/*0x7C*/ static u8 _data_7C = 0x00;
 /*0x80*/ static u8 _data_80 = 0;
 /*0x84*/ static s16 _data_84 = 0x0000;
 /*0x88*/ static s8 _data_88 = 1;
@@ -457,20 +457,20 @@ enum CmdMenuTextures {
 };
 
 /*0x8F0*/ static UIUnknownCharacterStruct _data_8F0[] = {
-    /*0*/  { _data_128, 0, 0, 8, 1, 0, 1 }, // Krystal items
-    /*1*/  { _data_2E4, 0, 0, 8, 1, 0, 1 }, // Sabre items
-    /*2*/  { _data_4A0, 0, 0, 8, 1, 0, 1 }, // Foodbag actions (Krystal)
-    /*3*/  { _data_4E8, 0, 0, 8, 1, 0, 1 }, // Foodbag actions (Sabre)
-    /*4*/  { _data_530, 0, 0, 8, 1, 0, 1 }, // Foodbag items (Krystal)
-    /*5*/  { _data_5E4, 0, 0, 8, 1, 0, 1 }, // Foodbag items (Sabre)
-    /*6*/  { _data_698, 0, 0, 8, 2, 0, 2 }, // Magic spells
-    /*7*/  { _data_710, 0, 0, 8, 9, 0, 4 }, // Sidekick commands (Kyte)
-    /*8*/  { _data_764, 0, 0, 8, 9, 0, 4 }, // Sidekick commands (Tricky)
-    /*9*/  { _data_7B8, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag actions (Krystal)
-    /*10*/ { _data_7DC, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag actions (Sabre)
-    /*11*/ { _data_800, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag items (Krystal)
-    /*12*/ { _data_878, 0, 0, 8, 1, 0, 1 }, // Dinosaur foodbag items (Sabre)
-    /*13*/ { NULL,      0, 0, 0, 0, 0, 0 }
+    /*0*/  { _data_128, 0, 0, 0x80001, 1 }, // Krystal items
+    /*1*/  { _data_2E4, 0, 0, 0x80001, 1 }, // Sabre items
+    /*2*/  { _data_4A0, 0, 0, 0x80001, 1 }, // Foodbag actions (Krystal)
+    /*3*/  { _data_4E8, 0, 0, 0x80001, 1 }, // Foodbag actions (Sabre)
+    /*4*/  { _data_530, 0, 0, 0x80001, 1 }, // Foodbag items (Krystal)
+    /*5*/  { _data_5E4, 0, 0, 0x80001, 1 }, // Foodbag items (Sabre)
+    /*6*/  { _data_698, 0, 0, 0x80002, 2 }, // Magic spells
+    /*7*/  { _data_710, 0, 0, 0x80009, 4 }, // Sidekick commands (Kyte)
+    /*8*/  { _data_764, 0, 0, 0x80009, 4 }, // Sidekick commands (Tricky)
+    /*9*/  { _data_7B8, 0, 0, 0x80001, 1 }, // Dinosaur foodbag actions (Krystal)
+    /*10*/ { _data_7DC, 0, 0, 0x80001, 1 }, // Dinosaur foodbag actions (Sabre)
+    /*11*/ { _data_800, 0, 0, 0x80001, 1 }, // Dinosaur foodbag items (Krystal)
+    /*12*/ { _data_878, 0, 0, 0x80001, 1 }, // Dinosaur foodbag items (Sabre)
+    /*13*/ { NULL,      0, 0, 0,       0 }
 };
 
 /*0x9D0*/ static s8 _data_9D0 = 0; //index of cmdmenu page currently open
@@ -557,7 +557,7 @@ enum CmdMenuTextures {
 /*0x318*/ static s32 _bss_318[64];
 /*0x418*/ static s16 _bss_418[64]; //array of textIDs
 /*0x498*/ static s8 _bss_498[64]; //array of unkAs (from InventoryItem)
-/*0x4D8*/ static s8 _bss_4D8[64]; //array of unkBs (from InventoryItem)
+/*0x4D8*/ static u8 _bss_4D8[64]; //array of unkBs (from InventoryItem)
 /*0x518*/ static u8 _bss_518[64];
 /*0x558*/ static u8 _bss_558[64];
 /*0x598*/ static Texture* _bss_598;
@@ -590,7 +590,7 @@ enum CmdMenuTextures {
 /*0xC42*/ static u8 _bss_C42[2];
 /*0xC44*/ static s32 _bss_C44;
 /*0xC48*/ static s8 _bss_C48;
-/*0xC4C*/ static u8 _bss_C4C[0x4];
+/*0xC4C*/ static s32 _bss_C4C;
 /*0xC50*/ static s32 _bss_C50;
 /*0xC54*/ static s32 _bss_C54; //controllerButtons
 /*0xC58*/ static s32 _bss_C58;
@@ -604,7 +604,11 @@ enum CmdMenuTextures {
 /*0xC88*/ static CmdmenuItemUnkBSS _bss_C88;
 // /*0xC90*/ static u8 _bss_C90[0x10];
 
+static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1);
 static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
+static s32 dll_1_func_39FC(void);
+static s32 dll_1_func_3A4C(void);
+static void dll_1_func_3A94(void);
 static void dll_1_func_4630(Gfx **gdl);
 static void dll_1_func_474C(Gfx** gfx);
 static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
@@ -855,7 +859,129 @@ void dll_1_func_13F4(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1614.s")
 
 // offset: 0x1FEC | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1FEC.s")
+void dll_1_func_1FEC(void) {
+    s16* sp4C;
+    Object* sp48;
+    InventoryItem *new_var;
+    u32 sp40;
+    s32 sp3C;
+    s32 sp38;
+    s8 sp37;
+
+    sp48 = get_player();
+    sp37 = 0;
+    if (sp48 != NULL) {
+        if (sp48->unkB0 & 0x1000) {
+            joy_set_button_mask(0, 7U);
+        } else if (_data_74 != 0) {
+            joy_set_button_mask(0, _data_74);
+        }
+        if (_bss_C48 != 0) {
+            _bss_C50 = _bss_C54;
+        } else {
+            _bss_C50 = joy_get_pressed(0);
+            if ((sp48->unkB0 & 0x1000) || (_data_74 != 0)) {
+                _bss_C50 = _bss_C50 | 0x4000;
+            }
+        }
+        switch (_bss_C3C) {
+        case 0:
+            break;
+        case 1:
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x79CU, 0x7FU, NULL, NULL, 0, NULL);
+            break;
+        case 2:
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x814U, 0x7FU, NULL, NULL, 0, NULL);
+            break;
+        }
+        usedItemGamebitID = -1;
+        _bss_C3C = 0;
+        _bss_C3D = -1;
+        new_var = _data_8F0[_bss_C3E].characterItems;
+        sp4C = &_data_8F0[_bss_C3E].unk4;
+        sp40 = _data_8F0[_bss_C3E].unk8;
+        sp3C = _data_8F0[_bss_C3E].unkC;
+        if ((_bss_C3E == 7) || (_bss_C3E == 8)) {
+            sp37 = 1;
+        }
+        _bss_C40 = *sp4C;
+        _bss_C44 = dll_1_func_325C(new_var, sp37);
+        if (_bss_C44 == 0) {
+            _data_9D0 = 0;
+            dll_1_func_3A94();
+            return;
+        }
+        if (_bss_C40 >= _bss_C44) {
+            _bss_C40 = 0;
+        }
+        _data_18 = _bss_418[_bss_C40];
+        if (dll_1_func_39FC() != 0) {
+            if ((_bss_C50 & sp3C) && (_data_4 < 8) && (_data_7C == 0)) {
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28AU, 0x7FU, NULL, NULL, 0, NULL);
+                _data_78 += 1;
+                if (_data_4 != 0) {
+                    _data_7C = 1;
+                }
+            }
+            if (_data_78 >= 0x100) {
+                _data_78 = 0xFF;
+            }
+            if (_bss_C7A != -1) {
+                _bss_C40 = _bss_C7A;
+            }
+            if ((_data_78 > 0) && (_data_4 == 0)) {
+                _data_78 -= 1;
+                if (_bss_C44 >= 2) {
+                    if (((_bss_C44 == 2) && (_bss_C40 == 1)) || ((_bss_C44 == 4) && (_bss_C40 == 3))) {
+                        _data_4 = 0x40;
+                        _data_8 = 2;
+                        _data_7C = 0;
+                    } else {
+                        _data_4 = 0x20;
+                        _data_8 = 2;
+                        _data_7C = 0;
+                    }
+                    _bss_C40 += 1;
+                    if (_bss_C40 >= _bss_C44) {
+                        _bss_C40 = 0;
+                    }
+                }
+            } else if (_bss_C50 & 0x4000) {
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28CU, 0x7FU, NULL, NULL, 0, NULL);
+                dll_1_func_3A94();
+            } else if ((_bss_C50 & 0x8000) && (dll_1_func_39FC() != 0)) {
+                sp38 = _bss_318[_bss_C40];
+                if (sp37 == 0) {
+                    obj_send_mesg(sp48, sp40, NULL, (void* ) sp38);
+                    usedItemGamebitID = (s16) sp38;
+                    _bss_C3C = _bss_4D8[_bss_C40];
+                    _bss_C3D = _bss_498[_bss_C40];
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28BU, 0x7FU, NULL, NULL, 0, NULL);
+                    dll_1_func_3A94();
+                } else {
+                    if (_bss_518[_bss_C40] != 0) {
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28BU, 0x7FU, NULL, NULL, 0, NULL);
+                        dll_1_func_3A94();
+                        usedItemGamebitID = (s16) sp38;
+                        _bss_C3C = 0;
+                    } else {
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, 0xA0U, 0x7FU, NULL, NULL, 0, NULL);
+                        usedItemGamebitID = -1;
+                        _bss_C3C = 0;
+                    }
+                }
+            }
+        }
+        if (dll_1_func_3A4C() != 0) {
+            _data_9D0 = 0;
+            _bss_C4C = 0;
+            _data_78 = 0;
+        } else {
+            joy_set_button_mask(0, 0xC000U);
+        }
+        *sp4C = _bss_C40;
+    }
+}
 
 // offset: 0x26D8 | func: 19
 static s16 dll_1_func_26D8(s32 arg0) {
@@ -870,23 +996,22 @@ static s16 dll_1_func_26D8(s32 arg0) {
 
 // offset: 0x27D8 | func: 20
 void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
-    s16 temp; // might be a different var, a0?
+    s16 temp;
     Object* player;
     s32 temp_v0;
     s32 var_a2;
     s32 temp_v0_2;
-    s32 pad;
     s32 var_s0;
-    s8 sp70[60]; // TODO: size? probably 64? or maybe like 5
+    s8 sp70[64]; // TODO: size?
     s32 var_s1;
-    s32 i; // s4
+    s32 i;
     s32 sp64;
     s32 var_s5;
-    u8 sp5F; // v1
+    u8 sp5F;
     u8 sp5E;
     s8 sp5D;
     s8 sp5C;
-    Object* sidekick; // sp58
+    Object* sidekick;
 
     player = get_player();
     sp5D = 0;
@@ -904,7 +1029,7 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
         temp_v0_2 = dll_1_func_26D8(temp_v0);
         if (temp_v0_2 != -1) {
             _bss_598 = tex_load_deferred(temp_v0_2);
-            _bss_59C = tex_load_deferred(0x574);
+            _bss_59C = tex_load_deferred(TEXTABLE_574);
         }
     }
     _bss_5A4 = temp_v0;
@@ -924,7 +1049,7 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
             temp = _data_AC[sp64];
             if (temp != -1) {
                 _bss_5A8 = tex_load_deferred(temp);
-                _bss_5AC = tex_load_deferred(0x584);
+                _bss_5AC = tex_load_deferred(TEXTABLE_584);
             }
         }
         _bss_5B0 = sp64;
@@ -934,7 +1059,6 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
         }
     }
     dll_1_func_7298(arg0);
-    // early return does not work here
     if (_bss_C44 != 0) {
         if (_data_10 != 0) {
             var_s5 = 3;
@@ -998,9 +1122,9 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
                     }
                 } else {
                     if (func_80041E08() != 0) {
-                        func_80037F9C(arg0, _bss_6B8[0], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                     } else {
-                        func_80037F9C(arg0, _bss_6B8[0], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                     }
                 }
                 var_s1 += 1;
@@ -1008,25 +1132,25 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
                     var_s1 -= _bss_C44;
                 }
             }
-            func_80037F9C(arg0, _bss_6B8[31], 0x10A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(arg0, _bss_6B8[32], 0x11A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(arg0, _bss_6B8[33], 0x10A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(arg0, _bss_6B8[34], 0x11A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
             dll_1_func_474C(arg0);
         }
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
             switch (_bss_C3E) {
             case 7:
-                sp5E = 0x2A;
+                sp5E = CMDMENU_TEX_42_Tricky;
                 sp5C = 3;
                 break;
             case 8:
-                sp5E = 0x36;
+                sp5E = CMDMENU_TEX_54_Kyte;
                 break;
             case 6:
                 sp5D = -2;
                 sp5C = 9;
-                sp5E = 0x31;
+                sp5E = CMDMENU_TEX_49_MagicBook;
                 break;
             default:
             case 0:
@@ -1037,7 +1161,7 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
             case 5:
                 sp5D = 1;
                 sp5C = 9;
-                sp5E = 0x32;
+                sp5E = CMDMENU_TEX_50_Bag;
                 break;
             }
             if (_data_14 < _data_10) {
@@ -1047,9 +1171,9 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
             }
         } else {
             if (_data_14 != 0) {
-                sp5E = 0x2A;
-                if (sidekick != NULL && sidekick->id == 0x25) {
-                    sp5E = 0x36;
+                sp5E = CMDMENU_TEX_42_Tricky;
+                if (sidekick != NULL && sidekick->id == OBJ_Kyte) {
+                    sp5E = CMDMENU_TEX_54_Kyte;
                     sp5F = _data_14;
                 } else {
                     sp5C = 3;
