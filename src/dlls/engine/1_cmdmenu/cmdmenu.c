@@ -200,15 +200,13 @@ enum CmdMenuTextures {
 /*0x80*/ static u8 _data_80 = 0;
 /*0x84*/ static s16 _data_84 = 0x0000;
 /*0x88*/ static s8 _data_88 = 1;
-/*0x8C*/ static u16 _data_8C[] = {0x002d, 0x0040};
-/*0x90*/ static u16 _data_90[] = {
-    0x01d7, 0x05bd, 0x05ce, 0x05fc, 0x0777, 0x0000
+/*0x8C*/ static s16 _data_8C[] = {
+    0x002d, 0x0040, 0x01d7, 0x05bd, 0x05ce, 0x05fc, 0x0777
 };
-/*0x9C*/ static u16 _data_9C[] = {0x0578, 0x057a};
-/*0xA0*/ static u16 _data_A0[] = {
-    0x057d, 0x057c, 0x057b, 0x057e, 0x0579, 0x0000
+/*0x9C*/ static s16 _data_9C[] = {
+    0x0578, 0x057a, 0x057d, 0x057c, 0x057b, 0x057e, 0x0579
 };
-/*0xAC*/ static u16 _data_AC[] = {
+/*0xAC*/ static s16 _data_AC[] = {
     0x057f, 0x057f, 0x0581, 0x0580, 0x0582, 0x0583
 };
 /*0xB8*/ static s16 _data_B8[10][2] = {
@@ -588,8 +586,9 @@ enum CmdMenuTextures {
 /*0xC3D*/ static s8 _bss_C3D;
 /*0xC3E*/ static s8 _bss_C3E;
 /*0xC3F*/ static u8 _bss_C3F;
-/*0xC40*/ static u8 _bss_C40[0x4];
-/*0xC44*/ static u8 _bss_C44[0x4];
+/*0xC40*/ static s16 _bss_C40;
+/*0xC42*/ static u8 _bss_C42[2];
+/*0xC44*/ static s32 _bss_C44;
 /*0xC48*/ static s8 _bss_C48;
 /*0xC4C*/ static u8 _bss_C4C[0x4];
 /*0xC50*/ static s32 _bss_C50;
@@ -606,7 +605,11 @@ enum CmdMenuTextures {
 // /*0xC90*/ static u8 _bss_C90[0x10];
 
 static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
+static void dll_1_func_4630(Gfx **gdl);
+static void dll_1_func_474C(Gfx** gfx);
 static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
+static void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1);
+static void dll_1_func_7298(Gfx** gdl);
 void dll_1_func_7550(void);
 
 // offset: 0x0 | ctor
@@ -855,10 +858,214 @@ void dll_1_func_13F4(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1FEC.s")
 
 // offset: 0x26D8 | func: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_26D8.s")
+static s16 dll_1_func_26D8(s32 arg0) {
+    s32 i;
+    for (i = 0; i < 7; i++) {
+        if (arg0 == _data_8C[i]) {
+            return _data_9C[i];
+        }    
+    }
+    return -1;
+}
 
 // offset: 0x27D8 | func: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_27D8.s")
+void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
+    s16 temp; // might be a different var, a0?
+    Object* player;
+    s32 temp_v0;
+    s32 var_a2;
+    s32 temp_v0_2;
+    s32 pad;
+    s32 var_s0;
+    s8 sp70[60]; // TODO: size? probably 64? or maybe like 5
+    s32 var_s1;
+    s32 i; // s4
+    s32 sp64;
+    s32 var_s5;
+    u8 sp5F; // v1
+    u8 sp5E;
+    s8 sp5D;
+    s8 sp5C;
+    Object* sidekick; // sp58
+
+    player = get_player();
+    sp5D = 0;
+    sp5C = 0;
+    sidekick = get_sidekick();
+    dll_1_func_6B74(arg0, &_bss_C88);
+    temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
+    if ((_bss_598 != NULL) && (temp_v0 != _bss_5A4)) {
+        tex_free(_bss_59C);
+        tex_free(_bss_598);
+        _bss_5A4 = -1;
+        _bss_598 = NULL;
+    }
+    if ((_bss_598 == NULL) && (temp_v0 != -1)) {
+        temp_v0_2 = dll_1_func_26D8(temp_v0);
+        if (temp_v0_2 != -1) {
+            _bss_598 = tex_load_deferred(temp_v0_2);
+            _bss_59C = tex_load_deferred(0x574);
+        }
+    }
+    _bss_5A4 = temp_v0;
+    if (_bss_598 != NULL) {
+        func_8003825C(arg0, _bss_59C, 0xFD, 0xA9, 0, 0, 0xFF, 0);
+        func_8003825C(arg0, _bss_598, 0x106, 0xB4, 0, 0, 0xFF, 0);
+    }
+    if (sidekick != NULL) {
+        ((DLL_ISidekick*)sidekick->dll)->vtbl->func26(sidekick, &sp64);
+        if ((_bss_5A8 != NULL) && (sp64 != _bss_5B0)) {
+            tex_free(_bss_5AC);
+            tex_free(_bss_5A8);
+            _bss_5B0 = -1;
+            _bss_5A8 = NULL;
+        }
+        if (_bss_5A8 == NULL && sp64 > 0) {
+            temp = _data_AC[sp64];
+            if (temp != -1) {
+                _bss_5A8 = tex_load_deferred(temp);
+                _bss_5AC = tex_load_deferred(0x584);
+            }
+        }
+        _bss_5B0 = sp64;
+        if (_bss_5A8 != NULL) {
+            func_8003825C(arg0, _bss_5AC, 0xFD, 0x79, 0, 0, 0xFF, 0);
+            func_8003825C(arg0, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, 0);
+        }
+    }
+    dll_1_func_7298(arg0);
+    // early return does not work here
+    if (_bss_C44 != 0) {
+        if (_data_10 != 0) {
+            var_s5 = 3;
+            if (_bss_C44 < 4) {
+                var_s0 = 1;
+            } else {
+                var_s5 = 5;
+                var_s0 = 2;
+            }
+            dll_1_func_4630(arg0);
+            _bss_C60->unkA = 0;
+            var_a2 = 0x5F - (var_s5 * 0xC);
+            _bss_C60[1].unk0 = NULL;
+            for (i = 0; i < _bss_C44; i++) {
+                sp70[i] = 0;
+            }
+            for (i = _bss_C44; i < var_s5; i++) {
+                sp70[i] = 1;
+            }
+            if (_bss_C44 < var_s5) {
+                _bss_C44 = var_s5;
+            }
+            if (_data_4 > 0) {
+                var_s0 += 1;
+                var_a2 -= 0x18;
+                var_s5 += 1;
+            }
+            if (_data_4 >= 0x19) {
+                var_s0 += 1;
+                var_a2 -= 0x18;
+                var_s5 += 1;
+            }
+            var_a2 += _bss_C28 - _data_C;
+            var_s1 = _bss_C40 - var_s0;
+            if (var_s1 < 0) {
+                var_s1 += _bss_C44;
+            }
+            for (i = 0; i < var_s5; i++) {
+                if (sp70[var_s1] == 0) {
+                    _bss_C60->unk4 = 0;
+                    sp5F = _data_10;
+                    if ((var_s1 == _bss_C40) && (_data_4 == 0)) {
+                        _bss_C60->unk8 = 0;
+                        _bss_C60->unkA = 0;
+                    } else {
+                        _bss_C60->unk8 = 0;
+                        _bss_C60->unkA = 0;
+                    }
+                    if (_bss_518[var_s1] != 0) {
+                        _bss_C60->unk0 = _bss_98[var_s1];
+                        if (func_80041E08() != 0) {
+                            func_80037F9C(arg0, _bss_C60, 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                        } else {
+                            func_80037F9C(arg0, _bss_C60, 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                        }
+                        if (_bss_558[var_s1] >= 2) {
+                            _bss_C60->unk0 = *_bss_6B0;
+                            _bss_C60->unk4 = (_bss_558[var_s1] - 2) << 8;
+                            func_80037F9C(arg0, _bss_C60, 0x114, ((i * 0x18) + var_a2) + _data_4 + 9, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        }
+                    }
+                } else {
+                    if (func_80041E08() != 0) {
+                        func_80037F9C(arg0, _bss_6B8[0], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                    } else {
+                        func_80037F9C(arg0, _bss_6B8[0], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                    }
+                }
+                var_s1 += 1;
+                if (var_s1 >= _bss_C44) {
+                    var_s1 -= _bss_C44;
+                }
+            }
+            func_80037F9C(arg0, _bss_6B8[31], 0x10A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(arg0, _bss_6B8[32], 0x11A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(arg0, _bss_6B8[33], 0x10A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(arg0, _bss_6B8[34], 0x11A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            dll_1_func_474C(arg0);
+        }
+        if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
+            switch (_bss_C3E) {
+            case 7:
+                sp5E = 0x2A;
+                sp5C = 3;
+                break;
+            case 8:
+                sp5E = 0x36;
+                break;
+            case 6:
+                sp5D = -2;
+                sp5C = 9;
+                sp5E = 0x31;
+                break;
+            default:
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                sp5D = 1;
+                sp5C = 9;
+                sp5E = 0x32;
+                break;
+            }
+            if (_data_14 < _data_10) {
+                sp5F = _data_10;
+            } else {
+                sp5F = _data_14;
+            }
+        } else {
+            if (_data_14 != 0) {
+                sp5E = 0x2A;
+                if (sidekick != NULL && sidekick->id == 0x25) {
+                    sp5E = 0x36;
+                    sp5F = _data_14;
+                } else {
+                    sp5C = 3;
+                    sp5F = _data_14;
+                }
+            } else {
+                sp5F = 0;
+            }
+        }
+        if (sp5F) {
+            _data_68 = tex_load_deferred(_data_9D8[sp5E]);
+            func_8003825C(arg0, _data_68, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, 0);
+            tex_free(_data_68);
+        }
+    }
+}
 
 // offset: 0x325C | func: 21
 s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {

@@ -1,8 +1,8 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
 #include "sys/joypad.h"
+#include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/214_animobj.h"
-#include "dlls/objects/211_tricky.h"
 #include "game/gamebits.h"
 #include "dll.h"
 #include "sys/main.h"
@@ -64,7 +64,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (!main_get_bits(BIT_4D4)) {
         tricky = get_sidekick();
         if (tricky) {
-            ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func22(tricky, self);
+            ((DLL_ISidekick*)tricky->dll)->vtbl->func22(tricky, self);
             main_set_bits(BIT_4D4, 1);
         }
     }
@@ -88,14 +88,14 @@ void NWtricky_control(Object *self) {
                 main_set_bits(BIT_8, 1);
                 main_set_bits(BIT_4E4, 1);
                 objdata->state = STATE_2;
-            } else if (((DLL_211_Tricky*)tricky->dll)->vtbl->base.func24(tricky) != 0) {
+            } else if (((DLL_ISidekick*)tricky->dll)->vtbl->func24(tricky) != 0) {
                 objdata->state = STATE_1;
                 objdata->timer = 0.0f;
             }
             break;
         case STATE_1:
             if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-                ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func21(tricky, 0, 0);
+                ((DLL_ISidekick*)tricky->dll)->vtbl->func21(tricky, 0, 0);
                 gDLL_6_AMSFX->vtbl->func_A6C(tricky);
                 main_set_bits(BIT_4E3, 0);
                 objdata->state = STATE_2;
@@ -170,12 +170,12 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
 
     if (!objdata->doneDemo) {
         tricky = get_sidekick();
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 1);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 2);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 3);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 4);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 5);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 0);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 1);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 2);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 3);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 4);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 5);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 0);
         switch (objdata->demoState) {
         case STATE2_0:
             for (i = 0; i < animObjData->unk98; i++) {

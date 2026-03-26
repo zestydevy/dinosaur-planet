@@ -25,6 +25,8 @@ DLL_INTERFACE(DLL_ISidekick) {
 	/*22*/ void (*func22)(Object *, Object *);
 	/*23*/ void (*func23)(Object *);
 	/*24*/ s32 (*func24)(Object *);
+	/*25*/ s32 (*func25)(Object*);
+ 	/*26*/ s32 (*func26)(Object*, s32*);
 };
 
 #endif //_DLLS_COMMON_SIDEKICK_H
