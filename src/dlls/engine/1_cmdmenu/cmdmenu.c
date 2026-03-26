@@ -553,24 +553,15 @@ enum CmdMenuTextures {
 /*0x8B*/ static u8 _bss_8B;
 /*0x8C*/ static f32 _bss_8C;
 /*0x90*/ static EnergyBar* _bss_90; 
-/*0x98*/ static u8 _bss_98[0x8]; //Pointers to inventory icon textures
-/*0xA0*/ static u8 _bss_A0[0xf8];
-/*0x198*/ static u8 _bss_198[0x8];
-/*0x1A0*/ static u8 _bss_1A0[0xf8];
-/*0x298*/ static u8 _bss_298[0x8];
-/*0x2A0*/ static u8 _bss_2A0[0x78];
-/*0x318*/ static u8 _bss_318[0x8];
-/*0x320*/ static u8 _bss_320[0xf8];
-/*0x418*/ static s16 _bss_418[4]; //array of textIDs
-/*0x420*/ static u8 _bss_420[0x78];
-/*0x498*/ static s8 _bss_498[8]; //array of unkAs (from InventoryItem)
-/*0x4A0*/ static u8 _bss_4A0[0x38];
-/*0x4D8*/ static s8 _bss_4D8[8]; //array of unkBs (from InventoryItem)
-/*0x4E0*/ static u8 _bss_4E0[0x38];
-/*0x518*/ static u8 _bss_518[0x8];
-/*0x520*/ static u8 _bss_520[0x38];
-/*0x558*/ static u8 _bss_558[0x8];
-/*0x560*/ static u8 _bss_560[0x38];
+/*0x98*/ static Texture* _bss_98[64]; //Pointers to inventory icon textures
+/*0x198*/ static Texture* _bss_198[64];
+/*0x298*/ static s16 _bss_298[64];
+/*0x318*/ static s32 _bss_318[64];
+/*0x418*/ static s16 _bss_418[64]; //array of textIDs
+/*0x498*/ static s8 _bss_498[64]; //array of unkAs (from InventoryItem)
+/*0x4D8*/ static s8 _bss_4D8[64]; //array of unkBs (from InventoryItem)
+/*0x518*/ static u8 _bss_518[64];
+/*0x558*/ static u8 _bss_558[64];
 /*0x598*/ static Texture* _bss_598;
 /*0x59C*/ static Texture* _bss_59C;
 /*0x5A0*/ static Texture* _bss_5A0;
@@ -614,6 +605,7 @@ enum CmdMenuTextures {
 /*0xC88*/ static CmdmenuItemUnkBSS _bss_C88;
 // /*0xC90*/ static u8 _bss_C90[0x10];
 
+static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
 static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
 void dll_1_func_7550(void);
 
@@ -869,7 +861,101 @@ void dll_1_func_13F4(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_27D8.s")
 
 // offset: 0x325C | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_325C.s")
+s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
+    s32 i;
+    s32 var_s7;
+    s32 var_s5;
+    s32 sp268;
+    Object* sidekick;
+    Texture* sp164[64];
+    Texture* sp64[64];
+
+    for (i = 0; i < 64; i++) {
+        sp164[i] = _bss_98[i];
+        sp64[i] = _bss_198[i];
+        _bss_98[i] = 0;
+        _bss_298[i] = -1;
+        _bss_558[i] = 1;
+        _bss_198[i] = 0;
+    }
+    var_s7 = 0;
+    i = 0;
+    if (arg1 == 0) {
+        _bss_C7A = -1;
+        while (arg0[i].flagObtained >= 0) {
+            var_s5 = main_get_bits(arg0[i].flagObtained);
+            if (var_s5 != 0) {
+                if (arg0 == _data_698) {
+                    _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
+                    _bss_298[var_s7] = arg0[i].textureID;
+                    _bss_318[var_s7] = arg0[i].flagObtained;
+                    if (var_s5 > 10) {
+                        var_s5 = 10;
+                    }
+                    _bss_558[var_s7] = (u8) var_s5;
+                    dll_1_func_3880(arg0, var_s7, i);
+                    if ((arg0[i].flagHide < 0) || (main_get_bits(arg0[i].flagHide) == 0)) {
+                        _bss_518[var_s7] = 1;
+                    } else {
+                        _bss_518[var_s7] = 0;
+                    }
+                    var_s7 += 1;
+                } else {
+                    if ((arg0[i].flagHide < 0) || (main_get_bits(arg0[i].flagHide) == 0)) {
+                        if ((_bss_C78 != 0) && (_bss_C78 == arg0[i].flagObtained)) {
+                            _bss_C7A = (s16) var_s7;
+                        }
+                        _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
+                        _bss_298[var_s7] = arg0[i].textureID;
+                        _bss_318[var_s7] = arg0[i].flagObtained;
+                        if (var_s5 > 10) {
+                            var_s5 = 10;
+                        }
+                        _bss_558[var_s7] = (u8) var_s5;
+                        dll_1_func_3880(arg0, var_s7, i);
+                        _bss_518[var_s7] = 1;
+                        var_s7 += 1;
+                    }
+                }
+            }
+            i += 1;
+        }
+    } else {
+        sidekick = get_sidekick();
+        if (sidekick != NULL) {
+            sp268 = ((DLL_ISidekick*)sidekick->dll)->vtbl->func13(sidekick);
+        } else {
+            sp268 = 0;
+        }
+        if (sp268 != -1) {
+            while (arg0[i].flagObtained >= 0) {
+                if (arg0[i].flagObtained & sp268) {
+                    _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
+                    _bss_558[var_s7] = 1;
+                    if (arg0[i].sidekickCommand != -1) {
+                        _bss_198[var_s7] = tex_load_deferred(arg0[i].sidekickCommand);
+                    } else {
+                        _bss_198[var_s7] = NULL;
+                    }
+                    _bss_318[var_s7] = arg0[i].flagHide;
+                    dll_1_func_3880(arg0, var_s7, i);
+                    _bss_518[var_s7] = 1;
+                    var_s7 += 1;
+                }
+                i += 1;
+            }
+        }
+    }
+    for (i = 0; i < 64; i++) {
+        if (sp164[i] != NULL) {
+            tex_free(sp164[i]);
+        }
+        if (sp64[i] != NULL) {
+            tex_free(sp64[i]);
+        }
+    }
+    return var_s7;
+}
 
 // offset: 0x3718 | func: 22
 static s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1) {
