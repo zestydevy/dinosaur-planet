@@ -103,6 +103,67 @@ typedef union {
     f32 items[10];
 } BSS60;
 
+enum CmdMenuTextures {
+    CMDMENU_TEX_00_Scroll_BG = 0,
+    CMDMENU_TEX_01_Scroll_Bottom = 1,
+    CMDMENU_TEX_02_Scroll_Top = 2,
+    CMDMENU_TEX_03_InfoScroll_Roll_End = 3,
+    CMDMENU_TEX_04_InfoScroll_Roll = 4,
+    CMDMENU_TEX_05_InfoScroll_Side = 5,
+    CMDMENU_TEX_06_InfoScroll_BG = 6,
+    CMDMENU_TEX_07_InfoScroll_SelfShadow = 7,
+    CMDMENU_TEX_08_Apple_0_Pct = 8,
+    CMDMENU_TEX_09_Apple_25_Pct = 9,
+    CMDMENU_TEX_10_Apple_50_Pct = 10,
+    CMDMENU_TEX_11_Apple_75_Pct = 11,
+    CMDMENU_TEX_12_Mushroom_Blue_Full = 12,
+    CMDMENU_TEX_13_Grub_Blue_Full = 13,
+    CMDMENU_TEX_14 = 14,
+    CMDMENU_TEX_15 = 15,
+    CMDMENU_TEX_16_Grub_Blue_Half = 16,
+    CMDMENU_TEX_17_Apple_100_Pct = 17,
+    CMDMENU_TEX_18_Scarab = 18,
+    CMDMENU_TEX_19_Scarab_Flutter_Frame1 = 19,
+    CMDMENU_TEX_20_Scarab_Flutter_Frame2 = 20,
+    CMDMENU_TEX_21_Scarab_Flutter_Frame3 = 21,
+    CMDMENU_TEX_22_Scarab_Spin_Frame1 = 22,
+    CMDMENU_TEX_23_Scarab_Spin_Frame2 = 23,
+    CMDMENU_TEX_24_Scarab_Spin_Frame3 = 24,
+    CMDMENU_TEX_25_Scarab_Spin_Frame4 = 25,
+    CMDMENU_TEX_26_Scarab_Spin_Frame5 = 26,
+    CMDMENU_TEX_27_Scarab_Spin_Frame6 = 27,
+    CMDMENU_TEX_28_Scarab_Spin_Frame7 = 28,
+    CMDMENU_TEX_29 = 29,
+    CMDMENU_TEX_30 = 30,
+    CMDMENU_TEX_31 = 31,
+    CMDMENU_TEX_32 = 32,
+    CMDMENU_TEX_33 = 33,
+    CMDMENU_TEX_34 = 34,
+    CMDMENU_TEX_35_MagicBar_Empty = 35,
+    CMDMENU_TEX_36_MagicBar_Full = 36,
+    CMDMENU_TEX_37_C_Down = 37,
+    CMDMENU_TEX_38_LeftDownButtons_With_Kyte = 38,
+    CMDMENU_TEX_39_C_Left = 39,
+    CMDMENU_TEX_40_Sabre = 40,
+    CMDMENU_TEX_41_C_Right = 41,
+    CMDMENU_TEX_42_Tricky = 42,
+    CMDMENU_TEX_43_LeftDownButtons_With_Tricky = 43,
+    CMDMENU_TEX_44_Mushroom_Empty = 44,
+    CMDMENU_TEX_45_Mushroom_Red_Full = 45,
+    CMDMENU_TEX_46_Mushroom_Red_Half = 46,
+    CMDMENU_TEX_47_RightButton_With_Bag = 47,
+    CMDMENU_TEX_48_LeftDownButtons_NoSidekick = 48,
+    CMDMENU_TEX_49_MagicBook = 49,
+    CMDMENU_TEX_50_Bag = 50,
+    CMDMENU_TEX_51_Mushroom_Blue_Half = 51,
+    CMDMENU_TEX_52 = 52,
+    CMDMENU_TEX_53_Krystal = 53,
+    CMDMENU_TEX_54_Kyte = 54,
+    CMDMENU_TEX_55_Grub_Empty = 55,
+    CMDMENU_TEX_56_Grub_Red_Full = 56,
+    CMDMENU_TEX_57_Grub_Red_Half = 57
+};
+
 /*0x0*/ static s8 _data_0 = 0;
 /*0x4*/ static s8 _data_4 = 0x00;
 /*0x8*/ static s8 _data_8 = 0x01;
@@ -417,66 +478,66 @@ typedef union {
 /*0x9D0*/ static s8 _data_9D0 = 0; //index of cmdmenu page currently open
 /*0x9D4*/ static u32 _data_9D4 = 0x00000000;
 /*0x9D8*/ static s16 _data_9D8[] = {
-/*00*/ 0x1be,
-/*01*/ 0x1bf,
-/*02*/ 0x1c0,
-/*03*/ 0x1c2,
-/*04*/ 0x1c3,
-/*05*/ 0x1c4,
-/*06*/ 0x1c5,
-/*07*/ 0x1c6,
-/*08*/ 0x3e2,
-/*09*/ 0x3e3,
-/*10*/ 0x3e4,
-/*11*/ 0x3e5,
-/*12*/ 0x421,
-/*13*/ 0x1c9,
-/*14*/ 0x3ea,
-/*15*/ 0x3eb,
-/*16*/ 0x1cb,
-/*17*/ 0x3e6,
-/*18*/ 0x3e7,
-/*19*/ 0x3f5,
-/*20*/ 0x3f6,
-/*21*/ 0x3f7,
-/*22*/ 0x3f8,
-/*23*/ 0x3f9,
-/*24*/ 0x3fa,
-/*25*/ 0x3fb,
-/*26*/ 0x3fc,
-/*27*/ 0x3fd,
-/*28*/ 0x3fe,
-/*29*/ 0x422,
-/*30*/ 0x423,
-/*31*/ 0x429,
-/*32*/ 0x42a,
-/*33*/ 0x42b,
-/*34*/ 0x42c,
-/*35*/ 0x424,
-/*36*/ 0x42d,
-/*37*/ 0x431,
-/*38*/ 0x1d4,
-/*39*/ 0x42f,
-/*40*/ 0x432,
-/*41*/ 0x430,
-/*42*/ 0x433,
-/*43*/ 0x42e,
-/*44*/ 0x435,
-/*45*/ 0x436,
-/*46*/ 0x438,
-/*47*/ 0x43a,
-/*48*/ 0x43b,
-/*49*/ 0x43d,
-/*50*/ 0x43e,
-/*51*/ 0x434,
-/*52*/ 0x437,
-/*53*/ 0x267,
-/*54*/ 0x268,
-/*55*/ 0x476,
-/*56*/ 0x477,
-/*57*/ 0x478,
-/*58*/ 0x000,
-/*59*/ 0x000
+    /*00*/ TEXTABLE_1BE_CMDMENU_Scroll_BG,
+    /*01*/ TEXTABLE_1BF_CMDMENU_Scroll_Bottom,
+    /*02*/ TEXTABLE_1C0_CMDMENU_Scroll_Top,
+    /*03*/ TEXTABLE_1C2_CMDMENU_InfoScroll_Roll_End,
+    /*04*/ TEXTABLE_1C3_CMDMENU_InfoScroll_Roll,
+    /*05*/ TEXTABLE_1C4_CMDMENU_InfoScroll_Side,
+    /*06*/ TEXTABLE_1C5_CMDMENU_InfoScroll_BG,
+    /*07*/ TEXTABLE_1C6_CMDMENU_InfoScroll_SelfShadow,
+    /*08*/ TEXTABLE_3E2_CMDMENU_Apple_0_Pct,
+    /*09*/ TEXTABLE_3E3_CMDMENU_Apple_25_Pct,
+    /*10*/ TEXTABLE_3E4_CMDMENU_Apple_50_Pct,
+    /*11*/ TEXTABLE_3E5_CMDMENU_Apple_75_Pct,
+    /*12*/ TEXTABLE_421_CMDMENU_Mushroom_Blue_Full,
+    /*13*/ TEXTABLE_1C9_CMDMENU_Grub_Blue_Full,
+    /*14*/ TEXTABLE_3EA,
+    /*15*/ TEXTABLE_3EB,
+    /*16*/ TEXTABLE_1CB_CMDMENU_Grub_Blue_Half,
+    /*17*/ TEXTABLE_3E6_CMDMENU_Apple_100_Pct,
+    /*18*/ TEXTABLE_3E7_CMDMENU_Scarab,
+    /*19*/ TEXTABLE_3F5_CMDMENU_Scarab_Flutter_Frame1,
+    /*20*/ TEXTABLE_3F6_CMDMENU_Scarab_Flutter_Frame2,
+    /*21*/ TEXTABLE_3F7_CMDMENU_Scarab_Flutter_Frame3,
+    /*22*/ TEXTABLE_3F8_CMDMENU_Scarab_Spin_Frame1,
+    /*23*/ TEXTABLE_3F9_CMDMENU_Scarab_Spin_Frame2,
+    /*24*/ TEXTABLE_3FA_CMDMENU_Scarab_Spin_Frame3,
+    /*25*/ TEXTABLE_3FB_CMDMENU_Scarab_Spin_Frame4,
+    /*26*/ TEXTABLE_3FC_CMDMENU_Scarab_Spin_Frame5,
+    /*27*/ TEXTABLE_3FD_CMDMENU_Scarab_Spin_Frame6,
+    /*28*/ TEXTABLE_3FE_CMDMENU_Scarab_Spin_Frame7,
+    /*29*/ TEXTABLE_422,
+    /*30*/ TEXTABLE_423,
+    /*31*/ TEXTABLE_429,
+    /*32*/ TEXTABLE_42A,
+    /*33*/ TEXTABLE_42B,
+    /*34*/ TEXTABLE_42C,
+    /*35*/ TEXTABLE_424_CMDMENU_MagicBar_Empty,
+    /*36*/ TEXTABLE_42D_CMDMENU_MagicBar_Full,
+    /*37*/ TEXTABLE_431_CMDMENU_C_Down,
+    /*38*/ TEXTABLE_1D4_CMDMENU_LeftDownButtons_With_Kyte,
+    /*39*/ TEXTABLE_42F_CMDMENU_C_Left,
+    /*40*/ TEXTABLE_432_CMDMENU_Sabre,
+    /*41*/ TEXTABLE_430_CMDMENU_C_Right,
+    /*42*/ TEXTABLE_433_CMDMENU_Tricky,
+    /*43*/ TEXTABLE_42E_CMDMENU_LeftDownButtons_With_Tricky,
+    /*44*/ TEXTABLE_435_CMDMENU_Mushroom_Empty,
+    /*45*/ TEXTABLE_436_CMDMENU_Mushroom_Red_Full,
+    /*46*/ TEXTABLE_438_CMDMENU_Mushroom_Red_Half,
+    /*47*/ TEXTABLE_43A_CMDMENU_RightButton_With_Bag,
+    /*48*/ TEXTABLE_43B_CMDMENU_LeftDownButtons_NoSidekick,
+    /*49*/ TEXTABLE_43D_CMDMENU_MagicBook,
+    /*50*/ TEXTABLE_43E_CMDMENU_Bag,
+    /*51*/ TEXTABLE_434_CMDMENU_Mushroom_Blue_Half,
+    /*52*/ TEXTABLE_437,
+    /*53*/ TEXTABLE_267_CMDMENU_Krystal,
+    /*54*/ TEXTABLE_268_CMDMENU_Kyte,
+    /*55*/ TEXTABLE_476_CMDMENU_Grub_Empty,
+    /*56*/ TEXTABLE_477_CMDMENU_Grub_Red_Full,
+    /*57*/ TEXTABLE_478_CMDMENU_Grub_Red_Half,
+    /*58*/ 0x000,
+    /*59*/ 0x000
 };
 
 /*0x0*/ static f32 _bss_0; //scarabUIOpacity
@@ -966,7 +1027,7 @@ void dll_1_func_3D28(Gfx** gdl, s32 arg1, s32 arg2) {
     Gfx* dl;
     Object* sidekick;
     Object* player;
-    u8 sp4B;
+    u8 texIdx;
     u8 pad_sp4A;
     u8 isKyte;
     u8 var_v0;
@@ -1004,30 +1065,30 @@ void dll_1_func_3D28(Gfx** gdl, s32 arg1, s32 arg2) {
                 sp44 |= 1;
             }
             if (sp44 & 2) {
-                sp4B = 0x2F;
-                _data_68 = tex_load_deferred(_data_9D8[47]);
+                texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
+                _data_68 = tex_load_deferred(_data_9D8[texIdx]);
                 func_8003825C(gdl, _data_68, 0x113, 0x19, 0, 0, (s32) _bss_8C, 0);
                 tex_free(_data_68);
             } else {
-                sp4B = 0x29;
-                func_80037F9C(gdl, _bss_6B8[41], 0x112, 0x22, 255, 255, 255, _bss_8C);
+                texIdx = CMDMENU_TEX_41_C_Right;
+                func_80037F9C(gdl, _bss_6B8[texIdx], 0x112, 0x22, 255, 255, 255, _bss_8C);
             }
             if (((sp44 & 4) && (sidekick != NULL)) || (sp44 & 1)) {
                 if ((sp44 & 4) && (sidekick != NULL) && (sp44 & 1)) {
                     if (isKyte) {
-                        sp4B = 0x26;
+                        texIdx = CMDMENU_TEX_38_LeftDownButtons_With_Kyte;
                     } else {
-                        sp4B = 0x2B;
+                        texIdx = CMDMENU_TEX_43_LeftDownButtons_With_Tricky;
                     }
                 } else if (sp44 & 2) {
-                    sp4B = 0x30;
+                    texIdx = CMDMENU_TEX_48_LeftDownButtons_NoSidekick;
                 }
-                _data_68 = tex_load_deferred(_data_9D8[sp4B]);
+                _data_68 = tex_load_deferred(_data_9D8[texIdx]);
                 func_8003825C(gdl, _data_68, 0xF5, 0x11, 0, 0, (s32) _bss_8C, 0);
                 tex_free(_data_68);
             } else {
-                func_80037F9C(gdl, _bss_6B8[37], 0xFC, 0x2B, 255, 255, 255, (u8) _bss_8C);
-                func_80037F9C(gdl, _bss_6B8[39], 0xF6, 0x1A, 255, 255, 255, (u8) _bss_8C);
+                func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) _bss_8C);
+                func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) _bss_8C);
             }
         }
     } else {
@@ -1035,8 +1096,8 @@ void dll_1_func_3D28(Gfx** gdl, s32 arg1, s32 arg2) {
     }
     dl = *gdl;
     if (_data_10 != 0) {
-        func_80037F9C(&dl, _bss_6B8[2], 0x102, 0x33, 255, 255, 255, (u8) _data_10);
-        func_80037F9C(&dl, _bss_6B8[1], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
+        func_80037F9C(&dl, _bss_6B8[CMDMENU_TEX_02_Scroll_Top], 0x102, 0x33, 255, 255, 255, (u8) _data_10);
+        func_80037F9C(&dl, _bss_6B8[CMDMENU_TEX_01_Scroll_Bottom], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
     }
     if (sidekick != NULL) {
         if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (_bss_60.unk4 >= 0.0f)) {
@@ -1060,33 +1121,33 @@ void dll_1_func_3D28(Gfx** gdl, s32 arg1, s32 arg2) {
             for (sp42 = 0; sp42 < _bss_10.items[9]; sp42++) {
                 if (sp42 < pad_sp43) {
                     if (isKyte) {
-                        var_v0 = 0x38; // red grub
+                        var_v0 = CMDMENU_TEX_56_Grub_Red_Full;
                     } else {
-                        var_v0 = 0x2D; // red mushroom
+                        var_v0 = CMDMENU_TEX_45_Mushroom_Red_Full;
                     }
                 } else if (sp42 == pad_sp43 && sp47) {
                     if (isKyte) {
-                        var_v0 = 0x39; // half red grub
+                        var_v0 = CMDMENU_TEX_57_Grub_Red_Half;
                     } else {
-                        var_v0 = 0x2E; // half red mushroom
+                        var_v0 = CMDMENU_TEX_46_Mushroom_Red_Half;
                     }
                 } else if (sp42 < sp46) {
                     if (isKyte) {
-                        var_v0 = 0xD; // blue grub
+                        var_v0 = CMDMENU_TEX_13_Grub_Blue_Full;
                     } else {
-                        var_v0 = 0xC; // blue mushroom
+                        var_v0 = CMDMENU_TEX_12_Mushroom_Blue_Full;
                     }
                 } else if (sp42 == sp46 && sp45) {
                     if (isKyte) {
-                        var_v0 = 0x10; // half blue grub
+                        var_v0 = CMDMENU_TEX_16_Grub_Blue_Half;
                     } else {
-                        var_v0 = 0x33; // half blue mushroom
+                        var_v0 = CMDMENU_TEX_51_Mushroom_Blue_Half;
                     }
                 } else {
                     if (isKyte) {
-                        var_v0 = 0x37; // empty grub
+                        var_v0 = CMDMENU_TEX_55_Grub_Empty;
                     } else {
-                        var_v0 = 0x2C; // empty mushroom
+                        var_v0 = CMDMENU_TEX_44_Mushroom_Empty;
                     }
                 }
                 func_80037F9C(&dl, _bss_6B8[var_v0], 
@@ -1517,15 +1578,15 @@ void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     u8 sp7E;
     s8 sp7C;
     s8 sp7D;
-    s32 viSize;
+    s32 tempVar;
     Gfx* sp74;
     Object* sp70 = get_player();
-    u8 var_v0;
+    u8 texIdx;
     char sp68[4] = "   ";
 
     sp74 = *gdl;
-    viSize = vi_get_current_size();
-    gDPSetScissor(sp74++, G_SC_NON_INTERLACE, 0, 0, (GET_VIDEO_WIDTH(viSize) & 0xFFFF) - 1, 239);
+    tempVar = vi_get_current_size();
+    gDPSetScissor(sp74++, G_SC_NON_INTERLACE, 0, 0, (GET_VIDEO_WIDTH(tempVar) & 0xFFFF) - 1, 239);
     if ((_bss_60.unk0 >= 0.0f) || (_bss_60.unk1C >= 0.0f) || (_bss_60.unk14 >= 0.0f)) {
         var_fv1 = 255.0f;
     } else {
@@ -1556,15 +1617,15 @@ void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 sp7C = var_s0 * 0xA;
                 sp7D = 0;
             }
-            viSize = _bss_10.unk0 >> 2;
-            if (var_s0 < viSize) {
-                var_v0 = 0x11;
-            } else if (viSize < var_s0) {
-                var_v0 = 8;
+            tempVar = _bss_10.unk0 >> 2;
+            if (var_s0 < tempVar) {
+                texIdx = CMDMENU_TEX_17_Apple_100_Pct;
+            } else if (tempVar < var_s0) {
+                texIdx = CMDMENU_TEX_08_Apple_0_Pct;
             } else {
-                var_v0 = ((_bss_10.unk0 & 3) + 8);
+                texIdx = CMDMENU_TEX_08_Apple_0_Pct + (_bss_10.unk0 & 3);
             }
-            func_80037F9C(&sp74, _bss_6B8[var_v0], sp7C + 0x3C, sp7D + 0x14, 0xFF, 0xFF, 0xFF, sp7E);
+            func_80037F9C(&sp74, _bss_6B8[texIdx], sp7C + 0x3C, sp7D + 0x14, 0xFF, 0xFF, 0xFF, sp7E);
         }
     }
     if ((_bss_60.unk8 >= 0.0f) || (_bss_60.unk14 >= 0.0f) || (((DLL_210_Player*)sp70->dll)->vtbl->func50(sp70) != -1)) {
@@ -1587,14 +1648,14 @@ void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     if (sp7E) {
         for (var_s0 = 0; var_s0 < (_bss_10.unk20 / 25); var_s0++) {
             if (var_s0 < (_bss_10.unk8 / 25)) {
-                viSize = 0x42;
+                tempVar = 0x42;
             } else if ((_bss_10.unk8 / 25) < var_s0) {
-                viSize = 0;
+                tempVar = 0;
             } else {
-                viSize = ((_bss_10.unk8 % 25) * 2) + 0xD;
+                tempVar = ((_bss_10.unk8 % 25) * 2) + 0xD;
             }
-            func_800390A4(&sp74, _bss_6B8[36], 23.0f, ((var_s0 * 0xC) + 0x3C), (f32) viSize, 14.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
-            func_800390A4(&sp74, _bss_6B8[35], (f32) (viSize + 0x17), ((var_s0 * 0xC) + 0x3C), (f32) (0x42 - viSize), 14.0f, viSize << 5, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
+            func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_36_MagicBar_Full], 23.0f, ((var_s0 * 0xC) + 0x3C), (f32) tempVar, 14.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
+            func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_35_MagicBar_Empty], (f32) (tempVar + 0x17), ((var_s0 * 0xC) + 0x3C), (f32) (0x42 - tempVar), 14.0f, tempVar << 5, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
         }
     }
     sp7E = (u8)_bss_0 < (u8)_bss_8 ?  (u8)_bss_8 : (u8)_bss_0;
@@ -1602,13 +1663,13 @@ void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         if (sp70->id == 0x1F) {
             sp7C = 0;
             sp7D = 0;
-            var_v0 = 0x35;
+            texIdx = CMDMENU_TEX_53_Krystal;
         } else {
             sp7C = 2;
             sp7D = -1;
-            var_v0 = 0x28;
+            texIdx = CMDMENU_TEX_40_Sabre;
         }
-        _data_68 = tex_load_deferred(_data_9D8[var_v0]);
+        _data_68 = tex_load_deferred(_data_9D8[texIdx]);
         func_8003825C(&sp74, _data_68, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, 0);
         tex_free(_data_68);
     }
@@ -1650,7 +1711,7 @@ void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 }
             }
         }
-        func_800390A4(&sp74, _bss_6B8[_bss_89+18], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
+        func_800390A4(&sp74, _bss_6B8[_bss_89 + CMDMENU_TEX_18_Scarab], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
         sprintf(sp68, "%d", (int)_bss_10.unkC);
         font_window_set_coords(3, 0, 0, 0x140, 0xF0);
         font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
@@ -1739,7 +1800,7 @@ void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
                 }
             }
         }
-        func_80037F9C(gdl, _bss_6B8[52], 
+        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_52], 
             0x16, 
             0xB0, 
             0xFF, 
@@ -1756,14 +1817,14 @@ void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
             0xFF, 
             0xFF, 
             (u8) arg1->unk8);
-        func_80037F9C(gdl, _bss_6B8[29], 
+        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_29], 
             0x14, 
             0xAF, 
             0xFF, 
             0xFF, 
             0xFF, 
             (u8) arg1->unk8);
-        func_80037F9C(gdl, _bss_6B8[30], 
+        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_30], 
             0x44, 
             0xAF, 
             0xFF, 
