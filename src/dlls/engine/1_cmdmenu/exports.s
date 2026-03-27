@@ -10,7 +10,7 @@ _exports:
 # export table
 .dword cmdmenu_func_308
 .dword cmdmenu_func_35C
-.dword cmdmenu_func_BB8
+.dword cmdmenu_print
 .dword cmdmenu_func_1290
 .dword cmdmenu_func_12EC
 .dword cmdmenu_func_F5C
@@ -23,12 +23,12 @@ _exports:
 .dword cmdmenu_func_130C
 .dword cmdmenu_func_1338
 .dword cmdmenu_func_13F4
-.dword cmdmenu_func_2B8
+.dword cmdmenu_disable_buttons
 .dword cmdmenu_func_6984
 .dword cmdmenu_func_69F8
 .dword cmdmenu_func_6B00
-.dword cmdmenu_func_2E0
-.dword cmdmenu_func_70C8
-.dword cmdmenu_func_7208
-.dword cmdmenu_func_7550
-.dword cmdmenu_func_75CC
+.dword cmdmenu_toggle_forced_stats_display
+.dword cmdmenu_energy_bar_create
+.dword cmdmenu_energy_bar_set
+.dword cmdmenu_energy_bar_free
+.dword cmdmenu_energy_bar_fadeout

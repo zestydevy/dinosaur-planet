@@ -30,7 +30,7 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ s32 (*func_308)(void);
 /*1*/ void (*func_35C)(void);
-/*2*/ void (*func_BB8)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
+/*2*/ void (*print)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 /*3*/ void (*func_1290)(void);
 /*4*/ void (*func_12EC)(void);
 /*5*/ s32 (*func5)(Object** a0, s32 a1, s32 a2, s32 a3, f32 a4); //unsure of types
@@ -43,15 +43,15 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*12*/ void (*func_130C)(u32 arg0, u32 arg1, u32 arg2);
 /*13*/ void (*func_1338)(s32 gametextID, s32 arg1, s32 arg2);
 /*14*/ void (*func_13F4)(void);
-/*15*/ void (*func_2B8)(u16 arg0);
+/*15*/ void (*disable_buttons)(u16 mask);
 /*16*/ void (*func_6984)(s32 arg0);
 /*17*/ void (*func_69F8)(s32 arg0, s32 arg1, s32 arg2);
 /*18*/ void (*func_6B00)(s16 textureID, s32 arg1, s32 arg2);
-/*19*/ void (*func_2E0)(u8 arg0);
-/*20*/ UnknownDLLFunc func_70C8;
-/*21*/ void (*func_7208)(s32 arg0);
-/*22*/ void (*func_7550)(void);
-/*23*/ UnknownDLLFunc func_75CC;
+/*19*/ void (*toggle_forced_stats_display)(u8 force);
+/*20*/ void (*energy_bar_create)(s32 minEnergy, s32 maxEnergy, s32 arg2, s32 arg3, s32 arg4);
+/*21*/ void (*energy_bar_set)(s32 energy);
+/*22*/ void (*energy_bar_free)(void);
+/*23*/ void (*energy_bar_fadeout)(void);
 };
 
 #endif //_DLLS_1_H

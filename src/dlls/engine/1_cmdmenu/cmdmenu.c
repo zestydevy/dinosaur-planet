@@ -75,18 +75,16 @@ typedef union {
 } CmdmenuPlayerSidekickData;
 
 typedef struct {
-/*00*/ s32 unk0;
-/*04*/ s32 unk4;
-/*08*/ u32 unk8;
-/*0C*/ u32 unkC;
-/*10*/ f32 unk10;
-/*14*/ u8 unk14;
-/*15*/ s8 unk15;
-/*16*/ s16 unk16;
-/*18*/ Func_80037F9C_Struct Fullbartex[2]; // official name: Fullbartex (default.dol)
-/*30*/ Func_80037F9C_Struct Emptybartex[2]; // official name: Emptybartex (default.dol)
-/*48*/ s32 unk48;
-/*4C*/ u32 unk4C_0 : 1;
+/*00*/ s32 min;
+/*04*/ s32 max;
+/*08*/ u32 width;
+/*0C*/ u32 height;
+/*10*/ f32 filledWidth;
+/*14*/ u8 alpha;
+/*18*/ Func_80037F9C_Struct fullbarTex[2]; // official name: Fullbartex (default.dol)
+/*30*/ Func_80037F9C_Struct emptybarTex[2]; // official name: Emptybartex (default.dol)
+/*48*/ s32 scale;
+/*4C_0*/ u32 fadeout : 1;
 } EnergyBar;
 
 typedef union {
@@ -195,10 +193,10 @@ enum CmdMenuTextures {
 /*0x6C*/ static u32 _data_6C[] = {
     0x3f800000, 0xff000000
 };
-/*0x74*/ static s8 _data_74 = 0;
+/*0x74*/ static s8 sJoyButtonMask = 0;
 /*0x78*/ static s16 _data_78 = 0;
 /*0x7C*/ static u8 _data_7C = 0;
-/*0x80*/ static u8 _data_80 = 0;
+/*0x80*/ static u8 sForceStatsDisplay = 0;
 /*0x84*/ static s16 _data_84 = 0;
 /*0x88*/ static s8 _data_88 = 1;
 /*0x8C*/ static s16 _data_8C[] = {
@@ -552,15 +550,15 @@ enum CmdMenuTextures {
 /*0x4*/ static f32 _bss_4; //playerIconMagicBarOpacity
 /*0x8*/ static f32 _bss_8;
 /*0xC*/ static s32 _bss_C;
-/*0x10*/ static CmdmenuPlayerSidekickData _bss_10; //Tricky food level is stored in here! Maybe a struct?
-/*0x38*/ static CmdmenuPlayerSidekickData _bss_38;
-/*0x60*/ static CmdmenuPlayerSidekickDataChangeTimers _bss_60;
+/*0x10*/ static CmdmenuPlayerSidekickData sStats; //Tricky food level is stored in here! Maybe a struct?
+/*0x38*/ static CmdmenuPlayerSidekickData sPrevStats;
+/*0x60*/ static CmdmenuPlayerSidekickDataChangeTimers sStatsChangeTimers;
 /*0x88*/ static u8 _bss_88;
 /*0x89*/ static u8 _bss_89;
 /*0x8A*/ static u8 _bss_8A;
 /*0x8B*/ static u8 _bss_8B;
 /*0x8C*/ static f32 _bss_8C;
-/*0x90*/ static EnergyBar* _bss_90; 
+/*0x90*/ static EnergyBar* sEnergyBar; 
 /*0x98*/ static Texture* _bss_98[64]; //Pointers to inventory icon textures
 /*0x198*/ static Texture* _bss_198[64];
 /*0x298*/ static s16 _bss_298[64];
@@ -572,24 +570,24 @@ enum CmdMenuTextures {
 /*0x558*/ static u8 _bss_558[64];
 /*0x598*/ static Texture* _bss_598;
 /*0x59C*/ static Texture* _bss_59C;
-/*0x5A0*/ static Texture* _bss_5A0;
+/*0x5A0*/ static Texture* sAButtonAnimTex;
 /*0x5A4*/ static s16 _bss_5A4;
 /*0x5A8*/ static Texture* _bss_5A8;
 /*0x5AC*/ static Texture* _bss_5AC;
 /*0x5B0*/ static s16 _bss_5B0;
 /*0x5B4*/ static s32 _bss_5B4;
-/*0x5B8*/ static s32 _bss_5B8;
+/*0x5B8*/ static s32 sCrosshairAnimRenderFlags;
 /*0x5BC*/ static s32 _bss_5BC;
-/*0x5C0*/ static s32 _bss_5C0;
+/*0x5C0*/ static s32 sCrosshairAnimProgress;
 /*0x5C8*/ static Texture* _bss_5C8[58];
-/*0x6B0*/ static Texture* _bss_6B0;
+/*0x6B0*/ static Texture* sInventoryStackNumbersTex;
 /*0x6B8*/ static Func_80037F9C_Struct _bss_6B8[58][2];
 /*0xC28*/ static s16 _bss_C28;
 /*0xC2A*/ static s16 _bss_C2A;
 /*0xC2C*/ static s16 _bss_C2C;
 /*0xC2E*/ static s16 _bss_C2E;
 /*0xC30*/ static GameTextChunk* _bss_C30;
-/*0xC34*/ static Texture* _bss_C34;
+/*0xC34*/ static Texture* sCrosshairTex;
 /*0xC38*/ static s16 usedItemGamebitID;
 /*0xC3A*/ static s16 _bss_C3A;
 /*0xC3C*/ static s8 _bss_C3C; //set to 0 when item selection successful
@@ -598,11 +596,11 @@ enum CmdMenuTextures {
 /*0xC3F*/ static u8 _bss_C3F;
 /*0xC40*/ static s16 _bss_C40;
 /*0xC44*/ static s32 _bss_C44;
-/*0xC48*/ static s8 _bss_C48;
+/*0xC48*/ static s8 sShouldOverrideJoypadButtons;
 /*0xC4C*/ static s32 _bss_C4C;
-/*0xC50*/ static s32 _bss_C50; // joypad button bitfield
-/*0xC54*/ static s32 _bss_C54; //controllerButtons
-/*0xC58*/ static s32 _bss_C58; // joypad button bitfield
+/*0xC50*/ static s32 sJoyPressedButtons; // joypad button bitfield
+/*0xC54*/ static s32 sJoyPressedButtonsOverride; //controllerButtons
+/*0xC58*/ static s32 sJoyHeldButtons; // joypad button bitfield
 /*0xC60*/ static Func_80037F9C_Struct _bss_C60[2];
 /*0xC78*/ static s8 _bss_C78;
 /*0xC7A*/ static s16 _bss_C7A;
@@ -632,15 +630,15 @@ static void cmdmenu_func_4830(void);
 static void cmdmenu_func_484C(void);
 static void cmdmenu_func_486C(void);
 static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_func_5608(void);
-static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_update_stats(void);
+static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0);
 static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1);
-static void cmdmenu_func_7298(Gfx** gdl);
-void cmdmenu_func_7550(void);
+static void cmdmenu_draw_energy_bar(Gfx** gdl);
+void cmdmenu_energy_bar_free(void);
 
 // offset: 0x0 | ctor
-void cmdmenu_ctor(s32 arg0) {
+void cmdmenu_ctor(void* dll) {
     s32 i;
 
     _bss_C78 = -1;
@@ -660,19 +658,19 @@ void cmdmenu_ctor(s32 arg0) {
         _bss_6B8[i][1].unk0 = 0;
     }
 
-    _bss_C34 = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
-    _bss_C34->animSpeed = 0x28;
-    _bss_5B8 = 0x80000;
-    _bss_5C0 = 0;
-    _bss_6B0 = tex_load_deferred(TEXTABLE_3A7_InventoryStackNumbers);
-    _bss_5A0 = tex_load_deferred(TEXTABLE_274_AButton_Anim);
-    _bss_5A0->animSpeed = 0x28;
+    sCrosshairTex = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
+    sCrosshairTex->animSpeed = 40;
+    sCrosshairAnimRenderFlags = RENDER_TEXANIM_REVERSE;
+    sCrosshairAnimProgress = 0;
+    sInventoryStackNumbersTex = tex_load_deferred(TEXTABLE_3A7_InventoryStackNumbers);
+    sAButtonAnimTex = tex_load_deferred(TEXTABLE_274_AButton_Anim);
+    sAButtonAnimTex->animSpeed = 40;
     
     cmdmenu_func_69CC(&_bss_C88);
 }
 
 // offset: 0x180 | dtor
-void cmdmenu_dtor(s32 arg0) {
+void cmdmenu_dtor(void* dll) {
     s32 i;
 
     for (i = 0; i < (s32)ARRAYCOUNT(_bss_5C8); i++) {
@@ -680,8 +678,8 @@ void cmdmenu_dtor(s32 arg0) {
             tex_free(_bss_5C8[i]);
         }
     }
-    tex_free(_bss_6B0);
-    tex_free(_bss_C34);
+    tex_free(sInventoryStackNumbersTex);
+    tex_free(sCrosshairTex);
     if (_bss_598 != NULL) {
         tex_free(_bss_598);
     }
@@ -694,19 +692,19 @@ void cmdmenu_dtor(s32 arg0) {
     if (_bss_5AC != NULL) {
         tex_free(_bss_5AC);
     }
-    if (_bss_5A0 != NULL) {
-        tex_free(_bss_5A0);
+    if (sAButtonAnimTex != NULL) {
+        tex_free(sAButtonAnimTex);
     }
 }
 
 // offset: 0x2B8 | func: 0 | export: 15
-void cmdmenu_func_2B8(u16 arg0) {
-    _data_74 = arg0;
+void cmdmenu_disable_buttons(u16 mask) {
+    sJoyButtonMask = mask;
 }
 
 // offset: 0x2E0 | func: 1 | export: 19
-void cmdmenu_func_2E0(u8 arg0) {
-    _data_80 = arg0;
+void cmdmenu_toggle_forced_stats_display(u8 force) {
+    sForceStatsDisplay = force;
 }
 
 // offset: 0x308 | func: 2 | export: 0
@@ -718,51 +716,51 @@ s32 cmdmenu_func_308(void) {
 
 // offset: 0x35C | func: 3 | export: 1
 void cmdmenu_func_35C(void) {
-    Object* sp3C;
-    Object* sp38;
+    Object* player;
+    Object* sidekick;
     s16 _pad;
     s8 sp31;
     s16 var_v1_3;
     s8 var_a0;
     s8 sp30;
 
-    sp3C = get_player();
-    sp38 = get_sidekick();
-    if (sp3C != NULL) {
-        _bss_C50 = joy_get_pressed(0);
-        _bss_C58 = joy_get_buttons(0);
-        if (sp3C->unkB0 & 0x1000) {
+    player = get_player();
+    sidekick = get_sidekick();
+    if (player != NULL) {
+        sJoyPressedButtons = joy_get_pressed(0);
+        sJoyHeldButtons = joy_get_buttons(0);
+        if (player->unkB0 & 0x1000) {
             joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-            _bss_C50 &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-            _bss_C58 &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-        } else if (_data_74 != 0) {
-            joy_set_button_mask(0, _data_74);
-            _bss_C50 &= ~_data_74;
-            _bss_C58 &= ~_data_74;
+            sJoyPressedButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+            sJoyHeldButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+        } else if (sJoyButtonMask != 0) {
+            joy_set_button_mask(0, sJoyButtonMask);
+            sJoyPressedButtons &= ~sJoyButtonMask;
+            sJoyHeldButtons &= ~sJoyButtonMask;
         }
-        if (_bss_C48 != 0) {
-            _bss_C50 = _bss_C54;
+        if (sShouldOverrideJoypadButtons) {
+            sJoyPressedButtons = sJoyPressedButtonsOverride;
         } else {
-            _bss_C50 |= _bss_C54;
-            if ((sp3C->unkB0 & 0x1000) || (_data_74 != 0)) {
-                _bss_C50 |= B_BUTTON;
+            sJoyPressedButtons |= sJoyPressedButtonsOverride;
+            if ((player->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
+                sJoyPressedButtons |= B_BUTTON;
             }
         }
-        if ((_bss_C50 & D_CBUTTONS) && (sp38 != NULL) && (_data_9D0 != 2)) {
-            sp30 = sp38->id == OBJ_Kyte ? 8 : 7;
+        if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (_data_9D0 != 2)) {
+            sp30 = sidekick->id == OBJ_Kyte ? 8 : 7;
             if (cmdmenu_func_3718(_data_8F0[sp30].characterItems, 1) != 0) {
                 joy_set_button_mask(0, D_CBUTTONS);
                 _data_9D4 = 2;
                 _bss_C3E = sp30;
             }
-        } else if ((_bss_C50 & R_CBUTTONS) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
-            sp30 = sp3C->id == OBJ_Krystal ? 0 : 1;
+        } else if ((sJoyPressedButtons & R_CBUTTONS) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
+            sp30 = player->id == OBJ_Krystal ? 0 : 1;
             if (cmdmenu_func_3718(_data_8F0[sp30].characterItems, 0) != 0) {
                 joy_set_button_mask(0, R_CBUTTONS);
                 _data_9D4 = 3;
                 _bss_C3E = sp30;
             }
-        } else if ((_bss_C50 & L_CBUTTONS) && (_data_9D0 != 4)) {
+        } else if ((sJoyPressedButtons & L_CBUTTONS) && (_data_9D0 != 4)) {
             if (cmdmenu_func_3718(_data_8F0[6].characterItems, 0) != 0) {
                 joy_set_button_mask(0, L_CBUTTONS);
                 _data_9D4 = 4;
@@ -801,14 +799,14 @@ void cmdmenu_func_35C(void) {
                 _data_8F0[7].unk4 = 0;
                 _data_8F0[8].unk4 = 0;
                 _data_9D0 = _data_9D4;
-                _bss_C50 = 0;
+                sJoyPressedButtons = 0;
                 _data_78 = 0;
                 _data_9D4 = 0;
             } else {
                 cmdmenu_func_3A94();
             }
         }
-        cmdmenu_func_5608();
+        cmdmenu_update_stats();
         cmdmenu_func_3AD0();
         cmdmenu_func_486C();
         _bss_C4C = _bss_C4C + 1;
@@ -834,7 +832,7 @@ void cmdmenu_func_35C(void) {
             }
         }
         _bss_C7C = -1;
-        if (((_bss_C58 & R_TRIG) || (var_a0 != 0)) && (var_v1_3 >= 0)) {
+        if (((sJoyHeldButtons & R_TRIG) || (var_a0 != 0)) && (var_v1_3 >= 0)) {
             if (var_v1_3 != _data_44) {
                 _data_44 = var_v1_3;
                 if (*_data_34 != NULL) {
@@ -852,12 +850,12 @@ void cmdmenu_func_35C(void) {
             }
         }
         joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-        _data_74 = 0;
+        sJoyButtonMask = 0;
     }
 }
 
 // offset: 0xBB8 | func: 4 | export: 2
-void cmdmenu_func_BB8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     Object* player;
     s32 viSize;
     s32 sp44;
@@ -866,10 +864,10 @@ void cmdmenu_func_BB8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     player = get_player();
     if (player != NULL) {
         if (((DLL_210_Player*)player->dll)->vtbl->func77(player, &sp44, &sp40) != 0) {
-            tex_animate(_bss_C34, &_bss_5B8, &_bss_5C0);
-            func_8003825C(gdl, _bss_C34, sp44 - 0x10, sp40 - 0x10, 0, _bss_5C0 >> 8, 0x96, 0);
+            tex_animate(sCrosshairTex, &sCrosshairAnimRenderFlags, &sCrosshairAnimProgress);
+            func_8003825C(gdl, sCrosshairTex, sp44 - 16, sp40 - 16, 0, sCrosshairAnimProgress >> 8, 150, 0);
         }
-        cmdmenu_func_5BBC(gdl, mtxs, vtxs);
+        cmdmenu_draw_player_stats(gdl, mtxs, vtxs);
         viSize = vi_get_current_size();
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
             0, 
@@ -1058,8 +1056,8 @@ static void cmdmenu_func_1410(void) {
             _bss_C30 = NULL;
         }
     } else {
-        tex_animate(_bss_5A0, &_bss_5B4, &_bss_5BC);
-        if (_bss_C50 & A_BUTTON) {
+        tex_animate(sAButtonAnimTex, &_bss_5B4, &_bss_5BC);
+        if (sJoyPressedButtons & A_BUTTON) {
             _bss_C2E += 3;
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             if (_bss_C2E < _bss_C30->count) {
@@ -1231,7 +1229,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
     
     dl_set_prim_color(&dl, 255, 255, 255, 255);
-    func_8003825C(&dl, _bss_5A0, _data_58 - 8, (_data_54 + _data_50) - 24, 0, _bss_5BC >> 8, _data_60, 0);
+    func_8003825C(&dl, sAButtonAnimTex, _data_58 - 8, (_data_54 + _data_50) - 24, 0, _bss_5BC >> 8, _data_60, 0);
 
     font_window_set_coords(3, 
         /*x1*/ _data_58 - _data_4C, 
@@ -1264,15 +1262,15 @@ static void cmdmenu_func_1FEC(void) {
     if (sp48 != NULL) {
         if (sp48->unkB0 & 0x1000) {
             joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-        } else if (_data_74 != 0) {
-            joy_set_button_mask(0, _data_74);
+        } else if (sJoyButtonMask != 0) {
+            joy_set_button_mask(0, sJoyButtonMask);
         }
-        if (_bss_C48 != 0) {
-            _bss_C50 = _bss_C54;
+        if (sShouldOverrideJoypadButtons) {
+            sJoyPressedButtons = sJoyPressedButtonsOverride;
         } else {
-            _bss_C50 = joy_get_pressed(0);
-            if ((sp48->unkB0 & 0x1000) || (_data_74 != 0)) {
-                _bss_C50 |= B_BUTTON;
+            sJoyPressedButtons = joy_get_pressed(0);
+            if ((sp48->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
+                sJoyPressedButtons |= B_BUTTON;
             }
         }
         switch (_bss_C3C) {
@@ -1307,7 +1305,7 @@ static void cmdmenu_func_1FEC(void) {
         }
         _data_18 = _bss_418[_bss_C40];
         if (cmdmenu_func_39FC() != 0) {
-            if ((_bss_C50 & sp3C) && (_data_4 < 8) && (_data_7C == 0)) {
+            if ((sJoyPressedButtons & sp3C) && (_data_4 < 8) && (_data_7C == 0)) {
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28A_Cmdmenu_MoveSelection, MAX_VOLUME, NULL, NULL, 0, NULL);
                 _data_78 += 1;
                 if (_data_4 != 0) {
@@ -1337,10 +1335,10 @@ static void cmdmenu_func_1FEC(void) {
                         _bss_C40 = 0;
                     }
                 }
-            } else if (_bss_C50 & B_BUTTON) {
+            } else if (sJoyPressedButtons & B_BUTTON) {
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28C_Cmdmenu_Close, MAX_VOLUME, NULL, NULL, 0, NULL);
                 cmdmenu_func_3A94();
-            } else if ((_bss_C50 & A_BUTTON) && (cmdmenu_func_39FC() != 0)) {
+            } else if ((sJoyPressedButtons & A_BUTTON) && (cmdmenu_func_39FC() != 0)) {
                 sp38 = _bss_318[_bss_C40];
                 if (sp37 == 0) {
                     obj_send_mesg(sp48, sp40, NULL, (void* ) sp38);
@@ -1449,7 +1447,7 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             func_8003825C(gdl, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, 0);
         }
     }
-    cmdmenu_func_7298(gdl);
+    cmdmenu_draw_energy_bar(gdl);
     if (_bss_C44 != 0) {
         if (_data_10 != 0) {
             var_s5 = 3;
@@ -1506,7 +1504,7 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                             func_80037F9C(gdl, _bss_C60, 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
                         }
                         if (_bss_558[var_s1] >= 2) {
-                            _bss_C60->unk0 = _bss_6B0;
+                            _bss_C60->unk0 = sInventoryStackNumbersTex;
                             _bss_C60->unk4 = (_bss_558[var_s1] - 2) << 8;
                             func_80037F9C(gdl, _bss_C60, 0x114, ((i * 0x18) + var_a2) + _data_4 + 9, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                         }
@@ -1908,7 +1906,7 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         func_80037F9C(&dl, _bss_6B8[CMDMENU_TEX_01_Scroll_Bottom], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
     }
     if (sidekick != NULL) {
-        if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (_bss_60.sidekickBlueFood >= 0.0f)) {
+        if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (sStatsChangeTimers.sidekickBlueFood >= 0.0f)) {
             _data_14 += gUpdateRate * 8;
             if (_data_14 > 255) {
                 _data_14 = 255;
@@ -1920,13 +1918,13 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
         }
         if (_data_14 != 0) {
-            _bss_10.sidekickRedFood = 3;
-            _bss_10.sidekickBlueFood = 3;
-            fullRedEnd = _bss_10.sidekickRedFood >> 1;
-            hasHalfRed = _bss_10.sidekickRedFood & 1;
-            fullBlueEnd = (_bss_10.sidekickBlueFood >> 1) + fullRedEnd + hasHalfRed;
-            hasHalfBlue = _bss_10.sidekickBlueFood & 1;
-            for (i = 0; i < _bss_10.sidekickMaxFood; i++) {
+            sStats.sidekickRedFood = 3;
+            sStats.sidekickBlueFood = 3;
+            fullRedEnd = sStats.sidekickRedFood >> 1;
+            hasHalfRed = sStats.sidekickRedFood & 1;
+            fullBlueEnd = (sStats.sidekickBlueFood >> 1) + fullRedEnd + hasHalfRed;
+            hasHalfBlue = sStats.sidekickBlueFood & 1;
+            for (i = 0; i < sStats.sidekickMaxFood; i++) {
                 if (i < fullRedEnd) {
                     if (isKyte) {
                         var_v0 = CMDMENU_TEX_56_Grub_Red_Full;
@@ -2285,47 +2283,46 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x5608 | func: 38
-static void cmdmenu_func_5608(void) {
+static void cmdmenu_update_stats(void) {
     Object* player;
     Object* sidekick;
-    CmdmenuPlayerSidekickData sp80;
+    CmdmenuPlayerSidekickData stats;
     f32 temp_fv0;
-    s16 temp_v0;
     u8 var_s2;
     u8 i;
 
     player = get_player();
     sidekick = get_sidekick();
     var_s2 = 0;
-    sp80.playerHealth = ((DLL_210_Player*)player->dll)->vtbl->get_health(player);
-    sp80.playerHealthMax = ((DLL_210_Player*)player->dll)->vtbl->get_health_max(player);
+    stats.playerHealth = ((DLL_210_Player*)player->dll)->vtbl->get_health(player);
+    stats.playerHealthMax = ((DLL_210_Player*)player->dll)->vtbl->get_health_max(player);
     if (sidekick != NULL) {
-        sp80.sidekickBlueFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_blue_food_count(sidekick);
-        sp80.sidekickRedFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_red_food_count(sidekick);
-        sp80.sidekickMaxFood = 8;
+        stats.sidekickBlueFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_blue_food_count(sidekick);
+        stats.sidekickRedFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_red_food_count(sidekick);
+        stats.sidekickMaxFood = 8;
     } else {
-        sp80.sidekickBlueFood = 0;
-        sp80.sidekickRedFood = 0;
-        sp80.sidekickMaxFood = 0;
+        stats.sidekickBlueFood = 0;
+        stats.sidekickRedFood = 0;
+        stats.sidekickMaxFood = 0;
     }
-    sp80.playerMagic = ((DLL_210_Player*)player->dll)->vtbl->get_magic(player);
-    sp80.playerMagicMax = ((DLL_210_Player*)player->dll)->vtbl->get_magic_max(player);
-    sp80.playerScarabCount = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
+    stats.playerMagic = ((DLL_210_Player*)player->dll)->vtbl->get_magic(player);
+    stats.playerMagicMax = ((DLL_210_Player*)player->dll)->vtbl->get_magic_max(player);
+    stats.playerScarabCount = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
     if (((DLL_210_Player*)player->dll)->vtbl->func21(player) != 0) {
         var_s2 = 7;
     }
     if (_bss_8B < var_s2) {
         _bss_8B = var_s2;
     }
-    if (_bss_C50 & R_TRIG) {
+    if (sJoyPressedButtons & R_TRIG) {
         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EA_Cmdmenu_ShowHUD, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if ((_bss_C58 & R_TRIG) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || ((_data_80 != 0) && (camera_get_letterbox() == 0))) {
-        sp80.unk14 = _bss_38.unk14 + 1;
+    if ((sJoyHeldButtons & R_TRIG) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || ((sForceStatsDisplay != 0) && (camera_get_letterbox() == 0))) {
+        stats.unk14 = sPrevStats.unk14 + 1;
     } else {
-        sp80.unk14 = _bss_38.unk14;
+        stats.unk14 = sPrevStats.unk14;
     }
-    if (_bss_C58 & R_TRIG) {
+    if (sJoyHeldButtons & R_TRIG) {
         _bss_8C += 8.5f * gUpdateRateF;
         if (_bss_8C > 255.0f) {
             _bss_8C = 255.0f;
@@ -2337,24 +2334,24 @@ static void cmdmenu_func_5608(void) {
         }
     }
     _bss_8C = _bss_8C < _bss_0 ? _bss_8C : _bss_0;
-    sp80.unk18 = 0;
+    stats.unk18 = 0;
     if (_bss_88 & 1) {
         _bss_88 &= ~1;
         for (i = 0; i < 10; i++) {
-            _bss_10.items[i] = sp80.items[i];
-            _bss_38.items[i] = sp80.items[i];
-            _bss_60.items[i] = -30.0f;
+            sStats.items[i] = stats.items[i];
+            sPrevStats.items[i] = stats.items[i];
+            sStatsChangeTimers.items[i] = -30.0f;
         }
         _bss_0 = 0.0f;
         return;
     }
 
     for (i = 0; i < 10; i++) {
-        temp_fv0 = _bss_60.items[i];
-        _bss_60.items[i] = temp_fv0 - gUpdateRateF;
+        temp_fv0 = sStatsChangeTimers.items[i];
+        sStatsChangeTimers.items[i] = temp_fv0 - gUpdateRateF;
         if (temp_fv0 > 60.0f) {
-            if (_bss_60.items[i] <= 60.0f) {
-                if (_bss_10.items[i] < sp80.items[i]) {
+            if (sStatsChangeTimers.items[i] <= 60.0f) {
+                if (sStats.items[i] < stats.items[i]) {
                     if (_data_B8[i][0] != -1) {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, _data_B8[i][0], MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
@@ -2363,23 +2360,23 @@ static void cmdmenu_func_5608(void) {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, _data_B8[i][1], MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
-                _bss_10.items[i] = sp80.items[i];
+                sStats.items[i] = stats.items[i];
             }
         }
-        if (sp80.items[i] != _bss_38.items[i]) {
-            _bss_38.items[i] = sp80.items[i];
-            if (_bss_60.items[i] <= 60.0f) {
-                _bss_60.items[i] = 90.0f - gUpdateRateF;
+        if (stats.items[i] != sPrevStats.items[i]) {
+            sPrevStats.items[i] = stats.items[i];
+            if (sStatsChangeTimers.items[i] <= 60.0f) {
+                sStatsChangeTimers.items[i] = 90.0f - gUpdateRateF;
             }
         }
-        if (_bss_60.items[i] < -30.0f) {
-            _bss_60.items[i] = -30.0f;
+        if (sStatsChangeTimers.items[i] < -30.0f) {
+            sStatsChangeTimers.items[i] = -30.0f;
         }
     }
 }
 
 // offset: 0x5BBC | func: 39
-static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     f32 var_fv1;
     u32 pad;
     u8 var_s0;
@@ -2395,7 +2392,7 @@ static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     sp74 = *gdl;
     tempVar = vi_get_current_size();
     gDPSetScissor(sp74++, G_SC_NON_INTERLACE, 0, 0, (GET_VIDEO_WIDTH(tempVar) & 0xFFFF) - 1, 239);
-    if ((_bss_60.playerHealth >= 0.0f) || (_bss_60.playerHealthMax >= 0.0f) || (_bss_60.unk14 >= 0.0f)) {
+    if ((sStatsChangeTimers.playerHealth >= 0.0f) || (sStatsChangeTimers.playerHealthMax >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
         var_fv1 = 255.0f;
     } else {
         var_fv1 = 0.0f;
@@ -2413,7 +2410,7 @@ static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     sp7E = _bss_0;
     if (sp7E) {
-        for (var_s0 = 0; var_s0 < (_bss_10.playerHealthMax >> 2); var_s0++) {
+        for (var_s0 = 0; var_s0 < (sStats.playerHealthMax >> 2); var_s0++) {
             s32 pad;
             if (var_s0 >= 0xD) {
                 sp7C = (var_s0 * 0xA) - 0x82;
@@ -2425,18 +2422,18 @@ static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 sp7C = var_s0 * 0xA;
                 sp7D = 0;
             }
-            tempVar = _bss_10.playerHealth >> 2;
+            tempVar = sStats.playerHealth >> 2;
             if (var_s0 < tempVar) {
                 texIdx = CMDMENU_TEX_17_Apple_100_Pct;
             } else if (tempVar < var_s0) {
                 texIdx = CMDMENU_TEX_08_Apple_0_Pct;
             } else {
-                texIdx = CMDMENU_TEX_08_Apple_0_Pct + (_bss_10.playerHealth & 3);
+                texIdx = CMDMENU_TEX_08_Apple_0_Pct + (sStats.playerHealth & 3);
             }
             func_80037F9C(&sp74, _bss_6B8[texIdx], sp7C + 0x3C, sp7D + 0x14, 0xFF, 0xFF, 0xFF, sp7E);
         }
     }
-    if ((_bss_60.playerMagic >= 0.0f) || (_bss_60.unk14 >= 0.0f) || (((DLL_210_Player*)sp70->dll)->vtbl->func50(sp70) != -1)) {
+    if ((sStatsChangeTimers.playerMagic >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f) || (((DLL_210_Player*)sp70->dll)->vtbl->func50(sp70) != -1)) {
         var_fv1 = 255.0f;
     } else {
         var_fv1 = 0.0f;
@@ -2454,13 +2451,13 @@ static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     sp7E = _bss_8;
     if (sp7E) {
-        for (var_s0 = 0; var_s0 < (_bss_10.playerMagicMax / 25); var_s0++) {
-            if (var_s0 < (_bss_10.playerMagic / 25)) {
+        for (var_s0 = 0; var_s0 < (sStats.playerMagicMax / 25); var_s0++) {
+            if (var_s0 < (sStats.playerMagic / 25)) {
                 tempVar = 0x42;
-            } else if ((_bss_10.playerMagic / 25) < var_s0) {
+            } else if ((sStats.playerMagic / 25) < var_s0) {
                 tempVar = 0;
             } else {
-                tempVar = ((_bss_10.playerMagic % 25) * 2) + 0xD;
+                tempVar = ((sStats.playerMagic % 25) * 2) + 0xD;
             }
             func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_36_MagicBar_Full], 23.0f, ((var_s0 * 0xC) + 0x3C), (f32) tempVar, 14.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
             func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_35_MagicBar_Empty], (f32) (tempVar + 0x17), ((var_s0 * 0xC) + 0x3C), (f32) (0x42 - tempVar), 14.0f, tempVar << 5, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
@@ -2481,7 +2478,7 @@ static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         func_8003825C(&sp74, _data_68, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, 0);
         tex_free(_data_68);
     }
-    if ((_bss_60.playerScarabCount >= 0.0f) || (_bss_60.unk14 >= 0.0f)) {
+    if ((sStatsChangeTimers.playerScarabCount >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
         var_fv1 = 255.0f;
     } else {
         var_fv1 = 0.0f;
@@ -2520,7 +2517,7 @@ static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
         }
         func_800390A4(&sp74, _bss_6B8[_bss_89 + CMDMENU_TEX_18_Scarab], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
-        sprintf(sp68, "%d", (int)_bss_10.playerScarabCount);
+        sprintf(sp68, "%d", (int)sStats.playerScarabCount);
         font_window_set_coords(3, 0, 0, 0x140, 0xF0);
         font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
         font_window_set_bg_colour(3, 0, 0, 0, 0);
@@ -2537,11 +2534,11 @@ static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 // offset: 0x6984 | func: 40 | export: 16
 void cmdmenu_func_6984(s32 arg0) {
     if (arg0 == -1) {
-        _bss_C54 = 0;
-        _bss_C48 = 0;
+        sJoyPressedButtonsOverride = 0;
+        sShouldOverrideJoypadButtons = FALSE;
     } else {
-        _bss_C54 = arg0;
-        _bss_C48 = 1;
+        sJoyPressedButtonsOverride = arg0;
+        sShouldOverrideJoypadButtons = TRUE;
     }
 }
 
@@ -2640,7 +2637,7 @@ static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
             0xFF, 
             (u8) arg1->unk8);
         if (arg1->unkC >= 2) {
-            _bss_C60->unk0 = _bss_6B0;
+            _bss_C60->unk0 = sInventoryStackNumbersTex;
             _bss_C60->unk4 = (arg1->unkC - 2) << 8;
             func_80037F9C(gdl, _bss_C60, 
                 0x34, 
@@ -2659,135 +2656,135 @@ void cmdmenu_func_70A0(u8 arg0) {
 }
 
 // offset: 0x70C8 | func: 46 | export: 20
-void cmdmenu_func_70C8(s32 minEnergy, s32 maxEnergy, s32 arg2, s32 arg3, s32 arg4) {
+void cmdmenu_energy_bar_create(s32 minEnergy, s32 maxEnergy, s32 fullTexID, s32 emptyTexID, s32 scale) {
     EnergyBar *enbar;
-    Func_80037F9C_Struct *temp;
+    Func_80037F9C_Struct *drawtex;
 
     /* default.dol
-    if (_bss_90 != NULL) {
+    if (sEnergyBar != NULL) {
         STUBBED_PRINTF("WARNING: ENERGY BAR ALREADY CREATED and need killed \n");
     }
     */
 
     enbar = mmAlloc(sizeof(EnergyBar), ALLOC_TAG_GAME_COL, ALLOC_NAME("cmdmenu : Bar"));
     bzero(enbar, sizeof(EnergyBar));
-    enbar->unk0 = minEnergy;
-    enbar->unk4 = maxEnergy;
-    temp = &enbar->Fullbartex[0];
-    temp->unk0 = tex_load_deferred(arg2);
-    temp->unk4 = 0;
-    temp->unk8 = 0;
-    temp->unkA = 0;
-    enbar->Fullbartex[1].unk0 = 0;
-    temp = &enbar->Emptybartex[0];
-    temp->unk0 = tex_load_deferred(arg3);
-    temp->unk4 = 0;
-    temp->unk8 = 0;
-    temp->unkA = 0;
-    enbar->Emptybartex[1].unk0 = 0;
-    enbar->unk8 = enbar->Fullbartex[0].unk0->width;
-    enbar->unkC = enbar->Fullbartex[0].unk0->height;
-    if (arg4 == 0) {
-        arg4 = 1;
+    enbar->min = minEnergy;
+    enbar->max = maxEnergy;
+    drawtex = &enbar->fullbarTex[0];
+    drawtex->unk0 = tex_load_deferred(fullTexID);
+    drawtex->unk4 = 0;
+    drawtex->unk8 = 0;
+    drawtex->unkA = 0;
+    enbar->fullbarTex[1].unk0 = 0;
+    drawtex = &enbar->emptybarTex[0];
+    drawtex->unk0 = tex_load_deferred(emptyTexID);
+    drawtex->unk4 = 0;
+    drawtex->unk8 = 0;
+    drawtex->unkA = 0;
+    enbar->emptybarTex[1].unk0 = 0;
+    enbar->width = enbar->fullbarTex[0].unk0->width;
+    enbar->height = enbar->fullbarTex[0].unk0->height;
+    if (scale == 0) {
+        scale = 1;
     }
-    enbar->unk48 = arg4;
-    _bss_90 = enbar;
-    STUBBED_PRINTF(" Width %i Length %i ", enbar->unk8, enbar->unkC);
-    enbar->unk14 = 0;
-    enbar->unk8 = enbar->unk8 * enbar->unk48;
-    enbar->unk10 = (f32) enbar->unk8;
+    enbar->scale = scale;
+    sEnergyBar = enbar;
+    STUBBED_PRINTF(" Width %i Length %i ", enbar->width, enbar->height);
+    enbar->alpha = 0;
+    enbar->width = enbar->width * enbar->scale;
+    enbar->filledWidth = (f32) enbar->width;
 }
 
 // offset: 0x7208 | func: 47 | export: 21
-void cmdmenu_func_7208(s32 arg0) {
-    u32 temp_ft1;
-    f32 f0;
+void cmdmenu_energy_bar_set(s32 energy) {
+    u32 filledWidth;
+    f32 filledRatio;
 
     /* default.dol
-    if (_bss_90 == NULL) {
+    if (sEnergyBar == NULL) {
         STUBBED_PRINTF(" WARNING: Energy bar not created ");
     }
     */
 
-    f0 = ((f32)(arg0 - _bss_90->unk0)) / ((f32)(_bss_90->unk4 - _bss_90->unk0));
-    temp_ft1 = (s32) (_bss_90->unk8 * f0);
-    _bss_90->unk10 = temp_ft1;
+    filledRatio = ((f32)(energy - sEnergyBar->min)) / ((f32)(sEnergyBar->max - sEnergyBar->min));
+    filledWidth = (s32) (sEnergyBar->width * filledRatio);
+    sEnergyBar->filledWidth = filledWidth;
 }
 
 // offset: 0x7298 | func: 48
-static void cmdmenu_func_7298(Gfx** gdl) {
-    EnergyBar* temp_v0;
+static void cmdmenu_draw_energy_bar(Gfx** gdl) {
+    EnergyBar* enbar;
 
-    temp_v0 = _bss_90;
-    if (temp_v0 == NULL) {
+    enbar = sEnergyBar;
+    if (enbar == NULL) {
         return;
     }
-    if (temp_v0->unk4C_0) {
-        if (gUpdateRate >= temp_v0->unk14) {
-            temp_v0->unk4C_0 = 0;
-            cmdmenu_func_7550();
+    if (enbar->fadeout) {
+        if (gUpdateRate >= enbar->alpha) {
+            enbar->fadeout = 0;
+            cmdmenu_energy_bar_free();
             return;
         } else {
-            temp_v0->unk14 -= gUpdateRate;
+            enbar->alpha -= gUpdateRate;
         }
     } else {
-        if (temp_v0->unk14 < (0xFF - (gUpdateRate * 2))) {
-            temp_v0->unk14 += (gUpdateRate * 2);
-        } else if (temp_v0->unk10 == 0.0f) {
-            temp_v0->unk14 = 0;
+        if (enbar->alpha < (0xFF - (gUpdateRate * 2))) {
+            enbar->alpha += (gUpdateRate * 2);
+        } else if (enbar->filledWidth == 0.0f) {
+            enbar->alpha = 0;
         } else {
-            temp_v0->unk14 = -1;
+            enbar->alpha = -1;
         }
     }
     
-    func_800390A4(gdl, temp_v0->Fullbartex, 
-        (f32) (0xA0 - (temp_v0->unk8 >> 1)), 
-        (f32) (0xE6 - temp_v0->unkC), 
-        temp_v0->unk10, 
-        (f32) temp_v0->unkC, 
+    func_800390A4(gdl, enbar->fullbarTex, 
+        (f32) (0xA0 - (enbar->width >> 1)), 
+        (f32) (0xE6 - enbar->height), 
+        enbar->filledWidth, 
+        (f32) enbar->height, 
         0, 
         0,
         1.0f, 
         1.0f, 
-        temp_v0->unk14 | ~0xFF, 
+        enbar->alpha | ~0xFF, 
         0x4002);
-    func_800390A4(gdl, temp_v0->Emptybartex, 
-        (f32) (0xA0 - (temp_v0->unk8 >> 1)) + temp_v0->unk10, 
-        (f32) (0xE6 - temp_v0->unkC), 
-        temp_v0->unk8 - temp_v0->unk10, 
-        (f32) temp_v0->unkC, 
-        (s32) (temp_v0->unk10 * 32.0f), 
+    func_800390A4(gdl, enbar->emptybarTex, 
+        (f32) (0xA0 - (enbar->width >> 1)) + enbar->filledWidth, 
+        (f32) (0xE6 - enbar->height), 
+        enbar->width - enbar->filledWidth, 
+        (f32) enbar->height, 
+        (s32) (enbar->filledWidth * 32.0f), 
         0, 
         1.0f, 
         1.0f, 
-        temp_v0->unk14 | ~0xFF, 
+        enbar->alpha | ~0xFF, 
         0x4002);
 }
 
 // offset: 0x7550 | func: 49 | export: 22
 /* Related to the fuel gauge at CloudRunner Fortress' Racetrack */
-void cmdmenu_func_7550(void) {
+void cmdmenu_energy_bar_free(void) {
     EnergyBar* enbar;
 
     /* default.dol
-    if (_bss_90 == NULL) {
+    if (sEnergyBar == NULL) {
         STUBBED_PRINTF(" WARNING : cmdmenu Energy bar alreadby freed \n");
     }
     */
 
     STUBBED_PRINTF(" Killing Bar ");
-    enbar = _bss_90;
-    enbar->unk14 = 0;
-    tex_free(enbar->Fullbartex[0].unk0);
-    tex_free(enbar->Emptybartex[0].unk0);
-    mmFree(_bss_90);
-    _bss_90 = NULL;
+    enbar = sEnergyBar;
+    enbar->alpha = 0;
+    tex_free(enbar->fullbarTex[0].unk0);
+    tex_free(enbar->emptybarTex[0].unk0);
+    mmFree(sEnergyBar);
+    sEnergyBar = NULL;
 }
 
 // offset: 0x75CC | func: 50 | export: 23
-void cmdmenu_func_75CC(void) {
-    if (_bss_90 != NULL) {
-        _bss_90->unk4C_0 = 1;
+void cmdmenu_energy_bar_fadeout(void) {
+    if (sEnergyBar != NULL) {
+        sEnergyBar->fadeout = 1;
     }
     /* default.dol
     else {

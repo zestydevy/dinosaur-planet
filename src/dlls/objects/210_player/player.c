@@ -8101,7 +8101,7 @@ s32 dll_210_func_178EC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s2->unk708 = NULL;
     }
     if (fsa->unk33A != 0) {
-        gDLL_1_cmdmenu->vtbl->func_2B8(0);
+        gDLL_1_cmdmenu->vtbl->disable_buttons(0);
         return 2;
     }
     return 0;
@@ -9324,7 +9324,7 @@ s32 dll_210_func_1BEBC(Object* player, ObjFSA_Data *arg1, f32 arg2) {
         player->shadow->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
         arg1->animExitAction = dll_210_func_1BF8C;
     }
-    gDLL_1_cmdmenu->vtbl->func_2B8(7U);
+    gDLL_1_cmdmenu->vtbl->disable_buttons(L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
     objdata = player->data;
     objdata->flags &= ~2;
     if (player->curModAnimId != 0x300) {
@@ -9934,7 +9934,7 @@ void dll_210_func_1D210(Object* player, Object *arg1) {
     Player_Data* objdata;
 
     objdata = player->data;
-    gDLL_1_cmdmenu->vtbl->func_2B8(7U);
+    gDLL_1_cmdmenu->vtbl->disable_buttons(L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
     objdata->unk708 = arg1;
     objdata->unk710 = 0.0f;
     if (arg1 != 0) {

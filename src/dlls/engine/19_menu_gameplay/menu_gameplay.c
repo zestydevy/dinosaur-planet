@@ -23,5 +23,5 @@ void dll_19_func_A0(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     if (D_800A7D94 != 0) {
         func_8000FB2C(gdl);
     }
-    gDLL_1_cmdmenu->vtbl->func_BB8(gdl, mtxs, vtxs);
+    gDLL_1_cmdmenu->vtbl->print(gdl, mtxs, vtxs);
 }
