@@ -233,14 +233,13 @@ void gplay_init_save(s8 idx, char *filename) {
     sState.save.file.playerno = PLAYER_KRYSTAL;
 
     for (i = 0; i < 2; i++) {
-
         sState.save.file.players[i].health = 12;
         sState.save.file.players[i].healthMax = 12;
         sState.save.file.players[i].magicMax = 25;
         sState.save.file.players[i].magic = 0;
 
-        sState.save.file.unk18[i].unk0 = 4;
-        sState.save.file.unk18[i].unk1 = 5;
+        sState.save.file.sidekicks[i].blueFood = 4;
+        sState.save.file.sidekicks[i].redFood = 5;
 
         sState.save.map.unk16F4[i].unk0 = -1;
         sState.save.map.unk16F4[i].unk2 = -1;
@@ -573,8 +572,8 @@ PlayerLocation *gplay_get_player_saved_location(void) {
     return &sState.save.map.playerLocations[sState.save.file.playerno];
 }
 
-GplayStruct11 *gplay_func_F30(void) {
-    return &sState.save.file.unk18[sState.save.file.playerno];
+SidekickStats *gplay_get_sidekick_stats(void) {
+    return &sState.save.file.sidekicks[sState.save.file.playerno];
 }
 
 // gplayGetCurrentPlayerLactions ?

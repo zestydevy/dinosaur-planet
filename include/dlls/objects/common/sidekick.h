@@ -15,8 +15,8 @@ DLL_INTERFACE(DLL_ISidekick) {
 	/*12*/ UnknownDLLFunc func12;
 	/*13*/ s32 (*func13)(Object*);
 	/*14*/ void (*func14)(Object *, s32);
-	/*15*/ s32 (*func15)(Object *);
-	/*16*/ s32 (*func16)(Object *);
+	/*15*/ s32 (*get_blue_food_count)(Object *); // how much blue food they currently have
+	/*16*/ s32 (*get_red_food_count)(Object *); // how much red food they currently have
 	/*17*/ UnknownDLLFunc func17;
 	/*18*/ UnknownDLLFunc func18;
 	/*19*/ UnknownDLLFunc func19;

@@ -6,6 +6,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
@@ -59,16 +60,16 @@ typedef struct {
 
 typedef union { 
     struct {
-        s32 unk0;
-        s32 unk4; //magic
-        s32 unk8; //scarabCount
-        s32 unkC;
-        s32 unk10;
-        s32 unk14;
-        s32 unk18; //maxHealth
-        s32 unk1C; //maxMagic
-        s32 unk20;
-        s32 unk24;
+    /*0 00*/ s32 playerHealth;
+    /*1 04*/ s32 sidekickBlueFood;
+    /*2 08*/ s32 playerMagic;
+    /*3 0C*/ s32 playerScarabCount;
+    /*4 10*/ s32 sidekickRedFood;
+    /*5 14*/ s32 unk14;
+    /*6 18*/ s32 unk18;
+    /*7 1C*/ s32 playerHealthMax;
+    /*8 20*/ s32 playerMagicMax;
+    /*9 24*/ s32 sidekickMaxFood;
     };
     s32 items[10];
 } CmdmenuPlayerSidekickData;
@@ -90,17 +91,19 @@ typedef struct {
 
 typedef union {
     struct {
-        f32 unk0;
-        f32 unk4;
-        f32 unk8;
-        f32 unkC;
-        u8 _unk10[0x14 - 0x10];
-        f32 unk14;
-        u8 _unk18[0x1C - 0x18];
-        f32 unk1C;
+    /*0 00*/ f32 playerHealth;
+    /*1 04*/ f32 sidekickBlueFood;
+    /*2 08*/ f32 playerMagic;
+    /*3 0C*/ f32 playerScarabCount;
+    /*4 10*/ f32 sidekickRedFood;
+    /*5 14*/ f32 unk14;
+    /*6 18*/ f32 unk18;
+    /*7 1C*/ f32 playerHealthMax;
+    /*8 20*/ f32 playerMagicMax;
+    /*9 24*/ f32 sidekickMaxFood;
     };
     f32 items[10];
-} BSS60;
+} CmdmenuPlayerSidekickDataChangeTimers;
 
 enum CmdMenuTextures {
     CMDMENU_TEX_00_Scroll_BG = 0,
@@ -551,7 +554,7 @@ enum CmdMenuTextures {
 /*0xC*/ static s32 _bss_C;
 /*0x10*/ static CmdmenuPlayerSidekickData _bss_10; //Tricky food level is stored in here! Maybe a struct?
 /*0x38*/ static CmdmenuPlayerSidekickData _bss_38;
-/*0x60*/ static BSS60 _bss_60;
+/*0x60*/ static CmdmenuPlayerSidekickDataChangeTimers _bss_60;
 /*0x88*/ static u8 _bss_88;
 /*0x89*/ static u8 _bss_89;
 /*0x8A*/ static u8 _bss_8A;
@@ -951,7 +954,7 @@ s32 dll_1_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
     var_s4 = 0;
     for (i = sp84; i < sp88; i++) {
         temp_s0 = temp_v0[i];
-        if ((temp_s0->def->unk40 != NULL) && (temp_s0->opacity == 0xFF) && !(temp_s0->unkAF & 8) && 
+        if ((temp_s0->def->unk40 != NULL) && (temp_s0->opacity == 0xFF) && !(temp_s0->unkAF & ARROW_FLAG_8_No_Targetting) && 
                 (temp_s0->def->unk40->flags & arg2) && (var_s4 < arg1) && (arg3 & 1)) {
             get_object_child_position(temp_s0, &sp9C, &sp98, &sp94);
             temp_fa0 = sp9C - temp_s2->srt.transl.x;
@@ -1390,7 +1393,7 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 var_a2;
     s32 temp_v0_2;
     s32 var_s0;
-    s8 sp70[64]; // TODO: size?
+    s8 sp70[64];
     s32 var_s1;
     s32 i;
     s32 sp64;
@@ -1836,12 +1839,12 @@ static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     u8 pad_sp4A;
     u8 isKyte;
     u8 var_v0;
-    u8 sp47;
-    u8 sp46;
-    u8 sp45;
+    u8 hasHalfRed;
+    u8 fullBlueEnd;
+    u8 hasHalfBlue;
     u8 sp44;
-    u8 pad_sp43;
-    u8 sp42;
+    u8 fullRedEnd;
+    u8 i;
     u8 pad_sp41;
 
     sidekick = get_sidekick();
@@ -1905,7 +1908,7 @@ static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         func_80037F9C(&dl, _bss_6B8[CMDMENU_TEX_01_Scroll_Bottom], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
     }
     if (sidekick != NULL) {
-        if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (_bss_60.unk4 >= 0.0f)) {
+        if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (_bss_60.sidekickBlueFood >= 0.0f)) {
             _data_14 += gUpdateRate * 8;
             if (_data_14 > 255) {
                 _data_14 = 255;
@@ -1917,32 +1920,32 @@ static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
         }
         if (_data_14 != 0) {
-            _bss_10.items[4] = 3;
-            _bss_10.items[1] = 3;
-            pad_sp43 = _bss_10.items[4] >> 1;
-            sp47 = _bss_10.items[4] & 1;
-            sp46 = (_bss_10.items[1] >> 1) + pad_sp43 + sp47;
-            sp45 = _bss_10.items[1] & 1;
-            for (sp42 = 0; sp42 < _bss_10.items[9]; sp42++) {
-                if (sp42 < pad_sp43) {
+            _bss_10.sidekickRedFood = 3;
+            _bss_10.sidekickBlueFood = 3;
+            fullRedEnd = _bss_10.sidekickRedFood >> 1;
+            hasHalfRed = _bss_10.sidekickRedFood & 1;
+            fullBlueEnd = (_bss_10.sidekickBlueFood >> 1) + fullRedEnd + hasHalfRed;
+            hasHalfBlue = _bss_10.sidekickBlueFood & 1;
+            for (i = 0; i < _bss_10.sidekickMaxFood; i++) {
+                if (i < fullRedEnd) {
                     if (isKyte) {
                         var_v0 = CMDMENU_TEX_56_Grub_Red_Full;
                     } else {
                         var_v0 = CMDMENU_TEX_45_Mushroom_Red_Full;
                     }
-                } else if (sp42 == pad_sp43 && sp47) {
+                } else if (i == fullRedEnd && hasHalfRed) {
                     if (isKyte) {
                         var_v0 = CMDMENU_TEX_57_Grub_Red_Half;
                     } else {
                         var_v0 = CMDMENU_TEX_46_Mushroom_Red_Half;
                     }
-                } else if (sp42 < sp46) {
+                } else if (i < fullBlueEnd) {
                     if (isKyte) {
                         var_v0 = CMDMENU_TEX_13_Grub_Blue_Full;
                     } else {
                         var_v0 = CMDMENU_TEX_12_Mushroom_Blue_Full;
                     }
-                } else if (sp42 == sp46 && sp45) {
+                } else if (i == fullBlueEnd && hasHalfBlue) {
                     if (isKyte) {
                         var_v0 = CMDMENU_TEX_16_Grub_Blue_Half;
                     } else {
@@ -1956,8 +1959,8 @@ static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     }
                 }
                 func_80037F9C(&dl, _bss_6B8[var_v0], 
-                    250 - ((sp42 / 4) * 9), 
-                    21  + ((sp42 % 4) * 8), 
+                    250 - ((i / 4) * 9), 
+                    21  + ((i % 4) * 8), 
                     255, 255, 255, _data_14);
             }
         }
@@ -2294,20 +2297,20 @@ static void dll_1_func_5608(void) {
     player = get_player();
     sidekick = get_sidekick();
     var_s2 = 0;
-    sp80.items[0] = ((DLL_210_Player*)player->dll)->vtbl->get_health(player);
-    sp80.items[7] = ((DLL_210_Player*)player->dll)->vtbl->get_health_max(player);
+    sp80.playerHealth = ((DLL_210_Player*)player->dll)->vtbl->get_health(player);
+    sp80.playerHealthMax = ((DLL_210_Player*)player->dll)->vtbl->get_health_max(player);
     if (sidekick != NULL) {
-        sp80.items[1] = ((DLL_ISidekick*)sidekick->dll)->vtbl->func15(sidekick);
-        sp80.items[4] = ((DLL_ISidekick*)sidekick->dll)->vtbl->func16(sidekick);
-        sp80.items[9] = 8;
+        sp80.sidekickBlueFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_blue_food_count(sidekick);
+        sp80.sidekickRedFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_red_food_count(sidekick);
+        sp80.sidekickMaxFood = 8;
     } else {
-        sp80.items[1] = 0;
-        sp80.items[4] = 0;
-        sp80.items[9] = 0;
+        sp80.sidekickBlueFood = 0;
+        sp80.sidekickRedFood = 0;
+        sp80.sidekickMaxFood = 0;
     }
-    sp80.items[2] = ((DLL_210_Player*)player->dll)->vtbl->get_magic(player);
-    sp80.items[8] = ((DLL_210_Player*)player->dll)->vtbl->get_magic_max(player);
-    sp80.items[3] = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
+    sp80.playerMagic = ((DLL_210_Player*)player->dll)->vtbl->get_magic(player);
+    sp80.playerMagicMax = ((DLL_210_Player*)player->dll)->vtbl->get_magic_max(player);
+    sp80.playerScarabCount = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
     if (((DLL_210_Player*)player->dll)->vtbl->func21(player) != 0) {
         var_s2 = 7;
     }
@@ -2318,9 +2321,9 @@ static void dll_1_func_5608(void) {
         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EA_Cmdmenu_ShowHUD, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if ((_bss_C58 & R_TRIG) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || ((_data_80 != 0) && (camera_get_letterbox() == 0))) {
-        sp80.items[5] = _bss_38.unk14 + 1;
+        sp80.unk14 = _bss_38.unk14 + 1;
     } else {
-        sp80.items[5] = _bss_38.unk14;
+        sp80.unk14 = _bss_38.unk14;
     }
     if (_bss_C58 & R_TRIG) {
         _bss_8C += 8.5f * gUpdateRateF;
@@ -2334,7 +2337,7 @@ static void dll_1_func_5608(void) {
         }
     }
     _bss_8C = _bss_8C < _bss_0 ? _bss_8C : _bss_0;
-    sp80.items[6] = 0;
+    sp80.unk18 = 0;
     if (_bss_88 & 1) {
         _bss_88 &= ~1;
         for (i = 0; i < 10; i++) {
@@ -2392,7 +2395,7 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     sp74 = *gdl;
     tempVar = vi_get_current_size();
     gDPSetScissor(sp74++, G_SC_NON_INTERLACE, 0, 0, (GET_VIDEO_WIDTH(tempVar) & 0xFFFF) - 1, 239);
-    if ((_bss_60.unk0 >= 0.0f) || (_bss_60.unk1C >= 0.0f) || (_bss_60.unk14 >= 0.0f)) {
+    if ((_bss_60.playerHealth >= 0.0f) || (_bss_60.playerHealthMax >= 0.0f) || (_bss_60.unk14 >= 0.0f)) {
         var_fv1 = 255.0f;
     } else {
         var_fv1 = 0.0f;
@@ -2410,7 +2413,7 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     sp7E = _bss_0;
     if (sp7E) {
-        for (var_s0 = 0; var_s0 < (_bss_10.unk1C >> 2); var_s0++) {
+        for (var_s0 = 0; var_s0 < (_bss_10.playerHealthMax >> 2); var_s0++) {
             s32 pad;
             if (var_s0 >= 0xD) {
                 sp7C = (var_s0 * 0xA) - 0x82;
@@ -2422,18 +2425,18 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 sp7C = var_s0 * 0xA;
                 sp7D = 0;
             }
-            tempVar = _bss_10.unk0 >> 2;
+            tempVar = _bss_10.playerHealth >> 2;
             if (var_s0 < tempVar) {
                 texIdx = CMDMENU_TEX_17_Apple_100_Pct;
             } else if (tempVar < var_s0) {
                 texIdx = CMDMENU_TEX_08_Apple_0_Pct;
             } else {
-                texIdx = CMDMENU_TEX_08_Apple_0_Pct + (_bss_10.unk0 & 3);
+                texIdx = CMDMENU_TEX_08_Apple_0_Pct + (_bss_10.playerHealth & 3);
             }
             func_80037F9C(&sp74, _bss_6B8[texIdx], sp7C + 0x3C, sp7D + 0x14, 0xFF, 0xFF, 0xFF, sp7E);
         }
     }
-    if ((_bss_60.unk8 >= 0.0f) || (_bss_60.unk14 >= 0.0f) || (((DLL_210_Player*)sp70->dll)->vtbl->func50(sp70) != -1)) {
+    if ((_bss_60.playerMagic >= 0.0f) || (_bss_60.unk14 >= 0.0f) || (((DLL_210_Player*)sp70->dll)->vtbl->func50(sp70) != -1)) {
         var_fv1 = 255.0f;
     } else {
         var_fv1 = 0.0f;
@@ -2451,13 +2454,13 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     sp7E = _bss_8;
     if (sp7E) {
-        for (var_s0 = 0; var_s0 < (_bss_10.unk20 / 25); var_s0++) {
-            if (var_s0 < (_bss_10.unk8 / 25)) {
+        for (var_s0 = 0; var_s0 < (_bss_10.playerMagicMax / 25); var_s0++) {
+            if (var_s0 < (_bss_10.playerMagic / 25)) {
                 tempVar = 0x42;
-            } else if ((_bss_10.unk8 / 25) < var_s0) {
+            } else if ((_bss_10.playerMagic / 25) < var_s0) {
                 tempVar = 0;
             } else {
-                tempVar = ((_bss_10.unk8 % 25) * 2) + 0xD;
+                tempVar = ((_bss_10.playerMagic % 25) * 2) + 0xD;
             }
             func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_36_MagicBar_Full], 23.0f, ((var_s0 * 0xC) + 0x3C), (f32) tempVar, 14.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
             func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_35_MagicBar_Empty], (f32) (tempVar + 0x17), ((var_s0 * 0xC) + 0x3C), (f32) (0x42 - tempVar), 14.0f, tempVar << 5, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
@@ -2465,7 +2468,7 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     sp7E = (u8)_bss_0 < (u8)_bss_8 ?  (u8)_bss_8 : (u8)_bss_0;
     if (sp7E) {
-        if (sp70->id == 0x1F) {
+        if (sp70->id == OBJ_Krystal) {
             sp7C = 0;
             sp7D = 0;
             texIdx = CMDMENU_TEX_53_Krystal;
@@ -2478,7 +2481,7 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         func_8003825C(&sp74, _data_68, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, 0);
         tex_free(_data_68);
     }
-    if ((_bss_60.unkC >= 0.0f) || (_bss_60.unk14 >= 0.0f)) {
+    if ((_bss_60.playerScarabCount >= 0.0f) || (_bss_60.unk14 >= 0.0f)) {
         var_fv1 = 255.0f;
     } else {
         var_fv1 = 0.0f;
@@ -2517,7 +2520,7 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
         }
         func_800390A4(&sp74, _bss_6B8[_bss_89 + CMDMENU_TEX_18_Scarab], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
-        sprintf(sp68, "%d", (int)_bss_10.unkC);
+        sprintf(sp68, "%d", (int)_bss_10.playerScarabCount);
         font_window_set_coords(3, 0, 0, 0x140, 0xF0);
         font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
         font_window_set_bg_colour(3, 0, 0, 0, 0);
@@ -2536,10 +2539,10 @@ void dll_1_func_6984(s32 arg0) {
     if (arg0 == -1) {
         _bss_C54 = 0;
         _bss_C48 = 0;
-        return;
+    } else {
+        _bss_C54 = arg0;
+        _bss_C48 = 1;
     }
-    _bss_C54 = arg0;
-    _bss_C48 = 1;
 }
 
 // offset: 0x69CC | func: 41

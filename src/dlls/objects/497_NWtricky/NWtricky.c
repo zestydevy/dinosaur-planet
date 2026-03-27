@@ -13,7 +13,7 @@ typedef struct {
     u8 doneDemo;
     u8 demoState;
     f32 timer;
-    GplayStruct11 *gplaystruct;
+    SidekickStats *sidekickStats;
 } NWtricky_Data;
 
 typedef struct {
@@ -52,7 +52,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     Object *tricky;
 
     objdata = self->data;
-    objdata->gplaystruct = gDLL_29_Gplay->vtbl->func_F30();
+    objdata->sidekickStats = gDLL_29_Gplay->vtbl->get_sidekick_stats();
     objdata->doneDemo = FALSE;
     objdata->demoState = STATE2_0;
     if (!main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
@@ -112,7 +112,7 @@ void NWtricky_control(Object *self) {
             if (objdata->timer >= NWTRICKY_MAX_TIMER_2) {
                 if (main_get_bits(BIT_4E3) == 0xFF) {
                     objdata->timer = 0.0f;
-                    if (objdata->gplaystruct->unk0 < 4) {
+                    if (objdata->sidekickStats->blueFood < 4) {
                         main_set_bits(BIT_4E3, 1);
                     } else if (!main_get_bits(BIT_111) && main_get_bits(BIT_4E4)) {
                         player = get_player();

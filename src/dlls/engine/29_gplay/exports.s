@@ -44,7 +44,7 @@ _exports:
 .dword gplay_get_state
 .dword gplay_get_player_stats
 .dword gplay_get_player_saved_location
-.dword gplay_func_F30
+.dword gplay_get_sidekick_stats
 .dword gplay_func_F60
 .dword gplay_func_FA8
 .dword gplay_func_FE8

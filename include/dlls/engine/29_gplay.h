@@ -58,10 +58,10 @@ typedef struct {
 
 // size: 0x3
 typedef struct {
-    u8 unk0;
-    u8 unk1;
-    u8 _unk2[1];
-} GplayStruct11;
+    u8 blueFood;
+    u8 redFood;
+    u8 _unk2[1]; // max food?
+} SidekickStats;
 
 #define MAX_SCARABS 999
 #define MAX_MAGIC 100
@@ -92,7 +92,7 @@ typedef struct {
 // size: 0x13d4
 typedef struct {
     PlayerStats players[2];
-    GplayStruct11 unk18[2];
+    SidekickStats sidekicks[2];
     u8 _unk1E[0x2];
     FoodbagContents unk20[2];
     FoodbagContents unk188[2];
@@ -275,7 +275,7 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*33*/ GameState *(*get_state)(void);
     /*34*/ PlayerStats *(*get_player_stats)(void);
     /*35*/ PlayerLocation *(*get_player_saved_location)(void);
-    /*36*/ GplayStruct11 *(*func_F30)(void);
+    /*36*/ SidekickStats *(*get_sidekick_stats)(void);
     /*37*/ GplayStruct6 *(*func_F60)(void);
     /*38*/ GplayStruct12 *(*func_FA8)(void);
     /*39*/ PlayerMusicAction *(*func_FE8)(void);
