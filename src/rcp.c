@@ -736,7 +736,7 @@ void func_800390A4(Gfx** arg0, Func_80037F9C_Struct* arg1, f32 arg2, f32 arg3, f
     dl_set_prim_color(&spA8, (arg10 >> 0x18) & 0xFF, (arg10 >> 0x10) & 0xFF, (arg10 >> 8) & 0xFF, arg10 & 0xFF);
     arg8 *= 4.0f;
     arg9 *= 4.0f;
-    for (j = 0, var_s7 = arg1[j].unk0;var_s7 != NULL; j++, var_s7 = arg1[j].unk0) {
+    for (j = 0, var_s7 = arg1[j].unk0; var_s7 != NULL; j++, var_s7 = arg1[j].unk0) {
         var_s3 = (s32) (arg2 * 4.0f);
         var_s5 = (s32) (arg3 * 4.0f);
         minWidth = (s32) (arg1[j].unk8 * arg8) + var_s3;

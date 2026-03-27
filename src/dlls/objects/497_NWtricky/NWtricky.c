@@ -1,8 +1,8 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
 #include "sys/joypad.h"
+#include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/214_animobj.h"
-#include "dlls/objects/211_tricky.h"
 #include "game/gamebits.h"
 #include "dll.h"
 #include "sys/main.h"
@@ -13,7 +13,7 @@ typedef struct {
     u8 doneDemo;
     u8 demoState;
     f32 timer;
-    GplayStruct11 *gplaystruct;
+    SidekickStats *sidekickStats;
 } NWtricky_Data;
 
 typedef struct {
@@ -52,7 +52,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     Object *tricky;
 
     objdata = self->data;
-    objdata->gplaystruct = gDLL_29_Gplay->vtbl->func_F30();
+    objdata->sidekickStats = gDLL_29_Gplay->vtbl->get_sidekick_stats();
     objdata->doneDemo = FALSE;
     objdata->demoState = STATE2_0;
     if (!main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
@@ -64,7 +64,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (!main_get_bits(BIT_4D4)) {
         tricky = get_sidekick();
         if (tricky) {
-            ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func22(tricky, self);
+            ((DLL_ISidekick*)tricky->dll)->vtbl->func22(tricky, self);
             main_set_bits(BIT_4D4, 1);
         }
     }
@@ -88,14 +88,14 @@ void NWtricky_control(Object *self) {
                 main_set_bits(BIT_8, 1);
                 main_set_bits(BIT_4E4, 1);
                 objdata->state = STATE_2;
-            } else if (((DLL_211_Tricky*)tricky->dll)->vtbl->base.func24(tricky) != 0) {
+            } else if (((DLL_ISidekick*)tricky->dll)->vtbl->func24(tricky) != 0) {
                 objdata->state = STATE_1;
                 objdata->timer = 0.0f;
             }
             break;
         case STATE_1:
             if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-                ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func21(tricky, 0, 0);
+                ((DLL_ISidekick*)tricky->dll)->vtbl->func21(tricky, 0, 0);
                 gDLL_6_AMSFX->vtbl->func_A6C(tricky);
                 main_set_bits(BIT_4E3, 0);
                 objdata->state = STATE_2;
@@ -112,7 +112,7 @@ void NWtricky_control(Object *self) {
             if (objdata->timer >= NWTRICKY_MAX_TIMER_2) {
                 if (main_get_bits(BIT_4E3) == 0xFF) {
                     objdata->timer = 0.0f;
-                    if (objdata->gplaystruct->unk0 < 4) {
+                    if (objdata->sidekickStats->blueFood < 4) {
                         main_set_bits(BIT_4E3, 1);
                     } else if (!main_get_bits(BIT_111) && main_get_bits(BIT_4E4)) {
                         player = get_player();
@@ -170,12 +170,12 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
 
     if (!objdata->doneDemo) {
         tricky = get_sidekick();
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 1);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 2);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 3);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 4);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 5);
-        ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 0);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 1);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 2);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 3);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 4);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 5);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 0);
         switch (objdata->demoState) {
         case STATE2_0:
             for (i = 0; i < animObjData->unk98; i++) {
@@ -205,9 +205,9 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
             }
             break;
         }
-        gDLL_1_UI->vtbl->func_6984(buttonMask);
+        gDLL_1_cmdmenu->vtbl->func_6984(buttonMask);
     } else {
-        gDLL_1_UI->vtbl->func_6984(-1);
+        gDLL_1_cmdmenu->vtbl->func_6984(-1);
     }
 
     return 0;

@@ -1,6 +1,6 @@
 #include "common.h"
 #include "sys/objtype.h"
-#include "dlls/objects/211_tricky.h"
+#include "dlls/objects/common/sidekick.h"
 
 typedef struct {
     u16 unk0;
@@ -54,7 +54,7 @@ void dll_535_control(Object* self) {
             sp20 = get_sidekick();
             if (sp20 != NULL) {
                 if (vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
-                    ((DLL_211_Tricky*)sp20->dll)->vtbl->base.func14(sp20, 4);
+                    ((DLL_ISidekick*)sp20->dll)->vtbl->func14(sp20, 4);
                 }
             }
         }

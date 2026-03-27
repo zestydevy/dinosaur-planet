@@ -252,7 +252,7 @@ s32 tex_gdl_set_texture_simple(Gfx **gdl, Texture *tex, s32 renderFlags, s32 fra
  * @param setModes - If true, update geometry, combine, and other modes
  */
 void tex_gdl_set_textures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes);
-void tex_animate(Texture *tex, s32 *, s32 *);
+void tex_animate(Texture *tex, s32 *renderFlags, s32 *progress);
 void* tex_get_frame_img(Texture *tex, s32 arg1);
 Texture *tex_get_cached(s32 id);
 void tex_disable_modes(s32 modes);

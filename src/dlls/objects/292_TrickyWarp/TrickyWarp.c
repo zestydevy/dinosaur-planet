@@ -3,7 +3,7 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/main.h"
-#include "dlls/objects/211_tricky.h"
+#include "dlls/objects/common/sidekick.h"
 
 typedef struct {
 /*0x00*/ ObjSetup base;
@@ -37,7 +37,7 @@ void TrickyWarp_control(Object *self) {
         sidekick = get_sidekick();
 
         if (sidekick && vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= SQ(setup->range)) {
-            ((DLL_211_Tricky*)(sidekick->dll))->vtbl->base.func14(sidekick, 1);
+            ((DLL_ISidekick*)(sidekick->dll))->vtbl->func14(sidekick, 1);
         }
     }
 }

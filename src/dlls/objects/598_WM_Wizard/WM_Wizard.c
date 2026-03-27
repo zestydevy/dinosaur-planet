@@ -137,8 +137,8 @@ void dll_598_func_11C8(Object* self) {
         main_set_bits(BIT_2FB, 1);
         objdata->unk29 = 0;
         joy_set_button_mask(0, A_BUTTON);
-    } else if ((self->unkAF & 1) && (gDLL_1_UI->vtbl->func_F40() == BIT_Foodbag_Give)) {
-        bit = gDLL_1_UI->vtbl->func_E2C(sp24, ARRAYCOUNT(sp24));
+    } else if ((self->unkAF & 1) && (gDLL_1_cmdmenu->vtbl->func_F40() == BIT_Foodbag_Give)) {
+        bit = gDLL_1_cmdmenu->vtbl->func_E2C(sp24, ARRAYCOUNT(sp24));
 
         // @fake
         if (objdata) {}

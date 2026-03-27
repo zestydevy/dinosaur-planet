@@ -26,8 +26,8 @@
 #include "game/objects/object.h"
 #include "types.h"
 
+#include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/523_SCcollectables.h"
-#include "dlls/objects/211_tricky.h"
 #include "dlls/objects/226_tumbleweedbush.h"
 #include "dlls/objects/227_tumbleweed.h"
 
@@ -373,7 +373,7 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
         if (sidekick && sidekick->id == OBJ_Tricky) {
             //Enable "Find" sidekick command when nearby
             if (distance < 30625.0f) {
-                ((DLL_211_Tricky*)sidekick->dll)->vtbl->base.func14(sidekick, 1);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
             }
             dx2 = self->srt.transl.x - sidekick->srt.transl.x;
             dz2 = self->srt.transl.z - sidekick->srt.transl.z;
