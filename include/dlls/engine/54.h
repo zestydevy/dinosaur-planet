@@ -4,11 +4,13 @@
 #include "dll_def.h"
 #include "types.h"
 
+#include "game/objects/object.h"
+
 DLL_INTERFACE(DLL_54) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ UnknownDLLFunc func0;
 /*1*/ UnknownDLLFunc func1;
-/*2*/ UnknownDLLFunc func2;
+/*2*/ s32 (*func2)(Object*, s8);
 /*3*/ UnknownDLLFunc func3;
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;

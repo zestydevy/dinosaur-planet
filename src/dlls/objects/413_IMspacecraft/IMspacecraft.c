@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 
 typedef struct {
     s16 timer;

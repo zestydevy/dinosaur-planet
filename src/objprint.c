@@ -536,7 +536,7 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
 }
 
 void func_80036438(Object* arg0) {
-    ObjDefStruct40* sp11C;
+    ObjDefLockData* sp11C;
     ObjectStruct74* sp118;
     MtxF* temp_s4;
     f32 temp_fs0;
@@ -548,13 +548,13 @@ void func_80036438(Object* arg0) {
     SRT spA8;
     ModelInstance* spA4;
 
-    sp11C = arg0->def->unk40;
+    sp11C = arg0->def->lockdata;
     sp118 = arg0->unk74;
     if (arg0->unkAF & 0x28) {
         return;
     }
     spA4 = arg0->modelInsts[arg0->modelInstIdx];
-    for (i = 0; i < arg0->def->unk9b; i++) {
+    for (i = 0; i < arg0->def->numLockdata; i++) {
         mtxId = sp11C[i].unk11[arg0->modelInstIdx];
         if (mtxId >= 0) {
             temp_s4 = (MtxF *)&((f32*)spA4->matrices[spA4->unk34 & 1])[mtxId << 4];

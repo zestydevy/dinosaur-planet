@@ -457,7 +457,7 @@ void dll_22_func_D9C(Gfx **gdl) {
     if (camera_get_letterbox() == 0) {
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, (_bss_8 - 2), (_bss_7A0 - 1), (_bss_C + 2));
         for (i = 0; i < _bss_7A0; i += _bss_7A3) {
-            func_80037F9C(gdl, &_bss_10, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
+            func_80037F9C(gdl, _bss_10, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
         }
     }
     font_window_set_coords(sWindowID, _bss_798, _bss_8, _bss_798 + _bss_79C, _bss_C);

@@ -4,7 +4,7 @@
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "dlls/objects/210_player.h"
 
 typedef struct {

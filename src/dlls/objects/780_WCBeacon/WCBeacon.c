@@ -1,5 +1,5 @@
 #include "game/objects/object.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objprint.h"

@@ -794,8 +794,8 @@ void dll_3_func_5698(AnimObj_Data* objData, Object* arg1) {
     temp_v0 = gDLL_26_Curves->vtbl->func_39C((s32)arg1);
 
     for (var_a0 = 1, index = 0, var_a2 = sp2C; index < 4; index++, var_a0 *= 2){
-        if ((temp_v0->unk1C[index] >= 0) && !(temp_v0->unk1B & var_a0)) {
-            var_a2 = temp_v0->unk1C[index];
+        if ((temp_v0->links[index] >= 0) && !(temp_v0->unk1B & var_a0)) {
+            var_a2 = temp_v0->links[index];
             index = 5;
         }
     }

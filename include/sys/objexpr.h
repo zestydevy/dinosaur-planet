@@ -1,5 +1,5 @@
-#ifndef _SYS_SEGMENT_334F0
-#define _SYS_SEGMENT_334F0
+#ifndef _SYS_OBJEXPR
+#define _SYS_OBJEXPR
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"

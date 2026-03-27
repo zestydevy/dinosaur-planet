@@ -410,8 +410,8 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     spitSetup->x = self->srt.transl.x;
     spitSetup->y = self->srt.transl.y + 20.0f;
     spitSetup->z = self->srt.transl.z;
-    spitSetup->loadFlags = OBJSETUP_LOAD_FLAG1;
-    spitSetup->fadeFlags = OBJSETUP_FADE_DISABLE;
+    spitSetup->loadFlags = OBJSETUP_LOAD_LEVEL;
+    spitSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     spitSetup->loadDistance = 0xFF;
     spitSetup->fadeDistance = 0xFF;
     spit = obj_create(spitSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);

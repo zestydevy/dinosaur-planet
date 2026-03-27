@@ -125,8 +125,8 @@ static void dll_593_func_8EC(Object* arg0) {
     setup->base.y = arg0->srt.transl.y + 40.0f;
     setup->base.z = arg0->srt.transl.z;
     setup->unk24 = -1;
-    setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
-    setup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
+    setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    setup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.objId = OBJ_MagicDustMid;

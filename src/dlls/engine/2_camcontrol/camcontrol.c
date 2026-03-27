@@ -910,7 +910,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
             targetCoords = obj->unk74;
             targetDef = obj->unk78;
                 
-            if (obj->unkD4 < obj->def->unk9b) {
+            if (obj->unkD4 < obj->def->numLockdata) {
                 lockIndex = obj->unkD4;
             } else {
                 lockIndex = 0;

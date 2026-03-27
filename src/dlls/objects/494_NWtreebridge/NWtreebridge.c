@@ -1,7 +1,7 @@
 #include "common.h"
 #include "dlls/engine/17_partfx.h"
 #include "sys/objtype.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 
 typedef struct {
     ObjSetup base;

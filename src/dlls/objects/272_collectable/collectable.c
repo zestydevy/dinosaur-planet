@@ -7,7 +7,7 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/newshadows.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/foodbag.h"
@@ -137,8 +137,8 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         objData->interactionRadius = 15.0f;
     }
 
-    if (self->def->unk40) {
-        objData->interactionRadius = self->def->unk40->interactRadius * 4;
+    if (self->def->lockdata) {
+        objData->interactionRadius = self->def->lockdata->interactRadius * 4;
     }
 
     if (self->def->unk87 & 0x10) {

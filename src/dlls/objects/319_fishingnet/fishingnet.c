@@ -3,7 +3,7 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 
 typedef struct {
     u8 unk0;

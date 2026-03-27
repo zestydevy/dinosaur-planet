@@ -4,7 +4,7 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/290_magicplant.h"

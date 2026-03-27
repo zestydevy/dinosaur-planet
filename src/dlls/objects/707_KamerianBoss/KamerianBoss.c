@@ -11,7 +11,7 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/rcp.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "dll.h"
 
 typedef struct {
@@ -110,8 +110,8 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
-    setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
-    setup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
+    setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    setup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->base.x = x;
     setup->base.y = y;
     setup->base.z = z;
@@ -145,8 +145,8 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     setup->x = x;
     setup->y = y;
     setup->z = z;
-    setup->loadFlags = OBJSETUP_LOAD_FLAG1;
-    setup->fadeFlags = OBJSETUP_FADE_DISABLE;
+    setup->loadFlags = OBJSETUP_LOAD_LEVEL;
+    setup->fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->loadDistance = 0xFF;
     setup->fadeDistance = 0xFF;
     projectile = obj_create(setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);

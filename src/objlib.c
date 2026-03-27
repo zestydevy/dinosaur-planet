@@ -3,7 +3,9 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/281_area.h"
 #include "sys/map.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
+
+// objlib.c (default.dol)
 
 typedef struct ObjectPairCallback {
     Object *primary;
@@ -133,6 +135,7 @@ void func_80031EBC(Vec4f* arg0, Vec4f* arg1) {
     arg1->w = arg0->y;
 }
 
+// 2nd param = placeNum in default.dol
 s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 useInputCoords) {
     s32 boneIdx;
     ModelInstance* modelInstance;
@@ -184,6 +187,7 @@ s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 use
     return 0;
 }
 
+// 2nd param = "placeNum" in default.dol
 MtxF *func_80032170(Object* obj, s32 arg1) {
     ModelInstance* temp_v1;
     s32 boneIdx;
@@ -204,6 +208,8 @@ void func_800321E4(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz) {
     *oz = obj->def->pAttachPoints[arg1].pos.z;
 }
 
+// attachBaseIdx (2nd param) = "placeno" in default.dol
+// arg2 (3rd param) = "nofeet" in default.dol
 void func_80032238(Object* obj, s32 attachBaseIdx, s32 arg2, Vec3f* position) {
     ModelInstance* modelInst;
     MtxF* mtx;
@@ -310,12 +316,20 @@ s32 registerObjectCallback(Object* obj, Object* otherObj, void (*callback)(Objec
     i = sCallbackPairIndex;
     while (i--) {
         if (obj == callbackPair->primary && otherObj == callbackPair->secondary) {
+            /* default.dol
+            if (callbackPair->callback != callback) {
+                STUBBED_PRINTF("WARNING:only one callback per collision is allowed\n");
+            } else {
+                STUBBED_PRINTF("WARNING:TCB already registered\n");
+            }
+            */
             return FALSE;
         }
         callbackPair++;
     }
 
     if (sCallbackPairIndex >= 16) {
+        // STUBBED_PRINTF("WARNING: MAX_TOUCH_CALLBACKS too small\n"); // default.dol
         return FALSE;
     }
 

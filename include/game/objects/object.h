@@ -50,18 +50,26 @@ enum ObjInitFlags {
 };
 
 enum ObjSetupLoadFlags {
-    // never unload? unless map unloads or setup changes
-    // skips check for being outside block grid span
-    OBJSETUP_LOAD_FLAG1 = 0x1,
-    // never unload? unless map unloads or setup changes (way less common)
-    // can still unload via object groups, but none also set 0x10 in practice (at least not in maps)
-    // skips check for being outside block grid span
-    OBJSETUP_LOAD_FLAG2 = 0x2,
-    // for distance check, use player position instead of camera(?)
-    OBJSETUP_LOAD_FLAG4 = 0x4,
-    // ?
-    OBJSETUP_LOAD_FLAG8 = 0x8,
+    // never unload? unless map unloads or setup changes.
+    // skips check for being outside block grid span.
+    //
+    // called "level" by default.dol
+    OBJSETUP_LOAD_LEVEL = 0x1,
+    // never unload? unless map unloads or setup changes (way less common).
+    // can still unload via object groups, but none also set 0x10 in practice (at least not in maps).
+    // skips check for being outside block grid span.
+    //
+    // called "manual" by default.dol
+    OBJSETUP_LOAD_MANUAL = 0x2,
+    // for distance check, use player position instead of camera(?).
+    //
+    // called "main" by default.dol
+    OBJSETUP_LOAD_MAIN = 0x4,
+    // called "camera" by default.dol
+    OBJSETUP_LOAD_CAMERA = 0x8,
     // load while the map object group the object is in is enabled.
+    //
+    // called "group" by default.dol
     OBJSETUP_LOAD_IN_MAP_OBJGROUP = 0x10,
     // skip unload check for distance to player/camera
     OBJSETUP_LOAD_FLAG20 = 0x20
@@ -69,26 +77,35 @@ enum ObjSetupLoadFlags {
 
 enum ObjSetupFadeFlags {
     // Disable distance based object fadeout.
-    OBJSETUP_FADE_DISABLE = 0x1,
+    //
+    // Called "manual" by default.dol.
+    OBJSETUP_FADE_MANUAL = 0x1,
     // Use player position to calculate fade, instead of the camera position.
-    OBJSETUP_FADE_PLAYER_RELATIVE = 0x2,
-    OBJSETUP_FADE_FLAG4 = 0x4,
+    //
+    // Called "main" by default.dol.
+    OBJSETUP_FADE_MAIN = 0x2,
+    // Called "camera" by default.dol.
+    OBJSETUP_FADE_CAMERA = 0x4,
     OBJSETUP_FADE_FLAG8 = 0x8
 };
 
 // Base struct, objects "inherit" from this and add their own setup info.
 // Note: Curves and race checkpoints are an exception and use a different version of this base struct.
+//
+// Aka. "romdef"
 typedef struct ObjSetup {
+        // "type" (default.dol)
 /*00*/  s16 objId;
 /*02*/  u8 quarterSize;
-        // Bits 0-7: Exclude from map setups 1-8
-/*03*/  u8 setupExclusions1;
+        // Bits 0-7: Exclude from map acts 1-8
+/*03*/  u8 actExclusions1;
 /*04*/  u8 loadFlags;
 /*05*/  union {
             u8 byte5;
-            // Bits 7-4 (note the reversal): Exclude from map setups 9-12
-            u8 setupExclusions2;
+            // Bits 7-4 (note the reversal): Exclude from map acts 9-12
+            u8 actExclusions2;
             // Bits 0-3: Fade flags
+            // "viewflags" (default.dol)
             u8 fadeFlags;
         };
 /*06*/  union {
@@ -96,14 +113,17 @@ typedef struct ObjSetup {
             // If loadFlags & 0x10 IS set, the map object group this object is a part of.
             u8 mapObjGroup;
             // If loadFlags & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
+            // "load range" (default.dol)
             u8 loadDistance;
         };
         // Max distance object is visible at (divided by 8).
+        // "view range" (default.dol)
 /*07*/  u8 fadeDistance;
 /*08*/  f32 x;
 /*0c*/  f32 y;
 /*10*/  f32 z;
         // Unique ID within map (not globally unique across all maps).
+        // Just called "ID" in default.dol.
 /*14*/  s32 uID;
 } ObjSetup;
 
@@ -274,10 +294,10 @@ typedef struct Object {
 /*003C*/    f32 loadDistance; // Note: If setup loadFlags & 0x10 is set, this value is garbage
 /*0040*/    f32 fadeDistance;
 /*0044*/    s16 group; // complete guess at a name, needs more investigation
-/*0046*/    s16 id;
+/*0046*/    s16 id; // called "romdefno" in default.dol
 /*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB
 /*004A*/    u8 unk4A[0x4c - 0x4a];
-/*004C*/    ObjSetup *setup; // exact type depends on object
+/*004C*/    ObjSetup *setup; // exact type depends on object (called "def" in default.dol)
 /*0050*/    ObjDef* def; // called "objdata" in default.dol
 /*0054*/    ObjectHitInfo* objhitInfo;
 /*0058*/    ObjectPolyhits *polyhits;

@@ -827,7 +827,7 @@ void Tumbleweed_create_twigs(Object* self) {
     setup->base.z = self->srt.transl.z;
     setup->base.fadeDistance = 0xFF;
     setup->base.loadFlags = OBJSETUP_LOAD_FLAG20;
-    setup->base.fadeFlags = OBJSETUP_FADE_PLAYER_RELATIVE;
+    setup->base.fadeFlags = OBJSETUP_FADE_MAIN;
     setup->roll = self->srt.roll;
     setup->pitch = self->srt.pitch;
     setup->yaw = self->srt.yaw;

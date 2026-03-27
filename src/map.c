@@ -20,6 +20,7 @@
 #include "sys/segment_1050.h"
 #include "sys/segment_1460.h"
 #include "dll.h"
+#include "macros.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
@@ -110,7 +111,7 @@ s32 D_80092A94 = -1;
  * 0x20000 - Spawns an FXEmit object and turns the fog a tan-ish color, renders a different sun??
  */
 u32 UINT_80092a98 = 0;
-s8 D_80092A9C[8] = {0, -2, -1, 1, 2, 0, 0, 0};
+s8 D_80092A9C[MAP_LAYER_COUNT] = {0, -2, -1, 1, 2};
 s8 gMapNumStreamMaps = 0;
 s32 D_80092AA8 = 0; // unused
 f32 D_80092AAC[24] = {
@@ -600,12 +601,12 @@ void init_maps(void) {
         gNumTotalBlocks++;
     }
     gNumTotalBlocks--;
-    D_800B96B0 = mmAlloc(sizeof(SavedObject) * 100, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B96B0 = mmAlloc(sizeof(SavedObject) * 100, ALLOC_TAG_TRACK_COL, ALLOC_NAME("objdef_store"));
     D_800B4A5C = -1;
     D_800B4A5E = -2;
-    gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, ALLOC_TAG_TRACK_COL, NULL);
+    gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texanim"));
     bzero(gBlockTextures, sizeof(BlockTexture) * 20);
-    D_800B97A8 = mmAlloc(sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B97A8 = mmAlloc(sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texscroll"));
     bzero(D_800B97A8, sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS);
     bzero(gRenderList, sizeof(u32) * MAX_RENDER_LIST_LENGTH);
     gRenderList[0] = -0x4000;
@@ -698,6 +699,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     UINT_80092a98 &= ~2;
     // @fake
     if (1) { } if (1) { } if (1) { } if (1) { }
+    // diProfEnd("Trackdraw") (default.dol)
 }
 
 // https://decomp.me/scratch/9mgpH
@@ -1213,6 +1215,8 @@ void func_80043FD8(s8* arg0) {
     objects = get_world_objects(0, 0);
     sp58 = func_80020DA0(&numObjs);
     if (numObjs > 180) {
+        // TODO:
+        // STUBBED_PRINTF("depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n");
         numObjs = 180;
     }
     func_80020EE4(sp58, numObjs - 1);
@@ -1240,6 +1244,11 @@ void func_80043FD8(s8* arg0) {
                 gRenderList[gRenderListLength] = (var_v0 << 14) | (i << 7) | 0x40;
                 gRenderListLength += 1;
             }
+            /* default.dol
+            else {
+                STUBBED_PRINTF("DrawGroups overflow\n"); // (default.dol)
+            }
+            */
         }
     }
     if (gRenderListLength >= 2) {
@@ -1412,7 +1421,7 @@ s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
     return layer[GRID_INDEX(gridZ, gridX)].mapIDs[0];
 }
 
-s32 func_800448D0(s32 arg0) {
+s32 func_800448D0(ObjSetup *arg0) {
     GlobalMapCell* var_a3;
     MapHeader* temp_v1;
     s16 var_v0;
@@ -1453,7 +1462,9 @@ s32 func_800448D0(s32 arg0) {
             new_var = (u32)(temp_v1->objectInstancesFileLength + (s8 *)obj);
             while ((u32)obj < new_var) {
                 obj2 = obj;
-                if ((s32)obj == arg0) {
+                if (obj == arg0) {
+                    // TODO:
+                    // STUBBED_PRINTF("found on map %d\n", sp20[var_a1]);
                     return sp20[var_a1];
                 }
                 obj = (ObjSetup*)&((s8 *)obj)[obj2->quarterSize * 4];
@@ -1461,6 +1472,8 @@ s32 func_800448D0(s32 arg0) {
         }
     }
 
+    // TODO:
+    // STUBBED_PRINTF("mapno not found\n");
     return -1;
 }
 
@@ -1525,7 +1538,7 @@ Block* func_80044BB0(s32 blockIndex) {
     if (blockIndex < 0 || blockIndex >= gLoadedBlockCount) {
         return 0;
     }
-    return (Block *)gLoadedBlocks[blockIndex];
+    return gLoadedBlocks[blockIndex];
 }
 
 //Camera and frustum related?
@@ -1772,7 +1785,6 @@ void some_cell_func(BitStream* stream) {
     bitstream_init(stream, &D_800B9798[(var_v1 * temp)], D_800B979E, D_800B979E);
 }
 
-// referenced by some_cell_func
 static const char str_8009a5e0[] = " ERROR: visible index greater than no vis blocks ";
 
 s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
@@ -1790,12 +1802,6 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     return 0;
 }
 
-// referenced by ???
-static const char str_8009a618[] = "trackFreeMap: Error no map!!\n";
-static const char str_8009a638[] = "WORLD MAP LIST OVERFLOW\n";
-static const char str_8009a654[] = "entry->gamno >= max_gam\n";
-static const char str_8009a670[] = "entry->block > max gam\n";
-
 u8 func_800456AC(Object* obj) {
     f32 fadeDist;
     Object* playerObj;
@@ -1808,7 +1814,7 @@ u8 func_800456AC(Object* obj) {
         obj->opacityWithFade = 0;
         return FALSE;
     }
-    if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_DISABLE)) {
+    if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MANUAL)) {
         obj->opacityWithFade = ((obj->opacity + 1) * 255) >> 8;
     } else {
         fadeDist = obj->fadeDistance;
@@ -1816,7 +1822,7 @@ u8 func_800456AC(Object* obj) {
             obj->opacityWithFade = 0;
             return FALSE;
         }
-        if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_PLAYER_RELATIVE) && (playerObj = get_player(), (playerObj != NULL))) {
+        if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = get_player(), (playerObj != NULL))) {
             dist = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
         } else {
             dist = camera_get_distance_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
@@ -1997,6 +2003,8 @@ void func_80045F48(s32 mapID) {
         map_init_obj_setup_list(gLoadedMapsDataTable[mapID], &gMapObjSetupLists[mapID], mapID, 1);
         mmFree(gLoadedMapsDataTable[mapID]);
         gLoadedMapsDataTable[mapID] = 0;
+    } else {
+        STUBBED_PRINTF("trackFreeMap: Error no map!!\n");
     }
 }
 
@@ -2074,6 +2082,7 @@ void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 map
     }
 }
 
+// this is probably checkMap in default.dol
 void func_800462B0(){
 }
 
@@ -2100,20 +2109,21 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     }
 }
 
+// map_load_mobile_map ?
 void func_80046320(s32 arg0, Object *obj) {
     s32 sp24;
-    s32 t0;
+    s32 foundEmptySlot;
     s32 mapID;
     MapHeader *sp18;
 
     sp24 = D_800B4A50;
     sp18 = map_load_streammap(arg0, 1);
     gLoadedMapsDataTable[arg0] = 0;
-    t0 = FALSE;
+    foundEmptySlot = FALSE;
 
     for (mapID = 80; mapID < 120; mapID++) {
         if (gLoadedMapsDataTable[mapID] == 0) {
-            t0 = TRUE;
+            foundEmptySlot = TRUE;
             gLoadedMapsDataTable[mapID] = sp18;
             break;
         } 
@@ -2123,12 +2133,15 @@ void func_80046320(s32 arg0, Object *obj) {
     gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     obj->unk34 = mapID;
     gDLL_29_Gplay->vtbl->func_1378(arg0, mapID);
+    if (!foundEmptySlot) {
+        STUBBED_PRINTF("WORLD MAP LIST OVERFLOW\n");
+    }
     D_800B4A50 = sp24;
-
-    if (t0){}
 }
 
 #ifndef NON_MATCHING
+static const char str_8009a654[] = "entry->gamno >= max_gam\n";
+static const char str_8009a670[] = "entry->block > max gam\n";
 void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 #else
@@ -2182,10 +2195,13 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         }
         if (cell->trkBlkIndex >= gNumTRKBLKEntries) {
             cell->trkBlkIndex = gNumTRKBLKEntries - 1;
+            STUBBED_PRINTF("entry->gamno >= max_gam\n");
+            // "WARNING track.c() ---- entry->gamno >= max_gam\n" (default.dol)
         }
         cell->blockID = gFile_TRKBLK[cell->trkBlkIndex] + cell->loadedBlockIndex;
         if (cell->blockID >= gFile_TRKBLK[gNumTRKBLKEntries]) {
             cell->blockID = gFile_TRKBLK[gNumTRKBLKEntries] - 1;
+            STUBBED_PRINTF("entry->block > max gam\n");
         }
     } else {
         cell->mapIDs[0] = -1;
@@ -2196,7 +2212,6 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         cell->loadedBlockIndex = 0;
     }
 }
-
 #endif
 
 void func_80046688(s32 arg0, s32 arg1) {
@@ -2218,7 +2233,7 @@ MapHeader* func_800466C0() {
     s32 mapID;
 
     layer = gDecodedGlobalMap[0];
-    mapID = layer[119].mapIDs[0]; //There should be 16*16 cells, so why this one specifically... centre cell?
+    mapID = layer[GRID_INDEX(7, 7)].mapIDs[0]; //There should be 16*16 cells, so why this one specifically... centre cell?
     if (mapID < 0) {
         mapID = D_80092BBC;
     }
@@ -2244,7 +2259,6 @@ s32 func_80046728(s32 mapID) {
         return 0;
     return gFile_TRKBLK[mapID + 1] - gFile_TRKBLK[mapID];
 }
-
 
 void init_global_map(void)
 {
@@ -2310,6 +2324,12 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
 
     mapbinstruct = (MapsBinStruct*)gMapReadBuffer;
     size = READ_MAPS_TAB(mapID, 2) - READ_MAPS_TAB(mapID, 0);
+
+    /* default.dol
+    if (size > 700) {
+        STUBBED_PRINTF("track.c: getdim(): TEMP_BUFFER_SIZE overflow\n");
+    }
+    */
     
     queue_load_file_region_to_ptr((void**)mapbinstruct, MAPS_BIN, READ_MAPS_TAB(mapID, 0), size);
     
@@ -2328,7 +2348,7 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
         for (arg2 = 0; arg2 < mapbinstruct->unk0; arg2++) {
             temp_v1 = arg2 + (arg3 * mapbinstruct->unk0);
             var_v0 = mapbinstruct->unkC[temp_v1];
-            if (((var_v0 >> 0x17) & 0x3F) != 0x3F) {
+            if (((var_v0 >> 23) & 0x3F) != 0x3F) {
                 temp = 1 << (temp_v1 & 7);
                 arg1[(temp_v1 >> 3)] |= temp;
             }
@@ -2807,6 +2827,7 @@ void map_func_8004773C(void) {
             gDLL_12_Minic->vtbl->func6(sp3C->unk3C & 1);
             for (i = 0; i < 4; i++) {
                 if (sp38[i] != -1) {
+                    // last 3 args: "track.c", 0x17b8, "plMusicactions->actions[i]" (default.dol)
                     gDLL_5_AMSEQ2->vtbl->set(NULL, sp38[i], 0, 0, 0);
                 }
             }
@@ -3134,26 +3155,6 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     }
 }
 
-static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
-static const char str_8009a6e0[] = "trackLoadBlockEnd: track block overrun\n";
-static const char str_8009a708[] = "TEXSCROLL: table is full\n";
-static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
-static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
-static const char str_8009a770[] = "MISMATCH on global texanim free\n";
-static const char str_8009a794[] = " Map not Loaded %i ";
-static const char str_8009a7a8[] = "OBJECT error: obj %d, has no romdef\n";
-static const char str_8009a7d0[] = "WARNING: trackSetLoaded bit overflow\n";
-static const char str_8009a7f8[] = "WARNING: trackGetLoaded bit overflow\n";
-static const char str_8009a820[] = "Cannot move object with an ident of -1!!!\n";
-static const char str_8009a84c[] = " OVer FLOW FLOW in RD saves for moving romdefs ";
-static const char str_8009a87c[] = " Error in moving of romdef ";
-static const char str_8009a898[] = " Saving Romdef for for %i tab no %i \n";
-static const char str_8009a8c0[] = "Cannot move object with an ident of -1!!!\n";
-static const char str_8009a8ec[] = " Removed Restored Num %i ";
-static const char str_8009a908[] = "%i ";
-static const char str_8009a90c[] = "romdefMove_Set: Mapno overflow!!\n";
-static const char str_8009a930[] = "######  DOING WARP  ########\n";
-
 void func_80048B14(Block* block) {
     s32 targetVertexIndex;
     s32 vertexIndex;
@@ -3182,6 +3183,7 @@ void func_80048B14(Block* block) {
     }
 }
 
+static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
 void func_80048C24(Block* block) {
     s32 index;
     s32 i;
@@ -3293,6 +3295,9 @@ void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
 
     if (slot == gLoadedBlockCount) {
         gLoadedBlockCount++;
+        if (gLoadedBlockCount == MAX_BLOCKS) {
+            STUBBED_PRINTF("trackLoadBlockEnd: track block overrun\n");
+        }
     }
 
     ptr = gBlockIndices[globalMapIdx];
@@ -3303,7 +3308,7 @@ void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
     gBlockRefCounts[slot] = 1;
 
     if (block->unk3E != 0) {
-        block_compute_vertex_colors((Block *) block, 0, 0, 1);
+        block_compute_vertex_colors(block, 0, 0, 1);
     }
 
     func_80058F3C();
@@ -3834,7 +3839,7 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
     s32 indexOfUnref;
     
     indexOfUnref = -1;
-    for (index = 0; index < 0x14; index++){
+    for (index = 0; index < 20; index++){
         if ((&gBlockTextures[index])->refCount != 0 && 
             tex == (&gBlockTextures[index])->texture && 
             animatorID == (&gBlockTextures[index])->unkE){
@@ -3848,9 +3853,11 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
         (&gBlockTextures[indexOfUnref])->refCount += 1;
         return indexOfUnref;
     }
+
+    STUBBED_PRINTF("TEXSCROLL: table is full\n");
     
     indexOfUnref = -1;
-    for (index = 0; index < 0x14; index++){
+    for (index = 0; index < 20; index++){
         if ((&gBlockTextures[index])->refCount == 0){
             indexOfUnref = index;
             break;
@@ -3867,6 +3874,10 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
     }
     return 0;
 }
+
+static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
+static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
+static const char str_8009a770[] = "MISMATCH on global texanim free\n";
 
 void func_8004A164(Texture *matchTexture, s32 matchParam) {
     s32 index;
@@ -4091,15 +4102,14 @@ void func_8004A67C(void) {
 
 void map_update_objects_streaming(s32 arg0) {
     GlobalMapCell* var_a3;
-    s32 spB8;
+    s32 i;
     MapHeader* temp_s6;
     ObjSetup* objSetup;
     Object* obj;
     Object* temp_s5;
-    s16 temp_v0_3;
-    s16 var_s4;
+    u32 temp_fp;
     s32 var_a1;
-    s32 sp9C;
+    s32 count;
     s32 var_a2;
     s32 unloadObj;
     s32 group;
@@ -4108,16 +4118,16 @@ void map_update_objects_streaming(s32 arg0) {
     ObjSetup* var_s1_2;
     s32 temp_s7;
     s32 temp_s4;
+    s16 var_s4;
+    s16 sp70[5];
     u32 objGroupBits;
-    s16 sp70[3]; // unknown size however 3 feels way to small?
-    u32 temp_fp;
-    Object** sp68;
+    Object** objList;
     s16 mapID;
 
     var_s4 = 0;
-    for (spB8 = 0; spB8 < MAP_LAYER_COUNT; spB8++) {
+    for (i = 0; i < MAP_LAYER_COUNT; i++) {
         var_a2 = 0;
-        var_a3 = gDecodedGlobalMap[spB8] + 119;
+        var_a3 = gDecodedGlobalMap[i] + GRID_INDEX(7, 7);
         for (var_a2 = 0; var_a2 < 3; var_a2++) {
             if (var_a3->mapIDs[var_a2] >= 0 && var_a3->mapIDs[var_a2] < MAP_ID_MAX) {
                 var_a1 = 0;
@@ -4129,6 +4139,11 @@ void map_update_objects_streaming(s32 arg0) {
                         }
                     }
                     if (var_a1 == 0) {
+                        /* default.dol
+                        if (var_s4 >= 5) {
+                            STUBBED_PRINTF("trackObjectControl: map overflow\n");
+                        } else
+                        */
                         sp70[var_s4++] = var_a3->mapIDs[var_a2];
                     }
                 }
@@ -4136,14 +4151,14 @@ void map_update_objects_streaming(s32 arg0) {
         }
     }
     
-    sp68 = get_world_objects(&spB8, &sp9C);
-    while (spB8 < sp9C) {
+    objList = get_world_objects(&i, &count);
+    while (i < count) {
         unloadObj = FALSE;
-        obj = sp68[spB8];
+        obj = objList[i];
         objSetup = obj->setup;
-        spB8++;
+        i++;
         if (obj->mapID >= 0) {
-            if (!(objSetup->loadFlags & OBJSETUP_LOAD_FLAG2)) {
+            if (!(objSetup->loadFlags & OBJSETUP_LOAD_MANUAL)) {
                 if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
                     if ((obj->group >= GROUP_NONE) && (map_should_obj_unload(obj) != 0)) {
                         unloadObj = TRUE;
@@ -4162,26 +4177,26 @@ void map_update_objects_streaming(s32 arg0) {
         if (unloadObj) {
             if (gLoadedMapsDataTable[obj->mapID] != NULL) {
                 if (obj->unkB2 >= 0) {
-                    func_8004B710(obj->unkB2, obj->mapID, 0U);
+                    func_8004B710(obj->unkB2, obj->mapID, 0);
                 }
             }
             if (obj->id == OBJ_IMSnowBike) {
-                func_8004AEFC(obj->mapID, sp70, var_s4);
+                STUBBED_PRINTF(" Map not Loaded %i ", func_8004AEFC(obj->mapID, sp70, var_s4) == 0);
             }
             obj_destroy_object(obj);
-            spB8 -= 1;
-            sp9C -= 1;
+            i -= 1;
+            count -= 1;
         }
     }
-    for (spB8 = 0; spB8 < MAP_ID_MAX; spB8++) {
-        if (gLoadedMapsDataTable[spB8] != NULL) {
-            objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits(spB8);
+    for (i = 0; i < MAP_ID_MAX; i++) {
+        if (gLoadedMapsDataTable[i] != NULL) {
+            objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits(i);
             if (objGroupBits != 0) {
-                gDLL_29_Gplay->vtbl->world_disable_all_obj_groups(spB8);
+                gDLL_29_Gplay->vtbl->world_disable_all_obj_groups(i);
                 group = 0;
                 while (objGroupBits != 0) {
                     if (objGroupBits & 1) {
-                        func_8004B548(gLoadedMapsDataTable[spB8], spB8, group, NULL);
+                        func_8004B548(gLoadedMapsDataTable[i], i, group, NULL);
                     }
                     objGroupBits >>= 1;
                     group++;
@@ -4189,38 +4204,43 @@ void map_update_objects_streaming(s32 arg0) {
             }
         }
     }
-    for (spB8 = 0; spB8 < var_s4; spB8++) {
-        temp_v0_3 = sp70[spB8];
-        temp_s6 = gLoadedMapsDataTable[temp_v0_3];
+    for (i = 0; i < var_s4; i++) {
+        temp_s6 = gLoadedMapsDataTable[sp70[i]];
         if (temp_s6 != NULL) {
             var_s1_2 = (ObjSetup* ) temp_s6->objectInstanceFile_ptr;
             temp_s7 = temp_s6->unk19;
             var_s3 = 0;
-            temp_fp = gMapObjSetupLists[temp_v0_3].groupsStart + (s32)var_s1_2;
+            temp_fp = gMapObjSetupLists[sp70[i]].groupsStart + (s32)var_s1_2;
             while ((u32) var_s1_2 < (u32) temp_fp) {
                 objSetup = var_s1_2;
                 if ((var_s1_2->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP)) {
                     break;
                 }
 
-                if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[spB8]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[spB8]) != 0)) {
-                    func_8004B710(var_s3, (u32) sp70[spB8], 1U);
+                if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[i]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[i]) != 0)) {
+                    func_8004B710(var_s3, (u32) sp70[i], 1);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[spB8], var_s3, NULL);
+                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[i], var_s3, NULL);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
-                        func_80012584(0x3E, 4U, NULL, var_s1_2, sp70[spB8], var_s3, 0, temp_s7);
+                        func_80012584(0x3E, 4, NULL, var_s1_2, sp70[i], var_s3, 0, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[spB8], var_s3, NULL);
+                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[i], var_s3, NULL);
                     }
                 }
                 var_s3++;
                 var_s1_2 = (ObjSetup* ) &((s32 *)var_s1_2)[objSetup->quarterSize];
+                /* default.dol
+                if (objSetup->quarterSize == 0) {
+                    STUBBED_PRINTF(" romlist %x ", objSetup);
+                    break;
+                }
+                */
             }
         }
     }
-    sp68 = obj_get_all_of_type(OBJTYPE_7, &sp9C);
-    for (spB8 = 0; spB8 < sp9C; spB8++) {
-        temp_s5 = sp68[spB8];
+    objList = obj_get_all_of_type(OBJTYPE_7, &count);
+    for (i = 0; i < count; i++) {
+        temp_s5 = objList[i];
         var_s3 = 0;
         temp_s4 = temp_s5->unk34;
         temp_s6 = gLoadedMapsDataTable[temp_s4];
@@ -4228,9 +4248,9 @@ void map_update_objects_streaming(s32 arg0) {
             temp_s7 = temp_s5->matrixIdx + 1;
             var_s1_2 = (ObjSetup* ) temp_s6->objectInstanceFile_ptr;
             temp_fp = gMapObjSetupLists[temp_s4].groupsStart + (s32)var_s1_2;
-            objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits((s32) temp_s4);
+            objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits(temp_s4);
             if (objGroupBits != 0) {
-                gDLL_29_Gplay->vtbl->world_disable_all_obj_groups((s32) temp_s4);
+                gDLL_29_Gplay->vtbl->world_disable_all_obj_groups(temp_s4);
                 group = 0;
                 while (objGroupBits != 0) {
                     if (objGroupBits & 1) {
@@ -4242,14 +4262,14 @@ void map_update_objects_streaming(s32 arg0) {
             }
             while ((u32) var_s1_2 < (u32) temp_fp) {
                 objSetup = var_s1_2;
-                if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object((ObjSetup* ) var_s1_2, temp_s7, temp_s4) != 0)) {
+                if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object(var_s1_2, temp_s7, temp_s4) != 0)) {
                     func_8004B710(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
-                        obj_create((ObjSetup* ) var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
+                        obj_create(var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
                     } else {
-                        obj_create((ObjSetup* ) var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
+                        obj_create(var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
                     }
                 }
                 var_s3++;
@@ -4290,11 +4310,11 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
         return 0;
     }
 
-    if (arg0->loadFlags & OBJSETUP_LOAD_FLAG1) {
+    if (arg0->loadFlags & OBJSETUP_LOAD_LEVEL) {
         return 1;
     }
 
-    if (arg0->loadFlags & OBJSETUP_LOAD_FLAG2) {
+    if (arg0->loadFlags & OBJSETUP_LOAD_MANUAL) {
         return 0;
     }
 
@@ -4323,7 +4343,7 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     }
 
     scaledZOrFlag = 0;
-    if ((arg0->loadFlags & OBJSETUP_LOAD_FLAG4) && (arg1 == 0)) {
+    if ((arg0->loadFlags & OBJSETUP_LOAD_MAIN) && (arg1 == 0)) {
         player = get_player();
         if (player != NULL) {
             sp20 = player->positionMirror.x;
@@ -4376,12 +4396,13 @@ s32 map_should_obj_unload(Object *obj) {
 
     objSetup = obj->setup;
     if (objSetup == NULL) {
+        STUBBED_PRINTF("OBJECT error: obj %d, has no romdef\n", obj->id);
         return FALSE;
     }
     if (func_8004B4A0(objSetup, obj->mapID) == 0) {
         return TRUE;
     }
-    if (objSetup->loadFlags & OBJSETUP_LOAD_FLAG1) {
+    if (objSetup->loadFlags & OBJSETUP_LOAD_LEVEL) {
         return FALSE;
     }
     if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
@@ -4390,7 +4411,7 @@ s32 map_should_obj_unload(Object *obj) {
         }
         return TRUE;
     }
-    if (objSetup->loadFlags & OBJSETUP_LOAD_FLAG2) {
+    if (objSetup->loadFlags & OBJSETUP_LOAD_MANUAL) {
         return FALSE;
     }
     if ((obj->unkC0 != NULL) && (obj->unkB4 < 0)) {
@@ -4416,7 +4437,7 @@ s32 map_should_obj_unload(Object *obj) {
     if (objSetup->loadFlags & OBJSETUP_LOAD_FLAG20) {
         return FALSE;
     }
-    if ((objSetup->loadFlags & OBJSETUP_LOAD_FLAG4) && (player = get_player(), (player != NULL)) && obj->parent == NULL) {
+    if ((objSetup->loadFlags & OBJSETUP_LOAD_MAIN) && (player = get_player(), (player != NULL)) && obj->parent == NULL) {
         var_fv1 = player->positionMirror.x;
         var_fa0 = player->positionMirror.y;
         var_fa1 = player->positionMirror.z;
@@ -4457,13 +4478,21 @@ s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     if (setupID == -1) {
         return 0;
     }
+    /* default.dol
+    if (mapID < 0 || mapID >= 120) {
+        STUBBED_PRINTF("Warning: object being checked doesn't have a valid mapno in trackCheckObjectLoad(mapno: %d)\n", mapID);
+    }
+    if (setupID > 11) {
+        STUBBED_PRINTF("Warning: act number is not valid (actno: %d)\n", setupID);
+    }
+    */
     if (setupID != 0) {
         if (setupID < 9) {
-            if ((obj->setupExclusions1 >> (setupID - 1)) & 1) {
+            if ((obj->actExclusions1 >> (setupID - 1)) & 1) {
                 return 0;
             }
         }
-        else if ((obj->setupExclusions2 >> (16 - setupID)) & 1) {
+        else if ((obj->actExclusions2 >> (16 - setupID)) & 1) {
             return 0;
         }
     }
@@ -4494,6 +4523,11 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
     s4 =  &((s8*)s0)[objSetupList->groups[objGroupIdx]];
     while ((u32) s0 < (u32) s4) {
         someVar += 1;
+        /* default.dol
+        if (((ObjSetup *)s0)->quarterSize == 0) {
+            STUBBED_PRINTF(" romlist %i ", s0);
+        }
+        */
         s0 += ((ObjSetup *)s0)->quarterSize * 4;
     }
 
@@ -4537,6 +4571,10 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
     cell_offset = cellIndex_plusBitToCheck >> 3; //upper part of arg0 used to choose cell within grid?
     bit_at_index = 1 << (cellIndex_plusBitToCheck & 7); //lower part of arg0 used to choose a bit from 0-7
     map->end_ptr[cell_offset] &= ~bit_at_index; //masks something to do with the grid cell?
+
+    if (cell_offset > 127) {
+        STUBBED_PRINTF("WARNING: trackSetLoaded bit overflow\n");
+    }
     
     if (arg2 != 0) {
         map->end_ptr[cell_offset] |= bit_at_index; //sets a bit to do with the grid cell?
@@ -4555,12 +4593,15 @@ s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     map = gLoadedMapsDataTable[mapIndex];
     cell_offset = cellIndex_plusBitToCheck >> 3;
     bit_at_index = 1 << (cellIndex_plusBitToCheck & 7);
-    if (map->end_ptr[cell_offset] & bit_at_index){
+    
+    if (cell_offset > 127) {
+        STUBBED_PRINTF("WARNING: trackGetLoaded bit overflow\n");
+    }
+
+    if (map->end_ptr[cell_offset] & bit_at_index) {
         return 1;
     }
-    if (cell_offset){
-        //Could be related to "trackSetLoaded bit" print strings in RODATA?
-    }
+
     return 0;
 }
 
@@ -4665,6 +4706,7 @@ void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z) {
     numSavedObjs = gDLL_29_Gplay->vtbl->get_num_saved_objects();
     savedObjs = gDLL_29_Gplay->vtbl->get_saved_objects();
     if (objsetup->uID == -1) {
+        STUBBED_PRINTF("Cannot move object with an ident of -1!!!\n");
         return;
     }
     for (found = FALSE, i = 0; i < numSavedObjs; i++) {
@@ -4679,8 +4721,15 @@ void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z) {
         }
     }
     if (found == FALSE) {
-        D_800B96B0[numSavedObjs].x = objsetup->x;\
-        D_800B96B0[numSavedObjs].y = objsetup->y;\
+        if (numSavedObjs > 100) {
+            STUBBED_PRINTF(" OVer FLOW FLOW in RD saves for moving romdefs ");
+        }
+        if (objsetup == NULL) {
+            STUBBED_PRINTF(" Error in moving of romdef ");
+        }
+        STUBBED_PRINTF(" Saving Romdef for for %i tab no %i \n", objsetup->uID, numSavedObjs);
+        D_800B96B0[numSavedObjs].x = objsetup->x;
+        D_800B96B0[numSavedObjs].y = objsetup->y;
         D_800B96B0[numSavedObjs].z = objsetup->z;
         D_800B96B0[numSavedObjs].uID =  objsetup->uID;
         D_800B96B0[numSavedObjs].mapID = mapID;
@@ -4708,19 +4757,24 @@ void func_8004BC20(SavedObject* arg0, s32 uID) {
 
     numSavedObjs = gDLL_29_Gplay->vtbl->get_num_saved_objects();
     savedObjs = gDLL_29_Gplay->vtbl->get_saved_objects();
-    if (uID != -1) {
-        for (i = 0; i < numSavedObjs; i++) {
-            if (uID == savedObjs[i].uID) {
-                bcopy(&D_800B96B0[i], &savedObjs[i], sizeof(SavedObject));
-                arg0->x = D_800B96B0[i].x;
-                arg0->y = D_800B96B0[i].y;
-                arg0->z = D_800B96B0[i].z;
-                // break
-                i = numSavedObjs;
-            }
+    if (uID == -1) {
+        STUBBED_PRINTF("Cannot move object with an ident of -1!!!\n");
+        return;
+    }
+    for (i = 0; i < numSavedObjs; i++) {
+        if (uID == savedObjs[i].uID) {
+            bcopy(&D_800B96B0[i], &savedObjs[i], sizeof(SavedObject));
+            arg0->x = D_800B96B0[i].x;
+            arg0->y = D_800B96B0[i].y;
+            arg0->z = D_800B96B0[i].z;
+            // break
+            i = numSavedObjs;
         }
     }
 }
+
+static const char str_8009a8ec[] = " Removed Restored Num %i ";
+static const char str_8009a908[] = "%i ";
 
 // official name: romdefMove_Set ?
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
@@ -4744,6 +4798,9 @@ void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
             sp68[numFound] = i;
             sp28[numFound] = savedObjs[i].uID;
             numFound++;
+            if (numFound > 15) {
+                STUBBED_PRINTF("romdefMove_Set: Mapno overflow!!\n");
+            }
         }
     }
     var_t3 = 0;
@@ -5247,6 +5304,8 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     }
 }
 #endif
+
+static const char str_8009a930[] = "######  DOING WARP  ########\n";
 
 /** 
   * Warps the player to coordinates stored in WARPTAB.bin 

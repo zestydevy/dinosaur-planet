@@ -19,12 +19,6 @@ struct PointersInts{
 	u32 valB;
 };
 
-static const char str_8009a370[] = "Error: Texture no %d out of range on load -> max=%d.!!\n";
-static const char str_8009a3a8[] = "Multiple texture fail!!\n";
-static const char str_8009a3c4[] = "TEX Error: TexTab overflow %d,%d!!\n";
-static const char str_8009a3e8[] = "texFreeTexture: NULL tex!!\n";
-static const char str_8009a404[] = "TEX Error: Tryed to deallocate non-existent texture!!\n";
-
 // -------- .data start 80091910 -------- //
 // Modulate RGB with shade then RGBA with PrimColor.
 // Like G_CC_MODULATEIA, G_CC_MODULATEIA_PRIM2 but without shade alpha.
@@ -799,6 +793,8 @@ Texture *tex_load_deferred(s32 id) {
     return texture;
 }
 
+static const char str_8009a370[] = "Error: Texture no %d out of range on load -> max=%d.!!\n";
+static const char str_8009a3a8[] = "Multiple texture fail!!\n";
 // official name: texLoadTexture
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_load.s")
@@ -861,11 +857,12 @@ Texture* tex_load(s32 id, u8 param2) {
     for (frame = 0; frame < numFrames; frame++) {
         uncompressedSize = gTexLoadBuffer[(frame << 1) + 1];
         compressedSize = gTexLoadBuffer[(frame + 1) << 1] - gTexLoadBuffer[frame << 1];
-        tex = mmAlloc((uncompressedSize + 0xE4), gTexAllocTag, NULL);
+        tex = mmAlloc((uncompressedSize + 0xE4), gTexAllocTag, ALLOC_NAME("tex"));
         if (tex == NULL) {
             if ((frame + 1) == 1) {
                 return NULL;
             }
+            // STUBBED_PRINTF("Multiple texture fail!!\n");
             firstTex->animDuration = (s16) (numFrames << 8);
             frame = numFrames;
         } else {
@@ -909,6 +906,8 @@ Texture* tex_load(s32 id, u8 param2) {
     return firstTex;
 }
 #endif
+
+static const char str_8009a3c4[] = "TEX Error: TexTab overflow %d,%d!!\n";
 
 Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl) {
     Gfx *mygdl;
@@ -1135,6 +1134,7 @@ void tex_free(Texture* texture) {
     s32 i;
 
     if (texture == NULL) {
+        STUBBED_PRINTF("texFreeTexture: NULL tex!!\n");
         return;
     }
 
@@ -1158,9 +1158,11 @@ void tex_free(Texture* texture) {
             mmFree(texture);
             gTextureCache[ASSETCACHE_ID(i)] = -1;
             gTextureCache[ASSETCACHE_PTR(i)] = -1;
-            break;
+            return;
         }
     }
+
+    STUBBED_PRINTF("TEX Error: Tryed to deallocate non-existent texture!!\n");
 }
 
 void tex_render_reset(void) {

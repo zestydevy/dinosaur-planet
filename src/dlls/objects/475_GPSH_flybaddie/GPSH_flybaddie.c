@@ -227,8 +227,8 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     objsetup = mmAlloc(sizeof(UnkObjSetup), ALLOC_TAG_OBJECTS_COL, NULL);
     bzero(objsetup, sizeof(UnkObjSetup));
     // @bug: ? Doesn't set objId (ends up zero, which is OBJ_Sabre)
-    objsetup->loadFlags = OBJSETUP_LOAD_FLAG2;
-    objsetup->fadeFlags = OBJSETUP_FADE_DISABLE;
+    objsetup->loadFlags = OBJSETUP_LOAD_MANUAL;
+    objsetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     objsetup->loadDistance = 0xFF;
     objsetup->fadeDistance = 0xFF;
     objsetup->x = self->srt.transl.x;

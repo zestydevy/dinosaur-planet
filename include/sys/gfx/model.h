@@ -122,7 +122,6 @@ typedef struct {
 } FacebatchBound;
 
 typedef struct{
-    // TODO
 /*0000*/    ModelTexture *materials;
 /*0004*/    Vtx *vertices;
 /*0008*/    ModelFacebatch *faces; //contains materialID ref, joint assignments, f3dex command index, base faceID, etc.
@@ -195,8 +194,7 @@ typedef struct {
 } ModelInstanceBlendshape;
 
 typedef struct {
-    // TODO
-/*0000*/    Model *model;
+/*0000*/    Model *model; // "mod" in default.dol
 /*0004*/    Vtx *vertices[2];
 /*000C*/    MtxF *matrices[2];
 /*0014*/    ModelInstance_0x14 *unk14;

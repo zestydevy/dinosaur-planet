@@ -30,7 +30,7 @@
 #include "sys/joypad.h"
 #include "sys/newshadows.h"
 #include "sys/segment_53F00.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "dll.h"
 #include "types.h"
 #include "dlls/objects/common/vehicle.h"
@@ -45,7 +45,7 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
 #include "unktypes.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "prevent_bss_reordering.h"
 
 static void dll_210_func_1BC0(Object* player, Player_Data* arg1);
@@ -929,7 +929,7 @@ void dll_210_func_1CA8(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
     if (temp_v0 != NULL) {
         if (temp_v0 != fsa->target) {
             fsa->unk33D = 0;
-            if ((temp_v0->def->unk40->flags & 0xF) == 1) {
+            if ((temp_v0->def->lockdata->flags & 0xF) == 1) {
                 arg1->unk8A9 = 2;
                 fsa->unk33D = 1;
             }
@@ -2632,7 +2632,7 @@ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
 void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
     Object* sp3C;
     Vec3f* temp_v1;
-    ObjDefStruct40* def40;
+    ObjDefLockData* def40;
     s16 temp;
 
     if (objdata->stats->magic == 0) {
@@ -2681,7 +2681,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
             if (sp3C == NULL) {
                 break;
             }
-            def40 = sp3C->def->unk40;
+            def40 = sp3C->def->lockdata;
             if ((def40->flags & 0xF) == 3) {
                 player->unkDC = 4;
                 gDLL_3_Animation->vtbl->func17(3, player, -1);
@@ -3518,8 +3518,8 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
         objsetup = obj_alloc_setup(0x24, OBJ_projball);
-        objsetup->loadFlags = OBJSETUP_LOAD_FLAG2;
-        objsetup->fadeFlags = OBJSETUP_FADE_DISABLE;
+        objsetup->loadFlags = OBJSETUP_LOAD_MANUAL;
+        objsetup->fadeFlags = OBJSETUP_FADE_MANUAL;
         objsetup->loadDistance = 0xFF;
         objsetup->fadeDistance = 0xFF;
         if (fsa->target != NULL) {
@@ -3623,8 +3623,8 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
         temp_v0 = obj_alloc_setup(0x24, OBJ_grenade);
-        temp_v0->loadFlags = OBJSETUP_LOAD_FLAG2;
-        temp_v0->fadeFlags = OBJSETUP_FADE_DISABLE;
+        temp_v0->loadFlags = OBJSETUP_LOAD_MANUAL;
+        temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
         temp_v0->loadDistance = 0xFF;
         temp_v0->fadeDistance = 0xFF;
         temp_v0->x = player->linkedObject->positionMirror.x;
@@ -3699,8 +3699,8 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     temp_v0 = obj_alloc_setup(0x24, OBJ_icebeam);
-    temp_v0->loadFlags = OBJSETUP_LOAD_FLAG2;
-    temp_v0->fadeFlags = OBJSETUP_FADE_DISABLE;
+    temp_v0->loadFlags = OBJSETUP_LOAD_MANUAL;
+    temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
     temp_v0->loadDistance = 0xFF;
     temp_v0->fadeDistance = 0xFF;
     temp_v0->x = player->linkedObject->positionMirror.x;
@@ -4506,7 +4506,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)v1objdata->foodbag->dll)->vtbl->func[16].withOneArgS32(sp8C);
             sp88 = gDLL_2_Camera->vtbl->get_highlighted_object();
-            if ((sp88 != NULL) && ((sp88->def->unk40->flags & 0xF) == 3)) {
+            if ((sp88 != NULL) && ((sp88->def->lockdata->flags & 0xF) == 3)) {
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
                 gDLL_3_Animation->vtbl->func17(2, player, -1);
                 player->unkC4 = sp88;
@@ -10350,8 +10350,8 @@ void dll_210_func_1DC48(Object* player) {
         objsetup->base.x = player->positionMirror.x;
         objsetup->base.y = player->positionMirror.y;
         objsetup->base.z = player->positionMirror.z;
-        objsetup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
-        objsetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
+        objsetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+        objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
         objsetup->base.loadDistance = 0xFF;
         objsetup->base.fadeDistance = 0xFF;
         objsetup->timer = i * 0xA;
@@ -10369,8 +10369,8 @@ Object *dll_210_func_1DD94(Object* player, s32 arg1) {
     LFXEmitter_Setup* objsetup;
 
     objsetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
-    objsetup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
-    objsetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
+    objsetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     objsetup->base.loadDistance = 0xFF;
     objsetup->base.fadeDistance = 0xFF;
     objsetup->base.x = player->srt.transl.x;

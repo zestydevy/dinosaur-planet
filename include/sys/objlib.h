@@ -1,5 +1,5 @@
-#ifndef _SYS_SEGMENT_326A0_H
-#define _SYS_SEGMENT_326A0_H
+#ifndef _SYS_OBJLIB_H
+#define _SYS_OBJLIB_H
 
 #include "PR/ultratypes.h"
 

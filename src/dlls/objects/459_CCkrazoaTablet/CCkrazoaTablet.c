@@ -3,10 +3,10 @@
 #include "game/objects/object.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "dll.h"
 #include "dlls/objects/214_animobj.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

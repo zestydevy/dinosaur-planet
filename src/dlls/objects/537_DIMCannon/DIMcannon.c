@@ -3,7 +3,7 @@
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "sys/gfx/modgfx.h"
 
 /*0x0*/ static DLL_IModgfx* _data_0 = NULL;

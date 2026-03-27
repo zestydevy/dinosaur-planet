@@ -1,16 +1,15 @@
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "dlls/objects/210_player.h"
 #include "sys/curves.h"
 #include "dll.h"
 #include "sys/main.h"
 #include "sys/rand.h"
+#include "macros.h"
+
+// expr.c (default.dol)
 
 #define TWENTY_DEGREES 0xE38
 #define HEAD_TURN_LIMIT 0x1FFF //~45 degrees (giving a 90 degree turn range)
-
-static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
-static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
-static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n";
 
 // -------- .bss start 800b2e00 -------- //
 u8 D_800B2E00;
@@ -153,6 +152,7 @@ void func_80032CF8(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3)
 
     sp34 = func_80034804(obj, 0);
     if (sp34 == NULL) {
+        STUBBED_PRINTF(" WARNING EXPR: This Object has no Head ");
         return;
     }
 
@@ -287,6 +287,7 @@ void func_800332A4(Object* arg0, s32* arg1, s32 arg2) {
     for (i = 0; i < arg2; i++) {
         temp_v0 = func_80034804(arg0, arg1[i]);
         if (temp_v0 == NULL) {
+            STUBBED_PRINTF(" WARNING EXPR: Obj Has No Joint %i ", i);
             continue;
         }
 
@@ -326,7 +327,7 @@ s32 func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
 
 #ifndef NON_EQUIVALENT
 s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4, f32 arg5, s16 arg6, s16 arg7);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_800334A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objexpr/func_800334A4.s")
 #else
 // https://decomp.me/scratch/hIDz6
 s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4, f32 arg5, s16 arg6, s16 arg7) {
@@ -943,5 +944,7 @@ void func_80034BC0(Object* obj, HeadAnimation* arg1) {
 void func_80034D94(u8 arg0, u8 arg1) {
     if (!arg0) {
         D_800B2E00 = ((arg1 & 0xFF & 0xFF) << 7) | (D_800B2E00 & 0xFF7F);
+    } else {
+        STUBBED_PRINTF(" WARNING: Expr Contrl Flag does not exist \n");
     }
 }

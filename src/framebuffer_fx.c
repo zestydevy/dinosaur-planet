@@ -6,9 +6,7 @@
 #include "sys/rcp.h"
 #include "sys/rsp_segment.h"
 #include "sys/segment_535C0.h"
-
-static const char str_8009a480[] = "Freak a0 %x  a1 %x \n";
-static const char str_8009a498[] = " size %x ";
+#include "macros.h"
 
 // -------- .data start 80092a50 -------- //
 s32 gFbfxEffectID = 0;
@@ -41,6 +39,7 @@ void fbfx_tick(Gfx **gdl, s32 updateRate) {
     if (gFbfxEffectID > FBFX_NONE) {
         if (gFbfxEffectID == FBFX_MOTION_BLUR && gFbfxTimer == 0) {
             gFbfxTimer = gFbfxEffectDuration;
+            STUBBED_PRINTF("Freak a0 %x  a1 %x \n", gFrontFramebuffer, gBackFramebuffer); // args from default.dol (maybe wrong?)
         }
         fbfx_do_effect(gdl, gFbfxEffectDuration, gFbfxEffectID, camera_get_letterbox());
         if (gFbfxEffectID == FBFX_MOTION_BLUR) {
@@ -52,7 +51,6 @@ void fbfx_tick(Gfx **gdl, s32 updateRate) {
         } else {
             gFbfxEffectID = FBFX_NONE;
         }
-        return;
     } else {
         gFbfxTimer = 0;
     }
@@ -707,6 +705,7 @@ void fbfx_func_800402F8(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
 
 void fbfx_motion_blur(u16 *fb1, u16 *fb2, s32 width, s32 height) {
     func_8005324C(fb1, fb2, (width * height) >> 2);
+    STUBBED_PRINTF(" size %x ", (width * height) >> 2);
 }
 
 // interpolating fb1 -> fb2: y = 1 / (2^x), where x is arg4 and y is the progress from fb1 to fb2

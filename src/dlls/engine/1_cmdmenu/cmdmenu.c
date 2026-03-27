@@ -952,8 +952,8 @@ s32 cmdmenu_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
     var_s4 = 0;
     for (i = sp84; i < sp88; i++) {
         temp_s0 = temp_v0[i];
-        if ((temp_s0->def->unk40 != NULL) && (temp_s0->opacity == 0xFF) && !(temp_s0->unkAF & ARROW_FLAG_8_No_Targetting) && 
-                (temp_s0->def->unk40->flags & arg2) && (var_s4 < arg1) && (arg3 & 1)) {
+        if ((temp_s0->def->lockdata != NULL) && (temp_s0->opacity == 0xFF) && !(temp_s0->unkAF & ARROW_FLAG_8_No_Targetting) && 
+                (temp_s0->def->lockdata->flags & arg2) && (var_s4 < arg1) && (arg3 & 1)) {
             get_object_child_position(temp_s0, &sp9C, &sp98, &sp94);
             temp_fa0 = sp9C - temp_s2->srt.transl.x;
             temp_fv0 = sp98 - temp_s2->srt.transl.y;

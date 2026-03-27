@@ -87,8 +87,8 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
     } else {
         objdata->interactionRadius = 50.0f;
     }
-    if (self->def->unk40) {
-        objdata->interactionRadius = self->def->unk40->interactRadius * 4;
+    if (self->def->lockdata) {
+        objdata->interactionRadius = self->def->lockdata->interactRadius * 4;
     }
 
     //Set shadow flags

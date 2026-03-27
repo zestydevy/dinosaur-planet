@@ -75,7 +75,7 @@ typedef struct {
 /*15*/ UNK_TYPE_8 unk15;
 /*16*/ UNK_TYPE_8 unk16;
 /*17*/ UNK_TYPE_8 unk17;
-} ObjDefStruct40;
+} ObjDefLockData;
 
 typedef struct {
     s16 id;
@@ -177,7 +177,7 @@ typedef struct {
 /*34*/ ModLineReencoded* pIntersectPoints; //ignored in file (zeroed on load) (wObjList?) // TODO: confirm
 /*38*/ u8 *nextIntersectPoint; // TODO: confirm
 /*3c*/ Vec3f *nextIntersectLine; // TODO: confirm
-/*40*/ ObjDefStruct40 *unk40; //z-targetting data
+/*40*/ ObjDefLockData *lockdata; //z-targetting data ("lockdata" in default.dol)
 /*44*/ u32 flags; //ObjDataFlags44 // TODO: confirm (0x10000: uses colour multiplier?)
 /*48*/ s16 shadowType; //ObjShadowType // TODO: confirm
 /*4a*/ s16 shadowTexture; // TODO: confirm
@@ -198,7 +198,7 @@ typedef struct {
 /*5e*/ s8 unk5e;
 /*5f*/ char name[16]; // not always the full name, cutoff after 15 characters (16 including null terminator)
 /*6f*/ u8 unk6f; // class (according to default.dol)
-/*70*/ u8 numAttachPoints;
+/*70*/ u8 numAttachPoints; // "noplacements" in default.dol
 /*71*/ u8 numAnimatedFrames;
 /*72*/ u8 numSequenceBones;
 /*73*/ u8 stateVar73; //1=translucent; 3=invincible - not flags // TODO: confirm
@@ -229,7 +229,7 @@ typedef struct {
 /*94*/ s16 unk94;
 /*96*/ s16 unk96;
 /*98*/ u8 _unk98[3];
-/*9b*/ u8 unk9b; // length of unk40 (z-targetting data)
+/*9b*/ u8 numLockdata; // length of lockdata (z-targetting data)
 /*9c*/ u8 unk9c;
 /*9d*/ u8 unk9d; // camera-related angle?
 /*9e*/ u8 _unk9e[2];

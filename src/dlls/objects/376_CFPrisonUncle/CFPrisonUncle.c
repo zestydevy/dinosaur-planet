@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
@@ -254,8 +254,8 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         dustSetup->base.y = self->srt.transl.y + 15.0f;
         dustSetup->base.z = self->srt.transl.z;
         dustSetup->unk24 = -1;
-        dustSetup->base.loadFlags = OBJSETUP_LOAD_FLAG4;
-        dustSetup->base.fadeFlags = OBJSETUP_FADE_FLAG4;
+        dustSetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
+        dustSetup->base.fadeFlags = OBJSETUP_FADE_CAMERA;
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;

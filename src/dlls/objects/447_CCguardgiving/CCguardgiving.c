@@ -3,7 +3,7 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/main.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "dll.h"
 #include "dlls/objects/210_player.h"
 #include "sys/objects.h"
