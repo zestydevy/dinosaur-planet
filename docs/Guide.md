@@ -403,9 +403,6 @@ DLLs work with three types of symbols:
 
 Import symbols are special and are the same for all DLLs. These symbols don't define actual addresses and instead are indexes into the DLLSIMPORT.tab file, which contains the real address. The indexes also have their 32nd bit set (0x80000000). For simplicity, all import symbols are defined in the `export_symbol_addrs.txt` file found in the repository root and are linked with every DLL.
 
-### DLL Build Configuration
-Each DLL comes with a `dll.yaml` file that defines whether the DLL should be compiled and linked.
-
 
 ## 7. Decompilation Tools
 There are many tools out there to assist with decomp. You can find [a full list of tools and other resources in the contribution guide](../CONTRIBUTING.md#resources).

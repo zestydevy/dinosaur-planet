@@ -18,7 +18,6 @@ from typing import TextIO
 
 from dino.dll import DLL
 from dino.dll_analysis import DLL_VRAM_BASE, AnalyzedDLL, analyze_dll
-from dino.dll_build_config import DLLBuildConfig
 from dino.dll_tab import DLLTab
 from dino.dlls_txt import DLLsTxt
 from dino.dll_syms_txt import DLLSymsTxt
@@ -128,14 +127,6 @@ class DLLSplitter:
                 end = timer()
                 if self.verbose:
                     print("[{}] Parsing complete (took {:.3} seconds).".format(number, end - start))
-
-                # Create DLL config if it doesn't exist
-                if dir != None:
-                    dll_config_path = dir.joinpath("dll.yaml")
-                    if not dll_config_path.exists():
-                        dll_config = DLLBuildConfig(compile=True)
-                        with open(dll_config_path, "w") as file:
-                            dll_config.save(file)
 
                 # Extract DLL
                 if self.verbose:
