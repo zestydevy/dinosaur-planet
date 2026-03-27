@@ -165,12 +165,12 @@ enum CmdMenuTextures {
 };
 
 /*0x0*/ static s8 _data_0 = 0;
-/*0x4*/ static s8 _data_4 = 0x00;
-/*0x8*/ static s8 _data_8 = 0x01;
+/*0x4*/ static s8 _data_4 = 0;
+/*0x8*/ static s8 _data_8 = 1;
 /*0xC*/ static s16 _data_C = 0x0048;
 /*0x10*/ static s16 _data_10 = 0x0000;
 /*0x14*/ static s16 _data_14 = 0x0000;
-/*0x18*/ static s16 _data_18 = 0xffff;
+/*0x18*/ static s16 _data_18 = -1;
 /*0x1C*/ static s8 _data_1C = 0;
 /*0x20*/ static s16 _data_20 = 60;
 /*0x24*/ static s16 _data_24 = 50;
@@ -180,7 +180,7 @@ enum CmdMenuTextures {
 /*0x34*/ static char* _data_34[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
-/*0x44*/ static s16 _data_44 = 0xffff;
+/*0x44*/ static s16 _data_44 = -1;
 /*0x48*/ static s8 _data_48 = 0;
 /*0x4C*/ static s16 _data_4C = 0x0078;
 /*0x50*/ static s16 _data_50 = 0x0050;
@@ -194,19 +194,30 @@ enum CmdMenuTextures {
     0x3f800000, 0xff000000
 };
 /*0x74*/ static s8 _data_74 = 0;
-/*0x78*/ static s16 _data_78 = 0x0000;
-/*0x7C*/ static u8 _data_7C = 0x00;
+/*0x78*/ static s16 _data_78 = 0;
+/*0x7C*/ static u8 _data_7C = 0;
 /*0x80*/ static u8 _data_80 = 0;
-/*0x84*/ static s16 _data_84 = 0x0000;
+/*0x84*/ static s16 _data_84 = 0;
 /*0x88*/ static s8 _data_88 = 1;
 /*0x8C*/ static s16 _data_8C[] = {
     0x002d, 0x0040, 0x01d7, 0x05bd, 0x05ce, 0x05fc, 0x0777
 };
 /*0x9C*/ static s16 _data_9C[] = {
-    0x0578, 0x057a, 0x057d, 0x057c, 0x057b, 0x057e, 0x0579
+    TEXTABLE_578_CMDMENU_ProjectileSpell_NoBG, 
+    TEXTABLE_57A_CMDMENU_IllusionSpell_NoBG, 
+    TEXTABLE_57D_CMDMENU_ShieldSpell_NoBG, 
+    TEXTABLE_57C_CMDMENU_PortalSpell_NoBG, 
+    TEXTABLE_57B_CMDMENU_IceSpell_NoBG, 
+    TEXTABLE_57E_CMDMENU_UnkSpell_NoBG, 
+    TEXTABLE_579_CMDMENU_GrenadeSpell_NoBG
 };
 /*0xAC*/ static s16 _data_AC[] = {
-    0x057f, 0x057f, 0x0581, 0x0580, 0x0582, 0x0583
+    TEXTABLE_57F_CMDMENU_FindCommand_NoBG, 
+    TEXTABLE_57F_CMDMENU_FindCommand_NoBG, 
+    TEXTABLE_581_CMDMENU_DistractCommand_NoBG, 
+    TEXTABLE_580_CMDMENU_GuardCommand_NoBG, 
+    TEXTABLE_582_CMDMENU_FlameCommand_NoBG, 
+    TEXTABLE_583_CMDMENU_TrickyBall_NoBG
 };
 /*0xB8*/ static s16 _data_B8[10][2] = {
     {-1, -1}, 
@@ -229,10 +240,10 @@ enum CmdMenuTextures {
     0x1417, 0x1c28, 0x1404, 0x1e10, 
     0x080e, 0x1812, 0x0812, 0x1818
 };
-/*0x118*/ static s8 _data_118 = 0x00;
-/*0x11C*/ static s8 _data_11C = 0x00;
-/*0x120*/ static s8 _data_120 = 0x00;
-/*0x124*/ static s8 _data_124 = 0x00;
+/*0x118*/ static s8 _data_118 = 0;
+/*0x11C*/ static s8 _data_11C = 0;
+/*0x120*/ static s8 _data_120 = 0;
+/*0x124*/ static s8 _data_124 = 0;
 
 #define NONE 0xFFFF
 #define END {NONE, NONE, NONE, NONE, 0x0000, 0x00, 0x00}
@@ -473,7 +484,7 @@ enum CmdMenuTextures {
 };
 
 /*0x9D0*/ static s8 _data_9D0 = 0; //index of cmdmenu page currently open
-/*0x9D4*/ static u32 _data_9D4 = 0x00000000;
+/*0x9D4*/ static s8 _data_9D4 = 0;
 /*0x9D8*/ static s16 _data_9D8[] = {
     /*00*/ TEXTABLE_1BE_CMDMENU_Scroll_BG,
     /*01*/ TEXTABLE_1BF_CMDMENU_Scroll_Bottom,
@@ -532,9 +543,7 @@ enum CmdMenuTextures {
     /*54*/ TEXTABLE_268_CMDMENU_Kyte,
     /*55*/ TEXTABLE_476_CMDMENU_Grub_Empty,
     /*56*/ TEXTABLE_477_CMDMENU_Grub_Red_Full,
-    /*57*/ TEXTABLE_478_CMDMENU_Grub_Red_Half,
-    /*58*/ 0x000,
-    /*59*/ 0x000
+    /*57*/ TEXTABLE_478_CMDMENU_Grub_Red_Half
 };
 
 /*0x0*/ static f32 _bss_0; //scarabUIOpacity
@@ -567,11 +576,11 @@ enum CmdMenuTextures {
 /*0x5AC*/ static Texture* _bss_5AC;
 /*0x5B0*/ static s16 _bss_5B0;
 /*0x5B4*/ static s32 _bss_5B4;
-/*0x5B8*/ static u32 _bss_5B8;
+/*0x5B8*/ static s32 _bss_5B8;
 /*0x5BC*/ static s32 _bss_5BC;
-/*0x5C0*/ static s32 _bss_5C0[2];
+/*0x5C0*/ static s32 _bss_5C0;
 /*0x5C8*/ static Texture* _bss_5C8[58];
-/*0x6B0*/ static Texture* _bss_6B0[2]; // TODO: not an array?
+/*0x6B0*/ static Texture* _bss_6B0;
 /*0x6B8*/ static Func_80037F9C_Struct _bss_6B8[58][2];
 /*0xC28*/ static s16 _bss_C28;
 /*0xC2A*/ static s16 _bss_C2A;
@@ -586,31 +595,43 @@ enum CmdMenuTextures {
 /*0xC3E*/ static s8 _bss_C3E;
 /*0xC3F*/ static u8 _bss_C3F;
 /*0xC40*/ static s16 _bss_C40;
-/*0xC42*/ static u8 _bss_C42[2];
 /*0xC44*/ static s32 _bss_C44;
 /*0xC48*/ static s8 _bss_C48;
 /*0xC4C*/ static s32 _bss_C4C;
 /*0xC50*/ static s32 _bss_C50;
 /*0xC54*/ static s32 _bss_C54; //controllerButtons
 /*0xC58*/ static s32 _bss_C58;
-/*0xC5C*/ static u8 _bss_C5C[0x4];
 /*0xC60*/ static Func_80037F9C_Struct _bss_C60[2];
 /*0xC78*/ static s8 _bss_C78;
 /*0xC7A*/ static s16 _bss_C7A;
-/*0xC7C*/ static u16 _bss_C7C;
-/*0xC7E*/ static u16 _bss_C7E;
-/*0xC80*/ static u16 _bss_C80;
+/*0xC7C*/ static s16 _bss_C7C;
+/*0xC7E*/ static s16 _bss_C7E;
+/*0xC80*/ static s16 _bss_C80;
 /*0xC88*/ static CmdmenuItemUnkBSS _bss_C88;
-// /*0xC90*/ static u8 _bss_C90[0x10];
 
+static void dll_1_func_1410(void);
+static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void dll_1_func_1FEC(void);
+static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1);
+static s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1);
 static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
 static void dll_1_func_38E4(Gfx** gdl, Texture* tex, s32 frame);
 static s32 dll_1_func_39FC(void);
 static s32 dll_1_func_3A4C(void);
 static void dll_1_func_3A94(void);
+static void dll_1_func_3AB0(void);
+static void dll_1_func_3AD0(void);
+static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void dll_1_func_4630(Gfx **gdl);
 static void dll_1_func_474C(Gfx** gfx);
+static s32 dll_1_func_47E8(void);
+static void dll_1_func_4830(void);
+static void dll_1_func_484C(void);
+static void dll_1_func_486C(void);
+static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void dll_1_func_5608(void);
+static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
 static void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1);
 static void dll_1_func_7298(Gfx** gdl);
@@ -640,8 +661,8 @@ void dll_1_ctor(s32 arg0) {
     _bss_C34 = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
     _bss_C34->animSpeed = 0x28;
     _bss_5B8 = 0x80000;
-    _bss_5C0[0] = 0;
-    _bss_6B0[0] = tex_load_deferred(TEXTABLE_3A7_InventoryStackNumbers);
+    _bss_5C0 = 0;
+    _bss_6B0 = tex_load_deferred(TEXTABLE_3A7_InventoryStackNumbers);
     _bss_5A0 = tex_load_deferred(TEXTABLE_274_AButton_Anim);
     _bss_5A0->animSpeed = 0x28;
     
@@ -657,7 +678,7 @@ void dll_1_dtor(s32 arg0) {
             tex_free(_bss_5C8[i]);
         }
     }
-    tex_free(_bss_6B0[0]);
+    tex_free(_bss_6B0);
     tex_free(_bss_C34);
     if (_bss_598 != NULL) {
         tex_free(_bss_598);
@@ -687,25 +708,179 @@ void dll_1_func_2E0(u8 arg0) {
 }
 
 // offset: 0x308 | func: 2 | export: 0
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_308.s")
-#else
-/* static */ void dll_1_func_1410(void);
-/* static */ void dll_1_func_1FEC(void);
-
 s32 dll_1_func_308(void) {
     dll_1_func_1FEC();
     dll_1_func_1410();
     return 0;
 }
-#endif
 
 // offset: 0x35C | func: 3 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_35C.s")
+void dll_1_func_35C(void) {
+    Object* sp3C;
+    Object* sp38;
+    s16 _pad;
+    s8 sp31;
+    s16 var_v1_3;
+    s8 var_a0;
+    s8 sp30;
+
+    sp3C = get_player();
+    sp38 = get_sidekick();
+    if (sp3C != NULL) {
+        _bss_C50 = joy_get_pressed(0);
+        _bss_C58 = joy_get_buttons(0);
+        if (sp3C->unkB0 & 0x1000) {
+            joy_set_button_mask(0, 7);
+            _bss_C50 &= ~0x17;
+            _bss_C58 &= ~0x17;
+        } else if (_data_74 != 0) {
+            joy_set_button_mask(0, _data_74);
+            _bss_C50 &= ~_data_74;
+            _bss_C58 &= ~_data_74;
+        }
+        if (_bss_C48 != 0) {
+            _bss_C50 = _bss_C54;
+        } else {
+            _bss_C50 |= _bss_C54;
+            if ((sp3C->unkB0 & 0x1000) || (_data_74 != 0)) {
+                _bss_C50 |= 0x4000;
+            }
+        }
+        if ((_bss_C50 & 4) && (sp38 != NULL) && (_data_9D0 != 2)) {
+            sp30 = sp38->id == 0x25 ? 8 : 7;
+            if (dll_1_func_3718(_data_8F0[sp30].characterItems, 1) != 0) {
+                joy_set_button_mask(0, 4);
+                _data_9D4 = 2;
+                _bss_C3E = sp30;
+            }
+        } else if ((_bss_C50 & 1) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
+            sp30 = sp3C->id == 0x1F ? 0 : 1;
+            if (dll_1_func_3718(_data_8F0[sp30].characterItems, 0) != 0) {
+                joy_set_button_mask(0, 1);
+                _data_9D4 = 3;
+                _bss_C3E = sp30;
+            }
+        } else if ((_bss_C50 & 2) && (_data_9D0 != 4)) {
+            if (dll_1_func_3718(_data_8F0[6].characterItems, 0) != 0) {
+                joy_set_button_mask(0, 2);
+                _data_9D4 = 4;
+                _bss_C3E = 6;
+            }
+        } else if (_bss_C3D != -1) {
+            _bss_C3A = usedItemGamebitID;
+            _bss_C3E = _bss_C3D;
+            if ((_data_9D0 == 2) || (_data_9D0 == 5)) {
+                _data_9D4 = 7;
+            } else if ((_data_9D0 == 3) || (_data_9D0 == 6)) {
+                _data_9D4 = 6;
+            } else if ((_data_9D0 == 4) || (_data_9D0 == 7)) {
+                _data_9D4 = 7;
+            }
+        }
+        if (gDLL_2_Camera->vtbl->get_dll_ID() == 0x60) {
+            dll_1_func_3A94();
+        } else if (_data_9D4 != 0) {
+            if (dll_1_func_3A4C() != 0) {
+                switch (_data_9D4) {
+                case 3:
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5ECU, 0x7FU, NULL, NULL, 0, NULL);
+                    break;
+                case 2:
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5F0U, 0x7FU, NULL, NULL, 0, NULL);
+                    break;
+                case 4:
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5EDU, 0x7FU, NULL, NULL, 0, NULL);
+                    break;
+                default:
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28DU, 0x7FU, NULL, NULL, 0, NULL);
+                    break;
+                }
+                dll_1_func_3AB0();
+                _data_8F0[7].unk4 = 0;
+                _data_8F0[8].unk4 = 0;
+                _data_9D0 = _data_9D4;
+                _bss_C50 = 0;
+                _data_78 = 0;
+                _data_9D4 = 0;
+            } else {
+                dll_1_func_3A94();
+            }
+        }
+        dll_1_func_5608();
+        dll_1_func_3AD0();
+        dll_1_func_486C();
+        _bss_C4C = _bss_C4C + 1;
+        if (_bss_C4C >= 3) {
+            _bss_C4C = 2;
+        }
+        if ((_data_0 != 0) || (_data_9D4 != 0)) {
+            var_v1_3 = _data_18;
+        } else {
+            var_v1_3 = gDLL_2_Camera->vtbl->get_target_gametextID();
+        }
+        _data_18 = -1;
+        var_a0 = 0;
+        if (_bss_C7C >= 0) {
+            var_v1_3 = _bss_C7C;
+            _data_28 = _bss_C80;
+            _data_2C = _bss_C7E;
+            var_a0 = 1;
+        } else {
+            if (dll_1_func_47E8() != 0) {
+                _data_2C = 0xA0;
+                _data_28 = 0x1E;
+            }
+        }
+        _bss_C7C = -1;
+        if (((_bss_C58 & 0x10) || (var_a0 != 0)) && (var_v1_3 >= 0)) {
+            if (var_v1_3 != _data_44) {
+                _data_44 = var_v1_3;
+                if (*_data_34 != NULL) {
+                    mmFree(*_data_34);
+                    *_data_34 = NULL;
+                }
+            }
+            dll_1_func_484C();
+        } else {
+            dll_1_func_4830();
+            if ((dll_1_func_47E8() != 0) && (*_data_34 != NULL)) {
+                mmFree(*_data_34);
+                *_data_34 = NULL;
+                _data_44 = -1;
+            }
+        }
+        joy_set_button_mask(0, 7);
+        _data_74 = 0;
+    }
+}
 
 // offset: 0xBB8 | func: 4 | export: 2
-void dll_1_func_BB8(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_BB8.s")
+void dll_1_func_BB8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+    Object* player;
+    s32 viSize;
+    s32 sp44;
+    s32 sp40;
+
+    player = get_player();
+    if (player != NULL) {
+        if (((DLL_210_Player*)player->dll)->vtbl->func77(player, &sp44, &sp40) != 0) {
+            tex_animate(_bss_C34, &_bss_5B8, &_bss_5C0);
+            func_8003825C(gdl, _bss_C34, sp44 - 0x10, sp40 - 0x10, 0, _bss_5C0 >> 8, 0x96, 0);
+        }
+        dll_1_func_5BBC(gdl, mtxs, vtxs);
+        viSize = vi_get_current_size();
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
+            0, 
+            0, 
+            GET_VIDEO_WIDTH(viSize), 
+            GET_VIDEO_HEIGHT(viSize));
+        dll_1_func_3D28(gdl, mtxs, vtxs);
+        dll_1_func_4AD4(gdl, mtxs, vtxs);
+        dll_1_func_1614(gdl, mtxs, vtxs);
+        dll_1_func_27D8(gdl, mtxs, vtxs);
+        camera_apply_scissor(gdl);
+    }
+}
 
 // offset: 0xDC4 | func: 5 | export: 6
 s32 dll_1_func_DC4(void) {
@@ -726,8 +901,18 @@ int dll_1_func_DF4(s32 itemGamebitID) {
 }
 
 // offset: 0xE2C | func: 7 | export: 8
-s32 dll_1_func_E2C(s32 *arg0, s32 arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_E2C.s")
+s32 dll_1_func_E2C(s32* arg0, s32 arg1) {
+    s32 i;
+
+    for (i = 0; i < arg1; i++) {
+        if (usedItemGamebitID == arg0[i]) {
+            _bss_C3C = 0;
+            return arg0[i];
+        }
+    }
+
+    return -1;
+}
 
 // offset: 0xF24 | func: 8 | export: 9
 // cmdmenu_get_pageID?
@@ -853,10 +1038,47 @@ void dll_1_func_13F4(void) {
 }
 
 // offset: 0x1410 | func: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1410.s")
+static void dll_1_func_1410(void) {
+    if (_data_48 != 0) {
+        _data_5C += gUpdateRate * 8;
+        if (_data_5C > 160) {
+            _data_5C = 160;
+        }
+        _data_60 += gUpdateRate * 8;
+        if (_data_60 > 255) {
+            _data_60 = 255;
+        }
+    } else {
+        _data_60 -= gUpdateRate * 8;
+        if (_data_60 < 0) {
+            _data_60 = 0;
+        }
+        if (_data_60 < _data_5C) {
+            _data_5C = _data_60;
+        }
+    }
+    if (_data_5C == 0) {
+        if (_bss_C30 != NULL) {
+            mmFree(_bss_C30);
+            _bss_C30 = NULL;
+        }
+    } else {
+        tex_animate(_bss_5A0, &_bss_5B4, &_bss_5BC);
+        if (_bss_C50 & 0x8000) {
+            _bss_C2E += 3;
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5D5, 0x7F, NULL, NULL, 0, NULL);
+            if (_bss_C2E < _bss_C30->count) {
+                joy_set_button_mask(0, 0x8000);
+                return;
+            }
+            _bss_C2E -= 3;
+            _data_48 = 0;
+        }
+    }
+}
 
 // offset: 0x1614 | func: 17
-void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 sp10C;
     s32 y;
     s32 sp104;
@@ -1033,7 +1255,7 @@ void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x1FEC | func: 18
-void dll_1_func_1FEC(void) {
+static void dll_1_func_1FEC(void) {
     s16* sp4C;
     Object* sp48;
     InventoryItem *new_var;
@@ -1169,7 +1391,7 @@ static s16 dll_1_func_26D8(s32 arg0) {
 }
 
 // offset: 0x27D8 | func: 20
-void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
+static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s16 temp;
     Object* player;
     s32 temp_v0;
@@ -1191,7 +1413,7 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
     sp5D = 0;
     sp5C = 0;
     sidekick = get_sidekick();
-    dll_1_func_6B74(arg0, &_bss_C88);
+    dll_1_func_6B74(gdl, &_bss_C88);
     temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
     if ((_bss_598 != NULL) && (temp_v0 != _bss_5A4)) {
         tex_free(_bss_59C);
@@ -1208,8 +1430,8 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
     }
     _bss_5A4 = temp_v0;
     if (_bss_598 != NULL) {
-        func_8003825C(arg0, _bss_59C, 0xFD, 0xA9, 0, 0, 0xFF, 0);
-        func_8003825C(arg0, _bss_598, 0x106, 0xB4, 0, 0, 0xFF, 0);
+        func_8003825C(gdl, _bss_59C, 0xFD, 0xA9, 0, 0, 0xFF, 0);
+        func_8003825C(gdl, _bss_598, 0x106, 0xB4, 0, 0, 0xFF, 0);
     }
     if (sidekick != NULL) {
         ((DLL_ISidekick*)sidekick->dll)->vtbl->func26(sidekick, &sp64);
@@ -1228,11 +1450,11 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
         }
         _bss_5B0 = sp64;
         if (_bss_5A8 != NULL) {
-            func_8003825C(arg0, _bss_5AC, 0xFD, 0x79, 0, 0, 0xFF, 0);
-            func_8003825C(arg0, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, 0);
+            func_8003825C(gdl, _bss_5AC, 0xFD, 0x79, 0, 0, 0xFF, 0);
+            func_8003825C(gdl, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, 0);
         }
     }
-    dll_1_func_7298(arg0);
+    dll_1_func_7298(gdl);
     if (_bss_C44 != 0) {
         if (_data_10 != 0) {
             var_s5 = 3;
@@ -1242,7 +1464,7 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
                 var_s5 = 5;
                 var_s0 = 2;
             }
-            dll_1_func_4630(arg0);
+            dll_1_func_4630(gdl);
             _bss_C60->unkA = 0;
             var_a2 = 0x5F - (var_s5 * 0xC);
             _bss_C60[1].unk0 = NULL;
@@ -1284,21 +1506,21 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
                     if (_bss_518[var_s1] != 0) {
                         _bss_C60->unk0 = _bss_98[var_s1];
                         if (func_80041E08() != 0) {
-                            func_80037F9C(arg0, _bss_C60, 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                            func_80037F9C(gdl, _bss_C60, 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
                         } else {
-                            func_80037F9C(arg0, _bss_C60, 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                            func_80037F9C(gdl, _bss_C60, 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
                         }
                         if (_bss_558[var_s1] >= 2) {
-                            _bss_C60->unk0 = *_bss_6B0;
+                            _bss_C60->unk0 = _bss_6B0;
                             _bss_C60->unk4 = (_bss_558[var_s1] - 2) << 8;
-                            func_80037F9C(arg0, _bss_C60, 0x114, ((i * 0x18) + var_a2) + _data_4 + 9, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                            func_80037F9C(gdl, _bss_C60, 0x114, ((i * 0x18) + var_a2) + _data_4 + 9, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                         }
                     }
                 } else {
                     if (func_80041E08() != 0) {
-                        func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                     } else {
-                        func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                     }
                 }
                 var_s1 += 1;
@@ -1306,11 +1528,11 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
                     var_s1 -= _bss_C44;
                 }
             }
-            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(arg0, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            dll_1_func_474C(arg0);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            dll_1_func_474C(gdl);
         }
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
             switch (_bss_C3E) {
@@ -1359,14 +1581,14 @@ void dll_1_func_27D8(Gfx** arg0, void* arg1, void* arg2) {
         }
         if (sp5F) {
             _data_68 = tex_load_deferred(_data_9D8[sp5E]);
-            func_8003825C(arg0, _data_68, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, 0);
+            func_8003825C(gdl, _data_68, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, 0);
             tex_free(_data_68);
         }
     }
 }
 
 // offset: 0x325C | func: 21
-s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
+static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
     s32 i;
     s32 var_s7;
     s32 var_s5;
@@ -1502,7 +1724,7 @@ static s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1) {
 }
 
 // offset: 0x3880 | func: 23
-void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
+static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
     _bss_418[loadedItemIndex] = items[itemIndex].textID;
     _bss_498[loadedItemIndex] = items[itemIndex].openPage;
     _bss_4D8[loadedItemIndex] = items[itemIndex].unkB;
@@ -1528,7 +1750,7 @@ static void dll_1_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
 }
 
 // offset: 0x39FC | func: 25
-s32 dll_1_func_39FC(void) {
+static s32 dll_1_func_39FC(void) {
     if (_data_0 == 0) {
         return 0;
     }
@@ -1539,7 +1761,7 @@ s32 dll_1_func_39FC(void) {
 }
 
 // offset: 0x3A4C | func: 26
-s32 dll_1_func_3A4C(void) {
+static s32 dll_1_func_3A4C(void) {
     if (_data_0 != 0) {
         return 0;
     }
@@ -1550,17 +1772,17 @@ s32 dll_1_func_3A4C(void) {
 }
 
 // offset: 0x3A94 | func: 27
-void dll_1_func_3A94(void) {
+static void dll_1_func_3A94(void) {
     _data_0 = 0;
 }
 
 // offset: 0x3AB0 | func: 28
-void dll_1_func_3AB0(void) {
+static void dll_1_func_3AB0(void) {
     _data_0 = 1;
 }
 
 // offset: 0x3AD0 | func: 29
-void dll_1_func_3AD0(void) {
+static void dll_1_func_3AD0(void) {
     _data_4 -= gUpdateRate << _data_8;
     if (_data_4 < 0) {
         _data_4 = 0;
@@ -1614,7 +1836,7 @@ void dll_1_func_3AD0(void) {
 }
 
 // offset: 0x3D28 | func: 30
-void dll_1_func_3D28(Gfx** gdl, s32 arg1, s32 arg2) {
+static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     Gfx* dl;
     Object* sidekick;
     Object* player;
@@ -1753,7 +1975,7 @@ void dll_1_func_3D28(Gfx** gdl, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x4630 | func: 31
-void dll_1_func_4630(Gfx **gdl) {
+static void dll_1_func_4630(Gfx **gdl) {
     if (func_80041E08() != 0) {
         gDPSetScissorFrac((*gdl)++, G_SC_NON_INTERLACE, 
             qu102(314.75), 
@@ -1770,7 +1992,7 @@ void dll_1_func_4630(Gfx **gdl) {
 }
 
 // offset: 0x474C | func: 32
-void dll_1_func_474C(Gfx** gfx) {
+static void dll_1_func_474C(Gfx** gfx) {
     s32 resolution;
 
     resolution = vi_get_current_size();
@@ -1778,7 +2000,7 @@ void dll_1_func_474C(Gfx** gfx) {
 }
 
 // offset: 0x47E8 | func: 33
-s32 dll_1_func_47E8(void) {
+static s32 dll_1_func_47E8(void) {
     if (_data_1C != 0) {
         return 0;
     }
@@ -1789,17 +2011,17 @@ s32 dll_1_func_47E8(void) {
 }
 
 // offset: 0x4830 | func: 34
-void dll_1_func_4830(void) {
+static void dll_1_func_4830(void) {
     _data_1C = 0;
 }
 
 // offset: 0x484C | func: 35
-void dll_1_func_484C(void) {
+static void dll_1_func_484C(void) {
     _data_1C = 1;
 }
 
 // offset: 0x486C | func: 36
-void dll_1_func_486C(void) {
+static void dll_1_func_486C(void) {
     if ((_data_1C != 0) && (_data_84 == 0)) {
         _data_30 += gUpdateRate * 32;
         if (_data_30 > 160) {
@@ -1853,7 +2075,7 @@ void dll_1_func_486C(void) {
 
 // offset: 0x4AD4 | func: 37
 // Draws the info box at the top of the screen describing the highlighted/z-locked item.
-void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 sp10C;
     s32 y;
     s32 sp104;
@@ -2068,7 +2290,7 @@ void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x5608 | func: 38
-void dll_1_func_5608(void) {
+static void dll_1_func_5608(void) {
     Object* player;
     Object* sidekick;
     CmdmenuPlayerSidekickData sp80;
@@ -2162,7 +2384,7 @@ void dll_1_func_5608(void) {
 }
 
 // offset: 0x5BBC | func: 39
-void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     f32 var_fv1;
     u32 pad;
     u8 var_s0;
@@ -2373,7 +2595,7 @@ void dll_1_func_6B00(s16 textureID, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x6B74 | func: 44
-void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
+static void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
     if (arg1->unk4 >= 0) {
         arg1->unk4 -= gUpdateRate;
         if (arg1->unk4 < 0) {
@@ -2423,7 +2645,7 @@ void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
             0xFF, 
             (u8) arg1->unk8);
         if (arg1->unkC >= 2) {
-            _bss_C60->unk0 = *_bss_6B0;
+            _bss_C60->unk0 = _bss_6B0;
             _bss_C60->unk4 = (arg1->unkC - 2) << 8;
             func_80037F9C(gdl, _bss_C60, 
                 0x34, 
@@ -2498,7 +2720,7 @@ void dll_1_func_7208(s32 arg0) {
 }
 
 // offset: 0x7298 | func: 48
-void dll_1_func_7298(Gfx** gdl) {
+static void dll_1_func_7298(Gfx** gdl) {
     EnergyBar* temp_v0;
 
     temp_v0 = _bss_90;
