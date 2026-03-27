@@ -143,6 +143,8 @@ enum SoundID {
 
     SOUND_9D_Fire_Loop = 0x9D,          //10 HOURS of Relaxing Fireplace Sounds - Burning Fireplace & Crackling Fire Sounds
 
+    SOUND_A0 = 0xA0, // cmdmenu (spooky)
+
     SOUND_A4_Blocked_Attack = 0xA4, 
 
     SOUND_AB_Death_Chant = 0xAB,        //unused death chant (see hour footage)
@@ -244,6 +246,11 @@ enum SoundID {
 
     SOUND_289_Engine_Loop = 0x289,
     
+    SOUND_28A_Cmdmenu_MoveSelection = 0x28A,
+
+    SOUND_28B_Cmdmenu_Use = 0x28B,
+    SOUND_28C_Cmdmenu_Close = 0x28C,
+    SOUND_28D_Cmdmenu_OpenBag_HighPitch = 0x28D, // cmdmenu
     SOUND_28E = 0x28E,
     SOUND_28F = 0x28F,
     SOUND_290_Propeller_Loop = 0x290,
@@ -341,15 +348,19 @@ enum SoundID {
     SOUND_57D = 0x57D, //tesla.c
     SOUND_57E = 0x57E, //tesla.c
 
-    SOUND_5EA = 0x5EA, // used in DLL 1 cmdmenu
-    SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
-
-    SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
-
     SOUND_PICMENU_SELECT = 0x5D3,
     SOUND_PICMENU_BACK = 0x5D4, // Used in DLL 66
     SOUND_PICMENU_MOVE = 0x5D5, // Used in DLL 66
     SOUND_RECAP_MENU_SELECT = 0x5D6, // Gong when starting game
+
+    SOUND_5EA_Cmdmenu_ShowHUD = 0x5EA, // used in DLL 1 cmdmenu
+    SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
+    SOUND_5EC_Cmdmenu_OpenBag = 0x5EC, // cmdmenu
+    SOUND_5ED_Cmdmenu_OpenSpellBook = 0x5ED, // cmdmenu
+
+    SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
+
+    SOUND_5F0_Cmdmenu_OpenSidekickMenu = 0x5F0, // cmdmenu
 
     SOUND_5F6_Tumbleweed_Roll = 0x5F6, // used in DLL 227
     SOUND_5F7_Tumbleweed_Disintegrate = 0x5F7, // used in DLL 227
@@ -460,12 +471,15 @@ enum SoundID {
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
 
+    SOUND_79C_Cmdmenu_CantUse = 0x79C,
+
     SOUND_7B0 = 0x7B0,
     SOUND_7B1 = 0x7B1,
 
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
+    SOUND_814_Cmdmenu_OpenSubMenu = 0x814,
     
     SOUND_83F = 0x83F, 
     

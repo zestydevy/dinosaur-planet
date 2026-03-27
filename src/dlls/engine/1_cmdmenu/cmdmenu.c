@@ -34,9 +34,8 @@ typedef struct {
 typedef struct {
 /*0*/ InventoryItem* characterItems;
 /*4*/ s16 unk4;
-/*6*/ s16 unk6; // TODO: might not exist
-/*8*/ u32 unk8;
-/*C*/ s32 unkC;
+/*8*/ u32 mesgID; // objmesg ID sent to player
+/*C*/ s32 btnMask; // mask of joypad buttons that can be used to move to this item
 } UIUnknownCharacterStruct;
 
 typedef struct {
@@ -220,14 +219,14 @@ enum CmdMenuTextures {
     TEXTABLE_583_CMDMENU_TrickyBall_NoBG
 };
 /*0xB8*/ static s16 _data_B8[10][2] = {
-    {-1, -1}, 
-    {-1, -1}, 
-    {-1, -1}, 
-    {-1, -1}, 
-    {-1, -1}, 
-    {-1, -1}, 
-    {-1, -1}, 
-    {-1, -1}, 
+    {NO_SOUND, NO_SOUND}, 
+    {NO_SOUND, NO_SOUND}, 
+    {NO_SOUND, NO_SOUND}, 
+    {NO_SOUND, NO_SOUND}, 
+    {NO_SOUND, NO_SOUND}, 
+    {NO_SOUND, NO_SOUND}, 
+    {NO_SOUND, NO_SOUND}, 
+    {NO_SOUND, NO_SOUND}, 
     {0, 0}, 
     {0, 0}
 };
@@ -467,20 +466,20 @@ enum CmdMenuTextures {
 };
 
 /*0x8F0*/ static UIUnknownCharacterStruct _data_8F0[] = {
-    /*0*/  { _data_128, 0, 0, 0x80001, 1 }, // Krystal items
-    /*1*/  { _data_2E4, 0, 0, 0x80001, 1 }, // Sabre items
-    /*2*/  { _data_4A0, 0, 0, 0x80001, 1 }, // Foodbag actions (Krystal)
-    /*3*/  { _data_4E8, 0, 0, 0x80001, 1 }, // Foodbag actions (Sabre)
-    /*4*/  { _data_530, 0, 0, 0x80001, 1 }, // Foodbag items (Krystal)
-    /*5*/  { _data_5E4, 0, 0, 0x80001, 1 }, // Foodbag items (Sabre)
-    /*6*/  { _data_698, 0, 0, 0x80002, 2 }, // Magic spells
-    /*7*/  { _data_710, 0, 0, 0x80009, 4 }, // Sidekick commands (Kyte)
-    /*8*/  { _data_764, 0, 0, 0x80009, 4 }, // Sidekick commands (Tricky)
-    /*9*/  { _data_7B8, 0, 0, 0x80001, 1 }, // Dinosaur foodbag actions (Krystal)
-    /*10*/ { _data_7DC, 0, 0, 0x80001, 1 }, // Dinosaur foodbag actions (Sabre)
-    /*11*/ { _data_800, 0, 0, 0x80001, 1 }, // Dinosaur foodbag items (Krystal)
-    /*12*/ { _data_878, 0, 0, 0x80001, 1 }, // Dinosaur foodbag items (Sabre)
-    /*13*/ { NULL,      0, 0, 0,       0 }
+    /*0*/  { _data_128, 0, 0x80001, R_CBUTTONS }, // Krystal items
+    /*1*/  { _data_2E4, 0, 0x80001, R_CBUTTONS }, // Sabre items
+    /*2*/  { _data_4A0, 0, 0x80001, R_CBUTTONS }, // Foodbag actions (Krystal)
+    /*3*/  { _data_4E8, 0, 0x80001, R_CBUTTONS }, // Foodbag actions (Sabre)
+    /*4*/  { _data_530, 0, 0x80001, R_CBUTTONS }, // Foodbag items (Krystal)
+    /*5*/  { _data_5E4, 0, 0x80001, R_CBUTTONS }, // Foodbag items (Sabre)
+    /*6*/  { _data_698, 0, 0x80002, L_CBUTTONS }, // Magic spells
+    /*7*/  { _data_710, 0, 0x80009, D_CBUTTONS }, // Sidekick commands (Kyte)
+    /*8*/  { _data_764, 0, 0x80009, D_CBUTTONS }, // Sidekick commands (Tricky)
+    /*9*/  { _data_7B8, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag actions (Krystal)
+    /*10*/ { _data_7DC, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag actions (Sabre)
+    /*11*/ { _data_800, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag items (Krystal)
+    /*12*/ { _data_878, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag items (Sabre)
+    /*13*/ { NULL,      0, 0,       0 }
 };
 
 /*0x9D0*/ static s8 _data_9D0 = 0; //index of cmdmenu page currently open
@@ -598,9 +597,9 @@ enum CmdMenuTextures {
 /*0xC44*/ static s32 _bss_C44;
 /*0xC48*/ static s8 _bss_C48;
 /*0xC4C*/ static s32 _bss_C4C;
-/*0xC50*/ static s32 _bss_C50;
+/*0xC50*/ static s32 _bss_C50; // joypad button bitfield
 /*0xC54*/ static s32 _bss_C54; //controllerButtons
-/*0xC58*/ static s32 _bss_C58;
+/*0xC58*/ static s32 _bss_C58; // joypad button bitfield
 /*0xC60*/ static Func_80037F9C_Struct _bss_C60[2];
 /*0xC78*/ static s8 _bss_C78;
 /*0xC7A*/ static s16 _bss_C7A;
@@ -730,9 +729,9 @@ void dll_1_func_35C(void) {
         _bss_C50 = joy_get_pressed(0);
         _bss_C58 = joy_get_buttons(0);
         if (sp3C->unkB0 & 0x1000) {
-            joy_set_button_mask(0, 7);
-            _bss_C50 &= ~0x17;
-            _bss_C58 &= ~0x17;
+            joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+            _bss_C50 &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+            _bss_C58 &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         } else if (_data_74 != 0) {
             joy_set_button_mask(0, _data_74);
             _bss_C50 &= ~_data_74;
@@ -743,26 +742,26 @@ void dll_1_func_35C(void) {
         } else {
             _bss_C50 |= _bss_C54;
             if ((sp3C->unkB0 & 0x1000) || (_data_74 != 0)) {
-                _bss_C50 |= 0x4000;
+                _bss_C50 |= B_BUTTON;
             }
         }
-        if ((_bss_C50 & 4) && (sp38 != NULL) && (_data_9D0 != 2)) {
-            sp30 = sp38->id == 0x25 ? 8 : 7;
+        if ((_bss_C50 & D_CBUTTONS) && (sp38 != NULL) && (_data_9D0 != 2)) {
+            sp30 = sp38->id == OBJ_Kyte ? 8 : 7;
             if (dll_1_func_3718(_data_8F0[sp30].characterItems, 1) != 0) {
-                joy_set_button_mask(0, 4);
+                joy_set_button_mask(0, D_CBUTTONS);
                 _data_9D4 = 2;
                 _bss_C3E = sp30;
             }
-        } else if ((_bss_C50 & 1) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
-            sp30 = sp3C->id == 0x1F ? 0 : 1;
+        } else if ((_bss_C50 & R_CBUTTONS) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
+            sp30 = sp3C->id == OBJ_Krystal ? 0 : 1;
             if (dll_1_func_3718(_data_8F0[sp30].characterItems, 0) != 0) {
-                joy_set_button_mask(0, 1);
+                joy_set_button_mask(0, R_CBUTTONS);
                 _data_9D4 = 3;
                 _bss_C3E = sp30;
             }
-        } else if ((_bss_C50 & 2) && (_data_9D0 != 4)) {
+        } else if ((_bss_C50 & L_CBUTTONS) && (_data_9D0 != 4)) {
             if (dll_1_func_3718(_data_8F0[6].characterItems, 0) != 0) {
-                joy_set_button_mask(0, 2);
+                joy_set_button_mask(0, L_CBUTTONS);
                 _data_9D4 = 4;
                 _bss_C3E = 6;
             }
@@ -777,22 +776,22 @@ void dll_1_func_35C(void) {
                 _data_9D4 = 7;
             }
         }
-        if (gDLL_2_Camera->vtbl->get_dll_ID() == 0x60) {
+        if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
             dll_1_func_3A94();
         } else if (_data_9D4 != 0) {
             if (dll_1_func_3A4C() != 0) {
                 switch (_data_9D4) {
                 case 3:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5ECU, 0x7FU, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EC_Cmdmenu_OpenBag, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
                 case 2:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5F0U, 0x7FU, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5F0_Cmdmenu_OpenSidekickMenu, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
                 case 4:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5EDU, 0x7FU, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5ED_Cmdmenu_OpenSpellBook, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
                 default:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28DU, 0x7FU, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28D_Cmdmenu_OpenBag_HighPitch, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
                 }
                 dll_1_func_3AB0();
@@ -832,7 +831,7 @@ void dll_1_func_35C(void) {
             }
         }
         _bss_C7C = -1;
-        if (((_bss_C58 & 0x10) || (var_a0 != 0)) && (var_v1_3 >= 0)) {
+        if (((_bss_C58 & R_TRIG) || (var_a0 != 0)) && (var_v1_3 >= 0)) {
             if (var_v1_3 != _data_44) {
                 _data_44 = var_v1_3;
                 if (*_data_34 != NULL) {
@@ -849,7 +848,7 @@ void dll_1_func_35C(void) {
                 _data_44 = -1;
             }
         }
-        joy_set_button_mask(0, 7);
+        joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         _data_74 = 0;
     }
 }
@@ -1064,11 +1063,11 @@ static void dll_1_func_1410(void) {
         }
     } else {
         tex_animate(_bss_5A0, &_bss_5B4, &_bss_5BC);
-        if (_bss_C50 & 0x8000) {
+        if (_bss_C50 & A_BUTTON) {
             _bss_C2E += 3;
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x5D5, 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             if (_bss_C2E < _bss_C30->count) {
-                joy_set_button_mask(0, 0x8000);
+                joy_set_button_mask(0, A_BUTTON);
                 return;
             }
             _bss_C2E -= 3;
@@ -1107,25 +1106,25 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     y = _data_54 << 2;
     height = _bss_C2C << 2;
     
-    dll_1_func_38E4(&dl, _bss_5C8[6], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104, 
         y, 
         sp10C + sp104, 
         y + height, 
         G_TX_RENDERTILE, 
-        0, 0, 
+        qs105(0), qs105(0), 
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = 1;
     
-    dll_1_func_38E4(&dl, _bss_5C8[5], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104 - (16 << 2), 
         y, 
         sp10C - sp104, 
         y + height, 
         G_TX_RENDERTILE, 
-        0, 0, 
+        qs105(0), qs105(0), 
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = 1;
     
@@ -1135,13 +1134,13 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sp10C + sp104 + (16 << 2), 
         y + height, 
         G_TX_RENDERTILE, 
-        qs105(15), 0, 
+        qs105(15), qs105(0), 
         qs510(-1), qs510(1));
     gDLBuilder->needsPipeSync = 1;
 
     sp104 += (16 << 2);
     
-    dll_1_func_38E4(&dl, _bss_5C8[7], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
     dl_set_prim_color(&dl, 255, 128, 128, 128);
     
     tempY = y;
@@ -1151,7 +1150,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sp10C + sp104, 
         tempY + (8 << 2), 
         G_TX_RENDERTILE, 
-        0, qs105(7), 
+        qs105(0), qs105(7), 
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = 1;
     
@@ -1162,37 +1161,37 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sp10C + sp104, 
         tempY + (8 << 2), 
         G_TX_RENDERTILE, 
-        0, 0, 
+        qs105(0), qs105(0), 
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = 1;
     
     dl_set_prim_color(&dl, 255, 255, 255, (u8) _data_5C);
 
     tempY = y - (11 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[4], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
         sp10C + sp104, 
         tempY + (16 << 2), 
         G_TX_RENDERTILE, 
-        0, qs105(15.9688), 
+        qs105(0), qs105(15.9688), 
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = 1;
     
     tempY = (y + height) - (4 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[4], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
         sp10C + sp104, 
         tempY + (16 << 2), 
         G_TX_RENDERTILE, 
-        0, qs105(15.9688), 
+        qs105(0), qs105(15.9688), 
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = 1;
     
-    dll_1_func_38E4(&dl, _bss_5C8[3], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++,
         sp10C - sp104 - (16 << 2),
@@ -1200,7 +1199,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sp10C - sp104, 
         tempY + (16 << 2), 
         G_TX_RENDERTILE, 
-        0, qs105(15.9688), 
+        qs105(0), qs105(15.9688), 
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = 1;
     
@@ -1221,7 +1220,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sp10C - sp104, 
         tempY + (16 << 2), 
         G_TX_RENDERTILE, 
-        0, qs105(15.9688), 
+        qs105(0), qs105(15.9688), 
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = 1;
     
@@ -1268,7 +1267,7 @@ static void dll_1_func_1FEC(void) {
     sp37 = 0;
     if (sp48 != NULL) {
         if (sp48->unkB0 & 0x1000) {
-            joy_set_button_mask(0, 7U);
+            joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         } else if (_data_74 != 0) {
             joy_set_button_mask(0, _data_74);
         }
@@ -1277,17 +1276,17 @@ static void dll_1_func_1FEC(void) {
         } else {
             _bss_C50 = joy_get_pressed(0);
             if ((sp48->unkB0 & 0x1000) || (_data_74 != 0)) {
-                _bss_C50 = _bss_C50 | 0x4000;
+                _bss_C50 |= B_BUTTON;
             }
         }
         switch (_bss_C3C) {
         case 0:
             break;
         case 1:
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x79CU, 0x7FU, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_79C_Cmdmenu_CantUse, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
         case 2:
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x814U, 0x7FU, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_814_Cmdmenu_OpenSubMenu, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
         }
         usedItemGamebitID = -1;
@@ -1295,8 +1294,8 @@ static void dll_1_func_1FEC(void) {
         _bss_C3D = -1;
         new_var = _data_8F0[_bss_C3E].characterItems;
         sp4C = &_data_8F0[_bss_C3E].unk4;
-        sp40 = _data_8F0[_bss_C3E].unk8;
-        sp3C = _data_8F0[_bss_C3E].unkC;
+        sp40 = _data_8F0[_bss_C3E].mesgID;
+        sp3C = _data_8F0[_bss_C3E].btnMask;
         if ((_bss_C3E == 7) || (_bss_C3E == 8)) {
             sp37 = 1;
         }
@@ -1313,14 +1312,14 @@ static void dll_1_func_1FEC(void) {
         _data_18 = _bss_418[_bss_C40];
         if (dll_1_func_39FC() != 0) {
             if ((_bss_C50 & sp3C) && (_data_4 < 8) && (_data_7C == 0)) {
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28AU, 0x7FU, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28A_Cmdmenu_MoveSelection, MAX_VOLUME, NULL, NULL, 0, NULL);
                 _data_78 += 1;
                 if (_data_4 != 0) {
                     _data_7C = 1;
                 }
             }
-            if (_data_78 >= 0x100) {
-                _data_78 = 0xFF;
+            if (_data_78 > 255) {
+                _data_78 = 255;
             }
             if (_bss_C7A != -1) {
                 _bss_C40 = _bss_C7A;
@@ -1342,26 +1341,26 @@ static void dll_1_func_1FEC(void) {
                         _bss_C40 = 0;
                     }
                 }
-            } else if (_bss_C50 & 0x4000) {
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28CU, 0x7FU, NULL, NULL, 0, NULL);
+            } else if (_bss_C50 & B_BUTTON) {
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28C_Cmdmenu_Close, MAX_VOLUME, NULL, NULL, 0, NULL);
                 dll_1_func_3A94();
-            } else if ((_bss_C50 & 0x8000) && (dll_1_func_39FC() != 0)) {
+            } else if ((_bss_C50 & A_BUTTON) && (dll_1_func_39FC() != 0)) {
                 sp38 = _bss_318[_bss_C40];
                 if (sp37 == 0) {
                     obj_send_mesg(sp48, sp40, NULL, (void* ) sp38);
                     usedItemGamebitID = (s16) sp38;
                     _bss_C3C = _bss_4D8[_bss_C40];
                     _bss_C3D = _bss_498[_bss_C40];
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28BU, 0x7FU, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                     dll_1_func_3A94();
                 } else {
                     if (_bss_518[_bss_C40] != 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x28BU, 0x7FU, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                         dll_1_func_3A94();
                         usedItemGamebitID = (s16) sp38;
                         _bss_C3C = 0;
                     } else {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, 0xA0U, 0x7FU, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_A0, MAX_VOLUME, NULL, NULL, 0, NULL);
                         usedItemGamebitID = -1;
                         _bss_C3C = 0;
                     }
@@ -1373,7 +1372,7 @@ static void dll_1_func_1FEC(void) {
             _bss_C4C = 0;
             _data_78 = 0;
         } else {
-            joy_set_button_mask(0, 0xC000U);
+            joy_set_button_mask(0, A_BUTTON | B_BUTTON);
         }
         *sp4C = _bss_C40;
     }
@@ -1528,10 +1527,10 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     var_s1 -= _bss_C44;
                 }
             }
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 0xFFU, 0xFFU, 0xFFU, _data_10);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
+            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
             dll_1_func_474C(gdl);
         }
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
@@ -2103,7 +2102,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     y = _data_28 << 2;
     height = _bss_C2A << 2;
 
-    dll_1_func_38E4(&dl, _bss_5C8[6], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104,
         /*uly*/ y,
@@ -2115,7 +2114,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
 
-    dll_1_func_38E4(&dl, _bss_5C8[5], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
         /*lrx*/ sp10C - sp104 - (16 << 2),
         /*lry*/ y,
@@ -2140,7 +2139,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     sp104 += (16 << 2);
 
     if (_bss_C2A >= 9) {
-        dll_1_func_38E4(&dl, _bss_5C8[7], 0);
+        dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
         dl_set_prim_color(&dl, 255, 128, 128, 128);
         
         tempY = y;
@@ -2171,7 +2170,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
 
     tempY = y - (11 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[4], _data_120);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104,
         /*uly*/ tempY,
@@ -2184,7 +2183,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
 
     tempY = (y + height) - (4 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[4], _data_124);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104,
         /*uly*/ tempY,
@@ -2196,7 +2195,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
 
-    dll_1_func_38E4(&dl, _bss_5C8[3], 0);
+    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104 - (16 << 2),
@@ -2322,15 +2321,15 @@ static void dll_1_func_5608(void) {
     if (_bss_8B < var_s2) {
         _bss_8B = var_s2;
     }
-    if (_bss_C50 & 0x10) {
-        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EA, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (_bss_C50 & R_TRIG) {
+        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EA_Cmdmenu_ShowHUD, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if ((_bss_C58 & 0x10) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || ((_data_80 != 0) && (camera_get_letterbox() == 0))) {
+    if ((_bss_C58 & R_TRIG) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || ((_data_80 != 0) && (camera_get_letterbox() == 0))) {
         sp80.items[5] = _bss_38.unk14 + 1;
     } else {
         sp80.items[5] = _bss_38.unk14;
     }
-    if (_bss_C58 & 0x10) {
+    if (_bss_C58 & R_TRIG) {
         _bss_8C += 8.5f * gUpdateRateF;
         if (_bss_8C > 255.0f) {
             _bss_8C = 255.0f;
