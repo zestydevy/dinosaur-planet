@@ -71,7 +71,7 @@ DLL_8 *gDLL_8 = NULL;
 DLL_9_newclouds *gDLL_9_Newclouds = NULL;
 DLL_10_newstars *gDLL_10_Newstars = NULL;
 DLL_12_minic *gDLL_12_Minic = NULL;
-DLL_1_UI *gDLL_1_UI = NULL;
+DLL_1_cmdmenu *gDLL_1_cmdmenu = NULL;
 DLL_4_race *gDLL_4_Race = NULL;
 DLL_5_AMSEQ *gDLL_5_AMSEQ = NULL;
 DLL_5_AMSEQ *gDLL_5_AMSEQ2 = NULL;
@@ -222,7 +222,7 @@ void game_init(void) {
         gDLL_31_Flash = dll_load_deferred(DLL_ID_FLASH, 2);
         gDLL_28_ScreenFade = dll_load_deferred(DLL_ID_SCREEN_FADE, 4);
     } else {
-        gDLL_1_UI = dll_load_deferred(DLL_ID_UI, 15);
+        gDLL_1_cmdmenu = dll_load_deferred(DLL_ID_CMDMENU, 15);
         gDLL_2_Camera = dll_load_deferred(DLL_ID_CAMERA, 23);
         gDLL_23 = dll_load_deferred(DLL_ID_23, 8);  // 0x12 in SFA
         gDLL_18_objfsa = dll_load_deferred(DLL_ID_18, 22); // 0x0F in SFA

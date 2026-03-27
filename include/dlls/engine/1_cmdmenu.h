@@ -26,7 +26,7 @@ typedef enum {
     PAGE_Foodbag = 6
 } Cmdmenu_Pages;
 
-DLL_INTERFACE(DLL_1_UI) {
+DLL_INTERFACE(DLL_1_cmdmenu) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ s32 (*func_308)(void);
 /*1*/ void (*func_35C)(void);

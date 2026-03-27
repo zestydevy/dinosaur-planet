@@ -97,7 +97,7 @@ void CCgrub_control(Object* self) {
             if (((DLL_IFoodbag*)sp54->dll)->vtbl->is_obtained(sp54) != 0) {
                 ((DLL_IFoodbag*)sp54->dll)->vtbl->collect_food(sp54, SIDEFOOD_Blue_Grubs);
             } else {
-                gDLL_1_UI->vtbl->func_69F8(0x23, 0x12c, main_increment_bits(BIT_CloudRunner_Grubs));
+                gDLL_1_cmdmenu->vtbl->func_69F8(0x23, 0x12c, main_increment_bits(BIT_CloudRunner_Grubs));
             }
             objdata->unk109 = 0xA;
         }

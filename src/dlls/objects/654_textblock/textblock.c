@@ -125,8 +125,8 @@ void Textblock_tick(Object* self) {
     }
     
     //Check if player used Krazoa Translator (@bug?: no player distance check?)
-    if (((DLL_1_UI*)gDLL_1_UI)->vtbl->func_DF4(BIT_Krazoa_Translator)) {
-        ((DLL_3_animation*)gDLL_3_Animation)->vtbl->func17(objData->seqIndex, self, -1);
+    if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Krazoa_Translator)) {
+        gDLL_3_Animation->vtbl->func17(objData->seqIndex, self, -1);
         objData->activated = TRUE;
         return;
     }

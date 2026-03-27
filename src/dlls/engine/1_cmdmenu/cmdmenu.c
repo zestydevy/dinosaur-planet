@@ -1,6 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "dlls/engine/1_ui.h"
+#include "dlls/engine/1_cmdmenu.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/objects/210_player.h"
@@ -23,7 +23,7 @@
 #include "gbi_extra.h"
 #include "prevent_bss_reordering2.h"
 
-// 9slcommandmenu.c (default.dol)
+// official filename: 9slcommandmenu.c (default.dol)
 
 typedef struct {
 /*0*/ Texture* unk0;
@@ -611,36 +611,36 @@ enum CmdMenuTextures {
 /*0xC80*/ static s16 _bss_C80;
 /*0xC88*/ static CmdmenuItemUnkBSS _bss_C88;
 
-static void dll_1_func_1410(void);
-static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void dll_1_func_1FEC(void);
-static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1);
-static s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1);
-static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
-static void dll_1_func_38E4(Gfx** gdl, Texture* tex, s32 frame);
-static s32 dll_1_func_39FC(void);
-static s32 dll_1_func_3A4C(void);
-static void dll_1_func_3A94(void);
-static void dll_1_func_3AB0(void);
-static void dll_1_func_3AD0(void);
-static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void dll_1_func_4630(Gfx **gdl);
-static void dll_1_func_474C(Gfx** gfx);
-static s32 dll_1_func_47E8(void);
-static void dll_1_func_4830(void);
-static void dll_1_func_484C(void);
-static void dll_1_func_486C(void);
-static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void dll_1_func_5608(void);
-static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
-static void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1);
-static void dll_1_func_7298(Gfx** gdl);
-void dll_1_func_7550(void);
+static void cmdmenu_func_1410(void);
+static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_func_1FEC(void);
+static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1);
+static s32 cmdmenu_func_3718(InventoryItem* arg0, s8 arg1);
+static void cmdmenu_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
+static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame);
+static s32 cmdmenu_func_39FC(void);
+static s32 cmdmenu_func_3A4C(void);
+static void cmdmenu_func_3A94(void);
+static void cmdmenu_func_3AB0(void);
+static void cmdmenu_func_3AD0(void);
+static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_func_4630(Gfx **gdl);
+static void cmdmenu_func_474C(Gfx** gfx);
+static s32 cmdmenu_func_47E8(void);
+static void cmdmenu_func_4830(void);
+static void cmdmenu_func_484C(void);
+static void cmdmenu_func_486C(void);
+static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_func_5608(void);
+static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0);
+static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1);
+static void cmdmenu_func_7298(Gfx** gdl);
+void cmdmenu_func_7550(void);
 
 // offset: 0x0 | ctor
-void dll_1_ctor(s32 arg0) {
+void cmdmenu_ctor(s32 arg0) {
     s32 i;
 
     _bss_C78 = -1;
@@ -668,11 +668,11 @@ void dll_1_ctor(s32 arg0) {
     _bss_5A0 = tex_load_deferred(TEXTABLE_274_AButton_Anim);
     _bss_5A0->animSpeed = 0x28;
     
-    dll_1_func_69CC(&_bss_C88);
+    cmdmenu_func_69CC(&_bss_C88);
 }
 
 // offset: 0x180 | dtor
-void dll_1_dtor(s32 arg0) {
+void cmdmenu_dtor(s32 arg0) {
     s32 i;
 
     for (i = 0; i < (s32)ARRAYCOUNT(_bss_5C8); i++) {
@@ -700,24 +700,24 @@ void dll_1_dtor(s32 arg0) {
 }
 
 // offset: 0x2B8 | func: 0 | export: 15
-void dll_1_func_2B8(u16 arg0) {
+void cmdmenu_func_2B8(u16 arg0) {
     _data_74 = arg0;
 }
 
 // offset: 0x2E0 | func: 1 | export: 19
-void dll_1_func_2E0(u8 arg0) {
+void cmdmenu_func_2E0(u8 arg0) {
     _data_80 = arg0;
 }
 
 // offset: 0x308 | func: 2 | export: 0
-s32 dll_1_func_308(void) {
-    dll_1_func_1FEC();
-    dll_1_func_1410();
+s32 cmdmenu_func_308(void) {
+    cmdmenu_func_1FEC();
+    cmdmenu_func_1410();
     return 0;
 }
 
 // offset: 0x35C | func: 3 | export: 1
-void dll_1_func_35C(void) {
+void cmdmenu_func_35C(void) {
     Object* sp3C;
     Object* sp38;
     s16 _pad;
@@ -750,20 +750,20 @@ void dll_1_func_35C(void) {
         }
         if ((_bss_C50 & D_CBUTTONS) && (sp38 != NULL) && (_data_9D0 != 2)) {
             sp30 = sp38->id == OBJ_Kyte ? 8 : 7;
-            if (dll_1_func_3718(_data_8F0[sp30].characterItems, 1) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[sp30].characterItems, 1) != 0) {
                 joy_set_button_mask(0, D_CBUTTONS);
                 _data_9D4 = 2;
                 _bss_C3E = sp30;
             }
         } else if ((_bss_C50 & R_CBUTTONS) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
             sp30 = sp3C->id == OBJ_Krystal ? 0 : 1;
-            if (dll_1_func_3718(_data_8F0[sp30].characterItems, 0) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[sp30].characterItems, 0) != 0) {
                 joy_set_button_mask(0, R_CBUTTONS);
                 _data_9D4 = 3;
                 _bss_C3E = sp30;
             }
         } else if ((_bss_C50 & L_CBUTTONS) && (_data_9D0 != 4)) {
-            if (dll_1_func_3718(_data_8F0[6].characterItems, 0) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[6].characterItems, 0) != 0) {
                 joy_set_button_mask(0, L_CBUTTONS);
                 _data_9D4 = 4;
                 _bss_C3E = 6;
@@ -780,9 +780,9 @@ void dll_1_func_35C(void) {
             }
         }
         if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
-            dll_1_func_3A94();
+            cmdmenu_func_3A94();
         } else if (_data_9D4 != 0) {
-            if (dll_1_func_3A4C() != 0) {
+            if (cmdmenu_func_3A4C() != 0) {
                 switch (_data_9D4) {
                 case 3:
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EC_Cmdmenu_OpenBag, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -797,7 +797,7 @@ void dll_1_func_35C(void) {
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28D_Cmdmenu_OpenBag_HighPitch, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
                 }
-                dll_1_func_3AB0();
+                cmdmenu_func_3AB0();
                 _data_8F0[7].unk4 = 0;
                 _data_8F0[8].unk4 = 0;
                 _data_9D0 = _data_9D4;
@@ -805,12 +805,12 @@ void dll_1_func_35C(void) {
                 _data_78 = 0;
                 _data_9D4 = 0;
             } else {
-                dll_1_func_3A94();
+                cmdmenu_func_3A94();
             }
         }
-        dll_1_func_5608();
-        dll_1_func_3AD0();
-        dll_1_func_486C();
+        cmdmenu_func_5608();
+        cmdmenu_func_3AD0();
+        cmdmenu_func_486C();
         _bss_C4C = _bss_C4C + 1;
         if (_bss_C4C >= 3) {
             _bss_C4C = 2;
@@ -828,7 +828,7 @@ void dll_1_func_35C(void) {
             _data_2C = _bss_C7E;
             var_a0 = 1;
         } else {
-            if (dll_1_func_47E8() != 0) {
+            if (cmdmenu_func_47E8() != 0) {
                 _data_2C = 0xA0;
                 _data_28 = 0x1E;
             }
@@ -842,10 +842,10 @@ void dll_1_func_35C(void) {
                     *_data_34 = NULL;
                 }
             }
-            dll_1_func_484C();
+            cmdmenu_func_484C();
         } else {
-            dll_1_func_4830();
-            if ((dll_1_func_47E8() != 0) && (*_data_34 != NULL)) {
+            cmdmenu_func_4830();
+            if ((cmdmenu_func_47E8() != 0) && (*_data_34 != NULL)) {
                 mmFree(*_data_34);
                 *_data_34 = NULL;
                 _data_44 = -1;
@@ -857,7 +857,7 @@ void dll_1_func_35C(void) {
 }
 
 // offset: 0xBB8 | func: 4 | export: 2
-void dll_1_func_BB8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+void cmdmenu_func_BB8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     Object* player;
     s32 viSize;
     s32 sp44;
@@ -869,23 +869,23 @@ void dll_1_func_BB8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             tex_animate(_bss_C34, &_bss_5B8, &_bss_5C0);
             func_8003825C(gdl, _bss_C34, sp44 - 0x10, sp40 - 0x10, 0, _bss_5C0 >> 8, 0x96, 0);
         }
-        dll_1_func_5BBC(gdl, mtxs, vtxs);
+        cmdmenu_func_5BBC(gdl, mtxs, vtxs);
         viSize = vi_get_current_size();
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
             0, 
             0, 
             GET_VIDEO_WIDTH(viSize), 
             GET_VIDEO_HEIGHT(viSize));
-        dll_1_func_3D28(gdl, mtxs, vtxs);
-        dll_1_func_4AD4(gdl, mtxs, vtxs);
-        dll_1_func_1614(gdl, mtxs, vtxs);
-        dll_1_func_27D8(gdl, mtxs, vtxs);
+        cmdmenu_func_3D28(gdl, mtxs, vtxs);
+        cmdmenu_func_4AD4(gdl, mtxs, vtxs);
+        cmdmenu_func_1614(gdl, mtxs, vtxs);
+        cmdmenu_func_27D8(gdl, mtxs, vtxs);
         camera_apply_scissor(gdl);
     }
 }
 
 // offset: 0xDC4 | func: 5 | export: 6
-s32 dll_1_func_DC4(void) {
+s32 cmdmenu_func_DC4(void) {
     if (usedItemGamebitID >= 0) {
         return 1;
     }
@@ -894,7 +894,7 @@ s32 dll_1_func_DC4(void) {
 
 // offset: 0xDF4 | func: 6 | export: 7
 //cmdmenu_was_item_selected
-int dll_1_func_DF4(s32 itemGamebitID) {
+int cmdmenu_func_DF4(s32 itemGamebitID) {
     if (itemGamebitID == usedItemGamebitID) {
         _bss_C3C = 0;
         return TRUE;
@@ -903,7 +903,7 @@ int dll_1_func_DF4(s32 itemGamebitID) {
 }
 
 // offset: 0xE2C | func: 7 | export: 8
-s32 dll_1_func_E2C(s32* arg0, s32 arg1) {
+s32 cmdmenu_func_E2C(s32* arg0, s32 arg1) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -918,17 +918,17 @@ s32 dll_1_func_E2C(s32* arg0, s32 arg1) {
 
 // offset: 0xF24 | func: 8 | export: 9
 // cmdmenu_get_pageID?
-s8 dll_1_func_F24(void) {
+s8 cmdmenu_func_F24(void) {
     return _data_9D0;
 }
 
 // offset: 0xF40 | func: 9 | export: 10
-s16 dll_1_func_F40(void) {
+s16 cmdmenu_func_F40(void) {
     return _bss_C3A;
 }
 
 // offset: 0xF5C | func: 10 | export: 5
-s32 dll_1_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
+s32 cmdmenu_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
     s32 _pad[2];
     f32 temp_fa0;
     f32 temp_fa1;
@@ -989,7 +989,7 @@ s32 dll_1_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
 }
 
 // offset: 0x1290 | func: 11 | export: 3
-void dll_1_func_1290(void) {
+void cmdmenu_func_1290(void) {
     s32 i;
     UIUnknownCharacterStruct *temp;
 
@@ -1002,19 +1002,19 @@ void dll_1_func_1290(void) {
 }
 
 // offset: 0x12EC | func: 12 | export: 4
-void dll_1_func_12EC(void) {
+void cmdmenu_func_12EC(void) {
     _bss_88 = 1;
 }
 
 // offset: 0x130C | func: 13 | export: 12
-void dll_1_func_130C(u32 arg0, u32 arg1, u32 arg2) {
+void cmdmenu_func_130C(u32 arg0, u32 arg1, u32 arg2) {
     _bss_C7C = arg0;
     _bss_C7E = arg1;
     _bss_C80 = arg2;
 }
 
 // offset: 0x1338 | func: 14 | export: 13
-void dll_1_func_1338(s32 gametextID, s32 arg1, s32 arg2) {
+void cmdmenu_func_1338(s32 gametextID, s32 arg1, s32 arg2) {
     if (_bss_C30 == NULL) {
         _bss_5B4 = 0x40000;
         _bss_5BC = 0;
@@ -1028,12 +1028,12 @@ void dll_1_func_1338(s32 gametextID, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x13F4 | func: 15 | export: 14
-void dll_1_func_13F4(void) {
+void cmdmenu_func_13F4(void) {
     _data_48 = 0;
 }
 
 // offset: 0x1410 | func: 16
-static void dll_1_func_1410(void) {
+static void cmdmenu_func_1410(void) {
     if (_data_48 != 0) {
         _data_5C += gUpdateRate * 8;
         if (_data_5C > 160) {
@@ -1073,7 +1073,7 @@ static void dll_1_func_1410(void) {
 }
 
 // offset: 0x1614 | func: 17
-static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 sp10C;
     s32 y;
     s32 sp104;
@@ -1102,7 +1102,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     y = _data_54 << 2;
     height = _bss_C2C << 2;
     
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104, 
         y, 
@@ -1113,7 +1113,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = 1;
     
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104 - (16 << 2), 
         y, 
@@ -1136,7 +1136,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     sp104 += (16 << 2);
     
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
     dl_set_prim_color(&dl, 255, 128, 128, 128);
     
     tempY = y;
@@ -1164,7 +1164,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl_set_prim_color(&dl, 255, 255, 255, (u8) _data_5C);
 
     tempY = y - (11 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
@@ -1176,7 +1176,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
     
     tempY = (y + height) - (4 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
@@ -1187,7 +1187,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = 1;
     
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++,
         sp10C - sp104 - (16 << 2),
@@ -1250,7 +1250,7 @@ static void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x1FEC | func: 18
-static void dll_1_func_1FEC(void) {
+static void cmdmenu_func_1FEC(void) {
     s16* sp4C;
     Object* sp48;
     InventoryItem *new_var;
@@ -1296,17 +1296,17 @@ static void dll_1_func_1FEC(void) {
             sp37 = 1;
         }
         _bss_C40 = *sp4C;
-        _bss_C44 = dll_1_func_325C(new_var, sp37);
+        _bss_C44 = cmdmenu_func_325C(new_var, sp37);
         if (_bss_C44 == 0) {
             _data_9D0 = 0;
-            dll_1_func_3A94();
+            cmdmenu_func_3A94();
             return;
         }
         if (_bss_C40 >= _bss_C44) {
             _bss_C40 = 0;
         }
         _data_18 = _bss_418[_bss_C40];
-        if (dll_1_func_39FC() != 0) {
+        if (cmdmenu_func_39FC() != 0) {
             if ((_bss_C50 & sp3C) && (_data_4 < 8) && (_data_7C == 0)) {
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28A_Cmdmenu_MoveSelection, MAX_VOLUME, NULL, NULL, 0, NULL);
                 _data_78 += 1;
@@ -1339,8 +1339,8 @@ static void dll_1_func_1FEC(void) {
                 }
             } else if (_bss_C50 & B_BUTTON) {
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28C_Cmdmenu_Close, MAX_VOLUME, NULL, NULL, 0, NULL);
-                dll_1_func_3A94();
-            } else if ((_bss_C50 & A_BUTTON) && (dll_1_func_39FC() != 0)) {
+                cmdmenu_func_3A94();
+            } else if ((_bss_C50 & A_BUTTON) && (cmdmenu_func_39FC() != 0)) {
                 sp38 = _bss_318[_bss_C40];
                 if (sp37 == 0) {
                     obj_send_mesg(sp48, sp40, NULL, (void* ) sp38);
@@ -1348,11 +1348,11 @@ static void dll_1_func_1FEC(void) {
                     _bss_C3C = _bss_4D8[_bss_C40];
                     _bss_C3D = _bss_498[_bss_C40];
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    dll_1_func_3A94();
+                    cmdmenu_func_3A94();
                 } else {
                     if (_bss_518[_bss_C40] != 0) {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        dll_1_func_3A94();
+                        cmdmenu_func_3A94();
                         usedItemGamebitID = (s16) sp38;
                         _bss_C3C = 0;
                     } else {
@@ -1363,7 +1363,7 @@ static void dll_1_func_1FEC(void) {
                 }
             }
         }
-        if (dll_1_func_3A4C() != 0) {
+        if (cmdmenu_func_3A4C() != 0) {
             _data_9D0 = 0;
             _bss_C4C = 0;
             _data_78 = 0;
@@ -1375,7 +1375,7 @@ static void dll_1_func_1FEC(void) {
 }
 
 // offset: 0x26D8 | func: 19
-static s16 dll_1_func_26D8(s32 arg0) {
+static s16 cmdmenu_func_26D8(s32 arg0) {
     s32 i;
     for (i = 0; i < 7; i++) {
         if (arg0 == _data_8C[i]) {
@@ -1386,7 +1386,7 @@ static s16 dll_1_func_26D8(s32 arg0) {
 }
 
 // offset: 0x27D8 | func: 20
-static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s16 temp;
     Object* player;
     s32 temp_v0;
@@ -1408,7 +1408,7 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     sp5D = 0;
     sp5C = 0;
     sidekick = get_sidekick();
-    dll_1_func_6B74(gdl, &_bss_C88);
+    cmdmenu_func_6B74(gdl, &_bss_C88);
     temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
     if ((_bss_598 != NULL) && (temp_v0 != _bss_5A4)) {
         tex_free(_bss_59C);
@@ -1417,7 +1417,7 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         _bss_598 = NULL;
     }
     if ((_bss_598 == NULL) && (temp_v0 != -1)) {
-        temp_v0_2 = dll_1_func_26D8(temp_v0);
+        temp_v0_2 = cmdmenu_func_26D8(temp_v0);
         if (temp_v0_2 != -1) {
             _bss_598 = tex_load_deferred(temp_v0_2);
             _bss_59C = tex_load_deferred(TEXTABLE_574);
@@ -1449,7 +1449,7 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             func_8003825C(gdl, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, 0);
         }
     }
-    dll_1_func_7298(gdl);
+    cmdmenu_func_7298(gdl);
     if (_bss_C44 != 0) {
         if (_data_10 != 0) {
             var_s5 = 3;
@@ -1459,7 +1459,7 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 var_s5 = 5;
                 var_s0 = 2;
             }
-            dll_1_func_4630(gdl);
+            cmdmenu_func_4630(gdl);
             _bss_C60->unkA = 0;
             var_a2 = 0x5F - (var_s5 * 0xC);
             _bss_C60[1].unk0 = NULL;
@@ -1527,7 +1527,7 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
             func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
             func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
-            dll_1_func_474C(gdl);
+            cmdmenu_func_474C(gdl);
         }
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
             switch (_bss_C3E) {
@@ -1583,7 +1583,7 @@ static void dll_1_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x325C | func: 21
-static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
+static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
     s32 i;
     s32 var_s7;
     s32 var_s5;
@@ -1615,7 +1615,7 @@ static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
                         var_s5 = 10;
                     }
                     _bss_558[var_s7] = (u8) var_s5;
-                    dll_1_func_3880(arg0, var_s7, i);
+                    cmdmenu_func_3880(arg0, var_s7, i);
                     if ((arg0[i].flagHide < 0) || (main_get_bits(arg0[i].flagHide) == 0)) {
                         _bss_518[var_s7] = 1;
                     } else {
@@ -1634,7 +1634,7 @@ static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
                             var_s5 = 10;
                         }
                         _bss_558[var_s7] = (u8) var_s5;
-                        dll_1_func_3880(arg0, var_s7, i);
+                        cmdmenu_func_3880(arg0, var_s7, i);
                         _bss_518[var_s7] = 1;
                         var_s7 += 1;
                     }
@@ -1660,7 +1660,7 @@ static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
                         _bss_198[var_s7] = NULL;
                     }
                     _bss_318[var_s7] = arg0[i].flagHide;
-                    dll_1_func_3880(arg0, var_s7, i);
+                    cmdmenu_func_3880(arg0, var_s7, i);
                     _bss_518[var_s7] = 1;
                     var_s7 += 1;
                 }
@@ -1680,7 +1680,7 @@ static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1) {
 }
 
 // offset: 0x3718 | func: 22
-static s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1) {
+static s32 cmdmenu_func_3718(InventoryItem* arg0, s8 arg1) {
     Object* sidekick;
     s32 var_s1;
     s32 var_v1;
@@ -1719,14 +1719,14 @@ static s32 dll_1_func_3718(InventoryItem* arg0, s8 arg1) {
 }
 
 // offset: 0x3880 | func: 23
-static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
+static void cmdmenu_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
     _bss_418[loadedItemIndex] = items[itemIndex].textID;
     _bss_498[loadedItemIndex] = items[itemIndex].openPage;
     _bss_4D8[loadedItemIndex] = items[itemIndex].unkB;
 }
 
 // offset: 0x38E4 | func: 24
-static void dll_1_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
+static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
     Gfx* dl;
     s32 i;
 
@@ -1745,7 +1745,7 @@ static void dll_1_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
 }
 
 // offset: 0x39FC | func: 25
-static s32 dll_1_func_39FC(void) {
+static s32 cmdmenu_func_39FC(void) {
     if (_data_0 == 0) {
         return 0;
     }
@@ -1756,7 +1756,7 @@ static s32 dll_1_func_39FC(void) {
 }
 
 // offset: 0x3A4C | func: 26
-static s32 dll_1_func_3A4C(void) {
+static s32 cmdmenu_func_3A4C(void) {
     if (_data_0 != 0) {
         return 0;
     }
@@ -1767,17 +1767,17 @@ static s32 dll_1_func_3A4C(void) {
 }
 
 // offset: 0x3A94 | func: 27
-static void dll_1_func_3A94(void) {
+static void cmdmenu_func_3A94(void) {
     _data_0 = 0;
 }
 
 // offset: 0x3AB0 | func: 28
-static void dll_1_func_3AB0(void) {
+static void cmdmenu_func_3AB0(void) {
     _data_0 = 1;
 }
 
 // offset: 0x3AD0 | func: 29
-static void dll_1_func_3AD0(void) {
+static void cmdmenu_func_3AD0(void) {
     _data_4 -= gUpdateRate << _data_8;
     if (_data_4 < 0) {
         _data_4 = 0;
@@ -1831,7 +1831,7 @@ static void dll_1_func_3AD0(void) {
 }
 
 // offset: 0x3D28 | func: 30
-static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     Gfx* dl;
     Object* sidekick;
     Object* player;
@@ -1859,17 +1859,17 @@ static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             if (player != NULL) {
                 var_v0 = player->id == OBJ_Krystal ? 0 : 1;
                 sp44 = 0;
-                if (dll_1_func_3718(_data_8F0[var_v0].characterItems, 0) != 0) {
+                if (cmdmenu_func_3718(_data_8F0[var_v0].characterItems, 0) != 0) {
                     sp44 = 2;
                 }
             }
             if (sidekick != NULL) {
                 var_v0 = sidekick->id == OBJ_Kyte ? 8 : 7;
-                if (dll_1_func_3718(_data_8F0[var_v0].characterItems, 1) != 0) {
+                if (cmdmenu_func_3718(_data_8F0[var_v0].characterItems, 1) != 0) {
                     sp44 |= 4;
                 }
             }
-            if (dll_1_func_3718(_data_8F0[6].characterItems, 0) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[6].characterItems, 0) != 0) {
                 sp44 |= 1;
             }
             if (sp44 & 2) {
@@ -1970,7 +1970,7 @@ static void dll_1_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x4630 | func: 31
-static void dll_1_func_4630(Gfx **gdl) {
+static void cmdmenu_func_4630(Gfx **gdl) {
     if (func_80041E08() != 0) {
         gDPSetScissorFrac((*gdl)++, G_SC_NON_INTERLACE, 
             qu102(314.75), 
@@ -1987,7 +1987,7 @@ static void dll_1_func_4630(Gfx **gdl) {
 }
 
 // offset: 0x474C | func: 32
-static void dll_1_func_474C(Gfx** gfx) {
+static void cmdmenu_func_474C(Gfx** gfx) {
     s32 resolution;
 
     resolution = vi_get_current_size();
@@ -1995,7 +1995,7 @@ static void dll_1_func_474C(Gfx** gfx) {
 }
 
 // offset: 0x47E8 | func: 33
-static s32 dll_1_func_47E8(void) {
+static s32 cmdmenu_func_47E8(void) {
     if (_data_1C != 0) {
         return 0;
     }
@@ -2006,17 +2006,17 @@ static s32 dll_1_func_47E8(void) {
 }
 
 // offset: 0x4830 | func: 34
-static void dll_1_func_4830(void) {
+static void cmdmenu_func_4830(void) {
     _data_1C = 0;
 }
 
 // offset: 0x484C | func: 35
-static void dll_1_func_484C(void) {
+static void cmdmenu_func_484C(void) {
     _data_1C = 1;
 }
 
 // offset: 0x486C | func: 36
-static void dll_1_func_486C(void) {
+static void cmdmenu_func_486C(void) {
     if ((_data_1C != 0) && (_data_84 == 0)) {
         _data_30 += gUpdateRate * 32;
         if (_data_30 > 160) {
@@ -2070,7 +2070,7 @@ static void dll_1_func_486C(void) {
 
 // offset: 0x4AD4 | func: 37
 // Draws the info box at the top of the screen describing the highlighted/z-locked item.
-static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 sp10C;
     s32 y;
     s32 sp104;
@@ -2098,7 +2098,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     y = _data_28 << 2;
     height = _bss_C2A << 2;
 
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104,
         /*uly*/ y,
@@ -2110,7 +2110,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
 
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
         /*lrx*/ sp10C - sp104 - (16 << 2),
         /*lry*/ y,
@@ -2135,7 +2135,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     sp104 += (16 << 2);
 
     if (_bss_C2A >= 9) {
-        dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
+        cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
         dl_set_prim_color(&dl, 255, 128, 128, 128);
         
         tempY = y;
@@ -2166,7 +2166,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
 
     tempY = y - (11 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104,
         /*uly*/ tempY,
@@ -2179,7 +2179,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
 
     tempY = (y + height) - (4 << 2);
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104,
         /*uly*/ tempY,
@@ -2191,7 +2191,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
 
-    dll_1_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
+    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++, 
         /*ulx*/ sp10C - sp104 - (16 << 2),
@@ -2285,7 +2285,7 @@ static void dll_1_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x5608 | func: 38
-static void dll_1_func_5608(void) {
+static void cmdmenu_func_5608(void) {
     Object* player;
     Object* sidekick;
     CmdmenuPlayerSidekickData sp80;
@@ -2379,7 +2379,7 @@ static void dll_1_func_5608(void) {
 }
 
 // offset: 0x5BBC | func: 39
-static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     f32 var_fv1;
     u32 pad;
     u8 var_s0;
@@ -2535,7 +2535,7 @@ static void dll_1_func_5BBC(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x6984 | func: 40 | export: 16
-void dll_1_func_6984(s32 arg0) {
+void cmdmenu_func_6984(s32 arg0) {
     if (arg0 == -1) {
         _bss_C54 = 0;
         _bss_C48 = 0;
@@ -2546,7 +2546,7 @@ void dll_1_func_6984(s32 arg0) {
 }
 
 // offset: 0x69CC | func: 41
-static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) {
+static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0) {
     arg0->unk4 = -1;
     arg0->unkC = 0;
     arg0->unk0 = 0;
@@ -2554,7 +2554,7 @@ static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) {
 }
 
 // offset: 0x69F8 | func: 42 | export: 17
-void dll_1_func_69F8(s16 arg0, s32 arg1, s32 arg2) {
+void cmdmenu_func_69F8(s16 arg0, s32 arg1, s32 arg2) {
     InventoryItem *var_v0;
     UIUnknownCharacterStruct *var_s2;
 
@@ -2580,7 +2580,7 @@ void dll_1_func_69F8(s16 arg0, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x6B00 | func: 43 | export: 18
-void dll_1_func_6B00(s16 textureID, s32 arg1, s32 arg2) {   
+void cmdmenu_func_6B00(s16 textureID, s32 arg1, s32 arg2) {   
     STUBBED_PRINTF("qInfoShowTex\n");
     if ((_bss_C88.unk0 = tex_load_deferred(textureID))){
         _bss_C88.unk4 = arg1;
@@ -2590,7 +2590,7 @@ void dll_1_func_6B00(s16 textureID, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x6B74 | func: 44
-static void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
+static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
     if (arg1->unk4 >= 0) {
         arg1->unk4 -= gUpdateRate;
         if (arg1->unk4 < 0) {
@@ -2654,12 +2654,12 @@ static void dll_1_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
 }
 
 // offset: 0x70A0 | func: 45 | export: 11
-void dll_1_func_70A0(u8 arg0) {
+void cmdmenu_func_70A0(u8 arg0) {
     _data_88 = arg0;
 }
 
 // offset: 0x70C8 | func: 46 | export: 20
-void dll_1_func_70C8(s32 minEnergy, s32 maxEnergy, s32 arg2, s32 arg3, s32 arg4) {
+void cmdmenu_func_70C8(s32 minEnergy, s32 maxEnergy, s32 arg2, s32 arg3, s32 arg4) {
     EnergyBar *enbar;
     Func_80037F9C_Struct *temp;
 
@@ -2699,7 +2699,7 @@ void dll_1_func_70C8(s32 minEnergy, s32 maxEnergy, s32 arg2, s32 arg3, s32 arg4)
 }
 
 // offset: 0x7208 | func: 47 | export: 21
-void dll_1_func_7208(s32 arg0) {
+void cmdmenu_func_7208(s32 arg0) {
     u32 temp_ft1;
     f32 f0;
 
@@ -2715,7 +2715,7 @@ void dll_1_func_7208(s32 arg0) {
 }
 
 // offset: 0x7298 | func: 48
-static void dll_1_func_7298(Gfx** gdl) {
+static void cmdmenu_func_7298(Gfx** gdl) {
     EnergyBar* temp_v0;
 
     temp_v0 = _bss_90;
@@ -2725,7 +2725,7 @@ static void dll_1_func_7298(Gfx** gdl) {
     if (temp_v0->unk4C_0) {
         if (gUpdateRate >= temp_v0->unk14) {
             temp_v0->unk4C_0 = 0;
-            dll_1_func_7550();
+            cmdmenu_func_7550();
             return;
         } else {
             temp_v0->unk14 -= gUpdateRate;
@@ -2766,7 +2766,7 @@ static void dll_1_func_7298(Gfx** gdl) {
 
 // offset: 0x7550 | func: 49 | export: 22
 /* Related to the fuel gauge at CloudRunner Fortress' Racetrack */
-void dll_1_func_7550(void) {
+void cmdmenu_func_7550(void) {
     EnergyBar* enbar;
 
     /* default.dol
@@ -2785,7 +2785,7 @@ void dll_1_func_7550(void) {
 }
 
 // offset: 0x75CC | func: 50 | export: 23
-void dll_1_func_75CC(void) {
+void cmdmenu_func_75CC(void) {
     if (_bss_90 != NULL) {
         _bss_90->unk4C_0 = 1;
     }

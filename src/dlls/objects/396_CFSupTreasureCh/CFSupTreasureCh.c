@@ -181,7 +181,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
         self->unkAF &= ~8;
         self->unkAF &= ~0x10;
         if (self->unkAF & 1) {
-            if (gDLL_1_UI->vtbl->func_DF4(BIT_CRF_Treasure_Chest_Key)) {
+            if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_CRF_Treasure_Chest_Key)) {
                 main_set_bits(BIT_CF_Free_Cloudrunner_From_Chest, 1);
                 main_set_bits(BIT_CRF_Treasure_Chest_Key, 0);
                 if (cloudbaby) {
