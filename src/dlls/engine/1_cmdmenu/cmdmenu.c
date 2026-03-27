@@ -187,9 +187,8 @@ enum CmdMenuTextures {
 /*0x54*/ static s16 _data_54 = 0x0014;
 /*0x58*/ static s16 _data_58 = 0x00a0;
 /*0x5C*/ static s16 _data_5C = 0x0000;
-/*0x60*/ static u32 _data_60[] = {
-    0x00000000, 0xffff0000
-};
+/*0x60*/ static s16 _data_60 = 0;
+/*0x64*/ static u32 _data_64 = 0xffff0000;
 /*0x68*/ static Texture* _data_68 = 0;
 /*0x6C*/ static u32 _data_6C[] = {
     0x3f800000, 0xff000000
@@ -606,6 +605,7 @@ enum CmdMenuTextures {
 
 static s32 dll_1_func_325C(InventoryItem* arg0, s8 arg1);
 static void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
+static void dll_1_func_38E4(Gfx** gdl, Texture* tex, s32 frame);
 static s32 dll_1_func_39FC(void);
 static s32 dll_1_func_3A4C(void);
 static void dll_1_func_3A94(void);
@@ -856,7 +856,181 @@ void dll_1_func_13F4(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1410.s")
 
 // offset: 0x1614 | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1614.s")
+void dll_1_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+    s32 sp10C;
+    s32 y;
+    s32 sp104;
+    s32 height;
+    s32 tempY;
+    s32 i;
+    Gfx* dl;
+
+    if (_data_5C == 0) {
+        return;
+    }
+    dl = *gdl;
+    gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+    dl_apply_combine(&dl);
+    gDPSetOtherMode(dl, 
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
+        G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
+    dl_apply_other_mode(&dl);
+    gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
+    dl_apply_geometry_mode(&dl);
+    dl_set_prim_color(&dl, 255, 255, 255, (u8) _data_5C);
+    sp10C = _data_58;
+    sp10C <<= 2;
+    sp104 = _data_4C << 2;
+    sp104 -= (16 << 2);
+    y = _data_54 << 2;
+    height = _bss_C2C << 2;
+    
+    dll_1_func_38E4(&dl, _bss_5C8[6], 0);
+    gSPTextureRectangle(dl++, 
+        sp10C - sp104, 
+        y, 
+        sp10C + sp104, 
+        y + height, 
+        G_TX_RENDERTILE, 
+        0, 0, 
+        qs510(1), qs510(1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    dll_1_func_38E4(&dl, _bss_5C8[5], 0);
+    gSPTextureRectangle(dl++, 
+        sp10C - sp104 - (16 << 2), 
+        y, 
+        sp10C - sp104, 
+        y + height, 
+        G_TX_RENDERTILE, 
+        0, 0, 
+        qs510(1), qs510(1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    gSPTextureRectangle(dl++, 
+        sp10C + sp104, 
+        y, 
+        sp10C + sp104 + (16 << 2), 
+        y + height, 
+        G_TX_RENDERTILE, 
+        qs105(15), 0, 
+        qs510(-1), qs510(1));
+    gDLBuilder->needsPipeSync = 1;
+
+    sp104 += (16 << 2);
+    
+    dll_1_func_38E4(&dl, _bss_5C8[7], 0);
+    dl_set_prim_color(&dl, 255, 128, 128, 128);
+    
+    tempY = y;
+    gSPTextureRectangle(dl++,
+        sp10C - sp104, 
+        tempY, 
+        sp10C + sp104, 
+        tempY + (8 << 2), 
+        G_TX_RENDERTILE, 
+        0, qs105(7), 
+        qs510(1), qs510(-1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    tempY = (y + height) - (6 << 2);
+    gSPTextureRectangle(dl++,
+        sp10C - sp104,
+        tempY, 
+        sp10C + sp104, 
+        tempY + (8 << 2), 
+        G_TX_RENDERTILE, 
+        0, 0, 
+        qs510(1), qs510(1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    dl_set_prim_color(&dl, 255, 255, 255, (u8) _data_5C);
+
+    tempY = y - (11 << 2);
+    dll_1_func_38E4(&dl, _bss_5C8[4], 0);
+    gSPTextureRectangle(dl++,
+        sp10C - sp104, 
+        tempY, 
+        sp10C + sp104, 
+        tempY + (16 << 2), 
+        G_TX_RENDERTILE, 
+        0, qs105(15.9688), 
+        qs510(1), qs510(-1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    tempY = (y + height) - (4 << 2);
+    dll_1_func_38E4(&dl, _bss_5C8[4], 0);
+    gSPTextureRectangle(dl++,
+        sp10C - sp104, 
+        tempY, 
+        sp10C + sp104, 
+        tempY + (16 << 2), 
+        G_TX_RENDERTILE, 
+        0, qs105(15.9688), 
+        qs510(1), qs510(-1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    dll_1_func_38E4(&dl, _bss_5C8[3], 0);
+    tempY = y - (11 << 2);
+    gSPTextureRectangle(dl++,
+        sp10C - sp104 - (16 << 2),
+        tempY, 
+        sp10C - sp104, 
+        tempY + (16 << 2), 
+        G_TX_RENDERTILE, 
+        0, qs105(15.9688), 
+        qs510(1), qs510(-1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    gSPTextureRectangle(dl++,
+        sp10C + sp104, 
+        tempY, 
+        sp10C + sp104 + (16 << 2), 
+        tempY + (16 << 2), 
+        G_TX_RENDERTILE, 
+        qs105(15), qs105(15.9688), 
+        qs510(-1), qs510(-1));
+    gDLBuilder->needsPipeSync = 1;
+
+    tempY = (y + height) - (4 << 2);
+    gSPTextureRectangle(dl++,
+        sp10C - sp104 - (16 << 2), 
+        tempY, 
+        sp10C - sp104, 
+        tempY + (16 << 2), 
+        G_TX_RENDERTILE, 
+        0, qs105(15.9688), 
+        qs510(1), qs510(-1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    gSPTextureRectangle(dl++,
+        sp10C + sp104, 
+        tempY, 
+        sp10C + sp104 + (16 << 2), 
+        tempY + (16 << 2), 
+        G_TX_RENDERTILE, 
+        qs105(15), qs105(15.9688), 
+        qs510(-1), qs510(-1));
+    gDLBuilder->needsPipeSync = 1;
+    
+    dl_set_prim_color(&dl, 255, 255, 255, 255);
+    func_8003825C(&dl, _bss_5A0, _data_58 - 8, (_data_54 + _data_50) - 24, 0, _bss_5BC >> 8, _data_60, 0);
+
+    font_window_set_coords(3, 
+        /*x1*/ _data_58 - _data_4C, 
+        /*y1*/ _data_54, 
+        /*x2*/ _data_58 + _data_4C, 
+        /*y2*/ _data_54 + _bss_C2C);
+    font_window_use_font(3, 1);
+    font_window_set_bg_colour(3, 0, 0, 0, 0);
+    font_window_flush_strings(3);
+    font_window_set_text_colour(3, 0, 0, 255, 255, _data_60);
+    for (i = _bss_C2E, y = 3; i < _bss_C30->count && i < (_bss_C2E + 3); i++, y += 16) {
+        font_window_add_string_xy(3, -0x8000, y, _bss_C30->strings[i], 1, ALIGN_TOP_CENTER);
+    }
+    font_window_draw(&dl, mtxs, vtxs, 3);
+    *gdl = dl;
+}
 
 // offset: 0x1FEC | func: 18
 void dll_1_func_1FEC(void) {
