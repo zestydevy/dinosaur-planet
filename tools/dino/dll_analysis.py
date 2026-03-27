@@ -219,11 +219,11 @@ def __set_symbol_name_defaults(
                 elif sym.isString():
                     sym.setNameIfUnset("str_{:X}".format(sym.vram - rodata.vram))
                 else:
-                    sym.setNameIfUnset("_rodata_{:X}".format(sym.vram - rodata.vram))
+                    sym.setNameIfUnset("rodata_{:X}".format(sym.vram - rodata.vram))
             elif sym.sectionType == spimdisasm.common.FileSectionType.Data and data != None:
-                sym.setNameIfUnset("_data_{:X}".format(sym.vram - data.vram))
+                sym.setNameIfUnset("data_{:X}".format(sym.vram - data.vram))
             elif sym.sectionType == spimdisasm.common.FileSectionType.Bss and bss != None:
-                sym.setNameIfUnset("_bss_{:X}".format(sym.vram - bss.vram))
+                sym.setNameIfUnset("bss_{:X}".format(sym.vram - bss.vram))
 
 # Roughly copied from spimdisasm's SymbolsSegment.readSplatSymbolAddrs function
 def __handle_dll_sym_attributes(

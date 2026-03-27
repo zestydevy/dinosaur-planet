@@ -365,7 +365,7 @@ class DLLSplitter:
                     self.__write_c_stub_data(
                         c_file, 
                         sym.words, 
-                        "_data_", 
+                        "data_", 
                         const=False,
                         static=static,
                         field_offset=offset,
@@ -441,7 +441,7 @@ class DLLSplitter:
                                     self.__write_c_stub_data(
                                         c_file, 
                                         sym.words[i:i+1], 
-                                        "_rodata_", 
+                                        "rodata_", 
                                         const=True,
                                         static=static,
                                         field_offset=offset + (i * 4))
@@ -460,7 +460,7 @@ class DLLSplitter:
                             self.__write_c_stub_data(
                                 c_file, 
                                 sym.words, 
-                                "_rodata{}_".format("" if not sym.isJumpTable() else "_jtbl"), 
+                                "rodata_" if not sym.isJumpTable() else "jtbl_", 
                                 const=True,
                                 static=static,
                                 field_offset=offset,
