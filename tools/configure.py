@@ -14,7 +14,6 @@ from typing import TextIO
 from natsort import os_sort_keygen
 import ninja_syntax
 
-from dino.dll_build_config import DLLBuildConfig
 from dino.dlls_txt import DLLsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
@@ -728,27 +727,24 @@ class InputScanner:
                 dll_src_dir = src_dlls_path.joinpath(mapped_dir)
                 dll_nm_dir = nm_dlls_path.joinpath(mapped_dir)
 
-                dll_config = self.__get_dll_config(dll_src_dir, number)
-                # Skip if this DLL is configured to use the original DLL instead of recompiling
-                if dll_config != None and dll_config.compile:
-                    c_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.c", recursive=True)]
-                    asm_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.s", recursive=True)]
-                    orig_got_path = dll_nm_dir.joinpath("_orig_got.s")
+                c_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.c", recursive=True)]
+                asm_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.s", recursive=True)]
+                orig_got_path = dll_nm_dir.joinpath("_orig_got.s")
 
-                    src_files = []
+                src_files = []
 
-                    for src_path in c_paths:
-                        obj_path = self.__make_obj_path(src_path)
-                        file_config = self.__get_file_config(src_path)
-                        src_files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
-                    
-                    for src_path in asm_paths:
-                        obj_path = self.__make_obj_path(src_path)
-                        src_files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
+                for src_path in c_paths:
+                    obj_path = self.__make_obj_path(src_path)
+                    file_config = self.__get_file_config(src_path)
+                    src_files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
+                
+                for src_path in asm_paths:
+                    obj_path = self.__make_obj_path(src_path)
+                    src_files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
 
-                    if orig_got_path.exists():
-                        obj_path = self.__make_obj_path(orig_got_path)
-                        src_files.append(BuildFile(str(orig_got_path), str(obj_path), BuildFileType.ASM))
+                if orig_got_path.exists():
+                    obj_path = self.__make_obj_path(orig_got_path)
+                    src_files.append(BuildFile(str(orig_got_path), str(obj_path), BuildFileType.ASM))
             
             # Scan full asm extract for expected dir and DLLs without a src dir
             undef_syms_file: str | None = None
@@ -799,15 +795,6 @@ class InputScanner:
             ido_version=ido_version,
             mips_iset=mips_iset,
             has_global_asm=has_global_asm)
-    
-    def __get_dll_config(self, dll_dir: Path, number: int) -> DLLBuildConfig | None:
-        yaml_path = dll_dir.joinpath("dll.yaml")
-        if not yaml_path.exists():
-            print(f"WARN: Missing {yaml_path}, skipping DLL {number}!")
-            return None
-        
-        with open(yaml_path, "r") as file:
-            return DLLBuildConfig.parse(file)
     
 def main():
     parser = argparse.ArgumentParser(description="Creates the Ninja build script for the Dinosaur Planet decompilation project.")
