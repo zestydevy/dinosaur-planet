@@ -81,8 +81,8 @@ typedef struct {
 /*0C*/ u32 height;
 /*10*/ f32 filledWidth;
 /*14*/ u8 alpha;
-/*18*/ Func_80037F9C_Struct fullbarTex[2]; // official name: Fullbartex (default.dol)
-/*30*/ Func_80037F9C_Struct emptybarTex[2]; // official name: Emptybartex (default.dol)
+/*18*/ TextureTile fullbarTex[2]; // official name: Fullbartex (default.dol)
+/*30*/ TextureTile emptybarTex[2]; // official name: Emptybartex (default.dol)
 /*48*/ s32 scale;
 /*4C_0*/ u32 fadeout : 1;
 } EnergyBar;
@@ -581,7 +581,7 @@ enum CmdMenuTextures {
 /*0x5C0*/ static s32 sCrosshairAnimProgress;
 /*0x5C8*/ static Texture* _bss_5C8[58];
 /*0x6B0*/ static Texture* sInventoryStackNumbersTex;
-/*0x6B8*/ static Func_80037F9C_Struct _bss_6B8[58][2];
+/*0x6B8*/ static TextureTile _bss_6B8[58][2];
 /*0xC28*/ static s16 _bss_C28;
 /*0xC2A*/ static s16 _bss_C2A;
 /*0xC2C*/ static s16 _bss_C2C;
@@ -601,7 +601,7 @@ enum CmdMenuTextures {
 /*0xC50*/ static s32 sJoyPressedButtons; // joypad button bitfield
 /*0xC54*/ static s32 sJoyPressedButtonsOverride; //controllerButtons
 /*0xC58*/ static s32 sJoyHeldButtons; // joypad button bitfield
-/*0xC60*/ static Func_80037F9C_Struct _bss_C60[2];
+/*0xC60*/ static TextureTile _bss_C60[2];
 /*0xC78*/ static s8 _bss_C78;
 /*0xC7A*/ static s16 _bss_C7A;
 /*0xC7C*/ static s16 _bss_C7C;
@@ -651,11 +651,11 @@ void cmdmenu_ctor(void* dll) {
 
     for (i = 0; i < 58; i++) {
         _bss_5C8[i] = tex_load_deferred(_data_9D8[i]);
-        _bss_6B8[i][0].unk0 = tex_load_deferred(_data_9D8[i]);
-        _bss_6B8[i][0].unk4 = 0;
-        _bss_6B8[i][0].unk8 = 0;
-        _bss_6B8[i][0].unkA = 0;
-        _bss_6B8[i][1].unk0 = 0;
+        _bss_6B8[i][0].tex = tex_load_deferred(_data_9D8[i]);
+        _bss_6B8[i][0].animProgress = 0;
+        _bss_6B8[i][0].x = 0;
+        _bss_6B8[i][0].y = 0;
+        _bss_6B8[i][1].tex = 0;
     }
 
     sCrosshairTex = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
@@ -865,7 +865,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     if (player != NULL) {
         if (((DLL_210_Player*)player->dll)->vtbl->func77(player, &sp44, &sp40) != 0) {
             tex_animate(sCrosshairTex, &sCrosshairAnimRenderFlags, &sCrosshairAnimProgress);
-            func_8003825C(gdl, sCrosshairTex, sp44 - 16, sp40 - 16, 0, sCrosshairAnimProgress >> 8, 150, 0);
+            rcp_screen_full_write(gdl, sCrosshairTex, sp44 - 16, sp40 - 16, 0, sCrosshairAnimProgress >> 8, 150, SCREEN_WRITE_TRANSLUCENT);
         }
         cmdmenu_draw_player_stats(gdl, mtxs, vtxs);
         viSize = vi_get_current_size();
@@ -1229,7 +1229,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
     
     dl_set_prim_color(&dl, 255, 255, 255, 255);
-    func_8003825C(&dl, sAButtonAnimTex, _data_58 - 8, (_data_54 + _data_50) - 24, 0, _bss_5BC >> 8, _data_60, 0);
+    rcp_screen_full_write(&dl, sAButtonAnimTex, _data_58 - 8, (_data_54 + _data_50) - 24, 0, _bss_5BC >> 8, _data_60, SCREEN_WRITE_TRANSLUCENT);
 
     font_window_set_coords(3, 
         /*x1*/ _data_58 - _data_4C, 
@@ -1423,8 +1423,8 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     _bss_5A4 = temp_v0;
     if (_bss_598 != NULL) {
-        func_8003825C(gdl, _bss_59C, 0xFD, 0xA9, 0, 0, 0xFF, 0);
-        func_8003825C(gdl, _bss_598, 0x106, 0xB4, 0, 0, 0xFF, 0);
+        rcp_screen_full_write(gdl, _bss_59C, 0xFD, 0xA9, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+        rcp_screen_full_write(gdl, _bss_598, 0x106, 0xB4, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     }
     if (sidekick != NULL) {
         ((DLL_ISidekick*)sidekick->dll)->vtbl->func26(sidekick, &sp64);
@@ -1443,8 +1443,8 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         }
         _bss_5B0 = sp64;
         if (_bss_5A8 != NULL) {
-            func_8003825C(gdl, _bss_5AC, 0xFD, 0x79, 0, 0, 0xFF, 0);
-            func_8003825C(gdl, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, 0);
+            rcp_screen_full_write(gdl, _bss_5AC, 0xFD, 0x79, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_full_write(gdl, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
     cmdmenu_draw_energy_bar(gdl);
@@ -1458,9 +1458,9 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 var_s0 = 2;
             }
             cmdmenu_func_4630(gdl);
-            _bss_C60->unkA = 0;
+            _bss_C60->y = 0;
             var_a2 = 0x5F - (var_s5 * 0xC);
-            _bss_C60[1].unk0 = NULL;
+            _bss_C60[1].tex = NULL;
             for (i = 0; i < _bss_C44; i++) {
                 sp70[i] = 0;
             }
@@ -1487,33 +1487,33 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
             for (i = 0; i < var_s5; i++) {
                 if (sp70[var_s1] == 0) {
-                    _bss_C60->unk4 = 0;
+                    _bss_C60->animProgress = 0;
                     sp5F = _data_10;
                     if ((var_s1 == _bss_C40) && (_data_4 == 0)) {
-                        _bss_C60->unk8 = 0;
-                        _bss_C60->unkA = 0;
+                        _bss_C60->x = 0;
+                        _bss_C60->y = 0;
                     } else {
-                        _bss_C60->unk8 = 0;
-                        _bss_C60->unkA = 0;
+                        _bss_C60->x = 0;
+                        _bss_C60->y = 0;
                     }
                     if (_bss_518[var_s1] != 0) {
-                        _bss_C60->unk0 = _bss_98[var_s1];
+                        _bss_C60->tex = _bss_98[var_s1];
                         if (func_80041E08() != 0) {
-                            func_80037F9C(gdl, _bss_C60, 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                            rcp_tile_write(gdl, _bss_C60, 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
                         } else {
-                            func_80037F9C(gdl, _bss_C60, 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                            rcp_tile_write(gdl, _bss_C60, 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
                         }
                         if (_bss_558[var_s1] >= 2) {
-                            _bss_C60->unk0 = sInventoryStackNumbersTex;
-                            _bss_C60->unk4 = (_bss_558[var_s1] - 2) << 8;
-                            func_80037F9C(gdl, _bss_C60, 0x114, ((i * 0x18) + var_a2) + _data_4 + 9, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                            _bss_C60->tex = sInventoryStackNumbersTex;
+                            _bss_C60->animProgress = (_bss_558[var_s1] - 2) << 8;
+                            rcp_tile_write(gdl, _bss_C60, 0x114, ((i * 0x18) + var_a2) + _data_4 + 9, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                         }
                     }
                 } else {
                     if (func_80041E08() != 0) {
-                        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                     } else {
-                        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
                     }
                 }
                 var_s1 += 1;
@@ -1521,10 +1521,10 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     var_s1 -= _bss_C44;
                 }
             }
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
-            func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
             cmdmenu_func_474C(gdl);
         }
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
@@ -1574,7 +1574,7 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         }
         if (sp5F) {
             _data_68 = tex_load_deferred(_data_9D8[sp5E]);
-            func_8003825C(gdl, _data_68, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, 0);
+            rcp_screen_full_write(gdl, _data_68, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, SCREEN_WRITE_TRANSLUCENT);
             tex_free(_data_68);
         }
     }
@@ -1873,11 +1873,11 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             if (sp44 & 2) {
                 texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
                 _data_68 = tex_load_deferred(_data_9D8[texIdx]);
-                func_8003825C(gdl, _data_68, 0x113, 0x19, 0, 0, (s32) _bss_8C, 0);
+                rcp_screen_full_write(gdl, _data_68, 0x113, 0x19, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
                 tex_free(_data_68);
             } else {
                 texIdx = CMDMENU_TEX_41_C_Right;
-                func_80037F9C(gdl, _bss_6B8[texIdx], 0x112, 0x22, 255, 255, 255, _bss_8C);
+                rcp_tile_write(gdl, _bss_6B8[texIdx], 0x112, 0x22, 255, 255, 255, _bss_8C);
             }
             if (((sp44 & 4) && (sidekick != NULL)) || (sp44 & 1)) {
                 if ((sp44 & 4) && (sidekick != NULL) && (sp44 & 1)) {
@@ -1890,11 +1890,11 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     texIdx = CMDMENU_TEX_48_LeftDownButtons_NoSidekick;
                 }
                 _data_68 = tex_load_deferred(_data_9D8[texIdx]);
-                func_8003825C(gdl, _data_68, 0xF5, 0x11, 0, 0, (s32) _bss_8C, 0);
+                rcp_screen_full_write(gdl, _data_68, 0xF5, 0x11, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
                 tex_free(_data_68);
             } else {
-                func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) _bss_8C);
-                func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) _bss_8C);
+                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) _bss_8C);
+                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) _bss_8C);
             }
         }
     } else {
@@ -1902,8 +1902,8 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     dl = *gdl;
     if (_data_10 != 0) {
-        func_80037F9C(&dl, _bss_6B8[CMDMENU_TEX_02_Scroll_Top], 0x102, 0x33, 255, 255, 255, (u8) _data_10);
-        func_80037F9C(&dl, _bss_6B8[CMDMENU_TEX_01_Scroll_Bottom], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
+        rcp_tile_write(&dl, _bss_6B8[CMDMENU_TEX_02_Scroll_Top], 0x102, 0x33, 255, 255, 255, (u8) _data_10);
+        rcp_tile_write(&dl, _bss_6B8[CMDMENU_TEX_01_Scroll_Bottom], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
     }
     if (sidekick != NULL) {
         if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (sStatsChangeTimers.sidekickBlueFood >= 0.0f)) {
@@ -1956,7 +1956,7 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         var_v0 = CMDMENU_TEX_44_Mushroom_Empty;
                     }
                 }
-                func_80037F9C(&dl, _bss_6B8[var_v0], 
+                rcp_tile_write(&dl, _bss_6B8[var_v0], 
                     250 - ((i / 4) * 9), 
                     21  + ((i % 4) * 8), 
                     255, 255, 255, _data_14);
@@ -2430,7 +2430,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             } else {
                 texIdx = CMDMENU_TEX_08_Apple_0_Pct + (sStats.playerHealth & 3);
             }
-            func_80037F9C(&sp74, _bss_6B8[texIdx], sp7C + 0x3C, sp7D + 0x14, 0xFF, 0xFF, 0xFF, sp7E);
+            rcp_tile_write(&sp74, _bss_6B8[texIdx], sp7C + 0x3C, sp7D + 0x14, 0xFF, 0xFF, 0xFF, sp7E);
         }
     }
     if ((sStatsChangeTimers.playerMagic >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f) || (((DLL_210_Player*)sp70->dll)->vtbl->func50(sp70) != -1)) {
@@ -2459,8 +2459,8 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             } else {
                 tempVar = ((sStats.playerMagic % 25) * 2) + 0xD;
             }
-            func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_36_MagicBar_Full], 23.0f, ((var_s0 * 0xC) + 0x3C), (f32) tempVar, 14.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
-            func_800390A4(&sp74, _bss_6B8[CMDMENU_TEX_35_MagicBar_Empty], (f32) (tempVar + 0x17), ((var_s0 * 0xC) + 0x3C), (f32) (0x42 - tempVar), 14.0f, tempVar << 5, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
+            rcp_tile_write_x(&sp74, _bss_6B8[CMDMENU_TEX_36_MagicBar_Full], 23.0f, ((var_s0 * 0xC) + 0x3C), (f32) tempVar, 14.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
+            rcp_tile_write_x(&sp74, _bss_6B8[CMDMENU_TEX_35_MagicBar_Empty], (f32) (tempVar + 0x17), ((var_s0 * 0xC) + 0x3C), (f32) (0x42 - tempVar), 14.0f, tempVar << 5, 0, 1.0f, 1.0f, sp7E | ~0xFF, TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
         }
     }
     sp7E = (u8)_bss_0 < (u8)_bss_8 ?  (u8)_bss_8 : (u8)_bss_0;
@@ -2475,7 +2475,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             texIdx = CMDMENU_TEX_40_Sabre;
         }
         _data_68 = tex_load_deferred(_data_9D8[texIdx]);
-        func_8003825C(&sp74, _data_68, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, 0);
+        rcp_screen_full_write(&sp74, _data_68, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, SCREEN_WRITE_TRANSLUCENT);
         tex_free(_data_68);
     }
     if ((sStatsChangeTimers.playerScarabCount >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
@@ -2516,7 +2516,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 }
             }
         }
-        func_800390A4(&sp74, _bss_6B8[_bss_89 + CMDMENU_TEX_18_Scarab], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, 0x4002);
+        rcp_tile_write_x(&sp74, _bss_6B8[_bss_89 + CMDMENU_TEX_18_Scarab], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
         sprintf(sp68, "%d", (int)sStats.playerScarabCount);
         font_window_set_coords(3, 0, 0, 0x140, 0xF0);
         font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
@@ -2605,31 +2605,31 @@ static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
                 }
             }
         }
-        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_52], 
+        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_52], 
             0x16, 
             0xB0, 
             0xFF, 
             0xFF, 
             0xFF, 
             (u8) arg1->unk8);
-        bzero(_bss_C60, sizeof(Func_80037F9C_Struct));
-        _bss_C60->unk0 = arg1->unk0;
-        _bss_C60[1].unk0 = NULL;
-        func_80037F9C(gdl, _bss_C60, 
+        bzero(_bss_C60, sizeof(TextureTile));
+        _bss_C60->tex = arg1->unk0;
+        _bss_C60[1].tex = NULL;
+        rcp_tile_write(gdl, _bss_C60, 
             0x24, 
             0xAF, 
             0xFF, 
             0xFF, 
             0xFF, 
             (u8) arg1->unk8);
-        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_29], 
+        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_29], 
             0x14, 
             0xAF, 
             0xFF, 
             0xFF, 
             0xFF, 
             (u8) arg1->unk8);
-        func_80037F9C(gdl, _bss_6B8[CMDMENU_TEX_30], 
+        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_30], 
             0x44, 
             0xAF, 
             0xFF, 
@@ -2637,9 +2637,9 @@ static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
             0xFF, 
             (u8) arg1->unk8);
         if (arg1->unkC >= 2) {
-            _bss_C60->unk0 = sInventoryStackNumbersTex;
-            _bss_C60->unk4 = (arg1->unkC - 2) << 8;
-            func_80037F9C(gdl, _bss_C60, 
+            _bss_C60->tex = sInventoryStackNumbersTex;
+            _bss_C60->animProgress = (arg1->unkC - 2) << 8;
+            rcp_tile_write(gdl, _bss_C60, 
                 0x34, 
                 0xBF, 
                 0xFF, 
@@ -2658,7 +2658,7 @@ void cmdmenu_func_70A0(u8 arg0) {
 // offset: 0x70C8 | func: 46 | export: 20
 void cmdmenu_energy_bar_create(s32 minEnergy, s32 maxEnergy, s32 fullTexID, s32 emptyTexID, s32 scale) {
     EnergyBar *enbar;
-    Func_80037F9C_Struct *drawtex;
+    TextureTile *drawtex;
 
     /* default.dol
     if (sEnergyBar != NULL) {
@@ -2671,19 +2671,19 @@ void cmdmenu_energy_bar_create(s32 minEnergy, s32 maxEnergy, s32 fullTexID, s32 
     enbar->min = minEnergy;
     enbar->max = maxEnergy;
     drawtex = &enbar->fullbarTex[0];
-    drawtex->unk0 = tex_load_deferred(fullTexID);
-    drawtex->unk4 = 0;
-    drawtex->unk8 = 0;
-    drawtex->unkA = 0;
-    enbar->fullbarTex[1].unk0 = 0;
+    drawtex->tex = tex_load_deferred(fullTexID);
+    drawtex->animProgress = 0;
+    drawtex->x = 0;
+    drawtex->y = 0;
+    enbar->fullbarTex[1].tex = 0;
     drawtex = &enbar->emptybarTex[0];
-    drawtex->unk0 = tex_load_deferred(emptyTexID);
-    drawtex->unk4 = 0;
-    drawtex->unk8 = 0;
-    drawtex->unkA = 0;
-    enbar->emptybarTex[1].unk0 = 0;
-    enbar->width = enbar->fullbarTex[0].unk0->width;
-    enbar->height = enbar->fullbarTex[0].unk0->height;
+    drawtex->tex = tex_load_deferred(emptyTexID);
+    drawtex->animProgress = 0;
+    drawtex->x = 0;
+    drawtex->y = 0;
+    enbar->emptybarTex[1].tex = 0;
+    enbar->width = enbar->fullbarTex[0].tex->width;
+    enbar->height = enbar->fullbarTex[0].tex->height;
     if (scale == 0) {
         scale = 1;
     }
@@ -2737,7 +2737,7 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
         }
     }
     
-    func_800390A4(gdl, enbar->fullbarTex, 
+    rcp_tile_write_x(gdl, enbar->fullbarTex, 
         (f32) (0xA0 - (enbar->width >> 1)), 
         (f32) (0xE6 - enbar->height), 
         enbar->filledWidth, 
@@ -2747,8 +2747,8 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
         1.0f, 
         1.0f, 
         enbar->alpha | ~0xFF, 
-        0x4002);
-    func_800390A4(gdl, enbar->emptybarTex, 
+        TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
+    rcp_tile_write_x(gdl, enbar->emptybarTex, 
         (f32) (0xA0 - (enbar->width >> 1)) + enbar->filledWidth, 
         (f32) (0xE6 - enbar->height), 
         enbar->width - enbar->filledWidth, 
@@ -2758,7 +2758,7 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
         1.0f, 
         1.0f, 
         enbar->alpha | ~0xFF, 
-        0x4002);
+        TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
 }
 
 // offset: 0x7550 | func: 49 | export: 22
@@ -2775,8 +2775,8 @@ void cmdmenu_energy_bar_free(void) {
     STUBBED_PRINTF(" Killing Bar ");
     enbar = sEnergyBar;
     enbar->alpha = 0;
-    tex_free(enbar->fullbarTex[0].unk0);
-    tex_free(enbar->emptybarTex[0].unk0);
+    tex_free(enbar->fullbarTex[0].tex);
+    tex_free(enbar->emptybarTex[0].tex);
     mmFree(sEnergyBar);
     sEnergyBar = NULL;
 }

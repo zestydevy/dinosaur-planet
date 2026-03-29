@@ -470,16 +470,16 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
 
         if (sMapTile && sOpacity) {
             //Draw minimap tile
-            func_8003825C(gdl, sMapTile, 
+            rcp_screen_full_write(gdl, sMapTile, 
                     (MINIMAP_SCREEN_X + sOffsetX - sGridX),
                     (MINIMAP_SCREEN_Y + sOffsetY - sGridZ),
-                    0, 0, sOpacity, 0);
+                    0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);
 
             //Draw player marker
-            func_8003825C(gdl, sMarkerPlayer, 
+            rcp_screen_full_write(gdl, sMarkerPlayer, 
                     (MINIMAP_SCREEN_X - sGridX - (player->positionMirror.x - sLevelMaxX) * 0.025f) - 4.0f,
                     (MINIMAP_SCREEN_Y - sGridZ - (player->positionMirror.z - sLevelMaxZ) * 0.025f) - 4.0f,
-                    0, 0, sOpacity, 0);
+                    0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);
 
             //Draw sidekick marker (if the sidekick's somewhere inside the current map's extended bounds)
             if (sidekick != NULL) {
@@ -487,10 +487,10 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
                     (sLevelMinX - BLOCKS_GRID_UNIT_HALF < sidekick->positionMirror.x) && (sidekick->positionMirror.x < sLevelMaxX + BLOCKS_GRID_UNIT_HALF) &&
                     (sLevelMinZ - BLOCKS_GRID_UNIT_HALF < sidekick->positionMirror.z) && (sidekick->positionMirror.z < sLevelMaxZ + BLOCKS_GRID_UNIT_HALF)
                 ) {
-                    func_8003825C(gdl, sMarkerSidekick, 
+                    rcp_screen_full_write(gdl, sMarkerSidekick, 
                         (MINIMAP_SCREEN_X - sGridX - (sidekick->positionMirror.x - sLevelMaxX) * 0.025f) - 4.0f,
                         (MINIMAP_SCREEN_Y - sGridZ - (sidekick->positionMirror.z - sLevelMaxZ) * 0.025f) - 4.0f,
-                        0, 0, sOpacity, 0);
+                        0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);
                 }
             }
         }

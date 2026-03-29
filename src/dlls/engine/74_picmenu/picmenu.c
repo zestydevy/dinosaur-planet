@@ -331,8 +331,8 @@ void picmenu_draw(Gfx **gdl) {
                 }
 
                 while (item->bgTextureIndices[k] != -1 && k < (s32)ARRAYCOUNT(item->bgTextureIndices)) {
-                    func_8003825C(gdl, sTextures[item->bgTextureIndices[k]].texture, 
-                        x, y, 0, 0, opacity, 0);
+                    rcp_screen_full_write(gdl, sTextures[item->bgTextureIndices[k]].texture, 
+                        x, y, 0, 0, opacity, SCREEN_WRITE_TRANSLUCENT);
                     x += sTextures[item->bgTextureIndices[k]].width;
                     k++;
                 }
@@ -393,13 +393,13 @@ void picmenu_draw(Gfx **gdl) {
 
             if (item->texture.asPtr != NULL) {
                 if (item->flags & PICMENU_HAS_BACKGROUND) {
-                    func_8003825C(gdl, item->texture.asPtr,
+                    rcp_screen_full_write(gdl, item->texture.asPtr,
                         item->itemX + 11, item->itemY, 0, 0, 
-                        item->flags & PICMENU_TRANSPARENT ? 128 : 255, 0);
+                        item->flags & PICMENU_TRANSPARENT ? 128 : 255, SCREEN_WRITE_TRANSLUCENT);
                 } else {
-                    func_8003825C(gdl, item->texture.asPtr,
+                    rcp_screen_full_write(gdl, item->texture.asPtr,
                         item->itemX, item->itemY, 0, 0, 
-                        item->flags & PICMENU_TRANSPARENT ? 128 : 255, 0);
+                        item->flags & PICMENU_TRANSPARENT ? 128 : 255, SCREEN_WRITE_TRANSLUCENT);
                 }
             }
         }

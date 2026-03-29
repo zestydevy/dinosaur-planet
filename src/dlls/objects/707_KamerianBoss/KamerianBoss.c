@@ -70,7 +70,7 @@ enum KDModAnims {
 /*0xC*/ static s16 sHealthBarTextureIDs[2] = {0x042d, 0x0422};
 
 /*0x0*/ static Texture *sHealthBarTextures[2];
-/*0x8*/ static Func_80037F9C_Struct _bss_8[2][2];
+/*0x8*/ static TextureTile _bss_8[2][2];
 /*0x38*/ static s32 sHealthBarAlpha;
 /*0x3C*/ static u8 _bss_3C[4];
 /*0x40*/ static u8 _bss_40[0x4c0];
@@ -187,11 +187,11 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     for (i = 0; i < 2; i++) {
         texture = tex_load_deferred(sHealthBarTextureIDs[i]);
         sHealthBarTextures[i] = texture;
-        _bss_8[i][0].unk0 = texture;
-        _bss_8[i][0].unk4 = 0;
-        _bss_8[i][0].unk8 = 0;
-        _bss_8[i][0].unkA = 0;
-        _bss_8[i][1].unk0 = NULL;
+        _bss_8[i][0].tex = texture;
+        _bss_8[i][0].animProgress = 0;
+        _bss_8[i][0].x = 0;
+        _bss_8[i][0].y = 0;
+        _bss_8[i][1].tex = NULL;
     }
 
     // load fxemit objects
@@ -738,7 +738,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         // Draw health bar
         if (sHealthBarAlpha != 0) {
-            func_800390A4(gdl, _bss_8[0], 
+            rcp_tile_write_x(gdl, _bss_8[0], 
                 /*x*/96.0f, 
                 /*y*/24.0f, 
                 /*width*/(f32) hpBarWidth, 
@@ -748,9 +748,9 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                 /*xScale*/4.0f, 
                 /*yScale*/1.0f, 
                 /*color*/sHealthBarAlpha - 256, 
-                /*flags*/0x4002);
+                /*flags*/TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
             
-            func_800390A4(gdl, _bss_8[1], 
+            rcp_tile_write_x(gdl, _bss_8[1], 
                 /*x*/(f32) ((hpBarWidth * 4) + 96), 
                 /*y*/24.0f, 
                 /*width*/(f32) (32 - hpBarWidth), 
@@ -760,7 +760,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                 /*xScale*/4.0f, 
                 /*yScale*/1.0f, 
                 /*color*/sHealthBarAlpha - 256, 
-                /*flags*/0x4002);
+                /*flags*/TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
         }
         // Get attachment positions
         i = 15;

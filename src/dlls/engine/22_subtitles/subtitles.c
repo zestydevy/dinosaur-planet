@@ -73,7 +73,7 @@ typedef struct StructData1C {
 /*0x4*/ static s32 sWindowID;
 /*0x8*/ static s32 _bss_8;
 /*0xC*/ static s32 _bss_C;
-/*0x10*/ static Func_80037F9C_Struct _bss_10[3];
+/*0x10*/ static TextureTile _bss_10[3];
 /*0x38*/ static StructBss38 _bss_38[3];
 /*0x77C*/ static u8 _bss_77C[0x4];
 /*0x780*/ static StructBss38 *_bss_780[3];
@@ -141,16 +141,16 @@ void dll_22_ctor(s32 arg0) {
             var_v0->unkC8[1][j].unkA = NULL;
         }
     }
-    _bss_10[0].unk0 = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
-    _bss_10[1].unk0 = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
-    _bss_10[2].unk0 = NULL;
-    _bss_10[0].unk8 = 0;
-    _bss_10[1].unk8 = _bss_10[0].unk0->width;
-    _bss_7A3 = _bss_10[0].unk0->width + _bss_10[1].unk0->width;
-    _bss_10[0].unkA = -2;
-    _bss_10[1].unkA = -2;
-    _bss_10[0].unk4 = 0;
-    _bss_10[1].unk4 = 0;
+    _bss_10[0].tex = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
+    _bss_10[1].tex = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
+    _bss_10[2].tex = NULL;
+    _bss_10[0].x = 0;
+    _bss_10[1].x = _bss_10[0].tex->width;
+    _bss_7A3 = _bss_10[0].tex->width + _bss_10[1].tex->width;
+    _bss_10[0].y = -2;
+    _bss_10[1].y = -2;
+    _bss_10[0].animProgress = 0;
+    _bss_10[1].animProgress = 0;
 }
 
 // offset: 0x1D4 | dtor
@@ -174,8 +174,8 @@ void dll_22_dtor(s32 arg0) {
             }
         }
     }
-    tex_free(_bss_10[0].unk0);
-    tex_free(_bss_10[1].unk0);
+    tex_free(_bss_10[0].tex);
+    tex_free(_bss_10[1].tex);
 }
 
 // offset: 0x2D0 | func: 0 | export: 0
@@ -457,7 +457,7 @@ void dll_22_func_D9C(Gfx **gdl) {
     if (camera_get_letterbox() == 0) {
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, (_bss_8 - 2), (_bss_7A0 - 1), (_bss_C + 2));
         for (i = 0; i < _bss_7A0; i += _bss_7A3) {
-            func_80037F9C(gdl, _bss_10, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
+            rcp_tile_write(gdl, _bss_10, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
         }
     }
     font_window_set_coords(sWindowID, _bss_798, _bss_8, _bss_798 + _bss_79C, _bss_C);

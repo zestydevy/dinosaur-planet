@@ -1,8 +1,11 @@
 #include "PR/gbi.h"
-#include "common.h"
+#include "sys/camera.h"
 #include "sys/map.h"
 #include "sys/rcp.h"
 #include "sys/rsp_segment.h"
+#include "sys/scheduler.h"
+#include "sys/vi.h"
+#include "macros.h"
 
 // .data
 
@@ -49,8 +52,7 @@ Gfx D_80091868[] = {
     gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
     gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_XLU_SURF | G_RM_AA_XLU_SURF2),
     gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
-    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2),
-    gsDPNoOp()
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2)
 };
 
 // -------- .bss start 800b3790 -------- //
@@ -66,8 +68,6 @@ OSMesgQueue *gScInterruptQ;
 u8 _bss_800b3d08[0x18];
 u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
 // -------- .bss end 800b4920 -------- //
-
-void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8); 
 
 /**
  * Prepare the gfx task for the F3DEX2 XBus microcode.
@@ -171,21 +171,22 @@ void rcp_set_border_color(u32 red, u32 green, s32 blue) {
     sBackgroundFillColour |= (sBackgroundFillColour << 16);
 }
 
-void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
-    s32 resolution;
-    s32 resWidth, resHeight;
+// official name: rcpClearScreen
+void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
+    s32 viSize;
+    s32 viWidth, viHeight;
     s32 ulx, uly, lrx, lry;
-    s32 var1;
+    s32 letterbox;
 
     viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
 
-    var1 = camera_get_letterbox();
+    letterbox = camera_get_letterbox();
 
-    resolution = vi_get_current_size();
-    resWidth = GET_VIDEO_WIDTH(resolution);
-    resHeight = GET_VIDEO_HEIGHT(resolution);
+    viSize = vi_get_current_size();
+    viWidth = GET_VIDEO_WIDTH(viSize);
+    viHeight = GET_VIDEO_HEIGHT(viSize);
 
-    gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, resWidth - 1, resHeight - 1);
+    gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, viWidth - 1, viHeight - 1);
 
     gDPSetCombineMode((*gdl), G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     dl_apply_combine(gdl);
@@ -200,9 +201,9 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, viWidth, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
-    if ((param3 & 2) != 0) {
+    if ((flags & CLEAR_ZBUFFER) != 0) {
         dl_set_fill_color(gdl, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
 
         gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
@@ -215,21 +216,21 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, viWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
 
-    if ((param3 & 1) != 0 || var1 != 0) {
+    if ((flags & CLEAR_COLOR) != 0 || letterbox != 0) {
         dl_set_fill_color(gdl, 
             (GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1) << 16) 
                 | GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1));
 
-        if ((param3 & 1) != 0) {
-            gDPFillRectangle((*gdl)++, 0, 0, resWidth - 1, resHeight - 1);
+        if ((flags & CLEAR_COLOR) != 0) {
+            gDPFillRectangle((*gdl)++, 0, 0, viWidth - 1, viHeight - 1);
             gDLBuilder->needsPipeSync = TRUE;
-        } else if (var1 != 0) {
-            gDPFillRectangle((*gdl)++, 0, 0, resWidth - 1, uly - 1);
+        } else if (letterbox != 0) {
+            gDPFillRectangle((*gdl)++, 0, 0, viWidth - 1, uly - 1);
             gDLBuilder->needsPipeSync = TRUE;
 
-            gDPFillRectangle((*gdl)++, 0, lry, resWidth - 1, resHeight - 1);
+            gDPFillRectangle((*gdl)++, 0, lry, viWidth - 1, viHeight - 1);
             gDLBuilder->needsPipeSync = TRUE;
         }
     }
@@ -288,119 +289,118 @@ void func_80037F8C(s32 param1) {
     D_800917BC = param1;
 }
 
-void func_80037F9C(Gfx** gdl, Func_80037F9C_Struct* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u8 arg6, u8 arg7) {
-    Texture* var_v0;
-    Texture* var_a1;
-    s32 temp_s5;
-    s32 temp_s6;
-    s32 temp_t8;
-    s32 var_s1;
-    s32 var_s2;
-    s32 var_s3;
-    s32 var_s4;
+// official name: rcpTileWrite ?
+void rcp_tile_write(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b, u8 a) {
+    Texture* tile;
+    Texture* tex;
+    s32 lrx;
+    s32 lry;
+    s32 frameno;
+    s32 ulx;
+    s32 uly;
+    s32 s;
+    s32 t;
     s32 i;
     s32 j;
-    Gfx* sp68;
+    Gfx* dl;
 
     j = 0;
-    sp68 = *gdl;
-    gSPLoadGeometryMode(sp68, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(&sp68);
-    gDPSetCombineMode(sp68, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    dl_apply_combine(&sp68);
+    dl = *gdl;
+    gSPLoadGeometryMode(dl, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
+    dl_apply_geometry_mode(&dl);
+    gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+    dl_apply_combine(&dl);
     gDPSetOtherMode(
-        sp68, 
+        dl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
     );
-    dl_apply_other_mode(&sp68);
-    arg2 *= 4;
-    arg3 *= 4;
-    var_a1 = arg1->unk0;
-    while (var_a1 != NULL) {
-        var_s1 = (arg1[j].unk8 * 4) + arg2;
-        var_s2 = (arg1[j].unkA * 4) + arg3;
-        temp_s5 = (var_a1->width * 4) + var_s1;
-        temp_s6 = (var_a1->height * 4) + var_s2;
-        if (temp_s5 > 0 && temp_s6 > 0) {
-            var_s3 = 0;
-            var_s4 = 0;
-            if (var_s1 < 0) {
-                var_s3 = -(var_s1 * 8);
-                var_s1 = 0;
+    dl_apply_other_mode(&dl);
+    x *= 4;
+    y *= 4;
+    tex = tiles->tex;
+    while (tex != NULL) {
+        ulx = (tiles[j].x * 4) + x;
+        uly = (tiles[j].y * 4) + y;
+        lrx = (tex->width * 4) + ulx;
+        lry = (tex->height * 4) + uly;
+        if (lrx > 0 && lry > 0) {
+            s = 0;
+            t = 0;
+            if (ulx < 0) {
+                s = -(ulx * 8);
+                ulx = 0;
             }
-            if (var_s2 < 0) {
-                var_s4 = -(var_s2 * 8);
-                var_s2 = 0;
+            if (uly < 0) {
+                t = -(uly * 8);
+                uly = 0;
             }
-            temp_t8 = (s32) arg1[j].unk4 >> 8;
-            for (var_v0 = var_a1, i = 0; i < temp_t8 && var_v0 != NULL; i++) {
-                var_v0 = var_v0->next;
+            frameno = (s32) tiles[j].animProgress >> 8;
+            for (tile = tex, i = 0; i < frameno && tile != NULL; i++) {
+                tile = tile->next;
             }
-            sp68->words.w0 = var_v0->gdl->words.w0;
-            sp68->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(var_v0 + 1);
-            
-            sp68++;
-            gSPDisplayList(sp68++, OS_PHYSICAL_TO_K0(var_v0->gdl + 1));
-            dl_set_prim_color(&sp68, arg4, arg5, arg6, arg7);
-            gSPTextureRectangle(sp68++, 
-            /* xl */ var_s1,
-            /* xy */ var_s2,
-            /* xh */ temp_s5,
-            /* yh */ temp_s6,
-            /* tile */ 0,
-            /* s */ var_s3,
-            /* t */ var_s4,
-            /* dsdx */ 1 << 10,
-            /* dsdy */ 1 << 10
+            dl->words.w0 = tile->gdl->words.w0;
+            dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tile + 1);
+            dl++;
+            gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(tile->gdl + 1));
+            dl_set_prim_color(&dl, r, g, b, a);
+            gSPTextureRectangle(dl++, 
+            /*ulx*/ ulx,
+            /*uly*/ uly,
+            /*lrx*/ lrx,
+            /*lry*/ lry,
+            /*tile*/ 0,
+            /*s*/ s,
+            /*t*/ t,
+            /*dsdx*/ 1 << 10,
+            /*dsdy*/ 1 << 10
             );
             gDLBuilder->needsPipeSync = 1;
         }
         j++;
-        var_a1 = arg1[j].unk0;
+        tex = tiles[j].tex;
     }
     tex_render_reset();
-    *gdl = sp68;
+    *gdl = dl;
 }
 
-void func_8003825C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
-    s32 temp = tex->height | ((tex->widthHeightHi & 0xF) << 8);
-    func_8003833C(gdl, tex, arg2, arg3, 0, temp, arg5, arg6, arg7);
+void rcp_screen_full_write(Gfx** gdl, Texture* tex, s32 x, s32 y, s32 arg4, s32 frameno, s32 alpha, s32 flags) {
+    s32 texHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
+    rcp_screen_write(gdl, tex, x, y, 0, texHeight, frameno, alpha, flags);
 }
 
-void func_800382AC(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
-    s32 temp_v1;
-    s32 var_s0;
-    s32 var_v0;
+void rcp_screen_scroll_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 top, s32 bottom, s32 alpha, s32 flags) {
+    s32 texHeight;
 
-    arg4 -= arg3;
-    temp_v1 = tex->height | ((tex->widthHeightHi & 0xF) << 8);
-    if (arg4 < 0) {
-        arg4 = 0;
+    top -= dstY;
+    texHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
+    if (top < 0) {
+        top = 0;
     }
-    arg5 -= arg3;
-    if (temp_v1 < arg5) {
-        arg5 = temp_v1;
+    bottom -= dstY;
+    if (texHeight < bottom) {
+        bottom = texHeight;
     }
-    if (arg4 < temp_v1 && arg5 >= 0) {
-        func_8003833C(gdl, tex, arg2, arg3, arg4, arg5, 0, arg6, arg7);
+    if (top < texHeight && bottom >= 0) {
+        rcp_screen_write(gdl, tex, dstX, dstY, top, bottom, 0, alpha, flags);
     }
 }
 
-void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8) {
+// official name: rcpScreenWrite (default.dol)
+void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s32 srcBottom, s32 frameno, s32 alpha, s32 flags) {
     s32 width;
     s32 sp148;
     s32 temp_v0_9;
-    s32 temp_v1;
+    s32 y;
     s32 height;
-    s32 var_t3;
+    s32 srcY;
     s32 texFormat;
-    s32 sp130;
+    s32 bytesPerPx;
     s32 sp12C;
     s32 sp128;
     s32 numFrames;
-    Texture* var_s6;
-    Texture* sp11C;
+    u8* img;
+    Texture* frameTex;
 
     sp12C = func_80041DBC();
     sp128 = func_80041E08();
@@ -410,10 +410,10 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     } else {
         numFrames = 0;    
     }
-    sp11C = tex;
-    if ((numFrames > 1) && (arg6 < numFrames)) {
-        for (numFrames = 0; numFrames < arg6 && sp11C != NULL; numFrames++) {
-            sp11C = sp11C->next;
+    frameTex = tex;
+    if ((numFrames > 1) && (frameno < numFrames)) {
+        for (numFrames = 0; numFrames < frameno && frameTex != NULL; numFrames++) {
+            frameTex = frameTex->next;
         }
     }
     gSPGeometryMode(*gdl, 0xFFFFFF, 0);
@@ -426,21 +426,21 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     }
     texFormat = TEX_FORMAT(tex->format);
     if (texFormat == TEX_FORMAT_RGBA16) {
-        sp130 = 2;
+        bytesPerPx = 2;
         height = (0x800 / width) & ~1;
     } else if (texFormat == TEX_FORMAT_IA8) {
-        sp130 = 1;
+        bytesPerPx = 1;
         height = (0x1000 / width) & ~1;
     } else {
-        sp130 = 4;
+        bytesPerPx = 4;
         height = (0x400 / width) & ~1;
     }
     if (height == 0) {
         return;
     }
 
-    var_s6 = (Texture*)((u8*)sp11C + (width * arg4 * sp130) + sizeof(Texture));
-    if (arg8 & 2) {
+    img = (u8*)frameTex + (width * srcTop * bytesPerPx) + sizeof(Texture);
+    if (flags & SCREEN_WRITE_CYC_COPY) {
         gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
         dl_apply_combine(gdl);
         gDPSetOtherMode(
@@ -449,7 +449,7 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
             G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2
         );
         dl_apply_other_mode(gdl);
-    } else if ((arg7 == 0xFF) && (arg8 & 1)) {
+    } else if ((alpha == 255) && (flags & SCREEN_WRITE_OPAQUE)) {
         gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
         dl_apply_combine(gdl);
         gDPSetOtherMode(
@@ -468,10 +468,10 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
         );
         dl_apply_other_mode(gdl);
     }
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, arg7);
-    var_t3 = arg4;
+    dl_set_prim_color(gdl, 255, 255, 255, alpha);
+    srcY = srcTop;
     do {
-        temp_v0_9 = arg5 - var_t3;
+        temp_v0_9 = srcBottom - srcY;
         if (temp_v0_9 < height) {
             height = temp_v0_9;
         }
@@ -495,7 +495,7 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
             //     /* shifts */ G_TX_NOLOD,
             //     /* shiftt */ G_TX_NOLOD
             // );
-            gDPSetTextureImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, OS_PHYSICAL_TO_K0(var_s6));
+            gDPSetTextureImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, OS_PHYSICAL_TO_K0(img));
             gDPSetTile((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
             gDPLoadSync((*gdl)++);
             gDPLoadBlock((*gdl)++, G_TX_LOADTILE, 0, 0, width * height - 1, 0);
@@ -522,7 +522,7 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
                 //     /* shifts */ G_TX_NOLOD,
                 //     /* shiftt */ G_TX_NOLOD
                 // );
-                gDPSetTextureImage((*gdl)++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, OS_PHYSICAL_TO_K0(var_s6));
+                gDPSetTextureImage((*gdl)++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, OS_PHYSICAL_TO_K0(img));
                 gDPSetTile((*gdl)++, G_IM_FMT_IA, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
                 gDPLoadSync((*gdl)++);
                 gDPLoadBlock((*gdl)++, G_TX_LOADTILE, 0, 0, ((width * height + 1) >> 1) - 1, 0);
@@ -550,7 +550,7 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
             //     /* shifts */ G_TX_NOLOD,
             //     /* shiftt */ G_TX_NOLOD
             // );
-            gDPSetTextureImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, OS_PHYSICAL_TO_K0(var_s6));
+            gDPSetTextureImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, OS_PHYSICAL_TO_K0(img));
             gDPSetTile((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
             gDPLoadSync((*gdl)++);
             gDPLoadBlock((*gdl)++, G_TX_LOADTILE, 0, 0, width * height - 1, 0);
@@ -559,14 +559,14 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
             gDPSetTileSize((*gdl)++, 0, 0, 0, (width - 1) << 2, ((height - 1) << 2));
         }
 
-        temp_v1 = arg3 + var_t3;
-        if (arg8 & 2) {
+        y = dstY + srcY;
+        if (flags & SCREEN_WRITE_CYC_COPY) {
             gSPTextureRectangle(
             /* pkt */ (*gdl)++,
-            /* xl */ arg2 << 2,
-            /* yl */ temp_v1 << 2,
-            /* xh */ (arg2 + width) << 2,
-            /* yh */ (temp_v1 + height - 1) << 2,
+            /* xl */ dstX << 2,
+            /* yl */ y << 2,
+            /* xh */ (dstX + width) << 2,
+            /* yh */ (y + height - 1) << 2,
             /* tile */ 0,
             /* s */ 0,
             /* t */ 0,
@@ -577,10 +577,10 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
         } else if ((sp128 != 0) && (sp12C != 0)) {
             gSPTextureRectangle(
             /* pkt */ (*gdl)++,
-            /* xl */ arg2 << 2,
-            /* yl */ temp_v1 << 2,
-            /* xh */ (arg2 + sp148) << 2,
-            /* yh */ (temp_v1 + height) << 2,
+            /* xl */ dstX << 2,
+            /* yl */ y << 2,
+            /* xh */ (dstX + sp148) << 2,
+            /* yh */ (y + height) << 2,
             /* tile */ 0,
             /* s */ 0,
             /* t */ 0,
@@ -591,10 +591,10 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
         } else if (sp12C != 0) {
             gSPTextureRectangle(
             /* pkt */ (*gdl)++,
-            /* xl */ arg2 << 2,
-            /* yl */ temp_v1 << 2,
-            /* xh */ (arg2 + sp148) << 2,
-            /* yh */ (temp_v1 + height) << 2,
+            /* xl */ dstX << 2,
+            /* yl */ y << 2,
+            /* xh */ (dstX + sp148) << 2,
+            /* yh */ (y + height) << 2,
             /* tile */ 0,
             /* s */ 0,
             /* t */ 0,
@@ -605,10 +605,10 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
         } else if (sp128 != 0) {
             gSPTextureRectangle(
             /* pkt */ (*gdl)++,
-            /* xl */ arg2 << 2,
-            /* yl */ temp_v1 << 2,
-            /* xh */ (arg2 + sp148) << 2,
-            /* yh */ (temp_v1 + height) << 2,
+            /* xl */ dstX << 2,
+            /* yl */ y << 2,
+            /* xh */ (dstX + sp148) << 2,
+            /* yh */ (y + height) << 2,
             /* tile */ 0,
             /* s */ 0,
             /* t */ 0,
@@ -619,10 +619,10 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
         } else {
             gSPTextureRectangle(
             /* pkt */ (*gdl)++,
-            /* xl */ arg2 << 2,
-            /* yl */ temp_v1 << 2,
-            /* xh */ (arg2 + width) << 2,
-            /* yh */ (temp_v1 + height) << 2,
+            /* xl */ dstX << 2,
+            /* yl */ y << 2,
+            /* xh */ (dstX + width) << 2,
+            /* yh */ (y + height) << 2,
             /* tile */ 0,
             /* s */ 0,
             /* t */ 0,
@@ -631,9 +631,9 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
             );
             gDLBuilder->needsPipeSync = 1;
         }
-        var_t3 += height;
-        var_s6 = (Texture *) ((u8*)var_s6 + width * height * sp130);
-    } while (var_t3 < arg5);
+        srcY += height;
+        img = (u8*)img + width * height * bytesPerPx;
+    } while (srcY < srcBottom);
 }
 
 void draw_pause_screen_freeze_frame(Gfx** gdl) {
@@ -704,88 +704,89 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
     }
 }
 
-void func_800390A4(Gfx** arg0, Func_80037F9C_Struct* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s32 arg6, s32 arg7, f32 arg8, f32 arg9, u32 arg10, s32 arg11) {
-    s32 temp_a0;
+// official name: rcpTileWriteX ?
+void rcp_tile_write_x(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 height, s32 s, s32 t, f32 scaleX, f32 scaleY, u32 color, s32 flags) {
+    s32 _pad;
     s32 resolution;
-    Texture* var_s7;
+    Texture* tile;
     Gfx* temp_s0;
-    s32 width; // cpCC
-    s32 height; // spC8
-    s32 minWidth;
-    s32 minHeight;
-    s32 var_s3;
-    s32 spB8;
-    s32 spB4;
-    s32 var_s5;
+    s32 viWidth; // cpCC
+    s32 viHeight; // spC8
+    s32 ulx;
+    s32 uly;
+    s32 dsdy;
+    s32 lrx;
+    s32 lry;
+    s32 dsdx;
     s32 j;
-    Gfx* spA8;
+    Gfx* dl;
 
-    spA8 = *arg0;
+    dl = *gdl;
     resolution = vi_get_current_size();
-    height = ((u16)GET_VIDEO_HEIGHT(resolution)) * 4;
-    width = GET_VIDEO_WIDTH(resolution) * 4;
-    temp_s0 = (arg11 & 0x4000)
-        ? &D_80091868[(arg11 & 0xFF) * 3]
-        : &D_80091828[(arg11 & 0xFF) * 3];
-    gSPGeometryMode(spA8, 0xFFFFFF, G_SHADING_SMOOTH | G_SHADE);
-    dl_apply_geometry_mode(&spA8);
-    bcopy(temp_s0, spA8, 8);
-    dl_apply_combine(&spA8);
-    bcopy(temp_s0 + 1, spA8, 8);
-    dl_apply_other_mode(&spA8);
-    dl_set_prim_color(&spA8, (arg10 >> 0x18) & 0xFF, (arg10 >> 0x10) & 0xFF, (arg10 >> 8) & 0xFF, arg10 & 0xFF);
-    arg8 *= 4.0f;
-    arg9 *= 4.0f;
-    for (j = 0, var_s7 = arg1[j].unk0; var_s7 != NULL; j++, var_s7 = arg1[j].unk0) {
-        var_s3 = (s32) (arg2 * 4.0f);
-        var_s5 = (s32) (arg3 * 4.0f);
-        minWidth = (s32) (arg1[j].unk8 * arg8) + var_s3;
-        minHeight = (s32) (arg1[j].unkA * arg9) + var_s5;
-        if ((minWidth < width) && (minHeight < height)) {
-            spB8 = (s32) (arg4 * arg8) + minWidth;
-            spB4 = (s32) (arg5 * arg9) + minHeight;
-            if ((spB8 > 0) && (spB4 > 0) && (minWidth < spB8) && (minHeight < spB4)) {
-                var_s5 = (((s32) arg4 - 1) << 12) / (spB8 - minWidth);
-                if (arg11 & 0x1000) {
-                    arg6 += ((s32) arg4 - 1) << 5;
-                    var_s5 = -var_s5;
+    viHeight = ((u16)GET_VIDEO_HEIGHT(resolution)) * 4;
+    viWidth = GET_VIDEO_WIDTH(resolution) * 4;
+    temp_s0 = (flags & TILE_WRITE_TRANSLUCENT)
+        ? &D_80091868[(flags & 0xFF) * 3]
+        : &D_80091828[(flags & 0xFF) * 3];
+    gSPGeometryMode(dl, 0xFFFFFF, G_SHADING_SMOOTH | G_SHADE);
+    dl_apply_geometry_mode(&dl);
+    bcopy(temp_s0, dl, sizeof(Gfx));
+    dl_apply_combine(&dl);
+    bcopy(temp_s0 + 1, dl, sizeof(Gfx));
+    dl_apply_other_mode(&dl);
+    dl_set_prim_color(&dl, (color >> 0x18) & 0xFF, (color >> 0x10) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+    scaleX *= 4.0f;
+    scaleY *= 4.0f;
+    for (j = 0, tile = tiles[j].tex; tile != NULL; j++, tile = tiles[j].tex) {
+        dsdy = (s32) (x * 4.0f); // @fake: reusing dsdx/dsdy vars here
+        dsdx = (s32) (y * 4.0f);
+        ulx = (s32) (tiles[j].x * scaleX) + dsdy;
+        uly = (s32) (tiles[j].y * scaleY) + dsdx;
+        if ((ulx < viWidth) && (uly < viHeight)) {
+            lrx = (s32) (width * scaleX) + ulx;
+            lry = (s32) (height * scaleY) + uly;
+            if ((lrx > 0) && (lry > 0) && (ulx < lrx) && (uly < lry)) {
+                dsdx = (((s32) width - 1) << 12) / (lrx - ulx);
+                if (flags & TILE_WRITE_FLIP_X) {
+                    s += ((s32) width - 1) << 5;
+                    dsdx = -dsdx;
                 }
-                var_s3 = (((s32) arg5 - 1) << 12) / (spB4 - minHeight);
-                if (arg11 & 0x2000) {
-                    arg7 = ((s32) arg5 - 1) << 5;
-                    var_s3 = -var_s3;
+                dsdy = (((s32) height - 1) << 12) / (lry - uly);
+                if (flags & TILE_WRITE_FLIP_Y) {
+                    t = ((s32) height - 1) << 5;
+                    dsdy = -dsdy;
                 }
-                if (minWidth < 0) {
-                    arg6 += (-minWidth * var_s5) >> 7;
-                    minWidth = 0;
+                if (ulx < 0) {
+                    s += (-ulx * dsdx) >> 7;
+                    ulx = 0;
                 }
-                if (minHeight < 0) {
-                    arg7 += (-minHeight * var_s3) >> 7;
-                    minHeight = 0;
+                if (uly < 0) {
+                    t += (-uly * dsdy) >> 7;
+                    uly = 0;
                 }
-                temp_s0 = var_s7->gdl;
-                spA8->words.w0 = temp_s0->words.w0;
-                spA8->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tex_get_frame_img(var_s7, arg1[j].unk4));
-                spA8++;
+                temp_s0 = tile->gdl;
+                dl->words.w0 = temp_s0->words.w0;
+                dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tex_get_frame_img(tile, tiles[j].animProgress));
+                dl++;
                 temp_s0++;
-                gSPDisplayList(spA8++, OS_PHYSICAL_TO_K0(temp_s0));
-                gSPTextureRectangle(spA8++, 
-                /* xl */ minWidth,
-                /* xl */ minHeight,
-                /* xh */ spB8,
-                /* yh */ spB4,
-                /* tile */ 0,
-                /* s */ arg6,
-                /* t */ arg7,
-                /* dsdx */ var_s5, 
-                /* dsdy */ var_s3
+                gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(temp_s0));
+                gSPTextureRectangle(dl++, 
+                /*ulx*/ ulx,
+                /*uly*/ uly,
+                /*lrx*/ lrx,
+                /*lry*/ lry,
+                /*tile*/ 0,
+                /*s*/ s,
+                /*t*/ t,
+                /*dsdx*/ dsdx, 
+                /*dsdy*/ dsdy
                 );
                 gDLBuilder->needsPipeSync = 1;
             }
         }
     }
     tex_render_reset();
-    *arg0 = spA8;
+    *gdl = dl;
 }
 
 void func_80039560(s32 a0, s32 a1, s32 a2, s32 a3) {
