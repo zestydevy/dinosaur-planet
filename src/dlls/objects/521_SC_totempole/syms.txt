@@ -1,0 +1,13 @@
+.text = 0x0:
+SCTotemPole_ctor = 0x0;
+SCTotemPole_dtor = 0xC;
+SCTotemPole_setup = 0x18;
+SCTotemPole_control = 0x94;
+SCTotemPole_update = 0x3DC;
+SCTotemPole_print = 0x3E8;
+SCTotemPole_free = 0x43C;
+SCTotemPole_get_model_flags = 0x4A4;
+SCTotemPole_get_data_size = 0x4B4;
+SCTotemPole_find_level_control = 0x4C8;
+
+.rodata = 0x5D0:

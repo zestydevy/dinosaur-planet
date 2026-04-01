@@ -463,6 +463,8 @@ enum SoundID {
     SOUND_77C_Capy_Sniff = 0x77C,
     SOUND_77D_Capy_Eat = 0x77D,
 
+    SOUND_786_Wooden_Ratcheting_Loop = 0x786, //SC_totempole (when approaching spinning pole)
+
     SOUND_78C = 0x78C, //DFPLevelControl (empty?)
     
     SOUND_793 = 0x793, //DFPLevelControl (empty?)
