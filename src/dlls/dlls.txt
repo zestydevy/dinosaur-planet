@@ -202,6 +202,7 @@
 521 = objects/521_SC_totempole
 523 = objects/523_SCcollectables
 525 = objects/525_SCtotempuzzle
+526 = objects/526_SC_meterblock
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
 537 = objects/537_DIMCannon

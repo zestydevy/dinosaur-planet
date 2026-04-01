@@ -1611,7 +1611,7 @@ typedef enum {
     BIT_644 = 0x644, // len:1 group:1
     BIT_645 = 0x645, // len:1 group:1
     BIT_646 = 0x646, // len:1 group:1
-    BIT_647 = 0x647, // len:1 group:0
+    BIT_SC_MeterBlock_Completed = 0x647, // len:1 group:0
     BIT_648 = 0x648, // len:1 group:1
     BIT_649 = 0x649, // len:1 group:1
     BIT_64A = 0x64A, // len:1 group:1
