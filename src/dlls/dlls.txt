@@ -38,6 +38,7 @@
 77 = engine/77_scarab
 82 = engine/82
 83 = engine/83
+92 = engine/92_camclimb
 94 = engine/94_camtalk1
 98 = engine/98_camcannon
 

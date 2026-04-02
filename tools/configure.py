@@ -409,7 +409,9 @@ class BuildNinjaWriter:
                     dll_link_deps.append(obj_build_path)
                 
                 # One C file is required per DLL with a src dir
-                assert(c_file != None)
+                if c_file == None:
+                    print(f"ERR: DLL directory '{dll.src_dir}' does not contain a C file!")
+                    sys.exit(1)
                 
                 # Convert syms.txt to linker script
                 syms_txt_path = f"{dll.src_dir}/syms.txt"
@@ -727,6 +729,10 @@ class InputScanner:
                 dll_src_dir = src_dlls_path.joinpath(mapped_dir)
                 dll_nm_dir = nm_dlls_path.joinpath(mapped_dir)
 
+                if not dll_src_dir.exists():
+                    print(f"ERR: DLL directory '{mapped_dir}' does not exist! Check dlls.txt")
+                    sys.exit(1)
+
                 c_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.c", recursive=True)]
                 asm_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.s", recursive=True)]
                 orig_got_path = dll_nm_dir.joinpath("_orig_got.s")
@@ -758,6 +764,14 @@ class InputScanner:
                 undef_syms_file = undef_syms_path.as_posix() if undef_syms_path.exists() else None
 
             self.dlls.append(DLL(str(number), str(dll_src_dir) if dll_src_dir != None else None, src_files, asm_file, undef_syms_file))
+        
+        # Check for orphaned DLL directories
+        mapped_dll_dirs = set([Path(p) for p in dlls_txt.path_map.values()])
+        for c_file_path in src_dlls_path.glob("**/*.c"):
+            dll_dir = c_file_path.parent.relative_to(src_dlls_path)
+
+            if dll_dir not in mapped_dll_dirs:
+                print(f"WARN: DLL directory '{dll_dir}' is not mapped to a DLL in dlls.txt!")
 
     def __make_obj_path(self, path: Path) -> Path:
         return path.with_suffix('.o')
