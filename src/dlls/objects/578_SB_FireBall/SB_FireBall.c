@@ -11,8 +11,8 @@ typedef struct {
 /*00*/ Object *cloudrunner;
 /*04*/ s16 counter;
 /*06*/ s16 unk6;
-/*08*/ Vec3f speed;
-/*14*/ s8 speedSaved;
+/*08*/ Vec3f velocity;
+/*14*/ s8 velocitySaved;
 } SB_FireBall_Data;
 
 static void SB_FireBall_func_408(Object *self);
@@ -34,7 +34,7 @@ void SB_FireBall_setup(Object *self, ObjSetup *setup, s32 arg2) {
     dll_unload(dll);
     self->unkDC = 1200;
     objdata->unk6 = 0;
-    objdata->speedSaved = FALSE;
+    objdata->velocitySaved = FALSE;
 }
 
 // offset: 0xCC | func: 1 | export: 1
@@ -55,16 +55,16 @@ void SB_FireBall_control(Object *self) {
         if (self->unkDC < 0) {
             obj_destroy_object(self);
         }
-        if (!objdata->speedSaved) {
-            objdata->speed.x = self->speed.x;
-            objdata->speed.y = self->speed.y;
-            objdata->speed.z = self->speed.z;
-            objdata->speedSaved = TRUE;
+        if (!objdata->velocitySaved) {
+            objdata->velocity.x = self->velocity.x;
+            objdata->velocity.y = self->velocity.y;
+            objdata->velocity.z = self->velocity.z;
+            objdata->velocitySaved = TRUE;
         }
         self->srt.transl.z -= a1 * 0.25f * gUpdateRateF;
-        self->srt.transl.x += objdata->speed.x * gUpdateRateF;
-        self->srt.transl.y += objdata->speed.y * gUpdateRateF;
-        self->srt.transl.z += objdata->speed.z * gUpdateRateF;
+        self->srt.transl.x += objdata->velocity.x * gUpdateRateF;
+        self->srt.transl.y += objdata->velocity.y * gUpdateRateF;
+        self->srt.transl.z += objdata->velocity.z * gUpdateRateF;
         SB_FireBall_func_408(self);
         if (objdata->counter >= 16) {
             self->objhitInfo->unk5F = 5;

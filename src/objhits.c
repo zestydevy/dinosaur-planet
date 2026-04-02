@@ -378,9 +378,9 @@ void func_800266E0(Object* obj) {
         objhitInfo->unk10.x = obj->srt.transl.x;
         objhitInfo->unk10.y = obj->srt.transl.y;
         objhitInfo->unk10.z = obj->srt.transl.z;
-        objhitInfo->unk20.x = obj->positionMirror.x;
-        objhitInfo->unk20.y = obj->positionMirror.y;
-        objhitInfo->unk20.z = obj->positionMirror.z;
+        objhitInfo->unk20.x = obj->globalPosition.x;
+        objhitInfo->unk20.y = obj->globalPosition.y;
+        objhitInfo->unk20.z = obj->globalPosition.z;
     }
 }
 
@@ -408,9 +408,9 @@ void func_8002674C(Object* obj) {
         objhitInfo->unk10.x = obj->srt.transl.x;
         objhitInfo->unk10.y = obj->srt.transl.y;
         objhitInfo->unk10.z = obj->srt.transl.z;
-        objhitInfo->unk20.x = obj->positionMirror.x;
-        objhitInfo->unk20.y = obj->positionMirror.y;
-        objhitInfo->unk20.z = obj->positionMirror.z;
+        objhitInfo->unk20.x = obj->globalPosition.x;
+        objhitInfo->unk20.y = obj->globalPosition.y;
+        objhitInfo->unk20.z = obj->globalPosition.z;
     }
 }
 
@@ -437,9 +437,9 @@ void func_800267C4(Object* obj) {
         objhitInfo->unk10.x = obj->srt.transl.x;
         objhitInfo->unk10.y = obj->srt.transl.y;
         objhitInfo->unk10.z = obj->srt.transl.z;
-        objhitInfo->unk20.x = obj->positionMirror.x;
-        objhitInfo->unk20.y = obj->positionMirror.y;
-        objhitInfo->unk20.z = obj->positionMirror.z;
+        objhitInfo->unk20.x = obj->globalPosition.x;
+        objhitInfo->unk20.y = obj->globalPosition.y;
+        objhitInfo->unk20.z = obj->globalPosition.z;
     }
 }
 
@@ -677,9 +677,9 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
                 sp58 = 0.015f;
                 sp70.scale = 231.0f;
                 gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_323, &sp70, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sp58);
-                sp70.transl.x -= obj->positionMirror.x;
-                sp70.transl.y -= obj->positionMirror.y;
-                sp70.transl.z -= obj->positionMirror.z;
+                sp70.transl.x -= obj->globalPosition.x;
+                sp70.transl.y -= obj->globalPosition.y;
+                sp70.transl.z -= obj->globalPosition.z;
                 sp70.scale = 123.0f;
                 for (i = 0; i < 15; i++) {
                     gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_324, &sp70, PARTFXFLAG_2, -1, NULL);
@@ -749,8 +749,8 @@ void obj_do_hit_detection(s32 numObjs) {
                 if (temp_a1 != NULL) {
                     temp_a1->unk34 &= ~0x20;
                 }
-                (*temp_v1)->unk4 = currentObj->positionMirror.x - currentObjHitInfo->unk30;
-                (*temp_v1)->unk0 = currentObj->positionMirror.x + currentObjHitInfo->unk30;
+                (*temp_v1)->unk4 = currentObj->globalPosition.x - currentObjHitInfo->unk30;
+                (*temp_v1)->unk0 = currentObj->globalPosition.x + currentObjHitInfo->unk30;
                 var_s7++;
                 if (var_s7 > 0x100) {
                     // " WARNING : OBJHITS hitlist has overflowed \n\n"
@@ -794,12 +794,12 @@ void obj_do_hit_detection(s32 numObjs) {
                             parentObj = (*var_s5)->unk8;
                             parentObjInfo = parentObj->objhitInfo;
                             if ((var_s6 != sp74) && (parentObj != currentObj->parent)) {
-                                var_fv0 = currentObj->positionMirror.z - parentObj->positionMirror.z;
+                                var_fv0 = currentObj->globalPosition.z - parentObj->globalPosition.z;
                                 if (!(var_fv0 > 0.0f)) {
                                     var_fv0 = -var_fv0;
                                 }
                                 if (var_fv0 < (currentObjHitInfo->unk30 + parentObjInfo->unk30)) {
-                                    var_fv0 = currentObj->positionMirror.y - parentObj->positionMirror.y;
+                                    var_fv0 = currentObj->globalPosition.y - parentObj->globalPosition.y;
                                     if (!(var_fv0 > 0.0f)) {
                                         var_fv0 = -var_fv0;
                                     }
@@ -881,8 +881,8 @@ void obj_do_hit_detection(s32 numObjs) {
             currentObjHitInfo->unk9E = 0;
             currentObjHitInfo->unk58 &= ~0x2000;
             if (((currentObjHitInfo->unk62 != 0) || (currentObjHitInfo->unk58 & 8)) && !(currentObjHitInfo->unk58 & 0x40)) {
-                currentObj->speed.x = (currentObj->srt.transl.x - currentObj->positionMirror2.x) * gUpdateRateInverseF;
-                currentObj->speed.z = (currentObj->srt.transl.z - currentObj->positionMirror2.z) * gUpdateRateInverseF;
+                currentObj->velocity.x = (currentObj->srt.transl.x - currentObj->prevLocalPosition.x) * gUpdateRateInverseF;
+                currentObj->velocity.z = (currentObj->srt.transl.z - currentObj->prevLocalPosition.z) * gUpdateRateInverseF;
             }
             var_s6++;
             sp68++;
@@ -1046,9 +1046,9 @@ void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0
         sp58 = obj->modelInsts[obj->modelInstIdx];
         sp54 = obj2->modelInsts[obj2->modelInstIdx];
         if (sp5C->unk5A & 1) {
-            spDC.x = obj2->positionMirror.x - gWorldX;
-            spDC.y = obj2->positionMirror.y;
-            spDC.z = obj2->positionMirror.z - gWorldZ;
+            spDC.x = obj2->globalPosition.x - gWorldX;
+            spDC.y = obj2->globalPosition.y;
+            spDC.z = obj2->globalPosition.z - gWorldZ;
             if (func_8002DFB8(spDC, sp5C->unk52, sp58->unk14, sp58->model, arg2, &sp64, &spE8) != 0) {
                 var_fv0 = obj2->unkA8 / obj->unkA8;
                 if (var_fv0 > 1.0f) {
@@ -1058,10 +1058,10 @@ void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0
                 func_800287E4(obj, obj2, spD0.x, spD0.y, spD0.z, 0);
             }
         } else if (sp5C->unk5A & 2) {
-            spDC.x = obj2->positionMirror.x - gWorldX;
-            spDC.y = obj2->positionMirror.y;
-            spDC.z = obj2->positionMirror.z - gWorldZ;
-            if (func_8002E3D0(spDC, sp5C->unk52, sp58->unk14, sp58->model, arg2, &sp64, obj2->positionMirror.y + sp5C->unk56, obj2->positionMirror.y + (f32) sp5C->unk54, &spE8) != 0) {
+            spDC.x = obj2->globalPosition.x - gWorldX;
+            spDC.y = obj2->globalPosition.y;
+            spDC.z = obj2->globalPosition.z - gWorldZ;
+            if (func_8002E3D0(spDC, sp5C->unk52, sp58->unk14, sp58->model, arg2, &sp64, obj2->globalPosition.y + sp5C->unk56, obj2->globalPosition.y + (f32) sp5C->unk54, &spE8) != 0) {
                 var_fv0 = obj2->unkA8 / obj->unkA8;
                 if (var_fv0 > 1.0f) {
                     var_fv0 = 1.0f;
@@ -1131,37 +1131,37 @@ void func_80028238(Object* obj, Object* otherObj) {
         return;
     }
 
-    sp70 = otherObj->positionMirror.x - obj->positionMirror.x;
-    sp6C = otherObj->positionMirror.y - obj->positionMirror.y;
-    sp68 = otherObj->positionMirror.z - obj->positionMirror.z;
+    sp70 = otherObj->globalPosition.x - obj->globalPosition.x;
+    sp6C = otherObj->globalPosition.y - obj->globalPosition.y;
+    sp68 = otherObj->globalPosition.z - obj->globalPosition.z;
     sp60 = sp58->unk52;
     sp5C = sp54->unk52;
     sp53 = 0;
     if (sp54->unk5A & 2 || sp58->unk5A & 2) {
         if (sp6C > 0.0f) {
             if (sp58->unk5A & 2) {
-                var_fa1 = obj->positionMirror.y + sp58->unk56;
+                var_fa1 = obj->globalPosition.y + sp58->unk56;
             } else {
-                var_fa1 = obj->positionMirror.y + sp60;
+                var_fa1 = obj->globalPosition.y + sp60;
             }
             if (sp54->unk5A & 2) {
-                var_fv0 = otherObj->positionMirror.y + sp54->unk54;
+                var_fv0 = otherObj->globalPosition.y + sp54->unk54;
             } else {
-                var_fv0 = otherObj->positionMirror.y - sp5C;
+                var_fv0 = otherObj->globalPosition.y - sp5C;
             }
             if (var_fa1 < var_fv0) {
                 return;
             }
         } else {
             if (sp54->unk5A & 2) {
-                var_fa1 = otherObj->positionMirror.y + sp54->unk56;
+                var_fa1 = otherObj->globalPosition.y + sp54->unk56;
             } else {
-                var_fa1 = otherObj->positionMirror.y + sp5C;
+                var_fa1 = otherObj->globalPosition.y + sp5C;
             }
             if (sp58->unk5A & 2) {
-                var_fv0 = obj->positionMirror.y + sp58->unk54;
+                var_fv0 = obj->globalPosition.y + sp58->unk54;
             } else {
-                var_fv0 = obj->positionMirror.y - sp60;
+                var_fv0 = obj->globalPosition.y - sp60;
             }
 
             if (var_fa1 < var_fv0) {
@@ -1193,22 +1193,22 @@ void func_80028238(Object* obj, Object* otherObj) {
         return;
     }
 
-    sp8C = obj->positionMirror.x - sp58->unk20.x;
-    sp88 = obj->positionMirror.y - sp58->unk20.y;
-    sp84 = obj->positionMirror.z - sp58->unk20.z;
+    sp8C = obj->globalPosition.x - sp58->unk20.x;
+    sp88 = obj->globalPosition.y - sp58->unk20.y;
+    sp84 = obj->globalPosition.z - sp58->unk20.z;
     if (sp53 != 0) {
         sp88 = 0.0f;
     }
     temp_fa1 = (sp8C * sp8C) + (sp88 * sp88) + (sp84 * sp84);
     if (temp_fa1 > 1.0f) {
-        temp_fv1 = (((otherObj->positionMirror.x - sp58->unk20.x) * sp8C) + ((otherObj->positionMirror.y - sp58->unk20.y) * sp88) + ((otherObj->positionMirror.z - sp58->unk20.z) * sp84)) / temp_fa1;
+        temp_fv1 = (((otherObj->globalPosition.x - sp58->unk20.x) * sp8C) + ((otherObj->globalPosition.y - sp58->unk20.y) * sp88) + ((otherObj->globalPosition.z - sp58->unk20.z) * sp84)) / temp_fa1;
         if (temp_fv1 >= 0.0f && temp_fv1 <= 1.0f) {
             sp9C = sp58->unk20.x + (temp_fv1 * sp8C);
             sp98 = sp58->unk20.y + (temp_fv1 * sp88);
             sp94 = sp58->unk20.z + (temp_fv1 * sp84);
-            temp_fv0_2 = sp9C - otherObj->positionMirror.x;
-            temp_fa1 = sp98 - otherObj->positionMirror.y;
-            temp_ft4_2 = sp94 - otherObj->positionMirror.z;
+            temp_fv0_2 = sp9C - otherObj->globalPosition.x;
+            temp_fa1 = sp98 - otherObj->globalPosition.y;
+            temp_ft4_2 = sp94 - otherObj->globalPosition.z;
             spA4 = sqrtf((temp_fv0_2 * temp_fv0_2) + (temp_fa1 * temp_fa1) + (temp_ft4_2 * temp_ft4_2));
         }
     }
@@ -1294,9 +1294,9 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
             return;
         }
 
-        obj->positionMirror.x -= x;
-        obj->positionMirror.y -= y;
-        obj->positionMirror.z -= z;
+        obj->globalPosition.x -= x;
+        obj->globalPosition.y -= y;
+        obj->globalPosition.z -= z;
         return;
     }
     
@@ -1308,9 +1308,9 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
             return;
         }
 
-        obj->positionMirror.x += x;
-        obj->positionMirror.y += y;
-        obj->positionMirror.z += z;
+        obj->globalPosition.x += x;
+        obj->globalPosition.y += y;
+        obj->globalPosition.z += z;
         return;
     }
     
@@ -1326,9 +1326,9 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
             return;
         }
 
-        obj->positionMirror.x -= x;
-        obj->positionMirror.y -= y;
-        obj->positionMirror.z -= z;
+        obj->globalPosition.x -= x;
+        obj->globalPosition.y -= y;
+        obj->globalPosition.z -= z;
         return;
     }
 
@@ -1351,9 +1351,9 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
             return;
         }
 
-        otherObj->positionMirror.x += x;
-        otherObj->positionMirror.y += y;
-        otherObj->positionMirror.z += z;
+        otherObj->globalPosition.x += x;
+        otherObj->globalPosition.y += y;
+        otherObj->globalPosition.z += z;
         return;
     }
 
@@ -1798,9 +1798,9 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
             var_fp = 1;
         }
         sp128.m[0][0] = spE0->unk52;
-        sp128.m[0][1] = obj->positionMirror.x - gWorldX;
-        sp128.m[0][2] = obj->positionMirror.y;
-        sp128.m[0][3] = obj->positionMirror.z - gWorldZ;
+        sp128.m[0][1] = obj->globalPosition.x - gWorldX;
+        sp128.m[0][2] = obj->globalPosition.y;
+        sp128.m[0][3] = obj->globalPosition.z - gWorldZ;
         sp128.m[2][0] = sp128.m[0][0];
         sp128.m[2][1] = spE0->unk20.x - gWorldX;
         sp128.m[2][2] = spE0->unk20.y;
@@ -1829,9 +1829,9 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
             spE6 = 1;
         }
         sp128.m[1][0] = spDC->unk52;
-        sp128.m[1][1] = obj2->positionMirror.x - gWorldX;
-        sp128.m[1][2] = obj2->positionMirror.y;
-        sp128.m[1][3] = obj2->positionMirror.z - gWorldZ;
+        sp128.m[1][1] = obj2->globalPosition.x - gWorldX;
+        sp128.m[1][2] = obj2->globalPosition.y;
+        sp128.m[1][3] = obj2->globalPosition.z - gWorldZ;
         sp128.m[3][0] = sp128.m[0][0];
         sp128.m[3][1] = spE0->unk20.x - gWorldX;
         sp128.m[3][2] = spE0->unk20.y;
@@ -1844,9 +1844,9 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     if (spFC > 0x40 || sphereCount > 0x40) {
         // "HIT VOLUMES: an object has too many hit spheres\n"
     }
-    var_fs1 = obj->positionMirror.x - obj2->positionMirror.x;
-    var_fs4 = obj->positionMirror.y - obj2->positionMirror.y;
-    var_fs2 = obj->positionMirror.z - obj2->positionMirror.z;
+    var_fs1 = obj->globalPosition.x - obj2->globalPosition.x;
+    var_fs4 = obj->globalPosition.y - obj2->globalPosition.y;
+    var_fs2 = obj->globalPosition.z - obj2->globalPosition.z;
     temp_fv0 = sqrtf(SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2));
     var_fs5 = temp_fv0;
     i = 0;
@@ -2801,10 +2801,10 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     Unk80030A24* sp7C;
 
     sp7C = arg3;
-    obj->speed.x = (obj->srt.transl.x - obj->positionMirror2.x) / gUpdateRateF;
-    obj->speed.y = (obj->srt.transl.y - obj->positionMirror2.y) / gUpdateRateF;
-    obj->speed.z = (obj->srt.transl.z - obj->positionMirror2.z) / gUpdateRateF;
-    VECTOR_SUBTRACT(obj->srt.transl, obj->positionMirror2, spE8);
+    obj->velocity.x = (obj->srt.transl.x - obj->prevLocalPosition.x) / gUpdateRateF;
+    obj->velocity.y = (obj->srt.transl.y - obj->prevLocalPosition.y) / gUpdateRateF;
+    obj->velocity.z = (obj->srt.transl.z - obj->prevLocalPosition.z) / gUpdateRateF;
+    VECTOR_SUBTRACT(obj->srt.transl, obj->prevLocalPosition, spE8);
     sp84 = vec3_length(&spE8);
 
     sp90.x = arg0->x;
@@ -2906,11 +2906,11 @@ s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     Unk80030A24* sp7C;
 
     sp7C = arg3;
-    obj->speed.x = (obj->positionMirror.x - obj->positionMirror3.x) / gUpdateRateF;
-    obj->speed.z = (obj->positionMirror.z - obj->positionMirror3.z) / gUpdateRateF;
-    spE8.x = obj->positionMirror.x - obj->positionMirror3.x;
-    spE8.y = obj->srt.transl.y - obj->positionMirror3.y;
-    spE8.z = obj->positionMirror.z - obj->positionMirror3.z;
+    obj->velocity.x = (obj->globalPosition.x - obj->prevGlobalPosition.x) / gUpdateRateF;
+    obj->velocity.z = (obj->globalPosition.z - obj->prevGlobalPosition.z) / gUpdateRateF;
+    spE8.x = obj->globalPosition.x - obj->prevGlobalPosition.x;
+    spE8.y = obj->srt.transl.y - obj->prevGlobalPosition.y;
+    spE8.z = obj->globalPosition.z - obj->prevGlobalPosition.z;
 
     sp84 = vec3_length(&spE8);
 
@@ -4013,12 +4013,12 @@ void func_80030AEC(Object* obj, Object* otherObj) {
     sp38.z += pad_sp68;
     obj->srt.transl.x = sp44.x;
     obj->srt.transl.z = sp44.z;
-    obj->positionMirror.x = obj->srt.transl.x;
-    obj->positionMirror.z = obj->srt.transl.z;
+    obj->globalPosition.x = obj->srt.transl.x;
+    obj->globalPosition.z = obj->srt.transl.z;
     otherObj->srt.transl.x = sp38.x;
     otherObj->srt.transl.z = sp38.z;
-    otherObj->positionMirror.x = otherObj->srt.transl.x;
-    otherObj->positionMirror.z = otherObj->srt.transl.z;
+    otherObj->globalPosition.x = otherObj->srt.transl.x;
+    otherObj->globalPosition.z = otherObj->srt.transl.z;
 }
 #endif
 
@@ -4029,10 +4029,10 @@ void func_80030E2C(Object* obj, f32* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4
     arg3->x = obj->srt.transl.x;
     arg3->y = obj->srt.transl.y;
     arg3->z = obj->srt.transl.z;
-    arg4->x = obj->positionMirror2.x;
-    arg4->y = obj->positionMirror2.y;
-    arg4->z = obj->positionMirror2.z;
-    arg2->x = obj->srt.transl.x - obj->positionMirror2.x;
+    arg4->x = obj->prevLocalPosition.x;
+    arg4->y = obj->prevLocalPosition.y;
+    arg4->z = obj->prevLocalPosition.z;
+    arg2->x = obj->srt.transl.x - obj->prevLocalPosition.x;
     arg2->y = 0.0f;
-    arg2->z = obj->srt.transl.z - obj->positionMirror2.z;
+    arg2->z = obj->srt.transl.z - obj->prevLocalPosition.z;
 }

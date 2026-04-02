@@ -136,9 +136,9 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     if (arg6 != 0) {
         set_camera_selector(0);
         temp_v0_2 = get_camera();
-        someX = temp_v0_2->tx - obj->positionMirror.f[0];
-        someY = temp_v0_2->ty - obj->positionMirror.f[1];
-        someZ = temp_v0_2->tz - obj->positionMirror.f[2];
+        someX = temp_v0_2->tx - obj->globalPosition.f[0];
+        someY = temp_v0_2->ty - obj->globalPosition.f[1];
+        someZ = temp_v0_2->tz - obj->globalPosition.f[2];
         var_fv0 = sqrtf(SQ(someX) + SQ(someY) + SQ(someZ));
         if (var_fv0 > 0.0f) {
             someX *= 15.0f / var_fv0;

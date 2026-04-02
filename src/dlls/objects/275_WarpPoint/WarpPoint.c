@@ -92,7 +92,7 @@ void WarpPoint_control(Object *self) {
                 objdata->unkC = 1;
             }
         }
-        if ((setup->warpID >= 0) && (vec3_distance(&self->positionMirror, &player->positionMirror) < objdata->dist)) {
+        if ((setup->warpID >= 0) && (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->dist)) {
             warpPlayer(setup->warpID, TRUE);
         }
         break;
@@ -113,9 +113,9 @@ void WarpPoint_control(Object *self) {
         break;
     case UNK1D_2:
         if (objdata->dist != 0.0f) {
-            dx = player->positionMirror.x - self->positionMirror.x;
-            dy = player->positionMirror.y - self->positionMirror.y;
-            dz = player->positionMirror.z - self->positionMirror.z;
+            dx = player->globalPosition.x - self->globalPosition.x;
+            dy = player->globalPosition.y - self->globalPosition.y;
+            dz = player->globalPosition.z - self->globalPosition.z;
             dist = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
         } else {
             dist = objdata->dist;
@@ -143,9 +143,9 @@ void WarpPoint_control(Object *self) {
         break;
     case UNK1D_4:
         if (objdata->dist != 0.0f) {
-            dx = player->positionMirror.x - self->positionMirror.x;
-            dy = player->positionMirror.y - self->positionMirror.y;
-            dz = player->positionMirror.z - self->positionMirror.z;
+            dx = player->globalPosition.x - self->globalPosition.x;
+            dy = player->globalPosition.y - self->globalPosition.y;
+            dz = player->globalPosition.z - self->globalPosition.z;
             dist = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
         } else {
             dist = objdata->dist;

@@ -99,7 +99,7 @@ void WL_spiritplace_control(Object *self) {
         main_get_bits(objdata->bit1) &&
         objdata->mode == 0 &&
         rand_next(1, 2) == 2 &&
-        vec3_distance(&get_player()->positionMirror, &self->positionMirror) < 90.0f) {
+        vec3_distance(&get_player()->globalPosition, &self->globalPosition) < 90.0f) {
             _data_4->vtbl->base.func0(self, 4, NULL, 1, -1, NULL);
     }
     if (main_get_bits(objdata->bit2) && objdata->unk0 == 0) {

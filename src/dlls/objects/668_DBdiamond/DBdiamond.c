@@ -62,7 +62,7 @@ void DBdiamond_control(Object *self) {
     objdata = self->data;
 
     if (objdata->unk0 != 1 && objdata->unk0 == 2 && self->unkAF & 1) {
-        if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < 60.0f) {
+        if (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < 60.0f) {
             obj_free_object_type(self, OBJTYPE_39);
             self->unkAF |= 8;
             main_set_bits(setup->flag1, 1);

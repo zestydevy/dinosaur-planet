@@ -75,8 +75,8 @@ void CCgasventControl_control(Object *self) {
         objects = obj_get_all_of_type(OBJTYPE_64, &count);
         count = 0;
         for (i = 0; i < GASVENT_COUNT; i++) {
-            if (vec3_distance_xz_squared(&objects[i]->positionMirror,
-                &obj_get_nearest_type_to(OBJTYPE_6, objects[i], NULL)->positionMirror) > DISTANCE) {
+            if (vec3_distance_xz_squared(&objects[i]->globalPosition,
+                &obj_get_nearest_type_to(OBJTYPE_6, objects[i], NULL)->globalPosition) > DISTANCE) {
                 count++;
                 objdata->timer += gUpdateRateF;
             }

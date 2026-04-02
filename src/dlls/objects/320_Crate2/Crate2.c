@@ -94,13 +94,13 @@ void dll_320_control(Object* self) {
         temp_v0_2 = obj_get_nearest_type_to(5, self, &sp3C);
         if (temp_v0_2 != NULL) {
             temp_fv0 = self->srt.transl.f[0];
-            temp_v0_2->positionMirror.f[0] = temp_fv0;
+            temp_v0_2->globalPosition.f[0] = temp_fv0;
             temp_v0_2->srt.transl.f[0] = temp_fv0;
             temp_fv0 = self->srt.transl.f[1] + 15.0f;
-            temp_v0_2->positionMirror.f[1] = temp_fv0;
+            temp_v0_2->globalPosition.f[1] = temp_fv0;
             temp_v0_2->srt.transl.f[1] = temp_fv0;
             temp_fv0 = self->srt.transl.f[2];
-            temp_v0_2->positionMirror.f[2] = temp_fv0;
+            temp_v0_2->globalPosition.f[2] = temp_fv0;
             temp_v0_2->srt.transl.f[2] = temp_fv0;
             temp_v0_2->srt.yaw = self->srt.yaw;
         }

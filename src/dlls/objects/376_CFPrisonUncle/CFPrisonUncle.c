@@ -129,7 +129,7 @@ void dll_376_control(Object* self) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
         } else {
             func_80034BC0(self, &objData->unk28);
-            if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->positionMirror, &player->positionMirror) < 200.0f)) {
+            if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
                 
                 if (rand_next(0, 100) < 50) {
@@ -202,9 +202,9 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             boneIdx = objDef->pAttachPoints->bones[self->modelInstIdx];
             mtx = (MtxF*)(((f32*)modelInstance->matrices[modelInstance->unk34 & 1]) + (boneIdx << 4));
             
-            self->srt.transl.x = self->positionMirror.x = mtx->m[3][0] + gWorldX;
-            self->srt.transl.y = self->positionMirror.y = mtx->m[3][1];
-            self->srt.transl.z = self->positionMirror.z = mtx->m[3][2] + gWorldZ;
+            self->srt.transl.x = self->globalPosition.x = mtx->m[3][0] + gWorldX;
+            self->srt.transl.y = self->globalPosition.y = mtx->m[3][1];
+            self->srt.transl.z = self->globalPosition.z = mtx->m[3][2] + gWorldZ;
             
             self->srt.yaw = 0;
             self->srt.pitch = 0;

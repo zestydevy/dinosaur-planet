@@ -25,9 +25,9 @@ void SB_MiniFire_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     self->unkDC = 180;
     rand = rand_next(20, 40);
-    self->speed.x = -((rand * 0.01f) + 0.8f);
-    self->speed.y = 0.0f;
-    self->speed.z = -0.3f;
+    self->velocity.x = -((rand * 0.01f) + 0.8f);
+    self->velocity.y = 0.0f;
+    self->velocity.z = -0.3f;
     self->srt.scale *= 0.8f;
     dll133 = dll_load_deferred(DLL_ID_133, 1);
     ((DLL_133*)dll133)->vtbl->base.func0(self, _data_0[0], NULL, 0x10000 | 0x2, -1, NULL);
@@ -46,9 +46,9 @@ void SB_MiniFire_control(Object *self) {
     s32 _pad[3];
     SRT transform;
 
-    self->srt.transl.x += self->speed.x * gUpdateRateF;
-    self->srt.transl.y += self->speed.y * gUpdateRateF;
-    self->srt.transl.z += self->speed.z * gUpdateRateF;
+    self->srt.transl.x += self->velocity.x * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
+    self->srt.transl.z += self->velocity.z * gUpdateRateF;
     transform.transl.x = 0.0f;
     transform.transl.y = 0.0f;
     transform.transl.z = 0.0f;
@@ -61,9 +61,9 @@ void SB_MiniFire_control(Object *self) {
     transform.pitch = 0;
     transform.yaw = 0;
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A0, &transform, PARTFXFLAG_1, -1, NULL);
-    dx = (self->srt.transl.x - self->positionMirror2.x);
-    dy = (self->srt.transl.y - self->positionMirror2.y);
-    dz = (self->srt.transl.z - self->positionMirror2.z);
+    dx = (self->srt.transl.x - self->prevLocalPosition.x);
+    dy = (self->srt.transl.y - self->prevLocalPosition.y);
+    dz = (self->srt.transl.z - self->prevLocalPosition.z);
     transform.transl.x = dx / 3.0f;
     transform.transl.y = dy / 3.0f;
     transform.transl.z = dz / 3.0f;

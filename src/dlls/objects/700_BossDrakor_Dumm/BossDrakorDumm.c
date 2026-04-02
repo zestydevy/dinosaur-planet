@@ -20,9 +20,9 @@ void dll_700_control(Object* self) {
     self->srt.transl.f[0] = temp_v0->srt.transl.f[2];
     self->srt.transl.f[1] = temp_v0->srt.transl.f[1];
     self->srt.transl.f[2] = temp_v0->srt.transl.f[0];
-    self->positionMirror.f[0] = temp_v0->tz;
-    self->positionMirror.f[1] = temp_v0->ty;
-    self->positionMirror.f[2] = temp_v0->tx;
+    self->globalPosition.f[0] = temp_v0->tz;
+    self->globalPosition.f[1] = temp_v0->ty;
+    self->globalPosition.f[2] = temp_v0->tx;
     self->srt.roll = temp_v0->srt.roll;
     self->srt.pitch = temp_v0->srt.pitch;
     self->srt.yaw = temp_v0->srt.yaw;

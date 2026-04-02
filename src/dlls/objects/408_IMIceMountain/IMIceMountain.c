@@ -54,7 +54,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:
         player = get_player();
-        if (player && (vec3_distance(&player->positionMirror, &self->positionMirror) < 2.5e7f)) {
+        if (player && (vec3_distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
             objdata->state = STATE_0;
             break;
         }

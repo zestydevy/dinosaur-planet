@@ -54,9 +54,9 @@ void flameblast_control(Object* self) {
     if (objdata->timer <= 0) {
         objdata->timer = 30;
 
-        self->speed.x = 0.0f;
-        self->speed.y = 0.0f;
-        self->speed.z = -2.0f;
+        self->velocity.x = 0.0f;
+        self->velocity.y = 0.0f;
+        self->velocity.z = -2.0f;
 
         sp30.transl.x = 0.0f;
         sp30.transl.y = 0.0f;
@@ -66,22 +66,22 @@ void flameblast_control(Object* self) {
         sp30.pitch = sidekick->srt.pitch;
         sp30.yaw = sidekick->srt.yaw;
 
-        rotate_vec3(&sp30, self->speed.f);
+        rotate_vec3(&sp30, self->velocity.f);
 
         self->srt.transl.x = sidekick->srt.transl.x;
         self->srt.transl.y = sidekick->srt.transl.y;
         self->srt.transl.z = sidekick->srt.transl.z;
-        self->srt.transl.x += self->speed.x * gUpdateRateF;
-        self->srt.transl.y += self->speed.y * gUpdateRateF;
-        self->srt.transl.z += self->speed.z * gUpdateRateF;
+        self->srt.transl.x += self->velocity.x * gUpdateRateF;
+        self->srt.transl.y += self->velocity.y * gUpdateRateF;
+        self->srt.transl.z += self->velocity.z * gUpdateRateF;
     }
 
-    self->positionMirror2.x = self->srt.transl.x;
-    self->positionMirror2.y = self->srt.transl.y;
-    self->positionMirror2.z = self->srt.transl.z;
-    self->srt.transl.x += self->speed.x * gUpdateRateF;
-    self->srt.transl.y += self->speed.y * gUpdateRateF;
-    self->srt.transl.z += self->speed.z * gUpdateRateF;
+    self->prevLocalPosition.x = self->srt.transl.x;
+    self->prevLocalPosition.y = self->srt.transl.y;
+    self->prevLocalPosition.z = self->srt.transl.z;
+    self->srt.transl.x += self->velocity.x * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
+    self->srt.transl.z += self->velocity.z * gUpdateRateF;
 }
 
 // offset: 0x274 | func: 2 | export: 2

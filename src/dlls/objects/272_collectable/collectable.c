@@ -128,7 +128,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_42, 0, 4, -1, 0);
         }
 
-        self->speed.y = -1.2f;
+        self->velocity.y = -1.2f;
     }
 
     if (collectableDef) {
@@ -288,7 +288,7 @@ void collectable_control(Object* self) {
 
     //Handle collection when close enough 
     //(either automatically or via target arrow, depending on objectID)
-    distance = vec3_distance_xz(&self->positionMirror, &player->positionMirror);
+    distance = vec3_distance_xz(&self->globalPosition, &player->globalPosition);
     if ((distance < objdata->interactionRadius) && (objdata->delayCollect == 0)) {
         switch (self->id) {
         case OBJ_meatPickup:
@@ -425,10 +425,10 @@ void collectable_handle_animation_and_fx(Object* self) {
         }
 
         //Vertical motion + shadow animation
-        if (self->speed.y < 0.0f) {
-            self->srt.transl.y += self->speed.y;
-            self->speed.y += 0.03f;
-            if (self->speed.y >= 0.0f) {
+        if (self->velocity.y < 0.0f) {
+            self->srt.transl.y += self->velocity.y;
+            self->velocity.y += 0.03f;
+            if (self->velocity.y >= 0.0f) {
                 shadows_func_8004D974(1);
                 objdata->shadowOpacity = 0;
             }
@@ -526,25 +526,25 @@ void collectable_handle_motion(Object* self) {
 
     if (self->srt.transl.y < (maxFound + 10.0f)) {
         self->srt.transl.y = maxFound + 10.0f;
-        self->speed.y = 0.0f - self->speed.y;
-        self->speed.y *= 0.99f;
-        self->speed.x *= 0.7f;
-        self->speed.z *= 0.7f;
-        if (sqrtf(SQ(self->speed.x) + SQ(self->speed.z)) < 0.03f) {
+        self->velocity.y = 0.0f - self->velocity.y;
+        self->velocity.y *= 0.99f;
+        self->velocity.x *= 0.7f;
+        self->velocity.z *= 0.7f;
+        if (sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)) < 0.03f) {
             objdata->moving--;
-            self->speed.y *= 0.5f;
+            self->velocity.y *= 0.5f;
             if (objdata->moving <= 0) {
                 objdata->moving = 0;
-                self->speed.y = 0.0f;
+                self->velocity.y = 0.0f;
             }
         }
     } else {
-        self->speed.y *= 0.99f;
-        self->speed.y -= 0.07f;
+        self->velocity.y *= 0.99f;
+        self->velocity.y -= 0.07f;
     }
 
     dt = (f32) gUpdateRate;
-    obj_integrate_speed(self, self->speed.x * dt, self->speed.y * dt, self->speed.z * dt);
+    obj_move(self, self->velocity.x * dt, self->velocity.y * dt, self->velocity.z * dt);
 }
 
 // offset: 0x1304 | func: 10
@@ -668,9 +668,9 @@ s32 collectable_get_area_value(Object* self) {
     objdata = self->data;
     if (objdata->areaValue == -2) {
         objdata->areaValue = func_80031BBC(
-            self->positionMirror.x, 
-            self->positionMirror.y, 
-            self->positionMirror.z
+            self->globalPosition.x, 
+            self->globalPosition.y, 
+            self->globalPosition.z
         );
     }
     return objdata->areaValue;
@@ -692,9 +692,9 @@ u8 collectable_get_visibility(Object* self) {
 void collectable_set_speed(Object* self, f32 speedX, f32 speedY, f32 speedZ) {
     Collectable_Data *objdata = self->data;
     objdata->moving = 8;
-    self->speed.x = speedX;
-    self->speed.y = speedY;
-    self->speed.z = speedZ;
+    self->velocity.x = speedX;
+    self->velocity.y = speedY;
+    self->velocity.z = speedZ;
 }
 
 // offset: 0x1854 | func: 17 | export: 13

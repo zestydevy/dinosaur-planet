@@ -72,11 +72,11 @@ void dll_241_func_10C(Object* self, f32* arg1, s8* arg2) {
     SkeetlaWall_Data* objdata;
 
     objdata = self->data;
-    arg1[0] = self->positionMirror.x - objdata->unk0;
-    arg1[1] = self->positionMirror.x + objdata->unk1;
-    arg1[2] = self->positionMirror.z + objdata->unk2;
-    arg1[3] = self->positionMirror.z - objdata->unk3;
-    arg1[4] = self->positionMirror.y + objdata->unk4;
-    arg1[5] = self->positionMirror.y - objdata->unk5;
+    arg1[0] = self->globalPosition.x - objdata->unk0;
+    arg1[1] = self->globalPosition.x + objdata->unk1;
+    arg1[2] = self->globalPosition.z + objdata->unk2;
+    arg1[3] = self->globalPosition.z - objdata->unk3;
+    arg1[4] = self->globalPosition.y + objdata->unk4;
+    arg1[5] = self->globalPosition.y - objdata->unk5;
     arg2[0] = objdata->unk6;
 }

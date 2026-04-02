@@ -153,8 +153,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
         }
         if (data->flags & 0x800000) {
             if ((data->unk4.unk25C & 2) || (data->unk4.hitsTouchBits != 0)) {
-                obj->speed.x = (obj->srt.transl.x - obj->objhitInfo->unk10.x) / fsaUpdateRate;
-                obj->speed.z = (obj->srt.transl.z - obj->objhitInfo->unk10.z) / fsaUpdateRate;
+                obj->velocity.x = (obj->srt.transl.x - obj->objhitInfo->unk10.x) / fsaUpdateRate;
+                obj->velocity.z = (obj->srt.transl.z - obj->objhitInfo->unk10.z) / fsaUpdateRate;
             }
             data->flags &= ~0x800000;
         }
@@ -176,13 +176,13 @@ void objfsa_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *callb
         sp24 = fsin16_precise(obj->srt.yaw);
         temp_fv0 = fcos16_precise(obj->srt.yaw);
         if (data->unk340 & 8) {
-            data->unk278 = (-obj->speed.z * temp_fv0) - (obj->speed.x * sp24);
+            data->unk278 = (-obj->velocity.z * temp_fv0) - (obj->velocity.x * sp24);
             data->speed = data->unk278;
         } else {
-            data->unk27C = (obj->speed.x * temp_fv0) - (obj->speed.z * sp24);
-            data->unk278 = (-obj->speed.z * temp_fv0) - (obj->speed.x * sp24);
+            data->unk27C = (obj->velocity.x * temp_fv0) - (obj->velocity.z * sp24);
+            data->unk278 = (-obj->velocity.z * temp_fv0) - (obj->velocity.x * sp24);
             if (data->unk340 & 4) {
-                data->speed = sqrtf(SQ(obj->speed.x) + SQ(obj->speed.z));
+                data->speed = sqrtf(SQ(obj->velocity.x) + SQ(obj->velocity.z));
             }
         }
         data->unk340 = 0;
@@ -471,8 +471,8 @@ void objfsa_turn_to_target(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 t
             var_fv0 = data->target->srt.transl.x - obj->srt.transl.x;
             var_fv1 = data->target->srt.transl.z - obj->srt.transl.z;
         } else {
-            var_fv0 = obj->positionMirror.x - data->target->positionMirror.x;
-            var_fv1 = obj->positionMirror.z - data->target->positionMirror.z;
+            var_fv0 = obj->globalPosition.x - data->target->globalPosition.x;
+            var_fv1 = obj->globalPosition.z - data->target->globalPosition.z;
         }
         var_v1 = arctan2_f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(var_v1)
@@ -550,27 +550,27 @@ void objfsa_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
             var_fa0 = 0.0f;
             var_fa1 = 0.0f;
         }
-        obj->speed.x = obj->speed.x + (((var_fa0 - obj->speed.x) * arg2) / data->unk2B0);
-        obj->speed.z = obj->speed.z + (((var_fa1 - obj->speed.z) * arg2) / data->unk2B0);
+        obj->velocity.x = obj->velocity.x + (((var_fa0 - obj->velocity.x) * arg2) / data->unk2B0);
+        obj->velocity.z = obj->velocity.z + (((var_fa1 - obj->velocity.z) * arg2) / data->unk2B0);
     } else {
         data->unk340 &= ~0x1;
     }
-    data->speed = sqrtf(SQ(obj->speed.x) + SQ(obj->speed.z));
+    data->speed = sqrtf(SQ(obj->velocity.x) + SQ(obj->velocity.z));
     if (data->speed < 0.04f) {
         data->speed = 0.0f;
-        obj->speed.x = 0.0f;
-        obj->speed.z = 0.0f;
+        obj->velocity.x = 0.0f;
+        obj->velocity.z = 0.0f;
     }
     sp2C = fsin16_precise(obj->srt.yaw);
     temp_fv0_4 = fcos16_precise(obj->srt.yaw);
-    data->unk27C = (obj->speed.x * temp_fv0_4) - (obj->speed.z * sp2C);
-    data->unk278 = (-obj->speed.z * temp_fv0_4) - (obj->speed.x * sp2C);
+    data->unk27C = (obj->velocity.x * temp_fv0_4) - (obj->velocity.z * sp2C);
+    data->unk278 = (-obj->velocity.z * temp_fv0_4) - (obj->velocity.x * sp2C);
 }
 
 // offset: 0x15D0 | func: 18 | export: 17
 void objfsa_func_15D0(Object *obj, ObjFSA_Data *data) {
-    obj->speed.x = 0.0f;
-    obj->speed.z = 0.0f;
+    obj->velocity.x = 0.0f;
+    obj->velocity.z = 0.0f;
     data->speed = 0.0f;
     data->unk278 = 0.0f;
     data->unk27C = 0.0f;
@@ -704,8 +704,8 @@ static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 updateRate) {
 
     if (!(data->flags & 0x02000000)) {
         if (!(data->flags & 0x200000)) {
-            obj->speed.y *= 0.97f;
-            obj->speed.y -= data->unk29C * updateRate;
+            obj->velocity.y *= 0.97f;
+            obj->velocity.y -= data->unk29C * updateRate;
         }
         
         if (!(data->unk340 & 1) || (data->unk340 & 4)) {
@@ -718,14 +718,14 @@ static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 updateRate) {
             sp88.scale = 1.0f;
             matrix_from_srt(&sp48, &sp88);
             if (data->flags & 0x10000) {
-                vec3_transform(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->speed.y, &sp3C);
+                vec3_transform(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->velocity.y, &sp3C);
             } else {
                 vec3_transform(&sp48, data->unk27C, 0.0f, -data->unk278, &sp40, &sp44, &sp3C);
             }
-            obj->speed.x = sp40;
-            obj->speed.z = sp3C;
+            obj->velocity.x = sp40;
+            obj->velocity.z = sp3C;
         }
-        obj_integrate_speed(obj, obj->speed.x * updateRate, obj->speed.y * updateRate, obj->speed.z * updateRate);
+        obj_move(obj, obj->velocity.x * updateRate, obj->velocity.y * updateRate, obj->velocity.z * updateRate);
     }
 }
 

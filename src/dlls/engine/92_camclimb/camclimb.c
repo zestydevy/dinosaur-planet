@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/segment_1460.h"
 #include "unktypes.h"
 
 typedef struct {

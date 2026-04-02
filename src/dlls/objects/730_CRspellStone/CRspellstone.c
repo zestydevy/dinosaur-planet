@@ -68,7 +68,7 @@ void CRSpellStone_control(Object* self) {
         }
 
         if ((objData->state == CRSpellStone_STATE_Rescued) && 
-            (vec3_distance(&self->positionMirror, &get_player()->positionMirror) < 105.0f)
+            (vec3_distance(&self->globalPosition, &get_player()->globalPosition) < 105.0f)
         ) {
             STUBBED_PRINTF("\n\n Hit By ONVEHICLE HIT \n\n");
             main_set_bits(objSetup->gamebitVehicleHit, 1);

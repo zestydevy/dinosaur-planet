@@ -103,9 +103,9 @@ void MMshrine_control(Object *self) {
     player = get_player();
     sp3C = 1000.0f;
     if (_data_4 != 0) {
-        self->positionMirror.x = self->srt.transl.x;
-        self->positionMirror.y = self->srt.transl.y;
-        self->positionMirror.z = self->srt.transl.z;
+        self->globalPosition.x = self->srt.transl.x;
+        self->globalPosition.y = self->srt.transl.y;
+        self->globalPosition.z = self->srt.transl.z;
         gDLL_5_AMSEQ->vtbl->play_ex(2, 0x2B, 0x50, 1, 0);
         main_set_bits(BIT_DB_Entered_Shrine_2, 1);
         _data_4 = 0;
@@ -170,7 +170,7 @@ void MMshrine_control(Object *self) {
         }
         switch (objdata->unkF) {
         case 0:
-            if (vec3_distance(&self->positionMirror, &player->positionMirror) < (f32) objdata->unk0) {
+            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unkF = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->func19(0x5E, 0, 0, 0);
@@ -367,7 +367,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
     }
     
     if (objdata->unkF == 8) {
-        if (vec3_distance(&self->positionMirror, &player->positionMirror) > 10.0f) {
+        if (vec3_distance(&self->globalPosition, &player->globalPosition) > 10.0f) {
             gDLL_3_Animation->vtbl->func18(arg2->unk63);
             objdata->unkF = 7;
         } else if (joy_get_buttons(0)) {

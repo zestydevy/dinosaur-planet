@@ -44,7 +44,7 @@ void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2)
     self->srt.scale = setup->unk21 * 0.015625f;
     self->srt.scale *= self->def->scale;
     objdata = (CFMainSlideDoor_Data*)self->data;
-    objdata->unk0 = vec3_distance_xz(&self->positionMirror, &get_player()->positionMirror) < 130.0f;
+    objdata->unk0 = vec3_distance_xz(&self->globalPosition, &get_player()->globalPosition) < 130.0f;
 }
 
 // offset: 0x108 | func: 1 | export: 1
@@ -100,12 +100,12 @@ int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     player = get_player();
     sidekick = get_sidekick();
     if (player != NULL) {
-        var_t6 = vec3_distance_xz(&a0->positionMirror, &player->positionMirror) < 130.0f;
+        var_t6 = vec3_distance_xz(&a0->globalPosition, &player->globalPosition) < 130.0f;
     } else {
         var_t6 = 0;
     }
     if (sidekick != NULL) {
-        var_t7 = vec3_distance_xz(&a0->positionMirror, &sidekick->positionMirror) < 130.0f;
+        var_t7 = vec3_distance_xz(&a0->globalPosition, &sidekick->globalPosition) < 130.0f;
     } else {
         var_t7 = 0;
     }

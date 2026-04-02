@@ -68,9 +68,9 @@ void FindKyteObject_control(Object *self) {
         if (kyte) {
             player = get_player();
             if (setup->unk1E != 0) {
-                dist = vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror);
+                dist = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition);
             } else {
-                dist = vec3_distance_squared(&player->positionMirror, &self->positionMirror);
+                dist = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
             }
             if (dist <= SQ(setup->unk18 * 2)) {
                 ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, 1);

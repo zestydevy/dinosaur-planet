@@ -59,18 +59,18 @@ void dll_509_control(Object* self) {
     if (WLData->unk110 > 0.0f) {
         WLData->unk110 = (f32) (WLData->unk110 - gUpdateRateF);
         if (WLData->unk110 <= 0.0f) {
-            self->speed.f[1] = -0.25f;
+            self->velocity.f[1] = -0.25f;
         }
     }
 
     temp = LilyData->base.y - self->srt.transl.f[1];
-    self->speed.f[1] += temp * 0.25f * 0.08f * gUpdateRateF;
-    self->speed.f[1] -= 0.05f * gUpdateRateF;
-    self->speed.f[1] *= 0.9f;
-    if (self->speed.f[1] > 1.4f) {
-        self->speed.f[1] = 1.4f;
+    self->velocity.f[1] += temp * 0.25f * 0.08f * gUpdateRateF;
+    self->velocity.f[1] -= 0.05f * gUpdateRateF;
+    self->velocity.f[1] *= 0.9f;
+    if (self->velocity.f[1] > 1.4f) {
+        self->velocity.f[1] = 1.4f;
     }
-    self->srt.transl.f[1] += self->speed.f[1] * gUpdateRateF;
+    self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF;
 }
 
 // offset: 0x2C8 | func: 2 | export: 2

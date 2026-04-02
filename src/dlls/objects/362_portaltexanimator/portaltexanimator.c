@@ -116,7 +116,7 @@ void portaltexanimator_control(Object* self) {
     } 
 
     if (objdata->animatorID) {
-        distance = vec3_distance(&self->positionMirror, &get_player()->positionMirror) - objdata->minDistance;
+        distance = vec3_distance(&self->globalPosition, &get_player()->globalPosition) - objdata->minDistance;
         if (distance < 0.0f) {
             distance = 0.0f;
         }

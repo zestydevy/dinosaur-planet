@@ -53,7 +53,7 @@ void dll_535_control(Object* self) {
         } else {
             sp20 = get_sidekick();
             if (sp20 != NULL) {
-                if (vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
+                if (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
                     ((DLL_ISidekick*)sp20->dll)->vtbl->func14(sp20, 4);
                 }
             }

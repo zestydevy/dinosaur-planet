@@ -56,9 +56,9 @@ static void kamerian_flame_create_flame_billboards(Object* self) {
 
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_680, &transform, PARTFXFLAG_1, -1, NULL);
 
-    delta.x = self->srt.transl.x - self->positionMirror2.x;
-    delta.y = self->srt.transl.y - self->positionMirror2.y;
-    delta.z = self->srt.transl.z - self->positionMirror2.z;
+    delta.x = self->srt.transl.x - self->prevLocalPosition.x;
+    delta.y = self->srt.transl.y - self->prevLocalPosition.y;
+    delta.z = self->srt.transl.z - self->prevLocalPosition.z;
 
     transform.transl.x = delta.x / 3.0f;
     transform.transl.y = delta.y / 3.0f;
@@ -91,10 +91,10 @@ void kamerian_flame_control(Object* self) {
         return;
     }
 
-    self->speed.y += -0.046f * gUpdateRateF;
-    self->srt.yaw = arctan2_f(self->speed.x, self->speed.z);
-    self->srt.pitch = arctan2_f(sqrtf((self->speed.x * self->speed.x) + (self->speed.z * self->speed.z)), self->speed.y) - 0x4000;
-    obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+    self->velocity.y += -0.046f * gUpdateRateF;
+    self->srt.yaw = arctan2_f(self->velocity.x, self->velocity.z);
+    self->srt.pitch = arctan2_f(sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z)), self->velocity.y) - 0x4000;
+    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     func_80026128(self, 0xA, 1, 0);
     func_80026940(self, 0x10);
     func_8002674C(self);
@@ -130,9 +130,9 @@ void kamerian_flame_update(Object* self) {
         self->srt.transl.x = objHitInfo->unk34;
         self->srt.transl.y = objHitInfo->unk38;
         self->srt.transl.z = objHitInfo->unk3C;
-        self->speed.x = 0.0f;
-        self->speed.y = 0.0f;
-        self->speed.z = 0.0f;
+        self->velocity.x = 0.0f;
+        self->velocity.y = 0.0f;
+        self->velocity.z = 0.0f;
         self->opacity = 254;
         func_800267A4(self);
         impactSoundID = SOUND_9B4_Flamethrower;

@@ -282,9 +282,9 @@ typedef int (*AnimationCallback)(struct Object *, struct Object *, struct AnimOb
  * Size: 0xe4, other object-related data is placed in the following memory
  */
 typedef struct Object {
-/*0000*/    SRT srt;
-/*0018*/    Vec3f positionMirror; //local vs global?
-/*0024*/    Vec3f speed; // rename to velocity?
+/*0000*/    SRT srt; // local space coordinates
+/*0018*/    Vec3f globalPosition; // world space coordinates
+/*0024*/    Vec3f velocity;
 /*0030*/    struct Object *parent; // transform is relative to this object. doesn't form a strict hierarchy
 /*0034*/    u8 unk34; //self-mapID for mobile map objects? (e.g. Galleon)
 /*0035*/    s8 matrixIdx;
@@ -310,8 +310,8 @@ typedef struct Object {
 /*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts; // called "frames" in default.dol
-/*0080*/    Vec3f positionMirror2; //gets copied twice.
-/*008C*/    Vec3f positionMirror3; //not sure why.
+/*0080*/    Vec3f prevLocalPosition; // srt position from previous tick
+/*008C*/    Vec3f prevGlobalPosition; // global position from previous tick
 /*0098*/    f32 animProgress;
 /*009C*/    f32 animProgressLayered;
 /*00A0*/    s16 curModAnimId;

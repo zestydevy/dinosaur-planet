@@ -127,8 +127,8 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
     objData->unk1A = 800;
     self->unkB0 |= 0x2000;
     objData->storedItemType = setup->storedItemID;
-    self->positionMirror2.y = self->srt.transl.y;
-    self->positionMirror2.x = self->srt.transl.z;
+    self->prevLocalPosition.y = self->srt.transl.y;
+    self->prevLocalPosition.x = self->srt.transl.z;
 
     if (main_get_bits(objData->gamebit)) {
         objData->unk0 = 1;
@@ -172,8 +172,8 @@ void smallbasket_control(Object* self) {
         objData->throwFlags = Basket_NOT_THROWN;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         smallbasket_create_items(self, player, objData);
-        self->speed.x = 0.0f;
-        self->speed.z = 0.0f;
+        self->velocity.x = 0.0f;
+        self->velocity.z = 0.0f;
     }
     
     if (objData->unk0) {
@@ -198,12 +198,12 @@ void smallbasket_control(Object* self) {
                 self->srt.transl.x = objSetup->base.x;
                 self->srt.transl.y = objSetup->base.y;
                 self->srt.transl.z = objSetup->base.z;
-                self->positionMirror2.x = objSetup->base.x;
-                self->positionMirror2.y = objSetup->base.y;
-                self->positionMirror2.z = objSetup->base.z;
-                self->speed.x = 0.0f;
-                self->speed.y = 0.0f;
-                self->speed.z = 0.0f;
+                self->prevLocalPosition.x = objSetup->base.x;
+                self->prevLocalPosition.y = objSetup->base.y;
+                self->prevLocalPosition.z = objSetup->base.z;
+                self->velocity.x = 0.0f;
+                self->velocity.y = 0.0f;
+                self->velocity.z = 0.0f;
                 func_800267A4(self);
             }
 
@@ -224,9 +224,9 @@ void smallbasket_control(Object* self) {
                     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
                 }
 
-                self->positionMirror2.f[1] = self->srt.transl.z;
-                self->positionMirror2.f[2] = self->srt.transl.z;
-                self->positionMirror2.f[0] = self->srt.transl.x;
+                self->prevLocalPosition.f[1] = self->srt.transl.z;
+                self->prevLocalPosition.f[2] = self->srt.transl.z;
+                self->prevLocalPosition.f[0] = self->srt.transl.x;
             } else {
                 func_800267A4(self);
                 self->objhitInfo->unk10.f[0] = self->srt.transl.x;
@@ -262,8 +262,8 @@ void smallbasket_control(Object* self) {
                 if ((objData->carryFlags == Basket_STOP_CARRYING) && (self->unkE0 == 0) && (player->curModAnimId != Player_MODANIM_447_Carrying_Idle)) {
                     objData->carryFlags = Basket_NOT_CARRIED;
                     objData->throwFlags = Basket_THROWN;
-                    self->speed.f[1] = (playerFSA->analogInputPower * 0.75f) + 2.2f;
-                    self->speed.f[2] = (playerFSA->analogInputPower * -0.75f) + -2.2f;
+                    self->velocity.f[1] = (playerFSA->analogInputPower * 0.75f) + 2.2f;
+                    self->velocity.f[2] = (playerFSA->analogInputPower * -0.75f) + -2.2f;
                     srt.roll = 0;
                     srt.pitch = 0;
                     srt.transl.x = 0.0f;
@@ -271,15 +271,15 @@ void smallbasket_control(Object* self) {
                     srt.transl.z = 0.0f;
                     srt.scale = 1.0f;
                     srt.yaw = player->srt.yaw;
-                    rotate_vec3((SRT*)&srt, self->speed.f);
+                    rotate_vec3((SRT*)&srt, self->velocity.f);
                     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_637_Heavy_Whoosh, 0x43, NULL, NULL, 0, NULL);
                     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_634, 0x61, NULL, NULL, 0, NULL);
                 } else if ((objData->carryFlags == Basket_STOP_CARRYING) && (self->unkE0 == 0)) {
                     objData->carryFlags = Basket_NOT_CARRIED;
                     objData->throwFlags = Basket_THROWN_No_Items;
-                    self->speed.f[0] = 0.0f;
-                    self->speed.f[1] = 0.0f;
-                    self->speed.f[2] = 0.0f;
+                    self->velocity.f[0] = 0.0f;
+                    self->velocity.f[1] = 0.0f;
+                    self->velocity.f[2] = 0.0f;
                     func_8002674C(self);
                     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
                     func_80026160(self);
@@ -289,14 +289,14 @@ void smallbasket_control(Object* self) {
             objData->unk1A -= gUpdateRate;
             if (objData->throwFlags == Basket_THROWN) {
                 func_80026128(self, 15, 1, 0);
-                if (self->speed.y > -10.0f) {
-                    self->speed.y += -0.12f * gUpdateRateF;
+                if (self->velocity.y > -10.0f) {
+                    self->velocity.y += -0.12f * gUpdateRateF;
                 }
                 func_8002674C(self);
             }
-            self->srt.transl.x += self->speed.x * gUpdateRateF;
-            self->srt.transl.y += self->speed.y * gUpdateRateF;
-            self->srt.transl.z += self->speed.z * gUpdateRateF;
+            self->srt.transl.x += self->velocity.x * gUpdateRateF;
+            self->srt.transl.y += self->velocity.y * gUpdateRateF;
+            self->srt.transl.z += self->velocity.z * gUpdateRateF;
             smallbasket_handle_collision(self);
 
             if ((self->objhitInfo->unk9D) && (objData->throwFlags == Basket_THROWN)) {
@@ -307,13 +307,13 @@ void smallbasket_control(Object* self) {
                 objData->throwFlags = Basket_NOT_THROWN;
                 self->unkAF |= ARROW_FLAG_8_No_Targetting;
                 smallbasket_create_items(self, player, objData);
-                self->speed.x = 0.0f;
-                self->speed.z = 0.0f;
+                self->velocity.x = 0.0f;
+                self->velocity.z = 0.0f;
                 func_80026160(self);
             } else if ((self->objhitInfo->unk9D) && (objData->throwFlags == Basket_THROWN_No_Items)) {
                 //Destroy thrown basket without creating items
-                self->speed.x = 0.0f;
-                self->speed.z = 0.0f;
+                self->velocity.x = 0.0f;
+                self->velocity.z = 0.0f;
                 objData->unk10 = 500;
                 objData->throwFlags = Basket_NOT_THROWN;
                 self->unkE0 = 0;
@@ -327,9 +327,9 @@ void smallbasket_control(Object* self) {
 
         if (objData->carryFlags) {
             //Automatically throw the basket when far from its origin
-            if (SQ(objData->autoThrowRadius) <= vec3_distance_xz_squared(&self->positionMirror, (Vec3f*) &objSetup->base.x)) {
-                self->speed.x = 0.0f;
-                self->speed.z = 0.0f;
+            if (SQ(objData->autoThrowRadius) <= vec3_distance_xz_squared(&self->globalPosition, (Vec3f*) &objSetup->base.x)) {
+                self->velocity.x = 0.0f;
+                self->velocity.z = 0.0f;
                 objData->unk10 = 500;
                 objData->throwFlags = 0;
                 self->unkE0 = 0;
@@ -454,9 +454,9 @@ int smallbasket_handle_collision(Object* self) {
         spF8[0].x = self->srt.transl.x;
         spF8[0].y = self->srt.transl.y;
         spF8[0].z = self->srt.transl.z;
-        spC8[0].x = self->positionMirror2.x;
-        spC8[0].y = self->positionMirror2.y;
-        spC8[0].z = self->positionMirror2.z;
+        spC8[0].x = self->prevLocalPosition.x;
+        spC8[0].y = self->prevLocalPosition.y;
+        spC8[0].z = self->prevLocalPosition.z;
         sp5C.unk40[0] = objHits->unk52;
         sp5C.unk50[0] = -1;
         sp5C.unk54[0] = 3;
@@ -495,24 +495,24 @@ int smallbasket_handle_collision(Object* self) {
             self->srt.transl.x = objHits->unk34;
             self->srt.transl.y = objHits->unk38;
             self->srt.transl.z = objHits->unk3C;
-            objHits->unk10.f[0] = self->positionMirror2.x;
-            objHits->unk10.f[1] = self->positionMirror2.y;
-            objHits->unk10.f[2] = self->positionMirror2.z;
-            self->speed.x = 0.0f;
-            self->speed.y = 0.0f;
-            self->speed.z = 0.0f;
+            objHits->unk10.f[0] = self->prevLocalPosition.x;
+            objHits->unk10.f[1] = self->prevLocalPosition.y;
+            objHits->unk10.f[2] = self->prevLocalPosition.z;
+            self->velocity.x = 0.0f;
+            self->velocity.y = 0.0f;
+            self->velocity.z = 0.0f;
             return TRUE;
         } else {
             objHits->unk9D |= 1;
             self->srt.transl.x = objHits->unk34;
             self->srt.transl.y = objHits->unk38;
             self->srt.transl.z = objHits->unk3C;
-            objHits->unk10.f[0] = self->positionMirror2.x;
-            objHits->unk10.f[1] = self->positionMirror2.y;
-            objHits->unk10.f[2] = self->positionMirror2.z;
-            self->speed.x = 0.0f;
-            self->speed.y = 0.0f;
-            self->speed.z = 0.0f;
+            objHits->unk10.f[0] = self->prevLocalPosition.x;
+            objHits->unk10.f[1] = self->prevLocalPosition.y;
+            objHits->unk10.f[2] = self->prevLocalPosition.z;
+            self->velocity.x = 0.0f;
+            self->velocity.y = 0.0f;
+            self->velocity.z = 0.0f;
             return TRUE;
         }
     } else {
@@ -603,24 +603,24 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
             
             if (onGround) {
-                obj->speed.f[0] = sVec.x * 3;
-                obj->speed.f[1] = sVec.y * 4;
-                obj->speed.f[2] = sVec.z * 3;
+                obj->velocity.f[0] = sVec.x * 3;
+                obj->velocity.f[1] = sVec.y * 4;
+                obj->velocity.f[2] = sVec.z * 3;
             } else {
-                obj->speed.f[0] = self->srt.transl.x - player->srt.transl.x;
-                obj->speed.f[2] = self->srt.transl.z - player->srt.transl.z;
+                obj->velocity.f[0] = self->srt.transl.x - player->srt.transl.x;
+                obj->velocity.f[2] = self->srt.transl.z - player->srt.transl.z;
             }
             
-            magnitude = SQ(obj->speed.f[2]) + SQ(obj->speed.f[0]);
+            magnitude = SQ(obj->velocity.f[2]) + SQ(obj->velocity.f[0]);
             if (magnitude != 0.0f) {
                 magnitude = sqrtf(magnitude);
-                obj->speed.f[0] /= magnitude;
-                obj->speed.f[2] /= magnitude;
+                obj->velocity.f[0] /= magnitude;
+                obj->velocity.f[2] /= magnitude;
             }
             
-            obj->speed.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[1] = 2.2f;
+            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
             srt.transl.y = 0;
@@ -629,8 +629,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.roll = 0;
             srt.pitch = 0;
             srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->speed.f);
-            yaw = arctan2_f(obj->speed.x, -obj->speed.z) << 0x10 >> 0x10 ;
+            rotate_vec3((SRT* ) &srt, obj->velocity.f);
+            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
@@ -644,24 +644,24 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             scarabSetup->lifetime = 400;
             obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
             if (onGround != 0) {
-                obj->speed.f[0] = sVec.x * 3;
-                obj->speed.f[1] = sVec.y * 4;
-                obj->speed.f[2] = sVec.z * 3;
+                obj->velocity.f[0] = sVec.x * 3;
+                obj->velocity.f[1] = sVec.y * 4;
+                obj->velocity.f[2] = sVec.z * 3;
             } else {
-                obj->speed.f[0] = self->srt.transl.x - player->srt.transl.x;
-                obj->speed.f[2] = self->srt.transl.z - player->srt.transl.z;
+                obj->velocity.f[0] = self->srt.transl.x - player->srt.transl.x;
+                obj->velocity.f[2] = self->srt.transl.z - player->srt.transl.z;
             }
             
-            magnitude = SQ(obj->speed.f[2]) + SQ(obj->speed.f[0]);
+            magnitude = SQ(obj->velocity.f[2]) + SQ(obj->velocity.f[0]);
             if (magnitude != 0.0f) {
                 magnitude = sqrtf(magnitude);
-                obj->speed.f[0] /= magnitude;
-                obj->speed.f[2] /= magnitude;
+                obj->velocity.f[0] /= magnitude;
+                obj->velocity.f[2] /= magnitude;
             }
             
-            obj->speed.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[1] = 2.2f;
+            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
             srt.transl.y = 0;
@@ -670,8 +670,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.roll = 0;
             srt.pitch = 0;
             srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->speed.f);
-            yaw = arctan2_f(obj->speed.x, -obj->speed.z) << 0x10 >> 0x10 ;
+            rotate_vec3((SRT* ) &srt, obj->velocity.f);
+            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
@@ -686,24 +686,24 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
 
             if (onGround != 0) {
-                obj->speed.f[0] = sVec.x * 3;
-                obj->speed.f[1] = sVec.y * 4;
-                obj->speed.f[2] = sVec.z * 3;
+                obj->velocity.f[0] = sVec.x * 3;
+                obj->velocity.f[1] = sVec.y * 4;
+                obj->velocity.f[2] = sVec.z * 3;
             } else {
-                obj->speed.f[0] = self->srt.transl.x - player->srt.transl.x;
-                obj->speed.f[2] = self->srt.transl.z - player->srt.transl.z;
+                obj->velocity.f[0] = self->srt.transl.x - player->srt.transl.x;
+                obj->velocity.f[2] = self->srt.transl.z - player->srt.transl.z;
             }
             
-            magnitude = SQ(obj->speed.f[2]) + SQ(obj->speed.f[0]);
+            magnitude = SQ(obj->velocity.f[2]) + SQ(obj->velocity.f[0]);
             if (magnitude != 0.0f) {
                 magnitude = sqrtf(magnitude);
-                obj->speed.f[0] /= magnitude;
-                obj->speed.f[2] /= magnitude;
+                obj->velocity.f[0] /= magnitude;
+                obj->velocity.f[2] /= magnitude;
             }
             
-            obj->speed.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[1] = 2.2f;
+            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
             srt.transl.y = 0;
@@ -712,8 +712,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.roll = 0;
             srt.pitch = 0;
             srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->speed.f);
-            yaw = arctan2_f(obj->speed.x, -obj->speed.z) << 0x10 >> 0x10 ;
+            rotate_vec3((SRT* ) &srt, obj->velocity.f);
+            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
@@ -728,24 +728,24 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
             
             if (onGround) {
-                obj->speed.f[0] = sVec.x * 3;
-                obj->speed.f[1] = sVec.y * 4;
-                obj->speed.f[2] = sVec.z * 3;
+                obj->velocity.f[0] = sVec.x * 3;
+                obj->velocity.f[1] = sVec.y * 4;
+                obj->velocity.f[2] = sVec.z * 3;
             } else {
-                obj->speed.f[0] = self->srt.transl.x - player->srt.transl.x;
-                obj->speed.f[2] = self->srt.transl.z - player->srt.transl.z;
+                obj->velocity.f[0] = self->srt.transl.x - player->srt.transl.x;
+                obj->velocity.f[2] = self->srt.transl.z - player->srt.transl.z;
             }
             
-            magnitude = SQ(obj->speed.f[2]) + SQ(obj->speed.f[0]);
+            magnitude = SQ(obj->velocity.f[2]) + SQ(obj->velocity.f[0]);
             if (magnitude != 0.0f) {
                 magnitude = sqrtf(magnitude);
-                obj->speed.f[0] /= magnitude;
-                obj->speed.f[2] /= magnitude;
+                obj->velocity.f[0] /= magnitude;
+                obj->velocity.f[2] /= magnitude;
             }
             
-            obj->speed.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[1] = 2.2f;
+            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
             srt.transl.y = 0;
@@ -754,8 +754,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.roll = 0;
             srt.pitch = 0;
             srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->speed.f);
-            yaw = arctan2_f(obj->speed.x, -obj->speed.z) << 0x10 >> 0x10 ;
+            rotate_vec3((SRT* ) &srt, obj->velocity.f);
+            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
@@ -783,21 +783,21 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             
             obj = obj_create((ObjSetup*)foodSetup, 5, self->mapID, -1, self->parent);
             if (onGround != 0) {
-                obj->speed.f[0] = sVec.x * 3;
-                obj->speed.f[1] = sVec.y * 4;
-                obj->speed.f[2] = sVec.z * 3;
+                obj->velocity.f[0] = sVec.x * 3;
+                obj->velocity.f[1] = sVec.y * 4;
+                obj->velocity.f[2] = sVec.z * 3;
             }
             
-            magnitude = SQ(obj->speed.f[2]) + SQ(obj->speed.f[0]);
+            magnitude = SQ(obj->velocity.f[2]) + SQ(obj->velocity.f[0]);
             if (magnitude != 0.0f) {
                 magnitude = 2.0f * sqrtf(magnitude);
-                obj->speed.f[0] /= magnitude;
-                obj->speed.f[2] /= magnitude;
+                obj->velocity.f[0] /= magnitude;
+                obj->velocity.f[2] /= magnitude;
             }
             
-            obj->speed.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->speed.f[1] = 2.2f;
+            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
             srt.transl.y = 0;
@@ -806,9 +806,9 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.roll = 0;
             srt.pitch = 0;
             srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT*) &srt, obj->speed.f);
+            rotate_vec3((SRT*) &srt, obj->velocity.f);
 
-            yaw = arctan2_f(obj->speed.x, -obj->speed.z) << 0x10 >> 0x10 ;
+            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
@@ -833,8 +833,8 @@ void smallbasket_handle_attack_collisions(Object* self, Object* player, SmallBas
         objData->unk10 = 50;
         objData->throwFlags = 0;
         smallbasket_create_items(self, player, objData);
-        self->speed.x = 0.0f;
-        self->speed.z = 0.0f;
+        self->velocity.x = 0.0f;
+        self->velocity.z = 0.0f;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         func_80026160(self);
     }

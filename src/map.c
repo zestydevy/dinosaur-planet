@@ -1823,9 +1823,9 @@ u8 func_800456AC(Object* obj) {
             return FALSE;
         }
         if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = get_player(), (playerObj != NULL))) {
-            dist = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
+            dist = vec3_distance(&obj->globalPosition, &playerObj->globalPosition);
         } else {
-            dist = camera_get_distance_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+            dist = camera_get_distance_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
         }
         if (fadeDist < dist) {
             obj->opacityWithFade = 0;
@@ -1848,7 +1848,7 @@ u8 func_800456AC(Object* obj) {
     if (obj->id == OBJ_FXEmit) {
         return TRUE;
     }
-    return is_sphere_in_frustum(&obj->positionMirror, obj->unkA8);
+    return is_sphere_in_frustum(&obj->globalPosition, obj->unkA8);
 }
 
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
@@ -2838,9 +2838,9 @@ void map_func_8004773C(void) {
             sp4C.srt.transl.x = 0.0f;
             sp4C.srt.transl.y = 0.0f;
             sp4C.srt.transl.z = 0.0f;
-            sp4C.positionMirror.x = 0.0f;
-            sp4C.positionMirror.y = 0.0f;
-            sp4C.positionMirror.z = 0.0f;
+            sp4C.globalPosition.x = 0.0f;
+            sp4C.globalPosition.y = 0.0f;
+            sp4C.globalPosition.z = 0.0f;
             if (sp3C->unkA != -1) {
                 sp4C.srt.transl.x = sp3C->unk10;
                 sp4C.srt.transl.y = sp3C->unk14;
@@ -4346,9 +4346,9 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     if ((arg0->loadFlags & OBJSETUP_LOAD_MAIN) && (arg1 == 0)) {
         player = get_player();
         if (player != NULL) {
-            sp20 = player->positionMirror.x;
-            sp1C = player->positionMirror.y;
-            sp18 = player->positionMirror.z;
+            sp20 = player->globalPosition.x;
+            sp1C = player->globalPosition.y;
+            sp18 = player->globalPosition.z;
         } else {
             scaledZOrFlag = 1;
         }
@@ -4438,9 +4438,9 @@ s32 map_should_obj_unload(Object *obj) {
         return FALSE;
     }
     if ((objSetup->loadFlags & OBJSETUP_LOAD_MAIN) && (player = get_player(), (player != NULL)) && obj->parent == NULL) {
-        var_fv1 = player->positionMirror.x;
-        var_fa0 = player->positionMirror.y;
-        var_fa1 = player->positionMirror.z;
+        var_fv1 = player->globalPosition.x;
+        var_fa0 = player->globalPosition.y;
+        var_fa1 = player->globalPosition.z;
     } else {
         if (obj->parent != NULL) {
             var_a0 = obj->parent->matrixIdx + 1;
@@ -4457,9 +4457,9 @@ s32 map_should_obj_unload(Object *obj) {
         var_ft4 = var_fa0 - obj->srt.transl.y;
         var_ft5 = var_fa1 - obj->srt.transl.z;
     } else {
-        var_fv0 = var_fv1 - obj->positionMirror.x;
-        var_ft4 = var_fa0 - obj->positionMirror.y;
-        var_ft5 = var_fa1 - obj->positionMirror.z;
+        var_fv0 = var_fv1 - obj->globalPosition.x;
+        var_ft4 = var_fa0 - obj->globalPosition.y;
+        var_ft5 = var_fa1 - obj->globalPosition.z;
     }
     loadDistAdjusted = loadDist + 40.0f;
     var_fv0 = ((var_fv0 * var_fv0) + (var_ft4 * var_ft4) + (var_ft5 * var_ft5));

@@ -69,16 +69,16 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
     dist = 3.4028235e38f;
     obj_get_nearest_type_to(0x12, self, &dist);
 
-    diPrintf("worm %d, barrel %d\n", (s32) vec3_distance_xz(&self->positionMirror, &objdata->unk4->positionMirror), (s32) dist);
+    diPrintf("worm %d, barrel %d\n", (s32) vec3_distance_xz(&self->globalPosition, &objdata->unk4->globalPosition), (s32) dist);
     switch (objdata->unk0) {
     case 4:
         dll_461_func_12B0(self, objdata->unk4);
-        if (vec3_distance_xz_squared(&self->positionMirror, &objdata->unk4->positionMirror) < 32400.0f) {
+        if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition) < 32400.0f) {
             dll_461_func_1090(self, objdata->unk4, objdata, 5);
         } else {
             if (((DLL_ISidekick*)objdata->unk8->dll)->vtbl->func24(objdata->unk8) != 0) {
-                diPrintf("kyte dist %d interest range 50.0F\n", (s32) vec3_distance_xz(&self->positionMirror, &objdata->unk8->positionMirror));
-                if (vec3_distance_xz_squared(&self->positionMirror, &objdata->unk8->positionMirror) < 3600.0f) {
+                diPrintf("kyte dist %d interest range 50.0F\n", (s32) vec3_distance_xz(&self->globalPosition, &objdata->unk8->globalPosition));
+                if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk8->globalPosition) < 3600.0f) {
                     dll_461_func_1250(self, objdata);
                     objdata->unk18 = 0.0f;
                 }
@@ -119,15 +119,15 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         } else {
             main_set_bits(0x46E, 0xC3U);
         }
-        if (vec3_distance_xz_squared(&self->positionMirror, &objdata->unk4->positionMirror) < 32400.0f) {
+        if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition) < 32400.0f) {
             dll_461_func_1090(self, objdata->unk4, objdata, 6);
-        } else if (vec3_distance_xz_squared(&self->positionMirror, &objdata->unk8->positionMirror) < 32400.0f) {
+        } else if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk8->globalPosition) < 32400.0f) {
             dll_461_func_1090(self, objdata->unk8, objdata, 7);
         } else {
-            if ((((DLL_ISidekick*)objdata->unk8->dll)->vtbl->func24(objdata->unk8) != 0) || (vec3_distance_xz_squared(&self->positionMirror, &objdata->unk8->positionMirror) < 90000.0f)) {
+            if ((((DLL_ISidekick*)objdata->unk8->dll)->vtbl->func24(objdata->unk8) != 0) || (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk8->globalPosition) < 90000.0f)) {
                 func_8002493C(self, 1.5f, &objdata->unk14);
                 dll_461_func_1384(self, &objdata->unk8->srt.transl, 1.5f);
-            } else if (vec3_distance_xz_squared(&self->positionMirror, (Vec3f* ) &setup->x) < 10000.0f) {
+            } else if (vec3_distance_xz_squared(&self->globalPosition, (Vec3f* ) &setup->x) < 10000.0f) {
                 dll_461_func_1030(self, objdata);
             } else {
                 objdata->unk0 = 0xA;
@@ -143,7 +143,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         break;
     case 11:
         if (((s32) setup->x == (s32) self->srt.transl.f[0]) && ((s32) setup->z == (s32) self->srt.transl.f[2])) {
-            dist = vec3_distance_xz_squared(&self->positionMirror, &objdata->unk4->positionMirror);
+            dist = vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition);
             if (dist < 2500.0f) {
                 objdata->unk3 = 0;
                 gDLL_3_Animation->vtbl->func17(8, objdata->unkC, -1);
@@ -172,7 +172,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
             }
         } else {
             dll_461_func_1384(self, (Vec3f* ) &setup->x, 3.0f);
-            if (vec3_distance_xz_squared(&self->positionMirror, (Vec3f* ) &setup->x) < 10000.0f) {
+            if (vec3_distance_xz_squared(&self->globalPosition, (Vec3f* ) &setup->x) < 10000.0f) {
                 objdata->unk2 = 1;
             }
         }
@@ -193,7 +193,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         }
         if (objdata->unk18 > 3000.0f) {
             objdata->unk0 = 4;
-        } else if (vec3_distance_xz_squared(&self->positionMirror, &objdata->unk4->positionMirror) < 32400.0f) {
+        } else if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition) < 32400.0f) {
             dll_461_func_1090(self, objdata->unk4, objdata, 8);
         }
         dll_461_func_14B0(self, objdata);

@@ -780,7 +780,7 @@ CurveSetup *dll_25_func_2A50(Object *obj, s32 arg1)
             ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
             ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->pos.x);
+            temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -814,7 +814,7 @@ CurveSetup *dll_25_func_2BC4(Object *obj, s32 arg1)
             (temp_s0->curveType == 0x22) &&
             ((arg1 == temp_s0->base_type22.unk4) || ((temp_s0->unk1A < 3) && (arg1 == -1))))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->pos.x);
+            temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -848,7 +848,7 @@ CurveSetup *dll_25_func_2CF8(Object *obj, s32 arg1)
             ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
             ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->pos.x);
+            temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
