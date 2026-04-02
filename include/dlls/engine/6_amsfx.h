@@ -164,10 +164,12 @@ enum SoundID {
     SOUND_DD_Krystal_Hurt_Augh = 0xDD,     //player hurt sfx
     SOUND_DE_Krystal_Hurt_Ugh = 0xDE,      //player hurt sfx 
 
+    SOUND_E1 = 0xE1,
     SOUND_E2_Krystal_Yuh = 0xE2,
     SOUND_E3_Krystal_Yaahh = 0xE3,
     SOUND_E4_Krystal_Yeah = 0xE4,
-
+    
+    SOUND_E7 = 0xE7,
     
     SOUND_E9_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
     SOUND_EA_Krystal_Find = 0xEA,          //"Seek it out!"
@@ -456,6 +458,7 @@ enum SoundID {
     SOUND_76D_Log_Bump = 0x76D, // used by DFlog, BWlog
 
     SOUND_775_Timer_Countdown = 0x775,
+    SOUND_776 = 0x776,
     
     SOUND_779_Water_Rushing_Loop = 0x779,  //DFwhirlpool, babbling river-like sound
     SOUND_77A_Water_Draining_Loop = 0x77A, //DFwhirlpool, static-y waterfall-like sound
@@ -508,6 +511,10 @@ enum SoundID {
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
     
+    SOUND_90F = 0x90F,
+    SOUND_910 = 0x910,
+    SOUND_911 = 0x911,
+
     SOUND_912_Object_Refused = 0x912,
 
     SOUND_927_Harsh_Electric_Loop = 0x927, // DRbullet
