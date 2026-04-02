@@ -194,7 +194,7 @@ void ECSHshrine_control(Object* self) {
     //STATE MACHINE
     switch (objdata->state) {
     case ECShrine_STATE_Waiting:
-        if (vec3_distance(&self->positionMirror, &player->positionMirror) < objdata->testStartRadius) {
+        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->testStartRadius) {
             objdata->state = ECShrine_STATE_Test_Start;
             main_set_bits(BIT_DB_Entered_Shrine_3, 0);
             gDLL_3_Animation->vtbl->func17(0, self, -1);

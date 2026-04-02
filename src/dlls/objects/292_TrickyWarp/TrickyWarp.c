@@ -36,7 +36,7 @@ void TrickyWarp_control(Object *self) {
         player = get_player();
         sidekick = get_sidekick();
 
-        if (sidekick && vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= SQ(setup->range)) {
+        if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(setup->range)) {
             ((DLL_ISidekick*)(sidekick->dll))->vtbl->func14(sidekick, 1);
         }
     }

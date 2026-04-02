@@ -78,16 +78,16 @@ void WMwallpower_control(Object* self) {
     }
 
     //Get exact distance to player 
-    delta.f[0] = self->positionMirror.x - player->positionMirror.x;
-    delta.f[1] = self->positionMirror.y - player->positionMirror.y;
-    delta.f[2] = self->positionMirror.z - player->positionMirror.z;
+    delta.f[0] = self->globalPosition.x - player->globalPosition.x;
+    delta.f[1] = self->globalPosition.y - player->globalPosition.y;
+    delta.f[2] = self->globalPosition.z - player->globalPosition.z;
     distance = sqrtf(SQ(delta.f[0]) + SQ(delta.f[1]) + SQ(delta.f[2])); //@bug?: unused
 
     if ((objdata->timerAndFXCount >= 0) || 
         ((objdata->timerAndFXCount < 0) && (self->unkDC <= 0))) 
     {
-        delta.f[0] = self->positionMirror.x - player->positionMirror.x;
-        delta.f[2] = self->positionMirror.z - player->positionMirror.z;
+        delta.f[0] = self->globalPosition.x - player->globalPosition.x;
+        delta.f[2] = self->globalPosition.z - player->globalPosition.z;
 
         //Create magic wave effect when player within 2D radius
         if (sqrtf(SQ(delta.f[0]) + SQ(delta.f[2])) <= objdata->fxRadius) { //@optimisation: could use distanceSquared

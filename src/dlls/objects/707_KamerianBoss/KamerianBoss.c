@@ -153,9 +153,9 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     if (projectile != NULL) {
         projectile->srt.pitch = arg5;
         projectile->srt.yaw = arg4;
-        projectile->speed.x = fcos16(arg5) * fsin16(arg4) * arg6;
-        projectile->speed.y = fsin16(arg5) * arg6;
-        projectile->speed.z = fcos16(arg5) * fcos16(arg4) * arg6;
+        projectile->velocity.x = fcos16(arg5) * fsin16(arg4) * arg6;
+        projectile->velocity.y = fsin16(arg5) * arg6;
+        projectile->velocity.z = fcos16(arg5) * fcos16(arg4) * arg6;
         projectile->unkC4 = self;
     }
 }
@@ -200,9 +200,9 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
         var_s0_2 = i != 0 ? 163 : -163;        
         objdata->unk8[i] = KamerianBoss_create_fx_emit(
             self,
-            var_s0_2 + self->positionMirror.x,
-            self->positionMirror.y + 175.0f,
-            self->positionMirror.z + 145.0f,
+            var_s0_2 + self->globalPosition.x,
+            self->globalPosition.y + 175.0f,
+            self->globalPosition.z + 145.0f,
             0x691
         );
         var_s0_2 = i--;
@@ -343,13 +343,13 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
     
     var_v0 = ((side != 0) ? 163 : -163);
     if (1){} // @fake
-    sp80 = (f32) var_v0 + self->positionMirror.x;
-    sp7C = self->positionMirror.z + 145.0f;
+    sp80 = (f32) var_v0 + self->globalPosition.x;
+    sp7C = self->globalPosition.z + 145.0f;
     
     var_v0 = ((side != 0) ? 163 : -163);
-    sp78 = (f32) var_v0 + self->positionMirror.x;
-    sp74 = self->positionMirror.y + 175.0f;
-    sp70 = self->positionMirror.z + 145.0f;
+    sp78 = (f32) var_v0 + self->globalPosition.x;
+    sp74 = self->globalPosition.y + 175.0f;
+    sp70 = self->globalPosition.z + 145.0f;
     
     if ((s32) *timer >= (s32) gUpdateRate) {
         *timer -= gUpdateRate;
@@ -359,8 +359,8 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
     *timer = rand_next(90, 270);
     if (1){} // @fake
     
-    temp_fv0_2 = player->positionMirror.x - sp80;
-    temp_fv1_2 = player->positionMirror.z - sp7C;
+    temp_fv0_2 = player->globalPosition.x - sp80;
+    temp_fv1_2 = player->globalPosition.z - sp7C;
     if (sqrtf(SQ(temp_fv0_2) + SQ(temp_fv1_2)) < 500.0f) {
         func_80014D34(1.2f, &sp6C, &sp68, &sp64);
         sp68 += 20.0f;
@@ -371,7 +371,7 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
             sp52 = -10000;
         }
         sp6C = (fsin16(sp52) * 400.0f) + sp80;
-        sp68 = player->positionMirror.y;
+        sp68 = player->globalPosition.y;
         sp64 = (fcos16(sp52) * 400.0f) + sp7C;
     }
     sp52 = atan2f_to_s(sp6C - sp78, sp64 - sp70);
@@ -621,7 +621,7 @@ void KamerianBoss_control(Object *self) {
                     if (objdata->rightPipeTimer == 0) {
                         objdata->rightPipeTimer = 600;
                         for (j = 0; j < 6; j += 2) {
-                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->positionMirror.x - 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
+                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x - 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Collision_Type_Projectile) && (objdata->rightPipeTimer > 50)) {
@@ -642,7 +642,7 @@ void KamerianBoss_control(Object *self) {
                     if (objdata->leftPipeTimer == 0) {
                         objdata->leftPipeTimer = 600;
                         for (j = 1; j < 7; j += 2) {
-                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->positionMirror.x + 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
+                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x + 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Collision_Type_Projectile) && (objdata->leftPipeTimer > 50)) {

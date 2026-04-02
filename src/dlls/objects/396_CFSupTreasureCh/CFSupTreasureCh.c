@@ -99,8 +99,8 @@ void CFSupTreasureCh_control(Object *self) {
     }
     if (objdata->flags & CFSUPTREASURECH_16) {
         self->opacity = OBJECT_OPACITY_MAX;
-        self->speed.y -= 0.03f;
-        self->srt.transl.y += self->speed.y;
+        self->velocity.y -= 0.03f;
+        self->srt.transl.y += self->velocity.y;
         if (self->srt.yaw != 0) {
             self->srt.yaw >>= 1;
         }
@@ -272,7 +272,7 @@ void CFSupTreasureCh_func_7B8(Object *self, s32 arg1, f32 arg2) {
     func_8002674C(self);
     func_80023A18(self, 0);
     self->opacity = OBJECT_OPACITY_MAX;
-    self->speed.y = 0.0f;
+    self->velocity.y = 0.0f;
 }
 
 // offset: 0x9B8 | func: 11

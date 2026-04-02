@@ -110,9 +110,9 @@ void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, u16* arg3, s16*
         *arg5 = 0;
         return;
     }
-    sp20.x = arg1->positionMirror.f[0] - arg0->positionMirror.f[0];
-    sp20.y = arg1->positionMirror.f[1] - arg0->positionMirror.f[1];
-    sp20.z = arg1->positionMirror.f[2] - arg0->positionMirror.f[2];
+    sp20.x = arg1->globalPosition.f[0] - arg0->globalPosition.f[0];
+    sp20.y = arg1->globalPosition.f[1] - arg0->globalPosition.f[1];
+    sp20.z = arg1->globalPosition.f[2] - arg0->globalPosition.f[2];
     temp_v0 = arctan2_f(-sp20.x, -sp20.z);
     if (arg0->parent != NULL) {
         var_a1 = arg0->srt.yaw + arg0->parent->srt.yaw;
@@ -143,28 +143,28 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
     f32 sp44;
     f32 sp40;
 
-    sp48 = arg4->positionMirror.x - arg1;
-    sp44 = arg4->positionMirror.z - arg2;
+    sp48 = arg4->globalPosition.x - arg1;
+    sp44 = arg4->globalPosition.z - arg2;
     sp40 = sqrtf(SQ(sp48) + SQ(sp44));
     if (sp40 < arg3) {
         sp5C = fsin16_precise(arg0->srt.yaw);
         sp58 = fcos16_precise(arg0->srt.yaw);
         temp_fa0 = -(((arg1 - sp5C) * sp5C) + ((arg2 - sp58) * sp58));
-        sp44 = (arg4->positionMirror.x * sp5C) + (sp58 * arg4->positionMirror.z) + temp_fa0;
-        sp48 = (arg4->positionMirror3.x * sp5C) + (sp58 * arg4->positionMirror3.z) + temp_fa0;
+        sp44 = (arg4->globalPosition.x * sp5C) + (sp58 * arg4->globalPosition.z) + temp_fa0;
+        sp48 = (arg4->prevGlobalPosition.x * sp5C) + (sp58 * arg4->prevGlobalPosition.z) + temp_fa0;
         // @fake
         do { } while (0);
         if ((sp44 > 0.0f) && (sp48 <= 1.0f)) {
-            arg4->positionMirror.x -= sp5C * sp44;
-            arg4->positionMirror.z -= sp58 * sp44;
-            inverse_transform_point_by_object(arg4->positionMirror.x, arg4->positionMirror.y, arg4->positionMirror.z, arg4->srt.transl.f, &arg4->srt.transl.y, &arg4->srt.transl.z, arg4->parent);
+            arg4->globalPosition.x -= sp5C * sp44;
+            arg4->globalPosition.z -= sp58 * sp44;
+            inverse_transform_point_by_object(arg4->globalPosition.x, arg4->globalPosition.y, arg4->globalPosition.z, arg4->srt.transl.f, &arg4->srt.transl.y, &arg4->srt.transl.z, arg4->parent);
         } else if (sp48 > 1.0f) {
             sp40 = 2.0f * arg3;
         }
     }
     if (sp40 < arg3) {
-        sp48 = arg4->positionMirror.x;
-        sp44 = arg4->positionMirror.z;
+        sp48 = arg4->globalPosition.x;
+        sp44 = arg4->globalPosition.z;
     } else {
         sp48 = arg1;
         sp44 = arg2;
@@ -425,7 +425,7 @@ Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 ar
     spF8[1] = 0;
     i = 0;
     while (stop == FALSE && (curObj = spF8[i]) != NULL) {
-        VECTOR_SUBTRACT(curObj->positionMirror, arg0->positionMirror, spE0);
+        VECTOR_SUBTRACT(curObj->globalPosition, arg0->globalPosition, spE0);
         if ((VECTOR_MAGNITUDE(spE0) < arg2) && (fsa->hitpoints != 0)) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func56(curObj) > 0.5f) {
                 stop = TRUE;
@@ -537,31 +537,31 @@ Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
         break;
     case 5:
         setup2 = (Baddie_Setup*)arg0->setup;
-        sp40 = arg0->positionMirror.x;
-        sp3C = arg0->positionMirror.y;
-        sp38 = arg0->positionMirror.z;
+        sp40 = arg0->globalPosition.x;
+        sp3C = arg0->globalPosition.y;
+        sp38 = arg0->globalPosition.z;
         if (setup2 != NULL) {
-            arg0->positionMirror.x = setup2->base.x;
-            arg0->positionMirror.y = setup2->base.y;
-            arg0->positionMirror.z = setup2->base.z;
+            arg0->globalPosition.x = setup2->base.x;
+            arg0->globalPosition.y = setup2->base.y;
+            arg0->globalPosition.z = setup2->base.z;
         }
         
         sp34 = 750.0f;
         temp_v0 = obj_get_nearest_type_to(OBJTYPE_5, arg0, &sp34);
-        arg0->positionMirror.x = sp40;
-        arg0->positionMirror.y = sp3C;
-        arg0->positionMirror.z = sp38;
+        arg0->globalPosition.x = sp40;
+        arg0->globalPosition.y = sp3C;
+        arg0->globalPosition.z = sp38;
         if (temp_v0 != NULL) {
             temp_fv0 = arg0->srt.transl.x;
-            temp_v0->positionMirror.x = temp_fv0;
+            temp_v0->globalPosition.x = temp_fv0;
             temp_v0->srt.transl.x = temp_fv0;
             
             temp_fv0 = arg0->srt.transl.y + 15.0f;
-            temp_v0->positionMirror.y = temp_fv0;
+            temp_v0->globalPosition.y = temp_fv0;
             temp_v0->srt.transl.y = temp_fv0;
             
             temp_fv0 = arg0->srt.transl.z;
-            temp_v0->positionMirror.z = temp_fv0;
+            temp_v0->globalPosition.z = temp_fv0;
             temp_v0->srt.transl.z = temp_fv0;
         }
         _bss_0 = temp_v0;

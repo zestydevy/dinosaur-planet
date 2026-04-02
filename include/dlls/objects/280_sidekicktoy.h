@@ -28,7 +28,7 @@ typedef enum {
 
 DLL_INTERFACE(DLL_280_SidekickToy) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ void (*throw)(Object* self, Object* thrownBy, f32 speedX, f32 speedY, f32 speedZ);
+    /*7*/ void (*throw)(Object* self, Object* thrownBy, f32 velX, f32 velY, f32 velZ);
     /*8*/ void (*carry)(Object* self, SidekickToy_Data* objdata);
     /*9*/ s32 (*is_stopped)(Object* self);
 };

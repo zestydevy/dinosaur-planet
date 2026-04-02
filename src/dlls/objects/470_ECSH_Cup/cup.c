@@ -202,7 +202,7 @@ void ECSHCup_control(Object* self) {
         self->srt.transl.x = goal.x;
         self->srt.transl.z = goal.z;
         objData->prevState = state;
-    } else if ((state == Cup_STATE_Await_Choice) && player && vec3_distance(&self->positionMirror, &player->positionMirror) < 30.0f) {
+    } else if ((state == Cup_STATE_Await_Choice) && player && vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
         ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->choose_cup(objData->cupIndex);
         if (objData->cupIndex == cupWithSpirit) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);

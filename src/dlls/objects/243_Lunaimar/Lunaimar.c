@@ -252,7 +252,7 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
 
     player = get_player();
     if (fsa->target != NULL) {
-        VECTOR_SUBTRACT(fsa->target->positionMirror, self->positionMirror, sp6C);
+        VECTOR_SUBTRACT(fsa->target->globalPosition, self->globalPosition, sp6C);
         fsa->targetDist = VECTOR_MAGNITUDE(sp6C);
     }
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 4);
@@ -308,7 +308,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     animator = func_800348A0(self, 0, 0);
     objdata->unk12 += 0x1000;
     animator->frame = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
-    VECTOR_SUBTRACT(sidekick->positionMirror, self->positionMirror, sp44);
+    VECTOR_SUBTRACT(sidekick->globalPosition, self->globalPosition, sp44);
     sp40 = VECTOR_MAGNITUDE(sp44);
     if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < baddie->unk3E2)) {
         baddie->unk3B2 |= 4;
@@ -417,9 +417,9 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     spit = obj_create(spitSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
     if (spit != NULL) {
         temp_fv0 = (baddie->fsa.targetDist / (f32) baddie->unk3E2) * 60.0f;
-        spit->speed.x = (baddie->fsa.target->srt.transl.x - spitSetup->x) / temp_fv0;
-        spit->speed.y = (((f32) rand_next(-0xA, 0xA) + (baddie->fsa.target->srt.transl.y + 20.0f)) - spitSetup->y) / temp_fv0;
-        spit->speed.z = (baddie->fsa.target->srt.transl.z - spitSetup->z) / temp_fv0;
+        spit->velocity.x = (baddie->fsa.target->srt.transl.x - spitSetup->x) / temp_fv0;
+        spit->velocity.y = (((f32) rand_next(-0xA, 0xA) + (baddie->fsa.target->srt.transl.y + 20.0f)) - spitSetup->y) / temp_fv0;
+        spit->velocity.z = (baddie->fsa.target->srt.transl.z - spitSetup->z) / temp_fv0;
         spit->unkC4 = self;
     }
 }

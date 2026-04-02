@@ -82,7 +82,7 @@ void WLpressureswitch_control(Object* self) {
     objdata = self->data;
 
     playerIsFarAway = FALSE;
-    if (vec3_distance(&self->positionMirror, &player->positionMirror) > 100.0f) {
+    if (vec3_distance(&self->globalPosition, &player->globalPosition) > 100.0f) {
         playerIsFarAway = TRUE;
     }
 
@@ -112,7 +112,7 @@ void WLpressureswitch_control(Object* self) {
     //Handle Tricky's behaviour during Sabre's first visit
     } else if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_ACT_3_SPIRIT_2_SABRE_DB) {
         sidekick = get_sidekick();
-        if (sidekick && vec3_distance(&self->positionMirror, &sidekick->positionMirror) < 50.0f) {
+        if (sidekick && vec3_distance(&self->globalPosition, &sidekick->globalPosition) < 50.0f) {
             objdata->pressed = 5;
         }
     }

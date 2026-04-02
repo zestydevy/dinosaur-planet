@@ -25,17 +25,17 @@ void CannonBall_control(Object* self) {
     //Apply gravity
     if (self->unkE0 == 1) {
         self->objhitInfo->unk50 = 8;
-        self->speed.y -= 0.07f * gUpdateRateF;
-        self->speed.y *= 0.97f;
+        self->velocity.y -= 0.07f * gUpdateRateF;
+        self->velocity.y *= 0.97f;
     }
     
-    //Integrate speed
-    self->positionMirror2.x = self->srt.transl.x;
-    self->positionMirror2.y = self->srt.transl.y;
-    self->positionMirror2.z = self->srt.transl.z;    
-    self->srt.transl.x += self->speed.x * gUpdateRateF;
-    self->srt.transl.y += self->speed.y * gUpdateRateF;
-    self->srt.transl.z += self->speed.z * gUpdateRateF;
+    //Integrate velocity
+    self->prevLocalPosition.x = self->srt.transl.x;
+    self->prevLocalPosition.y = self->srt.transl.y;
+    self->prevLocalPosition.z = self->srt.transl.z;    
+    self->srt.transl.x += self->velocity.x * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
+    self->srt.transl.z += self->velocity.z * gUpdateRateF;
     
     //Destroy self when lifetime runs out
     self->unkDC -= gUpdateRate;

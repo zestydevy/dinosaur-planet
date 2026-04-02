@@ -112,7 +112,7 @@ void dll_503_control(Object* self) {
         if (objdata->unk2C > 40.0f) {
             objdata->unk2C = 40.0f;
         }
-        if (!(objdata->unk3B & 1) && (vec3_distance(&self->positionMirror, &player->positionMirror) <= objdata->unk2C) && 
+        if (!(objdata->unk3B & 1) && (vec3_distance(&self->globalPosition, &player->globalPosition) <= objdata->unk2C) && 
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) && 
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)) {
             func_8002635C(player, self, 0x15, 1, 0);
@@ -160,7 +160,7 @@ void dll_503_control(Object* self) {
         }
         self->unkAF &= ~8;
         objdata->unk2C = (f32) (objdata->unk2C + (2.5f * gUpdateRateF));
-        if (!(objdata->unk3B & 1) && (vec3_distance(&self->positionMirror, &player->positionMirror) <= objdata->unk2C) && 
+        if (!(objdata->unk3B & 1) && (vec3_distance(&self->globalPosition, &player->globalPosition) <= objdata->unk2C) && 
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) && 
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)) {
             func_8002635C(player, self, 0x15, 1, 0);

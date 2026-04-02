@@ -943,9 +943,9 @@ void amseq_update_dist_falloff(void) {
             sFocusObj = NULL;
             focus = NULL;
         } else {
-            focusX = focus->positionMirror.f[0];
-            focusY = focus->positionMirror.f[1];
-            focusZ = focus->positionMirror.f[2];
+            focusX = focus->globalPosition.f[0];
+            focusY = focus->globalPosition.f[1];
+            focusZ = focus->globalPosition.f[2];
         }
     }
 

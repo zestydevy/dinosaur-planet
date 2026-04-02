@@ -86,7 +86,7 @@ void dll_602_control(Object* self) {
     if (objdata->unk10 == 2) {
         self->srt.yaw += 0x32;
     }
-    temp_fv0 = vec3_distance(&get_player()->positionMirror, &self->positionMirror);
+    temp_fv0 = vec3_distance(&get_player()->globalPosition, &self->globalPosition);
     if (objdata->unk8 == 0) {
         if (temp_fv0 < 90.0f) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1D3, MAX_VOLUME, &objdata->unk8, NULL, 0, NULL);

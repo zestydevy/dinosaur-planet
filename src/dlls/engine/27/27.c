@@ -92,7 +92,7 @@ void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 updateRate) {
 
     transform_point_by_object(
         obj->srt.transl.f[0], obj->srt.transl.f[1], obj->srt.transl.f[2], 
-        &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z, 
+        &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
         obj->parent);
     
     dll_27_get_obj_world_matrix(obj, data, &worldMtx);
@@ -217,7 +217,7 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 updateRate) {
             dll_27_func_1278(arg0, arg1);
             transform_point_by_object(
                 arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, 
-                &arg0->positionMirror.x, &arg0->positionMirror.y, &arg0->positionMirror.z, 
+                &arg0->globalPosition.x, &arg0->globalPosition.y, &arg0->globalPosition.z, 
                 arg0->parent);
         }
         if (arg1->flags & DLL27FLAG_HAS_TERRAIN_COLLIDER) {
@@ -262,12 +262,12 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 updateRate) {
         }
         if (!(arg1->flags & DLL27FLAG_40000)) {
             if ((arg0->objhitInfo != NULL) && (arg0->objhitInfo->unk58 & 1)) {
-                arg0->speed.y = (arg0->positionMirror.y - arg0->objhitInfo->unk20.y) * updateRateInverse;
-                if (arg0->objhitInfo->unk20.y < arg0->positionMirror.y) {
-                    arg0->speed.y = 0.0f;
+                arg0->velocity.y = (arg0->globalPosition.y - arg0->objhitInfo->unk20.y) * updateRateInverse;
+                if (arg0->objhitInfo->unk20.y < arg0->globalPosition.y) {
+                    arg0->velocity.y = 0.0f;
                 }
             } else {
-                arg0->speed.y = (arg0->positionMirror.y - arg0->positionMirror3.y) * updateRateInverse;
+                arg0->velocity.y = (arg0->globalPosition.y - arg0->prevGlobalPosition.y) * updateRateInverse;
             }
         }
     } else if (arg1->mode == DLL27MODE_2) {
@@ -283,7 +283,7 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 updateRate) {
         dll_27_reset(arg0, arg1);
     }
     inverse_transform_point_by_object(
-        arg0->positionMirror.x, arg0->positionMirror.y, arg0->positionMirror.z, 
+        arg0->globalPosition.x, arg0->globalPosition.y, arg0->globalPosition.z, 
         &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, 
         arg0->parent);
 }
@@ -336,7 +336,7 @@ Func_80057F1C_Struct* dll_27_func_C7C(Object* arg0, f32 arg1, f32 arg2, s32* arg
             var_v0 = -1;
         }
         
-        bss_170 = func_80057F1C(arg0, arg1, arg0->positionMirror.y, arg2, &sp4C, var_v0, 0);
+        bss_170 = func_80057F1C(arg0, arg1, arg0->globalPosition.y, arg2, &sp4C, var_v0, 0);
         
         for (i = 0; i < bss_170; i++) {
             bss_8[i].unk0[0] = sp4C[i]->unk0[0];
@@ -375,19 +375,19 @@ void dll_27_reset(Object *obj, DLL27_Data *data) {
 
     transform_point_by_object(
         obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
-        &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z, 
+        &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
         obj->parent);
 
     for (i = 0; i < ((s32) data->numTestPoints >> 4); i++) {
-        data->unk38[i].x = obj->positionMirror.x;
-        data->unk38[i].y = obj->positionMirror.y + 5.0f;
-        data->unk38[i].z = obj->positionMirror.z;
+        data->unk38[i].x = obj->globalPosition.x;
+        data->unk38[i].y = obj->globalPosition.y + 5.0f;
+        data->unk38[i].z = obj->globalPosition.z;
     }
 
     for (i = 0; i < (data->numTestPoints & 0xF); i++) {
-        data->unk110[i].x = obj->positionMirror.x;
-        data->unk110[i].y = obj->positionMirror.y + 5.0f;
-        data->unk110[i].z = obj->positionMirror.z;
+        data->unk110[i].x = obj->globalPosition.x;
+        data->unk110[i].y = obj->globalPosition.y + 5.0f;
+        data->unk110[i].z = obj->globalPosition.z;
     }
 
     data->unk25C = 0;
@@ -421,9 +421,9 @@ static void dll_27_get_obj_world_matrix(Object *obj, DLL27_Data *data, MtxF *mtx
         srt.roll = obj->srt.roll;
     }
     srt.scale = 1.0f;
-    srt.transl.x = obj->positionMirror.x;
-    srt.transl.y = obj->positionMirror.y;
-    srt.transl.z = obj->positionMirror.z;
+    srt.transl.x = obj->globalPosition.x;
+    srt.transl.y = obj->globalPosition.y;
+    srt.transl.z = obj->globalPosition.z;
     matrix_from_srt(mtx, &srt);
 }
 
@@ -546,12 +546,12 @@ static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
 
         for (var_t1 = 0; var_t1 < sp60; var_t1++) {
             if (temp_v0[var_t1].unk14 != 0xE) {
-                if ((var_t2 == 0) && (temp_v0[var_t1].unk0[0] < (arg0->positionMirror.y + 5.0f)) && (temp_v0[var_t1].unk0[2] > 0.707f)) {
+                if ((var_t2 == 0) && (temp_v0[var_t1].unk0[0] < (arg0->globalPosition.y + 5.0f)) && (temp_v0[var_t1].unk0[2] > 0.707f)) {
                     arg1->floorYList[var_t4] = temp_v0[var_t1].unk0[0];
                     var_t2 = 1;
-                    arg1->floorDistList[var_t4] = (f32) (arg0->positionMirror.y - temp_v0[var_t1].unk0[0]);
+                    arg1->floorDistList[var_t4] = (f32) (arg0->globalPosition.y - temp_v0[var_t1].unk0[0]);
                 } else {
-                    if (((arg0->positionMirror.y + 5.0f) <= temp_v0[var_t1].unk0[0]) && (temp_v0[var_t1].unk0[2] < 0.0f)) {
+                    if (((arg0->globalPosition.y + 5.0f) <= temp_v0[var_t1].unk0[0]) && (temp_v0[var_t1].unk0[2] < 0.0f)) {
                         arg1->unk1CC[var_t4] = temp_v0[var_t1].unk0[0];
                     }
                 }
@@ -579,7 +579,7 @@ static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
         }
 
         if (arg1->waterYList[var_t4] != -100000.0f) {
-            arg1->underwaterDistList[var_t4] = arg1->waterYList[var_t4] - arg0->positionMirror.y;
+            arg1->underwaterDistList[var_t4] = arg1->waterYList[var_t4] - arg0->globalPosition.y;
         }
     }
     arg1->waterY = arg1->waterYList[0];
@@ -599,7 +599,7 @@ static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
     s32 temp_v1;
 
     temp_v0 = dll_27_func_C7C(arg0, arg1->unk8[0].x, arg1->unk8[0].z, &sp48, 0);
-    temp_fv1 = arg0->positionMirror.y;
+    temp_fv1 = arg0->globalPosition.y;
     var_fa0 = 10000.0f;
 
     for (temp_v1 = sp48 - 1; temp_v1 >= 0; temp_v1--) {
@@ -607,7 +607,7 @@ static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
             if ((temp_fv1 <= temp_v0[temp_v1].unk0[0]) && 
                 ((temp_v0[temp_v1].unk0[0] - var_fa0) <= temp_fv1)) 
             {
-                arg0->positionMirror.y = temp_v0[temp_v1].unk0[0];
+                arg0->globalPosition.y = temp_v0[temp_v1].unk0[0];
                 arg1->floorNormalX = temp_v0[temp_v1].unk0[1];
                 arg1->floorNormalY = temp_v0[temp_v1].unk0[2];
                 arg1->floorNormalZ = temp_v0[temp_v1].unk0[3];
@@ -677,15 +677,15 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
 
     temp_t7 = (arg1->numTestPoints >> 4);
     if (temp_t7 == 2 || temp_t7 == 4) {
-        arg0->positionMirror.x = 0.0f;
-        arg0->positionMirror.y = 0.0f;
-        arg0->positionMirror.z = 0.0f;
+        arg0->globalPosition.x = 0.0f;
+        arg0->globalPosition.y = 0.0f;
+        arg0->globalPosition.z = 0.0f;
         for (i = 0; i < (temp_t7*3); i+=3) {
-            arg0->positionMirror.x += arg1->unk38[0].f[i];
-            arg0->positionMirror.y += arg1->unk38[0].f[i+1];
-            arg0->positionMirror.z += arg1->unk38[0].f[i+2];
+            arg0->globalPosition.x += arg1->unk38[0].f[i];
+            arg0->globalPosition.y += arg1->unk38[0].f[i+1];
+            arg0->globalPosition.z += arg1->unk38[0].f[i+2];
         }
-        VECTOR_SCALE(arg0->positionMirror, 1.0f / temp_t7);
+        VECTOR_SCALE(arg0->globalPosition, 1.0f / temp_t7);
         if (!(arg1->flags & (DLL27FLAG_400 | DLL27FLAG_HAS_TERRAIN_COLLIDER | DLL27FLAG_8000))) {
             return;
         }
@@ -694,9 +694,9 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
         spDC.pitch = -arg0->srt.pitch;
         spDC.roll = -arg0->srt.roll;
         spDC.scale = 1;
-        spDC.transl.x = -arg0->positionMirror.x;
-        spDC.transl.y = -arg0->positionMirror.y;
-        spDC.transl.z = -arg0->positionMirror.z;
+        spDC.transl.x = -arg0->globalPosition.x;
+        spDC.transl.y = -arg0->globalPosition.y;
+        spDC.transl.z = -arg0->globalPosition.z;
         matrix_from_srt_reversed(&sp68, &spDC);
         for (var_s0_2 = 0, i = 0; i < temp_t7; i++) {
             vec3_transform(&sp68, 
@@ -733,9 +733,9 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
             arg0->srt.roll += (0x4000 - arctan2_f(f12, f14)) & 0xFFFF;
         }
     } else {
-        arg0->positionMirror.x = arg1->unk38[0].x;
-        arg0->positionMirror.y = arg1->unk38[0].y;
-        arg0->positionMirror.z = arg1->unk38[0].z;
+        arg0->globalPosition.x = arg1->unk38[0].x;
+        arg0->globalPosition.y = arg1->unk38[0].y;
+        arg0->globalPosition.z = arg1->unk38[0].z;
     }
 }
 
@@ -768,18 +768,18 @@ static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
         var_ft4 = arg1->unk38[1].x;
         var_ft5 = arg1->unk38[1].z;
     }
-    arg0->positionMirror.x = var_ft4;
-    arg0->positionMirror.z = var_ft5;
+    arg0->globalPosition.x = var_ft4;
+    arg0->globalPosition.z = var_ft5;
 
     temp_v0 = dll_27_func_C7C(arg0, var_ft4, var_ft5, &spCC, 0);
 
     for (var_a0 = 0; var_a0 < spCC; var_a0++) {
         if ((temp_v0[var_a0].unk14 != 0xE) && 
             (temp_v0[var_a0].unk0[2] > 0.707f) && 
-            ((arg0->positionMirror.y <= temp_v0[var_a0].unk0[0])) && 
-            ((temp_v0[var_a0].unk0[0] - 50.0f) <= arg0->positionMirror.y)) 
+            ((arg0->globalPosition.y <= temp_v0[var_a0].unk0[0])) && 
+            ((temp_v0[var_a0].unk0[0] - 50.0f) <= arg0->globalPosition.y)) 
         {
-            arg0->positionMirror.y = temp_v0[var_a0].unk0[0];
+            arg0->globalPosition.y = temp_v0[var_a0].unk0[0];
             arg1->floorNormalX = temp_v0[var_a0].unk0[1];
             arg1->floorNormalY = temp_v0[var_a0].unk0[2];
             arg1->floorNormalZ = temp_v0[var_a0].unk0[3];
@@ -803,11 +803,11 @@ static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
         func_8005509C(arg0, spB0, spB0, 1, &sp40, 3U);
         arg1->unk38[1].x = spB0[0];
         arg1->unk38[1].z = spB0[2];
-        arg0->positionMirror.x = spB0[0];
-        arg0->positionMirror.z = spB0[2];
+        arg0->globalPosition.x = spB0[0];
+        arg0->globalPosition.z = spB0[2];
     }
-    arg1->unk38[0].x = arg0->positionMirror.x;
-    arg1->unk38[0].z = arg0->positionMirror.z;
+    arg1->unk38[0].x = arg0->globalPosition.x;
+    arg1->unk38[0].z = arg0->globalPosition.z;
 }
 
 // offset: 0x2394 | func: 20
@@ -840,12 +840,12 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     var_fa1 = 0.0f;
     for (sp84 = 0; sp84 < ((s32) arg1->numTestPoints >> 4); sp84++) {
         spB0[sp84] = arg1->unk38[sp84].y;
-        temp_v0 = func_80057F1C(arg0, arg1->unk38[sp84].x, arg0->positionMirror.y, arg1->unk38[sp84].z, &sp6C, -1, 0);
+        temp_v0 = func_80057F1C(arg0, arg1->unk38[sp84].x, arg0->globalPosition.y, arg1->unk38[sp84].z, &sp6C, -1, 0);
         var_s0 = 0;
         if (temp_v0 != 0) {
             for (var_a0 = 0; var_a0 < temp_v0; var_a0++) {
                 if (var_s0 == 0) {
-                    if ((sp6C[var_a0]->unk0[0] < (arg0->positionMirror.y + 50.0f)) && (sp6C[var_a0]->unk14 != 0xE)) {
+                    if ((sp6C[var_a0]->unk0[0] < (arg0->globalPosition.y + 50.0f)) && (sp6C[var_a0]->unk14 != 0xE)) {
                         spB0[sp84] = sp6C[var_a0]->unk0[0];
                         var_t0 += 1;
                         var_s0 = 1;
@@ -861,7 +861,7 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
         arg1->unk38[sp84].y = spB0[sp84];
     }
     if (var_t0 != 0) {
-        arg0->positionMirror.y = var_ft4 / var_t0;
+        arg0->globalPosition.y = var_ft4 / var_t0;
         arg1->unk25D = 1;
         arg1->floorNormalX = var_fv1 / var_t0;
         arg1->floorNormalY = var_fa0 / var_t0;

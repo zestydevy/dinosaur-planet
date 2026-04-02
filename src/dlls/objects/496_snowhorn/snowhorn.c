@@ -310,7 +310,7 @@ void dll_496_control(Object* snowhorn) {
     mapsObj = (SnowHorn_Setup*)snowhorn->setup;
     player = get_player();
 
-    if (vec3_distance_xz_squared(&snowhorn->positionMirror, &player->positionMirror) 
+    if (vec3_distance_xz_squared(&snowhorn->globalPosition, &player->globalPosition) 
             < 2.0f * (objdata->unkRadius * objdata->unkRadius)) {
         if (!(objdata->unk424 & 0x80)) {
             objdata->unk424 |= 0x80;
@@ -341,7 +341,7 @@ void dll_496_control(Object* snowhorn) {
         return;
     }
 
-    objdata->distanceFromPlayer = vec3_distance(&snowhorn->positionMirror, &player->positionMirror);
+    objdata->distanceFromPlayer = vec3_distance(&snowhorn->globalPosition, &player->globalPosition);
     switch (mapsObj->unk1D) {
         case 0:
             dll_496_func_D80(snowhorn, objdata, mapsObj);
@@ -578,7 +578,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
     if (!player) 
         return;
     
-    if ((f32)objdata->unkRadius*objdata->unkRadius < vec3_distance_squared(&snowhorn->positionMirror, &player->positionMirror)) {
+    if ((f32)objdata->unkRadius*objdata->unkRadius < vec3_distance_squared(&snowhorn->globalPosition, &player->globalPosition)) {
         objdata->sleepTimer += gUpdateRate;
         if (objdata->sleepTimer > 900) {
             gDLL_3_Animation->vtbl->func17(7, snowhorn, -1); //play seq 7?
@@ -729,14 +729,14 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
                 rotate_vec3(&srt, v.f);
-                self->positionMirror.x = objdata->unk10 + 40.0f;
-                self->positionMirror.z = self->srt.transl.z;
-                self->positionMirror.y = objdata->playerPositionCopy.x;
+                self->globalPosition.x = objdata->unk10 + 40.0f;
+                self->globalPosition.z = self->srt.transl.z;
+                self->globalPosition.y = objdata->playerPositionCopy.x;
 
                 srt.yaw = 0;
-                self->positionMirror.x = self->positionMirror.x;                
-                self->positionMirror.y = self->positionMirror.y;
-                self->positionMirror.z = self->positionMirror.z;
+                self->globalPosition.x = self->globalPosition.x;                
+                self->globalPosition.y = self->globalPosition.y;
+                self->globalPosition.z = self->globalPosition.z;
                 objdata->flags = 3;
             }
             break;
@@ -782,7 +782,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 objdata->unkE = (u16) (0x8000 - *&temp_v0_2[1]);
                 player = get_player();
                 
-                var_v1 = (arctan2_f((player->positionMirror.x + (player->speed.x * 60.0f)) - self->positionMirror.x, (player->positionMirror.z + (player->speed.z * 60.0f)) - self->positionMirror.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
+                var_v1 = (arctan2_f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
                 CIRCLE_WRAP(var_v1)
                 
                 func_80023D30(self, 1, 0.0f, 0);
@@ -890,7 +890,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
     }
     
     if (_data_274[0] != 0 && 
-        func_80031BBC(snowhorn->positionMirror.x, snowhorn->positionMirror.y, snowhorn->positionMirror.z) == 0xA){
+        func_80031BBC(snowhorn->globalPosition.x, snowhorn->globalPosition.y, snowhorn->globalPosition.z) == 0xA){
         gDLL_3_Animation->vtbl->func17(0x10, snowhorn, -1); //setAnimation?
         return;
     }
@@ -979,7 +979,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             
             frostWeed = obj_get_nearest_type_to(OBJTYPE_4, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
-            if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < setup->unkRadius * setup->unkRadius) {
+            if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->globalPosition, &frostWeed->globalPosition) < setup->unkRadius * setup->unkRadius) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {
                     ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->gravitate_towards_point(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
@@ -996,7 +996,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             }
             break;
         case 3:
-            if (vec3_distance_xz_squared(&objdata->playerPositionCopy, &objdata->frostWeed->positionMirror) < 6.25f) {
+            if (vec3_distance_xz_squared(&objdata->playerPositionCopy, &objdata->frostWeed->globalPosition) < 6.25f) {
                 objdata->flags = 4;
             }
             break;

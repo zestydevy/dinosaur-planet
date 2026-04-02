@@ -448,13 +448,13 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         arg8->srt.transl.f[1] = D_800B2E10->m[3][1];
         arg8->srt.transl.f[2] = D_800B2E10->m[3][2];
         if (arg8->parent != NULL) {
-            transform_point_by_object(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->positionMirror.f, &arg8->positionMirror.f[1], &arg8->positionMirror.f[2], arg8->parent);
+            transform_point_by_object(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->globalPosition.f, &arg8->globalPosition.f[1], &arg8->globalPosition.f[2], arg8->parent);
         } else {
             arg8->srt.transl.f[0] += gWorldX;
             arg8->srt.transl.f[2] += gWorldZ;
-            arg8->positionMirror.f[0] = arg8->srt.transl.f[0];
-            arg8->positionMirror.f[1] = arg8->srt.transl.f[1];
-            arg8->positionMirror.f[2] = arg8->srt.transl.f[2];
+            arg8->globalPosition.f[0] = arg8->srt.transl.f[0];
+            arg8->globalPosition.f[1] = arg8->srt.transl.f[1];
+            arg8->globalPosition.f[2] = arg8->srt.transl.f[2];
         }
         if (arg8->def->numAttachPoints >= 2 && arg8->group == GROUP_UNK48) {
             if (arg8->parent != NULL) {
@@ -586,9 +586,9 @@ void func_80036438(Object* arg0) {
                 transform_point_by_object_matrix(&sp118[i].refPoint, &sp118[i].refPoint, arg0->parent->matrixIdx);
             }
         } else {
-            spA8.transl.f[0] = arg0->positionMirror.f[0];
-            spA8.transl.f[1] = arg0->positionMirror.f[1];
-            spA8.transl.f[2] = arg0->positionMirror.f[2];
+            spA8.transl.f[0] = arg0->globalPosition.f[0];
+            spA8.transl.f[1] = arg0->globalPosition.f[1];
+            spA8.transl.f[2] = arg0->globalPosition.f[2];
             if (sp11C->flags & 0x10) {
                 spA8.yaw = 0;
                 spA8.pitch = 0;

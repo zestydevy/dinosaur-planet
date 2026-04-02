@@ -140,23 +140,23 @@ void SB_ShipHead_control(Object *self) {
         fireballSetup->z = oz;
         fireballObj = obj_create(fireballSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
         player = get_player();
-        dx = player->positionMirror.x - fireballObj->srt.transl.x;
-        dy = (player->positionMirror.y - 30.0f) - fireballObj->srt.transl.y;
-        dz = player->positionMirror.z - fireballObj->srt.transl.z;
+        dx = player->globalPosition.x - fireballObj->srt.transl.x;
+        dy = (player->globalPosition.y - 30.0f) - fireballObj->srt.transl.y;
+        dz = player->globalPosition.z - fireballObj->srt.transl.z;
         temp_fv1 = 30.0f / sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
         fireballObj->unkDC = 120;
-        fireballObj->speed.x = dx * temp_fv1;
-        fireballObj->speed.y = dy * temp_fv1;
-        fireballObj->speed.z = dz * temp_fv1;
+        fireballObj->velocity.x = dx * temp_fv1;
+        fireballObj->velocity.y = dy * temp_fv1;
+        fireballObj->velocity.z = dz * temp_fv1;
         fireballObj->unkE0 = (s32)objdata->cloudrunner;
     }
     if (sp3B == 1) {
         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_17A_Galleon_Roar, 43, NULL, NULL, 0, NULL);
         player = get_player();
         minifireSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_MiniFire);
-        minifireSetup->x = player->positionMirror.x + 100.0f;
-        minifireSetup->y = rand_next(-6, 6) + player->positionMirror.y + 50.0f;
-        minifireSetup->z = rand_next(-6, 6) + player->positionMirror.z + 45.0f;
+        minifireSetup->x = player->globalPosition.x + 100.0f;
+        minifireSetup->y = rand_next(-6, 6) + player->globalPosition.y + 50.0f;
+        minifireSetup->z = rand_next(-6, 6) + player->globalPosition.z + 45.0f;
         minifireSetup->loadFlags = 2;
         minifireSetup->fadeFlags = 1;
         minifireSetup->loadDistance = 0xFF;

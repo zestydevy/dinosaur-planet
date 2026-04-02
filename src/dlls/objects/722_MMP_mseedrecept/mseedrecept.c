@@ -194,7 +194,7 @@ void mmp_mseedrecept_control(Object* self) {
         case 3:
             kyte = get_sidekick();
             self->srt.transl.y = objSetup->base.y;
-            if (vec3_distance_xz_squared(&kyte->positionMirror, &self->positionMirror) <= 2500.0f){
+            if (vec3_distance_xz_squared(&kyte->globalPosition, &self->globalPosition) <= 2500.0f){
                 
                 for (count = -1; count < (objData->unkC >> 0xD); count++){
                     particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;

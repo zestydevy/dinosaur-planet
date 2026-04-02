@@ -643,7 +643,7 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
                                    &spD8.transl.x, &spD8.transl.y, &spD8.transl.z);
                     spD8.transl.x += gWorldX;
                     spD8.transl.z += gWorldZ;
-                    normalized = SQ(a2->speed.x) + SQ(a2->speed.y) + SQ(a2->speed.z);
+                    normalized = SQ(a2->velocity.x) + SQ(a2->velocity.y) + SQ(a2->velocity.z);
                     if (normalized < 0.1f) {
                         gDLL_17_partfx->vtbl->spawn(a2, 0x19A, &spD8, 0x200000, -1, NULL);
                     } else {
@@ -676,10 +676,10 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
                        &spD8.transl.x, &spD8.transl.y, &spD8.transl.z);
         spD8.transl.x += gWorldX;
         spD8.transl.z += gWorldZ;
-        spD8.transl.x += (2.0f * a2->speed.x);
-        spD8.transl.y += (2.0f * a2->speed.y);
-        spD8.transl.z += (2.0f * a2->speed.z);
-        normalized = SQ(a2->speed.x) + SQ(a2->speed.y) + SQ(a2->speed.z);
+        spD8.transl.x += (2.0f * a2->velocity.x);
+        spD8.transl.y += (2.0f * a2->velocity.y);
+        spD8.transl.z += (2.0f * a2->velocity.z);
+        normalized = SQ(a2->velocity.x) + SQ(a2->velocity.y) + SQ(a2->velocity.z);
         if (normalized < 0.01f) {
             gDLL_17_partfx->vtbl->spawn(a2, 0x19D, &spD8, 0x200000, -1, NULL);
         }

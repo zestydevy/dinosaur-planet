@@ -174,9 +174,9 @@ void crate_control(Object* self) {
             distance = 50.0f;
             obj = obj_get_nearest_type_to(OBJTYPE_5, self, &distance);
             if (obj != NULL) {
-                obj->srt.transl.x = obj->positionMirror.x = self->srt.transl.x;
-                obj->srt.transl.y = obj->positionMirror.y = self->srt.transl.y + 10.0f;
-                obj->srt.transl.z = obj->positionMirror.z = self->srt.transl.z;
+                obj->srt.transl.x = obj->globalPosition.x = self->srt.transl.x;
+                obj->srt.transl.y = obj->globalPosition.y = self->srt.transl.y + 10.0f;
+                obj->srt.transl.z = obj->globalPosition.z = self->srt.transl.z;
                 obj->srt.yaw = self->srt.yaw;
             }
         }

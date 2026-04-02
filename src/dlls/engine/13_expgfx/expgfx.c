@@ -256,17 +256,17 @@ s16 dll_13_func_228(ExpgfxStruct* arg0, s32 arg1) {
         var_a3->unk40.pitch = arg0->transform.pitch;
         var_a3->unk40.yaw = arg0->transform.yaw;
     } else if (temp_v0_2 & 0x200000) {
-        var_a3->unk40.transl.x = temp_v0_5->positionMirror.x;
-        var_a3->unk40.transl.y = temp_v0_5->positionMirror.y;
-        var_a3->unk40.transl.z = temp_v0_5->positionMirror.z;
+        var_a3->unk40.transl.x = temp_v0_5->globalPosition.x;
+        var_a3->unk40.transl.y = temp_v0_5->globalPosition.y;
+        var_a3->unk40.transl.z = temp_v0_5->globalPosition.z;
         var_a3->unk40.scale = temp_v0_5->srt.scale;
         var_a3->unk40.roll = temp_v0_5->srt.roll;
         var_a3->unk40.pitch = temp_v0_5->srt.pitch;
         var_a3->unk40.yaw = temp_v0_5->srt.yaw;
         if ((temp_v0_2 & 2) || (temp_v0_2 & 4)) {
-            arg0->unk24.x += temp_v0_5->speed.x;
-            arg0->unk24.y += temp_v0_5->speed.y;
-            arg0->unk24.z += temp_v0_5->speed.z;
+            arg0->unk24.x += temp_v0_5->velocity.x;
+            arg0->unk24.y += temp_v0_5->velocity.y;
+            arg0->unk24.z += temp_v0_5->velocity.z;
         }
         if (temp_v0_5 != NULL) {
             var_a2 = temp_v0_5->parent;
@@ -324,24 +324,24 @@ s16 dll_13_func_228(ExpgfxStruct* arg0, s32 arg1) {
         var_a2 = get_player();
         var_a3->unk80 ^= 0x10;
         if (var_a3->unk7C & 1) {
-            sp44[0] = var_a2->positionMirror.x - var_a3->unk64;
-            sp44[2] = var_a2->positionMirror.z - var_a3->unk6C;
+            sp44[0] = var_a2->globalPosition.x - var_a3->unk64;
+            sp44[2] = var_a2->globalPosition.z - var_a3->unk6C;
             temp_fv0 = SQ(sp44[0]) + SQ(sp44[2]);
-            if (temp_fv0 < 3600.0f && var_a2->speed.x != 0.0f && var_a2->speed.z != 0.0f) {
+            if (temp_fv0 < 3600.0f && var_a2->velocity.x != 0.0f && var_a2->velocity.z != 0.0f) {
                 temp_fv0 = var_a3->unk0[0].unk6 * 2;
-                var_a3->unk70 += (var_a2->positionMirror.x - var_a3->unk64) / temp_fv0;
-                var_a3->unk74 += ((var_a2->positionMirror.y + 30.0f) - var_a3->unk68) / temp_fv0;
-                var_a3->unk78 += (var_a2->positionMirror.z - var_a3->unk6C) / temp_fv0;
+                var_a3->unk70 += (var_a2->globalPosition.x - var_a3->unk64) / temp_fv0;
+                var_a3->unk74 += ((var_a2->globalPosition.y + 30.0f) - var_a3->unk68) / temp_fv0;
+                var_a3->unk78 += (var_a2->globalPosition.z - var_a3->unk6C) / temp_fv0;
             }
         } else {
-            sp44[0] = var_a2->positionMirror.x - (var_a3->unk64 + temp_v0_5->srt.transl.x);
-            sp44[2] = var_a2->positionMirror.z - (var_a3->unk6C + temp_v0_5->srt.transl.z);
+            sp44[0] = var_a2->globalPosition.x - (var_a3->unk64 + temp_v0_5->srt.transl.x);
+            sp44[2] = var_a2->globalPosition.z - (var_a3->unk6C + temp_v0_5->srt.transl.z);
             temp_fv0 = SQ(sp44[0]) + SQ(sp44[2]);
-            if (temp_fv0 < 3600.0f && var_a2->speed.x != 0.0f && var_a2->speed.z != 0.0f) {
+            if (temp_fv0 < 3600.0f && var_a2->velocity.x != 0.0f && var_a2->velocity.z != 0.0f) {
                 temp_fv0 = var_a3->unk0[0].unk6 * 2;
-                var_a3->unk70 -= (var_a2->positionMirror.x - (var_a3->unk64 + temp_v0_5->srt.transl.x)) / temp_fv0;
-                var_a3->unk74 -= ((var_a2->positionMirror.y + 30.0f) - (var_a3->unk68 + temp_v0_5->srt.transl.y)) / temp_fv0;
-                var_a3->unk78 -= (var_a2->positionMirror.z - (var_a3->unk6C + temp_v0_5->srt.transl.z)) / temp_fv0;
+                var_a3->unk70 -= (var_a2->globalPosition.x - (var_a3->unk64 + temp_v0_5->srt.transl.x)) / temp_fv0;
+                var_a3->unk74 -= ((var_a2->globalPosition.y + 30.0f) - (var_a3->unk68 + temp_v0_5->srt.transl.y)) / temp_fv0;
+                var_a3->unk78 -= (var_a2->globalPosition.z - (var_a3->unk6C + temp_v0_5->srt.transl.z)) / temp_fv0;
             }
         }
     }

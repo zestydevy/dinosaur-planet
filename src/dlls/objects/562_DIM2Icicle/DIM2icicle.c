@@ -49,7 +49,7 @@ void DIM2Icicle_setup(Object* self, DIM2Icicle_Setup* setup, s32 arg2) {
     
     self->srt.yaw = setup->yaw << 8;
     self->unkB0 |= 0x2000;
-    self->speed.y = 0.0f;
+    self->velocity.y = 0.0f;
 }
 
 // offset: 0xBC | func: 1 | export: 1
@@ -114,11 +114,11 @@ void DIM2Icicle_control(Object* self) {
         }
 
         //Fall
-        self->speed.y -= 0.1f * gUpdateRateF;
-        if (self->speed.y < -10.0f) {
-            self->speed.y = -10.0f;
+        self->velocity.y -= 0.1f * gUpdateRateF;
+        if (self->velocity.y < -10.0f) {
+            self->velocity.y = -10.0f;
         }
-        self->srt.transl.y += self->speed.y * gUpdateRateF;
+        self->srt.transl.y += self->velocity.y * gUpdateRateF;
 
         //Check for when icicle reaches ground
         if (self->srt.transl.y < objData->groundHeight) {
@@ -147,12 +147,12 @@ void DIM2Icicle_control(Object* self) {
         if (opacity < 0) {
             opacity = 0;
             self->srt.transl.y = objSetup->base.y;
-            self->speed.y = 0.0f;
+            self->velocity.y = 0.0f;
         }
         self->opacity = opacity;
 
         //Continue fall during fadeout
-        self->srt.transl.y += self->speed.y * gUpdateRateF;
+        self->srt.transl.y += self->velocity.y * gUpdateRateF;
         break;
     }
 }

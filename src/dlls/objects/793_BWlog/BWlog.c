@@ -121,7 +121,7 @@ void dll_793_control(Object* self) {
     objdata->unk338 = obj_get_nearest_type_to(OBJTYPE_23, self, &sp98);
     if (objdata->unk338 != NULL) {
         temp_s0 = (ObjType23Setup*)objdata->unk338->setup;
-        sp98 = vec3_distance(&self->positionMirror, &objdata->unk338->positionMirror);
+        sp98 = vec3_distance(&self->globalPosition, &objdata->unk338->globalPosition);
         if (objdata->unk32E == 2) {
             var_fv1 = 0.95f;
         } else {
@@ -245,7 +245,7 @@ u32 dll_793_get_data_size(Object *self, u32 a1) {
 s32 dll_793_func_950(Object *self, Object *rider) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     if ((objdata->unk32E == 0) && (objdata->unk338 != NULL)) {
-        return vec3_distance(&rider->positionMirror, &self->positionMirror) < 50.0f;
+        return vec3_distance(&rider->globalPosition, &self->globalPosition) < 50.0f;
     }
     return 0;
 }

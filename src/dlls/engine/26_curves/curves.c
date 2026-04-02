@@ -884,9 +884,9 @@ s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
         if ((obj->group == GROUP_UNK46) && (arg3 != obj->mapID)) {
             curveSetup = (CurveSetup*)obj->setup;
             if ((curveSetup != NULL) && (curveSetup->curveType == 0x16)) {
-                temp_fv0 = obj->positionMirror.x - arg0, 
-                temp_fv1 = obj->positionMirror.y - arg1, 
-                temp_fa1 = obj->positionMirror.z - arg2, 
+                temp_fv0 = obj->globalPosition.x - arg0, 
+                temp_fv1 = obj->globalPosition.y - arg1, 
+                temp_fa1 = obj->globalPosition.z - arg2, 
                 temp_fv0_2 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
 
                 if (var_fs0 == -1.0f || temp_fv0_2 < var_fs1) {

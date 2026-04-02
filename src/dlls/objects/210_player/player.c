@@ -624,10 +624,10 @@ void dll_210_control(Object* player) {
         for (i = 0; i < sp80; i++) {
             *_bss_1AA = i;
             dll_210_func_11A0(player, data, sp70);
-            get_object_child_position(player, &player->positionMirror.x, &player->positionMirror.y, &player->positionMirror.z);
-            data->unk7EC.x += player->speed.x;
-            data->unk7EC.y += player->speed.y;
-            data->unk7EC.z += player->speed.z;
+            get_object_child_position(player, &player->globalPosition.x, &player->globalPosition.y, &player->globalPosition.z);
+            data->unk7EC.x += player->velocity.x;
+            data->unk7EC.y += player->velocity.y;
+            data->unk7EC.z += player->velocity.z;
         }
     } else {
         *_bss_1AA = 0;
@@ -755,17 +755,17 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
         sp9C.transl.z = 0;
         sp9C.scale = 1.0f;
         matrix_from_srt(&sp5C, &sp9C);
-        vec3_transform(&sp5C, arg1->unk0.unk27C, 0, -arg1->unk0.unk278, &player->speed.x, &spC8, &player->speed.z);
+        vec3_transform(&sp5C, arg1->unk0.unk27C, 0, -arg1->unk0.unk278, &player->velocity.x, &spC8, &player->velocity.z);
     } else {
         spC4 = fsin16_precise(player->srt.yaw);
         temp_fv0 = fcos16_precise(player->srt.yaw);
-        arg1->unk0.unk27C = (player->speed.x * temp_fv0) - (player->speed.z * spC4);
-        arg1->unk0.unk278 = (-player->speed.z * temp_fv0) - (player->speed.x * spC4);
+        arg1->unk0.unk27C = (player->velocity.x * temp_fv0) - (player->velocity.z * spC4);
+        arg1->unk0.unk278 = (-player->velocity.z * temp_fv0) - (player->velocity.x * spC4);
     }
     temp_v0_3 = &arg1->unk0.unk4;
     if (!(arg1->unk0.flags & 0x200000)) {
-        player->speed.y *= 0.97f;
-        player->speed.y -= arg1->unk0.unk29C * arg2;
+        player->velocity.y *= 0.97f;
+        player->velocity.y -= arg1->unk0.unk29C * arg2;
     }
     if (((s8*)temp_v0_3)[0x25C] & 0x10) {
         switch (((s8*)temp_v0_3)[0xB8]) {
@@ -856,30 +856,30 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             } else {
                 sp4C = 1.0f - (sp4C * 0.05f);
             }
-            player->speed.x *= sp4C;
-            player->speed.z *= sp4C;
+            player->velocity.x *= sp4C;
+            player->velocity.z *= sp4C;
         }
     }
-    if (player->speed.x < -3.0f) {
-        player->speed.x = -3.0f;
+    if (player->velocity.x < -3.0f) {
+        player->velocity.x = -3.0f;
     }
-    if (player->speed.x > 3.0f) {
-        player->speed.x = 3.0f;
+    if (player->velocity.x > 3.0f) {
+        player->velocity.x = 3.0f;
     }
-    if (player->speed.y < -4.0f) {
-        player->speed.y = -4.0f;
+    if (player->velocity.y < -4.0f) {
+        player->velocity.y = -4.0f;
     }
-    if (player->speed.y > 4.0f) {
-        player->speed.y = 4.0f;
+    if (player->velocity.y > 4.0f) {
+        player->velocity.y = 4.0f;
     }
-    if (player->speed.z < -3.0f) {
-        player->speed.z = -3.0f;
+    if (player->velocity.z < -3.0f) {
+        player->velocity.z = -3.0f;
     }
-    if (player->speed.z > 3.0f) {
-        player->speed.z = 3.0f;
+    if (player->velocity.z > 3.0f) {
+        player->velocity.z = 3.0f;
     }
     temp_fv0 = player->srt.scale / player->def->scale;
-    obj_integrate_speed(player, player->speed.x * arg2 * temp_fv0, player->speed.y * arg2 * temp_fv0, player->speed.z * arg2 * temp_fv0);
+    obj_move(player, player->velocity.x * arg2 * temp_fv0, player->velocity.y * arg2 * temp_fv0, player->velocity.z * arg2 * temp_fv0);
     dll_210_func_1BC0(player, arg1);
 }
 
@@ -993,9 +993,9 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 var_fs0 /= temp_fv0;
                 var_fs1 /= temp_fv0;
             }
-            player->speed.y = 2.5f;
-            player->speed.x = var_fs0 * 2.5f;
-            player->speed.z = var_fs1 * 2.5f;
+            player->velocity.y = 2.5f;
+            player->velocity.x = var_fs0 * 2.5f;
+            player->velocity.z = var_fs1 * 2.5f;
             gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Hurt_Knocked_Down);
             dll_210_add_health(player, -messageArgument);
             if (arg1->unk868 != NULL) {
@@ -1011,9 +1011,9 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 var_fs0 /= temp_fv0;
                 var_fs1 /= temp_fv0;
             }
-            player->speed.y = 2.5f;
-            player->speed.x = -var_fs0 * 2.5f;
-            player->speed.z = -var_fs1 * 2.5f;
+            player->velocity.y = 2.5f;
+            player->velocity.x = -var_fs0 * 2.5f;
+            player->velocity.z = -var_fs1 * 2.5f;
             gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Hurt_Knocked_Down);
             dll_210_add_health(player, -messageArgument);
             if (arg1->unk868 != NULL) {
@@ -1029,9 +1029,9 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 var_fs0 /= temp_fv0;
                 var_fs1 /= temp_fv0;
             }
-            player->speed.y = 2.5f;
-            player->speed.x = -var_fs0 * 2.5f;
-            player->speed.z = -var_fs1 * 2.5f;
+            player->velocity.y = 2.5f;
+            player->velocity.x = -var_fs0 * 2.5f;
+            player->velocity.z = -var_fs1 * 2.5f;
             gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_DA_Krystal_Hurt_Ough, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Hurt_Knocked_Down);
             func_80023D30(player, 0x450, 0.0f, 0);
@@ -1228,9 +1228,9 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         sp48.transl.y = temp->m[sp80][2];
         sp48.transl.z = temp->m[sp80][3] + gWorldZ;
         gDLL_17_partfx->vtbl->spawn(arg0, 0x328, &sp48, 0x200001, -1, NULL);
-        sp48.transl.x -= arg0->positionMirror.x;
-        sp48.transl.y -= arg0->positionMirror.y;
-        sp48.transl.z -= arg0->positionMirror.z;
+        sp48.transl.x -= arg0->globalPosition.x;
+        sp48.transl.y -= arg0->globalPosition.y;
+        sp48.transl.z -= arg0->globalPosition.z;
         sp70 = dll_load_deferred(0x1002U, 1U);
         sp60[1] += rand_next(0, 0x9B);
         sp60[2] += rand_next(0, 0x9B);
@@ -1296,27 +1296,27 @@ void dll_210_update(Object* player) {
     }
     if (objdata->unk0.unk4.mode == 1) {
         if (!(objdata->flags & 0x2000) && (objdata->unk0.unk4.unk25C != 0)) {
-            temp_fv0 = (player->positionMirror.y - player->positionMirror3.y) / updateRate;
-            player->speed.y = temp_fv0;
+            temp_fv0 = (player->globalPosition.y - player->prevGlobalPosition.y) / updateRate;
+            player->velocity.y = temp_fv0;
             if (temp_fv0 < -4.0f) {
-                player->speed.y = -4.0f;
+                player->velocity.y = -4.0f;
             }
-            if (player->speed.y > 0.0f) {
-                player->speed.y = 0.0f;
+            if (player->velocity.y > 0.0f) {
+                player->velocity.y = 0.0f;
             }
         }
         if (objdata->unk0.flags & 0x800000) {
             if (player->parent != NULL) {
-                player->speed.x = (player->srt.transl.x - player->positionMirror2.x) / updateRate;
-                player->speed.z = (player->srt.transl.z - player->positionMirror2.z) / updateRate;
+                player->velocity.x = (player->srt.transl.x - player->prevLocalPosition.x) / updateRate;
+                player->velocity.z = (player->srt.transl.z - player->prevLocalPosition.z) / updateRate;
             } else {
-                player->speed.x = (player->positionMirror.x - player->positionMirror3.x) / updateRate;
-                player->speed.z = (player->positionMirror.z - player->positionMirror3.z) / updateRate;
+                player->velocity.x = (player->globalPosition.x - player->prevGlobalPosition.x) / updateRate;
+                player->velocity.z = (player->globalPosition.z - player->prevGlobalPosition.z) / updateRate;
             }
             if (((objdata->unk0.unk4.unk25C & 6) && !(objdata->unk0.unk4.unk25C & 0x60)) || (objdata->unk0.unk4.hitsTouchBits != 0)) {
                 sp4C = fsin16_precise(player->srt.yaw);
                 temp_fv0 = fcos16_precise(player->srt.yaw);
-                objdata->unk0.unk278 = (temp_fv0 * -player->speed.z) - (player->speed.x * sp4C);
+                objdata->unk0.unk278 = (temp_fv0 * -player->velocity.z) - (player->velocity.x * sp4C);
                 if (objdata->unk0.unk278 > 1.65f) {
                     objdata->unk0.unk278 = 1.65f;
                 }
@@ -1709,23 +1709,23 @@ void dll_210_func_41F4(Object* player, Player_Data* arg1) {
 }
 
 // offset: 0x43EC | func: 23 | export: 65
-void dll_210_func_43EC(Object* player, f32 arg1, f32 arg2, f32 arg3) {
+void dll_210_func_43EC(Object* player, f32 x, f32 y, f32 z) {
     Player_Data* objdata;
 
-    player->positionMirror3.x = arg1;
-    player->positionMirror2.x = arg1;
-    player->positionMirror.x = arg1;
-    player->srt.transl.x = arg1;
+    player->prevGlobalPosition.x = x;
+    player->prevLocalPosition.x = x;
+    player->globalPosition.x = x;
+    player->srt.transl.x = x;
 
-    player->positionMirror3.y = arg2;
-    player->positionMirror2.y = arg2;
-    player->positionMirror.y = arg2;
-    player->srt.transl.y = arg2;
+    player->prevGlobalPosition.y = y;
+    player->prevLocalPosition.y = y;
+    player->globalPosition.y = y;
+    player->srt.transl.y = y;
 
-    player->positionMirror3.z = arg3;
-    player->positionMirror2.z = arg3;
-    player->positionMirror.z = arg3;
-    player->srt.transl.z = arg3;
+    player->prevGlobalPosition.z = z;
+    player->prevLocalPosition.z = z;
+    player->globalPosition.z = z;
+    player->srt.transl.z = z;
 
     objdata = player->data;
     dll_210_func_7260(player, objdata);
@@ -2309,7 +2309,7 @@ void dll_210_func_60A8(Object* player, s32 arg1, s32 arg2) {
     sp24 = player->data;
     player->unkB0 &= 0xEFFF;
     func_8002674C(player);
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     dll_210_func_7260(player, sp24);
     sp24->unk8B7 = 2;
     sp24->unk834 = 0.0f;
@@ -2735,9 +2735,9 @@ static void dll_210_func_7260(Object* player, Player_Data* arg1) {
     player->objhitInfo->unk10.x = player->srt.transl.x;
     player->objhitInfo->unk10.y = player->srt.transl.y;
     player->objhitInfo->unk10.z = player->srt.transl.z;
-    player->objhitInfo->unk20.x = player->positionMirror.x;
-    player->objhitInfo->unk20.y = player->positionMirror.y;
-    player->objhitInfo->unk20.z = player->positionMirror.z;
+    player->objhitInfo->unk20.x = player->globalPosition.x;
+    player->objhitInfo->unk20.y = player->globalPosition.y;
+    player->objhitInfo->unk20.z = player->globalPosition.z;
 }
 
 // offset: 0x7300 | func: 36
@@ -2774,7 +2774,7 @@ static s32 dll_210_func_7300(Object* player, Player_Data* arg1, Func_80059C40_St
     arg3->unk38.y = 0.0f;
     arg3->unk38.z = arg1->unk7EC.z;
     arg3->unk4 = ((arg2->unk38.z - arg2->unk38.y) * arg2->unk48) + arg2->unk38.y;
-    arg3->unk8 = player->positionMirror2.y;
+    arg3->unk8 = player->prevLocalPosition.y;
     arg3->unk0 = arg3->unk4 - arg3->unk8;
     arg3->unk46 =  arg2->unk50;
     if (arg2->unk50 == 6) {
@@ -2998,11 +2998,11 @@ static void dll_210_func_7CF8(ObjFSA_Data* fsa, Vec3f* arg1) {
 static void dll_210_func_7DA0(Object* player, ObjFSA_Data* fsa, Vec3f* arg2) {
     f32 f0;
 
-    f0 = sqrtf(SQ(player->speed.x) + SQ(player->speed.z));
+    f0 = sqrtf(SQ(player->velocity.x) + SQ(player->velocity.z));
     arg2->y = 0.0f;
     if (f0 > 0.01f) {
-        arg2->x = player->speed.x;
-        arg2->z = player->speed.z;
+        arg2->x = player->velocity.x;
+        arg2->z = player->velocity.z;
         arg2->x /= f0;
         arg2->z /= f0;
         return;
@@ -3458,12 +3458,12 @@ static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle
             }
         }
         vehicle->dll->vtbl->print(vehicle, arg3, arg4, arg5, arg6, -1);
-        player->positionMirror3.x = player->positionMirror.x;
-        player->positionMirror3.y = player->positionMirror.y;
-        player->positionMirror3.z = player->positionMirror.z;
-        player->positionMirror2.x = player->srt.transl.x;
-        player->positionMirror2.y = player->srt.transl.y;
-        player->positionMirror2.z = player->srt.transl.z;
+        player->prevGlobalPosition.x = player->globalPosition.x;
+        player->prevGlobalPosition.y = player->globalPosition.y;
+        player->prevGlobalPosition.z = player->globalPosition.z;
+        player->prevLocalPosition.x = player->srt.transl.x;
+        player->prevLocalPosition.y = player->srt.transl.y;
+        player->prevLocalPosition.z = player->srt.transl.z;
     }
     ((DLL_IVehicle*)vehicle->dll)->vtbl->func9(vehicle, &sp44, &sp40, &sp3C);
     player->srt.transl.x = sp44;
@@ -3472,12 +3472,12 @@ static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle
     player->srt.yaw = vehicle->srt.yaw;
     player->srt.pitch = vehicle->srt.pitch;
     player->srt.roll = vehicle->srt.roll;
-    player->positionMirror.x = player->srt.transl.x;
-    player->positionMirror.y = player->srt.transl.y;
-    player->positionMirror.z = player->srt.transl.z;
-    player->speed.x = vehicle->speed.x;
-    player->speed.y = vehicle->speed.y;
-    player->speed.z = vehicle->speed.z;
+    player->globalPosition.x = player->srt.transl.x;
+    player->globalPosition.y = player->srt.transl.y;
+    player->globalPosition.z = player->srt.transl.z;
+    player->velocity.x = vehicle->velocity.x;
+    player->velocity.y = vehicle->velocity.y;
+    player->velocity.z = vehicle->velocity.z;
     dll_210_func_7260(player, arg1);
 }
 
@@ -3556,10 +3556,10 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     sp90.yaw += player->parent->srt.yaw;
                 }
                 matrix_from_srt(&spC0, &sp90);
-                vec3_transform(&spC0, 0.0f, 0.0f, -5.0f, &temp_v0_2->speed.x, &temp_v0_2->speed.y, &temp_v0_2->speed.z);
-                temp_v0_2->positionMirror.x = temp_v0_2->srt.transl.x;
-                temp_v0_2->positionMirror.y = temp_v0_2->srt.transl.y;
-                temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
+                vec3_transform(&spC0, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
+                temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
+                temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
+                temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
                 temp_v0_2->srt.yaw = player->srt.yaw;
                 temp_v0_2->srt.pitch = 0;
             } else {
@@ -3578,20 +3578,20 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 sp104.y = temp_fs2 / temp_fv0;
                 sp104.z = temp / temp_fv0;
                 vec3_transform_no_translate(camera_get_viewmtx2(), &sp104, &sp104);
-                temp_v0_2->speed.x = sp104.x * -5.0f;
-                temp_v0_2->speed.y = sp104.y * -5.0f;
-                temp_v0_2->speed.z = sp104.z * -5.0f;
+                temp_v0_2->velocity.x = sp104.x * -5.0f;
+                temp_v0_2->velocity.y = sp104.y * -5.0f;
+                temp_v0_2->velocity.z = sp104.z * -5.0f;
 
                 temp_fv0_2 = mainCam->srt.transl.x;
-                temp_v0_2->positionMirror.x = temp_fv0_2;
+                temp_v0_2->globalPosition.x = temp_fv0_2;
                 temp_v0_2->srt.transl.x = temp_fv0_2;
 
                 temp_fv0_2 = mainCam->srt.transl.y;
-                temp_v0_2->positionMirror.y = temp_fv0_2;
+                temp_v0_2->globalPosition.y = temp_fv0_2;
                 temp_v0_2->srt.transl.y = temp_fv0_2;
 
                 temp_fv0_2 = mainCam->srt.transl.z;
-                temp_v0_2->positionMirror.z = temp_fv0_2;
+                temp_v0_2->globalPosition.z = temp_fv0_2;
                 temp_v0_2->srt.transl.z = temp_fv0_2;
 
                 temp_v0_2->srt.pitch = 0;
@@ -3627,9 +3627,9 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
         temp_v0->loadDistance = 0xFF;
         temp_v0->fadeDistance = 0xFF;
-        temp_v0->x = player->linkedObject->positionMirror.x;
-        temp_v0->y = player->linkedObject->positionMirror.y;
-        temp_v0->z = player->linkedObject->positionMirror.z;
+        temp_v0->x = player->linkedObject->globalPosition.x;
+        temp_v0->y = player->linkedObject->globalPosition.y;
+        temp_v0->z = player->linkedObject->globalPosition.z;
         temp_a0 = player->linkedObject;
         temp_s5 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
         temp_v0_2 = obj_create(temp_v0, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
@@ -3661,10 +3661,10 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 spE8.yaw += player->parent->srt.yaw;
             }
             matrix_from_srt(&sp9C, &spE8);
-            vec3_transform(&sp9C, 0.0f, 0.0f, temp_s5 * -0.15f, &temp_v0_2->speed.x, &temp_v0_2->speed.y, &temp_v0_2->speed.z);
-            temp_v0_2->positionMirror.x = temp_v0_2->srt.transl.x;
-            temp_v0_2->positionMirror.y = temp_v0_2->srt.transl.y;
-            temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
+            vec3_transform(&sp9C, 0.0f, 0.0f, temp_s5 * -0.15f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
+            temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
+            temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
+            temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
             temp_v0_2->srt.yaw = player->srt.yaw;
             temp_v0_2->srt.pitch = 0;
             temp_v0_2->unkDC = 0x15E;
@@ -3703,9 +3703,9 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
     temp_v0->loadDistance = 0xFF;
     temp_v0->fadeDistance = 0xFF;
-    temp_v0->x = player->linkedObject->positionMirror.x;
-    temp_v0->y = player->linkedObject->positionMirror.y;
-    temp_v0->z = player->linkedObject->positionMirror.z;
+    temp_v0->x = player->linkedObject->globalPosition.x;
+    temp_v0->y = player->linkedObject->globalPosition.y;
+    temp_v0->z = player->linkedObject->globalPosition.z;
     temp_a0 = player->linkedObject;
     ((s8*)temp_v0)[0x19] = ((DLL_Unknown *)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
     temp_v0_2 = obj_create(temp_v0, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
@@ -3720,9 +3720,9 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         spD4 = NULL;
     }
     if (spD4 != NULL) {
-        sp90 = spD4->positionMirror.x - player->positionMirror.x;
-        sp8C = spD4->positionMirror.y - player->positionMirror.y;
-        sp88 = spD4->positionMirror.z - player->positionMirror.z;
+        sp90 = spD4->globalPosition.x - player->globalPosition.x;
+        sp8C = spD4->globalPosition.y - player->globalPosition.y;
+        sp88 = spD4->globalPosition.z - player->globalPosition.z;
         spF8.yaw = 0;
         spF8.pitch = arctan2_f(sp8C, sqrtf(SQ(sp90) + SQ(sp88)));
     } else {
@@ -3741,24 +3741,24 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     spF8.yaw = spF8.yaw + player->srt.yaw + var_v1;
     spF8.roll = 0;
     matrix_from_srt(&sp94, &spF8);
-    vec3_transform(&sp94, 0.0f, 0.0f, -5.0f, &temp_v0_2->speed.x, &temp_v0_2->speed.y, &temp_v0_2->speed.z);
-    temp_v0_2->positionMirror.x = temp_v0_2->srt.transl.x;
-    temp_v0_2->positionMirror.y = temp_v0_2->srt.transl.y;
-    temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
+    vec3_transform(&sp94, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
+    temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
+    temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
+    temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
     temp_v0_2->srt.yaw = player->srt.yaw;
     temp_v0_2->unkDC = 0xBE;
     temp_v0_2->unkE0 = (s32) spD4;
-    sp84 = sqrtf(SQ(temp_v0_2->speed.x) + SQ(temp_v0_2->speed.z));
-    spE0.yaw = -0x4000 - arctan2_f(temp_v0_2->speed.z, temp_v0_2->speed.x);
-    spE0.pitch = arctan2_f(temp_v0_2->speed.y, sp84) - 0x4000;
+    sp84 = sqrtf(SQ(temp_v0_2->velocity.x) + SQ(temp_v0_2->velocity.z));
+    spE0.yaw = -0x4000 - arctan2_f(temp_v0_2->velocity.z, temp_v0_2->velocity.x);
+    spE0.pitch = arctan2_f(temp_v0_2->velocity.y, sp84) - 0x4000;
     spE0.roll = 0;
-    sp64.x = temp_v0_2->speed.x * 300.0f;
-    sp64.y = temp_v0_2->speed.y * 300.0f;
-    sp64.z = temp_v0_2->speed.z * 300.0f;
+    sp64.x = temp_v0_2->velocity.x * 300.0f;
+    sp64.y = temp_v0_2->velocity.y * 300.0f;
+    sp64.z = temp_v0_2->velocity.z * 300.0f;
     sp64.x += temp_v0_2->srt.transl.x;
     sp64.y += temp_v0_2->srt.transl.y;
     sp64.z += temp_v0_2->srt.transl.z;
-    func_80007EE0(&player->positionMirror, &sp5C);
+    func_80007EE0(&player->globalPosition, &sp5C);
     func_80007EE0(&sp64, &sp54);
     if (func_80008048(&sp5C, &sp54, &sp4C, 0, 0) == 0) {
         func_80007E2C(&sp64, &sp4C);
@@ -3830,9 +3830,9 @@ static void dll_210_func_A024(Object* player, ObjFSA_Data* fsa) {
     fsa->speed = 0.0f;
     fsa->unk27C = 0.0f;
     fsa->unk278 = 0.0f;
-    player->speed.x = 0.0f;
-    player->speed.y = 0.0f;
-    player->speed.z = 0.0f;
+    player->velocity.x = 0.0f;
+    player->velocity.y = 0.0f;
+    player->velocity.z = 0.0f;
 }
 
 // offset: 0xA058 | func: 55
@@ -3902,8 +3902,8 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->unk27C = _data_C[1];
     _data_C[0] = 0.0f;
     _data_C[1] = 0.0f;
-    player->speed.f[0] = 0.0f;
-    player->speed.f[2] = 0.0f;
+    player->velocity.f[0] = 0.0f;
+    player->velocity.f[2] = 0.0f;
     if (sp4C->unk868 == 0) {
         temp_v0 = dll_210_func_BA38(player, fsa, arg2);
         if (temp_v0 != 0) {
@@ -4580,12 +4580,12 @@ s32 dll_210_func_C264(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             return 2;
         }
     } else {
-        player->speed.f[1] = 2.6f;
+        player->velocity.f[1] = 2.6f;
         fsa->unk278 = 0.72f;
         fsa->animTickDelta = 0.026f;
         func_80023D30(player, 0x426, 0.0f, 0U);
     }
-    player->speed.f[1] -= 0.15f;
+    player->velocity.f[1] -= 0.15f;
     return 0;
 }
 
@@ -4642,17 +4642,17 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 _bss_8 = 0.5f;
                 _bss_8 = 38.4f * _bss_8;
                 _bss_4 = 0.0f;
-                player->speed.f[1] = 0.1f * _bss_8;
+                player->velocity.f[1] = 0.1f * _bss_8;
                 _bss_8 = _bss_8 + _bss_8;
                 gDLL_6_AMSFX->vtbl->play_sound(player, spAC->unk3B8[0x8], MAX_VOLUME, NULL, NULL, 0, NULL);
                 if (*_bss_14 != 0) {
-                    player->speed.f[1] *= *_data_8;
+                    player->velocity.f[1] *= *_data_8;
                     fsa->unk278 *= *_data_8;
                 }
             }
             break;
         case 0x12:
-            player->speed.f[1] += -0.1f * arg2;
+            player->velocity.f[1] += -0.1f * arg2;
             _bss_4 += arg2;
             func_800240BC(player, _bss_4 / _bss_8);
             if ((_bss_4 > 10.0f) && (fsa->unk4.unk25C & 0x10)) {
@@ -4666,7 +4666,7 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 if ((_bss_8 + 2.0f) < _bss_4) {
                     return 0xE;
                 }
-                if ((player->speed.f[1] < 0.0f) && (fsa->unk4.underwaterDist > 5.0f)) {
+                if ((player->velocity.f[1] < 0.0f) && (fsa->unk4.underwaterDist > 5.0f)) {
                     return 0x20;
                 }
             }
@@ -4701,9 +4701,9 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             break;
         case 0x11:
             gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
-            player->speed.f[1] += -0.1f * arg2;
+            player->velocity.f[1] += -0.1f * arg2;
             if (player->animProgress > 0.99f) {
-                player->speed.f[1] = 0.0f;
+                player->velocity.f[1] = 0.0f;
                 return 2;
             }
             break;
@@ -4729,12 +4729,12 @@ s32 dll_210_func_CAA8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->flags |= 0x200000;
     fsa->unk27C = 0.0f;
     if (fsa->enteredAnimState != 0) {
-        player->speed.f[1] = -2.0f;
+        player->velocity.f[1] = -2.0f;
         gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[9], MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM103, 1, 0, 0, NULL, 0, 0);
         func_80023D30(player, 0xA, 0.0f, 0U);
     }
-    player->speed.f[1] -= 0.12f * arg2;
+    player->velocity.f[1] -= 0.12f * arg2;
     fsa->unk278 *= 0.98f;
     if (player->curModAnimId == 0xA) {
         fsa->animTickDelta = 0.01f;
@@ -4786,12 +4786,12 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             gDLL_6_AMSFX->vtbl->play_sound(player, sp38->unk3B8[9], MAX_VOLUME, NULL, NULL, 0, NULL);
             func_80023D30(player, 9, 0.0f, 0U);
         }
-        player->speed.f[1] -= 0.1f * arg2;
+        player->velocity.f[1] -= 0.1f * arg2;
         fsa->unk278 *= 0.98f;
         break;
     case 0x13:
         gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
-        player->speed.f[1] = 0.0f;
+        player->velocity.f[1] = 0.0f;
         if (player->animProgress > 0.99f) {
             return 2;
         }
@@ -4799,7 +4799,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     case 0x418:
         gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
-        player->speed.f[1] = 0.0f;
+        player->velocity.f[1] = 0.0f;
         if (player->animProgress > 0.99f) {
             if ((fsa->prevAnalogInputPower >= 0.42000002f) && (fsa->analogInputPower >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
                 return 5;
@@ -4822,7 +4822,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             func_80023D30(player, 0xB, 0.0f, 0U);
             dll_210_add_health(player, -4);
         }
-        player->speed.f[1] -= 0.1f * arg2;
+        player->velocity.f[1] -= 0.1f * arg2;
         fsa->unk278 *= 0.98f;
         break;
     case 10:
@@ -4839,7 +4839,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->animStateTime >= 0x3D) {
             dll_210_func_4634(player, 9, 0);
         }
-        player->speed.f[1] -= 0.1f * arg2;
+        player->velocity.f[1] -= 0.1f * arg2;
         fsa->unk278 *= 0.98f;
         break;
     case 0xB:
@@ -4870,7 +4870,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 2, 0, NULL, 0, 0xFF);
     }
 
-    if ((player->speed.f[1] < 0.0f) && (fsa->unk4.underwaterDist > 5.0f)) {
+    if ((player->velocity.f[1] < 0.0f) && (fsa->unk4.underwaterDist > 5.0f)) {
         return 0x20;
     }
     return 0;
@@ -4939,7 +4939,7 @@ s32 dll_210_func_D5F0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0) { return temp_v0; }
     }
-    player->speed.f[1] = 0;
+    player->velocity.f[1] = 0;
     if (player->curModAnimId == 0x419) {
         if (fsa->unk33A != 0) {
             _bss_200 = 3;
@@ -4989,7 +4989,7 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (temp_v0 != 0) {
         return temp_v0;
     }
-    player->speed.f[1] = 0.0f;
+    player->velocity.f[1] = 0.0f;
     sp44.unk10 = temp_s0->unk490.unk2C.x;
     sp44.unk8 = temp_s0->unk490.unk2C.z;
     switch (player->curModAnimId) {
@@ -5074,7 +5074,7 @@ s32 dll_210_func_DC10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0) { return temp_v0; }
     }
-    player->speed.f[1] = 0.0f;
+    player->velocity.f[1] = 0.0f;
     switch (_bss_200) {
         case 0xE:
         case 0x12:
@@ -5084,10 +5084,10 @@ s32 dll_210_func_DC10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 gDLL_6_AMSFX->vtbl->play_sound(player, temp_s1->unk3B8[rand_next(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             if (fsa->unk33A != 0) {
-                player->positionMirror.f[0] = temp_s1->unk7EC.x;
-                player->positionMirror.f[1] = temp_s1->unk490.unk4;
-                player->positionMirror.f[2] = temp_s1->unk7EC.z;
-                inverse_transform_point_by_object(player->positionMirror.f[0], player->positionMirror.f[1], player->positionMirror.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+                player->globalPosition.f[0] = temp_s1->unk7EC.x;
+                player->globalPosition.f[1] = temp_s1->unk490.unk4;
+                player->globalPosition.f[2] = temp_s1->unk7EC.z;
+                inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
                 player->curModAnimIdLayered = -1;
                 dll_210_func_7260(player, temp_s1);
                 func_80023D30(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
@@ -5169,7 +5169,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     if (fsa->enteredAnimState != 0) {
         fsa->unk270 = PLAYER_ASTATE_Ledge_Grab_Holding;
-        player->speed.f[1] = 0.0f;
+        player->velocity.f[1] = 0.0f;
     }
     objdata = player->data;
     objdata->unk7FC = 0.0f;
@@ -5186,10 +5186,10 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     switch (_bss_200) {
     case 0:
         if (fsa->unk33A != 0) {
-            player->positionMirror.f[0] = objdata->unk7EC.x;
-            player->positionMirror.f[1] = objdata->unk7EC.y;
-            player->positionMirror.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.f[0], player->positionMirror.f[1], player->positionMirror.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            player->globalPosition.f[0] = objdata->unk7EC.x;
+            player->globalPosition.f[1] = objdata->unk7EC.y;
+            player->globalPosition.f[2] = objdata->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             func_80023D30(player, (s32) _data_564[2], 0.0f, 1U);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 2;
@@ -5198,9 +5198,9 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             temp_fa0 = _bss_1B0[2] + (objdata->unk490.unk4 - objdata->unk7EC.y);
             temp_fa0 = -temp_fa0 * -0.3f;
             if (temp_fa0 >= 0.0f) {
-                player->speed.f[1] = sqrtf(temp_fa0);
+                player->velocity.f[1] = sqrtf(temp_fa0);
             } else {
-                player->speed.f[1] = 0.0f;
+                player->velocity.f[1] = 0.0f;
             }
 
             sp48.f[0] = *_bss_1F8 * objdata->unk490.unk1C.x;
@@ -5222,7 +5222,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     case 2:
         temp_fa0 = _bss_1B0[2] + objdata->unk490.unk4;
-        player->speed.f[1] += -0.15f * arg2;
+        player->velocity.f[1] += -0.15f * arg2;
         sp68 = (objdata->unk7EC.y - objdata->unk490.unk8) / (temp_fa0 - objdata->unk490.unk8);
         if (sp68 < 0.0f) {
             sp68 = 0.0f;
@@ -5236,7 +5236,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp47 = 1;
             sp6C = 0.035f;
             player->srt.transl.f[1] = objdata->unk490.unk4;
-            player->speed.f[1] = 0.0f;
+            player->velocity.f[1] = 0.0f;
         }
         objdata->unk490.unk10 += (player->srt.transl.f[1] - objdata->unk490.unk10) * 0.02f * arg2;
         gDLL_2_Camera->vtbl->reposition_player(objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
@@ -5273,9 +5273,9 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     case 5:
         if (fsa->unk33A != 0) {
-            player->positionMirror.f[0] = objdata->unk7EC.x;
-            player->positionMirror.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.f[0], 0.0f, player->positionMirror.f[2], player->srt.transl.f, &sp68, &player->srt.transl.f[2], player->parent);
+            player->globalPosition.f[0] = objdata->unk7EC.x;
+            player->globalPosition.f[2] = objdata->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.f[0], 0.0f, player->globalPosition.f[2], player->srt.transl.f, &sp68, &player->srt.transl.f[2], player->parent);
             dll_210_func_7260(player, objdata);
             func_80023D30(player, (s32) *objdata->modAnims, 0.0f, 1U);
             return 2;
@@ -5287,7 +5287,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         shadows_set_custom_obj_pos(player, sp88.z, sp88.y, sp88.x);
         break;
     default:
-        player->speed.f[1] = 0.0f;
+        player->velocity.f[1] = 0.0f;
         temp_fv0 = (1.0f - ((objdata->unk490.unk0 - 32.0f) / 32));
         sp5E = temp_fv0 * 1023.0f;
         _bss_200 = 0;
@@ -5369,18 +5369,18 @@ s32 dll_210_func_EB1C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp60 = objdata->unk490.unk10;
         sp5C += (objdata->unk490.unk2C.f[2] - sp5C) * temp_fv0;
         if (fsa->unk33A != 0) {
-            player->positionMirror.x = temp_fv1;
+            player->globalPosition.x = temp_fv1;
             // @fake
             if (1) {}
-            player->positionMirror.y = objdata->unk7EC.y;
-            player->positionMirror.z = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.x, player->positionMirror.y, player->positionMirror.z, player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            player->globalPosition.y = objdata->unk7EC.y;
+            player->globalPosition.z = objdata->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.x, player->globalPosition.y, player->globalPosition.z, player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             func_80023D30(player, _data_564[8], 0.0f, 1U);
             fsa->animTickDelta = 0.02f;
             _bss_202 = _bss_200 = 8;
             func_8001A3FC(modelInstance, 0U, 0, 0.0f, player->srt.scale, &sp6C, &sp52[2]);
             player->srt.transl.f[1] -= sp6C.f[1];
-            player->speed.f[1] = -2.0f;
+            player->velocity.f[1] = -2.0f;
             objdata->unk490.unk18 = 1.0f;
         }
         break;
@@ -5393,7 +5393,7 @@ s32 dll_210_func_EB1C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_fv0 = player->srt.transl.f[1];
         sp60 = temp_fv0;
         sp60 += ((objdata->unk490.unk10 - temp_fv0) * objdata->unk490.unk18);
-        player->speed.f[1] += -0.05f * arg2;
+        player->velocity.f[1] += -0.05f * arg2;
         temp_fa1 = (_bss_1B0[3] + fsa->unk4.floorY);
         if (temp_fv0 <= temp_fa1) {
             objdata->unk490.unk10 = sp60;
@@ -5401,7 +5401,7 @@ s32 dll_210_func_EB1C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp52[1] = 1;
             sp7C = 0.027f;
             player->srt.transl.f[1] = fsa->unk4.floorY;
-            player->speed.f[1] = 0.0f;
+            player->velocity.f[1] = 0.0f;
         }
         break;
     case 9:
@@ -5450,8 +5450,8 @@ static s32 dll_210_func_EFB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->unk278 = 0.0f;
     fsa->unk27C = 0.0f;
     fsa->flags |= 0x200000;
-    player->speed.f[0] = 0.0f;
-    player->speed.f[2] = 0.0f;
+    player->velocity.f[0] = 0.0f;
+    player->velocity.f[2] = 0.0f;
 
     return 0;
 }
@@ -5480,7 +5480,7 @@ s32 dll_210_func_F00C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0) { return temp_v0; }
     }
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     spA4 = objdata->unk3CC.unk0 != 1;
     if (spA4) {
         fsa->animTickDelta = 0.01f;
@@ -5613,7 +5613,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if ((fsa->unk4.underwaterDist > 25.0f) && (fsa->unk4.floorDist < 100.0f)) {
         return 0x21;
     }
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     sp9C = fsa->yAnalogInput / 60.0f;
     if (sp9C < 0.0f) {
         sp9C = -sp9C;
@@ -5665,9 +5665,9 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 10:
     case 11:
         if (fsa->unk33A != 0) {
-            player->positionMirror.x = temp_s0->unk7EC.x;
-            player->positionMirror.z = temp_s0->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.x, 0.0f, player->positionMirror.z, player->srt.transl.f, &sp84, &player->srt.transl.z, player->parent);
+            player->globalPosition.x = temp_s0->unk7EC.x;
+            player->globalPosition.z = temp_s0->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp84, &player->srt.transl.z, player->parent);
             dll_210_func_7260(player, temp_s0);
             func_80023D30(player, *temp_s0->modAnims, 0.0f, 1U);
             return -1;
@@ -5887,7 +5887,7 @@ s32 dll_210_func_1034C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (var_fv1 < sp6C) {
             temp_fv0 = SQ(_bss_38) / (2.0f * sp6C);
             temp_fv1 = -sqrtf(2.0f * (temp_fv0) * var_fv1);
-            player->speed.y = temp_fv1;
+            player->velocity.y = temp_fv1;
             if (temp_fv1 >= -0.01f) {
                 func_80023D30(player, 0x37, 0.0f, 1U);
                 gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
@@ -5895,17 +5895,17 @@ s32 dll_210_func_1034C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 temp_s2->unk3CC.unk1C = player->srt.transl.y;
                 player->srt.transl.y = temp_s2->unk3CC.unk8;
                 dll_210_func_7260(player, temp_s2);
-                player->speed.y = 0.0f;
+                player->velocity.y = 0.0f;
             }
         } else {
-            if (player->speed.y > -3.0f) {
-                player->speed.y = player->speed.y - (0.05f * arg2);
+            if (player->velocity.y > -3.0f) {
+                player->velocity.y = player->velocity.y - (0.05f * arg2);
             }
-            if (player->speed.y < -3.0f) {
-                player->speed.y = -3.0f;
+            if (player->velocity.y < -3.0f) {
+                player->velocity.y = -3.0f;
             }
-            if (player->speed.y < _bss_38) {
-                _bss_38 = player->speed.y;
+            if (player->velocity.y < _bss_38) {
+                _bss_38 = player->velocity.y;
             }
         }
         break;
@@ -5914,9 +5914,9 @@ s32 dll_210_func_1034C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             gDLL_6_AMSFX->vtbl->play_sound(player, (u16) temp_s2->unk898[func_80025CD4((s32) fsa->unk4.unk68.unk50[0])], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         if (fsa->unk33A != 0) {
-            player->positionMirror.x = temp_s2->unk7EC.x;
-            player->positionMirror.z = temp_s2->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.x, 0.0f, player->positionMirror.z, player->srt.transl.f, &sp5C, &player->srt.transl.z, player->parent);
+            player->globalPosition.x = temp_s2->unk7EC.x;
+            player->globalPosition.z = temp_s2->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp5C, &player->srt.transl.z, player->parent);
             dll_210_func_7260(player, temp_s2);
             func_80023D30(player, (s32) *temp_s2->modAnims, 0.0f, 1U);
             return 2;
@@ -5956,7 +5956,7 @@ s32 dll_210_func_10898(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0) { return temp_v0; }
     }
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     if (fsa->enteredAnimState != 0) {
         fsa->animExitAction = dll_210_func_12514;
         fsa->unk270 = PLAYER_ASTATE_Falling;
@@ -6002,7 +6002,7 @@ s32 dll_210_func_10A0C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0) { return temp_v0; }
     }
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     if (fsa->enteredAnimState != 0) {
         fsa->unk270 = PLAYER_ASTATE_Wall_Clambering_Start;
         fsa->animExitAction = dll_210_func_12514;
@@ -6107,7 +6107,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     // @fake
     if ((_bss_200 && _bss_200) && _bss_200) {}
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     spE0 = player->modelInsts[player->modelInstIdx];
     temp_s0 = player->data;
     sp124 = fsa->animTickDelta;
@@ -6422,12 +6422,12 @@ s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0) { return temp_v0; }
     }
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     func_80024DD0(player, 0, 1, temp_s1->unk430.unk5C);
     if (player->animProgress > 0.99f) {
-        player->positionMirror.x = temp_s1->unk7EC.x;
-        player->positionMirror.z = temp_s1->unk7EC.z;
-        inverse_transform_point_by_object(player->positionMirror.x, 0.0f, player->positionMirror.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
+        player->globalPosition.x = temp_s1->unk7EC.x;
+        player->globalPosition.z = temp_s1->unk7EC.z;
+        inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
         dll_210_func_7260(player, temp_s1);
         func_80023D30(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
         return -1;
@@ -6481,12 +6481,12 @@ s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0 != 0) { return temp_v0; }
     }
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     func_80024DD0(player, 0, 1, temp_s1->unk430.unk5C);
     if (player->animProgress > 0.99f) {
-        player->positionMirror.x = temp_s1->unk7EC.x;
-        player->positionMirror.z = temp_s1->unk7EC.z;
-        inverse_transform_point_by_object(player->positionMirror.x, 0.0f, player->positionMirror.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
+        player->globalPosition.x = temp_s1->unk7EC.x;
+        player->globalPosition.z = temp_s1->unk7EC.z;
+        inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
         dll_210_func_7260(player, temp_s1);
         func_80023D30(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
         return -1;
@@ -6543,14 +6543,14 @@ s32 dll_210_func_125BC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (f2 > 25.0f) {
         f2 = 25.0f;
     }
-    player->speed.y += (f2 / 25.0f) * 0.13f * gUpdateRateF;
-    player->speed.y -= 0.1f * gUpdateRateF;
-    player->speed.y *= 0.96f;
-    if (player->speed.y > 1.4f) {
-        player->speed.y = 1.4f;
+    player->velocity.y += (f2 / 25.0f) * 0.13f * gUpdateRateF;
+    player->velocity.y -= 0.1f * gUpdateRateF;
+    player->velocity.y *= 0.96f;
+    if (player->velocity.y > 1.4f) {
+        player->velocity.y = 1.4f;
     }
-    player->speed.x *= 0.98f;
-    player->speed.z *= 0.98f;
+    player->velocity.x *= 0.98f;
+    player->velocity.z *= 0.98f;
     for (i = 0; i < 4; i++) {
         gDLL_17_partfx->vtbl->spawn(player, PARTICLE_202, NULL, PARTFXFLAG_NONE, -1, NULL);
     }
@@ -6673,11 +6673,11 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (var_fa0 > 25.0f) {
             var_fa0 = 25.0f;
         }
-        player->speed.f[1] += (var_fa0 / 25.0f) * 0.13f * gUpdateRateF;
-        player->speed.f[1] -= 0.1f * gUpdateRateF;
-        player->speed.f[1] *= 0.96f;
-        if (player->speed.f[1] > 1.4f) {
-            player->speed.f[1] = 1.4f;
+        player->velocity.f[1] += (var_fa0 / 25.0f) * 0.13f * gUpdateRateF;
+        player->velocity.f[1] -= 0.1f * gUpdateRateF;
+        player->velocity.f[1] *= 0.96f;
+        if (player->velocity.f[1] > 1.4f) {
+            player->velocity.f[1] = 1.4f;
         }
         if (fsa->analogInputPower > 0.1f) {
             player->srt.yaw += ((fsa->unk32A * arg2) / 24.0f) * 182.0f;
@@ -6701,7 +6701,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 vec3_transform(&sp7C, sp78, 0.0f, sp70, &sp78, &sp74, &sp70);
                 gDLL_24_Waterfx->vtbl->func_1CC8(sp78, temp_s0->waterY, sp70, 0, 0.0f, 3);
             }
-            if ((player->speed.f[1] > -0.1f) && (player->speed.f[1] < 0.1f)) {
+            if ((player->velocity.f[1] > -0.1f) && (player->velocity.f[1] < 0.1f)) {
                 temp_s1->unk880 -= gUpdateRate;
                 if (temp_s1->unk880 <= 0) {
                     if (rand_next(0, 1)) {
@@ -6713,7 +6713,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 }
             }
         }
-        if ((player->speed.f[1] < 0.0f) && (temp_s1->unk67C != 0)) {
+        if ((player->velocity.f[1] < 0.0f) && (temp_s1->unk67C != 0)) {
             for (i = 0; i < 4; i++) {
                 gDLL_17_partfx->vtbl->spawn(player, 0x202, NULL, 0, -1, NULL);
             }
@@ -6723,9 +6723,9 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 gDLL_17_partfx->vtbl->spawn(player, 0x201, NULL, 0, -1, NULL);
             }
         }
-        dll_210_func_128F4(player->speed.f, &player->speed.f[2], arg2, player);
-        player->speed.f[0] *= 0.98f;
-        player->speed.f[2] *= 0.98f;
+        dll_210_func_128F4(player->velocity.f, &player->velocity.f[2], arg2, player);
+        player->velocity.f[0] *= 0.98f;
+        player->velocity.f[2] *= 0.98f;
         if (fsa->analogInputPower < 0.05f) {
             fsa->unk328 = 0;
             fsa->unk32A = 0;
@@ -6800,11 +6800,11 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (sp120 > 25.0f) {
             sp120 = 25.0f;
         }
-        player->speed.f[1] += (sp120 / 25.0f) * 0.13f * gUpdateRateF;
-        player->speed.f[1] -= 0.1f * gUpdateRateF;
-        player->speed.f[1] *= 0.96f;
-        if (player->speed.f[1] > 1.4f) {
-            player->speed.f[1] = 1.4f;
+        player->velocity.f[1] += (sp120 / 25.0f) * 0.13f * gUpdateRateF;
+        player->velocity.f[1] -= 0.1f * gUpdateRateF;
+        player->velocity.f[1] *= 0.96f;
+        if (player->velocity.f[1] > 1.4f) {
+            player->velocity.f[1] = 1.4f;
         }
         if (fsa->analogInputPower < 0.05f) {
             fsa->unk328 = 0;
@@ -6826,11 +6826,11 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             var_fs1 = -temp_fv1;
         }
         sp120 = sp120;
-        dll_210_func_128F4(player->speed.f, &player->speed.f[2], arg2, player);
+        dll_210_func_128F4(player->velocity.f, &player->velocity.f[2], arg2, player);
         temp_fs0 = fsin16_precise(player->srt.yaw);
         temp_fv0 = fcos16_precise(player->srt.yaw);
-        fsa->unk27C = (player->speed.f[0] * temp_fv0) - (player->speed.f[2] * temp_fs0);
-        fsa->unk278 = (-player->speed.f[2] * temp_fv0) - (player->speed.f[0] * temp_fs0);
+        fsa->unk27C = (player->velocity.f[0] * temp_fv0) - (player->velocity.f[2] * temp_fs0);
+        fsa->unk278 = (-player->velocity.f[2] * temp_fv0) - (player->velocity.f[0] * temp_fs0);
         fsa->speed += ((var_fs1 - fsa->speed) / 25.0f) * arg2;
         fsa->unk278 += fsa->speed;
         fsa->unk278 *= 0.98f;
@@ -6901,7 +6901,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->unk270 = PLAYER_ASTATE_Vehicle_Getting_On;
     }
     func_800267A4(player);
-    player->speed.f[1] = 0.0f;
+    player->velocity.f[1] = 0.0f;
     if (fsa->enteredAnimState != 0) {
         objdata->unk8A9 = 1;
         switch (temp_s2->id) {
@@ -7202,7 +7202,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (temp_v0 != 0) { return temp_v0; }
     }
     func_800267A4(player);
-    player->speed.f[1] = 0.0f;
+    player->velocity.f[1] = 0.0f;
     if (fsa->enteredAnimState != 0) {
         ((DLL_IVehicle*)temp_s2->dll)->vtbl->func9(temp_s2, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
         if ((temp_s2->id == OBJ_IMSnowBike) || (temp_s2->id == OBJ_CRSnowBike)) {
@@ -7265,9 +7265,9 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp4C[2] = 0;
         }
         player->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
-        player->positionMirror.x = temp_s1->unk7EC.x;
-        player->positionMirror.z = temp_s1->unk7EC.z;
-        inverse_transform_point_by_object(player->positionMirror.x, 0.0f, player->positionMirror.z, player->srt.transl.f, &sp54.scale, &player->srt.transl.z, player->parent);
+        player->globalPosition.x = temp_s1->unk7EC.x;
+        player->globalPosition.z = temp_s1->unk7EC.z;
+        inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp54.scale, &player->srt.transl.z, player->parent);
         if (temp_s1->unk750 == 1) {
             player->srt.yaw += 0x4000;
         } else {
@@ -7301,7 +7301,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0 != 0) { return temp_v0; }
     }
-    player->speed.y = 0.0f;
+    player->velocity.y = 0.0f;
     switch (player->curModAnimId) {
     case 0x40D:
         var_fv0 = fsa->yAnalogInput / 60.0f;
@@ -7749,18 +7749,18 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     switch (_bss_200) {
     case 0:
         if (fsa->unk33A != 0) {
-            player->positionMirror.f[0] = objdata->unk7EC.x;
-            player->positionMirror.f[1] = objdata->unk7EC.y;
-            player->positionMirror.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.f[0], player->positionMirror.f[1], player->positionMirror.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            player->globalPosition.f[0] = objdata->unk7EC.x;
+            player->globalPosition.f[1] = objdata->unk7EC.y;
+            player->globalPosition.f[2] = objdata->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             func_80023D30(player, _data_69C[1], 0.0f, 1U);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 1;
             func_8001A3FC(sp5C, 0U, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
             player->srt.transl.f[1] -= sp7C.f[1];
             temp_fa1 = (_bss_1B0[2] + (objdata->unk6B0.unk0.y - objdata->unk7EC.y));
-            player->speed.f[1] = sqrtf(-temp_fa1 * -5.6f);
-            player->speed.f[1] = sqrtf(-temp_fa1 * -0.34f);
+            player->velocity.f[1] = sqrtf(-temp_fa1 * -5.6f);
+            player->velocity.f[1] = sqrtf(-temp_fa1 * -0.34f);
             sp4C.f[0] = *_bss_1F8 * objdata->unk6B0.unkC.x;
             sp4C.f[1] = *_bss_1F8 * objdata->unk6B0.unkC.y;
             sp4C.f[2] = *_bss_1F8 * objdata->unk6B0.unkC.z;
@@ -7773,13 +7773,13 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             _bss_204 = player->srt.transl.f[0];
             _bss_208 = player->srt.transl.f[2];
         } else {
-            player->speed.f[1] = 0.0f;
+            player->velocity.f[1] = 0.0f;
             gDLL_18_objfsa->vtbl->func10(player, fsa, arg2, 0.1f);
         }
         break;
     case 1:
         temp_fa1 = _bss_1B0[2] + objdata->unk6B0.unk0.y;
-        player->speed.f[1] += -0.17f * arg2;
+        player->velocity.f[1] += -0.17f * arg2;
         var_fv0 = (objdata->unk7EC.y - objdata->unk6B0.unk0.z) / (temp_fa1 - objdata->unk6B0.unk0.z);
         if (var_fv0 < 0.0f) {
             var_fv0 = 0.0f;
@@ -7801,16 +7801,16 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->srt.transl.f[0] = objdata->unk6B0.unk1C.x;
             player->srt.transl.f[1] = objdata->unk6B0.unk1C.y;
             player->srt.transl.f[2] = objdata->unk6B0.unk1C.z;
-            player->speed.f[1] = 0.0f;
+            player->velocity.f[1] = 0.0f;
         }
         break;
     case 7:
     case 8:
         if (fsa->unk33A != 0) {
-            player->positionMirror.f[0] = objdata->unk7EC.x;
-            player->positionMirror.f[1] = objdata->unk7EC.y;
-            player->positionMirror.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.f[0], player->positionMirror.f[1], player->positionMirror.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            player->globalPosition.f[0] = objdata->unk7EC.x;
+            player->globalPosition.f[1] = objdata->unk7EC.y;
+            player->globalPosition.f[2] = objdata->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             dll_210_func_7260(player, objdata);
             func_80023D30(player, _data_6C0[0], 0.0f, 1U);
             return 0x2E;
@@ -7819,10 +7819,10 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 2:
         if (fsa->unk33A != 0) {
             if (fsa->yAnalogInput > 5.0f) {
-                player->positionMirror.f[0] = objdata->unk7EC.x;
-                player->positionMirror.f[1] = objdata->unk7EC.y;
-                player->positionMirror.f[2] = objdata->unk7EC.z;
-                inverse_transform_point_by_object(player->positionMirror.f[0], player->positionMirror.f[1], player->positionMirror.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+                player->globalPosition.f[0] = objdata->unk7EC.x;
+                player->globalPosition.f[1] = objdata->unk7EC.y;
+                player->globalPosition.f[2] = objdata->unk7EC.z;
+                inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
                 dll_210_func_7260(player, objdata);
                 func_80023D30(player, _data_6C0[0], 0.0f, 1U);
                 return 0x2E;
@@ -7836,10 +7836,10 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     case 3:
         if (fsa->yAnalogInput > 5.0f) {
-            player->positionMirror.f[0] = objdata->unk7EC.x;
-            player->positionMirror.f[1] = objdata->unk7EC.y;
-            player->positionMirror.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->positionMirror.f[0], player->positionMirror.f[1], player->positionMirror.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            player->globalPosition.f[0] = objdata->unk7EC.x;
+            player->globalPosition.f[1] = objdata->unk7EC.y;
+            player->globalPosition.f[2] = objdata->unk7EC.z;
+            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             dll_210_func_7260(player, objdata);
             func_80023D30(player, _data_6C0[0], 0.0f, 1U);
             return 0x2E;
@@ -7910,7 +7910,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp64 = player->srt.transl.x;
     sp60 = player->srt.transl.y;
     sp5C = player->srt.transl.z;
-    player->speed.f[1] = 0.0f;
+    player->velocity.f[1] = 0.0f;
     sp94 = fsa->yAnalogInput / 60.0f;
     if (sp94 < 0.0f) {
         sp94 = -sp94;
@@ -7959,7 +7959,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             func_80023D30(player, 0x12, 0.0f, 1);
             fsa->animTickDelta = 0.2f;
             fsa->unk278 = 0.0f;
-            player->speed.f[1] = 0.0f;
+            player->velocity.f[1] = 0.0f;
             return 0x2F;
         } else {
             break;
@@ -7971,7 +7971,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     func_80023D30(player, 0x12, 0.0f, 1U);
                     fsa->animTickDelta = 0.2f;
                     fsa->unk278 = 0.0f;
-                    player->speed.f[1] = 0.0f;
+                    player->velocity.f[1] = 0.0f;
                     return 0x2F;
                 }
                 sp8C = (sp94 * 0.033999998f) + 0.015f;
@@ -8084,9 +8084,9 @@ s32 dll_210_func_178EC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->animTickDelta = 0.015f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
-        player->speed.f[0] = 0.0f;
-        player->speed.f[1] = 0.0f;
-        player->speed.f[2] = 0.0f;
+        player->velocity.f[0] = 0.0f;
+        player->velocity.f[1] = 0.0f;
+        player->velocity.f[2] = 0.0f;
     }
     if ((temp_s2->unk708 != NULL) && (player->animProgress > 0.66f)) {
         ((DLL_Unknown *)temp_s2->unk708->dll)->vtbl->func[7].withFiveArgsCustom2(
@@ -8148,7 +8148,7 @@ s32 dll_210_func_17C14(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->unk341 = 3;
     if (fsa->enteredAnimState != 0) {
         func_80025F40(player, &sp34, NULL, NULL);
-        player->srt.yaw = arctan2_f(-sp34->speed.f[0], -sp34->speed.f[2]);
+        player->srt.yaw = arctan2_f(-sp34->velocity.f[0], -sp34->velocity.f[2]);
         func_80023D30(player, 0x407, 0.0f, 0U);
         fsa->animTickDelta = 0.015f;
     }
@@ -8269,18 +8269,18 @@ s32 dll_210_func_180D4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp50 = 0.0f;
         var_ft4 = 0.0f;
     }
-    player->speed.x += ((sp50 - player->speed.x) * arg2) / fsa->unk2B0;
-    player->speed.z += ((var_ft4 - player->speed.z) * arg2) / fsa->unk2B0;
-    fsa->speed = sqrtf(SQ(player->speed.x) + SQ(player->speed.z));
+    player->velocity.x += ((sp50 - player->velocity.x) * arg2) / fsa->unk2B0;
+    player->velocity.z += ((var_ft4 - player->velocity.z) * arg2) / fsa->unk2B0;
+    fsa->speed = sqrtf(SQ(player->velocity.x) + SQ(player->velocity.z));
     if (fsa->speed < 0.04f) {
         fsa->speed = 0.0f;
-        player->speed.x = 0.0f;
-        player->speed.z = 0.0f;
+        player->velocity.x = 0.0f;
+        player->velocity.z = 0.0f;
     }
     sp48 = fsin16_precise(player->srt.yaw);
     temp_fv0 = fcos16_precise(player->srt.yaw);
-    fsa->unk27C = (player->speed.x * temp_fv0) - (player->speed.z * sp48);
-    fsa->unk278 = (-player->speed.z * temp_fv0) - (player->speed.x * sp48);
+    fsa->unk27C = (player->velocity.x * temp_fv0) - (player->velocity.z * sp48);
+    fsa->unk278 = (-player->velocity.z * temp_fv0) - (player->velocity.x * sp48);
     gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
     temp_t4 = (sp56 >> 1);
     if (fsa->speed < _data_748[temp_t4]) {
@@ -9386,7 +9386,7 @@ s32 dll_210_func_1C07C(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     gDLL_18_objfsa->vtbl->func16(player, arg1, arg2, 1.0f);
     arg1->unk2B0 = 16.0f;
     arg1->animTickDelta = 0.01f;
-    player->speed.f[1] = objdata->unk808 * arg2;
+    player->velocity.f[1] = objdata->unk808 * arg2;
     gDLL_18_objfsa->vtbl->func8(player, arg1, arg2, (f32) arg1->unk32A, 32.0f);
     return 0;
 }
@@ -9405,17 +9405,17 @@ s32 dll_210_func_1C230(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     gDLL_18_objfsa->vtbl->func16(player, arg1, arg2, 1.0f);
     arg1->unk2B0 = 16.0f;
     if (objdata->unk820 != NULL) {
-        sp34.f[0] = objdata->unk820->positionMirror.f[0] - player->positionMirror.f[0];
-        sp34.f[1] = objdata->unk820->positionMirror.f[1] - player->positionMirror.f[1];
-        sp34.f[2] = objdata->unk820->positionMirror.f[2] - player->positionMirror.f[2];
-        player->speed.f[0] += (sp34.f[0] / 3000.0f) * arg2;
-        player->speed.f[1] += (sp34.f[1] / 3000.0f) * arg2;
-        player->speed.f[2] += (sp34.f[2] / 3000.0f) * arg2;
+        sp34.f[0] = objdata->unk820->globalPosition.f[0] - player->globalPosition.f[0];
+        sp34.f[1] = objdata->unk820->globalPosition.f[1] - player->globalPosition.f[1];
+        sp34.f[2] = objdata->unk820->globalPosition.f[2] - player->globalPosition.f[2];
+        player->velocity.f[0] += (sp34.f[0] / 3000.0f) * arg2;
+        player->velocity.f[1] += (sp34.f[1] / 3000.0f) * arg2;
+        player->velocity.f[2] += (sp34.f[2] / 3000.0f) * arg2;
     }
     if (arg1->enteredAnimState != 0) {
         func_80023D30(player, 0x12, 0.0f, 1U);
     }
-    var_fv0 = player->speed.y;
+    var_fv0 = player->velocity.y;
     CLAMP(var_fv0, 0.0f, 1.0f)
     var_fv0 = 1.0f - var_fv0;
     func_800240BC(player, var_fv0);
@@ -9468,26 +9468,26 @@ s32 dll_210_func_1C620(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     switch (player->curModAnimId) {
         case 0x450:
             arg1->animTickDelta = 0.02f;
-            if ((player->speed.f[1] < 1.0f) && (arg1->unk4.unk25C & 0x10)) {
+            if ((player->velocity.f[1] < 1.0f) && (arg1->unk4.unk25C & 0x10)) {
                 gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[0x227], MAX_VOLUME, NULL, NULL, 0, NULL);
                 func_80023D30(player, 0xC3, 0.0f, 0U);
             }
-            f0 = SQ(player->speed.x) + SQ(player->speed.z);
+            f0 = SQ(player->velocity.x) + SQ(player->velocity.z);
             if (f0 > 1.0f) {
-                var_v1 = arctan2_f(player->speed.x, player->speed.z) - (player->srt.yaw & 0xFFFF);
+                var_v1 = arctan2_f(player->velocity.x, player->velocity.z) - (player->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(var_v1)
                 player->srt.yaw += (var_v1 * (s32) arg2) >> 3;
             }
             break;
         case 0xC1:
             arg1->animTickDelta = 0.05f;
-            if ((player->speed.f[1] < 1.0f) && (arg1->unk4.unk25C & 0x10)) {
+            if ((player->velocity.f[1] < 1.0f) && (arg1->unk4.unk25C & 0x10)) {
                 gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[0x227], MAX_VOLUME, NULL, NULL, 0, NULL);
                 func_80023D30(player, 0xC3, 0.0f, 0U);
             }
-            f0 = SQ(player->speed.x) + SQ(player->speed.z);
+            f0 = SQ(player->velocity.x) + SQ(player->velocity.z);
             if (f0 > 1.0f) {
-                var_v1 = arctan2_f(player->speed.x, player->speed.z) - (player->srt.yaw & 0xFFFF);
+                var_v1 = arctan2_f(player->velocity.x, player->velocity.z) - (player->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(var_v1)
                 player->srt.yaw += (var_v1 * (s32) arg2) >> 3;
             }
@@ -9502,8 +9502,8 @@ s32 dll_210_func_1C620(Object* player, ObjFSA_Data* arg1, f32 arg2) {
                     return -0x4E;
                 }
             }
-            player->speed.x = 0.0f;
-            player->speed.z = 0.0f;
+            player->velocity.x = 0.0f;
+            player->velocity.z = 0.0f;
             break;
         case 0xC5:
             arg1->animTickDelta = 0.01f;
@@ -9516,8 +9516,8 @@ s32 dll_210_func_1C620(Object* player, ObjFSA_Data* arg1, f32 arg2) {
             break;
     }
     arg1->unk340 |= 2;
-    player->speed.f[0] *= 0.96f;
-    player->speed.f[2] *= 0.96f;
+    player->velocity.f[0] *= 0.96f;
+    player->velocity.f[2] *= 0.96f;
     return 0;
 }
 
@@ -10347,9 +10347,9 @@ void dll_210_func_1DC48(Object* player) {
             break;
         }
 
-        objsetup->base.x = player->positionMirror.x;
-        objsetup->base.y = player->positionMirror.y;
-        objsetup->base.z = player->positionMirror.z;
+        objsetup->base.x = player->globalPosition.x;
+        objsetup->base.y = player->globalPosition.y;
+        objsetup->base.z = player->globalPosition.z;
         objsetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
         objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
         objsetup->base.loadDistance = 0xFF;

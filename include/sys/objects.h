@@ -47,7 +47,7 @@ void *obj_alloc_setup(s32 size, s32 objId);
 void func_800210DC(void);
 void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6);
 
-s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz);
+s32 obj_move(Object *obj, f32 dx, f32 dy, f32 dz);
 Object *func_800211B4(s32 param1);
 
 void func_80023C6C(Object *obj);

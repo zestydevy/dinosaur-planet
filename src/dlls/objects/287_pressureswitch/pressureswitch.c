@@ -152,7 +152,7 @@ void pressureswitch_control(Object* self) {
         player = get_player();
         sidekick = get_sidekick();
         if (sidekick) {
-            if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= 
+            if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 
                 (setup->distanceSidekickBehaviour * setup->distanceSidekickBehaviour)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 3);
             }

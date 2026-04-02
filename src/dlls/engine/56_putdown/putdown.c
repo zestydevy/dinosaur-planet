@@ -88,7 +88,7 @@ Object* putdown_get_nearest_placed_food_of_type(Object* foodbag, Object* target,
     //Find the nearest object in the placed food's subset
     for (closestFoodIndex = -1, index = 0, minDistance = 10000.0f; index < MAX_FOOD_PLACED; index++){
         if (placed_objects[index]){
-            distance = vec3_distance_squared(&target->positionMirror, &placed_objects[index]->positionMirror);
+            distance = vec3_distance_squared(&target->globalPosition, &placed_objects[index]->globalPosition);
             if (closestFoodIndex == -1 || distance <= minDistance) {
                 minDistance = distance;
                 closestFoodIndex = index;

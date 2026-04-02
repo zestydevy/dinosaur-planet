@@ -82,7 +82,7 @@ void sfxplayer_control(Object* self) {
             }
         } else if (mode & 6){
             //Start sound when inside inner radius, stop sound when leaving outer radius
-            playerDistanceSquared = vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror);
+            playerDistanceSquared = vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition);
             if (!objdata->sound && (playerDistanceSquared < objdata->distanceSqInner)){
                 gDLL_6_AMSFX->vtbl->play_sound(self, setup->soundID, MAX_VOLUME, (u32*)&objdata->sound, 0, 0, 0);
             } else if ((objdata->distanceSqOuter < playerDistanceSquared) && objdata->sound){
@@ -93,7 +93,7 @@ void sfxplayer_control(Object* self) {
     } else {
         if (mode & 8) {
             //Random chance of playing sound if player is inside inner radius
-            playerDistanceSquared = vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror);
+            playerDistanceSquared = vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition);
             if (!rand_next(0, 0x12C) && (playerDistanceSquared < objdata->distanceSqInner)){
                 gDLL_6_AMSFX->vtbl->play_sound(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
             }

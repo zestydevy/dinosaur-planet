@@ -18,9 +18,9 @@ void DBBoneDust_setup(Object* self, DBBoneDust_Setup* objSetup, s32 arg2) {
     self->srt.transl.x = objSetup->base.x;
     self->srt.transl.y = objSetup->base.y;
     self->srt.transl.z = objSetup->base.z;
-    self->speed.x = 0.0f;
-    self->speed.z = 0.0f;
-    self->speed.y = -4.0f;
+    self->velocity.x = 0.0f;
+    self->velocity.z = 0.0f;
+    self->velocity.y = -4.0f;
     objData->rotation.asWord = rand_next(0, 0xFFFF);
 }
 
@@ -47,24 +47,24 @@ void DBBoneDust_control(Object* self) {
         height = objData->baseY - self->srt.transl.y; //negative value when in air, positive when under ground
         if (height > 0) {
             //Bounce when hitting ground, losing some momentum
-            self->speed.y = -self->speed.y * 0.7f;
-            if (self->speed.y >= 0.0f) {
-                absoluteSpeed = self->speed.y;
+            self->velocity.y = -self->velocity.y * 0.7f;
+            if (self->velocity.y >= 0.0f) {
+                absoluteSpeed = self->velocity.y;
             } else {
-                absoluteSpeed = -self->speed.y;
+                absoluteSpeed = -self->velocity.y;
             }
             
             //Start floating when nearly stopped
             if (absoluteSpeed < 0.1f) {
                 objData->state = DBBoneDust_STATE_Hovering;
-                self->speed.x = self->speed.z = 0.0;
+                self->velocity.x = self->velocity.z = 0.0;
                 break;
             }
         }
 
         //Decelerate
-        self->speed.y += -0.4f;
-        obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
+        self->velocity.y += -0.4f;
+        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
         fxTrans.roll = 0xFF;
         fxTrans.pitch = 0xFF - (objData->rotation.asWord % 1280);
@@ -73,16 +73,16 @@ void DBBoneDust_control(Object* self) {
         break;
     case DBBoneDust_STATE_Hovering:
         //Oscillating over ground, ready to be collected
-        self->speed.y = fsin16_precise(objData->rotation.asHalfwords[1]) * 0.3f;
-        obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
+        self->velocity.y = fsin16_precise(objData->rotation.asHalfwords[1]) * 0.3f;
+        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
         //Check if player is close by
-        if (vec3_distance(&self->positionMirror, &player->positionMirror) < 100.0f) {
+        if (vec3_distance(&self->globalPosition, &player->globalPosition) < 100.0f) {
             objData->state = DBBoneDust_STATE_Fly_Towards_Player;
         }
         break;
     case DBBoneDust_STATE_Fly_Towards_Player:
-        distance = vec3_distance_xz(&self->positionMirror, &player->positionMirror);
+        distance = vec3_distance_xz(&self->globalPosition, &player->globalPosition);
         if (distance < 6.0f) {
             //Collected
             ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 3);
@@ -100,10 +100,10 @@ void DBBoneDust_control(Object* self) {
             guNormalize(&uPlayer.z, &uPlayer.y, &uPlayer.x);
 
             //Go towards the player
-            self->speed.x = uPlayer.z * absoluteSpeed;
-            self->speed.y = uPlayer.y * absoluteSpeed;
-            self->speed.z = uPlayer.x * absoluteSpeed;
-            obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
+            self->velocity.x = uPlayer.z * absoluteSpeed;
+            self->velocity.y = uPlayer.y * absoluteSpeed;
+            self->velocity.z = uPlayer.x * absoluteSpeed;
+            obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
             //Motion trail effect
             fxTrans.roll = 0xFF;
@@ -159,9 +159,9 @@ void DBBoneDust_launch(Object* self, Vec3f* position, Vec3f* speed, f32 baseY) {
     }
     
     if (speed != NULL) {
-        self->speed.x = speed->x * 4.0f;
-        self->speed.y = speed->y * 4.0f;
-        self->speed.z = speed->z * 4.0f;
+        self->velocity.x = speed->x * 4.0f;
+        self->velocity.y = speed->y * 4.0f;
+        self->velocity.z = speed->z * 4.0f;
     }
     
     objData->rotation.asWord = 0;

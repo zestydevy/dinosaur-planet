@@ -35,7 +35,7 @@ void dll_510_setup(Object* self, DLL510_Setup* setup, s32 arg2) {
     temp_v1->unk0 = (setup->unk1A / 255.0f);
     self->srt.scale = self->def->scale - (temp_v1->unk0 * 0.5f);
     self->srt.yaw = setup->unk18 << 8;
-    self->speed.f[1] = 0.0f;
+    self->velocity.f[1] = 0.0f;
     if (main_get_bits((s32) setup->unk1E) != 0) {
         temp_v1->unk12 = 4;
     }
@@ -99,11 +99,11 @@ void dll_510_control(Object* self) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
-        self->speed.f[1] -= 0.1f * gUpdateRateF;
-        if (self->speed.f[1] < -10.0f) {
-            self->speed.f[1] = -10.0f;
+        self->velocity.f[1] -= 0.1f * gUpdateRateF;
+        if (self->velocity.f[1] < -10.0f) {
+            self->velocity.f[1] = -10.0f;
         }
-        self->srt.transl.f[1] += self->speed.f[1] * gUpdateRateF;
+        self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF;
         if (!(SHrootData->unk13 & 1) && (SHrootData->unk13 & 4)) {
             if (self->srt.transl.f[1] < (SHrootData->unk8 + 10.0f)) {
                 gDLL_24_Waterfx->vtbl->func_174C(self->srt.transl.f[0], SHrootData->unk8, self->srt.transl.f[2], 10.0f);

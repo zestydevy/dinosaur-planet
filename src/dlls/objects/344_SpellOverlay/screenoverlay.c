@@ -153,9 +153,9 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         self->srt.transl.x = gWorldX;
         self->srt.transl.y = -1.5f;
         self->srt.transl.z = gWorldZ;
-        self->positionMirror.x = gWorldX;
-        self->positionMirror.y = -1.5f;
-        self->positionMirror.z = gWorldZ;
+        self->globalPosition.x = gWorldX;
+        self->globalPosition.y = -1.5f;
+        self->globalPosition.z = gWorldZ;
 
         camera_setup_viewport_and_matrices(gdl, mtxs);
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);

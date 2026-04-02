@@ -125,7 +125,7 @@ void DBDustGeezer_control(Object* self) {
             //Enable "Find" sidekick command when nearby
             player = get_player();
             sidekick = get_sidekick();
-            if (sidekick && vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= 40000.0f) {
+            if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
             }
         }

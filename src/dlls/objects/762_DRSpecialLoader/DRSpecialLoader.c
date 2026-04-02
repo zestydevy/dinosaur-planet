@@ -25,7 +25,7 @@ void dll_762_control(Object *self) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 9, 1);
     } else {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 9, 0);
-        if ((!main_get_bits(BIT_7C8)) && (main_get_bits(BIT_667)) && (vec3_distance(&player->positionMirror, &self->positionMirror) < 100.0f)) {
+        if ((!main_get_bits(BIT_7C8)) && (main_get_bits(BIT_667)) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
             main_set_bits(BIT_7C7, 1);
         }
     }

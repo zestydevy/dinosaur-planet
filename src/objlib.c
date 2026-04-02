@@ -271,7 +271,7 @@ Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
     if (objID != -1) {
         for (i = sp48; i < sp44; i++) {
             if (objID == objects[i]->id && obj != objects[i]) {
-                distance = vec3_distance_squared(&obj->positionMirror, &objects[i]->positionMirror);
+                distance = vec3_distance_squared(&obj->globalPosition, &objects[i]->globalPosition);
                 if (distance < *outDistance) {
                     *outDistance = distance;
                     outObj = objects[i];
@@ -280,7 +280,7 @@ Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
         }
     } else {
         for (i = sp48; i < sp44; i++) {
-            distance = vec3_distance_squared(&obj->positionMirror, &(objects[i])->positionMirror);
+            distance = vec3_distance_squared(&obj->globalPosition, &(objects[i])->globalPosition);
             if (distance != 0.0f && distance < *outDistance) {
                 *outDistance = distance;
                 outObj = objects[i];

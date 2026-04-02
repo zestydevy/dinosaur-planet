@@ -266,7 +266,7 @@ void fish_control(Object* self) {
         temp_fv1_3 = 60.0f / var_fa1;
         if (temp_fv1_3 <= objdata->unk8) {
             objdata->unk8 = (f32) (objdata->unk8 - temp_fv1_3);
-            if ((player != NULL) && (vec3_distance_squared(&self->positionMirror, &player->positionMirror) < 10000.0f)) {
+            if ((player != NULL) && (vec3_distance_squared(&self->globalPosition, &player->globalPosition) < 10000.0f)) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x26, NULL, 0, -1, objdata->unkC);
             }
         }
