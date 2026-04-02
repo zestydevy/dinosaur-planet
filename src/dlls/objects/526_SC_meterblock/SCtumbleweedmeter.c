@@ -17,7 +17,7 @@ typedef struct {
     u32 soundHandle;            //Stops a looping sound when meter freed (unused, since no sound is played)
 } SCMeterBlock_Data;
 
-#define METER_RANGE_Y 171.0f
+#define METER_HEIGHT 171.0f
 
 // offset: 0x0 | ctor
 void SCMeterBlock_ctor(void *dll) { }
@@ -30,7 +30,7 @@ void SCMeterBlock_setup(Object* self, SCMeterBlock_Setup* objSetup, s32 arg2) {
     SCMeterBlock_Data* objData = self->data;
 
     //Calculate the distance to step along Y whenever a Tumbleweed is offered
-    objData->meterUnitY = METER_RANGE_Y / objSetup->weedsNeeded;
+    objData->meterUnitY = METER_HEIGHT / objSetup->weedsNeeded;
 
     //Restore meter's position based on gamebit
     objData->weedsOffered = main_get_bits(objSetup->gamebitMeterProgress);

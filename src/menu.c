@@ -47,7 +47,7 @@ u8 gSaveGameIdx;
 u8 D_800A7D69;
 s32 D_800A7D6C;
 f32 D_800A7D70;
-f32 D_800A7D74;
+f32 D_800A7D74; // UI countdown time (in frames)
 s8 D_800A7D78;
 s8 D_800A7D79;
 u32 D_800A7D7C;
@@ -168,18 +168,21 @@ void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
 
 void func_8000F640(s32 param1) { }
 
-void func_8000F64C(s8 param1, s32 param2) {
-    param2 *= 60;
+/** 
+  * Starts a countdown timer
+  */
+void func_8000F64C(s8 param1, s32 seconds) {
+    seconds *= 60;
 
     D_800A7D79 = param1;
 
     if (param1 & 1) {
-        D_800A7D70 = param2;
+        D_800A7D70 = seconds;
     } else {
         D_800A7D70 = 0.0f;
     }
 
-    D_800A7D74 = param2;
+    D_800A7D74 = seconds;
     D_800A7D6C = 1;
     D_800A7D78 = 0;
     D_800A7D94 = param1 & 3;

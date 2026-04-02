@@ -67,7 +67,7 @@
     0x01e6, 0x01e6, 0x01e6, 0x01e6, 0x01e6, 0x01e6, 0x01e6,
     0x01e6, 0x01e6, 0x01e6, 0x01e6, 0x01e6, 0x01e6, 0x01e6
 };
-// ?
+// ? last byte (0x20) is a duration for a UI timer
 /*0x158*/ static u8 _data_158[3][5] = {
     { 0x01, 0x02, 0x03, 0x04, 0x20 },
     { 0x02, 0x01, 0x03, 0x04, 0x20 },
@@ -87,8 +87,8 @@ typedef struct {
 
 static void SC_levelcontrol_func_8B4(Object *self);
 static void SC_levelcontrol_func_BBC(Object *self, u8 arg1);
-static void SC_levelcontrol_func_11FC(Object *self);
-static int SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
+static void SC_levelcontrol_handle_lightfoot_ambush(Object *self);
+static int SC_levelcontrol_anim_callback(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
 
 // offset: 0x0 | ctor
 void SC_levelcontrol_ctor(void *dll) { }
@@ -105,7 +105,7 @@ void SC_levelcontrol_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->isNighttime = FALSE;
     objdata->unk2 = 0;
     objdata->index1 = main_get_bits(BIT_SC_UNKNOWN_2BA);
-    self->animCallback = SC_levelcontrol_func_12D8;
+    self->animCallback = SC_levelcontrol_anim_callback;
 }
 
 // offset: 0x90 | func: 1 | export: 1
@@ -180,7 +180,7 @@ void SC_levelcontrol_control(Object *self) {
     }
 
     SC_levelcontrol_func_BBC(self, sp2F);
-    SC_levelcontrol_func_11FC(self);
+    SC_levelcontrol_handle_lightfoot_ambush(self);
 }
 
 // offset: 0x420 | func: 2 | export: 2
@@ -236,7 +236,7 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
         main_set_bits(BIT_SC_Pond_Platform_Raised, 1);
         main_set_bits(BIT_SC_Platform_Rises_Totem_Challenge_Begins, 1);
         gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
-        func_8000F64C(0x1D, 0x2D);
+        func_8000F64C(0x1D, 45);
         func_8000F6CC();
     } else if (objdata->unk2 == 3) {
         if (gDLL_7_Newday->vtbl->func8(&time)) {
@@ -333,15 +333,18 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
         if (objdata->index1 >= SOMESIZE) {
             objdata->index1 = 0;
         }
+
         func_80000860(self, player, _data_40[objdata->index1], 0);
         func_80000860(self, player, _data_8[objdata->index1], 0);
         func_80000860(self, player, _data_78[objdata->index1], 0);
+
         if (_data_B0[objdata->index1] != 0) {
             func_80000860(self, player, _data_B0[objdata->index1], 0);
         }
 
         func_80000450(self, player, _data_E8[objdata->index1], 0, 0, 0);
         func_80000450(self, player, _data_120[objdata->index1], 0, 0, 0);
+
         if (isNighttime) {
             gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->set(self, 0xBA, 0, 0, 0);
@@ -351,6 +354,7 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
             gDLL_5_AMSEQ2->vtbl->set(self, 0xB9, 0, 0, 0);
             func_80000450(self, player, 0x1E4, 0, 0, 0);
         }
+
         main_set_bits(BIT_SC_UNKNOWN_2BA, objdata->index1);
         return;
     }
@@ -409,7 +413,7 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
 }
 
 // offset: 0x11FC | func: 11
-void SC_levelcontrol_func_11FC(Object *self) {
+void SC_levelcontrol_handle_lightfoot_ambush(Object *self) {
     if (!main_get_bits(BIT_SC_Ambushed) &&
         main_get_bits(BIT_SC_Encountered_Baby_Lightfoot)) {
         main_set_bits(BIT_SC_Ambushed, 1);
@@ -420,12 +424,12 @@ void SC_levelcontrol_func_11FC(Object *self) {
 }
 
 // offset: 0x12D8 | func: 12
-static int SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
+static int SC_levelcontrol_anim_callback(Object *self, Object *overrideObj, AnimObj_Data *animData, s8 arg3) {
     s32 i;
 
-    arg2->unk62 = 0;
-    for (i = 0; i < arg2->unk98; i++) {
-        switch (arg2->unk8E[i]) {
+    animData->unk62 = 0;
+    for (i = 0; i < animData->unk98; i++) {
+        switch (animData->unk8E[i]) {
         case 1:
             SC_levelcontrol_func_660(self, 6);
             break;
