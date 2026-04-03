@@ -2133,7 +2133,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     objdata->unk72C.y = objdata->unk7EC.y;
                     objdata->unk72C.z = objdata->unk7EC.z;
                     ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 2);
-                    arg0->srt.flags |= 8;
+                    arg0->srt.flags |= OBJFLAG_MANUAL_PREV_POSITIONS;
                     arg0->shadow->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
                     arg2->unk7A &= ~0x4;
                     switch (vehicle->id) {
@@ -2162,7 +2162,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 vehicle = objdata->vehicle;
                 if (vehicle != NULL) {
                     ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 0);
-                    arg0->srt.flags &= ~0x8;
+                    arg0->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
                     arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
                     vehicle = NULL;
                     arg2->unk7A |= 4;
@@ -2200,12 +2200,12 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             case 7:
                 arg2->unk7A &= ~0x3;
                 dll_210_func_1D4E0(arg0, 1);
-                arg0->srt.flags |= 8;
+                arg0->srt.flags |= OBJFLAG_MANUAL_PREV_POSITIONS;
                 break;
             case 8:
                 arg2->unk7A = arg2->unk7C;
                 dll_210_func_1D4E0(arg0, 0);
-                arg0->srt.flags &= ~8;
+                arg0->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
                 break;
             case 10:
                 objdata->unk878 = 2;
@@ -3535,7 +3535,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         ((s8*)objsetup)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
         temp_v0_2 = obj_create(objsetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
         if (temp_v0_2 != NULL) {
-            temp_v0_2->srt.flags |= 0x2000;
+            temp_v0_2->srt.flags |= OBJFLAG_OWNS_SETUP;
             temp_v1 = fsa->target;
             if (temp_v1 != NULL) {
                 temp_a0 = player->linkedObject;
@@ -3634,7 +3634,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s5 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
         temp_v0_2 = obj_create(temp_v0, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
         if (temp_v0_2 != NULL) {
-            temp_v0_2->srt.flags |= 0x2000;
+            temp_v0_2->srt.flags |= OBJFLAG_OWNS_SETUP;
             if (fsa->target != NULL) {
                 var_s2 = fsa->target;
             } else {
@@ -3713,7 +3713,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return;
     }
 
-    temp_v0_2->srt.flags |= 0x2000;
+    temp_v0_2->srt.flags |= OBJFLAG_OWNS_SETUP;
     if (fsa->target != NULL) {
         spD4 = fsa->target;
     } else {
@@ -6957,7 +6957,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         objdata->unk744.f[0] = sp5C;
         objdata->unk744.f[1] = sp60 - sp68.f[1];
         objdata->unk744.f[2] = sp64;
-        player->srt.flags |= 8;
+        player->srt.flags |= OBJFLAG_MANUAL_PREV_POSITIONS;
         player->shadow->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
         fsa->animTickDelta = 0.022f;
     }
@@ -7165,7 +7165,7 @@ static void dll_210_func_14B70(Object* player, ObjFSA_Data *fsa) {
     s16* temp_v0_2;
 
     player->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
-    player->srt.flags &= ~8;
+    player->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
     player->curModAnimIdLayered = -1;
     temp_v0_2 = func_80034804(player, 9);
     if (temp_v0_2 != NULL) {
@@ -7241,7 +7241,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s1->unk738.z = sp80.f[2];
         temp_s1->unk744.y = player->srt.transl.f[1] - temp_s1->unk738.y;
         temp_s1->unk750 = spA0;
-        player->srt.flags &= ~8;
+        player->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
         player->curModAnimIdLayered = -1;
         fsa->animTickDelta = 0.016f;
     }
@@ -7659,13 +7659,13 @@ s32 dll_210_func_16220(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->animTickDelta = 0.01f;
         fsa->unk278 = 0.0f;
         if (self->animProgress > 0.5f) {
-            if (objdata->unk708->srt.flags & 0x4000) {
+            if (objdata->unk708->srt.flags & OBJFLAG_INVISIBLE) {
                 objdata->unk710 -= 0.04f * updateRate;
             } else {
                 gDLL_28_ScreenFade->vtbl->fade(0x3C, 1);
             }
             temp_v0 = objdata->unk708;
-            temp_v0->srt.flags |= 0x4000;
+            temp_v0->srt.flags |= OBJFLAG_INVISIBLE;
             func_800267A4(objdata->unk708);
             if (objdata->unk710 < 0.0f) {
                 objdata->unk710 = 0.0f;
@@ -7704,7 +7704,7 @@ s32 dll_210_func_164DC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (player->curModAnimId == 0xC7) {
         fsa->animTickDelta = 0.02f;
         fsa->unk278 = 0.0f;
-        sp24->unk708->srt.flags |= 0x4000;
+        sp24->unk708->srt.flags |= OBJFLAG_INVISIBLE;
         func_800267A4(sp24->unk708);
         if (player->animProgress > 0.8f) {
             sp24->unk708 = NULL;
@@ -8096,7 +8096,7 @@ s32 dll_210_func_178EC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             0x40400000,
             2.0f * -fcos16_precise(player->srt.yaw)
         );
-        temp_s2->unk708->srt.flags &= ~0x4000;
+        temp_s2->unk708->srt.flags &= ~OBJFLAG_INVISIBLE;
         func_8002674C(temp_s2->unk708);
         temp_s2->unk708 = NULL;
     }

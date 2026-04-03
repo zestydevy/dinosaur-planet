@@ -533,7 +533,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     update_pi_manager_array(0, objId);
 
-    if (initFlags & OBJ_INIT_FLAG2) {
+    if (initFlags & OBJ_INIT_ID_IS_TABIDX) {
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
@@ -556,10 +556,10 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         return NULL;
     } 
     
-    objHeader.srt.flags = 2;
+    objHeader.srt.flags = OBJFLAG_UNK_2;
 
     if (def->flags & 0x80) {
-        objHeader.srt.flags = 0x82;
+        objHeader.srt.flags = OBJFLAG_UNK_80 | OBJFLAG_UNK_2;
     }
 
     if (def->flags & 0x40000) {
@@ -567,7 +567,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if (initFlags & OBJ_INIT_FLAG4) {
-        objHeader.srt.flags |= 0x2000;
+        objHeader.srt.flags |= OBJFLAG_OWNS_SETUP;
     }
 
     objHeader.srt.transl.x = setup->x;
@@ -1101,7 +1101,7 @@ void update_object(Object *obj) {
     } else {
         update_pi_manager_array(1, obj->id);
 
-        if (!(obj->srt.flags & 8)) {
+        if (!(obj->srt.flags & OBJFLAG_MANUAL_PREV_POSITIONS)) {
             obj->prevLocalPosition.x = obj->srt.transl.x;
             obj->prevLocalPosition.y = obj->srt.transl.y;
             obj->prevLocalPosition.z = obj->srt.transl.z;
@@ -1606,7 +1606,7 @@ void obj_free_object(Object *obj, s32 param2) {
         }
     }
 
-    if (obj->srt.flags & 0x2000 && obj->setup != NULL) {
+    if (obj->srt.flags & OBJFLAG_OWNS_SETUP && obj->setup != NULL) {
         mmFree(obj->setup);
     }
 

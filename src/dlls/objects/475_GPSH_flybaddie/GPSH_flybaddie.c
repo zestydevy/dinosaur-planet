@@ -236,7 +236,7 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     objsetup->z = self->srt.transl.z;
     obj = obj_create(objsetup, OBJ_INIT_FLAG1, -1, -1, NULL);
     if (obj != NULL) {
-        obj->srt.flags |= 0x2000;
+        obj->srt.flags |= OBJFLAG_OWNS_SETUP;
         dirVec[0] = player->srt.transl.x - self->srt.transl.x;
         dirVec[1] = (player->srt.transl.y + 20.0f) - self->srt.transl.y;
         dirVec[2] = player->srt.transl.z - self->srt.transl.z;

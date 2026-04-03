@@ -1786,7 +1786,7 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         } else {
             sp1AC = model->maxAnimatedVertDistance * obj->srt.scale;
         }
-        if (obj->srt.flags & 0x4000) {
+        if (obj->srt.flags & OBJFLAG_INVISIBLE) {
             return 0U;
         }
     } else {
@@ -1818,7 +1818,7 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         sp16C = temp_v1->unk24;
         spheres = model->hitSpheres;
         sp1B0 = model->maxAnimatedVertDistance * obj2->srt.scale;
-        if (obj2->srt.flags & 0x4000) {
+        if (obj2->srt.flags & OBJFLAG_INVISIBLE) {
             return 0U;
         }
     } else {

@@ -61,7 +61,7 @@ void PortalSpellDoor_setup(Object* self, PortalSpellDoor_Setup* objSetup, s32 ar
         if (objSetup->hitsAnimatorID && !func_80058F50()) {
             func_80059038(objSetup->hitsAnimatorID, self->parent, 0);
         }
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
         self->unkB0 |= 0xE000;
     }
 
@@ -80,7 +80,7 @@ void PortalSpellDoor_control(Object* self) {
 
     //Check if the door transformation sequence has played, otherwise wait for player to use spell
     if (objData->sequencePlayed) {
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
 
         //Destroy secondary door object
         if (objData->portalDoorAnim != NULL) {

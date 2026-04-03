@@ -1236,7 +1236,7 @@ void func_80043FD8(s8* arg0) {
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
                 if (object->def->flags & 0x100000) {
                     var_v0 = 150000 - i;
-                } else if ((object->opacityWithFade == 0xFF) && !(object->srt.flags & 0x80)) {
+                } else if ((object->opacityWithFade == 0xFF) && !(object->srt.flags & OBJFLAG_UNK_80)) {
                     var_v0 = 150000 - i;
                 } else {
                     var_v0 = i + 50000;

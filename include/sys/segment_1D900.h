@@ -2,6 +2,9 @@
 #define _SYS_SEGMENT_1D900_H
 
 #include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "game/objects/object.h"
+#include "sys/gfx/model.h"
 
 extern u8 D_800B1847;
 
@@ -11,5 +14,9 @@ u8 func_8001EBE0(void);
 void func_8001CD00(void);
 void func_8001EBD0(s32);
 void func_8001EAA4(u8 arg0, u8 arg1, u8 arg2, f32 arg3);
+void func_8001F848(Gfx **gdl);
+void func_8001F094(ModelInstance* arg0);
+void func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2);
+void func_8001DF60(Object* obj, ModelInstance* modelInst);
 
 #endif

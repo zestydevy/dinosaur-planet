@@ -72,7 +72,7 @@ void dll_502_setup(Object* self, DLL502_Setup* setup, s32 arg2) {
     if (main_get_bits((s32) setup->unk1A) != 0) {
         DLL502Data->unk136 = 8;
         self->objhitInfo->unk58 &= 0xFFFE;
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
     }
     self->modelInstIdx = setup->unk20;
     if (self->modelInstIdx >= self->def->numModels) {
@@ -188,7 +188,7 @@ void dll_502_control(Object* self) {
             if (spCC->id == 0x416) {
                 temp_s3->unk136 = 8U;
                 ((DLL_Unknown*)spCC->dll)->vtbl->func[20].withThreeArgsCustom3(spCC, 1, self); // func20
-                self->srt.flags |= 0x4000;
+                self->srt.flags |= OBJFLAG_INVISIBLE;
                 func_800267A4(self);
             } else {
                 temp_s3->unk137 |= 0x10;
@@ -443,7 +443,7 @@ static void dll_502_func_D74(Object* arg0, DLL502_Data* DLL502Data, DLL502_Setup
     case 2:
         if (DLL502Data->unk137 & 1) {
             DLL502Data->unk136 = 8U;
-            arg0->srt.flags |= 0x4000;
+            arg0->srt.flags |= OBJFLAG_INVISIBLE;
             func_800267A4(arg0);
         }
         break;

@@ -518,7 +518,7 @@ void SB_Galleon_func_EAC(Object *self) {
     objdata = self->data;
     sp84 = 120.0f;
     self->mapID = -1;
-    if ((objdata->cloudrunner != NULL) && (objdata->cloudrunner->srt.flags & 0x40)) {
+    if ((objdata->cloudrunner != NULL) && (objdata->cloudrunner->srt.flags & OBJFLAG_UNK_40)) {
         objdata->cloudrunner = NULL;
         objdata->cloudrunner = NULL;
     }

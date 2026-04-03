@@ -155,7 +155,7 @@ void SHspore_control(Object* self) {
                 }
 
                 objData->deletionTimer = 200.0f;
-                self->srt.flags |= 0x4000;
+                self->srt.flags |= OBJFLAG_INVISIBLE;
                 func_800267A4(self);
             }
         } else {
@@ -171,7 +171,7 @@ void SHspore_control(Object* self) {
                 }
 
                 objData->deletionTimer = 200.0f;
-                self->srt.flags |= 0x4000;
+                self->srt.flags |= OBJFLAG_INVISIBLE;
                 func_800267A4(self);
             }
         }

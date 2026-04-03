@@ -28,7 +28,7 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     objdata->state = TOY_STATE_0_Carried;
     objdata->timer = 0.0f;
     objdata->interactionTimer = 0.0f;
-    self->srt.flags |= 0x4000;
+    self->srt.flags |= OBJFLAG_INVISIBLE;
     self->unkB0 |= 0x6000;
     if (player) {
         ((DLL_210_Player*)player->dll)->vtbl->func9(player, self);
@@ -236,7 +236,7 @@ void SidekickToy_carry(Object* self, SidekickToy_Data* objdata) {
     objdata2->state = TOY_STATE_0_Carried;
     objdata2->timer = 0.0f;
     
-    self->srt.flags |= 0x4000;
+    self->srt.flags |= OBJFLAG_INVISIBLE;
 
     func_800267A4(self);
     objdata2->collision.mode = 0;

@@ -221,7 +221,7 @@ static void dll_220_func_778(Object* self) {
 // offset: 0x8A4 | func: 9
 static void dll_220_func_8A4(Object* self, DLL220_Data* arg1) {
     func_800267A4(self);
-    self->srt.flags |= 0x4000;
+    self->srt.flags |= OBJFLAG_INVISIBLE;
     arg1->unk4 |= 2;
 }
 

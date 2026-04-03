@@ -179,7 +179,7 @@ void dll_537_control(Object* self) {
         func_80023D30(self, 0, 0, 0);
     }
     
-    self->srt.flags &= 0xBFFF;
+    self->srt.flags &= ~OBJFLAG_INVISIBLE;
     
     switch (objData->unk24) {
     case 5:
@@ -394,7 +394,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
         }
         break;
     default:
-        self->srt.flags &= 0xBFFF;
+        self->srt.flags &= ~OBJFLAG_INVISIBLE;
         if (animData->unk8D == 1) {
             objSetup = (DLL537_Setup*)self->setup;
             main_set_bits(objSetup->unk18, 1);

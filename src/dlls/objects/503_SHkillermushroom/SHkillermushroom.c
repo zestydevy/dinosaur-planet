@@ -334,7 +334,7 @@ static void dll_503_func_DE4(Object* arg0, DLL503_Data* arg1, s32 arg2) {
     arg0->srt.pitch = rand_next(-0x5DC, 0x5DC);
     arg0->srt.yaw = rand_next(-0x5DC, 0x5DC);
     arg0->opacity = 0xFF;
-    arg0->srt.flags &= 0xBFFF;
+    arg0->srt.flags &= ~OBJFLAG_INVISIBLE;
     arg0->srt.transl.f[0] = setup->x;
     arg0->srt.transl.f[1] = setup->y;
     arg0->srt.transl.f[2] = setup->z;

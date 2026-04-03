@@ -102,7 +102,7 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
 
     //Set up collision
     objData->collisionRadius = self->objhitInfo->unk52;
-    if (self->srt.flags & 0x2000) {
+    if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
         gDLL_27->vtbl->init(&objData->collision, 
             DLL27FLAG_NONE, 
             DLL27FLAG_1 | DLL27FLAG_2 | DLL27FLAG_4 | DLL27FLAG_40000, 
@@ -190,7 +190,7 @@ void MagicDust_control(Object* self) {
     }
     
     //Handle motion
-    if (self->srt.flags & 0x2000) {
+    if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
         //Do nothing when parented to MagicPlant
         if (self->unkC4 != NULL) {
             self->shadow->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
@@ -256,11 +256,11 @@ void MagicDust_control(Object* self) {
         } else {
             //Destroy self when vanish timer's up
             if (objData->timer <= 0.0f) {
-                if (self->srt.flags & 0x2000) {
+                if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
                     obj_destroy_object(self);
                 } else {
                     obj_free_tick(self);
-                    self->srt.flags |= 0x4000;
+                    self->srt.flags |= OBJFLAG_INVISIBLE;
                 }
             }
             return;

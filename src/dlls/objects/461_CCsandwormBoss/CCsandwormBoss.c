@@ -200,7 +200,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         break;
     case 14:
         objdata->unk0 = 0xF;
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
         func_800267A4(self);
         func_80026160(self);
         main_set_bits(0x3FB, 1);

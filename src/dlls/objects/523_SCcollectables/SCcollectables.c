@@ -132,7 +132,7 @@ void SCcollectables_control(Object* self) {
         }
     }
     
-    if (self->srt.flags & 0x4000) {
+    if (self->srt.flags & OBJFLAG_INVISIBLE) {
         return;
     }
     

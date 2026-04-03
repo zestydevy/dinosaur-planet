@@ -63,7 +63,7 @@ void SPItem_control(Object* self) {
             //Hide item if not in stock or already purchased
             if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 
                 (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_hidden(objData->shop, objSetup->itemIndex))) {
-                self->srt.flags |= 0x4000;  //don't draw
+                self->srt.flags |= OBJFLAG_INVISIBLE;  //don't draw
                 self->unkB0 |= 0x8000;    //don't animate
                 self->unkAF |= 8;         //don't allow targetting
             }
@@ -156,7 +156,7 @@ void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* arg2) 
 
     //Check if object should be hidden
     if (((DLL_768_SPShop*) shop->dll)->vtbl->is_item_hidden(shop, objSetup->itemIndex)){
-        self->srt.flags |= 0x4000;  //don't draw
+        self->srt.flags |= OBJFLAG_INVISIBLE;  //don't draw
         self->unkB0 |= 0x8000;    //don't update animation
         self->unkAF |= 8;         //don't allow targetting
     }

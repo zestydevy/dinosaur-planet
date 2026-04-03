@@ -31,12 +31,12 @@ void DRExplodeDoor_setup(Object* self, DRExplodeDoor_Setup* objSetup, s32 arg2) 
     
     //Set conditional transform flags
     if (objSetup->mode != DRExplodeDoor_MODE_No_Transform_Flags) {
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
     }
     
     //Check if exploded previously
     if (main_get_bits(objSetup->gamebitExplode)) {
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
         self->unkB0 |= 0x2000;
         obj_free_tick(self);
     }
@@ -89,7 +89,7 @@ void DRExplodeDoor_update(Object* self) {
         
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_860_Explosion_Mid, MAX_VOLUME, 0, 0, 0, 0);
         self->unkB0 |= 0x2000;
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
         
         main_set_bits(objSetup->gamebitExplode, 1);
         func_800267A4(self);

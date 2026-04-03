@@ -36,7 +36,7 @@ void CRFuelTank_setup(Object *self, CRFuelTank_Setup *setup, s32 arg2) {
     if ((setup->gamebit != NO_GAMEBIT) && (main_get_bits(setup->gamebit))) {
         func_80026160(self);
         func_800267A4(self);
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
     }
 }
 
@@ -44,7 +44,7 @@ void CRFuelTank_setup(Object *self, CRFuelTank_Setup *setup, s32 arg2) {
 void CRFuelTank_control(Object *self) {
     if (self->opacity < OBJECT_OPACITY_MAX) {
         if (gUpdateRate >= self->opacity) {
-            self->srt.flags |= 0x4000;
+            self->srt.flags |= OBJFLAG_INVISIBLE;
             return;
         }
         self->opacity -= 2 * gUpdateRate;

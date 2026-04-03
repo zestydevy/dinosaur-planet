@@ -43,9 +43,33 @@ typedef struct {
 /*0062*/    s8 unk62;
 } ObjectC0_Data;
 
+// Stored in the flags of Object.srt
+enum ObjectFlags {
+/*1*/ OBJFLAG_UNK_2 = 0x2,
+
+      // don't automatically calculate previous local/global position object fields
+/*3*/ OBJFLAG_MANUAL_PREV_POSITIONS = 0x8,
+
+/*6*/ OBJFLAG_UNK_40 = 0x40,
+/*7*/ OBJFLAG_UNK_80 = 0x80,
+
+      // don't add model display list to the main display list when drawing
+/*9*/ OBJFLAG_SKIP_MODEL_DL = 0x200,
+
+       // still draws shadow
+/*12*/ OBJFLAG_SHADOW_ONLY = 0x1000,
+       // whether the associated ObjSetup should be freed when the object is freed
+       // TODO: this flag means more, see magicdust dll
+/*13*/ OBJFLAG_OWNS_SETUP = 0x2000,
+       // also disables hitsphere detection?
+/*14*/ OBJFLAG_INVISIBLE = 0x4000
+};
+
 enum ObjInitFlags {
     OBJ_INIT_FLAG1 = 0x1,
-    OBJ_INIT_FLAG2 = 0x2,
+    // Whether the object ID provided for object creation is actually a direct index into OBJECTS.tab
+    OBJ_INIT_ID_IS_TABIDX = 0x2,
+    // Sets whether the object owns its setup pointer
     OBJ_INIT_FLAG4 = 0x4
 };
 
