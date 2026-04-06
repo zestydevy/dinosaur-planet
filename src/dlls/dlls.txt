@@ -204,6 +204,7 @@
 524 = objects/524_SCanimobj
 525 = objects/525_SCtotempuzzle
 526 = objects/526_SC_meterblock
+527 = objects/527_SC_totembond
 528 = objects/528_SC_totemstrength
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall

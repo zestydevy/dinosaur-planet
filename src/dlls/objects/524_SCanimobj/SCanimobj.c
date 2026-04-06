@@ -138,6 +138,7 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
         }
+        
         if (self->unkE0 & 2) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
