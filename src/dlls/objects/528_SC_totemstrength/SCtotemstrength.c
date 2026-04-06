@@ -3,6 +3,7 @@
 #include "sys/fonts.h"
 #include "sys/map_enums.h"
 
+#include "dlls/objects/210_player.h"
 #include "dlls/objects/519_SC_levelcontrol.h"
 
 typedef struct {
@@ -18,7 +19,7 @@ typedef struct {
     s32 unk10;
     s16 unk14;
     s16 unk16;
-    u32 soundHandle; //soundHandle
+    u32 soundHandle;
     u32 soundHandleLightFoot;
     u8 unk20;
     Vec3f home; //initial position
@@ -155,12 +156,6 @@ u32 SCTotemStrength_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x46C | func: 7
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/528_SC_totemstrength/SCTotemStrength_anim_callback.s")
-#else
-
-
-
 static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
     static s32 bss_0;
 
@@ -177,7 +172,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
     objData = self->data;
     player = get_player();
     objData->unk20 |= 4;
-    main_set_bits(0x780, 0);
+    main_set_bits(BIT_780, 0);
     
     for (i = 0; i < animData->unk98; i++) {
         switch (animData->unk8E[i]) {
@@ -198,7 +193,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
             
             func_80023D30(player, 0x401, 0.0f, 0);
             func_80023D30(objData->lightfoot, 0, 1.0f, 0);
-            ((DLL_Unknown*)gDLL_3_Animation)->vtbl->func[19].withFourArgs(0x5A, 3, 0, 0);
+            gDLL_3_Animation->vtbl->func19(0x5A, 3, 0, 0);
             break;
         case 3:
             SCTotemStrength_func_F44(self, 3);
@@ -207,8 +202,8 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
             SCTotemStrength_func_F44(self, 4);
             break;
         case 5:
-            ((DLL_Unknown*)player->dll)->vtbl->func[22].withTwoArgs(player, 0x7F);
-            ((DLL_Unknown*)player->dll)->vtbl->func[12].withTwoArgs(player, 0xFF);
+            ((DLL_210_Player*)player->dll)->vtbl->set_health(player, 0x7F);
+            ((DLL_210_Player*)player->dll)->vtbl->set_magic(player, 0xFF);
             //break;
         default:
             break;
@@ -336,7 +331,6 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
 
     return 0;
 }
-#endif
 
 // offset: 0xF44 | func: 8
 void SCTotemStrength_func_F44(Object* self, u8 arg1) {
