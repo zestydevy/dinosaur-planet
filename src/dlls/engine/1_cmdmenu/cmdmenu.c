@@ -30,14 +30,14 @@ typedef struct {
 /*4*/ s32 timer;
 /*8*/ f32 opacity;
 /*C*/ s16 count;
-} CmdmenuItemUnkBSS;
+} CmdmenuItemUnkBSS; //ItemInfoBox?
 
 typedef struct {
-/*0*/ InventoryItem* characterItems;
+/*0*/ InventoryItem* items;
 /*4*/ s16 unk4;
 /*8*/ u32 mesgID; // objmesg ID sent to player
 /*C*/ s32 btnMask; // mask of joypad buttons that can be used to move to this item
-} UIUnknownCharacterStruct;
+} UIUnknownCharacterStruct; //InventoryPage?
 
 typedef struct {
     f32 unk0; //scarabUIOpacity
@@ -754,20 +754,20 @@ void cmdmenu_func_35C(void) {
         }
         if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (_data_9D0 != 2)) {
             sp30 = sidekick->id == OBJ_Kyte ? 8 : 7;
-            if (cmdmenu_func_3718(_data_8F0[sp30].characterItems, 1) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[sp30].items, 1) != 0) {
                 joy_set_button_mask(0, D_CBUTTONS);
                 _data_9D4 = 2;
                 _bss_C3E = sp30;
             }
         } else if ((sJoyPressedButtons & R_CBUTTONS) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
             sp30 = player->id == OBJ_Krystal ? 0 : 1;
-            if (cmdmenu_func_3718(_data_8F0[sp30].characterItems, 0) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[sp30].items, 0) != 0) {
                 joy_set_button_mask(0, R_CBUTTONS);
                 _data_9D4 = 3;
                 _bss_C3E = sp30;
             }
         } else if ((sJoyPressedButtons & L_CBUTTONS) && (_data_9D0 != 4)) {
-            if (cmdmenu_func_3718(_data_8F0[6].characterItems, 0) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[6].items, 0) != 0) {
                 joy_set_button_mask(0, L_CBUTTONS);
                 _data_9D4 = 4;
                 _bss_C3E = 6;
@@ -999,7 +999,7 @@ void cmdmenu_func_1290(void) {
 
     temp = _data_8F0;
 
-    for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
+    for (i = 0; temp[i].items; i++) { temp[i].unk4 = 0; }
     usedItemGamebitID = -1;
     _bss_C3C = 0;
     _bss_C3D = -1;
@@ -1292,7 +1292,7 @@ static void cmdmenu_func_1FEC(void) {
         usedItemGamebitID = -1;
         _bss_C3C = 0;
         _bss_C3D = -1;
-        new_var = _data_8F0[_bss_C3E].characterItems;
+        new_var = _data_8F0[_bss_C3E].items;
         sp4C = &_data_8F0[_bss_C3E].unk4;
         sp40 = _data_8F0[_bss_C3E].mesgID;
         sp3C = _data_8F0[_bss_C3E].btnMask;
@@ -1866,17 +1866,17 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             if (player != NULL) {
                 var_v0 = player->id == OBJ_Krystal ? 0 : 1;
                 sp44 = 0;
-                if (cmdmenu_func_3718(_data_8F0[var_v0].characterItems, 0) != 0) {
+                if (cmdmenu_func_3718(_data_8F0[var_v0].items, 0) != 0) {
                     sp44 = 2;
                 }
             }
             if (sidekick != NULL) {
                 var_v0 = sidekick->id == OBJ_Kyte ? 8 : 7;
-                if (cmdmenu_func_3718(_data_8F0[var_v0].characterItems, 1) != 0) {
+                if (cmdmenu_func_3718(_data_8F0[var_v0].items, 1) != 0) {
                     sp44 |= 4;
                 }
             }
-            if (cmdmenu_func_3718(_data_8F0[6].characterItems, 0) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[6].items, 0) != 0) {
                 sp44 |= 1;
             }
             if (sp44 & 2) {
@@ -2569,8 +2569,8 @@ void cmdmenu_func_69F8(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
     _bss_C88.texture = NULL;
 
     //Find the item's TEXTABLE textureID, using the item's collection gamebitID
-    while (inventoryPage->characterItems != NULL) {
-        items = inventoryPage->characterItems;
+    while (inventoryPage->items != NULL) {
+        items = inventoryPage->items;
         while (items->gamebitObtained != NO_GAMEBIT) {
             if (itemGamebit == items->gamebitObtained) {
                 _bss_C88.texture = tex_load_deferred(items->textureID);
