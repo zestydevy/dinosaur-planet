@@ -704,7 +704,7 @@ typedef enum {
     BIT_2B9 = 0x2B9, // len:1 group:2
     BIT_SC_UNKNOWN_2BA = 0x2BA, // len:5 group:2
     BIT_2BB = 0x2BB, // len:1 group:2
-    BIT_2BC = 0x2BC, // len:1 group:0
+    BIT_LightFoot_Village_Krystal_Freed = 0x2BC, // len:1 group:0
     BIT_2BD = 0x2BD, // len:1 group:0
     BIT_2BE = 0x2BE, // len:1 group:1
     BIT_2BF = 0x2BF, // len:1 group:0
@@ -1616,7 +1616,7 @@ typedef enum {
     BIT_649 = 0x649, // len:1 group:1
     BIT_64A = 0x64A, // len:1 group:1
     BIT_64B = 0x64B, // len:8 group:3
-    BIT_64C = 0x64C, // len:1 group:0
+    BIT_LFV_Flame_Game_Rotate_Pole = 0x64C, // len:1 group:0 (LightFoot Village: totem pole minigame)
     BIT_64D = 0x64D, // len:1 group:0
     BIT_64E = 0x64E, // len:1 group:0
     BIT_64F = 0x64F, // len:1 group:0

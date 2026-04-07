@@ -1,66 +1,54 @@
 #include "common.h"
-
-#include "dlls/objects/210_player.h"
-#include "dlls/objects/519_SC_levelcontrol.h"
 #include "game/objects/object.h"
 
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-} DLL527_Setup;
-
-typedef struct {
-    u8 unk0;
-    u8 unk1;
-    s16 unk2;
-    u32 unk4;
-    s32 unk8;
-} DLL527_Data;
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/210_player.h"
+#include "dlls/objects/516_SC_lightfoot.h"
+#include "dlls/objects/519_SC_levelcontrol.h"
+#include "dlls/objects/725_SC_flamegameflame.h"
+#include "sys/math.h"
 
 typedef struct {
     ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-    s16 unk24;
-    s16 unk26;
-    s16 unk28;
-    s8 unk2A;
-    s16 unk2C;
-    s16 unk2E;
-    s16 unk30;
-    s8 unk32;
-} SCLightFoot_Setup; //0x38
+} SCTotemBond_Setup;
 
 typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 unk1A;
-    s8 unk1C;
-    s8 unk1D;
-    s8 unk1E;
-    s8 unk1F;
-} SCFlameGameFlame_Setup; //0x20
+    u8 flags;
+    s16 directionIndex;     //Direction the totem pole is facing (used to index into `dActivateGamebits`, etc.)
+    u32 soundHandle;        //Used for pole rotation sound
+    s32 flameEnergyCount;   //Kyte's Flame energy
+} SCTotemBond_Data;
 
-/*0x0*/ static u16 data_0[] = {
-    0x064d, 0x0064e, 0x064f, 0x00650
+typedef enum {
+    SCTotemBond_FLAG_None = 0,
+    SCTotemBond_FLAG_Init_Minigame = 1,
+    SCTotemBond_FLAG_Minigame_Active = 2,
+    SCTotemBond_FLAG_All_Directions_Defended = 4,
+    SCTotemBond_FLAG_Finished = 8
+} SCTotemBond_Flags;
+
+typedef enum {
+    SCTotemBond_SEQCMD_1_Initialise_Minigame = 1,
+    SCTotemBond_SEQCMD_2_Set_Level_State_3 = 2,
+    SCTotemBond_SEQCMD_3_Set_Level_State_2 = 3,
+} SCTotemBond_SeqCommands;
+
+/*0x0*/ static u16 dActivateGamebits[] = {
+    BIT_64D, BIT_64E, BIT_64F, BIT_650
 };
-/*0x8*/ static u16 data_8[] = {
-    0x0768, 0x00769, 0x076a, 0x0076b
+/*0x8*/ static u16 dFinishedGamebits[] = {
+    BIT_768, BIT_769, BIT_76A, BIT_76B
 };
-/*0x10*/ static u16 data_10[] = {
-    0x0084, 0x00085, 0x0086, 0x00087
+/*0x10*/ static u16 dKyteFlightCurveIDs[] = {
+    0x84, 0x85, 0x86, 0x87
 };
 
-static int SCTotemBond_func_3A4(Object* self, Object* objOverride, AnimObj_Data* animData, s8 arg3);
-static void SCTotemBond_func_7F8(Object* self, DLL527_Data* objData);
-static void SCTotemBond_func_960(Object* self, DLL527_Data* objData);
-static s32 SCTotemBond_func_A70(Object* self, DLL527_Data* objData);
-static void SCTotemBond_func_B80(Object* self, u8 arg1);
+static int SCTotemBond_anim_callback(Object* self, Object* objOverride, AnimObj_Data* animData, s8 arg3);
+static void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData);
+static void SCTotemBond_finish_minigame(Object* self, SCTotemBond_Data* objData);
+static s32 SCTotemBond_pick_new_direction(Object* self, SCTotemBond_Data* objData);
+static void SCTotemBond_set_level_state(Object* self, u8 value);
 
 // offset: 0x0 | ctor
 void SCTotemBond_ctor(void *dll) { }
@@ -68,19 +56,18 @@ void SCTotemBond_ctor(void *dll) { }
 // offset: 0xC | dtor
 void SCTotemBond_dtor(void *dll) { }
 
-
 // offset: 0x18 | func: 0 | export: 0
-void SCTotemBond_setup(Object* self, DLL527_Setup* objSetup, s32 arg2) {
-    DLL527_Data* objData = self->data;
+void SCTotemBond_setup(Object* self, SCTotemBond_Setup* objSetup, s32 arg2) {
+    SCTotemBond_Data* objData = self->data;
     
-    objData->unk2 = (u16)self->srt.yaw / 16384;
-    self->animCallback = SCTotemBond_func_3A4;
+    objData->directionIndex = (u16)self->srt.yaw / M_90_DEGREES;
+    self->animCallback = SCTotemBond_anim_callback;
     self->unkB0 |= 0x6000;
 }
 
 // offset: 0x68 | func: 1 | export: 1
 void SCTotemBond_control(Object* self) {
-    DLL527_Data* objData;
+    SCTotemBond_Data* objData;
     Object* player;
     Object* sidekick;
 
@@ -88,35 +75,38 @@ void SCTotemBond_control(Object* self) {
     player = get_player();
     sidekick = get_sidekick();
     
-    if (objData->unk0 & 1) {
-        SCTotemBond_func_7F8(self, objData);
+    if (objData->flags & SCTotemBond_FLAG_Init_Minigame) {
+        SCTotemBond_init_minigame(self, objData);
     }
     
-    if (objData->unk0 & 2) {
+    if (objData->flags & SCTotemBond_FLAG_Minigame_Active) {
         if (sidekick != NULL) {
-            ((DLL_Unknown*)sidekick->dll)->vtbl->func[18].withTwoArgs(sidekick, objData->unk8);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->func18(sidekick, objData->flameEnergyCount);
         }
         
-        ((DLL_Unknown*)player->dll)->vtbl->func[71].withFourArgs(player, &self->srt.transl, self, 0);
+        ((DLL_210_Player*)player->dll)->vtbl->func71(player, &self->srt.transl, &self->srt, 0);
         
-        if (main_get_bits(BIT_64C) != 0) {
-            main_set_bits(BIT_64C, 0);
-            if (SCTotemBond_func_A70(self, objData) != 0) {
-                objData->unk0 |= 4;
+        //Rotate pole when gamebit set
+        if (main_get_bits(BIT_LFV_Flame_Game_Rotate_Pole)) {
+            main_set_bits(BIT_LFV_Flame_Game_Rotate_Pole, 0);
+            if (SCTotemBond_pick_new_direction(self, objData)) {
+                objData->flags |= SCTotemBond_FLAG_All_Directions_Defended;
             }
             
-            objData->unk4 = gDLL_6_AMSFX->vtbl->play_sound(self, 0x796, 0x7F, 0, 0, 0, 0);
+            objData->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796_Pole_Rotate, MAX_VOLUME, 0, 0, 0, 0);
         }
 
-        if (objData->unk2 != (((u16) ((0, self->srt)).yaw) / 16384)) {
+        //Rotate towards goal direction
+        if ((u16)self->srt.yaw / M_90_DEGREES != objData->directionIndex) {
             self->srt.yaw -= 256.0f * gUpdateRateF;
-            if ((u16)self->srt.yaw / 16384 == objData->unk2) {
-                main_set_bits(data_0[objData->unk2], 1);
+            if ((u16)self->srt.yaw / M_90_DEGREES == objData->directionIndex) {
+                //Set gamebit to enable the direction's Flame target
+                main_set_bits(dActivateGamebits[objData->directionIndex], 1);
             }
         }
         
-        if (objData->unk0 & 0xC) {
-            SCTotemBond_func_960(self, objData);
+        if (objData->flags & (SCTotemBond_FLAG_All_Directions_Defended | SCTotemBond_FLAG_Finished)) {
+            SCTotemBond_finish_minigame(self, objData);
         }
     }
 }
@@ -133,11 +123,11 @@ void SCTotemBond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x318 | func: 4 | export: 4
 void SCTotemBond_free(Object* self, s32 arg1) {
-    DLL527_Data* objData = self->data;
+    SCTotemBond_Data* objData = self->data;
     
-    if (objData->unk4 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->unk4);
-        objData->unk4 = 0;
+    if (objData->soundHandle != 0) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        objData->soundHandle = 0;
     }
 }
 
@@ -148,29 +138,30 @@ u32 SCTotemBond_get_model_flags(Object *self) {
 
 // offset: 0x390 | func: 6 | export: 6
 u32 SCTotemBond_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL527_Data);
+    return sizeof(SCTotemBond_Data);
 }
 
 // offset: 0x3A4 | func: 7
-int SCTotemBond_func_3A4(Object* self, Object* objOverride, AnimObj_Data* animData, s8 arg3) {
+int SCTotemBond_anim_callback(Object* self, Object* objOverride, AnimObj_Data* animData, s8 arg3) {
+    SCTotemBond_Data* objData;
     s32 i;
-    DLL527_Data* objData;
 
     objData = self->data;
     animData->unk62 = 0;
 
     for (i = 0; i < animData->unk98; i++) {
         switch (animData->unk8E[i]) {
-        case 1:
-            objData->unk0 |= 1;
-            self->srt.yaw = 0x7FFF;
+        case SCTotemBond_SEQCMD_1_Initialise_Minigame:
+            objData->flags |= SCTotemBond_FLAG_Init_Minigame;
+            self->srt.yaw = M_180_DEGREES - 1;
             gDLL_3_Animation->vtbl->func19(0x56, 1, 0, 0);
             break;
-        case 2:
-            SCTotemBond_func_B80(self, 3);
+        case SCTotemBond_SEQCMD_2_Set_Level_State_3:
+            //Plays regular SwapStone Circle music
+            SCTotemBond_set_level_state(self, 3);
             break;
-        case 3:
-            SCTotemBond_func_B80(self, 2);
+        case SCTotemBond_SEQCMD_3_Set_Level_State_2:
+            SCTotemBond_set_level_state(self, 2);
             break;
         }
     }
@@ -179,143 +170,163 @@ int SCTotemBond_func_3A4(Object* self, Object* objOverride, AnimObj_Data* animDa
 }
 
 // offset: 0x510 | func: 8
-static void SCTotemBond_func_510(Object* self, DLL527_Data* objData, f32 arg2) {
-    s32 temp_s4;
-    s8 var_s6;
+static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotemBond_Data* objData, f32 lightFootRadius) {
+    s32 angle;
+    s8 lfIndex;
     s8 i;
     SCFlameGameFlame_Setup* setupFlame;
     SCLightFoot_Setup* setupLF;
-    DLL527_Setup* objSetup;
+    SCTotemBond_Setup* objSetup;
 
-    for (i = 0, var_s6 = 1; i < 4; i++) {
-        objSetup = (DLL527_Setup*)self->setup;
-        temp_s4 = i << 0xE;
+    //Create 4 LightFoot and 4 Flame targets
+    for (i = 0, lfIndex = 1; i < 4; i++) {
+        objSetup = (SCTotemBond_Setup*)self->setup;
+        angle = i << 0xE; //degrees: 0, 90, 180, 270
         
-        setupLF = obj_alloc_setup(0x38, OBJ_SC_lightfootSpe);
-        setupLF->base.x = (fsin16_precise(self->srt.yaw + temp_s4) * arg2) + self->srt.transl.x;
+        setupLF = obj_alloc_setup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);
+        setupLF->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupLF->base.y = self->srt.transl.y;
-        setupLF->base.z = (fcos16_precise(self->srt.yaw + temp_s4) * arg2) + self->srt.transl.z;
+        setupLF->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
         setupLF->base.loadFlags = objSetup->base.loadFlags;
         setupLF->base.byte5 = objSetup->base.byte5;
         setupLF->base.byte6 = objSetup->base.byte6;
         setupLF->base.fadeDistance = objSetup->base.fadeDistance;
         setupLF->unk18 = -1;
         setupLF->unk1A = 0x64C;
-        setupLF->unk1C = data_8[var_s6];
-        setupLF->unk30 = data_0[var_s6];
-        setupLF->unk2A = (self->srt.yaw + temp_s4 + 0x8000) >> 8;
+        setupLF->unk1C = dFinishedGamebits[lfIndex];
+        setupLF->unk30 = dActivateGamebits[lfIndex];
+        setupLF->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         setupLF->unk32 = 1;
         
-        setupFlame = obj_alloc_setup(0x20, OBJ_SC_flamegamefla);
-        setupFlame->base.x = (fsin16_precise(self->srt.yaw + temp_s4) * arg2) + self->srt.transl.x;
+        setupFlame = obj_alloc_setup(sizeof(SCFlameGameFlame_Setup), OBJ_SC_flamegamefla);
+        setupFlame->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupFlame->base.y = self->srt.transl.y;
-        setupFlame->base.z = (fcos16_precise(self->srt.yaw + temp_s4) * arg2) + self->srt.transl.z;
+        setupFlame->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
         setupFlame->base.loadFlags = objSetup->base.loadFlags;
         setupFlame->base.byte5 = objSetup->base.byte5;
         setupFlame->base.byte6 = objSetup->base.byte6;
         setupFlame->base.fadeDistance = objSetup->base.fadeDistance;
-        setupFlame->unk18 = 75;
+        setupFlame->flameRange = 75;
         setupFlame->unk19 = 0;
-        setupFlame->unk1A = data_10[var_s6];
+        setupFlame->kyteFlightCurveID = dKyteFlightCurveIDs[lfIndex];
         setupFlame->unk1C = 5;
         setupFlame->unk1D = 7;
         setupFlame->unk1E = 7;
-        setupFlame->unk1F = (self->srt.yaw + temp_s4 + 0x8000) >> 8;
+        setupFlame->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         
         obj_create((ObjSetup*)setupLF, 5, -1, -1, 0);
         obj_create((ObjSetup*)setupFlame, 5, -1, -1, 0);
         
-        var_s6++;
-        if (var_s6 >= 4) {
-            var_s6 = 0;
+        lfIndex++;
+        if (lfIndex >= 4) {
+            lfIndex = 0;
         }
     }
 }
 
 // offset: 0x7F8 | func: 9
-void SCTotemBond_func_7F8(Object* self, DLL527_Data* objData) {
+void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     Object* player;
     Object* kyte;
 
+    //Make sure Kyte has at least 1 unit of Flame energy
     kyte = get_sidekick();
     if (kyte != NULL) {
-        objData->unk8 = ((DLL_Unknown*)kyte->dll)->vtbl->func[16].withOneArgS32(kyte);
-        if (objData->unk8 <= 0) {
-            objData->unk8 = 1;
+        objData->flameEnergyCount = ((DLL_ISidekick*)kyte->dll)->vtbl->get_red_food_count(kyte);
+        if (objData->flameEnergyCount <= 0) {
+            objData->flameEnergyCount = 1;
         }
     } else {
-        objData->unk8 = 1;
+        objData->flameEnergyCount = 1;
     }
     
-    self->srt.yaw = 0x7FFF;
+    self->srt.yaw = M_180_DEGREES - 1;
     func_800267A4(self);
-    SCTotemBond_func_510(self, objData, -70.0f);
-    main_set_bits(data_0[objData->unk2], 1);
+
+    //Create minigame objects, and enable first Flame target
+    SCTotemBond_create_lightfoot_and_flame_targets(self, objData, -70.0f);
+    main_set_bits(dActivateGamebits[objData->directionIndex], 1);
+
+    //Hide totem (for first-person view)
     self->opacity = 0;
     
-    objData->unk0 &= ~1;
-    objData->unk0 |= 2;
-    main_set_bits(0x46E, 0x83);
+    //Set object flags
+    objData->flags &= ~SCTotemBond_FLAG_Init_Minigame;
+    objData->flags |= SCTotemBond_FLAG_Minigame_Active;
     
+    //Set Kyte's initial flight curve
+    main_set_bits(BIT_Kyte_Flight_Curve, 0x83);
+    
+    //Create restart point
     player = get_player();
     gDLL_29_Gplay->vtbl->restart_set(&player->srt.transl, player->srt.yaw, map_get_layer());
 }
 
 
 // offset: 0x960 | func: 10
-void SCTotemBond_func_960(Object* self, DLL527_Data* objData) {
+void SCTotemBond_finish_minigame(Object* self, SCTotemBond_Data* objData) {
     Object* player;
 
     player = get_player();
     
     gDLL_29_Gplay->vtbl->restart_clear();
-    gDLL_2_Camera->vtbl->change_camera_module(0x54, 0, 3, 0, 0, 0, 0);
+    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 3, 0, NULL, 0, 0);
     self->opacity = OBJECT_OPACITY_MAX;
     ((DLL_210_Player*)player->dll)->vtbl->func71(player, 0, 0, 0);
     
     func_8002674C(self);
     
-    if (objData->unk0 & 4) {
-        main_set_bits(BIT_2BC, 1);
+    if (objData->flags & SCTotemBond_FLAG_All_Directions_Defended) {
+        main_set_bits(BIT_LightFoot_Village_Krystal_Freed, 1);
     }
-    objData->unk0 = 0;
+    objData->flags = SCTotemBond_FLAG_None;
 }
 
 // offset: 0xA70 | func: 11
-s32 SCTotemBond_func_A70(Object* self, DLL527_Data* objData) {
-    s8 sp44[4];
+/**
+  * Picks a new direction for the player to face, 
+  * excluding directions that Kyte has already defended using Flame.
+  *
+  * Returns 0 if successful, or 1 if no direction could be picked.
+  */
+s32 SCTotemBond_pick_new_direction(Object* self, SCTotemBond_Data* objData) {
+    s8 directionsAvailable[4];
     u8 random;
-    u8 matchIndex;
+    u8 directions;
     u8 i;
 
-    for (i = 0, matchIndex = 0; i < 4; i++) {
-        if (main_get_bits(data_8[i]) == 0) {
-            sp44[matchIndex++] = i;
+    for (i = 0, directions = 0; i < 4; i++) {
+        if (main_get_bits(dFinishedGamebits[i]) == 0) {
+            directionsAvailable[directions++] = i;
         }
     }
     
-    if (!matchIndex) {
+    if (!directions) {
         return 1;
     }
     
-    random = sp44[rand_next(0, matchIndex - 1)];
-    if (objData->unk2 == random) {
-        main_set_bits(data_0[objData->unk2], 1);
+    random = directionsAvailable[rand_next(0, directions - 1)];
+    if (objData->directionIndex == random) {
+        main_set_bits(dActivateGamebits[objData->directionIndex], 1);
     }
-    objData->unk2 = random;
+    objData->directionIndex = random;
     
     return 0;
 }
 
 // offset: 0xB80 | func: 12
-void SCTotemBond_func_B80(Object* self, u8 arg1) {
+/**
+  * Finds the `SC_levelcontrol` Object, and uses one of its functions to
+  * set an overall state value for SwapStone Circle.
+  */
+void SCTotemBond_set_level_state(Object* self, u8 value) {
     Object** objects;
     s32 index;
     s32 count;
 
     for (objects = get_world_objects(&index, &count); index < count; index++) {
         if ((self != objects[index]) && (objects[index]->id == OBJ_SC_levelcontrol)) {
-            ((DLL_519_SC_Levelcontrol*)objects[index]->dll)->vtbl->func7(objects[index], arg1);
+            ((DLL_519_SC_Levelcontrol*)objects[index]->dll)->vtbl->func7(objects[index], value);
             return;
         }
     }

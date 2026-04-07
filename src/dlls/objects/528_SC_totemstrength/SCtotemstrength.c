@@ -55,9 +55,9 @@ typedef enum {
 typedef enum {
     SCTotemStrength_SEQCMD_1_Enable_Pushing = 1,
     SCTotemStrength_SEQCMD_2_Initialise_Strength_Game = 2,
-    SCTotemStrength_SEQCMD_Set_Level_State_3 = 3,
-    SCTotemStrength_SEQCMD_Set_Level_State_4 = 4,
-    SCTotemStrength_SEQCMD_Refill_Player_Health_Magic = 5
+    SCTotemStrength_SEQCMD_3_Set_Level_State_3 = 3,
+    SCTotemStrength_SEQCMD_4_Set_Level_State_4 = 4,
+    SCTotemStrength_SEQCMD_5_Refill_Player_Health_Magic = 5
 } SCTotemStrength_SeqCommands;
 
 /*0x0*/ static u16 dSoundsLightFoot[3] = {
@@ -238,14 +238,14 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
             func_80023D30(objData->lightFoot, 0, 1.0f, 0);
             gDLL_3_Animation->vtbl->func19(0x5A, 3, 0, 0);
             break;
-        case SCTotemStrength_SEQCMD_Set_Level_State_3:
+        case SCTotemStrength_SEQCMD_3_Set_Level_State_3:
             STUBBED_PRINTF("Enable music change\n");
             SCTotemStrength_set_level_state(self, 3);
             break;
-        case SCTotemStrength_SEQCMD_Set_Level_State_4:
+        case SCTotemStrength_SEQCMD_4_Set_Level_State_4:
             SCTotemStrength_set_level_state(self, 4);
             break;
-        case SCTotemStrength_SEQCMD_Refill_Player_Health_Magic:
+        case SCTotemStrength_SEQCMD_5_Refill_Player_Health_Magic:
             ((DLL_210_Player*)player->dll)->vtbl->set_health(player, 0x7F);
             ((DLL_210_Player*)player->dll)->vtbl->set_magic(player, 0xFF);
             //break;

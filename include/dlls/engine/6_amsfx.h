@@ -472,7 +472,7 @@ enum SoundID {
     
     SOUND_793 = 0x793, //DFPLevelControl (empty?)
 
-    SOUND_796 = 0x796,
+    SOUND_796_Pole_Rotate = 0x796,
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
 
