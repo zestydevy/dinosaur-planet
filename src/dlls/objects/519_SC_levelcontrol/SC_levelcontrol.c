@@ -17,6 +17,8 @@
 #include "types.h"
 #include "sys/rand.h"
 
+#include "dlls/objects/519_SC_levelcontrol.h"
+
 #define SOMESIZE 28
 
 // tree order

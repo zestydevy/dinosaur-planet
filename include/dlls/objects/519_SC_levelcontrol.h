@@ -14,6 +14,17 @@ typedef enum {
     SC_ObjGroup6_LightFoot_Village_Rotating_Door = 6
 } SC_ObjectGroups;
 
+typedef enum {
+    SC_Setup0 = 0,
+    SC_Setup1 = 1,
+    SC_Setup2 = 2,
+    SC_Setup3 = 3,
+    SC_Setup4 = 4,
+    SC_Setup5 = 5,
+    SC_Setup6_LightFoot_Trials_Strength = 6,
+    SC_Setup7 = 7
+} SC_Setups; //TO-DO: find maximum setup number used, add descriptive names for each setup
+
 DLL_INTERFACE(DLL_519_SC_Levelcontrol) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ void (*func7)(Object *self, u8 arg1);
