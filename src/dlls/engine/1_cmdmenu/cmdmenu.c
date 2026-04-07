@@ -26,10 +26,10 @@
 // official filename: 9slcommandmenu.c (default.dol)
 
 typedef struct {
-/*0*/ Texture* unk0;
-/*4*/ s32 unk4;
-/*8*/ f32 unk8;
-/*C*/ s16 unkC;
+/*0*/ Texture* texture;
+/*4*/ s32 timer;
+/*8*/ f32 opacity;
+/*C*/ s16 count;
 } CmdmenuItemUnkBSS;
 
 typedef struct {
@@ -133,12 +133,12 @@ enum CmdMenuTextures {
     CMDMENU_TEX_26_Scarab_Spin_Frame5 = 26,
     CMDMENU_TEX_27_Scarab_Spin_Frame6 = 27,
     CMDMENU_TEX_28_Scarab_Spin_Frame7 = 28,
-    CMDMENU_TEX_29 = 29,
-    CMDMENU_TEX_30 = 30,
-    CMDMENU_TEX_31 = 31,
-    CMDMENU_TEX_32 = 32,
-    CMDMENU_TEX_33 = 33,
-    CMDMENU_TEX_34 = 34,
+    CMDMENU_TEX_29_Page_Torn_Left = 29,
+    CMDMENU_TEX_30_Page_Torn_Right = 30,
+    CMDMENU_TEX_31_Highlight_Corner_Top_Left = 31,
+    CMDMENU_TEX_32_Highlight_Corner_Top_Right = 32,
+    CMDMENU_TEX_33_Highlight_Corner_Bottom_Left = 33,
+    CMDMENU_TEX_34_Highlight_Corner_Bottom_Right = 34,
     CMDMENU_TEX_35_MagicBar_Empty = 35,
     CMDMENU_TEX_36_MagicBar_Full = 36,
     CMDMENU_TEX_37_C_Down = 37,
@@ -156,7 +156,7 @@ enum CmdMenuTextures {
     CMDMENU_TEX_49_MagicBook = 49,
     CMDMENU_TEX_50_Bag = 50,
     CMDMENU_TEX_51_Mushroom_Blue_Half = 51,
-    CMDMENU_TEX_52 = 52,
+    CMDMENU_TEX_52_Page_Torn_Shadow = 52,
     CMDMENU_TEX_53_Krystal = 53,
     CMDMENU_TEX_54_Kyte = 54,
     CMDMENU_TEX_55_Grub_Empty = 55,
@@ -200,7 +200,13 @@ enum CmdMenuTextures {
 /*0x84*/ static s16 _data_84 = 0;
 /*0x88*/ static s8 _data_88 = 1;
 /*0x8C*/ static s16 _data_8C[] = {
-    0x002d, 0x0040, 0x01d7, 0x05bd, 0x05ce, 0x05fc, 0x0777
+    BIT_Spell_Projectile, 
+    BIT_Spell_Illusion, 
+    BIT_Spell_Forcefield, 
+    BIT_Spell_Portal, 
+    BIT_Spell_Ice_Blast, 
+    BIT_Spell_Mind_Read, 
+    BIT_Spell_Grenade
 };
 /*0x9C*/ static s16 _data_9C[] = {
     TEXTABLE_578_CMDMENU_ProjectileSpell_NoBG, 
@@ -250,219 +256,219 @@ enum CmdMenuTextures {
 
 /* Krystal items
  * 0x128*/ static InventoryItem _data_128[] = {
-    {BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    0x245, NONE,  0x010, -1, 1}, //Warp Crystal
-    {BIT_CRF_Prison_Key_1,       NONE,                             0x175, NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
-    {BIT_CRF_Power_Room_Key,     NONE,                             0x176, NONE,  0x008, -1, 1}, //Power Room Key (CloudRunner Fortress)
-    {BIT_CRF_Red_Power_Crystal,  NONE,                             0x180, NONE,  0x009, -1, 1}, //Red Power Crystal (CloudRunner Fortress)
-    {BIT_CRF_Green_Power_Crystal,NONE,                             0x181, NONE,  0x009, -1, 1}, //Green Power Crystal (CloudRunner Fortress)
-    {BIT_CRF_Blue_Power_Crystal, NONE,                             0x182, NONE,  0x009, -1, 1}, //Blue Power Crystal (CloudRunner Fortress)
-    {BIT_IM_Snowbike_Key,        NONE,                             0x175, NONE,  0x011, -1, 1}, //Snowbike Key (Removed)
-    {BIT_DIM_Mine_Key,           BIT_DIM_Used_Mine_Key,            0x175, NONE,  0x013, -1, 1}, //Mine Key (unused?)
-    {BIT_DIM_Alpine_Roots,       NONE,                             0x1a3, NONE,  0x00b, -1, 1}, //Alpine Root (unused?)
-    {BIT_DIM_Gear_1,             BIT_DIM_Used_Gear_1,              0x479, NONE,  0x00b, -1, 1}, //DIM Gear 1
-    {BIT_DIM_Gear_2,            BIT_DIM_Used_Gear_2,              0x479,  NONE,  0x00b, -1, 1}, //DIM Gear 2
-    {BIT_DIM_Gear_3,            BIT_DIM_Used_Gear_3,              0x479,  NONE,  0x00b, -1, 1}, //DIM Gear 3
-    {BIT_DIM_Gear_4,            BIT_DIM_Used_Gear_4,              0x479,  NONE,  0x00b, -1, 1}, //DIM Gear 4
-    {BIT_Krystal_Foodbag_S,     BIT_Krystal_Foodbag_M,            0x27a,  NONE,  0x016,  2, 2}, //Small Food Bag
-    {BIT_Krystal_Foodbag_M,     BIT_Krystal_Foodbag_L,            0x244,  NONE,  0x017,  2, 2}, //Medium Food Bag
-    {BIT_Krystal_Foodbag_L,     NONE,                             0x2bf,  NONE,  0x018,  2, 2}, //Large Food Bag
-    {BIT_Krystal_Dino_Bag_S,    BIT_Krystal_Dino_Bag_M,           0x471,  NONE,  0x02f,  9, 2}, //Small Grub Bag
-    {BIT_Krystal_Dino_Bag_M,    BIT_Krystal_Dino_Bag_L,           0x560,  NONE,  0x030,  9, 2}, //Medium Grub Bag
-    {BIT_Krystal_Dino_Bag_L,    NONE,                             0x560,  NONE,  0x031,  9, 2}, //Large Grub Bag
-    {BIT_Gold_Nugget_GP,        BIT_CC_Bribed_GuardClaw,          0x257,  NONE,  NONE,  -1, 1}, //Gold Nugget #1 (Near Golden Plains)
-    {BIT_Gold_Nugget_LFV,       BIT_CC_Used_Cell_Door_Key,        0x257,  NONE,  NONE,  -1, 1}, //Gold Nugget #2 (Near LightFoot Village)
-    {BIT_CC_Fire_Crystal,       NONE,                             0x4f7,  NONE,  0x102, -1, 1}, //Fire Crystal
-    {BIT_CC_Cell_Door_Key,      BIT_CC_Used_Cell_Door_Key,        0x175,  NONE,  0x01e, -1, 1}, //Cell Door Key (Cape Claw?)
-    {BIT_SpellStone_CRF,        NONE,                             0x562,  NONE,  NONE,  -1, 1}, //SpellStone - CloudRunner Fortress (Inactive)
-    {BIT_SpellStone_BWC,        NONE,                             0x562,  NONE,  NONE,  -1, 1}, //SpellStone - BlackWater Canyon (Inactive)
-    {BIT_SpellStone_KP,         NONE,                             0x562,  NONE,  NONE,  -1, 1}, //SpellStone - Krazoa Palace (Inactive)
-    {BIT_Krazoa_Translator,     NONE,                             0x496,  NONE,  NONE,  -1, 1}, //Krazoa Translator
-    {BIT_Horn_of_Truth,         NONE,                             0x258,  NONE,  0x01d, -1, 1}, //Horn of Truth
-    {BIT_CRF_Treasure_Chest_Key,NONE,                             0x568,  NONE,  NONE,  -1, 1}, //Treasure Chest Key (CloudRunner Fortress)
-    {BIT_CloudRunner_Grubs,     NONE,                             0x1a5,  NONE,  0x02a, -1, 1}, //Blue Mushroom (CloudRunner Grubs?)
-    {BIT_Krystal_Fireflies,     NONE,                             0x46d,  NONE,  0x03d, -1, 1}, //Firefly Lantern
-    {BIT_CRF_Prison_Key_2,      NONE,                             0x175,  NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
-    {BIT_CC_Krazoa_Tablets,     NONE,                             0x496,  NONE,  0x05b, -1, 1}, //Krazoa Tablets
-    {BIT_Inventory_MoonSeeds,   NONE,                             0x40d,  NONE,  0x05e, -1, 1}, //MoonSeeds
-    {BIT_CC_Engineers_Key,      NONE,                             0x175,  NONE,  0x064, -1, 1}, //Construction Engineer's Key (CloudRunner Fortress)
-    {BIT_Gold_Nugget_CC,        BIT_CC_Bribed_GuardClaw,          0x257,  NONE,  0x103, -1, 1}, //Gold Nugget #3 (Cape Claw)
+    {BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    TEXTABLE_245, NONE,  0x010, -1, 1}, //Warp Crystal
+    {BIT_CRF_Prison_Key_1,       NONE,                             TEXTABLE_175, NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
+    {BIT_CRF_Power_Room_Key,     NONE,                             TEXTABLE_176, NONE,  0x008, -1, 1}, //Power Room Key (CloudRunner Fortress)
+    {BIT_CRF_Red_Power_Crystal,  NONE,                             TEXTABLE_180, NONE,  0x009, -1, 1}, //Red Power Crystal (CloudRunner Fortress)
+    {BIT_CRF_Green_Power_Crystal,NONE,                             TEXTABLE_181, NONE,  0x009, -1, 1}, //Green Power Crystal (CloudRunner Fortress)
+    {BIT_CRF_Blue_Power_Crystal, NONE,                             TEXTABLE_182, NONE,  0x009, -1, 1}, //Blue Power Crystal (CloudRunner Fortress)
+    {BIT_IM_Snowbike_Key,        NONE,                             TEXTABLE_175, NONE,  0x011, -1, 1}, //Snowbike Key (Removed)
+    {BIT_DIM_Mine_Key,           BIT_DIM_Used_Mine_Key,            TEXTABLE_175, NONE,  0x013, -1, 1}, //Mine Key (unused?)
+    {BIT_DIM_Alpine_Roots,       NONE,                             TEXTABLE_1A3, NONE,  0x00b, -1, 1}, //Alpine Root (unused?)
+    {BIT_DIM_Gear_1,             BIT_DIM_Used_Gear_1,              TEXTABLE_479, NONE,  0x00b, -1, 1}, //DIM Gear 1
+    {BIT_DIM_Gear_2,            BIT_DIM_Used_Gear_2,              TEXTABLE_479,  NONE,  0x00b, -1, 1}, //DIM Gear 2
+    {BIT_DIM_Gear_3,            BIT_DIM_Used_Gear_3,              TEXTABLE_479,  NONE,  0x00b, -1, 1}, //DIM Gear 3
+    {BIT_DIM_Gear_4,            BIT_DIM_Used_Gear_4,              TEXTABLE_479,  NONE,  0x00b, -1, 1}, //DIM Gear 4
+    {BIT_Krystal_Foodbag_S,     BIT_Krystal_Foodbag_M,            TEXTABLE_27A,  NONE,  0x016,  2, 2}, //Small Food Bag
+    {BIT_Krystal_Foodbag_M,     BIT_Krystal_Foodbag_L,            TEXTABLE_244,  NONE,  0x017,  2, 2}, //Medium Food Bag
+    {BIT_Krystal_Foodbag_L,     NONE,                             TEXTABLE_2BF,  NONE,  0x018,  2, 2}, //Large Food Bag
+    {BIT_Krystal_Dino_Bag_S,    BIT_Krystal_Dino_Bag_M,           TEXTABLE_471,  NONE,  0x02f,  9, 2}, //Small Grub Bag
+    {BIT_Krystal_Dino_Bag_M,    BIT_Krystal_Dino_Bag_L,           TEXTABLE_560,  NONE,  0x030,  9, 2}, //Medium Grub Bag
+    {BIT_Krystal_Dino_Bag_L,    NONE,                             TEXTABLE_560,  NONE,  0x031,  9, 2}, //Large Grub Bag
+    {BIT_Gold_Nugget_GP,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  NONE,  -1, 1}, //Gold Nugget #1 (Near Golden Plains)
+    {BIT_Gold_Nugget_LFV,       BIT_CC_Rescued_Kyte,              TEXTABLE_257,  NONE,  NONE,  -1, 1}, //Gold Nugget #2 (Near LightFoot Village)
+    {BIT_CC_Fire_Crystal,       NONE,                             TEXTABLE_4F7,  NONE,  0x102, -1, 1}, //Fire Crystal
+    {BIT_CC_Cell_Door_Key,      BIT_CC_Rescued_Kyte,              TEXTABLE_175,  NONE,  0x01e, -1, 1}, //Cell Door Key (Cape Claw?)
+    {BIT_SpellStone_CRF,        NONE,                             TEXTABLE_562,  NONE,  NONE,  -1, 1}, //SpellStone - CloudRunner Fortress (Inactive)
+    {BIT_SpellStone_BWC,        NONE,                             TEXTABLE_562,  NONE,  NONE,  -1, 1}, //SpellStone - BlackWater Canyon (Inactive)
+    {BIT_SpellStone_KP,         NONE,                             TEXTABLE_562,  NONE,  NONE,  -1, 1}, //SpellStone - Krazoa Palace (Inactive)
+    {BIT_Krazoa_Translator,     NONE,                             TEXTABLE_496,  NONE,  NONE,  -1, 1}, //Krazoa Translator
+    {BIT_Horn_of_Truth,         NONE,                             TEXTABLE_258,  NONE,  0x01d, -1, 1}, //Horn of Truth
+    {BIT_CRF_Treasure_Chest_Key,NONE,                             TEXTABLE_568,  NONE,  NONE,  -1, 1}, //Treasure Chest Key (CloudRunner Fortress)
+    {BIT_CloudRunner_Grubs,     NONE,                             TEXTABLE_1A5,  NONE,  0x02a, -1, 1}, //Blue Mushroom (CloudRunner Grubs?)
+    {BIT_Krystal_Fireflies,     NONE,                             TEXTABLE_46D,  NONE,  0x03d, -1, 1}, //Firefly Lantern
+    {BIT_CRF_Prison_Key_2,      NONE,                             TEXTABLE_175,  NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
+    {BIT_CC_Krazoa_Tablets,     NONE,                             TEXTABLE_496,  NONE,  0x05b, -1, 1}, //Krazoa Tablets
+    {BIT_Inventory_MoonSeeds,   NONE,                             TEXTABLE_40D,  NONE,  0x05e, -1, 1}, //MoonSeeds
+    {BIT_CC_Engineers_Key,      NONE,                             TEXTABLE_175,  NONE,  0x064, -1, 1}, //Construction Engineer's Key (CloudRunner Fortress)
+    {BIT_Gold_Nugget_CC,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  0x103, -1, 1}, //Gold Nugget #3 (Cape Claw)
     END
 };
 
 /* Sabre items
  * 0x2E4*/ static InventoryItem _data_2E4[] = {
-    {BIT_SP_Krazoa_Translator,       NONE,                         0x175, NONE,  0x0a,  -1, 1}, //Gate Key (Northern Wastes) (Unused?)
-    {BIT_SW_Alpine_Roots,            NONE,                         0x1a3, NONE,  0x0b,  -1, 1}, //Alpine Root (Geyser area)
-    {BIT_Inventory_Blue_Mushrooms,   NONE,                         0x1a5, NONE,  0x0c,  -1, 1}, //Blue Mushroom
-    {BIT_Inventory_Purple_Mushrooms, NONE,                         0x498, NONE,  0x57,  -1, 1}, //Purple Mushroom
-    {BIT_Inventory_White_Mushrooms,  NONE,                         0x497, NONE,  0x56,  -1, 1}, //White Mushroom
-    {BIT_DIM_Mine_Key,               BIT_DIM_Used_Mine_Key,        0x175, NONE,  0x13,  -1, 1}, //Mine Key
-    {BIT_DIM_Alpine_Roots,           NONE,                         0x1a3, NONE,  0x0b,  -1, 1}, //Alpine Root (DIM)
-    {BIT_DIM_Gear_1,                 BIT_DIM_Used_Gear_1,          0x479, NONE,  0x0b,  -1, 1}, //DIM Gear 1 
-    {BIT_DIM_Gear_2,                 BIT_DIM_Used_Gear_2,          0x479, NONE,  0x0b,  -1, 1}, //DIM Gear 2
-    {BIT_DIM_Gear_3,                 BIT_DIM_Used_Gear_3,          0x479, NONE,  0x0b,  -1, 1}, //DIM Gear 3
-    {BIT_DIM_Gear_4,                BIT_DIM_Used_Gear_4,          0x479,  NONE,  0x0b,  -1, 1}, //DIM Gear 4
-    {BIT_Belina_Te_Cell_Key,        BIT_Used_Belina_Te_Cell_Key,  0x175,  NONE,  0x19,  -1, 1}, //Belina Te Cell Key (DarkIce Mines)
-    {BIT_Tricky_Cell_Key,           BIT_Used_Tricky_Cell_Key,     0x175,  NONE,  0x19,  -1, 1}, //Tricky Cell Key (DarkIce Mines)
-    {BIT_Sabre_Warp_Crystal,        BIT_Sabre_Used_Warp_Crystal,  0x245,  NONE,  0x10,  -1, 1}, //Warp Crystal
-    {BIT_DIM_Door_Key_1,            BIT_DIM_Used_Door_Key_1,      0x175,  NONE,  0x19,  -1, 1}, //Door Key 1 (DarkIce Mines)
-    {BIT_DIM_Door_Key_2,            BIT_DIM_Used_Door_Key_2,      0x175,  NONE,  0x19,  -1, 1}, //Door Key 2 (DarkIce Mines)
-    {BIT_Sabre_Foodbag_S,           BIT_Sabre_Foodbag_M,          0x27a,  NONE,  0x16,   3, 2}, //Small Food Bag
-    {BIT_Sabre_Foodbag_M,           BIT_Sabre_Foodbag_L,          0x244,  NONE,  0x17,   3, 2}, //Medium Food Bag
-    {BIT_Sabre_Foodbag_L,           NONE,                         0x2bf,  NONE,  0x18,   3, 2}, //Large Food Bag
-    {BIT_Sabre_Dino_Bag_S,          BIT_Sabre_Dino_Bag_M,         0x471,  NONE,  0x32,  10, 2}, //Small Dinosaur Food Bag
-    {BIT_Sabre_Dino_Bag_M,          BIT_Sabre_Dino_Bag_L,         0x560,  NONE,  0x33,  10, 2}, //Medium Dinosaur Food Bag
-    {BIT_Sabre_Dino_Bag_L,          NONE,                         0x560,  NONE,  0x34,  10, 2}, //Large Dinosaur Food Bag
-    {BIT_Inventory_Corrupt_Item,    NONE,                         0x175,  NONE,  0x1d,  -1, 1}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
-    {BIT_Horn_of_Truth,             NONE,                         0x258,  NONE,  0x1d,  -1, 1}, //Horn of Truth
-    {BIT_Sabre_Fireflies,           NONE,                         0x46d,  NONE,  0x3d,  -1, 1}, //Firefly Lantern
-    {BIT_WC_Silver_Tooth,           BIT_WC_Used_Silver_Tooth,     0x52b,  NONE,  0x00,  -1, 1}, //Silver Tooth (Walled City)
-    {BIT_WC_Gold_Tooth,             BIT_WC_Used_Gold_Tooth,       0x52a,  NONE,  0x00,  -1, 1}, //Gold Tooth (Walled City)
-    {BIT_WC_Sun_Stone,              BIT_WC_Used_Sun_Stone,        0x3a8,  NONE,  0x1b,  -1, 1}, //Sun Stone (Walled City)
-    {BIT_WC_Moon_Stone,             BIT_WC_Used_Moon_Stone,       0x3d6,  NONE,  0x1c,  -1, 1}, //Moon Stone (Walled City)
-    {BIT_Inventory_MoonSeeds,       NONE,                         0x40d,  NONE,  0x62,  -1, 1}, //MoonSeeds
-    {BIT_SpellStone_DIM,            BIT_SpellStone_DIM_Activated, 0x562,  NONE,  0x60,  -1, 1}, //SpellStone - DarkIce Mines (Inactive)
-    {BIT_SpellStone_DIM_Activated,  NONE,                         0x563,  NONE,  0x61,  -1, 1}, //SpellStone - DarkIce Mines (Activated) 
-    {BIT_SpellStone_WC,             NONE,                         0x180,  NONE,  NONE,  -1, 1}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
-    {BIT_SpellStone_DR,             NONE,                         0x180,  NONE,  NONE,  -1, 1}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
-    {BIT_DB_PointBack_Egg,          NONE,                         0x55e,  NONE,  0x5e,  -1, 1}, //PointBack Egg (Diamond Bay)
-    {BIT_DB_Bay_Diamond,            NONE,                         0x55f,  NONE,  0x5f,  -1, 1}, //Bay Diamond
+    {BIT_SP_Krazoa_Translator,       NONE,                         TEXTABLE_175, NONE,  0x0a,  -1, 1}, //Gate Key (Northern Wastes) (Unused?)
+    {BIT_SW_Alpine_Roots,            NONE,                         TEXTABLE_1A3, NONE,  0x0b,  -1, 1}, //Alpine Root (Geyser area)
+    {BIT_Inventory_Blue_Mushrooms,   NONE,                         TEXTABLE_1A5, NONE,  0x0c,  -1, 1}, //Blue Mushroom
+    {BIT_Inventory_Purple_Mushrooms, NONE,                         TEXTABLE_498, NONE,  0x57,  -1, 1}, //Purple Mushroom
+    {BIT_Inventory_White_Mushrooms,  NONE,                         TEXTABLE_497, NONE,  0x56,  -1, 1}, //White Mushroom
+    {BIT_DIM_Mine_Key,               BIT_DIM_Used_Mine_Key,        TEXTABLE_175, NONE,  0x13,  -1, 1}, //Mine Key
+    {BIT_DIM_Alpine_Roots,           NONE,                         TEXTABLE_1A3, NONE,  0x0b,  -1, 1}, //Alpine Root (DIM)
+    {BIT_DIM_Gear_1,                 BIT_DIM_Used_Gear_1,          TEXTABLE_479, NONE,  0x0b,  -1, 1}, //DIM Gear 1 
+    {BIT_DIM_Gear_2,                 BIT_DIM_Used_Gear_2,          TEXTABLE_479, NONE,  0x0b,  -1, 1}, //DIM Gear 2
+    {BIT_DIM_Gear_3,                 BIT_DIM_Used_Gear_3,          TEXTABLE_479, NONE,  0x0b,  -1, 1}, //DIM Gear 3
+    {BIT_DIM_Gear_4,                BIT_DIM_Used_Gear_4,          TEXTABLE_479,  NONE,  0x0b,  -1, 1}, //DIM Gear 4
+    {BIT_Belina_Te_Cell_Key,        BIT_Used_Belina_Te_Cell_Key,  TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Belina Te Cell Key (DarkIce Mines)
+    {BIT_Tricky_Cell_Key,           BIT_Used_Tricky_Cell_Key,     TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Tricky Cell Key (DarkIce Mines)
+    {BIT_Sabre_Warp_Crystal,        BIT_Sabre_Used_Warp_Crystal,  TEXTABLE_245,  NONE,  0x10,  -1, 1}, //Warp Crystal
+    {BIT_DIM_Door_Key_1,            BIT_DIM_Used_Door_Key_1,      TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Door Key 1 (DarkIce Mines)
+    {BIT_DIM_Door_Key_2,            BIT_DIM_Used_Door_Key_2,      TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Door Key 2 (DarkIce Mines)
+    {BIT_Sabre_Foodbag_S,           BIT_Sabre_Foodbag_M,          TEXTABLE_27A,  NONE,  0x16,   3, 2}, //Small Food Bag
+    {BIT_Sabre_Foodbag_M,           BIT_Sabre_Foodbag_L,          TEXTABLE_244,  NONE,  0x17,   3, 2}, //Medium Food Bag
+    {BIT_Sabre_Foodbag_L,           NONE,                         TEXTABLE_2BF,  NONE,  0x18,   3, 2}, //Large Food Bag
+    {BIT_Sabre_Dino_Bag_S,          BIT_Sabre_Dino_Bag_M,         TEXTABLE_471,  NONE,  0x32,  10, 2}, //Small Dinosaur Food Bag
+    {BIT_Sabre_Dino_Bag_M,          BIT_Sabre_Dino_Bag_L,         TEXTABLE_560,  NONE,  0x33,  10, 2}, //Medium Dinosaur Food Bag
+    {BIT_Sabre_Dino_Bag_L,          NONE,                         TEXTABLE_560,  NONE,  0x34,  10, 2}, //Large Dinosaur Food Bag
+    {BIT_Inventory_Corrupt_Item,    NONE,                         TEXTABLE_175,  NONE,  0x1d,  -1, 1}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
+    {BIT_Horn_of_Truth,             NONE,                         TEXTABLE_258,  NONE,  0x1d,  -1, 1}, //Horn of Truth
+    {BIT_Sabre_Fireflies,           NONE,                         TEXTABLE_46D,  NONE,  0x3d,  -1, 1}, //Firefly Lantern
+    {BIT_WC_Silver_Tooth,           BIT_WC_Used_Silver_Tooth,     TEXTABLE_52B,  NONE,  0x00,  -1, 1}, //Silver Tooth (Walled City)
+    {BIT_WC_Gold_Tooth,             BIT_WC_Used_Gold_Tooth,       TEXTABLE_52A,  NONE,  0x00,  -1, 1}, //Gold Tooth (Walled City)
+    {BIT_WC_Sun_Stone,              BIT_WC_Used_Sun_Stone,        TEXTABLE_3A8,  NONE,  0x1b,  -1, 1}, //Sun Stone (Walled City)
+    {BIT_WC_Moon_Stone,             BIT_WC_Used_Moon_Stone,       TEXTABLE_3D6,  NONE,  0x1c,  -1, 1}, //Moon Stone (Walled City)
+    {BIT_Inventory_MoonSeeds,       NONE,                         TEXTABLE_40D,  NONE,  0x62,  -1, 1}, //MoonSeeds
+    {BIT_SpellStone_DIM,            BIT_SpellStone_DIM_Activated, TEXTABLE_562,  NONE,  0x60,  -1, 1}, //SpellStone - DarkIce Mines (Inactive)
+    {BIT_SpellStone_DIM_Activated,  NONE,                         TEXTABLE_563,  NONE,  0x61,  -1, 1}, //SpellStone - DarkIce Mines (Activated) 
+    {BIT_SpellStone_WC,             NONE,                         TEXTABLE_180,  NONE,  NONE,  -1, 1}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {BIT_SpellStone_DR,             NONE,                         TEXTABLE_180,  NONE,  NONE,  -1, 1}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {BIT_DB_PointBack_Egg,          NONE,                         TEXTABLE_55E,  NONE,  0x5e,  -1, 1}, //PointBack Egg (Diamond Bay)
+    {BIT_DB_Bay_Diamond,            NONE,                         TEXTABLE_55F,  NONE,  0x5f,  -1, 1}, //Bay Diamond
     END
 };
 
 /* Food Bag actions (Krystal)
  * 0x4A0*/ static InventoryItem _data_4A0[] = {
-    {BIT_Foodbag_Eat,               NONE, 0x2c7, NONE, 0x1f, 4, 2}, //Eat food in foodbag
-    {BIT_Foodbag_Place,             NONE, 0x2c8, NONE, 0x20, 4, 2}, //Place food down from foodbag
-    {BIT_Foodbag_Give,              NONE, 0x2ef, NONE, 0x21, 4, 2}, //Give food from foodbag
-    {BIT_Foodbag_Setting_Eat_First, NONE, 0x265, NONE, 0x39, 2, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {BIT_Foodbag_Setting_Eat_Later, NONE, 0x529, NONE, 0x3a, 2, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, 4, 2}, //Eat food in foodbag
+    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, 4, 2}, //Place food down from foodbag
+    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, 4, 2}, //Give food from foodbag
+    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, 2, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, 2, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     END
 };
 
 /* Food Bag actions (Sabre)
  * 0x4E8*/ static InventoryItem _data_4E8[] = {
-    {BIT_Foodbag_Eat,               NONE, 0x2c7, NONE, 0x1f, 5, 2}, //Eat food in foodbag
-    {BIT_Foodbag_Place,             NONE, 0x2c8, NONE, 0x20, 5, 2}, //Place food down from foodbag
-    {BIT_Foodbag_Give,              NONE, 0x2ef, NONE, 0x21, 5, 2}, //Give food from foodbag
-    {BIT_Foodbag_Setting_Eat_First, NONE, 0x265, NONE, 0x39, 3, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {BIT_Foodbag_Setting_Eat_Later, NONE, 0x529, NONE, 0x3a, 3, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, 5, 2}, //Eat food in foodbag
+    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, 5, 2}, //Place food down from foodbag
+    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, 5, 2}, //Give food from foodbag
+    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, 3, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, 3, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     END
 };
 
 /* Food Bag items (Krystal)
  * 0x530*/ static InventoryItem _data_530[] = {
-    {BIT_Green_Apple_Count,  NONE,                  0x26e, NONE, 0x22, -1, 1}, //Green apple
-    {BIT_Red_Apple_Count,    NONE,                  0x26f, NONE, 0x23, -1, 1}, //Red apple
-    {BIT_Brown_Apple_Count,  NONE,                  0x270, NONE, 0x24, -1, 1}, //Brown Apple
-    {BIT_Fish_Count,         NONE,                  0x272, NONE, 0x25, -1, 1}, //Fish
-    {BIT_Smoked_Fish_Count,  NONE,                  0x2c6, NONE, 0x26, -1, 1}, //Smoked Fish
-    {BIT_Dino_Egg_Count,     NONE,                  0x2c4, NONE, 0x27, -1, 1}, //Dino Egg
-    {BIT_Moldy_Meat_Count,   NONE,                  0x2c5, NONE, 0x28, -1, 1}, //Moldy Meat
-    {BIT_Green_Bean_Count,   NONE,                  0x270, NONE, 0x35, -1, 1}, //Green Bean
-    {BIT_Red_Bean_Count,     NONE,                  0x270, NONE, 0x36, -1, 1}, //Red Bean
-    {BIT_Brown_Bean_Count,   NONE,                  0x270, NONE, 0x37, -1, 1}, //Brown Bean
-    {BIT_Blue_Bean_Count,   NONE,                  0x270,  NONE, 0x38, -1, 1}, //Blue Bean
-    {BIT_Krystal_Foodbag_S, BIT_Krystal_Foodbag_M, 0x27a,  NONE, 0x16,  2, 2}, //Small Food Bag
-    {BIT_Krystal_Foodbag_M, BIT_Krystal_Foodbag_L, 0x244,  NONE, 0x17,  2, 2}, //Medium Food Bag
-    {BIT_Krystal_Foodbag_L, NONE,                  0x2bf,  NONE, 0x18,  2, 2}, //Large Food Bag
+    {BIT_Green_Apple_Count,  NONE,                  TEXTABLE_26E, NONE, 0x22, -1, 1}, //Green apple
+    {BIT_Red_Apple_Count,    NONE,                  TEXTABLE_26F, NONE, 0x23, -1, 1}, //Red apple
+    {BIT_Brown_Apple_Count,  NONE,                  TEXTABLE_270, NONE, 0x24, -1, 1}, //Brown Apple
+    {BIT_Fish_Count,         NONE,                  TEXTABLE_272, NONE, 0x25, -1, 1}, //Fish
+    {BIT_Smoked_Fish_Count,  NONE,                  TEXTABLE_2C6, NONE, 0x26, -1, 1}, //Smoked Fish
+    {BIT_Dino_Egg_Count,     NONE,                  TEXTABLE_2C4, NONE, 0x27, -1, 1}, //Dino Egg
+    {BIT_Moldy_Meat_Count,   NONE,                  TEXTABLE_2C5, NONE, 0x28, -1, 1}, //Moldy Meat
+    {BIT_Green_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x35, -1, 1}, //Green Bean
+    {BIT_Red_Bean_Count,     NONE,                  TEXTABLE_270, NONE, 0x36, -1, 1}, //Red Bean
+    {BIT_Brown_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x37, -1, 1}, //Brown Bean
+    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, -1, 1}, //Blue Bean
+    {BIT_Krystal_Foodbag_S, BIT_Krystal_Foodbag_M, TEXTABLE_27A,  NONE, 0x16,  2, 2}, //Small Food Bag
+    {BIT_Krystal_Foodbag_M, BIT_Krystal_Foodbag_L, TEXTABLE_244,  NONE, 0x17,  2, 2}, //Medium Food Bag
+    {BIT_Krystal_Foodbag_L, NONE,                  TEXTABLE_2BF,  NONE, 0x18,  2, 2}, //Large Food Bag
     END
 };
 
 /* Food Bag items (Sabre)
  * 0x5E4*/ static InventoryItem _data_5E4[] = {
-    {BIT_Green_Apple_Count,  NONE,                  0x26e, NONE, 0x22, -1, 1}, //Green apple
-    {BIT_Red_Apple_Count,    NONE,                  0x26f, NONE, 0x23, -1, 1}, //Red apple
-    {BIT_Brown_Apple_Count,  NONE,                  0x270, NONE, 0x24, -1, 1}, //Brown Apple
-    {BIT_Fish_Count,         NONE,                  0x272, NONE, 0x25, -1, 1}, //Fish
-    {BIT_Smoked_Fish_Count,  NONE,                  0x2c6, NONE, 0x26, -1, 1}, //Smoked Fish
-    {BIT_Dino_Egg_Count,     NONE,                  0x2c4, NONE, 0x27, -1, 1}, //Dino Egg
-    {BIT_Moldy_Meat_Count,   NONE,                  0x2c5, NONE, 0x28, -1, 1}, //Moldy Meat
-    {BIT_Green_Bean_Count,   NONE,                  0x270, NONE, 0x35, -1, 1}, //Green Bean 
-    {BIT_Red_Bean_Count,     NONE,                  0x270, NONE, 0x36, -1, 1}, //Red Bean
-    {BIT_Brown_Bean_Count,   NONE,                  0x270, NONE, 0x37, -1, 1}, //Brown Bean
-    {BIT_Blue_Bean_Count,   NONE,                  0x270,  NONE, 0x38, -1, 1}, //Blue Bean
-    {BIT_Sabre_Foodbag_S,   BIT_Sabre_Foodbag_M,   0x27a,  NONE, 0x16,  3, 2}, //Small Food Bag
-    {BIT_Sabre_Foodbag_M,   BIT_Sabre_Foodbag_L,   0x244,  NONE, 0x17,  3, 2}, //Medium Food Bag
-    {BIT_Sabre_Foodbag_L,   NONE,                  0x2bf,  NONE, 0x18,  3, 2}, //Large Food Bag
+    {BIT_Green_Apple_Count,  NONE,                  TEXTABLE_26E, NONE, 0x22, -1, 1}, //Green apple
+    {BIT_Red_Apple_Count,    NONE,                  TEXTABLE_26F, NONE, 0x23, -1, 1}, //Red apple
+    {BIT_Brown_Apple_Count,  NONE,                  TEXTABLE_270, NONE, 0x24, -1, 1}, //Brown Apple
+    {BIT_Fish_Count,         NONE,                  TEXTABLE_272, NONE, 0x25, -1, 1}, //Fish
+    {BIT_Smoked_Fish_Count,  NONE,                  TEXTABLE_2C6, NONE, 0x26, -1, 1}, //Smoked Fish
+    {BIT_Dino_Egg_Count,     NONE,                  TEXTABLE_2C4, NONE, 0x27, -1, 1}, //Dino Egg
+    {BIT_Moldy_Meat_Count,   NONE,                  TEXTABLE_2C5, NONE, 0x28, -1, 1}, //Moldy Meat
+    {BIT_Green_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x35, -1, 1}, //Green Bean 
+    {BIT_Red_Bean_Count,     NONE,                  TEXTABLE_270, NONE, 0x36, -1, 1}, //Red Bean
+    {BIT_Brown_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x37, -1, 1}, //Brown Bean
+    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, -1, 1}, //Blue Bean
+    {BIT_Sabre_Foodbag_S,   BIT_Sabre_Foodbag_M,   TEXTABLE_27A,  NONE, 0x16,  3, 2}, //Small Food Bag
+    {BIT_Sabre_Foodbag_M,   BIT_Sabre_Foodbag_L,   TEXTABLE_244,  NONE, 0x17,  3, 2}, //Medium Food Bag
+    {BIT_Sabre_Foodbag_L,   NONE,                  TEXTABLE_2BF,  NONE, 0x18,  3, 2}, //Large Food Bag
     END
 };
 
 /* Magic Spells
  * 0x698*/ static InventoryItem _data_698[] = {
-    {BIT_Spell_Projectile, NONE,    0x0183, NONE, 0x0d, -1, 0}, //Projectile Spell
-    {BIT_Spell_Ice_Blast,  NONE,    0x0468, NONE, 0x3c, -1, 0}, //Ice Blast Spell
-    {BIT_Spell_Grenade,    NONE,    0x04f8, NONE, 0x0f, -1, 0}, //Grenade Spell (Incorrectly labelled as Randorn)
-    {BIT_Spell_Illusion,   NONE,    0x0177, NONE, 0x0e, -1, 0}, //Illusion Spell
-    {BIT_Spell_Forcefield, NONE,    0x0265, NONE, 0x14, -1, 0}, //ForceField Spell
-    {BIT_Spell_Glitched_1, NONE,    0x0183, NONE, 0x0d, -1, 0}, //Glitched Spell
-    {BIT_Spell_Glitched_2, BIT_348, 0x0529, NONE, 0x0d, -1, 0}, //Glitched Spell (Maybe "Quake", mentioned elsewhere?)
-    {BIT_Spell_Portal,     NONE,    0x0466, NONE, 0x3b, -1, 0}, //Portal Spell
-    {BIT_Spell_Mind_Read,  NONE,    0x0470, NONE, 0x3e, -1, 0}, //Mind Read
+    {BIT_Spell_Projectile, NONE,    TEXTABLE_183, NONE, 0x0d, -1, 0}, //Projectile Spell
+    {BIT_Spell_Ice_Blast,  NONE,    TEXTABLE_468, NONE, 0x3c, -1, 0}, //Ice Blast Spell
+    {BIT_Spell_Grenade,    NONE,    TEXTABLE_4F8, NONE, 0x0f, -1, 0}, //Grenade Spell (Incorrectly labelled as Randorn)
+    {BIT_Spell_Illusion,   NONE,    TEXTABLE_177, NONE, 0x0e, -1, 0}, //Illusion Spell
+    {BIT_Spell_Forcefield, NONE,    TEXTABLE_265, NONE, 0x14, -1, 0}, //ForceField Spell
+    {BIT_Spell_Glitched_1, NONE,    TEXTABLE_183, NONE, 0x0d, -1, 0}, //Glitched Spell
+    {BIT_Spell_Glitched_2, BIT_348, TEXTABLE_529, NONE, 0x0d, -1, 0}, //Glitched Spell (Maybe "Quake", mentioned elsewhere?)
+    {BIT_Spell_Portal,     NONE,    TEXTABLE_466, NONE, 0x3b, -1, 0}, //Portal Spell
+    {BIT_Spell_Mind_Read,  NONE,    TEXTABLE_470, NONE, 0x3e, -1, 0}, //Mind Read
     END
 };
 
 /* Sidekick Commands (Kyte)
  * 0x710*/ static InventoryItem _data_710[] = {
-    {0x01, 0, 0x1cd, 0x1cd, 0, 0, 0}, //Heel
-    {0x20, 5, 0x1d1, 0x1d1, 6, 0, 0}, //Play
-    {0x02, 1, 0x1ce, 0x1ce, 1, 0, 0}, //Find
-    {0x10, 4, 0x1cf, 0x1cf, 2, 0, 0}, //Flame
-    {0x04, 2, 0x1d0, 0x1d0, 3, 0, 0}, //Distract
-    {0x08, 3, 0x1d2, 0x1d2, 4, 0, 0}, //Guard
+    {0x01, 0, TEXTABLE_1CD, TEXTABLE_1CD, 0, 0, 0}, //Heel
+    {0x20, 5, TEXTABLE_1D1, TEXTABLE_1D1, 6, 0, 0}, //Play
+    {0x02, 1, TEXTABLE_1CE, TEXTABLE_1CE, 1, 0, 0}, //Find
+    {0x10, 4, TEXTABLE_1CF, TEXTABLE_1CF, 2, 0, 0}, //Flame
+    {0x04, 2, TEXTABLE_1D0, TEXTABLE_1D0, 3, 0, 0}, //Distract
+    {0x08, 3, TEXTABLE_1D2, TEXTABLE_1D2, 4, 0, 0}, //Guard
     END
 };
 
 /* Sidekick Commands (Tricky)
  * 0x764*/ static InventoryItem _data_764[] = {
-    {0x01, 0, 0x1cd, 0x1cd, 0, 0, 0}, //Heel
-    {0x20, 5, 0x1d1, 0x1d1, 6, 0, 0}, //Play
-    {0x02, 1, 0x1ce, 0x1ce, 1, 0, 0}, //Find
-    {0x10, 4, 0x1cf, 0x1cf, 2, 0, 0}, //Flame
-    {0x04, 2, 0x1d0, 0x1d0, 3, 0, 0}, //Distract
-    {0x08, 3, 0x1d2, 0x1d2, 4, 0, 0}, //Guard
+    {0x01, 0, TEXTABLE_1CD, TEXTABLE_1CD, 0, 0, 0}, //Heel
+    {0x20, 5, TEXTABLE_1D1, TEXTABLE_1D1, 6, 0, 0}, //Play
+    {0x02, 1, TEXTABLE_1CE, TEXTABLE_1CE, 1, 0, 0}, //Find
+    {0x10, 4, TEXTABLE_1CF, TEXTABLE_1CF, 2, 0, 0}, //Flame
+    {0x04, 2, TEXTABLE_1D0, TEXTABLE_1D0, 3, 0, 0}, //Distract
+    {0x08, 3, TEXTABLE_1D2, TEXTABLE_1D2, 4, 0, 0}, //Guard
     END
 };
 
 /* Dinosaur Food Bag Actions (Krystal)
  * 0x7B8*/ static InventoryItem _data_7B8[] = {
-    {BIT_Dino_Foodbag_Place, NONE, 0x2c8, NONE, 0x20, 11, 2}, //Place food down from foodbag
-    {BIT_Dino_Foodbag_Give,  NONE, 0x561, NONE, 0x21, 11, 2}, //Give food from foodbag
+    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, 11, 2}, //Place food down from foodbag
+    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, 11, 2}, //Give food from foodbag
     END
 };
 
 /* Dinosaur Food Bag Actions (Sabre)
  * 0x7DC*/ static InventoryItem _data_7DC[] = {
-    {BIT_Dino_Foodbag_Place, NONE, 0x2c8, NONE, 0x20, 12, 2}, //Place food down from foodbag
-    {BIT_Dino_Foodbag_Give,  NONE, 0x561, NONE, 0x21, 12, 2}, //Give food from foodbag
+    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, 12, 2}, //Place food down from foodbag
+    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, 12, 2}, //Give food from foodbag
     END
 };
 
 /* Dinosaur Food Bag Items (Kyte)
  * 0x800*/ static InventoryItem _data_800[] = {
-    {BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, 0x27a, NONE, 0x2f,  9, 2}, //Small Mushroom Bag
-    {BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, 0x244, NONE, 0x30,  9, 2}, //Medium Mushroom Bag
-    {BIT_Krystal_Dino_Bag_L,      NONE,                   0x2bf, NONE, 0x31,  9, 2}, //Large Mushroom Bag
-    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   0x270, NONE, 0x0c, -1, 1}, //Blue Mushroom
-    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   0x270, NONE, 0x2d, -1, 1}, //Red Mushroom
-    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   0x270, NONE, 0x2e, -1, 1}, //Old Mushroom
-    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   0x270, NONE, 0x2a, -1, 1}, //Blue Grub
-    {BIT_Dino_Bag_Red_Grubs,      NONE,                   0x270, NONE, 0x2b, -1, 1}, //Red Grub
-    {BIT_Dino_Bag_Old_Grubs,      NONE,                   0x270, NONE, 0x2c, -1, 1}, //Old Grub
+    {BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, TEXTABLE_27A, NONE, 0x2f,  9, 2}, //Small Mushroom Bag
+    {BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, TEXTABLE_244, NONE, 0x30,  9, 2}, //Medium Mushroom Bag
+    {BIT_Krystal_Dino_Bag_L,      NONE,                   TEXTABLE_2BF, NONE, 0x31,  9, 2}, //Large Mushroom Bag
+    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, -1, 1}, //Blue Mushroom
+    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, -1, 1}, //Red Mushroom
+    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, -1, 1}, //Old Mushroom
+    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, -1, 1}, //Blue Grub
+    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, -1, 1}, //Red Grub
+    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, -1, 1}, //Old Grub
     END
 };
 
 /* Dinosaur Food Bag Items (Tricky)
  * 0x878*/ static InventoryItem _data_878[] = {
-    {BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   0x27a, NONE, 0x32, 10, 2}, //Small Mushroom Bag
-    {BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   0x244, NONE, 0x33, 10, 2}, //Medium Mushroom Bag
-    {BIT_Sabre_Dino_Bag_L,        NONE,                   0x2bf, NONE, 0x34, 10, 2}, //Large Mushroom Bag
-    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   0x270, NONE, 0x0c, -1, 1}, //Blue Mushroom
-    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   0x270, NONE, 0x2d, -1, 1}, //Red Mushroom
-    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   0x270, NONE, 0x2e, -1, 1}, //Old Mushroom
-    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   0x270, NONE, 0x2a, -1, 1}, //Blue Grub
-    {BIT_Dino_Bag_Red_Grubs,      NONE,                   0x270, NONE, 0x2b, -1, 1}, //Red Grub
-    {BIT_Dino_Bag_Old_Grubs,      NONE,                   0x270, NONE, 0x2c, -1, 1}, //Old Grub
+    {BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   TEXTABLE_27A, NONE, 0x32, 10, 2}, //Small Mushroom Bag
+    {BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   TEXTABLE_244, NONE, 0x33, 10, 2}, //Medium Mushroom Bag
+    {BIT_Sabre_Dino_Bag_L,        NONE,                   TEXTABLE_2BF, NONE, 0x34, 10, 2}, //Large Mushroom Bag
+    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, -1, 1}, //Blue Mushroom
+    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, -1, 1}, //Red Mushroom
+    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, -1, 1}, //Old Mushroom
+    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, -1, 1}, //Blue Grub
+    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, -1, 1}, //Red Grub
+    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, -1, 1}, //Old Grub
     END
 };
 
@@ -515,12 +521,12 @@ enum CmdMenuTextures {
     /*26*/ TEXTABLE_3FC_CMDMENU_Scarab_Spin_Frame5,
     /*27*/ TEXTABLE_3FD_CMDMENU_Scarab_Spin_Frame6,
     /*28*/ TEXTABLE_3FE_CMDMENU_Scarab_Spin_Frame7,
-    /*29*/ TEXTABLE_422,
-    /*30*/ TEXTABLE_423,
-    /*31*/ TEXTABLE_429,
-    /*32*/ TEXTABLE_42A,
-    /*33*/ TEXTABLE_42B,
-    /*34*/ TEXTABLE_42C,
+    /*29*/ TEXTABLE_422_CMDMENU_Page_Torn_Left,
+    /*30*/ TEXTABLE_423_CMDMENU_Page_Torn_Right,
+    /*31*/ TEXTABLE_429_CMDMENU_Highlight_Corner_Top_Left,
+    /*32*/ TEXTABLE_42A_CMDMENU_Highlight_Corner_Top_Right,
+    /*33*/ TEXTABLE_42B_CMDMENU_Highlight_Corner_Bottom_Left,
+    /*34*/ TEXTABLE_42C_CMDMENU_Highlight_Corner_Bottom_Right,
     /*35*/ TEXTABLE_424_CMDMENU_MagicBar_Empty,
     /*36*/ TEXTABLE_42D_CMDMENU_MagicBar_Full,
     /*37*/ TEXTABLE_431_CMDMENU_C_Down,
@@ -538,7 +544,7 @@ enum CmdMenuTextures {
     /*49*/ TEXTABLE_43D_CMDMENU_MagicBook,
     /*50*/ TEXTABLE_43E_CMDMENU_Bag,
     /*51*/ TEXTABLE_434_CMDMENU_Mushroom_Blue_Half,
-    /*52*/ TEXTABLE_437,
+    /*52*/ TEXTABLE_437_CMDMENU_Page_Torn_Shadow,
     /*53*/ TEXTABLE_267_CMDMENU_Krystal,
     /*54*/ TEXTABLE_268_CMDMENU_Kyte,
     /*55*/ TEXTABLE_476_CMDMENU_Grub_Empty,
@@ -1521,10 +1527,13 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     var_s1 -= _bss_C44;
                 }
             }
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_31], 0x10A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_32], 0x11A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_33], 0x10A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_34], 0x11A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
+
+            //Draw a square around the currently highlighted item
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_31_Highlight_Corner_Top_Left], 0x10A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_32_Highlight_Corner_Top_Right], 0x11A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left], 0x10A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], 0x11A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
+            
             cmdmenu_func_474C(gdl);
         }
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
@@ -2544,109 +2553,135 @@ void cmdmenu_func_6984(s32 arg0) {
 
 // offset: 0x69CC | func: 41
 static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0) {
-    arg0->unk4 = -1;
-    arg0->unkC = 0;
-    arg0->unk0 = 0;
-    arg0->unk8 = 0.0f;
+    arg0->timer = -1;
+    arg0->count = 0;
+    arg0->texture = NULL;
+    arg0->opacity = 0.0f;
 }
 
 // offset: 0x69F8 | func: 42 | export: 17
-void cmdmenu_func_69F8(s16 arg0, s32 arg1, s32 arg2) {
-    InventoryItem *var_v0;
-    UIUnknownCharacterStruct *var_s2;
+void cmdmenu_func_69F8(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
+    InventoryItem *items;
+    UIUnknownCharacterStruct *inventoryPage;
 
-    var_s2 = _data_8F0;
+    inventoryPage = _data_8F0;
     STUBBED_PRINTF("qInfoShow\n");
-    _bss_C88.unk0 = NULL;
-    while (var_s2->characterItems != NULL) {
-        var_v0 = var_s2->characterItems;
-        while (var_v0->flagObtained != -1) {
-            if (arg0 == var_v0->flagObtained) {
-                _bss_C88.unk0 = tex_load_deferred(var_v0->textureID);
+    _bss_C88.texture = NULL;
+
+    //Find the item's TEXTABLE textureID, using the item's collection gamebitID
+    while (inventoryPage->characterItems != NULL) {
+        items = inventoryPage->characterItems;
+        while (items->flagObtained != NO_GAMEBIT) {
+            if (itemGamebit == items->flagObtained) {
+                _bss_C88.texture = tex_load_deferred(items->textureID);
                 break;
             }
-            var_v0++;
+            items++;
         }
-        var_s2++;
+        inventoryPage++;
     }
-    if (_bss_C88.unk0 != NULL) {
-        _bss_C88.unk4 = arg1;
-        _bss_C88.unkC = arg2;
-        _bss_C88.unk8 = 0.0f;
+
+    if (_bss_C88.texture != NULL) {
+        _bss_C88.timer = displayDuration;
+        _bss_C88.count = itemCount;
+        _bss_C88.opacity = 0.0f;
     }
 }
 
 // offset: 0x6B00 | func: 43 | export: 18
-void cmdmenu_func_6B00(s16 textureID, s32 arg1, s32 arg2) {   
+void cmdmenu_func_6B00(s16 textureID, s32 duration, s32 arg2) {   
     STUBBED_PRINTF("qInfoShowTex\n");
-    if ((_bss_C88.unk0 = tex_load_deferred(textureID))){
-        _bss_C88.unk4 = arg1;
-        _bss_C88.unkC = arg2;
-        _bss_C88.unk8 = 0.0f;
+    if ((_bss_C88.texture = tex_load_deferred(textureID))){
+        _bss_C88.timer = duration;
+        _bss_C88.count = arg2;
+        _bss_C88.opacity = 0.0f;
     }
 }
 
 // offset: 0x6B74 | func: 44
-static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1) {
-    if (arg1->unk4 >= 0) {
-        arg1->unk4 -= gUpdateRate;
-        if (arg1->unk4 < 0) {
-            tex_free(arg1->unk0);
-            arg1->unk0 = NULL;
-            return;
-        }
-        if ((f32) arg1->unk4 < 30.0f) {
-            arg1->unk8 = ((f32) arg1->unk4 * 255.0f) / 30.0f;
-        } else {
-            if (arg1->unk8 != 255.0f) {
-                arg1->unk8 += (8.5f * (f32) gUpdateRate);
-                if (arg1->unk8 > 255.0f) {
-                    arg1->unk8 = 255.0f;
-                }
+/**
+  * Displays an item collection pop-up in the bottom-left corner of the screen.
+  * 
+  * NOTE: The box is styled after an older UI design, and it's only used by certain items (notably Kyte's grubs).
+  */
+static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* box) {
+    //Do nothing after item's timer finished
+    if (box->timer < 0) {
+        return;
+    }
+
+    //Decrement box's timer
+    box->timer -= gUpdateRate;
+    if (box->timer < 0) {
+        tex_free(box->texture);
+        box->texture = NULL;
+        return;
+    }
+
+    //Update box's opacity
+    if (box->timer < 30.0f) {
+        //Fade out box during last half-second on-screen
+        box->opacity = (box->timer * 255.0f) / 30.0f;
+    } else {
+        //Otherwise, fade the box in if it's not fully visible
+        if (box->opacity != 255.0f) {
+            box->opacity += 8.5f * (f32) gUpdateRate;
+            if (box->opacity > 255.0f) {
+                box->opacity = 255.0f;
             }
         }
-        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_52], 
-            0x16, 
-            0xB0, 
-            0xFF, 
-            0xFF, 
-            0xFF, 
-            (u8) arg1->unk8);
-        bzero(_bss_C60, sizeof(TextureTile));
-        _bss_C60->tex = arg1->unk0;
-        _bss_C60[1].tex = NULL;
+    }
+
+    //Draw the box's shadow
+    rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_52_Page_Torn_Shadow], 
+        0x16, 
+        0xB0, 
+        0xFF, 
+        0xFF, 
+        0xFF, 
+        (u8) box->opacity);
+
+    //Draw the item's inventory icon (including embedded page background)
+    bzero(_bss_C60, sizeof(TextureTile));
+    _bss_C60->tex = box->texture;
+    _bss_C60[1].tex = NULL;
+    rcp_tile_write(gdl, _bss_C60, 
+        0x24, 
+        0xAF, 
+        0xFF, 
+        0xFF, 
+        0xFF, 
+        (u8) box->opacity);
+
+    //Draw tattered left edge of box (@bug: outdated page design, mismatched with icons' newer BG)
+    rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_29_Page_Torn_Left], 
+        0x14, 
+        0xAF, 
+        0xFF, 
+        0xFF, 
+        0xFF, 
+        (u8) box->opacity);
+
+    //Draw tattered right edge of box (@bug: outdated page design, mismatched with icons' newer BG)
+    rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_30_Page_Torn_Right], 
+        0x44, 
+        0xAF, 
+        0xFF, 
+        0xFF, 
+        0xFF, 
+        (u8) box->opacity);
+
+    //Draw item count
+    if (box->count > 1) {
+        _bss_C60->tex = sInventoryStackNumbersTex;
+        _bss_C60->animProgress = (box->count - 2) << 8;
         rcp_tile_write(gdl, _bss_C60, 
-            0x24, 
-            0xAF, 
+            0x34, 
+            0xBF, 
             0xFF, 
             0xFF, 
             0xFF, 
-            (u8) arg1->unk8);
-        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_29], 
-            0x14, 
-            0xAF, 
-            0xFF, 
-            0xFF, 
-            0xFF, 
-            (u8) arg1->unk8);
-        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_30], 
-            0x44, 
-            0xAF, 
-            0xFF, 
-            0xFF, 
-            0xFF, 
-            (u8) arg1->unk8);
-        if (arg1->unkC >= 2) {
-            _bss_C60->tex = sInventoryStackNumbersTex;
-            _bss_C60->animProgress = (arg1->unkC - 2) << 8;
-            rcp_tile_write(gdl, _bss_C60, 
-                0x34, 
-                0xBF, 
-                0xFF, 
-                0xFF, 
-                0xFF, 
-                (u8) arg1->unk8);
-        }
+            (u8) box->opacity);
     }
 }
 

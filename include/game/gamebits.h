@@ -713,7 +713,7 @@ typedef enum {
     BIT_2C2 = 0x2C2, // len:1 group:1
     BIT_2C3 = 0x2C3, // len:1 group:1
     BIT_2C4 = 0x2C4, // len:1 group:0
-    BIT_CC_Used_Cell_Door_Key = 0x2C5, // len:1 group:2 task:17  [INVENTORY - HIDE]
+    BIT_CC_Rescued_Kyte = 0x2C5, // len:1 group:2 task:17  [INVENTORY - HIDE] (Used Cell Door Key)
     BIT_2C6 = 0x2C6, // len:1 group:0
     BIT_2C7 = 0x2C7, // len:1 group:2
     BIT_SC_Play_Krystal_Sees_Tribe_Dino = 0x2C8, // len:1 group:0

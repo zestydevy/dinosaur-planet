@@ -272,7 +272,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
     player = get_player();
 
     if (mapSetup < 3) {
-        if (main_get_bits(BIT_CC_Used_Cell_Door_Key)) {
+        if (main_get_bits(BIT_CC_Rescued_Kyte)) {
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 3);
         }
     } else switch (mapSetup) {
