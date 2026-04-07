@@ -1611,32 +1611,32 @@ static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
     i = 0;
     if (arg1 == 0) {
         _bss_C7A = -1;
-        while (arg0[i].flagObtained >= 0) {
-            var_s5 = main_get_bits(arg0[i].flagObtained);
+        while (arg0[i].gamebitObtained >= 0) {
+            var_s5 = main_get_bits(arg0[i].gamebitObtained);
             if (var_s5 != 0) {
                 if (arg0 == _data_698) {
                     _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
                     _bss_298[var_s7] = arg0[i].textureID;
-                    _bss_318[var_s7] = arg0[i].flagObtained;
+                    _bss_318[var_s7] = arg0[i].gamebitObtained;
                     if (var_s5 > 10) {
                         var_s5 = 10;
                     }
                     _bss_558[var_s7] = (u8) var_s5;
                     cmdmenu_func_3880(arg0, var_s7, i);
-                    if ((arg0[i].flagHide < 0) || (main_get_bits(arg0[i].flagHide) == 0)) {
+                    if ((arg0[i].gamebitHide < 0) || (main_get_bits(arg0[i].gamebitHide) == 0)) {
                         _bss_518[var_s7] = 1;
                     } else {
                         _bss_518[var_s7] = 0;
                     }
                     var_s7 += 1;
                 } else {
-                    if ((arg0[i].flagHide < 0) || (main_get_bits(arg0[i].flagHide) == 0)) {
-                        if ((_bss_C78 != 0) && (_bss_C78 == arg0[i].flagObtained)) {
+                    if ((arg0[i].gamebitHide < 0) || (main_get_bits(arg0[i].gamebitHide) == 0)) {
+                        if ((_bss_C78 != 0) && (_bss_C78 == arg0[i].gamebitObtained)) {
                             _bss_C7A = (s16) var_s7;
                         }
                         _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
                         _bss_298[var_s7] = arg0[i].textureID;
-                        _bss_318[var_s7] = arg0[i].flagObtained;
+                        _bss_318[var_s7] = arg0[i].gamebitObtained;
                         if (var_s5 > 10) {
                             var_s5 = 10;
                         }
@@ -1657,8 +1657,8 @@ static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
             sp268 = 0;
         }
         if (sp268 != -1) {
-            while (arg0[i].flagObtained >= 0) {
-                if (arg0[i].flagObtained & sp268) {
+            while (arg0[i].gamebitObtained >= 0) {
+                if (arg0[i].gamebitObtained & sp268) {
                     _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
                     _bss_558[var_s7] = 1;
                     if (arg0[i].sidekickCommand != -1) {
@@ -1666,7 +1666,7 @@ static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
                     } else {
                         _bss_198[var_s7] = NULL;
                     }
-                    _bss_318[var_s7] = arg0[i].flagHide;
+                    _bss_318[var_s7] = arg0[i].gamebitHide;
                     cmdmenu_func_3880(arg0, var_s7, i);
                     _bss_518[var_s7] = 1;
                     var_s7 += 1;
@@ -1696,11 +1696,11 @@ static s32 cmdmenu_func_3718(InventoryItem* arg0, s8 arg1) {
     var_s1 = 0;
     i = 0;
     if (arg1 == 0) {
-        while (arg0[i].flagObtained >= 0) {
-            if (main_get_bits(arg0[i].flagObtained) != 0) {
+        while (arg0[i].gamebitObtained >= 0) {
+            if (main_get_bits(arg0[i].gamebitObtained) != 0) {
                 if (arg0 == _data_698) {
                     var_s1 += 1;
-                } else if ((arg0[i].flagHide < 0) || (main_get_bits(arg0[i].flagHide) == 0)) {
+                } else if ((arg0[i].gamebitHide < 0) || (main_get_bits(arg0[i].gamebitHide) == 0)) {
                     var_s1 += 1;
                 }
             }
@@ -1714,8 +1714,8 @@ static s32 cmdmenu_func_3718(InventoryItem* arg0, s8 arg1) {
             var_v1 = 0;
         }
         if (var_v1 > 0) {
-            while (arg0[i].flagObtained >= 0) {
-                if (arg0[i].flagObtained != 0) {
+            while (arg0[i].gamebitObtained >= 0) {
+                if (arg0[i].gamebitObtained != 0) {
                     var_s1 += 1;
                 }
                 i++;
@@ -2571,8 +2571,8 @@ void cmdmenu_func_69F8(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
     //Find the item's TEXTABLE textureID, using the item's collection gamebitID
     while (inventoryPage->characterItems != NULL) {
         items = inventoryPage->characterItems;
-        while (items->flagObtained != NO_GAMEBIT) {
-            if (itemGamebit == items->flagObtained) {
+        while (items->gamebitObtained != NO_GAMEBIT) {
+            if (itemGamebit == items->gamebitObtained) {
                 _bss_C88.texture = tex_load_deferred(items->textureID);
                 break;
             }
