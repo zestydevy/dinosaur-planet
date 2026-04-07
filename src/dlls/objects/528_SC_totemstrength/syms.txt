@@ -8,8 +8,8 @@ SCTotemStrength_print = 0x398;
 SCTotemStrength_free = 0x3E0;
 SCTotemStrength_get_model_flags = 0x448;
 SCTotemStrength_get_data_size = 0x458;
-SCTotemStrength_func_46C = 0x46C;
-SCTotemStrength_anim_callback = 0xF44;
+SCTotemStrength_anim_callback = 0x46C;
+SCTotemStrength_set_level_state = 0xF44;
 
 .rodata = 0x107C:
 str_0 = 0x0; // absolute:0x107C
@@ -19,4 +19,4 @@ dSoundsLightFoot = 0x0; // absolute:0x10CC
 dSoundsKrystal = 0x8; // absolute:0x10D4
 
 .bss = 0x10DC:
-bss_0 = 0x0; // absolute:0x10DC
+sPrevYaw = 0x0; // absolute:0x10DC

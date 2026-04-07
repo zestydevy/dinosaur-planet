@@ -164,12 +164,12 @@ enum SoundID {
     SOUND_DD_Krystal_Hurt_Augh = 0xDD,     //player hurt sfx
     SOUND_DE_Krystal_Hurt_Ugh = 0xDE,      //player hurt sfx 
 
-    SOUND_E1 = 0xE1,
+    SOUND_E1_Krystal_Ugh = 0xE1,           //SCtotemstrength
     SOUND_E2_Krystal_Yuh = 0xE2,
     SOUND_E3_Krystal_Yaahh = 0xE3,
     SOUND_E4_Krystal_Yeah = 0xE4,
     
-    SOUND_E7 = 0xE7,
+    SOUND_E7_Krystal_Hyeh = 0xE7,          //SCtotemstrength
     
     SOUND_E9_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
     SOUND_EA_Krystal_Find = 0xEA,          //"Seek it out!"
@@ -458,7 +458,7 @@ enum SoundID {
     SOUND_76D_Log_Bump = 0x76D, // used by DFlog, BWlog
 
     SOUND_775_Timer_Countdown = 0x775,
-    SOUND_776 = 0x776,
+    SOUND_776_Wooden_Creaking_Loop = 0x776, //used by SCtotemstrength
     
     SOUND_779_Water_Rushing_Loop = 0x779,  //DFwhirlpool, babbling river-like sound
     SOUND_77A_Water_Draining_Loop = 0x77A, //DFwhirlpool, static-y waterfall-like sound
@@ -511,9 +511,9 @@ enum SoundID {
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
     
-    SOUND_90F = 0x90F,
-    SOUND_910 = 0x910,
-    SOUND_911 = 0x911,
+    SOUND_90F_Muscle_LightFoot_Cry = 0x90F,     //SCtotemstrength
+    SOUND_910_Muscle_LightFoot_Scream = 0x910,  //SCtotemstrength
+    SOUND_911_Muscle_LightFoot_Oh_No = 0x911,   //SCtotemstrength
 
     SOUND_912_Object_Refused = 0x912,
 
@@ -649,8 +649,8 @@ DLL_INTERFACE(DLL_6_AMSFX) {
 // Play sound using source object for panning and distance falloff
 /*2*/ u32 (*play_sound)(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *arg4, s32 arg5, char *arg6);
 /*3*/ void (*func_7E4)(u8 arg0);
-/*4*/ void (*func_860)(u32 arg0, u8 arg1);
-/*5*/ void (*func_954)(u32 arg0, f32 pitch);
+/*4*/ void (*func_860)(u32 soundHandle, u8 volume); //adjust volume
+/*5*/ void (*func_954)(u32 soundHandle, f32 pitch); //adjust pitch
 /*6*/ void (*func_A1C)(u32 arg0);
 /*7*/ void (*func_A6C)(Object *obj);
 /*8*/ s32 (*func_B48)(u32 arg0);

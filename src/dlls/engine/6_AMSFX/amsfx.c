@@ -60,7 +60,7 @@ typedef struct UnkBss28 {
 /*0x28*/ static UnkBss28 _bss_28[0x10];
 /*0x128*/ static ACache *_bss_128;
 
-void dll_6_func_860(u32 arg0, u8 arg1);
+void dll_6_func_860(u32 soundHandle, u8 volume);
 void dll_6_func_A1C(u32 arg0);
 s32 dll_6_func_DE8(u16 arg0, SoundDef* arg1);
 static s32 dll_6_func_1C38(void);

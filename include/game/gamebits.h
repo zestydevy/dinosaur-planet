@@ -1924,13 +1924,13 @@ typedef enum {
     BIT_77D = 0x77D, // len:1 group:0
     BIT_77E = 0x77E, // len:1 group:0
     BIT_77F = 0x77F, // len:1 group:0
-    BIT_780 = 0x780, // len:1 group:0
+    BIT_SCTotemStrength_Inactive = 0x780, // len:1 group:0 (set to 0 if `SCtotemstrength` is in a sequence, or 1 otherwise)
     BIT_781 = 0x781, // len:1 group:0
     BIT_782 = 0x782, // len:1 group:2
     BIT_783 = 0x783, // len:1 group:1
-    BIT_784 = 0x784, // len:1 group:0
+    BIT_LightFoot_Strength_Game_Won = 0x784, // len:1 group:0
     BIT_785 = 0x785, // len:1 group:2
-    BIT_786 = 0x786, // len:1 group:0
+    BIT_LightFoot_Strength_Game_Lost = 0x786, // len:1 group:0
     BIT_787 = 0x787, // len:1 group:2
     BIT_788 = 0x788, // len:1 group:1
     BIT_DR_Lava_Pools_Cooled_Count = 0x789, // len:3 group:1
