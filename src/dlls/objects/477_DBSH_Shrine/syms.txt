@@ -1,0 +1,17 @@
+.text = 0x0:
+dll_477_ctor = 0x0;
+dll_477_dtor = 0xC;
+dll_477_setup = 0x18;
+dll_477_control = 0x224;
+dll_477_update = 0xC0C;
+dll_477_print = 0xC18;
+dll_477_free = 0xC60;
+dll_477_get_model_flags = 0xCF8;
+dll_477_get_data_size = 0xD08;
+dll_477_func_D1C = 0xD1C;
+dll_477_func_10A0 = 0x10A0;
+
+.rodata = 0x127C:
+
+.data = 0x12DC:
+data_0 = 0x0; // absolute:0x12DC
