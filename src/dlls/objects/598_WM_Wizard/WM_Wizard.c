@@ -6,7 +6,26 @@
 #include "game/objects/interaction_arrow.h"
 
 typedef struct {
-    u8 _unk0[0x29];
+    ObjSetup base;
+    s8 unk18;
+} WMWizard_Setup;
+
+typedef struct {
+    Vec3f unk0;
+    f32 unkC; //could be a Vec3f as well?
+    f32 unk10;
+    f32 unk14;
+    s16 unk18;
+    s16 unk1A;
+    s32 unk1C;
+    s16 unk20;
+    u8 unk22;
+    u8 unk23;
+    u8 unk24;
+    u8 unk25;
+    u8 unk26;
+    u8 unk27;
+    u8 unk28;
     u8 unk29;
     u16 unk2A;
 } Wizard_Data;
@@ -91,7 +110,27 @@ s32 dll_598_func_62C(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x650 | func: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/598_WM_Wizard/dll_598_func_650.s")
+int dll_598_func_650(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
+    Wizard_Data* objData;
+    s32 i;
+
+    objData = self->data;
+    self->unkAF |= 8;
+
+    for (i = 0; i < animData->unk98; i++) {
+        switch (animData->unk8E[i]) {
+        case 0:
+            break;
+        case 1:
+            if (objData->unk29 >= 2) {
+                main_set_bits(BIT_314, 1);
+            }
+            break;
+        }
+    }
+
+    return 0;
+}
 
 // offset: 0x72C | func: 12
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/598_WM_Wizard/dll_598_func_72C.s")
