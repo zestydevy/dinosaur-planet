@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_477_ctor
-.dword dll_477_dtor
+.dword DBSHshrine_ctor
+.dword DBSHshrine_dtor
 
 # export table
-/*0*/ .dword dll_477_setup
-/*1*/ .dword dll_477_control
-/*2*/ .dword dll_477_update
-/*3*/ .dword dll_477_print
-/*4*/ .dword dll_477_free
-/*5*/ .dword dll_477_get_model_flags
-/*6*/ .dword dll_477_get_data_size
+/*0*/ .dword DBSHshrine_setup
+/*1*/ .dword DBSHshrine_control
+/*2*/ .dword DBSHshrine_update
+/*3*/ .dword DBSHshrine_print
+/*4*/ .dword DBSHshrine_free
+/*5*/ .dword DBSHshrine_get_model_flags
+/*6*/ .dword DBSHshrine_get_data_size

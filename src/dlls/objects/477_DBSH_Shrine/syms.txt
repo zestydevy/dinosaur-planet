@@ -1,15 +1,15 @@
 .text = 0x0:
-dll_477_ctor = 0x0;
-dll_477_dtor = 0xC;
-dll_477_setup = 0x18;
-dll_477_control = 0x224;
-dll_477_update = 0xC0C;
-dll_477_print = 0xC18;
-dll_477_free = 0xC60;
-dll_477_get_model_flags = 0xCF8;
-dll_477_get_data_size = 0xD08;
-dll_477_func_D1C = 0xD1C;
-dll_477_func_10A0 = 0x10A0;
+DBSHshrine_ctor = 0x0;
+DBSHshrine_dtor = 0xC;
+DBSHshrine_setup = 0x18;
+DBSHshrine_control = 0x224;
+DBSHshrine_update = 0xC0C;
+DBSHshrine_print = 0xC18;
+DBSHshrine_free = 0xC60;
+DBSHshrine_get_model_flags = 0xCF8;
+DBSHshrine_get_data_size = 0xD08;
+DBSHshrine_anim_callback = 0xD1C;
+DBSHshrine_handle_messages = 0x10A0;
 
 .rodata = 0x127C:
 
