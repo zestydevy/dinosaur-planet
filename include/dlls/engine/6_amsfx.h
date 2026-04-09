@@ -631,6 +631,10 @@ enum SoundID {
     SOUND_BA3_Burning_Loop = 0xBA3,
     SOUND_BA4_Spell_Aim_Hum_Loop = 0xBA4,
 
+    SOUND_BA8_Randorn_Calling_Krystal_1 = 0xBA8,
+    SOUND_BA8_Randorn_Calling_Krystal_2 = 0xBA9,
+    SOUND_BA8_Randorn_Calling_Krystal_3 = 0xBAA,
+
     SOUND_B3C_Machinery_Charge_Up = 0xB3C,
 
     NO_SOUND = -1

@@ -767,7 +767,7 @@ typedef enum {
     BIT_2F8 = 0x2F8, // len:1 group:1
     BIT_2F9 = 0x2F9, // len:1 group:1
     BIT_2FA = 0x2FA, // len:1 group:0
-    BIT_2FB = 0x2FB, // len:1 group:1
+    BIT_2FB = 0x2FB, // len:1 group:1 (Randorn-related: possibly intended to be set if Randorn dies)
     BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_One = 0x2FC, // len:1 group:1
     BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Two = 0x2FD, // len:1 group:1
     BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Three = 0x2FE, // len:1 group:1
@@ -792,7 +792,7 @@ typedef enum {
     BIT_311 = 0x311, // len:1 group:0
     BIT_312 = 0x312, // len:1 group:0
     BIT_313 = 0x313, // len:1 group:0
-    BIT_314 = 0x314, // len:1 group:1
+    BIT_Randorn_Saved = 0x314, // len:1 group:1 (Randorn-related: seems intended to be set if Randorn was fed enough times to remain healthy during Krystal's last visit to WM!)
     BIT_315 = 0x315, // len:1 group:1
     BIT_Spirit_2_Release_Sabre = 0x316, // len:1 group:1
     BIT_317 = 0x317, // len:1 group:1
