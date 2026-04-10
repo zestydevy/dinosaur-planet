@@ -14,7 +14,7 @@ DLL_INTERFACE(DLL_ISidekick) {
 	/*11*/ UnknownDLLFunc func11;
 	/*12*/ UnknownDLLFunc func12;
 	/*13*/ s32 (*func13)(Object*);
-	/*14*/ void (*func14)(Object* self, s32 gamebitID); //use a sidekick command
+	/*14*/ void (*func14)(Object* self, s32 gamebitID); //show a sidekick command in the inventory
 	/*15*/ s32 (*get_blue_food_count)(Object *); // how much blue food they currently have
 	/*16*/ s32 (*get_red_food_count)(Object *); // how much red food they currently have
 	/*17*/ UnknownDLLFunc func17;

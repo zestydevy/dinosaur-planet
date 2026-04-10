@@ -19,6 +19,9 @@ DLL_INTERFACE(DLL_53) {
     /*7*/ void (*func7)(s32, SRT*);
     /*8*/ UnknownDLLFunc func8;
     /*9*/ void (*func9)(s32, SRT*);
+    /*10*/ UnknownDLLFunc func10;
+    /*11*/ UnknownDLLFunc func11;
+    /*12*/ void (*func12)(Object*, s32, Vec3f*);
 };
 
 #endif // _DLL_53_H
