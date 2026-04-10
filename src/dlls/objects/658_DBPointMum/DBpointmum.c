@@ -3,6 +3,7 @@
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
+#include "dlls/engine/53.h"
 
 typedef s32 (*PointBackBSSUnk0_UnkC)(void*, s32, s32);
 
@@ -178,8 +179,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     }
     
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-    //TO-DO: figure out DLL interface
-    ((DLL_Unknown*)gTempDLLInsts[1])->vtbl->func[3].withThreeArgs((s32)self, (s32)objData, 0);
+    ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, objData, 0);
 
     fxBitfield = objData->unk51C;
     if (!fxBitfield) {
@@ -189,7 +189,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     for (i = 0; i < 4; i++){
         if ((1 << i) & fxBitfield) {
             func_80031F6C(self, i + 2, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z, 0);
-            gDLL_17_partfx->vtbl->spawn(self, 0x676, &fxTransform, 0x210001, -1, 0);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_676, &fxTransform, 0x210001, -1, 0);
         }
     }
 }

@@ -22,14 +22,14 @@ typedef enum {
     SCTotemPole_ModelIdx_Diamond = 0,
     SCTotemPole_ModelIdx_Circle = 1, //shorter, and without CloudRunner wings  
     SCTotemPole_ModelIdx_Square = 2,
-    SCTotemPole_ModelIdx_Triangle = 3,
+    SCTotemPole_ModelIdx_Triangle = 3
 } SCTotemPole_ModelIndices;
 
 typedef enum {
     SCTotemPole_Square   = 0x30C5A, //at the start of the winding pathway around Rubble (spins in place)
     SCTotemPole_Diamond  = 0x30C5C, //close to Discovery Falls' entrance pond
     SCTotemPole_Circle   = 0x31A35, //on the serpent-head island at the end of the winding pathway
-    SCTotemPole_Triangle = 0x31A3A, //on pond island inside LightFoot Village
+    SCTotemPole_Triangle = 0x31A3A //on pond island inside LightFoot Village
 } SCTotemPole_UIDs;
 
 typedef enum {
