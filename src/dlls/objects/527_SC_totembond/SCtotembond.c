@@ -31,7 +31,7 @@ typedef enum {
 typedef enum {
     SCTotemBond_SEQCMD_1_Initialise_Minigame = 1,
     SCTotemBond_SEQCMD_2_Set_Level_State_3 = 2,
-    SCTotemBond_SEQCMD_3_Set_Level_State_2 = 3,
+    SCTotemBond_SEQCMD_3_Set_Level_State_2 = 3
 } SCTotemBond_SeqCommands;
 
 /*0x0*/ static u16 dActivateGamebits[] = {
