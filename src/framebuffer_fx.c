@@ -158,10 +158,6 @@ void fbfx_func_8003ED00(u16* arg0, u16* arg1, s32 arg2) {
     (arg0--)[0] = ((arg1--)[0] & ~0x39CE) >> 3;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003EF30.s")
-#else
-// https://decomp.me/scratch/KWLGK
 void fbfx_func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, void (*arg6)(u16*, s32, s32, u16*)) {
     s32 width;
     s32 height;
@@ -179,23 +175,21 @@ void fbfx_func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 ar
     currentFB = gFrontFramebuffer;
     nextFB = gBackFramebuffer;
     i = 0;
-    if (height > i) {
-        s1 = arg0;
-        s2 = arg3;
-
+    if (height > i) {\
+        s1 = arg0;\
+        s2 = arg3;\
         do {
             temp_s0 = (sin16(s1) * arg1) / 32768;
             temp_s0 -= (sin16(s2) * arg4) / 32768;
             arg6(currentFB, width, temp_s0, nextFB);
             s1 += arg2;
-            s2 += arg5 ^ 0;
+            s2 += arg5 ^ (arg5 * 0);
             i++;
             currentFB += width;
             nextFB += width;
         } while (i < height);
     }
 }
-#endif
 
 void fbfx_func_8003F074(u16* arg0, s32 arg1, s32 arg2, u16* arg3) {
     u16 sp50[644];

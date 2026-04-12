@@ -3409,18 +3409,18 @@ void block_setup_gdl_groups(Block *block)
             if (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
                 gDPSetCombineLERP(
                     mygdl++, 
-                    TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, // a0 - d0
-                    TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, // Aa0 - Ad0
-                    COMBINED, SHADE, COMBINED_ALPHA, SHADE, // a1 - d1
-                    COMBINED, 0, SHADE, 0 // Aa1 - Ad1
+                    TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0,
+                    TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0,
+                    COMBINED, SHADE, COMBINED_ALPHA, SHADE,
+                    COMBINED, 0, SHADE, 0
                 )
             } else {
                 gDPSetCombineLERP(
                     mygdl++, 
-                    SHADE, TEXEL0, SHADE_ALPHA, TEXEL0, // a0 - d0
-                    ENVIRONMENT, 0, TEXEL0, 0, COMBINED, // Aa0 - Ad0
-                    SHADE, COMBINED_ALPHA, SHADE, // a1 - d1
-                    COMBINED, 1, PRIMITIVE, 1 // Aa1 - Ad1
+                    SHADE, TEXEL0, SHADE_ALPHA, TEXEL0,
+                    ENVIRONMENT, 0, TEXEL0, 0, COMBINED,
+                    SHADE, COMBINED_ALPHA, SHADE,
+                    COMBINED, 1, PRIMITIVE, 1
                 )
             }
             gDPSetOtherMode(
