@@ -15,8 +15,7 @@ typedef enum {
 } SC_ObjectGroups;
 
 typedef enum {
-    SC_Setup0 = 0,
-    SC_Setup1 = 1,
+    SC_Setup1_Meeting_Rubble_Autoswap = 1,
     SC_Setup2 = 2,
     SC_Setup3 = 3,
     SC_Setup4 = 4,

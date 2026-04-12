@@ -2,6 +2,7 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/607_WL_LevelControl.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "dlls/objects/common/foodbag.h"
@@ -9,13 +10,13 @@
 
 typedef struct {
     ObjSetup base;
-    s8 unk18;
+    s8 yaw;
 } WMWizard_Setup;
 
 typedef struct {
     Vec3f home;             //Initial position
-    f32 animSpeed;
-    f32 unk10;              //ObjHits-related
+    f32 animSpeed;          //Animation delta when Randorn is walking around the hall at random
+    f32 objHitsValue;       //ObjHits-related
     f32 unk14;
     s16 unk18;
     s16 unk1A;
@@ -28,7 +29,6 @@ typedef struct {
     u8 activeSeqIndex;      //Used by animCallback funcs to tell which sequence is playing
     u8 objectID;
     u8 timesFed;            //Incremented when offering food from the inventory
-    u16 unk2A;
 } WMWizard_Data;
 
 typedef struct {
@@ -70,12 +70,12 @@ typedef struct {
 static int WMWizard_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
 static int WMWizard_anim_visit_1_first_meeting(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
 static int WMWizard_anim_visit_2_spirit_df(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
+static int WMWizard_anim_visit_3_spirit_mmp(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
 static int WMWizard_anim_visit_3_spirit_cc(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
-static int WMWizard_anim_visit_4_spirit_gp(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
 static void WMWizard_handle_visit_1_first_meeting(Object* self);
 static void WMWizard_handle_visit_2_spirit_df(Object* self);
-static void WMWizard_handle_visit_3_spirit_cc(Object* self);
-static void WMWizard_handle_visit_4_spirit_gp(Object* self);
+static void WMWizard_handle_visit_3_spirit_mmp(Object* self);
+static void WMWizard_handle_visit_4_spirit_cc(Object* self);
 
 // offset: 0x0 | ctor
 void WMWizard_ctor(void *dll) { }
@@ -89,7 +89,7 @@ void WMWizard_setup(Object* self, WMWizard_Setup* objSetup, s32 arg2) {
 
     self->unkDC = 0;
     objData = self->data;
-    self->srt.yaw = objSetup->unk18 << 8;
+    self->srt.yaw = objSetup->yaw << 8;
     self->animCallback = WMWizard_anim_callback;
     
     objData->objectID = objSetup->base.objId;
@@ -105,7 +105,6 @@ void WMWizard_setup(Object* self, WMWizard_Setup* objSetup, s32 arg2) {
     objData->walkIndex = 1;
     objData->prevWalkIndex = 12;
     objData->walkWaitTimer = 300;
-    
     objData->animSpeed = 0.0f;
     objData->unk14 = 1.0f;
 }
@@ -119,7 +118,7 @@ void WMWizard_control(Object* self) {
         dObjHitsData, 
         0xB,
         (objdata->walkIndex & 0x80) ? 1 : 0,
-        &objdata->unk10
+        &objdata->objHitsValue
     )) {
         objdata->walkIndex |= 0x80;
         return;
@@ -129,20 +128,20 @@ void WMWizard_control(Object* self) {
     //Handle setup-specific behaviour
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 0:
-    case 3:
-    case 5:
+    case WM_Setup3_Spirit2_Sabre_DB:
+    case WM_Setup5_Spirit4_Sabre_WC:
         break;
-    case 1:
+    case WM_Setup1_Krystal_Meeting_Randorn:
         WMWizard_handle_visit_1_first_meeting(self);
         break;
-    case 2:
+    case WM_Setup2_Spirit1_Krystal_DF:
         WMWizard_handle_visit_2_spirit_df(self);
         break;
-    case 4:
-        WMWizard_handle_visit_3_spirit_cc(self);
+    case WM_Setup4_Spirit3_Krystal_MMP:
+        WMWizard_handle_visit_3_spirit_mmp(self);
         break;
-    case 6:
-        WMWizard_handle_visit_4_spirit_gp(self);
+    case WM_Setup6_Spirit5_6_Krystal_CC_Sabre_WG:
+        WMWizard_handle_visit_4_spirit_cc(self);
         break;
     }
 }
@@ -153,7 +152,7 @@ void WMWizard_update(Object *self) { }
 // offset: 0x244 | func: 3 | export: 3
 void WMWizard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == 4) {
+        if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
             if (main_get_bits(BIT_2BD)) {
                 draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
             }
@@ -181,20 +180,20 @@ int WMWizard_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* anim
     //Setup-specific anim callback behaviours
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 0:
-    case 3:
-    case 5:
+    case WM_Setup3_Spirit2_Sabre_DB:
+    case WM_Setup5_Spirit4_Sabre_WC:
         break;
-    case 1:
+    case WM_Setup1_Krystal_Meeting_Randorn:
         WMWizard_anim_visit_1_first_meeting(self, overrideObj, animData, arg3);
         break;
-    case 2:
+    case WM_Setup2_Spirit1_Krystal_DF:
         WMWizard_anim_visit_2_spirit_df(self, overrideObj, animData, arg3);
         break;
-    case 4:
-        WMWizard_anim_visit_3_spirit_cc(self, overrideObj, animData, arg3);
+    case WM_Setup4_Spirit3_Krystal_MMP:
+        WMWizard_anim_visit_3_spirit_mmp(self, overrideObj, animData, arg3);
         break;
-    case 6:
-        WMWizard_anim_visit_4_spirit_gp(self, overrideObj, animData, arg3);
+    case WM_Setup6_Spirit5_6_Krystal_CC_Sabre_WG:
+        WMWizard_anim_visit_3_spirit_cc(self, overrideObj, animData, arg3);
         break;
     } 
     return 0;
@@ -249,13 +248,13 @@ int WMWizard_anim_visit_2_spirit_df(Object* self, Object* overrideObj, AnimObj_D
 }
 
 // offset: 0x62C | func: 10
-int WMWizard_anim_visit_3_spirit_cc(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
+int WMWizard_anim_visit_3_spirit_mmp(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     return 0;
 }
 
 // offset: 0x650 | func: 11
-int WMWizard_anim_visit_4_spirit_gp(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
+int WMWizard_anim_visit_3_spirit_cc(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
     WMWizard_Data* objData;
     s32 i;
 
@@ -344,7 +343,11 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
     Object* player = get_player();
     Object* foodbag;
     s32 foodGamebit;
-    s32 dAcceptedFoodsVisit2[3] = {BIT_Green_Apple_Count, BIT_Red_Apple_Count, BIT_Brown_Apple_Count};
+    s32 dAcceptedFoodsVisit2[3] = {
+        BIT_Green_Apple_Count,
+        BIT_Red_Apple_Count,
+        BIT_Brown_Apple_Count
+    };
     f32 dx;
     f32 dz;
     f32 distance;
@@ -481,7 +484,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
 }
 
 // offset: 0x1124 | func: 14
-void WMWizard_handle_visit_3_spirit_cc(Object* self) {
+void WMWizard_handle_visit_3_spirit_mmp(Object* self) {
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     if (self->curModAnimId != 2) {
@@ -491,7 +494,7 @@ void WMWizard_handle_visit_3_spirit_cc(Object* self) {
 }
 
 // offset: 0x11C8 | func: 15
-void WMWizard_handle_visit_4_spirit_gp(Object* self) {
+void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     WMWizard_Data* objdata = self->data;
     Object* player = get_player();
     s32 foodGamebit;

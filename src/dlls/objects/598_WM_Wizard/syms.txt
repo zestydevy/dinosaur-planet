@@ -11,12 +11,12 @@ WMWizard_get_data_size = 0x350;
 WMWizard_anim_callback = 0x364;
 WMWizard_anim_visit_1_first_meeting = 0x470;
 WMWizard_anim_visit_2_spirit_df = 0x610;
-WMWizard_anim_visit_3_spirit_cc = 0x62C;
-WMWizard_anim_visit_4_spirit_gp = 0x650;
+WMWizard_anim_visit_3_spirit_mmp = 0x62C;
+WMWizard_anim_visit_3_spirit_cc = 0x650;
 WMWizard_handle_visit_1_first_meeting = 0x72C;
 WMWizard_handle_visit_2_spirit_df = 0xA20;
-WMWizard_handle_visit_3_spirit_cc = 0x1124;
-WMWizard_handle_visit_4_spirit_gp = 0x11C8;
+WMWizard_handle_visit_3_spirit_mmp = 0x1124;
+WMWizard_handle_visit_4_spirit_cc = 0x11C8;
 
 .rodata = 0x1530:
 

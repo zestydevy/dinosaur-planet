@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/519_SC_levelcontrol.h"
 #include "dlls/objects/common/foodbag.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
@@ -20,15 +21,7 @@
 #include "types.h"
 #include "sys/rand.h"
 
-typedef struct {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    u8 unk6;
-    u8 unk7;
-    u8 unk8;
-    u8 unk9;
-} WL_LevelControl_Data;
+#include "dlls/objects/607_WL_LevelControl.h"
 
 static void WL_LevelControl_setup1_tick(Object* self);
 static void WL_LevelControl_setup2_tick(Object* self);
@@ -46,43 +39,45 @@ void WL_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    WL_LevelControl_Data* objdata;
+    WL_LevelControl_Data* objData;
 
     obj_add_object_type(self, OBJTYPE_10);
-    objdata = self->data;
-    objdata->unk7 = 0;
-    objdata->unk2 = 0x1E;
+    objData = self->data;
+
+    objData->galleonIsLoaded = FALSE;
+    objData->timer = 30;
+
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 0:
         break;
-    case 1:
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 1);
-        gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 0, 1);
+    case WM_Setup1_Krystal_Meeting_Randorn:
+        gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, SC_Setup1_Meeting_Rubble_Autoswap);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup0_Main_SwapStone_Area, 1);
         break;
-    case 2:
+    case WM_Setup2_Spirit1_Krystal_DF:
         break;
-    case 3:
+    case WM_Setup3_Spirit2_Sabre_DB:
         break;
-    case 4:
+    case WM_Setup4_Spirit3_Krystal_MMP:
         func_80000860(self, self, 0xA5, 0);
         func_80000860(self, self, 0xA6, 0);
-        objdata->unk0 = -1;
+        objData->enemiesDefeated = -1;
         break;
-    case 5:
+    case WM_Setup5_Spirit4_Sabre_WC:
         func_80000860(self, self, 0xE4, 0);
         func_80000860(self, self, 0xE5, 0);
         break;
-    case 6:
+    case WM_Setup6_Spirit5_6_Krystal_CC_Sabre_WG:
         func_80000860(self, self, 0xA5, 0);
         func_80000860(self, self, 0xA6, 0);
         main_set_bits(BIT_Krystal_Foodbag_M, 1);
         break;
-    case 7:
+    case WM_Setup7_Spirit7_8_Krystal_GP_Sabre_SW:
         func_80000860(self, self, 0xE4, 0);
         func_80000860(self, self, 0xE5, 0);
-        objdata->unk4 = 0x2BC;
-        objdata->unk6 = 0x1E;
-        objdata->unk2 = objdata->unk6;
+        objData->intervalBehaviourTimer = 700;
+        objData->interval = 30;
+        objData->timer = objData->interval;
         break;
     default:
         break;
@@ -94,25 +89,25 @@ void WL_LevelControl_control(Object* self) {
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 0:
         break;
-    case 1:
+    case WM_Setup1_Krystal_Meeting_Randorn:
         WL_LevelControl_setup1_tick(self);
         break;
-    case 2:
+    case WM_Setup2_Spirit1_Krystal_DF:
         WL_LevelControl_setup2_tick(self);
         break;
-    case 3:
+    case WM_Setup3_Spirit2_Sabre_DB:
         WL_LevelControl_setup3_tick(self);
         break;
-    case 4:
+    case WM_Setup4_Spirit3_Krystal_MMP:
         WL_LevelControl_setup4_tick(self);
         break;
-    case 5:
+    case WM_Setup5_Spirit4_Sabre_WC:
         WL_LevelControl_setup5_tick(self);
         break;
-    case 6:
+    case WM_Setup6_Spirit5_6_Krystal_CC_Sabre_WG:
         WL_LevelControl_setup6_tick(self);
         break;
-    case 7:
+    case WM_Setup7_Spirit7_8_Krystal_GP_Sabre_SW:
         WL_LevelControl_setup7_tick(self);
         break;
     }
@@ -123,7 +118,7 @@ void WL_LevelControl_update(Object *self) { }
 
 // offset: 0x3A0 | func: 3 | export: 3
 void WL_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    if (visibility != 0) {
+    if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
@@ -145,87 +140,106 @@ u32 WL_LevelControl_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x460 | func: 7
-static void WL_LevelControl_func_460(Object* self, WL_LevelControl_Data* objdata) {
+static void WL_LevelControl_load_galleon_if_needed(Object* self, WL_LevelControl_Data* objData) {
     Object** objs;
-    s32 numObjs;
+    s32 count;
     s32 i;
-    s32 var_t0;
+    s32 galleonNotFound;
 
-    if (main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte) == 0) {
-        objs = obj_get_all_of_type(OBJTYPE_7, &numObjs);
-        var_t0 = 1;
-        
-        for (i = 0; i < numObjs; i++) {
-            if ((objs[i]->id == OBJ_WL_Galleon) || (objs[i]->id == OBJ_SB_Galleon)) {
-                var_t0 = 0;
-            }
-        }
+    //Return early if Krystal already saw the Galleon leave with Kyte
+    if (main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte)) {
+        return;
+    }
 
-        if (var_t0 != 0) {
-            if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) == 0) {
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 1);
-            }
-            main_set_bits(BIT_WL_Load_Unload_Galleon, 1);
-            objdata->unk7 = 1;
-            objdata->unk8 |= 1;
+    //Try to find the Galleon
+    objs = obj_get_all_of_type(OBJTYPE_7, &count);
+    for (galleonNotFound = TRUE, i = 0; i < count; i++) {
+        if ((objs[i]->id == OBJ_WL_Galleon) || (objs[i]->id == OBJ_SB_Galleon)) {
+            galleonNotFound = FALSE;
+            //@bug: continues iterating
         }
+    }
+
+    //If the Galleon couldn't be found, load it
+    if (galleonNotFound) {
+        if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, WM_ObjGroup1_Galleon) == 0) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, WM_ObjGroup1_Galleon, 1);
+        }
+        main_set_bits(BIT_WL_Load_Unload_Galleon, 1);
+        objData->galleonIsLoaded = TRUE;
+        objData->flags |= WL_LevelControl_FLAG_Galleon_Docked;
     }
 }
 
 // offset: 0x648 | func: 8
-static void WL_LevelControl_func_648(Object* self, WL_LevelControl_Data* objdata) {
-    u32 sp2C;
-    s32 numObjs;
+static void WL_LevelControl_unload_galleon_if_needed(Object* self, WL_LevelControl_Data* objData) {
+    u32 krystalIsLeaving;
+    s32 count;
     Object** objs;
     s32 i;
 
-    sp2C = main_get_bits(BIT_WM_Near_Cave_Exit_Krystal_Side);
-    if ((objdata->unk8 & 1) && (main_get_bits(BIT_WL_Load_Unload_Galleon) == 0)) {
-        if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) != 0) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
+    //Check a gamebit that's set as Krystal leaves via the cave corridor after meeting with Randorn
+    krystalIsLeaving = main_get_bits(BIT_WM_Near_Cave_Exit_Krystal_Side);
+
+    //Unload the Galleon if its load gamebit is false
+    if ((objData->flags & WL_LevelControl_FLAG_Galleon_Docked) && 
+        (main_get_bits(BIT_WL_Load_Unload_Galleon) == FALSE)
+    ) {
+        if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, WM_ObjGroup1_Galleon)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, WM_ObjGroup1_Galleon, 0);
         }
-        objdata->unk8 &= ~1;
+        objData->flags &= ~WL_LevelControl_FLAG_Galleon_Docked;
     }
-    if (!(objdata->unk8 & 2) && (sp2C != 0)) {
-        objs = obj_get_all_of_type(OBJTYPE_7, &numObjs);
-        for (i = 0; i < numObjs; i++) {
+
+    //Search for the Galleon once (@bug?: does nothing with this)
+    if (((objData->flags & WL_LevelControl_FLAG_Galleon_Leaving_Search) == FALSE) && krystalIsLeaving) {
+        objs = obj_get_all_of_type(OBJTYPE_7, &count);
+        for (i = 0; i < count; i++) {
             if (objs[i]->id == OBJ_WL_Galleon) {
-                i = numObjs; // break out of loop
+                i = count; //index break
             }
         }
-        objdata->unk8 |= 2;
+
+        objData->flags |= WL_LevelControl_FLAG_Galleon_Leaving_Search;
     }
 }
 
 // offset: 0x7A4 | func: 9
+/** 
+  * For Krystal's 1st visit, meeting Randorn for the first time etc.
+  */
 static void WL_LevelControl_setup1_tick(Object* self) {
-    /*0x0*/ static u8 _data_0 = 0;
+    /*0x0*/ static u8 dSetup1KrystalSwitchesHit = 0;
 
-    WL_LevelControl_Data* objdata;
-    u8 temp_t8;
+    WL_LevelControl_Data* objData;
+    u8 switchesHit;
 
-    objdata = self->data;
-    temp_t8 = 0;
-    temp_t8 += main_get_bits(BIT_WM_Force_Field_1_Disabled);
-    temp_t8 += main_get_bits(BIT_WM_Force_Field_2_Disabled);
-    temp_t8 += main_get_bits(BIT_WM_Force_Field_3_Disabled);
-    if ((temp_t8 == 3) && (_data_0 != 3)) {
+    objData = self->data;
+
+    //Count how many of the switches have been hit in Krystal's laser corridor
+    switchesHit = 0;
+    switchesHit += main_get_bits(BIT_WM_Force_Field_1_Disabled);
+    switchesHit += main_get_bits(BIT_WM_Force_Field_2_Disabled);
+    switchesHit += main_get_bits(BIT_WM_Force_Field_3_Disabled);
+    if ((switchesHit == 3) && (dSetup1KrystalSwitchesHit != 3)) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    _data_0 = temp_t8;
-    switch (objdata->unk7) {
-        case 1:
-            if (objdata->unk9 == 1) {
-                WL_LevelControl_func_648(self, objdata);
+    dSetup1KrystalSwitchesHit = switchesHit;
+
+    //Handle the Galleon
+    switch (objData->galleonIsLoaded) {
+        case TRUE:
+            if (objData->setup == WM_Setup1_Krystal_Meeting_Randorn) {
+                WL_LevelControl_unload_galleon_if_needed(self, objData);
             }
             break;
-        case 0:
-            objdata->unk9 = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
-            switch (objdata->unk9) {
-            case 1:
-                WL_LevelControl_func_460(self, objdata);
+        case FALSE:
+            objData->setup = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+            switch (objData->setup) {
+            case WM_Setup1_Krystal_Meeting_Randorn:
+                WL_LevelControl_load_galleon_if_needed(self, objData);
                 break;
-            case 2:
+            case WM_Setup2_Spirit1_Krystal_DF:
                 break;
             }
             break;
@@ -233,245 +247,371 @@ static void WL_LevelControl_setup1_tick(Object* self) {
 }
 
 // offset: 0x940 | func: 10
+/** 
+  * For Krystal's 2nd visit, depositing Spirit 1 (Discovery Falls)
+  */
 static void WL_LevelControl_setup2_tick(Object* self) {
-    static u8 _data_4 = 1;
+    static u8 dInitSpirit1Visit = TRUE;
     
     Object* player;
-    Object* temp_v0;
+    Object* foodbag;
 
     player = get_player();
-    if ((_data_4 != 0) && (main_get_bits(BIT_Play_Seq_0180_Release_Spirit_1) == 0)) {
+
+    //Set up the visit (only runs once)
+    if (dInitSpirit1Visit && (main_get_bits(BIT_Play_Seq_0180_Release_Spirit_1) == FALSE)) {
+        //Ensure the player has relevant spells
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
-        player = get_player();
+
+        player = get_player(); //@bug: already assigned
+
         main_set_bits(BIT_FC, 1);
+
+        //Restore some magic and make sure the player has the 1st Spirit
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, 1, 1);
+        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(1), TRUE);
+
+        //Use envFxActions
         func_80000860(self, self, 0x204, 0);
         func_80000860(self, self, 0x205, 0);
         func_80000860(self, self, 0x206, 0);
-        _data_4 = 0;
+
+        dInitSpirit1Visit = FALSE;
     }
-    if (main_get_bits(BIT_Krystal_Foodbag_M) != 0) {
-        temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
-        if ((temp_v0 != NULL) && (main_get_bits(BIT_Green_Apple_Count) == 0)) {
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-            ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
+
+    //If Krystal has the Medium Food Bag and it doesn't have any green apples, add 10 of them (@debug code related to Randorn?)
+    if (main_get_bits(BIT_Krystal_Foodbag_M)) {
+        foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
+        if (foodbag && (main_get_bits(BIT_Green_Apple_Count) == 0)) {
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
         }
     }
 }
 
 // offset: 0xC50 | func: 11
+/** 
+  * For Sabre's 1st visit, depositing Spirit 2 (Diamond Bay)
+  */
 static void WL_LevelControl_setup3_tick(Object* self) {
-    static u8 _data_8 = 1;
+    static u8 dInitSpirit2Visit = TRUE;
     
     Object* player;
 
-    if ((main_get_bits(BIT_Spirit_2_Release_Sabre) == 0) & _data_8) {
+    //Set up the visit (only runs once)
+    if ((main_get_bits(BIT_Spirit_2_Release_Sabre) == FALSE) & dInitSpirit2Visit) {
+        //Use envFxActions
         func_80000860(self, self, 0xE4, 0);
         func_80000860(self, self, 0xE5, 0);
         func_80000450(self, self, 0x275, 0, 0, 0);
         func_80000450(self, self, 0x278, 0, 0, 0);
+
+        //Ensure the player has relevant spells
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
+
+        //Restore some magic and make sure the player has the 2nd Spirit
         player = get_player();
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, 2, 1);
+        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(2), TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        _data_8 = 0;
-    } else if (_data_8 != 0) {
+
+        dInitSpirit2Visit = FALSE;
+    } else if (dInitSpirit2Visit) {
+        //Use envFxActions
         func_80000860(self, self, 0xE4, 0);
         func_80000860(self, self, 0xE5, 0);
         func_80000450(self, self, 0x275, 0, 0, 0);
-        _data_8 = 0;
+        dInitSpirit2Visit = FALSE;
     }
 }
 
 // offset: 0xE34 | func: 12
+/** 
+  * For Krystal's 3rd visit, depositing Spirit 3 (Moon Mountain Pass)
+  */
 static void WL_LevelControl_setup4_tick(Object* self) {
-    /*0xC*/ static u8 _data_C = 1;
-    /*0x10*/ static s32 _data_10 = -1;
+    /*0xC*/ static u8 dInitSpirit3Visit = TRUE;
+    /*0x10*/ static s32 dUseGradualEnvFx = -1;
 
-    WL_LevelControl_Data* objdata;
+    WL_LevelControl_Data* objData;
     Object* player;
-    s16 temp_v0_3;
-    s16 var_s2;
+    s16 useGradualEnvFx;
+    s16 enemiesDefeated = 0;
     u8 i;
 
-    var_s2 = 0;
-    objdata = self->data;
-    if ((_data_C != 0) && (main_get_bits(BIT_317) == 0)) {
+    objData = self->data;
+
+    //Set up the visit (only runs once)
+    if (dInitSpirit3Visit && (main_get_bits(BIT_317) == FALSE)) {
+        //Ensure the player has relevant spells, and set other gamebit
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
         main_set_bits(BIT_Set_During_Spirit_Release_1, 1);
+
+        //Restore some magic and make sure the player has the 3rd Spirit
         player = get_player();
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, 4, 1);
+        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(3), TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        _data_C = 0;
+
+        dInitSpirit3Visit = FALSE;
     }
+
+    /* Check 6 gamebits
+    
+       NOTE: The 1st queried gamebit is set when defeating the SharpClaw in 
+       Sabre's equivalent of Randorn's hall, so the base gamebitID may be a mistake
+       here given that this function runs during one of Krystal's visits.
+
+       The loop may be intended to count how many Skeetlas have been defeated by Krystal,
+       since they do start appearing during this trip! There are also exactly 6 of them
+       positioned in Randorn's room, which might be relevant.
+    */
     for (i = 0; i < 6; i++) {
-        var_s2 +=  main_get_bits(i + BIT_WM_Killed_SharpClaw_2573);
+        enemiesDefeated += main_get_bits(i + BIT_WM_Killed_SharpClaw_2573);
     }
-    temp_v0_3 = main_get_bits(BIT_2C4);
-    if ((temp_v0_3 != 0) && (var_s2 != objdata->unk0)) {
-        objdata->unk0 = var_s2;
-        func_80000860(self, self, (objdata->unk0 + 0xF4), 0);
-        func_80000450(self, self, ((objdata->unk0 / 2) + 0x13C), 0, 0, 0);
-    } else if (temp_v0_3 != _data_10) {
-        if (temp_v0_3 != 0) {
-            func_80000860(self, self, (objdata->unk0 + 0xF4), 0);
-            func_80000450(self, self, ((objdata->unk0 / 2) + 0x13C), 0, 0, 0);
+
+    //Use different envFxActions based on how many enemies (likely Skeetlas?) were defeated
+    //(Dim the player and reintroduce fog as value increases, making the room gradually brighter)
+    useGradualEnvFx = main_get_bits(BIT_2C4);
+    if (useGradualEnvFx && (enemiesDefeated != objData->enemiesDefeated)) {
+        objData->enemiesDefeated = enemiesDefeated;
+        func_80000860(self, self, (objData->enemiesDefeated + 0xF4), 0);
+        func_80000450(self, self, ((objData->enemiesDefeated / 2) + 0x13C), 0, 0, 0);
+    } else if (useGradualEnvFx != dUseGradualEnvFx) {
+        if (useGradualEnvFx) {
+            func_80000860(self, self, (objData->enemiesDefeated + 0xF4), 0);
+            func_80000450(self, self, ((objData->enemiesDefeated / 2) + 0x13C), 0, 0, 0);
         } else {
             func_80000860(self, self, 0xFB, 0);
             func_80000450(self, self, 0x144, 0, 0, 0);
         }
     }
-    _data_10 = temp_v0_3;
+
+    //Store previous state, so envFxActions are only called when BIT_2C4 or enemiesDefeated changes
+    dUseGradualEnvFx = useGradualEnvFx;
 }
 
 // offset: 0x1118 | func: 13
+/** 
+  * For Sabre's 2nd visit, depositing Spirit 4 (Walled City)
+  */
 static void WL_LevelControl_setup5_tick(Object* self) {
-    /*0x14*/ static u8 _data_14 = 1;
+    /*0x14*/ static u8 dInitSpirit4Visit = TRUE;
 
-    WL_LevelControl_Data* objdata;
-    f32 sp40;
-    Object* temp_v0;
-    Object** var_a2;
-    s32 sp34;
+    WL_LevelControl_Data* objData;
+    f32 distance;
+    Object* guardClaw;
+    Object** objects;
+    s32 count;
     s16 i;
-    s16 temp_v0_2;
+    s16 lastUsedSpell;
     ObjSetup *someObjsetup;
     Object* player;
     
-    sp34 = 0;
-    sp40 = 10000.0f;
+    count = 0;
+    distance = 10000.0f;
     player = get_player();
-    objdata = self->data;
-    if ((_data_14 != 0) && (main_get_bits(BIT_318) == 0)) {
+    objData = self->data;
+
+    //Set up the visit (only runs once)
+    if (dInitSpirit4Visit && (main_get_bits(BIT_318) == FALSE)) {
+        //Ensure the player has relevant spells
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
         main_set_bits(BIT_Spell_Illusion, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, 8, 1);
+
+        //Restore some magic and make sure the player has the 4th Spirit
+        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(4), TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        main_set_bits(BIT_2DD, 0);
-        _data_14 = 0;
+
+        main_set_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
+
+        dInitSpirit4Visit = FALSE;
     }
-    if (main_get_bits(BIT_2DB) != 0) {
+
+    //Disable HITS line (TO-DO: find where this line is)
+    if (main_get_bits(BIT_2DB)) {
         func_80059038(0x18, 0, 0);
     }
-    if (main_get_bits(BIT_2DD) != 0) {
+
+    //Delete the dock's GuardClaw after dropping a crate from above
+    if (main_get_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw)) {
         main_set_bits(BIT_CFExplodeTunnel_Trigger_31B6F, 1);
-        main_set_bits(BIT_2DD, 0);
-        temp_v0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp40);
-        if (temp_v0 != NULL) {
-            obj_destroy_object(temp_v0);
+        main_set_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
+
+        guardClaw = obj_get_nearest_type_to(OBJTYPE_4, self, &distance);
+        if (guardClaw != NULL) {
+            //@bug: may potentially delete a Skeetla instead, since they're also objType4
+            obj_destroy_object(guardClaw);
         }
-        objdata->unk2 = 0x1E;
+
+        objData->timer = 30;
     }
-    if (main_get_bits(BIT_2F7) != 0) {
-        var_a2 = obj_get_all_of_type(OBJTYPE_4, &sp34);
-        for (i = 0; i < sp34; i++) {
-            someObjsetup = var_a2[i]->setup;
-            if ((someObjsetup->uID == 0x296E) || (someObjsetup->uID == 0x296F)) {
-                obj_destroy_object(var_a2[i]);
+
+    //Search through the objects, and delete the hall's SharpClaw and GuardClaw
+    if (main_get_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws)) {
+        objects = obj_get_all_of_type(OBJTYPE_4, &count);
+        for (i = 0; i < count; i++) {
+            someObjsetup = objects[i]->setup;
+            if ((someObjsetup->uID == 0x296E) ||    //SharpClaw
+                (someObjsetup->uID == 0x296F)       //GuardClaw
+            ) {
+                obj_destroy_object(objects[i]);
             }
         }
-        main_set_bits(BIT_2F7, 0);
+        main_set_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws, 0);
     }
-    if (main_get_bits(BIT_2EE) != 0) {
-        temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
-        if ((temp_v0_2 != 0x40) && (temp_v0_2 != 0x1D7) && (main_get_bits(BIT_2F3) == 0)) {
+
+    //Handle Sabre entering the hall with the GuardClaw
+    if (main_get_bits(BIT_WM_Setup5_Sabre_Entered_GuardClaw_Hall)) {
+        lastUsedSpell = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
+
+        //Warp the player away if they're not using the Illusion or Forcefield Spells
+        if ((lastUsedSpell != BIT_Spell_Illusion) && 
+            (lastUsedSpell != BIT_Spell_Forcefield) && 
+            (main_get_bits(BIT_WM_Setup5_Sabre_Hall_Disable_GuardClaw_Warp) == FALSE)
+        ) {
             warpPlayer(WARP_WM_SABRE_KRAZOA_CORRIDOR, /*fadeToBlack=*/FALSE);
         }
-        main_set_bits(BIT_2EE, 0);
+
+        main_set_bits(BIT_WM_Setup5_Sabre_Entered_GuardClaw_Hall, 0);
     }
-    if (main_get_bits(BIT_2FA) != 0) {
-        if (main_get_bits(BIT_2F7) == 0) {
-            main_set_bits(BIT_2F7, 1);
+
+    /* Handle removing the GuardClaw hall's warp-away behaviour (and deleting the SharpClaw)
+
+       NOTE: BIT_2FA intended to be set upon depositing Spirit 4?
+             Doesn't seem to get set in practice.
+    */
+    if (main_get_bits(BIT_WM_Setup5_Sabre_Hall_GuardClaw_Gone)) {
+        if (main_get_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws) == 0) {
+            main_set_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws, 1);
         }
-        objdata->unk2 -= (s16)gUpdateRate;
-        if (objdata->unk2 <= 0) {
-            objdata->unk2 = 0;
-            main_set_bits(BIT_2FA, 0);
-            main_set_bits(BIT_2F3, 1);
-            objdata->unk2 = 0x1E;
+
+        objData->timer -= (s16)gUpdateRate;
+        if (objData->timer <= 0) {
+            objData->timer = 0;
+            main_set_bits(BIT_WM_Setup5_Sabre_Hall_GuardClaw_Gone, 0);
+            main_set_bits(BIT_WM_Setup5_Sabre_Hall_Disable_GuardClaw_Warp, 1);
+            objData->timer = 30;
         }
     }
 }
 
 // offset: 0x14FC | func: 14
+/** 
+  * Seems to be for Sabre's 3rd visit, depositing Spirit 6 (Willow Grove),
+  * but the foodbag code suggests Krystal's 4th visit, depositing Spirit 5 (Cape Claw)
+  *
+  * Given that setup7 seems to be the final setup (handling Spirits 7 and 8), 
+  * maybe setup6 is also meant to handle two visits: Spirits 5 and 6.
+  */
 static void WL_LevelControl_setup6_tick(Object* self) {
-    /*0x18*/ static u8 _data_18 = 1;
+    /*0x18*/ static u8 dInitSpirit6Visit = TRUE;
 
     Object* player;
-    Object* temp_v0;
+    Object* foodbag;
 
     player = get_player();
-    if ((_data_18 != 0) && (main_get_bits(BIT_Play_Seq_020D) == 0)) {
-        temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->set_capacity(temp_v0);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Green_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Red_Apple);
-        ((DLL_IFoodbag*)temp_v0->dll)->vtbl->collect_food(temp_v0, FOOD_Brown_Apple);
+
+    //Set up the visit (only runs once)
+    if (dInitSpirit6Visit && (main_get_bits(BIT_Play_Seq_020D) == FALSE)) {
+        //Add 10 green apples, and 1 red and brown apple to the food bag (@debug code related to Randorn?)
+        foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->set_capacity(foodbag);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
+        ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Brown_Apple);
+
+        //Ensure the player has relevant spells
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, 0x20, 1);
-        _data_18 = 0;
+
+        //Restore some magic and make sure the player has the 6th Spirit
+        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(6), TRUE);
+
+        dInitSpirit6Visit = FALSE;
     }
 }
 
 // offset: 0x1788 | func: 15
+/** 
+  * For Krystal's 5th visit, depositing Spirit 7 (Test of Knowledge)
+  *
+  * May also be for Sabre's 4th visit, depositing Spirit 8 (Test of Sacrifice)
+  */
 static void WL_LevelControl_setup7_tick(Object* self) {
-    /*0x1C*/ static u8 _data_1C = 1;
+    /*0x1C*/ static u8 dInitSpirit7Visit = TRUE;
 
-    WL_LevelControl_Data* objdata;
+    WL_LevelControl_Data* objData;
     Object* player;
 
     get_player();
-    objdata = (WL_LevelControl_Data*)self->data;
-    if ((_data_1C != 0) && (main_get_bits(BIT_Play_Seq_020D) == 0)) {
+    objData = (WL_LevelControl_Data*)self->data;
+
+    //Set up the visit (only runs once)
+    if (dInitSpirit7Visit && (main_get_bits(BIT_Play_Seq_020D) == FALSE)) {
+        //Ensure the player has relevant spells
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
+
+        //Restore some magic and make sure the player has the 7th Spirit
         player = get_player();
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, 0x40, 1);
+        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(7), TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        _data_1C = 0;
-        objdata->unk2 = 1;
+
+        dInitSpirit7Visit = FALSE;
+
+        objData->timer = 1;
+
+        //Use envFxActions
         func_80000860(self, self, 0x32, 0);
         func_80000860(self, self, 0x33, 0);
+        
         main_set_bits(BIT_221, 1);
     }
-    if (main_get_bits(BIT_36C) != 0) {
-        if (objdata->unk4 > 0) {
-            objdata->unk4 -= (s16)gUpdateRate;
-            if (objdata->unk2 != 0) {
-                objdata->unk2 -= (s16)gUpdateRate;
-                if (objdata->unk2 <= 0) {
+
+    if (main_get_bits(BIT_WM_Setup5_Interval_Behaviour)) {
+        /* Over 11.666 seconds, set BIT_36D at rapid intervals -
+           starting with period of 0.5s, and getting one frame more frequent each time.
+
+           TO-DO: what's this gamebit used for?
+        */
+        if (objData->intervalBehaviourTimer > 0) {
+            objData->intervalBehaviourTimer -= (s16)gUpdateRate;
+
+            if (objData->timer != 0) {
+                objData->timer -= (s16)gUpdateRate;
+                if (objData->timer <= 0) {
                     main_set_bits(BIT_36D, 1);
-                    if (objdata->unk6 >= 0xB) {
-                        objdata->unk6 = objdata->unk6 - 1;
+                    if (objData->interval > 10) {
+                        objData->interval -= 1;
                     }
-                    objdata->unk2 = objdata->unk6;
+                    objData->timer = objData->interval;
                 }
             }
         }
     }
+
+    //Open/close the door to Randorn's hall erratically
+    //NOTE: Randorn's door isn't set up to appear in setup 7, so this behaviour can't be seen
     if (rand_next(0, 30) == 0) {
         main_set_bits(BIT_WM_Randorn_Door_OpenClose, 1);
     }
