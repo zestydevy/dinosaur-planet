@@ -1,0 +1,13 @@
+.text = 0x0:
+ProjectileSwitch_ctor = 0x0;
+ProjectileSwitch_dtor = 0xC;
+ProjectileSwitch_setup = 0x18;
+ProjectileSwitch_control = 0x1B0;
+ProjectileSwitch_update = 0x398;
+ProjectileSwitch_print = 0x3A4;
+ProjectileSwitch_free = 0x440;
+ProjectileSwitch_get_model_flags = 0x450;
+ProjectileSwitch_get_data_size = 0x488;
+ProjectileSwitch_change_state = 0x49C;
+
+.rodata = 0x5AC:

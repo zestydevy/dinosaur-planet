@@ -478,6 +478,8 @@ enum SoundID {
 
     SOUND_79C_Cmdmenu_CantUse = 0x79C,
 
+    SOUND_7AE_Switch_Hit_Blast = 0x7AE,
+    SOUND_7AF_Switch_Reset_Swoosh = 0x7AF,
     SOUND_7B0 = 0x7B0,
     SOUND_7B1 = 0x7B1,
 
