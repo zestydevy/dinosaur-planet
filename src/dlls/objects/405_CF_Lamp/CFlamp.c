@@ -102,9 +102,9 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     arg2->unk62 = 0;
     arg2->unk7A &= ~0x20;
     sp70 = (f32) setup->unk1A;
-    tempx = camera->srt.transl.x - self->positionMirror.x;
-    tempz = camera->srt.transl.z - self->positionMirror.z;
-    tempy = camera->srt.transl.y - self->positionMirror.y;
+    tempx = camera->srt.transl.x - self->globalPosition.x;
+    tempz = camera->srt.transl.z - self->globalPosition.z;
+    tempy = camera->srt.transl.y - self->globalPosition.y;
     sp60 = SQ(tempx) + SQ(tempz) + SQ(tempy);
     if (sp60 != 0) { 
         sp60 = sqrtf(sp60);
@@ -120,9 +120,9 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     if ((self->opacity >= 0x81) && (sp60 < 400.0f)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8C, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }
-    sp50 = self->positionMirror.x - gWorldX;
-    sp48 = self->positionMirror.z - gWorldZ;
-    sp4C = self->positionMirror.y;
+    sp50 = self->globalPosition.x - gWorldX;
+    sp48 = self->globalPosition.z - gWorldZ;
+    sp4C = self->globalPosition.y;
     camera_project_point(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
     camera_clip_to_screen(sp44, sp40, sp3C, &sp38, &sp34, NULL);
     sp2C = vi_obj_depth(sp38, sp34, self);

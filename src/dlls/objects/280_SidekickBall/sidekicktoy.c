@@ -28,7 +28,7 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     objdata->state = TOY_STATE_0_Carried;
     objdata->timer = 0.0f;
     objdata->interactionTimer = 0.0f;
-    self->srt.flags |= 0x4000;
+    self->srt.flags |= OBJFLAG_INVISIBLE;
     self->unkB0 |= 0x6000;
     if (player) {
         ((DLL_210_Player*)player->dll)->vtbl->func9(player, self);
@@ -52,65 +52,65 @@ static void SidekickToy_tick_collision(Object* self, SidekickToy_Data* objdata) 
 
 // offset: 0x250 | func: 2
 static s32 SidekickToy_tick_flight(Object* self) {
-    Vec3f speed;
+    Vec3f velocity;
     Vec3f sp40;
-    f32 absSpeed;
+    f32 speed;
     f32 temp_ft0;
     f32 dotProductDouble;
-    f32 tempAbsSpeed;
+    f32 tempSpeed;
     SidekickToy_Data* objdata;
 
     objdata = self->data;
 
-    self->speed.y -= 0.05f * gUpdateRateF;
-    obj_integrate_speed(self,
-        self->speed.x * gUpdateRateF,
-        self->speed.y * gUpdateRateF,
-        self->speed.z * gUpdateRateF
+    self->velocity.y -= 0.05f * gUpdateRateF;
+    obj_move(self,
+        self->velocity.x * gUpdateRateF,
+        self->velocity.y * gUpdateRateF,
+        self->velocity.z * gUpdateRateF
     );
     SidekickToy_tick_collision(self, objdata);
     if (objdata->collision.unk25D) {
-        speed.f[0] = -self->speed.x;
-        speed.f[1] = -self->speed.y;
-        speed.f[2] = -self->speed.z;
-        absSpeed = VECTOR_MAGNITUDE(speed);
-        tempAbsSpeed = absSpeed;
-        if (tempAbsSpeed > 0.5f) {
-            if (tempAbsSpeed > 2.0f) {
-                tempAbsSpeed = 2.0f;
+        velocity.f[0] = -self->velocity.x;
+        velocity.f[1] = -self->velocity.y;
+        velocity.f[2] = -self->velocity.z;
+        speed = VECTOR_MAGNITUDE(velocity);
+        tempSpeed = speed;
+        if (tempSpeed > 0.5f) {
+            if (tempSpeed > 2.0f) {
+                tempSpeed = 2.0f;
             }
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x161, tempAbsSpeed * 32.0f, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, 0x161, tempSpeed * 32.0f, 0, 0, 0, 0);
         }
-        //Getting normalised direction vector from speed
-        if (absSpeed != 0.0f) {
-            speed.f[0] *= 1.0f / absSpeed;
-            speed.f[1] *= 1.0f / absSpeed;
-            speed.f[2] *= 1.0f / absSpeed;
+        //Getting normalised direction vector from velocity
+        if (speed != 0.0f) {
+            velocity.f[0] *= 1.0f / speed;
+            velocity.f[1] *= 1.0f / speed;
+            velocity.f[2] *= 1.0f / speed;
         }
         sp40.f[0] = objdata->collision.unk68.unk0[0].x;
         sp40.f[1] = objdata->collision.unk68.unk0[0].y;
         sp40.f[2] = objdata->collision.unk68.unk0[0].z;
-        dotProductDouble = 2.0f * DOT_PRODUCT(speed, sp40);
+        dotProductDouble = 2.0f * DOT_PRODUCT(velocity, sp40);
 
-        self->speed.x = sp40.x*dotProductDouble;
-        self->speed.y = sp40.y*dotProductDouble;
-        self->speed.z = sp40.z*dotProductDouble;
-        VECTOR_SUBTRACT(self->speed, speed, self->speed)
+        self->velocity.x = sp40.x*dotProductDouble;
+        self->velocity.y = sp40.y*dotProductDouble;
+        self->velocity.z = sp40.z*dotProductDouble;
+        VECTOR_SUBTRACT(self->velocity, velocity, self->velocity)
 
-        if (absSpeed < 0.3f) {
+        if (speed < 0.3f) {
             if (gDLL_25->vtbl->func_12FC(self->srt.transl.f)) {
                 return TOY_STATE_1_At_Rest;
             }
-            self->speed.x *= 10.0f;
-            self->speed.y *= 10.0f;
-            self->speed.z *= 10.0f;
+            self->velocity.x *= 10.0f;
+            self->velocity.y *= 10.0f;
+            self->velocity.z *= 10.0f;
         }
-        self->speed.x *= absSpeed * 0.7f;
-        self->speed.y *= absSpeed * 0.70f; //NOTE: compiles as separate rodata
-        self->speed.z *= absSpeed * 0.7f;
+        self->velocity.x *= speed * 0.7f;
+        self->velocity.y *= speed * 0.70f; //NOTE: compiles as separate rodata
+        self->velocity.z *= speed * 0.7f;
     }
-    self->srt.pitch = self->speed.z * 1000.0f;
-    self->srt.roll -= self->speed.x * 1000.0f;
+    self->srt.pitch = self->velocity.z * 1000.0f;
+    self->srt.roll -= self->velocity.x * 1000.0f;
     return TOY_STATE_2_In_Flight;
 }
 
@@ -219,13 +219,13 @@ u32 SidekickToy_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0xA88 | func: 9 | export: 7
-void SidekickToy_throw(Object* self, Object* thrownBy, f32 speedX, f32 speedY, f32 speedZ) {
+void SidekickToy_throw(Object* self, Object* thrownBy, f32 velX, f32 velY, f32 velZ) {
     SidekickToy_Data* objdata = self->data;
     objdata->state = TOY_STATE_2_In_Flight;
     objdata->timer = 0.0f;
-    self->speed.x = speedX;
-    self->speed.y = speedY;
-    self->speed.z = speedZ;
+    self->velocity.x = velX;
+    self->velocity.y = velY;
+    self->velocity.z = velZ;
     self->srt.flags = 0;
     objdata->interactionTimer = 30.0f;
 }
@@ -236,7 +236,7 @@ void SidekickToy_carry(Object* self, SidekickToy_Data* objdata) {
     objdata2->state = TOY_STATE_0_Carried;
     objdata2->timer = 0.0f;
     
-    self->srt.flags |= 0x4000;
+    self->srt.flags |= OBJFLAG_INVISIBLE;
 
     func_800267A4(self);
     objdata2->collision.mode = 0;

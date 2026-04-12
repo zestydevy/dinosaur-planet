@@ -49,9 +49,9 @@ typedef enum {
 /*0x1A8*/ static f32 sPlayerX;
 /*0x1AC*/ static f32 sPlayerY;
 /*0x1B0*/ static f32 sPlayerZ;
-/*0x1B4*/ static f32 sPlayerPositionMirrorX;
-/*0x1B8*/ static f32 sPlayerPositionMirrorY;
-/*0x1BC*/ static f32 sPlayerPositionMirrorZ;
+/*0x1B4*/ static f32 sPlayerGlobalPositionX;
+/*0x1B8*/ static f32 sPlayerGlobalPositionY;
+/*0x1BC*/ static f32 sPlayerGlobalPositionZ;
 /*0x1C0*/ static f32 sFov;
 /*0x1C4*/ static s32 _bss_1C4;          //Set to -1 in ctor/dctor, but otherwise unused?
 /*0x1C8*/ static s8 _bss_1C8;           //Set to -1 in ctor/dctor, but otherwise unused?
@@ -139,9 +139,9 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
         player->srt.transl.x = sCamData->newPlayerPosition.x;
         player->srt.transl.y = sCamData->newPlayerPosition.y;
         player->srt.transl.z = sCamData->newPlayerPosition.z;
-        player->positionMirror.x = sCamData->newPlayerPosition.x;
-        player->positionMirror.y = sCamData->newPlayerPosition.y;
-        player->positionMirror.z = sCamData->newPlayerPosition.z;
+        player->globalPosition.x = sCamData->newPlayerPosition.x;
+        player->globalPosition.y = sCamData->newPlayerPosition.y;
+        player->globalPosition.z = sCamData->newPlayerPosition.z;
         sCamData->setPlayerPosition = FALSE;
     }
     
@@ -216,7 +216,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
     sCamData->positionMirror.z = sCamData->srt.transl.z;
     sCamData->highlightFlags = 0;
 
-    //Restore the player's transl/positionMirror
+    //Restore the player's transl/globalPosition
     CamControl_restore_player_coords(player);
 }
 
@@ -489,14 +489,14 @@ void CamControl_lock_icon_tick(void) {
         distSquared *= distSquared;
 
         targetCoords = &hlObject->unk74[hlObject->unkD4];
-        dx = player->positionMirror.x - targetCoords->refPoint.x;
-        dz = player->positionMirror.z - targetCoords->refPoint.z;
+        dx = player->globalPosition.x - targetCoords->refPoint.x;
+        dz = player->globalPosition.z - targetCoords->refPoint.z;
         
         //Check whether to ignore differences in player/target's y coordinates
         if (hlObject->unkAF & ARROW_FLAG_80_Ignore_TranslateY) {
             dy = 0.0f;
         } else {
-            dy = player->positionMirror.y - targetCoords->refPoint.y;
+            dy = player->globalPosition.y - targetCoords->refPoint.y;
         }
         
         //Highlight the target object when in range
@@ -595,7 +595,7 @@ void CamControl_lock_icon_tick(void) {
         if (arrow->opacity > 0) {
             sIconRapidTimer -= gUpdateRate;
             arrow->srt.transl.y += 2.0f * gUpdateRateF;
-            arrow->positionMirror.y += 2.0f * gUpdateRateF;
+            arrow->globalPosition.y += 2.0f * gUpdateRateF;
         } else {
             sIconState = LockIcon_STATE_Hidden;
         }
@@ -814,27 +814,27 @@ void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction) {
 }
 
 // offset: 0x1D94 | func: 31
-/** Stores a copy of the player's transl/positionMirror near the start of a CamControl tick */
+/** Stores a copy of the player's transl/globalPosition near the start of a CamControl tick */
 void CamControl_store_player_coords(Object* player) {
     sPlayerX = player->srt.transl.x;
     sPlayerY = player->srt.transl.y;
     sPlayerZ = player->srt.transl.z;
-    sPlayerPositionMirrorX = player->positionMirror.x;
-    sPlayerPositionMirrorY = player->positionMirror.y;
-    sPlayerPositionMirrorZ = player->positionMirror.z;
+    sPlayerGlobalPositionX = player->globalPosition.x;
+    sPlayerGlobalPositionY = player->globalPosition.y;
+    sPlayerGlobalPositionZ = player->globalPosition.z;
 }
 
 // offset: 0x1DF0 | func: 32
-/** Restores the player's original transl/positionMirror near the end of a CamControl tick */
+/** Restores the player's original transl/globalPosition near the end of a CamControl tick */
 void CamControl_restore_player_coords(Object* player) {
     Object* parent = player->parent;
     
     player->srt.transl.x = sPlayerX;
     player->srt.transl.y = sPlayerY;
     player->srt.transl.z = sPlayerZ;
-    player->positionMirror.x = sPlayerPositionMirrorX;
-    player->positionMirror.y = sPlayerPositionMirrorY;
-    player->positionMirror.z = sPlayerPositionMirrorZ;
+    player->globalPosition.x = sPlayerGlobalPositionX;
+    player->globalPosition.y = sPlayerGlobalPositionY;
+    player->globalPosition.z = sPlayerGlobalPositionZ;
     
     if (parent != NULL) {
         player->srt.yaw -= parent->srt.yaw;
@@ -853,7 +853,7 @@ void CamControl_average_player_speed(CamControl_Data* camData, Object* player) {
     }
 
     //Put player's absolute lateral speed into last slot
-    speedMagnitude = SQ(player->speed.x) + SQ(player->speed.z);
+    speedMagnitude = SQ(player->velocity.x) + SQ(player->velocity.z);
     if (speedMagnitude > 0.0f) {
         speedMagnitude = sqrtf(speedMagnitude);
     }
@@ -902,7 +902,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
     for (i = 0, matchCount = 0; i < count; i++){
         obj = objects[i];
 
-        if ((obj->opacity != 0) && !(obj->srt.flags & 0x4000) && !(obj->unkB0 & 0x40)) {
+        if ((obj->opacity != 0) && !(obj->srt.flags & OBJFLAG_INVISIBLE) && !(obj->unkB0 & 0x40)) {
             if (obj->unkAF & (ARROW_FLAG_20_Removed | ARROW_FLAG_8_No_Targetting)){
                 continue;
             }
@@ -920,12 +920,12 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
                 continue;
             }
             
-            dx = player->positionMirror.x - targetCoords[lockIndex].drawPoint.x;
-            dz = player->positionMirror.z - targetCoords[lockIndex].drawPoint.z;
+            dx = player->globalPosition.x - targetCoords[lockIndex].drawPoint.x;
+            dz = player->globalPosition.z - targetCoords[lockIndex].drawPoint.z;
             if (obj->unkAF & ARROW_FLAG_80_Ignore_TranslateY) {
                 dy = 0.0f;
             } else {
-                dy = player->positionMirror.y - targetCoords[lockIndex].drawPoint.y;
+                dy = player->globalPosition.y - targetCoords[lockIndex].drawPoint.y;
             }
 
             distSquared = targetDef[lockIndex].hlRadius * 4;
@@ -1029,22 +1029,22 @@ void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, V
         }
         
         _data_0[0] = obj->def->gametextIndex[textIdx];
-        lockIcon->positionMirror.x = lockCoords->drawPoint.x;
-        lockIcon->positionMirror.y = lockCoords->drawPoint.y;
-        lockIcon->positionMirror.z = lockCoords->drawPoint.z;
+        lockIcon->globalPosition.x = lockCoords->drawPoint.x;
+        lockIcon->globalPosition.y = lockCoords->drawPoint.y;
+        lockIcon->globalPosition.z = lockCoords->drawPoint.z;
         lockIcon->modelInstIdx = modelIndex;
         lockIcon->parent = obj->parent;
         
         if (lockIcon->parent != 0){
             inverse_transform_point_by_object(
-                lockIcon->positionMirror.x, lockIcon->positionMirror.y, lockIcon->positionMirror.z, 
+                lockIcon->globalPosition.x, lockIcon->globalPosition.y, lockIcon->globalPosition.z, 
                 &lockIcon->srt.transl.x, &lockIcon->srt.transl.y, &lockIcon->srt.transl.z, 
                 lockIcon->parent
             );
         } else {
-            lockIcon->srt.transl.x = lockIcon->positionMirror.x;
-            lockIcon->srt.transl.y = lockIcon->positionMirror.y;
-            lockIcon->srt.transl.z = lockIcon->positionMirror.z;
+            lockIcon->srt.transl.x = lockIcon->globalPosition.x;
+            lockIcon->srt.transl.y = lockIcon->globalPosition.y;
+            lockIcon->srt.transl.z = lockIcon->globalPosition.z;
         }
     }
     

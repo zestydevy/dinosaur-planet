@@ -88,9 +88,9 @@ void dll_433_control(Object* self) {
     sp34 = 0;
     sp44 = 1000.0f;
     if (_data_4) {
-        self->positionMirror.f[0] = self->srt.transl.f[0];
-        self->positionMirror.f[1] = self->srt.transl.f[1];
-        self->positionMirror.f[2] = self->srt.transl.f[2];
+        self->globalPosition.f[0] = self->srt.transl.f[0];
+        self->globalPosition.f[1] = self->srt.transl.f[1];
+        self->globalPosition.f[2] = self->srt.transl.f[2];
         main_set_bits(BIT_DB_Entered_Shrine_2, 1U);
         gDLL_5_AMSEQ->vtbl->play_ex(2U, 0x2BU, 0x50, 1, 0U);
     }
@@ -159,7 +159,7 @@ void dll_433_control(Object* self) {
         }
         switch (objdata->unk11) {
         case 0:
-            if (vec3_distance(&self->positionMirror, &player->positionMirror) < (f32) objdata->unk0) {
+            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 main_set_bits(BIT_589, 0U);
                 objdata->unk11 = 1U;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0U);

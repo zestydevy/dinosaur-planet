@@ -327,7 +327,7 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
     }
 
     //Start/stop twinkling sound loop as player approaches/leaves
-    playerDistance = vec3_distance(&self->positionMirror, &player->positionMirror);
+    playerDistance = vec3_distance(&self->globalPosition, &player->globalPosition);
     if (objData->soundHandle == 0) {
         if (playerDistance < TWINKLE_START_DISTANCE) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_619_Twinkle_Loop, 96, &objData->soundHandle, NULL, 0, NULL);
@@ -372,8 +372,8 @@ void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup *objSetup, M
             dz = self->srt.transl.z - player->srt.transl.z;
             angle = arctan2_f(dx, dz);
             rand_next(angle - 0x1000, angle + 0x1000); //@bug? result not used
-            magicDust->speed.x = fsin16_precise(self->srt.yaw) * speed;
-            magicDust->speed.z = fcos16_precise(self->srt.yaw) * speed;
+            magicDust->velocity.x = fsin16_precise(self->srt.yaw) * speed;
+            magicDust->velocity.z = fcos16_precise(self->srt.yaw) * speed;
 
             //Play ringing sound
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_61A_Crystal_Ringing, MAX_VOLUME, NULL, NULL, 0, NULL);

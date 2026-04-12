@@ -49,9 +49,9 @@ void DRbullet_setup(Object* self, DRbullet_Setup* objSetup, s32 arg2) {
     self->srt.transl.x = objSetup->base.x;
     self->srt.transl.y = objSetup->base.y;
     self->srt.transl.z = objSetup->base.z;
-    self->speed.x = objSetup->speedX;   
-    self->speed.y = objSetup->speedY;
-    self->speed.z = objSetup->speedZ;
+    self->velocity.x = objSetup->speedX;   
+    self->velocity.y = objSetup->speedY;
+    self->velocity.z = objSetup->speedZ;
 
     shadowData = self->shadow;
     if (shadowData != NULL) {
@@ -71,7 +71,7 @@ void DRbullet_control(Object* self) {
 
     switch (objData->state){
         case BULLET_STATE_FIRED:
-            obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+            obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
             objData->timer -= gUpdateRate;
             //Check if the bullet hit something or its timer expired
             if ((objData->timer < 0) || (self->objhitInfo->unk58 & 8)) {
@@ -174,12 +174,12 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     self->srt.transl.x = pFired->transl.x;
     self->srt.transl.y = pFired->transl.y;
     self->srt.transl.z = pFired->transl.z;
-    self->speed.x = velocity.f[0];
-    self->speed.y = velocity.f[1];
-    self->speed.z = velocity.f[2];    
-    lateralSpeed = sqrtf((self->speed.x * self->speed.x) + (self->speed.z * self->speed.z));
-    self->srt.yaw = arctan2_f(self->speed.x, self->speed.z);
-    self->srt.pitch = -arctan2_f(self->speed.y, lateralSpeed);
+    self->velocity.x = velocity.f[0];
+    self->velocity.y = velocity.f[1];
+    self->velocity.z = velocity.f[2];    
+    lateralSpeed = sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z));
+    self->srt.yaw = arctan2_f(self->velocity.x, self->velocity.z);
+    self->srt.pitch = -arctan2_f(self->velocity.y, lateralSpeed);
     self->srt.roll = 0;
     func_8002674C(self);
 
@@ -188,9 +188,9 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_927_Harsh_Electric_Loop, 0x7F, &objData->whooshSoundHandle, NULL, 0, NULL);
 
     //Set bullet's expiry timer based on 10 second trajectory after being fired
-    futurePosition.x = self->speed.x * 600.0f;
-    futurePosition.y = self->speed.y * 600.0f;
-    futurePosition.z = self->speed.z * 600.0f;
+    futurePosition.x = self->velocity.x * 600.0f;
+    futurePosition.y = self->velocity.y * 600.0f;
+    futurePosition.z = self->velocity.z * 600.0f;
     futurePosition.x += self->srt.transl.x;
     futurePosition.y += self->srt.transl.y;
     futurePosition.z += self->srt.transl.z;
@@ -215,9 +215,9 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     lfxEmitter = DRbullet_create_lfxEmitter(self, 0x24B);
     objData->lfxEmitter = lfxEmitter;
     if (lfxEmitter != NULL){
-        objData->lfxEmitter->speed.x = self->speed.x;
-        objData->lfxEmitter->speed.y = self->speed.y;
-        objData->lfxEmitter->speed.z = self->speed.z;
+        objData->lfxEmitter->velocity.x = self->velocity.x;
+        objData->lfxEmitter->velocity.y = self->velocity.y;
+        objData->lfxEmitter->velocity.z = self->velocity.z;
     }
 
     //Set bullet's opacity and scale

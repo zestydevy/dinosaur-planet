@@ -128,8 +128,8 @@ void dll_232_control(Object* self) {
             return;
         }
         if (baddie->fsa.logicState != 4) {
-            var_fv0 = self->speed.f[1] - bat->unk18;
-            bat->unk18 = self->speed.f[1];
+            var_fv0 = self->velocity.f[1] - bat->unk18;
+            bat->unk18 = self->velocity.f[1];
             if (var_fv0 < 0.0f) {
                 var_fv0 *= -0.04f;
             } else {
@@ -160,9 +160,9 @@ void dll_232_control(Object* self) {
                 sp84->tr.f[1] = self->srt.transl.f[1] - bat->unk1C;
             }
             if (baddie->fsa.target != NULL) {
-                sp6C.f[0] = baddie->fsa.target->positionMirror.f[0] - self->positionMirror.f[0];
-                sp6C.f[1] = baddie->fsa.target->positionMirror.f[1] - self->positionMirror.f[1];
-                sp6C.f[2] = baddie->fsa.target->positionMirror.f[2] - self->positionMirror.f[2];
+                sp6C.f[0] = baddie->fsa.target->globalPosition.f[0] - self->globalPosition.f[0];
+                sp6C.f[1] = baddie->fsa.target->globalPosition.f[1] - self->globalPosition.f[1];
+                sp6C.f[2] = baddie->fsa.target->globalPosition.f[2] - self->globalPosition.f[2];
                 baddie->fsa.targetDist = sqrtf(SQ(sp6C.f[0]) + SQ(sp6C.f[1]) + SQ(sp6C.f[2]));
             }
             if (!(baddie->unk3B0 & 0x20)) {
@@ -247,9 +247,9 @@ static s32 dll_232_func_978(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     fsa->unk341 = 3;
     if (fsa->enteredAnimState != 0) {
         func_800267A4(self);
-        self->speed.f[0] = -self->speed.f[0];
-        self->speed.f[1] += 5.0f;
-        self->speed.f[2] = -self->speed.f[2];
+        self->velocity.f[0] = -self->velocity.f[0];
+        self->velocity.f[1] += 5.0f;
+        self->velocity.f[2] = -self->velocity.f[2];
         bat->unk24 = rand_next(-0xFA0, 0xFA0);
         bat->unk22 = rand_next(-0xFA0, 0xFA0);
         bat->unk26 = rand_next(-0xFA0, 0xFA0);
@@ -273,42 +273,42 @@ static void dll_232_func_AB8(Object* self, Bat_Data* bat) {
     s32 res;
 
     if (self->srt.transl.f[0] < bat->unkC) {
-        self->speed.f[0] += 1.2f;
+        self->velocity.f[0] += 1.2f;
     } else {
-        self->speed.f[0] -= 1.2f;
+        self->velocity.f[0] -= 1.2f;
     }
     if (self->srt.transl.f[1] < bat->unk10) {
-        self->speed.f[1] += 1.0f;
+        self->velocity.f[1] += 1.0f;
     } else {
-        self->speed.f[1] -= 0.75f;
+        self->velocity.f[1] -= 0.75f;
     }
     if (self->srt.transl.f[2] < bat->unk14) {
-        self->speed.f[2] += 1.2f;
+        self->velocity.f[2] += 1.2f;
     } else {
-        self->speed.f[2] -= 1.2f;
+        self->velocity.f[2] -= 1.2f;
     }
     if (bat->unk1C < 25.0f) {
-        self->speed.f[1] = (self->speed.f[1] * 0.9f) + 0.1f;
+        self->velocity.f[1] = (self->velocity.f[1] * 0.9f) + 0.1f;
     }
-    self->speed.f[0] *= 0.985f;
-    self->speed.f[1] *= 0.945f;
-    self->speed.f[2] *= 0.985f;
-    if (self->speed.f[0] > 6.0f) {
-        self->speed.f[0] = 6.0f;
-    } else if (self->speed.f[0] < -6.0f) {
-        self->speed.f[0] = -6.0f;
+    self->velocity.f[0] *= 0.985f;
+    self->velocity.f[1] *= 0.945f;
+    self->velocity.f[2] *= 0.985f;
+    if (self->velocity.f[0] > 6.0f) {
+        self->velocity.f[0] = 6.0f;
+    } else if (self->velocity.f[0] < -6.0f) {
+        self->velocity.f[0] = -6.0f;
     }
-    if (self->speed.f[2] > 6.0f) {
-        self->speed.f[2] = 6.0f;
-    } else if (self->speed.f[2] < -6.0f) {
-        self->speed.f[2] = -6.0f;
+    if (self->velocity.f[2] > 6.0f) {
+        self->velocity.f[2] = 6.0f;
+    } else if (self->velocity.f[2] < -6.0f) {
+        self->velocity.f[2] = -6.0f;
     }
     temp_t0 = self->srt.yaw;
-    res = atan2f_to_s(self->speed.f[0], self->speed.f[2]);
+    res = atan2f_to_s(self->velocity.f[0], self->velocity.f[2]);
     self->srt.yaw = res;
     temp_t0 = self->srt.yaw - temp_t0;
     self->srt.roll += ((self->srt.roll - (temp_t0)) >> 2);
-    obj_integrate_speed(self, self->speed.f[0], self->speed.f[1], self->speed.f[2]);
+    obj_move(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
 }
 
 // offset: 0xCF0 | func: 12
@@ -357,14 +357,14 @@ static s32 dll_232_func_EC8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
     baddie = self->data;
     bat = baddie->objdata;
-    self->speed.f[0] *= 0.985f;
-    self->speed.f[1] = (self->speed.f[1] - 0.4f) * 0.945f;
-    self->speed.f[2] *= 0.985f;
+    self->velocity.f[0] *= 0.985f;
+    self->velocity.f[1] = (self->velocity.f[1] - 0.4f) * 0.945f;
+    self->velocity.f[2] *= 0.985f;
     fsa->flags |= OBJFSA_FLAG_4000;
     self->srt.yaw += bat->unk24;
     self->srt.pitch += bat->unk22;
     self->srt.roll += bat->unk26;
-    obj_integrate_speed(self, self->speed.f[0], self->speed.f[1], self->speed.f[2]);
+    obj_move(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
     if (bat->unk1C <= 0.0f) {
         obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000U, self);
         obj_destroy_object(self);

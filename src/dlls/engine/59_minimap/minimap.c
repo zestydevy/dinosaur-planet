@@ -374,9 +374,9 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
         }
         
         if (mapFound) {
-            playerX = player->positionMirror.x;
-            playerZ = player->positionMirror.z;
-            playerY = player->positionMirror.y;
+            playerX = player->globalPosition.x;
+            playerZ = player->globalPosition.z;
+            playerY = player->globalPosition.y;
             
             //Iterate over the map's tiles, until finding a tile whose bounding volume contains the player coords
             mapLevel = &sMinimapLevels[index];
@@ -477,19 +477,19 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
 
             //Draw player marker
             rcp_screen_full_write(gdl, sMarkerPlayer, 
-                    (MINIMAP_SCREEN_X - sGridX - (player->positionMirror.x - sLevelMaxX) * 0.025f) - 4.0f,
-                    (MINIMAP_SCREEN_Y - sGridZ - (player->positionMirror.z - sLevelMaxZ) * 0.025f) - 4.0f,
+                    (MINIMAP_SCREEN_X - sGridX - (player->globalPosition.x - sLevelMaxX) * 0.025f) - 4.0f,
+                    (MINIMAP_SCREEN_Y - sGridZ - (player->globalPosition.z - sLevelMaxZ) * 0.025f) - 4.0f,
                     0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);
 
             //Draw sidekick marker (if the sidekick's somewhere inside the current map's extended bounds)
             if (sidekick != NULL) {
                 if (
-                    (sLevelMinX - BLOCKS_GRID_UNIT_HALF < sidekick->positionMirror.x) && (sidekick->positionMirror.x < sLevelMaxX + BLOCKS_GRID_UNIT_HALF) &&
-                    (sLevelMinZ - BLOCKS_GRID_UNIT_HALF < sidekick->positionMirror.z) && (sidekick->positionMirror.z < sLevelMaxZ + BLOCKS_GRID_UNIT_HALF)
+                    (sLevelMinX - BLOCKS_GRID_UNIT_HALF < sidekick->globalPosition.x) && (sidekick->globalPosition.x < sLevelMaxX + BLOCKS_GRID_UNIT_HALF) &&
+                    (sLevelMinZ - BLOCKS_GRID_UNIT_HALF < sidekick->globalPosition.z) && (sidekick->globalPosition.z < sLevelMaxZ + BLOCKS_GRID_UNIT_HALF)
                 ) {
                     rcp_screen_full_write(gdl, sMarkerSidekick, 
-                        (MINIMAP_SCREEN_X - sGridX - (sidekick->positionMirror.x - sLevelMaxX) * 0.025f) - 4.0f,
-                        (MINIMAP_SCREEN_Y - sGridZ - (sidekick->positionMirror.z - sLevelMaxZ) * 0.025f) - 4.0f,
+                        (MINIMAP_SCREEN_X - sGridX - (sidekick->globalPosition.x - sLevelMaxX) * 0.025f) - 4.0f,
+                        (MINIMAP_SCREEN_Y - sGridZ - (sidekick->globalPosition.z - sLevelMaxZ) * 0.025f) - 4.0f,
                         0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);
                 }
             }

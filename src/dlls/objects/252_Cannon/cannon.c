@@ -178,9 +178,9 @@ dummy_label1: ;
         }
         yaw += 0x4000;
 
-        //Set the cannonball's lateral speed and position offset based on the cannon's yaw
-        obj->speed.f[0] = fsin16_precise(yaw) * 7.0f;
-        obj->speed.f[2] = fcos16_precise(yaw) * 7.0f;
+        //Set the cannonball's lateral velocity and position offset based on the cannon's yaw
+        obj->velocity.f[0] = fsin16_precise(yaw) * 7.0f;
+        obj->velocity.f[2] = fcos16_precise(yaw) * 7.0f;
         obj->srt.transl.f[0] += fsin16_precise(yaw) * 80.0f;
         obj->srt.transl.f[2] += fcos16_precise(yaw) * 80.0f;
 

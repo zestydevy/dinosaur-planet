@@ -43,9 +43,33 @@ typedef struct {
 /*0062*/    s8 unk62;
 } ObjectC0_Data;
 
+// Stored in the flags of Object.srt
+enum ObjectFlags {
+/*1*/ OBJFLAG_UNK_2 = 0x2,
+
+      // don't automatically calculate previous local/global position object fields
+/*3*/ OBJFLAG_MANUAL_PREV_POSITIONS = 0x8,
+
+/*6*/ OBJFLAG_UNK_40 = 0x40,
+/*7*/ OBJFLAG_UNK_80 = 0x80,
+
+      // don't add model display list to the main display list when drawing
+/*9*/ OBJFLAG_SKIP_MODEL_DL = 0x200,
+
+       // still draws shadow
+/*12*/ OBJFLAG_SHADOW_ONLY = 0x1000,
+       // whether the associated ObjSetup should be freed when the object is freed
+       // TODO: this flag means more, see magicdust dll
+/*13*/ OBJFLAG_OWNS_SETUP = 0x2000,
+       // also disables hitsphere detection?
+/*14*/ OBJFLAG_INVISIBLE = 0x4000
+};
+
 enum ObjInitFlags {
     OBJ_INIT_FLAG1 = 0x1,
-    OBJ_INIT_FLAG2 = 0x2,
+    // Whether the object ID provided for object creation is actually a direct index into OBJECTS.tab
+    OBJ_INIT_ID_IS_TABIDX = 0x2,
+    // Sets whether the object owns its setup pointer
     OBJ_INIT_FLAG4 = 0x4
 };
 
@@ -282,9 +306,9 @@ typedef int (*AnimationCallback)(struct Object *, struct Object *, struct AnimOb
  * Size: 0xe4, other object-related data is placed in the following memory
  */
 typedef struct Object {
-/*0000*/    SRT srt;
-/*0018*/    Vec3f positionMirror; //local vs global?
-/*0024*/    Vec3f speed; // rename to velocity?
+/*0000*/    SRT srt; // local space coordinates
+/*0018*/    Vec3f globalPosition; // world space coordinates
+/*0024*/    Vec3f velocity;
 /*0030*/    struct Object *parent; // transform is relative to this object. doesn't form a strict hierarchy
 /*0034*/    u8 unk34; //self-mapID for mobile map objects? (e.g. Galleon)
 /*0035*/    s8 matrixIdx;
@@ -310,8 +334,8 @@ typedef struct Object {
 /*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts; // called "frames" in default.dol
-/*0080*/    Vec3f positionMirror2; //gets copied twice.
-/*008C*/    Vec3f positionMirror3; //not sure why.
+/*0080*/    Vec3f prevLocalPosition; // srt position from previous tick
+/*008C*/    Vec3f prevGlobalPosition; // global position from previous tick
 /*0098*/    f32 animProgress;
 /*009C*/    f32 animProgressLayered;
 /*00A0*/    s16 curModAnimId;

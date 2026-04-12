@@ -18,11 +18,11 @@ void SB_Debris_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SB_Debris_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SRT transform;
-    Vec3f speed = VEC3F(1.8f, 0.0f, 0.0f);
+    Vec3f velocity = VEC3F(1.8f, 0.0f, 0.0f);
     SB_Debris_Data *objdata;
 
     objdata = self->data;
-    speed.x *= rand_next(3, 5);
+    velocity.x *= rand_next(3, 5);
     self->unkDC = 75;
     objdata->unk0 = 75.0f;
     transform.transl.x = 0.0f;
@@ -32,10 +32,10 @@ void SB_Debris_setup(Object *self, ObjSetup *setup, s32 arg2) {
     transform.roll = 0;
     transform.pitch = rand_next(-0x2EE0, 0x2EE0);
     transform.yaw = rand_next(0, 0xFFFE);
-    rotate_vec3(&transform, speed.f);
-    self->speed.x = speed.x;
-    self->speed.y = speed.y;
-    self->speed.z = speed.z;
+    rotate_vec3(&transform, velocity.f);
+    self->velocity.x = velocity.x;
+    self->velocity.y = velocity.y;
+    self->velocity.z = velocity.z;
     self->modelInstIdx = rand_next(0, 1);
     self->srt.scale *= 5.0f;
 }
@@ -56,13 +56,13 @@ void SB_Debris_control(Object *self) {
     transform.pitch = 0;
     transform.yaw = 0;
     transform.scale = 1.0f;
-    self->srt.transl.x += self->speed.x * gUpdateRateF;
-    self->srt.transl.y += self->speed.y * gUpdateRateF;
-    self->srt.transl.z += self->speed.z * gUpdateRateF;
+    self->srt.transl.x += self->velocity.x * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
+    self->srt.transl.z += self->velocity.z * gUpdateRateF;
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_9F, NULL, PARTFXFLAG_1, -1, NULL);
-    dx = (self->srt.transl.x - self->positionMirror2.x);
-    dy = (self->srt.transl.y - self->positionMirror2.y);
-    dz = (self->srt.transl.z - self->positionMirror2.z);
+    dx = (self->srt.transl.x - self->prevLocalPosition.x);
+    dy = (self->srt.transl.y - self->prevLocalPosition.y);
+    dz = (self->srt.transl.z - self->prevLocalPosition.z);
     transform.transl.x = dx / 3.0f;
     transform.transl.y = dy / 3.0f;
     transform.transl.z = dz / 3.0f;
@@ -71,7 +71,7 @@ void SB_Debris_control(Object *self) {
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_9F, &transform, PARTFXFLAG_1, -1, NULL);
     self->srt.yaw += gUpdateRate * 0x374;
     self->srt.pitch += gUpdateRate * 0x12C;
-    self->speed.y -= 0.05f;
+    self->velocity.y -= 0.05f;
     self->unkDC -= gUpdateRate;
     if (self->unkDC < 0) {
         obj_destroy_object(self);

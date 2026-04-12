@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/gametexts.h"
 #include "sys/segment_1050.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
     u8 _unk0[0xA58 - 0x0];

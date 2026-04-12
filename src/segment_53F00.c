@@ -2673,34 +2673,34 @@ void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
     hitInfo = arg0->objhitInfo;
 
     if (parent != NULL) {
-        transform_point_by_object(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &arg0->positionMirror.x, &arg0->positionMirror.y, &arg0->positionMirror.z, parent);
-        transform_point_by_object(arg0->positionMirror2.x, arg0->positionMirror2.y, arg0->positionMirror2.z, &arg0->positionMirror3.x, &arg0->positionMirror3.y, &arg0->positionMirror3.z, parent);
-        rotate_point_by_object(arg0->speed.x, 0, arg0->speed.z, &speedX, &speedY, &speedZ, parent);
+        transform_point_by_object(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &arg0->globalPosition.x, &arg0->globalPosition.y, &arg0->globalPosition.z, parent);
+        transform_point_by_object(arg0->prevLocalPosition.x, arg0->prevLocalPosition.y, arg0->prevLocalPosition.z, &arg0->prevGlobalPosition.x, &arg0->prevGlobalPosition.y, &arg0->prevGlobalPosition.z, parent);
+        rotate_point_by_object(arg0->velocity.x, 0, arg0->velocity.z, &speedX, &speedY, &speedZ, parent);
         dYaw = parent->srt.yaw + arg0->srt.yaw;
     } else {
-        speedX = arg0->speed.x;
-        speedZ = arg0->speed.z;
+        speedX = arg0->velocity.x;
+        speedZ = arg0->velocity.z;
         dYaw = arg0->srt.yaw;
     }
 
     if (arg2 != 0) {
         parent = arg0->parent;
         if (arg0->parent != NULL) {
-            inverse_transform_point_by_object(arg0->positionMirror.x, arg0->positionMirror.y, arg0->positionMirror.z, &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, arg0->parent);
-            inverse_transform_point_by_object(arg0->positionMirror3.x, arg0->positionMirror3.y, arg0->positionMirror3.z, &arg0->positionMirror2.x, &arg0->positionMirror2.y, &arg0->positionMirror2.z, arg0->parent);
-            inverse_rotate_point_by_object(speedX, 0, speedZ, &arg0->speed.x, &speedY, &arg0->speed.z, arg0->parent);
+            inverse_transform_point_by_object(arg0->globalPosition.x, arg0->globalPosition.y, arg0->globalPosition.z, &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, arg0->parent);
+            inverse_transform_point_by_object(arg0->prevGlobalPosition.x, arg0->prevGlobalPosition.y, arg0->prevGlobalPosition.z, &arg0->prevLocalPosition.x, &arg0->prevLocalPosition.y, &arg0->prevLocalPosition.z, arg0->parent);
+            inverse_rotate_point_by_object(speedX, 0, speedZ, &arg0->velocity.x, &speedY, &arg0->velocity.z, arg0->parent);
             dYaw -= arg0->parent->srt.yaw;
             CIRCLE_WRAP(dYaw)
             arg0->srt.yaw = dYaw;
         } else {
-            arg0->srt.transl.x = arg0->positionMirror.x;
-            arg0->srt.transl.y = arg0->positionMirror.y;
-            arg0->srt.transl.z = arg0->positionMirror.z;
-            arg0->positionMirror2.x = arg0->positionMirror3.x;
-            arg0->positionMirror2.y = arg0->positionMirror3.y;
-            arg0->positionMirror2.z = arg0->positionMirror3.z;
-            arg0->speed.x = speedX;
-            arg0->speed.z = speedZ;
+            arg0->srt.transl.x = arg0->globalPosition.x;
+            arg0->srt.transl.y = arg0->globalPosition.y;
+            arg0->srt.transl.z = arg0->globalPosition.z;
+            arg0->prevLocalPosition.x = arg0->prevGlobalPosition.x;
+            arg0->prevLocalPosition.y = arg0->prevGlobalPosition.y;
+            arg0->prevLocalPosition.z = arg0->prevGlobalPosition.z;
+            arg0->velocity.x = speedX;
+            arg0->velocity.z = speedZ;
             arg0->srt.yaw = dYaw;
         }
     }
@@ -2709,9 +2709,9 @@ void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
         hitInfo->unk10.x = arg0->srt.transl.x;
         hitInfo->unk10.y = arg0->srt.transl.y;
         hitInfo->unk10.z = arg0->srt.transl.z;
-        hitInfo->unk20.x = arg0->positionMirror.x;
-        hitInfo->unk20.y = arg0->positionMirror.y;
-        hitInfo->unk20.z = arg0->positionMirror.z;
+        hitInfo->unk20.x = arg0->globalPosition.x;
+        hitInfo->unk20.y = arg0->globalPosition.y;
+        hitInfo->unk20.z = arg0->globalPosition.z;
     }
 
     if (arg0->group == 1) {

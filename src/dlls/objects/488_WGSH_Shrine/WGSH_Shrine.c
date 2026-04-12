@@ -81,9 +81,9 @@ void dll_488_setup(Object *self, WGSH_Shrine_Setup *setup, s32 arg2) {
     sp30 = dll_load_deferred(DLL_ID_122, 1);
     objdata->unkC = sp30->vtbl->func0(self, 1, 0, 0x402, -1, 0);
     dll_unload(sp30);
-    self->positionMirror.x = self->srt.transl.x;
-    self->positionMirror.y = self->srt.transl.y;
-    self->positionMirror.z = self->srt.transl.z;
+    self->globalPosition.x = self->srt.transl.x;
+    self->globalPosition.y = self->srt.transl.y;
+    self->globalPosition.z = self->srt.transl.z;
 }
 
 // offset: 0x244 | func: 1 | export: 1
@@ -157,7 +157,7 @@ void dll_488_control(Object *self) {
         }
         switch (objdata->unk13) {
         case 0:
-            if (vec3_distance(&self->positionMirror, &sp48->positionMirror) < (f32) objdata->unk0) {
+            if (vec3_distance(&self->globalPosition, &sp48->globalPosition) < (f32) objdata->unk0) {
                 objdata->unk13 = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->func17(0, self, -1);

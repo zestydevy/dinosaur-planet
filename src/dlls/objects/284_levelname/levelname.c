@@ -107,7 +107,7 @@ void levelname_control(Object* self) {
 
     switch (objdata->state) {
         case LEVELNAME_STATE_0_WAITING:
-            distance = vec3_distance(&self->positionMirror, &get_player()->positionMirror);
+            distance = vec3_distance(&self->globalPosition, &get_player()->globalPosition);
             if (distance < objdata->activationRadius) {
                 if (objdata->flagID != NO_GAMEBIT) {
                     main_set_bits(objdata->flagID, 1);

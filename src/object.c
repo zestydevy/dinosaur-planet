@@ -382,7 +382,7 @@ void func_80020EE4(s32 param1, s32 param2) {
             if (obj->def->flags & 0x80000) {
                 obj->unkA4 = obj->def->unk9d * 1000;
             } else {
-                obj->unkA4 = -camera_get_angle_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+                obj->unkA4 = -camera_get_angle_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
             }
         }
 
@@ -533,7 +533,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     update_pi_manager_array(0, objId);
 
-    if (initFlags & OBJ_INIT_FLAG2) {
+    if (initFlags & OBJ_INIT_ID_IS_TABIDX) {
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
@@ -556,10 +556,10 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         return NULL;
     } 
     
-    objHeader.srt.flags = 2;
+    objHeader.srt.flags = OBJFLAG_UNK_2;
 
     if (def->flags & 0x80) {
-        objHeader.srt.flags = 0x82;
+        objHeader.srt.flags = OBJFLAG_UNK_80 | OBJFLAG_UNK_2;
     }
 
     if (def->flags & 0x40000) {
@@ -567,7 +567,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if (initFlags & OBJ_INIT_FLAG4) {
-        objHeader.srt.flags |= 0x2000;
+        objHeader.srt.flags |= OBJFLAG_OWNS_SETUP;
     }
 
     objHeader.srt.transl.x = setup->x;
@@ -737,22 +737,22 @@ void obj_add_object(Object *obj, u32 initFlags) {
     if (obj->parent != NULL) {
         transform_point_by_object(
             obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z,
-            &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z,
+            &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z,
             obj->parent
         );
     } else {
-        obj->positionMirror.x = obj->srt.transl.x;
-        obj->positionMirror.y = obj->srt.transl.y;
-        obj->positionMirror.z = obj->srt.transl.z;
+        obj->globalPosition.x = obj->srt.transl.x;
+        obj->globalPosition.y = obj->srt.transl.y;
+        obj->globalPosition.z = obj->srt.transl.z;
     }
 
-    obj->positionMirror2.x = obj->srt.transl.x;
-    obj->positionMirror2.y = obj->srt.transl.y;
-    obj->positionMirror2.z = obj->srt.transl.z;
+    obj->prevLocalPosition.x = obj->srt.transl.x;
+    obj->prevLocalPosition.y = obj->srt.transl.y;
+    obj->prevLocalPosition.z = obj->srt.transl.z;
 
-    obj->positionMirror3.x = obj->positionMirror.x;
-    obj->positionMirror3.y = obj->positionMirror.y;
-    obj->positionMirror3.z = obj->positionMirror.z;
+    obj->prevGlobalPosition.x = obj->globalPosition.x;
+    obj->prevGlobalPosition.y = obj->globalPosition.y;
+    obj->prevGlobalPosition.z = obj->globalPosition.z;
 
     copy_obj_position_mirrors(obj, obj->setup, 0);
 
@@ -1075,12 +1075,12 @@ void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3) {
         }
     }
 
-    obj->positionMirror2.x = obj->srt.transl.x;
-    obj->positionMirror3.x = obj->srt.transl.x;
-    obj->positionMirror2.y = obj->srt.transl.y;
-    obj->positionMirror3.y = obj->srt.transl.y;
-    obj->positionMirror2.z = obj->srt.transl.z;
-    obj->positionMirror3.z = obj->srt.transl.z;
+    obj->prevLocalPosition.x = obj->srt.transl.x;
+    obj->prevGlobalPosition.x = obj->srt.transl.x;
+    obj->prevLocalPosition.y = obj->srt.transl.y;
+    obj->prevGlobalPosition.y = obj->srt.transl.y;
+    obj->prevLocalPosition.z = obj->srt.transl.z;
+    obj->prevGlobalPosition.z = obj->srt.transl.z;
 }
 
 void update_object(Object *obj) {
@@ -1101,21 +1101,21 @@ void update_object(Object *obj) {
     } else {
         update_pi_manager_array(1, obj->id);
 
-        if (!(obj->srt.flags & 8)) {
-            obj->positionMirror2.x = obj->srt.transl.x;
-            obj->positionMirror2.y = obj->srt.transl.y;
-            obj->positionMirror2.z = obj->srt.transl.z;
+        if (!(obj->srt.flags & OBJFLAG_MANUAL_PREV_POSITIONS)) {
+            obj->prevLocalPosition.x = obj->srt.transl.x;
+            obj->prevLocalPosition.y = obj->srt.transl.y;
+            obj->prevLocalPosition.z = obj->srt.transl.z;
 
-            obj->positionMirror3.x = obj->positionMirror.x;
-            obj->positionMirror3.y = obj->positionMirror.y;
-            obj->positionMirror3.z = obj->positionMirror.z;
+            obj->prevGlobalPosition.x = obj->globalPosition.x;
+            obj->prevGlobalPosition.y = obj->globalPosition.y;
+            obj->prevGlobalPosition.z = obj->globalPosition.z;
         }
 
         if (obj->dll != NULL && !(obj->unkB0 & 0x8000)) {
             obj->dll->vtbl->control(obj);
 
             get_object_child_position(obj,
-                &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
+                &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
         }
 
         if (obj->objhitInfo != NULL) {
@@ -1146,7 +1146,7 @@ void func_8002272C(Object *obj) {
         obj->dll->vtbl->update(obj);
 
         get_object_child_position(obj,
-            &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
+            &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
     }
 
     update_pi_manager_array(3, -1);
@@ -1606,7 +1606,7 @@ void obj_free_object(Object *obj, s32 param2) {
         }
     }
 
-    if (obj->srt.flags & 0x2000 && obj->setup != NULL) {
+    if (obj->srt.flags & OBJFLAG_OWNS_SETUP && obj->setup != NULL) {
         mmFree(obj->setup);
     }
 
@@ -1737,9 +1737,9 @@ void func_80023894(Object* object, s32 objectId) {
 
     sidekickSetup = (SidekickSetup*)object->setup;
     D_80091688.base.objId = objectId;
-    D_80091688.base.x = object->positionMirror.x;
-    D_80091688.base.y = object->positionMirror.y;
-    D_80091688.base.z = object->positionMirror.z;
+    D_80091688.base.x = object->globalPosition.x;
+    D_80091688.base.y = object->globalPosition.y;
+    D_80091688.base.z = object->globalPosition.z;
     D_80091688.unk18 = sidekickSetup->unk18;
     D_80091688.unk19 = sidekickSetup->unk19;
 
@@ -1788,7 +1788,7 @@ void obj_infer_map_id(Object *obj) {
     obj->mapID = map_get_map_id_from_xz_ws(obj->srt.transl.x, obj->srt.transl.z);
 }
 
-s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz) {
+s32 obj_move(Object *obj, f32 dx, f32 dy, f32 dz) {
     obj->srt.transl.x += dx;
     obj->srt.transl.y += dy;
     obj->srt.transl.z += dz;

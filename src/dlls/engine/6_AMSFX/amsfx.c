@@ -544,9 +544,9 @@ void dll_6_func_1320(Object* arg0, u16 arg1, f32 arg2, f32 arg3, f32 arg4, u32* 
     xDiff = sp30->tx;
     yDiff = sp30->ty;
     zDiff = sp30->tz;
-    pad  = arg0->positionMirror.y - yDiff;
-    temp = arg0->positionMirror.y - yDiff;
-    temp = sqrtf(SQ(arg0->positionMirror.x - xDiff) + SQ(temp) + SQ(arg0->positionMirror.z - zDiff));
+    pad  = arg0->globalPosition.y - yDiff;
+    temp = arg0->globalPosition.y - yDiff;
+    temp = sqrtf(SQ(arg0->globalPosition.x - xDiff) + SQ(temp) + SQ(arg0->globalPosition.z - zDiff));
     if (arg4 < temp) {
         var_v1 = 0;
     } else if (temp <= arg3) {
@@ -599,9 +599,9 @@ void dll_6_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
     temp_fv0 = arg2->srt.transl.x - arg1->srt.transl.x;
     temp_fv1 = arg2->srt.transl.y - arg1->srt.transl.y;
     temp_fa1 = arg2->srt.transl.z - arg1->srt.transl.z;
-    sp28 = arg2->positionMirror2.x - arg1->positionMirror2.x;
-    sp24 = arg2->positionMirror2.y - arg1->positionMirror2.y;
-    sp20 = arg2->positionMirror2.z - arg1->positionMirror2.z;
+    sp28 = arg2->prevLocalPosition.x - arg1->prevLocalPosition.x;
+    sp24 = arg2->prevLocalPosition.y - arg1->prevLocalPosition.y;
+    sp20 = arg2->prevLocalPosition.z - arg1->prevLocalPosition.z;
     sp3C = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
     temp_fv1 = ((sqrtf(SQ(sp28) + SQ(sp24) + SQ(sp20)) - sp3C) / arg3) + 1.0f;
     if (temp_fv1 < 0.1f) {

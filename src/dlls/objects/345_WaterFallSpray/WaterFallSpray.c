@@ -55,9 +55,9 @@ void WaterFallSpray_control(Object *self) {
         return;
 
     if (self->unkDC <= 0) {
-        dx = self->positionMirror.x - player->positionMirror.x;
-        dy = self->positionMirror.y - player->positionMirror.y;
-        dz = self->positionMirror.z - player->positionMirror.z;
+        dx = self->globalPosition.x - player->globalPosition.x;
+        dy = self->globalPosition.y - player->globalPosition.y;
+        dz = self->globalPosition.z - player->globalPosition.z;
 
         if (sqrtf(dx*dx + dy*dy + dz*dz) <= setup->distance * 0x10 || setup->distance == 0) {
 

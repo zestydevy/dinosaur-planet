@@ -190,7 +190,7 @@ void DFPfloorbar_control(Object* self) {
 
 // offset: 0x560 | func: 2 | export: 2
 void DFPfloorbar_update(Object* arg0) {
-    if ((dLevelControl != NULL) && (dLevelControl->srt.flags & 0x40)) {
+    if ((dLevelControl != NULL) && (dLevelControl->srt.flags & OBJFLAG_UNK_40)) {
         dLevelControl = NULL;
     }
 }

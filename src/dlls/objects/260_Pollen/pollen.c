@@ -57,9 +57,9 @@ void dll_260_func_13C(Object* arg0) {
         if (temp_v0_3 != NULL) {
             temp_v0_3->srt.pitch = 0;
             temp_v0_3->srt.yaw = 0;
-            temp_v0_3->speed.f[0] = (f32) rand_next(-0x32, 0x32) * 0.01f;
-            temp_v0_3->speed.f[1] = (f32) rand_next(0, 0x1E) * 0.01f;
-            temp_v0_3->speed.f[2] = (f32) rand_next(-0x32, 0x32) * 0.01f;
+            temp_v0_3->velocity.f[0] = (f32) rand_next(-0x32, 0x32) * 0.01f;
+            temp_v0_3->velocity.f[1] = (f32) rand_next(0, 0x1E) * 0.01f;
+            temp_v0_3->velocity.f[2] = (f32) rand_next(-0x32, 0x32) * 0.01f;
             temp_v0_3->unkC4 = arg0;
         }
     }
@@ -79,9 +79,9 @@ void dll_260_update(Object* self) {
         self->srt.transl.f[1] = temp_v0->unk38;
         self->srt.transl.f[2] = temp_v0->unk3C;
         self->opacity = 0;
-        self->speed.f[0] = 0.0f;
-        self->speed.f[1] = 0.0f;
-        self->speed.f[2] = 0.0f;
+        self->velocity.f[0] = 0.0f;
+        self->velocity.f[1] = 0.0f;
+        self->velocity.f[2] = 0.0f;
         func_800267A4(self);
     }
 }

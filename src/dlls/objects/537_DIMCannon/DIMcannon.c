@@ -179,7 +179,7 @@ void dll_537_control(Object* self) {
         func_80023D30(self, 0, 0, 0);
     }
     
-    self->srt.flags &= 0xBFFF;
+    self->srt.flags &= ~OBJFLAG_INVISIBLE;
     
     switch (objData->unk24) {
     case 5:
@@ -201,7 +201,7 @@ void dll_537_control(Object* self) {
         dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
         if (main_get_bits(objSetup->unk1A)) {
             objData->unk24 = 5;
-        } else if ((objData->unk0 != NULL) && (main_get_bits(objSetup->unk1E) == 0) && (vec3_distance_xz_squared(&self->positionMirror, &objData->unk0->positionMirror) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
+        } else if ((objData->unk0 != NULL) && (main_get_bits(objSetup->unk1E) == 0) && (vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
             objData->unk24 = 1;
         }
         objData->unk25 = 0;
@@ -227,7 +227,7 @@ void dll_537_control(Object* self) {
                     objData->unk22 -= gUpdateRate;
                 }
                 
-                objData->unk10 = vec3_distance_xz_squared(&self->positionMirror, &objData->unk0->positionMirror);
+                objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
                 if ((objData->unk10 < (f32) SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
                     sidekick = get_sidekick();
                     if (sidekick != NULL) {
@@ -252,7 +252,7 @@ void dll_537_control(Object* self) {
             objData->unk4.x = objData->unk0->srt.transl.x;
             objData->unk4.y = objData->unk0->srt.transl.y;
             objData->unk4.z = objData->unk0->srt.transl.z;
-            objData->unk10 = vec3_distance_xz_squared(&self->positionMirror, &objData->unk0->positionMirror);
+            objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
             if (((objSetup->unk26 * 90000.0f) / 100.0f) < objData->unk10) {
                 main_set_bits(objSetup->unk22, 1);
                 objData->unk24 = 1;
@@ -394,7 +394,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
         }
         break;
     default:
-        self->srt.flags &= 0xBFFF;
+        self->srt.flags &= ~OBJFLAG_INVISIBLE;
         if (animData->unk8D == 1) {
             objSetup = (DLL537_Setup*)self->setup;
             main_set_bits(objSetup->unk18, 1);
@@ -585,9 +585,9 @@ void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup) {
     
     sp24 = objSetup->unk1A * 0.1f;
     sp20 = objSetup->unk1C * 0.1f;
-    self->speed.x = fsin16_precise(self->srt.yaw) * sp20;
-    self->speed.y = -sp24;
-    self->speed.z = fcos16_precise(self->srt.yaw) * sp20;
+    self->velocity.x = fsin16_precise(self->srt.yaw) * sp20;
+    self->velocity.y = -sp24;
+    self->velocity.z = fcos16_precise(self->srt.yaw) * sp20;
     
     self->unkDC = 0;
 
@@ -615,8 +615,8 @@ void dll_537_func_1430(Object* self) {
     s32 pad;
     Unk_Data* objData;
     
-    self->speed.y += -0.022f * gUpdateRateF;
-    obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+    self->velocity.y += -0.022f * gUpdateRateF;
+    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
 
     objHits = self->objhitInfo;
     if (objHits != NULL) {
@@ -639,7 +639,7 @@ void dll_537_func_1430(Object* self) {
     
     objData = self->data;
     
-    self->srt.pitch = arctan2_f(self->speed.y, sqrtf(SQ(self->speed.x) + SQ(self->speed.z)));
+    self->srt.pitch = arctan2_f(self->velocity.y, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)));
     
     if (objData->unk0 != 0) {
         _data_0->vtbl->func0(self, 2, 0, 0x10002, -1, 0);

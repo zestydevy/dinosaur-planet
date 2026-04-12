@@ -25,7 +25,7 @@ void dll_327_dtor(void *dll) { }
 void dll_327_setup(Object* self, DLL327_Setup* objSetup, s32 arg2) {
     f32 factor;
     
-    self->srt.flags |= 2;
+    self->srt.flags |= OBJFLAG_UNK_2;
     
     //Apply a scale multiplier to the object and its shadow
     factor = objSetup->scaleMultiplier & 0xFF;

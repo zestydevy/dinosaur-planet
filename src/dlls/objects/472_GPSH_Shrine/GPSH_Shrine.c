@@ -100,9 +100,9 @@ void GPSH_Shrine_setup(Object* self, GPSH_Shrine_Setup* setup, s32 arg2) {
     objdata->unkC = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
     dll_unload(modgfxDLL);
     _bss_8 = 0.00001f;
-    self->positionMirror.x = self->srt.transl.x;
-    self->positionMirror.y = self->srt.transl.y;
-    self->positionMirror.z = self->srt.transl.z;
+    self->globalPosition.x = self->srt.transl.x;
+    self->globalPosition.y = self->srt.transl.y;
+    self->globalPosition.z = self->srt.transl.z;
 }
 
 // offset: 0x290 | func: 1 | export: 1
@@ -206,7 +206,7 @@ void GPSH_Shrine_control(Object* self) {
         }
         switch (objdata->unk15) {
         case 0:
-            if (vec3_distance(&self->positionMirror, &player->positionMirror) < (f32) objdata->unk0) {
+            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unk15 = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
@@ -428,7 +428,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
         }
         a2->unk8E[i] = 0;
     }
-    if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3_distance(&a0->positionMirror, &player->positionMirror))) {
+    if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3_distance(&a0->globalPosition, &player->globalPosition))) {
         gDLL_3_Animation->vtbl->func18(a2->unk63);
     }
     return 0;

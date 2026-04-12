@@ -72,7 +72,7 @@ void dll_502_setup(Object* self, DLL502_Setup* setup, s32 arg2) {
     if (main_get_bits((s32) setup->unk1A) != 0) {
         DLL502Data->unk136 = 8;
         self->objhitInfo->unk58 &= 0xFFFE;
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
     }
     self->modelInstIdx = setup->unk20;
     if (self->modelInstIdx >= self->def->numModels) {
@@ -109,7 +109,7 @@ void dll_502_setup(Object* self, DLL502_Setup* setup, s32 arg2) {
     }
     DLL502Data->unk120 = 5.0f;
     if (player != NULL) {
-        temp_fv0_3 = vec3_distance(&player->positionMirror, &self->positionMirror);
+        temp_fv0_3 = vec3_distance(&player->globalPosition, &self->globalPosition);
         DLL502Data->unk10C = temp_fv0_3;
         DLL502Data->unk108 = temp_fv0_3;
     } else {
@@ -166,12 +166,12 @@ void dll_502_control(Object* self) {
         }
     } else {
         temp_s3->unk10C = (f32) temp_s3->unk108;
-        spC4 = vec3_distance_squared(&player->positionMirror, &self->positionMirror);
+        spC4 = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
         if (sidekick == NULL) {
             temp_s3->unk108 = sqrtf(spC4);
         } else {
             spC4 = spC4;
-            temp_fv0 = vec3_distance_squared(&sidekick->positionMirror, &self->positionMirror);
+            temp_fv0 = vec3_distance_squared(&sidekick->globalPosition, &self->globalPosition);
             if (spC4 < temp_fv0) {
                 // assign temp_s3->unk108 directly instead of temp-saving it to var_fv0
                 temp_s3->unk108 = sqrtf(spC4);
@@ -188,7 +188,7 @@ void dll_502_control(Object* self) {
             if (spCC->id == 0x416) {
                 temp_s3->unk136 = 8U;
                 ((DLL_Unknown*)spCC->dll)->vtbl->func[20].withThreeArgsCustom3(spCC, 1, self); // func20
-                self->srt.flags |= 0x4000;
+                self->srt.flags |= OBJFLAG_INVISIBLE;
                 func_800267A4(self);
             } else {
                 temp_s3->unk137 |= 0x10;
@@ -211,7 +211,7 @@ void dll_502_control(Object* self) {
                     break;
                 }
             }
-            temp_v0_3 = func_80059C40(&self->positionMirror2, &self->srt.transl, 6.0f, 2, &sp58, self, 8, -1, 0xFFU, 0x14);
+            temp_v0_3 = func_80059C40(&self->prevLocalPosition, &self->srt.transl, 6.0f, 2, &sp58, self, 8, -1, 0xFFU, 0x14);
             if ((spD8->unk18 == 4) && (temp_v0_3 != 0) && (sp58.unk50 == 0xD)) {
                 temp_s3->unk137 = (u8) (temp_s3->unk137 | 4);
             }
@@ -443,7 +443,7 @@ static void dll_502_func_D74(Object* arg0, DLL502_Data* DLL502Data, DLL502_Setup
     case 2:
         if (DLL502Data->unk137 & 1) {
             DLL502Data->unk136 = 8U;
-            arg0->srt.flags |= 0x4000;
+            arg0->srt.flags |= OBJFLAG_INVISIBLE;
             func_800267A4(arg0);
         }
         break;
@@ -511,9 +511,9 @@ static void dll_502_func_D74(Object* arg0, DLL502_Data* DLL502Data, DLL502_Setup
     } else {
         sp84 = 0.0f;
     }
-    arg0->speed.f[0] = fsin16_precise(DLL502Data->unk130) * sp84;
-    arg0->speed.f[2] = fcos16_precise(DLL502Data->unk130) * sp84;
-    obj_integrate_speed(arg0, arg0->speed.f[0] * gUpdateRateF, 0.0f, arg0->speed.f[2] * gUpdateRateF);
+    arg0->velocity.f[0] = fsin16_precise(DLL502Data->unk130) * sp84;
+    arg0->velocity.f[2] = fcos16_precise(DLL502Data->unk130) * sp84;
+    obj_move(arg0, arg0->velocity.f[0] * gUpdateRateF, 0.0f, arg0->velocity.f[2] * gUpdateRateF);
 }
 
 /*0x0*/ static const char str_0[] = "MUSHROOM: trapped!!!!\n";

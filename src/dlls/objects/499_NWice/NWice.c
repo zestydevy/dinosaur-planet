@@ -20,7 +20,7 @@ void dll_499_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_499_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    self->srt.flags |= 0x4000;
+    self->srt.flags |= OBJFLAG_INVISIBLE;
     self->unkB0 |= 0x2000;
     obj_add_object_type(self, OBJTYPE_61);
 }

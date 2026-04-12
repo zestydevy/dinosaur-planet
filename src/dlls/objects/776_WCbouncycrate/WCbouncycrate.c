@@ -34,25 +34,25 @@ void dll_776_control(Object* self) {
     if (!(DLL776Data->unkA & 1)) {
         DLL776Data->unk8 -= gUpdateRateF;
         if (DLL776Data->unk8 <= 0) {
-            self->speed.y = dll_776_func_224(self);
+            self->velocity.y = dll_776_func_224(self);
             DLL776Data->unkB = 0U;
             DLL776Data->unkA = (u8) (DLL776Data->unkA | 1);
         }
         return; 
     }
 
-    self->speed.y += -0.14f * gUpdateRateF;
-    self->srt.transl.y += self->speed.y * gUpdateRateF;
+    self->velocity.y += -0.14f * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
 
     if (self->srt.transl.y <= DLL776Data->unk0) {
         self->srt.transl.y = self->srt.transl.y + (DLL776Data->unk0 - self->srt.transl.y);
-        self->speed.y = -self->speed.y * 0.8f;
+        self->velocity.y = -self->velocity.y * 0.8f;
         DLL776Data->unkB++;
         if (DLL776Data->unkB >= 0xB) {
             DLL776Data->unkA &= ~1;
             DLL776Data->unk8 = 0x28;
             self->srt.transl.y = DLL776Data->unk0;
-            self->speed.y = 0.0f;
+            self->velocity.y = 0.0f;
         }
     }
 }

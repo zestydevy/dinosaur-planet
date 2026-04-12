@@ -63,7 +63,7 @@ void WLWorm_control(Object* self) {
     }
     
     //Return home when player not near object's initial position
-    if (vec3_distance_xz(&player->positionMirror, (Vec3f*)&self->setup->x) > 440.0f){
+    if (vec3_distance_xz(&player->globalPosition, (Vec3f*)&self->setup->x) > 440.0f){
         self->srt.transl.f[0] = objData->home.f[0];
         self->srt.transl.f[1] = objData->home.f[1];
         self->srt.transl.f[2] = objData->home.f[2];
@@ -71,9 +71,9 @@ void WLWorm_control(Object* self) {
     }
 
     //Get vector towards player (unnormalised)
-    delta.f[0] = player->positionMirror.f[0] - self->srt.transl.f[0];
-    delta.f[1] = player->positionMirror.f[1] - self->srt.transl.f[1];
-    delta.f[2] = player->positionMirror.f[2] - self->srt.transl.f[2];
+    delta.f[0] = player->globalPosition.f[0] - self->srt.transl.f[0];
+    delta.f[1] = player->globalPosition.f[1] - self->srt.transl.f[1];
+    delta.f[2] = player->globalPosition.f[2] - self->srt.transl.f[2];
 
     //Move towards player
     if ((delta.f[0] > 0.0f) || (delta.f[0] < 0.0f)) {

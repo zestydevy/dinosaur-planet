@@ -127,7 +127,7 @@ void dll_220_control(Object* self) {
         }
         if (objdata->unk4 & 5) {
             //Get vector to player, and angle to player
-            VECTOR_SUBTRACT(player->positionMirror, self->positionMirror, vPlayer); 
+            VECTOR_SUBTRACT(player->globalPosition, self->globalPosition, vPlayer); 
             angle = arctan2_f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(angle);
             if (((u16)angle < objdata->unk8) || (((0xFFFF - objdata->unk8) & 0xFFFF) < (u16)angle)) {
@@ -211,9 +211,9 @@ static void dll_220_func_778(Object* self) {
     if (temp_v0_2 != NULL) {
         sp2C = temp_v0_2;
         player = get_player();
-        sp2C->speed.f[0] = (player->srt.transl.f[0] - self->srt.transl.f[0]) / 42.0f;
-        sp2C->speed.f[1] = ((player->srt.transl.f[1] + objdata->unkE) - self->srt.transl.f[1]) / 42.0f;
-        sp2C->speed.f[2] = (player->srt.transl.f[2] - self->srt.transl.f[2]) / 42.0f;
+        sp2C->velocity.f[0] = (player->srt.transl.f[0] - self->srt.transl.f[0]) / 42.0f;
+        sp2C->velocity.f[1] = ((player->srt.transl.f[1] + objdata->unkE) - self->srt.transl.f[1]) / 42.0f;
+        sp2C->velocity.f[2] = (player->srt.transl.f[2] - self->srt.transl.f[2]) / 42.0f;
         sp2C->unkC4 = self;
     }
 }
@@ -221,7 +221,7 @@ static void dll_220_func_778(Object* self) {
 // offset: 0x8A4 | func: 9
 static void dll_220_func_8A4(Object* self, DLL220_Data* arg1) {
     func_800267A4(self);
-    self->srt.flags |= 0x4000;
+    self->srt.flags |= OBJFLAG_INVISIBLE;
     arg1->unk4 |= 2;
 }
 

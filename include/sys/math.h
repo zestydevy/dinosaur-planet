@@ -153,7 +153,7 @@ typedef struct {
 /*0000*/    s16 yaw; // 16-bit angle in the range [-32768..32768) => [-pi..pi)
 /*0002*/    s16 pitch;
 /*0004*/    s16 roll;
-/*0006*/    s16 flags;
+/*0006*/    s16 flags; // meaning depends on context. for object SRTs, this is ObjectFlags
 /*0008*/    f32 scale;
 /*000C*/	Vec3f transl;
 } SRT;

@@ -105,7 +105,7 @@ void GP_LevelControl_control(Object *self) {
     if (gDLL_29_Gplay->vtbl->get_map_setup(MAP_GOLDEN_PLAINS) == 2) {
         obj = func_800211B4(0x35138);
         obj2 = func_800211B4(0x3043B);
-        if (obj && obj2 && vec3_distance_squared(&obj->positionMirror, &obj2->positionMirror) < 300.0f) {
+        if (obj && obj2 && vec3_distance_squared(&obj->globalPosition, &obj2->globalPosition) < 300.0f) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 3, 1);
             main_set_bits(BIT_GP_Sharpclaw_Jetbike_Cutscene1, 1);
             main_set_bits(BIT_GP_Sharpclaw_Jetbike_Cutscene2, 1);
