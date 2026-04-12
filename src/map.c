@@ -1986,9 +1986,6 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
 #else
-void map_restore_saved_objects(MapHeader*, s32);                   /* extern */
-MapHeader* map_load_streammap(s32, s32);         /* extern */
-void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 s32 map_load_streammap_add_to_table(s32 arg0) {
     s32 sp2C;
     Struct_D_800B9768_unk4* temp_a3;
@@ -2194,10 +2191,6 @@ void func_80046320(s32 arg0, Object *obj) {
     if (t0){}
 }
 
-#ifndef NON_MATCHING
-void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
-#else
 void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {
     Struct_D_800B9768_unk4 *temp;
     s32 sp30;
@@ -2205,6 +2198,7 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
     s32 mapIndex;
     MapHeader* sp24;
     s8 sp20[2];
+    s16 *temp2;
 
     sp30 = func_80045DC0(worldGridX, worldGridZ, arg3);
     if (sp30 != -1) {
@@ -2214,8 +2208,9 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         }
         gMapStreamMapTable[mapIndex].unk06 = 1;
         sp24 = gMapStreamMapTable[mapIndex].header;
-        sp20[0] = D_800B9768.unk8[sp30][0];
-        sp20[1] = D_800B9768.unk8[sp30][1];
+        temp2 = (s16*)(((u8*)D_800B9768.unk8) + (sp30 << 1 << 1));
+        sp20[0] = temp2[0];
+        sp20[1] = temp2[1];
         cell->mapIDs[0] = sp30;
         cell->mapIDs[1] = sp20[0];
         cell->mapIDs[2] = sp20[1];
@@ -2224,14 +2219,14 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
             if (mapIndex == -1) {
                 mapIndex = map_load_streammap_add_to_table(sp20[0]);
             }
-            ((s8 *)&gMapStreamMapTable[mapIndex])[2] = 1;
+            ((s8 *)&gMapStreamMapTable[mapIndex])[6] = 1;
         }
         if (sp20[1] != -1) {
             mapIndex = map_find_streammap_index(sp20[1]);
             if (mapIndex == -1) {
                 mapIndex = map_load_streammap_add_to_table(sp20[1]);
             }
-            ((s8 *)&gMapStreamMapTable[mapIndex])[2] = 1;
+            ((s8 *)&gMapStreamMapTable[mapIndex])[6] = 1;
         }
 
         temp = &D_800B9768.unk4[sp30];
@@ -2263,7 +2258,6 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         cell->loadedBlockIndex = 0;
     }
 }
-#endif
 
 void func_80046688(s32 arg0, s32 arg1) {
 }
