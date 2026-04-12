@@ -453,8 +453,8 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
                 objData->animSpeed = 0.04f;
             }
 
-            self->speed.x = (dx / distance) * 0.25f;
-            self->speed.z = (dz / distance) * 0.25f;
+            self->velocity.x = (dx / distance) * 0.25f;
+            self->velocity.z = (dz / distance) * 0.25f;
             func_8002493C(self, 0.25f, &objData->animSpeed);
         } else {
             if (self->curModAnimId != 0xC) {
@@ -473,12 +473,12 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
         if (distance < 4.0f) {
             objData->prevWalkIndex = objData->walkIndex;
             objData->walkIndex = 0xC;
-            self->speed.x = 0.0f;
-            self->speed.z = 0.0f;
+            self->velocity.x = 0.0f;
+            self->velocity.z = 0.0f;
         }
         
-        self->srt.transl.x += (self->speed.x * gUpdateRateF);
-        self->srt.transl.z += (self->speed.z * gUpdateRateF);
+        self->srt.transl.x += (self->velocity.x * gUpdateRateF);
+        self->srt.transl.z += (self->velocity.z * gUpdateRateF);
         func_80024108(self, objData->animSpeed, gUpdateRateF, &sp30);
     }
 }

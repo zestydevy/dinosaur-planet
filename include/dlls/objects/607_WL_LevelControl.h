@@ -43,7 +43,7 @@ typedef enum {
     WM_ObjGroup9_EMPTY = 9,
     WM_ObjGroup10_EMPTY = 10, //Empty, but loaded around Krystal antechamber (specifically in setup4, so may be intended for ceiling Skeetlas)
     WM_ObjGroup11_Krystal_Orrery = 11, //planets, console
-    WM_ObjGroup13_EMPTY = 13, //Empty, but loaded when entering Krystal antechamber (specifically in setup6)
+    WM_ObjGroup13_EMPTY = 13 //Empty, but loaded when entering Krystal antechamber (specifically in setup6)
 } WM_ObjectGroups;
 
 #define SPIRIT_INDEX(value) (1 << (value - 1))

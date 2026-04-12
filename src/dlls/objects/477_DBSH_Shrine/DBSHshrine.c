@@ -85,9 +85,9 @@ void DBSHshrine_setup(Object* self, DBSHshrine_Setup* objSetup, s32 arg2) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 1);
     }
     
-    self->positionMirror.x = self->srt.transl.x;
-    self->positionMirror.y = self->srt.transl.y;
-    self->positionMirror.z = self->srt.transl.z;
+    self->globalPosition.x = self->srt.transl.x;
+    self->globalPosition.y = self->srt.transl.y;
+    self->globalPosition.z = self->srt.transl.z;
 }
 
 // offset: 0x224 | func: 1 | export: 1
@@ -183,7 +183,7 @@ void DBSHshrine_control(Object* self) {
     //STATE MACHINE
     switch (objData->state) {
     case 0:
-        if (vec3_distance(&self->positionMirror, &player->positionMirror) < objData->testStartRadius) {
+        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->testStartRadius) {
             if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) != 0) {
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
             }
@@ -401,12 +401,12 @@ void DBSHshrine_handle_messages(Object* self) {
     while (obj_recv_mesg(self, &message, &sender, (void*)&messageArg) != 0) {
         switch (message) {
         case 0x30005:
-            if (vec3_distance(&self->positionMirror, &sender->positionMirror) < 200.0f) {
+            if (vec3_distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
                 objData->unk6 = -3;
             }
             break;
         case 0x30006:
-            if (vec3_distance(&self->positionMirror, &sender->positionMirror) < 200.0f) {
+            if (vec3_distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
                 objData->unk6 = 0x10;
             }
             break;
