@@ -3,6 +3,7 @@
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/fonts.h"
 #include "sys/gfx/model.h"
@@ -16,7 +17,7 @@ typedef struct {
     s16 flagID;
     s16 unk1A;
     s16 unk1C;
-    s16 textID; //1E
+    s16 textID;
     u8 activationRadius;
 } LevelName_Setup;
 
@@ -59,7 +60,7 @@ enum LevelNameStates{
     0x01f6
 };
 
-static int levelname_anim_callback(Object* arg0, Object *arg1, AnimObj_Data* arg2, s8 arg3);
+static int levelname_anim_callback(Object* self, Object *overrideObj, AnimObj_Data* animData, s8 arg3);
 
 // offset: 0x0 | ctor
 void levelname_ctor(void* dll){ }
@@ -89,7 +90,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
     objdata->state = LEVELNAME_STATE_0_WAITING;
     objdata->timer = objdata->opacity;
 
-    if (objdata->flagID != -1) {
+    if (objdata->flagID != NO_GAMEBIT) {
         if (main_get_bits(objdata->flagID)) {
             objdata->state = LEVELNAME_STATE_4_FINISHED;
         }
@@ -108,23 +109,23 @@ void levelname_control(Object* self) {
         case LEVELNAME_STATE_0_WAITING:
             distance = vec3_distance(&self->positionMirror, &get_player()->positionMirror);
             if (distance < objdata->activationRadius) {
-                if (objdata->flagID != -1) {
+                if (objdata->flagID != NO_GAMEBIT) {
                     main_set_bits(objdata->flagID, 1);
                 }
-                objdata->state = 1;
+                objdata->state = LEVELNAME_STATE_1_FADING_IN;
             }
             break;
         case LEVELNAME_STATE_1_FADING_IN:
             objdata->opacity += gUpdateRate * 4;
             if (objdata->opacity > 220) {
                 objdata->opacity = 220;
-                objdata->state = 2;
+                objdata->state = LEVELNAME_STATE_2_HOLDING;
             }
             break;
         case LEVELNAME_STATE_2_HOLDING:
             objdata->timer += gUpdateRate;
             if ((u32)objdata->timer > objdata->displayDuration) {
-                objdata->state = 3;
+                objdata->state = LEVELNAME_STATE_3_FADING_OUT;
             }    
             objdata->opacity = (s32) (fsin16_precise(objdata->timer * 0x500) * 30.0f) + 0xDC;
             break;
@@ -132,7 +133,7 @@ void levelname_control(Object* self) {
             objdata->opacity -= gUpdateRate * 4;
             if (objdata->opacity < 0) {
                 objdata->opacity = 0;
-                objdata->state = 4;
+                objdata->state = LEVELNAME_STATE_4_FINISHED;
             }
             break;
         case LEVELNAME_STATE_4_FINISHED:
@@ -162,7 +163,7 @@ void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle*
     font_window_set_text_colour(6, 
         0xFF, 0xFF, 0xFF, 0, objdata->opacity);
 
-    for (index = 0; index < gametext->count; index++, yCoord += 0x1E){
+    for (index = 0; index < gametext->count; index++, yCoord += 30){
         font_window_add_string_xy(6, -0x8000, yCoord, 
             gametext->strings[index], 1, 4);
         font_window_draw(gfx, mtx, vtx, 6);
@@ -188,14 +189,14 @@ u32 levelname_get_data_size(Object* self, s32 arg1){
 }
 
 // offset: 0x508 | func: 7
-static int levelname_anim_callback(Object* arg0, Object *arg1, AnimObj_Data* arg2, s8 arg3) {
+static int levelname_anim_callback(Object* self, Object *overrideObj, AnimObj_Data* animData, s8 arg3) {
     LevelName_Data* objdata;
     s32 i;
 
-    objdata = arg0->data;
+    objdata = self->data;
 
-    for (i = 0; i < arg2->unk98; i++){
-        if (arg2->unk8E[i] == 1) {
+    for (i = 0; i < animData->unk98; i++){
+        if (animData->unk8E[i] == 1) {
             if (objdata->flagID != -1) {
                 main_set_bits(objdata->flagID, 1);
             }
