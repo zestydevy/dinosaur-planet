@@ -3781,18 +3781,17 @@ void func_80049D88(void)
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_textures.s")
-#else
 s32 block_setup_textures(Block* block) {
     s32 var_a1;
     s32 var_s1;
     s32 i;
     s32 j;
-    u32 var_t0;
+    s32 var_t0;
     s32 var_s6;
     s32 var_a2;
+    s32 new_var;
     BlockShape* temp_a3;
+    BlockShape* temp_a3_2;
 
     var_s1 = 0;
     var_s6 = 0;
@@ -3801,31 +3800,35 @@ s32 block_setup_textures(Block* block) {
         if (temp_a3->flags & RENDER_COMPOSITE_BASE) {
             var_s6++;
         }
-        if (temp_a3->flags & RENDER_UNK10000 && temp_a3->animatorID != 0) {
-            var_a1 = FALSE;
-            for (j = 0; j < var_s1; j++) {
-                if (block->unk28[j].unk2 == temp_a3->animatorID) {
-                    var_a1 = TRUE;
-                    break;
+        if (temp_a3->flags & RENDER_UNK10000) {
+            if (temp_a3->animatorID != 0) {
+                temp_a3_2 = temp_a3;
+                var_a1 = FALSE;
+                for (j = 0; j < var_s1; j++) {
+                    var_a2 = temp_a3_2->animatorID;
+                    if (block->unk28[j].unk2 == (new_var = var_a2 ^ 0 )) {
+                        var_a1 = TRUE;
+                        break;
+                    }
                 }
-            }
-            var_a2 = temp_a3->animatorID;
-            if (var_a1 == FALSE) {
-                var_a1 = temp_a3->flags;
-                block->unk28[var_s1].textureIndex = func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
-                block->unk28[var_s1].unk2 = block->shapes[i].animatorID;
-                var_s1++;
-            } else {
-                var_a1 = temp_a3->flags;
-                func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
-            }
+
+                var_a2 = temp_a3->animatorID;
+                if (var_a1 == FALSE) {
+                    var_a1 = temp_a3->flags;
+                    block->unk28[var_s1].textureIndex = func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
+                    block->unk28[var_s1].unk2 = block->shapes[i].animatorID;
+                    var_s1++;
+                } else {
+                    var_a1 = temp_a3->flags;
+                    func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
+                }
+                }
         }
     }
     block->unk49 = var_s6;
     block->unk48 = var_s1;
     return var_s1 * 4;
 }
-#endif
 
 void func_80049FA8(Block* block) {
     s32 index;
