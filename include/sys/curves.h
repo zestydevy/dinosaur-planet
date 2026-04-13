@@ -34,10 +34,10 @@ typedef struct {
 /*08*/ Vec3f pos;
 /*14*/ u32 uID;
 /*18*/ s8 unk18;
-/*19*/ s8 unk19; // curveType?  2) KTrex, 3) RedEye, 1A) camera?, 1B) camera?, 1D) ThornTail, 1F) crawlSpace, 22) Kyte, 24) Tricky
+/*19*/ s8 curveType; // "CURVETYPE in default.dol"  2) KTrex, 3) RedEye, 1A) camera?, 1B) camera?, 1D) ThornTail, 1F) crawlSpace, 22) Kyte, 24) Tricky
 /*1A*/ s8 unk1A;
 /*1B*/ s8 unk1B;
-/*1C*/ s32 unk1C[4];
+/*1C*/ s32 links[4]; // "links" in default.dol
 // TODO: struct split here?
 /*2C*/ s8 unk2C;
 /*2D*/ s8 unk2D;

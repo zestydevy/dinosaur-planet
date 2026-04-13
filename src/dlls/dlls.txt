@@ -10,6 +10,7 @@
 16 = engine/16
 17 = engine/17_partfx
 18 = engine/18_objfsa
+19 = engine/19_menu_gameplay
 20 = engine/20_screens
 21 = engine/21_gametext
 22 = engine/22_subtitles
@@ -37,6 +38,7 @@
 77 = engine/77_scarab
 82 = engine/82
 83 = engine/83
+92 = engine/92_camclimb
 94 = engine/94_camtalk1
 98 = engine/98_camcannon
 
@@ -56,13 +58,18 @@
 225 = objects/225_SabreBaddie
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
+232 = objects/232_VampireBat
 236 = objects/236_WG_Triffid
+241 = objects/241_SkeetlaWall
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie
 246 = objects/246_SwarmBaddie
 248 = objects/248_PirahnaBaddie
 250 = objects/250_TurtleBaddie
+252 = objects/252_Cannon
+253 = objects/253_CannonBall
 254 = objects/254_PineCone
+257 = objects/257_tesla
 260 = objects/260_Pollen
 264 = objects/264_kamerian_flame
 266 = objects/266_sfxplayer
@@ -77,6 +84,7 @@
 279 = objects/279_Door
 280 = objects/280_SidekickBall
 281 = objects/281_area
+282 = objects/282_Crate
 283 = objects/283_krazoatext
 284 = objects/284_levelname
 287 = objects/287_pressureswitch
@@ -105,6 +113,7 @@
 323 = objects/323_waterfallControl
 324 = objects/324_curve
 325 = objects/325_trigger
+327 = objects/327
 331 = objects/331_genprops
 332 = objects/332_FXEmit
 334 = objects/334_Transporter
@@ -132,6 +141,7 @@
 396 = objects/396_CFSupTreasureCh
 398 = objects/398_CFMagicWall
 400 = objects/400_CFLevelControl
+405 = objects/405_CF_Lamp
 408 = objects/408_IMIceMountain
 412 = objects/412_IMicepillar
 413 = objects/413_IMspacecraft
@@ -142,6 +152,7 @@
 427 = objects/427_DFlevelcontrol
 428 = objects/428_DFmole
 431 = objects/431_DFwhirlpool
+433 = objects/433_DFSH_Shrine
 435 = objects/435_KrazoaSpirit
 438 = objects/438_RobotBeam
 441 = objects/441_MMP_levelcontrol
@@ -193,7 +204,10 @@
 525 = objects/525_SCtotempuzzle
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
+537 = objects/537_DIMCannon
+541 = objects/541_DIMExplosion
 544 = objects/544_DIM_LevelControl
+545 = objects/545_DIMTent
 546 = objects/546_DIMBikeDoor
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
@@ -218,7 +232,9 @@
 588 = objects/588_SB_ShipFlag
 589 = objects/589_SB_ShipGunBroke
 590 = objects/590_WL_Galleon
+593 = objects/593_WL_DeadDino
 596 = objects/596_WLpressureswitch
+598 = objects/598_WM_Wizard
 602 = objects/602_WLTorch
 603 = objects/603_WL_Vein
 605 = objects/605_WLworm
@@ -230,6 +246,7 @@
 614 = objects/614_WM_Planets
 615 = objects/615_crawler
 617 = objects/617_WL_VConsole
+618 = objects/618_WM_TransTop
 619 = objects/619_VFP_LevelControl
 633 = objects/633_VFP_PodiumPoint
 636 = objects/636_VFP_lavastar
@@ -243,6 +260,7 @@
 659 = objects/659_DBTrigger
 660 = objects/660_DBSpike
 661 = objects/661_DBPlaceHolder
+662 = objects/662_DBEgg
 663 = objects/663_DBlevelControl
 668 = objects/668_DBdiamond
 670 = objects/670_DBExpbit
@@ -279,7 +297,7 @@
 762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem
 768 = objects/768_SPShop
-772 = objects/772_SPitemBeam
+772 = objects/772_SPitembeam
 776 = objects/776_WCbouncycrate
 777 = objects/777_WCTrexChase
 778 = objects/778_WCSabreChase
@@ -292,5 +310,4 @@
 787 = objects/787_WCApertureSymbol
 793 = objects/793_BWlog
 795 = objects/795_BWLevelControl
-
 796 = objects/796_AMLevelControl

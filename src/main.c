@@ -71,7 +71,7 @@ DLL_8 *gDLL_8 = NULL;
 DLL_9_newclouds *gDLL_9_Newclouds = NULL;
 DLL_10_newstars *gDLL_10_Newstars = NULL;
 DLL_12_minic *gDLL_12_Minic = NULL;
-DLL_1_UI *gDLL_1_UI = NULL;
+DLL_1_cmdmenu *gDLL_1_cmdmenu = NULL;
 DLL_4_race *gDLL_4_Race = NULL;
 DLL_5_AMSEQ *gDLL_5_AMSEQ = NULL;
 DLL_5_AMSEQ *gDLL_5_AMSEQ2 = NULL;
@@ -222,7 +222,7 @@ void game_init(void) {
         gDLL_31_Flash = dll_load_deferred(DLL_ID_FLASH, 2);
         gDLL_28_ScreenFade = dll_load_deferred(DLL_ID_SCREEN_FADE, 4);
     } else {
-        gDLL_1_UI = dll_load_deferred(DLL_ID_UI, 15);
+        gDLL_1_cmdmenu = dll_load_deferred(DLL_ID_CMDMENU, 15);
         gDLL_2_Camera = dll_load_deferred(DLL_ID_CAMERA, 23);
         gDLL_23 = dll_load_deferred(DLL_ID_23, 8);  // 0x12 in SFA
         gDLL_18_objfsa = dll_load_deferred(DLL_ID_18, 22); // 0x0F in SFA
@@ -279,7 +279,7 @@ void game_init(void) {
 }
 
 void game_tick(void) {
-    u8 phi_v1;
+    u8 clearFlags;
     u32 updateRate;
     Gfx **gdl;
 
@@ -313,14 +313,15 @@ void game_tick(void) {
     gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0));
 
     rsp_init(&gCurGfx);
-    phi_v1 = 2;
 
-    if (func_80041D5C() == 0)
-        phi_v1 = 0;
-    else if (func_80041D74() == 0)
-        phi_v1 = 3;
+    clearFlags = CLEAR_ZBUFFER;
+    if (func_80041D5C() == 0) {
+        clearFlags = CLEAR_NONE;
+    } else if (func_80041D74() == 0) {
+        clearFlags = CLEAR_COLOR | CLEAR_ZBUFFER;
+    }
 
-    func_80037A14(&gCurGfx, &gCurMtx, phi_v1);
+    rcp_clear_screen(&gCurGfx, &gCurMtx, clearFlags);
     voxmap_update_cache_timers();
     func_80013D80();
     audio_func_800121DC();

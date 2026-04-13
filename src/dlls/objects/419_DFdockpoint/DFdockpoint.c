@@ -36,9 +36,9 @@ void DFdockpoint_control(Object *self) {
         if (logCount == 0) {
             logsetup = obj_alloc_setup(sizeof(BWLog_Setup), OBJ_BWLog);
             logsetup->base.quarterSize = 9;
-            logsetup->base.loadFlags = OBJSETUP_LOAD_FLAG4;
+            logsetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
             logsetup->base.loadDistance = 50;
-            logsetup->base.fadeFlags = OBJSETUP_FADE_PLAYER_RELATIVE;
+            logsetup->base.fadeFlags = OBJSETUP_FADE_MAIN;
             logsetup->base.fadeDistance = 45;
             logsetup->base.x = self->srt.transl.x;
             logsetup->base.y = self->srt.transl.y;

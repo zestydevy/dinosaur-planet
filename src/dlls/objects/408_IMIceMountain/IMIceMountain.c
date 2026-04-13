@@ -54,7 +54,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:
         player = get_player();
-        if (player && (vec3_distance(&player->positionMirror, &self->positionMirror) < 2.5e7f)) {
+        if (player && (vec3_distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
             objdata->state = STATE_0;
             break;
         }
@@ -233,7 +233,7 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
     Object *player;
     Object *snowbike;
 
-    gDLL_1_UI->vtbl->func_2B8(7);
+    gDLL_1_cmdmenu->vtbl->disable_buttons(L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
     vi_set_update_rate_target(3); // 20 FPS
     if (main_get_bits(BIT_IM_Race_Ended)) {
         main_set_bits(BIT_IM_Race_Ended, 0);
@@ -247,7 +247,7 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
         }
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 1);
         if (racePosition == 1) {
-            gDLL_1_UI->vtbl->func_2B8(1);
+            gDLL_1_cmdmenu->vtbl->disable_buttons(R_CBUTTONS);
             objdata->state = STATE_Race_Won;
             main_set_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 1);
         } else {

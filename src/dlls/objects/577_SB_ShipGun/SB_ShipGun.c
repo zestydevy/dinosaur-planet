@@ -7,7 +7,7 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "dll.h"
 
 typedef struct {
@@ -184,11 +184,11 @@ void SB_ShipGun_control(Object *self) {
         if ((parent != NULL) && (((DLL_572_SB_Galleon*)parent->dll)->vtbl->func9(parent) != 0)) {
             objdata->state = STATE_3;
         }
-        dx1 = player->positionMirror.f[0] - self->positionMirror.f[0];
-        dz1 = player->positionMirror.f[2] - self->positionMirror.f[2];
+        dx1 = player->globalPosition.f[0] - self->globalPosition.f[0];
+        dz1 = player->globalPosition.f[2] - self->globalPosition.f[2];
         self->srt.yaw = arctan2_f(-dz1, dx1) * 2;
-        new_var = self->positionMirror.f[1];
-        dy1 = player->positionMirror.f[1] - new_var;
+        new_var = self->globalPosition.f[1];
+        dy1 = player->globalPosition.f[1] - new_var;
         objdata->unk6 = arctan2_f(-dy1, sqrtf((dx1 * dx1) + (dz1 * dz1)));
         if (objdata->unk6 >= 0x1F41) {
             objdata->unk6 = 0x1F40;
@@ -220,20 +220,20 @@ void SB_ShipGun_control(Object *self) {
             cannonballSetup->fadeDistance = 0xFF;
             cannonballObj = obj_create(cannonballSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
             if (0) { }
-            dx = (dx1 = objdata->cloudrunner->positionMirror.x - self->positionMirror.x);
-            dy = objdata->cloudrunner->positionMirror.y - (self->positionMirror.y + 100.0f);
-            dz1 = objdata->cloudrunner->positionMirror.z - self->positionMirror.z;
+            dx = (dx1 = objdata->cloudrunner->globalPosition.x - self->globalPosition.x);
+            dy = objdata->cloudrunner->globalPosition.y - (self->globalPosition.y + 100.0f);
+            dz1 = objdata->cloudrunner->globalPosition.z - self->globalPosition.z;
             dz = dz1;
             temp_ft0 = 10.0f / sqrtf(((dx * dx) + (dy * dy)) + (dz * dz));
             new_var3 = &temp_ft0;
-            cannonballObj->speed.x = dx * (*new_var3);
-            cannonballObj->speed.y = dy * (*(&temp_ft0));
-            dy = cannonballObj->speed.x;
-            cannonballObj->speed.z = dz * (*(&temp_ft0));
+            cannonballObj->velocity.x = dx * (*new_var3);
+            cannonballObj->velocity.y = dy * (*(&temp_ft0));
+            dy = cannonballObj->velocity.x;
+            cannonballObj->velocity.z = dz * (*(&temp_ft0));
             cannonballObj->srt.transl.x += dy * 8.0f;
-            cannonballObj->srt.transl.y += cannonballObj->speed.y * 8.0f;
-            cannonballObj->srt.transl.z += cannonballObj->speed.z * 8.0f;
-            cannonballObj->srt.yaw = arctan2_f(cannonballObj->speed.x, cannonballObj->speed.z);
+            cannonballObj->srt.transl.y += cannonballObj->velocity.y * 8.0f;
+            cannonballObj->srt.transl.z += cannonballObj->velocity.z * 8.0f;
+            cannonballObj->srt.yaw = arctan2_f(cannonballObj->velocity.x, cannonballObj->velocity.z);
             cannonballObj->unkDC = 0xB4;
             cannonballObj->unkE0 = (s32) objdata->cloudrunner;
             camera_enable_y_offset();

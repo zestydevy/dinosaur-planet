@@ -14,8 +14,8 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/segment_326A0.h"
-#include "sys/segment_334F0.h"
+#include "sys/objlib.h"
+#include "sys/objexpr.h"
 #include "sys/rand.h"
 #include "dll.h"
 #include "prevent_bss_reordering.h"
@@ -417,9 +417,9 @@ void dll_702_control(Object* self) {
         func_80028D2C(self);
         baddie->fsa.target = get_player();
         if (baddie->fsa.target != NULL) {
-            vec[0] = baddie->fsa.target->positionMirror.x - self->positionMirror.x;
-            vec[1] = baddie->fsa.target->positionMirror.y - self->positionMirror.y;
-            vec[2] = baddie->fsa.target->positionMirror.z - self->positionMirror.z;
+            vec[0] = baddie->fsa.target->globalPosition.x - self->globalPosition.x;
+            vec[1] = baddie->fsa.target->globalPosition.y - self->globalPosition.y;
+            vec[2] = baddie->fsa.target->globalPosition.z - self->globalPosition.z;
             baddie->fsa.targetDist = sqrtf(SQ(vec[0]) + SQ(vec[1]) + SQ(vec[2]));
         }
         func_80032A08(self, &sBaddie->unk3BC);
@@ -908,9 +908,9 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_328, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
-            _bss_60.transl.x -= self->positionMirror.x;
-            _bss_60.transl.y -= self->positionMirror.y;
-            _bss_60.transl.z -= self->positionMirror.z;
+            _bss_60.transl.x -= self->globalPosition.x;
+            _bss_60.transl.y -= self->globalPosition.y;
+            _bss_60.transl.z -= self->globalPosition.z;
             _bss_60.scale = 1.0f;
             _bss_60.yaw = 0;
             _bss_60.pitch = 0;
@@ -991,7 +991,7 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     tempSRT.transl.z = 0.0f;
     tempSRT.scale = 1.0f;
     matrix_from_srt(&tempMtx, &tempSRT);
-    vec3_transform(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->speed.x, &tempY, &self->speed.z);
+    vec3_transform(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->velocity.x, &tempY, &self->velocity.z);
     if (reversed) {
         self->srt.yaw = (f32) sKTData->turnStartYaw + (16384.0f * self->animProgress);
     } else {

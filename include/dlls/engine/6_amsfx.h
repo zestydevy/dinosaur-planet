@@ -36,6 +36,8 @@ enum SoundID {
 
     SOUND_15_Heavy_Stone_Moving = 0x15,    // used by door to Randorn's hall
 
+    SOUND_18 = 0x18, //empty?
+
     SOUND_1A = 0x1A,        
     SOUND_1B = 0x1B,     
     SOUND_1C = 0x1C,          
@@ -134,11 +136,14 @@ enum SoundID {
     SOUND_8E_Magic_Chime = 0x8E,  // used by collectable DLL
     SOUND_8F_Water_Paddle = 0x8F, // used by DFlog
 
+    SOUND_95_Explosion = 0x95, //Cannon
     SOUND_96_Cannon = 0x96, //SB_ShipGun
 
     SOUND_9B_Transporter_Hiss = 0x9B,
 
     SOUND_9D_Fire_Loop = 0x9D,          //10 HOURS of Relaxing Fireplace Sounds - Burning Fireplace & Crackling Fire Sounds
+
+    SOUND_A0 = 0xA0, // cmdmenu (spooky)
 
     SOUND_A4_Blocked_Attack = 0xA4, 
 
@@ -241,6 +246,11 @@ enum SoundID {
 
     SOUND_289_Engine_Loop = 0x289,
     
+    SOUND_28A_Cmdmenu_MoveSelection = 0x28A,
+
+    SOUND_28B_Cmdmenu_Use = 0x28B,
+    SOUND_28C_Cmdmenu_Close = 0x28C,
+    SOUND_28D_Cmdmenu_OpenBag_HighPitch = 0x28D, // cmdmenu
     SOUND_28E = 0x28E,
     SOUND_28F = 0x28F,
     SOUND_290_Propeller_Loop = 0x290,
@@ -274,7 +284,7 @@ enum SoundID {
 
     SOUND_36E_Lever_Clunk = 0x36e, // used by many levers (e.g. ones leading to Cape Claw courtyard)
 
-    SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat
+    SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat, SmallBasket
     SOUND_372_Crate_Struck = 0x372, // used by MediumMetalCrat
 
     SOUND_377_Metal_Smack = 0x377,
@@ -282,6 +292,8 @@ enum SoundID {
     SOUND_380_Scorching_Impact = 0x380, //DRbullet
 
     SOUND_386_Squelched_Impact = 0x386, //DRbullet
+
+    SOUND_389_Explosion = 0x389, //DIMExplosion
 
     SOUND_3D6 = 0x3D6, // used in SHroot (DLL 510)
     SOUND_3D7_Whoosh = 0x3D7, //used in SHroot (DLL 510), DIM2Icicle (DLL 562) 
@@ -330,14 +342,25 @@ enum SoundID {
 
     SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
 
-    SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
+    SOUND_57A = 0x57A, //tesla.c
 
-    SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
+    SOUND_57C = 0x57C, //tesla.c
+    SOUND_57D = 0x57D, //tesla.c
+    SOUND_57E = 0x57E, //tesla.c
 
     SOUND_PICMENU_SELECT = 0x5D3,
     SOUND_PICMENU_BACK = 0x5D4, // Used in DLL 66
     SOUND_PICMENU_MOVE = 0x5D5, // Used in DLL 66
     SOUND_RECAP_MENU_SELECT = 0x5D6, // Gong when starting game
+
+    SOUND_5EA_Cmdmenu_ShowHUD = 0x5EA, // used in DLL 1 cmdmenu
+    SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
+    SOUND_5EC_Cmdmenu_OpenBag = 0x5EC, // cmdmenu
+    SOUND_5ED_Cmdmenu_OpenSpellBook = 0x5ED, // cmdmenu
+
+    SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
+
+    SOUND_5F0_Cmdmenu_OpenSidekickMenu = 0x5F0, // cmdmenu
 
     SOUND_5F6_Tumbleweed_Roll = 0x5F6, // used in DLL 227
     SOUND_5F7_Tumbleweed_Disintegrate = 0x5F7, // used in DLL 227
@@ -352,9 +375,11 @@ enum SoundID {
 
 
     SOUND_633 = 0x633, // empty? used by player DLL
+    SOUND_634 = 0x634, // empty? used by SmallBasket
+    SOUND_637_Heavy_Whoosh = 0x637,
 
-    SOUND_64C_Wicker_Rattle = 0x64C, // used by MediumCrate
-    SOUND_64D_Wooden_Rattle = 0x64D, // used by MediumCrate
+    SOUND_64C_Wicker_Rattle = 0x64C, // used by MediumCrate, SmallBasket
+    SOUND_64D_Wooden_Rattle = 0x64D, // used by MediumCrate, SmallBasket
 
     SOUND_669_Insect_Scurry_Loop = 0x669, // Scarab
 
@@ -387,8 +412,10 @@ enum SoundID {
 
     SOUND_6B4_Basket_Carry = 0x6B4, // used by player
     SOUND_6B5_Crate_Struck = 0x6B5, // used by MediumCrate
-    SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate
-    SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate
+    SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate, SmallBasket
+    SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate, SmallBasket
+    SOUND_6B8_Crate_Hiss = 0x6B7,   // used by SmallBasket
+    SOUND_6B9_Crate_Hiss = 0x6B7,   // used by SmallBasket
 
     SOUND_6BB_Creature_Cry = 0x6BB, // Scarab
     SOUND_6BC_Creature_Cry = 0x6BC, // Duster, Scarab
@@ -444,12 +471,15 @@ enum SoundID {
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
 
+    SOUND_79C_Cmdmenu_CantUse = 0x79C,
+
     SOUND_7B0 = 0x7B0,
     SOUND_7B1 = 0x7B1,
 
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
+    SOUND_814_Cmdmenu_OpenSubMenu = 0x814,
     
     SOUND_83F = 0x83F, 
     

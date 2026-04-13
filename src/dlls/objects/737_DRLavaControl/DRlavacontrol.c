@@ -192,8 +192,8 @@ Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
 
     setup = (LFXEmitter_Setup*)obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     
-    setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
-    setup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
+    setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    setup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.x = self->srt.transl.x;

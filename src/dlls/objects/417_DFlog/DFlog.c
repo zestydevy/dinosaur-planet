@@ -166,7 +166,7 @@ static int dll_417_func_3B8(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
 s32 dll_417_func_400(Object *self, Object *a1) {
     DFlog_Data *objdata = (DFlog_Data*)self->data;
     if ((objdata->unk4EC == 0) && (objdata->unk4F4 != NULL)) {
-        return vec3_distance(&a1->positionMirror, &self->positionMirror) < 50.0f;
+        return vec3_distance(&a1->globalPosition, &self->globalPosition) < 50.0f;
     }
     return 0;
 }
@@ -219,7 +219,7 @@ s32 dll_417_func_5F8(Object* arg0, Object* arg1) {
     objdata = (DFlog_Data*)arg0->data;
     if ((objdata->unk4F4 != 0) && (objdata->unk4EC == 2)) {
         camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAMSHIPBATTLE2) && (gDLL_1_UI->vtbl->func_DC4() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
+        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAMSHIPBATTLE2) && (gDLL_1_cmdmenu->vtbl->func_DC4() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
             var_fs0 = 0.0f;
             for (i = 0; i < 2; i++) {
                 var_fs0 += sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
@@ -444,7 +444,7 @@ static void dll_417_func_E8C(Object* arg0) {
     objdata->unk4F4 = obj_get_nearest_type_to(OBJTYPE_23, arg0, &spBC);
     if (objdata->unk4F4 != NULL) {
         temp_s0 = (ObjType23Setup*)objdata->unk4F4->setup;
-        spBC = vec3_distance(&arg0->positionMirror, &objdata->unk4F4->positionMirror);
+        spBC = vec3_distance(&arg0->globalPosition, &objdata->unk4F4->globalPosition);
         if (objdata->unk4EC == 2) {
             var_fv1 = 0.95f;
         } else {

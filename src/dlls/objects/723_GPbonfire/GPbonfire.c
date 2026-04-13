@@ -113,7 +113,7 @@ void GPbonfire_control(Object* self) {
     setup = (GPBonfire_Setup*)self->setup;
     player = get_player();
 
-    playerIsNearby = vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror) <= setup->interactionDistance * setup->interactionDistance;    
+    playerIsNearby = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition) <= setup->interactionDistance * setup->interactionDistance;    
 
     objdata->currentState &= ~2;
     if (objdata->currentState & 1) {
@@ -155,13 +155,13 @@ void GPbonfire_control(Object* self) {
             sidekick = get_sidekick();
             if (sidekick && playerIsNearby) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 4);
-                if (gDLL_1_UI->vtbl->func_DF4(4)) {
+                if (gDLL_1_cmdmenu->vtbl->func_DF4(4)) {
                     main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
                 }
             }
             break;
         case STATE_3_START_BURNING:
-            if (vec3_distance_xz_squared(&get_sidekick()->positionMirror, &self->positionMirror) <= 2500.0f) {
+            if (vec3_distance_xz_squared(&get_sidekick()->globalPosition, &self->globalPosition) <= 2500.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, PARTFXFLAG_2, -1, NULL);
             }
@@ -181,7 +181,7 @@ void GPbonfire_control(Object* self) {
             tumbleweeds = obj_get_all_of_type(4, &count);
             for (weedIndex = 0; weedIndex < count; weedIndex++){
                 if (tumbleweeds[weedIndex]->id == OBJ_Tumbleweed3) {
-                    distanceToTumbleweed = vec3_distance(&self->positionMirror, &tumbleweeds[weedIndex]->positionMirror);
+                    distanceToTumbleweed = vec3_distance(&self->globalPosition, &tumbleweeds[weedIndex]->globalPosition);
 
                     if (distanceToTumbleweed < 40.0f) {
                         if (tumbleweeds[weedIndex]) {} // @fake?

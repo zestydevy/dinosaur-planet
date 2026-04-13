@@ -70,7 +70,7 @@ void SCbeacon_control(Object* self) {
     objSetup = (SCbeacon_Setup*)self->setup;
     player = get_player();
     
-    playerIsNearby = (vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror) <= SQ(objSetup->playerRange));
+    playerIsNearby = (vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition) <= SQ(objSetup->playerRange));
     
     objData->flags &= ~SCbeacon_FLAG_Emit_Light;
 
@@ -109,14 +109,14 @@ void SCbeacon_control(Object* self) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 4);
 
             //Check if Flame command was selected
-            if (gDLL_1_UI->vtbl->func_DF4(4)) {
+            if (gDLL_1_cmdmenu->vtbl->func_DF4(4)) {
                 main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteCurveID);
             }
         }
         break;
     case SCbeacon_STATE_Lighting:
         sidekick = get_sidekick();
-        if (vec3_distance_xz_squared(&sidekick->positionMirror, &self->positionMirror) <= 2500.0f) {
+        if (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= 2500.0f) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, 2, -1, NULL); //create smoke
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, 2, -1, NULL); //create embers
         }
@@ -291,12 +291,12 @@ int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animDat
     */
     objData->flags |= SCbeacon_FLAG_Add_Tumbleweed;
     
-    playerIsNearby = (vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror) <= SQ(objSetup->playerRange));
+    playerIsNearby = (vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition) <= SQ(objSetup->playerRange));
 
     switch (objData->state) {
     case SCbeacon_STATE_Lighting:
         sidekick = get_sidekick();
-        if (vec3_distance_xz_squared(&sidekick->positionMirror, &self->positionMirror) <= 2500.0f) {
+        if (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= 2500.0f) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, 2, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, 2, -1, NULL);
         }

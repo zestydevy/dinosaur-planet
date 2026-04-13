@@ -16,50 +16,7 @@
 
 #include "dlls/objects/210_player.h"
 
-typedef struct {
-ObjSetup base;
-s16 unused18;
-s16 lifetime;
-} Scarab_Setup;
-
-typedef struct {
-/*00*/ u32 soundHandle;         //Manages crawling sound loop
-/*04*/ f32 speedX;              //Scurry speed
-/*08*/ f32 speedZ;              //Scurry speed
-/*0C*/ f32 goldClimbTimer;      //Amount of time Gold Scarab has been climbing wall
-/*10*/ f32 initialY;            //Y value from objSetup - used as fallback height
-/*14*/ s16 destructDelayTimer;  //Used to delay deletion when collected
-/*16*/ s16 unused16;
-/*18*/ s16 lifetime;            //Decrements while scurrying, Scarab disappears when 0
-/*1A*/ s16 rollSpeed;           //Rate of change of roll
-/*1C*/ s16 scurryInitialYaw;    //Reference yaw
-/*1E*/ s16 stunTimer;           //Scarab can't continue scurrying while active. Rainbow Scarabs can only be collected while stunned!
-/*20*/ s16 goldClimbDuration;   //Amount of time Gold Scarab should climb wall before stopping (randomised)
-/*22*/ s16 collectSoundID;      //Sound to play when collected
-/*24*/ s16 collectFXScale;      //Size of effect created when collected
-/*26*/ u8 state;                //State machine value
-/*27*/ s8 unused27;
-/*27*/ s8 unused28;
-/*29*/ u8 scarabTypeIndex;      //0) Green, 1) Red, 2) Gold, 3) Rainbow
-/*2A*/ u8 flags;                //Receive messages from other objects
-} Scarab_Data;
-
-typedef enum {
-    Scarab_STATE_Tumbling_Through_Air = 0,
-    Scarab_STATE_Scurrying = 1,
-    Scarab_STATE_Climb_Wall_Gold = 2 //Special Gold Scarab behaviour: climb vertically, can't be collected until shot down
-} Scarab_States;
-
-typedef enum {
-    Scarab_FLAG_Wait_for_Message = 1
-} Scarab_Flags;
-
-typedef enum {
-    Scarab_TYPE_Green = 0,
-    Scarab_TYPE_Red = 1,
-    Scarab_TYPE_Gold = 2,
-    Scarab_TYPE_Rainbow = 3
-} Scarab_Types;
+#include "dlls/objects/297_scarab.h"
 
 /** Different sequenceIDs for each Scarab type to play when the player first collects a Scarab */
 /*0x0*/ static s16 dSequenceIDs[4] = {
@@ -170,13 +127,13 @@ void scarab_control(Object* self) {
     state = objData->state;
     if (state == Scarab_STATE_Tumbling_Through_Air) {
         func_8002674C(self);
-        self->srt.transl.x += self->speed.x * gUpdateRateF;
-        self->srt.transl.y += self->speed.y * gUpdateRateF;
-        self->srt.transl.z += self->speed.z * gUpdateRateF;
+        self->srt.transl.x += self->velocity.x * gUpdateRateF;
+        self->srt.transl.y += self->velocity.y * gUpdateRateF;
+        self->srt.transl.z += self->velocity.z * gUpdateRateF;
 
         //Apply gravity, with terminal velocity
-        if (self->speed.y > -15.0f) {
-            self->speed.y += -0.06f * gUpdateRateF;
+        if (self->velocity.y > -15.0f) {
+            self->velocity.y += -0.06f * gUpdateRateF;
         }
         self->srt.roll += objData->rollSpeed * gUpdateRate;
 
@@ -193,17 +150,17 @@ void scarab_control(Object* self) {
             
             id = self->id;
             if (id == OBJ_Green_scarab) {
-                objData->speedX = self->speed.x * 0.15f;
-                objData->speedZ = self->speed.z * 0.15f;
+                objData->speedX = self->velocity.x * 0.15f;
+                objData->speedZ = self->velocity.z * 0.15f;
             } else if (id == OBJ_Red_scarab) {
-                objData->speedX = self->speed.x * 0.65f;
-                objData->speedZ = self->speed.z * 0.65f;
+                objData->speedX = self->velocity.x * 0.65f;
+                objData->speedZ = self->velocity.z * 0.65f;
             } else if (id == OBJ_Gold_scarab) {
-                objData->speedX = self->speed.x * 1.2f;
-                objData->speedZ = self->speed.z * 1.2f;
+                objData->speedX = self->velocity.x * 1.2f;
+                objData->speedZ = self->velocity.z * 1.2f;
             } else if (id == OBJ_Rain_scarab) {
-                objData->speedX = self->speed.x * 0.45f;
-                objData->speedZ = self->speed.z * 0.45f;
+                objData->speedX = self->velocity.x * 0.45f;
+                objData->speedZ = self->velocity.z * 0.45f;
             } else if (id == OBJ_Blue_bean) { //Strangely "OBJ_Blue_bean" does use this DLL!
                 objData->speedX = 0/*.0f*/;
                 objData->speedZ = 0/*.0f*/;
@@ -233,19 +190,19 @@ void scarab_control(Object* self) {
                 objData->soundHandle = 0;
             }
             
-            self->speed.x = player->srt.transl.x - self->srt.transl.x;
-            self->speed.z = player->srt.transl.z - self->srt.transl.z;
+            self->velocity.x = player->srt.transl.x - self->srt.transl.x;
+            self->velocity.z = player->srt.transl.z - self->srt.transl.z;
             self->srt.yaw = 0;
 
-            magnitude = SQ(self->speed.x) + SQ(self->speed.z);
+            magnitude = SQ(self->velocity.x) + SQ(self->velocity.z);
             if (magnitude != 0.0f) {
                 magnitude = sqrtf(magnitude);
             }
 
             self->srt.pitch = 0;
-            self->speed.x /= 2.0f * magnitude;
-            self->speed.z /= 2.0f * magnitude;
-            self->speed.y = 2.2f;
+            self->velocity.x /= 2.0f * magnitude;
+            self->velocity.z /= 2.0f * magnitude;
+            self->velocity.y = 2.2f;
             transform.roll = 0;
             transform.pitch = 0;
             transform.scale = 1.0f;
@@ -253,8 +210,8 @@ void scarab_control(Object* self) {
             transform.transl.y = 0;
             transform.transl.z = 0;
             transform.yaw = rand_next(-10000, 10000);
-            rotate_vec3(&transform, self->speed.f);
-            yaw = self->srt.yaw - (u16)arctan2_f(self->speed.x, -self->speed.z);
+            rotate_vec3(&transform, self->velocity.f);
+            yaw = self->srt.yaw - (u16)arctan2_f(self->velocity.x, -self->velocity.z);
             CIRCLE_WRAP(yaw)
             self->srt.yaw = yaw;
             objData->state = Scarab_STATE_Tumbling_Through_Air;
@@ -300,9 +257,9 @@ void scarab_control(Object* self) {
             }
             self->srt.roll += rand_next(-1000, 1000);
             
-            self->speed.x = objData->speedX;
-            self->speed.y = 0/*.0f*/;
-            self->speed.z = objData->speedZ;
+            self->velocity.x = objData->speedX;
+            self->velocity.y = 0/*.0f*/;
+            self->velocity.z = objData->speedZ;
             
             transform.scale = 1.0f;
             transform.transl.x = 0/*.0f*/;
@@ -311,7 +268,7 @@ void scarab_control(Object* self) {
             transform.roll = 0;
             transform.pitch = 0;
             transform.yaw = self->srt.yaw - objData->scurryInitialYaw;
-            rotate_vec3(&transform, (f32*)&self->speed);
+            rotate_vec3(&transform, (f32*)&self->velocity);
             
             //Handle lifetime timer
             objData->lifetime -= gUpdateRate;
@@ -320,9 +277,9 @@ void scarab_control(Object* self) {
             }
             
             //Check for wall collisions
-            pointFuture.x = self->srt.transl.x + (self->speed.x * gUpdateRateF * 1.5f);
+            pointFuture.x = self->srt.transl.x + (self->velocity.x * gUpdateRateF * 1.5f);
             pointFuture.y = self->srt.transl.y + 30.0f;
-            pointFuture.z = self->srt.transl.z + (self->speed.z * gUpdateRateF * 1.5f);
+            pointFuture.z = self->srt.transl.z + (self->velocity.z * gUpdateRateF * 1.5f);
             pointNow.x = self->srt.transl.x;
             pointNow.y = self->srt.transl.y + 30.0f;
             pointNow.z = self->srt.transl.z;
@@ -343,8 +300,8 @@ void scarab_control(Object* self) {
             
             //Continue moving
             if (!collided) {
-                self->srt.transl.x += self->speed.x * gUpdateRateF;
-                self->srt.transl.z += self->speed.z * gUpdateRateF;
+                self->srt.transl.x += self->velocity.x * gUpdateRateF;
+                self->srt.transl.z += self->velocity.z * gUpdateRateF;
             }
         } else {
             //STUNNED STATE (Gold Scarabs can't move for a while after being shot onto ground)
@@ -379,7 +336,7 @@ void scarab_control(Object* self) {
         }
 
         //Collect scurrying Scarab when player is nearby (Rainbow Scarabs must also be stunned)
-        if ((objData->stunTimer || (self->id != OBJ_Rain_scarab)) && (vec3_distance_xz(&player->positionMirror, &self->positionMirror) < 25.0f)) {
+        if ((objData->stunTimer || (self->id != OBJ_Rain_scarab)) && (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 25.0f)) {
             //Play an item collection sequence the first time a Scarab is collected
             if (!main_get_bits(BIT_Tutorial_Collected_Scarab)) {
                 gDLL_3_Animation->vtbl->func30(dSequenceIDs[objData->scarabTypeIndex], 0, 0);
@@ -409,15 +366,15 @@ void scarab_control(Object* self) {
         //Rainbow Scarab: attack behaviour (when not stunned)
         if ((objData->stunTimer == 0) && (self->id == OBJ_Rain_scarab)) {
             //Colliding with player
-            if (vec3_distance_xz(&player->positionMirror, &self->positionMirror) < 20.0f) {
+            if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 20.0f) {
                 //Hurt player (unless special Rainbow Scarab immunity gamebit is set!)
                 if (main_get_bits(BIT_Player_Immune_to_Rainbow_Scarabs) == 0) {
                     obj_send_mesg(player, 0x60004, self, (void*)1);
                 }
 
                 //Jolt backwards slightly
-                self->srt.transl.x += (-self->speed.x * 26.0f);
-                self->srt.transl.z += (-self->speed.z * 26.0f);
+                self->srt.transl.x += (-self->velocity.x * 26.0f);
+                self->srt.transl.z += (-self->velocity.z * 26.0f);
                 
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BB_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
             }
@@ -529,19 +486,19 @@ void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg
     }
 
     else if (arg2 == 2){
-        self->speed.x = arg3->unk0->x;
-        self->speed.z = arg3->unk0->z;
+        self->velocity.x = arg3->unk0->x;
+        self->velocity.z = arg3->unk0->z;
 
-        speed = (self->speed.x * self->speed.x) + (self->speed.z * self->speed.z);
+        speed = (self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z);
         if (speed){
             speed = sqrtf(speed);
         }
         doubleSpeed = 2.0f * speed;
 
-        self->speed.x /= doubleSpeed;
-        self->speed.z /= doubleSpeed;
-        objData->speedX = self->speed.x;
-        objData->speedZ = self->speed.z;
+        self->velocity.x /= doubleSpeed;
+        self->velocity.z /= doubleSpeed;
+        objData->speedX = self->velocity.x;
+        objData->speedZ = self->velocity.z;
         self->srt.yaw = arctan2_f(-arg3->unk0->x, -arg3->unk0->z);
         return;
     }
@@ -586,9 +543,9 @@ s32 scarab_was_ground_reached(Object* self) {
         spF0[0].x = self->srt.transl.x;
         spF0[0].y = self->srt.transl.y;
         spF0[0].z = self->srt.transl.z;
-        spC0[0].x = self->positionMirror2.x;
-        spC0[0].y = self->positionMirror2.y;
-        spC0[0].z = self->positionMirror2.z;
+        spC0[0].x = self->prevLocalPosition.x;
+        spC0[0].y = self->prevLocalPosition.y;
+        spC0[0].z = self->prevLocalPosition.z;
         sp54.unk40[0] = objHits->unk52;
         sp54.unk50[0] = -1;
         sp54.unk54[0] = 3;
@@ -626,18 +583,18 @@ s32 scarab_was_ground_reached(Object* self) {
             self->srt.transl.x = objHits->unk34;
             self->srt.transl.y = objHits->unk38;
             self->srt.transl.z = objHits->unk3C;
-            objHits->unk10.x = self->positionMirror2.x;
-            objHits->unk10.y = self->positionMirror2.y;
-            objHits->unk10.z = self->positionMirror2.z;
+            objHits->unk10.x = self->prevLocalPosition.x;
+            objHits->unk10.y = self->prevLocalPosition.y;
+            objHits->unk10.z = self->prevLocalPosition.z;
             return TRUE;
         } else {
             objHits->unk9D |= 1;
             self->srt.transl.x = objHits->unk34;
             self->srt.transl.y = objHits->unk38;
             self->srt.transl.z = objHits->unk3C;
-            objHits->unk10.x = self->positionMirror2.x;
-            objHits->unk10.y = self->positionMirror2.y;
-            objHits->unk10.z = self->positionMirror2.z;
+            objHits->unk10.x = self->prevLocalPosition.x;
+            objHits->unk10.y = self->prevLocalPosition.y;
+            objHits->unk10.z = self->prevLocalPosition.z;
             return TRUE;
         }
     } else {

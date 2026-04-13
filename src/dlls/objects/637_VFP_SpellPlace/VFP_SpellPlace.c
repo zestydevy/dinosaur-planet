@@ -54,7 +54,7 @@ void VFP_SpellPlace_control(Object* self) {
 
     player = get_player();
     
-    if ((player != NULL) && !(vec3_distance(&self->positionMirror, &player->positionMirror) > 100.0f)) {
+    if ((player != NULL) && !(vec3_distance(&self->globalPosition, &player->globalPosition) > 100.0f)) {
         mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
         switch (mapSetupID) {
         case 1:
@@ -102,7 +102,7 @@ static void VFP_SpellPlace_do_act1(Object* self) {
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unkAF &= ~0x8;
         
-        if ((bits2 != 0) && (gDLL_1_UI->vtbl->func_DF4(0x123) != 0)) {
+        if ((bits2 != 0) && (gDLL_1_cmdmenu->vtbl->func_DF4(0x123) != 0)) {
             main_set_bits(objdata->unk0, 1);
             objdata->unk4 = 1;
             self->unkAF |= 8;
@@ -124,7 +124,7 @@ static void VFP_SpellPlace_do_act2(Object* self) {
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unkAF &= ~0x8;
         
-        if ((bits2 != 0) && (gDLL_1_UI->vtbl->func_DF4(0x83B) != 0)) {
+        if ((bits2 != 0) && (gDLL_1_cmdmenu->vtbl->func_DF4(0x83B) != 0)) {
             main_set_bits(objdata->unk0, 1);
             objdata->unk4 = 1;
             self->unkAF |= 8;

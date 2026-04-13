@@ -20,7 +20,7 @@ void setuppoint_dtor(void *dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void setuppoint_setup(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
-    objsetup->base.loadFlags = OBJSETUP_LOAD_FLAG8;
+    objsetup->base.loadFlags = OBJSETUP_LOAD_CAMERA;
     objsetup->base.loadDistance = 0;
     objsetup->base.fadeDistance = 0;
     self->unkE0 = objsetup->unk19;

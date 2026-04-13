@@ -34,9 +34,9 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
 
     angle = rand_next(0, 0xFFFF);
     speed = (rand_next(39, 44) / 100.0f);
-    self->speed.x = fsin16_precise(angle) * speed;
-    self->speed.z = fcos16_precise(angle) * speed;
-    self->speed.y = rand_next(40, 50) / 50.0f;
+    self->velocity.x = fsin16_precise(angle) * speed;
+    self->velocity.z = fcos16_precise(angle) * speed;
+    self->velocity.y = rand_next(40, 50) / 50.0f;
 
     //Set up special modes
     if (objSetup->mode == MagicDust_MODE_Delay_Fall) {
@@ -52,9 +52,9 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
         attractDuration = 120.0f;
         if (attractDuration != 0.0f) {
             player = get_player(); //@bug?: missing NULL check
-            self->speed.x = (player->srt.transl.x - self->srt.transl.x) / attractDuration;
-            self->speed.y = (player->srt.transl.y - self->srt.transl.y) / attractDuration;
-            self->speed.z = (player->srt.transl.z - self->srt.transl.z) / attractDuration;
+            self->velocity.x = (player->srt.transl.x - self->srt.transl.x) / attractDuration;
+            self->velocity.y = (player->srt.transl.y - self->srt.transl.y) / attractDuration;
+            self->velocity.z = (player->srt.transl.z - self->srt.transl.z) / attractDuration;
         }
     }
 
@@ -102,7 +102,7 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
 
     //Set up collision
     objData->collisionRadius = self->objhitInfo->unk52;
-    if (self->srt.flags & 0x2000) {
+    if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
         gDLL_27->vtbl->init(&objData->collision, 
             DLL27FLAG_NONE, 
             DLL27FLAG_1 | DLL27FLAG_2 | DLL27FLAG_4 | DLL27FLAG_40000, 
@@ -190,7 +190,7 @@ void MagicDust_control(Object* self) {
     }
     
     //Handle motion
-    if (self->srt.flags & 0x2000) {
+    if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
         //Do nothing when parented to MagicPlant
         if (self->unkC4 != NULL) {
             self->shadow->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
@@ -203,9 +203,9 @@ void MagicDust_control(Object* self) {
 
         //Apply drag and gravity when falling
         if (!(objData->flags & (MagicDust_FLAG_Delay_Fall | MagicDust_FLAG_On_Ground))) {
-            self->speed.x *= 0.99f;
-            self->speed.z *= 0.99f;
-            self->speed.y -= (0.1f * gUpdateRateF);
+            self->velocity.x *= 0.99f;
+            self->velocity.z *= 0.99f;
+            self->velocity.y -= (0.1f * gUpdateRateF);
         }
         
         //Decrement timer
@@ -248,19 +248,19 @@ void MagicDust_control(Object* self) {
             }
 
             //Move
-            obj_integrate_speed(self, 
-                self->speed.x * gUpdateRateF, 
-                self->speed.y * gUpdateRateF, 
-                self->speed.z * gUpdateRateF
+            obj_move(self, 
+                self->velocity.x * gUpdateRateF, 
+                self->velocity.y * gUpdateRateF, 
+                self->velocity.z * gUpdateRateF
             );
         } else {
             //Destroy self when vanish timer's up
             if (objData->timer <= 0.0f) {
-                if (self->srt.flags & 0x2000) {
+                if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
                     obj_destroy_object(self);
                 } else {
                     obj_free_tick(self);
-                    self->srt.flags |= 0x4000;
+                    self->srt.flags |= OBJFLAG_INVISIBLE;
                 }
             }
             return;
@@ -274,9 +274,9 @@ void MagicDust_control(Object* self) {
 
             //Bounce when colliding with ground
             if (collision->unk25D != 0) {
-                negativeS.x = -self->speed.x;
-                negativeS.y = -self->speed.y;
-                negativeS.z = -self->speed.z;
+                negativeS.x = -self->velocity.x;
+                negativeS.y = -self->velocity.y;
+                negativeS.z = -self->velocity.z;
                 absSpeed = VECTOR_MAGNITUDE(negativeS);
 
                 //Play a "ting!" sound scaling volume by speed
@@ -317,23 +317,23 @@ void MagicDust_control(Object* self) {
                 
                 //Bounce upwards if the ground is mostly level
                 if (nSurface.f[1] >= 0.707f) {
-                    self->speed.y = -self->speed.y;
-                    self->speed.y *= 0.85f;
+                    self->velocity.y = -self->velocity.y;
+                    self->velocity.y *= 0.85f;
 
                     //Stop after 6 bounces
                     objData->bounces++;
                     if (objData->bounces >= 6) {
                         objData->flags |= MagicDust_FLAG_On_Ground;
-                        self->speed.x = 0;
-                        self->speed.y = 0;
-                        self->speed.z = 0;
+                        self->velocity.x = 0;
+                        self->velocity.y = 0;
+                        self->velocity.z = 0;
                     }
                 //Otherwise bounce laterally and lose vertical momentum
                 } else {
-                    self->speed.x = -self->speed.x;
-                    self->speed.z = -self->speed.z;
-                    self->speed.x *= 0.85f;
-                    self->speed.z *= 0.85f;
+                    self->velocity.x = -self->velocity.x;
+                    self->velocity.z = -self->velocity.z;
+                    self->velocity.x *= 0.85f;
+                    self->velocity.z *= 0.85f;
                 }
             }
         }
@@ -345,7 +345,7 @@ void MagicDust_control(Object* self) {
         distance = -distance;
     } 
     if (distance < 20.0f) {
-        playerDistance = vec3_distance_xz_squared(&self->positionMirror, &player->positionMirror);
+        playerDistance = vec3_distance_xz_squared(&self->globalPosition, &player->globalPosition);
         distance = objData->collisionRadius + 8.0f;
         if (playerDistance < SQ(distance)) {
             //Display a tutorial box when the player first collects a Magic Crystal

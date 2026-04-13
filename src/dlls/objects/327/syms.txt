@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_327_ctor = 0x0;
+dll_327_dtor = 0xC;
+dll_327_setup = 0x18;
+dll_327_control = 0x170;
+dll_327_update = 0x230;
+dll_327_print = 0x23C;
+dll_327_free = 0x290;
+dll_327_get_model_flags = 0x2A0;
+dll_327_get_data_size = 0x2B0;
+
+.rodata = 0x30C:

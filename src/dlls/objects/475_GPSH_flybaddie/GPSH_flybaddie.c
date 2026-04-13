@@ -221,14 +221,14 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     f32 magnitude;
 
     player = get_player();
-    self->positionMirror.x = self->srt.transl.x;
-    self->positionMirror.y = self->srt.transl.y;
-    self->positionMirror.z = self->srt.transl.z;
+    self->globalPosition.x = self->srt.transl.x;
+    self->globalPosition.y = self->srt.transl.y;
+    self->globalPosition.z = self->srt.transl.z;
     objsetup = mmAlloc(sizeof(UnkObjSetup), ALLOC_TAG_OBJECTS_COL, NULL);
     bzero(objsetup, sizeof(UnkObjSetup));
     // @bug: ? Doesn't set objId (ends up zero, which is OBJ_Sabre)
-    objsetup->loadFlags = OBJSETUP_LOAD_FLAG2;
-    objsetup->fadeFlags = OBJSETUP_FADE_DISABLE;
+    objsetup->loadFlags = OBJSETUP_LOAD_MANUAL;
+    objsetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     objsetup->loadDistance = 0xFF;
     objsetup->fadeDistance = 0xFF;
     objsetup->x = self->srt.transl.x;
@@ -236,7 +236,7 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     objsetup->z = self->srt.transl.z;
     obj = obj_create(objsetup, OBJ_INIT_FLAG1, -1, -1, NULL);
     if (obj != NULL) {
-        obj->srt.flags |= 0x2000;
+        obj->srt.flags |= OBJFLAG_OWNS_SETUP;
         dirVec[0] = player->srt.transl.x - self->srt.transl.x;
         dirVec[1] = (player->srt.transl.y + 20.0f) - self->srt.transl.y;
         dirVec[2] = player->srt.transl.z - self->srt.transl.z;
@@ -251,14 +251,14 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
         obj->srt.transl.x += dirVec[0] * 10.0f;
         obj->srt.transl.y += dirVec[1] * 10.0f;
         obj->srt.transl.z += dirVec[2] * 10.0f;
-        obj->speed.x = 2.0f * dirVec[0];
-        obj->speed.y = 2.0f * dirVec[1];
-        obj->speed.z = 2.0f * dirVec[2];
+        obj->velocity.x = 2.0f * dirVec[0];
+        obj->velocity.y = 2.0f * dirVec[1];
+        obj->velocity.z = 2.0f * dirVec[2];
         obj->unkDC = 0xBE;
         obj->unkE0 = 0;
-        obj->positionMirror.x = obj->srt.transl.x;
-        obj->positionMirror.y = obj->srt.transl.y;
-        obj->positionMirror.z = obj->srt.transl.z;
+        obj->globalPosition.x = obj->srt.transl.x;
+        obj->globalPosition.y = obj->srt.transl.y;
+        obj->globalPosition.z = obj->srt.transl.z;
         gDLL_6_AMSFX->vtbl->play_sound(obj, SOUND_730_Electrified_Blast, 0x50, NULL, NULL, 0, NULL);
     }
 }

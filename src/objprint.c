@@ -39,9 +39,6 @@ u8 BYTE_800b2e22;
 u8 BYTE_800b2e23;
 // -------- .bss end 800b2e30 -------- //
 
-void func_8001DF60(Object*, ModelInstance*);
-void func_8001E818(Object*, Model*, ModelInstance*);
-void func_8001F094(ModelInstance*);
 void func_800357B4(Object*, ModelInstance*, Model*);
 ModelInstance *func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
 void func_80036890(Object*, s32);
@@ -61,11 +58,11 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
         }
     }
 
-    if (arg4->srt.flags & 0x4000) {
+    if (arg4->srt.flags & OBJFLAG_INVISIBLE) {
         return;
     }
 
-    if (arg4->parent != NULL && (arg4->parent->srt.flags & 0x4000)) {
+    if (arg4->parent != NULL && (arg4->parent->srt.flags & OBJFLAG_INVISIBLE)) {
         return;
     }
 
@@ -202,12 +199,12 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             spDC.transl.f[0] += gWorldX;
             spDC.transl.f[2] += gWorldZ;
         }
-        camera_setup_object_srt_matrix(&tempGdl, &tempMtxs, (SRT* ) &spDC, 1.0f, 0.0f, NULL);
+        camera_setup_object_srt_matrix(&tempGdl, &tempMtxs, &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
         dl_set_all_dirty();
         tex_render_reset();
     }
-    if (!(obj->srt.flags & 0x1000)) {
+    if (!(obj->srt.flags & OBJFLAG_SHADOW_ONLY)) {
         if (!(modelInst->unk34 & 8)) {
             if ((model->animCount != 0) && !(model->unk71 & 2)) {
                 if (PTR_DAT_800b2e1c == 0) {
@@ -256,7 +253,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             dl_set_env_color(&tempGdl, spD7, spD6, spD5, BYTE_800b2e23);
         }
         dl_set_prim_color(&tempGdl, spD7, spD6, spD5, spFC);
-        if (!(obj->srt.flags & 0x200)) {
+        if (!(obj->srt.flags & OBJFLAG_SKIP_MODEL_DL)) {
             gSPSegment(tempGdl++, SEGMENT_3, modelInst->matrices[modelInst->unk34 & 1]);
             gSPSegment(tempGdl++, SEGMENT_5, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
             if (spFC == 0xFF) {
@@ -425,7 +422,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         if (sp64->hitSphereCount != 0) {
             func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
         }
-        if (!(arg4->srt.flags & 0x200)) {
+        if (!(arg4->srt.flags & OBJFLAG_SKIP_MODEL_DL)) {
             gSPSegment((*arg0)++, SEGMENT_3, sp74);
             gSPSegment((*arg0)++, SEGMENT_5, modelInst->vertices[(modelInst->unk34 >> 1) & 1]);
             if ((u8) arg10 == 0xFF) {
@@ -447,13 +444,13 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         arg8->srt.transl.f[1] = D_800B2E10->m[3][1];
         arg8->srt.transl.f[2] = D_800B2E10->m[3][2];
         if (arg8->parent != NULL) {
-            transform_point_by_object(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->positionMirror.f, &arg8->positionMirror.f[1], &arg8->positionMirror.f[2], arg8->parent);
+            transform_point_by_object(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->globalPosition.f, &arg8->globalPosition.f[1], &arg8->globalPosition.f[2], arg8->parent);
         } else {
             arg8->srt.transl.f[0] += gWorldX;
             arg8->srt.transl.f[2] += gWorldZ;
-            arg8->positionMirror.f[0] = arg8->srt.transl.f[0];
-            arg8->positionMirror.f[1] = arg8->srt.transl.f[1];
-            arg8->positionMirror.f[2] = arg8->srt.transl.f[2];
+            arg8->globalPosition.f[0] = arg8->srt.transl.f[0];
+            arg8->globalPosition.f[1] = arg8->srt.transl.f[1];
+            arg8->globalPosition.f[2] = arg8->srt.transl.f[2];
         }
         if (arg8->def->numAttachPoints >= 2 && arg8->group == GROUP_UNK48) {
             if (arg8->parent != NULL) {
@@ -535,7 +532,7 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
 }
 
 void func_80036438(Object* arg0) {
-    ObjDefStruct40* sp11C;
+    ObjDefLockData* sp11C;
     ObjectStruct74* sp118;
     MtxF* temp_s4;
     f32 temp_fs0;
@@ -547,13 +544,13 @@ void func_80036438(Object* arg0) {
     SRT spA8;
     ModelInstance* spA4;
 
-    sp11C = arg0->def->unk40;
+    sp11C = arg0->def->lockdata;
     sp118 = arg0->unk74;
     if (arg0->unkAF & 0x28) {
         return;
     }
     spA4 = arg0->modelInsts[arg0->modelInstIdx];
-    for (i = 0; i < arg0->def->unk9b; i++) {
+    for (i = 0; i < arg0->def->numLockdata; i++) {
         mtxId = sp11C[i].unk11[arg0->modelInstIdx];
         if (mtxId >= 0) {
             temp_s4 = (MtxF *)&((f32*)spA4->matrices[spA4->unk34 & 1])[mtxId << 4];
@@ -585,9 +582,9 @@ void func_80036438(Object* arg0) {
                 transform_point_by_object_matrix(&sp118[i].refPoint, &sp118[i].refPoint, arg0->parent->matrixIdx);
             }
         } else {
-            spA8.transl.f[0] = arg0->positionMirror.f[0];
-            spA8.transl.f[1] = arg0->positionMirror.f[1];
-            spA8.transl.f[2] = arg0->positionMirror.f[2];
+            spA8.transl.f[0] = arg0->globalPosition.f[0];
+            spA8.transl.f[1] = arg0->globalPosition.f[1];
+            spA8.transl.f[2] = arg0->globalPosition.f[2];
             if (sp11C->flags & 0x10) {
                 spA8.yaw = 0;
                 spA8.pitch = 0;

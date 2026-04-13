@@ -130,7 +130,7 @@ Object *obj_get_nearest_type_to(s32 type, Object *object, float *distance) {
     iend = gObjectTypeIndices[type + 1];
     while (i < iend)
     {
-        f32 distSquared = vec3_distance_squared(&object->positionMirror, &gObjectTypeList[i]->positionMirror);
+        f32 distSquared = vec3_distance_squared(&object->globalPosition, &gObjectTypeList[i]->globalPosition);
         if (distSquared < minDistSquared) {
             minDistSquared = distSquared;
             result = gObjectTypeList[i];
@@ -170,7 +170,7 @@ Object *obj_get_nearest_type_to_excluding_self(s32 type, Object *object, float *
     {
         if (object != gObjectTypeList[i])
         {
-            f32 distSquared = vec3_distance_squared(&object->positionMirror, &gObjectTypeList[i]->positionMirror);
+            f32 distSquared = vec3_distance_squared(&object->globalPosition, &gObjectTypeList[i]->globalPosition);
             if (distSquared < minDistSquared) {
                 minDistSquared = distSquared;
                 result = gObjectTypeList[i];
@@ -208,7 +208,7 @@ Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
         if (gObjectTypeList[i] == NULL) {
             continue;
         }
-        VECTOR_SUBTRACT(*location, gObjectTypeList[i]->positionMirror, d);
+        VECTOR_SUBTRACT(*location, gObjectTypeList[i]->globalPosition, d);
         
         distSquared = VECTOR_MAGNITUDE_SQUARED(d);
         if (distSquared < minDistSquared) {

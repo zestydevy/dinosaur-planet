@@ -7,7 +7,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "types.h"
@@ -294,6 +294,12 @@ typedef struct {
 /*8BF*/ s8 unk8BF;
 /*8C0*/ s8 unk8C0;
 } Player_Data;
+
+typedef enum {
+    Player_MODANIM_0_Idle = 0,
+
+    Player_MODANIM_447_Carrying_Idle = 0x447
+} Player_Modanims;
 
 typedef enum {
     PLAYER_ASTATE_Standing = 1,

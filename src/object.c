@@ -14,7 +14,7 @@
 #include "sys/objtype.h"
 #include "sys/objhits.h"
 #include "sys/newshadows.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "macros.h"
 #include "dll.h"
 
@@ -41,8 +41,8 @@ SidekickSetup D_80091688 = {
         /*objId=*/-1,
         /*quarterSize=*/7,
         /*setupExclusions1=*/0,
-        /*loadFlags=*/OBJSETUP_LOAD_FLAG1,
-        /*fadeFlags=*/{ OBJSETUP_FADE_FLAG4 },
+        /*loadFlags=*/OBJSETUP_LOAD_LEVEL,
+        /*fadeFlags=*/{ OBJSETUP_FADE_CAMERA },
         /*loadDistance=*/{ 0xFF },
         /*fadeDistance=*/0xFF,
         /*x=*/0.0f,
@@ -92,7 +92,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags);
 void obj_free_objdef(s32 tabIdx);
 void func_80021E74(f32 scale, ModelInstance *modelInst);
 void func_80022200(Object *obj, s32 param2, s32 param3);
-u32 obj_alloc_object_state(Object *obj, u32 addr);
+u32 obj_alloc_objdata(Object *obj, u32 addr);
 u32 obj_init_event_data(s32 param1, Object *obj, u32 addr);
 u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
 f32 func_80022150(Object *obj);
@@ -382,7 +382,7 @@ void func_80020EE4(s32 param1, s32 param2) {
             if (obj->def->flags & 0x80000) {
                 obj->unkA4 = obj->def->unk9d * 1000;
             } else {
-                obj->unkA4 = -camera_get_angle_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+                obj->unkA4 = -camera_get_angle_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
             }
         }
 
@@ -533,7 +533,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     update_pi_manager_array(0, objId);
 
-    if (initFlags & OBJ_INIT_FLAG2) {
+    if (initFlags & OBJ_INIT_ID_IS_TABIDX) {
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
@@ -556,10 +556,10 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         return NULL;
     } 
     
-    objHeader.srt.flags = 2;
+    objHeader.srt.flags = OBJFLAG_UNK_2;
 
     if (def->flags & 0x80) {
-        objHeader.srt.flags = 0x82;
+        objHeader.srt.flags = OBJFLAG_UNK_80 | OBJFLAG_UNK_2;
     }
 
     if (def->flags & 0x40000) {
@@ -567,7 +567,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if (initFlags & OBJ_INIT_FLAG4) {
-        objHeader.srt.flags |= 0x2000;
+        objHeader.srt.flags |= OBJFLAG_OWNS_SETUP;
     }
 
     objHeader.srt.transl.x = setup->x;
@@ -665,7 +665,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         return NULL;
     }
      
-    addr = obj_alloc_object_state(obj, (u32)&obj->modelInsts[def->numModels]);
+    addr = obj_alloc_objdata(obj, (u32)&obj->modelInsts[def->numModels]);
 
     if (modflags & MODFLAGS_EVENTS) {
         addr = obj_init_event_data(obj->id, obj, addr);
@@ -699,9 +699,9 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         addr = (u32)obj->unk70 + (def->numAnimatedFrames * sizeof(Vtx));
     }
 
-    if (def->unk9b != 0) {
+    if (def->numLockdata != 0) {
         obj->unk74 = (ObjectStruct74*)mmAlign4(addr);
-        addr = (u32)obj->unk74 + (def->unk9b * sizeof(ObjectStruct74));
+        addr = (u32)obj->unk74 + (def->numLockdata * sizeof(ObjectStruct74));
     }
 
     if (def->unk8F != 0 && def->unk74 != 0) {
@@ -709,15 +709,15 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         addr = func_80026A20(obj->id, obj->modelInsts[0], obj->objhitInfo, addr, obj);
     }
 
-    if (def->unk9b != 0) {
+    if (def->numLockdata != 0) {
         obj->unk78 = (ObjectStruct78*)mmAlign4(addr);
 
-        for (j = 0; j < def->unk9b; j++) {
-            obj->unk78[j].flags = def->unk40[j].flags;
-            obj->unk78[j].interactRadius = def->unk40[j].interactRadius;
-            obj->unk78[j].hlAngularRange = def->unk40[j].hlAngularRange;
-            obj->unk78[j].lockExitRadius = def->unk40[j].lockExitRadius;
-            obj->unk78[j].hlRadius = def->unk40[j].hlRadius;
+        for (j = 0; j < def->numLockdata; j++) {
+            obj->unk78[j].flags = def->lockdata[j].flags;
+            obj->unk78[j].interactRadius = def->lockdata[j].interactRadius;
+            obj->unk78[j].hlAngularRange = def->lockdata[j].hlAngularRange;
+            obj->unk78[j].lockExitRadius = def->lockdata[j].lockExitRadius;
+            obj->unk78[j].hlRadius = def->lockdata[j].hlRadius;
         }
 
         // addr = (u32)obj->unk78 + (def->unk9b * sizeof(ObjectStruct78)); // default.dol
@@ -737,22 +737,22 @@ void obj_add_object(Object *obj, u32 initFlags) {
     if (obj->parent != NULL) {
         transform_point_by_object(
             obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z,
-            &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z,
+            &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z,
             obj->parent
         );
     } else {
-        obj->positionMirror.x = obj->srt.transl.x;
-        obj->positionMirror.y = obj->srt.transl.y;
-        obj->positionMirror.z = obj->srt.transl.z;
+        obj->globalPosition.x = obj->srt.transl.x;
+        obj->globalPosition.y = obj->srt.transl.y;
+        obj->globalPosition.z = obj->srt.transl.z;
     }
 
-    obj->positionMirror2.x = obj->srt.transl.x;
-    obj->positionMirror2.y = obj->srt.transl.y;
-    obj->positionMirror2.z = obj->srt.transl.z;
+    obj->prevLocalPosition.x = obj->srt.transl.x;
+    obj->prevLocalPosition.y = obj->srt.transl.y;
+    obj->prevLocalPosition.z = obj->srt.transl.z;
 
-    obj->positionMirror3.x = obj->positionMirror.x;
-    obj->positionMirror3.y = obj->positionMirror.y;
-    obj->positionMirror3.z = obj->positionMirror.z;
+    obj->prevGlobalPosition.x = obj->globalPosition.x;
+    obj->prevGlobalPosition.y = obj->globalPosition.y;
+    obj->prevGlobalPosition.z = obj->globalPosition.z;
 
     copy_obj_position_mirrors(obj, obj->setup, 0);
 
@@ -852,17 +852,17 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
     if (def->numSequenceBones != 0) {
         size = mmAlign4(size);
-        size += def->numSequenceBones * 0x12;
+        size += def->numSequenceBones * (sizeof(s16) * 9);
     }
 
     if (def->numAnimatedFrames != 0) {
         size = mmAlign4(size);
-        size += def->numAnimatedFrames * 0x10;
+        size += def->numAnimatedFrames * sizeof(Vtx);
     }
 
-    if (def->unk9b != 0) {
+    if (def->numLockdata != 0) {
         size = mmAlign4(size);
-        size += def->unk9b * 0x18;
+        size += def->numLockdata * sizeof(ObjectStruct74);
     }
 
     if (def->unk8F != 0 && def->unk74 != 0) {
@@ -870,9 +870,9 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
         size += 300;
     }
 
-    if (def->unk9b != 0) {
+    if (def->numLockdata != 0) {
         size = mmAlign4(size);
-        size += def->unk9b * 5;
+        size += def->numLockdata * sizeof(ObjectStruct78);
     }
 
     return size;
@@ -1075,12 +1075,12 @@ void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3) {
         }
     }
 
-    obj->positionMirror2.x = obj->srt.transl.x;
-    obj->positionMirror3.x = obj->srt.transl.x;
-    obj->positionMirror2.y = obj->srt.transl.y;
-    obj->positionMirror3.y = obj->srt.transl.y;
-    obj->positionMirror2.z = obj->srt.transl.z;
-    obj->positionMirror3.z = obj->srt.transl.z;
+    obj->prevLocalPosition.x = obj->srt.transl.x;
+    obj->prevGlobalPosition.x = obj->srt.transl.x;
+    obj->prevLocalPosition.y = obj->srt.transl.y;
+    obj->prevGlobalPosition.y = obj->srt.transl.y;
+    obj->prevLocalPosition.z = obj->srt.transl.z;
+    obj->prevGlobalPosition.z = obj->srt.transl.z;
 }
 
 void update_object(Object *obj) {
@@ -1101,21 +1101,21 @@ void update_object(Object *obj) {
     } else {
         update_pi_manager_array(1, obj->id);
 
-        if (!(obj->srt.flags & 8)) {
-            obj->positionMirror2.x = obj->srt.transl.x;
-            obj->positionMirror2.y = obj->srt.transl.y;
-            obj->positionMirror2.z = obj->srt.transl.z;
+        if (!(obj->srt.flags & OBJFLAG_MANUAL_PREV_POSITIONS)) {
+            obj->prevLocalPosition.x = obj->srt.transl.x;
+            obj->prevLocalPosition.y = obj->srt.transl.y;
+            obj->prevLocalPosition.z = obj->srt.transl.z;
 
-            obj->positionMirror3.x = obj->positionMirror.x;
-            obj->positionMirror3.y = obj->positionMirror.y;
-            obj->positionMirror3.z = obj->positionMirror.z;
+            obj->prevGlobalPosition.x = obj->globalPosition.x;
+            obj->prevGlobalPosition.y = obj->globalPosition.y;
+            obj->prevGlobalPosition.z = obj->globalPosition.z;
         }
 
         if (obj->dll != NULL && !(obj->unkB0 & 0x8000)) {
             obj->dll->vtbl->control(obj);
 
             get_object_child_position(obj,
-                &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
+                &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
         }
 
         if (obj->objhitInfo != NULL) {
@@ -1146,13 +1146,13 @@ void func_8002272C(Object *obj) {
         obj->dll->vtbl->update(obj);
 
         get_object_child_position(obj,
-            &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
+            &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
     }
 
     update_pi_manager_array(3, -1);
 }
 
-u32 obj_alloc_object_state(Object *obj, u32 addr) {
+u32 obj_alloc_objdata(Object *obj, u32 addr) {
     u32 dataSize = 0;
     
     addr = mmAlign4(addr);
@@ -1323,8 +1323,8 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
             def->collectableDef = (CollectableDef*)((u32)def + (u32)def->collectableDef);
         }
 
-        if (def->unk40 != 0) {
-            def->unk40 = (ObjDefStruct40*)((u32)def + (u32)def->unk40);
+        if (def->lockdata != 0) {
+            def->lockdata = (ObjDefLockData*)((u32)def + (u32)def->lockdata);
         }
 
         if (def->pSeq != 0) {
@@ -1606,7 +1606,7 @@ void obj_free_object(Object *obj, s32 param2) {
         }
     }
 
-    if (obj->srt.flags & 0x2000 && obj->setup != NULL) {
+    if (obj->srt.flags & OBJFLAG_OWNS_SETUP && obj->setup != NULL) {
         mmFree(obj->setup);
     }
 
@@ -1622,8 +1622,8 @@ void *obj_alloc_setup(s32 size, s32 objId) {
     setup->uID = -1;
     setup->loadDistance = 100;
     setup->fadeDistance = 50;
-    setup->loadFlags = OBJSETUP_LOAD_FLAG8;
-    setup->fadeFlags = OBJSETUP_FADE_FLAG4;
+    setup->loadFlags = OBJSETUP_LOAD_CAMERA;
+    setup->fadeFlags = OBJSETUP_FADE_CAMERA;
     setup->objId = objId;
 
     return (void*)setup;
@@ -1658,9 +1658,9 @@ void func_80023464(s32 playerno) {
         if (playerno > PLAYER_NONE) {
             bzero(&playerSetup, sizeof(playerSetup));
             playerSetup.uID = -1;
-            playerSetup.setupExclusions1 = 0;
-            playerSetup.loadFlags = OBJSETUP_LOAD_FLAG1;
-            playerSetup.fadeFlags = OBJSETUP_FADE_FLAG4;
+            playerSetup.actExclusions1 = 0;
+            playerSetup.loadFlags = OBJSETUP_LOAD_LEVEL;
+            playerSetup.fadeFlags = OBJSETUP_FADE_CAMERA;
             playerSetup.loadDistance = 255;
             playerSetup.fadeDistance = 100;
             playerSetup.objId = D_80091664[playerno];
@@ -1704,9 +1704,9 @@ void func_80023628() {
     if (playerno > PLAYER_NONE) {
         bzero(&playerSetup, sizeof(playerSetup));
         playerSetup.uID = -1;
-        playerSetup.setupExclusions1 = 0;
-        playerSetup.loadFlags = OBJSETUP_LOAD_FLAG1;
-        playerSetup.fadeFlags = OBJSETUP_FADE_FLAG4;
+        playerSetup.actExclusions1 = 0;
+        playerSetup.loadFlags = OBJSETUP_LOAD_LEVEL;
+        playerSetup.fadeFlags = OBJSETUP_FADE_CAMERA;
         playerSetup.loadDistance = 255;
         playerSetup.fadeDistance = 100;
         playerSetup.objId = D_80091664[playerno];
@@ -1737,9 +1737,9 @@ void func_80023894(Object* object, s32 objectId) {
 
     sidekickSetup = (SidekickSetup*)object->setup;
     D_80091688.base.objId = objectId;
-    D_80091688.base.x = object->positionMirror.x;
-    D_80091688.base.y = object->positionMirror.y;
-    D_80091688.base.z = object->positionMirror.z;
+    D_80091688.base.x = object->globalPosition.x;
+    D_80091688.base.y = object->globalPosition.y;
+    D_80091688.base.z = object->globalPosition.z;
     D_80091688.unk18 = sidekickSetup->unk18;
     D_80091688.unk19 = sidekickSetup->unk19;
 
@@ -1788,7 +1788,7 @@ void obj_infer_map_id(Object *obj) {
     obj->mapID = map_get_map_id_from_xz_ws(obj->srt.transl.x, obj->srt.transl.z);
 }
 
-s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz) {
+s32 obj_move(Object *obj, f32 dx, f32 dy, f32 dz) {
     obj->srt.transl.x += dx;
     obj->srt.transl.y += dy;
     obj->srt.transl.z += dz;
@@ -1918,14 +1918,14 @@ void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
 }
 
 void func_80023C6C(Object *obj) {
-    ObjDefStruct40 *src;
+    ObjDefLockData *src;
     ObjectStruct78 *dst;
 
     if (obj != NULL) {
         dst = obj->unk78;
 
         if (dst != NULL) {
-            src = &obj->def->unk40[obj->unkD4];
+            src = &obj->def->lockdata[obj->unkD4];
             dst += obj->unkD4;
 
             dst->interactRadius = src->interactRadius;
@@ -1941,7 +1941,7 @@ static const char str_800997cc[] = "locknum out of range\n";
 static const char str_800997e4[] = "infonum out of range\n";
 
 void func_80023CD8(Object *obj, u16 param2) {
-    if (param2 > obj->def->unk9b) {
+    if (param2 > obj->def->numLockdata) {
         param2 = 0;
     }
 

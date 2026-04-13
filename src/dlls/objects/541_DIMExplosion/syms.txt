@@ -1,0 +1,12 @@
+.text = 0x0:
+DIMExplosion_ctor = 0x0;
+DIMExplosion_dtor = 0xC;
+DIMExplosion_setup = 0x18;
+DIMExplosion_control = 0xA0;
+DIMExplosion_update = 0x180;
+DIMExplosion_print = 0x18C;
+DIMExplosion_free = 0x354;
+DIMExplosion_get_model_flags = 0x364;
+DIMExplosion_get_data_size = 0x374;
+
+.rodata = 0x3D0:

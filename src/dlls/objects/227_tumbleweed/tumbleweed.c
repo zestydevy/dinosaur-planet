@@ -26,8 +26,8 @@
 #include "game/objects/object.h"
 #include "types.h"
 
+#include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/523_SCcollectables.h"
-#include "dlls/objects/211_tricky.h"
 #include "dlls/objects/226_tumbleweedbush.h"
 #include "dlls/objects/227_tumbleweed.h"
 
@@ -74,9 +74,9 @@ void Tumbleweed_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup*
     objData->timer = objData->baseScale / rand_next(200, 500);
     objData->player = 0;
     
-    self->speed.x = 0.0f;
-    self->speed.y = 0.0f;
-    self->speed.z = 0.0f;
+    self->velocity.x = 0.0f;
+    self->velocity.y = 0.0f;
+    self->velocity.z = 0.0f;
      
     if (self->shadow) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
@@ -255,13 +255,13 @@ void Tumbleweed_tick_chase_player(Object* self) {
         objData->characterDistance = sqrtf(SQ(dx) + SQ(dz));
         
         if (objData->characterDistance > 20.0f) {
-            self->speed.x -= dx / (objData->characterDistance * 20.0f);
-            self->speed.z -= dz / (objData->characterDistance * 20.0f);
-            objData->rollSpeed = self->speed.x * 728.0f;
-            objData->pitchSpeed = self->speed.z * 728.0f;
+            self->velocity.x -= dx / (objData->characterDistance * 20.0f);
+            self->velocity.z -= dz / (objData->characterDistance * 20.0f);
+            objData->rollSpeed = self->velocity.x * 728.0f;
+            objData->pitchSpeed = self->velocity.z * 728.0f;
         } else {
-            self->speed.x = 0.0f - (self->speed.x * 0.8f);
-            self->speed.z = 0.0f - (self->speed.z * 0.8f);
+            self->velocity.x = 0.0f - (self->velocity.x * 0.8f);
+            self->velocity.z = 0.0f - (self->velocity.z * 0.8f);
         }
         
         //Move and apply collision
@@ -301,10 +301,10 @@ void Tumbleweed_tick_chase_player(Object* self) {
             objData->timer -= gUpdateRateF;
         }
 
-        //Stop, drop (speed.y), and roll (or use the terrain part of the motion function at least)
-        self->speed.x = 0.0f;
-        self->speed.y /= 1.1f; //@frame-rate dependent
-        self->speed.z = 0.0f;
+        //Stop, drop (velocity.y), and roll (or use the terrain part of the motion function at least)
+        self->velocity.x = 0.0f;
+        self->velocity.y /= 1.1f; //@frame-rate dependent
+        self->velocity.z = 0.0f;
         Tumbleweed_bounce_and_roll(self, objData);
 
     } else {
@@ -373,7 +373,7 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
         if (sidekick && sidekick->id == OBJ_Tricky) {
             //Enable "Find" sidekick command when nearby
             if (distance < 30625.0f) {
-                ((DLL_211_Tricky*)sidekick->dll)->vtbl->base.func14(sidekick, 1);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
             }
             dx2 = self->srt.transl.x - sidekick->srt.transl.x;
             dz2 = self->srt.transl.z - sidekick->srt.transl.z;
@@ -401,18 +401,18 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
 
         if (objData->player != NULL) {
             //Aim towards player if stored in objData
-            self->speed.x -= dxTarget / (targetDistance * 10.0f);
-            self->speed.z -= dzTarget / (targetDistance * 10.0f);
+            self->velocity.x -= dxTarget / (targetDistance * 10.0f);
+            self->velocity.z -= dzTarget / (targetDistance * 10.0f);
         } else if ((objData->characterDistance < 150.0f) && (objData->characterDistance > 0)) {
             //Aim to stay a fixed distance away from player/sidekick
-            self->speed.x -= dx / ((objData->characterDistance - 150.0f) * 15.0f);
-            self->speed.z -= dz / ((objData->characterDistance - 150.0f) * 15.0f);
-            objData->rollSpeed = self->speed.x * 728.0f;
-            objData->pitchSpeed = self->speed.z * 728.0f;
+            self->velocity.x -= dx / ((objData->characterDistance - 150.0f) * 15.0f);
+            self->velocity.z -= dz / ((objData->characterDistance - 150.0f) * 15.0f);
+            objData->rollSpeed = self->velocity.x * 728.0f;
+            objData->pitchSpeed = self->velocity.z * 728.0f;
         } else if ((targetDistance > 10.0f) && (targetDistance > 0)) {
             //Aim towards home (tree)
-            self->speed.x -= dxTarget / (targetDistance * 10.0f);
-            self->speed.z -= dzTarget / (targetDistance * 10.0f);
+            self->velocity.x -= dxTarget / (targetDistance * 10.0f);
+            self->velocity.z -= dzTarget / (targetDistance * 10.0f);
         }
         
         //Move and apply collision
@@ -452,16 +452,16 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
             objData->timer -= gUpdateRateF;
         }
 
-        //Stop, drop (speed.y), and roll (or use the terrain part of the motion function at least)
-        self->speed.x = 0.0f;
-        self->speed.y /= 1.1f; //@frame-rate dependent
-        self->speed.z = 0.0f;
+        //Stop, drop (velocity.y), and roll (or use the terrain part of the motion function at least)
+        self->velocity.x = 0.0f;
+        self->velocity.y /= 1.1f; //@frame-rate dependent
+        self->velocity.z = 0.0f;
         Tumbleweed_bounce_and_roll(self, objData);
 
     } else if (objData->state == Tumbleweed_STATE_Gravitate) {
         //Gravitate towards a target point (e.g. when being eaten by Garunda Te)
         distance = vec3_distance_xz_squared(&self->srt.transl, objData->gravitateTarget);
-        obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+        obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
         
         //Advance state after gravitating beyond the destination point
         if (distance < vec3_distance_xz_squared(&self->srt.transl, objData->gravitateTarget)) {
@@ -595,9 +595,9 @@ void Tumbleweed_gravitate_towards_point(Object* self, Vec3f* point) {
     dy = point->y - self->srt.transl.y;
     dz = point->z - self->srt.transl.z;
     
-    self->speed.x = dx * 0.02f;
-    self->speed.y = dy * 0.02f;
-    self->speed.z = dz * 0.02f;
+    self->velocity.x = dx * 0.02f;
+    self->velocity.y = dy * 0.02f;
+    self->velocity.z = dz * 0.02f;
     
     objData->state = Tumbleweed_STATE_Gravitate;
     objData->gravitateTarget = point;
@@ -647,39 +647,39 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
         }
     }
 
-    //Limit x-component of speed
-    if (self->speed.x > SPEED_CAP_X) {
-        self->speed.x = SPEED_CAP_X;
-    } else if (self->speed.x < -SPEED_CAP_X) {
-        self->speed.x = -SPEED_CAP_X;
+    //Limit x-component of velocity
+    if (self->velocity.x > SPEED_CAP_X) {
+        self->velocity.x = SPEED_CAP_X;
+    } else if (self->velocity.x < -SPEED_CAP_X) {
+        self->velocity.x = -SPEED_CAP_X;
     }
     
-    //Limit y-component of speed
+    //Limit y-component of velocity
     if (self->id == OBJ_Tumbleweed1 || self->id == OBJ_Tumbleweed1twig) {
-        if (self->speed.y > SPEED_CAP_Y_CHASE) {
-            self->speed.y = SPEED_CAP_Y_CHASE;
-        } else if (self->speed.y < -SPEED_CAP_Y_CHASE) {
-            self->speed.y = -SPEED_CAP_Y_CHASE;
+        if (self->velocity.y > SPEED_CAP_Y_CHASE) {
+            self->velocity.y = SPEED_CAP_Y_CHASE;
+        } else if (self->velocity.y < -SPEED_CAP_Y_CHASE) {
+            self->velocity.y = -SPEED_CAP_Y_CHASE;
         }
     } else {
-        if (self->speed.y > SPEED_CAP_Y_FLEE) {
-            self->speed.y = SPEED_CAP_Y_FLEE;
+        if (self->velocity.y > SPEED_CAP_Y_FLEE) {
+            self->velocity.y = SPEED_CAP_Y_FLEE;
         }
-        else if (self->speed.y < -SPEED_CAP_Y_FLEE) {
-            self->speed.y = -SPEED_CAP_Y_FLEE;
+        else if (self->velocity.y < -SPEED_CAP_Y_FLEE) {
+            self->velocity.y = -SPEED_CAP_Y_FLEE;
         }
     }
     
-    //Limit z-component of speed (@bug? handled separately to x-component, instead of via xz vector and overall lateral limit)
-    if (self->speed.z > SPEED_CAP_Z) {
-        self->speed.z = SPEED_CAP_Z;
-    } else if (self->speed.z < -SPEED_CAP_Z) {
-        self->speed.z = -SPEED_CAP_Z;
+    //Limit z-component of velocity (@bug? handled separately to x-component, instead of via xz vector and overall lateral limit)
+    if (self->velocity.z > SPEED_CAP_Z) {
+        self->velocity.z = SPEED_CAP_Z;
+    } else if (self->velocity.z < -SPEED_CAP_Z) {
+        self->velocity.z = -SPEED_CAP_Z;
     }
     
-    self->srt.transl.x += self->speed.x * gUpdateRateF;
-    self->srt.transl.y += self->speed.y * gUpdateRateF;
-    self->srt.transl.z += self->speed.z * gUpdateRateF;
+    self->srt.transl.x += self->velocity.x * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
+    self->srt.transl.z += self->velocity.z * gUpdateRateF;
     self->srt.roll += objData->rollSpeed * gUpdateRateF;
     self->srt.pitch += objData->pitchSpeed * gUpdateRateF;
     self->srt.yaw += objData->yawSpeed * gUpdateRateF;
@@ -690,20 +690,20 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
 
         //Apply gravity when tumbleweed above ground
         if (groundY < self->srt.transl.y) {
-            self->speed.y = self->speed.y + (-0.17f); //@bug: framerate dependent gravity
+            self->velocity.y = self->velocity.y + (-0.17f); //@bug: framerate dependent gravity
             return;
         }
         
         //Bounce when hitting ground
         self->srt.transl.y = groundY;
         if (self->id == OBJ_Tumbleweed2 || self->id == OBJ_Tumbleweed2twig) {
-            self->speed.y = 0.0f - (((f32)objData->characterDistance / rand_next(140, 180)) * (self->speed.y * 0.8f));
+            self->velocity.y = 0.0f - (((f32)objData->characterDistance / rand_next(140, 180)) * (self->velocity.y * 0.8f));
         } else {
-            self->speed.y = 0.0f - (((f32) objData->characterDistance / rand_next(20, 40)) * (self->speed.y * 0.8f));
+            self->velocity.y = 0.0f - (((f32) objData->characterDistance / rand_next(20, 40)) * (self->velocity.y * 0.8f));
         }
         
         //Squeak when bouncing
-        volume = self->speed.y * 32.0f;
+        volume = self->velocity.y * 32.0f;
         if (volume > MAX_VOLUME) {
             volume = MAX_VOLUME;
         }
@@ -827,7 +827,7 @@ void Tumbleweed_create_twigs(Object* self) {
     setup->base.z = self->srt.transl.z;
     setup->base.fadeDistance = 0xFF;
     setup->base.loadFlags = OBJSETUP_LOAD_FLAG20;
-    setup->base.fadeFlags = OBJSETUP_FADE_PLAYER_RELATIVE;
+    setup->base.fadeFlags = OBJSETUP_FADE_MAIN;
     setup->roll = self->srt.roll;
     setup->pitch = self->srt.pitch;
     setup->yaw = self->srt.yaw;

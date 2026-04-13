@@ -6,9 +6,14 @@
 #include "types.h"
 
 enum ParticleID {
+    PARTICLE_2 = 0x2, //cannon blast
+    PARTICLE_5 = 0x5,
+    PARTICLE_9 = 0x9, //debris explosion
+    PARTICLE_3C = 0x3C,
     PARTICLE_42 = 0x42,
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
+    PARTICLE_69 = 0x69, //nothing?
     PARTICLE_75 = 0x75,
     PARTICLE_77 = 0x77,
     PARTICLE_78 = 0x78,
@@ -52,6 +57,10 @@ enum ParticleID {
     PARTICLE_1F4 = 0x1F4,
     PARTICLE_1F7 = 0x1F7,
     PARTICLE_202 = 0x202,
+    PARTICLE_203 = 0x203, //fire
+    PARTICLE_204 = 0x204, //floating ember
+    PARTICLE_205 = 0x205, //smoke rising
+    PARTICLE_206 = 0x206, //snow evaporating
     PARTICLE_257 = 0x257,
     /* --- DLL 36 END --- */
     /* --- DLL 35 START --- */

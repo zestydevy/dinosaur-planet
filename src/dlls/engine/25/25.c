@@ -83,7 +83,7 @@ void dll_25_func_D8(void)
     for (sp270 = 0; sp270 < curvesCount; sp270++)
     {
         temp_s4 = curvesResult[sp270].setup;
-        if (temp_s4->unk19 == 0x26)
+        if (temp_s4->curveType == 0x26)
         {
             temp_v0 = temp_s4->unk3;
             temp_s0 = &_bss_DC[temp_v0];
@@ -108,9 +108,9 @@ void dll_25_func_D8(void)
             for (var_v1_2 = 0; var_v1_2 < 4; var_v1_2++)
             {
                 temp_s0->unk1C[var_v1_2] = 0;
-                if (temp_s4->unk1C[var_v1_2] >= 0)
+                if (temp_s4->links[var_v1_2] >= 0)
                 {
-                    temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_s4->unk1C[var_v1_2]);
+                    temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_s4->links[var_v1_2]);
                     temp_t1 = temp_s4->unk3 * temp_v0_2->unk3;
                     for (var_s0 = 1; var_s0 < _bss_E4; var_s0++)
                     {
@@ -124,7 +124,7 @@ void dll_25_func_D8(void)
                     {
                         for (var_s0 = 0; var_s0 < 4; var_s0++)
                         {
-                            if ((s32)temp_s4->uID == temp_v0_2->unk1C[var_s0])
+                            if ((s32)temp_s4->uID == temp_v0_2->links[var_s0])
                             {
                                 break;
                             }
@@ -532,10 +532,10 @@ CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
     {
         temp_s0 = result[i].setup;
         if ((temp_s0 != NULL) && 
-            (temp_s0->unk19 == 0x24) && 
+            (temp_s0->curveType == 0x24) && 
             ((arg1 == -1) || (arg1 == temp_s0->unk3)) &&
             ((arg2 == -1) || (arg2 == temp_s0->unk1A)) &&
-            ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) &&
+            ((temp_s0->links[0] != -1) || (temp_s0->unk2F == -1)) &&
             ((temp_s0->type24.unk30 == -1) || (main_get_bits(temp_s0->type24.unk30) != 0)) &&
             ((temp_s0->type24.unk32 == -1) || (main_get_bits(temp_s0->type24.unk32) == 0)))
         {
@@ -575,10 +575,10 @@ CurveSetup *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
     {
         temp_v1 = result[var_v1].setup;
         if ((temp_v1 != NULL) &&
-            (temp_v1->unk19 == 0x24) &&
+            (temp_v1->curveType == 0x24) &&
             ((arg1 == -1) || (arg1 == temp_v1->unk3)) &&
             ((arg2 == -1) || (arg2 == temp_v1->unk1A)) &&
-            ((temp_v1->unk1C[0] != -1) || (temp_v1->unk2F == -1)))
+            ((temp_v1->links[0] != -1) || (temp_v1->unk2F == -1)))
         {
             temp_fa1 = arg0[0] - temp_v1->pos.x;
             temp_ft4 = arg0[1] - temp_v1->pos.y;
@@ -774,13 +774,13 @@ CurveSetup *dll_25_func_2A50(Object *obj, s32 arg1)
     for (i = 0; i < count; i++)
     {
         temp_s0 = result[i].setup;
-        if ((temp_s0->unk19 == 0x22) &&
+        if ((temp_s0->curveType == 0x22) &&
             ((arg1 == temp_s0->base_type22.unk4) || ((temp_s0->unk1A < 3) &&
                                                     (arg1 == -1))) &&
             ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
             ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->pos.x);
+            temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -811,10 +811,10 @@ CurveSetup *dll_25_func_2BC4(Object *obj, s32 arg1)
     {
         temp_s0 = result[i].setup;
         if (
-            (temp_s0->unk19 == 0x22) &&
+            (temp_s0->curveType == 0x22) &&
             ((arg1 == temp_s0->base_type22.unk4) || ((temp_s0->unk1A < 3) && (arg1 == -1))))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->pos.x);
+            temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -843,12 +843,12 @@ CurveSetup *dll_25_func_2CF8(Object *obj, s32 arg1)
     for (i = 0; i < count; i++)
     {
         temp_s0 = result[i].setup;
-        if ((temp_s0->unk19 == 0x22) &&
+        if ((temp_s0->curveType == 0x22) &&
             (arg1 == temp_s0->unk1A) &&
             ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
             ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->pos.x);
+            temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;

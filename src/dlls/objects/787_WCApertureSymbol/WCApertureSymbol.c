@@ -75,7 +75,7 @@ void dll_787_control(Object *self) {
         break;
     case 1:
         if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM1STPERSON) {
-            if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21) && (vec3_distance(&player->positionMirror, &self->positionMirror) < 200.0f)) {
+            if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 200.0f)) {
                 gDLL_7_Newday->vtbl->func4(&sp48);
                 if (setup->unk19 == 0) {
                     objdata->targetOpacity = dll_787_func_490(self, objdata, 66000.0f, 74000.0f, sp48);

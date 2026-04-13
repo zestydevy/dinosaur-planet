@@ -95,7 +95,7 @@ void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         return;
     }
 
-    func_80037A14(gdl, mtxs, 1);
+    rcp_clear_screen(gdl, mtxs, CLEAR_COLOR);
     gDLL_76->vtbl->func2(gdl, mtxs);
 
     if (data_0 > 40 && data_4 == 0) {
@@ -125,8 +125,8 @@ void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             var1 = 1.0f;
         }
 
-        func_8003825C(gdl, bss_10, 0xa5, 0x94, 0, 0, (s16)(255.0f * var1), 0);
-        func_8003825C(gdl, bss_18, 0x66, 0xfa, 0, 0, (s16)(255.0f * var1), 0);
+        rcp_screen_full_write(gdl, bss_10, 0xa5, 0x94, 0, 0, (s16)(255.0f * var1), SCREEN_WRITE_TRANSLUCENT);
+        rcp_screen_full_write(gdl, bss_18, 0x66, 0xfa, 0, 0, (s16)(255.0f * var1), SCREEN_WRITE_TRANSLUCENT);
     }
 
     if (data_4 >= 1) {
@@ -142,7 +142,7 @@ void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             var1 = 1.0f;
         }
 
-        func_8003825C(gdl, bss_C, 0xa5, 0x94, 0, 0, (u32)(255.0f * var1) & 0xFF, 0);
-        func_8003825C(gdl, bss_14, 0x66, 0xfa, 0, 0, (u32)(255.0f * var1) & 0xFF, 0);
+        rcp_screen_full_write(gdl, bss_C, 0xa5, 0x94, 0, 0, (u32)(255.0f * var1) & 0xFF, SCREEN_WRITE_TRANSLUCENT);
+        rcp_screen_full_write(gdl, bss_14, 0x66, 0xfa, 0, 0, (u32)(255.0f * var1) & 0xFF, SCREEN_WRITE_TRANSLUCENT);
     }
 }

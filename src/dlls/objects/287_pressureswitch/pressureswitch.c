@@ -1,6 +1,6 @@
 #include "common.h"
 #include "sys/objtype.h"
-#include "dlls/objects/211_tricky.h"
+#include "dlls/objects/common/sidekick.h"
 
 typedef struct {
 f32 x;
@@ -152,9 +152,9 @@ void pressureswitch_control(Object* self) {
         player = get_player();
         sidekick = get_sidekick();
         if (sidekick) {
-            if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= 
+            if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 
                 (setup->distanceSidekickBehaviour * setup->distanceSidekickBehaviour)) {
-                ((DLL_211_Tricky*)sidekick->dll)->vtbl->base.func14(sidekick, 3);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 3);
             }
         }
     }

@@ -3,7 +3,7 @@
 #include "game/gamebits.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "dlls/objects/212_kyte.h"
+#include "dlls/objects/common/sidekick.h"
 
 typedef struct {
 /*00*/ f32 timer;
@@ -68,13 +68,13 @@ void FindKyteObject_control(Object *self) {
         if (kyte) {
             player = get_player();
             if (setup->unk1E != 0) {
-                dist = vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror);
+                dist = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition);
             } else {
-                dist = vec3_distance_squared(&player->positionMirror, &self->positionMirror);
+                dist = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
             }
             if (dist <= SQ(setup->unk18 * 2)) {
-                ((DLL_212_Kyte*)kyte->dll)->vtbl->base.func14(kyte, 1);
-                if (gDLL_1_UI->vtbl->func_DF4(1)) {
+                ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, 1);
+                if (gDLL_1_cmdmenu->vtbl->func_DF4(1)) {
                     objdata->flightCurve = main_get_bits(BIT_Kyte_Flight_Curve);
                     main_set_bits(BIT_Kyte_Flight_Curve, setup->unk1A);
                     if (setup->unk1C != 0) {

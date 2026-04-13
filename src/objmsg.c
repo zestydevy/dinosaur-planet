@@ -90,7 +90,7 @@ void obj_send_mesg_many_nearby(s16 objId, f32 distance, u16 flags, Object *sende
         obj = objects[i];
 
         if ((obj != sender || !(flags & OBJMSG_SEND_IGNORE_SENDER)) && (objId == obj->id || (flags & OBJMSG_SEND_ALL))) {
-            if (vec3_distance(&sender->positionMirror, &obj->positionMirror) < distance) {
+            if (vec3_distance(&sender->globalPosition, &obj->globalPosition) < distance) {
                 if (obj_send_mesg(obj, mesgID, sender, mesgArg) == 0) {
                     
                 }

@@ -41,7 +41,10 @@ typedef struct {
  /*1A*/ s16 stringID;
 } KText_Setup;
 
-/*0x0*/ static Func_80037F9C_Struct currentGlyph;
+/*0x0*/ static struct {
+    TextureTile tile;
+    u32 null; // terminates the texture tile list
+} currentGlyph;
 
 static void krazoatext_load_required_glyph_textures(Object* self, KText_Data* objdata);
 static void krazoatext_unload_all_glyph_textures(Object* self, KText_Data* objdata);
@@ -165,11 +168,11 @@ void krazoatext_print_text(Object* self, Gfx** gfx) {
         if ((objdata->text[charCount] >= ASCII_A) && (objdata->text[charCount] <= ASCII_Z)) {
             glyphIndex = objdata->text[charCount] - ASCII_A;
             if (objdata->glyphs[glyphIndex]) {
-                currentGlyph.unk0 = objdata->glyphs[glyphIndex];
-                currentGlyph.unk8 = 0;
-                currentGlyph.unkA = 0;
-                currentGlyph.unk4 = 0;
-                func_80037F9C(gfx, &currentGlyph, xCoord, KRAZOA_PRINT_BASE_Y, 0xFF, 0xFF, 0xFF, 0xFF);
+                currentGlyph.tile.tex = objdata->glyphs[glyphIndex];
+                currentGlyph.tile.x = 0;
+                currentGlyph.tile.y = 0;
+                currentGlyph.tile.animProgress = 0;
+                rcp_tile_write(gfx, &currentGlyph.tile, xCoord, KRAZOA_PRINT_BASE_Y, 0xFF, 0xFF, 0xFF, 0xFF);
             }
         }
 

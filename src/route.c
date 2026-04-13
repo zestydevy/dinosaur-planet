@@ -188,11 +188,11 @@ void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx)
     }
     
     for (i = 0; i < 4; i++) {
-        neighborCurveUID = base->unk1C[i];
+        neighborCurveUID = base->links[i];
         if ((neighborCurveUID >= 0) && (var_fp & (1 << i))) {
             neighbor = gDLL_26_Curves->vtbl->func_39C(neighborCurveUID);
             if (neighbor != NULL) {
-                switch (neighbor->unk19) {
+                switch (neighbor->curveType) {
                 case 0x22: // Kyte
                     if (route_is_allowed_kyte_curve(neighbor, (UnkVoxmap2Struct*)route->goal) != 0) {
                         route_add_neighbor(route, basePoint, baseCurveIdx, 
@@ -399,7 +399,7 @@ s32 route_is_goal(Route* route, RoutePoint* point) {
     s32 temp3;
 
     temp_v0 = route->goal;
-    switch (point->curve->unk19) {
+    switch (point->curve->curveType) {
     case 0x22: // Kyte
         new_var = (UnkVoxmap2Struct*)route->goal;
         if (new_var->unk4 != NULL) {
@@ -416,16 +416,16 @@ s32 route_is_goal(Route* route, RoutePoint* point) {
             if (route->routePoints[point->prevPointIdx].curve) {}
 
             temp_a1 = route->routePoints[point->prevPointIdx].curve;
-            if (point->curve->uID == (u32)temp_a1->unk1C[0]) {
+            if (point->curve->uID == (u32)temp_a1->links[0]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk4;
             }
-            if (point->curve->uID == (u32)temp_a1->unk1C[1]) {
+            if (point->curve->uID == (u32)temp_a1->links[1]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk5;
             }
-            if (point->curve->uID == (u32)temp_a1->unk1C[2]) {
+            if (point->curve->uID == (u32)temp_a1->links[2]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk6;
             }
-            if (point->curve->uID == (u32)temp_a1->unk1C[3]) {
+            if (point->curve->uID == (u32)temp_a1->links[3]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk7;
             }
 

@@ -95,7 +95,7 @@ void Transporter_control(Object *self) {
     camera_enable_y_offset();
     player = get_player();
     if (player) {
-        distToPlayer = vec3_distance_xz(&player->positionMirror, &self->positionMirror);
+        distToPlayer = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
         if ((objdata->unk25 == 0) && (objdata->unk24 == 0) && (distToPlayer < 40.0f)) {
             if (!objdata->dll140) {
                 objdata->dll140 = dll_load_deferred(DLL_ID_140, 1);
@@ -147,18 +147,18 @@ void Transporter_control(Object *self) {
                 objdata->unk18 = objdata->unk12;
             }
             camera = get_camera();
-            delta.f[0] = self->positionMirror.x - camera->tx;
-            delta.f[1] = self->positionMirror.y - camera->ty;
-            delta.f[2] = self->positionMirror.z - camera->tz;
+            delta.f[0] = self->globalPosition.x - camera->tx;
+            delta.f[1] = self->globalPosition.y - camera->ty;
+            delta.f[2] = self->globalPosition.z - camera->tz;
             mag1 = VECTOR_MAGNITUDE(delta);
             if (mag1 != 0.0f) {
                 delta.f[0] /= mag1; delta.f[0] *= 20.0f;
                 delta.f[1] /= mag1; delta.f[1] *= 20.0f;
                 delta.f[2] /= mag1; delta.f[2] *= 20.0f;
             }
-            transform.transl.x = player->positionMirror.x;
-            transform.transl.y = player->positionMirror.y;
-            transform.transl.z = player->positionMirror.z;
+            transform.transl.x = player->globalPosition.x;
+            transform.transl.y = player->globalPosition.y;
+            transform.transl.z = player->globalPosition.z;
             transform.yaw = 0;
             transform.roll = 0;
             transform.pitch = 0;
@@ -172,18 +172,18 @@ void Transporter_control(Object *self) {
                 } else if ((objdata->unk25 == 0) && (self->unkDC < 200)) {
                     camera_set_shake_offset(rand_next(0, 10) * 0.05f);
                 }
-                transform.transl.x = delta.f[0] + self->positionMirror.x;
-                transform.transl.y = delta.f[1] + self->positionMirror.y;
-                transform.transl.z = delta.f[2] + self->positionMirror.z;
+                transform.transl.x = delta.f[0] + self->globalPosition.x;
+                transform.transl.y = delta.f[1] + self->globalPosition.y;
+                transform.transl.z = delta.f[2] + self->globalPosition.z;
                 if ((self->unkDC % 10) < (s16)(s32)gUpdateRateF) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_78, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 }
             } else {
                 self->unkE0 -= gUpdateRate;
                 if ((self->unkE0 <= 0) && (objdata->unk25 == 0)) {
-                    transform.transl.x = player->positionMirror.x;
-                    transform.transl.y = player->positionMirror.y;
-                    transform.transl.z = player->positionMirror.z;
+                    transform.transl.x = player->globalPosition.x;
+                    transform.transl.y = player->globalPosition.y;
+                    transform.transl.z = player->globalPosition.z;
                     transform.scale = 1.0f;
                     transform.yaw = 0;
                     transform.roll = 0;
@@ -195,9 +195,9 @@ void Transporter_control(Object *self) {
             }
             self->unkDC -= gUpdateRate;
         } else if ((objdata->unk24 != 0) && (self->unkDC <= 0)) {
-            transform.transl.x = player->positionMirror.x;
-            transform.transl.y = player->positionMirror.y;
-            transform.transl.z = player->positionMirror.z;
+            transform.transl.x = player->globalPosition.x;
+            transform.transl.y = player->globalPosition.y;
+            transform.transl.z = player->globalPosition.z;
             transform.yaw = 0;
             transform.roll = 0;
             transform.pitch = 0;

@@ -35,7 +35,7 @@ void dll_465_control(Object* self) {
     
     objData->unk0 = main_get_bits(objSetup->unk1E);
     if (objData->unk0 == 1) {
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
         self->unkB0 |= 0x8000;
         func_800267A4(self);
     }

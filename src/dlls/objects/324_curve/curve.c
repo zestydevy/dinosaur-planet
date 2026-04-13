@@ -20,16 +20,16 @@ void curve_setup(Object* self, CurveSetup* curveSetup, s32 arg2) {
     self->srt.yaw = curveSetup->unk2C << 8;
     self->srt.pitch = curveSetup->unk2D << 8;
     
-    if (curveSetup->unk19 == CURVE_TYPE_8 || curveSetup->unk19 == CURVE_TYPE_Camera_1A) {
+    if (curveSetup->curveType == CURVE_TYPE_8 || curveSetup->curveType == CURVE_TYPE_Camera_1A) {
         self->srt.roll = curveSetup->type8.unk38;
     }
     
-    if (curveSetup->unk19 == CURVE_TYPE_15) {
+    if (curveSetup->curveType == CURVE_TYPE_15) {
         self->srt.scale = 1.25f;
         return;
     }
 
-    if (curveSetup->unk19 == CURVE_TYPE_16) {
+    if (curveSetup->curveType == CURVE_TYPE_16) {
         self->srt.scale = 1.1f;
         return;
     }

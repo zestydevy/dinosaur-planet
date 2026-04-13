@@ -23,8 +23,11 @@ enum ObjectGroup {
 	GROUP_NONE = 0,
 	GROUP_UNK1 = 1, // player?
 	GROUP_UNK16 = 16,
+	GROUP_UNK29 = 29,
+	GROUP_UNK41 = 41,
 	GROUP_UNK46 = 46,
-	GROUP_UNK48 = 48
+	GROUP_UNK48 = 48,
+	GROUP_UNK54 = 54
 };
 
 // base objdata of objects in group 16?
@@ -40,25 +43,57 @@ typedef struct {
 /*0062*/    s8 unk62;
 } ObjectC0_Data;
 
+// Stored in the flags of Object.srt
+enum ObjectFlags {
+/*1*/ OBJFLAG_UNK_2 = 0x2,
+
+      // don't automatically calculate previous local/global position object fields
+/*3*/ OBJFLAG_MANUAL_PREV_POSITIONS = 0x8,
+
+/*6*/ OBJFLAG_UNK_40 = 0x40,
+/*7*/ OBJFLAG_UNK_80 = 0x80,
+
+      // don't add model display list to the main display list when drawing
+/*9*/ OBJFLAG_SKIP_MODEL_DL = 0x200,
+
+       // still draws shadow
+/*12*/ OBJFLAG_SHADOW_ONLY = 0x1000,
+       // whether the associated ObjSetup should be freed when the object is freed
+       // TODO: this flag means more, see magicdust dll
+/*13*/ OBJFLAG_OWNS_SETUP = 0x2000,
+       // also disables hitsphere detection?
+/*14*/ OBJFLAG_INVISIBLE = 0x4000
+};
+
 enum ObjInitFlags {
     OBJ_INIT_FLAG1 = 0x1,
-    OBJ_INIT_FLAG2 = 0x2,
+    // Whether the object ID provided for object creation is actually a direct index into OBJECTS.tab
+    OBJ_INIT_ID_IS_TABIDX = 0x2,
+    // Sets whether the object owns its setup pointer
     OBJ_INIT_FLAG4 = 0x4
 };
 
 enum ObjSetupLoadFlags {
-    // never unload? unless map unloads or setup changes
-    // skips check for being outside block grid span
-    OBJSETUP_LOAD_FLAG1 = 0x1,
-    // never unload? unless map unloads or setup changes (way less common)
-    // can still unload via object groups, but none also set 0x10 in practice (at least not in maps)
-    // skips check for being outside block grid span
-    OBJSETUP_LOAD_FLAG2 = 0x2,
-    // for distance check, use player position instead of camera(?)
-    OBJSETUP_LOAD_FLAG4 = 0x4,
-    // ?
-    OBJSETUP_LOAD_FLAG8 = 0x8,
+    // never unload? unless map unloads or setup changes.
+    // skips check for being outside block grid span.
+    //
+    // called "level" by default.dol
+    OBJSETUP_LOAD_LEVEL = 0x1,
+    // never unload? unless map unloads or setup changes (way less common).
+    // can still unload via object groups, but none also set 0x10 in practice (at least not in maps).
+    // skips check for being outside block grid span.
+    //
+    // called "manual" by default.dol
+    OBJSETUP_LOAD_MANUAL = 0x2,
+    // for distance check, use player position instead of camera(?).
+    //
+    // called "main" by default.dol
+    OBJSETUP_LOAD_MAIN = 0x4,
+    // called "camera" by default.dol
+    OBJSETUP_LOAD_CAMERA = 0x8,
     // load while the map object group the object is in is enabled.
+    //
+    // called "group" by default.dol
     OBJSETUP_LOAD_IN_MAP_OBJGROUP = 0x10,
     // skip unload check for distance to player/camera
     OBJSETUP_LOAD_FLAG20 = 0x20
@@ -66,26 +101,35 @@ enum ObjSetupLoadFlags {
 
 enum ObjSetupFadeFlags {
     // Disable distance based object fadeout.
-    OBJSETUP_FADE_DISABLE = 0x1,
+    //
+    // Called "manual" by default.dol.
+    OBJSETUP_FADE_MANUAL = 0x1,
     // Use player position to calculate fade, instead of the camera position.
-    OBJSETUP_FADE_PLAYER_RELATIVE = 0x2,
-    OBJSETUP_FADE_FLAG4 = 0x4,
+    //
+    // Called "main" by default.dol.
+    OBJSETUP_FADE_MAIN = 0x2,
+    // Called "camera" by default.dol.
+    OBJSETUP_FADE_CAMERA = 0x4,
     OBJSETUP_FADE_FLAG8 = 0x8
 };
 
 // Base struct, objects "inherit" from this and add their own setup info.
 // Note: Curves and race checkpoints are an exception and use a different version of this base struct.
+//
+// Aka. "romdef"
 typedef struct ObjSetup {
+        // "type" (default.dol)
 /*00*/  s16 objId;
 /*02*/  u8 quarterSize;
-        // Bits 0-7: Exclude from map setups 1-8
-/*03*/  u8 setupExclusions1;
+        // Bits 0-7: Exclude from map acts 1-8
+/*03*/  u8 actExclusions1;
 /*04*/  u8 loadFlags;
 /*05*/  union {
             u8 byte5;
-            // Bits 7-4 (note the reversal): Exclude from map setups 9-12
-            u8 setupExclusions2;
+            // Bits 7-4 (note the reversal): Exclude from map acts 9-12
+            u8 actExclusions2;
             // Bits 0-3: Fade flags
+            // "viewflags" (default.dol)
             u8 fadeFlags;
         };
 /*06*/  union {
@@ -93,14 +137,17 @@ typedef struct ObjSetup {
             // If loadFlags & 0x10 IS set, the map object group this object is a part of.
             u8 mapObjGroup;
             // If loadFlags & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
+            // "load range" (default.dol)
             u8 loadDistance;
         };
         // Max distance object is visible at (divided by 8).
+        // "view range" (default.dol)
 /*07*/  u8 fadeDistance;
 /*08*/  f32 x;
 /*0c*/  f32 y;
 /*10*/  f32 z;
         // Unique ID within map (not globally unique across all maps).
+        // Just called "ID" in default.dol.
 /*14*/  s32 uID;
 } ObjSetup;
 
@@ -259,9 +306,9 @@ typedef int (*AnimationCallback)(struct Object *, struct Object *, struct AnimOb
  * Size: 0xe4, other object-related data is placed in the following memory
  */
 typedef struct Object {
-/*0000*/    SRT srt;
-/*0018*/    Vec3f positionMirror; //local vs global?
-/*0024*/    Vec3f speed; // rename to velocity?
+/*0000*/    SRT srt; // local space coordinates
+/*0018*/    Vec3f globalPosition; // world space coordinates
+/*0024*/    Vec3f velocity;
 /*0030*/    struct Object *parent; // transform is relative to this object. doesn't form a strict hierarchy
 /*0034*/    u8 unk34; //self-mapID for mobile map objects? (e.g. Galleon)
 /*0035*/    s8 matrixIdx;
@@ -271,10 +318,10 @@ typedef struct Object {
 /*003C*/    f32 loadDistance; // Note: If setup loadFlags & 0x10 is set, this value is garbage
 /*0040*/    f32 fadeDistance;
 /*0044*/    s16 group; // complete guess at a name, needs more investigation
-/*0046*/    s16 id;
+/*0046*/    s16 id; // called "romdefno" in default.dol
 /*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB
 /*004A*/    u8 unk4A[0x4c - 0x4a];
-/*004C*/    ObjSetup *setup; // exact type depends on object
+/*004C*/    ObjSetup *setup; // exact type depends on object (called "def" in default.dol)
 /*0050*/    ObjDef* def; // called "objdata" in default.dol
 /*0054*/    ObjectHitInfo* objhitInfo;
 /*0058*/    ObjectPolyhits *polyhits;
@@ -287,8 +334,8 @@ typedef struct Object {
 /*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts; // called "frames" in default.dol
-/*0080*/    Vec3f positionMirror2; //gets copied twice.
-/*008C*/    Vec3f positionMirror3; //not sure why.
+/*0080*/    Vec3f prevLocalPosition; // srt position from previous tick
+/*008C*/    Vec3f prevGlobalPosition; // global position from previous tick
 /*0098*/    f32 animProgress;
 /*009C*/    f32 animProgressLayered;
 /*00A0*/    s16 curModAnimId;

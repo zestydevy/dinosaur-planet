@@ -97,8 +97,8 @@ void Duster_control(Object *self) {
         return;
     }
 
-    if (self->speed.y > -4.0f) {
-        self->speed.y += -0.12f * gUpdateRateF;
+    if (self->velocity.y > -4.0f) {
+        self->velocity.y += -0.12f * gUpdateRateF;
     }
     objdata->unkE = FALSE;
     count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp54, 0, 0);
@@ -121,8 +121,8 @@ void Duster_control(Object *self) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_87E_Duster_Cry, 0x25, NULL, NULL, 0, NULL);
             }
             if (objdata->unk11 != 0) {
-                self->speed.x = 0.2f;
-                self->speed.z = 0.0f;
+                self->velocity.x = 0.2f;
+                self->velocity.z = 0.0f;
 
                 srt.roll = 0;
                 srt.pitch = 0;
@@ -131,17 +131,17 @@ void Duster_control(Object *self) {
                 srt.transl.z = 0.0f;
                 srt.scale = 1.0f;
                 srt.yaw = self->srt.yaw;
-                rotate_vec3(&srt, self->speed.f);
+                rotate_vec3(&srt, self->velocity.f);
             } else {
-                self->speed.x = 0.0f;
-                self->speed.z = 0.0f;
+                self->velocity.x = 0.0f;
+                self->velocity.z = 0.0f;
             }
             if (objdata->resetTimer2) {
                 objdata->timer2 = 250;
             }
         } else {
-            self->srt.transl.x += self->speed.x * gUpdateRateF;
-            self->srt.transl.z += self->speed.z * gUpdateRateF;
+            self->srt.transl.x += self->velocity.x * gUpdateRateF;
+            self->srt.transl.z += self->velocity.z * gUpdateRateF;
         }
         if (func_80025F40(self, NULL, NULL, NULL) == 0xF) {
             objdata->resetTimer2 = TRUE;
@@ -169,7 +169,7 @@ void Duster_control(Object *self) {
         }
         self->srt.yaw += 0xBB8 * (s16)gUpdateRateF;
     }
-    if (vec3_distance_xz(&player->positionMirror, &self->positionMirror) < 20.0f) {
+    if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 20.0f) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6CA_Chime, 0x7F, 0, 0, 0, 0);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
@@ -180,7 +180,7 @@ void Duster_control(Object *self) {
         stats = gDLL_29_Gplay->vtbl->get_player_stats();
         stats->dusters++;
     }
-    self->srt.transl.y += self->speed.y;
+    self->srt.transl.y += self->velocity.y;
 }
 
 // offset: 0x754 | func: 2 | export: 2
@@ -191,7 +191,7 @@ void Duster_update(Object *self) {
 
     objdata = self->data;
     if (func_80059C40(
-        &self->positionMirror2,
+        &self->prevLocalPosition,
         &self->srt.transl,
         30.0f,
         2,
@@ -204,9 +204,9 @@ void Duster_update(Object *self) {
         objdata->unkE = TRUE;
     }
 
-    self->positionMirror2.x = self->srt.transl.x;
-    self->positionMirror2.y = self->srt.transl.y;
-    self->positionMirror2.z = self->srt.transl.z;
+    self->prevLocalPosition.x = self->srt.transl.x;
+    self->prevLocalPosition.y = self->srt.transl.y;
+    self->prevLocalPosition.z = self->srt.transl.z;
 }
 
 // offset: 0x7FC | func: 3 | export: 3

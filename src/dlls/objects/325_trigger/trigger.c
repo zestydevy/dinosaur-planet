@@ -241,9 +241,9 @@ void trigger_control(Object* self) {
             if (objdata->flags & TRG_FIRST_TICK) {
                 switch (setup->activatorObjType) {
                 default:
-                    objdata->activatorPrevPos.x = activatorObj->positionMirror2.x;
-                    objdata->activatorPrevPos.y = activatorObj->positionMirror2.y;
-                    objdata->activatorPrevPos.z = activatorObj->positionMirror2.z;
+                    objdata->activatorPrevPos.x = activatorObj->prevLocalPosition.x;
+                    objdata->activatorPrevPos.y = activatorObj->prevLocalPosition.y;
+                    objdata->activatorPrevPos.z = activatorObj->prevLocalPosition.z;
                     break;
                 case 2:
                     // Camera
@@ -254,9 +254,9 @@ void trigger_control(Object* self) {
                 case 0:
                 case 1:
                     // Player/sidekick
-                    objdata->activatorPrevPos.x = activatorObj->positionMirror3.x;
-                    objdata->activatorPrevPos.y = activatorObj->positionMirror3.y;
-                    objdata->activatorPrevPos.z = activatorObj->positionMirror3.z;
+                    objdata->activatorPrevPos.x = activatorObj->prevGlobalPosition.x;
+                    objdata->activatorPrevPos.y = activatorObj->prevGlobalPosition.y;
+                    objdata->activatorPrevPos.z = activatorObj->prevGlobalPosition.z;
                     break;
                 }
                 
@@ -271,9 +271,9 @@ void trigger_control(Object* self) {
             case 0:
             case 1:
                 // Player/sidekick
-                objdata->activatorCurrPos.x = activatorObj->positionMirror.x;
-                objdata->activatorCurrPos.y = activatorObj->positionMirror.y;
-                objdata->activatorCurrPos.z = activatorObj->positionMirror.z;
+                objdata->activatorCurrPos.x = activatorObj->globalPosition.x;
+                objdata->activatorCurrPos.y = activatorObj->globalPosition.y;
+                objdata->activatorCurrPos.z = activatorObj->globalPosition.z;
                 break;
             default:
             case 2:
@@ -929,9 +929,9 @@ static void trigger_point_update(Object *self, Object *activator) {
     objdata = (Trigger_Data*)self->data;
     setup = (Trigger_Setup*)self->setup;
 
-    diffX = objdata->activatorPrevPos.x - self->positionMirror.x;
-    diffY = objdata->activatorPrevPos.y - self->positionMirror.y;
-    diffZ = objdata->activatorPrevPos.z - self->positionMirror.z;
+    diffX = objdata->activatorPrevPos.x - self->globalPosition.x;
+    diffY = objdata->activatorPrevPos.y - self->globalPosition.y;
+    diffZ = objdata->activatorPrevPos.z - self->globalPosition.z;
     prevDist = diffX * diffX + diffY * diffY + diffZ * diffZ;
 
     if (setup->localID > 0) {
@@ -944,14 +944,14 @@ static void trigger_point_update(Object *self, Object *activator) {
             }
 
             if (self->parent != NULL) {
-                inverse_transform_point_by_object(self->positionMirror.x, self->positionMirror.y, self->positionMirror.z,
+                inverse_transform_point_by_object(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z,
                     &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z, 
                     self->parent);
             }
     } else {
-        diffX = objdata->activatorCurrPos.x - self->positionMirror.x;
-        diffY = objdata->activatorCurrPos.y - self->positionMirror.y;
-        diffZ = objdata->activatorCurrPos.z - self->positionMirror.z;
+        diffX = objdata->activatorCurrPos.x - self->globalPosition.x;
+        diffY = objdata->activatorCurrPos.y - self->globalPosition.y;
+        diffZ = objdata->activatorCurrPos.z - self->globalPosition.z;
         currDist = diffX * diffX + diffY * diffY + diffZ * diffZ;
     }
 
@@ -998,15 +998,15 @@ static void trigger_cylinder_update(Object* self, Object* activator) {
     setup = (Trigger_Setup*)self->setup;
     unk3BTimes2 = setup->sizeY << 1;
     
-    diffX = objdata->activatorPrevPos.x - self->positionMirror.x;
-    diffY = objdata->activatorPrevPos.y - self->positionMirror.y;
-    diffZ = objdata->activatorPrevPos.z - self->positionMirror.z;
+    diffX = objdata->activatorPrevPos.x - self->globalPosition.x;
+    diffY = objdata->activatorPrevPos.y - self->globalPosition.y;
+    diffZ = objdata->activatorPrevPos.z - self->globalPosition.z;
     
     lengthSquared = (diffX * diffX) + (diffZ * diffZ);
 
-    diffX = objdata->activatorCurrPos.x - self->positionMirror.x;
-    diffY2 = objdata->activatorCurrPos.y - self->positionMirror.y;
-    diffZ = objdata->activatorCurrPos.z - self->positionMirror.z;
+    diffX = objdata->activatorCurrPos.x - self->globalPosition.x;
+    diffY2 = objdata->activatorCurrPos.y - self->globalPosition.y;
+    diffZ = objdata->activatorCurrPos.z - self->globalPosition.z;
     
     lengthSquared2 = (diffX * diffX) + (diffZ * diffZ);
     
@@ -1077,7 +1077,7 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     objdata->lookVector.x = ox;
     objdata->lookVector.y = oy;
     objdata->lookVector.z = oz;
-    objdata->lookVectorNegDot = -((self->positionMirror.x * ox) + (self->positionMirror.y * oy) + (self->positionMirror.z * oz));
+    objdata->lookVectorNegDot = -((self->globalPosition.x * ox) + (self->globalPosition.y * oy) + (self->globalPosition.z * oz));
 
     modelInstance = sPlaneModel;
     model = modelInstance->model;
@@ -1128,12 +1128,12 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
         minZ = swapTemp;
     }
 
-    objdata->planeMin.x = self->positionMirror.x + self->srt.scale * minX;
-    objdata->planeMin.y = self->positionMirror.y + self->srt.scale * minY;
-    objdata->planeMin.z = self->positionMirror.z + self->srt.scale * minZ;
-    objdata->planeMax.x = self->positionMirror.x + self->srt.scale * maxX;
-    objdata->planeMax.y = self->positionMirror.y + self->srt.scale * maxY;
-    objdata->planeMax.z = self->positionMirror.z + self->srt.scale * maxZ;
+    objdata->planeMin.x = self->globalPosition.x + self->srt.scale * minX;
+    objdata->planeMin.y = self->globalPosition.y + self->srt.scale * minY;
+    objdata->planeMin.z = self->globalPosition.z + self->srt.scale * minZ;
+    objdata->planeMax.x = self->globalPosition.x + self->srt.scale * maxX;
+    objdata->planeMax.y = self->globalPosition.y + self->srt.scale * maxY;
+    objdata->planeMax.z = self->globalPosition.z + self->srt.scale * maxZ;
     objdata->radiusSquared = (self->srt.scale * 145.0f) * (self->srt.scale * 145.0f);
 }
 
@@ -1263,9 +1263,9 @@ static void trigger_func_2884(Object *self, f32 *ox, f32 *oy, f32 *oz) {
     sp24 = fsin16_precise(-self->srt.pitch);
     temp_f0 = fcos16_precise(-self->srt.pitch);
     
-    temp_f2 = (*ox) - self->positionMirror.x;
-    temp_f16 = (*oy) - self->positionMirror.y;
-    temp_f12 = (*oz) - self->positionMirror.z;
+    temp_f2 = (*ox) - self->globalPosition.x;
+    temp_f16 = (*oy) - self->globalPosition.y;
+    temp_f12 = (*oz) - self->globalPosition.z;
     
     *ox = (temp_f2 * sp28) - (temp_f12 * sp2C);
     temp_f12 = (temp_f2 * sp2C) + (temp_f12 * sp28);

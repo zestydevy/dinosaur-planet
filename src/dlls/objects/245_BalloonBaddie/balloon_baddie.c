@@ -153,11 +153,11 @@ void BalloonBaddie_control(Object* self) {
         }
         objdata->player = get_player();
         if (objdata->player) {
-            VECTOR_SUBTRACT(objdata->player->positionMirror, self->positionMirror, delta);
+            VECTOR_SUBTRACT(objdata->player->globalPosition, self->globalPosition, delta);
             objdata->distToPlayer = VECTOR_MAGNITUDE(delta);
         }
         if (curveStruct) {
-            VECTOR_SUBTRACT(*((Vec3f*)&curveStruct->unk68), self->positionMirror, delta);
+            VECTOR_SUBTRACT(*((Vec3f*)&curveStruct->unk68), self->globalPosition, delta);
             objdata->distToCurve = VECTOR_MAGNITUDE(delta);
         }
         // start retreating
@@ -259,44 +259,44 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     self->srt.pitch = (fsin16_precise(objdata->theta[0]) + fsin16_precise(objdata->theta[2])) * 1000.0f;
 
     if (objdata->flags & BALLOONBADDIE_CHASE) {
-        self->speed.x += (objdata->player->srt.transl.x - self->srt.transl.x) * 0.001f;
-        self->speed.y += ((objdata->player->srt.transl.y + 60.0f) - self->srt.transl.y) * 0.001f;
-        self->speed.z += (objdata->player->srt.transl.z - self->srt.transl.z) * 0.001f;
+        self->velocity.x += (objdata->player->srt.transl.x - self->srt.transl.x) * 0.001f;
+        self->velocity.y += ((objdata->player->srt.transl.y + 60.0f) - self->srt.transl.y) * 0.001f;
+        self->velocity.z += (objdata->player->srt.transl.z - self->srt.transl.z) * 0.001f;
     } else if (objdata->flags & BALLOONBADDIE_RETREAT) {
-        self->speed.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
-        self->speed.y += (curveStruct->unk68.y - self->srt.transl.y) * 0.001f;
-        self->speed.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
+        self->velocity.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
+        self->velocity.y += (curveStruct->unk68.y - self->srt.transl.y) * 0.001f;
+        self->velocity.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
     } else {
-        self->speed.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
-        self->speed.y += (curveStruct->unk68.y + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
-        self->speed.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
+        self->velocity.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
+        self->velocity.y += (curveStruct->unk68.y + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
+        self->velocity.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
     }
 
-    VECTOR_SCALE(self->speed, 0.9f);
+    VECTOR_SCALE(self->velocity, 0.9f);
 
-    if (self->speed.x > BALLOONBADDIE_MAX_SPEED) {
-        self->speed.x = BALLOONBADDIE_MAX_SPEED;
+    if (self->velocity.x > BALLOONBADDIE_MAX_SPEED) {
+        self->velocity.x = BALLOONBADDIE_MAX_SPEED;
     }
-    if (self->speed.y > BALLOONBADDIE_MAX_SPEED) {
-        self->speed.y = BALLOONBADDIE_MAX_SPEED;
+    if (self->velocity.y > BALLOONBADDIE_MAX_SPEED) {
+        self->velocity.y = BALLOONBADDIE_MAX_SPEED;
     }
-    if (self->speed.z > BALLOONBADDIE_MAX_SPEED) {
-        self->speed.z = BALLOONBADDIE_MAX_SPEED;
+    if (self->velocity.z > BALLOONBADDIE_MAX_SPEED) {
+        self->velocity.z = BALLOONBADDIE_MAX_SPEED;
     }
-    if (self->speed.x < -BALLOONBADDIE_MAX_SPEED) {
-        self->speed.x = -BALLOONBADDIE_MAX_SPEED;
+    if (self->velocity.x < -BALLOONBADDIE_MAX_SPEED) {
+        self->velocity.x = -BALLOONBADDIE_MAX_SPEED;
     }
-    if (self->speed.y < -BALLOONBADDIE_MAX_SPEED) {
-        self->speed.y = -BALLOONBADDIE_MAX_SPEED;
+    if (self->velocity.y < -BALLOONBADDIE_MAX_SPEED) {
+        self->velocity.y = -BALLOONBADDIE_MAX_SPEED;
     }
-    if (self->speed.z < -BALLOONBADDIE_MAX_SPEED) {
-        self->speed.z = -BALLOONBADDIE_MAX_SPEED;
+    if (self->velocity.z < -BALLOONBADDIE_MAX_SPEED) {
+        self->velocity.z = -BALLOONBADDIE_MAX_SPEED;
     }
 
-    obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     func_80024108(self, objdata->unkC, gUpdateRateF, &sp50);
 
-    angle = arctan2_f(self->positionMirror.x - objdata->player->positionMirror.x, self->positionMirror.z - objdata->player->positionMirror.z) - ((u16)self->srt.yaw);
+    angle = arctan2_f(self->globalPosition.x - objdata->player->globalPosition.x, self->globalPosition.z - objdata->player->globalPosition.z) - ((u16)self->srt.yaw);
     CIRCLE_WRAP(angle)
     self->srt.yaw += (s32)((angle * gUpdateRateF) / 12.0f);
 }

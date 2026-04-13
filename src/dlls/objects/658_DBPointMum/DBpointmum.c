@@ -2,7 +2,7 @@
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 
 typedef s32 (*PointBackBSSUnk0_UnkC)(void*, s32, s32);
 
@@ -256,7 +256,7 @@ s32 dll_658_func_ACC(Object* self, PointBack_funcACC_UnkArg1* arg1, s32 arg2) {
         result = 0;
         for (i = 0; i < 3; i++) {
             if (objects[i] != NULL) {
-                result |= vec3_distance(&self->positionMirror, &objects[i]->positionMirror) < 200.0f;
+                result |= vec3_distance(&self->globalPosition, &objects[i]->globalPosition) < 200.0f;
             }
         }
         

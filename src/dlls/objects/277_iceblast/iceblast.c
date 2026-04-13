@@ -54,9 +54,9 @@ void iceblast_control(Object* self) {
     objdata->timer -= (s16)gUpdateRateF;
     if (objdata->timer <= 0) {
         objdata->timer = 30;
-        self->speed.x = 0.0f; 
-        self->speed.y = -5.0f;
-        self->speed.z = 0.0f; 
+        self->velocity.x = 0.0f; 
+        self->velocity.y = -5.0f;
+        self->velocity.z = 0.0f; 
 
         transform.transl.x = 0.0f;
         transform.transl.y = 0.0f;
@@ -66,22 +66,22 @@ void iceblast_control(Object* self) {
         transform.pitch = weapon->srt.pitch;
         transform.yaw = weapon->srt.yaw;
 
-        rotate_vec3(&transform, self->speed.f);
-        self->srt.transl.x = weapon->positionMirror.x;
-        self->srt.transl.y = weapon->positionMirror.y;
-        self->srt.transl.z = weapon->positionMirror.z;
-        self->srt.transl.x += self->speed.x * gUpdateRateF;
-        self->srt.transl.y += self->speed.y * gUpdateRateF;
-        self->srt.transl.z += self->speed.z * gUpdateRateF;
+        rotate_vec3(&transform, self->velocity.f);
+        self->srt.transl.x = weapon->globalPosition.x;
+        self->srt.transl.y = weapon->globalPosition.y;
+        self->srt.transl.z = weapon->globalPosition.z;
+        self->srt.transl.x += self->velocity.x * gUpdateRateF;
+        self->srt.transl.y += self->velocity.y * gUpdateRateF;
+        self->srt.transl.z += self->velocity.z * gUpdateRateF;
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, -1);
     }
 
-    self->positionMirror2.x = self->srt.transl.x;
-    self->positionMirror2.y = self->srt.transl.y;
-    self->positionMirror2.z = self->srt.transl.z;
-    self->srt.transl.x += self->speed.x * gUpdateRateF;
-    self->srt.transl.y += self->speed.y * gUpdateRateF;
-    self->srt.transl.z += self->speed.z * gUpdateRateF;
+    self->prevLocalPosition.x = self->srt.transl.x;
+    self->prevLocalPosition.y = self->srt.transl.y;
+    self->prevLocalPosition.z = self->srt.transl.z;
+    self->srt.transl.x += self->velocity.x * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
+    self->srt.transl.z += self->velocity.z * gUpdateRateF;
 
 }
 

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
@@ -129,7 +129,7 @@ void dll_376_control(Object* self) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
         } else {
             func_80034BC0(self, &objData->unk28);
-            if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->positionMirror, &player->positionMirror) < 200.0f)) {
+            if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
                 
                 if (rand_next(0, 100) < 50) {
@@ -202,9 +202,9 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             boneIdx = objDef->pAttachPoints->bones[self->modelInstIdx];
             mtx = (MtxF*)(((f32*)modelInstance->matrices[modelInstance->unk34 & 1]) + (boneIdx << 4));
             
-            self->srt.transl.x = self->positionMirror.x = mtx->m[3][0] + gWorldX;
-            self->srt.transl.y = self->positionMirror.y = mtx->m[3][1];
-            self->srt.transl.z = self->positionMirror.z = mtx->m[3][2] + gWorldZ;
+            self->srt.transl.x = self->globalPosition.x = mtx->m[3][0] + gWorldX;
+            self->srt.transl.y = self->globalPosition.y = mtx->m[3][1];
+            self->srt.transl.z = self->globalPosition.z = mtx->m[3][2] + gWorldZ;
             
             self->srt.yaw = 0;
             self->srt.pitch = 0;
@@ -254,8 +254,8 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         dustSetup->base.y = self->srt.transl.y + 15.0f;
         dustSetup->base.z = self->srt.transl.z;
         dustSetup->unk24 = -1;
-        dustSetup->base.loadFlags = OBJSETUP_LOAD_FLAG4;
-        dustSetup->base.fadeFlags = OBJSETUP_FADE_FLAG4;
+        dustSetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
+        dustSetup->base.fadeFlags = OBJSETUP_FADE_CAMERA;
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;

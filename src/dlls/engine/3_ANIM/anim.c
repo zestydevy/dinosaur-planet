@@ -491,12 +491,12 @@ void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData,
     AnimObj_Setup *setup;
 
     setup = (AnimObj_Setup*)override->setup;
-    actor->positionMirror2.f[0] = actor->srt.transl.f[0];
-    actor->positionMirror2.f[1] = actor->srt.transl.f[1];
-    actor->positionMirror2.f[2] = actor->srt.transl.f[2];
-    actor->positionMirror3.f[0] = actor->positionMirror.f[0];
-    actor->positionMirror3.f[1] = actor->positionMirror.f[1];
-    actor->positionMirror3.f[2] = actor->positionMirror.f[2];
+    actor->prevLocalPosition.f[0] = actor->srt.transl.f[0];
+    actor->prevLocalPosition.f[1] = actor->srt.transl.f[1];
+    actor->prevLocalPosition.f[2] = actor->srt.transl.f[2];
+    actor->prevGlobalPosition.f[0] = actor->globalPosition.f[0];
+    actor->prevGlobalPosition.f[1] = actor->globalPosition.f[1];
+    actor->prevGlobalPosition.f[2] = actor->globalPosition.f[2];
 
     if (actor->animCallback != NULL) {
         // a re-cast to use the actual struct instead of a forward declaration is fine here
@@ -543,7 +543,7 @@ void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData,
         }
     }
     actor->unkAF &= 0xFFF8;
-    get_object_child_position(actor, actor->positionMirror.f, &actor->positionMirror.f[1], &actor->positionMirror.f[2]);
+    get_object_child_position(actor, actor->globalPosition.f, &actor->globalPosition.f[1], &actor->globalPosition.f[2]);
     if (actor->objhitInfo != NULL) {
         actor->objhitInfo->unk48 = NULL;
         actor->objhitInfo->unk62 = 0;
@@ -601,9 +601,9 @@ void dll_3_func_4B20(Object* animObj, AnimObj_Setup* setup) {
 
     if (dll_3_func_4BAC(animObj, 
                         animObj->parent, 
-                        animObj->positionMirror.x, 
-                        animObj->positionMirror.y, 
-                        animObj->positionMirror.z,
+                        animObj->globalPosition.x, 
+                        animObj->globalPosition.y, 
+                        animObj->globalPosition.z,
                         &floatVal,
                         setup->base.y) != 0) {
         animObj->srt.transl.y += floatVal - setup->base.y;
@@ -620,7 +620,7 @@ s32 dll_3_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* y
     s32 temp_v0;
     s32 index;
 
-    temp_v0 = func_80057F1C(animObj, x, animObj->positionMirror.f[1], z, &sp5C, 0, 1);
+    temp_v0 = func_80057F1C(animObj, x, animObj->globalPosition.f[1], z, &sp5C, 0, 1);
     if (temp_v0) {
         lowestIndex = 0;
         lowestFound = 1000.0f;
@@ -794,8 +794,8 @@ void dll_3_func_5698(AnimObj_Data* objData, Object* arg1) {
     temp_v0 = gDLL_26_Curves->vtbl->func_39C((s32)arg1);
 
     for (var_a0 = 1, index = 0, var_a2 = sp2C; index < 4; index++, var_a0 *= 2){
-        if ((temp_v0->unk1C[index] >= 0) && !(temp_v0->unk1B & var_a0)) {
-            var_a2 = temp_v0->unk1C[index];
+        if ((temp_v0->links[index] >= 0) && !(temp_v0->unk1B & var_a0)) {
+            var_a2 = temp_v0->links[index];
             index = 5;
         }
     }
@@ -992,7 +992,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
             camera_enable_y_offset();
             temp_v0_3 = get_player();
             if (temp_v0_3 != NULL) {
-                temp_fv0 = vec3_distance_xz(&temp_v0_3->positionMirror, &arg0->positionMirror);
+                temp_fv0 = vec3_distance_xz(&temp_v0_3->globalPosition, &arg0->globalPosition);
                 var_fa0 = (2.0f * (sp54 - 7)) + 1.0f;
                 if (temp_fv0 < 200.0f) {
                     if (temp_fv0 > 50.0f) {

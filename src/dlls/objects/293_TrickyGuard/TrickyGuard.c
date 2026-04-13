@@ -1,6 +1,6 @@
 #include "common.h"
 #include "sys/objtype.h"
-#include "dlls/objects/211_tricky.h"
+#include "dlls/objects/common/sidekick.h"
 
 typedef struct {
 /*00*/ ObjSetup base;
@@ -39,9 +39,9 @@ void TrickyGuard_control(Object* self) {
         return;
     }
 
-    if (((DLL_211_Tricky*)tricky->dll)->vtbl->func25(tricky) == 0) {
-        if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= SQ(objSetup->range)) {
-            ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 3);
+    if (((DLL_ISidekick*)tricky->dll)->vtbl->func25(tricky) == 0) {
+        if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(objSetup->range)) {
+            ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 3);
         }
     }
 }

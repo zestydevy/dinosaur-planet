@@ -1,0 +1,17 @@
+.text = 0x0:
+crate_ctor = 0x0;
+crate_dtor = 0xC;
+crate_setup = 0x18;
+crate_control = 0x15C;
+crate_update = 0x5D8;
+crate_print = 0x5E4;
+crate_free = 0x728;
+crate_get_model_flags = 0x7B8;
+crate_get_data_size = 0x7C8;
+
+.rodata = 0x854:
+
+.data = 0x854:
+dModGfxDLLDestroyed = 0x0; // absolute:0x854
+dModGfxDLLDamaged = 0x4; // absolute:0x858
+dModGfxParams = 0x8; // absolute:0x85C

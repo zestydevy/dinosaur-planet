@@ -10,7 +10,7 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "sys/segment_53F00.h"
 #include "sys/rand.h"
 #include "dll.h"
@@ -289,7 +289,7 @@ void dll_711_control(Object *self) {
             } else {
                 self->unkAF |= 0x10;
             }
-            if ((player != NULL) && (vec3_distance(&player->positionMirror, &self->positionMirror) < 50.0f)) {
+            if ((player != NULL) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 50.0f)) {
                 dll_711_func_3430(self, objdata, &sp78, 0, 1, 1);
                 vec3_transform(&sp78, _data_90[0].x, _data_90[0].y, _data_90[0].z, &sp74, &sp70, &sp6C);
                 temp_fv0 = player->srt.transl.x - sp74;
@@ -471,12 +471,12 @@ void dll_711_update(Object *self) {
         _bss_8.pitch = -objdata->unk3CE;
         _bss_8.roll = -objdata->unk3D0;
         matrix_from_srt_reversed(&sp7C, &_bss_8);
-        self->speed.x = (self->srt.transl.x - self->positionMirror2.x) * gUpdateRateInverseF;
-        self->speed.y = (self->srt.transl.y - self->positionMirror2.y) * gUpdateRateInverseF;
-        self->speed.z = (self->srt.transl.z - self->positionMirror2.z) * gUpdateRateInverseF;
-        spBC.f[0] = self->speed.x * 0.93749994f;
-        spBC.f[1] = self->speed.y * 0.93749994f;
-        spBC.f[2] = self->speed.z * 0.93749994f;
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
+        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
+        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * gUpdateRateInverseF;
+        spBC.f[0] = self->velocity.x * 0.93749994f;
+        spBC.f[1] = self->velocity.y * 0.93749994f;
+        spBC.f[2] = self->velocity.z * 0.93749994f;
         vec3_transform(&sp7C, spBC.f[0], spBC.f[1], spBC.f[2], &temp_v0->unkC.x, &temp_v0->unkC.y, &temp_v0->unkC.z);
         dll_711_func_3430(self, objdata, &sp3C, 0, 0, 0);
         vec3_transform(&sp3C, 0.0f, 0.0f, -10.0f, &objdata->unk3A8, &objdata->unk3AC, &objdata->unk3B0);
@@ -745,9 +745,9 @@ static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl,
         sp48[2] += rand_next(0, 155);
         volume = (0.0f - objdata->unk398) * 21.0f;
         if ((objdata->unk3E1 & 0xF) && (objdata->unk3D8 <= 0)) {
-            sp6C.transl.x = objdata->unk32C[0].x - self->positionMirror.x;
-            sp6C.transl.y = objdata->unk32C[0].y - self->positionMirror.y;
-            sp6C.transl.z = objdata->unk32C[0].z - self->positionMirror.z;
+            sp6C.transl.x = objdata->unk32C[0].x - self->globalPosition.x;
+            sp6C.transl.y = objdata->unk32C[0].y - self->globalPosition.y;
+            sp6C.transl.z = objdata->unk32C[0].z - self->globalPosition.z;
             _data_A8->vtbl->func0(self, 0, &sp6C, 1, -1, sp48);
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->func_954(soundHandle, (volume / 127.0f) + 0.5f);
@@ -971,21 +971,21 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     } else {
         arg2->unkC.z = var_fa0;
     }
-    vec3_transform(&sp140, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->speed.f, &self->speed.y, &self->speed.z);
-    VECTOR_SCALE(self->speed, 1.0666667f);
-    obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
+    vec3_transform(&sp140, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
+    VECTOR_SCALE(self->velocity, 1.0666667f);
+    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (arg4 != 0) {
         spA4 = 1.0f / updateRate;
         dll_711_func_3780(self, objdata, dll27Data);
         gDLL_27->vtbl->func_1E8(self, dll27Data, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, dll27Data);
         gDLL_27->vtbl->func_624(self, dll27Data, updateRate);
-        self->speed.x = (self->srt.transl.x - self->positionMirror2.x) * spA4;
-        self->speed.y = (self->srt.transl.y - self->positionMirror2.y) * spA4;
-        self->speed.z = (self->srt.transl.z - self->positionMirror2.z) * spA4;
-        sp70.f[0] = self->speed.x * 0.93749994f;
-        sp70.f[1] = self->speed.y * 0.93749994f;
-        sp70.f[2] = self->speed.z * 0.93749994f;
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * spA4;
+        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * spA4;
+        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * spA4;
+        sp70.f[0] = self->velocity.x * 0.93749994f;
+        sp70.f[1] = self->velocity.y * 0.93749994f;
+        sp70.f[2] = self->velocity.z * 0.93749994f;
         vec3_transform(&sp100, sp70.f[0], sp70.f[1], sp70.f[2], &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
         sp7C.f[0] = 0.0f;
         sp7C.f[1] = 1.0f;
@@ -1143,20 +1143,20 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     } else {
         arg2->unkC.z = temp_fv0;
     }
-    vec3_transform(&sp11C, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->speed.f, &self->speed.y, &self->speed.z);
-    VECTOR_SCALE(self->speed, 1.0666667f);
-    obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
+    vec3_transform(&sp11C, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
+    VECTOR_SCALE(self->velocity, 1.0666667f);
+    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (arg4 != 0) {
         sp8C = (1.0f / updateRate);
         gDLL_27->vtbl->func_1E8(self, dll27Data, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, dll27Data);
         gDLL_27->vtbl->func_624(self, dll27Data, updateRate);
-        self->speed.x = (self->srt.transl.x - self->positionMirror2.x) * sp8C;
-        self->speed.y = (self->srt.transl.y - self->positionMirror2.y) * sp8C;
-        self->speed.z = (self->srt.transl.z - self->positionMirror2.z) * sp8C;
-        sp64.f[0] = self->speed.x * 0.93749994f;
-        sp64.f[1] = self->speed.y * 0.93749994f;
-        sp64.f[2] = self->speed.z * 0.93749994f;
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * sp8C;
+        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * sp8C;
+        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * sp8C;
+        sp64.f[0] = self->velocity.x * 0.93749994f;
+        sp64.f[1] = self->velocity.y * 0.93749994f;
+        sp64.f[2] = self->velocity.z * 0.93749994f;
         vec3_transform(&spDC, sp64.f[0], sp64.y, sp64.f[2], &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
         sp70.f[0] = 0.0f;
         sp70.f[1] = 1.0f;

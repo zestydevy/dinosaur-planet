@@ -116,8 +116,8 @@ void dll_782_control(Object* self) {
             var_v0 = 0xFF;
         }
         self->opacity = (u8) var_v0;
-        self->speed.x = 0.0f;
-        self->speed.z = 0.0f;
+        self->velocity.x = 0.0f;
+        self->velocity.z = 0.0f;
         if (((DLL_210_Player*)player->dll)->vtbl->func47(player, self, &objdata->unk275) != 0) {
             if (self->modelInstIdx == 1) {
                 if (objdata->unk275 == 0) {
@@ -161,7 +161,7 @@ void dll_782_control(Object* self) {
         }
         break;
     case 2:
-        var_fv1 = sqrtf((self->speed.x * self->speed.x) + (self->speed.z * self->speed.z));
+        var_fv1 = sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z));
         var_fv1 -= 0.25f;
         if (var_fv1 < 0.0f) {
             var_fv1 = 0.0f;
@@ -172,57 +172,57 @@ void dll_782_control(Object* self) {
         }
         
         gDLL_6_AMSFX->vtbl->func_860(objdata->unk26C, var_fv1);
-        obj_integrate_speed(self, self->speed.x * gUpdateRateF, 0.0f, self->speed.z * gUpdateRateF);
+        obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
         var_a0 = 0;
         if (objdata->unk275 == 0) {
-            if (self->speed.x < 1.5f) {
-                self->speed.x += (gUpdateRateF * 0.05f);
+            if (self->velocity.x < 1.5f) {
+                self->velocity.x += (gUpdateRateF * 0.05f);
             }
             if (objdata->unk264 <= self->srt.transl.x) {
                 self->srt.transl.x = objdata->unk264;
                 var_a0 = 1;
             }
         } else if (objdata->unk275 == 1) {
-            if (self->speed.x > -1.5f) {
-                self->speed.x -= (gUpdateRateF * 0.05f);
+            if (self->velocity.x > -1.5f) {
+                self->velocity.x -= (gUpdateRateF * 0.05f);
             }
             if (self->srt.transl.x <= objdata->unk264) {
                 self->srt.transl.x = objdata->unk264;
                 var_a0 = 1;
             }
         } else if (objdata->unk275 == 2) {
-            if (self->speed.z < 1.5f) {
-                self->speed.z += (gUpdateRateF * 0.05f);
+            if (self->velocity.z < 1.5f) {
+                self->velocity.z += (gUpdateRateF * 0.05f);
             }
             if (objdata->unk268 <= self->srt.transl.z) {
                 self->srt.transl.z = objdata->unk268;
                 var_a0 = 1;
             }
         } else if (objdata->unk275 == 3) {
-            if (self->speed.z > -1.5f) {
-                self->speed.z -= (gUpdateRateF * 0.05f);
+            if (self->velocity.z > -1.5f) {
+                self->velocity.z -= (gUpdateRateF * 0.05f);
             }
             if (self->srt.transl.z <= objdata->unk268) {
                 self->srt.transl.z = objdata->unk268;
                 var_a0 = 1;
             }
         }
-        if (self->speed.x > 1.5f) {
-            self->speed.x = 1.5f;
+        if (self->velocity.x > 1.5f) {
+            self->velocity.x = 1.5f;
         }
-        if (self->speed.x < -1.5f) {
-            self->speed.x = -1.5f;
+        if (self->velocity.x < -1.5f) {
+            self->velocity.x = -1.5f;
         }
-        if (self->speed.z > 1.5f) {
-            self->speed.z = 1.5f;
+        if (self->velocity.z > 1.5f) {
+            self->velocity.z = 1.5f;
         }
-        if (self->speed.z < -1.5f) {
-            self->speed.z = -1.5f;
+        if (self->velocity.z < -1.5f) {
+            self->velocity.z = -1.5f;
         }
         if (var_a0 != 0) {
             gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk26C);
-            self->speed.x = 0.0f;
-            self->speed.z = 0.0f;
+            self->velocity.x = 0.0f;
+            self->velocity.z = 0.0f;
             if (objdata->unk277 == 2) {
                 objdata->unk274 = 4;
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BB_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, 0, 0, 0);

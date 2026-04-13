@@ -4,7 +4,7 @@
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 
-#include "dlls/objects/211_tricky.h"
+#include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/685_DBbonedust.h"
 
 typedef enum {
@@ -125,8 +125,8 @@ void DBDustGeezer_control(Object* self) {
             //Enable "Find" sidekick command when nearby
             player = get_player();
             sidekick = get_sidekick();
-            if (sidekick && vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= 40000.0f) {
-                ((DLL_211_Tricky*)sidekick->dll)->vtbl->base.func14(sidekick, 1);
+            if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
             }
         }
         break;

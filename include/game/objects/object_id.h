@@ -19,7 +19,7 @@ enum ObjID {
     OBJ_XYZAnimator = 8,
     OBJ_EnergyGem1 = 9,
     OBJ_Spellstone = 10,
-    OBJ_meatPickup = 11,
+    OBJ_meatPickup = 11, //Energy Egg
     OBJ_setuppoint = 13,
     OBJ_animator = 14,
     OBJ_texscroll = 15,

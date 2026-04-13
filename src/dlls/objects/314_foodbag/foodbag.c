@@ -144,10 +144,10 @@ void Foodbag_control(Object* self) {
 
     objData = self->data;
 
-    gDLL_1_UI->vtbl->func_70A0(0);
-    uiGamebit = gDLL_1_UI->vtbl->func_E2C(foodbag_cmdmenu_gamebitIDs, ARRAYCOUNT(foodbag_cmdmenu_gamebitIDs));
-    uiSubmenuGamebit = gDLL_1_UI->vtbl->func_F40();
-    gDLL_1_UI->vtbl->func_70A0(1);
+    gDLL_1_cmdmenu->vtbl->func_70A0(0);
+    uiGamebit = gDLL_1_cmdmenu->vtbl->func_E2C(foodbag_cmdmenu_gamebitIDs, ARRAYCOUNT(foodbag_cmdmenu_gamebitIDs));
+    uiSubmenuGamebit = gDLL_1_cmdmenu->vtbl->func_F40();
+    gDLL_1_cmdmenu->vtbl->func_70A0(1);
     Foodbag_set_capacity(self);
 
     //Check if a relevant item was selected in the cmdmenu

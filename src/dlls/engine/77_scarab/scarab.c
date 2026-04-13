@@ -53,7 +53,7 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         ((DLL_768_SPShop*)object->dll)->vtbl->func20(object, &sp40, &scarabCount, &sp38);
     }
     
-    func_8003825C(gdl, scarabTexture, 0xFC, 0xC6, 0, 0, 0xFF, 0);
+    rcp_screen_full_write(gdl, scarabTexture, 0xFC, 0xC6, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     
     scarabCount = (sp38 - scarabCount) + sp40;
     if (scarabCount < 0) {

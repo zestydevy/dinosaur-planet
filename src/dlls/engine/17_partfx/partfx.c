@@ -1002,9 +1002,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp6C.unk30.x = transform->transl.x;
                 sp6C.unk30.y = transform->transl.y;
                 sp6C.unk30.z = transform->transl.z;
-                sp6C.unk30.x -= sp6C.unk0->positionMirror.x;
-                sp6C.unk30.y -= sp6C.unk0->positionMirror.y;
-                sp6C.unk30.z -= sp6C.unk0->positionMirror.z;
+                sp6C.unk30.x -= sp6C.unk0->globalPosition.x;
+                sp6C.unk30.y -= sp6C.unk0->globalPosition.y;
+                sp6C.unk30.z -= sp6C.unk0->globalPosition.z;
             }
             if (rand_next(0, 0x28) == 0) {
                 sp6C.unk3C = 0.0003f;
@@ -1027,9 +1027,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp6C.unk30.x = transform->transl.x;
                 sp6C.unk30.y = transform->transl.y;
                 sp6C.unk30.z = transform->transl.z;
-                sp6C.unk30.x -= sp6C.unk0->positionMirror.x;
-                sp6C.unk30.y -= sp6C.unk0->positionMirror.y;
-                sp6C.unk30.z -= sp6C.unk0->positionMirror.z;
+                sp6C.unk30.x -= sp6C.unk0->globalPosition.x;
+                sp6C.unk30.y -= sp6C.unk0->globalPosition.y;
+                sp6C.unk30.z -= sp6C.unk0->globalPosition.z;
                 sp6C.unk24.z = 0.3f;
             }
             sp6C.unk8 = 0x64;
@@ -1681,9 +1681,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp6C.unk30.x = transform->transl.x;
                 sp6C.unk30.y = transform->transl.y;
                 sp6C.unk30.z = transform->transl.z;
-                sp6C.unk30.x -= sp6C.unk0->positionMirror.x;
-                sp6C.unk30.y -= sp6C.unk0->positionMirror.y;
-                sp6C.unk30.z -= sp6C.unk0->positionMirror.z;
+                sp6C.unk30.x -= sp6C.unk0->globalPosition.x;
+                sp6C.unk30.y -= sp6C.unk0->globalPosition.y;
+                sp6C.unk30.z -= sp6C.unk0->globalPosition.z;
             }
             sp6C.unk8 = 0x14;
             sp6C.unk60 = 0xFF;
@@ -2262,9 +2262,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk44 |= flags;
             if (sp6C.unk44 & 1) {
                 if (sp6C.unk0 != NULL) {
-                    sp6C.unk30.x += sp6C.unk0->positionMirror.x;
-                    sp6C.unk30.y += sp6C.unk0->positionMirror.y;
-                    sp6C.unk30.z += sp6C.unk0->positionMirror.z;
+                    sp6C.unk30.x += sp6C.unk0->globalPosition.x;
+                    sp6C.unk30.y += sp6C.unk0->globalPosition.y;
+                    sp6C.unk30.z += sp6C.unk0->globalPosition.z;
                 } else {
                     sp6C.unk30.x += sp6C.transform.transl.x;
                     sp6C.unk30.y += sp6C.transform.transl.y;
@@ -3217,9 +3217,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk30.y += sp6C.transform.transl.y;
             sp6C.unk30.z += sp6C.transform.transl.z;
         } else if (sp6C.unk0 != NULL) {
-            sp6C.unk30.x += sp6C.unk0->positionMirror.x;
-            sp6C.unk30.y += sp6C.unk0->positionMirror.y;
-            sp6C.unk30.z += sp6C.unk0->positionMirror.z;
+            sp6C.unk30.x += sp6C.unk0->globalPosition.x;
+            sp6C.unk30.y += sp6C.unk0->globalPosition.y;
+            sp6C.unk30.z += sp6C.unk0->globalPosition.z;
         }
     }
     sp62 = gDLL_13_Expgfx->vtbl->func1(&sp6C, sp30);

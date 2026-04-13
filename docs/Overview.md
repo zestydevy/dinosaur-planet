@@ -20,7 +20,6 @@ The `src` directory contains all of the decompiled C implementation files (`.c` 
 The `src/dlls` directory is special. Dinosaur Planet uses a unique DLL system. Each DLL has its own directory under `src/dlls` containing:
 - A single C file for the full implementation of that DLL.
 - An `exports.s` file which defines the DLL's export table.
-- A `dll.yaml` file that configures how the DLL should be extracted and recompiled.
 - A `syms.txt` file that defines addresses for known symbols for that specific DLL.
 
 In the `src/dlls/dlls.txt` file, DLL numbers are mapped to their subdirectory.

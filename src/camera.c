@@ -1376,19 +1376,16 @@ f32 fexp(f32 x, u32 iterations)
 // compute viewProjection matrix for object's matrix idx
 void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
 {
-    u8 isChild;
+    u8 ancestor;
     MtxF mtxf;
     Object *origObject;
     f32 oldScale;
 
     origObject = object;
 
-    if (gRSPMatrices[object->matrixIdx] == NULL)
-    {
-        isChild = FALSE;
-
-        while (object != NULL)
-        {
+    if (gRSPMatrices[object->matrixIdx] == NULL) {
+        ancestor = FALSE;
+        while (object != NULL) {
             if (object->parent == NULL) {
                 object->srt.transl.x -= gWorldX;
                 object->srt.transl.z -= gWorldZ;
@@ -1399,7 +1396,7 @@ void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
                 object->srt.scale = 1.0f;
             }
 
-            if (!isChild) {
+            if (!ancestor) {
                 matrix_from_srt(&MtxF_800a6a60, &object->srt);
             } else {
                 matrix_from_srt(&mtxf, &object->srt);
@@ -1414,7 +1411,7 @@ void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
             }
 
             object = object->parent;
-            isChild = TRUE;
+            ancestor = TRUE;
         }
 
         matrix_concat(&MtxF_800a6a60, &gViewProjMtx, &gAuxMtx2);
@@ -1452,26 +1449,25 @@ void camera_update_object_matrix(Object *object)
 
 void camera_build_object_matrix(Object *object, int matrixIdx)
 {
-    s8 isChild;
+    s8 ancestor;
     f32 oldScale;
     s8 objectCount;
     SRT invsrt;
     Object* objectList[5]; // how many?
 
-    isChild = FALSE;
+    ancestor = FALSE;
     // @fake
-    if (isChild){}
+    if (ancestor){}
     objectCount = 0;
 
-    while (object != NULL)
-    {
+    while (object != NULL) {
         objectList[objectCount] = object;
         objectCount++;
 
         oldScale = object->srt.scale;
         object->srt.scale = 1.0f;
 
-        if (!isChild) {
+        if (!ancestor) {
             matrix_from_srt((MtxF *) (((f32 *) gObjectMatrices) + (matrixIdx << 4)), &object->srt);
         } else {
             matrix_from_srt(&gAuxMtx, &object->srt);
@@ -1481,7 +1477,7 @@ void camera_build_object_matrix(Object *object, int matrixIdx)
         object->srt.scale = oldScale;
         object = object->parent;
 
-        isChild = TRUE;
+        ancestor = TRUE;
     }
 
     while (objectCount > 0)

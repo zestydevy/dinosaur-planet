@@ -1,7 +1,7 @@
 #ifndef _DLL_H
 #define _DLL_H
 
-#include "dlls/engine/1_ui.h"
+#include "dlls/engine/1_cmdmenu.h"
 #include "dlls/engine/2_camcontrol.h"
 #include "dlls/engine/3_animation.h"
 #include "dlls/engine/4_race.h"
@@ -45,7 +45,7 @@
 // Note: These are DLL IDs not indices
 enum DLL_ID {
     // Engine
-    DLL_ID_UI = 1,
+    DLL_ID_CMDMENU = 1,
     DLL_ID_CAMERA = 2,
     DLL_ID_ANIM = 3,
     DLL_ID_RACE = 4,
@@ -151,6 +151,7 @@ enum DLL_ID {
     DLL_ID_130 = 0x101A,
     DLL_ID_133 = 0x101D,
     DLL_ID_136 = 0x1020,
+    DLL_ID_137 = 0x1021,
     DLL_ID_139 = 0x1023,
     DLL_ID_140 = 0x1024,
     DLL_ID_141 = 0x1025,
@@ -159,6 +160,8 @@ enum DLL_ID {
     DLL_ID_148 = 0x102C,
     DLL_ID_149 = 0x102D,
     DLL_ID_155 = 0x1033,
+    DLL_ID_157 = 0x1035,
+    DLL_ID_165 = 0x103D,
     DLL_ID_170 = 0x1042,
     DLL_ID_177 = 0x1049,
     DLL_ID_180 = 0x104C,
@@ -170,6 +173,7 @@ enum DLL_ID {
     DLL_ID_190 = 0x2004,
     DLL_ID_194 = 0x2008,
     DLL_ID_202 = 0x2010,
+    DLL_ID_205 = 0x2013,
 
     // Objects
     DLL_ID_210_Player = 0x8001,
@@ -182,7 +186,7 @@ enum DLL_ID {
 // These are loaded on game init, are never unloaded, and are referenced by
 // their global variable instead of from loading the DLL.
 
-extern DLL_1_UI *gDLL_1_UI;
+extern DLL_1_cmdmenu *gDLL_1_cmdmenu;
 extern DLL_2_camera *gDLL_2_Camera;
 extern DLL_3_animation *gDLL_3_Animation;
 extern DLL_5_AMSEQ *gDLL_5_AMSEQ;

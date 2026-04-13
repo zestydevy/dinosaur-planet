@@ -50,7 +50,7 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
     self->srt.roll = objsetup->roll << 8;
     self->srt.scale = self->def->scale;
     self->modelInstIdx = objsetup->modelIdx;
-    self->speed.y = 0.0f;
+    self->velocity.y = 0.0f;
     
     if (self->objhitInfo) {
         self->objhitInfo->unk52 = objsetup->objHitsValue;
@@ -87,8 +87,8 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
     } else {
         objdata->interactionRadius = 50.0f;
     }
-    if (self->def->unk40) {
-        objdata->interactionRadius = self->def->unk40->interactRadius * 4;
+    if (self->def->lockdata) {
+        objdata->interactionRadius = self->def->lockdata->interactRadius * 4;
     }
 
     //Set shadow flags
@@ -132,7 +132,7 @@ void SCcollectables_control(Object* self) {
         }
     }
     
-    if (self->srt.flags & 0x4000) {
+    if (self->srt.flags & OBJFLAG_INVISIBLE) {
         return;
     }
     
@@ -168,7 +168,7 @@ void SCcollectables_control(Object* self) {
             return;
         }
         
-        distance = vec3_distance(&self->positionMirror, &player->positionMirror);
+        distance = vec3_distance(&self->globalPosition, &player->globalPosition);
         if ((distance < objdata->interactionRadius) && (objdata->delayInteractionTimer == 0)) {
             outMessage = collectableDef->collectMessage << 0x10;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
@@ -260,24 +260,24 @@ void SCcollectables_handle_motion(Object* self, u8 alreadyOnGround) {
         if (alreadyOnGround) {
             self->srt.transl.y = *samples[minIndex] + REST_HEIGHT;
             objdata->fallFlags |= FLAG_Fall_Finished;
-            self->speed.y = 0.0f;
+            self->velocity.y = 0.0f;
         } else {
-            if (self->srt.transl.y > *samples[minIndex] + REST_HEIGHT - (self->speed.y * gUpdateRateF)) {
+            if (self->srt.transl.y > *samples[minIndex] + REST_HEIGHT - (self->velocity.y * gUpdateRateF)) {
             //Falling
-                if (self->speed.y > -4.0f) {
-                    self->speed.y -= 0.17f; //@bug: framerate dependent
+                if (self->velocity.y > -4.0f) {
+                    self->velocity.y -= 0.17f; //@bug: framerate dependent
                 }
             } else {
             //Bouncing
-                self->srt.transl.y = *samples[minIndex] + REST_HEIGHT - (self->speed.y * gUpdateRateF);
-                self->speed.y = 0.0f - (self->speed.y * 0.4f); //lose kinetic energy on bounce
+                self->srt.transl.y = *samples[minIndex] + REST_HEIGHT - (self->velocity.y * gUpdateRateF);
+                self->velocity.y = 0.0f - (self->velocity.y * 0.4f); //lose kinetic energy on bounce
 
                 //End fall when bounce speed near 0
-                dy = sqrtf(SQ(self->speed.y));
+                dy = sqrtf(SQ(self->velocity.y));
                 if (dy < 0.25f) {
                     self->srt.transl.y = *samples[minIndex] + REST_HEIGHT;
                     objdata->fallFlags |= FLAG_Fall_Finished;
-                    self->speed.y = 0.0f;
+                    self->velocity.y = 0.0f;
                 }
 
                 //Play bounce sound (volume dependent on speed)
@@ -290,7 +290,7 @@ void SCcollectables_handle_motion(Object* self, u8 alreadyOnGround) {
         }
     }
     
-    obj_integrate_speed(self, 0.0f, self->speed.y * gUpdateRateF, 0.0f);
+    obj_move(self, 0.0f, self->velocity.y * gUpdateRateF, 0.0f);
 }
 
 // offset: 0xA2C | func: 8
@@ -331,7 +331,7 @@ void SCcollectables_copy_object_position(Object* self, Object* other) {
     self->srt.transl.x = other->srt.transl.x;
     self->srt.transl.y = other->srt.transl.y;
     self->srt.transl.z = other->srt.transl.z;
-    self->positionMirror.x = other->positionMirror.x;
-    self->positionMirror.y = other->positionMirror.y;
-    self->positionMirror.z = other->positionMirror.z;
+    self->globalPosition.x = other->globalPosition.x;
+    self->globalPosition.y = other->globalPosition.y;
+    self->globalPosition.z = other->globalPosition.z;
 }

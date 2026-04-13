@@ -11,7 +11,7 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/rcp.h"
-#include "sys/segment_326A0.h"
+#include "sys/objlib.h"
 #include "dll.h"
 
 typedef struct {
@@ -70,7 +70,7 @@ enum KDModAnims {
 /*0xC*/ static s16 sHealthBarTextureIDs[2] = {0x042d, 0x0422};
 
 /*0x0*/ static Texture *sHealthBarTextures[2];
-/*0x8*/ static Func_80037F9C_Struct _bss_8[2][2];
+/*0x8*/ static TextureTile _bss_8[2][2];
 /*0x38*/ static s32 sHealthBarAlpha;
 /*0x3C*/ static u8 _bss_3C[4];
 /*0x40*/ static u8 _bss_40[0x4c0];
@@ -110,8 +110,8 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
-    setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
-    setup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
+    setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    setup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->base.x = x;
     setup->base.y = y;
     setup->base.z = z;
@@ -145,17 +145,17 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     setup->x = x;
     setup->y = y;
     setup->z = z;
-    setup->loadFlags = OBJSETUP_LOAD_FLAG1;
-    setup->fadeFlags = OBJSETUP_FADE_DISABLE;
+    setup->loadFlags = OBJSETUP_LOAD_LEVEL;
+    setup->fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->loadDistance = 0xFF;
     setup->fadeDistance = 0xFF;
     projectile = obj_create(setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
     if (projectile != NULL) {
         projectile->srt.pitch = arg5;
         projectile->srt.yaw = arg4;
-        projectile->speed.x = fcos16(arg5) * fsin16(arg4) * arg6;
-        projectile->speed.y = fsin16(arg5) * arg6;
-        projectile->speed.z = fcos16(arg5) * fcos16(arg4) * arg6;
+        projectile->velocity.x = fcos16(arg5) * fsin16(arg4) * arg6;
+        projectile->velocity.y = fsin16(arg5) * arg6;
+        projectile->velocity.z = fcos16(arg5) * fcos16(arg4) * arg6;
         projectile->unkC4 = self;
     }
 }
@@ -187,11 +187,11 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     for (i = 0; i < 2; i++) {
         texture = tex_load_deferred(sHealthBarTextureIDs[i]);
         sHealthBarTextures[i] = texture;
-        _bss_8[i][0].unk0 = texture;
-        _bss_8[i][0].unk4 = 0;
-        _bss_8[i][0].unk8 = 0;
-        _bss_8[i][0].unkA = 0;
-        _bss_8[i][1].unk0 = NULL;
+        _bss_8[i][0].tex = texture;
+        _bss_8[i][0].animProgress = 0;
+        _bss_8[i][0].x = 0;
+        _bss_8[i][0].y = 0;
+        _bss_8[i][1].tex = NULL;
     }
 
     // load fxemit objects
@@ -200,9 +200,9 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
         var_s0_2 = i != 0 ? 163 : -163;        
         objdata->unk8[i] = KamerianBoss_create_fx_emit(
             self,
-            var_s0_2 + self->positionMirror.x,
-            self->positionMirror.y + 175.0f,
-            self->positionMirror.z + 145.0f,
+            var_s0_2 + self->globalPosition.x,
+            self->globalPosition.y + 175.0f,
+            self->globalPosition.z + 145.0f,
             0x691
         );
         var_s0_2 = i--;
@@ -343,13 +343,13 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
     
     var_v0 = ((side != 0) ? 163 : -163);
     if (1){} // @fake
-    sp80 = (f32) var_v0 + self->positionMirror.x;
-    sp7C = self->positionMirror.z + 145.0f;
+    sp80 = (f32) var_v0 + self->globalPosition.x;
+    sp7C = self->globalPosition.z + 145.0f;
     
     var_v0 = ((side != 0) ? 163 : -163);
-    sp78 = (f32) var_v0 + self->positionMirror.x;
-    sp74 = self->positionMirror.y + 175.0f;
-    sp70 = self->positionMirror.z + 145.0f;
+    sp78 = (f32) var_v0 + self->globalPosition.x;
+    sp74 = self->globalPosition.y + 175.0f;
+    sp70 = self->globalPosition.z + 145.0f;
     
     if ((s32) *timer >= (s32) gUpdateRate) {
         *timer -= gUpdateRate;
@@ -359,8 +359,8 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
     *timer = rand_next(90, 270);
     if (1){} // @fake
     
-    temp_fv0_2 = player->positionMirror.x - sp80;
-    temp_fv1_2 = player->positionMirror.z - sp7C;
+    temp_fv0_2 = player->globalPosition.x - sp80;
+    temp_fv1_2 = player->globalPosition.z - sp7C;
     if (sqrtf(SQ(temp_fv0_2) + SQ(temp_fv1_2)) < 500.0f) {
         func_80014D34(1.2f, &sp6C, &sp68, &sp64);
         sp68 += 20.0f;
@@ -371,7 +371,7 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
             sp52 = -10000;
         }
         sp6C = (fsin16(sp52) * 400.0f) + sp80;
-        sp68 = player->positionMirror.y;
+        sp68 = player->globalPosition.y;
         sp64 = (fcos16(sp52) * 400.0f) + sp7C;
     }
     sp52 = atan2f_to_s(sp6C - sp78, sp64 - sp70);
@@ -621,7 +621,7 @@ void KamerianBoss_control(Object *self) {
                     if (objdata->rightPipeTimer == 0) {
                         objdata->rightPipeTimer = 600;
                         for (j = 0; j < 6; j += 2) {
-                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->positionMirror.x - 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
+                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x - 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Collision_Type_Projectile) && (objdata->rightPipeTimer > 50)) {
@@ -642,7 +642,7 @@ void KamerianBoss_control(Object *self) {
                     if (objdata->leftPipeTimer == 0) {
                         objdata->leftPipeTimer = 600;
                         for (j = 1; j < 7; j += 2) {
-                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->positionMirror.x + 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
+                            objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x + 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Collision_Type_Projectile) && (objdata->leftPipeTimer > 50)) {
@@ -738,7 +738,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         // Draw health bar
         if (sHealthBarAlpha != 0) {
-            func_800390A4(gdl, _bss_8[0], 
+            rcp_tile_write_x(gdl, _bss_8[0], 
                 /*x*/96.0f, 
                 /*y*/24.0f, 
                 /*width*/(f32) hpBarWidth, 
@@ -748,9 +748,9 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                 /*xScale*/4.0f, 
                 /*yScale*/1.0f, 
                 /*color*/sHealthBarAlpha - 256, 
-                /*flags*/0x4002);
+                /*flags*/TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
             
-            func_800390A4(gdl, _bss_8[1], 
+            rcp_tile_write_x(gdl, _bss_8[1], 
                 /*x*/(f32) ((hpBarWidth * 4) + 96), 
                 /*y*/24.0f, 
                 /*width*/(f32) (32 - hpBarWidth), 
@@ -760,7 +760,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                 /*xScale*/4.0f, 
                 /*yScale*/1.0f, 
                 /*color*/sHealthBarAlpha - 256, 
-                /*flags*/0x4002);
+                /*flags*/TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
         }
         // Get attachment positions
         i = 15;

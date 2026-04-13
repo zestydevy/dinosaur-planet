@@ -7,6 +7,9 @@
 #include "animation.h"
 #include "sys/math.h"
 
+// TODO: figure out how to include the actual file defining this
+struct Object;
+
 typedef enum {
     MODFLAGS_NONE = 0x0,
     MODFLAGS_1 = 0x1,
@@ -122,7 +125,6 @@ typedef struct {
 } FacebatchBound;
 
 typedef struct{
-    // TODO
 /*0000*/    ModelTexture *materials;
 /*0004*/    Vtx *vertices;
 /*0008*/    ModelFacebatch *faces; //contains materialID ref, joint assignments, f3dex command index, base faceID, etc.
@@ -195,8 +197,7 @@ typedef struct {
 } ModelInstanceBlendshape;
 
 typedef struct {
-    // TODO
-/*0000*/    Model *model;
+/*0000*/    Model *model; // "mod" in default.dol
 /*0004*/    Vtx *vertices[2];
 /*000C*/    MtxF *matrices[2];
 /*0014*/    ModelInstance_0x14 *unk14;
@@ -253,5 +254,8 @@ u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 b
 ModelInstance *model_load_create_instance(s32 id, u32 flags);
 void destroy_model_instance(ModelInstance *modelInst);
 ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
+// TODO: replace struct Object with just Object
+void func_8001A8EC(ModelInstance* modelInst, Model* model, struct Object* obj, MtxF* arg3, struct Object* obj2);
+void func_80019730(ModelInstance* arg0, Model* arg1, struct Object* arg2, MtxF* arg3);
 
 #endif //_SYS_GFX_MODEL_H

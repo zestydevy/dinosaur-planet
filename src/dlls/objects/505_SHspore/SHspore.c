@@ -62,7 +62,7 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     sp37 = 5;
     objData->lifetime = 1500.0f; //25s
     self->unkB0 |= 0x6000;
-    self->speed.y = 3.0f;
+    self->velocity.y = 3.0f;
 
     func_800267A4(self);
     objData->angleGoal = rand_next(0, 0xFFFF);
@@ -102,14 +102,14 @@ void SHspore_control(Object* self) {
             objData->angleChangeTimer = 0.0f;
         }
 
-        self->speed.y += -0.009f * gUpdateRateF;
-        if (self->speed.y < -0.2f) {
-            self->speed.y = -0.2f;
+        self->velocity.y += -0.009f * gUpdateRateF;
+        if (self->velocity.y < -0.2f) {
+            self->velocity.y = -0.2f;
         }
-        if (self->speed.y > 0) {
-            self->speed.y *= 0.97f; //framerate dependent? Ascent would slow more rapidly at 60fps
+        if (self->velocity.y > 0) {
+            self->velocity.y *= 0.97f; //framerate dependent? Ascent would slow more rapidly at 60fps
         }
-        if (self->speed.y < 0.0f) {
+        if (self->velocity.y < 0.0f) {
             func_8002674C(self);
         }
 
@@ -127,9 +127,9 @@ void SHspore_control(Object* self) {
             lateralJolt = objData->lateralAccelerationGoal - objData->lateralAcceleration;
             objData->lateralAcceleration += lateralJolt * 0.01f * gUpdateRateF;
         }
-        self->speed.x = objData->velocityX + (objData->coefficientX * objData->lateralAcceleration);
-        self->speed.z = objData->velocityZ + (objData->coefficientZ * objData->lateralAcceleration);
-        obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+        self->velocity.x = objData->velocityX + (objData->coefficientX * objData->lateralAcceleration);
+        self->velocity.z = objData->velocityZ + (objData->coefficientZ * objData->lateralAcceleration);
+        obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
         gDLL_27->vtbl->func_1E8(self, &objData->terrainCollider, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, &objData->terrainCollider);
         gDLL_27->vtbl->func_624(self, &objData->terrainCollider, gUpdateRateF);
@@ -155,7 +155,7 @@ void SHspore_control(Object* self) {
                 }
 
                 objData->deletionTimer = 200.0f;
-                self->srt.flags |= 0x4000;
+                self->srt.flags |= OBJFLAG_INVISIBLE;
                 func_800267A4(self);
             }
         } else {
@@ -171,7 +171,7 @@ void SHspore_control(Object* self) {
                 }
 
                 objData->deletionTimer = 200.0f;
-                self->srt.flags |= 0x4000;
+                self->srt.flags |= OBJFLAG_INVISIBLE;
                 func_800267A4(self);
             }
         }

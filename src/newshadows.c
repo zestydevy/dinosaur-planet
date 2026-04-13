@@ -325,7 +325,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     s32 j;
     Vec3f sp244[8];
     s32 pad3[3];
-    Vec3f sp22C; // obj -> positionMirror copy
+    Vec3f sp22C; // obj -> globalPosition copy
     Vec3f sp220; // obj -> srt -> transl copy
     Vec3f sp1C0[8];
     u8 pad[0x34];
@@ -418,19 +418,19 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&obj->srt.transl, &sp220, sizeof(Vec3f));
-        bcopy(&obj->positionMirror, &sp22C, sizeof(Vec3f));
+        bcopy(&obj->globalPosition, &sp22C, sizeof(Vec3f));
         if (obj->parent != NULL) {
             transform_point_by_object(
                 shadow->tr.x,
                 shadow->tr.y,
                 shadow->tr.z,
-                &obj->positionMirror.x,
-                &obj->positionMirror.y,
-                &obj->positionMirror.z,
+                &obj->globalPosition.x,
+                &obj->globalPosition.y,
+                &obj->globalPosition.z,
                 obj->parent
             );
         } else {
-            bcopy(&shadow->tr, &obj->positionMirror, sizeof(Vec3f));
+            bcopy(&shadow->tr, &obj->globalPosition, sizeof(Vec3f));
         }
         bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
     }
@@ -450,7 +450,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         shadows_func_80051944(0, obj, sp244, shadow->scale, 0);
     }
     for (i = 0, j = 0; i < 8; i++, j++) {
-        VECTOR_ADD(obj->positionMirror, sp244[i], sp1C0[j]);
+        VECTOR_ADD(obj->globalPosition, sp244[i], sp1C0[j]);
     }
     fit_aabb_around_cubes(&sp68, sp1C0, sp1C0, sp48, 8);
     func_80053750(obj, &sp68, 1);
@@ -479,7 +479,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             D_80092C34 = 400;
             if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
-                bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
+                bcopy(&sp22C, &obj->globalPosition, sizeof(Vec3f));
             }
             return 0;
         }
@@ -490,7 +490,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             D_80092C34 = 400;
             if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
-                bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
+                bcopy(&sp22C, &obj->globalPosition, sizeof(Vec3f));
             }
 
             return 0;
@@ -505,7 +505,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     D_80092C34 = D_800BB148 - D_800B98B0[D_80092C08];
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
-        bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
+        bcopy(&sp22C, &obj->globalPosition, sizeof(Vec3f));
     }
     return 0;
 }
@@ -517,7 +517,7 @@ s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
 
     sp1C = shadow->distFadeStart * 4;
     sp18 = shadow->distFadeEnd * 4;
-    var_fv1 = (camera_get_distance_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z) - sp1C) / (sp18 - sp1C);
+    var_fv1 = (camera_get_distance_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z) - sp1C) / (sp18 - sp1C);
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     } else if (var_fv1 > 1.0f) {
@@ -540,12 +540,12 @@ void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtx
 
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&obj->srt.transl, &sp44, sizeof(Vec3f));
-        bcopy(&obj->positionMirror, &sp50, sizeof(Vec3f));
+        bcopy(&obj->globalPosition, &sp50, sizeof(Vec3f));
         bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
         if (obj->parent != NULL) {
             transform_point_by_object(shadow->tr.x, shadow->tr.y, shadow->tr.z, &shadow->tr.x, &shadow->tr.y, &shadow->tr.z, obj->parent);
         } else {
-            bcopy(&shadow->tr, &obj->positionMirror, sizeof(Vec3f));
+            bcopy(&shadow->tr, &obj->globalPosition, sizeof(Vec3f));
         }
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_DYNAMIC_TEX) {
@@ -553,7 +553,7 @@ void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtx
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&sp44, &obj->srt.transl, sizeof(Vec3f));
-        bcopy(&sp50, &obj->positionMirror, sizeof(Vec3f));
+        bcopy(&sp50, &obj->globalPosition, sizeof(Vec3f));
     }
 }
 
@@ -605,19 +605,19 @@ void shadows_update_obj_box(Object* arg0) {
         D_800BB17C = D_800BB180;
         if (temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
             bcopy(&arg0->srt.transl, &sp1D4, 0xC);
-            bcopy(&arg0->positionMirror, &sp1E0, 0xC);
+            bcopy(&arg0->globalPosition, &sp1E0, 0xC);
             if (arg0->parent != NULL) {
                 transform_point_by_object(
                     temp_s1->tr.x,
                     temp_s1->tr.y,
                     temp_s1->tr.z,
-                    &arg0->positionMirror.x,
-                    &arg0->positionMirror.y,
-                    &arg0->positionMirror.z,
+                    &arg0->globalPosition.x,
+                    &arg0->globalPosition.y,
+                    &arg0->globalPosition.z,
                     arg0->parent
                 );
             } else {
-                bcopy(&temp_s1->tr, &arg0->positionMirror, 0xC);
+                bcopy(&temp_s1->tr, &arg0->globalPosition, 0xC);
             }
             bcopy(&temp_s1->tr, &arg0->srt.transl, 0xC);
         }
@@ -633,7 +633,7 @@ void shadows_update_obj_box(Object* arg0) {
         }
         shadows_func_80051944(0, arg0, sp24C, temp_s1->scale * 0.5f, 0);
         for (i = 0, j = 0; i < 8; i++, j++) {
-            VECTOR_ADD(arg0->positionMirror, sp24C[i], sp1EC[j]);
+            VECTOR_ADD(arg0->globalPosition, sp24C[i], sp1EC[j]);
         }
         fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
         func_80053750(arg0, &sp70, 1);
@@ -649,7 +649,7 @@ void shadows_update_obj_box(Object* arg0) {
             D_80092C38 = 0x258;
             if (temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp1D4, &arg0->srt.transl, 0xC);
-                bcopy(&sp1E0, &arg0->positionMirror, 0xC);
+                bcopy(&sp1E0, &arg0->globalPosition, 0xC);
             }
             return;
         } else {
@@ -662,7 +662,7 @@ void shadows_update_obj_box(Object* arg0) {
             D_80092BFC = 0;
             if (temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp1D4, &arg0->srt.transl, 0xC);
-                bcopy(&sp1E0, &arg0->positionMirror, 0xC);
+                bcopy(&sp1E0, &arg0->globalPosition, 0xC);
             }
         }
     }
@@ -1167,9 +1167,9 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
     bzero(&D_800B9B10, 0x4C);
     temp_fs4 = (f32) spAC->visibility * 0.015625f;
     camera = get_camera();
-    spD0.x = camera->tx - arg0->positionMirror.x;
-    spD0.y = camera->ty - arg0->positionMirror.y;
-    spD0.z = camera->tz - arg0->positionMirror.z;
+    spD0.x = camera->tx - arg0->globalPosition.x;
+    spD0.y = camera->ty - arg0->globalPosition.y;
+    spD0.z = camera->tz - arg0->globalPosition.z;
     var_fv1 = sqrtf((spD0.x * spD0.x) + (spD0.y * spD0.y) + (spD0.z * spD0.z));
     if (spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
         var_fv1 = 0.0f;

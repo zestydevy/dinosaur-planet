@@ -14,7 +14,6 @@
 #include "sys/memory.h"
 #include "sys/rcp.h"
 #include "types.h"
-#include "prevent_bss_reordering.h"
 
 /*0x0*/ static PicMenuItem pressStartItem[] = {
     /*0*/ NEW_PICMENU_ITEM(
@@ -237,7 +236,7 @@ void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
         font_window_flush_strings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
         if (main_demo_finished()) {
-            func_8003825C(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, 0);
+            rcp_screen_full_write(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
         font_window_draw(gfx, NULL, NULL, 1);
     }

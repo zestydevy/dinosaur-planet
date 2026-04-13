@@ -106,16 +106,16 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
         return 0;
     }
     func_80025F40(self, NULL, NULL, NULL);
-    pdx = player->positionMirror.x - self->positionMirror.x;
-    pdz = player->positionMirror.z - self->positionMirror.z;
-    pdy = player->positionMirror.y - self->positionMirror.y;
+    pdx = player->globalPosition.x - self->globalPosition.x;
+    pdz = player->globalPosition.z - self->globalPosition.z;
+    pdy = player->globalPosition.y - self->globalPosition.y;
     range1 = SQ(pdx) + SQ(pdz) + SQ(pdy);
     if (range1 != 0.0f) {
         range1 = sqrtf(range1);
     }
-    dx = camera->srt.transl.x - self->positionMirror.x;
-    dz = camera->srt.transl.z - self->positionMirror.z;
-    dy = camera->srt.transl.y - self->positionMirror.y;
+    dx = camera->srt.transl.x - self->globalPosition.x;
+    dz = camera->srt.transl.z - self->globalPosition.z;
+    dy = camera->srt.transl.y - self->globalPosition.y;
     range2 = SQ(dx) + SQ(dz) + SQ(dy);
     if (range2 != 0.0f) {
         range2 = sqrtf(range2);
@@ -130,9 +130,9 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     if ((self->opacity > 128) && (range2 < 400.0f)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8C, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }
-    x = self->positionMirror.x - gWorldX;
-    z = self->positionMirror.z - gWorldZ;
-    y = self->positionMirror.y;
+    x = self->globalPosition.x - gWorldX;
+    z = self->globalPosition.z - gWorldZ;
+    y = self->globalPosition.y;
     camera_project_point(x, y, z, &ox1, &oy1, &oz1);
     camera_clip_to_screen(ox1, oy1, oz1, &ox, &oy, NULL);
     sp30 = vi_obj_depth(ox, oy, self);

@@ -3,6 +3,7 @@
 #ifndef _SYS_GFX_TEXTURE_H
 #define _SYS_GFX_TEXTURE_H
 #include "PR/ultratypes.h"
+#include "PR/mbi.h"
 #include "PR/gbi.h"
 
 /** Custom render mode. RM_AA_ZB_XLU_INTER with Z_UPD */
@@ -116,6 +117,21 @@
  * A   = 1
  */
 #define G_CC_DINO_MODULATERGB_1A2 COMBINED, 0, SHADE, 0,  0, 0, 0, 1
+/**
+ * RGB = (COMBINED - SHADE) * COMBINED_ALPHA + SHADE
+ * A   = COMBINED * SHADE
+ */
+#define G_CC_DINO_LERP_FROM_SHADE2 COMBINED, SHADE, COMBINED_ALPHA,  SHADE, COMBINED, 0, SHADE, 0
+/**
+ * RGB = (SHADE - TEXEL0) * SHADE_ALPHA + TEXEL0
+ * A   = ENVIRONMENT * TEXEL0
+ */
+#define G_CC_DINO_BLEND_TEX_SHADE_ENVA SHADE, TEXEL0, SHADE_ALPHA, TEXEL0,  ENVIRONMENT, 0, TEXEL0, 0
+/**
+ * RGB = (COMBINED - SHADE) * COMBINED_ALPHA + SHADE
+ * A   = (COMBINED - 1) * PRIMITIVE + 1
+ */
+#define G_CC_DINO_LERP_FROM_SHADE_INVA2 COMBINED, SHADE, COMBINED_ALPHA, SHADE,  COMBINED, 1, PRIMITIVE, 1
 
 // Gets the texture type. E.g: rgba16
 #define TEX_FORMAT(x) (x & 0xF)
@@ -236,7 +252,7 @@ s32 tex_gdl_set_texture_simple(Gfx **gdl, Texture *tex, s32 renderFlags, s32 fra
  * @param setModes - If true, update geometry, combine, and other modes
  */
 void tex_gdl_set_textures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes);
-void tex_animate(Texture *tex, s32 *, s32 *);
+void tex_animate(Texture *tex, s32 *renderFlags, s32 *progress);
 void* tex_get_frame_img(Texture *tex, s32 arg1);
 Texture *tex_get_cached(s32 id);
 void tex_disable_modes(s32 modes);

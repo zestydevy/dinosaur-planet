@@ -197,9 +197,9 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
         self->linkedObject->parent = self->parent;
     }
     if (fsa->target != NULL) {
-        vec.f[0] = fsa->target->positionMirror.f[0] - self->positionMirror.f[0];
-        vec.f[1] = fsa->target->positionMirror.f[1] - self->positionMirror.f[1];
-        vec.f[2] = fsa->target->positionMirror.f[2] - self->positionMirror.f[2];
+        vec.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
+        vec.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
+        vec.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
         fsa->targetDist = sqrtf(SQ(vec.f[0]) + SQ(vec.f[1]) + SQ(vec.f[2]));
     }
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
@@ -209,7 +209,7 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
         if (foodbag != NULL) {
             dinoEgg = ((DLL_IFoodbag*)foodbag->dll)->vtbl->get_nearest_placed_food_of_type(foodbag, self, FOOD_Dino_Egg);
         }
-        if ((dinoEgg != NULL) && (vec3_distance(&self->positionMirror, &dinoEgg->positionMirror) < 150.0f)) {
+        if ((dinoEgg != NULL) && (vec3_distance(&self->globalPosition, &dinoEgg->globalPosition) < 150.0f)) {
             fsa->target = dinoEgg;
             return;
         }
@@ -276,7 +276,7 @@ s32 capy_anim_state_0_standing(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objlist = obj_get_all_of_type(OBJTYPE_54, &count);
         distflag = 0;
         for (i = 0; i < count; i++) {
-            if (!distflag && vec3_distance(&self->positionMirror, &objlist[i]->positionMirror) < 300.0f) {
+            if (!distflag && vec3_distance(&self->globalPosition, &objlist[i]->globalPosition) < 300.0f) {
                 distflag = 1;
                 fsa->target = objlist[i];
             }

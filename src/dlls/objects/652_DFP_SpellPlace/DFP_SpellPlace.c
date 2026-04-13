@@ -58,7 +58,7 @@ void dll_652_control(Object* self) {
     u8 mapSetupID;
 
     player = get_player();
-    if ((player != NULL) && !(vec3_distance(&self->positionMirror, &player->positionMirror) > 100.0f)) {
+    if ((player != NULL) && !(vec3_distance(&self->globalPosition, &player->globalPosition) > 100.0f)) {
         mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
         switch (mapSetupID) {
         case 1:
@@ -103,7 +103,7 @@ static void dll_652_func_254(Object* self) {
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~8;
-        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func_DF4(BIT_SpellStone_CRF) != 0)) {
+        if ((bit2Val != 0) && (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_SpellStone_CRF) != 0)) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= 8;
@@ -123,7 +123,7 @@ static void dll_652_func_364(Object* self) {
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~8;
-        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func_DF4(BIT_SpellStone_DIM) != 0)) {
+        if ((bit2Val != 0) && (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_SpellStone_DIM) != 0)) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= 8;

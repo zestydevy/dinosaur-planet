@@ -71,8 +71,8 @@ segments:
     - [0x26900, c, objhits]
     - [0x31AC0, c, objtype]
     - [0x32220, c, objmsg]
-    - [0x326A0, c, segment_326A0]
-    - [0x334F0, c, segment_334F0]
+    - [0x326A0, c, objlib]
+    - [0x334F0, c, objexpr]
     - [0x359E0, c, objprint]
     - [0x37C90, c, filesystem]
     - [0x38020, c, crash]
@@ -315,8 +315,8 @@ segments:
     - [0x92260, .data, object]
     - [0x922B0, .data, objanim]
     - [0x922E0, .data, objhits]
-    - [0x92310, .data, segment_326A0]
-    - [0x92320, .data, segment_334F0]
+    - [0x92310, .data, objlib]
+    - [0x92320, .data, objexpr]
     - [0x92350, .data, objprint]
     - [0x92370, .data, crash]
     - [0x92380, .data, rcp]
@@ -393,7 +393,7 @@ segments:
     - [0x9a460, .rodata, objhits]
     - [0x9A700, .rodata, objtype]
     - [0x9A850, .rodata, objmsg]
-    - [0x9A890, .rodata, segment_334F0]
+    - [0x9A890, .rodata, objexpr]
     - [0x9A950, .rodata, objprint]
     - [0x9A9B0, .rodata, route]
     - [0x9AAB0, .rodata, rarezip]
@@ -469,8 +469,8 @@ segments:
     # - { type: .bss, vram: 0x800b18e0, name: object }
     # - { type: .bss, vram: 0x800b1990, name: objhits }
     # - { type: .bss, vram: 0x800b28b0, name: objtype }
-    # - { type: .bss, vram: 0x800b2d40, name: segment_326A0 }
-    # - { type: .bss, vram: 0x800b2e00, name: segment_334F0 }
+    # - { type: .bss, vram: 0x800b2d40, name: objlib }
+    # - { type: .bss, vram: 0x800b2e00, name: objexpr }
     # - { type: .bss, vram: 0x800b2e10, name: objprint }
     # - { type: .bss, vram: 0x800b2e30, name: filesystem }
     # - { type: .bss, vram: 0x800b2ed0, name: crash }

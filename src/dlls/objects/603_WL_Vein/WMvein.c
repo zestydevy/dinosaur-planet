@@ -72,9 +72,9 @@ void WMvein_control(Object* self) {
         return;
     }
     
-    delta.f[0] = self->positionMirror.f[0] - player->positionMirror.f[0];
-    delta.f[1] = self->positionMirror.f[1] - player->positionMirror.f[1];
-    delta.f[2] = self->positionMirror.f[2] - player->positionMirror.f[2];
+    delta.f[0] = self->globalPosition.f[0] - player->globalPosition.f[0];
+    delta.f[1] = self->globalPosition.f[1] - player->globalPosition.f[1];
+    delta.f[2] = self->globalPosition.f[2] - player->globalPosition.f[2];
     distance = sqrtf((SQ(delta.f[0]) + SQ(delta.f[1]) + SQ(delta.f[2])));
 
     if (distance <= objdata->fxRadius) {

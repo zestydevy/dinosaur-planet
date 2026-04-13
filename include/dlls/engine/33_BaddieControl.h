@@ -4,7 +4,7 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
-#include "sys/segment_334F0.h"
+#include "sys/objexpr.h"
 #include "sys/curves.h"
 #include "sys/math.h"
 #include "sys/voxmap.h"
