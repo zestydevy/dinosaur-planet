@@ -512,7 +512,7 @@ typedef enum {
     BIT_1F9 = 0x1F9, // len:1 group:1
     BIT_1FA = 0x1FA, // len:1 group:1
     BIT_1FB = 0x1FB, // len:1 group:1
-    BIT_1FC = 0x1FC, // len:1 group:1
+    BIT_Play_Seq_0170_WM_Return_to_Randorn_Quan_Ata_Lachu_Speaks = 0x1FC, // len:1 group:1
     BIT_Dino_Bag_Old_Grubs = 0x1FD, // len:6 group:1    [INVENTORY]
     BIT_1FE = 0x1FE, // len:1 group:1
     BIT_1FF = 0x1FF, // len:1 group:1
@@ -705,7 +705,7 @@ typedef enum {
     BIT_SC_UNKNOWN_2BA = 0x2BA, // len:5 group:2
     BIT_2BB = 0x2BB, // len:1 group:2
     BIT_LightFoot_Village_Krystal_Freed = 0x2BC, // len:1 group:0
-    BIT_2BD = 0x2BD, // len:1 group:0
+    BIT_WM_Setup4_Show_Randorn = 0x2BD, // len:1 group:0 (When Krystal returns to WM with Moon Mountain Pass' Krazoa Spirit, Randorn will only be visible if this bit is set)
     BIT_2BE = 0x2BE, // len:1 group:1
     BIT_2BF = 0x2BF, // len:1 group:0
     BIT_2C0 = 0x2C0, // len:1 group:3
@@ -767,7 +767,7 @@ typedef enum {
     BIT_2F8 = 0x2F8, // len:1 group:1
     BIT_2F9 = 0x2F9, // len:1 group:1
     BIT_WM_Setup5_Sabre_Hall_GuardClaw_Gone = 0x2FA, // len:1 group:0
-    BIT_2FB = 0x2FB, // len:1 group:1 (Randorn-related: possibly intended to be set if Randorn dies)
+    BIT_WM_Setup6_Randorn_Sitting_Up = 0x2FB, // len:1 group:1
     BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_One = 0x2FC, // len:1 group:1
     BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Two = 0x2FD, // len:1 group:1
     BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Three = 0x2FE, // len:1 group:1

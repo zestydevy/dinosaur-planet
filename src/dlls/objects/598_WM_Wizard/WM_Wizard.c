@@ -1,71 +1,15 @@
+#include "PR/ultratypes.h"
 #include "common.h"
 #include "dll.h"
-#include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/210_player.h"
-#include "dlls/objects/607_WL_LevelControl.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
-#include "dlls/objects/common/foodbag.h"
 #include "game/objects/interaction_arrow.h"
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/common/foodbag.h"
+#include "dlls/objects/210_player.h"
+#include "dlls/objects/607_WL_LevelControl.h"
 
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} WMWizard_Setup;
-
-typedef struct {
-    Vec3f home;             //Initial position
-    f32 animSpeed;          //Animation delta when Randorn is walking around the hall at random
-    f32 objHitsValue;       //ObjHits-related
-    f32 unk14;
-    s16 unk18;
-    s16 unk1A;
-    s32 unk1C;
-    s16 walkWaitTimer;      //Pause before moving to next random walk destination
-    s16 talkTimer;          //Randomised delay when calling out to Krystal
-    u8 walkIndex;           //Random walk destination index
-    u8 prevWalkIndex;       //Previous random walk destination index
-    u8 hasMetKrystal;       //Boolean: whether you've seen Krystal's 1st cutscene with Randorn
-    u8 activeSeqIndex;      //Used by animCallback funcs to tell which sequence is playing
-    u8 objectID;
-    u8 timesFed;            //Incremented when offering food from the inventory
-} WMWizard_Data;
-
-typedef struct {
-    union {
-        struct {
-            f32 x;          //Walk goal x (relative to home position)
-            f32 z;          //Walk goal z (relative to home position)
-            f32 modAnimID1; //NOTE: strange that it's typed as a float
-            f32 modAnimID2; //NOTE: strange that it's typed as a float
-            f32 animSpeed;
-        };
-        f32 f[5];
-    };
-} RandomWalkData;
-
-/*0x0*/ static Unk80026DF4 dObjHitsData[] = {
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}
-};
-
-/*0xDC*/ static f32 dRandomWalkData[] = {
-    0,      0,    0,   0,    0.02, 
-    79,     152,  20,  20,   0.01, 
-    138,   -6,  20, 20, 0.02,
-    -73,   -48, 20, 20, 0.02, 
-    -248,  -7,  0,  0,  0.02, 
-    0,     0,   0,  0,  0.02
-};
+#include "dlls/objects/598_WM_Wizard.h"
 
 static int WMWizard_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
 static int WMWizard_anim_visit_1_first_meeting(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
@@ -102,8 +46,8 @@ void WMWizard_setup(Object* self, WMWizard_Setup* objSetup, s32 arg2) {
 
     objData->hasMetKrystal = main_get_bits(BIT_WM_Played_Randorn_First_Meeting);
     objData->timesFed = 0;
-    objData->walkIndex = 1;
-    objData->prevWalkIndex = 12;
+    objData->walkIndexFlags = 1; //In setup2, always walk towards pillar first
+    objData->prevWalkIndex = WALK_STOPPING;
     objData->walkWaitTimer = 300;
     objData->animSpeed = 0.0f;
     objData->unk14 = 1.0f;
@@ -113,17 +57,18 @@ void WMWizard_setup(Object* self, WMWizard_Setup* objSetup, s32 arg2) {
 void WMWizard_control(Object* self) {
     WMWizard_Data* objdata = self->data;
     
+    //Objhits
     if (func_80026DF4(
         self, 
         dObjHitsData, 
-        0xB,
-        (objdata->walkIndex & 0x80) ? 1 : 0,
+        11,
+        (objdata->walkIndexFlags & WMWizard_FLAG_80) ? TRUE : FALSE,
         &objdata->objHitsValue
     )) {
-        objdata->walkIndex |= 0x80;
+        objdata->walkIndexFlags |= WMWizard_FLAG_80;
         return;
     }
-    objdata->walkIndex &= ~0x80;
+    objdata->walkIndexFlags &= ~WMWizard_FLAG_80;
     
     //Handle setup-specific behaviour
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
@@ -153,7 +98,7 @@ void WMWizard_update(Object *self) { }
 void WMWizard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
-            if (main_get_bits(BIT_2BD)) {
+            if (main_get_bits(BIT_WM_Setup4_Show_Randorn)) {
                 draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
             }
         } else {
@@ -284,12 +229,13 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
 
     objData = self->data;
 
-    if (self->curModAnimId != 2) {
-        func_80023D30(self, 2, 0.0f, 0U);
+    //Handle animation
+    if (self->curModAnimId != Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP) {
+        func_80023D30(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0);
     }
-
     func_80024108(self, 0.005f, gUpdateRate, NULL);
 
+    //Before meeting Randorn
     if (objData->hasMetKrystal == FALSE) {
         //Play Krystal and Randorn's first conversation sequence when talked to
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
@@ -312,27 +258,31 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
                 NULL
             );
         }
-    } else {
-        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-        if (self->unkAF & ARROW_FLAG_1_Interacted) {
-            player = get_player();
 
-            //Check if Krystal has magic
-            if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) > 0) {
-                objData->activeSeqIndex = 2;
-                gDLL_3_Animation->vtbl->func17(2, self, -1);
-                joy_set_button_mask(0, A_BUTTON);
+        return;
+    }
 
-            //Otherwise, restore Krystal's magic if she hasn't deactivated the lasers yet
-            } else if (
-                main_get_bits(BIT_WM_Force_Field_1_Disabled) == 0 || 
-                main_get_bits(BIT_WM_Force_Field_2_Disabled) == 0 || 
-                main_get_bits(BIT_WM_Force_Field_3_Disabled) == 0
-            ) {
-                objData->activeSeqIndex = 1;
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
-                joy_set_button_mask(0, A_BUTTON);
-            }
+    //After meeting Randorn
+    self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+    if (self->unkAF & ARROW_FLAG_1_Interacted) {
+        player = get_player();
+
+        //Check if Krystal has magic
+        if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) > 0) {
+            //Remind about visiting Discovery Falls
+            objData->activeSeqIndex = WMWizard_OBJSEQ_2_Discovery_Falls_Reminder;
+            gDLL_3_Animation->vtbl->func17(WMWizard_OBJSEQ_2_Discovery_Falls_Reminder, self, -1);
+            joy_set_button_mask(0, A_BUTTON);
+
+        //Otherwise, restore Krystal's magic if she hasn't deactivated the lasers yet
+        } else if (
+            main_get_bits(BIT_WM_Force_Field_1_Disabled) == 0 || 
+            main_get_bits(BIT_WM_Force_Field_2_Disabled) == 0 || 
+            main_get_bits(BIT_WM_Force_Field_3_Disabled) == 0
+        ) {
+            objData->activeSeqIndex = WMWizard_OBJSEQ_1_Offering_Magic_Refill;
+            gDLL_3_Animation->vtbl->func17(WMWizard_OBJSEQ_1_Offering_Magic_Refill, self, -1);
+            joy_set_button_mask(0, A_BUTTON);
         }
     }
 }
@@ -358,8 +308,8 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
 
     self->srt.transl.y = objData->home.y;
 
-    //Check if player offers food
-    if (main_get_bits(BIT_1FC)) {
+    //After Quan Ata Lachu cutscene (sitting at edge of podium)
+    if (main_get_bits(BIT_Play_Seq_0170_WM_Return_to_Randorn_Quan_Ata_Lachu_Speaks)) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         if ((self->unkAF & ARROW_FLAG_1_Interacted) && (gDLL_1_cmdmenu->vtbl->func_F40() == BIT_Foodbag_Give)) {
             foodGamebit = gDLL_1_cmdmenu->vtbl->func_E2C(dAcceptedFoodsVisit2, ARRAYCOUNT(dAcceptedFoodsVisit2));
@@ -367,6 +317,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
                 main_set_bits(BIT_4D1, 1);
                 objData->timesFed++;
                 main_set_bits(BIT_310, 1);
+
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
                 ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, foodGamebit);
                 joy_set_button_mask(0, A_BUTTON);
@@ -375,34 +326,35 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
         return;
     }
     
+    //Before Quan Ata Lachu cutscene (random walk behaviour)
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
     //Pick next walk destination
     if (objData->walkWaitTimer <= 0) {
         switch (rand_next(1, 4)) {
         case 1:
-            objData->prevWalkIndex = objData->walkIndex;
-            objData->walkIndex = 1;
+            objData->prevWalkIndex = objData->walkIndexFlags;
+            objData->walkIndexFlags = 1;
             objData->walkWaitTimer = 400;
             break;
         case 2:
-            objData->prevWalkIndex = objData->walkIndex;
-            objData->walkIndex = 2;
+            objData->prevWalkIndex = objData->walkIndexFlags;
+            objData->walkIndexFlags = 2;
             objData->walkWaitTimer = 400;
             break;
         case 3:
-            objData->prevWalkIndex = objData->walkIndex;
-            objData->walkIndex = 3;
+            objData->prevWalkIndex = objData->walkIndexFlags;
+            objData->walkIndexFlags = 3;
             objData->walkWaitTimer = 400;
             break;
         case 4:
-            objData->prevWalkIndex = objData->walkIndex;
-            objData->walkIndex = 4;
+            objData->prevWalkIndex = objData->walkIndexFlags;
+            objData->walkIndexFlags = 4;
             objData->walkWaitTimer = 400;
             break;
         case 5: //unreachable?
-            objData->prevWalkIndex = objData->walkIndex;
-            objData->walkIndex = 5;
+            objData->prevWalkIndex = objData->walkIndexFlags;
+            objData->walkIndexFlags = 5;
             objData->walkWaitTimer = 400;
             break;
         }
@@ -410,46 +362,52 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
     }
 
     //Handle random walk movement
-    if (objData->walkIndex == 0xC) {
+    if (objData->walkIndexFlags == WALK_STOPPING) {
+        //Stopping: Rotate until facing away from centre of mural
         walkData = (RandomWalkData*)&dRandomWalkData[objData->prevWalkIndex * 5];
         dYaw = ((u16)arctan2_f(walkData->x, walkData->z) & 0xFFFF) - self->srt.yaw;
         diPrintf("diff %d\n", dYaw);
+
         if ((dYaw < -1000) || (dYaw > 1000)) {
             if (dYaw > 0) {
                 self->srt.yaw += gUpdateRate * 100;
             } else {
                 self->srt.yaw -= gUpdateRate * 100;
             }
-        } else {        
+        } else {
+            //Done rotating outwards: start the walk point's intro idle animation and go to stopped state
             func_80023D30(self, dRandomWalkData[(objData->prevWalkIndex * 5) + 2], 0.0f, 0);
             objData->animSpeed = dRandomWalkData[(objData->prevWalkIndex * 5) + 4];
-            objData->walkIndex = 0xD;
+            objData->walkIndexFlags = WALK_STOPPED;
         }
-    } else if (objData->walkIndex == 0xD) {
-        if (func_80024108(self, objData->animSpeed, gUpdateRateF, &sp30) != 0) {
+    } else if (objData->walkIndexFlags == WALK_STOPPED) {
+        //Stopped: wait for the intro idle animation to finish
+        if (func_80024108(self, objData->animSpeed, gUpdateRateF, &sp30)) {
+            //Start the walk point's secondary idle loop animation
             walkData = (RandomWalkData*)&dRandomWalkData[objData->prevWalkIndex * 5];
-            if (walkData->modAnimID1 == self->curModAnimId) {
-                func_80023D30(self, walkData->modAnimID2, 0.0f, 0);
+            if (walkData->modAnimIDIdleIntro == self->curModAnimId) {
+                func_80023D30(self, walkData->modAnimIDIdleLoop, 0.0f, 0);
                 objData->animSpeed = dRandomWalkData[(objData->prevWalkIndex * 5) + 4];
             }
         }
         
-        //Wait at destination until timer runs out
+        //Wait here until timer runs out
         objData->walkWaitTimer -= gUpdateRate;
         if (objData->walkWaitTimer <= 0) {
             objData->walkWaitTimer = 0;
         }
     } else {
-        //Move to destination
-        walkData = (RandomWalkData*)&dRandomWalkData[objData->walkIndex * 5];
+        //Go to next walk point
+        walkData = (RandomWalkData*)&dRandomWalkData[objData->walkIndexFlags * 5];
         dx = walkData->x - (self->srt.transl.x - objData->home.x);
         dz = walkData->z - (self->srt.transl.z - objData->home.z);
         distance = sqrtf(SQ(dx) + SQ(dz));
         dYaw = ((u16)arctan2_f(dx, dz) & 0xFFFF) - (self->srt.yaw);
         
         if ((dYaw >= -1000) && (dYaw <= 1000)) {
-            if (self->curModAnimId != 0x3B) {
-                func_80023D30(self, 0x3B, 0.0f, 0);
+            //Walk towards destination
+            if (self->curModAnimId != Randorn_MODANIM_59_Walk_LOOP) {
+                func_80023D30(self, Randorn_MODANIM_59_Walk_LOOP, 0.0f, 0);
                 objData->animSpeed = 0.04f;
             }
 
@@ -457,8 +415,9 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
             self->velocity.z = (dz / distance) * 0.25f;
             func_8002493C(self, 0.25f, &objData->animSpeed);
         } else {
-            if (self->curModAnimId != 0xC) {
-                func_80023D30(self, 0xC, 0.0f, 0);
+            //Limping on the spot, turn to face the next walk point
+            if (self->curModAnimId != Randorn_MODANIM_12_Limp_Walk_LOOP) {
+                func_80023D30(self, Randorn_MODANIM_12_Limp_Walk_LOOP, 0.0f, 0);
                 objData->animSpeed = 0.01f;
             }
             
@@ -471,12 +430,13 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
         
         //Arrive at destination
         if (distance < 4.0f) {
-            objData->prevWalkIndex = objData->walkIndex;
-            objData->walkIndex = 0xC;
+            objData->prevWalkIndex = objData->walkIndexFlags;
+            objData->walkIndexFlags = WALK_STOPPING;
             self->velocity.x = 0.0f;
             self->velocity.z = 0.0f;
         }
         
+        //Move and advance animation playback
         self->srt.transl.x += (self->velocity.x * gUpdateRateF);
         self->srt.transl.z += (self->velocity.z * gUpdateRateF);
         func_80024108(self, objData->animSpeed, gUpdateRateF, &sp30);
@@ -485,10 +445,11 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
 
 // offset: 0x1124 | func: 14
 void WMWizard_handle_visit_3_spirit_mmp(Object* self) {
-
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    if (self->curModAnimId != 2) {
-        func_80023D30(self, 2, 0.0f, 0U);
+
+    //Handle animation
+    if (self->curModAnimId != Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP) {
+        func_80023D30(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0);
     }
     func_80024108(self, 0.005f, gUpdateRate, NULL);
 }
@@ -509,28 +470,30 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
         self->unkAF ^= ARROW_FLAG_8_No_Targetting;
     }
 
-    //Play different animations based on gamebit
-    if (main_get_bits(BIT_2FB) == 0) {
-        if (self->curModAnimId != 7) {
-            func_80023D30(self, 7, 0.0f, 0);
+    //Handle animations 
+    if (main_get_bits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE) {
+        //Randorn initially slumped to the side
+        if (self->curModAnimId != Randorn_MODANIM_7_Sitting_Attempt_to_Stand_Collapse) {
+            func_80023D30(self, Randorn_MODANIM_7_Sitting_Attempt_to_Stand_Collapse, 0.0f, 0);
         }
-
+        
         func_80024108(self, 0.005f, gUpdateRate, NULL);
     } else {
-        if (self->curModAnimId != 2) {
-            func_80023D30(self, 2, 0.0f, 0); 
+        //He sits up after the player talks with him
+        if (self->curModAnimId != Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP) {
+            func_80023D30(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0); 
         }
     
         func_80024108(self, 0.005f, gUpdateRate, NULL);
     }
 
-    //Check if player talks to Randorn
-    if ((self->unkAF & ARROW_FLAG_1_Interacted) && (main_get_bits(BIT_2FB) == 0)) {
-        main_set_bits(BIT_2FB, 1);
+    //Check if player talks to Randorn while he's collapsed
+    if ((self->unkAF & ARROW_FLAG_1_Interacted) && (main_get_bits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE)) {
+        main_set_bits(BIT_WM_Setup6_Randorn_Sitting_Up, 1);
         objdata->timesFed = 0;
         joy_set_button_mask(0, A_BUTTON);
     
-    //Check if player offers food to Randorn
+    //Check if player offers food to Randorn while he's sitting up
     } else if (
         (self->unkAF & ARROW_FLAG_1_Interacted) && 
         (gDLL_1_cmdmenu->vtbl->func_F40() == BIT_Foodbag_Give)

@@ -589,7 +589,7 @@ static void WL_LevelControl_setup7_tick(Object* self) {
     }
 
     if (main_get_bits(BIT_WM_Setup5_Interval_Behaviour)) {
-        /* Over 11.666 seconds, set BIT_36D at rapid intervals -
+        /* Over 11.666 seconds, set BIT_36D at rapid intervals:
            starting with period of 0.5s, and getting one frame more frequent each time.
 
            TO-DO: what's this gamebit used for?
