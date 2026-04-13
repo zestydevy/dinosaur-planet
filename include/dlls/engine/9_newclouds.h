@@ -14,7 +14,7 @@ DLL_INTERFACE(DLL_9_newclouds) {
 /*3*/ void (*func3)(void);
 /*4*/ void (*func4)(Gfx **);
 /*5*/ UnknownDLLFunc func5;
-/*6*/ UnknownDLLFunc func6;
+/*6*/ void (*func6)(Gfx **, u8, s32);
 /*7*/ UnknownDLLFunc func7;
 /*8*/ UnknownDLLFunc func8;
 };

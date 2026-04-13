@@ -19,7 +19,7 @@ DLL_INTERFACE(DLL_14_modgfx) {
 /*8*/ UnknownDLLFunc func8;
 /*9*/ UnknownDLLFunc func9;
 /*10*/ void (*func10)(Object*);
-/*11*/ UnknownDLLFunc func11;
+/*11*/ void (*func11)(s8 *);
 /*12*/ UnknownDLLFunc func12;
 };
 

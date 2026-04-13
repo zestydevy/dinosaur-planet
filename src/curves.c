@@ -10,8 +10,6 @@ s32 D_8008C7D4 = -1;
 /* -------- .bss start 800a7c30 -------- */
 f32 D_800A7C30[4];
 f32 D_800A7C40;
-f32 D_800A7C48[7];
-f32 D_800A7C64;
 /* -------- .bss end 800a7c70 -------- */
 
 static const char str_800983b0[] = "curvesMove: There must be at least four control points\n";
@@ -245,39 +243,32 @@ void func_8000535C(UnkCurvesStruct *arg0) {
     }
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_800053B0.s")
-#else
 s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
     f32 temp_fs1;
     s32 var_t0;
     f32 temp_fv0;
     f32 var_fs0;
     s32 var_v1;
-    f32* var_v0;
     f32 *s1;
-    s32 pad[2];
 
     var_fs0 = arg1 * gUpdateRateF;
+    s1 = arg0->unk14;
     if (var_fs0 > 0.0f) {
         var_v1 = (s32) (arg0->unk0 * 20.0f);
         if (var_v1 == 20) {
             var_v1 -= 1;
         }
         if (arg0->unk80 != 0) {
-            arg0->unk4 = arg0->unk14[1 + var_v1] + arg0->unk4;
+            arg0->unk4 = s1[1 + var_v1] + arg0->unk4;
         } else if (arg0->unk0 >= 1.0f) {
             return 1;
         }
         arg0->unk8 += var_fs0;
         var_fs0 += arg0->unk4;
-        var_v0 = &arg0->unk14[var_v1];
-        s1 = var_v0;
         while (var_fs0 > 0.0f) {
-            var_fs0 -= var_v0[1];
+            var_fs0 -= s1[var_v1 + 1];
             if (var_fs0 > 0.0f) {
                 var_v1 += 1;
-                var_v0 += 1;
                 if (var_v1 >= 20) {
                     var_t0 = arg0->unk10;
                     if ((arg0->unk94 == func_80004D70) || (arg0->unk94 == func_80004C5C)) {
@@ -302,12 +293,14 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
                     }
                     func_800065C0(arg0, 20);
                     var_v1 = 0;
-                    var_v0 = s1;
                 }
             }
         }
-        var_fs0 += var_v0[1];
-        temp_fs1 = ((var_fs0 / var_v0[1]) * (((var_v1 + 1) / 20.0f) - (var_v1 / 20.0f))) + (var_v1 / 20.0f);
+        temp_fv0 = (var_v1 / 20.0f);
+        var_fs0 += s1[var_v1 + 1];
+        temp_fs1 = ((var_fs0 / s1[var_v1 + 1]) * (((var_v1 + 1) / 20.0f) - temp_fv0)) + temp_fv0;
+        // @fake?
+        var_v1 = 0;
         if (arg0->unk84 != NULL) {
             arg0->unk68.x = arg0->unk94((Vec4f* ) &arg0->unk84[arg0->unk10], temp_fs1, &arg0->unk74);
         }
@@ -326,19 +319,16 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
             var_v1 -= 1;
         }
         if (arg0->unk80 == 0) {
-            arg0->unk4 = arg0->unk14[ 1 + var_v1] - arg0->unk4;
+            arg0->unk4 = s1[ 1 + var_v1] - arg0->unk4;
         } else if (arg0->unk0 <= 0.0f) {
             return 1;
         }
-        var_v0 = &arg0->unk14[var_v1];
-        s1 = var_v0;
         arg0->unk8 += var_fs0;
         var_fs0 += arg0->unk4;
         while (var_fs0 < 0.0f) {
-            var_fs0 += var_v0[1];
+            var_fs0 += s1[var_v1 + 1];
             if (var_fs0 < 0.0f) {
                 var_v1 -= 1;
-                var_v0 -= 1;
                 if (var_v1 < 0) {
                     var_t0 = arg0->unk10;
                     if ((arg0->unk94 == func_80004D70) || (arg0->unk94 == func_80004C5C)) {
@@ -363,11 +353,11 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
                     }
                     func_800065C0(arg0, 20);
                     var_v1 = 19;
-                    var_v0 = s1;
                 }
             }
         }
-        temp_fs1 = ((var_fs0 / var_v0[1]) * (((var_v1 + 1) / 20.0f) - (var_v1 / 20.0f))) + (var_v1 / 20.0f);
+        temp_fv0 = (var_v1 / 20.0f);
+        temp_fs1 = ((var_fs0 / s1[var_v1 + 1]) * (((var_v1 + 1) / 20.0f) - temp_fv0)) + temp_fv0;
         if (arg0->unk84 != NULL) {
             arg0->unk68.x = arg0->unk94((Vec4f* ) &arg0->unk84[arg0->unk10], temp_fs1, &arg0->unk74);
         }
@@ -378,12 +368,11 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
             arg0->unk68.z = arg0->unk94((Vec4f* ) &arg0->unk8C[arg0->unk10], temp_fs1, &arg0->unk7C);
         }
         arg0->unk0 = temp_fs1;
-        arg0->unk4 = var_fs0 - var_v0[1];
+        arg0->unk4 = var_fs0 - s1[var_v1 + 1];
         arg0->unk80 = 1;
     }
     return 0;
 }
-#endif
 
 void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, unk_curve_func_2 arg7) {
     f32 spC0[4];
@@ -461,10 +450,9 @@ void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* a
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80005E60.s")
-#else
 void func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *arg5, f32 *arg6, f32 *arg7, f32 *arg8, s32 arg9, void (*arg10)(f32*, f32*, f32*, f32*)) {
+    static f32 D_800A7C48[7];
+    static f32 D_800A7C64;
     f32 spC0[4];
     f32 spB0[4];
     f32 spA0[4];
@@ -480,22 +468,18 @@ void func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *a
     f32 sp78;
     f32 sp74;
     f32 sp70;
-    f32 temp_fv1;
     s32 i;
 
     if (arg9 != D_8008C7D4) {
-        temp_fv1 = 1.0f / arg9;
-        D_800A7C48[0] = temp_fv1 * temp_fv1;
+        D_800A7C64 = 1.0f / arg9;
+        D_800A7C48[0] = SQ(D_800A7C64);
         D_800A7C48[1] = D_800A7C48[0] * 2;
-        D_800A7C48[2] = D_800A7C48[0] * temp_fv1;
+        D_800A7C48[2] = D_800A7C48[0] * D_800A7C64;
         D_800A7C48[3] = D_800A7C48[2] * 6.0f;
         D_800A7C48[4] = D_800A7C48[0] * 3.0f;
         D_800A7C48[5] = D_800A7C48[0] * 6.0f;
-        D_800A7C48[6] = 2 * temp_fv1;
-        // @fake
-        do { } while (0);
+        D_800A7C48[6] = 2 * D_800A7C64;
         D_8008C7D4 = arg9;
-        D_800A7C64 = temp_fv1;
     }
     if (arg0 != NULL) {
         arg10(arg0, spC0, D_800A7C48, arg3);
@@ -575,7 +559,6 @@ void func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *a
         }
     }
 }
-#endif
 
 void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     f32 *phi_s4;
