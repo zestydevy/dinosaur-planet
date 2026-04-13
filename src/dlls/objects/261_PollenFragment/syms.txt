@@ -1,0 +1,12 @@
+.text = 0x0:
+PollenFragment_ctor = 0x0;
+PollenFragment_dtor = 0xC;
+PollenFragment_setup = 0x18;
+PollenFragment_control = 0xF4;
+PollenFragment_update = 0x2F0;
+PollenFragment_print = 0x2FC;
+PollenFragment_free = 0x350;
+PollenFragment_get_model_flags = 0x390;
+PollenFragment_get_data_size = 0x3A0;
+
+.rodata = 0x420:

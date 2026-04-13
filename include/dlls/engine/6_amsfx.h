@@ -441,6 +441,8 @@ enum SoundID {
     SOUND_700_Krystal_Ugh = 0x700,      //player hurt sfx
     SOUND_701_Sabre_Ugh_EMPTY = 0x701,  //NOTE: seems to be empty, but intended as Sabre's counterpart to 0x700
 
+    SOUND_722_Impact_Wobble = 0x722, //Pollen
+
     SOUND_72D_Lock_On = 0x72D,          //Z-targetting
     SOUND_72E_Lock_Disengage = 0x72E,   //Z-targetting
 
@@ -590,7 +592,11 @@ enum SoundID {
     SOUND_AC8_Ground_Impact = 0xAC8, // used by PointBack
     SOUND_AC9_Impact_Crumbling = 0xAC9, // used by PointBack
 
+    SOUND_AFF_Gas_Disperse_Burst = 0xAFF, //Pollen
+    
     SOUND_B01_Success_Chime = 0xB01, //NWtreebridge (via seq 0x92)
+    SOUND_B02_Gas_Disperse_Burst = 0xB02, //PollenFragment
+    SOUND_B03_Acid_Hiss_Loop = 0xB03,     //PollenFragment
 
     SOUND_B1C_Ladder_Climb_A = 0xB1C,
     SOUND_B1D_Ladder_Climb_B = 0xB1D,
