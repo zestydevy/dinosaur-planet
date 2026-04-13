@@ -2595,25 +2595,20 @@ void map_decrement_layer(void) {
     UINT_80092a98 |= 0x4000;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80047404.s")
-#else
-
 void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 arg6, s32 arg7, s32 arg8) {
     MapHeader* temp_t1;
-    s32 temp_t2;
     s32 temp_t6;
     s32 temp_v1_2;
-    s32 temp;
-    s32* var_t2;
-    s32* var_t3;
-    s32 *var_v0;
-    s16* temp_v1;
+    u32 temp;
+    u32* var_t2;
+    u32* var_t3;
+    u32 *var_v0;
+    Struct_D_800B9768_unk4* temp_v1;
 
-    temp_v1 = &D_800B9768.unk4[gMapStreamMapTable[arg8].mapID].xMin;
+    temp_v1 = &D_800B9768.unk4[gMapStreamMapTable[arg8].mapID];
     temp_t1 = gMapStreamMapTable[arg8].header;
-    arg0 -= temp_v1[0];
-    arg1 -= temp_v1[2];
+    arg0 -= temp_v1->xMin;
+    arg1 -= temp_v1->zMin;
     if (arg8 == -1) {
         temp_v1_2 = 1;
         arg2[1] = temp_v1_2;
@@ -2640,15 +2635,15 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
     }
 
     if (arg7 != 0) {
-        var_t2 = (s32 *)temp_t1->grid_A2_ptr;
-        var_t3 = (s32 *)temp_t1->grid_B2_ptr;
+        var_t2 = (u32 *)temp_t1->grid_A2_ptr;
+        var_t3 = (u32 *)temp_t1->grid_B2_ptr;
     } else {
-        var_t2 = (s32 *)temp_t1->grid_A1_ptr;
-        var_t3 = (s32 *)temp_t1->grid_B1_ptr;
+        var_t2 = (u32 *)temp_t1->grid_A1_ptr;
+        var_t3 = (u32 *)temp_t1->grid_B1_ptr;
     }
-    temp_t6 = ((temp_t1->gridSizeX * (arg1)) + (arg0)) * 2;
+    temp_t6 = ((temp_t1->gridSizeX * (arg1)) + (arg0)) << 1;
     if (arg6 == 0) {
-        var_v0= var_t2;
+        var_v0 = var_t2;
         var_v0 += temp_t6;
         temp_v1_2 = var_v0[0];
         arg2[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
@@ -2656,7 +2651,8 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
         arg2[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
         arg2[3] = (temp_v1_2 & 0xF) - 7;
         temp_v1_2 >>= 0x10;
-        arg3[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
+        arg3[0] = ((temp_v1_2 >> 0xC) & 0xF);
+        arg3[0] -= 7;
         arg3[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
         arg3[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
         arg3[3] = (temp_v1_2 & 0xF) - 7;
@@ -2688,10 +2684,9 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
     arg5[2] = 0;
     arg5[1] = -1;
     arg5[0] = 0;
-    var_v0 = &temp_t1->blockIDs_ptr[temp_t6 >> 1];
-    temp_v1_2 = var_v0[0] & 0x7F;
-    if (temp_v1_2 != 0x7F) {
-        temp_v1_2 = var_t3[((temp_v1_2 << 2) + arg6) - 1];
+    temp_v1_2 = temp_t1->blockIDs_ptr[temp_t6 >> 1];
+    if ((temp_v1_2 & 0x7F) != 0x7F) {
+        temp_v1_2 = var_t3[(((temp_v1_2 & 0x7F) << 2) + arg6) - 1];
         arg2[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
         arg2[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
         arg2[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
@@ -2703,7 +2698,6 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
         arg3[3] = (temp_v1_2 & 0xF) - 7;
     }
 }
-#endif
 
 void func_80047710(s32 arg0, s32 arg1, s32 arg2) {
 }
