@@ -52,7 +52,7 @@ void dll_716_control(Object* self) {
         if (sidekick != NULL) {
             if (vec3_distance_squared(&get_player()-> globalPosition, &objdata->unk38->pos) <= SQ(setup->unk18)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
-                if (gDLL_1_cmdmenu->vtbl->func_DF4(1) != 0) {
+                if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_1) != 0) {
                     main_set_bits(BIT_Kyte_Flight_Curve, (u32) setup->unk1A);
                 }
             }

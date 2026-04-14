@@ -33,9 +33,9 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*2*/ void (*print)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 /*3*/ void (*func_1290)(void);
 /*4*/ void (*func_12EC)(void);
-/*5*/ s32 (*func5)(Object** a0, s32 a1, s32 a2, s32 a3, f32 a4); //unsure of types
+/*5*/ s32 (*get_target_objects)(Object **targetObjects, s32 maxObjects, u8 lockFlag, s32 arg3, f32 range); //Gets an array (`targetObjects`) of nearby Objects that can be targetted (i.e. have lock-on data and are fully opaque), sorted by their address. Returns the number of Objects in the array.
 /*6*/ s32 (*func_DC4)(void);
-/*7*/ s32 (*func_DF4)(s32 itemGamebitID); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
+/*7*/ s32 (*was_item_used)(s32 itemGamebitID); //Checks if a particular item was used in the inventory (queried via its inventory gamebitID)
 /*8*/ s32 (*func_E2C)(s32 *arg0, s32 arg1);
 /*9*/ s8 (*func_F24)(void);
 /*10*/ s16 (*func_F40)(void); //get gamebitID of active submenu?

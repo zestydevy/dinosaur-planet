@@ -13,9 +13,9 @@ _exports:
 .dword cmdmenu_print
 .dword cmdmenu_func_1290
 .dword cmdmenu_func_12EC
-.dword cmdmenu_func_F5C
+.dword cmdmenu_get_target_objects
 .dword cmdmenu_func_DC4
-.dword cmdmenu_func_DF4
+.dword cmdmenu_was_item_used
 .dword cmdmenu_func_E2C
 .dword cmdmenu_func_F24
 .dword cmdmenu_func_F40

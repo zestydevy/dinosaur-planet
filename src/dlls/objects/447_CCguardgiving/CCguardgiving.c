@@ -110,13 +110,13 @@ void CCguardgiving_control(Object *self) {
         }
         break;
     case STATE_Bribe_Attempt:
-        if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Gold_Nugget_CC)) {
+        if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Gold_Nugget_CC)) {
             //Accepting gold nugget
             gDLL_3_Animation->vtbl->func17(SeqIndex_Bribed_with_Gold, self, -1);
             objdata->state = STATE_Waiting_to_Sell_Map;
             func_80023BF8(self, 0, 0, 0, 0, 2);
             main_set_bits(BIT_CC_Bribed_GuardClaw, 1);
-        } else if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Scarab_Count_Krystal)) {
+        } else if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Scarab_Count_Krystal)) {
             //Refusing scarabs
             gDLL_3_Animation->vtbl->func17(SeqIndex_Bribe_with_Scarabs_Refused, self, -1);
         } else if (gDLL_1_cmdmenu->vtbl->func_F24() != PAGE_Inventory) {
@@ -136,7 +136,7 @@ void CCguardgiving_control(Object *self) {
         }
         break;
     case STATE_Map_Sale_Attempt:
-        if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Scarab_Count_Krystal)) {
+        if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Scarab_Count_Krystal)) {
             //Give map when scarabs selected in inventory
             player = get_player();
             count = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);

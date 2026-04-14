@@ -6,7 +6,9 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
+#include "game/gametexts.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
@@ -164,6 +166,21 @@ enum CmdMenuTextures {
     CMDMENU_TEX_57_Grub_Red_Half = 57
 };
 
+#define NO_GAMETEXT -1
+#define NO_PAGE -1
+
+typedef enum {
+    CMDMENU_PAGE_0 = 0, //Krystal (closed?)
+    CMDMENU_PAGE_1 = 1, //Sabre (closed?)
+    CMDMENU_PAGE_2 = 2,
+    CMDMENU_PAGE_3 = 3, //Krystal items
+    CMDMENU_PAGE_4 = 4,
+    CMDMENU_PAGE_5 = 5,
+    CMDMENU_PAGE_6 = 6, //Spells
+    CMDMENU_PAGE_7 = 7, //Tricky
+    CMDMENU_PAGE_8 = 8 //Kyte
+} CmdMenuInventoryPageIDs;
+
 /*0x0*/ static s8 _data_0 = 0;
 /*0x4*/ static s8 _data_4 = 0;
 /*0x8*/ static s8 _data_8 = 1;
@@ -176,11 +193,22 @@ enum CmdMenuTextures {
 /*0x24*/ static s16 _data_24 = 50;
 /*0x28*/ static s16 _data_28 = 20;
 /*0x2C*/ static s16 _data_2C = 160;
-/*0x30*/ static s16 _data_30 = 0;
-/*0x34*/ static char* _data_34[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
+/*0x30*/ static s16 dInfoScrollOpacity = 0;
+
+/** 
+  * Lines of text for the info scroll 
+  */
+/*0x34*/ static char* dTextStrings[] = {
+    NULL, NULL, NULL, NULL
 };
-/*0x44*/ static s16 _data_44 = -1;
+
+/** 
+  * StringID for the info scroll's gametext
+  *
+  * (First 255 lines are from `gametext_3`, higher IDs use `gametext_568`) 
+  */
+/*0x44*/ static s16 dGametextStringID = NO_GAMETEXT;
+
 /*0x48*/ static s8 _data_48 = 0;
 /*0x4C*/ static s16 _data_4C = 0x0078;
 /*0x50*/ static s16 _data_50 = 0x0050;
@@ -189,14 +217,14 @@ enum CmdMenuTextures {
 /*0x5C*/ static s16 _data_5C = 0x0000;
 /*0x60*/ static s16 _data_60 = 0;
 /*0x64*/ static u32 _data_64 = 0xffff0000;
-/*0x68*/ static Texture* _data_68 = 0;
+/*0x68*/ static Texture* dInventoryPageIcon = NULL; //Icon in the top-right corner of screen: Bag/SpellBook/Kyte/Tricky
 /*0x6C*/ static u32 _data_6C[] = {
     0x3f800000, 0xff000000
 };
 /*0x74*/ static s8 sJoyButtonMask = 0;
 /*0x78*/ static s16 _data_78 = 0;
 /*0x7C*/ static u8 _data_7C = 0;
-/*0x80*/ static u8 sForceStatsDisplay = 0;
+/*0x80*/ static u8 sForceStatsDisplay = FALSE;
 /*0x84*/ static s16 _data_84 = 0;
 /*0x88*/ static s8 _data_88 = 1;
 /*0x8C*/ static s16 _data_8C[] = {
@@ -489,7 +517,7 @@ enum CmdMenuTextures {
     /*13*/ { NULL,      0, 0,       0 }
 };
 
-/*0x9D0*/ static s8 _data_9D0 = 0; //index of cmdmenu page currently open
+/*0x9D0*/ static s8 dInventoryPageID = 0; //index of cmdmenu page currently open
 /*0x9D4*/ static s8 _data_9D4 = 0;
 /*0x9D8*/ static s16 _data_9D8[] = {
     /*00*/ TEXTABLE_1BE_CMDMENU_Scroll_BG,
@@ -594,7 +622,7 @@ enum CmdMenuTextures {
 /*0xC2E*/ static s16 _bss_C2E;
 /*0xC30*/ static GameTextChunk* _bss_C30;
 /*0xC34*/ static Texture* sCrosshairTex;
-/*0xC38*/ static s16 usedItemGamebitID;
+/*0xC38*/ static s16 sUsedItemGamebitID;
 /*0xC3A*/ static s16 _bss_C3A;
 /*0xC3C*/ static s8 _bss_C3C; //set to 0 when item selection successful
 /*0xC3D*/ static s8 _bss_C3D;
@@ -635,7 +663,7 @@ static s32 cmdmenu_func_47E8(void);
 static void cmdmenu_func_4830(void);
 static void cmdmenu_func_484C(void);
 static void cmdmenu_func_486C(void);
-static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_update_stats(void);
 static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0);
@@ -649,7 +677,7 @@ void cmdmenu_ctor(void* dll) {
 
     _bss_C78 = -1;
     _bss_C7A = -1;
-    usedItemGamebitID = -1;
+    sUsedItemGamebitID = NO_GAMEBIT;
     _bss_C3C = 0;
     _bss_C3D = -1;
     _bss_5A4 = -1;
@@ -726,15 +754,17 @@ void cmdmenu_func_35C(void) {
     Object* sidekick;
     s16 _pad;
     s8 sp31;
-    s16 var_v1_3;
+    s16 newStringID;
     s8 var_a0;
-    s8 sp30;
+    s8 newPageID;
 
     player = get_player();
     sidekick = get_sidekick();
+
     if (player != NULL) {
         sJoyPressedButtons = joy_get_pressed(0);
         sJoyHeldButtons = joy_get_buttons(0);
+
         if (player->unkB0 & 0x1000) {
             joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
             sJoyPressedButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
@@ -744,6 +774,7 @@ void cmdmenu_func_35C(void) {
             sJoyPressedButtons &= ~sJoyButtonMask;
             sJoyHeldButtons &= ~sJoyButtonMask;
         }
+
         if (sShouldOverrideJoypadButtons) {
             sJoyPressedButtons = sJoyPressedButtonsOverride;
         } else {
@@ -752,37 +783,40 @@ void cmdmenu_func_35C(void) {
                 sJoyPressedButtons |= B_BUTTON;
             }
         }
-        if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (_data_9D0 != 2)) {
-            sp30 = sidekick->id == OBJ_Kyte ? 8 : 7;
-            if (cmdmenu_func_3718(_data_8F0[sp30].items, 1) != 0) {
+
+        //Using C buttons (left/down/right) to open or change inventory pages
+        if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dInventoryPageID != CMDMENU_PAGE_2)) {
+            newPageID = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8 : CMDMENU_PAGE_7;
+            if (cmdmenu_func_3718(_data_8F0[newPageID].items, 1) != 0) {
                 joy_set_button_mask(0, D_CBUTTONS);
                 _data_9D4 = 2;
-                _bss_C3E = sp30;
+                _bss_C3E = newPageID;
             }
-        } else if ((sJoyPressedButtons & R_CBUTTONS) && (_data_9D0 != 3) && (_data_9D0 != 6)) {
-            sp30 = player->id == OBJ_Krystal ? 0 : 1;
-            if (cmdmenu_func_3718(_data_8F0[sp30].items, 0) != 0) {
+        } else if ((sJoyPressedButtons & R_CBUTTONS) && (dInventoryPageID != CMDMENU_PAGE_3) && (dInventoryPageID != CMDMENU_PAGE_6)) {
+            newPageID = player->id == OBJ_Krystal ? CMDMENU_PAGE_0 : CMDMENU_PAGE_1;
+            if (cmdmenu_func_3718(_data_8F0[newPageID].items, 0) != 0) {
                 joy_set_button_mask(0, R_CBUTTONS);
                 _data_9D4 = 3;
-                _bss_C3E = sp30;
+                _bss_C3E = newPageID;
             }
-        } else if ((sJoyPressedButtons & L_CBUTTONS) && (_data_9D0 != 4)) {
+        } else if ((sJoyPressedButtons & L_CBUTTONS) && (dInventoryPageID != CMDMENU_PAGE_4)) {
             if (cmdmenu_func_3718(_data_8F0[6].items, 0) != 0) {
                 joy_set_button_mask(0, L_CBUTTONS);
                 _data_9D4 = 4;
-                _bss_C3E = 6;
+                _bss_C3E = CMDMENU_PAGE_6;
             }
         } else if (_bss_C3D != -1) {
-            _bss_C3A = usedItemGamebitID;
+            _bss_C3A = sUsedItemGamebitID;
             _bss_C3E = _bss_C3D;
-            if ((_data_9D0 == 2) || (_data_9D0 == 5)) {
+            if ((dInventoryPageID == CMDMENU_PAGE_2) || (dInventoryPageID == CMDMENU_PAGE_5)) {
                 _data_9D4 = 7;
-            } else if ((_data_9D0 == 3) || (_data_9D0 == 6)) {
+            } else if ((dInventoryPageID == CMDMENU_PAGE_3) || (dInventoryPageID == CMDMENU_PAGE_6)) {
                 _data_9D4 = 6;
-            } else if ((_data_9D0 == 4) || (_data_9D0 == 7)) {
+            } else if ((dInventoryPageID == CMDMENU_PAGE_4) || (dInventoryPageID == CMDMENU_PAGE_7)) {
                 _data_9D4 = 7;
             }
         }
+
         if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
             cmdmenu_func_3A94();
         } else if (_data_9D4 != 0) {
@@ -804,7 +838,7 @@ void cmdmenu_func_35C(void) {
                 cmdmenu_func_3AB0();
                 _data_8F0[7].unk4 = 0;
                 _data_8F0[8].unk4 = 0;
-                _data_9D0 = _data_9D4;
+                dInventoryPageID = _data_9D4;
                 sJoyPressedButtons = 0;
                 _data_78 = 0;
                 _data_9D4 = 0;
@@ -820,41 +854,43 @@ void cmdmenu_func_35C(void) {
             _bss_C4C = 2;
         }
         if ((_data_0 != 0) || (_data_9D4 != 0)) {
-            var_v1_3 = _data_18;
+            newStringID = _data_18;
         } else {
-            var_v1_3 = gDLL_2_Camera->vtbl->get_target_gametextID();
+            newStringID = gDLL_2_Camera->vtbl->get_target_gametextID();
         }
         _data_18 = -1;
         var_a0 = 0;
         if (_bss_C7C >= 0) {
-            var_v1_3 = _bss_C7C;
+            newStringID = _bss_C7C;
             _data_28 = _bss_C80;
             _data_2C = _bss_C7E;
             var_a0 = 1;
         } else {
             if (cmdmenu_func_47E8() != 0) {
-                _data_2C = 0xA0;
-                _data_28 = 0x1E;
+                _data_2C = 160;
+                _data_28 = 30;
             }
         }
         _bss_C7C = -1;
-        if (((sJoyHeldButtons & R_TRIG) || (var_a0 != 0)) && (var_v1_3 >= 0)) {
-            if (var_v1_3 != _data_44) {
-                _data_44 = var_v1_3;
-                if (*_data_34 != NULL) {
-                    mmFree(*_data_34);
-                    *_data_34 = NULL;
+
+        if (((sJoyHeldButtons & R_TRIG) || (var_a0 != 0)) && (newStringID >= 0)) {
+            if (newStringID != dGametextStringID) {
+                dGametextStringID = newStringID;
+                if (*dTextStrings != NULL) {
+                    mmFree(*dTextStrings);
+                    *dTextStrings = NULL;
                 }
             }
             cmdmenu_func_484C();
         } else {
             cmdmenu_func_4830();
-            if ((cmdmenu_func_47E8() != 0) && (*_data_34 != NULL)) {
-                mmFree(*_data_34);
-                *_data_34 = NULL;
-                _data_44 = -1;
+            if ((cmdmenu_func_47E8() != 0) && (*dTextStrings != NULL)) {
+                mmFree(*dTextStrings);
+                *dTextStrings = NULL;
+                dGametextStringID = NO_GAMETEXT;
             }
         }
+
         joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         sJoyButtonMask = 0;
     }
@@ -881,7 +917,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             GET_VIDEO_WIDTH(viSize), 
             GET_VIDEO_HEIGHT(viSize));
         cmdmenu_func_3D28(gdl, mtxs, vtxs);
-        cmdmenu_func_4AD4(gdl, mtxs, vtxs);
+        cmdmenu_print_info_scroll(gdl, mtxs, vtxs);
         cmdmenu_func_1614(gdl, mtxs, vtxs);
         cmdmenu_func_27D8(gdl, mtxs, vtxs);
         camera_apply_scissor(gdl);
@@ -889,17 +925,16 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0xDC4 | func: 5 | export: 6
-s32 cmdmenu_func_DC4(void) {
-    if (usedItemGamebitID >= 0) {
-        return 1;
+int cmdmenu_func_DC4(void) {
+    if (sUsedItemGamebitID > NO_GAMEBIT) {
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }
 
 // offset: 0xDF4 | func: 6 | export: 7
-//cmdmenu_was_item_selected
-int cmdmenu_func_DF4(s32 itemGamebitID) {
-    if (itemGamebitID == usedItemGamebitID) {
+int cmdmenu_was_item_used(s32 itemGamebitID) {
+    if (itemGamebitID == sUsedItemGamebitID) {
         _bss_C3C = 0;
         return TRUE;
     }
@@ -911,7 +946,7 @@ s32 cmdmenu_func_E2C(s32* arg0, s32 arg1) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
-        if (usedItemGamebitID == arg0[i]) {
+        if (sUsedItemGamebitID == arg0[i]) {
             _bss_C3C = 0;
             return arg0[i];
         }
@@ -923,7 +958,7 @@ s32 cmdmenu_func_E2C(s32* arg0, s32 arg1) {
 // offset: 0xF24 | func: 8 | export: 9
 // cmdmenu_get_pageID?
 s8 cmdmenu_func_F24(void) {
-    return _data_9D0;
+    return dInventoryPageID;
 }
 
 // offset: 0xF40 | func: 9 | export: 10
@@ -932,64 +967,70 @@ s16 cmdmenu_func_F40(void) {
 }
 
 // offset: 0xF5C | func: 10 | export: 5
-s32 cmdmenu_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
-    s32 _pad[2];
-    f32 temp_fa0;
-    f32 temp_fa1;
-    f32 temp_fv0;
-    Camera* temp_s2;
-    f32 sp9C;
-    f32 sp98;
-    f32 sp94;
-    Object* temp_s0;
-    Object** temp_v0;
-    s32 sp88;
-    s32 sp84;
-    Object* temp_a0;
-    Object* temp_v1;
+/** 
+  * Gets an array (`targetObjects`) of nearby Objects that can be targetted 
+  * (i.e. have lock-on data and are fully opaque), sorted by their address.
+  *
+  * Returns the number of Objects in the array.
+  */
+s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFlag, s32 arg3, f32 range) {
+    s32 _pad1[2];
+    f32 dx;
+    f32 dz;
+    f32 dy;
+    Camera* camera;
+    f32 objX;
+    f32 objY;
+    f32 objZ;
+    Object* obj;
+    Object** objects;
+    s32 count;
+    s32 index;
+    s32 _pad2[2];
     s32 isSorted;
     s32 i;
-    s32 var_s4;
-    s32 var_v1;
+    s32 targetCount;
+    s32 yaw;
 
     set_camera_selector(0);
-    temp_s2 = get_main_camera();
-    temp_v0 = get_world_objects(&sp84, &sp88);
-    var_s4 = 0;
-    for (i = sp84; i < sp88; i++) {
-        temp_s0 = temp_v0[i];
-        if ((temp_s0->def->lockdata != NULL) && (temp_s0->opacity == 0xFF) && !(temp_s0->unkAF & ARROW_FLAG_8_No_Targetting) && 
-                (temp_s0->def->lockdata->flags & arg2) && (var_s4 < arg1) && (arg3 & 1)) {
-            get_object_child_position(temp_s0, &sp9C, &sp98, &sp94);
-            temp_fa0 = sp9C - temp_s2->srt.transl.x;
-            temp_fv0 = sp98 - temp_s2->srt.transl.y;
-            temp_fa1 = sp94 - temp_s2->srt.transl.z;
-            if ((SQ(temp_fa0) + SQ(temp_fv0) + SQ(temp_fa1)) < SQ(arg4)) {
-                var_v1 = temp_s2->srt.yaw - ((0x4000 - arctan2_f(temp_fa0, temp_fa1)) & 0xFFFF);
-                CIRCLE_WRAP(var_v1);
-                if (var_v1 < -10000 && var_v1 > -22000) {
-                    arg0[var_s4] = temp_s0;
-                    var_s4 += 1;
+    camera = get_main_camera();
+    objects = get_world_objects(&index, &count);
+
+    //Get the subset of Objects that can be targetted
+    for (targetCount = 0, i = index; i < count; i++) {
+        obj = objects[i];
+        if ((obj->def->lockdata != NULL) && (obj->opacity == OBJECT_OPACITY_MAX) && !(obj->unkAF & ARROW_FLAG_8_No_Targetting) && 
+                (obj->def->lockdata->flags & lockFlag) && (targetCount < maxObjects) && (arg3 & 1)) {
+            get_object_child_position(obj, &objX, &objY, &objZ);
+            dx = objX - camera->srt.transl.x;
+            dy = objY - camera->srt.transl.y;
+            dz = objZ - camera->srt.transl.z;
+            if ((SQ(dx) + SQ(dy) + SQ(dz)) < SQ(range)) {
+                yaw = camera->srt.yaw - (u16)(M_90_DEGREES - arctan2_f(dx, dz));
+                CIRCLE_WRAP(yaw);
+                if (yaw < -10000 && yaw > -22000) {
+                    targetObjects[targetCount++] = obj;
                 }
             }
         }
     }
 
-    if (var_s4 > 0) {
+    //Sort the targettable Objects by address
+    if (targetCount > 0) {
         do {
             isSorted = TRUE;
-            for (i = 0; i < (var_s4 - 1); i++) {
-                if ((s32)arg0[i] < (s32)arg0[i + 1]) {
-                    temp_s0 = arg0[i];
-                    arg0[i] = arg0[i + 1];
-                    arg0[i + 1] = temp_s0;
+            for (i = 0; i < (targetCount - 1); i++) {
+                if ((s32)targetObjects[i] < (s32)targetObjects[i + 1]) {
+                    obj = targetObjects[i];
+                    targetObjects[i] = targetObjects[i + 1];
+                    targetObjects[i + 1] = obj;
                     isSorted = FALSE;
                 }
             }
         } while (isSorted == FALSE);
     }
     
-    return var_s4;
+    return targetCount;
 }
 
 // offset: 0x1290 | func: 11 | export: 3
@@ -1000,7 +1041,7 @@ void cmdmenu_func_1290(void) {
     temp = _data_8F0;
 
     for (i = 0; temp[i].items; i++) { temp[i].unk4 = 0; }
-    usedItemGamebitID = -1;
+    sUsedItemGamebitID = NO_GAMEBIT;
     _bss_C3C = 0;
     _bss_C3D = -1;
 }
@@ -1256,17 +1297,17 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 // offset: 0x1FEC | func: 18
 static void cmdmenu_func_1FEC(void) {
     s16* sp4C;
-    Object* sp48;
+    Object* player;
     InventoryItem *new_var;
     u32 sp40;
     s32 sp3C;
     s32 sp38;
     s8 sp37;
 
-    sp48 = get_player();
+    player = get_player();
     sp37 = 0;
-    if (sp48 != NULL) {
-        if (sp48->unkB0 & 0x1000) {
+    if (player != NULL) {
+        if (player->unkB0 & 0x1000) {
             joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         } else if (sJoyButtonMask != 0) {
             joy_set_button_mask(0, sJoyButtonMask);
@@ -1275,10 +1316,11 @@ static void cmdmenu_func_1FEC(void) {
             sJoyPressedButtons = sJoyPressedButtonsOverride;
         } else {
             sJoyPressedButtons = joy_get_pressed(0);
-            if ((sp48->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
+            if ((player->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
                 sJoyPressedButtons |= B_BUTTON;
             }
         }
+
         switch (_bss_C3C) {
         case 0:
             break;
@@ -1289,20 +1331,23 @@ static void cmdmenu_func_1FEC(void) {
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_814_Cmdmenu_OpenSubMenu, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
         }
-        usedItemGamebitID = -1;
+
+        sUsedItemGamebitID = NO_GAMEBIT;
         _bss_C3C = 0;
         _bss_C3D = -1;
         new_var = _data_8F0[_bss_C3E].items;
         sp4C = &_data_8F0[_bss_C3E].unk4;
         sp40 = _data_8F0[_bss_C3E].mesgID;
         sp3C = _data_8F0[_bss_C3E].btnMask;
-        if ((_bss_C3E == 7) || (_bss_C3E == 8)) {
+
+        if ((_bss_C3E == CMDMENU_PAGE_7) || (_bss_C3E == CMDMENU_PAGE_8)) {
             sp37 = 1;
         }
+
         _bss_C40 = *sp4C;
         _bss_C44 = cmdmenu_func_325C(new_var, sp37);
         if (_bss_C44 == 0) {
-            _data_9D0 = 0;
+            dInventoryPageID = 0;
             cmdmenu_func_3A94();
             return;
         }
@@ -1347,8 +1392,8 @@ static void cmdmenu_func_1FEC(void) {
             } else if ((sJoyPressedButtons & A_BUTTON) && (cmdmenu_func_39FC() != 0)) {
                 sp38 = _bss_318[_bss_C40];
                 if (sp37 == 0) {
-                    obj_send_mesg(sp48, sp40, NULL, (void* ) sp38);
-                    usedItemGamebitID = (s16) sp38;
+                    obj_send_mesg(player, sp40, NULL, (void* ) sp38);
+                    sUsedItemGamebitID = (s16) sp38;
                     _bss_C3C = _bss_4D8[_bss_C40];
                     _bss_C3D = _bss_498[_bss_C40];
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -1357,18 +1402,18 @@ static void cmdmenu_func_1FEC(void) {
                     if (_bss_518[_bss_C40] != 0) {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                         cmdmenu_func_3A94();
-                        usedItemGamebitID = (s16) sp38;
+                        sUsedItemGamebitID = (s16) sp38;
                         _bss_C3C = 0;
                     } else {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_A0, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        usedItemGamebitID = -1;
+                        sUsedItemGamebitID = NO_GAMEBIT;
                         _bss_C3C = 0;
                     }
                 }
             }
         }
         if (cmdmenu_func_3A4C() != 0) {
-            _data_9D0 = 0;
+            dInventoryPageID = 0;
             _bss_C4C = 0;
             _data_78 = 0;
         } else {
@@ -1536,27 +1581,28 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             
             cmdmenu_func_474C(gdl);
         }
+
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
             switch (_bss_C3E) {
-            case 7:
+            case CMDMENU_PAGE_7:
                 sp5E = CMDMENU_TEX_42_Tricky;
                 sp5C = 3;
                 break;
-            case 8:
+            case CMDMENU_PAGE_8:
                 sp5E = CMDMENU_TEX_54_Kyte;
                 break;
-            case 6:
+            case CMDMENU_PAGE_6:
                 sp5D = -2;
                 sp5C = 9;
                 sp5E = CMDMENU_TEX_49_MagicBook;
                 break;
             default:
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
+            case CMDMENU_PAGE_0:
+            case CMDMENU_PAGE_1:
+            case CMDMENU_PAGE_2:
+            case CMDMENU_PAGE_3:
+            case CMDMENU_PAGE_4:
+            case CMDMENU_PAGE_5:
                 sp5D = 1;
                 sp5C = 9;
                 sp5E = CMDMENU_TEX_50_Bag;
@@ -1581,10 +1627,11 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 sp5F = 0;
             }
         }
+
         if (sp5F) {
-            _data_68 = tex_load_deferred(_data_9D8[sp5E]);
-            rcp_screen_full_write(gdl, _data_68, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, SCREEN_WRITE_TRANSLUCENT);
-            tex_free(_data_68);
+            dInventoryPageIcon = tex_load_deferred(_data_9D8[sp5E]);
+            rcp_screen_full_write(gdl, dInventoryPageIcon, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, SCREEN_WRITE_TRANSLUCENT);
+            tex_free(dInventoryPageIcon);
         }
     }
 }
@@ -1651,11 +1698,13 @@ static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
         }
     } else {
         sidekick = get_sidekick();
+
         if (sidekick != NULL) {
             sp268 = ((DLL_ISidekick*)sidekick->dll)->vtbl->func13(sidekick);
         } else {
             sp268 = 0;
         }
+
         if (sp268 != -1) {
             while (arg0[i].gamebitObtained >= 0) {
                 if (arg0[i].gamebitObtained & sp268) {
@@ -1845,7 +1894,7 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     u8 texIdx;
     u8 pad_sp4A;
     u8 isKyte;
-    u8 var_v0;
+    u8 pageID;
     u8 hasHalfRed;
     u8 fullBlueEnd;
     u8 hasHalfBlue;
@@ -1864,30 +1913,34 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     if (_data_10 == 0) {
         if (_bss_8C != 0.0f) {
             if (player != NULL) {
-                var_v0 = player->id == OBJ_Krystal ? 0 : 1;
+                pageID = player->id == OBJ_Krystal ? CMDMENU_PAGE_0 : CMDMENU_PAGE_1;
                 sp44 = 0;
-                if (cmdmenu_func_3718(_data_8F0[var_v0].items, 0) != 0) {
+                if (cmdmenu_func_3718(_data_8F0[pageID].items, 0) != 0) {
                     sp44 = 2;
                 }
             }
+
             if (sidekick != NULL) {
-                var_v0 = sidekick->id == OBJ_Kyte ? 8 : 7;
-                if (cmdmenu_func_3718(_data_8F0[var_v0].items, 1) != 0) {
+                pageID = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8 : CMDMENU_PAGE_7;
+                if (cmdmenu_func_3718(_data_8F0[pageID].items, 1) != 0) {
                     sp44 |= 4;
                 }
             }
+
             if (cmdmenu_func_3718(_data_8F0[6].items, 0) != 0) {
                 sp44 |= 1;
             }
+
             if (sp44 & 2) {
                 texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
-                _data_68 = tex_load_deferred(_data_9D8[texIdx]);
-                rcp_screen_full_write(gdl, _data_68, 0x113, 0x19, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
-                tex_free(_data_68);
+                dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
+                rcp_screen_full_write(gdl, dInventoryPageIcon, 0x113, 0x19, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
+                tex_free(dInventoryPageIcon);
             } else {
                 texIdx = CMDMENU_TEX_41_C_Right;
                 rcp_tile_write(gdl, _bss_6B8[texIdx], 0x112, 0x22, 255, 255, 255, _bss_8C);
             }
+
             if (((sp44 & 4) && (sidekick != NULL)) || (sp44 & 1)) {
                 if ((sp44 & 4) && (sidekick != NULL) && (sp44 & 1)) {
                     if (isKyte) {
@@ -1898,9 +1951,9 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 } else if (sp44 & 2) {
                     texIdx = CMDMENU_TEX_48_LeftDownButtons_NoSidekick;
                 }
-                _data_68 = tex_load_deferred(_data_9D8[texIdx]);
-                rcp_screen_full_write(gdl, _data_68, 0xF5, 0x11, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
-                tex_free(_data_68);
+                dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
+                rcp_screen_full_write(gdl, dInventoryPageIcon, 0xF5, 0x11, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
+                tex_free(dInventoryPageIcon);
             } else {
                 rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) _bss_8C);
                 rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) _bss_8C);
@@ -1936,36 +1989,36 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             for (i = 0; i < sStats.sidekickMaxFood; i++) {
                 if (i < fullRedEnd) {
                     if (isKyte) {
-                        var_v0 = CMDMENU_TEX_56_Grub_Red_Full;
+                        pageID = CMDMENU_TEX_56_Grub_Red_Full;
                     } else {
-                        var_v0 = CMDMENU_TEX_45_Mushroom_Red_Full;
+                        pageID = CMDMENU_TEX_45_Mushroom_Red_Full;
                     }
                 } else if (i == fullRedEnd && hasHalfRed) {
                     if (isKyte) {
-                        var_v0 = CMDMENU_TEX_57_Grub_Red_Half;
+                        pageID = CMDMENU_TEX_57_Grub_Red_Half;
                     } else {
-                        var_v0 = CMDMENU_TEX_46_Mushroom_Red_Half;
+                        pageID = CMDMENU_TEX_46_Mushroom_Red_Half;
                     }
                 } else if (i < fullBlueEnd) {
                     if (isKyte) {
-                        var_v0 = CMDMENU_TEX_13_Grub_Blue_Full;
+                        pageID = CMDMENU_TEX_13_Grub_Blue_Full;
                     } else {
-                        var_v0 = CMDMENU_TEX_12_Mushroom_Blue_Full;
+                        pageID = CMDMENU_TEX_12_Mushroom_Blue_Full;
                     }
                 } else if (i == fullBlueEnd && hasHalfBlue) {
                     if (isKyte) {
-                        var_v0 = CMDMENU_TEX_16_Grub_Blue_Half;
+                        pageID = CMDMENU_TEX_16_Grub_Blue_Half;
                     } else {
-                        var_v0 = CMDMENU_TEX_51_Mushroom_Blue_Half;
+                        pageID = CMDMENU_TEX_51_Mushroom_Blue_Half;
                     }
                 } else {
                     if (isKyte) {
-                        var_v0 = CMDMENU_TEX_55_Grub_Empty;
+                        pageID = CMDMENU_TEX_55_Grub_Empty;
                     } else {
-                        var_v0 = CMDMENU_TEX_44_Mushroom_Empty;
+                        pageID = CMDMENU_TEX_44_Mushroom_Empty;
                     }
                 }
-                rcp_tile_write(&dl, _bss_6B8[var_v0], 
+                rcp_tile_write(&dl, _bss_6B8[pageID], 
                     250 - ((i / 4) * 9), 
                     21  + ((i % 4) * 8), 
                     255, 255, 255, _data_14);
@@ -2025,17 +2078,17 @@ static void cmdmenu_func_484C(void) {
 // offset: 0x486C | func: 36
 static void cmdmenu_func_486C(void) {
     if ((_data_1C != 0) && (_data_84 == 0)) {
-        _data_30 += gUpdateRate * 32;
-        if (_data_30 > 160) {
-            _data_30 = 160;
+        dInfoScrollOpacity += gUpdateRate * 32;
+        if (dInfoScrollOpacity > 160) {
+            dInfoScrollOpacity = 160;
         }
     } else if (_bss_C2A == 0) {
-        _data_30 -= gUpdateRate * 32;
-        if (_data_30 < 0) {
-            _data_30 = 0;
+        dInfoScrollOpacity -= gUpdateRate * 32;
+        if (dInfoScrollOpacity < 0) {
+            dInfoScrollOpacity = 0;
         }
     }
-    if ((_data_1C != 0) && (_data_30 == 160)) {
+    if ((_data_1C != 0) && (dInfoScrollOpacity == 160)) {
         _bss_C2A += gUpdateRate * 4;
         if (_data_24 < _bss_C2A) {
             _bss_C2A = _data_24;
@@ -2052,10 +2105,10 @@ static void cmdmenu_func_486C(void) {
             _data_124 += 1;
         }
     }
-    if (_data_30 == 0) {
-        if (*_data_34 != NULL) {
-            mmFree(*_data_34);
-            *_data_34 = NULL;
+    if (dInfoScrollOpacity == 0) {
+        if (*dTextStrings != NULL) {
+            mmFree(*dTextStrings);
+            *dTextStrings = NULL;
         }
     } else {
         while (_data_120 >= 3) {
@@ -2077,18 +2130,19 @@ static void cmdmenu_func_486C(void) {
 
 // offset: 0x4AD4 | func: 37
 // Draws the info box at the top of the screen describing the highlighted/z-locked item.
-static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
-    s32 sp10C;
+static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+    s32 charIdx;
     s32 y;
     s32 sp104;
     s32 height;
     s32 tempY;
-    s32 i;
+    s32 lineIdx;
     Gfx* dl;
 
-    if (_data_30 == 0) {
+    if (dInfoScrollOpacity == 0) {
         return;
     }
+
     dl = *gdl;
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     dl_apply_combine(&dl);
@@ -2098,18 +2152,19 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl_apply_other_mode(&dl);
     gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
     dl_apply_geometry_mode(&dl);
-    dl_set_prim_color(&dl, 255, 255, 255, _data_30);
-    sp10C = _data_2C << 2;
+    dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
+    charIdx = _data_2C << 2;
     sp104 = _data_20 << 2;
     sp104 -= (16 << 2);
     y = _data_28 << 2;
     height = _bss_C2A << 2;
 
+    //Draw scroll's paper BG
     cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C - sp104,
+        /*ulx*/ charIdx - sp104,
         /*uly*/ y,
-        /*lrx*/ sp10C + sp104,
+        /*lrx*/ charIdx + sp104,
         /*lry*/ y + height,
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(0), 
@@ -2117,11 +2172,12 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
 
+    //Draw scroll's left side
     cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
-        /*lrx*/ sp10C - sp104 - (16 << 2),
+        /*lrx*/ charIdx - sp104 - (16 << 2),
         /*lry*/ y,
-        /*ulx*/ sp10C - sp104,
+        /*ulx*/ charIdx - sp104,
         /*uly*/ y + height,
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(0), 
@@ -2129,9 +2185,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C + sp104,
+        /*ulx*/ charIdx + sp104,
         /*uly*/ y,
-        /*lrx*/ sp10C + sp104 + (16 << 2),
+        /*lrx*/ charIdx + sp104 + (16 << 2),
         /*lry*/ y + height,
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(15), /*t*/ qs105(0),
@@ -2147,9 +2203,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         
         tempY = y;
         gSPTextureRectangle(dl++, 
-            /*ulx*/ sp10C - sp104,
+            /*ulx*/ charIdx - sp104,
             /*uly*/ tempY,
-            /*lrx*/ sp10C + sp104,
+            /*lrx*/ charIdx + sp104,
             /*lry*/ tempY + (8 << 2),
             /*tile*/ G_TX_RENDERTILE,
             /*s*/ qs105(0), /*t*/ qs105(7), 
@@ -2159,9 +2215,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
         tempY = (y + height) - (6 << 2);
         gSPTextureRectangle(dl++, 
-            /*ulx*/ sp10C - sp104,
+            /*ulx*/ charIdx - sp104,
             /*uly*/ tempY,
-            /*lrx*/ sp10C + sp104,
+            /*lrx*/ charIdx + sp104,
             /*lry*/ tempY + (8 << 2),
             /*tile*/ G_TX_RENDERTILE,
             /*s*/ qs105(0), /*t*/ qs105(0), 
@@ -2169,15 +2225,15 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         );
         gDLBuilder->needsPipeSync = 1;
 
-        dl_set_prim_color(&dl, 255, 255, 255, _data_30);
+        dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
     }
 
     tempY = y - (11 << 2);
     cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C - sp104,
+        /*ulx*/ charIdx - sp104,
         /*uly*/ tempY,
-        /*lrx*/ sp10C + sp104,
+        /*lrx*/ charIdx + sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2188,9 +2244,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     tempY = (y + height) - (4 << 2);
     cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C - sp104,
+        /*ulx*/ charIdx - sp104,
         /*uly*/ tempY,
-        /*lrx*/ sp10C + sp104,
+        /*lrx*/ charIdx + sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2201,9 +2257,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C - sp104 - (16 << 2),
+        /*ulx*/ charIdx - sp104 - (16 << 2),
         /*uly*/ tempY,
-        /*lrx*/ sp10C - sp104,
+        /*lrx*/ charIdx - sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2211,9 +2267,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C + sp104,
+        /*ulx*/ charIdx + sp104,
         /*uly*/ tempY,
-        /*lrx*/ sp10C + sp104 + (16 << 2),
+        /*lrx*/ charIdx + sp104 + (16 << 2),
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(15), /*t*/ qs105(15.9688), 
@@ -2222,9 +2278,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
     tempY = (y + height) - (4 << 2);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C - sp104 - (16 << 2),
+        /*ulx*/ charIdx - sp104 - (16 << 2),
         /*uly*/ tempY,
-        /*lrx*/ sp10C - sp104,
+        /*lrx*/ charIdx - sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2232,9 +2288,9 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
     gSPTextureRectangle(dl++, 
-        /*ulx*/ sp10C + sp104,
+        /*ulx*/ charIdx + sp104,
         /*uly*/ tempY,
-        /*lrx*/ sp10C + sp104 + (16 << 2),
+        /*lrx*/ charIdx + sp104 + (16 << 2),
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(15), /*t*/ qs105(15.9688), 
@@ -2244,28 +2300,33 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     dl_set_prim_color(&dl, 255, 255, 255, 255);
 
-    if (_data_44 < 0) {
+    //Return early if there's no gametext
+    if (dGametextStringID < 0) {
         return;
     }
-    if (_data_34[0] == NULL) {
-        _data_34[0] = _data_44 >= 256 
-            ? gDLL_21_Gametext->vtbl->get_text(568, _data_44 - 256) 
-            : gDLL_21_Gametext->vtbl->get_text(3, _data_44);
-        _data_34[1] = NULL;
-        _data_34[2] = NULL;
-        _data_34[3] = NULL;
-        sp10C = 0;
-        i = 1;
-        while (_data_34[0][sp10C] != '\0') {
-            if (_data_34[0][sp10C] == '|') {
-                _data_34[0][sp10C] = '\0';
-                sp10C += 2;
-                _data_34[i] = &_data_34[0][sp10C];
-                i += 1;
-            }
-            sp10C += 1;
+
+    //Get the gametext lines
+    if (dTextStrings[0] == NULL) {
+        //Get the item's string (use a different gametext file for lineIDs beyond 255) 
+        dTextStrings[0] = dGametextStringID >= 256 
+            ? gDLL_21_Gametext->vtbl->get_text(GAMETEXT_238_UI_Text_2, dGametextStringID - 256) 
+            : gDLL_21_Gametext->vtbl->get_text(GAMETEXT_003_UI_Text_1, dGametextStringID);
+        dTextStrings[1] = NULL;
+        dTextStrings[2] = NULL;
+        dTextStrings[3] = NULL;
+
+        //Check for bar delimiter in text (separates lines)
+        for (charIdx = 0, lineIdx = 1; dTextStrings[0][charIdx] != '\0'; charIdx++) {
+            if (dTextStrings[0][charIdx] == '|') {
+                dTextStrings[0][charIdx] = '\0';
+                charIdx += 2; //ROM's text should have space after bar, so skipping it
+                
+                dTextStrings[lineIdx] = &dTextStrings[0][charIdx]; //store address of new line
+                lineIdx++;
+            }            
         }
     }
+
     if (_bss_C2A > 0) {
         font_window_set_coords(3, 
             /*x1*/ _data_2C - _data_20, 
@@ -2276,18 +2337,23 @@ static void cmdmenu_func_4AD4(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         font_window_set_bg_colour(3, 0, 0, 0, 0);
         font_window_flush_strings(3);
         font_window_set_text_colour(3, 0, 0, 255, 255, 255);
+
         y = 3;
-        for (i = 0; i < 4; i++) {
-            if (_data_34[i] == NULL) {
+
+        //Print the text lines
+        for (lineIdx = 0; lineIdx < 4; lineIdx++) {
+            if (dTextStrings[lineIdx] == NULL) {
                 break;
             }
-            font_window_add_string_xy(3, -0x8000, y, _data_34[i], 1, ALIGN_TOP_CENTER);
+            font_window_add_string_xy(3, -0x8000, y, dTextStrings[lineIdx], 1, ALIGN_TOP_CENTER);
             font_window_set_text_colour(3, 20, 20, 20, 255, 255);
             font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
             y += 16;
         }
+
         font_window_draw(&dl, mtxs, vtxs, 3);
     }
+
     *gdl = dl;
 }
 
@@ -2483,9 +2549,9 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             sp7D = -1;
             texIdx = CMDMENU_TEX_40_Sabre;
         }
-        _data_68 = tex_load_deferred(_data_9D8[texIdx]);
-        rcp_screen_full_write(&sp74, _data_68, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, SCREEN_WRITE_TRANSLUCENT);
-        tex_free(_data_68);
+        dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
+        rcp_screen_full_write(&sp74, dInventoryPageIcon, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, SCREEN_WRITE_TRANSLUCENT);
+        tex_free(dInventoryPageIcon);
     }
     if ((sStatsChangeTimers.playerScarabCount >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
         var_fv1 = 255.0f;

@@ -322,7 +322,7 @@ void minimap_dtor(void *dll) {
   * This inventory item/option was either scrapped or yet to be added, but unused text also exists for it! 
   */
 void minimap_toggle_via_cmdmenu(void) {
-    if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Toggle_Minimap)) {
+    if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Toggle_Minimap)) {
         sMinimapVisible = 1 - sMinimapVisible;
     }
 }
