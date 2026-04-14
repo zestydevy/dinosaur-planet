@@ -345,8 +345,10 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
         //Handle player anim progress/looping
         if (func_80024108(player, ((f32)sPrevYaw - (f32)objData->yaw) / 9500.0f, gUpdateRateF, 0) != 0) {
             if ((((f32)sPrevYaw - (f32)objData->yaw) / 9500.0f) < 0.0f) {
+                //Start at end of animation
                 func_80023D30(player, 0x401, 1.0f, 0);
             } else {
+                //Start at beginning of animation
                 func_80023D30(player, 0x401, 0.0f, 0);
             }
         }
@@ -354,8 +356,10 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
         //Handle LightFoot anim progress/looping
         if (func_80024108(objData->lightFoot, -(((f32)sPrevYaw - (f32)objData->yaw) / 9500.0f), gUpdateRateF, 0) != 0) {
             if (-(((f32)sPrevYaw - (f32)objData->yaw) / 9500.0f) < 0.0f) {
+                //Start at end of animation
                 func_80023D30(objData->lightFoot, 0, 1.0f, 0);
             } else {
+                //Start at beginning of animation
                 func_80023D30(objData->lightFoot, 0, 0.0f, 0);
             }
         }

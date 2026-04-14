@@ -31,7 +31,7 @@ typedef struct {
 
 typedef enum {
     WMWizard_FLAG_None = 0,
-    WMWizard_FLAG_80 = 0x80,
+    WMWizard_FLAG_80 = 0x80
 } WMWizard_Flags;
 
 typedef enum {

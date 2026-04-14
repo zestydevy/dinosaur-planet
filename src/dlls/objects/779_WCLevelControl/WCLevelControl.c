@@ -453,7 +453,7 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
     case 1:
         if (objdata->unk5 & 1) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
-            func_8000F64C(0x11, 0x3C);
+            func_8000F64C(0x11, 60);
             func_8000F6CC();
         } else if (main_get_bits(BIT_7F9) != 0) {
             objdata->unk5 |= 4;
@@ -476,7 +476,7 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
     case 2:
         if (objdata->unk5 & 1) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
-            func_8000F64C(0x11, 0x3C);
+            func_8000F64C(0x11, 60);
             func_8000F6CC();
         } else if (main_get_bits(BIT_7FA) != 0) {
             objdata->unk5 |= 8;
@@ -526,7 +526,7 @@ static void dll_779_func_1928(Object *self, WCLevelControl_Data *objdata) {
     switch(objdata->unk4) {
         case 6:
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
-            func_8000F64C(0x11, 0x3C);
+            func_8000F64C(0x11, 60);
             func_8000F6CC();
             objdata->unk4 = 4;
             break;
