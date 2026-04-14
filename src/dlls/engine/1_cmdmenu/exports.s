@@ -24,9 +24,9 @@ _exports:
 .dword cmdmenu_func_1338
 .dword cmdmenu_func_13F4
 .dword cmdmenu_disable_buttons
-.dword cmdmenu_func_6984
-.dword cmdmenu_func_69F8
-.dword cmdmenu_func_6B00
+.dword cmdmenu_set_buttons_override
+.dword cmdmenu_info_show
+.dword cmdmenu_info_show_tex
 .dword cmdmenu_toggle_forced_stats_display
 .dword cmdmenu_energy_bar_create
 .dword cmdmenu_energy_bar_set

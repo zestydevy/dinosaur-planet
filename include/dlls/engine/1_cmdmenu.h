@@ -28,6 +28,28 @@ typedef enum {
     CMDMENU_CATEGORY_7 = 7
 } CmdMenuPageCategories;
 
+typedef enum {
+    CMDMENU_PAGE_0_Items_Krystal = 0,
+    CMDMENU_PAGE_1_Items_Sabre = 1,
+    CMDMENU_PAGE_2_Food_Actions_Krystal = 2,
+    CMDMENU_PAGE_3_Food_Actions_Sabre = 3,
+    CMDMENU_PAGE_4_Food_Krystal = 4,
+    CMDMENU_PAGE_5_Food_Sabre = 5,
+    CMDMENU_PAGE_6_Spells = 6,
+    CMDMENU_PAGE_7_Sidekick_Kyte = 7,
+    CMDMENU_PAGE_8_Sidekick_Tricky = 8,
+    CMDMENU_PAGE_9_Food_Actions_Kyte = 9,
+    CMDMENU_PAGE_10_Food_Actions_Tricky = 10,
+    CMDMENU_PAGE_11_Food_Kyte = 11,
+    CMDMENU_PAGE_12_Food_Tricky = 12
+} CmdMenuPages;
+
+#define SOUND_NONE 0
+#define SOUND_ITEM 1
+#define SOUND_PAGE 2
+
+#define CMDMENU_CLEAR_BUTTONS_OVERRIDE -1
+
 DLL_INTERFACE(DLL_1_cmdmenu) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ s32 (*func_308)(void);
@@ -46,9 +68,9 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*13*/ void (*func_1338)(s32 gametextID, s32 arg1, s32 arg2);
 /*14*/ void (*func_13F4)(void);
 /*15*/ void (*disable_buttons)(u16 mask);
-/*16*/ void (*func_6984)(s32 arg0);
-/*17*/ void (*func_69F8)(s32 arg0, s32 arg1, s32 arg2);
-/*18*/ void (*func_6B00)(s16 textureID, s32 arg1, s32 arg2);
+/*16*/ void (*set_buttons_override)(s32 buttonsOverride); //Simulate controller button presses (only for the cmdmenu), used by tutorial sequences like Tricky's sidekick command explanation.
+/*17*/ void (*info_show)(s16 itemGamebit, s32 displayDuration, s32 itemCount); //Show an item info pop-up in the bottom-left of screen (used after collecting certain items, e.g. Kyte's grubs) - the item is specified using its inventory gamebitID.
+/*18*/ void (*info_show_tex)(s16 textureID, s32 displayDuration, s32 itemCount); //Show an item info pop-up in the bottom-left of screen (used after collecting certain items, e.g. Kyte's grubs) - the item is specified using its textable textureID.
 /*19*/ void (*toggle_forced_stats_display)(u8 force);
 /*20*/ void (*energy_bar_create)(s32 minEnergy, s32 maxEnergy, s32 arg2, s32 arg3, s32 arg4);
 /*21*/ void (*energy_bar_set)(s32 energy);

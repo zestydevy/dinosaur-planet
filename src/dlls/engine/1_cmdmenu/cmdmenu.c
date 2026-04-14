@@ -27,12 +27,28 @@
 
 // official filename: 9slcommandmenu.c (default.dol)
 
+#define SCREEN_TOP_LEFT_X 0
+#define SCREEN_TOP_LEFT_Y 0
+
+#define POS_HEALTH_X 60
+#define POS_HEALTH_Y 20
+
+#define POS_HEALTH_MARGIN_X 10
+
+#define POS_PAGE_ICON_X 261
+#define POS_PAGE_ICON_Y 10
+
+#define POS_ITEM_HL_X1 266
+#define POS_ITEM_HL_Y1 82
+#define POS_ITEM_HL_X2 282
+#define POS_ITEM_HL_Y2 102
+
 typedef struct {
 /*0*/ Texture* texture;
 /*4*/ s32 timer;
 /*8*/ f32 opacity;
 /*C*/ s16 count;
-} CmdmenuItemUnkBSS; //ItemInfoBox?
+} CmdmenuInfoShowData; //ItemInfoBox?
 
 typedef struct {
 /*0*/ InventoryItem* items;
@@ -40,25 +56,6 @@ typedef struct {
 /*8*/ u32 mesgID; // objmesg ID sent to player
 /*C*/ s32 btnMask; // mask of joypad buttons that can be used to move to this item
 } CmdmenuPage;
-
-typedef struct {
-    f32 unk0; //scarabUIOpacity
-    f32 unk4; //playerIconMagicBarOpacity
-    s32 unk8;
-    s32 unkC; //healthValue
-} CmdmenuBSS0;
-
-// size: 0x18
-typedef struct {
-/*0*/ Texture* unk0;
-/*4*/ s32 unk4;
-/*8*/ s16 unk8;
-/*8*/ s16 unkA;
-/*C*/ s32 unkC;
-/*10*/ s16 unk10;
-/*12*/ s16 unk12;
-/*14*/ s32 unk14;
-} CmdmenuItemUnkBSS6B8;
 
 typedef union { 
     struct {
@@ -167,30 +164,18 @@ enum CmdMenuTextures {
 };
 
 #define NO_GAMETEXT -1
+#define NO_TEXTURE -1
+#define NO_SIDEKICK_COMMAND -1
 #define NO_PAGE -1
-
-typedef enum {
-    CMDMENU_PAGE_0_Items_Krystal = 0,
-    CMDMENU_PAGE_1_Items_Sabre = 1,
-    CMDMENU_PAGE_2_Food_Actions_Krystal = 2,
-    CMDMENU_PAGE_3_Food_Actions_Sabre = 3,
-    CMDMENU_PAGE_4_Food_Krystal = 4,
-    CMDMENU_PAGE_5_Food_Sabre = 5,
-    CMDMENU_PAGE_6_Spells = 6,
-    CMDMENU_PAGE_7_Sidekick_Kyte = 7,
-    CMDMENU_PAGE_8_Sidekick_Tricky = 8,
-    CMDMENU_PAGE_9_Food_Actions_Kyte = 9,
-    CMDMENU_PAGE_10_Food_Actions_Tricky = 10,
-    CMDMENU_PAGE_11_Food_Kyte = 11,
-    CMDMENU_PAGE_12_Food_Tricky = 12
-} CmdMenuPages;
+#define MAX_OPACITY 0xFF
+#define MAX_LOADED_ITEMS 64
 
 /*0x0*/ static s8 _data_0 = 0;
 /*0x4*/ static s8 _data_4 = 0;
 /*0x8*/ static s8 _data_8 = 1;
-/*0xC*/ static s16 _data_C = 0x0048;
-/*0x10*/ static s16 _data_10 = 0x0000;
-/*0x14*/ static s16 _data_14 = 0x0000;
+/*0xC*/ static s16 _data_C = 72;
+/*0x10*/ static s16 _data_10 = 0;
+/*0x14*/ static s16 _data_14 = 0;
 /*0x18*/ static s16 _data_18 = -1;
 /*0x1C*/ static s8 _data_1C = 0;
 /*0x20*/ static s16 _data_20 = 60;
@@ -214,13 +199,13 @@ typedef enum {
 /*0x44*/ static s16 dGametextStringID = NO_GAMETEXT;
 
 /*0x48*/ static s8 _data_48 = 0;
-/*0x4C*/ static s16 _data_4C = 0x0078;
-/*0x50*/ static s16 _data_50 = 0x0050;
-/*0x54*/ static s16 _data_54 = 0x0014;
-/*0x58*/ static s16 _data_58 = 0x00a0;
-/*0x5C*/ static s16 _data_5C = 0x0000;
+/*0x4C*/ static s16 _data_4C = 120;
+/*0x50*/ static s16 _data_50 = 80;
+/*0x54*/ static s16 _data_54 = 20;
+/*0x58*/ static s16 _data_58 = 160;
+/*0x5C*/ static s16 _data_5C = 0;
 /*0x60*/ static s16 _data_60 = 0;
-/*0x64*/ static u32 _data_64 = 0xffff0000;
+/*0x64*/ static s16 _data_64 = -1;
 /*0x68*/ static Texture* dInventoryPageIcon = NULL; //Icon in the top-right corner of screen: Bag/SpellBook/Kyte/Tricky
 /*0x6C*/ static u32 _data_6C[] = {
     0x3f800000, 0xff000000
@@ -231,7 +216,7 @@ typedef enum {
 /*0x80*/ static u8 sForceStatsDisplay = FALSE;
 /*0x84*/ static s16 _data_84 = 0;
 /*0x88*/ static s8 _data_88 = 1;
-/*0x8C*/ static s16 _data_8C[] = {
+/*0x8C*/ static s16 dSpellGamebits[] = {
     BIT_Spell_Projectile, 
     BIT_Spell_Illusion, 
     BIT_Spell_Forcefield, 
@@ -240,7 +225,7 @@ typedef enum {
     BIT_Spell_Mind_Read, 
     BIT_Spell_Grenade
 };
-/*0x9C*/ static s16 _data_9C[] = {
+/*0x9C*/ static s16 dSpellTextableIDs[] = {
     TEXTABLE_578_CMDMENU_ProjectileSpell_NoBG, 
     TEXTABLE_57A_CMDMENU_IllusionSpell_NoBG, 
     TEXTABLE_57D_CMDMENU_ShieldSpell_NoBG, 
@@ -249,7 +234,7 @@ typedef enum {
     TEXTABLE_57E_CMDMENU_UnkSpell_NoBG, 
     TEXTABLE_579_CMDMENU_GrenadeSpell_NoBG
 };
-/*0xAC*/ static s16 _data_AC[] = {
+/*0xAC*/ static s16 dCommandTextableIDs[] = {
     TEXTABLE_57F_CMDMENU_FindCommand_NoBG, 
     TEXTABLE_57F_CMDMENU_FindCommand_NoBG, 
     TEXTABLE_581_CMDMENU_DistractCommand_NoBG, 
@@ -284,159 +269,160 @@ typedef enum {
 /*0x124*/ static s8 _data_124 = 0;
 
 #define NONE 0xFFFF
+#define EXIT -1
 #define END {NONE, NONE, NONE, NONE, 0x0000, 0x00, 0x00}
 
 /* Krystal items
  * 0x128*/ static InventoryItem dPage0ItemsKrystal[] = {
-    {BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    TEXTABLE_245, NONE,  0x010, -1, 1}, //Warp Crystal
-    {BIT_CRF_Prison_Key_1,       NONE,                             TEXTABLE_175, NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
-    {BIT_CRF_Power_Room_Key,     NONE,                             TEXTABLE_176, NONE,  0x008, -1, 1}, //Power Room Key (CloudRunner Fortress)
-    {BIT_CRF_Red_Power_Crystal,  NONE,                             TEXTABLE_180, NONE,  0x009, -1, 1}, //Red Power Crystal (CloudRunner Fortress)
-    {BIT_CRF_Green_Power_Crystal,NONE,                             TEXTABLE_181, NONE,  0x009, -1, 1}, //Green Power Crystal (CloudRunner Fortress)
-    {BIT_CRF_Blue_Power_Crystal, NONE,                             TEXTABLE_182, NONE,  0x009, -1, 1}, //Blue Power Crystal (CloudRunner Fortress)
-    {BIT_IM_Snowbike_Key,        NONE,                             TEXTABLE_175, NONE,  0x011, -1, 1}, //Snowbike Key (Removed)
-    {BIT_DIM_Mine_Key,           BIT_DIM_Used_Mine_Key,            TEXTABLE_175, NONE,  0x013, -1, 1}, //Mine Key (unused?)
-    {BIT_DIM_Alpine_Roots,       NONE,                             TEXTABLE_1A3, NONE,  0x00b, -1, 1}, //Alpine Root (unused?)
-    {BIT_DIM_Gear_1,             BIT_DIM_Used_Gear_1,              TEXTABLE_479, NONE,  0x00b, -1, 1}, //DIM Gear 1
-    {BIT_DIM_Gear_2,            BIT_DIM_Used_Gear_2,              TEXTABLE_479,  NONE,  0x00b, -1, 1}, //DIM Gear 2
-    {BIT_DIM_Gear_3,            BIT_DIM_Used_Gear_3,              TEXTABLE_479,  NONE,  0x00b, -1, 1}, //DIM Gear 3
-    {BIT_DIM_Gear_4,            BIT_DIM_Used_Gear_4,              TEXTABLE_479,  NONE,  0x00b, -1, 1}, //DIM Gear 4
-    {BIT_Krystal_Foodbag_S,     BIT_Krystal_Foodbag_M,            TEXTABLE_27A,  NONE,  0x016,  2, 2}, //Small Food Bag
-    {BIT_Krystal_Foodbag_M,     BIT_Krystal_Foodbag_L,            TEXTABLE_244,  NONE,  0x017,  2, 2}, //Medium Food Bag
-    {BIT_Krystal_Foodbag_L,     NONE,                             TEXTABLE_2BF,  NONE,  0x018,  2, 2}, //Large Food Bag
-    {BIT_Krystal_Dino_Bag_S,    BIT_Krystal_Dino_Bag_M,           TEXTABLE_471,  NONE,  0x02f,  9, 2}, //Small Grub Bag
-    {BIT_Krystal_Dino_Bag_M,    BIT_Krystal_Dino_Bag_L,           TEXTABLE_560,  NONE,  0x030,  9, 2}, //Medium Grub Bag
-    {BIT_Krystal_Dino_Bag_L,    NONE,                             TEXTABLE_560,  NONE,  0x031,  9, 2}, //Large Grub Bag
-    {BIT_Gold_Nugget_GP,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  NONE,  -1, 1}, //Gold Nugget #1 (Near Golden Plains)
-    {BIT_Gold_Nugget_LFV,       BIT_CC_Rescued_Kyte,              TEXTABLE_257,  NONE,  NONE,  -1, 1}, //Gold Nugget #2 (Near LightFoot Village)
-    {BIT_CC_Fire_Crystal,       NONE,                             TEXTABLE_4F7,  NONE,  0x102, -1, 1}, //Fire Crystal
-    {BIT_CC_Cell_Door_Key,      BIT_CC_Rescued_Kyte,              TEXTABLE_175,  NONE,  0x01e, -1, 1}, //Cell Door Key (Cape Claw?)
-    {BIT_SpellStone_CRF,        NONE,                             TEXTABLE_562,  NONE,  NONE,  -1, 1}, //SpellStone - CloudRunner Fortress (Inactive)
-    {BIT_SpellStone_BWC,        NONE,                             TEXTABLE_562,  NONE,  NONE,  -1, 1}, //SpellStone - BlackWater Canyon (Inactive)
-    {BIT_SpellStone_KP,         NONE,                             TEXTABLE_562,  NONE,  NONE,  -1, 1}, //SpellStone - Krazoa Palace (Inactive)
-    {BIT_Krazoa_Translator,     NONE,                             TEXTABLE_496,  NONE,  NONE,  -1, 1}, //Krazoa Translator
-    {BIT_Horn_of_Truth,         NONE,                             TEXTABLE_258,  NONE,  0x01d, -1, 1}, //Horn of Truth
-    {BIT_CRF_Treasure_Chest_Key,NONE,                             TEXTABLE_568,  NONE,  NONE,  -1, 1}, //Treasure Chest Key (CloudRunner Fortress)
-    {BIT_CloudRunner_Grubs,     NONE,                             TEXTABLE_1A5,  NONE,  0x02a, -1, 1}, //Blue Mushroom (CloudRunner Grubs?)
-    {BIT_Krystal_Fireflies,     NONE,                             TEXTABLE_46D,  NONE,  0x03d, -1, 1}, //Firefly Lantern
-    {BIT_CRF_Prison_Key_2,      NONE,                             TEXTABLE_175,  NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
-    {BIT_CC_Krazoa_Tablets,     NONE,                             TEXTABLE_496,  NONE,  0x05b, -1, 1}, //Krazoa Tablets
-    {BIT_Inventory_MoonSeeds,   NONE,                             TEXTABLE_40D,  NONE,  0x05e, -1, 1}, //MoonSeeds
-    {BIT_CC_Engineers_Key,      NONE,                             TEXTABLE_175,  NONE,  0x064, -1, 1}, //Construction Engineer's Key (CloudRunner Fortress)
-    {BIT_Gold_Nugget_CC,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  0x103, -1, 1}, //Gold Nugget #3 (Cape Claw)
+    {BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    TEXTABLE_245, NONE,  0x010, EXIT,                                SOUND_ITEM}, //Warp Crystal
+    {BIT_CRF_Prison_Key_1,       NONE,                             TEXTABLE_175, NONE,  0x007, EXIT,                                SOUND_ITEM}, //Prison Key (CloudRunner Fortress)
+    {BIT_CRF_Power_Room_Key,     NONE,                             TEXTABLE_176, NONE,  0x008, EXIT,                                SOUND_ITEM}, //Power Room Key (CloudRunner Fortress)
+    {BIT_CRF_Red_Power_Crystal,  NONE,                             TEXTABLE_180, NONE,  0x009, EXIT,                                SOUND_ITEM}, //Red Power Crystal (CloudRunner Fortress)
+    {BIT_CRF_Green_Power_Crystal,NONE,                             TEXTABLE_181, NONE,  0x009, EXIT,                                SOUND_ITEM}, //Green Power Crystal (CloudRunner Fortress)
+    {BIT_CRF_Blue_Power_Crystal, NONE,                             TEXTABLE_182, NONE,  0x009, EXIT,                                SOUND_ITEM}, //Blue Power Crystal (CloudRunner Fortress)
+    {BIT_IM_Snowbike_Key,        NONE,                             TEXTABLE_175, NONE,  0x011, EXIT,                                SOUND_ITEM}, //Snowbike Key (Removed)
+    {BIT_DIM_Mine_Key,           BIT_DIM_Used_Mine_Key,            TEXTABLE_175, NONE,  0x013, EXIT,                                SOUND_ITEM}, //Mine Key (unused?)
+    {BIT_DIM_Alpine_Roots,       NONE,                             TEXTABLE_1A3, NONE,  0x00b, EXIT,                                SOUND_ITEM}, //Alpine Root (unused?)
+    {BIT_DIM_Gear_1,             BIT_DIM_Used_Gear_1,              TEXTABLE_479, NONE,  0x00b, EXIT,                                SOUND_ITEM}, //DIM Gear 1
+    {BIT_DIM_Gear_2,            BIT_DIM_Used_Gear_2,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                SOUND_ITEM}, //DIM Gear 2
+    {BIT_DIM_Gear_3,            BIT_DIM_Used_Gear_3,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                SOUND_ITEM}, //DIM Gear 3
+    {BIT_DIM_Gear_4,            BIT_DIM_Used_Gear_4,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                SOUND_ITEM}, //DIM Gear 4
+    {BIT_Krystal_Foodbag_S,     BIT_Krystal_Foodbag_M,            TEXTABLE_27A,  NONE,  0x016, CMDMENU_PAGE_2_Food_Actions_Krystal, SOUND_PAGE}, //Small Food Bag
+    {BIT_Krystal_Foodbag_M,     BIT_Krystal_Foodbag_L,            TEXTABLE_244,  NONE,  0x017, CMDMENU_PAGE_2_Food_Actions_Krystal, SOUND_PAGE}, //Medium Food Bag
+    {BIT_Krystal_Foodbag_L,     NONE,                             TEXTABLE_2BF,  NONE,  0x018, CMDMENU_PAGE_2_Food_Actions_Krystal, SOUND_PAGE}, //Large Food Bag
+    {BIT_Krystal_Dino_Bag_S,    BIT_Krystal_Dino_Bag_M,           TEXTABLE_471,  NONE,  0x02f, CMDMENU_PAGE_9_Food_Actions_Kyte,    SOUND_PAGE}, //Small Grub Bag
+    {BIT_Krystal_Dino_Bag_M,    BIT_Krystal_Dino_Bag_L,           TEXTABLE_560,  NONE,  0x030, CMDMENU_PAGE_9_Food_Actions_Kyte,    SOUND_PAGE}, //Medium Grub Bag
+    {BIT_Krystal_Dino_Bag_L,    NONE,                             TEXTABLE_560,  NONE,  0x031, CMDMENU_PAGE_9_Food_Actions_Kyte,    SOUND_PAGE}, //Large Grub Bag
+    {BIT_Gold_Nugget_GP,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //Gold Nugget #1 (Near Golden Plains)
+    {BIT_Gold_Nugget_LFV,       BIT_CC_Rescued_Kyte,              TEXTABLE_257,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //Gold Nugget #2 (Near LightFoot Village)
+    {BIT_CC_Fire_Crystal,       NONE,                             TEXTABLE_4F7,  NONE,  0x102, EXIT,                                SOUND_ITEM}, //Fire Crystal
+    {BIT_CC_Cell_Door_Key,      BIT_CC_Rescued_Kyte,              TEXTABLE_175,  NONE,  0x01e, EXIT,                                SOUND_ITEM}, //Cell Door Key (Cape Claw?)
+    {BIT_SpellStone_CRF,        NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //SpellStone - CloudRunner Fortress (Inactive)
+    {BIT_SpellStone_BWC,        NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //SpellStone - BlackWater Canyon (Inactive)
+    {BIT_SpellStone_KP,         NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //SpellStone - Krazoa Palace (Inactive)
+    {BIT_Krazoa_Translator,     NONE,                             TEXTABLE_496,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //Krazoa Translator
+    {BIT_Horn_of_Truth,         NONE,                             TEXTABLE_258,  NONE,  0x01d, EXIT,                                SOUND_ITEM}, //Horn of Truth
+    {BIT_CRF_Treasure_Chest_Key,NONE,                             TEXTABLE_568,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //Treasure Chest Key (CloudRunner Fortress)
+    {BIT_CloudRunner_Grubs,     NONE,                             TEXTABLE_1A5,  NONE,  0x02a, EXIT,                                SOUND_ITEM}, //Blue Mushroom (CloudRunner Grubs?)
+    {BIT_Krystal_Fireflies,     NONE,                             TEXTABLE_46D,  NONE,  0x03d, EXIT,                                SOUND_ITEM}, //Firefly Lantern
+    {BIT_CRF_Prison_Key_2,      NONE,                             TEXTABLE_175,  NONE,  0x007, EXIT,                                SOUND_ITEM}, //Prison Key (CloudRunner Fortress)
+    {BIT_CC_Krazoa_Tablets,     NONE,                             TEXTABLE_496,  NONE,  0x05b, EXIT,                                SOUND_ITEM}, //Krazoa Tablets
+    {BIT_Inventory_MoonSeeds,   NONE,                             TEXTABLE_40D,  NONE,  0x05e, EXIT,                                SOUND_ITEM}, //MoonSeeds
+    {BIT_CC_Engineers_Key,      NONE,                             TEXTABLE_175,  NONE,  0x064, EXIT,                                SOUND_ITEM}, //Construction Engineer's Key (CloudRunner Fortress)
+    {BIT_Gold_Nugget_CC,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  0x103, EXIT,                                SOUND_ITEM}, //Gold Nugget #3 (Cape Claw)
     END
 };
 
 /* Sabre items
  * 0x2E4*/ static InventoryItem dPage1ItemsSabre[] = {
-    {BIT_SP_Krazoa_Translator,       NONE,                         TEXTABLE_175, NONE,  0x0a,  -1, 1}, //Gate Key (Northern Wastes) (Unused?)
-    {BIT_SW_Alpine_Roots,            NONE,                         TEXTABLE_1A3, NONE,  0x0b,  -1, 1}, //Alpine Root (Geyser area)
-    {BIT_Inventory_Blue_Mushrooms,   NONE,                         TEXTABLE_1A5, NONE,  0x0c,  -1, 1}, //Blue Mushroom
-    {BIT_Inventory_Purple_Mushrooms, NONE,                         TEXTABLE_498, NONE,  0x57,  -1, 1}, //Purple Mushroom
-    {BIT_Inventory_White_Mushrooms,  NONE,                         TEXTABLE_497, NONE,  0x56,  -1, 1}, //White Mushroom
-    {BIT_DIM_Mine_Key,               BIT_DIM_Used_Mine_Key,        TEXTABLE_175, NONE,  0x13,  -1, 1}, //Mine Key
-    {BIT_DIM_Alpine_Roots,           NONE,                         TEXTABLE_1A3, NONE,  0x0b,  -1, 1}, //Alpine Root (DIM)
-    {BIT_DIM_Gear_1,                 BIT_DIM_Used_Gear_1,          TEXTABLE_479, NONE,  0x0b,  -1, 1}, //DIM Gear 1 
-    {BIT_DIM_Gear_2,                 BIT_DIM_Used_Gear_2,          TEXTABLE_479, NONE,  0x0b,  -1, 1}, //DIM Gear 2
-    {BIT_DIM_Gear_3,                 BIT_DIM_Used_Gear_3,          TEXTABLE_479, NONE,  0x0b,  -1, 1}, //DIM Gear 3
-    {BIT_DIM_Gear_4,                BIT_DIM_Used_Gear_4,          TEXTABLE_479,  NONE,  0x0b,  -1, 1}, //DIM Gear 4
-    {BIT_Belina_Te_Cell_Key,        BIT_Used_Belina_Te_Cell_Key,  TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Belina Te Cell Key (DarkIce Mines)
-    {BIT_Tricky_Cell_Key,           BIT_Used_Tricky_Cell_Key,     TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Tricky Cell Key (DarkIce Mines)
-    {BIT_Sabre_Warp_Crystal,        BIT_Sabre_Used_Warp_Crystal,  TEXTABLE_245,  NONE,  0x10,  -1, 1}, //Warp Crystal
-    {BIT_DIM_Door_Key_1,            BIT_DIM_Used_Door_Key_1,      TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Door Key 1 (DarkIce Mines)
-    {BIT_DIM_Door_Key_2,            BIT_DIM_Used_Door_Key_2,      TEXTABLE_175,  NONE,  0x19,  -1, 1}, //Door Key 2 (DarkIce Mines)
-    {BIT_Sabre_Foodbag_S,           BIT_Sabre_Foodbag_M,          TEXTABLE_27A,  NONE,  0x16,   3, 2}, //Small Food Bag
-    {BIT_Sabre_Foodbag_M,           BIT_Sabre_Foodbag_L,          TEXTABLE_244,  NONE,  0x17,   3, 2}, //Medium Food Bag
-    {BIT_Sabre_Foodbag_L,           NONE,                         TEXTABLE_2BF,  NONE,  0x18,   3, 2}, //Large Food Bag
-    {BIT_Sabre_Dino_Bag_S,          BIT_Sabre_Dino_Bag_M,         TEXTABLE_471,  NONE,  0x32,  10, 2}, //Small Dinosaur Food Bag
-    {BIT_Sabre_Dino_Bag_M,          BIT_Sabre_Dino_Bag_L,         TEXTABLE_560,  NONE,  0x33,  10, 2}, //Medium Dinosaur Food Bag
-    {BIT_Sabre_Dino_Bag_L,          NONE,                         TEXTABLE_560,  NONE,  0x34,  10, 2}, //Large Dinosaur Food Bag
-    {BIT_Inventory_Corrupt_Item,    NONE,                         TEXTABLE_175,  NONE,  0x1d,  -1, 1}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
-    {BIT_Horn_of_Truth,             NONE,                         TEXTABLE_258,  NONE,  0x1d,  -1, 1}, //Horn of Truth
-    {BIT_Sabre_Fireflies,           NONE,                         TEXTABLE_46D,  NONE,  0x3d,  -1, 1}, //Firefly Lantern
-    {BIT_WC_Silver_Tooth,           BIT_WC_Used_Silver_Tooth,     TEXTABLE_52B,  NONE,  0x00,  -1, 1}, //Silver Tooth (Walled City)
-    {BIT_WC_Gold_Tooth,             BIT_WC_Used_Gold_Tooth,       TEXTABLE_52A,  NONE,  0x00,  -1, 1}, //Gold Tooth (Walled City)
-    {BIT_WC_Sun_Stone,              BIT_WC_Used_Sun_Stone,        TEXTABLE_3A8,  NONE,  0x1b,  -1, 1}, //Sun Stone (Walled City)
-    {BIT_WC_Moon_Stone,             BIT_WC_Used_Moon_Stone,       TEXTABLE_3D6,  NONE,  0x1c,  -1, 1}, //Moon Stone (Walled City)
-    {BIT_Inventory_MoonSeeds,       NONE,                         TEXTABLE_40D,  NONE,  0x62,  -1, 1}, //MoonSeeds
-    {BIT_SpellStone_DIM,            BIT_SpellStone_DIM_Activated, TEXTABLE_562,  NONE,  0x60,  -1, 1}, //SpellStone - DarkIce Mines (Inactive)
-    {BIT_SpellStone_DIM_Activated,  NONE,                         TEXTABLE_563,  NONE,  0x61,  -1, 1}, //SpellStone - DarkIce Mines (Activated) 
-    {BIT_SpellStone_WC,             NONE,                         TEXTABLE_180,  NONE,  NONE,  -1, 1}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
-    {BIT_SpellStone_DR,             NONE,                         TEXTABLE_180,  NONE,  NONE,  -1, 1}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
-    {BIT_DB_PointBack_Egg,          NONE,                         TEXTABLE_55E,  NONE,  0x5e,  -1, 1}, //PointBack Egg (Diamond Bay)
-    {BIT_DB_Bay_Diamond,            NONE,                         TEXTABLE_55F,  NONE,  0x5f,  -1, 1}, //Bay Diamond
+    {BIT_SP_Krazoa_Translator,       NONE,                         TEXTABLE_175, NONE,  0x0a,  EXIT,                                SOUND_ITEM}, //Gate Key (Northern Wastes) (Unused?)
+    {BIT_SW_Alpine_Roots,            NONE,                         TEXTABLE_1A3, NONE,  0x0b,  EXIT,                                SOUND_ITEM}, //Alpine Root (Geyser area)
+    {BIT_Inventory_Blue_Mushrooms,   NONE,                         TEXTABLE_1A5, NONE,  0x0c,  EXIT,                                SOUND_ITEM}, //Blue Mushroom
+    {BIT_Inventory_Purple_Mushrooms, NONE,                         TEXTABLE_498, NONE,  0x57,  EXIT,                                SOUND_ITEM}, //Purple Mushroom
+    {BIT_Inventory_White_Mushrooms,  NONE,                         TEXTABLE_497, NONE,  0x56,  EXIT,                                SOUND_ITEM}, //White Mushroom
+    {BIT_DIM_Mine_Key,               BIT_DIM_Used_Mine_Key,        TEXTABLE_175, NONE,  0x13,  EXIT,                                SOUND_ITEM}, //Mine Key
+    {BIT_DIM_Alpine_Roots,           NONE,                         TEXTABLE_1A3, NONE,  0x0b,  EXIT,                                SOUND_ITEM}, //Alpine Root (DIM)
+    {BIT_DIM_Gear_1,                 BIT_DIM_Used_Gear_1,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                SOUND_ITEM}, //DIM Gear 1 
+    {BIT_DIM_Gear_2,                 BIT_DIM_Used_Gear_2,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                SOUND_ITEM}, //DIM Gear 2
+    {BIT_DIM_Gear_3,                 BIT_DIM_Used_Gear_3,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                SOUND_ITEM}, //DIM Gear 3
+    {BIT_DIM_Gear_4,                BIT_DIM_Used_Gear_4,          TEXTABLE_479,  NONE,  0x0b,  EXIT,                                SOUND_ITEM}, //DIM Gear 4
+    {BIT_Belina_Te_Cell_Key,        BIT_Used_Belina_Te_Cell_Key,  TEXTABLE_175,  NONE,  0x19,  EXIT,                                SOUND_ITEM}, //Belina Te Cell Key (DarkIce Mines)
+    {BIT_Tricky_Cell_Key,           BIT_Used_Tricky_Cell_Key,     TEXTABLE_175,  NONE,  0x19,  EXIT,                                SOUND_ITEM}, //Tricky Cell Key (DarkIce Mines)
+    {BIT_Sabre_Warp_Crystal,        BIT_Sabre_Used_Warp_Crystal,  TEXTABLE_245,  NONE,  0x10,  EXIT,                                SOUND_ITEM}, //Warp Crystal
+    {BIT_DIM_Door_Key_1,            BIT_DIM_Used_Door_Key_1,      TEXTABLE_175,  NONE,  0x19,  EXIT,                                SOUND_ITEM}, //Door Key 1 (DarkIce Mines)
+    {BIT_DIM_Door_Key_2,            BIT_DIM_Used_Door_Key_2,      TEXTABLE_175,  NONE,  0x19,  EXIT,                                SOUND_ITEM}, //Door Key 2 (DarkIce Mines)
+    {BIT_Sabre_Foodbag_S,           BIT_Sabre_Foodbag_M,          TEXTABLE_27A,  NONE,  0x16,  CMDMENU_PAGE_3_Food_Actions_Sabre,   SOUND_PAGE}, //Small Food Bag
+    {BIT_Sabre_Foodbag_M,           BIT_Sabre_Foodbag_L,          TEXTABLE_244,  NONE,  0x17,  CMDMENU_PAGE_3_Food_Actions_Sabre,   SOUND_PAGE}, //Medium Food Bag
+    {BIT_Sabre_Foodbag_L,           NONE,                         TEXTABLE_2BF,  NONE,  0x18,  CMDMENU_PAGE_3_Food_Actions_Sabre,   SOUND_PAGE}, //Large Food Bag
+    {BIT_Sabre_Dino_Bag_S,          BIT_Sabre_Dino_Bag_M,         TEXTABLE_471,  NONE,  0x32,  CMDMENU_PAGE_10_Food_Actions_Tricky, SOUND_PAGE}, //Small Dinosaur Food Bag
+    {BIT_Sabre_Dino_Bag_M,          BIT_Sabre_Dino_Bag_L,         TEXTABLE_560,  NONE,  0x33,  CMDMENU_PAGE_10_Food_Actions_Tricky, SOUND_PAGE}, //Medium Dinosaur Food Bag
+    {BIT_Sabre_Dino_Bag_L,          NONE,                         TEXTABLE_560,  NONE,  0x34,  CMDMENU_PAGE_10_Food_Actions_Tricky, SOUND_PAGE}, //Large Dinosaur Food Bag
+    {BIT_Inventory_Corrupt_Item,    NONE,                         TEXTABLE_175,  NONE,  0x1d,  EXIT,                                SOUND_ITEM}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
+    {BIT_Horn_of_Truth,             NONE,                         TEXTABLE_258,  NONE,  0x1d,  EXIT,                                SOUND_ITEM}, //Horn of Truth
+    {BIT_Sabre_Fireflies,           NONE,                         TEXTABLE_46D,  NONE,  0x3d,  EXIT,                                SOUND_ITEM}, //Firefly Lantern
+    {BIT_WC_Silver_Tooth,           BIT_WC_Used_Silver_Tooth,     TEXTABLE_52B,  NONE,  0x00,  EXIT,                                SOUND_ITEM}, //Silver Tooth (Walled City)
+    {BIT_WC_Gold_Tooth,             BIT_WC_Used_Gold_Tooth,       TEXTABLE_52A,  NONE,  0x00,  EXIT,                                SOUND_ITEM}, //Gold Tooth (Walled City)
+    {BIT_WC_Sun_Stone,              BIT_WC_Used_Sun_Stone,        TEXTABLE_3A8,  NONE,  0x1b,  EXIT,                                SOUND_ITEM}, //Sun Stone (Walled City)
+    {BIT_WC_Moon_Stone,             BIT_WC_Used_Moon_Stone,       TEXTABLE_3D6,  NONE,  0x1c,  EXIT,                                SOUND_ITEM}, //Moon Stone (Walled City)
+    {BIT_Inventory_MoonSeeds,       NONE,                         TEXTABLE_40D,  NONE,  0x62,  EXIT,                                SOUND_ITEM}, //MoonSeeds
+    {BIT_SpellStone_DIM,            BIT_SpellStone_DIM_Activated, TEXTABLE_562,  NONE,  0x60,  EXIT,                                SOUND_ITEM}, //SpellStone - DarkIce Mines (Inactive)
+    {BIT_SpellStone_DIM_Activated,  NONE,                         TEXTABLE_563,  NONE,  0x61,  EXIT,                                SOUND_ITEM}, //SpellStone - DarkIce Mines (Activated) 
+    {BIT_SpellStone_WC,             NONE,                         TEXTABLE_180,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {BIT_SpellStone_DR,             NONE,                         TEXTABLE_180,  NONE,  NONE,  EXIT,                                SOUND_ITEM}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {BIT_DB_PointBack_Egg,          NONE,                         TEXTABLE_55E,  NONE,  0x5e,  EXIT,                                SOUND_ITEM}, //PointBack Egg (Diamond Bay)
+    {BIT_DB_Bay_Diamond,            NONE,                         TEXTABLE_55F,  NONE,  0x5f,  EXIT,                                SOUND_ITEM}, //Bay Diamond
     END
 };
 
 /* Food Bag actions (Krystal)
  * 0x4A0*/ static InventoryItem dPage2FoodActionsKrystal[] = {
-    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, 4, 2}, //Eat food in foodbag
-    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, 4, 2}, //Place food down from foodbag
-    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, 4, 2}, //Give food from foodbag
-    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, 2, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, 2, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_4_Food_Krystal,            SOUND_PAGE}, //Eat food in foodbag
+    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_4_Food_Krystal,            SOUND_PAGE}, //Place food down from foodbag
+    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_4_Food_Krystal,            SOUND_PAGE}, //Give food from foodbag
+    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_2_Food_Actions_Krystal,    SOUND_PAGE}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_2_Food_Actions_Krystal,    SOUND_PAGE}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     END
 };
 
 /* Food Bag actions (Sabre)
  * 0x4E8*/ static InventoryItem dPage3FoodActionsSabre[] = {
-    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, 5, 2}, //Eat food in foodbag
-    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, 5, 2}, //Place food down from foodbag
-    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, 5, 2}, //Give food from foodbag
-    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, 3, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, 3, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_5_Food_Sabre,              SOUND_PAGE}, //Eat food in foodbag
+    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_5_Food_Sabre,              SOUND_PAGE}, //Place food down from foodbag
+    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_5_Food_Sabre,              SOUND_PAGE}, //Give food from foodbag
+    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_3_Food_Actions_Sabre,      SOUND_PAGE}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_3_Food_Actions_Sabre,      SOUND_PAGE}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     END
 };
 
 /* Food Bag items (Krystal)
  * 0x530*/ static InventoryItem dPage4FoodItemsKrystal[] = {
-    {BIT_Green_Apple_Count,  NONE,                  TEXTABLE_26E, NONE, 0x22, -1, 1}, //Green apple
-    {BIT_Red_Apple_Count,    NONE,                  TEXTABLE_26F, NONE, 0x23, -1, 1}, //Red apple
-    {BIT_Brown_Apple_Count,  NONE,                  TEXTABLE_270, NONE, 0x24, -1, 1}, //Brown Apple
-    {BIT_Fish_Count,         NONE,                  TEXTABLE_272, NONE, 0x25, -1, 1}, //Fish
-    {BIT_Smoked_Fish_Count,  NONE,                  TEXTABLE_2C6, NONE, 0x26, -1, 1}, //Smoked Fish
-    {BIT_Dino_Egg_Count,     NONE,                  TEXTABLE_2C4, NONE, 0x27, -1, 1}, //Dino Egg
-    {BIT_Moldy_Meat_Count,   NONE,                  TEXTABLE_2C5, NONE, 0x28, -1, 1}, //Moldy Meat
-    {BIT_Green_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x35, -1, 1}, //Green Bean
-    {BIT_Red_Bean_Count,     NONE,                  TEXTABLE_270, NONE, 0x36, -1, 1}, //Red Bean
-    {BIT_Brown_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x37, -1, 1}, //Brown Bean
-    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, -1, 1}, //Blue Bean
-    {BIT_Krystal_Foodbag_S, BIT_Krystal_Foodbag_M, TEXTABLE_27A,  NONE, 0x16,  2, 2}, //Small Food Bag
-    {BIT_Krystal_Foodbag_M, BIT_Krystal_Foodbag_L, TEXTABLE_244,  NONE, 0x17,  2, 2}, //Medium Food Bag
-    {BIT_Krystal_Foodbag_L, NONE,                  TEXTABLE_2BF,  NONE, 0x18,  2, 2}, //Large Food Bag
+    {BIT_Green_Apple_Count,  NONE,                 TEXTABLE_26E,  NONE, 0x22, EXIT,                                 SOUND_ITEM}, //Green apple
+    {BIT_Red_Apple_Count,    NONE,                 TEXTABLE_26F,  NONE, 0x23, EXIT,                                 SOUND_ITEM}, //Red apple
+    {BIT_Brown_Apple_Count,  NONE,                 TEXTABLE_270,  NONE, 0x24, EXIT,                                 SOUND_ITEM}, //Brown Apple
+    {BIT_Fish_Count,         NONE,                 TEXTABLE_272,  NONE, 0x25, EXIT,                                 SOUND_ITEM}, //Fish
+    {BIT_Smoked_Fish_Count,  NONE,                 TEXTABLE_2C6,  NONE, 0x26, EXIT,                                 SOUND_ITEM}, //Smoked Fish
+    {BIT_Dino_Egg_Count,     NONE,                 TEXTABLE_2C4,  NONE, 0x27, EXIT,                                 SOUND_ITEM}, //Dino Egg
+    {BIT_Moldy_Meat_Count,   NONE,                 TEXTABLE_2C5,  NONE, 0x28, EXIT,                                 SOUND_ITEM}, //Moldy Meat
+    {BIT_Green_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x35, EXIT,                                 SOUND_ITEM}, //Green Bean
+    {BIT_Red_Bean_Count,     NONE,                 TEXTABLE_270,  NONE, 0x36, EXIT,                                 SOUND_ITEM}, //Red Bean
+    {BIT_Brown_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x37, EXIT,                                 SOUND_ITEM}, //Brown Bean
+    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, EXIT,                                 SOUND_ITEM}, //Blue Bean
+    {BIT_Krystal_Foodbag_S, BIT_Krystal_Foodbag_M, TEXTABLE_27A,  NONE, 0x16, CMDMENU_PAGE_2_Food_Actions_Krystal,  SOUND_PAGE}, //Small Food Bag
+    {BIT_Krystal_Foodbag_M, BIT_Krystal_Foodbag_L, TEXTABLE_244,  NONE, 0x17, CMDMENU_PAGE_2_Food_Actions_Krystal,  SOUND_PAGE}, //Medium Food Bag
+    {BIT_Krystal_Foodbag_L, NONE,                  TEXTABLE_2BF,  NONE, 0x18, CMDMENU_PAGE_2_Food_Actions_Krystal,  SOUND_PAGE}, //Large Food Bag
     END
 };
 
 /* Food Bag items (Sabre)
  * 0x5E4*/ static InventoryItem dPage5FoodItemsSabre[] = {
-    {BIT_Green_Apple_Count,  NONE,                  TEXTABLE_26E, NONE, 0x22, -1, 1}, //Green apple
-    {BIT_Red_Apple_Count,    NONE,                  TEXTABLE_26F, NONE, 0x23, -1, 1}, //Red apple
-    {BIT_Brown_Apple_Count,  NONE,                  TEXTABLE_270, NONE, 0x24, -1, 1}, //Brown Apple
-    {BIT_Fish_Count,         NONE,                  TEXTABLE_272, NONE, 0x25, -1, 1}, //Fish
-    {BIT_Smoked_Fish_Count,  NONE,                  TEXTABLE_2C6, NONE, 0x26, -1, 1}, //Smoked Fish
-    {BIT_Dino_Egg_Count,     NONE,                  TEXTABLE_2C4, NONE, 0x27, -1, 1}, //Dino Egg
-    {BIT_Moldy_Meat_Count,   NONE,                  TEXTABLE_2C5, NONE, 0x28, -1, 1}, //Moldy Meat
-    {BIT_Green_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x35, -1, 1}, //Green Bean 
-    {BIT_Red_Bean_Count,     NONE,                  TEXTABLE_270, NONE, 0x36, -1, 1}, //Red Bean
-    {BIT_Brown_Bean_Count,   NONE,                  TEXTABLE_270, NONE, 0x37, -1, 1}, //Brown Bean
-    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, -1, 1}, //Blue Bean
-    {BIT_Sabre_Foodbag_S,   BIT_Sabre_Foodbag_M,   TEXTABLE_27A,  NONE, 0x16,  3, 2}, //Small Food Bag
-    {BIT_Sabre_Foodbag_M,   BIT_Sabre_Foodbag_L,   TEXTABLE_244,  NONE, 0x17,  3, 2}, //Medium Food Bag
-    {BIT_Sabre_Foodbag_L,   NONE,                  TEXTABLE_2BF,  NONE, 0x18,  3, 2}, //Large Food Bag
+    {BIT_Green_Apple_Count,  NONE,                 TEXTABLE_26E,  NONE, 0x22, EXIT,                                 SOUND_ITEM}, //Green apple
+    {BIT_Red_Apple_Count,    NONE,                 TEXTABLE_26F,  NONE, 0x23, EXIT,                                 SOUND_ITEM}, //Red apple
+    {BIT_Brown_Apple_Count,  NONE,                 TEXTABLE_270,  NONE, 0x24, EXIT,                                 SOUND_ITEM}, //Brown Apple
+    {BIT_Fish_Count,         NONE,                 TEXTABLE_272,  NONE, 0x25, EXIT,                                 SOUND_ITEM}, //Fish
+    {BIT_Smoked_Fish_Count,  NONE,                 TEXTABLE_2C6,  NONE, 0x26, EXIT,                                 SOUND_ITEM}, //Smoked Fish
+    {BIT_Dino_Egg_Count,     NONE,                 TEXTABLE_2C4,  NONE, 0x27, EXIT,                                 SOUND_ITEM}, //Dino Egg
+    {BIT_Moldy_Meat_Count,   NONE,                 TEXTABLE_2C5,  NONE, 0x28, EXIT,                                 SOUND_ITEM}, //Moldy Meat
+    {BIT_Green_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x35, EXIT,                                 SOUND_ITEM}, //Green Bean 
+    {BIT_Red_Bean_Count,     NONE,                 TEXTABLE_270,  NONE, 0x36, EXIT,                                 SOUND_ITEM}, //Red Bean
+    {BIT_Brown_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x37, EXIT,                                 SOUND_ITEM}, //Brown Bean
+    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, EXIT,                                 SOUND_ITEM}, //Blue Bean
+    {BIT_Sabre_Foodbag_S,   BIT_Sabre_Foodbag_M,   TEXTABLE_27A,  NONE, 0x16, CMDMENU_PAGE_3_Food_Actions_Sabre,    SOUND_PAGE}, //Small Food Bag
+    {BIT_Sabre_Foodbag_M,   BIT_Sabre_Foodbag_L,   TEXTABLE_244,  NONE, 0x17, CMDMENU_PAGE_3_Food_Actions_Sabre,    SOUND_PAGE}, //Medium Food Bag
+    {BIT_Sabre_Foodbag_L,   NONE,                  TEXTABLE_2BF,  NONE, 0x18, CMDMENU_PAGE_3_Food_Actions_Sabre,    SOUND_PAGE}, //Large Food Bag
     END
 };
 
 /* Magic Spells
  * 0x698*/ static InventoryItem dPage6MagicSpells[] = {
-    {BIT_Spell_Projectile, NONE,    TEXTABLE_183, NONE, 0x0d, -1, 0}, //Projectile Spell
-    {BIT_Spell_Ice_Blast,  NONE,    TEXTABLE_468, NONE, 0x3c, -1, 0}, //Ice Blast Spell
-    {BIT_Spell_Grenade,    NONE,    TEXTABLE_4F8, NONE, 0x0f, -1, 0}, //Grenade Spell (Incorrectly labelled as Randorn)
-    {BIT_Spell_Illusion,   NONE,    TEXTABLE_177, NONE, 0x0e, -1, 0}, //Illusion Spell
-    {BIT_Spell_Forcefield, NONE,    TEXTABLE_265, NONE, 0x14, -1, 0}, //ForceField Spell
-    {BIT_Spell_Glitched_1, NONE,    TEXTABLE_183, NONE, 0x0d, -1, 0}, //Glitched Spell
-    {BIT_Spell_Glitched_2, BIT_348, TEXTABLE_529, NONE, 0x0d, -1, 0}, //Glitched Spell (Maybe "Quake", mentioned elsewhere?)
-    {BIT_Spell_Portal,     NONE,    TEXTABLE_466, NONE, 0x3b, -1, 0}, //Portal Spell
-    {BIT_Spell_Mind_Read,  NONE,    TEXTABLE_470, NONE, 0x3e, -1, 0}, //Mind Read
+    {BIT_Spell_Projectile, NONE,    TEXTABLE_183, NONE, 0x0d, EXIT, SOUND_NONE}, //Projectile Spell
+    {BIT_Spell_Ice_Blast,  NONE,    TEXTABLE_468, NONE, 0x3c, EXIT, SOUND_NONE}, //Ice Blast Spell
+    {BIT_Spell_Grenade,    NONE,    TEXTABLE_4F8, NONE, 0x0f, EXIT, SOUND_NONE}, //Grenade Spell (Incorrectly labelled as Randorn)
+    {BIT_Spell_Illusion,   NONE,    TEXTABLE_177, NONE, 0x0e, EXIT, SOUND_NONE}, //Illusion Spell
+    {BIT_Spell_Forcefield, NONE,    TEXTABLE_265, NONE, 0x14, EXIT, SOUND_NONE}, //ForceField Spell
+    {BIT_Spell_Glitched_1, NONE,    TEXTABLE_183, NONE, 0x0d, EXIT, SOUND_NONE}, //Glitched Spell
+    {BIT_Spell_Glitched_2, BIT_348, TEXTABLE_529, NONE, 0x0d, EXIT, SOUND_NONE}, //Glitched Spell (Maybe "Quake", mentioned elsewhere?)
+    {BIT_Spell_Portal,     NONE,    TEXTABLE_466, NONE, 0x3b, EXIT, SOUND_NONE}, //Portal Spell
+    {BIT_Spell_Mind_Read,  NONE,    TEXTABLE_470, NONE, 0x3e, EXIT, SOUND_NONE}, //Mind Read
     END
 };
 
@@ -464,43 +450,43 @@ typedef enum {
 
 /* Dinosaur Food Bag Actions (Krystal)
  * 0x7B8*/ static InventoryItem dPage9FoodActionsKyte[] = {
-    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, 11, 2}, //Place food down from foodbag
-    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, 11, 2}, //Give food from foodbag
+    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_11_Food_Kyte, SOUND_PAGE}, //Place food down from foodbag
+    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, CMDMENU_PAGE_11_Food_Kyte, SOUND_PAGE}, //Give food from foodbag
     END
 };
 
 /* Dinosaur Food Bag Actions (Sabre)
  * 0x7DC*/ static InventoryItem dPage10FoodActionsTricky[] = {
-    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, 12, 2}, //Place food down from foodbag
-    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, 12, 2}, //Give food from foodbag
+    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_12_Food_Tricky, SOUND_PAGE}, //Place food down from foodbag
+    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, CMDMENU_PAGE_12_Food_Tricky, SOUND_PAGE}, //Give food from foodbag
     END
 };
 
 /* Dinosaur Food Bag Items (Kyte)
  * 0x800*/ static InventoryItem dPage11FoodItemsKyte[] = {
-    {BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, TEXTABLE_27A, NONE, 0x2f,  9, 2}, //Small Mushroom Bag
-    {BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, TEXTABLE_244, NONE, 0x30,  9, 2}, //Medium Mushroom Bag
-    {BIT_Krystal_Dino_Bag_L,      NONE,                   TEXTABLE_2BF, NONE, 0x31,  9, 2}, //Large Mushroom Bag
-    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, -1, 1}, //Blue Mushroom
-    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, -1, 1}, //Red Mushroom
-    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, -1, 1}, //Old Mushroom
-    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, -1, 1}, //Blue Grub
-    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, -1, 1}, //Red Grub
-    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, -1, 1}, //Old Grub
+    {BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, TEXTABLE_27A, NONE, 0x2f, CMDMENU_PAGE_9_Food_Actions_Kyte,       SOUND_PAGE}, //Small Mushroom Bag
+    {BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, TEXTABLE_244, NONE, 0x30, CMDMENU_PAGE_9_Food_Actions_Kyte,       SOUND_PAGE}, //Medium Mushroom Bag
+    {BIT_Krystal_Dino_Bag_L,      NONE,                   TEXTABLE_2BF, NONE, 0x31, CMDMENU_PAGE_9_Food_Actions_Kyte,       SOUND_PAGE}, //Large Mushroom Bag
+    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, EXIT,                                   SOUND_ITEM}, //Blue Mushroom
+    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, EXIT,                                   SOUND_ITEM}, //Red Mushroom
+    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, EXIT,                                   SOUND_ITEM}, //Old Mushroom
+    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, EXIT,                                   SOUND_ITEM}, //Blue Grub
+    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, EXIT,                                   SOUND_ITEM}, //Red Grub
+    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, EXIT,                                   SOUND_ITEM}, //Old Grub
     END
 };
 
 /* Dinosaur Food Bag Items (Tricky)
  * 0x878*/ static InventoryItem dPage12FoodItemsTricky[] = {
-    {BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   TEXTABLE_27A, NONE, 0x32, 10, 2}, //Small Mushroom Bag
-    {BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   TEXTABLE_244, NONE, 0x33, 10, 2}, //Medium Mushroom Bag
-    {BIT_Sabre_Dino_Bag_L,        NONE,                   TEXTABLE_2BF, NONE, 0x34, 10, 2}, //Large Mushroom Bag
-    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, -1, 1}, //Blue Mushroom
-    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, -1, 1}, //Red Mushroom
-    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, -1, 1}, //Old Mushroom
-    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, -1, 1}, //Blue Grub
-    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, -1, 1}, //Red Grub
-    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, -1, 1}, //Old Grub
+    {BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   TEXTABLE_27A, NONE, 0x32, CMDMENU_PAGE_10_Food_Actions_Tricky,    SOUND_PAGE}, //Small Mushroom Bag
+    {BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   TEXTABLE_244, NONE, 0x33, CMDMENU_PAGE_10_Food_Actions_Tricky,    SOUND_PAGE}, //Medium Mushroom Bag
+    {BIT_Sabre_Dino_Bag_L,        NONE,                   TEXTABLE_2BF, NONE, 0x34, CMDMENU_PAGE_10_Food_Actions_Tricky,    SOUND_PAGE}, //Large Mushroom Bag
+    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, EXIT,                                   SOUND_ITEM}, //Blue Mushroom
+    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, EXIT,                                   SOUND_ITEM}, //Red Mushroom
+    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, EXIT,                                   SOUND_ITEM}, //Old Mushroom
+    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, EXIT,                                   SOUND_ITEM}, //Blue Grub
+    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, EXIT,                                   SOUND_ITEM}, //Red Grub
+    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, EXIT,                                   SOUND_ITEM}, //Old Grub
     END
 };
 
@@ -522,8 +508,8 @@ typedef enum {
 };
 
 /*0x9D0*/ static s8 dPageCategory = 0; //Category of cmdmenu page currently open (see `CmdMenuPageCategories`)
-/*0x9D4*/ static s8 _data_9D4 = 0;
-/*0x9D8*/ static s16 _data_9D8[] = {
+/*0x9D4*/ static s8 dNextPageCategory = 0; //Assigned when changing between menus in the inventory
+/*0x9D8*/ static s16 dTextableIDs[] = {
     /*00*/ TEXTABLE_1BE_CMDMENU_Scroll_BG,
     /*01*/ TEXTABLE_1BF_CMDMENU_Scroll_Bottom,
     /*02*/ TEXTABLE_1C0_CMDMENU_Scroll_Top,
@@ -584,42 +570,42 @@ typedef enum {
     /*57*/ TEXTABLE_478_CMDMENU_Grub_Red_Half
 };
 
-/*0x0*/ static f32 _bss_0; //scarabUIOpacity
-/*0x4*/ static f32 _bss_4; //playerIconMagicBarOpacity
-/*0x8*/ static f32 _bss_8;
+/*0x0*/ static f32 sOpacityHealth;  //Opacity of player health UI
+/*0x4*/ static f32 sOpacityScarabs; //Opacity of Scarab counter UI
+/*0x8*/ static f32 sOpacityMagic;   //Opacity of player magic bar UI
 /*0xC*/ static s32 _bss_C;
 /*0x10*/ static CmdmenuPlayerSidekickData sStats; //Tricky food level is stored in here! Maybe a struct?
 /*0x38*/ static CmdmenuPlayerSidekickData sPrevStats;
 /*0x60*/ static CmdmenuPlayerSidekickDataChangeTimers sStatsChangeTimers;
 /*0x88*/ static u8 _bss_88;
-/*0x89*/ static u8 _bss_89;
+/*0x89*/ static u8 sAnimFrameScarab;
 /*0x8A*/ static u8 _bss_8A;
 /*0x8B*/ static u8 _bss_8B;
 /*0x8C*/ static f32 sOpacityR; //Opacity of icons on right side of screen (C-buttons, menu page image, etc.)
 /*0x90*/ static EnergyBar* sEnergyBar; 
-/*0x98*/ static Texture* _bss_98[64]; //Pointers to inventory icon textures
-/*0x198*/ static Texture* _bss_198[64];
-/*0x298*/ static s16 _bss_298[64];
-/*0x318*/ static s32 _bss_318[64];
-/*0x418*/ static s16 _bss_418[64]; //array of textIDs
-/*0x498*/ static s8 _bss_498[64]; //array of unkAs (from InventoryItem)
-/*0x4D8*/ static u8 _bss_4D8[64]; //array of unkBs (from InventoryItem)
-/*0x518*/ static u8 _bss_518[64];
-/*0x558*/ static u8 _bss_558[64];
-/*0x598*/ static Texture* _bss_598;
-/*0x59C*/ static Texture* _bss_59C;
+/*0x98*/ static Texture* sMenuItemTextures[MAX_LOADED_ITEMS]; //Inventory icon texture pointers for the current menu page's loaded items
+/*0x198*/ static Texture* sMenuSidekickCommandTextures[MAX_LOADED_ITEMS]; //Sidekick command inventory icon textures for the current menu page's loaded items
+/*0x298*/ static s16 sMenuItemTextureIDs[MAX_LOADED_ITEMS]; //TextableIDs for the current menu page's loaded items
+/*0x318*/ static s32 sMenuItemGamebits[MAX_LOADED_ITEMS]; //GamebitIDs for the current menu page's loaded items
+/*0x418*/ static s16 sMenuItemTextIDs[MAX_LOADED_ITEMS]; //Gametext lineIDs for the current menu page's loaded items
+/*0x498*/ static s8 _bss_498[MAX_LOADED_ITEMS]; //array of unkAs (from InventoryItem)
+/*0x4D8*/ static u8 _bss_4D8[MAX_LOADED_ITEMS]; //array of unkBs (from InventoryItem)
+/*0x518*/ static u8 sMenuItemVisibilities[MAX_LOADED_ITEMS];
+/*0x558*/ static u8 sMenuItemQuantities[MAX_LOADED_ITEMS];
+/*0x598*/ static Texture* sActiveSpellIcon; //Icon in bottom-right of screen
+/*0x59C*/ static Texture* sActiveSpellRing; //Icon in bottom-right of screen
 /*0x5A0*/ static Texture* sAButtonAnimTex;
-/*0x5A4*/ static s16 _bss_5A4;
-/*0x5A8*/ static Texture* _bss_5A8;
-/*0x5AC*/ static Texture* _bss_5AC;
-/*0x5B0*/ static s16 _bss_5B0;
+/*0x5A4*/ static s16 sPrevActiveSpellGamebit;
+/*0x5A8*/ static Texture* sActiveSidekickCommandIcon;
+/*0x5AC*/ static Texture* sActiveSidekickCommandRing;
+/*0x5B0*/ static s16 sPrevSidekickCommandIndex;
 /*0x5B4*/ static s32 _bss_5B4;
 /*0x5B8*/ static s32 sCrosshairAnimRenderFlags;
 /*0x5BC*/ static s32 _bss_5BC;
 /*0x5C0*/ static s32 sCrosshairAnimProgress;
-/*0x5C8*/ static Texture* _bss_5C8[58];
+/*0x5C8*/ static Texture* sTextures[ARRAYCOUNT(dTextableIDs)];
 /*0x6B0*/ static Texture* sInventoryStackNumbersTex;
-/*0x6B8*/ static TextureTile _bss_6B8[58][2];
+/*0x6B8*/ static TextureTile sTextureTiles[ARRAYCOUNT(dTextableIDs)][2];
 /*0xC28*/ static s16 _bss_C28;
 /*0xC2A*/ static s16 _bss_C2A;
 /*0xC2C*/ static s16 _bss_C2C;
@@ -628,7 +614,7 @@ typedef enum {
 /*0xC34*/ static Texture* sCrosshairTex;
 /*0xC38*/ static s16 sUsedItemGamebitID;
 /*0xC3A*/ static s16 _bss_C3A;
-/*0xC3C*/ static s8 _bss_C3C; //set to 0 when item selection successful
+/*0xC3C*/ static s8 sUsedItemSound; //Set to 0 when item selection successful (item given to character, etc.)
 /*0xC3D*/ static s8 _bss_C3D;
 /*0xC3E*/ static s8 _bss_C3E;
 /*0xC3F*/ static u8 _bss_C3F;
@@ -645,7 +631,7 @@ typedef enum {
 /*0xC7C*/ static s16 _bss_C7C;
 /*0xC7E*/ static s16 _bss_C7E;
 /*0xC80*/ static s16 _bss_C80;
-/*0xC88*/ static CmdmenuItemUnkBSS _bss_C88;
+/*0xC88*/ static CmdmenuInfoShowData sInfoPopup; //item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
 
 static void cmdmenu_func_1410(void);
 static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
@@ -670,30 +656,32 @@ static void cmdmenu_func_486C(void);
 static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_update_stats(void);
 static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0);
-static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* arg1);
+static void cmdmenu_info_hide(CmdmenuInfoShowData* arg0);
+static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoShowData* arg1);
 static void cmdmenu_draw_energy_bar(Gfx** gdl);
 void cmdmenu_energy_bar_free(void);
 
 // offset: 0x0 | ctor
 void cmdmenu_ctor(void* dll) {
-    s32 i;
+    u32 i;
 
     _bss_C78 = -1;
     _bss_C7A = -1;
     sUsedItemGamebitID = NO_GAMEBIT;
-    _bss_C3C = 0;
+    sUsedItemSound = SOUND_NONE;
     _bss_C3D = -1;
-    _bss_5A4 = -1;
-    _bss_5B0 = -1;
+    sPrevActiveSpellGamebit = NO_GAMEBIT;
+    sPrevSidekickCommandIndex = NO_SIDEKICK_COMMAND;
 
-    for (i = 0; i < 58; i++) {
-        _bss_5C8[i] = tex_load_deferred(_data_9D8[i]);
-        _bss_6B8[i][0].tex = tex_load_deferred(_data_9D8[i]);
-        _bss_6B8[i][0].animProgress = 0;
-        _bss_6B8[i][0].x = 0;
-        _bss_6B8[i][0].y = 0;
-        _bss_6B8[i][1].tex = 0;
+    //Load all the cmdmenu textures
+    for (i = 0; i < ARRAYCOUNT(dTextableIDs); i++) {
+        sTextures[i] = tex_load_deferred(dTextableIDs[i]);
+
+        sTextureTiles[i][0].tex = tex_load_deferred(dTextableIDs[i]);
+        sTextureTiles[i][0].animProgress = 0;
+        sTextureTiles[i][0].x = 0;
+        sTextureTiles[i][0].y = 0;
+        sTextureTiles[i][1].tex = NULL;
     }
 
     sCrosshairTex = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
@@ -704,31 +692,33 @@ void cmdmenu_ctor(void* dll) {
     sAButtonAnimTex = tex_load_deferred(TEXTABLE_274_AButton_Anim);
     sAButtonAnimTex->animSpeed = 40;
     
-    cmdmenu_func_69CC(&_bss_C88);
+    cmdmenu_info_hide(&sInfoPopup);
 }
 
 // offset: 0x180 | dtor
 void cmdmenu_dtor(void* dll) {
     s32 i;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(_bss_5C8); i++) {
-        if (_bss_5C8[i] != NULL) {
-            tex_free(_bss_5C8[i]);
+    for (i = 0; i < (s32)ARRAYCOUNT(sTextures); i++) {
+        if (sTextures[i] != NULL) {
+            tex_free(sTextures[i]);
         }
     }
+
     tex_free(sInventoryStackNumbersTex);
     tex_free(sCrosshairTex);
-    if (_bss_598 != NULL) {
-        tex_free(_bss_598);
+
+    if (sActiveSpellIcon != NULL) {
+        tex_free(sActiveSpellIcon);
     }
-    if (_bss_59C != NULL) {
-        tex_free(_bss_59C);
+    if (sActiveSpellRing != NULL) {
+        tex_free(sActiveSpellRing);
     }
-    if (_bss_5A8 != NULL) {
-        tex_free(_bss_5A8);
+    if (sActiveSidekickCommandIcon != NULL) {
+        tex_free(sActiveSidekickCommandIcon);
     }
-    if (_bss_5AC != NULL) {
-        tex_free(_bss_5AC);
+    if (sActiveSidekickCommandRing != NULL) {
+        tex_free(sActiveSidekickCommandRing);
     }
     if (sAButtonAnimTex != NULL) {
         tex_free(sAButtonAnimTex);
@@ -793,39 +783,39 @@ void cmdmenu_func_35C(void) {
             newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
             if (cmdmenu_func_3718(dCmdmenuPages[newPageIndex].items, 1)) {
                 joy_set_button_mask(0, D_CBUTTONS);
-                _data_9D4 = CMDMENU_CATEGORY_2_Sidekick;
+                dNextPageCategory = CMDMENU_CATEGORY_2_Sidekick;
                 _bss_C3E = newPageIndex;
             }
         } else if ((sJoyPressedButtons & R_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_3_Items) && (dPageCategory != CMDMENU_CATEGORY_6_Food)) {
             newPageIndex = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
             if (cmdmenu_func_3718(dCmdmenuPages[newPageIndex].items, 0)) {
                 joy_set_button_mask(0, R_CBUTTONS);
-                _data_9D4 = CMDMENU_CATEGORY_3_Items;
+                dNextPageCategory = CMDMENU_CATEGORY_3_Items;
                 _bss_C3E = newPageIndex;
             }
         } else if ((sJoyPressedButtons & L_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_4_Spells)) {
             if (cmdmenu_func_3718(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, 0)) {
                 joy_set_button_mask(0, L_CBUTTONS);
-                _data_9D4 = CMDMENU_CATEGORY_4_Spells;
+                dNextPageCategory = CMDMENU_CATEGORY_4_Spells;
                 _bss_C3E = 6;
             }
         } else if (_bss_C3D != -1) {
             _bss_C3A = sUsedItemGamebitID;
             _bss_C3E = _bss_C3D;
             if ((dPageCategory == CMDMENU_CATEGORY_2_Sidekick) || (dPageCategory == CMDMENU_CATEGORY_5)) {
-                _data_9D4 = 7;
+                dNextPageCategory = 7;
             } else if ((dPageCategory == CMDMENU_CATEGORY_3_Items) || (dPageCategory == CMDMENU_CATEGORY_6_Food)) {
-                _data_9D4 = 6;
+                dNextPageCategory = 6;
             } else if ((dPageCategory == CMDMENU_CATEGORY_4_Spells) || (dPageCategory == CMDMENU_CATEGORY_7)) {
-                _data_9D4 = 7;
+                dNextPageCategory = 7;
             }
         }
 
         if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
             cmdmenu_func_3A94();
-        } else if (_data_9D4 != 0) {
+        } else if (dNextPageCategory != 0) {
             if (cmdmenu_func_3A4C() != 0) {
-                switch (_data_9D4) {
+                switch (dNextPageCategory) {
                 case CMDMENU_CATEGORY_3_Items:
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EC_Cmdmenu_OpenBag, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
@@ -842,10 +832,10 @@ void cmdmenu_func_35C(void) {
                 cmdmenu_func_3AB0();
                 dCmdmenuPages[7].unk4 = 0;
                 dCmdmenuPages[8].unk4 = 0;
-                dPageCategory = _data_9D4;
+                dPageCategory = dNextPageCategory;
                 sJoyPressedButtons = 0;
                 _data_78 = 0;
-                _data_9D4 = 0;
+                dNextPageCategory = 0;
             } else {
                 cmdmenu_func_3A94();
             }
@@ -858,7 +848,7 @@ void cmdmenu_func_35C(void) {
         if (_bss_C4C >= 3) {
             _bss_C4C = 2;
         }
-        if ((_data_0 != 0) || (_data_9D4 != 0)) {
+        if ((_data_0 != 0) || (dNextPageCategory != 0)) {
             newStringID = _data_18;
         } else {
             newStringID = gDLL_2_Camera->vtbl->get_target_gametextID();
@@ -940,7 +930,7 @@ int cmdmenu_was_any_item_used(void) {
 // offset: 0xDF4 | func: 6 | export: 7
 int cmdmenu_was_this_item_used(s32 itemGamebitID) {
     if (itemGamebitID == sUsedItemGamebitID) {
-        _bss_C3C = 0;
+        sUsedItemSound = 0;
         return TRUE;
     }
     return FALSE;
@@ -952,7 +942,7 @@ s32 cmdmenu_func_E2C(s32* arg0, s32 arg1) {
 
     for (i = 0; i < arg1; i++) {
         if (sUsedItemGamebitID == arg0[i]) {
-            _bss_C3C = 0;
+            sUsedItemSound = 0;
             return arg0[i];
         }
     }
@@ -1046,7 +1036,7 @@ void cmdmenu_func_1290(void) {
 
     for (i = 0; temp[i].items; i++) { temp[i].unk4 = 0; }
     sUsedItemGamebitID = NO_GAMEBIT;
-    _bss_C3C = 0;
+    sUsedItemSound = 0;
     _bss_C3D = -1;
 }
 
@@ -1101,6 +1091,7 @@ static void cmdmenu_func_1410(void) {
             _data_5C = _data_60;
         }
     }
+
     if (_data_5C == 0) {
         if (_bss_C30 != NULL) {
             mmFree(_bss_C30);
@@ -1108,13 +1099,16 @@ static void cmdmenu_func_1410(void) {
         }
     } else {
         tex_animate(sAButtonAnimTex, &_bss_5B4, &_bss_5BC);
+
         if (sJoyPressedButtons & A_BUTTON) {
             _bss_C2E += 3;
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+
             if (_bss_C2E < _bss_C30->count) {
                 joy_set_button_mask(0, A_BUTTON);
                 return;
             }
+
             _bss_C2E -= 3;
             _data_48 = 0;
         }
@@ -1134,6 +1128,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     if (_data_5C == 0) {
         return;
     }
+
     dl = *gdl;
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     dl_apply_combine(&dl);
@@ -1151,7 +1146,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     y = _data_54 << 2;
     height = _bss_C2C << 2;
     
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104, 
         y, 
@@ -1162,7 +1157,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = 1;
     
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104 - (16 << 2), 
         y, 
@@ -1185,7 +1180,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     sp104 += (16 << 2);
     
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
     dl_set_prim_color(&dl, 255, 128, 128, 128);
     
     tempY = y;
@@ -1213,7 +1208,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl_set_prim_color(&dl, 255, 255, 255, (u8) _data_5C);
 
     tempY = y - (11 << 2);
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
@@ -1225,7 +1220,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
     
     tempY = (y + height) - (4 << 2);
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
@@ -1236,7 +1231,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = 1;
     
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++,
         sp10C - sp104 - (16 << 2),
@@ -1309,13 +1304,17 @@ static void cmdmenu_func_1FEC(void) {
     s8 sp37;
 
     player = get_player();
+
     sp37 = 0;
+
     if (player != NULL) {
         if (player->unkB0 & 0x1000) {
             joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         } else if (sJoyButtonMask != 0) {
             joy_set_button_mask(0, sJoyButtonMask);
         }
+
+        //Get button presses (or simulated ones, for tutorial sequences)
         if (sShouldOverrideJoypadButtons) {
             sJoyPressedButtons = sJoyPressedButtonsOverride;
         } else {
@@ -1325,19 +1324,19 @@ static void cmdmenu_func_1FEC(void) {
             }
         }
 
-        switch (_bss_C3C) {
-        case 0:
+        switch (sUsedItemSound) {
+        case SOUND_NONE:
             break;
-        case 1:
+        case SOUND_ITEM:
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_79C_Cmdmenu_CantUse, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
-        case 2:
+        case SOUND_PAGE:
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_814_Cmdmenu_OpenSubMenu, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
         }
 
         sUsedItemGamebitID = NO_GAMEBIT;
-        _bss_C3C = 0;
+        sUsedItemSound = SOUND_NONE;
         _bss_C3D = -1;
         new_var = dCmdmenuPages[_bss_C3E].items;
         sp4C = &dCmdmenuPages[_bss_C3E].unk4;
@@ -1350,15 +1349,18 @@ static void cmdmenu_func_1FEC(void) {
 
         _bss_C40 = *sp4C;
         _bss_C44 = cmdmenu_func_325C(new_var, sp37);
+
         if (_bss_C44 == 0) {
             dPageCategory = 0;
             cmdmenu_func_3A94();
             return;
         }
+
         if (_bss_C40 >= _bss_C44) {
             _bss_C40 = 0;
         }
-        _data_18 = _bss_418[_bss_C40];
+
+        _data_18 = sMenuItemTextIDs[_bss_C40];
         if (cmdmenu_func_39FC() != 0) {
             if ((sJoyPressedButtons & sp3C) && (_data_4 < 8) && (_data_7C == 0)) {
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28A_Cmdmenu_MoveSelection, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -1394,28 +1396,29 @@ static void cmdmenu_func_1FEC(void) {
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28C_Cmdmenu_Close, MAX_VOLUME, NULL, NULL, 0, NULL);
                 cmdmenu_func_3A94();
             } else if ((sJoyPressedButtons & A_BUTTON) && (cmdmenu_func_39FC() != 0)) {
-                sp38 = _bss_318[_bss_C40];
+                sp38 = sMenuItemGamebits[_bss_C40];
                 if (sp37 == 0) {
                     obj_send_mesg(player, sp40, NULL, (void* ) sp38);
-                    sUsedItemGamebitID = (s16) sp38;
-                    _bss_C3C = _bss_4D8[_bss_C40];
+                    sUsedItemGamebitID = sp38;
+                    sUsedItemSound = _bss_4D8[_bss_C40];
                     _bss_C3D = _bss_498[_bss_C40];
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                     cmdmenu_func_3A94();
                 } else {
-                    if (_bss_518[_bss_C40] != 0) {
+                    if (sMenuItemVisibilities[_bss_C40] != 0) {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                         cmdmenu_func_3A94();
-                        sUsedItemGamebitID = (s16) sp38;
-                        _bss_C3C = 0;
+                        sUsedItemGamebitID = sp38;
+                        sUsedItemSound = 0;
                     } else {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_A0, MAX_VOLUME, NULL, NULL, 0, NULL);
                         sUsedItemGamebitID = NO_GAMEBIT;
-                        _bss_C3C = 0;
+                        sUsedItemSound = 0;
                     }
                 }
             }
         }
+
         if (cmdmenu_func_3A4C() != 0) {
             dPageCategory = 0;
             _bss_C4C = 0;
@@ -1423,16 +1426,17 @@ static void cmdmenu_func_1FEC(void) {
         } else {
             joy_set_button_mask(0, A_BUTTON | B_BUTTON);
         }
+
         *sp4C = _bss_C40;
     }
 }
 
 // offset: 0x26D8 | func: 19
-static s16 cmdmenu_func_26D8(s32 arg0) {
+static s16 cmdmenu_func_26D8(s32 spellGamebit) {
     s32 i;
     for (i = 0; i < 7; i++) {
-        if (arg0 == _data_8C[i]) {
-            return _data_9C[i];
+        if (spellGamebit == dSpellGamebits[i]) {
+            return dSpellTextableIDs[i];
         }    
     }
     return -1;
@@ -1440,69 +1444,90 @@ static s16 cmdmenu_func_26D8(s32 arg0) {
 
 // offset: 0x27D8 | func: 20
 static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
-    s16 temp;
+    s16 commandTexTableID;
     Object* player;
-    s32 temp_v0;
+    s32 activeSpellGamebit;
     s32 var_a2;
-    s32 temp_v0_2;
+    s32 spellTexTableID;
     s32 var_s0;
     s8 sp70[64];
     s32 var_s1;
     s32 i;
-    s32 sp64;
+    s32 sideCommandIndex;
     s32 var_s5;
-    u8 sp5F;
-    u8 sp5E;
-    s8 sp5D;
-    s8 sp5C;
+    u8 iconOpacity;
+    u8 pageIcon;
+    s8 offsetX;
+    s8 offsetY;
     Object* sidekick;
 
     player = get_player();
-    sp5D = 0;
-    sp5C = 0;
+    offsetX = 0;
+    offsetY = 0;
     sidekick = get_sidekick();
-    cmdmenu_func_6B74(gdl, &_bss_C88);
-    temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
-    if ((_bss_598 != NULL) && (temp_v0 != _bss_5A4)) {
-        tex_free(_bss_59C);
-        tex_free(_bss_598);
-        _bss_5A4 = -1;
-        _bss_598 = NULL;
-    }
-    if ((_bss_598 == NULL) && (temp_v0 != -1)) {
-        temp_v0_2 = cmdmenu_func_26D8(temp_v0);
-        if (temp_v0_2 != -1) {
-            _bss_598 = tex_load_deferred(temp_v0_2);
-            _bss_59C = tex_load_deferred(TEXTABLE_574);
+
+    cmdmenu_info_draw(gdl, &sInfoPopup);
+
+    //Draw active spell icon
+    {
+        activeSpellGamebit = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
+
+        //Clear the icon's data before any change
+        if ((sActiveSpellIcon != NULL) && (activeSpellGamebit != sPrevActiveSpellGamebit)) {
+            tex_free(sActiveSpellRing);
+            tex_free(sActiveSpellIcon);
+            sPrevActiveSpellGamebit = NO_GAMEBIT;
+            sActiveSpellIcon = NULL;
         }
-    }
-    _bss_5A4 = temp_v0;
-    if (_bss_598 != NULL) {
-        rcp_screen_full_write(gdl, _bss_59C, 0xFD, 0xA9, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-        rcp_screen_full_write(gdl, _bss_598, 0x106, 0xB4, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-    }
-    if (sidekick != NULL) {
-        ((DLL_ISidekick*)sidekick->dll)->vtbl->func26(sidekick, &sp64);
-        if ((_bss_5A8 != NULL) && (sp64 != _bss_5B0)) {
-            tex_free(_bss_5AC);
-            tex_free(_bss_5A8);
-            _bss_5B0 = -1;
-            _bss_5A8 = NULL;
-        }
-        if (_bss_5A8 == NULL && sp64 > 0) {
-            temp = _data_AC[sp64];
-            if (temp != -1) {
-                _bss_5A8 = tex_load_deferred(temp);
-                _bss_5AC = tex_load_deferred(TEXTABLE_584);
+
+        //Load the icon's textures when needed
+        if ((sActiveSpellIcon == NULL) && (activeSpellGamebit != NO_GAMEBIT)) {
+            spellTexTableID = cmdmenu_func_26D8(activeSpellGamebit);
+            if (spellTexTableID != NO_TEXTURE) {
+                sActiveSpellIcon = tex_load_deferred(spellTexTableID);
+                sActiveSpellRing = tex_load_deferred(TEXTABLE_574);
             }
         }
-        _bss_5B0 = sp64;
-        if (_bss_5A8 != NULL) {
-            rcp_screen_full_write(gdl, _bss_5AC, 0xFD, 0x79, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, _bss_5A8, 0x106, 0x84, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+
+        sPrevActiveSpellGamebit = activeSpellGamebit;
+
+        if (sActiveSpellIcon != NULL) {
+            rcp_screen_full_write(gdl, sActiveSpellRing, 253, 169, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_full_write(gdl, sActiveSpellIcon, 262, 180, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
+
+    //Draw active sidekick command icon
+    if (sidekick != NULL) {
+        ((DLL_ISidekick*)sidekick->dll)->vtbl->func26(sidekick, &sideCommandIndex);
+
+        //Clear the icon's data before any change
+        if ((sActiveSidekickCommandIcon != NULL) && (sideCommandIndex != sPrevSidekickCommandIndex)) {
+            tex_free(sActiveSidekickCommandRing);
+            tex_free(sActiveSidekickCommandIcon);
+            sPrevSidekickCommandIndex = NO_SIDEKICK_COMMAND;
+            sActiveSidekickCommandIcon = NULL;
+        }
+
+        //Load the icon's textures when needed
+        if (sActiveSidekickCommandIcon == NULL && sideCommandIndex > 0) {
+            commandTexTableID = dCommandTextableIDs[sideCommandIndex];
+            if (commandTexTableID != NO_TEXTURE) {
+                sActiveSidekickCommandIcon = tex_load_deferred(commandTexTableID);
+                sActiveSidekickCommandRing = tex_load_deferred(TEXTABLE_584);
+            }
+        }
+
+        sPrevSidekickCommandIndex = sideCommandIndex;
+
+        if (sActiveSidekickCommandIcon != NULL) {
+            rcp_screen_full_write(gdl, sActiveSidekickCommandRing, 253, 121, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_full_write(gdl, sActiveSidekickCommandIcon, 262, 132, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+        }
+    }
+
     cmdmenu_draw_energy_bar(gdl);
+
     if (_bss_C44 != 0) {
         if (_data_10 != 0) {
             var_s5 = 3;
@@ -1512,38 +1537,48 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 var_s5 = 5;
                 var_s0 = 2;
             }
+
             cmdmenu_func_4630(gdl);
+
             _bss_C60->y = 0;
-            var_a2 = 0x5F - (var_s5 * 0xC);
+            var_a2 = 95 - (var_s5 * 12);
             _bss_C60[1].tex = NULL;
+
             for (i = 0; i < _bss_C44; i++) {
                 sp70[i] = 0;
             }
+
             for (i = _bss_C44; i < var_s5; i++) {
                 sp70[i] = 1;
             }
+
             if (_bss_C44 < var_s5) {
                 _bss_C44 = var_s5;
             }
+
             if (_data_4 > 0) {
                 var_s0 += 1;
-                var_a2 -= 0x18;
+                var_a2 -= 24;
                 var_s5 += 1;
             }
-            if (_data_4 >= 0x19) {
+
+            if (_data_4 > 24) {
                 var_s0 += 1;
-                var_a2 -= 0x18;
+                var_a2 -= 24;
                 var_s5 += 1;
             }
+
             var_a2 += _bss_C28 - _data_C;
             var_s1 = _bss_C40 - var_s0;
+
             if (var_s1 < 0) {
                 var_s1 += _bss_C44;
             }
+
             for (i = 0; i < var_s5; i++) {
                 if (sp70[var_s1] == 0) {
                     _bss_C60->animProgress = 0;
-                    sp5F = _data_10;
+                    iconOpacity = _data_10;
                     if ((var_s1 == _bss_C40) && (_data_4 == 0)) {
                         _bss_C60->x = 0;
                         _bss_C60->y = 0;
@@ -1551,26 +1586,45 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         _bss_C60->x = 0;
                         _bss_C60->y = 0;
                     }
-                    if (_bss_518[var_s1] != 0) {
-                        _bss_C60->tex = _bss_98[var_s1];
+                    if (sMenuItemVisibilities[var_s1] != 0) {
+                        _bss_C60->tex = sMenuItemTextures[var_s1];
                         if (func_80041E08() != 0) {
-                            rcp_tile_write(gdl, _bss_C60, 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                            rcp_tile_write(
+                                gdl, 
+                                _bss_C60, 
+                                261, 
+                                ((i * 24) + var_a2) + _data_4, 
+                                0xFF, 0xFF, 0xFF, iconOpacity
+                            );
                         } else {
-                            rcp_tile_write(gdl, _bss_C60, 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, sp5F);
+                            rcp_tile_write(
+                                gdl, 
+                                _bss_C60, 
+                                262, 
+                                ((i * 24) + var_a2) + _data_4, 
+                                0xFF, 0xFF, 0xFF, iconOpacity
+                            );
                         }
-                        if (_bss_558[var_s1] >= 2) {
+                        if (sMenuItemQuantities[var_s1] >= 2) {
                             _bss_C60->tex = sInventoryStackNumbersTex;
-                            _bss_C60->animProgress = (_bss_558[var_s1] - 2) << 8;
-                            rcp_tile_write(gdl, _bss_C60, 0x114, ((i * 0x18) + var_a2) + _data_4 + 9, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                            _bss_C60->animProgress = (sMenuItemQuantities[var_s1] - 2) << 8;
+                            rcp_tile_write(
+                                gdl, 
+                                _bss_C60, 
+                                276, 
+                                ((i * 24) + var_a2) + _data_4 + 9, 
+                                0xFF, 0xFF, 0xFF, 0xFF
+                            );
                         }
                     }
                 } else {
                     if (func_80041E08() != 0) {
-                        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x105, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 261, ((i * 24) + var_a2) + _data_4, 0xFF, 0xFF, 0xFF, 0xFF);
                     } else {
-                        rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_00_Scroll_BG], 0x106, ((i * 0x18) + var_a2) + _data_4, 0xFFU, 0xFFU, 0xFFU, 0xFFU);
+                        rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 262, ((i * 24) + var_a2) + _data_4, 0xFF, 0xFF, 0xFF, 0xFF);
                     }
                 }
+
                 var_s1 += 1;
                 if (var_s1 >= _bss_C44) {
                     var_s1 -= _bss_C44;
@@ -1578,127 +1632,159 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
 
             //Draw a square around the currently highlighted item
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_31_Highlight_Corner_Top_Left], 0x10A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_32_Highlight_Corner_Top_Right], 0x11A, (_bss_C28 - _data_C) + 0x52, 255, 255, 255, _data_10);
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left], 0x10A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
-            rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], 0x11A, (_bss_C28 - _data_C) + 0x66, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     POS_ITEM_HL_X1, (_bss_C28 - _data_C) + POS_ITEM_HL_Y1,  255, 255, 255, _data_10);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    POS_ITEM_HL_X2, (_bss_C28 - _data_C) + POS_ITEM_HL_Y1,  255, 255, 255, _data_10);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  POS_ITEM_HL_X1, (_bss_C28 - _data_C) + POS_ITEM_HL_Y2, 255, 255, 255, _data_10);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], POS_ITEM_HL_X2, (_bss_C28 - _data_C) + POS_ITEM_HL_Y2, 255, 255, 255, _data_10);
             
             cmdmenu_func_474C(gdl);
         }
 
-        if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
-            switch (_bss_C3E) {
-            case CMDMENU_PAGE_7_Sidekick_Kyte:
-                sp5E = CMDMENU_TEX_42_Tricky;
-                sp5C = 3;
-                break;
-            case CMDMENU_PAGE_8_Sidekick_Tricky:
-                sp5E = CMDMENU_TEX_54_Kyte;
-                break;
-            case CMDMENU_PAGE_6_Spells:
-                sp5D = -2;
-                sp5C = 9;
-                sp5E = CMDMENU_TEX_49_MagicBook;
-                break;
-            default:
-            case CMDMENU_PAGE_0_Items_Krystal:
-            case CMDMENU_PAGE_1_Items_Sabre:
-            case CMDMENU_PAGE_2_Food_Actions_Krystal:
-            case CMDMENU_PAGE_3_Food_Actions_Sabre:
-            case CMDMENU_PAGE_4_Food_Krystal:
-            case CMDMENU_PAGE_5_Food_Sabre:
-                sp5D = 1;
-                sp5C = 9;
-                sp5E = CMDMENU_TEX_50_Bag;
-                break;
-            }
-            if (_data_14 < _data_10) {
-                sp5F = _data_10;
-            } else {
-                sp5F = _data_14;
-            }
-        } else {
-            if (_data_14 != 0) {
-                sp5E = CMDMENU_TEX_42_Tricky;
-                if (sidekick != NULL && sidekick->id == OBJ_Kyte) {
-                    sp5E = CMDMENU_TEX_54_Kyte;
-                    sp5F = _data_14;
+        //Draw page icon (Bag/SpellBook/Kyte/Tricky)
+        {
+            if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
+                switch (_bss_C3E) {
+                case CMDMENU_PAGE_7_Sidekick_Kyte:
+                    pageIcon = CMDMENU_TEX_42_Tricky;
+                    offsetY = 3;
+                    break;
+                case CMDMENU_PAGE_8_Sidekick_Tricky:
+                    pageIcon = CMDMENU_TEX_54_Kyte;
+                    break;
+                case CMDMENU_PAGE_6_Spells:
+                    offsetX = -2;
+                    offsetY = 9;
+                    pageIcon = CMDMENU_TEX_49_MagicBook;
+                    break;
+                default:
+                case CMDMENU_PAGE_0_Items_Krystal:
+                case CMDMENU_PAGE_1_Items_Sabre:
+                case CMDMENU_PAGE_2_Food_Actions_Krystal:
+                case CMDMENU_PAGE_3_Food_Actions_Sabre:
+                case CMDMENU_PAGE_4_Food_Krystal:
+                case CMDMENU_PAGE_5_Food_Sabre:
+                    offsetX = 1;
+                    offsetY = 9;
+                    pageIcon = CMDMENU_TEX_50_Bag;
+                    break;
+                }
+                if (_data_14 < _data_10) {
+                    iconOpacity = _data_10;
                 } else {
-                    sp5C = 3;
-                    sp5F = _data_14;
+                    iconOpacity = _data_14;
                 }
             } else {
-                sp5F = 0;
+                if (_data_14 != 0) {
+                    pageIcon = CMDMENU_TEX_42_Tricky;
+                    if (sidekick != NULL && sidekick->id == OBJ_Kyte) {
+                        pageIcon = CMDMENU_TEX_54_Kyte;
+                        iconOpacity = _data_14;
+                    } else {
+                        offsetY = 3;
+                        iconOpacity = _data_14;
+                    }
+                } else {
+                    iconOpacity = 0;
+                }
             }
-        }
 
-        if (sp5F) {
-            dInventoryPageIcon = tex_load_deferred(_data_9D8[sp5E]);
-            rcp_screen_full_write(gdl, dInventoryPageIcon, sp5D + 0x105, sp5C + 0xA, 0, 0, sp5F, SCREEN_WRITE_TRANSLUCENT);
-            tex_free(dInventoryPageIcon);
+            if (iconOpacity) {
+                dInventoryPageIcon = tex_load_deferred(dTextableIDs[pageIcon]);
+                rcp_screen_full_write(
+                    gdl, 
+                    dInventoryPageIcon, 
+                    POS_PAGE_ICON_X + offsetX,
+                    POS_PAGE_ICON_Y + offsetY,
+                    0, 
+                    0, 
+                    iconOpacity, 
+                    SCREEN_WRITE_TRANSLUCENT
+                );
+                tex_free(dInventoryPageIcon);
+            }
         }
     }
 }
 
 // offset: 0x325C | func: 21
-static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
+static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
     s32 i;
-    s32 var_s7;
-    s32 var_s5;
+    s32 loadIdx;
+    s32 obtained;
     s32 sp268;
     Object* sidekick;
-    Texture* sp164[64];
-    Texture* sp64[64];
+    Texture* prevMenuItemTextures[MAX_LOADED_ITEMS];
+    Texture* prevMenuSidekickCommandTextures[MAX_LOADED_ITEMS];
 
-    for (i = 0; i < 64; i++) {
-        sp164[i] = _bss_98[i];
-        sp64[i] = _bss_198[i];
-        _bss_98[i] = 0;
-        _bss_298[i] = -1;
-        _bss_558[i] = 1;
-        _bss_198[i] = 0;
+    for (i = 0; i < MAX_LOADED_ITEMS; i++) {
+        //Store previous menu's textures so they can be freed
+        prevMenuItemTextures[i] = sMenuItemTextures[i];
+        prevMenuSidekickCommandTextures[i] = sMenuSidekickCommandTextures[i];
+
+        //Reset arrays
+        sMenuItemTextures[i] = NULL;
+        sMenuItemTextureIDs[i] = NO_TEXTURE;
+        sMenuItemQuantities[i] = 1;
+        sMenuSidekickCommandTextures[i] = NULL;
     }
-    var_s7 = 0;
+
+    loadIdx = 0;
     i = 0;
-    if (arg1 == 0) {
+    if (isSidekickMenu == FALSE) {
         _bss_C7A = -1;
-        while (arg0[i].gamebitObtained >= 0) {
-            var_s5 = main_get_bits(arg0[i].gamebitObtained);
-            if (var_s5 != 0) {
-                if (arg0 == dPage6MagicSpells) {
-                    _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
-                    _bss_298[var_s7] = arg0[i].textureID;
-                    _bss_318[var_s7] = arg0[i].gamebitObtained;
-                    if (var_s5 > 10) {
-                        var_s5 = 10;
+        while (items[i].gamebitObtained > NO_GAMEBIT) {
+            obtained = main_get_bits(items[i].gamebitObtained);
+            if (obtained) {
+                //Magic Spells
+                if (items == dPage6MagicSpells) {
+                    sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
+                    sMenuItemTextureIDs[loadIdx] = items[i].textureID;
+                    sMenuItemGamebits[loadIdx] = items[i].gamebitObtained;
+
+                    //Cap the displayed quantity at 10 (should always just be 1 for Spells)
+                    if (obtained > 10) {
+                        obtained = 10;
                     }
-                    _bss_558[var_s7] = (u8) var_s5;
-                    cmdmenu_func_3880(arg0, var_s7, i);
-                    if ((arg0[i].gamebitHide < 0) || (main_get_bits(arg0[i].gamebitHide) == 0)) {
-                        _bss_518[var_s7] = 1;
+                    sMenuItemQuantities[loadIdx] = obtained;
+
+                    cmdmenu_func_3880(items, loadIdx, i);
+
+                    //Store item's visibility state (Spells never get taken away, though)
+                    if ((items[i].gamebitHide < 0) || (main_get_bits(items[i].gamebitHide) == 0)) {
+                        sMenuItemVisibilities[loadIdx] = TRUE;
                     } else {
-                        _bss_518[var_s7] = 0;
+                        sMenuItemVisibilities[loadIdx] = FALSE;
                     }
-                    var_s7 += 1;
+
+                    loadIdx++;
+
+                //Other items
                 } else {
-                    if ((arg0[i].gamebitHide < 0) || (main_get_bits(arg0[i].gamebitHide) == 0)) {
-                        if ((_bss_C78 != 0) && (_bss_C78 == arg0[i].gamebitObtained)) {
-                            _bss_C7A = (s16) var_s7;
+                    //Only load non-magic items if they aren't hidden
+                    if ((items[i].gamebitHide < 0) || (main_get_bits(items[i].gamebitHide) == 0)) {
+                        if ((_bss_C78 != 0) && (_bss_C78 == items[i].gamebitObtained)) {
+                            _bss_C7A = loadIdx;
                         }
-                        _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
-                        _bss_298[var_s7] = arg0[i].textureID;
-                        _bss_318[var_s7] = arg0[i].gamebitObtained;
-                        if (var_s5 > 10) {
-                            var_s5 = 10;
+
+                        sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
+                        sMenuItemTextureIDs[loadIdx] = items[i].textureID;
+                        sMenuItemGamebits[loadIdx] = items[i].gamebitObtained;
+
+                        //Cap the displayed quantity at 10
+                        if (obtained > 10) {
+                            obtained = 10;
                         }
-                        _bss_558[var_s7] = (u8) var_s5;
-                        cmdmenu_func_3880(arg0, var_s7, i);
-                        _bss_518[var_s7] = 1;
-                        var_s7 += 1;
+                        sMenuItemQuantities[loadIdx] = obtained;
+
+                        cmdmenu_func_3880(items, loadIdx, i);
+
+                        sMenuItemVisibilities[loadIdx] = TRUE;
+
+                        loadIdx++;
                     }
                 }
             }
-            i += 1;
+            i++;
         }
     } else {
         sidekick = get_sidekick();
@@ -1710,33 +1796,39 @@ static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
         }
 
         if (sp268 != -1) {
-            while (arg0[i].gamebitObtained >= 0) {
-                if (arg0[i].gamebitObtained & sp268) {
-                    _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
-                    _bss_558[var_s7] = 1;
-                    if (arg0[i].sidekickCommand != -1) {
-                        _bss_198[var_s7] = tex_load_deferred(arg0[i].sidekickCommand);
+            while (items[i].gamebitObtained >= 0) {
+                if (items[i].gamebitObtained & sp268) {
+                    sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
+                    sMenuItemQuantities[loadIdx] = 1;
+
+                    if (items[i].sidekickCommand != NO_TEXTURE) {
+                        sMenuSidekickCommandTextures[loadIdx] = tex_load_deferred(items[i].sidekickCommand);
                     } else {
-                        _bss_198[var_s7] = NULL;
+                        sMenuSidekickCommandTextures[loadIdx] = NULL;
                     }
-                    _bss_318[var_s7] = arg0[i].gamebitHide;
-                    cmdmenu_func_3880(arg0, var_s7, i);
-                    _bss_518[var_s7] = 1;
-                    var_s7 += 1;
+
+                    sMenuItemGamebits[loadIdx] = items[i].gamebitHide;
+                    cmdmenu_func_3880(items, loadIdx, i);
+                    sMenuItemVisibilities[loadIdx] = TRUE;
+
+                    loadIdx++;
                 }
-                i += 1;
+                i++;
             }
         }
     }
-    for (i = 0; i < 64; i++) {
-        if (sp164[i] != NULL) {
-            tex_free(sp164[i]);
+
+    //Free the previous menu's textures
+    for (i = 0; i < MAX_LOADED_ITEMS; i++) {
+        if (prevMenuItemTextures[i] != NULL) {
+            tex_free(prevMenuItemTextures[i]);
         }
-        if (sp64[i] != NULL) {
-            tex_free(sp64[i]);
+        if (prevMenuSidekickCommandTextures[i] != NULL) {
+            tex_free(prevMenuSidekickCommandTextures[i]);
         }
     }
-    return var_s7;
+
+    return loadIdx;
 }
 
 // offset: 0x3718 | func: 22
@@ -1782,7 +1874,7 @@ static s32 cmdmenu_func_3718(InventoryItem* menuItems, s8 isSidekickMenu) {
 
 // offset: 0x3880 | func: 23
 static void cmdmenu_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
-    _bss_418[loadedItemIndex] = items[itemIndex].textID;
+    sMenuItemTextIDs[loadedItemIndex] = items[itemIndex].textID;
     _bss_498[loadedItemIndex] = items[itemIndex].openPage;
     _bss_4D8[loadedItemIndex] = items[itemIndex].unkB;
 }
@@ -1939,12 +2031,12 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
             if (sp44 & 2) {
                 texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
-                dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
+                dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
                 rcp_screen_full_write(gdl, dInventoryPageIcon, 275, 25, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
                 tex_free(dInventoryPageIcon);
             } else {
                 texIdx = CMDMENU_TEX_41_C_Right;
-                rcp_tile_write(gdl, _bss_6B8[texIdx], 0x112, 0x22, 255, 255, 255, sOpacityR);
+                rcp_tile_write(gdl, sTextureTiles[texIdx], 0x112, 0x22, 255, 255, 255, sOpacityR);
             }
 
             if (((sp44 & 4) && (sidekick != NULL)) || (sp44 & 1)) {
@@ -1957,12 +2049,12 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 } else if (sp44 & 2) {
                     texIdx = CMDMENU_TEX_48_LeftDownButtons_NoSidekick;
                 }
-                dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
+                dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
                 rcp_screen_full_write(gdl, dInventoryPageIcon, 0xF5, 0x11, 0, 0, (s32) sOpacityR, SCREEN_WRITE_TRANSLUCENT);
                 tex_free(dInventoryPageIcon);
             } else {
-                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) sOpacityR);
-                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) sOpacityR);
+                rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) sOpacityR);
+                rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) sOpacityR);
             }
         }
     } else {
@@ -1970,8 +2062,8 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
     dl = *gdl;
     if (_data_10 != 0) {
-        rcp_tile_write(&dl, _bss_6B8[CMDMENU_TEX_02_Scroll_Top], 0x102, 0x33, 255, 255, 255, (u8) _data_10);
-        rcp_tile_write(&dl, _bss_6B8[CMDMENU_TEX_01_Scroll_Bottom], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top], 0x102, 0x33, 255, 255, 255, (u8) _data_10);
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], 0x102, _bss_C28 + 0x3B, 255, 255, 255, (u8) _data_10);
     }
     if (sidekick != NULL) {
         if ((((_bss_C3E == 7) || (_bss_C3E == 8)) && (_data_10 != 0)) || (sStatsChangeTimers.sidekickBlueFood >= 0.0f)) {
@@ -2024,7 +2116,7 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         pageIdx = CMDMENU_TEX_44_Mushroom_Empty;
                     }
                 }
-                rcp_tile_write(&dl, _bss_6B8[pageIdx], 
+                rcp_tile_write(&dl, sTextureTiles[pageIdx], 
                     250 - ((i / 4) * 9), 
                     21  + ((i % 4) * 8), 
                     255, 255, 255, _data_14);
@@ -2166,7 +2258,7 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     height = _bss_C2A << 2;
 
     //Draw scroll's paper BG
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_06_InfoScroll_BG], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
         /*ulx*/ charIdx - sp104,
         /*uly*/ y,
@@ -2179,7 +2271,7 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
 
     //Draw scroll's left side
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_05_InfoScroll_Side], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
         /*lrx*/ charIdx - sp104 - (16 << 2),
         /*lry*/ y,
@@ -2204,7 +2296,7 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     sp104 += (16 << 2);
 
     if (_bss_C2A >= 9) {
-        cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
+        cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
         dl_set_prim_color(&dl, 255, 128, 128, 128);
         
         tempY = y;
@@ -2235,7 +2327,7 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
 
     tempY = y - (11 << 2);
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
     gSPTextureRectangle(dl++, 
         /*ulx*/ charIdx - sp104,
         /*uly*/ tempY,
@@ -2248,7 +2340,7 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = 1;
 
     tempY = (y + height) - (4 << 2);
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
     gSPTextureRectangle(dl++, 
         /*ulx*/ charIdx - sp104,
         /*uly*/ tempY,
@@ -2260,7 +2352,7 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = 1;
 
-    cmdmenu_func_38E4(&dl, _bss_5C8[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
+    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++, 
         /*ulx*/ charIdx - sp104 - (16 << 2),
@@ -2415,7 +2507,7 @@ static void cmdmenu_update_stats(void) {
         }
     }
 
-    sOpacityR = sOpacityR < _bss_0 ? sOpacityR : _bss_0;
+    sOpacityR = sOpacityR < sOpacityHealth ? sOpacityR : sOpacityHealth;
     stats.unk18 = 0;
     if (_bss_88 & 1) {
         _bss_88 &= ~1;
@@ -2424,7 +2516,7 @@ static void cmdmenu_update_stats(void) {
             sPrevStats.items[i] = stats.items[i];
             sStatsChangeTimers.items[i] = -30.0f;
         }
-        _bss_0 = 0.0f;
+        sOpacityHealth = 0.0f;
         return;
     }
 
@@ -2458,195 +2550,299 @@ static void cmdmenu_update_stats(void) {
 }
 
 // offset: 0x5BBC | func: 39
+/** 
+  * Draws the player's character icon, health, magic, and Scarab counter
+  */
 static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
-    f32 var_fv1;
+    f32 goalOpacity;
     u32 pad;
-    u8 var_s0;
-    u8 sp7E;
-    s8 sp7C;
-    s8 sp7D;
-    s32 tempVar;
-    Gfx* sp74;
-    Object* sp70 = get_player();
+    u8 i;
+    u8 statsOpacity;
+    s8 offsetX;
+    s8 offsetY;
+    s32 temp;
+    Gfx* dl;
+    Object* player = get_player();
     u8 texIdx;
-    char sp68[4] = "   ";
+    char sPlayerScarabCount[4] = "   ";
 
-    sp74 = *gdl;
-    tempVar = vi_get_current_size();
-    gDPSetScissor(sp74++, G_SC_NON_INTERLACE, 0, 0, (GET_VIDEO_WIDTH(tempVar) & 0xFFFF) - 1, 239);
-    if ((sStatsChangeTimers.playerHealth >= 0.0f) || (sStatsChangeTimers.playerHealthMax >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
-        var_fv1 = 255.0f;
-    } else {
-        var_fv1 = 0.0f;
-    }
-    if (_bss_0 < var_fv1) {
-        _bss_0 += 8.5f * gUpdateRateF;
-        if (_bss_0 > 255.0f) {
-            _bss_0 = 255.0f;
-        }
-    } else if (var_fv1 < _bss_0) {
-        _bss_0 -= 8.5f * gUpdateRateF;
-        if (_bss_0 < 0.0f) {
-            _bss_0 = 0.0f;
-        }
-    }
-    sp7E = _bss_0;
-    if (sp7E) {
-        for (var_s0 = 0; var_s0 < (sStats.playerHealthMax >> 2); var_s0++) {
-            s32 pad;
-            if (var_s0 >= 0xD) {
-                sp7C = (var_s0 * 0xA) - 0x82;
-                sp7D = 0x14;
-            } else if (var_s0 >= 7) {
-                sp7C = (var_s0 * 0xA) - 0x41;
-                sp7D = 0xA;
-            } else {
-                sp7C = var_s0 * 0xA;
-                sp7D = 0;
-            }
-            tempVar = sStats.playerHealth >> 2;
-            if (var_s0 < tempVar) {
-                texIdx = CMDMENU_TEX_17_Apple_100_Pct;
-            } else if (tempVar < var_s0) {
-                texIdx = CMDMENU_TEX_08_Apple_0_Pct;
-            } else {
-                texIdx = CMDMENU_TEX_08_Apple_0_Pct + (sStats.playerHealth & 3);
-            }
-            rcp_tile_write(&sp74, _bss_6B8[texIdx], sp7C + 0x3C, sp7D + 0x14, 0xFF, 0xFF, 0xFF, sp7E);
-        }
-    }
-    if ((sStatsChangeTimers.playerMagic >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f) || (((DLL_210_Player*)sp70->dll)->vtbl->func50(sp70) != -1)) {
-        var_fv1 = 255.0f;
-    } else {
-        var_fv1 = 0.0f;
-    }
-    if (_bss_8 < var_fv1) {
-        _bss_8 += 8.5f * gUpdateRateF;
-        if (_bss_8 > 255.0f) {
-            _bss_8 = 255.0f;
-        }
-    } else if (var_fv1 < _bss_8) {
-        _bss_8 -= 8.5f * gUpdateRateF;
-        if (_bss_8 < 0.0f) {
-            _bss_8 = 0.0f;
-        }
-    }
-    sp7E = _bss_8;
-    if (sp7E) {
-        for (var_s0 = 0; var_s0 < (sStats.playerMagicMax / 25); var_s0++) {
-            if (var_s0 < (sStats.playerMagic / 25)) {
-                tempVar = 0x42;
-            } else if ((sStats.playerMagic / 25) < var_s0) {
-                tempVar = 0;
-            } else {
-                tempVar = ((sStats.playerMagic % 25) * 2) + 0xD;
-            }
-            rcp_tile_write_x(&sp74, _bss_6B8[CMDMENU_TEX_36_MagicBar_Full], 23.0f, ((var_s0 * 0xC) + 0x3C), (f32) tempVar, 14.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
-            rcp_tile_write_x(&sp74, _bss_6B8[CMDMENU_TEX_35_MagicBar_Empty], (f32) (tempVar + 0x17), ((var_s0 * 0xC) + 0x3C), (f32) (0x42 - tempVar), 14.0f, tempVar << 5, 0, 1.0f, 1.0f, sp7E | ~0xFF, TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
-        }
-    }
-    sp7E = (u8)_bss_0 < (u8)_bss_8 ?  (u8)_bss_8 : (u8)_bss_0;
-    if (sp7E) {
-        if (sp70->id == OBJ_Krystal) {
-            sp7C = 0;
-            sp7D = 0;
-            texIdx = CMDMENU_TEX_53_Krystal;
+    dl = *gdl;
+    temp = vi_get_current_size();
+    gDPSetScissor(dl++, G_SC_NON_INTERLACE, 0, 0, (u16)GET_VIDEO_WIDTH(temp) - 1, 239);
+    
+    //Draw player health
+    {
+        if ((sStatsChangeTimers.playerHealth >= 0.0f) || (sStatsChangeTimers.playerHealthMax >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
+            goalOpacity = 255.0f;
         } else {
-            sp7C = 2;
-            sp7D = -1;
-            texIdx = CMDMENU_TEX_40_Sabre;
+            goalOpacity = 0.0f;
         }
-        dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
-        rcp_screen_full_write(&sp74, dInventoryPageIcon, sp7C + 0x14, sp7D + 0xA, 0, 0, sp7E, SCREEN_WRITE_TRANSLUCENT);
-        tex_free(dInventoryPageIcon);
-    }
-    if ((sStatsChangeTimers.playerScarabCount >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
-        var_fv1 = 255.0f;
-    } else {
-        var_fv1 = 0.0f;
-    }
-    if (_bss_4 < var_fv1) {
-        _bss_4 += 8.5f * gUpdateRateF;
-        if (_bss_4 > 255.0f) {
-            _bss_4 = 255.0f;
+
+        if (sOpacityHealth < goalOpacity) {
+            sOpacityHealth += 8.5f * gUpdateRateF;
+            if (sOpacityHealth > 255.0f) {
+                sOpacityHealth = 255.0f;
+            }
+        } else if (goalOpacity < sOpacityHealth) {
+            sOpacityHealth -= 8.5f * gUpdateRateF;
+            if (sOpacityHealth < 0.0f) {
+                sOpacityHealth = 0.0f;
+            }
         }
-    } else if (var_fv1 < _bss_4) {
-        _bss_4 -= 8.5f * gUpdateRateF;
-        if (_bss_4 < 0.0f) {
-            _bss_4 = 0.0f;
-        }
-    }
-    sp7E = _bss_4;
-    if (sp7E && (main_get_bits(BIT_UI_Scarab_Counter_Enabled) != 0)) {
-        _bss_89 = 0;
-        if (sp7E == 0xFF) {
-            // @fake assignment of var_s0
-            if ((var_s0 = _bss_8B) != 0) {
-                _bss_89 = 0xB - _bss_8B;
-                _bss_8B--;
-                if (!_bss_8B) {
-                    _bss_8A = 0x50;
+        
+        statsOpacity = sOpacityHealth;
+        if (statsOpacity) {
+            for (i = 0; i < (sStats.playerHealthMax >> 2); i++) {
+                s32 appleCount;
+                if (i >= 13) {
+                    offsetX = (i * 10) - 130;
+                    offsetY = 20;
+                } else if (i >= 7) {
+                    offsetX = (i * 10) - 65;
+                    offsetY = 10;
+                } else {
+                    offsetX = i * 10;
+                    offsetY = 0;
                 }
+
+                appleCount = sStats.playerHealth >> 2;
+                if (i < appleCount) {
+                    texIdx = CMDMENU_TEX_17_Apple_100_Pct;
+                } else if (appleCount < i) {
+                    texIdx = CMDMENU_TEX_08_Apple_0_Pct;
+                } else {
+                    texIdx = CMDMENU_TEX_08_Apple_0_Pct + (sStats.playerHealth & 3);
+                }
+                
+                rcp_tile_write(
+                    &dl,
+                    sTextureTiles[texIdx], 
+                    POS_HEALTH_X + offsetX, 
+                    POS_HEALTH_Y + offsetY,
+                    0xFF,0xFF, 0xFF, statsOpacity
+                );
+            }
+        }
+    }
+
+    //Draw player magic
+    {
+        //Get opacity goal
+        if ((sStatsChangeTimers.playerMagic >= 0.0f) || 
+            (sStatsChangeTimers.unk14 >= 0.0f) || 
+            (((DLL_210_Player*)player->dll)->vtbl->func50(player) != -1)
+        ) {
+            goalOpacity = 255.0f;
+        } else {
+            goalOpacity = 0.0f;
+        }
+
+        //Animate magic bar's opacity towards goal opacity
+        if (sOpacityMagic < goalOpacity) {
+            sOpacityMagic += 8.5f * gUpdateRateF;
+            if (sOpacityMagic > 255.0f) {
+                sOpacityMagic = 255.0f;
+            }
+        } else if (goalOpacity < sOpacityMagic) {
+            sOpacityMagic -= 8.5f * gUpdateRateF;
+            if (sOpacityMagic < 0.0f) {
+                sOpacityMagic = 0.0f;
+            }
+        }
+
+        //Draw magic bar(s)
+        statsOpacity = sOpacityMagic;
+        if (statsOpacity) {
+            for (i = 0; i < (sStats.playerMagicMax / 25); i++) {
+                if (i < (sStats.playerMagic / 25)) {
+                    temp = 66;
+                } else if ((sStats.playerMagic / 25) < i) {
+                    temp = 0;
+                } else {
+                    temp = ((sStats.playerMagic % 25) * 2) + 13;
+                }
+
+                rcp_tile_write_x(
+                    &dl,
+                    sTextureTiles[CMDMENU_TEX_36_MagicBar_Full],
+                    23.0f,
+                    ((i * 12) + 60),
+                    (f32) temp,
+                    14.0f,
+                    0, 0,
+                    1.0f, 1.0f,
+                    statsOpacity | ~0xFF,
+                    TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT
+                );
+
+                rcp_tile_write_x(
+                    &dl, sTextureTiles[CMDMENU_TEX_35_MagicBar_Empty],
+                    (23 + temp),
+                    ((i * 12) + 60),
+                    (f32) (66 - temp), 
+                    14.0f,
+                    temp << 5, 0, 
+                    1.0f, 1.0f, 
+                    statsOpacity | ~0xFF, 
+                    TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT
+                );
+            }
+        }
+    }
+
+    //Draw character icon
+    {
+        statsOpacity = ((u8)sOpacityHealth < (u8)sOpacityMagic) ? (u8)sOpacityMagic : (u8)sOpacityHealth;
+        if (statsOpacity) {
+            if (player->id == OBJ_Krystal) {
+                offsetX = 0;
+                offsetY = 0;
+                texIdx = CMDMENU_TEX_53_Krystal;
             } else {
-                if (_bss_8A != 0) {
-                    _bss_8A--;
-                    if (_bss_8A < 6) {
-                        _bss_89 = 3 - (_bss_8A >> 1);
+                offsetX = 2;
+                offsetY = -1;
+                texIdx = CMDMENU_TEX_40_Sabre;
+            }
+
+            dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
+
+            rcp_screen_full_write(
+                &dl,
+                dInventoryPageIcon,
+                20 + offsetX,
+                10 + offsetY,
+                0,
+                0,
+                statsOpacity,
+                SCREEN_WRITE_TRANSLUCENT
+            );
+
+            tex_free(dInventoryPageIcon);
+        }
+    }
+
+    //Draw Scarab counter
+    {
+        if ((sStatsChangeTimers.playerScarabCount >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
+            goalOpacity = 255.0f;
+        } else {
+            goalOpacity = 0.0f;
+        }
+
+        if (sOpacityScarabs < goalOpacity) {
+            sOpacityScarabs += 8.5f * gUpdateRateF;
+            if (sOpacityScarabs > 255.0f) {
+                sOpacityScarabs = 255.0f;
+            }
+        } else if (goalOpacity < sOpacityScarabs) {
+            sOpacityScarabs -= 8.5f * gUpdateRateF;
+            if (sOpacityScarabs < 0.0f) {
+                sOpacityScarabs = 0.0f;
+            }
+        }
+
+        statsOpacity = sOpacityScarabs;
+        if (statsOpacity && (main_get_bits(BIT_UI_Scarab_Counter_Enabled) != 0)) {
+            sAnimFrameScarab = 0;
+            if (statsOpacity == MAX_OPACITY) {
+                // @fake assignment of var_s0
+                if ((i = _bss_8B) != 0) {
+                    sAnimFrameScarab = 11 - _bss_8B;
+                    _bss_8B--;
+                    if (!_bss_8B) {
+                        _bss_8A = 80;
                     }
                 } else {
-                    _bss_8A = rand_next(0x14, 0xFF);
+                    if (_bss_8A != 0) {
+                        _bss_8A--;
+                        if (_bss_8A < 6) {
+                            sAnimFrameScarab = 3 - (_bss_8A >> 1);
+                        }
+                    } else {
+                        _bss_8A = rand_next(20, 255);
+                    }
                 }
             }
+
+            rcp_tile_write_x(
+                &dl, 
+                sTextureTiles[CMDMENU_TEX_18_Scarab + sAnimFrameScarab], 
+                252.0f, 
+                198.0f, 
+                16.0f, 
+                16.0f, 
+                0, 0, 
+                1.0f, 1.0f, 
+                statsOpacity | ~0xFF, 
+                TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT
+            );
+
+            sprintf(sPlayerScarabCount, "%d", (int)sStats.playerScarabCount);
+            font_window_set_coords(3, 0, 0, 320, 240);
+            font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
+            font_window_set_bg_colour(3, 0, 0, 0, 0);
+            font_window_flush_strings(3);
+            font_window_set_text_colour(3, 0xFF, 0xFF, 0xFF, 0xFF, statsOpacity);
+            font_window_add_string_xy(3, 270, 202, sPlayerScarabCount, 1, ALIGN_TOP_LEFT);
+            font_window_set_text_colour(3, 0x14, 0x14, 0x14, 0xFF, 0xFF);
+            font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
+            font_window_draw(&dl, mtxs, vtxs, 3);
         }
-        rcp_tile_write_x(&sp74, _bss_6B8[_bss_89 + CMDMENU_TEX_18_Scarab], 252.0f, 198.0f, 16.0f, 16.0f, 0, 0, 1.0f, 1.0f, sp7E | ~0xFF, TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
-        sprintf(sp68, "%d", (int)sStats.playerScarabCount);
-        font_window_set_coords(3, 0, 0, 0x140, 0xF0);
-        font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
-        font_window_set_bg_colour(3, 0, 0, 0, 0);
-        font_window_flush_strings(3);
-        font_window_set_text_colour(3, 0xFF, 0xFF, 0xFF, 0xFF, sp7E);
-        font_window_add_string_xy(3, 0x10E, 0xCA, sp68, 1, ALIGN_TOP_LEFT);
-        font_window_set_text_colour(3, 0x14, 0x14, 0x14, 0xFF, 0xFF);
-        font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
-        font_window_draw(&sp74, mtxs, vtxs, 3);
     }
-    *gdl = sp74;
+
+    *gdl = dl;
 }
 
 // offset: 0x6984 | func: 40 | export: 16
-void cmdmenu_func_6984(s32 arg0) {
-    if (arg0 == -1) {
+/**
+  * Simulate controller button presses (only for the cmdmenu),
+  * used by tutorial sequences like Tricky's sidekick command explanation.
+  *
+  * An argument of `CMDMENU_CLEAR_BUTTONS_OVERRIDE` (-1) clears the override.
+  */
+void cmdmenu_set_buttons_override(s32 buttonsOverride) {
+    if (buttonsOverride == CMDMENU_CLEAR_BUTTONS_OVERRIDE) {
         sJoyPressedButtonsOverride = 0;
         sShouldOverrideJoypadButtons = FALSE;
     } else {
-        sJoyPressedButtonsOverride = arg0;
+        sJoyPressedButtonsOverride = buttonsOverride;
         sShouldOverrideJoypadButtons = TRUE;
     }
 }
 
 // offset: 0x69CC | func: 41
-static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0) {
-    arg0->timer = -1;
-    arg0->count = 0;
-    arg0->texture = NULL;
-    arg0->opacity = 0.0f;
+/**
+  * Resets/zeroes out the item info pop-up that appears in the 
+  * bottom-left of screen after collecting certain items (e.g. Kyte's grubs)
+  */
+static void cmdmenu_info_hide(CmdmenuInfoShowData* info) {
+    info->timer = -1;
+    info->count = 0;
+    info->texture = NULL;
+    info->opacity = 0.0f;
 }
 
 // offset: 0x69F8 | func: 42 | export: 17
-void cmdmenu_func_69F8(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
+/**
+  * Show an item info pop-up in the bottom-left of screen
+  * (used after collecting certain items, e.g. Kyte's grubs)
+  *
+  * The item is specified using its inventory gamebitID.
+  */
+void cmdmenu_info_show(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
     InventoryItem *items;
     CmdmenuPage *inventoryPage;
 
     inventoryPage = dCmdmenuPages;
     STUBBED_PRINTF("qInfoShow\n");
-    _bss_C88.texture = NULL;
+    sInfoPopup.texture = NULL;
 
     //Find the item's TEXTABLE textureID, using the item's collection gamebitID
     while (inventoryPage->items != NULL) {
         items = inventoryPage->items;
         while (items->gamebitObtained != NO_GAMEBIT) {
             if (itemGamebit == items->gamebitObtained) {
-                _bss_C88.texture = tex_load_deferred(items->textureID);
+                sInfoPopup.texture = tex_load_deferred(items->textureID);
                 break;
             }
             items++;
@@ -2654,20 +2850,27 @@ void cmdmenu_func_69F8(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
         inventoryPage++;
     }
 
-    if (_bss_C88.texture != NULL) {
-        _bss_C88.timer = displayDuration;
-        _bss_C88.count = itemCount;
-        _bss_C88.opacity = 0.0f;
+    //Assign the rest of the info box's parameters, and set it up to fade in
+    if (sInfoPopup.texture != NULL) {
+        sInfoPopup.timer = displayDuration;
+        sInfoPopup.count = itemCount;
+        sInfoPopup.opacity = 0.0f;
     }
 }
 
 // offset: 0x6B00 | func: 43 | export: 18
-void cmdmenu_func_6B00(s16 textureID, s32 duration, s32 arg2) {   
+/**
+  * Show an item info pop-up in the bottom-left of screen
+  * (used after collecting certain items, e.g. Kyte's grubs)
+  *
+  * The item is specified using its textable textureID.
+  */
+void cmdmenu_info_show_tex(s16 textureID, s32 displayDuration, s32 itemCount) {   
     STUBBED_PRINTF("qInfoShowTex\n");
-    if ((_bss_C88.texture = tex_load_deferred(textureID))){
-        _bss_C88.timer = duration;
-        _bss_C88.count = arg2;
-        _bss_C88.opacity = 0.0f;
+    if ((sInfoPopup.texture = tex_load_deferred(textureID))){
+        sInfoPopup.timer = displayDuration;
+        sInfoPopup.count = itemCount;
+        sInfoPopup.opacity = 0.0f;
     }
 }
 
@@ -2677,7 +2880,7 @@ void cmdmenu_func_6B00(s16 textureID, s32 duration, s32 arg2) {
   * 
   * NOTE: The box is styled after an older UI design, and it's only used by certain items (notably Kyte's grubs).
   */
-static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* box) {
+static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoShowData* box) {
     //Do nothing after item's timer finished
     if (box->timer < 0) {
         return;
@@ -2706,9 +2909,9 @@ static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* box) {
     }
 
     //Draw the box's shadow
-    rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_52_Page_Torn_Shadow], 
-        0x16, 
-        0xB0, 
+    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_52_Page_Torn_Shadow], 
+        22, 
+        176, 
         0xFF, 
         0xFF, 
         0xFF, 
@@ -2719,26 +2922,26 @@ static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* box) {
     _bss_C60->tex = box->texture;
     _bss_C60[1].tex = NULL;
     rcp_tile_write(gdl, _bss_C60, 
-        0x24, 
-        0xAF, 
+        36, 
+        175, 
         0xFF, 
         0xFF, 
         0xFF, 
         (u8) box->opacity);
 
     //Draw tattered left edge of box (@bug: outdated page design, mismatched with icons' newer BG)
-    rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_29_Page_Torn_Left], 
-        0x14, 
-        0xAF, 
+    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_29_Page_Torn_Left], 
+        20, 
+        175, 
         0xFF, 
         0xFF, 
         0xFF, 
         (u8) box->opacity);
 
     //Draw tattered right edge of box (@bug: outdated page design, mismatched with icons' newer BG)
-    rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_30_Page_Torn_Right], 
-        0x44, 
-        0xAF, 
+    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_30_Page_Torn_Right], 
+        68, 
+        175, 
         0xFF, 
         0xFF, 
         0xFF, 
@@ -2749,8 +2952,8 @@ static void cmdmenu_func_6B74(Gfx** gdl, CmdmenuItemUnkBSS* box) {
         _bss_C60->tex = sInventoryStackNumbersTex;
         _bss_C60->animProgress = (box->count - 2) << 8;
         rcp_tile_write(gdl, _bss_C60, 
-            0x34, 
-            0xBF, 
+            52, 
+            191, 
             0xFF, 
             0xFF, 
             0xFF, 

@@ -250,7 +250,7 @@ typedef struct {
 /*876*/ u16 pad876;
 /*878*/ s16 unk878;
 /*87A*/ s16 unk87A;
-/*87C*/ s16 unk87C;
+/*87C*/ s16 unk87C; //last used spell's gamebit
 /*87E*/ s16 unk87E;
 /*880*/ s16 unk880;
 /*882*/ u16 pad882;

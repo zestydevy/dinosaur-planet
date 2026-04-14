@@ -190,14 +190,14 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
                     objdata->demoState = STATE2_2;
                     break;
                 } else if (animObjData->unk8E[i] == 1)
-                    buttonMask = D_CBUTTONS; // simulate C-Down press?
+                    buttonMask = D_CBUTTONS; // simulate C-Down press
             }
             buttonMask |= joy_get_pressed_raw(0) & D_CBUTTONS;
             break;
         case STATE2_2:
             for (i = 0; i < animObjData->unk98; i++) {
                 if (animObjData->unk8E[i] == 2)
-                    buttonMask = A_BUTTON; // simulate A press?
+                    buttonMask = A_BUTTON; // simulate A press
             }
             buttonMask |= joy_get_pressed_raw(0) & A_BUTTON;
             if (buttonMask & A_BUTTON) {
@@ -205,9 +205,9 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
             }
             break;
         }
-        gDLL_1_cmdmenu->vtbl->func_6984(buttonMask);
+        gDLL_1_cmdmenu->vtbl->set_buttons_override(buttonMask);
     } else {
-        gDLL_1_cmdmenu->vtbl->func_6984(-1);
+        gDLL_1_cmdmenu->vtbl->set_buttons_override(CMDMENU_CLEAR_BUTTONS_OVERRIDE);
     }
 
     return 0;
