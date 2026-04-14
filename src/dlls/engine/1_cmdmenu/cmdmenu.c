@@ -170,16 +170,20 @@ enum CmdMenuTextures {
 #define NO_PAGE -1
 
 typedef enum {
-    CMDMENU_PAGE_0 = 0, //Krystal (closed?)
-    CMDMENU_PAGE_1 = 1, //Sabre (closed?)
-    CMDMENU_PAGE_2 = 2,
-    CMDMENU_PAGE_3 = 3, //Krystal items
-    CMDMENU_PAGE_4 = 4,
-    CMDMENU_PAGE_5 = 5,
-    CMDMENU_PAGE_6 = 6, //Spells
-    CMDMENU_PAGE_7 = 7, //Tricky
-    CMDMENU_PAGE_8 = 8 //Kyte
-} CmdMenuInventoryPageIDs;
+    CMDMENU_PAGE_0_Items_Krystal = 0,
+    CMDMENU_PAGE_1_Items_Sabre = 1,
+    CMDMENU_PAGE_2_Food_Actions_Krystal = 2,
+    CMDMENU_PAGE_3_Food_Actions_Sabre = 3,
+    CMDMENU_PAGE_4_Food_Krystal = 4,
+    CMDMENU_PAGE_5_Food_Sabre = 5,
+    CMDMENU_PAGE_6_Spells = 6,
+    CMDMENU_PAGE_7_Sidekick_Kyte = 7,
+    CMDMENU_PAGE_8_Sidekick_Tricky = 8,
+    CMDMENU_PAGE_9_Food_Actions_Kyte = 9,
+    CMDMENU_PAGE_10_Food_Actions_Tricky = 10,
+    CMDMENU_PAGE_11_Food_Kyte = 11,
+    CMDMENU_PAGE_12_Food_Tricky = 12
+} CmdMenuPages;
 
 /*0x0*/ static s8 _data_0 = 0;
 /*0x4*/ static s8 _data_4 = 0;
@@ -517,7 +521,7 @@ typedef enum {
     /*13*/ { NULL,      0, 0,       0 }
 };
 
-/*0x9D0*/ static s8 dInventoryPageID = 0; //index of cmdmenu page currently open
+/*0x9D0*/ static s8 dPageCategory = 0; //Category of cmdmenu page currently open (see `CmdMenuPageCategories`)
 /*0x9D4*/ static s8 _data_9D4 = 0;
 /*0x9D8*/ static s16 _data_9D8[] = {
     /*00*/ TEXTABLE_1BE_CMDMENU_Scroll_BG,
@@ -591,7 +595,7 @@ typedef enum {
 /*0x89*/ static u8 _bss_89;
 /*0x8A*/ static u8 _bss_8A;
 /*0x8B*/ static u8 _bss_8B;
-/*0x8C*/ static f32 _bss_8C;
+/*0x8C*/ static f32 sOpacityR; //Opacity of icons on right side of screen (C-buttons, menu page image, etc.)
 /*0x90*/ static EnergyBar* sEnergyBar; 
 /*0x98*/ static Texture* _bss_98[64]; //Pointers to inventory icon textures
 /*0x198*/ static Texture* _bss_198[64];
@@ -756,7 +760,7 @@ void cmdmenu_func_35C(void) {
     s8 sp31;
     s16 newStringID;
     s8 var_a0;
-    s8 newPageID;
+    s8 newPageIndex;
 
     player = get_player();
     sidekick = get_sidekick();
@@ -785,34 +789,34 @@ void cmdmenu_func_35C(void) {
         }
 
         //Using C buttons (left/down/right) to open or change inventory pages
-        if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dInventoryPageID != CMDMENU_PAGE_2)) {
-            newPageID = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8 : CMDMENU_PAGE_7;
-            if (cmdmenu_func_3718(_data_8F0[newPageID].items, 1) != 0) {
+        if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dPageCategory != CMDMENU_CATEGORY_2_Sidekick)) {
+            newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
+            if (cmdmenu_func_3718(_data_8F0[newPageIndex].items, 1)) {
                 joy_set_button_mask(0, D_CBUTTONS);
-                _data_9D4 = 2;
-                _bss_C3E = newPageID;
+                _data_9D4 = CMDMENU_CATEGORY_2_Sidekick;
+                _bss_C3E = newPageIndex;
             }
-        } else if ((sJoyPressedButtons & R_CBUTTONS) && (dInventoryPageID != CMDMENU_PAGE_3) && (dInventoryPageID != CMDMENU_PAGE_6)) {
-            newPageID = player->id == OBJ_Krystal ? CMDMENU_PAGE_0 : CMDMENU_PAGE_1;
-            if (cmdmenu_func_3718(_data_8F0[newPageID].items, 0) != 0) {
+        } else if ((sJoyPressedButtons & R_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_3_Items) && (dPageCategory != CMDMENU_CATEGORY_6_Food)) {
+            newPageIndex = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
+            if (cmdmenu_func_3718(_data_8F0[newPageIndex].items, 0)) {
                 joy_set_button_mask(0, R_CBUTTONS);
-                _data_9D4 = 3;
-                _bss_C3E = newPageID;
+                _data_9D4 = CMDMENU_CATEGORY_3_Items;
+                _bss_C3E = newPageIndex;
             }
-        } else if ((sJoyPressedButtons & L_CBUTTONS) && (dInventoryPageID != CMDMENU_PAGE_4)) {
-            if (cmdmenu_func_3718(_data_8F0[6].items, 0) != 0) {
+        } else if ((sJoyPressedButtons & L_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_4_Spells)) {
+            if (cmdmenu_func_3718(_data_8F0[CMDMENU_PAGE_6_Spells].items, 0)) {
                 joy_set_button_mask(0, L_CBUTTONS);
-                _data_9D4 = 4;
-                _bss_C3E = CMDMENU_PAGE_6;
+                _data_9D4 = CMDMENU_CATEGORY_4_Spells;
+                _bss_C3E = 6;
             }
         } else if (_bss_C3D != -1) {
             _bss_C3A = sUsedItemGamebitID;
             _bss_C3E = _bss_C3D;
-            if ((dInventoryPageID == CMDMENU_PAGE_2) || (dInventoryPageID == CMDMENU_PAGE_5)) {
+            if ((dPageCategory == CMDMENU_CATEGORY_2_Sidekick) || (dPageCategory == CMDMENU_CATEGORY_5)) {
                 _data_9D4 = 7;
-            } else if ((dInventoryPageID == CMDMENU_PAGE_3) || (dInventoryPageID == CMDMENU_PAGE_6)) {
+            } else if ((dPageCategory == CMDMENU_CATEGORY_3_Items) || (dPageCategory == CMDMENU_CATEGORY_6_Food)) {
                 _data_9D4 = 6;
-            } else if ((dInventoryPageID == CMDMENU_PAGE_4) || (dInventoryPageID == CMDMENU_PAGE_7)) {
+            } else if ((dPageCategory == CMDMENU_CATEGORY_4_Spells) || (dPageCategory == CMDMENU_CATEGORY_7)) {
                 _data_9D4 = 7;
             }
         }
@@ -822,13 +826,13 @@ void cmdmenu_func_35C(void) {
         } else if (_data_9D4 != 0) {
             if (cmdmenu_func_3A4C() != 0) {
                 switch (_data_9D4) {
-                case 3:
+                case CMDMENU_CATEGORY_3_Items:
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EC_Cmdmenu_OpenBag, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
-                case 2:
+                case CMDMENU_CATEGORY_2_Sidekick:
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5F0_Cmdmenu_OpenSidekickMenu, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
-                case 4:
+                case CMDMENU_CATEGORY_4_Spells:
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5ED_Cmdmenu_OpenSpellBook, MAX_VOLUME, NULL, NULL, 0, NULL);
                     break;
                 default:
@@ -838,7 +842,7 @@ void cmdmenu_func_35C(void) {
                 cmdmenu_func_3AB0();
                 _data_8F0[7].unk4 = 0;
                 _data_8F0[8].unk4 = 0;
-                dInventoryPageID = _data_9D4;
+                dPageCategory = _data_9D4;
                 sJoyPressedButtons = 0;
                 _data_78 = 0;
                 _data_9D4 = 0;
@@ -846,6 +850,7 @@ void cmdmenu_func_35C(void) {
                 cmdmenu_func_3A94();
             }
         }
+
         cmdmenu_update_stats();
         cmdmenu_func_3AD0();
         cmdmenu_func_486C();
@@ -956,9 +961,8 @@ s32 cmdmenu_func_E2C(s32* arg0, s32 arg1) {
 }
 
 // offset: 0xF24 | func: 8 | export: 9
-// cmdmenu_get_pageID?
-s8 cmdmenu_func_F24(void) {
-    return dInventoryPageID;
+s8 cmdmenu_get_page_category(void) {
+    return dPageCategory;
 }
 
 // offset: 0xF40 | func: 9 | export: 10
@@ -1340,14 +1344,14 @@ static void cmdmenu_func_1FEC(void) {
         sp40 = _data_8F0[_bss_C3E].mesgID;
         sp3C = _data_8F0[_bss_C3E].btnMask;
 
-        if ((_bss_C3E == CMDMENU_PAGE_7) || (_bss_C3E == CMDMENU_PAGE_8)) {
+        if ((_bss_C3E == 7) || (_bss_C3E == 8)) {
             sp37 = 1;
         }
 
         _bss_C40 = *sp4C;
         _bss_C44 = cmdmenu_func_325C(new_var, sp37);
         if (_bss_C44 == 0) {
-            dInventoryPageID = 0;
+            dPageCategory = 0;
             cmdmenu_func_3A94();
             return;
         }
@@ -1413,7 +1417,7 @@ static void cmdmenu_func_1FEC(void) {
             }
         }
         if (cmdmenu_func_3A4C() != 0) {
-            dInventoryPageID = 0;
+            dPageCategory = 0;
             _bss_C4C = 0;
             _data_78 = 0;
         } else {
@@ -1584,25 +1588,25 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
         if (_data_0 != 0 || _data_10 == 0xFF || (_data_10 != 0 && _data_14 == 0)) {
             switch (_bss_C3E) {
-            case CMDMENU_PAGE_7:
+            case CMDMENU_PAGE_7_Sidekick_Kyte:
                 sp5E = CMDMENU_TEX_42_Tricky;
                 sp5C = 3;
                 break;
-            case CMDMENU_PAGE_8:
+            case CMDMENU_PAGE_8_Sidekick_Tricky:
                 sp5E = CMDMENU_TEX_54_Kyte;
                 break;
-            case CMDMENU_PAGE_6:
+            case CMDMENU_PAGE_6_Spells:
                 sp5D = -2;
                 sp5C = 9;
                 sp5E = CMDMENU_TEX_49_MagicBook;
                 break;
             default:
-            case CMDMENU_PAGE_0:
-            case CMDMENU_PAGE_1:
-            case CMDMENU_PAGE_2:
-            case CMDMENU_PAGE_3:
-            case CMDMENU_PAGE_4:
-            case CMDMENU_PAGE_5:
+            case CMDMENU_PAGE_0_Items_Krystal:
+            case CMDMENU_PAGE_1_Items_Sabre:
+            case CMDMENU_PAGE_2_Food_Actions_Krystal:
+            case CMDMENU_PAGE_3_Food_Actions_Sabre:
+            case CMDMENU_PAGE_4_Food_Krystal:
+            case CMDMENU_PAGE_5_Food_Sabre:
                 sp5D = 1;
                 sp5C = 9;
                 sp5E = CMDMENU_TEX_50_Bag;
@@ -1736,24 +1740,24 @@ static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
 }
 
 // offset: 0x3718 | func: 22
-static s32 cmdmenu_func_3718(InventoryItem* arg0, s8 arg1) {
+static s32 cmdmenu_func_3718(InventoryItem* menuItems, s8 isSidekickMenu) {
     Object* sidekick;
-    s32 var_s1;
+    s32 shownCount;
     s32 var_v1;
-    s32 i;
+    s32 itemIdx;
 
-    var_s1 = 0;
-    i = 0;
-    if (arg1 == 0) {
-        while (arg0[i].gamebitObtained >= 0) {
-            if (main_get_bits(arg0[i].gamebitObtained) != 0) {
-                if (arg0 == _data_698) {
-                    var_s1 += 1;
-                } else if ((arg0[i].gamebitHide < 0) || (main_get_bits(arg0[i].gamebitHide) == 0)) {
-                    var_s1 += 1;
+    shownCount = 0;
+    itemIdx = 0;
+    if (isSidekickMenu == FALSE) {
+        while (menuItems[itemIdx].gamebitObtained >= 0) {
+            if (main_get_bits(menuItems[itemIdx].gamebitObtained)) {
+                if (menuItems == _data_698) {
+                    shownCount++;
+                } else if ((menuItems[itemIdx].gamebitHide < 0) || (main_get_bits(menuItems[itemIdx].gamebitHide) == 0)) {
+                    shownCount++;
                 }
             }
-            i++;
+            itemIdx++;
         }
     } else {
         sidekick = get_sidekick();
@@ -1762,16 +1766,18 @@ static s32 cmdmenu_func_3718(InventoryItem* arg0, s8 arg1) {
         } else {
             var_v1 = 0;
         }
+
         if (var_v1 > 0) {
-            while (arg0[i].gamebitObtained >= 0) {
-                if (arg0[i].gamebitObtained != 0) {
-                    var_s1 += 1;
+            while (menuItems[itemIdx].gamebitObtained >= 0) {
+                if (menuItems[itemIdx].gamebitObtained) {
+                    shownCount++;
                 }
-                i++;
+                itemIdx++;
             }
         }
     }
-    return var_s1;
+
+    return shownCount;
 }
 
 // offset: 0x3880 | func: 23
@@ -1894,7 +1900,7 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     u8 texIdx;
     u8 pad_sp4A;
     u8 isKyte;
-    u8 pageID;
+    u8 pageIdx;
     u8 hasHalfRed;
     u8 fullBlueEnd;
     u8 hasHalfBlue;
@@ -1911,34 +1917,34 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         isKyte = (sidekick->id == OBJ_Kyte);
     }
     if (_data_10 == 0) {
-        if (_bss_8C != 0.0f) {
+        if (sOpacityR != 0.0f) {
             if (player != NULL) {
-                pageID = player->id == OBJ_Krystal ? CMDMENU_PAGE_0 : CMDMENU_PAGE_1;
+                pageIdx = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
                 sp44 = 0;
-                if (cmdmenu_func_3718(_data_8F0[pageID].items, 0) != 0) {
+                if (cmdmenu_func_3718(_data_8F0[pageIdx].items, FALSE) != 0) {
                     sp44 = 2;
                 }
             }
 
             if (sidekick != NULL) {
-                pageID = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8 : CMDMENU_PAGE_7;
-                if (cmdmenu_func_3718(_data_8F0[pageID].items, 1) != 0) {
+                pageIdx = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
+                if (cmdmenu_func_3718(_data_8F0[pageIdx].items, TRUE) != 0) {
                     sp44 |= 4;
                 }
             }
 
-            if (cmdmenu_func_3718(_data_8F0[6].items, 0) != 0) {
+            if (cmdmenu_func_3718(_data_8F0[CMDMENU_PAGE_6_Spells].items, FALSE) != 0) {
                 sp44 |= 1;
             }
 
             if (sp44 & 2) {
                 texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
                 dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
-                rcp_screen_full_write(gdl, dInventoryPageIcon, 0x113, 0x19, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
+                rcp_screen_full_write(gdl, dInventoryPageIcon, 275, 25, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
                 tex_free(dInventoryPageIcon);
             } else {
                 texIdx = CMDMENU_TEX_41_C_Right;
-                rcp_tile_write(gdl, _bss_6B8[texIdx], 0x112, 0x22, 255, 255, 255, _bss_8C);
+                rcp_tile_write(gdl, _bss_6B8[texIdx], 0x112, 0x22, 255, 255, 255, sOpacityR);
             }
 
             if (((sp44 & 4) && (sidekick != NULL)) || (sp44 & 1)) {
@@ -1952,15 +1958,15 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     texIdx = CMDMENU_TEX_48_LeftDownButtons_NoSidekick;
                 }
                 dInventoryPageIcon = tex_load_deferred(_data_9D8[texIdx]);
-                rcp_screen_full_write(gdl, dInventoryPageIcon, 0xF5, 0x11, 0, 0, (s32) _bss_8C, SCREEN_WRITE_TRANSLUCENT);
+                rcp_screen_full_write(gdl, dInventoryPageIcon, 0xF5, 0x11, 0, 0, (s32) sOpacityR, SCREEN_WRITE_TRANSLUCENT);
                 tex_free(dInventoryPageIcon);
             } else {
-                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) _bss_8C);
-                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) _bss_8C);
+                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_37_C_Down], 0xFC, 0x2B, 255, 255, 255, (u8) sOpacityR);
+                rcp_tile_write(gdl, _bss_6B8[CMDMENU_TEX_39_C_Left], 0xF6, 0x1A, 255, 255, 255, (u8) sOpacityR);
             }
         }
     } else {
-        _bss_8C = 0.0f;
+        sOpacityR = 0.0f;
     }
     dl = *gdl;
     if (_data_10 != 0) {
@@ -1989,36 +1995,36 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             for (i = 0; i < sStats.sidekickMaxFood; i++) {
                 if (i < fullRedEnd) {
                     if (isKyte) {
-                        pageID = CMDMENU_TEX_56_Grub_Red_Full;
+                        pageIdx = CMDMENU_TEX_56_Grub_Red_Full;
                     } else {
-                        pageID = CMDMENU_TEX_45_Mushroom_Red_Full;
+                        pageIdx = CMDMENU_TEX_45_Mushroom_Red_Full;
                     }
                 } else if (i == fullRedEnd && hasHalfRed) {
                     if (isKyte) {
-                        pageID = CMDMENU_TEX_57_Grub_Red_Half;
+                        pageIdx = CMDMENU_TEX_57_Grub_Red_Half;
                     } else {
-                        pageID = CMDMENU_TEX_46_Mushroom_Red_Half;
+                        pageIdx = CMDMENU_TEX_46_Mushroom_Red_Half;
                     }
                 } else if (i < fullBlueEnd) {
                     if (isKyte) {
-                        pageID = CMDMENU_TEX_13_Grub_Blue_Full;
+                        pageIdx = CMDMENU_TEX_13_Grub_Blue_Full;
                     } else {
-                        pageID = CMDMENU_TEX_12_Mushroom_Blue_Full;
+                        pageIdx = CMDMENU_TEX_12_Mushroom_Blue_Full;
                     }
                 } else if (i == fullBlueEnd && hasHalfBlue) {
                     if (isKyte) {
-                        pageID = CMDMENU_TEX_16_Grub_Blue_Half;
+                        pageIdx = CMDMENU_TEX_16_Grub_Blue_Half;
                     } else {
-                        pageID = CMDMENU_TEX_51_Mushroom_Blue_Half;
+                        pageIdx = CMDMENU_TEX_51_Mushroom_Blue_Half;
                     }
                 } else {
                     if (isKyte) {
-                        pageID = CMDMENU_TEX_55_Grub_Empty;
+                        pageIdx = CMDMENU_TEX_55_Grub_Empty;
                     } else {
-                        pageID = CMDMENU_TEX_44_Mushroom_Empty;
+                        pageIdx = CMDMENU_TEX_44_Mushroom_Empty;
                     }
                 }
-                rcp_tile_write(&dl, _bss_6B8[pageID], 
+                rcp_tile_write(&dl, _bss_6B8[pageIdx], 
                     250 - ((i / 4) * 9), 
                     21  + ((i % 4) * 8), 
                     255, 255, 255, _data_14);
@@ -2398,17 +2404,18 @@ static void cmdmenu_update_stats(void) {
         stats.unk14 = sPrevStats.unk14;
     }
     if (sJoyHeldButtons & R_TRIG) {
-        _bss_8C += 8.5f * gUpdateRateF;
-        if (_bss_8C > 255.0f) {
-            _bss_8C = 255.0f;
+        sOpacityR += 8.5f * gUpdateRateF;
+        if (sOpacityR > 255.0f) {
+            sOpacityR = 255.0f;
         }
     } else {
-        _bss_8C -= 8.5f * gUpdateRateF;
-        if (_bss_8C < 0.0f) {
-            _bss_8C = 0.0f;
+        sOpacityR -= 8.5f * gUpdateRateF;
+        if (sOpacityR < 0.0f) {
+            sOpacityR = 0.0f;
         }
     }
-    _bss_8C = _bss_8C < _bss_0 ? _bss_8C : _bss_0;
+
+    sOpacityR = sOpacityR < _bss_0 ? sOpacityR : _bss_0;
     stats.unk18 = 0;
     if (_bss_88 & 1) {
         _bss_88 &= ~1;

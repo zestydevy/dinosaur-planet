@@ -17,7 +17,7 @@ _exports:
 .dword cmdmenu_func_DC4
 .dword cmdmenu_was_item_used
 .dword cmdmenu_func_E2C
-.dword cmdmenu_func_F24
+.dword cmdmenu_get_page_category
 .dword cmdmenu_func_F40
 .dword cmdmenu_func_70A0
 .dword cmdmenu_func_130C

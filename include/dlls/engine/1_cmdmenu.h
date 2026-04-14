@@ -18,13 +18,15 @@ typedef struct {
 
 /** For use with dll_1_func_F24 */
 typedef enum {
-    PAGE_1 = 1,
-    PAGE_Sidekick = 2,
-    PAGE_Inventory = 3,
-    PAGE_Spells = 4,
-    PAGE_5 = 5,
-    PAGE_Foodbag = 6
-} Cmdmenu_Pages;
+    CMDMENU_CATEGORY_0 = 0, //Closed
+    CMDMENU_CATEGORY_1 = 1,
+    CMDMENU_CATEGORY_2_Sidekick = 2,
+    CMDMENU_CATEGORY_3_Items = 3,
+    CMDMENU_CATEGORY_4_Spells = 4,
+    CMDMENU_CATEGORY_5 = 5,
+    CMDMENU_CATEGORY_6_Food = 6,
+    CMDMENU_CATEGORY_7 = 7
+} CmdMenuPageCategories;
 
 DLL_INTERFACE(DLL_1_cmdmenu) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
@@ -37,7 +39,7 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*6*/ s32 (*func_DC4)(void);
 /*7*/ s32 (*was_item_used)(s32 itemGamebitID); //Checks if a particular item was used in the inventory (queried via its inventory gamebitID)
 /*8*/ s32 (*func_E2C)(s32 *arg0, s32 arg1);
-/*9*/ s8 (*func_F24)(void);
+/*9*/ s8 (*get_page_category)(void); //Returns the categoryID of the current inventory menu page (see `CmdMenuPageCategories`)
 /*10*/ s16 (*func_F40)(void); //get gamebitID of active submenu?
 /*11*/ void (*func_70A0)(u8 arg0);
 /*12*/ void (*func_130C)(u32 arg0, u32 arg1, u32 arg2);
