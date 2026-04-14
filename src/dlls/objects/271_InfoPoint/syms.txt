@@ -1,0 +1,18 @@
+.text = 0x0:
+InfoPoint_ctor = 0x0;
+InfoPoint_dtor = 0xC;
+InfoPoint_setup = 0x18;
+InfoPoint_control = 0x134;
+InfoPoint_update = 0x1B0;
+InfoPoint_print = 0x1BC;
+InfoPoint_free = 0x40C;
+InfoPoint_get_model_flags = 0x484;
+InfoPoint_get_data_size = 0x494;
+InfoPoint_anim_callback = 0x4A8;
+InfoPoint_tex_anim = 0x520;
+
+.rodata = 0x660:
+str_0 = 0x0; // absolute:0x660
+
+.data = 0x690:
+dTextWindowCoords = 0x0; // absolute:0x690
