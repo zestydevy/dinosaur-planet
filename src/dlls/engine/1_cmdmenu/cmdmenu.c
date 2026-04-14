@@ -39,7 +39,7 @@ typedef struct {
 /*4*/ s16 unk4;
 /*8*/ u32 mesgID; // objmesg ID sent to player
 /*C*/ s32 btnMask; // mask of joypad buttons that can be used to move to this item
-} UIUnknownCharacterStruct; //InventoryPage?
+} CmdmenuPage;
 
 typedef struct {
     f32 unk0; //scarabUIOpacity
@@ -287,7 +287,7 @@ typedef enum {
 #define END {NONE, NONE, NONE, NONE, 0x0000, 0x00, 0x00}
 
 /* Krystal items
- * 0x128*/ static InventoryItem _data_128[] = {
+ * 0x128*/ static InventoryItem dPage0ItemsKrystal[] = {
     {BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    TEXTABLE_245, NONE,  0x010, -1, 1}, //Warp Crystal
     {BIT_CRF_Prison_Key_1,       NONE,                             TEXTABLE_175, NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
     {BIT_CRF_Power_Room_Key,     NONE,                             TEXTABLE_176, NONE,  0x008, -1, 1}, //Power Room Key (CloudRunner Fortress)
@@ -328,7 +328,7 @@ typedef enum {
 };
 
 /* Sabre items
- * 0x2E4*/ static InventoryItem _data_2E4[] = {
+ * 0x2E4*/ static InventoryItem dPage1ItemsSabre[] = {
     {BIT_SP_Krazoa_Translator,       NONE,                         TEXTABLE_175, NONE,  0x0a,  -1, 1}, //Gate Key (Northern Wastes) (Unused?)
     {BIT_SW_Alpine_Roots,            NONE,                         TEXTABLE_1A3, NONE,  0x0b,  -1, 1}, //Alpine Root (Geyser area)
     {BIT_Inventory_Blue_Mushrooms,   NONE,                         TEXTABLE_1A5, NONE,  0x0c,  -1, 1}, //Blue Mushroom
@@ -369,7 +369,7 @@ typedef enum {
 };
 
 /* Food Bag actions (Krystal)
- * 0x4A0*/ static InventoryItem _data_4A0[] = {
+ * 0x4A0*/ static InventoryItem dPage2FoodActionsKrystal[] = {
     {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, 4, 2}, //Eat food in foodbag
     {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, 4, 2}, //Place food down from foodbag
     {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, 4, 2}, //Give food from foodbag
@@ -379,7 +379,7 @@ typedef enum {
 };
 
 /* Food Bag actions (Sabre)
- * 0x4E8*/ static InventoryItem _data_4E8[] = {
+ * 0x4E8*/ static InventoryItem dPage3FoodActionsSabre[] = {
     {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, 5, 2}, //Eat food in foodbag
     {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, 5, 2}, //Place food down from foodbag
     {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, 5, 2}, //Give food from foodbag
@@ -389,7 +389,7 @@ typedef enum {
 };
 
 /* Food Bag items (Krystal)
- * 0x530*/ static InventoryItem _data_530[] = {
+ * 0x530*/ static InventoryItem dPage4FoodItemsKrystal[] = {
     {BIT_Green_Apple_Count,  NONE,                  TEXTABLE_26E, NONE, 0x22, -1, 1}, //Green apple
     {BIT_Red_Apple_Count,    NONE,                  TEXTABLE_26F, NONE, 0x23, -1, 1}, //Red apple
     {BIT_Brown_Apple_Count,  NONE,                  TEXTABLE_270, NONE, 0x24, -1, 1}, //Brown Apple
@@ -408,7 +408,7 @@ typedef enum {
 };
 
 /* Food Bag items (Sabre)
- * 0x5E4*/ static InventoryItem _data_5E4[] = {
+ * 0x5E4*/ static InventoryItem dPage5FoodItemsSabre[] = {
     {BIT_Green_Apple_Count,  NONE,                  TEXTABLE_26E, NONE, 0x22, -1, 1}, //Green apple
     {BIT_Red_Apple_Count,    NONE,                  TEXTABLE_26F, NONE, 0x23, -1, 1}, //Red apple
     {BIT_Brown_Apple_Count,  NONE,                  TEXTABLE_270, NONE, 0x24, -1, 1}, //Brown Apple
@@ -427,7 +427,7 @@ typedef enum {
 };
 
 /* Magic Spells
- * 0x698*/ static InventoryItem _data_698[] = {
+ * 0x698*/ static InventoryItem dPage6MagicSpells[] = {
     {BIT_Spell_Projectile, NONE,    TEXTABLE_183, NONE, 0x0d, -1, 0}, //Projectile Spell
     {BIT_Spell_Ice_Blast,  NONE,    TEXTABLE_468, NONE, 0x3c, -1, 0}, //Ice Blast Spell
     {BIT_Spell_Grenade,    NONE,    TEXTABLE_4F8, NONE, 0x0f, -1, 0}, //Grenade Spell (Incorrectly labelled as Randorn)
@@ -441,7 +441,7 @@ typedef enum {
 };
 
 /* Sidekick Commands (Kyte)
- * 0x710*/ static InventoryItem _data_710[] = {
+ * 0x710*/ static InventoryItem dPage7CommandsKyte[] = {
     {0x01, 0, TEXTABLE_1CD, TEXTABLE_1CD, 0, 0, 0}, //Heel
     {0x20, 5, TEXTABLE_1D1, TEXTABLE_1D1, 6, 0, 0}, //Play
     {0x02, 1, TEXTABLE_1CE, TEXTABLE_1CE, 1, 0, 0}, //Find
@@ -452,7 +452,7 @@ typedef enum {
 };
 
 /* Sidekick Commands (Tricky)
- * 0x764*/ static InventoryItem _data_764[] = {
+ * 0x764*/ static InventoryItem sPage8CommandsTricky[] = {
     {0x01, 0, TEXTABLE_1CD, TEXTABLE_1CD, 0, 0, 0}, //Heel
     {0x20, 5, TEXTABLE_1D1, TEXTABLE_1D1, 6, 0, 0}, //Play
     {0x02, 1, TEXTABLE_1CE, TEXTABLE_1CE, 1, 0, 0}, //Find
@@ -463,21 +463,21 @@ typedef enum {
 };
 
 /* Dinosaur Food Bag Actions (Krystal)
- * 0x7B8*/ static InventoryItem _data_7B8[] = {
+ * 0x7B8*/ static InventoryItem dPage9FoodActionsKyte[] = {
     {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, 11, 2}, //Place food down from foodbag
     {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, 11, 2}, //Give food from foodbag
     END
 };
 
 /* Dinosaur Food Bag Actions (Sabre)
- * 0x7DC*/ static InventoryItem _data_7DC[] = {
+ * 0x7DC*/ static InventoryItem dPage10FoodActionsTricky[] = {
     {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, 12, 2}, //Place food down from foodbag
     {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, 12, 2}, //Give food from foodbag
     END
 };
 
 /* Dinosaur Food Bag Items (Kyte)
- * 0x800*/ static InventoryItem _data_800[] = {
+ * 0x800*/ static InventoryItem dPage11FoodItemsKyte[] = {
     {BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, TEXTABLE_27A, NONE, 0x2f,  9, 2}, //Small Mushroom Bag
     {BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, TEXTABLE_244, NONE, 0x30,  9, 2}, //Medium Mushroom Bag
     {BIT_Krystal_Dino_Bag_L,      NONE,                   TEXTABLE_2BF, NONE, 0x31,  9, 2}, //Large Mushroom Bag
@@ -491,7 +491,7 @@ typedef enum {
 };
 
 /* Dinosaur Food Bag Items (Tricky)
- * 0x878*/ static InventoryItem _data_878[] = {
+ * 0x878*/ static InventoryItem dPage12FoodItemsTricky[] = {
     {BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   TEXTABLE_27A, NONE, 0x32, 10, 2}, //Small Mushroom Bag
     {BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   TEXTABLE_244, NONE, 0x33, 10, 2}, //Medium Mushroom Bag
     {BIT_Sabre_Dino_Bag_L,        NONE,                   TEXTABLE_2BF, NONE, 0x34, 10, 2}, //Large Mushroom Bag
@@ -504,21 +504,21 @@ typedef enum {
     END
 };
 
-/*0x8F0*/ static UIUnknownCharacterStruct _data_8F0[] = {
-    /*0*/  { _data_128, 0, 0x80001, R_CBUTTONS }, // Krystal items
-    /*1*/  { _data_2E4, 0, 0x80001, R_CBUTTONS }, // Sabre items
-    /*2*/  { _data_4A0, 0, 0x80001, R_CBUTTONS }, // Foodbag actions (Krystal)
-    /*3*/  { _data_4E8, 0, 0x80001, R_CBUTTONS }, // Foodbag actions (Sabre)
-    /*4*/  { _data_530, 0, 0x80001, R_CBUTTONS }, // Foodbag items (Krystal)
-    /*5*/  { _data_5E4, 0, 0x80001, R_CBUTTONS }, // Foodbag items (Sabre)
-    /*6*/  { _data_698, 0, 0x80002, L_CBUTTONS }, // Magic spells
-    /*7*/  { _data_710, 0, 0x80009, D_CBUTTONS }, // Sidekick commands (Kyte)
-    /*8*/  { _data_764, 0, 0x80009, D_CBUTTONS }, // Sidekick commands (Tricky)
-    /*9*/  { _data_7B8, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag actions (Krystal)
-    /*10*/ { _data_7DC, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag actions (Sabre)
-    /*11*/ { _data_800, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag items (Krystal)
-    /*12*/ { _data_878, 0, 0x80001, R_CBUTTONS }, // Dinosaur foodbag items (Sabre)
-    /*13*/ { NULL,      0, 0,       0 }
+/*0x8F0*/ static CmdmenuPage dCmdmenuPages[] = {
+    /*0*/  { dPage0ItemsKrystal,         0, 0x80001, R_CBUTTONS },  // Krystal items
+    /*1*/  { dPage1ItemsSabre,           0, 0x80001, R_CBUTTONS },  // Sabre items
+    /*2*/  { dPage2FoodActionsKrystal,   0, 0x80001, R_CBUTTONS },  // Foodbag actions (Krystal)
+    /*3*/  { dPage3FoodActionsSabre,     0, 0x80001, R_CBUTTONS },  // Foodbag actions (Sabre)
+    /*4*/  { dPage4FoodItemsKrystal,     0, 0x80001, R_CBUTTONS },  // Foodbag items (Krystal)
+    /*5*/  { dPage5FoodItemsSabre,       0, 0x80001, R_CBUTTONS },  // Foodbag items (Sabre)
+    /*6*/  { dPage6MagicSpells,          0, 0x80002, L_CBUTTONS },  // Magic spells
+    /*7*/  { dPage7CommandsKyte,         0, 0x80009, D_CBUTTONS },  // Sidekick commands (Kyte)
+    /*8*/  { sPage8CommandsTricky,       0, 0x80009, D_CBUTTONS },  // Sidekick commands (Tricky)
+    /*9*/  { dPage9FoodActionsKyte,      0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag actions (Krystal)
+    /*10*/ { dPage10FoodActionsTricky,  0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag actions (Sabre)
+    /*11*/ { dPage11FoodItemsKyte,      0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag items (Krystal)
+    /*12*/ { dPage12FoodItemsTricky,    0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag items (Sabre)
+    /*13*/ { NULL,                      0, 0,       0 }
 };
 
 /*0x9D0*/ static s8 dPageCategory = 0; //Category of cmdmenu page currently open (see `CmdMenuPageCategories`)
@@ -791,20 +791,20 @@ void cmdmenu_func_35C(void) {
         //Using C buttons (left/down/right) to open or change inventory pages
         if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dPageCategory != CMDMENU_CATEGORY_2_Sidekick)) {
             newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
-            if (cmdmenu_func_3718(_data_8F0[newPageIndex].items, 1)) {
+            if (cmdmenu_func_3718(dCmdmenuPages[newPageIndex].items, 1)) {
                 joy_set_button_mask(0, D_CBUTTONS);
                 _data_9D4 = CMDMENU_CATEGORY_2_Sidekick;
                 _bss_C3E = newPageIndex;
             }
         } else if ((sJoyPressedButtons & R_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_3_Items) && (dPageCategory != CMDMENU_CATEGORY_6_Food)) {
             newPageIndex = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
-            if (cmdmenu_func_3718(_data_8F0[newPageIndex].items, 0)) {
+            if (cmdmenu_func_3718(dCmdmenuPages[newPageIndex].items, 0)) {
                 joy_set_button_mask(0, R_CBUTTONS);
                 _data_9D4 = CMDMENU_CATEGORY_3_Items;
                 _bss_C3E = newPageIndex;
             }
         } else if ((sJoyPressedButtons & L_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_4_Spells)) {
-            if (cmdmenu_func_3718(_data_8F0[CMDMENU_PAGE_6_Spells].items, 0)) {
+            if (cmdmenu_func_3718(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, 0)) {
                 joy_set_button_mask(0, L_CBUTTONS);
                 _data_9D4 = CMDMENU_CATEGORY_4_Spells;
                 _bss_C3E = 6;
@@ -840,8 +840,8 @@ void cmdmenu_func_35C(void) {
                     break;
                 }
                 cmdmenu_func_3AB0();
-                _data_8F0[7].unk4 = 0;
-                _data_8F0[8].unk4 = 0;
+                dCmdmenuPages[7].unk4 = 0;
+                dCmdmenuPages[8].unk4 = 0;
                 dPageCategory = _data_9D4;
                 sJoyPressedButtons = 0;
                 _data_78 = 0;
@@ -1040,9 +1040,9 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
 // offset: 0x1290 | func: 11 | export: 3
 void cmdmenu_func_1290(void) {
     s32 i;
-    UIUnknownCharacterStruct *temp;
+    CmdmenuPage *temp;
 
-    temp = _data_8F0;
+    temp = dCmdmenuPages;
 
     for (i = 0; temp[i].items; i++) { temp[i].unk4 = 0; }
     sUsedItemGamebitID = NO_GAMEBIT;
@@ -1339,10 +1339,10 @@ static void cmdmenu_func_1FEC(void) {
         sUsedItemGamebitID = NO_GAMEBIT;
         _bss_C3C = 0;
         _bss_C3D = -1;
-        new_var = _data_8F0[_bss_C3E].items;
-        sp4C = &_data_8F0[_bss_C3E].unk4;
-        sp40 = _data_8F0[_bss_C3E].mesgID;
-        sp3C = _data_8F0[_bss_C3E].btnMask;
+        new_var = dCmdmenuPages[_bss_C3E].items;
+        sp4C = &dCmdmenuPages[_bss_C3E].unk4;
+        sp40 = dCmdmenuPages[_bss_C3E].mesgID;
+        sp3C = dCmdmenuPages[_bss_C3E].btnMask;
 
         if ((_bss_C3E == 7) || (_bss_C3E == 8)) {
             sp37 = 1;
@@ -1665,7 +1665,7 @@ static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1) {
         while (arg0[i].gamebitObtained >= 0) {
             var_s5 = main_get_bits(arg0[i].gamebitObtained);
             if (var_s5 != 0) {
-                if (arg0 == _data_698) {
+                if (arg0 == dPage6MagicSpells) {
                     _bss_98[var_s7] = tex_load_deferred(arg0[i].textureID);
                     _bss_298[var_s7] = arg0[i].textureID;
                     _bss_318[var_s7] = arg0[i].gamebitObtained;
@@ -1751,7 +1751,7 @@ static s32 cmdmenu_func_3718(InventoryItem* menuItems, s8 isSidekickMenu) {
     if (isSidekickMenu == FALSE) {
         while (menuItems[itemIdx].gamebitObtained >= 0) {
             if (main_get_bits(menuItems[itemIdx].gamebitObtained)) {
-                if (menuItems == _data_698) {
+                if (menuItems == dPage6MagicSpells) {
                     shownCount++;
                 } else if ((menuItems[itemIdx].gamebitHide < 0) || (main_get_bits(menuItems[itemIdx].gamebitHide) == 0)) {
                     shownCount++;
@@ -1921,19 +1921,19 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             if (player != NULL) {
                 pageIdx = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
                 sp44 = 0;
-                if (cmdmenu_func_3718(_data_8F0[pageIdx].items, FALSE) != 0) {
+                if (cmdmenu_func_3718(dCmdmenuPages[pageIdx].items, FALSE) != 0) {
                     sp44 = 2;
                 }
             }
 
             if (sidekick != NULL) {
                 pageIdx = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
-                if (cmdmenu_func_3718(_data_8F0[pageIdx].items, TRUE) != 0) {
+                if (cmdmenu_func_3718(dCmdmenuPages[pageIdx].items, TRUE) != 0) {
                     sp44 |= 4;
                 }
             }
 
-            if (cmdmenu_func_3718(_data_8F0[CMDMENU_PAGE_6_Spells].items, FALSE) != 0) {
+            if (cmdmenu_func_3718(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, FALSE) != 0) {
                 sp44 |= 1;
             }
 
@@ -2635,9 +2635,9 @@ static void cmdmenu_func_69CC(CmdmenuItemUnkBSS* arg0) {
 // offset: 0x69F8 | func: 42 | export: 17
 void cmdmenu_func_69F8(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
     InventoryItem *items;
-    UIUnknownCharacterStruct *inventoryPage;
+    CmdmenuPage *inventoryPage;
 
-    inventoryPage = _data_8F0;
+    inventoryPage = dCmdmenuPages;
     STUBBED_PRINTF("qInfoShow\n");
     _bss_C88.texture = NULL;
 
