@@ -70,7 +70,7 @@ void SCFlameGameFlame_control(Object* self) {
         }
 
         //Check if the player issued the Flame command from the inventory
-        if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_4)) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_4)) {
             main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightCurveID);
             objData->flags |= SCFlameGameFlame_FLAG_Player_Gave_Command;
         }

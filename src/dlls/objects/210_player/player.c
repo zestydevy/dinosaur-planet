@@ -4459,8 +4459,9 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         break;
     }
-    if (gDLL_1_cmdmenu->vtbl->func_DC4() != 0) {
-        if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Horn_of_Truth)) {
+
+    if (gDLL_1_cmdmenu->vtbl->was_any_item_used()) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Horn_of_Truth)) {
             joy_set_button_mask(0, A_BUTTON);
             if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
@@ -4476,11 +4477,11 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         sp8E = 0;
         if (player->id != 0) {
-            if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Krystal_Fireflies)) {
+            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Krystal_Fireflies)) {
                 sp8E = 0xA;
             }
         } else {
-            if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Sabre_Fireflies)) {
+            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Sabre_Fireflies)) {
                 if (main_get_bits(BIT_7E2) != 0) {
                     sp8E = 0xA;
                 } else {
@@ -4499,6 +4500,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             return 0;
         }
     }
+    
     if (gDLL_1_cmdmenu->vtbl->func_F40() == BIT_Foodbag_Give) {
         sp8C = gDLL_1_cmdmenu->vtbl->func_E2C(sp38, 0x10);
         if (sp8C != -1 && (player->unkC4 == NULL)) {

@@ -36,8 +36,8 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*3*/ void (*func_1290)(void);
 /*4*/ void (*func_12EC)(void);
 /*5*/ s32 (*get_target_objects)(Object **targetObjects, s32 maxObjects, u8 lockFlag, s32 arg3, f32 range); //Gets an array (`targetObjects`) of nearby Objects that can be targetted (i.e. have lock-on data and are fully opaque), sorted by their address. Returns the number of Objects in the array.
-/*6*/ s32 (*func_DC4)(void);
-/*7*/ s32 (*was_item_used)(s32 itemGamebitID); //Checks if a particular item was used in the inventory (queried via its inventory gamebitID)
+/*6*/ int (*was_any_item_used)(void); //Checks if any item was used in the inventory (returns Boolean)
+/*7*/ int (*was_this_item_used)(s32 itemGamebitID); //Checks if a particular item was used in the inventory, queried via its inventory gamebitID (returns Boolean)
 /*8*/ s32 (*func_E2C)(s32 *arg0, s32 arg1);
 /*9*/ s8 (*get_page_category)(void); //Returns the categoryID of the current inventory menu page (see `CmdMenuPageCategories`)
 /*10*/ s16 (*func_F40)(void); //get gamebitID of active submenu?

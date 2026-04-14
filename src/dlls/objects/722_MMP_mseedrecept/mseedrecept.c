@@ -144,7 +144,7 @@ void mmp_mseedrecept_control(Object* self) {
             return;
         
         case 1:
-            if ((self->unkAF & ARROW_FLAG_1_Interacted) && gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Inventory_MoonSeeds)){
+            if ((self->unkAF & ARROW_FLAG_1_Interacted) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_MoonSeeds)){
                 count = main_get_bits(BIT_Inventory_MoonSeeds);
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
@@ -186,7 +186,7 @@ void mmp_mseedrecept_control(Object* self) {
             }
             if (kyte && (self->unkAF & 4)){
                 ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 4);
-                if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_4)){
+                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_4)){
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }

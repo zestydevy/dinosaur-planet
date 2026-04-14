@@ -14,8 +14,8 @@ _exports:
 .dword cmdmenu_func_1290
 .dword cmdmenu_func_12EC
 .dword cmdmenu_get_target_objects
-.dword cmdmenu_func_DC4
-.dword cmdmenu_was_item_used
+.dword cmdmenu_was_any_item_used
+.dword cmdmenu_was_this_item_used
 .dword cmdmenu_func_E2C
 .dword cmdmenu_get_page_category
 .dword cmdmenu_func_F40

@@ -930,7 +930,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0xDC4 | func: 5 | export: 6
-int cmdmenu_func_DC4(void) {
+int cmdmenu_was_any_item_used(void) {
     if (sUsedItemGamebitID > NO_GAMEBIT) {
         return TRUE;
     }
@@ -938,7 +938,7 @@ int cmdmenu_func_DC4(void) {
 }
 
 // offset: 0xDF4 | func: 6 | export: 7
-int cmdmenu_was_item_used(s32 itemGamebitID) {
+int cmdmenu_was_this_item_used(s32 itemGamebitID) {
     if (itemGamebitID == sUsedItemGamebitID) {
         _bss_C3C = 0;
         return TRUE;

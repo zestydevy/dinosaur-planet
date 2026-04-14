@@ -155,7 +155,7 @@ void GPbonfire_control(Object* self) {
             sidekick = get_sidekick();
             if (sidekick && playerIsNearby) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 4);
-                if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_4)) {
+                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_4)) {
                     main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
                 }
             }

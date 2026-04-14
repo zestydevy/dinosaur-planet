@@ -103,7 +103,7 @@ static void VFP_SpellPlace_do_act1(Object* self) {
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unkAF &= ~0x8;
         
-        if ((bits2 != 0) && gDLL_1_cmdmenu->vtbl->was_item_used(BIT_SpellStone_DIM)) {
+        if ((bits2 != 0) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {
             main_set_bits(objdata->unk0, 1);
             objdata->unk4 = 1;
             self->unkAF |= 8;
@@ -125,7 +125,7 @@ static void VFP_SpellPlace_do_act2(Object* self) {
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unkAF &= ~0x8;
         
-        if (bits2 && gDLL_1_cmdmenu->vtbl->was_item_used(BIT_SpellStone_WC)) {
+        if (bits2 && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_WC)) {
             main_set_bits(objdata->unk0, 1);
             objdata->unk4 = 1;
             self->unkAF |= 8;

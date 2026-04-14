@@ -101,7 +101,7 @@ void perchobject_control(Object* self) {
             //Set Kyte's flight curve when player calls her
             if (playerIsNearby){
                 ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32) kyte, 1);
-                if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_1)){
+                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_1)){
                     STUBBED_PRINTF("should activate the command\n");
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
@@ -209,7 +209,7 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
     if (kyte) {
         if (vec3_distance_squared(&get_player()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= (objSetup->interactionDistance * objSetup->interactionDistance)) {
             ((DLL_Unknown*)kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 1);
-            if (gDLL_1_cmdmenu->vtbl->was_item_used(BIT_1)) {
+            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_1)) {
                 STUBBED_PRINTF("should activate the command\n");
                 main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
             }

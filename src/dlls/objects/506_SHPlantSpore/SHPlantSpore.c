@@ -38,7 +38,7 @@ void dll_506_control(Object* self) {
     } else {
         self->unkAF &= ~0x10;
     }
-    if ((self->unkAF & 1) && gDLL_1_cmdmenu->vtbl->was_item_used(BIT_Inventory_Purple_Mushrooms)) {
+    if ((self->unkAF & 1) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_Purple_Mushrooms)) {
         main_decrement_bits(BIT_Inventory_Purple_Mushrooms);
         main_set_bits(objSetup->unk1E, 1);
         self->unkAF |= 0x8;
