@@ -212,13 +212,14 @@ void DBSHshrine_control(Object* self) {
         }
         break;
     case 2:
-        if (main_get_bits(BIT_16B)) {
+        if (main_get_bits(BIT_DB_Shrine_Test_of_Strength_Win)) {
             objData->state = 4;
             objData->unk2 = 0;
             objData->unk6 = 1;
             return;
         }
-        if (main_get_bits(BIT_16C)) {
+
+        if (main_get_bits(BIT_DB_Shrine_Test_of_Strength_Lose)) {
             objData->state = 8;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (u8)objData->unk8, 0);
             objData->unkA = 1;
@@ -254,8 +255,8 @@ void DBSHshrine_control(Object* self) {
         }
         main_set_bits(BIT_DB_Entered_Shrine_2, 0);
         main_set_bits(BIT_16A, 0);
-        main_set_bits(BIT_16B, 0);
-        main_set_bits(BIT_16C, 0);
+        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Win, 0);
+        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
         main_set_bits(BIT_DB_Entered_Shrine_3, 0);
         objData->state = 7;
         return;
@@ -268,8 +269,8 @@ void DBSHshrine_control(Object* self) {
         main_set_bits(BIT_DB_Entered_Shrine_1, 1);
         main_set_bits(BIT_DB_Entered_Shrine_2, 1);
         main_set_bits(BIT_16A, 0);
-        main_set_bits(BIT_16B, 0);
-        main_set_bits(BIT_16C, 0);
+        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Win, 0);
+        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
         
         modGfxDLL = dll_load_deferred(DLL_ID_122, 1);
         objData->unkC = modGfxDLL->vtbl->func0(self, 3, 0, 0x402, -1, 0);

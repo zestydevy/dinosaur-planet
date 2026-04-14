@@ -367,8 +367,8 @@ typedef enum {
     BIT_168 = 0x168, // len:1 group:2
     BIT_Dino_Bag_Red_Mushrooms = 0x169, // len:6 group:1     [INVENTORY]
     BIT_16A = 0x16A, // len:1 group:0
-    BIT_16B = 0x16B, // len:1 group:0
-    BIT_16C = 0x16C, // len:1 group:0
+    BIT_DB_Shrine_Test_of_Strength_Win = 0x16B, // len:1 group:0
+    BIT_DB_Shrine_Test_of_Strength_Lose = 0x16C, // len:1 group:0
     BIT_16D = 0x16D, // len:1 group:1
     BIT_16E = 0x16E, // len:1 group:1
     BIT_16F = 0x16F, // len:1 group:1

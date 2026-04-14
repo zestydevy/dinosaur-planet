@@ -276,6 +276,9 @@ enum SoundID {
     SOUND_343_Eerie_Ringing = 0x343, // ECSH_Cup (when Krazoa Spirit enters it)
     SOUND_344_Chime = 0x344,
 
+    SOUND_357_Magic_Hum_Loop = 0x357,       //DBSH_Symbol
+    SOUND_358_Reverse_Static_Hiss = 0x358,  //DBSH_Symbol
+
     SOUND_35A_Low_Whoosh = 0x35A, // WMrock
     SOUND_35B_Rock_Slide = 0x35B, // WMrock
 
@@ -440,6 +443,10 @@ enum SoundID {
 
     SOUND_700_Krystal_Ugh = 0x700,      //player hurt sfx
     SOUND_701_Sabre_Ugh_EMPTY = 0x701,  //NOTE: seems to be empty, but intended as Sabre's counterpart to 0x700
+
+    SOUND_710_Sabre_Test_of_Strength_1 = 0x710, //DBSH_Symbol
+    SOUND_711_Sabre_Test_of_Strength_2 = 0x711, //DBSH_Symbol
+    SOUND_712_Sabre_Test_of_Strength_3 = 0x712, //DBSH_Symbol
 
     SOUND_722_Impact_Wobble = 0x722, //Pollen
 

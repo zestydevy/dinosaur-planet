@@ -1,0 +1,21 @@
+.text = 0x0:
+DBSH_Symbol_ctor = 0x0;
+DBSH_Symbol_dtor = 0xC;
+DBSH_Symbol_setup = 0x18;
+DBSH_Symbol_control = 0x94;
+DBSH_Symbol_update = 0x5F8;
+DBSH_Symbol_print = 0x604;
+DBSH_Symbol_free = 0x64C;
+DBSH_Symbol_get_model_flags = 0x68C;
+DBSH_Symbol_get_data_size = 0x69C;
+DBSH_Symbol_anim_callback = 0x6B0;
+
+.rodata = 0xEB4:
+
+.data = 0xED4:
+dAnimOffsetSabre = 0x0; // absolute:0xED4
+dAnimOffsetKrystal = 0x4; // absolute:0xED8
+dPlayHissSound = 0x8; // absolute:0xEDC
+
+.bss = 0xEE4:
+sPrevYaw = 0x0; // absolute:0xEE4
