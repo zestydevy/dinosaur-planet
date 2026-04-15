@@ -10,7 +10,7 @@ void dll_19_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_19_func_18(void) {
-    gDLL_1_cmdmenu->vtbl->func_308();
+    gDLL_1_cmdmenu->vtbl->control();
 }
 
 // offset: 0x5C | func: 1 | export: 1

@@ -143,7 +143,7 @@ enum SoundID {
 
     SOUND_9D_Fire_Loop = 0x9D,          //10 HOURS of Relaxing Fireplace Sounds - Burning Fireplace & Crackling Fire Sounds
 
-    SOUND_A0 = 0xA0, // cmdmenu (spooky)
+    SOUND_A0_Cmdmenu_Item_Locked = 0xA0, // cmdmenu (spooky sound) - plays if an inventory item can't be used (unused in practice)
 
     SOUND_A4_Blocked_Attack = 0xA4, 
 

@@ -64,7 +64,7 @@ typedef enum {
 
 DLL_INTERFACE(DLL_1_cmdmenu) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ s32 (*func_308)(void);
+/*0*/ s32 (*control)(void);
 /*1*/ void (*func_35C)(void);
 /*2*/ void (*print)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 /*3*/ void (*func_1290)(void);

@@ -34,6 +34,7 @@
 #define NO_GAMETEXT -1
 #define NO_TEXTURE -1
 #define NO_PAGE -1
+#define NO_ITEM -1
 
 /* UI COORD MACROS (TO-DO: move to separate header?) */
 
@@ -94,6 +95,7 @@
 
 //Inventory item icons
 #define MENU_ITEM_X 262
+#define MENU_ITEM_Y 59
 #define MENU_ITEM_WIDTH 32
 #define MENU_ITEM_HEIGHT 24
 #define MENU_ITEM_QUANTITY_OFFSET_X 14
@@ -159,6 +161,13 @@
 
 //Info scroll
 
+//Tutorial textbox
+#define TUTORIAL_BOX_X 0
+#define TUTORIAL_BOX_Y 0
+#define TUTORIAL_BOX_WIDTH 0
+#define TUTORIAL_BOX_HEIGHT 0
+#define TUTORIAL_BOX_MAX_OPACITY 160
+
 //Energy bar
 #define ENERGY_BAR_X (SCREEN_WIDTH / 2)
 #define ENERGY_BAR_Y (SCREEN_HEIGHT - 10)
@@ -174,9 +183,9 @@ typedef struct {
 /** Data for a particular inventory page */
 typedef struct {
 /*0*/ InventoryItem* items; //all the different items that can appear on this page
-/*4*/ s16 unk4;     // the loaded item index of this page's selected item (at runtime)
-/*8*/ u32 mesgID;   // objmesg ID sent to player
-/*C*/ s32 btnMask;  // mask of joypad buttons that can be used to move to this item
+/*4*/ s16 usedIndex; // the loaded item index of this page's selected item (at runtime)
+/*8*/ u32 mesgID;    // objmesg ID sent to player
+/*C*/ s32 btnMask;   // mask of joypad buttons that can be used to move to this item
 } CmdmenuPage;
 
 #define CMDMENU_TRACKED_PLAYER_STATS_COUNT 10
@@ -303,15 +312,15 @@ typedef enum {
 /*0x4*/ static s8 sInventoryScrollOffset = 0;   //Y offset for the scroll's inner strip, used to smoothly animate moving between inventory items
 /*0x8*/ static s8 dInventoryMoveSpeed = 1;      //Scroll speed when moving between inventory items (how many times to shift gUpdateRate)
 /*0xC*/ static s16 dInventoryUnrollMax = 72;    //The height of the inventory scroll when fully open
-/*0x10*/ static s16 dOpacityInventory = 0;
+/*0x10*/ static s16 dInventoryOpacity = 0;
 /*0x14*/ static s16 dOpacitySidekickMeter = 0;
-/*0x18*/ static s16 dUsedItemTextID = NO_GAMETEXT;
+/*0x18*/ static s16 dSelectedItemTextID = NO_GAMETEXT;
 /*0x1C*/ static s8 dInfoScrollShow = 0;
 /*0x20*/ static s16 _data_20 = 60;
-/*0x24*/ static s16 _data_24 = 50;
+/*0x24*/ static s16 dInfoScrollUnrollMax = 50;
 /*0x28*/ static s16 _data_28 = 20;
 /*0x2C*/ static s16 _data_2C = 160;
-/*0x30*/ static s16 dOpacityInfoScroll = 0;
+/*0x30*/ static s16 dInfoScrollOpacity = 0;
 
 /** 
   * Lines of text for the info scroll 
@@ -325,23 +334,23 @@ typedef enum {
   *
   * (First 255 lines are from `gametext_3`, higher IDs use `gametext_568`) 
   */
-/*0x44*/ static s16 dGametextStringID = NO_GAMETEXT;
+/*0x44*/ static s16 dInfoScrollTextID = NO_GAMETEXT;
 
-/*0x48*/ static s8 _data_48 = 0;
+/*0x48*/ static s8 dTutorialBoxShow = 0;
 /*0x4C*/ static s16 _data_4C = 120;
 /*0x50*/ static s16 _data_50 = 80;
 /*0x54*/ static s16 _data_54 = 20;
 /*0x58*/ static s16 _data_58 = 160;
-/*0x5C*/ static s16 _data_5C = 0;
-/*0x60*/ static s16 _data_60 = 0;
+/*0x5C*/ static s16 dTutorialBoxOpacity = 0; //Controls the tutorial box's opacity
+/*0x60*/ static s16 dTutorialBoxTextOpacity = 0; //Controls the tutorial box's text opacity, and the opacity of the A button icon.
 /*0x64*/ static s16 _data_64 = -1;
 /*0x68*/ static Texture* dInventoryPageIcon = NULL; //Icon in the top-right corner of screen: Bag/SpellBook/Kyte/Tricky
 /*0x6C*/ static u32 _data_6C[] = {
     0x3f800000, 0xff000000
 };
 /*0x74*/ static s8 sJoyButtonMask = 0;
-/*0x78*/ static s16 _data_78 = 0;
-/*0x7C*/ static u8 _data_7C = 0;
+/*0x78*/ static s16 dInventoryTimesMoved = 0;
+/*0x7C*/ static u8 dInventoryIsScrolling = 0;
 /*0x80*/ static u8 sForceStatsDisplay = FALSE;
 /*0x84*/ static s16 _data_84 = 0;
 /*0x88*/ static s8 _data_88 = 1; //Unknown purpose - value never changes, but `func_70A0` compares its value.
@@ -394,7 +403,8 @@ typedef union {
 } CmdmenuPlayerStatsChangeSounds;
 
 /**
-  * Sound effects to play when tracked player stats increase/decrease (unused in practice)
+  * Sound effects to play when tracked player stats increase/decrease
+  * (unused in practice, all set to NO_SOUND)
   */
 /*0xB8*/ static CmdmenuPlayerStatsChangeSounds dStatChangeSounds = {{
     {NO_SOUND, NO_SOUND}, 
@@ -745,8 +755,8 @@ typedef union {
 /*0x418*/ static s16 sMenuItemTextIDs[MAX_LOADED_ITEMS]; //Gametext lineIDs for the current menu page's loaded items
 /*0x498*/ static s8 sMenuItemOpenPageIDs[MAX_LOADED_ITEMS]; //The menu page ID opened by each of the current menu page's loaded items (or -1 if it closes the inventory on use)
 /*0x4D8*/ static u8 sMenuItemUseSounds[MAX_LOADED_ITEMS]; //The sound types (see `CmdMenuItemSounds`) used by each of the current menu page's loaded items
-/*0x518*/ static u8 sMenuItemVisibilities[MAX_LOADED_ITEMS];
-/*0x558*/ static u8 sMenuItemQuantities[MAX_LOADED_ITEMS];
+/*0x518*/ static u8 sMenuItemVisibilities[MAX_LOADED_ITEMS]; //Visibility Booleans for each of the current menu page's loaded items (Spells are the only kind of inventory item that still load while their gamebitHidden is set, however they're drawn as an empty tile when hidden)
+/*0x558*/ static u8 sMenuItemQuantities[MAX_LOADED_ITEMS]; //Item quantities for each of the current menu page's loaded items
 /*0x598*/ static Texture* sActiveSpellIcon; //Icon in bottom-right of screen
 /*0x59C*/ static Texture* sActiveSpellRing; //Icon in bottom-right of screen
 /*0x5A0*/ static Texture* sAButtonAnimTex;
@@ -754,9 +764,9 @@ typedef union {
 /*0x5A8*/ static Texture* sActiveSidekickCommandIcon;
 /*0x5AC*/ static Texture* sActiveSidekickCommandRing;
 /*0x5B0*/ static s16 sPrevSidekickCommandIndex;
-/*0x5B4*/ static s32 _bss_5B4;
+/*0x5B4*/ static s32 sAButtonAnimRenderFlags;
 /*0x5B8*/ static s32 sCrosshairAnimRenderFlags;
-/*0x5BC*/ static s32 _bss_5BC;
+/*0x5BC*/ static s32 sAButtonAnimProgress;
 /*0x5C0*/ static s32 sCrosshairAnimProgress;
 /*0x5C8*/ static Texture* sTextures[ARRAYCOUNT(dTextableIDs)];
 /*0x6B0*/ static Texture* sInventoryStackNumbersTex;
@@ -764,16 +774,16 @@ typedef union {
 /*0xC28*/ static s16 sInventoryUnrollY;  //How far the inventory scroll has opened (0 when fully closed)
 /*0xC2A*/ static s16 sInfoScrollUnrollY; //How far the R-button info scroll has opened (0 when fully closed)
 /*0xC2C*/ static s16 _bss_C2C;
-/*0xC2E*/ static s16 _bss_C2E;
-/*0xC30*/ static GameTextChunk* _bss_C30;
+/*0xC2E*/ static s16 sTutorialBoxStringIndex;
+/*0xC30*/ static GameTextChunk* sTutorialBoxGametext;
 /*0xC34*/ static Texture* sCrosshairTex;
 /*0xC38*/ static s16 sUsedItemGamebitID;
 /*0xC3A*/ static s16 _bss_C3A;
 /*0xC3C*/ static s8 sUsedItemSound; //Set to 0 when item selection successful (item given to character, etc.)
-/*0xC3D*/ static s8 _bss_C3D;
+/*0xC3D*/ static s8 sUsedItemPageID;
 /*0xC3E*/ static s8 sInventoryPageID;
-/*0xC40*/ static s16 sUsedItemLoadedIdx;
-/*0xC44*/ static s32 _bss_C44;
+/*0xC40*/ static s16 sMenuSelectedItemIdx; //Loaded index of the item currently selected in the menu page 
+/*0xC44*/ static s32 sLoadedItemCount;
 /*0xC48*/ static s8 sShouldOverrideJoypadButtons;
 /*0xC4C*/ static s32 _bss_C4C;
 /*0xC50*/ static s32 sJoyPressedButtons; // joypad button bitfield
@@ -787,12 +797,12 @@ typedef union {
 /*0xC80*/ static s16 _bss_C80;
 /*0xC88*/ static CmdmenuInfoPopup sInfoPopup; //item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
 
-static void cmdmenu_func_1410(void);
-static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_tick_tutorial_textbox(void);
+static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_func_1FEC(void);
 static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static s32 cmdmenu_page_load_items(InventoryItem* arg0, s8 arg1);
-static s32 cmdmenu_page_count_shown_items(InventoryItem* arg0, s8 arg1);
+static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu);
+static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekickMenu);
 static void cmdmenu_store_loaded_item_metadata(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
 static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame);
 static int cmdmenu_is_inventory_open(void);
@@ -801,17 +811,17 @@ static void cmdmenu_close_inventory(void);
 static void cmdmenu_open_inventory(void);
 static void cmdmenu_func_3AD0(void);
 static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl);
+static void cmdmenu_gfx_set_scroll_scissor(Gfx** gdl);
 static void cmdmenu_gfx_set_screen_scissor(Gfx** gfx);
-static int cmdmenu_func_47E8(void);
+static int cmdmenu_is_info_scroll_closed(void);
 static void cmdmenu_close_info_scroll(void);
 static void cmdmenu_open_info_scroll(void);
 static void cmdmenu_func_486C(void);
 static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_update_stats(void);
 static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_info_hide(CmdmenuInfoPopup* arg0);
-static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* arg1);
+static void cmdmenu_info_hide(CmdmenuInfoPopup* info);
+static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box);
 static void cmdmenu_draw_energy_bar(Gfx** gdl);
 void cmdmenu_energy_bar_free(void);
 
@@ -823,7 +833,7 @@ void cmdmenu_ctor(void* dll) {
     sAutoUseItemLoadedIdx = -1;
     sUsedItemGamebitID = NO_GAMEBIT;
     sUsedItemSound = CMDMENU_SOUND_NONE;
-    _bss_C3D = -1;
+    sUsedItemPageID = -1;
     sPrevActiveSpellGamebit = NO_GAMEBIT;
     sPrevSidekickCommandIndex = NO_SIDEKICK_COMMAND;
 
@@ -851,9 +861,10 @@ void cmdmenu_ctor(void* dll) {
 
 // offset: 0x180 | dtor
 void cmdmenu_dtor(void* dll) {
-    s32 i;
+    u32 i;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(sTextures); i++) {
+    //Free all UI textures
+    for (i = 0; i < ARRAYCOUNT(sTextures); i++) {
         if (sTextures[i] != NULL) {
             tex_free(sTextures[i]);
         }
@@ -890,9 +901,12 @@ void cmdmenu_toggle_forced_stats_display(u8 force) {
 }
 
 // offset: 0x308 | func: 2 | export: 0
-s32 cmdmenu_func_308(void) {
+/**
+  * Main tick function for the cmdmenu (called by `menu_gameplay.c`)
+  */
+s32 cmdmenu_control(void) {
     cmdmenu_func_1FEC();
-    cmdmenu_func_1410();
+    cmdmenu_tick_tutorial_textbox();
     return 0;
 }
 
@@ -900,8 +914,8 @@ s32 cmdmenu_func_308(void) {
 void cmdmenu_func_35C(void) {
     Object* player;
     Object* sidekick;
-    s16 _pad;
-    s8 sp31;
+    s16 pad1;
+    s8 pad2;
     s16 newStringID;
     s8 var_a0;
     s8 newPageIndex;
@@ -909,143 +923,151 @@ void cmdmenu_func_35C(void) {
     player = get_player();
     sidekick = get_sidekick();
 
-    if (player != NULL) {
-        sJoyPressedButtons = joy_get_pressed(0);
-        sJoyHeldButtons = joy_get_buttons(0);
+    if (player == NULL) {
+        return;
+    }
 
-        if (player->unkB0 & 0x1000) {
-            joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-            sJoyPressedButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-            sJoyHeldButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-        } else if (sJoyButtonMask != 0) {
-            joy_set_button_mask(0, sJoyButtonMask);
-            sJoyPressedButtons &= ~sJoyButtonMask;
-            sJoyHeldButtons &= ~sJoyButtonMask;
+    //Get controller button presses/holds
+    sJoyPressedButtons = joy_get_pressed(0);
+    sJoyHeldButtons = joy_get_buttons(0);
+
+    if (player->unkB0 & 0x1000) {
+        joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+        sJoyPressedButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+        sJoyHeldButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+    } else if (sJoyButtonMask != 0) {
+        joy_set_button_mask(0, sJoyButtonMask);
+        sJoyPressedButtons &= ~sJoyButtonMask;
+        sJoyHeldButtons &= ~sJoyButtonMask;
+    }
+
+    if (sShouldOverrideJoypadButtons) {
+        sJoyPressedButtons = sJoyPressedButtonsOverride;
+    } else {
+        sJoyPressedButtons |= sJoyPressedButtonsOverride;
+        if ((player->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
+            sJoyPressedButtons |= B_BUTTON;
         }
+    }
 
-        if (sShouldOverrideJoypadButtons) {
-            sJoyPressedButtons = sJoyPressedButtonsOverride;
+    //Using C buttons (left/down/right) to open or change inventory pages
+    if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dPageCategory != CMDMENU_CATEGORY_2_Sidekick)) {
+        newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
+        if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, 1)) {
+            joy_set_button_mask(0, D_CBUTTONS);
+            dNextPageCategory = CMDMENU_CATEGORY_2_Sidekick;
+            sInventoryPageID = newPageIndex;
+        }
+    } else if ((sJoyPressedButtons & R_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_3_Items) && (dPageCategory != CMDMENU_CATEGORY_6_Food)) {
+        newPageIndex = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
+        if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, 0)) {
+            joy_set_button_mask(0, R_CBUTTONS);
+            dNextPageCategory = CMDMENU_CATEGORY_3_Items;
+            sInventoryPageID = newPageIndex;
+        }
+    } else if ((sJoyPressedButtons & L_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_4_Spells)) {
+        if (cmdmenu_page_count_shown_items(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, 0)) {
+            joy_set_button_mask(0, L_CBUTTONS);
+            dNextPageCategory = CMDMENU_CATEGORY_4_Spells;
+            sInventoryPageID = CMDMENU_PAGE_6_Spells;
+        }
+    } else if (sUsedItemPageID != NO_PAGE) {
+        _bss_C3A = sUsedItemGamebitID;
+        sInventoryPageID = sUsedItemPageID;
+        if ((dPageCategory == CMDMENU_CATEGORY_2_Sidekick) || (dPageCategory == CMDMENU_CATEGORY_5)) {
+            dNextPageCategory = 7;
+        } else if ((dPageCategory == CMDMENU_CATEGORY_3_Items) || (dPageCategory == CMDMENU_CATEGORY_6_Food)) {
+            dNextPageCategory = 6;
+        } else if ((dPageCategory == CMDMENU_CATEGORY_4_Spells) || (dPageCategory == CMDMENU_CATEGORY_7)) {
+            dNextPageCategory = 7;
+        }
+    }
+
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
+        cmdmenu_close_inventory();
+    } else if (dNextPageCategory != 0) {
+        if (cmdmenu_is_inventory_closed()) {
+            switch (dNextPageCategory) {
+            case CMDMENU_CATEGORY_3_Items:
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EC_Cmdmenu_OpenBag, MAX_VOLUME, NULL, NULL, 0, NULL);
+                break;
+            case CMDMENU_CATEGORY_2_Sidekick:
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5F0_Cmdmenu_OpenSidekickMenu, MAX_VOLUME, NULL, NULL, 0, NULL);
+                break;
+            case CMDMENU_CATEGORY_4_Spells:
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5ED_Cmdmenu_OpenSpellBook, MAX_VOLUME, NULL, NULL, 0, NULL);
+                break;
+            default:
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28D_Cmdmenu_OpenBag_HighPitch, MAX_VOLUME, NULL, NULL, 0, NULL);
+                break;
+            }
+
+            cmdmenu_open_inventory();
+
+            dCmdmenuPages[CMDMENU_PAGE_7_Sidekick_Kyte].usedIndex = 0;
+            dCmdmenuPages[CMDMENU_PAGE_8_Sidekick_Tricky].usedIndex = 0;
+
+            dPageCategory = dNextPageCategory;
+            sJoyPressedButtons = 0;
+            dInventoryTimesMoved = 0;
+            dNextPageCategory = 0;
         } else {
-            sJoyPressedButtons |= sJoyPressedButtonsOverride;
-            if ((player->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
-                sJoyPressedButtons |= B_BUTTON;
-            }
-        }
-
-        //Using C buttons (left/down/right) to open or change inventory pages
-        if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dPageCategory != CMDMENU_CATEGORY_2_Sidekick)) {
-            newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
-            if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, 1)) {
-                joy_set_button_mask(0, D_CBUTTONS);
-                dNextPageCategory = CMDMENU_CATEGORY_2_Sidekick;
-                sInventoryPageID = newPageIndex;
-            }
-        } else if ((sJoyPressedButtons & R_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_3_Items) && (dPageCategory != CMDMENU_CATEGORY_6_Food)) {
-            newPageIndex = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
-            if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, 0)) {
-                joy_set_button_mask(0, R_CBUTTONS);
-                dNextPageCategory = CMDMENU_CATEGORY_3_Items;
-                sInventoryPageID = newPageIndex;
-            }
-        } else if ((sJoyPressedButtons & L_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_4_Spells)) {
-            if (cmdmenu_page_count_shown_items(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, 0)) {
-                joy_set_button_mask(0, L_CBUTTONS);
-                dNextPageCategory = CMDMENU_CATEGORY_4_Spells;
-                sInventoryPageID = CMDMENU_PAGE_6_Spells;
-            }
-        } else if (_bss_C3D != -1) {
-            _bss_C3A = sUsedItemGamebitID;
-            sInventoryPageID = _bss_C3D;
-            if ((dPageCategory == CMDMENU_CATEGORY_2_Sidekick) || (dPageCategory == CMDMENU_CATEGORY_5)) {
-                dNextPageCategory = 7;
-            } else if ((dPageCategory == CMDMENU_CATEGORY_3_Items) || (dPageCategory == CMDMENU_CATEGORY_6_Food)) {
-                dNextPageCategory = 6;
-            } else if ((dPageCategory == CMDMENU_CATEGORY_4_Spells) || (dPageCategory == CMDMENU_CATEGORY_7)) {
-                dNextPageCategory = 7;
-            }
-        }
-
-        if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
             cmdmenu_close_inventory();
-        } else if (dNextPageCategory != 0) {
-            if (cmdmenu_is_inventory_closed()) {
-                switch (dNextPageCategory) {
-                case CMDMENU_CATEGORY_3_Items:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EC_Cmdmenu_OpenBag, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    break;
-                case CMDMENU_CATEGORY_2_Sidekick:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5F0_Cmdmenu_OpenSidekickMenu, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    break;
-                case CMDMENU_CATEGORY_4_Spells:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5ED_Cmdmenu_OpenSpellBook, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    break;
-                default:
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28D_Cmdmenu_OpenBag_HighPitch, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    break;
-                }
-                cmdmenu_open_inventory();
-                dCmdmenuPages[7].unk4 = 0;
-                dCmdmenuPages[8].unk4 = 0;
-                dPageCategory = dNextPageCategory;
-                sJoyPressedButtons = 0;
-                _data_78 = 0;
-                dNextPageCategory = 0;
-            } else {
-                cmdmenu_close_inventory();
-            }
         }
+    }
 
-        cmdmenu_update_stats();
-        cmdmenu_func_3AD0();
-        cmdmenu_func_486C();
+    cmdmenu_update_stats();
+    cmdmenu_func_3AD0();
+    cmdmenu_func_486C();
 
-        _bss_C4C = _bss_C4C + 1;
-        if (_bss_C4C >= 3) {
-            _bss_C4C = 2;
+    _bss_C4C++;
+    if (_bss_C4C > 2) {
+        _bss_C4C = 2;
+    }
+
+    /* If the inventory is visible, use the selected item's gametext,
+       otherwise use the target Object's description gametext */
+    if ((dInventoryShow != FALSE) || (dNextPageCategory != 0)) {
+        newStringID = dSelectedItemTextID;
+    } else {
+        newStringID = gDLL_2_Camera->vtbl->get_target_gametextID();
+    }
+    dSelectedItemTextID = NO_GAMETEXT;
+
+    var_a0 = 0;
+    if (_bss_C7C >= 0) {
+        newStringID = _bss_C7C;
+        _data_28 = _bss_C80;
+        _data_2C = _bss_C7E;
+        var_a0 = 1;
+    } else {
+        if (cmdmenu_is_info_scroll_closed()) {
+            _data_2C = 160;
+            _data_28 = 30;
         }
+    }
+    _bss_C7C = -1;
 
-        if ((dInventoryShow != 0) || (dNextPageCategory != 0)) {
-            newStringID = dUsedItemTextID;
-        } else {
-            newStringID = gDLL_2_Camera->vtbl->get_target_gametextID();
-        }
-        dUsedItemTextID = NO_GAMETEXT;
-
-        var_a0 = 0;
-        if (_bss_C7C >= 0) {
-            newStringID = _bss_C7C;
-            _data_28 = _bss_C80;
-            _data_2C = _bss_C7E;
-            var_a0 = 1;
-        } else {
-            if (cmdmenu_func_47E8() != 0) {
-                _data_2C = 160;
-                _data_28 = 30;
-            }
-        }
-        _bss_C7C = -1;
-
-        if (((sJoyHeldButtons & R_TRIG) || (var_a0 != 0)) && (newStringID >= 0)) {
-            if (newStringID != dGametextStringID) {
-                dGametextStringID = newStringID;
-                if (*dTextStrings != NULL) {
-                    mmFree(*dTextStrings);
-                    *dTextStrings = NULL;
-                }
-            }
-            cmdmenu_open_info_scroll();
-        } else {
-            cmdmenu_close_info_scroll();
-            if ((cmdmenu_func_47E8() != 0) && (*dTextStrings != NULL)) {
+    if (((sJoyHeldButtons & R_TRIG) || (var_a0 != 0)) && (newStringID >= 0)) {
+        if (newStringID != dInfoScrollTextID) {
+            dInfoScrollTextID = newStringID;
+            if (*dTextStrings != NULL) {
                 mmFree(*dTextStrings);
                 *dTextStrings = NULL;
-                dGametextStringID = NO_GAMETEXT;
             }
         }
-
-        joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
-        sJoyButtonMask = 0;
+        cmdmenu_open_info_scroll();
+    } else {
+        cmdmenu_close_info_scroll();
+        if ((cmdmenu_is_info_scroll_closed() != 0) && (*dTextStrings != NULL)) {
+            mmFree(*dTextStrings);
+            *dTextStrings = NULL;
+            dInfoScrollTextID = NO_GAMETEXT;
+        }
     }
+
+    joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+    sJoyButtonMask = 0;
 }
 
 // offset: 0xBB8 | func: 4 | export: 2
@@ -1084,7 +1106,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         GET_VIDEO_HEIGHT(viSize));
     cmdmenu_draw_c_buttons_and_sidekick_meter(gdl, mtxs, vtxs);
     cmdmenu_draw_info_scroll(gdl, mtxs, vtxs);
-    cmdmenu_func_1614(gdl, mtxs, vtxs);
+    cmdmenu_draw_tutorial_textbox(gdl, mtxs, vtxs);
     cmdmenu_draw_main(gdl, mtxs, vtxs);
     camera_apply_scissor(gdl);
 }
@@ -1100,24 +1122,33 @@ int cmdmenu_was_any_item_used(void) {
 // offset: 0xDF4 | func: 6 | export: 7
 int cmdmenu_was_this_item_used(s32 itemGamebitID) {
     if (itemGamebitID == sUsedItemGamebitID) {
-        sUsedItemSound = 0;
+        sUsedItemSound = CMDMENU_SOUND_NONE;
         return TRUE;
     }
     return FALSE;
 }
 
 // offset: 0xE2C | func: 7 | export: 8
-s32 cmdmenu_func_E2C(s32* arg0, s32 arg1) {
+/**
+  * Checks if the used inventory item's gamebitID matches any of those in a given array of gamebitIDs.
+  *
+  * If a match is found, the used item's gamebitID is returned. 
+  *
+  * If no match was found, `NO_GAMEBIT` (-1) is returned.
+  *
+  * The array's address should be provided (`gamebitArray`), as well as its item count (`arraySize`).
+  */
+s32 cmdmenu_was_used_item_in_gamebit_array(s32* gamebitArray, s32 arraySize) {
     s32 i;
 
-    for (i = 0; i < arg1; i++) {
-        if (sUsedItemGamebitID == arg0[i]) {
-            sUsedItemSound = 0;
-            return arg0[i];
+    for (i = 0; i < arraySize; i++) {
+        if (sUsedItemGamebitID == gamebitArray[i]) {
+            sUsedItemSound = CMDMENU_SOUND_NONE;
+            return gamebitArray[i];
         }
     }
 
-    return -1;
+    return NO_GAMEBIT;
 }
 
 // offset: 0xF24 | func: 8 | export: 9
@@ -1198,16 +1229,20 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
 }
 
 // offset: 0x1290 | func: 11 | export: 3
-void cmdmenu_func_1290(void) {
+/**
+  * Zeroes the used item index of all the inventory pages.
+  */
+void cmdmenu_pages_clear_used_item_index(void) {
     s32 i;
-    CmdmenuPage *temp;
+    CmdmenuPage *page;
 
-    temp = dCmdmenuPages;
+    page = dCmdmenuPages;
 
-    for (i = 0; temp[i].items; i++) { temp[i].unk4 = 0; }
+    for (i = 0; page[i].items; i++) { page[i].usedIndex = 0; }
+
     sUsedItemGamebitID = NO_GAMEBIT;
-    sUsedItemSound = 0;
-    _bss_C3D = -1;
+    sUsedItemSound = CMDMENU_SOUND_NONE;
+    sUsedItemPageID = NO_PAGE;
 }
 
 // offset: 0x12EC | func: 12 | export: 4
@@ -1221,20 +1256,20 @@ void cmdmenu_request_new_player_stats_snapshot(void) {
 }
 
 // offset: 0x130C | func: 13 | export: 12
-void cmdmenu_func_130C(u32 arg0, u32 arg1, u32 arg2) {
-    _bss_C7C = arg0;
+void cmdmenu_func_130C(u32 textID, u32 arg1, u32 arg2) {
+    _bss_C7C = textID;
     _bss_C7E = arg1;
     _bss_C80 = arg2;
 }
 
 // offset: 0x1338 | func: 14 | export: 13
 void cmdmenu_func_1338(s32 gametextID, s32 arg1, s32 arg2) {
-    if (_bss_C30 == NULL) {
-        _bss_5B4 = 0x40000;
-        _bss_5BC = 0;
-        _bss_C30 = gDLL_21_Gametext->vtbl->get_chunk(gametextID);
-        _bss_C2E = 0;
-        _data_48 = 1;
+    if (sTutorialBoxGametext == NULL) {
+        sAButtonAnimRenderFlags = 0x40000;
+        sAButtonAnimProgress = 0;
+        sTutorialBoxGametext = gDLL_21_Gametext->vtbl->get_chunk(gametextID);
+        sTutorialBoxStringIndex = 0;
+        dTutorialBoxShow = TRUE;
         _data_58 = arg1;
         _data_54 = arg2;
         _bss_C2C = _data_50;
@@ -1243,55 +1278,77 @@ void cmdmenu_func_1338(s32 gametextID, s32 arg1, s32 arg2) {
 
 // offset: 0x13F4 | func: 15 | export: 14
 void cmdmenu_func_13F4(void) {
-    _data_48 = 0;
+    dTutorialBoxShow = FALSE;
 }
 
 // offset: 0x1410 | func: 16
-static void cmdmenu_func_1410(void) {
-    if (_data_48 != 0) {
-        _data_5C += gUpdateRate * 8;
-        if (_data_5C > 160) {
-            _data_5C = 160;
+/**
+  * Handles fading the box in/out, playing the A button animation, and advancing the text when the player presses A. 
+  */
+static void cmdmenu_tick_tutorial_textbox(void) {
+    //Update the tutorial textbox's opacity
+    if (dTutorialBoxShow) {
+        //Fade in the box background
+        dTutorialBoxOpacity += gUpdateRate * 8;
+        if (dTutorialBoxOpacity > TUTORIAL_BOX_MAX_OPACITY) {
+            dTutorialBoxOpacity = TUTORIAL_BOX_MAX_OPACITY;
         }
-        _data_60 += gUpdateRate * 8;
-        if (_data_60 > 255) {
-            _data_60 = 255;
+
+        //Fade in the box's text (and button icon)
+        dTutorialBoxTextOpacity += gUpdateRate * 8;
+        if (dTutorialBoxTextOpacity > MAX_OPACITY) {
+            dTutorialBoxTextOpacity = MAX_OPACITY;
         }
     } else {
-        _data_60 -= gUpdateRate * 8;
-        if (_data_60 < 0) {
-            _data_60 = 0;
+        //Fade out the box's text first
+        dTutorialBoxTextOpacity -= gUpdateRate * 8;
+        if (dTutorialBoxTextOpacity < 0) {
+            dTutorialBoxTextOpacity = 0;
         }
-        if (_data_60 < _data_5C) {
-            _data_5C = _data_60;
+
+        //Then fade out the background and text together
+        if (dTutorialBoxOpacity > dTutorialBoxTextOpacity) {
+            dTutorialBoxOpacity = dTutorialBoxTextOpacity;
         }
     }
 
-    if (_data_5C == 0) {
-        if (_bss_C30 != NULL) {
-            mmFree(_bss_C30);
-            _bss_C30 = NULL;
+    //Free the box's gametext if the box is fully faded out
+    if (dTutorialBoxOpacity == 0) {
+        if (sTutorialBoxGametext != NULL) {
+            mmFree(sTutorialBoxGametext);
+            sTutorialBoxGametext = NULL;
         }
-    } else {
-        tex_animate(sAButtonAnimTex, &_bss_5B4, &_bss_5BC);
+        return;
+    }
 
+    //Handle player interaction
+    {
+        //Animate the A button icon
+        tex_animate(sAButtonAnimTex, &sAButtonAnimRenderFlags, &sAButtonAnimProgress);
+
+        //Advance to the next paragraph upon pressing A
         if (sJoyPressedButtons & A_BUTTON) {
-            _bss_C2E += 3;
+            sTutorialBoxStringIndex += 3; //3 strings per screen
+
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
 
-            if (_bss_C2E < _bss_C30->count) {
+            //Check if the end of the gametext has been reached
+            if (sTutorialBoxStringIndex < sTutorialBoxGametext->count) {
                 joy_set_button_mask(0, A_BUTTON);
-                return;
+            } else {
+                //If so, close the tutorial box
+                sTutorialBoxStringIndex -= 3;
+                dTutorialBoxShow = FALSE;
             }
-
-            _bss_C2E -= 3;
-            _data_48 = 0;
         }
     }
 }
 
 // offset: 0x1614 | func: 17
-static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+/** 
+  * Draws the tutorial textbox that appears upon seeing/collecting items for the first time.
+  */
+static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 sp10C;
     s32 y;
     s32 sp104;
@@ -1300,11 +1357,12 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 i;
     Gfx* dl;
 
-    if (_data_5C == 0) {
+    if (dTutorialBoxOpacity == 0) {
         return;
     }
 
     dl = *gdl;
+
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     dl_apply_combine(&dl);
     gDPSetOtherMode(dl, 
@@ -1313,7 +1371,8 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl_apply_other_mode(&dl);
     gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
     dl_apply_geometry_mode(&dl);
-    dl_set_prim_color(&dl, 255, 255, 255, (u8) _data_5C);
+    dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
+
     sp10C = _data_58;
     sp10C <<= 2;
     sp104 = _data_4C << 2;
@@ -1380,7 +1439,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = TRUE;
     
-    dl_set_prim_color(&dl, 255, 255, 255, (u8) _data_5C);
+    dl_set_prim_color(&dl, 255, 255, 255, (u8) dTutorialBoxOpacity);
 
     tempY = y - (11 << 2);
     cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
@@ -1450,7 +1509,7 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = TRUE;
     
     dl_set_prim_color(&dl, 255, 255, 255, 255);
-    rcp_screen_full_write(&dl, sAButtonAnimTex, _data_58 - 8, (_data_54 + _data_50) - 24, 0, _bss_5BC >> 8, _data_60, SCREEN_WRITE_TRANSLUCENT);
+    rcp_screen_full_write(&dl, sAButtonAnimTex, _data_58 - 8, (_data_54 + _data_50) - 24, 0, sAButtonAnimProgress >> 8, dTutorialBoxTextOpacity, SCREEN_WRITE_TRANSLUCENT);
 
     font_window_set_coords(3, 
         /*x1*/ _data_58 - _data_4C, 
@@ -1460,11 +1519,21 @@ static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     font_window_use_font(3, 1);
     font_window_set_bg_colour(3, 0, 0, 0, 0);
     font_window_flush_strings(3);
-    font_window_set_text_colour(3, 0, 0, 255, 255, _data_60);
-    for (i = _bss_C2E, y = 3; i < _bss_C30->count && i < (_bss_C2E + 3); i++, y += 16) {
-        font_window_add_string_xy(3, -0x8000, y, _bss_C30->strings[i], 1, ALIGN_TOP_CENTER);
+    font_window_set_text_colour(3, 0, 0, 255, 255, dTutorialBoxTextOpacity);
+
+    for (i = sTutorialBoxStringIndex, y = 3; i < sTutorialBoxGametext->count && i < (sTutorialBoxStringIndex + 3); i++, y += 16) {
+        font_window_add_string_xy(
+            3, 
+            -0x8000, 
+            y, 
+            sTutorialBoxGametext->strings[i], 
+            1, 
+            ALIGN_TOP_CENTER
+        );
     }
+
     font_window_draw(&dl, mtxs, vtxs, 3);
+
     *gdl = dl;
 }
 
@@ -1518,87 +1587,117 @@ static void cmdmenu_func_1FEC(void) {
 
     sUsedItemGamebitID = NO_GAMEBIT;
     sUsedItemSound = CMDMENU_SOUND_NONE;
-    _bss_C3D = -1;
+    sUsedItemPageID = NO_PAGE;
     pageItems = dCmdmenuPages[sInventoryPageID].items;
-    pageUnk4 = &dCmdmenuPages[sInventoryPageID].unk4;
+    pageUnk4 = &dCmdmenuPages[sInventoryPageID].usedIndex;
     pageMsg = dCmdmenuPages[sInventoryPageID].mesgID;
     pageBtnMask = dCmdmenuPages[sInventoryPageID].btnMask;
 
-    if ((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte) || (sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky)) {
+    //Check if this is a sidekick command page
+    if ((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte) || 
+        (sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky)
+    ) {
         isSidekickMenu = TRUE;
     }
 
-    sUsedItemLoadedIdx = *pageUnk4;
-    _bss_C44 = cmdmenu_page_load_items(pageItems, isSidekickMenu);
+    sMenuSelectedItemIdx = *pageUnk4;
+    sLoadedItemCount = cmdmenu_page_load_items(pageItems, isSidekickMenu);
 
-    if (_bss_C44 == 0) {
+    //If the current page has no visible items, close the inventory
+    if (sLoadedItemCount == 0) {
         dPageCategory = 0;
         cmdmenu_close_inventory();
         return;
     }
 
-    if (sUsedItemLoadedIdx >= _bss_C44) {
-        sUsedItemLoadedIdx = 0;
+    if (sMenuSelectedItemIdx >= sLoadedItemCount) {
+        sMenuSelectedItemIdx = 0;
     }
 
-    dUsedItemTextID = sMenuItemTextIDs[sUsedItemLoadedIdx];
+    dSelectedItemTextID = sMenuItemTextIDs[sMenuSelectedItemIdx];
 
+    //Handle scrolling through the inventory
     if (cmdmenu_is_inventory_open()) {
-        if ((sJoyPressedButtons & pageBtnMask) && (sInventoryScrollOffset < 8) && (_data_7C == 0)) {
+        //If the page's scroll button was pressed
+        if ((sJoyPressedButtons & pageBtnMask) && (sInventoryScrollOffset < 8) && (dInventoryIsScrolling == FALSE)) {
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28A_Cmdmenu_MoveSelection, MAX_VOLUME, NULL, NULL, 0, NULL);
-            _data_78 += 1;
+            dInventoryTimesMoved++;
+
             if (sInventoryScrollOffset != 0) {
-                _data_7C = 1;
+                dInventoryIsScrolling = TRUE;
             }
         }
-        if (_data_78 > 255) {
-            _data_78 = 255;
+
+        //Limit the number of moves
+        if (dInventoryTimesMoved > 255) {
+            dInventoryTimesMoved = 255;
         }
 
         //Auto-use an item? (functionality never used)
-        if (sAutoUseItemLoadedIdx != -1) {
-            sUsedItemLoadedIdx = sAutoUseItemLoadedIdx;
+        if (sAutoUseItemLoadedIdx != NO_ITEM) {
+            sMenuSelectedItemIdx = sAutoUseItemLoadedIdx;
         }
 
-        if ((_data_78 > 0) && (sInventoryScrollOffset == 0)) {
-            _data_78 -= 1;
-            if (_bss_C44 >= 2) {
-                if (((_bss_C44 == 2) && (sUsedItemLoadedIdx == 1)) || ((_bss_C44 == 4) && (sUsedItemLoadedIdx == 3))) {
+        if ((dInventoryTimesMoved > 0) && (sInventoryScrollOffset == 0)) {
+            dInventoryTimesMoved--;
+
+            if (sLoadedItemCount >= 2) {
+                if (((sLoadedItemCount == 2) && (sMenuSelectedItemIdx == 1)) || 
+                    ((sLoadedItemCount == 4) && (sMenuSelectedItemIdx == 3))
+                ) {
                     sInventoryScrollOffset = 64;
                     dInventoryMoveSpeed = 2;
-                    _data_7C = 0;
+                    dInventoryIsScrolling = FALSE;
                 } else {
                     sInventoryScrollOffset = 32;
                     dInventoryMoveSpeed = 2;
-                    _data_7C = 0;
+                    dInventoryIsScrolling = FALSE;
                 }
-                sUsedItemLoadedIdx++;
-                if (sUsedItemLoadedIdx >= _bss_C44) {
-                    sUsedItemLoadedIdx = 0;
+
+                sMenuSelectedItemIdx++;
+                if (sMenuSelectedItemIdx >= sLoadedItemCount) {
+                    sMenuSelectedItemIdx = 0;
                 }
             }
+
+        //Close the inventory with the B button
         } else if (sJoyPressedButtons & B_BUTTON) {
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28C_Cmdmenu_Close, MAX_VOLUME, NULL, NULL, 0, NULL);
             cmdmenu_close_inventory();
+
+        //Use an inventory item with the A button
         } else if ((sJoyPressedButtons & A_BUTTON) && cmdmenu_is_inventory_open()) {
-            usedGamebit = sMenuItemGamebits[sUsedItemLoadedIdx];
+            usedGamebit = sMenuItemGamebits[sMenuSelectedItemIdx];
+            
+            //Items/Spells
             if (isSidekickMenu == FALSE) {
-                obj_send_mesg(player, pageMsg, NULL, (void* ) usedGamebit);
+                obj_send_mesg(player, pageMsg, NULL, (void*)usedGamebit);
+                
                 sUsedItemGamebitID = usedGamebit;
-                sUsedItemSound = sMenuItemUseSounds[sUsedItemLoadedIdx];
-                _bss_C3D = sMenuItemOpenPageIDs[sUsedItemLoadedIdx];
+                sUsedItemSound = sMenuItemUseSounds[sMenuSelectedItemIdx];
+                sUsedItemPageID = sMenuItemOpenPageIDs[sMenuSelectedItemIdx];
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                 cmdmenu_close_inventory();
+                
+            //Sidekick commands
             } else {
-                if (sMenuItemVisibilities[sUsedItemLoadedIdx] != 0) {
+                if (sMenuItemVisibilities[sMenuSelectedItemIdx]) {
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                     cmdmenu_close_inventory();
                     sUsedItemGamebitID = usedGamebit;
-                    sUsedItemSound = 0;
+                    sUsedItemSound = CMDMENU_SOUND_NONE;
                 } else {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_A0, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    /*  If the item's gamebitHidden is set, play a refusal sound and keep the menu open.
+                        
+                        This feature is unused in practice, because loaded Sidekick Commands 
+                        always have their sMenuItemVisibilities set to TRUE.
+                        
+                        Possibly intended for Spells instead, since they're the only kind of 
+                        inventory item that can have their sMenuItemVisibilities set to FALSE?
+                    */
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_A0_Cmdmenu_Item_Locked, MAX_VOLUME, NULL, NULL, 0, NULL);
                     sUsedItemGamebitID = NO_GAMEBIT;
-                    sUsedItemSound = 0;
+                    sUsedItemSound = CMDMENU_SOUND_NONE;
                 }
             }
         }
@@ -1607,12 +1706,12 @@ static void cmdmenu_func_1FEC(void) {
     if (cmdmenu_is_inventory_closed()) {
         dPageCategory = 0;
         _bss_C4C = 0;
-        _data_78 = 0;
+        dInventoryTimesMoved = 0;
     } else {
         joy_set_button_mask(0, A_BUTTON | B_BUTTON);
     }
 
-    *pageUnk4 = sUsedItemLoadedIdx;
+    *pageUnk4 = sMenuSelectedItemIdx;
 }
 
 // offset: 0x26D8 | func: 19
@@ -1730,10 +1829,10 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     cmdmenu_draw_energy_bar(gdl);
 
     //Draw the inventory (except the top/bottom parts of the scroll)
-    if (_bss_C44 != 0) {
-        if (dOpacityInventory != 0) {
+    if (sLoadedItemCount != 0) {
+        if (dInventoryOpacity != 0) {
             var_s5 = 3;
-            if (_bss_C44 < 4) {
+            if (sLoadedItemCount < 4) {
                 var_s0 = 1;
             } else {
                 var_s5 = 5;
@@ -1747,16 +1846,16 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             yOffset = 95 - (var_s5 * 12);
             sTempIcon[1].tex = NULL;
 
-            for (i = 0; i < _bss_C44; i++) {
+            for (i = 0; i < sLoadedItemCount; i++) {
                 sp70[i] = 0;
             }
 
-            for (i = _bss_C44; i < var_s5; i++) {
+            for (i = sLoadedItemCount; i < var_s5; i++) {
                 sp70[i] = 1;
             }
 
-            if (_bss_C44 < var_s5) {
-                _bss_C44 = var_s5;
+            if (sLoadedItemCount < var_s5) {
+                sLoadedItemCount = var_s5;
             }
 
             if (sInventoryScrollOffset > 0) {
@@ -1772,18 +1871,18 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
 
             yOffset += sInventoryUnrollY - dInventoryUnrollMax;
-            loadedIdx = sUsedItemLoadedIdx - var_s0;
+            loadedIdx = sMenuSelectedItemIdx - var_s0;
 
             if (loadedIdx < 0) {
-                loadedIdx += _bss_C44;
+                loadedIdx += sLoadedItemCount;
             }
 
             for (i = 0; i < var_s5; i++) {
                 if (sp70[loadedIdx] == 0) {
                     sTempIcon->animProgress = 0;
-                    iconOpacity = dOpacityInventory;
+                    iconOpacity = dInventoryOpacity;
 
-                    if ((loadedIdx == sUsedItemLoadedIdx) && (sInventoryScrollOffset == 0)) {
+                    if ((loadedIdx == sMenuSelectedItemIdx) && (sInventoryScrollOffset == 0)) {
                         sTempIcon->x = 0;
                         sTempIcon->y = 0;
                     } else {
@@ -1852,16 +1951,16 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 }
 
                 loadedIdx++;
-                if (loadedIdx >= _bss_C44) {
-                    loadedIdx -= _bss_C44;
+                if (loadedIdx >= sLoadedItemCount) {
+                    loadedIdx -= sLoadedItemCount;
                 }
             }
 
             //Draw a selection square around the currently highlighted item
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dOpacityInventory);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dOpacityInventory);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dOpacityInventory);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dOpacityInventory);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dInventoryOpacity);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dInventoryOpacity);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
             
             //Restore full-screen scissor
             cmdmenu_gfx_set_screen_scissor(gdl);
@@ -1870,8 +1969,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         //Draw page icon (Bag/SpellBook/Kyte/Tricky)
         {
             if (dInventoryShow || 
-                dOpacityInventory == MAX_OPACITY || 
-                (dOpacityInventory != 0 && dOpacitySidekickMeter == 0)
+                dInventoryOpacity == MAX_OPACITY || 
+                (dInventoryOpacity != 0 && dOpacitySidekickMeter == 0)
             ) {
                 switch (sInventoryPageID) {
                 case CMDMENU_PAGE_7_Sidekick_Kyte:
@@ -1898,8 +1997,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     pageIcon = CMDMENU_TEX_50_Bag;
                     break;
                 }
-                if (dOpacitySidekickMeter < dOpacityInventory) {
-                    iconOpacity = dOpacityInventory;
+                if (dOpacitySidekickMeter < dInventoryOpacity) {
+                    iconOpacity = dInventoryOpacity;
                 } else {
                     iconOpacity = dOpacitySidekickMeter;
                 }
@@ -1973,7 +2072,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
 
     //Items/Spells
     if (isSidekickMenu == FALSE) {
-        sAutoUseItemLoadedIdx = -1;
+        sAutoUseItemLoadedIdx = NO_ITEM;
         while (items[i].gamebitObtained > NO_GAMEBIT) {
             obtained = main_get_bits(items[i].gamebitObtained);
             if (obtained) {
@@ -1992,7 +2091,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
                     cmdmenu_store_loaded_item_metadata(items, loadIdx, i);
 
                     //Store item's visibility state (Spells never get taken away, though)
-                    if ((items[i].gamebitHide < 0) || (main_get_bits(items[i].gamebitHide) == 0)) {
+                    if ((items[i].gamebitHide <= NO_GAMEBIT) || (main_get_bits(items[i].gamebitHide) == FALSE)) {
                         sMenuItemVisibilities[loadIdx] = TRUE;
                     } else {
                         sMenuItemVisibilities[loadIdx] = FALSE;
@@ -2237,20 +2336,20 @@ static void cmdmenu_func_3AD0(void) {
     //Manage the inventory scroll's opacity
     if (dInventoryShow) {
         //Fade in when opened
-        dOpacityInventory += gUpdateRate * 8;
-        if (dOpacityInventory > MAX_OPACITY) {
-            dOpacityInventory = MAX_OPACITY;
+        dInventoryOpacity += gUpdateRate * 8;
+        if (dInventoryOpacity > MAX_OPACITY) {
+            dInventoryOpacity = MAX_OPACITY;
         }
     } else if (sInventoryUnrollY == 0) {
         //Fade out when fully closed
-        dOpacityInventory -= gUpdateRate * 8;
-        if (dOpacityInventory < 0) {
-            dOpacityInventory = 0;
+        dInventoryOpacity -= gUpdateRate * 8;
+        if (dInventoryOpacity < 0) {
+            dInventoryOpacity = 0;
         }
     }
 
     //Animate the inventory scroll expanding/collapsing
-    if (dInventoryShow && (dOpacityInventory > 64)) {
+    if (dInventoryShow && (dInventoryOpacity > 64)) {
         //Expand/unfurl scroll when inventory partially faded in
         sInventoryUnrollY += gUpdateRate * 4;
         if (sInventoryUnrollY > dInventoryUnrollMax) {
@@ -2269,7 +2368,7 @@ static void cmdmenu_func_3AD0(void) {
         }
     }
 
-    if (dOpacityInventory) {
+    if (dInventoryOpacity) {
         if (sInventoryScrollOffset > 0) {
             _data_118 += 1;
             _data_11C += 1;
@@ -2316,7 +2415,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
     }
 
     //Draw C buttons (only while the inventory scroll is hidden)
-    if (dOpacityInventory == 0) {
+    if (dInventoryOpacity == 0) {
         if (sOpacityR != 0.0f) {
             //Check whether each C button has items to show
             {
@@ -2399,15 +2498,15 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
     /* @bug: why is this handled in the C-button/sidekick-meter function?
              Should likely be in `cmdmenu_draw_main` instead, and maybe ended up here by mistake!
      */
-    if (dOpacityInventory != 0) {
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top], 258, 51, 255, 255, 255, dOpacityInventory);
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], 258, sInventoryUnrollY + 59, 255, 255, 255, dOpacityInventory);
+    if (dInventoryOpacity != 0) {
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top], 258, 51, 255, 255, 255, dInventoryOpacity);
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], 258, sInventoryUnrollY + 59, 255, 255, 255, dInventoryOpacity);
     }
 
     //Draw the sidekick food meter
     if (sidekick != NULL) {
         //Handle the meter's opacity
-        if (((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte || sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky) && dOpacityInventory) || 
+        if (((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte || sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky) && dInventoryOpacity) || 
             (sStatsChangeTimers.sidekickBlueFood >= 0.0f)
         ) {
             /* Fade in while the sidekick's inventory page is open, 
@@ -2503,7 +2602,7 @@ static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl) {
     } else {
         //Standard aspect
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
-            262, 
+            MENU_ITEM_X, 
             59, 
             294, 
             sInventoryUnrollY + 61);
@@ -2522,22 +2621,30 @@ static void cmdmenu_gfx_set_screen_scissor(Gfx** gfx) {
 }
 
 // offset: 0x47E8 | func: 33
-static int cmdmenu_func_47E8(void) {
-    if (dInfoScrollShow != 0) {
-        return 0;
+static int cmdmenu_is_info_scroll_closed(void) {
+    if (dInfoScrollShow) {
+        return FALSE;
     }
+
     if (sInfoScrollUnrollY != 0) {
-        return 0;
+        return FALSE;
     }
+
     return TRUE;
 }
 
 // offset: 0x4830 | func: 34
+/**
+  * Causes the inventory/target info scroll to close.
+  */
 static void cmdmenu_close_info_scroll(void) {
     dInfoScrollShow = FALSE;
 }
 
 // offset: 0x484C | func: 35
+/**
+  * Causes the inventory/target info scroll to open.
+  */
 static void cmdmenu_open_info_scroll(void) {
     dInfoScrollShow = TRUE;
 }
@@ -2545,21 +2652,21 @@ static void cmdmenu_open_info_scroll(void) {
 // offset: 0x486C | func: 36
 static void cmdmenu_func_486C(void) {
     if ((dInfoScrollShow != 0) && (_data_84 == 0)) {
-        dOpacityInfoScroll += gUpdateRate * 32;
-        if (dOpacityInfoScroll > 160) {
-            dOpacityInfoScroll = 160;
+        dInfoScrollOpacity += gUpdateRate * 32;
+        if (dInfoScrollOpacity > 160) {
+            dInfoScrollOpacity = 160;
         }
     } else if (sInfoScrollUnrollY == 0) {
-        dOpacityInfoScroll -= gUpdateRate * 32;
-        if (dOpacityInfoScroll < 0) {
-            dOpacityInfoScroll = 0;
+        dInfoScrollOpacity -= gUpdateRate * 32;
+        if (dInfoScrollOpacity < 0) {
+            dInfoScrollOpacity = 0;
         }
     }
 
-    if ((dInfoScrollShow != 0) && (dOpacityInfoScroll == 160)) {
+    if ((dInfoScrollShow != 0) && (dInfoScrollOpacity == 160)) {
         sInfoScrollUnrollY += gUpdateRate * 4;
-        if (sInfoScrollUnrollY > _data_24) {
-            sInfoScrollUnrollY = _data_24;
+        if (sInfoScrollUnrollY > dInfoScrollUnrollMax) {
+            sInfoScrollUnrollY = dInfoScrollUnrollMax;
         } else {
             _data_120 += 1;
             _data_124 -= 1;
@@ -2574,7 +2681,7 @@ static void cmdmenu_func_486C(void) {
         }
     }
 
-    if (dOpacityInfoScroll == 0) {
+    if (dInfoScrollOpacity == 0) {
         if (*dTextStrings != NULL) {
             mmFree(*dTextStrings);
             *dTextStrings = NULL;
@@ -2608,7 +2715,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 lineIdx;
     Gfx* dl;
 
-    if (dOpacityInfoScroll == 0) {
+    if (dInfoScrollOpacity == 0) {
         return;
     }
 
@@ -2622,7 +2729,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl_apply_other_mode(&dl);
     gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
     dl_apply_geometry_mode(&dl);
-    dl_set_prim_color(&dl, 255, 255, 255, dOpacityInfoScroll);
+    dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
 
     x = _data_2C << 2;
     sp104 = _data_20 << 2;
@@ -2696,7 +2803,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         );
         gDLBuilder->needsPipeSync = TRUE;
 
-        dl_set_prim_color(&dl, 255, 255, 255, dOpacityInfoScroll);
+        dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
     }
 
     tempY = y - (11 << 2);
@@ -2772,16 +2879,16 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl_set_prim_color(&dl, 255, 255, 255, 255);
 
     //Return early if there's no gametext
-    if (dGametextStringID < 0) {
+    if (dInfoScrollTextID < 0) {
         return;
     }
 
     //Get the gametext lines
     if (dTextStrings[0] == NULL) {
         //Get the item's string (use a different gametext file for lineIDs beyond 255) 
-        dTextStrings[0] = dGametextStringID >= 256 
-            ? gDLL_21_Gametext->vtbl->get_text(GAMETEXT_238_UI_Text_2, dGametextStringID - 256) 
-            : gDLL_21_Gametext->vtbl->get_text(GAMETEXT_003_UI_Text_1, dGametextStringID);
+        dTextStrings[0] = dInfoScrollTextID >= 256 
+            ? gDLL_21_Gametext->vtbl->get_text(GAMETEXT_238_UI_Text_2, dInfoScrollTextID - 256) 
+            : gDLL_21_Gametext->vtbl->get_text(GAMETEXT_003_UI_Text_1, dInfoScrollTextID);
         dTextStrings[1] = NULL;
         dTextStrings[2] = NULL;
         dTextStrings[3] = NULL;
@@ -2790,7 +2897,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         for (x = 0, lineIdx = 1; dTextStrings[0][x] != '\0'; x++) {
             if (dTextStrings[0][x] == '|') {
                 dTextStrings[0][x] = '\0';
-                x += 2; //ROM's text should have space after bar, so skipping it
+                x += 2; //ROM's text should have space after bar ("| "), so skipping over it
                 
                 dTextStrings[lineIdx] = &dTextStrings[0][x]; //store address of new line
                 lineIdx++;
@@ -2986,15 +3093,15 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 //Get apple coords (3 rows)
                 if (i >= APPLES_ROW_3_IDX) {
                     //Row 3
-                    offsetX = (i * APPLES_SPACING_X) - (-APPLES_ROW_3_OFFSET_X + (APPLES_ROW_3_IDX * APPLES_SPACING_X));
+                    offsetX = (i * APPLES_SPACING_X) + (APPLES_ROW_3_OFFSET_X - (APPLES_ROW_3_IDX * APPLES_SPACING_X));
                     offsetY = 2 * APPLES_SPACING_Y;
                 } else if (i >= APPLES_ROW_2_IDX) {
                     //Row 2
-                    offsetX = (i * APPLES_SPACING_X) - (-APPLES_ROW_2_OFFSET_X + (APPLES_ROW_2_IDX * APPLES_SPACING_Y));
+                    offsetX = (i * APPLES_SPACING_X) + (APPLES_ROW_2_OFFSET_X - (APPLES_ROW_2_IDX * APPLES_SPACING_Y));
                     offsetY = APPLES_SPACING_Y;
                 } else {
                     //Row 1
-                    offsetX = i * APPLES_SPACING_X + APPLES_ROW_1_OFFSET_X;
+                    offsetX = (i * APPLES_SPACING_X) + (APPLES_ROW_1_OFFSET_X);
                     offsetY = 0;
                 }
 
