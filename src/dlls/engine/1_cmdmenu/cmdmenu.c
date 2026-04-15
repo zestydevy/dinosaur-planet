@@ -1,26 +1,26 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "dlls/engine/1_cmdmenu.h"
 #include "dll.h"
+#include "dlls/engine/1_cmdmenu.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/21_gametext.h"
-#include "dlls/objects/210_player.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/gametexts.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/textable.h"
+#include "sys/gfx/texture.h"
+#include "sys/fonts.h"
+#include "sys/joypad.h"
+#include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/rcp.h"
 #include "sys/vi.h"
-#include "sys/gfx/texture.h"
-#include "sys/main.h"
-#include "sys/fonts.h"
-#include "sys/rcp.h"
-#include "sys/joypad.h"
 #include "macros.h"
 #include "gbi_extra.h"
 #include "prevent_bss_reordering2.h"
@@ -35,7 +35,7 @@
 #define NO_TEXTURE -1
 #define NO_PAGE -1
 
-/* UI COORD MACROS */
+/* UI COORD MACROS (TO-DO: move to separate header?) */
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
@@ -45,59 +45,141 @@
 #define UI_TOP_LEFT_Y 0
 
 //Change these to move the UI elements in the top-right of screen (C-buttons, inventory scroll)
-#define UI_TOP_RIGHT_X (SCREEN_WIDTH)
-#define UI_TOP_RIGHT_Y (0)
+#define UI_TOP_RIGHT_X 0
+#define UI_TOP_RIGHT_Y 0
 
 //Change these to move the UI elements in the bottom-left of screen (item info pop-up, minimap)
-#define UI_BOTTOM_LEFT_X (0)
-#define UI_BOTTOM_LEFT_Y (SCREEN_HEIGHT)
+#define UI_BOTTOM_LEFT_X 0
+#define UI_BOTTOM_LEFT_Y 0
 
 //Change these to move the UI elements in the bottom-right of screen (Scarab counter, active Spell/Command)
-#define UI_BOTTOM_RIGHT_X (SCREEN_WIDTH)
-#define UI_BOTTOM_RIGHT_Y (SCREEN_HEIGHT)
+#define UI_BOTTOM_RIGHT_X 0
+#define UI_BOTTOM_RIGHT_Y 0
 
-//UI TOP-LEFT
-#define POS_HEALTH_X 60
-#define POS_HEALTH_Y 20
+/* UI TOP-LEFT */
+
+//Character icon
+#define CHARACTER_ICON_X 20
+#define CHARACTER_ICON_Y 10
+
+//Health
+#define HEALTH_ICONS_X 60
+#define HEALTH_ICONS_Y 20
+
+#define APPLES_SPACING_X 10
+#define APPLES_SPACING_Y 10
 
 #define APPLES_ROW_1 7
 #define APPLES_ROW_2 6
 #define APPLES_ROW_2_IDX (APPLES_ROW_1)
 #define APPLES_ROW_3_IDX (APPLES_ROW_1 + APPLES_ROW_2)
-#define APPLES_SPACING_X 10
-#define APPLES_SPACING_Y 10
+#define APPLES_ROW_1_OFFSET_X 0
+#define APPLES_ROW_2_OFFSET_X 5
+#define APPLES_ROW_3_OFFSET_X 0
 
-//UI TOP-RIGHT
-#define POS_PAGE_ICON_X 261
-#define POS_PAGE_ICON_Y 10
+//Magic
+#define MAGIC_UNITS_PER_BAR 25
+#define MAGIC_BARS_WIDTH 66
+#define MAGIC_BARS_HEIGHT 14
+#define MAGIC_BARS_X 23
+#define MAGIC_BARS_Y 60
+#define MAGIC_BARS_SPACING_Y 12
+#define MAGIC_BARS_ZERO_POINT_X 13
 
-#define POS_ITEM_HL_X1 266
-#define POS_ITEM_HL_Y1 82
-#define POS_ITEM_HL_X2 282
-#define POS_ITEM_HL_Y2 102
+/* UI TOP-RIGHT */
 
-//UI BOTTOM-LEFT
+//Inventory page icon
+#define PAGE_ICON_X 261
+#define PAGE_ICON_Y 10
 
-//UI BOTTOM-RIGHT
-#define POS_SCARABS_X (UI_BOTTOM_RIGHT_X - 68)
-#define POS_SCARABS_Y (UI_BOTTOM_RIGHT_Y - 42)
-#define POS_SCARABS_NUMBER_X (POS_SCARABS_X + 18)
-#define POS_SCARABS_NUMBER_Y (POS_SCARABS_Y + 4)
+//Inventory item icons
+#define MENU_ITEM_X 262
+#define MENU_ITEM_WIDTH 32
+#define MENU_ITEM_HEIGHT 24
+#define MENU_ITEM_QUANTITY_OFFSET_X 14
+#define MENU_ITEM_QUANTITY_OFFSET_Y 9
+#define MENU_ITEM_QUANTITY_X (MENU_ITEM_X + MENU_ITEM_QUANTITY_OFFSET_X)
 
+//Inventory item selection highlight
+#define ITEM_HL_X1 (MENU_ITEM_X + 4)
+#define ITEM_HL_Y1 82
+#define ITEM_HL_X2 (MENU_ITEM_X + 20)
+#define ITEM_HL_Y2 (ITEM_HL_Y1 + 20)
 
+//Sidekick meter
+#define SIDEKICK_METER_X 250
+#define SIDEKICK_METER_Y 21
+#define SIDEKICK_METER_SPACING_X 9
+#define SIDEKICK_METER_SPACING_Y 8
+
+/* UI BOTTOM-LEFT */
+
+//Item info pop-up
+#define INFO_POPUP_X 20
+#define INFO_POPUP_Y 175
+#define INFO_POPUP_EDGE_WIDTH 16
+
+#define INFO_POPUP_L_X (INFO_POPUP_X + 0)
+#define INFO_POPUP_M_X (INFO_POPUP_L_X + INFO_POPUP_EDGE_WIDTH)
+#define INFO_POPUP_R_X (INFO_POPUP_M_X + MENU_ITEM_WIDTH)
+#define INFO_POPUP_SHADOW_X (INFO_POPUP_X + 2)
+#define INFO_POPUP_SHADOW_Y (INFO_POPUP_Y + 1)
+#define INFO_POPUP_QUANTITY_X (INFO_POPUP_M_X + 16)
+#define INFO_POPUP_QUANTITY_Y (INFO_POPUP_Y + 16)
+
+/* UI BOTTOM-RIGHT */
+
+//Scarabs counter
+#define SCARABS_ICON_X (252)
+#define SCARABS_ICON_Y (198)
+#define SCARABS_ICON_WIDTH (16)
+#define SCARABS_ICON_HEIGTH (16)
+#define SCARABS_NUMBER_X (SCARABS_ICON_X + 18)
+#define SCARABS_NUMBER_Y (SCARABS_ICON_Y + 4)
+
+//Active Spell
+#define ACTIVE_SPELL_X 253
+#define ACTIVE_SPELL_Y 169
+#define ACTIVE_SPELL_ICON_OFFSET_X 9
+#define ACTIVE_SPELL_ICON_OFFSET_Y 11
+
+#define ACTIVE_SPELL_ICON_X (ACTIVE_SPELL_X + ACTIVE_SPELL_ICON_OFFSET_X)
+#define ACTIVE_SPELL_ICON_Y (ACTIVE_SPELL_Y + ACTIVE_SPELL_ICON_OFFSET_Y)
+
+//Active Sidekick Command
+#define ACTIVE_SIDECOMMAND_X 253
+#define ACTIVE_SIDECOMMAND_Y 121
+#define ACTIVE_SIDECOMMAND_ICON_OFFSET_X 9
+#define ACTIVE_SIDECOMMAND_ICON_OFFSET_Y 11
+
+#define ACTIVE_SIDECOMMAND_ICON_X (ACTIVE_SIDECOMMAND_X + ACTIVE_SIDECOMMAND_ICON_OFFSET_X)
+#define ACTIVE_SIDECOMMAND_ICON_Y (ACTIVE_SIDECOMMAND_Y + ACTIVE_SIDECOMMAND_ICON_OFFSET_Y)
+
+/* CENTRED UI */
+
+//Info scroll
+
+//Energy bar
+#define ENERGY_BAR_X (SCREEN_WIDTH / 2)
+#define ENERGY_BAR_Y (SCREEN_HEIGHT - 10)
+
+/** Data for the item info pop-up that appears after collecting certain items (e.g. Kyte's grubs) */
 typedef struct {
 /*0*/ Texture* texture;
 /*4*/ s32 timer;
 /*8*/ f32 opacity;
 /*C*/ s16 count;
-} CmdmenuInfoShowData;
+} CmdmenuInfoPopup;
 
+/** Data for a particular inventory page */
 typedef struct {
-/*0*/ InventoryItem* items;
+/*0*/ InventoryItem* items; //all the different items that can appear on this page
 /*4*/ s16 unk4;     // the loaded item index of this page's selected item (at runtime)
 /*8*/ u32 mesgID;   // objmesg ID sent to player
 /*C*/ s32 btnMask;  // mask of joypad buttons that can be used to move to this item
 } CmdmenuPage;
+
+#define CMDMENU_TRACKED_PLAYER_STATS_COUNT 10
 
 typedef union { 
     struct {
@@ -115,19 +197,6 @@ typedef union {
     s32 items[10];
 } CmdmenuPlayerSidekickData;
 
-typedef struct {
-/*00*/ s32 min;
-/*04*/ s32 max;
-/*08*/ u32 width;
-/*0C*/ u32 height;
-/*10*/ f32 filledWidth;
-/*14*/ u8 alpha;
-/*18*/ TextureTile fullbarTex[2]; // official name: Fullbartex (default.dol)
-/*30*/ TextureTile emptybarTex[2]; // official name: Emptybartex (default.dol)
-/*48*/ s32 scale;
-/*4C_0*/ u32 fadeout : 1;
-} EnergyBar;
-
 typedef union {
     struct {
     /*0 00*/ f32 playerHealth;
@@ -144,6 +213,19 @@ typedef union {
     f32 items[10];
 } CmdmenuPlayerSidekickDataChangeTimers;
 
+typedef struct {
+/*00*/ s32 min;
+/*04*/ s32 max;
+/*08*/ u32 width;
+/*0C*/ u32 height;
+/*10*/ f32 filledWidth;
+/*14*/ u8 alpha;
+/*18*/ TextureTile fullbarTex[2]; // official name: Fullbartex (default.dol)
+/*30*/ TextureTile emptybarTex[2]; // official name: Emptybartex (default.dol)
+/*48*/ s32 scale;
+/*4C_0*/ u32 fadeout : 1;
+} EnergyBar;
+
 enum CmdMenuTextures {
     CMDMENU_TEX_00_Scroll_BG = 0,
     CMDMENU_TEX_01_Scroll_Bottom = 1,
@@ -159,8 +241,8 @@ enum CmdMenuTextures {
     CMDMENU_TEX_11_Apple_75_Pct = 11,
     CMDMENU_TEX_12_Mushroom_Blue_Full = 12,
     CMDMENU_TEX_13_Grub_Blue_Full = 13,
-    CMDMENU_TEX_14 = 14,
-    CMDMENU_TEX_15 = 15,
+    CMDMENU_TEX_14_Unk_Circle_Glow = 14,
+    CMDMENU_TEX_15_Unk_Circle_Blue = 15,
     CMDMENU_TEX_16_Grub_Blue_Half = 16,
     CMDMENU_TEX_17_Apple_100_Pct = 17,
     CMDMENU_TEX_18_Scarab = 18,
@@ -183,17 +265,17 @@ enum CmdMenuTextures {
     CMDMENU_TEX_35_MagicBar_Empty = 35,
     CMDMENU_TEX_36_MagicBar_Full = 36,
     CMDMENU_TEX_37_C_Down = 37,
-    CMDMENU_TEX_38_LeftDownButtons_With_Kyte = 38,
+    CMDMENU_TEX_38_LeftDownButtons_SpellBook_With_Kyte = 38,
     CMDMENU_TEX_39_C_Left = 39,
     CMDMENU_TEX_40_Sabre = 40,
     CMDMENU_TEX_41_C_Right = 41,
     CMDMENU_TEX_42_Tricky = 42,
-    CMDMENU_TEX_43_LeftDownButtons_With_Tricky = 43,
+    CMDMENU_TEX_43_LeftDownButtons_SpellBook_With_Tricky = 43,
     CMDMENU_TEX_44_Mushroom_Empty = 44,
     CMDMENU_TEX_45_Mushroom_Red_Full = 45,
     CMDMENU_TEX_46_Mushroom_Red_Half = 46,
     CMDMENU_TEX_47_RightButton_With_Bag = 47,
-    CMDMENU_TEX_48_LeftDownButtons_NoSidekick = 48,
+    CMDMENU_TEX_48_LeftDownButtons_SpellBook_NoSidekick = 48,
     CMDMENU_TEX_49_MagicBook = 49,
     CMDMENU_TEX_50_Bag = 50,
     CMDMENU_TEX_51_Mushroom_Blue_Half = 51,
@@ -205,14 +287,26 @@ enum CmdMenuTextures {
     CMDMENU_TEX_57_Grub_Red_Half = 57
 };
 
+typedef enum {
+    CIcon_FLAG_None = 0,
+    CIcon_FLAG_Have_Spells = 1,
+    CIcon_FLAG_Have_Items = 2,
+    CIcon_FLAG_Have_Sidekick_Commands = 4
+} CmdMenuCIconFlags;
+
+typedef enum {
+    PlayerStats_FLAG_None = 0,
+    PlayerStats_FLAG_Update_Snapshot = 1
+} CmdMenuPlayerStatsFlags;
+
 /*0x0*/ static s8 dInventoryShow = FALSE;
 /*0x4*/ static s8 sInventoryScrollOffset = 0;   //Y offset for the scroll's inner strip, used to smoothly animate moving between inventory items
 /*0x8*/ static s8 dInventoryMoveSpeed = 1;      //Scroll speed when moving between inventory items (how many times to shift gUpdateRate)
 /*0xC*/ static s16 dInventoryUnrollMax = 72;    //The height of the inventory scroll when fully open
-/*0x10*/ static s16 dOpacityInventoryScroll = 0;
-/*0x14*/ static s16 _data_14 = 0;
-/*0x18*/ static s16 _data_18 = -1;
-/*0x1C*/ static s8 _data_1C = 0;
+/*0x10*/ static s16 dOpacityInventory = 0;
+/*0x14*/ static s16 dOpacitySidekickMeter = 0;
+/*0x18*/ static s16 dUsedItemTextID = NO_GAMETEXT;
+/*0x1C*/ static s8 dInfoScrollShow = 0;
 /*0x20*/ static s16 _data_20 = 60;
 /*0x24*/ static s16 _data_24 = 50;
 /*0x28*/ static s16 _data_28 = 20;
@@ -250,7 +344,7 @@ enum CmdMenuTextures {
 /*0x7C*/ static u8 _data_7C = 0;
 /*0x80*/ static u8 sForceStatsDisplay = FALSE;
 /*0x84*/ static s16 _data_84 = 0;
-/*0x88*/ static s8 _data_88 = 1;
+/*0x88*/ static s8 _data_88 = 1; //Unknown purpose - value never changes, but `func_70A0` compares its value.
 /*0x8C*/ static s16 dSpellGamebits[] = {
     BIT_Spell_Projectile, 
     BIT_Spell_Illusion, 
@@ -277,7 +371,32 @@ enum CmdMenuTextures {
     TEXTABLE_582_CMDMENU_FlameCommand_NoBG, 
     TEXTABLE_583_CMDMENU_TrickyBall_NoBG
 };
-/*0xB8*/ static s16 _data_B8[10][2] = {
+
+typedef struct {
+    s16 increased;
+    s16 decreased;
+} StatChangeSounds;
+
+typedef union {
+    struct {
+        /*0 00*/ StatChangeSounds playerHealth;
+        /*1 04*/ StatChangeSounds sidekickBlueFood;
+        /*2 08*/ StatChangeSounds playerMagic;
+        /*3 0C*/ StatChangeSounds playerScarabCount;
+        /*4 10*/ StatChangeSounds sidekickRedFood;
+        /*5 14*/ StatChangeSounds unk14;
+        /*6 18*/ StatChangeSounds unk18;
+        /*7 1C*/ StatChangeSounds playerHealthMax;
+        /*8 20*/ StatChangeSounds playerMagicMax;
+        /*9 24*/ StatChangeSounds sidekickMaxFood;
+    };
+    StatChangeSounds items[10];
+} CmdmenuPlayerStatsChangeSounds;
+
+/**
+  * Sound effects to play when tracked player stats increase/decrease (unused in practice)
+  */
+/*0xB8*/ static CmdmenuPlayerStatsChangeSounds dStatChangeSounds = {{
     {NO_SOUND, NO_SOUND}, 
     {NO_SOUND, NO_SOUND}, 
     {NO_SOUND, NO_SOUND}, 
@@ -286,9 +405,9 @@ enum CmdMenuTextures {
     {NO_SOUND, NO_SOUND}, 
     {NO_SOUND, NO_SOUND}, 
     {NO_SOUND, NO_SOUND}, 
-    {0, 0}, 
+    {0, 0},
     {0, 0}
-};
+}};
 /*0xE0*/ static u16 _data_E0[] = {
     0x0d05, 0x1310, 0x040a, 0x0c16, 
     0x0416, 0x0c20, 0x0d16, 0x1328, 
@@ -560,8 +679,8 @@ enum CmdMenuTextures {
     /*11*/ TEXTABLE_3E5_CMDMENU_Apple_75_Pct,
     /*12*/ TEXTABLE_421_CMDMENU_Mushroom_Blue_Full,
     /*13*/ TEXTABLE_1C9_CMDMENU_Grub_Blue_Full,
-    /*14*/ TEXTABLE_3EA,
-    /*15*/ TEXTABLE_3EB,
+    /*14*/ TEXTABLE_3EA_CMDMENU_Unk_Circle_Glow, //Small glowing purple circle, unknown purpose
+    /*15*/ TEXTABLE_3EB_CMDMENU_Unk_Circle_Blue, //Small blue circle, unknown purpose
     /*16*/ TEXTABLE_1CB_CMDMENU_Grub_Blue_Half,
     /*17*/ TEXTABLE_3E6_CMDMENU_Apple_100_Pct,
     /*18*/ TEXTABLE_3E7_CMDMENU_Scarab,
@@ -584,17 +703,17 @@ enum CmdMenuTextures {
     /*35*/ TEXTABLE_424_CMDMENU_MagicBar_Empty,
     /*36*/ TEXTABLE_42D_CMDMENU_MagicBar_Full,
     /*37*/ TEXTABLE_431_CMDMENU_C_Down,
-    /*38*/ TEXTABLE_1D4_CMDMENU_LeftDownButtons_With_Kyte,
+    /*38*/ TEXTABLE_1D4_CMDMENU_LeftDownButtons_SpellBook_With_Kyte,
     /*39*/ TEXTABLE_42F_CMDMENU_C_Left,
     /*40*/ TEXTABLE_432_CMDMENU_Sabre,
     /*41*/ TEXTABLE_430_CMDMENU_C_Right,
     /*42*/ TEXTABLE_433_CMDMENU_Tricky,
-    /*43*/ TEXTABLE_42E_CMDMENU_LeftDownButtons_With_Tricky,
+    /*43*/ TEXTABLE_42E_CMDMENU_LeftDownButtons_SpellBook_With_Tricky,
     /*44*/ TEXTABLE_435_CMDMENU_Mushroom_Empty,
     /*45*/ TEXTABLE_436_CMDMENU_Mushroom_Red_Full,
     /*46*/ TEXTABLE_438_CMDMENU_Mushroom_Red_Half,
     /*47*/ TEXTABLE_43A_CMDMENU_RightButton_With_Bag,
-    /*48*/ TEXTABLE_43B_CMDMENU_LeftDownButtons_NoSidekick,
+    /*48*/ TEXTABLE_43B_CMDMENU_LeftDownButtons_SpellBook_NoSidekick,
     /*49*/ TEXTABLE_43D_CMDMENU_MagicBook,
     /*50*/ TEXTABLE_43E_CMDMENU_Bag,
     /*51*/ TEXTABLE_434_CMDMENU_Mushroom_Blue_Half,
@@ -609,23 +728,23 @@ enum CmdMenuTextures {
 /*0x0*/ static f32 sOpacityHealth;  //Opacity of player health UI
 /*0x4*/ static f32 sOpacityScarabs; //Opacity of Scarab counter UI
 /*0x8*/ static f32 sOpacityMagic;   //Opacity of player magic bar UI
-/*0xC*/ static s32 _bss_C;
+/*0xC*/ static f32 _bss_C; //Unused
 /*0x10*/ static CmdmenuPlayerSidekickData sStats;
 /*0x38*/ static CmdmenuPlayerSidekickData sPrevStats;
 /*0x60*/ static CmdmenuPlayerSidekickDataChangeTimers sStatsChangeTimers;
-/*0x88*/ static u8 _bss_88;
-/*0x89*/ static u8 sAnimFrameScarab;
-/*0x8A*/ static u8 sAnimScarabFlutterTimer;
-/*0x8B*/ static u8 _bss_8B;
+/*0x88*/ static u8 sPlayerStatsFlags;
+/*0x89*/ static u8 sAnimFrameScarab; //Frame offset for the Scarab (an ID offset in practice, since Scarab's animation frames are stored as separate textures)
+/*0x8A*/ static u8 sAnimScarabFlutterTimer; //Plays Scarab flutter animation during last ticks of countdown
+/*0x8B*/ static u8 sAnimScarabSpin; //Plays Scarab spin animation when nonzero (used as frame offset)
 /*0x8C*/ static f32 sOpacityR; //Opacity of icons on right side of screen (C-buttons, menu page image, etc.)
 /*0x90*/ static EnergyBar* sEnergyBar; 
 /*0x98*/ static Texture* sMenuItemTextures[MAX_LOADED_ITEMS]; //Inventory icon texture pointers for the current menu page's loaded items
-/*0x198*/ static Texture* sMenuSidekickCommandTextures[MAX_LOADED_ITEMS]; //Sidekick command inventory icon textures for the current menu page's loaded items
+/*0x198*/ static Texture* sMenuItemTexturesSidekick[MAX_LOADED_ITEMS]; //Sidekick command inventory icon textures for the current menu page's loaded items
 /*0x298*/ static s16 sMenuItemTextureIDs[MAX_LOADED_ITEMS]; //TextableIDs for the current menu page's loaded items
 /*0x318*/ static s32 sMenuItemGamebits[MAX_LOADED_ITEMS]; //GamebitIDs for the current menu page's loaded items
 /*0x418*/ static s16 sMenuItemTextIDs[MAX_LOADED_ITEMS]; //Gametext lineIDs for the current menu page's loaded items
-/*0x498*/ static s8 _bss_498[MAX_LOADED_ITEMS]; //array of unkAs (from InventoryItem)
-/*0x4D8*/ static u8 _bss_4D8[MAX_LOADED_ITEMS]; //array of unkBs (from InventoryItem)
+/*0x498*/ static s8 sMenuItemOpenPageIDs[MAX_LOADED_ITEMS]; //The menu page ID opened by each of the current menu page's loaded items (or -1 if it closes the inventory on use)
+/*0x4D8*/ static u8 sMenuItemUseSounds[MAX_LOADED_ITEMS]; //The sound types (see `CmdMenuItemSounds`) used by each of the current menu page's loaded items
 /*0x518*/ static u8 sMenuItemVisibilities[MAX_LOADED_ITEMS];
 /*0x558*/ static u8 sMenuItemQuantities[MAX_LOADED_ITEMS];
 /*0x598*/ static Texture* sActiveSpellIcon; //Icon in bottom-right of screen
@@ -642,8 +761,8 @@ enum CmdMenuTextures {
 /*0x5C8*/ static Texture* sTextures[ARRAYCOUNT(dTextableIDs)];
 /*0x6B0*/ static Texture* sInventoryStackNumbersTex;
 /*0x6B8*/ static TextureTile sTextureTiles[ARRAYCOUNT(dTextableIDs)][2];
-/*0xC28*/ static s16 sInventoryUnrollY; //How far the inventory scroll has opened (0 when fully closed)
-/*0xC2A*/ static s16 _bss_C2A;
+/*0xC28*/ static s16 sInventoryUnrollY;  //How far the inventory scroll has opened (0 when fully closed)
+/*0xC2A*/ static s16 sInfoScrollUnrollY; //How far the R-button info scroll has opened (0 when fully closed)
 /*0xC2C*/ static s16 _bss_C2C;
 /*0xC2E*/ static s16 _bss_C2E;
 /*0xC30*/ static GameTextChunk* _bss_C30;
@@ -653,47 +772,46 @@ enum CmdMenuTextures {
 /*0xC3C*/ static s8 sUsedItemSound; //Set to 0 when item selection successful (item given to character, etc.)
 /*0xC3D*/ static s8 _bss_C3D;
 /*0xC3E*/ static s8 sInventoryPageID;
-/*0xC3F*/ static u8 _bss_C3F;
-/*0xC40*/ static s16 usedLoadedIdx;
+/*0xC40*/ static s16 sUsedItemLoadedIdx;
 /*0xC44*/ static s32 _bss_C44;
 /*0xC48*/ static s8 sShouldOverrideJoypadButtons;
 /*0xC4C*/ static s32 _bss_C4C;
 /*0xC50*/ static s32 sJoyPressedButtons; // joypad button bitfield
 /*0xC54*/ static s32 sJoyPressedButtonsOverride; //controllerButtons
 /*0xC58*/ static s32 sJoyHeldButtons; // joypad button bitfield
-/*0xC60*/ static TextureTile _bss_C60[2];
-/*0xC78*/ static s8 _bss_C78;
-/*0xC7A*/ static s16 _bss_C7A;
+/*0xC60*/ static TextureTile sTempIcon[2];
+/*0xC78*/ static s8 sAutoUseItemGamebit; //Gamebit: Always -1, but maybe intended to auto-use a particular item when opening inventory?
+/*0xC7A*/ static s16 sAutoUseItemLoadedIdx; //Loaded index of the auto-used item (unused in practice)
 /*0xC7C*/ static s16 _bss_C7C;
 /*0xC7E*/ static s16 _bss_C7E;
 /*0xC80*/ static s16 _bss_C80;
-/*0xC88*/ static CmdmenuInfoShowData sInfoPopup; //item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
+/*0xC88*/ static CmdmenuInfoPopup sInfoPopup; //item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
 
 static void cmdmenu_func_1410(void);
 static void cmdmenu_func_1614(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_func_1FEC(void);
-static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static s32 cmdmenu_func_325C(InventoryItem* arg0, s8 arg1);
+static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static s32 cmdmenu_page_load_items(InventoryItem* arg0, s8 arg1);
 static s32 cmdmenu_page_count_shown_items(InventoryItem* arg0, s8 arg1);
-static void cmdmenu_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
+static void cmdmenu_store_loaded_item_metadata(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
 static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame);
-static s32 cmdmenu_is_inventory_open(void);
-static s32 cmdmenu_func_3A4C(void);
+static int cmdmenu_is_inventory_open(void);
+static int cmdmenu_is_inventory_closed(void);
 static void cmdmenu_close_inventory(void);
 static void cmdmenu_open_inventory(void);
 static void cmdmenu_func_3AD0(void);
-static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_func_4630(Gfx **gdl);
+static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl);
 static void cmdmenu_gfx_set_screen_scissor(Gfx** gfx);
-static s32 cmdmenu_func_47E8(void);
-static void cmdmenu_func_4830(void);
-static void cmdmenu_func_484C(void);
+static int cmdmenu_func_47E8(void);
+static void cmdmenu_close_info_scroll(void);
+static void cmdmenu_open_info_scroll(void);
 static void cmdmenu_func_486C(void);
-static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_update_stats(void);
 static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_info_hide(CmdmenuInfoShowData* arg0);
-static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoShowData* arg1);
+static void cmdmenu_info_hide(CmdmenuInfoPopup* arg0);
+static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* arg1);
 static void cmdmenu_draw_energy_bar(Gfx** gdl);
 void cmdmenu_energy_bar_free(void);
 
@@ -701,8 +819,8 @@ void cmdmenu_energy_bar_free(void);
 void cmdmenu_ctor(void* dll) {
     u32 i;
 
-    _bss_C78 = -1;
-    _bss_C7A = -1;
+    sAutoUseItemGamebit = NO_GAMEBIT;
+    sAutoUseItemLoadedIdx = -1;
     sUsedItemGamebitID = NO_GAMEBIT;
     sUsedItemSound = CMDMENU_SOUND_NONE;
     _bss_C3D = -1;
@@ -850,7 +968,7 @@ void cmdmenu_func_35C(void) {
         if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
             cmdmenu_close_inventory();
         } else if (dNextPageCategory != 0) {
-            if (cmdmenu_func_3A4C() != 0) {
+            if (cmdmenu_is_inventory_closed()) {
                 switch (dNextPageCategory) {
                 case CMDMENU_CATEGORY_3_Items:
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EC_Cmdmenu_OpenBag, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -887,12 +1005,12 @@ void cmdmenu_func_35C(void) {
         }
 
         if ((dInventoryShow != 0) || (dNextPageCategory != 0)) {
-            newStringID = _data_18;
+            newStringID = dUsedItemTextID;
         } else {
             newStringID = gDLL_2_Camera->vtbl->get_target_gametextID();
         }
+        dUsedItemTextID = NO_GAMETEXT;
 
-        _data_18 = -1;
         var_a0 = 0;
         if (_bss_C7C >= 0) {
             newStringID = _bss_C7C;
@@ -915,9 +1033,9 @@ void cmdmenu_func_35C(void) {
                     *dTextStrings = NULL;
                 }
             }
-            cmdmenu_func_484C();
+            cmdmenu_open_info_scroll();
         } else {
-            cmdmenu_func_4830();
+            cmdmenu_close_info_scroll();
             if ((cmdmenu_func_47E8() != 0) && (*dTextStrings != NULL)) {
                 mmFree(*dTextStrings);
                 *dTextStrings = NULL;
@@ -964,10 +1082,10 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         0, 
         GET_VIDEO_WIDTH(viSize), 
         GET_VIDEO_HEIGHT(viSize));
-    cmdmenu_func_3D28(gdl, mtxs, vtxs);
-    cmdmenu_print_info_scroll(gdl, mtxs, vtxs);
+    cmdmenu_draw_c_buttons_and_sidekick_meter(gdl, mtxs, vtxs);
+    cmdmenu_draw_info_scroll(gdl, mtxs, vtxs);
     cmdmenu_func_1614(gdl, mtxs, vtxs);
-    cmdmenu_func_27D8(gdl, mtxs, vtxs);
+    cmdmenu_draw_main(gdl, mtxs, vtxs);
     camera_apply_scissor(gdl);
 }
 
@@ -1093,9 +1211,13 @@ void cmdmenu_func_1290(void) {
 }
 
 // offset: 0x12EC | func: 12 | export: 4
-/** Update player stats */
-void cmdmenu_func_12EC(void) {
-    _bss_88 = 1;
+/** 
+  * Flags that a snapshot of the player's current tracked stats should be taken.
+  *
+  * (Used to show UI when player health changes, etc.)
+  */
+void cmdmenu_request_new_player_stats_snapshot(void) {
+    sPlayerStatsFlags = PlayerStats_FLAG_Update_Snapshot;
 }
 
 // offset: 0x130C | func: 13 | export: 12
@@ -1406,8 +1528,8 @@ static void cmdmenu_func_1FEC(void) {
         isSidekickMenu = TRUE;
     }
 
-    usedLoadedIdx = *pageUnk4;
-    _bss_C44 = cmdmenu_func_325C(pageItems, isSidekickMenu);
+    sUsedItemLoadedIdx = *pageUnk4;
+    _bss_C44 = cmdmenu_page_load_items(pageItems, isSidekickMenu);
 
     if (_bss_C44 == 0) {
         dPageCategory = 0;
@@ -1415,11 +1537,11 @@ static void cmdmenu_func_1FEC(void) {
         return;
     }
 
-    if (usedLoadedIdx >= _bss_C44) {
-        usedLoadedIdx = 0;
+    if (sUsedItemLoadedIdx >= _bss_C44) {
+        sUsedItemLoadedIdx = 0;
     }
 
-    _data_18 = sMenuItemTextIDs[usedLoadedIdx];
+    dUsedItemTextID = sMenuItemTextIDs[sUsedItemLoadedIdx];
 
     if (cmdmenu_is_inventory_open()) {
         if ((sJoyPressedButtons & pageBtnMask) && (sInventoryScrollOffset < 8) && (_data_7C == 0)) {
@@ -1432,14 +1554,16 @@ static void cmdmenu_func_1FEC(void) {
         if (_data_78 > 255) {
             _data_78 = 255;
         }
-        if (_bss_C7A != -1) {
-            usedLoadedIdx = _bss_C7A;
+
+        //Auto-use an item? (functionality never used)
+        if (sAutoUseItemLoadedIdx != -1) {
+            sUsedItemLoadedIdx = sAutoUseItemLoadedIdx;
         }
 
         if ((_data_78 > 0) && (sInventoryScrollOffset == 0)) {
             _data_78 -= 1;
             if (_bss_C44 >= 2) {
-                if (((_bss_C44 == 2) && (usedLoadedIdx == 1)) || ((_bss_C44 == 4) && (usedLoadedIdx == 3))) {
+                if (((_bss_C44 == 2) && (sUsedItemLoadedIdx == 1)) || ((_bss_C44 == 4) && (sUsedItemLoadedIdx == 3))) {
                     sInventoryScrollOffset = 64;
                     dInventoryMoveSpeed = 2;
                     _data_7C = 0;
@@ -1448,25 +1572,25 @@ static void cmdmenu_func_1FEC(void) {
                     dInventoryMoveSpeed = 2;
                     _data_7C = 0;
                 }
-                usedLoadedIdx++;
-                if (usedLoadedIdx >= _bss_C44) {
-                    usedLoadedIdx = 0;
+                sUsedItemLoadedIdx++;
+                if (sUsedItemLoadedIdx >= _bss_C44) {
+                    sUsedItemLoadedIdx = 0;
                 }
             }
         } else if (sJoyPressedButtons & B_BUTTON) {
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28C_Cmdmenu_Close, MAX_VOLUME, NULL, NULL, 0, NULL);
             cmdmenu_close_inventory();
         } else if ((sJoyPressedButtons & A_BUTTON) && cmdmenu_is_inventory_open()) {
-            usedGamebit = sMenuItemGamebits[usedLoadedIdx];
+            usedGamebit = sMenuItemGamebits[sUsedItemLoadedIdx];
             if (isSidekickMenu == FALSE) {
                 obj_send_mesg(player, pageMsg, NULL, (void* ) usedGamebit);
                 sUsedItemGamebitID = usedGamebit;
-                sUsedItemSound = _bss_4D8[usedLoadedIdx];
-                _bss_C3D = _bss_498[usedLoadedIdx];
+                sUsedItemSound = sMenuItemUseSounds[sUsedItemLoadedIdx];
+                _bss_C3D = sMenuItemOpenPageIDs[sUsedItemLoadedIdx];
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                 cmdmenu_close_inventory();
             } else {
-                if (sMenuItemVisibilities[usedLoadedIdx] != 0) {
+                if (sMenuItemVisibilities[sUsedItemLoadedIdx] != 0) {
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                     cmdmenu_close_inventory();
                     sUsedItemGamebitID = usedGamebit;
@@ -1480,7 +1604,7 @@ static void cmdmenu_func_1FEC(void) {
         }
     }
 
-    if (cmdmenu_func_3A4C() != 0) {
+    if (cmdmenu_is_inventory_closed()) {
         dPageCategory = 0;
         _bss_C4C = 0;
         _data_78 = 0;
@@ -1488,7 +1612,7 @@ static void cmdmenu_func_1FEC(void) {
         joy_set_button_mask(0, A_BUTTON | B_BUTTON);
     }
 
-    *pageUnk4 = usedLoadedIdx;
+    *pageUnk4 = sUsedItemLoadedIdx;
 }
 
 // offset: 0x26D8 | func: 19
@@ -1508,15 +1632,25 @@ static s16 cmdmenu_get_spell_textable(s32 spellGamebit) {
 }
 
 // offset: 0x27D8 | func: 20
-static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+/**
+  * Draws the main inventory scroll and its page icon. 
+  *
+  * Also draws the active spell and active sidekick command icons.
+  * 
+  * Calls drawing the info pop-up (cmdmenu_info_draw) and the energy bar (cmdmenu_draw_energy_bar).
+  *
+  * (NOTE: The top/bottom parts of the scroll aren't drawn here, 
+  *        for some reason they're in `cmdmenu_draw_c_buttons_and_sidekick_meter`!)
+  */
+static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s16 commandTexTableID;
     Object* player;
     s32 activeSpellGamebit;
-    s32 var_a2;
+    s32 yOffset;
     s32 spellTexTableID;
     s32 var_s0;
     s8 sp70[64];
-    s32 var_s1;
+    s32 loadedIdx;
     s32 i;
     s32 sideCommandIndex;
     s32 var_s5;
@@ -1531,7 +1665,7 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     offsetY = 0;
     sidekick = get_sidekick();
 
-    //Draw item info pop-up
+    //Call the item info pop-up's draw
     cmdmenu_info_draw(gdl, &sInfoPopup);
 
     //Draw active spell icon
@@ -1558,8 +1692,8 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sPrevActiveSpellGamebit = activeSpellGamebit;
 
         if (sActiveSpellIcon != NULL) {
-            rcp_screen_full_write(gdl, sActiveSpellRing, 253, 169, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, sActiveSpellIcon, 262, 180, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_full_write(gdl, sActiveSpellRing, ACTIVE_SPELL_X,      ACTIVE_SPELL_Y,      0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_full_write(gdl, sActiveSpellIcon, ACTIVE_SPELL_ICON_X, ACTIVE_SPELL_ICON_Y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
 
@@ -1587,15 +1721,17 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sPrevSidekickCommandIndex = sideCommandIndex;
 
         if (sActiveSidekickCommandIcon != NULL) {
-            rcp_screen_full_write(gdl, sActiveSidekickCommandRing, 253, 121, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, sActiveSidekickCommandIcon, 262, 132, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_full_write(gdl, sActiveSidekickCommandRing, ACTIVE_SIDECOMMAND_X,      ACTIVE_SIDECOMMAND_Y,      0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_full_write(gdl, sActiveSidekickCommandIcon, ACTIVE_SIDECOMMAND_ICON_X, ACTIVE_SIDECOMMAND_ICON_Y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
 
+    //Call the energy bar's draw
     cmdmenu_draw_energy_bar(gdl);
 
+    //Draw the inventory (except the top/bottom parts of the scroll)
     if (_bss_C44 != 0) {
-        if (dOpacityInventoryScroll != 0) {
+        if (dOpacityInventory != 0) {
             var_s5 = 3;
             if (_bss_C44 < 4) {
                 var_s0 = 1;
@@ -1604,11 +1740,12 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 var_s0 = 2;
             }
 
-            cmdmenu_func_4630(gdl);
+            //Set a scissor mask for the inner strip of the inventory scroll
+            cmdmenu_gfx_set_scroll_scissor(gdl);
 
-            _bss_C60->y = 0;
-            var_a2 = 95 - (var_s5 * 12);
-            _bss_C60[1].tex = NULL;
+            sTempIcon->y = 0;
+            yOffset = 95 - (var_s5 * 12);
+            sTempIcon[1].tex = NULL;
 
             for (i = 0; i < _bss_C44; i++) {
                 sp70[i] = 0;
@@ -1624,95 +1761,118 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
             if (sInventoryScrollOffset > 0) {
                 var_s0 += 1;
-                var_a2 -= 24;
+                yOffset -= MENU_ITEM_HEIGHT;
                 var_s5 += 1;
             }
 
-            if (sInventoryScrollOffset > 24) {
+            if (sInventoryScrollOffset > MENU_ITEM_HEIGHT) {
                 var_s0 += 1;
-                var_a2 -= 24;
+                yOffset -= MENU_ITEM_HEIGHT;
                 var_s5 += 1;
             }
 
-            var_a2 += sInventoryUnrollY - dInventoryUnrollMax;
-            var_s1 = usedLoadedIdx - var_s0;
+            yOffset += sInventoryUnrollY - dInventoryUnrollMax;
+            loadedIdx = sUsedItemLoadedIdx - var_s0;
 
-            if (var_s1 < 0) {
-                var_s1 += _bss_C44;
+            if (loadedIdx < 0) {
+                loadedIdx += _bss_C44;
             }
 
             for (i = 0; i < var_s5; i++) {
-                if (sp70[var_s1] == 0) {
-                    _bss_C60->animProgress = 0;
-                    iconOpacity = dOpacityInventoryScroll;
+                if (sp70[loadedIdx] == 0) {
+                    sTempIcon->animProgress = 0;
+                    iconOpacity = dOpacityInventory;
 
-                    if ((var_s1 == usedLoadedIdx) && (sInventoryScrollOffset == 0)) {
-                        _bss_C60->x = 0;
-                        _bss_C60->y = 0;
+                    if ((loadedIdx == sUsedItemLoadedIdx) && (sInventoryScrollOffset == 0)) {
+                        sTempIcon->x = 0;
+                        sTempIcon->y = 0;
                     } else {
-                        _bss_C60->x = 0;
-                        _bss_C60->y = 0;
+                        sTempIcon->x = 0;
+                        sTempIcon->y = 0;
                     }
 
-                    if (sMenuItemVisibilities[var_s1] != 0) {
-                        _bss_C60->tex = sMenuItemTextures[var_s1];
+                    if (sMenuItemVisibilities[loadedIdx] != FALSE) {
+                        sTempIcon->tex = sMenuItemTextures[loadedIdx];
 
-                        if (func_80041E08() != 0) {
+                        //Draw icon
+                        if (func_80041E08()) {
+                            //Widescreen aspect
                             rcp_tile_write(
                                 gdl, 
-                                _bss_C60, 
-                                261, 
-                                ((i * 24) + var_a2) + sInventoryScrollOffset, 
+                                sTempIcon, 
+                                MENU_ITEM_X - 1, 
+                                ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
                                 0xFF, 0xFF, 0xFF, iconOpacity
                             );
                         } else {
+                            //Standard aspect
                             rcp_tile_write(
                                 gdl, 
-                                _bss_C60, 
-                                262, 
-                                ((i * 24) + var_a2) + sInventoryScrollOffset, 
+                                sTempIcon, 
+                                MENU_ITEM_X, 
+                                ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
                                 0xFF, 0xFF, 0xFF, iconOpacity
                             );
                         }
 
-                        if (sMenuItemQuantities[var_s1] >= 2) {
-                            _bss_C60->tex = sInventoryStackNumbersTex;
-                            _bss_C60->animProgress = (sMenuItemQuantities[var_s1] - 2) << 8;
+                        //Draw quantity text (for stackable items)
+                        if (sMenuItemQuantities[loadedIdx] > 1) {
+                            sTempIcon->tex = sInventoryStackNumbersTex;
+                            sTempIcon->animProgress = (sMenuItemQuantities[loadedIdx] - 2) << 8; //Numbers only shown from 2 onwards (up to 10)
                             rcp_tile_write(
                                 gdl, 
-                                _bss_C60, 
-                                276, 
-                                ((i * 24) + var_a2) + sInventoryScrollOffset + 9, 
+                                sTempIcon, 
+                                MENU_ITEM_QUANTITY_X, 
+                                ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset + MENU_ITEM_QUANTITY_OFFSET_Y, 
                                 0xFF, 0xFF, 0xFF, 0xFF
                             );
                         }
                     }
                 } else {
-                    if (func_80041E08() != 0) {
-                        rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 261, ((i * 24) + var_a2) + sInventoryScrollOffset, 0xFF, 0xFF, 0xFF, 0xFF);
+                    //Draw empty tile
+                    if (func_80041E08()) {
+                        //Widescreen aspect
+                        rcp_tile_write(
+                            gdl, 
+                            sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 
+                            MENU_ITEM_X - 1, 
+                            ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
+                            0xFF, 0xFF, 0xFF, 0xFF
+                        );
                     } else {
-                        rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 262, ((i * 24) + var_a2) + sInventoryScrollOffset, 0xFF, 0xFF, 0xFF, 0xFF);
+                        //Standard aspect
+                        rcp_tile_write(
+                            gdl, 
+                            sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 
+                            MENU_ITEM_X, 
+                            ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
+                            0xFF, 0xFF, 0xFF, 0xFF
+                        );
                     }
                 }
 
-                var_s1 += 1;
-                if (var_s1 >= _bss_C44) {
-                    var_s1 -= _bss_C44;
+                loadedIdx++;
+                if (loadedIdx >= _bss_C44) {
+                    loadedIdx -= _bss_C44;
                 }
             }
 
-            //Draw a square around the currently highlighted item
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     POS_ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + POS_ITEM_HL_Y1,  255, 255, 255, dOpacityInventoryScroll);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    POS_ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + POS_ITEM_HL_Y1,  255, 255, 255, dOpacityInventoryScroll);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  POS_ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + POS_ITEM_HL_Y2, 255, 255, 255, dOpacityInventoryScroll);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], POS_ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + POS_ITEM_HL_Y2, 255, 255, 255, dOpacityInventoryScroll);
+            //Draw a selection square around the currently highlighted item
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dOpacityInventory);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dOpacityInventory);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dOpacityInventory);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dOpacityInventory);
             
+            //Restore full-screen scissor
             cmdmenu_gfx_set_screen_scissor(gdl);
         }
 
         //Draw page icon (Bag/SpellBook/Kyte/Tricky)
         {
-            if (dInventoryShow != 0 || dOpacityInventoryScroll == 0xFF || (dOpacityInventoryScroll != 0 && _data_14 == 0)) {
+            if (dInventoryShow || 
+                dOpacityInventory == MAX_OPACITY || 
+                (dOpacityInventory != 0 && dOpacitySidekickMeter == 0)
+            ) {
                 switch (sInventoryPageID) {
                 case CMDMENU_PAGE_7_Sidekick_Kyte:
                     pageIcon = CMDMENU_TEX_42_Tricky;
@@ -1738,20 +1898,21 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     pageIcon = CMDMENU_TEX_50_Bag;
                     break;
                 }
-                if (_data_14 < dOpacityInventoryScroll) {
-                    iconOpacity = dOpacityInventoryScroll;
+                if (dOpacitySidekickMeter < dOpacityInventory) {
+                    iconOpacity = dOpacityInventory;
                 } else {
-                    iconOpacity = _data_14;
+                    iconOpacity = dOpacitySidekickMeter;
                 }
             } else {
-                if (_data_14 != 0) {
+                //Show sidekick's icon when the sidekick meter should be visible
+                if (dOpacitySidekickMeter != 0) {
                     pageIcon = CMDMENU_TEX_42_Tricky;
                     if (sidekick != NULL && sidekick->id == OBJ_Kyte) {
                         pageIcon = CMDMENU_TEX_54_Kyte;
-                        iconOpacity = _data_14;
+                        iconOpacity = dOpacitySidekickMeter;
                     } else {
                         offsetY = 3;
-                        iconOpacity = _data_14;
+                        iconOpacity = dOpacitySidekickMeter;
                     }
                 } else {
                     iconOpacity = 0;
@@ -1763,8 +1924,8 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 rcp_screen_full_write(
                     gdl, 
                     dInventoryPageIcon, 
-                    POS_PAGE_ICON_X + offsetX,
-                    POS_PAGE_ICON_Y + offsetY,
+                    PAGE_ICON_X + offsetX,
+                    PAGE_ICON_Y + offsetY,
                     0, 
                     0, 
                     iconOpacity, 
@@ -1777,7 +1938,15 @@ static void cmdmenu_func_27D8(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x325C | func: 21
-static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
+/**
+  * Sets up a given menu page's visible items, loading their textures and storing their quantities, textureIDs, gamebits.
+  *
+  * Returns how many items will be shown on the page.
+  *
+  * For sidekick command pages: an item will only be shown if the sidekick is loaded, and
+  * the command is unhidden (e.g. near a Find target)
+  */
+static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
     s32 i;
     s32 loadIdx;
     s32 obtained;
@@ -1790,13 +1959,13 @@ static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
     for (i = 0; i < MAX_LOADED_ITEMS; i++) {
         //Store previous menu's textures so they can be freed
         prevMenuItemTextures[i] = sMenuItemTextures[i];
-        prevMenuSidekickCommandTextures[i] = sMenuSidekickCommandTextures[i];
+        prevMenuSidekickCommandTextures[i] = sMenuItemTexturesSidekick[i];
 
         //Reset arrays
         sMenuItemTextures[i] = NULL;
         sMenuItemTextureIDs[i] = NO_TEXTURE;
         sMenuItemQuantities[i] = 1;
-        sMenuSidekickCommandTextures[i] = NULL;
+        sMenuItemTexturesSidekick[i] = NULL;
     }
 
     loadIdx = 0;
@@ -1804,7 +1973,7 @@ static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
 
     //Items/Spells
     if (isSidekickMenu == FALSE) {
-        _bss_C7A = -1;
+        sAutoUseItemLoadedIdx = -1;
         while (items[i].gamebitObtained > NO_GAMEBIT) {
             obtained = main_get_bits(items[i].gamebitObtained);
             if (obtained) {
@@ -1820,7 +1989,7 @@ static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
                     }
                     sMenuItemQuantities[loadIdx] = obtained;
 
-                    cmdmenu_func_3880(items, loadIdx, i);
+                    cmdmenu_store_loaded_item_metadata(items, loadIdx, i);
 
                     //Store item's visibility state (Spells never get taken away, though)
                     if ((items[i].gamebitHide < 0) || (main_get_bits(items[i].gamebitHide) == 0)) {
@@ -1836,8 +2005,12 @@ static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
                     //Only load non-magic items if they aren't used/hidden
                     if ((items[i].gamebitHide <= NO_GAMEBIT) || (main_get_bits(items[i].gamebitHide) == FALSE)) {
                         
-                        if ((_bss_C78 != 0) && (_bss_C78 == items[i].gamebitObtained)) {
-                            _bss_C7A = loadIdx;
+                        /* Auto-use a specified item?
+                          (Never runs, since `sAutoUseItemGamebit` is always -1 (NO_GAMEBIT) and 
+                           no inventory items have `NO_GAMEBIT` as their `gamebitObtained`)
+                        */
+                        if ((sAutoUseItemGamebit != 0) && (sAutoUseItemGamebit == items[i].gamebitObtained)) {
+                            sAutoUseItemLoadedIdx = loadIdx;
                         }
 
                         sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
@@ -1850,7 +2023,7 @@ static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
                         }
                         sMenuItemQuantities[loadIdx] = obtained;
 
-                        cmdmenu_func_3880(items, loadIdx, i);
+                        cmdmenu_store_loaded_item_metadata(items, loadIdx, i);
 
                         sMenuItemVisibilities[loadIdx] = TRUE;
 
@@ -1881,13 +2054,13 @@ static s32 cmdmenu_func_325C(InventoryItem* items, s8 isSidekickMenu) {
                     sMenuItemQuantities[loadIdx] = 1;
 
                     if (items[i].sidekickCommand != NO_TEXTURE) {
-                        sMenuSidekickCommandTextures[loadIdx] = tex_load_deferred(items[i].sidekickCommand);
+                        sMenuItemTexturesSidekick[loadIdx] = tex_load_deferred(items[i].sidekickCommand);
                     } else {
-                        sMenuSidekickCommandTextures[loadIdx] = NULL;
+                        sMenuItemTexturesSidekick[loadIdx] = NULL;
                     }
 
                     sMenuItemGamebits[loadIdx] = items[i].gamebitHide;
-                    cmdmenu_func_3880(items, loadIdx, i);
+                    cmdmenu_store_loaded_item_metadata(items, loadIdx, i);
                     sMenuItemVisibilities[loadIdx] = TRUE;
 
                     loadIdx++;
@@ -1964,10 +2137,17 @@ static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekic
 }
 
 // offset: 0x3880 | func: 23
-static void cmdmenu_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
+/**
+  * Stores interaction-related data for a given loaded inventory item:
+  *
+  * - textID (to show when R is held)
+  * - pageID (to open when used)
+  * - sound type (to play when used)
+  */
+static void cmdmenu_store_loaded_item_metadata(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
     sMenuItemTextIDs[loadedItemIndex] = items[itemIndex].textID;
-    _bss_498[loadedItemIndex] = items[itemIndex].openPage;
-    _bss_4D8[loadedItemIndex] = items[itemIndex].sound;
+    sMenuItemOpenPageIDs[loadedItemIndex] = items[itemIndex].openPage;
+    sMenuItemUseSounds[loadedItemIndex] = items[itemIndex].sound;
 }
 
 // offset: 0x38E4 | func: 24
@@ -1976,16 +2156,21 @@ static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
     s32 i;
 
     dl = *gdl;
+
     for (i = 0; i < frame; i++) {
         if (tex->next != NULL) {
             tex = tex->next;
         }
     }
+
     dl->words.w0 = tex->gdl->words.w0;
     dl->words.w1 = (u32) (OS_PHYSICAL_TO_K0(tex + 1));
     dl++;
+
     gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(tex->gdl + 1));
+
     tex_render_reset();
+
     *gdl = dl;
 }
 
@@ -1993,8 +2178,8 @@ static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
 /**
   * Checks if the inventory scroll menu is fully open.
   */
-static s32 cmdmenu_is_inventory_open(void) {
-    //Check if the inventory is closed
+static int cmdmenu_is_inventory_open(void) {
+    //Check if the inventory shouldn't be shown
     if (dInventoryShow == FALSE) {
         return FALSE;
     }
@@ -2008,24 +2193,35 @@ static s32 cmdmenu_is_inventory_open(void) {
 }
 
 // offset: 0x3A4C | func: 26
-static s32 cmdmenu_func_3A4C(void) {
-    if (dInventoryShow != 0) {
-        return 0;
+/**
+  * Checks if the inventory scroll menu is fully closed.
+  */
+static int cmdmenu_is_inventory_closed(void) {
+    //Check if the inventory should be shown
+    if (dInventoryShow) {
+        return FALSE;
     }
 
+    //Check if the scroll isn't fully closed
     if (sInventoryUnrollY != 0) {
-        return 0;
+        return FALSE;
     }
 
-    return 1;
+    return TRUE;
 }
 
 // offset: 0x3A94 | func: 27
+/**
+  * Causes the inventory scroll to close.
+  */
 static void cmdmenu_close_inventory(void) {
     dInventoryShow = FALSE;
 }
 
 // offset: 0x3AB0 | func: 28
+/**
+  * Causes the inventory scroll to open.
+  */
 static void cmdmenu_open_inventory(void) {
     dInventoryShow = TRUE;
 }
@@ -2041,20 +2237,20 @@ static void cmdmenu_func_3AD0(void) {
     //Manage the inventory scroll's opacity
     if (dInventoryShow) {
         //Fade in when opened
-        dOpacityInventoryScroll += gUpdateRate * 8;
-        if (dOpacityInventoryScroll > MAX_OPACITY) {
-            dOpacityInventoryScroll = MAX_OPACITY;
+        dOpacityInventory += gUpdateRate * 8;
+        if (dOpacityInventory > MAX_OPACITY) {
+            dOpacityInventory = MAX_OPACITY;
         }
     } else if (sInventoryUnrollY == 0) {
         //Fade out when fully closed
-        dOpacityInventoryScroll -= gUpdateRate * 8;
-        if (dOpacityInventoryScroll < 0) {
-            dOpacityInventoryScroll = 0;
+        dOpacityInventory -= gUpdateRate * 8;
+        if (dOpacityInventory < 0) {
+            dOpacityInventory = 0;
         }
     }
 
     //Animate the inventory scroll expanding/collapsing
-    if (dInventoryShow && (dOpacityInventoryScroll > 64)) {
+    if (dInventoryShow && (dOpacityInventory > 64)) {
         //Expand/unfurl scroll when inventory partially faded in
         sInventoryUnrollY += gUpdateRate * 4;
         if (sInventoryUnrollY > dInventoryUnrollMax) {
@@ -2073,7 +2269,7 @@ static void cmdmenu_func_3AD0(void) {
         }
     }
 
-    if (dOpacityInventoryScroll) {
+    if (dOpacityInventory) {
         if (sInventoryScrollOffset > 0) {
             _data_118 += 1;
             _data_11C += 1;
@@ -2094,18 +2290,18 @@ static void cmdmenu_func_3AD0(void) {
 }
 
 // offset: 0x3D28 | func: 30
-static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     Gfx* dl;
     Object* sidekick;
     Object* player;
     u8 texIdx;
-    u8 pad_sp4A;
+    u8 pad;
     u8 isKyte;
     u8 pageIdx;
     u8 hasHalfRed;
     u8 fullBlueEnd;
     u8 hasHalfBlue;
-    u8 sp44;
+    u8 cIconFlags;
     u8 fullRedEnd;
     u8 i;
     u8 iconIndex;
@@ -2113,61 +2309,84 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     sidekick = get_sidekick();
     player = get_player();
     isKyte = FALSE;
-    sp44 = 0;
+    cIconFlags = CIcon_FLAG_None;
 
     if (sidekick != NULL) {
         isKyte = (sidekick->id == OBJ_Kyte);
     }
 
-    //Draw C buttons while the inventory scroll is hidden
-    if (dOpacityInventoryScroll == 0) {
+    //Draw C buttons (only while the inventory scroll is hidden)
+    if (dOpacityInventory == 0) {
         if (sOpacityR != 0.0f) {
-            if (player != NULL) {
-                pageIdx = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
-                sp44 = 0;
-                if (cmdmenu_page_count_shown_items(dCmdmenuPages[pageIdx].items, FALSE) != 0) {
-                    sp44 = 2;
-                }
-            }
-
-            if (sidekick != NULL) {
-                pageIdx = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
-                if (cmdmenu_page_count_shown_items(dCmdmenuPages[pageIdx].items, TRUE) != 0) {
-                    sp44 |= 4;
-                }
-            }
-
-            if (cmdmenu_page_count_shown_items(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, FALSE) != 0) {
-                sp44 |= 1;
-            }
-
-            if (sp44 & 2) {
-                texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
-                dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
-                rcp_screen_full_write(gdl, dInventoryPageIcon, 275, 25, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
-                tex_free(dInventoryPageIcon);
-            } else {
-                texIdx = CMDMENU_TEX_41_C_Right;
-                rcp_tile_write(gdl, sTextureTiles[texIdx], 274, 34, 255, 255, 255, sOpacityR);
-            }
-
-            if (((sp44 & 4) && (sidekick != NULL)) || (sp44 & 1)) {
-                if ((sp44 & 4) && (sidekick != NULL) && (sp44 & 1)) {
-                    if (isKyte) {
-                        texIdx = CMDMENU_TEX_38_LeftDownButtons_With_Kyte;
-                    } else {
-                        texIdx = CMDMENU_TEX_43_LeftDownButtons_With_Tricky;
+            //Check whether each C button has items to show
+            {
+                //Check if player has inventory items
+                if (player != NULL) {
+                    pageIdx = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
+                    cIconFlags = CIcon_FLAG_None;
+                    if (cmdmenu_page_count_shown_items(dCmdmenuPages[pageIdx].items, FALSE) != 0) {
+                        cIconFlags = CIcon_FLAG_Have_Items;
                     }
-                } else if (sp44 & 2) {
-                    texIdx = CMDMENU_TEX_48_LeftDownButtons_NoSidekick;
                 }
 
-                dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
-                rcp_screen_full_write(gdl, dInventoryPageIcon, 245, 17, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
-                tex_free(dInventoryPageIcon);
-            } else {
-                rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_37_C_Down], 252, 43, 255, 255, 255, sOpacityR);
-                rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_39_C_Left], 246, 26, 255, 255, 255, sOpacityR);
+                //Check if Sidekick Commands are available
+                if (sidekick != NULL) {
+                    pageIdx = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
+                    if (cmdmenu_page_count_shown_items(dCmdmenuPages[pageIdx].items, TRUE) != 0) {
+                        cIconFlags |= CIcon_FLAG_Have_Sidekick_Commands;
+                    }
+                }
+
+                //Check if Spells are available
+                if (cmdmenu_page_count_shown_items(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, FALSE) != 0) {
+                    cIconFlags |= CIcon_FLAG_Have_Spells;
+                }
+            }
+
+            //Draw C-right button
+            {
+                if (cIconFlags & CIcon_FLAG_Have_Items) {
+                    //With inventory bag
+                    texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
+                    dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
+                    rcp_screen_full_write(gdl, dInventoryPageIcon, 275, 25, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
+                    tex_free(dInventoryPageIcon);
+                } else {
+                    //Empty C-right button
+                    texIdx = CMDMENU_TEX_41_C_Right;
+                    rcp_tile_write(gdl, sTextureTiles[texIdx], 274, 34, 255, 255, 255, sOpacityR);
+                }
+            }
+
+            //Draw C-left and C-down buttons
+            {
+                if (((cIconFlags & CIcon_FLAG_Have_Sidekick_Commands) && sidekick) || 
+                    (cIconFlags & CIcon_FLAG_Have_Spells)
+                ) {
+                    //If Sidekick Commands AND Spells are available
+                    if ((cIconFlags & CIcon_FLAG_Have_Sidekick_Commands) && sidekick && (cIconFlags & CIcon_FLAG_Have_Spells)) {
+                        //Show the SpellBook on C-left and Kyte/Tricky on C-down
+                        if (isKyte) {
+                            texIdx = CMDMENU_TEX_38_LeftDownButtons_SpellBook_With_Kyte;
+                        } else {
+                            texIdx = CMDMENU_TEX_43_LeftDownButtons_SpellBook_With_Tricky;
+                        }
+                    } else if (cIconFlags & CIcon_FLAG_Have_Items) { //@bug: should be checking `CIcon_FLAG_Have_Spells`?
+                        //Show the SpellBook on C-left and nothing on C-down
+                        texIdx = CMDMENU_TEX_48_LeftDownButtons_SpellBook_NoSidekick;
+                    }
+                    /* @bug: texIdx could end up reusing the C-right section's value here if neither condition is met
+                       (i.e. have commands but not spells and items, or have spells but not commands and items) 
+                    */
+
+                    dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
+                    rcp_screen_full_write(gdl, dInventoryPageIcon, 245, 17, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
+                    tex_free(dInventoryPageIcon);
+                } else {
+                    //Draw empty C-down and C-left buttons
+                    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_37_C_Down], 252, 43, 255, 255, 255, sOpacityR);
+                    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_39_C_Left], 246, 26, 255, 255, 255, sOpacityR);
+                }
             }
         }
     } else {
@@ -2176,64 +2395,77 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     dl = *gdl;
 
-    if (dOpacityInventoryScroll != 0) {
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top], 258, 51, 255, 255, 255, dOpacityInventoryScroll);
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], 258, sInventoryUnrollY + 59, 255, 255, 255, dOpacityInventoryScroll);
+    //Draw the top/bottom of the inventory scroll
+    /* @bug: why is this handled in the C-button/sidekick-meter function?
+             Should likely be in `cmdmenu_draw_main` instead, and maybe ended up here by mistake!
+     */
+    if (dOpacityInventory != 0) {
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top], 258, 51, 255, 255, 255, dOpacityInventory);
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], 258, sInventoryUnrollY + 59, 255, 255, 255, dOpacityInventory);
     }
 
+    //Draw the sidekick food meter
     if (sidekick != NULL) {
-        if ((
-            ((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte) || 
-             (sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky)
-            ) && 
-            (dOpacityInventoryScroll != 0)) || (sStatsChangeTimers.sidekickBlueFood >= 0.0f)
+        //Handle the meter's opacity
+        if (((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte || sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky) && dOpacityInventory) || 
+            (sStatsChangeTimers.sidekickBlueFood >= 0.0f)
         ) {
-            _data_14 += gUpdateRate * 8;
-            if (_data_14 > MAX_OPACITY) {
-                _data_14 = MAX_OPACITY;
+            /* Fade in while the sidekick's inventory page is open, 
+               or when the sidekick's blue food count has recently changed */
+            dOpacitySidekickMeter += gUpdateRate * 8;
+            if (dOpacitySidekickMeter > MAX_OPACITY) {
+                dOpacitySidekickMeter = MAX_OPACITY;
             }
         } else {
-            _data_14 -= gUpdateRate * 8;
-            if (_data_14 < 0) {
-                _data_14 = 0;
+            //Otherwise fade out
+            dOpacitySidekickMeter -= gUpdateRate * 8;
+            if (dOpacitySidekickMeter < 0) {
+                dOpacitySidekickMeter = 0;
             }
         }
 
-        if (_data_14 != 0) {
-            //@unfinished: hard-coded food quantities
+        if (dOpacitySidekickMeter != 0) {
+            //Get sidekick's red/blue food counts (@unfinished: hard-coded quantities)
             sStats.sidekickRedFood = 3;
             sStats.sidekickBlueFood = 3;
 
+            //Determine the values to show on the meter (2 food units per icon)
             fullRedEnd = sStats.sidekickRedFood >> 1;
             hasHalfRed = sStats.sidekickRedFood & 1;
             fullBlueEnd = (sStats.sidekickBlueFood >> 1) + fullRedEnd + hasHalfRed;
             hasHalfBlue = sStats.sidekickBlueFood & 1;
 
+            //Draw the sidekick's food icons
             for (i = 0; i < sStats.sidekickMaxFood; i++) {
+                //Draw red food first (full icons)
                 if (i < fullRedEnd) {
                     if (isKyte) {
                         iconIndex = CMDMENU_TEX_56_Grub_Red_Full;
                     } else {
                         iconIndex = CMDMENU_TEX_45_Mushroom_Red_Full;
                     }
+                //Draw red food's remainder second (half icon)
                 } else if (i == fullRedEnd && hasHalfRed) {
                     if (isKyte) {
                         iconIndex = CMDMENU_TEX_57_Grub_Red_Half;
                     } else {
                         iconIndex = CMDMENU_TEX_46_Mushroom_Red_Half;
                     }
+                //Draw blue food third (full icons)
                 } else if (i < fullBlueEnd) {
                     if (isKyte) {
                         iconIndex = CMDMENU_TEX_13_Grub_Blue_Full;
                     } else {
                         iconIndex = CMDMENU_TEX_12_Mushroom_Blue_Full;
                     }
+                //Draw blue food's remainder last (half icon)
                 } else if (i == fullBlueEnd && hasHalfBlue) {
                     if (isKyte) {
                         iconIndex = CMDMENU_TEX_16_Grub_Blue_Half;
                     } else {
                         iconIndex = CMDMENU_TEX_51_Mushroom_Blue_Half;
                     }
+                //Pad out with empty icons
                 } else {
                     if (isKyte) {
                         iconIndex = CMDMENU_TEX_55_Grub_Empty;
@@ -2242,10 +2474,11 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     }
                 }
                 
+                //Draw icons (in 2x4 grid: starting top-right to bottom-right, then top-left to bottom-left)
                 rcp_tile_write(&dl, sTextureTiles[iconIndex], 
-                    250 - ((i / 4) * 9), 
-                    21  + ((i % 4) * 8), 
-                    255, 255, 255, _data_14);
+                    SIDEKICK_METER_X - ((i / 4) * SIDEKICK_METER_SPACING_X), 
+                    SIDEKICK_METER_Y  + ((i % 4) * SIDEKICK_METER_SPACING_Y), 
+                    255, 255, 255, dOpacitySidekickMeter);
             }
         }
     }
@@ -2256,23 +2489,31 @@ static void cmdmenu_func_3D28(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x4630 | func: 31
-static void cmdmenu_func_4630(Gfx **gdl) {
-    if (func_80041E08() != 0) {
+/**
+  * Sets a scissor mask for the inner strip of the inventory scroll.
+  */
+static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl) {
+    if (func_80041E08()) {
+        //Widescreen aspect
         gDPSetScissorFrac((*gdl)++, G_SC_NON_INTERLACE, 
             qu102(314.75), 
             qu102(48.25), 
             qu102(366.75), 
-            (((f32) sInventoryUnrollY * 0.82f) + 48.38f + 2.0f) * 4.0f);
+            ((sInventoryUnrollY * 0.82f) + 48.38f + 2.0f) * 4.0f);
     } else {
+        //Standard aspect
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
             262, 
             59, 
             294, 
-            sInventoryUnrollY + 0x3D);
+            sInventoryUnrollY + 61);
     }
 }
 
 // offset: 0x474C | func: 32
+/**
+  * Sets a full-screen scissor mask.
+  */
 static void cmdmenu_gfx_set_screen_scissor(Gfx** gfx) {
     s32 resolution;
 
@@ -2281,52 +2522,52 @@ static void cmdmenu_gfx_set_screen_scissor(Gfx** gfx) {
 }
 
 // offset: 0x47E8 | func: 33
-static s32 cmdmenu_func_47E8(void) {
-    if (_data_1C != 0) {
+static int cmdmenu_func_47E8(void) {
+    if (dInfoScrollShow != 0) {
         return 0;
     }
-    if (_bss_C2A != 0) {
+    if (sInfoScrollUnrollY != 0) {
         return 0;
     }
-    return 1;
+    return TRUE;
 }
 
 // offset: 0x4830 | func: 34
-static void cmdmenu_func_4830(void) {
-    _data_1C = 0;
+static void cmdmenu_close_info_scroll(void) {
+    dInfoScrollShow = FALSE;
 }
 
 // offset: 0x484C | func: 35
-static void cmdmenu_func_484C(void) {
-    _data_1C = 1;
+static void cmdmenu_open_info_scroll(void) {
+    dInfoScrollShow = TRUE;
 }
 
 // offset: 0x486C | func: 36
 static void cmdmenu_func_486C(void) {
-    if ((_data_1C != 0) && (_data_84 == 0)) {
+    if ((dInfoScrollShow != 0) && (_data_84 == 0)) {
         dOpacityInfoScroll += gUpdateRate * 32;
         if (dOpacityInfoScroll > 160) {
             dOpacityInfoScroll = 160;
         }
-    } else if (_bss_C2A == 0) {
+    } else if (sInfoScrollUnrollY == 0) {
         dOpacityInfoScroll -= gUpdateRate * 32;
         if (dOpacityInfoScroll < 0) {
             dOpacityInfoScroll = 0;
         }
     }
 
-    if ((_data_1C != 0) && (dOpacityInfoScroll == 160)) {
-        _bss_C2A += gUpdateRate * 4;
-        if (_data_24 < _bss_C2A) {
-            _bss_C2A = _data_24;
+    if ((dInfoScrollShow != 0) && (dOpacityInfoScroll == 160)) {
+        sInfoScrollUnrollY += gUpdateRate * 4;
+        if (sInfoScrollUnrollY > _data_24) {
+            sInfoScrollUnrollY = _data_24;
         } else {
             _data_120 += 1;
             _data_124 -= 1;
         }
     } else {
-        _bss_C2A -= gUpdateRate * 4;
-        if (_bss_C2A < 0) {
-            _bss_C2A = 0;
+        sInfoScrollUnrollY -= gUpdateRate * 4;
+        if (sInfoScrollUnrollY < 0) {
+            sInfoScrollUnrollY = 0;
         } else {
             _data_120 -= 1;
             _data_124 += 1;
@@ -2358,8 +2599,8 @@ static void cmdmenu_func_486C(void) {
 
 // offset: 0x4AD4 | func: 37
 // Draws the info box at the top of the screen describing the highlighted/z-locked item.
-static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
-    s32 charIdx;
+static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+    s32 x;
     s32 y;
     s32 sp104;
     s32 height;
@@ -2372,6 +2613,7 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
 
     dl = *gdl;
+
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     dl_apply_combine(&dl);
     gDPSetOtherMode(dl,
@@ -2381,18 +2623,19 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
     dl_apply_geometry_mode(&dl);
     dl_set_prim_color(&dl, 255, 255, 255, dOpacityInfoScroll);
-    charIdx = _data_2C << 2;
+
+    x = _data_2C << 2;
     sp104 = _data_20 << 2;
     sp104 -= (16 << 2);
     y = _data_28 << 2;
-    height = _bss_C2A << 2;
+    height = sInfoScrollUnrollY << 2;
 
     //Draw scroll's paper BG
     cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx - sp104,
+        /*ulx*/ x - sp104,
         /*uly*/ y,
-        /*lrx*/ charIdx + sp104,
+        /*lrx*/ x + sp104,
         /*lry*/ y + height,
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(0), 
@@ -2403,9 +2646,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     //Draw scroll's left side
     cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
-        /*lrx*/ charIdx - sp104 - (16 << 2),
+        /*lrx*/ x - sp104 - (16 << 2),
         /*lry*/ y,
-        /*ulx*/ charIdx - sp104,
+        /*ulx*/ x - sp104,
         /*uly*/ y + height,
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(0), 
@@ -2413,9 +2656,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = TRUE;
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx + sp104,
+        /*ulx*/ x + sp104,
         /*uly*/ y,
-        /*lrx*/ charIdx + sp104 + (16 << 2),
+        /*lrx*/ x + sp104 + (16 << 2),
         /*lry*/ y + height,
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(15), /*t*/ qs105(0),
@@ -2425,15 +2668,15 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     sp104 += (16 << 2);
 
-    if (_bss_C2A >= 9) {
+    if (sInfoScrollUnrollY >= 9) {
         cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
         dl_set_prim_color(&dl, 255, 128, 128, 128);
         
         tempY = y;
         gSPTextureRectangle(dl++, 
-            /*ulx*/ charIdx - sp104,
+            /*ulx*/ x - sp104,
             /*uly*/ tempY,
-            /*lrx*/ charIdx + sp104,
+            /*lrx*/ x + sp104,
             /*lry*/ tempY + (8 << 2),
             /*tile*/ G_TX_RENDERTILE,
             /*s*/ qs105(0), /*t*/ qs105(7), 
@@ -2443,9 +2686,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
         tempY = (y + height) - (6 << 2);
         gSPTextureRectangle(dl++, 
-            /*ulx*/ charIdx - sp104,
+            /*ulx*/ x - sp104,
             /*uly*/ tempY,
-            /*lrx*/ charIdx + sp104,
+            /*lrx*/ x + sp104,
             /*lry*/ tempY + (8 << 2),
             /*tile*/ G_TX_RENDERTILE,
             /*s*/ qs105(0), /*t*/ qs105(0), 
@@ -2459,9 +2702,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     tempY = y - (11 << 2);
     cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx - sp104,
+        /*ulx*/ x - sp104,
         /*uly*/ tempY,
-        /*lrx*/ charIdx + sp104,
+        /*lrx*/ x + sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2472,9 +2715,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     tempY = (y + height) - (4 << 2);
     cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx - sp104,
+        /*ulx*/ x - sp104,
         /*uly*/ tempY,
-        /*lrx*/ charIdx + sp104,
+        /*lrx*/ x + sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2485,9 +2728,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx - sp104 - (16 << 2),
+        /*ulx*/ x - sp104 - (16 << 2),
         /*uly*/ tempY,
-        /*lrx*/ charIdx - sp104,
+        /*lrx*/ x - sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2495,9 +2738,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = TRUE;
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx + sp104,
+        /*ulx*/ x + sp104,
         /*uly*/ tempY,
-        /*lrx*/ charIdx + sp104 + (16 << 2),
+        /*lrx*/ x + sp104 + (16 << 2),
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(15), /*t*/ qs105(15.9688), 
@@ -2506,9 +2749,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     gDLBuilder->needsPipeSync = TRUE;
     tempY = (y + height) - (4 << 2);
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx - sp104 - (16 << 2),
+        /*ulx*/ x - sp104 - (16 << 2),
         /*uly*/ tempY,
-        /*lrx*/ charIdx - sp104,
+        /*lrx*/ x - sp104,
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(0), /*t*/ qs105(15.9688), 
@@ -2516,9 +2759,9 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     );
     gDLBuilder->needsPipeSync = TRUE;
     gSPTextureRectangle(dl++, 
-        /*ulx*/ charIdx + sp104,
+        /*ulx*/ x + sp104,
         /*uly*/ tempY,
-        /*lrx*/ charIdx + sp104 + (16 << 2),
+        /*lrx*/ x + sp104 + (16 << 2),
         /*lry*/ tempY + (16 << 2),
         /*tile*/ G_TX_RENDERTILE,
         /*s*/ qs105(15), /*t*/ qs105(15.9688), 
@@ -2544,23 +2787,23 @@ static void cmdmenu_print_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         dTextStrings[3] = NULL;
 
         //Check for bar delimiter in text (separates lines)
-        for (charIdx = 0, lineIdx = 1; dTextStrings[0][charIdx] != '\0'; charIdx++) {
-            if (dTextStrings[0][charIdx] == '|') {
-                dTextStrings[0][charIdx] = '\0';
-                charIdx += 2; //ROM's text should have space after bar, so skipping it
+        for (x = 0, lineIdx = 1; dTextStrings[0][x] != '\0'; x++) {
+            if (dTextStrings[0][x] == '|') {
+                dTextStrings[0][x] = '\0';
+                x += 2; //ROM's text should have space after bar, so skipping it
                 
-                dTextStrings[lineIdx] = &dTextStrings[0][charIdx]; //store address of new line
+                dTextStrings[lineIdx] = &dTextStrings[0][x]; //store address of new line
                 lineIdx++;
             }            
         }
     }
 
-    if (_bss_C2A > 0) {
+    if (sInfoScrollUnrollY > 0) {
         font_window_set_coords(3, 
             /*x1*/ _data_2C - _data_20, 
             /*y1*/ _data_28, 
             /*x2*/ _data_2C + _data_20, 
-            /*y2*/ _data_28 + _bss_C2A);
+            /*y2*/ _data_28 + sInfoScrollUnrollY);
         font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
         font_window_set_bg_colour(3, 0, 0, 0, 0);
         font_window_flush_strings(3);
@@ -2590,15 +2833,17 @@ static void cmdmenu_update_stats(void) {
     Object* player;
     Object* sidekick;
     CmdmenuPlayerSidekickData stats;
-    f32 temp_fv0;
-    u8 var_s2;
+    f32 timer;
+    u8 scarabFrameOffset;
     u8 i;
 
     player = get_player();
     sidekick = get_sidekick();
-    var_s2 = 0;
+    scarabFrameOffset = 0;
+
     stats.playerHealth = ((DLL_210_Player*)player->dll)->vtbl->get_health(player);
     stats.playerHealthMax = ((DLL_210_Player*)player->dll)->vtbl->get_health_max(player);
+
     if (sidekick != NULL) {
         stats.sidekickBlueFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_blue_food_count(sidekick);
         stats.sidekickRedFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_red_food_count(sidekick);
@@ -2608,27 +2853,33 @@ static void cmdmenu_update_stats(void) {
         stats.sidekickRedFood = 0;
         stats.sidekickMaxFood = 0;
     }
+
     stats.playerMagic = ((DLL_210_Player*)player->dll)->vtbl->get_magic(player);
     stats.playerMagicMax = ((DLL_210_Player*)player->dll)->vtbl->get_magic_max(player);
     stats.playerScarabCount = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
-    if (((DLL_210_Player*)player->dll)->vtbl->func21(player) != 0) {
-        var_s2 = 7;
+
+    //Check if the player collected a Scarab
+    if (((DLL_210_Player*)player->dll)->vtbl->get_scarabs_largest_recently_collected(player) != 0) {
+        scarabFrameOffset = 7;
     }
-    if (_bss_8B < var_s2) {
-        _bss_8B = var_s2;
+    if (sAnimScarabSpin < scarabFrameOffset) {
+        sAnimScarabSpin = scarabFrameOffset;
     }
+
     if (sJoyPressedButtons & R_TRIG) {
         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EA_Cmdmenu_ShowHUD, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if ((sJoyHeldButtons & R_TRIG) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || ((sForceStatsDisplay != 0) && (camera_get_letterbox() == 0))) {
+
+    if ((sJoyHeldButtons & R_TRIG) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || (sForceStatsDisplay && (camera_get_letterbox() == 0))) {
         stats.unk14 = sPrevStats.unk14 + 1;
     } else {
         stats.unk14 = sPrevStats.unk14;
     }
+
     if (sJoyHeldButtons & R_TRIG) {
         sOpacityR += 8.5f * gUpdateRateF;
-        if (sOpacityR > 255.0f) {
-            sOpacityR = 255.0f;
+        if (sOpacityR > MAX_OPACITY_F) {
+            sOpacityR = MAX_OPACITY_F;
         }
     } else {
         sOpacityR -= 8.5f * gUpdateRateF;
@@ -2639,9 +2890,11 @@ static void cmdmenu_update_stats(void) {
 
     sOpacityR = sOpacityR < sOpacityHealth ? sOpacityR : sOpacityHealth;
     stats.unk18 = 0;
-    if (_bss_88 & 1) {
-        _bss_88 &= ~1;
-        for (i = 0; i < 10; i++) {
+
+    //Update the player stats snapshot when requested
+    if (sPlayerStatsFlags & PlayerStats_FLAG_Update_Snapshot) {
+        sPlayerStatsFlags &= ~PlayerStats_FLAG_Update_Snapshot;
+        for (i = 0; i < CMDMENU_TRACKED_PLAYER_STATS_COUNT; i++) {
             sStats.items[i] = stats.items[i];
             sPrevStats.items[i] = stats.items[i];
             sStatsChangeTimers.items[i] = -30.0f;
@@ -2650,29 +2903,34 @@ static void cmdmenu_update_stats(void) {
         return;
     }
 
-    for (i = 0; i < 10; i++) {
-        temp_fv0 = sStatsChangeTimers.items[i];
-        sStatsChangeTimers.items[i] = temp_fv0 - gUpdateRateF;
-        if (temp_fv0 > 60.0f) {
+    //Compare the current player stats and the stored player stats
+    for (i = 0; i < CMDMENU_TRACKED_PLAYER_STATS_COUNT; i++) {
+        //Decrease the stat's timer
+        timer = sStatsChangeTimers.items[i];
+        sStatsChangeTimers.items[i] = timer - gUpdateRateF;
+
+        if (timer > 60.0f) {
             if (sStatsChangeTimers.items[i] <= 60.0f) {
                 if (sStats.items[i] < stats.items[i]) {
-                    if (_data_B8[i][0] != -1) {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, _data_B8[i][0], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    if (dStatChangeSounds.items[i].increased != NO_SOUND) {
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, dStatChangeSounds.items[i].increased, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 } else {
-                    if (_data_B8[i][1] != -1) {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, _data_B8[i][1], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    if (dStatChangeSounds.items[i].decreased != NO_SOUND) {
+                        gDLL_6_AMSFX->vtbl->play_sound(NULL, dStatChangeSounds.items[i].decreased, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
                 sStats.items[i] = stats.items[i];
             }
         }
+
         if (stats.items[i] != sPrevStats.items[i]) {
             sPrevStats.items[i] = stats.items[i];
             if (sStatsChangeTimers.items[i] <= 60.0f) {
                 sStatsChangeTimers.items[i] = 90.0f - gUpdateRateF;
             }
         }
+
         if (sStatsChangeTimers.items[i] < -30.0f) {
             sStatsChangeTimers.items[i] = -30.0f;
         }
@@ -2728,15 +2986,15 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 //Get apple coords (3 rows)
                 if (i >= APPLES_ROW_3_IDX) {
                     //Row 3
-                    offsetX = (i * APPLES_SPACING_X) - (APPLES_ROW_3_IDX * APPLES_SPACING_X);
+                    offsetX = (i * APPLES_SPACING_X) - (-APPLES_ROW_3_OFFSET_X + (APPLES_ROW_3_IDX * APPLES_SPACING_X));
                     offsetY = 2 * APPLES_SPACING_Y;
                 } else if (i >= APPLES_ROW_2_IDX) {
                     //Row 2
-                    offsetX = (i * APPLES_SPACING_X) - (-5 + (APPLES_ROW_2_IDX * APPLES_SPACING_Y));
+                    offsetX = (i * APPLES_SPACING_X) - (-APPLES_ROW_2_OFFSET_X + (APPLES_ROW_2_IDX * APPLES_SPACING_Y));
                     offsetY = APPLES_SPACING_Y;
                 } else {
                     //Row 1
-                    offsetX = i * APPLES_SPACING_X;
+                    offsetX = i * APPLES_SPACING_X + APPLES_ROW_1_OFFSET_X;
                     offsetY = 0;
                 }
 
@@ -2756,8 +3014,8 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 rcp_tile_write(
                     &dl,
                     sTextureTiles[texIdx], 
-                    POS_HEALTH_X + offsetX, 
-                    POS_HEALTH_Y + offsetY,
+                    HEALTH_ICONS_X + offsetX, 
+                    HEALTH_ICONS_Y + offsetY,
                     0xFF,0xFF, 0xFF, statsOpacity
                 );
             }
@@ -2792,34 +3050,40 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         //Draw magic bar(s)
         statsOpacity = sOpacityMagic;
         if (statsOpacity) {
-            for (i = 0; i < (sStats.playerMagicMax / 25); i++) {
-                if (i < (sStats.playerMagic / 25)) {
-                    temp = 66;
-                } else if ((sStats.playerMagic / 25) < i) {
+            //Draw a magic bar for every 25 units of the player's max magic (just 1 bar initially)
+            for (i = 0; i < (sStats.playerMagicMax / MAGIC_UNITS_PER_BAR); i++) {
+                if (i < (sStats.playerMagic / MAGIC_UNITS_PER_BAR)) {
+                    //Full bar
+                    temp = MAGIC_BARS_WIDTH;
+                } else if ((sStats.playerMagic / MAGIC_UNITS_PER_BAR) < i) {
+                    //Empty bar
                     temp = 0;
                 } else {
-                    temp = ((sStats.playerMagic % 25) * 2) + 13;
+                    //Partial bar
+                    temp = MAGIC_BARS_ZERO_POINT_X + ((sStats.playerMagic % MAGIC_UNITS_PER_BAR) * 2);
                 }
 
+                //Draw the filled part of the bar
                 rcp_tile_write_x(
                     &dl,
                     sTextureTiles[CMDMENU_TEX_36_MagicBar_Full],
-                    23.0f,
-                    ((i * 12) + 60),
-                    (f32) temp,
-                    14.0f,
+                    MAGIC_BARS_X,
+                    (MAGIC_BARS_Y + (i * MAGIC_BARS_SPACING_Y)),
+                    temp,
+                    MAGIC_BARS_HEIGHT,
                     0, 0,
                     1.0f, 1.0f,
                     statsOpacity | ~0xFF,
                     TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT
                 );
 
+                //Draw the empty part of the bar
                 rcp_tile_write_x(
                     &dl, sTextureTiles[CMDMENU_TEX_35_MagicBar_Empty],
-                    (23 + temp),
-                    ((i * 12) + 60),
-                    (f32) (66 - temp), 
-                    14.0f,
+                    (MAGIC_BARS_X + temp),
+                    (MAGIC_BARS_Y + (i * MAGIC_BARS_SPACING_Y)),
+                    (MAGIC_BARS_WIDTH - temp), 
+                    MAGIC_BARS_HEIGHT,
                     temp << 5, 0, 
                     1.0f, 1.0f, 
                     statsOpacity | ~0xFF, 
@@ -2848,8 +3112,8 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             rcp_screen_full_write(
                 &dl,
                 dInventoryPageIcon,
-                20 + offsetX,
-                10 + offsetY,
+                CHARACTER_ICON_X + offsetX,
+                CHARACTER_ICON_Y + offsetY,
                 0,
                 0,
                 statsOpacity,
@@ -2881,21 +3145,22 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         }
 
         statsOpacity = sOpacityScarabs;
-        if (statsOpacity && (main_get_bits(BIT_UI_Scarab_Counter_Enabled) != 0)) {
+        if (statsOpacity && main_get_bits(BIT_UI_Scarab_Counter_Enabled)) {
             sAnimFrameScarab = 0;
             if (statsOpacity == MAX_OPACITY) {
-                // @fake assignment of i
-                if ((i = _bss_8B) != 0) {
-                    sAnimFrameScarab = 11 - _bss_8B;
-                    _bss_8B--;
-                    if (!_bss_8B) {
+                if ((i = sAnimScarabSpin)) { //@fake assignment of i
+                    //Animate Scarab spinning (upon collecting Scarabs)
+                    sAnimFrameScarab = 11 - sAnimScarabSpin;
+                    sAnimScarabSpin--; //@framerate-dependent
+                    if (sAnimScarabSpin == 0) {
                         sAnimScarabFlutterTimer = 80;
                     }
                 } else {
+                    //Animate Scarab fluttering wings
                     if (sAnimScarabFlutterTimer) {
                         sAnimScarabFlutterTimer--; //@framerate-dependent
 
-                        //Change the Scarab's frame during last few ticks of timer 
+                        //Change the Scarab's frame during last few ticks of the timer 
                         if (sAnimScarabFlutterTimer < 6) {
                             sAnimFrameScarab = 3 - (sAnimScarabFlutterTimer >> 1);
                         }
@@ -2908,10 +3173,10 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             rcp_tile_write_x(
                 &dl, 
                 sTextureTiles[CMDMENU_TEX_18_Scarab + sAnimFrameScarab], 
-                POS_SCARABS_X, 
-                POS_SCARABS_Y, 
-                16, 
-                16, 
+                SCARABS_ICON_X, 
+                SCARABS_ICON_Y, 
+                SCARABS_ICON_WIDTH, 
+                SCARABS_ICON_HEIGTH, 
                 0, 0, 
                 1.0f, 1.0f, 
                 statsOpacity | ~0xFF, 
@@ -2919,12 +3184,12 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             );
 
             sprintf(playerScarabCountText, "%d", (int)sStats.playerScarabCount);
-            font_window_set_coords(3, 0, 0, 320, 240);
+            font_window_set_coords(3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
             font_window_set_bg_colour(3, 0, 0, 0, 0);
             font_window_flush_strings(3);
             font_window_set_text_colour(3, 0xFF, 0xFF, 0xFF, 0xFF, statsOpacity);
-            font_window_add_string_xy(3, POS_SCARABS_NUMBER_X, POS_SCARABS_NUMBER_Y, playerScarabCountText, 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(3, SCARABS_NUMBER_X, SCARABS_NUMBER_Y, playerScarabCountText, 1, ALIGN_TOP_LEFT);
             font_window_set_text_colour(3, 0x14, 0x14, 0x14, 0xFF, 0xFF);
             font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
             font_window_draw(&dl, mtxs, vtxs, 3);
@@ -2956,7 +3221,7 @@ void cmdmenu_set_buttons_override(s32 buttonsOverride) {
   * Resets/zeroes out the item info pop-up that appears in the 
   * bottom-left of screen after collecting certain items (e.g. Kyte's grubs)
   */
-static void cmdmenu_info_hide(CmdmenuInfoShowData* info) {
+static void cmdmenu_info_hide(CmdmenuInfoPopup* info) {
     info->timer = -1;
     info->count = 0;
     info->texture = NULL;
@@ -3021,7 +3286,7 @@ void cmdmenu_info_show_tex(s16 textureID, s32 displayDuration, s32 itemCount) {
   * 
   * NOTE: The box is styled after an older UI design, and it's only used by certain items (notably Kyte's grubs).
   */
-static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoShowData* box) {
+static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
     //Do nothing after item's timer finished
     if (box->timer < 0) {
         return;
@@ -3038,67 +3303,67 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoShowData* box) {
     //Update box's opacity
     if (box->timer < 30.0f) {
         //Fade out box during last half-second on-screen
-        box->opacity = (box->timer * 255.0f) / 30.0f;
+        box->opacity = (box->timer * MAX_OPACITY_F) / 30.0f;
     } else {
         //Otherwise, fade the box in if it's not fully visible
-        if (box->opacity != 255.0f) {
+        if (box->opacity != MAX_OPACITY_F) {
             box->opacity += 8.5f * (f32) gUpdateRate;
-            if (box->opacity > 255.0f) {
-                box->opacity = 255.0f;
+            if (box->opacity > MAX_OPACITY_F) {
+                box->opacity = MAX_OPACITY_F;
             }
         }
     }
 
     //Draw the box's shadow
     rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_52_Page_Torn_Shadow], 
-        22, 
-        176, 
+        INFO_POPUP_SHADOW_X, 
+        INFO_POPUP_SHADOW_Y, 
         0xFF, 
         0xFF, 
         0xFF, 
-        (u8) box->opacity);
+        box->opacity);
 
     //Draw the item's inventory icon (including embedded page background)
-    bzero(_bss_C60, sizeof(TextureTile));
-    _bss_C60->tex = box->texture;
-    _bss_C60[1].tex = NULL;
-    rcp_tile_write(gdl, _bss_C60, 
-        36, 
-        175, 
+    bzero(sTempIcon, sizeof(TextureTile));
+    sTempIcon->tex = box->texture;
+    sTempIcon[1].tex = NULL;
+    rcp_tile_write(gdl, sTempIcon, 
+        INFO_POPUP_M_X, 
+        INFO_POPUP_Y, 
         0xFF, 
         0xFF, 
         0xFF, 
-        (u8) box->opacity);
+        box->opacity);
 
-    //Draw tattered left edge of box (@bug: outdated page design, mismatched with icons' newer BG)
+    //Draw tattered left edge of box (@unfinished: outdated page design, mismatched with icons' newer BG)
     rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_29_Page_Torn_Left], 
-        20, 
-        175, 
+        INFO_POPUP_L_X, 
+        INFO_POPUP_Y, 
         0xFF, 
         0xFF, 
         0xFF, 
-        (u8) box->opacity);
+        box->opacity);
 
-    //Draw tattered right edge of box (@bug: outdated page design, mismatched with icons' newer BG)
+    //Draw tattered right edge of box (@unfinished: outdated page design, mismatched with icons' newer BG)
     rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_30_Page_Torn_Right], 
-        68, 
-        175, 
+        INFO_POPUP_R_X,
+        INFO_POPUP_Y, 
         0xFF, 
         0xFF, 
         0xFF, 
-        (u8) box->opacity);
+        box->opacity);
 
     //Draw item count
     if (box->count > 1) {
-        _bss_C60->tex = sInventoryStackNumbersTex;
-        _bss_C60->animProgress = (box->count - 2) << 8;
-        rcp_tile_write(gdl, _bss_C60, 
-            52, 
-            191, 
+        sTempIcon->tex = sInventoryStackNumbersTex;
+        sTempIcon->animProgress = (box->count - 2) << 8;
+        rcp_tile_write(gdl, sTempIcon, 
+            INFO_POPUP_QUANTITY_X, 
+            INFO_POPUP_QUANTITY_Y, 
             0xFF, 
             0xFF, 
             0xFF, 
-            (u8) box->opacity);
+            box->opacity);
     }
 }
 
@@ -3179,7 +3444,7 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
 
     if (enbar->fadeout) {
         if (gUpdateRate >= enbar->alpha) {
-            enbar->fadeout = 0;
+            enbar->fadeout = FALSE;
             cmdmenu_energy_bar_free();
             return;
         } else {
@@ -3196,8 +3461,8 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
     }
     
     rcp_tile_write_x(gdl, enbar->fullbarTex, 
-        (160 - (enbar->width >> 1)), 
-        (230 - enbar->height), 
+        (ENERGY_BAR_X - (enbar->width >> 1)), 
+        (ENERGY_BAR_Y - enbar->height), 
         enbar->filledWidth, 
         enbar->height, 
         0, 
@@ -3207,8 +3472,8 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
         enbar->alpha | ~0xFF, 
         TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
     rcp_tile_write_x(gdl, enbar->emptybarTex, 
-        (160 - (enbar->width >> 1)) + enbar->filledWidth, 
-        (230 - enbar->height), 
+        (ENERGY_BAR_X - (enbar->width >> 1)) + enbar->filledWidth, 
+        (ENERGY_BAR_Y - enbar->height), 
         enbar->width - enbar->filledWidth, 
         enbar->height, 
         (enbar->filledWidth * 32.0f), 
@@ -3244,7 +3509,7 @@ void cmdmenu_energy_bar_free(void) {
 // offset: 0x75CC | func: 50 | export: 23
 void cmdmenu_energy_bar_fadeout(void) {
     if (sEnergyBar != NULL) {
-        sEnergyBar->fadeout = 1;
+        sEnergyBar->fadeout = TRUE;
     }
     /* default.dol
     else {

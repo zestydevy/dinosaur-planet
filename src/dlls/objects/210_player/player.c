@@ -518,7 +518,7 @@ void dll_210_setup(Object* player, u32 arg1) {
         player->shadow->flags |= (OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_DYNAMIC_TEX | OBJ_SHADOW_FLAG_MAKE_TEX_SLOT(0));
         player->shadow->maxDistScale = player->shadow->scale * 0.5f;
     }
-    gDLL_1_cmdmenu->vtbl->func_12EC();
+    gDLL_1_cmdmenu->vtbl->request_new_player_stats_snapshot();
     data->foodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
     data->sidekickFoodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
     data->modAnims = _data_98;
@@ -9847,8 +9847,8 @@ void dll_210_add_scarab(Object* player, s32 amount) {
 
     newScarabCount = objdata->stats->scarabs;
     newScarabCount += amount;
-    if (objdata->stats->scarabsLargestPayday < amount) {
-        objdata->stats->scarabsLargestPayday = amount;
+    if (objdata->stats->scarabsLargestRecent < amount) {
+        objdata->stats->scarabsLargestRecent = amount;
     }
 
     if (newScarabCount < 0) {
@@ -9873,12 +9873,17 @@ u16 dll_210_get_scarabs(Object* player) {
 }
 
 // offset: 0x1D13C | func: 173 | export: 21
-s8 dll_210_func_1D13C(Object* player) {
+/**
+  * Returns the largest Scarab size recently collected, and resets the recent Scarab record to 0.
+  * 
+  * Used to cause the Scarab UI to spin upon collection, etc.
+  */
+s8 dll_210_get_scarabs_largest_recently_collected(Object* player) {
     Player_Data* objdata = player->data;
     s8 previous;
 
-    previous = objdata->stats->scarabsLargestPayday;
-    objdata->stats->scarabsLargestPayday = 0;
+    previous = objdata->stats->scarabsLargestRecent;
+    objdata->stats->scarabsLargestRecent = 0;
     return previous;
 }
 

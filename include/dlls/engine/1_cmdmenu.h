@@ -68,7 +68,7 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*1*/ void (*func_35C)(void);
 /*2*/ void (*print)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 /*3*/ void (*func_1290)(void);
-/*4*/ void (*func_12EC)(void);
+/*4*/ void (*request_new_player_stats_snapshot)(void); //Flags that a snapshot of the player's current tracked stats should be taken. (Used to show UI when player health changes, etc.)
 /*5*/ s32 (*get_target_objects)(Object **targetObjects, s32 maxObjects, u8 lockFlag, s32 arg3, f32 range); //Gets an array (`targetObjects`) of nearby Objects that can be targetted (i.e. have lock-on data and are fully opaque), sorted by their address. Returns the number of Objects in the array.
 /*6*/ int (*was_any_item_used)(void); //Checks if any item was used in the inventory (returns Boolean)
 /*7*/ int (*was_this_item_used)(s32 itemGamebitID); //Checks if a particular item was used in the inventory, queried via its inventory gamebitID (returns Boolean)

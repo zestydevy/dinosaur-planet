@@ -471,7 +471,7 @@ enum TexTable {
     TEXTABLE_1D1 = 0x1D1, // TEX0:675
     TEXTABLE_1D2 = 0x1D2, // TEX0:676
     TEXTABLE_1D3 = 0x1D3, // TEX0:677
-    TEXTABLE_1D4_CMDMENU_LeftDownButtons_With_Kyte = 0x1D4, // TEX0:551
+    TEXTABLE_1D4_CMDMENU_LeftDownButtons_SpellBook_With_Kyte = 0x1D4, // TEX0:551
     TEXTABLE_1D5 = 0x1D5, // TEX0:221
     TEXTABLE_1D6 = 0x1D6, // TEX0:549
     TEXTABLE_1D7 = 0x1D7, // TEX0:550
@@ -1005,8 +1005,8 @@ enum TexTable {
     TEXTABLE_3E7_CMDMENU_Scarab = 0x3E7, // TEX0:585
     TEXTABLE_3E8 = 0x3E8, // TEX0:317
     TEXTABLE_3E9 = 0x3E9, // TEX0:177
-    TEXTABLE_3EA = 0x3EA, // TEX0:544
-    TEXTABLE_3EB = 0x3EB, // TEX0:545
+    TEXTABLE_3EA_CMDMENU_Unk_Circle_Glow = 0x3EA, // TEX0:544
+    TEXTABLE_3EB_CMDMENU_Unk_Circle_Blue = 0x3EB, // TEX0:545
     TEXTABLE_3EC = 0x3EC, // TEX0:318
     TEXTABLE_3ED = 0x3ED, // TEX0:319
     TEXTABLE_3EE = 0x3EE, // TEX0:320
@@ -1073,7 +1073,7 @@ enum TexTable {
     TEXTABLE_42B_CMDMENU_Highlight_Corner_Bottom_Left = 0x42B, // TEX0:540
     TEXTABLE_42C_CMDMENU_Highlight_Corner_Bottom_Right = 0x42C, // TEX0:541
     TEXTABLE_42D_CMDMENU_MagicBar_Full = 0x42D, // TEX0:543
-    TEXTABLE_42E_CMDMENU_LeftDownButtons_With_Tricky = 0x42E, // TEX0:552
+    TEXTABLE_42E_CMDMENU_LeftDownButtons_SpellBook_With_Tricky = 0x42E, // TEX0:552
     TEXTABLE_42F_CMDMENU_C_Left = 0x42F, // TEX0:546
     TEXTABLE_430_CMDMENU_C_Right = 0x430, // TEX0:547
     TEXTABLE_431_CMDMENU_C_Down = 0x431, // TEX0:548
@@ -1086,7 +1086,7 @@ enum TexTable {
     TEXTABLE_438_CMDMENU_Mushroom_Red_Half = 0x438, // TEX0:579
     TEXTABLE_439 = 0x439, // TEX0:0
     TEXTABLE_43A_CMDMENU_RightButton_With_Bag = 0x43A, // TEX0:553
-    TEXTABLE_43B_CMDMENU_LeftDownButtons_NoSidekick = 0x43B, // TEX0:554
+    TEXTABLE_43B_CMDMENU_LeftDownButtons_SpellBook_NoSidekick = 0x43B, // TEX0:554
     TEXTABLE_43C = 0x43C, // TEX0:0
     TEXTABLE_43D_CMDMENU_MagicBook = 0x43D, // TEX0:559
     TEXTABLE_43E_CMDMENU_Bag = 0x43E, // TEX0:560

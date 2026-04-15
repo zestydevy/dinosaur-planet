@@ -12,7 +12,7 @@ _exports:
 .dword cmdmenu_func_35C
 .dword cmdmenu_print
 .dword cmdmenu_func_1290
-.dword cmdmenu_func_12EC
+.dword cmdmenu_request_new_player_stats_snapshot
 .dword cmdmenu_get_target_objects
 .dword cmdmenu_was_any_item_used
 .dword cmdmenu_was_this_item_used
