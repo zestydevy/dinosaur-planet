@@ -5,6 +5,17 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 
+#define NO_SIDEKICK_COMMAND -1
+
+typedef enum {
+    Sidekick_COMMAND_01_Heel     = 0x1,
+    Sidekick_COMMAND_02_Find     = 0x2,
+    Sidekick_COMMAND_04_Distract = 0x4,
+    Sidekick_COMMAND_08_Guard    = 0x8, 
+    Sidekick_COMMAND_10_Flame    = 0x10,
+    Sidekick_COMMAND_20_Play     = 0x20
+} SidekickCommands;
+
 DLL_INTERFACE(DLL_ISidekick) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
 	/*7*/ UnknownDLLFunc func7;
@@ -13,10 +24,10 @@ DLL_INTERFACE(DLL_ISidekick) {
 	/*10*/ UnknownDLLFunc func10;
 	/*11*/ UnknownDLLFunc func11;
 	/*12*/ UnknownDLLFunc func12;
-	/*13*/ s32 (*func13)(Object*);
-	/*14*/ void (*func14)(Object* self, s32 gamebitID); //show a sidekick command in the inventory
-	/*15*/ s32 (*get_blue_food_count)(Object *); // how much blue food they currently have
-	/*16*/ s32 (*get_red_food_count)(Object *); // how much red food they currently have
+	/*13*/ s32 (*func13)(Object*);	//Returns a bitfield of the sidekick's available commands (see `SidekickCommands`)
+	/*14*/ void (*func14)(Object* self, s32 gamebitID); //Show a sidekick command in the inventory (e.g. Flame available when near vines)
+	/*15*/ s32 (*get_blue_food_count)(Object *); // How much blue food they currently have
+	/*16*/ s32 (*get_red_food_count)(Object *);  // How much red food they currently have
 	/*17*/ UnknownDLLFunc func17;
 	/*18*/ void (*func18)(Object* self, s32);
 	/*19*/ UnknownDLLFunc func19;

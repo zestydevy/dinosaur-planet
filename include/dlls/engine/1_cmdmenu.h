@@ -13,8 +13,18 @@ typedef struct {
 /*6*/ s16 sidekickCommand;  //Usually -1, except on sidekick commands
 /*8*/ s16 textID;           //Gametext lineID (in either file #3 or 568, depending on upper byte)
 /*A*/ s8 openPage;          //Command menu page to open after use (-1 to close)
-/*B*/ u8 unkB;
+/*B*/ u8 sound;             //The sound to play when selecting this item (see `CmdMenuItemSounds`)
 } InventoryItem;
+
+typedef struct {
+/*0*/ s16 gamebitObtained;  //Gamebit that adds item to inventory
+/*2*/ s16 gamebitHide;      //Gamebit that removes item from inventory
+/*4*/ s16 textureID;        //Mapped through TEXTABLE.bin
+/*6*/ s16 sidekickCommand;  //Usually -1, except on sidekick commands
+/*8*/ s16 textID;           //Gametext lineID (in either file #3 or 568, depending on upper byte)
+/*A*/ s8 openPage;          //Command menu page to open after use (-1 to close)
+/*B*/ u8 sound;             //The sound to play when selecting this item (see `CmdMenuItemSounds`)
+} InventoryCommand;
 
 /** For use with dll_1_func_F24 */
 typedef enum {
@@ -44,9 +54,11 @@ typedef enum {
     CMDMENU_PAGE_12_Food_Tricky = 12
 } CmdMenuPages;
 
-#define SOUND_NONE 0
-#define SOUND_ITEM 1
-#define SOUND_PAGE 2
+typedef enum {
+    CMDMENU_SOUND_NONE = 0,
+    CMDMENU_SOUND_ITEM = 1, //Sound only plays if the item couldn't be used (e.g. Alpine Root wasn't given to SnowHorn)
+    CMDMENU_SOUND_PAGE = 2  //Sound for entering inventory sub-pages (e.g. entering into foodbag's actions page)
+} CmdMenuItemSounds;
 
 #define CMDMENU_CLEAR_BUTTONS_OVERRIDE -1
 
