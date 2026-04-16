@@ -66,17 +66,16 @@
 //Health
 #define HEALTH_ICONS_X 60
 #define HEALTH_ICONS_Y 20
-
 #define APPLES_SPACING_X 10
 #define APPLES_SPACING_Y 10
-
 #define APPLES_ROW_1 7
 #define APPLES_ROW_2 6
-#define APPLES_ROW_2_IDX (APPLES_ROW_1)
-#define APPLES_ROW_3_IDX (APPLES_ROW_1 + APPLES_ROW_2)
 #define APPLES_ROW_1_OFFSET_X 0
 #define APPLES_ROW_2_OFFSET_X 5
 #define APPLES_ROW_3_OFFSET_X 0
+
+#define APPLES_ROW_2_IDX (APPLES_ROW_1)
+#define APPLES_ROW_3_IDX (APPLES_ROW_1 + APPLES_ROW_2)
 
 //Magic
 #define MAGIC_UNITS_PER_BAR 25
@@ -100,16 +99,21 @@
 #define MENU_ITEM_HEIGHT 24
 #define MENU_ITEM_QUANTITY_OFFSET_X 14
 #define MENU_ITEM_QUANTITY_OFFSET_Y 9
+
 #define MENU_ITEM_QUANTITY_X (MENU_ITEM_X + MENU_ITEM_QUANTITY_OFFSET_X)
 
 //Inventory scroll
 #define MENU_HEIGHT_OPEN 72
 
 //Inventory item selection highlight
-#define ITEM_HL_X1 (MENU_ITEM_X + 4)
-#define ITEM_HL_Y1 82
-#define ITEM_HL_X2 (MENU_ITEM_X + 20)
-#define ITEM_HL_Y2 (ITEM_HL_Y1 + 20)
+#define ITEM_HL_WIDTH 8
+#define ITEM_HL_HEIGHT 6
+#define ITEM_HL_MARGIN 4
+
+#define ITEM_HL_X1 (MENU_ITEM_X + ITEM_HL_MARGIN)
+#define ITEM_HL_Y1 (MENU_ITEM_Y + (MENU_HEIGHT_OPEN - MENU_ITEM_HEIGHT)/2 - 1)
+#define ITEM_HL_X2 (MENU_ITEM_X + MENU_ITEM_WIDTH - ITEM_HL_WIDTH - ITEM_HL_MARGIN)
+#define ITEM_HL_Y2 (ITEM_HL_Y1 + MENU_ITEM_HEIGHT - ITEM_HL_MARGIN)
 
 //Sidekick meter
 #define SIDEKICK_METER_X 250
@@ -135,10 +139,10 @@
 /* UI BOTTOM-RIGHT */
 
 //Scarabs counter
-#define SCARABS_ICON_X (252)
-#define SCARABS_ICON_Y (198)
-#define SCARABS_ICON_WIDTH (16)
-#define SCARABS_ICON_HEIGTH (16)
+#define SCARABS_ICON_X 252
+#define SCARABS_ICON_Y 198
+#define SCARABS_ICON_WIDTH 16
+#define SCARABS_ICON_HEIGTH 16
 #define SCARABS_NUMBER_X (SCARABS_ICON_X + 18)
 #define SCARABS_NUMBER_Y (SCARABS_ICON_Y + 4)
 
@@ -164,8 +168,8 @@
 
 //Info scroll
 #define INFO_SCROLL_WIDTH 120
-#define INFO_SCROLL_HEIGHT_OPEN 50
-#define INFO_SCROLL_LINE_HEIGHT 16
+#define INFO_SCROLL_HEIGHT 50 //When open
+#define INFO_SCROLL_LINE_HEIGHT 16 //Text lines' vertical spacing
 #define INFO_SCROLL_X (SCREEN_WIDTH/2)
 #define INFO_SCROLL_Y 30
 #define INFO_SCROLL_Y_INITIAL (INFO_SCROLL_Y - 10)
@@ -182,12 +186,28 @@
 #define INFO_SCROLL_HANDLE_HEIGHT 16
 
 //Tutorial textbox
+#define TUTORIAL_BOX_WIDTH 240
+#define TUTORIAL_BOX_HEIGHT 80
+#define TUTORIAL_BOX_TEXT_Y 3 //Top margin for text printed inside the tutorial box
+#define TUTORIAL_BOX_LINE_HEIGHT 16 //Text lines' vertical spacing
 #define TUTORIAL_BOX_X (SCREEN_WIDTH/2)
 #define TUTORIAL_BOX_Y 20
-#define TUTORIAL_BOX_WIDTH 120
-#define TUTORIAL_BOX_HEIGHT 80
 #define TUTORIAL_BOX_OPACITY_MAX 160
 #define TUTORIAL_BOX_OPACITY_SPEED 8
+
+//Tutorial textbox texture dimensions
+#define TUTORIAL_BOX_PAGE_EDGE_WIDTH 16
+#define TUTORIAL_BOX_PAGE_SHADOW_HEIGHT 8
+#define TUTORIAL_BOX_ROLL_HEIGHT 16
+#define TUTORIAL_BOX_ROLL_TOP_Y_OFFSET 11
+#define TUTORIAL_BOX_ROLL_BOTTOM_Y_OFFSET 4 //NOTE: causes 1px gap, may be intentional as dark shadow
+#define TUTORIAL_BOX_HANDLE_WIDTH 16
+#define TUTORIAL_BOX_HANDLE_HEIGHT 16
+
+#define TUTORIAL_BOX_A_BUTTON_WIDTH 24
+#define TUTORIAL_BOX_A_BUTTON_HEIGHT 24
+#define TUTORIAL_BOX_A_BUTTON_OFFSET_X 8
+#define TUTORIAL_BOX_A_BUTTON_OFFSET_Y 0
 
 //Energy bar
 #define ENERGY_BAR_X (SCREEN_WIDTH / 2)
@@ -360,7 +380,7 @@ typedef enum {
 
 /*0x1C*/ static s8 dInfoScrollShow = FALSE;
 /*0x20*/ static s16 dInfoScrollWidthHalf = INFO_SCROLL_WIDTH >> 1; //The half-width of the info scroll's page
-/*0x24*/ static s16 dInfoScrollUnrollMax = INFO_SCROLL_HEIGHT_OPEN;
+/*0x24*/ static s16 dInfoScrollUnrollMax = INFO_SCROLL_HEIGHT;
 /*0x28*/ static s16 dInfoScrollY = INFO_SCROLL_Y_INITIAL; //Initialised at slightly different Y
 /*0x2C*/ static s16 dInfoScrollX = INFO_SCROLL_X;
 /*0x30*/ static s16 dInfoScrollOpacity = 0;
@@ -378,9 +398,9 @@ typedef enum {
   * (First 255 lines are from `gametext_3`, higher IDs use `gametext_568`) 
   */
 /*0x44*/ static s16 dInfoScrollTextID = NO_GAMETEXT;
-/*0x48*/ static s8 dTutorialBoxShow = 0;
-/*0x4C*/ static s16 dTutorialBoxWidth = TUTORIAL_BOX_WIDTH;
-/*0x50*/ static s16 sTutorialBoxHeight = TUTORIAL_BOX_HEIGHT;
+/*0x48*/ static s8 dTutorialBoxShow = FALSE;
+/*0x4C*/ static s16 dTutorialBoxHalfWidth = TUTORIAL_BOX_WIDTH / 2;
+/*0x50*/ static s16 dTutorialBoxHeight = TUTORIAL_BOX_HEIGHT;
 /*0x54*/ static s16 dTutorialBoxY = TUTORIAL_BOX_Y;
 /*0x58*/ static s16 dTutorialBoxX = TUTORIAL_BOX_X;
 /*0x5C*/ static s16 dTutorialBoxOpacity = 0; //Controls the tutorial box's opacity
@@ -397,7 +417,7 @@ typedef struct {
 };
 
 /*0x74*/ static s8 sJoyButtonMask = 0;
-/*0x78*/ static s16 dInventoryTimesMoved = 0;
+/*0x78*/ static s16 dInventoryMovesQueued = 0;
 /*0x7C*/ static u8 dInventoryIsScrolling = FALSE;
 /*0x80*/ static u8 sForceStatsDisplay = FALSE;
 /*0x84*/ static s16 dInfoScrollDisabled = FALSE; //Stops the info scroll from appearing (unused)
@@ -840,7 +860,7 @@ typedef struct {
 /*0x6B8*/ static TextureTile sTextureTiles[ARRAYCOUNT(dTextableIDs)][2];
 /*0xC28*/ static s16 sInventoryUnrollY;  //How far the inventory scroll has opened (0 when fully closed)
 /*0xC2A*/ static s16 sInfoScrollUnrollY; //How far the R-button info scroll has opened (0 when fully closed)
-/*0xC2C*/ static s16 _bss_C2C;
+/*0xC2C*/ static s16 sTutorialBoxHeight;
 /*0xC2E*/ static s16 sTutorialBoxStringIndex;
 /*0xC30*/ static GameTextChunk* sTutorialBoxGametext;
 /*0xC34*/ static Texture* sCrosshairTex;
@@ -1097,7 +1117,7 @@ void cmdmenu_func_35C(void) {
 
             dPageCategory = dNextPageCategory;
             sJoyPressedButtons = 0;
-            dInventoryTimesMoved = 0;
+            dInventoryMovesQueued = 0;
             dNextPageCategory = 0;
         } else {
             /* When changing page category (e.g. from Items to Spells),
@@ -1375,7 +1395,7 @@ void cmdmenu_open_tutorial_textbox(s32 gametextID, s32 screenX, s32 screenY) {
         dTutorialBoxShow = TRUE;
         dTutorialBoxX = screenX;
         dTutorialBoxY = screenY;
-        _bss_C2C = sTutorialBoxHeight;
+        sTutorialBoxHeight = dTutorialBoxHeight;
     }
 }
 
@@ -1455,9 +1475,9 @@ static void cmdmenu_tick_tutorial_textbox(void) {
   * Draws the tutorial textbox that appears upon seeing/collecting items for the first time.
   */
 static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
-    s32 sp10C;
+    s32 x;
     s32 y;
-    s32 sp104;
+    s32 halfWidth;
     s32 height;
     s32 tempY;
     s32 i;
@@ -1479,164 +1499,225 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     dl_apply_geometry_mode(&dl);
     dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
 
-    sp10C = dTutorialBoxX;
-    sp10C <<= 2;
-    sp104 = dTutorialBoxWidth << 2;
-    sp104 -= (16 << 2);
+    //Get dimensions (note: coords multiplied by 4 for gSPTextureRectangle)
+    x = dTutorialBoxX;
+    x <<= 2;
+    halfWidth = dTutorialBoxHalfWidth << 2;
+    halfWidth -= (TUTORIAL_BOX_PAGE_EDGE_WIDTH << 2); //Subtract the page's edge margin
     y = dTutorialBoxY << 2;
-    height = _bss_C2C << 2;
+    height = sTutorialBoxHeight << 2;
     
-    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
-    gSPTextureRectangle(dl++, 
-        sp10C - sp104, 
-        y, 
-        sp10C + sp104, 
-        y + height, 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(0), 
-        qs510(1), qs510(1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
-    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
-    gSPTextureRectangle(dl++, 
-        sp10C - sp104 - (16 << 2), 
-        y, 
-        sp10C - sp104, 
-        y + height, 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(0), 
-        qs510(1), qs510(1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
-    gSPTextureRectangle(dl++, 
-        sp10C + sp104, 
-        y, 
-        sp10C + sp104 + (16 << 2), 
-        y + height, 
-        G_TX_RENDERTILE, 
-        qs105(15), qs105(0), 
-        qs510(-1), qs510(1));
-    gDLBuilder->needsPipeSync = TRUE;
+    //Draw main paper background 
+    {
+        //Middle section (excluding the paper's left/right edges)
+        cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
+        gSPTextureRectangle(dl++, 
+            /*ulx*/ x - halfWidth,
+            /*uly*/ y,
+            /*lrx*/ x + halfWidth,
+            /*lry*/ y + height,
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(0), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+        
+        //Left edge of paper
+        cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
+        gSPTextureRectangle(dl++, 
+            /*lrx*/ x - halfWidth - (TUTORIAL_BOX_PAGE_EDGE_WIDTH << 2),
+            /*lry*/ y,
+            /*ulx*/ x - halfWidth,
+            /*uly*/ y + height,
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(0), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+        
+        //Right edge of paper
+        gSPTextureRectangle(dl++, 
+            /*ulx*/ x + halfWidth,
+            /*uly*/ y,
+            /*lrx*/ x + halfWidth + (TUTORIAL_BOX_PAGE_EDGE_WIDTH << 2),
+            /*lry*/ y + height,
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(15), /*t*/ qs105(0),
+            /*dsdx*/ qs510(-1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
 
-    sp104 += (16 << 2);
+        halfWidth += (TUTORIAL_BOX_PAGE_EDGE_WIDTH << 2); //restore half-width
+    }
     
-    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
-    dl_set_prim_color(&dl, 255, 128, 128, 128);
-    
-    tempY = y;
-    gSPTextureRectangle(dl++,
-        sp10C - sp104, 
-        tempY, 
-        sp10C + sp104, 
-        tempY + (8 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(7), 
-        qs510(1), qs510(-1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
-    tempY = (y + height) - (6 << 2);
-    gSPTextureRectangle(dl++,
-        sp10C - sp104,
-        tempY, 
-        sp10C + sp104, 
-        tempY + (8 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(0), 
-        qs510(1), qs510(1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
-    dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
+    //Draw the top/bottom rolls' page shadows
+    {
+        cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
+        dl_set_prim_color(&dl, 255, 128, 128, 128);
+        
+        //Top shadow
+        tempY = y;
+        gSPTextureRectangle(dl++,
+            /*ulx*/ x - halfWidth,
+            /*uly*/ tempY,
+            /*lrx*/ x + halfWidth,
+            /*lry*/ tempY + (TUTORIAL_BOX_PAGE_SHADOW_HEIGHT << 2),
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(7), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+        
+        //Bottom shadow
+        tempY = y + height - ((TUTORIAL_BOX_PAGE_SHADOW_HEIGHT - 2) << 2);
+        gSPTextureRectangle(dl++,
+            /*ulx*/ x - halfWidth,
+            /*uly*/ tempY,
+            /*lrx*/ x + halfWidth,
+            /*lry*/ tempY + (TUTORIAL_BOX_PAGE_SHADOW_HEIGHT << 2),
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(0), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+        
+        //Restore prim colour
+        dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
+    }
 
-    tempY = y - (11 << 2);
-    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
-    gSPTextureRectangle(dl++,
-        sp10C - sp104, 
-        tempY, 
-        sp10C + sp104, 
-        tempY + (16 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(15.9688), 
-        qs510(1), qs510(-1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
-    tempY = (y + height) - (4 << 2);
-    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
-    gSPTextureRectangle(dl++,
-        sp10C - sp104, 
-        tempY, 
-        sp10C + sp104, 
-        tempY + (16 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(15.9688), 
-        qs510(1), qs510(-1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
-    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
-    tempY = y - (11 << 2);
-    gSPTextureRectangle(dl++,
-        sp10C - sp104 - (16 << 2),
-        tempY, 
-        sp10C - sp104, 
-        tempY + (16 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(15.9688), 
-        qs510(1), qs510(-1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
-    gSPTextureRectangle(dl++,
-        sp10C + sp104, 
-        tempY, 
-        sp10C + sp104 + (16 << 2), 
-        tempY + (16 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(15), qs105(15.9688), 
-        qs510(-1), qs510(-1));
-    gDLBuilder->needsPipeSync = TRUE;
+    //Draw the top/bottom rolls
+    {
+        //Top roll (middle span)
+        {
+            tempY = y - (TUTORIAL_BOX_ROLL_TOP_Y_OFFSET << 2);
+            cmdmenu_gfx_set_texture(
+                &dl, 
+                sTextures[CMDMENU_TEX_04_InfoScroll_Roll],
+                0
+            );
+            gSPTextureRectangle(dl++,
+                /*ulx*/ x - halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth,
+                /*lry*/ tempY + (TUTORIAL_BOX_ROLL_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+        }
+        
+        //Bottom roll (middle span)
+        {
+            tempY = y + height - (TUTORIAL_BOX_ROLL_BOTTOM_Y_OFFSET << 2);
+            cmdmenu_gfx_set_texture(
+                &dl, 
+                sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 
+                0
+            );
+            gSPTextureRectangle(dl++,
+                /*ulx*/ x - halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth,
+                /*lry*/ tempY + (TUTORIAL_BOX_ROLL_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+        }
+        
+        //Roll handles
+        {
+            cmdmenu_gfx_set_texture(
+                &dl, 
+                sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 
+                0
+            );
+            
+            //Top roll handle (left)
+            tempY = y - (TUTORIAL_BOX_ROLL_TOP_Y_OFFSET << 2);
+            gSPTextureRectangle(dl++,
+                /*ulx*/ x - halfWidth - (TUTORIAL_BOX_HANDLE_WIDTH << 2),
+                /*uly*/ tempY,
+                /*lrx*/ x - halfWidth,
+                /*lry*/ tempY + (TUTORIAL_BOX_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+            
+            //Top roll handle (right)
+            gSPTextureRectangle(dl++,
+                /*ulx*/ x + halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth + (TUTORIAL_BOX_HANDLE_WIDTH << 2),
+                /*lry*/ tempY + (TUTORIAL_BOX_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(15), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
 
-    tempY = (y + height) - (4 << 2);
-    gSPTextureRectangle(dl++,
-        sp10C - sp104 - (16 << 2), 
-        tempY, 
-        sp10C - sp104, 
-        tempY + (16 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(0), qs105(15.9688), 
-        qs510(1), qs510(-1));
-    gDLBuilder->needsPipeSync = TRUE;
+            //Bottom roll handle (left)
+            tempY = y + height - (TUTORIAL_BOX_ROLL_BOTTOM_Y_OFFSET << 2);
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x - halfWidth - (TUTORIAL_BOX_HANDLE_WIDTH << 2),
+                /*uly*/ tempY,
+                /*lrx*/ x - halfWidth,
+                /*lry*/ tempY + (TUTORIAL_BOX_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+            
+            //Bottom roll handle (right)
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x + halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth + (TUTORIAL_BOX_HANDLE_WIDTH << 2),
+                /*lry*/ tempY + (TUTORIAL_BOX_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(15), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+        }
+    }
     
-    gSPTextureRectangle(dl++,
-        sp10C + sp104, 
-        tempY, 
-        sp10C + sp104 + (16 << 2), 
-        tempY + (16 << 2), 
-        G_TX_RENDERTILE, 
-        qs105(15), qs105(15.9688), 
-        qs510(-1), qs510(-1));
-    gDLBuilder->needsPipeSync = TRUE;
-    
+    //Restore prim colour
     dl_set_prim_color(&dl, 255, 255, 255, 255);
+
+    //Draw A button icon (animated) at bottom-centre of box
     rcp_screen_full_write(
         &dl, 
         sAButtonAnimTex, 
-        dTutorialBoxX - 8, 
-        (dTutorialBoxY + sTutorialBoxHeight) - 24, 
+        dTutorialBoxX - (TUTORIAL_BOX_A_BUTTON_WIDTH/2) + 4, 
+        (dTutorialBoxY + dTutorialBoxHeight) - TUTORIAL_BOX_A_BUTTON_HEIGHT, 
         0, 
         sAButtonAnimProgress >> 8, 
         dTutorialBoxTextOpacity, 
         SCREEN_WRITE_TRANSLUCENT
     );
 
+    //Set up the text window
     font_window_set_coords(3, 
-        /*x1*/ dTutorialBoxX - dTutorialBoxWidth, 
+        /*x1*/ dTutorialBoxX - dTutorialBoxHalfWidth, 
         /*y1*/ dTutorialBoxY, 
-        /*x2*/ dTutorialBoxX + dTutorialBoxWidth, 
-        /*y2*/ dTutorialBoxY + _bss_C2C);
-    font_window_use_font(3, 1);
+        /*x2*/ dTutorialBoxX + dTutorialBoxHalfWidth, 
+        /*y2*/ dTutorialBoxY + sTutorialBoxHeight);
+    font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
     font_window_set_bg_colour(3, 0, 0, 0, 0);
     font_window_flush_strings(3);
     font_window_set_text_colour(3, 0, 0, 255, 255, dTutorialBoxTextOpacity);
 
-    for (i = sTutorialBoxStringIndex, y = 3; i < sTutorialBoxGametext->count && i < (sTutorialBoxStringIndex + 3); i++, y += 16) {
+    //Print 3 lines of text at a time
+    for (i = sTutorialBoxStringIndex, y = TUTORIAL_BOX_TEXT_Y; 
+        i < sTutorialBoxGametext->count && i < (sTutorialBoxStringIndex + 3); 
+        i++, y += TUTORIAL_BOX_LINE_HEIGHT
+    ) {
         font_window_add_string_xy(
             3, 
             -0x8000, 
@@ -1744,7 +1825,7 @@ static void cmdmenu_tick_inventory(void) {
         //If the page's scroll button was pressed
         if ((sJoyPressedButtons & pageBtnMask) && (sInventoryScrollOffset < 8) && (dInventoryIsScrolling == FALSE)) {
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28A_Cmdmenu_MoveSelection, MAX_VOLUME, NULL, NULL, 0, NULL);
-            dInventoryTimesMoved++;
+            dInventoryMovesQueued++;
 
             if (sInventoryScrollOffset != 0) {
                 dInventoryIsScrolling = TRUE;
@@ -1752,8 +1833,8 @@ static void cmdmenu_tick_inventory(void) {
         }
 
         //Limit the number of moves
-        if (dInventoryTimesMoved > 255) {
-            dInventoryTimesMoved = 255;
+        if (dInventoryMovesQueued > 255) {
+            dInventoryMovesQueued = 255;
         }
 
         //Auto-select an item (functionality never used)
@@ -1762,24 +1843,29 @@ static void cmdmenu_tick_inventory(void) {
         }
 
         //Move between items
-        if ((dInventoryTimesMoved > 0) && (sInventoryScrollOffset == 0)) {
-            dInventoryTimesMoved--;
+        if ((dInventoryMovesQueued > 0) && (sInventoryScrollOffset == 0)) {
+            dInventoryMovesQueued--;
 
             if (sDisplayedItemCount > 1) {
+                //When wrapping to top, skip over a gap in the inventory in specific cases (2 or 4 items)
                 if (((sDisplayedItemCount == 2) && (sMenuSelectedItemIdx == 1)) || 
                     ((sDisplayedItemCount == 4) && (sMenuSelectedItemIdx == 3))
                 ) {
-                    sInventoryScrollOffset = 64;
+                    //@bug: causes visual pop: should be MENU_ITEM_HEIGHT
+                    sInventoryScrollOffset = 2 * MENU_ITEM_WIDTH;
                     dInventoryMoveSpeed = 2;
                     dInventoryIsScrolling = FALSE;
                 } else {
-                    sInventoryScrollOffset = 32;
+                    //@bug: causes visual pop: should be MENU_ITEM_HEIGHT
+                    sInventoryScrollOffset = MENU_ITEM_WIDTH;
                     dInventoryMoveSpeed = 2;
                     dInventoryIsScrolling = FALSE;
                 }
 
-                //Wrap back to top of item list
+                //Select next item
                 sMenuSelectedItemIdx++;
+
+                //Wrap selection back to top of item list
                 if (sMenuSelectedItemIdx >= sDisplayedItemCount) {
                     sMenuSelectedItemIdx = 0;
                 }
@@ -1831,7 +1917,7 @@ static void cmdmenu_tick_inventory(void) {
     if (cmdmenu_is_inventory_closed()) {
         dPageCategory = 0;
         _bss_C4C = 0;
-        dInventoryTimesMoved = 0;
+        dInventoryMovesQueued = 0;
     } else {
         joy_set_button_mask(0, A_BUTTON | B_BUTTON);
     }
@@ -2091,72 +2177,71 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             cmdmenu_gfx_set_screen_scissor(gdl);
         }
 
-        //Draw page icon (Bag/SpellBook/Kyte/Tricky)
-        {
-            if (dInventoryShow || 
-                dInventoryOpacity == MAX_OPACITY || 
-                (dInventoryOpacity != 0 && dOpacitySidekickMeter == 0)
-            ) {
-                switch (sInventoryPageID) {
-                case CMDMENU_PAGE_7_Sidekick_Kyte:
-                    pageIcon = CMDMENU_TEX_42_Tricky;
-                    offsetY = 3;
-                    break;
-                case CMDMENU_PAGE_8_Sidekick_Tricky:
+        //Get page icon (Bag/SpellBook/Kyte/Tricky)
+        if (dInventoryShow || 
+            dInventoryOpacity == MAX_OPACITY || 
+            (dInventoryOpacity != 0 && dOpacitySidekickMeter == 0)
+        ) {
+            switch (sInventoryPageID) {
+            case CMDMENU_PAGE_7_Sidekick_Kyte:
+                pageIcon = CMDMENU_TEX_42_Tricky;
+                offsetY = 3;
+                break;
+            case CMDMENU_PAGE_8_Sidekick_Tricky:
+                pageIcon = CMDMENU_TEX_54_Kyte;
+                break;
+            case CMDMENU_PAGE_6_Spells:
+                offsetX = -2;
+                offsetY = 9;
+                pageIcon = CMDMENU_TEX_49_MagicBook;
+                break;
+            default:
+            case CMDMENU_PAGE_0_Items_Krystal:
+            case CMDMENU_PAGE_1_Items_Sabre:
+            case CMDMENU_PAGE_2_Food_Actions_Krystal:
+            case CMDMENU_PAGE_3_Food_Actions_Sabre:
+            case CMDMENU_PAGE_4_Food_Krystal:
+            case CMDMENU_PAGE_5_Food_Sabre:
+                offsetX = 1;
+                offsetY = 9;
+                pageIcon = CMDMENU_TEX_50_Bag;
+                break;
+            }
+            if (dOpacitySidekickMeter < dInventoryOpacity) {
+                iconOpacity = dInventoryOpacity;
+            } else {
+                iconOpacity = dOpacitySidekickMeter;
+            }
+        } else {
+            //Show sidekick's icon when the sidekick meter should be visible
+            if (dOpacitySidekickMeter != 0) {
+                pageIcon = CMDMENU_TEX_42_Tricky;
+                if (sidekick != NULL && sidekick->id == OBJ_Kyte) {
                     pageIcon = CMDMENU_TEX_54_Kyte;
-                    break;
-                case CMDMENU_PAGE_6_Spells:
-                    offsetX = -2;
-                    offsetY = 9;
-                    pageIcon = CMDMENU_TEX_49_MagicBook;
-                    break;
-                default:
-                case CMDMENU_PAGE_0_Items_Krystal:
-                case CMDMENU_PAGE_1_Items_Sabre:
-                case CMDMENU_PAGE_2_Food_Actions_Krystal:
-                case CMDMENU_PAGE_3_Food_Actions_Sabre:
-                case CMDMENU_PAGE_4_Food_Krystal:
-                case CMDMENU_PAGE_5_Food_Sabre:
-                    offsetX = 1;
-                    offsetY = 9;
-                    pageIcon = CMDMENU_TEX_50_Bag;
-                    break;
-                }
-                if (dOpacitySidekickMeter < dInventoryOpacity) {
-                    iconOpacity = dInventoryOpacity;
+                    iconOpacity = dOpacitySidekickMeter;
                 } else {
+                    offsetY = 3;
                     iconOpacity = dOpacitySidekickMeter;
                 }
             } else {
-                //Show sidekick's icon when the sidekick meter should be visible
-                if (dOpacitySidekickMeter != 0) {
-                    pageIcon = CMDMENU_TEX_42_Tricky;
-                    if (sidekick != NULL && sidekick->id == OBJ_Kyte) {
-                        pageIcon = CMDMENU_TEX_54_Kyte;
-                        iconOpacity = dOpacitySidekickMeter;
-                    } else {
-                        offsetY = 3;
-                        iconOpacity = dOpacitySidekickMeter;
-                    }
-                } else {
-                    iconOpacity = 0;
-                }
+                iconOpacity = 0;
             }
+        }
 
-            if (iconOpacity) {
-                dInventoryPageIcon = tex_load_deferred(dTextableIDs[pageIcon]);
-                rcp_screen_full_write(
-                    gdl, 
-                    dInventoryPageIcon, 
-                    PAGE_ICON_X + offsetX,
-                    PAGE_ICON_Y + offsetY,
-                    0, 
-                    0, 
-                    iconOpacity, 
-                    SCREEN_WRITE_TRANSLUCENT
-                );
-                tex_free(dInventoryPageIcon);
-            }
+        //Draw page icon
+        if (iconOpacity) {
+            dInventoryPageIcon = tex_load_deferred(dTextableIDs[pageIcon]);
+            rcp_screen_full_write(
+                gdl, 
+                dInventoryPageIcon, 
+                PAGE_ICON_X + offsetX,
+                PAGE_ICON_Y + offsetY,
+                0, 
+                0, 
+                iconOpacity, 
+                SCREEN_WRITE_TRANSLUCENT
+            );
+            tex_free(dInventoryPageIcon);
         }
     }
 }
@@ -2748,8 +2833,8 @@ static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl) {
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
             MENU_ITEM_X, 
             MENU_ITEM_Y, 
-            (MENU_ITEM_X + MENU_ITEM_WIDTH), 
-            sInventoryUnrollY + 61);
+            MENU_ITEM_X + MENU_ITEM_WIDTH, 
+            sInventoryUnrollY + MENU_ITEM_Y + 2);
     }
 }
 
@@ -3186,16 +3271,23 @@ static void cmdmenu_update_stats(void) {
         sAnimScarabSpin = scarabFrameOffset;
     }
 
+    //Play sound when pressing R to show HUD
     if (sJoyPressedButtons & R_TRIG) {
         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EA_Cmdmenu_ShowHUD, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 
-    if ((sJoyHeldButtons & R_TRIG) || (gDLL_2_Camera->vtbl->get_target_object() != NULL) || (sForceStatsDisplay && (camera_get_letterbox() == 0))) {
+    //Increment stat.unk14 when holding R, or when there's a target Object, or when stats are auto-shown
+    //(Causes health/magic to fade in and stay on-screen a little while longer than C buttons)
+    if ((sJoyHeldButtons & R_TRIG) || 
+        (gDLL_2_Camera->vtbl->get_target_object() != NULL) || 
+        (sForceStatsDisplay && (camera_get_letterbox() == 0))
+    ) {
         stats.unk14 = sPrevStats.unk14 + 1;
     } else {
         stats.unk14 = sPrevStats.unk14;
     }
 
+    //Fade in C buttons when holding R
     if (sJoyHeldButtons & R_TRIG) {
         sOpacityR += 8.5f * gUpdateRateF;
         if (sOpacityR > MAX_OPACITY_F) {
@@ -3208,7 +3300,9 @@ static void cmdmenu_update_stats(void) {
         }
     }
 
-    sOpacityR = sOpacityR < sOpacityHealth ? sOpacityR : sOpacityHealth;
+    //Right side's opacity shouldn't exceed health UI's opacity
+    sOpacityR = (sOpacityR < sOpacityHealth) ? sOpacityR : sOpacityHealth;
+
     stats.unk18 = 0;
 
     //Update the player stats snapshot when requested
@@ -3231,6 +3325,7 @@ static void cmdmenu_update_stats(void) {
 
         if (timer > 60.0f) {
             if (sStatsChangeTimers.items[i] <= 60.0f) {
+                //Optionally play a sound when the stat increases/decreases (unused)
                 if (sStats.items[i] < stats.items[i]) {
                     if (dStatChangeSounds.items[i].increased != NO_SOUND) {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, dStatChangeSounds.items[i].increased, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -3240,10 +3335,12 @@ static void cmdmenu_update_stats(void) {
                         gDLL_6_AMSFX->vtbl->play_sound(NULL, dStatChangeSounds.items[i].decreased, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
+
                 sStats.items[i] = stats.items[i];
             }
         }
 
+        //Check if the stat changed
         if (stats.items[i] != sPrevStats.items[i]) {
             sPrevStats.items[i] = stats.items[i];
             if (sStatsChangeTimers.items[i] <= 60.0f) {
@@ -3276,11 +3373,14 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     dl = *gdl;
     temp = vi_get_current_size();
-    gDPSetScissor(dl++, G_SC_NON_INTERLACE, 0, 0, (u16)GET_VIDEO_WIDTH(temp) - 1, 239);
+    gDPSetScissor(dl++, G_SC_NON_INTERLACE, 0, 0, (u16)GET_VIDEO_WIDTH(temp) - 1, SCREEN_HEIGHT - 1);
     
     //Draw player health
     {
-        if ((sStatsChangeTimers.playerHealth >= 0.0f) || (sStatsChangeTimers.playerHealthMax >= 0.0f) || (sStatsChangeTimers.unk14 >= 0.0f)) {
+        if ((sStatsChangeTimers.playerHealth >= 0.0f) || 
+            (sStatsChangeTimers.playerHealthMax >= 0.0f) || 
+            (sStatsChangeTimers.unk14 >= 0.0f)
+        ) {
             goalOpacity = MAX_OPACITY_F;
         } else {
             goalOpacity = 0.0f;
