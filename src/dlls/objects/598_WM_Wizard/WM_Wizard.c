@@ -311,8 +311,12 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
     //After Quan Ata Lachu cutscene (sitting at edge of podium)
     if (main_get_bits(BIT_Play_Seq_0170_WM_Return_to_Randorn_Quan_Ata_Lachu_Speaks)) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-        if ((self->unkAF & ARROW_FLAG_1_Interacted) && (gDLL_1_cmdmenu->vtbl->func_F40() == BIT_Foodbag_Give)) {
-            foodGamebit = gDLL_1_cmdmenu->vtbl->func_E2C(dAcceptedFoodsVisit2, ARRAYCOUNT(dAcceptedFoodsVisit2));
+
+        if ((self->unkAF & ARROW_FLAG_1_Interacted) && (gDLL_1_cmdmenu->vtbl->get_subpage_gamebit() == BIT_Foodbag_Give)) {
+            foodGamebit = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(
+                            dAcceptedFoodsVisit2, ARRAYCOUNT(dAcceptedFoodsVisit2)
+                        );
+            
             if (foodGamebit >= 0) {
                 main_set_bits(BIT_4D1, 1);
                 objData->timesFed++;
@@ -496,9 +500,12 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     //Check if player offers food to Randorn while he's sitting up
     } else if (
         (self->unkAF & ARROW_FLAG_1_Interacted) && 
-        (gDLL_1_cmdmenu->vtbl->func_F40() == BIT_Foodbag_Give)
+        (gDLL_1_cmdmenu->vtbl->get_subpage_gamebit() == BIT_Foodbag_Give)
     ) {
-        foodGamebit = gDLL_1_cmdmenu->vtbl->func_E2C(dAcceptedFoodsVisit4, ARRAYCOUNT(dAcceptedFoodsVisit4));
+        foodGamebit = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(
+                            dAcceptedFoodsVisit4, 
+                            ARRAYCOUNT(dAcceptedFoodsVisit4)
+                        );
 
         // @fake
         if (objdata) {}

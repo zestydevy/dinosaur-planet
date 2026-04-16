@@ -7,14 +7,26 @@
 
 #define NO_SIDEKICK_COMMAND -1
 
+#define INDEX_TO_FLAG(index) 1 << (index)
+
 typedef enum {
-    Sidekick_COMMAND_01_Heel     = 0x1,
-    Sidekick_COMMAND_02_Find     = 0x2,
-    Sidekick_COMMAND_04_Distract = 0x4,
-    Sidekick_COMMAND_08_Guard    = 0x8, 
-    Sidekick_COMMAND_10_Flame    = 0x10,
-    Sidekick_COMMAND_20_Play     = 0x20
-} SidekickCommands;
+    Sidekick_Command_INDEX_0_Heel     = 0,
+    Sidekick_Command_INDEX_1_Find     = 1,
+    Sidekick_Command_INDEX_2_Distract = 2,
+    Sidekick_Command_INDEX_3_Guard    = 3, 
+    Sidekick_Command_INDEX_4_Flame    = 4,
+    Sidekick_Command_INDEX_5_Play     = 5
+} SidekickCommandIndices;
+
+typedef enum {
+    Sidekick_Command_FLAG_01_Heel     = INDEX_TO_FLAG(Sidekick_Command_INDEX_0_Heel),
+    Sidekick_Command_FLAG_02_Find     = INDEX_TO_FLAG(Sidekick_Command_INDEX_1_Find),
+    Sidekick_Command_FLAG_04_Distract = INDEX_TO_FLAG(Sidekick_Command_INDEX_2_Distract),
+    Sidekick_Command_FLAG_08_Guard    = INDEX_TO_FLAG(Sidekick_Command_INDEX_3_Guard),
+    Sidekick_Command_FLAG_10_Flame    = INDEX_TO_FLAG(Sidekick_Command_INDEX_4_Flame),
+    Sidekick_Command_FLAG_20_Play     = INDEX_TO_FLAG(Sidekick_Command_INDEX_5_Play)
+} SidekickCommandFlags;
+
 
 DLL_INTERFACE(DLL_ISidekick) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);

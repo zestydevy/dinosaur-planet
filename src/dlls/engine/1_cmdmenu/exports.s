@@ -8,17 +8,17 @@ _exports:
 .dword cmdmenu_dtor
 
 # export table
-.dword cmdmenu_control
-.dword cmdmenu_func_35C
+.dword cmdmenu_update1
+.dword cmdmenu_update2
 .dword cmdmenu_print
-.dword cmdmenu_pages_clear_used_item_index
+.dword cmdmenu_pages_clear_last_selected_index
 .dword cmdmenu_request_new_player_stats_snapshot
 .dword cmdmenu_get_target_objects
 .dword cmdmenu_was_any_item_used
 .dword cmdmenu_was_this_item_used
 .dword cmdmenu_was_used_item_in_gamebit_array
 .dword cmdmenu_get_page_category
-.dword cmdmenu_func_F40
+.dword cmdmenu_get_subpage_gamebit
 .dword cmdmenu_func_70A0
 .dword cmdmenu_auto_show_info_scroll
 .dword cmdmenu_open_tutorial_textbox

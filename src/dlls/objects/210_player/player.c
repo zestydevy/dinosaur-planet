@@ -633,7 +633,7 @@ void dll_210_control(Object* player) {
         *_bss_1AA = 0;
         dll_210_func_11A0(player, data, _bss_1AC);
     }
-    i = gDLL_1_cmdmenu->vtbl->func_E2C(sp48, 6);
+    i = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(sp48, 6);
     if (i != -1) {
         gDLL_6_AMSFX->vtbl->play_sound(player, (player->id != PLAYER_SABRE ? _data_4C0 : _data_4CC)[i], 0x7FU, NULL, NULL, 0, NULL);
     }
@@ -2280,10 +2280,10 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         if (objdata->unk708 != NULL) {
             if (objdata->unk708->def->unkAA >= 0) {
                 if (arg2->unk8D == 0x1A) {
-                    gDLL_1_cmdmenu->vtbl->func_1338(objdata->unk708->def->unkAA, 0xA0, 0x8C);
+                    gDLL_1_cmdmenu->vtbl->open_tutorial_textbox(objdata->unk708->def->unkAA, 160, 140);
                 }
             } else {
-                gDLL_1_cmdmenu->vtbl->func_130C(objdata->unk708->def->gametextIndex, 0xA0, 0x8C);
+                gDLL_1_cmdmenu->vtbl->auto_show_info_scroll(objdata->unk708->def->gametextIndex[0], 160, 140);
             }
             if (arg2->unk8D == 1) {
                 gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);
@@ -4496,13 +4496,13 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (sp8E) {
             dll_210_func_1DAB0(player);
             gDLL_3_Animation->vtbl->func17(sp8E, player, -1);
-            gDLL_1_cmdmenu->vtbl->func_1290();
+            gDLL_1_cmdmenu->vtbl->pages_clear_last_selected_index();
             return 0;
         }
     }
     
-    if (gDLL_1_cmdmenu->vtbl->func_F40() == BIT_Foodbag_Give) {
-        sp8C = gDLL_1_cmdmenu->vtbl->func_E2C(sp38, 0x10);
+    if (gDLL_1_cmdmenu->vtbl->get_subpage_gamebit() == BIT_Foodbag_Give) {
+        sp8C = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(sp38, 0x10);
         if (sp8C != -1 && (player->unkC4 == NULL)) {
             joy_set_button_mask(0, A_BUTTON);
             player->unkE0 = sp8C;

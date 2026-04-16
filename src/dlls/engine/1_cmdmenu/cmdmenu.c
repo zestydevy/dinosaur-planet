@@ -8,6 +8,7 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/gametexts.h"
+#include "game/gametexts_ui.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -169,6 +170,7 @@
 //Info scroll
 #define INFO_SCROLL_WIDTH 120
 #define INFO_SCROLL_HEIGHT 50 //When open
+#define INFO_SCROLL_TEXT_Y 3 //Top margin for text printed inside the tutorial box
 #define INFO_SCROLL_LINE_HEIGHT 16 //Text lines' vertical spacing
 #define INFO_SCROLL_X (SCREEN_WIDTH/2)
 #define INFO_SCROLL_Y 30
@@ -212,90 +214,6 @@
 //Energy bar
 #define ENERGY_BAR_X (SCREEN_WIDTH / 2)
 #define ENERGY_BAR_Y (SCREEN_HEIGHT - 10)
-
-/** Data for the item info pop-up that appears after collecting certain items (e.g. Kyte's grubs) */
-typedef struct {
-/*0*/ Texture* texture;
-/*4*/ s32 timer;
-/*8*/ f32 opacity;
-/*C*/ s16 count;
-} CmdmenuInfoPopup;
-
-/** Data for a particular inventory page */
-typedef struct {
-/*0*/ InventoryItem* items; //all the different items that can appear on this page
-/*4*/ s16 selectedIndex; // the loaded item index of this page's selected item (at runtime)
-/*8*/ u32 mesgID;    // objmesg ID sent to player
-/*C*/ s32 btnMask;   // mask of joypad buttons that can be used to move to this item
-} CmdmenuPage;
-
-#define CMDMENU_TRACKED_PLAYER_STATS_COUNT 10
-
-typedef union { 
-    struct {
-    /*0 00*/ s32 playerHealth;
-    /*1 04*/ s32 sidekickBlueFood;
-    /*2 08*/ s32 playerMagic;
-    /*3 0C*/ s32 playerScarabCount;
-    /*4 10*/ s32 sidekickRedFood;
-    /*5 14*/ s32 unk14;
-    /*6 18*/ s32 unk18;
-    /*7 1C*/ s32 playerHealthMax;
-    /*8 20*/ s32 playerMagicMax;
-    /*9 24*/ s32 sidekickMaxFood;
-    };
-    s32 items[10];
-} CmdmenuPlayerSidekickData;
-
-typedef union {
-    struct {
-    /*0 00*/ f32 playerHealth;
-    /*1 04*/ f32 sidekickBlueFood;
-    /*2 08*/ f32 playerMagic;
-    /*3 0C*/ f32 playerScarabCount;
-    /*4 10*/ f32 sidekickRedFood;
-    /*5 14*/ f32 unk14;
-    /*6 18*/ f32 unk18;
-    /*7 1C*/ f32 playerHealthMax;
-    /*8 20*/ f32 playerMagicMax;
-    /*9 24*/ f32 sidekickMaxFood;
-    };
-    f32 items[10];
-} CmdmenuPlayerSidekickDataChangeTimers;
-
-typedef struct {
-    s16 increased;
-    s16 decreased;
-} StatChangeSounds;
-
-typedef union {
-    struct {
-        /*0 00*/ StatChangeSounds playerHealth;
-        /*1 04*/ StatChangeSounds sidekickBlueFood;
-        /*2 08*/ StatChangeSounds playerMagic;
-        /*3 0C*/ StatChangeSounds playerScarabCount;
-        /*4 10*/ StatChangeSounds sidekickRedFood;
-        /*5 14*/ StatChangeSounds unk14;
-        /*6 18*/ StatChangeSounds unk18;
-        /*7 1C*/ StatChangeSounds playerHealthMax;
-        /*8 20*/ StatChangeSounds playerMagicMax;
-        /*9 24*/ StatChangeSounds sidekickMaxFood;
-    };
-    StatChangeSounds items[10];
-} CmdmenuPlayerStatsChangeSounds;
-
-typedef struct {
-/*00*/ s32 min;
-/*04*/ s32 max;
-/*08*/ u32 width;
-/*0C*/ u32 height;
-/*10*/ f32 filledWidth;
-/*14*/ u8 alpha;
-/*18*/ TextureTile fullbarTex[2]; // official name: Fullbartex (default.dol)
-/*30*/ TextureTile emptybarTex[2]; // official name: Emptybartex (default.dol)
-/*48*/ s32 scale;
-/*4C_0*/ u32 fadeout : 1;
-} EnergyBar;
 
 enum CmdMenuTextures {
     CMDMENU_TEX_00_Scroll_BG = 0,
@@ -411,17 +329,17 @@ typedef enum {
 typedef struct {
     f32 unk0;
     s8 unk4;
-} CmdMenuUnusedData;
-/*0x6C*/ static CmdMenuUnusedData _data_6C = {
+} CmdMenuUnusedData6C;
+
+/*0x6C*/ static CmdMenuUnusedData6C _data_6C = {
     1.0f, -1
 };
-
 /*0x74*/ static s8 sJoyButtonMask = 0;
 /*0x78*/ static s16 dInventoryMovesQueued = 0;
 /*0x7C*/ static u8 dInventoryIsScrolling = FALSE;
 /*0x80*/ static u8 sForceStatsDisplay = FALSE;
 /*0x84*/ static s16 dInfoScrollDisabled = FALSE; //Stops the info scroll from appearing (unused)
-/*0x88*/ static s8 _data_88 = 1; //Unknown purpose - value never changes, but `func_70A0` compares its value.
+/*0x88*/ static s8 _data_88 = 1; //Unknown purpose. Foodbag-related? `Foodbag_control` uses `func_70A0` to set this data's value to 0 or 1, but it's otherwise unused.
 
 /*0x8C*/ static s16 dSpellGamebits[] = {
     BIT_Spell_Projectile, 
@@ -524,222 +442,220 @@ typedef struct {
 
 /* Krystal items
  * 0x128*/ static InventoryItem dPage0ItemsKrystal[] = {
-    {BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    TEXTABLE_245, NONE,  0x010, EXIT,                                CMDMENU_SOUND_ITEM}, //Warp Crystal
-    {BIT_CRF_Prison_Key_1,       NONE,                             TEXTABLE_175, NONE,  0x007, EXIT,                                CMDMENU_SOUND_ITEM}, //Prison Key (CloudRunner Fortress)
-    {BIT_CRF_Power_Room_Key,     NONE,                             TEXTABLE_176, NONE,  0x008, EXIT,                                CMDMENU_SOUND_ITEM}, //Power Room Key (CloudRunner Fortress)
-    {BIT_CRF_Red_Power_Crystal,  NONE,                             TEXTABLE_180, NONE,  0x009, EXIT,                                CMDMENU_SOUND_ITEM}, //Red Power Crystal (CloudRunner Fortress)
-    {BIT_CRF_Green_Power_Crystal,NONE,                             TEXTABLE_181, NONE,  0x009, EXIT,                                CMDMENU_SOUND_ITEM}, //Green Power Crystal (CloudRunner Fortress)
-    {BIT_CRF_Blue_Power_Crystal, NONE,                             TEXTABLE_182, NONE,  0x009, EXIT,                                CMDMENU_SOUND_ITEM}, //Blue Power Crystal (CloudRunner Fortress)
-    {BIT_IM_Snowbike_Key,        NONE,                             TEXTABLE_175, NONE,  0x011, EXIT,                                CMDMENU_SOUND_ITEM}, //Snowbike Key (Removed)
-    {BIT_DIM_Mine_Key,           BIT_DIM_Used_Mine_Key,            TEXTABLE_175, NONE,  0x013, EXIT,                                CMDMENU_SOUND_ITEM}, //Mine Key (unused?)
-    {BIT_DIM_Alpine_Roots,       NONE,                             TEXTABLE_1A3, NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}, //Alpine Root (unused?)
-    {BIT_DIM_Gear_1,             BIT_DIM_Used_Gear_1,              TEXTABLE_479, NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 1
-    {BIT_DIM_Gear_2,            BIT_DIM_Used_Gear_2,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 2
-    {BIT_DIM_Gear_3,            BIT_DIM_Used_Gear_3,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 3
-    {BIT_DIM_Gear_4,            BIT_DIM_Used_Gear_4,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 4
-    {BIT_Krystal_Foodbag_S,     BIT_Krystal_Foodbag_M,            TEXTABLE_27A,  NONE,  0x016, CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}, //Small Food Bag
-    {BIT_Krystal_Foodbag_M,     BIT_Krystal_Foodbag_L,            TEXTABLE_244,  NONE,  0x017, CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}, //Medium Food Bag
-    {BIT_Krystal_Foodbag_L,     NONE,                             TEXTABLE_2BF,  NONE,  0x018, CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}, //Large Food Bag
-    {BIT_Krystal_Dino_Bag_S,    BIT_Krystal_Dino_Bag_M,           TEXTABLE_471,  NONE,  0x02f, CMDMENU_PAGE_9_Food_Actions_Kyte,    CMDMENU_SOUND_PAGE}, //Small Grub Bag
-    {BIT_Krystal_Dino_Bag_M,    BIT_Krystal_Dino_Bag_L,           TEXTABLE_560,  NONE,  0x030, CMDMENU_PAGE_9_Food_Actions_Kyte,    CMDMENU_SOUND_PAGE}, //Medium Grub Bag
-    {BIT_Krystal_Dino_Bag_L,    NONE,                             TEXTABLE_560,  NONE,  0x031, CMDMENU_PAGE_9_Food_Actions_Kyte,    CMDMENU_SOUND_PAGE}, //Large Grub Bag
-    {BIT_Gold_Nugget_GP,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //Gold Nugget #1 (Near Golden Plains)
-    {BIT_Gold_Nugget_LFV,       BIT_CC_Rescued_Kyte,              TEXTABLE_257,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //Gold Nugget #2 (Near LightFoot Village)
-    {BIT_CC_Fire_Crystal,       NONE,                             TEXTABLE_4F7,  NONE,  0x102, EXIT,                                CMDMENU_SOUND_ITEM}, //Fire Crystal
-    {BIT_CC_Cell_Door_Key,      BIT_CC_Rescued_Kyte,              TEXTABLE_175,  NONE,  0x01e, EXIT,                                CMDMENU_SOUND_ITEM}, //Cell Door Key (Cape Claw?)
-    {BIT_SpellStone_CRF,        NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //SpellStone - CloudRunner Fortress (Inactive)
-    {BIT_SpellStone_BWC,        NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //SpellStone - BlackWater Canyon (Inactive)
-    {BIT_SpellStone_KP,         NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //SpellStone - Krazoa Palace (Inactive)
-    {BIT_Krazoa_Translator,     NONE,                             TEXTABLE_496,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //Krazoa Translator
-    {BIT_Horn_of_Truth,         NONE,                             TEXTABLE_258,  NONE,  0x01d, EXIT,                                CMDMENU_SOUND_ITEM}, //Horn of Truth
-    {BIT_CRF_Treasure_Chest_Key,NONE,                             TEXTABLE_568,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //Treasure Chest Key (CloudRunner Fortress)
-    {BIT_CloudRunner_Grubs,     NONE,                             TEXTABLE_1A5,  NONE,  0x02a, EXIT,                                CMDMENU_SOUND_ITEM}, //Blue Mushroom (CloudRunner Grubs?)
-    {BIT_Krystal_Fireflies,     NONE,                             TEXTABLE_46D,  NONE,  0x03d, EXIT,                                CMDMENU_SOUND_ITEM}, //Firefly Lantern
-    {BIT_CRF_Prison_Key_2,      NONE,                             TEXTABLE_175,  NONE,  0x007, EXIT,                                CMDMENU_SOUND_ITEM}, //Prison Key (CloudRunner Fortress)
-    {BIT_CC_Krazoa_Tablets,     NONE,                             TEXTABLE_496,  NONE,  0x05b, EXIT,                                CMDMENU_SOUND_ITEM}, //Krazoa Tablets
-    {BIT_Inventory_MoonSeeds,   NONE,                             TEXTABLE_40D,  NONE,  0x05e, EXIT,                                CMDMENU_SOUND_ITEM}, //MoonSeeds
-    {BIT_CC_Engineers_Key,      NONE,                             TEXTABLE_175,  NONE,  0x064, EXIT,                                CMDMENU_SOUND_ITEM}, //Construction Engineer's Key (CloudRunner Fortress)
-    {BIT_Gold_Nugget_CC,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  0x103, EXIT,                                CMDMENU_SOUND_ITEM}, //Gold Nugget #3 (Cape Claw)
-    END
+    {{BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    TEXTABLE_245, NONE,  0x010, EXIT,                                CMDMENU_SOUND_ITEM}}, //Warp Crystal
+    {{BIT_CRF_Prison_Key_1,       NONE,                             TEXTABLE_175, NONE,  0x007, EXIT,                                CMDMENU_SOUND_ITEM}}, //Prison Key (CloudRunner Fortress)
+    {{BIT_CRF_Power_Room_Key,     NONE,                             TEXTABLE_176, NONE,  0x008, EXIT,                                CMDMENU_SOUND_ITEM}}, //Power Room Key (CloudRunner Fortress)
+    {{BIT_CRF_Red_Power_Crystal,  NONE,                             TEXTABLE_180, NONE,  0x009, EXIT,                                CMDMENU_SOUND_ITEM}}, //Red Power Crystal (CloudRunner Fortress)
+    {{BIT_CRF_Green_Power_Crystal,NONE,                             TEXTABLE_181, NONE,  0x009, EXIT,                                CMDMENU_SOUND_ITEM}}, //Green Power Crystal (CloudRunner Fortress)
+    {{BIT_CRF_Blue_Power_Crystal, NONE,                             TEXTABLE_182, NONE,  0x009, EXIT,                                CMDMENU_SOUND_ITEM}}, //Blue Power Crystal (CloudRunner Fortress)
+    {{BIT_IM_Snowbike_Key,        NONE,                             TEXTABLE_175, NONE,  0x011, EXIT,                                CMDMENU_SOUND_ITEM}}, //Snowbike Key (Removed)
+    {{BIT_DIM_Mine_Key,           BIT_DIM_Used_Mine_Key,            TEXTABLE_175, NONE,  0x013, EXIT,                                CMDMENU_SOUND_ITEM}}, //Mine Key (unused?)
+    {{BIT_DIM_Alpine_Roots,       NONE,                             TEXTABLE_1A3, NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}}, //Alpine Root (unused?)
+    {{BIT_DIM_Gear_1,             BIT_DIM_Used_Gear_1,              TEXTABLE_479, NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 1
+    {{BIT_DIM_Gear_2,            BIT_DIM_Used_Gear_2,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 2
+    {{BIT_DIM_Gear_3,            BIT_DIM_Used_Gear_3,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 3
+    {{BIT_DIM_Gear_4,            BIT_DIM_Used_Gear_4,              TEXTABLE_479,  NONE,  0x00b, EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 4
+    {{BIT_Krystal_Foodbag_S,     BIT_Krystal_Foodbag_M,            TEXTABLE_27A,  NONE,  0x016, CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}}, //Small Food Bag
+    {{BIT_Krystal_Foodbag_M,     BIT_Krystal_Foodbag_L,            TEXTABLE_244,  NONE,  0x017, CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}}, //Medium Food Bag
+    {{BIT_Krystal_Foodbag_L,     NONE,                             TEXTABLE_2BF,  NONE,  0x018, CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}}, //Large Food Bag
+    {{BIT_Krystal_Dino_Bag_S,    BIT_Krystal_Dino_Bag_M,           TEXTABLE_471,  NONE,  0x02f, CMDMENU_PAGE_9_Food_Actions_Kyte,    CMDMENU_SOUND_PAGE}}, //Small Grub Bag
+    {{BIT_Krystal_Dino_Bag_M,    BIT_Krystal_Dino_Bag_L,           TEXTABLE_560,  NONE,  0x030, CMDMENU_PAGE_9_Food_Actions_Kyte,    CMDMENU_SOUND_PAGE}}, //Medium Grub Bag
+    {{BIT_Krystal_Dino_Bag_L,    NONE,                             TEXTABLE_560,  NONE,  0x031, CMDMENU_PAGE_9_Food_Actions_Kyte,    CMDMENU_SOUND_PAGE}}, //Large Grub Bag
+    {{BIT_Gold_Nugget_GP,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Gold Nugget #1 (Near Golden Plains)
+    {{BIT_Gold_Nugget_LFV,       BIT_CC_Rescued_Kyte,              TEXTABLE_257,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Gold Nugget #2 (Near LightFoot Village)
+    {{BIT_CC_Fire_Crystal,       NONE,                             TEXTABLE_4F7,  NONE,  0x102, EXIT,                                CMDMENU_SOUND_ITEM}}, //Fire Crystal
+    {{BIT_CC_Cell_Door_Key,      BIT_CC_Rescued_Kyte,              TEXTABLE_175,  NONE,  0x01e, EXIT,                                CMDMENU_SOUND_ITEM}}, //Cell Door Key (Cape Claw?)
+    {{BIT_SpellStone_CRF,        NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //SpellStone - CloudRunner Fortress (Inactive)
+    {{BIT_SpellStone_BWC,        NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //SpellStone - BlackWater Canyon (Inactive)
+    {{BIT_SpellStone_KP,         NONE,                             TEXTABLE_562,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //SpellStone - Krazoa Palace (Inactive)
+    {{BIT_Krazoa_Translator,     NONE,                             TEXTABLE_496,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Krazoa Translator
+    {{BIT_Horn_of_Truth,         NONE,                             TEXTABLE_258,  NONE,  0x01d, EXIT,                                CMDMENU_SOUND_ITEM}}, //Horn of Truth
+    {{BIT_CRF_Treasure_Chest_Key,NONE,                             TEXTABLE_568,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Treasure Chest Key (CloudRunner Fortress)
+    {{BIT_CloudRunner_Grubs,     NONE,                             TEXTABLE_1A5,  NONE,  0x02a, EXIT,                                CMDMENU_SOUND_ITEM}}, //Blue Mushroom (CloudRunner Grubs?)
+    {{BIT_Krystal_Fireflies,     NONE,                             TEXTABLE_46D,  NONE,  0x03d, EXIT,                                CMDMENU_SOUND_ITEM}}, //Firefly Lantern
+    {{BIT_CRF_Prison_Key_2,      NONE,                             TEXTABLE_175,  NONE,  0x007, EXIT,                                CMDMENU_SOUND_ITEM}}, //Prison Key (CloudRunner Fortress)
+    {{BIT_CC_Krazoa_Tablets,     NONE,                             TEXTABLE_496,  NONE,  0x05b, EXIT,                                CMDMENU_SOUND_ITEM}}, //Krazoa Tablets
+    {{BIT_Inventory_MoonSeeds,   NONE,                             TEXTABLE_40D,  NONE,  0x05e, EXIT,                                CMDMENU_SOUND_ITEM}}, //MoonSeeds
+    {{BIT_CC_Engineers_Key,      NONE,                             TEXTABLE_175,  NONE,  0x064, EXIT,                                CMDMENU_SOUND_ITEM}}, //Construction Engineer's Key (CloudRunner Fortress)
+    {{BIT_Gold_Nugget_CC,        BIT_CC_Bribed_GuardClaw,          TEXTABLE_257,  NONE,  0x103, EXIT,                                CMDMENU_SOUND_ITEM}}, //Gold Nugget #3 (Cape Claw)
+    {END}
 };
 
 /* Sabre items
  * 0x2E4*/ static InventoryItem dPage1ItemsSabre[] = {
-    {BIT_SP_Krazoa_Translator,       NONE,                         TEXTABLE_175, NONE,  0x0a,  EXIT,                                CMDMENU_SOUND_ITEM}, //Gate Key (Northern Wastes) (Unused?)
-    {BIT_SW_Alpine_Roots,            NONE,                         TEXTABLE_1A3, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}, //Alpine Root (Geyser area)
-    {BIT_Inventory_Blue_Mushrooms,   NONE,                         TEXTABLE_1A5, NONE,  0x0c,  EXIT,                                CMDMENU_SOUND_ITEM}, //Blue Mushroom
-    {BIT_Inventory_Purple_Mushrooms, NONE,                         TEXTABLE_498, NONE,  0x57,  EXIT,                                CMDMENU_SOUND_ITEM}, //Purple Mushroom
-    {BIT_Inventory_White_Mushrooms,  NONE,                         TEXTABLE_497, NONE,  0x56,  EXIT,                                CMDMENU_SOUND_ITEM}, //White Mushroom
-    {BIT_DIM_Mine_Key,               BIT_DIM_Used_Mine_Key,        TEXTABLE_175, NONE,  0x13,  EXIT,                                CMDMENU_SOUND_ITEM}, //Mine Key
-    {BIT_DIM_Alpine_Roots,           NONE,                         TEXTABLE_1A3, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}, //Alpine Root (DIM)
-    {BIT_DIM_Gear_1,                 BIT_DIM_Used_Gear_1,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 1 
-    {BIT_DIM_Gear_2,                 BIT_DIM_Used_Gear_2,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 2
-    {BIT_DIM_Gear_3,                 BIT_DIM_Used_Gear_3,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 3
-    {BIT_DIM_Gear_4,                BIT_DIM_Used_Gear_4,          TEXTABLE_479,  NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}, //DIM Gear 4
-    {BIT_Belina_Te_Cell_Key,        BIT_Used_Belina_Te_Cell_Key,  TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}, //Belina Te Cell Key (DarkIce Mines)
-    {BIT_Tricky_Cell_Key,           BIT_Used_Tricky_Cell_Key,     TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}, //Tricky Cell Key (DarkIce Mines)
-    {BIT_Sabre_Warp_Crystal,        BIT_Sabre_Used_Warp_Crystal,  TEXTABLE_245,  NONE,  0x10,  EXIT,                                CMDMENU_SOUND_ITEM}, //Warp Crystal
-    {BIT_DIM_Door_Key_1,            BIT_DIM_Used_Door_Key_1,      TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}, //Door Key 1 (DarkIce Mines)
-    {BIT_DIM_Door_Key_2,            BIT_DIM_Used_Door_Key_2,      TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}, //Door Key 2 (DarkIce Mines)
-    {BIT_Sabre_Foodbag_S,           BIT_Sabre_Foodbag_M,          TEXTABLE_27A,  NONE,  0x16,  CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}, //Small Food Bag
-    {BIT_Sabre_Foodbag_M,           BIT_Sabre_Foodbag_L,          TEXTABLE_244,  NONE,  0x17,  CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}, //Medium Food Bag
-    {BIT_Sabre_Foodbag_L,           NONE,                         TEXTABLE_2BF,  NONE,  0x18,  CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}, //Large Food Bag
-    {BIT_Sabre_Dino_Bag_S,          BIT_Sabre_Dino_Bag_M,         TEXTABLE_471,  NONE,  0x32,  CMDMENU_PAGE_10_Food_Actions_Tricky, CMDMENU_SOUND_PAGE}, //Small Dinosaur Food Bag
-    {BIT_Sabre_Dino_Bag_M,          BIT_Sabre_Dino_Bag_L,         TEXTABLE_560,  NONE,  0x33,  CMDMENU_PAGE_10_Food_Actions_Tricky, CMDMENU_SOUND_PAGE}, //Medium Dinosaur Food Bag
-    {BIT_Sabre_Dino_Bag_L,          NONE,                         TEXTABLE_560,  NONE,  0x34,  CMDMENU_PAGE_10_Food_Actions_Tricky, CMDMENU_SOUND_PAGE}, //Large Dinosaur Food Bag
-    {BIT_Inventory_Corrupt_Item,    NONE,                         TEXTABLE_175,  NONE,  0x1d,  EXIT,                                CMDMENU_SOUND_ITEM}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
-    {BIT_Horn_of_Truth,             NONE,                         TEXTABLE_258,  NONE,  0x1d,  EXIT,                                CMDMENU_SOUND_ITEM}, //Horn of Truth
-    {BIT_Sabre_Fireflies,           NONE,                         TEXTABLE_46D,  NONE,  0x3d,  EXIT,                                CMDMENU_SOUND_ITEM}, //Firefly Lantern
-    {BIT_WC_Silver_Tooth,           BIT_WC_Used_Silver_Tooth,     TEXTABLE_52B,  NONE,  0x00,  EXIT,                                CMDMENU_SOUND_ITEM}, //Silver Tooth (Walled City)
-    {BIT_WC_Gold_Tooth,             BIT_WC_Used_Gold_Tooth,       TEXTABLE_52A,  NONE,  0x00,  EXIT,                                CMDMENU_SOUND_ITEM}, //Gold Tooth (Walled City)
-    {BIT_WC_Sun_Stone,              BIT_WC_Used_Sun_Stone,        TEXTABLE_3A8,  NONE,  0x1b,  EXIT,                                CMDMENU_SOUND_ITEM}, //Sun Stone (Walled City)
-    {BIT_WC_Moon_Stone,             BIT_WC_Used_Moon_Stone,       TEXTABLE_3D6,  NONE,  0x1c,  EXIT,                                CMDMENU_SOUND_ITEM}, //Moon Stone (Walled City)
-    {BIT_Inventory_MoonSeeds,       NONE,                         TEXTABLE_40D,  NONE,  0x62,  EXIT,                                CMDMENU_SOUND_ITEM}, //MoonSeeds
-    {BIT_SpellStone_DIM,            BIT_SpellStone_DIM_Activated, TEXTABLE_562,  NONE,  0x60,  EXIT,                                CMDMENU_SOUND_ITEM}, //SpellStone - DarkIce Mines (Inactive)
-    {BIT_SpellStone_DIM_Activated,  NONE,                         TEXTABLE_563,  NONE,  0x61,  EXIT,                                CMDMENU_SOUND_ITEM}, //SpellStone - DarkIce Mines (Activated) 
-    {BIT_SpellStone_WC,             NONE,                         TEXTABLE_180,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
-    {BIT_SpellStone_DR,             NONE,                         TEXTABLE_180,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
-    {BIT_DB_PointBack_Egg,          NONE,                         TEXTABLE_55E,  NONE,  0x5e,  EXIT,                                CMDMENU_SOUND_ITEM}, //PointBack Egg (Diamond Bay)
-    {BIT_DB_Bay_Diamond,            NONE,                         TEXTABLE_55F,  NONE,  0x5f,  EXIT,                                CMDMENU_SOUND_ITEM}, //Bay Diamond
-    END
+    {{BIT_SP_Krazoa_Translator,       NONE,                         TEXTABLE_175, NONE,  0x0a,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Gate Key (Northern Wastes) (Unused?)
+    {{BIT_SW_Alpine_Roots,            NONE,                         TEXTABLE_1A3, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Alpine Root (Geyser area)
+    {{BIT_Inventory_Blue_Mushrooms,   NONE,                         TEXTABLE_1A5, NONE,  0x0c,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Blue Mushroom
+    {{BIT_Inventory_Purple_Mushrooms, NONE,                         TEXTABLE_498, NONE,  0x57,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Purple Mushroom
+    {{BIT_Inventory_White_Mushrooms,  NONE,                         TEXTABLE_497, NONE,  0x56,  EXIT,                                CMDMENU_SOUND_ITEM}}, //White Mushroom
+    {{BIT_DIM_Mine_Key,               BIT_DIM_Used_Mine_Key,        TEXTABLE_175, NONE,  0x13,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Mine Key
+    {{BIT_DIM_Alpine_Roots,           NONE,                         TEXTABLE_1A3, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Alpine Root (DIM)
+    {{BIT_DIM_Gear_1,                 BIT_DIM_Used_Gear_1,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 1 
+    {{BIT_DIM_Gear_2,                 BIT_DIM_Used_Gear_2,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 2
+    {{BIT_DIM_Gear_3,                 BIT_DIM_Used_Gear_3,          TEXTABLE_479, NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 3
+    {{BIT_DIM_Gear_4,                BIT_DIM_Used_Gear_4,          TEXTABLE_479,  NONE,  0x0b,  EXIT,                                CMDMENU_SOUND_ITEM}}, //DIM Gear 4
+    {{BIT_Belina_Te_Cell_Key,        BIT_Used_Belina_Te_Cell_Key,  TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Belina Te Cell Key (DarkIce Mines)
+    {{BIT_Tricky_Cell_Key,           BIT_Used_Tricky_Cell_Key,     TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Tricky Cell Key (DarkIce Mines)
+    {{BIT_Sabre_Warp_Crystal,        BIT_Sabre_Used_Warp_Crystal,  TEXTABLE_245,  NONE,  0x10,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Warp Crystal
+    {{BIT_DIM_Door_Key_1,            BIT_DIM_Used_Door_Key_1,      TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Door Key 1 (DarkIce Mines)
+    {{BIT_DIM_Door_Key_2,            BIT_DIM_Used_Door_Key_2,      TEXTABLE_175,  NONE,  0x19,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Door Key 2 (DarkIce Mines)
+    {{BIT_Sabre_Foodbag_S,           BIT_Sabre_Foodbag_M,          TEXTABLE_27A,  NONE,  0x16,  CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}}, //Small Food Bag
+    {{BIT_Sabre_Foodbag_M,           BIT_Sabre_Foodbag_L,          TEXTABLE_244,  NONE,  0x17,  CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}}, //Medium Food Bag
+    {{BIT_Sabre_Foodbag_L,           NONE,                         TEXTABLE_2BF,  NONE,  0x18,  CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}}, //Large Food Bag
+    {{BIT_Sabre_Dino_Bag_S,          BIT_Sabre_Dino_Bag_M,         TEXTABLE_471,  NONE,  0x32,  CMDMENU_PAGE_10_Food_Actions_Tricky, CMDMENU_SOUND_PAGE}}, //Small Dinosaur Food Bag
+    {{BIT_Sabre_Dino_Bag_M,          BIT_Sabre_Dino_Bag_L,         TEXTABLE_560,  NONE,  0x33,  CMDMENU_PAGE_10_Food_Actions_Tricky, CMDMENU_SOUND_PAGE}}, //Medium Dinosaur Food Bag
+    {{BIT_Sabre_Dino_Bag_L,          NONE,                         TEXTABLE_560,  NONE,  0x34,  CMDMENU_PAGE_10_Food_Actions_Tricky, CMDMENU_SOUND_PAGE}}, //Large Dinosaur Food Bag
+    {{BIT_Inventory_Corrupt_Item,    NONE,                         TEXTABLE_175,  NONE,  0x1d,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
+    {{BIT_Horn_of_Truth,             NONE,                         TEXTABLE_258,  NONE,  0x1d,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Horn of Truth
+    {{BIT_Sabre_Fireflies,           NONE,                         TEXTABLE_46D,  NONE,  0x3d,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Firefly Lantern
+    {{BIT_WC_Silver_Tooth,           BIT_WC_Used_Silver_Tooth,     TEXTABLE_52B,  NONE,  0x00,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Silver Tooth (Walled City)
+    {{BIT_WC_Gold_Tooth,             BIT_WC_Used_Gold_Tooth,       TEXTABLE_52A,  NONE,  0x00,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Gold Tooth (Walled City)
+    {{BIT_WC_Sun_Stone,              BIT_WC_Used_Sun_Stone,        TEXTABLE_3A8,  NONE,  0x1b,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Sun Stone (Walled City)
+    {{BIT_WC_Moon_Stone,             BIT_WC_Used_Moon_Stone,       TEXTABLE_3D6,  NONE,  0x1c,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Moon Stone (Walled City)
+    {{BIT_Inventory_MoonSeeds,       NONE,                         TEXTABLE_40D,  NONE,  0x62,  EXIT,                                CMDMENU_SOUND_ITEM}}, //MoonSeeds
+    {{BIT_SpellStone_DIM,            BIT_SpellStone_DIM_Activated, TEXTABLE_562,  NONE,  0x60,  EXIT,                                CMDMENU_SOUND_ITEM}}, //SpellStone - DarkIce Mines (Inactive)
+    {{BIT_SpellStone_DIM_Activated,  NONE,                         TEXTABLE_563,  NONE,  0x61,  EXIT,                                CMDMENU_SOUND_ITEM}}, //SpellStone - DarkIce Mines (Activated) 
+    {{BIT_SpellStone_WC,             NONE,                         TEXTABLE_180,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {{BIT_SpellStone_DR,             NONE,                         TEXTABLE_180,  NONE,  NONE,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {{BIT_DB_PointBack_Egg,          NONE,                         TEXTABLE_55E,  NONE,  0x5e,  EXIT,                                CMDMENU_SOUND_ITEM}}, //PointBack Egg (Diamond Bay)
+    {{BIT_DB_Bay_Diamond,            NONE,                         TEXTABLE_55F,  NONE,  0x5f,  EXIT,                                CMDMENU_SOUND_ITEM}}, //Bay Diamond
+    {END}
 };
 
 /* Food Bag actions (Krystal)
  * 0x4A0*/ static InventoryItem dPage2FoodActionsKrystal[] = {
-    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}, //Eat food in foodbag
-    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}, //Place food down from foodbag
-    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}, //Give food from foodbag
-    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_2_Food_Actions_Krystal,    CMDMENU_SOUND_PAGE}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_2_Food_Actions_Krystal,    CMDMENU_SOUND_PAGE}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
-    END
+    {{BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}}, //Eat food in foodbag
+    {{BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
+    {{BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}}, //Give food from foodbag
+    {{BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_2_Food_Actions_Krystal,    CMDMENU_SOUND_PAGE}}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {{BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_2_Food_Actions_Krystal,    CMDMENU_SOUND_PAGE}}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {END}
 };
 
 /* Food Bag actions (Sabre)
  * 0x4E8*/ static InventoryItem dPage3FoodActionsSabre[] = {
-    {BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}, //Eat food in foodbag
-    {BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}, //Place food down from foodbag
-    {BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}, //Give food from foodbag
-    {BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_3_Food_Actions_Sabre,      CMDMENU_SOUND_PAGE}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_3_Food_Actions_Sabre,      CMDMENU_SOUND_PAGE}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
-    END
+    {{BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}}, //Eat food in foodbag
+    {{BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
+    {{BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}}, //Give food from foodbag
+    {{BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_3_Food_Actions_Sabre,      CMDMENU_SOUND_PAGE}}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {{BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_3_Food_Actions_Sabre,      CMDMENU_SOUND_PAGE}}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {END}
 };
 
 /* Food Bag items (Krystal)
  * 0x530*/ static InventoryItem dPage4FoodItemsKrystal[] = {
-    {BIT_Green_Apple_Count,  NONE,                 TEXTABLE_26E,  NONE, 0x22, EXIT,                                 CMDMENU_SOUND_ITEM}, //Green apple
-    {BIT_Red_Apple_Count,    NONE,                 TEXTABLE_26F,  NONE, 0x23, EXIT,                                 CMDMENU_SOUND_ITEM}, //Red apple
-    {BIT_Brown_Apple_Count,  NONE,                 TEXTABLE_270,  NONE, 0x24, EXIT,                                 CMDMENU_SOUND_ITEM}, //Brown Apple
-    {BIT_Fish_Count,         NONE,                 TEXTABLE_272,  NONE, 0x25, EXIT,                                 CMDMENU_SOUND_ITEM}, //Fish
-    {BIT_Smoked_Fish_Count,  NONE,                 TEXTABLE_2C6,  NONE, 0x26, EXIT,                                 CMDMENU_SOUND_ITEM}, //Smoked Fish
-    {BIT_Dino_Egg_Count,     NONE,                 TEXTABLE_2C4,  NONE, 0x27, EXIT,                                 CMDMENU_SOUND_ITEM}, //Dino Egg
-    {BIT_Moldy_Meat_Count,   NONE,                 TEXTABLE_2C5,  NONE, 0x28, EXIT,                                 CMDMENU_SOUND_ITEM}, //Moldy Meat
-    {BIT_Green_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x35, EXIT,                                 CMDMENU_SOUND_ITEM}, //Green Bean
-    {BIT_Red_Bean_Count,     NONE,                 TEXTABLE_270,  NONE, 0x36, EXIT,                                 CMDMENU_SOUND_ITEM}, //Red Bean
-    {BIT_Brown_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x37, EXIT,                                 CMDMENU_SOUND_ITEM}, //Brown Bean
-    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, EXIT,                                 CMDMENU_SOUND_ITEM}, //Blue Bean
-    {BIT_Krystal_Foodbag_S, BIT_Krystal_Foodbag_M, TEXTABLE_27A,  NONE, 0x16, CMDMENU_PAGE_2_Food_Actions_Krystal,  CMDMENU_SOUND_PAGE}, //Small Food Bag
-    {BIT_Krystal_Foodbag_M, BIT_Krystal_Foodbag_L, TEXTABLE_244,  NONE, 0x17, CMDMENU_PAGE_2_Food_Actions_Krystal,  CMDMENU_SOUND_PAGE}, //Medium Food Bag
-    {BIT_Krystal_Foodbag_L, NONE,                  TEXTABLE_2BF,  NONE, 0x18, CMDMENU_PAGE_2_Food_Actions_Krystal,  CMDMENU_SOUND_PAGE}, //Large Food Bag
-    END
+    {{BIT_Green_Apple_Count,  NONE,                 TEXTABLE_26E,  NONE, GAMETEXT_UI_22_Green_Apple,     EXIT,                                 CMDMENU_SOUND_ITEM}}, //Green apple
+    {{BIT_Red_Apple_Count,    NONE,                 TEXTABLE_26F,  NONE, GAMETEXT_UI_23_Red_Apple,       EXIT,                                 CMDMENU_SOUND_ITEM}}, //Red apple
+    {{BIT_Brown_Apple_Count,  NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_24_Brown_Apple,     EXIT,                                 CMDMENU_SOUND_ITEM}}, //Brown Apple
+    {{BIT_Fish_Count,         NONE,                 TEXTABLE_272,  NONE, GAMETEXT_UI_25_Fish,            EXIT,                                 CMDMENU_SOUND_ITEM}}, //Fish
+    {{BIT_Smoked_Fish_Count,  NONE,                 TEXTABLE_2C6,  NONE, GAMETEXT_UI_26_Smoked_Fish,     EXIT,                                 CMDMENU_SOUND_ITEM}}, //Smoked Fish
+    {{BIT_Dino_Egg_Count,     NONE,                 TEXTABLE_2C4,  NONE, GAMETEXT_UI_27_Dino_Egg,        EXIT,                                 CMDMENU_SOUND_ITEM}}, //Dino Egg
+    {{BIT_Moldy_Meat_Count,   NONE,                 TEXTABLE_2C5,  NONE, GAMETEXT_UI_28_Moldy_Meat,      EXIT,                                 CMDMENU_SOUND_ITEM}}, //Moldy Meat
+    {{BIT_Green_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_35_Green_Bean,      EXIT,                                 CMDMENU_SOUND_ITEM}}, //Green Bean
+    {{BIT_Red_Bean_Count,     NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_36_Red_Bean,        EXIT,                                 CMDMENU_SOUND_ITEM}}, //Red Bean
+    {{BIT_Brown_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_37_Brown_Bean,      EXIT,                                 CMDMENU_SOUND_ITEM}}, //Brown Bean
+    {{BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, GAMETEXT_UI_38_Blue_Bean,       EXIT,                                 CMDMENU_SOUND_ITEM}}, //Blue Bean
+    {{BIT_Krystal_Foodbag_S, BIT_Krystal_Foodbag_M, TEXTABLE_27A,  NONE, GAMETEXT_UI_16_Small_Food_Bag,  CMDMENU_PAGE_2_Food_Actions_Krystal,  CMDMENU_SOUND_PAGE}}, //Small Food Bag
+    {{BIT_Krystal_Foodbag_M, BIT_Krystal_Foodbag_L, TEXTABLE_244,  NONE, GAMETEXT_UI_17_Medium_Food_Bag, CMDMENU_PAGE_2_Food_Actions_Krystal,  CMDMENU_SOUND_PAGE}}, //Medium Food Bag
+    {{BIT_Krystal_Foodbag_L, NONE,                  TEXTABLE_2BF,  NONE, GAMETEXT_UI_18_Large_Food_Bag,  CMDMENU_PAGE_2_Food_Actions_Krystal,  CMDMENU_SOUND_PAGE}}, //Large Food Bag
+    {END}
 };
 
 /* Food Bag items (Sabre)
  * 0x5E4*/ static InventoryItem dPage5FoodItemsSabre[] = {
-    {BIT_Green_Apple_Count,  NONE,                 TEXTABLE_26E,  NONE, 0x22, EXIT,                                 CMDMENU_SOUND_ITEM}, //Green apple
-    {BIT_Red_Apple_Count,    NONE,                 TEXTABLE_26F,  NONE, 0x23, EXIT,                                 CMDMENU_SOUND_ITEM}, //Red apple
-    {BIT_Brown_Apple_Count,  NONE,                 TEXTABLE_270,  NONE, 0x24, EXIT,                                 CMDMENU_SOUND_ITEM}, //Brown Apple
-    {BIT_Fish_Count,         NONE,                 TEXTABLE_272,  NONE, 0x25, EXIT,                                 CMDMENU_SOUND_ITEM}, //Fish
-    {BIT_Smoked_Fish_Count,  NONE,                 TEXTABLE_2C6,  NONE, 0x26, EXIT,                                 CMDMENU_SOUND_ITEM}, //Smoked Fish
-    {BIT_Dino_Egg_Count,     NONE,                 TEXTABLE_2C4,  NONE, 0x27, EXIT,                                 CMDMENU_SOUND_ITEM}, //Dino Egg
-    {BIT_Moldy_Meat_Count,   NONE,                 TEXTABLE_2C5,  NONE, 0x28, EXIT,                                 CMDMENU_SOUND_ITEM}, //Moldy Meat
-    {BIT_Green_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x35, EXIT,                                 CMDMENU_SOUND_ITEM}, //Green Bean 
-    {BIT_Red_Bean_Count,     NONE,                 TEXTABLE_270,  NONE, 0x36, EXIT,                                 CMDMENU_SOUND_ITEM}, //Red Bean
-    {BIT_Brown_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, 0x37, EXIT,                                 CMDMENU_SOUND_ITEM}, //Brown Bean
-    {BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, 0x38, EXIT,                                 CMDMENU_SOUND_ITEM}, //Blue Bean
-    {BIT_Sabre_Foodbag_S,   BIT_Sabre_Foodbag_M,   TEXTABLE_27A,  NONE, 0x16, CMDMENU_PAGE_3_Food_Actions_Sabre,    CMDMENU_SOUND_PAGE}, //Small Food Bag
-    {BIT_Sabre_Foodbag_M,   BIT_Sabre_Foodbag_L,   TEXTABLE_244,  NONE, 0x17, CMDMENU_PAGE_3_Food_Actions_Sabre,    CMDMENU_SOUND_PAGE}, //Medium Food Bag
-    {BIT_Sabre_Foodbag_L,   NONE,                  TEXTABLE_2BF,  NONE, 0x18, CMDMENU_PAGE_3_Food_Actions_Sabre,    CMDMENU_SOUND_PAGE}, //Large Food Bag
-    END
+    {{BIT_Green_Apple_Count,  NONE,                 TEXTABLE_26E,  NONE, GAMETEXT_UI_22_Green_Apple,     EXIT,                                 CMDMENU_SOUND_ITEM}}, //Green apple
+    {{BIT_Red_Apple_Count,    NONE,                 TEXTABLE_26F,  NONE, GAMETEXT_UI_23_Red_Apple,       EXIT,                                 CMDMENU_SOUND_ITEM}}, //Red apple
+    {{BIT_Brown_Apple_Count,  NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_24_Brown_Apple,     EXIT,                                 CMDMENU_SOUND_ITEM}}, //Brown Apple
+    {{BIT_Fish_Count,         NONE,                 TEXTABLE_272,  NONE, GAMETEXT_UI_25_Fish,            EXIT,                                 CMDMENU_SOUND_ITEM}}, //Fish
+    {{BIT_Smoked_Fish_Count,  NONE,                 TEXTABLE_2C6,  NONE, GAMETEXT_UI_26_Smoked_Fish,     EXIT,                                 CMDMENU_SOUND_ITEM}}, //Smoked Fish
+    {{BIT_Dino_Egg_Count,     NONE,                 TEXTABLE_2C4,  NONE, GAMETEXT_UI_27_Dino_Egg,        EXIT,                                 CMDMENU_SOUND_ITEM}}, //Dino Egg
+    {{BIT_Moldy_Meat_Count,   NONE,                 TEXTABLE_2C5,  NONE, GAMETEXT_UI_28_Moldy_Meat,      EXIT,                                 CMDMENU_SOUND_ITEM}}, //Moldy Meat
+    {{BIT_Green_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_35_Green_Bean,      EXIT,                                 CMDMENU_SOUND_ITEM}}, //Green Bean 
+    {{BIT_Red_Bean_Count,     NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_36_Red_Bean,        EXIT,                                 CMDMENU_SOUND_ITEM}}, //Red Bean
+    {{BIT_Brown_Bean_Count,   NONE,                 TEXTABLE_270,  NONE, GAMETEXT_UI_37_Brown_Bean,      EXIT,                                 CMDMENU_SOUND_ITEM}}, //Brown Bean
+    {{BIT_Blue_Bean_Count,   NONE,                  TEXTABLE_270,  NONE, GAMETEXT_UI_38_Blue_Bean,       EXIT,                                 CMDMENU_SOUND_ITEM}}, //Blue Bean
+    {{BIT_Sabre_Foodbag_S,   BIT_Sabre_Foodbag_M,   TEXTABLE_27A,  NONE, GAMETEXT_UI_16_Small_Food_Bag,  CMDMENU_PAGE_3_Food_Actions_Sabre,    CMDMENU_SOUND_PAGE}}, //Small Food Bag
+    {{BIT_Sabre_Foodbag_M,   BIT_Sabre_Foodbag_L,   TEXTABLE_244,  NONE, GAMETEXT_UI_17_Medium_Food_Bag, CMDMENU_PAGE_3_Food_Actions_Sabre,    CMDMENU_SOUND_PAGE}}, //Medium Food Bag
+    {{BIT_Sabre_Foodbag_L,   NONE,                  TEXTABLE_2BF,  NONE, GAMETEXT_UI_18_Large_Food_Bag,  CMDMENU_PAGE_3_Food_Actions_Sabre,    CMDMENU_SOUND_PAGE}}, //Large Food Bag
+    {END}
 };
 
 /* Magic Spells
  * 0x698*/ static InventoryItem dPage6MagicSpells[] = {
-    {BIT_Spell_Projectile, NONE,    TEXTABLE_183, NONE, 0x0d, EXIT, CMDMENU_SOUND_NONE}, //Projectile Spell
-    {BIT_Spell_Ice_Blast,  NONE,    TEXTABLE_468, NONE, 0x3c, EXIT, CMDMENU_SOUND_NONE}, //Ice Blast Spell
-    {BIT_Spell_Grenade,    NONE,    TEXTABLE_4F8, NONE, 0x0f, EXIT, CMDMENU_SOUND_NONE}, //Grenade Spell (Incorrectly labelled as Randorn)
-    {BIT_Spell_Illusion,   NONE,    TEXTABLE_177, NONE, 0x0e, EXIT, CMDMENU_SOUND_NONE}, //Illusion Spell
-    {BIT_Spell_Forcefield, NONE,    TEXTABLE_265, NONE, 0x14, EXIT, CMDMENU_SOUND_NONE}, //ForceField Spell
-    {BIT_Spell_Glitched_1, NONE,    TEXTABLE_183, NONE, 0x0d, EXIT, CMDMENU_SOUND_NONE}, //Glitched Spell
-    {BIT_Spell_Glitched_2, BIT_348, TEXTABLE_529, NONE, 0x0d, EXIT, CMDMENU_SOUND_NONE}, //Glitched Spell (Maybe "Quake", mentioned elsewhere?)
-    {BIT_Spell_Portal,     NONE,    TEXTABLE_466, NONE, 0x3b, EXIT, CMDMENU_SOUND_NONE}, //Portal Spell
-    {BIT_Spell_Mind_Read,  NONE,    TEXTABLE_470, NONE, 0x3e, EXIT, CMDMENU_SOUND_NONE}, //Mind Read
+    {{BIT_Spell_Projectile, NONE,    TEXTABLE_183, NONE, GAMETEXT_UI_D_Projectile_Spell, EXIT, CMDMENU_SOUND_NONE}}, //Projectile Spell
+    {{BIT_Spell_Ice_Blast,  NONE,    TEXTABLE_468, NONE, GAMETEXT_UI_3C_Ice_Blast_Spell, EXIT, CMDMENU_SOUND_NONE}}, //Ice Blast Spell
+    {{BIT_Spell_Grenade,    NONE,    TEXTABLE_4F8, NONE, GAMETEXT_UI_F_Wizard_Randorn,   EXIT, CMDMENU_SOUND_NONE}}, //Grenade Spell (Incorrectly labelled as Randorn)
+    {{BIT_Spell_Illusion,   NONE,    TEXTABLE_177, NONE, GAMETEXT_UI_E_Illusion_Spell,   EXIT, CMDMENU_SOUND_NONE}}, //Illusion Spell
+    {{BIT_Spell_Forcefield, NONE,    TEXTABLE_265, NONE, GAMETEXT_UI_14_Shield,          EXIT, CMDMENU_SOUND_NONE}}, //ForceField Spell
+    {{BIT_Spell_Glitched_1, NONE,    TEXTABLE_183, NONE, GAMETEXT_UI_D_Projectile_Spell, EXIT, CMDMENU_SOUND_NONE}}, //Glitched Spell
+    {{BIT_Spell_Glitched_2, BIT_348, TEXTABLE_529, NONE, GAMETEXT_UI_D_Projectile_Spell, EXIT, CMDMENU_SOUND_NONE}}, //Glitched Spell (Maybe "Quake", mentioned elsewhere?)
+    {{BIT_Spell_Portal,     NONE,    TEXTABLE_466, NONE, GAMETEXT_UI_3B_Portal_Spell,    EXIT, CMDMENU_SOUND_NONE}}, //Portal Spell
+    {{BIT_Spell_Mind_Read,  NONE,    TEXTABLE_470, NONE, GAMETEXT_UI_3E_Mindread_Spell,  EXIT, CMDMENU_SOUND_NONE}}, //Mind Read
+    {END}
+};
+
+/* Sidekick Commands (Kyte) (NOTE: uses a slightly different struct)
+ * 0x710*/ static InventoryCommand dPage7CommandsKyte[] = {
+    {Sidekick_Command_FLAG_01_Heel,      Sidekick_Command_INDEX_0_Heel,     TEXTABLE_1CD, TEXTABLE_1CD, GAMETEXT_UI_0_Heel,      0, 0}, //Heel
+    {Sidekick_Command_FLAG_20_Play,      Sidekick_Command_INDEX_5_Play,     TEXTABLE_1D1, TEXTABLE_1D1, GAMETEXT_UI_6_Play,      0, 0}, //Play
+    {Sidekick_Command_FLAG_02_Find,      Sidekick_Command_INDEX_1_Find,     TEXTABLE_1CE, TEXTABLE_1CE, GAMETEXT_UI_1_Find,      0, 0}, //Find
+    {Sidekick_Command_FLAG_10_Flame,     Sidekick_Command_INDEX_4_Flame,    TEXTABLE_1CF, TEXTABLE_1CF, GAMETEXT_UI_2_Flame,     0, 0}, //Flame
+    {Sidekick_Command_FLAG_04_Distract,  Sidekick_Command_INDEX_2_Distract, TEXTABLE_1D0, TEXTABLE_1D0, GAMETEXT_UI_3_Distract,  0, 0}, //Distract
+    {Sidekick_Command_FLAG_08_Guard,     Sidekick_Command_INDEX_3_Guard,    TEXTABLE_1D2, TEXTABLE_1D2, GAMETEXT_UI_4_Guard,     0, 0}, //Guard
     END
 };
 
-//TODO: should sidekick pages use an InventoryItem struct variant with slightly different member names?
-
-/* Sidekick Commands (Kyte)
- * 0x710*/ static InventoryItem dPage7CommandsKyte[] = {
-    {Sidekick_COMMAND_01_Heel,      0, TEXTABLE_1CD, TEXTABLE_1CD, 0, 0, 0}, //Heel
-    {Sidekick_COMMAND_20_Play,      5, TEXTABLE_1D1, TEXTABLE_1D1, 6, 0, 0}, //Play
-    {Sidekick_COMMAND_02_Find,      1, TEXTABLE_1CE, TEXTABLE_1CE, 1, 0, 0}, //Find
-    {Sidekick_COMMAND_10_Flame,     4, TEXTABLE_1CF, TEXTABLE_1CF, 2, 0, 0}, //Flame
-    {Sidekick_COMMAND_04_Distract,  2, TEXTABLE_1D0, TEXTABLE_1D0, 3, 0, 0}, //Distract
-    {Sidekick_COMMAND_08_Guard,     3, TEXTABLE_1D2, TEXTABLE_1D2, 4, 0, 0}, //Guard
-    END
-};
-
-/* Sidekick Commands (Tricky)
- * 0x764*/ static InventoryItem sPage8CommandsTricky[] = {
-    {Sidekick_COMMAND_01_Heel,      0, TEXTABLE_1CD, TEXTABLE_1CD, 0, 0, 0}, //Heel
-    {Sidekick_COMMAND_20_Play,      5, TEXTABLE_1D1, TEXTABLE_1D1, 6, 0, 0}, //Play
-    {Sidekick_COMMAND_02_Find,      1, TEXTABLE_1CE, TEXTABLE_1CE, 1, 0, 0}, //Find
-    {Sidekick_COMMAND_10_Flame,     4, TEXTABLE_1CF, TEXTABLE_1CF, 2, 0, 0}, //Flame
-    {Sidekick_COMMAND_04_Distract,  2, TEXTABLE_1D0, TEXTABLE_1D0, 3, 0, 0}, //Distract
-    {Sidekick_COMMAND_08_Guard,     3, TEXTABLE_1D2, TEXTABLE_1D2, 4, 0, 0}, //Guard
+/* Sidekick Commands (Tricky) (NOTE: uses a slightly different struct)
+ * 0x764*/ static InventoryCommand sPage8CommandsTricky[] = {
+    {Sidekick_Command_FLAG_01_Heel,      Sidekick_Command_INDEX_0_Heel,     TEXTABLE_1CD, TEXTABLE_1CD, GAMETEXT_UI_0_Heel,      0, 0}, //Heel
+    {Sidekick_Command_FLAG_20_Play,      Sidekick_Command_INDEX_5_Play,     TEXTABLE_1D1, TEXTABLE_1D1, GAMETEXT_UI_6_Play,      0, 0}, //Play
+    {Sidekick_Command_FLAG_02_Find,      Sidekick_Command_INDEX_1_Find,     TEXTABLE_1CE, TEXTABLE_1CE, GAMETEXT_UI_1_Find,      0, 0}, //Find
+    {Sidekick_Command_FLAG_10_Flame,     Sidekick_Command_INDEX_4_Flame,    TEXTABLE_1CF, TEXTABLE_1CF, GAMETEXT_UI_2_Flame,     0, 0}, //Flame
+    {Sidekick_Command_FLAG_04_Distract,  Sidekick_Command_INDEX_2_Distract, TEXTABLE_1D0, TEXTABLE_1D0, GAMETEXT_UI_3_Distract,  0, 0}, //Distract
+    {Sidekick_Command_FLAG_08_Guard,     Sidekick_Command_INDEX_3_Guard,    TEXTABLE_1D2, TEXTABLE_1D2, GAMETEXT_UI_4_Guard,     0, 0}, //Guard
     END
 };
 
 /* Dinosaur Food Bag Actions (Krystal)
  * 0x7B8*/ static InventoryItem dPage9FoodActionsKyte[] = {
-    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_11_Food_Kyte, CMDMENU_SOUND_PAGE}, //Place food down from foodbag
-    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, CMDMENU_PAGE_11_Food_Kyte, CMDMENU_SOUND_PAGE}, //Give food from foodbag
-    END
+    {{BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, GAMETEXT_UI_20_Place, CMDMENU_PAGE_11_Food_Kyte,   CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
+    {{BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, GAMETEXT_UI_21_Give,  CMDMENU_PAGE_11_Food_Kyte,   CMDMENU_SOUND_PAGE}}, //Give food from foodbag
+    {END}
 };
 
 /* Dinosaur Food Bag Actions (Sabre)
  * 0x7DC*/ static InventoryItem dPage10FoodActionsTricky[] = {
-    {BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_12_Food_Tricky, CMDMENU_SOUND_PAGE}, //Place food down from foodbag
-    {BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, 0x21, CMDMENU_PAGE_12_Food_Tricky, CMDMENU_SOUND_PAGE}, //Give food from foodbag
-    END
+    {{BIT_Dino_Foodbag_Place, NONE, TEXTABLE_2C8, NONE, GAMETEXT_UI_20_Place, CMDMENU_PAGE_12_Food_Tricky, CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
+    {{BIT_Dino_Foodbag_Give,  NONE, TEXTABLE_561, NONE, GAMETEXT_UI_21_Give,  CMDMENU_PAGE_12_Food_Tricky, CMDMENU_SOUND_PAGE}}, //Give food from foodbag
+    {END}
 };
 
 /* Dinosaur Food Bag Items (Kyte)
  * 0x800*/ static InventoryItem dPage11FoodItemsKyte[] = {
-    {BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, TEXTABLE_27A, NONE, 0x2f, CMDMENU_PAGE_9_Food_Actions_Kyte,       CMDMENU_SOUND_PAGE}, //Small Mushroom Bag
-    {BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, TEXTABLE_244, NONE, 0x30, CMDMENU_PAGE_9_Food_Actions_Kyte,       CMDMENU_SOUND_PAGE}, //Medium Mushroom Bag
-    {BIT_Krystal_Dino_Bag_L,      NONE,                   TEXTABLE_2BF, NONE, 0x31, CMDMENU_PAGE_9_Food_Actions_Kyte,       CMDMENU_SOUND_PAGE}, //Large Mushroom Bag
-    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, EXIT,                                   CMDMENU_SOUND_ITEM}, //Blue Mushroom
-    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, EXIT,                                   CMDMENU_SOUND_ITEM}, //Red Mushroom
-    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, EXIT,                                   CMDMENU_SOUND_ITEM}, //Old Mushroom
-    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, EXIT,                                   CMDMENU_SOUND_ITEM}, //Blue Grub
-    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, EXIT,                                   CMDMENU_SOUND_ITEM}, //Red Grub
-    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, EXIT,                                   CMDMENU_SOUND_ITEM}, //Old Grub
-    END
+    {{BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, TEXTABLE_27A, NONE, GAMETEXT_UI_2F_Small_Grub_Bag,       CMDMENU_PAGE_9_Food_Actions_Kyte,       CMDMENU_SOUND_PAGE}}, //Small Mushroom Bag
+    {{BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, TEXTABLE_244, NONE, GAMETEXT_UI_30_Medium_Grub_Bag,      CMDMENU_PAGE_9_Food_Actions_Kyte,       CMDMENU_SOUND_PAGE}}, //Medium Mushroom Bag
+    {{BIT_Krystal_Dino_Bag_L,      NONE,                   TEXTABLE_2BF, NONE, GAMETEXT_UI_31_Large_Grub_Bag,       CMDMENU_PAGE_9_Food_Actions_Kyte,       CMDMENU_SOUND_PAGE}}, //Large Mushroom Bag
+    {{BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_C_Blue_Mushroom,         EXIT,                                   CMDMENU_SOUND_ITEM}}, //Blue Mushroom
+    {{BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2D_Red_Mushroom,         EXIT,                                   CMDMENU_SOUND_ITEM}}, //Red Mushroom
+    {{BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2E_Old_Mushroom,         EXIT,                                   CMDMENU_SOUND_ITEM}}, //Old Mushroom
+    {{BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2A_Blue_Grub,            EXIT,                                   CMDMENU_SOUND_ITEM}}, //Blue Grub
+    {{BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2B_Red_Grub,             EXIT,                                   CMDMENU_SOUND_ITEM}}, //Red Grub
+    {{BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2C_Old_Grub,             EXIT,                                   CMDMENU_SOUND_ITEM}}, //Old Grub
+    {END}
 };
 
 /* Dinosaur Food Bag Items (Tricky)
  * 0x878*/ static InventoryItem dPage12FoodItemsTricky[] = {
-    {BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   TEXTABLE_27A, NONE, 0x32, CMDMENU_PAGE_10_Food_Actions_Tricky,    CMDMENU_SOUND_PAGE}, //Small Mushroom Bag
-    {BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   TEXTABLE_244, NONE, 0x33, CMDMENU_PAGE_10_Food_Actions_Tricky,    CMDMENU_SOUND_PAGE}, //Medium Mushroom Bag
-    {BIT_Sabre_Dino_Bag_L,        NONE,                   TEXTABLE_2BF, NONE, 0x34, CMDMENU_PAGE_10_Food_Actions_Tricky,    CMDMENU_SOUND_PAGE}, //Large Mushroom Bag
-    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, 0x0c, EXIT,                                   CMDMENU_SOUND_ITEM}, //Blue Mushroom
-    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2d, EXIT,                                   CMDMENU_SOUND_ITEM}, //Red Mushroom
-    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, 0x2e, EXIT,                                   CMDMENU_SOUND_ITEM}, //Old Mushroom
-    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, 0x2a, EXIT,                                   CMDMENU_SOUND_ITEM}, //Blue Grub
-    {BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2b, EXIT,                                   CMDMENU_SOUND_ITEM}, //Red Grub
-    {BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, 0x2c, EXIT,                                   CMDMENU_SOUND_ITEM}, //Old Grub
-    END
+    {{BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   TEXTABLE_27A, NONE, GAMETEXT_UI_32_Small_Mushroom_Bag,   CMDMENU_PAGE_10_Food_Actions_Tricky,    CMDMENU_SOUND_PAGE}}, //Small Mushroom Bag
+    {{BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   TEXTABLE_244, NONE, GAMETEXT_UI_33_Medium_Mushroom_Bag,  CMDMENU_PAGE_10_Food_Actions_Tricky,    CMDMENU_SOUND_PAGE}}, //Medium Mushroom Bag
+    {{BIT_Sabre_Dino_Bag_L,        NONE,                   TEXTABLE_2BF, NONE, GAMETEXT_UI_34_Large_Mushroom_Bag,   CMDMENU_PAGE_10_Food_Actions_Tricky,    CMDMENU_SOUND_PAGE}}, //Large Mushroom Bag
+    {{BIT_Dino_Bag_Blue_Mushrooms, NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_C_Blue_Mushroom,         EXIT,                                   CMDMENU_SOUND_ITEM}}, //Blue Mushroom
+    {{BIT_Dino_Bag_Red_Mushrooms,  NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2D_Red_Mushroom,         EXIT,                                   CMDMENU_SOUND_ITEM}}, //Red Mushroom
+    {{BIT_Dino_Bag_Old_Mushrooms,  NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2E_Old_Mushroom,         EXIT,                                   CMDMENU_SOUND_ITEM}}, //Old Mushroom
+    {{BIT_Dino_Bag_Blue_Grubs,     NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2A_Blue_Grub,            EXIT,                                   CMDMENU_SOUND_ITEM}}, //Blue Grub
+    {{BIT_Dino_Bag_Red_Grubs,      NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2B_Red_Grub,             EXIT,                                   CMDMENU_SOUND_ITEM}}, //Red Grub
+    {{BIT_Dino_Bag_Old_Grubs,      NONE,                   TEXTABLE_270, NONE, GAMETEXT_UI_2C_Old_Grub,             EXIT,                                   CMDMENU_SOUND_ITEM}}, //Old Grub
+    {END}
 };
 
 /*0x8F0*/ static CmdmenuPage dCmdmenuPages[] = {
@@ -836,7 +752,7 @@ typedef struct {
 /*0x8C*/ static f32 sOpacityR; //Opacity of icons on right side of screen (C-buttons, menu page image, etc.)
 /*0x90*/ static EnergyBar* sEnergyBar; 
 /*0x98*/ static Texture* sMenuItemTextures[MAX_LOADED_ITEMS]; //Inventory icon texture pointers for the current menu page's loaded items
-/*0x198*/ static Texture* sMenuItemTexturesSidekick[MAX_LOADED_ITEMS]; //Sidekick command inventory icon textures for the current menu page's loaded items
+/*0x198*/ static Texture* sMenuItemTexturesSidekick[MAX_LOADED_ITEMS]; //Sidekick command inventory icon textures for the current menu page's loaded items (unused aside from loading the textures)
 /*0x298*/ static s16 sMenuItemTextureIDs[MAX_LOADED_ITEMS]; //TextableIDs for the current menu page's loaded items
 /*0x318*/ static s32 sMenuItemGamebits[MAX_LOADED_ITEMS]; //GamebitIDs for the current menu page's loaded items
 /*0x418*/ static s16 sMenuItemTextIDs[MAX_LOADED_ITEMS]; //Gametext lineIDs for the current menu page's loaded items
@@ -865,14 +781,14 @@ typedef struct {
 /*0xC30*/ static GameTextChunk* sTutorialBoxGametext;
 /*0xC34*/ static Texture* sCrosshairTex;
 /*0xC38*/ static s16 sUsedItemGamebitID;
-/*0xC3A*/ static s16 sSelectedItemGamebit;
+/*0xC3A*/ static s16 sSubmenuGamebit; //The gamebitID associated with the item that opened a menu subpage (e.g. a foodbag's gamebit)
 /*0xC3C*/ static s8 sUsedItemSound; //Set to 0 when item selection successful (item given to character, etc.)
 /*0xC3D*/ static s8 sUsedItemPageID;
 /*0xC3E*/ static s8 sInventoryPageID;
 /*0xC40*/ static s16 sMenuSelectedItemIdx; //Display index of the item currently selected in the menu page 
 /*0xC44*/ static s32 sDisplayedItemCount;  //The number of items displayed in the current page (while drawing, includes the number of empty tiles)
 /*0xC48*/ static s8 sShouldOverrideJoypadButtons;
-/*0xC4C*/ static s32 _bss_C4C;
+/*0xC4C*/ static s32 dInventoryFrameCounter; //Counts how many times `cmdmenu_update2` has run (clamped from 0-2, and resets to 0 upon closing the inventory)
 /*0xC50*/ static s32 sJoyPressedButtons; // joypad button bitfield
 /*0xC54*/ static s32 sJoyPressedButtonsOverride; //controllerButtons
 /*0xC58*/ static s32 sJoyHeldButtons; // joypad button bitfield
@@ -886,7 +802,7 @@ typedef struct {
 
 static void cmdmenu_tick_tutorial_textbox(void);
 static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_tick_inventory(void);
+static void cmdmenu_tick_inventory_page(void);
 static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu);
 static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekickMenu);
@@ -978,11 +894,17 @@ void cmdmenu_dtor(void* dll) {
 }
 
 // offset: 0x2B8 | func: 0 | export: 15
+/**
+  * Can disable/reenable the player's inventory control.
+  */
 void cmdmenu_disable_buttons(u16 mask) {
     sJoyButtonMask = mask;
 }
 
 // offset: 0x2E0 | func: 1 | export: 19
+/**
+  * A nonzero argument causes the player's stats HUD to appear automatically. An argument of 0 will remove this effect.
+  */
 void cmdmenu_toggle_forced_stats_display(u8 force) {
     sForceStatsDisplay = force;
 }
@@ -991,8 +913,8 @@ void cmdmenu_toggle_forced_stats_display(u8 force) {
 /**
   * Main tick function for the cmdmenu (called by `menu_gameplay.c`)
   */
-s32 cmdmenu_control(void) {
-    cmdmenu_tick_inventory();
+s32 cmdmenu_update1(void) {
+    cmdmenu_tick_inventory_page();
     cmdmenu_tick_tutorial_textbox();
     return 0;
 }
@@ -1000,15 +922,15 @@ s32 cmdmenu_control(void) {
 // offset: 0x35C | func: 3 | export: 1
 /**
   * Handles opening/closing player interactions for the inventory and info scroll:
-  * - Inventory: opening/closing inventory pages with the C buttons (or when entering sub-pages like the foodbag).
-  * - Info scroll: opening when holding R (or automatically), and sets the displayed textID.
+  * - Inventory: opening/closing inventory pages with the C buttons (or when entering sub-pages like the foodbag)
+  * - Info scroll: opening when holding R (or automatically), and sets the displayed textID
   *
   * Also calls the following functions:
-  * - Calls `cmdmenu_update_stats` (to track changes in player stats)
+  * - Calls `cmdmenu_update_stats` (to track changes in player stats, and show C-buttons/health when holding R)
   * - Calls `cmdmenu_inventory_animate` (inventory fading/expanding/collapsing)
   * - Calls `cmdmenu_info_scroll_animate` (info scroll fading/expanding/collapsing)
   */
-void cmdmenu_func_35C(void) {
+void cmdmenu_update2(void) {
     Object* player;
     Object* sidekick;
     s16 pad1;
@@ -1073,7 +995,7 @@ void cmdmenu_func_35C(void) {
         }
     } else if (sUsedItemPageID != EXIT) {
         //No C-buttons were pressed, but the selected item opened an inventory page (e.g. foodbags)
-        sSelectedItemGamebit = sUsedItemGamebitID;
+        sSubmenuGamebit = sUsedItemGamebitID;
         sInventoryPageID = sUsedItemPageID;
 
         //Sidekick Commands -> Sidekick Foodbag
@@ -1130,9 +1052,10 @@ void cmdmenu_func_35C(void) {
     cmdmenu_inventory_animate();
     cmdmenu_info_scroll_animate();
 
-    _bss_C4C++;
-    if (_bss_C4C > 2) {
-        _bss_C4C = 2;
+    //Count how many times this function has run (clamped from 0-2)
+    dInventoryFrameCounter++;
+    if (dInventoryFrameCounter > 2) {
+        dInventoryFrameCounter = 2;
     }
 
     /* If the inventory is visible, use the selected item's gametext,
@@ -1272,13 +1195,22 @@ s32 cmdmenu_was_used_item_in_gamebit_array(s32* gamebitArray, s32 arraySize) {
 }
 
 // offset: 0xF24 | func: 8 | export: 9
+/**
+  * Returns the categoryID of the current inventory menu page (see `CmdMenuPageCategories`)
+  */
 s8 cmdmenu_get_page_category(void) {
     return dPageCategory;
 }
 
 // offset: 0xF40 | func: 9 | export: 10
-s16 cmdmenu_func_F40(void) {
-    return sSelectedItemGamebit;
+/**
+  * Returns the gamebitID associated with the current menu subpage.
+  * (e.g. if Krystal has opened her Food Bag Actions page, the returned gamebitID would be: 
+            `BIT_Krystal_Foodbag_S` or `BIT_Krystal_Foodbag_M` or
+            `BIT_Krystal_Foodbag_L`, depending on which bag she has.)
+  */
+s16 cmdmenu_get_subpage_gamebit(void) {
+    return sSubmenuGamebit;
 }
 
 // offset: 0xF5C | func: 10 | export: 5
@@ -1350,9 +1282,9 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
 
 // offset: 0x1290 | func: 11 | export: 3
 /**
-  * Zeroes the used item index of all the inventory pages.
+  * Zeroes the selected item index on all the inventory pages (i.e. forgets user's last selection).
   */
-void cmdmenu_pages_clear_used_item_index(void) {
+void cmdmenu_pages_clear_last_selected_index(void) {
     s32 i;
     CmdmenuPage *page;
 
@@ -1378,14 +1310,19 @@ void cmdmenu_request_new_player_stats_snapshot(void) {
 // offset: 0x130C | func: 13 | export: 12
 /**
   * Overrides the info scroll, displaying a specific textID at a custom screen position (can differ from usual top-centre).
+  *
+  * See `GameTexts_UI_A` and `GameTexts_UI_B` for textIDs.
   */
-void cmdmenu_auto_show_info_scroll(u32 textID, u32 screenX, u32 screenY) {
-    sInfoScrollOverrideTextID = textID;
+void cmdmenu_auto_show_info_scroll(u32 uiTextID, u32 screenX, u32 screenY) {
+    sInfoScrollOverrideTextID = uiTextID;
     sInfoScrollOverrideX = screenX;
     sInfoScrollOverrideY = screenY;
 }
 
 // offset: 0x1338 | func: 14 | export: 13
+/**
+  * Opens the tutorial textbox at a specified screen position, displaying a specific gametext file's tutorial text.
+  */
 void cmdmenu_open_tutorial_textbox(s32 gametextID, s32 screenX, s32 screenY) {
     if (sTutorialBoxGametext == NULL) {
         sAButtonAnimRenderFlags = 0x40000;
@@ -1400,6 +1337,9 @@ void cmdmenu_open_tutorial_textbox(s32 gametextID, s32 screenX, s32 screenY) {
 }
 
 // offset: 0x13F4 | func: 15 | export: 14
+/**
+  * Causes the tutorial textbox to close.
+  */
 void cmdmenu_close_tutorial_textbox(void) {
     dTutorialBoxShow = FALSE;
 }
@@ -1735,14 +1675,14 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
 
 // offset: 0x1FEC | func: 18
 /**
-  * Handles the following parts of the inventory scroll menu:
+  * Handles player interaction on the current page of the inventory scroll menu:
   * - Moving through the current page's items with its C button.
   * - Using an item with the A button.
   * - Closing the inventory with the B button.
   * - Playing a sound when using items (unsuccessfully) or entering subpages.
   * - Auto-selecting an item when opening the inventory (unused?)
   */
-static void cmdmenu_tick_inventory(void) {
+static void cmdmenu_tick_inventory_page(void) {
     s16* pageSelectionIndex;
     Object* player;
     InventoryItem *pageItems;
@@ -1916,7 +1856,7 @@ static void cmdmenu_tick_inventory(void) {
 
     if (cmdmenu_is_inventory_closed()) {
         dPageCategory = 0;
-        _bss_C4C = 0;
+        dInventoryFrameCounter = 0;
         dInventoryMovesQueued = 0;
     } else {
         joy_set_button_mask(0, A_BUTTON | B_BUTTON);
@@ -2355,15 +2295,18 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
         }
 
         if (availableCommands != NO_SIDEKICK_COMMAND) {
-
             while (items[i].gamebitObtained >= 0) {
                 //Only load a sidekick command item if it's currently available
                 if (items[i].gamebitObtained & availableCommands) {
                     sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
                     sMenuItemQuantities[loadIdx] = 1;
 
-                    if (items[i].sidekickCommand != NO_TEXTURE) {
-                        sMenuItemTexturesSidekick[loadIdx] = tex_load_deferred(items[i].sidekickCommand);
+                    /* Load secondary sidekick texture
+                       NOTE: not used/drawn, and always the same as the command's `.textureID`.
+                       Maybe it's supposed to hold the alternate transparent texture for the active sidekick command bubble?
+                    */
+                    if (items[i].command.sidekickTextureID != NO_TEXTURE) {
+                        sMenuItemTexturesSidekick[loadIdx] = tex_load_deferred(items[i].command.sidekickTextureID);
                     } else {
                         sMenuItemTexturesSidekick[loadIdx] = NULL;
                     }
@@ -3182,7 +3125,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     //Get the gametext lines
     if (dInfoScrollStrings[0] == NULL) {
-        //Get the item's string (use a different gametext file for lineIDs beyond 255) 
+        //Get the item's string (use a different gametext file for textIDs beyond 255) 
         dInfoScrollStrings[0] = dInfoScrollTextID >= 256 
             ? gDLL_21_Gametext->vtbl->get_text(GAMETEXT_238_UI_Text_2, dInfoScrollTextID - 256) 
             : gDLL_21_Gametext->vtbl->get_text(GAMETEXT_003_UI_Text_1, dInfoScrollTextID);
@@ -3214,10 +3157,8 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         font_window_flush_strings(3);
         font_window_set_text_colour(3, 0, 0, 255, 255, 255);
 
-        y = 3;
-
         //Print the text lines
-        for (lineIdx = 0; lineIdx <= 3; lineIdx++) {
+        for (y = INFO_SCROLL_TEXT_Y, lineIdx = 0; lineIdx <= 3; lineIdx++) {
             if (dInfoScrollStrings[lineIdx] == NULL) {
                 break;
             }
@@ -3234,6 +3175,13 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 }
 
 // offset: 0x5608 | func: 38
+/**
+  * Tracks changes in the player/sidekick's stats, and handles the following:
+  *
+  * - Fading in the C buttons while holding R
+  * - Fading in the health/magic UI while holding R / locked on / auto-shown
+  * - Spinning the Scarab counter icon when a Scarab is collected
+  */
 static void cmdmenu_update_stats(void) {
     Object* player;
     Object* sidekick;
@@ -3379,7 +3327,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     {
         if ((sStatsChangeTimers.playerHealth >= 0.0f) || 
             (sStatsChangeTimers.playerHealthMax >= 0.0f) || 
-            (sStatsChangeTimers.unk14 >= 0.0f)
+            (sStatsChangeTimers.unk14 >= 0.0f) //Shows health when pressing R
         ) {
             goalOpacity = MAX_OPACITY_F;
         } else {
@@ -3788,11 +3736,19 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
 }
 
 // offset: 0x70A0 | func: 45 | export: 11
-void cmdmenu_func_70A0(u8 arg0) {
-    _data_88 = arg0;
+/**
+  * Foodbag-related? 
+  *
+  * `Foodbag_control` uses this function to set `_data_88` to 0 or 1, but the data seems to otherwise be unused.
+  */
+void cmdmenu_func_70A0(u8 unkBool) {
+    _data_88 = unkBool;
 }
 
 // offset: 0x70C8 | func: 46 | export: 20
+/**
+  * Creates an energy bar (e.g. the fuel gauge at CloudRunner Fortress' Racetrack)
+  */
 void cmdmenu_energy_bar_create(s32 minEnergy, s32 maxEnergy, s32 fullTexID, s32 emptyTexID, s32 scale) {
     EnergyBar *enbar;
     TextureTile *drawtex;
@@ -3838,6 +3794,9 @@ void cmdmenu_energy_bar_create(s32 minEnergy, s32 maxEnergy, s32 fullTexID, s32 
 }
 
 // offset: 0x7208 | func: 47 | export: 21
+/*
+ * Sets the value of the active energy bar.
+ */
 void cmdmenu_energy_bar_set(s32 energy) {
     u32 filledWidth;
     f32 filledRatio;
@@ -3854,6 +3813,9 @@ void cmdmenu_energy_bar_set(s32 energy) {
 }
 
 // offset: 0x7298 | func: 48
+/*
+ * Draws the energy bar, if one is created.
+ */
 static void cmdmenu_draw_energy_bar(Gfx** gdl) {
     EnergyBar* enbar;
 
@@ -3906,7 +3868,7 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
 
 // offset: 0x7550 | func: 49 | export: 22
 /**
-  * Frees the energy bar (e.g. the fuel gauge at CloudRunner Fortress' Racetrack)
+  * Frees the energy bar immediately.
   */
 void cmdmenu_energy_bar_free(void) {
     EnergyBar* enbar;
@@ -3927,6 +3889,9 @@ void cmdmenu_energy_bar_free(void) {
 }
 
 // offset: 0x75CC | func: 50 | export: 23
+/**
+  * Causes the energy bar to fade out and free itself when invisible.
+  */
 void cmdmenu_energy_bar_fadeout(void) {
     if (sEnergyBar != NULL) {
         sEnergyBar->fadeout = TRUE;

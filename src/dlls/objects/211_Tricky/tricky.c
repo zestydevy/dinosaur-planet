@@ -116,34 +116,34 @@ s32 dll_211_func_10D4(Object* self) {
     objData = self->data;
 
     if (main_get_bits(BIT_4E4)) {
-        sideCmdBits = objData->unk1B | Sidekick_COMMAND_01_Heel;
+        sideCmdBits = objData->unk1B | Sidekick_Command_FLAG_01_Heel;
 
         //Check if Flame command should be shown
         if ((objData->unk18 == 0xB) || 
             ((objData->unk18 == 0x10) && (objData->unk1A == 1)) || 
             ((objData->unk18 == 0x11) && (objData->unk1A == 1))
         ) {
-            sideCmdBits |= Sidekick_COMMAND_10_Flame;
+            sideCmdBits |= Sidekick_Command_FLAG_10_Flame;
         }
 
         //Check if Tricky's ball is unlocked
         if (main_get_bits(BIT_3F8)) {
-            sideCmdBits |= Sidekick_COMMAND_20_Play;
+            sideCmdBits |= Sidekick_Command_FLAG_20_Play;
         }
 
         //Check if Guard isn't unlocked
         if (main_get_bits(BIT_DD) == FALSE) {
-            sideCmdBits &= ~Sidekick_COMMAND_08_Guard;
+            sideCmdBits &= ~Sidekick_Command_FLAG_08_Guard;
         }
 
         //Check if Distract isn't unlocked
         if (main_get_bits(0x9E) == FALSE) {
-            sideCmdBits &= ~Sidekick_COMMAND_04_Distract;
+            sideCmdBits &= ~Sidekick_Command_FLAG_04_Distract;
         }
 
         //Check if Flame isn't unlocked
         if (main_get_bits(BIT_245) == FALSE) {
-            sideCmdBits &= ~Sidekick_COMMAND_10_Flame;
+            sideCmdBits &= ~Sidekick_Command_FLAG_10_Flame;
         }
         
         objData->unk1B = 0;
