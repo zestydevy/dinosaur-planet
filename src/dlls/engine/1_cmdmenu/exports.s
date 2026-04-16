@@ -20,9 +20,9 @@ _exports:
 .dword cmdmenu_get_page_category
 .dword cmdmenu_func_F40
 .dword cmdmenu_func_70A0
-.dword cmdmenu_func_130C
-.dword cmdmenu_func_1338
-.dword cmdmenu_func_13F4
+.dword cmdmenu_auto_show_info_scroll
+.dword cmdmenu_open_tutorial_textbox
+.dword cmdmenu_close_tutorial_textbox
 .dword cmdmenu_disable_buttons
 .dword cmdmenu_set_buttons_override
 .dword cmdmenu_info_show

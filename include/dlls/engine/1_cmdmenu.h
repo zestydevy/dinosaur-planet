@@ -26,16 +26,16 @@ typedef struct {
 /*B*/ u8 sound;             //The sound to play when selecting this item (see `CmdMenuItemSounds`)
 } InventoryCommand;
 
-/** For use with dll_1_func_F24 */
+/** For use with cmdmenu_get_page_category */
 typedef enum {
-    CMDMENU_CATEGORY_0 = 0, //Closed
-    CMDMENU_CATEGORY_1 = 1,
+    CMDMENU_CATEGORY_0 = 0, //Closed/no change
+    CMDMENU_CATEGORY_1 = 1, //Unused
     CMDMENU_CATEGORY_2_Sidekick = 2,
     CMDMENU_CATEGORY_3_Items = 3,
     CMDMENU_CATEGORY_4_Spells = 4,
-    CMDMENU_CATEGORY_5 = 5,
-    CMDMENU_CATEGORY_6_Food = 6,
-    CMDMENU_CATEGORY_7 = 7
+    CMDMENU_CATEGORY_5 = 5,                 //Seems intended for Sidekick subpages
+    CMDMENU_CATEGORY_6_Food = 6,            //Item subpages (player foodbag actions/items)
+    CMDMENU_CATEGORY_7_Sidekick_Food = 7    //Seems intended for Spells subpages (not used); used for Sidekick subpages instead
 } CmdMenuPageCategories;
 
 typedef enum {
@@ -76,7 +76,7 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*9*/ s8 (*get_page_category)(void); //Returns the categoryID of the current inventory menu page (see `CmdMenuPageCategories`)
 /*10*/ s16 (*func_F40)(void); //get gamebitID of active submenu?
 /*11*/ void (*func_70A0)(u8 arg0);
-/*12*/ void (*func_130C)(u32 arg0, u32 arg1, u32 arg2);
+/*12*/ void (*auto_show_info_scroll)(u32 textID, u32 screenX, u32 screenY); //Overrides the info scroll, displaying a specific textID at a custom screen position (can differ from usual top-centre).
 /*13*/ void (*func_1338)(s32 gametextID, s32 arg1, s32 arg2);
 /*14*/ void (*func_13F4)(void);
 /*15*/ void (*disable_buttons)(u16 mask);

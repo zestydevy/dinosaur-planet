@@ -102,6 +102,9 @@
 #define MENU_ITEM_QUANTITY_OFFSET_Y 9
 #define MENU_ITEM_QUANTITY_X (MENU_ITEM_X + MENU_ITEM_QUANTITY_OFFSET_X)
 
+//Inventory scroll
+#define MENU_HEIGHT_OPEN 72
+
 //Inventory item selection highlight
 #define ITEM_HL_X1 (MENU_ITEM_X + 4)
 #define ITEM_HL_Y1 82
@@ -160,13 +163,31 @@
 /* CENTRED UI */
 
 //Info scroll
+#define INFO_SCROLL_WIDTH 120
+#define INFO_SCROLL_HEIGHT_OPEN 50
+#define INFO_SCROLL_LINE_HEIGHT 16
+#define INFO_SCROLL_X (SCREEN_WIDTH/2)
+#define INFO_SCROLL_Y 30
+#define INFO_SCROLL_Y_INITIAL (INFO_SCROLL_Y - 10)
+#define INFO_SCROLL_OPACITY_MAX 160
+#define INFO_SCROLL_OPACITY_SPEED 32
+
+//Info scroll texture dimensions
+#define INFO_SCROLL_PAGE_EDGE_WIDTH 16
+#define INFO_SCROLL_PAGE_SHADOW_HEIGHT 8
+#define INFO_SCROLL_ROLL_HEIGHT 16
+#define INFO_SCROLL_ROLL_TOP_Y_OFFSET 11
+#define INFO_SCROLL_ROLL_BOTTOM_Y_OFFSET 4 //NOTE: causes 1px gap, may be intentional as dark shadow
+#define INFO_SCROLL_HANDLE_WIDTH 16
+#define INFO_SCROLL_HANDLE_HEIGHT 16
 
 //Tutorial textbox
-#define TUTORIAL_BOX_X 0
-#define TUTORIAL_BOX_Y 0
-#define TUTORIAL_BOX_WIDTH 0
-#define TUTORIAL_BOX_HEIGHT 0
-#define TUTORIAL_BOX_MAX_OPACITY 160
+#define TUTORIAL_BOX_X (SCREEN_WIDTH/2)
+#define TUTORIAL_BOX_Y 20
+#define TUTORIAL_BOX_WIDTH 120
+#define TUTORIAL_BOX_HEIGHT 80
+#define TUTORIAL_BOX_OPACITY_MAX 160
+#define TUTORIAL_BOX_OPACITY_SPEED 8
 
 //Energy bar
 #define ENERGY_BAR_X (SCREEN_WIDTH / 2)
@@ -183,7 +204,7 @@ typedef struct {
 /** Data for a particular inventory page */
 typedef struct {
 /*0*/ InventoryItem* items; //all the different items that can appear on this page
-/*4*/ s16 usedIndex; // the loaded item index of this page's selected item (at runtime)
+/*4*/ s16 selectedIndex; // the loaded item index of this page's selected item (at runtime)
 /*8*/ u32 mesgID;    // objmesg ID sent to player
 /*C*/ s32 btnMask;   // mask of joypad buttons that can be used to move to this item
 } CmdmenuPage;
@@ -221,6 +242,27 @@ typedef union {
     };
     f32 items[10];
 } CmdmenuPlayerSidekickDataChangeTimers;
+
+typedef struct {
+    s16 increased;
+    s16 decreased;
+} StatChangeSounds;
+
+typedef union {
+    struct {
+        /*0 00*/ StatChangeSounds playerHealth;
+        /*1 04*/ StatChangeSounds sidekickBlueFood;
+        /*2 08*/ StatChangeSounds playerMagic;
+        /*3 0C*/ StatChangeSounds playerScarabCount;
+        /*4 10*/ StatChangeSounds sidekickRedFood;
+        /*5 14*/ StatChangeSounds unk14;
+        /*6 18*/ StatChangeSounds unk18;
+        /*7 1C*/ StatChangeSounds playerHealthMax;
+        /*8 20*/ StatChangeSounds playerMagicMax;
+        /*9 24*/ StatChangeSounds sidekickMaxFood;
+    };
+    StatChangeSounds items[10];
+} CmdmenuPlayerStatsChangeSounds;
 
 typedef struct {
 /*00*/ s32 min;
@@ -309,23 +351,24 @@ typedef enum {
 } CmdMenuPlayerStatsFlags;
 
 /*0x0*/ static s8 dInventoryShow = FALSE;
-/*0x4*/ static s8 sInventoryScrollOffset = 0;   //Y offset for the scroll's inner strip, used to smoothly animate moving between inventory items
-/*0x8*/ static s8 dInventoryMoveSpeed = 1;      //Scroll speed when moving between inventory items (how many times to shift gUpdateRate)
-/*0xC*/ static s16 dInventoryUnrollMax = 72;    //The height of the inventory scroll when fully open
+/*0x4*/ static s8 sInventoryScrollOffset = 0; //Y offset for the scroll's inner strip, used to smoothly animate moving between inventory items
+/*0x8*/ static s8 dInventoryMoveSpeed = 1; //Scroll speed when moving between inventory items (how many times to shift gUpdateRate)
+/*0xC*/ static s16 dInventoryUnrollMax = MENU_HEIGHT_OPEN; //The height of the inventory scroll when fully open
 /*0x10*/ static s16 dInventoryOpacity = 0;
 /*0x14*/ static s16 dOpacitySidekickMeter = 0;
 /*0x18*/ static s16 dSelectedItemTextID = NO_GAMETEXT;
-/*0x1C*/ static s8 dInfoScrollShow = 0;
-/*0x20*/ static s16 _data_20 = 60;
-/*0x24*/ static s16 dInfoScrollUnrollMax = 50;
-/*0x28*/ static s16 _data_28 = 20;
-/*0x2C*/ static s16 _data_2C = 160;
+
+/*0x1C*/ static s8 dInfoScrollShow = FALSE;
+/*0x20*/ static s16 dInfoScrollWidthHalf = INFO_SCROLL_WIDTH >> 1; //The half-width of the info scroll's page
+/*0x24*/ static s16 dInfoScrollUnrollMax = INFO_SCROLL_HEIGHT_OPEN;
+/*0x28*/ static s16 dInfoScrollY = INFO_SCROLL_Y_INITIAL; //Initialised at slightly different Y
+/*0x2C*/ static s16 dInfoScrollX = INFO_SCROLL_X;
 /*0x30*/ static s16 dInfoScrollOpacity = 0;
 
 /** 
   * Lines of text for the info scroll 
   */
-/*0x34*/ static char* dTextStrings[] = {
+/*0x34*/ static char* dInfoScrollStrings[] = {
     NULL, NULL, NULL, NULL
 };
 
@@ -335,25 +378,31 @@ typedef enum {
   * (First 255 lines are from `gametext_3`, higher IDs use `gametext_568`) 
   */
 /*0x44*/ static s16 dInfoScrollTextID = NO_GAMETEXT;
-
 /*0x48*/ static s8 dTutorialBoxShow = 0;
-/*0x4C*/ static s16 _data_4C = 120;
-/*0x50*/ static s16 _data_50 = 80;
-/*0x54*/ static s16 _data_54 = 20;
-/*0x58*/ static s16 _data_58 = 160;
+/*0x4C*/ static s16 dTutorialBoxWidth = TUTORIAL_BOX_WIDTH;
+/*0x50*/ static s16 sTutorialBoxHeight = TUTORIAL_BOX_HEIGHT;
+/*0x54*/ static s16 dTutorialBoxY = TUTORIAL_BOX_Y;
+/*0x58*/ static s16 dTutorialBoxX = TUTORIAL_BOX_X;
 /*0x5C*/ static s16 dTutorialBoxOpacity = 0; //Controls the tutorial box's opacity
 /*0x60*/ static s16 dTutorialBoxTextOpacity = 0; //Controls the tutorial box's text opacity, and the opacity of the A button icon.
-/*0x64*/ static s16 _data_64 = -1;
+/*0x64*/ static s16 _data_64 = -1; //unused
 /*0x68*/ static Texture* dInventoryPageIcon = NULL; //Icon in the top-right corner of screen: Bag/SpellBook/Kyte/Tricky
-/*0x6C*/ static u32 _data_6C[] = {
-    0x3f800000, 0xff000000
+
+typedef struct {
+    f32 unk0;
+    s8 unk4;
+} CmdMenuUnusedData;
+/*0x6C*/ static CmdMenuUnusedData _data_6C = {
+    1.0f, -1
 };
+
 /*0x74*/ static s8 sJoyButtonMask = 0;
 /*0x78*/ static s16 dInventoryTimesMoved = 0;
-/*0x7C*/ static u8 dInventoryIsScrolling = 0;
+/*0x7C*/ static u8 dInventoryIsScrolling = FALSE;
 /*0x80*/ static u8 sForceStatsDisplay = FALSE;
-/*0x84*/ static s16 _data_84 = 0;
+/*0x84*/ static s16 dInfoScrollDisabled = FALSE; //Stops the info scroll from appearing (unused)
 /*0x88*/ static s8 _data_88 = 1; //Unknown purpose - value never changes, but `func_70A0` compares its value.
+
 /*0x8C*/ static s16 dSpellGamebits[] = {
     BIT_Spell_Projectile, 
     BIT_Spell_Illusion, 
@@ -381,27 +430,6 @@ typedef enum {
     TEXTABLE_583_CMDMENU_TrickyBall_NoBG
 };
 
-typedef struct {
-    s16 increased;
-    s16 decreased;
-} StatChangeSounds;
-
-typedef union {
-    struct {
-        /*0 00*/ StatChangeSounds playerHealth;
-        /*1 04*/ StatChangeSounds sidekickBlueFood;
-        /*2 08*/ StatChangeSounds playerMagic;
-        /*3 0C*/ StatChangeSounds playerScarabCount;
-        /*4 10*/ StatChangeSounds sidekickRedFood;
-        /*5 14*/ StatChangeSounds unk14;
-        /*6 18*/ StatChangeSounds unk18;
-        /*7 1C*/ StatChangeSounds playerHealthMax;
-        /*8 20*/ StatChangeSounds playerMagicMax;
-        /*9 24*/ StatChangeSounds sidekickMaxFood;
-    };
-    StatChangeSounds items[10];
-} CmdmenuPlayerStatsChangeSounds;
-
 /**
   * Sound effects to play when tracked player stats increase/decrease
   * (unused in practice, all set to NO_SOUND)
@@ -418,19 +446,57 @@ typedef union {
     {0, 0},
     {0, 0}
 }};
+
+/** Unused data */
 /*0xE0*/ static u16 _data_E0[] = {
-    0x0d05, 0x1310, 0x040a, 0x0c16, 
-    0x0416, 0x0c20, 0x0d16, 0x1328, 
-    0x140a, 0x1c16, 0x1416, 0x1c20, 
-    0x0b00, 0x150a, 0x0204, 0x0c10, 
-    0x0417, 0x0c28, 0x0b20, 0x152c, 
-    0x1417, 0x1c28, 0x1404, 0x1e10, 
+    0x0d05, 0x1310, 0x040a, 0x0c16, 0x0416, 0x0c20, 
+    0x0d16, 0x1328, 0x140a, 0x1c16, 0x1416, 0x1c20, 
+    0x0b00, 0x150a, 0x0204, 0x0c10, 0x0417, 0x0c28, 
+    0x0b20, 0x152c, 0x1417, 0x1c28, 0x1404, 0x1e10, 
     0x080e, 0x1812, 0x0812, 0x1818
 };
-/*0x118*/ static s8 _data_118 = 0;
-/*0x11C*/ static s8 _data_11C = 0;
-/*0x120*/ static s8 _data_120 = 0;
-/*0x124*/ static s8 _data_124 = 0;
+
+/* 
+ * This value ends up unused, but its purpose can be inferred from the info scroll's equivalent variables.
+ *
+ * Frame counter, intended to animate the top of the inventory scroll rotating (3 frame animation)
+ * The texture only has 1 frame though, so this may be a leftover from an earlier UI design.
+ *
+ * Value increases while info scroll expanding (decreases while collapsing), or while scrolling between items.
+ */
+/*0x118*/ static s8 dInventoryFrameTop = 0; 
+
+/* 
+ * This value ends up unused, but its purpose can be inferred from the info scroll's equivalent variables.
+ *
+ * Frame counter, intended to animate the bottom of the inventory scroll rotating (3 frame animation)
+ * The texture only has 1 frame though, so this may be a leftover from an earlier UI design.
+ *
+ * Value increases while info scroll collapsing (decreases while expanding), or while scrolling between items.
+ */
+/*0x11C*/ static s8 dInventoryFrameBottom = 0;
+
+/* 
+ * Frame counter, intended to animate the top of the info scroll rotating (3 frame animation)
+ * The texture only has 1 frame though, so this may be a leftover from an earlier UI design.
+ *
+ * Value increases while info scroll expanding (decreases while collapsing), but gets reset to 0.
+ *
+ * Top rolls in opposite direction to bottom, suggesting info scroll used to expand from the middle 
+ * (in the Dec 2000 design it expands from the top down, with the top fixed in place.)
+ */
+/*0x120*/ static s8 dInfoScrollFrameTop = 0;
+
+/* 
+ * Frame counter, intended to animate the bottom of the info scroll rotating (3 frame animation)
+ * The texture only has 1 frame though, so this may be a leftover from an earlier UI design.
+ *
+ * Value increases while info scroll collapsing (decreases while expanding), but gets reset to 0.
+ *
+ * Bottom rolls in opposite direction to top, suggesting info scroll used to expand from the middle 
+ * (in the Dec 2000 design it expands from the top down, with the top fixed in place.)
+ */
+/*0x124*/ static s8 dInfoScrollFrameBottom = 0;
 
 #define NONE 0xFFFF
 #define EXIT -1
@@ -591,6 +657,7 @@ typedef union {
 };
 
 //TODO: should sidekick pages use an InventoryItem struct variant with slightly different member names?
+
 /* Sidekick Commands (Kyte)
  * 0x710*/ static InventoryItem dPage7CommandsKyte[] = {
     {Sidekick_COMMAND_01_Heel,      0, TEXTABLE_1CD, TEXTABLE_1CD, 0, 0, 0}, //Heel
@@ -673,7 +740,7 @@ typedef union {
 };
 
 /*0x9D0*/ static s8 dPageCategory = 0; //Category of cmdmenu page currently open (see `CmdMenuPageCategories`)
-/*0x9D4*/ static s8 dNextPageCategory = 0; //Assigned when changing between menus in the inventory
+/*0x9D4*/ static s8 dNextPageCategory = 0; //Assigned a non-zero value when switching between sections in the inventory
 /*0x9D8*/ static s16 dTextableIDs[] = {
     /*00*/ TEXTABLE_1BE_CMDMENU_Scroll_BG,
     /*01*/ TEXTABLE_1BF_CMDMENU_Scroll_Bottom,
@@ -778,45 +845,45 @@ typedef union {
 /*0xC30*/ static GameTextChunk* sTutorialBoxGametext;
 /*0xC34*/ static Texture* sCrosshairTex;
 /*0xC38*/ static s16 sUsedItemGamebitID;
-/*0xC3A*/ static s16 _bss_C3A;
+/*0xC3A*/ static s16 sSelectedItemGamebit;
 /*0xC3C*/ static s8 sUsedItemSound; //Set to 0 when item selection successful (item given to character, etc.)
 /*0xC3D*/ static s8 sUsedItemPageID;
 /*0xC3E*/ static s8 sInventoryPageID;
-/*0xC40*/ static s16 sMenuSelectedItemIdx; //Loaded index of the item currently selected in the menu page 
-/*0xC44*/ static s32 sLoadedItemCount;
+/*0xC40*/ static s16 sMenuSelectedItemIdx; //Display index of the item currently selected in the menu page 
+/*0xC44*/ static s32 sDisplayedItemCount;  //The number of items displayed in the current page (while drawing, includes the number of empty tiles)
 /*0xC48*/ static s8 sShouldOverrideJoypadButtons;
 /*0xC4C*/ static s32 _bss_C4C;
 /*0xC50*/ static s32 sJoyPressedButtons; // joypad button bitfield
 /*0xC54*/ static s32 sJoyPressedButtonsOverride; //controllerButtons
 /*0xC58*/ static s32 sJoyHeldButtons; // joypad button bitfield
 /*0xC60*/ static TextureTile sTempIcon[2];
-/*0xC78*/ static s8 sAutoUseItemGamebit; //Gamebit: Always -1, but maybe intended to auto-use a particular item when opening inventory?
-/*0xC7A*/ static s16 sAutoUseItemLoadedIdx; //Loaded index of the auto-used item (unused in practice)
-/*0xC7C*/ static s16 _bss_C7C;
-/*0xC7E*/ static s16 _bss_C7E;
-/*0xC80*/ static s16 _bss_C80;
+/*0xC78*/ static s8 sAutoSelectItemGamebit; //Gamebit: Always -1, but seems intended to auto-select a specific item when opening the inventory?
+/*0xC7A*/ static s16 sAutoSelectItemIdx; //Index of the auto-selected item (unused in practice)
+/*0xC7C*/ static s16 sInfoScrollOverrideTextID; //Causes the info scroll to open automatically
+/*0xC7E*/ static s16 sInfoScrollOverrideX;      //Custom screen position for the info scroll when auto-shown
+/*0xC80*/ static s16 sInfoScrollOverrideY;   //Custom screen position for the info scroll when auto-shown
 /*0xC88*/ static CmdmenuInfoPopup sInfoPopup; //item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
 
 static void cmdmenu_tick_tutorial_textbox(void);
 static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
-static void cmdmenu_func_1FEC(void);
+static void cmdmenu_tick_inventory(void);
 static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu);
 static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekickMenu);
 static void cmdmenu_store_loaded_item_metadata(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
-static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame);
+static void cmdmenu_gfx_set_texture(Gfx** gdl, Texture* tex, s32 frame);
 static int cmdmenu_is_inventory_open(void);
 static int cmdmenu_is_inventory_closed(void);
 static void cmdmenu_close_inventory(void);
 static void cmdmenu_open_inventory(void);
-static void cmdmenu_func_3AD0(void);
+static void cmdmenu_inventory_animate(void);
 static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_gfx_set_scroll_scissor(Gfx** gdl);
-static void cmdmenu_gfx_set_screen_scissor(Gfx** gfx);
+static void cmdmenu_gfx_set_screen_scissor(Gfx** gdl);
 static int cmdmenu_is_info_scroll_closed(void);
 static void cmdmenu_close_info_scroll(void);
 static void cmdmenu_open_info_scroll(void);
-static void cmdmenu_func_486C(void);
+static void cmdmenu_info_scroll_animate(void);
 static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
 static void cmdmenu_update_stats(void);
 static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
@@ -829,15 +896,15 @@ void cmdmenu_energy_bar_free(void);
 void cmdmenu_ctor(void* dll) {
     u32 i;
 
-    sAutoUseItemGamebit = NO_GAMEBIT;
-    sAutoUseItemLoadedIdx = -1;
+    sAutoSelectItemGamebit = NO_GAMEBIT;
+    sAutoSelectItemIdx = NO_ITEM;
     sUsedItemGamebitID = NO_GAMEBIT;
     sUsedItemSound = CMDMENU_SOUND_NONE;
     sUsedItemPageID = -1;
     sPrevActiveSpellGamebit = NO_GAMEBIT;
     sPrevSidekickCommandIndex = NO_SIDEKICK_COMMAND;
 
-    //Load all the cmdmenu textures
+    //Initialise all the cmdmenu TextureTiles and load their Textures
     for (i = 0; i < ARRAYCOUNT(dTextableIDs); i++) {
         sTextures[i] = tex_load_deferred(dTextableIDs[i]);
 
@@ -905,19 +972,29 @@ void cmdmenu_toggle_forced_stats_display(u8 force) {
   * Main tick function for the cmdmenu (called by `menu_gameplay.c`)
   */
 s32 cmdmenu_control(void) {
-    cmdmenu_func_1FEC();
+    cmdmenu_tick_inventory();
     cmdmenu_tick_tutorial_textbox();
     return 0;
 }
 
 // offset: 0x35C | func: 3 | export: 1
+/**
+  * Handles opening/closing player interactions for the inventory and info scroll:
+  * - Inventory: opening/closing inventory pages with the C buttons (or when entering sub-pages like the foodbag).
+  * - Info scroll: opening when holding R (or automatically), and sets the displayed textID.
+  *
+  * Also calls the following functions:
+  * - Calls `cmdmenu_update_stats` (to track changes in player stats)
+  * - Calls `cmdmenu_inventory_animate` (inventory fading/expanding/collapsing)
+  * - Calls `cmdmenu_info_scroll_animate` (info scroll fading/expanding/collapsing)
+  */
 void cmdmenu_func_35C(void) {
     Object* player;
     Object* sidekick;
     s16 pad1;
     s8 pad2;
     s16 newStringID;
-    s8 var_a0;
+    s8 autoShowInfoScroll;
     s8 newPageIndex;
 
     player = get_player();
@@ -950,42 +1027,52 @@ void cmdmenu_func_35C(void) {
         }
     }
 
-    //Using C buttons (left/down/right) to open or change inventory pages
+    //Use C buttons (left/down/right) to open/change inventory pages
     if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dPageCategory != CMDMENU_CATEGORY_2_Sidekick)) {
+        //C-down: Sidekick Commands
         newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
-        if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, 1)) {
+        if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, TRUE)) {
             joy_set_button_mask(0, D_CBUTTONS);
             dNextPageCategory = CMDMENU_CATEGORY_2_Sidekick;
             sInventoryPageID = newPageIndex;
         }
     } else if ((sJoyPressedButtons & R_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_3_Items) && (dPageCategory != CMDMENU_CATEGORY_6_Food)) {
+        //C-right: Items
         newPageIndex = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
-        if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, 0)) {
+        if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, FALSE)) {
             joy_set_button_mask(0, R_CBUTTONS);
             dNextPageCategory = CMDMENU_CATEGORY_3_Items;
             sInventoryPageID = newPageIndex;
         }
     } else if ((sJoyPressedButtons & L_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_4_Spells)) {
-        if (cmdmenu_page_count_shown_items(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, 0)) {
+        //C-left: Magic Spells
+        if (cmdmenu_page_count_shown_items(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, FALSE)) {
             joy_set_button_mask(0, L_CBUTTONS);
             dNextPageCategory = CMDMENU_CATEGORY_4_Spells;
             sInventoryPageID = CMDMENU_PAGE_6_Spells;
         }
-    } else if (sUsedItemPageID != NO_PAGE) {
-        _bss_C3A = sUsedItemGamebitID;
+    } else if (sUsedItemPageID != EXIT) {
+        //No C-buttons were pressed, but the selected item opened an inventory page (e.g. foodbags)
+        sSelectedItemGamebit = sUsedItemGamebitID;
         sInventoryPageID = sUsedItemPageID;
+
+        //Sidekick Commands -> Sidekick Foodbag
         if ((dPageCategory == CMDMENU_CATEGORY_2_Sidekick) || (dPageCategory == CMDMENU_CATEGORY_5)) {
-            dNextPageCategory = 7;
+            dNextPageCategory = CMDMENU_CATEGORY_7_Sidekick_Food; //@bug? Maybe Category 5 is intended for Sidekick Food (i.e. 2->5, 3->6, 4->7; instead of 2->7, 3->6, 4->7)
+        //Items -> Player Foodbag
         } else if ((dPageCategory == CMDMENU_CATEGORY_3_Items) || (dPageCategory == CMDMENU_CATEGORY_6_Food)) {
-            dNextPageCategory = 6;
-        } else if ((dPageCategory == CMDMENU_CATEGORY_4_Spells) || (dPageCategory == CMDMENU_CATEGORY_7)) {
-            dNextPageCategory = 7;
+            dNextPageCategory = CMDMENU_CATEGORY_6_Food;
+        //Spells -> Spell subpage (unused)
+        } else if ((dPageCategory == CMDMENU_CATEGORY_4_Spells) || (dPageCategory == CMDMENU_CATEGORY_7_Sidekick_Food)) {
+            dNextPageCategory = CMDMENU_CATEGORY_7_Sidekick_Food;
         }
     }
 
+    //Keep the inventory closed during the Galleon battle
     if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
         cmdmenu_close_inventory();
     } else if (dNextPageCategory != 0) {
+        //Handle opening the inventory (or opening a different page category)
         if (cmdmenu_is_inventory_closed()) {
             switch (dNextPageCategory) {
             case CMDMENU_CATEGORY_3_Items:
@@ -1004,21 +1091,24 @@ void cmdmenu_func_35C(void) {
 
             cmdmenu_open_inventory();
 
-            dCmdmenuPages[CMDMENU_PAGE_7_Sidekick_Kyte].usedIndex = 0;
-            dCmdmenuPages[CMDMENU_PAGE_8_Sidekick_Tricky].usedIndex = 0;
+            //Sidekick command pages always open on index 0 (unlike other pages which remember last selection)
+            dCmdmenuPages[CMDMENU_PAGE_7_Sidekick_Kyte].selectedIndex = 0;
+            dCmdmenuPages[CMDMENU_PAGE_8_Sidekick_Tricky].selectedIndex = 0;
 
             dPageCategory = dNextPageCategory;
             sJoyPressedButtons = 0;
             dInventoryTimesMoved = 0;
             dNextPageCategory = 0;
         } else {
+            /* When changing page category (e.g. from Items to Spells),
+               first close up the scroll's current page, before reopening with the new page */
             cmdmenu_close_inventory();
         }
     }
 
     cmdmenu_update_stats();
-    cmdmenu_func_3AD0();
-    cmdmenu_func_486C();
+    cmdmenu_inventory_animate();
+    cmdmenu_info_scroll_animate();
 
     _bss_C4C++;
     if (_bss_C4C > 2) {
@@ -1034,34 +1124,42 @@ void cmdmenu_func_35C(void) {
     }
     dSelectedItemTextID = NO_GAMETEXT;
 
-    var_a0 = 0;
-    if (_bss_C7C >= 0) {
-        newStringID = _bss_C7C;
-        _data_28 = _bss_C80;
-        _data_2C = _bss_C7E;
-        var_a0 = 1;
+    //Check if the info scroll should be auto-shown
+    autoShowInfoScroll = FALSE;
+    if (sInfoScrollOverrideTextID > NO_GAMETEXT) {
+        newStringID = sInfoScrollOverrideTextID;
+
+        //When auto-shown, scroll's screen position can temporarily be changed
+        dInfoScrollY = sInfoScrollOverrideY; 
+        dInfoScrollX = sInfoScrollOverrideX;
+
+        autoShowInfoScroll = TRUE;
     } else {
+        //Restore the scroll's default position when closed
         if (cmdmenu_is_info_scroll_closed()) {
-            _data_2C = 160;
-            _data_28 = 30;
+            dInfoScrollX = INFO_SCROLL_X;
+            dInfoScrollY = INFO_SCROLL_Y;
         }
     }
-    _bss_C7C = -1;
+    sInfoScrollOverrideTextID = NO_GAMETEXT;
 
-    if (((sJoyHeldButtons & R_TRIG) || (var_a0 != 0)) && (newStringID >= 0)) {
+    //Open the scroll when R is held (or when auto-shown) and a textID is set
+    if (((sJoyHeldButtons & R_TRIG) || autoShowInfoScroll) && (newStringID > NO_GAMETEXT)) {
+        //Free the scroll's current strings when the textID changes
         if (newStringID != dInfoScrollTextID) {
             dInfoScrollTextID = newStringID;
-            if (*dTextStrings != NULL) {
-                mmFree(*dTextStrings);
-                *dTextStrings = NULL;
+            if (*dInfoScrollStrings != NULL) {
+                mmFree(*dInfoScrollStrings);
+                *dInfoScrollStrings = NULL;
             }
         }
         cmdmenu_open_info_scroll();
     } else {
         cmdmenu_close_info_scroll();
-        if ((cmdmenu_is_info_scroll_closed() != 0) && (*dTextStrings != NULL)) {
-            mmFree(*dTextStrings);
-            *dTextStrings = NULL;
+        //Free the scroll's current strings when fully closed
+        if (cmdmenu_is_info_scroll_closed() && (*dInfoScrollStrings != NULL)) {
+            mmFree(*dInfoScrollStrings);
+            *dInfoScrollStrings = NULL;
             dInfoScrollTextID = NO_GAMETEXT;
         }
     }
@@ -1082,7 +1180,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         return;
     }
 
-    //Draw Spell reticle when aiming
+    //Draw Spell reticle when aiming (@bug: x coord not adjusted in widescreen)
     if (((DLL_210_Player*)player->dll)->vtbl->func77(player, &screenX, &screenY)) {
         tex_animate(sCrosshairTex, &sCrosshairAnimRenderFlags, &sCrosshairAnimProgress);
         rcp_screen_full_write(
@@ -1098,12 +1196,14 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
 
     cmdmenu_draw_player_stats(gdl, mtxs, vtxs);
+
     viSize = vi_get_current_size();
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
         0, 
         0, 
         GET_VIDEO_WIDTH(viSize), 
         GET_VIDEO_HEIGHT(viSize));
+
     cmdmenu_draw_c_buttons_and_sidekick_meter(gdl, mtxs, vtxs);
     cmdmenu_draw_info_scroll(gdl, mtxs, vtxs);
     cmdmenu_draw_tutorial_textbox(gdl, mtxs, vtxs);
@@ -1158,7 +1258,7 @@ s8 cmdmenu_get_page_category(void) {
 
 // offset: 0xF40 | func: 9 | export: 10
 s16 cmdmenu_func_F40(void) {
-    return _bss_C3A;
+    return sSelectedItemGamebit;
 }
 
 // offset: 0xF5C | func: 10 | export: 5
@@ -1238,7 +1338,7 @@ void cmdmenu_pages_clear_used_item_index(void) {
 
     page = dCmdmenuPages;
 
-    for (i = 0; page[i].items; i++) { page[i].usedIndex = 0; }
+    for (i = 0; page[i].items; i++) { page[i].selectedIndex = 0; }
 
     sUsedItemGamebitID = NO_GAMEBIT;
     sUsedItemSound = CMDMENU_SOUND_NONE;
@@ -1256,52 +1356,58 @@ void cmdmenu_request_new_player_stats_snapshot(void) {
 }
 
 // offset: 0x130C | func: 13 | export: 12
-void cmdmenu_func_130C(u32 textID, u32 arg1, u32 arg2) {
-    _bss_C7C = textID;
-    _bss_C7E = arg1;
-    _bss_C80 = arg2;
+/**
+  * Overrides the info scroll, displaying a specific textID at a custom screen position (can differ from usual top-centre).
+  */
+void cmdmenu_auto_show_info_scroll(u32 textID, u32 screenX, u32 screenY) {
+    sInfoScrollOverrideTextID = textID;
+    sInfoScrollOverrideX = screenX;
+    sInfoScrollOverrideY = screenY;
 }
 
 // offset: 0x1338 | func: 14 | export: 13
-void cmdmenu_func_1338(s32 gametextID, s32 arg1, s32 arg2) {
+void cmdmenu_open_tutorial_textbox(s32 gametextID, s32 screenX, s32 screenY) {
     if (sTutorialBoxGametext == NULL) {
         sAButtonAnimRenderFlags = 0x40000;
         sAButtonAnimProgress = 0;
         sTutorialBoxGametext = gDLL_21_Gametext->vtbl->get_chunk(gametextID);
         sTutorialBoxStringIndex = 0;
         dTutorialBoxShow = TRUE;
-        _data_58 = arg1;
-        _data_54 = arg2;
-        _bss_C2C = _data_50;
+        dTutorialBoxX = screenX;
+        dTutorialBoxY = screenY;
+        _bss_C2C = sTutorialBoxHeight;
     }
 }
 
 // offset: 0x13F4 | func: 15 | export: 14
-void cmdmenu_func_13F4(void) {
+void cmdmenu_close_tutorial_textbox(void) {
     dTutorialBoxShow = FALSE;
 }
 
 // offset: 0x1410 | func: 16
 /**
-  * Handles fading the box in/out, playing the A button animation, and advancing the text when the player presses A. 
+  * Handles the tutorial textbox's player interactions and animation:
+  * - Fading the box in/out
+  * - Playing the A button icon's animation
+  * - Advancing the text (or closing textbox) when the player presses A. 
   */
 static void cmdmenu_tick_tutorial_textbox(void) {
     //Update the tutorial textbox's opacity
     if (dTutorialBoxShow) {
         //Fade in the box background
-        dTutorialBoxOpacity += gUpdateRate * 8;
-        if (dTutorialBoxOpacity > TUTORIAL_BOX_MAX_OPACITY) {
-            dTutorialBoxOpacity = TUTORIAL_BOX_MAX_OPACITY;
+        dTutorialBoxOpacity += gUpdateRate * TUTORIAL_BOX_OPACITY_SPEED;
+        if (dTutorialBoxOpacity > TUTORIAL_BOX_OPACITY_MAX) {
+            dTutorialBoxOpacity = TUTORIAL_BOX_OPACITY_MAX;
         }
 
         //Fade in the box's text (and button icon)
-        dTutorialBoxTextOpacity += gUpdateRate * 8;
+        dTutorialBoxTextOpacity += gUpdateRate * TUTORIAL_BOX_OPACITY_SPEED;
         if (dTutorialBoxTextOpacity > MAX_OPACITY) {
             dTutorialBoxTextOpacity = MAX_OPACITY;
         }
     } else {
         //Fade out the box's text first
-        dTutorialBoxTextOpacity -= gUpdateRate * 8;
+        dTutorialBoxTextOpacity -= gUpdateRate * TUTORIAL_BOX_OPACITY_SPEED;
         if (dTutorialBoxTextOpacity < 0) {
             dTutorialBoxTextOpacity = 0;
         }
@@ -1373,14 +1479,14 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     dl_apply_geometry_mode(&dl);
     dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
 
-    sp10C = _data_58;
+    sp10C = dTutorialBoxX;
     sp10C <<= 2;
-    sp104 = _data_4C << 2;
+    sp104 = dTutorialBoxWidth << 2;
     sp104 -= (16 << 2);
-    y = _data_54 << 2;
+    y = dTutorialBoxY << 2;
     height = _bss_C2C << 2;
     
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
+    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104, 
         y, 
@@ -1391,7 +1497,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = TRUE;
     
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
+    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
     gSPTextureRectangle(dl++, 
         sp10C - sp104 - (16 << 2), 
         y, 
@@ -1414,7 +1520,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
 
     sp104 += (16 << 2);
     
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
+    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
     dl_set_prim_color(&dl, 255, 128, 128, 128);
     
     tempY = y;
@@ -1439,10 +1545,10 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
         qs510(1), qs510(1));
     gDLBuilder->needsPipeSync = TRUE;
     
-    dl_set_prim_color(&dl, 255, 255, 255, (u8) dTutorialBoxOpacity);
+    dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
 
     tempY = y - (11 << 2);
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
+    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
@@ -1454,7 +1560,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     gDLBuilder->needsPipeSync = TRUE;
     
     tempY = (y + height) - (4 << 2);
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
+    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 0);
     gSPTextureRectangle(dl++,
         sp10C - sp104, 
         tempY, 
@@ -1465,7 +1571,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
         qs510(1), qs510(-1));
     gDLBuilder->needsPipeSync = TRUE;
     
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
+    cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
     tempY = y - (11 << 2);
     gSPTextureRectangle(dl++,
         sp10C - sp104 - (16 << 2),
@@ -1509,13 +1615,22 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     gDLBuilder->needsPipeSync = TRUE;
     
     dl_set_prim_color(&dl, 255, 255, 255, 255);
-    rcp_screen_full_write(&dl, sAButtonAnimTex, _data_58 - 8, (_data_54 + _data_50) - 24, 0, sAButtonAnimProgress >> 8, dTutorialBoxTextOpacity, SCREEN_WRITE_TRANSLUCENT);
+    rcp_screen_full_write(
+        &dl, 
+        sAButtonAnimTex, 
+        dTutorialBoxX - 8, 
+        (dTutorialBoxY + sTutorialBoxHeight) - 24, 
+        0, 
+        sAButtonAnimProgress >> 8, 
+        dTutorialBoxTextOpacity, 
+        SCREEN_WRITE_TRANSLUCENT
+    );
 
     font_window_set_coords(3, 
-        /*x1*/ _data_58 - _data_4C, 
-        /*y1*/ _data_54, 
-        /*x2*/ _data_58 + _data_4C, 
-        /*y2*/ _data_54 + _bss_C2C);
+        /*x1*/ dTutorialBoxX - dTutorialBoxWidth, 
+        /*y1*/ dTutorialBoxY, 
+        /*x2*/ dTutorialBoxX + dTutorialBoxWidth, 
+        /*y2*/ dTutorialBoxY + _bss_C2C);
     font_window_use_font(3, 1);
     font_window_set_bg_colour(3, 0, 0, 0, 0);
     font_window_flush_strings(3);
@@ -1538,8 +1653,16 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
 }
 
 // offset: 0x1FEC | func: 18
-static void cmdmenu_func_1FEC(void) {
-    s16* pageUnk4;
+/**
+  * Handles the following parts of the inventory scroll menu:
+  * - Moving through the current page's items with its C button.
+  * - Using an item with the A button.
+  * - Closing the inventory with the B button.
+  * - Playing a sound when using items (unsuccessfully) or entering subpages.
+  * - Auto-selecting an item when opening the inventory (unused?)
+  */
+static void cmdmenu_tick_inventory(void) {
+    s16* pageSelectionIndex;
     Object* player;
     InventoryItem *pageItems;
     u32 pageMsg;
@@ -1589,28 +1712,28 @@ static void cmdmenu_func_1FEC(void) {
     sUsedItemSound = CMDMENU_SOUND_NONE;
     sUsedItemPageID = NO_PAGE;
     pageItems = dCmdmenuPages[sInventoryPageID].items;
-    pageUnk4 = &dCmdmenuPages[sInventoryPageID].usedIndex;
+    pageSelectionIndex = &dCmdmenuPages[sInventoryPageID].selectedIndex;
     pageMsg = dCmdmenuPages[sInventoryPageID].mesgID;
     pageBtnMask = dCmdmenuPages[sInventoryPageID].btnMask;
 
-    //Check if this is a sidekick command page
+    //Check if the current page is a sidekick command page
     if ((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte) || 
         (sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky)
     ) {
         isSidekickMenu = TRUE;
     }
 
-    sMenuSelectedItemIdx = *pageUnk4;
-    sLoadedItemCount = cmdmenu_page_load_items(pageItems, isSidekickMenu);
+    sMenuSelectedItemIdx = *pageSelectionIndex;
+    sDisplayedItemCount = cmdmenu_page_load_items(pageItems, isSidekickMenu);
 
     //If the current page has no visible items, close the inventory
-    if (sLoadedItemCount == 0) {
+    if (sDisplayedItemCount == 0) {
         dPageCategory = 0;
         cmdmenu_close_inventory();
         return;
     }
 
-    if (sMenuSelectedItemIdx >= sLoadedItemCount) {
+    if (sMenuSelectedItemIdx >= sDisplayedItemCount) {
         sMenuSelectedItemIdx = 0;
     }
 
@@ -1633,17 +1756,18 @@ static void cmdmenu_func_1FEC(void) {
             dInventoryTimesMoved = 255;
         }
 
-        //Auto-use an item? (functionality never used)
-        if (sAutoUseItemLoadedIdx != NO_ITEM) {
-            sMenuSelectedItemIdx = sAutoUseItemLoadedIdx;
+        //Auto-select an item (functionality never used)
+        if (sAutoSelectItemIdx != NO_ITEM) {
+            sMenuSelectedItemIdx = sAutoSelectItemIdx;
         }
 
+        //Move between items
         if ((dInventoryTimesMoved > 0) && (sInventoryScrollOffset == 0)) {
             dInventoryTimesMoved--;
 
-            if (sLoadedItemCount >= 2) {
-                if (((sLoadedItemCount == 2) && (sMenuSelectedItemIdx == 1)) || 
-                    ((sLoadedItemCount == 4) && (sMenuSelectedItemIdx == 3))
+            if (sDisplayedItemCount > 1) {
+                if (((sDisplayedItemCount == 2) && (sMenuSelectedItemIdx == 1)) || 
+                    ((sDisplayedItemCount == 4) && (sMenuSelectedItemIdx == 3))
                 ) {
                     sInventoryScrollOffset = 64;
                     dInventoryMoveSpeed = 2;
@@ -1654,8 +1778,9 @@ static void cmdmenu_func_1FEC(void) {
                     dInventoryIsScrolling = FALSE;
                 }
 
+                //Wrap back to top of item list
                 sMenuSelectedItemIdx++;
-                if (sMenuSelectedItemIdx >= sLoadedItemCount) {
+                if (sMenuSelectedItemIdx >= sDisplayedItemCount) {
                     sMenuSelectedItemIdx = 0;
                 }
             }
@@ -1711,7 +1836,7 @@ static void cmdmenu_func_1FEC(void) {
         joy_set_button_mask(0, A_BUTTON | B_BUTTON);
     }
 
-    *pageUnk4 = sMenuSelectedItemIdx;
+    *pageSelectionIndex = sMenuSelectedItemIdx;
 }
 
 // offset: 0x26D8 | func: 19
@@ -1752,7 +1877,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 loadedIdx;
     s32 i;
     s32 sideCommandIndex;
-    s32 var_s5;
+    s32 tileCount;
     u8 iconOpacity;
     u8 pageIcon;
     s8 offsetX;
@@ -1829,13 +1954,13 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     cmdmenu_draw_energy_bar(gdl);
 
     //Draw the inventory (except the top/bottom parts of the scroll)
-    if (sLoadedItemCount != 0) {
+    if (sDisplayedItemCount != 0) {
         if (dInventoryOpacity != 0) {
-            var_s5 = 3;
-            if (sLoadedItemCount < 4) {
+            tileCount = 3;
+            if (sDisplayedItemCount <= 3) {
                 var_s0 = 1;
             } else {
-                var_s5 = 5;
+                tileCount = 5;
                 var_s0 = 2;
             }
 
@@ -1843,41 +1968,41 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             cmdmenu_gfx_set_scroll_scissor(gdl);
 
             sTempIcon->y = 0;
-            yOffset = 95 - (var_s5 * 12);
+            yOffset = 95 - (tileCount * (MENU_ITEM_HEIGHT/2));
             sTempIcon[1].tex = NULL;
 
-            for (i = 0; i < sLoadedItemCount; i++) {
+            for (i = 0; i < sDisplayedItemCount; i++) {
                 sp70[i] = 0;
             }
 
-            for (i = sLoadedItemCount; i < var_s5; i++) {
+            for (i = sDisplayedItemCount; i < tileCount; i++) {
                 sp70[i] = 1;
             }
 
-            if (sLoadedItemCount < var_s5) {
-                sLoadedItemCount = var_s5;
+            if (sDisplayedItemCount < tileCount) {
+                sDisplayedItemCount = tileCount;
             }
 
             if (sInventoryScrollOffset > 0) {
-                var_s0 += 1;
+                var_s0++;
                 yOffset -= MENU_ITEM_HEIGHT;
-                var_s5 += 1;
+                tileCount++;
             }
 
             if (sInventoryScrollOffset > MENU_ITEM_HEIGHT) {
-                var_s0 += 1;
+                var_s0++;
                 yOffset -= MENU_ITEM_HEIGHT;
-                var_s5 += 1;
+                tileCount++;
             }
 
             yOffset += sInventoryUnrollY - dInventoryUnrollMax;
             loadedIdx = sMenuSelectedItemIdx - var_s0;
 
             if (loadedIdx < 0) {
-                loadedIdx += sLoadedItemCount;
+                loadedIdx += sDisplayedItemCount;
             }
 
-            for (i = 0; i < var_s5; i++) {
+            for (i = 0; i < tileCount; i++) {
                 if (sp70[loadedIdx] == 0) {
                     sTempIcon->animProgress = 0;
                     iconOpacity = dInventoryOpacity;
@@ -1951,8 +2076,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 }
 
                 loadedIdx++;
-                if (loadedIdx >= sLoadedItemCount) {
-                    loadedIdx -= sLoadedItemCount;
+                if (loadedIdx >= sDisplayedItemCount) {
+                    loadedIdx -= sDisplayedItemCount;
                 }
             }
 
@@ -2072,7 +2197,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
 
     //Items/Spells
     if (isSidekickMenu == FALSE) {
-        sAutoUseItemLoadedIdx = NO_ITEM;
+        sAutoSelectItemIdx = NO_ITEM;
         while (items[i].gamebitObtained > NO_GAMEBIT) {
             obtained = main_get_bits(items[i].gamebitObtained);
             if (obtained) {
@@ -2104,12 +2229,12 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
                     //Only load non-magic items if they aren't used/hidden
                     if ((items[i].gamebitHide <= NO_GAMEBIT) || (main_get_bits(items[i].gamebitHide) == FALSE)) {
                         
-                        /* Auto-use a specified item?
-                          (Never runs, since `sAutoUseItemGamebit` is always -1 (NO_GAMEBIT) and 
+                        /* Auto-select a specified item?
+                          (Never runs, since `sAutoSelectItemGamebit` is always -1 (NO_GAMEBIT) and 
                            no inventory items have `NO_GAMEBIT` as their `gamebitObtained`)
                         */
-                        if ((sAutoUseItemGamebit != 0) && (sAutoUseItemGamebit == items[i].gamebitObtained)) {
-                            sAutoUseItemLoadedIdx = loadIdx;
+                        if ((sAutoSelectItemGamebit != 0) && (sAutoSelectItemGamebit == items[i].gamebitObtained)) {
+                            sAutoSelectItemIdx = loadIdx;
                         }
 
                         sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
@@ -2250,12 +2375,13 @@ static void cmdmenu_store_loaded_item_metadata(InventoryItem* items, s32 loadedI
 }
 
 // offset: 0x38E4 | func: 24
-static void cmdmenu_func_38E4(Gfx** gdl, Texture* tex, s32 frame) {
+static void cmdmenu_gfx_set_texture(Gfx** gdl, Texture* tex, s32 frame) {
     Gfx* dl;
     s32 i;
 
     dl = *gdl;
 
+    //Get the animation frame
     for (i = 0; i < frame; i++) {
         if (tex->next != NULL) {
             tex = tex->next;
@@ -2326,7 +2452,15 @@ static void cmdmenu_open_inventory(void) {
 }
 
 // offset: 0x3AD0 | func: 29
-static void cmdmenu_func_3AD0(void) {
+/**
+  * Updates the inventory's animation:
+  * - Fading in/out
+  * - Expanding/collapsing page
+  * - Scrolling between items
+  *
+  * Also manages unused inventory frame counters.
+  */
+static void cmdmenu_inventory_animate(void) {
     //Animate moving to the next inventory item
     sInventoryScrollOffset -= gUpdateRate << dInventoryMoveSpeed;
     if (sInventoryScrollOffset < 0) {
@@ -2350,45 +2484,55 @@ static void cmdmenu_func_3AD0(void) {
 
     //Animate the inventory scroll expanding/collapsing
     if (dInventoryShow && (dInventoryOpacity > 64)) {
-        //Expand/unfurl scroll when inventory partially faded in
+        //Expand/unfurl scroll when inventory opacity partially faded in
         sInventoryUnrollY += gUpdateRate * 4;
         if (sInventoryUnrollY > dInventoryUnrollMax) {
             sInventoryUnrollY = dInventoryUnrollMax;
         } else {
-            _data_118++;
-            _data_11C--;
+            //Increment/decrement roll frames while inventory is expanding
+            dInventoryFrameTop++;
+            dInventoryFrameBottom--;
         }
     } else {
         sInventoryUnrollY -= gUpdateRate * 4;
         if (sInventoryUnrollY < 0) {
             sInventoryUnrollY = 0;
         } else {
-            _data_118--;
-            _data_11C++;
+            //Decrement/increment roll frames while inventory is collapsing
+            dInventoryFrameTop--;
+            dInventoryFrameBottom++;
         }
     }
 
     if (dInventoryOpacity) {
+        //Increment roll frames while the inventory is scrolling
         if (sInventoryScrollOffset > 0) {
-            _data_118 += 1;
-            _data_11C += 1;
+            dInventoryFrameTop++;
+            dInventoryFrameBottom++;
         }
-        while (_data_118 >= 3) {
-            _data_118 -= 3;
+        
+        //Update frame counters, keeping them in 0-2 range (effectively `dInventoryFrame %= 3`)
+        while (dInventoryFrameTop >= 3) {
+            dInventoryFrameTop -= 3;
         }
-        while (_data_118 < 0) {
-            _data_118 += 3;
+        while (dInventoryFrameTop < 0) {
+            dInventoryFrameTop += 3;
         }
-        while (_data_11C >= 3) {
-            _data_11C -= 3;
+        while (dInventoryFrameBottom >= 3) {
+            dInventoryFrameBottom -= 3;
         }
-        while (_data_11C < 0) {
-            _data_11C += 3;
+        while (dInventoryFrameBottom < 0) {
+            dInventoryFrameBottom += 3;
         }
     }
 }
 
 // offset: 0x3D28 | func: 30
+/**
+  * Draws the C button icons, and the sidekick food meter.
+  *
+  * The top/bottom of the inventory scroll is also drawn here for some reason!
+  */
 static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     Gfx* dl;
     Object* sidekick;
@@ -2603,8 +2747,8 @@ static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl) {
         //Standard aspect
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
             MENU_ITEM_X, 
-            59, 
-            294, 
+            MENU_ITEM_Y, 
+            (MENU_ITEM_X + MENU_ITEM_WIDTH), 
             sInventoryUnrollY + 61);
     }
 }
@@ -2613,19 +2757,24 @@ static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl) {
 /**
   * Sets a full-screen scissor mask.
   */
-static void cmdmenu_gfx_set_screen_scissor(Gfx** gfx) {
+static void cmdmenu_gfx_set_screen_scissor(Gfx** gdl) {
     s32 resolution;
 
     resolution = vi_get_current_size();
-    gDPSetScissor((*gfx)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution));
+    gDPSetScissor((*gdl)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution));
 }
 
 // offset: 0x47E8 | func: 33
+/**
+  * Checks if the info scroll is fully closed.
+  */
 static int cmdmenu_is_info_scroll_closed(void) {
+    //Check if the info scroll should be shown
     if (dInfoScrollShow) {
         return FALSE;
     }
 
+    //Check if the scroll isn't fully closed
     if (sInfoScrollUnrollY != 0) {
         return FALSE;
     }
@@ -2650,66 +2799,90 @@ static void cmdmenu_open_info_scroll(void) {
 }
 
 // offset: 0x486C | func: 36
-static void cmdmenu_func_486C(void) {
-    if ((dInfoScrollShow != 0) && (_data_84 == 0)) {
-        dInfoScrollOpacity += gUpdateRate * 32;
-        if (dInfoScrollOpacity > 160) {
-            dInfoScrollOpacity = 160;
+/**
+  * Updates the info scroll's animation:
+  * - Fading in/out
+  * - Expanding/collapsing
+  *
+  * Also manages unused info scroll frame counters.
+  */
+static void cmdmenu_info_scroll_animate(void) {
+    //Update the info scroll's opacity
+    if (dInfoScrollShow && (dInfoScrollDisabled == FALSE)) {
+        //Fade in
+        dInfoScrollOpacity += gUpdateRate * INFO_SCROLL_OPACITY_SPEED;
+        if (dInfoScrollOpacity > INFO_SCROLL_OPACITY_MAX) {
+            dInfoScrollOpacity = INFO_SCROLL_OPACITY_MAX;
         }
     } else if (sInfoScrollUnrollY == 0) {
-        dInfoScrollOpacity -= gUpdateRate * 32;
+        //Fade out once the scroll's closed
+        dInfoScrollOpacity -= gUpdateRate * INFO_SCROLL_OPACITY_SPEED;
         if (dInfoScrollOpacity < 0) {
             dInfoScrollOpacity = 0;
         }
     }
 
-    if ((dInfoScrollShow != 0) && (dInfoScrollOpacity == 160)) {
+    //Animate the scroll expanding/collapsing
+    if (dInfoScrollShow && (dInfoScrollOpacity == INFO_SCROLL_OPACITY_MAX)) {
+        //Expand scroll once fully faded in
         sInfoScrollUnrollY += gUpdateRate * 4;
         if (sInfoScrollUnrollY > dInfoScrollUnrollMax) {
             sInfoScrollUnrollY = dInfoScrollUnrollMax;
         } else {
-            _data_120 += 1;
-            _data_124 -= 1;
+            //Increment/decrement roll frames while info scroll is expanding
+            dInfoScrollFrameTop++;
+            dInfoScrollFrameBottom--;
         }
     } else {
+        //Collapse scroll before fading out
         sInfoScrollUnrollY -= gUpdateRate * 4;
         if (sInfoScrollUnrollY < 0) {
             sInfoScrollUnrollY = 0;
         } else {
-            _data_120 -= 1;
-            _data_124 += 1;
+            //Decrement/increment roll frames while info scroll is collapsing
+            dInfoScrollFrameTop--;
+            dInfoScrollFrameBottom++;
         }
     }
 
     if (dInfoScrollOpacity == 0) {
-        if (*dTextStrings != NULL) {
-            mmFree(*dTextStrings);
-            *dTextStrings = NULL;
+        //Free the info scroll's strings when fully faded out
+        if (*dInfoScrollStrings != NULL) {
+            mmFree(*dInfoScrollStrings);
+            *dInfoScrollStrings = NULL;
         }
     } else {
-        while (_data_120 >= 3) {
-            _data_120 -= 3;
+        //Update roll frame counters, keeping them in 0-2 range (effectively `dInfoScrollFrame %= 3`)
+        while (dInfoScrollFrameTop >= 3) {
+            dInfoScrollFrameTop -= 3;
         }
-        while (_data_120 < 0) {
-            _data_120 += 3;
+        while (dInfoScrollFrameTop < 0) {
+            dInfoScrollFrameTop += 3;
         }
-        while (_data_124 >= 3) {
-            _data_124 -= 3;
+        while (dInfoScrollFrameBottom >= 3) {
+            dInfoScrollFrameBottom -= 3;
         }
-        while (_data_124 < 0) {
-            _data_124 += 3;
+        while (dInfoScrollFrameBottom < 0) {
+            dInfoScrollFrameBottom += 3;
         }
-        _data_120 = 0;
-        _data_124 = 0;
+
+        //Set the frame counters to 0 anyway (since the texture only has 1 frame)
+        dInfoScrollFrameTop = 0;
+        dInfoScrollFrameBottom = 0;
     }
 }
 
 // offset: 0x4AD4 | func: 37
-// Draws the info box at the top of the screen describing the highlighted/z-locked item.
+/**
+  * Draws the info box at the top of the screen describing the highlighted/z-locked item.
+  *
+  * The info scroll can also be shown automatically (e.g. during Forcefield Spell 
+  * collection cutscene) at custom screen coordinates.
+  */
 static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 x;
     s32 y;
-    s32 sp104;
+    s32 halfWidth;
     s32 height;
     s32 tempY;
     s32 lineIdx;
@@ -2731,186 +2904,226 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl_apply_geometry_mode(&dl);
     dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
 
-    x = _data_2C << 2;
-    sp104 = _data_20 << 2;
-    sp104 -= (16 << 2);
-    y = _data_28 << 2;
+    //Get dimensions (note: coords multiplied by 4 for gSPTextureRectangle)
+    x = dInfoScrollX << 2;
+    halfWidth = dInfoScrollWidthHalf << 2;
+    halfWidth -= INFO_SCROLL_PAGE_EDGE_WIDTH << 2; //Subtract the page's edge margin
+    y = dInfoScrollY << 2;
     height = sInfoScrollUnrollY << 2;
 
-    //Draw scroll's paper BG
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x - sp104,
-        /*uly*/ y,
-        /*lrx*/ x + sp104,
-        /*lry*/ y + height,
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(0), /*t*/ qs105(0), 
-        /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
-
-    //Draw scroll's left side
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
-    gSPTextureRectangle(dl++, 
-        /*lrx*/ x - sp104 - (16 << 2),
-        /*lry*/ y,
-        /*ulx*/ x - sp104,
-        /*uly*/ y + height,
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(0), /*t*/ qs105(0), 
-        /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x + sp104,
-        /*uly*/ y,
-        /*lrx*/ x + sp104 + (16 << 2),
-        /*lry*/ y + height,
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(15), /*t*/ qs105(0),
-        /*dsdx*/ qs510(-1), /*dtdy*/ qs510(1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
-
-    sp104 += (16 << 2);
-
-    if (sInfoScrollUnrollY >= 9) {
-        cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
-        dl_set_prim_color(&dl, 255, 128, 128, 128);
-        
-        tempY = y;
+    //Draw main paper background
+    {
+        //Middle section (excluding the paper's left/right edges)
+        cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_06_InfoScroll_BG], 0);
         gSPTextureRectangle(dl++, 
-            /*ulx*/ x - sp104,
-            /*uly*/ tempY,
-            /*lrx*/ x + sp104,
-            /*lry*/ tempY + (8 << 2),
-            /*tile*/ G_TX_RENDERTILE,
-            /*s*/ qs105(0), /*t*/ qs105(7), 
-            /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
-        );
-        gDLBuilder->needsPipeSync = TRUE;
-
-        tempY = (y + height) - (6 << 2);
-        gSPTextureRectangle(dl++, 
-            /*ulx*/ x - sp104,
-            /*uly*/ tempY,
-            /*lrx*/ x + sp104,
-            /*lry*/ tempY + (8 << 2),
+            /*ulx*/ x - halfWidth,
+            /*uly*/ y,
+            /*lrx*/ x + halfWidth,
+            /*lry*/ y + height,
             /*tile*/ G_TX_RENDERTILE,
             /*s*/ qs105(0), /*t*/ qs105(0), 
             /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
         );
         gDLBuilder->needsPipeSync = TRUE;
 
+        //Left edge of paper
+        cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_05_InfoScroll_Side], 0);
+        gSPTextureRectangle(dl++, 
+            /*lrx*/ x - halfWidth - (INFO_SCROLL_PAGE_EDGE_WIDTH << 2),
+            /*lry*/ y,
+            /*ulx*/ x - halfWidth,
+            /*uly*/ y + height,
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(0), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+
+        //Right edge of paper
+        gSPTextureRectangle(dl++, 
+            /*ulx*/ x + halfWidth,
+            /*uly*/ y,
+            /*lrx*/ x + halfWidth + (INFO_SCROLL_PAGE_EDGE_WIDTH << 2),
+            /*lry*/ y + height,
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(15), /*t*/ qs105(0),
+            /*dsdx*/ qs510(-1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+
+        halfWidth += (INFO_SCROLL_PAGE_EDGE_WIDTH << 2); //restore half-width
+    }
+
+    //Draw the top/bottom rolls' page shadows
+    if (sInfoScrollUnrollY > INFO_SCROLL_PAGE_SHADOW_HEIGHT) {
+        cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
+        dl_set_prim_color(&dl, 255, 128, 128, 128);
+        
+        //Top shadow
+        tempY = y;
+        gSPTextureRectangle(dl++, 
+            /*ulx*/ x - halfWidth,
+            /*uly*/ tempY,
+            /*lrx*/ x + halfWidth,
+            /*lry*/ tempY + (INFO_SCROLL_PAGE_SHADOW_HEIGHT << 2),
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(7), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+
+        //Bottom shadow
+        tempY = y + height - ((INFO_SCROLL_PAGE_SHADOW_HEIGHT - 2) << 2);
+        gSPTextureRectangle(dl++, 
+            /*ulx*/ x - halfWidth,
+            /*uly*/ tempY,
+            /*lrx*/ x + halfWidth,
+            /*lry*/ tempY + (INFO_SCROLL_PAGE_SHADOW_HEIGHT << 2),
+            /*tile*/ G_TX_RENDERTILE,
+            /*s*/ qs105(0), /*t*/ qs105(0), 
+            /*dsdx*/ qs510(1), /*dtdy*/ qs510(1)
+        );
+        gDLBuilder->needsPipeSync = TRUE;
+
+        //Restore prim colour
         dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
     }
 
-    tempY = y - (11 << 2);
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], _data_120);
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x - sp104,
-        /*uly*/ tempY,
-        /*lrx*/ x + sp104,
-        /*lry*/ tempY + (16 << 2),
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
-        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
+    //Draw the top/bottom rolls
+    {
+        //Top roll (middle span)
+        {
+            tempY = y - (INFO_SCROLL_ROLL_TOP_Y_OFFSET << 2);
+            cmdmenu_gfx_set_texture(
+                &dl,
+                sTextures[CMDMENU_TEX_04_InfoScroll_Roll], 
+                dInfoScrollFrameTop //Unused/scrapped rolling animation (always set to frame 0)
+            );
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x - halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth,
+                /*lry*/ tempY + (INFO_SCROLL_ROLL_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+        }
 
-    tempY = (y + height) - (4 << 2);
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], _data_124);
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x - sp104,
-        /*uly*/ tempY,
-        /*lrx*/ x + sp104,
-        /*lry*/ tempY + (16 << 2),
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
-        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
+        //Bottom roll (middle span)
+        {
+            tempY = y + height - (INFO_SCROLL_ROLL_BOTTOM_Y_OFFSET << 2);
+            cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_04_InfoScroll_Roll], dInfoScrollFrameBottom);
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x - halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth,
+                /*lry*/ tempY + (INFO_SCROLL_ROLL_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+        }
 
-    cmdmenu_func_38E4(&dl, sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 0);
-    tempY = y - (11 << 2);
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x - sp104 - (16 << 2),
-        /*uly*/ tempY,
-        /*lrx*/ x - sp104,
-        /*lry*/ tempY + (16 << 2),
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
-        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x + sp104,
-        /*uly*/ tempY,
-        /*lrx*/ x + sp104 + (16 << 2),
-        /*lry*/ tempY + (16 << 2),
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(15), /*t*/ qs105(15.9688), 
-        /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
-    tempY = (y + height) - (4 << 2);
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x - sp104 - (16 << 2),
-        /*uly*/ tempY,
-        /*lrx*/ x - sp104,
-        /*lry*/ tempY + (16 << 2),
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(0), /*t*/ qs105(15.9688), 
-        /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
-    gSPTextureRectangle(dl++, 
-        /*ulx*/ x + sp104,
-        /*uly*/ tempY,
-        /*lrx*/ x + sp104 + (16 << 2),
-        /*lry*/ tempY + (16 << 2),
-        /*tile*/ G_TX_RENDERTILE,
-        /*s*/ qs105(15), /*t*/ qs105(15.9688), 
-        /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
-    );
-    gDLBuilder->needsPipeSync = TRUE;
+        //Roll handles
+        {
+            cmdmenu_gfx_set_texture(
+                &dl, 
+                sTextures[CMDMENU_TEX_03_InfoScroll_Roll_End], 
+                0
+            );
+            
+            //Top roll handle (left)
+            tempY = y - (INFO_SCROLL_ROLL_TOP_Y_OFFSET << 2);
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x - halfWidth - (INFO_SCROLL_HANDLE_WIDTH << 2),
+                /*uly*/ tempY,
+                /*lrx*/ x - halfWidth,
+                /*lry*/ tempY + (INFO_SCROLL_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
 
+            //Top roll handle (right)
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x + halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth + (INFO_SCROLL_HANDLE_WIDTH << 2),
+                /*lry*/ tempY + (INFO_SCROLL_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(15), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+
+            //Bottom roll handle (left)
+            tempY = y + height - (INFO_SCROLL_ROLL_BOTTOM_Y_OFFSET << 2);
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x - halfWidth - (INFO_SCROLL_HANDLE_WIDTH << 2),
+                /*uly*/ tempY,
+                /*lrx*/ x - halfWidth,
+                /*lry*/ tempY + (INFO_SCROLL_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(0), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+
+            //Bottom roll handle (right)
+            gSPTextureRectangle(dl++, 
+                /*ulx*/ x + halfWidth,
+                /*uly*/ tempY,
+                /*lrx*/ x + halfWidth + (INFO_SCROLL_HANDLE_WIDTH << 2),
+                /*lry*/ tempY + (INFO_SCROLL_HANDLE_HEIGHT << 2),
+                /*tile*/ G_TX_RENDERTILE,
+                /*s*/ qs105(15), /*t*/ qs105(15.9688), 
+                /*dsdx*/ qs510(-1), /*dtdy*/ qs510(-1)
+            );
+            gDLBuilder->needsPipeSync = TRUE;
+        }
+    }
+
+    //Restore prim colour
     dl_set_prim_color(&dl, 255, 255, 255, 255);
 
     //Return early if there's no gametext
-    if (dInfoScrollTextID < 0) {
+    if (dInfoScrollTextID <= NO_GAMETEXT) {
         return;
     }
 
     //Get the gametext lines
-    if (dTextStrings[0] == NULL) {
+    if (dInfoScrollStrings[0] == NULL) {
         //Get the item's string (use a different gametext file for lineIDs beyond 255) 
-        dTextStrings[0] = dInfoScrollTextID >= 256 
+        dInfoScrollStrings[0] = dInfoScrollTextID >= 256 
             ? gDLL_21_Gametext->vtbl->get_text(GAMETEXT_238_UI_Text_2, dInfoScrollTextID - 256) 
             : gDLL_21_Gametext->vtbl->get_text(GAMETEXT_003_UI_Text_1, dInfoScrollTextID);
-        dTextStrings[1] = NULL;
-        dTextStrings[2] = NULL;
-        dTextStrings[3] = NULL;
+        dInfoScrollStrings[1] = NULL;
+        dInfoScrollStrings[2] = NULL;
+        dInfoScrollStrings[3] = NULL;
 
         //Check for bar delimiter in text (separates lines)
-        for (x = 0, lineIdx = 1; dTextStrings[0][x] != '\0'; x++) {
-            if (dTextStrings[0][x] == '|') {
-                dTextStrings[0][x] = '\0';
+        for (x = 0, lineIdx = 1; dInfoScrollStrings[0][x] != '\0'; x++) {
+            if (dInfoScrollStrings[0][x] == '|') {
+                dInfoScrollStrings[0][x] = '\0';
                 x += 2; //ROM's text should have space after bar ("| "), so skipping over it
                 
-                dTextStrings[lineIdx] = &dTextStrings[0][x]; //store address of new line
+                dInfoScrollStrings[lineIdx] = &dInfoScrollStrings[0][x]; //store address of new line
                 lineIdx++;
             }            
         }
     }
 
+    //Draw text if the scroll's open
     if (sInfoScrollUnrollY > 0) {
         font_window_set_coords(3, 
-            /*x1*/ _data_2C - _data_20, 
-            /*y1*/ _data_28, 
-            /*x2*/ _data_2C + _data_20, 
-            /*y2*/ _data_28 + sInfoScrollUnrollY);
+            /*x1*/ dInfoScrollX - dInfoScrollWidthHalf, 
+            /*y1*/ dInfoScrollY, 
+            /*x2*/ dInfoScrollX + dInfoScrollWidthHalf, 
+            /*y2*/ dInfoScrollY + sInfoScrollUnrollY);
         font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
         font_window_set_bg_colour(3, 0, 0, 0, 0);
         font_window_flush_strings(3);
@@ -2919,14 +3132,14 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         y = 3;
 
         //Print the text lines
-        for (lineIdx = 0; lineIdx < 4; lineIdx++) {
-            if (dTextStrings[lineIdx] == NULL) {
+        for (lineIdx = 0; lineIdx <= 3; lineIdx++) {
+            if (dInfoScrollStrings[lineIdx] == NULL) {
                 break;
             }
-            font_window_add_string_xy(3, -0x8000, y, dTextStrings[lineIdx], 1, ALIGN_TOP_CENTER);
+            font_window_add_string_xy(3, -0x8000, y, dInfoScrollStrings[lineIdx], 1, ALIGN_TOP_CENTER);
             font_window_set_text_colour(3, 20, 20, 20, 255, 255);
             font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
-            y += 16;
+            y += INFO_SCROLL_LINE_HEIGHT;
         }
 
         font_window_draw(&dl, mtxs, vtxs, 3);

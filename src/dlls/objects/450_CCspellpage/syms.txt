@@ -13,4 +13,4 @@ CCspellpage_anim_callback = 0x160;
 .rodata = 0x2B4:
 
 .data = 0x2B4:
-_data_0 = 0x0; // absolute:0x2B4
+dShowInfoScrollTimer = 0x0; // absolute:0x2B4
