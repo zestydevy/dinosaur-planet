@@ -172,7 +172,7 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*12*/ void (*auto_show_info_scroll)(u32 uiTextID, u32 screenX, u32 screenY); //Overrides the info scroll, displaying a specific textID at a custom screen position (can differ from usual top-centre). See `GameTexts_UI_A` and `GameTexts_UI_B` for UI textIDs.
 /*13*/ void (*open_tutorial_textbox)(s32 gametextID, s32 screenX, s32 screenY); //Opens the tutorial textbox at a specified screen position, displaying a specific gametext file's tutorial text.
 /*14*/ void (*close_tutorial_textbox)(void); //Causes the tutorial textbox to close.
-/*15*/ void (*disable_buttons)(u16 mask); //Can disable/reenable the player's inventory control.
+/*15*/ void (*disable_buttons)(u16 mask); //Sets a controller button mask, affecting player control of the inventory.
 /*16*/ void (*set_buttons_override)(s32 buttonsOverride); //Simulate controller button presses (only for the cmdmenu), used by tutorial sequences like Tricky's sidekick command explanation. An argument of `CMDMENU_CLEAR_BUTTONS_OVERRIDE` (-1) clears the override.
 /*17*/ void (*info_show)(s16 itemGamebit, s32 displayDuration, s32 itemCount); //Show an item info pop-up in the bottom-left of screen (used after collecting certain items, e.g. Kyte's grubs) - the item is specified using its inventory gamebitID.
 /*18*/ void (*info_show_tex)(s16 textureID, s32 displayDuration, s32 itemCount); //Show an item info pop-up in the bottom-left of screen (used after collecting certain items, e.g. Kyte's grubs) - the item is specified using its textable textureID.

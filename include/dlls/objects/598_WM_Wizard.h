@@ -58,7 +58,7 @@ typedef struct {
 } RandomWalkData;
 
 typedef enum {
-    Randorn_MODANIM_0_Standing_Thoughfully_LOOP = 0, //Pondering with left hand at mouth, right hand on hip
+    Randorn_MODANIM_0_Standing_Thoughtfully_LOOP = 0, //Pondering with left hand at mouth, right hand on hip
     Randorn_MODANIM_1_Sitting_Holding_Head_LOOP = 1, //Sitting at edge of podium, head down and left hand held to temple, right hand planted behind on the podium
     Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP = 2, //Looking ahead, breathing slowly, upper body weight supported by hands on knees
     Randorn_MODANIM_3_Sitting_Exhausted_LOOP = 3, //Head down, hunched forward, elbows leaning heavily on knees (initial pose for 1st cutscene with Krystal)
@@ -139,12 +139,12 @@ typedef enum {
 };
 
 /*0xDC*/ static f32 dRandomWalkData[] = {
-    0,      0,    Randorn_MODANIM_0_Standing_Thoughfully_LOOP,  Randorn_MODANIM_0_Standing_Thoughfully_LOOP,    0.02,   //middle of Krazoa floor mural
+    0,      0,    Randorn_MODANIM_0_Standing_Thoughtfully_LOOP,  Randorn_MODANIM_0_Standing_Thoughtfully_LOOP,    0.02,   //middle of Krazoa floor mural
     79,     152,  Randorn_MODANIM_20_Standing_Idle_L_LOOP,      Randorn_MODANIM_20_Standing_Idle_L_LOOP,        0.01,   //near top-right pillar (furthest from antechamber door, on right when facing podium)
     138,   -6,  Randorn_MODANIM_20_Standing_Idle_L_LOOP,     Randorn_MODANIM_20_Standing_Idle_L_LOOP,       0.02,  //near podium
     -73,   -48, Randorn_MODANIM_20_Standing_Idle_L_LOOP,     Randorn_MODANIM_20_Standing_Idle_L_LOOP,       0.02,  //near middle of Krazoa floor mural, closer to orrery door
-    -248,  -7,  Randorn_MODANIM_0_Standing_Thoughfully_LOOP, Randorn_MODANIM_0_Standing_Thoughfully_LOOP,   0.02,  //beside orrery door
-    0,     0,   Randorn_MODANIM_0_Standing_Thoughfully_LOOP, Randorn_MODANIM_0_Standing_Thoughfully_LOOP,   0.02
+    -248,  -7,  Randorn_MODANIM_0_Standing_Thoughtfully_LOOP, Randorn_MODANIM_0_Standing_Thoughtfully_LOOP,   0.02,  //beside orrery door
+    0,     0,   Randorn_MODANIM_0_Standing_Thoughtfully_LOOP, Randorn_MODANIM_0_Standing_Thoughtfully_LOOP,   0.02
 };
 
 #endif // _DLLS_598_H

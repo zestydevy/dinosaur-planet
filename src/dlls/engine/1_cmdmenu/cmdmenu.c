@@ -37,6 +37,9 @@
 #define NO_PAGE -1
 #define NO_ITEM -1
 
+#define SLOT_OCCUPIED 0
+#define SLOT_PADDED 1
+
 /* UI COORD MACROS (TO-DO: move to separate header?) */
 
 #define SCREEN_WIDTH 320
@@ -106,6 +109,15 @@
 //Inventory scroll
 #define MENU_HEIGHT_OPEN 72
 
+#define MENU_SCROLL_WIDTH 40
+#define MENU_SCROLL_HEIGHT 8
+
+#define MENU_SCROLL_X (MENU_ITEM_X - (MENU_SCROLL_WIDTH - MENU_ITEM_WIDTH)/2)
+#define MENU_SCROLL_TOP_Y (MENU_ITEM_Y - MENU_SCROLL_HEIGHT)
+#define MENU_SCROLL_BOTTOM_Y (MENU_ITEM_Y)
+
+#define MENU_SCROLL_CENTRE_Y (MENU_ITEM_Y + (MENU_ITEM_HEIGHT + MENU_ITEM_HEIGHT/2)) //Screen Y-coord in the middle of the inventory's 3 tiles
+
 //Inventory item selection highlight
 #define ITEM_HL_WIDTH 8
 #define ITEM_HL_HEIGHT 6
@@ -121,6 +133,26 @@
 #define SIDEKICK_METER_Y 21
 #define SIDEKICK_METER_SPACING_X 9
 #define SIDEKICK_METER_SPACING_Y 8
+#define SIDEKICK_METER_ICONS_PER_COLUMN 4
+
+//C buttons
+#define C_BUTTONS_X 245
+#define C_BUTTONS_Y 17
+
+#define C_BUTTONS_LEFT_EMPTY_X (C_BUTTONS_X + 1)
+#define C_BUTTONS_LEFT_EMPTY_Y (C_BUTTONS_Y + 9)
+
+#define C_BUTTONS_DOWN_EMPTY_X (C_BUTTONS_X + 7)
+#define C_BUTTONS_DOWN_EMPTY_Y (C_BUTTONS_Y + 26)
+
+#define C_BUTTONS_RIGHT_EMPTY_X (C_BUTTONS_X + 29)
+#define C_BUTTONS_RIGHT_EMPTY_Y (C_BUTTONS_Y + 17)
+
+#define C_BUTTONS_LEFT_DOWN_BOOK_SIDEKICK_X (C_BUTTONS_X + 0)
+#define C_BUTTONS_LEFT_DOWN_BOOK_SIDEKICK_Y (C_BUTTONS_Y + 0)
+
+#define C_BUTTONS_RIGHT_BAG_X (C_BUTTONS_X + 30)
+#define C_BUTTONS_RIGHT_BAG_Y (C_BUTTONS_Y + 8)
 
 /* UI BOTTOM-LEFT */
 
@@ -215,6 +247,11 @@
 #define ENERGY_BAR_X (SCREEN_WIDTH / 2)
 #define ENERGY_BAR_Y (SCREEN_HEIGHT - 10)
 
+//Aiming reticle
+#define AIMING_RETICLE_WIDTH 32
+#define AIMING_RETICLE_HEIGHT 32
+#define AIMING_RETICLE_OPACITY 150
+
 enum CmdMenuTextures {
     CMDMENU_TEX_00_Scroll_BG = 0,
     CMDMENU_TEX_01_Scroll_Bottom = 1,
@@ -297,10 +334,10 @@ typedef enum {
 /*0x18*/ static s16 dSelectedItemTextID = NO_GAMETEXT;
 
 /*0x1C*/ static s8 dInfoScrollShow = FALSE;
-/*0x20*/ static s16 dInfoScrollWidthHalf = INFO_SCROLL_WIDTH >> 1; //The half-width of the info scroll's page
-/*0x24*/ static s16 dInfoScrollUnrollMax = INFO_SCROLL_HEIGHT;
-/*0x28*/ static s16 dInfoScrollY = INFO_SCROLL_Y_INITIAL; //Initialised at slightly different Y
-/*0x2C*/ static s16 dInfoScrollX = INFO_SCROLL_X;
+/*0x20*/ static s16 dInfoScrollWidthHalf = INFO_SCROLL_WIDTH >> 1; //Half-width of the info scroll's page
+/*0x24*/ static s16 dInfoScrollUnrollMax = INFO_SCROLL_HEIGHT; //Height of the info scroll's page (when fully open)
+/*0x28*/ static s16 dInfoScrollY = INFO_SCROLL_Y_INITIAL; //Screen coord for the info scroll (initialised at slightly higher Y)
+/*0x2C*/ static s16 dInfoScrollX = INFO_SCROLL_X; //Screen coord for the centre of the info scroll
 /*0x30*/ static s16 dInfoScrollOpacity = 0;
 
 /** 
@@ -324,7 +361,7 @@ typedef enum {
 /*0x5C*/ static s16 dTutorialBoxOpacity = 0; //Controls the tutorial box's opacity
 /*0x60*/ static s16 dTutorialBoxTextOpacity = 0; //Controls the tutorial box's text opacity, and the opacity of the A button icon.
 /*0x64*/ static s16 _data_64 = -1; //unused
-/*0x68*/ static Texture* dInventoryPageIcon = NULL; //Icon in the top-right corner of screen: Bag/SpellBook/Kyte/Tricky
+/*0x68*/ static Texture* dInventoryPageIcon = NULL; //Icon in the top-right corner of screen: Bag/SpellBook/Kyte/Tricky (also used for C-right button)
 
 typedef struct {
     f32 unk0;
@@ -741,32 +778,32 @@ typedef struct {
 /*0x0*/ static f32 sOpacityHealth;  //Opacity of player health UI
 /*0x4*/ static f32 sOpacityScarabs; //Opacity of Scarab counter UI
 /*0x8*/ static f32 sOpacityMagic;   //Opacity of player magic bar UI
-/*0xC*/ static f32 _bss_C; //Unused
+/*0xC*/ static f32 _bss_C;          //Unused
 /*0x10*/ static CmdmenuPlayerSidekickData sStats;
 /*0x38*/ static CmdmenuPlayerSidekickData sPrevStats;
 /*0x60*/ static CmdmenuPlayerSidekickDataChangeTimers sStatsChangeTimers;
 /*0x88*/ static u8 sPlayerStatsFlags;
-/*0x89*/ static u8 sAnimFrameScarab; //Frame offset for the Scarab (an ID offset in practice, since Scarab's animation frames are stored as separate textures)
+/*0x89*/ static u8 sAnimFrameScarab;        //Frame offset for the Scarab (an ID offset in practice, since Scarab's animation frames are stored as separate textures)
 /*0x8A*/ static u8 sAnimScarabFlutterTimer; //Plays Scarab flutter animation during last ticks of countdown
-/*0x8B*/ static u8 sAnimScarabSpin; //Plays Scarab spin animation when nonzero (used as frame offset)
-/*0x8C*/ static f32 sOpacityR; //Opacity of icons on right side of screen (C-buttons, menu page image, etc.)
+/*0x8B*/ static u8 sAnimScarabSpin;         //Plays Scarab spin animation when nonzero (used as frame offset)
+/*0x8C*/ static f32 sOpacityR;              //Opacity of icons on right side of screen (C-buttons, menu page image, etc.)
 /*0x90*/ static EnergyBar* sEnergyBar; 
-/*0x98*/ static Texture* sMenuItemTextures[MAX_LOADED_ITEMS]; //Inventory icon texture pointers for the current menu page's loaded items
-/*0x198*/ static Texture* sMenuItemTexturesSidekick[MAX_LOADED_ITEMS]; //Sidekick command inventory icon textures for the current menu page's loaded items (unused aside from loading the textures)
-/*0x298*/ static s16 sMenuItemTextureIDs[MAX_LOADED_ITEMS]; //TextableIDs for the current menu page's loaded items
-/*0x318*/ static s32 sMenuItemGamebits[MAX_LOADED_ITEMS]; //GamebitIDs for the current menu page's loaded items
-/*0x418*/ static s16 sMenuItemTextIDs[MAX_LOADED_ITEMS]; //Gametext lineIDs for the current menu page's loaded items
-/*0x498*/ static s8 sMenuItemOpenPageIDs[MAX_LOADED_ITEMS]; //The menu page ID opened by each of the current menu page's loaded items (or -1 if it closes the inventory on use)
-/*0x4D8*/ static u8 sMenuItemUseSounds[MAX_LOADED_ITEMS]; //The sound types (see `CmdMenuItemSounds`) used by each of the current menu page's loaded items
-/*0x518*/ static u8 sMenuItemVisibilities[MAX_LOADED_ITEMS]; //Visibility Booleans for each of the current menu page's loaded items (Spells are the only kind of inventory item that still load while their gamebitHidden is set, however they're drawn as an empty tile when hidden)
-/*0x558*/ static u8 sMenuItemQuantities[MAX_LOADED_ITEMS]; //Item quantities for each of the current menu page's loaded items
-/*0x598*/ static Texture* sActiveSpellIcon; //Icon in bottom-right of screen
-/*0x59C*/ static Texture* sActiveSpellRing; //Icon in bottom-right of screen
-/*0x5A0*/ static Texture* sAButtonAnimTex;
-/*0x5A4*/ static s16 sPrevActiveSpellGamebit;
-/*0x5A8*/ static Texture* sActiveSidekickCommandIcon;
-/*0x5AC*/ static Texture* sActiveSidekickCommandRing;
-/*0x5B0*/ static s16 sPrevSidekickCommandIndex;
+/*0x98*/ static Texture* sMenuItemTextures[MAX_LOADED_ITEMS];           //Inventory icon texture pointers for the current menu page's loaded items
+/*0x198*/ static Texture* sMenuItemTexturesSidekick[MAX_LOADED_ITEMS];  //Sidekick command inventory icon textures for the current menu page's loaded items (unused aside from loading the textures)
+/*0x298*/ static s16 sMenuItemTextureIDs[MAX_LOADED_ITEMS];             //TextableIDs for the current menu page's loaded items
+/*0x318*/ static s32 sMenuItemGamebits[MAX_LOADED_ITEMS];               //GamebitIDs for the current menu page's loaded items (or for sidekick commands: the command's index)
+/*0x418*/ static s16 sMenuItemTextIDs[MAX_LOADED_ITEMS];                //Gametext lineIDs for the current menu page's loaded items
+/*0x498*/ static s8 sMenuItemOpenPageIDs[MAX_LOADED_ITEMS];             //The menu page ID opened by each of the current menu page's loaded items (or -1 if it closes the inventory on use)
+/*0x4D8*/ static u8 sMenuItemUseSounds[MAX_LOADED_ITEMS];               //The sound types (see `CmdMenuItemSounds`) used by each of the current menu page's loaded items
+/*0x518*/ static u8 sMenuItemVisibilities[MAX_LOADED_ITEMS];            //Visibility Booleans for each of the current menu page's loaded items (Spells are the only kind of inventory item that still load while their gamebitHidden is set, however they're drawn as an empty tile when hidden)
+/*0x558*/ static u8 sMenuItemQuantities[MAX_LOADED_ITEMS];              //Item quantities for each of the current menu page's loaded items
+/*0x598*/ static Texture* sActiveSpellIcon;             //Icon in bottom-right of screen, showing the Spell currently in use
+/*0x59C*/ static Texture* sActiveSpellRing;             //Icon in bottom-right of screen, circling the Spell currently in use
+/*0x5A0*/ static Texture* sAButtonAnimTex;              //Animated A button icon, shown on the tutorial textbox
+/*0x5A4*/ static s16 sPrevActiveSpellGamebit;           //The gamebitID of the mostly recently-used Spell (used to check if the active Spell changed)
+/*0x5A8*/ static Texture* sActiveSidekickCommandIcon;   //Icon in bottom-right of screen, showing the Sidekick Command currently in use
+/*0x5AC*/ static Texture* sActiveSidekickCommandRing;   //Icon in bottom-right of screen, circling the Sidekick Command currently in use
+/*0x5B0*/ static s16 sPrevSidekickCommandIndex;         //The index of the mostly recently-used Sidekick Command (used to check if the active Sidekick Command changed)
 /*0x5B4*/ static s32 sAButtonAnimRenderFlags;
 /*0x5B8*/ static s32 sCrosshairAnimRenderFlags;
 /*0x5BC*/ static s32 sAButtonAnimProgress;
@@ -781,24 +818,24 @@ typedef struct {
 /*0xC30*/ static GameTextChunk* sTutorialBoxGametext;
 /*0xC34*/ static Texture* sCrosshairTex;
 /*0xC38*/ static s16 sUsedItemGamebitID;
-/*0xC3A*/ static s16 sSubmenuGamebit; //The gamebitID associated with the item that opened a menu subpage (e.g. a foodbag's gamebit)
-/*0xC3C*/ static s8 sUsedItemSound; //Set to 0 when item selection successful (item given to character, etc.)
+/*0xC3A*/ static s16 sSubmenuGamebit;   //The gamebitID associated with the item that opened a menu subpage (e.g. a foodbag's gamebit)
+/*0xC3C*/ static s8 sUsedItemSound;     //Set to 0 when item selection successful (item given to character, etc.)
 /*0xC3D*/ static s8 sUsedItemPageID;
 /*0xC3E*/ static s8 sInventoryPageID;
 /*0xC40*/ static s16 sMenuSelectedItemIdx; //Display index of the item currently selected in the menu page 
-/*0xC44*/ static s32 sDisplayedItemCount;  //The number of items displayed in the current page (while drawing, includes the number of empty tiles)
+/*0xC44*/ static s32 sDisplayedItemCount;  //The number of items displayed on the current page (while drawing, this number is updated to include the number of empty tiles)
 /*0xC48*/ static s8 sShouldOverrideJoypadButtons;
-/*0xC4C*/ static s32 dInventoryFrameCounter; //Counts how many times `cmdmenu_update2` has run (clamped from 0-2, and resets to 0 upon closing the inventory)
-/*0xC50*/ static s32 sJoyPressedButtons; // joypad button bitfield
-/*0xC54*/ static s32 sJoyPressedButtonsOverride; //controllerButtons
-/*0xC58*/ static s32 sJoyHeldButtons; // joypad button bitfield
+/*0xC4C*/ static s32 dInventoryFrameCounter;        //Counts how many times `cmdmenu_update2` has run (clamped from 0-2, and resets to 0 upon closing the inventory)
+/*0xC50*/ static s32 sJoyPressedButtons;            //Joypad button bitfield
+/*0xC54*/ static s32 sJoyPressedButtonsOverride;    //Joypad button bitfield (for simulated presses, used during inventory tutorials)
+/*0xC58*/ static s32 sJoyHeldButtons;               //Joypad button bitfield
 /*0xC60*/ static TextureTile sTempIcon[2];
-/*0xC78*/ static s8 sAutoSelectItemGamebit; //Gamebit: Always -1, but seems intended to auto-select a specific item when opening the inventory?
-/*0xC7A*/ static s16 sAutoSelectItemIdx; //Index of the auto-selected item (unused in practice)
-/*0xC7C*/ static s16 sInfoScrollOverrideTextID; //Causes the info scroll to open automatically
+/*0xC78*/ static s8 sAutoSelectItemGamebit;     //Always -1, but seems intended to auto-select a specific item when opening the inventory
+/*0xC7A*/ static s16 sAutoSelectItemIdx;        //Index of the auto-selected item (unused in practice)
+/*0xC7C*/ static s16 sInfoScrollOverrideTextID; //Causes the info scroll to open automatically (@bug: initialises at 0 instead of NO_GAMETEXT. This causes the info box to display for the first few frames of gameplay, leaving a beige smear in the top-left of the framebuffer.)
 /*0xC7E*/ static s16 sInfoScrollOverrideX;      //Custom screen position for the info scroll when auto-shown
-/*0xC80*/ static s16 sInfoScrollOverrideY;   //Custom screen position for the info scroll when auto-shown
-/*0xC88*/ static CmdmenuInfoPopup sInfoPopup; //item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
+/*0xC80*/ static s16 sInfoScrollOverrideY;      //Custom screen position for the info scroll when auto-shown
+/*0xC88*/ static CmdmenuInfoPopup sInfoPopup;   //Item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
 
 static void cmdmenu_tick_tutorial_textbox(void);
 static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
@@ -836,7 +873,7 @@ void cmdmenu_ctor(void* dll) {
     sAutoSelectItemIdx = NO_ITEM;
     sUsedItemGamebitID = NO_GAMEBIT;
     sUsedItemSound = CMDMENU_SOUND_NONE;
-    sUsedItemPageID = -1;
+    sUsedItemPageID = NO_PAGE;
     sPrevActiveSpellGamebit = NO_GAMEBIT;
     sPrevSidekickCommandIndex = NO_SIDEKICK_COMMAND;
 
@@ -895,7 +932,7 @@ void cmdmenu_dtor(void* dll) {
 
 // offset: 0x2B8 | func: 0 | export: 15
 /**
-  * Can disable/reenable the player's inventory control.
+  * Sets a controller button mask, affecting player control of the inventory.
   */
 void cmdmenu_disable_buttons(u16 mask) {
     sJoyButtonMask = mask;
@@ -1129,11 +1166,11 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         rcp_screen_full_write(
             gdl, 
             sCrosshairTex, 
-            screenX - 16, 
-            screenY - 16, 
+            screenX - (AIMING_RETICLE_WIDTH/2), 
+            screenY - (AIMING_RETICLE_HEIGHT/2), 
             0, 
             sCrosshairAnimProgress >> 8, 
-            150, 
+            AIMING_RETICLE_OPACITY, 
             SCREEN_WRITE_TRANSLUCENT
         );
     }
@@ -1732,6 +1769,7 @@ static void cmdmenu_tick_inventory_page(void) {
     sUsedItemGamebitID = NO_GAMEBIT;
     sUsedItemSound = CMDMENU_SOUND_NONE;
     sUsedItemPageID = NO_PAGE;
+
     pageItems = dCmdmenuPages[sInventoryPageID].items;
     pageSelectionIndex = &dCmdmenuPages[sInventoryPageID].selectedIndex;
     pageMsg = dCmdmenuPages[sInventoryPageID].mesgID;
@@ -1777,7 +1815,7 @@ static void cmdmenu_tick_inventory_page(void) {
             dInventoryMovesQueued = 255;
         }
 
-        //Auto-select an item (functionality never used)
+        //Auto-select a specific item (unused feature)
         if (sAutoSelectItemIdx != NO_ITEM) {
             sMenuSelectedItemIdx = sAutoSelectItemIdx;
         }
@@ -1896,11 +1934,11 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s16 commandTexTableID;
     Object* player;
     s32 activeSpellGamebit;
-    s32 yOffset;
+    s32 stripY;
     s32 spellTexTableID;
-    s32 var_s0;
-    s8 sp70[64];
-    s32 loadedIdx;
+    s32 numSlotsAboveSelected;
+    s8 slot[MAX_LOADED_ITEMS];
+    s32 itemIdx;
     s32 i;
     s32 sideCommandIndex;
     s32 tileCount;
@@ -1979,61 +2017,82 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     //Call the energy bar's draw
     cmdmenu_draw_energy_bar(gdl);
 
-    //Draw the inventory (except the top/bottom parts of the scroll)
+    //Draw the inventory's vertical icon strip
+    //(i.e. every part of the scroll except its top/bottom rolls)
     if (sDisplayedItemCount != 0) {
         if (dInventoryOpacity != 0) {
+            /* 
+                Figure out the number of tiles to draw (minimum of 3).
+
+                Empty tiles are inserted to pad out the strip when 
+                there're only 1/2/4 items shown on the page.
+            */
             tileCount = 3;
             if (sDisplayedItemCount <= 3) {
-                var_s0 = 1;
+                numSlotsAboveSelected = 1;
             } else {
                 tileCount = 5;
-                var_s0 = 2;
+                numSlotsAboveSelected = 2;
             }
 
             //Set a scissor mask for the inner strip of the inventory scroll
             cmdmenu_gfx_set_scroll_scissor(gdl);
 
             sTempIcon->y = 0;
-            yOffset = 95 - (tileCount * (MENU_ITEM_HEIGHT/2));
+
+            //Calculate the screen Y-coord of the top of the tile strip
+            stripY = MENU_SCROLL_CENTRE_Y - (tileCount * (MENU_ITEM_HEIGHT/2));
+
             sTempIcon[1].tex = NULL;
 
+            //Set the slots that show icons
             for (i = 0; i < sDisplayedItemCount; i++) {
-                sp70[i] = 0;
+                slot[i] = SLOT_OCCUPIED;
             }
-
+            //Set the padded slots (empty BG tiles)
             for (i = sDisplayedItemCount; i < tileCount; i++) {
-                sp70[i] = 1;
+                slot[i] = SLOT_PADDED;
             }
 
+            //Change sDisplayedItemCount so it's at least the size of the tile strip (including empty slots)
             if (sDisplayedItemCount < tileCount) {
                 sDisplayedItemCount = tileCount;
             }
 
-            if (sInventoryScrollOffset > 0) {
-                var_s0++;
-                yOffset -= MENU_ITEM_HEIGHT;
-                tileCount++;
+            //While animating moving between items
+            {
+                //Shift the top of the strip up by 1 item
+                if (sInventoryScrollOffset > 0) {
+                    numSlotsAboveSelected++;
+                    stripY -= MENU_ITEM_HEIGHT;
+                    tileCount++;
+                }
+                //Or shift it up by 2 during large offsets (when wrapping from bottom-to-top)
+                if (sInventoryScrollOffset > MENU_ITEM_HEIGHT) {
+                    numSlotsAboveSelected++;
+                    stripY -= MENU_ITEM_HEIGHT;
+                    tileCount++;
+                }
             }
 
-            if (sInventoryScrollOffset > MENU_ITEM_HEIGHT) {
-                var_s0++;
-                yOffset -= MENU_ITEM_HEIGHT;
-                tileCount++;
+            //Have the strip move with the bottom of the scroll (during its expanding/collapsing animation)
+            stripY += sInventoryUnrollY - dInventoryUnrollMax;
+
+            //Calculate the item index of the uppermost slot in the strip
+            itemIdx = sMenuSelectedItemIdx - numSlotsAboveSelected;
+            if (itemIdx < 0) {
+                itemIdx += sDisplayedItemCount;
             }
 
-            yOffset += sInventoryUnrollY - dInventoryUnrollMax;
-            loadedIdx = sMenuSelectedItemIdx - var_s0;
-
-            if (loadedIdx < 0) {
-                loadedIdx += sDisplayedItemCount;
-            }
-
+            //Iterate down the strip, drawing the slots' tiles
             for (i = 0; i < tileCount; i++) {
-                if (sp70[loadedIdx] == 0) {
+                if (slot[itemIdx] == SLOT_OCCUPIED) {
                     sTempIcon->animProgress = 0;
                     iconOpacity = dInventoryOpacity;
 
-                    if ((loadedIdx == sMenuSelectedItemIdx) && (sInventoryScrollOffset == 0)) {
+                    //Shift the selected item's tile when scrolling's finished (does nothing: cases identical)
+                    //May suggest Rare considered lifting/popping out the selected item slightly
+                    if ((itemIdx == sMenuSelectedItemIdx) && (sInventoryScrollOffset == 0)) {
                         sTempIcon->x = 0;
                         sTempIcon->y = 0;
                     } else {
@@ -2041,8 +2100,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         sTempIcon->y = 0;
                     }
 
-                    if (sMenuItemVisibilities[loadedIdx] != FALSE) {
-                        sTempIcon->tex = sMenuItemTextures[loadedIdx];
+                    if (sMenuItemVisibilities[itemIdx] != FALSE) {
+                        sTempIcon->tex = sMenuItemTextures[itemIdx];
 
                         //Draw icon
                         if (func_80041E08()) {
@@ -2051,7 +2110,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                                 gdl, 
                                 sTempIcon, 
                                 MENU_ITEM_X - 1, 
-                                ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
+                                stripY + (i * MENU_ITEM_HEIGHT) + sInventoryScrollOffset, 
                                 0xFF, 0xFF, 0xFF, iconOpacity
                             );
                         } else {
@@ -2060,20 +2119,20 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                                 gdl, 
                                 sTempIcon, 
                                 MENU_ITEM_X, 
-                                ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
+                                stripY + (i * MENU_ITEM_HEIGHT) + sInventoryScrollOffset, 
                                 0xFF, 0xFF, 0xFF, iconOpacity
                             );
                         }
 
                         //Draw quantity text (for stackable items)
-                        if (sMenuItemQuantities[loadedIdx] > 1) {
+                        if (sMenuItemQuantities[itemIdx] > 1) {
                             sTempIcon->tex = sInventoryStackNumbersTex;
-                            sTempIcon->animProgress = (sMenuItemQuantities[loadedIdx] - 2) << 8; //Numbers only shown from 2 onwards (up to 10)
+                            sTempIcon->animProgress = (sMenuItemQuantities[itemIdx] - 2) << 8; //Numbers only shown from 2 onwards (up to 10)
                             rcp_tile_write(
                                 gdl, 
                                 sTempIcon, 
                                 MENU_ITEM_QUANTITY_X, 
-                                ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset + MENU_ITEM_QUANTITY_OFFSET_Y, 
+                                stripY + (i * MENU_ITEM_HEIGHT) + sInventoryScrollOffset + MENU_ITEM_QUANTITY_OFFSET_Y, 
                                 0xFF, 0xFF, 0xFF, 0xFF
                             );
                         }
@@ -2086,7 +2145,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                             gdl, 
                             sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 
                             MENU_ITEM_X - 1, 
-                            ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
+                            stripY + (i * MENU_ITEM_HEIGHT) + sInventoryScrollOffset, 
                             0xFF, 0xFF, 0xFF, 0xFF
                         );
                     } else {
@@ -2095,21 +2154,22 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                             gdl, 
                             sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 
                             MENU_ITEM_X, 
-                            ((i * MENU_ITEM_HEIGHT) + yOffset) + sInventoryScrollOffset, 
+                            stripY + (i * MENU_ITEM_HEIGHT) + sInventoryScrollOffset, 
                             0xFF, 0xFF, 0xFF, 0xFF
                         );
                     }
                 }
 
-                loadedIdx++;
-                if (loadedIdx >= sDisplayedItemCount) {
-                    loadedIdx -= sDisplayedItemCount;
+                //Increment/wrap the item index
+                itemIdx++;
+                if (itemIdx >= sDisplayedItemCount) {
+                    itemIdx -= sDisplayedItemCount;
                 }
             }
 
             //Draw a selection square around the currently highlighted item
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dInventoryOpacity);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1,  255, 255, 255, dInventoryOpacity);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1, 255, 255, 255, dInventoryOpacity);
+            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1, 255, 255, 255, dInventoryOpacity);
             rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
             rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
             
@@ -2147,6 +2207,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 pageIcon = CMDMENU_TEX_50_Bag;
                 break;
             }
+
             if (dOpacitySidekickMeter < dInventoryOpacity) {
                 iconOpacity = dInventoryOpacity;
             } else {
@@ -2295,9 +2356,9 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
         }
 
         if (availableCommands != NO_SIDEKICK_COMMAND) {
-            while (items[i].gamebitObtained >= 0) {
+            while (items[i].command.flag >= 0) {
                 //Only load a sidekick command item if it's currently available
-                if (items[i].gamebitObtained & availableCommands) {
+                if (items[i].command.flag & availableCommands) {
                     sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
                     sMenuItemQuantities[loadIdx] = 1;
 
@@ -2311,7 +2372,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
                         sMenuItemTexturesSidekick[loadIdx] = NULL;
                     }
 
-                    sMenuItemGamebits[loadIdx] = items[i].gamebitHide;
+                    sMenuItemGamebits[loadIdx] = items[i].command.index;
                     cmdmenu_store_loaded_item_metadata(items, loadIdx, i);
                     sMenuItemVisibilities[loadIdx] = TRUE;
 
@@ -2620,12 +2681,26 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                     //With inventory bag
                     texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
                     dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
-                    rcp_screen_full_write(gdl, dInventoryPageIcon, 275, 25, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
+                    rcp_screen_full_write(gdl, 
+                        dInventoryPageIcon, 
+                        C_BUTTONS_RIGHT_BAG_X, 
+                        C_BUTTONS_RIGHT_BAG_Y, 
+                        0, 
+                        0, 
+                        sOpacityR, 
+                        SCREEN_WRITE_TRANSLUCENT
+                    );
                     tex_free(dInventoryPageIcon);
                 } else {
                     //Empty C-right button
                     texIdx = CMDMENU_TEX_41_C_Right;
-                    rcp_tile_write(gdl, sTextureTiles[texIdx], 274, 34, 255, 255, 255, sOpacityR);
+                    rcp_tile_write(
+                        gdl,
+                        sTextureTiles[texIdx], 
+                        C_BUTTONS_RIGHT_EMPTY_X, 
+                        C_BUTTONS_RIGHT_EMPTY_Y, 
+                        255, 255, 255, sOpacityR
+                    );
                 }
             }
 
@@ -2651,12 +2726,33 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                     */
 
                     dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
-                    rcp_screen_full_write(gdl, dInventoryPageIcon, 245, 17, 0, 0, sOpacityR, SCREEN_WRITE_TRANSLUCENT);
+                    rcp_screen_full_write(
+                        gdl, 
+                        dInventoryPageIcon, 
+                        C_BUTTONS_LEFT_DOWN_BOOK_SIDEKICK_X, 
+                        C_BUTTONS_LEFT_DOWN_BOOK_SIDEKICK_Y, 
+                        0, 
+                        0, 
+                        sOpacityR, 
+                        SCREEN_WRITE_TRANSLUCENT
+                    );
                     tex_free(dInventoryPageIcon);
                 } else {
                     //Draw empty C-down and C-left buttons
-                    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_37_C_Down], 252, 43, 255, 255, 255, sOpacityR);
-                    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_39_C_Left], 246, 26, 255, 255, 255, sOpacityR);
+                    rcp_tile_write(
+                        gdl,
+                        sTextureTiles[CMDMENU_TEX_37_C_Down], 
+                        C_BUTTONS_DOWN_EMPTY_X, 
+                        C_BUTTONS_DOWN_EMPTY_Y, 
+                        255, 255, 255, sOpacityR
+                    );
+                    rcp_tile_write(
+                        gdl, 
+                        sTextureTiles[CMDMENU_TEX_39_C_Left], 
+                        C_BUTTONS_LEFT_EMPTY_X, 
+                        C_BUTTONS_LEFT_EMPTY_Y, 
+                        255, 255, 255, sOpacityR
+                    );
                 }
             }
         }
@@ -2671,8 +2767,8 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
              Should likely be in `cmdmenu_draw_main` instead, and maybe ended up here by mistake!
      */
     if (dInventoryOpacity != 0) {
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top], 258, 51, 255, 255, 255, dInventoryOpacity);
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], 258, sInventoryUnrollY + 59, 255, 255, 255, dInventoryOpacity);
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top],    MENU_SCROLL_X, MENU_SCROLL_TOP_Y,                        255, 255, 255, dInventoryOpacity);
+        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], MENU_SCROLL_X, MENU_SCROLL_BOTTOM_Y + sInventoryUnrollY, 255, 255, 255, dInventoryOpacity);
     }
 
     //Draw the sidekick food meter
@@ -2747,9 +2843,10 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                 
                 //Draw icons (in 2x4 grid: starting top-right to bottom-right, then top-left to bottom-left)
                 rcp_tile_write(&dl, sTextureTiles[iconIndex], 
-                    SIDEKICK_METER_X - ((i / 4) * SIDEKICK_METER_SPACING_X), 
-                    SIDEKICK_METER_Y  + ((i % 4) * SIDEKICK_METER_SPACING_Y), 
-                    255, 255, 255, dOpacitySidekickMeter);
+                    SIDEKICK_METER_X - ((i / SIDEKICK_METER_ICONS_PER_COLUMN) * SIDEKICK_METER_SPACING_X), 
+                    SIDEKICK_METER_Y + ((i % SIDEKICK_METER_ICONS_PER_COLUMN) * SIDEKICK_METER_SPACING_Y), 
+                    255, 255, 255, dOpacitySidekickMeter
+                );
             }
         }
     }
@@ -3436,7 +3533,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     &dl,
                     sTextureTiles[CMDMENU_TEX_36_MagicBar_Full],
                     MAGIC_BARS_X,
-                    (MAGIC_BARS_Y + (i * MAGIC_BARS_SPACING_Y)),
+                    MAGIC_BARS_Y + (i * MAGIC_BARS_SPACING_Y),
                     temp,
                     MAGIC_BARS_HEIGHT,
                     0, 0,
@@ -3448,8 +3545,8 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 //Draw the empty part of the bar
                 rcp_tile_write_x(
                     &dl, sTextureTiles[CMDMENU_TEX_35_MagicBar_Empty],
-                    (MAGIC_BARS_X + temp),
-                    (MAGIC_BARS_Y + (i * MAGIC_BARS_SPACING_Y)),
+                    MAGIC_BARS_X + temp,
+                    MAGIC_BARS_Y + (i * MAGIC_BARS_SPACING_Y),
                     (MAGIC_BARS_WIDTH - temp), 
                     MAGIC_BARS_HEIGHT,
                     temp << 5, 0, 
@@ -3689,7 +3786,8 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
         0xFF, 
         0xFF, 
         0xFF, 
-        box->opacity);
+        box->opacity
+    );
 
     //Draw the item's inventory icon (including embedded page background)
     bzero(sTempIcon, sizeof(TextureTile));
@@ -3701,7 +3799,8 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
         0xFF, 
         0xFF, 
         0xFF, 
-        box->opacity);
+        box->opacity
+    );
 
     //Draw tattered left edge of box (@unfinished: outdated page design, mismatched with icons' newer BG)
     rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_29_Page_Torn_Left], 
@@ -3710,7 +3809,8 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
         0xFF, 
         0xFF, 
         0xFF, 
-        box->opacity);
+        box->opacity
+    );
 
     //Draw tattered right edge of box (@unfinished: outdated page design, mismatched with icons' newer BG)
     rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_30_Page_Torn_Right], 
@@ -3719,9 +3819,10 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
         0xFF, 
         0xFF, 
         0xFF, 
-        box->opacity);
+        box->opacity
+    );
 
-    //Draw item count
+    //Draw item count (NOTE: can't draw values under 2 or over 10, because no icons provided)
     if (box->count > 1) {
         sTempIcon->tex = sInventoryStackNumbersTex;
         sTempIcon->animProgress = (box->count - 2) << 8;
@@ -3731,7 +3832,8 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
             0xFF, 
             0xFF, 
             0xFF, 
-            box->opacity);
+            box->opacity
+        );
     }
 }
 
