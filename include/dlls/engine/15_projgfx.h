@@ -11,7 +11,7 @@ DLL_INTERFACE(DLL_15_projgfx) {
 /*2*/ void (*func2)(u8 updateRate, s32);
 /*3*/ UnknownDLLFunc func3;
 /*4*/ void (*func4)(struct Object*);
-/*5*/ UnknownDLLFunc func5;
+/*5*/ void (*func5)(Gfx **, Mtx **, Vertex **, s32);
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
 /*8*/ UnknownDLLFunc func8;
