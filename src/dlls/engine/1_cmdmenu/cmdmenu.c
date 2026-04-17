@@ -407,7 +407,7 @@ typedef struct {
 
 /**
   * Sound effects to play when tracked player stats increase/decrease
-  * (unused in practice, all set to NO_SOUND)
+  * (unused in practice, all set to NO_SOUND or 0)
   */
 /*0xB8*/ static CmdmenuPlayerStatsChangeSounds dStatChangeSounds = {{
     {NO_SOUND, NO_SOUND}, 
@@ -817,15 +817,15 @@ typedef struct {
 /*0xC2E*/ static s16 sTutorialBoxStringIndex;
 /*0xC30*/ static GameTextChunk* sTutorialBoxGametext;
 /*0xC34*/ static Texture* sCrosshairTex;
-/*0xC38*/ static s16 sUsedItemGamebitID;
-/*0xC3A*/ static s16 sSubmenuGamebit;   //The gamebitID associated with the item that opened a menu subpage (e.g. a foodbag's gamebit)
-/*0xC3C*/ static s8 sUsedItemSound;     //Set to 0 when item selection successful (item given to character, etc.)
-/*0xC3D*/ static s8 sUsedItemPageID;
-/*0xC3E*/ static s8 sInventoryPageID;
+/*0xC38*/ static s16 sUsedItemGamebitID;  //The gamebitID associated with the used item
+/*0xC3A*/ static s16 sSubmenuGamebitID;   //The gamebitID associated with the item that opened a menu subpage (e.g. a foodbag's gamebit)
+/*0xC3C*/ static s8 sUsedItemSoundType;   //Set to 0 when item selection successful (item given to character, etc.)
+/*0xC3D*/ static s8 sUsedItemPageID;      //The pageID associated with the used item (see `CmdMenuPages`)
+/*0xC3E*/ static s8 sInventoryPageID;     //The pageID currently open (see `CmdMenuPages`)
 /*0xC40*/ static s16 sMenuSelectedItemIdx; //Display index of the item currently selected in the menu page 
-/*0xC44*/ static s32 sDisplayedItemCount;  //The number of items displayed on the current page (while drawing, this number is updated to include the number of empty tiles)
-/*0xC48*/ static s8 sShouldOverrideJoypadButtons;
-/*0xC4C*/ static s32 dInventoryFrameCounter;        //Counts how many times `cmdmenu_update2` has run (clamped from 0-2, and resets to 0 upon closing the inventory)
+/*0xC44*/ static s32 sDisplayedItemCount;  //The number of items displayed on the current page (while drawing the inventory icons, this number is updated to be at least the number of slots in the tile strip)
+/*0xC48*/ static s8 sShouldOverrideJoypadButtons;   //Whether to fully override the player's UI control with simulated button presses
+/*0xC4C*/ static s32 sInventoryFrameCounter;        //Counts how many times `cmdmenu_update2` has run (clamped from 0-2, and resets to 0 upon closing the inventory)
 /*0xC50*/ static s32 sJoyPressedButtons;            //Joypad button bitfield
 /*0xC54*/ static s32 sJoyPressedButtonsOverride;    //Joypad button bitfield (for simulated presses, used during inventory tutorials)
 /*0xC58*/ static s32 sJoyHeldButtons;               //Joypad button bitfield
@@ -872,7 +872,7 @@ void cmdmenu_ctor(void* dll) {
     sAutoSelectItemGamebit = NO_GAMEBIT;
     sAutoSelectItemIdx = NO_ITEM;
     sUsedItemGamebitID = NO_GAMEBIT;
-    sUsedItemSound = CMDMENU_SOUND_NONE;
+    sUsedItemSoundType = CMDMENU_SOUND_NONE;
     sUsedItemPageID = NO_PAGE;
     sPrevActiveSpellGamebit = NO_GAMEBIT;
     sPrevSidekickCommandIndex = NO_SIDEKICK_COMMAND;
@@ -1032,7 +1032,7 @@ void cmdmenu_update2(void) {
         }
     } else if (sUsedItemPageID != EXIT) {
         //No C-buttons were pressed, but the selected item opened an inventory page (e.g. foodbags)
-        sSubmenuGamebit = sUsedItemGamebitID;
+        sSubmenuGamebitID = sUsedItemGamebitID;
         sInventoryPageID = sUsedItemPageID;
 
         //Sidekick Commands -> Sidekick Foodbag
@@ -1090,9 +1090,9 @@ void cmdmenu_update2(void) {
     cmdmenu_info_scroll_animate();
 
     //Count how many times this function has run (clamped from 0-2)
-    dInventoryFrameCounter++;
-    if (dInventoryFrameCounter > 2) {
-        dInventoryFrameCounter = 2;
+    sInventoryFrameCounter++;
+    if (sInventoryFrameCounter > 2) {
+        sInventoryFrameCounter = 2;
     }
 
     /* If the inventory is visible, use the selected item's gametext,
@@ -1202,7 +1202,8 @@ int cmdmenu_was_any_item_used(void) {
 // offset: 0xDF4 | func: 6 | export: 7
 int cmdmenu_was_this_item_used(s32 itemGamebitID) {
     if (itemGamebitID == sUsedItemGamebitID) {
-        sUsedItemSound = CMDMENU_SOUND_NONE;
+        //Don't play the "item refused" sound when an item was used successfully
+        sUsedItemSoundType = CMDMENU_SOUND_NONE;
         return TRUE;
     }
     return FALSE;
@@ -1223,7 +1224,7 @@ s32 cmdmenu_was_used_item_in_gamebit_array(s32* gamebitArray, s32 arraySize) {
 
     for (i = 0; i < arraySize; i++) {
         if (sUsedItemGamebitID == gamebitArray[i]) {
-            sUsedItemSound = CMDMENU_SOUND_NONE;
+            sUsedItemSoundType = CMDMENU_SOUND_NONE;
             return gamebitArray[i];
         }
     }
@@ -1247,7 +1248,7 @@ s8 cmdmenu_get_page_category(void) {
             `BIT_Krystal_Foodbag_L`, depending on which bag she has.)
   */
 s16 cmdmenu_get_subpage_gamebit(void) {
-    return sSubmenuGamebit;
+    return sSubmenuGamebitID;
 }
 
 // offset: 0xF5C | func: 10 | export: 5
@@ -1283,8 +1284,14 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
     //Get the subset of Objects that can be targetted
     for (targetCount = 0, i = index; i < count; i++) {
         obj = objects[i];
-        if ((obj->def->lockdata != NULL) && (obj->opacity == OBJECT_OPACITY_MAX) && !(obj->unkAF & ARROW_FLAG_8_No_Targetting) && 
-                (obj->def->lockdata->flags & lockFlag) && (targetCount < maxObjects) && (arg3 & 1)) {
+
+        if ((obj->def->lockdata != NULL) && 
+            (obj->opacity == OBJECT_OPACITY_MAX) && 
+            ((obj->unkAF & ARROW_FLAG_8_No_Targetting) == FALSE) && 
+            (obj->def->lockdata->flags & lockFlag) && 
+            (targetCount < maxObjects) && 
+            (arg3 & 1)
+        ) {
             get_object_child_position(obj, &objX, &objY, &objZ);
             dx = objX - camera->srt.transl.x;
             dy = objY - camera->srt.transl.y;
@@ -1330,7 +1337,7 @@ void cmdmenu_pages_clear_last_selected_index(void) {
     for (i = 0; page[i].items; i++) { page[i].selectedIndex = 0; }
 
     sUsedItemGamebitID = NO_GAMEBIT;
-    sUsedItemSound = CMDMENU_SOUND_NONE;
+    sUsedItemSoundType = CMDMENU_SOUND_NONE;
     sUsedItemPageID = NO_PAGE;
 }
 
@@ -1755,7 +1762,7 @@ static void cmdmenu_tick_inventory_page(void) {
     }
 
     //Play item use sound if needed
-    switch (sUsedItemSound) {
+    switch (sUsedItemSoundType) {
     case CMDMENU_SOUND_NONE:
         break;
     case CMDMENU_SOUND_ITEM:
@@ -1767,7 +1774,7 @@ static void cmdmenu_tick_inventory_page(void) {
     }
 
     sUsedItemGamebitID = NO_GAMEBIT;
-    sUsedItemSound = CMDMENU_SOUND_NONE;
+    sUsedItemSoundType = CMDMENU_SOUND_NONE;
     sUsedItemPageID = NO_PAGE;
 
     pageItems = dCmdmenuPages[sInventoryPageID].items;
@@ -1863,7 +1870,7 @@ static void cmdmenu_tick_inventory_page(void) {
                 obj_send_mesg(player, pageMsg, NULL, (void*)usedGamebit);
                 
                 sUsedItemGamebitID = usedGamebit;
-                sUsedItemSound = sMenuItemUseSounds[sMenuSelectedItemIdx];
+                sUsedItemSoundType = sMenuItemUseSounds[sMenuSelectedItemIdx];
                 sUsedItemPageID = sMenuItemOpenPageIDs[sMenuSelectedItemIdx];
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                 cmdmenu_close_inventory();
@@ -1874,7 +1881,7 @@ static void cmdmenu_tick_inventory_page(void) {
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_28B_Cmdmenu_Use, MAX_VOLUME, NULL, NULL, 0, NULL);
                     cmdmenu_close_inventory();
                     sUsedItemGamebitID = usedGamebit;
-                    sUsedItemSound = CMDMENU_SOUND_NONE;
+                    sUsedItemSoundType = CMDMENU_SOUND_NONE;
                 } else {
                     /*  If the item's gamebitHidden is set, play a refusal sound and keep the menu open.
                         
@@ -1886,7 +1893,7 @@ static void cmdmenu_tick_inventory_page(void) {
                     */
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_A0_Cmdmenu_Item_Locked, MAX_VOLUME, NULL, NULL, 0, NULL);
                     sUsedItemGamebitID = NO_GAMEBIT;
-                    sUsedItemSound = CMDMENU_SOUND_NONE;
+                    sUsedItemSoundType = CMDMENU_SOUND_NONE;
                 }
             }
         }
@@ -1894,7 +1901,7 @@ static void cmdmenu_tick_inventory_page(void) {
 
     if (cmdmenu_is_inventory_closed()) {
         dPageCategory = 0;
-        dInventoryFrameCounter = 0;
+        sInventoryFrameCounter = 0;
         dInventoryMovesQueued = 0;
     } else {
         joy_set_button_mask(0, A_BUTTON | B_BUTTON);
