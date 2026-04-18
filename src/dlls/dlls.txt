@@ -71,11 +71,14 @@
 254 = objects/254_PineCone
 257 = objects/257_tesla
 260 = objects/260_Pollen
+261 = objects/261_PollenFragment
 264 = objects/264_kamerian_flame
+265 = objects/265_SHvines
 266 = objects/266_sfxplayer
 267 = objects/267_checkpoint4
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
+271 = objects/271_InfoPoint
 272 = objects/272_collectable
 274 = objects/274_pushpull
 275 = objects/275_WarpPoint
@@ -87,6 +90,7 @@
 282 = objects/282_Crate
 283 = objects/283_krazoatext
 284 = objects/284_levelname
+285 = objects/285_ProjectileSwitch
 287 = objects/287_pressureswitch
 289 = objects/289_CClogpush
 290 = objects/290_MagicPlant
@@ -178,6 +182,8 @@
 470 = objects/470_ECSH_Cup
 472 = objects/472_GPSH_Shrine
 475 = objects/475_GPSH_flybaddie
+477 = objects/477_DBSH_Shrine
+478 = objects/478_DBSH_Symbol
 481 = objects/481_NWSH_Shrine
 488 = objects/488_WGSH_Shrine
 494 = objects/494_NWtreebridge
@@ -200,8 +206,13 @@
 515 = objects/515_SHswapstone
 517 = objects/517_SCbabyLightFoot
 519 = objects/519_SC_levelcontrol
+521 = objects/521_SC_totempole
 523 = objects/523_SCcollectables
+524 = objects/524_SCanimobj
 525 = objects/525_SCtotempuzzle
+526 = objects/526_SC_meterblock
+527 = objects/527_SC_totembond
+528 = objects/528_SC_totemstrength
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
 537 = objects/537_DIMCannon
@@ -288,6 +299,7 @@
 721 = objects/721_SC_beacon
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
+725 = objects/725_SC_flamegameflame
 729 = objects/729_CRCloudRace
 730 = objects/730_CRspellStone
 731 = objects/731_CRFuelTank

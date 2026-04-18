@@ -34,7 +34,7 @@ typedef struct AnimObj_Data {
 /*024*/ f32 unk24; //some speed
 /*028*/ s32 unk28;
 /*02C*/ void *unk2C;
-/*030*/ u32 unk30;
+/*030*/ u32 unk30; //soundHandle?
 /*034*/ u32 unk34[4];   //soundHandles?
 /*044*/ s16 unk44[4];   //soundHandle related - playback frequency?
 /*04C*/ Vec3f unk4C; //position diff between parent "override" animObj and child "actor" object?

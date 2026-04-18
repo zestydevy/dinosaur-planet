@@ -65,6 +65,8 @@ enum ParticleID {
     /* --- DLL 36 END --- */
     /* --- DLL 35 START --- */
     PARTICLE_258 = 0x258,
+    PARTICLE_279 = 0x279, //glowing pink magic flares (DBSH_Symbol)
+    PARTICLE_27A = 0x27A, //glowing pink magic flares (DBSH_Symbol)
     PARTICLE_286 = 0x286,
     PARTICLE_2BB = 0x2BB,
     /* --- DLL 35 END --- */
@@ -147,9 +149,9 @@ enum ParticleID {
     PARTICLE_4B0 = 0x4B0,
     PARTICLE_4B2 = 0x4B2,
     PARTICLE_4B3 = 0x4B3,
-    PARTICLE_4BB = 0x4BB,
     PARTICLE_4B5 = 0x4B5,
     PARTICLE_4BA = 0x4BA,
+    PARTICLE_4BB = 0x4BB,
     PARTICLE_4BC = 0x4BC,
     PARTICLE_4C6 = 0x4C6,
     PARTICLE_4C7 = 0x4C7,
@@ -175,6 +177,11 @@ enum ParticleID {
     /* --- DLL 34 START --- */
     PARTICLE_5DD = 0x5DD,
     PARTICLE_640 = 0x640,
+    PARTICLE_672 = 0x672,
+    PARTICLE_673 = 0x673,
+    PARTICLE_674 = 0x674,
+    PARTICLE_675 = 0x675,
+    PARTICLE_676 = 0x676,
     /* --- DLL 34 END --- */
     PARTICLE_680 = 0x680,
     PARTICLE_683 = 0x683,

@@ -1,0 +1,21 @@
+.text = 0x0:
+SCFlameGameFlame_ctor = 0x0;
+SCFlameGameFlame_dtor = 0xC;
+SCFlameGameFlame_setup = 0x18;
+SCFlameGameFlame_control = 0xE0;
+SCFlameGameFlame_update = 0x2A4;
+SCFlameGameFlame_print = 0x2B0;
+SCFlameGameFlame_free = 0x2F0;
+SCFlameGameFlame_get_model_flags = 0x330;
+SCFlameGameFlame_get_data_size = 0x340;
+SCFlameGameFlame_func_354 = 0x354;
+SCFlameGameFlame_func_3A4 = 0x3A4;
+SCFlameGameFlame_func_3BC = 0x3BC;
+SCFlameGameFlame_func_3D4 = 0x3D4;
+
+.rodata = 0x448:
+
+.data = 0x448:
+dActivateGamebits = 0x0; // absolute:0x448
+dFinishedGamebits = 0x8; // absolute:0x450
+dKyteFlightCurveIDs = 0x10; // absolute:0x458

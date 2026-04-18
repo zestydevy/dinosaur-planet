@@ -5,6 +5,7 @@
 #include "sys/main.h"
 #include "sys/objlib.h"
 #include "dll.h"
+#include "dlls/engine/1_cmdmenu.h"
 #include "dlls/objects/210_player.h"
 #include "sys/objects.h"
 #include "game/gamebits.h"
@@ -103,23 +104,23 @@ void CCguardgiving_control(Object *self) {
             } else {
                 objdata->objectSeqIndex = SeqIndex_Chat_Bribe_Wanted_1;
             }
-        } else if (gDLL_1_cmdmenu->vtbl->func_F24() == PAGE_Inventory) {
+        } else if (gDLL_1_cmdmenu->vtbl->get_page_category() == CMDMENU_CATEGORY_3_Items) {
             //Go to bribe attempt state if the object inventory is open
             objdata->state = STATE_Bribe_Attempt;
             func_80023BF8(self, 0, 0, 0, 0, 3);
         }
         break;
     case STATE_Bribe_Attempt:
-        if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Gold_Nugget_CC)) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Gold_Nugget_CC)) {
             //Accepting gold nugget
             gDLL_3_Animation->vtbl->func17(SeqIndex_Bribed_with_Gold, self, -1);
             objdata->state = STATE_Waiting_to_Sell_Map;
             func_80023BF8(self, 0, 0, 0, 0, 2);
             main_set_bits(BIT_CC_Bribed_GuardClaw, 1);
-        } else if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Scarab_Count_Krystal)) {
+        } else if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Scarab_Count_Krystal)) {
             //Refusing scarabs
             gDLL_3_Animation->vtbl->func17(SeqIndex_Bribe_with_Scarabs_Refused, self, -1);
-        } else if (gDLL_1_cmdmenu->vtbl->func_F24() != PAGE_Inventory) {
+        } else if (gDLL_1_cmdmenu->vtbl->get_page_category() != CMDMENU_CATEGORY_3_Items) {
             //If the object inventory closes, go back to waiting
             objdata->state = STATE_Waiting_for_Bribe;
             func_80023BF8(self, 0, 0, 0, 0, 2);
@@ -129,14 +130,14 @@ void CCguardgiving_control(Object *self) {
         if (func_80032538(self)) {
             //Play map sale chat sequence when talked to
             gDLL_3_Animation->vtbl->func17(SeqIndex_Chat_Map, self, -1);
-        } else if (gDLL_1_cmdmenu->vtbl->func_F24() == PAGE_Inventory) {
+        } else if (gDLL_1_cmdmenu->vtbl->get_page_category() == CMDMENU_CATEGORY_3_Items) {
             //Advance state when object inventory open
             objdata->state = STATE_Map_Sale_Attempt;
             func_80023BF8(self, 0, 0, 0, 0, 3);
         }
         break;
     case STATE_Map_Sale_Attempt:
-        if (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Scarab_Count_Krystal)) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Scarab_Count_Krystal)) {
             //Give map when scarabs selected in inventory
             player = get_player();
             count = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
@@ -147,7 +148,7 @@ void CCguardgiving_control(Object *self) {
                 func_80023BF8(self, 0, 0, 0, 0, 2);
                 main_set_bits(BIT_Map_CC, 1);
             }
-        } else if (gDLL_1_cmdmenu->vtbl->func_F24() != PAGE_Inventory) {
+        } else if (gDLL_1_cmdmenu->vtbl->get_page_category() != CMDMENU_CATEGORY_3_Items) {
             //If the object inventory closes, go back to waiting
             objdata->state = STATE_Waiting_to_Sell_Map;
             func_80023BF8(self, 0, 0, 0, 0, 2);

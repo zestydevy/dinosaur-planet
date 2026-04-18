@@ -126,7 +126,7 @@ void DBDustGeezer_control(Object* self) {
             player = get_player();
             sidekick = get_sidekick();
             if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_1_Find);
             }
         }
         break;

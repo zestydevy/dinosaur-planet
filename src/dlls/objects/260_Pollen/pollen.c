@@ -1,36 +1,33 @@
 #include "common.h"
+#include "sys/math.h"
+#include "sys/objects.h"
+#include "dlls/objects/237_WG_PollenCannon.h"
+#include "dlls/objects/261_PollenFragment.h"
+
+#include "dlls/objects/260_Pollen.h"
 
 // offset: 0x0 | ctor
-void dll_260_ctor(void *dll) { }
+void Pollen_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_260_dtor(void *dll) { }
+void Pollen_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-typedef struct {
-    s16 unk0;
-    s16 pad2;
-    s16 unk4;
-    s16 unk6;
-    f32 unk8;
-    f32 unkC;
-    s16 unk10;
-    s16 unk12;
-}DLL260_Data;
+void Pollen_setup(Object* self, ObjSetup* setup, s32 arg2) {
+    Pollen_Data* objdata = self->data;
 
-void dll_260_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    DLL260_Data* objdata; 
-
-    objdata = self->data;
-    objdata->unk0 = rand_next(-0x8000, 0x7FFF);
-    objdata->unkC = ((f32) rand_next(0xFA0, 0x1388) * 0.01f);
-    objdata->unk4 = rand_next(-0x8000, 0x7FFF);
+    objdata->unk0 = rand_next(-M_180_DEGREES, M_180_DEGREES - 1);
+    objdata->unkC = rand_next(4000, 5000) * 0.01f;
+    objdata->unk4 = rand_next(-M_180_DEGREES, M_180_DEGREES - 1);
     objdata->unk8 = 0.0f;
-    objdata->unk6 = rand_next(0xE6, 0x1F4);
+    objdata->unk6 = rand_next(230, 500);
     objdata->unk10 = 0;
-    objdata->unk12 = 0xA;
-    self->opacity = 0xFF;
+    objdata->unk12 = 10;
+
+    self->opacity = OBJECT_OPACITY_MAX;
+
     func_800267A4(self);
+
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
         self->shadow->maxDistScale = self->shadow->scale * 2.5f;
@@ -38,73 +35,137 @@ void dll_260_setup(Object* self, ObjSetup* setup, s32 arg2) {
 }
 
 // offset: 0x13C | func: 1
-void dll_260_func_13C(Object* arg0) {
-    ObjSetup* setup;
-    Object* temp_v0_3;
+static void Pollen_create_fragments(Object* self) {
+    PollenFragment_Setup* setup;
+    Object* fragment;
     s32 i;
 
     i = 6;
     while (i--) {
-        setup = obj_alloc_setup(0x24, OBJ_PollenFragment);
-        setup->x = arg0->srt.transl.x;
-        setup->y = arg0->srt.transl.y;
-        setup->z = arg0->srt.transl.z;
-        setup->loadFlags = 1;
-        setup->byte5 = 1;
-        setup->byte6 = 0xFF;
-        setup->fadeDistance = 0xFF;
-        temp_v0_3 = obj_create(setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
-        if (temp_v0_3 != NULL) {
-            temp_v0_3->srt.pitch = 0;
-            temp_v0_3->srt.yaw = 0;
-            temp_v0_3->velocity.f[0] = (f32) rand_next(-0x32, 0x32) * 0.01f;
-            temp_v0_3->velocity.f[1] = (f32) rand_next(0, 0x1E) * 0.01f;
-            temp_v0_3->velocity.f[2] = (f32) rand_next(-0x32, 0x32) * 0.01f;
-            temp_v0_3->unkC4 = arg0;
+        setup = obj_alloc_setup(sizeof(PollenFragment_Setup), OBJ_PollenFragment);
+        setup->base.x = self->srt.transl.x;
+        setup->base.y = self->srt.transl.y;
+        setup->base.z = self->srt.transl.z;
+        setup->base.loadFlags = 1;
+        setup->base.byte5 = 1;
+        setup->base.byte6 = 0xFF;
+        setup->base.fadeDistance = 0xFF;
+        fragment = obj_create(
+            (ObjSetup*)setup, 
+            OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, 
+            -1, 
+            -1, 
+            NULL
+        );
+
+        if (fragment != NULL) {
+            fragment->srt.pitch = 0;
+            fragment->srt.yaw = 0;
+            fragment->velocity.x = 0.01f * rand_next(-50, 50);
+            fragment->velocity.y = 0.01f * rand_next(0, 30);
+            fragment->velocity.z = 0.01f * rand_next(-50, 50);
+            fragment->unkC4 = self;
         }
     }
 }
 
 // offset: 0x2A4 | func: 2 | export: 1
-void dll_260_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/260_Pollen/dll_260_control.s")
+void Pollen_control(Object* self) {
+    Object* pollenCannon;
+    PollenCannon_Data *pollenCannonData;
+    Pollen_Data* objData;
+    u32 index;
+    s32 count;
+    PollenCannonUnk3F4* cannonUnk;
+
+    objData = self->data;
+    
+    pollenCannon = self->unkC4;
+    pollenCannonData = (PollenCannon_Data*)pollenCannon->data;
+    cannonUnk = pollenCannonData->unk3F4;
+    
+    if (objData->unk12 != 0) {
+        objData->unk12--;
+    }
+    
+    //Apply gravity and move
+    self->velocity.y -= 0.045f * gUpdateRateF;
+    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    
+    //Objhits
+    func_80026128(self, 0x15, 1, 0);
+    func_80026940(self, 7);
+    func_8002674C(self);
+
+    //React to hitting the player or sidekick
+    if (self->objhitInfo->unk48 && 
+        ((get_player() == self->objhitInfo->unk48) || (get_sidekick() == self->objhitInfo->unk48))
+    ) {
+        camera_enable_y_offset();
+        camera_set_shake_offset(1.0f);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AFF_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
+        self->opacity = 0;
+        func_800267A4(self);
+    }
+
+    //Create gas particles
+    index = 3;
+    while (index--) {
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4BA, NULL, 1, -1, NULL);
+    }
+    
+    //Destroy self after colliding
+    if (self->opacity == 0) {
+        if (pollenCannon->id == OBJ_WG_PollenCannon) {
+            index = cannonUnk->unk6_0;
+            while (index--) {
+                if (self == cannonUnk->unk8[index]) {
+                    cannonUnk->unk8[index] = cannonUnk->unk8[--cannonUnk->unk6_0];
+                }
+            } 
+        }
+        
+        Pollen_create_fragments(self);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
+        obj_destroy_object(self);
+    }
+}
 
 // offset: 0x5C0 | func: 3 | export: 2
-void dll_260_update(Object* self) {
-    ObjectHitInfo* temp_v0;
+void Pollen_update(Object* self) {
+    ObjectHitInfo* objHits;
 
-    temp_v0 = self->objhitInfo;
-    if (temp_v0->unk9D != 0) {
-        self->srt.transl.f[0] = temp_v0->unk34;
-        self->srt.transl.f[1] = temp_v0->unk38;
-        self->srt.transl.f[2] = temp_v0->unk3C;
+    objHits = self->objhitInfo;
+    if (objHits->unk9D) {
+        self->srt.transl.x = objHits->unk34;
+        self->srt.transl.y = objHits->unk38;
+        self->srt.transl.z = objHits->unk3C;
         self->opacity = 0;
-        self->velocity.f[0] = 0.0f;
-        self->velocity.f[1] = 0.0f;
-        self->velocity.f[2] = 0.0f;
+        self->velocity.x = 0.0f;
+        self->velocity.y = 0.0f;
+        self->velocity.z = 0.0f;
         func_800267A4(self);
     }
 }
 
 // offset: 0x634 | func: 4 | export: 3
-void dll_260_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    if (visibility != 0) {
+void Pollen_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x688 | func: 5 | export: 4
-void dll_260_free(Object* self, s32 a1) {
+void Pollen_free(Object* self, s32 a1) {
     camera_disable_y_offset();
 }
 
 // offset: 0x6C8 | func: 6 | export: 5
-u32 dll_260_get_model_flags(Object *self) {
+u32 Pollen_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x6D8 | func: 7 | export: 6
-u32 dll_260_get_data_size(Object* self, u32 a1) {
-    return 0x14U;
+u32 Pollen_get_data_size(Object* self, u32 a1) {
+    return sizeof(Pollen_Data);
 }
-

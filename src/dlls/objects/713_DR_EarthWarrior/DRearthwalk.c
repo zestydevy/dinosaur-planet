@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/gametexts.h"
 #include "sys/segment_1050.h"
+#include "dlls/objects/713_DRearthwalk.h"
 #include "prevent_bss_reordering.h"
 
 typedef struct {

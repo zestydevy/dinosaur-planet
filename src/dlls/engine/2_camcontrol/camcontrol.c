@@ -897,7 +897,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
         return NULL;
     }
     
-    count = gDLL_1_cmdmenu->vtbl->func5(objects, 8, 0xFF, 1, 1000.0f);
+    count = gDLL_1_cmdmenu->vtbl->get_target_objects(objects, ARRAYCOUNT(objects), 0xFF, 1, 1000.0f);
 
     for (i = 0, matchCount = 0; i < count; i++){
         obj = objects[i];

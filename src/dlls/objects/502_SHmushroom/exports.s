@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_502_ctor
-.dword dll_502_dtor
+.dword SHmushroom_ctor
+.dword SHmushroom_dtor
 
 # export table
-/*0*/ .dword dll_502_setup
-/*1*/ .dword dll_502_control
-/*2*/ .dword dll_502_update
-/*3*/ .dword dll_502_print
-/*4*/ .dword dll_502_free
-/*5*/ .dword dll_502_get_model_flags
-/*6*/ .dword dll_502_get_data_size
+/*0*/ .dword SHmushroom_setup
+/*1*/ .dword SHmushroom_control
+/*2*/ .dword SHmushroom_update
+/*3*/ .dword SHmushroom_print
+/*4*/ .dword SHmushroom_free
+/*5*/ .dword SHmushroom_get_model_flags
+/*6*/ .dword SHmushroom_get_data_size

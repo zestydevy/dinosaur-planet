@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_598_ctor
-.dword dll_598_dtor
+.dword WMWizard_ctor
+.dword WMWizard_dtor
 
 # export table
-/*0*/ .dword dll_598_setup
-/*1*/ .dword dll_598_control
-/*2*/ .dword dll_598_update
-/*3*/ .dword dll_598_print
-/*4*/ .dword dll_598_free
-/*5*/ .dword dll_598_get_model_flags
-/*6*/ .dword dll_598_get_data_size
+/*0*/ .dword WMWizard_setup
+/*1*/ .dword WMWizard_control
+/*2*/ .dword WMWizard_update
+/*3*/ .dword WMWizard_print
+/*4*/ .dword WMWizard_free
+/*5*/ .dword WMWizard_get_model_flags
+/*6*/ .dword WMWizard_get_data_size

@@ -16,7 +16,7 @@ typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ u8 unk18;
 /*19*/ u8 unk19;
-/*1A*/ u16 unk1A;
+/*1A*/ u16 kyteFlightCurve;
 /*1C*/ u8 unk1C;
 /*1D*/ u8 unk1D;
 /*1E*/ u8 unk1E;
@@ -51,7 +51,7 @@ void FindKyteObject_control(Object *self) {
     setup = (FindKyteObject_Setup*)self->setup;
     switch (objdata->state) {
     case 0:
-        curveSetup = gDLL_25->vtbl->func_2A50(self, setup->unk1A);
+        curveSetup = gDLL_25->vtbl->func_2A50(self, setup->kyteFlightCurve);
         objdata->curveSetup = curveSetup;
         if (curveSetup) {
             objdata->state = 1;
@@ -64,6 +64,7 @@ void FindKyteObject_control(Object *self) {
             objdata->state = 0;
             break;
         }
+
         kyte = get_sidekick();
         if (kyte) {
             player = get_player();
@@ -72,14 +73,19 @@ void FindKyteObject_control(Object *self) {
             } else {
                 dist = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
             }
+
             if (dist <= SQ(setup->unk18 * 2)) {
-                ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, 1);
-                if (gDLL_1_cmdmenu->vtbl->func_DF4(1)) {
+                //Enable Find command option
+                ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_1_Find);
+
+                //Check if Find command was used
+                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                     objdata->flightCurve = main_get_bits(BIT_Kyte_Flight_Curve);
-                    main_set_bits(BIT_Kyte_Flight_Curve, setup->unk1A);
+                    main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteFlightCurve);
                     if (setup->unk1C != 0) {
                         main_set_bits(BIT_488, setup->unk1C);
                     }
+                    
                     objdata->timer = setup->unk19 * 60.0f;
                     objdata->state = 2;
                 }
@@ -93,7 +99,7 @@ void FindKyteObject_control(Object *self) {
                 main_set_bits(BIT_488, -1);
             }
             objdata->state = 1;
-            if (main_get_bits(BIT_Kyte_Flight_Curve) == setup->unk1A) {
+            if (main_get_bits(BIT_Kyte_Flight_Curve) == setup->kyteFlightCurve) {
                 main_set_bits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
             }
         }

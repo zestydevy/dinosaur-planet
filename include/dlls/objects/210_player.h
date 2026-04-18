@@ -250,7 +250,7 @@ typedef struct {
 /*876*/ u16 pad876;
 /*878*/ s16 unk878;
 /*87A*/ s16 unk87A;
-/*87C*/ s16 unk87C;
+/*87C*/ s16 unk87C; //last used spell's gamebit
 /*87E*/ s16 unk87E;
 /*880*/ s16 unk880;
 /*882*/ u16 pad882;
@@ -401,7 +401,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*18*/ void (*set_scarabs)(Object* player, s32 scarabs);
     /*19*/ void (*add_scarab)(Object *player, s32 amount);
     /*20*/ u16 (*get_scarabs)(Object* player);
-    /*21*/ s8 (*func21)(Object* player);
+    /*21*/ s8 (*get_scarabs_largest_recently_collected)(Object* player); //Returns the largest Scarab size recently collected, and resets the recent Scarab record to 0. (Used to cause the Scarab UI to spin upon collection, etc.)
     /*22*/ void (*set_health)(Object* player, s32 health);
     /*23*/ void (*set_health_max)(Object* player, s32 healthMax);
     /*24*/ void (*add_health)(Object* player, s32 amount);

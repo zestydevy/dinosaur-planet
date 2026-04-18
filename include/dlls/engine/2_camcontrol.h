@@ -99,7 +99,7 @@ DLL_INTERFACE(DLL_2_camera) {
 /*7*/ CameraAction* (*get_camera_action)(s32 actionIndex);	//Returns a pointer to a `CameraAction` read from CAMERAACTIONS.BIN
 /*8*/ void (*change_mode)(u32 cameraMode, s32 index); 		//Can apply a CameraAction (or a different 8-byte struct) depending on the mode value. Depending on mode `params` can be the camera DLL index (relative to CAMNORMAL's ID), or the index of the CameraAction to use, or params for the 8-byte struct. TO-DO: update description once better understood!
 /*9*/ void (*store_player)(Object* player, s32 arg1); 		//Stores a reference to the player Object onto CamControl_Data 
-/*10*/ void (*reposition_player)(f32 x, f32 y, f32 z);		//Changes the player's SRT transl and positionMirror (the next time export1 runs)
+/*10*/ void (*reposition_player)(f32 x, f32 y, f32 z);		//Changes the player's SRT transl and globalPosition (the next time export1 runs)
 /*11*/ void (*move_camera_by_delta)(f32 dx, f32 dy, f32 dz); //Shifts the camera by a position delta
 /*12*/ void (*func12)(f32 xNumerator, Vec4f* vec4, f32 xDivisor, f32 xMin, f32 y, f32 w); //TO-DO: figure out what this is for (related to interpolation ease tangents, maybe?)
 /*13*/ void (*get_player_to_camera_distances)(Camera* camera, f32* dx, f32* dy, f32* dz, f32* distance2D, f32 yOffset); //Stores the components of a player-to-camera vector onto the dx/dy/dz f32* arguments, and optionally stores the absolute lateral distance as well (clamped to a minimum of 5). The yOffset argument can be used to start the vector from a point above the player's feet. NOTE: arg0 could also be an Object*, or a pointer to an SRT.

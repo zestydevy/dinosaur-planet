@@ -1,0 +1,12 @@
+.text = 0x0:
+SCMeterBlock_ctor = 0x0;
+SCMeterBlock_dtor = 0xC;
+SCMeterBlock_setup = 0x18;
+SCMeterBlock_control = 0xD4;
+SCMeterBlock_update = 0x240;
+SCMeterBlock_print = 0x24C;
+SCMeterBlock_free = 0x2A0;
+SCMeterBlock_get_model_flags = 0x328;
+SCMeterBlock_get_data_size = 0x338;
+
+.rodata = 0x38C:

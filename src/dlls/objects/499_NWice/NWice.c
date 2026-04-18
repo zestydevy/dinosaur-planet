@@ -36,8 +36,9 @@ void dll_499_control(Object* self) {
     UnkObjType3E_Setup *setup;
     UnkObjType3E_Setup *temp2;
 
-    dist = 3.4028235e38f;
+    dist = M_INFINITY_F;
     objdata = self->data;
+
     if (objdata->unk0 != NULL) {
         self->srt.transl.x = objdata->unk0->srt.transl.x;
         self->srt.transl.y = objdata->unk0->srt.transl.y;
@@ -56,6 +57,7 @@ void dll_499_control(Object* self) {
         }
         return;
     }
+
     objList = obj_get_all_of_type(OBJTYPE_62, &numObjs);
     setup = (UnkObjType3E_Setup*)self->setup;
     for (i = 0; i < numObjs; i++) {

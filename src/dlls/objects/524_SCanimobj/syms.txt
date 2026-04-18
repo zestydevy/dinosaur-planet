@@ -1,0 +1,15 @@
+.text = 0x0:
+SCAnimObj_ctor = 0x0;
+SCAnimObj_dtor = 0xC;
+SCAnimObj_setup = 0x18;
+SCAnimObj_control = 0x1A0;
+SCAnimObj_update = 0x3F8;
+SCAnimObj_print = 0x404;
+SCAnimObj_free = 0x824;
+SCAnimObj_get_model_flags = 0x930;
+SCAnimObj_get_data_size = 0x940;
+
+.rodata = 0x9B8:
+
+.bss = 0x9D8:
+sTransform = 0x0; // absolute:0x9D8

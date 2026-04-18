@@ -1,0 +1,13 @@
+.text = 0x0:
+SHvines_ctor = 0x0;
+SHvines_dtor = 0xC;
+SHvines_setup = 0x18;
+SHvines_control = 0x104;
+SHvines_update = 0x22C;
+SHvines_print = 0x2A4;
+SHvines_free = 0x470;
+SHvines_get_model_flags = 0x4C4;
+SHvines_get_data_size = 0x4D4;
+
+.rodata = 0x564:
+str_0 = 0x0; // absolute:0x564

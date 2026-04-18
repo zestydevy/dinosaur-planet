@@ -10,12 +10,12 @@ void dll_19_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_19_func_18(void) {
-    gDLL_1_cmdmenu->vtbl->func_308();
+    gDLL_1_cmdmenu->vtbl->update1();
 }
 
 // offset: 0x5C | func: 1 | export: 1
 void dll_19_func_5C(void) {
-    gDLL_1_cmdmenu->vtbl->func_35C();
+    gDLL_1_cmdmenu->vtbl->update2();
 }
 
 // offset: 0xA0 | func: 2 | export: 2

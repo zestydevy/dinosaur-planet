@@ -22,7 +22,7 @@ u8 modelIdx;
 s16 gameBitPressed;             //flag to set when switch is pressed down
 u8 yOffsetAnimation;            //how far down the switch should move when pressed
 u8 yThreshold;                  //threshold for other objects pressing switch
-u8 distanceSidekickBehaviour;   //player distance at which special sidekick behaviour is activated
+u8 distanceGuardCommand;   //player distance at which special sidekick behaviour is activated
 s16 gameBitActivated;            //flag to check if switch is deactivated
 } PressureSwitch_Setup;
 
@@ -147,14 +147,13 @@ void pressureswitch_control(Object* self) {
         }
     }
 
-    //Activate sidekick behaviour when player close to switch
-    if (!main_get_bits(setup->gameBitPressed) && setup->distanceSidekickBehaviour) {
+    //Show Guard command option when player close to switch
+    if (!main_get_bits(setup->gameBitPressed) && setup->distanceGuardCommand) {
         player = get_player();
         sidekick = get_sidekick();
         if (sidekick) {
-            if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 
-                (setup->distanceSidekickBehaviour * setup->distanceSidekickBehaviour)) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 3);
+            if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(setup->distanceGuardCommand)) {
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_3_Guard);
             }
         }
     }

@@ -371,10 +371,11 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
         
         sidekick = get_sidekick();
         if (sidekick && sidekick->id == OBJ_Tricky) {
-            //Enable "Find" sidekick command when nearby
+            //Enable "Find" sidekick command option when nearby
             if (distance < 30625.0f) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 1);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_1_Find);
             }
+
             dx2 = self->srt.transl.x - sidekick->srt.transl.x;
             dz2 = self->srt.transl.z - sidekick->srt.transl.z;
             sidekickDistance = SQ(dx2) + SQ(dz2);

@@ -1,0 +1,23 @@
+.text = 0x0:
+SCTotemBond_ctor = 0x0;
+SCTotemBond_dtor = 0xC;
+SCTotemBond_setup = 0x18;
+SCTotemBond_control = 0x68;
+SCTotemBond_update = 0x2B8;
+SCTotemBond_print = 0x2C4;
+SCTotemBond_free = 0x318;
+SCTotemBond_get_model_flags = 0x380;
+SCTotemBond_get_data_size = 0x390;
+SCTotemBond_anim_callback = 0x3A4;
+SCTotemBond_create_lightfoot_and_flame_targets = 0x510;
+SCTotemBond_init_minigame = 0x7F8;
+SCTotemBond_finish_minigame = 0x960;
+SCTotemBond_pick_new_direction = 0xA70;
+SCTotemBond_set_level_state = 0xB80;
+
+.rodata = 0xCE0:
+
+.data = 0xCE0:
+dActivateGamebits = 0x0; // absolute:0xCE0
+dFinishedGamebits = 0x8; // absolute:0xCE8
+dKyteFlightCurveIDs = 0x10; // absolute:0xCF0

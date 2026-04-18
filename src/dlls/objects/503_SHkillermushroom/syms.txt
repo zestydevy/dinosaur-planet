@@ -1,17 +1,17 @@
 .text = 0x0:
-dll_503_ctor = 0x0;
-dll_503_dtor = 0xC;
-dll_503_setup = 0x18;
-dll_503_control = 0xC4;
-dll_503_update = 0xCDC;
-dll_503_print = 0xCE8;
-dll_503_free = 0xD70;
-dll_503_get_model_flags = 0xDB8;
-dll_503_get_data_size = 0xDD0;
-dll_503_func_DE4 = 0xDE4;
+SHkillermushroom_ctor = 0x0;
+SHkillermushroom_dtor = 0xC;
+SHkillermushroom_setup = 0x18;
+SHkillermushroom_control = 0xC4;
+SHkillermushroom_update = 0xCDC;
+SHkillermushroom_print = 0xCE8;
+SHkillermushroom_free = 0xD70;
+SHkillermushroom_get_model_flags = 0xDB8;
+SHkillermushroom_get_data_size = 0xDD0;
+SHkillermushroom_reset = 0xDE4;
 
 .rodata = 0xFFC:
 
 .data = 0x103C:
-_data_0 = 0x0; // absolute:0x103C
-_data_18 = 0x18; // absolute:0x1054
+dStateModAnimIDs = 0x0; // absolute:0x103C
+dStateAnimSpeeds = 0x18; // absolute:0x1054

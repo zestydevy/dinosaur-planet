@@ -90,6 +90,7 @@ void CCgrub_control(Object* self) {
     sp60 = -1;
     objdata = (CCgrub_Data*)self->data;
     objsetup = (CCgrub_Setup*)self->setup;
+
     while (obj_recv_mesg(self, &sp5C, NULL, NULL) != 0) {
         if (sp5C == 0x7000B) {
             temp_v0 = get_player();
@@ -97,11 +98,17 @@ void CCgrub_control(Object* self) {
             if (((DLL_IFoodbag*)sp54->dll)->vtbl->is_obtained(sp54) != 0) {
                 ((DLL_IFoodbag*)sp54->dll)->vtbl->collect_food(sp54, SIDEFOOD_Blue_Grubs);
             } else {
-                gDLL_1_cmdmenu->vtbl->func_69F8(0x23, 0x12c, main_increment_bits(BIT_CloudRunner_Grubs));
+                //Show an item collection pop-up
+                gDLL_1_cmdmenu->vtbl->info_show(
+                    BIT_CloudRunner_Grubs, 
+                    300, 
+                    main_increment_bits(BIT_CloudRunner_Grubs)
+                );
             }
             objdata->unk109 = 0xA;
         }
     }
+    
     if ((func_80025F40(self, NULL, NULL, NULL) != 0) && (objdata->unk109 != 0)) {
         func_80023D30(self, 0, 0.0f, 0);
         objdata->unk110 = 0.005f;

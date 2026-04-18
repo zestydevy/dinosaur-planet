@@ -518,7 +518,7 @@ void dll_210_setup(Object* player, u32 arg1) {
         player->shadow->flags |= (OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_DYNAMIC_TEX | OBJ_SHADOW_FLAG_MAKE_TEX_SLOT(0));
         player->shadow->maxDistScale = player->shadow->scale * 0.5f;
     }
-    gDLL_1_cmdmenu->vtbl->func_12EC();
+    gDLL_1_cmdmenu->vtbl->request_new_player_stats_snapshot();
     data->foodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
     data->sidekickFoodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
     data->modAnims = _data_98;
@@ -633,7 +633,7 @@ void dll_210_control(Object* player) {
         *_bss_1AA = 0;
         dll_210_func_11A0(player, data, _bss_1AC);
     }
-    i = gDLL_1_cmdmenu->vtbl->func_E2C(sp48, 6);
+    i = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(sp48, 6);
     if (i != -1) {
         gDLL_6_AMSFX->vtbl->play_sound(player, (player->id != PLAYER_SABRE ? _data_4C0 : _data_4CC)[i], 0x7FU, NULL, NULL, 0, NULL);
     }
@@ -2280,10 +2280,10 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         if (objdata->unk708 != NULL) {
             if (objdata->unk708->def->unkAA >= 0) {
                 if (arg2->unk8D == 0x1A) {
-                    gDLL_1_cmdmenu->vtbl->func_1338(objdata->unk708->def->unkAA, 0xA0, 0x8C);
+                    gDLL_1_cmdmenu->vtbl->open_tutorial_textbox(objdata->unk708->def->unkAA, 160, 140);
                 }
             } else {
-                gDLL_1_cmdmenu->vtbl->func_130C(objdata->unk708->def->gametextIndex, 0xA0, 0x8C);
+                gDLL_1_cmdmenu->vtbl->auto_show_info_scroll(objdata->unk708->def->gametextIndex[0], 160, 140);
             }
             if (arg2->unk8D == 1) {
                 gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);
@@ -4459,8 +4459,9 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         break;
     }
-    if (gDLL_1_cmdmenu->vtbl->func_DC4() != 0) {
-        if (gDLL_1_cmdmenu->vtbl->func_DF4(0x1EE) != 0) {
+
+    if (gDLL_1_cmdmenu->vtbl->was_any_item_used()) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Horn_of_Truth)) {
             joy_set_button_mask(0, A_BUTTON);
             if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
@@ -4476,11 +4477,11 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         sp8E = 0;
         if (player->id != 0) {
-            if (gDLL_1_cmdmenu->vtbl->func_DF4(0x13D) != 0) {
+            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Krystal_Fireflies)) {
                 sp8E = 0xA;
             }
         } else {
-            if (gDLL_1_cmdmenu->vtbl->func_DF4(0x5D6) != 0) {
+            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Sabre_Fireflies)) {
                 if (main_get_bits(BIT_7E2) != 0) {
                     sp8E = 0xA;
                 } else {
@@ -4488,19 +4489,20 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     if (1) {}
                     if (1) {}
                     sp8E = 0xA;
-                    main_set_bits(BIT_7E2, 1U);
+                    main_set_bits(BIT_7E2, 1);
                 }
             }
         }
         if (sp8E) {
             dll_210_func_1DAB0(player);
             gDLL_3_Animation->vtbl->func17(sp8E, player, -1);
-            gDLL_1_cmdmenu->vtbl->func_1290();
+            gDLL_1_cmdmenu->vtbl->pages_clear_last_selected_index();
             return 0;
         }
     }
-    if (gDLL_1_cmdmenu->vtbl->func_F40() == 0x387) {
-        sp8C = gDLL_1_cmdmenu->vtbl->func_E2C(sp38, 0x10);
+    
+    if (gDLL_1_cmdmenu->vtbl->get_subpage_gamebit() == BIT_Foodbag_Give) {
+        sp8C = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(sp38, 0x10);
         if (sp8C != -1 && (player->unkC4 == NULL)) {
             joy_set_button_mask(0, A_BUTTON);
             player->unkE0 = sp8C;
@@ -9845,8 +9847,8 @@ void dll_210_add_scarab(Object* player, s32 amount) {
 
     newScarabCount = objdata->stats->scarabs;
     newScarabCount += amount;
-    if (objdata->stats->scarabsLargestPayday < amount) {
-        objdata->stats->scarabsLargestPayday = amount;
+    if (objdata->stats->scarabsLargestRecent < amount) {
+        objdata->stats->scarabsLargestRecent = amount;
     }
 
     if (newScarabCount < 0) {
@@ -9871,12 +9873,17 @@ u16 dll_210_get_scarabs(Object* player) {
 }
 
 // offset: 0x1D13C | func: 173 | export: 21
-s8 dll_210_func_1D13C(Object* player) {
+/**
+  * Returns the largest Scarab size recently collected, and resets the recent Scarab record to 0.
+  * 
+  * Used to cause the Scarab UI to spin upon collection, etc.
+  */
+s8 dll_210_get_scarabs_largest_recently_collected(Object* player) {
     Player_Data* objdata = player->data;
     s8 previous;
 
-    previous = objdata->stats->scarabsLargestPayday;
-    objdata->stats->scarabsLargestPayday = 0;
+    previous = objdata->stats->scarabsLargestRecent;
+    objdata->stats->scarabsLargestRecent = 0;
     return previous;
 }
 

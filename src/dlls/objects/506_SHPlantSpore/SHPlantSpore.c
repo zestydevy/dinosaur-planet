@@ -27,11 +27,9 @@ void dll_506_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
 // offset: 0x34 | func: 1 | export: 1
 void dll_506_control(Object* self) {
-    DLL506_Setup* sp24 = (DLL506_Setup*) self->setup;
-    s16 temp_a1;
+    DLL506_Setup* objSetup = (DLL506_Setup*) self->setup;
 
-    temp_a1 = sp24->unk20;
-    if ((temp_a1 != -1) && (main_get_bits(temp_a1) == 0)) {
+    if ((objSetup->unk20 != NO_GAMEBIT) && (main_get_bits(objSetup->unk20) == 0)) {
         self->unkAF |= 8;
         return;
     }
@@ -40,12 +38,12 @@ void dll_506_control(Object* self) {
     } else {
         self->unkAF &= ~0x10;
     }
-    if ((self->unkAF & 1) && (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_Inventory_Purple_Mushrooms) != 0)) {
+    if ((self->unkAF & 1) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_Purple_Mushrooms)) {
         main_decrement_bits(BIT_Inventory_Purple_Mushrooms);
-        main_set_bits(sp24->unk1E, 1);
+        main_set_bits(objSetup->unk1E, 1);
         self->unkAF |= 0x8;
     }
-    if (main_get_bits(sp24->unk1E) == 0) {
+    if (main_get_bits(objSetup->unk1E) == 0) {
         self->unkAF &= ~0x8;
     }
     func_80036438(self);

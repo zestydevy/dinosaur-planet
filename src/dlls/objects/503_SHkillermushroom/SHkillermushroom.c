@@ -1,351 +1,448 @@
 #include "common.h"
-#include "dlls/engine/6_amsfx.h"
+#include "game/gamebits.h"
+#include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objlib.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 
-typedef struct {
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    s32 _unk14;
-    s32 _unk18;
-    s32 unk1C;
-    f32 unk20;
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    f32 unk30;
-    u32 unk34;
-    s16 unk38;
-    u8 unk3A;
-    u8 unk3B; 
-    s8 _unk3C;
-    s8 unk3D;
-    s16 _unk3E;
-} DLL503_Data;
-typedef struct {
-    ObjSetup base;
-    u16 unk18;
-    u16 unk1A;
-    s16 unk1C;
-    u8 unk1E;
-    u8 unk1F;
-}DLL503_Setup;
+#include "dlls/objects/503_SHkillermushroom.h"
 
-static void dll_503_func_DE4(Object* arg0, DLL503_Data* arg1, s32 arg2);
-
-
-/*0x0*/ static s16 _data_0[] = {
-    0, 0, 4, 1, 2, 3, 5, 6, 6, 9, 0, 0
+/*0x0*/ static s16 dStateModAnimIDs[] = {
+    SHmushroom_MODANIM_0_Idle_LOOP,     //SHmushroom_STATE_0_Idle
+    SHmushroom_MODANIM_0_Idle_LOOP,     //SHmushroom_STATE_1_Regrow
+    SHmushroom_MODANIM_4_Topple_End,    //SHmushroom_STATE_2_Dying_Outro
+    SHmushroom_MODANIM_1_Spores_Intro,  //SHmushroom_STATE_3_Spore_Attack_Intro
+    SHmushroom_MODANIM_2_Spores_LOOP,   //SHmushroom_STATE_4_Spore_Attack
+    SHmushroom_MODANIM_3_Spores_Outro,  //SHmushroom_STATE_5_Spore_Attack_Outro
+    SHmushroom_MODANIM_5_Topple_Start,  //SHmushroom_STATE_6_Dying_Intro
+    SHmushroom_MODANIM_6_Angry,         //SHmushroom_STATE_7_Angry_Fast
+    SHmushroom_MODANIM_6_Angry,         //SHmushroom_STATE_8_Angry_Slow
+    SHmushroom_MODANIM_9_Stunned_LOOP,  //SHmushroom_STATE_9_Stunned
+    SHmushroom_MODANIM_0_Idle_LOOP     //SHmushroom_STATE_10_Hidden
 };
-/*0x18*/ static f32 _data_18[] = {
-    0.0f, 0.0f, 0.008f, 0.025f, 0.018f, 0.015f, 0.006f, 0.008f, 
-    0.005f, 0.012f, 0.005f, 0.0f, 0.0f, 0.0f
+
+/*0x18*/ static f32 dStateAnimSpeeds[] = {
+    0.0f,       //SHmushroom_STATE_0_Idle
+    0.0f,       //SHmushroom_STATE_1_Regrow
+    0.008f,     //SHmushroom_STATE_2_Dying_Outro
+    0.025f,     //SHmushroom_STATE_3_Spore_Attack_Intro
+    0.018f,     //SHmushroom_STATE_4_Spore_Attack
+    0.015f,     //SHmushroom_STATE_5_Spore_Attack_Outro
+    0.006f,     //SHmushroom_STATE_6_Dying_Intro
+    0.008f,     //SHmushroom_STATE_7_Angry_Fast
+    0.005f,     //SHmushroom_STATE_8_Angry_Slow
+    0.012f,     //SHmushroom_STATE_9_Stunned
+    0.005f     //SHmushroom_STATE_10_Hidden
 };
+
+static void SHkillermushroom_reset(Object* self, SHkillermushroom_Data* objData, int startAtZeroScale);
 
 // offset: 0x0 | ctor
-void dll_503_ctor(void *dll) { }
+void SHkillermushroom_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_503_dtor(void *dll) { }
+void SHkillermushroom_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_503_setup(Object* self, DLL503_Setup* setup, s32 arg2) {
-    ObjectShadow* temp_v0;
-    DLL503_Data* objdata;
+void SHkillermushroom_setup(Object* self, SHkillermushroom_Setup* objSetup, s32 arg2) {
+    SHkillermushroom_Data* objData;
+    ObjectShadow* shadow;
 
-    objdata = self->data;
-    objdata->unk0 = 0;
-    objdata->unk2C = 0; 
-    objdata->unkC = self->srt.scale;
-    objdata->unk38 =  setup->unk1A;
-    if (objdata->unk38 < 0x708) {
-        objdata->unk38 = 0x708U;
+    objData = self->data;
+
+    objData->timer = 0;
+    objData->sporeInhaleRange = 0;
+    objData->baseScale = self->srt.scale;
+
+    //Set minimum regrowth wait period
+    objData->regrowWaitDuration = objSetup->regrowWaitDuration;
+    if (objData->regrowWaitDuration < 1800) {
+        objData->regrowWaitDuration = 1800;
     }
-    self->srt.transl.f[1] = setup->base.y - 2.0f;
-    temp_v0 = self->shadow;
-    if (temp_v0 != NULL) {
-        temp_v0->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
+
+    self->srt.transl.y = objSetup->base.y - 2.0f;
+
+    //Set up object shadow
+    shadow = self->shadow;
+    if (shadow != NULL) {
+        shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
     }
+
     if (arg2 == 0) {
-        dll_503_func_DE4(self, objdata, 0);
+        SHkillermushroom_reset(self, objData, FALSE);
     }
 }
 
 // offset: 0xC4 | func: 1 | export: 1
-void dll_503_control(Object* self) {
-    DLL503_Data* objdata;
+void SHkillermushroom_control(Object* self) {
+    SHkillermushroom_Data* objData;
     Object* player;
-    Object* sp7C;
-    s32 sp78;
-    s32 sp74;
-    f32 temp_fa1;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    s32 var_v0;
+    Object* hitBy;
+    s32 hitSphereID;
+    s32 hitDamage;
+    f32 dz;
+    f32 dx;
+    f32 dy;
+    s32 opacity;
     s32 pad;
-    u16 temp;
-    u8 sp5D;
-    DLL503_Setup* sp58;
-    SRT sp40;
+    u16 playerDistance;
+    u8 i;
+    SHkillermushroom_Setup* objSetup;
+    SRT fxTransform;
 
-    objdata = self->data; 
+    objData = self->data;
     player = get_player();
-    sp58 = (DLL503_Setup*)self->setup;
-    func_80026160(self);
-    self->unkAF |= 8;
-    objdata->unk3B |= 4;
+    objSetup = (SHkillermushroom_Setup*)self->setup;
 
-    switch (objdata->unk3A) {
-    case 6:
-        if (objdata->unk34 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B, MAX_VOLUME, &objdata->unk34, NULL, 0, NULL);
+    func_80026160(self);
+    self->unkAF |= ARROW_FLAG_8_No_Targetting;
+    objData->flags |= SHmushroom_FLAG_Vulnerable;
+
+    switch (objData->state) {
+    case SHmushroom_STATE_6_Dying_Intro:
+        //Inaccessible state: spraying spores, then toppling over and fading out!
+
+        //Start spore sound loop
+        if (objData->soundHandle == 0) {
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B_Spore_Spray_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
-        objdata->unk3B &= ~4;
-        objdata->unk2C = (f32) (objdata->unk2C + (2.5f * gUpdateRateF));
-        if (objdata->unk2C > 40.0f) {
-            objdata->unk2C = 40.0f;
+
+        //Become invulnerable
+        objData->flags &= ~SHmushroom_FLAG_Vulnerable;
+
+        //Increase spore damage radius
+        objData->sporeInhaleRange += INHALE_RADIUS_SPEED * gUpdateRateF;
+        if (objData->sporeInhaleRange > INHALE_RADIUS_MAX) {
+            objData->sporeInhaleRange = INHALE_RADIUS_MAX;
         }
-        if (!(objdata->unk3B & 1) && (vec3_distance(&self->globalPosition, &player->globalPosition) <= objdata->unk2C) && 
-            (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) && 
-            (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)) {
+
+        //Harm the player if they're in range
+        if (!(objData->flags & SHmushroom_FLAG_Disable_Spore_Damage) &&
+            (vec3_distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
+            (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
+            (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
+        ) {
             func_8002635C(player, self, 0x15, 1, 0);
-            objdata->unk3B |= 1;
+            objData->flags |= SHmushroom_FLAG_Disable_Spore_Damage;
         }
-        if (objdata->unk3B & 2) {
-            objdata->unk3A = 2U;
-            objdata->unk0 = 0.0f;
-            if (objdata->unk34 != 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34);
-                objdata->unk34 = 0U;
+
+        //Go to topple outro when animation finished
+        if (objData->flags & SHmushroom_FLAG_Animation_Finished) {
+            objData->state = SHmushroom_STATE_2_Dying_Outro;
+            objData->timer = 0.0f;
+
+            //Stop sound loop
+            if (objData->soundHandle != 0) {
+                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                objData->soundHandle = 0;
             }
         }
-        sp40.transl.f[0] = objdata->unk20;
-        sp40.transl.f[1] = objdata->unk24;
-        sp40.transl.f[2] = objdata->unk28;
-        for (sp5D = 5; sp5D != 0; sp5D--) {
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &sp40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+
+        //Create spore particles
+        fxTransform.transl.x = objData->attachX;
+        fxTransform.transl.y = objData->attachY;
+        fxTransform.transl.z = objData->attachZ;
+        for (i = 5; i != 0; i--) {
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &fxTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
         break;
-    case 2:
-        objdata->unk3B &= ~4;
-        if (objdata->unk3B & 2) {
-            var_v0 = self->opacity - (gUpdateRate * 4);
-            if (var_v0 < 0) {
-                var_v0 = 0;
+    case SHmushroom_STATE_2_Dying_Outro:
+        //Stay invulnerable
+        objData->flags &= ~SHmushroom_FLAG_Vulnerable;
+
+        //Fade out when animation finished
+        if (objData->flags & SHmushroom_FLAG_Animation_Finished) {
+            opacity = self->opacity - (gUpdateRate * 4);
+            if (opacity < 0) {
+                opacity = 0;
             }
-            self->opacity = var_v0;
-            objdata->unk0 = (f32) (objdata->unk0 + gUpdateRateF);
-            if ((f32) objdata->unk38 < objdata->unk0) {
-                dll_503_func_DE4(self, (DLL503_Data* ) objdata, 1);
-                objdata->unk3A = 1U;
+            self->opacity = opacity;
+
+            //Regrow
+            objData->timer += gUpdateRateF;
+            if (objData->timer > objData->regrowWaitDuration) {
+                SHkillermushroom_reset(self, objData, TRUE);
+                objData->state = SHmushroom_STATE_1_Regrow;
             }
         }
         break;
-    case 3:
-        self->unkAF &= ~8;
-        if (objdata->unk3B & 2) {
-            objdata->unk3A = 4U;
+
+    case SHmushroom_STATE_3_Spore_Attack_Intro:
+        //Wait for attack intro animation to finish
+        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+        if (objData->flags & SHmushroom_FLAG_Animation_Finished) {
+            objData->state = SHmushroom_STATE_4_Spore_Attack;
         }
         break;
-    case 4:
-        if (objdata->unk34 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B, MAX_VOLUME, &objdata->unk34, NULL, 0, NULL);
+    case SHmushroom_STATE_4_Spore_Attack:
+        //Start spore sound loop
+        if (objData->soundHandle == 0) {
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B_Spore_Spray_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
-        self->unkAF &= ~8;
-        objdata->unk2C = (f32) (objdata->unk2C + (2.5f * gUpdateRateF));
-        if (!(objdata->unk3B & 1) && (vec3_distance(&self->globalPosition, &player->globalPosition) <= objdata->unk2C) && 
-            (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) && 
-            (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)) {
+
+        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+
+        //Increase spore damage radius
+        objData->sporeInhaleRange += INHALE_RADIUS_SPEED * gUpdateRateF;
+
+        //Harm the player if they're in range
+        if (!(objData->flags & SHmushroom_FLAG_Disable_Spore_Damage) &&
+            (vec3_distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
+            (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
+            (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
+        ) {
             func_8002635C(player, self, 0x15, 1, 0);
-            objdata->unk3B |= 1;
+            objData->flags |= SHmushroom_FLAG_Disable_Spore_Damage;
         }
-        if (objdata->unk2C > 40.0f) {
-            objdata->unk2C = 40.0f;
+
+        //Limit spore damage radius
+        if (objData->sporeInhaleRange > INHALE_RADIUS_MAX) {
+            objData->sporeInhaleRange = INHALE_RADIUS_MAX;
         }
-        objdata->unk0 = (f32) (objdata->unk0 + gUpdateRateF);
-        if (objdata->unk0 > 120.0f) {
-            objdata->unk3A = 5U;
-            objdata->unk0 = 0.0f;
-            if (objdata->unk34 != 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34);
-                objdata->unk34 = 0U;
+
+        //End attack after two seconds
+        objData->timer += gUpdateRateF;
+        if (objData->timer > SPORE_ATTACK_DURATION) {
+            objData->state = SHmushroom_STATE_5_Spore_Attack_Outro;
+            objData->timer = 0.0f;
+
+            //Stop sound loop
+            if (objData->soundHandle != 0) {
+                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                objData->soundHandle = 0;
             }
         }
-        sp40.transl.f[0] = objdata->unk20;
-        sp40.transl.f[1] = objdata->unk24;
-        sp40.transl.f[2] = objdata->unk28;
-        for (sp5D = 5; sp5D != 0; sp5D--) {
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &sp40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+
+        //Create spore particles
+        fxTransform.transl.x = objData->attachX;
+        fxTransform.transl.y = objData->attachY;
+        fxTransform.transl.z = objData->attachZ;
+        for (i = 5; i != 0; i--) {
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &fxTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
         break;
-    case 5:
-        self->unkAF &= ~8;
-        objdata->unk0 += gUpdateRateF;
-        if (sp58->unk18 < objdata->unk0) {
-            if (objdata->unk3B & 2) {
-                objdata->unk3A = 0U;
-                objdata->unk3B &= ~1;
-                objdata->unk2C = 0.0f;
-            }
+    case SHmushroom_STATE_5_Spore_Attack_Outro:
+        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+
+        //Return to idle after a waiting period (and after animation's finished)
+        objData->timer += gUpdateRateF;
+        if ((objData->timer > objSetup->attackCooldown) &&
+            (objData->flags & SHmushroom_FLAG_Animation_Finished)
+        ) {
+            objData->state = SHmushroom_STATE_0_Idle;
+            objData->flags &= ~SHmushroom_FLAG_Disable_Spore_Damage;
+            objData->sporeInhaleRange = 0.0f;
         }
         break;
-    case 1:
-        objdata->unk3B &= ~4;
-        if (objdata->unk4 < self->srt.scale) {
-            objdata->unk10 = (f32) (objdata->unk10 / 1.1f);
+
+    case SHmushroom_STATE_1_Regrow:
+        //Regrow after being collected/killed
+
+        //Stay invulnerable
+        objData->flags &= ~SHmushroom_FLAG_Vulnerable;
+
+        //Limit scale speed
+        if (self->srt.scale > objData->scaleMax) {
+            objData->scaleSpeed /= 1.1f;
         }
-        if (objdata->unk10 < 0.00001f) {
-            objdata->unk10 = 0.0f;
+        if (objData->scaleSpeed < 0.00001f) {
+            objData->scaleSpeed = 0.0f;
         }
-        objdata->unk0 = (f32) (objdata->unk0 + gUpdateRateF);
-        self->srt.scale += objdata->unk10 * gUpdateRateF;
-        if (objdata->unk8 < objdata->unk0) {
-            objdata->unk3A = 0U;
+
+        //Increase timer and scale
+        objData->timer += gUpdateRateF;
+        self->srt.scale += objData->scaleSpeed * gUpdateRateF;
+
+        //Return to idle once grown
+        if (objData->timer > objData->growDuration) {
+            objData->state = SHmushroom_STATE_0_Idle;
         }
         break;
-    case 9:
-        if (objdata->unk0 <= 0.0f) {
-            func_80023BF8(self, 0x19, 0, 0, 0U, 6U);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_745, MAX_VOLUME, &objdata->unk34, NULL, 0, NULL);
-            objdata->unk0 = (f32) rand_next(0xF0, 0x12C);
+
+    case SHmushroom_STATE_9_Stunned:
+        //Configure LockIcon, start stunned sound loop, and pick stun duration
+        if (objData->timer <= 0.0f) {
+            func_80023BF8(self, 0x19, 0, 0, 0, 6);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            objData->timer = rand_next(240, 300);
         }
-        objdata->unk0 = (f32) (objdata->unk0 - gUpdateRateF);
-        if (objdata->unk0 <= 0.0f) {
+
+        //Run down stun timer
+        objData->timer -= gUpdateRateF;
+
+        //Return to idle once stun wears off
+        if (objData->timer <= 0.0f) {
             gDLL_13_Expgfx->vtbl->func4(self);
-            objdata->unk3A = 0U;
+            objData->state = SHmushroom_STATE_0_Idle;
             func_80023C6C(self);
-            if (objdata->unk34 != 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34);
-                objdata->unk34 = 0U;
+
+            //Stop sound loop
+            if (objData->soundHandle != 0) {
+                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                objData->soundHandle = 0;
             }
+
+        //If still stunned, emit particles periodically
         } else {
-            objdata->unk30 -= gUpdateRateF;
-            if (objdata->unk30 <= 0.0f) {
-                sp40.transl.f[0] = 14.0f;
-                sp40.transl.f[1] = 25.0f;
-                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51D, &sp40, PARTFXFLAG_2, -1, NULL);
-                objdata->unk30 = 20.0f;
+            objData->stunFxTimer -= gUpdateRateF;
+            if (objData->stunFxTimer <= 0.0f) {
+                fxTransform.transl.x = 14.0f;
+                fxTransform.transl.y = 25.0f;
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51D, &fxTransform, PARTFXFLAG_2, -1, NULL);
+                objData->stunFxTimer = 20.0f;
             }
-            if (self->unkAF & 1) {
-                obj_send_mesg(player, 0x7000AU, self, (void* )0x119);
-                objdata->unk3A = 0xAU;
-                if (objdata->unk34 != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34);
-                    objdata->unk34 = 0U;
+
+            //Handle player collecting mushroom (@incomplete: doesn't add any inventory items)
+            if (self->unkAF & ARROW_FLAG_1_Interacted) {
+                //Send message to player, displaying Red Mushroom's tutorial box
+                //@bug: should use unique Red Mushroom tutorial gamebit, not the Blue Mushroom gamebit?
+                obj_send_mesg(player,
+                    0x7000A,
+                    self,
+                    (void*)BIT_Tutorial_Collected_Blue_Mushroom
+                );
+
+                objData->state = SHmushroom_STATE_10_Hidden;
+
+                //Stop sound loop
+                if (objData->soundHandle != 0) {
+                    gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                    objData->soundHandle = 0;
                 }
             }
-            self->unkAF &= ~8;
+
+            self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
         break;
-    case 10:
+
+    case SHmushroom_STATE_10_Hidden:
+        //Wait to regrow after being collected
         func_800267A4(self);
-        objdata->unk0 = (f32) (objdata->unk0 + gUpdateRateF);
-        if ((f32) objdata->unk38 < objdata->unk0) {
-            dll_503_func_DE4(self, (DLL503_Data* ) objdata, 1);
-            objdata->unk3A = 1U;
+
+        objData->timer += gUpdateRateF;
+        if (objData->timer > objData->regrowWaitDuration) {
+            SHkillermushroom_reset(self, objData, TRUE);
+            objData->state = SHmushroom_STATE_1_Regrow;
             func_80023C6C(self);
         }
         break;
-    case 0:
+
+    case SHmushroom_STATE_0_Idle:
     default:
-        self->unkAF &= ~8;
-        temp_fv0 = player->srt.transl.f[0] - self->srt.transl.f[0];
-        temp_fv1 = player->srt.transl.f[1] - self->srt.transl.f[1];
-        temp_fa1 = player->srt.transl.f[2] - self->srt.transl.f[2];
-        // temp var required?
-        temp = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
-        if (temp < sp58->unk1E && 
-            ((((DLL_210_Player*)player->dll)->vtbl->func56(player)) >= 0.54f)) {
-            objdata->unk3B &= ~1;
-            objdata->unk3A = 3U;
-            objdata->unk0 = 0.0f;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53A, MAX_VOLUME, NULL, NULL, 0, NULL);
+        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+        dx = player->srt.transl.x - self->srt.transl.x;
+        dy = player->srt.transl.y - self->srt.transl.y;
+        dz = player->srt.transl.z - self->srt.transl.z;
+
+        playerDistance = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
+
+        //Attack the player when they approach
+        if (playerDistance < objSetup->aggroRadius &&
+            (((DLL_210_Player*)player->dll)->vtbl->func56(player) >= 0.54f)
+        ) {
+            objData->flags &= ~SHmushroom_FLAG_Disable_Spore_Damage;
+            objData->state = SHmushroom_STATE_3_Spore_Attack_Intro;
+            objData->timer = 0.0f;
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53A_Spore_Spray_Intro, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     }
-    if ((func_80025F40(self, &sp7C, &sp78, &sp74) != 0) && (objdata->unk3B & 4)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_744, MAX_VOLUME, NULL, NULL, 0, NULL);
-        objdata->unk3B &= ~1;
-        if (sp58->unk1C != -1) {
-            main_set_bits((s32) sp58->unk1C, 1U);
+
+    //React to attacks
+    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) && (objData->flags & SHmushroom_FLAG_Vulnerable)) {
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objData->flags &= ~SHmushroom_FLAG_Disable_Spore_Damage;
+
+        //Optionally set a gamebit when the mushroom is attacked
+        if (objSetup->gamebitAttacked != NO_GAMEBIT) {
+            main_set_bits(objSetup->gamebitAttacked, TRUE);
         }
-        objdata->unk3A = 9U;
-        objdata->unk0 = 0.0f;
-        if (objdata->unk34 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34);
-            objdata->unk34 = 0U;
+
+        objData->state = SHmushroom_STATE_9_Stunned;
+        objData->timer = 0.0f;
+
+        //Stop active sound loop
+        if (objData->soundHandle != 0) {
+            gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+            objData->soundHandle = 0;
         }
     }
-    if (self->curModAnimId != _data_0[objdata->unk3A]) {
-        func_80023D30(self, _data_0[objdata->unk3A], 0.0f, 0U);
+
+    //Change animation if needed
+    if (self->curModAnimId != dStateModAnimIDs[objData->state]) {
+        func_80023D30(self, dStateModAnimIDs[objData->state], 0.0f, 0);
     }
-    if (func_80024108(self, _data_18[objdata->unk3A], gUpdateRateF, NULL) != 0) {
-        objdata->unk3B |= 2;
-        return;
+
+    //Advance animation
+    if (func_80024108(self, dStateAnimSpeeds[objData->state], gUpdateRateF, NULL)) {
+        objData->flags |= SHmushroom_FLAG_Animation_Finished;
+    } else {
+        objData->flags &= ~SHmushroom_FLAG_Animation_Finished;
     }
-    objdata->unk3B &= ~2;
 }
 
 // offset: 0xCDC | func: 2 | export: 2
-void dll_503_update(Object *self) { }
+void SHkillermushroom_update(Object *self) { }
 
 // offset: 0xCE8 | func: 3 | export: 3
-void dll_503_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    DLL503_Data* objdata;
+void SHkillermushroom_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    SHkillermushroom_Data* objData = self->data;
 
-    objdata = self->data;
-    if (visibility != 0) {
+    if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 0, &objdata->unk20, &objdata->unk24, &objdata->unk28, 0);
+
+        //Store attach point coords (for particle effects)
+        func_80031F6C(self, 0,
+            &objData->attachX,
+            &objData->attachY,
+            &objData->attachZ,
+            0
+        );
     }
 }
 
 // offset: 0xD70 | func: 4 | export: 4
-void dll_503_free(Object* self, s32 a1) {
+void SHkillermushroom_free(Object* self, s32 a1) {
     gDLL_13_Expgfx->vtbl->func4(self);
 }
 
 // offset: 0xDB8 | func: 5 | export: 5
-u32 dll_503_get_model_flags(Object* self) {
-    DLL503_Setup* setup;
-
-    setup = (DLL503_Setup*)self->setup;
-    return MODFLAGS_MODEL_INDEX(setup->unk1F) | MODFLAGS_LOAD_SINGLE_MODEL;
+u32 SHkillermushroom_get_model_flags(Object* self) {
+    SHkillermushroom_Setup* setup = (SHkillermushroom_Setup*)self->setup;
+    return MODFLAGS_MODEL_INDEX(setup->modelIdx) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
+
 // offset: 0xDD0 | func: 6 | export: 6
-u32 dll_503_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL503_Data);
+u32 SHkillermushroom_get_data_size(Object *self, u32 a1) {
+    return sizeof(SHkillermushroom_Data);
 }
 
 // offset: 0xDE4 | func: 7
-static void dll_503_func_DE4(Object* arg0, DLL503_Data* arg1, s32 arg2) {
-    ObjSetup* setup;
-    f32 temp_fv0;
+static void SHkillermushroom_reset(Object* self, SHkillermushroom_Data* objData, int startAtZeroScale) {
+    SHkillermushroom_Setup* objSetup = (SHkillermushroom_Setup*)self->setup;
 
-    setup = arg0->setup;
-    arg0->srt.roll = rand_next(-0x5DC, 0x5DC);
-    arg0->srt.pitch = rand_next(-0x5DC, 0x5DC);
-    arg0->srt.yaw = rand_next(-0x5DC, 0x5DC);
-    arg0->opacity = 0xFF;
-    arg0->srt.flags &= ~OBJFLAG_INVISIBLE;
-    arg0->srt.transl.f[0] = setup->x;
-    arg0->srt.transl.f[1] = setup->y;
-    arg0->srt.transl.f[2] = setup->z;
-    if (arg2 != 0) {
-        arg0->srt.scale = 0.00001f;
-        arg1->unk0 = 0.0f;
-        arg1->unk8 = (rand_next(0, 0x64) + 200.0f);
-        temp_fv0 = (rand_next(-0x64, 0x64) * 0.001f) + arg1->unkC;
-        arg1->unk4 = temp_fv0;
-        arg1->unk10 =(temp_fv0 / arg1->unk8);
+    self->srt.roll = rand_next(-1500, 1500);
+    self->srt.pitch = rand_next(-1500, 1500);
+    self->srt.yaw = rand_next(-1500, 1500);
+    self->opacity = OBJECT_OPACITY_MAX;
+    self->srt.flags &= ~OBJFLAG_INVISIBLE;
+    self->srt.transl.x = objSetup->base.x;
+    self->srt.transl.y = objSetup->base.y;
+    self->srt.transl.z = objSetup->base.z;
+
+    if (startAtZeroScale) {
+        self->srt.scale = 0.00001f;
+        objData->timer = 0.0f;
+        objData->growDuration = rand_next(0, 100) + 200.0f;
+        objData->scaleMax = (rand_next(-100, 100) * 0.001f) + objData->baseScale;
+        objData->scaleSpeed = objData->scaleMax / objData->growDuration;
     }
-    func_8002674C(arg0);
-    func_800264D0(arg0);
+
+    func_8002674C(self);
+    func_800264D0(self);
 }

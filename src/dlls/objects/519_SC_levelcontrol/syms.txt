@@ -12,8 +12,8 @@ SC_levelcontrol_func_660 = 0x660;
 SC_levelcontrol_func_8A4 = 0x8A4;
 SC_levelcontrol_func_8B4 = 0x8B4;
 SC_levelcontrol_func_BBC = 0xBBC;
-SC_levelcontrol_func_11FC = 0x11FC;
-SC_levelcontrol_func_12D8 = 0x12D8;
+SC_levelcontrol_handle_lightfoot_ambush = 0x11FC;
+SC_levelcontrol_anim_callback = 0x12D8;
 
 .rodata = 0x1428:
 

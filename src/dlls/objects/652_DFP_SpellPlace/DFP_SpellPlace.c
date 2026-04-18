@@ -2,6 +2,7 @@
 #include "PR/gbi.h"
 #include "dll.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -102,11 +103,11 @@ static void dll_652_func_254(Object* self) {
     bit2Val = main_get_bits(objdata->unk2);
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
-        self->unkAF &= ~8;
-        if ((bit2Val != 0) && (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_SpellStone_CRF) != 0)) {
+        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+        if (bit2Val && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_CRF)) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
             objdata->unk4 = 1;
-            self->unkAF |= 8;
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
             main_set_bits(objdata->unk0, 1);
         }
     }
@@ -123,7 +124,7 @@ static void dll_652_func_364(Object* self) {
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~8;
-        if ((bit2Val != 0) && (gDLL_1_cmdmenu->vtbl->func_DF4(BIT_SpellStone_DIM) != 0)) {
+        if (bit2Val && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= 8;

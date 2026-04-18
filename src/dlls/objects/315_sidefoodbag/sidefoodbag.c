@@ -83,8 +83,11 @@ void SideFoodbag_control(Object* self) {
 
     objData = self->data;
 
-    uiGamebit = gDLL_1_cmdmenu->vtbl->func_E2C(dino_foodbag_cmdmenu_gamebitIDs, ARRAYCOUNT(dino_foodbag_cmdmenu_gamebitIDs));
-    uiSubmenuGamebit = gDLL_1_cmdmenu->vtbl->func_F40();
+    uiGamebit = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(
+                    dino_foodbag_cmdmenu_gamebitIDs, 
+                    ARRAYCOUNT(dino_foodbag_cmdmenu_gamebitIDs)
+                );
+    uiSubmenuGamebit = gDLL_1_cmdmenu->vtbl->get_subpage_gamebit();
 
     SideFoodbag_set_capacity(self);
 

@@ -5,6 +5,8 @@
 #include "sys/segment_1460.h"
 #include "sys/map.h"
 
+#include "prevent_bss_reordering.h"
+
 typedef struct {
 /*00*/    ObjSetup base;
 /*18*/    s8 yaw;

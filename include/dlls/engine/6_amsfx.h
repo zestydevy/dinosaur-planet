@@ -143,7 +143,7 @@ enum SoundID {
 
     SOUND_9D_Fire_Loop = 0x9D,          //10 HOURS of Relaxing Fireplace Sounds - Burning Fireplace & Crackling Fire Sounds
 
-    SOUND_A0 = 0xA0, // cmdmenu (spooky)
+    SOUND_A0_Cmdmenu_Item_Locked = 0xA0, // cmdmenu (spooky sound) - plays if an inventory item can't be used (unused in practice)
 
     SOUND_A4_Blocked_Attack = 0xA4, 
 
@@ -164,10 +164,12 @@ enum SoundID {
     SOUND_DD_Krystal_Hurt_Augh = 0xDD,     //player hurt sfx
     SOUND_DE_Krystal_Hurt_Ugh = 0xDE,      //player hurt sfx 
 
+    SOUND_E1_Krystal_Ugh = 0xE1,           //SCtotemstrength
     SOUND_E2_Krystal_Yuh = 0xE2,
     SOUND_E3_Krystal_Yaahh = 0xE3,
     SOUND_E4_Krystal_Yeah = 0xE4,
-
+    
+    SOUND_E7_Krystal_Hyeh = 0xE7,          //SCtotemstrength
     
     SOUND_E9_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
     SOUND_EA_Krystal_Find = 0xEA,          //"Seek it out!"
@@ -274,6 +276,9 @@ enum SoundID {
     SOUND_343_Eerie_Ringing = 0x343, // ECSH_Cup (when Krazoa Spirit enters it)
     SOUND_344_Chime = 0x344,
 
+    SOUND_357_Magic_Hum_Loop = 0x357,       //DBSH_Symbol
+    SOUND_358_Reverse_Static_Hiss = 0x358,  //DBSH_Symbol
+
     SOUND_35A_Low_Whoosh = 0x35A, // WMrock
     SOUND_35B_Rock_Slide = 0x35B, // WMrock
 
@@ -336,9 +341,9 @@ enum SoundID {
     SOUND_50C_Low_Rumble_Loop = 0x50C, //IMSnowBike
     SOUND_50D_Jet_Loop = 0x50D,        //IMSnowBike
 
-    SOUND_53A = 0x53A, //used by SHkillermushroom
-    SOUND_53B = 0x53B, //used by SHkillermushroom
-    SOUND_53C = 0x53C, //used by SHbluemushroom
+    SOUND_53A_Spore_Spray_Intro = 0x53A, //used by SHkillermushroom
+    SOUND_53B_Spore_Spray_Loop = 0x53B, //used by SHkillermushroom
+    SOUND_53C_Mushroom_Bounce = 0x53C, //used by SHbluemushroom
 
     SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
 
@@ -439,14 +444,20 @@ enum SoundID {
     SOUND_700_Krystal_Ugh = 0x700,      //player hurt sfx
     SOUND_701_Sabre_Ugh_EMPTY = 0x701,  //NOTE: seems to be empty, but intended as Sabre's counterpart to 0x700
 
+    SOUND_710_Sabre_Test_of_Strength_1 = 0x710, //DBSH_Symbol
+    SOUND_711_Sabre_Test_of_Strength_2 = 0x711, //DBSH_Symbol
+    SOUND_712_Sabre_Test_of_Strength_3 = 0x712, //DBSH_Symbol
+
+    SOUND_722_Impact_Wobble = 0x722, //Pollen
+
     SOUND_72D_Lock_On = 0x72D,          //Z-targetting
     SOUND_72E_Lock_Disengage = 0x72E,   //Z-targetting
 
     SOUND_72F_Harsh_Magical_Thrum_Loop = 0x72F, // used in DLL 475 GPSH_flybaddie
     SOUND_730_Electrified_Blast = 0x730, // used in DLL 475 GPSH_flybaddie
 
-    SOUND_744 = 0x744, //used by SHmushroom, SHkillermushroom
-    SOUND_745 = 0x745, //used by SHmushroom, SHkillermushroom
+    SOUND_744_Mushroom_Hit = 0x744, //used by SHmushroom, SHkillermushroom
+    SOUND_745_Mushroom_Stunned_Loop = 0x745, //used by SHmushroom, SHkillermushroom
 
     SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy = 0x74B,
 
@@ -456,6 +467,7 @@ enum SoundID {
     SOUND_76D_Log_Bump = 0x76D, // used by DFlog, BWlog
 
     SOUND_775_Timer_Countdown = 0x775,
+    SOUND_776_Wooden_Creaking_Loop = 0x776, //used by SCtotemstrength
     
     SOUND_779_Water_Rushing_Loop = 0x779,  //DFwhirlpool, babbling river-like sound
     SOUND_77A_Water_Draining_Loop = 0x77A, //DFwhirlpool, static-y waterfall-like sound
@@ -463,16 +475,20 @@ enum SoundID {
     SOUND_77C_Capy_Sniff = 0x77C,
     SOUND_77D_Capy_Eat = 0x77D,
 
+    SOUND_786_Wooden_Ratcheting_Loop = 0x786, //SC_totempole (when approaching spinning pole)
+
     SOUND_78C = 0x78C, //DFPLevelControl (empty?)
     
     SOUND_793 = 0x793, //DFPLevelControl (empty?)
 
-    SOUND_796 = 0x796,
+    SOUND_796_Pole_Rotate = 0x796,
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
 
     SOUND_79C_Cmdmenu_CantUse = 0x79C,
 
+    SOUND_7AE_Switch_Hit_Blast = 0x7AE,
+    SOUND_7AF_Switch_Reset_Swoosh = 0x7AF,
     SOUND_7B0 = 0x7B0,
     SOUND_7B1 = 0x7B1,
 
@@ -506,6 +522,10 @@ enum SoundID {
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
     
+    SOUND_90F_Muscle_LightFoot_Cry = 0x90F,     //SCtotemstrength
+    SOUND_910_Muscle_LightFoot_Scream = 0x910,  //SCtotemstrength
+    SOUND_911_Muscle_LightFoot_Oh_No = 0x911,   //SCtotemstrength
+
     SOUND_912_Object_Refused = 0x912,
 
     SOUND_927_Harsh_Electric_Loop = 0x927, // DRbullet
@@ -579,7 +599,11 @@ enum SoundID {
     SOUND_AC8_Ground_Impact = 0xAC8, // used by PointBack
     SOUND_AC9_Impact_Crumbling = 0xAC9, // used by PointBack
 
+    SOUND_AFF_Gas_Disperse_Burst = 0xAFF, //Pollen
+    
     SOUND_B01_Success_Chime = 0xB01, //NWtreebridge (via seq 0x92)
+    SOUND_B02_Gas_Disperse_Burst = 0xB02, //PollenFragment
+    SOUND_B03_Acid_Hiss_Loop = 0xB03,     //PollenFragment
 
     SOUND_B1C_Ladder_Climb_A = 0xB1C,
     SOUND_B1D_Ladder_Climb_B = 0xB1D,
@@ -622,6 +646,10 @@ enum SoundID {
     SOUND_BA3_Burning_Loop = 0xBA3,
     SOUND_BA4_Spell_Aim_Hum_Loop = 0xBA4,
 
+    SOUND_BA8_Randorn_Calling_Krystal_1 = 0xBA8,
+    SOUND_BA8_Randorn_Calling_Krystal_2 = 0xBA9,
+    SOUND_BA8_Randorn_Calling_Krystal_3 = 0xBAA,
+
     SOUND_B3C_Machinery_Charge_Up = 0xB3C,
 
     NO_SOUND = -1
@@ -640,8 +668,8 @@ DLL_INTERFACE(DLL_6_AMSFX) {
 // Play sound using source object for panning and distance falloff
 /*2*/ u32 (*play_sound)(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *arg4, s32 arg5, char *arg6);
 /*3*/ void (*func_7E4)(u8 arg0);
-/*4*/ void (*func_860)(u32 arg0, u8 arg1);
-/*5*/ void (*func_954)(u32 arg0, f32 pitch);
+/*4*/ void (*func_860)(u32 soundHandle, u8 volume); //adjust volume
+/*5*/ void (*func_954)(u32 soundHandle, f32 pitch); //adjust pitch
 /*6*/ void (*func_A1C)(u32 arg0);
 /*7*/ void (*func_A6C)(Object *obj);
 /*8*/ s32 (*func_B48)(u32 arg0);

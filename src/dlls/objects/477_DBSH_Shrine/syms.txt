@@ -1,0 +1,17 @@
+.text = 0x0:
+DBSHshrine_ctor = 0x0;
+DBSHshrine_dtor = 0xC;
+DBSHshrine_setup = 0x18;
+DBSHshrine_control = 0x224;
+DBSHshrine_update = 0xC0C;
+DBSHshrine_print = 0xC18;
+DBSHshrine_free = 0xC60;
+DBSHshrine_get_model_flags = 0xCF8;
+DBSHshrine_get_data_size = 0xD08;
+DBSHshrine_anim_callback = 0xD1C;
+DBSHshrine_handle_messages = 0x10A0;
+
+.rodata = 0x127C:
+
+.data = 0x12DC:
+data_0 = 0x0; // absolute:0x12DC

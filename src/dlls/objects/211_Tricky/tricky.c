@@ -1,8 +1,19 @@
 #include "common.h"
 
+#include "dlls/objects/common/sidekick.h"
+
+#include "prevent_bss_reordering.h"
+
 typedef struct {
-    u8 _unk0[0x610];
-} DLL211_Data;
+    u8 _unk0[0x18 - 0];
+    u8 unk18;
+    u8 _unk19;
+    u8 unk1A;
+    u8 unk1B; //bitfield of available sidekick commands
+    u8 unk1C;
+    u8 unk1D;
+    u8 _unk1E[0x610 - 0x1E];
+} DLL211_Data; //0x610
 
 /*0x0*/ static u32 _data_0[] = {
     0x06d70500, 0x000001dc, 0x05000000
@@ -100,13 +111,69 @@ u32 dll_211_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_10C4.s")
 
 // offset: 0x10D4 | func: 13 | export: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_10D4.s")
+s32 dll_211_func_10D4(Object* self) {
+    DLL211_Data* objData;
+    s32 sideCmdBits;
+
+    objData = self->data;
+
+    if (main_get_bits(BIT_4E4)) {
+        sideCmdBits = objData->unk1B | Sidekick_Command_FLAG_01_Heel;
+
+        //Check if Flame command should be shown
+        if ((objData->unk18 == 0xB) || 
+            ((objData->unk18 == 0x10) && (objData->unk1A == 1)) || 
+            ((objData->unk18 == 0x11) && (objData->unk1A == 1))
+        ) {
+            sideCmdBits |= Sidekick_Command_FLAG_10_Flame;
+        }
+
+        //Check if Tricky's ball is unlocked
+        if (main_get_bits(BIT_3F8)) {
+            sideCmdBits |= Sidekick_Command_FLAG_20_Play;
+        }
+
+        //Check if Guard isn't unlocked
+        if (main_get_bits(BIT_DD) == FALSE) {
+            sideCmdBits &= ~Sidekick_Command_FLAG_08_Guard;
+        }
+
+        //Check if Distract isn't unlocked
+        if (main_get_bits(0x9E) == FALSE) {
+            sideCmdBits &= ~Sidekick_Command_FLAG_04_Distract;
+        }
+
+        //Check if Flame isn't unlocked
+        if (main_get_bits(BIT_245) == FALSE) {
+            sideCmdBits &= ~Sidekick_Command_FLAG_10_Flame;
+        }
+        
+        objData->unk1B = 0;
+        
+        return sideCmdBits;
+    }
+    
+    return NO_SIDEKICK_COMMAND;
+}
 
 // offset: 0x1230 | func: 14 | export: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1230.s")
+int dll_211_func_1230(Object* self, s32* arg1) {
+    DLL211_Data* objData = self->data;
+    *arg1 = objData->unk1D;
+    return TRUE;
+}
 
 // offset: 0x1248 | func: 15 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1248.s")
+/**
+  * Enables a sidekick command (e.g. allowing Flame when near vines).
+  */
+void dll_211_func_1248(Object* self, s32 commandIndex) {
+    DLL211_Data* objData = self->data;
+    
+    if (commandIndex < TOTAL_SIDEKICK_COMMANDS) {
+        objData->unk1B |= (1 << commandIndex);
+    }
+}
 
 // offset: 0x1270 | func: 16 | export: 15
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1270.s")

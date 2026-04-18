@@ -219,7 +219,7 @@ s32 dll_417_func_5F8(Object* arg0, Object* arg1) {
     objdata = (DFlog_Data*)arg0->data;
     if ((objdata->unk4F4 != 0) && (objdata->unk4EC == 2)) {
         camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAMSHIPBATTLE2) && (gDLL_1_cmdmenu->vtbl->func_DC4() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
+        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAMSHIPBATTLE2) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
             var_fs0 = 0.0f;
             for (i = 0; i < 2; i++) {
                 var_fs0 += sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));

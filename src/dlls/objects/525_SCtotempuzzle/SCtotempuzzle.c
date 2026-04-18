@@ -90,7 +90,7 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 >= 8) {
                         dll525Data->unk8 = 0;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
                     gDLL_6_AMSFX->vtbl->func_954(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
@@ -103,7 +103,7 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 < 0) {
                         dll525Data->unk8 = 7;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
                     gDLL_6_AMSFX->vtbl->func_954(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
