@@ -341,9 +341,9 @@ enum SoundID {
     SOUND_50C_Low_Rumble_Loop = 0x50C, //IMSnowBike
     SOUND_50D_Jet_Loop = 0x50D,        //IMSnowBike
 
-    SOUND_53A = 0x53A, //used by SHkillermushroom
-    SOUND_53B = 0x53B, //used by SHkillermushroom
-    SOUND_53C = 0x53C, //used by SHbluemushroom
+    SOUND_53A_Spore_Spray_Intro = 0x53A, //used by SHkillermushroom
+    SOUND_53B_Spore_Spray_Loop = 0x53B, //used by SHkillermushroom
+    SOUND_53C_Mushroom_Bounce = 0x53C, //used by SHbluemushroom
 
     SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
 
@@ -456,8 +456,8 @@ enum SoundID {
     SOUND_72F_Harsh_Magical_Thrum_Loop = 0x72F, // used in DLL 475 GPSH_flybaddie
     SOUND_730_Electrified_Blast = 0x730, // used in DLL 475 GPSH_flybaddie
 
-    SOUND_744 = 0x744, //used by SHmushroom, SHkillermushroom
-    SOUND_745 = 0x745, //used by SHmushroom, SHkillermushroom
+    SOUND_744_Mushroom_Hit = 0x744, //used by SHmushroom, SHkillermushroom
+    SOUND_745_Mushroom_Stunned_Loop = 0x745, //used by SHmushroom, SHkillermushroom
 
     SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy = 0x74B,
 

@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_503_ctor
-.dword dll_503_dtor
+.dword SHkillermushroom_ctor
+.dword SHkillermushroom_dtor
 
 # export table
-/*0*/ .dword dll_503_setup
-/*1*/ .dword dll_503_control
-/*2*/ .dword dll_503_update
-/*3*/ .dword dll_503_print
-/*4*/ .dword dll_503_free
-/*5*/ .dword dll_503_get_model_flags
-/*6*/ .dword dll_503_get_data_size
+/*0*/ .dword SHkillermushroom_setup
+/*1*/ .dword SHkillermushroom_control
+/*2*/ .dword SHkillermushroom_update
+/*3*/ .dword SHkillermushroom_print
+/*4*/ .dword SHkillermushroom_free
+/*5*/ .dword SHkillermushroom_get_model_flags
+/*6*/ .dword SHkillermushroom_get_data_size

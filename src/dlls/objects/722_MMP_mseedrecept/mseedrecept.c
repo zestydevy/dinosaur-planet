@@ -2,6 +2,7 @@
 #include "PR/gbi.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
@@ -12,20 +13,6 @@
 #include "sys/objtype.h"
 #include "sys/rand.h"
 #include "types.h"
-
-// typedef struct {
-// /*00*/	s16 objId;
-// /*02*/	u8 quarterSize;
-// /*03*/	u8 act;
-// /*04*/	u8 nextCurveGroup;
-// /*05*/	u8 prevCurveGroup;
-// /*06*/	u8 branch1CurveGroup;
-// /*07*/	u8 branch2CurveGroup;
-// /*08*/	f32 x;
-// /*0c*/	f32 y;
-// /*10*/	f32 z;
-// /*14*/	s32 uID;
-// } CurveSetup; //curves use the base objSetup fields differently, so creating a unique base struct
 
 typedef struct {
 /*00*/ CurveSetup base;
@@ -119,7 +106,7 @@ void mmp_mseedrecept_control(Object* self) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitPlanted, 1);
         objData->unk1 &= ~1;
-        self->opacity = 255;
+        self->opacity = OBJECT_OPACITY_MAX;
     }
     
     if (gDLL_7_Newday->vtbl->func8(&time) || objData->unk0 == 3){
@@ -136,7 +123,7 @@ void mmp_mseedrecept_control(Object* self) {
             if (main_get_bits(objData->gamebitPlanted)){
                 objData->unk0 = 2;
                 self->srt.transl.y = objSetup->base.y;
-                self->opacity = 255;
+                self->opacity = OBJECT_OPACITY_MAX;
             }
             if (main_get_bits(objData->gamebitGrown)){
                 mmp_mseedrecept_func_D40(self);
@@ -171,7 +158,7 @@ void mmp_mseedrecept_control(Object* self) {
                         objData->unk1 |= 4;
                     } else {
                         objData->unk10 = rand_next(50, 200);
-                        objData->unk1 &= 0xFFFB;
+                        objData->unk1 &= ~4;
                     }
                 }
                 
@@ -184,9 +171,12 @@ void mmp_mseedrecept_control(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, PARTFXFLAG_2, -1, &_bss_0[bssIndex]);
                 
             }
-            if (kyte && (self->unkAF & 4)){
-                ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 4);
-                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_4)){
+            if (kyte && (self->unkAF & ARROW_FLAG_4_Highlighted)){
+                //Enable Flame command option
+                ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_4_Flame);
+
+                //Check if Flame command was used
+                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)){
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }

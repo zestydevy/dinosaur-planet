@@ -285,7 +285,7 @@ typedef enum {
     BIT_SnowHorn_Tutorial_GotAlpineRoot2 = 0x116, // len:1 group:2
     BIT_117 = 0x117, // len:1 group:2
     BIT_118 = 0x118, // len:1 group:2
-    BIT_119 = 0x119, // len:1 group:1
+    BIT_Tutorial_Collected_Blue_Mushroom = 0x119, // len:1 group:1 [TUTORIAL]
     BIT_11A = 0x11A, // len:1 group:2
     BIT_SP_Green_Magic = 0x11B, // len:1 group:1 (in stock in shop)
     BIT_11C = 0x11C, // len:1 group:1
@@ -2324,7 +2324,7 @@ typedef enum {
     BIT_90E = 0x90E, // len:1 group:2
     BIT_90F = 0x90F, // len:1 group:2
     BIT_Tutorial_Collected_Scarab = 0x910, // len:1 group:2 [TUTORIAL]
-    BIT_911 = 0x911, // len:1 group:2
+    BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj = 0x911, // len:1 group:2 [TUTORIAL] (Used to assign tutorial sequence's animObj only once. Gamebit 0x119 is used for the tutorial sequence itself!)
     BIT_Shown_ZLock_Interact_Message = 0x912, // len:1 group:2
     BIT_913 = 0x913, // len:1 group:2
     BIT_Tutorial_Magic_Plant = 0x914, // len:1 group:2 [TUTORIAL]

@@ -1,3 +1,4 @@
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/map.h"
@@ -41,9 +42,9 @@ void SHswaplift_control(Object *self) {
         }
     }
     if (dostuff) {
-        self->unkAF &= ~0x8;
+        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
-        if (self->unkAF & 0x1) {
+        if (self->unkAF & ARROW_FLAG_1_Interacted) {
             if (self->unkDC == MAP_SWAPSTONE_CIRCLE) {
                 main_set_bits(BIT_Play_Seq_0107_Rocky_Intro_Unused, 1);
             } else {
@@ -53,7 +54,7 @@ void SHswaplift_control(Object *self) {
             joy_set_button_mask(0, A_BUTTON);
         }
     } else {
-        self->unkAF |= 0x8;
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
 }
 

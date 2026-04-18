@@ -3,6 +3,7 @@
 #include "dlls/engine/26_curves.h"
 #include "dll.h"
 #include "dlls/objects/214_animobj.h"
+#include "dlls/objects/common/sidekick.h"
 #include "game/objects/object.h"
 #include "macros.h"
 #include "sys/objects.h"
@@ -16,7 +17,7 @@
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 interactionDistance;
+/*18*/ u8 findCommandRange;
 /*19*/ u8 unk19;
 /*1A*/ u16 kyteFlightGroup; //curve group Kyte should traverse when using "Find" command
 /*1C*/ s16 unk1C;
@@ -87,11 +88,11 @@ void perchobject_control(Object* self) {
             //Check distance between player and perch (either lateral X/Z distance or full 3D distance check)
             if (objSetup->useDistance3D){
                 playerToCurveDistance = vec3_distance_squared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
-                playerIsNearby = (u8)(playerToCurveDistance <= (objSetup->interactionDistance * objSetup->interactionDistance));
+                playerIsNearby = (u8)(playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange));
             } else {
                 playerToCurveDistance = vec3_distance_xz_squared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
                 playerIsNearby = FALSE;
-                if (playerToCurveDistance <= (objSetup->interactionDistance * objSetup->interactionDistance)) {
+                if (playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange)) {
                     playerIsNearby = TRUE;
                 }
                 if (1) { } //fake?
@@ -100,8 +101,8 @@ void perchobject_control(Object* self) {
 
             //Set Kyte's flight curve when player calls her
             if (playerIsNearby){
-                ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32) kyte, 1);
-                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_1)){
+                ((DLL_ISidekick*) kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_1_Find);
+                if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)){
                     STUBBED_PRINTF("should activate the command\n");
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
@@ -207,13 +208,17 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
 
     kyte = get_sidekick();    
     if (kyte) {
-        if (vec3_distance_squared(&get_player()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= (objSetup->interactionDistance * objSetup->interactionDistance)) {
-            ((DLL_Unknown*)kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 1);
-            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_1)) {
+        if (vec3_distance_squared(&get_player()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
+            //Enable Find command option
+            ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_1_Find);
+            
+            //Check if Find command was used
+            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                 STUBBED_PRINTF("should activate the command\n");
                 main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
             }
         }
     }
+    
     return 0;
 }

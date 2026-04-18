@@ -106,10 +106,10 @@ void SCbeacon_control(Object* self) {
         sidekick = get_sidekick();
         if (sidekick && (self->unkAF & ARROW_FLAG_4_Highlighted)) {
             //Show Flame command option
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 4);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_4_Flame);
 
             //Check if Flame command was selected
-            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_4)) {
+            if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
                 main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteCurveID);
             }
         }

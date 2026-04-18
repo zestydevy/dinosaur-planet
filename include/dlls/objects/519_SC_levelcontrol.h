@@ -15,14 +15,14 @@ typedef enum {
 } SC_ObjectGroups;
 
 typedef enum {
-    SC_Setup1_Meeting_Rubble_Autoswap = 1,
-    SC_Setup2 = 2,
-    SC_Setup3 = 3,
-    SC_Setup4 = 4,
-    SC_Setup5 = 5,
-    SC_Setup6_LightFoot_Trials_Strength = 6,
-    SC_Setup7 = 7
-} SC_Setups; //TO-DO: find maximum setup number used, add descriptive names for each setup
+    SC_Act1_Meeting_Rubble_Autoswap = 1,
+    SC_Act2 = 2,
+    SC_Act3 = 3,
+    SC_Act4 = 4,
+    SC_Act5 = 5,
+    SC_Act6_LightFoot_Trials_Strength = 6,
+    SC_Act7 = 7
+} SC_Acts; //TO-DO: find maximum act number used, add descriptive names for each one
 
 DLL_INTERFACE(DLL_519_SC_Levelcontrol) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);

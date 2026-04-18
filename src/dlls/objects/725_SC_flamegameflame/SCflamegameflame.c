@@ -62,15 +62,15 @@ void SCFlameGameFlame_control(Object* self) {
             if (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= SQ(objSetup->flameRange)) {
                 objData->flags |= SCFlameGameFlame_FLAG_Kyte_is_Nearby;
 
-                //Kyte uses the Flame command
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, BIT_4);
+                //Show Flame command option
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_4_Flame);
             } else {
                 objData->flags &= ~SCFlameGameFlame_FLAG_Kyte_is_Nearby;
             }
         }
 
         //Check if the player issued the Flame command from the inventory
-        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_4)) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
             main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightCurveID);
             objData->flags |= SCFlameGameFlame_FLAG_Player_Gave_Command;
         }

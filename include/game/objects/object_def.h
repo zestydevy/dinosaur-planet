@@ -235,7 +235,7 @@ typedef struct {
 /*9e*/ u8 _unk9e[2];
 /*a0*/ s16 unka0;
 /*a2*/ s16 gametextIndex[4]; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
-/*aa*/ s16 unkAA;
+/*aa*/ s16 unkAA; //gametextID for tutorial textbox
 } ObjDef;
 
 #endif

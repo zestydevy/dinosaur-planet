@@ -51,7 +51,7 @@ void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     case 0:
         break;
     case WM_Setup1_Krystal_Meeting_Randorn:
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, SC_Setup1_Meeting_Rubble_Autoswap);
+        gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, SC_Act1_Meeting_Rubble_Autoswap);
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup0_Main_SwapStone_Area, 1);
         break;
     case WM_Setup2_Spirit1_Krystal_DF:

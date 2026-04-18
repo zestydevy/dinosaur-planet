@@ -32,7 +32,7 @@ void SHvines_setup(Object* self, SHvines_Setup* objSetup, s32 arg2) {
     obj_add_object_type(self, OBJTYPE_51);
 
     if (main_get_bits(objSetup->gamebitBurnt)) {
-        self->srt.flags |= 0x4000;
+        self->srt.flags |= OBJFLAG_INVISIBLE;
         obj_free_tick(self);
         func_800267A4(self);
     }
@@ -57,7 +57,7 @@ void SHvines_control(Object* self) {
     //Allow the Flame command when nearby
     if (sidekick != NULL) {
         if (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) <= SQ(objSetup->flameDistance)) {
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 4);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_4_Flame);
         }
     }
 
@@ -65,7 +65,7 @@ void SHvines_control(Object* self) {
     if (self->opacity < OBJECT_OPACITY_MAX) {
         if (self->opacity < gUpdateRate) {
             obj_free_tick(self);
-            self->srt.flags |= 0x4000;
+            self->srt.flags |= OBJFLAG_INVISIBLE;
             func_800267A4(self);
             return;
         }

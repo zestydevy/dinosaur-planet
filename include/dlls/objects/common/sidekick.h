@@ -6,6 +6,7 @@
 #include "dll_def.h"
 
 #define NO_SIDEKICK_COMMAND -1
+#define TOTAL_SIDEKICK_COMMANDS 6
 
 #define INDEX_TO_FLAG(index) 1 << (index)
 

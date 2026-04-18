@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/interaction_arrow.h"
 #include "sys/gfx/model.h"
 
 #include "dlls/objects/214_animobj.h"
@@ -20,7 +21,7 @@ typedef struct {
 } SPItem_Setup;
 
 static int SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
-static void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* arg2);
+static void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* animObjData);
 
 // offset: 0x0 | ctor
 void SPItem_ctor(void *dll) { }
@@ -63,15 +64,15 @@ void SPItem_control(Object* self) {
             //Hide item if not in stock or already purchased
             if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 
                 (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_hidden(objData->shop, objSetup->itemIndex))) {
-                self->srt.flags |= OBJFLAG_INVISIBLE;  //don't draw
+                self->srt.flags |= OBJFLAG_INVISIBLE;
                 self->unkB0 |= 0x8000;    //don't animate
-                self->unkAF |= 8;         //don't allow targetting
+                self->unkAF |= ARROW_FLAG_8_No_Targetting;
             }
             //Get gametext line index
             objData->gametextLineIdx = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->get_item_gametext_index(objData->shop, objSetup->itemIndex);
         }
     //Check if A pressed while target overhead
-    } else if (self->unkAF & 1) {
+    } else if (self->unkAF & ARROW_FLAG_1_Interacted) {
         scarabCount = ((DLL_Unknown*)player->dll)->vtbl->func[20].withOneArgS32((s32)player);
         initialPrice = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->get_initial_price(objData->shop, objSetup->itemIndex);
         ((DLL_768_SPShop*)objData->shop->dll)->vtbl->set_current_item_index(objData->shop, objSetup->itemIndex);
@@ -145,7 +146,7 @@ static int SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
 }
 
 // offset: 0x4AC | func: 8
-void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* arg2) {
+void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* animObjData) {
     SPItem_Data *objData;
     SPItem_Setup *objSetup;
     Object *shop;
@@ -156,9 +157,9 @@ void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* arg2) 
 
     //Check if object should be hidden
     if (((DLL_768_SPShop*) shop->dll)->vtbl->is_item_hidden(shop, objSetup->itemIndex)){
-        self->srt.flags |= OBJFLAG_INVISIBLE;  //don't draw
+        self->srt.flags |= OBJFLAG_INVISIBLE;
         self->unkB0 |= 0x8000;    //don't update animation
-        self->unkAF |= 8;         //don't allow targetting
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
     
     //Clear SPShop DLL's current item index
