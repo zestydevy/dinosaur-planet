@@ -41,8 +41,6 @@ s16 D_80092C30 = 0;
 s16 D_80092C34 = 0;
 s16 D_80092C38 = 0;
 f32 D_80092C3C = 0;
-s32 D_80092C40 = 1;
-f32 D_80092C44 = 0;
 // function statics start here...
 // -------- .data end 80092cc0 -------- //
 
@@ -75,8 +73,6 @@ Gfx* D_800BB188;
 f32 D_800BB18C;
 Texture* D_800BB190;
 Vec3f D_800BB198;
-Vec3f D_800BB1A8;
-u8 _bss_800bb1b8[0x48];
 // -------- .bss end 800bb200 -------- //
 
 s32 shadows_func_8004FA4C(void);
@@ -179,17 +175,16 @@ void shadows_init(void) {
     D_800BB190 = tex_load_deferred(TEXTABLE_D8);
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_8004D698.s")
-#else
-extern f32 D_800BB1B0;
 void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
+    static s32 D_80092C40 = 1;
+    static f32 D_80092C44 = 0.0f;
+    static Vec3f D_800BB1A8;
+    static u8 _bss_800bb1b8[0x40];
     Vec3f sp1C;
-    f32 var_fv0;
 
     if (func_8001EBE0() != 0) {
-        arg1 = 198.0f;
         arg0 = 0.0f;
+        arg1 = 198.0f;
         arg2 = 19.0f;
     }
     sp1C.x = arg0;
@@ -198,10 +193,10 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     D_80092C18 = arg3;
     D_80092BD0 = arg3 * arg0;
     D_80092BD4 = arg3 * arg1;
-    if (arg1 < 0.0f) {
-        D_80092BE4 = 1.0f + arg1;
+    if (sp1C.y < 0.0f) {
+        D_80092BE4 = 1.0f + sp1C.y;
         if (1) {
-            D_80092BE4 = 1.0f;
+            D_80092BE4 = 1/*.0f*/;
         }
     } else {
         D_80092BE4 = 1.0f;
@@ -209,14 +204,14 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     if (D_80092BD4 < 80.0f) {
         D_80092BD4 = 80.0f;
     }
+    // @fake
+    if (!arg2) {}
     D_80092BD8 = arg3 * arg2;
     shadows_func_80052230(&sp1C, &D_800BB1A8, &D_80092C44);
-    var_fv0 = D_80092C44;
-    if (var_fv0 < 0.0f) {
-        var_fv0 *= -1.0f;
+    if (D_80092C44 < 0.0f) {
+        D_80092C44 *= -1.0f;
     }
-    D_80092C44 = var_fv0;
-    if (var_fv0 <= 0.9961900115f) { // probably .99f
+    if (D_80092C44 <= 0.9961900115f) {
         D_80092C40 = 1;
     }
     if (D_80092C40 != 0) {
@@ -227,7 +222,6 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
         shadows_func_8004D974(1);
     }
 }
-#endif
 
 void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z) {
     ObjectShadow *shadow = obj->shadow;
