@@ -52,7 +52,7 @@ Vec3f *D_800B98A8[2];
 Vtx *D_800B98B0[2];
 s16 D_800B98B8[300];
 u8 D_800B9B10[80];
-s16 D_800B9B60[800];
+s16 D_800B9B60[400][2];
 Unk8004FA58 D_800BA1A0[200];
 Vec3f *D_800BB140;
 Vec3f *D_800BB144;
@@ -945,13 +945,8 @@ s32 shadows_func_8004FA4C(void) {
     return 0;
 }
 
-#ifndef NON_EQUIVALENT
-static s32 _data_pad[3] = {0}; // <- should go away once D_80092CA0 is in shadows_func_8004FA58 ?
-s32 D_80092CA0 = 1;
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_8004FA58.s")
-#else
-// https://decomp.me/scratch/GRoDG
 s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max) {
+    static s32 _data_pad[3] = {0};
     static s32 D_80092CA0 = 1;
     s32 sp28C;
     Camera* camera;
@@ -962,19 +957,17 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     f32 var_fa1;
     f32 var_fs2;
     s32 sp26C;
-    u8 pad[0x20];
-    Vec3f sp1A4[14]; // unknown size, should be equal
+    u8 pad[0x1C];
     f32 var_fs3;
+    Vec3f sp1A4[14]; // unknown size, should be equal
     f32 var_fv0;
-    s16 var_a0;
+    s32 var_a0;
     s32 var_s2;
     s32 var_s7;
     s32 var_a3;
     s32 var_s4;
     Vec3f spE4[14]; // unknown size, should be equal
-    f32 spE0;
-    f32 spDC;
-    f32 spD8;
+    Vec3f spD8;
     s16 spD6;
     s16 spD4;
     s16 spD2;
@@ -983,58 +976,59 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     Vtx* var_s0;
     Unk8004FA58* var_s3;
     s32 var_v0_2;
-    ObjectShadow* spAC;
-    s32 spA0;
     s32 sp90;
+    s32 tempSp26C;
+    Unk8004FA58 *spA0;
+    ObjectShadow* spAC;
 
     sp280 = 0;
     sp26C = 0;
     spAC = arg0->shadow;
     camera = get_camera();
     if (arg0->parent != NULL) {
-        inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8, &spDC, &spE0, arg0->parent);
+        inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8.f[0], &spD8.f[1], &spD8.f[2], arg0->parent);
     } else {
-        spD8 = camera->tx;
-        spDC = camera->ty;
-        spE0 = camera->tz;
+        spD8.f[0] = camera->tx;
+        spD8.f[1] = camera->ty;
+        spD8.f[2] = camera->tz;
     }
-    spD8 -= arg0->srt.transl.x;
-    spDC -= arg0->srt.transl.y;
-    spE0 -= arg0->srt.transl.z;
-    temp_fv0 = sqrtf((spD8 * spD8) + (spDC * spDC) + (spE0 * spE0));
+    spD8.f[0] -= arg0->srt.transl.x;
+    spD8.f[1] -= arg0->srt.transl.y;
+    spD8.f[2] -= arg0->srt.transl.z;
+    temp_fv0 = sqrtf(SQ(spD8.x) + SQ(spD8.y) + SQ(spD8.z));
     var_fs2 = temp_fv0 * 0.1f;
-    var_a0 = arctan2_f(spDC, sqrtf((spD8 * spD8) + (spE0 * spE0)));
-    CLAMP(var_a0, 0, 0x2000)
-    var_a3 = 0;
+    var_a0 = (s16)((u16)arctan2_f(spD8.y, sqrtf(SQ(spD8.x) + SQ(spD8.z))));
+    CLAMP(var_a0, 0, 0x2000);
     var_fv0 = (f32)var_a0 / 8192;
     if (var_fv0 > 1.0f) {
         var_fv0 = 1.0f;
     }
     var_fv0 = 1.0f - var_fv0;
-    var_fs3 = var_fv0 * var_fv0;
+    var_fs3 = SQ(var_fv0);
     if (spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
-        var_fs3 = 0.0f;
         var_fs2 = 0.0f;
+        var_fs3 = 0.0f;
     }
     if (temp_fv0 != 0.0f) {
         temp_fv0 = var_fs2 / temp_fv0;
-        spD8 *= temp_fv0;
-        spDC *= temp_fv0;
-        spE0 *= temp_fv0;
+        spD8.f[0] *= temp_fv0;
+        spD8.f[1] *= temp_fv0;
+        spD8.f[2] *= temp_fv0;
     }
     if (spAC->flags & OBJ_SHADOW_FLAG_WATER_SURFACE) {
-        var_fs3 = 0.0f;
-        spDC = 0.0f;
-        spD8 = 0.0f;
-        spE0 = 0.0f;
+        var_fs3 = 0/*.0f*/;
+        spD8.f[0] = 0/*.0f*/;
+        spD8.f[1] = 0/*.0f*/;
+        spD8.f[2] = 0/*.0f*/;
     }
     D_80092C20 = 0;
     for (sp28C = 0; sp28C < arg3; sp28C++) {
         for (var_s4 = 0; var_s4 < 3; var_s4++) {
+            // @fake?
             var_v0 = &arg4[sp280 + var_s4];
-            sp1A4[var_s4].x = var_v0->x;
-            sp1A4[var_s4].y = var_v0->y;
-            sp1A4[var_s4].z = var_v0->z;
+            sp1A4[var_s4].x = arg4[sp280 + var_s4].x;
+            sp1A4[var_s4].y = arg4[sp280 + var_s4].y;
+            sp1A4[var_s4].z = arg4[sp280 + var_s4].z;
         }
         if (arg6[sp28C].unk10 & 1) {
             if (shadows_func_80051CFC(&spAC->dir, (Vec3f *)&arg6[sp28C].pos) == 1) {
@@ -1043,9 +1037,9 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
                     var_s3 = &arg2[sp90];
                     var_s2 = 0;
                     var_v0_2 = var_s7 - 1;
-                    temp_v1_3 = &sp1A4[var_v0_2];
-                    var_fa1 = (temp_v1_3->z * var_s3->pos.z) + ((temp_v1_3->x * var_s3->pos.x) + (temp_v1_3->y * var_s3->pos.y)) + var_s3->pos.w;
-                    for (var_s4 = 0; var_s4 < var_s7; var_s4++) {
+                    var_fa1 = (sp1A4[var_v0_2].x * var_s3->pos.x) + (sp1A4[var_v0_2].y * var_s3->pos.y) + (sp1A4[var_v0_2].z * var_s3->pos.z) + var_s3->pos.w;
+                    var_s4 = 0;
+                    while (var_s4 < var_s7) {
                         temp_fs0_2 = (sp1A4[var_s4].x * var_s3->pos.x) + (sp1A4[var_s4].y * var_s3->pos.y) + (sp1A4[var_s4].z * var_s3->pos.z) + var_s3->pos.w;
                         if (temp_fs0_2 <= 0.0f) {
                             if (var_fa1 <= 0.0f) {
@@ -1064,7 +1058,7 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
                             shadows_func_800528AC(&sp1A4[var_v0_2], &sp1A4[var_s4], &spE4[var_s2++], &var_s3->pos);
                         }
                         var_fa1 = temp_fs0_2;
-                        var_v0_2 = var_s4;
+                        var_v0_2 = var_s4++;
                     }
                     var_s7 = var_s2;
                     for (var_s4 = 0; var_s4 < var_s2; var_s4++) {\
@@ -1077,40 +1071,38 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
                     D_800B98B8[D_80092C20] = var_s7;
                     D_80092C20++;
                 }
-                if (var_s7 > 0) {
-                    var_s0 = &arg5[sp26C];
-                    for (var_s4 = 0; var_s4 != var_s7; var_s4++) {
-                        if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
-                            shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
-                        } else {
-                            shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
-                        }
-                        if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
-                            spD2 = 0xFF;
-                        }
-                        D_800B9B60[sp26C * 2 + 0] = spD6;
-                        D_800B9B60[sp26C * 2 + 1] = spD4;
-                        if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
-                            var_s0->v.ob[0] = (sp1A4[var_s4].x + spD8) * 20.0f;
-                            var_s0->v.ob[1] = (sp1A4[var_s4].y + spDC + var_fs3) * 20.0f;
-                            var_s0->v.ob[2] = (sp1A4[var_s4].z + spE0) * 20.0f;
-                        } else {
-                            var_s0->v.ob[0] = sp1A4[var_s4].x * 20.0f;
-                            var_s0->v.ob[1] = sp1A4[var_s4].y * 20.0f;
-                            if (!(spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER)) {
-                                var_s0->v.ob[1] += 0x1E;
-                            }
-                            var_s0->v.ob[2] = sp1A4[var_s4].z * 20.0f;
-                        }
-                        temp_v0_3 = &arg5[sp26C];
-                        temp_v0_3->v.tc[0] = spD6;
-                        temp_v0_3->v.tc[1] = spD4;
-                        var_s0++;
-                        sp26C++;
-                        if (sp26C >= max) {
-                            return 0;
-                        }
+                for (var_s4 = 0; var_s4 < var_s7; ) {
+                    var_a3 = sp26C;
+                    tempSp26C = sp26C;
+                    if (arg0->def->shadowType == 2) {
+                        shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
+                    } else {
+                        shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
                     }
+                    if (spAC->flags & 0x8000) {
+                        spD2 = 0xFF;
+                    }
+                    D_800B9B60[var_a3][0] = spD6;
+                    D_800B9B60[var_a3][1] = spD4;
+                    if (arg0->def->shadowType == 2) {
+                        arg5[tempSp26C].v.ob[0] = (sp1A4[var_s4].x + spD8.x) * 20.0f;
+                        arg5[tempSp26C].v.ob[1] = (sp1A4[var_s4].y + spD8.y + var_fs3) * 20.0f;
+                        arg5[tempSp26C].v.ob[2] = (sp1A4[var_s4].z + spD8.z) * 20.0f;
+                    } else {
+                        arg5[tempSp26C].v.ob[0] = sp1A4[var_s4].x * 20.0f;
+                        arg5[tempSp26C].v.ob[1] = sp1A4[var_s4].y * 20.0f;
+                        if (!(spAC->flags & 0x80)) {
+                            arg5[tempSp26C].v.ob[1] += 0x1E;
+                        }
+                        arg5[tempSp26C].v.ob[2] = sp1A4[var_s4].z * 20.0f;
+                    }
+                    arg5[tempSp26C].v.tc[0] = spD6;
+                    arg5[tempSp26C].v.tc[1] = spD4;
+                    sp26C++;
+                    if (sp26C >= max) {
+                        return 0;
+                    }
+                    var_s4++;
                 }
             }
         }
@@ -1119,7 +1111,6 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     D_80092CA0 ^= 1;
     return 1;
 }
-#endif
 
 #ifndef NON_EQUIVALENT
 s32 D_80092CA4 = 1;
@@ -1258,8 +1249,8 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
                     spCA = 0xFF;
                 }
 
-                D_800B9B60[sp330 * 2 + 0] = spCE;
-                D_800B9B60[sp330 * 2 + 1] = spCC;
+                D_800B9B60[sp330][0] = spCE;
+                D_800B9B60[sp330][1] = spCC;
 
                 var_s0++;
                 var_s0[-1].v.ob[0] = spE8[var_s4].x * 20.0f;
