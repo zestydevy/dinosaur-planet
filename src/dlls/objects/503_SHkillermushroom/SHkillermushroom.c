@@ -341,9 +341,9 @@ void SHkillermushroom_control(Object* self) {
 
         playerDistance = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
 
-        //Attack the player when they approach
+        //Attack the player when they're nearby
         if (playerDistance < objSetup->aggroRadius &&
-            (((DLL_210_Player*)player->dll)->vtbl->func56(player) >= 0.54f)
+            (((DLL_210_Player*)player->dll)->vtbl->func56(player) >= 0.54f) //Player can avoid detection by sneaking
         ) {
             objData->flags &= ~SHmushroom_FLAG_Disable_Spore_Damage;
             objData->state = SHmushroom_STATE_3_Spore_Attack_Intro;
