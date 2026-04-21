@@ -405,7 +405,7 @@ void collectable_handle_animation_and_fx(Object* self) {
     CollectableDef* collectableDef;
     s32 temp;
 
-    collectableDef = (CollectableDef*)self->def->collectableDef;
+    collectableDef = self->def->collectableDef;
     if (collectableDef == NULL) {
         return;
     }
@@ -436,8 +436,8 @@ void collectable_handle_animation_and_fx(Object* self) {
             shadow = self->shadow;
             if (shadow) {
                 opacity = objdata->shadowOpacity + (gUpdateRate * 8);
-                if (opacity > 0xFF) {
-                    opacity = 0xFF;
+                if (opacity > OBJECT_OPACITY_MAX) {
+                    opacity = OBJECT_OPACITY_MAX;
                 }
                 objdata->shadowOpacity = opacity;
                 temp = shadows_calc_opacity(self, shadow);

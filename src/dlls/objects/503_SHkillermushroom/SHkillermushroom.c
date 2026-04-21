@@ -13,31 +13,31 @@
 #include "dlls/objects/503_SHkillermushroom.h"
 
 /*0x0*/ static s16 dStateModAnimIDs[] = {
-    SHmushroom_MODANIM_0_Idle_LOOP,     //SHmushroom_STATE_0_Idle
-    SHmushroom_MODANIM_0_Idle_LOOP,     //SHmushroom_STATE_1_Regrow
-    SHmushroom_MODANIM_4_Topple_End,    //SHmushroom_STATE_2_Dying_Outro
-    SHmushroom_MODANIM_1_Spores_Intro,  //SHmushroom_STATE_3_Spore_Attack_Intro
-    SHmushroom_MODANIM_2_Spores_LOOP,   //SHmushroom_STATE_4_Spore_Attack
-    SHmushroom_MODANIM_3_Spores_Outro,  //SHmushroom_STATE_5_Spore_Attack_Outro
-    SHmushroom_MODANIM_5_Topple_Start,  //SHmushroom_STATE_6_Dying_Intro
-    SHmushroom_MODANIM_6_Angry,         //SHmushroom_STATE_7_Angry_Fast
-    SHmushroom_MODANIM_6_Angry,         //SHmushroom_STATE_8_Angry_Slow
-    SHmushroom_MODANIM_9_Stunned_LOOP,  //SHmushroom_STATE_9_Stunned
-    SHmushroom_MODANIM_0_Idle_LOOP     //SHmushroom_STATE_10_Hidden
+    SHkillermushroom_MODANIM_0_Idle_LOOP,     //SHkillermushroom_STATE_0_Idle
+    SHkillermushroom_MODANIM_0_Idle_LOOP,     //SHkillermushroom_STATE_1_Regrow
+    SHkillermushroom_MODANIM_4_Topple_End,    //SHkillermushroom_STATE_2_Dying_Outro
+    SHkillermushroom_MODANIM_1_Spores_Intro,  //SHkillermushroom_STATE_3_Spore_Attack_Intro
+    SHkillermushroom_MODANIM_2_Spores_LOOP,   //SHkillermushroom_STATE_4_Spore_Attack
+    SHkillermushroom_MODANIM_3_Spores_Outro,  //SHkillermushroom_STATE_5_Spore_Attack_Outro
+    SHkillermushroom_MODANIM_5_Topple_Start,  //SHkillermushroom_STATE_6_Dying_Intro
+    SHkillermushroom_MODANIM_6_Angry,         //SHkillermushroom_STATE_7_Angry_Fast
+    SHkillermushroom_MODANIM_6_Angry,         //SHkillermushroom_STATE_8_Angry_Slow
+    SHkillermushroom_MODANIM_9_Stunned_LOOP,  //SHkillermushroom_STATE_9_Stunned
+    SHkillermushroom_MODANIM_0_Idle_LOOP     //SHkillermushroom_STATE_10_Hidden
 };
 
 /*0x18*/ static f32 dStateAnimSpeeds[] = {
-    0.0f,       //SHmushroom_STATE_0_Idle
-    0.0f,       //SHmushroom_STATE_1_Regrow
-    0.008f,     //SHmushroom_STATE_2_Dying_Outro
-    0.025f,     //SHmushroom_STATE_3_Spore_Attack_Intro
-    0.018f,     //SHmushroom_STATE_4_Spore_Attack
-    0.015f,     //SHmushroom_STATE_5_Spore_Attack_Outro
-    0.006f,     //SHmushroom_STATE_6_Dying_Intro
-    0.008f,     //SHmushroom_STATE_7_Angry_Fast
-    0.005f,     //SHmushroom_STATE_8_Angry_Slow
-    0.012f,     //SHmushroom_STATE_9_Stunned
-    0.005f     //SHmushroom_STATE_10_Hidden
+    0.0f,       //SHkillermushroom_STATE_0_Idle
+    0.0f,       //SHkillermushroom_STATE_1_Regrow
+    0.008f,     //SHkillermushroom_STATE_2_Dying_Outro
+    0.025f,     //SHkillermushroom_STATE_3_Spore_Attack_Intro
+    0.018f,     //SHkillermushroom_STATE_4_Spore_Attack
+    0.015f,     //SHkillermushroom_STATE_5_Spore_Attack_Outro
+    0.006f,     //SHkillermushroom_STATE_6_Dying_Intro
+    0.008f,     //SHkillermushroom_STATE_7_Angry_Fast
+    0.005f,     //SHkillermushroom_STATE_8_Angry_Slow
+    0.012f,     //SHkillermushroom_STATE_9_Stunned
+    0.005f     //SHkillermushroom_STATE_10_Hidden
 };
 
 static void SHkillermushroom_reset(Object* self, SHkillermushroom_Data* objData, int startAtZeroScale);
@@ -101,10 +101,10 @@ void SHkillermushroom_control(Object* self) {
 
     func_80026160(self);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    objData->flags |= SHmushroom_FLAG_Vulnerable;
+    objData->flags |= SHkillermushroom_FLAG_Vulnerable;
 
     switch (objData->state) {
-    case SHmushroom_STATE_6_Dying_Intro:
+    case SHkillermushroom_STATE_6_Dying_Intro:
         //Inaccessible state: spraying spores, then toppling over and fading out!
 
         //Start spore sound loop
@@ -113,7 +113,7 @@ void SHkillermushroom_control(Object* self) {
         }
 
         //Become invulnerable
-        objData->flags &= ~SHmushroom_FLAG_Vulnerable;
+        objData->flags &= ~SHkillermushroom_FLAG_Vulnerable;
 
         //Increase spore damage radius
         objData->sporeInhaleRange += INHALE_RADIUS_SPEED * gUpdateRateF;
@@ -122,18 +122,18 @@ void SHkillermushroom_control(Object* self) {
         }
 
         //Harm the player if they're in range
-        if (!(objData->flags & SHmushroom_FLAG_Disable_Spore_Damage) &&
+        if (!(objData->flags & SHkillermushroom_FLAG_Disable_Spore_Damage) &&
             (vec3_distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
         ) {
             func_8002635C(player, self, 0x15, 1, 0);
-            objData->flags |= SHmushroom_FLAG_Disable_Spore_Damage;
+            objData->flags |= SHkillermushroom_FLAG_Disable_Spore_Damage;
         }
 
         //Go to topple outro when animation finished
-        if (objData->flags & SHmushroom_FLAG_Animation_Finished) {
-            objData->state = SHmushroom_STATE_2_Dying_Outro;
+        if (objData->flags & SHkillermushroom_FLAG_Animation_Finished) {
+            objData->state = SHkillermushroom_STATE_2_Dying_Outro;
             objData->timer = 0.0f;
 
             //Stop sound loop
@@ -151,12 +151,12 @@ void SHkillermushroom_control(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &fxTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
         break;
-    case SHmushroom_STATE_2_Dying_Outro:
+    case SHkillermushroom_STATE_2_Dying_Outro:
         //Stay invulnerable
-        objData->flags &= ~SHmushroom_FLAG_Vulnerable;
+        objData->flags &= ~SHkillermushroom_FLAG_Vulnerable;
 
         //Fade out when animation finished
-        if (objData->flags & SHmushroom_FLAG_Animation_Finished) {
+        if (objData->flags & SHkillermushroom_FLAG_Animation_Finished) {
             opacity = self->opacity - (gUpdateRate * 4);
             if (opacity < 0) {
                 opacity = 0;
@@ -167,19 +167,19 @@ void SHkillermushroom_control(Object* self) {
             objData->timer += gUpdateRateF;
             if (objData->timer > objData->regrowWaitDuration) {
                 SHkillermushroom_reset(self, objData, TRUE);
-                objData->state = SHmushroom_STATE_1_Regrow;
+                objData->state = SHkillermushroom_STATE_1_Regrow;
             }
         }
         break;
 
-    case SHmushroom_STATE_3_Spore_Attack_Intro:
+    case SHkillermushroom_STATE_3_Spore_Attack_Intro:
         //Wait for attack intro animation to finish
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-        if (objData->flags & SHmushroom_FLAG_Animation_Finished) {
-            objData->state = SHmushroom_STATE_4_Spore_Attack;
+        if (objData->flags & SHkillermushroom_FLAG_Animation_Finished) {
+            objData->state = SHkillermushroom_STATE_4_Spore_Attack;
         }
         break;
-    case SHmushroom_STATE_4_Spore_Attack:
+    case SHkillermushroom_STATE_4_Spore_Attack:
         //Start spore sound loop
         if (objData->soundHandle == 0) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B_Spore_Spray_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
@@ -191,13 +191,13 @@ void SHkillermushroom_control(Object* self) {
         objData->sporeInhaleRange += INHALE_RADIUS_SPEED * gUpdateRateF;
 
         //Harm the player if they're in range
-        if (!(objData->flags & SHmushroom_FLAG_Disable_Spore_Damage) &&
+        if (!(objData->flags & SHkillermushroom_FLAG_Disable_Spore_Damage) &&
             (vec3_distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
         ) {
             func_8002635C(player, self, 0x15, 1, 0);
-            objData->flags |= SHmushroom_FLAG_Disable_Spore_Damage;
+            objData->flags |= SHkillermushroom_FLAG_Disable_Spore_Damage;
         }
 
         //Limit spore damage radius
@@ -208,7 +208,7 @@ void SHkillermushroom_control(Object* self) {
         //End attack after two seconds
         objData->timer += gUpdateRateF;
         if (objData->timer > SPORE_ATTACK_DURATION) {
-            objData->state = SHmushroom_STATE_5_Spore_Attack_Outro;
+            objData->state = SHkillermushroom_STATE_5_Spore_Attack_Outro;
             objData->timer = 0.0f;
 
             //Stop sound loop
@@ -226,25 +226,25 @@ void SHkillermushroom_control(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EB, &fxTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
         break;
-    case SHmushroom_STATE_5_Spore_Attack_Outro:
+    case SHkillermushroom_STATE_5_Spore_Attack_Outro:
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
         //Return to idle after a waiting period (and after animation's finished)
         objData->timer += gUpdateRateF;
         if ((objData->timer > objSetup->attackCooldown) &&
-            (objData->flags & SHmushroom_FLAG_Animation_Finished)
+            (objData->flags & SHkillermushroom_FLAG_Animation_Finished)
         ) {
-            objData->state = SHmushroom_STATE_0_Idle;
-            objData->flags &= ~SHmushroom_FLAG_Disable_Spore_Damage;
+            objData->state = SHkillermushroom_STATE_0_Idle;
+            objData->flags &= ~SHkillermushroom_FLAG_Disable_Spore_Damage;
             objData->sporeInhaleRange = 0.0f;
         }
         break;
 
-    case SHmushroom_STATE_1_Regrow:
+    case SHkillermushroom_STATE_1_Regrow:
         //Regrow after being collected/killed
 
         //Stay invulnerable
-        objData->flags &= ~SHmushroom_FLAG_Vulnerable;
+        objData->flags &= ~SHkillermushroom_FLAG_Vulnerable;
 
         //Limit scale speed
         if (self->srt.scale > objData->scaleMax) {
@@ -260,11 +260,11 @@ void SHkillermushroom_control(Object* self) {
 
         //Return to idle once grown
         if (objData->timer > objData->growDuration) {
-            objData->state = SHmushroom_STATE_0_Idle;
+            objData->state = SHkillermushroom_STATE_0_Idle;
         }
         break;
 
-    case SHmushroom_STATE_9_Stunned:
+    case SHkillermushroom_STATE_9_Stunned:
         //Configure LockIcon, start stunned sound loop, and pick stun duration
         if (objData->timer <= 0.0f) {
             func_80023BF8(self, 0x19, 0, 0, 0, 6);
@@ -278,7 +278,7 @@ void SHkillermushroom_control(Object* self) {
         //Return to idle once stun wears off
         if (objData->timer <= 0.0f) {
             gDLL_13_Expgfx->vtbl->func4(self);
-            objData->state = SHmushroom_STATE_0_Idle;
+            objData->state = SHkillermushroom_STATE_0_Idle;
             func_80023C6C(self);
 
             //Stop sound loop
@@ -307,7 +307,7 @@ void SHkillermushroom_control(Object* self) {
                     (void*)BIT_Tutorial_Collected_Blue_Mushroom
                 );
 
-                objData->state = SHmushroom_STATE_10_Hidden;
+                objData->state = SHkillermushroom_STATE_10_Hidden;
 
                 //Stop sound loop
                 if (objData->soundHandle != 0) {
@@ -320,19 +320,19 @@ void SHkillermushroom_control(Object* self) {
         }
         break;
 
-    case SHmushroom_STATE_10_Hidden:
+    case SHkillermushroom_STATE_10_Hidden:
         //Wait to regrow after being collected
         func_800267A4(self);
 
         objData->timer += gUpdateRateF;
         if (objData->timer > objData->regrowWaitDuration) {
             SHkillermushroom_reset(self, objData, TRUE);
-            objData->state = SHmushroom_STATE_1_Regrow;
+            objData->state = SHkillermushroom_STATE_1_Regrow;
             func_80023C6C(self);
         }
         break;
 
-    case SHmushroom_STATE_0_Idle:
+    case SHkillermushroom_STATE_0_Idle:
     default:
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         dx = player->srt.transl.x - self->srt.transl.x;
@@ -341,12 +341,12 @@ void SHkillermushroom_control(Object* self) {
 
         playerDistance = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
 
-        //Attack the player when they approach
+        //Attack the player when they're nearby
         if (playerDistance < objSetup->aggroRadius &&
-            (((DLL_210_Player*)player->dll)->vtbl->func56(player) >= 0.54f)
+            (((DLL_210_Player*)player->dll)->vtbl->func56(player) >= 0.54f) //Player can avoid detection by sneaking
         ) {
-            objData->flags &= ~SHmushroom_FLAG_Disable_Spore_Damage;
-            objData->state = SHmushroom_STATE_3_Spore_Attack_Intro;
+            objData->flags &= ~SHkillermushroom_FLAG_Disable_Spore_Damage;
+            objData->state = SHkillermushroom_STATE_3_Spore_Attack_Intro;
             objData->timer = 0.0f;
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53A_Spore_Spray_Intro, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
@@ -354,16 +354,16 @@ void SHkillermushroom_control(Object* self) {
     }
 
     //React to attacks
-    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) && (objData->flags & SHmushroom_FLAG_Vulnerable)) {
+    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) && (objData->flags & SHkillermushroom_FLAG_Vulnerable)) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
-        objData->flags &= ~SHmushroom_FLAG_Disable_Spore_Damage;
+        objData->flags &= ~SHkillermushroom_FLAG_Disable_Spore_Damage;
 
         //Optionally set a gamebit when the mushroom is attacked
         if (objSetup->gamebitAttacked != NO_GAMEBIT) {
             main_set_bits(objSetup->gamebitAttacked, TRUE);
         }
 
-        objData->state = SHmushroom_STATE_9_Stunned;
+        objData->state = SHkillermushroom_STATE_9_Stunned;
         objData->timer = 0.0f;
 
         //Stop active sound loop
@@ -380,9 +380,9 @@ void SHkillermushroom_control(Object* self) {
 
     //Advance animation
     if (func_80024108(self, dStateAnimSpeeds[objData->state], gUpdateRateF, NULL)) {
-        objData->flags |= SHmushroom_FLAG_Animation_Finished;
+        objData->flags |= SHkillermushroom_FLAG_Animation_Finished;
     } else {
-        objData->flags &= ~SHmushroom_FLAG_Animation_Finished;
+        objData->flags &= ~SHkillermushroom_FLAG_Animation_Finished;
     }
 }
 

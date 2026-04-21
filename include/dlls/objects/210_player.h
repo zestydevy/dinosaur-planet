@@ -186,7 +186,7 @@ typedef struct {
 /*67F*/ s8 pad67F;
 /*680*/ UnkArg2 unk680;
 /*6B0*/ UnkArg4 unk6B0;
-/*708*/ Object *unk708;
+/*708*/ Object *unk708; //collected Object
 /*70C*/ s16 unk70C;
 /*70E*/ u16 pad70E;
 /*710*/ f32 unk710;

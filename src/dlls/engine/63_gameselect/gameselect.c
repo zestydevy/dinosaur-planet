@@ -10,6 +10,7 @@
 #include "dlls/engine/74_picmenu.h"
 #include "game/gamebits.h"
 #include "game/gametexts.h"
+#include "sys/gfx/textable.h"
 #include "sys/vi.h"
 #include "sys/gfx/texture.h"
 #include "sys/fonts.h"
@@ -25,37 +26,37 @@
 
 static PicMenuItem sGameSelectMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 158, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 146, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 158, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 146, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ 1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*1*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 212, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 200, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 212, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 200, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 0, /*downLink*/ 2, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*2*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 266, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 254, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 266, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 254, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 1, /*downLink*/ 3, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*3*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 2, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ 4, /*overrideWith*/ -1),
     /*4*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 2, /*downLink*/ -1, /*leftLink*/ 3, /*rightLink*/ -1,  /*overrideWith*/ -1
     )
 };
@@ -63,24 +64,24 @@ static s8 sGameSelectMenuText[] = { -1, -2, -3, 5, 6 };
 
 static PicMenuItem sCopySrcSelectMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 158, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 146, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 158, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 146, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ 1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*1*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 212, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 200, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 212, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 200, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 0, /*downLink*/ 2, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*2*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 266, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 254, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 266, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 254, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 1, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
@@ -88,17 +89,17 @@ static s8 sCopySrcSelectMenuText[] = { -1, -2, -3 };
 
 static PicMenuItem sCopyDstSelectMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 284, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 272, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 284, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 272, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ 1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*1*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 338, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 326, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 338, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 326, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 0, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
@@ -106,17 +107,17 @@ static s8 sCopyDstSelectMenuText[] = { -1, -2 };
 
 static PicMenuItem sCopyConfirmMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ 1, /*overrideWith*/ -1
     ),
     /*1*/ NEW_PICMENU_ITEM(
-        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ 0, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
@@ -124,24 +125,24 @@ static s8 sCopyConfirmMenuText[] = { 1, 2 };
 
 static PicMenuItem sEraseSelectMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 158, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 146, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 158, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 146, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ 1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*1*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 212, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 200, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 212, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 200, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 0, /*downLink*/ 2, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     ),
     /*2*/ NEW_PICMENU_ITEM(
-        /*textX*/ 119, /*textY*/ 266, /*innerWidth*/ 320, 
-        /*itemX*/ 58, /*itemY*/ 254, /*textureID*/ -1, /*outerWidth*/ 320, 
-        /*flags*/ PICMENU_HAS_BACKGROUND, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 119, /*textY*/ 266, /*innerWidth*/ 320,
+        /*itemX*/ 58, /*itemY*/ 254, /*textureID*/ -1, /*outerWidth*/ 320,
+        /*flags*/ PICMENU_HAS_BACKGROUND,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ 1, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
@@ -149,17 +150,17 @@ static s8 sEraseSelectMenuText[] = { -1, -2, -3 };
 
 static PicMenuItem sEraseConfirmMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ 1, /*overrideWith*/ -1
     ),
     /*1*/ NEW_PICMENU_ITEM(
-        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ 0, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
@@ -167,17 +168,17 @@ static s8 sEraseConfirmMenuText[] = { 1, 2 };
 
 static PicMenuItem sGameConfirmMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ 1, /*overrideWith*/ -1
     ),
     /*1*/ NEW_PICMENU_ITEM(
-        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0, 
-        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 58, /*textY*/ 324, /*innerWidth*/ 0,
+        /*itemX*/ 58, /*itemY*/ 312, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_INLINE | PICMENU_AUTO_WIDTH,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ 0, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
@@ -185,10 +186,10 @@ static s8 sGameConfirmMenuText[] = { 1, 2 };
 
 static PicMenuItem sGameRecapMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
-        /*textX*/ 320, /*textY*/ 382, /*innerWidth*/ 0, 
-        /*itemX*/ 320, /*itemY*/ 370, /*textureID*/ -1, /*outerWidth*/ 0, 
-        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH | PICMENU_ALIGN_ITEM_CENTER, 
-        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*textX*/ 320, /*textY*/ 382, /*innerWidth*/ 0,
+        /*itemX*/ 320, /*itemY*/ 370, /*textureID*/ -1, /*outerWidth*/ 0,
+        /*flags*/ PICMENU_ALIGN_TEXT_CENTER | PICMENU_HAS_BACKGROUND | PICMENU_AUTO_WIDTH | PICMENU_ALIGN_ITEM_CENTER,
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN,
         /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ -1,
         /*overrideWith*/ -1
     )
@@ -216,25 +217,67 @@ static s8 sSubmenuIdx = -1;
 static s8 sSelectedSaveIdx = -1; // currently selected save file
 static s8 sCopyDstIdx = -1; // save file to copy game to
 static s16 sSaveGameTextureIDs[] = {
-    0x031d, 0x031c, 
-    0x031f, 0x031e
+    TEXTABLE_31D_GameSelect_Sabre,
+    TEXTABLE_31C_GameSelect_Krystal, 
+    TEXTABLE_31F_GameSelect_Spirits, 
+    TEXTABLE_31E_GameSelect_SpellStones
 };
+
+typedef enum {
+    IconTexture_0_Sabre = 0,
+    IconTexture_1_Krystal = 1,
+    IconTexture_2_Spirits = 2,
+    IconTexture_3_SpellStones = 3
+} IconTextureIndices;
+
 static s16 sSaveGameBgTextureIDs[] = {
-    0x0320, 0x02f5, 
-    0x02f6, 0x02f7, 
-    0x02f8, 0x02f9, 
-    0x02fa, 0x02fb, 
-    0x02fc, 0x0313, 
-    0x02fd, 0x02fe, 
-    0x02ff, 0x0300, 
-    0x0301, 0x0302, 
-    0x0303, 0x0304
+    TEXTABLE_320_Textbox_Edge_Bottom_1,
+    TEXTABLE_2F5_Textbox_Edge_Bottom_2,
+    TEXTABLE_2F6_Textbox_Corner_Bottom_Left,
+    TEXTABLE_2F7_Textbox_Corner_Bottom_Right,
+    TEXTABLE_2F8_Textbox_Corner_Top_Left,
+    TEXTABLE_2F9_Textbox_Corner_Top_Right,
+    TEXTABLE_2FA_Textbox_Edge_Left_1,
+    TEXTABLE_2FB_Textbox_Edge_Left_2,
+    TEXTABLE_2FC_Textbox_Edge_Left_3,
+    TEXTABLE_313_Textbox_Centre_1,
+    TEXTABLE_2FD_Textbox_Centre_2,
+    TEXTABLE_2FE_Textbox_Centre_3,
+    TEXTABLE_2FF_Textbox_Centre_4,
+    TEXTABLE_300_Textbox_Edge_Right_1,
+    TEXTABLE_301_Textbox_Edge_Right_2,
+    TEXTABLE_302_Textbox_Edge_Right_3,
+    TEXTABLE_303_Textbox_Edge_Top_1,
+    TEXTABLE_304_Textbox_Edge_Top_2 
 };
+
+typedef enum {
+    BoxTexture_Edge_Bottom_1 = 0,
+    BoxTexture_Edge_Bottom_2 = 1,
+    BoxTexture_Corner_Bottom_Left = 2,
+    BoxTexture_Corner_Bottom_Right = 3,
+    BoxTexture_Corner_Top_Left = 4,
+    BoxTexture_Corner_Top_Right = 5,
+    BoxTexture_Edge_Left_1 = 6,
+    BoxTexture_Edge_Left_2 = 7,
+    BoxTexture_Edge_Left_3 = 8,
+    BoxTexture_Centre_1 = 9,
+    BoxTexture_Centre_2 = 10,
+    BoxTexture_Centre_3 = 11,
+    BoxTexture_Centre_4 = 12,
+    BoxTexture_Edge_Right_1 = 13,
+    BoxTexture_Edge_Right_2 = 14,
+    BoxTexture_Edge_Right_3 = 15,
+    BoxTexture_Edge_Top_1 = 16,
+    BoxTexture_Edge_Top_2 = 17
+} BoxTextureIndices;
+
+#define END_OF_ROW -1
 static s16 sSaveGameBgIndices[] = {
-    4, 17, 16, 17, 5,  -1, 
-    6, 10, 9,  11, 13, -1, 
-    7, 11, 12, 9,  14, -1, 
-    2, 1,  0,  1,  3,  -1
+    BoxTexture_Corner_Top_Left,     BoxTexture_Edge_Top_2,        BoxTexture_Edge_Top_1,       BoxTexture_Edge_Top_2,       BoxTexture_Corner_Top_Right,         END_OF_ROW,
+    BoxTexture_Edge_Left_1,         BoxTexture_Centre_2,          BoxTexture_Centre_1,         BoxTexture_Centre_3,         BoxTexture_Edge_Right_1,            END_OF_ROW,
+    BoxTexture_Edge_Left_2,        BoxTexture_Centre_3,         BoxTexture_Centre_4,        BoxTexture_Centre_1,        BoxTexture_Edge_Right_2,            END_OF_ROW,
+    BoxTexture_Corner_Bottom_Left, BoxTexture_Edge_Bottom_2,    BoxTexture_Edge_Bottom_1,   BoxTexture_Edge_Bottom_2,   BoxTexture_Corner_Bottom_Right,     END_OF_ROW
 };
 
 /*0*/ static GameSelectSaveInfo sSaveGameInfo[3];
@@ -275,9 +318,9 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
 void dll_63_ctor(void *self) {
     s32 i;
 
-    sBackgroundTexture = tex_load_deferred(0x2DD);
-    sLogoTexture = tex_load_deferred(0xC5);
-    sLogoShadowTexture = tex_load_deferred(0x2E1);
+    sBackgroundTexture = tex_load_deferred(TEXTABLE_2DD_Paper_BG_Scales);
+    sLogoTexture = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
+    sLogoShadowTexture = tex_load_deferred(TEXTABLE_2E1_DinosaurPlanetLogoShadow);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EC_Menu_Managing_Saves);
@@ -412,13 +455,13 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     submenu = &sSubmenus[sSubmenuIdx];
 
     if ((!sExitToGame && !sExitToMainMenu) || sExitTransitionTimer > 10) {
-        font_window_set_coords(1, 0, 0, 
-            GET_VIDEO_WIDTH(vi_get_current_size()) - 100, 
+        font_window_set_coords(1, 0, 0,
+            GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
             GET_VIDEO_HEIGHT(vi_get_current_size()));
         font_window_flush_strings(1);
 
-        font_window_set_coords(3, 105, 0, 
-            GET_VIDEO_WIDTH(vi_get_current_size()) - 200, 
+        font_window_set_coords(3, 105, 0,
+            GET_VIDEO_WIDTH(vi_get_current_size()) - 200,
             GET_VIDEO_HEIGHT(vi_get_current_size()));
         font_window_flush_strings(3);
 
@@ -470,8 +513,8 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 font_window_add_string_xy(1, 318, 403, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 2, ALIGN_TOP_CENTER);
             }
 
-            font_window_set_coords(2, 0, 0, 
-                GET_VIDEO_WIDTH(vi_get_current_size()) - 100, 
+            font_window_set_coords(2, 0, 0,
+                GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
                 GET_VIDEO_HEIGHT(vi_get_current_size()));
             font_window_flush_strings(2);
             font_window_use_font(2, FONT_DINO_MEDIUM_FONT_IN);
@@ -563,7 +606,7 @@ static void dll_63_goto_game_select(s32 param1) {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -624,7 +667,7 @@ static void dll_63_goto_game_confirm() {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -657,7 +700,7 @@ static void dll_63_goto_copy_src_select() {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -698,7 +741,7 @@ static void dll_63_goto_copy_dst_select() {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -721,7 +764,7 @@ static void dll_63_goto_copy_confirm() {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -755,7 +798,7 @@ static void dll_63_goto_erase_select() {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -778,7 +821,7 @@ static void dll_63_goto_erase_confirm() {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -801,7 +844,7 @@ static void dll_63_goto_game_recap() {
         /*param6*/ 4,
         /*textColor*/ 0, 0, 0,
         /*textHighlight*/ 0, 0, 0);
-    
+
     sRedrawFrames = 2;
 }
 
@@ -872,7 +915,7 @@ static void dll_63_act_game_confirm(PicMenuAction action, s32 selected) {
         dll_63_goto_game_select(0);
     } else {
         gDLL_29_Gplay->vtbl->load_save(sSelectedSaveIdx, /*startGame*/FALSE);
-        
+
         gDLL_30_Task->vtbl->load_recently_completed();
 
         if (gDLL_30_Task->vtbl->get_num_recently_completed() != 0) {
@@ -974,7 +1017,7 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
     len = ARRAYCOUNT(sSaveGameBgIndices);
 
     for (i = 0; i < len; i++) {
-        if (sSaveGameBgIndices[i] == -1) {
+        if (sSaveGameBgIndices[i] == END_OF_ROW) {
             x2 = x;
             y2 += 32;
         } else {
@@ -986,14 +1029,14 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
     // Draw player icon
     rcp_screen_full_write(gdl, sSaveGameTextures[saveInfo->playerno], x + 14, y + 8, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     // Draw spirit icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[2], x + 241, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcp_screen_full_write(gdl, sSaveGameTextures[IconTexture_2_Spirits], x + 241, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     // Draw spell stone icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[3], x2 + 14, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcp_screen_full_write(gdl, sSaveGameTextures[IconTexture_3_SpellStones], x2 + 14, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
 
     // Draw text
     font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
     font_window_set_text_colour(1, 255, 255, 255, 0, 255);
-    
+
     font_window_add_string_xy(1, x + 64, y + 18, saveInfo->filename, 1, ALIGN_TOP_LEFT);
 
     sprintf(sSaveGameTimeStr, "%3d:%02d:%02d", saveInfo->timeHours, saveInfo->timeMinutes, saveInfo->timeSeconds);

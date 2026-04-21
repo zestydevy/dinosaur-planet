@@ -4,10 +4,10 @@
 _exports:
 
 # ctor/dtor
-.dword dll_61_ctor
-.dword dll_61_dtor
+.dword rareware_ctor
+.dword rareware_dtor
 
 # export table
-.dword dll_61_update1
-.dword dll_61_update2
-.dword dll_61_draw
+.dword rareware_update1
+.dword rareware_update2
+.dword rareware_draw
