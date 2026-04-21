@@ -631,8 +631,8 @@ typedef struct {
     {END}
 };
 
-/* Sidekick Commands (Kyte) (NOTE: uses a slightly different struct)
- * 0x710*/ static InventoryCommand dPage7CommandsKyte[] = {
+/* Sidekick Commands (Tricky) (NOTE: uses a slightly different struct)
+ * 0x710*/ static InventoryCommand dPage7CommandsTricky[] = {
     {Sidekick_Command_FLAG_01_Heel,      Sidekick_Command_INDEX_0_Heel,     TEXTABLE_1CD, TEXTABLE_1CD, GAMETEXT_UI_0_Heel,      0, 0}, //Heel
     {Sidekick_Command_FLAG_20_Play,      Sidekick_Command_INDEX_5_Play,     TEXTABLE_1D1, TEXTABLE_1D1, GAMETEXT_UI_6_Play,      0, 0}, //Play
     {Sidekick_Command_FLAG_02_Find,      Sidekick_Command_INDEX_1_Find,     TEXTABLE_1CE, TEXTABLE_1CE, GAMETEXT_UI_1_Find,      0, 0}, //Find
@@ -642,8 +642,8 @@ typedef struct {
     END
 };
 
-/* Sidekick Commands (Tricky) (NOTE: uses a slightly different struct)
- * 0x764*/ static InventoryCommand sPage8CommandsTricky[] = {
+/* Sidekick Commands (Kyte) (NOTE: uses a slightly different struct)
+ * 0x764*/ static InventoryCommand sPage8CommandsKyte[] = {
     {Sidekick_Command_FLAG_01_Heel,      Sidekick_Command_INDEX_0_Heel,     TEXTABLE_1CD, TEXTABLE_1CD, GAMETEXT_UI_0_Heel,      0, 0}, //Heel
     {Sidekick_Command_FLAG_20_Play,      Sidekick_Command_INDEX_5_Play,     TEXTABLE_1D1, TEXTABLE_1D1, GAMETEXT_UI_6_Play,      0, 0}, //Play
     {Sidekick_Command_FLAG_02_Find,      Sidekick_Command_INDEX_1_Find,     TEXTABLE_1CE, TEXTABLE_1CE, GAMETEXT_UI_1_Find,      0, 0}, //Find
@@ -703,8 +703,8 @@ typedef struct {
     /*4*/  { dPage4FoodItemsKrystal,     0, 0x80001, R_CBUTTONS },  // Foodbag items (Krystal)
     /*5*/  { dPage5FoodItemsSabre,       0, 0x80001, R_CBUTTONS },  // Foodbag items (Sabre)
     /*6*/  { dPage6MagicSpells,          0, 0x80002, L_CBUTTONS },  // Magic spells
-    /*7*/  { dPage7CommandsKyte,         0, 0x80009, D_CBUTTONS },  // Sidekick commands (Kyte)
-    /*8*/  { sPage8CommandsTricky,       0, 0x80009, D_CBUTTONS },  // Sidekick commands (Tricky)
+    /*7*/  { dPage7CommandsTricky,       0, 0x80009, D_CBUTTONS },  // Sidekick commands (Tricky)
+    /*8*/  { sPage8CommandsKyte,         0, 0x80009, D_CBUTTONS },  // Sidekick commands (Kyte)
     /*9*/  { dPage9FoodActionsKyte,      0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag actions (Krystal)
     /*10*/ { dPage10FoodActionsTricky,  0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag actions (Sabre)
     /*11*/ { dPage11FoodItemsKyte,      0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag items (Krystal)
@@ -1009,7 +1009,7 @@ void cmdmenu_update2(void) {
     //Use C buttons (left/down/right) to open/change inventory pages
     if ((sJoyPressedButtons & D_CBUTTONS) && (sidekick != NULL) && (dPageCategory != CMDMENU_CATEGORY_2_Sidekick)) {
         //C-down: Sidekick Commands
-        newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
+        newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Kyte : CMDMENU_PAGE_7_Sidekick_Tricky;
         if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, TRUE)) {
             joy_set_button_mask(0, D_CBUTTONS);
             dNextPageCategory = CMDMENU_CATEGORY_2_Sidekick;
@@ -1071,8 +1071,8 @@ void cmdmenu_update2(void) {
             cmdmenu_open_inventory();
 
             //Sidekick command pages always open on index 0 (unlike other pages which remember last selection)
-            dCmdmenuPages[CMDMENU_PAGE_7_Sidekick_Kyte].selectedIndex = 0;
-            dCmdmenuPages[CMDMENU_PAGE_8_Sidekick_Tricky].selectedIndex = 0;
+            dCmdmenuPages[CMDMENU_PAGE_7_Sidekick_Tricky].selectedIndex = 0;
+            dCmdmenuPages[CMDMENU_PAGE_8_Sidekick_Kyte].selectedIndex = 0;
 
             dPageCategory = dNextPageCategory;
             sJoyPressedButtons = 0;
@@ -1783,8 +1783,8 @@ static void cmdmenu_tick_inventory_page(void) {
     pageBtnMask = dCmdmenuPages[sInventoryPageID].btnMask;
 
     //Check if the current page is a sidekick command page
-    if ((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte) || 
-        (sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky)
+    if ((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Tricky) || 
+        (sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Kyte)
     ) {
         isSidekickMenu = TRUE;
     }
@@ -2190,11 +2190,11 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             (dInventoryOpacity != 0 && dOpacitySidekickMeter == 0)
         ) {
             switch (sInventoryPageID) {
-            case CMDMENU_PAGE_7_Sidekick_Kyte:
+            case CMDMENU_PAGE_7_Sidekick_Tricky:
                 pageIcon = CMDMENU_TEX_42_Tricky;
                 offsetY = 3;
                 break;
-            case CMDMENU_PAGE_8_Sidekick_Tricky:
+            case CMDMENU_PAGE_8_Sidekick_Kyte:
                 pageIcon = CMDMENU_TEX_54_Kyte;
                 break;
             case CMDMENU_PAGE_6_Spells:
@@ -2670,7 +2670,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
 
                 //Check if Sidekick Commands are available
                 if (sidekick != NULL) {
-                    pageIdx = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Tricky : CMDMENU_PAGE_7_Sidekick_Kyte;
+                    pageIdx = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Kyte : CMDMENU_PAGE_7_Sidekick_Tricky;
                     if (cmdmenu_page_count_shown_items(dCmdmenuPages[pageIdx].items, TRUE) != 0) {
                         cIconFlags |= CIcon_FLAG_Have_Sidekick_Commands;
                     }
@@ -2781,7 +2781,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
     //Draw the sidekick food meter
     if (sidekick != NULL) {
         //Handle the meter's opacity
-        if (((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Kyte || sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Tricky) && dInventoryOpacity) || 
+        if (((sInventoryPageID == CMDMENU_PAGE_7_Sidekick_Tricky || sInventoryPageID == CMDMENU_PAGE_8_Sidekick_Kyte) && dInventoryOpacity) || 
             (sStatsChangeTimers.sidekickBlueFood >= 0.0f)
         ) {
             /* Fade in while the sidekick's inventory page is open, 
