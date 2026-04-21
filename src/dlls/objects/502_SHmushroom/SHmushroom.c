@@ -513,7 +513,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 		}
 
 		break;
-	case SHmushroom_STATE_5_Surprised_Hop: //(TODO: check if this state can be entered - can't seem to activate it!)
+	case SHmushroom_STATE_5_Surprised_Hop: //(NOTE: harder to enter this state at smoother framerates)
 		//When hurt, finish playing the hop animation before advancing to stunned state
 		if ((objData->flags & (SHmushroom_FLAG_Hurt | SHmushroom_FLAG_Animation_Finished)) == (SHmushroom_FLAG_Hurt | SHmushroom_FLAG_Animation_Finished)) {
 			objData->state = SHmushroom_STATE_9_Stunned;
