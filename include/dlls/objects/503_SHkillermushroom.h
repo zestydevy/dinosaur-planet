@@ -41,37 +41,37 @@ typedef struct {
 } SHkillermushroom_Data;
 
 typedef enum {
-	SHmushroom_FLAG_None = 0x0,
-	SHmushroom_FLAG_Disable_Spore_Damage = 0x1,
-	SHmushroom_FLAG_Animation_Finished = 0x2,
-	SHmushroom_FLAG_Vulnerable = 0x4
+	SHkillermushroom_FLAG_None = 0x0,
+	SHkillermushroom_FLAG_Disable_Spore_Damage = 0x1,
+	SHkillermushroom_FLAG_Animation_Finished = 0x2,
+	SHkillermushroom_FLAG_Vulnerable = 0x4
 } SHkillermushroom_Flags;
 
 typedef enum {
-	SHmushroom_STATE_0_Idle = 0,                //Attacks with spores when the player to approaches
-	SHmushroom_STATE_1_Regrow = 1,              //Regrowing after being collected/killed
-	SHmushroom_STATE_2_Dying_Outro = 2,         //(INACCESSIBLE) Unused state! Spores dissipate, mushroom topples over and fades out, before regrowing
-	SHmushroom_STATE_3_Spore_Attack_Intro = 3,  //Spore attack: wind-up
-	SHmushroom_STATE_4_Spore_Attack = 4,        //Spore attack: released harmful spores
-	SHmushroom_STATE_5_Spore_Attack_Outro = 5,  //Spore attack: back to idle
-	SHmushroom_STATE_6_Dying_Intro = 6,         //(INACCESSIBLE) Unused state! Mushroom releases spores and then starts toppling over
-	SHmushroom_STATE_7_Angry_Fast = 7,          //(UNUSED) No State Machine code, but has an animation of recoiling and hopping angrily (faster playback)
-	SHmushroom_STATE_8_Angry_Slow = 8,          //(UNUSED) No State Machine code, but has an animation of recoiling and hopping angrily (slower playback)
-	SHmushroom_STATE_9_Stunned = 9,             //Stunned after attack
-	SHmushroom_STATE_10_Hidden = 10             //Mushroom hidden after being collected, starts regrowing after a while
+	SHkillermushroom_STATE_0_Idle = 0,                //Attacks with spores when the player to approaches
+	SHkillermushroom_STATE_1_Regrow = 1,              //Regrowing after being collected/killed
+	SHkillermushroom_STATE_2_Dying_Outro = 2,         //(INACCESSIBLE) Unused state! Spores dissipate, mushroom topples over and fades out, before regrowing
+	SHkillermushroom_STATE_3_Spore_Attack_Intro = 3,  //Spore attack: wind-up
+	SHkillermushroom_STATE_4_Spore_Attack = 4,        //Spore attack: released harmful spores
+	SHkillermushroom_STATE_5_Spore_Attack_Outro = 5,  //Spore attack: back to idle
+	SHkillermushroom_STATE_6_Dying_Intro = 6,         //(INACCESSIBLE) Unused state! Mushroom releases spores and then starts toppling over
+	SHkillermushroom_STATE_7_Angry_Fast = 7,          //(UNUSED) No State Machine code, but has an animation of recoiling and hopping angrily (faster playback)
+	SHkillermushroom_STATE_8_Angry_Slow = 8,          //(UNUSED) No State Machine code, but has an animation of recoiling and hopping angrily (slower playback)
+	SHkillermushroom_STATE_9_Stunned = 9,             //Stunned after attack
+	SHkillermushroom_STATE_10_Hidden = 10             //Mushroom hidden after being collected, starts regrowing after a while
 } SHkillermushroom_States;
 
 typedef enum {
-	SHmushroom_MODANIM_0_Idle_LOOP = 0,     //Spinning head in small circles
-	SHmushroom_MODANIM_1_Spores_Intro = 1,  //Anticipates upwards with cap, then squashes down (one-shot)
-	SHmushroom_MODANIM_2_Spores_LOOP = 2,   //Continuing from [mAnim1], spinning head in circles while spraying spores
-	SHmushroom_MODANIM_3_Spores_Outro = 3,  //Continuing from [mAnim2], unsquashing and returning to idle (one-shot)
-	SHmushroom_MODANIM_4_Topple_End = 4,    //Continuing from [mAnim5], topples forward onto its head, flopping its stem behind it (one-shot)
-	SHmushroom_MODANIM_5_Topple_Start = 5,  //Squashes down while spinning head, then springs off the ground into curved pose (one-shot)
-	SHmushroom_MODANIM_6_Angry = 6,         //Recoils its "neck" as through from an attack, then hops in place angrily (one-shot)
-	SHmushroom_MODANIM_7_Spring_Jump = 7,   //(UNUSED) Progressively squashes its stem down like winding up a spring, until only its cap is visible flat on the ground, then jumps up massively (one-shot)
-	SHmushroom_MODANIM_8_Spring_Fly = 8,    //(UNUSED) Continuing from [mAnim7], mushroom rockets away into sky! Maybe these two anims were for an older design of `SHrocketmushroom`? (one-shot)
-	SHmushroom_MODANIM_9_Stunned_LOOP = 9   //Spinning head in wide dizzy circles
+	SHkillermushroom_MODANIM_0_Idle_LOOP = 0,     //Spinning head in small circles
+	SHkillermushroom_MODANIM_1_Spores_Intro = 1,  //Anticipates upwards with cap, then squashes down (one-shot)
+	SHkillermushroom_MODANIM_2_Spores_LOOP = 2,   //Continuing from [mAnim1], spinning head in circles while spraying spores
+	SHkillermushroom_MODANIM_3_Spores_Outro = 3,  //Continuing from [mAnim2], unsquashing and returning to idle (one-shot)
+	SHkillermushroom_MODANIM_4_Topple_End = 4,    //Continuing from [mAnim5], topples forward onto its head, flopping its stem behind it (one-shot)
+	SHkillermushroom_MODANIM_5_Topple_Start = 5,  //Squashes down while spinning head, then springs off the ground into curved pose (one-shot)
+	SHkillermushroom_MODANIM_6_Angry = 6,         //Recoils its "neck" as through from an attack, then hops in place angrily (one-shot)
+	SHkillermushroom_MODANIM_7_Spring_Jump = 7,   //(UNUSED) Progressively squashes its stem down like winding up a spring, until only its cap is visible flat on the ground, then jumps up massively (one-shot)
+	SHkillermushroom_MODANIM_8_Spring_Fly = 8,    //(UNUSED) Continuing from [mAnim7], mushroom rockets away into sky! Maybe these two anims were for an older design of `SHrocketmushroom`? (one-shot)
+	SHkillermushroom_MODANIM_9_Stunned_LOOP = 9   //Spinning head in wide dizzy circles
 } SHkillermushroom_ModAnim;
 
 #endif // _DLLS_503_H
