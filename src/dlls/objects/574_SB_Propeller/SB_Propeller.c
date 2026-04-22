@@ -42,7 +42,7 @@ void SB_Propeller_control(Object *self) {
     s32 torque;
     s32 parent_unkDC;
     Object *sp48;
-    s32 var_v1;
+    s32 damageType;
     s32 i;
 
     parent = self->parent;
@@ -89,14 +89,14 @@ void SB_Propeller_control(Object *self) {
         if (self->unkDC < 0) {
             self->unkDC = 0;
         }
-        var_v1 = func_80025F40(self, &sp48, NULL, NULL);
-        if (var_v1 == 0) {
+        damageType = func_80025F40(self, &sp48, NULL, NULL);
+        if (damageType == 0) {
             if (self->objhitInfo->unk48) {
-                var_v1 = 1;
+                damageType = 1;
                 sp48 = self->objhitInfo->unk48;
             }
         }
-        if ((var_v1 != 0) && (self->unkDC == 0) && sp48) {
+        if ((damageType != 0) && (self->unkDC == 0) && sp48) {
             player = get_player();
             if (sp48 != player) {
                 self->unkDC = 20;

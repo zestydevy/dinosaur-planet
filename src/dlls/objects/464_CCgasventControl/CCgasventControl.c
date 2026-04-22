@@ -91,7 +91,7 @@ void CCgasventControl_control(Object *self) {
         if (objdata->timer > DURATION) {
             objdata->timer -= DURATION;
             if (((DLL_210_Player*)objdata->player->dll)->vtbl->func50(objdata->player) != BIT_Spell_Forcefield)
-                func_8002635C(objdata->player, self, 0x15, 1, 0);
+                func_8002635C(objdata->player, self, Damage_Type_Toxic, 1, 0);
         }
         break;
     case STATE_Puzzle_Completed:

@@ -29,7 +29,7 @@ void DBSupShield_update(Object *self) {
     Object* bullet;
 
     collisionType = func_80025F40(self, &bullet, 0, 0);
-    if (collisionType == 18) {
+    if (collisionType == Damage_Type_Bullet) {
         //@bug? Should this be checking "if (bullet->id == OBJ_DBbullet)" before calling its DLL function?
         bullet->id = OBJ_DBbullet; 
         if (bullet->id != 0) {

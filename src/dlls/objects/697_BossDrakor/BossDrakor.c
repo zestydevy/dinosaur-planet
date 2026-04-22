@@ -264,13 +264,13 @@ static void BossDrakor_func_768(Object *self, Baddie *arg1, BossDrakor_ActualDat
 // offset: 0x838 | func: 12
 static void BossDrakor_func_838(Object *self, Baddie *arg1, ObjFSA_Data *fsa) {
     BossDrakor_ActualData *objdata = arg1->objdata;
-    Object *sp30;
+    Object *hitBy;
     s32 _pad;
-    s32 sp28;
-    s32 sp24;
+    s32 hitSphereID;
+    s32 hitDamage;
 
-    if (func_80025F40(self, &sp30, &sp28, &sp24) != 0) {
-        if ((sp30->id != OBJ_BossDrakorAster) && (sp30->id != OBJ_BossDrakorFlatR) && (fsa->logicState != DRAKOR_LSTATE_1)) {
+    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) != 0) {
+        if ((hitBy->id != OBJ_BossDrakorAster) && (hitBy->id != OBJ_BossDrakorFlatR) && (fsa->logicState != DRAKOR_LSTATE_1)) {
             fsa->logicState = DRAKOR_LSTATE_1;
             objdata->animIndex = 0;
             BossDrakor_func_8E0(1);

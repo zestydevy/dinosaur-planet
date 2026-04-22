@@ -624,7 +624,7 @@ void KamerianBoss_control(Object *self) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x - 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    } else if ((collisionType == Collision_Type_Projectile) && (objdata->rightPipeTimer > 50)) {
+                    } else if ((collisionType == Damage_Type_Projectile) && (objdata->rightPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(13);
                         KamerianBoss_disable_hit_sphere(14);
                         func_80023D30(self, 
@@ -645,7 +645,7 @@ void KamerianBoss_control(Object *self) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x + 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    } else if ((collisionType == Collision_Type_Projectile) && (objdata->leftPipeTimer > 50)) {
+                    } else if ((collisionType == Damage_Type_Projectile) && (objdata->leftPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(8);
                         KamerianBoss_disable_hit_sphere(9);
                         func_80023D30(self, 
@@ -659,7 +659,7 @@ void KamerianBoss_control(Object *self) {
                     }
                     break;
                 case 0:
-                    if (collisionType == Collision_Type_Projectile) {
+                    if (collisionType == Damage_Type_Projectile) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(0);
                             func_80023D30(self, 
@@ -672,7 +672,7 @@ void KamerianBoss_control(Object *self) {
                     }
                     break;
                 case 1:
-                    if (collisionType == Collision_Type_Projectile) {
+                    if (collisionType == Damage_Type_Projectile) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(1);
                             func_80023D30(self, 

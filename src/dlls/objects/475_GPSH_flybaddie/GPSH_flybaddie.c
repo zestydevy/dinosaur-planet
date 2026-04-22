@@ -98,7 +98,7 @@ void GPSH_flybaddie_control(Object* self) {
     GPSH_flybaddie_Data* objdata;
     s32 i;
     s32 _pad;
-    Object *sp48;
+    Object *hitBy;
 
     objdata = self->data;
     if (objdata->unk4E > 0) {
@@ -127,8 +127,8 @@ void GPSH_flybaddie_control(Object* self) {
     objdata->unk30 += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
-    if ((func_80025F40(self, &sp48, NULL, NULL) == 0xF) && (sp48 != 0)) {
-        if (sp48->id != OBJ_WGSH_projball) {
+    if ((func_80025F40(self, &hitBy, NULL, NULL) == 0xF) && (hitBy != NULL)) {
+        if (hitBy->id != OBJ_WGSH_projball) {
             for (i = 15; i != 0; i--) {
                 gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
             }

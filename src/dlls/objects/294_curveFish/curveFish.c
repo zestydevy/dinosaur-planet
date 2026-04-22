@@ -106,7 +106,7 @@ void dll_294_control(Object* self) {
             self->unkAF &= ~0x8;
         }
         temp_v0_2 = func_80025F40(self, NULL, NULL, NULL);
-        if ((temp_v0_2 != 0) && (temp_v0_2 == Collision_Type_Fishingnet)) {
+        if ((temp_v0_2 != 0) && (temp_v0_2 == Damage_Type_Fishing_Net)) {
             dll_294_func_968(self);
         } else {
             curvefishdata->unk124 += gUpdateRateF;

@@ -95,21 +95,42 @@ typedef struct Unk800B20B8 {
 } Unk800B20B8;
 
 typedef enum {
-    Collision_Type_Sword_Staff_Strike1 = 0xA,
-    Collision_Type_Sword_Staff_Strike2 = 0xB,
-    Collision_Type_Sword_Strike = 0xC,
-    Collision_Type_Projectile = 0xF,  // Projectile & Grenade impact (not explosion)
-    Collision_Type_Fishingnet = 0x11,
-    Collision_Type_Ice_Spell = 0x19,        //Speeder bike checks this type, strangely?
-    Collision_Type_15 = 0x21,               //Speeder bike checks for this
-    Collision_Type_None = 0x7F
-} CollisionTypes;
+    Damage_Type_1 = 0x1, //kills player
+    Damage_Type_2 = 0x2,
+    Damage_Type_3 = 0x3,
+    Damage_Type_4 = 0x4, //DIMsnowball? Squashes player
+    Damage_Type_Barrel_Explosion = 0x5,
+    Damage_Type_6 = 0x6,
+    Damage_Type_7 = 0x7,
+    Damage_Type_8 = 0x8,
+    Damage_Type_9 = 0x9,
+    Damage_Type_Sword_Staff_Strike1 = 0xA,     //Sabre: anticlockwise/jump-attack  Krystal: anticlockwise        (possibly meant for anticlockwise attacks?)
+    Damage_Type_Sword_Staff_Strike2 = 0xB,     //Sabre: overhead                   Krystal: clockwise/overhead   (possibly meant for overhead/jump-attack?)
+    Damage_Type_Sword_Strike_Clockwise = 0xC,  //Sabre: clockwise                  Krystal: N/A                  (possibly meant for clockwise attacks?)
+    Damage_Type_D = 0xD,                 //Speeder bike checks this type
+    Damage_Type_E = 0xE,
+    Damage_Type_Projectile = 0xF,        //Projectile & Grenade impact (not explosion)
+    Damage_Type_10 = 0x10,
+    Damage_Type_Fishing_Net = 0x11,
+    Damage_Type_Bullet = 0x12,
+    Damage_Type_13 = 0x13,
+    Damage_Type_14 = 0x14, //vehicle-related?
+    Damage_Type_Toxic = 0x15, //stuns player (SHkillermushroom spores)
+    Damage_Type_16 = 0x16,
+    Damage_Type_17 = 0x17,
+    Damage_Type_18 = 0x18, //hurts player, screen shake effect
+    Damage_Type_Ice_Blast = 0x19,
+    Damage_Type_Flame_Command = 0x1A,
+    Damage_Type_1B = 0x1B, //player-related, causes falling?
+    Damage_Type_Icy_Water = 0x1C,
+    Damage_Type_None = 0x7F
+} DamageTypes;
 
 void objhits_init(void);
 void func_80025DF0(void);
 void obj_do_hit_detection(s32 numObjs);
 s32 func_80025F40(Object*,Object **,s32 *,s32 *);
-s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4);
+s32 func_8002635C(Object* objDamaged, Object* hitBy, s8 damageType, s8 hitDamage, s8 arg4);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 s32 func_80026724(Object*);
 void func_80028D90(void);

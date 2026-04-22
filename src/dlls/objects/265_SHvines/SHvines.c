@@ -83,7 +83,7 @@ void SHvines_update(Object* self) {
     objSetup = (SHvines_Setup*)self->setup;
 
     //Check for Flame command collisions
-    if (func_80025F40(self, NULL, NULL, &sp28) == 26) {
+    if (func_80025F40(self, NULL, NULL, &sp28) == Damage_Type_Flame_Command) {
         STUBBED_PRINTF("\n HIT HIT HIT HIT Hit by Booldy Side Kick \n\n\n");
         main_set_bits(objSetup->gamebitBurnt, 1);
         self->opacity = 0xFD; //start fade out

@@ -253,7 +253,7 @@ s32 func_800261E8(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4, f3
     return TRUE;
 }
 
-s32 func_8002635C(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4) {
+s32 func_8002635C(Object* objDamaged, Object* hitBy, s8 hitType, s8 damage, s8 arg4) {
     ObjectHitInfo* objHitInfo;
     ObjectHitInfo* objHitInfo2;
     s32 i;
@@ -262,7 +262,7 @@ s32 func_8002635C(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4) {
         return FALSE;
     }
 
-    objHitInfo = obj->objhitInfo;
+    objHitInfo = objDamaged->objhitInfo;
     if (!(objHitInfo->unk58 & 1)) {
         return FALSE;
     }
@@ -270,7 +270,7 @@ s32 func_8002635C(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4) {
     if (hitBy != NULL) {
         objHitInfo2 = hitBy->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk48 = obj;
+            objHitInfo2->unk48 = objDamaged;
         }
     }
 
@@ -280,9 +280,9 @@ s32 func_8002635C(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4) {
                 objHitInfo->unk63[i] = arg4;
                 objHitInfo->hitTypeList[i] = hitType;
                 objHitInfo->hitDamageList[i] = damage;
-                objHitInfo->hitXList[i] = obj->srt.transl.x;
-                objHitInfo->hitYList[i] = obj->srt.transl.y;
-                objHitInfo->hitZList[i] = obj->srt.transl.z;
+                objHitInfo->hitXList[i] = objDamaged->srt.transl.x;
+                objHitInfo->hitYList[i] = objDamaged->srt.transl.y;
+                objHitInfo->hitZList[i] = objDamaged->srt.transl.z;
             }
             i = objHitInfo->unk62 + 1;
         }
@@ -293,9 +293,9 @@ s32 func_8002635C(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4) {
         objHitInfo->hitTypeList[objHitInfo->unk62] = hitType;
         objHitInfo->hitDamageList[objHitInfo->unk62] = damage;
         objHitInfo->hitByList[objHitInfo->unk62] = hitBy;
-        objHitInfo->hitXList[objHitInfo->unk62] = obj->srt.transl.x;
-        objHitInfo->hitYList[objHitInfo->unk62] = obj->srt.transl.y;
-        objHitInfo->hitZList[objHitInfo->unk62] = obj->srt.transl.z;
+        objHitInfo->hitXList[objHitInfo->unk62] = objDamaged->srt.transl.x;
+        objHitInfo->hitYList[objHitInfo->unk62] = objDamaged->srt.transl.y;
+        objHitInfo->hitZList[objHitInfo->unk62] = objDamaged->srt.transl.z;
         objHitInfo->unk62 += 1;
     }
 

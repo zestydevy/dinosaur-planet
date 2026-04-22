@@ -37,7 +37,7 @@ void SHboulder_control(Object* self) {
     }
 
     //Check for collisions (specifically the kind created by barrels' explosions!)
-    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == 5) {
+    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == Damage_Type_Barrel_Explosion) {
         objData->fadeOut = TRUE;
     }
 }

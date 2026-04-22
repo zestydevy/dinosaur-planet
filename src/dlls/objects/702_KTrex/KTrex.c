@@ -866,10 +866,10 @@ static void dll_702_anim_event_to_fx(s32 modAnimEvent, s32 fxFlags) {
 static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     static SRT _bss_60;
     Baddie* baddie = (Baddie*)self->data;
-    s32 sp60;
-    s32 sp5C;
-    s32 sp58;
-    Object* sp54;
+    s32 damageType;
+    s32 hitSphereID;
+    s32 hitDamage;
+    Object* hitBy;
     MtxF* temp_v1; // TODO: maybe not a matrix?
     ModelInstance* modelInst;
     u32 sp3C[] = {0x00000006, 0x00000069, 0x00000069, 0x000000ff};
@@ -883,14 +883,15 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             baddie->unk3EC = -baddie->unk3EC;
         }
     }
-    sp60 = func_80025F40(self, &sp54, &sp5C, &sp58);
-    if (sp60 != 0) {
+
+    damageType = func_80025F40(self, &hitBy, &hitSphereID, &hitDamage);
+    if (damageType != 0) {
         modelInst = self->modelInsts[self->modelInstIdx];
         temp_v1 = modelInst->unk24;
-        if ((fsa->hitpoints != 0) && ((sp5C == 3) || (sp5C == 2))) {
-            _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
-            _bss_60.transl.y = temp_v1->m[sp5C][2];
-            _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
+        if ((fsa->hitpoints != 0) && ((hitSphereID == 3) || (hitSphereID == 2))) {
+            _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
+            _bss_60.transl.y = temp_v1->m[hitSphereID][2];
+            _bss_60.transl.z = temp_v1->m[hitSphereID][3] + gWorldZ;
             gDLL_6_AMSFX->vtbl->play_sound(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_2_Camera->vtbl->change_mode(2, 0);
@@ -898,15 +899,15 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B3, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             sKTData->flags &= ~KTFLAG_VULNERABLE;
             sKTData->flags |= KTFLAG_DAMAGED;
-            fsa->lastHitType = (s8) sp60;
+            fsa->lastHitType = (s8) damageType;
             fsa->hitpoints -= 1;
         } else {
             gDLL_6_AMSFX->vtbl->play_sound(self, sSndDeflectAttack[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
             temp_v1 = modelInst->unk24;
-            _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
-            _bss_60.transl.y = temp_v1->m[sp5C][2];
-            _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
+            _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
+            _bss_60.transl.y = temp_v1->m[hitSphereID][2];
+            _bss_60.transl.z = temp_v1->m[hitSphereID][3] + gWorldZ;
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_328, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             _bss_60.transl.x -= self->globalPosition.x;
             _bss_60.transl.y -= self->globalPosition.y;
@@ -922,7 +923,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
         if (fsa->hitpoints <= 0) {
             fsa->hitpoints = 0;
         }
-        obj_send_mesg(sp54, 0xE0001, self, NULL);
+        obj_send_mesg(hitBy, 0xE0001, self, NULL);
     }
 }
 

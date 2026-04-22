@@ -180,7 +180,7 @@ void scarab_control(Object* self) {
         }
 
         //Fall off when hit by Projectile Spell / Grenade collision
-        if (func_80025F40(self, 0, 0, 0) == 15) {
+        if (func_80025F40(self, 0, 0, 0) == Damage_Type_Projectile) {
             //Become stunned (delays scurry behaviour after landing)
             objData->stunTimer = 250;
 
@@ -380,7 +380,7 @@ void scarab_control(Object* self) {
             }
 
             //Become stunned when hit by Projectile Spell / Grenade
-            if (func_80025F40(self, 0, 0, 0) == 15) {
+            if (func_80025F40(self, 0, 0, 0) == Damage_Type_Projectile) {
                 objData->stunTimer = 250;
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
                 if (objData->soundHandle) {
@@ -392,7 +392,7 @@ void scarab_control(Object* self) {
         //Rainbow Scarab: handle stunned behaviour
         } else if ((objData->stunTimer) && (self->id == OBJ_Rain_scarab)){
             //Check for a follow-up Projectile Spell / Grenade attack while stunned
-            if (func_80025F40(self, 0, 0, 0) == 15) {
+            if (func_80025F40(self, 0, 0, 0) == Damage_Type_Projectile) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x51A, NULL, 1, -1, 0);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BD_Creature_Death_Cry, MAX_VOLUME, 0, 0, 0, 0);
                 if (objData->soundHandle) {

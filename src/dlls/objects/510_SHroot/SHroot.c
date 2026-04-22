@@ -45,57 +45,57 @@ void dll_510_setup(Object* self, DLL510_Setup* setup, s32 arg2) {
 
 void dll_510_control(Object* self) {
     s32 pad;
-    DLL510_Data* SHrootData;
-    DLL510_Setup* sp54;
-    s32 temp_v0; 
+    DLL510_Data* objData;
+    DLL510_Setup* objSetup;
+    s32 count; 
     s32 i;
     Func_80057F1C_Struct** sp48;
 
-    SHrootData = self->data;
-    sp54 = (DLL510_Setup*)self->setup; 
-    switch (SHrootData->unk12) {
+    objData = self->data;
+    objSetup = (DLL510_Setup*)self->setup; 
+    switch (objData->unk12) {
     case 0:
-        if (func_80025F40(self, NULL, NULL, NULL) == 0xF) {
-            SHrootData->unk10 = rand_next(0x320, 0x4B0);
-            SHrootData->unk12 = 3U;
+        if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
+            objData->unk10 = rand_next(800, 1200);
+            objData->unk12 = 3;
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
             return;
         }
     break;
         
     case 3:
-        self->srt.pitch = SHrootData->unk10;
-        SHrootData->unk10 = (s16) (s32) ((f32) SHrootData->unk10 * 0.333f);
+        self->srt.pitch = objData->unk10;
+        objData->unk10 = (s16) (s32) ((f32) objData->unk10 * 0.333f);
         if (self->srt.pitch < 0xA) {
             self->srt.pitch = 0;
-            SHrootData->unk12 = 1U;
-            SHrootData->unk14 = 0x1E;
+            objData->unk12 = 1U;
+            objData->unk14 = 0x1E;
             return;
         }
         break;
     case 1:
-        if (!(SHrootData->unk13 & 2)) {
-            temp_v0 = func_80057F1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);
-            SHrootData->unk4 = -100000.0f;
-            for (i = 0; i < temp_v0; i++) {
+        if (!(objData->unk13 & 2)) {
+            count = func_80057F1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);
+            objData->unk4 = -100000.0f;
+            for (i = 0; i < count; i++) {
             
                 if (sp48[i]->unk0[0] < self->srt.transl.f[1]) {
                     
-                    if (!(SHrootData->unk13 & 4) && (sp48[i]->unk14 == 0xE)) {
-                        SHrootData->unk8 = sp48[i]->unk0[0];
-                        SHrootData->unk13 |= 4;
+                    if (!(objData->unk13 & 4) && (sp48[i]->unk14 == 0xE)) {
+                        objData->unk8 = sp48[i]->unk0[0];
+                        objData->unk13 |= 4;
                         
-                    } else if (!(SHrootData->unk13 & 2)) {
-                        SHrootData->unk4 = sp48[i]->unk0[0];
-                        SHrootData->unk13 |= 2;
+                    } else if (!(objData->unk13 & 2)) {
+                        objData->unk4 = sp48[i]->unk0[0];
+                        objData->unk13 |= 2;
                     }
                 }
             }
-            SHrootData->unk13 &= ~1;
+            objData->unk13 &= ~1;
         }
-        if (SHrootData->unk14 > 0) {
-            SHrootData->unk14 -= gUpdateRate;
-            if (SHrootData->unk14 <= 0) {
+        if (objData->unk14 > 0) {
+            objData->unk14 -= gUpdateRate;
+            if (objData->unk14 <= 0) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
@@ -104,39 +104,39 @@ void dll_510_control(Object* self) {
             self->velocity.f[1] = -10.0f;
         }
         self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF;
-        if (!(SHrootData->unk13 & 1) && (SHrootData->unk13 & 4)) {
-            if (self->srt.transl.f[1] < (SHrootData->unk8 + 10.0f)) {
-                gDLL_24_Waterfx->vtbl->func_174C(self->srt.transl.f[0], SHrootData->unk8, self->srt.transl.f[2], 10.0f);
-                gDLL_24_Waterfx->vtbl->func_1CC8(self->srt.transl.f[0], SHrootData->unk8, self->srt.transl.f[2], 0, 0.0f, 2);
+        if (!(objData->unk13 & 1) && (objData->unk13 & 4)) {
+            if (self->srt.transl.f[1] < (objData->unk8 + 10.0f)) {
+                gDLL_24_Waterfx->vtbl->func_174C(self->srt.transl.f[0], objData->unk8, self->srt.transl.f[2], 10.0f);
+                gDLL_24_Waterfx->vtbl->func_1CC8(self->srt.transl.f[0], objData->unk8, self->srt.transl.f[2], 0, 0.0f, 2);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
-                SHrootData->unk13 |= 1 ;
+                objData->unk13 |= 1 ;
             }
         }
-        if ((SHrootData->unk13 & 2) && (self->srt.transl.f[1] < (SHrootData->unk4 + 40.0f))) {
-            main_set_bits(sp54->unk1E, 1);
-            SHrootData->unk12 = 2;
+        if ((objData->unk13 & 2) && (self->srt.transl.f[1] < (objData->unk4 + 40.0f))) {
+            main_set_bits(objSetup->unk1E, 1);
+            objData->unk12 = 2;
             return;
         }
         break;
     case 4:
-        if (!(SHrootData->unk13 & 2)) {
-            temp_v0 = func_80057F1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);   
-            SHrootData->unk4 = -100000.0f;
-            for (i = 0; i < temp_v0; i++) {
+        if (!(objData->unk13 & 2)) {
+            count = func_80057F1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);   
+            objData->unk4 = -100000.0f;
+            for (i = 0; i < count; i++) {
                 
                 
                 if (sp48 [i]->unk0[0] < self->srt.transl.f[1]) {
                         
-                    if (!(SHrootData->unk13 & 2)) {
-                        SHrootData->unk4 = sp48 [i]->unk0[0];
-                        SHrootData->unk13 = (u8) (SHrootData->unk13 | 2);
+                    if (!(objData->unk13 & 2)) {
+                        objData->unk4 = sp48 [i]->unk0[0];
+                        objData->unk13 = (u8) (objData->unk13 | 2);
                     }
                 }
             }
         }
-        if (SHrootData->unk13 & 2) {
-            SHrootData->unk12 = 2;
-            self->srt.transl.f[1] = SHrootData->unk4 + 40.0f;
+        if (objData->unk13 & 2) {
+            objData->unk12 = 2;
+            self->srt.transl.f[1] = objData->unk4 + 40.0f;
         }
         break;
             case 2:

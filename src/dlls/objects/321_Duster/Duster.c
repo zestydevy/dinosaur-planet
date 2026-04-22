@@ -143,7 +143,7 @@ void Duster_control(Object *self) {
             self->srt.transl.x += self->velocity.x * gUpdateRateF;
             self->srt.transl.z += self->velocity.z * gUpdateRateF;
         }
-        if (func_80025F40(self, NULL, NULL, NULL) == 0xF) {
+        if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
             objdata->resetTimer2 = TRUE;
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, NULL, NULL, 0, NULL);
         }

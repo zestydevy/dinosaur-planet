@@ -53,7 +53,7 @@ void SB_ShipHead_control(Object *self) {
     s32 parentDC;
     Object *outSender;
     f32 temp_fv1;
-    Object *sp4C;
+    Object *hitBy;
     SB_ShipHead_Data *objdata;
     u32 outMesgID;
     void *outMesgArg;
@@ -104,7 +104,7 @@ void SB_ShipHead_control(Object *self) {
             break;
         }
     }
-    if ((self->unkE0 <= 0) && ((parentDC == 3) || (parentDC == 4) || (parentDC == 5)) && (func_80025F40(self, &sp4C, NULL, NULL) != 0) && (sp4C->id != OBJ_SB_FireBall)) {
+    if ((self->unkE0 <= 0) && ((parentDC == 3) || (parentDC == 4) || (parentDC == 5)) && (func_80025F40(self, &hitBy, NULL, NULL) != 0) && (hitBy->id != OBJ_SB_FireBall)) {
         objdata->counter = 255;
         gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_179_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         ((DLL_572_SB_Galleon*)parent->dll)->vtbl->func7(parent);

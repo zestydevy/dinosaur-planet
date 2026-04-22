@@ -773,7 +773,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             arg1->unk87A -= gUpdateRate;
             if (arg1->unk87A <= 0) {
                 arg1->unk87A = 0x3C;
-                func_8002635C(player, NULL, 0x13, 1, 0);
+                func_8002635C(player, NULL, Damage_Type_13, 1, 0);
             }
             break;
         case 29:
@@ -787,18 +787,18 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             arg1->unk87A -= gUpdateRate;
             if (arg1->unk87A <= 0) {
                 arg1->unk87A = 0x3C;
-                func_8002635C(player, NULL, 0x13, 1, 0);
+                func_8002635C(player, NULL, Damage_Type_13, 1, 0);
             }
             break;
         case 8:
-            func_8002635C(player, NULL, 1, 0, 0);
+            func_8002635C(player, NULL, Damage_Type_1, 0, 0);
             break;
         case 28:
             if ((main_get_bits(BIT_21) == 0) && (arg1->unk87C != 0x1D7)) {
                 arg1->unk88E = arg1->unk88E + arg2;
                 if (arg1->unk88E >= 0x79) {
                     arg1->unk88E -= 0x78;
-                    func_8002635C(player, NULL, 0x15, 2, 0);
+                    func_8002635C(player, NULL, Damage_Type_Toxic, 2, 0);
                 }
             }
             break;
@@ -1096,141 +1096,142 @@ int dll_210_func_24FC(Object *player, ObjFSA_Data *fsa) {
 }
 
 // offset: 0x2534 | func: 8
-void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
-    s32 sp84;
-    s32 sp80;
-    s32 sp7C;
+void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
+    s32 hitType;
+    s32 hitSphereID;
+    s32 hitDamage;
     s32 aState;
-    Object *sp74;
+    Object *hitBy;
     DLL_IModgfx* sp70 = NULL;
     s32 sp60[4] = { 0x06, 0x69, 0x69, 0xff };
     SRT sp48;
     ModelInstance *new_var3;
     MtxF *temp;
 
-    sp84 = func_80025F40(arg0, &sp74, &sp80, &sp7C);
-    if (func_80026724(arg0) == 0) {
+    hitType = func_80025F40(self, &hitBy, &hitSphereID, &hitDamage);
+    if (func_80026724(self) == 0) {
         return;
     }
 
-    if (arg1->unk818 > 0.0f) {
+    if (objData->unk818 > 0.0f) {
         return;
     }
 
-    if (arg1->vehicle != NULL && sp84 != 0) {
-        sp84 = 20;
+    if (objData->vehicle != NULL && hitType != 0) {
+        hitType = Damage_Type_14;
     }
 
-    if (sp84 == 0) {
+    if (hitType == 0) {
         return;
     }
 
     if (fsa->unk270 != 0) {
-        sp84 = 27;
+        hitType = Damage_Type_1B;
     }
 
     if (fsa->unk341 == 3) {
-        if (sp84 >= fsa->lastHitType) {
+        if (hitType >= fsa->lastHitType) {
             return;
         }
     }
 
-    fsa->lastHitType = sp84;
-    arg0->curModAnimIdLayered = -1;
+    fsa->lastHitType = hitType;
+    self->curModAnimIdLayered = -1;
     aState = -1;
-    switch (sp84) {
+    switch (hitType) {
     // these cases might be incorrect
-    case 2:
-    case 17: // 0x40
-    case 19: // 0x48
-    case 22: // 0x54
-    case 26: // 0x64
+    case Damage_Type_2:
+    case Damage_Type_Fishing_Net: // 0x40
+    case Damage_Type_13: // 0x48
+    case Damage_Type_16: // 0x54
+    case Damage_Type_Flame_Command: // 0x64
         break;
-    case 7:
-    case 8:
-    case 9:
-    case 11:
+    case Damage_Type_7:
+    case Damage_Type_8:
+    case Damage_Type_9:
+    case Damage_Type_Sword_Staff_Strike2:
         aState = PLAYER_ASTATE_Hurt_Stagger;
         break;
-    case 10:
-    case 12:
+    case Damage_Type_Sword_Staff_Strike1:
+    case Damage_Type_Sword_Strike_Clockwise:
         aState = PLAYER_ASTATE_Hurt_Stagger_80;
         break;
-    case 4:
+    case Damage_Type_4:
         aState = PLAYER_ASTATE_Hurt_Flattened;
         break;
-    case 5:
+    case Damage_Type_Barrel_Explosion:
         aState = PLAYER_ASTATE_Hurt_Tumbling;
         break;
-    case 1:
-        sp7C = arg1->stats->health;
+    case Damage_Type_1:
+        hitDamage = objData->stats->health;
         break;
-    case 20:
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
+    case Damage_Type_14:
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
         break;
-    case 21:
+    case Damage_Type_Toxic:
         aState = PLAYER_ASTATE_Hurt_Stunned;
         break;
-    case 23:
+    case Damage_Type_17:
         aState = PLAYER_ASTATE_51;
         break;
-    case 24:
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
+    case Damage_Type_18:
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
         camera_enable_y_offset();
         camera_set_shake_offset(1.0f);
         break;
-    case 27:
+    case Damage_Type_1B:
         aState = fsa->unk270;
         if (aState == PLAYER_ASTATE_Falling) {
-            dll_210_func_A024(arg0, fsa);
-            arg0->srt.transl.x += fsin16_precise(arg0->srt.yaw) * 10.0f;
-            arg0->srt.transl.z += fcos16_precise(arg0->srt.yaw) * 10.0f;
-            dll_210_func_7260(arg0, arg1);
+            dll_210_func_A024(self, fsa);
+            self->srt.transl.x += fsin16_precise(self->srt.yaw) * 10.0f;
+            self->srt.transl.z += fcos16_precise(self->srt.yaw) * 10.0f;
+            dll_210_func_7260(self, objData);
         }
         break;
-    case 28:
-        switch (sp7C) {
+    case Damage_Type_Icy_Water:
+        switch (hitDamage) {
             case 0x7F:
-                gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Sabre_Exit_Icy_Water, MAX_VOLUME, NULL, NULL, 0, NULL);
-                sp7C = 0;
-                dll_210_add_health(arg0, 1);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_Sabre_Exit_Icy_Water, MAX_VOLUME, NULL, NULL, 0, NULL);
+                hitDamage = 0;
+                dll_210_add_health(self, 1);
                 break;
             case 0:
                 if (rand_next(0, 1) != 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Sabre_Freezing_A, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_Sabre_Freezing_A, MAX_VOLUME, NULL, NULL, 0, NULL);
                 } else {
-                    gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x193, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_Sabre_Freezing_B, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             default:
-                gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_B23_Teeth_Chattering, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B23_Teeth_Chattering, MAX_VOLUME, NULL, NULL, 0, NULL);
                 break;
         }
         break;
-    case 3: // 0x8
-    case 6: // 0x14
-    case 13: // 0x30
-    case 14: // 0x34
-    case 15: // 0x38
-    case 16: // 0x3C
-    case 18: // 0x44
-    case 25: // 0x60
+    case Damage_Type_3: // 0x8
+    case Damage_Type_6: // 0x14
+    case Damage_Type_D: // 0x30
+    case Damage_Type_E: // 0x34
+    case Damage_Type_Projectile: // 0x38
+    case Damage_Type_10: // 0x3C
+    case Damage_Type_Bullet: // 0x44
+    case Damage_Type_Ice_Blast: // 0x60
     default:
         aState = PLAYER_ASTATE_Hurt_Stagger;
         break;
     }
-    if (arg1->flags & 0x800) {
-        sp7C = 0;
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_25B_Magic_Attack_Deflected, MAX_VOLUME, NULL, NULL, 0, NULL);
-        new_var3 = arg0->modelInsts[arg0->modelInstIdx];
+    
+    if (objData->flags & 0x800) {
+        hitDamage = 0;
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_25B_Magic_Attack_Deflected, MAX_VOLUME, NULL, NULL, 0, NULL);
+        new_var3 = self->modelInsts[self->modelInstIdx];
         temp = (MtxF *)new_var3->unk24;
-        sp48.transl.x = temp->m[sp80][1] + gWorldX;
-        sp48.transl.y = temp->m[sp80][2];
-        sp48.transl.z = temp->m[sp80][3] + gWorldZ;
-        gDLL_17_partfx->vtbl->spawn(arg0, 0x328, &sp48, 0x200001, -1, NULL);
-        sp48.transl.x -= arg0->globalPosition.x;
-        sp48.transl.y -= arg0->globalPosition.y;
-        sp48.transl.z -= arg0->globalPosition.z;
+        sp48.transl.x = temp->m[hitSphereID][1] + gWorldX;
+        sp48.transl.y = temp->m[hitSphereID][2];
+        sp48.transl.z = temp->m[hitSphereID][3] + gWorldZ;
+        gDLL_17_partfx->vtbl->spawn(self, 0x328, &sp48, 0x200001, -1, NULL);
+        sp48.transl.x -= self->globalPosition.x;
+        sp48.transl.y -= self->globalPosition.y;
+        sp48.transl.z -= self->globalPosition.z;
         sp70 = dll_load_deferred(0x1002U, 1U);
         sp60[1] += rand_next(0, 0x9B);
         sp60[2] += rand_next(0, 0x9B);
@@ -1239,24 +1240,24 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         sp48.roll = 0;
         sp48.scale = 1.0f;
         if ((s32)&sp70) {} // @fake
-        sp70->vtbl->func0(arg0, 0, &sp48, 1, -1, &sp60);
+        sp70->vtbl->func0(self, 0, &sp48, 1, -1, &sp60);
         if (sp70 != NULL) {
             dll_unload(sp70);
         }
-    } else if (sp7C != 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, arg1->unk3B8[rand_next(19, 21)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        arg1->unk818 = 90.0f;
-        arg1->unk81C = 0.0f;
-        arg1->unk8B9 = 0xC;
+    } else if (hitDamage != 0) {
+        gDLL_6_AMSFX->vtbl->play_sound(self, objData->unk3B8[rand_next(19, 21)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        objData->unk818 = 90.0f;
+        objData->unk81C = 0.0f;
+        objData->unk8B9 = 0xC;
         if (aState != -1) {
-            arg1->unk868 = NULL;
-            arg1->unk708 = NULL;
-            gDLL_18_objfsa->vtbl->set_anim_state(arg0, fsa, aState);
+            objData->unk868 = NULL;
+            objData->unk708 = NULL;
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, aState);
         }
     }
-    dll_210_add_health(arg0, -sp7C);
-    if (arg1->stats->health <= 0) {
-        gDLL_18_objfsa->vtbl->set_anim_state(arg0, fsa, PLAYER_ASTATE_Dead);
+    dll_210_add_health(self, -hitDamage);
+    if (objData->stats->health <= 0) {
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, PLAYER_ASTATE_Dead);
     }
 }
 

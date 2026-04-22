@@ -1234,19 +1234,19 @@ static void dll_711_func_3430(Object *self, IMSnowBike_Data *objdata, MtxF *a2, 
 
 // offset: 0x34E4 | func: 26
 static void dll_711_func_34E4(Object *self, IMSnowBike_Data *objdata) {
-    s32 temp_v0;
+    s32 damageType;
     s32 sp30;
     s32 sp2C;
     Object *sp28;
 
-    temp_v0 = func_80025F40(self, &sp28, &sp30, &sp2C);
-    if ((self->objhitInfo->unk58 & 1) && (temp_v0 != 0)) {
-        switch (temp_v0) {
-        case 13:
+    damageType = func_80025F40(self, &sp28, &sp30, &sp2C);
+    if ((self->objhitInfo->unk58 & 1) && (damageType != 0)) {
+        switch (damageType) {
+        case Damage_Type_D:
             objdata->unk3DA = 0x14;
             objdata->unk380 = 0.8f;
             return;
-        case 15:
+        case Damage_Type_Projectile:
             objdata->unk3DA = 0xC;
             objdata->unk380 = 0.5f;
             break;

@@ -200,7 +200,7 @@ enum SoundID {
     SOUND_Sabre_Freezing_A = 0x183,     //"I'm freezing!"
     SOUND_Sabre_Exit_Icy_Water = 0x184, //"That's much better!"
 
-    SOUND_Sabre_Freezing_B = 0x184,     //"That's too cold for me!"
+    SOUND_Sabre_Freezing_B = 0x193,     //"That's too cold for me!"
 
     SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
 

@@ -127,7 +127,7 @@ void SHkillermushroom_control(Object* self) {
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
         ) {
-            func_8002635C(player, self, 0x15, 1, 0);
+            func_8002635C(player, self, Damage_Type_Toxic, 1, 0);
             objData->flags |= SHkillermushroom_FLAG_Disable_Spore_Damage;
         }
 
@@ -196,7 +196,7 @@ void SHkillermushroom_control(Object* self) {
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
         ) {
-            func_8002635C(player, self, 0x15, 1, 0);
+            func_8002635C(player, self, Damage_Type_Toxic, 1, 0);
             objData->flags |= SHkillermushroom_FLAG_Disable_Spore_Damage;
         }
 

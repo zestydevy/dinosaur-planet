@@ -172,7 +172,7 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         break;
     case STATE_Hot:
         //Waiting for Ice Blast Spell to be used on pillar
-        if (func_80025F40(self, NULL, NULL, NULL) == 0x19) {
+        if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Ice_Blast) {
             objdata->state = STATE_Fade_Texture_to_Cooled;
         }
         break;

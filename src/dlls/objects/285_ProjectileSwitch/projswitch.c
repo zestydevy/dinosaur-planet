@@ -94,7 +94,7 @@ void ProjectileSwitch_control(Object* self) {
     }
 
     //React to Projectile Switch attacks
-    if (func_80025F40(self, NULL, NULL, NULL) == Collision_Type_Projectile) {
+    if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
         if (objData->switchPressed) {
             if ((objSetup->modelIndexAndFlags & 3) == Switch_FLAG_Can_Be_Toggled_Via_Attacks) {
                 ProjectileSwitch_change_state(self, FALSE, TRUE);

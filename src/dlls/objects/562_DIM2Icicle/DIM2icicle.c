@@ -68,7 +68,7 @@ void DIM2Icicle_control(Object* self) {
     switch (objData->state) {
     case DIM2Icicle_STATE_Dangling:
         //React to Projectile Spell collisions
-        if (func_80025F40(self, NULL, NULL, NULL) == 15) {
+        if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
             objData->pitch = rand_next(800, 1200);
             objData->state = DIM2Icicle_STATE_Damaged;
             self->objhitInfo->unk58 &= ~1;

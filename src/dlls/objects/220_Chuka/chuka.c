@@ -147,7 +147,7 @@ void dll_220_control(Object* self) {
     objdata->unk12 = distance2D;
 
     //Check for Projectile Spell attacks
-    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == Collision_Type_Projectile) {
+    if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == Damage_Type_Projectile) {
         objdata->unkC--; //Lose health
         if (objdata->unkC <= 0) {
             dll_220_func_8A4(self, objdata); //Suggests arg1 of dll_220_func_8A4 might be a DLL220_Data*

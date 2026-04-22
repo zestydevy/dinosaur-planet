@@ -42,13 +42,13 @@ void ColdWaterControl_control(Object* self) {
 
             //Reset objHits interaction when timer is at its initial value
             if (objData->timer == COLDWATER_INITIAL) {
-                func_8002635C(objData->player, self, 0x1C, 0, 1);
+                func_8002635C(objData->player, self, Damage_Type_Icy_Water, 0, 1);
             }
             
             //Increment timer, and hurt the player after passing timer threshold
             objData->timer += gUpdateRateF;
             if (objData->timer > COLDWATER_THRESHOLD) {
-                func_8002635C(objData->player, self, 0x1C, 1, 1);
+                func_8002635C(objData->player, self, Damage_Type_Icy_Water, 1, 1);
                 objData->hurtCounter++;
                 objData->timer -= COLDWATER_THRESHOLD;
             }
@@ -57,7 +57,7 @@ void ColdWaterControl_control(Object* self) {
 
             //Reset objHits interaction and hurt timer/counter
             if (objData->hurtCounter) {
-                func_8002635C(objData->player, self, 0x1C, 0x7F, 1);
+                func_8002635C(objData->player, self, Damage_Type_Icy_Water, 0x7F, 1);
                 objData->hurtCounter = 0;
             }
             objData->timer = COLDWATER_INITIAL;

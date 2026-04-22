@@ -92,7 +92,7 @@ void DRLavaControl_control(Object* self) {
 // offset: 0x170 | func: 2 | export: 2
 void DRLavaControl_update(Object* self) {
     //Check if hit with Ice Blast Spell
-    if (func_80025F40(self, NULL, NULL, NULL) == 25) {
+    if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Ice_Blast) {
         DRLavaControl_freeze(self);
     }
 }

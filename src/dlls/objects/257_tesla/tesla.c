@@ -26,7 +26,7 @@ typedef struct {
     u8 unk1E;
     u8 unk1F;
     u8 unk20;
-    u8 unk21;
+    u8 damageStrength;
 } Tesla_Setup;
 
 static void dll_257_func_1144(Object* self, Tesla_Setup* setup);
@@ -150,11 +150,11 @@ void dll_257_control(Object* self) {
             var_s0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp64);
             if (var_s0 == NULL || sp68 <= sp64) {
                 if (sp68 < setup->unk19) {
-                    func_8002635C(player, self, 0xB, setup->unk21, 0);
+                    func_8002635C(player, self, Damage_Type_Sword_Staff_Strike2, setup->damageStrength, 0);
                 }
             } else {
                 if (sp64 < setup->unk19) {
-                    func_8002635C(var_s0, self, 0xF, setup->unk21, 0);
+                    func_8002635C(var_s0, self, Damage_Type_Projectile, setup->damageStrength, 0);
                 }
             }
         }

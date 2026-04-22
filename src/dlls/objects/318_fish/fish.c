@@ -186,7 +186,7 @@ void fish_control(Object* self) {
         }
     }
     temp_v0 = func_80025F40(self, NULL, NULL, NULL);
-    if ((temp_v0 != 0) && (temp_v0 == Collision_Type_Fishingnet)) {
+    if ((temp_v0 != 0) && (temp_v0 == Damage_Type_Fishing_Net)) {
         fish_func_2150(self);
         return;
     }
