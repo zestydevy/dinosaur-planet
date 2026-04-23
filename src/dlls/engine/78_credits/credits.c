@@ -5,7 +5,10 @@
 #include "sys/gfx/textable.h"
 
 #define MAX_OPACITY 0xFF
-#define LINE_SPACITY 0xFF
+
+#define BASE_X_LEFT 19
+#define BASE_X_RIGHT 299
+#define BASE_Y 53
 
 typedef enum {
     CREDITS_L,
@@ -322,15 +325,15 @@ void credits_draw(Gfx** gdl, s32 arg1, s32 arg2) {
                 //Section headings
                 font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0xFF, line->opacity);
                 align = ALIGN_TOP_LEFT;
-                x = 19;
+                x = BASE_X_LEFT;
             } else {
                 //Developer names
                 font_window_set_text_colour(1, 0x98, 0x9F, 0xBA, 0xFF, line->opacity);
                 align = ALIGN_TOP_RIGHT;
-                x = 299;
+                x = BASE_X_RIGHT;
             }
             
-            y = ((line->lineIndex - 1) << 4) + 53;
+            y = ((line->lineIndex - 1) << 4) + BASE_Y;
             
             //Text
             font_window_set_extra_char_spacing(1, line->spacing);
