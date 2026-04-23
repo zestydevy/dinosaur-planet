@@ -10,11 +10,6 @@
 #define BASE_X_RIGHT 299
 #define BASE_Y 53
 
-typedef enum {
-    CREDITS_L,
-    CREDITS_R
-} CreditsAlignments;
-
 typedef struct {
     u16 frameIn;        //Line starts fading in
     u16 frameHold;      //Line finished fading in, holds at max opacity
@@ -33,6 +28,11 @@ typedef struct {
     u16 frameFinished;      //Advances to the next group once this frame is reached
     u8 lineCount;           //Count of nonzero items in lines
 } CreditsGroup;
+
+typedef enum {
+    CREDITS_L,
+    CREDITS_R
+} CreditsAlignments;
 
 #define EMPTY {0, 0, 0, 0, 0, 0, 0, 0, 0}
 
@@ -189,9 +189,9 @@ typedef struct {
 };
 
 /*0x0*/ static Texture* sDinosaurPlanetLogoTex; //Shown at the beginning of the credits
-/*0x4*/ static u8 sGroupIdx; //The index of the current group of names
-/*0x8*/ static GameTextChunk* sText; //Gametext file 0x1FD
-/*0xC*/ static f32 sTime; //The current frame of the credits
+/*0x4*/ static u8 sGroupIdx;                    //The index of the current group of names
+/*0x8*/ static GameTextChunk* sText;            //Gametext file 0x1FD
+/*0xC*/ static f32 sTime;                       //The current frame of the credits
 
 // offset: 0x0 | ctor
 void credits_ctor(void *dll) {
@@ -333,14 +333,14 @@ void credits_draw(Gfx** gdl, s32 arg1, s32 arg2) {
                 x = BASE_X_RIGHT;
             }
             
-            y = ((line->lineIndex - 1) << 4) + BASE_Y;
+            y = BASE_Y + ((line->lineIndex - 1) << 4);
             
             //Text
             font_window_set_extra_char_spacing(1, line->spacing);
             font_window_add_string_xy(1, x, y, sText->strings[line->textID], 1, align);
             
             //Text drop-shadow
-            font_window_set_text_colour(1, 0, 0, 0, MAX_OPACITY, line->opacity);
+            font_window_set_text_colour(1, 0, 0, 0, 0xFF, line->opacity);
             font_window_add_string_xy(1, x - 2, y - 2, sText->strings[line->textID], 2, align);
         }
     }
