@@ -109,7 +109,7 @@ typedef struct {
 /*0006*/ s16 unk6;
 /*0008*/ s16 unk8;
 /*000A*/ s16 unka;
-/*000C*/ s16 unkc;  //y coord?
+/*000C*/ s16 unkC;  //y coord?
 /*000E*/ u16 unke;  //LAction.bin index
 /*0010*/ u16 unk10; //lightLayer (lights' influences can be combined when on different layers)
 /*0012*/ union {

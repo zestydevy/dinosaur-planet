@@ -157,7 +157,247 @@ s32 func_800240BC(Object* object, f32 progress) {
 }
 
 //advances current animation playback
-#pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80024108.s")
+s32 func_80024108(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3) {
+    AnimState* temp_t0;
+    Animation* var_t5_2;
+    ModelInstance* temp_t2;
+    s16* new_var;
+    f32 temp_ft5;
+    f32 var_fa0;
+    s32 temp_a1;
+    f32 sp78;
+    f32 sp74;
+    f32 sp70;
+    f32 var_fs0;
+    f32 var_fs1;
+    f32 var_fv0;
+    f32 var_fv1;
+    f32 sp5C;
+    s32 temp_ft0;
+    s32 temp_ft1;
+    s32 temp_ft3;
+    s32 temp_s0;
+    s32 temp_t7;
+    s32 var_t1;
+    s32 var_t3;
+    s32 var_t5;
+    s32 var_v1;
+    s16* var_v0;
+    s16* var_s0;
+
+    var_t3 = 0;
+    temp_t2 = arg0->modelInsts[arg0->modelInstIdx];
+    if (temp_t2->model->animCount <= 0) {
+        return var_t3;
+    }
+    temp_t0 = temp_t2->animState0;
+    if (temp_t0 == NULL) {
+        return var_t3;
+    }
+    temp_t0->unkC[0] = temp_t0->totalAnimationFrames[0] * arg1;
+    if (temp_t0->unk58[0] != 0) {
+        if (temp_t0->unk62[1] & 8) {
+            temp_t0->unkC[1] = temp_t0->unkC[0];
+        }
+        var_fv0 = temp_t0->curAnimationFrame[1];
+        sp5C = temp_t0->totalAnimationFrames[1];
+        temp_t0->curAnimationFrame[1] += temp_t0->unkC[1] * arg2;
+        if (temp_t0->unk60[1] != 0) {
+            if (temp_t0->curAnimationFrame[1] < 0.0f) {
+                temp_t0->curAnimationFrame[1] += sp5C;
+            }
+            if (sp5C <= temp_t0->curAnimationFrame[1]) {
+                temp_t0->curAnimationFrame[1] -= sp5C;
+            }
+        } else {
+            if (temp_t0->curAnimationFrame[1] < 0.0f) {
+                temp_t0->curAnimationFrame[1] = 0.0f;
+            }
+            if (sp5C < temp_t0->curAnimationFrame[1]) {
+                temp_t0->curAnimationFrame[1] = sp5C;
+            }
+        }
+        if (!(temp_t0->unk62[1] & 2)) {
+            temp_t0->unk58[0] -= temp_t0->unk5C[1] * arg2;
+        }
+        if (temp_t0->unk58[0] < 0) {
+            temp_t0->unk58[0] = 0;
+        }
+        if (temp_t0->unk58[0] == 0) {
+            temp_t0->unk5C[0] = 0;
+        }
+    }
+    sp78 = arg0->animProgress;
+    arg1 *= arg2;
+    arg0->animProgress += arg1;
+    if (arg0->animProgress >= 1.0f) {
+        if (temp_t0->unk60[0] != 0) {
+            while (arg0->animProgress >= 1.0f) {
+                arg0->animProgress -= 1.0f;
+            }
+        } else {
+            arg0->animProgress = 1.0f;
+        }
+        var_t3 = 1;
+    } else if (arg0->animProgress < 0.0f) {
+        var_t3 = 1;
+        if (temp_t0->unk60[0] != 0) {
+            while (arg0->animProgress < 0.0f) {
+                arg0->animProgress += 1.0f;
+            }
+        } else {
+            arg0->animProgress = 0.0f;
+            // FAKE
+            temp_ft3 = (s32) sp70;
+        }
+    }
+    if (arg3 == NULL) {
+        return var_t3;
+    }
+
+    arg3->unk12 = 0;
+    arg3->unk0[2] = 0.0f;
+    arg3->unk0[1] = 0.0f;
+    arg3->unk0[0] = 0.0f;
+    if (arg0->curEvent != NULL) {
+        arg3->unk1B = 0;
+        temp_a1 = arg0->curEvent->size >> 1;
+        if (temp_a1 != 0) {
+            temp_ft1 = sp78 * 512.0f;
+            temp_ft0 = arg0->animProgress * 512.0f;
+            var_t1 = 0;
+            if (temp_ft0 < temp_ft1) {
+                var_t1 |= 1;
+            }
+            if (arg1 < 0.0f) {
+                var_t1 |= 2;
+            }
+            for (var_t5 = 0; var_t5 < temp_a1 && arg3->unk1B < 8; var_t5++) {
+                var_v1 = *((s16*)arg0->curEvent->data + var_t5);
+                temp_s0 = var_v1 & 0x1FF;
+                var_v1 = (var_v1 >> 9) & 0x7F;
+                if (var_v1 != 0x7F) {
+                    if ((var_t1 == 0) && (temp_s0 >= temp_ft1) && (temp_s0 < temp_ft0)) {
+                        arg3->unk13[arg3->unk1B] = var_v1;
+                        arg3->unk1B += 1;
+                    }
+                    if ((var_t1 == 1) && ((temp_s0 >= temp_ft1) || (temp_s0 < temp_ft0))) {
+                        arg3->unk13[arg3->unk1B] = var_v1;
+                        arg3->unk1B += 1;
+                    }
+                    if ((var_t1 == 3) && (temp_ft0 < temp_s0) && (temp_ft1 >= temp_s0)) {
+                        arg3->unk13[arg3->unk1B] = var_v1;
+                        arg3->unk1B += 1;
+                    }
+                    if ((var_t1 == 2) && ((temp_ft0 < temp_s0) || (temp_ft1 >= temp_s0))) {
+                        arg3->unk13[arg3->unk1B] = var_v1;
+                        arg3->unk1B += 1;
+                    }
+                }
+            }
+        }
+    }
+    if (temp_t2->model->unk71 & 0x40) {
+        var_t5_2 = &temp_t0->anims[temp_t0->animIndexes[0]]->anim;
+    } else {
+        var_t5_2 = temp_t2->model->anims[temp_t0->animIndexes[0]];
+    }
+    if (var_t5_2->offset_rootMotion != 0) {
+        arg3->unk12 = 1;
+        var_s0 = NULL;
+        var_v0 = (u8*)var_t5_2 + var_t5_2->offset_rootMotion;
+        sp5C = ((f32*)var_v0)[0] * arg0->srt.scale;
+        temp_a1 = var_v0[2] - 1;
+        var_v0 += 3;
+        var_v1 = 0;
+        var_fa0 = temp_a1 * sp78;
+        sp74 = var_fa0 - (s32) var_fa0;
+        sp70 = arg0->animProgress * temp_a1;
+        temp_ft3 = (s32) sp70;
+        sp70 -= (f32) temp_ft3;
+        if (temp_t0->unk58[1] != 0) {
+            var_fs0 = temp_t0->unk58[1] / 1023.0f;
+            var_fs1 = 1.0f - var_fs0;
+            if (temp_t2->model->unk71 & 0x40) {
+                var_t5_2 = &temp_t0->anims2[temp_t0->unk48[0]]->anim;
+            } else {
+                var_t5_2 = temp_t2->model->anims[temp_t0->unk48[0]];
+            }
+            var_s0 = (u8*)var_t5_2 + var_t5_2->offset_rootMotion + 6;
+        } else {
+            var_fs0 = 0.0f;
+            var_fs1 = 1.0f;
+        }
+        for (; var_v1 != 6; var_v1++) {
+            if (var_v0[0] != 0) {
+                var_v0++;
+                var_fa0 = temp_a1 * sp78;
+                if (var_s0 != NULL) {
+                    var_s0 += 1;
+                }
+                var_fv0 = var_v0[(s32)var_fa0] * var_fs1;
+                if (var_s0 != NULL) {
+                    var_fv0 += var_s0[(s32)var_fa0] * var_fs0;
+                }
+                var_fv1 = var_v0[(s32)var_fa0 + 1] * var_fs1;
+                if (var_s0 != NULL) {
+                    var_fv1 += var_s0[(s32)var_fa0 + 1] * var_fs0;
+                }
+
+                // FAKE?
+                new_var = var_v0;
+                temp_ft5 = ((var_fv1 - var_fv0) * sp74) + var_fv0;
+                temp_ft0 = temp_ft3;
+                var_fv0 = new_var[temp_ft0] * var_fs1;
+                if (var_s0 != NULL) {
+                    var_fv0 += var_s0[temp_ft0] * var_fs0;
+                }
+                var_fv1 = new_var[temp_ft0 + 1] * var_fs1;
+                if (var_s0 != NULL) {
+                    var_fv1 += var_s0[temp_ft0 + 1] * var_fs0;
+                }
+                var_fa0 = ((var_fv1 - var_fv0) * sp70) + var_fv0;
+                if (arg1 > 0.0f) {
+                    if (arg0->animProgress < sp78) {
+                        var_fa0 += (new_var[temp_a1] * var_fs1);
+                        if (var_s0 != NULL) {
+                            var_fa0 += var_s0[temp_a1] * var_fs0;
+                        }
+                    }
+                } else {
+                    if (sp78 < arg0->animProgress) {
+                        var_fa0 -= (new_var[temp_a1] * var_fs1);
+                        if (var_s0 != NULL) {
+                            var_fa0 += var_s0[temp_a1] * var_fs0;
+                        }
+                    }
+                }
+                if (var_v1 < 3) {
+                    arg3->unk0[var_v1] = (var_fa0 - temp_ft5) * sp5C;
+                } else {
+                    arg3->unkC[var_v1 - 3] = (var_fa0 - temp_ft5);
+                }
+                var_v0 += temp_a1 + 1;
+                if (var_s0 != NULL) {
+                    var_s0 += temp_a1 + 1;
+                }
+            } else {
+                var_v0 += 1;
+                if (var_s0 != NULL) {
+                    var_s0 += 1;
+                }
+                if (var_v1 < 3) {
+                    arg3->unk0[var_v1] = 0.0f;
+                } else {
+                    arg3->unkC[var_v1 - 3] = 0;
+                }
+            }
+        }
+    } else {
+        arg3->unk12 = 0;
+    }
+    return var_t3;
+}
 
 //https://decomp.me/scratch/zIGpo
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_8002493C.s")

@@ -21,7 +21,7 @@ typedef struct {
 // size: 0x1C
 typedef struct {
   f32 unk0[3];
-  s16 unkc[3];
+  s16 unkC[3];
   u8 unk12;
   s8 unk13[8];
   s8 unk1B; // current length of unk13
