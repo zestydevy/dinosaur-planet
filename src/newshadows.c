@@ -1074,24 +1074,24 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
                 for (var_s4 = 0; var_s4 < var_s7; ) {
                     var_a3 = sp26C;
                     tempSp26C = sp26C;
-                    if (arg0->def->shadowType == 2) {
+                    if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
                         shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
                     } else {
                         shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
                     }
-                    if (spAC->flags & 0x8000) {
+                    if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                         spD2 = 0xFF;
                     }
                     D_800B9B60[var_a3][0] = spD6;
                     D_800B9B60[var_a3][1] = spD4;
-                    if (arg0->def->shadowType == 2) {
+                    if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
                         arg5[tempSp26C].v.ob[0] = (sp1A4[var_s4].x + spD8.x) * 20.0f;
                         arg5[tempSp26C].v.ob[1] = (sp1A4[var_s4].y + spD8.y + var_fs3) * 20.0f;
                         arg5[tempSp26C].v.ob[2] = (sp1A4[var_s4].z + spD8.z) * 20.0f;
                     } else {
                         arg5[tempSp26C].v.ob[0] = sp1A4[var_s4].x * 20.0f;
                         arg5[tempSp26C].v.ob[1] = sp1A4[var_s4].y * 20.0f;
-                        if (!(spAC->flags & 0x80)) {
+                        if (!(spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER)) {
                             arg5[tempSp26C].v.ob[1] += 0x1E;
                         }
                         arg5[tempSp26C].v.ob[2] = sp1A4[var_s4].z * 20.0f;
