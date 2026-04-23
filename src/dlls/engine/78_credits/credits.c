@@ -288,11 +288,10 @@ void credits_update2(void) {
 // offset: 0x570 | func: 2 | export: 2
 void credits_draw(Gfx** gdl, s32 arg1, s32 arg2) {
     CreditsLine* line;
+    s32 align;
     s32 i;
     s32 x;
     s32 y;
-    s32 align;
-    char *string;
 
     if (sGroupIdx == ARRAYCOUNT(dCredits)) {
         return;
