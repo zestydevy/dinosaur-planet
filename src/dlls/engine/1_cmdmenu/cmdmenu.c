@@ -3224,6 +3224,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     //Return early if there's no gametext
     if (dInfoScrollTextID <= NO_GAMETEXT) {
+        //@bug: display list desync (missing `*gdl = dl;`)
         return;
     }
 
@@ -3832,6 +3833,8 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
     //Draw item count (NOTE: can't draw values under 2 or over 10, because no icons provided)
     if (box->count > 1) {
         sTempIcon->tex = sInventoryStackNumbersTex;
+
+        //@bug: crashes if count is above 10, since there's no texture frame
         sTempIcon->animProgress = (box->count - 2) << 8;
         rcp_tile_write(gdl, sTempIcon, 
             INFO_POPUP_QUANTITY_X, 

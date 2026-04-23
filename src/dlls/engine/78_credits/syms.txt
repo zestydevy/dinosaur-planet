@@ -1,0 +1,17 @@
+.text = 0x0:
+credits_ctor = 0x0;
+credits_dtor = 0x80;
+credits_update1 = 0xD4;
+credits_update2 = 0x568;
+credits_draw = 0x570;
+
+.rodata = 0x924:
+
+.data = 0x924:
+dCredits = 0x0; // absolute:0x924
+
+.bss = 0xF14:
+sDinosaurPlanetLogoTex = 0x0; // absolute:0xF14
+sGroupIdx = 0x4; // absolute:0xF18
+sText = 0x8; // absolute:0xF1C
+sTime = 0xC; // absolute:0xF20
