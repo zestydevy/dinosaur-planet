@@ -12,22 +12,22 @@
 /* -------- .data start -------- */
 s32 gMenuDLLIDs[] = {
     /*0*/  -1,
-    /*1*/  19,
-    /*2*/  60,
-    /*3*/  61,
-    /*4*/  62,
-    /*5*/  63,
-    /*6*/  64,
-    /*7*/  65,
-    /*8*/  66,
-    /*9*/  67,
-    /*10*/ 71,
-    /*11*/ 68,
-    /*12*/ 69,
-    /*13*/ 70,
-    /*14*/ 77,
-    /*15*/ 78,
-    /*16*/ 79,
+    /*1*/  19, //gameplay
+    /*2*/  60, //post
+    /*3*/  61, //rareware
+    /*4*/  62, //mainmenu
+    /*5*/  63, //gameselect
+    /*6*/  64, //nameentry
+    /*7*/  65, //options
+    /*8*/  66, //pausemenu
+    /*9*/  67, //gameover
+    /*10*/ 71, //old options
+    /*11*/ 68, //old title screen
+    /*12*/ 69, //?
+    /*13*/ 70, //old level select
+    /*14*/ 77, //scarab (shop minigame counter)
+    /*15*/ 78, //credits
+    /*16*/ 79, //(used by swapstone and shopkeeper)
     /*17*/ 80
 };
 

@@ -36,7 +36,7 @@ enum MenuID {
     MENU_12 = 12,
     MENU_13 = 13,
     MENU_14 = 14,
-    MENU_15 = 15,
+    MENU_CREDITS = 15, // credits
     MENU_16 = 16, // used by swapstone and shopkeeper
     MENU_17 = 17
 };
