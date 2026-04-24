@@ -41,6 +41,6 @@ void func_8002559C(Object* object, s32 modAnimBankAndIndex, s32 arg2);
 void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3);
 void func_80025780(Object*, f32 updateRate, UnkFunc_80024108Struct*, void*);
 u8 func_80025CD4(s32 arg0);
-s32 func_80025140(Object*, f32, f32, s32);
+s32 func_80025140(Object*, f32, f32, UnkFunc_80024108Struct*);
 
 #endif

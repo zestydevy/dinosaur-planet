@@ -520,7 +520,125 @@ s32 func_800250F4(Object* object, f32 progress) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025140.s")
+s32 func_80025140(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3) {
+    AnimState* temp_a1;
+    ModelInstance* temp_v0;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 temp_t1;
+    s32 temp_ft1;
+    s32 temp_ft3;
+    s32 temp_t4;
+    s32 temp_t7;
+    s32 var_t0;
+    s32 var_t3;
+    s32 var_v1;
+
+    var_v1 = 0;
+    temp_v0 = arg0->modelInsts[arg0->modelInstIdx];
+    if (temp_v0->model->animCount <= 0) {
+        return var_v1;
+    }
+    temp_a1 = temp_v0->animState1;
+    temp_a1->unkC[0] = temp_a1->totalAnimationFrames[0] * arg1;
+    if (temp_a1->unk58[0] != 0) {
+        if (temp_a1->unk62[1] & 8) {
+            temp_a1->unkC[1] = temp_a1->unkC[0];
+        }
+        temp_fv0 = temp_a1->curAnimationFrame[1];
+        temp_fv1 = temp_a1->totalAnimationFrames[1];
+        temp_a1->curAnimationFrame[1] += temp_a1->unkC[1] * arg2;
+        if (temp_a1->unk60[1] != 0) {
+            if (temp_a1->curAnimationFrame[1] < 0.0f) {
+                temp_a1->curAnimationFrame[1] += temp_fv1;
+            }
+            if (temp_fv1 <= temp_a1->curAnimationFrame[1]) {
+                temp_a1->curAnimationFrame[1] -= temp_fv1;
+            }
+        } else {
+            if (temp_a1->curAnimationFrame[1] < 0.0f) {
+                temp_a1->curAnimationFrame[1] = 0.0f;
+            }
+            if (temp_fv1 < temp_a1->curAnimationFrame[1]) {
+                temp_a1->curAnimationFrame[1] = temp_fv1;
+            }
+        }
+        if (!(temp_a1->unk62[1] & 2)) {
+            temp_a1->unk58[0] -= temp_a1->unk5C[1] * arg2;
+        }
+        if (temp_a1->unk58[0] < 0) {
+            temp_a1->unk58[0] = 0;
+        }
+        if (temp_a1->unk58[0] == 0) {
+            temp_a1->unk5C[0] = 0;
+        }
+    }
+    arg1 *= arg2;
+    temp_fv0 = arg0->animProgressLayered;
+    arg0->animProgressLayered += arg1;
+    if (arg0->animProgressLayered >= 1.0f) {
+        if (temp_a1->unk60[0] != 0) {
+            while (arg0->animProgressLayered >= 1.0f) {
+                arg0->animProgressLayered -= 1.0f;
+            }
+        } else {
+            arg0->animProgressLayered = 1.0f;
+        }
+        var_v1 = 1;
+    } else if (arg0->animProgressLayered < 0.0f) {
+        var_v1 = 1;
+        if (temp_a1->unk60[0] != 0) {
+            while (arg0->animProgressLayered < 0.0f) {
+                arg0->animProgressLayered += 1.0f;
+            }
+        } else {
+            arg0->animProgressLayered = 0.0f;
+        }
+    }
+    if (arg3 == NULL) {
+        return var_v1;
+    }
+    arg3->unk12 = 0;
+    if (arg0->curEvent != NULL) {
+        arg3->unk1B = 0;
+        temp_t7 = arg0->curEvent->size >> 1;
+        if (temp_t7 != 0) {
+            temp_ft3 = temp_fv0 * 512.0f;
+            temp_ft1 = arg0->animProgressLayered * 512.0f;
+            var_t0 = 0;
+            if (temp_ft1 < temp_ft3) {
+                var_t0 |= 1;
+            }
+            if (arg1 < 0.0f) {
+                var_t0 |= 2;
+            }
+            for (var_t3 = 0; var_t3 < temp_t7 && arg3->unk1B < 8; var_t3++) {
+                temp_t1 = *(((s16*)arg0->curEvent->data) + var_t3);
+                temp_t4 = temp_t1 & 0x1FF;
+                temp_t1 = (temp_t1 >> 9) & 0x7F;
+                if (temp_t1 != 0x7F) {
+                    if ((var_t0 == 0) && (temp_t4 >= temp_ft3) && (temp_t4 < temp_ft1)) {
+                        arg3->unk13[arg3->unk1B] = temp_t1;
+                        arg3->unk1B++;
+                    }
+                    if ((var_t0 == 1) && ((temp_t4 >= temp_ft3) || (temp_t4 < temp_ft1))) {
+                        arg3->unk13[arg3->unk1B] = temp_t1;
+                        arg3->unk1B++;
+                    }
+                    if ((var_t0 == 3) && (temp_ft1 < temp_t4) && (temp_ft3 >= temp_t4)) {
+                        arg3->unk13[arg3->unk1B] = temp_t1;
+                        arg3->unk1B++;
+                    }
+                    if ((var_t0 == 2) && ((temp_ft1 < temp_t4) || (temp_ft3 >= temp_t4))) {
+                        arg3->unk13[arg3->unk1B] = temp_t1;
+                        arg3->unk1B++;
+                    }
+                }
+            }
+        }
+    }
+    return var_v1;
+}
 
 void func_800255F8(Model* model, AnimState* animState, s32 bank_and_index, s16 arg3);
 
