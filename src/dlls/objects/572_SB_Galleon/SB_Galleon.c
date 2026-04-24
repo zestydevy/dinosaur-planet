@@ -85,11 +85,11 @@ typedef struct {
 /*0x0*/ static Data0 _data_0 = { NULL, NULL, FALSE };
 
 enum SB_Galleon_State {
-    STATE_0,
-    STATE_1,
-    STATE_2,
-    STATE_3,
-    STATE_4
+    STATE_0, //Galleon battle
+    STATE_1, //Fade to landing on Galleon
+    STATE_2, //Landed on Galleon?
+    STATE_3, //Arriving at Warlock Mountain (prep-work)
+    STATE_4  //Docked at Warlock Mountain?
 };
 
 static int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
@@ -276,24 +276,26 @@ u8 SB_Galleon_func_700(Object *self) {
     return objdata->unk80;
 }
 
-#ifndef NON_MATCHING
 // offset: 0x710 | func: 11 | export: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/572_SB_Galleon/SB_Galleon_func_710.s")
-#else
-s32 SB_Galleon_func_710(Object *self) {
-    SB_Galleon_Data *objdata;
+s32 SB_Galleon_func_710(Object* self) {
+    SB_Galleon_Data *objData;
+    s32 temp;
 
-    objdata = self->data;
-    if (objdata->unk29 == 1) {
-        if (objdata->unk86 >= 5)
-            objdata->unk86 -= 5;
+    objData = self->data;
+    
+    if (objData->unk29 == 1) {
+        temp = objData->unk86;
+        if (objData->unk86 >= 5) {
+            temp = objData->unk86 - 5;
+        } else {
+            temp = objData->unk86;
+        }
 
-        return 540 + -90 * objdata->unk86;
+        return 540 + 90*(-temp); 
+    } else {
+        return 1600;
     }
-
-    return 1600;
 }
-#endif
 
 // offset: 0x770 | func: 12
 int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
@@ -311,6 +313,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
     objdata->unk3C = 0.0f;
     objdata->unk40 = 0.0f;
     animObjData->unkF4 = SB_Galleon_func_B5C;
+
     for (i = 0; i < animObjData->unk98; i++) {
         switch (animObjData->unk8E[i]) {
         case 1:
@@ -367,6 +370,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
             break;
         }
     }
+
     if (objdata->unk7D == 0) {
         self->unkDC = 7;
     } else {
@@ -376,6 +380,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
         gDLL_12_Minic->vtbl->func9(-25.0f, 0.0f);
         gDLL_12_Minic->vtbl->func7(0);
     }
+    
     animObjData->unk7A = -1;
     animObjData->unk62 = 0;
     objdata->unk82 -= gUpdateRate;
@@ -409,22 +414,26 @@ void SB_Galleon_func_B88(Object *self) {
 
     self->unkDC = 7;
     objdata = self->data;
+
     if (main_get_bits(BIT_SB_Scales_Intro) && (!main_get_bits(BIT_SB_Found_Kyte))) {
         _data_0.fadeoutStarted = TRUE;
         main_set_bits(BIT_SB_Found_Kyte, 1);
         gDLL_28_ScreenFade->vtbl->fade(10, SCREEN_FADE_BLACK);
     }
+
     if (objdata->unk8E != 0) {
         player = get_player();
         func_80000860(player, get_player(), 148, 0);
         objdata->unk8E = 0;
     }
+
     if ((_data_0.fadeoutStarted) && gDLL_28_ScreenFade->vtbl->is_complete()) {
         gDLL_28_ScreenFade->vtbl->fade_reversed(80, SCREEN_FADE_BLACK);
         gDLL_3_Animation->vtbl->func17(1, self, -1);
         objdata->state = STATE_3;
         _data_0.fadeoutStarted = FALSE;
     }
+    
     gDLL_12_Minic->vtbl->func9(-25.0f, 0.0f);
     gDLL_12_Minic->vtbl->func7(0);
     roll = fsin16_precise(objdata->unk74);
@@ -439,6 +448,7 @@ void SB_Galleon_func_B88(Object *self) {
     } else if ((roll > -0.1f) && (roll < 0.1f)) {
         objdata->unk8B = 0;
     }
+
     self->srt.roll = (s16) ((s32) (roll * 432.0f));
     new_var = ((u16)objdata->unk74) + (gUpdateRate << 7);
     objdata->unk74 = (s16) new_var;
