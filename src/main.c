@@ -27,6 +27,8 @@
 #include "sys/framebuffer_fx.h"
 #include "sys/segment_1D900.h"
 #include "sys/segment_53F00.h"
+#include "sys/map.h"
+#include "sys/map_enums.h"
 #include "dll.h"
 #include "constants.h"
 
@@ -60,7 +62,7 @@ f32 gUpdateRateF = 1.0f;
 f32 gUpdateRateMirrorF = 1.0f;
 f32 gUpdateRateInverseF = 1.0f;
 f32 gUpdateRateInverseMirrorF = 1.0f;
-s32 D_8008C968 = -1;
+s32 gMainMapChangeNextMenu = -1;
 u8 alSynFlag = 0;
 s32 D_8008C970 = 0;
 DLL_28_screen_fade *gDLL_28_ScreenFade = NULL;
@@ -135,7 +137,7 @@ Triangle *gMainPol[2];
 Triangle *gCurPol;
 OSSched osscheduler_;
 u64 ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)];
-s8 D_800B09C0;
+s8 gMainDoMapChange;
 u8 gFrameBufIdx;
 s8 gPauseState;
 u8 gDemoState;
@@ -148,7 +150,7 @@ void game_init(void);
 void init_bittable(void);
 void game_tick_no_expansion(void);
 void game_tick(void);
-void func_80014074(void);
+void main_handle_map_change(void);
 void alloc_frame_buffers(void);
 void func_80013D80(void);
 s8 func_800143FC(void);
@@ -272,7 +274,7 @@ void game_init(void) {
     dl_init_debug_infos();
     menu_set(MENU_POST);
     if (osMemSize == EXPANSION_SIZE) {
-        func_80014074();
+        main_handle_map_change();
     }
     func_80041D20(0);
     func_80041C6C(0);
@@ -357,7 +359,7 @@ void game_tick(void) {
     gUpdateRateMirrorF = gUpdateRateF;
     gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 
-    func_80014074();
+    main_handle_map_change();
     write_c_file_label_pointers("main/main.c", 0x37C);
 }
 
@@ -478,11 +480,11 @@ void func_80013FB4(void) {
     gDLL_5_AMSEQ->vtbl->stop(1);
     gDLL_22_Subtitles->vtbl->func_448();
     unpause();
-    func_800141A4(1, 0, PLAYER_KRYSTAL, -1);
+    main_change_map(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, /*don't change menu*/-1);
 }
 
-void func_80014074(void) {
-    if (D_800B09C0 != 0) {
+void main_handle_map_change(void) {
+    if (gMainDoMapChange) {
         // "$$$$$  CHANGEMAP \n" (default.dol)
         mmSetDelay(0);
         if (D_8008CA30 != 0) {
@@ -495,14 +497,14 @@ void func_80014074(void) {
             gSPEndDisplayList(gCurGfx++);
         }
 
-        D_800B09C0 = 0;
+        gMainDoMapChange = FALSE;
 
         mmSetDelay(0);
         camera_init();
 
-        if (D_8008C968 >= 0) {
-            menu_set(D_8008C968);
-            D_8008C968 = -1;
+        if (gMainMapChangeNextMenu >= 0) {
+            menu_set(gMainMapChangeNextMenu);
+            gMainMapChangeNextMenu = -1;
         }
 
         map_func_8004773C();
@@ -517,8 +519,8 @@ void func_80014074(void) {
 }
 
 // officialName: mainChangeMap
-void func_800141A4(s32 mapID, s32 arg1, s32 playerno, s32 arg3) {
-    PlayerLocation *temp_v0;
+void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
+    PlayerLocation *location;
 
     // "mainChangeMap(%d,%d,%d)\n" (default.dol)
 
@@ -533,20 +535,20 @@ void func_800141A4(s32 mapID, s32 arg1, s32 playerno, s32 arg3) {
     gDLL_30_Task->vtbl->load_recently_completed();
     gDLL_29_Gplay->vtbl->set_playerno(playerno);
 
-    temp_v0 = gDLL_29_Gplay->vtbl->get_player_saved_location();
+    location = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
-    map_func_80048054(mapID, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
-    gDLL_29_Gplay->vtbl->checkpoint(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
+    map_func_80048054(mapID, setupID, &location->vec.x, &location->vec.y, &location->vec.z, &location->mapLayer);
+    gDLL_29_Gplay->vtbl->checkpoint(&location->vec, 0, 0, location->mapLayer);
 
-    D_800B09C0 = 1;
-    D_8008C968 = arg3;
+    gMainDoMapChange = TRUE;
+    gMainMapChangeNextMenu = menuID;
 }
 
 void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     func_8001440C(0);
     map_func_800483BC(arg0, arg1, arg2);
     clear_PlayerPosBuffer();
-    D_800B09C0 = 1;
+    gMainDoMapChange = TRUE;
 }
 
 void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
@@ -565,7 +567,7 @@ void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
 
 void func_800143A4(void) {
     map_func_80048034();
-    D_800B09C0 = 1;
+    gMainDoMapChange = TRUE;
 }
 
 Gfx *func_800143D0(Gfx **arg0) {

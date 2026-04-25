@@ -6,6 +6,7 @@
 #include "dlls/engine/74_picmenu.h"
 #include "game/gametexts.h"
 #include "sys/fonts.h"
+#include "sys/map_enums.h"
 #include "sys/vi.h"
 #include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
@@ -219,7 +220,7 @@ s32 mainmenu_update1(void) {
                 gDLL_29_Gplay->vtbl->save_game_options();
             }
         } else if (sExitTransitionTimer < 1) {
-            func_800141A4(1, 0, PLAYER_KRYSTAL, nextMenuID);
+            main_change_map(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, nextMenuID);
         }
 
         if (sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {

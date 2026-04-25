@@ -6,7 +6,7 @@
   */
 typedef enum {
     MAP_FRONT_END = 0,
-    MAP_FRONT_END2 = 1, //Unused?
+    MAP_FRONT_END2 = 1, //Used by menus (post, game select, etc.)
     MAP_DRAGON_ROCK_TOP = 2,
     MAP_KRAZOA_PALACE = 3,
     MAP_VOLCANO_FORCE_POINT_TEMPLE = 4,
