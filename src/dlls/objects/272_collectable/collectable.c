@@ -607,11 +607,11 @@ void collectable_collect(Object* self) {
         switch (id) {  
         case OBJ_meatPickup:      
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Dino_Egg);
-            obj_free_object_type(self, 5);
+            obj_free_object_type(self, OBJTYPE_5);
             return;
         case OBJ_applePickup:
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
-            obj_free_object_type(self, 5);
+            obj_free_object_type(self, OBJTYPE_5);
             obj_destroy_object(self);
             return;
         case OBJ_beanPickup:
