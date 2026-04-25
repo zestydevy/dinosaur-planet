@@ -1,34 +1,16 @@
-#include "game/objects/object.h"
-#include "dlls/objects/214_animobj.h"
-#include "dlls/objects/210_player.h"
 #include "dll.h"
+#include "dlls/objects/common/vehicle.h"
+#include "dlls/objects/210_player.h"
+#include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
+#include "game/objects/object.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/segment_1050.h"
 #include "sys/segment_1460.h"
-#include "game/gamebits.h"
 #include "sys/vi.h"
-#include "dlls/objects/common/vehicle.h"
 
-typedef struct {
-    u8 state;
-    u8 flags;
-    s8 warpCounter;
-} IMIceMountain_Data;
-
-typedef enum {
-    STATE_0,
-    STATE_Rescue_Tricky,
-    STATE_Race_Start_Sequence,
-    STATE_Race,
-    STATE_Race_Won,
-    STATE_Race_Lost,
-    STATE_Intro_Sequence
-} IMIceMountain_State;
-
-typedef enum {
-    IMICEMOUNTAIN_FLAG_1 = 0x1
-} IMIceMountain_Flag;
+#include "dlls/objects/408_IMIceMountain.h"
 
 static int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 static void IMIceMountain_do_act1(Object *self);
@@ -50,14 +32,16 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     self->animCallback = IMIceMountain_anim_callback;
-    gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
+    gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup1, 0);
+
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
-    case 1:
+    case IM_Act1_Rescuing_Tricky:
         player = get_player();
         if (player && (vec3_distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
             objdata->state = STATE_0;
             break;
         }
+        
         if (main_get_bits(BIT_IM_MultiSeq_3)) {
             if (main_get_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring)) {
                 objdata->state = STATE_Race_Won;
@@ -70,46 +54,51 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
                 objdata->state = STATE_Race_Start_Sequence;
             }
         } else {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0, 1);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 5, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup0_AnimTricky, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup5_Summit_Main, 1);
             if (main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
                 objdata->state = STATE_Rescue_Tricky;
             } else {
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 2, 1);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup2_AnimSpacecraft, 1);
                 objdata->state = STATE_Intro_Sequence;
                 main_set_bits(BIT_Play_Seq_0063_IM_Sabre_Intro, 1);
             }
         }
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 3, 1);
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 4, 1);
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 7, 1);
-    case 2:
-    case 3:
-    case 4:
+
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup3_Cave_Jetbikes_SharpClaw, 1);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup4_Cave_Jetbikes_SharpClaw, 1);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup7_Summit_Jetbike_Sequences, 1);
+        break;
+    case IM_Act2:
+        break;
+    case IM_Act3:
+        break;
+    case IM_Act4:
         break;
     }
 }
 
 // offset: 0x330 | func: 1 | export: 1
 void IMIceMountain_control(Object *self) {
-    IMIceMountain_Data *objdata;
+    IMIceMountain_Data *objdata = self->data;
 
-    objdata = self->data;
     vi_set_update_rate_target(1); // 60 FPS
+
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
-    case 1:
+    case IM_Act1_Rescuing_Tricky:
         IMIceMountain_do_act1(self);
         break;
-    case 2:
+    case IM_Act2:
         IMIceMountain_do_act2(self);
         break;
-    case 3:
+    case IM_Act3:
         IMIceMountain_do_act3(self);
         break;
-    case 4:
+    case IM_Act4:
         IMIceMountain_do_act4(self);
         break;
     }
+
     objdata->flags &= ~IMICEMOUNTAIN_FLAG_1;
 }
 
@@ -143,6 +132,7 @@ int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
 
     objdata = self->data;
     objdata->flags |= IMICEMOUNTAIN_FLAG_1;
+
     for (i = 0; i < animObjData->unk98; i++) {
         if (animObjData->unk8E[i] == 1) {
             func_80000860(self, self, 0xA3, 0);
@@ -168,23 +158,25 @@ void IMIceMountain_do_act1(Object *self) {
     case STATE_Intro_Sequence:
         if (main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
             objdata->state = STATE_Rescue_Tricky;
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 2, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup2_AnimSpacecraft, 0);
         }
         break;
     case STATE_Rescue_Tricky:
         if (main_get_bits(BIT_IM_MultiSeq_2)) {
             objdata->state = STATE_Race_Start_Sequence;
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 6, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup6_Track_Icicles, 1);
         }
         break;
     case STATE_Race_Start_Sequence:
         if (main_get_bits(BIT_IM_MultiSeq_3)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0, 0);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 5, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup0_AnimTricky, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup5_Summit_Main, 0);
         }
+
         if (main_get_bits(BIT_IM_Race_Started)) {
             objdata->state = STATE_Race;
         }
+
         if (self->unkDC == 0) {
             func_80000860(self, self, 0xA3, 0);
             func_80000860(self, self, 0x9E, 0);
@@ -196,6 +188,7 @@ void IMIceMountain_do_act1(Object *self) {
             gDLL_12_Minic->vtbl->func6(1);
             self->unkDC = 1;
         }
+
         break;
     case STATE_Race:
         IMIceMountain_do_race(self, objdata);
@@ -203,10 +196,10 @@ void IMIceMountain_do_act1(Object *self) {
     case STATE_Race_Won:
         if (objdata->flags & IMICEMOUNTAIN_FLAG_1) {
             gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 2);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 3, 0);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 4, 0);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 6, 0);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 7, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup3_Cave_Jetbikes_SharpClaw, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup4_Cave_Jetbikes_SharpClaw, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup6_Track_Icicles, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup7_Summit_Jetbike_Sequences, 0);
             objdata->state = STATE_0;
         }
         break;
@@ -214,8 +207,9 @@ void IMIceMountain_do_act1(Object *self) {
         if (objdata->flags & IMICEMOUNTAIN_FLAG_1) {
             objdata->warpCounter = 2;
         }
+
         if (objdata->warpCounter > 0) {
-            objdata->warpCounter -= 1;
+            objdata->warpCounter--;
             if (objdata->warpCounter == 0) {
                 // race will restart after warp
                 warpPlayer(WARP_IM_RACE_START, FALSE);
@@ -234,7 +228,9 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
     Object *snowbike;
 
     gDLL_1_cmdmenu->vtbl->disable_buttons(L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+
     vi_set_update_rate_target(3); // 20 FPS
+
     if (main_get_bits(BIT_IM_Race_Ended)) {
         main_set_bits(BIT_IM_Race_Ended, 0);
         main_set_bits(BIT_IM_Race_Started, 0);
@@ -245,7 +241,9 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
         } else {
             racePosition = 0;
         }
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 1);
+
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup1, 1);
+        
         if (racePosition == 1) {
             gDLL_1_cmdmenu->vtbl->disable_buttons(R_CBUTTONS);
             objdata->state = STATE_Race_Won;
