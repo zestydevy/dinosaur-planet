@@ -65,15 +65,12 @@ typedef struct StructData1C {
 /*0x4C*/ static f32 _data_4C = 0.0f;
 /*0x50*/ static u8 _data_50 = 0;
 /*0x54*/ static u8 _data_54 = 0;
-/*0x58*/ static u32 _data_58 = 0;
-/*0x5C*/ static u32 _data_5C = 0x01000000;
-/*0x60*/ static f32 _data_60 = 0.0f;
 
 /*0x0*/ static s32 sFontID;
 /*0x4*/ static s32 sWindowID;
 /*0x8*/ static s32 _bss_8;
 /*0xC*/ static s32 _bss_C;
-/*0x10*/ static TextureTile _bss_10[3];
+/*0x10*/ static TextureTile sBackground[3];
 /*0x38*/ static StructBss38 _bss_38[3];
 /*0x77C*/ static u8 _bss_77C[0x4];
 /*0x780*/ static StructBss38 *_bss_780[3];
@@ -84,9 +81,9 @@ typedef struct StructData1C {
 /*0x79C*/ static s32 _bss_79C;
 /*0x7A0*/ static u16 _bss_7A0;
 /*0x7A2*/ static u8 _bss_7A2;
-/*0x7A3*/ static u8 _bss_7A3;
+/*0x7A3*/ static u8 sBackgroundWidth;
 /*0x7A4*/ static u8 _bss_7A4;
-/*0x7A8*/ static s32 currentColourCommand;
+/*0x7A8*/ static s32 sCurrentColourCommand;
 /*0x7AC*/ static GameTextChunk *_bss_7AC;
 /*0x7B0*/ static u16 _bss_7B0;
 /*0x7B2*/ static u8 _bss_7B2[0x2];
@@ -119,7 +116,7 @@ void dll_22_ctor(s32 arg0) {
 
     sFontID = 1;
     sWindowID = 6;
-    font_load(1);
+    font_load(FONT_DINO_SUBTITLE_FONT_1);
     _bss_780[0] = &_bss_38[0];
     _bss_780[1] = &_bss_38[1];
     _bss_780[2] = &_bss_38[2];
@@ -128,6 +125,7 @@ void dll_22_ctor(s32 arg0) {
     _data_40 = 0;
     var_a1 = _bss_38;
     var_v1 = 0;
+
     for (i = 0; i < 3; i++) {
         var_v0 = &_bss_38[i];
         for (j = 0; j < 8; j += 1) {
@@ -141,16 +139,18 @@ void dll_22_ctor(s32 arg0) {
             var_v0->unkC8[1][j].unkA = NULL;
         }
     }
-    _bss_10[0].tex = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
-    _bss_10[1].tex = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
-    _bss_10[2].tex = NULL;
-    _bss_10[0].x = 0;
-    _bss_10[1].x = _bss_10[0].tex->width;
-    _bss_7A3 = _bss_10[0].tex->width + _bss_10[1].tex->width;
-    _bss_10[0].y = -2;
-    _bss_10[1].y = -2;
-    _bss_10[0].animProgress = 0;
-    _bss_10[1].animProgress = 0;
+
+    //Set up background strip (shown behind subtitles when played outside of sequences)
+    sBackground[0].tex = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
+    sBackground[1].tex = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
+    sBackground[2].tex = NULL;
+    sBackground[0].x = 0;
+    sBackground[1].x = sBackground[0].tex->width;
+    sBackgroundWidth = sBackground[0].tex->width + sBackground[1].tex->width;
+    sBackground[0].y = -2;
+    sBackground[1].y = -2;
+    sBackground[0].animProgress = 0;
+    sBackground[1].animProgress = 0;
 }
 
 // offset: 0x1D4 | dtor
@@ -160,7 +160,8 @@ void dll_22_dtor(s32 arg0) {
     s32 i;
     s32 j;
 
-    font_unload(1);
+    font_unload(FONT_DINO_SUBTITLE_FONT_1);
+
     for (j = 0; j < 3; j++) {
         temp = &_bss_38[j];
         for (i = 0; i < 8; i++) {
@@ -174,17 +175,18 @@ void dll_22_dtor(s32 arg0) {
             }
         }
     }
-    tex_free(_bss_10[0].tex);
-    tex_free(_bss_10[1].tex);
+
+    tex_free(sBackground[0].tex);
+    tex_free(sBackground[1].tex);
 }
 
 // offset: 0x2D0 | func: 0 | export: 0
 u32 dll_22_func_2D0(u32 arg0) {
-    u32 temp_v0;
+    u32 previous;
 
-    temp_v0 = _data_38;
+    previous = _data_38;
     _data_38 = arg0;
-    return temp_v0;
+    return previous;
 }
 
 // offset: 0x2F4 | func: 1 | export: 1
@@ -208,7 +210,7 @@ void dll_22_func_368(u16 arg0) {
         dll_22_func_448();
     }
     _data_34 = 1;
-    currentColourCommand = -255;
+    sCurrentColourCommand = -255;
     _bss_7AC = gDLL_21_Gametext->vtbl->get_chunk(arg0);
     _bss_7B0 = arg0;
 }
@@ -263,7 +265,9 @@ void dll_22_func_578(Gfx **gdl) {
             _data_40 = 0;
         }
     }
+
     dll_22_func_8F4();
+
     if (_data_34 == 0) {
         return;
     }
@@ -369,51 +373,39 @@ void dll_22_func_578(Gfx **gdl) {
 }
 
 // offset: 0xC64 | func: 10
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_C64.s")
-#else
-// WIP
-/* static */ void dll_22_func_C64(void) {
-    StructBss38 *temp;
-    s32 j;
+void dll_22_func_C64(void) {
+    static s8 _data_58 = 0;
+    static s8 _data_5C = 1;
+    static f32 _data_60 = 0.0f;
     s32 i;
-    f32 temp_fv0;
-    s32 temp_t2;
+    s32 j;
 
-    temp_fv0 = _data_60;
-    temp_fv0 += gUpdateRateF;
-    if (_data_5C != 0) {
-        _data_60 = temp_fv0;
-        if (temp_fv0 > 10.0f) {
-            temp_t2 = (s8)(_data_58 + 1);
-            _data_58 = temp_t2;
-            temp_fv0 -= 10.0f;
-            _data_60 = temp_fv0;
-            if ((s8)temp_t2 == 3) {
+    _data_60 += gUpdateRateF;
+    
+    if (_data_5C) {
+        if (_data_60 > 10.0f) {
+            _data_60 -= 10.0f;
+            _data_58++;
+            if (_data_58 == 3) {
                 _data_5C = 0;
             }
         }
     } else {
-        _data_60 = temp_fv0;
-        if (temp_fv0 > 10.0f) {
-            temp_t2 = (s8)(_data_58 - 1);
-            _data_58 = temp_t2;
-            temp_fv0 -= 10.0f;
-            _data_60 = temp_fv0;
-            if ((s8)temp_t2 == 0) {
+        if (_data_60 > 10.0f) {
+            _data_60 -= 10.0f;
+            _data_58--;
+            if (_data_58 == 0) {
                 _data_5C = 1;
             }
         }
     }
-    temp_t2 = _data_58 << 8;
+    
     for (i = 0; i < 3; i++) {
-        temp = &_bss_38[i];
         for (j = 0; j < 8; j += 1) {
-            temp->unkC8[0][j].unk4 = temp_t2;
+            _bss_38[i].unkC8[0][j].unk4 = _data_58 << 8;
         }
     }
 }
-#endif
 
 // offset: 0xD9C | func: 11
 // Needs to be static for matching
@@ -456,8 +448,8 @@ void dll_22_func_D9C(Gfx **gdl) {
     }
     if (camera_get_letterbox() == 0) {
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, (_bss_8 - 2), (_bss_7A0 - 1), (_bss_C + 2));
-        for (i = 0; i < _bss_7A0; i += _bss_7A3) {
-            rcp_tile_write(gdl, _bss_10, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
+        for (i = 0; i < _bss_7A0; i += sBackgroundWidth) {
+            rcp_tile_write(gdl, sBackground, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
         }
     }
     font_window_set_coords(sWindowID, _bss_798, _bss_8, _bss_798 + _bss_79C, _bss_C);
@@ -682,7 +674,7 @@ void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4)
 static void dll_22_func_2000(u8 *colour_rgba32, s32 rgba8) {
     s32 componentIndex;
 
-    currentColourCommand = rgba8;
+    sCurrentColourCommand = rgba8;
     rgba8 = -rgba8;
 
     switch (rgba8 & 3) {
