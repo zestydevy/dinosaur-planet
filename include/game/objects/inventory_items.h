@@ -92,6 +92,18 @@ typedef enum {
 }  InventorySpellIndices;
 
 typedef enum {
+    INVENTORY_DINO_FOOD_0_Dino_Bag_S,     
+    INVENTORY_DINO_FOOD_1_Dino_Bag_M,     
+    INVENTORY_DINO_FOOD_2_Dino_Bag_L,     
+    INVENTORY_DINO_FOOD_3_Blue_Mushrooms,
+    INVENTORY_DINO_FOOD_4_Red_Mushrooms, 
+    INVENTORY_DINO_FOOD_5_Old_Mushrooms, 
+    INVENTORY_DINO_FOOD_6_Blue_Grubs,    
+    INVENTORY_DINO_FOOD_7_Red_Grubs,     
+    INVENTORY_DINO_FOOD_8_Old_Grubs
+}  SidekickFoodbagIndices;
+
+typedef enum {
     ICON_WARP_CRYSTAL = 0x0245,
     ICON_KEY = 0x0175,
     ICON_MOON_MOUNTAIN_PASS_KEY = 0x0568, //unused?
