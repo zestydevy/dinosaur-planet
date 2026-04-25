@@ -852,9 +852,6 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
     animState->unk58[1] = arg3;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025780.s")
-#else
 void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u16 arg3) {
     Vec3f* sp94;
     Vec3f sp88;
@@ -905,7 +902,7 @@ void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u
             break;
         }
     }
-    if (var_s0 == 0 || sp94 == NULL) {
+    if (!var_s0 || sp94 == NULL) {
         return;
     }
 
@@ -973,7 +970,6 @@ void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u
         var_s5++;
     }
 }
-#endif
 
 u8 func_80025CD4(s32 arg0) {
     if (arg0 >= (s32)ARRAYCOUNT(D_800916B0))
