@@ -1,12 +1,14 @@
-#include "dlls/engine/6_amsfx.h"
+#include "macros.h"
+#include "game/gamebits.h"
+#include "game/gametexts.h"
 #include "game/objects/object.h"
 #include "sys/joypad.h"
-#include "dlls/objects/common/sidekick.h"
-#include "dlls/objects/214_animobj.h"
-#include "game/gamebits.h"
-#include "dll.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "dll.h"
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/214_animobj.h"
 
 typedef struct {
     u8 state;
@@ -19,24 +21,26 @@ typedef struct {
 typedef struct {
     ObjSetup base;
     u8 unk18[0x23 - 0x18];
-    u8 unk23;
+    u8 unk23; //Find command range?
 } GroundAnimator_Setup;
 
 typedef enum {
-    STATE_0,
-    STATE_1,
-    STATE_2
+    STATE_0_Initial,
+    STATE_1_Chased_by_SharpClaw,
+    STATE_2_Learning_Sidekick_Commands
 } NWtricky_State;
 
 typedef enum {
-    STATE2_0,
-    STATE2_1,
-    STATE2_2
+    NWtricky_DEMO_STATE_Initial,
+    NWtricky_DEMO_STATE_Show_Inventory,
+    NWtricky_DEMO_STATE_Close_Inventory
 } NWtricky_State2;
 
-// time for tricky to call for help
-#define NWTRICKY_MAX_TIMER_1 600.0f
-#define NWTRICKY_MAX_TIMER_2 2000.0f
+// Time for Tricky to call out while being chased by a SharpClaw
+#define NWTRICKY_INVERVAL_CALL_FOR_HELP 600.0f
+
+// Time for Tricky to offer hint
+#define NWTRICKY_INVERVAL_OFFER_HINT 2000.0f
 
 static int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
@@ -54,13 +58,15 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata = self->data;
     objdata->sidekickStats = gDLL_29_Gplay->vtbl->get_sidekick_stats();
     objdata->doneDemo = FALSE;
-    objdata->demoState = STATE2_0;
+    objdata->demoState = NWtricky_DEMO_STATE_Initial;
+
     if (!main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
         main_set_bits(BIT_4E3, 0xFF);
-        objdata->state = STATE_0;
+        objdata->state = STATE_0_Initial;
     } else {
-        objdata->state = STATE_2;
+        objdata->state = STATE_2_Learning_Sidekick_Commands;
     }
+
     if (!main_get_bits(BIT_4D4)) {
         tricky = get_sidekick();
         if (tricky) {
@@ -68,6 +74,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
             main_set_bits(BIT_4D4, 1);
         }
     }
+
     self->animCallback = NWtricky_anim_callback;
 }
 
@@ -81,56 +88,73 @@ void NWtricky_control(Object *self) {
 
     objdata = self->data;
     tricky = get_sidekick();
-    if (tricky) {
-        switch (objdata->state) {
-        case STATE_0:
-            if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-                main_set_bits(BIT_8, 1);
-                main_set_bits(BIT_4E4, 1);
-                objdata->state = STATE_2;
-            } else if (((DLL_ISidekick*)tricky->dll)->vtbl->func24(tricky) != 0) {
-                objdata->state = STATE_1;
-                objdata->timer = 0.0f;
-            }
-            break;
-        case STATE_1:
-            if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-                ((DLL_ISidekick*)tricky->dll)->vtbl->func21(tricky, 0, 0);
-                gDLL_6_AMSFX->vtbl->func_A6C(tricky);
-                main_set_bits(BIT_4E3, 0);
-                objdata->state = STATE_2;
-            } else {
-                objdata->timer += gUpdateRateF;
-                if (objdata->timer >= NWTRICKY_MAX_TIMER_1) {
-                    objdata->timer -= NWTRICKY_MAX_TIMER_1;
-                    gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_222_NW_Tricky_Sharpclaw_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
-                }
-            }
-            break;
-        case STATE_2:
+    if (tricky == NULL) {
+        return;
+    }
+
+    switch (objdata->state) {
+    case STATE_0_Initial:
+        if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+            main_set_bits(BIT_8, 1);
+            main_set_bits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
+            objdata->state = STATE_2_Learning_Sidekick_Commands;
+        } else if (((DLL_ISidekick*)tricky->dll)->vtbl->func24(tricky) != 0) {
+            objdata->state = STATE_1_Chased_by_SharpClaw;
+            objdata->timer = 0.0f;
+        }
+        break;
+
+    case STATE_1_Chased_by_SharpClaw:
+        if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+            ((DLL_ISidekick*)tricky->dll)->vtbl->func21(tricky, 0, 0);
+            gDLL_6_AMSFX->vtbl->func_A6C(tricky);
+            main_set_bits(BIT_4E3, 0);
+            objdata->state = STATE_2_Learning_Sidekick_Commands;
+        } else {
+            //Call out while being chased
             objdata->timer += gUpdateRateF;
-            if (objdata->timer >= NWTRICKY_MAX_TIMER_2) {
-                if (main_get_bits(BIT_4E3) == 0xFF) {
-                    objdata->timer = 0.0f;
-                    if (objdata->sidekickStats->blueFood < 4) {
-                        main_set_bits(BIT_4E3, 1);
-                    } else if (!main_get_bits(BIT_111) && main_get_bits(BIT_4E4)) {
-                        player = get_player();
-                        // get GroundAnimator object for the hole containing tricky's ball
-                        trickyballGroundAnimator = func_800211B4(6021);
-                        gaSetup = (GroundAnimator_Setup*)trickyballGroundAnimator->setup;
-                        if ((vec3_distance_squared(&trickyballGroundAnimator->globalPosition, &player->globalPosition) <= SQ(gaSetup->unk23)) && (vec3_distance_squared(&player->globalPosition, &tricky->globalPosition) <= 10000.0f)) {
-                            gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_4BC_Tricky_Dig_EMPTY, MAX_VOLUME, NULL, NULL, 0, NULL);
-                            gDLL_22_Subtitles->vtbl->func_368(0xBE);
-                        }
+            if (objdata->timer >= NWTRICKY_INVERVAL_CALL_FOR_HELP) {
+                objdata->timer -= NWTRICKY_INVERVAL_CALL_FOR_HELP;
+                gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_222_NW_Tricky_Sharpclaw_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
+            }
+        }
+        break;
+
+    case STATE_2_Learning_Sidekick_Commands:
+        objdata->timer += gUpdateRateF;
+        if (objdata->timer >= NWTRICKY_INVERVAL_OFFER_HINT) {
+            if (main_get_bits(BIT_4E3) == 0xFF) {
+                objdata->timer = 0.0f;
+                if (objdata->sidekickStats->blueFood < 4) {
+                    main_set_bits(BIT_4E3, 1);
+                } else if (!main_get_bits(BIT_SW_Tricky_Toy_Unearthed) && main_get_bits(BIT_Tricky_Unlocked_Sidekick_Commands)) {
+                    player = get_player();
+
+                    //Get GroundAnimator object for the hole containing Tricky's ball
+                    trickyballGroundAnimator = func_800211B4(0x1785); //search by uID
+
+                    //@bug: missing null check
+                    gaSetup = (GroundAnimator_Setup*)trickyballGroundAnimator->setup;
+
+                    //Offer a hint if Tricky and the player stay at the toy's dig spot for a while
+                    if ((vec3_distance_squared(
+                            &trickyballGroundAnimator->globalPosition,
+                            &player->globalPosition) <= SQ(gaSetup->unk23)) && 
+                        (vec3_distance_squared(
+                            &player->globalPosition, 
+                            &tricky->globalPosition) <= 10000.0f)
+                    ) {
+                        gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_4BC_Tricky_Dig_EMPTY, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_0BE_SW_Tricky_Tutorial_Hint);
                     }
                 }
             }
-            if (main_get_bits(BIT_25)) {
-                main_set_bits(BIT_3F8, 1);
-            }
-            break;
         }
+
+        if (main_get_bits(BIT_25)) {
+            main_set_bits(BIT_3F8, 1);
+        }
+        break;
     }
 }
 
@@ -144,7 +168,7 @@ void NWtricky_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle
 void NWtricky_free(Object *self, s32 a1) {
     if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw) && !main_get_bits(BIT_4E3)) {
         main_set_bits(BIT_4E3, 0xFF);
-        main_set_bits(BIT_4E4, 1);
+        main_set_bits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
     }
 }
 
@@ -170,41 +194,52 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
 
     if (!objdata->doneDemo) {
         tricky = get_sidekick();
-        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 1);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 2);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 3);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 4);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 5);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, 0);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, Sidekick_Command_INDEX_1_Find);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, Sidekick_Command_INDEX_2_Distract);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, Sidekick_Command_INDEX_3_Guard);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, Sidekick_Command_INDEX_4_Flame);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, Sidekick_Command_INDEX_5_Play);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->func14(tricky, Sidekick_Command_INDEX_0_Heel);
+
         switch (objdata->demoState) {
-        case STATE2_0:
+        case NWtricky_DEMO_STATE_Initial:
+            STUBBED_PRINTF("menu start\n");
             for (i = 0; i < animObjData->unk98; i++) {
                 if (animObjData->unk8E[i] == 3)
-                    objdata->demoState = STATE2_1;
+                    objdata->demoState = NWtricky_DEMO_STATE_Show_Inventory;
             }
             break;
-        case STATE2_1:
-            joy_get_pressed_raw(0);
+
+        case NWtricky_DEMO_STATE_Show_Inventory:
+            STUBBED_PRINTF("menu cbuttons %d\n", joy_get_pressed_raw(0));
             for (i = 0; i < animObjData->unk98; i++) {
                 if (animObjData->unk8E[i] == 4) {
-                    objdata->demoState = STATE2_2;
+                    objdata->demoState = NWtricky_DEMO_STATE_Close_Inventory;
                     break;
                 } else if (animObjData->unk8E[i] == 1)
                     buttonMask = D_CBUTTONS; // simulate C-Down press
             }
+
+            //Get player's C-button presses as well
             buttonMask |= joy_get_pressed_raw(0) & D_CBUTTONS;
             break;
-        case STATE2_2:
+
+        case NWtricky_DEMO_STATE_Close_Inventory:
+            STUBBED_PRINTF("menu a button\n");
             for (i = 0; i < animObjData->unk98; i++) {
                 if (animObjData->unk8E[i] == 2)
                     buttonMask = A_BUTTON; // simulate A press
             }
+
+            //Get player's A presses as well
             buttonMask |= joy_get_pressed_raw(0) & A_BUTTON;
+
             if (buttonMask & A_BUTTON) {
                 objdata->doneDemo = TRUE;
             }
             break;
         }
+
         gDLL_1_cmdmenu->vtbl->set_buttons_override(buttonMask);
     } else {
         gDLL_1_cmdmenu->vtbl->set_buttons_override(CMDMENU_CLEAR_BUTTONS_OVERRIDE);
@@ -212,7 +247,3 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
 
     return 0;
 }
-
-/*0x0*/ static const char str_0[] = "menu start\n";
-/*0xC*/ static const char str_C[] = "menu cbuttons %d\n";
-/*0x20*/ static const char str_20[] = "menu a button\n";

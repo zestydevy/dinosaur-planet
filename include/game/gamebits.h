@@ -277,7 +277,7 @@ typedef enum {
     BIT_10E = 0x10E, // len:1 group:0
     BIT_10F = 0x10F, // len:1 group:0
     BIT_110 = 0x110, // len:1 group:0
-    BIT_111 = 0x111, // len:1 group:2
+    BIT_SW_Tricky_Toy_Unearthed = 0x111, // len:1 group:2 [FIND COMMAND SPOT] Dug up Tricky's Toy in SnowHorn Wastes' geyser area
     BIT_112 = 0x112, // len:1 group:2
     BIT_113 = 0x113, // len:1 group:2
     BIT_114 = 0x114, // len:1 group:2
@@ -585,7 +585,7 @@ typedef enum {
     BIT_DIM_Used_Door_Key_1 = 0x242, // len:1 group:1   [INVENTORY - HIDE]
     BIT_WC_Used_Moon_Stone = 0x243, // len:1 group:1    [INVENTORY - HIDE]
     BIT_244 = 0x244, // len:1 group:1
-    BIT_245 = 0x245, // len:1 group:2
+    BIT_Tricky_Learned_Flame_Command = 0x245, // len:1 group:2 [SIDEKICK COMMAND]
     BIT_246 = 0x246, // len:1 group:2
     BIT_247 = 0x247, // len:1 group:0
     BIT_248 = 0x248, // len:1 group:0
@@ -1256,7 +1256,7 @@ typedef enum {
     BIT_4E1 = 0x4E1, // len:1 group:1
     BIT_4E2 = 0x4E2, // len:16 group:3
     BIT_4E3 = 0x4E3, // len:8 group:1
-    BIT_4E4 = 0x4E4, // len:1 group:2
+    BIT_Tricky_Unlocked_Sidekick_Commands = 0x4E4, // len:1 group:2 [SIDEKICK COMMAND] Unlocks Tricky's sidekick commands menu (set during his tutorial chat in SnowHorn Wastes' geyser area)
     BIT_Tricky_Spawns = 0x4E5, // len:1 group:2
     BIT_4E6 = 0x4E6, // len:1 group:1
     BIT_4E7 = 0x4E7, // len:1 group:1
