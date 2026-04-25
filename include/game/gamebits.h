@@ -41,7 +41,7 @@ typedef enum {
     BIT_22 = 0x22, // len:1 group:0
     BIT_CloudRunner_Grubs = 0x23, // len:4 group:2          [INVENTORY]
     BIT_Sabre_Dino_Bag_M = 0x24, // len:1 group:1 (medium)  [INVENTORY]
-    BIT_25 = 0x25, // len:1 group:2
+    BIT_SW_Tricky_Ball_Collected = 0x25, // len:1 group:2
     BIT_26 = 0x26, // len:1 group:2
     BIT_27 = 0x27, // len:1 group:1
     BIT_28 = 0x28, // len:1 group:1
@@ -162,7 +162,7 @@ typedef enum {
     BIT_9B = 0x9B, // len:1 group:2
     BIT_9C = 0x9C, // len:1 group:2
     BIT_9D = 0x9D, // len:1 group:2
-    BIT_Tricky_Distract_Learned = 0x9E, // len:1 group:2
+    BIT_Tricky_Learned_Distract = 0x9E, // len:1 group:2 [SIDEKICK COMMAND]
     BIT_SB_Scales_Intro = 0x9F, // len:1 group:0
     BIT_SB_Found_Kyte = 0xA0, // len:1 group:1 task:2
     BIT_A1 = 0xA1, // len:1 group:0
@@ -225,7 +225,7 @@ typedef enum {
     BIT_DA = 0xDA, // len:1 group:2
     BIT_DB = 0xDB, // len:1 group:1
     BIT_DC = 0xDC, // len:1 group:1
-    BIT_DD = 0xDD, // len:1 group:2
+    BIT_Tricky_Learned_Guard = 0xDD, // len:1 group:2 [SIDEKICK COMMAND]
     BIT_DE = 0xDE, // len:1 group:2
     BIT_Rolling_Demo_Map_Setup = 0xDF, // len:4 group:1
     BIT_DF_Map_Setup = 0xE0, // len:4 group:1
@@ -585,7 +585,7 @@ typedef enum {
     BIT_DIM_Used_Door_Key_1 = 0x242, // len:1 group:1   [INVENTORY - HIDE]
     BIT_WC_Used_Moon_Stone = 0x243, // len:1 group:1    [INVENTORY - HIDE]
     BIT_244 = 0x244, // len:1 group:1
-    BIT_Tricky_Learned_Flame_Command = 0x245, // len:1 group:2 [SIDEKICK COMMAND]
+    BIT_Tricky_Learned_Flame = 0x245, // len:1 group:2 [SIDEKICK COMMAND]
     BIT_246 = 0x246, // len:1 group:2
     BIT_247 = 0x247, // len:1 group:0
     BIT_248 = 0x248, // len:1 group:0
@@ -1020,7 +1020,7 @@ typedef enum {
     BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever = 0x3F5, // len:1 group:0 (position noted from left, while facing towards ocean)
     BIT_3F6 = 0x3F6, // len:1 group:0
     BIT_3F7 = 0x3F7, // len:1 group:0
-    BIT_3F8 = 0x3F8, // len:1 group:2
+    BIT_Tricky_Ball_Unlocked = 0x3F8, // len:1 group:2 [SIDEKICK COMMAND]
     BIT_3F9 = 0x3F9, // len:1 group:2
     BIT_3FA = 0x3FA, // len:1 group:2
     BIT_3FB = 0x3FB, // len:1 group:2
@@ -2321,7 +2321,7 @@ typedef enum {
     BIT_90B = 0x90B, // len:1 group:2
     BIT_90C = 0x90C, // len:1 group:2
     BIT_Tutorial_Magic_Crystal = 0x90D, // len:1 group:2 [TUTORIAL]
-    BIT_90E = 0x90E, // len:1 group:2
+    BIT_Tutorial_Collected_Energy_Egg = 0x90E, // len:1 group:2 [TUTORIAL]
     BIT_90F = 0x90F, // len:1 group:2
     BIT_Tutorial_Collected_Scarab = 0x910, // len:1 group:2 [TUTORIAL]
     BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj = 0x911, // len:1 group:2 [TUTORIAL] (Used to assign tutorial sequence's animObj only once. Gamebit 0x119 is used for the tutorial sequence itself!)

@@ -40,7 +40,7 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     func_800267A4(self);
     objdata->collision.mode = 0;
     obj_init_mesg_queue(self, 1);
-    main_set_bits(BIT_3F8, 0);
+    main_set_bits(BIT_Tricky_Ball_Unlocked, 0);
 }
 
 // offset: 0x1A4 | func: 1
@@ -205,7 +205,7 @@ void SidekickToy_free(Object* self, s32 arg1) {
             ((DLL_210_Player*)player->dll)->vtbl->func9(player, 0);
         }
     }
-    main_set_bits(BIT_3F8, 1);
+    main_set_bits(BIT_Tricky_Ball_Unlocked, 1);
 }
 
 // offset: 0xA64 | func: 7 | export: 5

@@ -299,7 +299,7 @@ void collectable_control(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x549, 0, 1, -1, 0);
             }
 
-            if (main_get_bits(BIT_90E) == 0) {
+            if (main_get_bits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
                 gDLL_3_Animation->vtbl->func30(collectableDef->seqObjectID, 0, 0);
                 outMessage = 0;
                 obj_send_mesg(
@@ -308,7 +308,7 @@ void collectable_control(Object* self) {
                     self, 
                     0
                 );
-                main_set_bits(BIT_90E, 1);
+                main_set_bits(BIT_Tutorial_Collected_Energy_Egg, 1);
             } else {
                 objdata->timerDestroy = 180.0f;
                 collectable_collect(self);

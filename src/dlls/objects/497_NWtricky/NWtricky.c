@@ -151,8 +151,8 @@ void NWtricky_control(Object *self) {
             }
         }
 
-        if (main_get_bits(BIT_25)) {
-            main_set_bits(BIT_3F8, 1);
+        if (main_get_bits(BIT_SW_Tricky_Ball_Collected)) {
+            main_set_bits(BIT_Tricky_Ball_Unlocked, 1);
         }
         break;
     }
