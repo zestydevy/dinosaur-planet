@@ -8,7 +8,6 @@
 typedef union {
     void (*asVoid)(void);
     void (*withOneArg)(s32);
-    
     void (*withTwoArgs)(s32, s32);
     void (*withThreeArgs)(s32, s32, s32);
     void (*withFourArgs)(s32, s32, s32, s32);
@@ -34,6 +33,7 @@ typedef union {
     s32 (*withSevenArgsS32)(s32, s32, s32, s32, s32, s32, s32);
     f32 (*asVoidF32)(void);
     f32 (*withOneArgF32)(s32);
+    f32 (*withOneVoidArgF32)(void*);
     f32 (*withTwoArgsF32)(s32, s32);
     f32 (*withThreeArgsF32)(s32, s32, s32);
     f32 (*withFourArgsF32)(s32, s32, s32, s32);
@@ -46,6 +46,7 @@ typedef union {
     void (*withOneS32OneF32)(s32, f32);
     void (*withTwoArgsCustom)(void *, s32);
     void (*withFourArgsCustom)(void *, void *, f32, s32);
+    void (*withFourArgsCustom2)(void*, void *, void*, void *);
     void (*withFiveArgsCustom)(void *, f32, f32 *, f32 *, f32 *);
     void (*withFiveArgsCustom2)(void *, void *, f32, s32, f32);
     s32 (*withFiveArgsCustom3)(void *, void *, s8, f32 *, f32 *);

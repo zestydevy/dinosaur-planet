@@ -1,5 +1,6 @@
 #include "common.h"
 #include "macros.h"
+#include "dlls/objects/210_player.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
@@ -399,8 +400,144 @@ s32 func_80024108(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3
     return var_t3;
 }
 
-//https://decomp.me/scratch/zIGpo
-#pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_8002493C.s")
+s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
+    AnimState* temp_a1;
+    Animation* var_v0;
+    Model* temp_v1;
+    ModelInstance* temp_v0;
+    f32 temp_fa1;
+    s32 stop;
+    f32 var_fa0;
+    s32 temp_a1_2;
+    f32 var_fv0;
+    f32 sp50;
+    f32 var_fv1;
+    s16* var_v1;
+    s32 var_a3;
+    s32 var_t1;
+    f32 sp3C;
+    f32 var_ft4;
+    f32 sp34;
+    s16* temp_a2;
+    s32 pad2;
+    f32 var_fs1;
+    f32 var_fs0;
+    f32 sp20;
+    f32 sp1C;
+
+    temp_v0 = arg0->modelInsts[arg0->modelInstIdx];
+    temp_v1 = temp_v0->model;
+    if (temp_v1->animCount <= 0) {
+        return 0;
+    }
+    temp_a1 = temp_v0->animState0;
+    temp_a2 = NULL;
+    pad2 = temp_a1->unk58[1];
+    var_fv1 = sp50 = arg0->srt.scale;
+    var_fv0 = var_fv1 / arg0->def->scale;
+    arg1 *= var_fv0;
+    if (temp_a1->unk58[1] != 0) {
+        sp20 = temp_a1->unk58[1] / 1023.0f;
+        sp1C = 1.0f - sp20;
+        if (temp_v1->unk71 & 0x40) {
+            var_v0 = &temp_a1->anims2[temp_a1->unk48[0]]->anim;
+        } else {
+            var_v0 = temp_v1->anims[temp_a1->unk48[0]];
+        }
+        if (var_v0->offset_rootMotion != 0) {
+            temp_a2 = (u8*)var_v0 + var_v0->offset_rootMotion;
+            sp34 = ((f32*)temp_a2)[0] * var_fv1;
+            temp_a2 += 3;
+            if (temp_a2[0] == 0) {
+                temp_a2++;
+                if (temp_a2[0] == 0) {
+                    temp_a2++;
+                    if (temp_a2[0] == 0) {
+                        temp_a2 = NULL;
+                    }
+                }
+            }
+            if (temp_a2 != NULL) {
+                temp_a2++;
+            }
+        }
+    }
+    if (temp_v1->unk71 & 0x40) {
+        var_v0 = &temp_a1->anims[temp_a1->animIndexes[0]]->anim;
+    } else {
+        var_v0 = temp_v1->anims[temp_a1->animIndexes[0]];
+    }
+    if (var_v0->offset_rootMotion) {
+        var_v1 = (u8*)var_v0 + var_v0->offset_rootMotion;
+        temp_a1_2 = var_v1[2] - 1;
+        // FAKE var_v1[0] * 0
+        var_ft4 = ((f32*)var_v1)[var_v1[0] * 0] * var_fv1;
+        var_t1 = 0;
+        var_v1 = var_v1 + 3;
+        if (var_v1[0]) {
+            var_t1 = 1;
+        } else {
+            var_v1++;
+        }
+        if ((var_t1 == 0) && (var_v1[0] == 0)) {
+            var_v1++;
+        }
+        if ((var_v1++)[0]) {
+            if (var_v1[temp_a1_2] < 0) {
+                var_ft4 = -var_ft4;
+            }
+            if (var_v1[temp_a1_2] == 0) {
+                return 0;
+            }
+            sp3C = 1.0f / temp_a1_2;
+            sp50 = arg0->animProgress * temp_a1_2;
+            var_a3 = sp50;
+            sp50 -= var_a3;
+            if (temp_a2 != NULL) {
+                if (temp_a2[temp_a1_2] < 0) {
+                    sp34 = -sp34;
+                }
+                var_fa0 = (var_v1[var_a3 + 0] * sp1C * var_ft4);
+                var_fa0 += (temp_a2[var_a3 + 0] * sp20 * sp34);
+                var_fv0 = (var_v1[var_a3 + 1] * sp1C * var_ft4);
+                var_fv0 += (temp_a2[var_a3 + 1] * sp20 * sp34);
+            } else {
+                var_fa0 = var_v1[var_a3 + 0] * var_ft4;
+                var_fv0 = var_v1[var_a3 + 1] * var_ft4;
+            }
+            temp_fa1 = ((var_fv0 - var_fa0) * sp50) + var_fa0 + arg1;
+            var_fv1 = sp3C - (sp3C * sp50);
+            stop = 0;
+            // FAKE
+            if (0) { }
+            do {
+                if (temp_fa1 < var_fv0) {
+                    stop = 1;
+                    var_fv1 -= ((var_fv0 - temp_fa1) * sp3C) / (var_fv0 - var_fa0);
+                } else {
+                    var_a3++;
+                    if (var_a3 >= temp_a1_2) {
+                        var_a3 = 0;
+                    }
+                    var_fa0 = var_fv0;
+                    if (temp_a2 != NULL) {
+                        var_fs0 = ((f32) var_v1[var_a3 + 1] - (f32) var_v1[var_a3 + 0]) * var_ft4;
+                        var_fs1 = ((f32) temp_a2[var_a3 + 1] - (f32) temp_a2[var_a3 + 0]) * sp34;
+                        var_fv0 += (var_fs0 * sp1C) + (var_fs1 * sp20);
+                    } else {
+                        var_fv0 += ((f32) var_v1[var_a3 + 1] - (f32) var_v1[var_a3 + 0]) * var_ft4;
+                    }
+                    var_fv1 += sp3C;
+                }
+            } while (stop == 0);
+            if (arg2 != NULL) {
+                *arg2 = var_fv1;
+            }
+            return 1;
+        }
+    }
+    return 0;
+}
 
 void func_80024D74(Object* object, s32 arg1) {
     ModelInstance* model;
@@ -715,7 +852,128 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
     animState->unk58[1] = arg3;
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025780.s")
+#else
+void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u16 arg3) {
+    Vec3f* sp94;
+    Vec3f sp88;
+    f32 sp84; // var_fv0
+    u16 *sp80;
+    u8 var_s0;
+    u8 sp7E;
+    DLL27_Data* sp78;
+    SRT sp60;
+    u8 var_s0_3;
+    u8 var_s5;
+
+    sp94 = NULL;
+    switch (arg0->group) {
+    case 1:
+        ((DLL_210_Player*)arg0->dll)->vtbl->func55(arg0, updateRate, &sp80, &sp7E, &sp94);
+        sp78 = ((DLL_210_Player*)arg0->dll)->vtbl->func57(arg0);
+        sp84 = ((DLL_210_Player*)arg0->dll)->vtbl->func56(arg0);
+        break;
+    case 2:
+        ((DLL_Unknown*)arg0->dll)->vtbl->func[10].withFourArgsCustom2(arg0, &sp80, &sp7E, &sp94);
+        sp78 = ((DLL_Unknown*)arg0->dll)->vtbl->func[12].withOneVoidArgS32(arg0);
+        sp84 = ((DLL_Unknown*)arg0->dll)->vtbl->func[11].withOneVoidArgF32(arg0);
+        break;
+    default:
+        return;
+    }
+
+    var_s0 = 0;
+    for (var_s5 = 0; var_s5 < arg2->unk1B; var_s5++) {
+        switch (arg2->unk13[var_s5]) {
+        case 0:
+            if (arg3 != 0) {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, arg3, 0x7FU, NULL, NULL, 0, NULL);
+            }
+            break;
+        case 1:
+            var_s0 |= 1;
+            break;
+        case 2:
+            var_s0 |= 2;
+            break;
+        case 3:
+            var_s0 |= 4;
+            break;
+        case 4:
+            var_s0 |= 8;
+            break;
+        }
+    }
+    if (var_s0 == 0 || sp94 == NULL) {
+        return;
+    }
+
+    sp60.yaw = 0;
+    sp60.roll = 0;
+    sp60.pitch = 0;
+    sp60.transl.x = 0.0f;
+    sp60.transl.y = 0.0f;
+    sp60.transl.z = 0.0f;
+    sp60.scale = 1.0f;
+    if ((sp78 == NULL || !(sp78->unk25C & 0x10)) && (sp78->flags & 0x400000)) {
+        return;
+    }
+
+    var_s5 = sp78->unk68.unk50[0];
+    if (var_s5 < (s32)ARRAYCOUNT(D_800916B0)) {
+        var_s5 = D_800916B0[var_s5];
+    } else {
+        var_s5 = 0;
+    }
+    if (sp78->underwaterDist != 0.0f) {
+        gDLL_24_Waterfx->vtbl->func_564(&arg0->srt, var_s0, sp94, sp78, sp84);
+        var_s5 = 5;
+    }
+    if (sp80 != 0) {
+        if (var_s0 & 5) {
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, sp80[rand_next(0, 1) * 2 + var_s5 * 4], sp7E, NULL, NULL, 0, NULL);
+        }
+        if (var_s0 & 0xA) {
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, sp80[rand_next(0, 1) * 2 + var_s5 * 4 + 1], sp7E, NULL, NULL, 0, NULL);
+        }
+    }
+
+    if (sp94 == NULL || var_s5 == 5) {
+        return;
+    }
+
+    var_s5 = 0;
+    while (var_s0) {
+        if (var_s0 & 1) {
+            sp88.f[0] = sp94[var_s5].x;
+            sp88.f[1] = 0.0f;
+            sp88.f[2] = sp94[var_s5].z;
+            if (arg0->group == 1) {
+                if (sp78->unk68.unk50[0] == 18) {
+                    sp60.transl.x = sp88.f[0];
+                    sp60.transl.y = 0.0f;
+                    sp60.transl.z = sp88.f[2];
+                    for (var_s0_3 = rand_next(2, 4); var_s0_3 != 0; var_s0_3--) {
+                        gDLL_17_partfx->vtbl->spawn(arg0, 0x259, &sp60, 0x10001, -1, NULL);
+                    }
+                } else if (sp78->unk68.unk50[0] == 3) {
+                    sp60.transl.x = sp88.f[0];
+                    sp60.transl.y = 0.0f;
+                    sp60.transl.z = sp88.f[2];
+                    sp60.scale = 0.00045f;
+                    for (var_s0_3 = rand_next(2, 4); var_s0_3 != 0; var_s0_3--) {
+                        gDLL_17_partfx->vtbl->spawn(arg0, rand_next(0, 1) + 0x1F9, &sp60, 0x10001, -1, NULL);
+                    }
+                }
+            }
+        }
+
+        var_s0 >>= 1;
+        var_s5++;
+    }
+}
+#endif
 
 u8 func_80025CD4(s32 arg0) {
     if (arg0 >= (s32)ARRAYCOUNT(D_800916B0))
