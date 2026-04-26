@@ -383,12 +383,12 @@ typedef enum {
     BIT_Played_Seq_01FD_Rocky_Teaches_Distract = 0x178, // len:1 group:1
     BIT_179 = 0x179, // len:1 group:1
     BIT_17A = 0x17A, // len:1 group:1
-    BIT_DIM_Gear_1 = 0x17B, // len:1 group:1 [INVENTORY]
+    BIT_DIM_Gear_1 = 0x17B, // len:1 group:1 [INVENTORY] (Given by the shackled SnowHorn)
     BIT_17C = 0x17C, // len:1 group:1
     BIT_17D = 0x17D, // len:1 group:1
-    BIT_DIM_Gear_2 = 0x17E, // len:1 group:1 [INVENTORY]
-    BIT_DIM_Gear_3 = 0x17F, // len:1 group:1 [INVENTORY]
-    BIT_DIM_Gear_4 = 0x180, // len:1 group:1 [INVENTORY]
+    BIT_DIM_Gear_2 = 0x17E, // len:1 group:1 [INVENTORY] (Found inside a crate in the boarded-up cave at the back of the tent area)
+    BIT_DIM_Gear_3 = 0x17F, // len:1 group:1 [INVENTORY] (Found inside a randomly-selected tent)
+    BIT_DIM_Gear_4 = 0x180, // len:1 group:1 [INVENTORY] (Found inside a crate near the beginning of the blizzard area, beside the Horn of Truth pad)
     BIT_DIM_Used_Gear_1 = 0x181, // len:1 group:1 [INVENTORY - HIDE]
     BIT_DIM_Used_Gear_2 = 0x182, // len:1 group:1 [INVENTORY - HIDE]
     BIT_DIM_Used_Gear_3 = 0x183, // len:1 group:1 [INVENTORY - HIDE]
