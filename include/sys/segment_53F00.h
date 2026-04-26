@@ -50,9 +50,11 @@ typedef struct UnkFunc80051D68Arg3 {
     s16 unk10[3]; // y pos?
     s16 unk16[3]; // z pos?
     s16 unk1C[8];
-    UNK_TYPE_8 unk2E;
-    UNK_TYPE_8 unk2F;
-    s8 unk30;
+    UNK_TYPE_8 pad2C;
+    UNK_TYPE_8 pad2D;
+    s8 unk2E;
+    s8 unk2F;
+    u8 unk30;
     s8 unk31;
     u8 unk32;
     u8 pad33;

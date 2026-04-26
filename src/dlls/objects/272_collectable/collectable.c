@@ -160,7 +160,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         lfxAction.unk6 = 0;
         lfxAction.unk4 = 0;
         lfxAction.unka = 0x54;
-        lfxAction.unkc = 0x25;
+        lfxAction.unkC = 0x25;
         lfxAction.unk1d = 0xFF;
         lfxAction.unk1e = 0;
         lfxAction.unk1f = self->def->lightIdx;

@@ -41,8 +41,6 @@ s16 D_80092C30 = 0;
 s16 D_80092C34 = 0;
 s16 D_80092C38 = 0;
 f32 D_80092C3C = 0;
-s32 D_80092C40 = 1;
-f32 D_80092C44 = 0;
 // function statics start here...
 // -------- .data end 80092cc0 -------- //
 
@@ -54,7 +52,7 @@ Vec3f *D_800B98A8[2];
 Vtx *D_800B98B0[2];
 s16 D_800B98B8[300];
 u8 D_800B9B10[80];
-s16 D_800B9B60[800];
+s16 D_800B9B60[400][2];
 Unk8004FA58 D_800BA1A0[200];
 Vec3f *D_800BB140;
 Vec3f *D_800BB144;
@@ -75,8 +73,6 @@ Gfx* D_800BB188;
 f32 D_800BB18C;
 Texture* D_800BB190;
 Vec3f D_800BB198;
-Vec3f D_800BB1A8;
-u8 _bss_800bb1b8[0x48];
 // -------- .bss end 800bb200 -------- //
 
 s32 shadows_func_8004FA4C(void);
@@ -179,17 +175,16 @@ void shadows_init(void) {
     D_800BB190 = tex_load_deferred(TEXTABLE_D8);
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_8004D698.s")
-#else
-extern f32 D_800BB1B0;
 void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
+    static s32 D_80092C40 = 1;
+    static f32 D_80092C44 = 0.0f;
+    static Vec3f D_800BB1A8;
+    static u8 _bss_800bb1b8[0x40];
     Vec3f sp1C;
-    f32 var_fv0;
 
     if (func_8001EBE0() != 0) {
-        arg1 = 198.0f;
         arg0 = 0.0f;
+        arg1 = 198.0f;
         arg2 = 19.0f;
     }
     sp1C.x = arg0;
@@ -198,10 +193,10 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     D_80092C18 = arg3;
     D_80092BD0 = arg3 * arg0;
     D_80092BD4 = arg3 * arg1;
-    if (arg1 < 0.0f) {
-        D_80092BE4 = 1.0f + arg1;
+    if (sp1C.y < 0.0f) {
+        D_80092BE4 = 1.0f + sp1C.y;
         if (1) {
-            D_80092BE4 = 1.0f;
+            D_80092BE4 = 1/*.0f*/;
         }
     } else {
         D_80092BE4 = 1.0f;
@@ -209,14 +204,14 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     if (D_80092BD4 < 80.0f) {
         D_80092BD4 = 80.0f;
     }
+    // @fake
+    if (!arg2) {}
     D_80092BD8 = arg3 * arg2;
     shadows_func_80052230(&sp1C, &D_800BB1A8, &D_80092C44);
-    var_fv0 = D_80092C44;
-    if (var_fv0 < 0.0f) {
-        var_fv0 *= -1.0f;
+    if (D_80092C44 < 0.0f) {
+        D_80092C44 *= -1.0f;
     }
-    D_80092C44 = var_fv0;
-    if (var_fv0 <= 0.9961900115f) { // probably .99f
+    if (D_80092C44 <= 0.9961900115f) {
         D_80092C40 = 1;
     }
     if (D_80092C40 != 0) {
@@ -227,7 +222,6 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
         shadows_func_8004D974(1);
     }
 }
-#endif
 
 void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z) {
     ObjectShadow *shadow = obj->shadow;
@@ -951,13 +945,8 @@ s32 shadows_func_8004FA4C(void) {
     return 0;
 }
 
-#ifndef NON_EQUIVALENT
-static s32 _data_pad[3] = {0}; // <- should go away once D_80092CA0 is in shadows_func_8004FA58 ?
-s32 D_80092CA0 = 1;
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_8004FA58.s")
-#else
-// https://decomp.me/scratch/GRoDG
 s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max) {
+    static s32 _data_pad[3] = {0};
     static s32 D_80092CA0 = 1;
     s32 sp28C;
     Camera* camera;
@@ -968,19 +957,17 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     f32 var_fa1;
     f32 var_fs2;
     s32 sp26C;
-    u8 pad[0x20];
-    Vec3f sp1A4[14]; // unknown size, should be equal
+    u8 pad[0x1C];
     f32 var_fs3;
+    Vec3f sp1A4[14]; // unknown size, should be equal
     f32 var_fv0;
-    s16 var_a0;
+    s32 var_a0;
     s32 var_s2;
     s32 var_s7;
     s32 var_a3;
     s32 var_s4;
     Vec3f spE4[14]; // unknown size, should be equal
-    f32 spE0;
-    f32 spDC;
-    f32 spD8;
+    Vec3f spD8;
     s16 spD6;
     s16 spD4;
     s16 spD2;
@@ -989,58 +976,59 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     Vtx* var_s0;
     Unk8004FA58* var_s3;
     s32 var_v0_2;
-    ObjectShadow* spAC;
-    s32 spA0;
     s32 sp90;
+    s32 tempSp26C;
+    Unk8004FA58 *spA0;
+    ObjectShadow* spAC;
 
     sp280 = 0;
     sp26C = 0;
     spAC = arg0->shadow;
     camera = get_camera();
     if (arg0->parent != NULL) {
-        inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8, &spDC, &spE0, arg0->parent);
+        inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8.f[0], &spD8.f[1], &spD8.f[2], arg0->parent);
     } else {
-        spD8 = camera->tx;
-        spDC = camera->ty;
-        spE0 = camera->tz;
+        spD8.f[0] = camera->tx;
+        spD8.f[1] = camera->ty;
+        spD8.f[2] = camera->tz;
     }
-    spD8 -= arg0->srt.transl.x;
-    spDC -= arg0->srt.transl.y;
-    spE0 -= arg0->srt.transl.z;
-    temp_fv0 = sqrtf((spD8 * spD8) + (spDC * spDC) + (spE0 * spE0));
+    spD8.f[0] -= arg0->srt.transl.x;
+    spD8.f[1] -= arg0->srt.transl.y;
+    spD8.f[2] -= arg0->srt.transl.z;
+    temp_fv0 = sqrtf(SQ(spD8.x) + SQ(spD8.y) + SQ(spD8.z));
     var_fs2 = temp_fv0 * 0.1f;
-    var_a0 = arctan2_f(spDC, sqrtf((spD8 * spD8) + (spE0 * spE0)));
-    CLAMP(var_a0, 0, 0x2000)
-    var_a3 = 0;
+    var_a0 = (s16)((u16)arctan2_f(spD8.y, sqrtf(SQ(spD8.x) + SQ(spD8.z))));
+    CLAMP(var_a0, 0, 0x2000);
     var_fv0 = (f32)var_a0 / 8192;
     if (var_fv0 > 1.0f) {
         var_fv0 = 1.0f;
     }
     var_fv0 = 1.0f - var_fv0;
-    var_fs3 = var_fv0 * var_fv0;
+    var_fs3 = SQ(var_fv0);
     if (spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
-        var_fs3 = 0.0f;
         var_fs2 = 0.0f;
+        var_fs3 = 0.0f;
     }
     if (temp_fv0 != 0.0f) {
         temp_fv0 = var_fs2 / temp_fv0;
-        spD8 *= temp_fv0;
-        spDC *= temp_fv0;
-        spE0 *= temp_fv0;
+        spD8.f[0] *= temp_fv0;
+        spD8.f[1] *= temp_fv0;
+        spD8.f[2] *= temp_fv0;
     }
     if (spAC->flags & OBJ_SHADOW_FLAG_WATER_SURFACE) {
-        var_fs3 = 0.0f;
-        spDC = 0.0f;
-        spD8 = 0.0f;
-        spE0 = 0.0f;
+        var_fs3 = 0/*.0f*/;
+        spD8.f[0] = 0/*.0f*/;
+        spD8.f[1] = 0/*.0f*/;
+        spD8.f[2] = 0/*.0f*/;
     }
     D_80092C20 = 0;
     for (sp28C = 0; sp28C < arg3; sp28C++) {
         for (var_s4 = 0; var_s4 < 3; var_s4++) {
+            // @fake?
             var_v0 = &arg4[sp280 + var_s4];
-            sp1A4[var_s4].x = var_v0->x;
-            sp1A4[var_s4].y = var_v0->y;
-            sp1A4[var_s4].z = var_v0->z;
+            sp1A4[var_s4].x = arg4[sp280 + var_s4].x;
+            sp1A4[var_s4].y = arg4[sp280 + var_s4].y;
+            sp1A4[var_s4].z = arg4[sp280 + var_s4].z;
         }
         if (arg6[sp28C].unk10 & 1) {
             if (shadows_func_80051CFC(&spAC->dir, (Vec3f *)&arg6[sp28C].pos) == 1) {
@@ -1049,9 +1037,9 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
                     var_s3 = &arg2[sp90];
                     var_s2 = 0;
                     var_v0_2 = var_s7 - 1;
-                    temp_v1_3 = &sp1A4[var_v0_2];
-                    var_fa1 = (temp_v1_3->z * var_s3->pos.z) + ((temp_v1_3->x * var_s3->pos.x) + (temp_v1_3->y * var_s3->pos.y)) + var_s3->pos.w;
-                    for (var_s4 = 0; var_s4 < var_s7; var_s4++) {
+                    var_fa1 = (sp1A4[var_v0_2].x * var_s3->pos.x) + (sp1A4[var_v0_2].y * var_s3->pos.y) + (sp1A4[var_v0_2].z * var_s3->pos.z) + var_s3->pos.w;
+                    var_s4 = 0;
+                    while (var_s4 < var_s7) {
                         temp_fs0_2 = (sp1A4[var_s4].x * var_s3->pos.x) + (sp1A4[var_s4].y * var_s3->pos.y) + (sp1A4[var_s4].z * var_s3->pos.z) + var_s3->pos.w;
                         if (temp_fs0_2 <= 0.0f) {
                             if (var_fa1 <= 0.0f) {
@@ -1070,7 +1058,7 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
                             shadows_func_800528AC(&sp1A4[var_v0_2], &sp1A4[var_s4], &spE4[var_s2++], &var_s3->pos);
                         }
                         var_fa1 = temp_fs0_2;
-                        var_v0_2 = var_s4;
+                        var_v0_2 = var_s4++;
                     }
                     var_s7 = var_s2;
                     for (var_s4 = 0; var_s4 < var_s2; var_s4++) {\
@@ -1083,40 +1071,38 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
                     D_800B98B8[D_80092C20] = var_s7;
                     D_80092C20++;
                 }
-                if (var_s7 > 0) {
-                    var_s0 = &arg5[sp26C];
-                    for (var_s4 = 0; var_s4 != var_s7; var_s4++) {
-                        if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
-                            shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
-                        } else {
-                            shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
-                        }
-                        if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
-                            spD2 = 0xFF;
-                        }
-                        D_800B9B60[sp26C * 2 + 0] = spD6;
-                        D_800B9B60[sp26C * 2 + 1] = spD4;
-                        if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
-                            var_s0->v.ob[0] = (sp1A4[var_s4].x + spD8) * 20.0f;
-                            var_s0->v.ob[1] = (sp1A4[var_s4].y + spDC + var_fs3) * 20.0f;
-                            var_s0->v.ob[2] = (sp1A4[var_s4].z + spE0) * 20.0f;
-                        } else {
-                            var_s0->v.ob[0] = sp1A4[var_s4].x * 20.0f;
-                            var_s0->v.ob[1] = sp1A4[var_s4].y * 20.0f;
-                            if (!(spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER)) {
-                                var_s0->v.ob[1] += 0x1E;
-                            }
-                            var_s0->v.ob[2] = sp1A4[var_s4].z * 20.0f;
-                        }
-                        temp_v0_3 = &arg5[sp26C];
-                        temp_v0_3->v.tc[0] = spD6;
-                        temp_v0_3->v.tc[1] = spD4;
-                        var_s0++;
-                        sp26C++;
-                        if (sp26C >= max) {
-                            return 0;
-                        }
+                for (var_s4 = 0; var_s4 < var_s7; ) {
+                    var_a3 = sp26C;
+                    tempSp26C = sp26C;
+                    if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
+                        shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
+                    } else {
+                        shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
                     }
+                    if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
+                        spD2 = 0xFF;
+                    }
+                    D_800B9B60[var_a3][0] = spD6;
+                    D_800B9B60[var_a3][1] = spD4;
+                    if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
+                        arg5[tempSp26C].v.ob[0] = (sp1A4[var_s4].x + spD8.x) * 20.0f;
+                        arg5[tempSp26C].v.ob[1] = (sp1A4[var_s4].y + spD8.y + var_fs3) * 20.0f;
+                        arg5[tempSp26C].v.ob[2] = (sp1A4[var_s4].z + spD8.z) * 20.0f;
+                    } else {
+                        arg5[tempSp26C].v.ob[0] = sp1A4[var_s4].x * 20.0f;
+                        arg5[tempSp26C].v.ob[1] = sp1A4[var_s4].y * 20.0f;
+                        if (!(spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER)) {
+                            arg5[tempSp26C].v.ob[1] += 0x1E;
+                        }
+                        arg5[tempSp26C].v.ob[2] = sp1A4[var_s4].z * 20.0f;
+                    }
+                    arg5[tempSp26C].v.tc[0] = spD6;
+                    arg5[tempSp26C].v.tc[1] = spD4;
+                    sp26C++;
+                    if (sp26C >= max) {
+                        return 0;
+                    }
+                    var_s4++;
                 }
             }
         }
@@ -1125,13 +1111,7 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     D_80092CA0 ^= 1;
     return 1;
 }
-#endif
 
-#ifndef NON_EQUIVALENT
-s32 D_80092CA4 = 1;
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_800502AC.s")
-#else
-// https://decomp.me/scratch/W9sJo
 s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7) {
     static s32 D_80092CA4 = 1;
     s32 sp354;
@@ -1159,12 +1139,12 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
     s32 var_s4;
     s32 var_s5;
     s32 var_v0_2;
-    Vtx* var_s0;
+    s32 temp;
     ObjectShadow* spAC;
 
     sp344 = 0;
     spAC = arg0->shadow;
-    bzero(&D_800B9B10, 0x4C);
+    bzero(&D_800B9B10, sizeof(D_800B9B10) - 4);
     temp_fs4 = (f32) spAC->visibility * 0.015625f;
     camera = get_camera();
     spD0.x = camera->tx - arg0->globalPosition.x;
@@ -1180,7 +1160,8 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
     }
     D_80092C20 = 0;
     sp330 = 0;
-    for (sp354 = 0; sp354 < arg3; sp344 += 3, sp354++) {
+    sp354 = 0;
+    while (sp354 < arg3) {
         for (var_s4 = 0; var_s4 < 3; var_s4++) {
             temp_v1 = &arg4[sp344 + var_s4];
             sp268[var_s4].x = arg4[sp344 + var_s4].x;
@@ -1191,8 +1172,8 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
         spDC.x = arg6[sp354].pos.x;
         spDC.y = arg6[sp354].pos.y;
         spDC.z = arg6[sp354].pos.z;
-        if (shadows_func_80052148((Vec3f* ) &spD0, (Vec3f* ) &spDC) != 1) {
-            continue;
+        if (shadows_func_80052148(&spD0, &spDC) != 1) {
+            goto end;
         }
 
         var_s3 = 0;
@@ -1201,8 +1182,9 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
             var_s5 = 0;
             var_s2 = &arg2[var_s3];
             var_v0_2 = sp33C - 1;
+            var_s4 = 0;
             var_fa1 = (sp268[var_v0_2].x * var_s2->pos.x) + (sp268[var_v0_2].y * var_s2->pos.y) + (sp268[var_v0_2].z * var_s2->pos.z) + var_s2->pos.w;
-            for (var_s4 = 0; var_s4 < sp33C; ) {
+            while (var_s4 < sp33C) {
                 temp_fs0 = (sp268[var_s4].x * var_s2->pos.x) + (sp268[var_s4].y * var_s2->pos.y) + (sp268[var_s4].z * var_s2->pos.z) + var_s2->pos.w;
                 if (temp_fs0 <= 0.0f) {
                     if (var_fa1 <= 0.0f) {
@@ -1233,6 +1215,7 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
             var_s3++;
         }
 
+        var_s5 = sp33C;
         if (sp33C != 0) {
             sp34C = 0;
         } else {
@@ -1241,68 +1224,66 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
 
         while (sp34C < 4) {
             if (sp34C == 0) {
-                shadows_func_80052644(sp1A8, spE8, sp33C, &sp338, &arg2[11].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, spE8, var_s5, &sp338, &arg2[11].pos, 0xC, NULL, 0U);
             } else if (sp34C == 1) {
-                shadows_func_80052644(sp1A8, sp268, sp33C, &sp33C, &arg2[10].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, sp268, var_s5, &sp33C, &arg2[10].pos, 0xC, NULL, 0U);
                 shadows_func_80052644(sp268, spE8, sp33C, &sp338, &arg2[9].pos, 0xC, NULL, 0U);
             } else if (sp34C == 2) {
-                shadows_func_80052644(sp1A8, sp268, sp33C, &sp33C, &arg2[8].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, sp268, var_s5, &sp33C, &arg2[8].pos, 0xC, NULL, 0U);
                 shadows_func_80052644(sp268, spE8, sp33C, &sp338, &arg2[7].pos, 0xC, NULL, 0U);
             } else {
-                shadows_func_80052644(sp1A8, spE8, sp33C, &sp338, &arg2[6].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, spE8, var_s5, &sp338, &arg2[6].pos, 0xC, NULL, 0U);
             }
             if (sp338 != 0) {
                 D_800B98B8[D_80092C20] = sp338;
                 D_800B9B10[D_80092C20 >> 2] |= sp34C << ((D_80092C20 & 3) * 2);
                 D_80092C20++;
             }
-            for (var_s4 = 0; var_s4 < sp338; var_s4++) {
-                var_s0 = &arg5[sp330];
+            for (var_s4 = 0; var_s4 < sp338; ) {
+                temp = sp330;
 
                 shadows_func_80050B88(arg0, &spE8[var_s4], &arg2[4], &arg2[2], &arg2[0], &arg2[1], &spCC, &spCE, spAC->scale * 0.75f, &spCA, 0);
                 if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                     spCA = 0xFF;
                 }
 
-                D_800B9B60[sp330 * 2 + 0] = spCE;
-                D_800B9B60[sp330 * 2 + 1] = spCC;
+                D_800B9B60[sp330][0] = spCE;
+                D_800B9B60[sp330][1] = spCC;
 
-                var_s0++;
-                var_s0[-1].v.ob[0] = spE8[var_s4].x * 20.0f;
-                var_s0[-1].v.ob[1] = spE8[var_s4].y * 20.0f;
-                var_s0[-1].v.ob[2] = spE8[var_s4].z * 20.0f;
-                var_s0[-1].v.cn[3] = spCA * D_80092BE4 * temp_fs4;
-                var_s0[-1].v.tc[0] = spCE;
-                arg5[sp330].v.tc[1] = spCC;
+                arg5[temp].v.ob[0] = spE8[var_s4].x * 20.0f;
+                arg5[temp].v.ob[1] = spE8[var_s4].y * 20.0f;
+                arg5[temp].v.ob[2] = spE8[var_s4].z * 20.0f;
+                arg5[temp].v.cn[3] = (s16)(spCA * D_80092BE4 * temp_fs4);
+                arg5[temp].v.tc[0] = spCE;
+                arg5[temp].v.tc[1] = spCC;
                 sp330++;
                 if (sp330 >= arg7) {
                     return 0;
                 }
+                var_s4++;
             }
             sp34C++;
         }
+
+        end:
+        sp344 += 3;
+        sp354++;
     }
     D_80092CA4 ^= 1;
     return 1;
 }
 
-#endif
-
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_80050B88.s")
-#else
-// https://decomp.me/scratch/IurnK
 void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA) {
     s32 pad;
     f32 temp_fa0;
     f32 temp_fa1;
     f32 temp_ft3;
-    f32 temp_ft4;
+    s32 pad3;
     f32 temp_fv0;
     f32 temp_fv1;
-    f32 var_ft4;
     f32 f0;
     f32 f2;
+    s32 pad2;
     f32 sp2C;
 
     sp2C = arg0->shadow->maxDistScale;
@@ -1325,11 +1306,12 @@ void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004
         if (arg9[0] >= 0x100) {
             arg9[0] = 0xFF;
         }
-        f2 = (arg4->pos.x * -arg2->pos.z) + (arg4->pos.z * arg2->pos.x);
+        temp_fa1 = arg2->pos.x;
+        f2 = (arg4->pos.x * -arg2->pos.z) + (arg4->pos.z * temp_fa1);
         if (f2 != 0.0f) {
             f2 = -((arg4->pos.x * arg1->x) + (arg4->pos.z * arg1->z) + arg4->pos.w) / f2;
         }
-        f0 = (arg3->pos.x * -arg2->pos.z) + (arg3->pos.z * arg2->pos.x);
+        f0 = (arg3->pos.x * -arg2->pos.z) + (arg3->pos.z * temp_fa1);
         if (f0 != 0.0f) {
             f0 = -((arg3->pos.x * arg1->x) + (arg3->pos.z * arg1->z) + arg3->pos.w) / f0;
         }
@@ -1345,15 +1327,15 @@ void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004
         arg7[0] += (f0 - (s32) f0) * 32.0f;
         return;
     }
-    temp_fv0 = -arg2->pos.w - ((arg2->pos.x * arg1->x) + (arg2->pos.y * arg1->y) + (arg2->pos.z * arg1->z));
-    temp_fv1 = arg2->pos.x * temp_fv0;
-    temp_fa0 = arg2->pos.y * temp_fv0;
-    temp_fa1 = arg2->pos.z * temp_fv0;
-    temp_ft3 = (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0) + (temp_fa1 * temp_fa1);
+    f0 = (-arg2->pos.w) - (((arg2->pos.x * arg1->x) + (arg2->pos.y * arg1->y)) + (arg2->pos.z * arg1->z));
+    temp_fv1 = arg2->pos.x * f0;
+    temp_fa0 = arg2->pos.y * f0;
+    temp_fa1 = arg2->pos.z * f0;
+    temp_ft3 = SQ(temp_fv1) + SQ(temp_fa0) + SQ(temp_fa1);
     if (temp_ft3 != 0.0f) {
         temp_ft3 = (sqrtf(temp_ft3) / (100.0f * (sp2C / 3.0f))) * 255.0f;
     }
-    if (arg0->shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
+    if (arg0->shadow->flags & 0x40) {
         arg9[0] = 0xFF;
     } else {
         arg9[0] = 255.0f - (s16) temp_ft3;
@@ -1363,44 +1345,43 @@ void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004
     } else if (arg9[0] > 255.0f) {
         arg9[0] = 0xFF;
     }
-    temp_fv0 = -arg5->pos.w - ((arg5->pos.x * arg1->x) + (arg5->pos.y * arg1->y) + (arg5->pos.z * arg1->z));
-    temp_fv1 = arg5->pos.x * temp_fv0;
-    temp_fa0 = arg5->pos.y * temp_fv0;
-    temp_fa1 = arg5->pos.z * temp_fv0;
-    temp_ft3 = (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0) + (temp_fa1 * temp_fa1);
+    f0 = (-arg5->pos.w) - (((arg5->pos.x * arg1->x) + (arg5->pos.y * arg1->y)) + (arg5->pos.z * arg1->z));
+    temp_fv1 = arg5->pos.x * f0;
+    temp_fa0 = arg5->pos.y * f0;
+    temp_fa1 = arg5->pos.z * f0;
+    temp_ft3 = SQ(temp_fv1) + SQ(temp_fa0) + SQ(temp_fa1);
     if (temp_ft3 != 0.0f) {
         temp_fv0 = sqrtf(temp_ft3);
         if (argA == 0) {
-            var_ft4 = 2.0f * temp_fv0;
+            temp_ft3 = 2.0f * temp_fv0;
         } else {
-            var_ft4 = temp_fv0 * 4.0f;
+            temp_ft3 = temp_fv0 * 4.0f;
         }
-        var_ft4 = var_ft4 / arg8;
-        arg6[0] = (s32)var_ft4 << 6;
-        arg6[0] += (var_ft4 - (s32)var_ft4) * 32.0f;
+        temp_ft3 = temp_ft3 / arg8;
+        arg6[0] = (s32)temp_ft3 << 6;
+        arg6[0] += (temp_ft3 - (s32)temp_ft3) * 32.0f;
     } else {
         arg6[0] = 0;
     }
-    temp_fv0 = -arg3->pos.w - ((arg3->pos.x * arg1->x) + (arg3->pos.y * arg1->y) + (arg3->pos.z * arg1->z));
-    temp_fv1 = arg3->pos.x * temp_fv0;
-    temp_fa0 = arg3->pos.y * temp_fv0;
-    temp_fa1 = arg3->pos.z * temp_fv0;
-    temp_ft3 = (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0) + (temp_fa1 * temp_fa1);
+    f0 = (-arg3->pos.w) - (((arg3->pos.x * arg1->x) + (arg3->pos.y * arg1->y)) + (arg3->pos.z * arg1->z));
+    temp_fv1 = arg3->pos.x * f0;
+    temp_fa0 = arg3->pos.y * f0;
+    temp_fa1 = arg3->pos.z * f0;
+    temp_ft3 = SQ(temp_fv1) + SQ(temp_fa0) + SQ(temp_fa1);
     if (temp_ft3 != 0.0f) {
-        temp_fv0 = sqrtf(temp_ft3);
+        f0 = sqrtf(temp_ft3);
         if (argA == 0) {
-            var_ft4 = 2.0f * temp_fv0;
+            temp_ft3 = 2.0f * f0;
         } else {
-            var_ft4 = temp_fv0 * 4.0f;
+            temp_ft3 = f0 * 4.0f;
         }
-        var_ft4 = var_ft4 / arg8;
-        arg7[0] = (s32) var_ft4 << 6;
-        arg7[0] += (var_ft4 - (s32) var_ft4) * 32.0f;
+        temp_ft3 = temp_ft3 / arg8;
+        arg7[0] = (s32) temp_ft3 << 6;
+        arg7[0] += (temp_ft3 - (s32) temp_ft3) * 32.0f;
         return;
     }
     arg7[0] = 0;
 }
-#endif
 
 void shadows_func_800511E8(Object *arg0, s32 arg1, Vec3f* arg2, Unk8004FA58 arg3[12]) {
     Vec3f normalizedPos;
@@ -1750,14 +1731,10 @@ void shadows_func_80052230(Vec3f *A, Vec3f *B, f32 *arg2) {
     *arg2 = 0;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_80052300.s")
-#else
 s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8) {
-    s32 sp44;
+        s32 sp44;
     s32 var_a2;
     Unk8005341C* temp_t2;
-    s8 var_t1;
     s8 var_v1;
     f32 sp34;
     f32 sp30;
@@ -1774,47 +1751,45 @@ s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* 
     temp_t2 = &temp_v0[sp44];
     sp44 = 0;
     var_a2 = 0;
-    if (arg8) {
-        var_t1 = 4;
+    if (arg8 != 0) {
+        arg8 = 4;
     } else {
-        var_t1 = 8;
+        arg8 = 8;
     }
-    if (temp_v0 < temp_t2) {
-        f0 = 0.00012208521f;
-        do {
-            if (temp_v0->unk0 == arg0->parent) {
-                sp44 = temp_v0->unk4;
-                while (sp44 < temp_v0[1].unk4) {
-                    var_v1 = TRUE;
-                    if (!(arg1[sp44].unk30 & var_t1)) {
-                        var_v1 = FALSE;
-                    }
-                    if (var_v1 != FALSE) {
-                        arg3[0].x = arg1[sp44].unkA[0] - sp34;
-                        arg3[0].y = arg1[sp44].unk10[0] - arg0->srt.transl.y;
-                        arg3[0].z = arg1[sp44].unk16[0] - sp30;
-                        arg3[1].x = arg1[sp44].unkA[1] - sp34;
-                        arg3[1].y = arg1[sp44].unk10[1] - arg0->srt.transl.y;
-                        arg3[1].z = arg1[sp44].unk16[1] - sp30;
-                        arg3[2].x = arg1[sp44].unkA[2] - sp34;
-                        arg3[2].y = arg1[sp44].unk10[2] - arg0->srt.transl.y;
-                        arg3[2].z = arg1[sp44].unk16[2] - sp30;
-                        arg3 += 3;
-                        arg2[var_a2].pos.x = arg1[sp44].unk4 * f0;
-                        arg2[var_a2].pos.y = arg1[sp44].unk6 * f0;
-                        arg2[var_a2].pos.z = arg1[sp44].unk8 * f0;
-                        arg2[var_a2].unk10 = arg1[sp44].unk30;
-                        var_a2++;
-                    }
-                    sp44++;
+    while (temp_v0 < temp_t2) {
+        if (temp_v0->unk0 == arg0->parent) {
+            for (sp44 = temp_v0->unk4; sp44 < temp_v0[1].unk4; sp44++) {
+                var_v1 = TRUE;
+                if (!(arg1[sp44].unk2F & arg8)) {
+                    var_v1 = FALSE;
                 }
+                if (var_v1 == FALSE) {
+                    continue;
+                }
+                arg3->x = arg1[sp44].unkA[0] - sp34;
+                arg3->y = arg1[sp44].unk10[0] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].unk16[0] - sp30;
+                arg3++;
+                arg3->x = arg1[sp44].unkA[1] - sp34;
+                arg3->y = arg1[sp44].unk10[1] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].unk16[1] - sp30;
+                arg3++;
+                arg3->x = arg1[sp44].unkA[2] - sp34;
+                arg3->y = arg1[sp44].unk10[2] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].unk16[2] - sp30;
+                arg3++;
+                arg2[var_a2].pos.x = arg1[sp44].unk4 * 0.00012208521f;
+                arg2[var_a2].pos.y = arg1[sp44].unk6 * 0.00012208521f;
+                arg2[var_a2].pos.z = arg1[sp44].unk8 * 0.00012208521f;
+                arg2[var_a2].unk10 = arg1[sp44].unk2F;
+                if (1) {}
+                var_a2++;
             }
-            temp_v0++;
-        } while (temp_v0 < temp_t2);
+        }
+        temp_v0++;
     }
     return var_a2;
 }
-#endif
 
 void shadows_func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag) {
     f32 new_var = 1/1000.0f;

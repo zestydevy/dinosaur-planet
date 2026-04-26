@@ -28,9 +28,7 @@ void* D_800B20AC;
 void* D_800B20B0;
 void* D_800B20B4;
 Unk800B20B8 D_800B20B8[64];
-Unk800B20B8* D_800B23B8;
-Unk800B20B8* D_800B23BC;
-u8 _bss_800B23C0[0xF8];
+Unk800B20B8* D_800B23B8[64];
 Unk80030A24 D_800B24B8[21]; // TODO: unknown length
 // -------- .bss end 800b28b0 -------- //
 
@@ -697,21 +695,18 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     return arg3;
 }
 
-static const char str_800998f0[] = " WARNING : OBJHITS hitlist has overflowed \n\n";
-#ifndef NON_EQUIVALENT
-void obj_do_hit_detection(s32 arg0);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/obj_do_hit_detection.s")
-#else
-// https://decomp.me/scratch/ftxul
-void obj_do_hit_detection(s32 numObjs) {
+void obj_do_hit_detection(s32 arg0) {
     u8 pad[0x9A0 - 0x984];
     Object* sp980;
-    u8 pad2[0x980 - 0x560];
-    s32 sp55C;
-    u8 pad3[0x55C - 0x150];
-    s32 sp14C;
+    u8 pad2[0x980 - 0x590];
+    ModelInstance_0x14_0x14 sp55C;
+    u8 pad3[0x55C - 0x180];
+    ModelInstance_0x14_0x14 sp14C;
     u8 pad4[0x14C - 0xEC];
     s32 spE8;
+    s32 pad5[10];
+    f32 var_fv1;
+    s32 var_s7;
     ModelInstance* temp_a1;
     Object* linkedObj;
     Object* parentObj;
@@ -722,38 +717,35 @@ void obj_do_hit_detection(s32 numObjs) {
     ObjectHitInfo* parentObjInfo; // s1
     ObjectHitInfo* currentObjHitInfo; // s3
     Unk800B20B8** temp_v1;
-    Unk800B20B8** var_s5;
     f32 var_fv0;
+    s32 s4;
     s32 sp84;
     s32 sp80;
     s32 sp7C;
-    s32 sp74;
-    s32 s4;
     s32 var_s6;
-    s32 var_s7;
-    Unk800B20B8** sp68;
+    s32 sp74;
 
     objects = get_world_objects(&sp7C, &sp80);
     D_800B20B8->unk4 = -36288576.0f;
     D_800B20B8->unk0 = D_800B20B8->unk4;
-    D_800B23B8 = D_800B20B8;
-    for (var_s6 = 0, var_s7 = 1; var_s6 < numObjs; var_s6++) {
+    D_800B23B8[0] = D_800B20B8;
+    for (var_s6 = 0, var_s7 = 1; var_s6 < arg0; var_s6++) {
         currentObj = objects[var_s6];
         currentObjHitInfo = currentObj->objhitInfo;
         if (currentObjHitInfo != NULL) {
             if ((currentObjHitInfo->unk58 & 3) && (currentObjHitInfo->unk5A != 8)) {
-                temp_v1 = &(&D_800B23B8)[var_s7];
-                *temp_v1 = &D_800B20B8[var_s7];
-                (*temp_v1)->unk8 = currentObj;
+                temp_v1 = &D_800B23B8[var_s7];
+                D_800B23B8[var_s7] = &D_800B20B8[var_s7];
+                D_800B23B8[var_s7]->unk8 = currentObj;
                 temp_a1 = currentObj->modelInsts[currentObj->modelInstIdx];
                 if (temp_a1 != NULL) {
                     temp_a1->unk34 &= ~0x20;
                 }
-                (*temp_v1)->unk4 = currentObj->globalPosition.x - currentObjHitInfo->unk30;
-                (*temp_v1)->unk0 = currentObj->globalPosition.x + currentObjHitInfo->unk30;
+                D_800B23B8[var_s7]->unk4 = currentObj->globalPosition.x - currentObjHitInfo->unk30;
+                D_800B23B8[var_s7]->unk0 = currentObj->globalPosition.x + currentObjHitInfo->unk30;
                 var_s7++;
                 if (var_s7 > 0x100) {
-                    // " WARNING : OBJHITS hitlist has overflowed \n\n"
+                    STUBBED_PRINTF(" WARNING : OBJHITS hitlist has overflowed \n\n");
                 }
             }
             currentObjHitInfo->unk9D = 0;
@@ -766,158 +758,121 @@ void obj_do_hit_detection(s32 numObjs) {
             }
         }
     }
-    func_8002B7CC(&D_800B23B8, var_s7);
+    func_8002B7CC(D_800B23B8, var_s7);
     sp74 = 1;
-    var_s6 = 1;
-    if (var_s7 >= 2) {
-        sp68 = D_800B23BC;
-        do {
-            currentObj = sp68[0]->unk8;
-            currentObjHitInfo = currentObj->objhitInfo;
-            sp980 = currentObj->linkedObject;
-            if (sp980 != NULL && (sp980->objhitInfo == NULL || !(sp980->objhitInfo->unk58 & 1))) {
-                sp980 = NULL;
-            }
-            if (currentObjHitInfo->unk58 & 4) {
-                s4 = sp74;
-                if (((&D_800B23B8)[s4]->unk0 < sp68[0]->unk4) && (s4 < var_s7)) {
-                    var_s5 = &(&D_800B23B8)[s4];
-                    do {
-                        s4++;
-                    } while ((*&(&D_800B23B8)[s4])->unk0 < sp68[0]->unk4 && s4 < var_s7);
-                }
-                sp74 = s4;
-                if (sp74 < var_s7) {
-                    var_s5 = &(&D_800B23B8)[sp74];
-                    if ((*var_s5)->unk4 < sp68[0]->unk0) {
-                        do {
-                            parentObj = (*var_s5)->unk8;
-                            parentObjInfo = parentObj->objhitInfo;
-                            if ((var_s6 != sp74) && (parentObj != currentObj->parent)) {
-                                var_fv0 = currentObj->globalPosition.z - parentObj->globalPosition.z;
-                                if (!(var_fv0 > 0.0f)) {
-                                    var_fv0 = -var_fv0;
-                                }
-                                if (var_fv0 < (currentObjHitInfo->unk30 + parentObjInfo->unk30)) {
-                                    var_fv0 = currentObj->globalPosition.y - parentObj->globalPosition.y;
-                                    if (!(var_fv0 > 0.0f)) {
-                                        var_fv0 = -var_fv0;
-                                    }
-                                    if (var_fv0 < (currentObjHitInfo->unk2C + parentObjInfo->unk2C) && parentObjInfo->unk58 & 1) {
-                                        if (!(currentObjHitInfo->unk58 & 0x40) && !(parentObjInfo->unk58 & 0x40) && (!(parentObjInfo->unk58 & 4) || (var_s6 >= sp74))) {
-                                            if ((parentObj->def->_unk98[0] & currentObj->def->_unk98[2]) && (currentObj->def->_unk98[0] & parentObj->def->_unk98[2])) {
-                                                if (parentObjInfo->unk5A & 0x20) {
-                                                    func_80027DAC(parentObj, currentObj, D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
-                                                } else if (currentObjHitInfo->unk5A & 0x20) {
-                                                        func_80027DAC(currentObj, parentObj, D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
-                                                } else if ((currentObjHitInfo->unk5A == 0x10) || parentObjInfo->unk5A == 0x10) {
-                                                    if (currentObjHitInfo->unk5B || parentObjInfo->unk5B) {
-                                                        func_80029C04(currentObj, parentObj, currentObj, 0, 1, -1U, 0U);
-                                                    }
-                                                } else if (currentObjHitInfo->unk5B || parentObjInfo->unk5B) {
-                                                    func_80028238(currentObj, parentObj);
-                                                }
-                                            }
+    for (var_s6 = 1; var_s6 < var_s7; var_s6++) {
+        currentObj = D_800B23B8[var_s6]->unk8;
+        currentObjHitInfo = currentObj->objhitInfo;
+        sp980 = currentObj->linkedObject;
+        if (sp980 != NULL && (sp980->objhitInfo == NULL || !(sp980->objhitInfo->unk58 & 1))) {
+            sp980 = NULL;
+        }
+        if (currentObjHitInfo->unk58 & 4) {
+            s4 = sp74;
+            for (; D_800B23B8[s4]->unk0 < D_800B23B8[var_s6]->unk4 && s4 < var_s7; s4++);
+            sp74 = s4;
+            for (; s4 < var_s7 && D_800B23B8[s4]->unk4 < D_800B23B8[var_s6]->unk0; s4++) {
+                parentObj = D_800B23B8[s4]->unk8;
+                parentObjInfo = parentObj->objhitInfo;
+                if ((var_s6 != s4) && (parentObj != currentObj->parent)) {
+                    var_fv0 = currentObj->globalPosition.z - parentObj->globalPosition.z;
+                    // FAKE
+                    if (!currentObj){}
+                    if (!(var_fv0 > 0.0f)) {
+                        var_fv0 = -var_fv0;
+                    }
+                    var_fv1 = currentObjHitInfo->unk30 + parentObjInfo->unk30;
+                    if (var_fv0 < var_fv1) {
+                        var_fv0 = currentObj->globalPosition.y - parentObj->globalPosition.y;
+                        if (!(var_fv0 > 0.0f)) {
+                            var_fv0 = -var_fv0;
+                        }
+                        var_fv1 = currentObjHitInfo->unk2C + parentObjInfo->unk2C;
+                        if (var_fv0 < var_fv1 && parentObjInfo->unk58 & 1) {
+                            if (!(currentObjHitInfo->unk58 & 0x40) && !(parentObjInfo->unk58 & 0x40) && (!(parentObjInfo->unk58 & 4) || (var_s6 >= s4))) {
+                                if ((parentObj->def->_unk98[0] & currentObj->def->_unk98[2]) && (currentObj->def->_unk98[0] & parentObj->def->_unk98[2])) {
+                                    if (parentObjInfo->unk5A & 0x20) {
+                                        func_80027DAC(parentObj, currentObj, D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
+                                    } else if (currentObjHitInfo->unk5A & 0x20) {
+                                        func_80027DAC(currentObj, parentObj, D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
+                                    } else if ((currentObjHitInfo->unk5A == 0x10) || parentObjInfo->unk5A == 0x10) {
+                                        if (currentObjHitInfo->unk5B || parentObjInfo->unk5B) {
+                                            func_80029C04(currentObj, parentObj, currentObj, 0, 1, -1U, 0U);
                                         }
-                                        if (!(currentObjHitInfo->unk58 & 0x100) && !(parentObjInfo->unk58 & 0x100)) {
-                                            if (parentObj->def->_unk98[0] & currentObj->def->_unk98[1]) {
-                                                if (parentObj->def->_unk98[1] & 0x80 || currentObj->def->_unk98[0] & parentObj->def->_unk98[1]) {
-                                                    linkedParentObj = parentObj->linkedObject;
-                                                    if (linkedParentObj != NULL && (linkedParentObj->objhitInfo == NULL || !(linkedParentObj->objhitInfo->unk58 & 1))) {
-                                                        linkedParentObj = NULL;
-                                                    }
-                                                    func_80028DCC(currentObj, parentObj, sp980, linkedParentObj, gUpdateRateF);
-                                                }
-                                            }
-                                        }
+                                    } else if (currentObjHitInfo->unk5B || parentObjInfo->unk5B) {
+                                        func_80028238(currentObj, parentObj);
                                     }
                                 }
                             }
-                            sp74++;
-                            var_s5++;
-                        } while (sp74 < var_s7 && (*var_s5)->unk4 < sp68[0]->unk0);
+                            if (!(currentObjHitInfo->unk58 & 0x100) && !(parentObjInfo->unk58 & 0x100)) {
+                                if (parentObj->def->_unk98[0] & currentObj->def->_unk98[1]) {
+                                    if (parentObj->def->_unk98[1] & 0x80 || currentObj->def->_unk98[0] & parentObj->def->_unk98[1]) {
+                                        linkedParentObj = parentObj->linkedObject;
+                                        if (linkedParentObj != NULL && (linkedParentObj->objhitInfo == NULL || !(linkedParentObj->objhitInfo->unk58 & 1))) {
+                                            linkedParentObj = NULL;
+                                        }
+                                        func_80028DCC(currentObj, parentObj, sp980, linkedParentObj, gUpdateRateF);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            var_s6++;
-            sp68++;
-        } while (var_s6 != var_s7);
+        }
     }
 
-    var_s6 = 1;
-    if (var_s7 >= 2) {
-        sp68 = D_800B23BC;
-        do {
-            currentObj = sp68[0]->unk8;
-            if (currentObj->objhitInfo->unk58 & 0x200) {
-                func_80027934(currentObj, currentObj);
-                linkedObj = currentObj->linkedObject;
-                if (linkedObj != NULL) {
-                    func_80027934(currentObj, linkedObj);
-                }
+    for (var_s6 = 1; var_s6 < var_s7; var_s6++) {
+        currentObj = D_800B23B8[var_s6]->unk8;
+        if (currentObj->objhitInfo->unk58 & 0x200) {
+            func_80027934(currentObj, currentObj);
+            if (currentObj->linkedObject != NULL) {
+                func_80027934(currentObj, currentObj->linkedObject);
             }
-            var_s6++;
-            sp68++;
-        } while (var_s6 != var_s7);
+        }
     }
 
-    var_s6 = 1;
-    if (var_s7 >= 2) {
-        sp68 = D_800B23BC;
-        do {
-            currentObj = sp68[0]->unk8;
-            currentObjHitInfo = currentObj->objhitInfo;
-            currentObjHitInfo->unk10.x = currentObj->srt.transl.x;
-            currentObjHitInfo->unk10.y = currentObj->srt.transl.y;
-            currentObjHitInfo->unk10.z = currentObj->srt.transl.z;
-            if (currentObj->parent != NULL) {
-                transform_point_by_object(currentObjHitInfo->unk10.x, currentObjHitInfo->unk10.y, currentObjHitInfo->unk10.z, &currentObjHitInfo->unk20.x, &currentObjHitInfo->unk20.y, &currentObjHitInfo->unk20.z, currentObj->parent);
-            } else {
-                currentObjHitInfo->unk20.x = currentObj->srt.transl.x;
-                currentObjHitInfo->unk20.y = currentObj->srt.transl.y;
-                currentObjHitInfo->unk20.z = currentObj->srt.transl.z;
-            }
-            currentObjHitInfo->unk1C = currentObj->animProgress;
-            currentObjHitInfo->unk9E = 0;
-            currentObjHitInfo->unk58 &= ~0x2000;
-            if (((currentObjHitInfo->unk62 != 0) || (currentObjHitInfo->unk58 & 8)) && !(currentObjHitInfo->unk58 & 0x40)) {
-                currentObj->velocity.x = (currentObj->srt.transl.x - currentObj->prevLocalPosition.x) * gUpdateRateInverseF;
-                currentObj->velocity.z = (currentObj->srt.transl.z - currentObj->prevLocalPosition.z) * gUpdateRateInverseF;
-            }
-            var_s6++;
-            sp68++;
-        } while (var_s6 != var_s7);
+    for (var_s6 = 1; var_s6 < var_s7; var_s6++) {
+        currentObj = D_800B23B8[var_s6]->unk8;
+        currentObjHitInfo = currentObj->objhitInfo;
+        currentObjHitInfo->unk10.x = currentObj->srt.transl.x;
+        currentObjHitInfo->unk10.y = currentObj->srt.transl.y;
+        currentObjHitInfo->unk10.z = currentObj->srt.transl.z;
+        if (currentObj->parent != NULL) {
+            transform_point_by_object(currentObjHitInfo->unk10.x, currentObjHitInfo->unk10.y, currentObjHitInfo->unk10.z, &currentObjHitInfo->unk20.x, &currentObjHitInfo->unk20.y, &currentObjHitInfo->unk20.z, currentObj->parent);
+        } else {
+            currentObjHitInfo->unk20.x = currentObj->srt.transl.x;
+            currentObjHitInfo->unk20.y = currentObj->srt.transl.y;
+            currentObjHitInfo->unk20.z = currentObj->srt.transl.z;
+        }
+        currentObjHitInfo->unk1C = currentObj->animProgress;
+        currentObjHitInfo->unk9E = 0;
+        currentObjHitInfo->unk58 &= ~0x2000;
+        if (((currentObjHitInfo->unk62 != 0) || (currentObjHitInfo->unk58 & 8)) && !(currentObjHitInfo->unk58 & 0x40)) {
+            currentObj->velocity.x = (currentObj->srt.transl.x - currentObj->prevLocalPosition.x) * gUpdateRateInverseF;
+            currentObj->velocity.z = (currentObj->srt.transl.z - currentObj->prevLocalPosition.z) * gUpdateRateInverseF;
+        }
     }
     func_80028D90();
 }
-#endif
 
-static const char str_80099920[] = "ACTIVE POLY HITS overflow\n";
-static const char str_8009993c[] = "ACTIVE POLY HITS overflow\n";
-#ifndef NON_EQUIVALENT
-void func_80027934(Object *obj, Object *otherObj);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80027934.s")
-#else
-// https://decomp.me/scratch/R1u2I
 void func_80027934(Object* obj, Object* otherObj) {
     u32 sp17C;
     Model* temp_fp;
     ModelInstance* temp_v0_2;
-    s32 new_var;
+    s32 i;
     ObjectHitInfo* objectHitInfo; // sp16C
-    f32 *temp_s2;
-    f32 *temp_s3;
+    Vec4f *temp_s2;
+    Vec4f *temp_s3;
     u16 temp_t7_2;
-    s32 var_t2;
+    u16 var_t2;
     u8 temp_v1_3;
     Unk80027934 spF0;
     AABBs32 spD8;
     f32 spA8[4 * 3];
     f32 sp78[4 * 3];
-    s32 temp_t8;
     s32 var_s0;
-    s32 i;
-    HitSphere* temp_v0_3;
+    f32 *temp;
 
     objectHitInfo = obj->objhitInfo;
     if (otherObj == obj) {
@@ -937,50 +892,46 @@ void func_80027934(Object* obj, Object* otherObj) {
         var_s0 = 0;
         temp_v0_2 = otherObj->modelInsts[otherObj->modelInstIdx];
         temp_fp = temp_v0_2->model;
-        temp_t8 = (temp_v0_2->unk34 >> 2) & 1;
-        temp_s2 = temp_v0_2->unk1C[temp_t8];
-        temp_s3 = temp_v0_2->unk1C[temp_t8 ^ 1];
+        temp_s2 = temp_v0_2->unk1C[(temp_v0_2->unk34 >> 2) & 1];
+        temp_s3 = temp_v0_2->unk1C[((temp_v0_2->unk34 >> 2) & 1) ^ 1];
         for (i = 0; i < temp_fp->hitSphereCount; i++) {
-            temp_v0_3 = &temp_fp->hitSpheres[i];
-            if ((i == temp_v0_3->unkC) && ((1 << temp_v0_3->unkD) & sp17C)) {
-                if (temp_v0_3->unkA != 0) {
-                    for (var_t2 = temp_v0_3->unkA; (u16)var_t2 != 0; var_t2 <<= 4) {
+            if ((i == temp_fp->hitSpheres[i].unkC) && ((1 << temp_fp->hitSpheres[i].unkD) & sp17C)) {
+                var_t2 = temp_fp->hitSpheres[i].unkA;
+                if (var_t2) {
+                    while (var_t2) {
                         if (var_s0 < 4) {
-                            new_var = var_s0 * 3;
-                            temp_t7_2 = (((var_t2 & 0xF000) >> 0xC) + i);
-                            spA8[new_var + 0] = temp_s2[temp_t7_2 * 4 + 1] + gWorldX;
-                            spA8[new_var + 1] = temp_s2[temp_t7_2 * 4 + 2];
-                            spA8[new_var + 2] = temp_s2[temp_t7_2 * 4 + 3] + gWorldZ;
-                            sp78[new_var + 0] = temp_s3[temp_t7_2 * 4 + 1] + gWorldX;
-                            sp78[new_var + 1] = temp_s3[temp_t7_2 * 4 + 2];
-                            sp78[new_var + 2] = temp_s3[temp_t7_2 * 4 + 3] + gWorldZ;
-                            spF0.unk40[var_s0] = temp_s2[temp_t7_2 * 4 + 0];
+                            temp_t7_2 = ((var_t2 & 0xF000) >> 0xC) + i;
+                            spA8[var_s0 * 3 + 0] = temp_s2[temp_t7_2].f[1] + gWorldX;
+                            spA8[var_s0 * 3 + 1] = temp_s2[temp_t7_2].f[2];
+                            spA8[var_s0 * 3 + 2] = temp_s2[temp_t7_2].f[3] + gWorldZ;
+                            sp78[var_s0 * 3 + 0] = temp_s3[temp_t7_2].f[1] + gWorldX;
+                            sp78[var_s0 * 3 + 1] = temp_s3[temp_t7_2].f[2];
+                            sp78[var_s0 * 3 + 2] = temp_s3[temp_t7_2].f[3] + gWorldZ;
+                            spF0.unk40[var_s0] = temp_s2[temp_t7_2].f[0];
+                            if (0) { }
                             spF0.unk50[var_s0] = -1;
                             spF0.unk54[var_s0] = 6;
                             var_s0++;
                         } else {
-                            // "ACTIVE POLY HITS overflow\n"
+                            STUBBED_PRINTF("ACTIVE POLY HITS overflow\n");
                         }
+                        var_t2 <<= 4;
                     }
+                } else if (var_s0 < 4) {
+                    spA8[var_s0 * 3 + 0] = temp_s2[i].f[1] + gWorldX;
+                    spA8[var_s0 * 3 + 1] = temp_s2[i].f[2];
+                    spA8[var_s0 * 3 + 2] = temp_s2[i].f[3] + gWorldZ;
+                    sp78[var_s0 * 3 + 0] = temp_s3[i].f[1] + gWorldX;
+                    sp78[var_s0 * 3 + 1] = temp_s3[i].f[2];
+                    sp78[var_s0 * 3 + 2] = temp_s3[i].f[3] + gWorldZ;
+                    spF0.unk40[var_s0] = temp_s2[i].f[0];
+                    spF0.unk50[var_s0] = -1;
+                    spF0.unk54[var_s0] = 6;
+                    var_s0++;
                 } else {
-                    if (var_s0 < 4) {
-                        new_var = var_s0 * 3;
-                        spA8[new_var + 0] = temp_s2[i * 4 + 1] + gWorldX;
-                        spA8[new_var + 1] = temp_s2[i * 4 + 2];
-                        spA8[new_var + 2] = temp_s2[i * 4 + 3] + gWorldZ;
-                        sp78[new_var + 0] = temp_s3[i * 4 + 1] + gWorldX;
-                        sp78[new_var + 1] = temp_s3[i * 4 + 2];
-                        sp78[new_var + 2] = temp_s3[i * 4 + 3] + gWorldZ;
-                        spF0.unk40[var_s0] = temp_s2[i * 4 + 0];
-                        spF0.unk50[var_s0] = -1;
-                        spF0.unk54[var_s0] = 6;
-                        var_s0++;
-                    } else {
-                        // "ACTIVE POLY HITS overflow\n"
-                    }
+                    STUBBED_PRINTF("ACTIVE POLY HITS overflow\n");
                 }
             }
-            
         }
     } else {
         var_s0 = 1;
@@ -1001,7 +952,7 @@ void func_80027934(Object* obj, Object* otherObj) {
 
     fit_aabb_around_cubes(&spD8, (Vec3f *) sp78, (Vec3f *) spA8, spF0.unk40, var_s0);
     func_80053750(otherObj, &spD8, objectHitInfo->unkA1);
-    temp_v1_3 = func_8005509C(otherObj, (Vec3f *) sp78, (Vec3f *) spA8, var_s0, &spF0, 0);
+    temp_v1_3 = func_8005509C(otherObj, (f32 *) sp78, (f32 *) spA8, var_s0, &spF0, 0);
     if (!temp_v1_3) {
         return;
     }
@@ -1025,7 +976,6 @@ void func_80027934(Object* obj, Object* otherObj) {
         objectHitInfo->unk9D |= 1;
     }
 }
-#endif
 
 void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, s32 arg7) {
     f32 var_fv0;
@@ -2553,12 +2503,11 @@ Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec
 #else
 // https://decomp.me/scratch/5vB1O
 Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) {
-    f32 pad_sp6C;
+    f32 var_fv1;
     f32 sp68;
     f32 sp64;
     f32 sp60;
     f32 var_fv0;
-    f32 var_fv1;
 
     func_8002BD04(arg0, arg2, arg5, arg7, arg6, arg8, arg9, argA, &sp64, &sp68, &sp60);
     arg3 /= argA;
@@ -2566,8 +2515,8 @@ Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec
     arg4 = sqrtf(arg4);
     sp68 = sqrtf(sp68) - arg2;
     arg4 -= arg2;
+    var_fv0 = arg9 - arg8;
     if (arg3 != sp64) {
-        var_fv0 = arg9 - arg8;
         if (var_fv0 == ((1.0f / (arg3 - sp64)) * (arg4 - sp68))) {
             if (sp64 > 0.0f) {
                 var_fv1 = 1.0f;
@@ -2579,7 +2528,6 @@ Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec
         }
     } else {
         var_fv1 = arg3;
-        var_fv0 = arg9 - arg8;
     }
     *argB = var_fv1;
     *argC = (var_fv0 * var_fv1) + arg8 + arg2;
@@ -2590,8 +2538,12 @@ Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec
     } else {
         var_fv0 = 0.0f;
     }
-    VECTOR_SUBTRACT((*arg0), (*arg1), (*argD));
-    VECTOR_SCALE((*argD), var_fv0);
+    argD->x = arg0->x - arg1->x;
+    argD->y = arg0->y - arg1->y;
+    argD->z = arg0->z - arg1->z;
+    argD->x *= var_fv0;
+    argD->y *= var_fv0;
+    argD->z *= var_fv0;
     argD->x += arg1->x;
     argD->y += arg1->y;
     argD->z += arg1->z;
