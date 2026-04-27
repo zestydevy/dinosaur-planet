@@ -8,9 +8,9 @@ SHswapstone_print = 0x284;
 SHswapstone_free = 0x3C4;
 SHswapstone_get_model_flags = 0x3D4;
 SHswapstone_get_data_size = 0x434;
-SHswapstone_func_448 = 0x448;
-SHswapstone_func_A8C = 0xA8C;
-SHswapstone_func_AD4 = 0xAD4;
+SHswapstone_anim_callback = 0x448;
+SHswapstone_restore_gameplay_menu = 0xA8C;
+SHswapstone_is_stick_direction_available = 0xAD4;
 SHswapstone_get_held_spirit = 0xC04;
 SHswapstone_has_spellstone = 0xD0C;
 

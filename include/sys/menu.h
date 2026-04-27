@@ -14,9 +14,18 @@ DLL_INTERFACE(DLL_IMenu) {
     /*2*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 };
 
+/** States for Menu 16 (DLL 79) */
+typedef enum {
+    SelectionMenu_STATE_0_Fade_Out,             //Fades out the current selection screen
+    SelectionMenu_STATE_1_SwapStone_Choices,    //SwapStone's top-level selection (Swap/Shop/Warp)
+    SelectionMenu_STATE_2_Confirm_Right,        //SwapStone's Swap confirm selection
+    SelectionMenu_STATE_3_Confirm_Left,         //SwapStone's Warp confirm selection
+    SelectionMenu_STATE_4_Confirm_ShopKeeper    //ShopKeeper haggling selection
+} SelectionMenu_States;
+
 DLL_INTERFACE(DLL_Menu16) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IMenu);
-    /*3*/ void (*func3)(s32);
+    /*3*/ void (*set_selection_state)(SelectionMenu_States state); //Sets which selection screen to show, or whether to fade out the current selection screen (see `SelectionMenu_States`)
 };
 
 // indices into gMenuDLLIDs
@@ -37,7 +46,7 @@ enum MenuID {
     MENU_13 = 13,
     MENU_14 = 14,
     MENU_CREDITS = 15, // credits
-    MENU_16 = 16, // used by swapstone and shopkeeper
+    MENU_SELECTION = 16, // used by SwapStone and ShopKeeper
     MENU_17 = 17
 };
 

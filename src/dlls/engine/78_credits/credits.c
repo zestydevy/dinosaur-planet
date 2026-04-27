@@ -286,7 +286,7 @@ void credits_update2(void) {
 }
 
 // offset: 0x570 | func: 2 | export: 2
-void credits_draw(Gfx** gdl, s32 arg1, s32 arg2) {
+void credits_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     CreditsLine* line;
     s32 align;
     s32 i;

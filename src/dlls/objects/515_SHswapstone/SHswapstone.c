@@ -36,9 +36,9 @@ typedef struct {
     u8 flags;
     u8 unk3;
     u8 awake;
-    s16 bitSwapStoneSpokenTo; // game bits ID
-    s16 bitIntroSeq; // game bits ID
-    s16 bitSwappedToSeq; // game bits ID
+    s16 bitSwapStoneSpokenTo;   // game bits ID
+    s16 bitIntroSeq;            // game bits ID
+    s16 bitSwappedToSeq;        // game bits ID
 } SHswapstone_Data;
 
 // warlock mountain warps (sabre, krystal)
@@ -46,11 +46,11 @@ typedef struct {
 // swapstone warps (sabre, krystal). this is for swapping characters
 /*0x4*/ static u16 sSwapStoneWarps[] = { WARP_SH_ROCKY_PODIUM, WARP_SC_RUBBLE_PODIUM };
 
-static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a3);
+static int SHswapstone_anim_callback(Object* self, Object* a1, AnimObj_Data* a2, s8 a3);
 static s32 SHswapstone_get_held_spirit(void);
-static s32 SHswapstone_has_spellstone(void);
-static void SHswapstone_func_A8C(Object* self, Object *override, struct AnimObj_Data* arg2);
-static s32 SHswapstone_func_AD4(Object* self, Object *override, s32 arg2);
+static int SHswapstone_has_spellstone(void);
+static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, struct AnimObj_Data* arg2);
+static int SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 arg2);
 
 // offset: 0x0 | ctor
 void SHswapstone_ctor(void *dll) { }
@@ -64,7 +64,7 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->rotation << 8;
-    self->animCallback = SHswapstone_func_448;
+    self->animCallback = SHswapstone_anim_callback;
 
     // @bug: can't tell mapID correctly if local BLOCKS cell is unloaded upon
     // approaching SwapStone (happens if camera lags behind in SwapStone Circe)
@@ -82,32 +82,37 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
         objdata->bitSwappedToSeq = BIT_Play_Seq_00D7_Swapped_to_Krystal;
         self->modelInstIdx = 0;
     }
-    if ((main_get_bits(BIT_Talking_to_Rocky) != 0) && (main_get_bits(BIT_Talked_to_Rocky) != 0)) {
+
+    if (main_get_bits(BIT_Talking_to_Rocky) && main_get_bits(BIT_Talked_to_Rocky)) {
         objdata->awake = TRUE;
     } else {
         objdata->awake = FALSE;
     }
+
     main_set_bits(objdata->bitIntroSeq, 0);
 }
 
 // offset: 0x140 | func: 1 | export: 1
 void SHswapstone_control(Object* self) {
-    SHswapstone_Data* objdata;
+    SHswapstone_Data* objdata = self->data;
 
-    objdata = self->data;
     if (objdata->awake == FALSE) {
         if (self->curModAnimId != 0xC) {
             func_80023D30(self, 0xC, 0.0f, 0);
         }
+
         func_80024108(self, 0.008f, gUpdateRateF, NULL);
-        if ((main_get_bits(BIT_Talking_to_Rocky) != 0) && (main_get_bits(BIT_Talked_to_Rocky) != 0)) {
+
+        if (main_get_bits(BIT_Talking_to_Rocky) && main_get_bits(BIT_Talked_to_Rocky)) {
             objdata->awake = TRUE;
         }
     } else {
         if (self->curModAnimId != 0) {
             func_80023D30(self, 0, 0.0f, 0);
         }
+
         func_80024108(self, 0.008f, gUpdateRateF, NULL);
+
         if (main_get_bits(BIT_Talking_to_Rocky) == 0) {
             objdata->awake = FALSE;
         }
@@ -126,14 +131,22 @@ void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
     SHswapstone_Data* objdata;
 
     objdata = self->data;
-    if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        player = get_player();
-        if ((player != NULL) && (((DLL_210_Player*)player->dll)->vtbl->func34(player) != 0)) {
-            func_80031F6C(self, objdata->attachIdx, &x, &y, &z, 0);
-            ((DLL_210_Player*)player->dll)->vtbl->func65(player, x, y, z);
-            ((DLL_210_Player*)player->dll)->vtbl->base.print(player, gdl, mtxs, vtxs, pols, -1);
-        }
+
+    if (!visibility) {
+        return;
+    }
+
+    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    
+    //Draw the player when attached to SwapStone's hand
+    player = get_player();
+    if (!player){
+        return;
+    }
+    if (((DLL_210_Player*)player->dll)->vtbl->func34(player)) {
+        func_80031F6C(self, objdata->attachIdx, &x, &y, &z, 0);
+        ((DLL_210_Player*)player->dll)->vtbl->func65(player, x, y, z);
+        ((DLL_210_Player*)player->dll)->vtbl->base.print(player, gdl, mtxs, vtxs, pols, -1);
     }
 }
 
@@ -151,6 +164,7 @@ u32 SHswapstone_get_model_flags(Object* self) {
         // We are Rocky
         modelno = 0;
     }
+
     return MODFLAGS_MODEL_INDEX(modelno) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
@@ -159,19 +173,25 @@ u32 SHswapstone_get_data_size(Object *self, u32 a1) {
     return sizeof(SHswapstone_Data);
 }
 
+#define CMD_BASE_SELECTION 13
+#define SELECT_SCREEN(var) (CMD_BASE_SELECTION + var)
+
 // offset: 0x448 | func: 7
-static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a3) {
+static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 a3) {
     SHswapstone_Data* objdata;
     s32 playerno;
     s32 i;
 
     objdata = self->data;
-    if (menu_get_current() != MENU_16) {
-        menu_set(MENU_16);
+
+    if (menu_get_current() != MENU_SELECTION) {
+        menu_set(MENU_SELECTION);
     }
-    a2->unkF8 = SHswapstone_func_AD4;
-    a2->unkF4 = SHswapstone_func_A8C;
-    if (a2->unk62 != 0) {
+
+    animData->unkF8 = SHswapstone_is_stick_direction_available;
+    animData->unkF4 = SHswapstone_restore_gameplay_menu;
+
+    if (animData->unk62 != 0) {
         objdata->flags &= ~(SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE);
         if (SHswapstone_get_held_spirit() != PLAYER_NO_SPIRIT) {
             objdata->flags |= SWAPSTONE_PLAYER_HAS_SPIRIT;
@@ -179,13 +199,14 @@ static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a
         if (SHswapstone_has_spellstone() != 0) {
             objdata->flags |= SWAPSTONE_PLAYER_HAS_SPELLSTONE;
         }
-        a2->unk62 = 0;
+        animData->unk62 = 0;
         if (main_get_bits(objdata->bitSwapStoneSpokenTo) != 0) {
-            a2->unk9D |= 4;
+            animData->unk9D |= 4;
         }
     }
-    for (i = 0; i < a2->unk98; i++) {
-        switch (a2->unk8E[i]) {
+
+    for (i = 0; i < animData->unk98; i++) {
+        switch (animData->unk8E[i]) {
         case 3:
             objdata->attachIdx = 0;
             break;
@@ -254,12 +275,12 @@ static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a
         case 12:
             warpPlayer(WARP_SWAPSTONE_SHOP_ENTRANCE, /*fadeToBlack=*/FALSE);
             break;
-        case 13:
-        case 14:
-        case 15:
-        case 16:
-            if (menu_get_current() == MENU_16) {
-                ((DLL_Menu16*)menu_get_active_dll())->vtbl->func3(a2->unk8E[i] - 0xD);
+        case (SELECT_SCREEN(SelectionMenu_STATE_0_Fade_Out)):
+        case (SELECT_SCREEN(SelectionMenu_STATE_1_SwapStone_Choices)):
+        case (SELECT_SCREEN(SelectionMenu_STATE_2_Confirm_Right)):
+        case (SELECT_SCREEN(SelectionMenu_STATE_3_Confirm_Left)):
+            if (menu_get_current() == MENU_SELECTION) {
+                ((DLL_Menu16*)menu_get_active_dll())->vtbl->set_selection_state(animData->unk8E[i] - CMD_BASE_SELECTION);
             }
             break;
         default:
@@ -273,47 +294,49 @@ static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a
 }
 
 // offset: 0xA8C | func: 8
-static void SHswapstone_func_A8C(Object* self, Object *override, struct AnimObj_Data* arg2) {
+static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, struct AnimObj_Data* animData) {
     menu_set(MENU_GAMEPLAY);
 }
 
 // offset: 0xAD4 | func: 9
-static s32 SHswapstone_func_AD4(Object* self, Object *override, s32 arg2) {
+static int SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 arg2) {
     SHswapstone_Data* objdata;
     s8 joyXSign;
     s8 joyYSign;
 
     objdata = self->data;
     joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
+
     switch (arg2) {
     case 20:
         if ((joyXSign < 0) && !(objdata->flags & (SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE))) {
-            return 1;
+            return TRUE;
         }
     default:
         break;
     case 21:
         if ((joyXSign < 0) && (objdata->flags & (SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE))) {
-            return 1;
+            return TRUE;
         }
         break;
     case 22:
         if ((joyXSign > 0) && (objdata->flags & SWAPSTONE_PLAYER_HAS_SPIRIT)) {
-            return 1;
+            return TRUE;
         }
         break;
     case 23:
         if ((joyXSign > 0) && !(objdata->flags & SWAPSTONE_PLAYER_HAS_SPIRIT)) {
-            return 1;
+            return TRUE;
         }
         break;
     case 24:
         if (joyYSign > 0) {
-            return 1;
+            return TRUE;
         }
         break;
     }
-    return 0;
+
+    return FALSE;
 }
 
 // offset: 0xC04 | func: 10
@@ -324,6 +347,7 @@ static s32 SHswapstone_get_held_spirit(void) {
 
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
     player = get_player();
+    
     spiritBits = ((DLL_210_Player*)player->dll)->vtbl->func38(player, PLAYER_SPIRIT_ANY);
     if (playerno == PLAYER_SABRE) {
         if (spiritBits & PLAYER_SPIRIT_2) {
@@ -359,12 +383,12 @@ static s32 SHswapstone_get_held_spirit(void) {
 // offset: 0xD0C | func: 11
 // Whether the player has a SpellStone.
 // Only checks for the first two!
-static s32 SHswapstone_has_spellstone(void) {
+static int SHswapstone_has_spellstone(void) {
     if (main_get_bits(BIT_SpellStone_CRF) != 0) {
-        return 1;
+        return TRUE;
     }
     if (main_get_bits(BIT_SpellStone_DIM) != 0) {
-        return 1;
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }

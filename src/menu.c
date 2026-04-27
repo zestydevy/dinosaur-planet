@@ -27,7 +27,7 @@ s32 gMenuDLLIDs[] = {
     /*13*/ 70, //old level select
     /*14*/ 77, //scarab (shop minigame counter)
     /*15*/ 78, //credits
-    /*16*/ 79, //(used by swapstone and shopkeeper)
+    /*16*/ 79, //selection (used by SwapStone/ShopKeeper)
     /*17*/ 80
 };
 

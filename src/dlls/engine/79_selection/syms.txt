@@ -1,0 +1,25 @@
+.text = 0x0:
+selection_ctor = 0x0;
+selection_dtor = 0xF8;
+selection_update1 = 0x174;
+selection_update2 = 0x230;
+selection_draw = 0x238;
+selection_set_menu_state = 0x1340;
+
+.rodata = 0x13C4:
+
+.data = 0x13C4:
+dFrameButtonA = 0x0; // absolute:0x13C4
+dFrameButtonB = 0x4; // absolute:0x13C8
+dFrameControlStick = 0x8; // absolute:0x13CC
+
+.bss = 0x13D4:
+sMenuState = 0x0; // absolute:0x13D4
+sTexButtonA = 0x4; // absolute:0x13D8
+sTexButtonB = 0x8; // absolute:0x13DC
+sTexControlStick = 0xC; // absolute:0x13E0
+bss_10 = 0x10; // absolute:0x13E4
+bss_14 = 0x14; // absolute:0x13E8
+bss_18 = 0x18; // absolute:0x13EC
+sGametext = 0x1C; // absolute:0x13F0
+sOpacity = 0x20; // absolute:0x13F4
