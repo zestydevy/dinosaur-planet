@@ -2,6 +2,7 @@
 #include "dll.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/281_area.h"
+#include "game/objects/interaction_arrow.h"
 #include "sys/map.h"
 #include "sys/objlib.h"
 
@@ -291,17 +292,20 @@ Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
     return outObj;
 }
 
-s32 func_80032538(Object* arg0) {
+int func_80032538(Object* objInteracted) {
     Object* player;
 
-    if (arg0->unkAF & 1 && !gDLL_1_cmdmenu->vtbl->was_any_item_used()) {
+    if ((objInteracted->unkAF & ARROW_FLAG_1_Interacted) && 
+        (gDLL_1_cmdmenu->vtbl->was_any_item_used() == FALSE)
+    ) {
         player = get_player();
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
             joy_set_button_mask(0, A_BUTTON);
-            return 1;
+            return TRUE;
         }
     }
-    return 0;
+
+    return FALSE;
 }
 
 s32 registerObjectCallback(Object* obj, Object* otherObj, void (*callback)(Object*, Object*)) {

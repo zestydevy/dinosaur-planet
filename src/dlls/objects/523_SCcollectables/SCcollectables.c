@@ -132,17 +132,22 @@ void SCcollectables_control(Object* self) {
         }
     }
     
+    //Handle being invisible
     if (self->srt.flags & OBJFLAG_INVISIBLE) {
         return;
     }
     
-    //Remove collision after collection
+    //Handle behaviour after being collected
     if (self->unkDC) {
+        //Remove collision
         if (self->objhitInfo) {
             self->objhitInfo->unk58 |= 0x100;
         }
 
-        if ((objdata->gamebitCollected != NO_GAMEBIT) && (main_get_bits(objdata->gamebitCollected) == FALSE)) {
+        //Check if collection gamebit was reset
+        if ((objdata->gamebitCollected != NO_GAMEBIT) && 
+            (main_get_bits(objdata->gamebitCollected) == FALSE)
+        ) {
             self->unkDC = 0;
         }
         return;

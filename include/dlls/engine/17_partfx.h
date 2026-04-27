@@ -11,6 +11,7 @@ enum ParticleID {
     PARTICLE_9 = 0x9, //debris explosion
     PARTICLE_3C = 0x3C,
     PARTICLE_42 = 0x42,
+    PARTICLE_47 = 0x47,
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
     PARTICLE_69 = 0x69, //nothing?
@@ -126,6 +127,7 @@ enum ParticleID {
     /* --- DLL 48 END --- */
     /* --- DLL 39 START --- */
     PARTICLE_41A = 0x41A,
+    PARTICLE_423 = 0x423,
     PARTICLE_425 = 0x425, //smoke
     PARTICLE_426 = 0x426, //embers
     PARTICLE_427 = 0x427,
@@ -207,6 +209,8 @@ enum ParticleID {
     /* --- DLL 50 START --- */
     PARTICLE_73A = 0x73A,
     PARTICLE_73B = 0x73B,
+    PARTICLE_73D = 0x73D,
+    PARTICLE_73E = 0x73E,
     PARTICLE_741 = 0x741,
     PARTICLE_76B = 0x76B,
     /* --- DLL 50 END --- */

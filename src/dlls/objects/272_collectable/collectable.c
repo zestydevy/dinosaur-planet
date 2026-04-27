@@ -118,6 +118,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         return;
     }
 
+    //Create particles for Magic collectables
     collectableDef = self->def->collectableDef;
     if (collectableDef && collectableDef->type == Collectable_Type_Magic) {
         if (arg2 == 0) {
@@ -131,6 +132,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         self->velocity.y = -1.2f;
     }
 
+    //Setup interaction radius
     if (collectableDef) {
         objData->interactionRadius = collectableDef->interactionRadius;
     } else {
@@ -141,6 +143,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         objData->interactionRadius = self->def->lockdata->interactRadius * 4;
     }
 
+    //Setup light effects (TODO: update when lfxActions are better understood)
     if (self->def->unk87 & 0x10) {
         if (1){ }
         lfxAction.unk12.asByte = 25;
@@ -170,6 +173,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         self->unkD6 = lfxAction.unk10;
     }
 
+    //Setup shadow
     if (self->shadow){
         self->shadow->flags = OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
         id = self->id;
@@ -178,6 +182,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         }
     }
 
+    //Setup vertex colour multiplier
     if ((self->def->flags & 0x10000) && objData->useColourMultiplier) {
         objData->multiplyR = objSetup->multiplyR;
         objData->multiplyG = objSetup->multiplyG;
@@ -261,28 +266,41 @@ void collectable_control(Object* self) {
         }
     }
 
+    //Handle being invisible
     if (self->srt.flags & OBJFLAG_INVISIBLE) {
         return;
     }
 
+    //Handle behaviour after being collected
     if (self->unkDC) {
+        //Remove collision
         if (self->objhitInfo) {
             self->objhitInfo->unk58 |= 0x100;
         }
-        if (objdata->gamebitCollected != NO_GAMEBIT && main_get_bits(objdata->gamebitCollected) == FALSE) {
+
+        //Check if collection gamebit was reset
+        if ((objdata->gamebitCollected != NO_GAMEBIT) && 
+            (main_get_bits(objdata->gamebitCollected) == FALSE)
+        ) {
             self->unkDC = 0;
         }
         return;
     }
 
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+
+    //Update animation/motion
     collectable_handle_animation_and_fx(self);
     if (objdata->moving) {
         collectable_handle_motion(self);
     }
 
+    //Return early if no player interaction can happen
     player = get_player();
-    if (!player || objdata->interactFlags & Collectable_FLAG_Interaction_Off || !self->def->collectableDef) {
+    if (!player || 
+        objdata->interactFlags & Collectable_FLAG_Interaction_Off || 
+        !self->def->collectableDef
+    ) {
         return;
     }
 
@@ -296,7 +314,7 @@ void collectable_control(Object* self) {
             gDLL_13_Expgfx->vtbl->func5(self);
 
             for (index = 10; index > 0; index--){
-                gDLL_17_partfx->vtbl->spawn(self, 0x549, 0, 1, -1, 0);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_549, 0, 1, -1, 0);
             }
 
             if (main_get_bits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
@@ -447,7 +465,7 @@ void collectable_handle_animation_and_fx(Object* self) {
 
         //Sparkles
         if (rand_next(0, 80) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x47, 0, 4, -1, 0);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_47, 0, 4, -1, 0);
         }
     }
 
@@ -480,7 +498,7 @@ void collectable_handle_animation_and_fx(Object* self) {
     case OBJ_SC_golden_nugge:
         if (objdata->distanceToPlayer < 200.0f) {
             if (rand_next(0, 10) == 0) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x423, 0, 2, -1, 0);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_423, 0, 2, -1, 0);
             }
             self->srt.yaw += (s16) (182.0f * gUpdateRateF);
             return;
@@ -490,16 +508,15 @@ void collectable_handle_animation_and_fx(Object* self) {
         if (objdata->distanceToPlayer < 200.0f) {
             if (rand_next(0, 10) == 0) {
                 if (self->modelInstIdx == 0) {
-                    gDLL_17_partfx->vtbl->spawn(self, 0x73D, 0, 2, -1, 0);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_73D, 0, 2, -1, 0);
                 } else {
-                    gDLL_17_partfx->vtbl->spawn(self, 0x73E, 0, 2, -1, 0);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_73E, 0, 2, -1, 0);
                 }
             }
             self->srt.yaw += (s16) (182.0f * gUpdateRateF);
         }
         break;
     }
-
 }
 
 // offset: 0x10C8 | func: 9
