@@ -1,0 +1,43 @@
+.text = 0x0:
+dll_251_ctor = 0x0;
+dll_251_dtor = 0x140;
+dll_251_setup = 0x1F4;
+dll_251_control = 0x4E0;
+dll_251_update = 0x9E0;
+dll_251_print = 0x9EC;
+dll_251_free = 0xA04;
+dll_251_get_model_flags = 0xAE4;
+dll_251_get_data_size = 0xAF4;
+dll_251_func_B08 = 0xB08;
+dll_251_func_B30 = 0xB30;
+dll_251_func_B64 = 0xB64;
+dll_251_func_BC0 = 0xBC0;
+dll_251_func_D98 = 0xD98;
+dll_251_func_DB0 = 0xDB0;
+dll_251_func_DE0 = 0xDE0;
+dll_251_func_DF0 = 0xDF0;
+dll_251_func_E0C = 0xE0C;
+dll_251_func_E2C = 0xE2C;
+dll_251_func_E64 = 0xE64;
+dll_251_func_E74 = 0xE74;
+dll_251_func_E84 = 0xE84;
+dll_251_func_EC0 = 0xEC0;
+dll_251_func_1F78 = 0x1F78;
+dll_251_func_1FC4 = 0x1FC4;
+dll_251_func_25A8 = 0x25A8;
+
+.rodata = 0x26F4:
+
+.data = 0x2704:
+data_0 = 0x0; // absolute:0x2704
+data_4 = 0x4; // absolute:0x2708
+data_8 = 0x8; // absolute:0x270C
+data_4C = 0x4C; // absolute:0x2750
+data_70 = 0x70; // absolute:0x2774
+data_78 = 0x78; // absolute:0x277C
+data_7C = 0x7C; // absolute:0x2780
+data_80 = 0x80; // absolute:0x2784
+
+.bss = 0x27C4:
+bss_0 = 0x0; // absolute:0x27C4
+bss_8 = 0x8; // absolute:0x27CC

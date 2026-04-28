@@ -391,6 +391,8 @@ enum SoundID {
     SOUND_66E_Ting = 0x66E, // MagicDust
 
     SOUND_677_Metal_Clang = 0x677, // snowhorn related
+    SOUND_678 = 0x678,
+    SOUND_679 = 0x679,
 
     SOUND_688_KT_Rex_Stomp = 0x688,
     SOUND_689_KT_Rex_Stomp = 0x689,
