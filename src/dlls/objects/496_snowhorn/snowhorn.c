@@ -835,7 +835,7 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         } else if (main_get_bits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2DC;
             objdata->unk426 = 1.0f;
-        } else if (main_get_bits(BIT_Tricky_Distract_Learned)){
+        } else if (main_get_bits(BIT_Tricky_Learned_Distract)){
             objdata->chatSequenceList = _data_2D4;
             objdata->unk426 = 1.0f;
         } else {
@@ -849,7 +849,7 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         } else if (main_get_bits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2D8;
             objdata->unk426 = 1.0f;
-        } else if (main_get_bits(BIT_Tricky_Distract_Learned)){
+        } else if (main_get_bits(BIT_Tricky_Learned_Distract)){
             objdata->chatSequenceList = _data_2D0;
             objdata->unk426 = 1.0f;
         } else {
