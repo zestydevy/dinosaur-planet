@@ -66,6 +66,12 @@ typedef struct {
 /*03*/ u8 unk3;
 } BlocksTextureIndexData;
 
+//Shape bounding box - macros for extracting X/Z axes' extra precision values
+#define SHAPE_BB_REMAINDER_X_MIN(shape) (shape->boundsRemainder & 3)
+#define SHAPE_BB_REMAINDER_Z_MIN(shape) ((shape->boundsRemainder >> 2) & 3)
+#define SHAPE_BB_REMAINDER_X_MAX(shape) ((shape->boundsRemainder >> 4) & 3)
+#define SHAPE_BB_REMAINDER_Z_MAX(shape) ((shape->boundsRemainder >> 6) & 3)
+
 typedef struct {
 /*00*/    u32 flags; // RenderFlags
 /*04*/    s16 vtxBase;
@@ -86,7 +92,7 @@ typedef struct {
 /*14*/    u8 animatorID; // Used to mark facebatches that can be removed/animated
 /*15*/    u8 blendMaterialIndex; // Used for multitextured water
 /*16*/    u8 unk16; // texture scroll effect handler index? (at runtime)
-/*17*/    u8 unk_cull; // The function responsible for face culling reads this
+/*17*/    u8 boundsRemainder; // Extra precision for the X/Z axes of the shape's bounding box (2 bits for Xmin, Zmin, Xmax, Zmax respectively)
 } BlockShape;
 
 typedef struct {

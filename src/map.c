@@ -1068,140 +1068,158 @@ void func_800436DC(Object* obj, s32 arg1) {
     }
 }
 
-void func_80043950(Block* arg0, s16 arg1, s16 arg2, s16 arg3) {
-    BlockShape* var_s0;
-    BlockVertex* temp_v0_2;
-    EncodedTri* temp_t5;
-    EncodedTri* temp_v0;
-    EncodedTri* var_a1;
-    Plane* var_v0;
-    f32 temp_fa1;
-    f32 temp_fs0;
-    f32 temp_fs5;
-    f32 temp_ft2;
-    f32 temp_ft4;
-    f32 temp_ft5;
-    f32 var_fa0;
-    BlockShape* sp98;
-    f32 var_fs1;
-    f32 sp90;
-    f32 sp8C;
-    f32 sp88;
-    f32 var_fs2;
-    f32 sp80;
-    f32 sp7C;
-    f32 var_fs3;
-    f32 var_fs4;
-    f32 var_fv1;
-    s32 temp_s2;
-    s32 temp_s3;
-    s32 temp_s4;
-    s32 var_s1;
-    u32 temp_a0_3;
-    u32 temp_t8;
-    s32 i;
-    f32 var_fv0;
-    f32 var_fa1;
-    BlockVertex  *tempVtx;
+/** Calculates frustum culling for a Block's shapes, and for each shape's faces. */
+void func_80043950(Block* block, s16 arg1, s16 arg2, s16 arg3) {
+    BlockShape* shape;
+    EncodedTri* triEnd;
+    EncodedTri* tri;
+    f32 pad[5];
+    f32 Xmax;
+    f32 Fx;
+    f32 Fy;
+    f32 Fz;
+    f32 V2z;
+    BlockShape* shapesEnd;
+    f32 V1x;
+    f32 Xmin;
+    f32 Ymin;
+    f32 Zmin;
+    f32 V1y;
+    f32 Ymax;
+    f32 Zmax;
+    f32 V2y;
+    f32 V2x;
+    f32 V1z;
+    s32 Wx;
+    s32 Wy;
+    s32 Wz;
+    s32 visible;
+    u32 i;
+    f32 dotProduct;
+    f32 Fd;
+    BlockVertex  *shapeVtx;
 
-    temp_s2 = (D_800B51E4->tx - gWorldX) - D_800B97B8;
-    temp_s3 = D_800B51E4->ty;
-    temp_s4 = (D_800B51E4->tz - gWorldZ) - D_800B97BC;
-    var_s0 = arg0->shapes;
-    sp98 = &arg0->shapes[arg0->shapeCount];
-    while ((u32) var_s0 < (u32) sp98) {
-        if (var_s0->flags & 0x200000) {
-            var_s0->flags &= ~0x10000000;
-            var_s0++;
-            continue;
-        }
-        if ((D_800B9794 != 0) && ((D_800B979C & 1) || !(var_s0->flags & 0x2404)) && (func_80045600((var_s0 - arg0->shapes), &D_800B9780, arg1, arg2, arg3) == 0)) {
-            var_s0->flags &= ~0x10000000;
-            var_s0++;
+    Wx = (D_800B51E4->tx - gWorldX) - D_800B97B8;
+    Wy = D_800B51E4->ty;
+    Wz = (D_800B51E4->tz - gWorldZ) - D_800B97BC;
+
+    //Shape-level culling (based on bounds)
+    shape = block->shapes;
+    shapesEnd = &block->shapes[block->shapeCount];
+    while ((u32) shape < (u32) shapesEnd) {
+        //Check shape flags
+        if (shape->flags & 0x200000) {
+            shape->flags &= ~0x10000000;
+            shape++;
             continue;
         }
 
-        var_s1 = 1;
-        temp_fs5 = ((var_s0->Xmax * 4) | ((var_s0->unk_cull >> 4) & 3)) + D_800B97B8;
-        sp90 = ((var_s0->Xmin * 4) | (var_s0->unk_cull & 3)) + D_800B97B8;
-        sp8C = var_s0->Ymin;
-        sp80 = var_s0->Ymax;
-        sp7C = ((var_s0->Zmax * 4) | ((var_s0->unk_cull >> 6) & 3)) + D_800B97BC;
-        sp88 = ((var_s0->Zmin * 4) | ((var_s0->unk_cull >> 2) & 3)) + D_800B97BC;
+        if ((D_800B9794 != 0) && ((D_800B979C & 1) || 
+            !(shape->flags & 0x2404)) && (func_80045600((shape - block->shapes), &D_800B9780, arg1, arg2, arg3) == 0)
+        ) {
+            shape->flags &= ~0x10000000;
+            shape++;
+            continue;
+        }
+
+        visible = TRUE;
+
+        //Get shape's bounding box
+        Xmax = ((shape->Xmax * 4) | SHAPE_BB_REMAINDER_X_MAX(shape)) + D_800B97B8;
+        Xmin = ((shape->Xmin * 4) | SHAPE_BB_REMAINDER_X_MIN(shape)) + D_800B97B8;
+        Ymin = shape->Ymin;
+        Ymax = shape->Ymax;
+        Zmax = ((shape->Zmax * 4) | SHAPE_BB_REMAINDER_Z_MAX(shape)) + D_800B97BC;
+        Zmin = ((shape->Zmin * 4) | SHAPE_BB_REMAINDER_Z_MIN(shape)) + D_800B97BC;
+
         for (i = 0; i < ARRAYCOUNT(gFrustumPlanes); i++) {
             if (gFrustumPlanes[i].unk14[0] & 1) {
-                var_fs1 = temp_fs5;
-                var_fs4 = sp90;
+                V1x = Xmax;
+                V2x = Xmin;
             } else {
-                var_fs1 = sp90;
-                var_fs4 = temp_fs5;
+                V1x = Xmin;
+                V2x = Xmax;
             }
+
             if (gFrustumPlanes[i].unk14[0] & 2) {
-                var_fs2 = sp80;
-                var_fs3 = sp8C;
+                V1y = Ymax;
+                V2y = Ymin;
             } else {
-                var_fs2 = sp8C;
-                var_fs3 = sp80;
+                V1y = Ymin;
+                V2y = Ymax;
             }
+
             if (gFrustumPlanes[i].unk14[0] & 4) {
-                var_fv1 = sp7C;
-                var_fa0 = sp88;
+                V1z = Zmax;
+                V2z = Zmin;
             } else {
-                var_fv1 = sp88;
-                var_fa0 = sp7C;
+                V1z = Zmin;
+                V2z = Zmax;
             }
-            var_fa1 =  gFrustumPlanes[i].d; // not used but required to be loaded here
-            temp_ft4 = gFrustumPlanes[i].x;
-            temp_ft5 = gFrustumPlanes[i].y;
-            temp_fs0 = gFrustumPlanes[i].z;
-            var_fv0 = gFrustumPlanes[i].d + ((var_fs1 * temp_ft4) + (var_fs2 * temp_ft5) + (var_fv1 * temp_fs0));
-            if (var_fv0 < 0.0f) {
-                var_fv0 = gFrustumPlanes[i].d + ((var_fs4 * temp_ft4) + (var_fs3 * temp_ft5) + (var_fa0 * temp_fs0));
-                if (var_fv0 < 0.0f) {
-                    var_s1 = 0;
+
+            Fd = gFrustumPlanes[i].d; // not used but required to be loaded here
+            Fx = gFrustumPlanes[i].x;
+            Fy = gFrustumPlanes[i].y;
+            Fz = gFrustumPlanes[i].z;
+
+            dotProduct = gFrustumPlanes[i].d + ((V1x * Fx) + (V1y * Fy) + (V1z * Fz));
+            if (dotProduct < 0.0f) {
+                dotProduct = gFrustumPlanes[i].d + ((V2x * Fx) + (V2y * Fy) + (V2z * Fz));
+                if (dotProduct < 0.0f) {
+                    visible = FALSE;
                     break;
                 }
             }
         }
 
-        if (var_s1 == 0) {
-            var_s0->flags &= ~0x10000000;
-            var_s0++;
+        //Set flags
+        if (visible == FALSE) {
+            shape->flags &= ~0x10000000;
+            shape++;
             continue;
         }
-        if (!(var_s0->flags & 0x80000000)) {
-            var_s1 = 0;
-            tempVtx = &arg0->vertices[var_s0->vtxBase];
-            var_a1 = arg0->encodedTris;
-            var_a1 += var_s0->triBase;
-            temp_t5 = arg0->encodedTris;
-            temp_t5 += var_s0[1].triBase;
-            while ((u32) var_a1 < (u32) temp_t5) {
-                s32 a2 = (s32)var_a1->d0 >> 0xD;
-                s32 temp0, temp1, temp2;
-                s32 temp3, temp4, temp5;
-                temp0 = (tempVtx[a2 & 0x1F].ob[0] - temp_s2);
-                temp1 = (tempVtx[a2 & 0x1F].ob[1] - temp_s3);
-                temp2 = (tempVtx[a2 & 0x1F].ob[2] - temp_s4);
-                temp3 = (s32)var_a1->d0 >> 0x12;
-                temp4 = (s32) (var_a1->d1 << 0xE) >> 0x12;
-                temp5 = (s32) var_a1->d1 >> 0x12;
-                if ((temp0 * temp3) + (temp1 * temp4) + (temp2 * temp5) < 0) {
-                    var_a1->d1 |= 1;
-                    var_s1 = 1;
+
+        //Tri-level culling (based on vertex coords)
+        if (!(shape->flags & 0x80000000)) {
+            visible = FALSE;
+            shapeVtx = &block->vertices[shape->vtxBase];
+            tri = block->encodedTris;
+            tri += shape->triBase;
+            triEnd = block->encodedTris;
+            triEnd += shape[1].triBase;
+
+            while ((u32) tri < (u32) triEnd) {
+                s32 a2 = (s32) tri->d0 >> 0xD;
+                s32 Ax, Ay, Az;
+                s32 Bx, By, Bz;
+
+                Ax = shapeVtx[a2 & 0x1F].ob[0] - Wx;
+                Ay = shapeVtx[a2 & 0x1F].ob[1] - Wy;
+                Az = shapeVtx[a2 & 0x1F].ob[2] - Wz;
+                Bx = (s32) tri->d0 >> 0x12;
+                By = (s32) (tri->d1 << 0xE) >> 0x12;
+                Bz = (s32) tri->d1 >> 0x12;
+
+                //Get dot product of vectors (check if seeing back of face?)
+                if ((Ax * Bx) + (Ay * By) + (Az * Bz) < 0) {
+                    tri->d1 |= 1;
+                    visible = TRUE;
                 } else {
-                    var_a1->d1 &= ~1;
+                    tri->d1 &= ~1;
                 }
-                var_a1++;
+
+                tri++;
             }
-            if (var_s1 == 0) {
-                var_s0->flags &= ~0x10000000;
-                var_s0++;
+
+            if (visible == FALSE) {
+                shape->flags &= ~0x10000000;
+                shape++;
                 continue;
             }
         }
-        var_s0->flags |= 0x10000000;
-        var_s0++;
+
+        shape->flags |= 0x10000000;
+        shape++;
     }
 }
 
