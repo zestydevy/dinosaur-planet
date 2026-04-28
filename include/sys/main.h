@@ -44,7 +44,7 @@ void mainproc(void *arg);
 
 void func_80013FB4(void);
 
-void func_800141A4(s32, s32, s32 playerno, s32);
+void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID);
 void func_800142A0(f32 arg0, f32 arg1, f32 arg2);
 void main_start_game(f32 x, f32 y, f32 z, s32 playerno);
 void func_800143A4(void);

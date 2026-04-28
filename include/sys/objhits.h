@@ -129,7 +129,7 @@ typedef enum {
 void objhits_init(void);
 void func_80025DF0(void);
 void obj_do_hit_detection(s32 numObjs);
-s32 func_80025F40(Object*,Object **,s32 *,s32 *);
+s32 func_80025F40(Object* obj, Object **hitBy, s32 *arg2, s32 *damage);
 s32 func_8002635C(Object* objDamaged, Object* hitBy, s8 damageType, s8 hitDamage, s8 arg4);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 s32 func_80026724(Object*);

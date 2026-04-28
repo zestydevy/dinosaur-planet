@@ -7,6 +7,7 @@
 #include "game/gamebits.h"
 #include "game/gametexts.h"
 #include "sys/fonts.h"
+#include "sys/map_enums.h"
 #include "sys/vi.h"
 #include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
@@ -49,7 +50,7 @@ void dll_60_ctor(void *dll) {
         font_load(FONT_DINO_MEDIUM_FONT_OUT);
         main_load_frontend();
         dExpansionPakMissing = FALSE;
-        func_800141A4(1, 0, PLAYER_NONE, -1);
+        main_change_map(MAP_FRONT_END2, 0, PLAYER_NONE, -1);
         gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
         main_set_bits(BIT_44F, 1);
         gDLL_2_Camera->vtbl->set_letterbox_goal(30, 1);

@@ -9,38 +9,38 @@ static const char str_8009823c[] = "in cache %d\n";
 static const char str_8009824c[] = "flush\n";
 static const char str_80098254[] = "in load %d\n";
 
-ACache* acache_init(u8 fileID, u8 arg1, u8 arg2, u8 arg3, ACacheCallback arg4) {
-    u8* var_a0;
+ACache* acache_init(u8 fileID, u8 recordsPerLoad, u8 recordSize, u8 slotCount, ACacheCallback loadCallback) {
+    u8* slotBuffer;
     ACache* cache;
-    s32 temp_v0_2[5];
-    s32 i;
+    s32 layoutOffsets[5];
+    s32 slotIndex;
 
-    temp_v0_2[0] = mmAlign16(sizeof(ACache));
-    temp_v0_2[1] = temp_v0_2[0] + (arg1 * arg2);
-    temp_v0_2[2] = temp_v0_2[1] + (arg3 * arg2);
-    temp_v0_2[3] = temp_v0_2[2] + (arg3 * 2);
-    i = temp_v0_2[3] + (arg3 * 4);
-    temp_v0_2[4] = i;
+    layoutOffsets[0] = mmAlign16(sizeof(ACache));
+    layoutOffsets[1] = layoutOffsets[0] + (recordsPerLoad * recordSize);
+    layoutOffsets[2] = layoutOffsets[1] + (slotCount * recordSize);
+    layoutOffsets[3] = layoutOffsets[2] + (slotCount * 2);
+    slotIndex = layoutOffsets[3] + (slotCount * 4);
+    layoutOffsets[4] = slotIndex;
     
-    cache = mmAlloc(temp_v0_2[4], COLOUR_TAG_GREY, NULL);
+    cache = mmAlloc(layoutOffsets[4], COLOUR_TAG_GREY, NULL);
     if (cache != NULL) {
-        if ((!cache->unkC) && (!cache->unkC)) {}
+        if ((!cache->slotStorage) && (!cache->slotStorage)) {}
         cache->fileID = fileID;
-        cache->unk1 = arg1;
-        cache->unk2 = arg2;
-        cache->unk3 = arg3;
-        cache->unk18 = arg4;
-        cache->unk8 = (u8* ) (temp_v0_2[0] + (u32)cache);
-        cache->unkC = (u8* ) (temp_v0_2[1] + (u32)cache);
-        cache->unk10 = (s16* ) (temp_v0_2[2] + (u32)cache);
-        cache->unk14 = (u8** ) (temp_v0_2[3] + (u32)cache);
-        cache->unk6 = -arg2 - 1;
-        var_a0 = cache->unkC;
-        cache->unk4 = 0;
-        for (i = 0; i < arg3; i++) {
-            cache->unk10[i] = -1;
-            cache->unk14[i] = var_a0;
-            var_a0 += arg2;
+        cache->recordsPerLoad = recordsPerLoad;
+        cache->recordSize = recordSize;
+        cache->slotCount = slotCount;
+        cache->loadCallback = loadCallback;
+        cache->loadedRecords = (u8* ) (layoutOffsets[0] + (u32)cache);
+        cache->slotStorage = (u8* ) (layoutOffsets[1] + (u32)cache);
+        cache->slotRecordIds = (s16* ) (layoutOffsets[2] + (u32)cache);
+        cache->slotBuffers = (u8** ) (layoutOffsets[3] + (u32)cache);
+        cache->loadedStartIndex = -recordSize - 1;
+        slotBuffer = cache->slotStorage;
+        cache->nextSlot = 0;
+        for (slotIndex = 0; slotIndex < slotCount; slotIndex++) {
+            cache->slotRecordIds[slotIndex] = -1;
+            cache->slotBuffers[slotIndex] = slotBuffer;
+            slotBuffer += recordSize;
         }
     }
     
@@ -51,83 +51,83 @@ void acache_free(ACache *cache) {
     mmFree(cache);
 }
 
-void acache_func_80000D50(ACache *cache) {
-    s32 i;
+void acache_flush(ACache *cache) {
+    s32 slotIndex;
 
-    cache->unk6 = -cache->unk2 - 1;
-    cache->unk4 = 0;
+    cache->loadedStartIndex = -cache->recordSize - 1;
+    cache->nextSlot = 0;
 
-    for (i = 0; i < cache->unk3; ++i) {
-       cache->unk10[i] = -1;
+    for (slotIndex = 0; slotIndex < cache->slotCount; ++slotIndex) {
+       cache->slotRecordIds[slotIndex] = -1;
     }
 }
 
-void *acache_get(ACache *cache, s32 arg1) {
-    u8* sp34;
-    s32 var_s0;
-    s32 var_s2_3;
-    s32 var_v1;
-    void *temp_v0_2;
+void *acache_get(ACache *cache, s32 recordIndex) {
+    u8* slotBuffer;
+    s32 slotIndex;
+    s32 cacheIndex;
+    s32 nextSlot;
+    void *loadedRecord;
 
-    sp34 = NULL;
-    cache->unk4--;
-    if (cache->unk4 < 0) {
-        cache->unk4 = cache->unk3 - 1;
+    slotBuffer = NULL;
+    cache->nextSlot--;
+    if (cache->nextSlot < 0) {
+        cache->nextSlot = cache->slotCount - 1;
     }
-    for (var_s2_3 = 0; var_s2_3 < cache->unk3; var_s2_3++) {
-        if (arg1 == cache->unk10[var_s2_3]) {
-            sp34 = cache->unk14[var_s2_3];
+    for (cacheIndex = 0; cacheIndex < cache->slotCount; cacheIndex++) {
+        if (recordIndex == cache->slotRecordIds[cacheIndex]) {
+            slotBuffer = cache->slotBuffers[cacheIndex];
             break;
         }
     }
-    if (sp34 != NULL) {
-        var_s0 = var_s2_3;
-        var_v1 = var_s2_3 + 1;
-        while (var_s0 != cache->unk4) {
-            if (var_v1 == cache->unk3) {
-                var_v1 = 0;
+    if (slotBuffer != NULL) {
+        slotIndex = cacheIndex;
+        nextSlot = cacheIndex + 1;
+        while (slotIndex != cache->nextSlot) {
+            if (nextSlot == cache->slotCount) {
+                nextSlot = 0;
             }
-            cache->unk10[var_s0] = cache->unk10[var_v1];
-            cache->unk14[var_s0] = cache->unk14[var_v1];
-            var_s0 += 1;
-            var_v1 += 1;
-            if (var_s0 == cache->unk3) {
-                var_s0 = 0;
+            cache->slotRecordIds[slotIndex] = cache->slotRecordIds[nextSlot];
+            cache->slotBuffers[slotIndex] = cache->slotBuffers[nextSlot];
+            slotIndex += 1;
+            nextSlot += 1;
+            if (slotIndex == cache->slotCount) {
+                slotIndex = 0;
             }
         }
     } else {
-        sp34 = cache->unk14[cache->unk4];
-        var_s2_3 = arg1 - cache->unk6;
-        if ((var_s2_3 < 0) || (var_s2_3 >= cache->unk1)) {
+        slotBuffer = cache->slotBuffers[cache->nextSlot];
+        cacheIndex = recordIndex - cache->loadedStartIndex;
+        if ((cacheIndex < 0) || (cacheIndex >= cache->recordsPerLoad)) {
             // Requested item is outside of the currently cached region
-            var_s2_3 = arg1 - (cache->unk1 >> 1);
-            if (var_s2_3 < 0) {
-                var_s2_3 = 0;
+            cacheIndex = recordIndex - (cache->recordsPerLoad >> 1);
+            if (cacheIndex < 0) {
+                cacheIndex = 0;
             }
-            cache->unk6 = var_s2_3;
-            if (cache->unk18 != NULL) {
+            cache->loadedStartIndex = cacheIndex;
+            if (cache->loadCallback != NULL) {
                 // Load from callback
-                for (var_s0 = 0; var_s0 < (s32) cache->unk1; var_s0 += 1) {
+                for (slotIndex = 0; slotIndex < (s32) cache->recordsPerLoad; slotIndex += 1) {
                     // Get thing from callback
-                    temp_v0_2 = cache->unk18(var_s2_3);
+                    loadedRecord = cache->loadCallback(cacheIndex);
                     // Copy it into cache
-                    bcopy(temp_v0_2, &cache->unk8[var_s0 * cache->unk2], cache->unk2);
-                    mmFree(temp_v0_2);
-                    var_s2_3 += 1;
+                    bcopy(loadedRecord, &cache->loadedRecords[slotIndex * cache->recordSize], cache->recordSize);
+                    mmFree(loadedRecord);
+                    cacheIndex += 1;
                 }
             } else {
                 // Load from file
                 queue_load_file_region_to_ptr(
-                    /*dest*/   (void** ) cache->unk8, 
+                    /*dest*/   (void** ) cache->loadedRecords,
                     /*fileID*/ (s32) cache->fileID, 
-                    /*offset*/ cache->unk2 * var_s2_3, 
-                    /*length*/ cache->unk1 * cache->unk2);
+                    /*offset*/ cache->recordSize * cacheIndex,
+                    /*length*/ cache->recordsPerLoad * cache->recordSize);
             }
-            var_s2_3 = arg1 - cache->unk6;
+            cacheIndex = recordIndex - cache->loadedStartIndex;
         }
-        bcopy(&cache->unk8[var_s2_3 * cache->unk2], sp34, cache->unk2);
+        bcopy(&cache->loadedRecords[cacheIndex * cache->recordSize], slotBuffer, cache->recordSize);
     }
-    cache->unk10[cache->unk4] = arg1;
-    cache->unk14[cache->unk4] = sp34;
-    return sp34;
+    cache->slotRecordIds[cache->nextSlot] = recordIndex;
+    cache->slotBuffers[cache->nextSlot] = slotBuffer;
+    return slotBuffer;
 }

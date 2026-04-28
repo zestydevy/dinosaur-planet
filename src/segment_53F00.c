@@ -673,7 +673,7 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
                         arg0->unk30 = sp7C->materials[sp7C->faces[spB4].materialID].unk7;
                     }
                     arg0->unk32 = (highestYIndex * 0x10) | lowestYIndex;
-                    arg0->unk31 = 1;
+                    arg0->unk2F = 1;
                     arg0 += 1;
                 }
             }
@@ -708,10 +708,10 @@ void func_80054DF8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, u8 arg2
             temp_fs2 *= temp_fv1;
         }
         if ((arg2 & 8) && (temp_fs0 >= 0.707f)) {
-            arg0->unk31 |= 0x10;
+            arg0->unk2F |= 0x10;
         }
         if ((arg2 & 4) && (temp_fs0 < 0.707f)) {
-            arg0->unk31 |= 0x10;
+            arg0->unk2F |= 0x10;
         }
         arg0->unk4 = temp_fs1 * 8191.0f;
         arg0->unk6 = temp_fs0 * 8191.0f;
@@ -874,7 +874,7 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
             sp1DA = arg6->unk54[sp1D6] == 6;
             var_s2 = arg1;
             for (;(u32) var_s2 < (u32) arg2; var_s2++) {
-                if (!(var_s2->unk31 & 0x10)) {
+                if (!(var_s2->unk2F & 0x10)) {
                     sp168.f[0] = var_s2->unk4 * (1.0f / 8191.0f);
                     sp168.f[1] = var_s2->unk6 * (1.0f / 8191.0f);
                     sp168.f[2] = var_s2->unk8 * (1.0f / 8191.0f);
@@ -902,10 +902,10 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                             sp184.f[0] = sp184.f[0] + sp1A8.f[0];\
                             sp184.f[1] = sp184.f[1] + sp1A8.f[1];\
                             sp184.f[2] = sp184.f[2] + sp1A8.f[2];\
-                            if (sp184.f[1] < (var_s2->unk10[var_s2->unk32 & 0xF] - (temp_fs2 + 0.1f))) {
+                            if (sp184.f[1] < (var_s2->unk10[var_s2->unk30 & 0xF] - (temp_fs2 + 0.1f))) {
                                 continue;
                             }
-                            if ((var_s2->unk10[var_s2->unk32 >> 4] + (temp_fs2 + 0.1f)) < sp184.f[1]) {
+                            if ((var_s2->unk10[var_s2->unk30 >> 4] + (temp_fs2 + 0.1f)) < sp184.f[1]) {
                                 continue;
                             }
                             sp138.f[0] = var_s2->unk1C[0];
@@ -1032,7 +1032,7 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                         sp128.f[3] = sp168.f[3];
                         sp1D2 = var_s4;
                         var_s4 = 0;
-                        spB4 = var_s2->unk30;
+                        spB4 = var_s2->unk2E;
                     }
                 }
             }
@@ -1574,7 +1574,7 @@ void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005
         arg4 -= (f32) D_800BB200->s[2];
     }
     for (var_s4 = arg0; (u32) var_s4 < (u32) arg1; var_s4++) {
-        if ((var_s4->unk31 & 0x10) && !(var_s4->unk31 & 4)) {
+        if ((var_s4->unk2F & 0x10) && !(var_s4->unk2F & 4)) {
             continue;
         }
         spB4.x = var_s4->unk4 * (1.0f / 8191.0f);
@@ -1608,7 +1608,7 @@ void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005
                     vec3_transform_no_translate(arg2->unkC, &spB4, &spB4);
                 }
                 D_800BB4A0->unk0[0] = spC8;
-                D_800BB4A0->unk14 = var_s4->unk30;
+                D_800BB4A0->unk14 = var_s4->unk2E;
                 D_800BB4A0->unk0[1] = spB4.x;
                 D_800BB4A0->unk0[2] = spB4.y;
                 D_800BB4A0->unk0[3] = spB4.z;

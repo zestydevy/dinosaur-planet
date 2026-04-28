@@ -264,6 +264,7 @@ enum SoundID {
     SOUND_2F8_Door_Opening = 0x2f8, // used by doors in Krazoa Shrines
     SOUND_2F9_Door_Closing = 0x2f9, // used by doors in Krazoa Shrines
 
+    SOUND_303 = 0x303,
     SOUND_304_Burning_Loop = 0x304, // flame blast
 
     SOUND_336 = 0x336,

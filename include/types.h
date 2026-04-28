@@ -8,7 +8,6 @@
 typedef union {
     void (*asVoid)(void);
     void (*withOneArg)(s32);
-    
     void (*withTwoArgs)(s32, s32);
     void (*withThreeArgs)(s32, s32, s32);
     void (*withFourArgs)(s32, s32, s32, s32);
@@ -34,6 +33,7 @@ typedef union {
     s32 (*withSevenArgsS32)(s32, s32, s32, s32, s32, s32, s32);
     f32 (*asVoidF32)(void);
     f32 (*withOneArgF32)(s32);
+    f32 (*withOneVoidArgF32)(void*);
     f32 (*withTwoArgsF32)(s32, s32);
     f32 (*withThreeArgsF32)(s32, s32, s32);
     f32 (*withFourArgsF32)(s32, s32, s32, s32);
@@ -46,6 +46,7 @@ typedef union {
     void (*withOneS32OneF32)(s32, f32);
     void (*withTwoArgsCustom)(void *, s32);
     void (*withFourArgsCustom)(void *, void *, f32, s32);
+    void (*withFourArgsCustom2)(void*, void *, void*, void *);
     void (*withFiveArgsCustom)(void *, f32, f32 *, f32 *, f32 *);
     void (*withFiveArgsCustom2)(void *, void *, f32, s32, f32);
     s32 (*withFiveArgsCustom3)(void *, void *, s8, f32 *, f32 *);
@@ -109,7 +110,7 @@ typedef struct {
 /*0006*/ s16 unk6;
 /*0008*/ s16 unk8;
 /*000A*/ s16 unka;
-/*000C*/ s16 unkc;  //y coord?
+/*000C*/ s16 unkC;  //y coord?
 /*000E*/ u16 unke;  //LAction.bin index
 /*0010*/ u16 unk10; //lightLayer (lights' influences can be combined when on different layers)
 /*0012*/ union {

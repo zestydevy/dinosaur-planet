@@ -499,10 +499,6 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/print_stack_trace.s")
-#else
-// https://decomp.me/scratch/EZR1D
 void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
     OSThread* thread;
     __OSThreadContext* ctx;
@@ -517,6 +513,7 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
     u32 *var_s1;
 
     sp60 = 0x1C;
+    var_s4 = 0;
     thread = threads[arg2];
     clear_framebuffer_current();
     gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
@@ -541,8 +538,8 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
         crash_print_line(0xF0, 0x2A, "%08x", sp54);
         gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
     }
-    var_s3 = 0x30;
-    var_s4 = 1;
+    var_s3 = 48;
+    var_s4++;
     while (var_s0 != NULL && sp60 > var_s4) {
         if ((var_s0[0] & 0xFC1FFFFF) == 0xF809) {
             var_s1 = var_s0[1];
@@ -564,7 +561,7 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
                 }
 
                 // ????????
-                if (&var_s0[1]) {
+                if ((u32)&var_s0[1]) {
                     switch (var_s0[1] >> 0x10) {
                         case 0x27BD:
                             var_s2 += ((u32) (var_s0[1] & 0xFFFF) >> 2);
@@ -593,12 +590,11 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
     }
     while (1) {
         crash_copy_control_inputs();
-        if (gCrashButtons[0] != 0) {
+        if (gCrashButtons[0]) {
             other_crash_print(threads, arg1, arg2);
         }
     }
 }
-#endif
 
 void other_crash_print(OSThread **threads, s32 count, s32 threadIdx) {
     OSThread *thread;

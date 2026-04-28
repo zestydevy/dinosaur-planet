@@ -325,50 +325,39 @@ s32 func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
     return var_s1 == (arg2 * 2);
 }
 
-#ifndef NON_EQUIVALENT
-s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4, f32 arg5, s16 arg6, s16 arg7);
-#pragma GLOBAL_ASM("asm/nonmatchings/objexpr/func_800334A4.s")
-#else
-// https://decomp.me/scratch/hIDz6
 s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4, f32 arg5, s16 arg6, s16 arg7) {
+    f32 temp_fs0;
     f32 sp90;
-    f32 sp8C;
+    f32 sp8C; // fa1
     f32 sp88;
     s16 sp84[2];
     s16 sp80[2];
-    u8 sp6B;
-    f32 temp_fs0;
-    s32 temp_a0;
-    s32 temp_a1;
     s32 temp_lo;
-    s32 temp_t5;
-    s16 temp_v1_2;
     s16 var_a0;
-    s16 var_t7;
+    s16 var_a1;
+    s32 pad;
     s32 var_v1;
     s16* temp_v0;
-    s16* var_a1;
-    s16* var_a3;
+    u8 sp6B;
     s32 temp_ft0;
-    s32 i;
+    s16* var_t3;
+    s32 i; // s3
     s32 j;
-    s32* var_s6;
-    u8 var_v1_4;
 
     sp6B = 0;
     temp_fs0 = arg2->x - otherObj->srt.transl.x;
     sp8C = arg2->z - otherObj->srt.transl.z;
     sp90 = (arg2->y + arg5) - otherObj->srt.transl.y;
     sp88 = sqrtf(SQ(temp_fs0) + SQ(sp8C));
-    sp84[0] = ((s16)((u16)arctan2_f(temp_fs0, sp8C)) - (obj->srt.yaw & 0xFFFF));
-    CIRCLE_WRAP(sp84[0])
-    sp84[1] = arg7 - -(u16)arctan2_f(sp88, sp90);
-    CIRCLE_WRAP(sp84[1])
-    if ((D_800B2E00 >> 0x1F) != 0) {
+    sp84[0] = (s16)(u16)arctan2_f(temp_fs0, sp8C) - (obj->srt.yaw & 0xFFFF);
+    CIRCLE_WRAP(sp84[0]);
+    sp84[1] = arg7 - (-arctan2_f(sp88, sp90) & 0xFFFF);
+    CIRCLE_WRAP(sp84[1]);
+    // ugly cast hack to fix instruction
+    if ((*(u32*)(&D_800B2E00) >> 0x1F) != 0) {
         sp84[0] -= 0x8000;
         sp84[1] = -sp84[1];
     }
-
     for (i = 0; i < 10; i++) {
         temp_v0 = func_80034804(obj, D_80091720[i]);
         if (temp_v0 == NULL) {
@@ -376,18 +365,17 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
         }
         for (j = 0; j < 2; j++) {
             if (j % 2) {
-                var_a0 = (arg4[i + 15] * 182.04f);
+                var_a0 = arg4[i + 15U] * 182.04f;
             } else {
-                var_a0 = (arg4[i] * 182.04f);
+                var_a0 = arg4[i] * 182.04f;
             }
-            temp_v1_2 = sp84[j];
-            sp80[j] = temp_v1_2;
-            if (var_a0 < temp_v1_2) {
+            sp80[j] = sp84[j];
+            if (var_a0 < sp84[j]) {
                 sp80[j] = var_a0;
-                sp84[j] = temp_v1_2 - var_a0;
-            } else if (temp_v1_2 < -var_a0) {
+                sp84[j] -= var_a0;
+            } else if (sp84[j] < -var_a0) {
                 sp80[j] = -var_a0;
-                sp84[j] = temp_v1_2 + var_a0;
+                sp84[j] += var_a0;
             } else {
                 sp84[j] = 0;
             }
@@ -399,40 +387,49 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
             func_80034518(arg3 + 1, temp_v0, 10.0f, 500.0f);
             arg3 += 2;
         } else {
-            temp_a1 = (s16) ((s16) ((sp80[0] + temp_v0[1]) >> 1) - temp_v0[1]);
+            var_t3 = arg4 + 15;
+            var_a1 = (temp_v0[1] + sp80[0]) >> 1;
+            var_a1 -= temp_v0[1];
             temp_lo = ((s16) (-arg4[i] * 182.04f) / 10) * gUpdateRate;
-            if (temp_a1 < temp_lo) {
-                var_t7 = temp_lo;
+            if (var_a1 < temp_lo) {
+                var_a1 = temp_lo;
             } else {
                 temp_lo = ((s16) (arg4[i] * 182.04f) / 10) * gUpdateRate;
-                if (temp_lo < temp_a1) {
-                    temp_a1 = temp_lo;
+                if (temp_lo < var_a1) {
+                    var_v1 = temp_lo;
+                } else {
+                    var_v1 = var_a1;
                 }
-                var_t7 = temp_a1;
+                var_a1 = var_v1;
             }
-            temp_a0 = (s16) ((s16) ((sp80[1] + temp_v0[0]) >> 1) - temp_v0[0]);
-            temp_lo = (-(s16) (arg4[i + 15] * 182.04f) / 10) * gUpdateRate;
-            if (temp_a0 < temp_lo) {
-                var_a0 = temp_lo;
+            var_a0 = (temp_v0[0] + sp80[1]) >> 1;
+            var_a0 -= temp_v0[0];
+            temp_ft0 = (s16) (var_t3[i] * 182.04f);
+            pad = (- temp_ft0 / 10) * gUpdateRate;
+            if (var_a0 < pad) {
+                var_a0 = pad;
             } else {
-                temp_lo = ((s16) (arg4[i + 15] * 182.04f) / 20) * gUpdateRate;
-                if (temp_lo < temp_a0) {
-                    temp_a0 = temp_lo;
+                if (((temp_ft0 / 20) * gUpdateRate) < var_a0) {
+                    var_v1 = ((temp_ft0 / 20) * gUpdateRate);
+                } else {
+                    var_v1 = var_a0;
                 }
-                var_a0 = temp_a0;
+                var_a0 = var_v1;
             }
             temp_v0[0] += var_a0;
-            temp_v0[1] += var_t7;
+            temp_v0[1] += var_a1;
         }
         if (i == 0) {
-            sp6B = (sp80[0] - 4) < temp_v0[1] && temp_v0[1] < (sp80[0] + 4);
+            var_v1 = (sp80[0] - 4) < temp_v0[1];
+            if (var_v1 != 0) {
+                var_v1 = temp_v0[1] < (sp80[0] + 4);
+            }
+            sp6B = var_v1;
         }
     }
-
-    D_800B2E00 &= 0xFF7F;
+    D_800B2E00 &= ~0x80;
     return sp84[0];
 }
-#endif
 
 void func_800339E0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     ModelInstance* sp2C;
@@ -943,7 +940,7 @@ void func_80034BC0(Object* obj, HeadAnimation* arg1) {
 
 void func_80034D94(u8 arg0, u8 arg1) {
     if (!arg0) {
-        D_800B2E00 = ((arg1 & 0xFF & 0xFF) << 7) | (D_800B2E00 & 0xFF7F);
+        D_800B2E00 = ((arg1 & 0xFF & 0xFF) << 7) | (D_800B2E00 & ~0x80);
     } else {
         STUBBED_PRINTF(" WARNING: Expr Contrl Flag does not exist \n");
     }

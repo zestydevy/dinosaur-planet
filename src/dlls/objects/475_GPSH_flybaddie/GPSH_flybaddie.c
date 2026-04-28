@@ -12,6 +12,7 @@
 #include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
+#include "sys/objhits.h"
 #include "sys/rand.h"
 #include "dll.h"
 #include "types.h"
@@ -88,9 +89,9 @@ void GPSH_flybaddie_setup(Object* self, GPSH_flybaddie_Setup* setup, s32 arg2) {
     objdata->unk4E = rand_next(0, 1000);
     if (setup->unk1A == 0) {
         objdata->unk44 = -130.0f;
-        return;
+    } else {
+        objdata->unk44 = (f32) setup->unk1A;
     }
-    objdata->unk44 = (f32) setup->unk1A;
 }
 
 // offset: 0x19C | func: 1 | export: 1
@@ -127,7 +128,7 @@ void GPSH_flybaddie_control(Object* self) {
     objdata->unk30 += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
-    if ((func_80025F40(self, &hitBy, NULL, NULL) == 0xF) && (hitBy != NULL)) {
+    if ((func_80025F40(self, &hitBy, NULL, NULL) == Damage_Type_Projectile) && (hitBy != NULL)) {
         if (hitBy->id != OBJ_WGSH_projball) {
             for (i = 15; i != 0; i--) {
                 gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);

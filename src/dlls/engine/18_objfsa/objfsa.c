@@ -395,7 +395,7 @@ void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 arg3) {
                 data->unk2AC = sp34.unk0[1];
             }
             if (arg3 & 8) {
-                obj->srt.yaw += sp34.unkc[1];
+                obj->srt.yaw += sp34.unkC[1];
             }
         } else {
             if (arg3 & 1) {
@@ -405,7 +405,7 @@ void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 arg3) {
                 data->unk27C = sp34.unk0[0] / updateRate;
             }
             if (arg3 & 8) {
-                obj->srt.yaw += sp34.unkc[1];
+                obj->srt.yaw += sp34.unkC[1];
             }
             if (arg3 & 4) {
                 data->unk280 = sp34.unk0[1] / updateRate;

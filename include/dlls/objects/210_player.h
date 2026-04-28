@@ -435,9 +435,9 @@ DLL_INTERFACE(DLL_210_Player) {
     /*52*/ void *(*func52)(Object* player);
     /*53*/ Object *(*func53)(Object* player);
     /*54*/ HeadAnimation *(*func54)(Object* player);
-    /*55*/ void (*func55)(Object* player, Player_Data* objdata, void** arg2, s8* arg3, Vec3f** arg4);
+    /*55*/ void (*func55)(Object* player, f32 arg1, void** arg2, s8* arg3, Vec3f** arg4);
     /*56*/ f32 (*func56)(Object* player);
-    /*57*/ s32 (*func57)(Object* player);
+    /*57*/ DLL27_Data *(*func57)(Object* player);
     /*58*/ void (*func58)(Object* player, f32 arg1);
     /*59*/ void (*func59)(Object* player, u8 arg1, f32 arg2, f32 arg3, Object *arg4);
     /*60*/ s32 (*func60)(Object* player);

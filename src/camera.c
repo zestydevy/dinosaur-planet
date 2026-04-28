@@ -1034,7 +1034,7 @@ void camera_setup_world_matrix(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f3
     }
     matrix_f2l_4x3(&MtxF_800a6a60, *rspMtxs);
 
-    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_LOAD);
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_MODELVIEW | G_MTX_LOAD);
 }
 
 u32 camera_check_convex_hull(u32 a0, u32 a1, u32 a2, u32 a3, s32 a4, s32 a5, s32 a6)

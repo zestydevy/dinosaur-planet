@@ -38,8 +38,7 @@ DLL_INTERFACE(DLL_13_expgfx) {
 /*3*/ void (*func3)(void);
 /*4*/ void (*func4)(Object* obj);
 /*5*/ void (*func5)(Object *obj);
-// Unmatched
-/*6*/ void (*func6)(Object *arg0, Gfx **gdl, Mtx **mtxs, Vertex **vertices, s32 arg4, s32 arg5, s32 arg6);
+/*6*/ s32 (*func6)(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vertices, u8 arg4, s32 arg5, s32 arg6);
 /*7*/ void (*func7)(void);
 /*8*/ void (*func8)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
 /*9*/ void (*func9)(Object *obj);

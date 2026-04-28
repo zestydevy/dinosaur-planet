@@ -1,0 +1,13 @@
+.text = 0x0:
+WGSH_ObjCreator_ctor = 0x0;
+WGSH_ObjCreator_dtor = 0xC;
+WGSH_ObjCreator_setup = 0x18;
+WGSH_ObjCreator_control = 0x54;
+WGSH_ObjCreator_update = 0x294;
+WGSH_ObjCreator_print = 0x2A0;
+WGSH_ObjCreator_free = 0x2F4;
+WGSH_ObjCreator_get_model_flags = 0x304;
+WGSH_ObjCreator_get_data_size = 0x314;
+
+.rodata = 0x374:
+_oob_rodata_0 = 0x0; // absolute:0x374

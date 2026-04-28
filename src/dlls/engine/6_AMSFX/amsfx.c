@@ -441,7 +441,7 @@ s32 dll_6_func_DE8(u16 soundID, SoundDef* soundDef) {
 
 // offset: 0xEE4 | func: 12 | export: 12
 s32 dll_6_func_EE4(s32 arg0, UNK_TYPE_32 arg1) {
-    acache_func_80000D50(_bss_128);
+    acache_flush(_bss_128);
     return 1;
 }
 

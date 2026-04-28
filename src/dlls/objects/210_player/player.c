@@ -8447,7 +8447,7 @@ static void dll_210_func_18DB0(Object* player, ObjFSA_Data* fsa) {
     Object* temp_a2;
 
     temp_a2 = player->linkedObject;
-    if (temp_a2->group == 0x30) {
+    if (temp_a2->group == GROUP_UNK48) {
         ((DLL_Unknown *)temp_a2->dll)->vtbl->func[12].withTwoArgsCustom(temp_a2, 0);
     }
 }
@@ -10172,13 +10172,13 @@ void *dll_210_func_1D754(Object* player) {
 }
 
 // offset: 0x1D768 | func: 204 | export: 53
-Object* dll_210_func_1D768(Object* player) {
+Object *dll_210_func_1D768(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->unk0.target;
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-HeadAnimation * dll_210_func_1D778(Object* player) {
+HeadAnimation *dll_210_func_1D778(Object* player) {
     Player_Data* objdata = player->data;
     return &objdata->unk354;
 }
@@ -10190,7 +10190,7 @@ f32 dll_210_func_1D788(Object* player) {
 }
 
 // offset: 0x1D798 | func: 207 | export: 55
-void dll_210_func_1D798(Object* player, Player_Data* objdata, void** arg2, s8* arg3, Vec3f** arg4) {
+void dll_210_func_1D798(Object* player, f32 arg1, void** arg2, s8* arg3, Vec3f** arg4) {
     Player_Data* objdata2 = player->data;
 
     *arg3 = 0x7F;
@@ -10199,10 +10199,10 @@ void dll_210_func_1D798(Object* player, Player_Data* objdata, void** arg2, s8* a
 }
 
 // offset: 0x1D7C4 | func: 208 | export: 57
-s32 dll_210_func_1D7C4(Object* player) {
+DLL27_Data *dll_210_func_1D7C4(Object* player) {
   Player_Data* objdata;
   objdata = player->data;
-  return (s32)((s8*) objdata) + 4;
+  return &objdata->unk0.unk4;
 }
 
 // offset: 0x1D7D4 | func: 209 | export: 72

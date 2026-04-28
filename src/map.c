@@ -894,11 +894,11 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
             shape = &block->shapes[temp_t6];
             if (shape->flags & 0x20000000) {
                 if (spA3 != 2) {
-                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&spA4[1]), G_MTX_LOAD);
+                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&spA4[1]), G_MTX_MODELVIEW | G_MTX_LOAD);
                     spA3 = 2;
                 }
             } else if (spA3 != 1) {
-                gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(spA4), G_MTX_LOAD);
+                gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(spA4), G_MTX_MODELVIEW | G_MTX_LOAD);
                 spA3 = 1;
             }
             if (shape->materialIndex == 0xFF) {

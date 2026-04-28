@@ -3224,7 +3224,8 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     //Return early if there's no gametext
     if (dInfoScrollTextID <= NO_GAMETEXT) {
-        //@bug: display list desync (missing `*gdl = dl;`)
+        // @bug: This skips updating the gdl pointer, which desyncs the DL builder state with
+        //       what's actually on the display list.
         return;
     }
 

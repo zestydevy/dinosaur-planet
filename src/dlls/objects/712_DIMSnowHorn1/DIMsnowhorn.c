@@ -17,7 +17,8 @@ typedef struct {
     f32 unk28C;
     f32 unk290;
     f32 unk294;
-    s8 unk298[0x2B0 - 0x298];
+    f32 unk298;
+    s8 unk29C[0x2B0 - 0x29C];
     f32 unk2B0;
     s8 unk2B4[0x310 - 0x2B4];
     s32 unk310;
