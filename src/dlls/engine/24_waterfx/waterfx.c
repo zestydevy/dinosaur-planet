@@ -434,24 +434,11 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
     if ((_bss_20 != 0) || (_bss_30 != 0) || (_bss_28 != 0) || (_bss_38 != 0)) {
         gSPLoadGeometryMode(*gdl, G_SHADE | G_ZBUFFER | G_SHADING_SMOOTH);
         dl_apply_geometry_mode(gdl);
-
-        // macro correct, invalid params
-        /*
-        gDPSetCombineLERP(*gdl, 
-            0, 0, 0, ENVIRONMENT, 
-            0, 0, 0, ENVIRONMENT, 
-            0, 0, 0, ENVIRONMENT, 
-            0, 0, 0, ENVIRONMENT);
-        */
-        {
-            Gfx *_g = *gdl;
-            _g->words.w0 = 0xFCFF97FF;\
-            _g->words.w1 = 0xFF10FE3F;
-        }
+        gDPSetCombineLERP(*gdl, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED, COMBINED, 0, SHADE, 0);
         dl_apply_combine(gdl);
-        
-        // TODO: Find/use correct flags
-        gDPSetOtherMode(*gdl, 0xEF182C00, 0x104B50);
+        gDPSetOtherMode(*gdl, 
+            G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
+            G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_ZB_CLD_SURF2);
         dl_apply_other_mode(gdl);
         if (_bss_20 != 0) {
             gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(_bss_40->gdl));
@@ -468,12 +455,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.roll = 0;
                 spAC.pitch = 0;
                 camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                {
-                    // TODO: Find correct macro
-                    Gfx *_g = (Gfx *)((*gdl)++);
-                    _g->words.w0 = 0x01004008; 
-                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_0[i << 2]); 
-                }
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_0[i << 2]), 4, 0);
                 dl_triangles(gdl, &_bss_4[i << 1], 2);
             }
         }
@@ -492,12 +474,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.roll = 0;
                 spAC.pitch = 0;
                 camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                {
-                    // TODO: Find correct macro
-                    Gfx *_g = (Gfx *)((*gdl)++);
-                    _g->words.w0 = 0x0100E01C;
-                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_8[i * 0xE]);
-                }
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_8[i * 0xE]), 14, 0);
                 dl_triangles(gdl, &_bss_C[i * 0xC], 0xC);
             }
         }
@@ -516,12 +493,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.roll = 0;
                 spAC.pitch = 0;
                 camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                {
-                    // TODO: Find correct macro
-                    Gfx *_g = (Gfx *)((*gdl)++);
-                    _g->words.w0 = 0x01004008;
-                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_10[i << 2]);
-                }
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_10[i << 2]), 4, 0);
                 dl_triangles(gdl, &_bss_14[i << 1], 2);
             }
         }
@@ -540,12 +512,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 spAC.roll = 0;
                 spAC.pitch = 0;
                 camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                {
-                    // TODO: Find correct macro
-                    Gfx *_g = (Gfx *)((*gdl)++);
-                    _g->words.w0 = 0x01004008;
-                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_18[i << 2]);
-                }
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_18[i << 2]), 4, 0);
                 dl_triangles(gdl, &_bss_1C[i << 1], 2);
             }
         }

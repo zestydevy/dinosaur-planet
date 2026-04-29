@@ -918,7 +918,7 @@ void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u
     }
 
     var_s5 = sp78->unk68.unk50[0];
-    if (var_s5 < (s32)ARRAYCOUNT(D_800916B0)) {
+    if (var_s5 < ARRAYCOUNT_S(D_800916B0)) {
         var_s5 = D_800916B0[var_s5];
     } else {
         var_s5 = 0;
@@ -972,7 +972,7 @@ void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u
 }
 
 u8 func_80025CD4(s32 arg0) {
-    if (arg0 >= (s32)ARRAYCOUNT(D_800916B0))
+    if (arg0 >= ARRAYCOUNT_S(D_800916B0))
         return 0;
     return D_800916B0[arg0];
 }

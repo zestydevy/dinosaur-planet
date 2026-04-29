@@ -173,7 +173,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     objData = self->data;  
     
     if (main_get_bits(BIT_50)) {
-        if (objData->unk0 && func_800456AC(objData->unk0)) {
+        if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
             draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
@@ -181,7 +181,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     
     if (main_get_bits(BIT_4D) && visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        if (objData->unk0 && func_800456AC(objData->unk0)) {
+        if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
             draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
@@ -212,7 +212,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     } else {
-        if (func_800456AC(objData->unk0)) {
+        if (track_obj_vis_check(objData->unk0)) {
             draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         if (visibility) {
@@ -259,7 +259,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;
-        obj_create((ObjSetup*)dustSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, NULL);
+        obj_create((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
     return 0;
 }

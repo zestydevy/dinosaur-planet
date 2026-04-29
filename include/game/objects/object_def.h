@@ -7,6 +7,20 @@
 /** Object definitions in OBJECTS.BIN.
  */
 
+enum ObjDefFlags {
+/*0*/ OBJDEF_INVISIBLE = 0x1, // objects that have no visual
+
+/*4*/ OBJDEF_FLAG10 = 0x10,
+/*5*/ OBJDEF_FLAG20 = 0x20,
+/*6*/ OBJDEF_IS_MOBILE_MAP = 0x40,
+/*7*/ OBJDEF_FLAG80 = 0x80,
+
+/*18*/ OBJDEF_FLAG40000 = 0x40000,
+/*19*/ OBJDEF_STATIC_DEPTH_SORT = 0x80000,
+/*20*/ OBJDEF_FLAG100000 = 0x100000
+};
+
+// TODO: remove
 enum ObjDataFlags44 { //copied from SFA; may be incorrect
     OBJDATA_FLAG44_HaveModels               = 0x00000001,
     OBJDATA_FLAG44_DifferentLightColor      = 0x00000010,
@@ -230,10 +244,10 @@ typedef struct {
 /*96*/ s16 unk96;
 /*98*/ u8 _unk98[3];
 /*9b*/ u8 numLockdata; // length of lockdata (z-targetting data)
-/*9c*/ u8 unk9c;
-/*9d*/ u8 unk9d; // camera-related angle?
+/*9c*/ u8 minVisRadiusSixteenth; // minimum vis radius for this object, divided by 16
+/*9d*/ u8 staticDepthSortVal; // pre-calculated depth sort value. only used if flags has the "static depth sort" bit set
 /*9e*/ u8 _unk9e[2];
-/*a0*/ s16 unka0;
+/*a0*/ s16 mobileMapID;
 /*a2*/ s16 gametextIndex[4]; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
 /*aa*/ s16 unkAA; //gametextID for tutorial textbox
 } ObjDef;

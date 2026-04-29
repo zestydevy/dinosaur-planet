@@ -78,7 +78,7 @@ void dll_320_control(Object* self) {
         if (objdata->unk1 > 0) {
             sp48 = objdata;
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
-            func_80023A18(self, 2 - objdata->unk1);
+            obj_set_model(self, 2 - objdata->unk1);
         }
     }
     if (objdata->unk1 <= 0) {

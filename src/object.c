@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/29_gplay.h"
+#include "game/objects/object_id.h"
 #include "sys/camera.h"
 #include "sys/fs.h"
 #include "sys/gfx/model.h"
@@ -26,9 +27,15 @@ typedef struct {
 /*14*/  u8 _unk14[0x20 - 0x14];
 } UnkStruct_80091668;
 
+enum ObjFreeMode {
+    OBJFREEMODE_FREE_ALL = 0,
+    OBJFREEMODE_IMMEDIATE = 1, // unused
+    OBJFREEMODE_DEFERRED = 2
+};
+
 // -------- .data start 80091660 -------- //
-s32 D_80091660 = 2;
-s16 D_80091664[2] = {0x00, 0x1F}; // gCharacterObjIds
+s32 sObjFreeMode = OBJFREEMODE_DEFERRED;
+s16 sObjPlayerObjIDs[2] = {OBJ_Sabre, OBJ_Krystal};
 UnkStruct_80091668 D_80091668 = {
     { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 },
     0.0f,
@@ -56,7 +63,7 @@ SidekickSetup D_80091688 = {
 // -------- .data end 800916b0 -------- //
 
 // -------- .bss start 800b18e0 -------- //
-s16 D_800B18E0;
+s16 sObjListVisibleStartIdx;
 s16* D_800B18E4;
 u32 D_800B18E8;
 s32  *gFile_OBJECTS_TAB;
@@ -70,8 +77,8 @@ s16  *gFile_OBJINDEX;
 int gObjIndexCount; //count of OBJINDEX.BIN entries
 Object **gObjDeferredFreeList;
 s32 gObjDeferredFreeListCount;
-Object **D_800B1918;
-s32 D_800B191C;
+Object **sObjLockList;
+s32 sObjLockListCount;
 Object **gObjList; //global object list
 s32 gNumObjs;
 LinkedList gObjUpdateList;
@@ -81,8 +88,8 @@ s32 D_800B1988;
 // -------- .bss end 800b1990 -------- //
 
 void obj_clear_all(void);
-void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3);
-void update_obj_models();
+void obj_init_object(Object *obj, ObjSetup *setup, s32 reset);
+void update_obj_models(void);
 void update_object(Object *obj);
 void func_8002272C(Object *obj);
 ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount);
@@ -95,15 +102,15 @@ void func_80022200(Object *obj, s32 param2, s32 param3);
 u32 obj_alloc_objdata(Object *obj, u32 addr);
 u32 obj_init_event_data(s32 param1, Object *obj, u32 addr);
 u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
-f32 func_80022150(Object *obj);
-void obj_free_object(Object *obj, s32 param2);
+f32 obj_calc_vis_radius(Object *obj);
+void obj_free_object(Object *obj, s32 onlySelf);
 
 void init_objects(void) {
     int i;
 
     //allocate some buffers
     gObjDeferredFreeList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
-    D_800B1918 = mmAlloc(sizeof(Object*) * 24, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
+    sObjLockList = mmAlloc(sizeof(Object*) * 24, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
     D_800B18E4 = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
 
     //load OBJINDEX.BIN and count number of entries
@@ -134,7 +141,7 @@ void init_objects(void) {
     obj_clear_all();
 }
 
-void update_objects() {
+void update_objects(void) {
     void *node;
     Object *obj;
     Object *player;
@@ -156,7 +163,7 @@ void update_objects() {
         if (obj->objhitInfo->unk58){} // fake match
     }
 
-    for (obj = (Object*)node; node != NULL && obj->def->flags & 0x40; obj = (Object*)node) {
+    for (obj = (Object*)node; node != NULL && (obj->def->flags & OBJDEF_IS_MOBILE_MAP); obj = (Object*)node) {
         update_object(obj);
         obj->matrixIdx = camera_alloc_object_matrix(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
@@ -210,7 +217,7 @@ void update_objects() {
     gDLL_3_Animation->vtbl->func5();
     gDLL_2_Camera->vtbl->tick(gUpdateRate);
 
-    write_c_file_label_pointers("objects/objects.c", 0x169);
+    write_c_file_label_pointers("objects/objects.c", 361);
 }
 
 static const char str_800994f4[] = "objGetSequence objtype out of range %d/%d\n";
@@ -222,7 +229,7 @@ static const char str_800995e8[] = "ObjList Overflow %d!!!\n";
 
 void doNothing_80020A40(void) {}
 
-void update_obj_models() {
+void update_obj_models(void) {
     int i;
     int j;
     int k;
@@ -261,20 +268,20 @@ void update_obj_models() {
     }
 }
 
-void obj_do_deferred_free() {
+void obj_do_deferred_free(void) {
     int i;
     for(i = 0; i < gObjDeferredFreeListCount; i++) {
-        obj_free_object(gObjDeferredFreeList[i], 0);
+        obj_free_object(gObjDeferredFreeList[i], FALSE);
         gObjDeferredFreeList[i] = 0;
     }
     gObjDeferredFreeListCount = 0;
 }
 
-void obj_free_all() {
+void obj_free_all(void) {
     s32 i;
     
     obj_do_deferred_free();
-    D_80091660 = 0;
+    sObjFreeMode = OBJFREEMODE_FREE_ALL;
 
     i = 0;
     while (gNumObjs != 0) {
@@ -286,10 +293,11 @@ void obj_free_all() {
     }
 
     obj_do_deferred_free();
-    D_80091660 = 2;
+    sObjFreeMode = OBJFREEMODE_DEFERRED;
 
     gObjDeferredFreeListCount = 0;
-    D_800B191C = 0;
+    // @bug: This resets the locklist without actually freeing anything on it!
+    sObjLockListCount = 0;
     gNumObjs = 0;
 
     linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
@@ -299,24 +307,28 @@ void obj_free_all() {
     gDLL_2_Camera->vtbl->store_player(NULL, 0);
 }
 
-void obj_clear_all() {
+void obj_clear_all(void) {
     gObjDeferredFreeListCount = 0;
-    D_800B191C = 0;
+    sObjLockListCount = 0;
     D_800B1988 = 0;
     gNumObjs = 0;
 
     linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
 
-    D_800B18E0 = 0;
+    sObjListVisibleStartIdx = 0;
     obj_object_type_init();
     func_80025DF0();
 }
 
-void func_80020D90(void) {
-    D_800B18E0 = 0;
+void obj_mark_visibility_sort_dirty(void) {
+    sObjListVisibleStartIdx = 0;
 }
 
-s32 func_80020DA0(s32 *numObjs) {
+/** 
+ * Sorts the object list such that all invisible objects are before visible objects. 
+ * Does not affect sort beyond that. 
+ */
+s32 obj_visibility_sort_objects(s32 *numObjs) {
     s32 objsEnd;
     s32 idx1;
     s32 idx2;
@@ -326,19 +338,18 @@ s32 func_80020DA0(s32 *numObjs) {
 
     if (0) {}
 
-    if (D_800B18E0 != 0) {
-        return D_800B18E0;
+    if (sObjListVisibleStartIdx != 0) {
+        return sObjListVisibleStartIdx;
     }
 
     idx1 = 0;
     idx2 = gNumObjs - 1;
     objsEnd = idx2;
 
-    // some kind of sort?
     while (idx1 <= idx2) {
         endLoop = 0;
         while (idx1 <= objsEnd && !endLoop) {
-            if ((gObjList[idx1]->def->flags & 1) != 0) {
+            if ((gObjList[idx1]->def->flags & OBJDEF_INVISIBLE) != 0) {
                 idx1++;
             } else {
                 endLoop = -1;
@@ -347,7 +358,7 @@ s32 func_80020DA0(s32 *numObjs) {
 
         endLoop = 0;
         while (idx2 >= 0 && !endLoop) {
-            if ((gObjList[idx2]->def->flags & 1) == 0) {
+            if ((gObjList[idx2]->def->flags & OBJDEF_INVISIBLE) == 0) {
                 idx2--;
             } else {
                 endLoop = -1;
@@ -366,31 +377,32 @@ s32 func_80020DA0(s32 *numObjs) {
         }
     }
 
-    D_800B18E0 = idx1;
+    sObjListVisibleStartIdx = idx1;
     return idx1;
 }
 
-void func_80020EE4(s32 param1, s32 param2) {
+void obj_depth_sort_objects(s32 start, s32 end) {
     s32 i;
     Object *obj;
     s32 endLoop;
 
-    if (param1 <= param2) {
-        for (i = param1; i <= param2; i++) {
+    if (start <= end) {
+        for (i = start; i <= end; i++) {
             obj = gObjList[i];
 
-            if (obj->def->flags & 0x80000) {
-                obj->unkA4 = obj->def->unk9d * 1000;
+            if (obj->def->flags & OBJDEF_STATIC_DEPTH_SORT) {
+                obj->depthSortVal = obj->def->staticDepthSortVal * 1000;
             } else {
-                obj->unkA4 = -camera_get_angle_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
+                // dot product based depth sorting
+                obj->depthSortVal = -camera_get_angle_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
             }
         }
 
         do {
             endLoop = TRUE;
 
-            for (i = param1; i < param2; i++) {
-                if (gObjList[i]->unkA4 < gObjList[i + 1]->unkA4) {
+            for (i = start; i < end; i++) {
+                if (gObjList[i]->depthSortVal < gObjList[i + 1]->depthSortVal) {
                     obj = gObjList[i];
                     gObjList[i] = gObjList[i + 1];
                     gObjList[i + 1] = obj;
@@ -533,7 +545,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     update_pi_manager_array(0, objId);
 
-    if (initFlags & OBJ_INIT_ID_IS_TABIDX) {
+    if (initFlags & OBJINIT_BY_TABIDX) {
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
@@ -558,15 +570,15 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     
     objHeader.srt.flags = OBJFLAG_UNK_2;
 
-    if (def->flags & 0x80) {
+    if (def->flags & OBJDEF_FLAG80) {
         objHeader.srt.flags = OBJFLAG_UNK_80 | OBJFLAG_UNK_2;
     }
 
-    if (def->flags & 0x40000) {
+    if (def->flags & OBJDEF_FLAG40000) {
         objHeader.unkB0 |= 0x80;
     }
 
-    if (initFlags & OBJ_INIT_FLAG4) {
+    if (initFlags & OBJINIT_FLAG4) {
         objHeader.srt.flags |= OBJFLAG_OWNS_SETUP;
     }
 
@@ -594,7 +606,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     modflags = obj_get_model_flags(&objHeader);
 
-    if (def->flags & 0x20) {
+    if (def->flags & OBJDEF_FLAG20) {
         modflags &= ~MODFLAGS_1;
     } else {
         modflags |= MODFLAGS_1;
@@ -606,7 +618,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         modflags &= ~MODFLAGS_SHADOW;
     }
 
-    if (def->flags & 1) {
+    if (def->flags & OBJDEF_INVISIBLE) {
         modflags |= MODFLAGS_DONT_LOAD_MODEL;
     }
 
@@ -679,7 +691,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         addr = shadows_init_obj_shadow(obj, addr, 0);
     }
 
-    obj->unkA8 = func_80022150(obj) * obj->srt.scale;
+    obj->visRadius = obj_calc_vis_radius(obj) * obj->srt.scale;
 
     if (def->unk8F != 0) {
         addr = func_8002667C(obj, addr);
@@ -754,7 +766,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
     obj->prevGlobalPosition.y = obj->globalPosition.y;
     obj->prevGlobalPosition.z = obj->globalPosition.z;
 
-    copy_obj_position_mirrors(obj, obj->setup, 0);
+    obj_init_object(obj, obj->setup, FALSE);
 
     if (obj->objhitInfo != NULL) {
         obj->objhitInfo->unk10.x = obj->srt.transl.x;
@@ -766,25 +778,25 @@ void obj_add_object(Object *obj, u32 initFlags) {
         obj->objhitInfo->unk20.z = obj->srt.transl.z;
     }
 
-    if (obj->def->unka0 > -1) {
-        func_80046320(obj->def->unka0, obj);
+    if (obj->def->mobileMapID > -1) {
+        map_load_mobile_map(obj->def->mobileMapID, obj);
     }
 
     update_pi_manager_array(0, -1);
 
-    if (obj->def->flags & OBJDATA_FLAG44_HasChildren) {
-        obj_add_object_type(obj, OBJTYPE_7);
+    if (obj->def->flags & OBJDEF_IS_MOBILE_MAP) {
+        obj_add_object_type(obj, OBJTYPE_MOBILE_MAP);
 
-        if (obj->updatePriority != 90) {
-            obj_set_update_priority(obj, 90);
+        if (obj->updatePriority != OBJPRIORITY_MOBILE_MAP) {
+            obj_set_update_priority(obj, OBJPRIORITY_MOBILE_MAP);
         }
     } else {
         if (obj->updatePriority == 0) {
-            obj_set_update_priority(obj, 80);
+            obj_set_update_priority(obj, OBJPRIORITY_DEFAULT);
         }
     }
 
-    if (initFlags & OBJ_INIT_FLAG1) {
+    if (initFlags & OBJINIT_STANDALONE) {
         obj->unkB0 |= 0x10;
         gObjList[gNumObjs] = obj;
         gNumObjs += 1;
@@ -802,15 +814,17 @@ void obj_add_object(Object *obj, u32 initFlags) {
         obj_add_object_type(obj, OBJTYPE_9);
     }
 
-    if (obj->def->flags & OBJDATA_FLAG44_HaveModels) {
-        func_80020D90();
+    // Resorting by visibility isn't necessary if the object is visible since the object
+    // was added to the end of the list where the visible objects are.
+    if (obj->def->flags & OBJDEF_INVISIBLE) {
+        obj_mark_visibility_sort_dirty();
     }
 
-    if (obj->def->flags & OBJDATA_FLAG44_DifferentLightColor) {
+    if (obj->def->flags & OBJDEF_FLAG10) {
         obj_add_object_type(obj, OBJTYPE_56);
     }
 
-    write_c_file_label_pointers("objects/objects.c", 0x477);
+    write_c_file_label_pointers("objects/objects.c", 1143);
 }
 
 u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
@@ -927,27 +941,27 @@ void func_80021E74(f32 scale, ModelInstance *modelInst) {
     }
 }
 
-f32 func_80022150(Object *obj) {
+f32 obj_calc_vis_radius(Object *obj) {
     s32 i;
-    f32 largestSomething;
+    f32 visRadius;
 
-    largestSomething = 10.0f;
+    visRadius = 10.0f; // minimum radius
 
     for (i = 0; i < obj->def->numModels; i++) {
         if (obj->modelInsts[i] != NULL) {
-            f32 var = obj->modelInsts[i]->model->maxAnimatedVertDistance;
+            f32 vertRadius = obj->modelInsts[i]->model->maxAnimatedVertDistance;
 
-            if (var > largestSomething) {
-                largestSomething = var;
+            if (vertRadius > visRadius) {
+                visRadius = vertRadius;
             }
         }
     }
 
-    if (largestSomething < obj->def->unk9c) {
-        largestSomething = obj->def->unk9c * 16.0f;
+    if (visRadius < obj->def->minVisRadiusSixteenth) {
+        visRadius = obj->def->minVisRadiusSixteenth * 16.0f;
     }
 
-    return largestSomething;
+    return visRadius;
 }
 
 void func_80022200(Object *obj, s32 param2, s32 param3) {
@@ -1021,25 +1035,25 @@ void obj_destroy_object(Object *obj) {
             }
 
             obj_free_tick(obj);
-            func_80020D90();
+            obj_mark_visibility_sort_dirty();
         }
 
         obj->unkB0 |= 0x40;
 
-        if (obj->unkDA != 0) {
-            for (i = 0; i < D_800B191C; i++) {
-                if (obj == D_800B1918[i]) {
+        if (obj->freeLock != 0) {
+            for (i = 0; i < sObjLockListCount; i++) {
+                if (obj == sObjLockList[i]) {
                     break;
                 }
             }
 
-            if (i == D_800B191C) {
-                D_800B1918[D_800B191C] = obj;
-                D_800B191C += 1;
+            if (i == sObjLockListCount) {
+                sObjLockList[sObjLockListCount] = obj;
+                sObjLockListCount += 1;
             } else {
-                STUBBED_PRINTF("objFreeTick %08x locked %d,already on list\n", obj, obj->unkDA);
+                STUBBED_PRINTF("objFreeTick %08x locked %d,already on list\n", obj, obj->freeLock);
             }
-        } else if (D_80091660 == 2) {
+        } else if (sObjFreeMode == OBJFREEMODE_DEFERRED) {
             i = gObjDeferredFreeListCount;
 
             if (gObjDeferredFreeListCount != 0) {
@@ -1060,18 +1074,18 @@ void obj_destroy_object(Object *obj) {
                 }
             }
         } else {
-            obj_free_object(obj, D_80091660 == 0);
+            obj_free_object(obj, /*onlySelf*/sObjFreeMode == OBJFREEMODE_FREE_ALL);
         }
     }
 }
 
-void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3) {
+void obj_init_object(Object *obj, ObjSetup *setup, s32 reset) {
     DLL_IObject *dll;
     obj->group = obj->def->group;
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
-            obj->dll->vtbl->setup(obj, setup, param3);
+            obj->dll->vtbl->setup(obj, setup, reset);
         }
     }
 
@@ -1443,8 +1457,8 @@ s16 func_80022E3C(s32 param1) {
 
     def = (ObjDef*)(gFile_OBJECTS_TAB[param1] + D_800B18E8); // ???
 
-    if (def->flags & 0x40) {
-        return def->unka0;
+    if (def->flags & OBJDEF_IS_MOBILE_MAP) {
+        return def->mobileMapID;
     }
 
     return -1;
@@ -1478,7 +1492,7 @@ s16 func_80022EC0(s32 arg0) {
     return D_800B18E4[var_v1];
 }
 
-void obj_free_object(Object *obj, s32 param2) {
+void obj_free_object(Object *obj, s32 onlySelf) {
     Object *obj2;
     /*sp+0xE4*/ LightAction lAction;
     ObjectAnim_Data *animObjdata;
@@ -1491,7 +1505,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->dll != NULL) {
         update_pi_manager_array(4, obj->id);
-        obj->dll->vtbl->free(obj, param2);
+        obj->dll->vtbl->free(obj, onlySelf);
         update_pi_manager_array(4, -1);
         dll_unload(obj->dll);
     }
@@ -1500,14 +1514,14 @@ void obj_free_object(Object *obj, s32 param2) {
     gDLL_5_AMSEQ->vtbl->func17(obj);
     gDLL_13_Expgfx->vtbl->func9(obj);
 
-    if (obj->def != NULL && obj->def->flags & 0x10) {
-        obj_free_object_type(obj, 56);
+    if (obj->def != NULL && (obj->def->flags & OBJDEF_FLAG10)) {
+        obj_free_object_type(obj, OBJTYPE_56);
     }
 
-    if (obj->def->flags & 0x40) {
-        obj_free_object_type(obj, 7);
+    if (obj->def->flags & OBJDEF_IS_MOBILE_MAP) {
+        obj_free_object_type(obj, OBJTYPE_MOBILE_MAP);
 
-        if (!param2) {
+        if (!onlySelf) {
             numStackObjs = 0;
 
             for (i = 0; i < gNumObjs; i++) {
@@ -1532,11 +1546,11 @@ void obj_free_object(Object *obj, s32 param2) {
                 obj_destroy_object(stackObjs[i]);
             }
 
-            func_80045F48(obj->unk34);
+            map_free(obj->mobileMapID);
         }
     }
 
-    if (!param2 && obj->group == GROUP_UNK16) {
+    if (!onlySelf && obj->group == GROUP_UNK16) {
         for (i = 0; i < gNumObjs; i++) {
             obj2 = gObjList[i];
             if (obj == obj2->unkC0) {
@@ -1600,7 +1614,7 @@ void obj_free_object(Object *obj, s32 param2) {
     obj_free_objdef(obj->tabIdx);
 
     if (obj->unkB4 >= 0) {
-        if (!param2) {
+        if (!onlySelf) {
             gDLL_3_Animation->vtbl->func18((s32)obj->unkB4);
             obj->unkB4 = -1;
         }
@@ -1663,13 +1677,13 @@ void func_80023464(s32 playerno) {
             playerSetup.fadeFlags = OBJSETUP_FADE_CAMERA;
             playerSetup.loadDistance = 255;
             playerSetup.fadeDistance = 100;
-            playerSetup.objId = D_80091664[playerno];
+            playerSetup.objId = sObjPlayerObjIDs[playerno];
             playerSetup.quarterSize = 24;
             playerSetup.x = x;
             playerSetup.y = y;
             playerSetup.z = z;
 
-            newPlayer = obj_create(&playerSetup, OBJ_INIT_FLAG1, -1, -1, NULL);
+            newPlayer = obj_create(&playerSetup, OBJINIT_STANDALONE, -1, -1, NULL);
         }
 
         gDLL_2_Camera->vtbl->init_data(newPlayer, x - 50.0f, y, z - 50.0f);
@@ -1678,7 +1692,7 @@ void func_80023464(s32 playerno) {
     }
 }
 
-void func_80023628() {
+void func_80023628(void) {
     Object *player;
     s32 mapType;
     ObjSetup playerSetup;
@@ -1709,13 +1723,13 @@ void func_80023628() {
         playerSetup.fadeFlags = OBJSETUP_FADE_CAMERA;
         playerSetup.loadDistance = 255;
         playerSetup.fadeDistance = 100;
-        playerSetup.objId = D_80091664[playerno];
+        playerSetup.objId = sObjPlayerObjIDs[playerno];
         playerSetup.quarterSize = 24;
         playerSetup.x = x;
         playerSetup.y = y;
         playerSetup.z = z;
 
-        player = obj_create(&playerSetup, OBJ_INIT_FLAG1, -1, -1, NULL);
+        player = obj_create(&playerSetup, OBJINIT_STANDALONE, -1, -1, NULL);
     }
 
     D_80091668.unk8 = fsin16_precise(savedPlayerLocation->rotationY << 8) * 60.0f + x;
@@ -1743,7 +1757,7 @@ void func_80023894(Object* object, s32 objectId) {
     D_80091688.unk18 = sidekickSetup->unk18;
     D_80091688.unk19 = sidekickSetup->unk19;
 
-    obj_create((ObjSetup*)&D_80091688, OBJ_INIT_FLAG1, -1, -1, NULL);
+    obj_create((ObjSetup*)&D_80091688, OBJINIT_STANDALONE, -1, -1, NULL);
 }
 
 Object *get_player(void) {
@@ -1763,7 +1777,7 @@ Object *get_player(void) {
     }
 }
 
-Object *get_sidekick() {
+Object *get_sidekick(void) {
     Object **objectList;
     s32 count;
 
@@ -1805,8 +1819,8 @@ void obj_set_update_priority(Object *obj, s8 priority) {
     obj->updatePriority = priority;
 }
 
-void func_80023A18(Object *obj, s32 modelIdx) {
-    obj->unkB0 &= 0xF0FF;
+void obj_set_model(Object *obj, s32 modelIdx) {
+    obj->unkB0 &= ~0xF00;
 
     if (modelIdx == obj->modelInstIdx) {
         return;
@@ -1822,7 +1836,7 @@ void func_80023A18(Object *obj, s32 modelIdx) {
     obj->unkB0 |= (modelIdx << 8) & 0x700;
 }
 
-void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
+void obj_handle_model_switch(Object *obj, ModelInstance *modelInst, Model *model) {
     s32 modelInstIdx;
     ModelInstance *modelInst2;
     s32 prevAnimId;
@@ -1830,7 +1844,7 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     modelInstIdx = (obj->unkB0 & 0x700) >> 8;
     modelInst2 = obj->modelInsts[modelInstIdx];
 
-    modelInst2->unk34 &= 0xFFF0;
+    modelInst2->unk34 &= ~0xF;
     modelInst2->unk34 |= modelInst->unk34 & 7;
 
     prevAnimId = obj->curModAnimId;
@@ -1849,14 +1863,14 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
         obj->objhitInfo->unk9E = 1;
     }
 
-    obj->unkB0 &= 0xF0FF;
+    obj->unkB0 &= ~0xF00;
 }
 
 void obj_add_effect_box(Object *obj) {
     gEffectBoxes[gEffectBoxCount] = obj;
     gEffectBoxCount += 1;
 
-    if (gEffectBoxCount > (s32)ARRAYCOUNT(gEffectBoxes)) {
+    if (gEffectBoxCount > ARRAYCOUNT_S(gEffectBoxes)) {
         STUBBED_PRINTF("warning: objAddEffectBox max effect boxes\n");
     }
 }

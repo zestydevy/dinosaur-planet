@@ -216,7 +216,7 @@ static void MagicPlant_create_magic_dust(Object* self, s32 objectID) {
 
     magicDust = obj_create(
         &dustSetup->base,
-        OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4,
+        OBJINIT_STANDALONE | OBJINIT_FLAG4,
         self->mapID,
         -1,
         self->parent

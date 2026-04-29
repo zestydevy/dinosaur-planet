@@ -47,43 +47,43 @@ void func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
 void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
 void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2);
 
-void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* arg4, s8 arg5) {
-    if (arg4->unkB0 & 0x40) {
+void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
+    if (obj->unkB0 & 0x40) {
         return;
     }
 
-    if (arg5 == 0) {
-        if (arg4->objhitInfo != NULL && (arg4->objhitInfo->unk5A & 0x30)) {
-            arg4->objhitInfo->unk9F = 2;
+    if (visibility == 0) {
+        if (obj->objhitInfo != NULL && (obj->objhitInfo->unk5A & 0x30)) {
+            obj->objhitInfo->unk9F = 2;
         }
     }
 
-    if (arg4->srt.flags & OBJFLAG_INVISIBLE) {
+    if (obj->srt.flags & OBJFLAG_INVISIBLE) {
         return;
     }
 
-    if (arg4->parent != NULL && (arg4->parent->srt.flags & OBJFLAG_INVISIBLE)) {
+    if (obj->parent != NULL && (obj->parent->srt.flags & OBJFLAG_INVISIBLE)) {
         return;
     }
 
-    update_pi_manager_array(2, arg4->id);
-    dl_add_debug_info(*gdl, arg4->id, "objects/objprint.c", 0x1AAU);
-    if (arg4->dll != NULL) {
-        if (!(arg4->unkB0 & 0x4000)) {
-            arg4->dll->vtbl->print(arg4, gdl, mtxs, vtxs, tris, arg5);
-        } else if (arg5 != 0) {
-            draw_object(arg4, gdl, mtxs, vtxs, tris, 1.0f);
+    update_pi_manager_array(2, obj->id);
+    dl_add_debug_info(*gdl, obj->id, "objects/objprint.c", 426);
+    if (obj->dll != NULL) {
+        if (!(obj->unkB0 & 0x4000)) {
+            obj->dll->vtbl->print(obj, gdl, mtxs, vtxs, tris, visibility);
+        } else if (visibility != 0) {
+            draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
         }
-    } else if (arg5 != 0) {
-        draw_object(arg4, gdl, mtxs, vtxs, tris, 1.0f);
+    } else if (visibility != 0) {
+        draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
     }
-    if (arg4->unkB0 & 0x800) {
-        func_80023A78(arg4, arg4->modelInsts[arg4->modelInstIdx], arg4->modelInsts[arg4->modelInstIdx]->model);
+    if (obj->unkB0 & 0x800) {
+        obj_handle_model_switch(obj, obj->modelInsts[obj->modelInstIdx], obj->modelInsts[obj->modelInstIdx]->model);
     }
-    if (arg4->linkedObject != NULL && (arg4->linkedObject->unkB0 & 0x800)) {
-        func_80023A78(arg4->linkedObject, arg4->linkedObject->modelInsts[arg4->modelInstIdx], arg4->linkedObject->modelInsts[arg4->modelInstIdx]->model);
+    if (obj->linkedObject != NULL && (obj->linkedObject->unkB0 & 0x800)) {
+        obj_handle_model_switch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
     }
-    dl_add_debug_info(*gdl, (u32) -arg4->id, "objects/objprint.c", 0x1E9U);
+    dl_add_debug_info(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
     update_pi_manager_array(2, -1);
 }
 

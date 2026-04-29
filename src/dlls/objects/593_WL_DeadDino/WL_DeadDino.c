@@ -130,5 +130,5 @@ static void dll_593_func_8EC(Object* arg0) {
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.objId = OBJ_MagicDustMid;
-    obj_create((ObjSetup*)setup, OBJ_INIT_FLAG4 | OBJ_INIT_FLAG1, (s32) arg0->mapID, -1, arg0->parent);
+    obj_create((ObjSetup*)setup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, (s32) arg0->mapID, -1, arg0->parent);
 }

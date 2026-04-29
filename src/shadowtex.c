@@ -117,7 +117,7 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
 
     sp84 = *mtxs;
     gIsShadowTexActive = TRUE;
-    if (slot >= (s32)ARRAYCOUNT(D_800BB558)) {
+    if (slot >= ARRAYCOUNT_S(D_800BB558)) {
         // STUBBED_PRINTF("maketex: buffer out of range\n");
     }
     D_800BB558[slot] = D_800BB560[(obj->shadow->bufferIdx ^ 1)+(slot*SHADOWTEX_NUM_SLOTS)];

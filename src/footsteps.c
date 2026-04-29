@@ -88,7 +88,7 @@ void footsteps_init(void) {
 
     D_800BCC10 = mmAlloc(sizeof(Vec3f) * 8, ALLOC_TAG_GFX_COL, ALLOC_NAME("foot:vol"));
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+    for (i = 0; i < ARRAYCOUNT_S(gUnkFootstepStructs); i++) {
         gSPEndDisplayList(&gUnkFootstepStructs[i].dl);
         gUnkFootstepStructs[i].unk84 = 0;
         gUnkFootstepStructs[i].unk88 = 0;
@@ -140,7 +140,7 @@ void footsteps_init(void) {
 void footsteps_clear(void) {
     s32 i;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+    for (i = 0; i < ARRAYCOUNT_S(gUnkFootstepStructs); i++) {
         gSPEndDisplayList(&gUnkFootstepStructs[i].dl);
         gUnkFootstepStructs[i].unk84 = 0;
         gUnkFootstepStructs[i].unk88 = 0;
@@ -203,7 +203,7 @@ void footsteps_func_8005CB10(Gfx **gdl, Object *obj) {
 
     i = 0;
 
-    while (i < (s32)ARRAYCOUNT(gUnkFootstepStructs)) {
+    while (i < ARRAYCOUNT_S(gUnkFootstepStructs)) {
         if (obj == gUnkFootstepStructs[i].obj) {
             gSPDisplayList((*gdl)++, &gUnkFootstepStructs[i].dl);
         }
@@ -247,7 +247,7 @@ void footsteps_func_8005CD80(void) {
     s32 k;
     Vtx_t *ptr;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+    for (i = 0; i < ARRAYCOUNT_S(gUnkFootstepStructs); i++) {
         ptr = &gUnkFootstepStructs[i].unk18[0];
         
         if (gUnkFootstepStructs[i].unk84 != 0) {
@@ -274,7 +274,7 @@ void footsteps_func_8005CDFC(s32 _) {
     var1 = 0;
     var2 = 0;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(gUnkFootstepStructs); i++) {
+    for (i = 0; i < ARRAYCOUNT_S(gUnkFootstepStructs); i++) {
         if (gUnkFootstepStructs[i].unk84 != 0) {
             ptr = &gUnkFootstepStructs[i].unk18[0];
             

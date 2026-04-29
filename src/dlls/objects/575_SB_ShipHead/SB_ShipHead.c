@@ -67,7 +67,7 @@ void SB_ShipHead_control(Object *self) {
     parentDC = parent->unkDC;
     if (parent->id == OBJ_WL_Galleon) {
         if (self->modelInstIdx != 1) {
-            func_80023A18(self, 1);
+            obj_set_model(self, 1);
         }
         self->objhitInfo->unk58 &= ~1;
         if (parentDC != 10) {
@@ -114,7 +114,7 @@ void SB_ShipHead_control(Object *self) {
         self->unkE0 -= gUpdateRate;
     }
     if (parentDC >= 8) {
-        func_80023A18(self, 1);
+        obj_set_model(self, 1);
     }
     if (parentDC == 8) {
         self->unkDC++;
@@ -138,7 +138,7 @@ void SB_ShipHead_control(Object *self) {
         fireballSetup->x = ox;
         fireballSetup->y = oy;
         fireballSetup->z = oz;
-        fireballObj = obj_create(fireballSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+        fireballObj = obj_create(fireballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
         player = get_player();
         dx = player->globalPosition.x - fireballObj->srt.transl.x;
         dy = (player->globalPosition.y - 30.0f) - fireballObj->srt.transl.y;
@@ -161,7 +161,7 @@ void SB_ShipHead_control(Object *self) {
         minifireSetup->fadeFlags = 1;
         minifireSetup->loadDistance = 0xFF;
         minifireSetup->fadeDistance = 0xFF;
-        obj_create(minifireSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+        obj_create(minifireSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     }
     func_80024108(self, 0.005f, gUpdateRateF, NULL);
     _data_0[0] = parentDC;

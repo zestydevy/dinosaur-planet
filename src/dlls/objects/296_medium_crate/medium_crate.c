@@ -335,7 +335,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scorpionSetup->base.z = rand_next(-10, 10) + self->srt.transl.z;
                 scorpionSetup->unk1A = 49;
                 scorpionSetup->unk19 = 7;
-                obj_create((ObjSetup*)scorpionSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
+                obj_create((ObjSetup*)scorpionSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 break;
             }
             case 1: {
@@ -344,7 +344,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 400;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = self->srt.transl.x - player->srt.transl.x;
                 obj->velocity.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -377,7 +377,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 400;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = self->srt.transl.x - player->srt.transl.x;
                 obj->velocity.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -410,7 +410,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 2000;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = self->srt.transl.x - player->srt.transl.x;
                 obj->velocity.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -443,7 +443,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 2000;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = player->srt.transl.x - self->srt.transl.x;
                 obj->velocity.z = player->srt.transl.z - self->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -483,7 +483,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 foodPickupSetup->base.y = self->srt.transl.y + 5.0f;
                 foodPickupSetup->base.z = self->srt.transl.z;
                 foodPickupSetup->gamebitSecondary = NO_GAMEBIT;
-                obj = obj_create((ObjSetup*)foodPickupSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)foodPickupSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->unkE0 = 21600;
                 break;
             }

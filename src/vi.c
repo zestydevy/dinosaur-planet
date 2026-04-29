@@ -161,7 +161,7 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     }
 
     if (someBool && osTvType == OS_TV_PAL) {
-        for (i = 0; i < (s32)ARRAYCOUNT(gResolutionArray); i++) {
+        for (i = 0; i < ARRAYCOUNT_S(gResolutionArray); i++) {
             gResolutionArray[i].v += 20;
         }
     }

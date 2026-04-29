@@ -528,10 +528,10 @@ class DLLSplitter:
             # Object DLL, check for function defaults
             if export_idx == 0:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_SETUP):
-                    c_file.write(f'void {func.getName()}(Object *self, ObjSetup *setup, s32 arg2) {{ }}\n')
+                    c_file.write(f'void {func.getName()}(Object *self, ObjSetup *setup, s32 reset) {{ }}\n')
                     return True
                 else:
-                    c_file.write(f'void {func.getName()}(Object *self, ObjSetup *setup, s32 arg2);\n')
+                    c_file.write(f'void {func.getName()}(Object *self, ObjSetup *setup, s32 reset);\n')
             elif export_idx == 1:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_CONTROL):
                     c_file.write(f'void {func.getName()}(Object *self) {{ }}\n')
@@ -552,10 +552,10 @@ class DLLSplitter:
                     c_file.write(f'void {func.getName()}(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);\n')
             elif export_idx == 4:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_FREE):
-                    c_file.write(f'void {func.getName()}(Object *self, s32 a1) {{ }}\n')
+                    c_file.write(f'void {func.getName()}(Object *self, s32 onlySelf) {{ }}\n')
                     return True
                 else:
-                    c_file.write(f'void {func.getName()}(Object *self, s32 a1);\n')
+                    c_file.write(f'void {func.getName()}(Object *self, s32 onlySelf);\n')
             elif export_idx == 5:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_GET_MODEL_FLAGS):
                     c_file.write(f'u32 {func.getName()}(Object *self) {{\n')
@@ -566,7 +566,7 @@ class DLLSplitter:
                     c_file.write(f'u32 {func.getName()}(Object *self);\n')
             elif export_idx == 6:
                 if obj_data_size != None:
-                    c_file.write(f'u32 {func.getName()}(Object *self, u32 a1) {{\n')
+                    c_file.write(f'u32 {func.getName()}(Object *self, u32 offsetAddr) {{\n')
                     if obj_data_size == 0:
                         c_file.write(f'    return 0;\n')
                     else:
@@ -574,7 +574,7 @@ class DLLSplitter:
                     c_file.write('}\n')
                     return True
                 else:
-                    c_file.write(f'u32 {func.getName()}(Object *self, u32 a1);\n')
+                    c_file.write(f'u32 {func.getName()}(Object *self, u32 offsetAddr);\n')
         
         return False
 

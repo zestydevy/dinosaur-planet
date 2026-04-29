@@ -159,7 +159,7 @@ s32 mp3_main_func_8007245c(struct asistream *streamptr, u16 **arg1, s32 *numchan
 
     stream = streamptr;
     stream->unk3ba0 += 1;
-    if (stream->unk3ba0 >= (s32)ARRAYCOUNT(stream->unk2070)) {
+    if (stream->unk3ba0 >= ARRAYCOUNT_S(stream->unk2070)) {
         stream->unk3ba0 = 0;
     }
     if (mp3_main_func_80071e18(stream, stream->unk8474) == 0) {

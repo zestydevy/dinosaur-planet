@@ -322,7 +322,7 @@ void func_800264D0(Object* arg0) {
     objHitInfo->unk50 = 0x400;
     temp_fv0 = (f32) objHitInfo->unk52;
     objHitInfo->unkC = temp_fv0 * temp_fv0;
-    objHitInfo->unk2C = arg0->unkA8;
+    objHitInfo->unk2C = arg0->visRadius;
     if (objHitInfo->unk5A & 2) {
         if (objHitInfo->unk54 < 0) {
             var_a3 = objHitInfo->unk54 * -1;
@@ -346,7 +346,7 @@ void func_800264D0(Object* arg0) {
         }
     }
 
-    objHitInfo->unk30 = arg0->unkA8;
+    objHitInfo->unk30 = arg0->visRadius;
     if ((objHitInfo->unk5A & 2) || (objHitInfo->unk5A & 1)) {
         if (objHitInfo->unk30 < objHitInfo->unk52) {
             objHitInfo->unk30 = objHitInfo->unk52;
@@ -469,7 +469,7 @@ void func_8002683C(Object* arg0, s16 arg1, s16 arg2, s16 arg3) {
     var_fv0 = objhitInfo->unk52;
     objhitInfo->unk50 = 0x400;
     objhitInfo->unkC = var_fv0 * var_fv0;
-    objhitInfo->unk2C = arg0->unkA8;
+    objhitInfo->unk2C = arg0->visRadius;
     if (arg2 < 0) {
         arg2 = -arg2;
     }
@@ -482,7 +482,7 @@ void func_8002683C(Object* arg0, s16 arg1, s16 arg2, s16 arg3) {
     if (objhitInfo->unk2C < arg3) {
         objhitInfo->unk2C = arg3;
     }
-    objhitInfo->unk30 = arg0->unkA8;
+    objhitInfo->unk30 = arg0->visRadius;
     var_fv0 = objhitInfo->unk52;
     if (objhitInfo->unk30 < var_fv0) {
         objhitInfo->unk30 = var_fv0;
@@ -498,11 +498,11 @@ void func_80026940(Object* obj, s16 arg1) {
         objhitInfo->unk52 = arg1;
         temp_fv0 = (f32) objhitInfo->unk52;
         objhitInfo->unkC = temp_fv0 * temp_fv0;
-        objhitInfo->unk2C = obj->unkA8;
+        objhitInfo->unk2C = obj->visRadius;
         if (objhitInfo->unk2C < temp_fv0) {
             objhitInfo->unk2C = temp_fv0;
         }
-        objhitInfo->unk30 = obj->unkA8;
+        objhitInfo->unk30 = obj->visRadius;
         if (objhitInfo->unk30 < temp_fv0) {
             objhitInfo->unk30 = temp_fv0;
         }
@@ -1000,7 +1000,7 @@ void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0
             spDC.y = obj2->globalPosition.y;
             spDC.z = obj2->globalPosition.z - gWorldZ;
             if (func_8002DFB8(spDC, sp5C->unk52, sp58->unk14, sp58->model, arg2, &sp64, &spE8) != 0) {
-                var_fv0 = obj2->unkA8 / obj->unkA8;
+                var_fv0 = obj2->visRadius / obj->visRadius;
                 if (var_fv0 > 1.0f) {
                     var_fv0 = 1.0f;
                 }
@@ -1012,7 +1012,7 @@ void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0
             spDC.y = obj2->globalPosition.y;
             spDC.z = obj2->globalPosition.z - gWorldZ;
             if (func_8002E3D0(spDC, sp5C->unk52, sp58->unk14, sp58->model, arg2, &sp64, obj2->globalPosition.y + sp5C->unk56, obj2->globalPosition.y + (f32) sp5C->unk54, &spE8) != 0) {
-                var_fv0 = obj2->unkA8 / obj->unkA8;
+                var_fv0 = obj2->visRadius / obj->visRadius;
                 if (var_fv0 > 1.0f) {
                     var_fv0 = 1.0f;
                 }
@@ -3925,7 +3925,7 @@ void func_80030AEC(Object* obj, Object* otherObj) {
     sp50.x = sp74.x - sp80.x;
     sp50.y = 0.0f;
     sp50.z = sp74.z - sp80.z;
-    temp_fa0 = vec3_normalize(&sp50) / (obj->unkA8 + otherObj->unkA8);
+    temp_fa0 = vec3_normalize(&sp50) / (obj->visRadius + otherObj->visRadius);
     temp_fa0 = 1.0f - temp_fa0;
     spBC = (sp98.x * sp50.x) + (sp98.y * sp50.y) + (sp98.z * sp50.z);
     spB8 = (sp8C.x * sp50.x) + (sp8C.y * sp50.y) + (sp8C.z * sp50.z);
@@ -3975,7 +3975,7 @@ void func_80030AEC(Object* obj, Object* otherObj) {
 #endif
 
 void func_80030E2C(Object* obj, f32* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4) {
-    *arg1 = SQ(obj->unkA8);
+    *arg1 = SQ(obj->visRadius);
     *arg1 = SQ(*arg1);
     *arg1 *= 3.926991f;
     arg3->x = obj->srt.transl.x;

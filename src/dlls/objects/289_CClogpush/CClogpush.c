@@ -127,7 +127,7 @@ void CClogpush_control(Object *self) {
 
 // offset: 0x400 | func: 2 | export: 2
 void CClogpush_update(Object *self) {
-    if (self->def->flags & 1 && self->unk74) {
+    if ((self->def->flags & OBJDEF_INVISIBLE) && self->unk74) {
         func_80036438(self);
     }
 }

@@ -161,7 +161,7 @@ void WGSH_flybaddie_control(Object* self) {
                         main_set_bits(BIT_1D8, 1);
                     }
                 } else {
-                    func_80023A18(self, self->modelInstIdx + 1);
+                    obj_set_model(self, self->modelInstIdx + 1);
                 }
             }
         }
@@ -248,7 +248,7 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
     projballSetup->x = self->srt.transl.x;
     projballSetup->y = self->srt.transl.y;
     projballSetup->z = self->srt.transl.z;
-    projball = obj_create(projballSetup, OBJ_INIT_FLAG1, -1, -1, NULL);
+    projball = obj_create(projballSetup, OBJINIT_STANDALONE, -1, -1, NULL);
     if (projball != NULL) {
         projball->srt.flags |= OBJFLAG_OWNS_SETUP;
         dirVec[0] = player->srt.transl.x - self->srt.transl.x;

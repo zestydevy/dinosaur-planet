@@ -368,8 +368,8 @@ typedef struct {
 /*0x5*/ u8 b2;
 /*0x6*/ u8 a;
 /*0x7*/ u8 unk7;
-/*0x8*/ s16 unk8; // some sort of index?
-} MapsUnk_800B97C0;
+/*0x8*/ s16 refCount;
+} BlockColorTableEntry;
 
 typedef struct {
 /*0000*/    f32 x;
@@ -508,14 +508,14 @@ Block* func_80044BB0(s32 blockIndex);
 
 // Map/Track (again)
 
-u8 func_800456AC(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
+u8 track_obj_vis_check(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 
 // streaming stuff starts here
 
 s32 func_80045D58(void);
-void func_80045F48(s32);
-void func_80046320(s32 arg0, Object *obj);
+void map_free(s32);
+void map_load_mobile_map(s32 id, Object *obj);
 GlobalMapCell* func_80046698(s32 gridX, s32 gridZ);
 
 // Global Map

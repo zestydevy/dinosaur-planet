@@ -940,7 +940,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
             if ((arg1->group == 1) && (arg1->modelInstIdx == 2)) {
                 return 1;
             }
-            func_80023A18(arg1, sp54);
+            obj_set_model(arg1, sp54);
         }
         break;
     case 24:                                        /* switch 1 */
@@ -1021,7 +1021,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
         break;
     case 23:                                    /* switch 2 */
         if ((arg4 == 0) && (sp54 < arg1->def->numModels)) {
-            func_80023A18(arg1, sp54);
+            obj_set_model(arg1, sp54);
         }
         break;
     case 27:                                    /* switch 2 */

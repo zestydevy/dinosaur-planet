@@ -47,7 +47,7 @@ void WMPlanets_setup(Object* self, WMPlanets_Setup* objsetup, s32 arg2) {
     objdata->orbitOrigin.y = self->srt.transl.y;
     objdata->orbitOrigin.z = self->srt.transl.z;
 
-    func_80023A18(self, objsetup->modelIdx);
+    obj_set_model(self, objsetup->modelIdx);
     self->srt.transl.z = objsetup->base.z + objdata->orbitRadius;
 }
 

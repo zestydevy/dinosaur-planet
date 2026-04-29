@@ -233,7 +233,7 @@ void CFSupTreasureCh_func_718(Object *arg0, Object *arg1) {
 
     objdata = arg0->data;
     if (!(objdata->flags & CFSUPTREASURECH_8)) {
-        func_80023A18(arg0, 1);
+        obj_set_model(arg0, 1);
         func_800267A4(arg0);
     }
     objdata->flags |= (CFSUPTREASURECH_8 | CFSUPTREASURECH_FREED_BABY_2);
@@ -270,7 +270,7 @@ void CFSupTreasureCh_func_7B8(Object *self, s32 arg1, f32 arg2) {
         self->srt.yaw = transform.yaw;
     }
     func_8002674C(self);
-    func_80023A18(self, 0);
+    obj_set_model(self, 0);
     self->opacity = OBJECT_OPACITY_MAX;
     self->velocity.y = 0.0f;
 }

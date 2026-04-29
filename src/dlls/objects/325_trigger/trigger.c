@@ -660,7 +660,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_LOD_MODEL:
             // "Trigger [%d], LOD Model [%d]"
-            func_80023A18(get_player(), (s32) cmd->param1);
+            obj_set_model(get_player(), (s32) cmd->param1);
             break;
         case TRG_CMD_SETUP_POINT:
             // "Trigger [%d], Setup Point,        Level      [%d], SetupPoint [%d]"

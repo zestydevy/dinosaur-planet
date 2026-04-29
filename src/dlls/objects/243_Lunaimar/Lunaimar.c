@@ -414,7 +414,7 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     spitSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     spitSetup->loadDistance = 0xFF;
     spitSetup->fadeDistance = 0xFF;
-    spit = obj_create(spitSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+    spit = obj_create(spitSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (spit != NULL) {
         temp_fv0 = (baddie->fsa.targetDist / (f32) baddie->unk3E2) * 60.0f;
         spit->velocity.x = (baddie->fsa.target->srt.transl.x - spitSetup->x) / temp_fv0;
@@ -446,7 +446,7 @@ static void dll_243_func_1614(Object *self, Lunaimar_ActualData *objdata) {
         shieldSetup->byte5 = setup->byte5;
         shieldSetup->byte6 = setup->byte6;
         shieldSetup->fadeDistance = setup->fadeDistance;
-        shield = obj_create(shieldSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+        shield = obj_create(shieldSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
         objdata->unk14 = shield;
         shield->unkC4 = self;
     }

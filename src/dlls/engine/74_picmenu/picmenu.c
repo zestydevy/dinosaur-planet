@@ -60,7 +60,7 @@ void picmenu_calculate_items_to_redraw();
 void picmenu_ctor(void *self) {
     s32 i;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(sTextures); i++) {
+    for (i = 0; i < ARRAYCOUNT_S(sTextures); i++) {
         sTextures[i].texture = tex_load_deferred(sTextures[i].textureID);
     }
 
@@ -70,7 +70,7 @@ void picmenu_ctor(void *self) {
 void picmenu_dtor(void *self) {
     s32 i;
 
-    for (i = 0; i < (s32)ARRAYCOUNT(sTextures); i++) {
+    for (i = 0; i < ARRAYCOUNT_S(sTextures); i++) {
         tex_free(sTextures[i].texture);
     }
 }
@@ -85,7 +85,7 @@ void picmenu_set_items(PicMenuItem *items, s32 count,
     PicMenuItem *item;
     PicMenuItem *leftItem;
 
-    if (count > (s32)ARRAYCOUNT(sItems)) {
+    if (count > ARRAYCOUNT_S(sItems)) {
         return;
     }
 
@@ -330,7 +330,7 @@ void picmenu_draw(Gfx **gdl) {
                     opacity = (sOpacity << 8) >> 8;
                 }
 
-                while (item->bgTextureIndices[k] != -1 && k < (s32)ARRAYCOUNT(item->bgTextureIndices)) {
+                while (item->bgTextureIndices[k] != -1 && k < ARRAYCOUNT_S(item->bgTextureIndices)) {
                     rcp_screen_full_write(gdl, sTextures[item->bgTextureIndices[k]].texture, 
                         x, y, 0, 0, opacity, SCREEN_WRITE_TRANSLUCENT);
                     x += sTextures[item->bgTextureIndices[k]].width;
@@ -592,7 +592,7 @@ static void picmenu_generate_item_background(PicMenuItem *item) {
     pxRemaining = item->outerWidth;
 
     i = 0;
-    while (i < (s32)ARRAYCOUNT(item->bgTextureIndices)) {
+    while (i < ARRAYCOUNT_S(item->bgTextureIndices)) {
         item->bgTextureIndices[i] = -1;
         i++;
     }

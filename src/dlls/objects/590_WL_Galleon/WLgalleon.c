@@ -68,7 +68,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
     func_80059038(0, self, 0);
 
     for (index = 0; index < 5; index++){
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, index, 0);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, index, 0);
     }
 }
 
@@ -92,25 +92,25 @@ void WLgalleon_control(Object* self) {
     objData = self->data;
 
     if (main_get_bits(BIT_429)) {
-        if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 2)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 0);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 0);
+        if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 2)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 0);
         }
     } else if (!main_get_bits(BIT_WM_Played_Randorn_First_Meeting) && 
-            !gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 2)) {
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 1);
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 1);
+            !gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 2)) {
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 1);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 1);
     }
 
     if (!main_get_bits(BIT_WM_Played_Randorn_First_Meeting)) {
         if (!objData->unk10 && !main_get_bits(BIT_429)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 1);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 1);
             objData->unk10 = TRUE;
         }
     } else {
-        if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 4)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 4, 1);
+        if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 4)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 4, 1);
         }
         if (objData->unk10) {
             objData->unk10 = FALSE;
@@ -212,9 +212,9 @@ static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
                 self->unkDC = 0xD;
                 break;
             case 6:
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 0);
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 0);
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 4, 0);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 0);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 0);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 4, 0);
                 main_set_bits(BIT_WL_Load_Unload_Galleon, 0);
                 break;
             case 2:
@@ -234,9 +234,9 @@ static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
                 break;
         }
     }
-    if (main_get_bits(BIT_429) && gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 2)) {
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 0);
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 0);
+    if (main_get_bits(BIT_429) && gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 2)) {
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 0);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 0);
     }
     return 0;
 }

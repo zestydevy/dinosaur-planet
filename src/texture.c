@@ -1313,7 +1313,7 @@ s32 tex_gdl_set_texture_simple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 fra
                 temp += 8;
             } else if (renderFlags & RENDER_CUTOUT) {
                 temp += 16;
-            } else if (renderFlags & RENDER_UNK_40000000) {
+            } else if (renderFlags & RENDER_UNK40000000) {
                 temp = 37;
             } else if (renderFlags & RENDER_SUBSURFACE) {
                 if (renderMipmaps != 0) {

@@ -152,7 +152,7 @@ static void WL_LevelControl_load_galleon_if_needed(Object* self, WL_LevelControl
     }
 
     //Try to find the Galleon
-    objs = obj_get_all_of_type(OBJTYPE_7, &count);
+    objs = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &count);
     for (galleonNotFound = TRUE, i = 0; i < count; i++) {
         if ((objs[i]->id == OBJ_WL_Galleon) || (objs[i]->id == OBJ_SB_Galleon)) {
             galleonNotFound = FALSE;
@@ -193,7 +193,7 @@ static void WL_LevelControl_unload_galleon_if_needed(Object* self, WL_LevelContr
 
     //Search for the Galleon once (@bug?: does nothing with this)
     if (((objData->flags & WL_LevelControl_FLAG_Galleon_Leaving_Search) == FALSE) && krystalIsLeaving) {
-        objs = obj_get_all_of_type(OBJTYPE_7, &count);
+        objs = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &count);
         for (i = 0; i < count; i++) {
             if (objs[i]->id == OBJ_WL_Galleon) {
                 i = count; //index break

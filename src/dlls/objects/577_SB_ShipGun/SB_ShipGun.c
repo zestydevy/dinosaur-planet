@@ -218,7 +218,7 @@ void SB_ShipGun_control(Object *self) {
             cannonballSetup->fadeFlags = 1;
             cannonballSetup->loadDistance = 0xFF;
             cannonballSetup->fadeDistance = 0xFF;
-            cannonballObj = obj_create(cannonballSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+            cannonballObj = obj_create(cannonballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
             if (0) { }
             dx = (dx1 = objdata->cloudrunner->globalPosition.x - self->globalPosition.x);
             dy = objdata->cloudrunner->globalPosition.y - (self->globalPosition.y + 100.0f);
@@ -262,7 +262,7 @@ void SB_ShipGun_control(Object *self) {
                     debrisSetup->fadeFlags = 2;
                     debrisSetup->loadDistance = 0xFF;
                     debrisSetup->fadeDistance = 0xFF;
-                    obj_create(debrisSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+                    obj_create(debrisSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
                 }
                 gDLL_17_partfx->vtbl->spawn(self, 0x9B, NULL, PARTFXFLAG_2, -1, NULL);
                 main_set_bits(setup->gunIndex + BIT_SB_Destroyed_Right_Gun, 1);

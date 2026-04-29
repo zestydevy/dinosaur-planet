@@ -104,7 +104,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         
         if (self->opacity < OBJECT_OPACITY_MAX) {
-            srt.scale = self->unkA8 * 0.03f;
+            srt.scale = self->visRadius * 0.03f;
             for (i = 0; i < gUpdateRate; i++) {
                 ((DLL_53*)gTempDLLInsts[1])->vtbl->func12(self, rand_next(0, objData->vertexCount - 1), transl);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_672, &srt, 0x200001, -1, NULL);

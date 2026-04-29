@@ -1675,7 +1675,7 @@ s32 func_8000ACD4(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
     temp_fa1 = SQ(*arg2);
     sp30 = 0;
     if (temp < temp_fa1) {
-        if (func_800456AC(arg1) != 0) {
+        if (track_obj_vis_check(arg1) != 0) {
             sp30 = 1;
             if (arg4 != 0) {
                 func_80007EE0(&arg0->srt.transl, &sp50);

@@ -52,7 +52,7 @@ static void Pollen_create_fragments(Object* self) {
         setup->base.fadeDistance = 0xFF;
         fragment = obj_create(
             (ObjSetup*)setup, 
-            OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, 
+            OBJINIT_STANDALONE | OBJINIT_FLAG4, 
             -1, 
             -1, 
             NULL

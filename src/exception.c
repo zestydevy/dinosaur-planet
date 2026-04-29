@@ -263,7 +263,7 @@ OSContPad gCrashContPadArray1[MAXCONTROLLERS];
 OSContPad gCrashContPadArray2[MAXCONTROLLERS];
 u16 gCrashButtons[MAXCONTROLLERS];
 const char *gCFileLabels[C_FILE_LABELS_LENGTH];
-s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
+s32 gSomeCFileInts[C_FILE_LABELS_LENGTH]; // line numbers
 /* -------- .bss end 800bfe70 -------- */
 
 void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4);
@@ -794,7 +794,7 @@ void clear_framebuffer_current() {
     }
 }
 
-void write_c_file_label_pointers(const char *cFileLabel, s32 a1) {
+void write_c_file_label_pointers(const char *cFileLabel, s32 line) {
     // If gCFileLabelFlag is zero, then zero out gCFileLabels and gSomeCFileInts
     if (gCFileLabelFlag == 0) {
         for (gCFileLabelFlag = 0; gCFileLabelFlag < C_FILE_LABELS_LENGTH; ++gCFileLabelFlag) {
@@ -813,7 +813,7 @@ void write_c_file_label_pointers(const char *cFileLabel, s32 a1) {
     }
 
     gCFileLabels[gCFileLabelIndex] = cFileLabel;
-    gSomeCFileInts[gCFileLabelIndex] = a1;
+    gSomeCFileInts[gCFileLabelIndex] = line;
 }
 
 // diRcpTrace?

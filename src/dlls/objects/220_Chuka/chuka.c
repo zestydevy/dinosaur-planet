@@ -207,7 +207,7 @@ static void dll_220_func_778(Object* self) {
     temp_v0->loadFlags = 2;
     temp_v0->byte5 = 4;
     temp_v0->fadeDistance = 0xFF;
-    temp_v0_2 = obj_create(temp_v0, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);;
+    temp_v0_2 = obj_create(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);;
     if (temp_v0_2 != NULL) {
         sp2C = temp_v0_2;
         player = get_player();

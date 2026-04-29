@@ -368,7 +368,7 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
             D_800B1842 = 0;
         }
     }
-    func_8001F890(modelInst->vertices[(modelInst->unk34 >> 1) & 1], modelInst->model->vertexGroups, spA8, modelInst->matrices[modelInst->unk34 & 1], (s32) D_800B1842, (s32) D_800B1843, D_800B1848, D_800B1858, obj->unkA8);
+    func_8001F890(modelInst->vertices[(modelInst->unk34 >> 1) & 1], modelInst->model->vertexGroups, spA8, modelInst->matrices[modelInst->unk34 & 1], (s32) D_800B1842, (s32) D_800B1843, D_800B1848, D_800B1858, obj->visRadius);
     if (obj->def->unk87 & 0xF) {
         D_800B1844 = spA1;
         D_800B1843 = sp9D;

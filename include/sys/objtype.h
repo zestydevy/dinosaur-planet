@@ -12,7 +12,7 @@ enum ObjType {
     OBJTYPE_4 = 4, // Tumbleweed, WG_Triffid, DFSH_Shrine
     OBJTYPE_5 = 5, // collectable, SCcollectables (OBJTYPE_COLLECTABLE?)
     OBJTYPE_6 = 6,
-    OBJTYPE_7 = 7, // CFScalesGalleon (mobile map Objects in general?)
+    OBJTYPE_MOBILE_MAP = 7, // CFScalesGalleon (mobile map Objects in general?)
     OBJTYPE_8 = 8, // StaticCamera.c
     OBJTYPE_9 = 9,
     OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop (also used by WCLevelControl, DFPLevelControl)

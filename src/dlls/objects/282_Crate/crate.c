@@ -111,7 +111,7 @@ void crate_control(Object* self) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Change model index (increase index to look more and more damaged)
-            func_80023A18(self, CRATE_HIT_POINTS - objData->health);
+            obj_set_model(self, CRATE_HIT_POINTS - objData->health);
 
             //Flash after being hit
             objData->flash = 1.0f;

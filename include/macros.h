@@ -4,6 +4,7 @@
 #define ALIGNED(x) __attribute__((aligned(x)))
 
 #define ARRAYCOUNT(a) (sizeof(a) / sizeof(a[0]))
+#define ARRAYCOUNT_S(a) (long)ARRAYCOUNT(a)
 #define OFFSETOF(type, field) ((size_t)&(((type*)0)->field))
 
 #ifdef __sgi

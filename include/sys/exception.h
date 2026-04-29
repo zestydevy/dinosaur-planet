@@ -27,7 +27,7 @@ void pi_manager_entry(void *arg);
 void crash_controller_getter();
 void check_video_mode_crash_and_clear_framebuffer();
 
-void write_c_file_label_pointers(const char *cFileLabel, s32 a1);
+void write_c_file_label_pointers(const char *cFileLabel, s32 line);
 void print_stack_trace(OSThread**, s32, s32);
 void other_crash_print(OSThread **threads, s32 count, s32 threadIdx);
 

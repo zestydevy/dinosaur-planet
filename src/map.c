@@ -55,7 +55,7 @@ Mtx* gWorldRSPMatrices;
 Vertex* D_800B51D4;
 Triangle* D_800B51D8;
 s16 SHORT_800b51dc;
-u32 UINT_800b51e0;
+s32 UINT_800b51e0;
 Camera* D_800B51E4;
 struct Vec3_Int Vec3_Int_array[20];
 MapHeader* gLoadedMapsDataTable[120];
@@ -94,8 +94,8 @@ f32 D_800B97B0; //y
 f32 D_800B97B4; //z
 f32 D_800B97B8;
 f32 D_800B97BC;
-MapsUnk_800B97C0 *D_800B97C0; // 255 items
-s16 D_800B97C4;
+BlockColorTableEntry *gBlockColorTable; // 255 items
+s16 gBlockColorTableLength;
 u8 _bss_800b97c8[0x8];
 // -------- .bss end 800b97e0 -------- //
 
@@ -159,8 +159,8 @@ void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
 HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
 void func_800441F4(u32* arg0, s32 arg1);
-void func_80048B14(Block *block);
-void func_80048C24(Block *block);
+void block_color_table_add_block(Block *block);
+void block_color_table_free_block(Block *block);
 u32 hits_get_size(s32 id);
 void block_setup_vertices(Block *block);
 void block_setup_gdl_groups(Block *block);
@@ -183,7 +183,7 @@ void map_update_objects_streaming(s32);
 s32 map_func_800485FC(s32, s32, s32, s32, s32);
 void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
 void func_800496E4(s32 blockIndex);
-s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
+s32 func_8004A058(Texture* tex, u32 renderFlags, s32 arg2);
 s32 map_should_obj_unload(Object*);
 void func_8004B548(MapHeader*, s32, s32, Object*);
 s32 map_should_stream_load_object(ObjSetup*, s8, s32);
@@ -192,14 +192,14 @@ void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
 void block_add_to_render_list(Block *block, f32 x, f32 z);
-void func_800436DC(Object* arg0, s32 arg1);
+void func_800436DC(Object* obj, s32 visibility);
 s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
-s32 func_80048E04(u8, u8, u8, u8);
+s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a);
 void func_8004A164(Texture*, s32);
 void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
-void func_80043950(Block*, s16, s16, s16);
+void block_calc_shape_visibility(Block*, s16, s16, s16);
 void func_80043FD8(s8* arg0);
 s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
 void some_cell_func(BitStream* stream);
@@ -581,7 +581,7 @@ void init_maps(void) {
     s32 i;
 
     UINT_80092a98 = 0;
-    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:cblocks"));
+    gBlockColorTable = mmAlloc(sizeof(BlockColorTableEntry) * 255, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:cblocks"));
     gLoadedBlocks = mmAlloc(sizeof(Block*) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blknos"));
     gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blkusage"));
     gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:mapinfo"));
@@ -712,7 +712,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
 
 void track_c_func(void) {
     s32 sp294;
-    Block* var_s0;
+    Block* block;
     s32 temp_t2_2;
     s32 temp_t3;
     s32 temp_v1;
@@ -757,7 +757,7 @@ void track_c_func(void) {
         sp230 = gBlockIndices[sp240];
         D_800B9714 = D_800B9700[sp240];
         func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp274, sp264, sp254, sp244, sp240, 1, D_800B4A54);
-        for (i = 0; i < ARRAYCOUNT(sp130); i++) { sp130[i] = 0; }
+        for (i = 0; i < ARRAYCOUNT_S(sp130); i++) { sp130[i] = 0; }
         
         for (var_s2 = sp274[2]; sp274[3] >= var_s2; var_s2++) {
             for (temp_s1 = sp274[0]; sp274[1] >= temp_s1; temp_s1++) {
@@ -789,29 +789,29 @@ void track_c_func(void) {
                 temp_v1 = GRID_INDEX(var_s2, temp_s1);
                 temp_v0 = sp230[temp_v1];
                 if (temp_v0 < 0) {
-                    var_s0 = NULL;
+                    block = NULL;
                 } else {
-                    var_s0 = gLoadedBlocks[temp_v0];
-                    var_s0->vtxFlags ^= 1;
+                    block = gLoadedBlocks[temp_v0];
+                    block->vtxFlags ^= 1;
                     if (sp130[temp_v1] == 0) {
                         continue;
                     }
                 }
-                if (temp_v0 < 0 || func_800451A0(temp_s1, var_s2, var_s0) == 0) {
+                if (temp_v0 < 0 || func_800451A0(temp_s1, var_s2, block) == 0) {
                     continue;
                 }
                 D_800B97B8 = temp_s1 * BLOCKS_GRID_UNIT_F;
                 D_800B97BC = var_s2 * BLOCKS_GRID_UNIT_F;
-                func_80043950(var_s0, temp_s1, var_s2, sp240);
+                block_calc_shape_visibility(block, temp_s1, var_s2, sp240);
                 if (UINT_80092a98 & 0x8000) {
-                    if (var_s0->unk3E != 0) {
-                        block_compute_vertex_colors(var_s0, temp_s1, var_s2, 0);
+                    if (block->unk3E != 0) {
+                        block_compute_vertex_colors(block, temp_s1, var_s2, 0);
                     }
-                    if ((var_s0->unk49 != 0) && (UINT_80092a98 & 0x100)) {
-                        func_8001F4C0(var_s0, temp_s1, var_s2);
+                    if ((block->unk49 != 0) && (UINT_80092a98 & 0x100)) {
+                        func_8001F4C0(block, temp_s1, var_s2);
                     }
                 }
-                block_add_to_render_list(var_s0, D_800B97B8, D_800B97BC);
+                block_add_to_render_list(block, D_800B97B8, D_800B97BC);
             }
         }
     }
@@ -843,7 +843,7 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     BlockTextureScroller* temp_v0_7;
     s32 i;
     BlocksTextureIndexData* temp_v0_4;
-    u32 spE4;
+    u32 forceTexSet;
     s32 spE0;
     s32 spDC;
     s32 spD8;
@@ -863,8 +863,8 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     s8 spA3;
     s8 temp2;
     s32 temp_t6;
-    s32 var_s7;
-    s32 var_t0;
+    s32 renderFlags;
+    s32 frameOptions;
     Block* block;
     Object** sp8C;
     Object *obj;
@@ -882,32 +882,34 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
             // @fake
             if (i) {}
             temp_v1 = gRenderList[i] & 0x3F;
-            spE4 = 0;
+            forceTexSet = FALSE;
             if (temp_v1 != spC4) {
                 spA3 = -1;
                 SHORT_800b51dc = -1;
                 spC4 = temp_v1;
-                UINT_800b51e0 = 0;
+                UINT_800b51e0 = TEX_FRAME(0);
                 spA4 = (temp_v1 * 2) + rspMtxs;
                 block = gBlocksToDraw[temp_v1];
             }
             shape = &block->shapes[temp_t6];
-            if (shape->flags & 0x20000000) {
+            if (shape->flags & RENDER_UNK20000000) {
                 if (spA3 != 2) {
                     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&spA4[1]), G_MTX_MODELVIEW | G_MTX_LOAD);
                     spA3 = 2;
                 }
-            } else if (spA3 != 1) {
-                gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(spA4), G_MTX_MODELVIEW | G_MTX_LOAD);
-                spA3 = 1;
+            } else {
+                if (spA3 != 1) {
+                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&spA4[0]), G_MTX_MODELVIEW | G_MTX_LOAD);
+                    spA3 = 1;
+                }
             }
             if (shape->materialIndex == 0xFF) {
                 tex0 = NULL;
             } else {
                 tex0 = block->materials[shape->materialIndex].texture;
             }
-            if (shape->flags & 0x2000) {
-                if (tex0->flags & 0xC000) {
+            if (shape->flags & RENDER_UNK2000) {
+                if (tex0->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
                     dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xA0);
                 } else {
                     dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0x64);
@@ -917,43 +919,43 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                     dl_set_prim_color(&gMainDL, spE0, spDC, spD8, 0xFF);
                 } else if (shape->envColourMode == 0xFE) {
                     dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
-                } else if (shape->flags & 0x46C00000) {
+                } else if (shape->flags & (RENDER_UNK40000000 | RENDER_UNK4000000 | RENDER_UNK2000000 | RENDER_UNK800000 | RENDER_UNK400000)) {
                     dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
                 } else {
                     func_8001F848(&gMainDL);
                 }
             }
-            var_s7 = shape->flags;
-            if (var_s7 & 0x10000) {
+            renderFlags = shape->flags;
+            if (renderFlags & RENDER_SHAPE_ANIMATED) {
                 temp_v0_4 = func_8004A284(block, shape->animatorID);
                 if (temp_v0_4 != NULL) {
-                    var_t0 = gBlockTextures[temp_v0_4->textureIndex].unk4 << 8;
-                    var_s7 |= gBlockTextures[temp_v0_4->textureIndex].flags;
+                    frameOptions = gBlockTextures[temp_v0_4->textureIndex].unk4 << 8;
+                    renderFlags |= gBlockTextures[temp_v0_4->textureIndex].flags;
                 } else {
-                    var_t0 = 0;
+                    frameOptions = 0;
                 }
-                if ((shape->animatorID != SHORT_800b51dc) || (var_t0 != UINT_800b51e0)) {
+                if ((shape->animatorID != SHORT_800b51dc) || (frameOptions != UINT_800b51e0)) {
                     SHORT_800b51dc = shape->animatorID;
-                    UINT_800b51e0 = var_t0;
-                    spE4 = 1;
+                    UINT_800b51e0 = frameOptions;
+                    forceTexSet = TRUE;
                 }
             } else {
                 SHORT_800b51dc = -1;
-                var_t0 = 0;
+                frameOptions = 0;
             }
             if (shape->blendMaterialIndex != 0xFF) {
                 tex1 = block->materials[shape->blendMaterialIndex].texture;
             } else {
                 tex1 = NULL;
             }
-            tex_gdl_set_textures(&gMainDL, tex0, tex1, var_s7, var_t0, spE4, 0);
+            tex_gdl_set_textures(&gMainDL, tex0, tex1, renderFlags, frameOptions, forceTexSet, FALSE);
             if (shape->unk16 != 0xFF) {
                 temp_v0_7 = func_80049D68(shape->unk16);
                 gDPSetTileSize(gMainDL++, 0, temp_v0_7->uOffsetA, temp_v0_7->vOffsetA, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
                 if (tex1 != NULL) {
                     gDPSetTileSize(gMainDL++, 1, temp_v0_7->uOffsetB, temp_v0_7->vOffsetB, (tex1->width - 1) << 2, (tex1->height - 1) << 2);
                 }
-            } else if ((tex0 != NULL) && (tex0->flags & 0xC000)) {
+            } else if ((tex0 != NULL) && (tex0->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY))) {
                 gDPSetTileSize(gMainDL++, 0, 0, 0, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
                 if (tex1 != NULL) {
                     gDPSetTileSize(gMainDL++, 1, 0, 0, (tex1->width - 1) << 2, (tex1->height - 1) << 2);
@@ -998,10 +1000,10 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                 gMainDL++;
             }
             gDLBuilder->needsPipeSync = 1;
-            if ((var_s7 & 0x100408) == 0x100408) {
+            if ((renderFlags & (RENDER_FOG_ACTIVE | RENDER_DECAL_SIMPLE | RENDER_DECAL)) == (RENDER_FOG_ACTIVE | RENDER_DECAL_SIMPLE | RENDER_DECAL)) {
                 temp_s0_2 = gMainDL - temp_s5;
-                dl_set_geometry_mode(&gMainDL, 0x10000);
-                if (var_s7 & 0x2004) {
+                dl_set_geometry_mode(&gMainDL, G_FOG);
+                if (renderFlags & (RENDER_UNK2000 | RENDER_SEMI_TRANSPARENT)) {
                     gDPSetCombineLERP(gMainDL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
                     dl_apply_combine(&gMainDL);
                     gDPSetOtherMode(
@@ -1029,7 +1031,7 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     }
 }
 
-void func_800436DC(Object* obj, s32 arg1) {
+void func_800436DC(Object* obj, s32 visibility) {
     s8 sp37;
     u8 someBool;
 
@@ -1051,13 +1053,13 @@ void func_800436DC(Object* obj, s32 arg1) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
         }
     }
-    objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, arg1);
+    objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, visibility);
     if (sp37 != 0) {
         if ((obj->id != OBJ_IMSnowBike) && (obj->id != OBJ_CRSnowBike)) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
         }
     }
-    if ((obj->linkedObject != NULL) && (arg1 != 0)) {
+    if ((obj->linkedObject != NULL) && (visibility != 0)) {
         sp37 = gDLL_13_Expgfx->vtbl->func10(obj->linkedObject);
         if (sp37 >= 2) {
             gDLL_13_Expgfx->vtbl->func6(obj->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
@@ -1069,7 +1071,7 @@ void func_800436DC(Object* obj, s32 arg1) {
 }
 
 /** Calculates frustum culling for a Block's shapes, and for each shape's faces. */
-void func_80043950(Block* block, s16 arg1, s16 arg2, s16 arg3) {
+void block_calc_shape_visibility(Block* block, s16 arg1, s16 arg2, s16 arg3) {
     BlockShape* shape;
     EncodedTri* triEnd;
     EncodedTri* tri;
@@ -1108,16 +1110,17 @@ void func_80043950(Block* block, s16 arg1, s16 arg2, s16 arg3) {
     shapesEnd = &block->shapes[block->shapeCount];
     while ((u32) shape < (u32) shapesEnd) {
         //Check shape flags
-        if (shape->flags & 0x200000) {
-            shape->flags &= ~0x10000000;
+        if (shape->flags & RENDER_SHAPE_HIDE) {
+            shape->flags &= ~RENDER_SHAPE_VISIBLE;
             shape++;
             continue;
         }
 
-        if ((D_800B9794 != 0) && ((D_800B979C & 1) || 
-            !(shape->flags & 0x2404)) && (func_80045600((shape - block->shapes), &D_800B9780, arg1, arg2, arg3) == 0)
+        if ((D_800B9794 != 0) && 
+            ((D_800B979C & 1) || !(shape->flags & (RENDER_UNK2000 | RENDER_DECAL_SIMPLE | RENDER_SEMI_TRANSPARENT))) && 
+            (func_80045600((shape - block->shapes), &D_800B9780, arg1, arg2, arg3) == 0)
         ) {
-            shape->flags &= ~0x10000000;
+            shape->flags &= ~RENDER_SHAPE_VISIBLE;
             shape++;
             continue;
         }
@@ -1132,7 +1135,7 @@ void func_80043950(Block* block, s16 arg1, s16 arg2, s16 arg3) {
         Zmax = ((shape->Zmax * 4) | SHAPE_BB_REMAINDER_Z_MAX(shape)) + D_800B97BC;
         Zmin = ((shape->Zmin * 4) | SHAPE_BB_REMAINDER_Z_MIN(shape)) + D_800B97BC;
 
-        for (i = 0; i < ARRAYCOUNT(gFrustumPlanes); i++) {
+        for (i = 0; i < ARRAYCOUNT_S(gFrustumPlanes); i++) {
             if (gFrustumPlanes[i].unk14[0] & 1) {
                 V1x = Xmax;
                 V2x = Xmin;
@@ -1174,13 +1177,13 @@ void func_80043950(Block* block, s16 arg1, s16 arg2, s16 arg3) {
 
         //Set flags
         if (visible == FALSE) {
-            shape->flags &= ~0x10000000;
+            shape->flags &= ~RENDER_SHAPE_VISIBLE;
             shape++;
             continue;
         }
 
         //Tri-level culling (based on vertex coords)
-        if (!(shape->flags & 0x80000000)) {
+        if (!(shape->flags & RENDER_NO_CULL)) {
             visible = FALSE;
             shapeVtx = &block->vertices[shape->vtxBase];
             tri = block->encodedTris;
@@ -1212,20 +1215,19 @@ void func_80043950(Block* block, s16 arg1, s16 arg2, s16 arg3) {
             }
 
             if (visible == FALSE) {
-                shape->flags &= ~0x10000000;
+                shape->flags &= ~RENDER_SHAPE_VISIBLE;
                 shape++;
                 continue;
             }
         }
 
-        shape->flags |= 0x10000000;
+        shape->flags |= RENDER_SHAPE_VISIBLE;
         shape++;
     }
 }
 
 
-void block_add_to_render_list(Block *block, f32 x, f32 z)
-{
+void block_add_to_render_list(Block *block, f32 x, f32 z) {
     s32 unused;
     s32 oldRenderListLength;
     s32 i;
@@ -1237,7 +1239,7 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
     oldRenderListLength = gRenderListLength;
 
     for (i = 0; i < block->shapeCount; i++) {
-        if ((block->shapes[i].flags & RENDER_UNK10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
+        if ((block->shapes[i].flags & RENDER_SHAPE_VISIBLE) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
             if (block->shapes[i].flags & RENDER_SEMI_TRANSPARENT) {
                 param = 100000 - (gBlocksToDrawIdx * 400) - i;
 
@@ -1272,38 +1274,41 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
     }
 }
 
-void func_80043FD8(s8* arg0) {
+void func_80043FD8(s8* objVisibilities) {
     Object* object;
     Object** objects;
     s32 numObjs;
-    s32 sp58;
+    s32 visibleStartIdx;
     s32 i;
     s32 var_v0;
-    s8* var_s2;
+    s8* vis;
 
-    objects = get_world_objects(0, 0);
-    sp58 = func_80020DA0(&numObjs);
+    objects = get_world_objects(NULL, NULL);
+    // Separate invisible objects from visible objects
+    visibleStartIdx = obj_visibility_sort_objects(&numObjs);
     if (numObjs > 180) {
         // TODO:
         // STUBBED_PRINTF("depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n");
         numObjs = 180;
     }
-    func_80020EE4(sp58, numObjs - 1);
+    // Depth sort just the visible objects
+    obj_depth_sort_objects(visibleStartIdx, numObjs - 1);
     for (i = 0; i < numObjs; i++) {
         object = objects[i];
-        var_s2 = &arg0[i];
-        if (i < sp58) {
-            var_s2[0] = 0;
+        vis = &objVisibilities[i];
+        if (i < visibleStartIdx) {
+            // Object is always invisible due to its definition
+            *vis = FALSE;
         } else {
-            var_s2[0] = func_800456AC(object);
-            if ((var_s2[0] != 0) && (object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
+            *vis = track_obj_vis_check(object);
+            if (*vis && (object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
                 shadows_update_obj_geom(object, 0, 0, gUpdateRate);
             }
             if ((object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
                 shadows_update_obj_box(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
-                if (object->def->flags & 0x100000) {
+                if (object->def->flags & OBJDEF_FLAG100000) {
                     var_v0 = 150000 - i;
                 } else if ((object->opacityWithFade == 0xFF) && !(object->srt.flags & OBJFLAG_UNK_80)) {
                     var_v0 = 150000 - i;
@@ -1867,7 +1872,11 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     return 0;
 }
 
-u8 func_800456AC(Object* obj) {
+/** 
+ * Updates the object's distance-based fade and returns whether the object is visible 
+ * according to the distance fade and frustum culling.
+ */
+u8 track_obj_vis_check(Object* obj) {
     f32 fadeDist;
     Object* playerObj;
     f32 dist;
@@ -1913,20 +1922,19 @@ u8 func_800456AC(Object* obj) {
     if (obj->id == OBJ_FXEmit) {
         return TRUE;
     }
-    return is_sphere_in_frustum(&obj->globalPosition, obj->unkA8);
+    return is_sphere_in_frustum(&obj->globalPosition, obj->visRadius);
 }
 
-u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
-{
+u8 is_sphere_in_frustum(Vec3f *v, f32 radius) {
     u8 i;
 
     for (i = 0; i < MAP_LAYER_COUNT; i++)
     {
-        if (gFrustumPlanes[i].x * (v->x - gWorldX) +
+        if ((gFrustumPlanes[i].x * (v->x - gWorldX) +
             gFrustumPlanes[i].y * v->y +
             gFrustumPlanes[i].z * (v->z - gWorldZ) +
             gFrustumPlanes[i].d +
-            radius
+            radius)
             < 0.0f)
         {
             return FALSE;
@@ -2059,8 +2067,7 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
     return -1;
 }
 
-/** free_mapID? */
-void func_80045F48(s32 mapID) {
+void map_free(s32 mapID) {
     if (gLoadedMapsDataTable[mapID]){
         map_init_obj_setup_list(gLoadedMapsDataTable[mapID], &gMapObjSetupLists[mapID], mapID, 1);
         mmFree(gLoadedMapsDataTable[mapID]);
@@ -2171,16 +2178,15 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     }
 }
 
-// map_load_mobile_map ?
-void func_80046320(s32 arg0, Object *obj) {
+void map_load_mobile_map(s32 id, Object *obj) {
     s32 sp24;
     s32 foundEmptySlot;
     s32 mapID;
     MapHeader *sp18;
 
     sp24 = D_800B4A50;
-    sp18 = map_load_streammap(arg0, 1);
-    gLoadedMapsDataTable[arg0] = 0;
+    sp18 = map_load_streammap(id, 1);
+    gLoadedMapsDataTable[id] = 0;
     foundEmptySlot = FALSE;
 
     for (mapID = 80; mapID < 120; mapID++) {
@@ -2193,8 +2199,8 @@ void func_80046320(s32 arg0, Object *obj) {
 
     map_init_obj_setup_list(sp18, &gMapObjSetupLists[mapID], mapID, 0);
     gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
-    obj->unk34 = mapID;
-    gDLL_29_Gplay->vtbl->func_1378(arg0, mapID);
+    obj->mobileMapID = mapID;
+    gDLL_29_Gplay->vtbl->func_1378(id, mapID);
     if (!foundEmptySlot) {
         STUBBED_PRINTF("WORLD MAP LIST OVERFLOW\n");
     }
@@ -2521,7 +2527,7 @@ void map_update_streaming(void) {
             }
             gMapStreamMapTable[sp284].unk06 = 1;
             D_800B4A54 = sp284;
-            for (var_s7 = 0; var_s7 < ARRAYCOUNT(gBlockIndices); var_s7++) {
+            for (var_s7 = 0; var_s7 < ARRAYCOUNT_S(gBlockIndices); var_s7++) {
                 func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
                 temp_a3 = gBlockIndices[var_s7];
                 D_800B9714 = D_800B9700[var_s7];
@@ -2762,7 +2768,7 @@ void map_func_8004773C(void) {
 
     gLoadedBlockCount = 0;
     gMapNumStreamMaps = 0;
-    D_800B97C4 = 0;
+    gBlockColorTableLength = 0;
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
     savedPlayerLocation = gDLL_29_Gplay->vtbl->get_player_saved_location();
     gMapCurrentStreamCoordsX = floor_f(savedPlayerLocation->vec.x / BLOCKS_GRID_UNIT_F);
@@ -3118,7 +3124,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     block->gdlGroups = (Gfx*)addr;
     block_setup_gdl_groups(block);
     addr += (3 * block->shapeCount * sizeof(Gfx));
-    func_80048B14(block);
+    block_color_table_add_block(block);
     if (block->vtxFlags & 8) {
         addr = mmAlign8(addr);
         fileVerts = block->vertices;
@@ -3135,7 +3141,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
         if (block->vtxCount && block->vtxCount){} // @fake
         fileVertsEnd += block->vtxCount;
         while (fileVerts < fileVertsEnd) {
-            if (shape->flags & 0x20000000) {
+            if (shape->flags & RENDER_UNK20000000) {
                 verts->ob[0] = (f32) fileVerts->ob[0];
                 verts->ob[1] = (fileVerts->ob[1] - block->minY) * 20.0f;
                 verts->ob[2] = (f32) fileVerts->ob[2];
@@ -3180,7 +3186,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     }
 }
 
-void func_80048B14(Block* block) {
+void block_color_table_add_block(Block* block) {
     s32 targetVertexIndex;
     s32 vertexIndex;
     s32 result;
@@ -3189,11 +3195,12 @@ void func_80048B14(Block* block) {
 
     for (i = 0; i < block->shapeCount; i++) {
         currentShape = &block->shapes[i];
-        if (currentShape->flags & 0x47C02120) {
+        if (currentShape->flags & (RENDER_UNK20 | RENDER_MIPMAPS | RENDER_UNK2000 | RENDER_UNK400000 | RENDER_UNK800000 |
+                RENDER_UNK1000000 | RENDER_UNK2000000 | RENDER_UNK4000000 | RENDER_UNK40000000)) {
             vertexIndex = currentShape->vtxBase;
             targetVertexIndex = currentShape[1].vtxBase;
             while (vertexIndex < targetVertexIndex) {
-                result = func_80048E04(
+                result = block_color_table_add(
                     block->vertices[vertexIndex].cn[0],
                     block->vertices[vertexIndex].cn[1],
                     block->vertices[vertexIndex].cn[2],
@@ -3209,23 +3216,24 @@ void func_80048B14(Block* block) {
 }
 
 static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
-void func_80048C24(Block* block) {
+void block_color_table_free_block(Block* block) {
     s32 index;
     s32 i;
     s32 targetVertexIndex;
     s32 vertexIndex;
 
     for (i = 0; i < block->shapeCount; i++) {
-        if (block->shapes[i].flags & 0x47C02120) {
+        if (block->shapes[i].flags & (RENDER_UNK20 | RENDER_MIPMAPS | RENDER_UNK2000 | RENDER_UNK400000 | RENDER_UNK800000 |
+                RENDER_UNK1000000 | RENDER_UNK2000000 | RENDER_UNK4000000 | RENDER_UNK40000000)) {
             vertexIndex = block->shapes[i].vtxBase;
             targetVertexIndex = block->shapes[i + 1].vtxBase;
             while (vertexIndex < targetVertexIndex) {
                 index = ((s16)block->vertices[vertexIndex].flag >> 2) & 0xFF;
-                if (D_800B97C0[index].unk8 != 0) {
-                    D_800B97C0[index].unk8--;
-                    if (D_800B97C0[index].unk8 == 0 && (index + 1) == D_800B97C4) {
-                        while (D_800B97C0[index].unk8 == 0 && index >= 0) {
-                            D_800B97C4 -= 1;
+                if (gBlockColorTable[index].refCount != 0) {
+                    gBlockColorTable[index].refCount--;
+                    if (gBlockColorTable[index].refCount == 0 && (index + 1) == gBlockColorTableLength) {
+                        while (gBlockColorTable[index].refCount == 0 && index >= 0) {
+                            gBlockColorTableLength -= 1;
                             index--;
                         }
                     }
@@ -3236,15 +3244,14 @@ void func_80048C24(Block* block) {
     }
 }
 
-s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
-    MapsUnk_800B97C0 *temp;
+s32 block_color_table_get(u8 r, u8 g, u8 b, u8 a) {
     s32 index;
     
-    for (index = 0; index < D_800B97C4; index++){
-        if ((arg0 == D_800B97C0[index].r) &&
-            (arg1 == D_800B97C0[index].g) &&
-            (arg2 == D_800B97C0[index].b) &&
-            (arg3 == D_800B97C0[index].a)){
+    for (index = 0; index < gBlockColorTableLength; index++){
+        if ((r == gBlockColorTable[index].r) &&
+            (g == gBlockColorTable[index].g) &&
+            (b == gBlockColorTable[index].b) &&
+            (a == gBlockColorTable[index].a)){
             return index;
         }
     }
@@ -3252,62 +3259,59 @@ s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
     return -1;
 }
 
-s32 func_80048E04(u8 arg0, u8 arg1, u8 arg2, u8 arg3)
-{
+s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a) {
     s32 i;
 
     // try to get the index from another function
-    i = func_80048D58(arg0, arg1, arg2, arg3);
+    i = block_color_table_get(r, g, b, a);
 
     // if we got something valid use it to increment unk8
     // then return
     if (i != -1) {
-        D_800B97C0[i].unk8++;
+        gBlockColorTable[i].refCount++;
     } else {
         // otherwise loop through SomeArray until
         // we find the first unk8 that is zero, or the final index
-        for (i = 0; i < D_800B97C4; i++) {
-            if (D_800B97C0[i].unk8 == 0) {
+        for (i = 0; i < gBlockColorTableLength; i++) {
+            if (gBlockColorTable[i].refCount == 0) {
                 break;
             }
         }
 
-        D_800B97C0[i].r2 = arg0;
-        D_800B97C0[i].r = D_800B97C0[i].r2;
-        D_800B97C0[i].g2 = arg1;
-        D_800B97C0[i].g = D_800B97C0[i].g2;
-        D_800B97C0[i].b2 = arg2;
-        D_800B97C0[i].b = D_800B97C0[i].b2;
+        gBlockColorTable[i].r2 = r;
+        gBlockColorTable[i].r = gBlockColorTable[i].r2;
+        gBlockColorTable[i].g2 = g;
+        gBlockColorTable[i].g = gBlockColorTable[i].g2;
+        gBlockColorTable[i].b2 = b;
+        gBlockColorTable[i].b = gBlockColorTable[i].b2;
 
-        D_800B97C0[i].a = arg3;
-        D_800B97C0[i].unk8 = 1;
+        gBlockColorTable[i].a = a;
+        gBlockColorTable[i].refCount = 1;
 
-        if (i == D_800B97C4) {
-            D_800B97C4++;
+        if (i == gBlockColorTableLength) {
+            gBlockColorTableLength++;
         }
     }
 
     return i;
 }
 
-void func_80048F58(void)
-{
+void func_80048F58(void) {
     s32 i;
     u8 r, g, b;
 
     func_8001F81C(&r, &g, &b);
 
-    for (i = 0; i < D_800B97C4; i++) {
-        if (D_800B97C0[i].a != 0xFE) {
-            D_800B97C0[i].r2 = (D_800B97C0[i].r * r) >> 8;
-            D_800B97C0[i].g2 = (D_800B97C0[i].g * g) >> 8;
-            D_800B97C0[i].b2 = (D_800B97C0[i].b * b) >> 8;
+    for (i = 0; i < gBlockColorTableLength; i++) {
+        if (gBlockColorTable[i].a != 0xFE) {
+            gBlockColorTable[i].r2 = (gBlockColorTable[i].r * r) >> 8;
+            gBlockColorTable[i].g2 = (gBlockColorTable[i].g * g) >> 8;
+            gBlockColorTable[i].b2 = (gBlockColorTable[i].b * b) >> 8;
         }
     }
 }
 
-void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
-{
+void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx) {
     s32 slot;
     s8 *ptr;
 
@@ -3316,7 +3320,6 @@ void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
             break;
         }
     }
-
 
     if (slot == gLoadedBlockCount) {
         gLoadedBlockCount++;
@@ -3339,12 +3342,10 @@ void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
     func_80058F3C();
 }
 
-void block_setup_gdl_groups(Block *block)
-{
+void block_setup_gdl_groups(Block *block) {
     s32 i;
 
-    for (i = 0; i < block->shapeCount; i++)
-    {
+    for (i = 0; i < block->shapeCount; i++) {
         BlockShape *shape;
         Texture *texture;
         s32 texFlags = 0;
@@ -3385,15 +3386,11 @@ void block_setup_gdl_groups(Block *block)
 
         flags |= RENDER_Z_COMPARE;
 
-        if (flags & RENDER_DECAL_SIMPLE)
-        {
-            if (flags & RENDER_SUBSURFACE)
-            {
+        if (flags & RENDER_DECAL_SIMPLE) {
+            if (flags & RENDER_SUBSURFACE) {
                 flags &= ~RENDER_SUBSURFACE;
                 tex_disable_modes(RENDER_SEMI_TRANSPARENT);
-            }
-            else
-            {
+            } else {
                 if ((flags & RENDER_UNK2000) || (flags & RENDER_SEMI_TRANSPARENT) || (flags & RENDER_DECAL)) {
                     flags |= RENDER_SEMI_TRANSPARENT;
                 } else {
@@ -3410,8 +3407,7 @@ void block_setup_gdl_groups(Block *block)
             TRUE, // force
             TEXOPT_INVISIBLE | TEXOPT_SET_MODES | TEXOPT_SKIP_MODE_CACHE);
 
-        if ((flags & RENDER_UNK2000) && texture != NULL && (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)))
-        {
+        if ((flags & RENDER_UNK2000) && texture != NULL && (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY))) {
             mygdl = &block->gdlGroups[i * 3];
             gSPLoadGeometryMode(mygdl++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH);
             if (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
@@ -3512,8 +3508,8 @@ void block_setup_vertices(Block *block)
         }
 
         shape = &block->shapes[i];
-        if (shape->flags & 0x10) {
-            shape->flags |= 0x800;
+        if (shape->flags & RENDER_UNK10) {
+            shape->flags |= RENDER_UNK800;
         }
     }
 }
@@ -3535,7 +3531,7 @@ void func_800496E4(s32 blockIndex) {
     gBlockRefCounts[blockIndex] -= 1;
     if (gBlockRefCounts[blockIndex] == 0) {
         block = gLoadedBlocks[blockIndex];
-        func_80048C24(block);
+        block_color_table_free_block(block);
         gLoadedBlockIds[blockIndex] = -1;
         gLoadedBlocks[blockIndex] = NULL;
         if (block->unk48 != 0) {
@@ -3806,19 +3802,19 @@ s32 block_setup_textures(Block* block) {
     s32 var_s6;
     s32 var_a2;
     s32 new_var;
-    BlockShape* temp_a3;
+    BlockShape* shape;
     BlockShape* temp_a3_2;
 
     var_s1 = 0;
     var_s6 = 0;
     for (i = 0; i < block->shapeCount; i++) {
-        temp_a3 = &block->shapes[i];
-        if (temp_a3->flags & RENDER_COMPOSITE_BASE) {
+        shape = &block->shapes[i];
+        if (shape->flags & RENDER_COMPOSITE_BASE) {
             var_s6++;
         }
-        if (temp_a3->flags & RENDER_UNK10000) {
-            if (temp_a3->animatorID != 0) {
-                temp_a3_2 = temp_a3;
+        if (shape->flags & RENDER_SHAPE_ANIMATED) {
+            if (shape->animatorID != 0) {
+                temp_a3_2 = shape;
                 var_a1 = FALSE;
                 for (j = 0; j < var_s1; j++) {
                     var_a2 = temp_a3_2->animatorID;
@@ -3828,17 +3824,17 @@ s32 block_setup_textures(Block* block) {
                     }
                 }
 
-                var_a2 = temp_a3->animatorID;
+                var_a2 = shape->animatorID;
                 if (var_a1 == FALSE) {
-                    var_a1 = temp_a3->flags;
-                    block->unk28[var_s1].textureIndex = func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
+                    var_a1 = shape->flags;
+                    block->unk28[var_s1].textureIndex = func_8004A058(block->materials[shape->materialIndex].texture, var_a1, var_a2);
                     block->unk28[var_s1].unk2 = block->shapes[i].animatorID;
                     var_s1++;
                 } else {
-                    var_a1 = temp_a3->flags;
-                    func_8004A058(block->materials[temp_a3->materialIndex].texture, var_a1, var_a2);
+                    var_a1 = shape->flags;
+                    func_8004A058(block->materials[shape->materialIndex].texture, var_a1, var_a2);
                 }
-                }
+            }
         }
     }
     block->unk49 = var_s6;
@@ -3853,7 +3849,7 @@ void func_80049FA8(Block* block) {
 
     for (index = 0; index < block->shapeCount; index++){
         shape = &block->shapes[index];
-        if (shape->flags & 0x10000) {
+        if (shape->flags & RENDER_SHAPE_ANIMATED) {
             animatorID = shape->animatorID;
             if (animatorID){
                 func_8004A164(block->materials[shape->materialIndex].texture, animatorID);
@@ -3862,7 +3858,7 @@ void func_80049FA8(Block* block) {
     }
 }
 
-s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
+s32 func_8004A058(Texture* tex, u32 renderFlags, s32 animatorID) {
     s32 index;
     s32 indexOfUnref;
     
@@ -3895,7 +3891,7 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
     if (indexOfUnref != -1){
         gBlockTextures[indexOfUnref].refCount = 1;
         gBlockTextures[indexOfUnref].unk4 = 0;
-        gBlockTextures[indexOfUnref].flags = flags;
+        gBlockTextures[indexOfUnref].flags = renderFlags;
         gBlockTextures[indexOfUnref].texture = tex;
         gBlockTextures[indexOfUnref].unkE = animatorID;
         return indexOfUnref;
@@ -4081,9 +4077,9 @@ void func_8004A67C(void) {
     f32 zz;
     Camera* camera;
     Object* obj;
-    Object** actors;
+    Object** mobileMapObjs;
 
-    actors = obj_get_all_of_type(OBJTYPE_7, &count);
+    mobileMapObjs = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &count);
     camera = get_camera();
     update_camera_for_object(camera);
 
@@ -4099,7 +4095,7 @@ void func_8004A67C(void) {
 
     // loop through the rest
     for (i = 0; i < count; i++) {
-        obj = actors[i];
+        obj = mobileMapObjs[i];
 
         id = obj->matrixIdx + 1;
 
@@ -4248,11 +4244,11 @@ void map_update_objects_streaming(s32 arg0) {
                 if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[i]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[i]) != 0)) {
                     func_8004B710(var_s3, (u32) sp70[i], 1);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[i], var_s3, NULL);
+                        obj_create(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3E, 4, NULL, var_s1_2, sp70[i], var_s3, 0, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[i], var_s3, NULL);
+                        obj_create(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
                     }
                 }
                 var_s3++;
@@ -4266,11 +4262,11 @@ void map_update_objects_streaming(s32 arg0) {
             }
         }
     }
-    objList = obj_get_all_of_type(OBJTYPE_7, &count);
+    objList = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &count);
     for (i = 0; i < count; i++) {
         temp_s5 = objList[i];
         var_s3 = 0;
-        temp_s4 = temp_s5->unk34;
+        temp_s4 = temp_s5->mobileMapID;
         temp_s6 = gLoadedMapsDataTable[temp_s4];
         if (temp_s6 != NULL) {
             temp_s7 = temp_s5->matrixIdx + 1;
@@ -4293,11 +4289,11 @@ void map_update_objects_streaming(s32 arg0) {
                 if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object(var_s1_2, temp_s7, temp_s4) != 0)) {
                     func_8004B710(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
+                        obj_create(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
+                        obj_create(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
                     }
                 }
                 var_s3++;
@@ -4574,7 +4570,7 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
             if (map_get_is_object_streaming_disabled() != 0) {
                 func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
             } else {
-                obj_create((ObjSetup* )s0, OBJ_INIT_FLAG1, mapID, someVar, arg3);
+                obj_create((ObjSetup* )s0, OBJINIT_STANDALONE, mapID, someVar, arg3);
             }
         }
         someVar += 1;
@@ -4896,7 +4892,7 @@ typedef struct UnkSp8C {
 // https://decomp.me/scratch/FLOC0
 void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     UnkSp8C* var_v0;
-    MapsUnk_800B97C0* temp_v0_7;
+    BlockColorTableEntry* temp_v0_7;
     s32 var_a0;
     s32 var_a3;
     Unk80092BC0 sp160;
@@ -4913,7 +4909,7 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 temp_t0;
     s16 var_s3;
     s16 var_a0_2;
-    s32 temp_v1;
+    s32 renderFlags;
     s32 var_a1;
     Vtx_t *sp124;
     s8 pad_sp123;
@@ -4974,33 +4970,34 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     for (i = 0; i < arg0->shapeCount; i++) {
         var_a1_2 = 0;
         blockShape = &arg0->shapes[i];
-        temp_v1 = blockShape->flags;
+        renderFlags = blockShape->flags;
         if (arg0->materials[blockShape->materialIndex].texture == NULL) {
             continue;
         }
         sp120 = 0;
-        if (((temp_v1 & 0x120) || (arg0->materials[blockShape->materialIndex].texture->flags & 0xC000)) && !(temp_v1 & 0x46C00000)) {
+        if (((renderFlags & (RENDER_MIPMAPS | RENDER_UNK20)) || (arg0->materials[blockShape->materialIndex].texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY))) 
+                && !(renderFlags & (RENDER_UNK400000 | RENDER_UNK800000 | RENDER_UNK2000000 | RENDER_UNK4000000 | RENDER_UNK40000000))) {
             var_a1_2 = 1;
-        } else if (temp_v1 & 0x46400000) {
+        } else if (renderFlags & (RENDER_UNK400000 | RENDER_UNK2000000 | RENDER_UNK4000000 | RENDER_UNK40000000)) {
             var_a1_2 = 2;
-        } else if (temp_v1 & 0x01000000) {
+        } else if (renderFlags & RENDER_UNK1000000) {
             var_a1_2 = 3;
-        } else if (temp_v1 & 0x800000) {
+        } else if (renderFlags & RENDER_UNK800000) {
             var_a1_2 = 4;
         }
 
-        if (!(temp_v1 & 0x10000000)) {
+        if (!(renderFlags & RENDER_SHAPE_VISIBLE)) {
             if ((var_a1_2 != 0) && (var_a1_2 != 3)) {
             }
             continue;
         }
 
         if (blockShape->envColourMode == 0xFF) {
-            if (temp_v1 & 0x400000) {
+            if (renderFlags & RENDER_UNK400000) {
                 sp7B = sp158[0];
                 sp7A = sp150[0];
                 sp79 = sp148[0];
-            } else if (temp_v1 & 0x40000000) {
+            } else if (renderFlags & RENDER_UNK40000000) {
                 sp7B = sp15C[0];
                 sp7A = sp154[0];
                 sp79 = sp14C[0];
@@ -5030,17 +5027,17 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                 }
             } else if (var_a0 == 1) {
                 while ((u32) var_s1 < (u32) sp124) {
-                    var_s1->cn[0] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].r2;
-                    var_s1->cn[1] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].g2;
-                    var_s1->cn[2] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].b2;
+                    var_s1->cn[0] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].r2;
+                    var_s1->cn[1] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].g2;
+                    var_s1->cn[2] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].b2;
                     var_s1++;
                 }
             } else if (var_a0 == 4) {
                 while ((u32) var_s1 < (u32) sp124) {
                     if (!((s16)var_s1->flag & 3)) {
-                        var_s1->cn[0] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].r2;
-                        var_s1->cn[1] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].g2;
-                        var_s1->cn[2] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].b2;
+                        var_s1->cn[0] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].r2;
+                        var_s1->cn[1] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].g2;
+                        var_s1->cn[2] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].b2;
                     }
                     var_s1++;
                 }
@@ -5093,8 +5090,8 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                         var_t3 = ((s16)var_v0->unk14 * (s16)var_fv1) >> 8;
                                     }
                                 }
-                                if (arg0->shapes[i].flags & 0x40400000) {
-                                    if (arg0->shapes[i].flags & 0x400000) {
+                                if (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000)) {
+                                    if (arg0->shapes[i].flags & RENDER_UNK400000) {
                                         var_a0_2 = 0;
                                     } else {
                                         var_a0_2 = 1;
@@ -5103,9 +5100,9 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                         temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
                                         switch ((s16)var_s1->flag & 3) {
                                         case 0: /* switch 1 */
-                                            var_a1 = D_800B97C0[temp_t0].r2;
-                                            var_a2 = D_800B97C0[temp_t0].g2;
-                                            var_a3 = D_800B97C0[temp_t0].b2;
+                                            var_a1 = gBlockColorTable[temp_t0].r2;
+                                            var_a2 = gBlockColorTable[temp_t0].g2;
+                                            var_a3 = gBlockColorTable[temp_t0].b2;
                                             break;
                                         default: /* switch 1 */
                                         case 1: /* switch 1 */
@@ -5114,7 +5111,7 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                             var_a3 = sp148[var_a0_2];
                                             break;
                                         case 2: /* switch 1 */
-                                            temp_v0_7 = &D_800B97C0[temp_t0];
+                                            temp_v0_7 = &gBlockColorTable[temp_t0];
                                             var_a1 = (((sp158[var_a0_2] + temp_v0_7->r) >> 1) * sp7B) >> 8;
                                             var_a2 = (((sp150[var_a0_2] + temp_v0_7->g) >> 1) * sp7A) >> 8;
                                             var_a3 = (((sp148[var_a0_2] + temp_v0_7->b) >> 1) * sp79) >> 8;
@@ -5155,13 +5152,13 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                         var_s1->cn[1] = var_a2;
                                         var_s1->cn[2] = var_a3;
                                     }
-                                } else if (arg0->shapes[i].flags & 0x02000000) {
+                                } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
                                     if (var_s3 == 0) {
-                                        var_a1 = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].r2;
+                                        var_a1 = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
                                         var_a1 += var_t1;
-                                        var_a2 = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].g2;
+                                        var_a2 = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
                                         var_a2 += var_t2;
-                                        var_a3 = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].b2;
+                                        var_a3 = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
                                         var_a3 += var_t3;
                                         if (var_a1 >= 0x100) {
                                             var_a1 = 0xFF;
@@ -5195,11 +5192,11 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                         var_s1->cn[1] = var_a2;
                                         var_s1->cn[2] = var_a3;
                                     }
-                                } else if (arg0->shapes[i].flags & 0x04000000) {
+                                } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
                                     if (var_s3 == 0) {
-                                        var_a1 = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].r2;
-                                        var_a2 = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].g2;
-                                        var_a3 = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].b2;
+                                        var_a1 = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].r2;
+                                        var_a2 = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].g2;
+                                        var_a3 = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].b2;
                                         if (((s16)var_s1->flag & 3) == 1) {
                                             var_a1 += var_t1;
                                             var_a2 += var_t2;
@@ -5249,8 +5246,8 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                     }
                                 }
                             } else {
-                                if ((var_s3 == 0) && (arg0->shapes[i].flags & 0x40400000)) {
-                                    if (arg0->shapes[i].flags & 0x400000) {
+                                if ((var_s3 == 0) && (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000))) {
+                                    if (arg0->shapes[i].flags & RENDER_UNK400000) {
                                         var_a0_2 = 0;
                                     } else {
                                         var_a0_2 = 1;
@@ -5258,9 +5255,9 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                     temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
                                     switch ((s16) var_s1->flag & 3) { /* irregular */
                                     case 0:
-                                        var_s1->cn[0] = D_800B97C0[temp_t0].r2;
-                                        var_s1->cn[1] = D_800B97C0[temp_t0].g2;
-                                        var_s1->cn[2] = D_800B97C0[temp_t0].b2;
+                                        var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                                        var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                                        var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
                                         break;
                                     default:
                                     case 1:
@@ -5269,19 +5266,19 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                         var_s1->cn[2] = sp148[var_a0_2];
                                         break;
                                     case 2:
-                                        var_s1->cn[0] = (((sp158[var_a0_2] + D_800B97C0[temp_t0].r) >> 1) * sp7B) >> 8;
-                                        var_s1->cn[1] = (((sp150[var_a0_2] + D_800B97C0[temp_t0].g) >> 1) * sp7A) >> 8;
-                                        var_s1->cn[2] = (((sp148[var_a0_2] + D_800B97C0[temp_t0].b) >> 1) * sp79) >> 8;
+                                        var_s1->cn[0] = (((sp158[var_a0_2] + gBlockColorTable[temp_t0].r) >> 1) * sp7B) >> 8;
+                                        var_s1->cn[1] = (((sp150[var_a0_2] + gBlockColorTable[temp_t0].g) >> 1) * sp7A) >> 8;
+                                        var_s1->cn[2] = (((sp148[var_a0_2] + gBlockColorTable[temp_t0].b) >> 1) * sp79) >> 8;
                                         break;
                                     }
-                                } else if (arg0->shapes[i].flags & 0x02000000) {
-                                    var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                    var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                    var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].b2;
-                                } else if (arg0->shapes[i].flags & 0x04000000) {
-                                    var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                    var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                    var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].b2;
+                                } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
+                                    var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
+                                    var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
+                                    var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
+                                } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
+                                    var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
+                                    var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
+                                    var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
                                 }
                             }
                             var_s1++;
@@ -5289,8 +5286,8 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                     }
                     if (sp78 == 0) {
                        while ((u32) var_s1 < (u32) sp124) {
-                            if (arg0->shapes[i].flags & 0x40400000) {
-                                if (arg0->shapes[i].flags & 0x400000) {
+                            if (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000)) {
+                                if (arg0->shapes[i].flags & RENDER_UNK400000) {
                                     var_a0_2 = 0;
                                 } else {
                                     var_a0_2 = 1;
@@ -5298,9 +5295,9 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                 temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
                                 switch ((s16) var_s1->flag & 3) { /* switch 2; irregular */
                                 case 0:     /* switch 2 */
-                                    var_s1->cn[0] = D_800B97C0[temp_t0].r2;
-                                    var_s1->cn[1] = D_800B97C0[temp_t0].g2;
-                                    var_s1->cn[2] = D_800B97C0[temp_t0].b2;
+                                    var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                                    var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                                    var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
                                     break;
                                 default:    /* switch 2 */
                                 case 1:     /* switch 2 */
@@ -5309,19 +5306,19 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                                     var_s1->cn[2] = sp148[var_a0_2];
                                     break;
                                 case 2:     /* switch 2 */
-                                    var_s1->cn[0] = (((sp158[var_a0_2] + D_800B97C0[temp_t0].r) >> 1) * sp7B) >> 8;
-                                    var_s1->cn[1] = (((sp150[var_a0_2] + D_800B97C0[temp_t0].g) >> 1) * sp7A) >> 8;
-                                    var_s1->cn[2] = (((sp148[var_a0_2] + D_800B97C0[temp_t0].b) >> 1) * sp79) >> 8;
+                                    var_s1->cn[0] = (((sp158[var_a0_2] + gBlockColorTable[temp_t0].r) >> 1) * sp7B) >> 8;
+                                    var_s1->cn[1] = (((sp150[var_a0_2] + gBlockColorTable[temp_t0].g) >> 1) * sp7A) >> 8;
+                                    var_s1->cn[2] = (((sp148[var_a0_2] + gBlockColorTable[temp_t0].b) >> 1) * sp79) >> 8;
                                     break;
                                 }
-                            } else if (arg0->shapes[i].flags & 0x02000000) {
-                                var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].b2;
-                            } else if (arg0->shapes[i].flags & 0x04000000) {
-                                var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].b2;
+                            } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
+                                var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
+                                var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
+                                var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
+                            } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
+                                var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
+                                var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
+                                var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
                             }
                             var_s1 += 1;
                         }

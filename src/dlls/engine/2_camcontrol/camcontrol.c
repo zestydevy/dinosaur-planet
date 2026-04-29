@@ -848,7 +848,7 @@ void CamControl_average_player_speed(CamControl_Data* camData, Object* player) {
     s32 i;
 
     //Copy speed samples up one slot
-    for (i = 0; i < (s32)ARRAYCOUNT(camData->speedSamples) - 1; i++) {
+    for (i = 0; i < ARRAYCOUNT_S(camData->speedSamples) - 1; i++) {
         camData->speedSamples[i] = camData->speedSamples[i + 1];
     }
 
@@ -861,7 +861,7 @@ void CamControl_average_player_speed(CamControl_Data* camData, Object* player) {
 
     //Average the 5 speed samples
     camData->speedAverage = 0.0f;
-    for (i = 0; i < (s32)ARRAYCOUNT(camData->speedSamples); i++) {
+    for (i = 0; i < ARRAYCOUNT_S(camData->speedSamples); i++) {
         camData->speedAverage += camData->speedSamples[i];
     }
     camData->speedAverage *= 0.2f;

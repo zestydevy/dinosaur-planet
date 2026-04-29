@@ -129,7 +129,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup->indexInBank = (s16) arg4;
     setup->fxRate = 1;
     setup->interval = 0;
-    fxEmit = obj_create((ObjSetup*)setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+    fxEmit = obj_create((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (fxEmit != NULL) {
         fxEmit->unkC4 = self;
     }
@@ -149,7 +149,7 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     setup->fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->loadDistance = 0xFF;
     setup->fadeDistance = 0xFF;
-    projectile = obj_create(setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+    projectile = obj_create(setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (projectile != NULL) {
         projectile->srt.pitch = arg5;
         projectile->srt.yaw = arg4;

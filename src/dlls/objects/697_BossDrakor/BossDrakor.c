@@ -193,7 +193,7 @@ static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata
     laserSetup->byte5 = drakorSetup->base.byte5;
     laserSetup->byte6 = drakorSetup->base.byte6;
     laserSetup->fadeDistance = drakorSetup->base.fadeDistance;
-    objdata->laser = obj_create(laserSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
+    objdata->laser = obj_create(laserSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
 }
 
 // offset: 0x50C | func: 9

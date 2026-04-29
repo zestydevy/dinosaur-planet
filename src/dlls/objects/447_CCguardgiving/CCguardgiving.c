@@ -165,7 +165,7 @@ void CCguardgiving_control(Object *self) {
 
 // offset: 0x66C | func: 2 | export: 2
 void CCguardgiving_update(Object *self) {
-    if (self->def->flags & 1 && self->unk74) {
+    if ((self->def->flags & OBJDEF_INVISIBLE) && self->unk74) {
         func_80036438(self);
     }
 }
