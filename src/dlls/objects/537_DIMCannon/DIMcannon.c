@@ -94,7 +94,7 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1314(self, (DIMCannonBall_Setup*)objSetup);
     } else {
-        obj_set_update_priority(self, 0x5A);
+        obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
         objData = self->data;
         self->unkAF |= 8;
         self->animCallback = dll_537_func_A94;

@@ -10,7 +10,7 @@ void dll_385_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_385_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    obj_set_update_priority(self, 0x5A);
+    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = dll_385_func_110;
 }
 

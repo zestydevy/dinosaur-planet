@@ -30,8 +30,11 @@ enum ObjectGroup {
 	GROUP_UNK54 = 54
 };
 
+#define OBJPRIORITY_TRIGGER 40
+#define OBJPRIORITY_PLAYER 60
 #define OBJPRIORITY_DEFAULT 80
 #define OBJPRIORITY_MOBILE_MAP 90
+#define OBJPRIORITY_ANIM 100
 
 #define OBJSTATE_UNK_ATTACH_INDEX_MASK 0x3
 #define OBJSTATE_NEXT_MODEL_INDEX_MASK 0x700
@@ -50,7 +53,7 @@ enum ObjectStateFlags {
     OBJSTATE_UNK20 = 0x20, // unused?
     // Object was destroyed (not necessarily freed just yet)
     OBJSTATE_DESTROYED = 0x40,
-    OBJSTATE_UNK80 = 0x80, // unused?
+    OBJSTATE_UNK80 = 0x80,
     // If set, bits 8-10 are the model index to switch to
     OBJSTATE_PENDING_MODEL_SWITCH = 0x800,
     OBJSTATE_IN_SEQ = 0x1000,
@@ -83,7 +86,7 @@ enum ObjectFlags {
 /*3*/ OBJFLAG_MANUAL_PREV_POSITIONS = 0x8,
 
 /*6*/ OBJFLAG_UNK_40 = 0x40,
-/*7*/ OBJFLAG_UNK_80 = 0x80,
+/*7*/ OBJFLAG_FORCE_TRANSPARENT_DRAW_ORDER = 0x80,
 
       // don't add model display list to the main display list when drawing
 /*9*/ OBJFLAG_SKIP_MODEL_DL = 0x200,

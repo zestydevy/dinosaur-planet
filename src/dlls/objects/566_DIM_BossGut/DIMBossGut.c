@@ -11,7 +11,7 @@ void dll_566_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_566_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    obj_set_update_priority(self, 0x5A);
+    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = dll_566_func_194;
     func_80023D30(self, 0, 0.0f, 0U);
     func_80024108(self, 0.005f, gUpdateRateF, NULL);

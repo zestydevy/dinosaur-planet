@@ -1308,9 +1308,9 @@ void func_80043FD8(s8* objVisibilities) {
                 shadows_update_obj_box(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
-                if (object->def->flags & OBJDEF_FLAG100000) {
+                if (object->def->flags & OBJDEF_FORCE_OPAQUE_DRAW_ORDER) {
                     var_v0 = 150000 - i;
-                } else if ((object->opacityWithFade == 0xFF) && !(object->srt.flags & OBJFLAG_UNK_80)) {
+                } else if ((object->opacityWithFade == 0xFF) && !(object->srt.flags & OBJFLAG_FORCE_TRANSPARENT_DRAW_ORDER)) {
                     var_v0 = 150000 - i;
                 } else {
                     var_v0 = i + 50000;

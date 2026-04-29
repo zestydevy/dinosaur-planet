@@ -111,7 +111,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     TriggerCommand *cmd;
 
     obj_add_object_type(self, OBJTYPE_2);
-    obj_set_update_priority(self, 40);
+    obj_set_update_priority(self, OBJPRIORITY_TRIGGER);
 
     objdata = (Trigger_Data*)self->data;
 

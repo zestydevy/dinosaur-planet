@@ -107,7 +107,7 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     obj_add_object_type(self, OBJTYPE_4);
-    obj_set_update_priority(self, 90);
+    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = SB_Galleon_anim_callback;
     objdata->x2 = self->srt.transl.x;
     objdata->y2 = self->srt.transl.y;

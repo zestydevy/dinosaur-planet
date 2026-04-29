@@ -483,8 +483,8 @@ void dll_210_setup(Object* player, u32 arg1) {
     data = player->data;
     obj_add_object_type(player, OBJTYPE_PLAYER);
     obj_add_object_type(player, OBJTYPE_39);
-    obj_set_update_priority(player, 0x3C);
-    obj_init_mesg_queue(player, 0x14U);
+    obj_set_update_priority(player, OBJPRIORITY_PLAYER);
+    obj_init_mesg_queue(player, 20);
     player->setup = NULL;
     player->animCallback = dll_210_func_4910;
     _bss_1A4 = 0;
@@ -1282,7 +1282,7 @@ void dll_210_update(Object* player) {
     }
     if (objdata->flags & 2) {
         temp_a1 = objdata->unk0.unk4.unkD4;
-        if ((temp_a1 != NULL) && (temp_a1->def->flags & OBJDEF_IS_MOBILE_MAP) != 0 && !(temp_a1->def->flags & OBJDEF_FLAG8000)) {
+        if ((temp_a1 != NULL) && (temp_a1->def->flags & OBJDEF_IS_MOBILE_MAP) != 0 && !(temp_a1->def->flags & OBJDEF_MOBILE_MAP_NEVER_PLAYER_PARENT)) {
             func_8005B5B8(player, temp_a1, 1);
         } else if ((player->parent != NULL) && (temp_a1 == NULL)) {
             func_8005B5B8(player, NULL, 1);

@@ -109,7 +109,7 @@ void camera_clip_to_screen(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz);
 void camera_screen_to_clip(s32 x, s32 y, s32 z, f32 *ox, f32 *oy, f32 *oz);
 void camera_setup_fullscreen_viewport(Gfx **gdl);
 void camera_setup_world_matrix(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale);
-u32 camera_check_convex_hull(u32 a0, u32 a1, u32 a2, u32 a3, s32 a4, s32 a5, s32 a6);
+s32 camera_check_convex_hull(Gfx **gdl, Mtx **rspMtxs, s32 a2, Object *obj, ModelInstance *modelInst, s32 a5, s32 a6);
 void camera_setup_object_srt_matrix(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 yScale, f32 unused, MtxF *outMtx);
 void camera_translate(f32 x, f32 y, f32 z);
 void camera_translate_relative(f32 forward, f32 b, f32 strafe);

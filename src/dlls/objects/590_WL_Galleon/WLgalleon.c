@@ -53,7 +53,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
         return;
     }
 
-    obj_set_update_priority(self, 0x5A);
+    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = WLgalleon_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     self->unkDC = 9;

@@ -156,7 +156,7 @@ void update_objects(void) {
 
     node = gObjUpdateList.head;
 
-    for (obj = (Object*)node; node != NULL && obj->updatePriority == 100; obj = (Object*)node) {
+    for (obj = (Object*)node; node != NULL && obj->updatePriority == OBJPRIORITY_ANIM; obj = (Object*)node) {
         update_object(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
 
@@ -570,12 +570,12 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     
     objHeader.srt.flags = OBJFLAG_UNK_2;
 
-    if (def->flags & OBJDEF_FLAG80) {
-        objHeader.srt.flags = OBJFLAG_UNK_80 | OBJFLAG_UNK_2;
+    if (def->flags & OBJDEF_FORCE_TRANSPARENT_DRAW_ORDER) {
+        objHeader.srt.flags |= OBJFLAG_FORCE_TRANSPARENT_DRAW_ORDER;
     }
 
     if (def->flags & OBJDEF_FLAG40000) {
-        objHeader.stateFlags |= 0x80;
+        objHeader.stateFlags |= OBJSTATE_UNK80;
     }
 
     if (initFlags & OBJINIT_FLAG4) {

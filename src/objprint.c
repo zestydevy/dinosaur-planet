@@ -92,14 +92,14 @@ void func_80034FF0(MtxF* arg0) {
 }
 
 void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, f32 yPrescale) {
-    s32 spFC;
+    s32 opacity;
     ModelInstance* modelInst;
     Model* model;
     SRT spDC;
     Object* parentObj;
-    u8 spD7;
-    u8 spD6;
-    u8 spD5;
+    u8 blendR;
+    u8 blendG;
+    u8 blendB;
     s32 var_v0;
     s32 var_v1;
     s32 var_a0;
@@ -129,28 +129,28 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
     }
 
     model = modelInst->model;
-    spFC = obj->opacityWithFade;
-    if (spFC > 0xFF) {
-        spFC = 0xFF;
+    opacity = obj->opacityWithFade;
+    if (opacity > 0xFF) {
+        opacity = 0xFF;
     }
-    if (obj->def->flags & 0x10000) {
+    if (obj->def->flags & OBJDEF_SKY_LIT) {
         if (func_8001EBE0() != 0) {
-            spD5 = spD6 = spD7 = 0xFF;
+            blendB = blendG = blendR = 0xFF;
         } else {
-            spD7 = sp6F;
-            spD6 = sp6E;
-            spD5 = sp6D;
+            blendR = sp6F;
+            blendG = sp6E;
+            blendB = sp6D;
         }
     } else {
-        spD5 = spD6 = spD7 = 0xFF;
+        blendB = blendG = blendR = 0xFF;
     }
     if (obj->def->numAnimatedFrames > 0) {
         func_80036890(obj, 2);
     }
     if (BYTE_80091754 != 0) {
-        var_v0 = (spD7 * SHORT_800b2e14) >> 8;
-        var_v1 = (spD6 * SHORT_800b2e16) >> 8;
-        var_a0 = (spD5 * SHORT_800b2e18) >> 8;
+        var_v0 = (blendR * SHORT_800b2e14) >> 8;
+        var_v1 = (blendG * SHORT_800b2e16) >> 8;
+        var_a0 = (blendB * SHORT_800b2e18) >> 8;
         if (var_v0 > 0xFF) {
             var_v0 = 0xFF;
         }
@@ -160,15 +160,15 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         if (var_a0 > 0xFF) {
             var_a0 = 0xFF;
         }
-        spD7 = var_v0;
-        spD6 = var_v1;
-        spD5 = var_a0;
+        blendR = var_v0;
+        blendG = var_v1;
+        blendB = var_a0;
         BYTE_80091754 = 0;
     }
     if (BYTE_80091758 != 0) {
-        spD7 = BYTE_800b2e20;
-        spD6 = BYTE_800b2e21;
-        spD5 = BYTE_800b2e22;
+        blendR = BYTE_800b2e20;
+        blendG = BYTE_800b2e21;
+        blendB = BYTE_800b2e22;
         BYTE_80091758 = 0;
     } else {
         BYTE_800b2e23 = 0;
@@ -224,11 +224,11 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
                 add_matrix_to_pool(sp70, 1);
             }
             modelInst->unk34 ^= 2;
-            if ((obj->def->flags & 0x10) || (model->blendshapes != NULL)) {
+            if ((obj->def->flags & OBJDEF_FLAG10) || (model->blendshapes != NULL)) {
                 if (model->blendshapes != NULL) {
                     func_8001B100(modelInst);
                 }
-                if (obj->def->flags & 0x10) {
+                if (obj->def->flags & OBJDEF_FLAG10) {
                     func_8001DF60(obj, modelInst);
                 }
             }
@@ -250,20 +250,22 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             }
         }
         if (model->unk71 & 4) {
-            dl_set_env_color(&tempGdl, spD7, spD6, spD5, BYTE_800b2e23);
+            dl_set_env_color(&tempGdl, blendR, blendG, blendB, BYTE_800b2e23);
         }
-        dl_set_prim_color(&tempGdl, spD7, spD6, spD5, spFC);
+        dl_set_prim_color(&tempGdl, blendR, blendG, blendB, opacity);
         if (!(obj->srt.flags & OBJFLAG_SKIP_MODEL_DL)) {
             gSPSegment(tempGdl++, SEGMENT_3, modelInst->matrices[modelInst->unk34 & 1]);
             gSPSegment(tempGdl++, SEGMENT_5, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
-            if (spFC == 0xFF) {
+            if (opacity == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
                     load_model_display_list(model, modelInst);
                     modelInst->unk34 ^= 0x10;
                 }
-            } else if (!(modelInst->unk34 & 0x10)) {
-                load_model_display_list2(model, modelInst);
-                modelInst->unk34 ^= 0x10;
+            } else {
+                if (!(modelInst->unk34 & 0x10)) {
+                    load_model_display_list2(model, modelInst);
+                    modelInst->unk34 ^= 0x10;
+                }
             }
             gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(modelInst->displayList));
             dl_set_all_dirty();
@@ -271,7 +273,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         }
         if (obj->linkedObject != NULL) {
             func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, 
-                obj->linkedObject, obj->stateFlags & OBJSTATE_UNK_ATTACH_INDEX_MASK, (u8)spFC);
+                obj->linkedObject, obj->stateFlags & OBJSTATE_UNK_ATTACH_INDEX_MASK, (u8)opacity);
         }
     }
     if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20) && (modelInst->unk14 != NULL)) {
@@ -411,7 +413,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             D_800B2E10 = sp74 = arg7;
         }
         modelInst->unk34 ^= 2;
-        if ((arg8->def->flags & 0x10) || (sp64->blendshapes != NULL)) {
+        if ((arg8->def->flags & OBJDEF_FLAG10) || (sp64->blendshapes != NULL)) {
             if (sp64->blendshapes != NULL) {
                 func_8001B100(modelInst);
             }
@@ -760,12 +762,12 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
             sp64 = 2;
         }
     }
-    if (arg0->def->flags & 0x1000) {
-        if ((sp64 == 1) || (arg0->def->flags & 0x20)) {
+    if (arg0->def->flags & OBJDEF_FLAG1000) {
+        if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
             func_8001F848(arg1);
         }
     } else {
-        if (arg0->def->flags & 0x20) {
+        if (arg0->def->flags & OBJDEF_FLAG20) {
             dl_set_prim_color(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
         } else if (sp64 != 0) {
             func_8001F848(arg1);
@@ -794,7 +796,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         } else {
             camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
         }
-        if ((sp64 == 1) || (arg0->def->flags & 0x20)) {
+        if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
             func_8001F848(arg1);
         }
     }

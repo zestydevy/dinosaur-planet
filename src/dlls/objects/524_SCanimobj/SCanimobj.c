@@ -14,7 +14,7 @@ void SCAnimObj_dtor(void *dll) { }
 void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
     AnimObj_Data* objData;
 
-    obj_set_update_priority(self, 100);
+    obj_set_update_priority(self, OBJPRIORITY_ANIM);
 
     objData = self->data;
     

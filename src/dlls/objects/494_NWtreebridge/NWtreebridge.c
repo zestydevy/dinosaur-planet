@@ -34,7 +34,7 @@ void NWtreebridge_setup(Object* self, NWtreebridge_Setup* objSetup, s32 arg2) {
     NWtreebridge_Data* objdata;
 
     objdata = self->data;
-    obj_set_update_priority(self, 90);
+    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = (void*)&NWtreebridge_anim_callback;
     self->srt.yaw = objSetup->yaw << 8;
     objdata->sequenceIndex = objSetup->sequenceIndex;

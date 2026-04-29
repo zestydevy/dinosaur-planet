@@ -64,7 +64,7 @@ void func_80025E58(void) {
 
     i = 0;
     for (i = 0; i < D_800B1998; i++) {
-        if (!(D_800B1994[i]->def->flags & 0x40) && (D_800B1994[i]->updatePriority != 0x64)) {
+        if (!(D_800B1994[i]->def->flags & OBJDEF_IS_MOBILE_MAP) && (D_800B1994[i]->updatePriority != OBJPRIORITY_ANIM)) {
             update_object(D_800B1994[i]);
         }
     }

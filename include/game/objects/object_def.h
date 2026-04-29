@@ -8,32 +8,29 @@
  */
 
 enum ObjDefFlags {
-/*0*/ OBJDEF_INVISIBLE = 0x1, // objects that have no visual
+     // Objects that have no visual.
+/*0*/ OBJDEF_INVISIBLE = 0x1,
 
-/*4*/ OBJDEF_FLAG10 = 0x10,
+/*2*/ OBJDEF_FLAG4 = 0x4,
+
+/*4*/ OBJDEF_FLAG10 = 0x10, // whether object is lit by lfx emitters?
 /*5*/ OBJDEF_FLAG20 = 0x20,
 /*6*/ OBJDEF_IS_MOBILE_MAP = 0x40,
-/*7*/ OBJDEF_FLAG80 = 0x80,
+      // Will always be sorted in the track render list as a transparent object, 
+      // regardless of actual opacity.
+/*7*/ OBJDEF_FORCE_TRANSPARENT_DRAW_ORDER = 0x80,
 
-/*15*/ OBJDEF_FLAG8000 = 0x8000,
+/*12*/ OBJDEF_FLAG1000 = 0x1000, // not used by any object
 
+       // For mobile maps, don't set as the player's parent when they are standing on the map.
+/*15*/ OBJDEF_MOBILE_MAP_NEVER_PLAYER_PARENT = 0x8000,
+/*16*/ OBJDEF_SKY_LIT = 0x10000, // if set, color from outside lighting will be blended in
+/*17*/ OBJDEF_FLAG20000 = 0x20000,
 /*18*/ OBJDEF_FLAG40000 = 0x40000,
 /*19*/ OBJDEF_STATIC_DEPTH_SORT = 0x80000,
-/*20*/ OBJDEF_FLAG100000 = 0x100000
-};
-
-// TODO: remove
-enum ObjDataFlags44 { //copied from SFA; may be incorrect
-    OBJDATA_FLAG44_HaveModels               = 0x00000001,
-    OBJDATA_FLAG44_DifferentLightColor      = 0x00000010,
-    OBJDATA_FLAG44_ModelRelated             = 0x00000020,
-    OBJDATA_FLAG44_HasChildren              = 0x00000040,
-    OBJDATA_FLAG44_EnableCulling            = 0x00000400,
-    OBJDATA_FLAG44_UseDifferentModelLoading = 0x00000800,
-    OBJDATA_FLAG44_DifferentCulling         = 0x00080000,
-    OBJDATA_FLAG44_KeepHitboxWhenInvisible  = 0x00200000,
-    OBJDATA_FLAG44_HasEvent                 = 0x00400000,
-    OBJDATA_FLAG44_DidLoadModels            = 0x00800000
+      // Will always be sorted in the track render list as an opaque object, 
+      // regardless of actual opacity.
+/*20*/ OBJDEF_FORCE_OPAQUE_DRAW_ORDER = 0x100000
 };
 
 enum ObjShadowType { //copied from SFA; may be incorrect

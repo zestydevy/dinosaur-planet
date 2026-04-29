@@ -20,7 +20,7 @@ void animobj_dtor(void *dll) { }
 void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
     AnimObj_Data *objdata;
 
-    obj_set_update_priority(self, 0x64);
+    obj_set_update_priority(self, OBJPRIORITY_ANIM);
     objdata = self->data;
     if (!setup->sequenceIdBitfield){
     }

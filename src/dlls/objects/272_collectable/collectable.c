@@ -183,7 +183,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     }
 
     //Setup vertex colour multiplier
-    if ((self->def->flags & 0x10000) && objData->useColourMultiplier) {
+    if ((self->def->flags & OBJDEF_SKY_LIT) && objData->useColourMultiplier) {
         objData->multiplyR = objSetup->multiplyR;
         objData->multiplyG = objSetup->multiplyG;
         objData->multiplyB = objSetup->multiplyB;
@@ -370,7 +370,7 @@ void collectable_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
     if (visibility && (objdata->timerDestroy == 0.0f) && (self->unkDC == 0) && !objdata->isHidden) {
         if (0) { }
 
-        if ((self->def->flags & 0x10000) && objdata->useColourMultiplier) {
+        if ((self->def->flags & OBJDEF_SKY_LIT) && objdata->useColourMultiplier) {
             func_80036F6C(objdata->multiplyR, objdata->multiplyG, objdata->multiplyB);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
