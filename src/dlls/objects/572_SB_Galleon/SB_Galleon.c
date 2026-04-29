@@ -142,11 +142,11 @@ void SB_Galleon_control(Object *self) {
 
     self->mapID = objdata->mapID;
     if (!main_get_bits(BIT_SB_Battle_Started)) {
-        if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 1)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 1);
+        if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 1)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 1);
         }
-        if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 3)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 3, 1);
+        if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 3)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 3, 1);
         }
         self->unkDC = 0;
         return;
