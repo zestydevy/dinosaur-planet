@@ -987,7 +987,7 @@ void cmdmenu_update2(void) {
     sJoyPressedButtons = joy_get_pressed(0);
     sJoyHeldButtons = joy_get_buttons(0);
 
-    if (player->unkB0 & 0x1000) {
+    if (player->stateFlags & OBJSTATE_IN_SEQ) {
         joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         sJoyPressedButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         sJoyHeldButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
@@ -1001,7 +1001,7 @@ void cmdmenu_update2(void) {
         sJoyPressedButtons = sJoyPressedButtonsOverride;
     } else {
         sJoyPressedButtons |= sJoyPressedButtonsOverride;
-        if ((player->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
+        if ((player->stateFlags & OBJSTATE_IN_SEQ) || (sJoyButtonMask != 0)) {
             sJoyPressedButtons |= B_BUTTON;
         }
     }
@@ -1745,7 +1745,7 @@ static void cmdmenu_tick_inventory_page(void) {
     }
 
     //Lock/unlock accessing the C-button scroll menu
-    if (player->unkB0 & 0x1000) {
+    if (player->stateFlags & OBJSTATE_IN_SEQ) {
         joy_set_button_mask(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
     } else if (sJoyButtonMask != 0) {
         joy_set_button_mask(0, sJoyButtonMask);
@@ -1756,7 +1756,7 @@ static void cmdmenu_tick_inventory_page(void) {
         sJoyPressedButtons = sJoyPressedButtonsOverride;
     } else {
         sJoyPressedButtons = joy_get_pressed(0);
-        if ((player->unkB0 & 0x1000) || (sJoyButtonMask != 0)) {
+        if ((player->stateFlags & OBJSTATE_IN_SEQ) || (sJoyButtonMask != 0)) {
             sJoyPressedButtons |= B_BUTTON;
         }
     }

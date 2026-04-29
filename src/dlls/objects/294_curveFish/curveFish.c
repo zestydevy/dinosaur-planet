@@ -46,7 +46,7 @@ void dll_294_dtor(void *dll) { }
 void dll_294_setup(Object* self, ObjSetup* setup, s32 arg2) {
     DLL294_Data* curveFishData = self->data;
     
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     curveFishData->unk10D = 0;
     dll_294_func_6C(self);
 }

@@ -48,8 +48,8 @@ void TexFrameAnimator_setup(Object* self, TexFrameAnimator_Setup* objSetup, s32 
         objData->playing = TRUE;
     }
 
-    self->unkB0 |= 0x2000;
-    self->unkB0 |= 0x4000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
+    self->stateFlags |= OBJSTATE_PRINT_DISABLED;
 }
 
 // offset: 0xDC | func: 1 | export: 1

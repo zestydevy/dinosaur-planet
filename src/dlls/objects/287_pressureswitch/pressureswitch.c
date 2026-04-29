@@ -42,7 +42,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
     s32 index;
 
     self->srt.yaw = setup->yaw << 8;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
 
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;

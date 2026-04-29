@@ -70,7 +70,7 @@ void DFP_LevelControl_setup(Object* self, DFPTLevelControl_Setup* objSetup, s32 
             main_set_bits(BIT_Spell_Grenade, 1);
             break;
     }
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x260 | func: 1 | export: 1

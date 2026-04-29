@@ -74,7 +74,7 @@ void DIMLavaBallGenerator_setup(Object *self, DIMLavaBallGenerator_Setup *setup,
         objdata->lfxStructs[0] = mmAlloc(sizeof(LightAction), ALLOC_TAG_OBJECTS_COL, NULL);
         objdata->lfxStructs[1] = mmAlloc(sizeof(LightAction), ALLOC_TAG_OBJECTS_COL, NULL);
     }
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x114 | func: 1 | export: 1

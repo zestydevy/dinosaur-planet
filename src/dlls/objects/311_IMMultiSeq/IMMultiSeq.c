@@ -48,7 +48,7 @@ void IMMultiSeq_setup(Object *self, IMMultiSeq_Setup *setup, s32 arg2) {
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
     self->animCallback = IMMultiSeq_anim_callback;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
         // diPrintf("SEQOBJ.c: modelno out of range romdefno=%d\n", self->modelInstIdx);

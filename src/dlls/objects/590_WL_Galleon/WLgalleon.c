@@ -63,7 +63,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
     objData->translate.z = self->srt.transl.z;
     objData->yaw = self->srt.yaw;
 
-    self->unkB0 |= 8;
+    self->stateFlags |= OBJSTATE_WORLD_MTX_IGNORE_SCALE;
 
     func_80059038(0, self, 0);
 

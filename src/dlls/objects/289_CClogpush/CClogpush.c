@@ -44,7 +44,7 @@ void CClogpush_setup(Object *self, CClogpush_Setup *objsetup, s32 arg2) {
     objdata = self->data;
     objdata->state = STATE_0;
     objdata->obj = NULL;
-    self->unkB0 |= 0x4000;
+    self->stateFlags |= OBJSTATE_PRINT_DISABLED;
 }
 
 // offset: 0x40 | func: 1 | export: 1

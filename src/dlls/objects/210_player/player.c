@@ -887,11 +887,11 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
 void dll_210_func_1BC0(Object* player, Player_Data* arg1) {
     Object* linkedObj;
 
-    player->unkB0 &= ~3;
+    player->stateFlags &= ~OBJSTATE_UNK_ATTACH_INDEX_MASK;
     if (arg1->unk8A8 == 2) {
-        player->unkB0 |= 3;
+        player->stateFlags |= (3 & OBJSTATE_UNK_ATTACH_INDEX_MASK);
     } else if (arg1->unk8A8 == 0) {
-        player->unkB0 |= 1;
+        player->stateFlags |= (1 & OBJSTATE_UNK_ATTACH_INDEX_MASK);
     }
     if (player->id != 0) {
         return;
@@ -1282,7 +1282,7 @@ void dll_210_update(Object* player) {
     }
     if (objdata->flags & 2) {
         temp_a1 = objdata->unk0.unk4.unkD4;
-        if ((temp_a1 != NULL) && (temp_a1->def->flags & 0x40) != 0 && !(temp_a1->def->flags & 0x8000)) {
+        if ((temp_a1 != NULL) && (temp_a1->def->flags & OBJDEF_IS_MOBILE_MAP) != 0 && !(temp_a1->def->flags & OBJDEF_FLAG8000)) {
             func_8005B5B8(player, temp_a1, 1);
         } else if ((player->parent != NULL) && (temp_a1 == NULL)) {
             func_8005B5B8(player, NULL, 1);
@@ -1290,7 +1290,7 @@ void dll_210_update(Object* player) {
     }
     vehicle = objdata->vehicle;
     objdata->flags |= 2;
-    if ((vehicle != NULL) && ((player->unkB0 & 0x1000) || objdata->unk0.animState == 0x24 || objdata->unk0.animState == 0x25)) {
+    if ((vehicle != NULL) && ((player->stateFlags & OBJSTATE_IN_SEQ) || objdata->unk0.animState == 0x24 || objdata->unk0.animState == 0x25)) {
         ((DLL_IVehicle*)vehicle->dll)->vtbl->func12(vehicle, &sp58, &sp54, &sp50);
         gDLL_2_Camera->vtbl->reposition_player(sp58, sp54, sp50);
         dll_210_func_8EA4(player, objdata, objdata->vehicle, NULL, NULL, NULL, NULL, 0);
@@ -1364,14 +1364,14 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
     data = player->data;
     sp80 = player->modelInsts[player->modelInstIdx];
     if (arg5 == -1 || !(data->flags & 0x4001)) {
-        if ((data->vehicle != NULL) && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
+        if ((data->vehicle != NULL) && ((player->stateFlags & OBJSTATE_IN_SEQ) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
             dll_210_func_8EA4(player, data, data->vehicle, arg1, arg2, arg3, arg4, 1);
         }
         if (data->unk8BE == 1) {
             dll_210_func_3B40(player, arg1, arg2, arg3, arg4);
         }
         gDLL_16->vtbl->func1(player);
-        if (data->vehicle != NULL && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
+        if (data->vehicle != NULL && ((player->stateFlags & OBJSTATE_IN_SEQ) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
             ((DLL_IVehicle*)data->vehicle->dll)->vtbl->func19(data->vehicle, player->def->scale);
         }
         if (data->unk818 > 0.0f) {
@@ -1380,7 +1380,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
         player->srt.transl.y += data->unk83C;
         draw_object(player, arg1, arg2, arg3, arg4, 1.0f);
         player->srt.transl.y -= data->unk83C;
-        if (data->vehicle != NULL && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
+        if (data->vehicle != NULL && ((player->stateFlags & OBJSTATE_IN_SEQ) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
             func_80034FF0(NULL);
         }
         if (arg5 != 0) {
@@ -1435,7 +1435,7 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
     gDLL_14_Modgfx->vtbl->func6(arg2, arg3, arg4, 1, player->linkedObject);
     if (arg1->unk87C == 0x40) {
         *_data_0 += gUpdateRate;
-        if ((*_data_0 >= 0x65) && !(player->unkB0 & 0x1000)) {
+        if ((*_data_0 >= 0x65) && !(player->stateFlags & OBJSTATE_IN_SEQ)) {
             dll_210_add_magic(player, -1);
             *_data_0 = 0;
         }
@@ -1446,7 +1446,7 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
     if (arg1->unk87C == 0x1D7) {
         gDLL_32->vtbl->func4(arg2, arg3, player);
         *_data_0 += gUpdateRate;
-        if ((*_data_0 >= 0x65) && !(player->unkB0 & 0x1000)) {
+        if ((*_data_0 >= 0x65) && !(player->stateFlags & OBJSTATE_IN_SEQ)) {
             dll_210_add_magic(player, -1);
             *_data_0 = 0;
         }
@@ -1609,8 +1609,8 @@ s32 dll_210_func_3F64(Object* player) {
 
     if (player->linkedObject == NULL) {
         player->linkedObject = obj_create(obj_alloc_setup(sizeof(ObjSetup), _data_24[data->unk8B4]), OBJINIT_FLAG4, -1, -1, player->parent);
-        player->unkB0 &= ~3;
-        player->unkB0 |= 3;
+        player->stateFlags &= ~OBJSTATE_UNK_ATTACH_INDEX_MASK;
+        player->stateFlags |= (3 & OBJSTATE_UNK_ATTACH_INDEX_MASK);
         func_80023D30(player->linkedObject, 0, 1.0f, 0U);
         return 1;
     }
@@ -1747,7 +1747,7 @@ void *dll_210_func_44A4(Object* player, s32 arg1) {
         if (fsa->unk304 & 0x1000) {
             return (void*)0;
         }
-        if (player->unkB0 & 0x1000) {
+        if (player->stateFlags & OBJSTATE_IN_SEQ) {
             return (void*)0;
         }
         return (void*)1;
@@ -2308,7 +2308,7 @@ void dll_210_func_60A8(Object* player, s32 arg1, s32 arg2) {
     Player_Data* sp24;
 
     sp24 = player->data;
-    player->unkB0 &= ~0x1000;
+    player->stateFlags &= ~OBJSTATE_IN_SEQ;
     func_8002674C(player);
     player->velocity.y = 0.0f;
     dll_210_func_7260(player, sp24);

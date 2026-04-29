@@ -87,7 +87,7 @@ void SCTotemStrength_setup(Object* self, SCTotemStrength_Setup* objSetup, s32 ar
 
     objData = self->data;
     self->animCallback = SCTotemStrength_anim_callback;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     self->srt.yaw = YAW_NEUTRAL;
     objData->yaw = YAW_NEUTRAL;
     objData->state = SCTotemStrength_STATE_Initial;

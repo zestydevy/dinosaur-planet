@@ -938,7 +938,7 @@ void amseq_update_dist_falloff(void) {
 
     focus = sFocusObj;
     if (focus != NULL) {
-        if (focus->unkB0 & 0x40) {
+        if (focus->stateFlags & OBJSTATE_DESTROYED) {
             // "amSeq: focus object deleted %08x,%d\n"
             sFocusObj = NULL;
             focus = NULL;
@@ -968,7 +968,7 @@ void amseq_update_dist_falloff(void) {
 
     for (i = 0; i < sNumSeqHandles; i++) {
         obj = sSeqHandles[i].obj;
-        if (obj->unkB0 & 0x40) {
+        if (obj->stateFlags & OBJSTATE_DESTROYED) {
             // "amSeq: seq object deleted\n"
             sSeqHandles[i].obj = NULL;
             sNumSeqHandles--;

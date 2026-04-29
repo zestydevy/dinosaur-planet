@@ -30,7 +30,7 @@ void CRFuelTank_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void CRFuelTank_setup(Object *self, CRFuelTank_Setup *setup, s32 arg2) {
-    self->unkB0 |= 0x4000;
+    self->stateFlags |= OBJSTATE_PRINT_DISABLED;
     func_8002674C(self);
     func_80026128(self, 0x1D, setup->unk1A / 10, 0);
     if ((setup->gamebit != NO_GAMEBIT) && (main_get_bits(setup->gamebit))) {

@@ -63,7 +63,7 @@ void checkpoint4_setup(Object *self, checkpoint4_Setup *setup, s32 arg2) {
     for (i = 0; i != SOME_COUNT; i++) objdata->unk34[i] = rand_next(0, 240);
 
     self->unkDC = setup->unk28;
-    self->unkB0 |= 0xA000;
+    self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_UPDATE_DISABLED);
 }
 
 // offset: 0x1D8 | func: 1 | export: 1

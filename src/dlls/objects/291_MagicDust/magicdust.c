@@ -118,7 +118,7 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
         gDLL_27->vtbl->reset(self, &objData->collision);
     }
 
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     //Set up timer
     if (objData->flags & MagicDust_FLAG_Delay_Fall) {

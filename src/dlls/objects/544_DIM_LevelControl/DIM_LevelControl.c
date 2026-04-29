@@ -34,7 +34,7 @@ void DIM_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
         gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
     }
     
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0xF8 | func: 1 | export: 1

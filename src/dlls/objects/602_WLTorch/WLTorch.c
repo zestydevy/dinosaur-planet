@@ -60,7 +60,7 @@ void dll_602_setup(Object* self, DLL602_Setup* setup, s32 arg2) {
     }
     self->srt.scale *= 2.0f;
     dll_unload(sp4C);
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x224 | func: 1 | export: 1

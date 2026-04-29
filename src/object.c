@@ -575,7 +575,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if (def->flags & OBJDEF_FLAG40000) {
-        objHeader.unkB0 |= 0x80;
+        objHeader.stateFlags |= 0x80;
     }
 
     if (initFlags & OBJINIT_FLAG4) {
@@ -797,7 +797,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
     }
 
     if (initFlags & OBJINIT_STANDALONE) {
-        obj->unkB0 |= 0x10;
+        obj->stateFlags |= OBJSTATE_STANDALONE;
         gObjList[gNumObjs] = obj;
         gNumObjs += 1;
 
@@ -977,7 +977,7 @@ void func_80022200(Object *obj, s32 param2, s32 param3) {
 
 // name guessed from leftover strings
 void obj_free_tick(Object *obj) {
-    if (obj->unkB0 & 0x10) {
+    if (obj->stateFlags & OBJSTATE_STANDALONE) {
         linked_list_remove(&gObjUpdateList, obj);
     }
 }
@@ -988,7 +988,7 @@ void obj_add_tick(Object *obj) {
     Object *objNode;
     s32 nextFieldOffset;
     
-    if (obj->unkB0 & 0x10) {
+    if (obj->stateFlags & OBJSTATE_STANDALONE) {
         nextFieldOffset = gObjUpdateList.nextFieldOffset;
         insertAfter = NULL;
 
@@ -1014,12 +1014,12 @@ void obj_destroy_object(Object *obj) {
         return;
     }
 
-    if (!(obj->unkB0 & 0x40)) {
+    if (!(obj->stateFlags & OBJSTATE_DESTROYED)) {
         if (obj->unkD9 != 0) {
             func_8003273C(obj);
         }
 
-        if (obj->unkB0 & 0x10) {
+        if (obj->stateFlags & OBJSTATE_STANDALONE) {
             for (i = 0; i < gNumObjs; i++) {
                 if (obj == gObjList[i]) {
                     break;
@@ -1038,7 +1038,7 @@ void obj_destroy_object(Object *obj) {
             obj_mark_visibility_sort_dirty();
         }
 
-        obj->unkB0 |= 0x40;
+        obj->stateFlags |= OBJSTATE_DESTROYED;
 
         if (obj->freeLock != 0) {
             for (i = 0; i < sObjLockListCount; i++) {
@@ -1098,7 +1098,7 @@ void obj_init_object(Object *obj, ObjSetup *setup, s32 reset) {
 }
 
 void update_object(Object *obj) {
-    if (obj->unkB0 & 0x40) {
+    if (obj->stateFlags & OBJSTATE_DESTROYED) {
         return;
     }
 
@@ -1125,7 +1125,7 @@ void update_object(Object *obj) {
             obj->prevGlobalPosition.z = obj->globalPosition.z;
         }
 
-        if (obj->dll != NULL && !(obj->unkB0 & 0x8000)) {
+        if (obj->dll != NULL && !(obj->stateFlags & OBJSTATE_CONTROL_DISABLED)) {
             obj->dll->vtbl->control(obj);
 
             get_object_child_position(obj,
@@ -1156,7 +1156,7 @@ void update_object(Object *obj) {
 void func_8002272C(Object *obj) {
     update_pi_manager_array(3, obj->id);
 
-    if (obj->dll != NULL && !(obj->unkB0 & 0x2000)) {
+    if (obj->dll != NULL && !(obj->stateFlags & OBJSTATE_UPDATE_DISABLED)) {
         obj->dll->vtbl->update(obj);
 
         get_object_child_position(obj,
@@ -1820,7 +1820,7 @@ void obj_set_update_priority(Object *obj, s8 priority) {
 }
 
 void obj_set_model(Object *obj, s32 modelIdx) {
-    obj->unkB0 &= ~0xF00;
+    obj->stateFlags &= ~(OBJSTATE_NEXT_MODEL_INDEX_MASK | OBJSTATE_PENDING_MODEL_SWITCH);
 
     if (modelIdx == obj->modelInstIdx) {
         return;
@@ -1832,8 +1832,8 @@ void obj_set_model(Object *obj, s32 modelIdx) {
         modelIdx = obj->def->numModels - 1;
     }
 
-    obj->unkB0 |= 0x800;
-    obj->unkB0 |= (modelIdx << 8) & 0x700;
+    obj->stateFlags |= OBJSTATE_PENDING_MODEL_SWITCH;
+    obj->stateFlags |= (modelIdx << OBJSTATE_NEXT_MODEL_INDEX_OFFSET) & OBJSTATE_NEXT_MODEL_INDEX_MASK;
 }
 
 void obj_handle_model_switch(Object *obj, ModelInstance *modelInst, Model *model) {
@@ -1841,7 +1841,7 @@ void obj_handle_model_switch(Object *obj, ModelInstance *modelInst, Model *model
     ModelInstance *modelInst2;
     s32 prevAnimId;
 
-    modelInstIdx = (obj->unkB0 & 0x700) >> 8;
+    modelInstIdx = (obj->stateFlags & OBJSTATE_NEXT_MODEL_INDEX_MASK) >> OBJSTATE_NEXT_MODEL_INDEX_OFFSET;
     modelInst2 = obj->modelInsts[modelInstIdx];
 
     modelInst2->unk34 &= ~0xF;
@@ -1863,7 +1863,7 @@ void obj_handle_model_switch(Object *obj, ModelInstance *modelInst, Model *model
         obj->objhitInfo->unk9E = 1;
     }
 
-    obj->unkB0 &= ~0xF00;
+    obj->stateFlags &= ~(OBJSTATE_NEXT_MODEL_INDEX_MASK | OBJSTATE_PENDING_MODEL_SWITCH);
 }
 
 void obj_add_effect_box(Object *obj) {

@@ -36,7 +36,7 @@ void WaterFallSpray_setup(Object *self, WaterFallSpray_Setup *setup, s32 arg2) {
     self->srt.pitch = setup->pitch << 8;
     self->srt.yaw = setup->yaw << 8;
     self->unkDC = 0;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x58 | func: 1 | export: 1

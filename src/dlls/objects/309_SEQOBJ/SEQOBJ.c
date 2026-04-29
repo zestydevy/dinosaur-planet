@@ -69,7 +69,7 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
         }
     }
     objData->finished = FALSE;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x124 | func: 1 | export: 1

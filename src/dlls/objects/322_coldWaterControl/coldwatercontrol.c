@@ -25,7 +25,7 @@ void ColdWaterControl_dtor(void *dll) { }
 void ColdWaterControl_setup(Object* self, ColdWaterControl_Setup* arg1, s32 arg2) {
     ColdWaterControl_Data* objData = self->data;
     objData->timer = COLDWATER_INITIAL;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x54 | func: 1 | export: 1

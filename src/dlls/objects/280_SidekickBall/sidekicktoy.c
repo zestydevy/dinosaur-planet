@@ -29,7 +29,7 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     objdata->timer = 0.0f;
     objdata->interactionTimer = 0.0f;
     self->srt.flags |= OBJFLAG_INVISIBLE;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     if (player) {
         ((DLL_210_Player*)player->dll)->vtbl->func9(player, self);
     }

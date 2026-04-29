@@ -87,7 +87,7 @@ void fish_setup(Object *self, fish_Setup *setup, s32 arg2) {
     }
     objdata->unk7C = 0;
     fish_func_84(self);
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x84 | func: 1

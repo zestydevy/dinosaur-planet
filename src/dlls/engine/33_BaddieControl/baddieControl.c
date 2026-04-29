@@ -828,7 +828,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     baddie->unk3B8 = setup->unk2F;
     baddie->nextWeaponID = setup->initialWeaponID;
     baddie->unk3BA = setup->unk28;
-    obj->unkB0 |= baddie->unk3BA & 3;
+    obj->stateFlags |= baddie->unk3BA & OBJSTATE_UNK_ATTACH_INDEX_MASK;
     if (sp3C & 8) {
         baddie->unk3A4 = setup->unk20;
         baddie->unk3A6 = setup->unk1E;

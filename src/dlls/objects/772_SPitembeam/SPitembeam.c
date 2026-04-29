@@ -20,7 +20,7 @@ void SPitembeam_setup(Object* self, SPitembeam_Setup* setup, s32 arg2) {
     f32 distance;
 
     distance = 10000.0f;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 
     //Store a pointer to the SPShop object
     self->unkDC = (s32)obj_get_nearest_type_to(OBJTYPE_10, self, &distance);
@@ -43,7 +43,7 @@ void SPitembeam_control(Object* self) {
         (((DLL_768_SPShop*)shop->dll)->vtbl->is_item_hidden(shop, objSetup->itemIndex))
     ) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
-        self->unkB0 |= 0x8000;
+        self->stateFlags |= OBJSTATE_CONTROL_DISABLED;
     }
 
     //Scroll the light beam texture

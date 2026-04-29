@@ -48,7 +48,7 @@ void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
 void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2);
 
 void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
-    if (obj->unkB0 & 0x40) {
+    if (obj->stateFlags & OBJSTATE_DESTROYED) {
         return;
     }
 
@@ -69,7 +69,7 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
     update_pi_manager_array(2, obj->id);
     dl_add_debug_info(*gdl, obj->id, "objects/objprint.c", 426);
     if (obj->dll != NULL) {
-        if (!(obj->unkB0 & 0x4000)) {
+        if (!(obj->stateFlags & OBJSTATE_PRINT_DISABLED)) {
             obj->dll->vtbl->print(obj, gdl, mtxs, vtxs, tris, visibility);
         } else if (visibility != 0) {
             draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
@@ -77,10 +77,10 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
     } else if (visibility != 0) {
         draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
     }
-    if (obj->unkB0 & 0x800) {
+    if (obj->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH) {
         obj_handle_model_switch(obj, obj->modelInsts[obj->modelInstIdx], obj->modelInsts[obj->modelInstIdx]->model);
     }
-    if (obj->linkedObject != NULL && (obj->linkedObject->unkB0 & 0x800)) {
+    if (obj->linkedObject != NULL && (obj->linkedObject->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH)) {
         obj_handle_model_switch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
     }
     dl_add_debug_info(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
@@ -270,7 +270,8 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             tex_render_reset();
         }
         if (obj->linkedObject != NULL) {
-            func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, obj->linkedObject, obj->unkB0 & 3, (u8)spFC);
+            func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, 
+                obj->linkedObject, obj->stateFlags & OBJSTATE_UNK_ATTACH_INDEX_MASK, (u8)spFC);
         }
     }
     if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20) && (modelInst->unk14 != NULL)) {

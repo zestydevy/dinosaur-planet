@@ -19,7 +19,7 @@ void dll_546_setup(Object* self, DLL546_Setup* setup, s32 arg2) {
     if (main_get_bits(setup->unk1E) != 0) {
         self->srt.pitch = ((setup->unk1A << 0xD) / 45);
     }
-    self->unkB0 |= 0xE000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_CONTROL_DISABLED);
 }
 
 // offset: 0x98 | func: 1 | export: 1

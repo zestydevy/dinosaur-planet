@@ -68,7 +68,7 @@ void SideFoodbag_setup(Object* self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     main_set_bits(BIT_Dino_Foodbag_Place, TRUE);
     main_set_bits(BIT_Dino_Foodbag_Give, TRUE);
     objData->dllPutdown->vtbl->update_food_quantity_gamebits(objData->bagSlots, dino_foodbag_items);
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x1A4 | func: 1 | export: 1

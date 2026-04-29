@@ -36,7 +36,7 @@ void SCMeterBlock_setup(Object* self, SCMeterBlock_Setup* objSetup, s32 arg2) {
     objData->weedsOffered = main_get_bits(objSetup->gamebitMeterProgress);
     self->srt.transl.y += objData->weedsOffered * objData->meterUnitY;
     
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     
     //Using a gamebit to check when a Tumbleweed is damaged, initialise it to 0
     main_set_bits(BIT_Damaged_a_Tumbleweed, 0);

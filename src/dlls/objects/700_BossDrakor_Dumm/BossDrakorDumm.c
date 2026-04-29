@@ -9,7 +9,7 @@ void dll_700_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void dll_700_setup(Object* self, ObjSetup* setup, s32 arg2) {
     self->opacity = 0;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x38 | func: 1 | export: 1

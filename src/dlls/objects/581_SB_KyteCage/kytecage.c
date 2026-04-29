@@ -132,7 +132,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
     if (objData != NULL) {
         if (objData->kyte != NULL) {
             kyte = objData->kyte;
-            if (kyte->unkB0 & 0x40) {
+            if (kyte->stateFlags & OBJSTATE_DESTROYED) {
                 objData->kyte = NULL;
             }
             objDef = self->def;

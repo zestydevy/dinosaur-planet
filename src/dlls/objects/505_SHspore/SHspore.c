@@ -61,7 +61,7 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     objData = self->data;
     sp37 = 5;
     objData->lifetime = 1500.0f; //25s
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     self->velocity.y = 3.0f;
 
     func_800267A4(self);

@@ -2278,7 +2278,7 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         spEC = NULL;
         spE8 = arg5->def->pIntersectPoints;
         spE0 = arg5->def->nextIntersectLine;
-        if (arg5->unkB0 & 4) {
+        if (arg5->stateFlags & OBJSTATE_DISABLE_MODLINES) {
             sp100 = 0;
         }
     } else {

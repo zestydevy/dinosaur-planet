@@ -48,7 +48,7 @@ void DIM2Icicle_setup(Object* self, DIM2Icicle_Setup* setup, s32 arg2) {
     }
     
     self->srt.yaw = setup->yaw << 8;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     self->velocity.y = 0.0f;
 }
 

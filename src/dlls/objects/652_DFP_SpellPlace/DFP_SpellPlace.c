@@ -50,7 +50,7 @@ void dll_652_setup(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
     } else {
         self->unkAF |= 8;
     }
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0xE0 | func: 1 | export: 1

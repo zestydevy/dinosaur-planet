@@ -147,7 +147,7 @@ void dll_243_setup(Object *self, Baddie_Setup *setup, s32 arg2) {
     temp_s2->unk4 = rand_next(0, 0x1F4);
     temp_s2->unk14 = NULL;
     temp_s2->unk8 = 0.0f;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x268 | func: 2 | export: 1

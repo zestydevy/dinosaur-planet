@@ -110,7 +110,7 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
     }
 
     obj_add_object_type(self, 4);
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x178 | func: 1 | export: 1
@@ -606,7 +606,7 @@ void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup) {
         objHits->unkA1 = hitsValue;
     }
     
-    self->unkB0 |= 0x4000;
+    self->stateFlags |= OBJSTATE_PRINT_DISABLED;
 }
 
 // offset: 0x1430 | func: 11

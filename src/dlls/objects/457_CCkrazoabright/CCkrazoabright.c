@@ -82,7 +82,7 @@ void CCkrazoabright_setup(Object* self, ObjSetup *setup, s32 arg2) {
     objData = self->data;
     objData->timer = 300.0f;
     self->animCallback = (void*)CCkrazoabright_anim_callback;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     //Set initial state of lever column icons (blending between two sets of icons)
     if (main_get_bits(BIT_CC_Courtyard_Crossfade_Lever_Icons)) {

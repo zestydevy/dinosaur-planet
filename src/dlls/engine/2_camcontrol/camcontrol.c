@@ -478,7 +478,7 @@ void CamControl_lock_icon_tick(void) {
     
     sCamData->targetFlags &= ~ARROW_FLAG_4_Highlighted;
     
-    if ((player == NULL) || (player->unkB0 & 0x1000)) {
+    if ((player == NULL) || (player->stateFlags & OBJSTATE_IN_SEQ)) {
         sIconState = LockIcon_STATE_Hidden;
         return;
     }
@@ -902,7 +902,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
     for (i = 0, matchCount = 0; i < count; i++){
         obj = objects[i];
 
-        if ((obj->opacity != 0) && !(obj->srt.flags & OBJFLAG_INVISIBLE) && !(obj->unkB0 & 0x40)) {
+        if ((obj->opacity != 0) && !(obj->srt.flags & OBJFLAG_INVISIBLE) && !(obj->stateFlags & OBJSTATE_DESTROYED)) {
             if (obj->unkAF & (ARROW_FLAG_20_Removed | ARROW_FLAG_8_No_Targetting)){
                 continue;
             }

@@ -68,7 +68,7 @@ void CCcage_setup(Object* self, CCcage_Setup* objSetup, s32 arg2) {
     
     objData->unk3C = 0.0f;
     
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0xD8 | func: 1 | export: 1

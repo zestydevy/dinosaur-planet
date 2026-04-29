@@ -27,7 +27,7 @@ void dll_339_setup(Object *self, DLL339_Setup *setup, s32 arg2) {
         }
         self->srt.scale *= self->def->scale;
     }
-    self->unkB0 |= 0xA000;
+    self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_UPDATE_DISABLED);
 }
 
 // offset: 0xD4 | func: 1 | export: 1

@@ -95,7 +95,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
             objdata->state = LEVELNAME_STATE_4_FINISHED;
         }
     }
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x120 | func: 1 | export: 1

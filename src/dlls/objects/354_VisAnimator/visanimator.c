@@ -38,7 +38,7 @@ void VisAnimator_setup(Object* self, VisAnimator_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
 
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 
     //Set initial visibility, inverting if the relevant bit is set in the multi-bit flag 
     objData->visibility = objSetup->initialVisibility;

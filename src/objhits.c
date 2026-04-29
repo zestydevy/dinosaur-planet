@@ -1541,7 +1541,7 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     if (obj3 != NULL) {
         sp244 = obj3->modelInsts[obj3->modelInstIdx];
         model3 = sp244->model;
-        attachPointIdx = obj->unkB0 & 0xFFFF & 3;
+        attachPointIdx = (obj->stateFlags & 0xFFFF) & OBJSTATE_UNK_ATTACH_INDEX_MASK;
         sp258 = obj->def->pAttachPoints[attachPointIdx].bones[obj->modelInstIdx];
         spEC.transl.x = obj->def->pAttachPoints[attachPointIdx].pos.x;
         spEC.transl.y = obj->def->pAttachPoints[attachPointIdx].pos.y;

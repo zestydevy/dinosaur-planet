@@ -15,6 +15,8 @@ enum ObjDefFlags {
 /*6*/ OBJDEF_IS_MOBILE_MAP = 0x40,
 /*7*/ OBJDEF_FLAG80 = 0x80,
 
+/*15*/ OBJDEF_FLAG8000 = 0x8000,
+
 /*18*/ OBJDEF_FLAG40000 = 0x40000,
 /*19*/ OBJDEF_STATIC_DEPTH_SORT = 0x80000,
 /*20*/ OBJDEF_FLAG100000 = 0x100000
@@ -192,7 +194,7 @@ typedef struct {
 /*38*/ u8 *nextIntersectPoint; // TODO: confirm
 /*3c*/ Vec3f *nextIntersectLine; // TODO: confirm
 /*40*/ ObjDefLockData *lockdata; //z-targetting data ("lockdata" in default.dol)
-/*44*/ u32 flags; //ObjDataFlags44 // TODO: confirm (0x10000: uses colour multiplier?)
+/*44*/ u32 flags; // ObjDefFlags
 /*48*/ s16 shadowType; //ObjShadowType // TODO: confirm
 /*4a*/ s16 shadowTexture; // TODO: confirm
 /*4c*/ UNK_TYPE_8 unk4C;

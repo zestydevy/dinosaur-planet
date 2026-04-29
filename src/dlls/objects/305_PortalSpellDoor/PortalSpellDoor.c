@@ -62,7 +62,7 @@ void PortalSpellDoor_setup(Object* self, PortalSpellDoor_Setup* objSetup, s32 ar
             func_80059038(objSetup->hitsAnimatorID, self->parent, 0);
         }
         self->srt.flags |= OBJFLAG_INVISIBLE;
-        self->unkB0 |= 0xE000;
+        self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_CONTROL_DISABLED);
     }
 
     objData->timer = -1;

@@ -38,7 +38,7 @@ enum ObjectGroup {
 #define OBJSTATE_NEXT_MODEL_INDEX_OFFSET 8
 
 // Note: bits 0-1 and 8-10 are integers and not flags
-enum ObjectState {
+enum ObjectStateFlags {
     // For mobile map (world) objects, their hit lines will be deactivated
     OBJSTATE_DISABLE_MODLINES = 0x4,
     // For mobile map (world) objects, the created parent view-projection matrix
@@ -384,10 +384,7 @@ typedef struct Object {
 /*00AD*/    s8 modelInstIdx; // called "modelno" in default.dol
 /*00AE*/    s8 updatePriority;
 /*00AF*/    u8 unkAF; //Target arrow flags (see InteractionArrowFlags)
-            // bit 11: if set, switch to model index specified by bits 8-10
-            // bits 8-10: next model index. set bit 11 to trigger
-            // bit 6: if set, object was destroyed
-/*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here). if 0x40 is set, this object was deleted
+/*00B0*/    u16 stateFlags; // ObjectStateFlags
 /*00B2*/    s16 unkB2;
 /*00B4*/    s16 unkB4;
 /*00B6*/    u8 unkB6[2];

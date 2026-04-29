@@ -33,7 +33,7 @@ void SHLevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SHLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     gDLL_7_Newday->vtbl->func16(7);
     gDLL_7_Newday->vtbl->func18((s32)&_data_38, (s32)&_data_0, (s32)&_data_70, (s32)&_data_A8);
     gDLL_7_Newday->vtbl->func19((s32)&_data_E0, (s32)&_data_118, 0, 0);

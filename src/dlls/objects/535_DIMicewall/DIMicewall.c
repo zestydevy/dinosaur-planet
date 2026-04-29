@@ -33,7 +33,7 @@ void dll_535_setup(Object* self, DLL535_Setup* setup, s32 arg2) {
     DLL535data->unk0 = (s16) setup->unk1E;
     obj_add_object_type(self, 0xE);
     obj_add_object_type(self, 0x33);
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0xA4 | func: 1 | export: 1

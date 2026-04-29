@@ -12,7 +12,7 @@ void WaterfallControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void WaterfallControl_setup(Object* self, WaterfallControl_Setup* arg1, s32 arg2) {
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x34 | func: 1 | export: 1

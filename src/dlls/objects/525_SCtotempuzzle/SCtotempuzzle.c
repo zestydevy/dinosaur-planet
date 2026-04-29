@@ -46,7 +46,7 @@ void dll_525_setup(Object* self, DLL525_Setup* setup, s32 arg2) {
         DLL515Data->unkA = 1;
     }
     self->animCallback = dll_525_func_81C;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x114 | func: 1 | export: 1

@@ -94,7 +94,7 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
     objdata->unk10 = 400;
     objdata->unk16 = setup->unk1A;
 
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     self->srt.yaw = setup->unk18 << 8;
 
     if (self->id == OBJ_MediumBasket) {

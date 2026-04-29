@@ -16,7 +16,7 @@ void MMP_levelcontrol_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void MMP_levelcontrol_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
     self->unkDC = 1;
     self->animCallback = MMP_levelcontrol_anim_callback;
 }

@@ -69,7 +69,7 @@ void DBlevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
             objdata->floodLevel++;
         }
     }
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     obj_add_object_type(self, OBJTYPE_52);
 }
 

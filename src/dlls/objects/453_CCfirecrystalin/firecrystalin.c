@@ -11,7 +11,7 @@ void CCfirecrystalin_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void CCfirecrystalin_setup(Object* self, CCfirecrystalin_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x3C | func: 1 | export: 1

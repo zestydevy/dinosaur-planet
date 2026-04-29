@@ -49,7 +49,7 @@ void crate_setup(Object* self, Crate_Setup* objSetup, s32 arg2) {
     
     obj_add_object_type(self, OBJTYPE_63);
     self->srt.yaw = objSetup->yaw << 8;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     
     dModGfxDLLDestroyed = dll_load(DLL_ID_107, 1, 0);
     dModGfxDLLDamaged = dll_load(DLL_ID_106, 1, 0);

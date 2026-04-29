@@ -24,7 +24,7 @@ void DIMExplosion_setup(Object* self, DIMExplosion_Setup* objSetup, s32 arg2) {
     objData->initialScale = 0.01f;
     self->srt.scale = 0.01f;
     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_389_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0xA0 | func: 1 | export: 1

@@ -85,7 +85,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
 
     self->animCallback = (void*)&collectable_anim_callback;
     self->modelInstIdx = objSetup->modelIdx;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     bzero(objData, sizeof(Collectable_Data));    
     objData->sidekickArgBase = objSetup->messageArgBase;

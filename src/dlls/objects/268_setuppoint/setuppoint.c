@@ -25,7 +25,7 @@ void setuppoint_setup(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
     objsetup->base.fadeDistance = 0;
     self->unkE0 = objsetup->unk19;
     self->srt.yaw = (objsetup->yaw & 0x3F) << 0xA;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x58 | func: 1 | export: 1

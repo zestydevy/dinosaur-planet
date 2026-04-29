@@ -42,7 +42,7 @@ void DBFakeHorizon_setup(Object* self, DBFakeHorizon_Setup* objSetup, s32 arg2) 
         }
     }
     
-    self->unkB0 |= 0xA000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_CONTROL_DISABLED);
 }
 
 // offset: 0xA0 | func: 1 | export: 1

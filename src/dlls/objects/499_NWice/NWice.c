@@ -21,7 +21,7 @@ void dll_499_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void dll_499_setup(Object* self, ObjSetup* setup, s32 arg2) {
     self->srt.flags |= OBJFLAG_INVISIBLE;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     obj_add_object_type(self, OBJTYPE_61);
 }
 
@@ -51,9 +51,9 @@ void dll_499_control(Object* self) {
             func_8002674C(self);
         }
         if ((objdata->unk0->opacity < 128) || (dist < 120.0f)) {
-            self->unkB0 |= 0x4;
+            self->stateFlags |= OBJSTATE_DISABLE_MODLINES;
         } else {
-            self->unkB0 &= ~0x4;
+            self->stateFlags &= ~OBJSTATE_DISABLE_MODLINES;
         }
         return;
     }

@@ -83,7 +83,7 @@ void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
     DIMTent_Data* objData = self->data;
 
     self->srt.yaw = objSetup->yaw << 8;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     objData->hitPoints = 1;
 

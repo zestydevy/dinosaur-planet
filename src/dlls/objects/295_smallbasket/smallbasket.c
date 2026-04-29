@@ -125,7 +125,7 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
     }
     
     objData->unk1A = 800;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     objData->storedItemType = setup->storedItemID;
     self->prevLocalPosition.y = self->srt.transl.y;
     self->prevLocalPosition.x = self->srt.transl.z;

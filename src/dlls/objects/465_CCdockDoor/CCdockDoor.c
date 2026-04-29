@@ -22,7 +22,7 @@ void dll_465_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void dll_465_setup(Object* self, DLL465_Setup* setup, s32 arg2) {
     self->srt.yaw = setup->unk18 << 8;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x3C | func: 1 | export: 1
@@ -36,7 +36,7 @@ void dll_465_control(Object* self) {
     objData->unk0 = main_get_bits(objSetup->unk1E);
     if (objData->unk0 == 1) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
-        self->unkB0 |= 0x8000;
+        self->stateFlags |= OBJSTATE_CONTROL_DISABLED;
         func_800267A4(self);
     }
 }

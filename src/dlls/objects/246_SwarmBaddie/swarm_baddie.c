@@ -63,7 +63,7 @@ void dll_246_setup(Object* self, DLL426_Setup* setup, s32 arg2) {
         objdata->unk20 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B83, HALF_VOLUME+1, NULL, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->func_954(objdata->unk20, 0.7f);
     }
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x1CC | func: 1 | export: 1

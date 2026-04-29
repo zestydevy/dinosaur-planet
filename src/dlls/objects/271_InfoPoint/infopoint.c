@@ -76,7 +76,7 @@ void InfoPoint_setup(Object* self, InfoPoint_Setup* objSetup, s32 arg2) {
     objData->texAnimSpeed = 2;
     objData->unk10 = objSetup->unk1B;
     objData->textOpacity = 0;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x134 | func: 1 | export: 1

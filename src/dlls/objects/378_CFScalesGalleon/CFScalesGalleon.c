@@ -33,7 +33,7 @@ void CFScalesGalleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
 #else
     self->animCallback = CFScalesGalleon_func_16C;
 #endif
-    self->unkB0 |= 0x4000;
+    self->stateFlags |= OBJSTATE_PRINT_DISABLED;
 }
 
 // offset: 0x80 | func: 1 | export: 1

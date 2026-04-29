@@ -51,7 +51,7 @@ void Textblock_setup(Object* self, Textblock_Setup* objSetup, s32 arg2) {
     objData->textureBlend = 0;
     objData->textureBlendSpeed = 4;
     modGfxDLL = dll_load_deferred(DLL_ID_107, 1);
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0xD0 | func: 1 | export: 1

@@ -59,7 +59,7 @@ void krazoatext_dtor(void* dll){ }
 void krazoatext_setup(Object* self, s32 arg1, s32 arg2) {  
     obj_init_mesg_queue(self, 2);
     krazoatext_unload_all_glyph_textures(self, self->data);
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x88 | func: 1 | export: 1

@@ -62,7 +62,7 @@ void SCTotemBond_setup(Object* self, SCTotemBond_Setup* objSetup, s32 arg2) {
     
     objData->directionIndex = (u16)self->srt.yaw / M_90_DEGREES;
     self->animCallback = SCTotemBond_anim_callback;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x68 | func: 1 | export: 1

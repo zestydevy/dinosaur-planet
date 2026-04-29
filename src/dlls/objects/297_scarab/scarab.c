@@ -45,7 +45,7 @@ void scarab_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
     objData->goldClimbDuration = rand_next(50, 100);
     objData->initialY = setup->base.y;
 
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     switch (self->id) {
         case OBJ_Green_scarab:

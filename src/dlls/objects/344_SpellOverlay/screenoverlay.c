@@ -129,7 +129,7 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     }
     
     //Draw while player isn't in a sequence
-    if (!(player->unkB0 & 0x1000)){
+    if (!(player->stateFlags & OBJSTATE_IN_SEQ)){
         diPrintf(" DRAWING THE THING ");
 
         get_main_camera(); //@bug?: not stored/used

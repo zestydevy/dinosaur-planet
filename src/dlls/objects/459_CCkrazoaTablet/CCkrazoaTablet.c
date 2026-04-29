@@ -36,7 +36,7 @@ void CCkrazoaTablet_setup(Object *self, CCkrazoaTablet_Setup *setup, s32 arg2) {
     CCkrazoaTablet_Data *objdata = self->data;
 
     self->animCallback = CCkrazoaTablet_anim_callback;
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gamebit)) {
         objdata->unk0 |= 1;

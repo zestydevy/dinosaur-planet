@@ -51,7 +51,7 @@ void MagicPlant_setup(Object* self, MagicPlant_Setup* objSetup, s32 arg2) {
     objData->state = MagicPlant_STATE_Growing;
     func_800240BC(self, objData->growProgress);
     self->srt.yaw = objSetup->yaw << 8;
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     self->modelInstIdx = objSetup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {

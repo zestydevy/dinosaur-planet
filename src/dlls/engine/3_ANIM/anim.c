@@ -1105,7 +1105,7 @@ void dll_3_func_71C0(Object* arg0, Object* arg1, AnimObj_Data* arg2) {
         }
         if (arg2->actor != 0) {
             arg1->unkC0 = 0;
-            arg1->unkB0 &= ~0x1000;
+            arg1->stateFlags &= ~OBJSTATE_IN_SEQ;
             arg2->actor = 0;
         }
     }

@@ -65,9 +65,9 @@ void ProjectileSwitch_setup(Object* self, ProjectileSwitch_Setup* objSetup, s32 
     }
     
     if (objSetup->enableTint == FALSE) {
-        self->unkB0 |= 0x4000;
+        self->stateFlags |= OBJSTATE_PRINT_DISABLED;
     }
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x1B0 | func: 1 | export: 1

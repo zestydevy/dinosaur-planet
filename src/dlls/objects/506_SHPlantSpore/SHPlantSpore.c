@@ -22,7 +22,7 @@ void dll_506_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_506_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x34 | func: 1 | export: 1

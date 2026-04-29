@@ -66,7 +66,7 @@ void dll_248_setup(Object* self, PirahnaBaddie_Setup* setup, s32 arg2) {
         }
         objdata->unk24 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    self->unkB0 |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x178 | func: 1 | export: 1

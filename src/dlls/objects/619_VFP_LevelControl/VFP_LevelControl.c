@@ -55,7 +55,7 @@ void VFP_LevelControl_setup(Object* self, ObjSetup* setup, s32 a2) {
         func_80000450(self, self, 0x174, 0, 0, 0);
         break;
     }
-    self->unkB0 |= 0x6000;
+    self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0x24C | func: 1 | export: 1

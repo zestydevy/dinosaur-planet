@@ -19,7 +19,7 @@ void CCfloor_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void CCfloor_setup(Object* self, CCfloor_Setup* objSetup, s32 arg2) {
     self->srt.scale = objSetup->scale * self->def->scale * 100.0f;
-    self->unkB0 |= 0xA000;
+    self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_UPDATE_DISABLED);
     self->opacity = 0xC0;
 }
 
