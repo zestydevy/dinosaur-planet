@@ -48,7 +48,17 @@
  * Usage for angles: CIRCLE_WRAP(angle)
  * Usage for other ranges: WRAP(value, low, high)
  */
+#ifdef AVOID_UB
+// There are many cases where CIRCLE_WRAP is given a 16-bit value, 
+// which causes incorrect behavior on other compilers.
+#define CIRCLE_WRAP(x) { \
+    s32 angle = (s32)x; \
+    WRAP(angle, -0x8000, 0x8000) \
+    x = angle; \
+}
+#else
 #define CIRCLE_WRAP(x) WRAP(x, -0x8000, 0x8000)
+#endif
 
 #define DOT_PRODUCT(vA, vB) ((vA.f[0] * vB.f[0]) + (vA.f[1] * vB.f[1]) + (vA.f[2] * vB.f[2]))
 
