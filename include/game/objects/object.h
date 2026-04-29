@@ -54,11 +54,11 @@ enum ObjectStateFlags {
     // If set, bits 8-10 are the model index to switch to
     OBJSTATE_PENDING_MODEL_SWITCH = 0x800,
     OBJSTATE_IN_SEQ = 0x1000,
-    // Update function will not be ran
+    // Update function will not be run
     OBJSTATE_UPDATE_DISABLED = 0x2000,
-    // Print function will not be ran (does not necessarily mean object is invisible)
+    // Print function will not be run (does not necessarily mean object is invisible)
     OBJSTATE_PRINT_DISABLED = 0x4000,
-    // Control function will not be ran
+    // Control function will not be run
     OBJSTATE_CONTROL_DISABLED = 0x8000
 };
 
