@@ -999,11 +999,21 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                 gSP1TriangleBlock(gMainDL, var_s2->d0);
                 gMainDL++;
             }
-            gDLBuilder->needsPipeSync = 1;
+
+            gDLBuilder->needsPipeSync = TRUE;
+
+            /* Draw fog separately for decals (redraws the faces with different settings)
+            
+               This is necessary because decals use vertex alpha, which can't be used at the same time as fog
+               (when using fog, the RSP replaces each pixel's A with the Z-depth value) */
             if ((renderFlags & (RENDER_FOG_ACTIVE | RENDER_DECAL_SIMPLE | RENDER_DECAL)) == (RENDER_FOG_ACTIVE | RENDER_DECAL_SIMPLE | RENDER_DECAL)) {
                 temp_s0_2 = gMainDL - temp_s5;
                 dl_set_geometry_mode(&gMainDL, G_FOG);
+
                 if (renderFlags & (RENDER_UNK2000 | RENDER_SEMI_TRANSPARENT)) {
+                    /* Semi-transparent decals
+                      (e.g. cross-fading two sections of water that flow in different directions) */
+                    //@bug: fog ends up too opaque here
                     gDPSetCombineLERP(gMainDL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
                     dl_apply_combine(&gMainDL);
                     gDPSetOtherMode(
@@ -1013,6 +1023,8 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                     );
                     dl_apply_other_mode(&gMainDL);
                 } else {
+                    /* Opaque decals 
+                      (e.g. cross-fading two sections of ground, like grass transitioning into autumnal leaves) */
                     gDPSetCombineLERP(gMainDL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
                     dl_apply_combine(&gMainDL);
                     
@@ -1023,9 +1035,11 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                     );
                     dl_apply_other_mode(&gMainDL);
                 }
+
+                //Redraw the previous facebatch by copying its draw commands
                 bcopy(temp_s5, gMainDL, temp_s0_2 * sizeof(Gfx));
                 gMainDL += temp_s0_2;
-                gDLBuilder->needsPipeSync = 1;
+                gDLBuilder->needsPipeSync = TRUE;
             }
         }
     }
