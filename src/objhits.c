@@ -1637,15 +1637,11 @@ void func_80029AB4(ModelJoint* joints, s32 jointsCount, HitSphere* hitSpheres, s
     }
 }
 
-static const char str_80099970[] = "OBJHITS: Temporary array overflow in 'hitVolumes'\n";
-
-static const char str_800999a4[] = "HIT VOLUMES: an object has too many hit spheres\n";
-#ifndef NON_EQUIVALENT
-u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80029C04.s")
-#else
-// https://decomp.me/scratch/WeRFa
 u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6) {
+    ModelInstance* temp_v1;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 var_fa0;
     f32 sp1CC;
     f32 sp1C8;
     f32 sp1C4;
@@ -1653,56 +1649,46 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     f32 sp1BC;
     f32 sp1B8;
     f32 sp1B4;
-    f32 sp1B0;
-    f32 sp1AC;
+    f32 sp1AC[2];
     f32 sp1A8;
+    f32 var_fa1;
     f32 sp1A0;
+    f32 var_fs1;
+    f32 var_fs2;
+    f32 var_fs4;
+    f32 var_fs5;
     f32 sp18C;
     f32 sp188;
     f32 sp184;
     f32 sp180;
     f32 sp17C;
+    f32 var_ft4;
     f32 sp174;
-    f32* sp170;                                     /* compiler-managed */
-    f32* sp16C;
-    f32* sp168;                                     /* compiler-managed */
+    Vec4f* sp170;
+    Vec4f* sp16C;
+    Vec4f* sp168;
     MtxF sp128;
-    HitSphere sp11A;
-    HitSphere sp10C;
-    HitSphere* spheres2; // sp108
-    HitSphere* spheres; // sp104
-    s32 sphereCount; // sp100
-    s32 spFC;
-    s32 spF8; // s7
-    s32 spF4; // s3
+    HitSphere stackSpheres[2];
+    HitSphere* spheres[2];
+    s32 sphereCounts[2];
+    s32 spF8;
+    s32 spF4;
+    f32 var_ft5;
+    u16 temp_a0;
+    u16 temp_a1;
+    s32 temp_v0_4;
+    s8 var_fp;
     s8 spE6;
+    u16 var_v1_4;
     ObjectHitInfo* spE0;
     ObjectHitInfo* spDC;
     ObjectHitInfo* spD8;
-    u64 spB0[3];
-    Model* model;
-    ModelInstance* temp_v1;
-    f32 temp_fv0;
-    f32 var_fa0;
-    f32 var_fa1;
-    f32 var_fs1;
-    f32 var_fs2;
-    f32 var_fs3;
-    f32 var_fs4;
-    f32 var_fs5;
-    f32 var_ft2;
-    f32 var_ft4;
-    f32 var_ft5;
-    s32 temp_a0;
-    s32 temp_a1;
-    s32 temp_v0_4;
-    s32 var_fp;
     s32 var_s4;
     s32 var_s5;
     s32 i;
     s32 j;
-    u16 var_v1_4;
-    f32* temp_s1;
+    u64 spB0[3];
+    Model *model;
 
     spE0 = obj->objhitInfo;
     spDC = obj2->objhitInfo;
@@ -1718,23 +1704,23 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     if ((arg3 != 0 && (spE0->unk5A & 0x10)) || (arg4 != 0 && spE0->unk5A == 0x10)) {
         temp_v1 = obj->modelInsts[obj->modelInstIdx];
         model = temp_v1->model;
-        spFC = (s32) model->hitSphereCount;
+        sphereCounts[0] = model->hitSphereCount;
         sp170 = temp_v1->unk24;
-        sp168 = temp_v1->unk1C[(((s32) temp_v1->unk34 >> 2) & 1) ^ 1];
-        spheres2 = model->hitSpheres;
+        sp168 = temp_v1->unk1C[((temp_v1->unk34 >> 2) & 1) ^ 1];
+        spheres[1] = model->hitSpheres;
         if (obj3 != obj) {
-            sp1AC = model->maxAnimatedVertDistance * obj3->srt.scale;
+            sp1AC[0] = model->maxAnimatedVertDistance * obj3->srt.scale;
         } else {
-            sp1AC = model->maxAnimatedVertDistance * obj->srt.scale;
+            sp1AC[0] = model->maxAnimatedVertDistance * obj->srt.scale;
         }
         if (obj->srt.flags & OBJFLAG_INVISIBLE) {
             return 0U;
         }
     } else {
-        spFC = 1;
-        sp170 = sp128.m[0];
-        sp168 = sp128.m[2];
-        spheres2 = &sp10C;
+        sphereCounts[0] = 1;
+        sp170 = (Vec4f*)sp128.m[0];
+        sp168 = (Vec4f*)sp128.m[2];
+        spheres[1] = &stackSpheres[0];
         if (spE0->unk5A & 2) {
             var_fp = 1;
         }
@@ -1746,26 +1732,26 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         sp128.m[2][1] = spE0->unk20.x - gWorldX;
         sp128.m[2][2] = spE0->unk20.y;
         sp128.m[2][3] = spE0->unk20.z - gWorldZ;
-        sp10C.unkC = 0;
-        sp10C.unkD = 0;
-        sp10C.unkA = 0;
-        sp1AC = sp128.m[0][0];
+        stackSpheres[0].unkC = 0;
+        stackSpheres[0].unkD = 0;
+        stackSpheres[0].unkA = 0;
+        sp1AC[0] = sp128.m[0][0];
     }
 
     if ((arg3 != 0 && (spDC->unk5A & 0x10)) || (arg4 != 0 && spDC->unk5A == 0x10)) {
         temp_v1 = obj2->modelInsts[obj2->modelInstIdx];
         model = temp_v1->model;
-        sphereCount = model->hitSphereCount;
+        sphereCounts[1] = model->hitSphereCount;
         sp16C = temp_v1->unk24;
-        spheres = model->hitSpheres;
-        sp1B0 = model->maxAnimatedVertDistance * obj2->srt.scale;
+        spheres[0] = model->hitSpheres;
+        sp1AC[1] = model->maxAnimatedVertDistance * obj2->srt.scale;
         if (obj2->srt.flags & OBJFLAG_INVISIBLE) {
             return 0U;
         }
     } else {
-        sp16C = sp128.m[1];
-        sphereCount = 1;
-        spheres = &sp11A;
+        sp16C = (Vec4f*)sp128.m[1];
+        sphereCounts[1] = 1;
+        spheres[0] = &stackSpheres[1];
         if (spDC->unk5A & 2) {
             spE6 = 1;
         }
@@ -1777,40 +1763,39 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         sp128.m[3][1] = spE0->unk20.x - gWorldX;
         sp128.m[3][2] = spE0->unk20.y;
         sp128.m[3][3] = spE0->unk20.z - gWorldZ;
-        sp11A.unkC = 0;
-        sp11A.unkD = 0;
-        sp11A.unkA = 0;
-        sp1B0 = sp128.m[1][0];
+        stackSpheres[1].unkC = 0;
+        stackSpheres[1].unkD = 0;
+        stackSpheres[1].unkA = 0;
+        sp1AC[1] = sp128.m[1][0];
     }
-    if (spFC > 0x40 || sphereCount > 0x40) {
-        // "HIT VOLUMES: an object has too many hit spheres\n"
+    if (sphereCounts[0] > 0x40 || sphereCounts[1] > 0x40) {
+        STUBBED_PRINTF("OBJHITS: Temporary array overflow in 'hitVolumes'\n");
     }
     var_fs1 = obj->globalPosition.x - obj2->globalPosition.x;
     var_fs4 = obj->globalPosition.y - obj2->globalPosition.y;
     var_fs2 = obj->globalPosition.z - obj2->globalPosition.z;
-    temp_fv0 = sqrtf(SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2));
-    var_fs5 = temp_fv0;
-    i = 0;
-    if ((sp1B0 + sp1AC + 100.0f) < var_fs5) {
+    var_fs5 = sqrtf(SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2));
+    if ((sp1AC[0] + sp1AC[1] + 100.0f) < var_fs5) {
         return 0U;
     }
     spB0[2] = 0;
     spB0[1] = 0;
     spB0[0] = 0;
     
-    for (i = 0; i < spFC; i++) {
-        if (i == spheres2[i].unkC) {
-            temp_v0_4 = 1 << spheres2[i].unkD;
+    for (i = 0; i < sphereCounts[0]; i++) {
+        if (i == spheres[1][i].unkC) {
+            temp_v0_4 = 1 << spheres[1][i].unkD;
             if (temp_v0_4 & arg5) {
-                spB0[2] |= (1 << i);
+                spB0[2] |= 1 << i;
             }
             if (temp_v0_4 & arg6) {
-                spB0[0] |= (1 << i);
+                spB0[0] |= 1 << i;
             }
         }
     }
-    for (i = 0; i < sphereCount; i++) {
-        if (i == spheres[i].unkC) {
+
+    for (i = 0; i < sphereCounts[1]; i++) {
+        if (i == spheres[0][i].unkC) {
             spB0[1] |= 1 << i;
         }
     }
@@ -1818,20 +1803,20 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     sp188 = -1.0f;
     do {
         var_s4 = 0;
-        for (i = 0; i < spFC; i++) {
-            if ((1 << i) & spB0[2]) {
+        for (i = 0; i < sphereCounts[0]; i++) {
+            if (spB0[2] & (0, (1 << i))) {
+                sp1CC = sp170[i].f[0];
+                sp1C8 = sp170[i].f[1];
+                sp1C4 = sp170[i].f[2];
+                sp1C0 = sp170[i].f[3];
                 var_s5 = 1;
-                sp1CC = sp170[i * 4 + 0];
-                sp1C8 = sp170[i * 4 + 1];
-                sp1C4 = sp170[i * 4 + 2];
-                sp1C0 = sp170[i * 4 + 3];
-                if ((1 << i) & spB0[0]) {
+                if (spB0[0] & (0, (1 << i))) {
                     var_s5 = 0;
                 }
                 if (var_s5 == 0) {
-                    sp1BC = sp168[i * 4 + 1];
-                    sp1B8 = sp168[i * 4 + 2];
-                    sp1B4 = sp168[i * 4 + 3];
+                    sp1BC = sp168[i].f[1];
+                    sp1B8 = sp168[i].f[2];
+                    sp1B4 = sp168[i].f[3];
                     sp184 = sp1C8 - sp1BC;
                     sp180 = sp1C4 - sp1B8;
                     sp17C = sp1C0 - sp1B4;
@@ -1842,29 +1827,29 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
                         var_s5 = 1;
                     }
                 }
-                for (j = 0; j < sphereCount; j++) {
-                    if ((1 << j) & spB0[1]) {
+                for (j = 0; j < sphereCounts[1]; j++) {
+                    if (spB0[1] & (0, (1 << j))) {
                         spF4 = 0;
-                        temp_s1 = &sp16C[j * 4];
-                        if (((i == 0) && (var_fp != 0)) || ((j == 0) && (spE6 != 0))) {
+                        if ((i == 0 && var_fp != 0) || (j == 0 && spE6 != 0)) {
                             if (var_fp != 0) {
                                 var_fa0 = spE0->unk54 + sp1C4;
                                 var_fa1 = spE0->unk56 + sp1C4;
-                                var_ft4 = temp_s1[2] - temp_s1[0];
-                                var_ft5 = temp_s1[0] + temp_s1[2];
+                                var_ft4 = sp16C[j].f[2] - sp16C[j].f[0];
+                                var_ft5 = sp16C[j].f[2] + sp16C[j].f[0];
                             } else {
                                 var_fa0 = sp1C4 - sp1CC;
                                 var_fa1 = sp1C4 + sp1CC;
-                                var_ft4 = temp_s1[2] + spDC->unk54;
-                                var_ft5 = temp_s1[2] + spDC->unk56;
+                                var_ft4 = sp16C[j].f[2] + spDC->unk54;
+                                var_ft5 = sp16C[j].f[2] + spDC->unk56;
                             }
-                            if ((!(var_ft4 < var_fa0) || !(var_ft5 < var_fa0)) && (!(var_fa1 < var_ft4) || !(var_fa1 < var_ft5))) {
-                                sp18C = temp_s1[0] + sp1CC;
+
+                            if (!(var_ft4 < var_fa0 && var_ft5 < var_fa0) && !(var_fa1 < var_ft4 && var_fa1 < var_ft5)) {
+                                sp18C = sp16C[j].f[0] + sp1CC;
                                 sp18C = SQ(sp18C);
-                                var_fs1 = sp1C8 - temp_s1[1];
+                                var_fs1 = sp1C8 - sp16C[j].f[1];
                                 var_fs5 = SQ(var_fs1);
                                 if (var_fs5 < sp18C) {
-                                    var_fs2 = sp1C0 - temp_s1[3];
+                                    var_fs2 = sp1C0 - sp16C[j].f[3];
                                     var_fs5 += SQ(var_fs2);
                                     if (var_fs5 < sp18C) {
                                         var_fs4 = 0.0f;
@@ -1873,16 +1858,16 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
                                 }
                             }
                         } else {
-                            sp18C = temp_s1[0] + sp1CC;
+                            sp18C = sp16C[j].f[0] + sp1CC;
                             sp18C = SQ(sp18C);
                             if (var_s5 != 0) {
-                                var_fs1 = sp1C8 - temp_s1[1];
+                                var_fs1 = sp1C8 - sp16C[j].f[1];
                                 var_fs5 = SQ(var_fs1);
                                 if (var_fs5 < sp18C) {
-                                    var_fs4 = sp1C4 - temp_s1[2];
+                                    var_fs4 = sp1C4 - sp16C[j].f[2];
                                     var_fs5 += SQ(var_fs4);
                                     if (var_fs5 < sp18C) {
-                                        var_fs2 = sp1C0 - temp_s1[3];
+                                        var_fs2 = sp1C0 - sp16C[j].f[3];
                                         var_fs5 += SQ(var_fs2);
                                         if (var_fs5 < sp18C) {
                                             spF4 = 1;
@@ -1890,22 +1875,28 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
                                     }
                                 }
                             } else {
-                                temp_fv0 = -((sp1BC * sp184) + (sp1B8 * sp180) + (sp1B4 * sp17C) + -((temp_s1[3] * sp17C) + ((temp_s1[1] * sp184) + (temp_s1[2] * sp180)))) * sp174;
+                                temp_fv0 = (sp16C[j].f[1] * sp184) + (sp16C[j].f[2] * sp180) + (sp16C[j].f[3] * sp17C);
+                                temp_fv0 = -temp_fv0;
+                                temp_fv0 = -(
+                                    (sp1BC * sp184) +
+                                    (sp1B8 * sp180) +
+                                    (sp1B4 * sp17C) +
+                                    temp_fv0
+                                ) * sp174;
                                 if (temp_fv0 <= 0.0f) {
-                                    var_fs1 = sp1BC - temp_s1[1];
-                                    var_fs4 = sp1B8 - temp_s1[2];
-                                    var_fs2 = sp1B4 - temp_s1[3];
+                                    var_fs1 = sp1BC - sp16C[j].f[1];
+                                    var_fs4 = sp1B8 - sp16C[j].f[2];
+                                    var_fs2 = sp1B4 - sp16C[j].f[3];
                                 } else {
-                                    var_ft2 = sp1C0;
                                     if (temp_fv0 >= 1.0f) {
-                                        var_fs1 = sp1C8 - temp_s1[1];
-                                        var_fs4 = sp1C4 - temp_s1[2];
+                                        var_fs1 = sp1C8 - sp16C[j].f[1];
+                                        var_fs4 = sp1C4 - sp16C[j].f[2];
+                                        var_fs2 = sp1C0 - sp16C[j].f[3];
                                     } else {
-                                        var_fs1 = (sp1BC + (temp_fv0 * sp184)) - temp_s1[1];
-                                        var_fs4 = (sp1B8 + (temp_fv0 * sp180)) - temp_s1[2];
-                                        var_ft2 = sp1B4 + (temp_fv0 * sp17C);
+                                        var_fs1 = (sp1BC + (temp_fv0 * sp184)) - sp16C[j].f[1];
+                                        var_fs4 = (sp1B8 + (temp_fv0 * sp180)) - sp16C[j].f[2];
+                                        var_fs2 = (sp1B4 + (temp_fv0 * sp17C)) - sp16C[j].f[3];
                                     }
-                                    var_fs2 = var_ft2 - temp_s1[3];
                                 }
                                 var_fs5 = SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2);
                                 if (var_fs5 < sp18C) {
@@ -1929,16 +1920,16 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
                                         var_fs4 /= sp18C;
                                         var_fs2 /= sp18C;
                                     }
-                                    D_800B19A0[var_s4].unk8 = temp_s1[0] * var_fs1;
-                                    D_800B19A0[var_s4].unkC = temp_s1[0] * var_fs4;
-                                    D_800B19A0[var_s4].unk10 = temp_s1[0] * var_fs2;
+                                    D_800B19A0[var_s4].unk8 = sp16C[j].f[0] * var_fs1;
+                                    D_800B19A0[var_s4].unkC = sp16C[j].f[0] * var_fs4;
+                                    D_800B19A0[var_s4].unk10 = sp16C[j].f[0] * var_fs2;
                                 }
                                 D_800B19A0[var_s4].unk18 = i;
                                 D_800B19A0[var_s4].unk19 = j;
                                 var_s4 += 1;
-                            } /*else {
-                                // "objhits.c: MAX_HITSTORE overflow\n" (default.dol)
-                            }*/
+                            } else {
+                                STUBBED_PRINTF("HIT VOLUMES: an object has too many hit spheres\n");
+                            }
                         }
                     } 
                 }
@@ -1949,26 +1940,28 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         for (i = 0; i < var_s4; i++) {
             spF8 = D_800B19A0[i].unk18;
             spF4 = D_800B19A0[i].unk19;
-            temp_a0 = spheres2[spF8].unkA;
-            temp_a1 = spheres[spF4].unkA;
+            temp_a0 = spheres[1][spF8].unkA;
+            temp_a1 = spheres[0][spF4].unkA;
             var_v1_4 = temp_a0;
-            if (temp_a0 != 0){
-                do {
-                    spB0[2] |= (1 << (spF8 + ((var_v1_4 & 0xF000) >> 0xC)));
-                    var_v1_4 <<= 4;
-                } while (var_v1_4);
+            while (var_v1_4) {
+                spB0[2] |= (1 << (spF8 + (u16)((var_v1_4 & 0xF000) >> 0xC)));
+                var_v1_4 <<= 4;
             }
             var_v1_4 = temp_a1;
-            if (temp_a1 != 0){
-                do {
-                    spB0[1] |= (1 << (spF4 + ((var_v1_4 & 0xF000) >> 0xC)));
-                    var_v1_4 <<= 4;
-                } while (var_v1_4);
+            while (var_v1_4) {
+                spB0[1] |= (1 << (spF4 + (u16)((var_v1_4 & 0xF000) >> 0xC)));
+                var_v1_4 <<= 4;
             }
-            if ((temp_a0 == 0) && (temp_a1 == 0)) {
+            if ((!temp_a0) && (!temp_a1)) {
                 if (arg3 != 0) {
-                    var_fs3 = spE6 != 0 ? sp170[spF8 * 4 + 2] : D_800B19A0[i].unkC + sp16C[spF4 * 4 + 2];
-                    func_800261E8(obj2, obj, spD8->unk5F, spD8->unk60, spF4, D_800B19A0[i].unk8 + sp16C[spF4 * 4 + 1], var_fs3, D_800B19A0[i].unk10 + sp16C[spF4 * 4 + 3]);
+                    temp_fv1 = sp16C[spF4].f[1] + D_800B19A0[i].unk8;
+                    if (spE6 != 0) {
+                        sp1C4 = sp170[spF8].f[2];
+                    } else {
+                        sp1C4 = sp16C[spF4].f[2] + D_800B19A0[i].unkC;
+                    }
+                    temp_fv0 = sp16C[spF4].f[3] + D_800B19A0[i].unk10;
+                    func_800261E8(obj2, obj, spD8->unk5F, spD8->unk60, spF4, temp_fv1, sp1C4, temp_fv0);
                 } else if (arg4 != 0) {
                     if (sp188 < D_800B19A0[i].unk14) {
                         sp188 = D_800B19A0[i].unk14;
@@ -1976,14 +1969,14 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
                         sp1A0 = D_800B19A0[i].unk4;
                     }
                 }
-            } else if (temp_a0 == 0) {
+            } else if (!temp_a0) {
                 spB0[2] |= 1 << spF8;
-            } else if (temp_a1 == 0) {
+            } else if (!temp_a1) {
                 spB0[1] |= 1 << spF4;
             }
         }
     } while (var_s4 != 0);
-    if ((arg3 != 0) && (spDC->unk62 != 0)) {
+    if (arg3 != 0 && spDC->unk62 != 0) {
         if (spE0->unk58 & 0x80) {
             func_800267A4(obj);
         }
@@ -1992,15 +1985,15 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         }
         return 1;
     }
-    if (arg4 != 0 && (sp188 > 0.0f) && (obj == obj3)) {
-        func_8002635C(obj2, obj, spD8->unk5D, spD8->unk5E, (s8) spF4);
-        func_8002635C(obj, obj2, spDC->unk5D, spDC->unk5E, (s8) spF8);
+    if (arg4 != 0 && sp188 > 0.0f && obj == obj3) {
+        func_8002635C(obj2, obj, spD8->unk5D, spD8->unk5E, spF4);
+        func_8002635C(obj, obj2, spDC->unk5D, spDC->unk5E, spF8);
         func_800287E4(obj, obj2, -sp1A8, 0.0f, -sp1A0, 0);
         return 1;
     }
     return 0;
 }
-#endif
+
 
 #ifndef NON_EQUIVALENT
 s32 func_8002AD3C(Object *obj, Vec3f *arg1, Vec3f *arg2, Vec3f *arg3, f32 *arg4);
@@ -2124,6 +2117,7 @@ s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4)
     *arg4 = 10.0f;
     return FALSE;
 }
+
 #endif
 
 void func_8002B2D0(s32* arg0, s32 arg1, s32 arg2, HitSphere *hitSpheres) {
