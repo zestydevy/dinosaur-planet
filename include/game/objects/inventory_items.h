@@ -92,6 +92,31 @@ typedef enum {
 }  InventorySpellIndices;
 
 typedef enum {
+    INVENTORY_FOOD_0_Green_Apple, 
+    INVENTORY_FOOD_1_Red_Apple,   
+    INVENTORY_FOOD_2_Brown_Apple, 
+    INVENTORY_FOOD_3_Fish,        
+    INVENTORY_FOOD_4_Smoked_Fish, 
+    INVENTORY_FOOD_5_Dino_Egg,    
+    INVENTORY_FOOD_6_Moldy_Meat,  
+    INVENTORY_FOOD_7_Green_Bean,  
+    INVENTORY_FOOD_8_Red_Bean,    
+    INVENTORY_FOOD_9_Brown_Bean,  
+    INVENTORY_FOOD_10_Blue_Bean,  
+    INVENTORY_FOOD_11_Foodbag_S,
+    INVENTORY_FOOD_12_Foodbag_M,
+    INVENTORY_FOOD_13_Foodbag_L
+}  PlayerFoodbagIndices;
+
+typedef enum {
+    INVENTORY_FOOD_ACTION_Eat,              
+    INVENTORY_FOOD_ACTION_Place,            
+    INVENTORY_FOOD_ACTION_Give,             
+    INVENTORY_FOOD_ACTION_Setting_Eat_First,
+    INVENTORY_FOOD_ACTION_Setting_Eat_Later
+}  PlayerFoodbagActionIndices;
+
+typedef enum {
     INVENTORY_DINO_FOOD_0_Dino_Bag_S,     
     INVENTORY_DINO_FOOD_1_Dino_Bag_M,     
     INVENTORY_DINO_FOOD_2_Dino_Bag_L,     
