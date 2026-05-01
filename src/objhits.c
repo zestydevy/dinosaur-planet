@@ -3088,11 +3088,6 @@ s32 func_8002DFB8(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
     return (s32) var_s0 != (s32) arg4;
 }
 
-#ifndef NON_MATCHING
-s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002E3D0.s")
-#else
-// https://decomp.me/scratch/vFxGY
 s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8) {
     s32 pad[3];
     Vec3f sp110;
@@ -3106,8 +3101,8 @@ s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
     f32 temp_fa0;
     f32 temp_fa1;
     f32* spE8;
-    f32 temp_fs0;
-    f32 temp_fs1;
+    f32 pad_spE4;
+    f32 pad_spE0;
     f32 spDC;
     f32 temp_ft4;
     f32 temp_ft5;
@@ -3121,7 +3116,6 @@ s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
     s32 temp_s5;
     f32 zero_f;
 
-    zero_f = 0.0f;
     var_fp = 0;
     if (arg2 == NULL) {
         return 0;
@@ -3133,12 +3127,15 @@ s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
     var_s0 = arg4;
     spE8 = arg2->unk4;
     *arg5 = var_s0;
-    *arg8 = zero_f;
-    spC4 = sqrtf(SQ(temp_s7->x - arg0.x) + SQ(zero_f) + SQ(temp_s7->z - arg0.z)) - arg1;
+    *arg8 = 0;
+    temp_fv0 = temp_s7->x - arg0.x;
+    zero_f = 0;
+    var_fv1 = temp_s7->z - arg0.z;
+    spC4 = sqrtf(SQ(temp_fv0) + SQ(zero_f) + SQ(var_fv1)) - arg1;
     spF8 = 2.0f * arg0.x;
     sp100 = 2.0f * arg0.z;
-    var_s3 = model->jointCount - 1;
-    while (var_s3) {
+    var_s3 = model->jointCount;
+    while (--var_s3) {
         if (spC4 < arg2->unk10[var_s3]) {
             temp_s5 = model->joints[var_s3].parentJointID;
             temp_s1 = &temp_s7[var_s3];
@@ -3156,23 +3153,24 @@ s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
                     }
                     temp_fv0 = arg2->unkC[var_s3] + var_fv1 + (2.0f * arg1);
                     temp_fv0 *= temp_fv0;
-                    if ((SQ(temp_ft4) + SQ(zero_f) + SQ(temp_ft5)) < (temp_fv0)) {
-                        VECTOR_SUBTRACT(*temp_s2, *temp_s1, sp110);
-                        var_fv1 = arg2->unkC[var_s3];
-                        if (var_fv1 != 0.0f) {
-                            temp_fv0 = 1.0f / var_fv1;
-                            VECTOR_SCALE(sp110, temp_fv0);
-                            var_fv1 = arg2->unkC[var_s3];
+                    if ((SQ(temp_ft4) + SQ(zero_f) + SQ(temp_ft5)) < temp_fv0) {
+                        sp110.x = temp_s2->x - temp_s1->x;
+                        sp110.y = temp_s2->y - temp_s1->y;
+                        sp110.z = temp_s2->z - temp_s1->z;
+                        if (arg2->unkC[var_s3] != 0) {
+                            temp_fv0 = 1.0f / arg2->unkC[var_s3];
+                            sp110.x *= temp_fv0;
+                            sp110.y *= temp_fv0;
+                            sp110.z *= temp_fv0;
                         }
-                        if (func_8002BF0C(&arg0, arg1, temp_s1, &sp110, temp_s2, temp_fa0, temp_fa1, var_fv1, &spDC, &spCC, &spC8) != 0) {
+                        if (func_8002BF0C(&arg0, arg1, temp_s1, &sp110, temp_s2, temp_fa0, temp_fa1, arg2->unkC[var_s3], &spDC, &spCC, &spC8) != 0) {
                             arg2->unk18[var_s3] = 1;
                             arg2->unk18[temp_s5] = 1;
                             var_s0->unk14.y = (sqrtf(spCC) - spC8) + arg1;
-                            temp_fa0 = var_s0->unk14.y;
-                            if (temp_fa0 > 0.0f) {
-                                var_fv1 = temp_fa0;
+                            if (var_s0->unk14.y > 0) {
+                                var_fv1 = var_s0->unk14.y;
                             } else {
-                                var_fv1 = -temp_fa0;
+                                var_fv1 = -var_s0->unk14.y;
                             }
                             var_s0->unk24 = 1.0f / var_fv1;
                             *arg8 += var_s0->unk24;
@@ -3198,12 +3196,10 @@ s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
                 }
             }
         }
-        var_s3 -= 1;
     }
     var_s0->unk28 = -1;
     return (s32) var_s0 != (s32) arg4;
 }
-#endif
 
 void func_8002E84C(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1) {
     arg0->unk18.x = arg1->unk18.x;
