@@ -1041,11 +1041,6 @@ void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0
     }
 }
 
-#ifndef NON_EQUIVALENT
-void func_80028238(Object *obj, Object *otherObj);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80028238.s")
-#else
-// https://decomp.me/scratch/Zv5Yv
 void func_80028238(Object* obj, Object* otherObj) {
     f32 spA4;
     f32 temp_fa1;
@@ -1059,7 +1054,7 @@ void func_80028238(Object* obj, Object* otherObj) {
     f32 temp_fv0_2;
     f32 temp_fv1;
     f32 var_fa1;
-    f32 var_ft4_2;
+    f32 var_fv0;
     f32 sp70;
     f32 sp6C;
     f32 sp68;
@@ -1069,15 +1064,10 @@ void func_80028238(Object* obj, Object* otherObj) {
     ObjectHitInfo* sp58;
     ObjectHitInfo* sp54;
     s8 sp53;
-    f32 var_fv0;
 
     sp58 = obj->objhitInfo;
     sp54 = otherObj->objhitInfo;
-    if (sp58->unk9E != 0) {
-        return;
-    }
-
-    if (sp54->unk9E != 0) {
+    if (sp58->unk9E != 0 || sp54->unk9E != 0) {
         return;
     }
 
@@ -1122,7 +1112,7 @@ void func_80028238(Object* obj, Object* otherObj) {
         sp6C = 0.0f;
     }
 
-    spA4 = sqrtf((sp70 * sp70) + (sp6C * sp6C) + (sp68 * sp68));
+    spA4 = sqrtf(SQ(sp70) + SQ(sp6C) + SQ(sp68));
     var_v0 = (s32) (f32) (s32) spA4;
     if (var_v0 > 0x400) {
         var_v0 = 0x400;
@@ -1149,17 +1139,19 @@ void func_80028238(Object* obj, Object* otherObj) {
     if (sp53 != 0) {
         sp88 = 0.0f;
     }
-    temp_fa1 = (sp8C * sp8C) + (sp88 * sp88) + (sp84 * sp84);
-    if (temp_fa1 > 1.0f) {
-        temp_fv1 = (((otherObj->globalPosition.x - sp58->unk20.x) * sp8C) + ((otherObj->globalPosition.y - sp58->unk20.y) * sp88) + ((otherObj->globalPosition.z - sp58->unk20.z) * sp84)) / temp_fa1;
+    temp_fa1 = SQ(sp8C) + SQ(sp88) + SQ(sp84);
+    temp_fv1 = temp_fa1;
+    if (temp_fv1 > 1.0f) {
+        temp_fv1 = (
+            ((otherObj->globalPosition.x - sp58->unk20.x) * sp8C) +
+            ((otherObj->globalPosition.y - sp58->unk20.y) * sp88) +
+            ((otherObj->globalPosition.z - sp58->unk20.z) * sp84)
+        ) / temp_fv1;
         if (temp_fv1 >= 0.0f && temp_fv1 <= 1.0f) {
             sp9C = sp58->unk20.x + (temp_fv1 * sp8C);
             sp98 = sp58->unk20.y + (temp_fv1 * sp88);
             sp94 = sp58->unk20.z + (temp_fv1 * sp84);
-            temp_fv0_2 = sp9C - otherObj->globalPosition.x;
-            temp_fa1 = sp98 - otherObj->globalPosition.y;
-            temp_ft4_2 = sp94 - otherObj->globalPosition.z;
-            spA4 = sqrtf((temp_fv0_2 * temp_fv0_2) + (temp_fa1 * temp_fa1) + (temp_ft4_2 * temp_ft4_2));
+            spA4 = sqrtf(SQ(sp9C - otherObj->globalPosition.x) + SQ(sp98 - otherObj->globalPosition.y) + SQ(sp94 - otherObj->globalPosition.z));
         }
     }
     if ((spA4 < (sp5C + sp60)) && (spA4 > 0.0f)) {
@@ -1172,7 +1164,7 @@ void func_80028238(Object* obj, Object* otherObj) {
             if (sp53 != 0) {
                 sp98 = 0.0f;
             }
-            temp_fv0_2 = sqrtf((sp9C * sp9C) + (sp98 * sp98) + (sp94 * sp94));
+            temp_fv0_2 = sqrtf(SQ(sp9C) + SQ(sp98) + SQ(sp94));
             if (temp_fv0_2 > 0.0f) {
                 sp70 = sp9C / temp_fv0_2;
                 sp6C = sp98 / temp_fv0_2;
@@ -1193,7 +1185,6 @@ void func_80028238(Object* obj, Object* otherObj) {
         }
     }
 }
-#endif
 
 void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5) {
     f32 sp74;
