@@ -3,13 +3,8 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "game/objects/object_id.h"
+#include "dlls/objects/419_DFdockpoint.h"
 #include "dlls/objects/793_BWLog.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 spawnLogDisabled;
-} DFdockpoint_Setup;
 
 // offset: 0x0 | ctor
 void DFdockpoint_ctor(void *dll) { }

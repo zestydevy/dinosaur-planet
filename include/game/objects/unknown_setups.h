@@ -11,11 +11,4 @@ typedef struct {
     u8 unk1A;
 } ObjType22Setup;
 
-// Includes DFdockpoint
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[2];
-    s16 unk1A;
-} ObjType23Setup;
-
 #endif

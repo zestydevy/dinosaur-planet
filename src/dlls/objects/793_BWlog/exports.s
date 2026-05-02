@@ -4,28 +4,28 @@
 _exports:
 
 # ctor/dtor
-.dword dll_793_ctor
-.dword dll_793_dtor
+.dword BWlog_ctor
+.dword BWlog_dtor
 
 # export table
-/*0*/ .dword dll_793_setup
-/*1*/ .dword dll_793_control
-/*2*/ .dword dll_793_update
-/*3*/ .dword dll_793_print
-/*4*/ .dword dll_793_free
-/*5*/ .dword dll_793_get_model_flags
-/*6*/ .dword dll_793_get_data_size
-/*7*/ .dword dll_793_func_950
-/*8*/ .dword dll_793_func_9E0
-/*9*/ .dword dll_793_func_B28
-/*10*/ .dword dll_793_func_B48
-/*11*/ .dword dll_793_func_C3C
-/*12*/ .dword dll_793_func_C4C
-/*13*/ .dword dll_793_func_D08
-/*14*/ .dword dll_793_func_D18
-/*15*/ .dword dll_793_func_E2C
-/*16*/ .dword dll_793_func_E48
-/*17*/ .dword dll_793_func_E70
-/*18*/ .dword dll_793_func_E80
-/*19*/ .dword dll_793_func_E8C
-/*20*/ .dword dll_793_func_E9C
+/*0*/ .dword BWlog_setup
+/*1*/ .dword BWlog_control
+/*2*/ .dword BWlog_update
+/*3*/ .dword BWlog_print
+/*4*/ .dword BWlog_free
+/*5*/ .dword BWlog_get_model_flags
+/*6*/ .dword BWlog_get_data_size
+/*7*/ .dword BWlog_func_950
+/*8*/ .dword BWlog_func_9E0
+/*9*/ .dword BWlog_get_position
+/*10*/ .dword BWlog_func_B48
+/*11*/ .dword BWlog_func_C3C
+/*12*/ .dword BWlog_func_C4C
+/*13*/ .dword BWlog_get_state
+/*14*/ .dword BWlog_func_D18
+/*15*/ .dword BWlog_func_E2C
+/*16*/ .dword BWlog_func_E48
+/*17*/ .dword BWlog_func_E70
+/*18*/ .dword BWlog_func_E80
+/*19*/ .dword BWlog_func_E8C
+/*20*/ .dword BWlog_func_E9C
