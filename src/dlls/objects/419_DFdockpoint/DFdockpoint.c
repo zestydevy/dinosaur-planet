@@ -31,21 +31,27 @@ void DFdockpoint_control(Object *self) {
 
     setup = (DFdockpoint_Setup*)self->setup;
 
-    if (!setup->spawnLogDisabled) {
-        obj_get_all_of_type(OBJTYPE_11, &logCount);
-        if (logCount == 0) {
-            logsetup = obj_alloc_setup(sizeof(BWLog_Setup), OBJ_BWLog);
-            logsetup->base.quarterSize = 9;
-            logsetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
-            logsetup->base.loadDistance = 50;
-            logsetup->base.fadeFlags = OBJSETUP_FADE_MAIN;
-            logsetup->base.fadeDistance = 45;
-            logsetup->base.x = self->srt.transl.x;
-            logsetup->base.y = self->srt.transl.y;
-            logsetup->base.z = self->srt.transl.z;
-            logsetup->yaw = setup->yaw;
-            obj_create((ObjSetup*)logsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
-        }
+    //Do nothing if the dockpoint doesn't create a log
+    if (setup->spawnLogDisabled) {
+        return;
+    }
+
+    //Create a log if none exists
+    /* @bug: doesn't first check if player's outside the log's unload distance, 
+       so a log will be rapidly created/deleted until the player comes into the log's load range */
+    obj_get_all_of_type(OBJTYPE_11, &logCount);
+    if (logCount == 0) {
+        logsetup = obj_alloc_setup(sizeof(BWLog_Setup), OBJ_BWLog);
+        logsetup->base.quarterSize = sizeof(BWLog_Setup)/4;
+        logsetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
+        logsetup->base.loadDistance = 50;
+        logsetup->base.fadeFlags = OBJSETUP_FADE_MAIN;
+        logsetup->base.fadeDistance = 45;
+        logsetup->base.x = self->srt.transl.x;
+        logsetup->base.y = self->srt.transl.y;
+        logsetup->base.z = self->srt.transl.z;
+        logsetup->yaw = setup->yaw;
+        obj_create((ObjSetup*)logsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
     }
 }
 
