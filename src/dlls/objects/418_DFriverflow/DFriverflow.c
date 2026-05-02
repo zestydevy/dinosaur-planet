@@ -21,7 +21,7 @@ void DFriverflow_setup(Object* self, DFriverflow_Setup* objSetup, s32 arg2) {
     }
     self->srt.yaw = objSetup->yaw << 8;
     self->srt.scale = self->def->scale;
-    self->srt.scale += (u8)objSetup->range * 0.001953125f;
+    self->srt.scale += objSetup->range * 0.001953125f;
     if (self->srt.scale < 0.01f) {
         self->srt.scale = 0.01f;
     }

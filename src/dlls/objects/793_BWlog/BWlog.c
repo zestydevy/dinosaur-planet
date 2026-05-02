@@ -1,5 +1,6 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/419_DFdockpoint.h"
 #include "game/objects/unknown_setups.h"
 #include "sys/joypad.h"
@@ -11,10 +12,10 @@
 #include "dll.h"
 
 typedef enum {
-    BWLog_STATE_0, //off log
-    BWLog_STATE_1, //hopping on log
-    BWLog_STATE_2, //on log
-    BWLog_STATE_3  //hopping off log
+    BWLog_STATE_0_No_Rider,             //Player not on log
+    BWLog_STATE_1_Player_Hopping_On,    //Player clambering onto log
+    BWLog_STATE_2_Player_On_Log,        //Player onboard
+    BWLog_STATE_3_Player_Hopping_Off    //Player dismounting log
 } BWlog_States;
 
 typedef enum {
@@ -40,24 +41,24 @@ typedef struct {
     f32 unk2C4;
     f32 unk2C8;
     f32 tValueRoll;
-    f32 unk2D0[2];
-    f32 unk2D8[2];
-    f32 unk2E0[2];
+    f32 flowX[2]; //DFriverflow objects' combined push strength in X (values for both ends of log)
+    f32 flowY[2]; //DFriverflow objects' combined push strength in Y (values for both ends of log)
+    f32 flowZ[2]; //DFriverflow objects' combined push strength in Z (values for both ends of log)
     u8 _unk2E8[0x2F8 - 0x2E8];
     f32 joyATimer;
     f32 unk2FC;
     f32 unk300[2];
-    f32 unk308;
-    f32 unk30C;
+    f32 soundPitch;
+    f32 soundVolume;
     f32 unk310;
-    u32 soundHandle;
+    u32 soundHandle; //Controls rushing water sound loop
     s32 rollAngle; // when rolling, the current roll rotation
     u16 unk31C[2];
     u16 joyPressed; // controller buttons pressed
     s16 joyStickX; // joystick x
     s16 joyStickY; // joystick y
-    s16 unk326;
-    s16 unk328;
+    s16 soundPitchPhase;
+    s16 soundVolumePhase;
     u8 rollState; // roll state (0 = not rolling, 1 = left, 2 = right)
     u8 unk32B;
     u8 joyARecentTap; // a pressed (turns off automatically after a time or if a is pressed again)
@@ -126,10 +127,10 @@ void BWlog_control(Object* self) {
     f32 var_fv1;
     f32 sp184[3];
     Vec3f sp178;
-    SRT sp160;
+    SRT srt;
     MtxF sp120;
     MtxF spE0;
-    MtxF spA0;
+    MtxF mtx;
     f32 sp9C;
     f32 distance;
     DFdockpoint_Setup* dockpointSetup;
@@ -142,7 +143,7 @@ void BWlog_control(Object* self) {
     if (objdata->dockpoint != NULL) {
         dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
         distance = vec3_distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
-        if (objdata->state == BWLog_STATE_2) {
+        if (objdata->state == BWLog_STATE_2_Player_On_Log) {
             var_fv1 = 0.95f;
         } else {
             var_fv1 = 0.5f;
@@ -160,7 +161,7 @@ void BWlog_control(Object* self) {
 
     BWlog_func_1C18(self, objdata);
 
-    if (objdata->state == BWLog_STATE_2) {
+    if (objdata->state == BWLog_STATE_2_Player_On_Log) {
         BWlog_func_1600(self, objdata);
         switch (objdata->rollState) {
         case BWLog_ROLL_STATE_1_Left:
@@ -178,30 +179,30 @@ void BWlog_control(Object* self) {
         self->srt.yaw -= (s32) (objdata->joyStickX * (60.0f - (objdata->joyStickY * 0.05f)) * 0.2f) & 0xFFFF & 0xFFFF;
     }
 
-    sp160.yaw = self->srt.yaw;
-    sp160.pitch = self->srt.pitch;
-    sp160.roll = self->srt.roll;
-    sp160.scale = 1.0f;
-    sp160.transl.x = self->srt.transl.x;
-    sp160.transl.y = self->srt.transl.y;
-    sp160.transl.z = self->srt.transl.z;
-    matrix_from_srt(&sp120, &sp160);
-    sp160.roll = 0;
-    sp160.transl.x = 0;
-    sp160.transl.y = 0;
-    sp160.transl.z = 0;
-    matrix_from_srt(&spE0, &sp160);
-    sp160.yaw = -sp160.yaw;
-    sp160.pitch = -sp160.pitch;
-    matrix_from_srt_reversed(&spA0, &sp160);
+    srt.yaw = self->srt.yaw;
+    srt.pitch = self->srt.pitch;
+    srt.roll = self->srt.roll;
+    srt.scale = 1.0f;
+    srt.transl.x = self->srt.transl.x;
+    srt.transl.y = self->srt.transl.y;
+    srt.transl.z = self->srt.transl.z;
+    matrix_from_srt(&sp120, &srt);
+    srt.roll = 0;
+    srt.transl.x = 0;
+    srt.transl.y = 0;
+    srt.transl.z = 0;
+    matrix_from_srt(&spE0, &srt);
+    srt.yaw = -srt.yaw;
+    srt.pitch = -srt.pitch;
+    matrix_from_srt_reversed(&mtx, &srt);
 
     for (i = 0; i < 2; i++) {
         vec3_transform(&sp120, 
                        _data_0[i].x, _data_0[i].y, _data_0[i].z, 
                        &objdata->unk260[i].x, &objdata->unk260[i].y, &objdata->unk260[i].z);
         BWlog_func_EB0(self, objdata, i);
-        vec3_transform(&spA0, 
-                       objdata->unk2D0[i], 0.0f, objdata->unk2E0[i], 
+        vec3_transform(&mtx, 
+                       objdata->flowX[i], 0.0f, objdata->flowZ[i], 
                        &sp184[0], &sp184[1], &sp184[2]);
         sp184[0] *= -0.5f;
         sp184[2] *= 0.5f;
@@ -251,6 +252,8 @@ void BWlog_free(Object *self, s32 a1) {
 
     objdata = self->data;
     obj_free_object_type(self, OBJTYPE_11);
+
+    //Stop sound loop
     if (objdata->soundHandle != 0) {
         gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
     }
@@ -270,7 +273,7 @@ u32 BWlog_get_data_size(Object *self, u32 a1) {
 // offset: 0x950 | func: 7 | export: 7
 int BWlog_func_950(Object *self, Object *rider) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
-    if ((objdata->state == BWLog_STATE_0) && (objdata->dockpoint != NULL)) {
+    if ((objdata->state == BWLog_STATE_0_No_Rider) && (objdata->dockpoint != NULL)) {
         return vec3_distance(&rider->globalPosition, &self->globalPosition) < 50.0f;
     }
     return FALSE;
@@ -324,7 +327,7 @@ s32 BWlog_func_B48(Object *self, Object *rider) {
     s32 i;
 
     objdata = (BWlog_Data*)self->data;
-    if ((objdata->dockpoint != NULL) && (objdata->state == BWLog_STATE_2) && (joy_get_pressed(0) & B_BUTTON)) {
+    if ((objdata->dockpoint != NULL) && (objdata->state == BWLog_STATE_2_Player_On_Log) && (joy_get_pressed(0) & B_BUTTON)) {
         var_fs0 = 0.0f;
         for (i = 0; i < 2; i++) {
             var_fs0 += sqrtf(SQ(objdata->unk278[i].x) + SQ(objdata->unk278[i].z));
@@ -675,183 +678,192 @@ static void BWlog_func_1A5C(Object* self, BWlog_Data* objdata) {
 static void BWlog_func_1C18(Object* self, BWlog_Data* objdata) {
     s32 i;
     s32 k;
-    s32 sp120[2];
+    s32 flowInfluences[2];
     s32 objListLength;
     Object* obj;
     Object** objList;
     f32 dx;
-    f32 temp_fv0;
+    f32 dy;
     f32 dz;
-    f32 temp_fv1;
+    f32 pushRadius;
     f32 sp100;
     f32 spFC;
     f32 spF8;
-    SRT spE0;
+    SRT srt;
     MtxF spA0;
 
     for (i = 0; i < 2; i++) {
-        objdata->unk2D0[i] = 0.0f;
-        objdata->unk2E0[i] = 0.0f;
-        sp120[i] = 0;
+        objdata->flowX[i] = 0.0f;
+        objdata->flowZ[i] = 0.0f;
+        flowInfluences[i] = 0;
     }
 
-    // grabs DFriverflow instances (and possibly more)
+    // Grabs DFriverflow instances (and possibly more)
     objList = obj_get_all_of_type(OBJTYPE_22, &objListLength);
 
     for (i = 0; i < objListLength; i++) {
         obj = objList[i];
         for (k = 0; k < 2; k++) {
-            temp_fv0 = obj->srt.transl.y - objdata->unk260[k].y;
-            if ((temp_fv0 <= 200.0f) && (temp_fv0 >= -200.0f)) {
+            dy = obj->srt.transl.y - objdata->unk260[k].y;
+            if ((dy <= 200.0f) && (dy >= -200.0f)) {
                 dx = obj->srt.transl.x - objdata->unk260[k].x;
                 dz = obj->srt.transl.z - objdata->unk260[k].z;
                 dx = sqrtf(SQ(dx) + SQ(dz));
-                temp_fv1 = (f32) ((ObjType22Setup*)obj->setup)->unk19 * 1.5f;
-                if (dx < temp_fv1) {
-                    dx = ((temp_fv1 - dx) / temp_fv1);
+                pushRadius = ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
+                if (dx < pushRadius) {
+                    dx = ((pushRadius - dx) / pushRadius);
                     dx *= (obj->srt.scale * 10.0f);
-                    objdata->unk2D0[k] += fsin16_precise(obj->srt.yaw) * dx;
-                    objdata->unk2E0[k] += fcos16_precise(obj->srt.yaw) * dx;
-                    sp120[k] += 1;
+                    objdata->flowX[k] += fsin16_precise(obj->srt.yaw) * dx;
+                    objdata->flowZ[k] += fcos16_precise(obj->srt.yaw) * dx;
+                    flowInfluences[k]++;
                 }
             }
         }
     }
 
     for (i = 0; i < 2; i++) {
-        if (sp120[i] != 0) {
-            objdata->unk2D0[i] /= sp120[i];
-            objdata->unk2E0[i] /= sp120[i];
+        if (flowInfluences[i] != 0) {
+            objdata->flowX[i] /= flowInfluences[i];
+            objdata->flowZ[i] /= flowInfluences[i];
         }
     }
     
     for (i = 0; i < 2; i++) {
-        spE0.yaw = arctan2_f(objdata->unk2D0[i], objdata->unk2E0[i]);
-        spE0.pitch = 0;
-        spE0.roll = 0;
-        spE0.scale = 1.0f;
-        spE0.transl.x = 0;
-        spE0.transl.y = 0;
-        spE0.transl.z = 0;
-        matrix_from_srt_reversed(&spA0, &spE0);
+        srt.yaw = arctan2_f(objdata->flowX[i], objdata->flowZ[i]);
+        srt.pitch = 0;
+        srt.roll = 0;
+        srt.scale = 1.0f;
+        srt.transl.x = 0;
+        srt.transl.y = 0;
+        srt.transl.z = 0;
+        matrix_from_srt_reversed(&spA0, &srt);
         vec3_transform(&spA0, 
             objdata->collider.waterNormalXList[i], objdata->collider.waterNormalYList[i], objdata->collider.waterNormalZList[i], 
             &sp100, &spFC, &spF8);
-        spE0.yaw = 0;
-        spE0.pitch = 0x4000 - arctan2_f(spFC, spF8);
-        spE0.roll = -(0x4000 - arctan2_f(spFC, sp100));
-        matrix_from_srt_reversed(&spA0, &spE0);
+        srt.yaw = 0;
+        srt.pitch = M_90_DEGREES - arctan2_f(spFC, spF8);
+        srt.roll = -(M_90_DEGREES - arctan2_f(spFC, sp100));
+        matrix_from_srt_reversed(&spA0, &srt);
         vec3_transform(&spA0, 
-            objdata->unk2D0[i], 0.0f, objdata->unk2E0[i], 
-            &objdata->unk2D0[i], &objdata->unk2D8[i], &objdata->unk2E0[i]);
+            objdata->flowX[i], 0.0f, objdata->flowZ[i], 
+            &objdata->flowX[i], &objdata->flowY[i], &objdata->flowZ[i]);
     }
 }
 
 // offset: 0x2020 | func: 28
-static void BWlog_func_2020(Object* arg0, BWlog_Data* arg1) {
-    u8 var_a1;
-    u8 sp3E;
+static void BWlog_func_2020(Object* self, BWlog_Data* objdata) {
+    u8 bumpSide;
+    u8 colliderFlags;
     s32 volume;
 
-    if (arg1->soundHandle == 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_A77, MAX_VOLUME, &arg1->soundHandle, NULL, 0, NULL);
+    if (objdata->soundHandle == 0) {
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A77, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
     } else {
-        arg1->unk30C = arg1->unk310 * 127.0f;
-        arg1->unk30C += fsin16_precise(arg1->unk328) * 30.0f;
-        if (arg1->unk30C < 30.0f) {
-            arg1->unk30C = 30.0f;
-        } else if (arg1->unk30C > 127.0f) {
-            arg1->unk30C = 127.0f;
+        //Adjust sound volume sinusoidally
+        objdata->soundVolume = objdata->unk310 * 127.0f;
+        objdata->soundVolume += fsin16_precise(objdata->soundVolumePhase) * 30.0f;
+        if (objdata->soundVolume < 30.0f) {
+            objdata->soundVolume = 30.0f;
+        } else if (objdata->soundVolume > 127.0f) {
+            objdata->soundVolume = 127.0f;
         }
-        gDLL_6_AMSFX->vtbl->func_860(arg1->soundHandle, arg1->unk30C);
-        arg1->unk308 = ((arg1->unk300[0] + arg1->unk300[1]) * 0.5f) / 25.0f;
-        if (arg1->unk308 < 0.0f) {
-            arg1->unk308 = 0.0f;
+        gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, objdata->soundVolume);
+
+        //Adjust sound pitch sinusoidally
+        objdata->soundPitch = ((objdata->unk300[0] + objdata->unk300[1]) * 0.5f) / 25.0f;
+        if (objdata->soundPitch < 0.0f) {
+            objdata->soundPitch = 0.0f;
         }
-        arg1->unk308 = 1.0f - arg1->unk308;
-        arg1->unk308 = (arg1->unk308 * 0.2f) + 0.2f;
-        arg1->unk308 += (fsin16_precise(arg1->unk326) * 0.1f);
-        gDLL_6_AMSFX->vtbl->func_954(arg1->soundHandle, arg1->unk308);
-        arg1->unk326 = arg1->unk326 + (gUpdateRate << 8);
-        arg1->unk328 = arg1->unk328 + (gUpdateRate << 9);
+        objdata->soundPitch = 1.0f - objdata->soundPitch;
+        objdata->soundPitch = (objdata->soundPitch * 0.2f) + 0.2f;
+        objdata->soundPitch += fsin16_precise(objdata->soundPitchPhase) * 0.1f;
+        gDLL_6_AMSFX->vtbl->func_954(objdata->soundHandle, objdata->soundPitch);
+
+        objdata->soundPitchPhase += gUpdateRate << 8;
+        objdata->soundVolumePhase += gUpdateRate << 9;
     }
 
+    //Play bump sound when colliding
     volume = 0;
-    sp3E = arg1->collider.unk25C & 3;
-    var_a1 = sp3E & (sp3E ^ arg1->unk32D);
-    if (var_a1 & 1) {
-        volume = (s32) ((sqrtf(SQ(arg1->unk290[0]) + SQ(arg1->unk298[0])) * 127.0f) / 0.95f);
+    colliderFlags = objdata->collider.unk25C & 3;
+    bumpSide = colliderFlags & (colliderFlags ^ objdata->unk32D);
+    if (bumpSide & 1) {
+        volume = (s32) ((sqrtf(SQ(objdata->unk290[0]) + SQ(objdata->unk298[0])) * 127.0f) / 0.95f);
     }
-    if (var_a1 & 2) {
-        if (volume > ((sqrtf(SQ(arg1->unk290[1]) + SQ(arg1->unk298[1])) * 127.0f) / 0.95f)) {
+    if (bumpSide & 2) {
+        if (volume > ((sqrtf(SQ(objdata->unk290[1]) + SQ(objdata->unk298[1])) * 127.0f) / 0.95f)) {
             volume = (s32) (f32) volume; // what
         } else {
-            volume = (s32) ((sqrtf(SQ(arg1->unk290[1]) + SQ(arg1->unk298[1])) * 127.0f) / 0.95f);
+            volume = (s32) ((sqrtf(SQ(objdata->unk290[1]) + SQ(objdata->unk298[1])) * 127.0f) / 0.95f);
         }
     }
-    if (volume >= 0xB) {
+    if (volume > 10) {
         if (volume > MAX_VOLUME) {
             volume = MAX_VOLUME;
         }
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_76D_Log_Bump, volume, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_76D_Log_Bump, volume, NULL, NULL, 0, NULL);
     }
-    arg1->unk32D = sp3E;
+
+    objdata->unk32D = colliderFlags;
 }
 
 // offset: 0x2444 | func: 29
 static void BWlog_func_2444(Object* self, BWlog_Data* objdata) {
-    f32 var_fs0;
-    f32 var_fs1;
-    f32 spF4;
-    f32 spF0;
-    f32 spEC;
+    f32 x;
+    f32 z;
+    f32 sin;
+    f32 cos;
+    f32 magnitude;
     Vec3f spE0;
     Vec3f particleConfig;
     Vec3f spC8;
     f32 temp_fv0;
-    s32 temp_ft5;
-    SRT spA8;
-    MtxF sp68;
+    s32 particleCount;
+    SRT srt;
+    MtxF mtx;
     s32 i;
 
-    var_fs0 = (objdata->unk2D0[0] + objdata->unk2D0[1]) * 0.5f;
-    var_fs1 = (objdata->unk2E0[0] + objdata->unk2E0[1]) * 0.5f;
-    spEC = sqrtf(SQ(var_fs0) + SQ(var_fs1));
-    if (spEC != 0.0f) {
-        var_fs0 /= spEC;
-        var_fs1 /= spEC;
+    x = (objdata->flowX[0] + objdata->flowX[1]) * 0.5f;
+    z = (objdata->flowZ[0] + objdata->flowZ[1]) * 0.5f;
+    magnitude = sqrtf(SQ(x) + SQ(z));
+    if (magnitude != 0.0f) {
+        x /= magnitude;
+        z /= magnitude;
     }
-    spF4 = fsin16_precise(self->srt.yaw);
-    spE0.y = -fcos16_precise(self->srt.yaw);
-    spE0.x = spF4;
+
+    sin = fsin16_precise(self->srt.yaw);
+    cos = -fcos16_precise(self->srt.yaw);
+    spE0.y = cos;
+    spE0.x = sin;
     particleConfig.x = -400.0f;
     particleConfig.y = 400.0f;
-    spA8.yaw = arctan2_f(var_fs0, var_fs1);
-    spA8.pitch = 0;
-    spA8.roll = 0;
-    spA8.scale = 1.0f;
-    spA8.transl.x = 0.0f;
-    spA8.transl.y = 0.0f;
-    spA8.transl.z = 0.0f;
+    srt.yaw = arctan2_f(x, z);
+    srt.pitch = 0;
+    srt.roll = 0;
+    srt.scale = 1.0f;
+    srt.transl.x = 0.0f;
+    srt.transl.y = 0.0f;
+    srt.transl.z = 0.0f;
     spC8.y = (objdata->unk278[0].x + objdata->unk278[1].x) * 0.5f;
     spC8.x = (objdata->unk278[0].z + objdata->unk278[1].z) * 0.5f;
-    matrix_from_srt_reversed(&sp68, &spA8);
-    vec3_transform(&sp68, spC8.y, 0, spC8.x, &spF4, &spC8.z, &spE0.z);
-    spEC = spEC * 1.5f;
-    spEC = spEC - spE0.z;
-    if (spEC < 0.0f) {
-        spEC = 0.0f;
+    matrix_from_srt_reversed(&mtx, &srt);
+    vec3_transform(&mtx, spC8.y, 0, spC8.x, &sin, &spC8.z, &spE0.z);
+    magnitude *= 1.5f;
+    magnitude -= spE0.z;
+    if (magnitude < 0.0f) {
+        magnitude = 0.0f;
     }
-    temp_ft5 = (s32) spEC;
-    particleConfig.z = (0.001f * spEC) + 0.004f;
-    spA8.transl.x = (var_fs0 * spE0.y) + (var_fs1 * spE0.x);
-    if (spA8.transl.x < 0.0f) {
-        for (i = 0; i < temp_ft5; i++) {
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_76C, &spA8, PARTFXFLAG_4, -1, &particleConfig);
+
+    particleCount = magnitude;
+    particleConfig.z = (0.001f * magnitude) + 0.004f;
+    srt.transl.x = (x * spE0.y) + (z * spE0.x);
+    if (srt.transl.x < 0.0f) {
+        for (i = 0; i < particleCount; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_76C, &srt, PARTFXFLAG_4, -1, &particleConfig);
         }
     } else {
-        for (i = 0; i < temp_ft5; i++) {
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_76C, &spA8, PARTFXFLAG_4, -1, &particleConfig);
+        for (i = 0; i < particleCount; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_76C, &srt, PARTFXFLAG_4, -1, &particleConfig);
         }
     }
 }

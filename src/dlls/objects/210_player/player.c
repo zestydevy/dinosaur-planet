@@ -40,6 +40,7 @@
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/277_iceblast.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/793_BWLog.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
@@ -6561,63 +6562,63 @@ s32 dll_210_func_125BC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 // offset: 0x128F4 | func: 92
-static void dll_210_func_128F4(f32* arg0, f32* arg1, f32 arg2, Object* arg3) {
-    Object* curObj;
+static void dll_210_func_128F4(f32* velocityX, f32* velocityZ, f32 deltaT, Object* player) {
+    Object* flowObj;
     s32 objCount;
-    Object** temp_v0;
+    Object** objects;
     s32 pad[2];
-    f32 temp_fs0;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    f32 var_fs1;
-    f32 var_fs2;
+    f32 dx;
+    f32 dz;
+    f32 range;
+    f32 pushZ;
+    f32 pushX;
     s32 i;
-    s32 var_s5;
+    s32 riverInfluences;
     Player_Data* objdata;
 
-    objdata = arg3->data;
-    var_fs1 = 0.0f;
-    var_fs2 = 0.0f;
-    temp_v0 = obj_get_all_of_type(OBJTYPE_22, &objCount);
-    var_s5 = 0;
+    objdata = player->data;
+    pushX = pushZ = 0.0f;
+    objects = obj_get_all_of_type(OBJTYPE_22, &objCount);
+    
+    riverInfluences = 0;
     for (i = 0; i < objCount; i++) {
-        curObj = temp_v0[i];
-        if (((ObjType22Setup*)curObj->setup)->unk1A & 2) {
-            var_s5 = 1;
-            temp_fv0 = curObj->srt.transl.f[1] - arg3->srt.transl.f[1];
-            if ((temp_fv0 <= 200.0f) && (temp_fv0 >= -200.0f)) {
-                temp_fs0 = curObj->srt.transl.f[0] - arg3->srt.transl.f[0];
-                temp_fv0 = curObj->srt.transl.f[2] - arg3->srt.transl.f[2];
-                temp_fs0 = sqrtf(SQ(temp_fs0) + SQ(temp_fv0));
-                temp_fv1 = ((ObjType22Setup*)curObj->setup)->unk19 * 1.5f;
-                if (temp_fs0 < temp_fv1) {
-                    temp_fs0 = ((temp_fv1 - temp_fs0) / temp_fv1);
-                    temp_fs0 *= (curObj->srt.scale * 10.0f);
-                    var_fs2 += fsin16_precise(curObj->srt.yaw) * temp_fs0;
-                    var_fs1 += fcos16_precise(curObj->srt.yaw) * temp_fs0;
+        flowObj = objects[i];
+        if (((DFriverflow_Setup*)flowObj->setup)->flags & 2) {
+            riverInfluences = 1;
+            dz = flowObj->srt.transl.y - player->srt.transl.y;
+            if ((dz <= 200.0f) && (dz >= -200.0f)) {
+                dx = flowObj->srt.transl.x - player->srt.transl.x;
+                dz = flowObj->srt.transl.z - player->srt.transl.z;
+                dx = sqrtf(SQ(dx) + SQ(dz));
+                range = ((DFriverflow_Setup*)flowObj->setup)->range * 1.5f;
+                if (dx < range) {
+                    dx = ((range - dx) / range);
+                    dx *= (flowObj->srt.scale * 10.0f);
+                    pushX += fsin16_precise(flowObj->srt.yaw) * dx;
+                    pushZ += fcos16_precise(flowObj->srt.yaw) * dx;
                 }
             }
         }
     }
 
-    if (var_s5 != 0) {
-        var_fs2 /= var_s5;
-        var_fs1 /= var_s5;
-        objdata->unk674 -= var_fs2 * 0.05f;
-        objdata->unk678 -= var_fs1 * 0.05f;
+    if (riverInfluences != 0) {
+        pushX /= riverInfluences;
+        pushZ /= riverInfluences;
+        objdata->unk674 -= pushX * 0.05f;
+        objdata->unk678 -= pushZ * 0.05f;
         objdata->unk674 *= 0.99f;
         objdata->unk678 *= 0.99f;
-        temp_fv0 = sqrtf(SQ(objdata->unk674) + SQ(objdata->unk678));
-        if (temp_fv0 > 0.85f) {
-            temp_fv1 = 0.85f / temp_fv0;
-            objdata->unk674 *= temp_fv1;
-            objdata->unk678 *= temp_fv1;
+        dz = sqrtf(SQ(objdata->unk674) + SQ(objdata->unk678));
+        if (dz > 0.85f) {
+            range = 0.85f / dz;
+            objdata->unk674 *= range;
+            objdata->unk678 *= range;
         }
-        *arg0 = objdata->unk674 * arg2;
-        *arg1 = objdata->unk678 * arg2;
+        *velocityX = objdata->unk674 * deltaT;
+        *velocityZ = objdata->unk678 * deltaT;
     } else {
-        *arg0 = 0.0f;
-        *arg1 = 0.0f;
+        *velocityX = 0.0f;
+        *velocityZ = 0.0f;
     }
 }
 
@@ -6726,7 +6727,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 gDLL_17_partfx->vtbl->spawn(player, 0x201, NULL, 0, -1, NULL);
             }
         }
-        dll_210_func_128F4(player->velocity.f, &player->velocity.f[2], arg2, player);
+        dll_210_func_128F4(&player->velocity.x, &player->velocity.z, arg2, player);
         player->velocity.f[0] *= 0.98f;
         player->velocity.f[2] *= 0.98f;
         if (fsa->analogInputPower < 0.05f) {
