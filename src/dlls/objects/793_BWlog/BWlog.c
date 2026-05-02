@@ -39,7 +39,7 @@ typedef struct {
     f32 rollAcceleration; // wobble
     f32 unk2C4;
     f32 unk2C8;
-    f32 unk2CC;
+    f32 tValueRoll;
     f32 unk2D0[2];
     f32 unk2D8[2];
     f32 unk2E0[2];
@@ -51,7 +51,7 @@ typedef struct {
     f32 unk30C;
     f32 unk310;
     u32 soundHandle;
-    s32 unk318; // when rolling, the current roll rotation
+    s32 rollAngle; // when rolling, the current roll rotation
     u16 unk31C[2];
     u16 joyPressed; // controller buttons pressed
     s16 joyStickX; // joystick x
@@ -380,10 +380,10 @@ void BWlog_func_D18(Object *self, s32 state) {
 }
 
 // offset: 0xE2C | func: 15 | export: 15
-void BWlog_func_E2C(Object *self, f32 *a1, s32 *a2) {
+void BWlog_get_roll_info(Object *self, f32 *tValueRoll, s32 *stateRoll) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
-    *a1 = objdata->unk2CC;
-    *a2 = objdata->unk32B;
+    *tValueRoll = objdata->tValueRoll;
+    *stateRoll = objdata->unk32B;
 }
 
 // offset: 0xE48 | func: 16 | export: 16
@@ -582,11 +582,11 @@ static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft) {
         objdata->unk298[1] = 2.5f;
     }
 
-    objdata->unk318 = 0;
+    objdata->rollAngle = 0;
     objdata->unk2BC = 0.0f;
     objdata->rollSpeed = objdata->unk2A0.x;
     objdata->unk2C8 = 0.0f;
-    objdata->unk2CC = 0.0f;
+    objdata->tValueRoll = 0.0f;
 }
 
 // offset: 0x1858 | func: 24
@@ -610,18 +610,19 @@ static void BWlog_func_1858(Object* self, BWlog_Data* objdata) {
         objdata->unk298[1] *= 0.985f;
     }
 
-    objdata->unk318 += gUpdateRateF * objdata->rollSpeed;
-    objdata->unk2CC = objdata->unk318 / 65535.0f;
+    objdata->rollAngle += gUpdateRateF * objdata->rollSpeed;
+    objdata->tValueRoll = objdata->rollAngle / M_360_DEGREES_F;
 
-    if (objdata->unk2CC < 0.0f) {
-        objdata->unk2CC = -objdata->unk2CC;
+    //Make sure the roll tValue is positive, and clamped from 0 to 1
+    if (objdata->tValueRoll < 0.0f) {
+        objdata->tValueRoll = -objdata->tValueRoll;
+    }
+    if (objdata->tValueRoll > 1.0f) {
+        objdata->tValueRoll = 1.0f;
     }
 
-    if (objdata->unk2CC > 1.0f) {
-        objdata->unk2CC = 1.0f;
-    }
-
-    if ((objdata->unk318 > 0xFFFF) || (objdata->unk318 < -0xFFFF)) {
+    //Finish rolling after a full 360 rotation
+    if ((objdata->rollAngle >= M_360_DEGREES) || (objdata->rollAngle <= -M_360_DEGREES)) {
         objdata->rollState = BWLog_ROLL_STATE_0;
     }
 
@@ -631,7 +632,7 @@ static void BWlog_func_1858(Object* self, BWlog_Data* objdata) {
         objdata->unk2B4 = -2.0f;
     }
 
-    self->srt.roll = objdata->unk318;
+    self->srt.roll = objdata->rollAngle;
 }
 
 // offset: 0x1A4C | func: 25

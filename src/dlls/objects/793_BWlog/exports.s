@@ -23,7 +23,7 @@ _exports:
 /*12*/ .dword BWlog_func_C4C
 /*13*/ .dword BWlog_get_state
 /*14*/ .dword BWlog_func_D18
-/*15*/ .dword BWlog_func_E2C
+/*15*/ .dword BWlog_get_roll_info
 /*16*/ .dword BWlog_func_E48
 /*17*/ .dword BWlog_func_E70
 /*18*/ .dword BWlog_func_E80
