@@ -4413,22 +4413,22 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
 }
 
 s32 map_should_obj_unload(Object *obj) {
-    s32 sp54;
+    s32 gridX;
     s32 pad[6];
     f32 loadDist;
     s32 pad2[6];
     ObjSetup* objSetup;
-    s32 temp_v0_2;
+    s32 gridZ;
     Object* player;
     f32 loadDistAdjusted;
-    f32 var_fa0;
-    f32 var_fa1;
-    f32 var_ft4;
-    f32 var_ft5;
-    f32 var_fv0;
-    f32 var_fv1;
-    s32 var_a0;
-    s32 var_a1;
+    f32 refZ;
+    f32 refY;
+    f32 refX;
+    f32 dz;
+    f32 dy;
+    f32 dx;
+    s32 mtxIdx;
+    s32 hasLocalBlock;
     s8 *currentBlockIndices;
     s32 i;
 
@@ -4437,77 +4437,105 @@ s32 map_should_obj_unload(Object *obj) {
         STUBBED_PRINTF("OBJECT error: obj %d, has no romdef\n", obj->id);
         return FALSE;
     }
+
+    //Unload the object if it's not used in the map's current Act
     if (func_8004B4A0(objSetup, obj->mapID) == 0) {
         return TRUE;
     }
+
+    //Check if the object is always loaded (provided its map is loaded and in the correct Act)
     if (objSetup->loadFlags & OBJSETUP_LOAD_LEVEL) {
         return FALSE;
     }
+
+    //If the object is in an objectGroup, check whether that group is loaded
     if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
-        if (gDLL_29_Gplay->vtbl->get_obj_group_status(obj->mapID, objSetup->mapObjGroup) != 0) {
+        if (gDLL_29_Gplay->vtbl->get_obj_group_status(obj->mapID, objSetup->mapObjGroup) != FALSE) {
             return FALSE;
         }
         return TRUE;
     }
+
+    //Check if the object's unloading is handled separately
     if (objSetup->loadFlags & OBJSETUP_LOAD_MANUAL) {
         return FALSE;
     }
+
     if ((obj->unkC0 != NULL) && (obj->unkB4 < 0)) {
         return FALSE;
     }
+
+    //If the object's not parented to a mobile map, check if its local block is loaded
     if (obj->parent == NULL) {
-        sp54 = floor_f((obj->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-        temp_v0_2 = floor_f((obj->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
-        if ((sp54 < 0) || (temp_v0_2 < 0) || (sp54 >= BLOCKS_GRID_SPAN) || (temp_v0_2 >= BLOCKS_GRID_SPAN)) {
+        gridX = floor_f((obj->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+        gridZ = floor_f((obj->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+
+        //Check if the grid cell is out of the loaded range
+        if ((gridX < 0) || (gridZ < 0) || (gridX >= BLOCKS_GRID_SPAN) || (gridZ >= BLOCKS_GRID_SPAN)) {
             return TRUE;
         }
-        sp54 = GRID_INDEX(temp_v0_2, sp54);
-        for (var_a1 = FALSE, i = 0; i < MAP_LAYER_COUNT; i++) {
+
+        //Check if its local block is loaded
+        gridX = GRID_INDEX(gridZ, gridX);
+        for (hasLocalBlock = FALSE, i = 0; i < MAP_LAYER_COUNT; i++) {
             currentBlockIndices = gBlockIndices[i];
-            if (currentBlockIndices[sp54] >= 0) {
-                var_a1 = TRUE;
+            if (currentBlockIndices[gridX] >= 0) {
+                hasLocalBlock = TRUE;
             }
         }
-        if (var_a1 == FALSE) {
+        if (hasLocalBlock == FALSE) {
             return TRUE;
         }
     }
+
+    //Check if the object doesn't unload based on player/camera distance
     if (objSetup->loadFlags & OBJSETUP_LOAD_FLAG20) {
         return FALSE;
     }
-    if ((objSetup->loadFlags & OBJSETUP_LOAD_MAIN) && (player = get_player(), (player != NULL)) && obj->parent == NULL) {
-        var_fv1 = player->globalPosition.x;
-        var_fa0 = player->globalPosition.y;
-        var_fa1 = player->globalPosition.z;
+
+    //Use player/camera distance to check if the object should unload
+    if ((objSetup->loadFlags & OBJSETUP_LOAD_MAIN) && 
+        (player = get_player(), (player != NULL)) && obj->parent == NULL
+    ) {
+        refX = player->globalPosition.x;
+        refY = player->globalPosition.y;
+        refZ = player->globalPosition.z;
     } else {
         if (obj->parent != NULL) {
-            var_a0 = obj->parent->matrixIdx + 1;
+            mtxIdx = obj->parent->matrixIdx + 1;
         } else {
-            var_a0 = 0;
+            mtxIdx = 0;
         }
-        var_fv1 = Vec3_Int_array[var_a0].f.x;
-        var_fa0 = Vec3_Int_array[var_a0].f.y;
-        var_fa1 = Vec3_Int_array[var_a0].f.z;
+        refX = Vec3_Int_array[mtxIdx].f.x;
+        refY = Vec3_Int_array[mtxIdx].f.y;
+        refZ = Vec3_Int_array[mtxIdx].f.z;
     }
+
     loadDist = obj->loadDistance;
+
+    //Make sure object's worldSpace coordinates are being used for the check
     if (obj->parent != NULL) {
-        var_fv0 = var_fv1 - obj->srt.transl.x;
-        var_ft4 = var_fa0 - obj->srt.transl.y;
-        var_ft5 = var_fa1 - obj->srt.transl.z;
+        dx = refX - obj->srt.transl.x;
+        dy = refY - obj->srt.transl.y;
+        dz = refZ - obj->srt.transl.z;
     } else {
-        var_fv0 = var_fv1 - obj->globalPosition.x;
-        var_ft4 = var_fa0 - obj->globalPosition.y;
-        var_ft5 = var_fa1 - obj->globalPosition.z;
+        dx = refX - obj->globalPosition.x;
+        dy = refY - obj->globalPosition.y;
+        dz = refZ - obj->globalPosition.z;
     }
+
+    //Unload distance: add padding of 40 to load distance
     loadDistAdjusted = loadDist + 40.0f;
-    var_fv0 = ((var_fv0 * var_fv0) + (var_ft4 * var_ft4) + (var_ft5 * var_ft5));
-    if (var_fv0 < (loadDistAdjusted * loadDistAdjusted)) {
-        return FALSE;
+
+    //Check whether object has left the radius (squared)
+    dx = (SQ(dx) + SQ(dy) + SQ(dz));
+    if (dx < SQ(loadDistAdjusted)) {
+        return FALSE; //Object doesn't unload yet
+    } else {
+        return TRUE; //Object unloaded
     }
-    return TRUE;
 }
 
-/** map_should_object_load? */
 // is_obj_in_current_map_setup
 s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     s32 setupID;
@@ -4516,6 +4544,7 @@ s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     if (setupID == -1) {
         return 0;
     }
+
     /* default.dol
     if (mapID < 0 || mapID >= 120) {
         STUBBED_PRINTF("Warning: object being checked doesn't have a valid mapno in trackCheckObjectLoad(mapno: %d)\n", mapID);
