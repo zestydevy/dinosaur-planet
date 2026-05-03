@@ -2653,12 +2653,7 @@ Vec3f* func_8002CBD4(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, 
     return arg8;
 }
 
-#ifndef NON_MATCHING
-void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, Vec3f* arg10);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002CEC8.s")
-#else
-// https://decomp.me/scratch/7dHqX
-void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, Vec3f* arg10) {
+Vec3f* func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, Vec3f* arg10) {
     f32 sp24;
     f32 sp20;
     f32 sp1C;
@@ -2675,7 +2670,7 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
         arg10->x += arg3->x;
         arg10->y += arg3->y;
         arg10->z += arg3->z;
-        return;
+        return arg10;
     }
 
     if (arg7 < arg2) {
@@ -2686,7 +2681,7 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
         arg10->x += arg4->x;
         arg10->y += arg4->y;
         arg10->z += arg4->z;
-        return;
+        return arg10;
     }
 
     sp1C = arg4->x - arg3->x;
@@ -2703,9 +2698,9 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
     arg10->x += sp10;
     arg10->y += sp14;
     arg10->z += sp18;
-}
-#endif
 
+    return arg10;
+}
 
 s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelInstance_0x14* arg4, Model *arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9) {
     Vec3f sp104;
