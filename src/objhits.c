@@ -1994,43 +1994,39 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     return 0;
 }
 
-
-#ifndef NON_EQUIVALENT
-s32 func_8002AD3C(Object *obj, Vec3f *arg1, Vec3f *arg2, Vec3f *arg3, f32 *arg4);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002AD3C.s")
-#else
-// https://decomp.me/scratch/z2C6y
 s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4) {
     HitSphere* temp_s4;
     Model* model;
-    ModelInstance* modelInstance;
-    ObjectHitInfo* objHitInfo;
-    f32 temp_fa0;
-    f32 temp_fs0;
-    f32 temp_fs1;
-    f32 temp_fv0_2;
-    f32 temp_fv0_3;
-    f32 var_ft5;
-    f32 var_fv1;
-    s32 temp_a0;
-    s32 i;
-    s32 var_s1;
-    u16 var_v1;
-    s32 temp_s3;
-    f32* temp_s5;
     s32 spEC;
     u64 spE8;
     f32 spE4;
     f32 spE0;
     f32 spDC;
     f32 spD8;
-    u8 pad_spC4[0xD8 - 0xC4];
+    ModelInstance* modelInstance;
+    ObjectHitInfo* objHitInfo;
+    f32 temp_fs2;
+    f32 temp_fa0;
+    f32 temp_fs0;
     f32 spC0;
     f32 spBC;
-    u8 pad_spA8[0xBC - 0xA8];
+    f32 temp_fs1;
+    f32 temp_fv0_3;
+    f32 var_ft5;
+    f32 var_fv1;
+    s32 temp_a0;
     f32 spA4;
     f32 spA0;
     f32 sp9C;
+    s32 i;
+    s32 var_s1;
+    u16 var_v1;
+    s32 temp_s3;
+    Vec4f* temp_s5;
+    f32 temp_fs3;
+    f32 temp_fs4;
+    f32 temp_fs5;
+    f32 pad;
 
     objHitInfo = obj->objhitInfo;
     modelInstance = obj->modelInsts[obj->modelInstIdx];
@@ -2058,34 +2054,36 @@ s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4)
         do {
             var_s1 = 0;
             for (i = 0; i < temp_s3; i++) {
-                if (((1 << i) & spE8)) {
-                    temp_fv0_2 = SQ(temp_s5[i * 4 + 0]);
-                    temp_fv0_3 = spA4 - temp_s5[i * 4 + 1];
-                    var_fv1 = spA0 - temp_s5[i * 4 + 2];
-                    temp_fa0 = sp9C - temp_s5[i * 4 + 3];
+                if ((1 << i) & spE8) {
+                    temp_fv0_3 = temp_s5[i].f[0];
+                    temp_fs2 = SQ(temp_fv0_3);
+                    temp_fs3 = temp_s5[i].f[1];
+                    temp_fs4 = temp_s5[i].f[2];
+                    temp_fs5 = temp_s5[i].f[3];
+                    temp_fv0_3 = spA4 - temp_fs3;
+                    var_fv1 = spA0 - temp_fs4;
+                    temp_fa0 = sp9C - temp_fs5;
+                    temp_fs1 = SQ(spE0) + SQ(spDC) + SQ(spD8);
                     spC0 = 2.0f * ((spE0 * temp_fv0_3) + (spDC * var_fv1) + (spD8 * temp_fa0));
                     var_ft5 = SQ(spC0);
-                    temp_fs1 = SQ(spE0) + SQ(spDC) + SQ(spD8);
-                    temp_fs0 = (4.0f * temp_fs1) * ((SQ(temp_fv0_3) + SQ(var_fv1) + SQ(temp_fa0)) - (temp_fv0_2));
+                    temp_fs0 = (4.0f * temp_fs1) * (SQ(temp_fv0_3) + SQ(var_fv1) + SQ(temp_fa0) -  temp_fs2);
                     spBC = var_ft5 - temp_fs0;
                     if (temp_fs0 < var_ft5) {
                         temp_fv0_3 = sqrtf(spBC);
-                        temp_fs0 = 2.0f * temp_fs1;
-                        if (temp_fs0 != 0.0f) {
-                            spC0 = -spC0;
-                            var_ft5 = (spC0 + temp_fv0_3) / temp_fs0;
+                        temp_fs1 = 2.0f * temp_fs1;
+                        if (temp_fs1 != 0.0f) {
+                            var_ft5 = (-spC0 + temp_fv0_3) / temp_fs1;
+                            var_fv1 = (-spC0 - temp_fv0_3) / temp_fs1;
                             if (var_ft5 > 0.0f) {
-                                var_fv1 = (spC0 - temp_fv0_3) / temp_fs0;
-                                if ((var_fv1 > 0.0f) && !(var_ft5 < var_fv1)) {
-                                    var_ft5 = var_fv1;
-                                }
-                            } else {
-                                var_fv1 = (spC0 - temp_fv0_3) / temp_fs0;
                                 if (var_fv1 > 0.0f) {
-                                    var_ft5 = var_fv1;
+                                    if (!(var_ft5 < var_fv1)) {
+                                        var_ft5 = var_fv1;
+                                    }
                                 }
+                            } else if (var_fv1 > 0.0f) {
+                                var_ft5 = var_fv1;
                             }
-                            if ((var_ft5 >= 0.0f) && (var_ft5 <= 1.0f)) {
+                            if (var_ft5 >= 0/*.0*/ && var_ft5 <= 1.0f) {
                                 if (var_ft5 < spE4) {
                                     spE4 = var_ft5;
                                 }
@@ -2117,8 +2115,6 @@ s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4)
     *arg4 = 10.0f;
     return FALSE;
 }
-
-#endif
 
 void func_8002B2D0(s32* arg0, s32 arg1, s32 arg2, HitSphere *hitSpheres) {
     s32 sp20[48];
