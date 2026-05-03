@@ -156,7 +156,7 @@ s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
 s32 func_8002DFB8(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32* arg6);
 s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8);
 void func_8002F498(Vec3f* arg0, ModelInstance_0x14* arg1, Model* model, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4);
-s32 func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
+int func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
 void func_80030A24(Object *arg0, Object *arg1, Unk80030A24* arg2, f32 arg3, s32 arg4, Vec3f* arg5);
 void func_80027934(Object *obj, Object *otherObj);
 void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 updateRate);

@@ -3514,50 +3514,40 @@ void func_8002F498(Vec3f* arg0, ModelInstance_0x14* arg1, Model* model, ModelIns
 
 static const char str_800999d8[] = " No Joints On Given Skeleton Object Error ";
 
-static const char str_80099a04[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt2 \n";
-static const char str_80099a48[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt \n";
-#ifndef NON_EQUIVALENT
-s32 func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002F998.s")
-#else
-// https://decomp.me/scratch/q2iY8
-s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14* arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD) {
+int func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14* arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD) {
     Vec3f* sp14C;
     Vec3f* sp148;
-    s32 sp13C;
-    s32 sp138; // s2
-    s32 sp130;
-    s32 sp128;
-    s32 sp124;
-    s32 sp118;
-    ModelInstance_0x14_0x14* sp114;
-    ModelInstance_0x14_0x14* sp110;
-    f32 spF4;
-    Vec3f spE4;
     Unk80030A24* var_s3;
     Vec3f* temp_s0;
+    s32 sp13C;
+    s32 sp138;
     Vec3f* temp_s6;
+    s32 sp130;
     Vec3f* var_s1;
+    s32 sp128;
+    s32 sp124;
     f32 temp_fs0;
     f32 temp_fs1;
+    s32 sp118; // t1
+    ModelInstance_0x14_0x14* sp114;
+    ModelInstance_0x14_0x14* sp110;
     f32 temp_fs2;
-    f32 temp_fv0;
+    f32 temp;
     f32 var_fa0;
-    f32 var_fs0;
     f32 var_fs3;
     f32 var_fv1;
-    s32 temp_a0_2;
-    s32 temp_s5;
-    s32 temp_v0;
-    s32 temp_v0_2;
     s32 var_s4;
+    f32 spF4;
     s32 var_s2;
+    Vec3f spE4;
+    s32 spC8;
+    s32 spD0;
     s32 var_s5;
 
     sp118 = 0;
-    temp_fs0 = func_8002F214(arg4);
-    temp_fv0 = func_8002F214(argB);
-    if ((temp_fs0 / temp_fv0) > 4.0f) {
+    temp = func_8002F214(arg4);
+    var_fv1 = func_8002F214(argB);
+    if ((temp / var_fv1) > 4.0f) {
         func_8002F24C(arg3, argB, arg5);
         for (sp13C = 0; sp13C != 25; sp13C++) {
             arg6[sp13C] = sp13C;
@@ -3566,7 +3556,7 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
         for (sp13C = 0; sp13C < 25; sp13C++) {
             arg5[sp13C] = sp13C;
         }
-        if ((temp_fv0 / temp_fs0) > 4.0f) {
+        if ((var_fv1 / temp) > 4.0f) {
             func_8002F24C(argA, arg4, arg6);
         } else {
             for (sp13C = 0; sp13C < 25; sp13C++) { arg6[sp13C] = sp13C; }
@@ -3575,125 +3565,120 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
     sp114 = argA;
     sp110 = arg3;
     var_s3 = argC;
+
+    arg3 = &sp110[arg5[0]];
+    *argD = 0/*.0f*/;
     sp128 = 0;
-    arg3 = &sp110[arg5[sp128]];
-    *argD = 0.0f;
-    while (arg3->unk0[0] != -1){
+    while (arg3->unk0[0] != -1) {
+        argA = &sp114[arg6[0]];
         sp124 = 0;
-        argA = &sp114[arg6[sp124]];
         while (argA->unk0[0] != -1) {
-            if (!(arg3->unk18.x < argA->unk24.x) && !(arg3->unk18.y < argA->unk24.y) && !(arg3->unk18.z < argA->unk24.z) && !(argA->unk18.x < arg3->unk24.x) && !(argA->unk18.y < arg3->unk24.y) && !(argA->unk18.z < arg3->unk24.z)) {
-                temp_v0 = arg3->unk30 - 1;
+            if (
+                !(arg3->unk18.x < argA->unk24.x) &&
+                !(arg3->unk18.y < argA->unk24.y) &&
+                !(arg3->unk18.z < argA->unk24.z) &&
+                !(argA->unk18.x < arg3->unk24.x) &&
+                !(argA->unk18.y < arg3->unk24.y) &&
+                !(argA->unk18.z < arg3->unk24.z)
+            ) {
+                spD0 = arg3->unk30 - 1;
                 do {
-                    temp_v0_2 = arg3->unk0[temp_v0];
-                    sp130 = temp_v0_2;
-                    var_fs3 = arg0->unk4[temp_v0_2];
-                    sp138 = arg1->joints[temp_v0_2].parentJointID;
-                    sp14C = &arg2[temp_v0_2];
-                    while (sp138 != arg3->unkC[temp_v0]) {
-                        sp148 = &arg2[sp138];
-                        temp_fs2 = arg0->unk4[sp138];
-                        if (
-                            (!(argA->unk18.x < (sp14C->x - var_fs3)) || !(argA->unk18.x < (sp148->x - temp_fs2))) &&
-                            (!((sp14C->x + var_fs3) < argA->unk24.x) || !((sp148->x + temp_fs2) < argA->unk24.x)) &&
-                            (!(argA->unk18.y < (sp14C->y - var_fs3)) || !(argA->unk18.y < (sp148->y - temp_fs2))) &&
-                            (!((sp14C->y + var_fs3) < argA->unk24.y) || !((sp148->y + temp_fs2) < argA->unk24.y)) &&
-                            (!(argA->unk18.z < (sp14C->z - var_fs3)) || !(argA->unk18.z < (sp148->z - temp_fs2)))
-                        ) {
-                            if (!((sp14C->z + var_fs3) < argA->unk24.z) || !((sp148->z + temp_fs2) < argA->unk24.z)) {
-                                temp_a0_2 = argA->unk30 - 1;
+                    sp130 = arg3->unk0[spD0];
+                    sp14C = &arg2[arg3->unk0[spD0]];\
+                    var_fs3 = arg0->unk4[arg3->unk0[spD0]];\
+                    var_s2 = arg1->joints[arg3->unk0[spD0]].parentJointID;
+                    if (var_s2 != arg3->unkC[spD0]) {
+                        sp138 = var_s2;
+                        do {
+                            sp148 = &arg2[sp138];
+                            temp_fs2 = arg0->unk4[sp138];
+                            temp_s6 = &arg2[sp138]; // can be moved into the do-while needed
+                            if (
+                                (!(argA->unk18.x < (sp14C->x - var_fs3)) || !(argA->unk18.x < (sp148->x - temp_fs2))) &&
+                                (!((sp14C->x + var_fs3) < argA->unk24.x) || !((sp148->x + temp_fs2) < argA->unk24.x)) &&
+                                (!(argA->unk18.y < (sp14C->y - var_fs3)) || !(argA->unk18.y < (sp148->y - temp_fs2))) &&
+                                (!((sp14C->y + var_fs3) < argA->unk24.y) || !((sp148->y + temp_fs2) < argA->unk24.y)) &&
+                                (!(argA->unk18.z < (sp14C->z - var_fs3)) || !(argA->unk18.z < (sp148->z - temp_fs2))) && 
+                                (!((sp14C->z + var_fs3) < argA->unk24.z) || !((sp148->z + temp_fs2) < argA->unk24.z))
+                            ) {
+                                spC8 = argA->unk30 - 1;
                                 do {
-                                    var_s5 = argA->unk0[temp_a0_2];
-                                    sp138 = arg8->joints[var_s5].parentJointID;
-                                    var_s4 = var_s5;
+                                    var_s5 = argA->unk0[spC8];
                                     var_s1 = &arg9[var_s5];
-                                    var_fs0 = arg7->unk4[var_s5];
-                                    var_s5 = sp138;
-                                    while (var_s5 != argA->unkC[temp_a0_2]) {
+                                    temp_fs0 = arg7->unk4[var_s5];
+                                    var_s4 = var_s5;
+                                    var_s2 = arg8->joints[var_s5].parentJointID;
+                                    var_s5 = var_s2;
+                                    while (var_s5 != argA->unkC[spC8]) {
                                         temp_s0 = &arg9[var_s5];
-                                        temp_s6 = &arg2[var_s5];
                                         temp_fs1 = arg7->unk4[var_s5];
-                                        if (temp_fs1 <= var_fs0) {
-                                            var_fv1 = 0;
-                                        } else {
-                                            var_fv1 = temp_fs1;
-                                        }
-                                        if (func_8002EBA8(sp14C, temp_s6, var_fs3, temp_fs2, var_s1, temp_s0, var_fs0, var_fv1) != 0) {
-                                            if (func_8002C278(*sp14C, *temp_s6, var_fs3, temp_fs2, *var_s1, *temp_s0, var_fs0, temp_fs1, arg0->unkC[sp130], arg7->unkC[var_s4], &spF4, &spE4) != 0) {
-                                                arg0->unk18[sp138] = 1;
-                                                arg0->unk18[sp130] = 1;
-                                                arg7->unk18[sp138] = 1;
-                                                arg7->unk18[var_s4] = 1;
-                                                var_s3->unk8.x = spE4.x;
-                                                var_s3->unk8.y = spE4.y;
-                                                var_s3->unk8.z = spE4.z;
-                                                if (spF4 == 0.0f) {
-                                                    spF4 = 0.1f;
-                                                }
-                                                var_s3->unk14.y = spF4;
-                                                var_s3->unk24 = 1.0f;
-                                                *argD += 1.0f;
-                                                if (temp_fs2 < var_fs3) {
-                                                    var_fa0 = var_fs3;
-                                                } else {
-                                                    var_fa0 = temp_fs2;
-                                                }
-                                                if (temp_fs1 < var_fs0) {
-                                                    var_fv1 = var_fs0;
-                                                } else {
-                                                    var_fv1 = temp_fs1;
-                                                }
-                                                temp_fv0 = (var_fv1 + var_fa0) - var_s3->unk14.y;
-                                                var_s3->unk14.z = temp_fv0;
-                                                var_s3->unk8.x *= temp_fv0;
-                                                var_s3->unk8.y *= temp_fv0;
-                                                var_s3->unk8.z *= temp_fv0;
-                                                var_s3->unk28 = sp13C;
-                                                if (sp118 < 20) {
-                                                    var_s3 += 1;
-                                                    sp118 += 1;
-                                                }
+                                        var_fv1 = (temp_fs1 <= temp_fs0) ? 0.0f : temp_fs1;
+                                        if (
+                                            func_8002EBA8(sp14C, temp_s6, var_fs3, temp_fs2, var_s1, temp_s0, temp_fs0, var_fv1) != 0
+                                            && func_8002C278(*sp14C, *temp_s6, var_fs3, temp_fs2, *var_s1, *temp_s0, temp_fs0, temp_fs1, arg0->unkC[sp130], arg7->unkC[var_s4], &spF4, &spE4) != 0
+                                        ) {
+                                            arg0->unk18[sp138] = 1;
+                                            arg0->unk18[sp130] = 1;
+                                            arg7->unk18[var_s5] = 1;
+                                            arg7->unk18[var_s4] = 1;
+                                            
+                                            var_s3->unk8.x = spE4.x;
+                                            var_s3->unk8.y = spE4.y;
+                                            var_s3->unk8.z = spE4.z;
+                                            if (spF4 == 0/*.0f*/) {
+                                                spF4 = 0.1f;
+                                            }
+                                            var_s3->unk14.y = spF4;
+                                            var_s3->unk24 = 1.0f;
+                                            *argD = *argD + 1.0f;
+                                            var_fa0 = MAX(var_fs3, temp_fs2);
+                                            var_fv1 = MAX(temp_fs0, temp_fs1);
+                                            var_s3->unk14.z = var_fv1 + var_fa0 - var_s3->unk14.y;
+                                            var_s3->unk8.x = var_s3->unk8.x * var_s3->unk14.z;
+                                            var_s3->unk8.y = var_s3->unk8.y * var_s3->unk14.z;
+                                            var_s3->unk8.z = var_s3->unk8.z * var_s3->unk14.z;
+                                            var_s3->unk28 = sp13C;
+                                            if (sp118 < 20) {
+                                                var_s3++;
+                                                sp118++;
                                             }
                                         }
-                                        var_s4 = var_s5;
-                                        sp138 = arg8->joints[var_s5].parentJointID;
                                         var_s1 = temp_s0;
-                                        var_fs0 = temp_fs1;
-                                        var_s5 = sp138;
+                                        var_s4 = var_s5;
+                                        var_s2 = arg8->joints[var_s5].parentJointID;
+                                        var_s5 = var_s2;
+                                        temp_fs0 = temp_fs1;
                                     }
-                                    sp138 = temp_a0_2 < 1;
-                                    temp_a0_2 -= 1;
-                                } while (sp138 == 0);
+                                    var_s2 = spC8-- > 0;
+                                } while (var_s2);
                             }
-                        }
-                        sp14C = sp148;
-                        var_fs3 = temp_fs2;
-                        sp130 = sp138;
-                        sp138 = arg1->joints[sp138].parentJointID;
+
+                            sp14C = sp148;
+                            var_fs3 = temp_fs2;
+                            sp130 = sp138;
+                            var_s2 = arg1->joints[sp130].parentJointID;
+                            sp138 = var_s2;
+                        } while (var_s2 != arg3->unkC[spD0]) ;
                     }
-                    sp138 = temp_v0 < 1;
-                    temp_v0 -= 1;
-                } while (sp138 == 0);
+                    var_s2 = spD0-- > 0;
+                } while (var_s2);
             }
-            if (sp124 + 1 > 25) {
-                // "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt2 \n"
+
+            if ((sp124 + 1) > 25) {
+                STUBBED_PRINTF("\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt2 \n");
             }
-            sp124 += 1;
-            argA = &sp114[arg6[sp124]];
+            argA = &sp114[arg6[++sp124]];
         }
-        if (sp128 + 1 > 25) {
-            // "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt \n"
+
+        if ((sp128 + 1) > 25) {
+            STUBBED_PRINTF("\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt \n");
         }
-        sp128 += 1;
-        arg3 = &sp110[arg5[sp128]];
+        arg3 = &sp110[arg5[++sp128]];
     }
-    
     var_s3->unk28 = -1;
-    return !((u32) var_s3 == (u32) argC);
+    return !(var_s3 == argC);
 }
 
-
-#endif
 
 static const char str_80099a88[] = " Result1 ";
 static const char str_80099a94[] = " x %f y %f z %f \n";
