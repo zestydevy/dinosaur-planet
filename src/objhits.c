@@ -3653,7 +3653,9 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
                                                 }
                                                 temp_fv0 = (var_fv1 + var_fa0) - var_s3->unk14.y;
                                                 var_s3->unk14.z = temp_fv0;
-                                                VECTOR_SCALE(var_s3->unk8, temp_fv0);
+                                                var_s3->unk8.x *= temp_fv0;
+                                                var_s3->unk8.y *= temp_fv0;
+                                                var_s3->unk8.z *= temp_fv0;
                                                 var_s3->unk28 = sp13C;
                                                 if (sp118 < 20) {
                                                     var_s3 += 1;
@@ -3697,6 +3699,8 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
     var_s3->unk28 = -1;
     return !((u32) var_s3 == (u32) argC);
 }
+
+
 #endif
 
 static const char str_80099a88[] = " Result1 ";
@@ -3868,11 +3872,6 @@ void func_80030A24(Object *arg0, Object *arg1, Unk80030A24* arg2, f32 arg3, s32 
     }
 }
 
-#ifndef NON_MATCHING
-void func_80030AEC(Object *obj, Object *otherObj);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80030AEC.s")
-#else
-// https://decomp.me/scratch/5K9Wp
 void func_80030AEC(Object* obj, Object* otherObj) {
     f32 spC4;
     f32 spC0;
@@ -3887,9 +3886,9 @@ void func_80030AEC(Object* obj, Object* otherObj) {
     Vec3f sp8C;
     Vec3f sp80;
     Vec3f sp74;
-    f32 pad_sp70;
-    f32 pad_sp6C;
-    f32 pad_sp68;
+    f32 tempY;
+    f32 tempX;
+    f32 tempZ;
     f32 temp_fa0;
     f32 sp34;
     f32 sp30;
@@ -3922,24 +3921,22 @@ void func_80030AEC(Object* obj, Object* otherObj) {
     }
     sp34 = spAC * spB8;
     sp30 = spA8 * spBC;
-    if (((sp34 >= 0.0f) && (spBC <= 0.0f)) || ((sp34 <= 0.0f) && (spBC >= 0.0f))) {
+    if ((sp34 >= 0.0f && spBC <= 0.0f) || (sp34 <= 0.0f && spBC >= 0.0f)) {
         sp34 = -spBC;
     }
-    if (((sp30 >= 0.0f) && (spB8 <= 0.0f)) || ((sp30 <= 0.0f) && (spB8 >= 0.0f))) {
+    if ((sp30 >= 0.0f && spB8 <= 0.0f) || (sp30 <= 0.0f && spB8 >= 0.0f)) {
         sp30 = -spB8;
     }
-    pad_sp70 = sp50.x * sp34 + sp98.x;
-    pad_sp6C = sp50.y * sp34 + sp98.y;
-    pad_sp68 = sp50.z * sp34 + sp98.z;
-    sp44.x += pad_sp70;
-    sp44.y += pad_sp6C;
-    sp44.z += pad_sp68;
-    pad_sp70 = sp8C.x + sp50.x * sp30;
-    pad_sp6C = sp8C.y + sp50.y * sp30;
-    pad_sp68 = sp8C.z + sp50.z * sp30;
-    sp38.x += pad_sp70;
-    sp38.y += pad_sp6C;
-    sp38.z += pad_sp68;
+    sp44.x += sp50.x * sp34 + sp98.x;
+    sp44.y += sp50.y * sp34 + sp98.y;
+    sp44.z += sp50.z * sp34 + sp98.z;
+    tempZ = sp50.z * sp30;
+    tempY = sp50.x * sp30 + sp8C.x;
+    tempX = sp50.y * sp30 + sp8C.y;
+    tempZ += sp8C.z;
+    sp38.x += tempY;
+    sp38.y += tempX;
+    sp38.z += tempZ;
     obj->srt.transl.x = sp44.x;
     obj->srt.transl.z = sp44.z;
     obj->globalPosition.x = obj->srt.transl.x;
@@ -3949,7 +3946,6 @@ void func_80030AEC(Object* obj, Object* otherObj) {
     otherObj->globalPosition.x = otherObj->srt.transl.x;
     otherObj->globalPosition.z = otherObj->srt.transl.z;
 }
-#endif
 
 void func_80030E2C(Object* obj, f32* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4) {
     *arg1 = SQ(obj->visRadius);
