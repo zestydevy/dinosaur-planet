@@ -2478,34 +2478,32 @@ s32 func_8002C278(Vec3f arg0, Vec3f arg1, f32 arg2, f32 arg3, Vec3f arg4, Vec3f 
     return 0;
 }
 
-#ifndef NON_MATCHING
-Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) ;
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002C3EC.s")
-#else
-// https://decomp.me/scratch/5vB1O
 Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) {
     f32 var_fv1;
     f32 sp68;
     f32 sp64;
     f32 sp60;
     f32 var_fv0;
+    f32 var_ft5;
 
     func_8002BD04(arg0, arg2, arg5, arg7, arg6, arg8, arg9, argA, &sp64, &sp68, &sp60);
     arg3 /= argA;
     sp64 /= argA;
     arg4 = sqrtf(arg4);
-    sp68 = sqrtf(sp68) - arg2;
+    sp68 = sqrtf(sp68);
     arg4 -= arg2;
+    sp68 -= arg2;
     var_fv0 = arg9 - arg8;
     if (arg3 != sp64) {
-        if (var_fv0 == ((1.0f / (arg3 - sp64)) * (arg4 - sp68))) {
+        var_ft5 = ((1.0f / (arg3 - sp64)) * (arg4 - sp68));
+        if (var_fv0 == var_ft5) {
             if (sp64 > 0.0f) {
                 var_fv1 = 1.0f;
             } else {
                 var_fv1 = 0.0f;
             }
         } else {
-            var_fv1 = (arg8 - (((arg4 - sp68) * (-arg3 / (arg3 - sp64))) + arg4)) / (((1.0f / (arg3 - sp64)) * (arg4 - sp68)) - var_fv0);
+            var_fv1 = (arg8 - (((arg4 - sp68) * (-arg3 / (arg3 - sp64))) + arg4)) / (var_ft5 - var_fv0);
         }
     } else {
         var_fv1 = arg3;
@@ -2530,7 +2528,6 @@ Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec
     argD->z += arg1->z;
     return argD;
 }
-#endif
 
 Vec3f* func_8002C658(Vec3f* arg0, f32 arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, f32 arg5, f32 arg6, Vec3f* arg7) {
     f32 temp_fv0;
