@@ -357,7 +357,7 @@ void dll_711_control(Object *self) {
         dll_711_func_34E4(self, objdata);
         if (objdata->flags & SNOWBIKEFLAG_IS_CPU) {
             if (objdata->flags & SNOWBIKEFLAG_8) {
-                if (func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
+                if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
                     if (objdata->flags & SNOWBIKEFLAG_2) {
                         sp54 = gDLL_4_Race->vtbl->func5(&objdata->unk0, &objdata->unk18, 2.8f * gUpdateRateF, 1, 1, 0);
                         gDLL_4_Race->vtbl->func4(self, &objdata->unk18);
@@ -671,7 +671,7 @@ void dll_711_func_1760(Object *self) {
     } else {
         uid = 0xCB3; // IM checkpoint setup UID
     }
-    checkpoint = (RaceCheckpointSetup*)func_80044448(uid, NULL, NULL, NULL, NULL);
+    checkpoint = (RaceCheckpointSetup*)map_find_obj_setup(uid, NULL, NULL, NULL, NULL);
     if (checkpoint != NULL) {
         self->srt.transl.x = checkpoint->pos.x;
         self->srt.transl.y = checkpoint->pos.y;

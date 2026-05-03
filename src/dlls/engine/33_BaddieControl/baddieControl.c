@@ -360,7 +360,7 @@ s32 BaddieControl_func_ED0(Object* arg0, Baddie* arg1, u8 arg2) {
     if (arg2 && (arg1->fsa.hitpoints <= 0) && (arg0->opacity == 0)) {
         return 0;
     }
-    if ((arg0->parent == NULL) && (func_8004454C(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
+    if ((arg0->parent == NULL) && (map_world_coords_to_block_index(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
         return 0;
     }
     return 1;

@@ -1799,7 +1799,7 @@ void obj_clear_map_id(Object *obj) {
 }
 
 void obj_infer_map_id(Object *obj) {
-    obj->mapID = map_get_map_id_from_xz_ws(obj->srt.transl.x, obj->srt.transl.z);
+    obj->mapID = map_world_xz_to_map_id(obj->srt.transl.x, obj->srt.transl.z);
 }
 
 s32 obj_move(Object *obj, f32 dx, f32 dy, f32 dz) {

@@ -238,7 +238,7 @@ VoxmapSlot* voxmap_find_closest_slot(Vec3s16 *position) {
     gVoxmapLastSearchedSlot.unk8 = gVoxmapLastSearchedSlot.unk0 / SOME_FACTOR;
     gVoxmapLastSearchedSlot.unkC = gVoxmapLastSearchedSlot.unk4 / SOME_FACTOR;
     var_s1 = -1;
-    if (func_80044B18(var_s0, sp40, 0) != 0) {
+    if (map_get_block_from_grid(var_s0, sp40, 0) != 0) {
         mapCell = func_80046698(var_s0, sp40);
         var_s1 = mapCell->blockID;
     }

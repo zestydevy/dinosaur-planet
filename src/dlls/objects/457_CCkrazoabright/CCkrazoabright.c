@@ -474,7 +474,7 @@ void CCkrazoabright_apply_blending_krazoa_symbol(u8* colours) {
     
     //Iterate over the courtyard well's two Block model pieces (containing the Krazoa symbol)
     for (b = 0; b < 2; b++){
-        block = func_80044BB0(func_8004454C(data_coords_well_blocks[b].x, data_coords_well_blocks[b].y, data_coords_well_blocks[b].z));
+        block = map_get_block_by_index(map_world_coords_to_block_index(data_coords_well_blocks[b].x, data_coords_well_blocks[b].y, data_coords_well_blocks[b].z));
         if (block == NULL) {
             continue;
         }
@@ -518,7 +518,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
 
     //Iterate over the courtyard's two ocean-side Block models (containing the lever columns) 
     for (b = 0; b < 2; b++) {
-        block = func_80044BB0(func_8004454C(data_coords_lever_blocks[b].x, data_coords_lever_blocks[b].y, data_coords_lever_blocks[b].z));
+        block = map_get_block_by_index(map_world_coords_to_block_index(data_coords_lever_blocks[b].x, data_coords_lever_blocks[b].y, data_coords_lever_blocks[b].z));
         if (block == NULL) {
             continue;
         }

@@ -69,7 +69,7 @@ void portaltexanimator_control(Object* self) {
     objdata = self->data;
 
     //Get the object's local BLOCKS model
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objdata->blockFound = FALSE;
         return;

@@ -114,13 +114,7 @@ s32 D_80092A84[2] = {0};
 s8 gMapLayer = 0;
 DLBuilder *gDLBuilder = &sMainDLBuilder;
 s32 D_80092A94 = -1;
-/** Flags
- * 0x10 - Whether the sky renders
- * 0x80 - Whether shadows render
- * 0x2000 - Freaks out depth testing?
- * 0x10000 - Runs vi_init_framebuffers then toggles off, i guess
- * 0x20000 - Spawns an FXEmit object and turns the fog a tan-ish color, renders a different sun??
- */
+// See TrackFlags enum
 u32 gTrackFlags = 0;
 s8 D_80092A9C[MAP_LAYER_COUNT] = {0, -2, -1, 1, 2};
 s8 gMapNumStreamMaps = 0;
@@ -176,8 +170,8 @@ void block_texscroll_free(u32 id);
 void block_free_texture_anims(Block*);
 void block_texscroll_tick(void);
 void block_texanim_tick(void);
-void func_80044BEC(void);
-void func_80048F58(void);
+void track_update_frustum(void);
+void block_color_table_tick(void);
 void track_draw_main(void);
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
@@ -198,9 +192,9 @@ s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 s32 func_8004B4A0(ObjSetup* obj, s32 mapno);
 void block_add_to_render_list(Block *block, f32 x, f32 z);
 void track_draw_object(Object* obj, s32 visibility);
-s32 func_80045DC0(s32, s32, s32); //unsure of last arg
+s32 func_80045DC0(s32, s32, s32);
 s32 map_find_streammap_index(s32);
-s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
+s32 map_load_streammap_add_to_table(s32);
 s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a);
 void block_texanim_free(Texture *tex, s32 animatorID);
 void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
@@ -643,7 +637,7 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
     mtx = get_some_model_view_mtx();
     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
     camera_setup_viewport_and_matrices(&gMainDL, 0);
-    func_80044BEC();
+    track_update_frustum();
     if (func_80010048() != 0) {
         if (!(gTrackFlags & TRACKFLAG_UNK8)) {
             gTrackFlags |= TRACKFLAG_UNK8;
@@ -687,7 +681,7 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
         gDLL_8->vtbl->func3(&gMainDL);
     }
     D_800B51E4 = get_camera();
-    func_80048F58();
+    block_color_table_tick();
     track_draw_main();
     gDLL_9_Newclouds->vtbl->func4(&gMainDL);
     camera_setup_fullscreen_viewport(&gMainDL);
@@ -1352,8 +1346,8 @@ void track_sort_render_list(u32* list, s32 length) {
     }
 }
 
-/** are_worldCoords_in_current_map */
-s32 func_80044320(f32 worldX, f32 worldZ) {
+// Note: This does not check every loaded map and probably won't behave how you'd expect!
+s32 map_are_world_coords_in_map(f32 worldX, f32 worldZ) {
     s32 localGridX;
     s32 localGridZ;
     s32 temp;
@@ -1363,57 +1357,57 @@ s32 func_80044320(f32 worldX, f32 worldZ) {
     temp = floor_f((worldZ - gWorldZ) / BLOCKS_GRID_UNIT);
     localGridZ = temp + gMapCurrentStreamCoordsZ + gMapActiveStreamMap->originOffsetZ - floor_f(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
     
-    
     if (localGridX < 0 || localGridZ < 0 || localGridX >= gMapActiveStreamMap->gridSizeX || localGridZ >= gMapActiveStreamMap->gridSizeZ) {
         return 0;
     }
     return 1;
 }
 
-ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4) {
+ObjSetup* map_find_obj_setup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap) {
     s32 mapID;
-    s32 object_offset;
+    s32 offset;
     s32 object_indexInMap;
-    u16 new_var;
+    u16 objsSubfileEnd;
     ObjSetup *obj;
     
-    for (mapID = 0; mapID < 120; mapID++){
+    for (mapID = 0; mapID < 120; mapID++) {
         // @fake
         if (!gMapActiveStreamMap) {}
-        if (!gLoadedMapsDataTable[mapID])
+        if (!gLoadedMapsDataTable[mapID]) {
             continue;
+        }
     
         gMapActiveStreamMap = gLoadedMapsDataTable[mapID];
         obj = (ObjSetup*)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
-        new_var = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
-        for (object_indexInMap = 0, object_offset = 0; object_offset < new_var; object_indexInMap++){
-            if (match_uID == obj->uID){
-                if (match_indexInMap){
-                    match_indexInMap[0] = object_indexInMap;
+        objsSubfileEnd = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
+        for (object_indexInMap = 0, offset = 0; offset < objsSubfileEnd; object_indexInMap++) {
+            if (searchUID == obj->uID) {
+                if (outIndexInMap){
+                    *outIndexInMap = object_indexInMap;
                 }
 
-                if (match_mapID){
-                    match_mapID[0] = mapID;
+                if (outMapID) {
+                    *outMapID = mapID;
                 }
 
-                if (arg3 != NULL){
-                    arg3[0] = gMapActiveStreamMap->unk19;
+                if (arg3 != NULL) {
+                    *arg3 = gMapActiveStreamMap->unk19;
                 }
 
-                if (arg4 != NULL){
-                    if (mapID >= MAP_ID_MAX){
-                        arg4[0] = 1;
+                if (outIsMobileMap != NULL) {
+                    if (mapID >= MAP_ID_MAX) {
+                        *outIsMobileMap = TRUE;
                         // @fake
-                        if ((!match_uID) && (!match_uID)) {}
+                        if ((!searchUID) && (!searchUID)) {}
                         return obj;
                     }
-                    arg4[0] = 0;
+                    *outIsMobileMap = FALSE;
                 }
                 
                 return obj;
             }
 
-            object_offset += obj->quarterSize * 4;
+            offset += obj->quarterSize * 4;
             obj = (ObjSetup*)&((s8 *)obj)[obj->quarterSize * 4];
         }
     }
@@ -1421,7 +1415,7 @@ ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, 
     return NULL;
 }
 
-s32 func_8004454C(f32 x, f32 y, f32 z) {
+s32 map_world_coords_to_block_index(f32 x, f32 y, f32 z) {
     s32 gridX;
     s32 gridZ;
     Block *currentBlock;
@@ -1431,16 +1425,16 @@ s32 func_8004454C(f32 x, f32 y, f32 z) {
     gridX = floor_f(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
     gridZ = floor_f(z / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
-    if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN){
+    if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN) {
         return -1;
     }
-    if (gridZ < 0 || gridZ >= BLOCKS_GRID_SPAN){
+    if (gridZ < 0 || gridZ >= BLOCKS_GRID_SPAN) {
         return -1;
     }
     gridX = GRID_INDEX(gridZ, gridX);
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
         temp = gBlockIndices[i];
-        if (temp[gridX] >= 0){
+        if (temp[gridX] >= 0) {
             currentBlock = gLoadedBlocks[temp[gridX]];
             
             //Check if within bounds of block (along Y axis)
@@ -1453,19 +1447,18 @@ s32 func_8004454C(f32 x, f32 y, f32 z) {
     return -1;
 }
 
-/** get_block_world_space_origin? */
-void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ) {
-    s32 worldGridX;
-    s32 worldGridZ;
+void map_world_to_block_world_coords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldX, f32* blockWorldZ) {
+    s32 gridX;
+    s32 gridZ;
 
-    worldGridX = floor_f(worldX / BLOCKS_GRID_UNIT);
-    worldGridZ = floor_f(worldZ / BLOCKS_GRID_UNIT);
+    gridX = floor_f(worldX / BLOCKS_GRID_UNIT);
+    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT);
     
-    *blockWorldOriginX = (f32) worldGridX * BLOCKS_GRID_UNIT;
-    *blockWorldOriginZ = (f32) worldGridZ * BLOCKS_GRID_UNIT;
+    *blockWorldX = (f32) gridX * BLOCKS_GRID_UNIT;
+    *blockWorldZ = (f32) gridZ * BLOCKS_GRID_UNIT;
 }
 
-s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
+s16 map_world_xz_to_map_id(f32 worldX, f32 worldZ) {
     s32 gridX;
     s32 gridZ;
     GlobalMapCell *layer;
@@ -1473,10 +1466,10 @@ s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
     gridX = floor_f(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
     gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
-    if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN){
+    if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN) {
         return -1;
     }
-    if (gridZ < 0 || gridZ >= BLOCKS_GRID_SPAN){
+    if (gridZ < 0 || gridZ >= BLOCKS_GRID_SPAN) {
         return -1;
     }
 
@@ -1484,7 +1477,7 @@ s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
     return layer[GRID_INDEX(gridZ, gridX)].mapIDs[0];
 }
 
-s32 func_800448D0(ObjSetup *arg0) {
+s32 map_find_map_id_of_obj_setup(ObjSetup *setup) {
     GlobalMapCell* var_a3;
     MapHeader* temp_v1;
     s16 var_v0;
@@ -1495,7 +1488,7 @@ s32 func_800448D0(ObjSetup *arg0) {
     ObjSetup* obj;
     s16 sp20[4];
     ObjSetup* obj2;
-    u32 new_var;
+    u32 objSubfileEnd;
 
     var_v0 = 0;
     var_a3 = *gDecodedGlobalMap;
@@ -1522,10 +1515,10 @@ s32 func_800448D0(ObjSetup *arg0) {
         temp_v1 = gLoadedMapsDataTable[sp20[var_a1]];
         if (temp_v1 != NULL) {
             obj = (ObjSetup *) temp_v1->objectInstanceFile_ptr;
-            new_var = (u32)(temp_v1->objectInstancesFileLength + (s8 *)obj);
-            while ((u32)obj < new_var) {
+            objSubfileEnd = (u32)(temp_v1->objectInstancesFileLength + (s8 *)obj);
+            while ((u32)obj < objSubfileEnd) {
                 obj2 = obj;
-                if (obj == arg0) {
+                if (obj == setup) {
                     STUBBED_PRINTF("found on map %d\n", sp20[var_a1]);
                     return sp20[var_a1];
                 }
@@ -1538,16 +1531,16 @@ s32 func_800448D0(ObjSetup *arg0) {
     return -1;
 }
 
-MapHeader** func_80044A10(void) {
+MapHeader** map_get_loaded_maps_table(void) {
     return gLoadedMapsDataTable;
 }
 
 /** Assign object instance file length and get object instance file from map */
-void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength) {
+ObjSetup* map_world_xz_to_map_obj_setup_list(f32 worldX, f32 worldZ, s32* objectsFileLength) {
     s32 mapID;
     MapHeader *map;
 
-    mapID = map_get_map_id_from_xz_ws(worldX, worldZ);
+    mapID = map_world_xz_to_map_id(worldX, worldZ);
     if (mapID != -1){
       *objectsFileLength = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
       return (void *)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
@@ -1556,7 +1549,7 @@ void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength) {
 }
 
 /** Assign blockIndex from worldX/Z */
-s32 func_80044A7C(s32 worldX, s32 worldZ, s32* blockIndex) {
+s32 map_world_xz_to_block_index(s32 worldX, s32 worldZ, s32* blockIndex) {
     s8 *blocksLayer;
     s32 *tempX;
       
@@ -1572,7 +1565,7 @@ s32 func_80044A7C(s32 worldX, s32 worldZ, s32* blockIndex) {
 }
 
 /** Get Block from visGrid cell */
-Block* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer) { 
+Block* map_get_block_from_grid(s32 visGridX, s32 visGridZ, s32 mapLayer) { 
     s8 *blocksLayer;
     s8 blockIndex;
 
@@ -1590,20 +1583,19 @@ Block* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer) {
 }
 
 /** Get visGrid layer */
-s8* func_80044B98(s32 arg0) {
-    return gBlockIndices[arg0];
+s8* map_get_block_grid_layer(s32 layer) {
+    return gBlockIndices[layer];
 }
 
 /** Get Block from blockIndex */
-Block* func_80044BB0(s32 blockIndex) {
+Block* map_get_block_by_index(s32 blockIndex) {
     if (blockIndex < 0 || blockIndex >= gLoadedBlockCount) {
         return 0;
     }
     return gLoadedBlocks[blockIndex];
 }
 
-//Camera and frustum related?
-void func_80044BEC(void) {
+void track_update_frustum(void) {
     f32 spDC;
     f32 spD8;
     f32 spD4;
@@ -1808,7 +1800,7 @@ void some_cell_func(BitStream* stream) {
     }
 
     sp3C = floor_f((D_800B51E4->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-    sp28 = func_80044B18(sp3C, floor_f((D_800B51E4->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F), 0);
+    sp28 = map_get_block_from_grid(sp3C, floor_f((D_800B51E4->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F), 0);
 
     sp3C = floor_f(D_800B51E4->srt.transl.x / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT;
     temp = (floor_f(D_800B51E4->srt.transl.z / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT);
@@ -2972,7 +2964,7 @@ void map_func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
     s32 mapInfoCount;
     MapInfo* mapInfo;
 
-    mapID = map_get_map_id_from_xz_ws(worldX, worldZ);
+    mapID = map_world_xz_to_map_id(worldX, worldZ);
     mapInfoCount = get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
 
     if (mapID < 0 || !(mapID < mapInfoCount)) {
@@ -3286,7 +3278,7 @@ s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a) {
     return i;
 }
 
-void func_80048F58(void) {
+void block_color_table_tick(void) {
     s32 i;
     u8 r, g, b;
 
@@ -4013,7 +4005,7 @@ s32 block_get_animator_vertex_count(Object* obj, u8 animatorID) {
     Block *block;
     BlockShape *shapes;
 
-    block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
     if (!block || !(block->vtxFlags & 8)) {
         return 0;
     }
@@ -4036,7 +4028,7 @@ s32 block_get_animator_shape_count(Object* obj, u8 animatorID) {
     BlockShape *shapes;
 
     //Get object's local Blocks model
-    block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return 0;
     }
@@ -4107,7 +4099,7 @@ void func_8004A67C(void) {
     }
 }
 
-// track_object_control
+// official name: trackObjectControl
 void map_update_objects_streaming(s32 arg0) {
     GlobalMapCell* var_a3;
     s32 i;
@@ -4616,7 +4608,7 @@ s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     return 0;
 }
 
-ObjSetup *func_8004B7D0(s32 search_uID, u32 arg1){
+ObjSetup *map_find_curve(s32 search_uID, u32 arg1){
     MapHeader *map;
     u8 *ptr;
     s32 offset;
@@ -4643,21 +4635,19 @@ ObjSetup *func_8004B7D0(s32 search_uID, u32 arg1){
     return 0;
 }
 
-/** map_find_checkpoint4_by_uID? 
+/**
   * "search_mapID == -1" searches through all maps instead of a specific mapID!
   */
-ObjSetup* func_8004B85C(s32 search_uID, s32 search_mapID) {
+ObjSetup* map_find_checkpoint(s32 search_uID, s32 search_mapID) {
     MapHeader* map;
     s32 search_endID;
-
     u8 *ptr;
     s32 offset;
-    
     s16 objID;
     
     if (search_mapID == -1) {
         search_mapID = 0;
-        search_endID = 0x78;
+        search_endID = 120;
     } else {
         search_endID = search_mapID + 1;
     }
@@ -4668,7 +4658,6 @@ ObjSetup* func_8004B85C(s32 search_uID, s32 search_mapID) {
 
         //Iterating over map objects
         if (map) {
-            
             ptr = (u8*)map->objectInstanceFile_ptr;
             offset = 0;
             
@@ -4689,7 +4678,7 @@ ObjSetup* func_8004B85C(s32 search_uID, s32 search_mapID) {
     return NULL;
 }
 
-void func_8004B914(s32 mapID) {
+void map_is_loaded(s32 mapID) {
     MapHeader *map;
 
     if ((mapID >= 0) && (mapID < 120)) {
@@ -4700,7 +4689,7 @@ void func_8004B914(s32 mapID) {
     }
 }
 
-void func_8004B948(s32 on) {
+void track_func_8004B948(s32 on) {
     if (on != 0) {
         gTrackFlags |= TRACKFLAG_UNK200;
     } else {

@@ -26,7 +26,7 @@ typedef struct {
 /*0050*/    s16 yaw;           // resolved yaw
 /*0052*/    s16 pitch;         // resolved pitch
 /*0054*/    s16 roll;          // resolved roll
-/*0056*/    u16 mapRegion;
+/*0056*/    u16 blockIndex;
 /*0058*/    u16 unk58;
 /*005A*/    s16 dpitch;        // pitch delta (shake)
 /*005C*/    s8 shakeCooldown;

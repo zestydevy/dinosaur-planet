@@ -592,7 +592,7 @@ void dll_210_control(Object* player) {
     if (sp80 >= 5) {
         sp80 = 4;
     }
-    if ((player->parent == NULL) && (func_8004454C(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z) < 0)) {
+    if ((player->parent == NULL) && (map_world_coords_to_block_index(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z) < 0)) {
         data->unk0.target = NULL;
         data->unk854 = 0;
         gDLL_2_Camera->vtbl->set_target_object(NULL);

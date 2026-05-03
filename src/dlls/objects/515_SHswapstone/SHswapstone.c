@@ -68,7 +68,7 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
 
     // @bug: can't tell mapID correctly if local BLOCKS cell is unloaded upon
     // approaching SwapStone (happens if camera lags behind in SwapStone Circe)
-    if (map_get_map_id_from_xz_ws(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
         objdata->bitSwapStoneSpokenTo = BIT_883;
         objdata->bitIntroSeq = BIT_Play_Seq_0107_Rocky_Intro_Unused;
@@ -157,7 +157,7 @@ void SHswapstone_free(Object *self, s32 a1) { }
 u32 SHswapstone_get_model_flags(Object* self) {
     s32 modelno;
 
-    if (map_get_map_id_from_xz_ws(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
         modelno = 1;
     } else {

@@ -510,11 +510,11 @@ void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
 // Render Settings
 
-void track_func_80041C30(s32 arg0);
-void track_set_sky_on(s32);
-void track_set_anti_alias_on(s32 arg0);
-void track_set_sky_objects_on(s32 arg0);
-void track_set_z_buffer_on(s32);
+void track_func_80041C30(s32 on);
+void track_set_sky_on(s32 on);
+void track_set_anti_alias_on(s32 on);
+void track_set_sky_objects_on(s32 on);
+void track_set_z_buffer_on(s32 on);
 s32 track_is_z_buffer_on(void);
 u32 track_is_sky_on(void);
 u32 track_func_80041D8C(void);
@@ -523,7 +523,7 @@ s32 track_func_80041DBC(void);
 s32 track_func_80041DD4(void);
 void track_func_80041DEC(void);
 s32 track_func_80041E08(void);
-void track_set_sun_glare_on(s32 arg0);
+void track_set_sun_glare_on(s32 on);
 s32 track_get_sun_glare_on(void);
 
 // Map/Track
@@ -531,18 +531,19 @@ s32 track_get_sun_glare_on(void);
 void init_maps(void);
 void track_tick(s32);
 void track_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
-ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
-s32 func_8004454C(f32 x, f32 y, f32 z);
-void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
-s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
-MapHeader** func_80044A10(void);
-void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
+ObjSetup* map_find_obj_setup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap);
+s32 map_world_coords_to_block_index(f32 x, f32 y, f32 z);
+/** Floor world coords to interval of block world coords. */
+void map_world_to_block_world_coords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldX, f32* blockWorldZ);
+s16 map_world_xz_to_map_id(f32 worldX, f32 worldZ);
+MapHeader** map_get_loaded_maps_table(void);
+ObjSetup *map_world_xz_to_map_obj_setup_list(f32 worldX, f32 worldZ, s32* objectsFileLength);
 
 // Blocks (map)
 
-Block* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
-s8* func_80044B98(s32 arg0);
-Block* func_80044BB0(s32 blockIndex);
+Block* map_get_block_from_grid(s32 visGridX, s32 visGridZ, s32 mapLayer);
+s8* map_get_block_grid_layer(s32 layer);
+Block* map_get_block_by_index(s32 blockIndex);
 
 // Map/Track (again)
 
@@ -589,7 +590,7 @@ s32 block_get_animator_shape_count(Object* obj, u8 animatorID);
 // something else
 
 void func_8004A67C(void);
-void func_8004B948(s32 arg0);
+void track_func_8004B948(s32 arg0);
 void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
 
 // Warp

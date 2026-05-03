@@ -48,7 +48,7 @@ void VisAnimator_setup(Object* self, VisAnimator_Setup* objSetup, s32 arg2) {
     }
 
     //Get local Blocks model and animate tagged Shapes' visibility
-    block = func_80044BB0(func_8004454C(
+    block = map_get_block_by_index(map_world_coords_to_block_index(
         self->srt.transl.x,self->srt.transl.y, self->srt.transl.z));
     if (block) {
         VisAnimator_animate_block_shapes(block, self, objData, objSetup);
@@ -72,7 +72,7 @@ void VisAnimator_control(Object* self) {
     objData = self->data;
 
     //Get local Block model
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->flags |= VisAnimator_FLAG_Block_Animate_Needed;
         return;

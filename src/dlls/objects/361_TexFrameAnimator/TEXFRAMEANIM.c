@@ -78,7 +78,7 @@ void TexFrameAnimator_control(Object* self) {
     }
 
     //Get object's local Blocks model
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (!block || !(block->vtxFlags & 8)) {
         return;
     }

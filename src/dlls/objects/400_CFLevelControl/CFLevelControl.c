@@ -449,7 +449,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
 
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
-        setup = func_80044448(data->uID, NULL, NULL, NULL, NULL);
+        setup = map_find_obj_setup(data->uID, NULL, NULL, NULL, NULL);
         if (setup) {
             if (data->unk12) {
                 ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);

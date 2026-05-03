@@ -66,7 +66,7 @@ void VFP_LevelControl_control(Object* self) {
     u8 mapSetupID;
 
     player = get_player();
-    map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
+    map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
     diPrintf("ACT %d \n", gDLL_29_Gplay->vtbl->get_map_setup(self->mapID));
     mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
     switch (mapSetupID) {

@@ -1092,7 +1092,7 @@ void camera_translate(f32 x, f32 y, f32 z)
     gCameras[gCameraSelector].srt.transl.x += x;
     gCameras[gCameraSelector].srt.transl.y += y;
     gCameras[gCameraSelector].srt.transl.z += z;
-    gCameras[gCameraSelector].mapRegion = func_8004454C(
+    gCameras[gCameraSelector].blockIndex = map_world_coords_to_block_index(
         gCameras[gCameraSelector].srt.transl.x, 
         gCameras[gCameraSelector].srt.transl.y, 
         gCameras[gCameraSelector].srt.transl.z);
@@ -1104,7 +1104,7 @@ void camera_translate_relative(f32 forward, f32 b, f32 strafe)
     gCameras[gCameraSelector].srt.transl.z -= forward * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
     gCameras[gCameraSelector].srt.transl.x -= strafe * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
     gCameras[gCameraSelector].srt.transl.z += strafe * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].mapRegion = func_8004454C(
+    gCameras[gCameraSelector].blockIndex = map_world_coords_to_block_index(
         gCameras[gCameraSelector].srt.transl.x, 
         gCameras[gCameraSelector].srt.transl.y, 
         gCameras[gCameraSelector].srt.transl.z);

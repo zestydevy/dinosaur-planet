@@ -3,6 +3,8 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/345_WaterFallSpray.h"
+#include "game/objects/object_id.h"
 #include "libnaudio/n_libaudio.h"
 #include "libnaudio/n_sndp.h"
 #include "libnaudio/n_sndplayer.h"
@@ -634,7 +636,7 @@ void dll_6_func_16E0(void) {
     Vec3f* camera;
 
     player = get_player();
-    mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
+    mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
     if ((mapID != _bss_1C) || (_bss_1E & 0x10)) {
         dll_6_func_1C38();
         _bss_1C = mapID;
@@ -716,31 +718,31 @@ void water_falls_set_flags(u8 arg0) {
 // offset: 0x1C38 | func: 21
 static s32 dll_6_func_1C38(void) {
     Object* player;
-    s32 var_a1;
-    u8* var_v1;
-    s32 sp28;
+    s32 offset;
+    ObjSetup* setup;
+    s32 setupListLength;
 
     player = get_player();
     if (player == NULL) {
         return TRUE;
     }
-    var_v1 = func_80044A20(player->srt.transl.x, player->srt.transl.z, &sp28);
-    if (var_v1 == NULL) {
+    setup = map_world_xz_to_map_obj_setup_list(player->srt.transl.x, player->srt.transl.z, &setupListLength);
+    if (setup == NULL) {
         return TRUE;
     }
-    var_a1 = 0;
+    offset = 0;
     _bss_1D = 0;
-    while (sp28 > var_a1 && _bss_1D < 0x10) {
-        if (((s16*)var_v1)[0] == 0x377) {
-            _bss_28[_bss_1D].pos.x = ((f32*)var_v1)[2];
-            _bss_28[_bss_1D].pos.y = ((f32*)var_v1)[3];
-            _bss_28[_bss_1D].pos.z = ((f32*)var_v1)[4];
-            _bss_28[_bss_1D].unkC = ((u8*)var_v1)[0x21] * 0x10;
-            _bss_28[_bss_1D].unkE = ((u8*)var_v1)[0x22] * 0x10;
+    while (setupListLength > offset && _bss_1D < 0x10) {
+        if (setup->objId == OBJ_WaterFallSpray) {
+            _bss_28[_bss_1D].pos.x = setup->x;
+            _bss_28[_bss_1D].pos.y = setup->y;
+            _bss_28[_bss_1D].pos.z = setup->z;
+            _bss_28[_bss_1D].unkC = ((WaterFallSpray_Setup*)setup)->unk21 * 0x10;
+            _bss_28[_bss_1D].unkE = ((WaterFallSpray_Setup*)setup)->unk22 * 0x10;
             _bss_1D++;
         }
-        var_a1 += ((u8*)var_v1)[2] << 2;
-        var_v1 += ((u8*)var_v1)[2] << 2;
+        offset += setup->quarterSize << 2;
+        setup = (ObjSetup*)((u8*)setup + (setup->quarterSize << 2));
     }
     return FALSE;
 }
