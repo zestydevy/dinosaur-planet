@@ -62,19 +62,19 @@ typedef struct UnkBss28 {
 /*0x28*/ static UnkBss28 _bss_28[0x10];
 /*0x128*/ static ACache *_bss_128;
 
-void dll_6_func_860(u32 soundHandle, u8 volume);
-void dll_6_func_A1C(u32 arg0);
-s32 dll_6_func_DE8(u16 arg0, SoundDef* arg1);
-static s32 dll_6_func_1C38(void);
-static s32 dll_6_func_1D58(s32, char *, s32);
-static s32 dll_6_func_1E64(u32);
-static void dll_6_func_1F78(void);
-static void dll_6_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut);
-static void dll_6_func_22FC(f32 arg0, f32 arg1, f32 arg2, SoundDef* arg3, s8* outVolume);
-static void dll_6_func_2438(f32 arg0, f32 arg1, s32 arg2, s8* outPan, s8* outFx);
+void amsfx_func_860(u32 soundHandle, u8 volume);
+void amsfx_func_A1C(u32 arg0);
+s32 amsfx_func_DE8(u16 arg0, SoundDef* arg1);
+static s32 amsfx_func_1C38(void);
+static s32 amsfx_func_1D58(s32, char *, s32);
+static s32 amsfx_func_1E64(u32);
+static void amsfx_func_1F78(void);
+static void amsfx_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut);
+static void amsfx_func_22FC(f32 arg0, f32 arg1, f32 arg2, SoundDef* arg3, s8* outVolume);
+static void amsfx_func_2438(f32 arg0, f32 arg1, s32 arg2, s8* outPan, s8* outFx);
 
 // offset: 0x0 | ctor
-void dll_6_ctor(s32 arg0) {
+void amsfx_ctor(s32 arg0) {
     u32* tab;
     s32 start;
     s32 length;
@@ -123,7 +123,7 @@ void dll_6_ctor(s32 arg0) {
 /*0x2C*/ static const char str_2C[] = "amSfxPlayEx failed\n";
 
 // offset: 0x22C | dtor
-void dll_6_dtor(s32 arg0) {
+void amsfx_dtor(s32 arg0) {
     s32 i;
     s32 var_v0;
 
@@ -135,7 +135,7 @@ void dll_6_dtor(s32 arg0) {
     _bss_1E = 0;
     for (i = 1; i < (_bss_8 + 1); i++) {
         if (_bss_4[i].unk1C) {
-            dll_6_func_1E64(i);
+            amsfx_func_1E64(i);
         }
     }
     mmFree(_bss_4);
@@ -144,11 +144,11 @@ void dll_6_dtor(s32 arg0) {
 }
 
 // offset: 0x338 | func: 0 | export: 0
-void dll_6_func_338(void) {
+void amsfx_func_338(void) {
     sndstate *temp_a0;
     s32 i;
 
-    dll_6_func_1F78();
+    amsfx_func_1F78();
     for (i = 1; i < (_bss_8 + 1); i++) {
         temp_a0 = _bss_4[i].unk1C;
         // @fake
@@ -156,7 +156,7 @@ void dll_6_func_338(void) {
         if (temp_a0 != 0) {
             if (temp_a0 == (sndstate*)-1) {
                 if (_bss_4[i].unk12 & 0x80) {
-                    dll_6_func_1E64(i);
+                    amsfx_func_1E64(i);
                 }
             } else if (temp_a0 == (sndstate*)-2) {
                 if (mp3_is_busy() == 0) {
@@ -170,10 +170,10 @@ void dll_6_func_338(void) {
 }
 
 // offset: 0x480 | func: 1 | export: 1
-void dll_6_func_480(Object *obj) { }
+void amsfx_func_480(Object *obj) { }
 
 // offset: 0x48C | func: 2 | export: 2
-u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *arg4, s32 arg5, char *arg6) {
+u32 amsfx_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *arg4, s32 arg5, char *arg6) {
     SoundDef soundDef;
     f32 x;
     f32 y;
@@ -191,7 +191,7 @@ u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char
     }
 
     //Get sound definition from AUDIO.bin subfile 0
-    dll_6_func_DE8(soundID, &soundDef);
+    amsfx_func_DE8(soundID, &soundDef);
 
     //Bail if sound's clipID is 0
     if (!(soundDef.bankAndClipID & 0x7FFF)) {
@@ -204,14 +204,14 @@ u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char
         activeSoundIndex = 0;
     }
 
-    activeSoundIndex = dll_6_func_1D58(activeSoundIndex, arg4, arg5);
+    activeSoundIndex = amsfx_func_1D58(activeSoundIndex, arg4, arg5);
     _bss_4[activeSoundIndex].soundID = soundID;
     _bss_4[activeSoundIndex].source = obj;
     _bss_4[activeSoundIndex].unk17 = MAX_VOLUME;
 
     if ((obj != NULL) && (soundDef.volumeFalloff & 3)) {
-        dll_6_func_2240(obj, &x, &y, &z, &yaw);
-        dll_6_func_22FC(x, y, z, &soundDef, &volumeCalc);
+        amsfx_func_2240(obj, &x, &y, &z, &yaw);
+        amsfx_func_22FC(x, y, z, &soundDef, &volumeCalc);
         _bss_4[activeSoundIndex].unk17 = volumeCalc;
     }
 
@@ -243,7 +243,7 @@ u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char
 }
 
 // offset: 0x7E4 | func: 3 | export: 3
-void dll_6_func_7E4(u8 arg0) {
+void amsfx_func_7E4(u8 arg0) {
     s32 i;
 
     for (i = 0; i < 1; i++) {
@@ -253,7 +253,7 @@ void dll_6_func_7E4(u8 arg0) {
 
 // offset: 0x860 | func: 4 | export: 4
 //amSfxSetVol?
-void dll_6_func_860(u32 soundHandle, u8 volume) {
+void amsfx_func_860(u32 soundHandle, u8 volume) {
     sndstate* temp_a0;
     u8 vol;
 
@@ -285,7 +285,7 @@ void dll_6_func_860(u32 soundHandle, u8 volume) {
 
 // offset: 0x954 | func: 5 | export: 5
 //amSfxSetPitch?
-void dll_6_func_954(u32 soundHandle, f32 pitch) {
+void amsfx_func_954(u32 soundHandle, f32 pitch) {
     sndstate *temp_a0;
 
     if ((u32) _bss_8 < soundHandle) {
@@ -307,16 +307,16 @@ void dll_6_func_954(u32 soundHandle, f32 pitch) {
 
 // offset: 0xA1C | func: 6 | export: 6
 //amSfxStop?
-void dll_6_func_A1C(u32 soundHandle) {
+void amsfx_func_A1C(u32 soundHandle) {
     if ((u32) _bss_8 >= soundHandle) {
-        dll_6_func_1E64(soundHandle);
+        amsfx_func_1E64(soundHandle);
     } else {
         STUBBED_PRINTF("amSfxStop: Warning,sound handle '%d' out of range.\n", soundHandle);
     }
 }
 
 // offset: 0xA6C | func: 7 | export: 7
-void dll_6_func_A6C(Object *obj) {
+void amsfx_func_A6C(Object *obj) {
     s32 i;
 
     if (obj == 0) {
@@ -327,14 +327,14 @@ void dll_6_func_A6C(Object *obj) {
     if (1) {}
     for (i = 1; i < (_bss_8+1); i++) {
         if ((_bss_4[i].unk12 & 0x40) != 0 && obj == _bss_4[i].source && _bss_4[i].unk1C != NULL) {
-            dll_6_func_1E64(i);
+            amsfx_func_1E64(i);
         }
     }
 }
 
 // offset: 0xB48 | func: 8 | export: 8
 //amSfxIsPlaying?
-s32 dll_6_func_B48(u32 soundHandle) {
+s32 amsfx_func_B48(u32 soundHandle) {
     if (soundHandle == 0) {
         return 0;
     }
@@ -352,7 +352,7 @@ s32 dll_6_func_B48(u32 soundHandle) {
 }
 
 // offset: 0xBBC | func: 9 | export: 9
-s32 dll_6_func_BBC(Object* arg0, s32 arg1, s32 arg2, Object **arg3, s32 arg4) {
+s32 amsfx_func_BBC(Object* arg0, s32 arg1, s32 arg2, Object **arg3, s32 arg4) {
     Object* temp_s0;
     f32 temp_fv0;
     f32 temp_fv1;
@@ -400,7 +400,7 @@ s32 dll_6_func_BBC(Object* arg0, s32 arg1, s32 arg2, Object **arg3, s32 arg4) {
 }
 
 // offset: 0xDCC | func: 10 | export: 10
-s32 dll_6_func_DCC(s32 arg0, UNK_TYPE_32 arg1, s32* arg2, s32* arg3) {
+s32 amsfx_func_DCC(s32 arg0, UNK_TYPE_32 arg1, s32* arg2, s32* arg3) {
     *arg2 = 0;
     *arg3 = 0;
     return 0;
@@ -408,7 +408,7 @@ s32 dll_6_func_DCC(s32 arg0, UNK_TYPE_32 arg1, s32* arg2, s32* arg3) {
 
 // offset: 0xDE8 | func: 11 | export: 11
 //amSfxGetDefault?
-s32 dll_6_func_DE8(u16 soundID, SoundDef* soundDef) {
+s32 amsfx_func_DE8(u16 soundID, SoundDef* soundDef) {
     void* temp_v0;
 
     if (soundID <= 0 || (s32)_bss_10 < soundID) {
@@ -442,13 +442,13 @@ s32 dll_6_func_DE8(u16 soundID, SoundDef* soundDef) {
 /*0x1EC*/ static const char str_1EC[] = "amSndPlayEx: Warning,sound handle '%d' out of range.\n";
 
 // offset: 0xEE4 | func: 12 | export: 12
-s32 dll_6_func_EE4(s32 arg0, UNK_TYPE_32 arg1) {
+s32 amsfx_func_EE4(s32 arg0, UNK_TYPE_32 arg1) {
     acache_flush(_bss_128);
     return 1;
 }
 
 // offset: 0xF2C | func: 13 | export: 13
-void dll_6_func_F2C(Object* arg0, u16 soundID, u32* arg2, char *arg3, s32 arg4) {
+void amsfx_func_F2C(Object* arg0, u16 soundID, u32* arg2, char *arg3, s32 arg4) {
     u32 temp_v0_2;
 
     if (!soundID) {
@@ -467,7 +467,7 @@ void dll_6_func_F2C(Object* arg0, u16 soundID, u32* arg2, char *arg3, s32 arg4) 
         return;
     }
     
-    temp_v0_2 = dll_6_func_1D58(temp_v0_2, arg3, arg4);
+    temp_v0_2 = amsfx_func_1D58(temp_v0_2, arg3, arg4);
     some_sound_func(_bss_0->bankArray[0], soundID, 0x4000U, 0x40U, 1.0f, 0U, 1U, &_bss_4[temp_v0_2].unk1C);
     _bss_4[temp_v0_2].soundID = -1 - soundID;
     _bss_4[temp_v0_2].source = arg0;
@@ -479,23 +479,23 @@ void dll_6_func_F2C(Object* arg0, u16 soundID, u32* arg2, char *arg3, s32 arg4) 
     _bss_4[temp_v0_2].unk12 |= 0x80;
 }
 
-void dll_6_func_10D0(Object* obj, u16 soundID, u32* soundHandle) {
+void amsfx_func_10D0(Object* obj, u16 soundID, u32* soundHandle) {
     if (soundHandle != NULL) {
-        dll_6_play_sound(obj, soundID, MAX_VOLUME, soundHandle, "game/amsfx.c", 0x2BD, "");
+        amsfx_play_sound(obj, soundID, MAX_VOLUME, soundHandle, "game/amsfx.c", 0x2BD, "");
         return;
     }
 
-    dll_6_play_sound(obj, soundID, MAX_VOLUME, NULL, "game/amsfx.c", 0x2BE, "");
+    amsfx_play_sound(obj, soundID, MAX_VOLUME, NULL, "game/amsfx.c", 0x2BE, "");
 }
 
 // offset: 0x1174 | func: 15 | export: 15
-void dll_6_func_1174(Object* obj, u16 soundID, u8 volume, u32* arg3) {
+void amsfx_func_1174(Object* obj, u16 soundID, u8 volume, u32* arg3) {
     if (arg3 != NULL) {
-        dll_6_play_sound(obj, soundID, volume, arg3, "game/amsfx.c", 0x2C5, "");
+        amsfx_play_sound(obj, soundID, volume, arg3, "game/amsfx.c", 0x2C5, "");
         return;
     }
 
-    dll_6_play_sound(obj, soundID, volume, NULL, "game/amsfx.c", 0x2C6, "");
+    amsfx_play_sound(obj, soundID, volume, NULL, "game/amsfx.c", 0x2C6, "");
 }
 
 static const char str_4[] = "AMSFX: Software bug in object (controlfunc %d)\n";
@@ -504,7 +504,7 @@ static const char str_6[] = "AMSFX: Software bug in object (controlfunc %d)\n";
 static const char str_7[] = "       amSfxStop is required to stop effect %d.\n";
 
 // offset: 0x1218 | func: 16 | export: 16
-void dll_6_func_1218(Object *obj) {
+void amsfx_func_1218(Object *obj) {
     s32 i;
     s32 temp = (!obj) && (!obj);
 
@@ -520,10 +520,10 @@ void dll_6_func_1218(Object *obj) {
             // @fake
             if (_bss_4[i].unk1C) {}
             if (_bss_4[i].unk1C != 0) {
-                dll_6_func_1E64(i);
+                amsfx_func_1E64(i);
             }
         }
-        dll_6_func_1E64(i);
+        amsfx_func_1E64(i);
         // @fake
         if (temp && (!obj)) {}
     }
@@ -531,7 +531,7 @@ void dll_6_func_1218(Object *obj) {
 
 
 // offset: 0x1320 | func: 17 | export: 20
-void dll_6_func_1320(Object* arg0, u16 arg1, f32 arg2, f32 arg3, f32 arg4, u32* arg5) {
+void amsfx_func_1320(Object* arg0, u16 arg1, f32 arg2, f32 arg3, f32 arg4, u32* arg5) {
     f32 pad;
     f32 temp2;
     f32 temp;
@@ -567,23 +567,23 @@ void dll_6_func_1320(Object* arg0, u16 arg1, f32 arg2, f32 arg3, f32 arg4, u32* 
         }
     }
     if ((var_v1 > 0) && (*arg5 == 0)) {
-        dll_6_play_sound(arg0, arg1, var_v1, arg5, "game/amsfx.c", 0x37B, "");
-        dll_6_func_954(*arg5, arg2);
+        amsfx_play_sound(arg0, arg1, var_v1, arg5, "game/amsfx.c", 0x37B, "");
+        amsfx_func_954(*arg5, arg2);
     }
     if (*arg5 != 0) {
         if (var_v1 == 0) {
-            dll_6_func_A1C(*arg5);
+            amsfx_func_A1C(*arg5);
             *arg5 = 0;
             return;
         }
-        dll_6_func_860(*arg5, var_v1);
+        amsfx_func_860(*arg5, var_v1);
     }
 }
 
 static const char str_11[] = "amSfxSetPitch: Warning,sound handle '%d' out of range.\n";
 static const char str_12[] = "amSfxSetPitch: Warning,invalid handle '%d'.\n";
 
-void dll_6_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
+void amsfx_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
     s32 pad2;
     f32 pitch;
     f32 sp3C;
@@ -628,7 +628,7 @@ void dll_6_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
 }
 
 // offset: 0x16E0 | func: 19 | export: 18
-void dll_6_func_16E0(void) {
+void amsfx_func_16E0(void) {
     Object* player;
     s32 i;
     f32 distance;
@@ -640,7 +640,7 @@ void dll_6_func_16E0(void) {
     player = get_player();
     mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
     if ((mapID != _bss_1C) || (_bss_1E & 0x10)) {
-        dll_6_func_1C38();
+        amsfx_func_1C38();
         _bss_1C = mapID;
         _bss_1E &= ~0x10;
     }
@@ -679,36 +679,36 @@ void dll_6_func_16E0(void) {
         volume2 = MAX_VOLUME;
     }
     if ((volume2 == 0) && (_bss_18 != 0)) {
-        dll_6_func_A1C(_bss_18);
+        amsfx_func_A1C(_bss_18);
         _bss_18 = 0;
     } else if (volume2 != 0) {
         if (_bss_18 == 0) {
             _bss_1F = 1;
-            dll_6_play_sound(NULL, SOUND_986_Waterfall_Low_Loop, _bss_1F, &_bss_18, "game/amsfx.c", 0x3F8, "");
+            amsfx_play_sound(NULL, SOUND_986_Waterfall_Low_Loop, _bss_1F, &_bss_18, "game/amsfx.c", 0x3F8, "");
         }
         if (volume2 < (u8) _bss_1F) {
             _bss_1F -= 1;
         } else {
             _bss_1F += 1;
         }
-        dll_6_func_860(_bss_18, _bss_1F);
+        amsfx_func_860(_bss_18, _bss_1F);
     }
     if ((volume1 == 0) && (_bss_14 != 0)) {
-        dll_6_func_A1C(_bss_14);
+        amsfx_func_A1C(_bss_14);
         _bss_14 = 0;
         return;
     }
     if (volume1 != 0) {
         if (_bss_14 == 0) {
             *_bss_20 = 1;
-            dll_6_play_sound(NULL, SOUND_987_Waterfall_High_Loop, *_bss_20, &_bss_14, "game/amsfx.c", 0x40C, "");
+            amsfx_play_sound(NULL, SOUND_987_Waterfall_High_Loop, *_bss_20, &_bss_14, "game/amsfx.c", 0x40C, "");
         }
         if (volume1 < (u8) *_bss_20) {
             *_bss_20 -= 1;
         } else {
             *_bss_20 += 1;
         }
-        dll_6_func_860(_bss_14, *_bss_20);
+        amsfx_func_860(_bss_14, *_bss_20);
     }
 }
 
@@ -719,12 +719,12 @@ static const char str_16[] = "AMSFX: freeSfxHandle not used, %d\n";
 static const char str_17[] = "AMSFX: Warning min/max range identical\n";
 
 // offset: 0x1C10 | func: 20 | export: 19
-void water_falls_set_flags(u8 arg0) {
-    _bss_1E = arg0;
+void amsfx_water_falls_set_flags(u8 flags) {
+    _bss_1E = flags;
 }
 
 // offset: 0x1C38 | func: 21
-static s32 dll_6_func_1C38(void) {
+static s32 amsfx_func_1C38(void) {
     Object* player;
     s32 offset;
     ObjSetup* setup;
@@ -756,7 +756,7 @@ static s32 dll_6_func_1C38(void) {
 }
 
 // offset: 0x1D58 | func: 22
-static s32 dll_6_func_1D58(s32 arg0, char *arg1, s32 arg2) {
+static s32 amsfx_func_1D58(s32 arg0, char *arg1, s32 arg2) {
     UnkBss4* var_v0;
     s32 temp_a0;
     s32 i;
@@ -784,7 +784,7 @@ static s32 dll_6_func_1D58(s32 arg0, char *arg1, s32 arg2) {
 }
 
 // offset: 0x1E64 | func: 23
-static s32 dll_6_func_1E64(u32 arg0) {
+static s32 amsfx_func_1E64(u32 arg0) {
     sndstate* temp_a0;
 
     if (arg0 == 0) {
@@ -813,7 +813,7 @@ static s32 dll_6_func_1E64(u32 arg0) {
 }
 
 // offset: 0x1F78 | func: 24
-static void dll_6_func_1F78(void) {
+static void amsfx_func_1F78(void) {
     Object* temp_a0;
     s32 i;
     f32 sp6C;
@@ -835,9 +835,9 @@ static void dll_6_func_1F78(void) {
         if (temp_s0 == (sndstate* )-1) { continue; } 
         if (!(_bss_4[i].def.volumeFalloff & 3)) { continue; }
         
-        dll_6_func_2240(temp_a0, &sp6C, &sp68, &sp64, &sp5A);
-        dll_6_func_22FC(sp6C, sp68, sp64, &_bss_4[i].def, &vol);
-        dll_6_func_2438(sp6C, sp64, sp5A, &pan, &fx);
+        amsfx_func_2240(temp_a0, &sp6C, &sp68, &sp64, &sp5A);
+        amsfx_func_22FC(sp6C, sp68, sp64, &_bss_4[i].def, &vol);
+        amsfx_func_2438(sp6C, sp64, sp5A, &pan, &fx);
         _bss_4[i].unk17 = vol;
         if (pan != (s8) _bss_4[i].unk14) {
             _bss_4[i].unk14 = (u8) pan;
@@ -870,7 +870,7 @@ static void dll_6_func_1F78(void) {
 }
 
 // offset: 0x2240 | func: 25
-static void dll_6_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut) {
+static void amsfx_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut) {
     Camera* camera;
     f32 sp28;
     f32 sp24;
@@ -887,7 +887,7 @@ static void dll_6_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut)
 
 // offset: 0x22FC | func: 26
 //apply_volume_falloff?
-static void dll_6_func_22FC(f32 x, f32 y, f32 z, SoundDef* soundDef, s8* outVolume) {
+static void amsfx_func_22FC(f32 x, f32 y, f32 z, SoundDef* soundDef, s8* outVolume) {
     f32 range;
     f32 distance;
 
@@ -918,7 +918,7 @@ static void dll_6_func_22FC(f32 x, f32 y, f32 z, SoundDef* soundDef, s8* outVolu
 }
 
 // offset: 0x2438 | func: 27
-static void dll_6_func_2438(f32 x, f32 z, s32 arg2, s8* outPan, s8* outFx) {
+static void amsfx_func_2438(f32 x, f32 z, s32 arg2, s8* outPan, s8* outFx) {
     f32 magnitude;
     s32 theta;
     s32 pad;
