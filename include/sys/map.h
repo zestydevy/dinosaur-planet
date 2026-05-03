@@ -51,20 +51,25 @@ typedef struct {
 /* *********************************************** */
 // MARK: Blocks
 
+// Extension of the normal RenderFlags enum, replaces some entries
+enum ShapeRenderFlags {
+/*14*/ RENDER_SHAPE_SPHERE_MAP = 0x4000
+};
+
 typedef struct {
 /*0000*/    Texture *texture;
 /*0004*/    u32 unk4;
 /*0008*/    u32 flags; // RenderFlags
 /*000C*/    s16 refCount;
-/*000E*/    u8 unkE;
+/*000E*/    u8 animatorID;
 /*000F*/    u8 unkF;
-} BlockTexture; // FIXME: better name
+} BlockTextureAnim;
 
 typedef struct {
-/*00*/ s16 textureIndex;
+/*00*/ s16 texanimID;
 /*02*/ u8 animatorID;
 /*03*/ u8 unk3;
-} BlocksTextureIndexData;
+} BlockTextureAnimInstance;
 
 //Shape bounding box - macros for extracting X/Z axes' extra precision values
 #define SHAPE_BB_REMAINDER_X_MIN(shape) (shape->boundsRemainder & 3)
@@ -91,7 +96,7 @@ typedef struct {
                             //     (used very rarely, in blocks 327 & 0843)
 /*14*/    u8 animatorID; // Used to mark facebatches that can be removed/animated
 /*15*/    u8 blendMaterialIndex; // Used for multitextured water
-/*16*/    u8 unk16; // texture scroll effect handler index? (at runtime)
+/*16*/    u8 texScrollerID; // texture scroll effect handler index (at runtime)
 /*17*/    u8 boundsRemainder; // Extra precision for the X/Z axes of the shape's bounding box (2 bits for Xmin, Zmin, Xmax, Zmax respectively)
 } BlockShape;
 
@@ -149,7 +154,7 @@ typedef struct {
 /*0018*/    HitsLine *ptr_hits_lines; // in ROM, sometimes matches grid column (HITS.bin data pointer at runtime)
 /*001C*/    s32 unk1C;
 /*0020*/    Vtx_t *vertices2[2];
-/*0028*/    BlocksTextureIndexData *unk28;
+/*0028*/    BlockTextureAnimInstance *texAnims;
 /*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
 /*0030*/    s16 vtxFlags;
 /*0032*/    s16 vtxCount;
@@ -167,8 +172,8 @@ typedef struct {
             // the number of times the texture/material settings
             // change while going through the block's F3DEX2 commands
 /*0046*/    s16 textureLoadCount;
-/*0048*/    u8 unk48; // texture_count (at runtime, distinct from material count since different materials can use same texture)
-/*0049*/    u8 unk49;
+/*0048*/    u8 numTexAnims; // count of distinct texture anims
+/*0049*/    u8 numSphereMappedShapes;
 /*004A*/    u8 materialCount;
 /*004B*/    s32 unk4B;
 /*004E*/    s8 unk4E;
@@ -236,7 +241,7 @@ enum TrackFlags {
        // Whether dynamic lighting for blocks is enabled.
 /*15*/ TRACKFLAG_BLOCK_LIGHTING = 0x8000,
        // Some code that uses this flag is not present in this build but 
-       // is present in default.dol. it would've rendered the game at 5:3 
+       // is present in default.dol. It would've rendered the game at 5:3 
        // when set or 9:4 if flag 0x8 is also set. Also would've changed
        // the VI resolution to 384x192.
        // Unimplemented "Wide" option (as seen in Perfect Dark)?
@@ -573,13 +578,13 @@ void map_func_800484A8(void);
 
 void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
 void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
-s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-Texture* func_8004A1E8(s32 match_value);
-BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2);
-BlockTexture *func_8004A2CC(s32 idx);
-s32 func_8004A528(Object* obj, u8 animatorID);
-s32 func_8004A5D8(Object* obj, u8 animatorID);
+s32 block_texscroll_add(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+void block_texscroll_set(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+Texture* block_texanim_get_tex(s32 animatorID);
+BlockTextureAnimInstance *block_texanim_get_instance(Block *block, s32 animatorID);
+BlockTextureAnim *block_texanim_get(s32 idx);
+s32 block_get_animator_vertex_count(Object* obj, u8 animatorID);
+s32 block_get_animator_shape_count(Object* obj, u8 animatorID);
 
 // something else
 

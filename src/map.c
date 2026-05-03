@@ -89,8 +89,8 @@ u8 *D_800B9798;
 u8 D_800B979C;
 s16 D_800B979E;
 s16 *D_800B97A0;
-BlockTexture *gBlockTextures;
-BlockTextureScroller *D_800B97A8; //gMapTextureScrollers?
+BlockTextureAnim *gBlockTexAnimTable;
+BlockTextureScroller *sBlockTexScrollTable;
 f32 D_800B97AC; //x
 f32 D_800B97B0; //y
 f32 D_800B97B4; //z
@@ -169,13 +169,13 @@ void block_color_table_free_block(Block *block);
 u32 hits_get_size(s32 id);
 void block_setup_vertices(Block *block);
 void block_setup_gdl_groups(Block *block);
-s32 block_setup_textures(Block *block);
+s32 block_setup_texture_anims(Block *block);
 void block_setup_xz_bitmap(Block *block);
 void block_compute_vertex_colors(Block*,s32,s32,s32);
-void func_80049D38(u32 arg0);
-void func_80049FA8(Block*);
-void block_texture_scrollers_tick(void);
-void block_tex_animate(void);
+void block_texscroll_free(u32 id);
+void block_free_texture_anims(Block*);
+void block_texscroll_tick(void);
+void block_texanim_tick(void);
 void func_80044BEC(void);
 void func_80048F58(void);
 void track_draw_main(void);
@@ -187,8 +187,8 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
 void map_update_objects_streaming(s32);
 s32 map_func_800485FC(s32, s32, s32, s32, s32);
 void map_check_block_grid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx);
-void func_800496E4(s32 blockIndex);
-s32 func_8004A058(Texture* tex, u32 renderFlags, s32 arg2);
+void block_free(s32 blockIndex);
+s32 block_texanim_add(Texture* tex, u32 renderFlags, s32 animatorID);
 s32 map_should_obj_unload(Object*);
 void func_8004B548(MapHeader*, s32, s32, Object*);
 s32 map_should_stream_load_object(ObjSetup*, s8, s32);
@@ -202,13 +202,13 @@ s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
 s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a);
-void func_8004A164(Texture*, s32);
+void block_texanim_free(Texture *tex, s32 animatorID);
 void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
 void block_calc_shape_visibility(Block*, s16, s16, s16);
 void track_add_visible_objects(s8* objVisibilities);
 s32 block_frustum_check(s32 xPos, s32 zPos, Block* block);
 void some_cell_func(BitStream* stream);
-BlockTextureScroller* func_80049D68(s32 arg0);
+BlockTextureScroller* block_texscroll_get(s32 id);
 s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4);
 
 void dl_set_all_dirty(void) {
@@ -601,10 +601,10 @@ void init_maps(void) {
     D_800B96B0 = mmAlloc(sizeof(SavedObject) * 100, ALLOC_TAG_TRACK_COL, ALLOC_NAME("objdef_store"));
     D_800B4A5C = -1;
     D_800B4A5E = -2;
-    gBlockTextures = mmAlloc(sizeof(BlockTexture) * MAX_TEXTURE_ANIMS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texanim"));
-    bzero(gBlockTextures, sizeof(BlockTexture) * MAX_TEXTURE_ANIMS);
-    D_800B97A8 = mmAlloc(sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texscroll"));
-    bzero(D_800B97A8, sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS);
+    gBlockTexAnimTable = mmAlloc(sizeof(BlockTextureAnim) * MAX_TEXTURE_ANIMS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texanim"));
+    bzero(gBlockTexAnimTable, sizeof(BlockTextureAnim) * MAX_TEXTURE_ANIMS);
+    sBlockTexScrollTable = mmAlloc(sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texscroll"));
+    bzero(sBlockTexScrollTable, sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS);
     bzero(gRenderList, sizeof(u32) * MAX_RENDER_LIST_LENGTH);
     gRenderList[0] = -0x4000;
 }
@@ -617,8 +617,8 @@ void track_tick(s32 arg0) {
         gDLL_8->vtbl->func2();
         gDLL_7_Newday->vtbl->func2();
         gDLL_9_Newclouds->vtbl->func3();
-        block_tex_animate();
-        block_texture_scrollers_tick();
+        block_texanim_tick();
+        block_texscroll_tick();
         map_handle_transition();
         if (gDLL_76 != NULL) {
             gDLL_76->vtbl->func1();
@@ -797,7 +797,7 @@ void track_draw_main(void) {
                     if (block->unk3E != 0) {
                         block_compute_vertex_colors(block, x, z, 0);
                     }
-                    if ((block->unk49 != 0) && (gTrackFlags & TRACKFLAG_UNK100)) {
+                    if ((block->numSphereMappedShapes != 0) && (gTrackFlags & TRACKFLAG_UNK100)) {
                         func_8001F4C0(block, x, z);
                     }
                 }
@@ -828,9 +828,9 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     BlockShape* shape;
     Vtx_t *tempVtx;
     s32 shapeIdx;
-    BlockTextureScroller* temp_v0_7;
+    BlockTextureScroller* texScroller;
     s32 i;
-    BlocksTextureIndexData* temp_v0_4;
+    BlockTextureAnimInstance* temp_v0_4;
     u32 forceTexSet;
     s32 spE0;
     s32 spDC;
@@ -915,10 +915,10 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
             }
             renderFlags = shape->flags;
             if (renderFlags & RENDER_SHAPE_ANIMATED) {
-                temp_v0_4 = func_8004A284(block, shape->animatorID);
+                temp_v0_4 = block_texanim_get_instance(block, shape->animatorID);
                 if (temp_v0_4 != NULL) {
-                    frameOptions = gBlockTextures[temp_v0_4->textureIndex].unk4 << 8;
-                    renderFlags |= gBlockTextures[temp_v0_4->textureIndex].flags;
+                    frameOptions = gBlockTexAnimTable[temp_v0_4->texanimID].unk4 << 8;
+                    renderFlags |= gBlockTexAnimTable[temp_v0_4->texanimID].flags;
                 } else {
                     frameOptions = 0;
                 }
@@ -937,11 +937,11 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                 tex1 = NULL;
             }
             tex_gdl_set_textures(&gMainDL, tex0, tex1, renderFlags, frameOptions, forceTexSet, FALSE);
-            if (shape->unk16 != 0xFF) {
-                temp_v0_7 = func_80049D68(shape->unk16);
-                gDPSetTileSize(gMainDL++, 0, temp_v0_7->uOffsetA, temp_v0_7->vOffsetA, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
+            if (shape->texScrollerID != 0xFF) {
+                texScroller = block_texscroll_get(shape->texScrollerID);
+                gDPSetTileSize(gMainDL++, 0, texScroller->uOffsetA, texScroller->vOffsetA, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
                 if (tex1 != NULL) {
-                    gDPSetTileSize(gMainDL++, 1, temp_v0_7->uOffsetB, temp_v0_7->vOffsetB, (tex1->width - 1) << 2, (tex1->height - 1) << 2);
+                    gDPSetTileSize(gMainDL++, 1, texScroller->uOffsetB, texScroller->vOffsetB, (tex1->width - 1) << 2, (tex1->height - 1) << 2);
                 }
             } else if ((tex0 != NULL) && (tex0->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY))) {
                 gDPSetTileSize(gMainDL++, 0, 0, 0, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
@@ -2585,7 +2585,7 @@ void map_update_streaming(void) {
             }
         }
         for (var_s3 = 0; var_s3 < var_fp; var_s3++) {
-            func_800496E4(sp84[var_s3].unk4);
+            block_free(sp84[var_s3].unk4);
         }
         func_8004530C();
     }
@@ -3013,7 +3013,7 @@ void map_func_800484A8(void) {
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
         var_s1 = gBlockIndices[i];
         for (j = 0; j < 256; j++) {
-            func_800496E4(var_s1[j]);
+            block_free(var_s1[j]);
         }
     }
     gLoadedBlockCount = 0;
@@ -3160,8 +3160,8 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
         block->vertices2[1] = (Vtx_t*)block->vertices;
     }
     addr = mmAlign4(addr);
-    block->unk28 = (BlocksTextureIndexData*)addr;
-    addr += block_setup_textures(block);
+    block->texAnims = (BlockTextureAnimInstance*)addr;
+    addr += block_setup_texture_anims(block);
     addr = mmAlign2(addr);
     block->xzBitmap = (s16*)addr;
     addr += block->unk34 * 2;
@@ -3343,7 +3343,7 @@ void block_setup_gdl_groups(Block *block) {
         s32 flags;
         Gfx *mygdl;
 
-        block->shapes[i].unk16 = 0xff;
+        block->shapes[i].texScrollerID = 0xff;
         
         shape = &block->shapes[i];
         flags = shape->flags;
@@ -3504,10 +3504,7 @@ void block_setup_vertices(Block *block) {
 }
 #endif
 
-/*
- * blocks_free?
- */
-void func_800496E4(s32 blockIndex) {
+void block_free(s32 blockIndex) {
     Block *block;
     s32 i;
     u8 runtimeValue;
@@ -3523,15 +3520,15 @@ void func_800496E4(s32 blockIndex) {
         block_color_table_free_block(block);
         gLoadedBlockIds[blockIndex] = -1;
         gLoadedBlocks[blockIndex] = NULL;
-        if (block->unk48 != 0) {
-            func_80049FA8(block);
+        if (block->numTexAnims != 0) {
+            block_free_texture_anims(block);
         }
 
         //Loop over shapes and free them
         for (i = 0; i < block->shapeCount; i++){
-            runtimeValue = (&block->shapes[i])->unk16;
+            runtimeValue = (&block->shapes[i])->texScrollerID;
             if (runtimeValue != 0xFF) {
-                func_80049D38(runtimeValue);
+                block_texscroll_free(runtimeValue);
             }
         }
 
@@ -3595,7 +3592,7 @@ void func_800499B4(){
 }
 
 /** Updates all the block texture scrollers */
-void block_texture_scrollers_tick(void) {
+void block_texscroll_tick(void) {
     BlockTextureScroller *scroll;
     s32 i;
     s32 dU;
@@ -3604,8 +3601,8 @@ void block_texture_scrollers_tick(void) {
     s32 dV_adjusted;
 
     for (i = 0; i < MAX_TEXTURE_SCROLLERS; i++){
-        if (D_800B97A8[i].refCount != 0) {
-            scroll = &D_800B97A8[i];
+        if (sBlockTexScrollTable[i].refCount != 0) {
+            scroll = &sBlockTexScrollTable[i];
 
             //Primary material
             dU_adjusted = scroll->uRemainderA;
@@ -3666,7 +3663,7 @@ void block_texture_scrollers_tick(void) {
   * MaterialA is the primary texture,
   * MaterialB is an optional blend texture, mostly used for texture-blended animated water
   */
-s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
+s32 block_texscroll_add(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
     BlockTextureScroller* scroll;
     s32 index;
     s32 scrollHandlerID;
@@ -3674,7 +3671,7 @@ s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB
     //Iterate through scroll handlers
     scrollHandlerID = 0;
     while (1) {
-        scroll = &D_800B97A8[scrollHandlerID];
+        scroll = &sBlockTexScrollTable[scrollHandlerID];
 
         //Reuse an existing scroll handler if it has the same animation config as what's specified in args
         if (
@@ -3696,7 +3693,7 @@ s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB
         if (scrollHandlerID >= MAX_TEXTURE_SCROLLERS) {
             index = -1;
             for (scrollHandlerID = 0; scrollHandlerID < MAX_TEXTURE_SCROLLERS; scrollHandlerID++) {
-                if (D_800B97A8[scrollHandlerID].refCount == 0) {
+                if (sBlockTexScrollTable[scrollHandlerID].refCount == 0) {
                     index = scrollHandlerID;
                     break;
                 }
@@ -3708,7 +3705,7 @@ s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB
             }
 
             //If an unused slot was found, store the scroll's anim params and return its ID
-            scroll = &D_800B97A8[index];
+            scroll = &sBlockTexScrollTable[index];
             scroll->uSpeedA = uSpeedA;
             scroll->vSpeedA = vSpeedA;
             scroll->widthA = widthA;
@@ -3737,10 +3734,10 @@ s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB
   * MaterialA is the primary texture,
   * MaterialB is an optional blend texture, mostly used for texture-blended animated water
   */
-void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB){
+void block_texscroll_set(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
     BlockTextureScroller *scroll;
 
-    scroll = &D_800B97A8[scrollerID];
+    scroll = &sBlockTexScrollTable[scrollerID];
 
     //Primary material
     scroll->uSpeedA = uSpeedA;
@@ -3755,110 +3752,110 @@ void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 hei
     scroll->heightB = heightB; 
 }
 
-void func_80049D38(u32 arg0) {
-    if (D_800B97A8[arg0].refCount > 0) {
-        D_800B97A8[arg0].refCount--;
+void block_texscroll_free(u32 id) {
+    if (sBlockTexScrollTable[id].refCount > 0) {
+        sBlockTexScrollTable[id].refCount--;
     } else {
         STUBBED_PRINTF("MISMATCH on global texscroll free\n");
     }
 }
 
-BlockTextureScroller* func_80049D68(s32 arg0) {
-    return &D_800B97A8[arg0];
+BlockTextureScroller* block_texscroll_get(s32 id) {
+    return &sBlockTexScrollTable[id];
 }
 
-void block_tex_animate(void) {
+void block_texanim_tick(void) {
     s32 i;
     Texture *texture;
 
     for (i = 0; i != MAX_TEXTURE_ANIMS; i++) {
-        if (gBlockTextures[i].refCount != 0) {
-            texture = gBlockTextures[i].texture;
+        if (gBlockTexAnimTable[i].refCount != 0) {
+            texture = gBlockTexAnimTable[i].texture;
 
             if ((texture != NULL) && (texture->animDuration != 0x100)) {
                 if (texture->animSpeed != 0) {
-                    tex_animate(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
+                    tex_animate(texture, (s32 *)&gBlockTexAnimTable[i].flags, (s32 *)&gBlockTexAnimTable[i].unk4);
                 }
             }
         }
     }
 }
 
-s32 block_setup_textures(Block* block) {
+s32 block_setup_texture_anims(Block* block) {
     s32 var_a1;
-    s32 var_s1;
+    s32 numTexAnims;
     s32 i;
     s32 j;
     s32 var_t0;
-    s32 var_s6;
-    s32 var_a2;
+    s32 numSphereMappedShapes;
+    s32 animatorID;
     s32 new_var;
     BlockShape* shape;
     BlockShape* temp_a3_2;
 
-    var_s1 = 0;
-    var_s6 = 0;
+    numTexAnims = 0;
+    numSphereMappedShapes = 0;
     for (i = 0; i < block->shapeCount; i++) {
         shape = &block->shapes[i];
-        if (shape->flags & RENDER_COMPOSITE_BASE) {
-            var_s6++;
+        if (shape->flags & RENDER_SHAPE_SPHERE_MAP) {
+            numSphereMappedShapes++;
         }
         if (shape->flags & RENDER_SHAPE_ANIMATED) {
             if (shape->animatorID != 0) {
                 temp_a3_2 = shape;
                 var_a1 = FALSE;
-                for (j = 0; j < var_s1; j++) {
-                    var_a2 = temp_a3_2->animatorID;
-                    if (block->unk28[j].animatorID == (new_var = var_a2 ^ 0 )) {
+                for (j = 0; j < numTexAnims; j++) {
+                    animatorID = temp_a3_2->animatorID;
+                    if (block->texAnims[j].animatorID == (new_var = animatorID ^ 0 )) {
                         var_a1 = TRUE;
                         break;
                     }
                 }
 
-                var_a2 = shape->animatorID;
+                animatorID = shape->animatorID;
                 if (var_a1 == FALSE) {
                     var_a1 = shape->flags;
-                    block->unk28[var_s1].textureIndex = func_8004A058(block->materials[shape->materialIndex].texture, var_a1, var_a2);
-                    block->unk28[var_s1].animatorID = block->shapes[i].animatorID;
-                    var_s1++;
+                    block->texAnims[numTexAnims].texanimID = block_texanim_add(block->materials[shape->materialIndex].texture, var_a1, animatorID);
+                    block->texAnims[numTexAnims].animatorID = block->shapes[i].animatorID;
+                    numTexAnims++;
                 } else {
                     var_a1 = shape->flags;
-                    func_8004A058(block->materials[shape->materialIndex].texture, var_a1, var_a2);
+                    block_texanim_add(block->materials[shape->materialIndex].texture, var_a1, animatorID);
                 }
             }
         }
     }
-    block->unk49 = var_s6;
-    block->unk48 = var_s1;
-    return var_s1 * 4;
+    block->numSphereMappedShapes = numSphereMappedShapes;
+    block->numTexAnims = numTexAnims;
+    return numTexAnims * sizeof(BlockTextureAnimInstance);
 }
 
-void func_80049FA8(Block* block) {
+void block_free_texture_anims(Block* block) {
     s32 index;
     u8 animatorID;
     BlockShape* shape;
 
-    for (index = 0; index < block->shapeCount; index++){
+    for (index = 0; index < block->shapeCount; index++) {
         shape = &block->shapes[index];
         if (shape->flags & RENDER_SHAPE_ANIMATED) {
             animatorID = shape->animatorID;
-            if (animatorID){
-                func_8004A164(block->materials[shape->materialIndex].texture, animatorID);
+            if (animatorID) {
+                block_texanim_free(block->materials[shape->materialIndex].texture, animatorID);
             }
         }
     }
 }
 
-s32 func_8004A058(Texture* tex, u32 renderFlags, s32 animatorID) {
+s32 block_texanim_add(Texture* tex, u32 renderFlags, s32 animatorID) {
     s32 index;
     s32 indexOfUnref;
     
     // Check if an existing slot can be reused
     indexOfUnref = -1;
     for (index = 0; index < MAX_TEXTURE_ANIMS; index++) {
-        if ((&gBlockTextures[index])->refCount != 0 && 
-            tex == (&gBlockTextures[index])->texture && 
-            animatorID == (&gBlockTextures[index])->unkE) {
+        if ((&gBlockTexAnimTable[index])->refCount != 0 && 
+            tex == (&gBlockTexAnimTable[index])->texture && 
+            animatorID == (&gBlockTexAnimTable[index])->animatorID) {
             
             indexOfUnref = index;
             break;
@@ -3867,25 +3864,25 @@ s32 func_8004A058(Texture* tex, u32 renderFlags, s32 animatorID) {
     
     if (indexOfUnref != -1) {
         // Already exists on list
-        (&gBlockTextures[indexOfUnref])->refCount += 1;
+        (&gBlockTexAnimTable[indexOfUnref])->refCount += 1;
         return indexOfUnref;
     }
     
     // Add to first empty slot
     indexOfUnref = -1;
     for (index = 0; index < MAX_TEXTURE_ANIMS; index++) {
-        if ((&gBlockTextures[index])->refCount == 0) {
+        if ((&gBlockTexAnimTable[index])->refCount == 0) {
             indexOfUnref = index;
             break;
         }
     }
     
     if (indexOfUnref != -1) {
-        gBlockTextures[indexOfUnref].refCount = 1;
-        gBlockTextures[indexOfUnref].unk4 = 0;
-        gBlockTextures[indexOfUnref].flags = renderFlags;
-        gBlockTextures[indexOfUnref].texture = tex;
-        gBlockTextures[indexOfUnref].unkE = animatorID;
+        gBlockTexAnimTable[indexOfUnref].refCount = 1;
+        gBlockTexAnimTable[indexOfUnref].unk4 = 0;
+        gBlockTexAnimTable[indexOfUnref].flags = renderFlags;
+        gBlockTexAnimTable[indexOfUnref].texture = tex;
+        gBlockTexAnimTable[indexOfUnref].animatorID = animatorID;
         return indexOfUnref;
     }
 
@@ -3894,12 +3891,12 @@ s32 func_8004A058(Texture* tex, u32 renderFlags, s32 animatorID) {
     return 0;
 }
 
-void func_8004A164(Texture *matchTexture, s32 matchParam) {
+void block_texanim_free(Texture *tex, s32 animatorID) {
     s32 index;
-    for (index = 0; index < MAX_TEXTURE_ANIMS; index++){
-        if (matchTexture == gBlockTextures[index].texture && matchParam == gBlockTextures[index].unkE){
-            if (gBlockTextures[index].refCount > 0) {
-                gBlockTextures[index].refCount--;
+    for (index = 0; index < MAX_TEXTURE_ANIMS; index++) {
+        if (tex == gBlockTexAnimTable[index].texture && animatorID == gBlockTexAnimTable[index].animatorID) {
+            if (gBlockTexAnimTable[index].refCount > 0) {
+                gBlockTexAnimTable[index].refCount--;
             } else {
                 STUBBED_PRINTF("MISMATCH on global texanim free\n");
             }
@@ -3907,20 +3904,19 @@ void func_8004A164(Texture *matchTexture, s32 matchParam) {
     }
 }
 
-/** blocks_get_texture_by_some_value? */
-Texture* func_8004A1E8(s32 match_value) {
+Texture* block_texanim_get_tex(s32 animatorID) {
     s32 blockIndex;
     Block *block;
     s32 textureIndex;
     
-    for (blockIndex = 0; blockIndex < gLoadedBlockCount; blockIndex++){
+    for (blockIndex = 0; blockIndex < gLoadedBlockCount; blockIndex++) {
         block = gLoadedBlocks[blockIndex];
         
-        if (block){
-            for (textureIndex = 0; textureIndex < block->unk48; textureIndex++){
-                if (match_value == (&block->unk28[textureIndex])->animatorID){
-                    textureIndex = (&block->unk28[textureIndex])->textureIndex;
-                    return gBlockTextures[textureIndex].texture;
+        if (block) {
+            for (textureIndex = 0; textureIndex < block->numTexAnims; textureIndex++) {
+                if (animatorID == (&block->texAnims[textureIndex])->animatorID) {
+                    textureIndex = (&block->texAnims[textureIndex])->texanimID;
+                    return gBlockTexAnimTable[textureIndex].texture;
                 }
             }
         }
@@ -3928,21 +3924,20 @@ Texture* func_8004A1E8(s32 match_value) {
     return NULL;
 }
 
-BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2) {
+BlockTextureAnimInstance *block_texanim_get_instance(Block *block, s32 animatorID) {
     s32 i;
 
-    for (i = 0; i < block->unk48; i++)
-    {
-        if (block->unk28[i].animatorID == param_2) {
-            return &block->unk28[i];
+    for (i = 0; i < block->numTexAnims; i++) {
+        if (block->texAnims[i].animatorID == animatorID) {
+            return &block->texAnims[i];
         }
     }
 
     return NULL;
 }
 
-BlockTexture *func_8004A2CC(s32 idx) {
-    return &gBlockTextures[idx];
+BlockTextureAnim *block_texanim_get(s32 idx) {
+    return &gBlockTexAnimTable[idx];
 }
 
 void block_setup_xz_bitmap(Block* block) {
@@ -4010,34 +4005,31 @@ void block_setup_xz_bitmap(Block* block) {
 }
 
 /**
-  * block_get_animator_vertex_count?
-  *
-  * (uses the animator object's world position to find the relevant block)
+  * uses the animator object's world position to find the relevant block
   */
-s32 func_8004A528(Object* obj, u8 animatorID) {
-    s32 index;
-    s32 anim_vertex_count;
+s32 block_get_animator_vertex_count(Object* obj, u8 animatorID) {
+    s32 i;
+    s32 vertexCount;
     Block *block;
-    BlockShape *blockShapes;
+    BlockShape *shapes;
 
     block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
-    if (!block || !(block->vtxFlags & 8)){
+    if (!block || !(block->vtxFlags & 8)) {
         return 0;
     }
     
-    anim_vertex_count = 0;
-    blockShapes = block->shapes;
-    for (index = 0; index < block->shapeCount; index++){
-        if (animatorID == (blockShapes[index]).animatorID){
-            anim_vertex_count += blockShapes[index + 1].vtxBase - blockShapes[index].vtxBase;
+    vertexCount = 0;
+    shapes = block->shapes;
+    for (i = 0; i < block->shapeCount; i++) {
+        if (animatorID == (shapes[i]).animatorID) {
+            vertexCount += shapes[i + 1].vtxBase - shapes[i].vtxBase;
         }
     }
     
-    return anim_vertex_count;
+    return vertexCount;
 }
 
-/** count_local_block_shapes_using_animatorID */
-s32 func_8004A5D8(Object* obj, u8 animatorID) {
+s32 block_get_animator_shape_count(Object* obj, u8 animatorID) {
     Block* block;
     s32 matches;
     s32 i;

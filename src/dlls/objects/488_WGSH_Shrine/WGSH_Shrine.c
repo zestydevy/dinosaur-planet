@@ -334,7 +334,7 @@ static int dll_488_func_C90(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             case 9:
                 main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (_data_0 == 0) {
-                    _data_0 = func_8004A1E8(1);
+                    _data_0 = block_texanim_get_tex(1);
                 }
                 break;
             case 8:

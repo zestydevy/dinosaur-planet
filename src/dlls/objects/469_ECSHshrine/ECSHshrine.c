@@ -620,7 +620,7 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
             case 10:
                 main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (dTexture == NULL) {
-                    dTexture = func_8004A1E8(1);
+                    dTexture = block_texanim_get_tex(1);
                 }
                 break;
             case 9:

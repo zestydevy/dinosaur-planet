@@ -339,7 +339,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                 case 10:
                     main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                     if (_data_0 == NULL)
-                        _data_0 = func_8004A1E8(1);
+                        _data_0 = block_texanim_get_tex(1);
                     break;
                 case 9:
                     main_set_bits(BIT_DB_Entered_Shrine_2, 1);
