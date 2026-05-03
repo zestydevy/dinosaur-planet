@@ -2117,7 +2117,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         sTempIcon->tex = sMenuItemTextures[itemIdx];
 
                         //Draw icon
-                        if (func_80041E08()) {
+                        if (track_func_80041E08()) {
                             //Widescreen aspect
                             rcp_tile_write(
                                 gdl, 
@@ -2152,7 +2152,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     }
                 } else {
                     //Draw empty tile
-                    if (func_80041E08()) {
+                    if (track_func_80041E08()) {
                         //Widescreen aspect
                         rcp_tile_write(
                             gdl, 
@@ -2874,7 +2874,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
   * Sets a scissor mask for the inner strip of the inventory scroll.
   */
 static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl) {
-    if (func_80041E08()) {
+    if (track_func_80041E08()) {
         //Widescreen aspect
         gDPSetScissorFrac((*gdl)++, G_SC_NON_INTERLACE, 
             qu102(314.75), 

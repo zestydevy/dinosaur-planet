@@ -383,8 +383,8 @@ s32 dll_63_update1() {
             } else {
                 dll_63_clean_up(/*leavingMenus*/FALSE);
             }
-            func_80041D20(1);
-            func_80041C6C(1);
+            track_set_z_buffer_on(TRUE);
+            track_set_sky_on(TRUE);
         } else if (sExitTransitionTimer < 1) {
             if (sExitToGame) {
                 gDLL_29_Gplay->vtbl->start_loaded_game();

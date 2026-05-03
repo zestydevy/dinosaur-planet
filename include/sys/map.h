@@ -209,6 +209,41 @@ typedef struct Unk80092BC0 {
 /* *********************************************** */
 // MARK: Map
 
+enum TrackFlags {
+      // Set during track_draw when the map is not a mobile map or type 3
+/*0*/ TRACKFLAG_UNK1 = 0x1,
+      // Determines whether streaming is enabled.
+      // Automatically unset on the next streaming update.
+/*1*/ TRACKFLAG_UPDATE_STREAMING = 0x2,
+/*2*/ TRACKFLAG_UNK4 = 0x4,
+      // Render with 16:9 camera aspect ratio. This is likely for
+      // anamorphic widescreen (i.e. rendering the 4:3 game in a way
+      // that looks correct on a 16:9 display).
+/*3*/ TRACKFLAG_UNK8 = 0x8,
+/*4*/ TRACKFLAG_SKY = 0x10,
+/*5*/ TRACKFLAG_ANTI_ALIAS = 0x20,
+/*6*/ TRACKFLAG_SKY_OBJECTS = 0x40,
+/*7*/ TRACKFLAG_SHADOWS = 0x80,
+/*8*/ TRACKFLAG_UNK100 = 0x100, // sphere map reflections?
+/*9*/ TRACKFLAG_UNK200 = 0x200, // cloud related?
+/*10*/ TRACKFLAG_UNK400 = 0x400, // unused
+       // Prevents any streaming related logic from being deferred.
+       // Automatically unset on the next streaming update.
+/*11*/ TRACKFLAG_UPDATE_STREAMING_IMMEDIATE = 0x800,
+/*12*/ TRACKFLAG_UNK1000 = 0x1000, // unused
+/*13*/ TRACKFLAG_DISABLE_Z_BUFFER = 0x2000,
+/*14*/ TRACKFLAG_LAYER_CHANGED = 0x4000,
+       // Whether dynamic lighting for blocks is enabled.
+/*15*/ TRACKFLAG_BLOCK_LIGHTING = 0x8000,
+       // Some code that uses this flag is not present in this build but 
+       // is present in default.dol. it would've rendered the game at 5:3 
+       // when set or 9:4 if flag 0x8 is also set. Also would've changed
+       // the VI resolution to 384x192.
+       // Unimplemented "Wide" option (as seen in Perfect Dark)?
+/*16*/ TRACKFLAG_UNK10000 = 0x10000,
+/*17*/ TRACKFLAG_SUN_GLARE = 0x20000
+};
+
 typedef struct {
 /*00*/  s16 gridSizeX;
 /*02*/  s16 gridSizeZ;
@@ -456,8 +491,8 @@ extern s32 D_80092A84[2];
 // DL Builder
 
 void dl_set_all_dirty(void);
-void func_80040FF8(void);
-void func_80041028(void);
+void dl_use_alt_builder(void);
+void dl_use_main_builder(void);
 void dl_apply_combine(Gfx **gdl);
 void dl_apply_other_mode(Gfx **gdl);
 void dl_apply_geometry_mode(Gfx **gdl);
@@ -474,21 +509,21 @@ void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
 // Render Settings
 
-void func_80041C30(s32 arg0);
-void func_80041C6C(s32);
-void func_80041CA8(s32 arg0);
-void func_80041CE4(s32 arg0);
-void func_80041D20(s32);
-s32 func_80041D5C(void);
-u32 func_80041D74(void);
-u32 func_80041D8C(void);
-u32 func_80041DA4(void);
-s32 func_80041DBC(void);
-s32 func_80041DD4(void);
-void func_80041DEC(void);
-s32 func_80041E08(void);
-void func_80041E24(s32 arg0);
-s32 func_80041E68(void);
+void track_func_80041C30(s32 arg0);
+void track_set_sky_on(s32);
+void track_set_anti_alias_on(s32 arg0);
+void track_set_sky_objects_on(s32 arg0);
+void track_set_z_buffer_on(s32);
+s32 track_is_z_buffer_on(void);
+u32 track_is_sky_on(void);
+u32 track_func_80041D8C(void);
+u32 track_get_shadows_on(void);
+s32 track_func_80041DBC(void);
+s32 track_func_80041DD4(void);
+void track_func_80041DEC(void);
+s32 track_func_80041E08(void);
+void track_set_sun_glare_on(s32 arg0);
+s32 track_get_sun_glare_on(void);
 
 // Map/Track
 

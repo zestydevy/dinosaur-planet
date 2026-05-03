@@ -471,10 +471,13 @@ void func_8001EB80(void) {
     }
 }
 
+// newlight_set_inside
+// officialName: newlightInside
 void func_8001EBD0(s32 arg0) {
     BYTE_80090cb0 = (u8) arg0;
 }
 
+// newlight_get_inside
 u8 func_8001EBE0(void) {
     return BYTE_80090cb0;
 }
@@ -612,7 +615,7 @@ void func_8001F094(ModelInstance* arg0) {
     f32 temp_ft4;
     f32 pad;
 
-    if (func_80041D8C() == 0) {
+    if (track_func_80041D8C() == 0) {
         return;
     }
 

@@ -276,8 +276,8 @@ void game_init(void) {
     if (osMemSize == EXPANSION_SIZE) {
         main_handle_map_change();
     }
-    func_80041D20(0);
-    func_80041C6C(0);
+    track_set_z_buffer_on(FALSE);
+    track_set_sky_on(FALSE);
 }
 
 void game_tick(void) {
@@ -317,9 +317,9 @@ void game_tick(void) {
     rsp_init(&gCurGfx);
 
     clearFlags = CLEAR_ZBUFFER;
-    if (func_80041D5C() == 0) {
+    if (track_is_z_buffer_on() == FALSE) {
         clearFlags = CLEAR_NONE;
-    } else if (func_80041D74() == 0) {
+    } else if (track_is_sky_on() == FALSE) {
         clearFlags = CLEAR_COLOR | CLEAR_ZBUFFER;
     }
 
@@ -473,8 +473,8 @@ void func_80013D80(void) {
 
 void func_80013FB4(void) {
     vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
-    func_80041D20(0);
-    func_80041C6C(0);
+    track_set_z_buffer_on(FALSE);
+    track_set_sky_on(FALSE);
     gDLL_5_AMSEQ->vtbl->stop(3);
     gDLL_5_AMSEQ->vtbl->stop(0);
     gDLL_5_AMSEQ->vtbl->stop(1);

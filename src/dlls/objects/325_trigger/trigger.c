@@ -549,7 +549,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                func_80041C6C(cmd->param2);
+                track_set_sky_on(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track Sky On"
                 } else {
@@ -560,7 +560,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                func_80041CA8((s32) cmd->param2);
+                track_set_anti_alias_on((s32) cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track AntiAlias On"
                 } else {
@@ -571,7 +571,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                func_80041CE4((s32) cmd->param2);
+                track_set_sky_objects_on((s32) cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track SkyObjects On"
                 } else {
@@ -612,10 +612,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 7:
                 if ((s32) cmd->param2 > 0) {
-                    func_80041E24(1);
+                    track_set_sun_glare_on(1);
                     // "Trigger [%d], trackSetSunGlareOn(1)" (default.dol)
                 } else {
-                    func_80041E24(0);
+                    track_set_sun_glare_on(0);
                     // "Trigger [%d], trackSetSunGlareOn(0)" (default.dol)
                 }
                 break;

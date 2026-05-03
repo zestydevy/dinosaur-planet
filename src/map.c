@@ -34,8 +34,8 @@ typedef struct UnkStruct {
 } UnkStruct;
 
 // -------- .bss start 800b49f0 -------- //
-DLBuilder D_800B49F0;
-DLBuilder D_800B4A20;
+DLBuilder sMainDLBuilder;
+DLBuilder sAltDLBuilder; // Used for building DLs other than the main GDL
 s32 D_800B4A50;
 s32 D_800B4A54;
 s8 D_800B4A58; //gStartWarp?
@@ -110,7 +110,7 @@ s8 D_80092A78 = 0; //gFadeDelayTimer
 s32 D_80092A7C[2] = {0};
 s32 D_80092A84[2] = {0};
 s8 gMapLayer = 0;
-DLBuilder *gDLBuilder = &D_800B49F0;
+DLBuilder *gDLBuilder = &sMainDLBuilder;
 s32 D_80092A94 = -1;
 /** Flags
  * 0x10 - Whether the sky renders
@@ -119,7 +119,7 @@ s32 D_80092A94 = -1;
  * 0x10000 - Runs vi_init_framebuffers then toggles off, i guess
  * 0x20000 - Spawns an FXEmit object and turns the fog a tan-ish color, renders a different sun??
  */
-u32 UINT_80092a98 = 0;
+u32 gTrackFlags = 0;
 s8 D_80092A9C[MAP_LAYER_COUNT] = {0, -2, -1, 1, 2};
 s8 gMapNumStreamMaps = 0;
 s32 D_80092AA8 = 0; // unused
@@ -193,7 +193,7 @@ s32 map_should_stream_load_object(ObjSetup*, s8, s32);
 s32 map_check_some_mapobj_flag(s32, u32);
 void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
-s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
+s32 func_8004B4A0(ObjSetup* obj, s32 mapno);
 void block_add_to_render_list(Block *block, f32 x, f32 z);
 void func_800436DC(Object* obj, s32 visibility);
 s32 func_80045DC0(s32, s32, s32); //unsure of last arg
@@ -214,14 +214,14 @@ void dl_set_all_dirty(void) {
     gDLBuilder->needsPipeSync = TRUE;
 }
 
-void func_80040FF8(void) {
-    gDLBuilder = &D_800B4A20;
+void dl_use_alt_builder(void) {
+    gDLBuilder = &sAltDLBuilder;
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
     gDLBuilder->needsPipeSync = TRUE;
 }
 
-void func_80041028(void) {
-    gDLBuilder = &D_800B49F0;
+void dl_use_main_builder(void) {
+    gDLBuilder = &sMainDLBuilder;
 }
 
 void dl_apply_combine(Gfx **gdl) {
@@ -256,8 +256,8 @@ void dl_apply_other_mode(Gfx **gdl) {
     Gfx *currGfx;
     u8 dirty;
 
-    if (UINT_80092a98 & 0x2000) {
-        (*gdl)->words.w1 &= ~0x30;
+    if (gTrackFlags & TRACKFLAG_DISABLE_Z_BUFFER) {
+        (*gdl)->words.w1 &= ~(Z_CMP | Z_UPD);
     }
 
     currGfx = &gDLBuilder->combine + 1;
@@ -285,12 +285,11 @@ void dl_apply_other_mode(Gfx **gdl) {
     }
 }
 
-void dl_apply_geometry_mode(Gfx **gdl)
-{
+void dl_apply_geometry_mode(Gfx **gdl) {
     u8 dirty;
 
-    if (UINT_80092a98 & 0x2000) {
-        (**gdl).words.w1 &= ~0x1;
+    if (gTrackFlags & TRACKFLAG_DISABLE_Z_BUFFER) {
+        (**gdl).words.w1 &= ~G_ZBUFFER;
     }
 
     if (gDLBuilder->dirtyFlags & DIRTY_FLAGS_GEOMETRY_MODE) {
@@ -306,22 +305,19 @@ void dl_apply_geometry_mode(Gfx **gdl)
     }
 }
 
-void dl_set_geometry_mode(Gfx **gdl, u32 mode)
-{
+void dl_set_geometry_mode(Gfx **gdl, u32 mode) {
     mode |= gDLBuilder->geometryMode;
     gSPLoadGeometryMode(*gdl, mode);
     dl_apply_geometry_mode(gdl);
 }
 
-void dl_clear_geometry_mode(Gfx **gdl, u32 mode)
-{
+void dl_clear_geometry_mode(Gfx **gdl, u32 mode) {
     mode = gDLBuilder->geometryMode & ~mode;
     gSPLoadGeometryMode(*gdl, mode);
     dl_apply_geometry_mode(gdl);
 }
 
-void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
-{
+void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -342,15 +338,13 @@ void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
-{
+void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     gDLBuilder->dirtyFlags |= DIRTY_FLAGS_SET_PRIMARY_COLOR;
     gDLBuilder->needsPipeSync = FALSE;
     dl_set_prim_color(gdl, r, g, b, a);
 }
 
-void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
-{
+void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -377,15 +371,13 @@ void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
-{
+void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     gDLBuilder->dirtyFlags |= DIRTY_FLAGS_SET_ENV_COLOR;
     gDLBuilder->needsPipeSync = FALSE;
     dl_set_env_color(gdl, r, g, b, a);
 }
 
-void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
-{
+void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -412,8 +404,7 @@ void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-void dl_set_fill_color(Gfx **gdl, u32 color)
-{
+void dl_set_fill_color(Gfx **gdl, u32 color) {
     u8 dirty;
 
     if (gDLBuilder->dirtyFlags & DIRTY_FLAGS_SET_FILL_COLOR)
@@ -439,8 +430,7 @@ void dl_set_fill_color(Gfx **gdl, u32 color)
     }
 }
 
-void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
-{
+void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -467,8 +457,7 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
-{
+void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount) {
     s32 n;
     DLTri *tri;
 
@@ -486,77 +475,72 @@ void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
     gDLBuilder->needsPipeSync = TRUE;
 }
 
-//These all seem to get/set render-related bits!
-void func_80041C30(s32 arg0) {
-    if (arg0 != 0) {
-        UINT_80092a98 |= 0x1000;
+void track_func_80041C30(s32 on) {
+    if (on != 0) {
+        gTrackFlags |= TRACKFLAG_UNK1000;
     } else {
-        UINT_80092a98 &= ~0x1000;
+        gTrackFlags &= ~TRACKFLAG_UNK1000;
     }
 }
 
-void func_80041C6C(s32 arg0) {
-    if (arg0 != 0) {
-        UINT_80092a98 |= 0x10;
+void track_set_sky_on(s32 on) {
+    if (on != 0) {
+        gTrackFlags |= TRACKFLAG_SKY;
     } else {
-        UINT_80092a98 &= ~0x10;
+        gTrackFlags &= ~TRACKFLAG_SKY;
     }
 }
 
-void func_80041CA8(s32 arg0) {
-    if (arg0 != 0) {
-        UINT_80092a98 |= 0x20;
-        return;
+void track_set_anti_alias_on(s32 on) {
+    if (on != 0) {
+        gTrackFlags |= TRACKFLAG_ANTI_ALIAS;
+    } else {
+        gTrackFlags &= ~TRACKFLAG_ANTI_ALIAS;
     }
-    UINT_80092a98 &= ~0x20;
 }
 
-void func_80041CE4(s32 arg0) {
-    if (arg0 != 0) {
-        UINT_80092a98 |= 0x40;
-        return;
+void track_set_sky_objects_on(s32 on) {
+    if (on != 0) {
+        gTrackFlags |= TRACKFLAG_SKY_OBJECTS;
+    } else {
+        gTrackFlags &= ~TRACKFLAG_SKY_OBJECTS;
     }
-    UINT_80092a98 &= ~0x40;
 }
 
-void func_80041D20(s32 arg0) {
-    if (arg0 != 0) {
-        UINT_80092a98 &= ~0x2000;
-        return;
+void track_set_z_buffer_on(s32 on) {
+    if (on != 0) {
+        gTrackFlags &= ~TRACKFLAG_DISABLE_Z_BUFFER;
+    } else {
+        gTrackFlags |= TRACKFLAG_DISABLE_Z_BUFFER;
     }
-    UINT_80092a98 |= 0x2000;
 }
 
-s32 func_80041D5C(void) {
-    return (UINT_80092a98 & 0x2000) == 0;
+s32 track_is_z_buffer_on(void) {
+    return (gTrackFlags & TRACKFLAG_DISABLE_Z_BUFFER) == FALSE;
 }
 
-u32 func_80041D74()
-{
-    return UINT_80092a98 & 0x10;
+u32 track_is_sky_on(void) {
+    return gTrackFlags & TRACKFLAG_SKY;
 }
 
-// Get widescreen-related bit?
-u32 func_80041D8C(void)
-{
-    return UINT_80092a98 & 0x100;
+u32 track_func_80041D8C(void) {
+    return gTrackFlags & TRACKFLAG_UNK100;
 }
 
-u32 func_80041DA4(void)
-{
-    return UINT_80092a98 & 0x80;
+u32 track_get_shadows_on(void) {
+    return gTrackFlags & TRACKFLAG_SHADOWS;
 }
 
-s32 func_80041DBC(void) {
-    return UINT_80092a98 & 8;
+s32 track_func_80041DBC(void) {
+    return gTrackFlags & TRACKFLAG_UNK8;
 }
 
-s32 func_80041DD4(void) {
-    return UINT_80092a98 & 0x1000;
+s32 track_func_80041DD4(void) {
+    return gTrackFlags & TRACKFLAG_UNK1000;
 }
 
-void func_80041DEC(void) {
-    UINT_80092a98 |= 0x800;
+void track_func_80041DEC(void) {
+    gTrackFlags |= TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
 }
 
 /* 
@@ -564,26 +548,26 @@ void func_80041DEC(void) {
  * Maybe related to the unimplemented cinematic aspect vs. widescreen option
  * in the video settings, like in GE/PD?
  */
-s32 func_80041E08(void) {
-    return UINT_80092a98 & 0x10000;
+s32 track_func_80041E08(void) {
+    return gTrackFlags & TRACKFLAG_UNK10000;
 }
 
-void func_80041E24(s32 arg0) {
-    if (arg0 != 0) {
-        UINT_80092a98 |= 0x20000;
-        return;
+void track_set_sun_glare_on(s32 on) {
+    if (on != 0) {
+        gTrackFlags |= TRACKFLAG_SUN_GLARE;
+    } else {
+        gTrackFlags &= ~TRACKFLAG_SUN_GLARE;
     }
-    UINT_80092a98 &= ~0x20000;
 }
 
-s32 func_80041E68(void) {
-    return UINT_80092a98 & 0x20000;
+s32 track_get_sun_glare_on(void) {
+    return gTrackFlags & TRACKFLAG_SUN_GLARE;
 }
 
 void init_maps(void) {
     s32 i;
 
-    UINT_80092a98 = 0;
+    gTrackFlags = 0;
     gBlockColorTable = mmAlloc(sizeof(BlockColorTableEntry) * 255, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:cblocks"));
     gLoadedBlocks = mmAlloc(sizeof(Block*) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blknos"));
     gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blkusage"));
@@ -625,7 +609,7 @@ void init_maps(void) {
 
 void func_80042174(s32 arg0) {
     if (arg0 == 0) {
-        if (UINT_80092a98 & 0x10) {
+        if (gTrackFlags & TRACKFLAG_SKY) {
             gDLL_12_Minic->vtbl->func2();
         }
         gDLL_8->vtbl->func2();
@@ -642,6 +626,7 @@ void func_80042174(s32 arg0) {
     func_8001EB80();
 }
 
+// track_draw
 void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
     Mtx* mtx;
 
@@ -649,9 +634,9 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     gWorldRSPMatrices = *mtxs;
     D_800B51D4 = *vtxs;
     D_800B51D8 = *pols;
-    UINT_80092a98 |= 0x21;
+    gTrackFlags |= (TRACKFLAG_ANTI_ALIAS | TRACKFLAG_UNK1);
     if ((gMapType == MAPTYPE_MOBILE) || (gMapType == MAPTYPE_3)) {
-        UINT_80092a98 &= ~1;
+        gTrackFlags &= ~TRACKFLAG_UNK1;
     }
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
     mtx = get_some_model_view_mtx();
@@ -659,39 +644,41 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     camera_setup_viewport_and_matrices(&gMainDL, 0);
     func_80044BEC();
     if (func_80010048() != 0) {
-        if (!(UINT_80092a98 & 8)) {
-            UINT_80092a98 |= 8;
+        if (!(gTrackFlags & TRACKFLAG_UNK8)) {
+            gTrackFlags |= TRACKFLAG_UNK8;
         }
         camera_set_aspect(1.7777778f);
-    } else if (UINT_80092a98 & 8) {
-        UINT_80092a98 &= ~8;
-        camera_set_aspect(1.3333334f);
+    } else {
+        if (gTrackFlags & TRACKFLAG_UNK8) {
+            gTrackFlags &= ~TRACKFLAG_UNK8;
+            camera_set_aspect(1.3333334f);
+        }
     }
-    if (UINT_80092a98 & 0x10000) {
-        if (UINT_80092a98 & 8) {
+    if (gTrackFlags & TRACKFLAG_UNK10000) {
+        if (gTrackFlags & TRACKFLAG_UNK8) {
             camera_set_aspect(1.7777778f);
         } else {
             camera_set_aspect(1.3333334f);
         }
         viewport_disable(get_camera_selector(), 0U);
         vi_some_video_setup(0);
-        UINT_80092a98 &= ~0x10000;
+        gTrackFlags &= ~TRACKFLAG_UNK10000;
     }
-    if (UINT_80092a98 & 0x10) {
+    if (gTrackFlags & TRACKFLAG_SKY) {
         setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
         gDLL_7_Newday->vtbl->func13(&gMainDL, &gWorldRSPMatrices);
 
-        if (UINT_80092a98 & 0x40) {
+        if (gTrackFlags & TRACKFLAG_SKY_OBJECTS) {
             gDLL_10_Newstars->vtbl->func1(&gMainDL);
         }
-        gDLL_7_Newday->vtbl->func3(&gMainDL, &gWorldRSPMatrices, UINT_80092a98 & 0x40);
+        gDLL_7_Newday->vtbl->func3(&gMainDL, &gWorldRSPMatrices, gTrackFlags & TRACKFLAG_SKY_OBJECTS);
     } else {
         setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
     }
     gDLL_11_Newlfx->vtbl->func2();
     gDLL_57->vtbl->func3();
     gDLL_58->vtbl->func2();
-    if (UINT_80092a98 & 0x20000) {
+    if (gTrackFlags & TRACKFLAG_SUN_GLARE) {
         if (gDLL_7_Newday->vtbl->func23(&gMainDL) == 0) {
             gDLL_8->vtbl->func3(&gMainDL);
         }
@@ -707,7 +694,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     *mtxs = gWorldRSPMatrices;
     *vtxs = D_800B51D4;
     *pols = D_800B51D8;
-    UINT_80092a98 &= ~2;
+    gTrackFlags &= ~TRACKFLAG_UPDATE_STREAMING;
     // @fake
     if (1) { } if (1) { } if (1) { } if (1) { }
     // diProfEnd("Trackdraw") (default.dol)
@@ -741,7 +728,7 @@ void track_c_func(void) {
     dl_add_debug_info(gMainDL, 0, "track/track.c", 0x53D);
     gDLL_9_Newclouds->vtbl->func6(&gMainDL, gUpdateRate, 0);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 3);
-    if (UINT_80092a98 & 0x10) {
+    if (gTrackFlags & TRACKFLAG_SKY) {
         gDLL_12_Minic->vtbl->func3(&gMainDL, &gWorldRSPMatrices);
     }
     dl_add_debug_info(gMainDL, 0, "track/track.c", 0x545);
@@ -798,11 +785,11 @@ void track_c_func(void) {
                 D_800B97B8 = temp_s1 * BLOCKS_GRID_UNIT_F;
                 D_800B97BC = var_s2 * BLOCKS_GRID_UNIT_F;
                 block_calc_shape_visibility(block, temp_s1, var_s2, sp240);
-                if (UINT_80092a98 & 0x8000) {
+                if (gTrackFlags & TRACKFLAG_BLOCK_LIGHTING) {
                     if (block->unk3E != 0) {
                         block_compute_vertex_colors(block, temp_s1, var_s2, 0);
                     }
-                    if ((block->unk49 != 0) && (UINT_80092a98 & 0x100)) {
+                    if ((block->unk49 != 0) && (gTrackFlags & TRACKFLAG_UNK100)) {
                         func_8001F4C0(block, temp_s1, var_s2);
                     }
                 }
@@ -1632,7 +1619,7 @@ void func_80044BEC(void) {
     SRT srt;
 
     camera = get_camera();
-    if ((UINT_80092a98 & 8) || (UINT_80092a98 & 0x10000)) {
+    if ((gTrackFlags & TRACKFLAG_UNK8) || (gTrackFlags & TRACKFLAG_UNK10000)) {
         sp80 = camera_get_fov() / 1.5f;
     } else {
         sp80 = camera_get_fov() * 0.5f;
@@ -2062,6 +2049,7 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
     return -1;
 }
 
+// track_free_map
 void map_free(s32 mapID) {
     if (gLoadedMapsDataTable[mapID]){
         map_init_obj_setup_list(gLoadedMapsDataTable[mapID], &gMapObjSetupLists[mapID], mapID, 1);
@@ -2286,7 +2274,7 @@ GlobalMapCell* func_80046698(s32 gridX, s32 gridZ) {
     return &layer[cellIndex];
 }
 
-MapHeader* func_800466C0() {
+MapHeader* func_800466C0(void) {
     MapHeader* map;
     GlobalMapCell *layer;
     s32 mapID;
@@ -2308,7 +2296,7 @@ MapHeader* func_800466C0() {
     return map;
 }
 
-s16 func_80046718() {
+s16 func_80046718(void) {
     return gNumTRKBLKEntries;
 }
 
@@ -2319,8 +2307,7 @@ s32 func_80046728(s32 mapID) {
     return gFile_TRKBLK[mapID + 1] - gFile_TRKBLK[mapID];
 }
 
-void init_global_map(void)
-{
+void init_global_map(void) {
     #define SOME_LENGTH     64
     s32 i;
     s32 size;
@@ -2418,13 +2405,13 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
 void map_func_80046B58(f32 x, f32 y, f32 z) {
     u32 temp_t8;
     
-    temp_t8 = UINT_80092a98;
-    if (!(temp_t8 & 2) || temp_t8 & 0x800){
+    temp_t8 = gTrackFlags;
+    if (!(temp_t8 & TRACKFLAG_UPDATE_STREAMING) || (temp_t8 & TRACKFLAG_UPDATE_STREAMING_IMMEDIATE)) {
         D_800B97AC = x;
         D_800B97B0 = y;
         D_800B97B4 = z;
-        UINT_80092a98 = temp_t8 | 2;
-        if (UINT_80092a98 & 0x800){
+        gTrackFlags = temp_t8 | TRACKFLAG_UPDATE_STREAMING;
+        if (gTrackFlags & TRACKFLAG_UPDATE_STREAMING_IMMEDIATE){
             map_update_streaming();
         }
     }
@@ -2459,20 +2446,20 @@ void map_update_streaming(void) {
     s32 xTemp;
     s32 zTemp;
 
-    if (!(UINT_80092a98 & 2)) {
+    if (!(gTrackFlags & TRACKFLAG_UPDATE_STREAMING)) {
         return;
     }
 
-    UINT_80092a98 &= ~2;
+    gTrackFlags &= ~TRACKFLAG_UPDATE_STREAMING;
     f0 = D_800B97AC;
     f2 = D_800B97B4;
     f14 = f0 - gWorldX;
     sp308 = f2 - gWorldZ;
     sp2F4 = floor_f(f14 / BLOCKS_GRID_UNIT_F);
     sp2F0 = floor_f(sp308 / BLOCKS_GRID_UNIT_F);
-    sp294 = UINT_80092a98 & 0x800;
-    UINT_80092a98 &= ~0x800;
-    if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (UINT_80092a98 & 0x4000)) {
+    sp294 = gTrackFlags & TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
+    gTrackFlags &= ~TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
+    if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (gTrackFlags & TRACKFLAG_LAYER_CHANGED)) {
         shadows_func_8004D974(1);
         func_80012B54(1, 0);
         var_fp = 0;
@@ -2595,7 +2582,7 @@ void map_update_streaming(void) {
         func_8004530C();
     }
     map_update_objects_streaming(sp294);
-    UINT_80092a98 &= ~0x4000;
+    gTrackFlags &= ~TRACKFLAG_LAYER_CHANGED;
 }
 
 void map_increment_layer(void) {
@@ -2603,7 +2590,7 @@ void map_increment_layer(void) {
     if (gMapLayer >= 3) {
         gMapLayer = 2;
     }
-    UINT_80092a98 |= 0x4000;
+    gTrackFlags |= TRACKFLAG_LAYER_CHANGED;
 }
 
 void map_decrement_layer(void) {
@@ -2611,7 +2598,7 @@ void map_decrement_layer(void) {
     if (gMapLayer < -2) {
         gMapLayer = -2;
     }
-    UINT_80092a98 |= 0x4000;
+    gTrackFlags |= TRACKFLAG_LAYER_CHANGED;
 }
 
 void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 arg6, s32 arg7, s32 arg8) {
@@ -2796,11 +2783,11 @@ void map_func_8004773C(void) {
     gDLL_9_Newclouds->vtbl->func1();
     gDLL_10_Newstars->vtbl->func0();
     footsteps_init();
-    UINT_80092a98 &= 0x2010;
-    UINT_80092a98 |= 0x81E0;
-    UINT_80092a98 |= 0x804;
+    gTrackFlags &= (TRACKFLAG_DISABLE_Z_BUFFER | TRACKFLAG_SKY);
+    gTrackFlags |= (TRACKFLAG_BLOCK_LIGHTING | TRACKFLAG_UNK100 | TRACKFLAG_SHADOWS | TRACKFLAG_SKY_OBJECTS | TRACKFLAG_ANTI_ALIAS);
+    gTrackFlags |= (TRACKFLAG_UPDATE_STREAMING_IMMEDIATE | TRACKFLAG_UNK4);
     map_func_80046B58(savedPlayerLocation->vec.x, savedPlayerLocation->vec.y, savedPlayerLocation->vec.z);
-    UINT_80092a98 &= ~4;
+    gTrackFlags &= ~TRACKFLAG_UNK4;
     func_800591EC();
     func_80023628();
     D_800B4A58 = 0;
@@ -2893,7 +2880,7 @@ void map_func_8004773C(void) {
     }
 }
 
-s32 map_get_type() {
+s32 map_get_type(void) {
     return gMapType;
 }
 
@@ -3434,8 +3421,7 @@ void block_setup_gdl_groups(Block *block) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_vertices.s")
 #else
-void block_setup_vertices(Block *block)
-{
+void block_setup_vertices(Block *block) {
     s32 i;
     BlockShape *shape;
     s32 v0[3]; // spC4 - spCC
@@ -3770,8 +3756,7 @@ BlockTextureScroller* func_80049D68(s32 arg0) {
     return &D_800B97A8[arg0];
 }
 
-void func_80049D88(void)
-{
+void func_80049D88(void) {
     s32 i;
     Texture *texture;
 
@@ -3930,8 +3915,7 @@ Texture* func_8004A1E8(s32 match_value) {
     return NULL;
 }
 
-BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2)
-{
+BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2) {
     s32 i;
 
     for (i = 0; i < block->unk48; i++)
@@ -3944,8 +3928,7 @@ BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2)
     return NULL;
 }
 
-BlockTexture *func_8004A2CC(s32 idx)
-{
+BlockTexture *func_8004A2CC(s32 idx) {
     return &gBlockTextures[idx];
 }
 
@@ -4119,6 +4102,7 @@ void func_8004A67C(void) {
     }
 }
 
+// track_object_control
 void map_update_objects_streaming(s32 arg0) {
     GlobalMapCell* var_a3;
     s32 i;
@@ -4490,11 +4474,12 @@ s32 map_should_obj_unload(Object *obj) {
 
 /** map_should_object_load? */
 // is_obj_in_current_map_setup
-s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
-    s32 setupID;
+// track_check_object_load
+s32 func_8004B4A0(ObjSetup* obj, s32 mapno) {
+    s32 actno;
 
-    setupID = gDLL_29_Gplay->vtbl->get_map_setup(mapID);
-    if (setupID == -1) {
+    actno = gDLL_29_Gplay->vtbl->get_map_setup(mapno);
+    if (actno == -1) {
         return 0;
     }
     /* default.dol
@@ -4505,13 +4490,13 @@ s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
         STUBBED_PRINTF("Warning: act number is not valid (actno: %d)\n", setupID);
     }
     */
-    if (setupID != 0) {
-        if (setupID < 9) {
-            if ((obj->actExclusions1 >> (setupID - 1)) & 1) {
+    if (actno != 0) {
+        if (actno < 9) {
+            if ((obj->actExclusions1 >> (actno - 1)) & 1) {
                 return 0;
             }
         }
-        else if ((obj->actExclusions2 >> (16 - setupID)) & 1) {
+        else if ((obj->actExclusions2 >> (16 - actno)) & 1) {
             return 0;
         }
     }
@@ -4576,7 +4561,8 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
 /**
  * Seems to be called when camera moves between grid cells?
  */
- void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
+// track_set_loaded
+void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
     s32 cell_offset;
     s32 bit_at_index;
     MapHeader *map;
@@ -4600,6 +4586,7 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
     }
 }
 
+// track_get_loaded
 s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     MapHeader *map;
     s32 bit_at_index;
@@ -4708,12 +4695,12 @@ void func_8004B914(s32 mapID) {
     }
 }
 
-void func_8004B948(s32 arg0) {
-    if (arg0 != 0) {
-        UINT_80092a98 |= 0x200;
-        return;
+void func_8004B948(s32 on) {
+    if (on != 0) {
+        gTrackFlags |= TRACKFLAG_UNK200;
+    } else {
+        gTrackFlags &= ~TRACKFLAG_UNK200;
     }
-    UINT_80092a98 &= ~0x200;
 }
 
 void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z) {
