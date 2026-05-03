@@ -62,7 +62,7 @@ typedef struct {
 
 typedef struct {
 /*00*/ s16 textureIndex;
-/*02*/ u8 unk2;
+/*02*/ u8 animatorID;
 /*03*/ u8 unk3;
 } BlocksTextureIndexData;
 
@@ -303,11 +303,6 @@ typedef struct {
   s32 layer;
 } Warp;
 
-typedef struct {
-  Vec3f coord;
-  s8 layer[2];
-} SimilarToWarp;
-
 // size: 0xA
 typedef struct Struct_D_800B9768_unk4 {
     s16 xMin;
@@ -460,6 +455,7 @@ typedef struct MapObjSetupList {
 // The map grid always has 5 layers: -2, -1, 0, 1, 2
 #define MAP_LAYER_COUNT 5
 #define MAX_TEXTURE_SCROLLERS 58
+#define MAX_TEXTURE_ANIMS 20
 
 #define GRID_INDEX(z, x) (((z) * BLOCKS_GRID_SPAN + (x)))
 
@@ -528,8 +524,8 @@ s32 track_get_sun_glare_on(void);
 // Map/Track
 
 void init_maps(void);
-void func_80042174(s32);
-void func_8004225C(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
+void track_tick(s32);
+void track_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
 ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
 s32 func_8004454C(f32 x, f32 y, f32 z);
 void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);

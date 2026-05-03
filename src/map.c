@@ -1,5 +1,6 @@
 #include "sys/map.h"
 #include "dlls/engine/29_gplay.h"
+#include "dlls/objects/common/vehicle.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/texture.h"
 #include "sys/asset_thread.h"
@@ -23,6 +24,7 @@
 #include "dll.h"
 #include "macros.h"
 #include "gbi_extra.h"
+#include "prevent_bss_reordering.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
@@ -158,10 +160,10 @@ s32 D_80092BBC = -1;
 Unk80092BC0 D_80092BC0 = {0};
 // -------- .data end 80092bd0 -------- //
 
-void func_8004D328(void);
+void map_handle_transition(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
 HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
-void func_800441F4(u32* arg0, s32 arg1);
+void track_sort_render_list(u32* arg0, s32 arg1);
 void block_color_table_add_block(Block *block);
 void block_color_table_free_block(Block *block);
 u32 hits_get_size(s32 id);
@@ -172,11 +174,11 @@ void block_setup_xz_bitmap(Block *block);
 void block_compute_vertex_colors(Block*,s32,s32,s32);
 void func_80049D38(u32 arg0);
 void func_80049FA8(Block*);
-void func_800499BC(void);
-void func_80049D88(void);
+void block_texture_scrollers_tick(void);
+void block_tex_animate(void);
 void func_80044BEC(void);
 void func_80048F58(void);
-void track_c_func(void);
+void track_draw_main(void);
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
@@ -184,7 +186,7 @@ MapHeader *map_load_streammap(s32, s32);
 void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
 void map_update_objects_streaming(s32);
 s32 map_func_800485FC(s32, s32, s32, s32, s32);
-void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
+void map_check_block_grid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx);
 void func_800496E4(s32 blockIndex);
 s32 func_8004A058(Texture* tex, u32 renderFlags, s32 arg2);
 s32 map_should_obj_unload(Object*);
@@ -195,7 +197,7 @@ void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 s32 func_8004B4A0(ObjSetup* obj, s32 mapno);
 void block_add_to_render_list(Block *block, f32 x, f32 z);
-void func_800436DC(Object* obj, s32 visibility);
+void track_draw_object(Object* obj, s32 visibility);
 s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
@@ -203,8 +205,8 @@ s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a);
 void func_8004A164(Texture*, s32);
 void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
 void block_calc_shape_visibility(Block*, s16, s16, s16);
-void func_80043FD8(s8* arg0);
-s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks);
+void track_add_visible_objects(s8* objVisibilities);
+s32 block_frustum_check(s32 xPos, s32 zPos, Block* block);
 void some_cell_func(BitStream* stream);
 BlockTextureScroller* func_80049D68(s32 arg0);
 s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4);
@@ -599,15 +601,15 @@ void init_maps(void) {
     D_800B96B0 = mmAlloc(sizeof(SavedObject) * 100, ALLOC_TAG_TRACK_COL, ALLOC_NAME("objdef_store"));
     D_800B4A5C = -1;
     D_800B4A5E = -2;
-    gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texanim"));
-    bzero(gBlockTextures, sizeof(BlockTexture) * 20);
+    gBlockTextures = mmAlloc(sizeof(BlockTexture) * MAX_TEXTURE_ANIMS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texanim"));
+    bzero(gBlockTextures, sizeof(BlockTexture) * MAX_TEXTURE_ANIMS);
     D_800B97A8 = mmAlloc(sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texscroll"));
     bzero(D_800B97A8, sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS);
     bzero(gRenderList, sizeof(u32) * MAX_RENDER_LIST_LENGTH);
     gRenderList[0] = -0x4000;
 }
 
-void func_80042174(s32 arg0) {
+void track_tick(s32 arg0) {
     if (arg0 == 0) {
         if (gTrackFlags & TRACKFLAG_SKY) {
             gDLL_12_Minic->vtbl->func2();
@@ -615,9 +617,9 @@ void func_80042174(s32 arg0) {
         gDLL_8->vtbl->func2();
         gDLL_7_Newday->vtbl->func2();
         gDLL_9_Newclouds->vtbl->func3();
-        func_80049D88();
-        func_800499BC();
-        func_8004D328();
+        block_tex_animate();
+        block_texture_scrollers_tick();
+        map_handle_transition();
         if (gDLL_76 != NULL) {
             gDLL_76->vtbl->func1();
         }
@@ -626,8 +628,7 @@ void func_80042174(s32 arg0) {
     func_8001EB80();
 }
 
-// track_draw
-void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
+void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
     Mtx* mtx;
 
     gMainDL = *gdl;
@@ -687,7 +688,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     }
     D_800B51E4 = get_camera();
     func_80048F58();
-    track_c_func();
+    track_draw_main();
     gDLL_9_Newclouds->vtbl->func4(&gMainDL);
     camera_setup_fullscreen_viewport(&gMainDL);
     *gdl = gMainDL;
@@ -700,106 +701,116 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     // diProfEnd("Trackdraw") (default.dol)
 }
 
-void track_c_func(void) {
-    s32 sp294;
+void track_draw_main(void) {
+    s32 xIdx;
     Block* block;
-    s32 temp_v1;
-    s8 *var_s8;
-    s32 temp_v0;
+    s32 gridIdx;
+    s8 *blockIdxMap;
+    s32 blockIdx;
     s32 sp274[4];
     s32 sp264[4];
     s32 sp254[4];
     s32 sp244[4];
-    s32 sp240;
-    s32 var_s2;
-    s32 var_s3;
-    s32 temp_s1;
+    s32 layer;
+    s32 z;
+    s32 zIdx;
+    s32 x;
     s8* sp230;
-    u8 sp130[BLOCKS_GRID_TOTAL_CELLS];
+    u8 blockVisibilities[BLOCKS_GRID_TOTAL_CELLS];
     s8 objVisibilities[MAX_VISIBLE_OBJECTS];
-    Mtx* sp78;
+    Mtx* rspMtxs;
 
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x52B);
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 1323);
     some_cell_func(&D_800B9780);
     shadows_func_8004D9B8();
     shadows_func_8004DABC();
     gRenderListLength = 1;
     gBlocksToDrawIdx = 0;
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x53D);
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 1341);
     gDLL_9_Newclouds->vtbl->func6(&gMainDL, gUpdateRate, 0);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 3);
     if (gTrackFlags & TRACKFLAG_SKY) {
         gDLL_12_Minic->vtbl->func3(&gMainDL, &gWorldRSPMatrices);
     }
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x545);
-    var_s8 = D_80092B0C;
-    sp78 = gWorldRSPMatrices;
-    sp240 = ARRAYCOUNT(gBlockIndices);
-    while (--sp240 >= 0) {
-        sp230 = gBlockIndices[sp240];
-        D_800B9714 = D_800B9700[sp240];
-        func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp274, sp264, sp254, sp244, sp240, 1, D_800B4A54);
-        for (temp_v1 = 0; temp_v1 < ARRAYCOUNT_S(sp130); temp_v1++) { sp130[temp_v1] = 0; }
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 1349);
+    blockIdxMap = D_80092B0C;
+    rspMtxs = gWorldRSPMatrices;
+    layer = MAP_LAYER_COUNT;
+    while (--layer >= 0) {
+        // Determine which blocks are visible from the current stream coords
+        sp230 = gBlockIndices[layer];
+        D_800B9714 = D_800B9700[layer];
+        map_check_block_grid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 
+            sp274, sp264, sp254, sp244, layer, /*checkVis*/TRUE, D_800B4A54);
+        for (gridIdx = 0; gridIdx < ARRAYCOUNT_S(blockVisibilities); gridIdx++) { blockVisibilities[gridIdx] = 0; }
         
-        for (var_s2 = sp274[2]; sp274[3] >= var_s2; var_s2++) {
-            for (temp_s1 = sp274[0]; sp274[1] >= temp_s1; temp_s1++) {
-                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+        for (z = sp274[2]; sp274[3] >= z; z++) {
+            for (x = sp274[0]; sp274[1] >= x; x++) {
+                blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
-        for (var_s2 = sp264[2]; sp264[3] >= var_s2; var_s2++) {
-            for (temp_s1 = sp264[0]; sp264[1] >= temp_s1; temp_s1++) {
-                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+        for (z = sp264[2]; sp264[3] >= z; z++) {
+            for (x = sp264[0]; sp264[1] >= x; x++) {
+                blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
-        for (var_s2 = sp254[2]; sp254[3] >= var_s2; var_s2++) {
-            for (temp_s1 = sp254[0]; sp254[1] >= temp_s1; temp_s1++) {
-                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+        for (z = sp254[2]; sp254[3] >= z; z++) {
+            for (x = sp254[0]; sp254[1] >= x; x++) {
+                blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
-        for (var_s2 = sp244[2]; sp244[3] >= var_s2; var_s2++) {
-            for (temp_s1 = sp244[0]; sp244[1] >= temp_s1; temp_s1++) {
-                sp130[(temp_s1 + 7) + ((var_s2 + 7) << 4)] = 1;
+        for (z = sp244[2]; sp244[3] >= z; z++) {
+            for (x = sp244[0]; sp244[1] >= x; x++) {
+                blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
         // @fake
-        if (sp240){}
+        if (layer){}
 
-        for (sp294 = 0; sp294 < BLOCKS_GRID_SPAN; sp294++) {
-            temp_s1 = var_s8[sp294];
-            for (var_s3 = 0; var_s3 < BLOCKS_GRID_SPAN; var_s3++) {
-                var_s2 = var_s8[var_s3];
-                temp_v1 = GRID_INDEX(var_s2, temp_s1);
-                temp_v0 = sp230[temp_v1];
-                if (temp_v0 < 0) {
+        // Add visible blocks to render list
+        for (xIdx = 0; xIdx < BLOCKS_GRID_SPAN; xIdx++) {
+            x = blockIdxMap[xIdx];
+            for (zIdx = 0; zIdx < BLOCKS_GRID_SPAN; zIdx++) {
+                z = blockIdxMap[zIdx];
+                gridIdx = GRID_INDEX(z, x);
+                blockIdx = sp230[gridIdx];
+                if (blockIdx < 0) {
                     block = NULL;
                 } else {
-                    block = gLoadedBlocks[temp_v0];
+                    block = gLoadedBlocks[blockIdx];
                     block->vtxFlags ^= 1;
-                    if (sp130[temp_v1] == 0) {
+                    if (blockVisibilities[gridIdx] == 0) {
+                        // Block is not visible according to visgrid
                         continue;
                     }
                 }
-                if (temp_v0 < 0 || func_800451A0(temp_s1, var_s2, block) == 0) {
+                if (blockIdx < 0 || block_frustum_check(x, z, block) == FALSE) {
+                    // Block not loaded or failed frustum check
                     continue;
                 }
-                D_800B97B8 = temp_s1 * BLOCKS_GRID_UNIT_F;
-                D_800B97BC = var_s2 * BLOCKS_GRID_UNIT_F;
-                block_calc_shape_visibility(block, temp_s1, var_s2, sp240);
+                // Calculate visible shapes/triangles
+                D_800B97B8 = x * BLOCKS_GRID_UNIT_F;
+                D_800B97BC = z * BLOCKS_GRID_UNIT_F;
+                block_calc_shape_visibility(block, x, z, layer);
+                // Update block lighting
                 if (gTrackFlags & TRACKFLAG_BLOCK_LIGHTING) {
                     if (block->unk3E != 0) {
-                        block_compute_vertex_colors(block, temp_s1, var_s2, 0);
+                        block_compute_vertex_colors(block, x, z, 0);
                     }
                     if ((block->unk49 != 0) && (gTrackFlags & TRACKFLAG_UNK100)) {
-                        func_8001F4C0(block, temp_s1, var_s2);
+                        func_8001F4C0(block, x, z);
                     }
                 }
+                // Add to render list
                 block_add_to_render_list(block, D_800B97B8, D_800B97BC);
             }
         }
     }
-    func_80043FD8(objVisibilities);
-    draw_render_list(sp78, objVisibilities);
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x5B2);
+    // Add visible objects to render list
+    track_add_visible_objects(objVisibilities);
+    // Draw blocks and objects
+    draw_render_list(rspMtxs, objVisibilities);
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 1458);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 2);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1);
     gDLL_14_Modgfx->vtbl->func11(objVisibilities);
@@ -810,13 +821,8 @@ void track_c_func(void) {
     gDLL_59_Minimap->vtbl->func1(&gMainDL, &gWorldRSPMatrices);
     shadows_func_8004D974(0);
     D_800B1847 = 0;
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 0x5C6);
+    dl_add_debug_info(gMainDL, 0, "track/track.c", 1478);
 }
-
-static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
-static const char str_8009a590[] = "found on map %d\n";
-static const char str_8009a5a4[] = "mapno not found\n";
-static const char str_8009a5b8[] = "error\n";
 
 void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     BlockShape* shape;
@@ -833,56 +839,56 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     s32 spD0;
     s32 spCC;
     EncodedTri* temp_a1;
-    s32 spC4;
+    s32 lastBlockIdx;
     EncodedTri* var_a0;
     EncodedTri* var_s2;
     Gfx* temp_s5;
     Texture* tex1;
     Texture* tex0;
     s32 temp_s0_2;
-    s32 temp_v1;
-    Mtx* spA4;
-    s8 spA3;
+    s32 blockIdx;
+    Mtx* blockMtxList;
+    s8 lastBlockMtx;
     s8 temp2;
-    s32 temp_t6;
+    s32 idx;
     s32 renderFlags;
     s32 frameOptions;
     Block* block;
-    Object** sp8C;
+    Object** objList;
     Object *obj;
 
-    spC4 = -1;
-    sp8C = get_world_objects(NULL, NULL);
+    lastBlockIdx = -1;
+    objList = get_world_objects(NULL, NULL);
     gDLL_57->vtbl->func2(&spE0, &spDC, &spD8, &spD4, &spD0, &spCC);
     for (i = 1; i < gRenderListLength; i++) {
-        temp_t6 = shapeIdx = (gRenderList[i] & 0x3F80) >> 7;
+        idx = shapeIdx = (gRenderList[i] & 0x3F80) >> 7;
         if (gRenderList[i] & 0x40) {
-            obj = sp8C[temp_t6];
-            func_800436DC(obj, visibilities[temp_t6]);
-            spA3 = 0;
+            obj = objList[idx];
+            track_draw_object(obj, visibilities[idx]);
+            lastBlockMtx = 0;
         } else {
             // @fake
             if (i) {}
-            temp_v1 = gRenderList[i] & 0x3F;
+            blockIdx = gRenderList[i] & 0x3F;
             forceTexSet = FALSE;
-            if (temp_v1 != spC4) {
-                spA3 = -1;
+            if (blockIdx != lastBlockIdx) {
+                lastBlockMtx = -1;
                 SHORT_800b51dc = -1;
-                spC4 = temp_v1;
+                lastBlockIdx = blockIdx;
                 UINT_800b51e0 = TEX_FRAME(0);
-                spA4 = (temp_v1 * 2) + rspMtxs;
-                block = gBlocksToDraw[temp_v1];
+                blockMtxList = (blockIdx * 2) + rspMtxs;
+                block = gBlocksToDraw[blockIdx];
             }
-            shape = &block->shapes[temp_t6];
+            shape = &block->shapes[idx];
             if (shape->flags & RENDER_UNK20000000) {
-                if (spA3 != 2) {
-                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&spA4[1]), G_MTX_MODELVIEW | G_MTX_LOAD);
-                    spA3 = 2;
+                if (lastBlockMtx != 2) {
+                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&blockMtxList[1]), G_MTX_MODELVIEW | G_MTX_LOAD);
+                    lastBlockMtx = 2;
                 }
             } else {
-                if (spA3 != 1) {
-                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&spA4[0]), G_MTX_MODELVIEW | G_MTX_LOAD);
-                    spA3 = 1;
+                if (lastBlockMtx != 1) {
+                    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&blockMtxList[0]), G_MTX_MODELVIEW | G_MTX_LOAD);
+                    lastBlockMtx = 1;
                 }
             }
             if (shape->materialIndex == 0xFF) {
@@ -1013,19 +1019,21 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     }
 }
 
-void func_800436DC(Object* obj, s32 visibility) {
+void track_draw_object(Object* obj, s32 visibility) {
     s8 sp37;
     u8 someBool;
 
     someBool = TRUE;
     if ((obj->id == OBJ_IMSnowBike) || (obj->id == OBJ_CRSnowBike)) {
         someBool = TRUE;
-        // TODO: snowbike dll
-        if (((DLL_Unknown*)obj->dll)->vtbl->func[13].withOneArgS32((s32)obj) != 0) {
+        if (((DLL_IVehicle*)obj->dll)->vtbl->func13(obj) != 0) {
             someBool = FALSE;
         }
     }
     // @bug: sp37 is uninitialized if someBool is false
+#ifdef AVOID_UB
+    sp37 = 0; // TODO: is this an ok default?
+#endif
     if (someBool != FALSE) {
         sp37 = gDLL_13_Expgfx->vtbl->func10(obj);
     }
@@ -1256,7 +1264,7 @@ void block_add_to_render_list(Block *block, f32 x, f32 z) {
     }
 }
 
-void func_80043FD8(s8* objVisibilities) {
+void track_add_visible_objects(s8* objVisibilities) {
     Object* object;
     Object** objects;
     s32 numObjs;
@@ -1269,8 +1277,7 @@ void func_80043FD8(s8* objVisibilities) {
     // Separate invisible objects from visible objects
     visibleStartIdx = obj_visibility_sort_objects(&numObjs);
     if (numObjs > MAX_VISIBLE_OBJECTS) {
-        // TODO:
-        // STUBBED_PRINTF("depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n");
+        STUBBED_PRINTF("depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n");
         numObjs = MAX_VISIBLE_OBJECTS;
     }
     // Depth sort just the visible objects
@@ -1308,17 +1315,17 @@ void func_80043FD8(s8* objVisibilities) {
         }
     }
     if (gRenderListLength >= 2) {
-        func_800441F4(gRenderList, gRenderListLength);
+        track_sort_render_list(gRenderList, gRenderListLength);
     }
 }
 
-void func_800441F4(u32* arg0, s32 arg1) {
+void track_sort_render_list(u32* list, s32 length) {
     u32 temp_a0;
     s32 var_t0;
     s32 var_v0;
     s32 var_v1;
 
-    for (var_v0 = 1; (arg1 - 1) / 9 >= var_v0; var_v0++) {
+    for (var_v0 = 1; (length - 1) / 9 >= var_v0; var_v0++) {
         var_v0 *= 3;
         // @fake
         var_v1 = var_v0 + 1;
@@ -1326,12 +1333,12 @@ void func_800441F4(u32* arg0, s32 arg1) {
 
     while (var_v0 > 0) {
         var_v1 = var_v0 + 1;
-        while (var_v1 < arg1) {
-            temp_a0 = arg0[var_v1];
+        while (var_v1 < length) {
+            temp_a0 = list[var_v1];
             var_t0 = var_v1;
             if (var_v0 < var_t0) {
-                while (arg0[var_t0 - var_v0] < temp_a0) {
-                    arg0[var_t0] = arg0[var_t0 - var_v0];
+                while (list[var_t0 - var_v0] < temp_a0) {
+                    list[var_t0] = list[var_t0 - var_v0];
                     var_t0 -= var_v0;
                     if (var_v0 >= var_t0) {
                         break;
@@ -1339,7 +1346,7 @@ void func_800441F4(u32* arg0, s32 arg1) {
                 }
             }
             var_v1++;
-            arg0[var_t0] = temp_a0;
+            list[var_t0] = temp_a0;
         }
         var_v0 /= 3;
     }
@@ -1519,8 +1526,7 @@ s32 func_800448D0(ObjSetup *arg0) {
             while ((u32)obj < new_var) {
                 obj2 = obj;
                 if (obj == arg0) {
-                    // TODO:
-                    // STUBBED_PRINTF("found on map %d\n", sp20[var_a1]);
+                    STUBBED_PRINTF("found on map %d\n", sp20[var_a1]);
                     return sp20[var_a1];
                 }
                 obj = (ObjSetup*)&((s8 *)obj)[obj2->quarterSize * 4];
@@ -1528,8 +1534,7 @@ s32 func_800448D0(ObjSetup *arg0) {
         }
     }
 
-    // TODO:
-    // STUBBED_PRINTF("mapno not found\n");
+    STUBBED_PRINTF("mapno not found\n");
     return -1;
 }
 
@@ -1712,11 +1717,14 @@ void func_80044BEC(void) {
         case 21:
             gFrustumPlanes[var_s0].unk14[0] = 4|2;
             break;
+        default:
+            STUBBED_PRINTF("error\n");
+            break;
         }
     }
 }
 
-s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks) {
+s32 block_frustum_check(s32 xPos, s32 zPos, Block* block) {
     Plane* currentPlane;
     f32 scaledXPos;
     f32 scaledZPos;
@@ -1731,9 +1739,9 @@ s32 func_800451A0(s32 xPos, s32 zPos, Block* blocks) {
     s32 i;
     s32 j;
 
-    if (blocks != NULL) {
-        minY = blocks->minY;
-        maxY = blocks->maxY;
+    if (block != NULL) {
+        minY = block->minY;
+        maxY = block->maxY;
     } else {
         minY = -100000.f;
         maxY = 100000.f;
@@ -2510,7 +2518,7 @@ void map_update_streaming(void) {
             gMapStreamMapTable[sp284].unk06 = 1;
             D_800B4A54 = sp284;
             for (var_s7 = 0; var_s7 < ARRAYCOUNT_S(gBlockIndices); var_s7++) {
-                func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
+                map_check_block_grid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
                 temp_a3 = gBlockIndices[var_s7];
                 D_800B9714 = D_800B9700[var_s7];
                 for (var_s2 = sp2C8[2]; sp2C8[3] >= var_s2; var_s2++) {
@@ -2601,8 +2609,8 @@ void map_decrement_layer(void) {
     gTrackFlags |= TRACKFLAG_LAYER_CHANGED;
 }
 
-void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 arg6, s32 arg7, s32 arg8) {
-    MapHeader* temp_t1;
+void map_check_block_grid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx) {
+    MapHeader* mapHeader;
     s32 temp_t6;
     s32 temp_v1_2;
     u32 temp;
@@ -2611,11 +2619,11 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
     u32 *var_v0;
     Struct_D_800B9768_unk4* temp_v1;
 
-    temp_v1 = &D_800B9768.unk4[gMapStreamMapTable[arg8].mapID];
-    temp_t1 = gMapStreamMapTable[arg8].header;
-    arg0 -= temp_v1->xMin;
-    arg1 -= temp_v1->zMin;
-    if (arg8 == -1) {
+    temp_v1 = &D_800B9768.unk4[gMapStreamMapTable[streamMapIdx].mapID];
+    mapHeader = gMapStreamMapTable[streamMapIdx].header;
+    gridX -= temp_v1->xMin;
+    gridZ -= temp_v1->zMin;
+    if (streamMapIdx == -1) {
         temp_v1_2 = 1;
         arg2[1] = temp_v1_2;
         arg2[3] = temp_v1_2;
@@ -2633,22 +2641,22 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
         arg5[2] = 0;
         arg5[1] = 0;
         arg5[0] = 0;
-        if (arg6 != 0) {
+        if (layer != 0) {
             arg2[3] = -2;
         }
 
         return;
     }
 
-    if (arg7 != 0) {
-        var_t2 = (u32 *)temp_t1->grid_A2_ptr;
-        var_t3 = (u32 *)temp_t1->grid_B2_ptr;
+    if (checkVis != 0) {
+        var_t2 = (u32 *)mapHeader->grid_A2_ptr;
+        var_t3 = (u32 *)mapHeader->grid_B2_ptr;
     } else {
-        var_t2 = (u32 *)temp_t1->grid_A1_ptr;
-        var_t3 = (u32 *)temp_t1->grid_B1_ptr;
+        var_t2 = (u32 *)mapHeader->grid_A1_ptr;
+        var_t3 = (u32 *)mapHeader->grid_B1_ptr;
     }
-    temp_t6 = ((temp_t1->gridSizeX * (arg1)) + (arg0)) << 1;
-    if (arg6 == 0) {
+    temp_t6 = ((mapHeader->gridSizeX * (gridZ)) + (gridX)) << 1;
+    if (layer == 0) {
         var_v0 = var_t2;
         var_v0 += temp_t6;
         temp_v1_2 = var_v0[0];
@@ -2690,9 +2698,9 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
     arg5[2] = 0;
     arg5[1] = -1;
     arg5[0] = 0;
-    temp_v1_2 = temp_t1->blockIDs_ptr[temp_t6 >> 1];
+    temp_v1_2 = mapHeader->blockIDs_ptr[temp_t6 >> 1];
     if ((temp_v1_2 & 0x7F) != 0x7F) {
-        temp_v1_2 = var_t3[(((temp_v1_2 & 0x7F) << 2) + arg6) - 1];
+        temp_v1_2 = var_t3[(((temp_v1_2 & 0x7F) << 2) + layer) - 1];
         arg2[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
         arg2[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
         arg2[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
@@ -3587,7 +3595,7 @@ void func_800499B4(){
 }
 
 /** Updates all the block texture scrollers */
-void func_800499BC(void) {
+void block_texture_scrollers_tick(void) {
     BlockTextureScroller *scroll;
     s32 i;
     s32 dU;
@@ -3695,6 +3703,7 @@ s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB
             }
             //Bail if no unreferenced scroller slot was found
             if (index == -1) {
+                STUBBED_PRINTF("TEXSCROLL: table is full\n");
                 return -1;
             }
 
@@ -3749,6 +3758,8 @@ void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 hei
 void func_80049D38(u32 arg0) {
     if (D_800B97A8[arg0].refCount > 0) {
         D_800B97A8[arg0].refCount--;
+    } else {
+        STUBBED_PRINTF("MISMATCH on global texscroll free\n");
     }
 }
 
@@ -3756,11 +3767,11 @@ BlockTextureScroller* func_80049D68(s32 arg0) {
     return &D_800B97A8[arg0];
 }
 
-void func_80049D88(void) {
+void block_tex_animate(void) {
     s32 i;
     Texture *texture;
 
-    for (i = 0; i != 20; i++) {
+    for (i = 0; i != MAX_TEXTURE_ANIMS; i++) {
         if (gBlockTextures[i].refCount != 0) {
             texture = gBlockTextures[i].texture;
 
@@ -3798,7 +3809,7 @@ s32 block_setup_textures(Block* block) {
                 var_a1 = FALSE;
                 for (j = 0; j < var_s1; j++) {
                     var_a2 = temp_a3_2->animatorID;
-                    if (block->unk28[j].unk2 == (new_var = var_a2 ^ 0 )) {
+                    if (block->unk28[j].animatorID == (new_var = var_a2 ^ 0 )) {
                         var_a1 = TRUE;
                         break;
                     }
@@ -3808,7 +3819,7 @@ s32 block_setup_textures(Block* block) {
                 if (var_a1 == FALSE) {
                     var_a1 = shape->flags;
                     block->unk28[var_s1].textureIndex = func_8004A058(block->materials[shape->materialIndex].texture, var_a1, var_a2);
-                    block->unk28[var_s1].unk2 = block->shapes[i].animatorID;
+                    block->unk28[var_s1].animatorID = block->shapes[i].animatorID;
                     var_s1++;
                 } else {
                     var_a1 = shape->flags;
@@ -3842,33 +3853,34 @@ s32 func_8004A058(Texture* tex, u32 renderFlags, s32 animatorID) {
     s32 index;
     s32 indexOfUnref;
     
+    // Check if an existing slot can be reused
     indexOfUnref = -1;
-    for (index = 0; index < 20; index++){
+    for (index = 0; index < MAX_TEXTURE_ANIMS; index++) {
         if ((&gBlockTextures[index])->refCount != 0 && 
             tex == (&gBlockTextures[index])->texture && 
-            animatorID == (&gBlockTextures[index])->unkE){
+            animatorID == (&gBlockTextures[index])->unkE) {
             
             indexOfUnref = index;
             break;
         }
     }
     
-    if (indexOfUnref != -1){
+    if (indexOfUnref != -1) {
+        // Already exists on list
         (&gBlockTextures[indexOfUnref])->refCount += 1;
         return indexOfUnref;
     }
-
-    STUBBED_PRINTF("TEXSCROLL: table is full\n");
     
+    // Add to first empty slot
     indexOfUnref = -1;
-    for (index = 0; index < 20; index++){
-        if ((&gBlockTextures[index])->refCount == 0){
+    for (index = 0; index < MAX_TEXTURE_ANIMS; index++) {
+        if ((&gBlockTextures[index])->refCount == 0) {
             indexOfUnref = index;
             break;
         }
     }
     
-    if (indexOfUnref != -1){
+    if (indexOfUnref != -1) {
         gBlockTextures[indexOfUnref].refCount = 1;
         gBlockTextures[indexOfUnref].unk4 = 0;
         gBlockTextures[indexOfUnref].flags = renderFlags;
@@ -3876,19 +3888,20 @@ s32 func_8004A058(Texture* tex, u32 renderFlags, s32 animatorID) {
         gBlockTextures[indexOfUnref].unkE = animatorID;
         return indexOfUnref;
     }
+
+    // No empty slots :(
+    STUBBED_PRINTF("TRACK ERROR: Global texanim overflow\n");
     return 0;
 }
 
-static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
-static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
-static const char str_8009a770[] = "MISMATCH on global texanim free\n";
-
 void func_8004A164(Texture *matchTexture, s32 matchParam) {
     s32 index;
-    for (index = 0; index < 0x14; index++){
+    for (index = 0; index < MAX_TEXTURE_ANIMS; index++){
         if (matchTexture == gBlockTextures[index].texture && matchParam == gBlockTextures[index].unkE){
-            if (gBlockTextures[index].refCount > 0){
+            if (gBlockTextures[index].refCount > 0) {
                 gBlockTextures[index].refCount--;
+            } else {
+                STUBBED_PRINTF("MISMATCH on global texanim free\n");
             }
         }
     }
@@ -3905,7 +3918,7 @@ Texture* func_8004A1E8(s32 match_value) {
         
         if (block){
             for (textureIndex = 0; textureIndex < block->unk48; textureIndex++){
-                if (match_value == (&block->unk28[textureIndex])->unk2){
+                if (match_value == (&block->unk28[textureIndex])->animatorID){
                     textureIndex = (&block->unk28[textureIndex])->textureIndex;
                     return gBlockTextures[textureIndex].texture;
                 }
@@ -3920,7 +3933,7 @@ BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2) {
 
     for (i = 0; i < block->unk48; i++)
     {
-        if (block->unk28[i].unk2 == param_2) {
+        if (block->unk28[i].animatorID == param_2) {
             return &block->unk28[i];
         }
     }
@@ -5349,37 +5362,37 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Called every frame!
     Seems to start a fade-out followed by a warp
 */
-void func_8004D328(void) {
-    SimilarToWarp* var_a2;
-    Warp* var_v0;
+void map_handle_transition(void) {
+    PlayerLocation* playerLocation;
+    Warp* warpLocation;
     u8 temp2;
     u8 temp1;
 
-    var_a2 = (SimilarToWarp*)gDLL_29_Gplay->vtbl->get_player_saved_location();
+    playerLocation = gDLL_29_Gplay->vtbl->get_player_saved_location();
     
     //Start fade?
     if (D_800B4A5E != -1) { //timer started?
-        
         D_80092A78 -= 1; //Decrement timer
         if (D_80092A78 < 0) { //When timer less than zero, fade to black
             if ((D_800B4A5E >= 0) && (D_800B4A59 != 0)) {
-                gDLL_28_ScreenFade->vtbl->fade_reversed(0x1E, 1);
+                gDLL_28_ScreenFade->vtbl->fade_reversed(30, SCREEN_FADE_BLACK);
             }
             D_800B4A5E = -1; //stop timer?
         }
     }
     
     //Warp after fade?
-    if (D_800B4A58 == 0)
+    if (D_800B4A58 == 0) {
         return;
+    }
         
     if (gDLL_28_ScreenFade->vtbl->is_complete() || D_800B4A59 == 0){
-        var_v0 = &D_800B4A60;
+        warpLocation = &D_800B4A60;
         D_800B4A58 = 0;
-        var_a2->coord.x = var_v0->coord.x;
-        var_a2->coord.y = var_v0->coord.y;
-        var_a2->coord.z = var_v0->coord.z;
-        var_a2->layer[1] = (s8)var_v0->layer;
+        playerLocation->vec.x = warpLocation->coord.x;
+        playerLocation->vec.y = warpLocation->coord.y;
+        playerLocation->vec.z = warpLocation->coord.z;
+        playerLocation->mapLayer = (s8)warpLocation->layer;
         func_800143A4();
         D_800B4A5E = D_800B4A5C;
         D_800B4A5C = -1;

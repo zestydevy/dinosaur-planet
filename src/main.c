@@ -431,9 +431,13 @@ void func_80013D80(void) {
 
         if (gPauseState == 0) {
             update_objects();
-            func_80042174(0);
+            track_tick(0);
 
-            if ((camera_is_alternate_active() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
+            if ((camera_is_alternate_active() == 0) 
+                    && (D_8008C94C == 0) 
+                    && (func_800143FC() == 0) 
+                    && ((button & START_BUTTON) != 0) 
+                    && (main_get_bits(BIT_44F) == 0)) {
                 gPauseState = 1;
                 joy_set_button_mask(0, START_BUTTON);
                 menu_set(MENU_PAUSE);
@@ -457,7 +461,7 @@ void func_80013D80(void) {
         gDLL_4_Race->vtbl->func14();
 
         if (gPauseState == 0) {
-            func_8004225C(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
+            track_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
         gDLL_20_Screens->vtbl->draw(&gCurGfx);
