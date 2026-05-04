@@ -59,9 +59,9 @@ void dll_246_setup(Object* self, DLL426_Setup* setup, s32 arg2) {
         if (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, objdata->unk14, (s32* ) _data_0, -1) == 0) {
             objdata->unk24 = (u8) (objdata->unk24 | 1);
         }
-        objdata->unk1C = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B83, MAX_VOLUME, NULL, NULL, 0, NULL);
-        objdata->unk20 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B83, HALF_VOLUME+1, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->func_954(objdata->unk20, 0.7f);
+        objdata->unk1C = gDLL_6_AMSFX->vtbl->play(self, SOUND_B83, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->unk20 = gDLL_6_AMSFX->vtbl->play(self, SOUND_B83, HALF_VOLUME+1, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk20, 0.7f);
     }
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -89,8 +89,8 @@ void dll_246_control(Object* self) {
     if (objdata->unk18 > 1.0f) {
         objdata->unk18 = (f32) (objdata->unk18 - 0.005f);
     }
-    gDLL_6_AMSFX->vtbl->func_954(objdata->unk1C, (fsin16_precise((s16) (objdata->unk26 + objdata->unk28)) * 0.05f) + objdata->unk18);
-    gDLL_6_AMSFX->vtbl->func_860(objdata->unk1C, (u32) (objdata->unk18 * 63.0f) );
+    gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk1C, (fsin16_precise((s16) (objdata->unk26 + objdata->unk28)) * 0.05f) + objdata->unk18);
+    gDLL_6_AMSFX->vtbl->set_vol(objdata->unk1C, (u32) (objdata->unk18 * 63.0f) );
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_336, NULL, 2, -1, &objdata->unk18);
     objdata->player = get_player();
     if (objdata->player != NULL) {
@@ -141,10 +141,10 @@ void dll_246_free(Object* self, s32 arg1) {
         objdata->unk0 = 0;
     }
     if (objdata->unk1C != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk1C);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk1C);
     }
     if (objdata->unk20 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk20);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk20);
     }
 }
 

@@ -487,7 +487,7 @@ void objfsa_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA
     temp_v0 = 1 << arg2;
     if (data->unk308 & temp_v0) {
         data->unk308 = data->unk308 & ~temp_v0;
-        gDLL_6_AMSFX->vtbl->play_sound(obj, arg4[arg3].soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(obj, arg4[arg3].soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 
@@ -499,9 +499,9 @@ void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA
     temp_v0 = 1 << arg2;
     if (data->unk308 & temp_v0) {
         data->unk308 = data->unk308 & ~temp_v0;
-        temp_v0_2 = gDLL_6_AMSFX->vtbl->play_sound(obj, arg4[arg3].soundID, volume, NULL, NULL, 0, NULL);
+        temp_v0_2 = gDLL_6_AMSFX->vtbl->play(obj, arg4[arg3].soundID, volume, NULL, NULL, 0, NULL);
         if (temp_v0_2 != 0) {
-            gDLL_6_AMSFX->vtbl->func_954(temp_v0_2, arg5);
+            gDLL_6_AMSFX->vtbl->set_pitch(temp_v0_2, arg5);
         }
     }
 }

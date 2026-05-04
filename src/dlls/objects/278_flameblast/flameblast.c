@@ -48,7 +48,7 @@ void flameblast_control(Object* self) {
         return;
 
     if (objdata->sound == 0)
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_304_Burning_Loop, 0x7F, &objdata->sound, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_304_Burning_Loop, 0x7F, &objdata->sound, 0, 0, 0);
 
     objdata->timer -= (s16) gUpdateRateF;
     if (objdata->timer <= 0) {
@@ -94,7 +94,7 @@ void flameblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle
 void flameblast_free(Object* self, s32 arg1) {
     FlameBlast_Data* objdata = self->data;
 
-    gDLL_6_AMSFX->vtbl->func_A1C(objdata->sound);
+    gDLL_6_AMSFX->vtbl->stop(objdata->sound);
 }
 
 // offset: 0x2EC | func: 5 | export: 5

@@ -35,7 +35,7 @@ void MMP_levelcontrol_control(Object *self) {
         gDLL_5_AMSEQ2->vtbl->set(self, 0xF, 0, 0, 0);
         self->unkDC = 0;
     }
-    gDLL_6_AMSFX->vtbl->func_16E0();
+    gDLL_6_AMSFX->vtbl->water_falls_control();
 }
 
 // offset: 0x1A0 | func: 2 | export: 2

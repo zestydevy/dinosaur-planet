@@ -159,7 +159,7 @@ void ProjectileSwitch_change_state(Object* self, int switchPressed, int playSoun
     //Optionally play a state change sound
     if (playSound) {
         soundID = switchPressed ? SOUND_7AE_Switch_Hit_Blast : SOUND_7AF_Switch_Reset_Swoosh;
-        gDLL_6_AMSFX->vtbl->play_sound(self, soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     //Set texture frame

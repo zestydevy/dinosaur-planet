@@ -883,11 +883,11 @@ void func_800349C0(Object* arg0, HeadAnimation* arg1, s32 soundID, s16 arg3, s32
     u32 sp34;
 
     sp34 = arg1->headAimY;
-    if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->func_B48(sp34)) {
+    if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->is_playing(sp34)) {
         if (sp34 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(sp34);
+            gDLL_6_AMSFX->vtbl->stop(sp34);
         }
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, soundID, MAX_VOLUME, &sp34, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(arg0, soundID, MAX_VOLUME, &sp34, 0, 0, 0);
         arg1->headAimZ = arg4;
         arg1->headGoalAngle = -arg3;
         arg1->headAimY = sp34;
@@ -919,16 +919,16 @@ void func_80034BC0(Object* obj, HeadAnimation* arg1) {
             if (sp24 < 0) {
                 arg1->headAimX = 0.0f;
                 sp24 = sp24;
-                gDLL_6_AMSFX->vtbl->func_A1C(temp_s1);
+                gDLL_6_AMSFX->vtbl->stop(temp_s1);
                 arg1->headGoalAngle = 0;
                 arg1->headAimY = 0.0f;
                 arg1->headAimZ = -1.0f;
             }
             arg1->headAimZ = (f32) sp24;
         }
-        if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->func_B48(temp_s1)) {
+        if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->is_playing(temp_s1)) {
             arg1->headAimX = 0.0f;
-            gDLL_6_AMSFX->vtbl->func_A1C(temp_s1);
+            gDLL_6_AMSFX->vtbl->stop(temp_s1);
             arg1->headGoalAngle = 0;
             arg1->headAimY = 0.0f;
             arg1->headAimZ = -1.0f;

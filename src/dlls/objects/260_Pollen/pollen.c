@@ -103,7 +103,7 @@ void Pollen_control(Object* self) {
     ) {
         camera_enable_y_offset();
         camera_set_shake_offset(1.0f);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AFF_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_AFF_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->opacity = 0;
         func_800267A4(self);
     }
@@ -126,7 +126,7 @@ void Pollen_control(Object* self) {
         }
         
         Pollen_create_fragments(self);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
         obj_destroy_object(self);
     }
 }

@@ -180,7 +180,7 @@ void DFPfloorbar_control(Object* self) {
         }
         
         if (tileSteppedOnNum == objData->safeTileIndex) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_999_Mechanical_Ratcheting, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_999_Mechanical_Ratcheting, MAX_VOLUME, 0, 0, 0, 0);
             objData->lowered = TRUE;
         } else {
             main_set_bits(BIT_DFPT_Zapped_by_Floor_Tiles, 1);

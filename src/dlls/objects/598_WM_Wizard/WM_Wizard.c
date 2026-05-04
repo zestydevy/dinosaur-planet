@@ -248,7 +248,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
         objData->talkTimer -= (s16)gUpdateRateF;
         if ((objData->talkTimer <= 0) && (objData->hasMetKrystal == 0)) {
             objData->talkTimer = rand_next(0, 600) + 800;
-            gDLL_6_AMSFX->vtbl->play_sound(
+            gDLL_6_AMSFX->vtbl->play(
                 NULL,
                 SOUND_BA8_Randorn_Calling_Krystal_1 + rand_next(0, 2), 
                 0x57 + rand_next(0, 0x28),

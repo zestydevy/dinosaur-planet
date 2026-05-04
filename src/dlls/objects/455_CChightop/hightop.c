@@ -72,17 +72,17 @@ void dll_455_control(Object* self) {
                 func_80023D30(self, 0x10, 0.0f, 0);
                 HighTopData->unk2C = 0.005f;
                 HighTopData->unk25 = 2;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_841, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_841, MAX_VOLUME, NULL, NULL, 0, NULL);
                 /* fallthrough */
             } else {
                 HighTopData->unk30 -= gUpdateRateF;
                 if (HighTopData->unk30 <= 0.0f) {
                     if (HighTopData->unk26 == 0) {
                         HighTopData->unk26 = 1U;
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_83F, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, SOUND_83F, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else {
                         HighTopData->unk26 = 0U;
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_840, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, SOUND_840, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                     HighTopData->unk30 += rand_next(0x12C, 0x190);
                 }
@@ -127,7 +127,7 @@ void dll_455_control(Object* self) {
                 HighTopData->unk30 -= gUpdateRateF;
                 if (HighTopData->unk30 <= 0.0f) {
                     HighTopData->unk30 += 150.0f;
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_842, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_842, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             }

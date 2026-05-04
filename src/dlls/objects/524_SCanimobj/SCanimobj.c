@@ -158,7 +158,7 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
                 gDLL_24_Waterfx->vtbl->func_1CC8(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 0, 0.0f, 3);
             }
             
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D8_Water_Splash, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, 0, 0, 0, 0);
             
             self->unkE0 &= ~4;
         }
@@ -176,14 +176,14 @@ void SCAnimObj_free(Object* self, s32 arg1) {
 
     for (i = 0; i < 4; i++) {
         if (objData->unk34[i]) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objData->unk34[i]);
+            gDLL_6_AMSFX->vtbl->stop(objData->unk34[i]);
         }
     }
     
     gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
     
     if (objData->unk30 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->unk30);
+        gDLL_6_AMSFX->vtbl->stop(objData->unk30);
     }
 }
 

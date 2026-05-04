@@ -15,7 +15,7 @@ void BWLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
 // offset: 0x5C | func: 1 | export: 1
 void BWLevelControl_control(Object *self) {
-    gDLL_6_AMSFX->vtbl->func_16E0();
+    gDLL_6_AMSFX->vtbl->water_falls_control();
 }
 
 // offset: 0xA4 | func: 2 | export: 2

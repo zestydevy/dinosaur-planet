@@ -93,7 +93,7 @@ void SCTotemBond_control(Object* self) {
                 objData->flags |= SCTotemBond_FLAG_All_Directions_Defended;
             }
             
-            objData->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796_Pole_Rotate, MAX_VOLUME, 0, 0, 0, 0);
+            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         //Rotate towards goal direction
@@ -126,7 +126,7 @@ void SCTotemBond_free(Object* self, s32 arg1) {
     SCTotemBond_Data* objData = self->data;
     
     if (objData->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }

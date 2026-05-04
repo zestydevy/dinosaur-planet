@@ -17,7 +17,7 @@ void WaterfallControl_setup(Object* self, WaterfallControl_Setup* arg1, s32 arg2
 
 // offset: 0x34 | func: 1 | export: 1
 void WaterfallControl_control(Object* self) {
-    gDLL_6_AMSFX->vtbl->func_16E0();
+    gDLL_6_AMSFX->vtbl->water_falls_control();
 }
 
 // offset: 0x7C | func: 2 | export: 2

@@ -30,7 +30,7 @@ void SB_ShipGunBroke_control(Object *self) {
     objdata = self->data;
     setup = (SB_ShipGunBroke_Setup*)self->setup;
     if (main_get_bits(setup->gunDestroyedGamebit) && !objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_BA3_Burning_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_BA3_Burning_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
     }
 }
 
@@ -53,7 +53,7 @@ void SB_ShipGunBroke_free(Object *self, s32 a1) {
 
     objdata = self->data;
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
         objdata->soundHandle = 0;
     }
 }

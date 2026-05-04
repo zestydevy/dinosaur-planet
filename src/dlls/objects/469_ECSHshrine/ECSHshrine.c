@@ -217,7 +217,7 @@ void ECSHshrine_control(Object* self) {
             objdata->state = ECShrine_STATE_Cup_Game_Start;
             objdata->musicPlayTimer = 200;
             objdata->substate = Cup_STATE_Rise_Up;
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->delayTimer = 0;
         }
         break;
@@ -362,7 +362,7 @@ void ECSHshrine_control(Object* self) {
                     gDLL_3_Animation->vtbl->func17(2, self, -1);
                     objdata->musicPlayTimer = 10;
                     objdata->substate = Cup_STATE_Sink_Down;
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
                 } else if (objdata->choiceWasCorrect == TRUE) {
                     if (objdata->state == ECShrine_STATE_Cups_Round_1) {
                         //Go to round 2
@@ -373,7 +373,7 @@ void ECSHshrine_control(Object* self) {
                         objdata->delayTimer = 12;
                         objdata->shuffles = 10;
                         objdata->choiceWasCorrect = NO_CHOICE_YET;
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_3_Animation->vtbl->func17(3, self, -1);
                     } else if (objdata->state == ECShrine_STATE_Cups_Round_2) {
                         //Go to round 3
@@ -384,7 +384,7 @@ void ECSHshrine_control(Object* self) {
                         objdata->delayTimer = 12;
                         objdata->shuffles = 16;
                         objdata->choiceWasCorrect = NO_CHOICE_YET;
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_3_Animation->vtbl->func17(3, self, -1);
                     } else {
                         //Test won!
@@ -392,8 +392,8 @@ void ECSHshrine_control(Object* self) {
                         objdata->state = ECShrine_STATE_Test_Successful;
                         objdata->choiceWasCorrect = 0;
                         objdata->substate = Cup_STATE_Sink_Down;
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 } else {
                     //Automatically win if the player takes too long choosing (@bug? Possibly supposed to fail instead)
@@ -403,8 +403,8 @@ void ECSHshrine_control(Object* self) {
                         objdata->state = ECShrine_STATE_Test_Successful;
                         objdata->choiceWasCorrect = FALSE;
                         objdata->substate = Cup_STATE_Sink_Down;
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
                 break;

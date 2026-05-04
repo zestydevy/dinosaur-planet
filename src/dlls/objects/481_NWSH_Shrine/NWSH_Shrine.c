@@ -169,7 +169,7 @@ void dll_481_control(Object *self) {
             } else {
                 if (objdata->unk10 != -0x3E7) {
                     if (objdata->unk10 < 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
                         objdata->unk10 = -0x3E7;
                     } else {
                         objdata->unk10 -= gUpdateRate;

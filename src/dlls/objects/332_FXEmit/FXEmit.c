@@ -123,7 +123,7 @@ void FXEmit_control(Object* self) {
                 objdata->disabled = FALSE;
                 objdata->intervalTimer = setup->interval * 100;
                 if (setup->intervalSoundID) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, setup->intervalSoundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, setup->intervalSoundID, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             } else {
                 objdata->disabled = TRUE;

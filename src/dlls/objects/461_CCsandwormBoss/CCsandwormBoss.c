@@ -151,7 +151,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
                 objdata->unk0 = 0xC;
                 objdata->unk14 = 0.005f;
                 func_80023D30(self, 8, 0, 0);
-                gDLL_6_AMSFX->vtbl->play_sound(self, (u16)_data_C[rand_next(0, 3)], 0x7FU, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, (u16)_data_C[rand_next(0, 3)], 0x7FU, NULL, NULL, 0, NULL);
                 objdata->unk2 = 0;
                 objdata->unk1 = 3;
             } else {

@@ -226,7 +226,7 @@ void dll_793_free(Object *self, s32 a1) {
     objdata = self->data;
     obj_free_object_type(self, OBJTYPE_11);
     if (objdata->unk314 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk314);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk314);
     }
 }
 
@@ -405,7 +405,7 @@ static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {
             var_fv0 = 127.0f;
         }
         if (var_fv0 > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A75, (u8) var_fv0, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_A75, (u8) var_fv0, NULL, NULL, 0, NULL);
         }
     } else if ((sp60 < 0.0f) && (objdata->unk300[arg2] > 0.0f)) {
         var_fv0 = objdata->unk278[arg2].y * 127.0f;
@@ -416,7 +416,7 @@ static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {
             var_fv0 = 127.0f;
         }
         if (var_fv0 > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A74, (u8) var_fv0, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_A74, (u8) var_fv0, NULL, NULL, 0, NULL);
         }
     }
     objdata->unk300[arg2] = sp60;
@@ -700,7 +700,7 @@ static void dll_793_func_2020(Object* arg0, BWlog_Data* arg1) {
     s32 var_v1;
 
     if (arg1->unk314 == 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_A77, 0x7F, &arg1->unk314, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(arg0, SOUND_A77, 0x7F, &arg1->unk314, NULL, 0, NULL);
     } else {
         arg1->unk30C = arg1->unk310 * 127.0f;
         arg1->unk30C += fsin16_precise(arg1->unk328) * 30.0f;
@@ -709,7 +709,7 @@ static void dll_793_func_2020(Object* arg0, BWlog_Data* arg1) {
         } else if (arg1->unk30C > 127.0f) {
             arg1->unk30C = 127.0f;
         }
-        gDLL_6_AMSFX->vtbl->func_860(arg1->unk314, arg1->unk30C);
+        gDLL_6_AMSFX->vtbl->set_vol(arg1->unk314, arg1->unk30C);
         arg1->unk308 = ((arg1->unk300[0] + arg1->unk300[1]) * 0.5f) / 25.0f;
         if (arg1->unk308 < 0.0f) {
             arg1->unk308 = 0.0f;
@@ -717,7 +717,7 @@ static void dll_793_func_2020(Object* arg0, BWlog_Data* arg1) {
         arg1->unk308 = 1.0f - arg1->unk308;
         arg1->unk308 = (arg1->unk308 * 0.2f) + 0.2f;
         arg1->unk308 += (fsin16_precise(arg1->unk326) * 0.1f);
-        gDLL_6_AMSFX->vtbl->func_954(arg1->unk314, arg1->unk308);
+        gDLL_6_AMSFX->vtbl->set_pitch(arg1->unk314, arg1->unk308);
         arg1->unk326 = arg1->unk326 + (gUpdateRate << 8);
         arg1->unk328 = arg1->unk328 + (gUpdateRate << 9);
     }
@@ -738,7 +738,7 @@ static void dll_793_func_2020(Object* arg0, BWlog_Data* arg1) {
         if (var_v1 >= 0x80) {
             var_v1 = 0x7F;
         }
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_76D_Log_Bump, var_v1, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(arg0, SOUND_76D_Log_Bump, var_v1, NULL, NULL, 0, NULL);
     }
     arg1->unk32D = sp3E;
 }

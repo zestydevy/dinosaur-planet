@@ -183,7 +183,7 @@ void CCcage_control(Object* self) {
         
         //Check for Projectile Spell collision
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_LightFoot_Shout, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_LightFoot_Shout, MAX_VOLUME, NULL, NULL, 0, NULL);
             if (objData->timesHit != 0) {
                 objData->fallDuration = 35.355f;
                 objData->fallTimer = 0;

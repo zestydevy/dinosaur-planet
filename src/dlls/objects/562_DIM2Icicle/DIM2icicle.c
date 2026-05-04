@@ -72,7 +72,7 @@ void DIM2Icicle_control(Object* self) {
             objData->pitch = rand_next(800, 1200);
             objData->state = DIM2Icicle_STATE_Damaged;
             self->objhitInfo->unk58 &= ~1;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
             return;
         }
         return;
@@ -109,7 +109,7 @@ void DIM2Icicle_control(Object* self) {
         if (objData->soundTimer > 0) {
             objData->soundTimer -= gUpdateRate;
             if (objData->soundTimer <= 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
 
@@ -126,7 +126,7 @@ void DIM2Icicle_control(Object* self) {
             objData->state = DIM2Icicle_STATE_Fall_Finished;
             gDLL_24_Waterfx->vtbl->func_174C(self->srt.transl.x, objData->groundHeight, self->srt.transl.z, 10.0f);
             gDLL_24_Waterfx->vtbl->func_1CC8(self->srt.transl.x, objData->groundHeight, self->srt.transl.z, 0, 0.0f, 2);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->soundTimer = 150;
             return;
         }
@@ -138,7 +138,7 @@ void DIM2Icicle_control(Object* self) {
         if (objData->soundTimer > 0) {
             objData->soundTimer -= gUpdateRate;
             if (objData->soundTimer <= 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3E3_Ice_Cracking, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_3E3_Ice_Cracking, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         

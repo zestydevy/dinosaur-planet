@@ -80,7 +80,7 @@ void BalloonBaddie_setup(Object *self, BalloonBaddie_Setup *setup, s32 arg2) {
         if (gDLL_26_Curves->vtbl->func_4288(objdata->curveStruct, self, objdata->attackRange, (s32*)&_data_0, -1) == 0) {
             objdata->flags |= BALLOONBADDIE_1;
         }
-        objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -109,8 +109,8 @@ void BalloonBaddie_control(Object* self) {
             self->opacity = OBJECT_OPACITY_MAX;
             self->unkAF &= ~8;
             objdata->flags |= BALLOONBADDIE_RESPAWNED;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->fadeoutTimer > 0.0f) {
@@ -130,15 +130,15 @@ void BalloonBaddie_control(Object* self) {
             if (func_8002601C(self, &sp60, &sp40, &sp3C, &sp50, &sp4C, &sp48) != 0) {
                 // balloonbaddie killed, start fade timer, start respawn timer
                 if (objdata->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
                     objdata->soundHandle = 0;
                 }
                 objdata->flags |= (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2);
                 objdata->fadeoutTimer = 1.0f;
                 self->unkAF |= 8;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_331, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_33_BaddieControl->vtbl->func18(self, setup->unk18, -1, 0);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, setup->respawnTimer * 60);
@@ -220,7 +220,7 @@ void BalloonBaddie_free(Object* self, s32 a1) {
         objdata->curveStruct = NULL;
     }
     if (objdata->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
 }
 

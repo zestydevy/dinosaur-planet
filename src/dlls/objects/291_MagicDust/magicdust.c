@@ -184,7 +184,7 @@ void MagicDust_control(Object* self) {
         //Play a ringing sound at intervals
         objData->soundTimer -= gUpdateRate;
         if (objData->soundTimer < 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_BA1_MagicDust_Twinkle, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_BA1_MagicDust_Twinkle, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->soundTimer = rand_next(240, 300);
         }
     }
@@ -244,7 +244,7 @@ void MagicDust_control(Object* self) {
                 }
 
                 self->opacity = 1;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B2B_Magic_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B2B_Magic_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
 
             //Move
@@ -285,7 +285,7 @@ void MagicDust_control(Object* self) {
                     if (absSpeed > 2.0f) {
                         volumeMultiplier = 2.0f;
                     }
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_66E_Ting, volumeMultiplier * 32.0f, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_66E_Ting, volumeMultiplier * 32.0f, NULL, NULL, 0, NULL);
                 }
                 
                 //Reflect speed vector off surface normal (@bug: result unused?)
@@ -365,7 +365,7 @@ void MagicDust_control(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, objData->fxIDSparkle, NULL, 1, -1, NULL);
             }
             
-            gDLL_6_AMSFX->vtbl->play_sound(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
 }

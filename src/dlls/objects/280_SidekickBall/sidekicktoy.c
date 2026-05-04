@@ -79,7 +79,7 @@ static s32 SidekickToy_tick_flight(Object* self) {
             if (tempSpeed > 2.0f) {
                 tempSpeed = 2.0f;
             }
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x161, tempSpeed * 32.0f, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, 0x161, tempSpeed * 32.0f, 0, 0, 0, 0);
         }
         //Getting normalised direction vector from velocity
         if (speed != 0.0f) {

@@ -181,7 +181,7 @@ void medium_crate_control(Object *self) {
         if (temp_v0_4 != 0) {
             objdata->unk17 += sp78;
             if (objdata->unk17 < 2) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, objdata->soundID1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, objdata->soundID1, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objdata->unk20 = 1.0f;
                 objdata->unk24 = 12.0f;
                 if (self->id == OBJ_MediumBasket) {
@@ -198,11 +198,11 @@ void medium_crate_control(Object *self) {
                 }
             } else {
                 if (objdata->unk8 != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
                     objdata->unk8 = 0;
                 }
                 _data_0->vtbl->func0(self, 1, NULL, 2, -1, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, objdata->soundID2, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, objdata->soundID2, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objdata->unkC = 50;
                 objdata->unk17 = 0;
                 medium_crate_func_C50(self, player, objdata);
@@ -215,19 +215,19 @@ void medium_crate_control(Object *self) {
             objdata->unkE = rand_next(0, 100) + 300;
             if (temp_fv0_2 < 8100.0f) {
                 if ((objdata->unk15 == 5) || (objdata->unk15 == 6) || (objdata->unk15 == 7) || (objdata->unk15 == 8)) {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_64D_Wooden_Rattle, 0x39, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_64D_Wooden_Rattle, 0x39, NULL, NULL, 0, NULL);
                 } else if (objdata->unk15 == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_6B7_Crate_Hiss, 0x39, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_6B7_Crate_Hiss, 0x39, NULL, NULL, 0, NULL);
                 }
             }
         } else {
             if ((objdata->unk15 == 1) || (objdata->unk15 == 2) || (objdata->unk15 == 3) || (objdata->unk15 == 4)) {
                 if (objdata->unk8 == 0) {
                     if (temp_fv0_2 < 8100.0f) {
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_64C_Wicker_Rattle, 0x39, &objdata->unk8, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, SOUND_64C_Wicker_Rattle, 0x39, &objdata->unk8, NULL, 0, NULL);
                     }
                 } else if (temp_fv0_2 >= 8100.0f) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
                     objdata->unk8 = 0;
                 }
             }
@@ -297,7 +297,7 @@ void medium_crate_free(Object *self, s32 param2) {
     dll_unload(_data_4);
 
     if (objdata->unk8 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
         objdata->unk8 = 0;
     }
 }

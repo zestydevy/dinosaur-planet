@@ -222,7 +222,7 @@ static void WL_LevelControl_setup1_tick(Object* self) {
     switchesHit += main_get_bits(BIT_WM_Force_Field_2_Disabled);
     switchesHit += main_get_bits(BIT_WM_Force_Field_3_Disabled);
     if ((switchesHit == 3) && (dSetup1KrystalSwitchesHit != 3)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_B89_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     dSetup1KrystalSwitchesHit = switchesHit;
 

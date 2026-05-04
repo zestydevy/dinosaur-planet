@@ -147,7 +147,7 @@ dummy_label1: ;
             //Create explosion of debris
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_9, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5, NULL, 4, -1, NULL);
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
 
             //Send an object message, then destroy both the attacking object and the cannon
             obj_send_mesg_many(GROUP_UNK54, 0, 0, 0xE0000, self);
@@ -194,7 +194,7 @@ dummy_label1: ;
         //Create blast sound/particle effects
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_69, NULL, 4, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_2, NULL, 4, -1, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
     
         objData->state = Cannon_STATE_Lowering;
         objData->timer = 20;
@@ -226,7 +226,7 @@ dummy_label3: ;
             
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_9, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5, NULL, 4, -1, NULL);
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
 
             //@bug? Possibly meant for `Cannon_STATE_Firing`, so the cannon doesn't get destroyed by its own attack?
             dObjectRef = obj;

@@ -77,8 +77,8 @@ void dll_780_control(Object *self) {
         }
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
             // Hit
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50a_Fire_Burning_Low_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_50a_Fire_Burning_Low_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->state = WCBEACON_STATE_2;
             objdata->unk0 = 0.0f;
         }

@@ -35,9 +35,9 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
         temp_v0_2->maxDistScale = temp_v0_2->scale * 2.5f;
     }
 
-    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B1_Flames_Venting, MAX_VOLUME, NULL, 0, 0, 0);
+    gDLL_6_AMSFX->vtbl->play(self, SOUND_9B1_Flames_Venting, MAX_VOLUME, NULL, 0, 0, 0);
     if (_bss_4 == 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B2_Fire_Burning, MAX_VOLUME, (u32*)&_bss_4, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_9B2_Fire_Burning, MAX_VOLUME, (u32*)&_bss_4, 0, 0, 0);
     }
 }
 
@@ -147,10 +147,10 @@ void kamerian_flame_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 // offset: 0x5B4 | func: 5 | export: 4
 void kamerian_flame_free(Object* self, s32 arg1) {
     if (_bss_4 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(_bss_4);
+        gDLL_6_AMSFX->vtbl->stop(_bss_4);
         _bss_4 = 0;
     }
-    gDLL_6_AMSFX->vtbl->play_sound(self, impactSoundID, MAX_VOLUME, NULL, 0, 0, 0);
+    gDLL_6_AMSFX->vtbl->play(self, impactSoundID, MAX_VOLUME, NULL, 0, 0, 0);
     camera_disable_y_offset();
 }
 

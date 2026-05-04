@@ -309,15 +309,15 @@ void dll_711_control(Object *self) {
             }
         }
         if (objdata->unk3B8 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3B8);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk3B8);
             objdata->unk3B8 = 0;
         }
         if (objdata->unk3BC != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3BC);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk3BC);
             objdata->unk3BC = 0;
         }
         if (objdata->unk3C0 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3C0);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk3C0);
             objdata->unk3C0 = 0;
         }
         if (objdata->unk2F4 != NULL) {
@@ -435,19 +435,19 @@ void dll_711_control(Object *self) {
             return;
         }
         if (objdata->unk3B4 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3B4);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk3B4);
             objdata->unk3B4 = 0;
         }
         if (objdata->unk3B8 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3B8);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk3B8);
             objdata->unk3B8 = 0;
         }
         if (objdata->unk3BC != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3BC);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk3BC);
             objdata->unk3BC = 0;
         }
         if (objdata->unk3C0 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3C0);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk3C0);
             objdata->unk3C0 = 0;
         }
         
@@ -520,19 +520,19 @@ void dll_711_free(Object *self, s32 a1) {
 
     objdata = self->data;
     if (objdata->unk3B4 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3B4);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk3B4);
         objdata->unk3B4 = 0;
     }
     if (objdata->unk3B8 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3B8);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk3B8);
         objdata->unk3B8 = 0;
     }
     if (objdata->unk3BC != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3BC);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk3BC);
         objdata->unk3BC = 0;
     }
     if (objdata->unk3C0 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3C0);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk3C0);
         objdata->unk3C0 = 0;
     }
     if (objdata->unk2F4 != NULL) {
@@ -749,22 +749,22 @@ static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl,
             sp6C.transl.y = objdata->unk32C[0].y - self->globalPosition.y;
             sp6C.transl.z = objdata->unk32C[0].z - self->globalPosition.z;
             _data_A8->vtbl->func0(self, 0, &sp6C, 1, -1, sp48);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->func_954(soundHandle, (volume / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(soundHandle, (volume / 127.0f) + 0.5f);
         } else if ((objdata->unk3E1 & 2) && (objdata->unk3D8 <= 0)) {
             sp6C.transl.x = objdata->unk32C[1].x;
             sp6C.transl.y = objdata->unk32C[1].y;
             sp6C.transl.z = objdata->unk32C[1].z;
             _data_A8->vtbl->func0(self, 0, &sp6C, 1, -1, sp48);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->func_954(soundHandle, (volume / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(soundHandle, (volume / 127.0f) + 0.5f);
         } else if ((objdata->unk3E1 & 4) && (objdata->unk3D8 <= 0)) {
             sp6C.transl.x = objdata->unk32C[2].x;
             sp6C.transl.y = objdata->unk32C[2].y;
             sp6C.transl.z = objdata->unk32C[2].z;
             _data_A8->vtbl->func0(self, 0, &sp6C, 1, -1, sp48);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->func_954(soundHandle, (volume / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(soundHandle, (volume / 127.0f) + 0.5f);
         }
     }
     if (objdata->unk3D8 <= 0) {
@@ -1405,7 +1405,7 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
     sp54 = 1.0f;
     if (arg6 & 1) {
         if (objdata->unk3B4 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objdata->unk3B4, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objdata->unk3B4, NULL, 0, NULL);
         }
         if (objdata->unk3B4 != 0) {
             _bss_24 = arg2 * 11.6f;
@@ -1418,7 +1418,7 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
             if (_bss_24 > 200.0f) {
                 _bss_24 = 200.0f;
             }
-            gDLL_6_AMSFX->vtbl->func_954(objdata->unk3B4, _bss_24 / 70.0f + 0.1f);
+            gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk3B4, _bss_24 / 70.0f + 0.1f);
             if (objdata->unk3E0 < 0x12) {
                 var_v0 = (arg2 * 30.0f);
                 if (var_v0 < 0) {
@@ -1427,15 +1427,15 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
                 if (var_v0 > 0x7F) {
                     var_v0 = 0x7F;
                 }
-                gDLL_6_AMSFX->vtbl->func_860(objdata->unk3B4, var_v0);
+                gDLL_6_AMSFX->vtbl->set_vol(objdata->unk3B4, var_v0);
             } else {
-                gDLL_6_AMSFX->vtbl->func_860(objdata->unk3B4, 0);
+                gDLL_6_AMSFX->vtbl->set_vol(objdata->unk3B4, 0);
             }
         }
     }
     if (arg6 & 2) {
         if (objdata->unk3BC == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_28F, MAX_VOLUME, &objdata->unk3BC, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F, MAX_VOLUME, &objdata->unk3BC, NULL, 0, NULL);
         }
         if (objdata->unk3BC != 0) {
             if (arg2 != 0.0f) {
@@ -1448,7 +1448,7 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
             } else if (_bss_24 > 1.0f) {
                 _bss_24 = 1.0f;
             }
-            gDLL_6_AMSFX->vtbl->func_954(objdata->unk3BC, 0.1f + _bss_24);
+            gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk3BC, 0.1f + _bss_24);
             if (objdata->unk3E0 < 0x12) {
                 _bss_24 *= 127.0f;
                 if (_bss_24 > 127.0f) {
@@ -1456,9 +1456,9 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
                 } else if (_bss_24 < 0.0f) {
                     _bss_24 = 0.0f;
                 }
-                gDLL_6_AMSFX->vtbl->func_860(objdata->unk3BC, _bss_24);
+                gDLL_6_AMSFX->vtbl->set_vol(objdata->unk3BC, _bss_24);
             } else {
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk3BC);
+                gDLL_6_AMSFX->vtbl->stop(objdata->unk3BC);
                 objdata->unk3BC = 0;
             }
         }
@@ -1466,15 +1466,15 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
     if (arg6 & 4) {
         if (objdata->unk3D6 <= 0) {
             if (objdata->unk3B8 == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objdata->unk3B8, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objdata->unk3B8, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             if (objdata->unk3C0 == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objdata->unk3C0, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objdata->unk3C0, NULL, 0, NULL);
             }
         }
         if (objdata->unk3B8 != 0) {
-            gDLL_6_AMSFX->vtbl->func_954(objdata->unk3B8, (objdata->unk394 * 0.00048828125f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk3B8, (objdata->unk394 * 0.00048828125f) + 0.5f);
             if (arg3 >= 6) {
                 objdata->unk394 += gUpdateRateF;
             } else {
@@ -1487,10 +1487,10 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
             if (objdata->unk394 > 90.0f) {
                 objdata->unk394 = 90.0f;
             }
-            gDLL_6_AMSFX->vtbl->func_860(objdata->unk3B8, objdata->unk394);
+            gDLL_6_AMSFX->vtbl->set_vol(objdata->unk3B8, objdata->unk394);
         }
         if (objdata->unk3C0 != 0) {
-            gDLL_6_AMSFX->vtbl->func_954(objdata->unk3C0, (objdata->unk390 / 75.0f) + 0.2f);
+            gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk3C0, (objdata->unk390 / 75.0f) + 0.2f);
             if (arg3 >= 6) {
                 objdata->unk390 = (arg3 * 0.6f) + 15.0f;
             } else {
@@ -1503,7 +1503,7 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
             if (objdata->unk390 > 127.0f) {
                 objdata->unk390 = 127.0f;
             }
-            gDLL_6_AMSFX->vtbl->func_860(objdata->unk3C0, objdata->unk390);
+            gDLL_6_AMSFX->vtbl->set_vol(objdata->unk3C0, objdata->unk390);
         }
     }
     if (objdata->unk2F4 == NULL) {
