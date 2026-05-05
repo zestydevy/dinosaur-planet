@@ -311,6 +311,7 @@
 729 = objects/729_CRCloudRace
 730 = objects/730_CRspellStone
 731 = objects/731_CRFuelTank
+734 = objects/734_DR_PushCart
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
 742 = objects/742_DR_ExplodeDoor

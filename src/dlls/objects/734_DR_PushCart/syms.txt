@@ -1,0 +1,30 @@
+.text = 0x0:
+dll_734_ctor = 0x0;
+dll_734_dtor = 0xC;
+dll_734_setup = 0x18;
+dll_734_control = 0x114;
+dll_734_update = 0x7E0;
+dll_734_print = 0x8B8;
+dll_734_free = 0xB8C;
+dll_734_get_model_flags = 0xC10;
+dll_734_get_data_size = 0xC20;
+dll_734_func_C34 = 0xC34;
+dll_734_func_D30 = 0xD30;
+dll_734_func_DD8 = 0xDD8;
+dll_734_func_133C = 0x133C;
+dll_734_func_1434 = 0x1434;
+dll_734_func_1588 = 0x1588;
+dll_734_func_1624 = 0x1624;
+dll_734_func_16EC = 0x16EC;
+dll_734_func_1A10 = 0x1A10;
+dll_734_func_1FD8 = 0x1FD8;
+dll_734_func_20BC = 0x20BC;
+dll_734_func_21A0 = 0x21A0;
+dll_734_func_25A4 = 0x25A4;
+
+.rodata = 0x27C0:
+str_0 = 0x0; // absolute:0x27C0
+rodata_30 = 0x30; // absolute:0x27F0
+
+.data = 0x2930:
+data_0 = 0x0; // absolute:0x2930
