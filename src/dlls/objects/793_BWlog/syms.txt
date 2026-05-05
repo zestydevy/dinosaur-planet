@@ -23,18 +23,18 @@ BWlog_func_E80 = 0xE80;
 BWlog_func_E8C = 0xE8C;
 BWlog_func_E9C = 0xE9C;
 BWlog_func_EB0 = 0xEB0;
-BWlog_func_1600 = 0x1600;
+BWlog_handle_controls_a_button = 0x1600;
 BWlog_start_roll = 0x178C;
-BWlog_func_1858 = 0x1858;
-BWlog_func_1A4C = 0x1A4C;
-BWlog_func_1A5C = 0x1A5C;
+BWlog_handle_roll = 0x1858;
+BWlog_handle_unknown_state = 0x1A4C;
+BWlog_handle_paddle_motion = 0x1A5C;
 BWlog_func_1C18 = 0x1C18;
-BWlog_func_2020 = 0x2020;
+BWlog_handle_sounds = 0x2020;
 BWlog_func_2444 = 0x2444;
 
 .rodata = 0x2820:
 
 .data = 0x28C0:
-_data_0 = 0x0; // absolute:0x28C0
-_data_18 = 0x18; // absolute:0x28D8
-_data_20 = 0x20; // absolute:0x28E0
+dLocalEndpointCoords = 0x0; // absolute:0x28C0
+dCollisionRadii = 0x18; // absolute:0x28D8
+dColliderParams = 0x20; // absolute:0x28E0
