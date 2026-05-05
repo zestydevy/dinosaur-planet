@@ -79,7 +79,7 @@ void DRExplodeDoor_update(Object* self) {
     SRT modGfxTrans;
     
     //Check for damage from barrel explosions, or for the explosion gamebit
-    if (func_80025F40(self, NULL, NULL, &hitDamage) == Damage_Type_Barrel_Explosion || 
+    if (func_80025F40(self, NULL, NULL, &hitDamage) == Damage_Type_Explosion || 
         main_get_bits(objSetup->gamebitExplode)
     ) {
         bzero(&modGfxTrans, sizeof(SRT));

@@ -99,7 +99,7 @@ typedef enum {
     Damage_Type_2 = 0x2,
     Damage_Type_3 = 0x3,
     Damage_Type_4 = 0x4, //DIMsnowball? Squashes player
-    Damage_Type_Barrel_Explosion = 0x5,
+    Damage_Type_Explosion = 0x5, //barrels, cannon fire
     Damage_Type_6 = 0x6,
     Damage_Type_7 = 0x7,
     Damage_Type_8 = 0x8,

@@ -1160,7 +1160,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
     case Damage_Type_4:
         aState = PLAYER_ASTATE_Hurt_Flattened;
         break;
-    case Damage_Type_Barrel_Explosion:
+    case Damage_Type_Explosion:
         aState = PLAYER_ASTATE_Hurt_Tumbling;
         break;
     case Damage_Type_1:
