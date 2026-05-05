@@ -222,6 +222,7 @@
 528 = objects/528_SC_totemstrength
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
+536 = objects/536_DIMBoulder
 537 = objects/537_DIMCannon
 541 = objects/541_DIMExplosion
 544 = objects/544_DIM_LevelControl

@@ -1,0 +1,15 @@
+.text = 0x0:
+dll_536_ctor = 0x0;
+dll_536_dtor = 0xC;
+dll_536_setup = 0x18;
+dll_536_control = 0xD0;
+dll_536_update = 0x634;
+dll_536_print = 0x640;
+dll_536_free = 0x694;
+dll_536_get_model_flags = 0x6A4;
+dll_536_get_data_size = 0x6B4;
+
+.rodata = 0x730:
+
+.data = 0x740:
+data_0 = 0x0; // absolute:0x740
