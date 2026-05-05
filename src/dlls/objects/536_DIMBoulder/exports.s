@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_536_ctor
-.dword dll_536_dtor
+.dword DIMBoulder_ctor
+.dword DIMBoulder_dtor
 
 # export table
-/*0*/ .dword dll_536_setup
-/*1*/ .dword dll_536_control
-/*2*/ .dword dll_536_update
-/*3*/ .dword dll_536_print
-/*4*/ .dword dll_536_free
-/*5*/ .dword dll_536_get_model_flags
-/*6*/ .dword dll_536_get_data_size
+/*0*/ .dword DIMBoulder_setup
+/*1*/ .dword DIMBoulder_control
+/*2*/ .dword DIMBoulder_update
+/*3*/ .dword DIMBoulder_print
+/*4*/ .dword DIMBoulder_free
+/*5*/ .dword DIMBoulder_get_model_flags
+/*6*/ .dword DIMBoulder_get_data_size

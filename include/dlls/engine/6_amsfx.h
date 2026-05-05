@@ -182,6 +182,8 @@ enum SoundID {
    
     SOUND_10A_Galleon_Roar = 0x10A,
 
+    SOUND_111_Heavy_Collision = 0x111, //DIMboulder
+
     SOUND_129_SnowHorn_Yawn_1 = 0x129,
     SOUND_12A_SnowHorn_SnoreHorn = 0x12A,
     SOUND_12B_SnowHorn_Yawn_2 = 0x12B,
