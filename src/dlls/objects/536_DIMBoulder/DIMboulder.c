@@ -1,7 +1,7 @@
 #include "common.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
-#include "dlls/engine/6_amsfx.h"
+#include "sys/objhits.h"
 
 /*0x0*/ static Vec3f data_0[] = {
     VEC3F(-0.5, 0.6, -0.2), 
@@ -52,6 +52,9 @@ void dll_536_setup(Object* self, DIMBoulder_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0xD0 | func: 1 | export: 1
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/536_DIMBoulder/dll_536_control.s")
+#else
 void dll_536_control(Object* self) {
     f32 pad2;
     f32 var_fa1;
@@ -74,7 +77,7 @@ void dll_536_control(Object* self) {
     spBC = gUpdateRate;
 
     if (objData->unk6 == 0) {
-        if ((func_80025F40(self, NULL, NULL, NULL) == 5) || 
+        if ((func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Explosion) || 
             ((joy_get_buttons(1) & A_BUTTON)) //Move the snowball with A button presses on Controller 2!
         ) {
             objData->unk6 = 1;
@@ -120,7 +123,7 @@ void dll_536_control(Object* self) {
                 }
             }
             if (objData->unk4 <= 0) {
-                volume = (var_fa1 * 0.50f) * 127.0f;
+                volume = (var_fa1 / 2.0f) * 127.0f;
                 if (volume > MAX_VOLUME) {
                     volume = MAX_VOLUME;
                 }
@@ -168,6 +171,7 @@ void dll_536_control(Object* self) {
         map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
 }
+#endif
 
 // offset: 0x634 | func: 2 | export: 2
 void dll_536_update(Object *self) { }
