@@ -52,9 +52,6 @@ void dll_536_setup(Object* self, DIMBoulder_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/536_DIMBoulder/dll_536_control.s")
-#else
 void dll_536_control(Object* self) {
     f32 pad2;
     f32 var_fa1;
@@ -73,8 +70,8 @@ void dll_536_control(Object* self) {
     AABBs32 sp34;
 
     objData = self->data;
-    var_fv0 = gUpdateRateF;
     spBC = gUpdateRate;
+    var_fv0 = gUpdateRateF;
 
     if (objData->unk6 == 0) {
         if ((func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Explosion) || 
@@ -171,7 +168,6 @@ void dll_536_control(Object* self) {
         map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
 }
-#endif
 
 // offset: 0x634 | func: 2 | export: 2
 void dll_536_update(Object *self) { }
