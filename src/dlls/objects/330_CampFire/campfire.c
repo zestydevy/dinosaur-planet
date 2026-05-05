@@ -28,7 +28,7 @@ typedef enum {
     CampFire_FLAG_0_None = 0,
     CampFire_FLAG_1 = 1, //Does nothing, but applied in setup when BIT_8C is set
     CampFire_FLAG_2 = 2, //Unused
-    CampFire_FLAG_4 = 4, //Does nothing, but applied in setup when instance-specific gamebit is set
+    CampFire_FLAG_4 = 4  //Does nothing, but applied in setup when instance-specific gamebit is set
 } CampFire_Flags;
 
 // offset: 0x0 | ctor
