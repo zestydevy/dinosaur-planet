@@ -332,18 +332,14 @@ void dll_734_func_133C(Object* self, DRPushCart_Data* objData) {
 }
 
 // offset: 0x1434 | func: 11
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/734_DR_PushCart/dll_734_func_1434.s")
-#else
 s32 dll_734_func_1434(Object* self, u8* arg1) {
-    s32 count; //44
+    s32 count;
     Object** objects;
-    s32 matches; //3C
+    s32 matches;
     s32 i;
-    s32 var_a2;
 
     matches = 0;
-    objects = obj_get_all_of_type(0x1B, &count);
+    objects = obj_get_all_of_type(OBJTYPE_27, &count);
     
     if (count == *arg1) {
         return *arg1;
@@ -354,17 +350,11 @@ s32 dll_734_func_1434(Object* self, u8* arg1) {
             matches++;
         }
     }   
-    
-    if (matches < 0) {
-        var_a2 = 0;
-    } else {
-        var_a2 = MIN(6, matches);
-    }
-    
-    *arg1 = var_a2;
-    return var_a2;
+
+    matches = (matches < 0) ? 0 : MIN(6, matches);
+    *arg1 = matches;
+    return matches;
 }
-#endif
 
 // offset: 0x1588 | func: 12
 void dll_734_func_1588(Object* self, s32 barrelCount) {
