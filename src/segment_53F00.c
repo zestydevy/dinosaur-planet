@@ -2063,19 +2063,19 @@ void func_800596BC(ObjDef* arg0) {
 
 s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_Struct* arg4, Object* arg5, s8 arg6, s8 arg7, u8 arg8, s8 arg9) {
     f32 spE0[2];
-    s32 var_s5;
-    f32 temp_fa1;
-    s32 var_a1;
+    s32 i;
+    f32 distance;
+    s32 isInRange;
     Object** objects;
     Unk8005B17C* temp_v0_2;
     Vec3f spC0;
     Vec3f spB4;
     Vec3f spA8;
     Vec3f sp9C;
-    f32 var_fa0;
+    f32 dz;
     s32 objectCount;
-    f32 temp_fv0;
-    f32 temp_fv1;
+    f32 dx;
+    f32 dy;
     Object* parentObj;
     Object* currentObj;
     ModelInstance *modelInst;
@@ -2100,33 +2100,36 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         bcopy(arg1, &spB4, sizeof(Vec3f));
     }
 
-    objects = obj_get_all_of_type(7, &objectCount);
-    for (var_s5 = 0; var_s5 < objectCount; var_s5++) {
-        currentObj = objects[var_s5];
+    objects = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &objectCount);
+    for (i = 0; i < objectCount; i++) {
+        currentObj = objects[i];
         if (currentObj != arg5 && currentObj->matrixIdx >= 0 && currentObj->def->pIntersectPoints != NULL) {
             if (currentObj->objhitInfo != NULL && !(currentObj->objhitInfo->unk58 & 1)) {
                 continue;
             }
-            temp_fv0 = currentObj->srt.transl.f[0] - spC0.f[0];
-            temp_fv1 = currentObj->srt.transl.f[1] - spC0.f[1];
-            var_fa0 = currentObj->srt.transl.f[2] - spC0.f[2];
+            dx = currentObj->srt.transl.f[0] - spC0.f[0];
+            dy = currentObj->srt.transl.f[1] - spC0.f[1];
+            dz = currentObj->srt.transl.f[2] - spC0.f[2];
             modelInst = currentObj->modelInsts[currentObj->objhitInfo->unkA0];
             model = modelInst->model;
-            temp_fa1 = model->maxAnimatedVertDistance + 0x32;
-            temp_fa1 = SQ(temp_fa1);
-            var_a1 = FALSE;
-            if ((SQ(temp_fv0) + SQ(temp_fv1) + SQ(var_fa0)) < temp_fa1) {
-                var_a1 = TRUE;
+            distance = model->maxAnimatedVertDistance + 0x32;
+            distance = SQ(distance);
+
+            isInRange = FALSE;
+            if ((SQ(dx) + SQ(dy) + SQ(dz)) < distance) {
+                isInRange = TRUE;
             }
-            if (var_a1 == FALSE) {
-                temp_fv0 = currentObj->srt.transl.f[0] - spB4.f[0];
-                temp_fv1 = currentObj->srt.transl.f[1] - spB4.f[1];
-                var_fa0 = currentObj->srt.transl.f[2] - spB4.f[2];
-                if ((SQ(temp_fv0) + SQ(temp_fv1) + SQ(var_fa0)) < temp_fa1) {
-                    var_a1 = TRUE;
+
+            if (isInRange == FALSE) {
+                dx = currentObj->srt.transl.f[0] - spB4.f[0];
+                dy = currentObj->srt.transl.f[1] - spB4.f[1];
+                dz = currentObj->srt.transl.f[2] - spB4.f[2];
+                if ((SQ(dx) + SQ(dy) + SQ(dz)) < distance) {
+                    isInRange = TRUE;
                 }
             }
-            if (var_a1 != FALSE) {
+
+            if (isInRange != FALSE) {
                 if (arg8 != 0xFF && (temp_v0_2 = func_8005B17C(arg5, currentObj, arg8), (temp_v0_2 != NULL))) {
                     spA8.f[0] = temp_v0_2->unk8.f[0];
                     spA8.f[1] = temp_v0_2->unk8.f[1];
@@ -2134,10 +2137,13 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
                 } else {
                     inverse_transform_point_by_object(spC0.f[0], spC0.f[1], spC0.f[2], &spA8.f[0], &spA8.f[1], &spA8.f[2], currentObj);
                 }
+
                 inverse_transform_point_by_object(spB4.f[0], spB4.f[1], spB4.f[2], &sp9C.f[0], &sp9C.f[1], &sp9C.f[2], currentObj);
+                
                 if (func_8005A3F8(&spA8, &sp9C, arg2, arg3, arg4, currentObj, arg6, arg7, arg9, arg5) != 0) {
                     transform_point_by_object(sp9C.f[0], sp9C.f[1], sp9C.f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], currentObj);
                 }
+
                 if (arg8 != 0xFF) {
                     temp_v0_2 = func_8005B204(arg5, currentObj, arg8);
                     if (temp_v0_2 != NULL) {
@@ -2157,9 +2163,9 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         arg4->unk2C.f[0] = arg4->unk18 - arg4->unk14;
         arg4->unk2C.f[1] = 0.0f;
         arg4->unk2C.f[2] = arg4->unk4 - arg4->unk8;
-        temp_fv1 = 1.0f / sqrtf(SQ(arg4->unk2C.x) + SQ(arg4->unk2C.z));
-        arg4->unk2C.f[0] *= temp_fv1;
-        arg4->unk2C.f[2] *= temp_fv1;
+        dy = 1.0f / sqrtf(SQ(arg4->unk2C.x) + SQ(arg4->unk2C.z));
+        arg4->unk2C.f[0] *= dy;
+        arg4->unk2C.f[2] *= dy;
         arg4->unk38.f[0] = -((arg4->unk14 * arg4->unk2C.z) + (arg4->unk2C.x * arg4->unk4));
         if (arg4->unk0 != NULL) {
             transform_point_by_object(arg4->unk4, arg4->unkC, arg4->unk14, &arg4->unk4, &arg4->unkC, &arg4->unk14, arg4->unk0);
@@ -2172,9 +2178,9 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         arg4->unk1C.f[0] = arg4->unk18 - arg4->unk14;
         arg4->unk1C.f[1] = 0.0f;
         arg4->unk1C.f[2] = arg4->unk4 - arg4->unk8;
-        temp_fv1 = 1.0f / sqrtf(SQ(arg4->unk1C.x) + SQ(arg4->unk1C.z));
-        arg4->unk1C.f[0] *= temp_fv1;
-        arg4->unk1C.f[2] *= temp_fv1;
+        dy = 1.0f / sqrtf(SQ(arg4->unk1C.x) + SQ(arg4->unk1C.z));
+        arg4->unk1C.f[0] *= dy;
+        arg4->unk1C.f[2] *= dy;
         arg4->unk38.f[1] = spE0[0] + arg4->unkC;
         arg4->unk38.f[2] = spE0[1] + arg4->unk10;
         arg4->unk1C.f[3] = -((arg4->unk14 * arg4->unk1C.z) + (arg4->unk1C.x * arg4->unk4));

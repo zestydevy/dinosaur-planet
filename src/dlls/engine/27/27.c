@@ -201,7 +201,7 @@ void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x624 | func: 5 | export: 5
-void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 updateRate) {
+void dll_27_func_624(Object* obj, DLL27_Data* arg1, f32 updateRate) {
     f32 updateRateInverse;
 
     updateRateInverse = 1.0f / updateRate;
@@ -212,81 +212,86 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 updateRate) {
         arg1->floorNormalY = 1.0f;
         arg1->floorNormalX = 0.0f;
         arg1->floorNormalZ = 0.0f;
+
         if (arg1->flags & DLL27FLAG_HAS_HITS_COLLIDER) {
             // Hit line detection and resolution
-            dll_27_func_A74(arg0, arg1);
-            dll_27_func_1278(arg0, arg1);
+            dll_27_func_A74(obj, arg1);
+            dll_27_func_1278(obj, arg1);
             transform_point_by_object(
-                arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, 
-                &arg0->globalPosition.x, &arg0->globalPosition.y, &arg0->globalPosition.z, 
-                arg0->parent);
+                obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
+                &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
+                obj->parent);
         }
+
         if (arg1->flags & DLL27FLAG_HAS_TERRAIN_COLLIDER) {
-            dll_27_func_B68(arg0, arg1);
-            dll_27_func_151C(arg0, arg1);
+            dll_27_func_B68(obj, arg1);
+            dll_27_func_151C(obj, arg1);
+
             switch (arg1->flags & (DLL27FLAG_2000000 | DLL27FLAG_4000000)) {
             case DLL27FLAG_2000000:
-                dll_27_func_214C(arg0, arg1);
+                dll_27_func_214C(obj, arg1);
                 break;
             case (DLL27FLAG_2000000 | DLL27FLAG_4000000):
-                dll_27_func_2394(arg0, arg1);
+                dll_27_func_2394(obj, arg1);
                 break;
             default:
-                dll_27_func_1D60(arg0, arg1);
+                dll_27_func_1D60(obj, arg1);
                 break;
             }
+
             if (arg1->flags & DLL27FLAG_100) {
-                dll_27_func_1AA0(arg0, arg1);
+                dll_27_func_1AA0(obj, arg1);
             }
             if (arg1->flags & DLL27FLAG_80) {
-                dll_27_func_1BA8(arg0, arg1);
+                dll_27_func_1BA8(obj, arg1);
             }
             if (arg1->flags & DLL27FLAG_1) {
-                dll_27_func_15C0(arg0, arg1);
+                dll_27_func_15C0(obj, arg1);
             }
         }
         if (arg1->flags & DLL27FLAG_800) {
-            if (arg0->srt.pitch >= 0x3401) {
-                arg0->srt.pitch = 0x3400;
+            if (obj->srt.pitch > 0x3400) {
+                obj->srt.pitch = 0x3400;
             }
-            if (arg0->srt.pitch < -0x3400) {
-                arg0->srt.pitch = -0x3400;
+            if (obj->srt.pitch < -0x3400) {
+                obj->srt.pitch = -0x3400;
             }
         }
         if (arg1->flags & DLL27FLAG_1000) {
-            if (arg0->srt.roll >= 0x3401) {
-                arg0->srt.roll = 0x3400;
+            if (obj->srt.roll > 0x3400) {
+                obj->srt.roll = 0x3400;
             }
-            if (arg0->srt.roll < -0x3400) {
-                arg0->srt.roll = -0x3400;
+            if (obj->srt.roll < -0x3400) {
+                obj->srt.roll = -0x3400;
             }
         }
         if (!(arg1->flags & DLL27FLAG_40000)) {
-            if ((arg0->objhitInfo != NULL) && (arg0->objhitInfo->unk58 & 1)) {
-                arg0->velocity.y = (arg0->globalPosition.y - arg0->objhitInfo->unk20.y) * updateRateInverse;
-                if (arg0->objhitInfo->unk20.y < arg0->globalPosition.y) {
-                    arg0->velocity.y = 0.0f;
+            if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk58 & 1)) {
+                obj->velocity.y = (obj->globalPosition.y - obj->objhitInfo->unk20.y) * updateRateInverse;
+                if (obj->objhitInfo->unk20.y < obj->globalPosition.y) {
+                    obj->velocity.y = 0.0f;
                 }
             } else {
-                arg0->velocity.y = (arg0->globalPosition.y - arg0->prevGlobalPosition.y) * updateRateInverse;
+                obj->velocity.y = (obj->globalPosition.y - obj->prevGlobalPosition.y) * updateRateInverse;
             }
         }
     } else if (arg1->mode == DLL27MODE_2) {
-        dll_27_reset(arg0, arg1);
+        dll_27_reset(obj, arg1);
         if (arg1->flags & DLL27FLAG_HAS_TERRAIN_COLLIDER) {
-            dll_27_func_B68(arg0, arg1);
+            dll_27_func_B68(obj, arg1);
             bcopy(arg1->unk8, arg1->unk38, (arg1->numTestPoints >> 4) * sizeof(Vec3f));
             if (arg1->flags & DLL27FLAG_1) {
-                dll_27_func_15C0(arg0, arg1);
+                dll_27_func_15C0(obj, arg1);
             }
         }
     } else {
-        dll_27_reset(arg0, arg1);
+        dll_27_reset(obj, arg1);
     }
+
     inverse_transform_point_by_object(
-        arg0->globalPosition.x, arg0->globalPosition.y, arg0->globalPosition.z, 
-        &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, 
-        arg0->parent);
+        obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z, 
+        &obj->srt.transl.x, &obj->srt.transl.y, &obj->srt.transl.z, 
+        obj->parent);
 }
 
 // offset: 0xA74 | func: 6
@@ -451,9 +456,9 @@ static void dll_27_get_obj_local_matrix(Object* obj, DLL27_Data* data, MtxF* mtx
 // does hit line detection and resolves collisions (moves object if needed)
 static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
     MtxF sp90;
-    f32 sp8C;
-    f32 sp88;
-    f32 temp_fv0;
+    f32 x;
+    f32 z;
+    f32 divisor;
     s32 temp_t5;
     s32 i;
     u8 numHitsTestPoints;
@@ -475,6 +480,7 @@ static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
     }
     
     if (numHitsTestPoints >= 2) {
+        //Average out the hits test points' influence
         obj->srt.transl.x = 0.0f;
         obj->srt.transl.z = 0.0f;
 
@@ -483,9 +489,9 @@ static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
             obj->srt.transl.z += data->unkE0[0].f[i+2];
         }
         
-        temp_fv0 = 1.0f / (f32) numHitsTestPoints;
-        obj->srt.transl.x *= temp_fv0;
-        obj->srt.transl.z *= temp_fv0;
+        divisor = 1.0f / numHitsTestPoints;
+        obj->srt.transl.x *= divisor;
+        obj->srt.transl.z *= divisor;
     } else {
         obj->srt.transl.x = data->unkE0[0].x;
         obj->srt.transl.z = data->unkE0[0].z;
@@ -497,7 +503,7 @@ static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
         data->unk110[0].f[i+2] = data->unkE0[0].f[i+2];
         vec3_transform(&sp90, 
                        data->localHitsTestPoints[0].f[i], data->localHitsTestPoints[0].f[i+1], data->localHitsTestPoints[0].f[i+2], 
-                       &sp8C, &data->unk110[0].f[i+1], &sp88);
+                       &x, &data->unk110[0].f[i+1], &z);
     }
 }
 
@@ -515,74 +521,76 @@ static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
 
 // offset: 0x15C0 | func: 15
 // does terrain checks
-static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_15C0(Object* obj, DLL27_Data* arg1) {
     Func_80057F1C_Struct* temp_v0;
-    s32 sp60;
-    s32 var_t1;
-    s32 var_t4;
-    s8 var_t2;
-    u8 var_v0;
+    s32 count;
+    s32 j;
+    s32 i;
+    s8 floorFound;
+    u8 numTerrainPoints;
 
-    var_v0 = arg1->numTestPoints >> 4;
+    numTerrainPoints = arg1->numTestPoints >> 4;
     if (!(arg1->flags & DLL27FLAG_8000000)) {
-        var_v0 = 1;
+        numTerrainPoints = 1;
     }
-    for (var_t4 = 0; var_t4 < var_v0; var_t4++) { 
-        if (var_v0 >= 2) {
+
+    for (i = 0; i < numTerrainPoints; i++) { 
+        if (numTerrainPoints >= 2) {
             bss_0 = NULL;
         }
 
-        var_t2 = 0;
+        floorFound = FALSE;
 
-        temp_v0 = dll_27_func_C7C(arg0, arg1->unk8[var_t4].x, arg1->unk8[var_t4].z, &sp60, 0);
+        temp_v0 = dll_27_func_C7C(obj, arg1->unk8[i].x, arg1->unk8[i].z, &count, 0);
         
-        arg1->waterYList[var_t4] = -100000.0f;
-        arg1->floorYList[var_t4] = -100000.0f;
-        arg1->unk1CC[var_t4] = 100000.0f;
-        arg1->underwaterDistList[var_t4] = 0;
-        arg1->floorDistList[var_t4] = 0;
-        arg1->waterNormalXList[var_t4] = 0.0f;
-        arg1->waterNormalZList[var_t4] = 0.0f;
-        arg1->waterNormalYList[var_t4] = 1.0f;
+        arg1->waterYList[i] = -100000.0f;
+        arg1->floorYList[i] = -100000.0f;
+        arg1->unk1CC[i] = 100000.0f;
+        arg1->underwaterDistList[i] = 0;
+        arg1->floorDistList[i] = 0;
+        arg1->waterNormalXList[i] = 0.0f;
+        arg1->waterNormalZList[i] = 0.0f;
+        arg1->waterNormalYList[i] = 1.0f;
 
-        for (var_t1 = 0; var_t1 < sp60; var_t1++) {
-            if (temp_v0[var_t1].unk14 != 0xE) {
-                if ((var_t2 == 0) && (temp_v0[var_t1].unk0[0] < (arg0->globalPosition.y + 5.0f)) && (temp_v0[var_t1].unk0[2] > 0.707f)) {
-                    arg1->floorYList[var_t4] = temp_v0[var_t1].unk0[0];
-                    var_t2 = 1;
-                    arg1->floorDistList[var_t4] = (f32) (arg0->globalPosition.y - temp_v0[var_t1].unk0[0]);
+        for (j = 0; j < count; j++) {
+            if (temp_v0[j].unk14 != 0xE) {
+                if ((floorFound == FALSE) && (temp_v0[j].unk0[0] < (obj->globalPosition.y + 5.0f)) && (temp_v0[j].unk0[2] > 0.707f)) {
+                    arg1->floorYList[i] = temp_v0[j].unk0[0];
+                    floorFound = TRUE;
+                    arg1->floorDistList[i] = (obj->globalPosition.y - temp_v0[j].unk0[0]);
                 } else {
-                    if (((arg0->globalPosition.y + 5.0f) <= temp_v0[var_t1].unk0[0]) && (temp_v0[var_t1].unk0[2] < 0.0f)) {
-                        arg1->unk1CC[var_t4] = temp_v0[var_t1].unk0[0];
+                    if (((obj->globalPosition.y + 5.0f) <= temp_v0[j].unk0[0]) && (temp_v0[j].unk0[2] < 0.0f)) {
+                        arg1->unk1CC[i] = temp_v0[j].unk0[0];
                     }
                 }
             }
         }
 
-        if (var_t2 == 0) {
+        if (floorFound == FALSE) {
             // No floor found, assume high above one
-            arg1->floorDistList[var_t4] = 100.0f;
+            arg1->floorDistList[i] = 100.0f;
         }
 
-        if (arg1->unk25C & (0x10 << var_t4)) {
-            arg1->floorDistList[var_t4] = 0.0f;
+        if (arg1->unk25C & (0x10 << i)) {
+            arg1->floorDistList[i] = 0.0f;
         }
 
-        for (var_t1 = 0; var_t1 < sp60; var_t1++) {
-            if (temp_v0[var_t1].unk14 == 0xE) {
-                if ((temp_v0[var_t1].unk0[0] < arg1->unk1CC[var_t4]) && (arg1->floorYList[var_t4] < temp_v0[var_t1].unk0[0])) {
-                    arg1->waterYList[var_t4] = temp_v0[var_t1].unk0[0];
-                    arg1->waterNormalXList[var_t4] = (f32) temp_v0[var_t1].unk0[1];
-                    arg1->waterNormalYList[var_t4] = (f32) temp_v0[var_t1].unk0[2];
-                    arg1->waterNormalZList[var_t4] = (f32) temp_v0[var_t1].unk0[3];
+        for (j = 0; j < count; j++) {
+            if (temp_v0[j].unk14 == 0xE) {
+                if ((temp_v0[j].unk0[0] < arg1->unk1CC[i]) && (arg1->floorYList[i] < temp_v0[j].unk0[0])) {
+                    arg1->waterYList[i] = temp_v0[j].unk0[0];
+                    arg1->waterNormalXList[i] = temp_v0[j].unk0[1];
+                    arg1->waterNormalYList[i] = temp_v0[j].unk0[2];
+                    arg1->waterNormalZList[i] = temp_v0[j].unk0[3];
                 }
             }
         }
 
-        if (arg1->waterYList[var_t4] != -100000.0f) {
-            arg1->underwaterDistList[var_t4] = arg1->waterYList[var_t4] - arg0->globalPosition.y;
+        if (arg1->waterYList[i] != -100000.0f) {
+            arg1->underwaterDistList[i] = arg1->waterYList[i] - obj->globalPosition.y;
         }
     }
+    
     arg1->waterY = arg1->waterYList[0];
     arg1->floorY = arg1->floorYList[0];
     arg1->unk1AC = arg1->unk1CC[0];
