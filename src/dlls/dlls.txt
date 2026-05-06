@@ -314,6 +314,7 @@
 734 = objects/734_DR_PushCart
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
+740 = objects/740_DR_tube
 742 = objects/742_DR_ExplodeDoor
 762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem

@@ -525,6 +525,9 @@ enum SoundID {
     
     SOUND_8C7_Explosion_High = 0x8C7, //DRexplodeDoor
 
+    SOUND_8DB_Eerie_Alarm_Loop = 0x8DB,         //DR_tube
+    SOUND_8DC_Ominous_Thrumming_Loop = 0x8DC,   //DR_tube
+
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
     
     SOUND_90F_Muscle_LightFoot_Cry = 0x90F,     //SCtotemstrength
