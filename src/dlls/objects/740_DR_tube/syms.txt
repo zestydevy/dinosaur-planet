@@ -20,4 +20,4 @@ dAnimGamebits = 0x0; // absolute:0x690
 dTubeTopGamebits = 0x14; // absolute:0x6A4
 
 .bss = 0x6B0:
-bss_0 = 0x0; // absolute:0x6B0
+sAllTubesActivated = 0x0; // absolute:0x6B0
