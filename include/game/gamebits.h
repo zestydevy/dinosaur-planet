@@ -1982,7 +1982,7 @@ typedef enum {
     BIT_7B7 = 0x7B7, // len:1 group:0
     BIT_7B8 = 0x7B8, // len:1 group:0
     BIT_7B9 = 0x7B9, // len:1 group:0
-    BIT_7BA = 0x7BA, // len:1 group:1
+    BIT_DR_Minecart_Track_Entrance_Demolished = 0x7BA, // len:1 group:1 (Broke open the entrance to the minecart tunnel, beside the imprisoned CloudRunner)
     BIT_7BB = 0x7BB, // len:1 group:1
     BIT_7BC = 0x7BC, // len:1 group:1
     BIT_SpellStone_KP = 0x7BD, // len:1 group:1 (SpellStone #5, Krazoa Palace) [INVENTORY]

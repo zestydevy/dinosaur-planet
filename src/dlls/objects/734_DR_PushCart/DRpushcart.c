@@ -1,6 +1,7 @@
 #include "common.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
+#include "sys/objtype.h"
 #include "dlls/objects/338_LFXEmitter.h"
 
 typedef struct {
@@ -21,7 +22,7 @@ typedef struct {
 } DRPushCart_Setup;
 
 typedef struct {
-    s8 unk0[0x108 - 0];
+    UnkCurvesStruct unk0;
     Object* unk108;
     f32 unk10C;
     f32 unk110;
@@ -126,7 +127,31 @@ u32 dll_734_get_data_size(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0xC34 | func: 7 | export: 7
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/734_DR_PushCart/dll_734_func_C34.s")
+f32 dll_734_func_C34(Object* self, s16* arg1, f32 arg2) {
+    DRPushCart_Data* objData;
+    s32 pad;
+    f32 sp24;
+    s16 angle;
+    f32 sign;
+
+    objData = self->data;
+    
+    if (objData->unk114) {
+        sp24 = arg2 / objData->unk114;
+    }
+    
+    angle = self->srt.yaw - (*arg1 & 0xFFFF);
+    CIRCLE_WRAP(angle);
+
+    if (-fcos16_precise(angle) < 0.0f) {
+        sign = -1.0f;
+    } else {
+        sign = 1.0f;
+    }
+    objData->unk110 = sp24 * sign;
+    
+    return objData->unk10C;
+}
 
 // offset: 0xD30 | func: 8
 void dll_734_func_D30(Object* self, s32 arg1) {
@@ -146,7 +171,7 @@ void dll_734_func_D30(Object* self, s32 arg1) {
 s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
     DRPushCart_Data* objData;
     Object* player;
-    f32 var_fv0;
+    f32 temp;
 
     objData = self->data;
     player = get_player();
@@ -179,11 +204,11 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
                     objData->unk118 = 0.0f;
                 } else {
                     if (objData->unk118 < 0.0f) {
-                        var_fv0 = -2.0f;
+                        temp = -2.0f;
                     } else {
-                        var_fv0 = 2.0f;
+                        temp = 2.0f;
                     }
-                    objData->unk110 += var_fv0;
+                    objData->unk110 += temp;
                 }
             }
         }
@@ -195,11 +220,11 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
                 objData->unk15C_28 = 1;
             } else {
                 if (objData->unk118 < 0.0f) {
-                    var_fv0 = -2.0f;
+                    temp = -2.0f;
                 } else {
-                    var_fv0 = 2.0f;
+                    temp = 2.0f;
                 }
-                objData->unk110 += var_fv0;
+                objData->unk110 += temp;
             }
         }
         break;
@@ -211,11 +236,11 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
     case 6:
         if (!(objData->unk15C_30)) {
             if (objData->unk118 < 0.0f) {
-                var_fv0 = -3.0f;
+                temp = -3.0f;
             } else {
-                var_fv0 = 3.0f;
+                temp = 3.0f;
             }
-            objData->unk110 += var_fv0;
+            objData->unk110 += temp;
         }
         break;
     case 7:
@@ -256,12 +281,12 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
         break;
     case 16:
         if (objData->unk118 >= 0) {
-            var_fv0 = objData->unk118;
+            temp = objData->unk118;
         } else {
-            var_fv0 = -objData->unk118;
+            temp = -objData->unk118;
         }
         
-        if (var_fv0 == 2.0f) {
+        if (temp == 2.0f) {
             objData->unk118 *= 0.5f;
         } else {
             objData->unk118 *= 2.0f;
@@ -271,14 +296,14 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
 
     if (arg2 != 2) {
         if (arg2 == 8) {
-            if (main_get_bits(BIT_67F) != 0) {
+            if (main_get_bits(BIT_67F)) {
                 *arg3 = 0;
             } else {
                 *arg3 = 1;
             }
         }
     } else {
-        main_set_bits(BIT_7BA, 1);
+        main_set_bits(BIT_DR_Minecart_Track_Entrance_Demolished, 1);
     }
     
     return 1;
@@ -307,7 +332,39 @@ void dll_734_func_133C(Object* self, DRPushCart_Data* objData) {
 }
 
 // offset: 0x1434 | func: 11
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/734_DR_PushCart/dll_734_func_1434.s")
+#else
+s32 dll_734_func_1434(Object* self, u8* arg1) {
+    s32 count; //44
+    Object** objects;
+    s32 matches; //3C
+    s32 i;
+    s32 var_a2;
+
+    matches = 0;
+    objects = obj_get_all_of_type(0x1B, &count);
+    
+    if (count == *arg1) {
+        return *arg1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (self == objects[i]->parent) {
+            matches++;
+        }
+    }   
+    
+    if (matches < 0) {
+        var_a2 = 0;
+    } else {
+        var_a2 = MIN(6, matches);
+    }
+    
+    *arg1 = var_a2;
+    return var_a2;
+}
+#endif
 
 // offset: 0x1588 | func: 12
 void dll_734_func_1588(Object* self, s32 barrelCount) {
@@ -354,28 +411,26 @@ Object* dll_734_func_1624(Object* self, Vec3f* coord) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/734_DR_PushCart/dll_734_func_20BC.s")
 #else
-s32 dll_734_func_20BC-7(CurveSetup* curveSetup, s32 arg1, s32 arg2) {
-    u32 curveLinks[4];
+s32 dll_734_func_20BC-8(CurveSetup* curveSetup, s32 arg1, s32 arg2) {
+    s32 curveLinks[4];
     s32 linkIdx;
     s32 i;
     s32 bit;
     
-    for (i = 0, linkIdx = 0, bit = 1; i < 4; i++, bit *= 2) {
-        if (((curveSetup->links[i] >= 0) && (curveSetup->unk1B & bit)) && (arg1 != curveSetup->links[i])) {
+    for (i = 0, linkIdx = 0, bit = 1; i < 4; i++, bit <<= 1) {
+        if (curveSetup->links[i] >= 0 && (curveSetup->unk1B & bit) && arg1 != curveSetup->links[i]) {
             curveLinks[linkIdx] = curveSetup->links[i];
             linkIdx++;
         }
     }
-
-    bit = linkIdx - 1;
+    
     if (linkIdx != 0) {
-        if ((bit < arg2) != 0) {
-            arg2 = bit;
-        }
+        arg2 = MIN(linkIdx - 1, arg2);
         if (arg2 == -1) {
-            arg2 = rand_next(0, bit);
+            arg2 = rand_next(0, linkIdx - 1);
         }
-        return curveLinks[arg2];
+        linkIdx = curveLinks[arg2];
+        return linkIdx;
     } else {
         return -1;
     }
@@ -386,14 +441,39 @@ s32 dll_734_func_20BC-7(CurveSetup* curveSetup, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/734_DR_PushCart/dll_734_func_21A0.s")
 
 // offset: 0x25A4 | func: 19
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/734_DR_PushCart/dll_734_func_25A4.s")
+#else
 
-/*0x30*/ static const f32 rodata_30[] = {
-    1.9046139090923178e+31, 1.1816695572882224e+22, 1.0842021724855044e-19, 7.716216751866123e-33, 2.7139198009492688e+20, 240596784.0, 2.667802940764995e+20, 2.0220383751744459e-16, 
-    6.162975822039155e-33, 1.7399059176108167e-19, 4.730134741866897e+22, 4.835413438493264e+30, 5.079074069486449e+31, 7.503454996174864e+28, 0.0, 1.6543379606513273e-19, 
-    52776228.0, 3456106496.0, 242.39601135253906, 7.397731894505344e+31, 1.3574490093801795e-19, 4.801150969608111e+30, 238.45361328125, 995842.3125, 
-    1.2089258196146292e+25, 1.798431401641387e-19, 203.12603759765625, 3478278912.0, 1.7560140968175505e-19, 823218432.0, 1.0842021724855044e-19, 847523348480.0, 
-    844914.0, 13913367552.0, 3458475753472.0, 1.798327874817847e-19, 869339456.0, 1.7047962365110034e-19, 2815439646228480.0, 0.0, 
-    2.0024867774945033e-19, 5.0788279321895755e+31, 2.7484300404688788e+20, 1.748564689166657e-19, 2.0220370516854658e-16, 2.0024867774945033e-19, 5.0788279321895755e+31, 2.7484300404688788e+20, 
-    1.401082657445381e-19, 236421632.0, 2.0220457867127343e-16, 4.4651249001114914e+30, 3.028101926759323e+24, 1.401082657445381e-19, 0.0
-};
+static void dll_734_func_21A0(DRPushCart_Data* self, Object* objData, s32 uID);
+
+//Matches, but needs dll_734_func_21A0
+void dll_734_func_25A4(Object* self, DRPushCart_Data* objData) {
+    s32 sp34;
+
+    sp34 = 1;
+    if (main_get_bits(0x788) != 0) {
+        dll_734_func_21A0(objData, self, 0x34BD4);
+        objData->unk15C_28 = 1;
+    } else if (!objData->unk15C_29) {
+        dll_734_func_21A0(objData, self, 0x33988);
+    } else {
+        gDLL_26_Curves->vtbl->func_4288(&objData->unk0, self, 300.0f, &sp34, -1);
+    }
+    func_800053B0(&objData->unk0, 0.01f);
+    self->srt.transl.x = objData->unk0.unk68.f[0];
+    self->srt.transl.y = objData->unk0.unk68.f[1];
+    self->srt.transl.z = objData->unk0.unk68.f[2];
+    self->srt.transl.y += 3.0f;
+}
+#endif
+
+/*0x30*/ static const char str_30[] = "speed %f ";
+/*0x3C*/ static const char str_3C[] = "\n Brake Message %i \n\n";
+/*0x54*/ static const char str_54[] = " Mine Cart At Doors ";
+/*0x6C*/ static const char str_6C[] = " COLLISION";
+/*0x78*/ static const char str_78[] = "Creating  BarrelCnt Is %i ";
+/*0x94*/ static const char str_94[] = " TRACK DOORS OPENDED ";
+/*0xAC*/ static const char str_AC[] = "SETTING POSITION TO NODE IDNY \n\n";
+/*0xD0*/ static const char str_D0[] = " list Branch No %i ";
+/*0xE4*/ static const char str_E4[] = " list Branch %i Max %i Branch No %i ";
