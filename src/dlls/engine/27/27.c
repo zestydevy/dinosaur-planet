@@ -2,6 +2,7 @@
 #include "PR/os.h"
 #include "sys/camera.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/objhits.h"
 #include "sys/segment_53F00.h"
 
@@ -621,35 +622,36 @@ static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
 
 // offset: 0x1BA8 | func: 17
 // calculate relative floor pitch/roll
-static void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1) {
-    s16 temp_v1;
-    s16 temp_v1_2;
-    SRT sp7C;
-    MtxF sp3C;
+static void dll_27_func_1BA8(Object* obj, DLL27_Data* arg1) {
+    s16 pitchAngle;
+    s16 rollAngle;
+    SRT srt;
+    MtxF mtx;
     f32 x;
     f32 y;
     f32 z;
 
     if (arg1->unk25C & 0x10) {
-        sp7C.yaw = -arg0->srt.yaw;
-        sp7C.pitch = 0;
-        sp7C.roll = 0;
-        sp7C.transl.x = 0.0f;
-        sp7C.transl.y = 0.0f;
-        sp7C.transl.z = 0.0f;
-        sp7C.scale = 1.0f;
-        matrix_from_srt_reversed(&sp3C, &sp7C);
-        vec3_transform(&sp3C, arg1->floorNormalX, arg1->floorNormalY, arg1->floorNormalZ, &x, &y, &z);
-        // 0x4000 = 90deg
-        temp_v1 = 0x4000 - arctan2_f(y, z);
-        arg1->relativeFloorPitch = temp_v1;
-        arg1->relativeFloorPitchSmooth += ((s32) ((temp_v1 - arg1->relativeFloorPitchSmooth) * gUpdateRate) >> 4);
-        temp_v1_2 = -0x4000 - -arctan2_f(y, x);
-        arg1->relativeFloorRoll = temp_v1_2;
-        arg1->relativeFloorRollSmooth += ((s32) ((temp_v1_2 - arg1->relativeFloorRollSmooth) * gUpdateRate) >> 4);
+        srt.yaw = -obj->srt.yaw;
+        srt.pitch = 0;
+        srt.roll = 0;
+        srt.transl.x = 0.0f;
+        srt.transl.y = 0.0f;
+        srt.transl.z = 0.0f;
+        srt.scale = 1.0f;
+        matrix_from_srt_reversed(&mtx, &srt);
+        vec3_transform(&mtx, arg1->floorNormalX, arg1->floorNormalY, arg1->floorNormalZ, &x, &y, &z);
+        
+        pitchAngle = M_90_DEGREES - arctan2_f(y, z);
+        arg1->relativeFloorPitch = pitchAngle;
+        arg1->relativeFloorPitchSmooth += ((pitchAngle - arg1->relativeFloorPitchSmooth) * gUpdateRate) >> 4;
+        
+        rollAngle = -M_90_DEGREES - -arctan2_f(y, x);
+        arg1->relativeFloorRoll = rollAngle;
+        arg1->relativeFloorRollSmooth += ((rollAngle - arg1->relativeFloorRollSmooth) * gUpdateRate) >> 4;
     } else {
-        arg1->relativeFloorPitchSmooth -= ((s32) (arg1->relativeFloorPitchSmooth * gUpdateRate) >> 4);
-        arg1->relativeFloorRollSmooth -= ((s32) (arg1->relativeFloorRollSmooth * gUpdateRate) >> 4);
+        arg1->relativeFloorPitchSmooth -= (arg1->relativeFloorPitchSmooth * gUpdateRate) >> 4;
+        arg1->relativeFloorRollSmooth -= (arg1->relativeFloorRollSmooth * gUpdateRate) >> 4;
         arg1->floorNormalX = 0.0f;
         arg1->floorNormalZ = 0.0f;
         arg1->floorNormalY = 1.0f;
@@ -720,17 +722,17 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
             f12 = f0 - temp;
             temp2 = spA8[var_s0_2] + spA8[var_a1];
             f14 = f2 - temp2;
-            arg0->srt.yaw += (s16) ((arctan2_f(f12, f14) & 0xFFFF) + 0x8000) >> 2;
+            arg0->srt.yaw += (s16) ((arctan2_f(f12, f14) & 0xFFFF) + M_180_DEGREES) >> 2;
         }
         if (arg1->flags & DLL27FLAG_200) {
             f12 = spA8[var_s0_2] - spA8[0];
             f14 = spB8[var_s0_2] - spB8[0];
-            arg0->srt.pitch += (arctan2_f(f12, f14) - 0x4000) & 0xFFFF;
+            arg0->srt.pitch += (arctan2_f(f12, f14) - M_90_DEGREES) & 0xFFFF;
         }
         if ((temp_t7 == 4) && (arg1->flags & DLL27FLAG_400)) {
             f12 = spC8[var_s1_2] - spC8[0];
             f14 = spB8[var_s1_2] - spB8[0];
-            arg0->srt.roll += (0x4000 - arctan2_f(f12, f14)) & 0xFFFF;
+            arg0->srt.roll += (M_90_DEGREES - arctan2_f(f12, f14)) & 0xFFFF;
         }
     } else {
         arg0->globalPosition.x = arg1->unk38[0].x;
