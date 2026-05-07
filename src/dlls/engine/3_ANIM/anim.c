@@ -88,8 +88,8 @@ typedef struct{
 } ANIMActorOverride;
 
 typedef struct {
-    u16 unk0;
-    u16 unk2;
+    s16 unk0;
+    s16 unk2;
     u16 totalActors; //maybe?
 } ANIMUnk698;
 
@@ -98,12 +98,10 @@ typedef struct {
 /*0x28*/ static const char str_28[] = "MAX_DECISION reached\n";
 /*0x40*/ static const char str_40[] = "st->messages overflow\n";
 /*0x58*/ static const char str_58[] = " MODEL NO %i \n";
-/*0x68*/ static const char str_68[] = " Could Not FInd Obj %i  over %i \n";
 
-/*0x0*/ static u32 _data_0 = 0x00000000;
-/*0x4*/ static u32 _data_4[] = {
-    0x00000000, 0xff000000
-};
+/*0x0*/ static s16 _data_0 = 0;
+/*0x4*/ static s16 _data_4 = 0;
+/*0x8*/ static s16 _data_8 = 0xff00;
 /*0xC*/ static f32 _data_C[] = {
     60.0, 0.0
 };
@@ -182,7 +180,7 @@ typedef struct {
 /*0x3A8*/ static u8 _bss_3A8[0x8];
 /*0x3B0*/ static u8 _bss_3B0[0x28];
 /*0x3D8*/ static s32 _bss_3D8[ANIMCURVES_SCENES_MAX];
-/*0x490*/ static s8 _bss_490[ANIMCURVES_SCENES_MAX];
+/*0x490*/ static u8 _bss_490[ANIMCURVES_SCENES_MAX];
 /*0x4C0*/ static u8 _bss_4C0[0x30];
 /*0x4F0*/ static u8 _bss_4F0[0xb4];
 /*0x5A4*/ static u8 _bss_5A4[0x4];
@@ -231,6 +229,7 @@ void dll_3_func_906C(s32 arg0);
 static s32 dll_3_func_93A0(Object* actor);
 static void dll_3_func_9CE8(s32 arg0);
 static Object* dll_3_func_9C08(s32 animCurvesIndex, Object* searchObject);
+static Object* dll_3_func_81F8(Object* animObj);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -1251,11 +1250,108 @@ void dll_3_func_7C6C(AnimObj_Data* state) {
 }
 
 // offset: 0x7CF0 | func: 43 | export: 9
-void dll_3_func_7CF0(void);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_7CF0.s")
+void dll_3_func_7CF0(void) {
+    s32 i;
+    s32 k;
+    s32 var_s5;
+    s32 var_s6;
+    AnimObj_Setup* temp_v0;
+    AnimObj_Data* temp_s1;
+    Object* spE0[20];
+    s32 temp_fp;
+    s32 temp_s7;
+    Object* temp_s0;
+    ANIMUnk698 *temp;
+    s32 spCC;
+    ANIMUnk698 sp6C[ANIMCURVES_ACTORS_MAX];
+    Object** sp68;
+    s32 sp64;
+    s32 sp60;
+
+    sp68 = get_world_objects(&sp60, &sp64);
+    if (_data_0 != _data_4) {
+        _data_4 = _data_0;
+    }
+    for (i = 0; i < ANIMCURVES_SCENES_MAX; i++) {
+        _bss_1C8[i] = 0;
+        if ((_bss_D8[i] != 0) && (_bss_A8[i] == 0)) {
+            _bss_1C8[i] = gUpdateRate;
+        }
+        _bss_A8[i] = _bss_D8[i];
+        _bss_D8[i] = 0;
+        _bss_1F8[i] = _bss_258[i];
+        _bss_258[i] = -1;
+        if (_bss_490[i] == 2) {
+            _bss_490[i] = 1;
+        } else {
+            _bss_490[i] = 0;
+        }
+    }
+    k = _bss_6F8;
+    spCC = 0;
+    while (k > 0) {
+        k--;
+        temp = &_bss_698[k];
+        temp_s7 = temp->unk0;
+        temp_fp = temp->unk2;
+        _bss_138[temp_s7] = 0;
+        _bss_108[temp_s7] = 0;
+        _bss_198[temp_s7] = 0;
+        var_s5 = 0;
+        var_s6 = 1;
+        for (i = 0; i < sp64; i++) {
+            temp_s0 = sp68[i];
+            if (temp_s0->group == 0x10) {
+                temp_v0 = (AnimObj_Setup*)temp_s0->setup;
+                temp_s1 = temp_s0->data;
+                if ((temp_v0 != NULL) && (temp_s7 == temp_v0->unk1F)) {
+                    if ((temp_v0->unk1C >= 4) && (dll_3_func_81F8(temp_s0) == NULL)) {
+                        var_s6 = 0;
+                        STUBBED_PRINTF(" Could Not FInd Obj %i  over %i \n", temp_s0->id, temp_v0->unk1C);
+                    } else {
+                        temp_s1->actor = 0;
+                    }
+                    /* default.dol
+                    if (var_s5 >= 20) {
+                        STUBBED_PRINTF("ANIM: noanims overflow\n");
+                    }
+                    */
+                    spE0[var_s5] = temp_s0;
+                    var_s5 += 1;
+                }
+            }
+        }
+        for (i = 0; i < var_s5; i++) {
+            temp_s0 = spE0[i];
+            temp_v0 = (AnimObj_Setup*)temp_s0->setup;
+            if ((temp_v0 != NULL) && (temp_s7 == temp_v0->unk1F)) {
+                temp_s1 = temp_s0->data;
+                if (var_s6 != 0) {
+                    temp_s1->unk8B = 2;
+                    temp_s1->unk6A = temp_fp;
+                    dll_3_func_3D0(temp_s0, 1);
+                    get_object_child_position(temp_s0, 
+                        &temp_s0->globalPosition.x, &temp_s0->globalPosition.y, &temp_s0->globalPosition.z);
+                } else {
+                    temp_s1->unk8B = 3;
+                }
+            }
+        }
+        if (var_s6 == 0) {
+            sp6C[spCC].unk0 = temp_s7;
+            sp6C[spCC].unk2 = temp_fp;
+            spCC += 1;
+        }
+    }
+    for (i = 0; i < spCC; i++) {
+        _bss_698[i].unk0 = sp6C[i].unk0;
+        _bss_698[i].unk2 = sp6C[i].unk2;
+    }
+    _bss_6F8 = (s8) spCC;
+}
 
 // offset: 0x81F8 | func: 44
-Object* dll_3_func_81F8(Object* animObj) {
+static Object* dll_3_func_81F8(Object* animObj) {
     AnimObj_Data *objdata;
     s32 numObjs;
     s32 start;
