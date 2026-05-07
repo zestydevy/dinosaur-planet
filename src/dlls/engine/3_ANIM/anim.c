@@ -102,9 +102,8 @@ typedef struct {
 /*0x0*/ static s16 _data_0 = 0;
 /*0x4*/ static s16 _data_4 = 0;
 /*0x8*/ static s16 _data_8 = 0xff00;
-/*0xC*/ static f32 _data_C[] = {
-    60.0, 0.0
-};
+/*0xC*/ static f32 _data_C = 60.0;
+/*0x10*/ static f32 _data_10 = 0.0f;
 /*0x14*/ static s16 _data_14[] = {
     0, 0
 };
@@ -120,9 +119,7 @@ typedef struct {
 /*0x2C*/ static s32 _data_2C = {
     0
 };
-/*0x30*/ static u32 _data_30[] = {
-    0x00000000
-};
+/*0x30*/ static s8 _data_30 = 0;
 /*0x34*/ static u32 _data_34[] = {
     0x00008000, 0x00004000, 0x00000002, 0x00000001, 0x00000004, 0x00000008, 0xffffffff
 };
@@ -183,18 +180,19 @@ typedef struct {
 /*0x490*/ static u8 _bss_490[ANIMCURVES_SCENES_MAX];
 /*0x4C0*/ static u8 _bss_4C0[0x30];
 /*0x4F0*/ static u8 _bss_4F0[0xb4];
-/*0x5A4*/ static u8 _bss_5A4[0x4];
-/*0x5A8*/ static u8 _bss_5A8[0x4];
+/*0x5A4*/ static f32 _bss_5A4;
+/*0x5A8*/ static f32 _bss_5A8;
 /*0x5AC*/ static u8 _bss_5AC[0x4]; //TODO: just u8?
-/*0x5B0*/ static u8 _bss_5B0[0x8];
+/*0x5B0*/ static f32 _bss_5B0;
+/*0x5B0*/ static u8 _bss_5B4[0x4];
 /*0x5B8*/ static Vec3f _bss_5B8;
-/*0x5C4*/ static u8 _bss_5C4[0x4];
-/*0x5C8*/ static u8 _bss_5C8[0x4];
+/*0x5C4*/ static f32 _bss_5C4;
+/*0x5C8*/ static s32 _bss_5C8;
 /*0x5CC*/ static u8 _bss_5CC[0x4];
-/*0x5D0*/ static u8 _bss_5D0[0x4];
-/*0x5D4*/ static u8 _bss_5D4[0x4];
+/*0x5D0*/ static s32 _bss_5D0;
+/*0x5D4*/ static s32 _bss_5D4;
 /*0x5D8*/ static void* _bss_5D8; //sequence file buffer
-/*0x5DC*/ static u8 _bss_5DC[0x4];
+/*0x5DC*/ static f32 _bss_5DC;
 /*0x5E0*/ static u8 _bss_5E0[0x4];
 /*0x5E4*/ static u8 _bss_5E4[0x4];
 /*0x5E8*/ static u8 _bss_5E8[0x8];
@@ -230,6 +228,7 @@ static s32 dll_3_func_93A0(Object* actor);
 static void dll_3_func_9CE8(s32 arg0);
 static Object* dll_3_func_9C08(s32 animCurvesIndex, Object* searchObject);
 static Object* dll_3_func_81F8(Object* animObj);
+s32 dll_3_func_8878(void);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -1139,8 +1138,135 @@ void dll_3_func_72E0(Object* arg0) {
 }
 
 // offset: 0x730C | func: 39 | export: 5
-void dll_3_func_730C(void);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_730C.s")
+void dll_3_func_730C(void) {
+    s32 _pad;
+    AnimObj_Setup *animobjSetup;
+    f32 sp184;
+    f32 sp180;
+    f32 sp17C;
+    s16 sp17A;
+    s16 sp178;
+    s16 sp176;
+    CamControl_Data* temp_v0;
+    CamControl_Data sp54;
+    Unk_DLL2_Func888 sp4C;
+    Unk_DLL2_Func888 sp44;
+    DLL_86_CamAction sp38;
+
+    if (_bss_6FC != NULL) {
+        if (dll_3_func_8878() != 0) {
+            animobjSetup = (AnimObj_Setup*)_bss_6FC->setup;
+            sp184 = _bss_6FC->globalPosition.x;
+            sp180 = _bss_6FC->globalPosition.y;
+            sp17C = _bss_6FC->globalPosition.z;
+            sp17A = _bss_6FC->srt.yaw;
+            sp178 = _bss_6FC->srt.pitch;
+            sp176 = _bss_6FC->srt.roll;
+            if (_bss_6FC->parent != NULL) {
+                sp17A += _bss_6FC->parent->srt.yaw;
+            }
+            _bss_A0 = 1.0f;
+            if (_bss_8B == 0) {
+                sp54.srt.transl.x = sp184;
+                sp54.srt.transl.y = sp180;
+                sp54.srt.transl.z = sp17C;
+                sp54.srt.yaw = 0x8000 - sp17A;
+                sp54.srt.pitch = -sp178;
+                sp54.srt.roll = sp176;
+                if (_data_30 != 0) {
+                    sp54.fov = _bss_5DC;
+                    _data_C = _bss_5DC;
+                } else {
+                    sp54.fov = _data_C;
+                }
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK1, 0, 1, sizeof(sp54), &sp54, animobjSetup->unk24, 0xFF);
+                _bss_8B = 1;
+            } else {
+                temp_v0 = gDLL_2_Camera->vtbl->get_data();
+                temp_v0->srt.transl.x = sp184;
+                temp_v0->srt.transl.y = sp180;
+                temp_v0->srt.transl.z = sp17C;
+                temp_v0->srt.yaw = 0x8000 - sp17A;
+                temp_v0->srt.pitch = -sp178;
+                temp_v0->srt.roll = sp176;
+                if (_data_30 != 0) {
+                    temp_v0->fov = _bss_5DC;
+                    _data_C = _bss_5DC;
+                } else {
+                    temp_v0->fov = _data_C;
+                }
+                _bss_5A4 = temp_v0->srt.transl.x;
+                _bss_5A8 = temp_v0->srt.transl.y;
+                _bss_5B0 = temp_v0->srt.transl.z;
+                _bss_5C8 = (s32) temp_v0->srt.yaw;
+                _bss_5D0 = (s32) temp_v0->srt.pitch;
+                _bss_5D4 = (s32) temp_v0->srt.roll;
+                _bss_5C4 = temp_v0->fov;
+            }
+        }
+    } else if (_bss_8B != 0) {
+        switch (_bss_8C) {
+        case DLL_ID_CAMSTATIC:
+            sp4C.unk0 = _bss_90;
+            sp4C.unk4 = (s8) _bss_94;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSTATIC, 1, 3, sizeof(sp4C), &sp4C, _bss_98, 0xFF);
+            dummy_label_1: ; // @fake
+            break;
+        case DLL_ID_CAMLOCKON:
+            sp44.unk0 = _bss_90;
+            if (_bss_98 == 0) {
+                sp44.unk4 = 1;
+            }
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 3, sizeof(sp44), &sp44, _bss_98, 0xFF);
+            dummy_label_2: ; // @fake
+            break;
+        case DLL_ID_CAMCLIMB:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLIMB, 1, 0, 0, NULL, _bss_98, 0xFF);
+            break;
+        case DLL_ID_CAMTALK1:
+            sp54.srt.transl.x = _bss_5A4;
+            sp54.srt.transl.y = _bss_5A8;
+            sp54.srt.yaw = (s16) _bss_5C8;
+            sp54.srt.pitch = (s16) _bss_5D0;
+            sp54.srt.transl.z = _bss_5B0;
+            sp54.srt.roll = (s16) _bss_5D4;
+            sp54.fov = _bss_5C4;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK1, 1, 0, sizeof(sp54), &sp54, 0, 0xFF);
+            break;
+        case DLL_ID_CAMSLIDE:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSLIDE, 1, 0, 0, NULL, _bss_98, 0xFF);
+            break;
+        case DLL_ID_CAM1STPERSON:
+            if (_bss_90 != 0) {
+                sp38.unk0 = 90.0f;
+                sp38.unk4 = 20.0f;
+                sp38.unk8 = 5;
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, 1, 1, sizeof(sp38), &sp38, 0, 0xFF);
+            } else {
+                sp38.unk0 = 90.0f;
+                sp38.unk4 = 20.0f;
+                sp38.unk8 = 30;
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, 1, 0, sizeof(sp38), &sp38, 0, 0xFF);
+            }
+            dummy_label_3: ; // @fake
+            break;
+        case DLL_ID_CAMSHIPBATTLE1:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE1, 1, 0, _bss_90, &_bss_94, _bss_98, 0xFF);
+            break;
+        case DLL_ID_CAMDRAKOR:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDRAKOR, 1, 0, 0, NULL, 0, 0xFF);
+            break;
+        default:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, _bss_90, 0, NULL, _bss_98, 0xFF);
+            break;
+        }
+        _bss_8C = 0;
+        _bss_8B = 0;
+        _data_C = 60.0f;
+    }
+    _data_30 = 0;
+    _bss_6FC = NULL;
+}
 
 // offset: 0x7974 | func: 40 | export: 6
 void dll_3_func_7974(AnimObj_Data* arg0, AnimObj_Setup* setup) {

@@ -14,7 +14,7 @@
 #include "sys/segment_53F00.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "prevent_bss_reordering.h"
+#include "prevent_bss_reordering2.h"
 
 typedef struct {
 /*00*/ Vec3f unk0;
