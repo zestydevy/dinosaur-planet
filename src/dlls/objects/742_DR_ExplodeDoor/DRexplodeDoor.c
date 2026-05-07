@@ -64,7 +64,7 @@ void DRExplodeDoor_control(Object* self) {
         dll->vtbl->func0(self, 16, NULL, 2, -1, &modGfxArg);
         dll_unload(dll);
         
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8C7_Explosion_High, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_8C7_Explosion_High, MAX_VOLUME, 0, 0, 0, 0);
         obj_free_tick(self);
     }
 }
@@ -89,7 +89,7 @@ void DRExplodeDoor_update(Object* self) {
         modGfxDLL->vtbl->func0(self, objSetup->modGfxArg1, &modGfxTrans, 2, -1, &modGfxArg);
         dll_unload(modGfxDLL);
         
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_860_Explosion_Mid, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, 0, 0, 0, 0);
         self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
         self->srt.flags |= OBJFLAG_INVISIBLE;
         

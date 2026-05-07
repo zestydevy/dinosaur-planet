@@ -169,7 +169,7 @@ void dll_481_control(Object *self) {
             } else {
                 if (objdata->unk10 != -0x3E7) {
                     if (objdata->unk10 < 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
                         objdata->unk10 = -0x3E7;
                     } else {
                         objdata->unk10 -= gUpdateRate;
@@ -328,7 +328,7 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         case 10:
             main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
             if (_data_0 == NULL) {
-                _data_0 = func_8004A1E8(1);
+                _data_0 = block_texanim_get_tex(1);
             }
             break;
         case 9:

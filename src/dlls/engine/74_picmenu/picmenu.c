@@ -189,14 +189,14 @@ PicMenuAction picmenu_update() {
             sHighlightAlpha = 255;
 
             if (sSounds->moveSoundID > -1) {
-                gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
         } else if (joyYSign > 0 && item->upLink != -1 && !(sItems[item->upLink].flags & PICMENU_INTANGIBLE)) {
             sSelectedItem = item->upLink;
             sHighlightAlpha = 255;
 
             if (sSounds->moveSoundID > -1) {
-                gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
         }
         
@@ -207,14 +207,14 @@ PicMenuAction picmenu_update() {
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
             } else if (joyXSign > 0 && item->rightLink != -1) {
                 sItems[sSelectedItem].overrideWith = item->rightLink;
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
             }
         } else {
@@ -223,7 +223,7 @@ PicMenuAction picmenu_update() {
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
                 
             } else if (joyXSign > 0 && item->rightLink != -1 && !(sItems[item->rightLink].flags & PICMENU_INTANGIBLE)) {
@@ -231,7 +231,7 @@ PicMenuAction picmenu_update() {
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
             }
         }
@@ -251,14 +251,14 @@ PicMenuAction picmenu_update() {
                 joy_set_button_mask(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->selectSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play(0, sSounds->selectSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
 
                 ret = PICMENU_ACTION_SELECT;
             }            
         } else if (buttons & B_BUTTON) {
             if (sSounds->backSoundID > -1) {
-                gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->backSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(0, sSounds->backSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
 
             joy_set_button_mask(0, B_BUTTON);

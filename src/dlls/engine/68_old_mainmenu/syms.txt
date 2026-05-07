@@ -1,9 +1,9 @@
 .text = 0x0:
-dll_68_ctor = 0x0;
-dll_68_dtor = 0x84;
-dll_68_func_C4 = 0xC4;
-dll_68_func_D0 = 0xD0;
-dll_68_func_D8 = 0xD8;
+old_mainmenu_ctor = 0x0;
+old_mainmenu_dtor = 0x84;
+old_mainmenu_func_C4 = 0xC4;
+old_mainmenu_func_D0 = 0xD0;
+old_mainmenu_func_D8 = 0xD8;
 
 .rodata = 0x2E0:
 
@@ -11,7 +11,7 @@ dll_68_func_D8 = 0xD8;
 data_0 = 0x0; // absolute:0x2E0
 
 .bss = 0x3D0:
-bss_0 = 0x0; // absolute:0x3D0
+sGametext = 0x0; // absolute:0x3D0
 bss_4 = 0x4; // absolute:0x3D4
 bss_8 = 0x8; // absolute:0x3D8
 bss_C = 0xC; // absolute:0x3DC

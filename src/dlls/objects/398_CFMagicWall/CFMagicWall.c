@@ -97,8 +97,8 @@ static void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID) {
     s32 vertexIdx;
     s32 shapeIdx;
 
-    blockIdx = func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
-    block = func_80044BB0(blockIdx);
+    blockIdx = map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+    block = map_get_block_by_index(blockIdx);
     if (block != NULL && (block->vtxFlags & 8)) {
         vtxs = block->vertices2[block->vtxFlags & 1];
         shapeIdx = 0;

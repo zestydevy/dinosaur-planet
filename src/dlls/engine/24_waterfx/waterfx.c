@@ -3,8 +3,10 @@
 #include "PR/os.h"
 #include "dlls/engine/24_waterfx.h"
 
+#include "gbi_extra.h"
 #include "macros.h"
 #include "sys/camera.h"
+#include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
 #include "sys/math.h"
 #include "sys/memory.h"
@@ -14,186 +16,192 @@
 
 #include "prevent_bss_reordering.h"
 
-// size: 0x10
-typedef struct StructBss8
-{
-    s16 unk0; // unk0 - unk4 xyz?
-    s16 unk2;
-    s16 unk4;
-    s16 unk6; // unk6 - unkA pitch/yaw/roll?
-    s16 unk8;
-    s16 unkA;
-    u8 unkC;
-    u8 unkD;
-    u8 unkE;
-    u8 unkF;
-} StructBss8;
-
-// size 0x1C
-typedef struct StructBss24
-{
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    s16 unk14;
-    s16 unk16;
-    s16 unk18;
-} StructBss24;
-
-// size: 0x5C
-typedef struct StructBss2C
-{
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    u8 pad10[0x24 - 0x10];
-    f32 unk24;
-    u8 pad28[0x3C - 0x28];
-    f32 unk3C;
-    u8 pad40[0x54 - 0x40];
-    s16 unk54;
-    s16 pad56;
-    s8 unk58;
-} StructBss2C;
+#define MAX_CIRCULAR_RIPPLES 30
+#define MAX_MOVEMENT_RIPPLES 30
+#define MAX_SPLASHES 10
+#define MAX_SPLASH_PARTICLES 30
 
 // size: 0x1C
-typedef struct StructBss34
-{
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    s16 unk14;
-    s16 unk16;
-    s8 unk18;
-} StructBss34;
+typedef struct {
+/*00*/ f32 x;
+/*04*/ f32 y;
+/*08*/ f32 z;
+/*0C*/ f32 unkC;
+/*10*/ f32 scale;
+/*14*/ s16 yaw;
+/*16*/ s16 alpha;
+/*18*/ s16 decayRate;
+} CircularWaterRipple;
+
+// size: 0x5C
+typedef struct {
+/*00*/ f32 x;
+/*04*/ f32 y;
+/*08*/ f32 z;
+/*0C*/ f32 unkC[6];
+/*24*/ f32 unk24[6];
+/*3C*/ f32 unk3C[6];
+/*54*/ s16 alpha;
+/*56*/ s16 unk56;
+/*58*/ u8 particleCount;
+} WaterSplash;
+
+// size: 0x1C
+typedef struct {
+/*00*/ f32 x;
+/*04*/ f32 y;
+/*08*/ f32 z;
+/*0C*/ f32 unkC;
+/*10*/ f32 scale;
+/*14*/ s16 alpha;
+/*16*/ s16 yaw;
+/*18*/ u8 hide;
+} MovementWaterRipple;
 
 // size: 0x14
-typedef struct StructBss3C
-{
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    s16 unk10;
-    s8 unk12;
-} StructBss3C;
+typedef struct {
+/*00*/ f32 xVel;
+/*04*/ f32 zVel;
+/*08*/ f32 speed; // lateral only
+/*0C*/ f32 yVel;
+/*10*/ s16 unk10;
+/*12*/ s8 splashIdx; // index of the linked water splash instance
+} WaterSplashParticle;
 
-static const u8 allocateMemoryError[] = "Could not allocate memory for waterfx dll\n";
+void waterfx_init(void);
+void waterfx_spawn_splash(f32 x, f32 y, f32 z, f32 size);
+void waterfx_spawn_movement_ripple(f32 x, f32 y, f32 z, s16 yaw, f32 arg4);
+void waterfx_spawn_circular_ripple(f32 x, f32 y, f32 z, s16 yaw, f32 arg4, s32 decayRate);
 
-void waterfx_func_24C(void);
-void waterfx_func_174C(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-void waterfx_func_1B28(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4);
-void waterfx_func_1CC8(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4, s32 arg5);
+static Vtx *sCircularRippleVerts;
+static DLTri *sCircularRippleTris;
 
-static StructBss8 *_bss_0; // 120 items
-static DLTri *_bss_4; // 60 items
-static StructBss8 *_bss_8; // 140 items
-static DLTri *_bss_C; // 120 items
-static StructBss8 *_bss_10; // 120 items
-static DLTri *_bss_14; // 60 items
-static StructBss8 *_bss_18; // 120 items
-static DLTri *_bss_1C; // 60 items
-static s32 _bss_20; // some sort of counter related to _bss_24
-static StructBss24 *_bss_24; // 30 items
-static s32 _bss_28; // some sort of counter related to _bss_8
-static StructBss2C *_bss_2C; // 10 items
-static s32 _bss_30; // some sort of counter related to _bss_34 and _bss_18
-static StructBss34 *_bss_34; // 30 items
-static s32 _bss_38; // some sort of counter related to _bss_2C and _bss_10
-static StructBss3C *_bss_3C; // 30 items
-static Texture *_bss_40; // texture if _bss_20 is not null
-static Texture *_bss_44; // texture if _bss_28 is not null
-static Texture *_bss_48; // texture if _bss_38 is not null
-static Texture *_bss_4C; // texture if _bss_30 is not null
-static f32 _bss_50;
+static Vtx *sWaterSplashVerts;
+static DLTri *sWaterSplashTris;
+
+static Vtx *sWaterSplashPartVerts;
+static DLTri *sWaterSplashPartTris;
+
+static Vtx *sMovementRippleVerts;
+static DLTri *sMovementRippleTris;
+
+static s32 sNumCircularRipples;
+static CircularWaterRipple *sCircularRipples;
+
+static s32 sNumWaterSplashes;
+static WaterSplash *sWaterSplashes;
+
+static s32 sNumMovementRipples;
+static MovementWaterRipple *sMovementRipples;
+
+static s32 sNumWaterSplashParticles;
+static WaterSplashParticle *sWaterSplashParticles;
+
+static Texture *sCircularWaterRippleTex;
+static Texture *sWaterSplashTex;
+static Texture *sWaterSplashParticleTex;
+static Texture *sMovementWaterRippleTex;
+
+static f32 sCircularRippleScale;
 
 // offset: 0x0 | ctor
-void waterfx_ctor(s32 arg0)
-{
-    s32 *state;
+void waterfx_ctor(void *dll) {
+    u8 *mem;
 
-    state = mmAlloc(0x3E80, ALLOC_TAG_GFX_COL, NULL);
-    if (state == NULL) {
-        STUBBED_PRINTF(allocateMemoryError); // Not sure this was actually printed but it would make the most sense
+    const u32 circRipTrisOffset = 0;
+    const u32 splashTrisOffset = circRipTrisOffset + (sizeof(DLTri) * MAX_CIRCULAR_RIPPLES * 2);
+    const u32 splashPartTrisOffset = splashTrisOffset + (sizeof(DLTri) * MAX_SPLASHES * 12);
+    const u32 movRipTrisOffset = splashPartTrisOffset + (sizeof(DLTri) * MAX_SPLASH_PARTICLES * 2);
+
+    const u32 circRipVtxsOffset = movRipTrisOffset + (sizeof(DLTri) * MAX_MOVEMENT_RIPPLES * 2);
+    const u32 splashVtxsOffset = circRipVtxsOffset + (sizeof(Vtx) * MAX_CIRCULAR_RIPPLES * 4);
+    const u32 splashPartVtxsOffset = splashVtxsOffset + (sizeof(Vtx) * MAX_SPLASHES * 14);
+    const u32 movRipVtxsOffset = splashPartVtxsOffset + (sizeof(Vtx) * MAX_SPLASH_PARTICLES * 4);
+
+    const u32 movRipVtxsSize = (sizeof(Vtx) * MAX_MOVEMENT_RIPPLES * 4);
+    const u32 circRipsSize = (sizeof(CircularWaterRipple) * MAX_CIRCULAR_RIPPLES);
+    const u32 splashesSize = (sizeof(WaterSplash) * MAX_SPLASHES);
+    const u32 splashPartsSize = (sizeof(WaterSplashParticle) * MAX_SPLASH_PARTICLES);
+    const u32 movRipsSize = (sizeof(MovementWaterRipple) * MAX_MOVEMENT_RIPPLES);
+
+    const u32 allocSize = movRipVtxsOffset + movRipVtxsSize + circRipsSize + splashesSize + splashPartsSize + movRipsSize;
+
+    mem = mmAlloc(allocSize, ALLOC_TAG_GFX_COL, ALLOC_NAME("waterfx:mem"));
+    if (mem == NULL) {
+        STUBBED_PRINTF("Could not allocate memory for waterfx dll\n");
         return;
     }
 
-    _bss_4 = (DLTri *) state;
-    _bss_C = (DLTri *) state + 60;
-    _bss_14 = (DLTri *) state + 180;
-    _bss_1C = (DLTri *) state + 240;
-    _bss_0 = (StructBss8 *) state + 300;
-    _bss_8 = (StructBss8 *) state + 420;
-    _bss_10 = (StructBss8 *) state + 560;
-    _bss_18 = (StructBss8 *) state + 680;
-    state += 3200;
-    _bss_24 = (StructBss24 *) state;
-    state += 210;
-    _bss_2C = (StructBss2C *) state;
-    state += 230;
-    _bss_3C = (StructBss3C *) state;
-    state += 150;
-    _bss_34 = (StructBss34 *) state;
-    _bss_20 = 0;
-    _bss_28 = 0;
-    _bss_38 = 0;
-    _bss_30 = 0;
-    _bss_40 = tex_load_deferred(0x56);
-    _bss_44 = tex_load_deferred(0x59);
-    _bss_48 = tex_load_deferred(0x22);
-    _bss_4C = tex_load_deferred(0x57);
-    waterfx_func_24C();
+    sCircularRippleTris = (DLTri*) (mem + circRipTrisOffset);
+    sWaterSplashTris = (DLTri*) (mem + splashTrisOffset);
+    sWaterSplashPartTris = (DLTri*) (mem + splashPartTrisOffset);
+    sMovementRippleTris = (DLTri*) (mem + movRipTrisOffset);
+    
+    sCircularRippleVerts = (Vtx*) (mem + circRipVtxsOffset);
+    sWaterSplashVerts = (Vtx*) (mem + splashVtxsOffset);
+    sWaterSplashPartVerts = (Vtx*) (mem + splashPartVtxsOffset);
+    sMovementRippleVerts = (Vtx*) (mem + movRipVtxsOffset);
+    
+    mem += movRipVtxsOffset + movRipVtxsSize;
+    sCircularRipples = (CircularWaterRipple*) mem;
+    mem += circRipsSize;
+    sWaterSplashes = (WaterSplash*) mem;
+    mem += splashesSize;
+    sWaterSplashParticles = (WaterSplashParticle*) mem;
+    mem += splashPartsSize;
+    sMovementRipples = (MovementWaterRipple*) mem;
+    
+    sNumCircularRipples = 0;
+    sNumWaterSplashes = 0;
+    sNumWaterSplashParticles = 0;
+    sNumMovementRipples = 0;
+    
+    sCircularWaterRippleTex = tex_load_deferred(TEXTABLE_56_CircularWaterRipple);
+    sWaterSplashTex = tex_load_deferred(TEXTABLE_59_WaterSplash);
+    sWaterSplashParticleTex = tex_load_deferred(TEXTABLE_22_WaterSplashParticle);
+    sMovementWaterRippleTex = tex_load_deferred(TEXTABLE_57_MovementWaterRipple);
+    
+    waterfx_init();
 }
 
 // offset: 0x160 | dtor
-void waterfx_dtor(s32 arg0)
-{
-    if (_bss_4 != NULL)
-    {
-        mmFree(_bss_4);
+void waterfx_dtor(void *dll) {
+    if (sCircularRippleTris != NULL) { // this frees all of the waterfx memory
+        mmFree(sCircularRippleTris);
     }
-    if (_bss_40 != NULL)
-    {
-        tex_free(_bss_40);
-        _bss_40 = NULL;
+    if (sCircularWaterRippleTex != NULL) {
+        tex_free(sCircularWaterRippleTex);
+        sCircularWaterRippleTex = NULL;
     }
-    if (_bss_44 != NULL)
-    {
-        tex_free(_bss_44);
-        _bss_44 = NULL;
+    if (sWaterSplashTex != NULL) {
+        tex_free(sWaterSplashTex);
+        sWaterSplashTex = NULL;
     }
-    if (_bss_48 != NULL)
-    {
-        tex_free(_bss_48);
-        _bss_48 = NULL;
+    if (sWaterSplashParticleTex != NULL) {
+        tex_free(sWaterSplashParticleTex);
+        sWaterSplashParticleTex = NULL;
     }
-    if (_bss_4C != NULL)
-    {
-        tex_free(_bss_4C);
-        _bss_4C = NULL;
+    if (sMovementWaterRippleTex != NULL) {
+        tex_free(sMovementWaterRippleTex);
+        sMovementWaterRippleTex = NULL;
     }
 }
 
 // offset: 0x24C | func: 0 | export: 6
-void waterfx_func_24C(void) {
+void waterfx_init(void) {
     DLTri *tempTri;
-    StructBss3C *temp_a3_2;
+    WaterSplashParticle *splashPart;
     DLTri *tri;
     s32 var_a2;
-    StructBss24 *temp_a2;
-    StructBss2C *temp_v0;
-    DLTri *bssC;
+    CircularWaterRipple *circRipple;
+    MovementWaterRipple *movRipple;
+    WaterSplash *splash;
     s32 i;
     u32 targetU;
     s32 temp_var;
 
-    tri = _bss_4;
-    for (i = 0; i < 30; i++) {
+    tri = sCircularRippleTris;
+    for (i = 0; i < MAX_CIRCULAR_RIPPLES; i++) {
         tri->v0 = 3;
         tri->v1 = 1;
         tri->v2 = 0;
@@ -202,20 +210,20 @@ void waterfx_func_24C(void) {
         tri->v1 = 2;
         tri->v2 = 1;
         tri++;
-        temp_a2 = &_bss_24[i];
-        temp_a2->unk0 = 0.0f;
-        temp_a2->unk4 = 0.0f;
-        temp_a2->unk8 = 0.0f;
-        temp_a2->unkC = 0.0f;
-        temp_a2->unk10 = 0.01f;
-        temp_a2->unk16 = 0;
+        circRipple = &sCircularRipples[i];
+        circRipple->x = 0.0f;
+        circRipple->y = 0.0f;
+        circRipple->z = 0.0f;
+        circRipple->unkC = 0.0f;
+        circRipple->scale = 0.01f;
+        circRipple->alpha = 0;
     }
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < MAX_SPLASHES; i++) {
         var_a2 = 0;
 
-        tempTri = &_bss_C[i * 12];
+        tempTri = &sWaterSplashTris[i * 12];
         tri = (DLTri *) tempTri;
-        targetU = (u32)&_bss_C[i * 12 + 12];
+        targetU = (u32)&sWaterSplashTris[i * 12 + 12];
         while ((u32)tri < targetU) {
             temp_var = var_a2 + 1;
             tri->v0 = var_a2;
@@ -231,16 +239,16 @@ void waterfx_func_24C(void) {
             var_a2 += 2;
         }
 
-        temp_v0 = &_bss_2C[i];
-        temp_v0->unk0 = 0.0f;
-        temp_v0->unk4 = 0.0f;
-        temp_v0->unk8 = 0.0f;
-        temp_v0->unk54 = 0;
-        temp_v0->unk58 = 0;
+        splash = &sWaterSplashes[i];
+        splash->x = 0.0f;
+        splash->y = 0.0f;
+        splash->z = 0.0f;
+        splash->alpha = 0;
+        splash->particleCount = 0;
     }
 
-    tri = _bss_1C;
-    for (i = 0; i < 30; i++) {
+    tri = sMovementRippleTris;
+    for (i = 0; i < MAX_MOVEMENT_RIPPLES; i++) {
         tri->v0 = 3;
         tri->v1 = 1;
         tri->v2 = 0;
@@ -249,18 +257,18 @@ void waterfx_func_24C(void) {
         tri->v1 = 2;
         tri->v2 = 1;
         tri++;
-        temp_a2 = (StructBss24 *) &_bss_34[i];
-        temp_a2->unk0 = 0.0f;
-        temp_a2->unk4 = 0.0f;
-        temp_a2->unk8 = 0.0f;
-        temp_a2->unkC = 0.0f;
-        temp_a2->unk10 = 0.01f;
-        temp_a2->unk14 = 0;
-        temp_a2->unk16 = 0;
+        movRipple = &sMovementRipples[i];
+        movRipple->x = 0.0f;
+        movRipple->y = 0.0f;
+        movRipple->z = 0.0f;
+        movRipple->unkC = 0.0f;
+        movRipple->scale = 0.01f;
+        movRipple->alpha = 0;
+        movRipple->yaw = 0;
     }
 
-    tri = _bss_14;
-    for (i = 0; i < 30; i++) {
+    tri = sWaterSplashPartTris;
+    for (i = 0; i < MAX_SPLASH_PARTICLES; i++) {
         tri->v0 = 0;
         tri->v1 = 1;
         tri->v2 = 3;
@@ -270,19 +278,18 @@ void waterfx_func_24C(void) {
         tri->v2 = 2;
         tri++;
 
-        temp_a3_2 = &_bss_3C[i];
-        temp_a3_2->unk12 = -1;
-        temp_a3_2->unk0 = 0.0f;
-        temp_a3_2->unk4 = 0.0f;
-        temp_a3_2->unk10 = 0;
-        temp_a3_2->unk8 = 0.0f;
-        temp_a3_2->unkC = 0.0f;
+        splashPart = &sWaterSplashParticles[i];
+        splashPart->splashIdx = -1;
+        splashPart->xVel = 0.0f;
+        splashPart->zVel = 0.0f;
+        splashPart->unk10 = 0;
+        splashPart->speed = 0.0f;
+        splashPart->yVel = 0.0f;
     }
 }
 
 // offset: 0x564 | func: 1 | export: 1
-void waterfx_func_564(SRT *transform, u16 arg1, Vec3f *arg2, DLL27_Data *arg3, f32 arg4)
-{
+void waterfx_func_564(SRT *transform, u16 arg1, Vec3f *arg2, DLL27_Data *arg3, f32 speed) {
     f32 temp_fs1;
     f32 temp_fs2;
     s32 i;
@@ -293,129 +300,129 @@ void waterfx_func_564(SRT *transform, u16 arg1, Vec3f *arg2, DLL27_Data *arg3, f
             temp_fs1 = arg2[i].x;
             temp_fs2 = arg2[i].z;
             if (arg3->underwaterDist < 10.0f) {
-                waterfx_func_174C(temp_fs1, transform->transl.y + arg3->underwaterDist, temp_fs2, 0.0f);
+                waterfx_spawn_splash(temp_fs1, transform->transl.y + arg3->underwaterDist, temp_fs2, 0.0f);
             }
-            waterfx_func_1CC8(temp_fs1, transform->transl.y + arg3->underwaterDist, temp_fs2, transform->yaw, 0.0f, 3);
+            waterfx_spawn_circular_ripple(temp_fs1, transform->transl.y + arg3->underwaterDist, temp_fs2, transform->yaw, 0.0f, 3);
         }
         arg1 >>= 1;
         i += 1;
     }
-    if (arg4 > 0.01f) {
-        waterfx_func_1B28(transform->transl.x, transform->transl.y + arg3->underwaterDist, transform->transl.z, transform->yaw, 0.0f);
+    if (speed > 0.01f) {
+        waterfx_spawn_movement_ripple(transform->transl.x, transform->transl.y + arg3->underwaterDist, transform->transl.z, transform->yaw, 0.0f);
     }
 }
 
 // offset: 0x6E8 | func: 2 | export: 0
-void waterfx_func_6E8() {
+void waterfx_tick(void) {
     s32 i;
     f32 temp_fv1;
-    f32 var_fv0;
-    s16 temp_ft1;
-    s16 temp;
-    s16 temp_ft4;
-    s16 temp_ft4_2;
+    f32 transparency;
+    s16 yMove;
+    s16 alpha;
+    s16 xMove;
+    s16 zMove;
     s32 j;
-    StructBss8* temp_a1;
-    StructBss8* temp_a1_2;
-    StructBss2C* temp_t0;
-    StructBss24* temp_v0;
-    StructBss34* temp_v0_2;
-    StructBss3C* temp_v0_3;
-    StructBss2C *temp2;
-    s32 pad[1];
+    Vtx* vtx;
+    Vtx* temp_a1_2;
+    WaterSplash* splash;
+    CircularWaterRipple* circRipple;
+    MovementWaterRipple* movRipple;
+    WaterSplashParticle* part;
+    WaterSplash *temp2;
+    f32 temp;
 
-    for (i = 0; i < 30; i++) {
-        temp_v0 = &_bss_24[i];
-        if (temp_v0->unk16 != 0) {
-            temp_v0->unk10 += 0.0007f * gUpdateRateF;
-            temp_v0->unk16 -= (gUpdateRate * temp_v0->unk18);
-            if (temp_v0->unk16 < 0) {
-                temp_v0->unk16 = 0;
-                _bss_20 -= 1;
+    for (i = 0; i < MAX_CIRCULAR_RIPPLES; i++) {
+        circRipple = &sCircularRipples[i];
+        if (circRipple->alpha != 0) {
+            circRipple->scale += 0.0007f * gUpdateRateF;
+            circRipple->alpha -= (gUpdateRate * circRipple->decayRate);
+            if (circRipple->alpha < 0) {
+                circRipple->alpha = 0;
+                sNumCircularRipples -= 1;
             }
         }
     }
 
-    for (i = 0; i < 10; i++) {
-        temp_t0 = &_bss_2C[i];
-        if (temp_t0->unk54 != 0) {
-            temp_a1 = &_bss_8[i * 0xE];
-            var_fv0 = temp_a1[1].unk2 / 400.0f;
-            if (var_fv0 < 0.0f) {
-                var_fv0 = 0.0f;
-            } else if (var_fv0 > 1.0f) {
-                var_fv0 = 1.0f;
+    for (i = 0; i < MAX_SPLASHES; i++) {
+        splash = &sWaterSplashes[i];
+        if (splash->alpha != 0) {
+            vtx = &sWaterSplashVerts[i * 14];
+            transparency = vtx[1].v.ob[1] / 400.0f;
+            if (transparency < 0.0f) {
+                transparency = 0.0f;
+            } else if (transparency > 1.0f) {
+                transparency = 1.0f;
             } 
-            // The backslashes are required to force everything on the same line
-            for (j = 0; j < 14; j++) {\
-                if (j & 1) {\
-                    temp2 = ((StructBss2C *) (((s32 *) temp_t0) + ((j % 12) >> 1)));\
-                    temp_a1[j].unk0 += (s16) (temp2->unkC * gUpdateRateF * 100.0f); \
-                    temp_a1[j].unk2 += (s16) (temp2->unk24 * gUpdateRateF * 100.0f); \
-                    temp_a1[j].unk4 += (s16) (temp2->unk3C * gUpdateRateF * 100.0f); \
-                }\
-                temp = 255.0f - (var_fv0 * 255.0f);\
-                temp_a1[j].unkF = temp;
+            j = 0;
+            while (j < 14) {
+                if (j & 1) {
+                    vtx[j].v.ob[0] += (s16) (splash->unkC[(j % 12) >> 1] * gUpdateRateF * 100.0f);
+                    vtx[j].v.ob[1] += (s16) (splash->unk24[(j % 12) >> 1] * gUpdateRateF * 100.0f);
+                    vtx[j].v.ob[2] += (s16) (splash->unk3C[(j % 12) >> 1] * gUpdateRateF * 100.0f);
+                }
+                alpha = 255.0f - (transparency * 255.0f);
+                vtx[j].v.cn[3] = alpha;
+                j++;
             }
-            if (temp_a1[1].unk2 >= 0x191) {
-                temp_t0->unk54 = 0;
-                _bss_28 -= 1;
-            }
-        }
-    }
-
-    for (i = 0; i < 30; i++) {
-        temp_v0_2 = &_bss_34[i];
-        if (temp_v0_2->unk14 != 0) {
-            temp_v0_2->unk10 += 0.004f * gUpdateRateF;
-            temp_v0_2->unk14 -= gUpdateRate * 5;
-            if (temp_v0_2->unk14 < 0) {
-                temp_v0_2->unk14 = 0;
-                _bss_30 -= 1;
-            }
-            if ((u8)temp_v0_2->unk18 == 0) {
-                temp_v0_2->unk18 = 1;
+            if (vtx[1].v.ob[1] > 400) {
+                splash->alpha = 0;
+                sNumWaterSplashes -= 1;
             }
         }
     }
 
-    for (i = 0; i < 0x1E; i++) {
-        temp_v0_3 = &_bss_3C[i];
-        if (temp_v0_3->unk12 != -1) {
-            temp_t0 = &_bss_2C[temp_v0_3->unk12];
-            temp_a1 = &_bss_10[i * 4];
+    for (i = 0; i < MAX_MOVEMENT_RIPPLES; i++) {
+        movRipple = &sMovementRipples[i];
+        if (movRipple->alpha != 0) {
+            movRipple->scale += 0.004f * gUpdateRateF;
+            movRipple->alpha -= gUpdateRate * 5;
+            if (movRipple->alpha < 0) {
+                movRipple->alpha = 0;
+                sNumMovementRipples -= 1;
+            }
+            if (movRipple->hide == FALSE) {
+                movRipple->hide = TRUE;
+            }
+        }
+    }
 
-            var_fv0 = 100.0f * gUpdateRateF;
-            temp_fv1 = temp_v0_3->unk8 * var_fv0;
-            temp_ft4 = (temp_v0_3->unk0 * temp_fv1);
-            temp_ft1 = (temp_v0_3->unkC * var_fv0);
-            temp_ft4_2 = (temp_v0_3->unk4 * temp_fv1);
+    for (i = 0; i < MAX_SPLASH_PARTICLES; i++) {
+        part = &sWaterSplashParticles[i];
+        if (part->splashIdx != -1) {
+            splash = &sWaterSplashes[part->splashIdx];
+            vtx = &sWaterSplashPartVerts[i * 4];
 
-            temp_a1->unk0 += temp_ft4;
-            temp_a1->unk2 += temp_ft1;
-            temp_a1->unk4 += temp_ft4_2;
-            temp_a1 += 3;
-            temp_a1[-2].unk0 += temp_ft4;
-            temp_a1[-2].unk2 += temp_ft1;
-            temp_a1[-2].unk4 += temp_ft4_2;
-            temp_a1[-1].unk0 += temp_ft4;
-            temp_a1[-1].unk2 += temp_ft1;
-            temp_a1[-1].unk4 += temp_ft4_2;
-            temp_a1->unk0 += temp_ft4;
-            temp_a1->unk2 += temp_ft1;
-            temp_a1->unk4 += temp_ft4_2;
+            temp = 100.0f * gUpdateRateF;
+            temp_fv1 = part->speed * temp;
+            xMove = (part->xVel * temp_fv1);
+            yMove = (part->yVel * temp);
+            zMove = (part->zVel * temp_fv1);
 
-            temp_v0_3->unkC += -0.025f * gUpdateRateF;
-            if (temp_t0->unk54 == 0) {
-                if (temp_a1->unk2 < 0) {
-                    temp_v0_3->unk12 = -1;
-                    _bss_38 -= 1;
-                    temp_t0->unk58 =  ((u8)temp_t0->unk58 - 1);
-                    waterfx_func_1CC8((temp_a1->unk0 / 100.0f) + temp_t0->unk0, temp_t0->unk4, (temp_a1->unk4 / 100.0f) + temp_t0->unk8, 0, 0.0f, 4);
+            vtx->v.ob[0] += xMove;
+            vtx->v.ob[1] += yMove;
+            vtx->v.ob[2] += zMove;
+            vtx += 3;
+            vtx[-2].v.ob[0] += xMove;
+            vtx[-2].v.ob[1] += yMove;
+            vtx[-2].v.ob[2] += zMove;
+            vtx[-1].v.ob[0] += xMove;
+            vtx[-1].v.ob[1] += yMove;
+            vtx[-1].v.ob[2] += zMove;
+            vtx->v.ob[0] += xMove;
+            vtx->v.ob[1] += yMove;
+            vtx->v.ob[2] += zMove;
+
+            part->yVel += -0.025f * gUpdateRateF;
+            if (splash->alpha == 0) {
+                if (vtx->v.ob[1] < 0) {
+                    part->splashIdx = -1;
+                    sNumWaterSplashParticles -= 1;
+                    splash->particleCount--;
+                    waterfx_spawn_circular_ripple((vtx->v.ob[0] / 100.0f) + splash->x, splash->y, (vtx->v.ob[2] / 100.0f) + splash->z, 0, 0.0f, 4);
                 }
             } else {
-                temp_a1_2 = &_bss_8[temp_v0_3->unk12 * 0xE];
-                temp_v0_3->unk10 = (0xFF - (u8)temp_a1_2[1].unkF);
+                temp_a1_2 = &sWaterSplashVerts[part->splashIdx * 14];
+                part->unk10 = (0xFF - temp_a1_2[1].v.cn[3]);
             }
         }
     }
@@ -423,15 +430,15 @@ void waterfx_func_6E8() {
 
 
 // offset: 0xC7C | func: 3 | export: 2
-void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
+void waterfx_print(Gfx** gdl, Mtx** mtxs) {
     s32 i;
-    SRT spAC;
-    StructBss24* temp_s0;
-    StructBss2C* temp_s0_2;
-    StructBss34 *temp_s0_3;
-    StructBss3C* temp_v0_9;
+    SRT srt;
+    CircularWaterRipple* circRipple;
+    WaterSplash* splash;
+    MovementWaterRipple *movRipple;
+    WaterSplashParticle* splashPart;
 
-    if ((_bss_20 != 0) || (_bss_30 != 0) || (_bss_28 != 0) || (_bss_38 != 0)) {
+    if ((sNumCircularRipples != 0) || (sNumMovementRipples != 0) || (sNumWaterSplashes != 0) || (sNumWaterSplashParticles != 0)) {
         gSPLoadGeometryMode(*gdl, G_SHADE | G_ZBUFFER | G_SHADING_SMOOTH);
         dl_apply_geometry_mode(gdl);
         gDPSetCombineLERP(*gdl, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED, COMBINED, 0, SHADE, 0);
@@ -440,80 +447,88 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_ZB_CLD_SURF2);
         dl_apply_other_mode(gdl);
-        if (_bss_20 != 0) {
-            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(_bss_40->gdl));
+
+        // Draw circular water ripples
+        if (sNumCircularRipples != 0) {
+            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(sCircularWaterRippleTex->gdl));
         }
-        for (i = 0; i < 30; i++) {
-            if (_bss_24[i].unk16 != 0) {
-                temp_s0 = &_bss_24[i];
-                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, temp_s0->unk16);
-                spAC.transl.x = temp_s0->unk0;
-                spAC.transl.y = temp_s0->unk4;
-                spAC.transl.z = temp_s0->unk8;
-                spAC.scale = temp_s0->unk10;
-                spAC.yaw = temp_s0->unk14;
-                spAC.roll = 0;
-                spAC.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_0[i << 2]), 4, 0);
-                dl_triangles(gdl, &_bss_4[i << 1], 2);
+        for (i = 0; i < MAX_CIRCULAR_RIPPLES; i++) {
+            if (sCircularRipples[i].alpha != 0) {
+                circRipple = &sCircularRipples[i];
+                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, circRipple->alpha);
+                srt.transl.x = circRipple->x;
+                srt.transl.y = circRipple->y;
+                srt.transl.z = circRipple->z;
+                srt.scale = circRipple->scale;
+                srt.yaw = circRipple->yaw;
+                srt.roll = 0;
+                srt.pitch = 0;
+                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sCircularRippleVerts[i << 2]), 4, 0);
+                dl_triangles(gdl, &sCircularRippleTris[i << 1], 2);
             }
         }
-        if (_bss_28 != 0) {
-            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(_bss_44->gdl));
+
+        // Draw 3D water splashes
+        if (sNumWaterSplashes != 0) {
+            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(sWaterSplashTex->gdl));
         }
-        for (i = 0; i < 10; i++) {
-            if (_bss_2C[i].unk54 != 0) {
-                temp_s0_2 = &_bss_2C[i];
-                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, temp_s0_2->unk54);
-                spAC.transl.x = temp_s0_2->unk0;
-                spAC.transl.y = temp_s0_2->unk4;
-                spAC.transl.z = temp_s0_2->unk8;
-                spAC.scale = 0.01f;
-                spAC.yaw = 0;
-                spAC.roll = 0;
-                spAC.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_8[i * 0xE]), 14, 0);
-                dl_triangles(gdl, &_bss_C[i * 0xC], 0xC);
+        for (i = 0; i < MAX_SPLASHES; i++) {
+            if (sWaterSplashes[i].alpha != 0) {
+                splash = &sWaterSplashes[i];
+                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, splash->alpha);
+                srt.transl.x = splash->x;
+                srt.transl.y = splash->y;
+                srt.transl.z = splash->z;
+                srt.scale = 0.01f;
+                srt.yaw = 0;
+                srt.roll = 0;
+                srt.pitch = 0;
+                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sWaterSplashVerts[i * 14]), 14, 0);
+                dl_triangles(gdl, &sWaterSplashTris[i * 12], 12);
             }
         }
-        if (_bss_38 != 0) {
-            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(_bss_48->gdl));
-            dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0xB4U);
+
+        // Draw water splash particles
+        if (sNumWaterSplashParticles != 0) {
+            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(sWaterSplashParticleTex->gdl));
+            dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0xB4);
         }
-        for (i = 0; i < 30; i++) {
-            if (_bss_3C[i].unk12 != -1 && _bss_3C[i].unk10 != 0) {
-                temp_v0_9 = &_bss_3C[i];
-                spAC.transl.x = _bss_2C[temp_v0_9->unk12].unk0;
-                spAC.transl.y = _bss_2C[temp_v0_9->unk12].unk4;
-                spAC.transl.z = _bss_2C[temp_v0_9->unk12].unk8;
-                spAC.scale = 0.01f;
-                spAC.yaw = 0;
-                spAC.roll = 0;
-                spAC.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_10[i << 2]), 4, 0);
-                dl_triangles(gdl, &_bss_14[i << 1], 2);
+        for (i = 0; i < MAX_SPLASH_PARTICLES; i++) {
+            if (sWaterSplashParticles[i].splashIdx != -1 && sWaterSplashParticles[i].unk10 != 0) {
+                splashPart = &sWaterSplashParticles[i];
+                srt.transl.x = sWaterSplashes[splashPart->splashIdx].x;
+                srt.transl.y = sWaterSplashes[splashPart->splashIdx].y;
+                srt.transl.z = sWaterSplashes[splashPart->splashIdx].z;
+                srt.scale = 0.01f;
+                srt.yaw = 0;
+                srt.roll = 0;
+                srt.pitch = 0;
+                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sWaterSplashPartVerts[i << 2]), 4, 0);
+                dl_triangles(gdl, &sWaterSplashPartTris[i << 1], 2);
             }
         }
-        if (_bss_30 != 0) {
-            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(_bss_4C->gdl));
+
+        // Draw movement water ripples
+        if (sNumMovementRipples != 0) {
+            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(sMovementWaterRippleTex->gdl));
         }
-        for (i = 0; i < 30; i++) {
-            if (_bss_34[i].unk14 != 0 && (u8)_bss_34[i].unk18 == 0) {
-                temp_s0_3 = &_bss_34[i];
-                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, temp_s0_3->unk14);
-                spAC.transl.x = temp_s0_3->unk0;
-                spAC.transl.y = temp_s0_3->unk4;
-                spAC.transl.z = temp_s0_3->unk8;
-                spAC.scale = temp_s0_3->unk10;
-                spAC.yaw = temp_s0_3->unk16;
-                spAC.roll = 0;
-                spAC.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, arg1, &spAC, 1.0f, 0.0f, NULL);
-                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&_bss_18[i << 2]), 4, 0);
-                dl_triangles(gdl, &_bss_1C[i << 1], 2);
+        for (i = 0; i < MAX_MOVEMENT_RIPPLES; i++) {
+            if (sMovementRipples[i].alpha != 0 && sMovementRipples[i].hide == FALSE) {
+                movRipple = &sMovementRipples[i];
+                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, movRipple->alpha);
+                srt.transl.x = movRipple->x;
+                srt.transl.y = movRipple->y;
+                srt.transl.z = movRipple->z;
+                srt.scale = movRipple->scale;
+                srt.yaw = movRipple->yaw;
+                srt.roll = 0;
+                srt.pitch = 0;
+                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sMovementRippleVerts[i << 2]), 4, 0);
+                dl_triangles(gdl, &sMovementRippleTris[i << 1], 2);
             }
         }
         tex_render_reset();
@@ -521,342 +536,312 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
 }
 
 // offset: 0x135C | func: 4
-/* static */ s32 waterfx_func_135C(StructBss2C *arg0, s32 arg1)
-{
-    StructBss3C *temp_s1;
-    f32 pad;
-    s32 temp_v0;
+static s32 waterfx_make_splash_particles(WaterSplash *splash, s32 splashIdx) {
+    WaterSplashParticle *part;
+    s32 _pad;
+    s32 count;
     f32 temp_fs0;
     f32 temp_fs0_2;
     f32 temp_fs1;
-    f32 temp_ft4;
+    f32 lateralMag;
     f32 temp_fv0;
-    s32 var_fp;
-    s32 var_s0;
-    StructBss8 *temp_v1;
-    s32 sp70[1]; // this needs to be an array for some reason
-    s16 var_s5;
-    s16 temp_ft1;
+    s32 i;
+    s32 idx;
+    Vtx *vtx;
+    s32 sectorSize[1]; // this needs to be an array for some reason
+    s16 angle;
+    s16 angleDeviation;
 
-    temp_v0 = rand_next(2, 4);
-    if ((temp_v0 + _bss_38) >= 0x1F)
-    {
-        temp_v0 = 30 - _bss_38;
+    count = rand_next(2, 4);
+    if ((count + sNumWaterSplashParticles) > MAX_SPLASH_PARTICLES) {
+        count = MAX_SPLASH_PARTICLES - sNumWaterSplashParticles;
     }
-    var_s5 = 0;
-    if (temp_v0 != 0)
-    {
-        var_fp = 0;
-        if (temp_v0 > 0)
-        {
-            do
-            {
-                for (var_s0 = 0; var_s0 < 30 && _bss_3C[var_s0].unk12 != -1; var_s0++)
-                {
+    angle = 0;
+    if (count != 0) {
+        for (i = 0; i < count; i++) {
+            for (idx = 0; idx < MAX_SPLASH_PARTICLES && sWaterSplashParticles[idx].splashIdx != -1; idx++) {}
+
+            if (idx < MAX_SPLASH_PARTICLES) {
+                part = &sWaterSplashParticles[idx];
+                sectorSize[0] = (s16)(0xFFFF / count);
+                angleDeviation = rand_next(-0x7D0, 0x7D0);
+                temp_fs0 = fsin16_precise(angle + angleDeviation);
+                temp_fv0 = fcos16_precise(angle + angleDeviation);
+                part->xVel = 4.0f * temp_fv0;
+                part->zVel = 4.0f * temp_fs0;
+                lateralMag = SQ(part->xVel) + SQ(part->zVel);
+                if (lateralMag > 0.0f) {
+                    lateralMag = 1.0f / lateralMag;
+                    part->xVel *= lateralMag;
+                    part->zVel *= lateralMag;
                 }
+                part->speed = rand_next(600, 800) * 0.001f;
+                part->yVel = rand_next(500, 600) * 0.001f;
+                part->unk10 = 0;
+                part->splashIdx = splashIdx;
 
-                if (var_s0 < 30)
-                {
-                    temp_s1 = &_bss_3C[var_s0];
-                    sp70[0] = (s16)(0xFFFF / temp_v0);
-                    temp_ft1 = rand_next(-0x7D0, 0x7D0);
-                    temp_fs0 = fsin16_precise(var_s5 + temp_ft1);
-                    temp_fv0 = fcos16_precise(var_s5 + temp_ft1);
-                    temp_s1->unk0 = 4.0f * temp_fv0;
-                    temp_s1->unk4 = 4.0f * temp_fs0;
-                    temp_ft4 = (temp_s1->unk0 * temp_s1->unk0) + (temp_s1->unk4 * temp_s1->unk4);
-                    if (temp_ft4 > 0.0f)
-                    {
-                        temp_ft4 = 1.0f / temp_ft4;
-                        temp_s1->unk0 *= temp_ft4;
-                        temp_s1->unk4 *= temp_ft4;
-                    }
-                    temp_s1->unk8 = rand_next(0x258, 0x320) * 0.001f;
-                    temp_s1->unkC = rand_next(0x1F4, 0x258) * 0.001f;
-                    temp_s1->unk10 = 0;
-                    temp_s1->unk12 = arg1;
+                temp_fs0 *= 100.0f;
+                temp_fv0 *= 100.0f;
 
-                    temp_fs0 *= 100.0f;
-                    temp_fv0 *= 100.0f;
+                vtx = &sWaterSplashPartVerts[idx * 4];
+                vtx->v.ob[1] = -300;
+                vtx->v.cn[3] = 0xFF;
+                vtx->v.tc[0] = qu105(31);
+                vtx->v.tc[1] = qu105(31);
+                vtx->v.ob[0] = -2.0f * temp_fv0;
+                vtx->v.ob[2] = -2.0f * temp_fs0;
 
-                    temp_v1 = &_bss_10[var_s0 * 4];
-                    temp_v1->unk2 = -300;
-                    temp_v1->unkF = -1;
-                    temp_v1->unk8 = 992;
-                    temp_v1->unkA = 992;
-                    temp_v1->unk0 = -2.0f * temp_fv0;
-                    temp_v1->unk4 = -2.0f * temp_fs0;
+                vtx[1].v.ob[1] = 300;
+                vtx[1].v.cn[3] = 0xFF;
+                vtx[1].v.tc[0] = qu105(31);
+                vtx[1].v.tc[1] = qu105(0);
+                vtx[1].v.ob[0] = vtx->v.ob[0];
+                vtx[1].v.ob[2] = vtx->v.ob[2];
+                vtx += 3;
 
-                    temp_v1[1].unk2 = 300;
-                    temp_v1[1].unkF = -1;
-                    temp_v1[1].unk8 = 992;
-                    temp_v1[1].unkA = 0;
-                    temp_v1[1].unk0 = temp_v1->unk0;
-                    temp_v1[1].unk4 = temp_v1->unk4;
-                    temp_v1 += 3;
+                vtx[-1].v.ob[1] = -300;
+                vtx[-1].v.cn[3] = 0xFF;
+                vtx[-1].v.tc[0] = qu105(0);
+                vtx[-1].v.tc[1] = qu105(31);
+                vtx[-1].v.ob[0] = 4 * temp_fv0;
+                vtx[-1].v.ob[2] = 4 * temp_fs0;
 
-                    temp_v1[-1].unk2 = -300;
-                    temp_v1[-1].unkF = -1;
-                    temp_v1[-1].unk8 = 0;
-                    temp_v1[-1].unkA = 992;
-                    temp_v1[-1].unk0 = 4 * temp_fv0;
-                    temp_v1[-1].unk4 = 4 * temp_fs0;
-
-                    temp_v1[0].unk2 = 300;
-                    temp_v1[0].unk8 = 0;
-                    temp_v1[0].unkA = 0;
-                    temp_v1[0].unkF = -1;
-                    temp_v1[0].unk0 = temp_v1[-1].unk0;
-                    temp_v1[0].unk4 = temp_v1[-1].unk4;
-                    _bss_38 += 1;
-                    var_s5 += sp70[0];
-                }
-                var_fp += 1;
-            } while (var_fp != temp_v0);
+                vtx[0].v.ob[1] = 300;
+                vtx[0].v.tc[0] = qu105(0);
+                vtx[0].v.tc[1] = qu105(0);
+                vtx[0].v.cn[3] = 0xFF;
+                vtx[0].v.ob[0] = vtx[-1].v.ob[0];
+                vtx[0].v.ob[2] = vtx[-1].v.ob[2];
+                sNumWaterSplashParticles += 1;
+                angle += sectorSize[0];
+            }
         }
     }
-    return temp_v0;
+    return count;
 }
 
 // offset: 0x174C | func: 5 | export: 3
-// Single sp offset problem, non matching, requires waterfx_func_135C to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24_waterfx/waterfx_func_174C.s")
-#else
-void waterfx_func_174C(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
-    StructBss2C* temp_fp;
+void waterfx_spawn_splash(f32 x, f32 y, f32 z, f32 size) {
+    WaterSplash* splash;
     f32 temp_fs1;
     f32 temp_ft4;
     f32 temp_fv0;
     f32 temp_fv0_2;
-    f32* var_s1; // this might be incorrect
-    s16 var_s2;
-    s16 var_s4;
-    s32 var_s3;
-    s32 var_s5;
-    StructBss8* var_s0;
+    s16 s;
+    s16 angle;
+    s32 idx;
+    Vtx* vtx;
+    s32 i;
 
-    if (arg3 == 0.0f) {
-        arg3 = 4.0f;
+    if (size == 0.0f) {
+        size = 4.0f;
     }
-    for ( var_s5 = 0; var_s5 < 0xA && (u8) _bss_2C[var_s5].unk58 != 0; var_s5++) {}
-    if (var_s5 >= 0xA) {
+    for (idx = 0; idx < MAX_SPLASHES && sWaterSplashes[idx].particleCount != 0; idx++) {}
+    if (idx >= MAX_SPLASHES) {
         return;
     }
 
-    temp_fp = &_bss_2C[var_s5];
-    var_s0 = &_bss_8[var_s5 * 0xE];
-    temp_fs1 = arg3 * 100.0f;
-    arg3 = 4.0f;
-    var_s0->unk0 = temp_fs1;
-
-    var_s0->unk2 = 0;
-    var_s0->unk4 = 0;
-    var_s0->unkC = 0xFF;
-    var_s0->unkD = 0;
-    var_s0->unkE = 0;
-    var_s0->unkF = 0xFF;
-    var_s0->unk8 = 0;
-    var_s0->unkA = 0;
-    var_s0++;
-    var_s0->unk0 = temp_fs1;
-    var_s0->unk2 = 0;
-    var_s0->unk4 = 0;
-    var_s0->unkC = 0xFF;
-    var_s0->unkD = 0;
-    var_s0->unkE = 0;
-    var_s0->unkF = 0xFF;
-    var_s0->unk8 = 0;
-    var_s0->unkA = 0x3A0;
-    var_s0++;
-    temp_fp->unkC = arg3;
-    temp_fp->unk24 = arg3;
-    temp_fp->unk3C = 0.0f;
-    temp_ft4 = 2.0f * (arg3 * arg3);
-    var_s4 = 0x2AAA;
+    splash = &sWaterSplashes[idx];
+    vtx = &sWaterSplashVerts[idx * 14];
+    temp_fs1 = size * 100.0f;
+    vtx->v.ob[0] = temp_fs1;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = 0;
+    vtx->v.cn[0] = 0xFF;
+    vtx->v.cn[1] = 0;
+    vtx->v.cn[2] = 0;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.tc[0] = qu105(0);
+    vtx->v.tc[1] = qu105(0);
+    vtx++;
+    vtx->v.ob[0] = temp_fs1;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = 0;
+    vtx->v.cn[0] = 0xFF;
+    vtx->v.cn[1] = 0;
+    vtx->v.cn[2] = 0;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.tc[0] = qu105(0);
+    vtx->v.tc[1] = qu105(29);
+    vtx++;
+    splash->unkC[0] = 4.0f;
+    splash->unk24[0] = 4.0f;
+    splash->unk3C[0] = 0.0f;
+    temp_ft4 = 2.0f * (splash->unkC[0] * splash->unk24[0]);
+    angle = 0x2AAA;
     if (temp_ft4 > 0.0f) {
-        // @fake
-        if (1) {}
         temp_ft4 = 1.0f / temp_ft4;
-        temp_fp->unkC *= temp_ft4;
-        temp_fp->unk24 *= temp_ft4;
+        splash->unkC[0] *= temp_ft4;
+        splash->unk24[0] *= temp_ft4;
     }
-    var_s2 = 0;
-    var_s3 = 4;
-    var_s1 = &temp_fp->unk4;
+    s = qu105(0);
+    i = 1;
     do {
-        temp_fv0 = fcos16_precise(var_s4);
-        temp_fv0_2 = fsin16_precise(var_s4);
-        ((StructBss2C *)var_s1)->unkC = arg3 * temp_fv0;
-        ((StructBss2C *)var_s1)->unk24 = arg3;
-        ((StructBss2C *)var_s1)->unk3C = arg3 * temp_fv0_2;
-        temp_ft4 = (((StructBss2C *)var_s1)->unk3C * ((StructBss2C *)var_s1)->unk3C) + ((((StructBss2C *)var_s1)->unkC * ((StructBss2C *)var_s1)->unkC) + (((StructBss2C *)var_s1)->unk24 * ((StructBss2C *)var_s1)->unk24));
+        temp_fv0 = fcos16_precise(angle);
+        temp_fv0_2 = fsin16_precise(angle);
+        splash->unkC[i] = 4.0f * temp_fv0;
+        splash->unk24[i] = 4.0f;
+        splash->unk3C[i] = 4.0f * temp_fv0_2;
+        temp_ft4 = SQ(splash->unkC[i]) + SQ(splash->unk24[i]) + SQ(splash->unk3C[i]);
         if (temp_ft4 > 0.0f) {
             temp_ft4 = 1.0f / temp_ft4;
-            ((StructBss2C *)var_s1)->unkC *= temp_ft4;
-            ((StructBss2C *)var_s1)->unk24 *= temp_ft4;
-            ((StructBss2C *)var_s1)->unk3C *= temp_ft4;
+            splash->unkC[i] *= temp_ft4;
+            splash->unk24[i] *= temp_ft4;
+            splash->unk3C[i] *= temp_ft4;
         }
-        var_s0->unk2 = 0;
-        var_s0->unkF = 0xFF;
-        var_s2 += 0xC00;
-        var_s0->unk8 = var_s2;
-        var_s0->unkA = 0;
-        var_s0[1].unk2 = 0;
-        var_s0[1].unkF = 0xFF;
-        var_s0[1].unk8 = var_s2;
-        if (0) { }
-        var_s0[1].unkA = 0x3A0;
-        var_s0->unk0 = temp_fs1 * temp_fv0;
-        var_s0->unk4 = temp_fs1 * temp_fv0_2;
-        var_s0[1].unk0 = var_s0->unk0;
-        var_s0[1].unk4 = var_s0->unk4;
-        var_s4 += 0x2AAA;
-        var_s0 += 2;
-        var_s1++;
-        var_s3 += 4;
-    } while (var_s3 != 0x18);
-    var_s2 += 0xC00;
-    var_s0->unk0 = temp_fs1;
-    var_s0->unk4 = 0;
-    var_s0->unk2 = 0;
-    var_s0->unkF = 0xFF;
-    var_s0->unkE = 0;
-    var_s0->unkD = 0;
-    var_s0->unkC = 0xFF;
-    var_s0->unk8 = var_s2;
-    var_s0->unkA = 0;
-    var_s0++;
-    var_s0->unk0 = temp_fs1;
-    var_s0->unk4 = 0;
-    var_s0->unk2 = 0;
-    var_s0->unkF = 0xFF;
-    var_s0->unkE = 0;
-    var_s0->unkD = 0;
-    var_s0->unkC = 0xFF;
-    var_s0->unk8 = var_s2;
-    var_s0->unkA = 0x3A0;
-    temp_fp->unk54 = 0xFF;
-    temp_fp->unk0 = arg0;
-    temp_fp->unk4 = arg1;
-    temp_fp->unk8 = arg2;
-    _bss_28 += 1;
-    temp_fp->unk58 = waterfx_func_135C(&_bss_2C[var_s5], var_s5);
+        s += qu105(96);
+        vtx->v.ob[1] = 0;
+        vtx->v.cn[3] = 0xFF;
+        vtx->v.tc[0] = s;
+        vtx->v.tc[1] = qu105(0);
+        vtx[1].v.ob[1] = 0;
+        vtx[1].v.cn[3] = 0xFF;
+        vtx[1].v.tc[0] = s;
+        if (0) { } // @fake
+        vtx[1].v.tc[1] = qu105(29);
+        vtx->v.ob[0] = temp_fs1 * temp_fv0;
+        vtx->v.ob[2] = temp_fs1 * temp_fv0_2;
+        vtx[1].v.ob[0] = vtx->v.ob[0];
+        vtx[1].v.ob[2] = vtx->v.ob[2];
+        angle += 0x2AAA;
+        vtx += 2;
+        i++;
+    } while (i != 6);
+    s += qu105(96);
+    vtx->v.ob[0] = temp_fs1;
+    vtx->v.ob[2] = 0;
+    vtx->v.ob[1] = 0;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.cn[2] = 0;
+    vtx->v.cn[1] = 0;
+    vtx->v.cn[0] = 0xFF;
+    vtx->v.tc[0] = s;
+    vtx->v.tc[1] = qu105(0);
+    vtx++;
+    vtx->v.ob[0] = temp_fs1;
+    vtx->v.ob[2] = 0;
+    vtx->v.ob[1] = 0;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.cn[2] = 0;
+    vtx->v.cn[1] = 0;
+    vtx->v.cn[0] = 0xFF;
+    vtx->v.tc[0] = s;
+    vtx->v.tc[1] = qu105(29);
+    splash->alpha = 0xFF;
+    splash->x = x;
+    splash->y = y;
+    splash->z = z;
+    sNumWaterSplashes += 1;
+    splash->particleCount = waterfx_make_splash_particles(&sWaterSplashes[idx], idx);
 }
-#endif
 
 // offset: 0x1B28 | func: 6 | export: 5
-void waterfx_func_1B28(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4)
-{
-    StructBss34 *temp_v0;
-    s32 var_v0;
-    StructBss8 *temp_a0;
+void waterfx_spawn_movement_ripple(f32 x, f32 y, f32 z, s16 yaw, f32 arg4) {
+    MovementWaterRipple *ripple;
+    s32 idx;
+    Vtx *vtx;
 
-    for (var_v0 = 0; var_v0 < 30 && _bss_34[var_v0].unk14 != 0; var_v0++)
-    {
-    }
-    if (var_v0 >= 30)
-    {
+    for (idx = 0; idx < MAX_MOVEMENT_RIPPLES && sMovementRipples[idx].alpha != 0; idx++) {}
+    if (idx >= MAX_MOVEMENT_RIPPLES) {
         return;
     }
 
-    temp_a0 = &_bss_18[var_v0 * 4];
-    temp_a0->unk0 = -200;
-    temp_a0->unk2 = 0;
-    temp_a0->unk4 = 400;
-    temp_a0->unkF = -1;
-    temp_a0->unk8 = 0;
-    temp_a0->unkA = 0;
-    temp_a0++;
-    temp_a0->unk0 = -200;
-    temp_a0->unk2 = 0;
-    temp_a0->unk4 = -200;
-    temp_a0->unkF = -1;
-    temp_a0->unk8 = 0;
-    temp_a0->unkA = 992;
-    temp_a0++;
-    temp_a0->unk0 = 200;
-    temp_a0->unk2 = 0;
-    temp_a0->unk4 = -200;
-    temp_a0->unkF = -1;
-    temp_a0->unk8 = 2016;
-    temp_a0->unkA = 992;
-    temp_a0++;
-    temp_a0->unk0 = 200;
-    temp_a0->unk2 = 0;
-    temp_a0->unk4 = 400;
-    temp_a0->unkF = -1;
-    temp_a0->unk8 = 2016;
-    temp_a0->unkA = 0;
-    temp_v0 = &_bss_34[var_v0];
-    temp_v0->unk0 = arg0;
-    temp_v0->unk4 = arg1;
-    temp_v0->unk8 = arg2;
-    temp_v0->unkC = arg4;
-    temp_v0->unk10 = 0.01f;
-    temp_v0->unk14 = 128;
-    temp_v0->unk16 = arg3;
-    temp_v0->unk18 = 0;
-    _bss_30 += 1;
+    vtx = &sMovementRippleVerts[idx * 4];
+    vtx->v.ob[0] = -200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = 400;
+    vtx->v.cn[3] = -1;
+    vtx->v.tc[0] = qu105(0);
+    vtx->v.tc[1] = qu105(0);
+    vtx++;
+    vtx->v.ob[0] = -200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = -200;
+    vtx->v.cn[3] = -1;
+    vtx->v.tc[0] = qu105(0);
+    vtx->v.tc[1] = qu105(31);
+    vtx++;
+    vtx->v.ob[0] = 200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = -200;
+    vtx->v.cn[3] = -1;
+    vtx->v.tc[0] = qu105(63);
+    vtx->v.tc[1] = qu105(31);
+    vtx++;
+    vtx->v.ob[0] = 200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = 400;
+    vtx->v.cn[3] = -1;
+    vtx->v.tc[0] = qu105(63);
+    vtx->v.tc[1] = qu105(0);
+    ripple = &sMovementRipples[idx];
+    ripple->x = x;
+    ripple->y = y;
+    ripple->z = z;
+    ripple->unkC = arg4;
+    ripple->scale = 0.01f;
+    ripple->alpha = 128;
+    ripple->yaw = yaw;
+    ripple->hide = FALSE;
+    sNumMovementRipples += 1;
 }
 
 // offset: 0x1C88 | func: 7 | export: 7
-// Some sort of setter. Sets _bss_50 to arg1 if first argument is not zero
-void waterfx_func_1C88(s32 arg0, f32 arg1) {
-    if (arg0 != 0) {
-        _bss_50 = 0.01f;
-        return;
+void waterfx_set_circular_ripple_scale(s32 useDefault, f32 scale) {
+    if (useDefault != 0) {
+        sCircularRippleScale = 0.01f;
+    } else {
+        sCircularRippleScale = scale;
     }
-    _bss_50 = arg1;
 }
 
 // offset: 0x1CC8 | func: 8 | export: 4
-void waterfx_func_1CC8(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4, s32 arg5) {
-    s32 var_v0;
-    s32 i;
-    StructBss8* temp_a1;
+void waterfx_spawn_circular_ripple(f32 x, f32 y, f32 z, s16 yaw, f32 arg4, s32 decayRate) {
+    s32 idx;
+    s32 vtxIdx;
+    Vtx* vtx;
 
-    for (var_v0 = 0; var_v0 < 30 && _bss_24[var_v0].unk16 != 0; var_v0++) {}
-    if (var_v0 >= 30) {
+    for (idx = 0; idx < MAX_CIRCULAR_RIPPLES && sCircularRipples[idx].alpha != 0; idx++) {}
+    if (idx >= MAX_CIRCULAR_RIPPLES) {
         return;
     }
 
-    i = var_v0 * 4;
-    temp_a1 = &_bss_0[i];
-    temp_a1->unk0 = -0xC8;
-    temp_a1->unk2 = 0;
-    temp_a1->unk4 = 0xC8;
-    temp_a1->unkF = 0xFF;
-    temp_a1->unk8 = 0;
-    temp_a1->unkA = 0;
-    temp_a1 = &_bss_0[i + 1];
-    temp_a1->unk0 = -0xC8;
-    temp_a1->unk2 = 0;
-    temp_a1->unk4 = -0xC8;
-    temp_a1->unkF = 0xFF;
-    temp_a1->unk8 = 0;
-    temp_a1->unkA = 0x7E0;
-    temp_a1 = &_bss_0[i + 2];
-    temp_a1->unk0 = 0xC8;
-    temp_a1->unk2 = 0;
-    temp_a1->unk4 = -0xC8;
-    temp_a1->unkF = 0xFF;
-    temp_a1->unk8 = 0x7E0;
-    temp_a1->unkA = 0x7E0;
-    temp_a1 = &_bss_0[i + 3];
-    temp_a1->unk0 = 0xC8;
-    temp_a1->unk2 = 0;
-    temp_a1->unk4 = 0xC8;
-    temp_a1->unkF = 0xFF;
-    temp_a1->unk8 = 0x7E0;
-    temp_a1->unkA = 0;
-    _bss_24[var_v0].unkC = arg4;
-    _bss_24[var_v0].unk16 = 0xFF;
-    _bss_24[var_v0].unk0 = arg0;
-    _bss_24[var_v0].unk4 = arg1;
-    _bss_24[var_v0].unk8 = arg2;
-    _bss_24[var_v0].unk14 = arg3;
-    _bss_24[var_v0].unk10 = _bss_50;
-    _bss_24[var_v0].unk18 = arg5;
-    _bss_20 += 1;
+    vtxIdx = idx * 4;
+    vtx = &sCircularRippleVerts[vtxIdx];
+    vtx->v.ob[0] = -200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = 200;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.tc[0] = qu105(0);
+    vtx->v.tc[1] = qu105(0);
+    vtx = &sCircularRippleVerts[vtxIdx + 1];
+    vtx->v.ob[0] = -200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = -200;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.tc[0] = qu105(0);
+    vtx->v.tc[1] = qu105(63);
+    vtx = &sCircularRippleVerts[vtxIdx + 2];
+    vtx->v.ob[0] = 200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = -200;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.tc[0] = qu105(63);
+    vtx->v.tc[1] = qu105(63);
+    vtx = &sCircularRippleVerts[vtxIdx + 3];
+    vtx->v.ob[0] = 200;
+    vtx->v.ob[1] = 0;
+    vtx->v.ob[2] = 200;
+    vtx->v.cn[3] = 0xFF;
+    vtx->v.tc[0] = qu105(63);
+    vtx->v.tc[1] = qu105(0);
+    sCircularRipples[idx].unkC = arg4;
+    sCircularRipples[idx].alpha = 0xFF;
+    sCircularRipples[idx].x = x;
+    sCircularRipples[idx].y = y;
+    sCircularRipples[idx].z = z;
+    sCircularRipples[idx].yaw = yaw;
+    sCircularRipples[idx].scale = sCircularRippleScale;
+    sCircularRipples[idx].decayRate = decayRate;
+    sNumCircularRipples += 1;
 }

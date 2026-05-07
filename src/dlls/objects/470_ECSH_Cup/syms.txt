@@ -13,4 +13,3 @@ ECSHCup_get_data_size = 0x9A0;
 
 .data = 0xA28:
 dShrine = 0x0; // absolute:0xA28
-_data_4 = 0x4; // absolute:0xA2C

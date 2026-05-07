@@ -56,7 +56,7 @@ void WGSH_ObjCreator_control(Object *self) {
         sp38 = dll_load_deferred(DLL_ID_146, 1);
         sp38->vtbl->func0(self, 0, 0, 1, -1, 0);
         sp38->vtbl->func0(self, 1, 0, 1, -1, 0);
-        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
         dll_unload(sp38);
         objdata->countdownRate = 1;
         self->unkE0 = 1;

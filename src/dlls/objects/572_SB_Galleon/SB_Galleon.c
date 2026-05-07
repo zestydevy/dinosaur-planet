@@ -205,10 +205,10 @@ void SB_Galleon_free(Object *self, s32 a1) {
         _data_0.tex2 = NULL;
     }
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
     if (objdata->soundHandle2) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle2);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
     }
     if (_data_0.tex1) { }
     obj_free_object_type(self, OBJTYPE_4);
@@ -234,7 +234,7 @@ s32 SB_Galleon_func_5C8(Object *self) {
     objdata = self->data;
     if (objdata->unk29 != 1) {
         if (objdata->unk29 >= 2) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_10A_Galleon_Roar, 97, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_10A_Galleon_Roar, 97, NULL, NULL, 0, NULL);
         }
         objdata->unk2B++;
         return 1;
@@ -351,13 +351,13 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
             break;
         case 6:
             if (objdata->soundHandle == 0)
-                objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
             // @fake
             if ((s32)&self) {}
         case 7:
             if (objdata->soundHandle) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
                 objdata->soundHandle = 0;
             }
             break;
@@ -439,10 +439,10 @@ void SB_Galleon_func_B88(Object *self) {
     roll = fsin16_precise(objdata->unk74);
     if (objdata->unk8B == 0) {
         if (roll < -0.9f) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_27A_Wood_Creak_A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_27A_Wood_Creak_A, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk8B = 1;
         } else if (roll > 0.9f) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_27B_Wood_Creak_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_27B_Wood_Creak_B, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk8B = 1;
         }
     } else if ((roll > -0.1f) && (roll < 0.1f)) {
@@ -543,11 +543,11 @@ void SB_Galleon_func_EAC(Object *self) {
     }
     if (objdata->unk29 >= 2) {
         if (objdata->soundHandle == 0) {
-            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
             objdata->soundHandle = 0;
         }
     }
@@ -571,7 +571,7 @@ void SB_Galleon_func_EAC(Object *self) {
         case 0:                                     /* switch 1 */
             sp84 = 120.0f;
             if (objdata->soundHandle2 != 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle2);
+                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
                 objdata->soundHandle2 = 0;
             }
             gDLL_2_Camera->vtbl->func22(&sp84, 0);
@@ -668,7 +668,7 @@ void SB_Galleon_func_EAC(Object *self) {
                         objdata->hintCounter--;
                         if (objdata->hintCounter <= 0) {
                             gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_007_SB_CloudRunner_battle_tips_1);
-                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
                             objdata->hintCounter = HINT_COUNTER_MAX;
                         }
                     }
@@ -688,7 +688,7 @@ void SB_Galleon_func_EAC(Object *self) {
                         objdata->hintCounter--;
                         if (objdata->hintCounter <= 0) {
                             gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_007_SB_CloudRunner_battle_tips_1);
-                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
                             objdata->hintCounter = HINT_COUNTER_MAX;
                         }
                     }
@@ -709,12 +709,12 @@ void SB_Galleon_func_EAC(Object *self) {
                 dy4 = cloudrunner->srt.transl.y + 260.0f;
                 if ((objdata->hintCounter <= 0) && ((temp_v0_10 = objdata->unk86, (temp_v0_10 == 0)) || (temp_v0_10 == 5))) {
                     gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_065_SB_CloudRunner_battle_tips_2);
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_260_SB_CloudRunner_battle_tips_2, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_260_SB_CloudRunner_battle_tips_2, MAX_VOLUME, NULL, NULL, 0, NULL);
                     objdata->hintCounter = HINT_COUNTER_MAX;
                 }
                 if (objdata->soundHandle2 == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_140_Galleon_Propeller_Loop, 80, &objdata->soundHandle2, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_277_Galleon_Creaking, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_140_Galleon_Propeller_Loop, 80, &objdata->soundHandle2, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_277_Galleon_Creaking, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             case 1:
@@ -886,7 +886,7 @@ void SB_Galleon_func_EAC(Object *self) {
             // temp_a0_3 = objdata->soundHandle2;
             if (objdata->soundHandle2 != 0) {
                 // spA8 = objdata;
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle2);
+                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
                 objdata->soundHandle2 = 0;
             }
             // spA8 = objdata;
@@ -935,7 +935,7 @@ void SB_Galleon_func_EAC(Object *self) {
                 if ((objdata->hintCounter <= 0) && (objdata->unk2B == 6)) {
                     // spA8 = objdata;
                     gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_069_SB_CloudRunner_battle_tips_3);
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_261_SB_CloudRunner_battle_tips_3, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_261_SB_CloudRunner_battle_tips_3, MAX_VOLUME, NULL, NULL, 0, NULL);
                     objdata->hintCounter = HINT_COUNTER_MAX;
                 }
                 break;
@@ -1080,7 +1080,7 @@ void SB_Galleon_func_EAC(Object *self) {
                     self->srt.transl.z = setup->z;
                     if (objdata->soundHandle != 0) {
                         // spA8 = objdata;
-                        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+                        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
                         objdata->soundHandle = 0;
                     }
                     gDLL_29_Gplay->vtbl->set_obj_group_status(SOME_MAP_ID, 3, 0);

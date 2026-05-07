@@ -95,7 +95,7 @@ void TexScroll_control(Object* self) {
     objData->scrollProgress += gUpdateRate;
 
     //Get object's local Block
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->adjustDeltaTime = TRUE;
         objData->searchForMaterial = TRUE;
@@ -248,7 +248,7 @@ void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objDat
     objSetup = (TexScroll_Setup*)self->setup;
 
     //Find object's local Block
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y,self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y,self->srt.transl.z));
     if (block == NULL) {
         objData->searchForMaterial = TRUE;
         return;

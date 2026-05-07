@@ -1,7 +1,7 @@
 .text = 0x0:
 minimap_ctor = 0x0;
 minimap_dtor = 0x5C;
-minimap_toggle = 0xE4;
+minimap_toggle_via_cmdmenu = 0xE4;
 minimap_print = 0x148;
 
 .rodata = 0xA4C:

@@ -115,7 +115,7 @@ void WCpressureswitch_control(Object* self) {
     switch (objdata->state) {
         case STATE_0_UP:
             if (objdata->pressed && deltaY <= self->srt.transl.y) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 objdata->state = STATE_3_MOVING_DOWN;
             }
             break;
@@ -131,7 +131,7 @@ void WCpressureswitch_control(Object* self) {
             /* Subtly different behaviour to other pressure switches,
              * waits for flag to unset before depressing the switch (for WC's timed challenges) */
             if (!main_get_bits(setup->gameBitPressed)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 objdata->state = STATE_1_MOVING_UP;
             }
             break;
@@ -171,7 +171,7 @@ void WCpressureswitch_free(Object* self, s32 arg1) {
     PressureSwitch_Data* objdata = self->data;
 
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
     obj_free_object_type(self, 0x33);
 }

@@ -276,8 +276,8 @@ void game_init(void) {
     if (osMemSize == EXPANSION_SIZE) {
         main_handle_map_change();
     }
-    func_80041D20(0);
-    func_80041C6C(0);
+    track_set_z_buffer_on(FALSE);
+    track_set_sky_on(FALSE);
 }
 
 void game_tick(void) {
@@ -317,9 +317,9 @@ void game_tick(void) {
     rsp_init(&gCurGfx);
 
     clearFlags = CLEAR_ZBUFFER;
-    if (func_80041D5C() == 0) {
+    if (track_is_z_buffer_on() == FALSE) {
         clearFlags = CLEAR_NONE;
-    } else if (func_80041D74() == 0) {
+    } else if (track_is_sky_on() == FALSE) {
         clearFlags = CLEAR_COLOR | CLEAR_ZBUFFER;
     }
 
@@ -431,9 +431,13 @@ void func_80013D80(void) {
 
         if (gPauseState == 0) {
             update_objects();
-            func_80042174(0);
+            track_tick(0);
 
-            if ((camera_is_alternate_active() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
+            if ((camera_is_alternate_active() == 0) 
+                    && (D_8008C94C == 0) 
+                    && (func_800143FC() == 0) 
+                    && ((button & START_BUTTON) != 0) 
+                    && (main_get_bits(BIT_44F) == 0)) {
                 gPauseState = 1;
                 joy_set_button_mask(0, START_BUTTON);
                 menu_set(MENU_PAUSE);
@@ -457,7 +461,7 @@ void func_80013D80(void) {
         gDLL_4_Race->vtbl->func14();
 
         if (gPauseState == 0) {
-            func_8004225C(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
+            track_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
         gDLL_20_Screens->vtbl->draw(&gCurGfx);
@@ -473,8 +477,8 @@ void func_80013D80(void) {
 
 void func_80013FB4(void) {
     vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
-    func_80041D20(0);
-    func_80041C6C(0);
+    track_set_z_buffer_on(FALSE);
+    track_set_sky_on(FALSE);
     gDLL_5_AMSEQ->vtbl->stop(3);
     gDLL_5_AMSEQ->vtbl->stop(0);
     gDLL_5_AMSEQ->vtbl->stop(1);

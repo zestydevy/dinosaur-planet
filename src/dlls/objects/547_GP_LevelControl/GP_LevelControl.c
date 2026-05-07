@@ -61,14 +61,14 @@ void GP_LevelControl_control(Object *self) {
     player = get_player();
 
     if (objdata->mapID != MAP_GOLDEN_PLAINS) {
-        if (map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z) == MAP_GOLDEN_PLAINS) {
+        if (map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z) == MAP_GOLDEN_PLAINS) {
             GP_LevelControl_func_4C8(self);
         } else {
             return;
         }
     }
 
-    objdata->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
+    objdata->mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
 
     // heat reducing energy cutscene
     if (!gDLL_7_Newday->vtbl->func8(&time) && !main_get_bits(BIT_643) && ((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0) {

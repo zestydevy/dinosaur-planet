@@ -76,7 +76,7 @@ void dll_525_control(Object* self) {
     if (main_get_bits(BIT_639) == 0) {
         dll525Data->unk4 -= gUpdateRateF;
         if (func_80025F40(self, &sp40, &sp48, &sp44) != 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x797U, 0x7FU, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, 0x797U, 0x7FU, NULL, NULL, 0, NULL);
             dll525Data->unkA = (s16) (dll525Data->unkA ^ 2);
             if (dll525Data->unkA & 2) {
                 main_set_bits(BIT_639, dll_525_func_684(self, dll525Data));
@@ -90,8 +90,8 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 >= 8) {
                         dll525Data->unk8 = 0;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->func_954(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
+                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
                     self->srt.yaw = (s16) (s32) ((f32) self->srt.yaw + (512.0f * gUpdateRateF));
@@ -103,8 +103,8 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 < 0) {
                         dll525Data->unk8 = 7;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->func_954(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
+                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
                     self->srt.yaw = (s16) (s32) ((f32) self->srt.yaw - (512.0f * gUpdateRateF));
@@ -132,7 +132,7 @@ void dll_525_free(Object* self, s32 a1) {
     dll525Data = self->data;
     temp_a1 = dll525Data->unkC;
     if (temp_a1 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(temp_a1);
+        gDLL_6_AMSFX->vtbl->stop(temp_a1);
         dll525Data->unkC = 0U;
     }
 }
@@ -167,13 +167,13 @@ static s32 dll_525_func_684(Object* arg0, void* arg1) {
                     if (dll525Data->unk8 == 4) {
                         var_s1 += 1;
                         if (arg0 == temp_v1) {
-                            gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
                         }
                     }
                 } else if (dll525Data->unk8 == 3) {
                     var_s1 += 1;
                     if (arg0 == temp_v1) {
-                        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
             }

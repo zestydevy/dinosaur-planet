@@ -567,26 +567,26 @@ void KamerianBoss_control(Object *self) {
             case KD_MODANIM_OPEN_RIGHT_WING_ALT:
                 objdata->rightWingOpened = TRUE;
                 var_a0 = 1;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
                 if (objdata->soundHandle1 != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle1);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle1);
                     objdata->soundHandle1 = 0;
                 }
                 break;
             case KD_MODANIM_OPEN_LEFT_WING:
             case KD_MODANIM_OPEN_LEFT_WING_ALT:
                 objdata->leftWingOpened = TRUE;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
                 if (objdata->soundHandle2 != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle2);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
                     objdata->soundHandle2 = 0;
                 }
                 break;
             case KD_MODANIM_OPEN_HATCH:
                 objdata->hatchOpened = TRUE;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
                 if (objdata->soundHandle3 != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle3);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle3);
                     objdata->soundHandle3 = 0;
                 }
                 break;
@@ -607,7 +607,7 @@ void KamerianBoss_control(Object *self) {
             func_80023D30(self, KD_MODANIM_OPEN_HATCH, 0.0f, 0);
             objdata->animTickDelta = 0.01f;
             sHealthBarAlpha = gUpdateRate;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle3, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle3, NULL, 0, NULL);
         }
         func_800269CC(self, self->objhitInfo, _data_0[var_s0]);
         i = self->objhitInfo->unk62;
@@ -623,7 +623,7 @@ void KamerianBoss_control(Object *self) {
                         for (j = 0; j < 6; j += 2) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x - 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Damage_Type_Projectile) && (objdata->rightPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(13);
                         KamerianBoss_disable_hit_sphere(14);
@@ -634,7 +634,7 @@ void KamerianBoss_control(Object *self) {
                         objdata->rightPipeYOffset = 1;
                         objdata->rightPipeDetached = TRUE;
                         obj_destroy_object(objdata->unk8[0]);
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                     break;
                 case 8:
@@ -644,7 +644,7 @@ void KamerianBoss_control(Object *self) {
                         for (j = 1; j < 7; j += 2) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x + 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Damage_Type_Projectile) && (objdata->leftPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(8);
                         KamerianBoss_disable_hit_sphere(9);
@@ -655,7 +655,7 @@ void KamerianBoss_control(Object *self) {
                         objdata->leftPipeYOffset = 1;
                         objdata->leftPipeDetached = TRUE;
                         obj_destroy_object(objdata->unk8[1]);
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                     break;
                 case 0:
@@ -666,8 +666,8 @@ void KamerianBoss_control(Object *self) {
                                 objdata->leftWingOpened ? KD_MODANIM_OPEN_RIGHT_WING_ALT : KD_MODANIM_OPEN_RIGHT_WING, 
                                 0.0f, 0);
                             objdata->animTickDelta = 0.005f;
-                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
-                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle1, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle1, NULL, 0, NULL);
                         }
                     }
                     break;
@@ -679,8 +679,8 @@ void KamerianBoss_control(Object *self) {
                                 objdata->rightWingOpened ? KD_MODANIM_OPEN_LEFT_WING_ALT : KD_MODANIM_OPEN_LEFT_WING, 
                                 0.0f, 0);
                             objdata->animTickDelta = 0.005f;
-                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
-                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle2, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle2, NULL, 0, NULL);
                         }
                     }
                     /* fallthrough */

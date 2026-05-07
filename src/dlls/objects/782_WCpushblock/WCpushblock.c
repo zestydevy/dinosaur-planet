@@ -155,7 +155,7 @@ void dll_782_control(Object* self) {
                 }
             }
             if ((objdata->unk264 != self->srt.transl.x) || (objdata->unk268 != self->srt.transl.y)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B9_Block_Shifting, 1, &objdata->unk26C, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9B9_Block_Shifting, 1, &objdata->unk26C, 0, 0, 0);
                 objdata->unk274 = 2;
             }
         }
@@ -171,7 +171,7 @@ void dll_782_control(Object* self) {
             var_fv1 = 127.0f;
         }
         
-        gDLL_6_AMSFX->vtbl->func_860(objdata->unk26C, var_fv1);
+        gDLL_6_AMSFX->vtbl->set_vol(objdata->unk26C, var_fv1);
         obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
         var_a0 = 0;
         if (objdata->unk275 == 0) {
@@ -220,12 +220,12 @@ void dll_782_control(Object* self) {
             self->velocity.z = -1.5f;
         }
         if (var_a0 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk26C);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk26C);
             self->velocity.x = 0.0f;
             self->velocity.z = 0.0f;
             if (objdata->unk277 == 2) {
                 objdata->unk274 = 4;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BB_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9BB_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, 0, 0, 0);
                 if (self->modelInstIdx == 1) {
                     main_increment_bits(BIT_810);
                 } else {
@@ -233,10 +233,10 @@ void dll_782_control(Object* self) {
                 }
             } else if (objdata->unk277 == 1) {
                 objdata->unk274 = 1;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
             } else {
                 objdata->unk274 = 3;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
             }
             if (objdata->unk274 != 3) {
                 if (self->modelInstIdx == 1) {
@@ -254,7 +254,7 @@ void dll_782_control(Object* self) {
     case 3:
         func_800267A4(self);
         if (self->opacity == 0xFF) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9C5_Vanish, MAX_VOLUME, NULL, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_9C5_Vanish, MAX_VOLUME, NULL, 0, 0, 0);
         }
         var_v0 = self->opacity - (gUpdateRate * 8);
         if (var_v0 < 0) {
@@ -275,7 +275,7 @@ void dll_782_control(Object* self) {
     case 5:
         if (self->opacity == 0) {
             func_8002674C(self);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9C6_Appear, MAX_VOLUME, NULL, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_9C6_Appear, MAX_VOLUME, NULL, 0, 0, 0);
         }
         var_v0 = self->opacity + (gUpdateRate * 8);
         if (var_v0 > 0xFF) {

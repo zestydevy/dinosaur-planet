@@ -261,10 +261,9 @@ void BWlog_free(Object *self, s32 a1) {
 
     objdata = self->data;
     obj_free_object_type(self, OBJTYPE_11);
-
     //Stop sound loop
     if (objdata->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
 }
 
@@ -447,7 +446,7 @@ static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 side) {
             volume = 127.0f;
         }
         if (volume > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A75, (u8)volume, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_A75, (u8)volume, NULL, NULL, 0, NULL);
         }
     } else if ((sp60 < 0.0f) && (objdata->unk300[side] > 0.0f)) {
         volume = objdata->unk278[side].y * 127.0f;
@@ -458,7 +457,7 @@ static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 side) {
             volume = 127.0f;
         }
         if (volume > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A74, (u8)volume, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_A74, (u8)volume, NULL, NULL, 0, NULL);
         }
     }
 
@@ -767,7 +766,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
     s32 volume;
 
     if (objdata->soundHandle == 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A77, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_A77, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
     } else {
         //Adjust sound volume sinusoidally
         objdata->soundVolume = objdata->unk310 * 127.0f;
@@ -777,7 +776,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         } else if (objdata->soundVolume > 127.0f) {
             objdata->soundVolume = 127.0f;
         }
-        gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, objdata->soundVolume);
+        gDLL_6_AMSFX->vtbl->set_vol(objdata->soundHandle, objdata->soundVolume);
 
         //Adjust sound pitch sinusoidally
         objdata->soundPitch = ((objdata->unk300[0] + objdata->unk300[1]) * 0.5f) / 25.0f;
@@ -787,7 +786,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         objdata->soundPitch = 1.0f - objdata->soundPitch;
         objdata->soundPitch = (objdata->soundPitch * 0.2f) + 0.2f;
         objdata->soundPitch += fsin16_precise(objdata->soundPitchPhase) * 0.1f;
-        gDLL_6_AMSFX->vtbl->func_954(objdata->soundHandle, objdata->soundPitch);
+        gDLL_6_AMSFX->vtbl->set_pitch(objdata->soundHandle, objdata->soundPitch);
 
         objdata->soundPitchPhase += gUpdateRate << 8;
         objdata->soundVolumePhase += gUpdateRate << 9;
@@ -811,7 +810,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         if (volume > MAX_VOLUME) {
             volume = MAX_VOLUME;
         }
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_76D_Log_Bump, volume, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_76D_Log_Bump, volume, NULL, NULL, 0, NULL);
     }
 
     objdata->unk32D = colliderFlags;

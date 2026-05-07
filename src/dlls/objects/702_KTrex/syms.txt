@@ -73,8 +73,6 @@ sSegEndCurvesCCW = 0xC4; // absolute:0x3EA8
 sPlayerSegmentGamebits = 0xD4; // absolute:0x3EB8
 sLaserWallGamebits = 0xDC; // absolute:0x3EC0
 _data_E4 = 0xE4; // absolute:0x3EC8
-_data_E8 = 0xE8; // absolute:0x3ECC
-_data_EC = 0xEC; // absolute:0x3ED0
 
 .bss = 0x3EE4:
 sAnimStateCallbacks = 0x0; // absolute:0x3EE4

@@ -106,7 +106,7 @@ void GPSH_flybaddie_control(Object* self) {
         objdata->unk4E -= (s16)gUpdateRateF;
     }
     if ((objdata->unk4E != -999) && (objdata->unk4E <= 0)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_72F_Harsh_Magical_Thrum_Loop, 0x28, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_72F_Harsh_Magical_Thrum_Loop, 0x28, NULL, NULL, 0, NULL);
         objdata->unk4E = -999;
     }
     self->srt.yaw += (s16) (objdata->unk48 / 10);
@@ -260,6 +260,6 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
         obj->globalPosition.x = obj->srt.transl.x;
         obj->globalPosition.y = obj->srt.transl.y;
         obj->globalPosition.z = obj->srt.transl.z;
-        gDLL_6_AMSFX->vtbl->play_sound(obj, SOUND_730_Electrified_Blast, 0x50, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(obj, SOUND_730_Electrified_Blast, 0x50, NULL, NULL, 0, NULL);
     }
 }

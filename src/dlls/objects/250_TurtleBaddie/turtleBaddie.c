@@ -61,7 +61,7 @@ void dll_250_setup(Object* self, DLL250_Setup* setup, s32 arg2) {
         if (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, objdata->unk20, _data_0, -1) == 0) {
             objdata->flags = (u8) (objdata->flags | 1);
         }
-        objdata->unk24 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->unk24 = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -89,8 +89,8 @@ void dll_250_control(Object* self) {
             self->opacity = 0xFF;
             self->unkAF &= 0xFFF7;
             objdata->flags = (u8) (objdata->flags | 8);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objdata->unk24 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->unk24 = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->unk18 > 0.0f) {
@@ -107,15 +107,15 @@ void dll_250_control(Object* self) {
         } else {
             if (func_8002601C(self, &sp60, &sp40, &sp3C, &sp50, &sp4C, &sp48) != 0) {
                 if (objdata->unk24 != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk24);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->unk24);
                     objdata->unk24 = 0U;
                 }
                 objdata->flags = (u8) (objdata->flags | 0x30);
                 objdata->unk18 = 1.0f;
                 self->unkAF |= 8;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_331, NULL, 2, -1, NULL);
                 gDLL_33_BaddieControl->vtbl->func18(self, (s32) setup->unk18, -1, 0U);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, (f32) (setup->unk1C * 0x3C));
@@ -198,7 +198,7 @@ void dll_250_free(Object* self, s32 arg1) {
         objdata->unk0 = NULL;
     }
     if (objdata->unk24 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk24);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk24);
     }
 }
 

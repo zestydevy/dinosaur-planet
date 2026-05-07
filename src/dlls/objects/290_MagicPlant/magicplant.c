@@ -172,7 +172,7 @@ void MagicPlant_free(Object* self, s32 a1) {
     //Stop twinkling loop
     soundHandle = objData->soundHandle;
     if (soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(soundHandle);
         objData->soundHandle = 0;
     }
 
@@ -283,7 +283,7 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
 
     //React to damage
     if ((hitType != 0) && (hitDamage != 0) && (hitType != 0)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_618_Slice_Impact, MAX_VOLUME, 0, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_618_Slice_Impact, MAX_VOLUME, 0, NULL, 0, NULL);
         objData->state = MagicPlant_STATE_Damaged;
         objData->animProgress = 0.03f;
         func_80023D30(self, MagicPlant_MODANIM_Damage_Shake, 0.0f, 0);
@@ -330,10 +330,10 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
     playerDistance = vec3_distance(&self->globalPosition, &player->globalPosition);
     if (objData->soundHandle == 0) {
         if (playerDistance < TWINKLE_START_DISTANCE) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_619_Twinkle_Loop, 96, &objData->soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_619_Twinkle_Loop, 96, &objData->soundHandle, NULL, 0, NULL);
         }
     } else if (playerDistance > TWINKLE_STOP_DISTANCE) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }
@@ -354,7 +354,7 @@ void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup *objSetup, M
 
     //Stop twinkling sound
     if (objData->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 
@@ -376,7 +376,7 @@ void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup *objSetup, M
             magicDust->velocity.z = fcos16_precise(self->srt.yaw) * speed;
 
             //Play ringing sound
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_61A_Crystal_Ringing, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_61A_Crystal_Ringing, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
 

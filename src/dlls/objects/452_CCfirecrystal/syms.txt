@@ -8,7 +8,7 @@ CCfirecrystal_print = 0x3B4;
 CCfirecrystal_free = 0x41C;
 CCfirecrystal_get_model_flags = 0x518;
 CCfirecrystal_get_data_size = 0x528;
-CCfirecrystal_create_light = 0x53C;
+CCfirecrystal_create_flame = 0x53C;
 CCfirecrystal_anim_callback = 0x614;
 
 .rodata = 0x6FC:

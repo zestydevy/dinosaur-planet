@@ -122,7 +122,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     collectableDef = self->def->collectableDef;
     if (collectableDef && collectableDef->type == Collectable_Type_Magic) {
         if (arg2 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         for (index = 10; index > 0; index--){
@@ -382,7 +382,7 @@ void collectable_free(Object* self, s32 arg1) {
     Collectable_Data* objdata = self->data;
     obj_free_object_type(self, OBJTYPE_5);
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
         objdata->soundHandle = 0;
     }
 }
@@ -477,7 +477,7 @@ void collectable_handle_animation_and_fx(Object* self) {
         if (objdata->soundTimer <= 0) {
             objdata->pitchAnimate = rand_next(600, 800);
             objdata->soundTimer = rand_next(180, 240);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8FC_Egg_Rattle, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_8FC_Egg_Rattle, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         //Rapidly oscillate rotational pitch for a basic rattle animation
@@ -605,7 +605,7 @@ void collectable_collect(Object* self) {
         default:
             break;
         case OBJ_DIMAlpineRoot2: 
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
             main_set_bits(BIT_3E9, 1);
             self->unkDC = 1;
             objdata->rootTimer = 1200;
@@ -645,7 +645,7 @@ void collectable_collect(Object* self) {
     case Collectable_Type_Magic:
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, collectableDef->amountRestored);
         gDLL_13_Expgfx->vtbl->func5(self);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         break;
     case Collectable_Type_Upgrade:
         obj_send_mesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));

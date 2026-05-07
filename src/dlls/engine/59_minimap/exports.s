@@ -8,5 +8,5 @@ _exports:
 .dword minimap_dtor
 
 # export table
-/*0*/ .dword minimap_toggle
+/*0*/ .dword minimap_toggle_via_cmdmenu
 /*1*/ .dword minimap_print

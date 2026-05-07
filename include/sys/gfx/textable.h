@@ -37,7 +37,7 @@ enum TexTable {
     TEXTABLE_1F = 0x1F, // TEX0:65
     TEXTABLE_20 = 0x20, // TEX0:66
     TEXTABLE_21 = 0x21, // TEX0:67
-    TEXTABLE_22 = 0x22, // TEX0:68
+    TEXTABLE_22_WaterSplashParticle = 0x22, // TEX0:68
     TEXTABLE_23 = 0x23, // TEX0:69
     TEXTABLE_24 = 0x24, // TEX0:70
     TEXTABLE_25 = 0x25, // TEX0:71
@@ -89,10 +89,10 @@ enum TexTable {
     TEXTABLE_53 = 0x53, // TEX0:160
     TEXTABLE_54 = 0x54, // TEX0:161
     TEXTABLE_55 = 0x55, // TEX0:162
-    TEXTABLE_56 = 0x56, // TEX0:163
-    TEXTABLE_57 = 0x57, // TEX0:164
+    TEXTABLE_56_CircularWaterRipple = 0x56, // TEX0:163
+    TEXTABLE_57_MovementWaterRipple = 0x57, // TEX0:164
     TEXTABLE_58 = 0x58, // TEX0:165
-    TEXTABLE_59 = 0x59, // TEX0:166
+    TEXTABLE_59_WaterSplash = 0x59, // TEX0:166
     TEXTABLE_5A = 0x5A, // TEX0:167
     TEXTABLE_5B = 0x5B, // TEX0:168
     TEXTABLE_5C = 0x5C, // TEX0:193

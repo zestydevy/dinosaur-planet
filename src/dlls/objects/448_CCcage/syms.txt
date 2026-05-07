@@ -8,9 +8,9 @@ CCcage_print = 0x8B0;
 CCcage_free = 0x904;
 CCcage_get_model_flags = 0x914;
 CCcage_get_data_size = 0x924;
-CCcage_func_938 = 0x938;
-CCcage_func_A34 = 0xA34;
-CCcage_func_B5C = 0xB5C;
+CCcage_transform_child = 0x938;
+CCcage_hit_ground = 0xA34;
+CCcage_impact_sway = 0xB5C;
 
 .rodata = 0xCA4:
 str_0 = 0x0; // absolute:0xCA4

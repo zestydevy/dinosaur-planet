@@ -111,8 +111,8 @@ void dll_376_control(Object* self) {
             } else {
                 *sp40 = 0;
             }
-            if (gDLL_6_AMSFX->vtbl->func_B48(objData->unk58) == 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->unk58);
+            if (gDLL_6_AMSFX->vtbl->is_playing(objData->unk58) == 0) {
+                gDLL_6_AMSFX->vtbl->stop(objData->unk58);
                 objData->unk58 = 0;
                 *sp40 = 0;
             }
@@ -130,7 +130,7 @@ void dll_376_control(Object* self) {
         } else {
             func_80034BC0(self, &objData->unk28);
             if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
                 
                 if (rand_next(0, 100) < 50) {
                     objData->unk5E++;

@@ -102,7 +102,7 @@ void DBlevelControl_control(Object *self) {
         objdata->floodLevel++;
     }
 
-    gDLL_6_AMSFX->vtbl->func_16E0();
+    gDLL_6_AMSFX->vtbl->water_falls_control();
 
     if (main_get_bits(_data_20[objdata->mapSetup-1])) {
         do {

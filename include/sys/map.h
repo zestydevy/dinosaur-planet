@@ -51,20 +51,25 @@ typedef struct {
 /* *********************************************** */
 // MARK: Blocks
 
+// Extension of the normal RenderFlags enum, replaces some entries
+enum ShapeRenderFlags {
+/*14*/ RENDER_SHAPE_SPHERE_MAP = 0x4000
+};
+
 typedef struct {
 /*0000*/    Texture *texture;
 /*0004*/    u32 unk4; // frame value (for multi-frame textures?)
 /*0008*/    u32 flags; // RenderFlags
 /*000C*/    s16 refCount;
-/*000E*/    u8 unkE;
+/*000E*/    u8 animatorID;
 /*000F*/    u8 unkF;
-} BlockTexture; // FIXME: better name
+} BlockTextureAnim;
 
 typedef struct {
-/*00*/ s16 textureIndex;
-/*02*/ u8 unk2;
+/*00*/ s16 texanimID;
+/*02*/ u8 animatorID;
 /*03*/ u8 unk3;
-} BlocksTextureIndexData;
+} BlockTextureAnimInstance;
 
 //Shape bounding box - macros for extracting X/Z axes' extra precision values
 #define SHAPE_BB_REMAINDER_X_MIN(shape) (shape->boundsRemainder & 3)
@@ -91,7 +96,7 @@ typedef struct {
                             //     (used very rarely, in blocks 327 & 0843)
 /*14*/    u8 animatorID; // Used to mark facebatches that can be removed/animated
 /*15*/    u8 blendMaterialIndex; // Used for multitextured water
-/*16*/    u8 unk16; // texture scroll effect handler index? (at runtime)
+/*16*/    u8 texScrollerID; // texture scroll effect handler index (at runtime)
 /*17*/    u8 boundsRemainder; // Extra precision for the X/Z axes of the shape's bounding box (2 bits for Xmin, Zmin, Xmax, Zmax respectively)
 } BlockShape;
 
@@ -149,7 +154,7 @@ typedef struct {
 /*0018*/    HitsLine *ptr_hits_lines; // in ROM, sometimes matches grid column (HITS.bin data pointer at runtime)
 /*001C*/    s32 unk1C;
 /*0020*/    Vtx_t *vertices2[2];
-/*0028*/    BlocksTextureIndexData *unk28;
+/*0028*/    BlockTextureAnimInstance *texAnims;
 /*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
 /*0030*/    s16 vtxFlags;
 /*0032*/    s16 vtxCount;
@@ -167,8 +172,8 @@ typedef struct {
             // the number of times the texture/material settings
             // change while going through the block's F3DEX2 commands
 /*0046*/    s16 textureLoadCount;
-/*0048*/    u8 unk48; // texture_count (at runtime, distinct from material count since different materials can use same texture)
-/*0049*/    u8 unk49;
+/*0048*/    u8 numTexAnims; // count of distinct texture anims
+/*0049*/    u8 numSphereMappedShapes;
 /*004A*/    u8 materialCount;
 /*004B*/    s32 unk4B;
 /*004E*/    s8 unk4E;
@@ -208,6 +213,41 @@ typedef struct Unk80092BC0 {
 
 /* *********************************************** */
 // MARK: Map
+
+enum TrackFlags {
+      // Set during track_draw when the map is not a mobile map or type 3
+/*0*/ TRACKFLAG_UNK1 = 0x1,
+      // Determines whether streaming is enabled.
+      // Automatically unset on the next streaming update.
+/*1*/ TRACKFLAG_UPDATE_STREAMING = 0x2,
+/*2*/ TRACKFLAG_UNK4 = 0x4,
+      // Render with 16:9 camera aspect ratio. This is likely for
+      // anamorphic widescreen (i.e. rendering the 4:3 game in a way
+      // that looks correct on a 16:9 display).
+/*3*/ TRACKFLAG_UNK8 = 0x8,
+/*4*/ TRACKFLAG_SKY = 0x10,
+/*5*/ TRACKFLAG_ANTI_ALIAS = 0x20,
+/*6*/ TRACKFLAG_SKY_OBJECTS = 0x40,
+/*7*/ TRACKFLAG_SHADOWS = 0x80,
+/*8*/ TRACKFLAG_UNK100 = 0x100, // sphere map reflections?
+/*9*/ TRACKFLAG_UNK200 = 0x200, // cloud related?
+/*10*/ TRACKFLAG_UNK400 = 0x400, // unused
+       // Prevents any streaming related logic from being deferred.
+       // Automatically unset on the next streaming update.
+/*11*/ TRACKFLAG_UPDATE_STREAMING_IMMEDIATE = 0x800,
+/*12*/ TRACKFLAG_UNK1000 = 0x1000, // unused
+/*13*/ TRACKFLAG_DISABLE_Z_BUFFER = 0x2000,
+/*14*/ TRACKFLAG_LAYER_CHANGED = 0x4000,
+       // Whether dynamic lighting for blocks is enabled.
+/*15*/ TRACKFLAG_BLOCK_LIGHTING = 0x8000,
+       // Some code that uses this flag is not present in this build but 
+       // is present in default.dol. It would've rendered the game at 5:3 
+       // when set or 9:4 if flag 0x8 is also set. Also would've changed
+       // the VI resolution to 384x192.
+       // Unimplemented "Wide" option (as seen in Perfect Dark)?
+/*16*/ TRACKFLAG_UNK10000 = 0x10000,
+/*17*/ TRACKFLAG_SUN_GLARE = 0x20000
+};
 
 typedef struct {
 /*00*/  s16 gridSizeX;
@@ -267,11 +307,6 @@ typedef struct {
   Vec3f coord;
   s32 layer;
 } Warp;
-
-typedef struct {
-  Vec3f coord;
-  s8 layer[2];
-} SimilarToWarp;
 
 // size: 0xA
 typedef struct Struct_D_800B9768_unk4 {
@@ -425,8 +460,11 @@ typedef struct MapObjSetupList {
 // The map grid always has 5 layers: -2, -1, 0, 1, 2
 #define MAP_LAYER_COUNT 5
 #define MAX_TEXTURE_SCROLLERS 58
+#define MAX_TEXTURE_ANIMS 20
 
 #define GRID_INDEX(z, x) (((z) * BLOCKS_GRID_SPAN + (x)))
+
+#define MAX_VISIBLE_OBJECTS 180
 
 
 /* *********************************************** */
@@ -454,8 +492,8 @@ extern s32 D_80092A84[2];
 // DL Builder
 
 void dl_set_all_dirty(void);
-void func_80040FF8(void);
-void func_80041028(void);
+void dl_use_alt_builder(void);
+void dl_use_main_builder(void);
 void dl_apply_combine(Gfx **gdl);
 void dl_apply_other_mode(Gfx **gdl);
 void dl_apply_geometry_mode(Gfx **gdl);
@@ -472,39 +510,40 @@ void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
 // Render Settings
 
-void func_80041C30(s32 arg0);
-void func_80041C6C(s32);
-void func_80041CA8(s32 arg0);
-void func_80041CE4(s32 arg0);
-void func_80041D20(s32);
-s32 func_80041D5C(void);
-u32 func_80041D74(void);
-u32 func_80041D8C(void);
-u32 func_80041DA4(void);
-s32 func_80041DBC(void);
-s32 func_80041DD4(void);
-void func_80041DEC(void);
-s32 func_80041E08(void);
-void func_80041E24(s32 arg0);
-s32 func_80041E68(void);
+void track_func_80041C30(s32 on);
+void track_set_sky_on(s32 on);
+void track_set_anti_alias_on(s32 on);
+void track_set_sky_objects_on(s32 on);
+void track_set_z_buffer_on(s32 on);
+s32 track_is_z_buffer_on(void);
+u32 track_is_sky_on(void);
+u32 track_func_80041D8C(void);
+u32 track_get_shadows_on(void);
+s32 track_func_80041DBC(void);
+s32 track_func_80041DD4(void);
+void track_func_80041DEC(void);
+s32 track_func_80041E08(void);
+void track_set_sun_glare_on(s32 on);
+s32 track_get_sun_glare_on(void);
 
 // Map/Track
 
 void init_maps(void);
-void func_80042174(s32);
-void func_8004225C(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
-ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
-s32 func_8004454C(f32 x, f32 y, f32 z);
-void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
-s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
-MapHeader** func_80044A10(void);
-void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
+void track_tick(s32);
+void track_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
+ObjSetup* map_find_obj_setup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap);
+s32 map_world_coords_to_block_index(f32 x, f32 y, f32 z);
+/** Floor world coords to interval of block world coords. */
+void map_world_to_block_world_coords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldX, f32* blockWorldZ);
+s16 map_world_xz_to_map_id(f32 worldX, f32 worldZ);
+MapHeader** map_get_loaded_maps_table(void);
+ObjSetup *map_world_xz_to_map_obj_setup_list(f32 worldX, f32 worldZ, s32* objectsFileLength);
 
 // Blocks (map)
 
-Block* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
-s8* func_80044B98(s32 arg0);
-Block* func_80044BB0(s32 blockIndex);
+Block* map_get_block_from_grid(s32 visGridX, s32 visGridZ, s32 mapLayer);
+s8* map_get_block_grid_layer(s32 layer);
+Block* map_get_block_by_index(s32 blockIndex);
 
 // Map/Track (again)
 
@@ -540,18 +579,18 @@ void map_func_800484A8(void);
 
 void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
 void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
-s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-Texture* func_8004A1E8(s32 match_value);
-BlocksTextureIndexData *func_8004A284(Block *block, s32 param_2);
-BlockTexture *func_8004A2CC(s32 idx);
-s32 func_8004A528(Object* obj, u8 animatorID);
-s32 func_8004A5D8(Object* obj, u8 animatorID);
+s32 block_texscroll_add(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+void block_texscroll_set(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+Texture* block_texanim_get_tex(s32 animatorID);
+BlockTextureAnimInstance *block_texanim_get_instance(Block *block, s32 animatorID);
+BlockTextureAnim *block_texanim_get(s32 idx);
+s32 block_get_animator_vertex_count(Object* obj, u8 animatorID);
+s32 block_get_animator_shape_count(Object* obj, u8 animatorID);
 
 // something else
 
 void func_8004A67C(void);
-void func_8004B948(s32 arg0);
+void track_func_8004B948(s32 arg0);
 void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
 
 // Warp

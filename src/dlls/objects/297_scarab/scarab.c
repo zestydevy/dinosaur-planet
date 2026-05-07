@@ -184,9 +184,9 @@ void scarab_control(Object* self) {
             //Become stunned (delays scurry behaviour after landing)
             objData->stunTimer = 250;
 
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
             if (objData->soundHandle) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
             
@@ -223,7 +223,7 @@ void scarab_control(Object* self) {
         if (objData->stunTimer == 0) { 
             //Play scurrying sound
             if (objData->soundHandle == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_669_Insect_Scurry_Loop, 0x39, &objData->soundHandle, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_669_Insect_Scurry_Loop, 0x39, &objData->soundHandle, 0, 0, 0);
             }
             
             //Find nearest ground distance
@@ -350,7 +350,7 @@ void scarab_control(Object* self) {
             
             //Remove objHits, play sound, create effects
             func_800267A4(self);
-            gDLL_6_AMSFX->vtbl->play_sound(self, objData->collectSoundID, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, objData->collectSoundID, MAX_VOLUME, 0, 0, 0, 0);
             transform.scale = objData->collectFXScale;
             gDLL_17_partfx->vtbl->spawn(self, 0x51A, &transform, 1, -1, 0);
             gDLL_17_partfx->vtbl->spawn(self, 0x51A, &transform, 1, -1, 0);
@@ -358,7 +358,7 @@ void scarab_control(Object* self) {
             
             //Stop scurrying sound loop
             if (objData->soundHandle) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -376,15 +376,15 @@ void scarab_control(Object* self) {
                 self->srt.transl.x += (-self->velocity.x * 26.0f);
                 self->srt.transl.z += (-self->velocity.z * 26.0f);
                 
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BB_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_6BB_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
             }
 
             //Become stunned when hit by Projectile Spell / Grenade
             if (func_80025F40(self, 0, 0, 0) == Damage_Type_Projectile) {
                 objData->stunTimer = 250;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
                 if (objData->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                     objData->soundHandle = 0;
                 }
             }
@@ -394,9 +394,9 @@ void scarab_control(Object* self) {
             //Check for a follow-up Projectile Spell / Grenade attack while stunned
             if (func_80025F40(self, 0, 0, 0) == Damage_Type_Projectile) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x51A, NULL, 1, -1, 0);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BD_Creature_Death_Cry, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_6BD_Creature_Death_Cry, MAX_VOLUME, 0, 0, 0, 0);
                 if (objData->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                     objData->soundHandle = 0;
                 }
 
@@ -436,7 +436,7 @@ void scarab_free(Object* self, s32 arg1) {
 
     objData = self->data;
     if (objData->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }

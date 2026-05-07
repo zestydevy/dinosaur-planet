@@ -223,7 +223,7 @@ void GPbonfire_control(Object* self) {
                 } else {
                     for (index = 0; index < 2; index++){
                         if (objdata->soundHandles[index]) {
-                            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandles[index]);
+                            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[index]);
                              objdata->soundHandles[index] = 0;
                         }
                     }
@@ -326,8 +326,8 @@ void GPbonfire_func_A44(Object* self) {
     }
 
     //Loop burning sounds
-    objdata->soundHandles[0] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50a_Fire_Burning_Low_Loop, 0x7F, NULL, 0, 0, 0);
-    objdata->soundHandles[1] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
+    objdata->soundHandles[0] = gDLL_6_AMSFX->vtbl->play(self, SOUND_50a_Fire_Burning_Low_Loop, 0x7F, NULL, 0, 0, 0);
+    objdata->soundHandles[1] = gDLL_6_AMSFX->vtbl->play(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
 
     //Create fire effect
     gDLL_14_Modgfx->vtbl->func10(self);

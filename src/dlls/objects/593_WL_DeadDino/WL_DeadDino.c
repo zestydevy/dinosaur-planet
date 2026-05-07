@@ -83,7 +83,7 @@ void dll_593_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             }
             objdata->unk8 += (gUpdateRateF * 0.01f);
             if (objdata->unk8 >= 2.0f) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objdata->unk11 = 1U;
                 objdata->unk8 = 0.0f;
                 dll_593_func_8EC(self);

@@ -103,7 +103,7 @@ void mmp_mseedrecept_control(Object* self) {
     
     if (objData->unk1 & 1){
         objData->unk0 = 2;
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitPlanted, 1);
         objData->unk1 &= ~1;
         self->opacity = OBJECT_OPACITY_MAX;
@@ -154,7 +154,7 @@ void mmp_mseedrecept_control(Object* self) {
                 if (objData->unk10 <= 0.0f){
                     if (rand_next(0, 1)){
                         objData->unk10 = 45.0f;
-                        gDLL_6_AMSFX->vtbl->play_sound(self, rand_next(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, rand_next(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
                         objData->unk1 |= 4;
                     } else {
                         objData->unk10 = rand_next(50, 200);
@@ -253,7 +253,7 @@ s32 mmp_mseedrecept_func_BEC(Object* self, s32 arg1) {
                 mmp_mseedrecept_func_D40(self);
             }
         } else {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
     return returnVal;
@@ -285,7 +285,7 @@ void mmp_mseedrecept_func_D40(Object* self) {
     
     if (main_get_bits(objData->gamebitPlanted)) {
         self->unkAF |= 8;
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitGrown, 1);
         objData->unk0 = 4;
         self->srt.transl.y = objSetup->base.y;

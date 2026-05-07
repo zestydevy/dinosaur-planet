@@ -8,11 +8,11 @@ _exports:
 .dword waterfx_dtor
 
 # export table
-.dword waterfx_func_6E8
+.dword waterfx_tick
 .dword waterfx_func_564
-.dword waterfx_func_C7C
-.dword waterfx_func_174C
-.dword waterfx_func_1CC8
-.dword waterfx_func_1B28
-.dword waterfx_func_24C
-.dword waterfx_func_1C88
+.dword waterfx_print
+.dword waterfx_spawn_splash
+.dword waterfx_spawn_circular_ripple
+.dword waterfx_spawn_movement_ripple
+.dword waterfx_init
+.dword waterfx_set_circular_ripple_scale

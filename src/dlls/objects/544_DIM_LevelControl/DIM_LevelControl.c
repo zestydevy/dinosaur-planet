@@ -54,7 +54,7 @@ void DIM_LevelControl_control(Object *self) {
         (main_get_bits(BIT_DIM_Lit_Igloo_Fire_One)) &&
         (main_get_bits(BIT_DIM_Lit_Igloo_Fire_Two)) &&
         (main_get_bits(BIT_DIM_Lit_Igloo_Fire_Three))) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(BIT_DIM_Lit_All_Igloo_Fires, 1);
     }
 }

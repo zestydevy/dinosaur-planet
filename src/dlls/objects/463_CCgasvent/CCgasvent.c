@@ -30,13 +30,13 @@ void CCgasvent_control(Object *self) {
     obj_get_nearest_type_to(OBJTYPE_6, self, &distance);
     if (distance < 10.0f) {
         if (objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
             objdata->soundHandle = 0;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B96_Gasvent_Covered, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_B96_Gasvent_Covered, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->soundHandle == 0) {
-            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B95_Gasvent_Uncovered, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_B95_Gasvent_Uncovered, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Gasvent_Gas, NULL, PARTFXFLAG_NONE, -1, NULL);
     }
@@ -54,7 +54,7 @@ void CCgasvent_free(Object *self, s32 arg1) {
 
     obj_free_object_type(self, OBJTYPE_64);
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
 }
 

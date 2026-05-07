@@ -56,8 +56,8 @@ void TexFrameAnimator_setup(Object* self, TexFrameAnimator_Setup* objSetup, s32 
 void TexFrameAnimator_control(Object* self) {
     TexFrameAnimator_Data* objData;
     Block* block;
-    BlocksTextureIndexData* blockMaterialInfo;
-    BlockTexture* blockTexture;
+    BlockTextureAnimInstance* texAnimInst;
+    BlockTextureAnim* blockTexture;
     TexFrameAnimator_Setup* objSetup;
 
     objData = self->data;
@@ -78,19 +78,19 @@ void TexFrameAnimator_control(Object* self) {
     }
 
     //Get object's local Blocks model
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (!block || !(block->vtxFlags & 8)) {
         return;
     }
 
     //Get local Block's relevant Material
-    blockMaterialInfo = func_8004A284(block, objData->materialID);
-    if (!blockMaterialInfo) {
+    texAnimInst = block_texanim_get_instance(block, objData->materialID);
+    if (!texAnimInst) {
         return;
     }
 
     //Get Block Material's Texture
-    blockTexture = func_8004A2CC(blockMaterialInfo->textureIndex);
+    blockTexture = block_texanim_get(texAnimInst->texanimID);
 
     //Advance texture animation frame
     objData->frame += objData->speed * gUpdateRate;

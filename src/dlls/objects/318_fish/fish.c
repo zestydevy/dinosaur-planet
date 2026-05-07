@@ -532,11 +532,11 @@ static s32 fish_func_1978(Object *self) {
             sp54.f[0] = sp54.f[0] + objdata->unk58;
             sp54.f[1] = (f32) setup->unk28 + objdata->unk2C;
             sp54.f[2] = sp54.f[2] + objdata->unk60;
-            gDLL_24_Waterfx->vtbl->func_174C(sp54.f[0],        sp54.f[1], sp54.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->func_174C(sp54.f[0] + 5.0f, sp54.f[1], sp54.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->func_1CC8(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
-            gDLL_24_Waterfx->vtbl->func_1CC8(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2],        self->srt.yaw, 0.0f, 3);
-            gDLL_24_Waterfx->vtbl->func_1CC8(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
+            gDLL_24_Waterfx->vtbl->spawn_splash(sp54.f[0],        sp54.f[1], sp54.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_splash(sp54.f[0] + 5.0f, sp54.f[1], sp54.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2],        self->srt.yaw, 0.0f, 3);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
         }
     } else {
         if ((objdata->unk54 < objdata->unk68) && (objdata->unk68 < objdata->unk4)) {
@@ -548,11 +548,11 @@ static s32 fish_func_1978(Object *self) {
             sp48.f[0] = sp48.f[0] + objdata->unk58;
             sp48.f[1] = (f32) setup->unk28 + objdata->unk2C;
             sp48.f[2] = sp48.f[2] + objdata->unk60;
-            gDLL_24_Waterfx->vtbl->func_174C(sp48.f[0],        sp48.f[1], sp48.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->func_174C(sp48.f[0] - 5.0f, sp48.f[1], sp48.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->func_1CC8(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
-            gDLL_24_Waterfx->vtbl->func_1CC8(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2], self->srt.yaw, 0.0f, 3);
-            gDLL_24_Waterfx->vtbl->func_1CC8(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
+            gDLL_24_Waterfx->vtbl->spawn_splash(sp48.f[0],        sp48.f[1], sp48.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_splash(sp48.f[0] - 5.0f, sp48.f[1], sp48.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2], self->srt.yaw, 0.0f, 3);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
         }
     }
     if (objdata->unk48 < objdata->unk4) {

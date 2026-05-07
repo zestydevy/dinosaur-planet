@@ -360,7 +360,7 @@ void trigger_free(Object *self, s32 param2) {
 
     for (i = 0; i < 8; i++) {
         if (objdata->soundHandles[i] != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandles[i]);
+            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[i]);
         }
         if (objdata->scripts[i] != NULL) {
             dll_unload(objdata->scripts[i]);
@@ -531,10 +531,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_SOUND: 
             // "Trigger [%d], Sound FX,           Action Num [%d],Handle Num [%d]"
             if (dir >= 0) {
-                gDLL_6_AMSFX->vtbl->func_10D0(self, (cmd->param2 | (cmd->param1 << 8)), &objdata->soundHandles[i]);
+                gDLL_6_AMSFX->vtbl->play2(self, (cmd->param2 | (cmd->param1 << 8)), &objdata->soundHandles[i]);
             } else {
                 if (objdata->soundHandles[i] != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandles[i]);
+                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[i]);
                     objdata->soundHandles[i] = 0;
                 }
             }
@@ -549,7 +549,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                func_80041C6C(cmd->param2);
+                track_set_sky_on(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track Sky On"
                 } else {
@@ -560,7 +560,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                func_80041CA8((s32) cmd->param2);
+                track_set_anti_alias_on((s32) cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track AntiAlias On"
                 } else {
@@ -571,7 +571,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                func_80041CE4((s32) cmd->param2);
+                track_set_sky_objects_on((s32) cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track SkyObjects On"
                 } else {
@@ -612,10 +612,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 7:
                 if ((s32) cmd->param2 > 0) {
-                    func_80041E24(1);
+                    track_set_sun_glare_on(1);
                     // "Trigger [%d], trackSetSunGlareOn(1)" (default.dol)
                 } else {
-                    func_80041E24(0);
+                    track_set_sun_glare_on(0);
                     // "Trigger [%d], trackSetSunGlareOn(0)" (default.dol)
                 }
                 break;

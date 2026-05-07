@@ -94,13 +94,13 @@ void dll_257_control(Object* self) {
             (setup->unk1C != -1 && main_get_bits(setup->unk1C) == 0)
         ) {
             objdata->unk8 = 1U;
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
+            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
         } else if (setup->base.y == self->srt.transl.f[1]) {
             objdata->unk8 = 3U;
             objdata->unkC = 0U;
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57C, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
+            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57C, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     case 1:
@@ -109,17 +109,17 @@ void dll_257_control(Object* self) {
         dll_257_func_1144(self, setup);
         if ((sp68 < setup->unk18) && (setup->unk1C == -1 || main_get_bits(setup->unk1C) != 0)) {
             objdata->unk8 = 0U;
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
+            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
         } else if ((setup->base.y - setup->unk1E) == self->srt.transl.f[1]) {
             objdata->unk8 = 2U;
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk14);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
         }
         break;
     case 2:
         if ((sp68 < setup->unk18) && (setup->unk1C == -1 || main_get_bits(setup->unk1C) != 0)) {
             objdata->unk8 = 0U;
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     case 3:
@@ -145,7 +145,7 @@ void dll_257_control(Object* self) {
         if (temp_fv1 < objdata->unkC) {
             objdata->unkC -= temp_fv1;
             objdata->unkA = 2;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
             sp64 = setup->unk19;
             var_s0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp64);
             if (var_s0 == NULL || sp68 <= sp64) {
@@ -194,8 +194,8 @@ void dll_257_control(Object* self) {
         bail:
         if (setup->unk18 < sp68 || (setup->unk1C != -1 && main_get_bits(setup->unk1C) == 0)) {
             objdata->unk8 = 1U;
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
+            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     case 4:
@@ -204,7 +204,7 @@ void dll_257_control(Object* self) {
             objdata->unkC -= 10.0f;
             func_8002635C(player, self, 1, 0, 0);
             objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, (s32)player);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         if (setup->unk1A < sp68) {
             objdata->unk8 = 3U;

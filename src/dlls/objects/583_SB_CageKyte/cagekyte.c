@@ -58,19 +58,19 @@ void SBCageKyte_control(Object* self) {
             } else {
                 randomSoundIndex = 1;
             }
-            gDLL_6_AMSFX->vtbl->play_sound(self, soundIDs[randomSoundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, soundIDs[randomSoundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->randomSoundDelay = rand_next(400, 600);
         }
     } else if (self->parent->unkDC >= 9) {
         //Play empty sound? (May have been removed)
         self->unkAF &= 0xFFF7;
         if (self->unkAF & 1) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_287_SB_Kyte_Empty, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_287_SB_Kyte_Empty, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
         if (objData->soundHandle) {
             self->unkAF |= 8;
-            if (!gDLL_6_AMSFX->vtbl->func_B48(objData->soundHandle)) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+            if (!gDLL_6_AMSFX->vtbl->is_playing(objData->soundHandle)) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -92,7 +92,7 @@ void SBCageKyte_free(Object* self, s32 arg1) {
     CageKyte_Data* data = self->data;
 
     if (data->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(data->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(data->soundHandle);
     }
 }
 

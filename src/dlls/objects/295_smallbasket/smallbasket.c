@@ -239,7 +239,7 @@ void smallbasket_control(Object* self) {
                     if (((DLL_210_Player*)player->dll)->vtbl->func49(player)) {
                         objData->beingCarried = FALSE;
                     } else {
-                        gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(player, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
                 
@@ -272,8 +272,8 @@ void smallbasket_control(Object* self) {
                     srt.scale = 1.0f;
                     srt.yaw = player->srt.yaw;
                     rotate_vec3((SRT*)&srt, self->velocity.f);
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_637_Heavy_Whoosh, 0x43, NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_634, 0x61, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_637_Heavy_Whoosh, 0x43, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_634, 0x61, NULL, NULL, 0, NULL);
                 } else if ((objData->carryFlags == Basket_STOP_CARRYING) && (self->unkE0 == 0)) {
                     objData->carryFlags = Basket_NOT_CARRIED;
                     objData->throwFlags = Basket_THROWN_No_Items;
@@ -302,7 +302,7 @@ void smallbasket_control(Object* self) {
             if ((self->objhitInfo->unk9D) && (objData->throwFlags == Basket_THROWN)) {
                 //Destroy thrown basket upon collision, creating items
                 dModGfxDLL->vtbl->func0(self, 1, NULL, 2, -1, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objData->unk10 = 50;
                 objData->throwFlags = Basket_NOT_THROWN;
                 self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -346,7 +346,7 @@ void smallbasket_control(Object* self) {
             if (objData->storedItemType == SmallBasket_ITEM_Energy_Egg || 
                 objData->storedItemType == SmallBasket_ITEM_Apple
             ){
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_64D_Wooden_Rattle, 0x39, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(NULL, SOUND_64D_Wooden_Rattle, 0x39, NULL, NULL, 0, NULL);
                 objData->shakeSoundTimer = rand_next(0, 100) + 300;
 
             //Play Scarab rattling sounds
@@ -355,13 +355,13 @@ void smallbasket_control(Object* self) {
                        objData->storedItemType == SmallBasket_ITEM_Scarab_Gold    || 
                        objData->storedItemType == SmallBasket_ITEM_Scarab_Rainbow
             ) {
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_64C_Wicker_Rattle, 0x39, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(NULL, SOUND_64C_Wicker_Rattle, 0x39, NULL, NULL, 0, NULL);
                 objData->shakeSoundTimer = rand_next(0, 100) + 300;
             }
             
             //Play Scorpion hiss sounds (neighbouring soundIDs picked at random)
             if (objData->storedItemType == SmallBasket_ITEM_Scorpion) {
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, rand_next(0, 2) + SOUND_6B7_Crate_Hiss, 0x39, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(NULL, rand_next(0, 2) + SOUND_6B7_Crate_Hiss, 0x39, NULL, NULL, 0, NULL);
                 objData->shakeSoundTimer = rand_next(0, 100) + 300;
             }
         }
@@ -403,7 +403,7 @@ void smallbasket_free(Object* self, s32 arg1) {
     dll_unload(dModGfxDLL);
 
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
         objdata->soundHandle = 0;
     }
 }
@@ -824,12 +824,12 @@ void smallbasket_handle_attack_collisions(Object* self, Object* player, SmallBas
     //Check for any kind of attack collision
     if (func_80025F40(self, NULL, NULL, NULL) != 0) {
         if (objData->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
             objData->soundHandle = 0;
         } 
 
         dModGfxDLL->vtbl->func0(self, 1, NULL, 2, -1, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
         objData->unk10 = 50;
         objData->throwFlags = 0;
         smallbasket_create_items(self, player, objData);

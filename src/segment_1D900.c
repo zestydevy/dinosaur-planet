@@ -471,10 +471,13 @@ void func_8001EB80(void) {
     }
 }
 
+// newlight_set_inside
+// officialName: newlightInside
 void func_8001EBD0(s32 arg0) {
     BYTE_80090cb0 = (u8) arg0;
 }
 
+// newlight_get_inside
 u8 func_8001EBE0(void) {
     return BYTE_80090cb0;
 }
@@ -612,7 +615,7 @@ void func_8001F094(ModelInstance* arg0) {
     f32 temp_ft4;
     f32 pad;
 
-    if (func_80041D8C() == 0) {
+    if (track_func_80041D8C() == 0) {
         return;
     }
 
@@ -693,7 +696,7 @@ void func_8001F094(ModelInstance* arg0) {
 }
 
 // update sphere mapping (e.g. ice reflections) for block
-void func_8001F4C0(Block* arg0, s32 arg1, s32 arg2) {
+void func_8001F4C0(Block* block, s32 blockX, s32 blockZ) {
     u8 pad[0x18];
     Vec3f sp9C;
     Vec3f sp88;
@@ -723,14 +726,14 @@ void func_8001F4C0(Block* arg0, s32 arg1, s32 arg2) {
 
     camera = get_main_camera();
     
-    sp9C.f[2] = camera->srt.transl.f[0] - ((arg1 * 640.0f) + gWorldX);
+    sp9C.f[2] = camera->srt.transl.f[0] - ((blockX * 640.0f) + gWorldX);
     sp9C.f[1] = camera->srt.transl.f[1];
-    sp9C.f[0] = camera->srt.transl.f[2] - ((arg2 * 640.0f) + gWorldZ);
+    sp9C.f[0] = camera->srt.transl.f[2] - ((blockZ * 640.0f) + gWorldZ);
     
-    temp_fp = arg0->vertices2[(arg0->vtxFlags & 1) ^ 1];
-    for (i = 0; i < arg0->shapeCount; i++) {
-        shape = &arg0->shapes[i];
-        if ((shape->flags & 0x4000) && (shape->flags & 0x10000000)) {
+    temp_fp = block->vertices2[(block->vtxFlags & 1) ^ 1];
+    for (i = 0; i < block->shapeCount; i++) {
+        shape = &block->shapes[i];
+        if ((shape->flags & RENDER_SHAPE_SPHERE_MAP) && (shape->flags & RENDER_SHAPE_VISIBLE)) {
             vertexIndex = shape->vtxBase;
             
             targetVertexIndex = shape[1].vtxBase;
@@ -738,9 +741,9 @@ void func_8001F4C0(Block* arg0, s32 arg1, s32 arg2) {
                 sp88.f[0] = 0.0f;
                 sp88.f[1] = 1.0f;
                 sp88.f[2] = 0.0f;
-                temp_fs3 = arg0->vertices[vertexIndex].ob[0];
-                temp_fs4 = arg0->vertices[vertexIndex].ob[1];
-                temp_fs5 = arg0->vertices[vertexIndex].ob[2];
+                temp_fs3 = block->vertices[vertexIndex].ob[0];
+                temp_fs4 = block->vertices[vertexIndex].ob[1];
+                temp_fs5 = block->vertices[vertexIndex].ob[2];
                 temp_fs0 = sp9C.f[2] - temp_fs3;
                 temp_fs1 = sp9C.f[1] - temp_fs4;
                 temp_fs2 = sp9C.f[0] - temp_fs5;

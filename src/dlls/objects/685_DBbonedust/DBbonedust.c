@@ -86,7 +86,7 @@ void DBBoneDust_control(Object* self) {
         if (distance < 6.0f) {
             //Collected
             ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 3);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
             objData->state = DBBoneDust_STATE_Hidden;
         } else {
             //Get unit vector pointing towards the player

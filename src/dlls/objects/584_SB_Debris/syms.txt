@@ -12,4 +12,3 @@ SB_Debris_get_data_size = 0x528;
 .rodata = 0x594:
 
 .data = 0x5A4:
-sSpeed = 0x0; // absolute:0x5A4

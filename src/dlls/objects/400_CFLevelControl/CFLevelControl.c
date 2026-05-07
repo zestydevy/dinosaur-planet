@@ -449,7 +449,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
 
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
-        setup = func_80044448(data->uID, NULL, NULL, NULL, NULL);
+        setup = map_find_obj_setup(data->uID, NULL, NULL, NULL, NULL);
         if (setup) {
             if (data->unk12) {
                 ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
@@ -508,14 +508,14 @@ s32 CFLevelControl_func_10BC(Object *self) {
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_73_Thunder, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_73_Thunder, MAX_VOLUME, NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" you have Passed ");
         sTriggerPassed = main_get_bits(BIT_CF_Entrance_Trigger_Passed);
     } else if ((rand_next(0, 100) == 0) && (main_get_bits(BIT_577))) {
         rand = rand_next(5, 10);
         gDLL_28_ScreenFade->vtbl->func3(rand, SCREEN_FADE_WHITE, 0.1f + rand * 0.05f);
         sDLL190->vtbl->func0(self, 2, NULL, 1, -1, 4, 0);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_73_Thunder, 77 + rand * 10 , NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_73_Thunder, 77 + rand * 10 , NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" Lighting Flash ");
     }
     return 1;

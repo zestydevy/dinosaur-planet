@@ -116,13 +116,13 @@ void animobj_free(Object *self, s32 arg1) {
     gDLL_3_Animation->vtbl->func8(objdata);
     for (i = 0; i < 4; i++){
         if (objdata->unk34[i]){
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34[i]);
+            gDLL_6_AMSFX->vtbl->stop(objdata->unk34[i]);
         }
     }
 
     gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
     if (objdata->unk30 != 0){
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk30);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk30);
     }
 }
 

@@ -56,8 +56,8 @@ void SB_Propeller_control(Object *self) {
         self->objhitInfo->unk58 &= ~1;
         if (!objdata->soundHandle) {
             if (parent_unkDC > 10) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_290_Propeller_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, 1);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_290_Propeller_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->set_vol(objdata->soundHandle, 1);
                 objdata->counter = 1;
             }
         } else {
@@ -65,7 +65,7 @@ void SB_Propeller_control(Object *self) {
             if (objdata->counter > 80) {
                 objdata->counter = 80;
             }
-            gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, objdata->counter);
+            gDLL_6_AMSFX->vtbl->set_vol(objdata->soundHandle, objdata->counter);
         }
     } else {
         sp54 = ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func8(self->parent);
@@ -82,7 +82,7 @@ void SB_Propeller_control(Object *self) {
             }
         } else {
             if (objdata->soundHandle) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
             }
         }
         self->unkDC -= gUpdateRate;
@@ -101,7 +101,7 @@ void SB_Propeller_control(Object *self) {
             if (sp48 != player) {
                 self->unkDC = 20;
                 if ((self->parent) && ((sp54 == 2) || (sp54 == 5))) {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
                     objdata->torque /= 3;
                     ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func7(self->parent);
                     for (i = 10; i != 0; i--) {
@@ -173,7 +173,7 @@ void SB_Propeller_free(Object *self, s32 arg1) {
     objdata = self->data;
     soundHandle = objdata->soundHandle;
     if (soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(soundHandle);
     }
 }
 

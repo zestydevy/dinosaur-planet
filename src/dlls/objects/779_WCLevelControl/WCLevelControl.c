@@ -161,7 +161,7 @@ void dll_779_func_464(SRT *arg0, s16 arg1, s16 arg2, f32 *arg3, f32 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = sp2C + 32.0f + (f32) (arg1 * 48) + 24.0f;
     *arg4 = sp28 + 129.0f + (f32) (arg2 * 48) + 24.0f;
 }
@@ -171,7 +171,7 @@ void dll_779_func_534(SRT *arg0, f32 arg1, f32 arg2, s16 *arg3, s16 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = (s16) ((s16) (s32) ((arg1 - sp2C) - 32.0f) / 48);
     *arg4 = (s16) ((s16) (s32) ((arg2 - sp28) - 129.0f) / 48);
 }
@@ -288,7 +288,7 @@ void dll_779_func_BA8(SRT *arg0, s16 arg1, s16 arg2, f32* arg3, f32 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = sp2C + 224.0f + (f32) (arg1 * 48) + 24.0f;
     *arg4 = sp28 + 128.0f + (f32) (arg2 * 48) + 24.0f;
 }
@@ -298,7 +298,7 @@ void dll_779_func_C78(SRT *arg0, f32 arg1, f32 arg2, s16 *arg3, s16 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = (s16) ((s16) (s32) ((arg1 - sp2C) - 224.0f) / 48);
     *arg4 = (s16) ((s16) (s32) ((arg2 - sp28) - 128.0f) / 48);
 }

@@ -65,12 +65,12 @@ void SpellOverlay_setup(Object* self, SpellOverlay_Setup* objSetup, s32 arg2) {
 
         //Play a sound as the effect appears
         if (objData->config->soundIDIn != NO_SOUND) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, objData->config->soundIDIn, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, objData->config->soundIDIn, MAX_VOLUME, 0, 0, 0, 0);
         }
         
         //Start a looping sound (none assigned in config, however)
         if (objData->config->soundIDLoop != NO_SOUND) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, objData->config->soundIDLoop, MAX_VOLUME, &objData->soundHandle, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, objData->config->soundIDLoop, MAX_VOLUME, &objData->soundHandle, 0, 0, 0);
         }
     }
     
@@ -173,7 +173,7 @@ void SpellOverlay_free(Object* self, s32 arg1) {
     objData = self->data;
     soundHandle = objData->soundHandle;
     if (soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(soundHandle);
     }
 }
 
@@ -201,7 +201,7 @@ int SpellOverlay_fade_out(Object* self) {
 
     //Play a fade out sound (none assigned in the config, however)
     if (objData->config->soundIDOut != NO_SOUND) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, objData->config->soundIDOut, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, objData->config->soundIDOut, MAX_VOLUME, 0, 0, 0, 0);
     }
 
     return 1;

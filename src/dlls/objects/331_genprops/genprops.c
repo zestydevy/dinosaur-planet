@@ -458,7 +458,7 @@ void dll_331_control(Object* self) {
             self->objhitInfo->unk58 &= ~1;
         }
         if (objData->unk3E == 2) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_35A_Low_Whoosh, 0x43, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_35A_Low_Whoosh, 0x43, NULL, NULL, 0, NULL);
             objData->unk3E--;
         }
         if ((objData->unk3E != 0) && ((self->srt.transl.f[1] + self->velocity.f[1]) <= player->srt.transl.f[1])) {
@@ -469,7 +469,7 @@ void dll_331_control(Object* self) {
             self->srt.scale *= 0.5f;
             objData->roll *= 2;
             objData->pitch *= 2;
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
             camera_set_shake_offset(0.5f);
         }
         if (objData->unk3E == 0) {
@@ -560,7 +560,7 @@ void dll_331_control(Object* self) {
                     self->unkE0 = 100;
                 }
             } else if ((distance <= 10.0f) && (_data_0 == NULL) && (self->unkE0 == 0)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1D2_Roar, 0x7F, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_1D2_Roar, 0x7F, NULL, NULL, 0, NULL);
                 _data_0 = self;
                 self->unkDC = 0x46;
             } else if ((distance < 40.0f) && (self->unkE0 == 0) && (self->unkDC == 0)) {
@@ -574,7 +574,7 @@ void dll_331_control(Object* self) {
     case OBJ_DIM2IceFloe2: //10d
         objData->timer -= gUpdateRate;
         if (objData->timer < 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, objData->soundIDs[rand_next(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, objData->soundIDs[rand_next(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
             objData->timer = objData->minCooldown;
             objData->timer += rand_next(0, objData->minCooldown);
         }

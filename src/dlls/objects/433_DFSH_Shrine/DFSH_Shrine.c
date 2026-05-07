@@ -378,7 +378,7 @@ static int dll_433_func_F18(Object* self, Object* arg1, AnimObj_Data* arg2, s8 a
                 case 9:
                     main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1U);
                     if (_data_0 == 0) {
-                        _data_0 = func_8004A1E8(1);
+                        _data_0 = block_texanim_get_tex(1);
                     }
                     break;
                 case 8:

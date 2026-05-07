@@ -600,7 +600,7 @@ static void dll_417_func_E8C(Object* self) {
         }
     }
     if ((s32) sp8D >= 0xB) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_76D_Log_Bump, sp8D, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_76D_Log_Bump, sp8D, NULL, NULL, 0, NULL);
     }
     objdata->unk4EE = temp_s2;
     if ((objdata->unk4EC == 2) && (sp90[0] != 0) && (sp90[1] != 0)) {
@@ -610,7 +610,7 @@ static void dll_417_func_E8C(Object* self) {
             sp9C = (spAC.y - spD0) / (spAC.y - spA0.y);
             if ((sp9C >= 0.0f) && (sp9C <= 1.0f)) {
                 if (objdata->unk4ED == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8F_Water_Paddle, 0x7F, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_8F_Water_Paddle, 0x7F, NULL, NULL, 0, NULL);
                     objdata->unk4ED = 2;
                 }
                 spE0.transl.x = ((spA0.x - spAC.x) * sp9C) + spAC.x;

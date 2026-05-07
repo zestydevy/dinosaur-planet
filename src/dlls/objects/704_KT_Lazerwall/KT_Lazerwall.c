@@ -99,8 +99,8 @@ void dll_704_control(Object* self) {
         sp44 = 1;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         if (!(objdata->unk1 & 4)) {
-            objdata->unk8 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_694_KT_Laserwall_PowerUp, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->func_954(objdata->unk8, (((f32) objsetup->unk1C / 15.0f) * 0.5f) + 1.0f);
+            objdata->unk8 = gDLL_6_AMSFX->vtbl->play(self, SOUND_694_KT_Laserwall_PowerUp, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk8, (((f32) objsetup->unk1C / 15.0f) * 0.5f) + 1.0f);
         }
     }
     if (objdata->unk0 & 8) {
@@ -110,12 +110,12 @@ void dll_704_control(Object* self) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
     }
     if (!(objdata->unk0 & 8) && (objdata->unk1 & 8)) {
-        objdata->unk4 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_696_KT_Laserwall_PowerDown, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->unk4 = gDLL_6_AMSFX->vtbl->play(self, SOUND_696_KT_Laserwall_PowerDown, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (objdata->unk10 > 0.0f) {
         objdata->unk10 -= gUpdateRateF;
         if (objdata->unk10 <= 0.0f) {
-            objdata->unk4 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_695_KT_Laserwall_Zap, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->unk4 = gDLL_6_AMSFX->vtbl->play(self, SOUND_695_KT_Laserwall_Zap, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk10 = 0.0f;
         }
     }
@@ -132,10 +132,10 @@ void dll_704_free(Object* self, s32 a1) {
     KT_Lazerwall_Data* objdata = (KT_Lazerwall_Data*)self->data;
     
     if (objdata->unk4 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk4);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk4);
     }
     if (objdata->unk8 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
+        gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
     }
     gDLL_14_Modgfx->vtbl->func5(self);
     dll_unload(_data_0);

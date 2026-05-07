@@ -534,13 +534,13 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
     for (outValue = 0, i = 0; i < arg1->unk1B; i++){
         switch (arg1->unk13[i]) {
         case 0:
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A50_Dinosaur_Grunt, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_A50_Dinosaur_Grunt, MAX_VOLUME, 0, 0, 0, 0);
             continue;
         case 7:
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AC8_Ground_Impact, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_AC8_Ground_Impact, MAX_VOLUME, 0, 0, 0, 0);
             continue;
         case 9:
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AC9_Impact_Crumbling, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_AC9_Impact_Crumbling, MAX_VOLUME, 0, 0, 0, 0);
             continue;
         case 10:
             func_80034B54(self, 
@@ -564,7 +564,7 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
     }
     
     if (outValue) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A73, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_A73, MAX_VOLUME, 0, 0, 0, 0);
     }
     
     return outValue;

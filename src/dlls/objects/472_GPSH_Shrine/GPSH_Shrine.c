@@ -411,7 +411,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
             case 10:
                 main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (_data_0 == 0) {
-                    _data_0 = func_8004A1E8(1);
+                    _data_0 = block_texanim_get_tex(1);
                 }
                 break;
             case 9:

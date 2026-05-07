@@ -107,7 +107,7 @@ void NWtricky_control(Object *self) {
     case STATE_1_Chased_by_SharpClaw:
         if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
             ((DLL_ISidekick*)tricky->dll)->vtbl->func21(tricky, 0, 0);
-            gDLL_6_AMSFX->vtbl->func_A6C(tricky);
+            gDLL_6_AMSFX->vtbl->stop_object(tricky);
             main_set_bits(BIT_4E3, 0);
             objdata->state = STATE_2_Learning_Sidekick_Commands;
         } else {
@@ -115,7 +115,7 @@ void NWtricky_control(Object *self) {
             objdata->timer += gUpdateRateF;
             if (objdata->timer >= NWTRICKY_INVERVAL_CALL_FOR_HELP) {
                 objdata->timer -= NWTRICKY_INVERVAL_CALL_FOR_HELP;
-                gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_222_NW_Tricky_Sharpclaw_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(tricky, SOUND_222_NW_Tricky_Sharpclaw_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         break;
@@ -144,7 +144,7 @@ void NWtricky_control(Object *self) {
                             &player->globalPosition, 
                             &tricky->globalPosition) <= 10000.0f)
                     ) {
-                        gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_4BC_Tricky_Dig_EMPTY, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(tricky, SOUND_4BC_Tricky_Dig_EMPTY, MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_0BE_SW_Tricky_Tutorial_Hint);
                     }
                 }

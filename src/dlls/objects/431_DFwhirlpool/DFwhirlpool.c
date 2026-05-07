@@ -40,7 +40,7 @@ void DFwhirlpool_setup(Object* self, DFwhirlpool_Setup* objSetup, s32 arg2) {
         return;
     }
     
-    objData->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_779_Water_Rushing_Loop, MAX_VOLUME, 0, 0, 0, 0);
+    objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_779_Water_Rushing_Loop, MAX_VOLUME, 0, 0, 0, 0);
 }
 
 // offset: 0xD4 | func: 1 | export: 1
@@ -57,8 +57,8 @@ void DFwhirlpool_control(Object* self) {
         //Wait for cave wall to be demolished
         if (main_get_bits(BIT_DF_Whirlpool_Cave_Wall_Demolished)) {
             objData->state = DFwhirlpool_STATE_Draining;
-            gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
-            objData->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_77A_Water_Draining_Loop, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77A_Water_Draining_Loop, MAX_VOLUME, 0, 0, 0, 0);
             return;
         }
         break;
@@ -70,7 +70,7 @@ void DFwhirlpool_control(Object* self) {
 
         //Advance state based on yawSpeed threshold
         if (objData->yawSpeed > WHIRLPOOL_SPEED_STATE_THRESHOLD) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
             objData->state = DFwhirlpool_STATE_Water_Lowered;
             objData->yawSpeed = WHIRLPOOL_SPEED_MAX;
             return;

@@ -31,10 +31,10 @@ static s32 pressureswitch_is_object_on_switch(Object* self);
 static int pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
-void dll_287_ctor(void *dll) { }
+void pressureswitch_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_287_dtor(void *dll) { }
+void pressureswitch_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
@@ -138,11 +138,11 @@ void pressureswitch_control(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
         if (objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
             objdata->soundHandle = 0;
         }
     }
@@ -174,7 +174,7 @@ void pressureswitch_free(Object* self, s32 arg1) {
     PressureSwitch_Data* objdata = self->data;
 
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
     obj_free_object_type(self, 0x33);
 }

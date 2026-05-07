@@ -722,10 +722,6 @@ void func_80036890(Object* arg0, s32 arg1) {
 }
 #endif
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036B78.s")
-#else
-// https://decomp.me/scratch/9dRNa
 void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     s32 sp6C;
     s32 sp68;
@@ -735,9 +731,11 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     SRT sp44;
     ModelInstance* temp_t0;
 
-    sp6C = arg0->srt.flags | 0x88;
-    sp68 = arg0->opacityWithFade & 0xFF;
+    sp6C = arg0->srt.flags;
+    sp6C |= 0x80;
+    sp6C |= 8;
     sp64 = 0;
+    sp68 = arg0->opacityWithFade;
     if (sp68 > 0xFF) {
         sp68 = 0xFF;
     }
@@ -801,7 +799,6 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         }
     }
 }
-#endif
 
 void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;

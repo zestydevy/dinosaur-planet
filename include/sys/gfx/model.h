@@ -257,5 +257,6 @@ ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
 // TODO: replace struct Object with just Object
 void func_8001A8EC(ModelInstance* modelInst, Model* model, struct Object* obj, MtxF* arg3, struct Object* obj2);
 void func_80019730(ModelInstance* arg0, Model* arg1, struct Object* arg2, MtxF* arg3);
+void func_8001AC44(ModelInstance*, Model*, struct Object*, MtxF*, MtxF*, u32, f32);
 
 #endif //_SYS_GFX_MODEL_H

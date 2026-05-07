@@ -206,7 +206,7 @@ void update_objects(void) {
         func_8002272C(player->linkedObject);
     }
 
-    gDLL_24_Waterfx->vtbl->func_6E8(gUpdateRate);
+    gDLL_24_Waterfx->vtbl->tick(gUpdateRate);
     gDLL_15_Projgfx->vtbl->func2(gUpdateRate, 0);
     gDLL_14_Modgfx->vtbl->func2(0, 0, 0);
     gDLL_13_Expgfx->vtbl->func2(0, gUpdateRate, 0, 0);
@@ -1510,7 +1510,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
         dll_unload(obj->dll);
     }
 
-    gDLL_6_AMSFX->vtbl->func_1218(obj);
+    gDLL_6_AMSFX->vtbl->free_object(obj);
     gDLL_5_AMSEQ->vtbl->func17(obj);
     gDLL_13_Expgfx->vtbl->func9(obj);
 
@@ -1799,7 +1799,7 @@ void obj_clear_map_id(Object *obj) {
 }
 
 void obj_infer_map_id(Object *obj) {
-    obj->mapID = map_get_map_id_from_xz_ws(obj->srt.transl.x, obj->srt.transl.z);
+    obj->mapID = map_world_xz_to_map_id(obj->srt.transl.x, obj->srt.transl.z);
 }
 
 s32 obj_move(Object *obj, f32 dx, f32 dy, f32 dz) {

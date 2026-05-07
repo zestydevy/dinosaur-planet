@@ -388,16 +388,16 @@ void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1) {
 
     for (index = 0; index < 4; index++){
         if (animObjData->unk34[index]) {
-            if (gDLL_6_AMSFX->vtbl->func_B48(animObjData->unk34[index]) == 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(animObjData->unk34[index]);
+            if (gDLL_6_AMSFX->vtbl->is_playing(animObjData->unk34[index]) == 0) {
+                gDLL_6_AMSFX->vtbl->stop(animObjData->unk34[index]);
                 animObjData->unk34[index] = 0;
                 animObjData->unk44[index] = 0;
                 if (index != 3) {
                     animObjData->unk8A = index;
                 }
             }
-            if (gDLL_6_AMSFX->vtbl->func_B48(animObjData->unk34[index]) && (animObjData->unk44[index] <= 0)) {
-                gDLL_6_AMSFX->vtbl->func_A1C(animObjData->unk34[index]);
+            if (gDLL_6_AMSFX->vtbl->is_playing(animObjData->unk34[index]) && (animObjData->unk44[index] <= 0)) {
+                gDLL_6_AMSFX->vtbl->stop(animObjData->unk34[index]);
                 animObjData->unk34[index] = 0;
                 animObjData->unk44[index] = 0;
                 if (index != 3) {
@@ -472,7 +472,7 @@ s8 dll_3_func_4158(AnimObj_Data* animObjData) {
         }
         
         if (index == 4) {
-            gDLL_6_AMSFX->vtbl->func_A1C(animObjData->unk34[animObjData->unk8A]);
+            gDLL_6_AMSFX->vtbl->stop(animObjData->unk34[animObjData->unk8A]);
             animObjData->unk34[animObjData->unk8A] = 0;
         } else {
             animObjData->unk8A = index - 1;
@@ -1014,7 +1014,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
         func_8000F6CC();
         break;
     case 13:                                    /* switch 2 */
-        gDLL_6_AMSFX->vtbl->func_A6C(arg1);
+        gDLL_6_AMSFX->vtbl->stop_object(arg1);
         break;
     case 16:                                    /* switch 2 */
         arg2->unk89 = sp54;
@@ -1094,8 +1094,8 @@ void dll_3_func_71C0(Object* arg0, Object* arg1, AnimObj_Data* arg2) {
 
     for (i = 0; i < 4; i++){
         soundHandle = arg2->unk34[i];
-        if (soundHandle && (gDLL_6_AMSFX->vtbl->func_B48(soundHandle) == 0)) {
-            gDLL_6_AMSFX->vtbl->func_A1C(arg2->unk34[i]);
+        if (soundHandle && (gDLL_6_AMSFX->vtbl->is_playing(soundHandle) == 0)) {
+            gDLL_6_AMSFX->vtbl->stop(arg2->unk34[i]);
         }
     }
     
