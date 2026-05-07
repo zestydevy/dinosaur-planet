@@ -437,12 +437,12 @@ void DR_NPC_play_sounds(Object* self, UnkFunc_80024108Struct* objAnimData, s16* 
         switch (objAnimData->unk13[i]) {
         case 0:
             if (soundIDs != NULL) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, soundIDs[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, soundIDs[0], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             break;
         case 7:
             if (soundIDs != NULL) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, soundIDs[1], MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, soundIDs[1], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             break;
         case 1:
@@ -464,6 +464,6 @@ void DR_NPC_play_sounds(Object* self, UnkFunc_80024108Struct* objAnimData, s16* 
 
     //Play a sound if case 1/2/3/4 were reached (only the GuardClaw uses this, and the soundID is empty)
     if (bits && (soundIDs != NULL)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, soundIDs[3], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, soundIDs[3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }

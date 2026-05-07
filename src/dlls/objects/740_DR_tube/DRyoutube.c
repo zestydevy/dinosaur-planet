@@ -86,7 +86,7 @@ void DR_Tube_setup(Object* self, DR_Tube_Setup* objSetup, s32 arg2) {
     sAllTubesActivated = main_get_bits(BIT_DR_Tubes_All_Activated);
 
     if (sAllTubesActivated) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
     }
 }
 
@@ -109,7 +109,7 @@ void DR_Tube_control(Object* self) {
     } else {
         //Play an eerie alarm loop when the tube is partly activated
         if (objData->sectionsBitfield && (objData->soundHandle == 0)) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8DB_Eerie_Alarm_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_8DB_Eerie_Alarm_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
 
         //Animate the tube's section textures
@@ -126,11 +126,11 @@ void DR_Tube_control(Object* self) {
 
         //Stop the eerie alarm loop
         if (objData->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
         }
 
         //Start the thrumming sound loop
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
     }
 }
 

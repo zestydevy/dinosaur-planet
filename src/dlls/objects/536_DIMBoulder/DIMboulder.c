@@ -141,7 +141,7 @@ void DIMBoulder_control(Object* self) {
                     volume = MAX_VOLUME;
                 }
                 
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_111_Heavy_Collision, volume, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_111_Heavy_Collision, volume, NULL, NULL, 0, NULL);
                 objData->soundTimer = 30;
             }
 
