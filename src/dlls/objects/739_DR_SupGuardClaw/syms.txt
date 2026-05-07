@@ -1,0 +1,25 @@
+.text = 0x0:
+DR_NPC_ctor = 0x0;
+DR_NPC_dtor = 0xC;
+DR_NPC_setup = 0x18;
+DR_NPC_control = 0x290;
+DR_NPC_update = 0x68C;
+DR_NPC_print = 0x698;
+DR_NPC_free = 0x71C;
+DR_NPC_get_model_flags = 0x790;
+DR_NPC_get_data_size = 0x7A0;
+DR_NPC_anim_callback = 0x7B4;
+DR_NPC_sharpclaw_behaviour = 0x9C8;
+DR_NPC_guardclaw_behaviour = 0xB04;
+DR_NPC_play_sounds = 0xD78;
+
+.rodata = 0x1004:
+
+.data = 0x10B4:
+dSoundsGuardClawAttack = 0x0; // absolute:0x10B4
+dSoundsGuardClaw = 0x8; // absolute:0x10BC
+dSoundsSharpClaw = 0x10; // absolute:0x10C4
+dModAnimsSharpClaw = 0x18; // absolute:0x10CC
+dModAnimsGuardClaw = 0x24; // absolute:0x10D8
+dDLL53Array1 = 0x30; // absolute:0x10E4
+dDLL53Array2 = 0x38; // absolute:0x10EC

@@ -220,6 +220,10 @@ enum SoundID {
 
     SOUND_226_Fall_Impact = 0x226,
 
+    SOUND_236_SharpClaw_Argh = 0x236, //DR_NiceSharpy
+
+    SOUND_239_SharpClaw_Snort = 0x239, //DR_NiceSharpy
+
     SOUND_242_Failure_Glissando = 0x242,
 
     SOUND_25B_Magic_Attack_Deflected = 0x25B,
@@ -284,6 +288,13 @@ enum SoundID {
 
     SOUND_35A_Low_Whoosh = 0x35A, // WMrock
     SOUND_35B_Rock_Slide = 0x35B, // WMrock
+
+    SOUND_35D_GuardClaw_Yawn = 0x35D,        //DR_SupGuardClaw
+    SOUND_35E_SharpClaw_Staff_Swing = 0x35E, //DR_SupGuardClaw
+    SOUND_35F_GuardClaw_Step = 0x35F,        //DR_SupGuardClaw
+
+    SOUND_361_GuardClaw_Go_Away = 0x361, //DR_SupGuardClaw
+    SOUND_362_GuardClaw_Hah = 0x362,     //DR_SupGuardClaw
 
     SOUND_368 = 0x368,
     SOUND_369 = 0x369,
