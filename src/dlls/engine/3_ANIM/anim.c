@@ -232,6 +232,8 @@ static f32 dll_3_func_6F3C(AnimCurvesKeyframe*, s32, s32);
 static void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s8 a5);
 static s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4);
 static void dll_3_func_57A4(UnkAnimStruct* arg0, f32 arg1);
+static s32 dll_3_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4);
+static s32 dll_3_func_5E50(s32 arg0, AnimObj_Data* arg1, ObjSetup* arg2);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -443,7 +445,7 @@ void dll_3_func_2760(Object* actor, Object *a1, void* a2, s32 a3); //unsure
 void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3);
 void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance);
 void dll_3_func_4B20(Object* animObj, AnimObj_Setup* setup);
-void dll_3_func_4FC4(Object* a0, void* a1); //unsure
+void dll_3_func_4FC4(Object* animObj, AnimObj_Data* arg1);
 void dll_3_func_71C0(Object *arg0, Object* arg1, AnimObj_Data* arg2);
 
 void dll_3_func_3414(Object* animObj, Object **arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3, ModelInstance **arg4) {
@@ -591,7 +593,34 @@ void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance** acto
 }
 
 // offset: 0x495C | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_495C.s")
+s32 dll_3_func_495C(AnimObj_Data* arg0, Object* arg1) {
+    s32 temp_v0_2;
+    s32 i;
+    s32 var_s3;
+    AnimCurvesEvent* event;
+
+    var_s3 = -1;
+    for (i = 0; i < arg0->animCurvesEventCount; i++) {
+        event = &arg0->animCurvesEvents[i];
+        if (event->type == 0) {
+            var_s3 = event->params;
+        } else if ((event->type == 0xB) && (event->params > 0)) {
+            temp_v0_2 = *(s32*)(event + 1);
+            if (((temp_v0_2 & 0x3F) == 4) && (dll_3_func_5E50((temp_v0_2 >> 6) & 0x3FF, arg0, arg1->setup) != 0)) {
+                var_s3 = var_s3 - 10;
+                if (var_s3 < 0) {
+                    var_s3 = 0;
+                }
+                return var_s3;
+            }
+            i += event->params;
+        }
+
+        var_s3 += event->delay;
+    }
+    
+    return -1;
+}
 
 // offset: 0x4A7C | func: 22
 static s32 dll_3_func_4A7C(AnimObj_Data* objData, s32 arg1) {
@@ -692,10 +721,71 @@ s32 dll_3_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* y
 }
 
 // offset: 0x4FC4 | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4FC4.s")
+void dll_3_func_4FC4(Object* animObj, AnimObj_Data* arg1) {
+    CurveSetup* curveSetup;
+    f32 dx;
+    f32 dz;
+    f32 sin;
+    f32 dy;
+    f32 cos;
+    Vec3f sp54;
+    Vec3f delta;
+    AnimObj_Setup* objSetup;
+
+    objSetup = (AnimObj_Setup*)animObj->setup;
+    
+    if (objSetup == NULL) {
+        return;
+    }
+    
+    if (arg1->unk28 < 0) {
+        dx = animObj->srt.transl.x - objSetup->base.x;
+        dz = animObj->srt.transl.z - objSetup->base.z;
+        sin = fsin16_precise(arg1->unk1A);
+        cos = fcos16_precise(arg1->unk1A);
+        animObj->srt.transl.x = objSetup->base.x + (cos * dx) + (sin * dz);
+        animObj->srt.transl.z = objSetup->base.z + (cos * dz) - (sin * dx);
+        return;
+    }
+    
+    curveSetup = gDLL_26_Curves->vtbl->func_39C(arg1->unk28);
+    if (curveSetup == NULL) {
+        return;
+    }
+    
+    dx = animObj->srt.transl.x - objSetup->base.x;
+    dy = animObj->srt.transl.y - objSetup->base.y;
+    dz = animObj->srt.transl.z - objSetup->base.z;
+    delta.f[0] = dx;
+    delta.f[1] = dy;
+    delta.f[2] = dz;
+
+    sp54.f[0] = animObj->srt.transl.x;
+    sp54.f[1] = animObj->srt.transl.y;
+    sp54.f[2] = animObj->srt.transl.z;
+    
+    if (curveSetup->links[0] < 0) {
+        animObj->srt.transl.x = sp54.f[0];
+        animObj->srt.transl.y = sp54.f[1];
+        animObj->srt.transl.z = sp54.f[2];
+        return;
+    }
+    
+    if (dll_3_func_51E0(arg1->unk2C, &delta, &sp54, &arg1->unk1A, arg1->unk86)) {
+        animObj->srt.transl.x = sp54.f[0];
+        animObj->srt.transl.y = sp54.f[1];
+        animObj->srt.transl.z = sp54.f[2];
+        return;
+    }
+    
+    sin = fsin16_precise(arg1->unk1A);
+    cos = fcos16_precise(arg1->unk1A);
+    animObj->srt.transl.x = objSetup->base.x + (cos * dx) + (sin * dz);
+    animObj->srt.transl.z = objSetup->base.z + (cos * dz) - (sin * dx);
+}
 
 // offset: 0x51E0 | func: 26
-s32 dll_3_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4) {
+static s32 dll_3_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4) {
     CurveSetup* var_s1;
     f32 temp_fv0_2;
     CurveSetup* sp84;
