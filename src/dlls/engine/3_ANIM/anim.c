@@ -231,6 +231,7 @@ s32 dll_3_func_8878(void);
 static f32 dll_3_func_6F3C(AnimCurvesKeyframe*, s32, s32);
 static void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s8 a5);
 static s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4);
+static void dll_3_func_57A4(UnkAnimStruct* arg0, f32 arg1);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -694,20 +695,7 @@ s32 dll_3_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* y
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4FC4.s")
 
 // offset: 0x51E0 | func: 26
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_51E0.s")
-#else
-
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    f32 unk8;
-    f32 unkC;
-} Func51E0Arg0;
-
-void dll_3_func_57A4(Func51E0Arg0* arg0, f32 arg1);
-
-s32 dll_3_func_51E0(Func51E0Arg0* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4) {
+s32 dll_3_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4) {
     CurveSetup* var_s1;
     f32 temp_fv0_2;
     CurveSetup* sp84;
@@ -730,10 +718,10 @@ s32 dll_3_func_51E0(Func51E0Arg0* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 
     if (var_s1 != NULL) {
         if (arg0->unk4 >= 0) {
             sp84 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
-            for (var_v1 = 0; var_v1 < 9 && ((f32*)arg0)[var_v1 + 2] <= sp80; var_v1++) {}
+            for (var_v1 = 0; var_v1 < 9 && arg0->unk8[var_v1] <= sp80; var_v1++) {}
             var_v1--;
             sp7C = var_v1;
-            sp7C += ((sp80 - ((f32*)arg0)[var_v1 + 2]) / (((f32*)arg0)[var_v1 + 3] - ((f32*)arg0)[var_v1 + 2]));
+            sp7C += (sp80 - arg0->unk8[var_v1]) / (arg0->unk8[var_v1 + 1] - arg0->unk8[var_v1]);
             sp7C /= 8/*.0f*/;
             sp3C = 2.0f * var_s1->unk2E;
             sp38 = 2.0f * sp84->unk2E;
@@ -791,7 +779,6 @@ s32 dll_3_func_51E0(Func51E0Arg0* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 
     out:
     return 1;
 }
-#endif
 
 // offset: 0x5698 | func: 27
 static void dll_3_func_5698(UnkAnimStruct* arg0, s32 arg1) {
@@ -824,7 +811,65 @@ static void dll_3_func_5698(UnkAnimStruct* arg0, s32 arg1) {
 }
 
 // offset: 0x57A4 | func: 28
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_57A4.s")
+void dll_3_func_57A4(UnkAnimStruct* arg0, f32 arg1) {
+    CurveSetup* temp_s1;
+    CurveSetup* var_s0;
+    s32 sp4C;
+    s32 var_v0;
+    s32 var_v1;
+
+    var_s0 = NULL;
+    if (arg1 < arg0->unk8[0]) {
+        var_s0 = gDLL_26_Curves->vtbl->func_39C(arg0->unk0);
+    }
+    if (var_s0 != NULL) {
+        while (arg1 < arg0->unk8[0]) {
+            var_v1 = 1;
+            for (var_v0 = 0; var_v0 < 4; var_v0++) {
+                if ((var_s0->links[var_v0] >= 0) && (var_s0->unk1B & var_v1)) {
+                    sp4C = var_s0->links[var_v0];
+                    var_v0 = 5;
+                }
+                var_v1 <<= 1;
+            }
+            if (var_v0 != 6) {
+                arg0->unk4 = arg0->unk0;
+                arg0->unk28 = arg0->unk8[0];
+                arg0->unk0 = -1;
+                return;
+            }
+            arg0->unk4 = arg0->unk0;
+            arg0->unk0 = sp4C;
+            temp_s1 = var_s0;
+            var_s0 = gDLL_26_Curves->vtbl->func_39C(sp4C);
+            dll_3_func_5A48(arg0, var_s0, temp_s1, arg0->unk8[0], 1);
+        }
+    }
+    temp_s1 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
+    if (temp_s1 != NULL) {
+        while (arg0->unk28 <= arg1) {
+            var_v1 = 1;
+            for (var_v0 = 0; var_v0 < 4; var_v0++) {
+                if ((temp_s1->links[var_v0] >= 0) && !(temp_s1->unk1B & var_v1)) {
+                    sp4C = temp_s1->links[var_v0];
+                    var_v0 = 5;
+                }
+                var_v1 <<= 1;
+            }
+            if (var_v0 != 6) {
+                arg0->unk0 = arg0->unk4;
+                arg0->unk8[0] = arg0->unk28;
+                arg0->unk4 = -1;
+                return;
+            }
+            arg0->unk0 = arg0->unk4;
+            arg0->unk4 = sp4C;
+            var_s0 = temp_s1;
+            temp_s1 = gDLL_26_Curves->vtbl->func_39C(sp4C);
+            dll_3_func_5A48(arg0, var_s0, temp_s1, arg0->unk28, 0);
+        }
+    }
+}
 
 // offset: 0x5A48 | func: 29
 void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s8 a5) {
