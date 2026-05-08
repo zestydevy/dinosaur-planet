@@ -4,6 +4,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/3_animation.h"
 #include "game/objects/object.h"
+#include "sys/objanim.h"
 #include "dll_def.h"
 
 typedef struct {
@@ -90,7 +91,7 @@ typedef struct AnimObj_Data {
 /*0CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
 /*0F4*/ AnimObj_DataF4Callback unkF4; //end-of-sequence callback function
 /*0F8*/ AnimObj_DataF8Callback unkF8;
-/*0FC*/ s8 unkFC[0x118 - 0xFC];
+/*0FC*/ UnkFunc_80024108Struct unkFC;
 /*118*/ s32 unk118;
 /*11C*/ Object* unk11C;
 /*120*/ s16 unk120;
