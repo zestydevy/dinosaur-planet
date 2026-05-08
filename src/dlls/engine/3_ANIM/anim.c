@@ -9,6 +9,9 @@
 #include "sys/menu.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
+#include "sys/segment_13D0.h"
+#include "sys/framebuffer_fx.h"
+#include "sys/gfx/projgfx.h"
 
 s32* func_800349B0(void);
 
@@ -94,6 +97,12 @@ typedef struct {
     u16 totalActors; //maybe?
 } ANIMUnk698;
 
+typedef struct {
+    Object* unk0;
+    s16 unk4;
+    s8 unk6;
+} Bss38Thing;
+
 /*0x0*/ static const char str_0[] = "Max activates reached\n";
 /*0x18*/ static const char str_18[] = "CODE OVERFLOW\n";
 /*0x28*/ static const char str_28[] = "MAX_DECISION reached\n";
@@ -117,7 +126,7 @@ typedef struct {
     0
 };
 /*0x30*/ static s8 _data_30 = 0;
-/*0x34*/ static u32 _data_34[] = {
+/*0x34*/ static s32 _data_34[] = {
     0x00008000, 0x00004000, 0x00000002, 0x00000001, 0x00000004, 0x00000008, 0xffffffff
 };
 /*0x50*/ static u32 _data_50[] = {
@@ -133,9 +142,6 @@ typedef struct {
 /*0xC4*/ static u32 _data_C4[] = {
     0x00000000
 };
-/*0xC8*/ static u32 _data_C8[] = {
-    0x00000000, 0x00000000
-};
 
 /*0x0*/ static ANIMBSSUnk0 _bss_0[4];
 /*0x20*/ static s8 _bss_20; //count of items in bss0?
@@ -146,9 +152,8 @@ typedef struct {
 /*0x32*/ static u8 _bss_32[0x1];
 /*0x33*/ static s8 _bss_33;
 /*0x34*/ static u8 _bss_34[0x4];
-/*0x38*/ static u8 _bss_38[0x8];
-/*0x40*/ static u8 _bss_40[0x48];
-/*0x88*/ static u8 _bss_88[0x1];
+/*0x38*/ static Bss38Thing _bss_38[10];
+/*0x88*/ static s8 _bss_88;
 /*0x89*/ static u8 _bss_89[0x1];
 /*0x8A*/ static u8 _bss_8A[0x1];
 /*0x8B*/ static s8 _bss_8B;
@@ -506,7 +511,90 @@ s8 dll_3_func_4158(AnimObj_Data* animObjData) {
 }
 
 // offset: 0x422C | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_422C.s")
+void dll_3_func_422C(AnimObj_Data* arg0, Object* arg1, u8 arg2) {
+    /*0xC8*/ static s32 _data_C8 = 0;
+    Object* temp_s2;
+    s32 temp_s0;
+    s32 temp_a0_3;
+    s32 temp_v1;
+    DLL_IProjgfx* temp_v0_2;
+
+    if ((_data_C8 != 0) && (arg1->unkB4 != arg0->unk63)) {
+        gDLL_1_cmdmenu->vtbl->set_buttons_override(0);
+    }
+    while (_bss_88 > 0) {
+        _bss_88--;
+        temp_v1 = _bss_38[_bss_88].unk6;
+        temp_s0 = _bss_38[_bss_88].unk4;
+        temp_s2 = _bss_38[_bss_88].unk0;
+        switch (temp_v1) {
+        case 3:
+            if (arg2) { break; }
+            gDLL_17_partfx->vtbl->spawn(temp_s2, temp_s0, NULL, PARTFXFLAG_10000, -1, NULL);
+            break;
+        case 4:
+            if (arg2) { break; }
+            func_800007EC(temp_s2, 0, 0, 1, -1, temp_s0, 0);
+            break;
+        case 5:
+            if (arg2) { break; }
+            temp_v0_2 = dll_load_deferred((temp_s0 + DLL_ID_PROJGFX_BASE), 1);
+            if (temp_v0_2 != NULL) {
+                temp_v0_2->vtbl->func0(temp_s2, 0, 0, 1, -1, temp_s0, 0);
+            }
+            if (temp_v0_2 != NULL) {
+                dll_unload(temp_v0_2);
+            }
+            break;
+        case 9:
+            if (arg2) { break; }
+            switch (temp_s0 & 0x2F) {
+                case 6:
+                    gDLL_28_ScreenFade->vtbl->fade((temp_s0 & 0xFC0) >> 4, 3);
+                    break;
+                case 7:
+                    gDLL_28_ScreenFade->vtbl->fade_reversed((temp_s0 & 0xFC0) >> 4, 3);
+                    break;
+                case 8:
+                    gDLL_28_ScreenFade->vtbl->fade((temp_s0 & 0xFC0) >> 4, 2);
+                    break;
+                case 9:
+                    gDLL_28_ScreenFade->vtbl->fade_reversed((temp_s0 & 0xFC0) >> 4, 2);
+                    break;
+                case 11:
+                    gDLL_28_ScreenFade->vtbl->fade((temp_s0 & 0xFC0) >> 4, 4);
+                    break;
+                case 12:
+                    gDLL_28_ScreenFade->vtbl->func3((temp_s0 & 0xFC0) >> 4, 4, 0.2f);
+                    break;
+                default:
+                    fbfx_play(temp_s0 & 0x2F, (temp_s0 & 0xFC0) >> 4);
+                    break;
+            }
+            break;
+        case 10:
+            if (arg2) { break; }
+            gDLL_22_Subtitles->vtbl->func_448();
+            gDLL_22_Subtitles->vtbl->func_368(temp_s0);
+            break;
+        case 11:
+            main_set_bits(temp_s0, 1);
+            break;
+        case 12:
+            main_set_bits(temp_s0, 0);
+            break;
+        case 13:
+            if (arg2) { break; }
+            gDLL_1_cmdmenu->vtbl->set_buttons_override(_data_34[temp_s0]);
+            if (_data_34[temp_s0] != -1) {
+                _data_C8 = 1;
+            } else {
+                _data_C8 = 0;
+            }
+            break;
+        }
+    }
+}
 
 // offset: 0x4698 | func: 19
 void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3) {
