@@ -229,6 +229,7 @@ static void dll_3_func_9CE8(s32 arg0);
 static Object* dll_3_func_9C08(s32 animCurvesIndex, Object* searchObject);
 static Object* dll_3_func_81F8(Object* animObj);
 s32 dll_3_func_8878(void);
+static f32 dll_3_func_6F3C(AnimCurvesKeyframe*, s32, s32);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -1074,33 +1075,106 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
 #endif
 
 // offset: 0x6EBC | func: 35
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_6EBC.s")
-#else
-
-f32 dll_3_func_6F3C(AnimCurvesKeyframe*, s32, s16);
-
-f32 dll_3_func_6EBC(AnimObj_Data* state, s32 channelIndex) {
+f32 dll_3_func_6EBC(AnimObj_Data* state, s32 channelIndex, s32 arg2) {
     f32 result;
-    s16 total_keys;
-    s16 first_key;
+    s32 temp;
+    AnimCurvesKeyframe *kf;
 
     if (state->animCurvesKeyframes == 0) {
         return 0.0f;
     }
 
     result = 0.0f;
-    total_keys = state->channelTotalKeys[channelIndex];
-    if (total_keys) {
-        first_key = state->channelFirstKeyIndex[channelIndex];
-        result = dll_3_func_6F3C(&state->animCurvesKeyframes[first_key], total_keys & 0xFFF, total_keys);
+    if (state->channelTotalKeys[channelIndex]) {
+        temp = state->channelTotalKeys[channelIndex] & 0xFFF;
+        kf = &state->animCurvesKeyframes[state->channelFirstKeyIndex[channelIndex]];
+        result = dll_3_func_6F3C(kf, temp, arg2);
     }
     return result;
 }
-#endif
 
 // offset: 0x6F3C | func: 36
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_6F3C.s")
+static f32 dll_3_func_6F3C(AnimCurvesKeyframe* arg0, s32 arg1, s32 arg2) {
+    s32 var_v0;
+    f32 temp;
+    f32 var_fa0;
+    f32 var_fv1;
+    f32 var_fv0;
+    s32 temp_t8;
+    f32 temp_fa1;
+    f32 sp2C[4];
+
+    if (arg1 <= 0) {
+        return 0.0f;
+    } 
+    var_v0 = 0;
+    while ((var_v0 < arg1 && arg0[var_v0].timeOffset < arg2)) {
+        var_v0 += 1;
+    }
+    if (var_v0 == arg1) {
+        var_fv1 = arg0[arg1 - 1].value;
+    } else if (var_v0 == 0) {
+        var_fv1 = arg0->value;
+    } else {
+        if (arg2 == arg0[var_v0].timeOffset) {
+            var_fv1 = arg0[var_v0].value;
+            if (((arg0[var_v0].interpolation & 3) >= 2) && (var_v0 < (arg1 - 1))) {
+                var_fv1 = arg0[var_v0 + 1].value;
+            }
+            return var_fv1;
+        }
+        var_v0 = var_v0 - 1;
+        temp_t8 = arg0[var_v0].interpolation & 3;
+        sp2C[0] = arg0[var_v0].value;
+        if (temp_t8 == 0) {
+            var_fa0 = arg0[var_v0 + 1].value - arg0[var_v0].value;
+            if (var_v0 > 0) {
+                var_fv0 = arg0[var_v0].value - arg0[var_v0 - 1].value;
+            } else {
+                var_fv0 = var_fa0;
+            }
+            if (var_fa0 < 0.0f) {
+                var_fa0 = -var_fa0;
+            }
+            if (var_fv0 < 0.0f) {
+                var_fv0 = -var_fv0;
+            }
+            temp = (var_fa0 + var_fv0) / 16.0f;
+            sp2C[2] = temp * (f32) ((s8) arg0[var_v0].interpolation >> 2);
+        }
+        temp_fa1 = (f32) (arg0[var_v0 + 1].timeOffset - arg0[var_v0].timeOffset);
+        var_v0 = var_v0 + 1;
+        if (var_v0 < arg1) {
+            sp2C[1] = arg0[var_v0].value;
+            if (temp_t8 == 0) {
+                if ((var_v0 + 1) < arg1) {
+                    var_fv0 = arg0[var_v0 + 1].value - arg0[var_v0].value;
+                } else {
+                    var_fv0 = var_fa0;
+                }
+                if (var_fv0 < 0.0f) {
+                    var_fv0 = -var_fv0;
+                }
+                if (0) {} // @fake
+                temp = (var_fa0 + var_fv0) / 16.0f;
+                sp2C[3] = temp * (f32) ((s8) arg0[var_v0].interpolation >> 2);
+            }
+        }
+        if (temp_fa1 > 0.0f) {
+            temp_fa1 = (f32) (arg2 - arg0[var_v0 - 1].timeOffset) / temp_fa1;
+            if (temp_t8 == 0) {
+                var_fv1 = func_80004C5C((Vec4f* ) &sp2C, temp_fa1, NULL);
+            } else if (temp_t8 == 1) {
+                var_fv1 = sp2C[0] + ((sp2C[1] - sp2C[0]) * temp_fa1);
+            } else {
+                var_fv1 = sp2C[1];
+            }
+        } else {
+            var_fv1 = sp2C[1];
+        }
+    }
+    return var_fv1;
+}
 
 // offset: 0x71C0 | func: 37
 void dll_3_func_71C0(Object* arg0, Object* arg1, AnimObj_Data* arg2) {
