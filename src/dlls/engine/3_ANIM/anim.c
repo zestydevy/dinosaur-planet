@@ -8,6 +8,7 @@
 #include "macros.h"
 #include "sys/menu.h"
 #include "sys/objlib.h"
+#include "sys/objmsg.h"
 
 s32* func_800349B0(void);
 
@@ -104,12 +105,8 @@ typedef struct {
 /*0x8*/ static s16 _data_8 = 0xff00;
 /*0xC*/ static f32 _data_C = 60.0;
 /*0x10*/ static f32 _data_10 = 0.0f;
-/*0x14*/ static s16 _data_14[] = {
-    0, 0
-};
-/*0x18*/ static s16 _data_18[] = {
-    0, 0
-};
+/*0x14*/ static s16 _data_14 = 0;
+/*0x18*/ static s16 _data_18 = 0;
 /*0x1C*/ static u8 _data_1C = 0;
 /*0x20*/ static s32 _data_20 = -1; // object ID of the thing the player should hold when playing the first time pickup sequence
 /*0x24*/ static Object *_data_24 = 0;
@@ -128,8 +125,10 @@ typedef struct {
     0x00000008, 0x00000009, 0x00030002, 0x00030003, 0x000a0004, 0x000a0005, 0x000a0006, 0x000f000b, 
     0x000f000c, 0x000f000d, 0x000f000e, 0x000f000f, 0x000f0010, 0x00130001, 0x00130002
 };
-/*0xAC*/ static u32 _data_AC[] = {
-    0x00000000, 0x00000000, 0x00000202, 0x00000001, 0x01010101, 0x01000000
+/*0xAC*/ static s8 _data_AC[] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x02, 0x02, 0x00, 0x00, 0x00, 0x01, 
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00
 };
 /*0xC4*/ static u32 _data_C4[] = {
     0x00000000
@@ -145,7 +144,7 @@ typedef struct {
 /*0x2C*/ static u8 _bss_2C[0x4];
 /*0x30*/ static u8 _bss_30[0x2];
 /*0x32*/ static u8 _bss_32[0x1];
-/*0x33*/ static u8 _bss_33[0x1];
+/*0x33*/ static s8 _bss_33;
 /*0x34*/ static u8 _bss_34[0x4];
 /*0x38*/ static u8 _bss_38[0x8];
 /*0x40*/ static u8 _bss_40[0x48];
@@ -231,6 +230,7 @@ static Object* dll_3_func_81F8(Object* animObj);
 s32 dll_3_func_8878(void);
 static f32 dll_3_func_6F3C(AnimCurvesKeyframe*, s32, s32);
 static void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s8 a5);
+static s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -593,7 +593,7 @@ void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance** acto
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_495C.s")
 
 // offset: 0x4A7C | func: 22
-s32 dll_3_func_4A7C(AnimObj_Data* objData, s32 arg1) {
+static s32 dll_3_func_4A7C(AnimObj_Data* objData, s32 arg1) {
     AnimCurvesEvent* event;
     s32 subevent;
     s32 index;
@@ -901,10 +901,268 @@ s32 dll_3_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData) {
 }
 
 // offset: 0x5E50 | func: 31
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_5E50.s")
+static s32 dll_3_func_5E50(s32 arg0, AnimObj_Data* arg1, ObjSetup* arg2) {
+    s32 sp24;
+    f32 sp20;
+
+    sp24 = 0;
+    switch (arg0) {
+    case 1:
+        if (arg1->unk6C <= 0) {
+            sp24 = 1;
+        }
+        break;
+    case 2:
+        if (arg1->unk6C > 0) {
+            sp24 = 1;
+        }
+        break;
+    case 3:
+        sp24 = 0;
+        if (gDLL_7_Newday->vtbl->func8(&sp20) == 0) {
+            sp24 = 1;
+        }
+        break;
+    case 4:
+        sp24 = 0;
+        if (gDLL_7_Newday->vtbl->func8(&sp20) != 0) {
+            sp24 = 1;
+        }
+        break;
+    case 5:
+        if (_bss_138[arg1->unk63] == 0) {
+            sp24 = 1;
+        }
+        break;
+    case 6:
+        if (_bss_138[arg1->unk63] == 1) {
+            sp24 = 1;
+        }
+        break;
+    case 7:
+        if (_bss_108[arg1->unk63] == 0) {
+            sp24 = 1;
+        }
+        break;
+    case 8:
+        if (_bss_108[arg1->unk63] != 0) {
+            sp24 = 1;
+        }
+        break;
+    case 9:
+        if (_data_14 <= 0) {
+            sp24 = 1;
+        }
+        break;
+    case 10:
+        if (_data_14 > 0) {
+            sp24 = 1;
+        }
+        break;
+    case 11:
+        if (_data_18 <= 0) {
+            sp24 = 1;
+        }
+        break;
+    case 12:
+        if (_data_18 > 0) {
+            sp24 = 1;
+        }
+        break;
+    case 13:
+        sp24 = 0;
+        if (func_8000FB1C() != 0) {
+            sp24 = 1;
+        }
+        break;
+    case 14:
+        sp24 = 0;
+        if (func_8000FB1C() == 0) {
+            sp24 = 1;
+        }
+        break;
+    case 16:
+        if (*_data_28 != 0) {
+            sp24 = 1;
+        }
+        break;
+    case 17:
+        if (*_data_28 == 0) {
+            sp24 = 1;
+        }
+        break;
+    default:
+        sp24 = 1;
+        break;
+    }
+    return sp24;
+}
 
 // offset: 0x60AC | func: 32
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_60AC.s")
+s32 dll_3_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* arg3, s16 arg4, s16 arg5, s8 arg6, s8 arg7) {
+    s32 var_s0;
+    s32 _pad;
+    s32 var_v1;
+    s32 var_fp;
+    s32 sp6C;
+    s32 temp_s3;
+    s32 var_a3;
+    s32 var_a2;
+    s32 temp_v0_2;
+    s32 var_a1;
+    s32 var_s1;
+
+    for (sp6C = 0; sp6C < arg5; sp6C++) {
+        var_a3 = 0;
+        temp_s3 = arg3[sp6C] & 0x3F;
+        var_s0 = (arg3[sp6C] >> 6) & 0x3FF;
+        var_s1 = (arg3[sp6C] >> 0x10) & 0xFFFF;
+        if ((temp_s3 == 2) || (temp_s3 == 3)) {
+            var_fp = var_s0;
+            if (var_s1 & 0x8000) {
+                var_s1 |= 0xFFFF0000;
+            }
+            var_s0 = 0;
+        }
+        switch (temp_s3) {
+        case 6:
+            if (dll_3_func_6620(arg0, arg1, arg2, (var_s1 << 8) | var_s0, (s8) arg7) == 0) {
+                return 1;
+            }
+            var_a3 = -1;
+            var_s0 = 0;
+            break;
+        case 9:
+            break;
+        case 7:
+            if (arg1 != arg0) {
+                switch (_data_AC[var_s0]) {
+                case 1:
+                    obj_send_mesg_many(0, OBJMSG_SEND_ALL, arg0, _data_50[var_s0], arg0);
+                    break;
+                case 2:
+                    obj_send_mesg_many_nearby(0, 600.0f, OBJMSG_SEND_ALL, arg0, _data_50[var_s0], arg0);
+                    break;
+                default:
+                    obj_send_mesg(arg1, _data_50[var_s0], arg0, NULL);
+                    break;
+                }
+            }
+            var_a3 = -1;
+            var_s0 = 0;
+            break;
+        case 8:
+            var_a1 = 0;
+            if (arg7 == 0) {
+                var_a2 = -1;
+                for (var_v1 = 0; var_v1 < 10; var_v1++) {
+                    if (var_s0 == arg2->unk138[var_v1]) {
+                        var_a1 = 1;
+                    }
+                    if (arg2->unk138[var_v1] == 0) {
+                        var_a2 = var_v1;
+                    }
+                }
+                if ((var_a1 == 0) && (var_a2 != -1)) {
+                    var_a3 = 0;
+                    arg2->unk138[var_a2] = (u8) var_s0;
+                    arg2->unk124[var_a2] = dll_3_func_4A7C(arg2, var_s1);
+                }
+                if (var_a2 == -1) {
+
+                }
+            }
+            break;
+        default:
+            var_a3 = dll_3_func_5E50(var_s0, arg2, arg0->setup);
+            break;
+        }
+
+        if ((var_a3 > 0) && (arg6 == 0)) {
+            switch (temp_s3) {
+            case 1:
+                if (arg7 == 0) {
+                    if (_bss_33 == 0) {
+                        _bss_33 = 1;
+                        arg2->animCurvesCurrentFrameA = (s16) var_s1;
+                        arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA;
+                    }
+                    return 1;
+                }
+                break;
+            case 10:
+                if (arg7 == 0) {
+                    if (_bss_33 == 0) {
+                        _bss_33 = 1;
+                        arg2->animCurvesCurrentFrameA = dll_3_func_4A7C(arg2, var_s1);
+                        arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA;
+                    }
+                    return 1;
+                }
+                break;
+            case 2:
+                switch (var_fp) {
+                case 0:
+                    temp_v0_2 = (*(s16*)0xBC000000);
+                    temp_v0_2 <<= 0x10;
+                    temp_v0_2 |= *(s16*)0xBC000002;
+                    if ((temp_v0_2 != 0x4C534653) && (temp_v0_2 != 0x4D504653)) {
+                        bzero(arg1, 0x100000);
+                    }
+                    arg2->unk8D = (u8) var_s1;
+                    if (arg2->unk98 < 10) {
+                        arg2->unk8E[arg2->unk98] = (u8) var_s1;
+                        arg2->unk98 += 1;
+                    }
+                    break;
+                case 1:
+                    arg2->unk6C = (s16) var_s1;
+                    break;
+                case 3:
+                    _data_14 = (s16) var_s1;
+                    break;
+                case 4:
+                    _data_18 = (s16) var_s1;
+                    break;
+                case 5:
+                    _bss_138[arg2->unk63] = (s8) var_s1;
+                    break;
+                case 6:
+                    main_set_bits(arg2->unk76, var_s1 != 0);
+                    break;
+                }
+                break;
+            case 3:
+                if (arg7 == 0) {
+                    switch (var_fp) {
+                    case 1:
+                        break;
+                    case 0:
+                        arg2->unk6C += var_s1;
+                        break;
+                    }
+                }
+                break;
+            case 4:
+                if (arg7 == 0) {
+                    arg2->animCurvesCurrentFrameA = arg4;
+                    arg2->animCurvesCurrentFrameB = arg4;
+                    arg2->unk88 = var_s0 + 1;
+                    _bss_33 = 1;
+                    return 1;
+                }
+                break;
+            case 5:
+                if (arg7 == 0) {
+                    return 0;
+                }
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
 
 // offset: 0x65EC | func: 33 | export: 19
 void dll_3_func_65EC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
@@ -915,7 +1173,7 @@ void dll_3_func_65EC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x6620 | func: 34
-s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4) {
+static s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4) {
     s32 sp54;
     s32 sp4C[2];
     Object *temp_v0_3;
@@ -939,7 +1197,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
                     mmFree(arg2->unk2C);
                     arg2->unk2C = NULL;
                 }
-                arg2->unk2C = mmAlloc(sizeof(UnkAnimStruct), 0x11, NULL);
+                arg2->unk2C = mmAlloc(sizeof(UnkAnimStruct), ALLOC_TAG_ANIMSEQ_COL, NULL);
                 if (arg2->unk2C != NULL) {
                     dll_3_func_5698(arg2->unk2C, arg2->unk28);
                 } else {
@@ -2057,22 +2315,22 @@ void dll_3_func_9474(s8 arg0) {
 
 // offset: 0x949C | func: 59 | export: 24
 s16 dll_3_func_949C(void) {
-    return _data_14[0];
+    return _data_14;
 }
 
 // offset: 0x94B8 | func: 60 | export: 25
 void dll_3_func_94B8(s16 arg0) {
-    _data_14[0] = arg0;
+    _data_14 = arg0;
 }
 
 // offset: 0x94E0 | func: 61 | export: 26
 s16 dll_3_func_94E0(void) {
-    return _data_18[0];
+    return _data_18;
 }
 
 // offset: 0x94FC | func: 62 | export: 27
 void dll_3_func_94FC(s16 arg0) {
-    _data_18[0] = arg0;
+    _data_18 = arg0;
 }
 
 // offset: 0x9524 | func: 63 | export: 29
