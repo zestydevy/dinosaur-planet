@@ -11,19 +11,19 @@ typedef struct {
     ObjSetup base;
     s16 regrowthDelay;
     s16 sporeLaunchInterval;    //Frames between spore launches (actual interval has some randomised variance added to this value)
-    s16 gamebitGrow;        //Gamebit to set upon exploding
+    s16 gamebitGrow;            //When specified, plant only grows when gamebit set (and gamebit unset upon exploding)
     s8 sporeAngularRange;       //Variance in launched SHspores' flight yaw
     s8 yaw;
 } SHrocketmushroom_Setup;
 
 typedef struct {
-    f32 timer;
+    f32 timer;          //Countdown timer for various states (waiting, growing, launching spore)
     f32 scaleMax;       //Scale threshold when growing
     f32 timerDefault;   //Stores a copy of the max timer value, but unused otherwise
     f32 scaleInitial;   //Stores a copy of the initial scale
     f32 scaleSpeed;     //Rate of change of scale
     u8 state;           //State Machine value
-    u8 flags;
+    u8 flags;           //Tracks animations finishing, entering a state, and launching spores
 } SHrocketmushroom_Data;
 
 typedef enum {
@@ -91,9 +91,11 @@ void SHrocketmushroom_setup(Object* self, SHrocketmushroom_Setup* objSetup, s32 
     
     if (reset == FALSE) {
         if ((objSetup->gamebitGrow != NO_GAMEBIT) && (main_get_bits(objSetup->gamebitGrow) == FALSE)) {
+            //If the plant only grows when a gamebit is set, start out hidden
             SHrocketmushroom_reset(self, objData, TRUE);
             objData->state = STATE_1_Hidden;
         } else {
+            //Otherwise start out in idle state
             SHrocketmushroom_reset(self, objData, FALSE);
         }
     }
@@ -431,7 +433,7 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
     
     self->objhitInfo->unk58 |= 0x40;
     
-    //Set nearby ExplodeAnimator's gamebit
+    //Set nearby ExplodeAnimator's gamebit (when used to blast open walls)
     obj = obj_get_nearest_type_to(OBJTYPE_28, self, &distance);
     if (obj != NULL) {
         exploderSetup = (ExplodeAnimator_Setup*)obj->setup;
