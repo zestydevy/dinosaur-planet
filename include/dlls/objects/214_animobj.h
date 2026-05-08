@@ -24,6 +24,13 @@ typedef struct {
 typedef void (*AnimObj_DataF4Callback)(Object *actor, Object *override, struct AnimObj_Data* arg2);
 typedef s32 (*AnimObj_DataF8Callback)(Object *actor, Object *override, s32 arg2);
 
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+    f32 unk8[8];
+    f32 unk28;
+} UnkAnimStruct;
+
 typedef struct AnimObj_Data {
 /*000*/ Object* actor;
 /*004*/ s32 unk4;
@@ -33,7 +40,7 @@ typedef struct AnimObj_Data {
 /*020*/ f32 unk20;
 /*024*/ f32 unk24; //some speed
 /*028*/ s32 unk28;
-/*02C*/ void *unk2C;
+/*02C*/ UnkAnimStruct *unk2C;
 /*030*/ u32 unk30; //soundHandle?
 /*034*/ u32 unk34[4];   //soundHandles?
 /*044*/ s16 unk44[4];   //soundHandle related - playback frequency?

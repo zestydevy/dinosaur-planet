@@ -569,7 +569,7 @@ s32 map_get_type(void);
 void map_func_80048034(void);
 void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
 void map_func_800483BC(f32, f32, f32);
-s8 map_get_layer(void);
+s32 map_get_layer(void);
 
 // something else
 

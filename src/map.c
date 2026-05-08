@@ -2991,7 +2991,7 @@ s16 map_get_mobile_map_vars(s32* outMapID) {
     return gMobileMapUnknown;
 }
 
-s8 map_get_layer(void) {
+s32 map_get_layer(void) {
     return gMapLayer;
 }
 

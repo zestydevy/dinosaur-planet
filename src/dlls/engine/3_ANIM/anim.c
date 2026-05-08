@@ -230,6 +230,7 @@ static Object* dll_3_func_9C08(s32 animCurvesIndex, Object* searchObject);
 static Object* dll_3_func_81F8(Object* animObj);
 s32 dll_3_func_8878(void);
 static f32 dll_3_func_6F3C(AnimCurvesKeyframe*, s32, s32);
+static void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s8 a5);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -793,27 +794,20 @@ s32 dll_3_func_51E0(Func51E0Arg0* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 
 #endif
 
 // offset: 0x5698 | func: 27
-#ifndef NON_MATCHING
-void dll_3_func_5698(AnimObj_Data* objData, Object* arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_5698.s")
-#else
-void dll_3_func_5A48(void* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s32 a5);
-
-//NOTE: not sure a0 is AnimObj_Data, could be other struct
-void dll_3_func_5698(AnimObj_Data* objData, Object* arg1) {
+static void dll_3_func_5698(UnkAnimStruct* arg0, s32 arg1) {
     CurveSetup* temp_v0;
-    s32 pad[2];
+    s32 pad;
     s32 temp_a1;
     s32 sp2C;
     s32 var_a2;
     s32 index;
     s32 var_a0;
 
-    objData->actor = arg1;
-    objData->unk4 = -1;
-    temp_v0 = gDLL_26_Curves->vtbl->func_39C((s32)arg1);
+    arg0->unk0 = arg1;
+    arg0->unk4 = -1;
+    temp_v0 = gDLL_26_Curves->vtbl->func_39C(arg1);
 
-    for (var_a0 = 1, index = 0, var_a2 = sp2C; index < 4; index++, var_a0 *= 2){
+    for (var_a0 = 1, index = 0; index < 4; index++, var_a0 *= 2){
         if ((temp_v0->links[index] >= 0) && !(temp_v0->unk1B & var_a0)) {
             var_a2 = temp_v0->links[index];
             index = 5;
@@ -821,20 +815,61 @@ void dll_3_func_5698(AnimObj_Data* objData, Object* arg1) {
     }
     
     if (index != 6) {
-        objData->actor = (Object*)-1;
+        arg0->unk0 = -1;
         return;
     }
     
-    objData->unk4 = var_a2;
-    dll_3_func_5A48(objData, temp_v0, gDLL_26_Curves->vtbl->func_39C(var_a2), 0, 0);
+    arg0->unk4 = var_a2;
+    dll_3_func_5A48(arg0, temp_v0, gDLL_26_Curves->vtbl->func_39C(var_a2), 0, 0);
 }
-#endif
 
 // offset: 0x57A4 | func: 28
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_57A4.s")
 
 // offset: 0x5A48 | func: 29
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_5A48.s")
+void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s8 a5) {
+    f32 temp_fa1;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 i;
+    f32 sp104;
+    f32 sp100;
+    f32 spF0[4];
+    f32 spE0[4];
+    f32 spD0[4];
+    f32 spAC[9];
+    f32 sp88[9];
+    f32 sp64[9];
+    
+    sp104 = 2.0f * (f32) a2->unk2E;
+    sp100 = 2.0f * (f32) a3->unk2E;
+    spF0[0] = a2->pos.x;
+    spF0[2] = fsin16_precise((s16) (a2->unk2C << 8)) * sp104;
+    spF0[1] = a3->pos.x;
+    spF0[3] = fsin16_precise((s16) (a3->unk2C << 8)) * sp100;
+    spE0[0] = a2->pos.y;
+    spE0[2] = fsin16_precise((s16) (a2->unk2D << 8)) * sp104;
+    spE0[1] = a3->pos.y;
+    spE0[3] = fsin16_precise((s16) (a3->unk2D << 8)) * sp100;
+    spD0[0] = a2->pos.z;
+    spD0[2] = fcos16_precise((s16) (a2->unk2C << 8)) * sp104;
+    spD0[1] = a3->pos.z;
+    spD0[3] = fcos16_precise((s16) (a3->unk2C << 8)) * sp100;
+    func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, (unk_curve_func_2)func_80004CE8); // TODO: fix cast
+    arg0->unk8[0] = 0.0f;
+    for (i = 0; i < 8; i++) {
+        temp_fv0 = spAC[i + 1] - spAC[i];
+        temp_fv1 = sp88[i + 1] - sp88[i];
+        temp_fa1 = sp64[i + 1] - sp64[i];
+        arg0->unk8[i + 1] = arg0->unk8[i] + sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
+    }
+    if (a5 == 1) {
+        a4 -= arg0->unk28;
+    }
+    for (i = 0; i <= 8; i++) {
+        arg0->unk8[i] += a4;
+    }
+}
 
 // offset: 0x5D78 | func: 30
 /** Called when sequence is waiting for button presses (e.g. menu when talking with Rocky) */
@@ -880,10 +915,6 @@ void dll_3_func_65EC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x6620 | func: 34
-#ifndef NON_MATCHING
-s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_6620.s")
-#else
 s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4) {
     s32 sp54;
     s32 sp4C[2];
@@ -892,38 +923,38 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
     f32 var_fa0;
 
     sp54 = (u8)(arg3 >> 8);
-    switch ((u8)arg3) {                              /* switch 1 */
-    case 2:                                         /* switch 1 */
+    arg3 = arg3 & 0xFF;
+    switch (arg3) {
+    case 2: 
         if (arg4 != 0) {
             break;
         }
         sp4C[0] = 0x19;
         sp4C[1] = 0x15;
+        if ((s32)&sp54) {}// @fake
         if (arg2->unk28 < 0) {
-            // @fake
-            if (&sp54) {}
             arg2->unk28 = gDLL_26_Curves->vtbl->func_1E4(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, sp4C, 2, sp54);
             if (arg2->unk28 >= 0) {
                 if (arg2->unk2C != NULL) {
                     mmFree(arg2->unk2C);
                     arg2->unk2C = NULL;
                 }
-                arg2->unk2C = mmAlloc(0x2C, 0x11, NULL);
+                arg2->unk2C = mmAlloc(sizeof(UnkAnimStruct), 0x11, NULL);
                 if (arg2->unk2C != NULL) {
-                    dll_3_func_5698(arg2->unk2C, (Object *) arg2->unk28);
+                    dll_3_func_5698(arg2->unk2C, arg2->unk28);
                 } else {
                     arg2->unk28 = -1;
                 }
             }
         }
         break;
-    case 9:                                         /* switch 1 */
+    case 9: 
         if (arg4 != 0) {
             break;
         }
         arg2->unk8C |= 1;
         break;
-    case 18:                                        /* switch 1 */
+    case 18:
         if (arg4 != 0) {
             break;
         }
@@ -933,7 +964,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
             _bss_3A8[arg2->unk63] |= 0x10;
         }
         break;
-    case 14:                                        /* switch 1 */
+    case 14:
         if (arg4 != 0) {
             break;
         }
@@ -941,7 +972,7 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
             gDLL_28_ScreenFade->vtbl->fade(sp54, 1);
         }
         break;
-    case 15:                                        /* switch 1 */
+    case 15:
         if (arg4 != 0) {
             break;
         }
@@ -949,10 +980,10 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
             gDLL_28_ScreenFade->vtbl->fade_reversed(sp54, 1);
         }
         break;
-    case 20:                                        /* switch 1 */
+    case 20:
         dll_3_func_65EC(0x59, sp54 & 0x7F, 1, 0x78);
         break;
-    case 23:                                        /* switch 1 */
+    case 23:
         if (arg4 != 0) {
             break;
         }
@@ -963,51 +994,51 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
             obj_set_model(arg1, sp54);
         }
         break;
-    case 24:                                        /* switch 1 */
+    case 24:
         if (arg1->group == 1) {
             ((DLL_210_Player*)arg1->dll)->vtbl->func28(arg1, sp54);
         }
         break;
-    case 25:                                        /* switch 1 */
+    case 25:
         if (arg1->group == 1) {
             ((DLL_210_Player*)arg1->dll)->vtbl->func29(arg1, sp54);
         }
         break;
-    case 26:                                        /* switch 1 */
+    case 26:
         dll_3_func_65EC(0x54, 4, 0, 0);
         break;
-    case 33:                                        /* switch 1 */
+    case 33:
         arg2->unk7A |= 0x400;
         arg2->unk142_4 = sp54;
         break;
-    case 34:                                        /* switch 1 */
+    case 34:
         arg2->unk7A &= ~0x400;
         arg2->unk142_4 = 0;
         break;
-    case 35:                                        /* switch 1 */
+    case 35:
         gDLL_29_Gplay->vtbl->checkpoint(&arg1->srt.transl, arg1->srt.yaw, 0, map_get_layer());
         break;
-    case 36:                                        /* switch 1 */
+    case 36:
         gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
         break;
-    case 37:                                        /* switch 1 */
+    case 37:
         ((DLL_210_Player*)get_player()->dll)->vtbl->func69(get_player(), sp54);
         break;
-    default:                                        /* switch 1 */
+    default:
         break;
     }
 
-    switch ((u8)arg3) {                             /* switch 2 */
-    case 0:                                     /* switch 2 */
+    switch (arg3) {
+    case 0: 
         *_bss_A4 = 1;
         return 0;
-    case 5:                                     /* switch 2 */
+    case 5: 
         gDLL_6_AMSFX->vtbl->func_480(arg1);
         break;
-    case 6:                                     /* switch 2 */
+    case 6: 
         gDLL_6_AMSFX->vtbl->func_480(NULL);
         break;
-    case 7:                                     /* switch 2 */
+    case 7: 
         if (arg4 == 0) {
             camera_enable_y_offset();
             temp_v0_3 = get_player();
@@ -1024,55 +1055,55 @@ s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8
             }
         }
         break;
-    case 10:                                    /* switch 2 */
+    case 10:
         func_8000F64C(0x12, sp54);
         break;
-    case 11:                                    /* switch 2 */
+    case 11:
         func_8000F64C(0x11, sp54);
         break;
-    case 12:                                    /* switch 2 */
+    case 12:
         func_8000F6CC();
         break;
-    case 13:                                    /* switch 2 */
+    case 13:
         gDLL_6_AMSFX->vtbl->stop_object(arg1);
         break;
-    case 16:                                    /* switch 2 */
+    case 16:
         arg2->unk89 = sp54;
         break;
-    case 23:                                    /* switch 2 */
+    case 23:
         if ((arg4 == 0) && (sp54 < arg1->def->numModels)) {
             obj_set_model(arg1, sp54);
         }
         break;
-    case 27:                                    /* switch 2 */
+    case 27:
         gDLL_29_Gplay->vtbl->set_obj_group_status((s32) arg1->mapID, sp54, 1);
         break;
-    case 28:                                    /* switch 2 */
+    case 28:
         gDLL_29_Gplay->vtbl->set_obj_group_status((s32) arg1->mapID, sp54, 0);
         break;
-    case 29:                                    /* switch 2 */
+    case 29:
         gDLL_29_Gplay->vtbl->set_map_setup((s32) arg1->mapID, sp54);
         break;
-    case 19:                                    /* switch 2 */
+    case 19:
         if (arg4 == 0) {
             _bss_3A8[arg2->unk63] &= ~0x10;
-        }
+        } 
+        else { } // @fake
         break;
-    case 30:                                    /* switch 2 */
+    case 30:
         if (arg4 == 0) {
             _bss_3A8[arg2->unk63] |= 0x10;
         }
         break;
-    case 31:                                    /* switch 2 */
+    case 31:
         gDLL_29_Gplay->vtbl->restart_clear();
         break;
-    case 32:                                    /* switch 2 */
+    case 32:
         gDLL_29_Gplay->vtbl->restart_goto();
         break;
     }
     return 1;
 }
-#endif
 
 // offset: 0x6EBC | func: 35
 f32 dll_3_func_6EBC(AnimObj_Data* state, s32 channelIndex, s32 arg2) {
