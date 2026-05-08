@@ -9,7 +9,7 @@ DLL_INTERFACE(DLL_IVehicle) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
 	/*7*/ s32 (*func7)(Object *self, Object *rider);
 	/*8*/ s32 (*func8)(Object *self);
-	/*9*/ void (*func9)(Object *self, f32 *a1, f32 *a2, f32 *a3);
+	/*9*/ void (*func9)(Object *self, f32 *x, f32 *y, f32 *z); //sets local coords of rider, relative to vehicle
 	/*10*/ s32 (*func10)(Object *self, Object *rider);
 	/*11*/ s32 (*func11)(Object *self);
 	/*12*/ void (*func12)(Object *self, f32 *a1, f32 *a2, f32 *a3);
