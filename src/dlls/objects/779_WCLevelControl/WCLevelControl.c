@@ -633,7 +633,7 @@ static void WCLevelControl_handle_act2(Object *self, WCLevelControl_Data *objdat
         if (temp == 4) {
             main_set_bits(BIT_813, 1);
             objdata->flags |= FLAG_20;
-        } else if (isNightTime || main_get_bits(BIT_809)) {
+        } else if (!isNightTime || main_get_bits(BIT_809)) {
             WCLevelControl_moon_puzzle_init_hard();
         }
     }
