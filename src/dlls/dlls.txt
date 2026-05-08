@@ -201,6 +201,7 @@
 501 = objects/501_SHtricky
 502 = objects/502_SHmushroom
 503 = objects/503_SHkillermushroom
+504 = objects/504_SHrocketmushroom
 505 = objects/505_SHspore
 506 = objects/506_SHPlantSpore
 507 = objects/507_SHqueenearthwalker

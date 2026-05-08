@@ -532,7 +532,10 @@ enum SoundID {
     
     SOUND_88D = 0x88D,
     
-    SOUND_8A2_Spore_Disintegrate = 0x8A2, // used in SHspore
+    SOUND_8A0_Deflate_Honk = 0x8A0,             //SHrocketmushroom
+    SOUND_8A1_Spore_Launched = 0x8A1,           //SHrocketmushroom
+    SOUND_8A2_Spore_Disintegrate = 0x8A2,       //SHspore
+    SOUND_8A3_Rocket_Mushroom_Grow = 0x8A3,     //SHrocketmushroom
     
     SOUND_8C7_Explosion_High = 0x8C7, //DRexplodeDoor
 
