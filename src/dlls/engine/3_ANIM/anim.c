@@ -126,12 +126,8 @@ typedef struct {
 /*0x1C*/ static u8 _data_1C = 0;
 /*0x20*/ static s32 _data_20 = -1; // object ID of the thing the player should hold when playing the first time pickup sequence
 /*0x24*/ static Object* _data_24 = 0;
-/*0x28*/ static s8 _data_28[] = {
-    0, 0, 0, 0
-};
-/*0x2C*/ static s32 _data_2C = {
-    0
-};
+/*0x28*/ static s8 _data_28 = 0;
+/*0x2C*/ static s32 _data_2C = 0;
 /*0x30*/ static s8 _data_30 = 0;
 /*0x34*/ static s32 _data_34[] = {
     0x00008000, 0x00004000, 0x00000002, 0x00000001, 0x00000004, 0x00000008, 0xffffffff
@@ -2302,12 +2298,12 @@ static s32 dll_3_func_5E50(s32 arg0, AnimObj_Data* arg1, AnimObj_Setup* arg2) {
         }
         break;
     case 16:
-        if (*_data_28 != 0) {
+        if (_data_28 != 0) {
             sp24 = 1;
         }
         break;
     case 17:
-        if (*_data_28 == 0) {
+        if (_data_28 == 0) {
             sp24 = 1;
         }
         break;
@@ -3625,12 +3621,12 @@ void dll_3_func_9440(AnimObj_Data* arg0, s32 arg1) {
 
 // offset: 0x9458 | func: 57 | export: 22
 s8 dll_3_func_9458(void) {
-    return _data_28[0];
+    return _data_28;
 }
 
 // offset: 0x9474 | func: 58 | export: 23
 void dll_3_func_9474(s8 arg0) {
-    _data_28[0] = arg0;
+    _data_28 = arg0;
 }
 
 // offset: 0x949C | func: 59 | export: 24
