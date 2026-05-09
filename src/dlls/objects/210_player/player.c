@@ -2280,13 +2280,13 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
 
         if (objdata->unk708 != NULL) {
             if (objdata->unk708->def->unkAA >= 0) {
-                if (arg2->unk8D == 0x1A) {
+                if (arg2->lastMessage == 0x1A) {
                     gDLL_1_cmdmenu->vtbl->open_tutorial_textbox(objdata->unk708->def->unkAA, 160, 140);
                 }
             } else {
                 gDLL_1_cmdmenu->vtbl->auto_show_info_scroll(objdata->unk708->def->gametextIndex[0], 160, 140);
             }
-            if (arg2->unk8D == 1) {
+            if (arg2->lastMessage == 1) {
                 gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);
                 obj_send_mesg(objdata->unk708, 0x7000B, arg0, NULL);
                 objdata->unk708 = NULL;

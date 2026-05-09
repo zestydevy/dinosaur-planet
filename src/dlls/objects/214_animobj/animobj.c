@@ -24,7 +24,7 @@ void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
     if (!setup->sequenceIdBitfield){
     }
 
-    objdata->unk76 = setup->unk1A;
+    objdata->eventGamebit = setup->unk1A;
     objdata->unk7A = -1;
     objdata->unk24 = 1.0f / (setup->unk24 + 1.0f);
     objdata->unk28 = -1;

@@ -79,6 +79,12 @@ enum AnimSetCodeEventType {
     ANIM_CODE_EVT_SET_BIT = 6
 };
 
+// Subtypes for ANIM_CODE_EVT_COUNTER_ADD
+enum AnimCounterAddCodeEventType {
+    ANIM_CODE_EVT_COUNTER_ADD_ENABLED = 0,
+    ANIM_CODE_EVT_COUNTER_ADD_DISABLED = 1
+};
+
 typedef enum {
 /*00*/    ANIMCURVES_CHANNEL_headRotateZ = 0,
 /*01*/    ANIMCURVES_CHANNEL_headRotateX = 1,
@@ -162,10 +168,10 @@ typedef struct {
 } Bss38Thing;
 
 typedef struct {
-    s32* unk0;
-    s16 unk4;
-    s16 unk6;
-} Bss5F0Thing;
+    s32* events; // pointer to list of code events
+    s16 numEvents;
+    s16 time; // timestamp of code event
+} CodeEventList;
 
 /*0x0*/ static s16 _data_0 = 0;
 /*0x4*/ static s16 _data_4 = 0;
@@ -247,8 +253,8 @@ typedef struct {
 /*0x5E0*/ static f32 _bss_5E0;
 /*0x5E4*/ static f32 _bss_5E4;
 /*0x5E8*/ static f32 _bss_5E8;
-/*0x5F0*/ static Bss5F0Thing _bss_5F0[20];
-/*0x690*/ static s32 _bss_690;
+/*0x5F0*/ static CodeEventList sCodeEvtQueue[20];
+/*0x690*/ static s32 sCodeEvtQueueCount;
 /*0x694*/ static u8 _bss_694[0x4]; // unused gap
 /*0x698*/ static ANIMUnk698 _bss_698[16];
 /*0x6F8*/ static s8 _bss_6F8;
@@ -289,7 +295,7 @@ static s8 anim_func_4158(AnimObj_Data* animObjData);
 static Object* anim_func_2FE8(Object* arg0, AnimObj_Data* arg1, AnimObj_Setup* arg2);
 static s32 anim_func_3614(Object* arg0, ModelInstance* arg1, AnimCurvesEvent** arg2, s8 arg3, s32* arg4);
 static void anim_func_4924(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance);
-static s32 anim_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* arg3, s16 arg4, s16 arg5, s8 arg6, s8 arg7);
+static s32 anim_do_code_event(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* arg3, s16 arg4, s16 arg5, s8 arg6, s8 arg7);
 static void anim_func_9EC8(Object* arg0, s16* arg1, s32 arg2);
 static void anim_func_72E0(Object* arg0);
 static void anim_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3);
@@ -304,7 +310,7 @@ static void anim_func_2760(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 a
 static void anim_func_3170(Object* arg0, Object* arg1, AnimObj_Data* arg2);
 static void anim_func_3414(Object* animObj, Object **arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3, ModelInstance **arg4);
 static s32 anim_func_495C(AnimObj_Data* arg0, Object* arg1);
-static s32 anim_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData);
+static s32 anim_check_decision(Object* override, s32 cond, AnimObj_Data* objData);
 static s32 anim_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state);
 
 // offset: 0x0 | ctor
@@ -410,7 +416,7 @@ s32 anim_func_3D0(Object* object, s32 updateRate) {
     _bss_32 = 0;
     _bss_89 = 0;
     _bss_8A = 0;
-    if ((_bss_3A8[temp_s0->unk63] & 8) && ((_bss_4C0[temp_s0->unk63] != 0) || (joy_get_pressed(0) & 0x20))) {
+    if ((_bss_3A8[temp_s0->unk63] & 8) && ((_bss_4C0[temp_s0->unk63] != 0) || (joy_get_pressed(0) & L_TRIG))) {
         if (temp_s0->unk8B == 0) {
             return 1;
         }
@@ -558,7 +564,7 @@ s32 anim_func_3D0(Object* object, s32 updateRate) {
         object->srt.pitch += temp_s0->unk16;
         object->srt.yaw += temp_s0->unk14;
         spBC = spD0->modelInsts[spD0->modelInstIdx];
-        _bss_690 = 0;
+        sCodeEvtQueueCount = 0;
         if (spBC != NULL) {
             sp9C = anim_func_6EBC(temp_s0, 0xD, temp_s0->animCurvesCurrentFrameB) + spCC->base.x;
             sp98 = anim_func_6EBC(temp_s0, 0xB, temp_s0->animCurvesCurrentFrameB) + spCC->base.z;
@@ -640,14 +646,14 @@ s32 anim_func_3D0(Object* object, s32 updateRate) {
                 }
             }
         }
-        for (var_s4 = 0; var_s4 < 10; var_s4++) {
-            if (temp_s0->unk138[var_s4] && (anim_func_5D78(object, temp_s0->unk138[var_s4], temp_s0) != 0)) {
+        for (var_s4 = 0; var_s4 < MAX_DECISION; var_s4++) {
+            if (temp_s0->decisionConditions[var_s4] && (anim_check_decision(object, temp_s0->decisionConditions[var_s4], temp_s0) != 0)) {
                 _bss_33 = 1;
-                temp_s0->animCurvesCurrentFrameA = temp_s0->unk124[var_s4];
+                temp_s0->animCurvesCurrentFrameA = temp_s0->decisionTimes[var_s4];
                 temp_s0->animCurvesCurrentFrameB = temp_s0->animCurvesCurrentFrameA;
                 var_s4 = 0;
-                while (var_s4 < 10) {
-                    temp_s0->unk138[var_s4++] = 0;
+                while (var_s4 < MAX_DECISION) {
+                    temp_s0->decisionConditions[var_s4++] = 0;
                 }
                 break;
             }
@@ -671,12 +677,12 @@ s32 anim_func_3D0(Object* object, s32 updateRate) {
         anim_func_1A04(object, spD0, temp_s0);
         anim_func_422C(temp_s0, spD0, 0);
         gDLL_15_Projgfx->vtbl->func2(temp_s0->animCurvesCurrentFrameA - temp_s0->animCurvesCurrentFrameB, spD0);
-        for (var_s4 = 0; var_s4 < _bss_690; var_s4++) {
-            if (anim_func_60AC(object, spD0, temp_s0, 
-                                _bss_5F0[var_s4].unk0, 
-                                _bss_5F0[var_s4].unk6, 
-                                _bss_5F0[var_s4].unk4, 0, 0) != 0) {
-                var_s4 = _bss_690;
+        for (var_s4 = 0; var_s4 < sCodeEvtQueueCount; var_s4++) {
+            if (anim_do_code_event(object, spD0, temp_s0, 
+                                sCodeEvtQueue[var_s4].events, 
+                                sCodeEvtQueue[var_s4].time, 
+                                sCodeEvtQueue[var_s4].numEvents, 0, 0) != 0) {
+                var_s4 = sCodeEvtQueueCount;
             }
             anim_func_4924(object, &spD0, &spBC);
         }
@@ -704,7 +710,7 @@ static void anim_func_15FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, AnimO
     AnimCurvesEvent* sp7C;
     s32 _pad;
     s32 _pad2;
-    Bss5F0Thing* temp_v0_2;
+    CodeEventList* temp_v0_2;
     s32 _pad3;
     Object* var_s4;
     s32 var_s0;
@@ -723,7 +729,7 @@ static void anim_func_15FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, AnimO
     if (arg2->animCurvesEvents != NULL) {
         arg2->unk78 = -1;
         _bss_88 = 0;
-        _bss_690 = _bss_88;
+        sCodeEvtQueueCount = _bss_88;
         while (arg2->unk72 < arg2->animCurvesEventCount) {
             sp7C = &arg2->animCurvesEvents[arg2->unk72];
             // TODO: check enum usage
@@ -748,17 +754,17 @@ static void anim_func_15FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, AnimO
                 }
             }
             arg2->unk72 += 1;
-            if (_bss_690 >= 20) {
-                for (var_s0 = 0; var_s0 < _bss_690; var_s0++) {
-                    temp_v0_2 = &_bss_5F0[var_s0];
-                    if (anim_func_60AC(arg0, var_s4, arg2, 
-                                        temp_v0_2->unk0, 
-                                        temp_v0_2->unk6, 
-                                        temp_v0_2->unk4, 0, 1) != 0) {
-                        var_s0 = _bss_690;
+            if (sCodeEvtQueueCount >= 20) {
+                for (var_s0 = 0; var_s0 < sCodeEvtQueueCount; var_s0++) {
+                    temp_v0_2 = &sCodeEvtQueue[var_s0];
+                    if (anim_do_code_event(arg0, var_s4, arg2, 
+                                        temp_v0_2->events, 
+                                        temp_v0_2->time, 
+                                        temp_v0_2->numEvents, 0, 1) != 0) {
+                        var_s0 = sCodeEvtQueueCount;
                     }
                 }
-                _bss_690 = 0;
+                sCodeEvtQueueCount = 0;
             }
             if (_bss_88 >= 10) {
                 anim_func_422C(arg2, var_s4, 1);
@@ -768,16 +774,16 @@ static void anim_func_15FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, AnimO
                 anim_func_4698(var_s4, arg0, arg2, 0);
             }
         }
-        for (var_s0 = 0; var_s0 < _bss_690; var_s0++) {
-            temp_v0_2 = &_bss_5F0[var_s0];
-            if (anim_func_60AC(arg0, var_s4, arg2, 
-                                temp_v0_2->unk0, 
-                                temp_v0_2->unk6, 
-                                temp_v0_2->unk4, 0, 1) != 0) {
-                var_s0 = _bss_690;
+        for (var_s0 = 0; var_s0 < sCodeEvtQueueCount; var_s0++) {
+            temp_v0_2 = &sCodeEvtQueue[var_s0];
+            if (anim_do_code_event(arg0, var_s4, arg2, 
+                                temp_v0_2->events, 
+                                temp_v0_2->time, 
+                                temp_v0_2->numEvents, 0, 1) != 0) {
+                var_s0 = sCodeEvtQueueCount;
             }
         }
-        _bss_690 = 0;
+        sCodeEvtQueueCount = 0;
         if (_bss_88 != 0) {
             anim_func_422C(arg2, var_s4, 1);
             _bss_88 = 0;
@@ -1163,7 +1169,7 @@ static void anim_func_2760(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 a
         }
         sp90 = sp7C[0];
         sp8C = sp7C[2];
-        _bss_690 = 0;
+        sCodeEvtQueueCount = 0;
         var_s0_2 = 0;
         while (var_s0_2 == 0 && arg2->unk72 < arg2->animCurvesEventCount) {
             spBC = &arg2->animCurvesEvents[arg2->unk72];
@@ -1189,13 +1195,16 @@ static void anim_func_2760(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 a
                 }
             }
         }
-        for (var_s0 = 0; var_s0 < _bss_690; var_s0++) {
-            if (anim_func_60AC(arg0, arg1, arg2, _bss_5F0[var_s0].unk0, _bss_5F0[var_s0].unk6, _bss_5F0[var_s0].unk4, 1, 0) != 0) {
-                var_s0 = _bss_690;
+        for (var_s0 = 0; var_s0 < sCodeEvtQueueCount; var_s0++) {
+            if (anim_do_code_event(arg0, arg1, arg2, 
+                    sCodeEvtQueue[var_s0].events, 
+                    sCodeEvtQueue[var_s0].time, 
+                    sCodeEvtQueue[var_s0].numEvents, 1, 0) != 0) {
+                var_s0 = sCodeEvtQueueCount;
             }
             anim_func_4924(arg0, &arg1, &spB4);
         }
-        _bss_690 = 0;
+        sCodeEvtQueueCount = 0;
     }
 }
 
@@ -1467,14 +1476,14 @@ static s32 anim_func_3614(Object* arg0, ModelInstance* arg1, AnimCurvesEvent** a
         }
         break;
     case ANIM_EVT_CODE:
-        if (_bss_690 >= 20) {
+        if (sCodeEvtQueueCount >= 20) {
             STUBBED_PRINTF("CODE OVERFLOW\n");
         }
-        if ((var_t0 != 0) && (evt->params > 0) && (_bss_690 < 20)) {
-            _bss_5F0[_bss_690].unk0 = (s32*)(evt + 1);
-            _bss_5F0[_bss_690].unk6 = temp_s0->animCurvesCurrentFrameA;
-            _bss_5F0[_bss_690].unk4 = evt->params;
-            _bss_690++;
+        if ((var_t0 != 0) && (evt->params > 0) && (sCodeEvtQueueCount < 20)) {
+            sCodeEvtQueue[sCodeEvtQueueCount].events = (s32*)(evt + 1);
+            sCodeEvtQueue[sCodeEvtQueueCount].time = temp_s0->animCurvesCurrentFrameA;
+            sCodeEvtQueue[sCodeEvtQueueCount].numEvents = evt->params;
+            sCodeEvtQueueCount++;
         }
         temp_s0->unk72 += evt->params;
         break;
@@ -1854,7 +1863,7 @@ static s32 anim_func_495C(AnimObj_Data* arg0, Object* arg1) {
 }
 
 // offset: 0x4A7C | func: 22
-static s32 anim_func_4A7C(AnimObj_Data* objData, s32 arg1) {
+static s32 anim_find_jump_target_time(AnimObj_Data* objData, s32 jumplabel) {
     AnimCurvesEvent* event;
     s32 subevent;
     s32 index;
@@ -1867,7 +1876,7 @@ static s32 anim_func_4A7C(AnimObj_Data* objData, s32 arg1) {
             delay = event->params;
         } else if (event->type == ANIM_EVT_CODE && event->params > 0) {
             subevent = *((s32 *)(event + 1));
-            if (((subevent & 0x3F) == 9) && (arg1 == (u16)(subevent >> 0x10))) {
+            if (((subevent & 0x3F) == ANIM_CODE_EVT_JUMPTARGET) && (jumplabel == (u16)(subevent >> 0x10))) {
                 return delay;
             }
             index += event->params;
@@ -2239,27 +2248,27 @@ void anim_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4,
 
 // offset: 0x5D78 | func: 30
 /** Called when sequence is waiting for button presses (e.g. menu when talking with Rocky) */
-static s32 anim_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData) {
-    switch (arg1) {
-        case 18:
+static s32 anim_check_decision(Object* override, s32 cond, AnimObj_Data* objData) {
+    switch (cond) {
+        case ANIM_DECISION_A_BUTTON:
             if (joy_get_pressed(0) & A_BUTTON) {
                 return 1;
             }
         default:
             break;
-        case 19:
+        case ANIM_DECISION_B_BUTTON:
             if (joy_get_pressed(0) & B_BUTTON) {
                 return 1;
             }
             break;
-        case 20:
-        case 21:
-        case 22:
-        case 23:
-        case 24:
-        case 25:
-            if (objData->unkF8 != NULL) {
-                return objData->unkF8(objData->unk11C, override, arg1);
+        case ANIM_DECISION_CUSTOM1:
+        case ANIM_DECISION_CUSTOM2:
+        case ANIM_DECISION_CUSTOM3:
+        case ANIM_DECISION_CUSTOM4:
+        case ANIM_DECISION_CUSTOM5:
+        case ANIM_DECISION_CUSTOM6:
+            if (objData->decisionCallback != NULL) {
+                return objData->decisionCallback(objData->unk11C, override, cond);
             }
             break;
     }
@@ -2365,32 +2374,32 @@ static s32 anim_func_5E50(s32 arg0, AnimObj_Data* arg1, AnimObj_Setup* arg2) {
 }
 
 // offset: 0x60AC | func: 32
-static s32 anim_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* arg3, s16 arg4, s16 arg5, s8 arg6, s8 arg7) {
+static s32 anim_do_code_event(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* codeEvents, s16 codeEventTime, s16 numCodeEvents, s8 arg6, s8 arg7) {
     s32 var_s0;
     s32 _pad;
-    s32 var_v1;
-    s32 var_fp;
-    s32 sp6C;
-    s32 temp_s3;
+    s32 k;
+    s32 subEvtType;
+    s32 i;
+    s32 evtType;
     s32 var_a3;
-    s32 var_a2;
+    s32 decIdx;
     s32 temp_v0_2;
-    s32 var_a1;
+    s32 decCondAlreadyExists;
     s32 var_s1;
 
-    for (sp6C = 0; sp6C < arg5; sp6C++) {
+    for (i = 0; i < numCodeEvents; i++) {
         var_a3 = 0;
-        temp_s3 = arg3[sp6C] & 0x3F;
-        var_s0 = (arg3[sp6C] >> 6) & 0x3FF;
-        var_s1 = (arg3[sp6C] >> 0x10) & 0xFFFF;
-        if ((temp_s3 == 2) || (temp_s3 == 3)) {
-            var_fp = var_s0;
+        evtType = codeEvents[i] & 0x3F;
+        var_s0 = (codeEvents[i] >> 6) & 0x3FF;
+        var_s1 = (codeEvents[i] >> 0x10) & 0xFFFF;
+        if ((evtType == ANIM_CODE_EVT_SET) || (evtType == ANIM_CODE_EVT_COUNTER_ADD)) {
+            subEvtType = var_s0;
             if (var_s1 & 0x8000) {
                 var_s1 |= 0xFFFF0000;
             }
             var_s0 = 0;
         }
-        switch (temp_s3) {
+        switch (evtType) {
         case ANIM_CODE_EVT_6:
             if (anim_func_6620(arg0, arg1, arg2, (var_s1 << 8) | var_s0, (s8) arg7) == 0) {
                 return 1;
@@ -2418,23 +2427,23 @@ static s32 anim_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* a
             var_s0 = 0;
             break;
         case ANIM_CODE_EVT_DECISION:
-            var_a1 = 0;
+            decCondAlreadyExists = FALSE;
             if (arg7 == 0) {
-                var_a2 = -1;
-                for (var_v1 = 0; var_v1 < MAX_DECISION; var_v1++) {
-                    if (var_s0 == arg2->unk138[var_v1]) {
-                        var_a1 = 1;
+                decIdx = -1;
+                for (k = 0; k < MAX_DECISION; k++) {
+                    if (var_s0 == arg2->decisionConditions[k]) {
+                        decCondAlreadyExists = TRUE;
                     }
-                    if (arg2->unk138[var_v1] == 0) {
-                        var_a2 = var_v1;
+                    if (arg2->decisionConditions[k] == 0) {
+                        decIdx = k;
                     }
                 }
-                if ((var_a1 == 0) && (var_a2 != -1)) {
+                if ((decCondAlreadyExists == FALSE) && (decIdx != -1)) {
                     var_a3 = 0;
-                    arg2->unk138[var_a2] = (u8) var_s0; // cond
-                    arg2->unk124[var_a2] = anim_func_4A7C(arg2, /*jumplabel*/var_s1);
+                    arg2->decisionConditions[decIdx] = (u8) var_s0; // cond
+                    arg2->decisionTimes[decIdx] = anim_find_jump_target_time(arg2, /*jumplabel*/var_s1);
                 }
-                if (var_a2 == -1) {
+                if (decIdx == -1) {
                     STUBBED_PRINTF("MAX_DECISION reached\n");
                 }
             }
@@ -2445,7 +2454,7 @@ static s32 anim_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* a
         }
 
         if ((var_a3 > 0) && (arg6 == 0)) {
-            switch (temp_s3) {
+            switch (evtType) {
             case ANIM_CODE_EVT_JUMPTOTIME:
                 if (arg7 == 0) {
                     if (_bss_33 == 0) {
@@ -2460,14 +2469,14 @@ static s32 anim_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* a
                 if (arg7 == 0) {
                     if (_bss_33 == 0) {
                         _bss_33 = 1;
-                        arg2->animCurvesCurrentFrameA = anim_func_4A7C(arg2, var_s1);
+                        arg2->animCurvesCurrentFrameA = anim_find_jump_target_time(arg2, var_s1);
                         arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA;
                     }
                     return 1;
                 }
                 break;
             case ANIM_CODE_EVT_SET:
-                switch (var_fp) {
+                switch (subEvtType) {
                 case ANIM_CODE_EVT_SET_MESSAGE:
                     // Security ROM check
                     temp_v0_2 = (*(s16*)0xBC000000);
@@ -2498,16 +2507,16 @@ static s32 anim_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* a
                     sEventFlags[arg2->unk63] = (s8) var_s1;
                     break;
                 case ANIM_CODE_EVT_SET_BIT:
-                    main_set_bits(arg2->unk76, var_s1 != 0);
+                    main_set_bits(arg2->eventGamebit, var_s1 != 0);
                     break;
                 }
                 break;
             case ANIM_CODE_EVT_COUNTER_ADD:
                 if (arg7 == 0) {
-                    switch (var_fp) {
-                    case 1:
+                    switch (subEvtType) {
+                    case ANIM_CODE_EVT_COUNTER_ADD_DISABLED:
                         break;
-                    case 0:
+                    case ANIM_CODE_EVT_COUNTER_ADD_ENABLED:
                         arg2->counter += var_s1;
                         break;
                     }
@@ -2515,8 +2524,8 @@ static s32 anim_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* a
                 break;
             case ANIM_CODE_EVT_PAUSE:
                 if (arg7 == 0) {
-                    arg2->animCurvesCurrentFrameA = arg4;
-                    arg2->animCurvesCurrentFrameB = arg4;
+                    arg2->animCurvesCurrentFrameA = codeEventTime;
+                    arg2->animCurvesCurrentFrameB = codeEventTime;
                     arg2->unk88 = var_s0 + 1;
                     _bss_33 = 1;
                     return 1;
@@ -3519,8 +3528,8 @@ s32 anim_start_obj_sequence(s32 objectSeqIndex, Object* object, s32 enabledActor
             actorObjData->unk1A = sp52;
             actorObjData->unk7A = -1;
             actorObjData->unk7A &= ~0x400;
-            for (j = 0; j < 4; j++) {
-                actorObjData->unk138[j] = 0;
+            for (j = 0; j < 4; j++) { // @bug? max decisions is 10 not 4
+                actorObjData->decisionConditions[j] = 0;
             }
             if (actors[i].settings & 0x80) {
                 actorObjData->unk62 = 4;

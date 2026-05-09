@@ -10,6 +10,17 @@
 #define ANIMCURVES_KEYFRAME_CHANNELS 19
 #define MAX_DECISION 10
 
+enum AnimDecisionCondition {
+    ANIM_DECISION_A_BUTTON = 18,
+    ANIM_DECISION_B_BUTTON = 19,
+    ANIM_DECISION_CUSTOM1 = 20,
+    ANIM_DECISION_CUSTOM2 = 21,
+    ANIM_DECISION_CUSTOM3 = 22,
+    ANIM_DECISION_CUSTOM4 = 23,
+    ANIM_DECISION_CUSTOM5 = 24,
+    ANIM_DECISION_CUSTOM6 = 25
+};
+
 typedef struct {
 /*0*/ f32 value;
 /*4*/ s8 interpolation;
@@ -39,7 +50,7 @@ typedef struct {
 } AnimObj_Setup;
 
 typedef void (*AnimObj_DataF4Callback)(Object *actor, Object *override, struct AnimObj_Data* arg2);
-typedef s32 (*AnimObj_DataF8Callback)(Object *actor, Object *override, s32 arg2);
+typedef s32 (*AnimObj_DecisionCallback)(Object *actor, Object *override, s32 arg2);
 
 typedef struct {
     s32 unk0;
@@ -82,7 +93,7 @@ typedef struct AnimObj_Data {
 /*070*/ s16 animCurvesKeyframeCount;
 /*072*/ s16 unk72;
 /*074*/ s16 unk74;
-/*076*/ s16 unk76;
+/*076*/ s16 eventGamebit; // gamebit toggleable by anim events
 /*078*/ s16 unk78;
 /*07A*/ s16 unk7A;
 /*07C*/ s16 unk7C;
@@ -111,14 +122,14 @@ typedef struct AnimObj_Data {
 /*0A8*/ s16 channelFirstKeyIndex[ANIMCURVES_KEYFRAME_CHANNELS];
 /*0CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
 /*0F4*/ AnimObj_DataF4Callback unkF4; //end-of-sequence callback function
-/*0F8*/ AnimObj_DataF8Callback unkF8;
+/*0F8*/ AnimObj_DecisionCallback decisionCallback;
 /*0FC*/ UnkFunc_80024108Struct unkFC;
 /*118*/ s32 unk118;
 /*11C*/ Object* unk11C;
 /*120*/ s16 unk120;
 /*122*/ s16 unk122;
-/*124*/ s16 unk124[MAX_DECISION];
-/*138*/ u8 unk138[MAX_DECISION];
+/*124*/ s16 decisionTimes[MAX_DECISION]; // timestamp of decision target
+/*138*/ u8 decisionConditions[MAX_DECISION]; // condition of decision
 /*142*/ u8 unk142_4: 4;
 /*142*/ u8 unk142_0: 4;
 /*143*/ s8 unk143[0x144 - 0x143];
