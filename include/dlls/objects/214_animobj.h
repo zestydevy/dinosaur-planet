@@ -34,10 +34,13 @@ typedef struct {
 
 typedef struct AnimObj_Data {
 /*000*/ Object* actor;
-/*004*/ s32 unk4;
-/*008*/ s8 unk8[0x10 - 0x8];
+/*004*/ f32 unk4;
+/*008*/ f32 unk8;
+/*00C*/ f32 unkC;
 /*010*/ f32 unk10;
-/*014*/ s8 unk14[0x1A - 0x14];
+/*014*/ s16 unk14;
+/*016*/ s16 unk16;
+/*018*/ s16 unk18;
 /*01A*/ s16 unk1A; //angle
 /*004*/ s8 unk1C[0x20 - 0x1C];
 /*020*/ f32 unk20;

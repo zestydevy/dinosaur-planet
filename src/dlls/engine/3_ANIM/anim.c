@@ -168,17 +168,15 @@ typedef struct {
 /*0x1C8*/ static s8 _bss_1C8[ANIMCURVES_SCENES_MAX];
 /*0x1F8*/ static s16 _bss_1F8[ANIMCURVES_SCENES_MAX];
 /*0x258*/ static s16 _bss_258[ANIMCURVES_SCENES_MAX];
-/*0x2B8*/ static u8 _bss_2B8[0x8];
-/*0x2C0*/ static u8 _bss_2C0[0x58];
-/*0x318*/ static u16 _bss_318[0x4];
-/*0x320*/ static u8 _bss_320[0x58];
-/*0x378*/ static s8 _bss_378[ANIMCURVES_SCENES_MAX];
+/*0x2B8*/ static s16 _bss_2B8[48]; // TODO: len of 45?
+/*0x318*/ static s16 _bss_318[46]; // TODO: len of 45?
+/*0x378*/ static u8 _bss_378[ANIMCURVES_SCENES_MAX];
 /*0x3A8*/ static u8 _bss_3A8[0x8];
 /*0x3B0*/ static u8 _bss_3B0[0x28];
 /*0x3D8*/ static s32 _bss_3D8[ANIMCURVES_SCENES_MAX];
 /*0x490*/ static u8 _bss_490[ANIMCURVES_SCENES_MAX];
-/*0x4C0*/ static u8 _bss_4C0[0x30];
-/*0x4F0*/ static u8 _bss_4F0[0xb4];
+/*0x4C0*/ static u8 _bss_4C0[48]; // TODO: len of 45?
+/*0x4F0*/ static f32 _bss_4F0[45];
 /*0x5A4*/ static f32 _bss_5A4;
 /*0x5A8*/ static f32 _bss_5A8;
 /*0x5AC*/ static u8 _bss_5AC[0x4]; //TODO: just u8?
@@ -235,7 +233,7 @@ static void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3,
 static s32 dll_3_func_6620(Object *arg0, Object *arg1, AnimObj_Data *arg2, s32 arg3, s8 arg4);
 static void dll_3_func_57A4(UnkAnimStruct* arg0, f32 arg1);
 static s32 dll_3_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4);
-static s32 dll_3_func_5E50(s32 arg0, AnimObj_Data* arg1, ObjSetup* arg2);
+static s32 dll_3_func_5E50(s32 arg0, AnimObj_Data* arg1, AnimObj_Setup* arg2);
 s16 dll_3_func_8598(Object* animObj);
 static void dll_3_func_9C94(s32 index, Object* object, Object* overrideObject);
 static void dll_3_func_4FC4(Object* animObj, AnimObj_Data* arg1);
@@ -251,6 +249,17 @@ static void dll_3_func_72E0(Object* arg0);
 static void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3);
 static void dll_3_func_71C0(Object* arg0, Object* arg1, AnimObj_Data* arg2);
 static void dll_3_func_422C(AnimObj_Data* arg0, Object* arg1, u8 arg2);
+static void dll_3_func_15FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3);
+static void dll_3_func_1C04(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 arg3);
+static void dll_3_func_1A04(Object* arg0, Object* arg1, AnimObj_Data* arg2);
+static void dll_3_func_2EB4(Object* arg0, Object* arg1, AnimObj_Data* objData);
+static void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1);
+static void dll_3_func_2760(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 arg3);
+static void dll_3_func_3170(Object* arg0, Object* arg1, AnimObj_Data* arg2);
+static void dll_3_func_3414(Object* animObj, Object **arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3, ModelInstance **arg4);
+static s32 dll_3_func_495C(AnimObj_Data* arg0, Object* arg1);
+static s32 dll_3_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData);
+static s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -321,11 +330,326 @@ void dll_3_func_394(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x3D0 | func: 5 | export: 4
-s32 dll_3_func_3D0(Object* object, s32 updateRate);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3D0.s")
+s32 dll_3_func_3D0(Object* object, s32 updateRate) {
+    AnimObj_Data* temp_s0;
+    Object* spD0;
+    AnimObj_Setup* spCC;
+    f32 temp_fs2;
+    f32 temp_fs3;
+    f32 temp_fv0_3;
+    ModelInstance* spBC;
+    AnimCurvesEvent* spB8;
+    f32 spB4;
+    s32 var_s4;
+    f32 var_fv1;
+    s32 temp_v0_6;
+    s32 var_s1;
+    s32 var_s3;
+    f32 sp9C;
+    f32 sp98;
+    s32 sp94;
+
+    sp94 = 0;
+    spCC = (AnimObj_Setup*)object->setup;
+    if (spCC == NULL) {
+        return 1;
+    }
+    temp_s0 = object->data;
+    spD0 = temp_s0->actor;
+    _bss_A4 = 0;
+    _bss_32 = 0;
+    _bss_89 = 0;
+    _bss_8A = 0;
+    if ((_bss_3A8[temp_s0->unk63] & 8) && ((_bss_4C0[temp_s0->unk63] != 0) || (joy_get_pressed(0) & 0x20))) {
+        if (temp_s0->unk8B == 0) {
+            return 1;
+        }
+        temp_s0->unk9D |= 0x80;
+        spD0 = object;
+        if (temp_s0->actor != NULL) {
+            spD0 = temp_s0->actor;
+            spD0->unkC0 = object;
+            spD0->stateFlags |= 0x1000;
+        }
+        if (_bss_4C0[temp_s0->unk63] != 0) {
+            if ((temp_s0->actor != NULL) && (temp_s0->actor->unkB4 != -1)) {
+                _bss_4F0[temp_s0->unk63] += gUpdateRateF;
+                if (_bss_4F0[temp_s0->unk63] > 60.0f) {
+                    if (_bss_9C != -1) {
+                        warpPlayer(_bss_9C, 0);
+                    } else {
+                        gDLL_28_ScreenFade->vtbl->fade_reversed(30, 1);
+                    }
+                    dll_3_func_71C0(object, spD0, temp_s0);
+                    return 1;
+                }
+                if (_bss_4F0[temp_s0->unk63] > 40.0f) {
+                    dll_3_func_15FC(object, spD0, temp_s0, spCC);
+                    gDLL_22_Subtitles->vtbl->func_448();
+                }
+            } else {
+                if (_bss_4F0[temp_s0->unk63] > 50.0f) {
+                    dll_3_func_71C0(object, spD0, temp_s0);
+                    return 1;
+                }
+                if (_bss_4F0[temp_s0->unk63] > 40.0f) {
+                    dll_3_func_15FC(object, spD0, temp_s0, spCC);
+                }
+            }
+        } else if ((temp_s0->actor != NULL) && (temp_s0->actor->unkB4 != -1)) {
+            gDLL_28_ScreenFade->vtbl->fade(30, 1);
+            _bss_4F0[temp_s0->unk63] = 0;
+            _bss_4C0[temp_s0->unk63] = 1;
+            _bss_9C = -1;
+        }
+
+        dll_3_func_1C04(object, spD0, temp_s0, temp_s0->animCurvesCurrentFrameA);
+        if (spD0 != object) {
+            dll_3_func_4698(spD0, object, temp_s0, 0);
+        }
+        dll_3_func_4FC4(object, temp_s0);
+        if (temp_s0->unk86 == 1) {
+            dll_3_func_4B20(object, spCC);
+        }
+        object->srt.yaw += temp_s0->unk1A;
+        dll_3_func_1A04(object, spD0, temp_s0);
+        if ((temp_s0->actor != NULL) && (temp_s0->actor->unkB4 != -1) && !(_bss_3A8[temp_s0->unk63] & 0x10)) {
+            gDLL_2_Camera->vtbl->set_letterbox_goal(30, 1);
+        }
+        return 0;
+    }
+    if (temp_s0->unk8B == 3) {
+        if (temp_s0->actor != NULL) {
+            spD0->unkC0 = object;
+            spD0->stateFlags |= 0x1000;
+        }
+        return 0;
+    }
+    if (_bss_490[temp_s0->unk63] == 1) {
+        temp_s0->animCurvesCurrentFrameA = _bss_2B8[temp_s0->unk63];
+        temp_s0->animCurvesCurrentFrameB = temp_s0->animCurvesCurrentFrameA;
+        dll_3_func_2EB4(object, spD0, temp_s0);
+    } else {
+        temp_s0->animCurvesCurrentFrameA = _bss_1F8[temp_s0->unk63];
+    }
+    dll_3_func_32B0(temp_s0, updateRate);
+    _bss_33 = 0;
+    do {
+        _bss_88 = 0;
+        if (temp_s0->unk8B == 0) {
+            object->opacity = 0;
+            return 1;
+        }
+        spD0 = object;
+        if (temp_s0->actor != NULL) {
+            spD0 = temp_s0->actor;
+            spD0->unkC0 = object;
+            spD0->stateFlags |= 0x1000;
+        } else if ((temp_s0->unk87 == 0) && (temp_s0->unk62 < 4)) {
+            temp_s0->unk62 = -1;
+        }
+        if (_bss_A8[temp_s0->unk63] != 0) {
+            if (_bss_1C8[temp_s0->unk63] != 0) {
+                temp_s0->animCurvesCurrentFrameA -= _bss_1C8[temp_s0->unk63];
+                if (temp_s0->animCurvesCurrentFrameA < 0) {
+                    temp_s0->animCurvesCurrentFrameA = 0;
+                }
+                temp_s0->animCurvesCurrentFrameB = (s16) (temp_s0->animCurvesCurrentFrameA - 1);
+                dll_3_func_2760(object, spD0, temp_s0, 1);
+            }
+        }
+        _bss_5CC = 0;
+        if (spD0 != object) {
+            dll_3_func_4698(spD0, object, temp_s0, _bss_A8[temp_s0->unk63]);
+            _bss_5CC = 1;
+        }
+        dll_3_func_3170(object, spD0, temp_s0);
+        if (temp_s0->unk8B == 2) {
+            dll_3_func_3414(object, &spD0, temp_s0, spCC, &spBC);
+            return 0;
+        }
+        if (_bss_A8[temp_s0->unk63] == 1) {
+            updateRate = 0;
+        } else if (_bss_A8[temp_s0->unk63] == 2) {
+            temp_s0->animCurvesCurrentFrameA = temp_s0->animCurvesDuration;
+            _bss_89 = 1;
+        } else if (_bss_A8[temp_s0->unk63] == 3) {
+            temp_v0_6 = dll_3_func_495C(temp_s0, object);
+            if (temp_v0_6 >= 0) {
+                _bss_33 = 1;
+                temp_s0->animCurvesCurrentFrameA = (s16) temp_v0_6;
+                temp_s0->animCurvesCurrentFrameB = temp_s0->animCurvesCurrentFrameA;
+            }
+        }
+        if ((temp_s0->actor != NULL) && (temp_s0->actor->unkB4 != -1) && !(_bss_3A8[temp_s0->unk63] & 0x10)) {
+            gDLL_2_Camera->vtbl->set_letterbox_goal(30, 1);
+        }
+        if (_bss_378[temp_s0->unk63] != 0) {
+            temp_s0->unk1A = _bss_318[temp_s0->unk63];
+        }
+        if (temp_s0->unk88 != 0) {
+            if (dll_3_func_5E50(temp_s0->unk88 - 1, temp_s0, spCC) == 0) {
+                temp_s0->unk88 = 0;
+            } else {
+                _bss_258[temp_s0->unk63] = temp_s0->animCurvesCurrentFrameA;
+                return 0;
+            }
+        }
+        temp_s0->animCurvesCurrentFrameA += updateRate;
+        if (temp_s0->animCurvesDuration < temp_s0->animCurvesCurrentFrameA) {
+            temp_s0->animCurvesCurrentFrameA = temp_s0->animCurvesDuration;
+        }
+        var_s3 = (s32) temp_s0->animCurvesCurrentFrameA;
+        dll_3_func_1C04(object, spD0, temp_s0, var_s3);
+        object->srt.transl.x += temp_s0->unk4;
+        object->srt.transl.y += temp_s0->unk8;
+        object->srt.transl.z += temp_s0->unkC;
+        object->srt.roll += temp_s0->unk18;
+        object->srt.pitch += temp_s0->unk16;
+        object->srt.yaw += temp_s0->unk14;
+        spBC = spD0->modelInsts[spD0->modelInstIdx];
+        _bss_690 = 0;
+        if (spBC != NULL) {
+            sp9C = dll_3_func_6EBC(temp_s0, 0xD, temp_s0->animCurvesCurrentFrameB) + spCC->base.x;
+            sp98 = dll_3_func_6EBC(temp_s0, 0xB, temp_s0->animCurvesCurrentFrameB) + spCC->base.z;
+        }
+        temp_s0->animCurvesCurrentFrameA = temp_s0->animCurvesCurrentFrameB;
+        while (temp_s0->animCurvesCurrentFrameA < var_s3) {
+            temp_s0->animCurvesCurrentFrameA += 1;
+            temp_fs3 = dll_3_func_6EBC(temp_s0, 0xD, temp_s0->animCurvesCurrentFrameA) + spCC->base.x;
+            temp_fs2 = dll_3_func_6EBC(temp_s0, 0xB, temp_s0->animCurvesCurrentFrameA) + spCC->base.z;
+            if ((temp_s0->animCurvesCurrentFrameA > 0) && (temp_s0->unk7A & 4)) {
+                if ((temp_s0->unk84 == 1) && (temp_s0->unk87 == 0) && (spBC != NULL)) {
+                    temp_fv0_3 = temp_fs3 - sp9C;
+                    var_fv1 = temp_fs2 - sp98;
+                    if (func_8002493C(spD0, sqrtf(SQ(temp_fv0_3) + SQ(var_fv1)), &spB4) == 0) {
+                        spB4 = dll_3_func_6EBC(temp_s0, 9, temp_s0->animCurvesCurrentFrameA - 1) * 0.0004f;
+                    }
+                } else {
+                    spB4 = dll_3_func_6EBC(temp_s0, 9, temp_s0->animCurvesCurrentFrameA - 1) * 0.0004f;
+                }
+                if (spBC != NULL) {
+                    func_80024108(spD0, spB4, 1.0f, &temp_s0->unkFC);
+                    func_80025780(spD0, 1.0f, &temp_s0->unkFC, 0);
+                    if ((temp_s0->unk30 != 0) && (spBC->model->unk71 & 1)) {
+                        func_80032B44(spD0, temp_s0->unk30);
+                    }
+                    func_8001B084(spBC, 1.0f);
+                    if (temp_s0->unk20 > 0.0f) {
+                        if (temp_s0->channelTotalKeys[10] != 0) {
+                            var_fv1 = dll_3_func_6EBC(temp_s0, 10, temp_s0->animCurvesCurrentFrameA - 1);
+                        } else {
+                            var_fv1 = 8.0f;
+                        }
+                        if (var_fv1 < 1.0f) {
+                            var_fv1 = 1.0f;
+                        }
+                        var_fv1 = 1.0f / var_fv1;
+                        temp_s0->unk20 -= var_fv1;
+                        if (temp_s0->unk20 < 0.0f) {
+                            temp_s0->unk20 = 0.0f;
+                        }
+                    }
+                    dummy_label1: ; // @fake
+                } else {
+                    spD0->animProgress += spB4;
+                    while (spD0->animProgress > 1.0f) {
+                        spD0->animProgress -= 1.0f;
+                    }
+                    while (spD0->animProgress < 0.0f) {
+                        spD0->animProgress += 1.0f;
+                    }
+                }
+            }
+            sp9C = temp_fs3;
+            sp98 = temp_fs2;
+            var_s1 = 0;
+            while ((var_s1 == 0) && (temp_s0->unk72 < temp_s0->animCurvesEventCount)) {
+                spB8 = temp_s0->animCurvesEvents + temp_s0->unk72;
+                if (spB8->type == 0) {
+                    if (temp_s0->animCurvesCurrentFrameA >= spB8->params) {
+                        temp_s0->unk74 = spB8->params;
+                        temp_s0->unk72 += 1;
+                    } else {
+                        var_s1 = 1;
+                    }
+                } else {
+                    if (temp_s0->animCurvesCurrentFrameA >= temp_s0->unk74) {
+                        if (spB8->type != 0xF) {
+                            temp_s0->unk74 += spB8->delay;
+                        }
+                        temp_s0->unk72 += 1;
+                        if (dll_3_func_3614(object, spBC, &spB8, 0, NULL) != 0) {
+                            var_s3 = temp_s0->animCurvesCurrentFrameA;
+                        }
+                        dll_3_func_4924(object, &spD0, &spBC);
+                    } else {
+                        var_s1 = 1;
+                    }
+                }
+            }
+        }
+        for (var_s4 = 0; var_s4 < 10; var_s4++) {
+            if (temp_s0->unk138[var_s4] && (dll_3_func_5D78(object, temp_s0->unk138[var_s4], temp_s0) != 0)) {
+                _bss_33 = 1;
+                temp_s0->animCurvesCurrentFrameA = temp_s0->unk124[var_s4];
+                temp_s0->animCurvesCurrentFrameB = temp_s0->animCurvesCurrentFrameA;
+                var_s4 = 0;
+                while (var_s4 < 10) {
+                    temp_s0->unk138[var_s4++] = 0;
+                }
+                break;
+            }
+        }
+        if ((_bss_5CC == 0) && (spD0 != object)) {
+            dll_3_func_4698(spD0, object, temp_s0, _bss_A8[temp_s0->unk63]);
+        }
+        if (temp_s0->unk9D != 0) {
+            _bss_33 = dll_3_func_3268(object, spD0, temp_s0);
+        }
+        temp_s0->unk98 = 0;
+        temp_s0->unk8D = 0;
+        if ((spBC != NULL) && (temp_s0->unk7A & 4)) {
+            spBC->animState0->unk58[0] = (s16) (temp_s0->unk20 * 1023.0f);
+        }
+        dll_3_func_4FC4(object, temp_s0);
+        if (temp_s0->unk86 == 1) {
+            dll_3_func_4B20(object, spCC);
+        }
+        object->srt.yaw += temp_s0->unk1A;
+        dll_3_func_1A04(object, spD0, temp_s0);
+        dll_3_func_422C(temp_s0, spD0, 0);
+        gDLL_15_Projgfx->vtbl->func2(temp_s0->animCurvesCurrentFrameA - temp_s0->animCurvesCurrentFrameB, spD0);
+        for (var_s4 = 0; var_s4 < _bss_690; var_s4++) {
+            if (dll_3_func_60AC(object, spD0, temp_s0, 
+                                _bss_5F0[var_s4].unk0, 
+                                _bss_5F0[var_s4].unk6, 
+                                _bss_5F0[var_s4].unk4, 0, 0) != 0) {
+                var_s4 = _bss_690;
+            }
+            dll_3_func_4924(object, &spD0, &spBC);
+        }
+        temp_s0->animCurvesCurrentFrameB = temp_s0->animCurvesCurrentFrameA;
+        if (_bss_A4 != 0) {
+            dll_3_func_4924(object, &spD0, &spBC);
+            dll_3_func_71C0(object, spD0, temp_s0);
+        } else {
+            if (_bss_33 != 0) {
+                _bss_2B8[temp_s0->unk63] = temp_s0->animCurvesCurrentFrameA;
+                _bss_490[temp_s0->unk63] = 2;
+                _bss_258[temp_s0->unk63] = temp_s0->animCurvesCurrentFrameA;
+            }
+            if (_bss_258[temp_s0->unk63] == -1) {
+                _bss_258[temp_s0->unk63] = _bss_1F8[temp_s0->unk63] + updateRate;
+            }
+        }
+    } while ((_bss_A4 == 0) && (temp_s0->animCurvesCurrentFrameA < temp_s0->animCurvesDuration) && sp94--);
+    
+    return 0;
+}
 
 // offset: 0x15FC | func: 6
-void dll_3_func_15FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3) {
+static void dll_3_func_15FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3) {
     AnimCurvesEvent* sp7C;
     s32 _pad;
     s32 _pad2;
@@ -823,7 +1147,7 @@ static void dll_3_func_2760(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 
 }
 
 // offset: 0x2EB4 | func: 10
-void dll_3_func_2EB4(s32 arg0, s32 arg1, AnimObj_Data* objData) {
+static void dll_3_func_2EB4(Object* arg0, Object* arg1, AnimObj_Data* objData) {
     s16 frame;
     s16 temp_t0;
     s32 finished;
@@ -907,7 +1231,7 @@ static Object* dll_3_func_2FE8(Object* arg0, AnimObj_Data* arg1, AnimObj_Setup* 
 
 // offset: 0x3170 | func: 12
 //TODO: verify argument structs are correct, and investigate lengths of BSS arrays
-void dll_3_func_3170(s32 arg0, s32 arg1, AnimObj_Data* arg2) {
+static void dll_3_func_3170(Object* arg0, Object* arg1, AnimObj_Data* arg2) {
     if (arg2->unk9D & 1) {
         _bss_108[arg2->unk63] = 1;
     }
@@ -929,7 +1253,7 @@ void dll_3_func_3170(s32 arg0, s32 arg1, AnimObj_Data* arg2) {
 }
 
 // offset: 0x3268 | func: 13
-s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) {
+static s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) {
     s32 returnVal;
 
     returnVal = 0;
@@ -944,7 +1268,7 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 }
 
 // offset: 0x32B0 | func: 14
-void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1) {
+static void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1) {
     s32 index;
 
     for (index = 0; index < 4; index++){
@@ -973,7 +1297,7 @@ void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1) {
 }
 
 // offset: 0x3414 | func: 15
-void dll_3_func_3414(Object* animObj, Object **arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3, ModelInstance **arg4) {
+static void dll_3_func_3414(Object* animObj, Object **arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3, ModelInstance **arg4) {
     Object* temp_s1;
 
     _bss_90 = 1;
@@ -1452,7 +1776,7 @@ static void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance
 }
 
 // offset: 0x495C | func: 21
-s32 dll_3_func_495C(AnimObj_Data* arg0, Object* arg1) {
+static s32 dll_3_func_495C(AnimObj_Data* arg0, Object* arg1) {
     s32 temp_v0_2;
     s32 i;
     s32 var_s3;
@@ -1465,7 +1789,7 @@ s32 dll_3_func_495C(AnimObj_Data* arg0, Object* arg1) {
             var_s3 = event->params;
         } else if ((event->type == 0xB) && (event->params > 0)) {
             temp_v0_2 = *(s32*)(event + 1);
-            if (((temp_v0_2 & 0x3F) == 4) && (dll_3_func_5E50((temp_v0_2 >> 6) & 0x3FF, arg0, arg1->setup) != 0)) {
+            if (((temp_v0_2 & 0x3F) == 4) && (dll_3_func_5E50((temp_v0_2 >> 6) & 0x3FF, arg0, (AnimObj_Setup*)arg1->setup) != 0)) {
                 var_s3 = var_s3 - 10;
                 if (var_s3 < 0) {
                     var_s3 = 0;
@@ -1867,7 +2191,7 @@ void dll_3_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4
 
 // offset: 0x5D78 | func: 30
 /** Called when sequence is waiting for button presses (e.g. menu when talking with Rocky) */
-s32 dll_3_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData) {
+static s32 dll_3_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData) {
     switch (arg1) {
         case 18:
             if (joy_get_pressed(0) & A_BUTTON) {
@@ -1895,7 +2219,7 @@ s32 dll_3_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData) {
 }
 
 // offset: 0x5E50 | func: 31
-static s32 dll_3_func_5E50(s32 arg0, AnimObj_Data* arg1, ObjSetup* arg2) {
+static s32 dll_3_func_5E50(s32 arg0, AnimObj_Data* arg1, AnimObj_Setup* arg2) {
     s32 sp24;
     f32 sp20;
 
@@ -2068,7 +2392,7 @@ static s32 dll_3_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* 
             }
             break;
         default:
-            var_a3 = dll_3_func_5E50(var_s0, arg2, arg0->setup);
+            var_a3 = dll_3_func_5E50(var_s0, arg2, (AnimObj_Setup*)arg0->setup);
             break;
         }
 
