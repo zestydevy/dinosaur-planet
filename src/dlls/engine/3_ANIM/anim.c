@@ -77,12 +77,6 @@ typedef struct {
 } AnimBSS0;
 
 typedef struct {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-} SequenceBoneStructUnk;
-
-typedef struct {
     Object *unk0;
     s32 unk4;
 } ANIMBSSUnk0;
@@ -146,11 +140,11 @@ typedef struct {
 
 /*0x0*/ static ANIMBSSUnk0 _bss_0[4];
 /*0x20*/ static s8 _bss_20; //count of items in bss0?
-/*0x24*/ static u32 _bss_24;
-/*0x28*/ static u8 _bss_28[0x4];
-/*0x2C*/ static u8 _bss_2C[0x4];
-/*0x30*/ static u8 _bss_30[0x2];
-/*0x32*/ static u8 _bss_32[0x1];
+/*0x24*/ static f32 _bss_24;
+/*0x28*/ static f32 _bss_28;
+/*0x2C*/ static f32 _bss_2C;
+/*0x30*/ static s16 _bss_30;
+/*0x32*/ static u8 _bss_32;
 /*0x33*/ static s8 _bss_33;
 /*0x34*/ static u8 _bss_34[0x4];
 /*0x38*/ static Bss38Thing _bss_38[10];
@@ -198,9 +192,10 @@ typedef struct {
 /*0x5D4*/ static s32 _bss_5D4;
 /*0x5D8*/ static void* _bss_5D8; //sequence file buffer
 /*0x5DC*/ static f32 _bss_5DC;
-/*0x5E0*/ static u8 _bss_5E0[0x4];
-/*0x5E4*/ static u8 _bss_5E4[0x4];
-/*0x5E8*/ static u8 _bss_5E8[0x8];
+/*0x5E0*/ static f32 _bss_5E0;
+/*0x5E4*/ static f32 _bss_5E4;
+/*0x5E8*/ static f32 _bss_5E8;
+/*0x5E8*/ static u8 _bss_5EC[0x4];
 /*0x5F0*/ static Bss5F0Thing _bss_5F0[20];
 /*0x690*/ static s32 _bss_690;
 /*0x694*/ static u8 _bss_694[0x4];
@@ -251,6 +246,7 @@ static Object* dll_3_func_2FE8(Object* arg0, AnimObj_Data* arg1, AnimObj_Setup* 
 static s32 dll_3_func_3614(Object* arg0, ModelInstance* arg1, AnimCurvesEvent** arg2, s8 arg3, s32* arg4);
 static void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance);
 static s32 dll_3_func_60AC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32* arg3, s16 arg4, s16 arg5, s8 arg6, s8 arg7);
+static void dll_3_func_9EC8(Object* arg0, s16* arg1, s32 arg2);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -331,7 +327,198 @@ s32 dll_3_func_3D0(Object* object, s32 updateRate);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_1A04.s")
 
 // offset: 0x1C04 | func: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_1C04.s")
+void dll_3_func_1C04(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
+    f32 var_fv1;
+    f32 sp58;
+    f32 sp54;
+    f32 sp50;
+    s32 _pad;
+    f32 sp48;
+    f32 sp44;
+    f32 sp40;
+    ObjSetup* sp3C;
+    Object* temp_v0_2;
+    s32 _pad2;
+    s16* temp_v0_3;
+
+    sp3C = arg0->setup;
+    arg0->srt.transl.x = sp3C->x;
+    arg0->srt.transl.y = sp3C->y;
+    arg0->srt.transl.z = sp3C->z;
+    arg0->srt.pitch = 0;
+    arg0->srt.yaw = 0;
+    arg0->srt.roll = 0;
+    if (arg2->unk7A & 0x20) {
+        arg1->opacity = 0xFF;
+    }
+    _bss_5E0 = 0.0f;\
+    _bss_5E4 = 0.0f;\
+    _bss_5E8 = 0.0f;
+    if (arg2->animCurvesKeyframes != NULL) {
+        var_fv1 = dll_3_func_6EBC(arg2, 0x12, arg3);
+        if (var_fv1 > 0.0f) {
+            if (arg2->unk34[3] != 0) {
+                gDLL_6_AMSFX->vtbl->set_vol(arg2->unk34[3], var_fv1);
+            }
+        }
+        if (!(arg2->unk8C & 2)) {
+            arg0->srt.yaw = (s16) (dll_3_func_6EBC(arg2, 7, arg3) * 182.044f);
+            arg0->srt.pitch = (s16) (dll_3_func_6EBC(arg2, 8, arg3) * 182.044f);
+            arg0->srt.roll = (s16) (dll_3_func_6EBC(arg2, 6, arg3) * 182.044f);
+            _bss_5E0 = dll_3_func_6EBC(arg2, 0xD, arg3);
+            _bss_5E4 = dll_3_func_6EBC(arg2, 0xC, arg3);
+            _bss_5E8 = dll_3_func_6EBC(arg2, 0xB, arg3);
+            _bss_24 = _bss_5E0;
+            _bss_28 = _bss_5E4;
+            _bss_2C = _bss_5E8;
+            _bss_30 = arg0->srt.yaw;
+            _bss_32 = 1;
+            arg0->srt.transl.x = sp3C->x + _bss_5E0;
+            arg0->srt.transl.y = sp3C->y + _bss_5E4;
+            arg0->srt.transl.z = sp3C->z + _bss_5E8;
+        } else {
+            _bss_5E4 = dll_3_func_6EBC(arg2, 0xC, arg3);
+            _bss_5E8 = dll_3_func_6EBC(arg2, 0xB, arg3);
+            arg0->srt.yaw = (s16) (dll_3_func_6EBC(arg2, 7, arg3) * 182.044f);
+            arg0->srt.pitch = (s16) (dll_3_func_6EBC(arg2, 8, arg3) * 182.044f);
+            sp58 = fsin16_precise(arg0->srt.yaw - 0x4000);
+            sp50 = fcos16_precise(arg0->srt.yaw - 0x4000);
+            sp54 = fcos16_precise(arg0->srt.pitch);
+            sp44 = fsin16_precise(arg0->srt.pitch);
+            sp44 = _bss_5E8 * sp44;
+            sp40 = _bss_5E8 * sp54;
+            sp48 = sp40 * sp50;
+            sp40 = sp40 * sp58;
+            temp_v0_2 = get_player();
+            arg0->srt.transl.x = temp_v0_2->srt.transl.x + sp48;
+            arg0->srt.transl.y = temp_v0_2->srt.transl.y + _bss_5E4 + sp44;
+            arg0->srt.transl.z = temp_v0_2->srt.transl.z + sp40;
+            arg0->srt.yaw = 0x8000 - arg0->srt.yaw;
+            arg0->srt.pitch = -arg0->srt.pitch;
+            _bss_24 = arg0->srt.transl.x - sp3C->x;
+            _bss_28 = arg0->srt.transl.y - sp3C->y;
+            _bss_2C = arg0->srt.transl.z - sp3C->z;
+            _bss_30 = arg0->srt.yaw;
+            _bss_32 = 1;
+        }
+        if (arg2->channelTotalKeys[0xE] != 0) {
+            var_fv1 = dll_3_func_6EBC(arg2, 0xE, arg3);
+            if (arg2->unk87 != 0) {
+                if (var_fv1 < 35.0f) {
+                    var_fv1 = 35.0f;
+                }
+                if (var_fv1 > 120.0f) {
+                    var_fv1 = 125.0f;
+                }
+                _data_30 = 1;
+                _bss_5DC = var_fv1;
+            } else {
+                arg2->unk10 = var_fv1;
+            }
+        }
+        if ((arg2->unk7A & 0x20) && (arg2->channelTotalKeys[3] != 0)) {
+            var_fv1 = dll_3_func_6EBC(arg2, 3, arg3);
+            if (var_fv1 < 0.0f) {
+                var_fv1 = 0.0f;
+            }
+            if (var_fv1 > 255.0f) {
+                var_fv1 = 255.0f;
+            }
+            arg1->opacity = (u8) (u32) var_fv1;
+        }
+        if (arg2->channelTotalKeys[4] != 0) {
+            gDLL_7_Newday->vtbl->func9(dll_3_func_6EBC(arg2, 4, arg3) * 60.0f);
+        }
+        if ((arg2->unk7A & 0x10) && (arg2->channelTotalKeys[5] != 0)) {
+            var_fv1 = dll_3_func_6EBC(arg2, 5, arg3);
+            arg1->srt.scale = arg1->def->scale * var_fv1;
+        }
+        if (arg2->unk7A & 8) {
+            temp_v0_3 = func_80034804(arg1, 0);
+            if (temp_v0_3 != NULL) {
+                if (arg2->channelTotalKeys[1] != 0) {
+                    var_fv1 = dll_3_func_6EBC(arg2, 1, arg3);
+                } else {
+                    var_fv1 = 0.0f;
+                }
+                temp_v0_3[0] = arg2->unk122 + (s16) (var_fv1 * 182.044f);
+                if (arg2->channelTotalKeys[2] != 0) {
+                    var_fv1 = dll_3_func_6EBC(arg2, 2, arg3);
+                } else {
+                    var_fv1 = 0.0f;
+                }
+                temp_v0_3[1] = arg2->unk120 + (s16) (var_fv1 * 182.044f);
+                if (arg2->channelTotalKeys[0] != 0) {
+                    var_fv1 = dll_3_func_6EBC(arg2, 0, arg3);
+                } else {
+                    var_fv1 = 0.0f;
+                }
+                temp_v0_3[2] = (s16) (var_fv1 * 182.044f);
+                if (arg2->unk7A & 0x400) {
+                    dll_3_func_9EC8(arg1, temp_v0_3, arg2->unk142_4);
+                }
+            }
+            if (1){} // @fake
+        }
+        if (arg2->unk7A & 0x200) {
+            temp_v0_3 = func_80034804(arg1, 1);
+            if (temp_v0_3 != NULL) {
+                if (arg2->channelTotalKeys[0x11] != 0) {
+                    var_fv1 = dll_3_func_6EBC(arg2, 0x11, arg3);
+                } else {
+                    var_fv1 = 0.0f;
+                }
+                temp_v0_3[0] = (s16) (var_fv1 * 182.044f);
+            }
+            if (1){} // @fake
+        }
+        if (arg2->unk7A & 0x40) {
+            TextureAnimator* temp_v0_6;
+            TextureAnimator* var_v1;
+            TextureAnimator* temp_s0;
+            temp_s0 = func_800348A0(arg1, 1, 0);
+            var_v1 = func_800348A0(arg1, 0, 0);
+            if ((temp_s0 != NULL) || (var_v1 != NULL)) {
+                if (arg2->channelTotalKeys[0xF] != 0) {
+                    var_fv1 = dll_3_func_6EBC(arg2, 0xF, arg3);
+                } else {
+                    var_fv1 = 0.0f;
+                }
+                if (temp_s0 != NULL) {
+                    temp_s0->positionU = (s16) var_fv1;
+                }
+                if (var_v1 != NULL) {
+                    var_v1->positionU = -(s16) var_fv1;
+                }
+                if (arg2->channelTotalKeys[0x10] != 0) {
+                    var_fv1 = dll_3_func_6EBC(arg2, 0x10, arg3);
+                } else {
+                    var_fv1 = 0.0f;
+                }
+                if (temp_s0 != NULL) {
+                    temp_s0->positionV = -(s16) var_fv1;
+                }
+                if (var_v1 != NULL) {
+                    var_v1->positionV = -(s16) var_fv1;
+                }
+            }
+            temp_s0 = func_800348A0(arg1, 5, 0);
+            temp_v0_6 = func_800348A0(arg1, 4, 0);
+            if (temp_s0 != NULL) {
+                temp_s0->frame = arg2->unk9A << 8;
+            }
+            if (temp_v0_6 != NULL) {
+                temp_v0_6->frame = arg2->unk9B << 8;
+            }
+        }
+    } else {
+        _bss_24 = _bss_5E0;
+        _bss_28 = _bss_5E4;
+        _bss_2C = _bss_5E8;
+        _bss_30 = 0;
+        _bss_32 = 1;
+    }
+}
 
 // offset: 0x2760 | func: 9
 void dll_3_func_2760(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
@@ -648,7 +835,7 @@ void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3414.s")
 #else
 void dll_3_func_1A04(Object* a0, Object *a1, void* a2); //unsure
-void dll_3_func_1C04(Object* actor, Object *a1, void* a2, s32 a3); //unsure
+void dll_3_func_1C04(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 arg3);
 void dll_3_func_2760(Object* arg0, Object* arg1, AnimObj_Data* arg2, s32 arg3);
 void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3);
 void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance);
@@ -3246,9 +3433,8 @@ s32 dll_3_func_9E88(f32 arg0, f32 arg1, f32 arg2) {
 }
 
 // offset: 0x9EC8 | func: 72
-void dll_3_func_9EC8(Object* arg0, SequenceBoneStructUnk* arg1, s32 arg2) {
-    //TODO: figure out what these structs are
-    SequenceBoneStructUnk *temp_v0;
+static void dll_3_func_9EC8(Object* arg0, s16* arg1, s32 arg2) {
+    s16 *temp_v0;
     s32 *temp_v1;
     s32 i;
     s32 *var_s0;
@@ -3264,11 +3450,11 @@ void dll_3_func_9EC8(Object* arg0, SequenceBoneStructUnk* arg1, s32 arg2) {
     }
     
     for (i = 1; i < arg2; i++){
-        temp_v0 = (SequenceBoneStructUnk *) func_80034804(arg0, var_s0[i]);
+        temp_v0 = func_80034804(arg0, var_s0[i]);
         if (temp_v0 != NULL){
-            temp_v0->unk2 = arg1->unk2;
-            temp_v0->unk0 = arg1->unk0;
-            temp_v0->unk4 = arg1->unk4;
+            temp_v0[1] = arg1[1];
+            temp_v0[0] = arg1[0];
+            temp_v0[2] = arg1[2];
         }
     }
     
