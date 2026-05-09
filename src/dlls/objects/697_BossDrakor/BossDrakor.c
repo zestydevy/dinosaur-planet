@@ -238,10 +238,10 @@ static void BossDrakor_func_55C(Object *self, Baddie *arg1, ObjFSA_Data *fsa) {
     } else {
         gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, 1);
     }
-    arg1->unk3AC = self->unkC0;
-    self->unkC0 = NULL;
+    arg1->unk3AC = self->animObj;
+    self->animObj = NULL;
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
-    self->unkC0 = arg1->unk3AC;
+    self->animObj = arg1->unk3AC;
     BossDrakor_func_768(self, arg1, objdata, fsa);
 }
 

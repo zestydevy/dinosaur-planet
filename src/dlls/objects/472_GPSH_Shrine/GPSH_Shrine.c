@@ -429,7 +429,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
         a2->messages[i] = 0;
     }
     if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3_distance(&a0->globalPosition, &player->globalPosition))) {
-        gDLL_3_Animation->vtbl->end_obj_sequence(a2->unk63);
+        gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
     }
     return 0;
 }

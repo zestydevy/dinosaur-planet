@@ -339,7 +339,7 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x34, 0x50, (s16) (u8) objdata->unk8, 0);
             break;
         case 13:
-            gDLL_3_Animation->vtbl->func19(0x5A, 0x65, 0, 0x50);
+            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMLOCKON, 0x65, 0, 0x50);
             break;
         }
     }
@@ -347,10 +347,10 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
     if (objdata->unk12 == 3) {
         if (main_get_bits(BIT_5BE) != 0) {
             objdata->unk12 = 7;
-            gDLL_3_Animation->vtbl->end_obj_sequence((s32) a2->unk63);
+            gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
         } else if (main_get_bits(BIT_1CB) != 0) {
             objdata->unk12 = 8;
-            gDLL_3_Animation->vtbl->end_obj_sequence((s32) a2->unk63);
+            gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
         } else if (objdata->unkE <= 0) {
             main_set_bits(BIT_176, 1);
             main_set_bits(BIT_1CA, 1);

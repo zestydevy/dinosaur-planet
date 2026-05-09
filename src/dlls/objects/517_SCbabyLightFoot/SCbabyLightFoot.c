@@ -141,10 +141,10 @@ static void dll_517_func_334(Object* arg0, Baddie* baddie, ObjFSA_Data* arg2) {
     func_80032A08(arg0, &baddie -> unk3BC);
     arg2->target = get_player();
     gDLL_33_BaddieControl->vtbl->func10(arg0, arg2, 0.17f, 1);
-    baddie->unk3AC = (Object* ) arg0->unkC0;
-    arg0->unkC0 = NULL;
+    baddie->unk3AC = (Object* ) arg0->animObj;
+    arg0->animObj = NULL;
     gDLL_18_objfsa->vtbl->tick(arg0, arg2, gUpdateRateF, gUpdateRateF, _bss_0, _bss_8);
-    arg0->unkC0 = baddie->unk3AC;
+    arg0->animObj = baddie->unk3AC;
 }
 
 // offset: 0x4AC | func: 10

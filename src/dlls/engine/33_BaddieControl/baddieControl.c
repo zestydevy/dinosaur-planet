@@ -272,7 +272,7 @@ s32 BaddieControl_func_8B4(Object* arg0, AnimObj_Data* arg1, Baddie* arg2, ObjFS
         }
         if ((var_v0 < 0x100) && (var_v0 >= -0xFF)) {
             arg1->unk62 = 0;
-            arg1->animCurvesCurrentFrameB = arg1->animCurvesCurrentFrameA - 1;
+            arg1->prevTime = arg1->time - 1;
         } else {
             gDLL_18_objfsa->vtbl->tick(arg0, &arg2->fsa, gUpdateRateF, gUpdateRateF, arg3, arg4);
         }

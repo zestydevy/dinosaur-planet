@@ -235,7 +235,7 @@ void update_obj_models(void) {
     int k;
     Object *object;
     ModelInstance *modelInst;
-    ObjectC0_Data *unk1;
+    AnimObj_Data *unk1;
 
     for (i = 0; i < gNumObjs; i++) {
         object = gObjList[i];
@@ -256,9 +256,9 @@ void update_obj_models(void) {
                     modelInst->unk34 &= ~0x8;
 
                     if (modelInst->model->blendshapes != NULL) {
-                        unk1 = object->unkC0 != NULL ? (ObjectC0_Data*)object->unkC0->data : NULL;
+                        unk1 = object->animObj != NULL ? (AnimObj_Data*)object->animObj->data : NULL;
 
-                        if (object->unkC0 == NULL || (unk1 != NULL && unk1->unk62 == 0)) {
+                        if (object->animObj == NULL || (unk1 != NULL && unk1->unk62 == 0)) {
                             func_8001B084(modelInst, gUpdateRateF);
                         }
                     }
@@ -422,8 +422,8 @@ void func_800210DC(void) {
     for (i = 0; i < gNumObjs; i++) {
         obj = gObjList[i];
 
-        if (obj->unkC0 != NULL) {
-            var = obj->unkC0;
+        if (obj->animObj != NULL) {
+            var = obj->animObj;
 
             if (obj->parent == NULL) {
                 if (var->parent != NULL) {
@@ -431,7 +431,7 @@ void func_800210DC(void) {
                 }
             }
             
-            obj->unkC0 = NULL;
+            obj->animObj = NULL;
         }
     }
 }
@@ -591,7 +591,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     objHeader.unkB2 = param4;
     objHeader.mapID = mapID;
     objHeader.curModAnimIdLayered = -1;
-    objHeader.unkB4 = -1;
+    objHeader.seqSlot = SEQSLOT_NONE;
     objHeader.srt.scale = def->scale;
     objHeader.opacity = 255;
     objHeader.mesgQueue = NULL;
@@ -1102,7 +1102,7 @@ void update_object(Object *obj) {
         return;
     }
 
-    if (obj->unkC0 != NULL) {
+    if (obj->animObj != NULL) {
         if (obj->linkedObject != NULL) {
             obj->linkedObject->objhitInfo->unk48 = 0;
             obj->linkedObject->objhitInfo->unk62 = 0;
@@ -1553,8 +1553,8 @@ void obj_free_object(Object *obj, s32 onlySelf) {
     if (!onlySelf && obj->group == GROUP_UNK16) {
         for (i = 0; i < gNumObjs; i++) {
             obj2 = gObjList[i];
-            if (obj == obj2->unkC0) {
-                obj2->unkC0 = NULL;
+            if (obj == obj2->animObj) {
+                obj2->animObj = NULL;
             }
         }
     }
@@ -1613,10 +1613,10 @@ void obj_free_object(Object *obj, s32 onlySelf) {
 
     obj_free_objdef(obj->tabIdx);
 
-    if (obj->unkB4 >= 0) {
+    if (obj->seqSlot >= 0) {
         if (!onlySelf) {
-            gDLL_3_Animation->vtbl->end_obj_sequence((s32)obj->unkB4);
-            obj->unkB4 = -1;
+            gDLL_3_Animation->vtbl->end_obj_sequence(obj->seqSlot);
+            obj->seqSlot = SEQSLOT_NONE;
         }
     }
 

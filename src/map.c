@@ -4414,7 +4414,7 @@ s32 map_should_obj_unload(Object *obj) {
     if (objSetup->loadFlags & OBJSETUP_LOAD_MANUAL) {
         return FALSE;
     }
-    if ((obj->unkC0 != NULL) && (obj->unkB4 < 0)) {
+    if ((obj->animObj != NULL) && (obj->seqSlot < 0)) {
         return FALSE;
     }
     if (obj->parent == NULL) {

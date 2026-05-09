@@ -631,7 +631,7 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x30, 0x50, (u8) objdata->musCorridorVol, 0);
                 break;
             case 13:
-                gDLL_3_Animation->vtbl->func19(0x5A, 0x64, 0, 0x50);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMLOCKON, 0x64, 0, 0x50);
                 break;
             }
         }

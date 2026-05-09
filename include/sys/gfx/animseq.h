@@ -9,6 +9,10 @@
 
 #define ANIMCURVES_KEYFRAME_CHANNELS 19
 #define MAX_DECISION 10
+#define SEQSLOT_NONE (-1)
+#define SEQSLOT_ANIMOBJ (-2)
+// When given to start_obj_sequence, enables all actors in the sequence
+#define OBJSEQ_ALL_ACTORS (-1)
 
 enum AnimDecisionCondition {
     ANIM_DECISION_A_BUTTON = 18,
@@ -39,9 +43,9 @@ typedef struct {
     /** isObjSeq2CurveIndex (1 bit) | sequenceID (11 bits) | actorIndex (4 bits) */
     s16 sequenceIdBitfield;
     s16 unk1A;
-    s16 unk1C;
+    s16 target; // target (actor) object ID + 4
     s8 unk1E;
-    s8 unk1F;
+    s8 seqSlot;
     s8 unk20;
     s8 unk21;
     s8 unk22;
@@ -60,7 +64,7 @@ typedef struct {
 } UnkAnimStruct;
 
 typedef struct AnimObj_Data {
-/*000*/ Object* actor;
+/*000*/ Object* actor; // the target of the anim obj (e.g. the target of an Override object)
 /*004*/ f32 unk4;
 /*008*/ f32 unk8;
 /*00C*/ f32 unkC;
@@ -68,33 +72,33 @@ typedef struct AnimObj_Data {
 /*014*/ s16 unk14;
 /*016*/ s16 unk16;
 /*018*/ s16 unk18;
-/*01A*/ s16 unk1A; //angle
+/*01A*/ s16 seqYaw; // base yaw of the whole object sequence?
 /*004*/ s8 unk1C[0x20 - 0x1C];
 /*020*/ f32 unk20;
 /*024*/ f32 unk24; //some speed
 /*028*/ s32 unk28;
 /*02C*/ UnkAnimStruct *unk2C;
 /*030*/ u32 unk30; //soundHandle?
-/*034*/ u32 unk34[4];   //soundHandles?
-/*044*/ s16 unk44[4];   //soundHandle related - playback frequency?
+/*034*/ u32 sfxHandles[4]; // sfx sound handles
+/*044*/ s16 sfxTimer[4]; // timer to end sfx early. if 32000, sfx will not end early
 /*04C*/ Vec3f unk4C; //position diff between parent "override" animObj and child "actor" object?
 /*058*/ f32 unk58;
 /*05C*/ s16 yawDiff;
 /*05E*/ s16 pitchDiff;
 /*060*/ s16 rollDiff;
 /*062*/ s8 unk62;
-/*063*/ s8 unk63;
-/*064*/ s16 animCurvesCurrentFrameA;
-/*066*/ s16 animCurvesCurrentFrameB;
-/*068*/ s16 animCurvesDuration;
+/*063*/ s8 seqSlot;
+/*064*/ s16 time;
+/*066*/ s16 prevTime;
+/*068*/ s16 duration;
 /*06A*/ s16 unk6A;
 /*06C*/ s16 counter;
 /*06E*/ s16 animCurvesEventCount;
 /*070*/ s16 animCurvesKeyframeCount;
-/*072*/ s16 unk72;
-/*074*/ s16 unk74;
+/*072*/ s16 eventIdx;
+/*074*/ s16 eventTime;
 /*076*/ s16 eventGamebit; // gamebit toggleable by anim events
-/*078*/ s16 unk78;
+/*078*/ s16 modAnimIdx;
 /*07A*/ s16 unk7A;
 /*07C*/ s16 unk7C;
 /*07E*/ s8 unk7E[0x80 - 0x7E];
@@ -105,26 +109,26 @@ typedef struct AnimObj_Data {
 /*087*/ s8 unk87;
 /*088*/ s8 unk88; // unk type
 /*088*/ s8 unk89;
-/*08A*/ s8 unk8A;                   //soundHandle-related
-/*08B*/ u8 unk8B;
+/*08A*/ s8 sfxNextSlot; // next free sfx handle slot
+/*08B*/ u8 unk8B; // "activation" state?
 /*08C*/ u8 unk8C;
 /*08D*/ u8 lastMessage;
 /*08E*/ u8 messages[10];
 /*098*/ u8 messageCount;
-/*099*/ u8 unk99;
-/*09A*/ u8 unk9A;
-/*09B*/ u8 unk9B;
+/*099*/ u8 modAnimStartFrame;
+/*09A*/ u8 blinkFrameR; // eyelid frame for right eye
+/*09B*/ u8 blinkFrameL; // eyelid frame for left eye
 /*09C*/ s8 unk9C[0x9D - 0x9C];
-/*09D*/ u8 unk9D;
+/*09D*/ u8 unk9D; // TODO: flags?
 /*09E*/ s8 unk9E[0xA0 - 0x9E];
 /*0A0*/ AnimCurvesEvent* animCurvesEvents;
 /*0A4*/ AnimCurvesKeyframe* animCurvesKeyframes;
-/*0A8*/ s16 channelFirstKeyIndex[ANIMCURVES_KEYFRAME_CHANNELS];
-/*0CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
+/*0A8*/ s16 channelFirstKeyIndex[ANIMCURVES_KEYFRAME_CHANNELS]; // global index of first keyframe per channel 
+/*0CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS]; // total number of keyframes per channel
 /*0F4*/ AnimObj_DataF4Callback unkF4; //end-of-sequence callback function
 /*0F8*/ AnimObj_DecisionCallback decisionCallback;
 /*0FC*/ UnkFunc_80024108Struct unkFC;
-/*118*/ s32 unk118;
+/*118*/ s32 actorUID;
 /*11C*/ Object* unk11C;
 /*120*/ s16 unk120;
 /*122*/ s16 unk122;

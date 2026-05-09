@@ -31,9 +31,7 @@
 #include "sys/map_enums.h"
 #include "dll.h"
 #include "constants.h"
-
-#define DONGLE_LSFS 0x4C534653
-#define DONGLE_MPFS 0x4D504653
+#include "dongle.h"
 
 /* -------- .data start -------- */
 const char *gGameBuildVersion = "1.3623";

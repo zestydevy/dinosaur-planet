@@ -32,7 +32,7 @@ int dll_54_func_5DC(Object* obj, s32 arg1) {
     ObjectShadow* shadowData;
 
     if (obj->def->shadowType == OBJ_SHADOW_GEOM) {
-        if (obj->unkB4 == -1) {
+        if (obj->seqSlot == SEQSLOT_NONE) {
             shadowData = obj->shadow;
             shadowData->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
         } else {

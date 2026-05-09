@@ -47,6 +47,7 @@
 #include "unktypes.h"
 #include "sys/objexpr.h"
 #include "prevent_bss_reordering.h"
+#include "dongle.h"
 
 static void dll_210_func_1BC0(Object* player, Player_Data* arg1);
 static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 arg3);
@@ -2063,7 +2064,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 if ((var_v0 < 0x100) && (var_v0 >= -0xFF)) {
                     arg2->unk7A = arg2->unk7C;
                     arg2->unk62 = 0;
-                    arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA - 1;
+                    arg2->prevTime = arg2->time - 1;
                     arg0->curModAnimIdLayered = -1;
                     spC8 = 0;
                 } else {
@@ -2159,7 +2160,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 2:
                 gDLL_2_Camera->vtbl->change_mode(0, 1);
-                gDLL_3_Animation->vtbl->func19(0x54, 4, 0, 0);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
                 vehicle = objdata->vehicle;
                 if (vehicle != NULL) {
                     ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 0);
@@ -2174,7 +2175,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 4:
                 vehicle = objdata->vehicle;
-                gDLL_3_Animation->vtbl->func19(0x57, 0, 0, 0);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMSLIDE, 0, 0, 0);
                 objdata->unk76C = NULL;
                 if ((vehicle != NULL) && (vehicle->id == OBJ_BWLog)) {
                     gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Vehicle_Getting_On);
@@ -2186,16 +2187,16 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 vehicle = objdata->vehicle;
                 if ((vehicle != NULL) && (vehicle->id == OBJ_DR_EarthWarrior)) {
                     gDLL_2_Camera->vtbl->change_mode(0, 0x69);
-                    gDLL_3_Animation->vtbl->func19(0x54, 4, 0, 0);
+                    gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
                 } else if ((vehicle != NULL) && (vehicle->id == OBJ_DR_CloudRunner)) {
-                    gDLL_3_Animation->vtbl->func19(0x65, 0, 0, 0);
+                    gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMDRAKOR, 0, 0, 0);
                 } else {
                     gDLL_2_Camera->vtbl->change_mode(0, 0x1D);
-                    gDLL_3_Animation->vtbl->func19(0x54, 4, 0, 0);
+                    gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
                 }
                 break;
             case 6:
-                gDLL_3_Animation->vtbl->func19(0x56, 0, 0, 0);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAM1STPERSON, 0, 0, 0);
                 gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_35);
                 break;
             case 7:
@@ -2220,7 +2221,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 arg0->unkC4 = NULL;
                 break;
             case 13:
-                gDLL_3_Animation->vtbl->func30(arg0->unkC4->id, arg0->unkC4, 0);
+                gDLL_3_Animation->vtbl->set_variable_obj(arg0->unkC4->id, arg0->unkC4, 0);
                 dll_210_func_1DB6C(arg0->unkC4, 29.0f);
                 gDLL_3_Animation->vtbl->start_obj_sequence(arg0->unkDC, arg0, -1);
                 break;
@@ -2287,7 +2288,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 gDLL_1_cmdmenu->vtbl->auto_show_info_scroll(objdata->unk708->def->gametextIndex[0], 160, 140);
             }
             if (arg2->lastMessage == 1) {
-                gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 3, 0, 0);
                 obj_send_mesg(objdata->unk708, 0x7000B, arg0, NULL);
                 objdata->unk708 = NULL;
             }
@@ -2689,7 +2690,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
                 temp_v1 = sp3C->unk74;
                 if (temp_v1 != NULL) {
                     temp = arctan2_f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
-                    gDLL_3_Animation->vtbl->func28(player->unkB4, temp);
+                    gDLL_3_Animation->vtbl->func28(player->seqSlot, temp);
                 }
                 player->unkC4 = sp3C;
             }
@@ -2701,7 +2702,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
                 arg2 = 0x5BD;
                 temp_v1 = sp3C->unk74;
                 temp = arctan2_f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
-                gDLL_3_Animation->vtbl->func28(player->unkB4, temp);
+                gDLL_3_Animation->vtbl->func28(player->seqSlot, temp);
             }
             break;
     }
@@ -3944,9 +3945,10 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 func_80023D30(player, sp4C->modAnims[0], 0.0f, 0U);
             }
         }
-        temp = *(s16* )0xBC000000 << 0x10;
-        temp |= *(s16* )0xBC000002;
-        if ((temp != 0x4C534653) && (temp != 0x4D504653)) {
+        // Security dongle check
+        temp = ACCESS_1 << 0x10;
+        temp |= ACCESS_2;
+        if ((temp != DONGLE_LSFS) && (temp != 0x4D504653)) {
             bzero(player, 0x100000);
         }
     }
@@ -4510,7 +4512,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp8C = ((DLL_Unknown*)v1objdata->foodbag->dll)->vtbl->func[16].withOneArgS32(sp8C);
             sp88 = gDLL_2_Camera->vtbl->get_highlighted_object();
             if ((sp88 != NULL) && ((sp88->def->lockdata->flags & 0xF) == 3)) {
-                gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
+                gDLL_3_Animation->vtbl->set_variable_obj(sp8C, sp88, 1);
                 gDLL_3_Animation->vtbl->start_obj_sequence(2, player, -1);
                 player->unkC4 = sp88;
                 *_data_18 = -1;

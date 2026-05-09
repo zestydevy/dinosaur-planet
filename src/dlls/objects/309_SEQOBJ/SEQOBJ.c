@@ -172,7 +172,7 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     SeqObj_Data* objData;
     s32 index;
 
-    if (self->unkB4 == -1) {
+    if (self->seqSlot == SEQSLOT_NONE) {
         return 0;
     }
     

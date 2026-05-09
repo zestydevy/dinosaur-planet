@@ -153,7 +153,7 @@ void dll_376_control(Object* self) {
         }
     } else {
         self->unkAF |= 8;
-        if (self->unkB4 == -1) {
+        if (self->seqSlot == SEQSLOT_NONE) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
     }

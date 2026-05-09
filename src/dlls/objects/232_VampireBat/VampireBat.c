@@ -187,10 +187,10 @@ void dll_232_control(Object* self) {
                 }
             }
             gDLL_33_BaddieControl->vtbl->func10(self, &baddie->fsa, 0.0f, -1);
-            baddie->unk3AC = self->unkC0;
-            self->unkC0 = NULL;
+            baddie->unk3AC = self->animObj;
+            self->animObj = NULL;
             gDLL_18_objfsa->vtbl->tick(self, &baddie->fsa, gUpdateRateF, gUpdateRateF, _bss_0, _bss_8);
-            self->unkC0 = baddie->unk3AC;
+            self->animObj = baddie->unk3AC;
         }
     }
 }

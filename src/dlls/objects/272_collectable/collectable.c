@@ -318,7 +318,7 @@ void collectable_control(Object* self) {
             }
 
             if (main_get_bits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
-                gDLL_3_Animation->vtbl->func30(collectableDef->seqObjectID, 0, 0);
+                gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 outMessage = 0;
                 obj_send_mesg(
                     player, 
@@ -344,7 +344,7 @@ void collectable_control(Object* self) {
             //Check for A button press when highlighted with arrow
             messageArg = objsetup->animMessage;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
-                gDLL_3_Animation->vtbl->func30(collectableDef->seqObjectID, 0, 0);
+                gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 obj_send_mesg(
                     player,
                     0x7000A,

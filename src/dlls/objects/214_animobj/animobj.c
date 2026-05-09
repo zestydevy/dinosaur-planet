@@ -61,39 +61,39 @@ void animobj_control(Object *self) {
     Object **objects;
 
     setup = (AnimObj_Setup *) self->setup;
-    if (!setup || setup->sequenceIdBitfield == -1){
+    if (!setup || setup->sequenceIdBitfield == -1) {
         return;
     }
 
-    index = gDLL_3_Animation->vtbl->func4(self, gUpdateRate);
-    if (!index || self->unkB4 != -2){
+    index = gDLL_3_Animation->vtbl->tick_obj(self, gUpdateRate);
+    if (!index || self->seqSlot != SEQSLOT_ANIMOBJ) {
         return;
     }
 
     objdata = self->data;
-    new_var = objdata->unk63;
+    new_var = objdata->seqSlot;
     matchObject = 0;
     objects = get_world_objects(&index, &count);
     matches = 0;
-    for (index = 0; index < count; index++){
+    for (index = 0; index < count; index++) {
         object = objects[index];
-        if (new_var == object->unkB4){
+        if (new_var == object->seqSlot) {
             matchObject = object;
         }
 
-        if (object->unkB4 == -2 && object->group == GROUP_UNK16) {
+        if (object->seqSlot == SEQSLOT_ANIMOBJ && object->group == GROUP_UNK16) {
             objdata = object->data;    
-            if (new_var == objdata->unk63){
+            if (new_var == objdata->seqSlot) {
                 matches++;
             }
         }
     }
 
-    if (matches < 2 && matchObject && matchObject->unkB4 != -1){
-        matchObject->unkB4 = -1;
+    if (matches < 2 && matchObject && matchObject->seqSlot != SEQSLOT_NONE) {
+        matchObject->seqSlot = SEQSLOT_NONE;
         gDLL_3_Animation->vtbl->end_obj_sequence(new_var);
     }
-    self->unkB4 = -1;
+    self->seqSlot = SEQSLOT_NONE;
 }
 
 // offset: 0x318 | func: 2 | export: 2
@@ -114,8 +114,8 @@ void animobj_free(Object *self, s32 arg1) {
     objdata = self->data;
     gDLL_3_Animation->vtbl->func8(objdata);
     for (i = 0; i < 4; i++){
-        if (objdata->unk34[i]){
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk34[i]);
+        if (objdata->sfxHandles[i]){
+            gDLL_6_AMSFX->vtbl->stop(objdata->sfxHandles[i]);
         }
     }
 

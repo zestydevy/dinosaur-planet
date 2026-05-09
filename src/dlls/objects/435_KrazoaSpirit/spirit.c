@@ -84,12 +84,12 @@ void Spirit_control(Object* self) {
         return;
     }
     
-    index = gDLL_3_Animation->vtbl->func4(self, gUpdateRateMirror);
+    index = gDLL_3_Animation->vtbl->tick_obj(self, gUpdateRateMirror);
 
-    if (index && (self->unkB4 == -2)) {
+    if (index && (self->seqSlot == SEQSLOT_ANIMOBJ)) {
         objData2 = (AnimObj_Data *) self->data;
         temp = objData2;
-        searchValue = temp->unk63;
+        searchValue = temp->seqSlot;
 
         matchObject = NULL;
         objects = get_world_objects(&index, &numObjects);
@@ -98,22 +98,22 @@ void Spirit_control(Object* self) {
         for (index = 0; index < numObjects; index++){
             obj = objects[index];
             
-            if (searchValue == obj->unkB4) {
+            if (searchValue == obj->seqSlot) {
                 matchObject = obj;
             }
-            if ((obj->unkB4 == -2) && (obj->group == 0x10)){
+            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->group == 0x10)){
                 objData2 = (AnimObj_Data *)obj->data;
-                if (searchValue == objData2->unk63) {
+                if (searchValue == objData2->seqSlot) {
                     otherMatchCount++;
                 }
             }
         }        
         
-        if ((otherMatchCount < 2) && matchObject && (matchObject->unkB4 != -1)) {
-            matchObject->unkB4 = -1;
+        if ((otherMatchCount < 2) && matchObject && (matchObject->seqSlot != SEQSLOT_NONE)) {
+            matchObject->seqSlot = SEQSLOT_NONE;
             gDLL_3_Animation->vtbl->end_obj_sequence(searchValue);
         }
-        self->unkB4 = -1;
+        self->seqSlot = SEQSLOT_NONE;
         obj_destroy_object(self);
     }
     

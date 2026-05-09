@@ -154,7 +154,7 @@ int SCTotemBond_anim_callback(Object* self, Object* objOverride, AnimObj_Data* a
         case SCTotemBond_SEQCMD_1_Initialise_Minigame:
             objData->flags |= SCTotemBond_FLAG_Init_Minigame;
             self->srt.yaw = M_180_DEGREES - 1;
-            gDLL_3_Animation->vtbl->func19(0x56, 1, 0, 0);
+            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAM1STPERSON, 1, 0, 0);
             break;
         case SCTotemBond_SEQCMD_2_Set_Level_State_3:
             //Plays regular SwapStone Circle music
