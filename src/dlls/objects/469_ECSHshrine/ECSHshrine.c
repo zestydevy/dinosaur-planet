@@ -197,7 +197,7 @@ void ECSHshrine_control(Object* self) {
         if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->testStartRadius) {
             objdata->state = ECShrine_STATE_Test_Start;
             main_set_bits(BIT_DB_Entered_Shrine_3, 0);
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
             modGfxDLL = dll_load_deferred(DLL_ID_147, 1);
             modGfxDLL->vtbl->func0(self, 2, NULL, 1, -1, NULL);
@@ -228,7 +228,7 @@ void ECSHshrine_control(Object* self) {
         objdata->delayTimer = 40;
         objdata->shuffles = 16;
         objdata->spiritCup = rand_next(0, 5);
-        gDLL_3_Animation->vtbl->func17(3, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         break;
     case ECShrine_STATE_Cups_Round_1:
     case ECShrine_STATE_Cups_Round_2:
@@ -359,7 +359,7 @@ void ECSHshrine_control(Object* self) {
                     objdata->state = ECShrine_STATE_Test_Failure;
                     gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (u8) objdata->musCorridorVol, 0);
                     objdata->musCorridorVolSpeed = 1;
-                    gDLL_3_Animation->vtbl->func17(2, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
                     objdata->musicPlayTimer = 10;
                     objdata->substate = Cup_STATE_Sink_Down;
                     gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -374,7 +374,7 @@ void ECSHshrine_control(Object* self) {
                         objdata->shuffles = 10;
                         objdata->choiceWasCorrect = NO_CHOICE_YET;
                         gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_3_Animation->vtbl->func17(3, self, -1);
+                        gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                     } else if (objdata->state == ECShrine_STATE_Cups_Round_2) {
                         //Go to round 3
                         objdata->spiritCup = rand_next(0, 5);
@@ -385,7 +385,7 @@ void ECSHshrine_control(Object* self) {
                         objdata->shuffles = 16;
                         objdata->choiceWasCorrect = NO_CHOICE_YET;
                         gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_3_Animation->vtbl->func17(3, self, -1);
+                        gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                     } else {
                         //Test won!
                         objdata->musicPlayTimer = 130;
@@ -423,7 +423,7 @@ void ECSHshrine_control(Object* self) {
             main_set_bits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->musCorridorVol, 0);
             objdata->musCorridorVolSpeed = 1;
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->state = ECShrine_STATE_Grant_Spirit;
         }
         break;
@@ -584,9 +584,9 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
         gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->musCorridorVol);
     }
 
-    for (i = 0; i < aData->unk98; i++) {
-        if (aData->unk8E[i] != 0) {
-            switch (aData->unk8E[i]) {
+    for (i = 0; i < aData->messageCount; i++) {
+        if (aData->messages[i] != 0) {
+            switch (aData->messages[i]) {
             case 1:
                 func_80000860(self, self, 0xCB, 0);
                 break;
@@ -635,7 +635,7 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
                 break;
             }
         }
-        aData->unk8E[i] = 0;
+        aData->messages[i] = 0;
     }
     return 0;
 }

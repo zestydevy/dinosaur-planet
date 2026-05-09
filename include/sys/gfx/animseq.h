@@ -8,6 +8,7 @@
 #include "sys/objanim.h"
 
 #define ANIMCURVES_KEYFRAME_CHANNELS 19
+#define MAX_DECISION 10
 
 typedef struct {
 /*0*/ f32 value;
@@ -19,7 +20,7 @@ typedef struct {
 typedef struct {
 /*0*/ s8 type;
 /*1*/ u8 delay;
-/*2*/ s16 params;
+/*2*/ s16 params; // official name: val
 } AnimCurvesEvent;
 
 typedef struct {
@@ -76,7 +77,7 @@ typedef struct AnimObj_Data {
 /*066*/ s16 animCurvesCurrentFrameB;
 /*068*/ s16 animCurvesDuration;
 /*06A*/ s16 unk6A;
-/*06C*/ s16 unk6C;
+/*06C*/ s16 counter;
 /*06E*/ s16 animCurvesEventCount;
 /*070*/ s16 animCurvesKeyframeCount;
 /*072*/ s16 unk72;
@@ -96,9 +97,9 @@ typedef struct AnimObj_Data {
 /*08A*/ s8 unk8A;                   //soundHandle-related
 /*08B*/ u8 unk8B;
 /*08C*/ u8 unk8C;
-/*08D*/ u8 unk8D;
-/*08E*/ u8 unk8E[0x98 - 0x8E];      //sequence subcommand IDs?
-/*098*/ u8 unk98;                   //sequence subcommand count?
+/*08D*/ u8 lastMessage;
+/*08E*/ u8 messages[10];
+/*098*/ u8 messageCount;
 /*099*/ u8 unk99;
 /*09A*/ u8 unk9A;
 /*09B*/ u8 unk9B;
@@ -116,8 +117,8 @@ typedef struct AnimObj_Data {
 /*11C*/ Object* unk11C;
 /*120*/ s16 unk120;
 /*122*/ s16 unk122;
-/*124*/ s16 unk124[10];
-/*138*/ u8 unk138[10];
+/*124*/ s16 unk124[MAX_DECISION];
+/*138*/ u8 unk138[MAX_DECISION];
 /*142*/ u8 unk142_4: 4;
 /*142*/ u8 unk142_0: 4;
 /*143*/ s8 unk143[0x144 - 0x143];

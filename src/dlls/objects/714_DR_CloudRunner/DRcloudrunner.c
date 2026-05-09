@@ -232,7 +232,7 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
         if (parent) {
             parent = parent->unkC4; //DR_Cage
             if (parent && (parent->id == OBJ_DR_Cage)) {
-                gDLL_3_Animation->vtbl->func17(rand_next(0, 1), self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(rand_next(0, 1), self, -1);
             }
         }
     } else {
@@ -241,7 +241,7 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
             parent = parent->unkC4; //DR_Cage
             if (parent && (parent->id == OBJ_DR_Cage) && 
                 ((DLL_745_DR_Cage*)parent->dll)->vtbl->func0(parent)) {
-                gDLL_3_Animation->vtbl->func17(2, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
             }
         }
     }

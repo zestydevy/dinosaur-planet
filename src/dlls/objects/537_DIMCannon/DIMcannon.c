@@ -189,7 +189,7 @@ void dll_537_control(Object* self) {
             sp3C = self;
             gDLL_2_Camera->vtbl->change_camera_module(0x63, 1, 0, 4, &sp3C, 0x32, 0xFF);
             objData->unk24 = 3;
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objData->unk27 = 0x3C;
             self->unkAF |= 8;
         }
@@ -395,12 +395,12 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
         break;
     default:
         self->srt.flags &= ~OBJFLAG_INVISIBLE;
-        if (animData->unk8D == 1) {
+        if (animData->lastMessage == 1) {
             objSetup = (DLL537_Setup*)self->setup;
             main_set_bits(objSetup->unk18, 1);
         }
         
-        animData->unk8D = 0;
+        animData->lastMessage = 0;
         if (objData->unk24 != 6) {
             objData->unk24 = 4;
         }

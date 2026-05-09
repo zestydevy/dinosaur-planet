@@ -195,8 +195,8 @@ static int levelname_anim_callback(Object* self, Object *overrideObj, AnimObj_Da
 
     objdata = self->data;
 
-    for (i = 0; i < animData->unk98; i++){
-        if (animData->unk8E[i] == 1) {
+    for (i = 0; i < animData->messageCount; i++){
+        if (animData->messages[i] == 1) {
             if (objdata->flagID != -1) {
                 main_set_bits(objdata->flagID, 1);
             }

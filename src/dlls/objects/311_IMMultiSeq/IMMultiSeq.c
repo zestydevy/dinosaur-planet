@@ -92,7 +92,7 @@ void IMMultiSeq_control(Object *self) {
             value = (VALUE_GAMEBITS2(objdata->setBitsCount) == 0);
             if (main_get_bits(setup->gamebits2[objdata->setBitsCount]) == value) {
                 if (setup->objectSeqIndex[objdata->setBitsCount] != -1) {
-                    gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex[objdata->setBitsCount], self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex[objdata->setBitsCount], self, -1);
                 }
             }
         }
@@ -159,7 +159,7 @@ int IMMultiSeq_anim_callback(Object *self, UNUSED Object *animObj, AnimObj_Data 
     if (currentSetBitsCount != IMMULTISEQ_GAMEBIT_COUNT && nextSetBitsCount < IMMULTISEQ_GAMEBIT_COUNT && setup->gamebits2[nextSetBitsCount] != -1) {
         value = VALUE_GAMEBITS2(nextSetBitsCount) == 0;
         if (main_get_bits(setup->gamebits2[nextSetBitsCount]) == value) {
-            gDLL_3_Animation->vtbl->func18(self->unkB4);
+            gDLL_3_Animation->vtbl->end_obj_sequence(self->unkB4);
         }
     }
     objdata->flags |= IMMULTISEQ_SET_GAMEBIT;

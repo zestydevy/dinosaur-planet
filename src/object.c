@@ -1615,7 +1615,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
 
     if (obj->unkB4 >= 0) {
         if (!onlySelf) {
-            gDLL_3_Animation->vtbl->func18((s32)obj->unkB4);
+            gDLL_3_Animation->vtbl->end_obj_sequence((s32)obj->unkB4);
             obj->unkB4 = -1;
         }
     }

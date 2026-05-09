@@ -138,10 +138,10 @@ void Cannon_control(Object* self) {
             }
 
             if (self->srt.yaw & 0x8000) {
-                gDLL_3_Animation->vtbl->func25(gDLL_3_Animation->vtbl->func24() - 1);
+                gDLL_3_Animation->vtbl->set_anim_counter1(gDLL_3_Animation->vtbl->get_anim_counter1() - 1);
 dummy_label1: ;
             } else {
-                gDLL_3_Animation->vtbl->func27(gDLL_3_Animation->vtbl->func26() - 1);
+                gDLL_3_Animation->vtbl->set_anim_counter2(gDLL_3_Animation->vtbl->get_anim_counter2() - 1);
             }
             
             //Create explosion of debris
@@ -218,10 +218,10 @@ dummy_label1: ;
             }
 
             if (self->srt.yaw & 0x8000) {
-                gDLL_3_Animation->vtbl->func25(gDLL_3_Animation->vtbl->func24() - 1);
+                gDLL_3_Animation->vtbl->set_anim_counter1(gDLL_3_Animation->vtbl->get_anim_counter1() - 1);
 dummy_label3: ;
             } else {
-                gDLL_3_Animation->vtbl->func27(gDLL_3_Animation->vtbl->func26() - 1);
+                gDLL_3_Animation->vtbl->set_anim_counter2(gDLL_3_Animation->vtbl->get_anim_counter2() - 1);
             }
             
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_9, NULL, 4, -1, NULL);

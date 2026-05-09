@@ -88,14 +88,14 @@ void SCAnimObj_control(Object* self) {
         
         if ((matchCount < 2) && (matchObj != NULL) && (matchObj->unkB4 != -1)) {
             matchObj->unkB4 = -1;
-            gDLL_3_Animation->vtbl->func18(temp);
+            gDLL_3_Animation->vtbl->end_obj_sequence(temp);
         }
         self->unkB4 = -1;
     }
 
 
-    for (aIndex = 0; aIndex < objData->unk98; aIndex++) {
-        switch (objData->unk8E[aIndex]) {
+    for (aIndex = 0; aIndex < objData->messageCount; aIndex++) {
+        switch (objData->messages[aIndex]) {
         case 0:
             self->unkE0 |= 1;
             if (0) {} //fake

@@ -146,7 +146,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
             dist = vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition);
             if (dist < 2500.0f) {
                 objdata->unk3 = 0;
-                gDLL_3_Animation->vtbl->func17(8, objdata->unkC, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(8, objdata->unkC, -1);
             } else if (dist < 32400.0f) {
                 objdata->unk0 = 0xC;
                 objdata->unk14 = 0.005f;
@@ -161,7 +161,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
                     objdata->unk0 = 0xD;
                     objdata->unk3 = 0;
                     objdata->unk18 = 0.0f;
-                    gDLL_3_Animation->vtbl->func17(5, objdata->unkC, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(5, objdata->unkC, -1);
                 } else {
                     objdata->unk0 = 0xC;
                     objdata->unk14 = 0.01f;

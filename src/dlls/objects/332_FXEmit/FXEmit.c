@@ -216,14 +216,14 @@ static int FXEmit_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     objdata = (FXEmit_Data*)self->data;
     setup = (FXEmit_Setup*)self->setup;
     
-    for (i = 0; i < animObjData->unk98; i++) {
-        if (animObjData->unk8E[i] == 1) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        if (animObjData->messages[i] == 1) {
             FXEmit_emit(self);
         }
-        if (animObjData->unk8E[i] == 2) {
+        if (animObjData->messages[i] == 2) {
             objdata->animCallbackRotate = 1 - objdata->animCallbackRotate;
         }
-        animObjData->unk8E[i] = 0;
+        animObjData->messages[i] = 0;
     }
     
     if (objdata->animCallbackRotate) {

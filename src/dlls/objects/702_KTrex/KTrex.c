@@ -678,8 +678,8 @@ static s32 dll_702_move_and_check_turn(ObjFSA_Data* fsa, KTrex_Data* ktdata) {
 
     a2->unk62 = 0;
 
-    for (i = 0; i < a2->unk98; i++) {
-        switch (a2->unk8E[i]) {
+    for (i = 0; i < a2->messageCount; i++) {
+        switch (a2->messages[i]) {
         case 1:
             sKTData->fxFlags |= KTFX_Footfall_Right2;
             break;

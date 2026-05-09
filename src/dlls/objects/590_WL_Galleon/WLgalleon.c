@@ -138,7 +138,7 @@ void WLgalleon_control(Object* self) {
         self->srt.transl.y = objData->translate.y;
         self->srt.transl.z = objData->translate.z;
         self->srt.yaw = objData->yaw;
-        gDLL_3_Animation->vtbl->func17(0, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         self->unkE0 = 2;
     }
 }
@@ -197,8 +197,8 @@ static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
     animObjData->unk7A = -1;
     animObjData->unk62 = 0;
 
-    for (index = 0; index < animObjData->unk98; index++){
-        switch (animObjData->unk8E[index]) {
+    for (index = 0; index < animObjData->messageCount; index++){
+        switch (animObjData->messages[index]) {
             case 1:
                 self->unkDC = 0xA;
                 break;

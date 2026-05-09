@@ -126,7 +126,7 @@ void dll_376_control(Object* self) {
         if (self->unkAF & 1) {
             dll_376_func_A3C(self, player);
             *func_80034804(self, 1) = -0xAAA;
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         } else {
             func_80034BC0(self, &objData->unk28);
             if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
@@ -154,7 +154,7 @@ void dll_376_control(Object* self) {
     } else {
         self->unkAF |= 8;
         if (self->unkB4 == -1) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
     }
 }
@@ -242,7 +242,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
     objData = self->data;
     if (objData->unk60 != 0) {
         return 0;
-    } else if (arg2->unk8D == 2) {
+    } else if (arg2->lastMessage == 2) {
         objData->unk60 = 1;
        
         

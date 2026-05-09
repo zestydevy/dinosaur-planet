@@ -196,7 +196,7 @@ void SPShop_play_sequence(Object* self, s32 playSequence, s32 sequenceIndex) {
     
     objData->unk0 = playSequence;
     if (playSequence) {
-        gDLL_3_Animation->vtbl->func17(sequenceIndex, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(sequenceIndex, self, -1);
     }
 }
 

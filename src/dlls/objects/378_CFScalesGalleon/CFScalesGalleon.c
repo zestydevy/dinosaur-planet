@@ -86,7 +86,7 @@ int CFScalesGalleon_func_16C(Object *self, Object *animObj, AnimObj_Data *animOb
     CFScalesGalleon_Data *objdata;
 
     objdata = self->data;
-    if (animObjData->unk98 != 0) {
+    if (animObjData->messageCount != 0) {
         self->opacity = OBJECT_OPACITY_MAX;
     }
     if (objdata->opacityCounter != 0) {

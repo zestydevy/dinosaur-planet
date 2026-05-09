@@ -155,10 +155,10 @@ int WMWizard_anim_visit_1_first_meeting(Object* self, Object* overrideObj, AnimO
     objData = self->data;
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
-    for (i = 0; i < animData->unk98; i++) {
+    for (i = 0; i < animData->messageCount; i++) {
 
         if (objData->activeSeqIndex == 1) {
-            if (animData->unk8E[i] == 4) {
+            if (animData->messages[i] == 4) {
                 ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 5);
             }
             continue;
@@ -168,10 +168,10 @@ int WMWizard_anim_visit_1_first_meeting(Object* self, Object* overrideObj, AnimO
             continue;
         }
 
-        if (animData->unk8E[i] == 1) {
+        if (animData->messages[i] == 1) {
             main_set_bits(BIT_WM_Played_Randorn_First_Meeting, 1);
             objData->hasMetKrystal = TRUE;
-        } else if (animData->unk8E[i] == 2) {
+        } else if (animData->messages[i] == 2) {
             // very fake
             if (player) {}
             if (player) {}
@@ -206,8 +206,8 @@ int WMWizard_anim_visit_3_spirit_cc(Object* self, Object* overrideObj, AnimObj_D
     objData = self->data;
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case 0:
             break;
         case 1:
@@ -271,7 +271,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
         if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) > 0) {
             //Remind about visiting Discovery Falls
             objData->activeSeqIndex = WMWizard_OBJSEQ_2_Discovery_Falls_Reminder;
-            gDLL_3_Animation->vtbl->func17(WMWizard_OBJSEQ_2_Discovery_Falls_Reminder, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(WMWizard_OBJSEQ_2_Discovery_Falls_Reminder, self, -1);
             joy_set_button_mask(0, A_BUTTON);
 
         //Otherwise, restore Krystal's magic if she hasn't deactivated the lasers yet
@@ -281,7 +281,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
             main_get_bits(BIT_WM_Force_Field_3_Disabled) == 0
         ) {
             objData->activeSeqIndex = WMWizard_OBJSEQ_1_Offering_Magic_Refill;
-            gDLL_3_Animation->vtbl->func17(WMWizard_OBJSEQ_1_Offering_Magic_Refill, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(WMWizard_OBJSEQ_1_Offering_Magic_Refill, self, -1);
             joy_set_button_mask(0, A_BUTTON);
         }
     }

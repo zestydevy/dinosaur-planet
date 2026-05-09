@@ -91,7 +91,7 @@ void animobj_control(Object *self) {
 
     if (matches < 2 && matchObject && matchObject->unkB4 != -1){
         matchObject->unkB4 = -1;
-        gDLL_3_Animation->vtbl->func18(new_var);
+        gDLL_3_Animation->vtbl->end_obj_sequence(new_var);
     }
     self->unkB4 = -1;
 }

@@ -24,17 +24,17 @@ DLL_INTERFACE(DLL_3_animation) {
 /*14*/ void (*func14)(s32 arg0);
 /*15*/ s32 (*func15)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 /*16*/ void (*func16)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-/*17*/ s32 (*func17)(s32 objectSeqIndex, Object* object, s32 enabledActors);
-/*18*/ void (*func18)(s32 arg0);
+/*17*/ s32 (*start_obj_sequence)(s32 objectSeqIndex, Object* object, s32 enabledActors);
+/*18*/ void (*end_obj_sequence)(s32 arg0);
 /*19*/ void (*func19)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-/*20*/ void (*func20)(Object *arg0, s32 arg1);
+/*20*/ void (*preempt_sequence_time)(Object *arg0, s32 arg1);
 /*21*/ void (*func21)(AnimObj_Data* state, s32 arg1);
 /*22*/ s8 (*func22)(void);
 /*23*/ void (*func23)(s8 arg0);
-/*24*/ s16 (*func24)(void);
-/*25*/ void (*func25)(s16 arg0);
-/*26*/ s16 (*func26)(void);
-/*27*/ void (*func27)(s16 arg0);
+/*24*/ s16 (*get_anim_counter1)(void);
+/*25*/ void (*set_anim_counter1)(s16 value);
+/*26*/ s16 (*get_anim_counter2)(void);
+/*27*/ void (*set_anim_counter2)(s16 value);
 /*28*/ void (*func28)(s32 arg0, s32 arg1);
 /*29*/ s32 (*func29)(Object* arg0, AnimObj_Data* arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5, s16 arg6);
 /*30*/ s32 (*func30)(s32 arg0, Object *arg1, s32 arg2); //Assigns an objectID to use for VariableObject in the item collection sequence?

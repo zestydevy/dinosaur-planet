@@ -136,7 +136,7 @@ void mmp_mseedrecept_control(Object* self) {
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
                     self->opacity = 0;
-                    gDLL_3_Animation->vtbl->func17(0, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                     main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
                 }
             }

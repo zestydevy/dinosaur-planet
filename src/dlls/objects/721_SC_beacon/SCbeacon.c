@@ -99,7 +99,7 @@ void SCbeacon_control(Object* self) {
     case SCbeacon_STATE_Bowl_Empty:
         //Play a Tumbleweed depositing sequence when the player is holding a Tumbleweed while nearby
         if (playerIsNearby && (((DLL_210_Player*)player->dll)->vtbl->func48(player) == OBJ_Tumbleweed1twig)) {
-            gDLL_3_Animation->vtbl->func17(objData->seqIdxPlaceTwigs, self, -1); //@bug: doesn't play because objectID not returned
+            gDLL_3_Animation->vtbl->start_obj_sequence(objData->seqIdxPlaceTwigs, self, -1); //@bug: doesn't play because objectID not returned
         }
         /* fallthrough */
     case SCbeacon_STATE_Twigs_in_Bowl:
@@ -182,7 +182,7 @@ int SCbeacon_handle_kyte_flame_seqs(Object* self, s32 finishLighting) {
     
     if (finishLighting == FALSE) {
         //Play the sequence where Kyte lights the beacon, and advance to "lighting" state (embers/smoke)
-        gDLL_3_Animation->vtbl->func17(objData->seqIdxLightTwigs, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(objData->seqIdxLightTwigs, self, -1);
         objData->state = SCbeacon_STATE_Lighting;
         isBeingLit = TRUE;
 

@@ -2108,8 +2108,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         objdata->unk0.unk4.mode = 0;
         objdata->unk0.xAnalogInput = 0.0f;
         objdata->unk0.yAnalogInput = 0.0f;
-        for (var_s1 = 0; var_s1 < arg2->unk98; var_s1++) {
-            switch (arg2->unk8E[var_s1]) {
+        for (var_s1 = 0; var_s1 < arg2->messageCount; var_s1++) {
+            switch (arg2->messages[var_s1]) {
             case 3:
                 objects = obj_get_all_of_type(0xB, &spC0);
                 for (var_s1 = 0; var_s1 < spC0; var_s1++) {
@@ -2222,7 +2222,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             case 13:
                 gDLL_3_Animation->vtbl->func30(arg0->unkC4->id, arg0->unkC4, 0);
                 dll_210_func_1DB6C(arg0->unkC4, 29.0f);
-                gDLL_3_Animation->vtbl->func17(arg0->unkDC, arg0, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(arg0->unkDC, arg0, -1);
                 break;
             case 14:
                 if (*_data_14 == 1) {
@@ -2685,7 +2685,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
             def40 = sp3C->def->lockdata;
             if ((def40->flags & 0xF) == 3) {
                 player->unkDC = 4;
-                gDLL_3_Animation->vtbl->func17(3, player, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(3, player, -1);
                 temp_v1 = sp3C->unk74;
                 if (temp_v1 != NULL) {
                     temp = arctan2_f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
@@ -2697,7 +2697,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
             arg2 = -1;
             sp3C = (Object *)gDLL_2_Camera->vtbl->get_highlighted_object();
             if ((sp3C != NULL) && (sp3C->id == 0x414 || sp3C->id == 0x4A9)) {
-                gDLL_3_Animation->vtbl->func17(5, player, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(5, player, -1);
                 arg2 = 0x5BD;
                 temp_v1 = sp3C->unk74;
                 temp = arctan2_f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
@@ -4472,7 +4472,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 if (temp_v0_5 != NULL) {
                     ((DLL_Unknown*)temp_v0_5->dll)->vtbl->func[7].withOneArg((s32)temp_v0_5);
                 }
-                gDLL_3_Animation->vtbl->func17(7, player, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(7, player, -1);
             }
             return 0;
         }
@@ -4496,7 +4496,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         if (sp8E) {
             dll_210_func_1DAB0(player);
-            gDLL_3_Animation->vtbl->func17(sp8E, player, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(sp8E, player, -1);
             gDLL_1_cmdmenu->vtbl->pages_clear_last_selected_index();
             return 0;
         }
@@ -4511,7 +4511,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp88 = gDLL_2_Camera->vtbl->get_highlighted_object();
             if ((sp88 != NULL) && ((sp88->def->lockdata->flags & 0xF) == 3)) {
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
-                gDLL_3_Animation->vtbl->func17(2, player, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(2, player, -1);
                 player->unkC4 = sp88;
                 *_data_18 = -1;
                 *_data_14 = 0;
@@ -6661,7 +6661,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     temp_s0 = &fsa->unk4;
     temp_s1->unk838 += gUpdateRateF;
     if ((temp_s1->unk838 > 120.0f) && (temp_s1->flags & 0x80000)) {
-        gDLL_3_Animation->vtbl->func17(0xB, player, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0xB, player, -1);
     } else {
         if ((temp_s0->underwaterDist <= 0.0f) && (temp_s0->floorDist > 20.0f)) {
             return -0xD;
@@ -6794,7 +6794,7 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     objdata->unk838 += gUpdateRateF;
     dll27data = &fsa->unk4;
     if ((objdata->unk838 > 120.0f) && (objdata->flags & 0x80000)) {
-        gDLL_3_Animation->vtbl->func17(0xB, player, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0xB, player, -1);
     } else {
         temp_fs0 = dll27data->waterY - 6.0f;
         temp_fs0 += fsin16_precise(objdata->unk88A);
@@ -7680,7 +7680,7 @@ s32 dll_210_func_16220(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         temp_v0_2 = objdata->unk708;
         temp_v0_2->srt.scale = temp_v0_2->def->scale * (0.5f + (objdata->unk710 * 0.5f));
         if ((fsa->unk33A != 0) && (gDLL_28_ScreenFade->vtbl->is_complete != NULL)) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             gDLL_28_ScreenFade->vtbl->fade_reversed(0x3C, 1);
             fsa->animStateTime = 0;
         }
@@ -8212,7 +8212,7 @@ s32 dll_210_func_17DA8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 s32 dll_210_func_17EF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState != 0) {
         dll_210_func_9F1C(player, 0);
-        gDLL_3_Animation->vtbl->func17(8, player, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(8, player, -1);
     }
     fsa->unk341 = 3;
     fsa->unk278 = 0.0f;

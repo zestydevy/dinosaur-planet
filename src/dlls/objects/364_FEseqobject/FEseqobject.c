@@ -33,7 +33,7 @@ void FEseqobject_setup(Object *self, ObjSetup *setup, s32 arg2) {
 void FEseqobject_control(Object *self) {
     self->srt.yaw = 0x2000;
     if (!main_get_bits(BIT_SB_Battle_Started)) {
-        gDLL_3_Animation->vtbl->func17(0, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
     }
 }
 
@@ -74,7 +74,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
 
     receiver = NULL;
 
-    for (i = 0; i < animObjData->unk98; i++) {
+    for (i = 0; i < animObjData->messageCount; i++) {
         transform.transl.x = 0.0f;
         transform.transl.y = 0.0f;
         transform.transl.z = 0.0f;
@@ -82,7 +82,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
         transform.yaw = 0;
         transform.roll = 0;
         transform.scale = 1.0f;
-        switch (animObjData->unk8E[i]) {
+        switch (animObjData->messages[i]) {
         case 1:
             main_set_bits(BIT_SB_Battle_Started, 1);
             break;

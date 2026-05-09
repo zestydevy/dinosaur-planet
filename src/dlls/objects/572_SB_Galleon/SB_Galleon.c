@@ -160,7 +160,7 @@ void SB_Galleon_control(Object *self) {
         break;
     case STATE_1:
         gDLL_28_ScreenFade->vtbl->fade_reversed(10, SCREEN_FADE_BLACK);
-        gDLL_3_Animation->vtbl->func17(3, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         objdata->state = STATE_2;
         break;
     case STATE_2:
@@ -170,7 +170,7 @@ void SB_Galleon_control(Object *self) {
         gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 1);
         self->mapID = -1;
         gDLL_28_ScreenFade->vtbl->fade_reversed(80, SCREEN_FADE_BLACK);
-        gDLL_3_Animation->vtbl->func17(2, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
         if (gDLL_29_Gplay->vtbl->get_obj_group_status(SOME_MAP_ID, 5)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(SOME_MAP_ID, 5, 0);
         }
@@ -314,8 +314,8 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
     objdata->unk40 = 0.0f;
     animObjData->unkF4 = SB_Galleon_func_B5C;
 
-    for (i = 0; i < animObjData->unk98; i++) {
-        switch (animObjData->unk8E[i]) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        switch (animObjData->messages[i]) {
         case 1:
             objdata->unk7D = 1-objdata->unk7D;
             break;
@@ -429,7 +429,7 @@ void SB_Galleon_func_B88(Object *self) {
 
     if ((_data_0.fadeoutStarted) && gDLL_28_ScreenFade->vtbl->is_complete()) {
         gDLL_28_ScreenFade->vtbl->fade_reversed(80, SCREEN_FADE_BLACK);
-        gDLL_3_Animation->vtbl->func17(1, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         objdata->state = STATE_3;
         _data_0.fadeoutStarted = FALSE;
     }
@@ -1086,7 +1086,7 @@ void SB_Galleon_func_EAC(Object *self) {
                     gDLL_29_Gplay->vtbl->set_obj_group_status(SOME_MAP_ID, 3, 0);
                     gDLL_29_Gplay->vtbl->set_obj_group_status(SOME_MAP_ID, 2, 1);
                     gDLL_29_Gplay->vtbl->set_obj_group_status(SOME_MAP_ID, 5, 1);
-                    gDLL_3_Animation->vtbl->func17(0, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                     gDLL_30_Task->vtbl->mark_task_completed(1);
                     return;
                 }

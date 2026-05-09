@@ -46,7 +46,7 @@ void SHtricky_control(Object *self) {
     switch (objdata->unk0) {
     case 0:
         if (main_get_bits(BIT_Play_Seq_00D1) != 0) {
-            gDLL_3_Animation->vtbl->func17(3, sidekick, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(3, sidekick, -1);
             objdata->unk0 = 1;
         } 
         break;

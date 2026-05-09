@@ -149,8 +149,8 @@ int SCTotemBond_anim_callback(Object* self, Object* objOverride, AnimObj_Data* a
     objData = self->data;
     animData->unk62 = 0;
 
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case SCTotemBond_SEQCMD_1_Initialise_Minigame:
             objData->flags |= SCTotemBond_FLAG_Init_Minigame;
             self->srt.yaw = M_180_DEGREES - 1;

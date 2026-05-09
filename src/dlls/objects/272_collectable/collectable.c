@@ -403,12 +403,12 @@ int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animO
     f32 sin;
 
     animObjData->unk62 = 0;
-    if (animObjData->unk8D == 1) {
+    if (animObjData->lastMessage == 1) {
         sin = fsin16_precise(0x6900);
         cos = fcos16_precise(0x6900);
         collectable_set_speed(self, sin * 8.0f, 2, cos * 8.0f);
         collectable_set_speed(self, 4.0f, 2, 0.0f);
-        animObjData->unk8D = 0;
+        animObjData->lastMessage = 0;
     }
     return 0;
 }

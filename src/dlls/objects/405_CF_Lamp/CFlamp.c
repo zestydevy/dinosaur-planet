@@ -54,7 +54,7 @@ void dll_405_setup(Object* self, ObjSetup* setup, s32 arg2) {
 // offset: 0x84 | func: 1 | export: 1
 void dll_405_control(Object* self) {
     if (self->unkE0 == 0) {
-        gDLL_3_Animation->vtbl->func17(0, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         self->unkE0 = 1;
     }
 }
@@ -135,7 +135,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     if ((vi_contains_point(sp38, sp34) != 0) && (sp30 > 0) && (sp30 < sp2C)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }
-    arg2->unk8D = 0;
+    arg2->lastMessage = 0;
     return 0;
 }
 

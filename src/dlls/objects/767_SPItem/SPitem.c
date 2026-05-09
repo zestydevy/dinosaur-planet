@@ -80,15 +80,15 @@ void SPItem_control(Object* self) {
         //Play sequence: "Yoooouuu pay this much!"
         if (scarabCount >= initialPrice) {
             if (player->id == OBJ_Krystal) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             } else {
-                gDLL_3_Animation->vtbl->func17(2, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
             }
         //Play sequence: "Put that dooown, you don't have enough Scarabs!"
         } else if (player->id == OBJ_Krystal) {
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         } else {
-            gDLL_3_Animation->vtbl->func17(3, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         }
         joy_set_button_mask(0, A_BUTTON);
     }

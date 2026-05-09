@@ -256,10 +256,10 @@ static int kyteCage_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
     
     data = self->data;
     
-    for (index = 0; index < animObjData->unk98; index++){
-        if ((u32)animObjData->unk8E[index] == 1){
+    for (index = 0; index < animObjData->messageCount; index++){
+        if ((u32)animObjData->messages[index] == 1){
             data->createLightning = 1;
-        } else if ((u32)animObjData->unk8E[index] == 2){
+        } else if ((u32)animObjData->messages[index] == 2){
             data->createLightning = 2;
         }
     }

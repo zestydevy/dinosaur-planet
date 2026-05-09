@@ -88,7 +88,7 @@ void Transporter_control(Object *self) {
     objdata = self->data;
     setup = (Transporter_Setup*)self->setup;
     if ((self->unkAF & 4) && !main_get_bits(BIT_Shown_ZLock_Interact_Message)) {
-        gDLL_3_Animation->vtbl->func17(2, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
         main_set_bits(BIT_Shown_ZLock_Interact_Message, 1);
         return;
     }
@@ -103,7 +103,7 @@ void Transporter_control(Object *self) {
             if (D_800B4A5E >= 0) {
                 objdata->unk25 = 0;
                 player->opacity = 0;
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 self->unkDC = objdata->unk1C;
                 if (!objdata->dll129) {
                     objdata->dll129 = dll_load_deferred(DLL_ID_129, 1);
@@ -118,7 +118,7 @@ void Transporter_control(Object *self) {
                 if (((setup->gamebit == -1) || (main_get_bits(setup->gamebit))) && (self->unkAF & 1)) {
                     joy_set_button_mask(0, A_BUTTON);
                     func_80000860(self, self, 187, 0);
-                    gDLL_3_Animation->vtbl->func17(0, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                     objdata->unk25 = 1;
                     self->unkDC = objdata->unk1C;
                     if (!objdata->dll129) {

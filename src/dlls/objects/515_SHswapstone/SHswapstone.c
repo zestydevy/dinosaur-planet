@@ -205,8 +205,8 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
         }
     }
 
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case 3:
             objdata->attachIdx = 0;
             break;
@@ -280,7 +280,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
         case (SELECT_SCREEN(SelectionMenu_STATE_2_Confirm_Right)):
         case (SELECT_SCREEN(SelectionMenu_STATE_3_Confirm_Left)):
             if (menu_get_current() == MENU_SELECTION) {
-                ((DLL_Menu16*)menu_get_active_dll())->vtbl->set_selection_state(animData->unk8E[i] - CMD_BASE_SELECTION);
+                ((DLL_Menu16*)menu_get_active_dll())->vtbl->set_selection_state(animData->messages[i] - CMD_BASE_SELECTION);
             }
             break;
         default:

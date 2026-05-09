@@ -64,7 +64,7 @@ void SHqueenearthwalker_control(Object* self) {
     case 2:
         if (self->unkAF & 1) {
             joy_set_button_mask(0, A_BUTTON);
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             main_set_bits(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
             objdata->questProgress = 3;
         }
@@ -75,7 +75,7 @@ void SHqueenearthwalker_control(Object* self) {
                 joy_set_button_mask(0, A_BUTTON);
                 objdata->eatenWhiteMushrooms += main_get_bits(BIT_Inventory_White_Mushrooms);
                 if (objdata->eatenWhiteMushrooms <= 0) {
-                    gDLL_3_Animation->vtbl->func17(3, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                 } else {
                     objdata->questProgress = 4U;
                     gDLL_30_Task->vtbl->mark_task_completed(0xB);
@@ -85,18 +85,18 @@ void SHqueenearthwalker_control(Object* self) {
                 main_set_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten, objdata->eatenWhiteMushrooms);
             } else if (self->unkAF & 1) {
                 joy_set_button_mask(0, A_BUTTON);
-                gDLL_3_Animation->vtbl->func17(4, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             }
         }
         break;
     case 4:
-        gDLL_3_Animation->vtbl->func17(2, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
         break;
     case 5:
-        gDLL_3_Animation->vtbl->func17(6, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(6, self, -1);
         break;
     case 6:
-        gDLL_3_Animation->vtbl->func17(7, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(7, self, -1);
         objdata->questProgress = 7;
         break;
     case 7:
@@ -144,8 +144,8 @@ static int SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2,
     a0->unkAF |= 8;
     a2->unk62 = 0;
 
-    for (i = 0; i < a2->unk98; i++) {
-        switch (a2->unk8E[i]) {
+    for (i = 0; i < a2->messageCount; i++) {
+        switch (a2->messages[i]) {
         case 3:
             objdata->questProgress = 5;
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);

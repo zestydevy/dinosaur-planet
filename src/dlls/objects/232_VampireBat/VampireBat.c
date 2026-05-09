@@ -123,7 +123,7 @@ void dll_232_control(Object* self) {
             self->srt.transl.f[0] = setup->base.x;
             self->srt.transl.f[1] = setup->base.y;
             self->srt.transl.f[2] = setup->base.z;
-            gDLL_3_Animation->vtbl->func17(setup->unk2E, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->unk2E, self, -1);
             self->unkE0 = 1;
             return;
         }

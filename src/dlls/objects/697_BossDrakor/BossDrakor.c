@@ -204,8 +204,8 @@ static int BossDrakor_anim_callback(Object *self, Object *arg1, AnimObj_Data *ar
 
     baddie = self->data;
     baddie->unk3B2 |= 2;
-    for (i = 0; i < arg2->unk98; i++) {
-        temp = arg2->unk8E[i];
+    for (i = 0; i < arg2->messageCount; i++) {
+        temp = arg2->messages[i];
         // @fake: These case numbers are made up for the match. Check the relevant sequences 
         //        to see what commands would be sent to this DLL.
         switch (temp) {
@@ -228,7 +228,7 @@ static void BossDrakor_func_55C(Object *self, Baddie *arg1, ObjFSA_Data *fsa) {
     gDLL_33_BaddieControl->vtbl->func4(self, get_player(), 0x10, &objdata->unk0, &objdata->unk2, &objdata->unk4);
     fsa->targetDist = (f32) objdata->unk4;
     if (self->unkE0 == 0) {
-        gDLL_3_Animation->vtbl->func17(setup->unk2E, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(setup->unk2E, self, -1);
         self->unkE0 = 1;
         return;
     }

@@ -72,7 +72,7 @@ void CRSpellStone_control(Object* self) {
         ) {
             STUBBED_PRINTF("\n\n Hit By ONVEHICLE HIT \n\n");
             main_set_bits(objSetup->gamebitVehicleHit, 1);
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
     }
 }

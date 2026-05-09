@@ -114,7 +114,7 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
             self->unkAF &= ~0x8;
             if ((gDLL_1_cmdmenu->vtbl->was_this_item_used(data_0) != 0) &&
                     (vec3_distance(&self->globalPosition, &player->globalPosition) < 100.0f)) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 main_set_bits(objdata->setGamebit, 1);
                 objdata->unk4 = 1;
                 self->unkAF |= 8;
@@ -128,8 +128,8 @@ static int VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, s8
     s32 i;
     u8 mapSetupID;
 
-    for (i = 0; i < a2->unk98; i++) {
-        if (a2->unk8E[i] == 1) {
+    for (i = 0; i < a2->messageCount; i++) {
+        if (a2->messages[i] == 1) {
             mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(a0->mapID);
             switch (mapSetupID) {
             case 1:
@@ -142,7 +142,7 @@ static int VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, s8
                 main_set_bits(BIT_VFP_Door_Open, 1);
                 break;
             }
-            a2->unk8E[i] = 0;
+            a2->messages[i] = 0;
         }
     }
     return 0;

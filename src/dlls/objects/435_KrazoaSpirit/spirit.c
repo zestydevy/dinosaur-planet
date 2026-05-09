@@ -111,13 +111,13 @@ void Spirit_control(Object* self) {
         
         if ((otherMatchCount < 2) && matchObject && (matchObject->unkB4 != -1)) {
             matchObject->unkB4 = -1;
-            gDLL_3_Animation->vtbl->func18(searchValue);
+            gDLL_3_Animation->vtbl->end_obj_sequence(searchValue);
         }
         self->unkB4 = -1;
         obj_destroy_object(self);
     }
     
-    if ((objData->unk8D == 1) || (objData->unk8D == 3)) {
+    if ((objData->lastMessage == 1) || (objData->lastMessage == 3)) {
         lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
         lfxSetup->base.loadDistance = 0xFF;
         lfxSetup->base.fadeDistance = 0xFF;
@@ -126,7 +126,7 @@ void Spirit_control(Object* self) {
         lfxSetup->base.z = self->srt.transl.z;
         lfxSetup->unk20 = 0;
         
-        if (objData->unk8D == 1) {
+        if (objData->lastMessage == 1) {
             lfxSetup->unk1E = 0x1CB;
         } else {
             lfxSetup->unk1E = 0x1CF;
@@ -138,13 +138,13 @@ void Spirit_control(Object* self) {
         lfxSetup->unk1C = 0;
         lfxSetup->unk24 = 0;
         data_lfxEmitter = obj_create((ObjSetup *) lfxSetup, 5, self->mapID, -1, self->parent);
-        objData->unk8D = 0;
-    } else if (objData->unk8D == 2) {
+        objData->lastMessage = 0;
+    } else if (objData->lastMessage == 2) {
         if (data_lfxEmitter) {
             obj_destroy_object(data_lfxEmitter);
             data_lfxEmitter = NULL;
         }
-        objData->unk8D = 0;
+        objData->lastMessage = 0;
     }
     
     if (data_lfxEmitter) {

@@ -137,7 +137,7 @@ void SCTotemStrength_control(Object* self) {
         }
         
         if (objData->state == SCTotemStrength_STATE_Pushing) {
-            objData->pushSeq = gDLL_3_Animation->vtbl->func17(0, self, -1);
+            objData->pushSeq = gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             return;
         }
         
@@ -217,8 +217,8 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
     main_set_bits(BIT_SCTotemStrength_Inactive, 0);
     
     //Handle sequence commands
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case SCTotemStrength_SEQCMD_1_Enable_Pushing:
             objData->flags |= SCTotemStrength_FLAG_Pushing_Enabled;
             break;
@@ -321,7 +321,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
             sPrevYaw = YAW_NEUTRAL;
             objData->state = SCTotemStrength_STATE_Won;
             func_80023D30(player, 0, 0.0f, 0);
-            gDLL_3_Animation->vtbl->func18(objData->pushSeq);
+            gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
             return 4;
         }
     
@@ -333,7 +333,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
             sPrevYaw = YAW_NEUTRAL;
             objData->state = SCTotemStrength_STATE_Lost;
             func_80023D30(player, 0, 0.0f, 0);
-            gDLL_3_Animation->vtbl->func18(objData->pushSeq);
+            gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
             return 4;
         }
         

@@ -149,7 +149,7 @@ void GPbonfire_control(Object* self) {
         case STATE_1_WAIT_FOR_PLAYER_INTERACTION:
             if (playerIsNearby && 
                 ((DLL_210_Player*)player->dll)->vtbl->func48(player) == 0x4BB) {
-                gDLL_3_Animation->vtbl->func17(objdata->sequenceIndexKindling, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(objdata->sequenceIndexKindling, self, -1);
             }
             break;
         case STATE_2_WAIT_FOR_KYTE:
@@ -277,7 +277,7 @@ s32 GPbonfire_start_burning(Object* self, s32 skipSequence) {
 
     returnVal = 0;
     if (!skipSequence) {
-        gDLL_3_Animation->vtbl->func17(objdata->sequenceIndexBurning, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(objdata->sequenceIndexBurning, self, -1);
         returnVal = 1;
         objdata->stateIndex = STATE_3_START_BURNING;
     } else if (skipSequence == TRUE) {
@@ -359,8 +359,8 @@ static int GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
     objdata = self->data;
 
     if (!objdata->callbackBool) {
-        for (index = 0; index < animObjData->unk98; index++){
-            if (animObjData->unk8E[index] == 1) {
+        for (index = 0; index < animObjData->messageCount; index++){
+            if (animObjData->messages[index] == 1) {
                 objdata->callbackBool = TRUE;
                 self->modelInstIdx = 1;
             }

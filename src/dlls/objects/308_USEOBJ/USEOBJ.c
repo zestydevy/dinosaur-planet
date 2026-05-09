@@ -78,7 +78,7 @@ void UseObj_control(Object *self) {
         }
         if (self->unkAF & 1 && (setup->gamebit2 == -1 || gDLL_1_cmdmenu->vtbl->was_this_item_used(setup->gamebit2))) {
             if (setup->objectSeqIndex != -1) {
-                gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
             }
             if (!(setup->flags & 4)) {
                 main_set_bits(setup->gamebit, 1);
@@ -95,7 +95,7 @@ void UseObj_control(Object *self) {
         if (self->unkDC == 0) {
             if (setup->objectSeqIndex != -1) {
                 if (setup->unk24 != 0) {
-                    gDLL_3_Animation->vtbl->func20(self, setup->unk24);
+                    gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk24);
                     var_a2 = 1;
                     if (setup->flags & 0x20) {
                         var_a2 = 3;
@@ -106,7 +106,7 @@ void UseObj_control(Object *self) {
                     if (setup->flags & 0x80) {
                         var_a2 |= 8;
                     }
-                    gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, var_a2);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, var_a2);
                 }
             }
             self->unkDC = 1;
@@ -150,16 +150,16 @@ static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
 
     setup = (UseObj_Setup*)self->setup;
     self->unkAF |= 8;
-    if (animObjData->unk8D != 0) {
-        if (setup->flags & 4 && animObjData->unk8D == 1) {
+    if (animObjData->lastMessage != 0) {
+        if (setup->flags & 4 && animObjData->lastMessage == 1) {
             main_set_bits(setup->gamebit, 1);
         }
-        if (animObjData->unk8D == 2) {
+        if (animObjData->lastMessage == 2) {
             if (setup->unk24 != 0) {
                 gDLL_3_Animation->vtbl->func21(animObjData, setup->unk24);
             }
         }
-        animObjData->unk8D = 0;
+        animObjData->lastMessage = 0;
     }
     return 0;
 }

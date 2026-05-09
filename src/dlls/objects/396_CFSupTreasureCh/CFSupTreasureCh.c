@@ -79,7 +79,7 @@ void CFSupTreasureCh_control(Object *self) {
     distance = 500.0f;
     if (objdata->flags & CFSUPTREASURECH_PLAY_SEQ) {
         if (objdata->objectSeqIndex != -1) {
-            gDLL_3_Animation->vtbl->func17(objdata->objectSeqIndex, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
             objdata->flags &= ~CFSUPTREASURECH_PLAY_SEQ;
             return;
         }

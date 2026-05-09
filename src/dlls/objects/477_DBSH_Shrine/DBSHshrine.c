@@ -190,7 +190,7 @@ void DBSHshrine_control(Object* self) {
             
             objData->state = 1;
             main_set_bits(BIT_DB_Entered_Shrine_3, 0);
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
             modGfxDLL = dll_load_deferred(DLL_ID_147, 1);
             modGfxDLL->vtbl->func0(self, 3, 0, 1, -1, 0);
@@ -223,7 +223,7 @@ void DBSHshrine_control(Object* self) {
             objData->state = 8;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (u8)objData->unk8, 0);
             objData->unkA = 1;
-            gDLL_3_Animation->vtbl->func17(2, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
             objData->unk2 = 0xA;
             return;
         }
@@ -240,7 +240,7 @@ void DBSHshrine_control(Object* self) {
         main_set_bits(BIT_DB_Entered_Shrine_1, 0);
         gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8)objData->unk8, 0);
         objData->unkA = 1;
-        gDLL_3_Animation->vtbl->func17(1, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         objData->state = 5;
         return;
     case 5:
@@ -326,9 +326,9 @@ int DBSHshrine_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
         gDLL_5_AMSEQ->vtbl->set_volume(3, objData->unk8);
     }
     
-    for (i = 0; i < animData->unk98; i++) {
-        if (animData->unk8E[i] != 0) {
-            switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        if (animData->messages[i] != 0) {
+            switch (animData->messages[i]) {
             case 1:
                 func_80000860(self, self, 0xD5, 0);
                 break;
@@ -383,7 +383,7 @@ int DBSHshrine_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
             }
         }
         
-        animData->unk8E[i] = 0;
+        animData->messages[i] = 0;
     }
     
     return 0;
