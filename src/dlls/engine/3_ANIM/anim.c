@@ -1,11 +1,14 @@
-//May have been stored as "game/anim.c" (based off leftover string at 0x2F1560 in SFA Kiosk's "default.dol")
-
-#include "common.h"
-
+#include "PR/ultratypes.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
-#include "macros.h"
+#include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
+#include "sys/asset_thread.h"
+#include "sys/curves.h"
+#include "sys/dll.h"
+#include "sys/fs.h"
+#include "sys/joypad.h"
+#include "sys/memory.h"
 #include "sys/menu.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
@@ -13,8 +16,15 @@
 #include "sys/segment_1460.h"
 #include "sys/framebuffer_fx.h"
 #include "sys/gfx/projgfx.h"
+#include "macros.h"
+#include "dll.h"
 
-s32* func_800349B0(void);
+// official filename: game/anim.c (default.dol)
+
+//Terminology mightn't be correct
+#define ANIMCURVES_SCENES_MAX 45
+#define ANIMCURVES_ACTORS_MAX 16
+#define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
 
 typedef enum {
 /*00*/    ANIMCURVES_CHANNEL_headRotateZ = 0,
@@ -67,8 +77,8 @@ typedef struct {
 } Actor;
 
 typedef struct {
-Vec3f coord; 
-s8 unkC;
+    Vec3f coord; 
+    s8 unkC;
 } CameraFunc15Unk_unk74; //Related to CameraAction and Unk_DLL2_Func888? TO-DO: figure out
 
 typedef struct {
@@ -89,7 +99,7 @@ typedef struct{
 typedef struct {
     s16 unk0;
     s16 unk2;
-    u16 totalActors; //maybe?
+    u16 unk4;
 } ANIMUnk698;
 
 typedef struct {
@@ -115,7 +125,7 @@ typedef struct {
 /*0x18*/ static s16 _data_18 = 0;
 /*0x1C*/ static u8 _data_1C = 0;
 /*0x20*/ static s32 _data_20 = -1; // object ID of the thing the player should hold when playing the first time pickup sequence
-/*0x24*/ static Object *_data_24 = 0;
+/*0x24*/ static Object* _data_24 = 0;
 /*0x28*/ static s8 _data_28[] = {
     0, 0, 0, 0
 };
@@ -146,7 +156,6 @@ typedef struct {
 /*0x30*/ static s16 _bss_30;
 /*0x32*/ static s8 _bss_32;
 /*0x33*/ static s8 _bss_33;
-/*0x34*/ static u8 _bss_34[0x4];
 /*0x38*/ static Bss38Thing _bss_38[10];
 /*0x88*/ static s8 _bss_88;
 /*0x89*/ static s8 _bss_89;
@@ -168,20 +177,18 @@ typedef struct {
 /*0x1C8*/ static s8 _bss_1C8[ANIMCURVES_SCENES_MAX];
 /*0x1F8*/ static s16 _bss_1F8[ANIMCURVES_SCENES_MAX];
 /*0x258*/ static s16 _bss_258[ANIMCURVES_SCENES_MAX];
-/*0x2B8*/ static s16 _bss_2B8[48]; // TODO: len of 45?
-/*0x318*/ static s16 _bss_318[46]; // TODO: len of 45?
+/*0x2B8*/ static s16 _bss_2B8[ANIMCURVES_SCENES_MAX];
+/*0x318*/ static s16 _bss_318[ANIMCURVES_SCENES_MAX];
 /*0x378*/ static u8 _bss_378[ANIMCURVES_SCENES_MAX];
-/*0x3A8*/ static u8 _bss_3A8[0x8];
-/*0x3B0*/ static u8 _bss_3B0[0x28];
+/*0x3A8*/ static u8 _bss_3A8[ANIMCURVES_SCENES_MAX];
 /*0x3D8*/ static s32 _bss_3D8[ANIMCURVES_SCENES_MAX];
 /*0x490*/ static u8 _bss_490[ANIMCURVES_SCENES_MAX];
-/*0x4C0*/ static u8 _bss_4C0[48]; // TODO: len of 45?
-/*0x4F0*/ static f32 _bss_4F0[45];
+/*0x4C0*/ static u8 _bss_4C0[ANIMCURVES_SCENES_MAX];
+/*0x4F0*/ static f32 _bss_4F0[ANIMCURVES_SCENES_MAX];
 /*0x5A4*/ static f32 _bss_5A4;
 /*0x5A8*/ static f32 _bss_5A8;
-/*0x5AC*/ static u8 _bss_5AC[0x4]; //TODO: just u8?
+/*0x5AC*/ static u8 _bss_5AC;
 /*0x5B0*/ static f32 _bss_5B0;
-/*0x5B0*/ static u8 _bss_5B4[0x4];
 /*0x5B8*/ static Vec3f _bss_5B8;
 /*0x5C4*/ static f32 _bss_5C4;
 /*0x5C8*/ static s32 _bss_5C8;
@@ -193,18 +200,14 @@ typedef struct {
 /*0x5E0*/ static f32 _bss_5E0;
 /*0x5E4*/ static f32 _bss_5E4;
 /*0x5E8*/ static f32 _bss_5E8;
-/*0x5E8*/ static u8 _bss_5EC[0x4];
 /*0x5F0*/ static Bss5F0Thing _bss_5F0[20];
 /*0x690*/ static s32 _bss_690;
-/*0x694*/ static u8 _bss_694[0x4];
-/*0x698*/ static ANIMUnk698 _bss_698[1];
-/*0x69E*/ static u8 _bss_69E[0x2];
-/*0x6A0*/ static u8 _bss_6A0[0x58];
+/*0x694*/ static u8 _bss_694[0x4]; // unused gap
+/*0x698*/ static ANIMUnk698 _bss_698[16];
 /*0x6F8*/ static s8 _bss_6F8;
 /*0x6FC*/ static Object *_bss_6FC;
-/*0x700*/ static s16 _bss_700[2];
-/*0x708*/ static ANIMActorOverride _bss_708[44][16];
-/*0x1D0C*/ static u8 _bss_1D0C[0x80];
+/*0x700*/ static s16 _bss_700;
+/*0x708*/ static ANIMActorOverride _bss_708[45][16];
 typedef union {
     struct {
     u32 unk0_8: 1; // 0x80
@@ -303,14 +306,14 @@ void dll_3_func_98(void) {
 void dll_3_func_2C0(s32 arg0, s32 arg1, s32 arg2) {   
     if (arg0 >= 0 && arg0 < ANIMCURVES_SCENES_MAX && _bss_6F8 < ANIMCURVES_ACTORS_MAX) {
         (&_bss_698[_bss_6F8])->unk0 = arg0;
-        (&_bss_698[_bss_6F8])->totalActors = arg2;
+        (&_bss_698[_bss_6F8])->unk4 = arg2;
         (&_bss_698[_bss_6F8])->unk2 = arg1; _bss_6F8++; 
     }
 }
 
 // offset: 0x324 | func: 2 | export: 2
 void dll_3_func_324(s32 arg0, s32 arg1) {
-    if (arg0 >= 0 && arg0 < 0x2D) {
+    if (arg0 >= 0 && arg0 < 45) {
         _bss_138[arg0] = arg1;
     }
 }
@@ -1230,7 +1233,6 @@ static Object* dll_3_func_2FE8(Object* arg0, AnimObj_Data* arg1, AnimObj_Setup* 
 }
 
 // offset: 0x3170 | func: 12
-//TODO: verify argument structs are correct, and investigate lengths of BSS arrays
 static void dll_3_func_3170(Object* arg0, Object* arg1, AnimObj_Data* arg2) {
     if (arg2->unk9D & 1) {
         _bss_108[arg2->unk63] = 1;
@@ -2815,7 +2817,7 @@ static void dll_3_func_71C0(Object* arg0, Object* arg1, AnimObj_Data* arg2) {
 // offset: 0x72E0 | func: 38
 static void dll_3_func_72E0(Object* arg0) {
     _bss_6FC = arg0;
-    _bss_700[0] = gUpdateRate;
+    _bss_700 = gUpdateRate;
 }
 
 // offset: 0x730C | func: 39 | export: 5
@@ -3434,11 +3436,11 @@ s32 dll_3_func_8900(s32 objectSeqIndex, Object* object, s32 enabledActors) {
             actorSetup->sequenceIdBitfield = ((objectSeqIndex & 0x7FF) * 0x10) | 0x8000 | (i & 0xF);
             actorSetup->unk1A = -1;
             if (i != 0) {
-                if ((*_bss_5AC != 0) && (actorSetup->base.objId == OBJ_AnimCamera)) {
+                if ((_bss_5AC != 0) && (actorSetup->base.objId == OBJ_AnimCamera)) {
                     actorSetup->base.x = sp5C + _bss_5B8.x;
                     actorSetup->base.y = sp58 + _bss_5B8.y;
                     actorSetup->base.z = sp54 + _bss_5B8.z;
-                    *_bss_5AC = 0;
+                    _bss_5AC = 0;
                 } else {
                     actorSetup->base.x = sp5C;
                     actorSetup->base.y = sp58;
@@ -3878,7 +3880,7 @@ s32 dll_3_func_9E58(s32 arg0, Object *arg1, s32 arg2) {
 
 // offset: 0x9E88 | func: 71 | export: 31
 s32 dll_3_func_9E88(f32 arg0, f32 arg1, f32 arg2) {
-    _bss_5AC[0] = 1;
+    _bss_5AC = 1;
     _bss_5B8.x = arg0;
     _bss_5B8.y = arg1;
     _bss_5B8.z = arg2;

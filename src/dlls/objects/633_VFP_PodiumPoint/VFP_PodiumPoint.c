@@ -2,7 +2,7 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"

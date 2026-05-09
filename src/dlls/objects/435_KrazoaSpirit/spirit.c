@@ -1,21 +1,13 @@
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/rand.h"
-
-typedef struct {
-    AnimObj_Setup base;
-} Spirit_Setup;
-
-typedef struct {
-    AnimObj_Data base;
-} Spirit_Data;
 
 /*0x0*/ static DLL_Unknown *data_modGfx = NULL;
 /*0x4*/ static Object *data_lfxEmitter = NULL;
@@ -27,29 +19,29 @@ void Spirit_ctor(void *dll) { }
 void Spirit_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Spirit_setup(Object* self, Spirit_Setup* objSetup, s32 arg2) {
-    Spirit_Data* objData;
+void Spirit_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
+    AnimObj_Data* objData;
     s32 temp_v0;
     s16 id;
 
     objData = self->data;
     
-    objData->base.unk76 = objSetup->base.unk1A;
-    objData->base.unk7A = -1;
-    objData->base.unk24 = 1.0f / ((u8)objSetup->base.unk24 + 1.0f);
-    objData->base.unk28 = -1;
+    objData->unk76 = objSetup->unk1A;
+    objData->unk7A = -1;
+    objData->unk24 = 1.0f / ((u8)objSetup->unk24 + 1.0f);
+    objData->unk28 = -1;
     
     temp_v0 = self->unkDC;
     
-    if ((temp_v0 == 0) && (objSetup->base.sequenceIdBitfield != 1)) {
+    if ((temp_v0 == 0) && (objSetup->sequenceIdBitfield != 1)) {
         gDLL_3_Animation->vtbl->func6(objData, objSetup);
-        self->unkDC = objSetup->base.sequenceIdBitfield + 1;
-    } else if (temp_v0 && (temp_v0 != objSetup->base.sequenceIdBitfield + 1)) {
+        self->unkDC = objSetup->sequenceIdBitfield + 1;
+    } else if (temp_v0 && (temp_v0 != objSetup->sequenceIdBitfield + 1)) {
         gDLL_3_Animation->vtbl->func8(objData);
-        if (objSetup->base.sequenceIdBitfield != -1) {
+        if (objSetup->sequenceIdBitfield != -1) {
             gDLL_3_Animation->vtbl->func6(objData, objSetup);
         }
-        self->unkDC = objSetup->base.sequenceIdBitfield + 1;
+        self->unkDC = objSetup->sequenceIdBitfield + 1;
     }
     
     id = self->id;
@@ -71,14 +63,14 @@ void Spirit_setup(Object* self, Spirit_Setup* objSetup, s32 arg2) {
 // offset: 0x1FC | func: 1 | export: 1
 void Spirit_control(Object* self) {
     s32 index;
-    Spirit_Setup *setup;
+    AnimObj_Setup *setup;
     s32 otherMatchCount;
     Object* obj;
     s8 searchValue;
     s16 id;
     Object* matchObject;
     LFXEmitter_Setup* lfxSetup;
-    Spirit_Data* objData;
+    AnimObj_Data* objData;
     s32 numObjects;
     AnimObj_Data* objData2;
     Object** objects;
@@ -86,9 +78,9 @@ void Spirit_control(Object* self) {
     AnimObj_Data *temp;
 
     objData = self->data;
-    setup = (Spirit_Setup*)self->setup;
+    setup = (AnimObj_Setup*)self->setup;
     
-    if (!setup || setup->base.sequenceIdBitfield == -1){
+    if (!setup || setup->sequenceIdBitfield == -1){
         return;
     }
     
@@ -125,7 +117,7 @@ void Spirit_control(Object* self) {
         obj_destroy_object(self);
     }
     
-    if ((objData->base.unk8D == 1) || (objData->base.unk8D == 3)) {
+    if ((objData->unk8D == 1) || (objData->unk8D == 3)) {
         lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
         lfxSetup->base.loadDistance = 0xFF;
         lfxSetup->base.fadeDistance = 0xFF;
@@ -134,7 +126,7 @@ void Spirit_control(Object* self) {
         lfxSetup->base.z = self->srt.transl.z;
         lfxSetup->unk20 = 0;
         
-        if (objData->base.unk8D == 1) {
+        if (objData->unk8D == 1) {
             lfxSetup->unk1E = 0x1CB;
         } else {
             lfxSetup->unk1E = 0x1CF;
@@ -146,13 +138,13 @@ void Spirit_control(Object* self) {
         lfxSetup->unk1C = 0;
         lfxSetup->unk24 = 0;
         data_lfxEmitter = obj_create((ObjSetup *) lfxSetup, 5, self->mapID, -1, self->parent);
-        objData->base.unk8D = 0;
-    } else if (objData->base.unk8D == 2) {
+        objData->unk8D = 0;
+    } else if (objData->unk8D == 2) {
         if (data_lfxEmitter) {
             obj_destroy_object(data_lfxEmitter);
             data_lfxEmitter = NULL;
         }
-        objData->base.unk8D = 0;
+        objData->unk8D = 0;
     }
     
     if (data_lfxEmitter) {
@@ -244,5 +236,5 @@ u32 Spirit_get_model_flags(Object *self){
 
 // offset: 0x92C | func: 6 | export: 6
 u32 Spirit_get_data_size(Object *self, u32 a1) {
-    return sizeof(Spirit_Data);
+    return sizeof(AnimObj_Data);
 }

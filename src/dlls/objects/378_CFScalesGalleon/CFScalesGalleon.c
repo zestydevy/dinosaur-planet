@@ -1,6 +1,6 @@
-#include "sys/main.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
+#include "sys/main.h"
 
 typedef struct {
 /*00*/ s32 _unk0;

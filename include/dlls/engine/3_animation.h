@@ -2,41 +2,18 @@
 #define _DLLS_3_H
 
 #include "PR/ultratypes.h"
-#include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "dll_def.h"
-#include "types.h"
-
-//Terminology mightn't be correct
-#define ANIMCURVES_SCENES_MAX 45
-#define ANIMCURVES_ACTORS_MAX 16
-#define ANIMCURVES_KEYFRAME_CHANNELS 19
-#define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
-
-typedef struct {
-/*0*/ f32 value;
-/*4*/ s8 interpolation;
-/*5*/ s8 channel;
-/*6*/ s16 timeOffset;
-} AnimCurvesKeyframe;
-
-typedef struct {
-/*0*/ s8 type;
-/*1*/ u8 delay;
-/*2*/ s16 params;
-} AnimCurvesEvent;
 
 DLL_INTERFACE(DLL_3_animation) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-// Unmatched
 /*0*/ void (*func0)(void);
-/*1*/ void (*func1)(s32 arg0, s32 arg1);
+/*1*/ void (*func1)(s32 arg0, s32 arg1); // @bug: missing 3rd param
 /*2*/ void (*func2)(s32 arg0, s32 arg1);
 /*3*/ s8 (*func3)(s32 arg0);
-// Unmatched
 /*4*/ s32 (*func4)(Object* object, s32 updateRate);
-// Unmatched
 /*5*/ void (*func5)(void);
-/*6*/ void (*func6)(void *state, void *setup);
+/*6*/ void (*func6)(AnimObj_Data* arg0, AnimObj_Setup* setup);
 /*7*/ void (*func7)(void *state);
 /*8*/ void (*func8)(void *state);
 // Unmatched

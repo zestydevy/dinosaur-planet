@@ -1,10 +1,10 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/main.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/gametexts_ui.h"
 

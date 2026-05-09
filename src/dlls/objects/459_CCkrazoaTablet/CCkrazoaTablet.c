@@ -1,11 +1,11 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
 #include "sys/objlib.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "sys/objexpr.h"
 
 typedef struct {

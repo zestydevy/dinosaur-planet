@@ -1,11 +1,11 @@
-#include "dlls/objects/214_animobj.h"
+#include "dlls/objects/373_CFCloudBaby.h"
+#include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
-#include "dll.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "game/gamebits.h"
-#include "dlls/objects/373_CFCloudBaby.h"
+#include "dll.h"
 #include "macros.h"
 
 typedef struct {

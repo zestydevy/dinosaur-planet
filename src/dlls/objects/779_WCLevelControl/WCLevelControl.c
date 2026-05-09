@@ -1,5 +1,5 @@
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/objtype.h"

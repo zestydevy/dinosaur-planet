@@ -2,8 +2,8 @@
 #include "game/objects/interaction_arrow.h"
 #include "sys/gfx/model.h"
 
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/768_SPshop.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 

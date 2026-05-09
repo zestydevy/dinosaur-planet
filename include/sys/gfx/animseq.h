@@ -1,11 +1,26 @@
-#ifndef _DLLS_214_H
-#define _DLLS_214_H
+/** Anim sequence system
+ */
+#ifndef _SYS_GFX_ANIMSEQ_H
+#define _SYS_GFX_ANIMSEQ_H
 
 #include "PR/ultratypes.h"
-#include "dlls/engine/3_animation.h"
 #include "game/objects/object.h"
 #include "sys/objanim.h"
-#include "dll_def.h"
+
+#define ANIMCURVES_KEYFRAME_CHANNELS 19
+
+typedef struct {
+/*0*/ f32 value;
+/*4*/ s8 interpolation;
+/*5*/ s8 channel;
+/*6*/ s16 timeOffset;
+} AnimCurvesKeyframe;
+
+typedef struct {
+/*0*/ s8 type;
+/*1*/ u8 delay;
+/*2*/ s16 params;
+} AnimCurvesEvent;
 
 typedef struct {
     ObjSetup base;

@@ -6,7 +6,7 @@
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/map_enums.h"
 #include "sys/menu.h"

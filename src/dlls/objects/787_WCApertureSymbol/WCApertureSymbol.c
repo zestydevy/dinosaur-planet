@@ -1,6 +1,6 @@
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/vi.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"

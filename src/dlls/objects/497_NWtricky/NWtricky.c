@@ -2,13 +2,13 @@
 #include "game/gamebits.h"
 #include "game/gametexts.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
-#include "dlls/objects/214_animobj.h"
 
 typedef struct {
     u8 state;

@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"

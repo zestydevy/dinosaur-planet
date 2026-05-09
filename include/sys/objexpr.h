@@ -80,5 +80,6 @@ void func_80032CF8(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3)
 void func_80034B54(Object* arg0, HeadAnimation* arg1, s16* soundIDs, u8 arg3);
 void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3);
 void func_80032B44(Object *obj, u32 arg1);
+s32* func_800349B0(void);
 
 #endif

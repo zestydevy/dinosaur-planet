@@ -4,7 +4,7 @@
 #include "game/objects/object.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"

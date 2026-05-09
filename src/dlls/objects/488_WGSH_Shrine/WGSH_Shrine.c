@@ -1,6 +1,6 @@
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
