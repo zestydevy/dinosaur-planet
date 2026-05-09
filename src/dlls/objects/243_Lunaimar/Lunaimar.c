@@ -323,10 +323,10 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     dll_243_func_11C0(self, baddie, fsa);
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 5);
-    baddie->unk3AC = self->unkC0;
-    self->unkC0 = NULL;
+    baddie->unk3AC = self->animObj;
+    self->animObj = NULL;
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
-    self->unkC0 = baddie->unk3AC;
+    self->animObj = baddie->unk3AC;
 }
 
 // offset: 0xEEC | func: 12

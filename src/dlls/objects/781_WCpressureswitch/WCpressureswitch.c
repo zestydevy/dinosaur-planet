@@ -240,23 +240,23 @@ static int WCpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj
     objdata = self->data;
     setup = (PressureSwitch_Setup*)self->setup;
 
-    if (animObjData->unk8D == 1) {
+    if (animObjData->lastMessage == 1) {
         for (index = 0; index < 10; index++){
             if (objdata->objectsOnSwitch[index]) {
                 objdata->objCoords[index].x = objdata->objectsOnSwitch[index]->srt.transl.x;
                 objdata->objCoords[index].z = objdata->objectsOnSwitch[index]->srt.transl.z;
             }
         }
-        animObjData->unk8D = 0;
+        animObjData->lastMessage = 0;
 
-    } else if (animObjData->unk8D == 2) {
+    } else if (animObjData->lastMessage == 2) {
         for (index = 0; index < 10; index++);
 
         self->srt.transl.z = setup->base.x; //@bug? should be x component?
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
         main_set_bits(setup->gameBitPressed, 0);
-        animObjData->unk8D = 0;
+        animObjData->lastMessage = 0;
     }
 
     return 0;

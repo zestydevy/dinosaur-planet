@@ -1,8 +1,8 @@
 #include "dlls/engine/27.h"
 #include "dlls/engine/4_race.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/joypad.h"
@@ -14,7 +14,7 @@
 #include "sys/segment_53F00.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "prevent_bss_reordering.h"
+#include "prevent_bss_reordering2.h"
 
 typedef struct {
 /*00*/ Vec3f unk0;

@@ -2991,7 +2991,7 @@ s16 map_get_mobile_map_vars(s32* outMapID) {
     return gMobileMapUnknown;
 }
 
-s8 map_get_layer(void) {
+s32 map_get_layer(void) {
     return gMapLayer;
 }
 
@@ -4414,7 +4414,7 @@ s32 map_should_obj_unload(Object *obj) {
     if (objSetup->loadFlags & OBJSETUP_LOAD_MANUAL) {
         return FALSE;
     }
-    if ((obj->unkC0 != NULL) && (obj->unkB4 < 0)) {
+    if ((obj->animObj != NULL) && (obj->seqSlot < 0)) {
         return FALSE;
     }
     if (obj->parent == NULL) {

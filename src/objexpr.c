@@ -107,7 +107,7 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
     func_80034678(obj, arg1, 0);
 }
 
-void func_80032B44(Object *obj, s32 arg1) {
+void func_80032B44(Object *obj, u32 arg1) {
     s32 v0;
     s32 pad;
     s32 sp1C;

@@ -72,12 +72,6 @@ typedef struct {
 /*009C*/ u8 unk9C;
 } ObjectAnim_Data;
 
-// objdata of object in Object::unkC0
-typedef struct {
-/*0000*/    u8 unk0[0x62 - 0x0];
-/*0062*/    s8 unk62;
-} ObjectC0_Data;
-
 // Stored in the flags of Object.srt
 enum ObjectFlags {
 /*1*/ OBJFLAG_UNK_2 = 0x2,
@@ -336,10 +330,9 @@ DLL_INTERFACE(DLL_IObject) {
     /*6*/ u32 (*get_data_size)(struct Object *obj, u32 offsetAddr);
 };
 
-// arg3 and arg4 are unknown types
 // always called by DLL 3 "ANIM" during cutscenes?
 struct AnimObj_Data;
-typedef int (*AnimationCallback)(struct Object *, struct Object *, struct AnimObj_Data *, s8);
+typedef int (*AnimationCallback)(struct Object *actor, struct Object *animObj, struct AnimObj_Data *animObjData, s8);
 
 /**
  * Game object instance.
@@ -389,11 +382,11 @@ typedef struct Object {
 /*00AF*/    u8 unkAF; //Target arrow flags (see InteractionArrowFlags)
 /*00B0*/    u16 stateFlags; // ObjectStateFlags
 /*00B2*/    s16 unkB2;
-/*00B4*/    s16 unkB4;
+/*00B4*/    s16 seqSlot; // the allocated slot for the object sequence this object is currently playing (-1 if not playing a seq, -2 if this is an anim object)
 /*00B6*/    u8 unkB6[2];
 /*00B8*/    void* data; //type depends on object
 /*00BC*/    AnimationCallback animCallback; // some kind of cutscene anim callback?
-/*00C0*/    struct Object *unkC0; // related to group 16 objects?
+/*00C0*/    struct Object *animObj; // the anim object that is currently targeting this object
 /*00C4*/    struct Object* unkC4; // parent object (called "parentobject" in default.dol)
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
 /*00CC*/    ObjectMesgQueue *mesgQueue;

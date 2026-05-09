@@ -87,7 +87,7 @@ void WarpPoint_control(Object *self) {
             dz = player->srt.transl.z - self->srt.transl.z;
             dist = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
             if ((objdata->unkC == 0) && (setup->unk1C != 0) && (dist < objdata->dist) && (player->parent == self->parent)) {
-                gDLL_3_Animation->vtbl->func17(objdata->objectSeqIndex, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
                 D_80092A78 = 2;
                 objdata->unkC = 1;
             }
@@ -102,12 +102,12 @@ void WarpPoint_control(Object *self) {
         dz = player->srt.transl.z - self->srt.transl.z;
         dist = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
         if ((D_800B4A5E >= 0) && (setup->unk1C != 0) && (dist < 100.0f) && (player->parent == self->parent)) {
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             D_80092A78 = 2;
         }
         if ((objdata->counter == 0) && (dist < setup->dist)) {
             if ((setup->warpID >= 0) && (setup->warpID >= 0)) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             }
         }
         break;
@@ -121,7 +121,7 @@ void WarpPoint_control(Object *self) {
             dist = objdata->dist;
         }
         if ((main_get_bits(objdata->gamebit)) && (objdata->unkC == 0) && (setup->unk1C != 0) && (dist <= objdata->dist) && (player->parent == self->parent)) {
-            gDLL_3_Animation->vtbl->func17(objdata->objectSeqIndex, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
             objdata->unkC = 1;
         } else if (objdata->unkC == 1) {
             if ((main_get_bits(objdata->gamebit)) && (objdata->counter == 0) && (dist <= objdata->dist) && (setup->warpID >= 0)) {
@@ -137,7 +137,7 @@ void WarpPoint_control(Object *self) {
         dist = sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
         if ((main_get_bits(objdata->gamebit)) && (objdata->unkC == 0) && (setup->unk1C != 0) && (dist < objdata->dist) && (player->parent == self->parent)) {
             main_set_bits(objdata->gamebit, 0);
-            gDLL_3_Animation->vtbl->func17(objdata->objectSeqIndex, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
             objdata->unkC = 1;
         }
         break;
@@ -151,7 +151,7 @@ void WarpPoint_control(Object *self) {
             dist = objdata->dist;
         }
         if ((D_800B4A5E >= 0) && (objdata->unkC == 0) && (setup->unk1C != 0) && (dist < objdata->dist) && (player->parent == self->parent)) {
-            gDLL_3_Animation->vtbl->func17(objdata->objectSeqIndex, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
             D_80092A78 = 2;
             objdata->unkC = 1;
         }
@@ -191,10 +191,10 @@ int WarpPoint_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObj
     WarpPoint_Setup *setup;
 
     setup = (WarpPoint_Setup*)self->setup;
-    if ((setup->unk1D != UNK1D_2) && (animObjData->unk8D == 1)) {
+    if ((setup->unk1D != UNK1D_2) && (animObjData->lastMessage == 1)) {
         if (setup->warpID >= 0) {
             warpPlayer(setup->warpID, 1);
-            animObjData->unk8D = 0;
+            animObjData->lastMessage = 0;
         }
     }
     return 0;

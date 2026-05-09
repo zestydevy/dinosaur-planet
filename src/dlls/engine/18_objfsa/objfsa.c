@@ -86,8 +86,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
     } else {
         data->targetDist = 0.0f;
     }
-    if (obj->unkC0) {}
-    if ((data->flags & 0x8000) && (obj->unkC0 == NULL)) {
+    if (obj->animObj) {}
+    if ((data->flags & 0x8000) && (obj->animObj == NULL)) {
         objfsa_run_logic_state(obj, data, fsaUpdateRate, logicStateCallbacks);
         data->logicStateTime += fsaUpdateRate;
         if ((f32) data->logicStateTime > 10000.0f) {

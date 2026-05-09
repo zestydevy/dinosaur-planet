@@ -1,13 +1,13 @@
 #include "dll.h"
 #include "game/objects/object.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/vi.h"
 #include "sys/segment_1050.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/730_CRSpellstone.h"
 
 typedef struct {

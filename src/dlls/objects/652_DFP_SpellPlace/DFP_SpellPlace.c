@@ -1,9 +1,9 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/gfx/model.h"
@@ -105,7 +105,7 @@ static void dll_652_func_254(Object* self) {
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         if (bit2Val && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_CRF)) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
             main_set_bits(objdata->unk0, 1);
@@ -125,7 +125,7 @@ static void dll_652_func_364(Object* self) {
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~8;
         if (bit2Val && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= 8;
         }

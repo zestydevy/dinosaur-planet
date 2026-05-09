@@ -1,11 +1,11 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
 #include "sys/objlib.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "sys/objexpr.h"
 
 typedef struct {
@@ -61,7 +61,7 @@ void CCkrazoaTablet_control(Object *self) {
             self->unkAF |= 8;
         } else {
             if (func_80032538(self) != 0) {
-                gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex + 3, obj_get_nearest_type_to(OBJTYPE_17, self, NULL), -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex + 3, obj_get_nearest_type_to(OBJTYPE_17, self, NULL), -1);
             }
         }
     }
@@ -97,8 +97,8 @@ int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *an
 
     CCkrazoaTablet_func_48C(self, objdata);
 
-    for (i = 0; i < animObjData->unk98; i++) {
-        switch (animObjData->unk8E[i]) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        switch (animObjData->messages[i]) {
             case 1:
                 main_set_bits(setup->gamebit, 1);
                 main_decrement_bits(BIT_CC_Krazoa_Tablets);

@@ -151,7 +151,7 @@ void dll_455_control(Object* self) {
             break;
         }
         if (self->unkAF & 1) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
         func_80024108(self, HighTopData->unk2C, gUpdateRateF, NULL);
         /* fallthrough */

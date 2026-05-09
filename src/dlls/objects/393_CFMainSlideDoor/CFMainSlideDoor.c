@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -56,10 +56,10 @@ void CFMainSlideDoor_control(Object* self) {
         setup = (CFMainSlideDoor_Setup*)self->setup;
         objdata = (CFMainSlideDoor_Data*)self->data;
         if ((setup->unk1C != 0) && (objdata->unk0 != 0)) {
-            gDLL_3_Animation->vtbl->func20(self, setup->unk1C);
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk1C);
         }
         if (setup->unk1E != -1) {
-            gDLL_3_Animation->vtbl->func17(setup->unk1E, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->unk1E, self, -1);
         }
         self->unkDC = 1;
     }
@@ -128,11 +128,11 @@ int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
         }
     }
     if (objdata->unk0 == 2) {
-        if (a2->unk8D == 2) {
+        if (a2->lastMessage == 2) {
             objdata->unk0 = 1;
         }
     } else if (objdata->unk0 == 3) {
-        if (a2->unk8D == 1) {
+        if (a2->lastMessage == 1) {
             objdata->unk0 = 0;
         }
     }

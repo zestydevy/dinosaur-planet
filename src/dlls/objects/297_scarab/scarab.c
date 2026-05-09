@@ -339,7 +339,7 @@ void scarab_control(Object* self) {
         if ((objData->stunTimer || (self->id != OBJ_Rain_scarab)) && (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 25.0f)) {
             //Play an item collection sequence the first time a Scarab is collected
             if (!main_get_bits(BIT_Tutorial_Collected_Scarab)) {
-                gDLL_3_Animation->vtbl->func30(dSequenceIDs[objData->scarabTypeIndex], 0, 0);
+                gDLL_3_Animation->vtbl->set_variable_obj(dSequenceIDs[objData->scarabTypeIndex], 0, 0);
                 messageID = 0;
                 obj_send_mesg(player, 0x7000A, self, 0);
                 main_set_bits(BIT_Tutorial_Collected_Scarab, 1);

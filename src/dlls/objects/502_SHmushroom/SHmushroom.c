@@ -600,7 +600,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 		if ((self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) &&
 			(main_get_bits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj) == FALSE)
 		) {
-			gDLL_3_Animation->vtbl->func30(OBJ_SHmushroomanim, NULL, 0);
+			gDLL_3_Animation->vtbl->set_variable_obj(OBJ_SHmushroomanim, NULL, 0);
 			main_set_bits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj, TRUE);
 		}
 
