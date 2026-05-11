@@ -190,6 +190,8 @@ enum SoundID {
 
     SOUND_140_Galleon_Propeller_Loop = 0x140,
 
+    SOUND_161_Toy_Squeak = 0x161,
+
     SOUND_174_Machinery_Move_A = 0x174, //SB_ShipGun
     SOUND_175_Machinery_Move_B = 0x175, //SB_ShipGun
     SOUND_176_Explosion_A = 0x176, //SB_ShipGun
