@@ -7,7 +7,6 @@
 #include "sys/objprint.h"
 #include "sys/segment_53F00.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/common/foodbag.h"
 #include "dll.h"
 

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 
 typedef struct {
@@ -111,7 +111,7 @@ void SeqObj_control(Object* self) {
 
             if (sequencePlayed) {
                 if (objSetup->seqIndex != -1) {
-                    gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, -1);
                 }
                 if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) == FALSE && 
                     (objSetup->playbackOptions & (SEQOBJ_OPTIONS_2 | SEQOBJ_OPTIONS_8)) == FALSE) {
@@ -122,11 +122,11 @@ void SeqObj_control(Object* self) {
     } else {
     //If sequence is playing
         if (objData->flags & SEQOBJ_FLAG_Unk_2) {
-            gDLL_3_Animation->vtbl->func20(self, objSetup->unk20);
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, objSetup->unk20);
             if (objSetup->playbackOptions & SEQOBJ_OPTIONS_A) {
-                gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, objSetup->unk22);
+                gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, objSetup->unk22);
             } else {
-                gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, 1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, 1);
             }
             objData->flags &= ~SEQOBJ_FLAG_Unk_2;
             return;
@@ -172,7 +172,7 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     SeqObj_Data* objData;
     s32 index;
 
-    if (self->unkB4 == -1) {
+    if (self->seqSlot == SEQSLOT_NONE) {
         return 0;
     }
     
@@ -180,8 +180,8 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     objData = self->data;
 
     animObjData->unk62 = 0;
-    for (index = 0; index < animObjData->unk98; index++){
-        switch (animObjData->unk8E[index]) {
+    for (index = 0; index < animObjData->messageCount; index++){
+        switch (animObjData->messages[index]) {
             case 1:
                 if (!(objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) && 
                      (objSetup->playbackOptions & SEQOBJ_OPTIONS_2)) {

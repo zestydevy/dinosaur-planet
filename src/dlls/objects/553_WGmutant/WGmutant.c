@@ -1,6 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objprint.h"
 
 typedef struct {

@@ -3,10 +3,10 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/math.h"
@@ -136,7 +136,7 @@ void mmp_mseedrecept_control(Object* self) {
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
                     self->opacity = 0;
-                    gDLL_3_Animation->vtbl->func17(0, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                     main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
                 }
             }

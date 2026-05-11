@@ -62,7 +62,7 @@ void dll_525_control(Object* self) {
     dll525Data = self->data;
     if (self->modelInstIdx == 5) {
         if (main_get_bits(BIT_639) == 0) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             return;
         }
         sp40 = get_player();

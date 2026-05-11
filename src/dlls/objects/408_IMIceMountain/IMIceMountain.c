@@ -1,9 +1,9 @@
 #include "dll.h"
 #include "dlls/objects/common/vehicle.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/segment_1050.h"
@@ -133,8 +133,8 @@ int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     objdata = self->data;
     objdata->flags |= IMICEMOUNTAIN_FLAG_1;
 
-    for (i = 0; i < animObjData->unk98; i++) {
-        if (animObjData->unk8E[i] == 1) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        if (animObjData->messages[i] == 1) {
             func_80000860(self, self, 0xA3, 0);
             func_80000860(self, self, 0x9E, 0);
             func_80000860(self, self, 0x104, 0);

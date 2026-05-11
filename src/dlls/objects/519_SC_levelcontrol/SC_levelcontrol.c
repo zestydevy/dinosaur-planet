@@ -6,7 +6,7 @@
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/map_enums.h"
 #include "sys/menu.h"
@@ -430,8 +430,8 @@ static int SC_levelcontrol_anim_callback(Object *self, Object *overrideObj, Anim
     s32 i;
 
     animData->unk62 = 0;
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case 1:
             SC_levelcontrol_func_660(self, 6);
             break;

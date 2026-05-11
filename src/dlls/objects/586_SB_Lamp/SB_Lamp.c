@@ -54,7 +54,7 @@ void SB_Lamp_setup(Object *self, ObjSetup *setup, s32 arg2) {
 // offset: 0xB8 | func: 1 | export: 1
 void SB_Lamp_control(Object *self) {
     if (self->unkE0 == 0) {
-        gDLL_3_Animation->vtbl->func17(0, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         self->unkE0 = 1;
     }
 }

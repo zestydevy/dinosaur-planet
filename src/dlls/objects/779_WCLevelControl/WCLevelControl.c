@@ -1,5 +1,6 @@
 #include "macros.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/objtype.h"
@@ -7,7 +8,6 @@
 #include "sys/segment_1050.h"
 #include "sys/segment_1460.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 
 #define PUZZLE_UNIT 48
 
@@ -482,9 +482,8 @@ static int WCLevelControl_anim_callback(Object *self, Object *overrideObj, AnimO
             main_set_bits(BIT_802, 1);
         }
     }
-
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
             case 1:
                 objdata->state = STATE_6;
                 break;
@@ -517,11 +516,11 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
             objdata->flags |= FLAG_4;
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
-            if (main_get_bits(BIT_7FA)) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+            if (main_get_bits(BIT_7FA) != 0) {
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->state = STATE_3;
             } else {
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 objdata->state = STATE_0;
             }
         } else if (func_8000FB1C()) {
@@ -540,11 +539,11 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
             objdata->flags |= FLAG_8;
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
-            if (main_get_bits(BIT_7F9)) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+            if (main_get_bits(BIT_7F9) != 0) {
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->state = STATE_3;
             } else {
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 objdata->state = STATE_0;
             }
         } else if (func_8000FB1C()) {

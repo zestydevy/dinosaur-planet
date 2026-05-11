@@ -15,8 +15,6 @@ void dll_relocate(DLLFile *dll);
 DLLFile *dll_load_from_tab(u16 tabidx, s32 *sizeOut);
 
 void init_dll_system(void) {
-    s32 dllNone = DLL_NONE;
-
     queue_alloc_load_file((void**)&gFile_DLLS_TAB, DLLS_TAB);
     queue_alloc_load_file((void**)&gFile_DLLSIMPORTTAB, DLLSIMPORTTAB_BIN);
 
@@ -29,8 +27,7 @@ void init_dll_system(void) {
 
     gLoadedDLLCount = MAX_LOADED_DLLS;
     while (gLoadedDLLCount != 0) {
-        --gLoadedDLLCount;
-        gLoadedDLLList[gLoadedDLLCount].tabidx = dllNone;
+        gLoadedDLLList[--gLoadedDLLCount].tabidx = DLL_NONE;
     }
 }
 

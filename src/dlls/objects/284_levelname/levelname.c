@@ -2,11 +2,11 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
-#include "sys/fonts.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
+#include "sys/fonts.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/memory.h"
@@ -195,8 +195,8 @@ static int levelname_anim_callback(Object* self, Object *overrideObj, AnimObj_Da
 
     objdata = self->data;
 
-    for (i = 0; i < animData->unk98; i++){
-        if (animData->unk8E[i] == 1) {
+    for (i = 0; i < animData->messageCount; i++){
+        if (animData->messages[i] == 1) {
             if (objdata->flagID != -1) {
                 main_set_bits(objdata->flagID, 1);
             }

@@ -6,10 +6,10 @@
 #include "dll.h"
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/227_tumbleweed.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
@@ -395,7 +395,7 @@ void dll_496_control(Object* snowhorn) {
         if (objdata->unk425 >= objdata->unk426) {
             objdata->unk425 = 0;
         }
-        gDLL_3_Animation->vtbl->func17(objdata->chatSequenceList[seqIndex], snowhorn, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(objdata->chatSequenceList[seqIndex], snowhorn, -1);
         joy_set_button_mask(0, A_BUTTON);
     }
 
@@ -444,8 +444,8 @@ int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
     self->unkAF |= 8;
     animObjdata->unk62 = 0;
 
-    for (i = 0; i < animObjdata->unk98; i++){
-        if (animObjdata->unk8E[i] == 3) {
+    for (i = 0; i < animObjdata->messageCount; i++){
+        if (animObjdata->messages[i] == 3) {
             main_set_bits(BIT_Map_SW, 1);
             continue;
         }        
@@ -581,7 +581,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
     if ((f32)objdata->unkRadius*objdata->unkRadius < vec3_distance_squared(&snowhorn->globalPosition, &player->globalPosition)) {
         objdata->sleepTimer += gUpdateRate;
         if (objdata->sleepTimer > 900) {
-            gDLL_3_Animation->vtbl->func17(7, snowhorn, -1); //play seq 7?
+            gDLL_3_Animation->vtbl->start_obj_sequence(7, snowhorn, -1); //play seq 7?
             objdata->sleepTimer = (s16) -rand_next(0, 50);
         }
         return;
@@ -619,7 +619,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
             if ((snowhorn->unkAF & 4) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
                 main_decrement_bits(BIT_SW_Alpine_Roots);
-                gDLL_3_Animation->vtbl->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
                 objdata->flags = 4;
                 return;
             }
@@ -628,7 +628,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
             if ((snowhorn->unkAF & 4) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
                 main_decrement_bits(BIT_SW_Alpine_Roots);
-                gDLL_3_Animation->vtbl->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
                 objdata->flags = 6;
                 return;
             }
@@ -641,7 +641,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
     if (snowhorn->unkAF & 1) {
         snowhorn->unkAF &= ~1;
         if (objdata->flags < 7) {
-            gDLL_3_Animation->vtbl->func17(objdata->flags, snowhorn, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(objdata->flags, snowhorn, -1);
             joy_set_button_mask(0, A_BUTTON);
         }
     }
@@ -891,7 +891,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
     
     if (_data_274[0] != 0 && 
         func_80031BBC(snowhorn->globalPosition.x, snowhorn->globalPosition.y, snowhorn->globalPosition.z) == 0xA){
-        gDLL_3_Animation->vtbl->func17(0x10, snowhorn, -1); //setAnimation?
+        gDLL_3_Animation->vtbl->start_obj_sequence(0x10, snowhorn, -1); //setAnimation?
         return;
     }
     snowhorn->unkAF &= 0xFFF7;
@@ -966,7 +966,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             break;
         case 1:
             if (func_80032538(self)) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->flags = 2;
                 main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
             }
@@ -974,7 +974,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
         case 2:
             //Eating FrostWeeds?
             if (func_80032538(self)) {
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             }
             
             frostWeed = obj_get_nearest_type_to(OBJTYPE_4, self, 0);
@@ -1019,9 +1019,9 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
         case 5:
             if (func_80032538(self)) {
                 if (objdata->unk425 % 2) {
-                    gDLL_3_Animation->vtbl->func17(3, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                 } else {
-                    gDLL_3_Animation->vtbl->func17(2, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
                 }
                 objdata->unk425 += 1;
             }
@@ -1029,7 +1029,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
         case 6:
             //SpellStone activation
             if (func_80032538(self)) {
-                gDLL_3_Animation->vtbl->func17(4, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             } else if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {
                 main_set_bits(BIT_SpellStone_DIM_Activated, 1);
                 objdata->flags = 7;

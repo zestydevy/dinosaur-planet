@@ -4,7 +4,7 @@
 #include "game/objects/object.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -50,7 +50,7 @@ static int SHswapstone_anim_callback(Object* self, Object* a1, AnimObj_Data* a2,
 static s32 SHswapstone_get_held_spirit(void);
 static int SHswapstone_has_spellstone(void);
 static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, struct AnimObj_Data* arg2);
-static s32 SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 arg2);
+static s32 SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 cond);
 
 // offset: 0x0 | ctor
 void SHswapstone_ctor(void *dll) { }
@@ -188,7 +188,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
         menu_set(MENU_SELECTION);
     }
 
-    animData->unkF8 = SHswapstone_is_stick_direction_available;
+    animData->decisionCallback = SHswapstone_is_stick_direction_available;
     animData->unkF4 = SHswapstone_restore_gameplay_menu;
 
     if (animData->unk62 != 0) {
@@ -205,8 +205,8 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
         }
     }
 
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case 3:
             objdata->attachIdx = 0;
             break;
@@ -280,7 +280,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
         case (SELECT_SCREEN(SelectionMenu_STATE_2_Confirm_Right)):
         case (SELECT_SCREEN(SelectionMenu_STATE_3_Confirm_Left)):
             if (menu_get_current() == MENU_SELECTION) {
-                ((DLL_Menu16*)menu_get_active_dll())->vtbl->set_selection_state(animData->unk8E[i] - CMD_BASE_SELECTION);
+                ((DLL_Menu16*)menu_get_active_dll())->vtbl->set_selection_state(animData->messages[i] - CMD_BASE_SELECTION);
             }
             break;
         default:
@@ -299,7 +299,7 @@ static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, st
 }
 
 // offset: 0xAD4 | func: 9
-static s32 SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 arg2) {
+static s32 SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 cond) {
     SHswapstone_Data* objdata;
     s8 joyXSign;
     s8 joyYSign;
@@ -307,29 +307,29 @@ static s32 SHswapstone_is_stick_direction_available(Object* self, Object *overri
     objdata = self->data;
     joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
 
-    switch (arg2) {
-    case 20:
+    switch (cond) {
+    case ANIM_DECISION_CUSTOM1:
         if ((joyXSign < 0) && !(objdata->flags & (SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE))) {
             return TRUE;
         }
     default:
         break;
-    case 21:
+    case ANIM_DECISION_CUSTOM2:
         if ((joyXSign < 0) && (objdata->flags & (SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE))) {
             return TRUE;
         }
         break;
-    case 22:
+    case ANIM_DECISION_CUSTOM3:
         if ((joyXSign > 0) && (objdata->flags & SWAPSTONE_PLAYER_HAS_SPIRIT)) {
             return TRUE;
         }
         break;
-    case 23:
+    case ANIM_DECISION_CUSTOM4:
         if ((joyXSign > 0) && !(objdata->flags & SWAPSTONE_PLAYER_HAS_SPIRIT)) {
             return TRUE;
         }
         break;
-    case 24:
+    case ANIM_DECISION_CUSTOM5:
         if (joyYSign > 0) {
             return TRUE;
         }

@@ -66,9 +66,9 @@ void NWtreebridge_control(Object* self) {
     if (objdata->felled == FALSE) {
         seqValue = objdata->seqValue;
         if (seqValue) {
-            gDLL_3_Animation->vtbl->func20(self, seqValue);
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, seqValue);
         }
-        gDLL_3_Animation->vtbl->func17(objdata->sequenceIndex, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(objdata->sequenceIndex, self, -1);
     }
 }
 
@@ -125,10 +125,10 @@ s32 NWtreebridge_anim_callback(Object* self, Object* arg1, AnimObj_Data* arg2) {
         }
     }
 
-    for (i = 0; i < arg2->unk98; i++){
+    for (i = 0; i < arg2->messageCount; i++){
         flags = PARTFXFLAG_1;
         partFXArg4 = -1;
-        switch (arg2->unk8E[i]) {
+        switch (arg2->messages[i]) {
         case 1:
             fxCount = 200;
             do {

@@ -412,11 +412,11 @@ u32 trigger_get_data_size(Object *self, u32 param2) {
 static void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activatorDistSquared) {
     Trigger_Setup* setup; // sp+74
     Trigger_Data* objdata; // sp+70
-    s32 pad;
     TriggerCommand *cmd;
-    s32 temp_a1;
     u8 i;
+    s32 temp_a1;
     Object* var_v0_2;
+    Object *obj;
     Object* sidekick;
 
     objdata = (Trigger_Data*)self->data;
@@ -470,7 +470,6 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_HAZARD: 
             // "Trigger [%d], Gamplay Vulnerable"
             switch (cmd->param1) {
-            Object *obj;
             case 0:
             case 1:
             case 2:
@@ -480,6 +479,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             case 6:
                 break;
             case 7: {
+                    s32 pad;
                     s32 mesgID; // sp+50
                     if (dir == 1) {
                         mesgID = 0x80;
@@ -492,7 +492,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 8: {
                     // "Trigger [%d], Death drop" (default.dol)
-                    s16 pad;
+                    s8 pad;
                     obj = get_player();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 9, 0.0f);
@@ -501,7 +501,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 9: {
                     // "Trigger [%d], Dangerous Water" (default.dol)
-                    s16 pad;
+                    s8 pad;
                     obj = get_player();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 10, 0.0f);
@@ -510,7 +510,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 10: {
                     // "Trigger [%d], Safe Water" (default.dol)
-                    s32 pad;
+                    s8 pad;
                     obj = get_player();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 11, 0.0f);

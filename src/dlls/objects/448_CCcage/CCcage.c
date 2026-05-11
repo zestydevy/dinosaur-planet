@@ -123,7 +123,7 @@ void CCcage_control(Object* self) {
             }
             
             //Play sequence
-            gDLL_3_Animation->vtbl->func17(0, objData->children[0], -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, objData->children[0], -1);
         }
         objData->state = STATE_Finished;
         break;
@@ -212,7 +212,7 @@ void CCcage_control(Object* self) {
             
             //Play sequence: cage door opening and LightFoot hopping out
             main_set_bits(BIT_CC_Shot_Down_Lightfoot_Cage, TRUE);
-            gDLL_3_Animation->vtbl->func17(0, objData->children[0], -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, objData->children[0], -1);
             objData->state = STATE_Finished;
         } else {
             //Continue falling

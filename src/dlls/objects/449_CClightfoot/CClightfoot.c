@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
@@ -111,7 +111,7 @@ static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data
 #endif
     CClightfoot_Data *objdata = self->data;
     if (self->unkAF & 1) {
-        gDLL_3_Animation->vtbl->func18(animObjData->unk63);
+        gDLL_3_Animation->vtbl->end_obj_sequence(animObjData->seqSlot);
         main_set_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
         objdata->spokeToPlayer = TRUE;

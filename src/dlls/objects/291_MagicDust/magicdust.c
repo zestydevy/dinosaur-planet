@@ -350,7 +350,7 @@ void MagicDust_control(Object* self) {
         if (playerDistance < SQ(distance)) {
             //Display a tutorial box when the player first collects a Magic Crystal
             if (main_get_bits(BIT_Tutorial_Magic_Crystal) == 0) {
-                gDLL_3_Animation->vtbl->func30(objData->animObjectID, NULL, 0);
+                gDLL_3_Animation->vtbl->set_variable_obj(objData->animObjectID, NULL, 0);
                 outMesgID = 0;
                 obj_send_mesg(player, 0x7000A, self, NULL);
                 main_set_bits(BIT_Tutorial_Magic_Crystal, 1);

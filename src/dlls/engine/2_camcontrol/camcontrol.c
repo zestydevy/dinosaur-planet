@@ -14,11 +14,6 @@ static s16 _data_0[] = {
     0xffff, 0x0000, 0x00f9, 0x00fc, 0x0102, 0x0104, 0x0106, 0x0108, 0x00fa, 0x00fd, 0x0103, 0x0105, 0x0107, 0x0109, 0xff00, 0x0000
 };
 
-typedef struct {
-    s32 unk0;
-    s8 unk4;
-} Unk_DLL2_Func888; //Used in similar situations as CameraAction, but has different shorter structure (CameraFunc15Unk_unk74 seems related to all this, too!)
-
 typedef enum {
     LockIcon_STATE_Hidden = 0,
     LockIcon_STATE_Vanish = 1,

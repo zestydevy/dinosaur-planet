@@ -72,7 +72,7 @@ void dll_780_control(Object *self) {
     
     if (objdata->state == WCBEACON_STATE_1) {
         if (main_get_bits(setup->unk20) == 0) {
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->state = WCBEACON_STATE_0;
         }
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
@@ -84,7 +84,7 @@ void dll_780_control(Object *self) {
         }
     } else if (objdata->state == WCBEACON_STATE_0) {
         if (main_get_bits(setup->unk20) != 0) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objdata->state = WCBEACON_STATE_1;
         }
     } else if (objdata->state == WCBEACON_STATE_2) {
@@ -110,8 +110,8 @@ void dll_780_control(Object *self) {
             temp_v0_2->frame = MAX_FRAME;
         }
         if (self->unkDC == 0) {
-            gDLL_3_Animation->vtbl->func20(self, 0x69);
-            gDLL_3_Animation->vtbl->func17(0, self, 1);
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, 0x69);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, 1);
         }
     }
     self->unkDC = 1;

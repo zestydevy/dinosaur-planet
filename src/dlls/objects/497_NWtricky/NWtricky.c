@@ -2,13 +2,13 @@
 #include "game/gamebits.h"
 #include "game/gametexts.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
-#include "dlls/objects/214_animobj.h"
 
 typedef struct {
     u8 state;
@@ -204,19 +204,19 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
         switch (objdata->demoState) {
         case NWtricky_DEMO_STATE_Initial:
             STUBBED_PRINTF("menu start\n");
-            for (i = 0; i < animObjData->unk98; i++) {
-                if (animObjData->unk8E[i] == 3)
+            for (i = 0; i < animObjData->messageCount; i++) {
+                if (animObjData->messages[i] == 3)
                     objdata->demoState = NWtricky_DEMO_STATE_Show_Inventory;
             }
             break;
 
         case NWtricky_DEMO_STATE_Show_Inventory:
             STUBBED_PRINTF("menu cbuttons %d\n", joy_get_pressed_raw(0));
-            for (i = 0; i < animObjData->unk98; i++) {
-                if (animObjData->unk8E[i] == 4) {
+            for (i = 0; i < animObjData->messageCount; i++) {
+                if (animObjData->messages[i] == 4) {
                     objdata->demoState = NWtricky_DEMO_STATE_Close_Inventory;
                     break;
-                } else if (animObjData->unk8E[i] == 1)
+                } else if (animObjData->messages[i] == 1)
                     buttonMask = D_CBUTTONS; // simulate C-Down press
             }
 
@@ -226,8 +226,8 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
 
         case NWtricky_DEMO_STATE_Close_Inventory:
             STUBBED_PRINTF("menu a button\n");
-            for (i = 0; i < animObjData->unk98; i++) {
-                if (animObjData->unk8E[i] == 2)
+            for (i = 0; i < animObjData->messageCount; i++) {
+                if (animObjData->messages[i] == 2)
                     buttonMask = A_BUTTON; // simulate A press
             }
 

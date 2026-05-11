@@ -102,7 +102,7 @@ void DBSH_Symbol_control(Object* self) {
 
         //Start the Test of Strength's sequence
         //(Causes control function to yield, and anim_callback function takes over)
-        objData->pushSeq = gDLL_3_Animation->vtbl->func17(0, self, -1);
+        objData->pushSeq = gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
         //Start a UI countdown (66 seconds)
         func_8000F64C(0x1D, 66);
@@ -217,8 +217,8 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
     animData->unk7A = -1;
     animData->unk62 = 0;
 
-    for (i = 0; i < animData->unk98; i++) {
-        if (animData->unk8E[i] == 1U) {
+    for (i = 0; i < animData->messageCount; i++) {
+        if (animData->messages[i] == 1U) {
             objData->testActive = TRUE;
         }
     }
@@ -261,7 +261,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         
         //Handle losing (time running out)
         if (objData->timeLeft <= 0) {
-            gDLL_3_Animation->vtbl->func18(objData->pushSeq);
+            gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
             func_8000FA2C();
         }
         
@@ -297,7 +297,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         //Handle winning
         if (objData->yaw > YAW_WIN) {
             objData->yaw = YAW_WIN;
-            gDLL_3_Animation->vtbl->func18(objData->pushSeq);
+            gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
             func_8000FA2C();
             objData->magicFxTimer = 10;
             objData->delayTimer = 20;

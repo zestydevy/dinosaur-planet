@@ -1,4 +1,4 @@
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objprint.h"
 
 typedef struct {

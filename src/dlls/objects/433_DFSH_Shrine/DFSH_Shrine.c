@@ -163,7 +163,7 @@ void dll_433_control(Object* self) {
                 main_set_bits(BIT_589, 0U);
                 objdata->unk11 = 1U;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0U);
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 modgfxDLL = dll_load_deferred(DLL_ID_147, 1U);
                 modgfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dll_unload(modgfxDLL);
@@ -233,7 +233,7 @@ void dll_433_control(Object* self) {
                 objdata->unk2 = 0;
                 gDLL_5_AMSEQ->vtbl->play_ex(3U, 0x35U, 0x50, (u8) objdata->unk8, 0U);
                 objdata->unkA = 1;
-                gDLL_3_Animation->vtbl->func17(2, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
                 objdata->unk2 = 0xA;
                 return;
             }
@@ -247,7 +247,7 @@ void dll_433_control(Object* self) {
             }
             objdata->unk2 = 0;
             main_set_bits(BIT_DB_Entered_Shrine_1, 0U);
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->unk2 = 0xA;
             return;
         case 4:
@@ -336,8 +336,8 @@ static int dll_433_func_F18(Object* self, Object* arg1, AnimObj_Data* arg2, s8 a
         gDLL_5_AMSEQ->vtbl->set_volume(3U, objdata->unk8);
     }
 
-    for (i = 0; i < arg2->unk98; i++) {
-        s32 temp = arg2->unk8E[i];
+    for (i = 0; i < arg2->messageCount; i++) {
+        s32 temp = arg2->messages[i];
         if (temp == 0) { // huh?
         } else {
             switch (temp) {
@@ -394,7 +394,7 @@ static int dll_433_func_F18(Object* self, Object* arg1, AnimObj_Data* arg2, s8 a
                     break;
             }
         }
-        arg2->unk8E[i] = 0U;
+        arg2->messages[i] = 0U;
     }
 
     return 0;

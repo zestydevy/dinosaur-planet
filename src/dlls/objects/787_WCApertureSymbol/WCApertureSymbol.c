@@ -1,6 +1,6 @@
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/vi.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
@@ -150,8 +150,8 @@ static int dll_787_func_43C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
 
     objdata = self->data;
 
-    for (i = 0; i < a2->unk98; i++) {
-        if (a2->unk8E[i] == 1) {
+    for (i = 0; i < a2->messageCount; i++) {
+        if (a2->messages[i] == 1) {
             objdata->state = 1;
         }
     }

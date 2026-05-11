@@ -43,7 +43,7 @@ void dll_786_control(Object *self) {
                 if (obj->id == 0) {
                     player = get_player();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {
-                        gDLL_3_Animation->vtbl->func17(0, self, -1);
+                        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                         objdata->unk4 = 1;
                         objdata->unk0 = 300.0f;
                     }
@@ -57,7 +57,7 @@ void dll_786_control(Object *self) {
                 if (obj->id == 0) {
                     player = get_player();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {
-                        gDLL_3_Animation->vtbl->func17(1, self, -1);
+                        gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                         objdata->unk4 = 0;
                         objdata->unk0 = 300.0f;
                     }

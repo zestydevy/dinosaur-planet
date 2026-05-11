@@ -1,6 +1,6 @@
 #include "common.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

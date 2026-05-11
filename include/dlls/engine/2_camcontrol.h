@@ -87,6 +87,17 @@ typedef struct {
 	s8 unkF; //pad?
 } CameraAction;
 
+typedef struct {
+    s32 unk0;
+    s8 unk4;
+} Unk_DLL2_Func888;  //Used in similar situations as CameraAction, but has different shorter structure (CameraFunc15Unk_unk74 seems related to all this, too!)
+
+typedef struct {
+    f32 unk0;
+    f32 unk4;
+    u16 unk8;
+} DLL_86_CamAction;
+
 DLL_INTERFACE(DLL_2_camera) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*init_data)(Object* player, f32 initialX, f32 initialY, f32 initialZ); //Zeroes CamControl's data, stores a reference to the player Object, and stores the camera's initial position.

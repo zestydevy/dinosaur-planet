@@ -116,8 +116,8 @@ int dll_413_func_1AC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     animTexture = func_800348A0(self, 0, 0);
     animTexture->frame = 0x100;
 
-    for (index = 0; index < arg2->unk98; index++){
-        subcommandID = arg2->unk8E[index];
+    for (index = 0; index < arg2->messageCount; index++){
+        subcommandID = arg2->messages[index];
 
         switch (subcommandID){
         case 1:

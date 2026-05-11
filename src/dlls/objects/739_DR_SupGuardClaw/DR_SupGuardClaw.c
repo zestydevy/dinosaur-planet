@@ -315,8 +315,8 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
     func_80028D2C(self);
 
     //GuardClaw sequence subevents
-    for (i = 0; i < animData->unk98; i++) {
-        if ((animData->unk8E[i] == 1) && (objSetup->characterType != DR_NPC_SharpClaw)) {
+    for (i = 0; i < animData->messageCount; i++) {
+        if ((animData->messages[i] == 1) && (objSetup->characterType != DR_NPC_SharpClaw)) {
             obj_free_tick(self);
             func_800267A4(self);
             self->srt.flags |= OBJFLAG_INVISIBLE;
@@ -338,7 +338,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
             main_set_bits(objSetup->gamebitFinished, 1);
             STUBBED_PRINTF(" \n Have Set Bit %i \n", objSetup->gamebitFinished);
 
-            gDLL_3_Animation->vtbl->func18(self->unkB4);
+            gDLL_3_Animation->vtbl->end_obj_sequence(self->seqSlot);
             return 0;
         } else {
             STUBBED_PRINTF(" FoodType %i ", foodGamebit);
@@ -360,7 +360,7 @@ s32 DR_NPC_sharpclaw_behaviour(Object* self) {
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         joy_set_button_mask(0, A_BUTTON);
         if (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
         return FALSE;
     }
@@ -401,7 +401,7 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
         joy_set_button_mask(0, A_BUTTON);
         self->objhitInfo->unk5F = 11;
         self->objhitInfo->unk60 = 4;
-        gDLL_3_Animation->vtbl->func17(rand_next(0, 1), self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(rand_next(0, 1), self, -1);
     }
 
     //Attack when sidekick or player nearby

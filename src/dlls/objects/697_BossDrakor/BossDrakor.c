@@ -1,9 +1,9 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/33_BaddieControl.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/698_BossDrakor_Laser.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -204,8 +204,8 @@ static int BossDrakor_anim_callback(Object *self, Object *arg1, AnimObj_Data *ar
 
     baddie = self->data;
     baddie->unk3B2 |= 2;
-    for (i = 0; i < arg2->unk98; i++) {
-        temp = arg2->unk8E[i];
+    for (i = 0; i < arg2->messageCount; i++) {
+        temp = arg2->messages[i];
         // @fake: These case numbers are made up for the match. Check the relevant sequences 
         //        to see what commands would be sent to this DLL.
         switch (temp) {
@@ -228,7 +228,7 @@ static void BossDrakor_func_55C(Object *self, Baddie *arg1, ObjFSA_Data *fsa) {
     gDLL_33_BaddieControl->vtbl->func4(self, get_player(), 0x10, &objdata->unk0, &objdata->unk2, &objdata->unk4);
     fsa->targetDist = (f32) objdata->unk4;
     if (self->unkE0 == 0) {
-        gDLL_3_Animation->vtbl->func17(setup->unk2E, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(setup->unk2E, self, -1);
         self->unkE0 = 1;
         return;
     }
@@ -238,10 +238,10 @@ static void BossDrakor_func_55C(Object *self, Baddie *arg1, ObjFSA_Data *fsa) {
     } else {
         gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, 1);
     }
-    arg1->unk3AC = self->unkC0;
-    self->unkC0 = NULL;
+    arg1->unk3AC = self->animObj;
+    self->animObj = NULL;
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
-    self->unkC0 = arg1->unk3AC;
+    self->animObj = arg1->unk3AC;
     BossDrakor_func_768(self, arg1, objdata, fsa);
 }
 

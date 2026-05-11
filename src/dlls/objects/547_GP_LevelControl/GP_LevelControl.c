@@ -96,7 +96,7 @@ void GP_LevelControl_control(Object *self) {
             objdata->heatCutsceneTimer -= 600.0f;
             if (!main_get_bits(BIT_GP_Shown_Heat_Cutscene)) {
                 main_set_bits(BIT_GP_Shown_Heat_Cutscene, 1);
-                gDLL_3_Animation->vtbl->func17(9, player, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(9, player, -1);
             }
         }
     }
