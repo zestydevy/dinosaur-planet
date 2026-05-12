@@ -214,7 +214,7 @@ void update_objects(void) {
     func_8002B6EC();
 
     gDLL_3_Animation->vtbl->func9();
-    gDLL_3_Animation->vtbl->func5();
+    gDLL_3_Animation->vtbl->update_camera();
     gDLL_2_Camera->vtbl->tick(gUpdateRate);
 
     write_c_file_label_pointers("objects/objects.c", 361);

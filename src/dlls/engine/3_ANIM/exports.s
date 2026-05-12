@@ -13,7 +13,7 @@ _exports:
 .dword anim_func_324
 .dword anim_func_358
 .dword anim_tick_obj
-.dword anim_func_730C
+.dword anim_update_camera
 .dword anim_func_7974
 .dword anim_func_7B64
 .dword anim_func_7C6C
