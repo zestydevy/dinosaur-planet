@@ -3,6 +3,7 @@
 
 #include "game/objects/object.h"
 #include "sys/gfx/animseq.h"
+#include "sys/objexpr.h"
 #include "dll_def.h"
 #include "types.h"
 
