@@ -1,0 +1,12 @@
+.text = 0x0:
+EffectBox_ctor = 0x0;
+EffectBox_dtor = 0xC;
+EffectBox_setup = 0x18;
+EffectBox_control = 0x9C;
+EffectBox_update = 0x45C;
+EffectBox_print = 0x468;
+EffectBox_free = 0x4BC;
+EffectBox_get_model_flags = 0x4F8;
+EffectBox_get_data_size = 0x508;
+
+.rodata = 0x570:

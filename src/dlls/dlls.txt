@@ -84,6 +84,7 @@
 270 = objects/270_sidesetup
 271 = objects/271_InfoPoint
 272 = objects/272_collectable
+273 = objects/273_EffectBox
 274 = objects/274_pushpull
 275 = objects/275_WarpPoint
 277 = objects/277_iceblast
