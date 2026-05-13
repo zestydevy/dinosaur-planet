@@ -203,6 +203,7 @@
 505 = objects/505_SHspore
 506 = objects/506_SHPlantSpore
 507 = objects/507_SHqueenearthwalker
+508 = objects/508_SHthorntail
 509 = objects/509_SHwaterLily
 510 = objects/510_SHroot
 511 = objects/511_SHboulder

@@ -56,6 +56,10 @@ typedef struct {
         s16 unk34;
     } type15;
     struct {
+        u8 _unk30[0x34 - 0x30];
+        u8 unk34;
+    } type1D;
+    struct {
         /*30*/ s16 unk30; // gameBit
         /*32*/ s16 usedBit; // gameBit
     } type22; // kyte?
