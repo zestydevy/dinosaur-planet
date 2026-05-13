@@ -161,7 +161,7 @@ void capy_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **p
 void capy_free(Object *self, s32 a1) {
     Baddie *baddie = self->data;
 
-    obj_free_object_type(self, 4);
+    obj_free_object_type(self, OBJTYPE_4);
     if (self->linkedObject != NULL) {
         obj_destroy_object(self->linkedObject);
         self->linkedObject = NULL;

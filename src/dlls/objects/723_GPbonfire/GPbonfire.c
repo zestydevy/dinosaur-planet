@@ -179,7 +179,7 @@ void GPbonfire_control(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
 
             //Handle tumbleweeds (only whole ones, twigs don't count)
-            tumbleweeds = obj_get_all_of_type(4, &count);
+            tumbleweeds = obj_get_all_of_type(OBJTYPE_4, &count);
             for (weedIndex = 0; weedIndex < count; weedIndex++){
                 if (tumbleweeds[weedIndex]->id == OBJ_Tumbleweed3) {
                     distanceToTumbleweed = vec3_distance(&self->globalPosition, &tumbleweeds[weedIndex]->globalPosition);
@@ -254,7 +254,7 @@ void GPbonfire_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle*
 void GPbonfire_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
-    obj_free_object_type(self, 0x30);
+    obj_free_object_type(self, OBJTYPE_48);
     //@bug? doesn't stop soundHandles like other object DLLs do
 }
 

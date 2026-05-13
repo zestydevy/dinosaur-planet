@@ -19,6 +19,7 @@ enum ObjType {
     OBJTYPE_11 = 11, // BWlog, DFlog, IMSnowBike
     OBJTYPE_12 = 12,
     OBJTYPE_13 = 13, // Krazoa shrine main (ECSH_Shrine etc.)
+    OBJTYPE_14 = 14,
     OBJTYPE_16 = 16, // Krazoa shrine doors (ECSH_Door1 etc.)
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,

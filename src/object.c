@@ -1572,7 +1572,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
     
 
     if (obj->def->unk5e >= 1) {
-        obj_free_object_type(obj, 9);
+        obj_free_object_type(obj, OBJTYPE_9);
     }
 
     if (obj->def->unk87 & 0x10) {
@@ -1764,7 +1764,7 @@ Object *get_player(void) {
     Object **objectList;
     s32 count;
 
-    objectList = obj_get_all_of_type(0, &count);
+    objectList = obj_get_all_of_type(OBJTYPE_PLAYER, &count);
 
     if(count > 1) {
         STUBBED_PRINTF(" ERROR : Error in Get Main More Players Loaded ");
@@ -1781,7 +1781,7 @@ Object *get_sidekick(void) {
     Object **objectList;
     s32 count;
 
-    objectList = obj_get_all_of_type(1, &count);
+    objectList = obj_get_all_of_type(OBJTYPE_SIDEKICK, &count);
 
     if (count > 1) {
         STUBBED_PRINTF(" ERROR : ERROR : Error in Get Sidekicks Loaded  ");

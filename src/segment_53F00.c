@@ -2100,7 +2100,7 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         bcopy(arg1, &spB4, sizeof(Vec3f));
     }
 
-    objects = obj_get_all_of_type(7, &objectCount);
+    objects = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &objectCount);
     for (var_s5 = 0; var_s5 < objectCount; var_s5++) {
         currentObj = objects[var_s5];
         if (currentObj != arg5 && currentObj->matrixIdx >= 0 && currentObj->def->pIntersectPoints != NULL) {

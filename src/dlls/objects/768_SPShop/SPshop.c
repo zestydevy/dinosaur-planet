@@ -171,7 +171,7 @@ void SPShop_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
 // offset: 0x334 | func: 4 | export: 4
 void SPShop_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, 0xA);
+    obj_free_object_type(self, OBJTYPE_10);
 }
 
 // offset: 0x374 | func: 5 | export: 5
