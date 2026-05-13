@@ -34,7 +34,7 @@ enum ObjType {
     OBJTYPE_37 = 37,
     OBJTYPE_38 = 38,
     OBJTYPE_39 = 39,
-    OBJTYPE_40 = 40,
+    OBJTYPE_40 = 40, // SHthorntail
     OBJTYPE_41 = 41, // DBExpBit
     OBJTYPE_44 = 44, // DBBoneGeezer
     OBJTYPE_48 = 48, // perchobject, SCbeacon (sidekick/Kyte-related?)
