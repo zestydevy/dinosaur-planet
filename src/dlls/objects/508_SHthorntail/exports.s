@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_508_ctor
-.dword dll_508_dtor
+.dword thorntail_ctor
+.dword thorntail_dtor
 
 # export table
-/*0*/ .dword dll_508_setup
-/*1*/ .dword dll_508_control
-/*2*/ .dword dll_508_update
-/*3*/ .dword dll_508_print
-/*4*/ .dword dll_508_free
-/*5*/ .dword dll_508_get_model_flags
-/*6*/ .dword dll_508_get_data_size
+/*0*/ .dword thorntail_setup
+/*1*/ .dword thorntail_control
+/*2*/ .dword thorntail_update
+/*3*/ .dword thorntail_print
+/*4*/ .dword thorntail_free
+/*5*/ .dword thorntail_get_model_flags
+/*6*/ .dword thorntail_get_data_size
