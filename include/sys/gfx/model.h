@@ -110,7 +110,8 @@ typedef struct {
 
 typedef struct {
 /*0000*/ u32 pad0;
-/*0004*/ s32 unk4; // display list index?
+/*0004*/ s16 unk4; // display list index?
+/*0006*/ u16 pad6;
 /*0008*/ u8 pad8[0xB - 0x8];
 /*000B*/ u8 unkB;
 } TextureAnimation;
