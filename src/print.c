@@ -23,7 +23,7 @@ s32 D_800BEAEC;
 s32 D_800BEAF0;
 s32 D_800BEAF4;
 s32 D_800BEAF8;
-s32 D_800BEAFC;
+u32 D_800BEAFC;
 u16 D_800BEB00; // gDebugScreenWidth?
 u16 D_800BEB02; // gDebugScreenHeight?
 u8 D_800BEB04;
@@ -1340,74 +1340,65 @@ void diPrintfRenderBackground(Gfx** gdl, u32 ulx, u32 uly, u32 lrx, u32 lry) {
     }
 }
 
-
-// guessed name
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/print/diPrintfRenderChar.s")
-#else
-// gfx commands arent quite correct
-s32 diPrintfRenderChar(Gfx **gdl, s32 asciiVal) {
-    s32 fontCharWidth;
+s32 diPrintfRenderChar(Gfx** gdl, s32 asciiVal) {
     s32 fontCharU;
-    s32 var1;
-    s32 var2;
+    s32 sp28;
+    s32 sp24;
+    s32 fontCharWidth;
 
-    if (asciiVal < '@') {
+    if (asciiVal < 0x40) {
         // Character is a symbol or number and not a letter
         if (D_800BEAFC != 0) {
             if (D_800BEAE8) {
-                gDPLoadTextureBlock((*gdl)++, OS_PHYSICAL_TO_K0(gDiTextures[0] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
+                gDPLoadTextureBlockS((*gdl)++, OS_K0_TO_PHYSICAL(gDiTextures[0] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
                                     0, 2, 2, 0, 0, 0, 0);
             }
             D_800BEAFC = 0;
         }
-        asciiVal -= '!';
-    } else if (asciiVal < '`') {
+        asciiVal -= 0x21;
+    } else if (asciiVal < 0x60) {
         // Character is a upper case letter
         if (D_800BEAFC != 1) {
             if (D_800BEAE8) {
-                gDPLoadTextureBlock((*gdl)++, OS_PHYSICAL_TO_K0(gDiTextures[1] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11,
+                gDPLoadTextureBlockS((*gdl)++, OS_K0_TO_PHYSICAL(gDiTextures[1] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11,
                                     0, 2, 2, 0, 0, 0, 0);
             }
             D_800BEAFC = 1;
         }
-        asciiVal -= '@';
-    } else if (asciiVal <= 0x7F) {
+        asciiVal -= 0x40;
+    } else if (asciiVal < 0x80) {
         // Character is a lower case letter
         if (D_800BEAFC != 2) {
             if (D_800BEAE8) {
-                gDPLoadTextureBlock((*gdl)++, OS_PHYSICAL_TO_K0(gDiTextures[2] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
+                gDPLoadTextureBlockS((*gdl)++, OS_K0_TO_PHYSICAL(gDiTextures[2] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
                                     0, 2, 2, 0, 0, 0, 0);
             }
             D_800BEAFC = 2;
         }
-        asciiVal -= '`';
+        asciiVal -= 0x60;
     }
     fontCharU = gDiFontCoords[D_800BEAFC][asciiVal].u;
     fontCharWidth = (gDiFontCoords[D_800BEAFC][asciiVal].v - fontCharU) + 1;
-    if (D_800BEAE8) {
-        var1 = (D_800BEADC << (D_800931AC + D_800931B4));
-        var2 = (D_800BEADE << (D_800931B0 + D_800931B8));
-
-        gDPSetCombineLERP((*gdl), 
-            0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 
-            0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0);
+    if (D_800BEAE8 != 0) {
+        sp28 = D_800BEADC << (D_800931AC + D_800931B4);
+        sp24 = D_800BEADE << (D_800931B0 + D_800931B8);
+        gDPSetCombineLERP(*gdl, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0);
         dl_apply_combine(gdl);
-        gSPTextureRectangle((*gdl)++, 
-            /*xl*/(var1 << 2), 
-            /*yl*/(var2 << 2), 
-            /*xh*/((var1 + (fontCharWidth << (D_800931AC + D_800931B4))) << 2),
-            /*yh*/((var2 + (10 << (D_800931B0 + D_800931B8))) << 2), 
-            /*tile*/0, 
-            /*s*/(fontCharU << 5), 
-            /*t*/0, 
-            /*dsdx*/1 << (10 - D_800931AC - D_800931B4), 
+        gSPTextureRectangle((*gdl)++,
+            /*xl*/(sp28 << 2),
+            /*yl*/(sp24 << 2),
+            /*xh*/((sp28 + (fontCharWidth << (D_800931AC + D_800931B4))) << 2),
+            /*yh*/((sp24 + (10 << (D_800931B0 + D_800931B8))) << 2),
+            /*tile*/0,
+            /*s*/(fontCharU << 5),
+            /*t*/0,
+            /*dsdx*/1 << (10 - D_800931AC - D_800931B4),
             /*dtdy*/1 << (10 - D_800931B0 - D_800931B8));
         gDLBuilder->needsPipeSync = TRUE;
     }
     return fontCharWidth;
 }
-#endif
+
 
 // guessed name
 void diPrintfUpdateBounds() {
