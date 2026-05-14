@@ -115,7 +115,7 @@ void WCpressureswitch_control(Object* self) {
     switch (objdata->state) {
         case STATE_0_UP:
             if (objdata->pressed && deltaY <= self->srt.transl.y) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 objdata->state = STATE_3_MOVING_DOWN;
             }
             break;
@@ -131,7 +131,7 @@ void WCpressureswitch_control(Object* self) {
             /* Subtly different behaviour to other pressure switches,
              * waits for flag to unset before depressing the switch (for WC's timed challenges) */
             if (!main_get_bits(setup->gameBitPressed)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 objdata->state = STATE_1_MOVING_UP;
             }
             break;
@@ -171,9 +171,9 @@ void WCpressureswitch_free(Object* self, s32 arg1) {
     PressureSwitch_Data* objdata = self->data;
 
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
-    obj_free_object_type(self, 0x33);
+    obj_free_object_type(self, OBJTYPE_51);
 }
 
 // offset: 0x594 | func: 5 | export: 5
@@ -240,23 +240,23 @@ static int WCpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj
     objdata = self->data;
     setup = (PressureSwitch_Setup*)self->setup;
 
-    if (animObjData->unk8D == 1) {
+    if (animObjData->lastMessage == 1) {
         for (index = 0; index < 10; index++){
             if (objdata->objectsOnSwitch[index]) {
                 objdata->objCoords[index].x = objdata->objectsOnSwitch[index]->srt.transl.x;
                 objdata->objCoords[index].z = objdata->objectsOnSwitch[index]->srt.transl.z;
             }
         }
-        animObjData->unk8D = 0;
+        animObjData->lastMessage = 0;
 
-    } else if (animObjData->unk8D == 2) {
+    } else if (animObjData->lastMessage == 2) {
         for (index = 0; index < 10; index++);
 
         self->srt.transl.z = setup->base.x; //@bug? should be x component?
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
         main_set_bits(setup->gameBitPressed, 0);
-        animObjData->unk8D = 0;
+        animObjData->lastMessage = 0;
     }
 
     return 0;

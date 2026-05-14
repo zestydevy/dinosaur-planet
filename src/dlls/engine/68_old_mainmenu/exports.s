@@ -4,10 +4,10 @@
 _exports:
 
 # ctor/dtor
-.dword dll_68_ctor
-.dword dll_68_dtor
+.dword old_mainmenu_ctor
+.dword old_mainmenu_dtor
 
 # export table
-/*0*/ .dword dll_68_func_C4
-/*1*/ .dword dll_68_func_D0
-/*2*/ .dword dll_68_func_D8
+/*0*/ .dword old_mainmenu_func_C4
+/*1*/ .dword old_mainmenu_func_D0
+/*2*/ .dword old_mainmenu_func_D8

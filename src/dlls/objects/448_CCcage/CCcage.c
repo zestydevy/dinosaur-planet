@@ -86,7 +86,7 @@ void CCcage_control(Object* self) {
     
     //Look for nearby CClightfoot
     if (objData->children[0] == NULL) {
-        nearbyObject = obj_get_nearest_type_to(0x28, self, &searchDistance);
+        nearbyObject = obj_get_nearest_type_to(OBJTYPE_40, self, &searchDistance);
         objData->children[0] = nearbyObject;
         if (!nearbyObject) {
             STUBBED_PRINTF("can't find lightfoot\n");
@@ -99,7 +99,7 @@ void CCcage_control(Object* self) {
 
     //Look for nearby CCspellpage
     if (objData->children[1] == NULL) {
-        nearbyObject = obj_get_nearest_type_to(5, self, &searchDistance);
+        nearbyObject = obj_get_nearest_type_to(OBJTYPE_5, self, &searchDistance);
         objData->children[1] = nearbyObject;
         if (!nearbyObject) {
             STUBBED_PRINTF("can't find lightfoot\n"); //might've meant to say "SpellPage"
@@ -123,7 +123,7 @@ void CCcage_control(Object* self) {
             }
             
             //Play sequence
-            gDLL_3_Animation->vtbl->func17(0, objData->children[0], -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, objData->children[0], -1);
         }
         objData->state = STATE_Finished;
         break;
@@ -183,7 +183,7 @@ void CCcage_control(Object* self) {
         
         //Check for Projectile Spell collision
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_LightFoot_Shout, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_LightFoot_Shout, MAX_VOLUME, NULL, NULL, 0, NULL);
             if (objData->timesHit != 0) {
                 objData->fallDuration = 35.355f;
                 objData->fallTimer = 0;
@@ -212,7 +212,7 @@ void CCcage_control(Object* self) {
             
             //Play sequence: cage door opening and LightFoot hopping out
             main_set_bits(BIT_CC_Shot_Down_Lightfoot_Cage, TRUE);
-            gDLL_3_Animation->vtbl->func17(0, objData->children[0], -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, objData->children[0], -1);
             objData->state = STATE_Finished;
         } else {
             //Continue falling

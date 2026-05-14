@@ -86,8 +86,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
     } else {
         data->targetDist = 0.0f;
     }
-    if (obj->unkC0) {}
-    if ((data->flags & 0x8000) && (obj->unkC0 == NULL)) {
+    if (obj->animObj) {}
+    if ((data->flags & 0x8000) && (obj->animObj == NULL)) {
         objfsa_run_logic_state(obj, data, fsaUpdateRate, logicStateCallbacks);
         data->logicStateTime += fsaUpdateRate;
         if ((f32) data->logicStateTime > 10000.0f) {
@@ -487,7 +487,7 @@ void objfsa_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA
     temp_v0 = 1 << arg2;
     if (data->unk308 & temp_v0) {
         data->unk308 = data->unk308 & ~temp_v0;
-        gDLL_6_AMSFX->vtbl->play_sound(obj, arg4[arg3].soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(obj, arg4[arg3].soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 
@@ -499,9 +499,9 @@ void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA
     temp_v0 = 1 << arg2;
     if (data->unk308 & temp_v0) {
         data->unk308 = data->unk308 & ~temp_v0;
-        temp_v0_2 = gDLL_6_AMSFX->vtbl->play_sound(obj, arg4[arg3].soundID, volume, NULL, NULL, 0, NULL);
+        temp_v0_2 = gDLL_6_AMSFX->vtbl->play(obj, arg4[arg3].soundID, volume, NULL, NULL, 0, NULL);
         if (temp_v0_2 != 0) {
-            gDLL_6_AMSFX->vtbl->func_954(temp_v0_2, arg5);
+            gDLL_6_AMSFX->vtbl->set_pitch(temp_v0_2, arg5);
         }
     }
 }

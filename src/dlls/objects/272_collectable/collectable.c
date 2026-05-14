@@ -122,7 +122,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     collectableDef = self->def->collectableDef;
     if (collectableDef && collectableDef->type == Collectable_Type_Magic) {
         if (arg2 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         for (index = 10; index > 0; index--){
@@ -318,7 +318,7 @@ void collectable_control(Object* self) {
             }
 
             if (main_get_bits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
-                gDLL_3_Animation->vtbl->func30(collectableDef->seqObjectID, 0, 0);
+                gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 outMessage = 0;
                 obj_send_mesg(
                     player, 
@@ -344,7 +344,7 @@ void collectable_control(Object* self) {
             //Check for A button press when highlighted with arrow
             messageArg = objsetup->animMessage;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
-                gDLL_3_Animation->vtbl->func30(collectableDef->seqObjectID, 0, 0);
+                gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 obj_send_mesg(
                     player,
                     0x7000A,
@@ -382,7 +382,7 @@ void collectable_free(Object* self, s32 arg1) {
     Collectable_Data* objdata = self->data;
     obj_free_object_type(self, OBJTYPE_5);
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
         objdata->soundHandle = 0;
     }
 }
@@ -403,12 +403,12 @@ int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animO
     f32 sin;
 
     animObjData->unk62 = 0;
-    if (animObjData->unk8D == 1) {
+    if (animObjData->lastMessage == 1) {
         sin = fsin16_precise(0x6900);
         cos = fcos16_precise(0x6900);
         collectable_set_speed(self, sin * 8.0f, 2, cos * 8.0f);
         collectable_set_speed(self, 4.0f, 2, 0.0f);
-        animObjData->unk8D = 0;
+        animObjData->lastMessage = 0;
     }
     return 0;
 }
@@ -477,7 +477,7 @@ void collectable_handle_animation_and_fx(Object* self) {
         if (objdata->soundTimer <= 0) {
             objdata->pitchAnimate = rand_next(600, 800);
             objdata->soundTimer = rand_next(180, 240);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8FC_Egg_Rattle, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_8FC_Egg_Rattle, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         //Rapidly oscillate rotational pitch for a basic rattle animation
@@ -605,7 +605,7 @@ void collectable_collect(Object* self) {
         default:
             break;
         case OBJ_DIMAlpineRoot2: 
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
             main_set_bits(BIT_3E9, 1);
             self->unkDC = 1;
             objdata->rootTimer = 1200;
@@ -645,7 +645,7 @@ void collectable_collect(Object* self) {
     case Collectable_Type_Magic:
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, collectableDef->amountRestored);
         gDLL_13_Expgfx->vtbl->func5(self);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         break;
     case Collectable_Type_Upgrade:
         obj_send_mesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));

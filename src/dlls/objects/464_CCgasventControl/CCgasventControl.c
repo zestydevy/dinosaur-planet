@@ -66,7 +66,7 @@ void CCgasventControl_control(Object *self) {
         break;
     case STATE_Unstarted:
         if (main_get_bits(BIT_3EC)) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objdata->state = STATE_Puzzle;
         }
         break;
@@ -82,8 +82,8 @@ void CCgasventControl_control(Object *self) {
             }
         }
         if (count == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->state = STATE_Puzzle_Complete;
             break;
         }
@@ -95,8 +95,8 @@ void CCgasventControl_control(Object *self) {
         }
         break;
     case STATE_Puzzle_Completed:
-        gDLL_3_Animation->vtbl->func20(self, 0);
-        gDLL_3_Animation->vtbl->func17(1, self, 0xC);
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, 0);
+        gDLL_3_Animation->vtbl->start_obj_sequence(1, self, 0xC);
         objdata->state = STATE_Puzzle_Complete;
         break;
     }

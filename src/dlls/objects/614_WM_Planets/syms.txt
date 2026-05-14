@@ -12,4 +12,3 @@ WMPlanets_get_data_size = 0x344;
 .rodata = 0x39C:
 
 .data = 0x3AC:
-_data_0 = 0x0; // absolute:0x3AC

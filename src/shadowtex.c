@@ -256,16 +256,16 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     temp_s0->srt.pitch = (s16) spB0;
     temp_s0->srt.yaw = (s16) spAC;
     temp_s0->srt.roll = (s16) spA8;
-    if (func_80041E08() != 0) {
+    if (track_func_80041E08() != 0) {
         set_camera_selector(0);
         camera_set_fov(sp88);
-        if (func_80041DBC() != 0) {
-            camera_set_aspect(2.25f);
+        if (track_func_80041DBC() != 0) {
+            camera_set_aspect(2.25f); // 9:4
         } else {
-            camera_set_aspect(1.66f);
+            camera_set_aspect(1.66f); // 5:3
         }
         camera_setup_viewport_and_matrices(gdl, &sp84);
-    } else if (func_80041DBC() != 0) {
+    } else if (track_func_80041DBC() != 0) {
         set_camera_selector(0);
         camera_set_fov(sp88);
         camera_set_aspect(1.7777778f);

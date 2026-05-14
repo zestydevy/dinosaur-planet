@@ -11,4 +11,4 @@ _exports:
 /*0*/ .dword selection_update1
 /*1*/ .dword selection_update2
 /*2*/ .dword selection_draw
-/*3*/ .dword selection_set_menu_state
+/*3*/ .dword selection_set_selection_state

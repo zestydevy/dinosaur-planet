@@ -1,5 +1,5 @@
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/segment_1050.h"
@@ -35,7 +35,7 @@ void MMP_levelcontrol_control(Object *self) {
         gDLL_5_AMSEQ2->vtbl->set(self, 0xF, 0, 0, 0);
         self->unkDC = 0;
     }
-    gDLL_6_AMSFX->vtbl->func_16E0();
+    gDLL_6_AMSFX->vtbl->water_falls_control();
 }
 
 // offset: 0x1A0 | func: 2 | export: 2
@@ -71,8 +71,8 @@ int MMP_levelcontrol_anim_callback(Object *self, Object *animObj, AnimObj_Data *
 
     player = get_player();
     animObjData->unk62 = 0;
-    for (i = 0; i < animObjData->unk98; i++) {
-        switch (animObjData->unk8E[i]) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        switch (animObjData->messages[i]) {
         case 1:
             func_80000860(self, player, 0x13B, 0);
             func_80000450(self, player, 0x263, 0, 0, 0);

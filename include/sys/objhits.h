@@ -146,7 +146,6 @@ void func_80032804(Object*,Object*);
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 updateRate);
 void func_80029AB4(ModelJoint *joints, s32 jointsCount, HitSphere *hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5);
-void func_8001AC44(ModelInstance*, Model*, Object*, MtxF*, MtxF*, u32, f32);
 void func_80029A14(Model *model, AnimState *animState, AnimState *arg2, f32 arg3, u8 arg4);
 void func_80030994(ModelInstance* modelInstance, f32 arg1, f32 arg2);
 void func_80030E2C(Object *obj, f32 *arg1, Vec3f *arg2, Vec3f *arg3, Vec3f *arg4);

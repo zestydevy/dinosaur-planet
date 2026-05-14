@@ -402,8 +402,8 @@ void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s
     u8* img;
     Texture* frameTex;
 
-    sp12C = func_80041DBC();
-    sp128 = func_80041E08();
+    sp12C = track_func_80041DBC();
+    sp128 = track_func_80041E08();
     
     if (tex->animDuration != 0) {
         numFrames = (s32) tex->animDuration >> 8;

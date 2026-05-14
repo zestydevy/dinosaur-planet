@@ -16,4 +16,4 @@ dll_413_func_4BC = 0x4BC;
 .rodata = 0x638:
 
 .bss = 0x658:
-_bss_0 = 0x0; // absolute:0x658
+fxTransform = 0x0; // absolute:0x658

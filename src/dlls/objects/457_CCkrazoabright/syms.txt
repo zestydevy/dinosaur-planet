@@ -26,4 +26,3 @@ data_coords_well_blocks = 0x0; // absolute:0x16CC
 data_coords_lever_blocks = 0x18; // absolute:0x16E4
 data_krazoa_symbol_shape_animatorIDs = 0x30; // absolute:0x16FC
 data_tablet_quest_gamebits = 0x38; // absolute:0x1704
-_data_44 = 0x44; // absolute:0x1710

@@ -6,7 +6,7 @@
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/map_enums.h"
 #include "sys/menu.h"
@@ -126,7 +126,7 @@ void SC_levelcontrol_control(Object *self) {
     }
 
     if (objdata->mapID != MAP_SWAPSTONE_CIRCLE) {
-        if (map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+        if (map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
             SC_levelcontrol_func_8B4(self);
             sp2F = 0;
         } else {
@@ -134,7 +134,7 @@ void SC_levelcontrol_control(Object *self) {
         }
     }
 
-    objdata->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
+    objdata->mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
 
     // trees must be hit in the correct order
     if (main_get_bits(BIT_SC_Hit_Village_Tree_One)) {
@@ -430,8 +430,8 @@ static int SC_levelcontrol_anim_callback(Object *self, Object *overrideObj, Anim
     s32 i;
 
     animData->unk62 = 0;
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case 1:
             SC_levelcontrol_func_660(self, 6);
             break;

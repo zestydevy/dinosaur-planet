@@ -169,14 +169,14 @@ void ECSHCup_control(Object* self) {
             self->opacityWithFade = opacity;
         }
         
-        gDLL_6_AMSFX->vtbl->func_1218(self);
+        gDLL_6_AMSFX->vtbl->free_object(self);
     } else if ((state == Cup_STATE_Round_Start) && (state != objData->prevState)) {
         if (objData->cupIndex == cupWithSpirit) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
-            gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_343_Eerie_Ringing, 0x57, 0, 0, 0, 0);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_33F_Cup_Slide_Loop, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
+            gDLL_6_AMSFX->vtbl->play(0, SOUND_343_Eerie_Ringing, 0x57, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_33F_Cup_Slide_Loop, MAX_VOLUME, 0, 0, 0, 0);
         } else {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_33F_Cup_Slide_Loop, 0x1E, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_33F_Cup_Slide_Loop, 0x1E, 0, 0, 0, 0);
         }
         objData->prevState = state;
     } else if ((state == Cup_STATE_Moving) && (state != objData->prevState)) {
@@ -205,7 +205,7 @@ void ECSHCup_control(Object* self) {
     } else if ((state == Cup_STATE_Await_Choice) && player && vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
         ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->choose_cup(objData->cupIndex);
         if (objData->cupIndex == cupWithSpirit) {
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         }
     }
 }

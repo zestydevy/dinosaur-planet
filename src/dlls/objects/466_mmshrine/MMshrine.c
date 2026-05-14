@@ -1,9 +1,9 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/gfx/texture.h"
 #include "sys/gfx/model.h"
@@ -173,8 +173,8 @@ void MMshrine_control(Object *self) {
             if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unkF = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0);
-                gDLL_3_Animation->vtbl->func19(0x5E, 0, 0, 0);
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMTALK1, 0, 0, 0);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 temp_v0_5 = dll_load_deferred(DLL_ID_147, 1);
                 temp_v0_5->vtbl->func0(self, 1, 0, 1, -1, 0);
                 dll_unload(temp_v0_5);
@@ -192,15 +192,15 @@ void MMshrine_control(Object *self) {
             }
             break;
         case 2:
-            gDLL_3_Animation->vtbl->func17(3, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
             objdata->unkF = 8;
             break;
         case 8:
-            gDLL_3_Animation->vtbl->func17(5, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
             objdata->unkF = 4;
             break;
         case 7:
-            gDLL_3_Animation->vtbl->func17(4, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             objdata->unkF = 9;
             objdata->unk2 = 0;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (s16) (u8) objdata->unk8, 0);
@@ -217,7 +217,7 @@ void MMshrine_control(Object *self) {
                 main_set_bits(BIT_DB_Entered_Shrine_1, 0);
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (s16) (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             }
             break;
         case 5:
@@ -300,8 +300,8 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
         gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->unk8);
     }
 
-    for (i = 0; i < arg2->unk98; i++){
-        temp = arg2->unk8E[i];
+    for (i = 0; i < arg2->messageCount; i++){
+        temp = arg2->messages[i];
         if (temp != 0) {
             switch (temp) {
                 case 1:
@@ -339,7 +339,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                 case 10:
                     main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                     if (_data_0 == NULL)
-                        _data_0 = func_8004A1E8(1);
+                        _data_0 = block_texanim_get_tex(1);
                     break;
                 case 9:
                     main_set_bits(BIT_DB_Entered_Shrine_2, 1);
@@ -351,7 +351,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                 case 12:
                     func_80000860(self, self, 0xCE, 0);
                     main_set_bits(BIT_Test_of_Fear_Particles, 1);
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_342_Low_Whoosh, MAX_VOLUME, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_342_Low_Whoosh, MAX_VOLUME, 0, 0, 0, 0);
                     break;
                 case 13:
                     if (D_80092A7C[0] == -1) {
@@ -363,15 +363,15 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                     break;
             }
         }
-        arg2->unk8E[i] = 0;
+        arg2->messages[i] = 0;
     }
     
     if (objdata->unkF == 8) {
         if (vec3_distance(&self->globalPosition, &player->globalPosition) > 10.0f) {
-            gDLL_3_Animation->vtbl->func18(arg2->unk63);
+            gDLL_3_Animation->vtbl->end_obj_sequence(arg2->seqSlot);
             objdata->unkF = 7;
         } else if (joy_get_buttons(0)) {
-            gDLL_3_Animation->vtbl->func18(arg2->unk63);
+            gDLL_3_Animation->vtbl->end_obj_sequence(arg2->seqSlot);
             objdata->unkF = 7;
         }
     }

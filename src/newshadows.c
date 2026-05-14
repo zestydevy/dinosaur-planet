@@ -336,7 +336,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
 
     // @fake
     if (1) {}
-    if (func_80041DA4() == 0) {
+    if (track_get_shadows_on() == 0) {
         obj->shadow->gdl = NULL;
         return 0;
     }
@@ -574,7 +574,7 @@ void shadows_update_obj_box(Object* arg0) {
     AABBs32 sp70;
     f32 sp50[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // D_80092C74
 
-    if (func_80041DA4() == 0) {
+    if (track_get_shadows_on() == 0) {
         arg0->shadow->gdl = NULL;
         return;
     }
@@ -859,7 +859,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     }
     var_s2 = 0;
     sp1E4 = 0;
-    func_80040FF8();
+    dl_use_alt_builder();
     tex_render_save_state();
     // @fake
     if ((s32)&dl) {}
@@ -931,7 +931,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
         var_s2 += D_800B98B8[sp1E4];
     }
     gSPEndDisplayList(dl++);
-    func_80041028();
+    dl_use_main_builder();
     tex_render_restore_state();
     *arg5 = var_s4;
     return dl - sp1C8;

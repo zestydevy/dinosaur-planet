@@ -2,8 +2,8 @@
 #define _DLL_33_H
 
 #include "dlls/engine/18_objfsa.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objexpr.h"
 #include "sys/curves.h"
 #include "sys/math.h"

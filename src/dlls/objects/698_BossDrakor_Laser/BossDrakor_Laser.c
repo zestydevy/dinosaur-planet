@@ -59,11 +59,11 @@ void dll_698_control(Object *self) {
             if (objdata->unk4 <= 0) {
                 objdata->unk4 = 0;
                 gDLL_14_Modgfx->vtbl->func10(self);
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
-                gDLL_6_AMSFX->vtbl->func_A1C(objdata->unkC);
+                gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
+                gDLL_6_AMSFX->vtbl->stop(objdata->unkC);
                 objdata->unk8 = 0;
                 objdata->unkC = 0;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9A1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9A1, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         if (objdata->unk2 != 0) {
@@ -90,8 +90,8 @@ void dll_698_control(Object *self) {
                 if (objdata->unk10 >= 0x80) {
                     objdata->unk10 = 0x7F;
                 }
-                gDLL_6_AMSFX->vtbl->func_860(objdata->unk8, objdata->unk10);
-                gDLL_6_AMSFX->vtbl->func_954(objdata->unk8, 1.0625f - ((f32) objdata->unk10 * (1.0f / 1024.0f)));
+                gDLL_6_AMSFX->vtbl->set_vol(objdata->unk8, objdata->unk10);
+                gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk8, 1.0625f - ((f32) objdata->unk10 * (1.0f / 1024.0f)));
             }
             if (objdata->unkC != 0) {
                 objdata->unk12 = (s16) (s32) ((2.0f - (sp38 / sp34)) * 127.0f);
@@ -101,8 +101,8 @@ void dll_698_control(Object *self) {
                 if (objdata->unk12 >= 0x80) {
                     objdata->unk12 = 0x7F;
                 }
-                gDLL_6_AMSFX->vtbl->func_860(objdata->unkC, (objdata->unk12 >> 1));
-                gDLL_6_AMSFX->vtbl->func_954(objdata->unkC, ((f32) objdata->unk12 * (1.0f / 1024.0f)) + 0.9365f);
+                gDLL_6_AMSFX->vtbl->set_vol(objdata->unkC, (objdata->unk12 >> 1));
+                gDLL_6_AMSFX->vtbl->set_pitch(objdata->unkC, ((f32) objdata->unk12 * (1.0f / 1024.0f)) + 0.9365f);
             }
         }
     }
@@ -150,9 +150,9 @@ void dll_698_func_564(Object *arg0, s32 arg1, s32 arg2) {
     dll_unload(sp30);
     objdata->unk10 = 1;
     objdata->unk12 = 1;
-    objdata->unk8 = gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_98F, (u8) objdata->unk10, NULL, NULL, 0, NULL);
-    objdata->unkC = gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_990, (u8) objdata->unk12, NULL, NULL, 0, NULL);
-    gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_9A0, MAX_VOLUME, NULL, NULL, 0, NULL);
+    objdata->unk8 = gDLL_6_AMSFX->vtbl->play(NULL, SOUND_98F, (u8) objdata->unk10, NULL, NULL, 0, NULL);
+    objdata->unkC = gDLL_6_AMSFX->vtbl->play(NULL, SOUND_990, (u8) objdata->unk12, NULL, NULL, 0, NULL);
+    gDLL_6_AMSFX->vtbl->play(arg0, SOUND_9A0, MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 
 // offset: 0x6E4 | func: 8

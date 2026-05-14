@@ -109,7 +109,7 @@ void SHkillermushroom_control(Object* self) {
 
         //Start spore sound loop
         if (objData->soundHandle == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B_Spore_Spray_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_53B_Spore_Spray_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
 
         //Become invulnerable
@@ -138,7 +138,7 @@ void SHkillermushroom_control(Object* self) {
 
             //Stop sound loop
             if (objData->soundHandle != 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -182,7 +182,7 @@ void SHkillermushroom_control(Object* self) {
     case SHkillermushroom_STATE_4_Spore_Attack:
         //Start spore sound loop
         if (objData->soundHandle == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53B_Spore_Spray_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_53B_Spore_Spray_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
 
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
@@ -213,7 +213,7 @@ void SHkillermushroom_control(Object* self) {
 
             //Stop sound loop
             if (objData->soundHandle != 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -268,7 +268,7 @@ void SHkillermushroom_control(Object* self) {
         //Configure LockIcon, start stunned sound loop, and pick stun duration
         if (objData->timer <= 0.0f) {
             func_80023BF8(self, 0x19, 0, 0, 0, 6);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
             objData->timer = rand_next(240, 300);
         }
 
@@ -283,7 +283,7 @@ void SHkillermushroom_control(Object* self) {
 
             //Stop sound loop
             if (objData->soundHandle != 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
 
@@ -311,7 +311,7 @@ void SHkillermushroom_control(Object* self) {
 
                 //Stop sound loop
                 if (objData->soundHandle != 0) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                     objData->soundHandle = 0;
                 }
             }
@@ -348,14 +348,14 @@ void SHkillermushroom_control(Object* self) {
             objData->flags &= ~SHkillermushroom_FLAG_Disable_Spore_Damage;
             objData->state = SHkillermushroom_STATE_3_Spore_Attack_Intro;
             objData->timer = 0.0f;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_53A_Spore_Spray_Intro, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_53A_Spore_Spray_Intro, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     }
 
     //React to attacks
     if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) && (objData->flags & SHkillermushroom_FLAG_Vulnerable)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
         objData->flags &= ~SHkillermushroom_FLAG_Disable_Spore_Damage;
 
         //Optionally set a gamebit when the mushroom is attacked
@@ -368,7 +368,7 @@ void SHkillermushroom_control(Object* self) {
 
         //Stop active sound loop
         if (objData->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
             objData->soundHandle = 0;
         }
     }

@@ -1,8 +1,8 @@
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/332_FXEmit.h"
 #include "sys/dll.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/projgfx.h"
 #include "sys/main.h"
@@ -123,7 +123,7 @@ void FXEmit_control(Object* self) {
                 objdata->disabled = FALSE;
                 objdata->intervalTimer = setup->interval * 100;
                 if (setup->intervalSoundID) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, setup->intervalSoundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, setup->intervalSoundID, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             } else {
                 objdata->disabled = TRUE;
@@ -216,14 +216,14 @@ static int FXEmit_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     objdata = (FXEmit_Data*)self->data;
     setup = (FXEmit_Setup*)self->setup;
     
-    for (i = 0; i < animObjData->unk98; i++) {
-        if (animObjData->unk8E[i] == 1) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        if (animObjData->messages[i] == 1) {
             FXEmit_emit(self);
         }
-        if (animObjData->unk8E[i] == 2) {
+        if (animObjData->messages[i] == 2) {
             objdata->animCallbackRotate = 1 - objdata->animCallbackRotate;
         }
-        animObjData->unk8E[i] = 0;
+        animObjData->messages[i] = 0;
     }
     
     if (objdata->animCallbackRotate) {

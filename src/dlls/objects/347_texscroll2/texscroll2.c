@@ -52,7 +52,7 @@ void TexScroll2_control(Object* self) {
     objData = self->data;
 
     //Get object's local Block model
-    if (func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z)) == NULL) {
+    if (map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z)) == NULL) {
         objData->scrollSetupNeeded = TRUE;
         return;
     }
@@ -105,7 +105,7 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     objSetup = (TexScroll2_Setup*)self->setup;
 
     //Get object's local Block
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->scrollSetupNeeded = TRUE;
         return;
@@ -170,12 +170,12 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
             //If blend material is specified, only apply scrolling if the shape uses it as its secondary multitexture material
             if (objData->blendMaterialIndex == -1 || 
                 objData->blendMaterialIndex == block->shapes[shapeIndex].blendMaterialIndex) {
-                if (block->shapes[shapeIndex].unk16 != 0xFF) {
-                    func_80049CE4(block->shapes[shapeIndex].unk16, 
+                if (block->shapes[shapeIndex].texScrollerID != 0xFF) {
+                    block_texscroll_set(block->shapes[shapeIndex].texScrollerID, 
                         objData->uSpeedA, objData->vSpeedA, widthA, heightA, 
                         objData->uSpeedB, objData->vSpeedB, widthB, heightB);
                 } else {
-                    block->shapes[shapeIndex].unk16 = func_80049B84(
+                    block->shapes[shapeIndex].texScrollerID = block_texscroll_add(
                         objData->uSpeedA, objData->vSpeedA, widthA, heightA,
                         objData->uSpeedB, objData->vSpeedB, widthB, heightB);
                 }

@@ -1,10 +1,10 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/main.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/gametexts_ui.h"
 
@@ -47,7 +47,7 @@ void CCspellpage_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0xFC | func: 4 | export: 4
 void CCspellpage_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, 5);
+    obj_free_object_type(self, OBJTYPE_5);
 }
 
 // offset: 0x13C | func: 5 | export: 5
@@ -65,8 +65,8 @@ int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
     /*0x0*/ static f32 dShowInfoScrollTimer = 0.0f;
     s32 i;
 
-    for (i = 0; i < animObjData->unk98; i++) {
-        if (animObjData->unk8E[i] == 1) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        if (animObjData->messages[i] == 1) {
             dShowInfoScrollTimer = 100.0f;
             main_set_bits(BIT_Spell_Forcefield, 1);
         }

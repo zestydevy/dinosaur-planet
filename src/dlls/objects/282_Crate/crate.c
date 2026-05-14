@@ -108,7 +108,7 @@ void crate_control(Object* self) {
     if (func_8002601C(self, NULL, NULL, &hitDamage, (f32*)&srt.transl.x, (f32*)&srt.transl.y, (f32*)&srt.transl.z) != 0) {
         objData->health -= hitDamage;
         if (objData->health > 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Change model index (increase index to look more and more damaged)
             obj_set_model(self, CRATE_HIT_POINTS - objData->health);
@@ -139,7 +139,7 @@ void crate_control(Object* self) {
         objData->isDestroyed = TRUE;
         objData->isRespawned = FALSE;
 
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
         
         self->objhitInfo->unk58 &= ~1;
 

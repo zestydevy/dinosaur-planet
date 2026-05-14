@@ -8,14 +8,14 @@
 
 DLL_INTERFACE(DLL_24_waterfx) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func_6E8)();
+/*0*/ void (*tick)(u8 updateRate); // @bug: does not match signature of implementation
 /*1*/ void (*func_564)(SRT *transform, u16 arg1, Vec3f *arg2, DLL27_Data *arg3, f32 arg4);
-/*2*/ void (*func_C7C)(Gfx** gdl, Mtx** arg1);
-/*3*/ void (*func_174C)(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
-/*4*/ void (*func_1CC8)(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4, s32 arg5);
-/*5*/ void (*func_1B28)(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4);
-/*6*/ void (*func_24C)(void);
-/*7*/ void (*func_1C88)(s32 arg0, f32 arg1);
+/*2*/ void (*print)(Gfx** gdl, Mtx** arg1);
+/*3*/ void (*spawn_splash)(f32 x, f32 y, f32 z, f32 size);
+/*4*/ void (*spawn_circular_ripple)(f32 x, f32 y, f32 z, s16 yaw, f32 arg4, s32 decayRate);
+/*5*/ void (*spawn_movement_ripple)(f32 x, f32 y, f32 z, s16 yaw, f32 arg4);
+/*6*/ void (*init)(void);
+/*7*/ void (*set_circular_ripple_scale)(s32 useDefault, f32 scale);
 };
 
 #endif //_DLLS_24_H

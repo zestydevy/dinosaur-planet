@@ -1,9 +1,9 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "PR/gbi.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "sys/gfx/model.h"
@@ -86,13 +86,13 @@ void GP_ShrinePillar_control(Object* self) {
     if (objdata->startSequence) {
         if ((setup->unk1C != 0) && (objdata->state != STATE_Underground)) {
             seqArg2 = setup->unk20;
-            gDLL_3_Animation->vtbl->func20(self, setup->unk1C);
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk1C);
         } else {
             seqArg2 = -1; 
         }
 
         if (setup->sequenceIndex != -1) {
-            gDLL_3_Animation->vtbl->func17(setup->sequenceIndex, self, seqArg2);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->sequenceIndex, self, seqArg2);
         }
         objdata->startSequence = FALSE;
     }
@@ -147,8 +147,8 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         break;
     case STATE_Rising:
         //Waiting for pillar rising sequence to call subcommand
-        for (index = 0; index < animObjData->unk98; index++) {
-            if (animObjData->unk8E[index] == 1) {
+        for (index = 0; index < animObjData->messageCount; index++) {
+            if (animObjData->messages[index] == 1) {
                 objdata->state = STATE_Raised;
                 if (setup->gamebitRaised != NO_GAMEBIT) {
                     main_set_bits(setup->gamebitRaised, 1);
@@ -164,8 +164,8 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         break;
     case STATE_Waiting_for_Door_Open:
         //Waiting for door opening sequence to call subcommand
-        for (index = 0; index < animObjData->unk98; index++) {
-            if (animObjData->unk8E[index] == 2) {
+        for (index = 0; index < animObjData->messageCount; index++) {
+            if (animObjData->messages[index] == 2) {
                 objdata->state = STATE_Hot;
             }
         }

@@ -2,10 +2,10 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -104,7 +104,7 @@ void WLpressureswitch_control(Object* self) {
             if (objdata->state == STATE_0_UP && 
                 listedObject && listedObject->id == OBJ_WL_Column_Top) {
                 if (!playerIsFarAway) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, 0, 0, 0);
                 }
                 objdata->state = STATE_1_DOWN;
             }
@@ -167,11 +167,11 @@ void WLpressureswitch_control(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
         if (objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
             objdata->soundHandle = 0;
         }
     }
@@ -194,7 +194,7 @@ void WLpressureswitch_free(Object* self, s32 arg1) {
 
     soundHandle = objdata->soundHandle;
     if (soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(soundHandle);
     }
 }
 

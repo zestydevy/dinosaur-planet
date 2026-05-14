@@ -2,32 +2,24 @@
 # Computes and displays progress for the decompilation project
 
 import argparse
+from typing import TextIO
 from git.repo import Repo
-from glob import glob
 from io import TextIOWrapper
 import json
 import os
 from pathlib import Path
-import subprocess
-import sys
 
-from dino.dll import DLL
-from dino.dll_analysis import get_dll_functions
 from dino.dlls_txt import DLLsTxt
-from dino.dll_syms_txt import DLLSymsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ROOT_DIR = Path(os.path.abspath(os.path.join(SCRIPT_DIR, "..")))
 
 ASM_PATH = ROOT_DIR.joinpath("asm")
-BIN_PATH = ROOT_DIR.joinpath("bin")
-BUILD_PATH = ROOT_DIR.joinpath("build")
-SRC_PATH = ROOT_DIR.joinpath("src")
 SRC_DLLS_PATH = ROOT_DIR.joinpath("src/dlls")
 
 class DLLProgress:
     def __init__(self,
-                 number: str,
+                 number: int,
                  total_bytes: int,
                  total_funcs: int,
                  matching_bytes: int,
@@ -49,93 +41,125 @@ class CoreProgress:
         self.matching_bytes = matching_bytes
         self.matching_funcs = matching_funcs
 
+class ProgressCategory:
+    def __init__(self) -> None:
+        self.total_bytes = 0
+        self.total_funcs = 0
+        self.matching_bytes = 0
+        self.matching_funcs = 0
+        self.matching_funcs_ratio = 0
+        self.matching_bytes_ratio = 0
+    
+    def compute_ratios(self):
+        if self.total_funcs != 0:
+            self.matching_funcs_ratio = self.matching_funcs / self.total_funcs
+        else:
+            self.matching_funcs_ratio = 0
+        if self.total_bytes != 0:
+            self.matching_bytes_ratio = self.matching_bytes / self.total_bytes
+        else:
+            self.matching_bytes_ratio = 0
+
 class OverallProgress:
     def __init__(self,
                  core: CoreProgress,
                  dlls: "list[DLLProgress]") -> None:
-        self.core = core
-        self.dlls = dlls
+        # Compute core progress
+        self.core = ProgressCategory()
+
+        self.core.total_bytes = core.total_bytes
+        self.core.total_funcs = core.total_funcs
+        self.core.matching_bytes = core.matching_bytes
+        self.core.matching_funcs = core.matching_funcs
 
         # Compute total DLL progress
-        self.dll_total_bytes = 0
-        self.dll_total_funcs = 0
-        self.dll_matching_bytes = 0
-        self.dll_matching_funcs = 0
+        self.dll = ProgressCategory()
+        self.dll_engine = ProgressCategory()
+        self.dll_modgfx = ProgressCategory()
+        self.dll_projgfx = ProgressCategory()
+        self.dll_objects = ProgressCategory()
 
         for progress in dlls:
-            self.dll_total_bytes += progress.total_bytes
-            self.dll_total_funcs += progress.total_funcs
-            self.dll_matching_bytes += progress.matching_bytes
-            self.dll_matching_funcs += progress.matching_funcs
+            if progress.number >= 210:
+                subcategory = self.dll_objects
+            elif progress.number >= (185 + 1):
+                subcategory = self.dll_projgfx
+            elif progress.number >= (103 + 1):
+                subcategory = self.dll_modgfx
+            else:
+                subcategory = self.dll_engine
+
+            self.dll.total_bytes += progress.total_bytes
+            self.dll.total_funcs += progress.total_funcs
+            self.dll.matching_bytes += progress.matching_bytes
+            self.dll.matching_funcs += progress.matching_funcs
+
+            subcategory.total_bytes += progress.total_bytes
+            subcategory.total_funcs += progress.total_funcs
+            subcategory.matching_bytes += progress.matching_bytes
+            subcategory.matching_funcs += progress.matching_funcs
 
         # Compute overall progress
-        self.total_bytes = core.total_bytes + self.dll_total_bytes
-        self.total_funcs = core.total_funcs + self.dll_total_funcs
-        self.matching_bytes = core.matching_bytes + self.dll_matching_bytes
-        self.matching_funcs = core.matching_funcs + self.dll_matching_funcs
+        self.total = ProgressCategory()
+        self.total.total_bytes = core.total_bytes + self.dll.total_bytes
+        self.total.total_funcs = core.total_funcs + self.dll.total_funcs
+        self.total.matching_bytes = core.matching_bytes + self.dll.matching_bytes
+        self.total.matching_funcs = core.matching_funcs + self.dll.matching_funcs
 
         # Compute ratios
-        self.core_matching_funcs_ratio = core.matching_funcs / core.total_funcs
-        self.core_matching_bytes_ratio = core.matching_bytes / core.total_bytes
+        self.core.compute_ratios()
+        self.dll.compute_ratios()
+        self.dll_engine.compute_ratios()
+        self.dll_modgfx.compute_ratios()
+        self.dll_projgfx.compute_ratios()
+        self.dll_objects.compute_ratios()
+        self.total.compute_ratios()
 
-        self.dll_matching_funcs_ratio = self.dll_matching_funcs / self.dll_total_funcs
-        self.dll_matching_bytes_ratio = self.dll_matching_bytes / self.dll_total_bytes
-
-        self.matching_funcs_ratio = self.matching_funcs / self.total_funcs
-        self.matching_bytes_ratio = self.matching_bytes / self.total_bytes
-
-def get_core_func_sizes(elf_path: Path) -> "tuple[dict[str, int], int]":
-    # Get functions and their sizes from the given .elf
-    try:
-        result = subprocess.run(['mips-linux-gnu-readelf', '--symbols', elf_path], stdout=subprocess.PIPE)
-        lines = result.stdout.decode().split("\n")
-    except:
-        print(f"Error: Could not run mips-linux-gnu-readelf on {elf_path} - make sure that the project is built")
-        sys.exit(1)
-
-    sizes = {}
-    total = 0
-
-    for line in [l for l in lines if "FUNC" in l]:
-        components = line.split()
-        size = int(components[2])
-        name = components[7]
-        # Include asm functions (which have a size of 0), 
-        # but exclude branch labels (which also count as funcs and have a size of 0)
-        if size > 0 or not name.startswith("L8"):
-            total += size
-            sizes[name] = size
-
-    return sizes, total
-
-def get_core_nonmatching_funcs() -> "set[str]":
-    nonmatching_path = ASM_PATH.joinpath("nonmatchings")
-    funcs = set()
-
-    for asm_path in nonmatching_path.rglob("*.s"):
-        # Skip DLL nonmatchings
-        if asm_path.relative_to(nonmatching_path).parts[0] == "dlls":
-            continue
-
-        # Add
-        funcs.add(asm_path.stem)
-
-    return funcs
+def add_funcs_from_asm(file: TextIO, funcs: set[str]):
+    in_text: bool | None = None
+    total_bytes = 0
+    for line in file.readlines():
+        if line.startswith(".section"):
+            section = line.split(" ")[1][:-1]
+            if section == ".text":
+                in_text = True
+            else:
+                if in_text:
+                    # Left .text, we can exit early
+                    break
+                in_text = False
+        elif in_text != False and line.startswith("nonmatching"):
+            _, name, size = line.split(" ")
+            name = name[:-1]
+            size = int(size, base=0)
+            total_bytes += size
+            funcs.add(name)
+    
+    return total_bytes
 
 def get_core_progress() -> CoreProgress:
-    # Get all core functions and their sizes from the final .elf
-    dino_elf_path = BUILD_PATH.joinpath("dino.elf")
-    func_sizes, total_bytes = get_core_func_sizes(dino_elf_path)
-    all_funcs = set(func_sizes.keys())
+    data_path = ASM_PATH.joinpath("data")
+    dlls_path = ASM_PATH.joinpath("dlls")
+    nonmatchings_path = ASM_PATH.joinpath("nonmatchings")
+    nonmatchings_dlls_path = ASM_PATH.joinpath("nonmatchings/dlls")
 
-    # Get nonmatching functions
-    nonmatching_funcs = get_core_nonmatching_funcs()
+    nonmatching_funcs: set[str] = set()
+    nonmatching_bytes = 0
+    all_funcs: set[str] = set()
+    total_bytes = 0
 
-    # Compute matching amount
+    for path in ASM_PATH.glob("**/*.s"):
+        if path.is_relative_to(data_path) or path.is_relative_to(dlls_path) or path.is_relative_to(nonmatchings_dlls_path):
+            continue
+
+        with open(path, "r", encoding="utf-8") as file:
+            if path.is_relative_to(nonmatchings_path):
+                nonmatching_bytes += add_funcs_from_asm(file, nonmatching_funcs)
+            else:
+                total_bytes += add_funcs_from_asm(file, all_funcs)
+    
+    matching_bytes = total_bytes - nonmatching_bytes
     matching_funcs = all_funcs - nonmatching_funcs
-    matching_bytes = 0
-    for func in matching_funcs:
-        matching_bytes += func_sizes[func]
 
     # Done
     return CoreProgress(
@@ -145,64 +169,37 @@ def get_core_progress() -> CoreProgress:
         matching_funcs=len(matching_funcs)
     )
 
-def read_dll_symbols_txt(path: Path) -> DLLSymsTxt:
-    with open(path, "r", encoding="utf-8") as syms_file:
-        return DLLSymsTxt.parse(syms_file)
-
-def get_dll_progress(dll_path: Path, number: str, dll_dir: str | None) -> DLLProgress:
-    symbol_files: list[DLLSymsTxt] = []
-    nonmatching_funcs: "set[str]" = set()
-    has_src = False
-
-    # To determine progress we need to check if the DLL has a src directory
-    # If it does, we need its syms.txt and we need to check the respective asm/nonmatchings directory
-    if dll_dir != None:
-        syms_path = SRC_PATH.joinpath(f"dlls/{dll_dir}/syms.txt")
-        if syms_path.exists():
-            has_src = True
-            # Get a list of known symbols for the DLL (we need the function symbols)
-            symbol_files.append(read_dll_symbols_txt(syms_path))
-            # Get list of functions that aren't matching
-            nonmatchings_dir = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll_dir}")
-            if nonmatchings_dir.exists():
-                for asm_file in nonmatchings_dir.iterdir():
-                    if asm_file.name.endswith(".s"):
-                        nonmatching_funcs.add(asm_file.name[:-2])
+def get_dll_progress(number: int, src_dir_name: str | None) -> DLLProgress:
+    all_funcs: set[str] = set()
+    with open(ASM_PATH.joinpath(f"dlls/{number}.s"), "r", encoding="utf-8") as file:
+        total_bytes = add_funcs_from_asm(file, all_funcs)
     
-    # Get all DLL functions and their sizes
-    with open(dll_path, "rb") as dll_file:
-        dll_data = bytearray(dll_file.read())
-        dll = DLL.parse(dll_data)
-        dll_functions = get_dll_functions(dll, int(number, base=0), dll_data, symbol_files)
-    
-    func_sizes: "dict[str, int]" = {}
-    total_bytes = 0
-    for func in dll_functions:
-        size = func.sizew * 4
-        func_sizes[func.getName()] = size
-        total_bytes += size
-    
-    # Compute matching amounts
-    if has_src:
-        matching_funcs = set(func_sizes.keys()) - nonmatching_funcs
-        matching_bytes = 0
-        for func in matching_funcs:
-            matching_bytes += func_sizes[func]
+    if src_dir_name != None:
+        nonmatching_funcs: set[str] = set()
+        nonmatching_bytes = 0
+        dll_nonmatchings_path = ASM_PATH.joinpath("nonmatchings/dlls").joinpath(src_dir_name)
+        if dll_nonmatchings_path.exists():
+            for path in dll_nonmatchings_path.glob("**/*.s"):
+                if path.stem == "_orig_got":
+                    continue
+                with open(path, "r", encoding="utf-8") as file:
+                    nonmatching_bytes += add_funcs_from_asm(file, nonmatching_funcs)
+        
+        matching_funcs = all_funcs - nonmatching_funcs
+        matching_bytes = total_bytes - nonmatching_bytes
     else:
-        matching_funcs = []
+        matching_funcs: set[str] = set()
         matching_bytes = 0
-
-    # Done
+    
     return DLLProgress(
         number, 
         total_bytes=total_bytes, 
-        total_funcs=len(func_sizes), 
+        total_funcs=len(all_funcs), 
         matching_bytes=matching_bytes,
         matching_funcs=len(matching_funcs)
     )
 
 def get_all_dll_progress() -> "list[DLLProgress]":
-    dlls_dir = BIN_PATH.joinpath("assets/dlls")
     progress: "list[DLLProgress]" = []
 
     # Get custom src dir for each DLL
@@ -212,11 +209,11 @@ def get_all_dll_progress() -> "list[DLLProgress]":
     with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
         dlls_txt = DLLsTxt.parse(dlls_txt_file)
 
-    # Get progress of each .dll asset
-    for dll_path in [Path(p) for p in glob(f"{dlls_dir}/*.dll")]:
-        number = dll_path.name.split(".")[0]
-        dir_name = dlls_txt.path_map.get(int(number), None)
-        progress.append(get_dll_progress(dll_path, number, dir_name))
+    # Get progress of each DLL
+    for i in range(796):
+        number = i + 1
+        dir_name = dlls_txt.path_map.get(number, None)
+        progress.append(get_dll_progress(number, dir_name))
     
     return progress
 
@@ -239,25 +236,53 @@ def output_json(p: OverallProgress, file: TextIOWrapper):
     # Build JSON data
     data = {
         "total": {
-            "matching_ratio": p.matching_bytes_ratio,
-            "matching_funcs": p.matching_funcs,
-            "matching_bytes": p.matching_bytes,
-            "total_funcs": p.total_funcs,
-            "total_bytes": p.total_bytes,
+            "matching_ratio": p.total.matching_bytes_ratio,
+            "matching_funcs": p.total.matching_funcs,
+            "matching_bytes": p.total.matching_bytes,
+            "total_funcs": p.total.total_funcs,
+            "total_bytes": p.total.total_bytes,
         },
         "core": {
-            "matching_ratio": p.core_matching_bytes_ratio,
+            "matching_ratio": p.core.matching_bytes_ratio,
             "matching_funcs": p.core.matching_funcs,
             "matching_bytes": p.core.matching_bytes,
             "total_funcs": p.core.total_funcs,
             "total_bytes": p.core.total_bytes,
         },
         "dll": {
-            "matching_ratio": p.dll_matching_bytes_ratio,
-            "matching_funcs": p.dll_matching_funcs,
-            "matching_bytes": p.dll_matching_bytes,
-            "total_funcs": p.dll_total_funcs,
-            "total_bytes": p.dll_total_bytes,
+            "matching_ratio": p.dll.matching_bytes_ratio,
+            "matching_funcs": p.dll.matching_funcs,
+            "matching_bytes": p.dll.matching_bytes,
+            "total_funcs": p.dll.total_funcs,
+            "total_bytes": p.dll.total_bytes,
+            "engine": {
+                "matching_ratio": p.dll_engine.matching_bytes_ratio,
+                "matching_funcs": p.dll_engine.matching_funcs,
+                "matching_bytes": p.dll_engine.matching_bytes,
+                "total_funcs": p.dll_engine.total_funcs,
+                "total_bytes": p.dll_engine.total_bytes,
+            },
+            "modgfx": {
+                "matching_ratio": p.dll_modgfx.matching_bytes_ratio,
+                "matching_funcs": p.dll_modgfx.matching_funcs,
+                "matching_bytes": p.dll_modgfx.matching_bytes,
+                "total_funcs": p.dll_modgfx.total_funcs,
+                "total_bytes": p.dll_modgfx.total_bytes,
+            },
+            "projgfx": {
+                "matching_ratio": p.dll_projgfx.matching_bytes_ratio,
+                "matching_funcs": p.dll_projgfx.matching_funcs,
+                "matching_bytes": p.dll_projgfx.matching_bytes,
+                "total_funcs": p.dll_projgfx.total_funcs,
+                "total_bytes": p.dll_projgfx.total_bytes,
+            },
+            "objects": {
+                "matching_ratio": p.dll_objects.matching_bytes_ratio,
+                "matching_funcs": p.dll_objects.matching_funcs,
+                "matching_bytes": p.dll_objects.matching_bytes,
+                "total_funcs": p.dll_objects.total_funcs,
+                "total_bytes": p.dll_objects.total_bytes,
+            }
         },
         "git": {
             "commit_hash": git_commit_hash,
@@ -269,20 +294,35 @@ def output_json(p: OverallProgress, file: TextIOWrapper):
     # Output
     json.dump(data, file, indent=2)
 
-def print_progress(p: OverallProgress):
-    print(f"{p.core.matching_funcs} matched core functions / {p.core.total_funcs} total ({p.core_matching_funcs_ratio * 100:.2f}%)")
-    print(f"{p.core.matching_bytes} matching core bytes / {p.core.total_bytes} total ({p.core_matching_bytes_ratio * 100:.2f}%)")
+def print_progress(p: OverallProgress, show_banks: bool):
+    print(f"{p.total.matching_funcs} matched overall functions / {p.total.total_funcs} total ({p.total.matching_funcs_ratio * 100:.2f}%)")
+    print(f"{p.total.matching_bytes} matching overall bytes / {p.total.total_bytes} total ({p.total.matching_bytes_ratio * 100:.2f}%)")
     print()
-    print(f"{p.dll_matching_funcs} matched DLL functions / {p.dll_total_funcs} total ({p.dll_matching_funcs_ratio * 100:.2f}%)")
-    print(f"{p.dll_matching_bytes} matching DLL bytes / {p.dll_total_bytes} total ({p.dll_matching_bytes_ratio * 100:.2f}%)")
+    print(f"{p.core.matching_funcs} matched core functions / {p.core.total_funcs} total ({p.core.matching_funcs_ratio * 100:.2f}%)")
+    print(f"{p.core.matching_bytes} matching core bytes / {p.core.total_bytes} total ({p.core.matching_bytes_ratio * 100:.2f}%)")
     print()
-    print(f"{p.matching_funcs} matched overall functions / {p.total_funcs} total ({p.matching_funcs_ratio * 100:.2f}%)")
-    print(f"{p.matching_bytes} matching overall bytes / {p.total_bytes} total ({p.matching_bytes_ratio * 100:.2f}%)")
+    print(f"{p.dll.matching_funcs} matched DLL functions / {p.dll.total_funcs} total ({p.dll.matching_funcs_ratio * 100:.2f}%)")
+    print(f"{p.dll.matching_bytes} matching DLL bytes / {p.dll.total_bytes} total ({p.dll.matching_bytes_ratio * 100:.2f}%)")
+    if show_banks:
+        print()
+        print("DLL Banks:")
+        print(f"    {p.dll_engine.matching_funcs} matched engine DLL functions / {p.dll_engine.total_funcs} total ({p.dll_engine.matching_funcs_ratio * 100:.2f}%)")
+        print(f"    {p.dll_engine.matching_bytes} matching engine DLL bytes / {p.dll_engine.total_bytes} total ({p.dll_engine.matching_bytes_ratio * 100:.2f}%)")
+        print()
+        print(f"    {p.dll_modgfx.matching_funcs} matched modgfx DLL functions / {p.dll_modgfx.total_funcs} total ({p.dll_modgfx.matching_funcs_ratio * 100:.2f}%)")
+        print(f"    {p.dll_modgfx.matching_bytes} matching modgfx DLL bytes / {p.dll_modgfx.total_bytes} total ({p.dll_modgfx.matching_bytes_ratio * 100:.2f}%)")
+        print()
+        print(f"    {p.dll_projgfx.matching_funcs} matched projgfx DLL functions / {p.dll_projgfx.total_funcs} total ({p.dll_projgfx.matching_funcs_ratio * 100:.2f}%)")
+        print(f"    {p.dll_projgfx.matching_bytes} matching projgfx DLL bytes / {p.dll_projgfx.total_bytes} total ({p.dll_projgfx.matching_bytes_ratio * 100:.2f}%)")
+        print()
+        print(f"    {p.dll_objects.matching_funcs} matched object DLL functions / {p.dll_objects.total_funcs} total ({p.dll_objects.matching_funcs_ratio * 100:.2f}%)")
+        print(f"    {p.dll_objects.matching_bytes} matching object DLL bytes / {p.dll_objects.total_bytes} total ({p.dll_objects.matching_bytes_ratio * 100:.2f}%)") 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Computes and reports progress for the project.")
     parser.add_argument("-q", "--quiet", action="store_true", help="Don't print messages to stdout.", default=False)
-    parser.add_argument("--json", type=argparse.FileType("w", encoding="utf-8"), help="File to write the current progress to as JSON.")
+    parser.add_argument("--json", type=str, help="File to write the current progress to as JSON.")
+    parser.add_argument("--dll-banks", dest="dll_banks", action="store_true", help="Display progress per DLL bank.", default=False)
 
     args = parser.parse_args()
     
@@ -294,10 +334,10 @@ if __name__ == "__main__":
 
     # Emit JSON
     if args.json:
-        with args.json as json_file:
+        with open(args.json, "w", encoding="utf-8") as json_file:
             output_json(progress, json_file)
 
     # Print progress
     if not args.quiet:
         print()
-        print_progress(progress)
+        print_progress(progress, args.dll_banks)

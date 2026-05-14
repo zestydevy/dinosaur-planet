@@ -93,7 +93,7 @@ void SCTotemBond_control(Object* self) {
                 objData->flags |= SCTotemBond_FLAG_All_Directions_Defended;
             }
             
-            objData->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_796_Pole_Rotate, MAX_VOLUME, 0, 0, 0, 0);
+            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         //Rotate towards goal direction
@@ -126,7 +126,7 @@ void SCTotemBond_free(Object* self, s32 arg1) {
     SCTotemBond_Data* objData = self->data;
     
     if (objData->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }
@@ -149,12 +149,12 @@ int SCTotemBond_anim_callback(Object* self, Object* objOverride, AnimObj_Data* a
     objData = self->data;
     animData->unk62 = 0;
 
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case SCTotemBond_SEQCMD_1_Initialise_Minigame:
             objData->flags |= SCTotemBond_FLAG_Init_Minigame;
             self->srt.yaw = M_180_DEGREES - 1;
-            gDLL_3_Animation->vtbl->func19(0x56, 1, 0, 0);
+            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAM1STPERSON, 1, 0, 0);
             break;
         case SCTotemBond_SEQCMD_2_Set_Level_State_3:
             //Plays regular SwapStone Circle music

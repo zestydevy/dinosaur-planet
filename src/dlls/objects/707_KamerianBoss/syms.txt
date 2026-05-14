@@ -31,6 +31,5 @@ _data_18 = 0x18; // absolute:0x2298
 .bss = 0x22A0:
 sHealthBarTextures = 0x0; // absolute:0x22A0
 _bss_8 = 0x8; // absolute:0x22A8
-_bss_20 = 0x20; // absolute:0x22C0
 sHealthBarAlpha = 0x38; // absolute:0x22D8
 _bss_40 = 0x40; // absolute:0x22E0

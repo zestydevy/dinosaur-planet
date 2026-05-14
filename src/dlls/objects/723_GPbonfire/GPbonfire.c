@@ -5,10 +5,10 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -149,7 +149,7 @@ void GPbonfire_control(Object* self) {
         case STATE_1_WAIT_FOR_PLAYER_INTERACTION:
             if (playerIsNearby && 
                 ((DLL_210_Player*)player->dll)->vtbl->func48(player) == 0x4BB) {
-                gDLL_3_Animation->vtbl->func17(objdata->sequenceIndexKindling, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(objdata->sequenceIndexKindling, self, -1);
             }
             break;
         case STATE_2_WAIT_FOR_KYTE:
@@ -179,7 +179,7 @@ void GPbonfire_control(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
 
             //Handle tumbleweeds (only whole ones, twigs don't count)
-            tumbleweeds = obj_get_all_of_type(4, &count);
+            tumbleweeds = obj_get_all_of_type(OBJTYPE_4, &count);
             for (weedIndex = 0; weedIndex < count; weedIndex++){
                 if (tumbleweeds[weedIndex]->id == OBJ_Tumbleweed3) {
                     distanceToTumbleweed = vec3_distance(&self->globalPosition, &tumbleweeds[weedIndex]->globalPosition);
@@ -223,7 +223,7 @@ void GPbonfire_control(Object* self) {
                 } else {
                     for (index = 0; index < 2; index++){
                         if (objdata->soundHandles[index]) {
-                            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandles[index]);
+                            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[index]);
                              objdata->soundHandles[index] = 0;
                         }
                     }
@@ -254,7 +254,7 @@ void GPbonfire_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle*
 void GPbonfire_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
-    obj_free_object_type(self, 0x30);
+    obj_free_object_type(self, OBJTYPE_48);
     //@bug? doesn't stop soundHandles like other object DLLs do
 }
 
@@ -277,7 +277,7 @@ s32 GPbonfire_start_burning(Object* self, s32 skipSequence) {
 
     returnVal = 0;
     if (!skipSequence) {
-        gDLL_3_Animation->vtbl->func17(objdata->sequenceIndexBurning, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(objdata->sequenceIndexBurning, self, -1);
         returnVal = 1;
         objdata->stateIndex = STATE_3_START_BURNING;
     } else if (skipSequence == TRUE) {
@@ -326,8 +326,8 @@ void GPbonfire_func_A44(Object* self) {
     }
 
     //Loop burning sounds
-    objdata->soundHandles[0] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50a_Fire_Burning_Low_Loop, 0x7F, NULL, 0, 0, 0);
-    objdata->soundHandles[1] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
+    objdata->soundHandles[0] = gDLL_6_AMSFX->vtbl->play(self, SOUND_50a_Fire_Burning_Low_Loop, 0x7F, NULL, 0, 0, 0);
+    objdata->soundHandles[1] = gDLL_6_AMSFX->vtbl->play(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
 
     //Create fire effect
     gDLL_14_Modgfx->vtbl->func10(self);
@@ -359,8 +359,8 @@ static int GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
     objdata = self->data;
 
     if (!objdata->callbackBool) {
-        for (index = 0; index < animObjData->unk98; index++){
-            if (animObjData->unk8E[index] == 1) {
+        for (index = 0; index < animObjData->messageCount; index++){
+            if (animObjData->messages[index] == 1) {
                 objdata->callbackBool = TRUE;
                 self->modelInstIdx = 1;
             }

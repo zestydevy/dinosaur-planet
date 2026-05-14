@@ -18,6 +18,10 @@
 #define STUBBED_PRINTF 
 #endif
 
+// For string literals that were turned into null pointers in this build.
+// These strings can be found in other builds like default.dol.
+#define STUBBED_STR(x) 0
+
 #define DO_PRAGMA(x) _Pragma(#x)
 
 #ifdef __sgi

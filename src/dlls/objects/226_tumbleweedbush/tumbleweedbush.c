@@ -108,7 +108,7 @@ void TumbleweedBush_control(Object* self) {
             }
         }
         
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_544_Wood_Struck, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_544_Wood_Struck, MAX_VOLUME, 0, 0, 0, 0);
     }
     
     //Get player distance

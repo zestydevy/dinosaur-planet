@@ -1,8 +1,8 @@
 #ifndef _DLL_53_H
 #define _DLL_53_H
 
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "dll_def.h"
 #include "types.h"
 

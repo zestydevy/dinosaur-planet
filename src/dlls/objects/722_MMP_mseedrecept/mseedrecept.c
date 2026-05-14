@@ -3,10 +3,10 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/math.h"
@@ -103,7 +103,7 @@ void mmp_mseedrecept_control(Object* self) {
     
     if (objData->unk1 & 1){
         objData->unk0 = 2;
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitPlanted, 1);
         objData->unk1 &= ~1;
         self->opacity = OBJECT_OPACITY_MAX;
@@ -136,7 +136,7 @@ void mmp_mseedrecept_control(Object* self) {
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
                     self->opacity = 0;
-                    gDLL_3_Animation->vtbl->func17(0, self, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                     main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
                 }
             }
@@ -154,7 +154,7 @@ void mmp_mseedrecept_control(Object* self) {
                 if (objData->unk10 <= 0.0f){
                     if (rand_next(0, 1)){
                         objData->unk10 = 45.0f;
-                        gDLL_6_AMSFX->vtbl->play_sound(self, rand_next(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, rand_next(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
                         objData->unk1 |= 4;
                     } else {
                         objData->unk10 = rand_next(50, 200);
@@ -219,7 +219,7 @@ void mmp_mseedrecept_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0xB88 | func: 4 | export: 4
 void mmp_mseedrecept_free(Object* self, s32 a1) {
-    obj_free_object_type(self, 0x30);
+    obj_free_object_type(self, OBJTYPE_48);
 }
 
 // offset: 0xBC8 | func: 5 | export: 5
@@ -253,7 +253,7 @@ s32 mmp_mseedrecept_func_BEC(Object* self, s32 arg1) {
                 mmp_mseedrecept_func_D40(self);
             }
         } else {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
     return returnVal;
@@ -285,7 +285,7 @@ void mmp_mseedrecept_func_D40(Object* self) {
     
     if (main_get_bits(objData->gamebitPlanted)) {
         self->unkAF |= 8;
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitGrown, 1);
         objData->unk0 = 4;
         self->srt.transl.y = objSetup->base.y;

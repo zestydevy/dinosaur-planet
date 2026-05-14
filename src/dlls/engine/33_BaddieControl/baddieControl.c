@@ -1,10 +1,10 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/260_Pollen.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
 #include "sys/memory.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
@@ -272,7 +272,7 @@ s32 BaddieControl_func_8B4(Object* arg0, AnimObj_Data* arg1, Baddie* arg2, ObjFS
         }
         if ((var_v0 < 0x100) && (var_v0 >= -0xFF)) {
             arg1->unk62 = 0;
-            arg1->animCurvesCurrentFrameB = arg1->animCurvesCurrentFrameA - 1;
+            arg1->prevTime = arg1->time - 1;
         } else {
             gDLL_18_objfsa->vtbl->tick(arg0, &arg2->fsa, gUpdateRateF, gUpdateRateF, arg3, arg4);
         }
@@ -360,7 +360,7 @@ s32 BaddieControl_func_ED0(Object* arg0, Baddie* arg1, u8 arg2) {
     if (arg2 && (arg1->fsa.hitpoints <= 0) && (arg0->opacity == 0)) {
         return 0;
     }
-    if ((arg0->parent == NULL) && (func_8004454C(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
+    if ((arg0->parent == NULL) && (map_world_coords_to_block_index(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
         return 0;
     }
     return 1;
@@ -711,7 +711,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
             fsa->lastHitType = (s8) hitType;
         }
         if (*arg7 != 0) {
-            gDLL_6_AMSFX->vtbl->func_A1C(*arg7);
+            gDLL_6_AMSFX->vtbl->stop(*arg7);
             *arg7 = 0;
         }
         obj_send_mesg(sp50, 0xE0001, obj, NULL);
@@ -729,7 +729,7 @@ s32 BaddieControl_func_1D88(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, 
     while (obj_recv_mesg(arg0, &sp60, &sp64, (void*)&sp5C) != 0) {
         switch (sp60) {
             case 0x140001:
-                gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(arg0, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
                 break;
             case 0x4:
                 obj_send_mesg(sp64, 5, arg0, NULL);
@@ -888,7 +888,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
 // offset: 0x24FC | func: 19 | export: 15
 void BaddieControl_free(Object* obj, Baddie* baddie, u8 arg2) {
     if (baddie->unk3A8 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(baddie->unk3A8);
+        gDLL_6_AMSFX->vtbl->stop(baddie->unk3A8);
     }
     if (!(baddie->unk3B0 & arg2)) {
         if (baddie->unk3A6 != 0) {

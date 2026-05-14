@@ -96,7 +96,7 @@ void krazoatext_control(Object* self) {
     } else if (self->unkAF & 1) {
         objdata->state = 1;
         if (objdata->sound == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
         }
     }
 
@@ -106,8 +106,8 @@ void krazoatext_control(Object* self) {
         krazoatext_unload_all_glyph_textures(self, objdata);
     }
 
-    if (objdata->sound && !gDLL_6_AMSFX->vtbl->func_B48(objdata->sound)) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->sound);
+    if (objdata->sound && !gDLL_6_AMSFX->vtbl->is_playing(objdata->sound)) {
+        gDLL_6_AMSFX->vtbl->stop(objdata->sound);
         objdata->sound = NULL;
     }
 }
@@ -130,17 +130,17 @@ void krazoatext_free(Object* self, s32 arg1) {
 
     krazoatext_unload_all_glyph_textures(self, objdata);
     if (objdata->sound) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objdata->sound);
+        gDLL_6_AMSFX->vtbl->stop(objdata->sound);
     }
 }
 
 // offset: 0x414 | func: 5 | export: 5
-u32 dll_283_get_model_flags(Object* self) {
+u32 krazoatext_get_model_flags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x424 | func: 6 | export: 6
-u32 dll_283_get_data_size(Object *self, u32 a1) {
+u32 krazoatext_get_data_size(Object *self, u32 a1) {
     return sizeof(KText_Data);
 }
 

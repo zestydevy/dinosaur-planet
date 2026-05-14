@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
@@ -137,7 +137,7 @@ void dll_481_control(Object *self) {
             objdata->unk16 = 1;
         }
     } else {
-        temp_v0_4 = obj_get_nearest_type_to(0x10, player, &sp3C);
+        temp_v0_4 = obj_get_nearest_type_to(OBJTYPE_16, player, &sp3C);
         if ((temp_v0_4 != NULL) && (sp3C < 300.0f) && (sp3C > 100.0f)) {
             var_fv0 = temp_v0_4->srt.transl.z - player->srt.transl.z;
             if (var_fv0 <= 0.0f) {
@@ -169,7 +169,7 @@ void dll_481_control(Object *self) {
             } else {
                 if (objdata->unk10 != -0x3E7) {
                     if (objdata->unk10 < 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
                         objdata->unk10 = -0x3E7;
                     } else {
                         objdata->unk10 -= gUpdateRate;
@@ -194,14 +194,14 @@ void dll_481_control(Object *self) {
             }
             break;
         case 2:
-            gDLL_3_Animation->vtbl->func17(3, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
             objdata->unk12 = 3;
             return;
         case 7:
-            gDLL_3_Animation->vtbl->func17(4, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             break;
         case 8:
-            gDLL_3_Animation->vtbl->func17(5, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (s16) (u8) objdata->unk8, 0);
             main_set_bits(BIT_15F, 0);
             main_set_bits(BIT_DB_Entered_Shrine_2, 0);
@@ -223,7 +223,7 @@ void dll_481_control(Object *self) {
             main_set_bits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x34, 0x50, (s16) (u8) objdata->unk8, 0);
             objdata->unkA = 1;
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->unk12 = 5;
             return;
         case 5:
@@ -290,8 +290,8 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         }
         gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->unk8);
     }
-    if (a2->unk8D != 0) {
-        switch (a2->unk8D) {
+    if (a2->lastMessage != 0) {
+        switch (a2->lastMessage) {
         case 1:
             func_80000860(self, self, 0xD5, 0);
             break;
@@ -328,7 +328,7 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         case 10:
             main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
             if (_data_0 == NULL) {
-                _data_0 = func_8004A1E8(1);
+                _data_0 = block_texanim_get_tex(1);
             }
             break;
         case 9:
@@ -339,18 +339,18 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x34, 0x50, (s16) (u8) objdata->unk8, 0);
             break;
         case 13:
-            gDLL_3_Animation->vtbl->func19(0x5A, 0x65, 0, 0x50);
+            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMLOCKON, 0x65, 0, 0x50);
             break;
         }
     }
-    a2->unk8D = 0;
+    a2->lastMessage = 0;
     if (objdata->unk12 == 3) {
         if (main_get_bits(BIT_5BE) != 0) {
             objdata->unk12 = 7;
-            gDLL_3_Animation->vtbl->func18((s32) a2->unk63);
+            gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
         } else if (main_get_bits(BIT_1CB) != 0) {
             objdata->unk12 = 8;
-            gDLL_3_Animation->vtbl->func18((s32) a2->unk63);
+            gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
         } else if (objdata->unkE <= 0) {
             main_set_bits(BIT_176, 1);
             main_set_bits(BIT_1CA, 1);

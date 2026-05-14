@@ -1,6 +1,6 @@
 #include "common.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/objlib.h"
 
@@ -18,7 +18,7 @@ void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
     
-    objData->unk76 = objSetup->unk1A;
+    objData->eventGamebit = objSetup->unk1A;
     objData->unk7A = -1;
     objData->unk24 = 1.0f / (objSetup->unk24 + 1.0f);
     objData->unk28 = -1;
@@ -62,9 +62,9 @@ void SCAnimObj_control(Object* self) {
         return;
     }
         
-    index = gDLL_3_Animation->vtbl->func4(self, gUpdateRateMirror);
-    if ((index != 0) && (self->unkB4 == -2)) {
-        temp = objData->unk63;
+    index = gDLL_3_Animation->vtbl->tick_obj(self, gUpdateRateMirror);
+    if ((index != 0) && (self->seqSlot == SEQSLOT_ANIMOBJ)) {
+        temp = objData->seqSlot;
         matchObj = NULL;
         
         objects = get_world_objects(&index, &count);
@@ -73,29 +73,29 @@ void SCAnimObj_control(Object* self) {
         for (index = 0; index < count; index++) {
             obj = objects[index];
 
-            if (temp == obj->unkB4) {
+            if (temp == obj->seqSlot) {
                 matchObj = obj;
             }
             
-            if ((obj->unkB4 == -2) && (obj->group == GROUP_UNK16)) {
+            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->group == GROUP_UNK16)) {
                 objData = obj->data;
-                if (temp == objData->unk63) {
+                if (temp == objData->seqSlot) {
                     matchCount++;
                 }  
             } 
         }
 
         
-        if ((matchCount < 2) && (matchObj != NULL) && (matchObj->unkB4 != -1)) {
-            matchObj->unkB4 = -1;
-            gDLL_3_Animation->vtbl->func18(temp);
+        if ((matchCount < 2) && (matchObj != NULL) && (matchObj->seqSlot != SEQSLOT_NONE)) {
+            matchObj->seqSlot = SEQSLOT_NONE;
+            gDLL_3_Animation->vtbl->end_obj_sequence(temp);
         }
-        self->unkB4 = -1;
+        self->seqSlot = SEQSLOT_NONE;
     }
 
 
-    for (aIndex = 0; aIndex < objData->unk98; aIndex++) {
-        switch (objData->unk8E[aIndex]) {
+    for (aIndex = 0; aIndex < objData->messageCount; aIndex++) {
+        switch (objData->messages[aIndex]) {
         case 0:
             self->unkE0 |= 1;
             if (0) {} //fake
@@ -154,11 +154,11 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
                 sTransform.transl.x += rand_next(-50, 50) / 10.0f;
                 sTransform.transl.z += rand_next(-50, 50) / 10.0f;
                 
-                gDLL_24_Waterfx->vtbl->func_174C(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 4.0f);
-                gDLL_24_Waterfx->vtbl->func_1CC8(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 0, 0.0f, 3);
+                gDLL_24_Waterfx->vtbl->spawn_splash(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 4.0f);
+                gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 0, 0.0f, 3);
             }
             
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D8_Water_Splash, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, 0, 0, 0, 0);
             
             self->unkE0 &= ~4;
         }
@@ -175,15 +175,15 @@ void SCAnimObj_free(Object* self, s32 arg1) {
     gDLL_3_Animation->vtbl->func8(objData);
 
     for (i = 0; i < 4; i++) {
-        if (objData->unk34[i]) {
-            gDLL_6_AMSFX->vtbl->func_A1C(objData->unk34[i]);
+        if (objData->sfxHandles[i]) {
+            gDLL_6_AMSFX->vtbl->stop(objData->sfxHandles[i]);
         }
     }
     
     gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
     
     if (objData->unk30 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->unk30);
+        gDLL_6_AMSFX->vtbl->stop(objData->unk30);
     }
 }
 

@@ -58,7 +58,7 @@ void HitAnimator_setup(Object* self, HitAnimator_Setup* objSetup, s32 arg2) {
         }
     }
 
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block && (objSetup->mode & HitAnimator_Mode_BLOCKS) && objSetup->blocksAnimatorID) {
         HitAnimator_animate_blocks_shapes(block, self, objData, objSetup);
     }
@@ -84,7 +84,7 @@ void HitAnimator_control(Object* self) {
     objData = self->data;
 
     //Get object's local Blocks model
-    block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->flags &= ~HitAnimator_Flag_1;
         objData->flags |= HitAnimator_Flag_BLOCK_Animate_Needed;

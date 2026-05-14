@@ -19,6 +19,7 @@ enum ObjType {
     OBJTYPE_11 = 11, // BWlog, DFlog, IMSnowBike
     OBJTYPE_12 = 12,
     OBJTYPE_13 = 13, // Krazoa shrine main (ECSH_Shrine etc.)
+    OBJTYPE_14 = 14,
     OBJTYPE_16 = 16, // Krazoa shrine doors (ECSH_Door1 etc.)
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
@@ -34,7 +35,7 @@ enum ObjType {
     OBJTYPE_37 = 37,
     OBJTYPE_38 = 38,
     OBJTYPE_39 = 39,
-    OBJTYPE_40 = 40,
+    OBJTYPE_40 = 40, // SHthorntail
     OBJTYPE_41 = 41, // DBExpBit
     OBJTYPE_44 = 44, // DBBoneGeezer
     OBJTYPE_48 = 48, // perchobject, SCbeacon (sidekick/Kyte-related?)

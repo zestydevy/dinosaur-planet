@@ -83,7 +83,7 @@ void InfoPoint_setup(Object* self, InfoPoint_Setup* objSetup, s32 arg2) {
 void InfoPoint_control(Object* self) {
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         joy_set_button_mask(0, A_BUTTON);
-        gDLL_3_Animation->vtbl->func17(0, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
     }
 }
 
@@ -160,8 +160,8 @@ int InfoPoint_anim_callback(Object* self, Object* arg1, AnimObj_Data* animData, 
 
     objData = self->data;
     
-    for (i = 0; i < animData->unk98; i++) {
-        switch (animData->unk8E[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
         case InfoPoint_SEQCMD_1_Set_Text_Opacity_Max:
             objData->textOpacity = 0xFF;
             break;

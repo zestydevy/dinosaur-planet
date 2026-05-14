@@ -2,10 +2,10 @@
 #include "PR/gbi.h"
 #include "dlls/engine/26_curves.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/math.h"
 #include "sys/main.h"
@@ -125,7 +125,7 @@ void perchobject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 
 // offset: 0x2BC | func: 4 | export: 4
 void perchobject_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, 0x30);
+    obj_free_object_type(self, OBJTYPE_48);
 }
 
 // offset: 0x2FC | func: 5 | export: 5

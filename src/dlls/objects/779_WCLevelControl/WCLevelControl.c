@@ -1,5 +1,5 @@
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/objtype.h"
@@ -161,7 +161,7 @@ void dll_779_func_464(SRT *arg0, s16 arg1, s16 arg2, f32 *arg3, f32 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = sp2C + 32.0f + (f32) (arg1 * 48) + 24.0f;
     *arg4 = sp28 + 129.0f + (f32) (arg2 * 48) + 24.0f;
 }
@@ -171,7 +171,7 @@ void dll_779_func_534(SRT *arg0, f32 arg1, f32 arg2, s16 *arg3, s16 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = (s16) ((s16) (s32) ((arg1 - sp2C) - 32.0f) / 48);
     *arg4 = (s16) ((s16) (s32) ((arg2 - sp28) - 129.0f) / 48);
 }
@@ -288,7 +288,7 @@ void dll_779_func_BA8(SRT *arg0, s16 arg1, s16 arg2, f32* arg3, f32 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = sp2C + 224.0f + (f32) (arg1 * 48) + 24.0f;
     *arg4 = sp28 + 128.0f + (f32) (arg2 * 48) + 24.0f;
 }
@@ -298,7 +298,7 @@ void dll_779_func_C78(SRT *arg0, f32 arg1, f32 arg2, s16 *arg3, s16 *arg4) {
     f32 sp2C;
     f32 sp28;
 
-    func_8004478C(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
+    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &sp2C, &sp28);
     *arg3 = (s16) ((s16) (s32) ((arg1 - sp2C) - 224.0f) / 48);
     *arg4 = (s16) ((s16) (s32) ((arg2 - sp28) - 128.0f) / 48);
 }
@@ -429,8 +429,8 @@ static int dll_779_func_12EC(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) 
             main_set_bits(BIT_802, 1);
         }
     }
-    for (i = 0; i < a2->unk98; i++) {
-        switch (a2->unk8E[i]) {
+    for (i = 0; i < a2->messageCount; i++) {
+        switch (a2->messages[i]) {
             case 1:
                 objdata->unk4 = 6;
                 break;
@@ -460,10 +460,10 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
             if (main_get_bits(BIT_7FA) != 0) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->unk4 = 3;
             } else {
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 objdata->unk4 = 0;
             }
         } else if (func_8000FB1C() != 0) {
@@ -483,10 +483,10 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
             if (main_get_bits(BIT_7F9) != 0) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->unk4 = 3;
             } else {
-                gDLL_3_Animation->vtbl->func17(1, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 objdata->unk4 = 0;
             }
         } else if (func_8000FB1C() != 0) {

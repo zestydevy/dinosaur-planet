@@ -1,11 +1,11 @@
-#include "dlls/objects/214_animobj.h"
+#include "dlls/objects/373_CFCloudBaby.h"
+#include "game/gamebits.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
-#include "dll.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "game/gamebits.h"
-#include "dlls/objects/373_CFCloudBaby.h"
+#include "dll.h"
 #include "macros.h"
 
 typedef struct {
@@ -79,7 +79,7 @@ void CFSupTreasureCh_control(Object *self) {
     distance = 500.0f;
     if (objdata->flags & CFSUPTREASURECH_PLAY_SEQ) {
         if (objdata->objectSeqIndex != -1) {
-            gDLL_3_Animation->vtbl->func17(objdata->objectSeqIndex, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
             objdata->flags &= ~CFSUPTREASURECH_PLAY_SEQ;
             return;
         }

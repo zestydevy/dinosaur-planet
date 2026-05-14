@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/math.h"
@@ -155,8 +155,8 @@ void CCkrazoabright_colour_krazoa_symbol_tablet_quest(Object* self) {
 
     objData = self->data;
     
-    gDLL_3_Animation->vtbl->func20(self, 0x258);
-    gDLL_3_Animation->vtbl->func17(0, self, 0x78);
+    gDLL_3_Animation->vtbl->preempt_sequence_time(self, 0x258);
+    gDLL_3_Animation->vtbl->start_obj_sequence(0, self, 0x78);
 
     for (index = 0; index < 6; index++){
         gamebitValueInverted = main_get_bits(data_tablet_quest_gamebits[index]) ^ 1;
@@ -227,14 +227,14 @@ void CCkrazoabright_handle_lever_puzzle_1(Object* self, CCkrazoabright_Data* obj
             
             //Check if all points of the Krazoa symbol are lit
             if (index == 6) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objData->state = STATE_Lighting_Lanterns;
                 objData->timer = 0.0f;
                 for (index = 0; index < 6; index++) { objData->pointsLit[index] = 0; }
                 return;
             }
 
-            gDLL_3_Animation->vtbl->func17(2, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
             objData->timer = 0.0f;
         }
     }
@@ -250,7 +250,7 @@ void CCkrazoabright_handle_lighting_lanterns(Object* self, CCkrazoabright_Data* 
         objData->updateNeeded = FALSE;
 
         //Show courtyard gate reopening
-        gDLL_3_Animation->vtbl->func17(1, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         objData->state = STATE_Krazoa_Tablet_Quest;
     }
 }
@@ -265,7 +265,7 @@ void CCkrazoabright_handle_krazoa_tablet_quest(Object* self, CCkrazoabright_Data
         objData->timer += gUpdateRateF;
         if (objData->timer >= 140.0f){
             objData->timer = 300.0f;
-            gDLL_3_Animation->vtbl->func17(3, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
             objData->state = STATE_Lever_Puzzle_Two; 
         } 
     } else {
@@ -372,14 +372,14 @@ void CCkrazoabright_handle_lever_puzzle_2(Object* self, CCkrazoabright_Data* obj
             
             //Check if all points of the Krazoa symbol are lit
             if (index == 6) {
-                gDLL_3_Animation->vtbl->func17(5, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
                 objData->state = STATE_Finished;
                 objData->timer = 0.0f;
                 for (index = 0; index < 6; index++) { objData->pointsLit[index] = 0; }
                 return;
             }
 
-            gDLL_3_Animation->vtbl->func17(2, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
             objData->timer = 0.0f;
         }
     }
@@ -410,8 +410,8 @@ s32 CCkrazoabright_anim_callback(Object* self, Object* animObj, AnimObj_Data* an
     s32 i;
     u8 colours[6] = {0, 0, 0, 0, 0, 0};
 
-    for (i = 0; i < animObjData->unk98; i++) {
-        switch (animObjData->unk8E[i]) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        switch (animObjData->messages[i]) {
         case 1:
             for (i = 0; i < 6; i++) {
                 objData->prevPoints[i] = 0;
@@ -474,7 +474,7 @@ void CCkrazoabright_apply_blending_krazoa_symbol(u8* colours) {
     
     //Iterate over the courtyard well's two Block model pieces (containing the Krazoa symbol)
     for (b = 0; b < 2; b++){
-        block = func_80044BB0(func_8004454C(data_coords_well_blocks[b].x, data_coords_well_blocks[b].y, data_coords_well_blocks[b].z));
+        block = map_get_block_by_index(map_world_coords_to_block_index(data_coords_well_blocks[b].x, data_coords_well_blocks[b].y, data_coords_well_blocks[b].z));
         if (block == NULL) {
             continue;
         }
@@ -485,7 +485,7 @@ void CCkrazoabright_apply_blending_krazoa_symbol(u8* colours) {
             //If the shape has any of the 6 relevant animatorIDs, apply its new texture blend value
             for (a = 0; a < 6; a++){
                 if (data_krazoa_symbol_shape_animatorIDs[a] == shapes[s].animatorID){
-                    func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->textureIndex)->unk4 = colours[a];
+                    block_texanim_get(block_texanim_get_instance(block, shapes[s].animatorID)->texanimID)->unk4 = colours[a];
                     break;
                 }
             }
@@ -518,7 +518,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
 
     //Iterate over the courtyard's two ocean-side Block models (containing the lever columns) 
     for (b = 0; b < 2; b++) {
-        block = func_80044BB0(func_8004454C(data_coords_lever_blocks[b].x, data_coords_lever_blocks[b].y, data_coords_lever_blocks[b].z));
+        block = map_get_block_by_index(map_world_coords_to_block_index(data_coords_lever_blocks[b].x, data_coords_lever_blocks[b].y, data_coords_lever_blocks[b].z));
         if (block == NULL) {
             continue;
         }
@@ -529,7 +529,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
             //If the shape's animatorIDs is 11 (used by lever icons), apply new texture blend value
             if (shapes[s].animatorID == 11) {
                 colourToSet = colour;
-                func_8004A2CC(func_8004A284(block, shapes[s].animatorID)->textureIndex)->unk4 = colourToSet;
+                block_texanim_get(block_texanim_get_instance(block, shapes[s].animatorID)->texanimID)->unk4 = colourToSet;
             }
         }
     }

@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "types.h"
 #include "dll.h"
@@ -7,7 +8,6 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/main.h"
-#include "dlls/objects/214_animobj.h"
 
 typedef struct {
     u8 flags;
@@ -80,14 +80,14 @@ void DBPlaceHolder_control(Object *self) {
         self->srt.yaw = arctan2s(x, z);
         self->unkAF |= 8;
         objdata->flags |= 2;
-        gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
     }
     if (objdata->flags & 0x10) {
-        gDLL_3_Animation->vtbl->func20(self, setup->unk20);
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk20);
         if (setup->flags & 0x10) {
-            gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, setup->unk22);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, setup->unk22);
         } else {
-            gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, 1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, 1);
         }
         objdata->flags &= ~0x10;
     }
@@ -132,7 +132,7 @@ int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     DBPlaceHolder_Setup *setup;
 
     setup = (DBPlaceHolder_Setup*)self->setup;
-    if (animObjData->unk8D == 2) {
+    if (animObjData->lastMessage == 2) {
         main_set_bits(setup->gamebit1, 1);
     }
     return 0;

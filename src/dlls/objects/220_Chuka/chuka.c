@@ -132,17 +132,17 @@ void dll_220_control(Object* self) {
             CIRCLE_WRAP(angle);
             if (((u16)angle < objdata->unk8) || (((0xFFFF - objdata->unk8) & 0xFFFF) < (u16)angle)) {
                 if ((rand_next(0, 0x63) < objdata->unkD) || (objdata->unk4 & 4)) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, _data_10[2], MAX_VOLUME, NULL, NULL, 0, NULL);
                     dll_220_func_778(self);
                 } else {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             } else {
-                gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
     } else if (objdata->unk4 & 1) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     objdata->unk12 = distance2D;
 
@@ -152,7 +152,7 @@ void dll_220_control(Object* self) {
         if (objdata->unkC <= 0) {
             dll_220_func_8A4(self, objdata); //Suggests arg1 of dll_220_func_8A4 might be a DLL220_Data*
             gDLL_33_BaddieControl->vtbl->func18(self, objdata->unkA, -1, 1);
-            gDLL_6_AMSFX->vtbl->play_sound(self, _data_10[3], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, _data_10[3], MAX_VOLUME, NULL, NULL, 0, NULL);
             main_set_bits(objdata->unk10, 1);
         }
     }
@@ -187,7 +187,7 @@ u32 dll_220_get_data_size(Object *self, u32 a1) {
 void dll_220_func_704(Object* self, u8 arg1) {
     
     if (arg1 == 0x80) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 

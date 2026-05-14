@@ -77,7 +77,7 @@ void dll_320_control(Object* self) {
         objdata->unk1 = (s8) (objdata->unk1 - 1);
         if (objdata->unk1 > 0) {
             sp48 = objdata;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
             obj_set_model(self, 2 - objdata->unk1);
         }
     }
@@ -86,12 +86,12 @@ void dll_320_control(Object* self) {
         objdata->unk0 = 1;
         temp_v0 = self->objhitInfo;
         temp_v0->unk58 &= 0xFFFE;
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp40->unk1C != -1) {
             main_set_bits((s32) sp40->unk1C, 1U);
         }
         sp3C = 50.0f;
-        temp_v0_2 = obj_get_nearest_type_to(5, self, &sp3C);
+        temp_v0_2 = obj_get_nearest_type_to(OBJTYPE_5, self, &sp3C);
         if (temp_v0_2 != NULL) {
             temp_fv0 = self->srt.transl.f[0];
             temp_v0_2->globalPosition.f[0] = temp_fv0;

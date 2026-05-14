@@ -79,13 +79,13 @@ void dll_307_control(Object* self) {
     if (objdata->unkD != 0) {
         if ((setup->unk1C != 0) && (objdata->unkC != 0)) {
             var_a2 = setup->unk20;
-            gDLL_3_Animation->vtbl->func20(self, setup->unk1C);
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk1C);
         } else {
             var_a2 = -1;
         }
         
         if (setup->unk1E != -1) {
-            gDLL_3_Animation->vtbl->func17(setup->unk1E, self, var_a2);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->unk1E, self, var_a2);
         }
         objdata->unkD = 0;
     }
@@ -147,13 +147,13 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         }
         if ((temp_v0_3 != 0) && !(objdata->unkE & 1)) {
             if (self->def->numAnimatedFrames != 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9A3_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9A3_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             objdata->unkE |= 1;
         }
         if ((var_s1 != 0) && !(objdata->unkE & 2)) {
             if (self->def->numAnimatedFrames != 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9A3_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_9A3_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             objdata->unkE |= 2;
         }
@@ -165,8 +165,8 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         objdata->unkC = 3;
     }
     if (objdata->unkC == 2) {
-        for (var_s1_2 = 0; var_s1_2 < a2->unk98; var_s1_2++) {
-            if (a2->unk8E[var_s1_2] == 2) {
+        for (var_s1_2 = 0; var_s1_2 < a2->messageCount; var_s1_2++) {
+            if (a2->messages[var_s1_2] == 2) {
                 objdata->unkC = 1;
                 if (setup->unk1A != -1) {
                     main_set_bits(setup->unk1A, 1);
@@ -174,8 +174,8 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             }
         }
     } else if (objdata->unkC == 3) {
-        for (var_s1_2 = 0; var_s1_2 < a2->unk98; var_s1_2++) {
-            if (a2->unk8E[var_s1_2] == 1) {
+        for (var_s1_2 = 0; var_s1_2 < a2->messageCount; var_s1_2++) {
+            if (a2->messages[var_s1_2] == 1) {
                 dll_307_func_6E4(objdata, setup);
                 objdata->unkC = 0;
                 objdata->unkE = 0;

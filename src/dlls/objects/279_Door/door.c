@@ -46,18 +46,18 @@ void dll_279_control(Object* self) {
 
         if (self->id == OBJ_WL_Door1) {
             if (main_get_bits(objdata->unkC)) {
-                gDLL_3_Animation->vtbl->func20(self, 0x82);
+                gDLL_3_Animation->vtbl->preempt_sequence_time(self, 0x82);
                 objdata->unk19 = 1;
             }
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         } else if (self->id == OBJ_WL_WarpDoor) {
             if (main_get_bits(objdata->unkC)) {
-                gDLL_3_Animation->vtbl->func20(self, 0x75);
+                gDLL_3_Animation->vtbl->preempt_sequence_time(self, 0x75);
                 objdata->unk19 = 1;
             }
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         } else {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
         self->unkDC = 1;
     }

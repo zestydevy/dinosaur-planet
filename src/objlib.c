@@ -60,7 +60,7 @@ u16 func_80031BBC(f32 x, f32 y, f32 z) {
     MapHeader *current;
 
     out = -1U;
-    maps = func_80044A10();
+    maps = map_get_loaded_maps_table();
     for (i = 0; i < MAP_ID_MAX; i++) {
         if (maps[i] == NULL) {
             continue;

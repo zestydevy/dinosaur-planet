@@ -111,8 +111,8 @@ void dll_376_control(Object* self) {
             } else {
                 *sp40 = 0;
             }
-            if (gDLL_6_AMSFX->vtbl->func_B48(objData->unk58) == 0) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->unk58);
+            if (gDLL_6_AMSFX->vtbl->is_playing(objData->unk58) == 0) {
+                gDLL_6_AMSFX->vtbl->stop(objData->unk58);
                 objData->unk58 = 0;
                 *sp40 = 0;
             }
@@ -126,11 +126,11 @@ void dll_376_control(Object* self) {
         if (self->unkAF & 1) {
             dll_376_func_A3C(self, player);
             *func_80034804(self, 1) = -0xAAA;
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         } else {
             func_80034BC0(self, &objData->unk28);
             if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
                 
                 if (rand_next(0, 100) < 50) {
                     objData->unk5E++;
@@ -153,8 +153,8 @@ void dll_376_control(Object* self) {
         }
     } else {
         self->unkAF |= 8;
-        if (self->unkB4 == -1) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+        if (self->seqSlot == SEQSLOT_NONE) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
     }
 }
@@ -242,7 +242,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
     objData = self->data;
     if (objData->unk60 != 0) {
         return 0;
-    } else if (arg2->unk8D == 2) {
+    } else if (arg2->lastMessage == 2) {
         objData->unk60 = 1;
        
         

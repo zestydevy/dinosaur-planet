@@ -4,7 +4,7 @@ selection_dtor = 0xF8;
 selection_update1 = 0x174;
 selection_update2 = 0x230;
 selection_draw = 0x238;
-selection_set_menu_state = 0x1340;
+selection_set_selection_state = 0x1340;
 
 .rodata = 0x13C4:
 

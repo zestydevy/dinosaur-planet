@@ -85,8 +85,8 @@ void CClogpush_control(Object *self) {
     switch (objdata->state) {
     case STATE_1:
         CClogpush_func_4E0(self, objdata->obj);
-        gDLL_3_Animation->vtbl->func20(self, setup->unk1E);
-        gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, setup->unk20);
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk1E);
+        gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, setup->unk20);
         objdata->state = STATE_4;
         break;
     case STATE_2:
@@ -109,7 +109,7 @@ void CClogpush_control(Object *self) {
             }
             self->unkAF |= 0x8;
             objdata->unk1 = TRUE;
-            gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
             break;
         }
         objdata->obj->unkAF |= 0x20;

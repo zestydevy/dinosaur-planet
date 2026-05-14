@@ -316,7 +316,7 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 foodType) {
             if (objData->playerHealth && objData->playerHealth && objData->playerHealth) {} //@fake?
 
             if (*objData->playerHealthMax != currentHealth) {
-                gDLL_6_AMSFX->vtbl->play_sound(get_player(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(get_player(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
             }
             *objData->playerHealth = *objData->playerHealthMax;
             return TRUE;
@@ -326,7 +326,7 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 foodType) {
         if (*objData->playerHealth == *objData->playerHealthMax){
             objData->playerEatTimer = 120.0f;
         }
-        gDLL_6_AMSFX->vtbl->play_sound(get_player(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(get_player(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
         return TRUE;
     }
 

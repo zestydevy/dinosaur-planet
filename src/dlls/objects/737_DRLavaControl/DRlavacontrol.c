@@ -134,13 +134,13 @@ void DRLavaControl_freeze(Object* self) {
     objSetup = (DRLavaControl_Setup*)self->setup;
 
     if (objData->freezeTimer > 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_80C_Steam_Hissing, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_80C_Steam_Hissing, MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5A, NULL, PARTFXFLAG_2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5B, NULL, PARTFXFLAG_2, -1, NULL);
         objData->freezeTimer--; //@bug: doesn't use gUpdateRate, frame-rate dependent
 
         if (objData->freezeTimer == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_80B_Crackling_Freezing, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_80B_Crackling_Freezing, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->flags |= 1;
             main_set_bits(objSetup->gameBitFrozen, TRUE);
             // diPrintf(" bit set %i ", objSetup->gameBitFrozen);

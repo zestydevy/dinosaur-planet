@@ -1,5 +1,6 @@
 /** Animation system
  */
+ // TODO: rename file, this is for model animations specifically
 #ifndef _SYS_GFX_ANIMATION_H
 #define _SYS_GFX_ANIMATION_H
 

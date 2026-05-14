@@ -67,7 +67,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
     setup = self->setup;
     objdata->unk18 += gUpdateRateF;
     dist = 3.4028235e38f;
-    obj_get_nearest_type_to(0x12, self, &dist);
+    obj_get_nearest_type_to(OBJTYPE_18, self, &dist);
 
     diPrintf("worm %d, barrel %d\n", (s32) vec3_distance_xz(&self->globalPosition, &objdata->unk4->globalPosition), (s32) dist);
     switch (objdata->unk0) {
@@ -146,22 +146,22 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
             dist = vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition);
             if (dist < 2500.0f) {
                 objdata->unk3 = 0;
-                gDLL_3_Animation->vtbl->func17(8, objdata->unkC, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(8, objdata->unkC, -1);
             } else if (dist < 32400.0f) {
                 objdata->unk0 = 0xC;
                 objdata->unk14 = 0.005f;
                 func_80023D30(self, 8, 0, 0);
-                gDLL_6_AMSFX->vtbl->play_sound(self, (u16)_data_C[rand_next(0, 3)], 0x7FU, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, (u16)_data_C[rand_next(0, 3)], 0x7FU, NULL, NULL, 0, NULL);
                 objdata->unk2 = 0;
                 objdata->unk1 = 3;
             } else {
                 dist = 50.0f;
-                objdata->unk10 = obj_get_nearest_type_to(0x12, self, &dist);
+                objdata->unk10 = obj_get_nearest_type_to(OBJTYPE_18, self, &dist);
                 if ((objdata->unk10 != NULL) && (gDLL_54->vtbl->func4.withOneArgS32((s32)objdata->unk10->data) == 0)) {
                     objdata->unk0 = 0xD;
                     objdata->unk3 = 0;
                     objdata->unk18 = 0.0f;
-                    gDLL_3_Animation->vtbl->func17(5, objdata->unkC, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(5, objdata->unkC, -1);
                 } else {
                     objdata->unk0 = 0xC;
                     objdata->unk14 = 0.01f;

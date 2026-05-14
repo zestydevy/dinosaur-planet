@@ -1,10 +1,10 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/objects/object_def.h"
+#include "sys/gfx/animseq.h"
 #include "sys/objexpr.h"
 #include "sys/main.h"
 #include "sys/gfx/model.h"
@@ -256,10 +256,10 @@ static int kyteCage_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
     
     data = self->data;
     
-    for (index = 0; index < animObjData->unk98; index++){
-        if ((u32)animObjData->unk8E[index] == 1){
+    for (index = 0; index < animObjData->messageCount; index++){
+        if ((u32)animObjData->messages[index] == 1){
             data->createLightning = 1;
-        } else if ((u32)animObjData->unk8E[index] == 2){
+        } else if ((u32)animObjData->messages[index] == 2){
             data->createLightning = 2;
         }
     }

@@ -320,12 +320,12 @@ void dll_331_control(Object* self) {
         }
         break;
     case OBJ_GPSHswapstone: //0x409
-        gDLL_3_Animation->vtbl->func17(0, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         break;
     case OBJ_DFturbinelever: //0xae
         collidedObject = &self->polyhits->unk100[0];
         if ((self->unkDC == 0) && (collidedObject != NULL) && (*(s16*)(((s32)self->polyhits) + 0x146) == 0x2B)) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             self->unkDC = 1;
         }
         break;
@@ -341,7 +341,7 @@ void dll_331_control(Object* self) {
         break;
     case OBJ_WMlargerock: //0x2b7
         if (main_get_bits(objData->gamebitA) == 0) {
-            gDLL_3_Animation->vtbl->func17(0, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
         break;
     case OBJ_WM_MoonSeedMoun: //0x271
@@ -458,7 +458,7 @@ void dll_331_control(Object* self) {
             self->objhitInfo->unk58 &= ~1;
         }
         if (objData->unk3E == 2) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_35A_Low_Whoosh, 0x43, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_35A_Low_Whoosh, 0x43, NULL, NULL, 0, NULL);
             objData->unk3E--;
         }
         if ((objData->unk3E != 0) && ((self->srt.transl.f[1] + self->velocity.f[1]) <= player->srt.transl.f[1])) {
@@ -469,7 +469,7 @@ void dll_331_control(Object* self) {
             self->srt.scale *= 0.5f;
             objData->roll *= 2;
             objData->pitch *= 2;
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
             camera_set_shake_offset(0.5f);
         }
         if (objData->unk3E == 0) {
@@ -560,11 +560,11 @@ void dll_331_control(Object* self) {
                     self->unkE0 = 100;
                 }
             } else if ((distance <= 10.0f) && (_data_0 == NULL) && (self->unkE0 == 0)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1D2_Roar, 0x7F, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_1D2_Roar, 0x7F, NULL, NULL, 0, NULL);
                 _data_0 = self;
                 self->unkDC = 0x46;
             } else if ((distance < 40.0f) && (self->unkE0 == 0) && (self->unkDC == 0)) {
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             }
             if (--self->unkE0 <= 0) {
                 self->unkE0 = 0;
@@ -574,7 +574,7 @@ void dll_331_control(Object* self) {
     case OBJ_DIM2IceFloe2: //10d
         objData->timer -= gUpdateRate;
         if (objData->timer < 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, objData->soundIDs[rand_next(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, objData->soundIDs[rand_next(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
             objData->timer = objData->minCooldown;
             objData->timer += rand_next(0, objData->minCooldown);
         }
@@ -621,11 +621,11 @@ s32 dll_331_func_1D34(Object* self, Object* animObj, AnimObj_Data* animObjData, 
         case OBJ_GPSHswapstone:
             break;
         case OBJ_NWbigrock:
-            for (index = 0; index < animObjData->unk98; index++){
-                if (animObjData->unk8E[index] == 1) {
+            for (index = 0; index < animObjData->messageCount; index++){
+                if (animObjData->messages[index] == 1) {
                     gDLL_17_partfx->vtbl->spawn(self, 0x44, NULL, 2, -1, NULL);
                 }
-                animObjData->unk8E[index] = 0;
+                animObjData->messages[index] = 0;
             }        
             break;
         case OBJ_WMlargerock:
@@ -633,11 +633,11 @@ s32 dll_331_func_1D34(Object* self, Object* animObj, AnimObj_Data* animObjData, 
                 animObjData->unk9D |= 4;
             }
             
-            for (index = 0; index < animObjData->unk98; index++){
-                if (animObjData->unk8E[index] == 1) {
+            for (index = 0; index < animObjData->messageCount; index++){
+                if (animObjData->messages[index] == 1) {
                     gDLL_17_partfx->vtbl->spawn(self, 0x44, NULL, 2, -1, NULL);
                 }
-                animObjData->unk8E[index] = 0;
+                animObjData->messages[index] = 0;
             }
             
             break;

@@ -1,8 +1,8 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dll.h"
-#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "game/gamebits.h"
@@ -209,7 +209,7 @@ void GPSH_Shrine_control(Object* self) {
             if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unk15 = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0);
-                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 modgfxDLL = dll_load_deferred(DLL_ID_147, 1);
                 modgfxDLL->vtbl->func0(self, 2, 0, 1, -1, 0);
                 dll_unload(modgfxDLL);
@@ -266,7 +266,7 @@ void GPSH_Shrine_control(Object* self) {
                     sp34--;
                     if ((!objdata) && (!objdata)){} // @fake
                 }
-                gDLL_3_Animation->vtbl->func17(2, self, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
             } else {
                 objdata->unk14 = 0;
                 return;
@@ -284,7 +284,7 @@ void GPSH_Shrine_control(Object* self) {
             main_set_bits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
             objdata->unkA = 1;
-            gDLL_3_Animation->vtbl->func17(1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->unk15 = 5;
             return;
         case 5:
@@ -371,8 +371,8 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
         }
         gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->unk8);
     }
-    for (i = 0; i < a2->unk98; i++) {
-        temp_v0_2 = a2->unk8E[i];
+    for (i = 0; i < a2->messageCount; i++) {
+        temp_v0_2 = a2->messages[i];
         if (temp_v0_2 != 0) {
             switch (temp_v0_2) {
             case 1:
@@ -411,7 +411,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
             case 10:
                 main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (_data_0 == 0) {
-                    _data_0 = func_8004A1E8(1);
+                    _data_0 = block_texanim_get_tex(1);
                 }
                 break;
             case 9:
@@ -426,10 +426,10 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
                 break;
             }
         }
-        a2->unk8E[i] = 0;
+        a2->messages[i] = 0;
     }
     if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3_distance(&a0->globalPosition, &player->globalPosition))) {
-        gDLL_3_Animation->vtbl->func18(a2->unk63);
+        gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
     }
     return 0;
 }

@@ -91,10 +91,10 @@ void DBSpike_control(Object* self) {
                 //Sprung
                 obj_set_model(self, DBSpike_MODEL_Motion_Smear);
                 objData->motionBlurTimer = -56;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A2A_Heavy_Swing, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_A2A_Heavy_Swing, MAX_VOLUME, 0, 0, 0, 0);
             } else {
                 //Retracting
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A29_Wooden_Ratcheting_Loop, MAX_VOLUME, &objData->soundHandle, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_A29_Wooden_Ratcheting_Loop, MAX_VOLUME, &objData->soundHandle, 0, 0, 0);
             }
         }
     } else {
@@ -112,7 +112,7 @@ void DBSpike_control(Object* self) {
             (self->srt.roll > objData->rollGoal - 0x500)
         ) {
             if (objData->soundHandle) {
-                gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
             objData->flags &= ~DBSpike_FLAG_Moving;
@@ -129,7 +129,7 @@ void DBSpike_control(Object* self) {
 void DBSpike_update(Object* self) {
     //Play sound when any kind of collision is detected
     if (func_80025F40(self, 0, 0, 0)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A28_Blade_Impact, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_A28_Blade_Impact, MAX_VOLUME, 0, 0, 0, 0);
     }
 }
 

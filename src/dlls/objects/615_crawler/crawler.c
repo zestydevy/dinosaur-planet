@@ -73,6 +73,6 @@ void dll_615_func_1AE8(Object* self) {
     
     obj_free_tick(self);
     func_800267A4(self);
-    obj_free_object_type(self, 4);    
+    obj_free_object_type(self, OBJTYPE_4);    
     self->srt.flags |= OBJFLAG_INVISIBLE;
 }

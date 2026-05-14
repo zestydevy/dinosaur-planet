@@ -155,7 +155,7 @@ void dll_251_free(Object* self, s32 arg1) {
     }
     
     if (objData->unk6C != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(objData->unk6C);
+        gDLL_6_AMSFX->vtbl->stop(objData->unk6C);
         objData->unk6C = 0;
     }
     
@@ -256,7 +256,7 @@ void dll_251_func_BC0(Object* self, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     
     data_78->vtbl->func0(0, 1, &fxTransform, 0x401, -1, sp50[data_4C[idx] & 0xFFFF]);
     
-    gDLL_6_AMSFX->vtbl->play_sound(self, data_8[idx], MAX_VOLUME, NULL, NULL, 0, NULL);
+    gDLL_6_AMSFX->vtbl->play(self, data_8[idx], MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 #endif
 
