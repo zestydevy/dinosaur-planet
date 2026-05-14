@@ -1312,8 +1312,34 @@ s32 diPrintf_func_80061210(Gfx** gdl, char* buffer) {
     return buffer - bufferCopy;
 }
 
-// guessed name
-#pragma GLOBAL_ASM("asm/nonmatchings/print/diPrintfRenderBackground.s")
+void diPrintfRenderBackground(Gfx** gdl, u32 ulx, u32 uly, u32 lrx, u32 lry) {
+    s32 temp_v0;
+    s32 temp_v1;
+
+    if (((ulx == lrx) | (uly == lry)) == 0) {
+        if (ulx >= 2U) {
+            ulx -= 2;
+        }
+        lrx += 2;
+        temp_v0 = D_800931AC + D_800931B4;
+        temp_v1 = D_800931B0 + D_800931B8;
+        ulx <<= temp_v0;
+        lrx <<= temp_v0;
+        uly <<= temp_v1;
+        lry <<= temp_v1;
+        gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+        dl_apply_combine(gdl);
+        if ((D_800931B4 != 0) || (D_800931B8 != 0)) {
+            dl_set_prim_color(gdl, 0U, 0U, 0U, 0xFFU);
+            gDPFillRectangle((*gdl)++, ulx - 4, uly - 4, lrx + 4, lry + 4);
+            gDLBuilder->needsPipeSync = 1;
+            dl_set_prim_color(gdl, D_800BEB04, D_800BEB05, D_800BEB06, D_800BEB07);
+        }
+        gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
+        gDLBuilder->needsPipeSync = 1;
+    }
+}
+
 
 // guessed name
 #if 1
