@@ -44,23 +44,23 @@ void WaterFallSpray_control(Object *self) {
         dy = self->globalPosition.y - player->globalPosition.y;
         dz = self->globalPosition.z - player->globalPosition.z;
 
-        if (sqrtf(dx*dx + dy*dy + dz*dz) <= setup->distance * 0x10 || setup->distance == 0) {
+        if (sqrtf(SQ(dx) + SQ(dy) + SQ(dz)) <= setup->distance * 0x10 || setup->distance == 0) {
 
             for (i = 0; i < setup->iterations; i++){
                 srt.transl.x = rand_next(-setup->amplitudeX, setup->amplitudeX);
                 srt.transl.y = rand_next(-setup->amplitudeY, setup->amplitudeY);
                 srt.transl.z = rand_next(-setup->amplitudeZ, setup->amplitudeZ);
 
-                if (setup->unk23 & 1) {
+                if (setup->flags & WaterFallSpray_FLAG_Big_Mist_Cloud) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_320, &srt, PARTFXFLAG_4, -1, NULL);
                 }
-                if (setup->unk23 & 2) {
+                if (setup->flags & WaterFallSpray_FLAG_Falling_Droplets) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_321, &srt, PARTFXFLAG_4, -1, NULL);
                 }
-                if (setup->unk23 & 4) {
+                if (setup->flags & WaterFallSpray_FLAG_Small_Mist_Cloud) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_322, &srt, PARTFXFLAG_4, -1, NULL);
                 }
-                if (setup->unk23 & 8) {
+                if (setup->flags & WaterFallSpray_FLAG_Mist_Jet) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_351, &srt, PARTFXFLAG_4, -1, NULL);
                 }
             }
