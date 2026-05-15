@@ -81,6 +81,7 @@
 266 = objects/266_sfxplayer
 267 = objects/267_checkpoint4
 268 = objects/268_setuppoint
+269 = objects/269_sideload
 270 = objects/270_sidesetup
 271 = objects/271_InfoPoint
 272 = objects/272_collectable
