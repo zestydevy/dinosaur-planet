@@ -2,6 +2,7 @@
 #include "PR/gbi.h"
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
+#include "dlls/objects/418_DFriverflow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/objects/unknown_setups.h"
@@ -6584,14 +6585,14 @@ static void dll_210_func_128F4(f32* arg0, f32* arg1, f32 arg2, Object* arg3) {
     var_s5 = 0;
     for (i = 0; i < objCount; i++) {
         curObj = temp_v0[i];
-        if (((ObjType22Setup*)curObj->setup)->unk1A & 2) {
+        if (((DFriverflow_Setup*)curObj->setup)->flags & 2) {
             var_s5 = 1;
             temp_fv0 = curObj->srt.transl.f[1] - arg3->srt.transl.f[1];
             if ((temp_fv0 <= 200.0f) && (temp_fv0 >= -200.0f)) {
                 temp_fs0 = curObj->srt.transl.f[0] - arg3->srt.transl.f[0];
                 temp_fv0 = curObj->srt.transl.f[2] - arg3->srt.transl.f[2];
                 temp_fs0 = sqrtf(SQ(temp_fs0) + SQ(temp_fv0));
-                temp_fv1 = ((ObjType22Setup*)curObj->setup)->unk19 * 1.5f;
+                temp_fv1 = ((DFriverflow_Setup*)curObj->setup)->range * 1.5f;
                 if (temp_fs0 < temp_fv1) {
                     temp_fs0 = ((temp_fv1 - temp_fs0) / temp_fv1);
                     temp_fs0 *= (curObj->srt.scale * 10.0f);

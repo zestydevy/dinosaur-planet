@@ -1,6 +1,7 @@
 #include "PR/os.h"
 #include "dlls/engine/27.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/418_DFriverflow.h"
 #include "game/objects/unknown_setups.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
@@ -384,14 +385,14 @@ static void dll_417_func_BC8(Object* arg0) {
 
     for (i = 0; i < objListLength; i++) {
         obj = objList[i];
-        if (((ObjType22Setup*)obj->setup)->unk1A & 1) {
+        if (((DFriverflow_Setup*)obj->setup)->flags & 1) {
             for (k = 0; k < 2; k++) {
                 temp_fv0 = obj->srt.transl.y - objdata->unk240[k].y;
                 if ((temp_fv0 <= 200.0f) && (temp_fv0 >= -200.0f)) {
                     temp_fs0 = obj->srt.transl.x - objdata->unk240[k].x;
                     temp_fv0_2 = obj->srt.transl.z - objdata->unk240[k].z;
                     temp_fs0 = sqrtf(SQ(temp_fs0) + SQ(temp_fv0_2));
-                    temp_fv1 = (f32) ((ObjType22Setup*)obj->setup)->unk19 * 1.5f;
+                    temp_fv1 = (f32) ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
                     if (temp_fs0 < temp_fv1) {
                         temp_fs0 = ((temp_fv1 - temp_fs0) / temp_fv1);
                         temp_fs0 *= (obj->srt.scale * 10.0f);

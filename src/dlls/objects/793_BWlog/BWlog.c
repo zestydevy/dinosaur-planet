@@ -1,4 +1,5 @@
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/418_DFriverflow.h"
 #include "game/objects/unknown_setups.h"
 #include "sys/joypad.h"
 #include "sys/objects.h"
@@ -652,7 +653,7 @@ static void dll_793_func_1C18(Object* self, BWlog_Data* objdata) {
                 temp_fs0 = obj->srt.transl.x - objdata->unk260[k].x;
                 temp_fv0_2 = obj->srt.transl.z - objdata->unk260[k].z;
                 temp_fs0 = sqrtf(SQ(temp_fs0) + SQ(temp_fv0_2));
-                temp_fv1 = (f32) ((ObjType22Setup*)obj->setup)->unk19 * 1.5f;
+                temp_fv1 = (f32) ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
                 if (temp_fs0 < temp_fv1) {
                     temp_fs0 = ((temp_fv1 - temp_fs0) / temp_fv1);
                     temp_fs0 *= (obj->srt.scale * 10.0f);

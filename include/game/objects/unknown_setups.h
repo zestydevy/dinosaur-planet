@@ -3,14 +3,6 @@
 
 #include "game/objects/object.h"
 
-// Includes DFriverflow
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-} ObjType22Setup;
-
 // Includes DFdockpoint
 typedef struct {
     ObjSetup base;
