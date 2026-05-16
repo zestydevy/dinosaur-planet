@@ -2,9 +2,9 @@
 #include "PR/gbi.h"
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
+#include "dlls/objects/418_DFriverflow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
-#include "game/objects/unknown_setups.h"
 #include "game/gamebits.h"
 #include "sys/gfx/animseq.h"
 #include "sys/footsteps.h"
@@ -2113,7 +2113,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         for (var_s1 = 0; var_s1 < arg2->messageCount; var_s1++) {
             switch (arg2->messages[var_s1]) {
             case 3:
-                objects = obj_get_all_of_type(0xB, &spC0);
+                objects = obj_get_all_of_type(OBJTYPE_11, &spC0);
                 for (var_s1 = 0; var_s1 < spC0; var_s1++) {
                     // @fake
                     if (var_s1) {}
@@ -3290,7 +3290,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
     }
     if (fsa->unk310 & 0x8000) {
         if (arg5 & 0x800) {
-            objects = obj_get_all_of_type(0xB, &sp80);
+            objects = obj_get_all_of_type(OBJTYPE_11, &sp80);
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
                 if (((DLL_IVehicle*)sp88->dll)->vtbl->func7(sp88, player) != 0) {
@@ -3300,7 +3300,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
             }
         }
         if ((arg5 & 0x1000) && (main_get_bits(BIT_880) != 0)) {
-            objects = obj_get_all_of_type(0x19, &sp80);
+            objects = obj_get_all_of_type(OBJTYPE_25, &sp80);
             arg1->unk6B0.unk34 = NULL;
             arg1->unk6B0.unk3C = 200.0f;
             for (i = 0; i < sp80; i++) {
@@ -9014,7 +9014,7 @@ s32 dll_210_func_1ADA4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp3F = 0;
     sp3E = 1;
     sp44 = 100.0f;
-    sp40 = obj_get_nearest_type_to(0x3F, player, &sp44);
+    sp40 = obj_get_nearest_type_to(OBJTYPE_63, player, &sp44);
     if (sp40 != NULL) {
         sp30.f[0] = sp40->srt.transl.f[0] - player->srt.transl.f[0];
         sp30.f[1] = sp40->srt.transl.f[1] - player->srt.transl.f[1];

@@ -173,7 +173,7 @@ void WCpressureswitch_free(Object* self, s32 arg1) {
     if (objdata->soundHandle) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
-    obj_free_object_type(self, 0x33);
+    obj_free_object_type(self, OBJTYPE_51);
 }
 
 // offset: 0x594 | func: 5 | export: 5

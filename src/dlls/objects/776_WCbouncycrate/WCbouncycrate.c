@@ -86,7 +86,7 @@ static f32 dll_776_func_224(Object* arg0) {
     f32 sp24;
 
     sp24 = 10000.0f;
-    if (obj_get_nearest_type_to(4, arg0, &sp24) == NULL) {
+    if (obj_get_nearest_type_to(OBJTYPE_4, arg0, &sp24) == NULL) {
         return 0.0f;
     }
     if (sp24 < 200.0f) {

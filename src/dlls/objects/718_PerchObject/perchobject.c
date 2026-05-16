@@ -125,7 +125,7 @@ void perchobject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 
 // offset: 0x2BC | func: 4 | export: 4
 void perchobject_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, 0x30);
+    obj_free_object_type(self, OBJTYPE_48);
 }
 
 // offset: 0x2FC | func: 5 | export: 5

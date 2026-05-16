@@ -85,6 +85,7 @@
 270 = objects/270_sidesetup
 271 = objects/271_InfoPoint
 272 = objects/272_collectable
+273 = objects/273_EffectBox
 274 = objects/274_pushpull
 275 = objects/275_WarpPoint
 277 = objects/277_iceblast
@@ -209,6 +210,7 @@
 505 = objects/505_SHspore
 506 = objects/506_SHPlantSpore
 507 = objects/507_SHqueenearthwalker
+508 = objects/508_SHthorntail
 509 = objects/509_SHwaterLily
 510 = objects/510_SHroot
 511 = objects/511_SHboulder

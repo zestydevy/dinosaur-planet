@@ -178,7 +178,7 @@ void dll_257_control(Object* self) {
                     goto bail;
                 }
             }
-            objects = obj_get_all_of_type(3, &sp54);
+            objects = obj_get_all_of_type(OBJTYPE_3, &sp54);
             for (i = 0; i != 2; i++) {
                 start:
                 temp_v0_5 = rand_next(0, sp54 - 1);\

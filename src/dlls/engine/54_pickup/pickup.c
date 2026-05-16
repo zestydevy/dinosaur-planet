@@ -20,7 +20,7 @@ void dll_54_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_54_func_18(Object* arg0, Object* arg1, s16 arg2) {
-    obj_add_object_type(arg0, 0x12);
+    obj_add_object_type(arg0, OBJTYPE_18);
     arg1->srt.pitch = arg2;
 }
 
@@ -53,7 +53,7 @@ int dll_54_func_5DC(Object* obj, s32 arg1) {
 
 // offset: 0x664 | func: 3 | export: 3
 void dll_54_func_664(Object* arg0) {
-    obj_free_object_type(arg0, 0x12);
+    obj_free_object_type(arg0, OBJTYPE_18);
 }
 
 // offset: 0x6A0 | func: 4 | export: 4

@@ -8,7 +8,7 @@ typedef struct {
     ObjSetup base;
     u8 yaw;
     u8 range;           //determines push falloff range and push strength (also used as scale, divided by 512)
-    u8 flags;           //bit0 to push log, bit1 to push player (defaults to 0xFF during setup if no bits set) 
+    u8 flags;           //filters what is affected by the push effect. 0 = everything, bit 1 = logs, bit 2 = player
     u8 pad1B;
     s16 toggleGamebit;  //optional: gamebitID switches off the riverflow when set
 } DFriverflow_Setup;

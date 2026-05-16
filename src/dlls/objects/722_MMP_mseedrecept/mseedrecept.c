@@ -219,7 +219,7 @@ void mmp_mseedrecept_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0xB88 | func: 4 | export: 4
 void mmp_mseedrecept_free(Object* self, s32 a1) {
-    obj_free_object_type(self, 0x30);
+    obj_free_object_type(self, OBJTYPE_48);
 }
 
 // offset: 0xBC8 | func: 5 | export: 5

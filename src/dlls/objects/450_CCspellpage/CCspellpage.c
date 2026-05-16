@@ -47,7 +47,7 @@ void CCspellpage_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0xFC | func: 4 | export: 4
 void CCspellpage_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, 5);
+    obj_free_object_type(self, OBJTYPE_5);
 }
 
 // offset: 0x13C | func: 5 | export: 5

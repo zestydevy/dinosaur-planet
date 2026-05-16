@@ -45,7 +45,7 @@ enum AnimEventType {
     ANIM_EVT_LOOK_AT = 10,
     ANIM_EVT_CODE = 11,
     ANIM_EVT_SPEECH = 12,
-    ANIM_EVT_ENVFX = 13,
+    ANIM_EVT_ENVFX = 13, // TODO: "ENVFX" is presumably the official name but maybe we can do better?
     ANIM_EVT_STORYBOARD = 14,
     ANIM_EVT_SFX_WITH_DURATION = 15
 };
@@ -126,7 +126,7 @@ enum AnimCounterAddCodeEventType {
 
 // Subtypes for ANIM_CODE_EVT_6
 enum Anim6CodeEventType {
-    ANIM_CODE_EVT_6_0 = 0,
+    ANIM_CODE_EVT_6_0 = 0, // remove override?
     ANIM_CODE_EVT_6_2 = 2, // curve related
     ANIM_CODE_EVT_6_5 = 5, // sfx related, noop
     ANIM_CODE_EVT_6_6 = 6, // sfx related, noop
@@ -139,8 +139,8 @@ enum Anim6CodeEventType {
     ANIM_CODE_EVT_6_14 = 14,
     ANIM_CODE_EVT_6_15 = 15,
     ANIM_CODE_EVT_6_16 = 16,
-    ANIM_CODE_EVT_6_18 = 18,
-    ANIM_CODE_EVT_6_19 = 19,
+    ANIM_CODE_EVT_6_TOGGLE_LETTERBOX = 18,
+    ANIM_CODE_EVT_6_ENABLE_LETTERBOX = 19,
     ANIM_CODE_EVT_6_STATIC_CAMERA = 20,
     ANIM_CODE_EVT_6_SET_MODEL = 23,
     ANIM_CODE_EVT_6_24 = 24,
@@ -149,7 +149,7 @@ enum Anim6CodeEventType {
     ANIM_CODE_EVT_6_ENABLE_OBJ_GROUP = 27,
     ANIM_CODE_EVT_6_DISABLE_OBJ_GROUP = 28,
     ANIM_CODE_EVT_6_SET_ACT = 29,
-    ANIM_CODE_EVT_6_30 = 30,
+    ANIM_CODE_EVT_6_DISABLE_LETTERBOX = 30,
     ANIM_CODE_EVT_6_RESTART_CLEAR = 31,
     ANIM_CODE_EVT_6_RESTART_GOTO = 32,
     ANIM_CODE_EVT_6_33 = 33,
@@ -217,6 +217,21 @@ enum AnimEventConditionType {
     ANIM_EVTCOND_14 = 14, // countdown timer related
     ANIM_EVTCOND_16 = 16,
     ANIM_EVTCOND_17 = 17
+};
+
+enum ActorSettings {
+    ACTORSETTING_UNK4000 = 0x4000, // look for existing obj to override
+    ACTORSETTING_UNK8000 = 0x8000
+};
+
+// TODO: better name
+enum ActorUpperSettings {
+    ACTORUSETTING_DONT_OVERRIDE_POS = 0x1,
+    ACTORUSETTING_DONT_OVERRIDE_ROT = 0x2,
+    ACTORUSETTING_ZERO_YAW = 0x4,
+    ACTORUSETTING_SKIPPABLE = 0x8, // whether the seq can be skipped with L trigger
+    ACTORUSETTING_NO_LETTERBOX = 0x10,
+    ACTORUSETTING_UNK20 = 0x20
 };
 
 // size:0x8
@@ -355,12 +370,12 @@ typedef struct {
 /*0x694*/ static u8 _bss_694[0x4]; // unused gap
 /*0x698*/ static ANIMUnk698 _bss_698[16];
 /*0x6F8*/ static s8 _bss_6F8;
-/*0x6FC*/ static Object *_bss_6FC;
+/*0x6FC*/ static Object *_bss_6FC; // camera animobj (AnimCamera)?
 /*0x700*/ static s16 _bss_700;
 /*0x708*/ static ANIMActorOverride _bss_708[45][16];
 typedef struct {
     u32 unk0_8: 1;
-    u32 unk0_1: 31;
+    u32 unk0_1: 31; // unused
 } UnkBss1D88;
 /*0x1D88*/ static UnkBss1D88 _bss_1D88;
 
@@ -513,7 +528,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
     _bss_32 = 0;
     _bss_89 = 0;
     _bss_8A = 0;
-    if ((_bss_3A8[st->seqSlot] & 8) && ((_bss_4C0[st->seqSlot] != 0) || (joy_get_pressed(0) & L_TRIG))) {
+    if ((_bss_3A8[st->seqSlot] & ACTORUSETTING_SKIPPABLE) && ((_bss_4C0[st->seqSlot] != 0) || (joy_get_pressed(0) & L_TRIG))) {
         if (st->unk8B == 0) {
             return 1;
         }
@@ -566,7 +581,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
         }
         animObj->srt.yaw += st->seqYaw;
         anim_update_actor_transform(animObj, actor, st);
-        if ((st->actor != NULL) && (st->actor->seqSlot != SEQSLOT_NONE) && !(_bss_3A8[st->seqSlot] & 0x10)) {
+        if ((st->actor != NULL) && (st->actor->seqSlot != SEQSLOT_NONE) && !(_bss_3A8[st->seqSlot] & ACTORUSETTING_NO_LETTERBOX)) {
             gDLL_2_Camera->vtbl->set_letterbox_goal(30, TRUE);
         }
         return 0;
@@ -634,7 +649,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                 st->prevTime = st->time;
             }
         }
-        if ((st->actor != NULL) && (st->actor->seqSlot != SEQSLOT_NONE) && !(_bss_3A8[st->seqSlot] & 0x10)) {
+        if ((st->actor != NULL) && (st->actor->seqSlot != SEQSLOT_NONE) && !(_bss_3A8[st->seqSlot] & ACTORUSETTING_NO_LETTERBOX)) {
             gDLL_2_Camera->vtbl->set_letterbox_goal(30, TRUE);
         }
         if (_bss_378[st->seqSlot] != 0) {
@@ -673,7 +688,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
             st->time += 1;
             newX = anim_channel_value(st, CHANNEL_translateX, st->time) + setup->base.x;
             newZ = anim_channel_value(st, CHANNEL_translateZ, st->time) + setup->base.z;
-            if ((st->time > 0) && (st->unk7A & 4)) {
+            if ((st->time > 0) && (st->unk7A & ANIM7AFLAG_OVERRIDE_MODEL)) {
                 if ((st->unk84 == 1) && (st->unk87 == 0) && (actorModelInst != NULL)) {
                     xDiff = newX - prevX;
                     var_fv1 = newZ - prevZ;
@@ -764,7 +779,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
         }
         st->messageCount = 0;
         st->lastMessage = 0;
-        if ((actorModelInst != NULL) && (st->unk7A & 4)) {
+        if ((actorModelInst != NULL) && (st->unk7A & ANIM7AFLAG_OVERRIDE_MODEL)) {
             actorModelInst->animState0->unk58[0] = (s16) (st->unk20 * 1023.0f);
         }
         anim_func_4FC4(animObj, st);
@@ -920,7 +935,7 @@ static void anim_update_actor_transform(Object* animObj, Object* actor, AnimObj_
     temp_a1 = animObj->srt.pitch;
     temp_a3 = animObj->srt.roll;
     if (actor != animObj) {
-        if (st->unk7A & 1) {
+        if (st->unk7A & ANIM7AFLAG_OVERRIDE_POS) {
             if (st->unk62 == 2) {
                 actor->srt.transl.x = (st->unk4C.x * st->unk58) + var_fv0;
                 actor->srt.transl.y = (st->unk4C.y * st->unk58) + var_fv1;
@@ -931,7 +946,7 @@ static void anim_update_actor_transform(Object* animObj, Object* actor, AnimObj_
                 actor->srt.transl.z = var_fa0;
             }
         }
-        if (st->unk7A & 2) {
+        if (st->unk7A & ANIM7AFLAG_OVERRIDE_ROT) {
             if (st->unk62 == 2) {
                 actor->srt.yaw = var_v1 + (s16) ((f32) st->yawDiff * st->unk58);
                 actor->srt.pitch = temp_a1 + (s16) ((f32) st->pitchDiff * st->unk58);
@@ -971,7 +986,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
     animObj->srt.pitch = 0;
     animObj->srt.yaw = 0;
     animObj->srt.roll = 0;
-    if (st->unk7A & 0x20) {
+    if (st->unk7A & ANIM7AFLAG_OVERRIDE_OPACITY) {
         actor->opacity = 0xFF;
     }
     _bss_5E0 = 0.0f;\
@@ -1039,7 +1054,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
                 st->unk10 = var_fv1;
             }
         }
-        if ((st->unk7A & 0x20) && (st->channelTotalKeys[CHANNEL_opacity] != 0)) {
+        if ((st->unk7A & ANIM7AFLAG_OVERRIDE_OPACITY) && (st->channelTotalKeys[CHANNEL_opacity] != 0)) {
             var_fv1 = anim_channel_value(st, CHANNEL_opacity, time);
             if (var_fv1 < 0.0f) {
                 var_fv1 = 0.0f;
@@ -1052,11 +1067,11 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
         if (st->channelTotalKeys[CHANNEL_dayTime] != 0) {
             gDLL_7_Newday->vtbl->func9(anim_channel_value(st, CHANNEL_dayTime, time) * 60.0f);
         }
-        if ((st->unk7A & 0x10) && (st->channelTotalKeys[CHANNEL_scale] != 0)) {
+        if ((st->unk7A & ANIM7AFLAG_OVERRIDE_SCALE) && (st->channelTotalKeys[CHANNEL_scale] != 0)) {
             var_fv1 = anim_channel_value(st, CHANNEL_scale, time);
             actor->srt.scale = actor->def->scale * var_fv1;
         }
-        if (st->unk7A & 8) {
+        if (st->unk7A & ANIM7AFLAG_OVERRIDE_HEAD) {
             temp_v0_3 = func_80034804(actor, 0);
             if (temp_v0_3 != NULL) {
                 if (st->channelTotalKeys[CHANNEL_headRotateX] != 0) {
@@ -1077,13 +1092,13 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
                     var_fv1 = 0.0f;
                 }
                 temp_v0_3[2] = (s16) (var_fv1 * 182.044f);
-                if (st->unk7A & 0x400) {
+                if (st->unk7A & ANIM7AFLAG_UNK400) {
                     anim_func_9EC8(actor, temp_v0_3, st->unk142_4);
                 }
             }
             if (1){} // @fake
         }
-        if (st->unk7A & 0x200) {
+        if (st->unk7A & ANIM7AFLAG_OVERRIDE_JAW) {
             temp_v0_3 = func_80034804(actor, 1);
             if (temp_v0_3 != NULL) {
                 if (st->channelTotalKeys[CHANNEL_jaw] != 0) {
@@ -1095,7 +1110,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             }
             if (1){} // @fake
         }
-        if (st->unk7A & 0x40) {
+        if (st->unk7A & ANIM7AFLAG_OVERRIDE_EYES) {
             TextureAnimator* temp_v0_6;
             TextureAnimator* var_v1;
             TextureAnimator* temp_s0;
@@ -1374,7 +1389,7 @@ static Object* anim_func_2FE8(Object* animObj, AnimObj_Data* st, AnimObj_Setup* 
         }
     } else {
         if (st->actor != NULL) {
-            if (st->unk7A & 1) {
+            if (st->unk7A & ANIM7AFLAG_OVERRIDE_POS) {
                 actor->srt.transl.x = animObj->srt.transl.x;
                 actor->srt.transl.y = animObj->srt.transl.y;
                 actor->srt.transl.z = animObj->srt.transl.z;
@@ -1384,7 +1399,7 @@ static Object* anim_func_2FE8(Object* animObj, AnimObj_Data* st, AnimObj_Setup* 
             if (st->unk86 == 1) {
                 anim_func_4B20(actor, setup);
             }
-            if (st->unk7A & 2) {
+            if (st->unk7A & ANIM7AFLAG_OVERRIDE_ROT) {
                 actor->srt.yaw += st->seqYaw;
             }
             actor->animObj = NULL;
@@ -2695,14 +2710,14 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
         }
         st->unk8C |= 1;
         break;
-    case ANIM_CODE_EVT_6_18:
+    case ANIM_CODE_EVT_6_TOGGLE_LETTERBOX:
         if (arg4 != 0) {
             break;
         }
-        if (_bss_3A8[st->seqSlot] & 0x10) {
-            _bss_3A8[st->seqSlot] &= ~0x10;
+        if (_bss_3A8[st->seqSlot] & ACTORUSETTING_NO_LETTERBOX) {
+            _bss_3A8[st->seqSlot] &= ~ACTORUSETTING_NO_LETTERBOX;
         } else {
-            _bss_3A8[st->seqSlot] |= 0x10;
+            _bss_3A8[st->seqSlot] |= ACTORUSETTING_NO_LETTERBOX;
         }
         break;
     case ANIM_CODE_EVT_6_14:
@@ -2750,11 +2765,11 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
         anim_set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
         break;
     case ANIM_CODE_EVT_6_33:
-        st->unk7A |= 0x400;
+        st->unk7A |= ANIM7AFLAG_UNK400;
         st->unk142_4 = sp54;
         break;
     case ANIM_CODE_EVT_6_34:
-        st->unk7A &= ~0x400;
+        st->unk7A &= ~ANIM7AFLAG_UNK400;
         st->unk142_4 = 0;
         break;
     case ANIM_CODE_EVT_6_CHECKPOINT:
@@ -2826,15 +2841,15 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
     case ANIM_CODE_EVT_6_SET_ACT:
         gDLL_29_Gplay->vtbl->set_map_setup(actor->mapID, sp54);
         break;
-    case ANIM_CODE_EVT_6_19:
+    case ANIM_CODE_EVT_6_ENABLE_LETTERBOX:
         if (arg4 == 0) {
-            _bss_3A8[st->seqSlot] &= ~0x10;
+            _bss_3A8[st->seqSlot] &= ~ACTORUSETTING_NO_LETTERBOX;
         } 
         else { } // @fake
         break;
-    case ANIM_CODE_EVT_6_30:
+    case ANIM_CODE_EVT_6_DISABLE_LETTERBOX:
         if (arg4 == 0) {
-            _bss_3A8[st->seqSlot] |= 0x10;
+            _bss_3A8[st->seqSlot] |= ACTORUSETTING_NO_LETTERBOX;
         }
         break;
     case ANIM_CODE_EVT_6_RESTART_CLEAR:
@@ -2881,8 +2896,7 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
     if (count <= 0) {
         return 0.0f;
     }
-
-    // Jump to keyframe at given timestamp
+    // Find keyframe that we are currently interpolating into
     i = 0;
     while ((i < count && keyframes[i].timeOffset < time)) {
         i++;
@@ -3024,7 +3038,7 @@ static void anim_func_72E0(Object* animObj) {
 }
 
 // offset: 0x730C | func: 39 | export: 5
-void anim_func_730C(void) {
+void anim_update_camera(void) {
     s32 _pad;
     AnimObj_Setup *animobjSetup;
     f32 sp184;
@@ -3155,7 +3169,7 @@ void anim_func_730C(void) {
 }
 
 // offset: 0x7974 | func: 40 | export: 6
-void anim_func_7974(AnimObj_Data* arg0, AnimObj_Setup* setup) {
+void anim_func_7974(AnimObj_Data* st, AnimObj_Setup* setup) {
     s32 animcurves_bin_offset;
     s32 size;
     s32 animCurvesIndex;
@@ -3164,8 +3178,8 @@ void anim_func_7974(AnimObj_Data* arg0, AnimObj_Setup* setup) {
         return;
     }
 
-    arg0->animCurvesKeyframeCount = 0;
-    arg0->animCurvesEventCount = 0;
+    st->animCurvesKeyframeCount = 0;
+    st->animCurvesEventCount = 0;
     animCurvesIndex = setup->sequenceIdBitfield;
 
     if (animCurvesIndex & ANIMCURVES_IS_OBJSEQ2CURVE_INDEX) {
@@ -3182,30 +3196,30 @@ void anim_func_7974(AnimObj_Data* arg0, AnimObj_Setup* setup) {
         return;
     }
 
-    arg0->animCurvesEvents = mmAlloc(size, ALLOC_TAG_ANIMSEQ_COL, ALLOC_NAME("anim:events"));
-    if (arg0->animCurvesEvents == NULL) {
+    st->animCurvesEvents = mmAlloc(size, ALLOC_TAG_ANIMSEQ_COL, ALLOC_NAME("anim:events"));
+    if (st->animCurvesEvents == NULL) {
         return;
     }
 
-    queue_load_file_region_to_ptr((void *) arg0->animCurvesEvents, ANIMCURVES_BIN, animcurves_bin_offset, size);
-    arg0->animCurvesEventCount = ((s32 *) sTempBuffer)[0] & 0xFFFF;
-    arg0->animCurvesKeyframeCount = ((size >> 2) - arg0->animCurvesEventCount) >> 1;
-    arg0->animCurvesKeyframes = (AnimCurvesKeyframe *) (&arg0->animCurvesEvents[arg0->animCurvesEventCount]);
-    arg0->seqSlot = setup->seqSlot;
+    queue_load_file_region_to_ptr((void *) st->animCurvesEvents, ANIMCURVES_BIN, animcurves_bin_offset, size);
+    st->animCurvesEventCount = ((s32 *) sTempBuffer)[0] & 0xFFFF;
+    st->animCurvesKeyframeCount = ((size >> 2) - st->animCurvesEventCount) >> 1;
+    st->animCurvesKeyframes = (AnimCurvesKeyframe *) (&st->animCurvesEvents[st->animCurvesEventCount]);
+    st->seqSlot = setup->seqSlot;
 
-    if (arg0->seqSlot >= 0) {
-        _bss_108[arg0->seqSlot] = 0;
-        sEventFlags[arg0->seqSlot] = 0;
-        _bss_198[arg0->seqSlot] = 0;
+    if (st->seqSlot >= 0) {
+        _bss_108[st->seqSlot] = 0;
+        sEventFlags[st->seqSlot] = 0;
+        _bss_198[st->seqSlot] = 0;
     }
 
     if (setup->unk22 != 0) {
-        arg0->unk8B = 2;
+        st->unk8B = 2;
     } else {
-        arg0->unk8B = 0;
+        st->unk8B = 0;
     }
 
-    anim_func_7B64(arg0);
+    anim_func_7B64(st);
 }
 
 // offset: 0x7B64 | func: 41 | export: 7
@@ -3454,7 +3468,7 @@ s16 anim_func_8598(Object* animObj) {
     case 3:
         st->actor = NULL;
         st->unk87 = (s8) (setup->target - 2);
-        if (!(_bss_3A8[st->seqSlot] & 0x10)) {
+        if (!(_bss_3A8[st->seqSlot] & ACTORUSETTING_NO_LETTERBOX)) {
             gDLL_2_Camera->vtbl->set_letterbox_goal(30, TRUE);
         }
         break;
@@ -3617,18 +3631,18 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
                 if ((object->id == OBJ_VariableObject) && (sVariableObjID != -1)) {
                     actorSetup->target = sVariableObjID + 4;
                 }
-                actors[i].settings |= 0x8000;
+                actors[i].settings |= ACTORSETTING_UNK8000;
             } else if (actorObjID == 0xFFFE) {
                 actorSetup->base.objId = OBJ_AnimCamera;
                 actorSetup->target = 3;
-            } else if (actors[i].settings & 0x4000) {
+            } else if (actors[i].settings & ACTORSETTING_UNK4000) {
                 actorSetup->base.objId = OBJ_Override;
                 actorSetup->target = actorObjID + 4;
             } else {
                 actorSetup->base.objId = actorObjID;
                 actorSetup->target = 0;
             }
-            if (actors[i].settings & 0x8000) {
+            if (actors[i].settings & ACTORSETTING_UNK8000) {
                 actorSetup->unk20 = 0;
                 actorSetup->unk21 = 0;
             } else {
@@ -3669,7 +3683,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
             actorObjData = actorObj->data;
             actorObjData->seqYaw = yaw;
             actorObjData->unk7A = -1;
-            actorObjData->unk7A &= ~0x400;
+            actorObjData->unk7A &= ~ANIM7AFLAG_UNK400;
             for (j = 0; j < 4; j++) { // @bug? max decisions is 10 not 4
                 actorObjData->decisionConditions[j] = 0;
             }
@@ -3686,19 +3700,19 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
             }
             actorObjData->actorUID = actors[i].uid;
             temp_v1_4 = (actors[i].settings >> 8) & 0x3F;
-            if (temp_v1_4 & 1) {
-                actorObjData->unk7A &= ~1;
+            if (temp_v1_4 & ACTORUSETTING_DONT_OVERRIDE_POS) {
+                actorObjData->unk7A &= ~ANIM7AFLAG_OVERRIDE_POS;
             }
-            if (temp_v1_4 & 2) {
-                actorObjData->unk7A &= ~2;
+            if (temp_v1_4 & ACTORUSETTING_DONT_OVERRIDE_ROT) {
+                actorObjData->unk7A &= ~ANIM7AFLAG_OVERRIDE_ROT;
             }
-            if (temp_v1_4 & 4) {
+            if (temp_v1_4 & ACTORUSETTING_ZERO_YAW) {
                 actorObjData->seqYaw = 0;
             }
-            if (temp_v1_4 & 8) {
-                actorObjData->unk7A &= ~0x100;
+            if (temp_v1_4 & ACTORUSETTING_SKIPPABLE) {
+                actorObjData->unk7A &= ~ANIM7AFLAG_UNK100;
             }
-            if (temp_v1_4 & 0x20) {
+            if (temp_v1_4 & ACTORUSETTING_UNK20) {
                 actorObjData->unk8C |= 2;
             }
             actorObjData->unk7C = actorObjData->unk7A;
@@ -3720,7 +3734,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
     _bss_490[object->seqSlot] = 0;
     temp_v0_7 = anim_func_93A0(object);
     if (temp_v0_7 != 0) {
-        _bss_3A8[object->seqSlot] |= 0x10;
+        _bss_3A8[object->seqSlot] |= ACTORUSETTING_NO_LETTERBOX;
     }
     anim_func_2C0(slot, temp_v0_7, numActors);
     if (sp48 != 0) {
@@ -3872,9 +3886,9 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
     arg4 *= 182.04f;
     arg2 *= 182.04f;
     if (st->unk62 == 4) {
-        st->unk7A &= ~0x2;
+        st->unk7A &= ~ANIM7AFLAG_OVERRIDE_ROT;
         if (func_80034804(actor, 0) != NULL) {
-            st->unk7A &= ~0x8;
+            st->unk7A &= ~ANIM7AFLAG_OVERRIDE_HEAD;
         }
         st->unkF4 = anim_func_9B70;
         st->unk4C.f[0] = 0.0f;
@@ -3923,7 +3937,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
             st->unk24 = var_fv1;
         }
         if ((arg5 != -1) && (arg6 != -1)) {
-            st->unk7A &= ~0x4;
+            st->unk7A &= ~ANIM7AFLAG_OVERRIDE_MODEL;
             if (st->yawDiff < 0) {
                 if (arg6 != -1) {
                     func_80023D30(actor, arg6, 0.0f, 0);
@@ -3943,7 +3957,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
         actor->srt.yaw += (s16) (st->unk24 * st->yawDiff);
         sp50 = func_80034804(actor, 0);
         if (sp50 != NULL) {
-            st->unk7A &= ~0x8;
+            st->unk7A &= ~ANIM7AFLAG_OVERRIDE_HEAD;
             var_fv0 = (func_80031DD8(actor, sp30, NULL) * st->unk58) + (sp50[1] * (1.0f - st->unk58)) ;
             if (var_fv0 < -arg4) {
                 var_fv0 = -arg4;
@@ -3974,12 +3988,12 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
         }
         if (st->unk58 > 1.0f) {
             st->unk62 = 0;
-            st->unk7A |= 8;
+            st->unk7A |= ANIM7AFLAG_OVERRIDE_HEAD;
             sp50 = func_80034804(actor, 0);
             st->unk120 = sp50[1];
             st->unk122 = sp50[0];
             if (st->unk58 > 1.0f) {
-                st->unk7A |= 4;
+                st->unk7A |= ANIM7AFLAG_OVERRIDE_MODEL;
             }
         }
         return 1;

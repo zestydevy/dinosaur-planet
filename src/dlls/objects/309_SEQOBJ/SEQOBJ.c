@@ -153,7 +153,7 @@ void SeqObj_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
 // offset: 0x418 | func: 4 | export: 4
 void SeqObj_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, 0x11);
+    obj_free_object_type(self, OBJTYPE_17);
 }
 
 // offset: 0x458 | func: 5 | export: 5

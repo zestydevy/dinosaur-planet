@@ -3,7 +3,6 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/419_DFdockpoint.h"
-#include "game/objects/unknown_setups.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/joypad.h"

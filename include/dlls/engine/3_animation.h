@@ -12,7 +12,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*2*/ void (*func2)(s32 arg0, s32 arg1);
 /*3*/ s8 (*func3)(s32 arg0);
 /*4*/ s32 (*tick_obj)(Object* animObj, s32 updateRate);
-/*5*/ void (*func5)(void);
+/*5*/ void (*update_camera)(void);
 /*6*/ void (*func6)(AnimObj_Data* arg0, AnimObj_Setup* setup);
 /*7*/ void (*func7)(AnimObj_Data* state);
 /*8*/ void (*func8)(AnimObj_Data* state);

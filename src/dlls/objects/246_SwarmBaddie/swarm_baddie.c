@@ -134,7 +134,7 @@ void dll_246_free(Object* self, s32 arg1) {
     void* temp_a0;
 
     objdata = self->data;
-    obj_free_object_type(self, 4);
+    obj_free_object_type(self, OBJTYPE_4);
     temp_a0 = objdata->unk0;
     if (temp_a0 != NULL) {
         mmFree(temp_a0);
