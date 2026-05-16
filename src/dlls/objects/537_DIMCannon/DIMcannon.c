@@ -1,22 +1,15 @@
 #include "common.h"
+#include "game/objects/interaction_arrow.h"
 #include "sys/gfx/model.h"
+#include "sys/math.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 #include "sys/gfx/modgfx.h"
+#include "dlls/objects/541_DIMexplosion.h"
 
 /*0x0*/ static DLL_IModgfx* _data_0 = NULL;
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-} DIMExplosion_Setup;
 
 typedef struct {
     ObjSetup base;
@@ -135,14 +128,14 @@ void dll_537_control(Object* self) {
     objSetup = (DLL537_Setup*)self->setup;
     sidekick = get_sidekick();
     
-    if (self->id == 0x1D6) {
+    if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1430(self);
         return;
     }
     
-    if (self->unkAF & 8) {
+    if (self->unkAF & ARROW_FLAG_8_No_Targetting) {
         if (main_get_bits(objSetup->unk1A)) {
-            self->unkAF &= 0xFFF7;
+            self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     }
     
@@ -336,7 +329,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
     s32 pad;
 
     animData->unk62 = 0;
-    animData->unk7A &= 0xF9F7;
+    animData->unk7A &= ~(0x400 | 0x200 | 8);
     
     objData = self->data;
 
@@ -346,11 +339,11 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
         if (objData->unk27 > 0) {
             objData->unk27 -= gUpdateRate;
         } else {      
-            s16* sp38;
-            s32 sp34;
+            s16* jointAngle;
+            s32 angle;
             
-            sp38 = func_80034804(self, 0);
-            sp34 = -*sp38;
+            jointAngle = func_80034804(self, 0);
+            angle = -*jointAngle;
             self->srt.yaw -= joy_get_stick_x(0) * 4;
 
             if (objData->unk20 > 0) {
@@ -361,36 +354,36 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
                 objData->unk22 -= gUpdateRate;
             }
             
-            if ((joy_get_buttons(0) & 0x8000) && (objData->unk20 <= 0)) {
-                sp34 = sp34 + 0x320;
+            if ((joy_get_buttons(0) & A_BUTTON) && (objData->unk20 <= 0)) {
+                angle += 800;
             } else {
-                sp34 = sp34 - 0x4B0;
+                angle -= 1200;
             }
             
-            if (sp34 >= 0x2001) {
-                sp34 = 0x2000;
+            if (angle > M_45_DEGREES) {
+                angle = M_45_DEGREES;
             }
-            if (sp34 < 0) {
-                sp34 = 0;
+            if (angle < 0) {
+                angle = 0;
             }
             
-            if ((joy_get_released(0) & 0x8000) && (objData->unk20 <= 0)) {
+            if ((joy_get_released(0) & A_BUTTON) && (objData->unk20 <= 0)) {
                 objData->unk25 = 1;
             }
             dll_537_func_1150(self);
             
-            if (joy_get_pressed(0) & 0x2000) {
+            if (joy_get_pressed(0) & Z_TRIG) {
                 gDLL_2_Camera->vtbl->change_camera_module(0x54, 0, 1, 0, NULL, 0, 0xFF);
                 objData->unk24 = 5;
-                objData->unk27 = 0x3C;
+                objData->unk27 = 60;
                 animData->unk9D |= 4;
-                self->unkAF &= 0xFFF7;
+                self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
             }
             
-            sp34 = -sp34;
-            sp34 -= ((*sp38) & 0xFFFF);
-            CIRCLE_WRAP(sp34);            
-            *sp38 += sp34 >> 2;
+            angle = -angle;
+            angle -= (u16)(*jointAngle);
+            CIRCLE_WRAP(angle);            
+            *jointAngle += angle >> 2;
         }
         break;
     default:
@@ -574,27 +567,24 @@ void dll_537_func_1150(Object* self) {
 
 // offset: 0x1314 | func: 10
 void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup) {
-    f32 sp24;
-    f32 sp20;
+    f32 verticalSpeed;
+    f32 lateralSpeed;
     DIMCannonBall_Data* objData;
-    ObjectShadow* shadow;
     ObjectHitInfo* objHits;
     s32 hitsValue = 1;
 
     self->srt.yaw = objSetup->unk18 << 8;
-    
-    sp24 = objSetup->unk1A * 0.1f;
-    sp20 = objSetup->unk1C * 0.1f;
-    self->velocity.x = fsin16_precise(self->srt.yaw) * sp20;
-    self->velocity.y = -sp24;
-    self->velocity.z = fcos16_precise(self->srt.yaw) * sp20;
+    verticalSpeed = objSetup->unk1A * 0.1f;
+    lateralSpeed = objSetup->unk1C * 0.1f;
+    self->velocity.x = fsin16_precise(self->srt.yaw) * lateralSpeed;
+    self->velocity.y = -verticalSpeed;
+    self->velocity.z = fcos16_precise(self->srt.yaw) * lateralSpeed;
     
     self->unkDC = 0;
 
-    shadow = self->shadow;
-    if (shadow != NULL) {
-        self->shadow->flags |= 0xC10;
-        self->shadow->flags |= 0x8000;
+    if (self->shadow != NULL) {
+        self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_OPACITY | OBJ_SHADOW_FLAG_CUSTOM_DIR;
+        self->shadow->flags |= OBJ_SHADOW_FLAG_8000;
         self->shadow->maxDistScale = 2.0f * self->shadow->scale;
     }
 
@@ -633,7 +623,7 @@ void dll_537_func_1430(Object* self) {
     }
     
     self->unkDC += gUpdateRate;
-    if (self->unkDC >= 0x4B1) {
+    if (self->unkDC > 1200) {
         obj_destroy_object(self);
     }
     
@@ -655,18 +645,18 @@ void dll_537_func_1640(Object* self) {
 
 // offset: 0x16AC | func: 13
 void dll_537_func_16AC(Object* self) {
-    Unk_Data* objData;
-    DIMCannonBall_Setup* shotSetup;
+    Unk_Data* objData; //This should be the cannonball's data, but `dll_537_get_data_size` says `DIMCannonBall_Data` has a size of 1?
+    DIMExplosion_Setup* explosion;
 
     objData = self->data;
     
-    shotSetup = (DIMCannonBall_Setup*)obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
-    shotSetup->base.loadFlags = objData->unk4;
-    shotSetup->base.byte6 = objData->unk6;
-    shotSetup->base.byte5 = objData->unk5;
-    shotSetup->base.fadeDistance = objData->unk7;
-    shotSetup->base.x = self->srt.transl.x;
-    shotSetup->base.y = self->srt.transl.y;
-    shotSetup->base.z = self->srt.transl.z;
-    obj_create((ObjSetup*)shotSetup, 5, self->mapID, -1, self->parent);
+    explosion = (DIMExplosion_Setup*)obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+    explosion->base.loadFlags = objData->unk4; //Is objData storing an objSetup here? The offsets match as it's setting up the explosion's objSetup
+    explosion->base.byte6 = objData->unk6;
+    explosion->base.byte5 = objData->unk5;
+    explosion->base.fadeDistance = objData->unk7;
+    explosion->base.x = self->srt.transl.x;
+    explosion->base.y = self->srt.transl.y;
+    explosion->base.z = self->srt.transl.z;
+    obj_create((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
 }

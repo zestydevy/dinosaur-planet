@@ -1,0 +1,13 @@
+.text = 0x0:
+DFbarrelanim_ctor = 0x0;
+DFbarrelanim_dtor = 0xC;
+DFbarrelanim_setup = 0x18;
+DFbarrelanim_control = 0x19C;
+DFbarrelanim_update = 0x454;
+DFbarrelanim_print = 0x460;
+DFbarrelanim_free = 0x4B4;
+DFbarrelanim_get_model_flags = 0x5C0;
+DFbarrelanim_get_data_size = 0x5D0;
+
+.rodata = 0x644:
+_oob_rodata_0 = 0x0; // absolute:0x644

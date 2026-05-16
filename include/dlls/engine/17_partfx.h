@@ -99,6 +99,7 @@ enum ParticleID {
     PARTICLE_351 = 0x351,  //small cloud of mist, jetting forward (WaterWallSpray)
     /* --- DLL 41 START --- */
     PARTICLE_352 = 0x352,
+    PARTICLE_355 = 0x355,
     PARTICLE_383 = 0x383,
     /* --- DLL 41 END --- */
     /* --- DLL 34 START --- */

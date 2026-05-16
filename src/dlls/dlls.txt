@@ -158,6 +158,7 @@
 417 = objects/417_DFlog
 418 = objects/418_DFriverflow
 419 = objects/419_DFdockpoint
+424 = objects/424_DFbarrelanim
 425 = objects/425_DFbarrelcreator
 426 = objects/426_DFcavedoor
 427 = objects/427_DFlevelcontrol
