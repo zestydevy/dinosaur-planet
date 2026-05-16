@@ -26,7 +26,7 @@ enum ObjType {
     OBJTYPE_23 = 23, // DFdockpoint
     OBJTYPE_24 = 24,
     OBJTYPE_25 = 25, // DFropenode
-    OBJTYPE_27 = 27, // DRpushcart-related
+    OBJTYPE_27 = 27, // Barrels
     OBJTYPE_28 = 28, // ExplodeAnimator
     OBJTYPE_29 = 29,
     OBJTYPE_32 = 32,
