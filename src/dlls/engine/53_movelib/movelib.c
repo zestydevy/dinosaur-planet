@@ -5,14 +5,19 @@
 
 // TODO: move to header
 typedef struct {
-    u8 _unk0[0x10 - 0x0];
+    f32 unk0;
+    u8 _unk4[0x10 - 0x4];
     Vec3f unk10;
     HeadAnimation unk1C;
     u8 _unk40[0x454 - 0x40];
     s16 unk454[25]; // at least 25
     u8 _unk486[0x490 - 0x486];
     s32 unk490;
-    u8 _unk494[0x4A4 - 0x494];
+    s32 unk494;
+    u8 unk498;
+    u8 _unk499[0x49C - 0x499];
+    Object* unk49C;
+    u8 _unk4A0[0x4A4 - 0x4A0];
     s16 unk4A4;
     s16 unk4A6;
     u8 unk4A8;
@@ -35,24 +40,19 @@ void dll_53_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_18.s")
-#else
-// regalloc
-s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* arg3, f32* arg4, s16* arg5) {
+static s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* arg3, f32* arg4, s16* arg5, Vec3f* arg6) {
     s16 sp3E;
     s16 sp3C;
     f32 sp38;
     s32* sp34;
     HeadAnimation* var_a3;
-    s32 var_a3_2;
 
     sp34 = func_800349B0();
     if (arg1->objhitInfo != NULL) {
         if (arg1->objhitInfo->unk5A & 2) {
-            sp38 = (f32) arg1->objhitInfo->unk56 * 4.0f;
+            sp38 = arg1->objhitInfo->unk56 * 4.0f;
         } else if (arg1->objhitInfo->unk5A & 1) {
-            sp38 = (f32) arg1->objhitInfo->unk52;
+            sp38 = arg1->objhitInfo->unk52;
         } else {
             sp38 = 30.0f;
         }
@@ -60,14 +60,11 @@ s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* arg3, f32
         sp38 = 30.0f;
     }
     sp3E = func_80031DD8(arg0, arg1, NULL);
-    if (arg3->unk4A9 & 8) {
-        var_a3 = NULL;
-    } else {
-        var_a3 = &arg3->unk1C;
-    }
-    sp3C = func_800334A4(arg0, arg1, &arg3->unk10, var_a3, arg3->unk454, sp38, 8, (s16) (s32) arg3->unk4A4);
+    sp3C = func_800334A4(arg0, arg1, &arg3->unk10, 
+                         (arg3->unk4A9 & 8) ? NULL : &arg3->unk1C, 
+                         arg3->unk454, sp38, 8, arg3->unk4A4);
     if (!(arg3->unk4A9 & 8)) {
-        arg3->unk490 = (s32) (func_800333C8(arg0, sp34, (s32) arg3->unk4A8, &arg3->unk1C) == 0);
+        arg3->unk490 = !func_800333C8(arg0, sp34, arg3->unk4A8, &arg3->unk1C);
     }
     arg3->unk490 = 0;
     if ((arg3->unk4A9 & 2) && (sp3C != 0)) {
@@ -78,50 +75,56 @@ s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* arg3, f32
         if ((-arg3->unk4A6 < sp3E) && (sp3E < arg3->unk4A6)) {
             *arg4 = 0.005f;
             *arg2 = 0;
-            return sp3C == 0;
+            // " In turn Range "
+            return !sp3C;
         }
     }
     if ((*arg2 == 0) && (sp3C != 0)) {
         *arg2 = 1;
         *arg4 = 0.005f;
     } else if (*arg2 != 0) {
-        if (sp3E > 0) {
-            if (arg0->curModAnimId != arg5[1]) {
-                func_80023D30(arg0, arg5[1], 0.0f, 0U);
-                func_80024D74(arg0, 0x1E);
-            }
+        if (sp3E > 0 && arg0->curModAnimId != arg5[1]) {
+            func_80023D30(arg0, arg5[1], 0.0f, 0);
+            func_80024D74(arg0, 0x1E);
         }
-        if (sp3E < 0) {
-            if (arg0->curModAnimId != arg5[0]) {
-                func_80023D30(arg0, arg5[0], 0.0f, 0U);
-                func_80024D74(arg0, 0x1E);
-            }
+        if (sp3E < 0 && arg0->curModAnimId != arg5[0]) {
+            func_80023D30(arg0, arg5[0], 0.0f, 0);
+            func_80024D74(arg0, 0x1E);
         }
         if (sp3C == 0) {
-            if (sp3E > 0) {
-                sp3E /= 20;
-            } else {
-                sp3E /= 20;
-            }
-        } else if (sp3E > 0) {
-            sp3E = (sp3E - 0x500) / 20;
+            sp3E = sp3E > 0 ? (sp3E / 20) : (sp3E / 20);
         } else {
-            sp3E = (sp3E + 0x500) / 20;
+            sp3E = sp3E > 0 ? ((sp3E - 0x500) / 20) : ((sp3E + 0x500) / 20);
         }
         arg0->srt.yaw += sp3E;
-        if (sp3E >= 0) {
-            var_a3_2 = sp3E;
-        } else {
-            var_a3_2 = -sp3E;
-        }
-        *arg4 = (f32) var_a3_2 / 20922.25f;
+        *arg4 = (f32) (sp3E >= 0 ? sp3E : -sp3E) / 20922.25f;
     }
     return 1;
 }
-#endif
 
 // offset: 0x3B4 | func: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_3B4.s")
+void dll_53_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* arg3) {
+    s32* temp_a1 = func_800349B0();
+    switch (arg2->unk498) {
+    case 3:
+        func_80033224(arg0, temp_a1, arg2->unk4A8, &arg2->unk1C);
+        arg2->unk490 = 0;
+        arg2->unk498 = 2;
+        /* fallthrough */
+    case 2:
+        if (dll_53_func_18(arg0, arg1, &arg2->unk494, arg2, &arg2->unk0, arg3, &arg2->unk10) == 0) {
+            arg2->unk498 = 6;
+        }
+        break;
+    case 6:
+        arg2->unk498 = 7;
+        /* fallthrough */
+    case 7:
+        arg2->unk0 = 0.005f;
+        break;
+    }
+    arg2->unk49C = arg1;
+}
 
 // offset: 0x4B8 | func: 2 | export: 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_4B8.s")
