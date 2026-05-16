@@ -2,6 +2,7 @@
 #include "dlls/engine/53.h"
 #include "sys/objlib.h"
 #include "sys/objexpr.h"
+#include "sys/objtype.h"
 
 // TODO: move to header
 typedef struct {
@@ -15,14 +16,18 @@ typedef struct {
     s32 unk490;
     s32 unk494;
     u8 unk498;
-    u8 _unk499[0x49C - 0x499];
+    u8 unk499;
+    u8 _unk49A[0x49C - 0x49A];
     Object* unk49C;
-    u8 _unk4A0[0x4A4 - 0x4A0];
+    Object* unk4A0;
     s16 unk4A4;
     s16 unk4A6;
     u8 unk4A8;
     u8 unk4A9;
-    u8 _unk4AA[0x4B8 - 0x4AA];
+    u8 _unk4AA[0x4AC - 0x4AA];
+    s32 unk4AC;
+    s32 unk4B0;
+    s32 unk4B4;
 } MoveLibData;
 
 /*0x0*/ static u32 data_0[] = {
@@ -75,7 +80,7 @@ static s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* ar
         if ((-arg3->unk4A6 < sp3E) && (sp3E < arg3->unk4A6)) {
             *arg4 = 0.005f;
             *arg2 = 0;
-            // " In turn Range "
+            STUBBED_PRINTF(" In turn Range ");
             return !sp3C;
         }
     }
@@ -127,7 +132,136 @@ void dll_53_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* arg3) {
 }
 
 // offset: 0x4B8 | func: 2 | export: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_4B8.s")
+void dll_53_func_4B8(Object* arg0, MoveLibData* arg1) {
+    f32 sp64;
+    f32 sp60;
+    f32 temp_fv1;
+    s16 sp5A;
+    s32* sp54;
+    Object* sp50;
+    f32 sp44[3];
+
+    sp64 = 1000.0f;
+    sp60 = 30.0f;
+    sp5A = 0;
+    sp54 = func_800349B0();
+    get_player();
+    if (arg1->unk499 == 0) {
+        if ((arg1->unk4A9 & 1) && (arg1->unk498 != 8)) {
+            arg1->unk498 = 8;
+            if (!(arg1->unk4A9 & 8)) {
+                func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                arg1->unk490 = 0x50;
+                func_80033350(&arg1->unk1C, arg1->unk4A8, 0, 0);
+            } else {
+                func_800332A4(arg0, func_800349B0(), arg1->unk4A8);
+            }
+        } else if (!(arg1->unk4A9 & 1) && (arg1->unk498 == 8)) {
+            arg1->unk498 = 0;
+            if (!(arg1->unk4A9 & 8)) {
+                func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                arg1->unk490 = 0x50;
+            }
+        }
+        if (arg1->unk498 > 1) {
+            if ((arg1->unk490 != 0) && !(arg1->unk4A9 & 8)) {
+                arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                return;
+            }
+            func_800332A4(arg0, func_800349B0(), arg1->unk4A8);
+            return;
+        }
+        if (arg1->unk4A0 == NULL) {
+            sp50 = obj_get_nearest_type_to(OBJTYPE_9, arg0, &sp64);
+        } else {
+            sp50 = arg1->unk4A0;
+        }
+        if (NULL != sp50) {
+            if (arg1->unk4A9 & 0x20) {
+                sp44[0] = arg1->unk10.x - sp50->srt.transl.x;
+                sp44[1] = arg1->unk10.y - sp50->srt.transl.y;
+                sp44[2] = arg1->unk10.z - sp50->srt.transl.z;
+                temp_fv1 = sqrtf(SQ(sp44[0]) + SQ(sp44[2]));
+                if (temp_fv1 <= 40.0f) {
+                    temp_fv1 = (temp_fv1 - 10.0f) / 30.0f;
+                    temp_fv1 = temp_fv1 < 0.0f
+                        ? 0.0f
+                        : temp_fv1 > 1.0f
+                            ? 1.0f
+                            : temp_fv1;
+                    temp_fv1 = 1.0f - temp_fv1;
+                    arg1->unk10.x = (arg1->unk10.x * (1.0f - temp_fv1)) + (arg0->srt.transl.x * temp_fv1);
+                    arg1->unk10.z = (arg1->unk10.z * (1.0f - temp_fv1)) + (arg0->srt.transl.z * temp_fv1);
+                }
+            }
+            if ((arg1->unk4AC != -1) && (sp50 == arg1->unk49C)) {
+                if (((arg1->unk4B4 -= gUpdateRate) <= 0) && ((arg1->unk4B4 + gUpdateRate) > 0)) {
+                    func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                    arg1->unk490 = 0x50;
+                    func_80033350(&arg1->unk1C, arg1->unk4A8, 0, 0);
+                    arg1->unk498 = 0;
+                    return;
+                }
+                if (arg1->unk490 != 0) {
+                    arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                }
+                if (arg1->unk4B4 < -arg1->unk4B0) {
+                    arg1->unk4B4 = rand_next(arg1->unk4B0, arg1->unk4AC);
+                }
+                if (arg1->unk4B4 < 0) {
+                    return;
+                }
+            } else {
+                arg1->unk4B4 = arg1->unk4AC;
+            }
+            if ((sp50 != arg1->unk49C) && (sp50 != NULL)) {
+                if (sp50->objhitInfo != NULL) {
+                    if (sp50->objhitInfo->unk5A & 2) {
+                        sp60 = (f32) sp50->objhitInfo->unk56 * 4.0f;
+                    } else if (sp50->objhitInfo->unk5A & 1) {
+                        sp60 = (f32) sp50->objhitInfo->unk52;
+                    } else {
+                        sp60 = 30.0f;
+                    }
+                } else {
+                    sp60 = 30.0f;
+                }
+            }
+            if (sp50 != NULL) {
+                sp5A = func_80031DD8(arg0, sp50, NULL);
+            }
+            if (arg1->unk4A9 & 0x10) {
+                func_80034D94(0, 1);
+                sp5A -= 0x8000;
+            }
+            if ((((sp5A >= 0) ? sp5A : -sp5A) >= 0x5555) || (sp50 == NULL)) {
+                if ((arg1->unk498 != 0) || ((sp50 == NULL) && (arg1->unk49C != NULL))) {
+                    func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                    arg1->unk490 = 0xA;
+                    func_80033350(&arg1->unk1C, arg1->unk4A8, 0, 0);
+                    arg1->unk498 = 0;
+                }
+            } else {
+                if ((sp50 != arg1->unk49C) || (arg1->unk498 == 0)) {
+                    func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                    arg1->unk490 = 1;
+                }
+                if (arg1->unk4A9 & 8) {
+                    arg1->unk490 = 0;
+                }
+                func_800334A4(arg0, sp50, &arg1->unk10, 
+                              arg1->unk490 != 0 ? &arg1->unk1C : NULL, 
+                              arg1->unk454, sp60, 8, arg1->unk4A4);
+                arg1->unk498 = 1;
+            }
+            arg1->unk49C = sp50;
+            arg1->unk4A0 = NULL;
+            if (!(arg1->unk4A9 & 8) && (arg1->unk490 != 0)) {
+                arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+            }
+        }
+    }
+}
 
 // offset: 0xB84 | func: 3 | export: 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_B84.s")
@@ -180,7 +314,6 @@ void dll_53_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* arg3) {
 // offset: 0x1F1C | func: 19 | export: 12
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_1F1C.s")
 
-/*0x28*/ static const char str_28[] = " In turn Range ";
 /*0x38*/ static const char str_38[] = "Got Curve ";
 /*0x44*/ static const char str_44[] = " PathId %i Loc id %i \n";
 /*0x5C*/ static const char str_5C[] = " Tangent 1 %f %f %f \n";
