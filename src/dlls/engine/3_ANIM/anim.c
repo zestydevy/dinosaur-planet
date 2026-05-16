@@ -2012,14 +2012,14 @@ s32 anim_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yO
     f32 sampleY;
     Func_80057F1C_Struct** sp5C;
     f32 lowestFound;
-    s32 temp_v0;
+    s32 sampleCount;
     s32 index;
 
-    temp_v0 = func_80057F1C(animObj, x, animObj->globalPosition.f[1], z, &sp5C, 0, 1);
-    if (temp_v0) {
+    sampleCount = func_80057F1C(animObj, x, animObj->globalPosition.f[1], z, &sp5C, 0, 1);
+    if (sampleCount) {
         lowestIndex = 0;
         lowestFound = 1000.0f;
-        for (index = 0; index < temp_v0; index++) {
+        for (index = 0; index < sampleCount; index++) {
             if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
                 sampleY = y - sp5C[index]->unk0[0];
                 if (sampleY < 0.0f) {
@@ -2038,11 +2038,11 @@ s32 anim_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yO
         }
     }
 
-    if (temp_v0) {
+    if (sampleCount) {
         y += *yOut - ySetup;
         lowestFound = 1000.0f;
         lowestIndex = 0;
-        for (index = 0; index < temp_v0; index++) {
+        for (index = 0; index < sampleCount; index++) {
            if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
                 sampleY = y + 5.0f - sp5C[index]->unk0[0];
                 if (sampleY < 0.0f) {
