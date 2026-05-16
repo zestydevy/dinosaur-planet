@@ -32,6 +32,7 @@ enum ObjType {
     OBJTYPE_32 = 32,
     OBJTYPE_33 = 33,
     OBJTYPE_34 = 34,
+    OBJTYPE_35 = 35, // Debris
     OBJTYPE_37 = 37,
     OBJTYPE_38 = 38,
     OBJTYPE_39 = 39,

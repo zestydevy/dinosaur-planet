@@ -6,10 +6,10 @@
 
 typedef struct {
     ObjSetup base;
-    s16 _unk18;
-    s16 _unk1A;
-    s16 _unk1C;
-    s16 _unk1E;
+    s16 _unused18;
+    u8 yaw;
+    s16 _unused1C;
+    s16 _unused1E;
 } DFBarrel_Setup; //0x20
 
 #endif // _DLLS_423_H
