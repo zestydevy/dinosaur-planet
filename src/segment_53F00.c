@@ -1945,9 +1945,6 @@ void func_800591EC(void) {
 }
 #endif
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800596BC.s")
-#else
 void func_800596BC(ObjDef* arg0) {
     ModLineReencoded* var_s2;
     ModLine* var_s0;
@@ -1972,15 +1969,16 @@ void func_800596BC(ObjDef* arg0) {
     D_800BB4D8 = 0;
     var_s0 = arg0->pModLines;        
     sp6C8 = arg0->modLineCount;
-    for (var_s3 = 0; var_s3 < sp6C8; var_s3++, var_s0++, D_800BB4D6++) {
+    for (var_s3 = 0; var_s3 < sp6C8; var_s3++, D_800BB4D6++) {
+        var_s7 = &var_s0[var_s3];
         var_s2 = &D_80092E74[D_800BB4D6];
-        var_s2->heightA = var_s0->heightA;
-        var_s2->heightB = var_s0->heightB;
-        var_s2->settingsB = var_s0->settingsB;
-        var_s2->settingsA = var_s0->settingsA;
-        var_s2->animatorID = var_s0->animatorID;
+        var_s2->heightA = var_s7->heightA;
+        var_s2->heightB = var_s7->heightB;
+        var_s2->settingsB = var_s7->settingsB;
+        var_s2->settingsA = var_s7->settingsA;
+        var_s2->animatorID = var_s7->animatorID;
         for (var_s1 = 0; var_s1 < 2; var_s1++) {
-            var_s2->indexes[var_s1] = func_8005A2BC(var_s0->somePos[var_s1], var_s0->somePos[var_s1 + 2], f0 = var_s0->somePos[var_s1 + 4], D_800BB4D6, sp68);
+            var_s2->indexes[var_s1] = func_8005A2BC(var_s7->somePos[var_s1], var_s7->somePos[var_s1 + 2], f0 = var_s7->somePos[var_s1 + 4], D_800BB4D6, sp68);
         }
 
         if (D_800BB4D8 >= 400) {
@@ -2059,7 +2057,6 @@ void func_800596BC(ObjDef* arg0) {
     D_800BB4D6 = 0;
     D_800BB4D8 = 0;
 }
-#endif
 
 s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_Struct* arg4, Object* arg5, s8 arg6, s8 arg7, u8 arg8, s8 arg9) {
     f32 spE0[2];
