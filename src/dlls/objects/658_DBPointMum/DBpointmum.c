@@ -25,12 +25,14 @@ typedef struct {
     u8 unk8E;
 } PointBack_func1308_arg1; //might be AnimObj_Data?
 
+// same as DLL53Func17F4Arg1?
 typedef struct {
     s8 _unk0[0x2C - 0x0];
     s8 unk2C;
     s8 unk2D;
 } DLL658_func19FC_arg1;
 
+// same as DLL53Func17F4Arg2?
 typedef struct {
     Vec3f unk0;
     Vec3f unkC;

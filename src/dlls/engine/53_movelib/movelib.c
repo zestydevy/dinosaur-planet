@@ -57,10 +57,10 @@ static s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* ar
     }
     sp3E = func_80031DD8(arg0, arg1, NULL);
     sp3C = func_800334A4(arg0, arg1, &arg3->unk10, 
-                         (arg3->unk4A9 & 8) ? NULL : &arg3->unk1C, 
+                         (arg3->unk4A9 & 8) ? NULL : arg3->unk1C, 
                          arg3->unk454, sp38, 8, arg3->unk4A4);
     if (!(arg3->unk4A9 & 8)) {
-        arg3->unk490 = !func_800333C8(arg0, sp34, arg3->unk4A8, &arg3->unk1C);
+        arg3->unk490 = !func_800333C8(arg0, sp34, arg3->unk4A8, arg3->unk1C);
     }
     arg3->unk490 = 0;
     if ((arg3->unk4A9 & 2) && (sp3C != 0)) {
@@ -81,11 +81,11 @@ static s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* ar
     } else if (*arg2 != 0) {
         if (sp3E > 0 && arg0->curModAnimId != arg5[1]) {
             func_80023D30(arg0, arg5[1], 0.0f, 0);
-            func_80024D74(arg0, 0x1E);
+            func_80024D74(arg0, 30);
         }
         if (sp3E < 0 && arg0->curModAnimId != arg5[0]) {
             func_80023D30(arg0, arg5[0], 0.0f, 0);
-            func_80024D74(arg0, 0x1E);
+            func_80024D74(arg0, 30);
         }
         if (sp3C == 0) {
             sp3E = sp3E > 0 ? (sp3E / 20) : (sp3E / 20);
@@ -103,7 +103,7 @@ static void dll_53_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* 
     s32* temp_a1 = func_800349B0();
     switch (arg2->unk498) {
     case 3:
-        func_80033224(arg0, temp_a1, arg2->unk4A8, &arg2->unk1C);
+        func_80033224(arg0, temp_a1, arg2->unk4A8, arg2->unk1C);
         arg2->unk490 = 0;
         arg2->unk498 = 2;
         /* fallthrough */
@@ -141,22 +141,22 @@ void dll_53_func_4B8(Object* arg0, MoveLibData* arg1) {
         if ((arg1->unk4A9 & 1) && (arg1->unk498 != 8)) {
             arg1->unk498 = 8;
             if (!(arg1->unk4A9 & 8)) {
-                func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                func_80033224(arg0, sp54, arg1->unk4A8, arg1->unk1C);
                 arg1->unk490 = 0x50;
-                func_80033350(&arg1->unk1C, arg1->unk4A8, 0, 0);
+                func_80033350(arg1->unk1C, arg1->unk4A8, 0, 0);
             } else {
                 func_800332A4(arg0, func_800349B0(), arg1->unk4A8);
             }
         } else if (!(arg1->unk4A9 & 1) && (arg1->unk498 == 8)) {
             arg1->unk498 = 0;
             if (!(arg1->unk4A9 & 8)) {
-                func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                func_80033224(arg0, sp54, arg1->unk4A8, arg1->unk1C);
                 arg1->unk490 = 0x50;
             }
         }
         if (arg1->unk498 > 1) {
             if ((arg1->unk490 != 0) && !(arg1->unk4A9 & 8)) {
-                arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, arg1->unk1C);
                 return;
             }
             func_800332A4(arg0, func_800349B0(), arg1->unk4A8);
@@ -187,14 +187,14 @@ void dll_53_func_4B8(Object* arg0, MoveLibData* arg1) {
             }
             if ((arg1->unk4AC != -1) && (sp50 == arg1->unk49C)) {
                 if (((arg1->unk4B4 -= gUpdateRate) <= 0) && ((arg1->unk4B4 + gUpdateRate) > 0)) {
-                    func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                    func_80033224(arg0, sp54, arg1->unk4A8, arg1->unk1C);
                     arg1->unk490 = 0x50;
-                    func_80033350(&arg1->unk1C, arg1->unk4A8, 0, 0);
+                    func_80033350(arg1->unk1C, arg1->unk4A8, 0, 0);
                     arg1->unk498 = 0;
                     return;
                 }
                 if (arg1->unk490 != 0) {
-                    arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                    arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, arg1->unk1C);
                 }
                 if (arg1->unk4B4 < -arg1->unk4B0) {
                     arg1->unk4B4 = rand_next(arg1->unk4B0, arg1->unk4AC);
@@ -227,28 +227,28 @@ void dll_53_func_4B8(Object* arg0, MoveLibData* arg1) {
             }
             if ((((sp5A >= 0) ? sp5A : -sp5A) >= 0x5555) || (sp50 == NULL)) {
                 if ((arg1->unk498 != 0) || ((sp50 == NULL) && (arg1->unk49C != NULL))) {
-                    func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                    func_80033224(arg0, sp54, arg1->unk4A8, arg1->unk1C);
                     arg1->unk490 = 0xA;
-                    func_80033350(&arg1->unk1C, arg1->unk4A8, 0, 0);
+                    func_80033350(arg1->unk1C, arg1->unk4A8, 0, 0);
                     arg1->unk498 = 0;
                 }
             } else {
                 if ((sp50 != arg1->unk49C) || (arg1->unk498 == 0)) {
-                    func_80033224(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                    func_80033224(arg0, sp54, arg1->unk4A8, arg1->unk1C);
                     arg1->unk490 = 1;
                 }
                 if (arg1->unk4A9 & 8) {
                     arg1->unk490 = 0;
                 }
                 func_800334A4(arg0, sp50, &arg1->unk10, 
-                              arg1->unk490 != 0 ? &arg1->unk1C : NULL, 
+                              arg1->unk490 != 0 ? arg1->unk1C : NULL, 
                               arg1->unk454, sp60, 8, arg1->unk4A4);
                 arg1->unk498 = 1;
             }
             arg1->unk49C = sp50;
             arg1->unk4A0 = NULL;
             if (!(arg1->unk4A9 & 8) && (arg1->unk490 != 0)) {
-                arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, &arg1->unk1C);
+                arg1->unk490 = !func_800333C8(arg0, sp54, arg1->unk4A8, arg1->unk1C);
             }
         }
     }
@@ -283,8 +283,8 @@ void dll_53_func_BA4(Object* arg0, MoveLibData* arg1, s16 arg2, s16 arg3, s32 ar
     arg1->unk0 = 0/*.0f*/;
     arg1->unk4AC = -1;
     func_800332A4(arg0, func_800349B0(), arg4);
-    func_80033224(arg0, func_800349B0(), arg4, &arg1->unk1C);
-    func_80033350(&arg1->unk1C, arg1->unk4A8, 0, 0);
+    func_80033224(arg0, func_800349B0(), arg4, arg1->unk1C);
+    func_80033350(arg1->unk1C, arg1->unk4A8, 0, 0);
     dll_53_func_1E70(arg1, data_0, data_0, 8);
 }
 
@@ -365,9 +365,9 @@ static void dll_53_func_106C(Object* actor, Object* animObj, AnimObj_Data* animO
     sp2C = actor->data;
     gDLL_2_Camera->vtbl->set_target_object(NULL);
     sp2C->unk498 = 0;
-    func_80033224(actor, sp28, sp2C->unk4A8, &sp2C->unk1C);
+    func_80033224(actor, sp28, sp2C->unk4A8, sp2C->unk1C);
     sp2C->unk490 = 0x50;
-    func_80033350(&sp2C->unk1C, sp2C->unk4A8, 0, 0);
+    func_80033350(sp2C->unk1C, sp2C->unk4A8, 0, 0);
 }
 
 // offset: 0x1130 | func: 9 | export: 10

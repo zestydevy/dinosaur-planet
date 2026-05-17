@@ -12,22 +12,18 @@ typedef struct {
     f32 unk0;
     Vec3f unk4;
     Vec3f unk10;
-    HeadAnimation unk1C;
-    u8 _unk40[0x454 - 0x40];
-    s16 unk454[25]; // at least 25
-    u8 _unk486[0x490 - 0x486];
+    HeadAnimation unk1C[30];
+    s16 unk454[30];
     s32 unk490;
     s32 unk494;
     u8 unk498;
     u8 unk499;
-    u8 _unk49A[0x49C - 0x49A];
     Object* unk49C;
     Object* unk4A0;
     s16 unk4A4;
     s16 unk4A6;
     u8 unk4A8;
     u8 unk4A9;
-    u8 _unk4AA[0x4AC - 0x4AA];
     s32 unk4AC;
     s32 unk4B0;
     s32 unk4B4;
