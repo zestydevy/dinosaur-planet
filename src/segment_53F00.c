@@ -1098,35 +1098,28 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
     return spB7 | (spB5 * 0x10);
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800564C8.s")
-#else
-// N64: https://decomp.me/scratch/iUTQF
-// default.dol: https://decomp.me/scratch/ItkU6
 s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
     f32 temp_fa0;
     f32 temp_fa1;
     f32 temp_fs4;
-    f32 temp_ft3;
     f32 temp_ft4;
     f32 temp_ft5;
     f32 temp_fv1;
     s32 var_v0;
+    f32 var_fs1;
     f32 sp7C;
     f32 sp78;
-    f32 var_fs1;
     f32 var_fs2;
     s32 var_a0;
     s32 var_a1;
+    s32 var_v1;
     f32 sp64;
     f32 sp60;
-    s32 var_v1;
     s32 var_v1_2;
     s32 i;
+    s32 temp2;
     UnkFunc80051D68Arg3 *temp;
 
-    var_a0 = 0;
-    var_a1 = 1;
     if (arg5 != 0) {
         sp64 = 0;
         sp60 = 0;
@@ -1135,10 +1128,13 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
         sp60 = D_800BB200->z;
     }
     i = 0;
+    temp2 = 0;
+    var_a0 = 0;
+    var_a1 = 1;
     do {
-        temp_fs4 = arg2[i].f[1];
-        var_fs1 = arg2[i].f[0];
-        var_fs2 = arg2[i].f[2];
+        var_fs1 = arg2[temp2].f[0];
+        temp_fs4 = arg2[temp2].f[1];
+        var_fs2 = arg2[temp2].f[2];
         sp7C = arg4->unk40[i];
         sp78 = sp7C + 0.1f;
         var_fs1 -= sp64;
@@ -1148,9 +1144,9 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
             var_v1 = FALSE;
             temp = arg0;
             for (; (u32) temp < (u32) arg1; temp++) {
-                temp_fa1 = temp->unk4 * (1.0f / 8191.0f);
-                temp_fa0 = temp->unk6 * (1.0f / 8191.0f);
-                temp_ft4 = temp->unk8 * (1.0f / 8191.0f);
+                temp_fa1 = temp->unk4 * 0.00012208521f;
+                temp_fa0 = temp->unk6 * 0.00012208521f;
+                temp_ft4 = temp->unk8 * 0.00012208521f;
                 temp_ft5 = temp->unk0;
                 if (temp_fa0 >= 0.707f) {
                     continue;
@@ -1158,15 +1154,17 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
 
                 temp_fv1 = ((temp_fa1 * var_fs1) + (temp_fa0 * temp_fs4) + (temp_ft4 * var_fs2) + temp_ft5) - sp7C;
                 if ((2.0f * -sp7C) <= temp_fv1 && temp_fv1 <= 0.0f) {
-                    if (temp_fs4 < (temp->unk10[temp->unk32 & 0xF] - sp78)) {
+                    if (temp_fs4 < (temp->unk10[temp->unk30 & 0xF] - sp78)) {
                         continue;
                     }
 
-                    if ((temp->unk10[temp->unk32 >> 4] + sp78) < temp_fs4) {
+                    if ((temp->unk10[temp->unk30 >> 4] + sp78) < temp_fs4) {
                         continue;
                     }
 
                     var_v1_2 = 0;
+                    // @fake to fix floats
+                    do { } while (0);
                     var_fs1 -= temp_fv1 * temp_fa1;
                     var_fs2 -= temp_fv1 * temp_ft4;
                     while (var_v1_2 < 0x65 && ((var_fs1 * temp_fa1) + (temp_fa0 * temp_fs4) + (var_fs2 * temp_ft4) + temp_ft5) < sp78) {
@@ -1179,8 +1177,8 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
                     if (var_v0 > 20) {
                         var_v1 = FALSE;
                     }
-                    arg2[i].f[0] = var_fs1 + sp64;
-                    arg2[i].f[2] = var_fs2 + sp60;
+                    arg2[temp2].f[0] = var_fs1 + sp64;
+                    arg2[temp2].f[2] = var_fs2 + sp60;
                     break;
                 }
             }
@@ -1191,11 +1189,11 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
         }
         var_a1 <<= 1;
         i++;
+        temp2++;
     } while (i < arg3);
 
     return var_a0;
 }
-#endif
 
 s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, Vec4f* arg5) {
     Vec3f sp64;
