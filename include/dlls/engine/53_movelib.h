@@ -47,7 +47,7 @@ typedef struct {
 } DLL53Func17F4Arg2;
 
 // Temp DLL 1 (see main.c)
-DLL_INTERFACE(DLL_53) {
+DLL_INTERFACE(DLL_53_movelib) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func0)(Object* arg0, MoveLibData* arg1);
     /*1*/ void (*func1)(MoveLibData* arg0, Object* arg1);

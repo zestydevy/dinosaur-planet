@@ -1,6 +1,6 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/332_FXEmit.h"
 #include "game/objects/object.h"
@@ -710,13 +710,13 @@ void KamerianBoss_control(Object *self) {
                 s16 sp8C[3] = {0x0002, 0x0000, 0x0000}; // _data_10
                 s16 sp84[3] = {0x0018, 0x0014, 0x0008}; // _data_18
                 create_temp_dll(53);
-                ((DLL_53*)gTempDLLInsts[1])->vtbl->func2(self, &_bss_40, -18000, 9800, 3);
-                ((DLL_53*)gTempDLLInsts[1])->vtbl->func6(&_bss_40, sp84, sp84, 3);
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &_bss_40, -18000, 9800, 3);
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&_bss_40, sp84, sp84, 3);
                 _bss_40.unk4A9 |= 8;
                 objdata->loadedTempDLL = TRUE;
             }
-            ((DLL_53*)gTempDLLInsts[1])->vtbl->func1(&_bss_40, objdata->player);
-            ((DLL_53*)gTempDLLInsts[1])->vtbl->func0(self, &_bss_40);
+            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&_bss_40, objdata->player);
+            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &_bss_40);
         }
     }
 }
@@ -774,7 +774,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         }
         // Head lookat
         if (objdata->loadedTempDLL) {
-            ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, &_bss_40, 2);
+            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &_bss_40, 2);
         }
     }
 }

@@ -1,4 +1,4 @@
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/map.h"
@@ -18,25 +18,25 @@
     0x0000, 0x0000, 0x0000, 0x0000
 };
 
-static void dll_53_func_106C(Object* actor, Object* animObj, AnimObj_Data* animObjData);
-static void dll_53_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4);
-static s32 dll_53_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2);
-static s32 dll_53_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4);
-static f32 dll_53_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4);
-void dll_53_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3);
+static void movelib_func_106C(Object* actor, Object* animObj, AnimObj_Data* animObjData);
+static void movelib_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4);
+static s32 movelib_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2);
+static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4);
+static f32 movelib_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4);
+void movelib_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3);
 
 // offset: 0x0 | ctor
-void dll_53_ctor(void *dll) {
+void movelib_ctor(void *dll) {
     STUBBED_PRINTF("\n MOVELIB LOADED \n");
 }
 
 // offset: 0xC | dtor
-void dll_53_dtor(void *dll) {
+void movelib_dtor(void *dll) {
     STUBBED_PRINTF("\n MOVELIB FREEDED \n");
 }
 
 // offset: 0x18 | func: 0
-static s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* arg3, f32* arg4, s16* arg5, Vec3f* arg6) {
+static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* arg3, f32* arg4, s16* arg5, Vec3f* arg6) {
     s16 sp3E;
     s16 sp3C;
     f32 sp38;
@@ -99,7 +99,7 @@ static s32 dll_53_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* ar
 }
 
 // offset: 0x3B4 | func: 1
-static void dll_53_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* arg3) {
+static void movelib_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* arg3) {
     s32* temp_a1 = func_800349B0();
     switch (arg2->unk498) {
     case 3:
@@ -108,7 +108,7 @@ static void dll_53_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* 
         arg2->unk498 = 2;
         /* fallthrough */
     case 2:
-        if (dll_53_func_18(arg0, arg1, &arg2->unk494, arg2, &arg2->unk0, arg3, &arg2->unk10) == 0) {
+        if (movelib_func_18(arg0, arg1, &arg2->unk494, arg2, &arg2->unk0, arg3, &arg2->unk10) == 0) {
             arg2->unk498 = 6;
         }
         break;
@@ -123,7 +123,7 @@ static void dll_53_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* 
 }
 
 // offset: 0x4B8 | func: 2 | export: 0
-void dll_53_func_4B8(Object* arg0, MoveLibData* arg1) {
+void movelib_func_4B8(Object* arg0, MoveLibData* arg1) {
     f32 sp64;
     f32 sp60;
     f32 temp_fv1;
@@ -255,19 +255,19 @@ void dll_53_func_4B8(Object* arg0, MoveLibData* arg1) {
 }
 
 // offset: 0xB84 | func: 3 | export: 1
-void dll_53_func_B84(MoveLibData* arg0, Object* arg1) {
+void movelib_func_B84(MoveLibData* arg0, Object* arg1) {
     arg0->unk4A0 = arg1;
 }
 
 // offset: 0xB90 | func: 4 | export: 5
-void dll_53_func_B90(MoveLibData* arg0, s32 arg1, s32 arg2) {
+void movelib_func_B90(MoveLibData* arg0, s32 arg1, s32 arg2) {
     arg0->unk4AC = arg1;
     arg0->unk4B0 = arg2;
     arg0->unk4B4 = arg1;
 }
 
 // offset: 0xBA4 | func: 5 | export: 2
-void dll_53_func_BA4(Object* arg0, MoveLibData* arg1, s16 arg2, s16 arg3, s32 arg4) {
+void movelib_func_BA4(Object* arg0, MoveLibData* arg1, s16 arg2, s16 arg3, s32 arg4) {
     arg1->unk4A4 = arg2;
     arg1->unk4A6 = arg3;
     arg1->unk4A8 = arg4;
@@ -285,11 +285,11 @@ void dll_53_func_BA4(Object* arg0, MoveLibData* arg1, s16 arg2, s16 arg3, s32 ar
     func_800332A4(arg0, func_800349B0(), arg4);
     func_80033224(arg0, func_800349B0(), arg4, arg1->unk1C);
     func_80033350(arg1->unk1C, arg1->unk4A8, 0, 0);
-    dll_53_func_1E70(arg1, data_0, data_0, 8);
+    movelib_func_1E70(arg1, data_0, data_0, 8);
 }
 
 // offset: 0xCDC | func: 6 | export: 3
-void dll_53_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
+void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
     Vec3f sp4C;
     Vec3f sp3C;
     s16 sp38[3];
@@ -317,7 +317,7 @@ void dll_53_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
 }
 
 // offset: 0xE9C | func: 7 | export: 4
-s32 dll_53_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 arg3, s16 arg4) {
+s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 arg3, s16 arg4) {
     Object* temp_v0;
     s16 sp38[2];
     s16* temp_v0_3;
@@ -333,12 +333,12 @@ s32 dll_53_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 arg
         arg2->unk498 = 3;
         arg1->unk62 = 5;
         arg1->unk7A &= ~0x4;
-        arg1->unkF4 = dll_53_func_106C;
+        arg1->unkF4 = movelib_func_106C;
         return 1;
     }
     if (arg1->unk62 == 5) {
         if ((arg2->unk498 >= 2) && (arg2->unk498 < 8)) {
-            dll_53_func_3B4(arg0, temp_v0, arg2, sp38);
+            movelib_func_3B4(arg0, temp_v0, arg2, sp38);
             func_80024108(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
             if (arg2->unk498 == 7) {
                 arg1->unk7A |= 8;
@@ -357,7 +357,7 @@ s32 dll_53_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 arg
 }
 
 // offset: 0x106C | func: 8
-static void dll_53_func_106C(Object* actor, Object* animObj, AnimObj_Data* animObjData) {
+static void movelib_func_106C(Object* actor, Object* animObj, AnimObj_Data* animObjData) {
     MoveLibData* sp2C;
     s32* sp28;
 
@@ -371,7 +371,7 @@ static void dll_53_func_106C(Object* actor, Object* animObj, AnimObj_Data* animO
 }
 
 // offset: 0x1130 | func: 9 | export: 10
-s32 dll_53_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8* arg5) {
+s32 movelib_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8* arg5) {
     Vec3f sp3C;
     f32 sp38;
     f32 sp34;
@@ -421,7 +421,7 @@ s32 dll_53_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8*
 }
 
 // offset: 0x14F4 | func: 10 | export: 11
-s32 dll_53_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* arg2, f32 arg3, u8 arg4, f32* arg5, s32* arg6) {
+s32 movelib_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* arg2, f32 arg3, u8 arg4, f32* arg5, s32* arg6) {
     f32 xDiff, zDiff;
     s32 sp3C;
     f32 sp38;
@@ -432,13 +432,13 @@ s32 dll_53_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* arg
         return 1;
     }
     if (*arg6 & 4) {
-        if (dll_53_func_17F4(arg0, NULL, arg2, &arg2->unk30, arg3) != 0) {
+        if (movelib_func_17F4(arg0, NULL, arg2, &arg2->unk30, arg3) != 0) {
             STUBBED_PRINTF("Got Curve ");
-            dll_53_func_16B0(arg0, arg1, 2, arg4, 200.0f);
+            movelib_func_16B0(arg0, arg1, 2, arg4, 200.0f);
             *arg6 |= 8;
         }
     } else {
-        sp3C = dll_53_func_173C(arg0, arg1, arg3);
+        sp3C = movelib_func_173C(arg0, arg1, arg3);
         if (sp3C != 0) {
             *arg6 |= 0x10;
         }
@@ -456,7 +456,7 @@ s32 dll_53_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* arg
 }
 
 // offset: 0x16B0 | func: 11
-static void dll_53_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4) {
+static void movelib_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4) {
     s32 sp28[2];
 
     if (arg2 == 1) {
@@ -471,7 +471,7 @@ static void dll_53_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 
 }
 
 // offset: 0x173C | func: 12
-static s32 dll_53_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
+static s32 movelib_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
     s32 sp24;
 
     sp24 = 0;
@@ -485,7 +485,7 @@ static s32 dll_53_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
 }
 
 // offset: 0x17F4 | func: 13
-static s32 dll_53_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4) {
+static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4) {
     Vec4f sp48;
     s16 sp40[3];
     s32 sp3C;
@@ -506,7 +506,7 @@ static s32 dll_53_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4
         rotate_vec_inv((const SRT*)&sp40, &arg2->unk24);
         STUBBED_PRINTF(" Tangent 2 %f %f %f \n", &arg2->unk24.x, &arg2->unk24.y, &arg2->unk24.z);
         *arg3 = 0.0f;
-        arg2->unk34 = dll_53_func_1A1C(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
+        arg2->unk34 = movelib_func_1A1C(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
     } else {
         *arg3 += (arg4 * (f32) gUpdateRate) / arg2->unk34;
         STUBBED_PRINTF("t value %f ", arg3);
@@ -534,7 +534,7 @@ static s32 dll_53_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4
 }
 
 // offset: 0x1A1C | func: 14
-static f32 dll_53_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4) {
+static f32 movelib_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4) {
     f32 var_fs2;
     f32 var_fs5;
     s32 var_s1;
@@ -586,7 +586,7 @@ static f32 dll_53_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, V
 }
 
 // offset: 0x1C0C | func: 15 | export: 7
-s32 dll_53_func_1C0C(s32 arg0, SRT* arg1) {
+s32 movelib_func_1C0C(s32 arg0, SRT* arg1) {
     CurveSetup* temp_v0_2;
     s32 temp_v0;
 
@@ -609,7 +609,7 @@ s32 dll_53_func_1C0C(s32 arg0, SRT* arg1) {
 }
 
 // offset: 0x1CC8 | func: 16 | export: 9
-s32 dll_53_func_1CC8(s32 arg0, SRT* arg1) {
+s32 movelib_func_1CC8(s32 arg0, SRT* arg1) {
     Object* temp_v0_3;
     CurveSetup* sp30;
     f32 sp2C;
@@ -639,7 +639,7 @@ s32 dll_53_func_1CC8(s32 arg0, SRT* arg1) {
 }
 
 // offset: 0x1DEC | func: 17 | export: 8
-f32 dll_53_func_1DEC(Object* arg0, s32 arg1) {
+f32 movelib_func_1DEC(Object* arg0, s32 arg1) {
     s32 temp_v0 = gDLL_26_Curves->vtbl->func_218C(arg1);
     if (temp_v0 >= 0) {
         return gDLL_26_Curves->vtbl->func_174C(arg0, temp_v0);
@@ -650,7 +650,7 @@ f32 dll_53_func_1DEC(Object* arg0, s32 arg1) {
 }
 
 // offset: 0x1E70 | func: 18 | export: 6
-void dll_53_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3) {
+void movelib_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3) {
     if (arg1 == NULL) {
         arg1 = data_0;
     }
@@ -662,33 +662,25 @@ void dll_53_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3) {
 }
 
 // offset: 0x1F1C | func: 19 | export: 12
-#ifndef NON_MATCHING
-s32 dll_53_func_1F1C(Object* arg0, s32 arg1, Vec3f* arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_1F1C.s")
-#else
-s32 dll_53_func_1F1C(Object* arg0, s32 arg1, Vec3f* arg2) {
-    Model* temp_t2;
+s32 movelib_func_1F1C(Object* arg0, s32 arg1, Vec3f* arg2) {
     ModelInstance* temp_t1;
-    ObjectHitInfo* temp_v0;
+    Model* temp_t2;
     Vtx* temp_v1_3;
     s32 var_v0;
-    s32 temp2;
     MtxF* mtx;
     ModelFacebatch* face;
     s8 *new_var;
 
-    temp_v0 = arg0->objhitInfo;
     temp_t1 = arg0->modelInsts[arg0->modelInstIdx];
     temp_t2 = temp_t1->model;
-    if ((temp_v0 != NULL) && ((temp_v0->unk9F != 0) || (temp_v0->unk9E != 0))) {
+    if ((arg0->objhitInfo != NULL) && ((arg0->objhitInfo->unk9F != 0) || (arg0->objhitInfo->unk9E != 0))) {
         return 0;
     }
     if (arg1 >= temp_t2->vertexCount) {
         return 0;
     }
-    // this is almost certainly a bug. should be: !(temp_t1->unk34 & 8)
-    temp2 = !temp_t1->unk34;
-    if (temp2 & 8) {
+    // @bug: should be: !(temp_t1->unk34 & 8)
+    if (!temp_t1->unk34 & 8) {
         return 0;
     }
     temp_v1_3 = temp_t1->vertices[(temp_t1->unk34 >> 1) & 1];
@@ -704,7 +696,7 @@ s32 dll_53_func_1F1C(Object* arg0, s32 arg1, Vec3f* arg2) {
     arg2->x = (f32) temp_v1_3[arg1].v.ob[0];
     arg2->y = (f32) temp_v1_3[arg1].v.ob[1];
     arg2->z = (f32) temp_v1_3[arg1].v.ob[2];
-    vec3_transform(&temp_t1->matrices[temp_t1->unk34 & 1][*new_var],
+    vec3_transform((MtxF*)(((f32*)temp_t1->matrices[temp_t1->unk34 & 1]) + (*new_var << 4)),
         arg2->x, 
         arg2->y, 
         arg2->z, 
@@ -715,4 +707,3 @@ s32 dll_53_func_1F1C(Object* arg0, s32 arg1, Vec3f* arg2) {
     arg2->z += gWorldZ;
     return temp_t2->vertexCount;
 }
-#endif

@@ -3,7 +3,7 @@
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 
 typedef s32 (*PointBackBSSUnk0_UnkC)(void*, s32, s32);
 
@@ -181,7 +181,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     }
     
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, &objData->unk0, 0);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objData->unk0, 0);
 
     fxBitfield = objData->unk51C;
     if (!fxBitfield) {

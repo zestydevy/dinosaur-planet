@@ -1,7 +1,7 @@
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/27.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
@@ -211,8 +211,8 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
     self->animCallback = thorntail_func_8CC;
     objdata->unk4B8 = -1;
     create_temp_dll(53);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->unk0, -0x1FFF, 0x2AAA, 3);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func5(&objdata->unk0, 0x190, 0x1E);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->unk0, -0x1FFF, 0x2AAA, 3);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->unk0, 0x190, 0x1E);
     objdata->unk0.unk4A9 &= ~0x8;
     obj_add_object_type(self, OBJTYPE_40);
 }
@@ -262,7 +262,7 @@ void thorntail_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     objdata = self->data;
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->unk0, 0);
+        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->unk0, 0);
     }
 }
 
@@ -325,7 +325,7 @@ static CurveSetup* thorntail_func_608(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 static int thorntail_func_8CC(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3) {
     SHthorntail_Data *objdata = actor->data;
 
-    if (((DLL_53*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->unk0, 1, 1) != 0) {
+    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->unk0, 1, 1) != 0) {
         return 1;
     }
     if (a3 != 0) {
