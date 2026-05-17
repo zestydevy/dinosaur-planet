@@ -950,6 +950,7 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000921C.s")
 #else
 // https://decomp.me/scratch/ZVLXX
+
 s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     Unk80008E40Unk0* var_s1;
     Unk80008E40Unk0* next;
@@ -1008,6 +1009,7 @@ s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     arg0->unk22 = 0;
     return var_s3;
 }
+
 #endif
 
 s32 func_80009528(Unk80008E40* arg0, Unk80009024* arg1) {
