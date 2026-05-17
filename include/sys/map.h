@@ -101,8 +101,8 @@ typedef struct {
 } BlockShape;
 
 typedef struct {
-/*0000*/    u32 d0;
-/*0004*/    u32 d1;
+/*0000*/    s32 d0;
+/*0004*/    s32 d1;
 } EncodedTri;
 
 // Same as Vtx_t, but flag is signed

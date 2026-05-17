@@ -271,18 +271,18 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
     var_s0->unk4 = D_800BB264;
 }
 
-#ifndef NON_EQUIVALENT
+#ifndef NON_MATCHING
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053B24.s")
 #else
 // N64: https://decomp.me/scratch/s5P5f
 // default.dol: https://decomp.me/scratch/pyduQ
+
+
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 upperY, s32 arg3, s32 arg4, s32 lowerY, s32 arg6, u8 arg7) {
     Block* temp_s0;
     Block* temp_v0;
-    BlockShape* temp_t9;
-    BlockShape* var_s3;
-    Block *sp138[6]; // unknown size, max 10
+    Block *sp138[8];
     f32 temp_fs1;
     Vtx_t* sp128[3];
     Vtx_t *sp124;
@@ -293,10 +293,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     f32 temp_fs2;
     s32 sp10C;
     s32 sp108;
-    s32 lowerX;
-    s32 upperX;
-    s32 lowerZ;
-    s32 upperZ;
+    s32 temp_s4; // sp104
+    s32 temp_s5; // sp100
+    s32 temp_s7; // spFC
+    s32 temp_s3; // spF8
+    s32 lowerZ; // pad
+    s32 upperZ; // pad
+    BlockShape* temp_t9;
+    BlockShape* var_s3;
     f32 temp_fv0;
     f32 temp_fv1;
     s32 var_a0_3;
@@ -309,12 +313,8 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     s32 minZ;
     s16 var_v0;
     s32 var_v1_2;
-    s32 pad;
-    u32 temp_s3;
-    u32 temp_s4;
-    u32 temp_s5;
-    u32 xDiff;
-    u32 temp_s7;
+    s32 zDiff;
+    s32 xDiff;
     s32 temp_t9_4;
     s32 var_t0;
     u8 var_v0_3;
@@ -325,8 +325,8 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     BlockShape* sp9C;
 
     arg1 -= D_80092A60;
-    arg4 -= D_80092A60;
     arg3 -= D_80092A64;
+    arg4 -= D_80092A60;
     arg6 -= D_80092A64;
     if (arg4 < arg1) {
         arg1 ^= arg4;
@@ -344,16 +344,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     temp_s3 = floor_f(arg6 / BLOCKS_GRID_UNIT_F);
     sp108 = 0;
     for (sp118 = 0; sp118 < 5; sp118++) {
-        temp_v0 = map_get_block_from_grid(temp_s4, temp_s7, sp118);
-        if (temp_v0 != NULL) {
+        if ((temp_v0 = map_get_block_from_grid(temp_s4, temp_s7, sp118)) != NULL) {
             sp138[sp108] = temp_v0;
             D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
             D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
             sp108++;
         }
         if (temp_s5 != temp_s4) {
-            temp_v0 = map_get_block_from_grid(temp_s5, temp_s7, sp118);
-            if (temp_v0 != NULL) {
+            if ((temp_v0 = map_get_block_from_grid(temp_s5, temp_s7, sp118)) != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
                 D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
@@ -361,16 +359,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
             }
         }
         if (temp_s3 != temp_s7) {
-            temp_v0 = map_get_block_from_grid(temp_s4, temp_s3, sp118);
-            if (temp_v0 != NULL) {
+            if ((temp_v0 = map_get_block_from_grid(temp_s4, temp_s3, sp118)) != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
                 D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
                 sp108++;
             }
             if (temp_s5 != temp_s4) {
-                temp_v0 = map_get_block_from_grid(temp_s5, temp_s3, sp118);
-                if (temp_v0 != NULL) {
+                if ((temp_v0 = map_get_block_from_grid(temp_s5, temp_s3, sp118)) != NULL) {
                     sp138[sp108] = temp_v0;
                     D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
                     D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
@@ -381,41 +377,37 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     }
 
     for (sp118 = 0; sp118 < sp108; sp118++) {
-        lowerX = arg1 - D_800BB200[sp118].x;
-        upperX = arg4 - D_800BB200[sp118].x;
-        lowerZ = arg3 - D_800BB200[sp118].z;
-        upperZ = arg6 - D_800BB200[sp118].z;
+        temp_s4 = arg1 - D_800BB200[sp118].x;
+        temp_s5 = arg4 - D_800BB200[sp118].x;
+        temp_s7 = arg3 - D_800BB200[sp118].z;
+        temp_s3 = arg6 - D_800BB200[sp118].z;
         D_800BB200[sp118].x += D_80092A60;
         D_800BB200[sp118].z += D_80092A64;
-        // lowerX = MAX(0, lowerX);
-        if (lowerX < 0) {
-            lowerX = 0;
+        if (temp_s4 < 0) {
+            temp_s4 = 0;
         }
-        // upperX = MIN(BLOCKS_GRID_UNIT, upperX);
-        if (upperX > BLOCKS_GRID_UNIT) {
-            upperX = BLOCKS_GRID_UNIT;
+        if (temp_s5 > BLOCKS_GRID_UNIT) {
+            temp_s5 = BLOCKS_GRID_UNIT;
         }
-        // lowerZ = MAX(0, lowerZ);
-        if (lowerZ < 0) {
-            lowerZ = 0;
+        if (temp_s7 < 0) {
+            temp_s7 = 0;
         }
-        // upperZ = MIN(BLOCKS_GRID_UNIT, upperZ);
-        if (upperZ > BLOCKS_GRID_UNIT) {
-            upperZ = BLOCKS_GRID_UNIT;
+        if (temp_s3 > BLOCKS_GRID_UNIT) {
+            temp_s3 = BLOCKS_GRID_UNIT;
         }
-        xDiff = D_800BB200->x - D_800BB200[sp118].x;
-        temp_s7 = D_800BB200->z - D_800BB200[sp118].z;
+        xDiff = D_800BB200[sp118].x - D_800BB200->x;
+        zDiff = D_800BB200[sp118].z - D_800BB200->z;
         temp_s0 = sp138[sp118];
         var_v0 = 1;
         sp122 = 0;
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
-            if ((var_t0 + 80) >= lowerX && upperX >= var_t0) {
+            if ((var_t0 + 80) >= temp_s4 && temp_s5 >= var_t0) {
                 sp122 |= var_v0;
             }
             var_v0 <<= 1;
         }
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
-            if (var_t0 >= (lowerZ - 80) && upperZ >= var_t0) {
+            if ((var_t0 + 80) >= temp_s7 && temp_s3 >= var_t0) {
                 sp122 |= var_v0;
             }
             var_v0 <<= 1;
@@ -423,123 +415,121 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
         sp9C = &temp_s0->shapes[temp_s0->shapeCount];
         for (var_s3 = temp_s0->shapes; var_s3 < sp9C; var_s3++) {
             if (var_s3->flags & 0x2000) {
-                if (!(var_s3->flags & 0x300000)) {
-                    spA6 = 4;
-                    if (!(arg7 & 0x20)) {
-                        spA6 |= 0x10;
-                    }
-                    goto block_55;
+                if ((var_s3->flags & 0x300000)) {
+                    continue;
+                }
+                spA6 = 4;
+                if (!(arg7 & 0x20)) {
+                    spA6 |= 0x10;
                 }
             } else if (!(var_s3->flags & 0x800) || (arg7 & 0x20)) {
                 spA6 = 2;
-block_55:
-                if (
-                    lowerY >= var_s3->Ymin &&
-                    var_s3->Ymax >= upperY &&
-                    (upperX >> 2) >= var_s3->Xmin &&
-                    var_s3->Xmax >= (lowerX >> 2) &&
-                    (upperZ >> 2) >= var_s3->Zmin &&
-                    var_s3->Zmax >= (lowerZ >> 2)
-                ) {
-                    if (var_s3->flags & 0x1000) {
-                        spA6 |= 8;
-                    }
-                    sp124 = &temp_s0->vertices2[temp_s0->vtxFlags & 1][var_s3->vtxBase];
-                    sp11C = var_s3->triBase;
-                    sp10C = var_s3[1].triBase;
-                    for (; sp11C < sp10C; sp11C++) {
-                        if ((!temp_s0) && (!temp_s0)) {}
-                        var_t0 = temp_s0->xzBitmap[sp11C] & sp122;
-                        if ((var_t0 & 0xFF) && (var_t0 & 0xFF00)) {
-                            minX = SOME_MIN;
-                            maxX = SOME_MAX;
-                            minY = SOME_MIN;
-                            maxY = SOME_MAX;
-                            minZ = SOME_MIN;
-                            maxZ = SOME_MAX;
-                            sp128[0] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 13) & 0x1F];
-                            sp128[1] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 7) & 0x1F];
-                            sp128[2] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 1) & 0x1F];
-                            for (var_t0 = 0; var_t0 < 3; var_t0++) {
-                                var_a0_3 = sp128[var_t0]->ob[0];
-                                var_v1_2 = sp128[var_t0]->ob[1];
-                                var_a1_3 = sp128[var_t0]->ob[2];
-                                if (var_s3->flags & 0x20000000) {
-                                    var_a0_3 *= 1.0f; // not necessary, forces a float cast tho
-                                    var_v1_2 *= 0.05f;
-                                    var_a1_3 *= 1.0f; // not necessary, forces a float cast tho
-                                    var_v1_2 += temp_s0->minY;
-                                }
-                                if (maxX < var_a0_3) {
-                                    maxX = var_a0_3;
-                                }
-                                if (var_a0_3 < minX) {
-                                    minX = var_a0_3;
-                                }
-                                if (maxY < var_v1_2) {
-                                    maxY = var_v1_2;
-                                    highestYIndex = var_t0;
-                                }
-                                if (var_v1_2 < minY) {
-                                    minY = var_v1_2;
-                                    lowestYIndex = var_t0;
-                                }
-                                if (maxZ < var_a1_3) {
-                                    maxZ = var_a1_3;
-                                }
-                                if (var_a1_3 < minZ) {
-                                    minZ = var_a1_3;
-                                }
-                                // @fake
-                                if ((!temp_s7) && (!temp_s7)) {}
-                                arg0->unkA[var_t0] = var_a0_3 + xDiff;
-                                arg0->unk10[var_t0] = var_v1_2;
-                                arg0->unk16[var_t0] = var_a1_3 + temp_s7;
+            } else  {
+                continue;
+            }
+
+            if (
+                lowerY >= var_s3->Ymin &&
+                var_s3->Ymax >= upperY &&
+                (temp_s5 >> 2) >= var_s3->Xmin &&
+                var_s3->Xmax >= (temp_s4 >> 2) &&
+                (temp_s3 >> 2) >= var_s3->Zmin &&
+                var_s3->Zmax >= (temp_s7 >> 2)
+            ) {
+                if (var_s3->flags & 0x1000) {
+                    spA6 |= 8;
+                }
+                sp124 = &temp_s0->vertices2[temp_s0->vtxFlags & 1][var_s3->vtxBase];
+                sp11C = var_s3->triBase;
+                sp10C = var_s3[1].triBase;
+                for (;sp11C < sp10C; sp11C++) {
+                    var_t0 = sp122 & temp_s0->xzBitmap[sp11C];
+                    if ((var_t0 & 0xFF) && (var_t0 & 0xFF00)) {
+                        minX = SOME_MIN;
+                        maxX = SOME_MAX;
+                        minZ = minY = minX;
+                        maxZ = maxY = maxX;
+                        sp128[0] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 13) & 0x1F];
+                        sp128[1] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 7) & 0x1F];
+                        sp128[2] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 1) & 0x1F];
+                        // how to slti here?
+                        for (var_t0 = 0; var_t0 != 3; var_t0++) {
+                            var_a0_3 = sp128[var_t0]->ob[0];
+                            var_v1_2 = sp128[var_t0]->ob[1];
+                            var_a1_3 = sp128[var_t0]->ob[2];
+                            if (var_s3->flags & 0x20000000) {
+                                var_a0_3 *= 1.0f; // not necessary, forces a float cast tho
+                                var_v1_2 *= 0.05f;
+                                var_v1_2 += temp_s0->minY;
+                                var_a1_3 *= 1.0f; // not necessary, forces a float cast tho
                             }
-                            if (
-                                lowerY >= minY &&
-                                maxY >= upperY &&
-                                upperX >= minX &&
-                                maxX >= lowerX &&
-                                upperZ >= minZ &&
-                                maxZ >= lowerZ
-                            ) {
-                                if (var_s3->animatorID != 0) {
-                                    temp_fs0 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
-                                    temp_fs1 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
-                                    temp_fs2 = (arg0->unkA[0] * (arg0->unk10[1] - arg0->unk10[2])) + (arg0->unkA[1] * (arg0->unk10[2] - arg0->unk10[0])) + (arg0->unkA[2] * (arg0->unk10[0] - arg0->unk10[1]));
-                                    temp_fv0 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1) + SQ(temp_fs2));
-                                    if (temp_fv0 > 0.0f) {
-                                        temp_fv1 = 8191.0f / temp_fv0;
-                                        arg0->unk4 = temp_fs0 * temp_fv1;
-                                        arg0->unk6 = temp_fs1 * temp_fv1;
-                                        arg0->unk8 = temp_fs2 * temp_fv1;
-                                    }
+                            if (var_a0_3 > maxX) {
+                                maxX = var_a0_3;
+                            }
+                            if (var_a0_3 < minX) {
+                                minX = var_a0_3;
+                            }
+                            if (var_v1_2 > maxY) {
+                                maxY = var_v1_2;
+                                highestYIndex = var_t0;
+                            }
+                            if (var_v1_2 < minY) {
+                                minY = var_v1_2;
+                                lowestYIndex = var_t0;
+                            }
+                            if (var_a1_3 > maxZ) {
+                                maxZ = var_a1_3;
+                            }
+                            if (var_a1_3 < minZ) {
+                                minZ = var_a1_3;
+                            }
+                            arg0->unkA[var_t0] = var_a0_3 + xDiff;
+                            arg0->unk10[var_t0] = var_v1_2;
+                            arg0->unk16[var_t0] = var_a1_3 + zDiff;
+                        }
+                        if (
+                            lowerY >= minY &&
+                            maxY >= upperY &&
+                            temp_s5 >= minX &&
+                            maxX >= temp_s4 &&
+                            temp_s3 >= minZ &&
+                            maxZ >= temp_s7
+                        ) {
+                            if (var_s3->animatorID != 0) {
+                                temp_fs0 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
+                                temp_fs1 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
+                                temp_fs2 = (arg0->unkA[0] * (arg0->unk10[1] - arg0->unk10[2])) + (arg0->unkA[1] * (arg0->unk10[2] - arg0->unk10[0])) + (arg0->unkA[2] * (arg0->unk10[0] - arg0->unk10[1]));
+                                temp_fv0 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1) + SQ(temp_fs2));
+                                if (temp_fv0 > 0.0f) {
+                                    temp_fv1 = 8191.0f / temp_fv0;
+                                    arg0->unk4 = temp_fs0 * temp_fv1;
+                                    arg0->unk6 = temp_fs1 * temp_fv1;
+                                    arg0->unk8 = temp_fs2 * temp_fv1;
+                                }
+                            } else {
+                                arg0->unk4 = temp_s0->encodedTris[sp11C].d0 >> 0x12;
+                                arg0->unk6 = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
+                                arg0->unk8 = temp_s0->encodedTris[sp11C].d1 >> 0x12;
+                            }
+                            if ((!(arg7 & 8) || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
+                                arg0->unk0 = -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * (1.0f / 8191.0f);
+                                temp = (sp11C) * 9;
+                                for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
+                                    arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
+                                }
+                                if (var_s3->flags & 0x2000) {
+                                    var_v0_3 = 0xE;
                                 } else {
-                                    arg0->unk4 = temp_s0->encodedTris[sp11C].d0 >> 0x12;
-                                    arg0->unk6 = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
-                                    arg0->unk8 = temp_s0->encodedTris[sp11C].d1 >> 0x12;
-                                }
-                                if (((arg7 & 8) == 0 || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
-                                    arg0->unk0 = (f32) -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * (1.0f / 8191.0f);
-                                    temp = (sp11C) * 9;
-                                    for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
-                                        arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
-                                    }
-                                    if (var_s3->flags & 0x2000) {
-                                        var_v0_3 = 0xE;
+                                    if (var_s3->materialIndex == 0xFF) {
+                                        var_v0_3 = 0;
                                     } else {
-                                        if (var_s3->materialIndex == 0xFF) {
-                                            var_v0_3 = 0;
-                                        } else {
-                                            var_v0_3 = temp_s0->materials[var_s3->materialIndex].terrain_type;
-                                        }
+                                        var_v0_3 = temp_s0->materials[var_s3->materialIndex].terrain_type;
                                     }
-                                    arg0->unk2E = var_v0_3;
-                                    arg0->unk30 = (highestYIndex * 0x10) | lowestYIndex;
-                                    arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
-                                    arg0++;
                                 }
+                                arg0->unk2E = var_v0_3;
+                                arg0->unk30 = (highestYIndex << 4) | lowestYIndex;
+                                arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
+                                arg0++;
                             }
                         }
                     }
@@ -549,6 +539,8 @@ block_55:
     }
     return arg0;
 }
+
+
 #endif
 
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 upperX, f32 upperY, f32 upperZ, f32 lowerX, f32 lowerY, f32 lowerZ, u8 arg9) {
