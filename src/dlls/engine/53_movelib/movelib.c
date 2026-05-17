@@ -30,6 +30,21 @@ typedef struct {
     s32 unk4B4;
 } MoveLibData;
 
+typedef struct {
+    u8 _unk0[0x2C - 0x0];
+    s8 unk2C;
+    s8 unk2D;
+} DLL53Func17F4Arg1;
+
+typedef struct {
+    Vec3f unk0;
+    Vec3f unkC;
+    Vec3f unk18;
+    Vec3f unk24;
+    u8 _unk30[0x34 - 0x30];
+    f32 unk34;
+} DLL53Func17F4Arg2;
+
 /*0x0*/ static s16 data_0[] = {
     0x0023, 0x0023, 0x0023, 0x0023, 
     0x0023, 0x0023, 0x0023, 0x0023, 
@@ -38,6 +53,7 @@ typedef struct {
 };
 
 static void dll_53_func_106C(Object* actor, Object* animObj, AnimObj_Data* animObjData);
+static f32 dll_53_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4);
 void dll_53_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3);
 
 // offset: 0x0 | ctor
@@ -445,10 +461,102 @@ s32 dll_53_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8*
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_173C.s")
 
 // offset: 0x17F4 | func: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_17F4.s")
+s32 dll_53_func_17F4(SRT* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4) {
+    Vec4f sp48;
+    s16 sp40[3];
+    s32 sp3C;
+
+    sp3C = 0;
+    if (arg1 != NULL) {
+        arg2->unk18.y = 0.0f;
+        arg2->unk18.z = 0.0f;
+        arg2->unk24.y = 0.0f;
+        arg2->unk24.z = 0.0f;
+        arg2->unk18.x = -150.0f;
+        arg2->unk24.x = -150.0f;
+        rotate_vec_inv(arg0, &arg2->unk18);
+        sp40[2] = 0;
+        sp40[1] = (s16) arg1->unk2D;
+        sp40[0] = (s16) arg1->unk2C;
+        rotate_vec_inv((const SRT*)&sp40, &arg2->unk24);
+        *arg3 = 0.0f;
+        arg2->unk34 = dll_53_func_1A1C(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
+    } else {
+        *arg3 += (arg4 * (f32) gUpdateRate) / arg2->unk34;
+        if (*arg3 >= 1.0f) {
+            sp3C = 1;
+            *arg3 = 1.0f;
+        }
+    }
+    sp48.x = arg2->unk0.x;
+    sp48.y = arg2->unkC.x;
+    sp48.z = arg2->unk18.x;
+    sp48.w = arg2->unk24.x;
+    arg0->transl.x = func_80004C5C(&sp48, *arg3, NULL);
+    sp48.x = arg2->unk0.y;
+    sp48.y = arg2->unkC.y;
+    sp48.z = arg2->unk18.y;
+    sp48.w = arg2->unk24.y;
+    arg0->transl.y = func_80004C5C(&sp48, *arg3, NULL);
+    sp48.x = arg2->unk0.z;
+    sp48.y = arg2->unkC.z;
+    sp48.z = arg2->unk18.z;
+    sp48.w = arg2->unk24.z;
+    arg0->transl.z = func_80004C5C(&sp48, *arg3, NULL);
+    return sp3C;
+}
 
 // offset: 0x1A1C | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_1A1C.s")
+static f32 dll_53_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4) {
+    f32 var_fs2;
+    f32 var_fs5;
+    s32 var_s1;
+    f32 temp_fs0;
+    f32 spA4;
+    f32 spA0;
+    f32 temp_fs1;
+    f32 temp_fs2;
+    f32 temp_fv0;
+    f32 temp_fv0_2;
+    f32 temp_fv0_3;
+    Vec4f sp7C;
+    f32 temp_fv1;
+    
+    var_fs2 = arg0->unk0.x;
+    spA4 = arg0->unk0.y;
+    spA0 = arg0->unk0.z;
+    var_fs5 = 0.0f;
+    for (var_s1 = 1; var_s1 < arg4 + 1; var_s1++) {
+        temp_fs0 = (f32) var_s1 / (f32) arg4;
+        
+        sp7C.x = arg0->unk0.x;
+        sp7C.y = arg2->x;
+        sp7C.z = arg1->x;
+        sp7C.w = arg3->x;
+        temp_fv0 = func_80004C5C(&sp7C, temp_fs0, NULL);
+        temp_fs1 = temp_fv0 - var_fs2;
+        
+        sp7C.x = arg0->unk0.y;
+        sp7C.y = arg2->y;
+        sp7C.z = arg1->y;
+        sp7C.w = arg3->y;
+        temp_fv0_2 = func_80004C5C(&sp7C, temp_fs0, NULL);
+        temp_fs2 = temp_fv0_2 - spA4;
+        
+        sp7C.x = arg0->unk0.z;
+        sp7C.y = arg2->z;
+        sp7C.z = arg1->z;
+        sp7C.w = arg3->z;
+        temp_fv0_3 = func_80004C5C(&sp7C, temp_fs0, NULL);
+        temp_fv1 = temp_fv0_3 - spA0;
+        
+        var_fs5 += sqrtf(SQ(temp_fs1) + SQ(temp_fs2) + SQ(temp_fv1));
+        var_fs2 = temp_fv0;
+        spA4 = temp_fv0_2;
+        spA0 = temp_fv0_3;
+    }
+    return var_fs5;
+}
 
 // offset: 0x1C0C | func: 15 | export: 7
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_1C0C.s")
