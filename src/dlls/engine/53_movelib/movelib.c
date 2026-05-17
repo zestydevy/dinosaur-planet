@@ -41,7 +41,7 @@ typedef struct {
     Vec3f unkC;
     Vec3f unk18;
     Vec3f unk24;
-    u8 _unk30[0x34 - 0x30];
+    f32 unk30;
     f32 unk34;
 } DLL53Func17F4Arg2;
 
@@ -53,6 +53,9 @@ typedef struct {
 };
 
 static void dll_53_func_106C(Object* actor, Object* animObj, AnimObj_Data* animObjData);
+static void dll_53_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4);
+static s32 dll_53_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2);
+static s32 dll_53_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4);
 static f32 dll_53_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4);
 void dll_53_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3);
 
@@ -452,16 +455,69 @@ s32 dll_53_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8*
 }
 
 // offset: 0x14F4 | func: 10 | export: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_14F4.s")
+s32 dll_53_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* arg2, f32 arg3, u8 arg4, f32* arg5, s32* arg6) {
+    f32 xDiff, zDiff;
+    s32 sp3C;
+    f32 sp38;
+
+    sp3C = 0;
+    sp38 = 0.0f;
+    if (*arg6 & 0x10) {
+        return 1;
+    }
+    if (*arg6 & 4) {
+        if (dll_53_func_17F4(arg0, NULL, arg2, &arg2->unk30, arg3) != 0) {
+            dll_53_func_16B0(arg0, arg1, 2, arg4, 200.0f);
+            *arg6 |= 8;
+        }
+    } else {
+        sp3C = dll_53_func_173C(arg0, arg1, arg3);
+        if (sp3C != 0) {
+            *arg6 |= 0x10;
+        }
+    }
+    func_8002493C(arg0, arg3, arg5);
+    if ((*arg6 & 1) && (func_80058680(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp38, 0) == 0)) {
+        arg0->srt.transl.y -= sp38;
+    }
+    if (*arg6 & 2) {
+        xDiff = arg0->srt.transl.x - arg0->prevLocalPosition.x;
+        zDiff = arg0->srt.transl.z - arg0->prevLocalPosition.z;
+        arg0->srt.yaw += ((s16)(arctan2_f(xDiff, zDiff) + 0x8000) - arg0->srt.yaw) >> 3;
+    }
+    return sp3C;
+}
 
 // offset: 0x16B0 | func: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_16B0.s")
+static void dll_53_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4) {
+    s32 sp28[2];
+
+    if (arg2 == 1) {
+        sp28[0] = 0;
+        sp28[1] = 0;
+    } else {
+        sp28[0] = 0x19;
+        sp28[1] = 0x15;
+    }
+    gDLL_26_Curves->vtbl->func_4288(arg1, arg0, arg4, sp28, arg3);
+}
 
 // offset: 0x173C | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_173C.s")
+static s32 dll_53_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
+    s32 sp24;
+
+    sp24 = 0;
+    if ((func_800053B0(arg1, arg2) != 0) || (arg1->unk10 != 0)) {
+        sp24 = gDLL_26_Curves->vtbl->func_4704(arg1);
+    }
+    arg0->srt.transl.x = arg1->unk68.x;
+    arg0->srt.transl.y = arg1->unk68.y;
+    arg0->srt.transl.z = arg1->unk68.z;
+    return sp24;
+}
 
 // offset: 0x17F4 | func: 13
-s32 dll_53_func_17F4(SRT* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4) {
+static s32 dll_53_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4) {
     Vec4f sp48;
     s16 sp40[3];
     s32 sp3C;
@@ -474,7 +530,7 @@ s32 dll_53_func_17F4(SRT* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2
         arg2->unk24.z = 0.0f;
         arg2->unk18.x = -150.0f;
         arg2->unk24.x = -150.0f;
-        rotate_vec_inv(arg0, &arg2->unk18);
+        rotate_vec_inv(&arg0->srt, &arg2->unk18);
         sp40[2] = 0;
         sp40[1] = (s16) arg1->unk2D;
         sp40[0] = (s16) arg1->unk2C;
@@ -492,17 +548,17 @@ s32 dll_53_func_17F4(SRT* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2
     sp48.y = arg2->unkC.x;
     sp48.z = arg2->unk18.x;
     sp48.w = arg2->unk24.x;
-    arg0->transl.x = func_80004C5C(&sp48, *arg3, NULL);
+    arg0->srt.transl.x = func_80004C5C(&sp48, *arg3, NULL);
     sp48.x = arg2->unk0.y;
     sp48.y = arg2->unkC.y;
     sp48.z = arg2->unk18.y;
     sp48.w = arg2->unk24.y;
-    arg0->transl.y = func_80004C5C(&sp48, *arg3, NULL);
+    arg0->srt.transl.y = func_80004C5C(&sp48, *arg3, NULL);
     sp48.x = arg2->unk0.z;
     sp48.y = arg2->unkC.z;
     sp48.z = arg2->unk18.z;
     sp48.w = arg2->unk24.z;
-    arg0->transl.z = func_80004C5C(&sp48, *arg3, NULL);
+    arg0->srt.transl.z = func_80004C5C(&sp48, *arg3, NULL);
     return sp3C;
 }
 
@@ -559,7 +615,25 @@ static f32 dll_53_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, V
 }
 
 // offset: 0x1C0C | func: 15 | export: 7
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/53_movelib/dll_53_func_1C0C.s")
+s32 dll_53_func_1C0C(s32 arg0, SRT* arg1) {
+    CurveSetup* temp_v0_2;
+    s32 temp_v0;
+
+    if (arg0 >= 28) {
+        return 0;
+    }
+    temp_v0 = gDLL_26_Curves->vtbl->func_218C(arg0);
+    if (temp_v0 >= 0) {
+        temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_v0);
+        arg1->transl.x = temp_v0_2->pos.x;
+        arg1->transl.y = temp_v0_2->pos.y;
+        arg1->transl.z = temp_v0_2->pos.z;
+        arg1->yaw = temp_v0_2->unk2C << 8;
+        return 1;
+    }
+
+    return 0;
+}
 
 // offset: 0x1CC8 | func: 16 | export: 9
 s32 dll_53_func_1CC8(s32 arg0, SRT* arg1) {
