@@ -1,8 +1,15 @@
-#include "common.h"
 #include "dlls/engine/53.h"
+#include "sys/curves.h"
+#include "sys/main.h"
+#include "sys/map.h"
+#include "sys/objects.h"
 #include "sys/objlib.h"
 #include "sys/objexpr.h"
 #include "sys/objtype.h"
+#include "sys/rand.h"
+#include "sys/segment_53F00.h"
+#include "dll.h"
+#include "macros.h"
 
 // TODO: move to header
 typedef struct {
@@ -467,6 +474,7 @@ s32 dll_53_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* arg
     }
     if (*arg6 & 4) {
         if (dll_53_func_17F4(arg0, NULL, arg2, &arg2->unk30, arg3) != 0) {
+            STUBBED_PRINTF("Got Curve ");
             dll_53_func_16B0(arg0, arg1, 2, arg4, 200.0f);
             *arg6 |= 8;
         }
@@ -500,6 +508,7 @@ static void dll_53_func_16B0(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 
         sp28[1] = 0x15;
     }
     gDLL_26_Curves->vtbl->func_4288(arg1, arg0, arg4, sp28, arg3);
+    STUBBED_PRINTF(" PathId %i Loc id %i \n", arg3, arg1->unk9C->unk18);
 }
 
 // offset: 0x173C | func: 12
@@ -531,14 +540,17 @@ static s32 dll_53_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4
         arg2->unk18.x = -150.0f;
         arg2->unk24.x = -150.0f;
         rotate_vec_inv(&arg0->srt, &arg2->unk18);
+        STUBBED_PRINTF(" Tangent 1 %f %f %f \n", &arg2->unk18.x, &arg2->unk18.y, &arg2->unk18.z);
         sp40[2] = 0;
         sp40[1] = (s16) arg1->unk2D;
         sp40[0] = (s16) arg1->unk2C;
         rotate_vec_inv((const SRT*)&sp40, &arg2->unk24);
+        STUBBED_PRINTF(" Tangent 2 %f %f %f \n", &arg2->unk24.x, &arg2->unk24.y, &arg2->unk24.z);
         *arg3 = 0.0f;
         arg2->unk34 = dll_53_func_1A1C(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
     } else {
         *arg3 += (arg4 * (f32) gUpdateRate) / arg2->unk34;
+        STUBBED_PRINTF("t value %f ", arg3);
         if (*arg3 >= 1.0f) {
             sp3C = 1;
             *arg3 = 1.0f;
@@ -620,6 +632,7 @@ s32 dll_53_func_1C0C(s32 arg0, SRT* arg1) {
     s32 temp_v0;
 
     if (arg0 >= 28) {
+        STUBBED_PRINTF("WARNING: Max CreatePoint is Exceeded ");
         return 0;
     }
     temp_v0 = gDLL_26_Curves->vtbl->func_218C(arg0);
@@ -632,6 +645,7 @@ s32 dll_53_func_1C0C(s32 arg0, SRT* arg1) {
         return 1;
     }
 
+    STUBBED_PRINTF("WARNING: Error Could not find createpoitn node ");
     return 0;
 }
 
@@ -660,6 +674,8 @@ s32 dll_53_func_1CC8(s32 arg0, SRT* arg1) {
         }
         return 1;
     }
+    
+    STUBBED_PRINTF(" Error Could not find node ");
     return 0;
 }
 
@@ -669,6 +685,8 @@ f32 dll_53_func_1DEC(Object* arg0, s32 arg1) {
     if (temp_v0 >= 0) {
         return gDLL_26_Curves->vtbl->func_174C(arg0, temp_v0);
     }
+
+    STUBBED_PRINTF("CURVEPOINT :Error Could not find node ");
     return -1.0f;
 }
 
@@ -739,13 +757,3 @@ s32 dll_53_func_1F1C(Object* arg0, s32 arg1, Vec3f* arg2) {
     return temp_t2->vertexCount;
 }
 #endif
-
-/*0x38*/ static const char str_38[] = "Got Curve ";
-/*0x44*/ static const char str_44[] = " PathId %i Loc id %i \n";
-/*0x5C*/ static const char str_5C[] = " Tangent 1 %f %f %f \n";
-/*0x74*/ static const char str_74[] = " Tangent 2 %f %f %f \n";
-/*0x8C*/ static const char str_8C[] = "t value %f ";
-/*0x98*/ static const char str_98[] = "WARNING: Max CreatePoint is Exceeded ";
-/*0xC0*/ static const char str_C0[] = "WARNING: Error Could not find createpoitn node ";
-/*0xF0*/ static const char str_F0[] = " Error Could not find node ";
-/*0x10C*/ static const char str_10C[] = "CURVEPOINT :Error Could not find node ";
