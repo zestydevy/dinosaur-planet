@@ -1,0 +1,29 @@
+.text = 0x0:
+movelib_ctor = 0x0;
+movelib_dtor = 0xC;
+movelib_func_18 = 0x18;
+movelib_func_3B4 = 0x3B4;
+movelib_func_4B8 = 0x4B8;
+movelib_func_B84 = 0xB84;
+movelib_func_B90 = 0xB90;
+movelib_func_BA4 = 0xBA4;
+movelib_func_CDC = 0xCDC;
+movelib_func_E9C = 0xE9C;
+movelib_func_106C = 0x106C;
+movelib_func_1130 = 0x1130;
+movelib_func_14F4 = 0x14F4;
+movelib_func_16B0 = 0x16B0;
+movelib_func_173C = 0x173C;
+movelib_func_17F4 = 0x17F4;
+movelib_func_1A1C = 0x1A1C;
+movelib_func_1C0C = 0x1C0C;
+movelib_func_1CC8 = 0x1CC8;
+movelib_func_1DEC = 0x1DEC;
+movelib_func_1E70 = 0x1E70;
+movelib_get_vtx_world_pos = 0x1F1C;
+
+.rodata = 0x21FC:
+str_0 = 0x0; // absolute:0x21FC
+
+.data = 0x234C:
+data_0 = 0x0; // absolute:0x234C

@@ -9,7 +9,7 @@
 #include "sys/dll.h"
 #include "sys/objtype.h"
 #include "sys/gfx/projgfx.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/373_CFCloudBaby.h"
 
 // CFGuardian/CFSupTreasureCh
@@ -452,7 +452,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
         setup = map_find_obj_setup(data->uID, NULL, NULL, NULL, NULL);
         if (setup) {
             if (data->unk12) {
-                ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
+                ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
                 setup->x = transform.transl.x;
                 setup->y = transform.transl.y;
                 setup->z = transform.transl.z;

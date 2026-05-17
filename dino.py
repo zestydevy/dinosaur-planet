@@ -519,7 +519,7 @@ class DinoCommandRunner:
             self.__run_cmd([sys.executable, str(M2CTX_PY), file])
 
         # Run m2c
-        self.__run_cmd(["m2c", "-t", "mips-ido-c", "--context", "ctx.c", "-f", func_name, asmpath.as_posix()])
+        self.__run_cmd(["m2c", "-t", "mips-ido-c", "--pointer-style", "left", "--context", "ctx.c", "-f", func_name, asmpath.as_posix()])
     
     def __assert_project_built(self):
         linker_script_path = SCRIPT_DIR.joinpath(f"{TARGET}.ld")

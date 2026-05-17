@@ -3,7 +3,7 @@
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 
 typedef s32 (*PointBackBSSUnk0_UnkC)(void*, s32, s32);
 
@@ -25,12 +25,14 @@ typedef struct {
     u8 unk8E;
 } PointBack_func1308_arg1; //might be AnimObj_Data?
 
+// same as DLL53Func17F4Arg1?
 typedef struct {
     s8 _unk0[0x2C - 0x0];
     s8 unk2C;
     s8 unk2D;
 } DLL658_func19FC_arg1;
 
+// same as DLL53Func17F4Arg2?
 typedef struct {
     Vec3f unk0;
     Vec3f unkC;
@@ -52,7 +54,7 @@ typedef struct {
 } PointBack_Setup;
 
 typedef struct {
-    s8 _unk0[0x4B8 - 0x0];
+    MoveLibData unk0;
     HeadAnimation unk4B8;
     s8 _unk4DC[0x51C - 0x4DC];
     s32 unk51C; //bitfield for creating 4 effects in print function?
@@ -179,7 +181,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     }
     
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, objData, 0);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objData->unk0, 0);
 
     fxBitfield = objData->unk51C;
     if (!fxBitfield) {
