@@ -551,12 +551,6 @@ block_55:
 }
 #endif
 
-#ifndef NON_MATCHING
-UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, u8 arg9);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005471C.s")
-#else
-// N64: https://decomp.me/scratch/Nabui
-// default.dol: https://decomp.me/scratch/PRxaZ
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 upperX, f32 upperY, f32 upperZ, f32 lowerX, f32 lowerY, f32 lowerZ, u8 arg9) {
     s32 var_s1;
     s16 spDC[3];
@@ -574,10 +568,11 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
     s32 i;
     u8 lowestYIndex; // s4
     u8 highestYIndex; // s3
+    s16 pad;
     f32 xBounds[4]; // sp98
     f32 zBounds[4]; // sp88
     f32 sp84;
-    s32 pad;
+    FacebatchBound *bound;
     Model* sp7C;
 
     sp7C = arg2->model;
@@ -600,90 +595,93 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
     for (spB4 = 0; spB4 < spB0; spB4++) {
         if (
             (sp7C->faces[spB4].tagC & 0x100000) == 0 &&
-            (!(sp7C->faces[spB4].tagC & 0x800) || (arg9 & 0x20)) &&
-            !(sp7C->facebatchBounds[(0, spB4)].minX < upperX) &&
-            !(lowerX < sp7C->facebatchBounds[(0, spB4)].maxX) &&
-            !(sp7C->facebatchBounds[(0, spB4)].minY < upperY) &&
-            !(lowerY < sp7C->facebatchBounds[(0, spB4)].maxY) &&
-            !(sp7C->facebatchBounds[(0, spB4)].minZ < upperZ) &&
-            !(lowerZ < sp7C->facebatchBounds[(0, spB4)].maxZ)
+            (!(sp7C->faces[spB4].tagC & 0x800) || (arg9 & 0x20))
        ) {
-            var_s0 = (sp7C->faces[spB4].tagC & 0x7FF);
-            var_s0 *= 9;
-            var_s1 = sp7C->faces[spB4].baseVertexID;
-            pad = sp7C->faces[spB4].baseF3DCommandIndex;
-            var_s5 = (u32*)&sp7C->displayList[pad];
-            for (;; var_s0 += 9) {
-                minX = SOME_MIN;
-                maxX = SOME_MAX;
-                minY = SOME_MIN;
-                maxY = SOME_MAX;
-                minZ = SOME_MIN;
-                maxZ = SOME_MAX;
-                if ((var_s5[0] >> 24) != 6 && (var_s5[0] >> 24) != 5) {
-                    break;
-                }
-                spDC[0] = (var_s5[0] >> 17) & 0x1F;
-                spDC[1] = (var_s5[0] >> 9) & 0x1F;
-                spDC[2] = (var_s5[0] >> 1) & 0x1F;
-                var_s5 += 1;
-                for (i = 0; i < 3; i++) {
-                    currVtx = &sp7C->vertices[spDC[i] + var_s1];
-                    if (maxX < currVtx->v.ob[0]) {
-                        maxX = currVtx->v.ob[0];
+            bound = (FacebatchBound *)((u8*)sp7C->facebatchBounds + ((spB4 * 3) << 2));
+            if (
+                !(bound->minX < upperX) &&
+                !(lowerX < bound->maxX) &&
+                !(bound->minY < upperY) &&
+                !(lowerY < bound->maxY) &&
+                !(bound->minZ < upperZ) &&
+                !(lowerZ < bound->maxZ)
+           ) {
+                var_s0 = (sp7C->faces[spB4].tagC & 0x7FF);
+                var_s0 *= 9;
+                var_s1 = sp7C->faces[spB4].baseVertexID;
+                pad = sp7C->faces[spB4].baseF3DCommandIndex;
+                var_s5 = (u32*)&sp7C->displayList[pad];
+                for (;; var_s0 += 9) {
+                    minX = SOME_MIN;
+                    maxX = SOME_MAX;
+                    minY = SOME_MIN;
+                    maxY = SOME_MAX;
+                    minZ = SOME_MIN;
+                    maxZ = SOME_MAX;
+                    if ((var_s5[0] >> 24) != 6 && (var_s5[0] >> 24) != 5) {
+                        break;
                     }
-                    if (currVtx->v.ob[0] < minX) {
-                        minX = currVtx->v.ob[0];
-                    }
-                    if (maxY < currVtx->v.ob[1]) {
-                        maxY = currVtx->v.ob[1];
-                        highestYIndex = i;
-                    }
-                    if (currVtx->v.ob[1] < minY) {
-                        minY = currVtx->v.ob[1];
-                        lowestYIndex = i;
-                    }
-                    if (maxZ < currVtx->v.ob[2]) {
-                        if (1) maxZ = currVtx->v.ob[2];
-                    }
-                    if (currVtx->v.ob[2] < minZ) {
-                        minZ = currVtx->v.ob[2];
-                    }
-                    arg0->unkA[i] = currVtx->v.ob[0];
-                    arg0->unk10[i] = currVtx->v.ob[1];
-                    arg0->unk16[i] = currVtx->v.ob[2];
-                }
-                if (!(lowerY < minY) && !(maxY < upperY) && !(lowerX < minX) && !(maxX < upperX) && !(lowerZ < minZ) && !(maxZ < upperZ)) {
-                    if (sp7C->edgeVectors != NULL) {
-                        for (i = var_s0; i < (var_s0 + 9); i++) {
-                            arg0->unk1C[i-var_s0] = sp7C->edgeVectors[i];
+                    spDC[0] = (var_s5[0] >> 17) & 0x1F;
+                    spDC[1] = (var_s5[0] >> 9) & 0x1F;
+                    spDC[2] = (var_s5[0] >> 1) & 0x1F;
+                    var_s5 += 1;
+                    for (i = 0; i < 3; i++) {
+                        currVtx = &sp7C->vertices[spDC[i] + var_s1];
+                        if (maxX < currVtx->v.ob[0]) {
+                            maxX = currVtx->v.ob[0];
                         }
-                    } else {
-                        for (i = var_s0; i < (var_s0 + 9); i++) {
-                            arg0->unk1C[i-var_s0] = 0;
+                        if (currVtx->v.ob[0] < minX) {
+                            minX = currVtx->v.ob[0];
                         }
-                        // @fake
-                        do {
-                            arg0->unk1C[1] = 0x7FFF;
-                            arg0->unk1C[4] = 0x7FFF;
-                            arg0->unk1C[7] = 0x7FFF;
-                        } while (0);
+                        if (maxY < currVtx->v.ob[1]) {
+                            maxY = currVtx->v.ob[1];
+                            highestYIndex = i;
+                        }
+                        if (currVtx->v.ob[1] < minY) {
+                            minY = currVtx->v.ob[1];
+                            lowestYIndex = i;
+                        }
+                        if (maxZ < currVtx->v.ob[2]) {
+                            if (1) maxZ = currVtx->v.ob[2];
+                        }
+                        if (currVtx->v.ob[2] < minZ) {
+                            minZ = currVtx->v.ob[2];
+                        }
+                        arg0->unkA[i] = currVtx->v.ob[0];
+                        arg0->unk10[i] = currVtx->v.ob[1];
+                        arg0->unk16[i] = currVtx->v.ob[2];
                     }
-                    if (sp7C->faces[spB4].materialID == 0xFF) {
-                        arg0->unk30 = 0;
-                    } else {
-                        arg0->unk30 = sp7C->materials[sp7C->faces[spB4].materialID].unk7;
+                    if (!(lowerY < minY) && !(maxY < upperY) && !(lowerX < minX) && !(maxX < upperX) && !(lowerZ < minZ) && !(maxZ < upperZ)) {
+                        if (sp7C->edgeVectors != NULL) {
+                            for (i = var_s0; i < (var_s0 + 9); i++) {
+                                arg0->unk1C[i-var_s0] = sp7C->edgeVectors[i];
+                            }
+                        } else {
+                            for (i = var_s0; i < (var_s0 + 9); i++) {
+                                arg0->unk1C[i-var_s0] = 0;
+                            }
+                            // @fake
+                            do {
+                                arg0->unk1C[1] = 0x7FFF;
+                                arg0->unk1C[4] = 0x7FFF;
+                                arg0->unk1C[7] = 0x7FFF;
+                            } while (0);
+                        }
+                        if (sp7C->faces[spB4].materialID == 0xFF) {
+                            arg0->unk2E = 0;
+                        } else {
+                            arg0->unk2E = sp7C->materials[sp7C->faces[spB4].materialID].unk7;
+                        }
+                        arg0->unk30 = (highestYIndex * 0x10) | lowestYIndex;
+                        arg0->unk2F = 1;
+                        arg0 += 1;
                     }
-                    arg0->unk32 = (highestYIndex * 0x10) | lowestYIndex;
-                    arg0->unk2F = 1;
-                    arg0 += 1;
                 }
             }
         }
     }
     return arg0;
 }
-#endif
 
 void func_80054DF8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, u8 arg2) {
     f32 temp_fv0;
