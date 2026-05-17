@@ -73,7 +73,7 @@ enum KDModAnims {
 /*0x8*/ static TextureTile _bss_8[2][2];
 /*0x38*/ static s32 sHealthBarAlpha;
 /*0x3C*/ static u8 _bss_3C[4];
-/*0x40*/ static u8 _bss_40[0x4c0];
+/*0x40*/ static MoveLibData _bss_40;
 
 // offset: 0x0 | ctor
 void KamerianBoss_ctor(void *dll) { }
@@ -707,16 +707,16 @@ void KamerianBoss_control(Object *self) {
         }
         if ((objdata->hatchOpened) && (objdata->player != NULL)) {
             if (!objdata->loadedTempDLL) {
-                u16 sp8C[3] = {0x0002, 0x0000, 0x0000}; // _data_10
-                u16 sp84[3] = {0x0018, 0x0014, 0x0008}; // _data_18
+                s16 sp8C[3] = {0x0002, 0x0000, 0x0000}; // _data_10
+                s16 sp84[3] = {0x0018, 0x0014, 0x0008}; // _data_18
                 create_temp_dll(53);
-                ((DLL_53*)gTempDLLInsts[1])->vtbl->func2(self, _bss_40, -18000, 9800, 3);
-                ((DLL_53*)gTempDLLInsts[1])->vtbl->func6(_bss_40, &sp84, &sp84, 3);
-                _bss_40[0x4A9] |= 8;
+                ((DLL_53*)gTempDLLInsts[1])->vtbl->func2(self, &_bss_40, -18000, 9800, 3);
+                ((DLL_53*)gTempDLLInsts[1])->vtbl->func6(&_bss_40, sp84, sp84, 3);
+                _bss_40.unk4A9 |= 8;
                 objdata->loadedTempDLL = TRUE;
             }
-            ((DLL_53*)gTempDLLInsts[1])->vtbl->func1(_bss_40, objdata->player);
-            ((DLL_53*)gTempDLLInsts[1])->vtbl->func0(self, _bss_40);
+            ((DLL_53*)gTempDLLInsts[1])->vtbl->func1(&_bss_40, objdata->player);
+            ((DLL_53*)gTempDLLInsts[1])->vtbl->func0(self, &_bss_40);
         }
     }
 }
@@ -774,7 +774,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         }
         // Head lookat
         if (objdata->loadedTempDLL) {
-            ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, _bss_40, 2);
+            ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, &_bss_40, 2);
         }
     }
 }

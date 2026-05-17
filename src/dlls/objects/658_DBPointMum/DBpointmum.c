@@ -52,7 +52,7 @@ typedef struct {
 } PointBack_Setup;
 
 typedef struct {
-    s8 _unk0[0x4B8 - 0x0];
+    MoveLibData unk0;
     HeadAnimation unk4B8;
     s8 _unk4DC[0x51C - 0x4DC];
     s32 unk51C; //bitfield for creating 4 effects in print function?
@@ -179,7 +179,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     }
     
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, objData, 0);
+    ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, &objData->unk0, 0);
 
     fxBitfield = objData->unk51C;
     if (!fxBitfield) {

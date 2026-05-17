@@ -11,47 +11,6 @@
 #include "dll.h"
 #include "macros.h"
 
-// TODO: move to header
-typedef struct {
-    f32 unk0;
-    Vec3f unk4;
-    Vec3f unk10;
-    HeadAnimation unk1C;
-    u8 _unk40[0x454 - 0x40];
-    s16 unk454[25]; // at least 25
-    u8 _unk486[0x490 - 0x486];
-    s32 unk490;
-    s32 unk494;
-    u8 unk498;
-    u8 unk499;
-    u8 _unk49A[0x49C - 0x49A];
-    Object* unk49C;
-    Object* unk4A0;
-    s16 unk4A4;
-    s16 unk4A6;
-    u8 unk4A8;
-    u8 unk4A9;
-    u8 _unk4AA[0x4AC - 0x4AA];
-    s32 unk4AC;
-    s32 unk4B0;
-    s32 unk4B4;
-} MoveLibData;
-
-typedef struct {
-    u8 _unk0[0x2C - 0x0];
-    s8 unk2C;
-    s8 unk2D;
-} DLL53Func17F4Arg1;
-
-typedef struct {
-    Vec3f unk0;
-    Vec3f unkC;
-    Vec3f unk18;
-    Vec3f unk24;
-    f32 unk30;
-    f32 unk34;
-} DLL53Func17F4Arg2;
-
 /*0x0*/ static s16 data_0[] = {
     0x0023, 0x0023, 0x0023, 0x0023, 
     0x0023, 0x0023, 0x0023, 0x0023, 
