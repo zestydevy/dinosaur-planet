@@ -662,48 +662,48 @@ void movelib_func_1E70(MoveLibData* arg0, s16* arg1, s16* arg2, s32 arg3) {
 }
 
 // offset: 0x1F1C | func: 19 | export: 12
-s32 movelib_func_1F1C(Object* arg0, s32 arg1, Vec3f* arg2) {
-    ModelInstance* temp_t1;
-    Model* temp_t2;
-    Vtx* temp_v1_3;
-    s32 var_v0;
+s32 movelib_get_vtx_world_pos(Object* obj, s32 vtx, Vec3f* outPos) {
+    ModelInstance* modelInst;
+    Model* model;
+    Vtx* verts;
+    s32 faceIdx;
     MtxF* mtx;
     ModelFacebatch* face;
-    s8 *new_var;
+    s8 *joint;
 
-    temp_t1 = arg0->modelInsts[arg0->modelInstIdx];
-    temp_t2 = temp_t1->model;
-    if ((arg0->objhitInfo != NULL) && ((arg0->objhitInfo->unk9F != 0) || (arg0->objhitInfo->unk9E != 0))) {
+    modelInst = obj->modelInsts[obj->modelInstIdx];
+    model = modelInst->model;
+    if ((obj->objhitInfo != NULL) && ((obj->objhitInfo->unk9F != 0) || (obj->objhitInfo->unk9E != 0))) {
         return 0;
     }
-    if (arg1 >= temp_t2->vertexCount) {
+    if (vtx >= model->vertexCount) {
         return 0;
     }
     // @bug: should be: !(temp_t1->unk34 & 8)
-    if (!temp_t1->unk34 & 8) {
+    if (!modelInst->unk34 & 8) {
         return 0;
     }
-    temp_v1_3 = temp_t1->vertices[(temp_t1->unk34 >> 1) & 1];
-    var_v0 = 0;
-    while (var_v0 < temp_t2->unk70 && arg1 >= temp_t2->faces[var_v0 + 1].baseVertexID) {
-        var_v0 += 1;
+    verts = modelInst->vertices[(modelInst->unk34 >> 1) & 1];
+    faceIdx = 0;
+    while (faceIdx < model->unk70 && vtx >= model->faces[faceIdx + 1].baseVertexID) {
+        faceIdx += 1;
     }
-    if (var_v0 == temp_t2->unk70) {
+    if (faceIdx == model->unk70) {
         return 0;
     }
-    face = &temp_t2->faces[var_v0];
-    new_var = &face->jointID_A;
-    arg2->x = (f32) temp_v1_3[arg1].v.ob[0];
-    arg2->y = (f32) temp_v1_3[arg1].v.ob[1];
-    arg2->z = (f32) temp_v1_3[arg1].v.ob[2];
-    vec3_transform((MtxF*)(((f32*)temp_t1->matrices[temp_t1->unk34 & 1]) + (*new_var << 4)),
-        arg2->x, 
-        arg2->y, 
-        arg2->z, 
-        &arg2->x, 
-        &arg2->y, 
-        &arg2->z);
-    arg2->x += gWorldX;
-    arg2->z += gWorldZ;
-    return temp_t2->vertexCount;
+    face = &model->faces[faceIdx];
+    joint = &face->jointID_A;
+    outPos->x = (f32) verts[vtx].v.ob[0];
+    outPos->y = (f32) verts[vtx].v.ob[1];
+    outPos->z = (f32) verts[vtx].v.ob[2];
+    vec3_transform((MtxF*)(((f32*)modelInst->matrices[modelInst->unk34 & 1]) + (*joint << 4)),
+        outPos->x, 
+        outPos->y, 
+        outPos->z, 
+        &outPos->x, 
+        &outPos->y, 
+        &outPos->z);
+    outPos->x += gWorldX;
+    outPos->z += gWorldZ;
+    return model->vertexCount;
 }

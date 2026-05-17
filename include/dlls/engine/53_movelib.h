@@ -61,7 +61,7 @@ DLL_INTERFACE(DLL_53_movelib) {
     /*9*/ s32 (*func9)(s32 arg0, SRT* arg1);
     /*10*/ s32 (*func10)(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8* arg5);
     /*11*/ s32 (*func11)(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* arg2, f32 arg3, u8 arg4, f32* arg5, s32* arg6);
-    /*12*/ s32 (*func12)(Object* arg0, s32 arg1, Vec3f* arg2);
+    /*12*/ s32 (*get_vtx_world_pos)(Object* obj, s32 vtx, Vec3f* outPos);
 };
 
 #endif // _DLL_53_H

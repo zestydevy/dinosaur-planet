@@ -20,4 +20,4 @@ _exports:
 /*9*/ .dword movelib_func_1CC8
 /*10*/ .dword movelib_func_1130
 /*11*/ .dword movelib_func_14F4
-/*12*/ .dword movelib_func_1F1C
+/*12*/ .dword movelib_get_vtx_world_pos
