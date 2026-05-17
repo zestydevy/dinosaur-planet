@@ -243,7 +243,8 @@ bail:
 ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/model/createModelInstance.s")
 #else
-// https://decomp.me/scratch/znF3e
+// N64: https://decomp.me/scratch/znF3e
+// default.dol: https://decomp.me/scratch/4v6UJ
 ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
     ModelInstance* temp_v0;
     s32 i;

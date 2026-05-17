@@ -275,7 +275,8 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053B24.s")
 #else
-// https://decomp.me/scratch/s5P5f
+// N64: https://decomp.me/scratch/s5P5f
+// default.dol: https://decomp.me/scratch/pyduQ
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 upperY, s32 arg3, s32 arg4, s32 lowerY, s32 arg6, u8 arg7) {
     Block* temp_s0;
     Block* temp_v0;
@@ -554,7 +555,8 @@ block_55:
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, u8 arg9);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005471C.s")
 #else
-// https://decomp.me/scratch/Nabui
+// N64: https://decomp.me/scratch/Nabui
+// default.dol: https://decomp.me/scratch/PRxaZ
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 upperX, f32 upperY, f32 upperZ, f32 lowerX, f32 lowerY, f32 lowerZ, u8 arg9) {
     s32 var_s1;
     s16 spDC[3];
@@ -1099,7 +1101,8 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800564C8.s")
 #else
-// https://decomp.me/scratch/iUTQF
+// N64: https://decomp.me/scratch/iUTQF
+// default.dol: https://decomp.me/scratch/ItkU6
 s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
     f32 temp_fa0;
     f32 temp_fa1;
@@ -1828,7 +1831,8 @@ void func_80059038(s32 animatorID, Object* parentObject, s32 enableLines) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800591EC.s")
 #else
-
+// https://decomp.me/scratch/LJBvz
+// default.dol: https://decomp.me/scratch/nML1I
 void func_800591EC(void) {
     s32 a3;
     f32 f0;

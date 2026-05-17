@@ -596,7 +596,8 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
 void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4);
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_80008524.s")
 #else
-// https://decomp.me/scratch/x1DTn
+// N64: https://decomp.me/scratch/x1DTn
+// default.dol: https://decomp.me/scratch/9Nci8
 void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4) {
     f32 temp_fv0;
     s32 temp_a2;
@@ -949,7 +950,8 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000921C.s")
 #else
-// https://decomp.me/scratch/ZVLXX
+// N64: https://decomp.me/scratch/ZVLXX
+// default.dol: https://decomp.me/scratch/a9bwY
 
 s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     Unk80008E40Unk0* var_s1;
@@ -1311,7 +1313,8 @@ void func_80009F5C(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2) {
 void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4);
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A078.s")
 #else
-// https://decomp.me/scratch/jUNws
+// N64: https://decomp.me/scratch/jUNws
+// default.dol: https://decomp.me/scratch/62Vc9
 void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4) {
     Unk80008E40Unk0* temp_v1_3;
     s32 var_v0;
