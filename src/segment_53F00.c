@@ -1828,11 +1828,6 @@ void func_80059038(s32 animatorID, Object* parentObject, s32 enableLines) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800591EC.s")
-#else
-// https://decomp.me/scratch/LJBvz
-// default.dol: https://decomp.me/scratch/nML1I
 void func_800591EC(void) {
     s32 a3;
     f32 f0;
@@ -1841,11 +1836,11 @@ void func_800591EC(void) {
     s32 sp6FC;
     s32 sp6F8;
     ModLineReencoded* var_s2;
-    ModLineReencoded* var_v0_2;
     f32 temp_fs0;
     f32 temp_fs1;
     s16 temp_a2;
-    s16 var_a1;
+    s16 var_a1_2;
+    s32 var_a1;
     s32 gridIndex;
     s32 var_a0;
     s32 var_a2;
@@ -1876,7 +1871,7 @@ void func_800591EC(void) {
             for (sp700 = 0; sp700 < BLOCKS_GRID_SPAN; sp700++) {
                 gridIndex = GRID_INDEX(sp6FC, sp700);
                 if (sp6D0[gridIndex] >= 0) {
-                    temp_v0_2 = map_get_block_by_index(sp6D0[gridIndex]);
+                    temp_v0_2 = (Block *)map_get_block_by_index(sp6D0[gridIndex]);
                     for (var_s6 = 0; var_s6 < temp_v0_2->hits_line_count; var_s6++) {
                         var_s0 = &temp_v0_2->ptr_hits_lines[var_s6];
                         var_s2 = &D_80092E74[D_800BB4D6];
@@ -1897,15 +1892,15 @@ void func_800591EC(void) {
         }
     }
     for (var_a0 = 0; var_a0 < D_800BB4D6; var_a0++) {
-        var_v0_2 = &D_80092E74[var_a0];
+        var_s2 = &D_80092E74[var_a0];
         for (var_a2 = 0; var_a2 < 2; var_a2++) {
-            if (sp84[var_v0_2->indexes[var_a2] * 2 + 0] >= 0 && var_a0 != sp84[var_v0_2->indexes[var_a2] * 2 + 0]) {
-                var_v0_2->indexes[var_a2 + 2] = sp84[var_v0_2->indexes[var_a2] * 2 + 0];
+            if (sp84[var_s2->indexes[var_a2] * 2 + 0] >= 0 && var_a0 != sp84[var_s2->indexes[var_a2] * 2 + 0]) {
+                var_s2->indexes[var_a2 + 2] = sp84[var_s2->indexes[var_a2] * 2 + 0];
             } else {
-                if (sp84[var_v0_2->indexes[var_a2] * 2 + 1] >= 0 && var_a0 != sp84[var_v0_2->indexes[var_a2] * 2 + 1]) {
-                    var_v0_2->indexes[var_a2 + 2] = sp84[var_v0_2->indexes[var_a2] * 2 + 1];
+                if (sp84[var_s2->indexes[var_a2] * 2 + 1] >= 0 && var_a0 != sp84[var_s2->indexes[var_a2] * 2 + 1]) {
+                    var_s2->indexes[var_a2 + 2] = sp84[var_s2->indexes[var_a2] * 2 + 1];
                 } else {
-                    var_v0_2->indexes[var_a2 + 2] = -1;
+                    var_s2->indexes[var_a2 + 2] = -1;
                 }
             }
         }
@@ -1916,9 +1911,8 @@ void func_800591EC(void) {
     do {
         isSorted = TRUE;
         for (var_a0 = 0; var_a0 < D_800BB4D6 - 1; var_a0++) {
-            var_a1 = D_80092E7C[var_a0];
-            var_a2 = D_80092E7C[var_a0 + 1];
-            if ((D_80092E74[var_a1].settingsB & 0x3F) < (D_80092E74[D_80092E7C[var_a0 + 1]].settingsB & 0x3F)) {
+            if ((D_80092E74[ D_80092E7C[var_a0]].settingsB & 0x3F) < (D_80092E74[D_80092E7C[var_a0 + 1]].settingsB & 0x3F)) {
+                var_a1 = D_80092E7C[var_a0];
                 D_80092E7C[var_a0] = D_80092E7C[var_a0 + 1] & 0xFFFF;
                 D_80092E7C[var_a0 + 1] = var_a1;
                 isSorted = FALSE;
@@ -1930,16 +1924,16 @@ void func_800591EC(void) {
     }
     temp_a2 = -1;
     for (var_a0 = 0; var_a0 < D_800BB4D6; var_a0++) {
-        var_a1 = D_80092E74[D_80092E7C[var_a0]].settingsB & 0x3F;
-        if (var_a1 > 18) {
-            var_a1 = 1;
+        var_a1_2 = D_80092E74[D_80092E7C[var_a0]].settingsB & 0x3F;
+        if (var_a1_2 > 18) {
+            var_a1_2 = 1;
         }
-        if (temp_a2 != var_a1) {
-            D_800BB4E0[var_a1 * 2] = var_a0;
+        if (temp_a2 != var_a1_2) {
+            D_800BB4E0[var_a1_2 * 2] = var_a0;
             if (temp_a2 != -1) {
                 D_800BB4E0[temp_a2 * 2 + 1] = var_a0;
             }
-            temp_a2 = var_a1;
+            temp_a2 = var_a1_2;
         }
     }
     if (temp_a2 != -1) {
@@ -1947,7 +1941,7 @@ void func_800591EC(void) {
     }
     D_80092E80 = 1;
 }
-#endif
+
 
 void func_800596BC(ObjDef* arg0) {
     ModLineReencoded* var_s2;
