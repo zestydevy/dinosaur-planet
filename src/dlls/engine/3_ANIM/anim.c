@@ -3787,9 +3787,9 @@ static s32 anim_get_preempt_time(Object* obj) {
 }
 
 // offset: 0x9440 | func: 56 | export: 21
-void anim_func_9440(AnimObj_Data* arg0, s32 arg1) {
-    arg0->unk80 = arg1;
-    arg0->unk9D |= 0x40;
+void anim_func_9440(AnimObj_Data* st, s32 arg1) {
+    st->unk80 = arg1;
+    st->unk9D |= 0x40;
 }
 
 // offset: 0x9458 | func: 57 | export: 22
