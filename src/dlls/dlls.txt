@@ -135,6 +135,7 @@
 346 = objects/346_animator
 347 = objects/347_texscroll2
 348 = objects/348_texscroll
+351 = objects/351_GroundAnimator
 353 = objects/353_HitAnimator
 354 = objects/354_VisAnimator
 357 = objects/357_ExplodeAnimator

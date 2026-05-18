@@ -41,7 +41,7 @@ enum ObjType {
     OBJTYPE_41 = 41, // DBExpBit
     OBJTYPE_44 = 44, // DBBoneGeezer
     OBJTYPE_48 = 48, // perchobject, SCbeacon (sidekick/Kyte-related?)
-    OBJTYPE_51 = 51, // SHbluemushroom, DBBoneGeezer, Tumbleweed (sidekick/Find-related?)
+    OBJTYPE_51 = 51, // SHbluemushroom, DBBoneGeezer, Tumbleweed, GroundAnimator (sidekick/Find-related?)
     OBJTYPE_52 = 52,
     OBJTYPE_53 = 53,
     OBJTYPE_54 = 54, // MagicPlant

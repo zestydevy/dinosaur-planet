@@ -171,6 +171,7 @@ enum DLL_ID {
     DLL_ID_177 = 0x1049,
     DLL_ID_180 = 0x104C,
     DLL_ID_182 = 0x104E,
+    DLL_ID_184 = 0x1050, //Magic Cave entrance glow
 
     // Proj gfx
     DLL_ID_PROJGFX_BASE = 0x2000,
