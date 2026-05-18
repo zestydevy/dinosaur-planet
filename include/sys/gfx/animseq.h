@@ -132,7 +132,7 @@ typedef struct AnimObj_Data {
 /*099*/ u8 modAnimStartFrame;
 /*09A*/ u8 blinkFrameR; // eyelid frame for right eye
 /*09B*/ u8 blinkFrameL; // eyelid frame for left eye
-/*09C*/ s8 unk9C[0x9D - 0x9C];
+/*09C*/ u8 unk9C;
 /*09D*/ u8 unk9D; // TODO: flags?
 /*09E*/ s8 unk9E[0xA0 - 0x9E];
 /*0A0*/ AnimCurvesEvent* animCurvesEvents;

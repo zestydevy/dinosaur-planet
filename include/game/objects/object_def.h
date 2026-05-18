@@ -205,7 +205,7 @@ typedef struct {
 /*56*/ u8 numPlayerObjs; //if > 0, objAddObjectType(obj, 8) // TODO: confirm
 /*57*/ u8 unk57; //never read?
 /*58*/ u16 dllID;
-/*5a*/ s16 group; // TODO: rename to controlNo
+/*5a*/ s16 controlNo; // see ObjectControlNumber enum. official name: controlNo
 /*5c*/ s8 modLinesSize; //ignored in file // TODO: confirm
 /*5d*/ s8 numModels; // number of pModelList (called "noframes" (number of frames?) by default.dol)
 /*5e*/ s8 unk5e;

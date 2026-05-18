@@ -133,7 +133,7 @@ void Cannon_control(Object* self) {
 
             //Do nothing if the collided object is the referenced object, or not an attack
             obj = self->objhitInfo->unk0;
-            if (obj == dObjectRef || obj->group != GROUP_UNK41){
+            if (obj == dObjectRef || obj->controlNo != OBJCONTROL_InvHit){
                 break;
             }
 
@@ -150,7 +150,7 @@ dummy_label1: ;
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
 
             //Send an object message, then destroy both the attacking object and the cannon
-            obj_send_mesg_many(GROUP_UNK54, 0, 0, 0xE0000, self);
+            obj_send_mesg_many(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
             obj_destroy_object(obj);
             obj_destroy_object(self);
             return;
@@ -213,7 +213,7 @@ dummy_label1: ;
 
             //Do nothing if the collided object is the referenced object, or not an attack
             obj = self->objhitInfo->unk0;
-            if (obj == dObjectRef || (obj->group != GROUP_UNK41)) {
+            if (obj == dObjectRef || (obj->controlNo != OBJCONTROL_InvHit)) {
                 break;
             }
 
@@ -232,7 +232,7 @@ dummy_label3: ;
             dObjectRef = obj;
 
             //Send an object message, then destroy both the attacking object and the cannon
-            obj_send_mesg_many(GROUP_UNK54, 0, 0, 0xE0000, self);
+            obj_send_mesg_many(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
             obj_destroy_object(obj);
             obj_destroy_object(self);
             return;

@@ -249,9 +249,9 @@ typedef struct{
 } ANIMActorOverride;
 
 typedef struct {
-    s16 unk0;
+    s16 seqSlot;
     s16 unk2;
-    u16 unk4;
+    u16 numActors;
 } ANIMUnk698;
 
 typedef struct {
@@ -451,11 +451,11 @@ void anim_func_98(void) {
 }
 
 // offset: 0x2C0 | func: 1 | export: 1
-void anim_func_2C0(s32 arg0, s32 arg1, s32 arg2) {   
-    if (arg0 >= 0 && arg0 < MAX_SEQSLOTS) {
+void anim_func_2C0(s32 seqSlot, s32 arg1, s32 numActors) {   
+    if (seqSlot >= 0 && seqSlot < MAX_SEQSLOTS) {
         if (_bss_6F8 < MAX_ACTORS) {
-            _bss_698[_bss_6F8].unk0 = arg0;
-            _bss_698[_bss_6F8].unk4 = arg2;
+            _bss_698[_bss_6F8].seqSlot = seqSlot;
+            _bss_698[_bss_6F8].numActors = numActors;
             _bss_698[_bss_6F8++].unk2 = arg1; 
         } else {
             STUBBED_PRINTF("Max activates reached\n");
@@ -2731,7 +2731,7 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
             break;
         }
         if (sp54 < actor->def->numModels) {
-            if ((actor->group == 1) && (actor->modelInstIdx == 2)) {
+            if ((actor->controlNo == OBJCONTROL_Player) && (actor->modelInstIdx == 2)) {
                 return 1;
             }
             STUBBED_PRINTF(" MODEL NO %i \n", actor->modelInstIdx);
@@ -2739,12 +2739,12 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
         }
         break;
     case ANIM_CODE_EVT_6_24:
-        if (actor->group == 1) {
+        if (actor->controlNo == OBJCONTROL_Player) {
             ((DLL_210_Player*)actor->dll)->vtbl->func28(actor, sp54);
         }
         break;
     case ANIM_CODE_EVT_6_25:
-        if (actor->group == 1) {
+        if (actor->controlNo == OBJCONTROL_Player) {
             ((DLL_210_Player*)actor->dll)->vtbl->func29(actor, sp54);
         }
         break;
@@ -3273,7 +3273,7 @@ void anim_func_7CF0(void) {
     while (k > 0) {
         k--;
         temp = &_bss_698[k];
-        slot = temp->unk0;
+        slot = temp->seqSlot;
         temp_fp = temp->unk2;
         sEventFlags[slot] = 0;
         _bss_108[slot] = 0;
@@ -3282,7 +3282,7 @@ void anim_func_7CF0(void) {
         var_s6 = 1;
         for (i = 0; i < numObjs; i++) {
             obj = objList[i];
-            if (obj->group == 0x10) {
+            if (obj->controlNo == OBJCONTROL_AnimObj) {
                 setup = (AnimObj_Setup*)obj->setup;
                 st = obj->data;
                 if ((setup != NULL) && (slot == setup->seqSlot)) {
@@ -3319,13 +3319,13 @@ void anim_func_7CF0(void) {
             }
         }
         if (var_s6 == 0) {
-            sp6C[spCC].unk0 = slot;
+            sp6C[spCC].seqSlot = slot;
             sp6C[spCC].unk2 = temp_fp;
             spCC += 1;
         }
     }
     for (i = 0; i < spCC; i++) {
-        _bss_698[i].unk0 = sp6C[i].unk0;
+        _bss_698[i].seqSlot = sp6C[i].seqSlot;
         _bss_698[i].unk2 = sp6C[i].unk2;
     }
     _bss_6F8 = (s8) spCC;
@@ -3407,7 +3407,7 @@ s16 anim_func_8598(Object* animObj) {
     objList = get_world_objects(&start, &numObjs);
     st = animObj->data;
     setup = (AnimObj_Setup*)animObj->setup;
-    if (animObj->group == 17) {
+    if (animObj->controlNo == OBJCONTROL_Unk17) {
         st->actor = NULL;
         return -1;
     }
@@ -3723,7 +3723,7 @@ void anim_end_obj_sequence(s32 slot) {
         if (slot == obj->seqSlot) {
             obj->seqSlot = SEQSLOT_NONE;
         }
-        if (obj->group == 0x10) {
+        if (obj->controlNo == OBJCONTROL_AnimObj) {
             animObjData = (AnimObj_Data*)obj->data;
             if (slot == animObjData->seqSlot) {
                 if (obj == _bss_6FC) {

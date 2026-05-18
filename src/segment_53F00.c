@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/objects/210_player.h"
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
 #include "sys/segment_53F00.h"
@@ -2714,9 +2715,7 @@ void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
         hitInfo->unk20.z = arg0->globalPosition.z;
     }
 
-    if (arg0->group == 1) {
-        ((DLL_Unknown*)gDLL_27)->vtbl->func[7].withTwoArgs((s32)arg0, 
-            ((DLL_Unknown*)arg0->dll)->vtbl->func[57].withOneArgS32((s32)arg0)
-        );
+    if (arg0->controlNo == OBJCONTROL_Player) {
+        ((DLL_27*)gDLL_27)->vtbl->reset(arg0, ((DLL_210_Player*)arg0->dll)->vtbl->func57(arg0));
     }
 }

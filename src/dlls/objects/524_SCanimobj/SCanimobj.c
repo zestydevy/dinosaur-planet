@@ -77,7 +77,7 @@ void SCAnimObj_control(Object* self) {
                 matchObj = obj;
             }
             
-            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->group == GROUP_UNK16)) {
+            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->controlNo == OBJCONTROL_AnimObj)) {
                 objData = obj->data;
                 if (temp == objData->seqSlot) {
                     matchCount++;

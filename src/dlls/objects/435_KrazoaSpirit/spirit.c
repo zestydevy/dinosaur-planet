@@ -101,7 +101,7 @@ void Spirit_control(Object* self) {
             if (searchValue == obj->seqSlot) {
                 matchObject = obj;
             }
-            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->group == 0x10)){
+            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->controlNo == OBJCONTROL_AnimObj)){
                 objData2 = (AnimObj_Data *)obj->data;
                 if (searchValue == objData2->seqSlot) {
                     otherMatchCount++;

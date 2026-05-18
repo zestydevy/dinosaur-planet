@@ -1,6 +1,7 @@
 #include "common.h"
 #include "macros.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/common/sidekick.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
@@ -140,7 +141,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     animState->unkC[0] = 0.0f;
     animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * animProgress;
     
-    if (object->linkedObject && object->linkedObject->group == GROUP_UNK48) {
+    if (object->linkedObject && object->linkedObject->controlNo == OBJCONTROL_Weapon) {
         ((ObjectAnim_Data_2*)object->linkedObject->data)->unk84 &= ~1;
     }
     
@@ -865,16 +866,16 @@ void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u
     u8 var_s5;
 
     sp94 = NULL;
-    switch (arg0->group) {
-    case 1:
+    switch (arg0->controlNo) {
+    case OBJCONTROL_Player:
         ((DLL_210_Player*)arg0->dll)->vtbl->func55(arg0, updateRate, &sp80, &sp7E, &sp94);
         sp78 = ((DLL_210_Player*)arg0->dll)->vtbl->func57(arg0);
         sp84 = ((DLL_210_Player*)arg0->dll)->vtbl->func56(arg0);
         break;
-    case 2:
-        ((DLL_Unknown*)arg0->dll)->vtbl->func[10].withFourArgsCustom2(arg0, &sp80, &sp7E, &sp94);
-        sp78 = ((DLL_Unknown*)arg0->dll)->vtbl->func[12].withOneVoidArgS32(arg0);
-        sp84 = ((DLL_Unknown*)arg0->dll)->vtbl->func[11].withOneVoidArgF32(arg0);
+    case OBJCONTROL_Sidekick:
+        ((DLL_ISidekick*)arg0->dll)->vtbl->func10.withFourArgsCustom2(arg0, &sp80, &sp7E, &sp94);
+        sp78 = ((DLL_ISidekick*)arg0->dll)->vtbl->func12.withOneVoidArgS32(arg0);
+        sp84 = ((DLL_ISidekick*)arg0->dll)->vtbl->func11.withOneVoidArgF32(arg0);
         break;
     default:
         return;
@@ -946,7 +947,7 @@ void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u
             sp88.f[0] = sp94[var_s5].x;
             sp88.f[1] = 0.0f;
             sp88.f[2] = sp94[var_s5].z;
-            if (arg0->group == 1) {
+            if (arg0->controlNo == OBJCONTROL_Player) {
                 if (sp78->unk68.unk50[0] == 18) {
                     sp60.transl.x = sp88.f[0];
                     sp60.transl.y = 0.0f;

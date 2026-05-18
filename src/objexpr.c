@@ -24,7 +24,7 @@ void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
     Object* target; // could also be SRT*
 
     //Handle player head aim
-    if (obj->group == GROUP_UNK1) {
+    if (obj->controlNo == OBJCONTROL_Player) {
         arg1 = ((DLL_210_Player*)obj->dll)->vtbl->func54(obj);
         arg2 = ((DLL_210_Player*)obj->dll)->vtbl->func56(obj);
         if (((DLL_210_Player*)obj->dll)->vtbl->func66(obj, 2) != NULL) {

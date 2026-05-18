@@ -47,7 +47,7 @@ u32 obj_send_mesg(Object *receiver, u32 mesgID, Object *sender, void *mesgArg) {
             return mesgQueue->count;
         }
         STUBBED_PRINTF("objmsg (%x): overflow in object %d defno=%d FROM: defno %d\n",
-            mesgID, receiver->group, receiver->id, sender->id);
+            mesgID, receiver->controlNo, receiver->id, sender->id);
     }
 
     return 0;
@@ -72,7 +72,7 @@ void obj_send_mesg_many(s32 filter, u16 flags, Object *sender, u32 mesgID, void 
         for (; i < numObjs; i++) {
             obj = objects[i];
             
-            if ((sender != obj || !(flags & OBJMSG_SEND_IGNORE_SENDER)) && ((flags & OBJMSG_SEND_ALL) || filter == obj->group)) {
+            if ((sender != obj || !(flags & OBJMSG_SEND_IGNORE_SENDER)) && ((flags & OBJMSG_SEND_ALL) || filter == obj->controlNo)) {
                 obj_send_mesg(obj, mesgID, sender, mesgArg);
             }
         }

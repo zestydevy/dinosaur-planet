@@ -118,7 +118,7 @@ s32 dll_236_func_D64(Object* self, ObjFSA_Data* arg1, s8 arg2) {
     arg1->unk341 = 0;
     if (triffid->unk5 != 0) {
         triffid->unk5 = 0U;
-        obj_send_mesg_many(0, 3U, self, 0xE0000U, self);
+        obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, 0xE0000U, self);
         gDLL_33_BaddieControl->vtbl->func18(self, (s32) baddie->unk3E0, -1, 0U);
         gDLL_18_objfsa->vtbl->func21(self, arg1, 0x3C, 0xA, 0U);
         baddie->unk3B4 = 0;

@@ -81,7 +81,7 @@ void animobj_control(Object *self) {
             matchObject = object;
         }
 
-        if (object->seqSlot == SEQSLOT_ANIMOBJ && object->group == GROUP_UNK16) {
+        if (object->seqSlot == SEQSLOT_ANIMOBJ && object->controlNo == OBJCONTROL_AnimObj) {
             objdata = object->data;    
             if (new_var == objdata->seqSlot) {
                 matches++;

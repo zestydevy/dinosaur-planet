@@ -36,7 +36,7 @@ void SHswaplift_control(Object *self) {
     if (self->polyhits->unk10F > 0) {
         for (index = 0; index < self->polyhits->unk10F; index++) {
             listedObject = (Object*)self->polyhits->unk100[index];
-            if (listedObject->group == GROUP_UNK1) {
+            if (listedObject->controlNo == OBJCONTROL_Player) {
                 dostuff = TRUE;
             }
         }

@@ -4160,13 +4160,13 @@ void map_update_objects_streaming(s32 arg0) {
         if (obj->mapID >= 0) {
             if (!(objSetup->loadFlags & OBJSETUP_LOAD_MANUAL)) {
                 if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
-                    if ((obj->group >= GROUP_NONE) && (map_should_obj_unload(obj) != 0)) {
+                    if ((obj->controlNo >= OBJCONTROL_None) && (map_should_obj_unload(obj) != 0)) {
                         unloadObj = TRUE;
                     } else if ((obj->mapID < MAP_ID_MAX) && (gLoadedMapsDataTable[obj->mapID] == NULL)) {
                         unloadObj = TRUE;
                     }
                 } else {
-                    if ((obj->group >= GROUP_NONE) && (map_should_obj_unload(obj) != 0)) {
+                    if ((obj->controlNo >= OBJCONTROL_None) && (map_should_obj_unload(obj) != 0)) {
                         unloadObj = TRUE;
                     } else if ((obj->mapID < MAP_ID_MAX) && (func_8004AEFC(obj->mapID, sp70, var_s4) == 0)) {
                         unloadObj = TRUE;

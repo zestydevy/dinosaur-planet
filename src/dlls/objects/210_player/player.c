@@ -2343,7 +2343,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
             } else {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             }
-            obj_send_mesg_many(0, 3U, player, 0xE0000U, player);
+            obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000U, player);
         }
     }
     player->objhitInfo->unk5F = 0;
@@ -2413,7 +2413,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             if (player->animProgressLayered > 0.59f) {
                 arg1->unk8A8 = 2;
             }
-            if ((temp_s2 != NULL) && (player->animProgressLayered > 0.7f) && (temp_s2->group == GROUP_UNK48)) {
+            if ((temp_s2 != NULL) && (player->animProgressLayered > 0.7f) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func7(temp_s2, 0.15f);
             }
             if (temp_s3 != 0) {
@@ -2422,7 +2422,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             }
             break;
         case 13:
-            if ((temp_s2 != NULL) && (temp_s2->group == GROUP_UNK48)) {
+            if ((temp_s2 != NULL) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func7(temp_s2, 1.0f);
             }
             arg1->unk8A8 = 2;
@@ -2440,7 +2440,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             if (player->animProgressLayered < 0.24f) {
                 arg1->unk8A8 = 0;
             }
-            if ((temp_s2 != NULL) && (player->animProgressLayered < 0.7f) && (temp_s2->group == GROUP_UNK48)) {
+            if ((temp_s2 != NULL) && (player->animProgressLayered < 0.7f) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func8(temp_s2);
             }
             if (temp_s3 != 0) {
@@ -2450,7 +2450,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             }
             break;
         case 14:
-            if (temp_s2->group == GROUP_UNK48) {
+            if (temp_s2->controlNo == OBJCONTROL_Weapon) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func8(temp_s2);
             }
             arg1->unk87C = -1;
@@ -3820,7 +3820,7 @@ static void dll_210_func_9F1C(Object* player, s32 arg1) {
     func_800267A4(player);
     menu_set(9);
     func_80010038(1);
-    obj_send_mesg_many(0, 3, player, 0xE0000, player);
+    obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000, player);
 }
 
 // offset: 0xA018 | func: 53
@@ -8382,7 +8382,7 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
     } else {
-        if (sp40->group == GROUP_UNK48) {
+        if (sp40->controlNo == OBJCONTROL_Weapon) {
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func11(sp40);
         }
         sp47 = 1;
@@ -8412,7 +8412,7 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (player->objhitInfo != NULL) {
             player->objhitInfo->unk61 = 0;
         }
-        if (sp40->group == GROUP_UNK48) {
+        if (sp40->controlNo == OBJCONTROL_Weapon) {
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func12(sp40, 1);
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func13(sp40, sp3C->unk3B4[sp3C->unk8A1].unk30);
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func18(sp40, sp3C->unk3B4[sp3C->unk8A1].unk1C, sp3C->unk3B4[sp3C->unk8A1].unk20);
@@ -8450,7 +8450,7 @@ static void dll_210_func_18DB0(Object* player, ObjFSA_Data* fsa) {
     Object* temp_a2;
 
     temp_a2 = player->linkedObject;
-    if (temp_a2->group == GROUP_UNK48) {
+    if (temp_a2->controlNo == OBJCONTROL_Weapon) {
         ((DLL_Unknown *)temp_a2->dll)->vtbl->func[12].withTwoArgsCustom(temp_a2, 0);
     }
 }

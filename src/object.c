@@ -1081,7 +1081,7 @@ void obj_destroy_object(Object *obj) {
 
 void obj_init_object(Object *obj, ObjSetup *setup, s32 reset) {
     DLL_IObject *dll;
-    obj->group = obj->def->group;
+    obj->controlNo = obj->def->controlNo;
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
@@ -1442,20 +1442,20 @@ s32 func_80022DFC(s32 idx) {
 }
 
 // unused
-s16 func_80022E3C(s32 param1) {
+s16 obj_get_mobile_map_id(s32 id) {
     ObjDef *def;
 
-    if (param1 > gObjIndexCount) {
+    if (id > gObjIndexCount) {
         return 0;
     }
 
-    param1 = gFile_OBJINDEX[param1];
+    id = gFile_OBJINDEX[id];
 
-    if (param1 == -1) {
+    if (id == -1) {
         return 0;
     }
 
-    def = (ObjDef*)(gFile_OBJECTS_TAB[param1] + D_800B18E8); // ???
+    def = (ObjDef*)(gFile_OBJECTS_TAB[id] + D_800B18E8); // ???
 
     if (def->flags & OBJDEF_IS_MOBILE_MAP) {
         return def->mobileMapID;
@@ -1464,38 +1464,38 @@ s16 func_80022E3C(s32 param1) {
     return -1;
 }
 
-s16 func_80022EC0(s32 arg0) {
+s16 obj_get_control_no(s32 id) {
     ObjDef def;
     s32 objtype;
     u32 var_v0;
     u32 var_v1;
 
-    if (gObjIndexCount < arg0) {
+    if (gObjIndexCount < id) {
         return 0;
     }    
 
-    objtype = arg0;
-    arg0 = gFile_OBJINDEX[arg0];
-    if (arg0 == -1) {
+    objtype = id;
+    id = gFile_OBJINDEX[id];
+    if (id == -1) {
         STUBBED_PRINTF("objGetControlNo objtype out of range %d/%d\n", objtype, gObjIndexCount);
         return 0;
     }
 
-    var_v0 = (u32)&def.group - (u32)&def;
+    var_v0 = (u32)&def.controlNo - (u32)&def;
     var_v1 = 0;
     while (var_v0 & 1) {
         var_v0 -= 1;
         var_v1 += 1;        
     }
 
-    queue_load_file_region_to_ptr((void*)D_800B18E4, OBJECTS_BIN, (s32)(gFile_OBJECTS_TAB[arg0] + var_v0), 8);
+    queue_load_file_region_to_ptr((void*)D_800B18E4, OBJECTS_BIN, (s32)(gFile_OBJECTS_TAB[id] + var_v0), 8);
     return D_800B18E4[var_v1];
 }
 
 void obj_free_object(Object *obj, s32 onlySelf) {
     Object *obj2;
     /*sp+0xE4*/ LightAction lAction;
-    ObjectAnim_Data *animObjdata;
+    AnimObj_Data *animObjdata;
     ModelInstance *modelInst;
     /*sp+0x40*/ Object *stackObjs[39]; // unknown exact length
     /*sp+0x3c*/ s32 k;
@@ -1550,7 +1550,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
         }
     }
 
-    if (!onlySelf && obj->group == GROUP_UNK16) {
+    if (!onlySelf && obj->controlNo == OBJCONTROL_AnimObj) {
         for (i = 0; i < gNumObjs; i++) {
             obj2 = gObjList[i];
             if (obj == obj2->animObj) {
@@ -1561,10 +1561,10 @@ void obj_free_object(Object *obj, s32 onlySelf) {
 
     for (k = 0; k < gNumObjs; k++) {
         obj2 = gObjList[k];
-        if (obj2->group == GROUP_UNK16) {
-            animObjdata = (ObjectAnim_Data*)obj2->data;
-            if (obj == animObjdata->unk0) {
-                animObjdata->unk0 = NULL;
+        if (obj2->controlNo == OBJCONTROL_AnimObj) {
+            animObjdata = (AnimObj_Data*)obj2->data;
+            if (obj == animObjdata->actor) {
+                animObjdata->actor = NULL;
                 animObjdata->unk9C = 1;
             }
         }
