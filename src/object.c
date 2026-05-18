@@ -213,7 +213,7 @@ void update_objects(void) {
 
     func_8002B6EC();
 
-    gDLL_3_Animation->vtbl->func9();
+    gDLL_3_Animation->vtbl->tick();
     gDLL_3_Animation->vtbl->update_camera();
     gDLL_2_Camera->vtbl->tick(gUpdateRate);
 

@@ -9,16 +9,16 @@ _exports:
 
 # export table
 .dword anim_func_98
-.dword anim_func_2C0
+.dword anim_queue_activate
 .dword anim_func_324
 .dword anim_func_358
 .dword anim_tick_obj
 .dword anim_update_camera
-.dword anim_func_7974
-.dword anim_func_7B64
-.dword anim_func_7C6C
-.dword anim_func_7CF0
-.dword anim_func_8598
+.dword anim_init_curve
+.dword anim_init_curve_keyframes
+.dword anim_free_curve
+.dword anim_tick
+.dword anim_find_override_target
 .dword anim_func_88BC
 .dword anim_func_8878
 .dword anim_func_8884

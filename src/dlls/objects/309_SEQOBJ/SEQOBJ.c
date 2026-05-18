@@ -4,37 +4,37 @@
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ s16 gamebitPlay;        //The sequence will play when this gamebit is set
-/*1A*/ s16 gamebitFinished;    //This gamebit will be set when the sequence has played
+/*18*/ s16 gamebitHasPlayed; // when gamebit is set, this objseq has played before
+/*1A*/ s16 gamebitPlay;    // when gamebit is set, triggers this seqobj to play
 /*1C*/ u8 rotate;
 /*1D*/ u8 playbackOptions;
 /*1E*/ s8 seqIndex;            //The index of the sequence in the Object.bin entry's sequence list
 /*1F*/ s8 modelInstIdx;        //Choose between 3D models, visible when debugging (usually a clapperboard)
-/*20*/ s16 unk20;
-/*22*/ u16 unk22;
+/*20*/ s16 replayStartTime;
+/*22*/ u16 replayActorMask; // bitfield of which actors are enabled if this seq is replaying
 /*24*/ u8 warpID;              //Optionally warp the player
 } SeqObj_Setup;
 
 typedef struct {
     u8 flags;
-    s8 finished;
+    s8 lastPlayBitValue;
 } SeqObj_Data;
 
 typedef enum {
     SEQOBJ_FLAG_None = 0,
-    SEQOBJ_FLAG_Playing = 1,
-    SEQOBJ_FLAG_Unk_2 = 2, //finished?
+    SEQOBJ_FLAG_PlayedBefore = 1,
+    SEQOBJ_FLAG_Replay = 2,
     SEQOBJ_FLAG_Anim_Callback_Ran = 4
 } SeqObj_Flags;
 
 typedef enum {
     SEQOBJ_OPTIONS_None = 0,
-    SEQOBJ_OPTIONS_Stoppable = 1,
+    SEQOBJ_OPTIONS_ManualHasPlayedBit = 1, // don't auto update the hasPlayed gamebit
     SEQOBJ_OPTIONS_2 = 2,
     SEQOBJ_OPTIONS_4 = 4,
     SEQOBJ_OPTIONS_8 = 8,
-    SEQOBJ_OPTIONS_A = 16
-} SeqObj_PlaybackOptions; //TO-DO: figure out what these do! Looping and auto-play may be options?
+    SEQOBJ_OPTIONS_HasReplayActorMask = 16 // if set, more than just the seqobj will be controlled by a replay
+} SeqObj_PlaybackOptions;
 
 static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
@@ -60,15 +60,20 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
     obj_add_object_type(self, OBJTYPE_17);
     
     objData->flags = SEQOBJ_FLAG_None;
-    if (objSetup->gamebitPlay != -1) {
-        if (main_get_bits(objSetup->gamebitPlay)) {
-            objData->flags |= SEQOBJ_FLAG_Playing;
-            if (objSetup->unk20 != 0) {
-                objData->flags |= SEQOBJ_FLAG_Unk_2;
+    if (objSetup->gamebitHasPlayed != -1) {
+        if (main_get_bits(objSetup->gamebitHasPlayed)) {
+            objData->flags |= SEQOBJ_FLAG_PlayedBefore;
+            if (objSetup->replayStartTime != 0) {
+                // Seqobj has already played before and should replay on load. This is used to restore
+                // game state that is controlled by sequences. For example, if a door is only opened
+                // when a seq plays and that door should already be open if the seqobj played before,
+                // the replay system can be used to start or instantly complete the seq to open the
+                // door automatically.
+                objData->flags |= SEQOBJ_FLAG_Replay;
             }
         }
     }
-    objData->finished = FALSE;
+    objData->lastPlayBitValue = FALSE;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
@@ -76,66 +81,66 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
 void SeqObj_control(Object* self) {
     SeqObj_Data* objData;
     SeqObj_Setup* objSetup;
-    s8 sequencePlayed;
+    s8 playBitValue;
 
     objData = self->data;
     objSetup = (SeqObj_Setup*)self->setup;
     
-    //Check if the anim callback function successfully ran
     if (objData->flags & SEQOBJ_FLAG_Anim_Callback_Ran) {
-        if (objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) {
+        if (objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) {
             if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_4) == FALSE) {
-                main_set_bits(objSetup->gamebitFinished, FALSE);
+                main_set_bits(objSetup->gamebitPlay, FALSE);
             }
         } else {
             if (objSetup->playbackOptions & SEQOBJ_OPTIONS_8) {
-                main_set_bits(objSetup->gamebitPlay, TRUE);
+                main_set_bits(objSetup->gamebitHasPlayed, TRUE);
             }
-            objData->flags |= SEQOBJ_FLAG_Playing;
+            objData->flags |= SEQOBJ_FLAG_PlayedBefore;
         }
 
         objData->flags &= ~SEQOBJ_FLAG_Anim_Callback_Ran;
     }
     
-    //If sequence isn't playing
-    if ((objData->flags & SEQOBJ_FLAG_Playing) == FALSE) {
-        //Start playing if "play" gamebit was set
-        if (main_get_bits(objSetup->gamebitPlay)) {
-            objData->flags |= SEQOBJ_FLAG_Playing;
+    if ((objData->flags & SEQOBJ_FLAG_PlayedBefore) == FALSE) {
+        if (main_get_bits(objSetup->gamebitHasPlayed)) {
+            // Played bit changed at runtime, swap state
+            objData->flags |= SEQOBJ_FLAG_PlayedBefore;
         }
 
-        //If "finished" gamebit is set, and objData->finished isn't set?
-        sequencePlayed = main_get_bits(objSetup->gamebitFinished);
-        if (sequencePlayed != objData->finished) {
-            objData->finished = sequencePlayed;
+        // Wait for play gamebit to trigger seqobj
+        playBitValue = main_get_bits(objSetup->gamebitPlay);
+        if (playBitValue != objData->lastPlayBitValue) {
+            objData->lastPlayBitValue = playBitValue;
 
-            if (sequencePlayed) {
+            if (playBitValue) {
+                // Start seq
                 if (objSetup->seqIndex != -1) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, -1);
                 }
-                if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) == FALSE && 
+                // Mark seqobj as having been played at least once
+                if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) == FALSE && 
                     (objSetup->playbackOptions & (SEQOBJ_OPTIONS_2 | SEQOBJ_OPTIONS_8)) == FALSE) {
-                    main_set_bits(objSetup->gamebitPlay, TRUE);
+                    main_set_bits(objSetup->gamebitHasPlayed, TRUE);
                 }
             }
         }
     } else {
-    //If sequence is playing
-        if (objData->flags & SEQOBJ_FLAG_Unk_2) {
-            gDLL_3_Animation->vtbl->preempt_sequence_time(self, objSetup->unk20);
-            if (objSetup->playbackOptions & SEQOBJ_OPTIONS_A) {
-                gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, objSetup->unk22);
+        // This seqobj has already played before. If it should replay, start the seq.
+        if (objData->flags & SEQOBJ_FLAG_Replay) {
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, objSetup->replayStartTime);
+            if (objSetup->playbackOptions & SEQOBJ_OPTIONS_HasReplayActorMask) {
+                gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, objSetup->replayActorMask);
             } else {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, 1);
             }
-            objData->flags &= ~SEQOBJ_FLAG_Unk_2;
+            objData->flags &= ~SEQOBJ_FLAG_Replay;
             return;
         }
 
-        //If the sequence is stoppable and the "play" gamebit unsets, stop playing
-        if (objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) {
-            if (main_get_bits(objSetup->gamebitPlay) == FALSE) {
-                objData->flags &= ~SEQOBJ_FLAG_Playing;
+        if (objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) {
+            if (main_get_bits(objSetup->gamebitHasPlayed) == FALSE) {
+                // Played bit changed at runtime, swap state
+                objData->flags &= ~SEQOBJ_FLAG_PlayedBefore;
             }
         }
     }
@@ -183,9 +188,9 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     for (index = 0; index < animObjData->messageCount; index++){
         switch (animObjData->messages[index]) {
             case 1:
-                if (!(objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) && 
+                if (!(objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) && 
                      (objSetup->playbackOptions & SEQOBJ_OPTIONS_2)) {
-                    main_set_bits(objSetup->gamebitPlay, 1);
+                    main_set_bits(objSetup->gamebitHasPlayed, 1);
                 }
                 break;
             case 2:
