@@ -1,5 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -12,14 +13,14 @@
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ s16 flagID;
+/*18*/ s16 gamebitEnable;
 /*1A*/ s16 unk1A;
 /*1C*/ u8 maxOpacity;
 /*1D*/ u8 minOpacity;
 /*1E*/ s8 animatorID;
 /*1E*/ s8 unk1F;
 /*20*/ s8 unk20;
-/*21*/ u8 unk21;
+/*21*/ u8 removeCollision; //When enabled, shape is tangible while visible
 /*22*/ u16 minDistance;
 } PortalTexAnimator_Setup;
 
@@ -27,15 +28,13 @@ typedef struct {
 /*00*/ s32 animatedVertexCount;
 /*04*/ f32 minDistance;
 /*08*/ f32 maxDistance;
-/*0C*/ f32 unkC;
+/*0C*/ f32 minDistanceCopy;
 /*10*/ s32 unk10;
 /*14*/ s16 vertexOpacity;
 /*16*/ s8 animatorID;
-/*17*/ s8 enabled; //unfinished, doesn't affect behaviour
+/*17*/ s8 enabled;              //unfinished, doesn't affect behaviour
 /*18*/ s8 blockFound;
 /*19*/ s8 unk19;
-/*1A*/ s8 unk1A;
-/*1B*/ s8 unk1B;
 } PortalTexAnimator_Data;
 
 static void portaltexanimator_animate_vertices(PortalTexAnimator_Data* objdata, PortalTexAnimator_Setup* setup, Block* block);
@@ -96,12 +95,13 @@ void portaltexanimator_control(Object* self) {
 
         objdata->minDistance = setup->minDistance;
         objdata->maxDistance = setup->base.loadDistance * 8;
-        objdata->unkC = setup->minDistance;
+        objdata->minDistanceCopy = setup->minDistance;
 
-        if (setup->flagID == -1) {
-            objdata->enabled = 1;
+        //Check gamebits (unfinished: doesn't do anything with this)
+        if (setup->gamebitEnable == NO_GAMEBIT) {
+            objdata->enabled = TRUE;
         } else {
-            objdata->enabled = main_get_bits(setup->flagID);
+            objdata->enabled = main_get_bits(setup->gamebitEnable);
         }
 
         //Set both vertex animation buffers' animated vertices to max opacity
@@ -150,14 +150,14 @@ void portaltexanimator_animate_vertices(PortalTexAnimator_Data* objdata, PortalT
 
             //Switch shape's draw flags when opacity is zero
             if (objdata->vertexOpacity == 0){
-                shapes[shapeIndex].flags |= 0x200000;
-                if (setup->unk21 != 0){
-                    shapes[shapeIndex].flags |= 0x800;
+                shapes[shapeIndex].flags |= RENDER_SHAPE_HIDE;
+                if (setup->removeCollision){
+                    shapes[shapeIndex].flags |= RENDER_UNK800;
                 }
             } else {
-                shapes[shapeIndex].flags &= 0xFFDFFFFF;
-                if (setup->unk21 != 0){
-                    shapes[shapeIndex].flags &= ~0x800;
+                shapes[shapeIndex].flags &= ~RENDER_SHAPE_HIDE;
+                if (setup->removeCollision){
+                    shapes[shapeIndex].flags &= ~RENDER_UNK800;
                 }
             }
         }
