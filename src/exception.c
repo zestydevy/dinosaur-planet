@@ -724,7 +724,7 @@ void crash_print_line(s32 x, s32 y, char *fmt, ...) {
 
     va_start(ap, fmt);
     
-    vsprintf(str, fmt, ap);
+    vsnprintf(str, sizeof(str), fmt, ap);
 
     va_end(ap);
 
@@ -752,7 +752,7 @@ void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4) {
 
     bvar = 1;
 
-    sprintf(str, "(");
+    snprintf(str, sizeof(str), "(");
     len = strlen(str);
 
     while (param4->code1 != 0) {
@@ -760,18 +760,18 @@ void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4) {
             if (bvar) {
                 bvar = 0;
             } else {
-                sprintf(str + len, ",");
+                snprintf(str + len, sizeof(str) - len, ",");
             }
 
             len = strlen(str);
-            sprintf(str + len, "%s", param4->text);
+            snprintf(str + len, sizeof(str) - len, "%s", param4->text);
             len = strlen(str);
         }
 
         param4++;
     }
 
-    sprintf(str + len, ")");
+    snprintf(str + len, sizeof(str) - len, ")");
     len = strlen(str);
     crash_print_line(x, y, str);
 }
