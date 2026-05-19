@@ -26,13 +26,14 @@ typedef struct {
     s16 unkA56;
     u16 unkA58;
     u8 _unkA5A[0xA5C - 0xA5A];
-    s8 unkA5C;
+    u8 unkA5C;
     u8 _unkA5D[0xA60 - 0xA5D];
     u8 unkA60_0 : 1;
     u8 unkA60_1 : 1;
     u8 unkA60_2 : 1;
     u8 unkA60_3 : 1;
     u8 unkA60_4 : 1;
+    u8 unkA60_5 : 1;
     u8 unkA61;
     s8 unkA62;
     s8 unkA63;
@@ -40,8 +41,11 @@ typedef struct {
 
 /*0x0*/ static u32 _data_0 = 0x0854081a;
 /*0x4*/ static u32 _data_4 = 0x08530852;
-/*0x8*/ static u32 _data_8[] = {
-    0x08170800, 0x08180800, 0x08191000, 0x081a1000
+/*0x8*/ static s16 _data_8[][2] = {
+    {0x0817, 0x0800}, 
+    {0x0818, 0x0800}, 
+    {0x0819, 0x1000}, 
+    {0x081a, 0x1000}
 };
 /*0x18*/ static u32 _data_18[] = {
     0x07bf1000, 0x08161000, 0x081c1000
@@ -69,16 +73,19 @@ typedef struct {
 /*0x94*/ static u32 _data_94[] = {
     0x00000008, 0x00000007, 0x00000009, 0x0000000a, 0x01c80000
 };
-/*0xA8*/ static u32 _data_A8 = 0x00180000;
-/*0xAC*/ static u32 _data_AC[] = {
-    0x3b4b295f, 0x00030003
+/*0xA8*/ static s16 _data_A8[] = {0x0018, 0x0000};
+/*0xAC*/ static f32 _data_AC[] = {
+    0.0031f, /*0x00030003*/2.7551e-40f // hmm
 };
-/*0xB4*/ static f32 _data_B4[] = {
-    0, 0.03, 0.05, 0.7, 0.6, 1.2, 0.8, 1.93, 
-    1.72, 2.7
+/*0xB4*/ static f32 _data_B4[][2] = {
+    {0.0f, 0.03f}, 
+    {0.05f, 0.7f}, 
+    {0.6f, 1.2f}, 
+    {0.8f, 1.93f}, 
+    {1.72f, 2.7f}
 };
-/*0xDC*/ static u32 _data_DC[] = {
-    0x00020003, 0x00170016, 0x00040000
+/*0xDC*/ static s16 _data_DC[] = {
+    0x0002, 0x0003, 0x0017, 0x0016, 0x0004, 0x0000
 };
 
 /*0x0*/ static u8 _bss_0[0x20];
@@ -87,6 +94,7 @@ typedef struct {
 /*0x30*/ static u8 _bss_30[0x40];
 
 static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3);
+static void dll_713_func_3210(Object* self, s16 arg1, s16 arg2);
 
 // offset: 0x0 | func: 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_0.s")
@@ -254,59 +262,386 @@ static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animO
 }
 
 // offset: 0x2174 | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_2174.s")
+static void dll_713_func_2174(Object* self, ObjFSA_Data* fsa) {
+    fsa->speed = 0.0f;
+    fsa->unk27C = 0.0f;
+    fsa->unk278 = 0.0f;
+    self->velocity.x = 0.0f;
+    self->velocity.y = 0.0f;
+    self->velocity.z = 0.0f;
+}
 
 // offset: 0x21A8 | func: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_21A8.s")
+s32 dll_713_func_21A8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DRearthwalk_Data* objdata = self->data;
+    if (objdata->unkA5C != 1) {
+        objdata->unkA58 |= 0x20;
+    }
+    return 2;
+}
 
 // offset: 0x21DC | func: 27
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_21DC.s")
+s32 dll_713_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DRearthwalk_Data* objdata = self->data;
+    s16 var_a1;
+    s32 temp_v0;
+    
+    dll_713_func_2174(self, fsa);
+    if (fsa->unk33A != 0) {
+        if (rand_next(0, 5) == 0) {
+            temp_v0 = rand_next(0, 1);
+            fsa->animTickDelta = _data_AC[temp_v0];
+            var_a1 = _data_A8[temp_v0];
+        } else {
+            var_a1 = _data_DC[0];
+        }
+        fsa->animTickDelta = 0.01f;
+        func_80023D30(self, var_a1, 0.0f, 0);
+        func_80024D74(self, 0x14);
+    }
+    if (fsa->analogInputPower < 0.1f) {
+        fsa->unk328 = 0;
+        fsa->unk32A = 0;
+        fsa->analogInputPower = 0.0f;
+    }
+    if (objdata->unkA56 <= 0) {
+        return 3;
+    }
+    if (fsa->enteredAnimState != 0) {
+        fsa->animStateTime = 0;
+        fsa->animTickDelta = 0.01f;
+        fsa->unk2B0 = 18.0f;
+        if (self->curModAnimId != _data_DC[0]) {
+            func_80023D30(self, _data_DC[0], 0.0f, 0);
+            func_80024D74(self, 0x14);
+        }
+    }
+    if ((fsa->prevAnalogInputPower > 0.0f) && (fsa->analogInputPower > 0.0f)) {
+        return 5;
+    }
+    if (fsa->unk310 & 0x8000) {
+        return 6;
+    }
+    if (rand_next(0, 60) == 0) {
+        func_80034B54(self, &objdata->unk394, _data_8[rand_next(0, 2)], 0);
+    }
+    return 0;
+}
 
 // offset: 0x2454 | func: 28
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_2454.s")
+s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DRearthwalk_Data* objdata = self->data;
+
+    fsa->flags |= 0x200000;
+    objdata->unkA62 = 3;
+    switch (self->curModAnimId) {
+    case 10:
+        self->unkAF |= 8;
+        if (fsa->unk33A != 0) {
+            func_80023D30(self, 0xE, 0.0f, 0);
+            fsa->animTickDelta = 0.01f;
+        }
+        if (objdata->unkA56 > 0) {
+            if ((fsa->animTickDelta > 0.0f) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
+                fsa->animTickDelta = -fsa->animTickDelta;
+            }
+        }
+        break;
+    case 12:
+    case 14:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+        fsa->animTickDelta = 0.005f;
+        if ((objdata->unkA56 != 0) && (objdata->unkA56 >= 5)) {
+            func_80023D30(self, 0xB, 0.0f, 0U);
+            fsa->animTickDelta = 0.01f;
+        }
+        break;
+    case 11:
+        if (fsa->unk33A != 0) {
+            objdata->unk3B8.unk4A9 &= ~0x2;
+            if (objdata->unkA58 & 0x20) {
+                objdata->unkA60_4 = 1;
+            } else {
+                objdata->unkA62 = 9;
+            }
+            objdata->unk3B8.unk4A9 &= ~1;
+            return 2;
+        }
+        break;
+    default:
+        objdata->unkA60_4 = 0;
+        func_80023D30(self, 0xA, 0.0f, 0);
+        objdata->unk3B8.unk4A9 |= 2;
+        dll_713_func_2174(self, fsa);
+        fsa->animTickDelta = 0.01f;
+        break;
+    }
+
+    if (rand_next(0, 30) == 0) {
+        func_80034B54(self, &objdata->unk394, _data_8[rand_next(0, 4)], 0);
+    }
+    return 0;
+}
 
 // offset: 0x2704 | func: 29
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_2704.s")
+s32 dll_713_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DRearthwalk_Data* objdata = self->data;
+    s16 temp_ft1;
+    
+    fsa->flags |= OBJFSA_FLAG_200000;
+    if ((fsa->unk328 < (objdata->unkA52 / 3)) || (fsa->analogInputPower == 0.0f)) {
+        return 5;
+    }
+    if (fsa->unk32A < -0xAF) {
+        fsa->unk32A = -fsa->unk32A;
+    }
+    if (self->curModAnimId != 5) {
+        func_80023D30(self, 5, 0.0f, 0U);
+    }
+    temp_ft1 = (f32) fsa->unk32A * updateRate * 182.04f;
+    self->srt.yaw += temp_ft1 >> 4;
+    dll_713_func_3210(self, temp_ft1, 0);
+    fsa->animTickDelta = fsa->analogInputPower * 0.08f;
+    if (fsa->unk310 & 0x8000) {
+        return 6;
+    }
+    return 0;
+}
 
 // offset: 0x2860 | func: 30
+#ifndef NON_MATCHING
+s32 dll_713_func_2860(Object *self, ObjFSA_Data *fsa, f32 updateRate);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_2860.s")
+#else
+s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    u32 var_v1_3;
+    s16 temp2;
+    u32 var_t0;
+    f32 var_fa0;
+    f32 temp_fv1;
+    s32 _pad2;
+    DRearthwalk_Data* sp2C;
+    s32 _pad3;
+    s32 _pad4;
+    s32 sp20;
+    f32 var_fv0;
+    s32 temp;
+
+    sp2C = self->data;
+    sp20 = 1;
+    fsa->flags |= 0x200000;
+    if (fsa->enteredAnimState != 0) {
+        fsa->unk32A = 0;
+        fsa->unk328 = 0;
+    }
+    if (fsa->analogInputPower < 0.08f) {
+        fsa->unk328 = 0;
+        fsa->unk32A = 0;
+        fsa->analogInputPower = 0.0f;
+    }
+    fsa->unk32A = CLAMP_EXPR(fsa->unk32A, -0x1000, 0x1000);
+    if (fsa->unk32A >= 0) {
+        temp = fsa->unk32A;
+    } else {
+        temp = -fsa->unk32A;
+    }
+    if (sp2C->unkA52 < temp) {
+        temp2 = (f32) fsa->unk32A * updateRate * 182.04f;
+        self->srt.yaw += temp2 >> 5;
+    } else {
+        self->srt.yaw += ((((f32) fsa->unk32A * updateRate) / 36.0f) * 182.0f);
+    }
+    dll_713_func_3210(self, (s16) ((f32) fsa->unk32A * updateRate * 182.04f), 0);
+    var_fv0 = fsa->analogInputPower;
+    if (var_fv0 < 0.0f) {
+        var_fv0 = 0.0f;
+    }
+    if (var_fv0 > 1.0f) {
+        var_fv0 = 1.0f;
+    }
+    var_fa0 = var_fv0 * 2.7f;
+    if (var_fa0 < 0) {
+        var_fa0 = 0;
+    }
+    fsa->speed += (((var_fa0 - fsa->speed) / fsa->unk2B0) * updateRate);
+    if (self->srt.pitch > 0) {
+        var_fa0 -= (fsin16_precise(self->srt.pitch) * 0.3f);
+    } else {
+        var_fa0 -= (fsin16_precise(self->srt.pitch) * 0.15f);
+    }
+    fsa->unk278 += (((var_fa0 - fsa->unk278) / fsa->unk2B0) * updateRate);
+    var_t0 = 0;
+    temp_fv1 = self->animProgress;
+    var_v1_3 = 0;
+    while (self->curModAnimId != _data_DC[var_v1_3] && var_v1_3 < 5) {
+        var_v1_3++;
+    }
+    if (var_v1_3 >= 5) {
+        var_v1_3 = 0;
+    }
+    if (rand_next(0, 0x46 - (s32) ((fsa->speed / 2.7f) * 50.0f)) == 0) {
+        func_80034B54(self, &sp2C->unk394, _data_8[rand_next(0, 3)], 0);
+    }
+
+    while (sp20) {
+        if (fsa->speed < _data_B4[var_v1_3][0]) {
+            if (var_v1_3 == 1) {
+                return 2;
+            }
+            var_v1_3 -= 1;
+            var_t0 = 1;
+        } else if (_data_B4[var_v1_3][1] <= fsa->speed) {
+            if (var_v1_3 == 0) {
+                temp_fv1 = 0.0f;
+            }
+            var_v1_3 += 1;
+            var_t0 = 1;
+        } else {
+            sp20 = 0;
+        }
+    }
+    if (var_t0 != 0) {
+        func_80023D30(self, _data_DC[var_v1_3], temp_fv1, 0);
+        func_80024D74(self, 0xA);
+    }
+    func_8002493C(self, fsa->unk278, &fsa->animTickDelta);
+    if (fsa->unk310 & 0x8000) {
+        joy_disable_buttons(0, 0x8000);
+        return 6;
+    }
+    return 0;
+}
+#endif
 
 // offset: 0x2D80 | func: 31
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_2D80.s")
+s32 dll_713_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    ObjectHitInfo* hit;
+    DRearthwalk_Data* objdata;
+
+    hit = self->objhitInfo;
+    objdata = self->data;
+    fsa->flags |= OBJFSA_FLAG_200000;
+    if (fsa->enteredAnimState != 0) {
+        objdata->unkA58 &= ~0x8;
+        hit->unk58 |= 0x200;
+        if (fsa->unk278 > 0.45f) {
+            func_80023D30(self, 0x14, 0.0f, 0);
+            fsa->animTickDelta = 0.021f;
+            hit->unk60 = fsa->unk278 > 1.93f ? 3 : 2;
+        } else {
+            func_80023D30(self, 0x15, 0.0f, 0);
+            fsa->animTickDelta = 0.011f;
+            hit->unk60 = 1;
+        }
+    }
+    if (self->animProgress < 0.4f) {
+        if ((self->animProgress + (fsa->animTickDelta * (f32) gUpdateRate)) > 0.4f) {
+            objdata->unkA60_5 = 1;
+        }
+    }
+    hit->unk5F = 5;
+    if (fsa->unk33A != 0) {
+        objdata->unkA60_5 = 0;
+        return 2;
+    }
+    if (self->curModAnimId == 0x14) {
+        gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 1);
+    }
+    return 0;
+}
 
 // offset: 0x2F90 | func: 32
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_2F90.s")
+s32 dll_713_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DRearthwalk_Data* objdata = self->data;
+
+    dll_713_func_2174(self, fsa);
+    if (fsa->enteredAnimState != 0) {
+        if (objdata->unkA56 > 0) {
+            if (objdata->unkA60_0 != 0) {
+                func_80023D30(self, 7, 0.0f, 0);
+            } else {
+                func_80023D30(self, 8, 0.0f, 0);
+            }
+        } else if (objdata->unkA60_0 != 0) {
+            func_80023D30(self, 0x12, 0.0f, 0);
+        } else {
+            func_80023D30(self, 0x13, 0.0f, 0);
+        }
+        fsa->animTickDelta = 0.02f;
+    }
+    if (self->animProgress > 0.9f) {
+        objdata->unkA56--;
+        if (objdata->unkA56 <= 0) {
+            if (objdata->unkA56 < -20) {
+                main_set_bits(BIT_5DE, 1);
+            }
+            return 3;
+        }
+        return 2;
+    }
+    return 0;
+}
 
 // offset: 0x311C | func: 33
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_311C.s")
+s32 dll_713_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DRearthwalk_Data* objdata = self->data;
+    
+    if (fsa->enteredAnimState != 0) {
+        dll_713_func_2174(self, fsa);
+        func_80023D30(self, *_data_DC, 0.0f, 0);
+    }
+    if ((main_get_bits(BIT_5CF) == 0) && (main_get_bits(BIT_5CD) != 0)) {
+        main_set_bits(BIT_656, 1);
+        objdata->unkA60_4 = 1;
+        return 2;
+    }
+    return 0;
+}
 
 // offset: 0x31F8 | func: 34
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_31F8.s")
+s32 dll_713_func_31F8(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
+    return 0;
+}
 
 // offset: 0x3210 | func: 35
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_3210.s")
+static void dll_713_func_3210(Object* self, s16 arg1, s16 arg2) {
+    s16* temp_v0;
+
+    temp_v0 = func_80034804(self, 9);
+    if (temp_v0 != NULL) {
+        temp_v0[1] += ((arg1 - temp_v0[1]) >> 5);
+        temp_v0[0] += ((arg2 - temp_v0[0]) >> 5);
+        
+        // @bug? should be clamping [0]?
+        temp_v0[1] = CLAMP_EXPR(temp_v0[1], -0x1555, 0x1555);
+        temp_v0[1] = CLAMP_EXPR(temp_v0[1], -0x1555, 0x1555);
+    }
+}
 
 // offset: 0x32EC | func: 36
 s32 dll_713_func_32EC(Object* self, u8 arg1) {
-    DRearthwalk_Data* objData;
+    DRearthwalk_Data* objdata;
 
-    objData = self->data;
+    objdata = self->data;
     switch (arg1) {
         case 5:
-            objData->unkA58 |= 0x80;
-            objData->unkA62 = 0xA;
+            objdata->unkA58 |= 0x80;
+            objdata->unkA62 = 0xA;
             //Set Mind Read text
             if (!gDLL_22_Subtitles->vtbl->func_21C0(self->id, GAMETEXT_0CF_DR_Mind_Read_messages_4)) {
                 break;
             }
         // fallthrough
         case 1:
-            objData->unkA62 = 2;
+            objdata->unkA62 = 2;
             func_80000450(self, self, 0x22C, 0, 0, 0);
             break;
         case 2:
             func_80000450(self, self, 0x22E, 0, 0, 0);
-            objData->unkA58 &= 0xFF7F;
+            objdata->unkA58 &= ~0x80;
             //Set Mind Read text
             gDLL_22_Subtitles->vtbl->func_21C0(self->id, GAMETEXT_0D0_DR_Mind_Read_messages_5);
     }
