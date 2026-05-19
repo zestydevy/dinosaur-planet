@@ -8,14 +8,14 @@
 typedef struct {
     ObjSetup base;
     s16 gamebitDug;         //Gamebit to set when Tricky digs up the spot
-    s16 unused1A;
-    s16 unused1C;
+    s16 unused1A;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
+    s16 unused1C;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
     s16 magicCaveID;        //Values 3 onwards cause the dig spot to become be a Magic Cave entrance
     u8 digDepthMax;         //Dig distance (stored at 100x scale)
     u8 soundIndex;          //Index of the sound to play when digging has finished (0: small secret, 1: big secret)
-    u8 unused22;
+    u8 unused22;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
     u8 findCommandRadius;   //Range for Find command to show up in inventory
-    u8 unused24;
+    u8 unused24;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
     u8 animatorID;          //Block shapes with this tag will be animated
     u8 falloffRadius;       //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
     u8 collectableDepth;    //How far down the collectable is buried beneath the dig spot
