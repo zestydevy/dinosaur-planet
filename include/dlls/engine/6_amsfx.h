@@ -510,6 +510,11 @@ enum SoundID {
     
     SOUND_851_Laser_Blast = 0x851, // DRbullet
 
+    SOUND_855 = 0x855,
+    SOUND_856 = 0x856,
+    SOUND_857 = 0x857,
+    SOUND_858 = 0x858,
+
     SOUND_860_Explosion_Mid = 0x860, //DRexplodeDoor
     
     SOUND_87B_Ting = 0x87B, // Duster
@@ -524,6 +529,8 @@ enum SoundID {
     SOUND_8A2_Spore_Disintegrate = 0x8A2, // used in SHspore
     
     SOUND_8C7_Explosion_High = 0x8C7, //DRexplodeDoor
+
+    SOUND_8ED = 0x8ED,
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
     

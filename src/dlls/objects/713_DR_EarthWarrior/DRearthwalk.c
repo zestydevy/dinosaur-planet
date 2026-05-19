@@ -7,6 +7,7 @@
 #include "sys/gfx/modgfx.h"
 #include "sys/segment_1050.h"
 #include "sys/objtype.h"
+#include "sys/objlib.h"
 #include "prevent_bss_reordering.h"
 
 typedef struct {
@@ -20,14 +21,23 @@ typedef struct {
     u8 _unk0x34C[0x394 - 0x34C];
     HeadAnimation unk394;
     MoveLibData unk3B8;
-    u8 _unk870[0xA52 - 0x870];
+    u8 _unk870[0x978 - 0x870];
+    Vec3f unk978;
+    u8 _unk984[0x9B4 - 0x984];
+    f32 unk9B4;
+    f32 unk9B8;
+    f32 unk9BC;
+    u8 _unk9C0[0xA52 - 0x9C0];
     s16 unkA52;
     u8 _unkA54[0xA56 - 0xA54];
     s16 unkA56;
     u16 unkA58;
-    u8 _unkA5A[0xA5C - 0xA5A];
+    u8 unkA5A;
+    u8 _unkA5B;
     u8 unkA5C;
-    u8 _unkA5D[0xA60 - 0xA5D];
+    u8 _unkA5D;
+    u8 unkA5E;
+    u8 unkA5F;
     u8 unkA60_0 : 1;
     u8 unkA60_1 : 1;
     u8 unkA60_2 : 1;
@@ -47,11 +57,19 @@ typedef struct {
     {0x0819, 0x1000}, 
     {0x081a, 0x1000}
 };
-/*0x18*/ static u32 _data_18[] = {
-    0x07bf1000, 0x08161000, 0x081c1000
+/*0x18*/ static s16 _data_18[][2] = {
+    {0x07bf, 0x1000}, 
+    {0x0816, 0x1000}, 
+    {0x081c, 0x1000}
 };
-/*0x24*/ static s16 _data_24[] = {
-    0x08ed, 0x1000, 0x0855, 0x0856, 0x0857, 0x0858
+/*0x24*/ static s16 _data_24[][2] = {
+    {SOUND_8ED, 0x1000}
+};
+/*0x24*/ static s16 _data_28[] = {
+    SOUND_855, 
+    SOUND_856, 
+    SOUND_857, 
+    SOUND_858
 };
 /*0x30*/ static Vec3f _data_30[] = {
     VEC3F(-9.0f, 0.0f, -12.0f), 
@@ -90,8 +108,7 @@ typedef struct {
 
 /*0x0*/ static u8 _bss_0[0x20];
 /*0x20*/ static u8 _bss_20[0x8];
-/*0x28*/ static u8 _bss_28[0x8];
-/*0x30*/ static u8 _bss_30[0x40];
+/*0x28*/ static MtxF _bss_28;
 
 static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3);
 static void dll_713_func_3210(Object* self, s16 arg1, s16 arg2);
@@ -159,20 +176,101 @@ void dll_713_control(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_B54.s")
 
 // offset: 0x107C | func: 5 | export: 2
-void dll_713_update(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_update.s")
+void dll_713_update(Object* self) {
+    DRearthwalk_Data* objdata;
+    ObjFSA_Data* fsa;
+    Object* hitBy;
+    DLL27_Data* temp_v1;
+    s16 angle;
+    s32 dmgType;
+
+    objdata = self->data;
+    fsa = self->data;
+    if (self->stateFlags & OBJSTATE_IN_SEQ) {
+        return;
+    }
+    
+    if (fsa->animState != 6) {
+        dmgType = func_80025F40(self, &hitBy, NULL, NULL);
+        if (dmgType != 0) {
+            if ((dmgType == Damage_Type_Flame_Command) || (get_player() == hitBy) || (hitBy->id == OBJ_sword)) {
+                return;
+            }
+            func_80034B54(self, &objdata->unk394, _data_18[rand_next(0, 2)], 1);
+            angle = self->srt.yaw - (hitBy->srt.yaw & 0xFFFF);
+            CIRCLE_WRAP(angle);
+            if ((angle > 0x4000) || (angle < -0x4000)) {
+                objdata->unkA60_0 = 0;
+            } else {
+                objdata->unkA60_0 = 1;
+            }
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 6);
+        }
+    }
+
+    if (fsa->unk4.mode != 0) {
+        temp_v1 = &fsa->unk4;
+        if (temp_v1->hitsTouchBits != 0) {
+            fsa->speed *= 0.5f;
+            fsa->unk2B0 *= 1.5f;
+        } else {
+            if (fsa->unk2B0 != 18.0f) {
+                fsa->unk2B0 *= 0.8f;
+                if (fsa->unk2B0 <= 18.0f) {
+                    fsa->unk2B0 = 18.0f;
+                }
+            }
+        }
+        if (temp_v1->unk140.unk0 != NULL) {
+            hitBy = temp_v1->unk140.unk0;
+            if ((hitBy->id == OBJ_DR_PushCart) && (objdata->unkA60_5) && (self->curModAnimId == 0x14)) {
+                gDLL_6_AMSFX->vtbl->play(self, _data_28[1], MAX_VOLUME, NULL, NULL, 0, NULL);
+                ((DLL_Unknown*)hitBy->dll)->vtbl->func[7].withThreeArgsCustom(hitBy, self, 190.f);
+                objdata->unkA60_5 = 0;
+            }
+            temp_v1->unk140.unk0 = NULL;
+        }
+    }
+}
 
 // offset: 0x138C | func: 6 | export: 3
-void dll_713_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_print.s")
+void dll_713_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    DRearthwalk_Data* objdata = self->data;
+    s32 numObjs;
+    Object** objs;
+    s32 i;
+
+    if (visibility == -1) {
+        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        func_80031F6C(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
+        func_80032238(self, 3, 4, &objdata->unk978);
+    }
+    if ((objdata->unkA5A != 2) && (visibility != 0)) {
+        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        func_80031F6C(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
+        func_80032238(self, 3, 4, &objdata->unk978);
+        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->unk3B8, 0);
+        if (objdata->unkA60_1) {
+            objs = obj_get_all_of_type(OBJTYPE_57, &numObjs);
+            for (i = 0; i < numObjs; i++) {
+                ((DLL_Unknown*)objs[i]->dll)->vtbl->func[7].objtype57Func7(objs[i], self, 
+                    _data_94[((DLL_Unknown*)objs[i]->dll)->vtbl->func[8].withOneVoidArgS32(objs[i])], 
+                    gdl, mtxs, vtxs, pols);
+            }
+        }
+    }
+}
 
 // offset: 0x160C | func: 7 | export: 4
-void dll_713_free(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_free.s")
+void dll_713_free(Object* self, s32 a1) {
+    obj_free_object_type(self, OBJTYPE_11);
+    remove_temp_dll(53);
+}
 
 // offset: 0x1660 | func: 8 | export: 5
-u32 dll_713_get_model_flags(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_get_model_flags.s")
+u32 dll_713_get_model_flags(Object *self) {
+    return MODFLAGS_EVENTS | MODFLAGS_SHADOW | MODFLAGS_1;
+}
 
 // offset: 0x1670 | func: 9 | export: 6
 u32 dll_713_get_data_size(Object *self, u32 a1) {
@@ -183,43 +281,133 @@ u32 dll_713_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1684.s")
 
 // offset: 0x197C | func: 11 | export: 7
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_197C.s")
+s32 dll_713_func_197C(Object* self, Object* rider) {
+    return 0;
+}
 
 // offset: 0x1990 | func: 12 | export: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1990.s")
+s32 dll_713_func_1990(Object* self) {
+    DRearthwalk_Data* objdata = self->data;
+
+    return objdata->unkA5F != 0 ? 1 : 2;
+}
 
 // offset: 0x19B8 | func: 13 | export: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_19B8.s")
+void dll_713_func_19B8(Object* self, f32* a1, f32* a2, f32* a3) {
+    DRearthwalk_Data* objdata = self->data;
+    *a1 = objdata->unk9B4;
+    *a2 = objdata->unk9B8;
+    *a3 = objdata->unk9BC;
+}
 
 // offset: 0x19DC | func: 14 | export: 10
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_19DC.s")
+s32 dll_713_func_19DC(Object* self, Object* rider) {
+    DRearthwalk_Data* objdata = self->data;
+    Vec3f sp48;
+    
+    if ((objdata->unkA56 != 0) && (joy_get_pressed(0) & 0x4000)) {
+        gDLL_5_AMSEQ2->vtbl->set(self, 0xF6, 0, 0, 0);
+        sp48.x = self->srt.transl.x;
+        sp48.y = self->srt.transl.y;
+        sp48.z = self->srt.transl.z;
+        sp48.x += fsin16_precise(self->srt.yaw - 0x4000) * 100.0f;
+        sp48.z += fcos16_precise(self->srt.yaw - 0x4000) * 100.0f;
+        if (func_80059C40(&self->srt.transl, &sp48, 10.0f, 1, NULL, self, 8, -1, 0xFF, 0) != 0) {
+            objdata->unkA5E = 1;
+        } else {
+            objdata->unkA5E = 0;
+        }
+        gDLL_3_Animation->vtbl->start_obj_sequence(objdata->unkA5E + 7, self, -1);
+    }
+    if (!objdata->unkA56) {
+        gDLL_5_AMSEQ2->vtbl->set(self, 0xF6, 0, 0, 0);
+    }
+    return objdata->unkA56 == 0;
+}
 
 // offset: 0x1BB8 | func: 15 | export: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1BB8.s")
+s32 dll_713_func_1BB8(Object* self) {
+    DRearthwalk_Data* objdata = self->data;
+
+    return objdata->unkA5E != 0 ? 2 : 1;
+}
 
 // offset: 0x1BE0 | func: 16 | export: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1BE0.s")
+void dll_713_func_1BE0(Object* self, f32* a1, f32* a2, f32* a3) {
+    MtxF mtx;
+    SRT srt;
+
+    srt.transl.x = self->srt.transl.x;
+    srt.transl.y = self->srt.transl.y;
+    srt.transl.z = self->srt.transl.z;
+    srt.yaw = self->srt.yaw;
+    srt.pitch = self->srt.pitch;
+    srt.roll = self->srt.roll;
+    srt.scale = 1.0f;
+    matrix_from_srt(&mtx, &srt);
+    vec3_transform(&mtx, 0.0f, 50.0f, -35.0f, a1, a2, a3);
+}
 
 // offset: 0x1CA4 | func: 17 | export: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1CA4.s")
+s32 dll_713_func_1CA4(Object* self) {
+    return 0;
+}
 
 // offset: 0x1CB4 | func: 18 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1CB4.s")
+void dll_713_func_1CB4(Object* self, s32 arg1) {
+    DRearthwalk_Data* objdata = self->data;
+    objdata->unkA5A = arg1;
+    if (arg1 == 0) {
+        main_set_bits(BIT_7BC, 0);
+        main_set_bits(BIT_7D4, 1);
+        objdata->unk3B8.unk4A9 &= ~1;
+    } else {
+        main_set_bits(BIT_7BC, 1);
+        main_set_bits(BIT_7D4, 0);
+    }
+}
 
 // offset: 0x1D5C | func: 19 | export: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1D5C.s")
+void dll_713_func_1D5C(Object* self, f32* arg1, s32* arg2) {
+    *arg1 = 0.0f;
+    *arg2 = 0;
+}
 
 // offset: 0x1D84 | func: 20 | export: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1D84.s")
+f32 dll_713_func_1D84(Object* self, f32* arg1) {
+    *arg1 = 5.0f;
+    return 0.0f;
+}
 
 // offset: 0x1DAC | func: 21 | export: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1DAC.s")
+s32 dll_713_func_1DAC(Object* self) {
+    return 0;
+}
 
 // offset: 0x1DBC | func: 22 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1DBC.s")
+void dll_713_func_1DBC(Object* self) { }
 
 // offset: 0x1DC8 | func: 23 | export: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_1DC8.s")
+void dll_713_func_1DC8(Object* self, f32 scale) {
+    MtxF* sp4C;
+    f32 atX;
+    f32 atY;
+    f32 atZ;
+    SRT srt;
+
+    sp4C = func_80032170(self, 2);
+    func_800321E4(self, 2, &atX, &atY, &atZ);
+    srt.yaw = 0;
+    srt.pitch = 0;
+    srt.roll = 0;
+    srt.transl.x = atX;
+    srt.transl.y = atY;
+    srt.transl.z = atZ;
+    srt.scale = scale / self->def->scale;
+    matrix_from_srt(&_bss_28, &srt);
+    matrix_concat_4x3(&_bss_28, sp4C, &_bss_28);
+    func_80034FF0(&_bss_28);
+}
 
 // offset: 0x1EBC | func: 24
 static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
@@ -654,6 +842,6 @@ void dll_713_func_3420(Object* self, s32 arg1, s32 arg2) {
     DRearthwalk_Data* objdata = self->data;
     if (arg1 == 1) {
         objdata->unkA56 += 12;
-        func_80034B54(self, &objdata->unk394, _data_24, 1);
+        func_80034B54(self, &objdata->unk394, _data_24[0], 1);
     }
 }

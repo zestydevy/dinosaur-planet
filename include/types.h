@@ -53,6 +53,7 @@ typedef union {
     s32 (*withFiveArgsCustom3)(void *, void *, s8, f32 *, f32 *);
     void (*withSixArgsCustom)(void *, s32, void *, s32, s32, s32);
     s32 (*withSevenArgsCustom)(void *, f32, f32, f32, void*, void*, void*);
+    void (*objtype57Func7)(void *, void *, s32, void *, void *, void *, void *);
 } UnknownDLLFunc;
 
 // "Unknown" DLL interface to help match code calling DLLs where the exact
