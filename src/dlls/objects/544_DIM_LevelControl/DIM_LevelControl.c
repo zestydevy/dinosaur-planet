@@ -29,9 +29,9 @@ void DIM_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     main_set_bits(BIT_DIM_Gear_3_Random_Tent, tentIndex);
 
     if (main_get_bits(BIT_42C)) {
-        gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 2);
+        gDLL_29_Gplay->vtbl->set_act(self->mapID, 2);
     } else {
-        gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
+        gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
     }
     
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);

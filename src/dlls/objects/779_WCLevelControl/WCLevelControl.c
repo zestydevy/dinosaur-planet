@@ -116,7 +116,7 @@ void dll_779_control(Object *self) {
         func_80000450(self, self, 0x24F, 0, 0, 0);
         self->unkDC = 1;
     }
-    act = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     if ((act == 1) || (act != 2)) {
         dll_779_func_1444(self, objdata);
     } else {

@@ -69,7 +69,7 @@ void DFPfloorbar_control(Object* self) {
     f32 dy;
     f32 dz;
     s16 tileSteppedOnNum;
-    u16 setupID;
+    u16 act;
 
     objSetup = (DFPfloorbar_Setup*)self->setup;
     objData = self->data;
@@ -78,9 +78,9 @@ void DFPfloorbar_control(Object* self) {
     
     diPrintf("needbit %d\n", main_get_bits(objData->gamebitLowered));
     
-    setupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     
-    switch (setupID) {
+    switch (act) {
     case 1:
         if (objData->rowIndex >= 3) {
             objSetup->base.y = 20.0f;

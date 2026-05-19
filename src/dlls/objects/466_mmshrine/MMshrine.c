@@ -230,7 +230,7 @@ void MMshrine_control(Object *self) {
             objdata->unkF = 6;
             main_set_bits(BIT_DB_Entered_Shrine_1, 1);
             main_set_bits(BIT_SP_Map_MMP, 1);
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 4);
+            gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 4);
             break;
         case 9:
             objdata->unkF = 0;

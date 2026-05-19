@@ -1,10 +1,10 @@
 .text = 0x0:
 anim_ctor = 0x0;
 anim_dtor = 0x58;
-anim_func_98 = 0x98;
+anim_init = 0x98;
 anim_queue_activate = 0x2C0;
-anim_func_324 = 0x324;
-anim_func_358 = 0x358;
+anim_set_flag = 0x324;
+anim_get_flag = 0x358;
 anim_func_394 = 0x394;
 anim_tick_obj = 0x3D0;
 anim_process_remaining_events_immediate = 0x15FC;

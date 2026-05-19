@@ -8,10 +8,10 @@ _exports:
 .dword anim_dtor
 
 # export table
-.dword anim_func_98
+.dword anim_init
 .dword anim_queue_activate
-.dword anim_func_324
-.dword anim_func_358
+.dword anim_set_flag
+.dword anim_get_flag
 .dword anim_tick_obj
 .dword anim_update_camera
 .dword anim_init_curve

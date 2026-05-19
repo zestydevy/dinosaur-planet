@@ -340,7 +340,7 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
             camAction = CamControl_get_camera_action(params);
         }
         if (camAction != NULL) {
-            gDLL_29_Gplay->vtbl->func_F60()->unk12 = params;
+            gDLL_29_Gplay->vtbl->get_current_player_lactions()->unk12 = params;
             if ((sActiveID == DLL_ID_CAMSHIPBATTLE1) || (sActiveID == DLL_ID_CAMTALK1)) {
                 CamControl_get_camnormal_module()->dll->vtbl->func3(camAction, 16);
             } else {

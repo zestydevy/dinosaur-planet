@@ -47,11 +47,11 @@ void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     objData->galleonIsLoaded = FALSE;
     objData->timer = 30;
 
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
         break;
     case WM_Setup1_Krystal_Meeting_Randorn:
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, SC_Act1_Meeting_Rubble_Autoswap);
+        gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, SC_Act1_Meeting_Rubble_Autoswap);
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup0_Main_SwapStone_Area, 1);
         break;
     case WM_Setup2_Spirit1_Krystal_DF:
@@ -86,7 +86,7 @@ void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
 // offset: 0x25C | func: 1 | export: 1
 void WL_LevelControl_control(Object* self) {
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
         break;
     case WM_Setup1_Krystal_Meeting_Randorn:
@@ -229,13 +229,13 @@ static void WL_LevelControl_setup1_tick(Object* self) {
     //Handle the Galleon
     switch (objData->galleonIsLoaded) {
         case TRUE:
-            if (objData->setup == WM_Setup1_Krystal_Meeting_Randorn) {
+            if (objData->act == WM_Setup1_Krystal_Meeting_Randorn) {
                 WL_LevelControl_unload_galleon_if_needed(self, objData);
             }
             break;
         case FALSE:
-            objData->setup = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
-            switch (objData->setup) {
+            objData->act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
+            switch (objData->act) {
             case WM_Setup1_Krystal_Meeting_Randorn:
                 WL_LevelControl_load_galleon_if_needed(self, objData);
                 break;

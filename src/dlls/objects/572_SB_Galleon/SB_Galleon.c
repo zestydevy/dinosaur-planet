@@ -126,7 +126,7 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (0) { }
     objdata->soundHandle2 = 0;
     objdata->unk8E = 100;
-    gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
+    gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
     func_80000450(self, self, 88, 0, 0, 0);
 }
 
@@ -167,7 +167,7 @@ void SB_Galleon_control(Object *self) {
         SB_Galleon_func_B88(self);
         break;
     case STATE_3:
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 1);
+        gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 1);
         self->mapID = -1;
         gDLL_28_ScreenFade->vtbl->fade_reversed(80, SCREEN_FADE_BLACK);
         gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);

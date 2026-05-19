@@ -247,7 +247,7 @@ void DBSHshrine_control(Object* self) {
         main_set_bits(BIT_15F, 0);
         objData->state = 6;
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 2, 1);
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 3);
+        gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 3);
         break;
     case 6:
         if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {

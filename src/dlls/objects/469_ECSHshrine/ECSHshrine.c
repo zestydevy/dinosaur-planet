@@ -431,7 +431,7 @@ void ECSHshrine_control(Object* self) {
         main_set_bits(BIT_143, 0);
         objdata->state = ECShrine_STATE_Warp_Away;
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_NUMBER(4), 1);
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 5);
+        gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 5);
         break;
     case ECShrine_STATE_Warp_Away:
         if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {

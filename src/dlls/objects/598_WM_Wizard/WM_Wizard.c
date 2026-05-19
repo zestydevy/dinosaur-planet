@@ -71,7 +71,7 @@ void WMWizard_control(Object* self) {
     objdata->walkIndexFlags &= ~WMWizard_FLAG_80;
     
     //Handle setup-specific behaviour
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
     case WM_Setup3_Spirit2_Sabre_DB:
     case WM_Setup5_Spirit4_Sabre_WC:
@@ -97,7 +97,7 @@ void WMWizard_update(Object *self) { }
 // offset: 0x244 | func: 3 | export: 3
 void WMWizard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
+        if (gDLL_29_Gplay->vtbl->get_act(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
             if (main_get_bits(BIT_WM_Setup4_Show_Randorn)) {
                 draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
             }
@@ -123,7 +123,7 @@ u32 WMWizard_get_data_size(Object *self, u32 a1) {
 // offset: 0x364 | func: 7
 int WMWizard_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
     //Setup-specific anim callback behaviours
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
     case WM_Setup3_Spirit2_Sabre_DB:
     case WM_Setup5_Spirit4_Sabre_WC:

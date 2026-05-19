@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/map_enums.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"
@@ -254,7 +255,7 @@ void dll_433_control(Object* self) {
             main_set_bits(BIT_125, 0U);
             objdata->unk11 = 5U;
             ((DLL_210_Player*)player->dll)->vtbl->func39(player, 1, 1);
-            gDLL_29_Gplay->vtbl->set_map_setup(0xB, 2);
+            gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 2);
             break;
         case 5:
             if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {

@@ -109,8 +109,8 @@ void DBlevelControl_control(Object *self) {
             objdata->mapSetup++;
         } while (main_get_bits(_data_20[objdata->mapSetup-1]));
     }
-    if (objdata->mapSetup != gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
-        gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, objdata->mapSetup);
+    if (objdata->mapSetup != gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
+        gDLL_29_Gplay->vtbl->set_act(self->mapID, objdata->mapSetup);
     }
 
     player = get_player();

@@ -2183,7 +2183,7 @@ void map_load_mobile_map(s32 id, Object *obj) {
     map_init_obj_setup_list(sp18, &gMapObjSetupLists[mapID], mapID, 0);
     gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     obj->mobileMapID = mapID;
-    gDLL_29_Gplay->vtbl->func_1378(id, mapID);
+    gDLL_29_Gplay->vtbl->set_mobile_map(id, mapID);
     if (!foundEmptySlot) {
         STUBBED_PRINTF("WORLD MAP LIST OVERFLOW\n");
     }
@@ -2721,15 +2721,15 @@ void map_func_8004773C(void) {
     Object sp4C;
     GlobalMapCell *currentCell;
     s8 *currentT1;
-    GplayStruct6* sp40;
-    GplayStruct12* sp3C;
+    PlayerLightActions* sp40;
+    PlayerEnvActions* sp3C;
     s16* sp38;
 
     if (D_800B4A5E == -1) {
         D_800B4A5E = -2;
         D_80092A78 = 8;
     }
-    gDLL_3_Animation->vtbl->func0();
+    gDLL_3_Animation->vtbl->init();
     camera_apply_alternate_trigger();
     camera_apply_alternate_trigger();
     func_80053300();
@@ -2799,9 +2799,9 @@ void map_func_8004773C(void) {
 
     player = get_player();
     if ((D_800B4A5E == -2) && (player != NULL) && ((playerno == PLAYER_SABRE) || (playerno == PLAYER_KRYSTAL))) {
-        sp40 = gDLL_29_Gplay->vtbl->func_F60();
-        sp3C = gDLL_29_Gplay->vtbl->func_FA8();
-        sp38 = gDLL_29_Gplay->vtbl->func_FE8()->actionNums;
+        sp40 = gDLL_29_Gplay->vtbl->get_current_player_lactions();
+        sp3C = gDLL_29_Gplay->vtbl->get_current_player_envactions();
+        sp38 = gDLL_29_Gplay->vtbl->get_current_player_musicactions()->actionNums;
         if (D_800B4A5E == -2) {
             if (sp40->unk0 != -1) {
                 func_80000608(player, player, sp40->unk0, 0, 0, 0);
@@ -2827,7 +2827,7 @@ void map_func_8004773C(void) {
             if (sp40->unkE != -1) {
                 func_80000608(player, player, sp40->unkE, 0, 0, 0);
             }
-            func_8001EBD0(sp40->unk10 & 1);
+            func_8001EBD0(sp40->isInside & 1);
             if (sp3C->unk4 != -1) {
                 func_800009C8(player, player, sp3C->unk4, 0);
             }
@@ -2926,7 +2926,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
                 *arg2 = objsetup->base.x + map->originWorldX;
                 *arg3 = objsetup->base.y;
                 *arg4 = objsetup->base.z + map->originWorldZ;
-                gDLL_29_Gplay->vtbl->set_map_setup(mapID, objsetup->mapSetupID);
+                gDLL_29_Gplay->vtbl->set_act(mapID, objsetup->mapAct);
                 for (group = 0; group < 32; group++) {
                     if ((objsetup->objGroupStatusBits >> group) & 1) {
                         // enable
@@ -4475,7 +4475,7 @@ s32 map_should_obj_unload(Object *obj) {
 s32 func_8004B4A0(ObjSetup* obj, s32 mapno) {
     s32 actno;
 
-    actno = gDLL_29_Gplay->vtbl->get_map_setup(mapno);
+    actno = gDLL_29_Gplay->vtbl->get_act(mapno);
     if (actno == -1) {
         return 0;
     }

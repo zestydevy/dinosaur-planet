@@ -155,8 +155,8 @@ enum Anim6CodeEventType {
     ANIM_CODE_EVT_6_RESTART_GOTO = 32,
     ANIM_CODE_EVT_6_33 = 33,
     ANIM_CODE_EVT_6_34 = 34,
-    ANIM_CODE_EVT_6_CHECKPOINT = 35,
-    ANIM_CODE_EVT_6_CHECKPOINT_NO_LOCATION = 36,
+    ANIM_CODE_EVT_6_SAVEPOINT = 35,
+    ANIM_CODE_EVT_6_SAVEPOINT_NO_LOCATION = 36,
     ANIM_CODE_EVT_6_TOGGLE_PLAYER_CONTROL = 37
 };
 
@@ -362,7 +362,7 @@ typedef struct {
 } UnkBss1D88;
 /*0x1D88*/ static UnkBss1D88 _bss_1D88;
 
-void anim_func_98(void);
+void anim_init(void);
 static s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup);
 void anim_init_curve_keyframes(AnimObj_Data* st);
 s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4, s16 arg5, s16 arg6);
@@ -411,7 +411,7 @@ static s32 anim_func_3268(Object* animObj, Object* actor, AnimObj_Data* st);
 // offset: 0x0 | ctor
 void anim_ctor(void *dll) {
     sTempBuffer = mmAlloc(0x10, ALLOC_TAG_ANIMSEQ_COL, ALLOC_NAME("anim:acbuff"));
-    anim_func_98();
+    anim_init();
 }
 
 // offset: 0x58 | dtor
@@ -420,7 +420,7 @@ void anim_dtor(void *dll) {
 }
 
 // offset: 0x98 | func: 0 | export: 0
-void anim_func_98(void) {
+void anim_init(void) {
     s32 i;
 
     for (i = 0; i < MAX_SEQSLOTS; i++) {
@@ -460,18 +460,18 @@ void anim_queue_activate(s32 seqSlot, s32 startTime, s32 numActors) {
 }
 
 // offset: 0x324 | func: 2 | export: 2
-void anim_func_324(s32 arg0, s32 arg1) {
-    if (arg0 >= 0 && arg0 < MAX_SEQSLOTS) {
-        sEventFlags[arg0] = arg1;
+void anim_set_flag(s32 seqSlot, s32 value) {
+    if (seqSlot >= 0 && seqSlot < MAX_SEQSLOTS) {
+        sEventFlags[seqSlot] = value;
     }
 }
 
 // offset: 0x358 | func: 3 | export: 3
-s8 anim_func_358(s32 arg0) {
-    if (arg0 < 0 || arg0 >= MAX_SEQSLOTS) {
+s8 anim_get_flag(s32 seqSlot) {
+    if (seqSlot < 0 || seqSlot >= MAX_SEQSLOTS) {
         return 0;
     }
-    return sEventFlags[arg0];
+    return sEventFlags[seqSlot];
 }
 
 // offset: 0x394 | func: 4 | export: 28
@@ -2756,11 +2756,11 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         st->unk7A &= ~ANIM7AFLAG_UNK400;
         st->unk142_4 = 0;
         break;
-    case ANIM_CODE_EVT_6_CHECKPOINT:
-        gDLL_29_Gplay->vtbl->checkpoint(&actor->srt.transl, actor->srt.yaw, 0, map_get_layer());
+    case ANIM_CODE_EVT_6_SAVEPOINT:
+        gDLL_29_Gplay->vtbl->savepoint(&actor->srt.transl, actor->srt.yaw, 0, map_get_layer());
         break;
-    case ANIM_CODE_EVT_6_CHECKPOINT_NO_LOCATION:
-        gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
+    case ANIM_CODE_EVT_6_SAVEPOINT_NO_LOCATION:
+        gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, map_get_layer());
         break;
     case ANIM_CODE_EVT_6_TOGGLE_PLAYER_CONTROL:
         ((DLL_210_Player*)get_player()->dll)->vtbl->func69(get_player(), sp54);
@@ -2823,7 +2823,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         gDLL_29_Gplay->vtbl->set_obj_group_status(actor->mapID, sp54, 0);
         break;
     case ANIM_CODE_EVT_6_SET_ACT:
-        gDLL_29_Gplay->vtbl->set_map_setup(actor->mapID, sp54);
+        gDLL_29_Gplay->vtbl->set_act(actor->mapID, sp54);
         break;
     case ANIM_CODE_EVT_6_ENABLE_LETTERBOX:
         if (arg4 == 0) {

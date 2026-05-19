@@ -51,13 +51,13 @@ void VFP_SpellPlace_setup(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
 // offset: 0xC8 | func: 1 | export: 1
 void VFP_SpellPlace_control(Object* self) {
     Object* player;
-    u8 mapSetupID;
+    u8 act;
 
     player = get_player();
     
     if ((player != NULL) && !(vec3_distance(&self->globalPosition, &player->globalPosition) > 100.0f)) {
-        mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
-        switch (mapSetupID) {
+        act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
+        switch (act) {
         case 1:
             // act 1
             VFP_SpellPlace_do_act1(self);

@@ -7,10 +7,10 @@
 
 DLL_INTERFACE(DLL_3_animation) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func0)(void);
-/*1*/ void (*func1)(s32 arg0, s32 arg1); // @bug: missing 3rd param
-/*2*/ void (*func2)(s32 arg0, s32 arg1);
-/*3*/ s8 (*func3)(s32 arg0);
+/*0*/ void (*init)(void);
+/*1*/ void (*queue_activate)(s32 seqSlot, s32 startTime); // @bug: missing 3rd param
+/*2*/ void (*set_flag)(s32 seqSlot, s32 value);
+/*3*/ s8 (*get_flag)(s32 seqSlot);
 /*4*/ s32 (*tick_obj)(Object* animObj, s32 updateRate);
 /*5*/ void (*update_camera)(void);
 /*6*/ void (*init_curve)(AnimObj_Data* state, AnimObj_Setup* setup);

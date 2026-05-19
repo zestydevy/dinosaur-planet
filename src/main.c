@@ -540,7 +540,7 @@ void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
     location = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
     map_func_80048054(mapID, setupID, &location->vec.x, &location->vec.y, &location->vec.z, &location->mapLayer);
-    gDLL_29_Gplay->vtbl->checkpoint(&location->vec, 0, 0, location->mapLayer);
+    gDLL_29_Gplay->vtbl->savepoint(&location->vec, 0, 0, location->mapLayer);
 
     gMainDoMapChange = TRUE;
     gMainMapChangeNextMenu = menuID;
@@ -563,7 +563,7 @@ void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
 
     gDLL_29_Gplay->vtbl->init_save(-1, NULL);
     gDLL_29_Gplay->vtbl->set_playerno(playerno);
-    gDLL_29_Gplay->vtbl->checkpoint(&pos, 0, 0, 0);
+    gDLL_29_Gplay->vtbl->savepoint(&pos, 0, 0, 0);
     gDLL_29_Gplay->vtbl->start_loaded_game();
 }
 
@@ -715,13 +715,13 @@ void main_set_bits(s32 entry, u32 value) {
             case 0: // Never saved to savegame
                 bitString = &gGplayState->bitString[0];
                 break;
-            case 1: // Saved with checkpoints
-                bitString = &gGplayState->save.chkpnt.bitString[0];
+            case 1: // Saved with savepoints
+                bitString = &gGplayState->save.main.bitString[0];
                 break;
             case 2: // Always saved
                 bitString = &gGplayState->save.file.bitString[0];
                 break;
-            case 3: // Saved with map saves
+            case 3: // Saved with savepoints that include a map save
                 bitString = &gGplayState->save.map.bitString[0];
                 break;
         }
@@ -768,13 +768,13 @@ u32 main_get_bits(s32 entry) {
             case 0: // Never saved to savegame
                 bitString = &gGplayState->bitString[0];
                 break;
-            case 1: // Saved with checkpoints
-                bitString = &gGplayState->save.chkpnt.bitString[0];
+            case 1: // Saved with savepoints
+                bitString = &gGplayState->save.main.bitString[0];
                 break;
             case 2: // Always saved
                 bitString = &gGplayState->save.file.bitString[0];
                 break;
-            case 3: // Saved with map saves
+            case 3: // Saved with savepoints that include a map save
                 bitString = &gGplayState->save.map.bitString[0];
                 break;
         }

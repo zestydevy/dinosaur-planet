@@ -39,15 +39,15 @@ void DFP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DFP_LevelControl_setup(Object* self, DFPTLevelControl_Setup* objSetup, s32 arg2) {
-    u8 mapSetup;
+    u8 act;
 
     obj_add_object_type(self, OBJTYPE_10);
     dTexElectricity = tex_load_deferred(1132);
     self->animCallback = DFP_LevelControl_anim_callback;
-    gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
-    mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+    gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
 
-    switch (mapSetup) { 
+    switch (act) { 
         case 0:
             func_80000860(self, self, 261, 0);
             func_80000860(self, self, 262, 0);
@@ -79,7 +79,7 @@ void DFP_LevelControl_control(Object* self) {
     static s16 dMagicRefillTimer = 0;
     Object *player;
     s32 mapID;
-    s32 setupID;
+    s32 act;
     
     player = get_player();
     
@@ -91,9 +91,9 @@ void DFP_LevelControl_control(Object* self) {
     }
     
     map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z); //@bug: unused
-    setupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     
-    switch (setupID) {
+    switch (act) {
     case 0:
         return;
     case 1:

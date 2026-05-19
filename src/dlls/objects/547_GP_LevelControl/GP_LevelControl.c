@@ -35,7 +35,7 @@ void GP_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata = self->data;
     objdata->unk4 = 0;
 
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 1:
         main_set_bits(BIT_GP_Sharpclaw_Jetbike_Cutscene2, 1);
         break;
@@ -102,7 +102,7 @@ void GP_LevelControl_control(Object *self) {
     }
 
     // trigger the jetbike cutscene?
-    if (gDLL_29_Gplay->vtbl->get_map_setup(MAP_GOLDEN_PLAINS) == 2) {
+    if (gDLL_29_Gplay->vtbl->get_act(MAP_GOLDEN_PLAINS) == 2) {
         obj = func_800211B4(0x35138);
         obj2 = func_800211B4(0x3043B);
         if (obj && obj2 && vec3_distance_squared(&obj->globalPosition, &obj2->globalPosition) < 300.0f) {
@@ -138,12 +138,12 @@ u32 GP_LevelControl_get_data_size(Object *self, u32 arg1) {
 
 // offset: 0x4C8 | func: 7
 void GP_LevelControl_func_4C8(Object *self) {
-    s32 mapSetup;
+    s32 act;
 
-    mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(MAP_GOLDEN_PLAINS);
+    act = gDLL_29_Gplay->vtbl->get_act(MAP_GOLDEN_PLAINS);
     gDLL_5_AMSEQ2->vtbl->set(self, 0xEE, 0, 0, 0);
     GP_LevelControl_func_58C(self, 1);
-    if (mapSetup == 3) {
+    if (act == 3) {
         main_set_bits(BIT_GP_Sharpclaw_Taken_Spellstone, 1);
     }
 }

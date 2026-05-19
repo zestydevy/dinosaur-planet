@@ -229,7 +229,7 @@ void thorntail_control(Object* self) {
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     if (func_80026DF4(self, data_40, 15, objdata->unk874, &objdata->unk84C) == 0) {
         objdata->unk874 = 0;
-        objdata->mapAct = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+        objdata->mapAct = gDLL_29_Gplay->vtbl->get_act(self->mapID);
         objdata->playerDist = vec3_distance(&self->globalPosition, &player->globalPosition);
         switch (setup->unk18) {
         case 1:

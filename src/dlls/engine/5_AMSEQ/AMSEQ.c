@@ -799,14 +799,14 @@ static s32 amseq_func_1E8C(MusicAction *action, s8 a1, s16 actionNo) {
     AMSEQPlayer* player;
     s8 playerNo;
     s8 sp82;
-    PlayerMusicAction* playerMusicAction;
+    PlayerMusicActions* playerMusicAction;
     s32 temp_s6;
     s32 chan;
     s8 channelVolumes[16];
     u16 temp_v1;
     s32 temp;
 
-    playerMusicAction = gDLL_29_Gplay->vtbl->func_FE8();
+    playerMusicAction = gDLL_29_Gplay->vtbl->get_current_player_musicactions();
     playerNo = -1;
     sp82 = -1;
     if (action->seqID != 0) {

@@ -51,10 +51,10 @@ void VFP_PodiumPoint_setup(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2)
 
 // offset: 0x68 | func: 1 | export: 1
 void VFP_PodiumPoint_control(Object* self) {
-    u8 mapSetupID;
+    u8 act;
 
-    mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
-    switch (mapSetupID) {
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
+    switch (act) {
     default:
         data_0 = 0x123;
         break;
@@ -126,12 +126,12 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
 // offset: 0x324 | func: 8
 static int VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     s32 i;
-    u8 mapSetupID;
+    u8 act;
 
     for (i = 0; i < a2->messageCount; i++) {
         if (a2->messages[i] == 1) {
-            mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(a0->mapID);
-            switch (mapSetupID) {
+            act = gDLL_29_Gplay->vtbl->get_act(a0->mapID);
+            switch (act) {
             case 1:
                 main_set_bits(BIT_VFP_Door_Seal_Break, 1);
                 break;

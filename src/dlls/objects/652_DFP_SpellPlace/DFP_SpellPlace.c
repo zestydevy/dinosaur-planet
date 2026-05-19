@@ -60,7 +60,7 @@ void dll_652_control(Object* self) {
 
     player = get_player();
     if ((player != NULL) && !(vec3_distance(&self->globalPosition, &player->globalPosition) > 100.0f)) {
-        mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+        mapSetupID = gDLL_29_Gplay->vtbl->get_act(self->mapID);
         switch (mapSetupID) {
         case 1:
             dll_652_func_254(self);

@@ -236,7 +236,7 @@ void dll_481_control(Object *self) {
             objdata->unk12 = 6;
             main_set_bits(BIT_DB_Entered_Shrine_1, 1);
             main_set_bits(BIT_SP_Replay_Disk_WM, 1);
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 9);
+            gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 9);
             break;
         case 6:
             if (main_get_bits(BIT_5C2) == 0) {
