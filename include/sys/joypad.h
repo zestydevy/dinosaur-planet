@@ -256,7 +256,7 @@ extern s8 gMenuJoystickDelay;
  *
  * @see gContThreadMesgQueue
  */
-void joy_read_nonblocking();
+void joy_read_nonblocking(void);
 
 /**
  * Initializes SI settings and controller globals.
@@ -265,7 +265,7 @@ void joy_read_nonblocking();
  * For example, if one controller is inserted, 0 will be returned.
  * If no controllers are inserted, -1 will be returned.
  */
-s32 joy_init();
+s32 joy_init(void);
 
 void joy_start_controller_thread(OSSched *scheduler);
 
@@ -394,14 +394,12 @@ s8 joy_get_stick_y_buffered(int port, int buffer);
 void joy_get_stick_menu_xy_sign(int port, s8 *xSign, s8 *ySign);
 
 /**
- * Sets the button mask for the given controller.
+ * Disables buttons for the given controller.
  *
- * @details Bits not set in the mask will result in those corresponding buttons
- * to be ignored. The button mask will be reset to 0xFFFF after the next input
- * frame. In other words, setting a button mask only applies to the next set
- * of button inputs.
+ * @details The given button bits will be removed from the button mask until the next input frame.
+ * This has an immediate effect on functions like joy_get_buttons.
  */
-void joy_set_button_mask(int port, u16 mask);
+void joy_disable_buttons(int port, u16 buttons);
 
 /**
  * Sets the number of input frames that must pass before menu movement occurs due to the
@@ -417,10 +415,10 @@ void joy_set_menu_joystick_delay(s8 delay);
  *
  * @see joy_get_stick_menu_xy_sign for more info.
  */
-void joy_reset_menu_joystick_delay();
+void joy_reset_menu_joystick_delay(void);
 
 void joy_controller_thread_entry(void *arg);
 s8 joy_handle_joystick_deadzone(s8 stick);
-void joy_reset_map();
+void joy_reset_map(void);
 
 #endif //_SYS_JOYPAD_H

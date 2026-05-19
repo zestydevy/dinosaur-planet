@@ -425,7 +425,7 @@ s32 smallbasket_handle_being_lifted(Object* self, Object* player, SmallBasket_Da
     gDLL_2_Camera->vtbl->get_target_object();
     outVal = 0;
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (self->unkE0 == 0)) {
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
         objData->playerMessageLo = -0x8000;
         objData->playerMessageHi = 0;
         func_800267A4(self);

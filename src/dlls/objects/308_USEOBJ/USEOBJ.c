@@ -100,7 +100,7 @@ void UseObj_control(Object *self) {
                 objdata->used = 1;
                 self->unkDC = 1;
             }
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
         }
     } else {
         if (self->unkDC == 0) {

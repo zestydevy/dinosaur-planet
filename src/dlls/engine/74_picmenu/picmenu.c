@@ -248,7 +248,7 @@ PicMenuAction picmenu_update() {
         buttons = joy_get_pressed(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
             if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && main_get_bits(BIT_44F) == 0) {
-                joy_set_button_mask(0, A_BUTTON | START_BUTTON);
+                joy_disable_buttons(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {
                     gDLL_6_AMSFX->vtbl->play(0, sSounds->selectSoundID, MAX_VOLUME, 0, 0, 0, 0);
@@ -261,7 +261,7 @@ PicMenuAction picmenu_update() {
                 gDLL_6_AMSFX->vtbl->play(0, sSounds->backSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
 
-            joy_set_button_mask(0, B_BUTTON);
+            joy_disable_buttons(0, B_BUTTON);
 
             ret = PICMENU_ACTION_BACK;
         }

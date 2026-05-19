@@ -90,7 +90,7 @@ void SPItem_control(Object* self) {
         } else {
             gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         }
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
     }
 
     func_80024108(self, 0.005f, gUpdateRateF, NULL);

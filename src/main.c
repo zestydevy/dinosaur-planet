@@ -416,7 +416,7 @@ void game_tick_no_expansion(void) {
 void func_80013D80(void) {
     s32 button;
 
-    joy_set_button_mask(0, U_JPAD | R_JPAD);
+    joy_disable_buttons(0, U_JPAD | R_JPAD);
     gDLL_2_Camera->vtbl->lock_icon_tick();
     gDLL_22_Subtitles->vtbl->func_4C0();
 
@@ -437,7 +437,7 @@ void func_80013D80(void) {
                     && ((button & START_BUTTON) != 0) 
                     && (main_get_bits(BIT_44F) == 0)) {
                 gPauseState = 1;
-                joy_set_button_mask(0, START_BUTTON);
+                joy_disable_buttons(0, START_BUTTON);
                 menu_set(MENU_PAUSE);
             }
 
