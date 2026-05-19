@@ -23,6 +23,7 @@ enum ObjType {
     OBJTYPE_16 = 16, // Krazoa shrine doors (ECSH_Door1 etc.)
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
+    OBJTYPE_21 = 21, // DR_CloudPerch (landing spots?)
     OBJTYPE_22 = 22, // DFriverflow
     OBJTYPE_23 = 23, // DFdockpoint
     OBJTYPE_24 = 24,
@@ -45,7 +46,7 @@ enum ObjType {
     OBJTYPE_54 = 54, // MagicPlant
     OBJTYPE_55 = 55,
     OBJTYPE_56 = 56,
-    OBJTYPE_59 = 59,
+    OBJTYPE_DINOCALLER = 59, // DR_EarthCallPad
     OBJTYPE_61 = 61, 
     OBJTYPE_62 = 62, 
     OBJTYPE_63 = 63, // MagicPlant, Crate

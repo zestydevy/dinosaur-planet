@@ -38,6 +38,7 @@
 #include "dlls/objects/common/vehicle.h"
 #include "dlls/objects/common/foodbag.h"
 #include "dlls/objects/common/group48.h"
+#include "dlls/objects/common/dinocaller.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/277_iceblast.h"
 #include "dlls/objects/338_LFXEmitter.h"
@@ -4374,8 +4375,8 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s8 sp8E;
     s16 sp8C;
     Object* sp88;
-    Object* temp_v0_5;
-    f32 sp80 = 200.0f;
+    Object* dinoCaller;
+    f32 callerMaxRange = 200.0f;
     s32 camDLLID;
     s32 sp38[17] = {
         0x0166, 0x0167, 0x0256, 0x036e, 0x037f, 0x0380, 0x0381, 0x0543, 
@@ -4471,9 +4472,9 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
             } else {
-                temp_v0_5 = obj_get_nearest_type_to(OBJTYPE_59, player, &sp80);
-                if (temp_v0_5 != NULL) {
-                    ((DLL_Unknown*)temp_v0_5->dll)->vtbl->func[7].withOneArg((s32)temp_v0_5);
+                dinoCaller = obj_get_nearest_type_to(OBJTYPE_DINOCALLER, player, &callerMaxRange);
+                if (dinoCaller != NULL) {
+                    ((DLL_IDinoCaller*)dinoCaller->dll)->vtbl->call(dinoCaller);
                 }
                 gDLL_3_Animation->vtbl->start_obj_sequence(7, player, -1);
             }

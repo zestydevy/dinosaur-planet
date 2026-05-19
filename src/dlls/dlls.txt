@@ -316,6 +316,8 @@
 737 = objects/737_DRLavaControl
 742 = objects/742_DR_ExplodeDoor
 762 = objects/762_DRSpecialLoader
+764 = objects/764_DR_CloudPerch
+765 = objects/765_DR_EarthCallPad
 767 = objects/767_SPItem
 768 = objects/768_SPShop
 772 = objects/772_SPitembeam
