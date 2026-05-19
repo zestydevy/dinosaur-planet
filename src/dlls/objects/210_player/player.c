@@ -9611,9 +9611,9 @@ void dll_210_func_1CC5C(Object* player, s32 arg1) {
 
     if (arg1 != 0) {
         objdata->flags |= 0x200000;
-        return;
+    } else {
+        objdata->flags &= ~0x200000;
     }
-    objdata->flags &= 0xFFDFFFFF;
 }
 
 // offset: 0x1CC94 | func: 153 | export: 68

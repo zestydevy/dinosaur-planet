@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/object.h"
 #include "macros.h"
 #include "sys/objtype.h"
 #include "dlls/engine/53.h"
@@ -77,16 +78,16 @@ void SHvines_control(Object* self) {
 // offset: 0x22C | func: 2 | export: 2
 void SHvines_update(Object* self) {
     s32 pad;
-    s32 sp28;
+    s32 hitDamage;
     SHvines_Setup* objSetup;
 
     objSetup = (SHvines_Setup*)self->setup;
 
     //Check for Flame command collisions
-    if (func_80025F40(self, NULL, NULL, &sp28) == Damage_Type_Flame_Command) {
+    if (func_80025F40(self, NULL, NULL, &hitDamage) == Damage_Type_Flame_Command) {
         STUBBED_PRINTF("\n HIT HIT HIT HIT Hit by Booldy Side Kick \n\n\n");
         main_set_bits(objSetup->gamebitBurnt, 1);
-        self->opacity = 0xFD; //start fade out
+        self->opacity = OBJECT_OPACITY_MAX - 2; //start fade out
     }
 }
 
