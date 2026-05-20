@@ -1164,7 +1164,7 @@ typedef enum {
     BIT_485 = 0x485, // len:1 group:1
     BIT_Play_Seq_0298_Queen_Shows_VFPT = 0x486, // len:1 group:1
     BIT_Play_Seq_0299_Queen_Shows_SpellStones = 0x487, // len:1 group:1
-    BIT_488 = 0x488, // len:8 group:1
+    BIT_Kyte_Flight_Talk_Sequence = 0x488, // len:8 group:1 [SIDEKICK] (sequenceID for talking to Kyte, set via FindKyteObject/Trigger command)
     BIT_Spirit_Bits = 0x489, // len:8 group:1
     BIT_SP_Foodbag_S = 0x48A, // len:1 group:1 (in stock in shop) (small)
     BIT_Garunda_Te_Weeds_Eaten = 0x48B, // len:4 group:2
@@ -1254,7 +1254,7 @@ typedef enum {
     BIT_4DF = 0x4DF, // len:1 group:1
     BIT_4E0 = 0x4E0, // len:1 group:1
     BIT_4E1 = 0x4E1, // len:1 group:1
-    BIT_4E2 = 0x4E2, // len:16 group:3
+    BIT_Tricky_Talk_Sequence = 0x4E2, // len:16 group:3 [SIDEKICK] (sequenceID for talking to Tricky, set via Trigger objects)
     BIT_4E3 = 0x4E3, // len:8 group:1
     BIT_Tricky_Unlocked_Sidekick_Commands = 0x4E4, // len:1 group:2 [SIDEKICK COMMAND] Unlocks Tricky's sidekick commands menu (set during his tutorial chat in SnowHorn Wastes' geyser area)
     BIT_Tricky_Spawns = 0x4E5, // len:1 group:2
