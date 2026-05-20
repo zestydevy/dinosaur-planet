@@ -35,6 +35,7 @@ typedef union {
     f32 (*withOneArgF32)(s32);
     f32 (*withOneVoidArgF32)(void*);
     f32 (*withTwoArgsF32)(s32, s32);
+    f32 (*withTwoArgsF32Custom)(void*, f32);
     f32 (*withThreeArgsF32)(s32, s32, s32);
     f32 (*withFourArgsF32)(s32, s32, s32, s32);
     f32 (*withFiveArgsF32)(s32, s32, s32, s32, s32);
