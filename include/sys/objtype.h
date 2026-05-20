@@ -46,6 +46,7 @@ enum ObjType {
     OBJTYPE_54 = 54, // MagicPlant
     OBJTYPE_55 = 55,
     OBJTYPE_56 = 56,
+    OBJTYPE_57 = 57,
     OBJTYPE_DINOCALLER = 59, // DR_EarthCallPad
     OBJTYPE_61 = 61, 
     OBJTYPE_62 = 62, 
