@@ -49,12 +49,12 @@ typedef struct {
 /*A5D*/ u8 _unkA5D;
 /*A5E*/ u8 unkA5E;
 /*A5F*/ u8 unkA5F;
-/*A60*/ u8 unkA60_0 : 1;
-/*A60*/ u8 unkA60_1 : 1;
-/*A60*/ u8 unkA60_2 : 1;
-/*A60*/ u8 unkA60_3 : 1;
-/*A60*/ u8 unkA60_4 : 1;
-/*A60*/ u8 unkA60_5 : 1;
+/*A60_0*/ u8 unkA60_0 : 1;
+/*A60_1*/ u8 unkA60_1 : 1;
+/*A60_2*/ u8 unkA60_2 : 1;
+/*A60_3*/ u8 unkA60_3 : 1;
+/*A60_4*/ u8 rideable : 1;
+/*A60_5*/ u8 unkA60_5 : 1;
 /*A61*/ s8 unkA61;
 /*A62*/ s8 talkSeq;
 /*A63*/ s8 unkA63;
@@ -131,61 +131,61 @@ enum DREWSeq {
     0x0002, 0x0003, 0x0017, 0x0016, 0x0004, 0x0000
 };
 
-/*0x0*/ static ObjFSA_StateCallback _bss_0[8];
-/*0x20*/ static ObjFSA_StateCallback _bss_20[1];
+/*0x0*/ static ObjFSA_StateCallback sAnimStateCallbacks[8];
+/*0x20*/ static ObjFSA_StateCallback sLogicStateCallbacks[1];
 /*0x28*/ static MtxF _bss_28;
 
-static void dll_713_func_ABC(Object* self);
-static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2);
-static void dll_713_func_1684(Object* self, DRearthwalk_Data* objdata, ObjFSA_Data* fsa);
-static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3);
-static void dll_713_func_3210(Object* self, s16 arg1, s16 arg2);
-static s32 dll_713_func_32EC(Object* self, u8 arg1);
+static void DRearthwalk_func_ABC(Object* self);
+static void DRearthwalk_func_B54(Object* self, s32 arg1, s32 arg2);
+static void DRearthwalk_func_1684(Object* self, DRearthwalk_Data* objdata, ObjFSA_Data* fsa);
+static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3);
+static void DRearthwalk_func_3210(Object* self, s16 arg1, s16 arg2);
+static s32 DRearthwalk_func_32EC(Object* self, u8 arg1);
 
-/*static*/ s32 dll_713_func_21A8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-/*static*/ s32 dll_713_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-/*static*/ s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-/*static*/ s32 dll_713_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-/*static*/ s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-/*static*/ s32 dll_713_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-/*static*/ s32 dll_713_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-/*static*/ s32 dll_713_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_21A8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
-/*static*/ s32 dll_713_func_31F8(Object *self, ObjFSA_Data *fsa, f32 updateRate);
+/*static*/ s32 DRearthwalk_func_31F8(Object *self, ObjFSA_Data *fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/DRearthwalk_func_0.s")
 #else
-void dll_713_func_0(void) {
-    _bss_0[0] = dll_713_func_21A8;
-    _bss_0[1] = dll_713_func_21DC;
-    _bss_0[2] = dll_713_func_2454;
-    _bss_0[3] = dll_713_func_2704;
-    _bss_0[4] = dll_713_func_2860;
-    _bss_0[5] = dll_713_func_2D80;
-    _bss_0[6] = dll_713_func_2F90;
-    _bss_0[7] = dll_713_func_311C;
+void DRearthwalk_func_0(void) {
+    sAnimStateCallbacks[0] = DRearthwalk_func_21A8;
+    sAnimStateCallbacks[1] = DRearthwalk_func_21DC;
+    sAnimStateCallbacks[2] = DRearthwalk_func_2454;
+    sAnimStateCallbacks[3] = DRearthwalk_func_2704;
+    sAnimStateCallbacks[4] = DRearthwalk_func_2860;
+    sAnimStateCallbacks[5] = DRearthwalk_func_2D80;
+    sAnimStateCallbacks[6] = DRearthwalk_func_2F90;
+    sAnimStateCallbacks[7] = DRearthwalk_func_311C;
 
-    _bss_20[0] = dll_713_func_31F8;
+    sLogicStateCallbacks[0] = DRearthwalk_func_31F8;
 }
 #endif
 
 // offset: 0x8C | ctor
 #ifndef NON_MATCHING
-void dll_713_ctor(void *dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_ctor.s")
+void DRearthwalk_ctor(void *dll);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/DRearthwalk_ctor.s")
 #else
-void dll_713_ctor(void* dll) {
-    dll_713_func_0();
+void DRearthwalk_ctor(void* dll) {
+    DRearthwalk_func_0();
 }
 #endif
 
 // offset: 0xCC | dtor
-void dll_713_dtor(void *dll) { }
+void DRearthwalk_dtor(void *dll) { }
 
 // offset: 0xD8 | func: 1 | export: 0
-void dll_713_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
+void DRearthwalk_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
     DRearthwalk_Data* objdata;
     s32 _pad[2];
     u8 sp50[] = {1, 1, 1, 1};
@@ -193,7 +193,7 @@ void dll_713_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
     s16 sp38[] = {0x0014, 0x0014, 0x0000, 0x0000, 0x0000};
 
     self->srt.yaw = setup->rotation << 8;
-    self->animCallback = dll_713_func_1EBC;
+    self->animCallback = DRearthwalk_func_1EBC;
     obj_add_object_type(self, OBJTYPE_11);
     objdata = self->data;
     objdata->unkA5C = setup->unk19;
@@ -221,13 +221,13 @@ void dll_713_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
         objdata->unkA60_1 = 1;
     } else {
         objdata->energy = 5;
-        objdata->unkA60_4 = 1;
+        objdata->rideable = 1;
     }
     objdata->unkA61 = 0x1E;
 }
 
 // offset: 0x408 | func: 2 | export: 1
-void dll_713_control(Object* self) {
+void DRearthwalk_control(Object* self) {
     DRearthwalk_Data* objdata;
     ObjFSA_Data* fsa;
     s32 sp4C;
@@ -251,16 +251,16 @@ void dll_713_control(Object* self) {
         self->objhitInfo->unk5C = 0xF4;
         var_a2 = 0;
         while (var_a2 < gUpdateRate) {
-            dll_713_func_B54(self, 1, var_a2);
+            DRearthwalk_func_B54(self, 1, var_a2);
             var_a2 += 1;
         }
     } else {
-        if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_628) == 0)) {
+        if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_DR_SavedEarthWarriorFromSkeetlas) == 0)) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
             obj_get_all_of_type(OBJTYPE_4, &sp40);
             diPrintf(" num %i ", sp40);
             if ((sp40 == 0) && (main_get_bits(BIT_DR_Lava_Pools_Cooled_Count) == 3)) {
-                main_set_bits(BIT_628, 1);
+                main_set_bits(BIT_DR_SavedEarthWarriorFromSkeetlas, 1);
                 objdata->talkSeq = EWSEQ_9_IfICouldGetOutOfTheseChains;
             }
         }
@@ -268,7 +268,7 @@ void dll_713_control(Object* self) {
         gDLL_27->vtbl->reset(self, &fsa->unk4);
         self->objhitInfo->unk5B = 0;
         self->objhitInfo->unk5C = 0;
-        dll_713_func_B54(self, gUpdateRate, -1);
+        DRearthwalk_func_B54(self, gUpdateRate, -1);
     }
     func_80028D2C(self);
     func_80032A08(self, &objdata->unk370);
@@ -289,7 +289,7 @@ void dll_713_control(Object* self) {
     objdata->unkA60_3 = 0;
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         objdata->unkA60_3 = 1;
-        if ((objdata->unkA60_3) && (objdata->unkA60_4)) {
+        if ((objdata->unkA60_3) && (objdata->rideable)) {
             joy_disable_buttons(0, A_BUTTON);
             plAngle = self->srt.yaw - (player->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(plAngle);
@@ -317,7 +317,7 @@ void dll_713_control(Object* self) {
             objdata->energy += 12;
             main_set_bits(BIT_Inventory_Blue_Mushrooms, main_get_bits(BIT_Inventory_Blue_Mushrooms) - 1);
         } else if ((objdata->talkSeq != -1) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0)) {
-            if (!objdata->unkA60_4) {
+            if (!objdata->rideable) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objdata->talkSeq, self, -1);
                 joy_disable_buttons(0, A_BUTTON);
             } else {
@@ -326,7 +326,7 @@ void dll_713_control(Object* self) {
         }
     }
     if ((objdata->unkA61 == 0) && (main_get_bits(BIT_7B6) == 0)) {
-        dll_713_func_ABC(self);
+        DRearthwalk_func_ABC(self);
     }
     if (objdata->unkA61 != 0) {
         objdata->unkA61 -= gUpdateRate;
@@ -337,14 +337,14 @@ void dll_713_control(Object* self) {
 }
 
 // offset: 0xABC | func: 3
-static void dll_713_func_ABC(Object* self) {
+static void DRearthwalk_func_ABC(Object* self) {
     if (vec3_distance_xz(&get_player()->globalPosition, &self->globalPosition) > 600.0f) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_DRAGON_ROCK_BOTTOM, 2, 0);
     }
 }
 
 // offset: 0xB54 | func: 4
-static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2) {
+static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
     DRearthwalk_Data* objdata;
     s32 _pad3;
     Camera* sp54;
@@ -379,7 +379,7 @@ static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2) {
         objdata->fsa.unk324 = sp54->srt.yaw;
     } else if (objdata->unkA58 & 0x40) {
         objdata->movedata.unk4A9 |= 2;
-        objdata->unkA60_4 = 0;
+        objdata->rideable = 0;
         sp28 = &objdata->unk870;
         temp_fv0 = sp28->unk68.x - self->srt.transl.x;
         temp_fa1 = sp28->unk68.z - self->srt.transl.z;
@@ -399,7 +399,7 @@ static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2) {
         dist = sqrtf(temp_fa1);
         if ((dist < 50.0f) && (sp4C != 0)) {
             if ((func_800053B0(sp28, 0.9f) != 0) || (sp28->unk10 != 0)) {
-                if (dll_713_func_32EC(self, (u8) sp28->unkA0->unk18) != 0) {
+                if (DRearthwalk_func_32EC(self, (u8) sp28->unkA0->unk18) != 0) {
                     if (gDLL_26_Curves->vtbl->func_4704(sp28) != 0) {
                         objdata->unkA58 &= ~0x140;
                         objdata->movedata.unk4A9 &= ~0x2;
@@ -431,12 +431,12 @@ static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2) {
     if (sp50 != 0) {
         objdata->fsa.flags &= ~OBJFSA_FLAG_400000;
     }
-    gDLL_18_objfsa->vtbl->tick(self, &objdata->fsa, (f32) arg1, gUpdateRateF, _bss_0, _bss_20);
-    dll_713_func_1684(self, objdata, &objdata->fsa);
+    gDLL_18_objfsa->vtbl->tick(self, &objdata->fsa, (f32) fsaUpdateRate, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
+    DRearthwalk_func_1684(self, objdata, &objdata->fsa);
 }
 
 // offset: 0x107C | func: 5 | export: 2
-void dll_713_update(Object* self) {
+void DRearthwalk_update(Object* self) {
     DRearthwalk_Data* objdata;
     ObjFSA_Data* fsa;
     Object* hitBy;
@@ -494,7 +494,7 @@ void dll_713_update(Object* self) {
 }
 
 // offset: 0x138C | func: 6 | export: 3
-void dll_713_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DRearthwalk_Data* objdata = self->data;
     s32 numObjs;
     Object** objs;
@@ -522,23 +522,23 @@ void dll_713_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 }
 
 // offset: 0x160C | func: 7 | export: 4
-void dll_713_free(Object* self, s32 a1) {
+void DRearthwalk_free(Object* self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_11);
     remove_temp_dll(53);
 }
 
 // offset: 0x1660 | func: 8 | export: 5
-u32 dll_713_get_model_flags(Object *self) {
+u32 DRearthwalk_get_model_flags(Object *self) {
     return MODFLAGS_EVENTS | MODFLAGS_SHADOW | MODFLAGS_1;
 }
 
 // offset: 0x1670 | func: 9 | export: 6
-u32 dll_713_get_data_size(Object *self, u32 a1) {
+u32 DRearthwalk_get_data_size(Object *self, u32 a1) {
     return sizeof(DRearthwalk_Data);
 }
 
 // offset: 0x1684 | func: 10
-static void dll_713_func_1684(Object* self, DRearthwalk_Data* objdata, ObjFSA_Data* fsa) {
+static void DRearthwalk_func_1684(Object* self, DRearthwalk_Data* objdata, ObjFSA_Data* fsa) {
     u8 var_s7;
     u8 var_s0_2;
     u8 var_s5;
@@ -599,19 +599,19 @@ static void dll_713_func_1684(Object* self, DRearthwalk_Data* objdata, ObjFSA_Da
 }
 
 // offset: 0x197C | func: 11 | export: 7
-s32 dll_713_func_197C(Object* self, Object* rider) {
+s32 DRearthwalk_func_197C(Object* self, Object* rider) {
     return 0;
 }
 
 // offset: 0x1990 | func: 12 | export: 8
-s32 dll_713_func_1990(Object* self) {
+s32 DRearthwalk_func_1990(Object* self) {
     DRearthwalk_Data* objdata = self->data;
 
     return objdata->unkA5F != 0 ? 1 : 2;
 }
 
 // offset: 0x19B8 | func: 13 | export: 9
-void dll_713_func_19B8(Object* self, f32* a1, f32* a2, f32* a3) {
+void DRearthwalk_func_19B8(Object* self, f32* a1, f32* a2, f32* a3) {
     DRearthwalk_Data* objdata = self->data;
     *a1 = objdata->unk9B4;
     *a2 = objdata->unk9B8;
@@ -619,7 +619,7 @@ void dll_713_func_19B8(Object* self, f32* a1, f32* a2, f32* a3) {
 }
 
 // offset: 0x19DC | func: 14 | export: 10
-s32 dll_713_func_19DC(Object* self, Object* rider) {
+s32 DRearthwalk_func_19DC(Object* self, Object* rider) {
     DRearthwalk_Data* objdata = self->data;
     Vec3f sp48;
     
@@ -644,14 +644,14 @@ s32 dll_713_func_19DC(Object* self, Object* rider) {
 }
 
 // offset: 0x1BB8 | func: 15 | export: 11
-s32 dll_713_func_1BB8(Object* self) {
+s32 DRearthwalk_func_1BB8(Object* self) {
     DRearthwalk_Data* objdata = self->data;
 
     return objdata->unkA5E != 0 ? 2 : 1;
 }
 
 // offset: 0x1BE0 | func: 16 | export: 12
-void dll_713_func_1BE0(Object* self, f32* a1, f32* a2, f32* a3) {
+void DRearthwalk_func_1BE0(Object* self, f32* a1, f32* a2, f32* a3) {
     MtxF mtx;
     SRT srt;
 
@@ -667,12 +667,12 @@ void dll_713_func_1BE0(Object* self, f32* a1, f32* a2, f32* a3) {
 }
 
 // offset: 0x1CA4 | func: 17 | export: 13
-s32 dll_713_func_1CA4(Object* self) {
+s32 DRearthwalk_func_1CA4(Object* self) {
     return 0;
 }
 
 // offset: 0x1CB4 | func: 18 | export: 14
-void dll_713_func_1CB4(Object* self, s32 arg1) {
+void DRearthwalk_func_1CB4(Object* self, s32 arg1) {
     DRearthwalk_Data* objdata = self->data;
     objdata->unkA5A = arg1;
     if (arg1 == 0) {
@@ -686,27 +686,27 @@ void dll_713_func_1CB4(Object* self, s32 arg1) {
 }
 
 // offset: 0x1D5C | func: 19 | export: 15
-void dll_713_func_1D5C(Object* self, f32* arg1, s32* arg2) {
+void DRearthwalk_func_1D5C(Object* self, f32* arg1, s32* arg2) {
     *arg1 = 0.0f;
     *arg2 = 0;
 }
 
 // offset: 0x1D84 | func: 20 | export: 16
-f32 dll_713_func_1D84(Object* self, f32* arg1) {
+f32 DRearthwalk_func_1D84(Object* self, f32* arg1) {
     *arg1 = 5.0f;
     return 0.0f;
 }
 
 // offset: 0x1DAC | func: 21 | export: 17
-s32 dll_713_func_1DAC(Object* self) {
+s32 DRearthwalk_func_1DAC(Object* self) {
     return 0;
 }
 
 // offset: 0x1DBC | func: 22 | export: 18
-void dll_713_func_1DBC(Object* self) { }
+void DRearthwalk_func_1DBC(Object* self) { }
 
 // offset: 0x1DC8 | func: 23 | export: 19
-void dll_713_func_1DC8(Object* self, f32 scale) {
+void DRearthwalk_func_1DC8(Object* self, f32 scale) {
     MtxF* sp4C;
     f32 atX;
     f32 atY;
@@ -728,7 +728,7 @@ void dll_713_func_1DC8(Object* self, f32 scale) {
 }
 
 // offset: 0x1EBC | func: 24
-static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
+static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
     DRearthwalk_Data* objdata;
     Object** objList;
     s32 i;
@@ -768,7 +768,7 @@ static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animO
 }
 
 // offset: 0x2174 | func: 25
-static void dll_713_func_2174(Object* self, ObjFSA_Data* fsa) {
+static void DRearthwalk_func_2174(Object* self, ObjFSA_Data* fsa) {
     fsa->speed = 0.0f;
     fsa->unk27C = 0.0f;
     fsa->unk278 = 0.0f;
@@ -777,8 +777,8 @@ static void dll_713_func_2174(Object* self, ObjFSA_Data* fsa) {
     self->velocity.z = 0.0f;
 }
 
-// offset: 0x21A8 | func: 26
-s32 dll_713_func_21A8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+// offset: 0x21A8 | func: 26 | anim state 0
+s32 DRearthwalk_func_21A8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DRearthwalk_Data* objdata = self->data;
     if (objdata->unkA5C != 1) {
         objdata->unkA58 |= 0x20;
@@ -786,13 +786,13 @@ s32 dll_713_func_21A8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 1 + 1;
 }
 
-// offset: 0x21DC | func: 27
-s32 dll_713_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+// offset: 0x21DC | func: 27 | anim state 1
+s32 DRearthwalk_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DRearthwalk_Data* objdata = self->data;
     s16 var_a1;
     s32 temp_v0;
     
-    dll_713_func_2174(self, fsa);
+    DRearthwalk_func_2174(self, fsa);
     if (fsa->unk33A != 0) {
         // idle or idle attack(?) anims
         if (rand_next(0, 5) == 0) {
@@ -836,8 +836,8 @@ s32 dll_713_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 }
 
-// offset: 0x2454 | func: 28
-s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+// offset: 0x2454 | func: 28 | anim state 2
+s32 DRearthwalk_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DRearthwalk_Data* objdata = self->data;
 
     fsa->flags |= OBJFSA_FLAG_200000;
@@ -865,7 +865,7 @@ s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->animTickDelta = 0.005f;
         if ((objdata->energy != 0) && (objdata->energy >= 5)) {
             // transition to standing up anim
-            func_80023D30(self, 0xB, 0.0f, 0U);
+            func_80023D30(self, 0xB, 0.0f, 0);
             fsa->animTickDelta = 0.01f;
         }
         break;
@@ -873,7 +873,7 @@ s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         if (fsa->unk33A != 0) {
             objdata->movedata.unk4A9 &= ~0x2;
             if (objdata->unkA58 & 0x20) {
-                objdata->unkA60_4 = 1;
+                objdata->rideable = 1;
             } else {
                 objdata->talkSeq = EWSEQ_9_IfICouldGetOutOfTheseChains;
             }
@@ -882,11 +882,11 @@ s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
         break;
     default:
-        objdata->unkA60_4 = 0;
+        objdata->rideable = 0;
         // transition to laying down anim
         func_80023D30(self, 0xA, 0.0f, 0);
         objdata->movedata.unk4A9 |= 2;
-        dll_713_func_2174(self, fsa);
+        DRearthwalk_func_2174(self, fsa);
         fsa->animTickDelta = 0.01f;
         break;
     }
@@ -897,8 +897,8 @@ s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 }
 
-// offset: 0x2704 | func: 29
-s32 dll_713_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+// offset: 0x2704 | func: 29 | anim state 3
+s32 DRearthwalk_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DRearthwalk_Data* objdata = self->data;
     s16 temp_ft1;
     
@@ -915,7 +915,7 @@ s32 dll_713_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     temp_ft1 = (f32) fsa->unk32A * updateRate * 182.04f;
     self->srt.yaw += temp_ft1 >> 4;
-    dll_713_func_3210(self, temp_ft1, 0);
+    DRearthwalk_func_3210(self, temp_ft1, 0);
     fsa->animTickDelta = fsa->analogInputPower * 0.08f;
     if (fsa->unk310 & 0x8000) {
         return 5 + 1;
@@ -923,12 +923,12 @@ s32 dll_713_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 }
 
-// offset: 0x2860 | func: 30
+// offset: 0x2860 | func: 30 | anim state 4
 #ifndef NON_MATCHING
-s32 dll_713_func_2860(Object *self, ObjFSA_Data *fsa, f32 updateRate);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/dll_713_func_2860.s")
+s32 DRearthwalk_func_2860(Object *self, ObjFSA_Data *fsa, f32 updateRate);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/713_DR_EarthWarrior/DRearthwalk_func_2860.s")
 #else
-s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DRearthwalk_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     u32 var_v1_3;
     s16 temp2;
     u32 var_t0;
@@ -966,7 +966,7 @@ s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     } else {
         self->srt.yaw += ((((f32) fsa->unk32A * updateRate) / 36.0f) * 182.0f);
     }
-    dll_713_func_3210(self, (s16) ((f32) fsa->unk32A * updateRate * 182.04f), 0);
+    DRearthwalk_func_3210(self, (s16) ((f32) fsa->unk32A * updateRate * 182.04f), 0);
     var_fv0 = fsa->analogInputPower;
     if (var_fv0 < 0.0f) {
         var_fv0 = 0.0f;
@@ -1029,8 +1029,8 @@ s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 #endif
 
-// offset: 0x2D80 | func: 31
-s32 dll_713_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+// offset: 0x2D80 | func: 31 | anim state 5
+s32 DRearthwalk_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     ObjectHitInfo* hit;
     DRearthwalk_Data* objdata;
 
@@ -1068,11 +1068,11 @@ s32 dll_713_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 }
 
-// offset: 0x2F90 | func: 32
-s32 dll_713_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+// offset: 0x2F90 | func: 32 | anim state 6
+s32 DRearthwalk_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DRearthwalk_Data* objdata = self->data;
 
-    dll_713_func_2174(self, fsa);
+    DRearthwalk_func_2174(self, fsa);
     if (fsa->enteredAnimState != 0) {
         if (objdata->energy > 0) {
             // hurt while standing anims
@@ -1104,29 +1104,29 @@ s32 dll_713_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 }
 
-// offset: 0x311C | func: 33
-s32 dll_713_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+// offset: 0x311C | func: 33 | anim state 7
+s32 DRearthwalk_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DRearthwalk_Data* objdata = self->data;
     
     if (fsa->enteredAnimState != 0) {
-        dll_713_func_2174(self, fsa);
-        func_80023D30(self, *_data_DC, 0.0f, 0);
+        DRearthwalk_func_2174(self, fsa);
+        func_80023D30(self, _data_DC[0], 0.0f, 0);
     }
     if ((main_get_bits(BIT_5CF) == 0) && (main_get_bits(BIT_5CD) != 0)) {
-        main_set_bits(BIT_656, 1);
-        objdata->unkA60_4 = 1;
+        main_set_bits(BIT_DR_EarthWarriorBroughtToSurface, 1);
+        objdata->rideable = 1;
         return 1 + 1;
     }
     return 0;
 }
 
-// offset: 0x31F8 | func: 34
-s32 dll_713_func_31F8(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
+// offset: 0x31F8 | func: 34 | logic state 0
+s32 DRearthwalk_func_31F8(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
     return 0;
 }
 
 // offset: 0x3210 | func: 35
-static void dll_713_func_3210(Object* self, s16 arg1, s16 arg2) {
+static void DRearthwalk_func_3210(Object* self, s16 arg1, s16 arg2) {
     s16* temp_v0;
 
     temp_v0 = func_80034804(self, 9);
@@ -1141,7 +1141,7 @@ static void dll_713_func_3210(Object* self, s16 arg1, s16 arg2) {
 }
 
 // offset: 0x32EC | func: 36
-static s32 dll_713_func_32EC(Object* self, u8 arg1) {
+static s32 DRearthwalk_func_32EC(Object* self, u8 arg1) {
     DRearthwalk_Data* objdata;
 
     objdata = self->data;
@@ -1169,7 +1169,7 @@ static s32 dll_713_func_32EC(Object* self, u8 arg1) {
 }
 
 // offset: 0x3420 | func: 37 | export: 20
-void dll_713_func_3420(Object* self, s32 arg1, s32 arg2) {
+void DRearthwalk_func_3420(Object* self, s32 arg1, s32 arg2) {
     DRearthwalk_Data* objdata = self->data;
     if (arg1 == 1) {
         objdata->energy += 12;
