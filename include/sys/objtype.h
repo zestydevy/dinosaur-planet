@@ -21,7 +21,7 @@ enum ObjType {
     OBJTYPE_13 = 13, // Krazoa shrine main (ECSH_Shrine etc.)
     OBJTYPE_14 = 14,
     OBJTYPE_16 = 16, // Krazoa shrine doors (ECSH_Door1 etc.)
-    OBJTYPE_17 = 17,
+    OBJTYPE_17 = 17, // SeqObject
     OBJTYPE_18 = 18,
     OBJTYPE_22 = 22, // DFriverflow
     OBJTYPE_23 = 23, // DFdockpoint
