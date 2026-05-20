@@ -212,7 +212,7 @@ void dll_243_free(Object *self, s32 a1) {
     Baddie *baddie;
 
     baddie = self->data;
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20);
 }
 

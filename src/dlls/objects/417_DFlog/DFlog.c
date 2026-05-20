@@ -86,7 +86,7 @@ void dll_417_setup(Object* self, DFlog_Setup* setup, s32 arg2) {
 
     objdata = (DFlog_Data*)self->data;
     _data_0 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_136, 1);
-    obj_add_object_type(self, OBJTYPE_11);
+    obj_add_object_type(self, OBJTYPE_Vehicle);
     self->animCallback = dll_417_func_3B8;
     self->srt.yaw = (setup->unk18 & 0xFFFF) << 8;
     gDLL_27->vtbl->init(&objdata->unk28C, 
@@ -144,7 +144,7 @@ void dll_417_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 // offset: 0x338 | func: 4 | export: 4
 void dll_417_free(Object *self, s32 a1) {
     dll_unload(_data_0);
-    obj_free_object_type(self, OBJTYPE_11);
+    obj_free_object_type(self, OBJTYPE_Vehicle);
 }
 
 // offset: 0x394 | func: 5 | export: 5
@@ -381,7 +381,7 @@ static void dll_417_func_BC8(Object* arg0) {
         sp9C[i] = 0;
     }
 
-    objList = obj_get_all_of_type(OBJTYPE_22, &objListLength);
+    objList = obj_get_all_of_type(OBJTYPE_Riverflow, &objListLength);
 
     for (i = 0; i < objListLength; i++) {
         obj = objList[i];
@@ -442,7 +442,7 @@ static void dll_417_func_E8C(Object* arg0) {
     objdata = (DFlog_Data*)arg0->data;
     sp8D = 0;
     spBC = 10000.0f;
-    objdata->unk4F4 = obj_get_nearest_type_to(OBJTYPE_23, arg0, &spBC);
+    objdata->unk4F4 = obj_get_nearest_type_to(OBJTYPE_Dockpoint, arg0, &spBC);
     if (objdata->unk4F4 != NULL) {
         temp_s0 = (ObjType23Setup*)objdata->unk4F4->setup;
         spBC = vec3_distance(&arg0->globalPosition, &objdata->unk4F4->globalPosition);

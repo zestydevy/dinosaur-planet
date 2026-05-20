@@ -29,7 +29,7 @@ void SB_ShipHead_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SB_ShipHead_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_4);
+    obj_add_object_type(self, OBJTYPE_Baddie);
     obj_init_mesg_queue(self, 10);
 }
 
@@ -220,7 +220,7 @@ void SB_ShipHead_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0xA28 | func: 4 | export: 4
 void SB_ShipHead_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
 }
 
 // offset: 0xA68 | func: 5 | export: 5

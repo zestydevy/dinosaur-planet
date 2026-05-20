@@ -10,7 +10,7 @@ void BWLevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void BWLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_10);
+    obj_add_object_type(self, OBJTYPE_LevelControl);
 }
 
 // offset: 0x5C | func: 1 | export: 1
@@ -30,7 +30,7 @@ void BWLevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x104 | func: 4 | export: 4
 void BWLevelControl_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_10);
+    obj_free_object_type(self, OBJTYPE_LevelControl);
 }
 
 // offset: 0x144 | func: 5 | export: 5

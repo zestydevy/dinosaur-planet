@@ -115,8 +115,8 @@ void Tumbleweed_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup*
         }
     }
     
-    obj_add_object_type(self, OBJTYPE_4);
-    obj_add_object_type(self, OBJTYPE_51);
+    obj_add_object_type(self, OBJTYPE_Baddie);
+    obj_add_object_type(self, OBJTYPE_TrickyTarget);
     func_800267A4(self);
 }
 
@@ -547,8 +547,8 @@ void Tumbleweed_free(Object* self, s32 arg1) {
         objData->goldenNugget = NULL;
     }
 
-    obj_free_object_type(self, OBJTYPE_4);
-    obj_free_object_type(self, OBJTYPE_51);
+    obj_free_object_type(self, OBJTYPE_Baddie);
+    obj_free_object_type(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x16F8 | func: 8 | export: 5

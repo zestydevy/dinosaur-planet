@@ -30,7 +30,7 @@ void DR_EarthCallPad_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DR_EarthCallPad_setup(Object* self, DR_EarthCallPad_Setup* setup, s32 reset) {
-    obj_add_object_type(self, OBJTYPE_DINOCALLER);
+    obj_add_object_type(self, OBJTYPE_DinoCallSpot);
     self->srt.yaw = setup->rotation << 8;
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
 }
@@ -50,7 +50,7 @@ void DR_EarthCallPad_free(Object* self, s32 onlySelf) {
     if (objdata->fxemit != NULL) {
         obj_destroy_object(objdata->fxemit);
     }
-    obj_free_object_type(self, OBJTYPE_DINOCALLER);
+    obj_free_object_type(self, OBJTYPE_DinoCallSpot);
 }
 
 // offset: 0x120 | func: 5 | export: 5

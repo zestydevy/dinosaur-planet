@@ -484,7 +484,7 @@ void dll_210_setup(Object* player, u32 arg1) {
     Player_Data* data;
 
     data = player->data;
-    obj_add_object_type(player, OBJTYPE_PLAYER);
+    obj_add_object_type(player, OBJTYPE_Player);
     obj_add_object_type(player, OBJTYPE_39);
     obj_set_update_priority(player, OBJPRIORITY_PLAYER);
     obj_init_mesg_queue(player, 20);
@@ -926,7 +926,7 @@ void dll_210_func_1CA8(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             return;
         }
         sp28 = 500.0f;
-        fsa->target = obj_get_nearest_type_to(OBJTYPE_4, player, &sp28);
+        fsa->target = obj_get_nearest_type_to(OBJTYPE_Baddie, player, &sp28);
         return;
     }
     if (temp_v0 != NULL) {
@@ -1592,7 +1592,7 @@ void dll_210_free(Object* player, UNK_TYPE_32 arg1) {
         }
     }
 
-    obj_free_object_type(player, OBJTYPE_PLAYER);
+    obj_free_object_type(player, OBJTYPE_Player);
     obj_free_object_type(player, OBJTYPE_39);
 }
 
@@ -2114,7 +2114,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         for (var_s1 = 0; var_s1 < arg2->messageCount; var_s1++) {
             switch (arg2->messages[var_s1]) {
             case 3:
-                objects = obj_get_all_of_type(OBJTYPE_11, &spC0);
+                objects = obj_get_all_of_type(OBJTYPE_Vehicle, &spC0);
                 for (var_s1 = 0; var_s1 < spC0; var_s1++) {
                     // @fake
                     if (var_s1) {}
@@ -2252,7 +2252,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 16:
                 sp60 = 400.0f;
-                tempObj = obj_get_nearest_type_to(OBJTYPE_MOBILE_MAP, arg0, &sp60);
+                tempObj = obj_get_nearest_type_to(OBJTYPE_MobileMap, arg0, &sp60);
                 if (tempObj != NULL) {
                     func_8005B5B8(arg0, tempObj, 1);
                 }
@@ -3268,7 +3268,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                 case 10:
                     if (spCC < 14.0f) {
                         sp6C = 50.0f;
-                        sp88 = obj_get_nearest_type_to(OBJTYPE_37, player, &sp6C);
+                        sp88 = obj_get_nearest_type_to(OBJTYPE_WallAnimator, player, &sp6C);
                         var_s0_2 = TRUE;
                         if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32((s32)sp88) == 0)) {
                             var_s0_2 = FALSE;
@@ -3291,7 +3291,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
     }
     if (fsa->unk310 & 0x8000) {
         if (arg5 & 0x800) {
-            objects = obj_get_all_of_type(OBJTYPE_11, &sp80);
+            objects = obj_get_all_of_type(OBJTYPE_Vehicle, &sp80);
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
                 if (((DLL_IVehicle*)sp88->dll)->vtbl->func7(sp88, player) != 0) {
@@ -3301,7 +3301,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
             }
         }
         if ((arg5 & 0x1000) && (main_get_bits(BIT_880) != 0)) {
-            objects = obj_get_all_of_type(OBJTYPE_25, &sp80);
+            objects = obj_get_all_of_type(OBJTYPE_RopeNode, &sp80);
             arg1->unk6B0.unk34 = NULL;
             arg1->unk6B0.unk3C = 200.0f;
             for (i = 0; i < sp80; i++) {
@@ -4472,7 +4472,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
             } else {
-                dinoCaller = obj_get_nearest_type_to(OBJTYPE_DINOCALLER, player, &callerMaxRange);
+                dinoCaller = obj_get_nearest_type_to(OBJTYPE_DinoCallSpot, player, &callerMaxRange);
                 if (dinoCaller != NULL) {
                     ((DLL_IDinoCaller*)dinoCaller->dll)->vtbl->call(dinoCaller);
                 }
@@ -6582,7 +6582,7 @@ static void dll_210_func_128F4(f32* arg0, f32* arg1, f32 arg2, Object* arg3) {
     objdata = arg3->data;
     var_fs1 = 0.0f;
     var_fs2 = 0.0f;
-    temp_v0 = obj_get_all_of_type(OBJTYPE_22, &objCount);
+    temp_v0 = obj_get_all_of_type(OBJTYPE_Riverflow, &objCount);
     var_s5 = 0;
     for (i = 0; i < objCount; i++) {
         curObj = temp_v0[i];

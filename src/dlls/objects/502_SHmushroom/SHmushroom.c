@@ -131,7 +131,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 		objData->prevPursuerDistance = 200.0f;
 	}
 
-	obj_add_object_type(self, OBJTYPE_51);
+	obj_add_object_type(self, OBJTYPE_TrickyTarget);
 
 	//Set up inventory gamebit (value incremented when collected)
 	if (self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) {
@@ -276,7 +276,7 @@ void SHmushroom_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 void SHmushroom_free(Object* self, s32 a1) {
 	SHmushroom_Data* objData = self->data;
 
-	obj_free_object_type(self, OBJTYPE_51);
+	obj_free_object_type(self, OBJTYPE_TrickyTarget);
 
 	//Stop sound loop
 	if (objData->soundHandleStun != 0) {

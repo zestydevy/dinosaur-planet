@@ -253,7 +253,7 @@ s32 dll_658_func_ACC(Object* self, PointBack_funcACC_UnkArg1* arg1, s32 arg2) {
     if (arg1 != NULL) {
         objects[0] = get_player();
         objects[1] = get_sidekick();
-        objects[2] = obj_get_nearest_type_to(OBJTYPE_4, self, &distance);
+        objects[2] = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
 
         result = 0;
         for (i = 0; i < 3; i++) {

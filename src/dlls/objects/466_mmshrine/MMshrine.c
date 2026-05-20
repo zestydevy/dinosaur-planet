@@ -146,7 +146,7 @@ void MMshrine_control(Object *self) {
             objdata->unk13 = 1;
         }
     } else {
-        temp_v0_4 = obj_get_nearest_type_to(OBJTYPE_16, player, &sp3C);
+        temp_v0_4 = obj_get_nearest_type_to(OBJTYPE_Door, player, &sp3C);
         if ((temp_v0_4 != NULL) && (sp3C < 300.0f) && (sp3C > 100.0f)) {
             var_fv0 = temp_v0_4->srt.transl.z - player->srt.transl.z;
             if (var_fv0 <= 0.0f) {

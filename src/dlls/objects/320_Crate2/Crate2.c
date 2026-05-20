@@ -91,7 +91,7 @@ void dll_320_control(Object* self) {
             main_set_bits((s32) sp40->unk1C, 1U);
         }
         sp3C = 50.0f;
-        temp_v0_2 = obj_get_nearest_type_to(OBJTYPE_5, self, &sp3C);
+        temp_v0_2 = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &sp3C);
         if (temp_v0_2 != NULL) {
             temp_fv0 = self->srt.transl.f[0];
             temp_v0_2->globalPosition.f[0] = temp_fv0;

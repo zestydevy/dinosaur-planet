@@ -153,7 +153,7 @@ void DBSHshrine_control(Object* self) {
         return;
     }
 
-    door = obj_get_nearest_type_to(OBJTYPE_16, player, &distance);
+    door = obj_get_nearest_type_to(OBJTYPE_Door, player, &distance);
     if ((door != NULL) && (distance < 300.0f) && (distance > 100.0f)) {
         dz = door->srt.transl.z - player->srt.transl.f[2];
         if (dz <= 0.0f) {

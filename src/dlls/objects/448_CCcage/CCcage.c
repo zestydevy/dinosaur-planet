@@ -99,7 +99,7 @@ void CCcage_control(Object* self) {
 
     //Look for nearby CCspellpage
     if (objData->children[1] == NULL) {
-        nearbyObject = obj_get_nearest_type_to(OBJTYPE_5, self, &searchDistance);
+        nearbyObject = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &searchDistance);
         objData->children[1] = nearbyObject;
         if (!nearbyObject) {
             STUBBED_PRINTF("can't find lightfoot\n"); //might've meant to say "SpellPage"

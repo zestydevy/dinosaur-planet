@@ -38,7 +38,7 @@ void MagicPlant_dtor(void *dll) { }
 void MagicPlant_setup(Object* self, MagicPlant_Setup* objSetup, s32 arg2) {
     MagicPlant_Data* objData = self->data;
 
-    obj_add_object_type(self, OBJTYPE_54);
+    obj_add_object_type(self, OBJTYPE_MagicPlant);
     obj_add_object_type(self, OBJTYPE_63);
 
     if (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->base.uID) == FALSE) {
@@ -176,7 +176,7 @@ void MagicPlant_free(Object* self, s32 a1) {
         objData->soundHandle = 0;
     }
 
-    obj_free_object_type(self, OBJTYPE_54);
+    obj_free_object_type(self, OBJTYPE_MagicPlant);
     obj_free_object_type(self, OBJTYPE_63);
 }
 

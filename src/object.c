@@ -785,7 +785,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
     update_pi_manager_array(0, -1);
 
     if (obj->def->flags & OBJDEF_IS_MOBILE_MAP) {
-        obj_add_object_type(obj, OBJTYPE_MOBILE_MAP);
+        obj_add_object_type(obj, OBJTYPE_MobileMap);
 
         if (obj->updatePriority != OBJPRIORITY_MOBILE_MAP) {
             obj_set_update_priority(obj, OBJPRIORITY_MOBILE_MAP);
@@ -811,7 +811,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
     }
 
     if (obj->def->unk5e >= 1) {
-        obj_add_object_type(obj, OBJTYPE_9);
+        obj_add_object_type(obj, OBJTYPE_LookAt);
     }
 
     // Resorting by visibility isn't necessary if the object is visible since the object
@@ -1519,7 +1519,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
     }
 
     if (obj->def->flags & OBJDEF_IS_MOBILE_MAP) {
-        obj_free_object_type(obj, OBJTYPE_MOBILE_MAP);
+        obj_free_object_type(obj, OBJTYPE_MobileMap);
 
         if (!onlySelf) {
             numStackObjs = 0;
@@ -1572,7 +1572,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
     
 
     if (obj->def->unk5e >= 1) {
-        obj_free_object_type(obj, OBJTYPE_9);
+        obj_free_object_type(obj, OBJTYPE_LookAt);
     }
 
     if (obj->def->unk87 & 0x10) {
@@ -1764,7 +1764,7 @@ Object *get_player(void) {
     Object **objectList;
     s32 count;
 
-    objectList = obj_get_all_of_type(OBJTYPE_PLAYER, &count);
+    objectList = obj_get_all_of_type(OBJTYPE_Player, &count);
 
     if(count > 1) {
         STUBBED_PRINTF(" ERROR : Error in Get Main More Players Loaded ");
@@ -1781,7 +1781,7 @@ Object *get_sidekick(void) {
     Object **objectList;
     s32 count;
 
-    objectList = obj_get_all_of_type(OBJTYPE_SIDEKICK, &count);
+    objectList = obj_get_all_of_type(OBJTYPE_Sidekick, &count);
 
     if (count > 1) {
         STUBBED_PRINTF(" ERROR : ERROR : Error in Get Sidekicks Loaded  ");

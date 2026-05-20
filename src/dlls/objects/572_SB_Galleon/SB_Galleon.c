@@ -106,7 +106,7 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SB_Galleon_Data *objdata;
 
     objdata = self->data;
-    obj_add_object_type(self, OBJTYPE_4);
+    obj_add_object_type(self, OBJTYPE_Baddie);
     obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = SB_Galleon_anim_callback;
     objdata->x2 = self->srt.transl.x;
@@ -211,7 +211,7 @@ void SB_Galleon_free(Object *self, s32 a1) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
     }
     if (_data_0.tex1) { }
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
     if ((objdata->unk8A != 0) && (a1 == 0)) {
         objdata->unk8A = 0;
     }

@@ -57,7 +57,7 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
         self->modelInstIdx = 0;
     }
     
-    obj_add_object_type(self, OBJTYPE_17);
+    obj_add_object_type(self, OBJTYPE_UseObj);
     
     objData->flags = SEQOBJ_FLAG_None;
     if (objSetup->gamebitHasPlayed != -1) {
@@ -158,7 +158,7 @@ void SeqObj_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
 // offset: 0x418 | func: 4 | export: 4
 void SeqObj_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_17);
+    obj_free_object_type(self, OBJTYPE_UseObj);
 }
 
 // offset: 0x458 | func: 5 | export: 5

@@ -69,7 +69,7 @@ void CCguardgiving_control(Object *self) {
 
     //Find the GuardClaw object
     if (!objdata->guardClaw) {
-        guardClaw = obj_get_nearest_type_to(OBJTYPE_4, self, &distance);
+        guardClaw = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
         objdata->guardClaw = guardClaw;
         if (guardClaw == NULL)
             return;

@@ -49,7 +49,7 @@ void dll_257_setup(Object* self, Tesla_Setup* setup, s32 arg2) {
     objdata->unk10 = 0.0f;
     self->srt.yaw = setup->unk20 << 8;
     self->srt.transl.f[1] = setup->base.y - setup->unk1E;
-    obj_add_object_type(self, OBJTYPE_3);
+    obj_add_object_type(self, OBJTYPE_Tesla);
 }
 
 
@@ -147,7 +147,7 @@ void dll_257_control(Object* self) {
             objdata->unkA = 2;
             gDLL_6_AMSFX->vtbl->play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
             sp64 = setup->unk19;
-            var_s0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp64);
+            var_s0 = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &sp64);
             if (var_s0 == NULL || sp68 <= sp64) {
                 if (sp68 < setup->unk19) {
                     func_8002635C(player, self, Damage_Type_Sword_Staff_Strike2, setup->damageStrength, 0);
@@ -161,7 +161,7 @@ void dll_257_control(Object* self) {
         if (objdata->unkA != 0) {
             if (var_s0 == NULL) {
                 sp64 = setup->unk19;
-                var_s0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp64);
+                var_s0 = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &sp64);
             }
             objdata->unkA--;
             if (var_s0 == NULL || sp68 <= sp64) {
@@ -178,7 +178,7 @@ void dll_257_control(Object* self) {
                     goto bail;
                 }
             }
-            objects = obj_get_all_of_type(OBJTYPE_3, &sp54);
+            objects = obj_get_all_of_type(OBJTYPE_Tesla, &sp54);
             for (i = 0; i != 2; i++) {
                 start:
                 temp_v0_5 = rand_next(0, sp54 - 1);\
@@ -241,7 +241,7 @@ void dll_257_free(Object* self, s32 a1) {
     if (modgfxDLL != NULL) {
         dll_unload(modgfxDLL);
     }
-    obj_free_object_type(self, OBJTYPE_3);
+    obj_free_object_type(self, OBJTYPE_Tesla);
 }
 
 // offset: 0x1120 | func: 5 | export: 5
