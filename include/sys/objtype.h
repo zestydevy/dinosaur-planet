@@ -63,8 +63,8 @@ enum ObjType {
     OBJTYPE_50 = 50, // LanternFireFly, WLFireFly
     // Tumbleweed, SandGrabber, SHvines, PressurePad (DLL 287), TrickyWarp, TrickyGuard, GroundAnimator, 
     // WallAnimator, SHbluemushroom, DIMLogFire (DLL 531), DIMIceWall, VFP_flamepoint, DB_FlameSwitch,
-    // WCPressureSwitc
-    OBJTYPE_51 = 51, // DBDustGeezer, DR_Chimmey, DR_Vines
+    // WCPressureSwitc, DBDustGeezer, DR_Chimmey, DR_Vines
+    OBJTYPE_51 = 51,
     OBJTYPE_52 = 52, // DBlevelcontrol
     OBJTYPE_53 = 53, // CFTreasRobo
     OBJTYPE_54 = 54, // MagicPlant
