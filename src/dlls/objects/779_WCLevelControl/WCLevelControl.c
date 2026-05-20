@@ -94,7 +94,7 @@ void dll_779_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (main_get_bits(BIT_2A5) != 0) {
         objdata->unk5 |= 0x40;
     }
-    obj_add_object_type(self, OBJTYPE_10);
+    obj_add_object_type(self, OBJTYPE_LevelControl);
     main_set_bits(BIT_226, 1);
     main_set_bits(BIT_2A6, 1);
     main_set_bits(BIT_206, 1);
@@ -143,7 +143,7 @@ void dll_779_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x400 | func: 4 | export: 4
 void dll_779_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_10);
+    obj_free_object_type(self, OBJTYPE_LevelControl);
 }
 
 // offset: 0x440 | func: 5 | export: 5

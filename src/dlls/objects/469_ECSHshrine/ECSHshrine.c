@@ -161,7 +161,7 @@ void ECSHshrine_control(Object* self) {
     }
 
     //Crossfade music volumes as player approaches door
-    door = obj_get_nearest_type_to(OBJTYPE_16, player, &objectDistance);
+    door = obj_get_nearest_type_to(OBJTYPE_Door, player, &objectDistance);
     if ((door != NULL) && (objectDistance < 300.0f) && (objectDistance > 100.0f)) {
         dz = door->srt.transl.z - player->srt.transl.z;
 

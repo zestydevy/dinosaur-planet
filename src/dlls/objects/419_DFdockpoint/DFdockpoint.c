@@ -19,7 +19,7 @@ void DFdockpoint_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DFdockpoint_setup(Object *self, DFdockpoint_Setup *objsetup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_23);
+    obj_add_object_type(self, OBJTYPE_Dockpoint);
     self->srt.yaw = (objsetup->yaw & 0xFF) << 8;
 }
 
@@ -32,7 +32,7 @@ void DFdockpoint_control(Object *self) {
     setup = (DFdockpoint_Setup*)self->setup;
 
     if (!setup->spawnLogDisabled) {
-        obj_get_all_of_type(OBJTYPE_11, &logCount);
+        obj_get_all_of_type(OBJTYPE_Vehicle, &logCount);
         if (logCount == 0) {
             logsetup = obj_alloc_setup(sizeof(BWLog_Setup), OBJ_BWLog);
             logsetup->base.quarterSize = 9;
@@ -61,7 +61,7 @@ void DFdockpoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x1CC | func: 4 | export: 4
 void DFdockpoint_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_23);
+    obj_free_object_type(self, OBJTYPE_Dockpoint);
 }
 
 // offset: 0x20C | func: 5 | export: 5

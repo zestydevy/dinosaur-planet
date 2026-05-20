@@ -208,7 +208,7 @@ typedef struct {
 /*5a*/ s16 controlNo; // see ObjectControlNumber enum. official name: controlNo
 /*5c*/ s8 modLinesSize; //ignored in file // TODO: confirm
 /*5d*/ s8 numModels; // number of pModelList (called "noframes" (number of frames?) by default.dol)
-/*5e*/ s8 unk5e;
+/*5e*/ s8 unk5e; // when >= 1, causes certain NPCs to look at nearby objects of this type
 /*5f*/ char name[16]; // not always the full name, cutoff after 15 characters (16 including null terminator)
 /*6f*/ u8 unk6f; // class (according to default.dol)
 /*70*/ u8 numAttachPoints; // "noplacements" in default.dol

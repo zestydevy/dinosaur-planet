@@ -214,7 +214,7 @@ void BalloonBaddie_free(Object* self, s32 a1) {
     BalloonBaddie_Data* objdata;
 
     objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
     if (objdata->curveStruct) {
         mmFree(objdata->curveStruct);
         objdata->curveStruct = NULL;

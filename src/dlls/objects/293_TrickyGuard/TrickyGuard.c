@@ -18,7 +18,7 @@ void TrickyGuard_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void TrickyGuard_setup(Object *self, TrickyGuard_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
-    obj_add_object_type(self, OBJTYPE_51);
+    obj_add_object_type(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x6C | func: 1 | export: 1
@@ -54,7 +54,7 @@ void TrickyGuard_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x1B0 | func: 4 | export: 4
 void TrickyGuard_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_51);
+    obj_free_object_type(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x1F0 | func: 5 | export: 5

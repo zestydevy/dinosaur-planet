@@ -110,7 +110,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     s32 i;
     TriggerCommand *cmd;
 
-    obj_add_object_type(self, OBJTYPE_2);
+    obj_add_object_type(self, OBJTYPE_Trigger);
     obj_set_update_priority(self, OBJPRIORITY_TRIGGER);
 
     objdata = (Trigger_Data*)self->data;
@@ -392,7 +392,7 @@ void trigger_free(Object *self, s32 param2) {
             break;
     }
 
-    obj_free_object_type(self, OBJTYPE_2);
+    obj_free_object_type(self, OBJTYPE_Trigger);
 }
 
 u32 trigger_get_model_flags(Object *self) {
@@ -415,7 +415,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
     TriggerCommand *cmd;
     u8 i;
     s32 temp_a1;
-    Object* var_v0_2;
+    Object* findTarget;
     Object *obj;
     Object* sidekick;
 
@@ -783,13 +783,14 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                     break;
                 case 2:
                     // "findobj %i \n"
-                    var_v0_2 = obj_get_nearest_type_to(OBJTYPE_52, sidekick, NULL);
-                    if (var_v0_2 == NULL) {
-                        var_v0_2 = obj_get_nearest_type_to(OBJTYPE_51, sidekick, NULL);
+                    // oh my god this is hacky...
+                    findTarget = obj_get_nearest_type_to(OBJTYPE_DBlevelcontrol, sidekick, NULL);
+                    if (findTarget == NULL) {
+                        findTarget = obj_get_nearest_type_to(OBJTYPE_TrickyTarget, sidekick, NULL);
                     }
-                    if (var_v0_2 != NULL) {
+                    if (findTarget != NULL) {
                         // "Trigger [%d], Sidekick Find On Object %d\n"
-                        ((DLL_ISidekick *)sidekick->dll)->vtbl->func22(sidekick, var_v0_2);
+                        ((DLL_ISidekick *)sidekick->dll)->vtbl->func22(sidekick, findTarget);
                     }
                     break;
                 }

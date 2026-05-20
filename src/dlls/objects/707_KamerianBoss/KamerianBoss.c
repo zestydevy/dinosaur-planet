@@ -781,7 +781,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 
 // offset: 0x2068 | func: 13 | export: 4
 void KamerianBoss_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
         obj_destroy_object(self->linkedObject);
         self->linkedObject = NULL;

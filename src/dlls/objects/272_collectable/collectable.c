@@ -75,7 +75,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     Collectable_Data* objData;
 
     objData = self->data;
-    obj_add_object_type(self, OBJTYPE_5);
+    obj_add_object_type(self, OBJTYPE_Collectable);
     obj_init_mesg_queue(self, 2);
 
     self->srt.yaw = objSetup->yaw << 8;
@@ -380,7 +380,7 @@ void collectable_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 // offset: 0xA88 | func: 4 | export: 4
 void collectable_free(Object* self, s32 arg1) {
     Collectable_Data* objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_5);
+    obj_free_object_type(self, OBJTYPE_Collectable);
     if (objdata->soundHandle) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
         objdata->soundHandle = 0;
@@ -624,11 +624,11 @@ void collectable_collect(Object* self) {
         switch (id) {  
         case OBJ_meatPickup:      
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Dino_Egg);
-            obj_free_object_type(self, OBJTYPE_5);
+            obj_free_object_type(self, OBJTYPE_Collectable);
             return;
         case OBJ_applePickup:
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
-            obj_free_object_type(self, OBJTYPE_5);
+            obj_free_object_type(self, OBJTYPE_Collectable);
             obj_destroy_object(self);
             return;
         case OBJ_beanPickup:

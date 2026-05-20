@@ -59,7 +59,7 @@ void CCgasventControl_control(Object *self) {
 
     switch (objdata->state) {
     case STATE_Loading:
-        obj_get_all_of_type(OBJTYPE_64, &count);
+        obj_get_all_of_type(OBJTYPE_CCgasvent, &count);
         objdata->player = get_player();
         if (count == GASVENT_COUNT && objdata->player)
             objdata->state = STATE_Unstarted;
@@ -72,11 +72,11 @@ void CCgasventControl_control(Object *self) {
         break;
     case STATE_Puzzle:
         // check if the vents are covered
-        objects = obj_get_all_of_type(OBJTYPE_64, &count);
+        objects = obj_get_all_of_type(OBJTYPE_CCgasvent, &count);
         count = 0;
         for (i = 0; i < GASVENT_COUNT; i++) {
             if (vec3_distance_xz_squared(&objects[i]->globalPosition,
-                &obj_get_nearest_type_to(OBJTYPE_6, objects[i], NULL)->globalPosition) > DISTANCE) {
+                &obj_get_nearest_type_to(OBJTYPE_PushBlock, objects[i], NULL)->globalPosition) > DISTANCE) {
                 count++;
                 objdata->timer += gUpdateRateF;
             }

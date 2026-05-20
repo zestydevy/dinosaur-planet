@@ -31,8 +31,8 @@ void dll_535_setup(Object* self, DLL535_Setup* setup, s32 arg2) {
     DLL535data->unk2 = (s8) setup->unk1A;
     DLL535data->unk4 = (s8) setup->unk1C;
     DLL535data->unk0 = (s16) setup->unk1E;
-    obj_add_object_type(self, OBJTYPE_14);
-    obj_add_object_type(self, OBJTYPE_51);
+    obj_add_object_type(self, OBJTYPE_DIMIceWall);
+    obj_add_object_type(self, OBJTYPE_TrickyTarget);
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
@@ -69,8 +69,8 @@ void dll_535_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x1F4 | func: 4 | export: 4
 void dll_535_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_14);
-    obj_free_object_type(self, OBJTYPE_51);
+    obj_free_object_type(self, OBJTYPE_DIMIceWall);
+    obj_free_object_type(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x254 | func: 5 | export: 5

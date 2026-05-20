@@ -48,7 +48,7 @@ void CFSupTreasureCh_setup(Object *self, CFSupTreasureCh_Setup *setup, s32 arg2)
     CFSupTreasureCh_Data *objdata;
 
     objdata = self->data;
-    obj_add_object_type(self, OBJTYPE_33);
+    obj_add_object_type(self, OBJTYPE_CFSupTreasureChest);
     self->animCallback = CFSupTreasureCh_func_424;
     self->srt.yaw = setup->yaw << 8;
     if (setup->hasBaby) {
@@ -85,7 +85,7 @@ void CFSupTreasureCh_control(Object *self) {
         }
     }
     if (objdata->objectSeqIndex == 1) {
-        cloudbaby = obj_get_nearest_type_to(OBJTYPE_34, self, &distance);
+        cloudbaby = obj_get_nearest_type_to(OBJTYPE_CFCloudBaby, self, &distance);
         if (cloudbaby) {
             cloudbaby->srt.transl.x = self->srt.transl.x;
             cloudbaby->srt.transl.y = self->srt.transl.y + 2.0f;
@@ -130,7 +130,7 @@ void CFSupTreasureCh_free(Object *self, s32 a1) {
     CFSupTreasureCh_Setup *setup;
 
     setup = (CFSupTreasureCh_Setup*)self->setup;
-    obj_free_object_type(self, OBJTYPE_33);
+    obj_free_object_type(self, OBJTYPE_CFSupTreasureChest);
     STUBBED_PRINTF(" Treasure Freeded");
     if (setup->hasBaby) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 4, 0);
@@ -170,7 +170,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
     animObjData->unk7A &= ~1;
     animObjData->unk7A &= ~2;
     if (objdata->objectSeqIndex == 1) {
-        cloudbaby = obj_get_nearest_type_to(OBJTYPE_34, self, &distance);
+        cloudbaby = obj_get_nearest_type_to(OBJTYPE_CFCloudBaby, self, &distance);
         if (cloudbaby) {
             cloudbaby->unkAF |= 8;
             cloudbaby->srt.transl.x = self->srt.transl.x;
@@ -201,7 +201,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
         self->unkAF &= ~0x10;
     }
     if (objdata->objectSeqIndex == 1) {
-        cloudbaby = obj_get_nearest_type_to(OBJTYPE_34, self, &distance);
+        cloudbaby = obj_get_nearest_type_to(OBJTYPE_CFCloudBaby, self, &distance);
         if (cloudbaby) {
             cloudbaby->srt.transl.x = self->srt.transl.x;
             cloudbaby->srt.transl.y = self->srt.transl.y + 2.0f;

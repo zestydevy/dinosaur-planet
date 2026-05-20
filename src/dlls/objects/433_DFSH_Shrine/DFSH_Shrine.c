@@ -136,7 +136,7 @@ void dll_433_control(Object* self) {
             }
         }
     } else {
-        temp_v0_4 = obj_get_nearest_type_to(OBJTYPE_16, player, &sp44);
+        temp_v0_4 = obj_get_nearest_type_to(OBJTYPE_Door, player, &sp44);
         if ((temp_v0_4 != NULL) && (sp44 < 300.0f) && (sp44 > 100.0f)) {
             var_fv0 = temp_v0_4->srt.transl.f[2] - player->srt.transl.f[2];
             if (var_fv0 <= 0.0f) {
@@ -225,7 +225,7 @@ void dll_433_control(Object* self) {
             break;
         case 3:
             if (objdata->unk10 != 4) {
-                sp38 = obj_get_all_of_type(OBJTYPE_4, &sp34);
+                sp38 = obj_get_all_of_type(OBJTYPE_Baddie, &sp34);
                 sp3C = 0;
                 while (sp3C < sp34) {
                     obj_destroy_object(sp38[sp3C]);

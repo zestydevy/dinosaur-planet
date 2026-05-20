@@ -85,7 +85,7 @@ void dll_793_setup(Object *self, ObjSetup *setup, s32 arg2) {
         DLL27MODE_1);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 2, _data_0, _data_18, _data_20);
     objdata->unk0.boundsYExtension = 100;
-    obj_add_object_type(self, OBJTYPE_11);
+    obj_add_object_type(self, OBJTYPE_Vehicle);
     objdata->unk31C[1] = 0x2000;
     objdata->unk2B4 = 15.0f;
     
@@ -119,7 +119,7 @@ void dll_793_control(Object* self) {
 
     objdata = (BWlog_Data*)self->data;
     sp98 = 10000.0f;
-    objdata->unk338 = obj_get_nearest_type_to(OBJTYPE_23, self, &sp98);
+    objdata->unk338 = obj_get_nearest_type_to(OBJTYPE_Dockpoint, self, &sp98);
     if (objdata->unk338 != NULL) {
         temp_s0 = (ObjType23Setup*)objdata->unk338->setup;
         sp98 = vec3_distance(&self->globalPosition, &objdata->unk338->globalPosition);
@@ -225,7 +225,7 @@ void dll_793_free(Object *self, s32 a1) {
     BWlog_Data *objdata;
 
     objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_11);
+    obj_free_object_type(self, OBJTYPE_Vehicle);
     if (objdata->unk314 != 0) {
         gDLL_6_AMSFX->vtbl->stop(objdata->unk314);
     }
@@ -643,7 +643,7 @@ static void dll_793_func_1C18(Object* self, BWlog_Data* objdata) {
     }
 
     // grabs DFriverflow instances (and possibly more)
-    objList = obj_get_all_of_type(OBJTYPE_22, &objListLength);
+    objList = obj_get_all_of_type(OBJTYPE_Riverflow, &objListLength);
 
     for (i = 0; i < objListLength; i++) {
         obj = objList[i];
