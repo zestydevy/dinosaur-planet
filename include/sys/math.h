@@ -20,8 +20,6 @@
 #define M_180_DEGREES_F 32768.0f //180 degrees in the game's angle system
 #define M_360_DEGREES_F 65535.0f //360 degrees in the game's angle system
 
-#define ABS(x) ((x) >= 0 ? (x) : -(x))
-
 /**
  * Keeps the value within the range.
  */
