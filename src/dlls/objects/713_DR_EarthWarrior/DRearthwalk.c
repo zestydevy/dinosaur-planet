@@ -21,44 +21,58 @@
 #include "dll.h"
 
 typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
+/*00*/ ObjSetup base;
+/*18*/ s8 rotation;
+/*19*/ s8 unk19;
 } DRearthwalk_Setup;
 
 typedef struct {
-    ObjFSA_Data unk0;
-    u8 _unk34C[0x370 - 0x34C];
-    HeadAnimation unk370;
-    HeadAnimation unk394;
-    MoveLibData unk3B8;
-    UnkCurvesStruct unk870;
-    Vec3f unk978[4];
-    u8 _unk9A8[0x9B4 - 0x9A8];
-    f32 unk9B4;
-    f32 unk9B8;
-    f32 unk9BC;
-    u8 _unk9C0[0xA52 - 0x9C0];
-    s16 unkA52;
-    u8 _unkA54[0xA56 - 0xA54];
-    s16 unkA56;
-    u16 unkA58;
-    u8 unkA5A;
-    u8 _unkA5B;
-    u8 unkA5C;
-    u8 _unkA5D;
-    u8 unkA5E;
-    u8 unkA5F;
-    u8 unkA60_0 : 1;
-    u8 unkA60_1 : 1;
-    u8 unkA60_2 : 1;
-    u8 unkA60_3 : 1;
-    u8 unkA60_4 : 1;
-    u8 unkA60_5 : 1;
-    s8 unkA61;
-    s8 unkA62;
-    s8 unkA63;
+/*000*/ ObjFSA_Data fsa;
+/*34C*/ u8 _unk34C[0x370 - 0x34C];
+/*370*/ HeadAnimation unk370;
+/*394*/ HeadAnimation unk394;
+/*3B8*/ MoveLibData movedata;
+/*870*/ UnkCurvesStruct unk870;
+/*978*/ Vec3f unk978[4];
+/*9A8*/ u8 _unk9A8[0x9B4 - 0x9A8];
+/*9B4*/ f32 unk9B4;
+/*9B8*/ f32 unk9B8;
+/*9BC*/ f32 unk9BC;
+/*9C0*/ u8 _unk9C0[0xA52 - 0x9C0];
+/*A52*/ s16 unkA52;
+/*A54*/ u8 _unkA54[0xA56 - 0xA54];
+/*A56*/ s16 energy;
+/*A58*/ u16 unkA58;
+/*A5A*/ u8 unkA5A;
+/*A5B*/ u8 _unkA5B;
+/*A5C*/ u8 unkA5C;
+/*A5D*/ u8 _unkA5D;
+/*A5E*/ u8 unkA5E;
+/*A5F*/ u8 unkA5F;
+/*A60*/ u8 unkA60_0 : 1;
+/*A60*/ u8 unkA60_1 : 1;
+/*A60*/ u8 unkA60_2 : 1;
+/*A60*/ u8 unkA60_3 : 1;
+/*A60*/ u8 unkA60_4 : 1;
+/*A60*/ u8 unkA60_5 : 1;
+/*A61*/ s8 unkA61;
+/*A62*/ s8 talkSeq;
+/*A63*/ s8 unkA63;
 } DRearthwalk_Data;
+
+enum DREWSeq {
+    EWSEQ_0_EatBlueMushroom_Laying = 0,
+    EWSEQ_1_EatBlueMushroom_Standing = 1,
+    EWSEQ_2_LetsGoStopTheDragon = 2,
+    EWSEQ_3_INeedEnergy = 3,
+    EWSEQ_4 = 4,
+    EWSEQ_5_SabreHopOn_Right = 5,
+    EWSEQ_6_SabreHopOn_Left = 6,
+    EWSEQ_7_SabreHopOff_Left = 7,
+    EWSEQ_8_SabreHopOff_Right = 8,
+    EWSEQ_9_IfICouldGetOutOfTheseChains = 9,
+    EWSEQ_10_TeethChattering = 10
+};
 
 /*0x0*/ static u16 _data_0[] = {0x0854, 0x081a};
 /*0x4*/ static u16 _data_4[] = {0x0853, 0x0852};
@@ -178,35 +192,35 @@ void dll_713_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
     s16 sp44[] = {0x000a, 0x000a, 0x0000, 0x0000, 0x0000};
     s16 sp38[] = {0x0014, 0x0014, 0x0000, 0x0000, 0x0000};
 
-    self->srt.yaw = setup->unk18 << 8;
+    self->srt.yaw = setup->rotation << 8;
     self->animCallback = dll_713_func_1EBC;
     obj_add_object_type(self, OBJTYPE_11);
     objdata = self->data;
     objdata->unkA5C = setup->unk19;
     objdata->unkA52 = 5;
-    objdata->unkA62 = -1;
+    objdata->talkSeq = -1;
     if (self->shadow != NULL) {
         self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
         self->shadow->maxDistScale = self->shadow->scale * 0.4f;
     }
-    gDLL_18_objfsa->vtbl->func0(self, &objdata->unk0, 8, 1);
-    objdata->unk0.unk29C = 0.17f;
-    objdata->unk0.unk4.mode = 0;
-    gDLL_27->vtbl->init(&objdata->unk0.unk4, DLL27FLAG_4000000 | DLL27FLAG_2000000 | DLL27FLAG_4, DLL27FLAG_NONE, DLL27MODE_DISABLED);
-    gDLL_27->vtbl->setup_hits_collider(&objdata->unk0.unk4, 2, _data_70, _data_88, 8);
-    gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0.unk4, 4, _data_30, _data_60, sp50);
-    gDLL_27->vtbl->reset(self, &objdata->unk0.unk4);
+    gDLL_18_objfsa->vtbl->func0(self, &objdata->fsa, 8, 1);
+    objdata->fsa.unk29C = 0.17f;
+    objdata->fsa.unk4.mode = DLL27MODE_DISABLED;
+    gDLL_27->vtbl->init(&objdata->fsa.unk4, DLL27FLAG_4000000 | DLL27FLAG_2000000 | DLL27FLAG_4, DLL27FLAG_NONE, DLL27MODE_DISABLED);
+    gDLL_27->vtbl->setup_hits_collider(&objdata->fsa.unk4, 2, _data_70, _data_88, 8);
+    gDLL_27->vtbl->setup_terrain_collider(&objdata->fsa.unk4, 4, _data_30, _data_60, sp50);
+    gDLL_27->vtbl->reset(self, &objdata->fsa.unk4);
     func_8002674C(self);
     create_temp_dll(53);
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->unk3B8, -4551, 5461, 2);
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->unk3B8, 300, 120);
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objdata->unk3B8, sp38, sp44, 2);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -4551, 5461, 2);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->movedata, 300, 120);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objdata->movedata, sp38, sp44, 2);
     if (setup->unk19 == 1) {
-        objdata->unkA56 = 1;
+        objdata->energy = 1;
         objdata->unkA58 |= 0x100;
         objdata->unkA60_1 = 1;
     } else {
-        objdata->unkA56 = 5;
+        objdata->energy = 5;
         objdata->unkA60_4 = 1;
     }
     objdata->unkA61 = 0x1E;
@@ -214,24 +228,25 @@ void dll_713_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
 
 // offset: 0x408 | func: 2 | export: 1
 void dll_713_control(Object* self) {
-    DRearthwalk_Data* temp_v0;
-    ObjFSA_Data* sp50;
+    DRearthwalk_Data* objdata;
+    ObjFSA_Data* fsa;
     s32 sp4C;
-    Object* sp48;
+    Object* player;
     s32 var_a2;
     s32 sp40;
-    s16 var_v0;
+    s16 plAngle;
 
-    temp_v0 = self->data;
-    sp50 = self->data;
+    objdata = self->data;
+    fsa = self->data;
     sp4C = 1;
-    sp48 = get_player();
-    temp_v0->unkA52 = 5;
-    diPrintf(" EARTHWALK ENERGY : %i ", temp_v0->unkA56);
-    self->unkAF &= ~8;
-    if (temp_v0->unkA5A == 2) {
-        self->unkAF |= 8;
-        sp50->unk4.mode = 1;
+    player = get_player();
+    objdata->unkA52 = 5;
+    diPrintf(" EARTHWALK ENERGY : %i ", objdata->energy);
+    self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+    if (objdata->unkA5A == 2) {
+        // riding?
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        fsa->unk4.mode = DLL27MODE_1;
         self->objhitInfo->unk5B = 0xF4;
         self->objhitInfo->unk5C = 0xF4;
         var_a2 = 0;
@@ -240,81 +255,83 @@ void dll_713_control(Object* self) {
             var_a2 += 1;
         }
     } else {
-        if (!(temp_v0->unkA58 & 0x20) && (main_get_bits(0x628) == 0)) {
-            self->unkAF |= 8;
-            obj_get_all_of_type(4, &sp40);
+        if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_628) == 0)) {
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
+            obj_get_all_of_type(OBJTYPE_4, &sp40);
             diPrintf(" num %i ", sp40);
-            if ((sp40 == 0) && (main_get_bits(0x789) == 3)) {
-                main_set_bits(0x628, 1);
-                temp_v0->unkA62 = 9;
+            if ((sp40 == 0) && (main_get_bits(BIT_DR_Lava_Pools_Cooled_Count) == 3)) {
+                main_set_bits(BIT_628, 1);
+                objdata->talkSeq = EWSEQ_9_IfICouldGetOutOfTheseChains;
             }
         }
-        sp50->unk4.mode = 1;
-        gDLL_27->vtbl->reset(self, &sp50->unk4);
+        fsa->unk4.mode = DLL27MODE_1;
+        gDLL_27->vtbl->reset(self, &fsa->unk4);
         self->objhitInfo->unk5B = 0;
         self->objhitInfo->unk5C = 0;
         dll_713_func_B54(self, gUpdateRate, -1);
     }
     func_80028D2C(self);
-    func_80032A08(self, &temp_v0->unk370);
-    func_80034BC0(self, &temp_v0->unk394);
-    if (!(temp_v0->unkA58 & 0x20) && (main_get_bits(0x5FE) != 0) && (temp_v0->unkA56 > 0)) {
-        main_set_bits(0x654, 1);
-        temp_v0->unkA62 = 2;
-        temp_v0->unkA60_1 = 0;
+    func_80032A08(self, &objdata->unk370);
+    func_80034BC0(self, &objdata->unk394);
+    if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_5FE) != 0) && (objdata->energy > 0)) {
+        main_set_bits(BIT_654, 1);
+        objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
+        objdata->unkA60_1 = 0;
     }
-    if (!(temp_v0->unkA58 & 0x20) && (main_get_bits(0x655) != 0)) {
-        temp_v0->unkA58 |= 0x40;
-        temp_v0->unkA62 = 2;
-        temp_v0->unkA58 |= 0x20;
-        temp_v0->unk3B8.unk4A9 |= 2;
-        gDLL_26_Curves->vtbl->func_4288(&temp_v0->unk870, self, 1000.0f, &sp4C, -1);
+    if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_655) != 0)) {
+        objdata->unkA58 |= 0x40;
+        objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
+        objdata->unkA58 |= 0x20;
+        objdata->movedata.unk4A9 |= 2;
+        gDLL_26_Curves->vtbl->func_4288(&objdata->unk870, self, 1000.0f, &sp4C, -1);
     }
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &temp_v0->unk3B8);
-    temp_v0->unkA60_3 = 0;
-    if (self->unkAF & 1) {
-        temp_v0->unkA60_3 = 1;
-        if ((temp_v0->unkA60_3) && (temp_v0->unkA60_4)) {
-            joy_disable_buttons(0, 0x8000);
-            var_v0 = self->srt.yaw - (sp48->srt.yaw & 0xFFFF);
-            CIRCLE_WRAP(var_v0);
-            if (var_v0 > 0) {
-                temp_v0->unkA5F = 0;
-                gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objdata->movedata);
+    objdata->unkA60_3 = 0;
+    if (self->unkAF & ARROW_FLAG_1_Interacted) {
+        objdata->unkA60_3 = 1;
+        if ((objdata->unkA60_3) && (objdata->unkA60_4)) {
+            joy_disable_buttons(0, A_BUTTON);
+            plAngle = self->srt.yaw - (player->srt.yaw & 0xFFFF);
+            CIRCLE_WRAP(plAngle);
+            if (plAngle > 0) {
+                // sabre gets on, from right side
+                objdata->unkA5F = 0;
+                gDLL_3_Animation->vtbl->start_obj_sequence(EWSEQ_5_SabreHopOn_Right, self, -1);
             } else {
-                temp_v0->unkA5F = 1;
-                gDLL_3_Animation->vtbl->start_obj_sequence(6, self, -1);
+                // sabre gets on, from left side
+                objdata->unkA5F = 1;
+                gDLL_3_Animation->vtbl->start_obj_sequence(EWSEQ_6_SabreHopOn_Left, self, -1);
             }
             gDLL_5_AMSEQ2->vtbl->set(self, 0xF9, 0, 0, 0);
-            temp_v0->unkA58 |= 4;
-            temp_v0->unk3B8.unk4A9 |= 1;
+            objdata->unkA58 |= 4;
+            objdata->movedata.unk4A9 |= 1;
         }
-        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(0xC1) != 0) {
-            if (sp50->animState == 2) {
-                gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                joy_disable_buttons(0, 0x8000);
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_Blue_Mushrooms) != 0) {
+            if (fsa->animState == 2) {
+                gDLL_3_Animation->vtbl->start_obj_sequence(EWSEQ_0_EatBlueMushroom_Laying, self, -1);
+                joy_disable_buttons(0, A_BUTTON);
             } else {
-                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
-                joy_disable_buttons(0, 0x8000);
+                gDLL_3_Animation->vtbl->start_obj_sequence(EWSEQ_1_EatBlueMushroom_Standing, self, -1);
+                joy_disable_buttons(0, A_BUTTON);
             }
-            temp_v0->unkA56 += 0xC;
-            main_set_bits(0xC1, main_get_bits(0xC1) - 1);
-        } else if ((temp_v0->unkA62 != -1) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0)) {
-            if (!temp_v0->unkA60_4) {
-                gDLL_3_Animation->vtbl->start_obj_sequence(temp_v0->unkA62, self, -1);
-                joy_disable_buttons(0, 0x8000);
+            objdata->energy += 12;
+            main_set_bits(BIT_Inventory_Blue_Mushrooms, main_get_bits(BIT_Inventory_Blue_Mushrooms) - 1);
+        } else if ((objdata->talkSeq != -1) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0)) {
+            if (!objdata->unkA60_4) {
+                gDLL_3_Animation->vtbl->start_obj_sequence(objdata->talkSeq, self, -1);
+                joy_disable_buttons(0, A_BUTTON);
             } else {
-                temp_v0->unkA60_3 = 1;
+                objdata->unkA60_3 = 1;
             }
         }
     }
-    if ((temp_v0->unkA61 == 0) && (main_get_bits(0x7B6) == 0)) {
+    if ((objdata->unkA61 == 0) && (main_get_bits(BIT_7B6) == 0)) {
         dll_713_func_ABC(self);
     }
-    if (temp_v0->unkA61 != 0) {
-        temp_v0->unkA61 -= gUpdateRate;
-        if (temp_v0->unkA61 < 0) {
-            temp_v0->unkA61 = 0;
+    if (objdata->unkA61 != 0) {
+        objdata->unkA61 -= gUpdateRate;
+        if (objdata->unkA61 < 0) {
+            objdata->unkA61 = 0;
         }
     }
 }
@@ -352,16 +369,16 @@ static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2) {
     }
     sp54 = get_main_camera();
     objdata = self->data;
-    objdata->unk0.hitpoints = 0;
-    objdata->unk0.flags &= ~0x8000;
+    objdata->fsa.hitpoints = 0;
+    objdata->fsa.flags &= ~OBJFSA_FLAG_8000;
     if (objdata->unkA5A == 2) {
-        objdata->unk0.xAnalogInput = (f32) joy_get_stick_x_buffered(0, arg2);
-        objdata->unk0.yAnalogInput = (f32) joy_get_stick_y_buffered(0, arg2);
-        objdata->unk0.unk310 = joy_get_pressed_buffered(0, arg2);
-        objdata->unk0.unk30C = joy_get_buttons_buffered(0, arg2);
-        objdata->unk0.unk324 = sp54->srt.yaw;
+        objdata->fsa.xAnalogInput = (f32) joy_get_stick_x_buffered(0, arg2);
+        objdata->fsa.yAnalogInput = (f32) joy_get_stick_y_buffered(0, arg2);
+        objdata->fsa.unk310 = joy_get_pressed_buffered(0, arg2);
+        objdata->fsa.unk30C = joy_get_buttons_buffered(0, arg2);
+        objdata->fsa.unk324 = sp54->srt.yaw;
     } else if (objdata->unkA58 & 0x40) {
-        objdata->unk3B8.unk4A9 |= 2;
+        objdata->movedata.unk4A9 |= 2;
         objdata->unkA60_4 = 0;
         sp28 = &objdata->unk870;
         temp_fv0 = sp28->unk68.x - self->srt.transl.x;
@@ -385,8 +402,8 @@ static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2) {
                 if (dll_713_func_32EC(self, (u8) sp28->unkA0->unk18) != 0) {
                     if (gDLL_26_Curves->vtbl->func_4704(sp28) != 0) {
                         objdata->unkA58 &= ~0x140;
-                        objdata->unk3B8.unk4A9 &= ~0x2;
-                        gDLL_18_objfsa->vtbl->set_anim_state(self, &objdata->unk0, 7);
+                        objdata->movedata.unk4A9 &= ~0x2;
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, &objdata->fsa, 7);
                     }
                 } else {
                     sp30 = 0.0f;
@@ -398,24 +415,24 @@ static void dll_713_func_B54(Object* self, s32 arg1, s32 arg2) {
             sp30 = 11.0f;
         }
         sp3A = arctan2_f(self->srt.transl.x - sp28->unk68.x, self->srt.transl.z - sp28->unk68.z) & 0xFFFF;
-        objdata->unk0.xAnalogInput = -fsin16_precise(-sp3A) * sp30;
-        objdata->unk0.yAnalogInput = -fcos16_precise(-sp3A) * sp30;
-        objdata->unk0.unk324 = 0;
-        objdata->unk0.unk310 = 0;
-        objdata->unk0.unk30C = 0;
+        objdata->fsa.xAnalogInput = -fsin16_precise(-sp3A) * sp30;
+        objdata->fsa.yAnalogInput = -fcos16_precise(-sp3A) * sp30;
+        objdata->fsa.unk324 = 0;
+        objdata->fsa.unk310 = 0;
+        objdata->fsa.unk30C = 0;
     } else {
-        objdata->unk0.unk310 = 0;
-        objdata->unk0.unk30C = 0;
-        objdata->unk0.unk324 = 0;
-        objdata->unk0.xAnalogInput = 0.0f;
-        objdata->unk0.yAnalogInput = 0.0f;
+        objdata->fsa.unk310 = 0;
+        objdata->fsa.unk30C = 0;
+        objdata->fsa.unk324 = 0;
+        objdata->fsa.xAnalogInput = 0.0f;
+        objdata->fsa.yAnalogInput = 0.0f;
     }
-    objdata->unk0.flags |= 0x400000;
+    objdata->fsa.flags |= OBJFSA_FLAG_400000;
     if (sp50 != 0) {
-        objdata->unk0.flags &= ~0x400000;
+        objdata->fsa.flags &= ~OBJFSA_FLAG_400000;
     }
-    gDLL_18_objfsa->vtbl->tick(self, &objdata->unk0, (f32) arg1, gUpdateRateF, _bss_0, _bss_20);
-    dll_713_func_1684(self, objdata, &objdata->unk0);
+    gDLL_18_objfsa->vtbl->tick(self, &objdata->fsa, (f32) arg1, gUpdateRateF, _bss_0, _bss_20);
+    dll_713_func_1684(self, objdata, &objdata->fsa);
 }
 
 // offset: 0x107C | func: 5 | export: 2
@@ -492,7 +509,7 @@ void dll_713_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         func_80031F6C(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
         func_80032238(self, 3, 4, objdata->unk978);
-        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->unk3B8, 0);
+        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->movedata, 0);
         if (objdata->unkA60_1) {
             objs = obj_get_all_of_type(OBJTYPE_57, &numObjs);
             for (i = 0; i < numObjs; i++) {
@@ -606,7 +623,7 @@ s32 dll_713_func_19DC(Object* self, Object* rider) {
     DRearthwalk_Data* objdata = self->data;
     Vec3f sp48;
     
-    if ((objdata->unkA56 != 0) && (joy_get_pressed(0) & 0x4000)) {
+    if ((objdata->energy != 0) && (joy_get_pressed(0) & B_BUTTON)) {
         gDLL_5_AMSEQ2->vtbl->set(self, 0xF6, 0, 0, 0);
         sp48.x = self->srt.transl.x;
         sp48.y = self->srt.transl.y;
@@ -620,10 +637,10 @@ s32 dll_713_func_19DC(Object* self, Object* rider) {
         }
         gDLL_3_Animation->vtbl->start_obj_sequence(objdata->unkA5E + 7, self, -1);
     }
-    if (!objdata->unkA56) {
+    if (!objdata->energy) {
         gDLL_5_AMSEQ2->vtbl->set(self, 0xF6, 0, 0, 0);
     }
-    return objdata->unkA56 == 0;
+    return objdata->energy == 0;
 }
 
 // offset: 0x1BB8 | func: 15 | export: 11
@@ -661,7 +678,7 @@ void dll_713_func_1CB4(Object* self, s32 arg1) {
     if (arg1 == 0) {
         main_set_bits(BIT_7BC, 0);
         main_set_bits(BIT_7D4, 1);
-        objdata->unk3B8.unk4A9 &= ~1;
+        objdata->movedata.unk4A9 &= ~1;
     } else {
         main_set_bits(BIT_7BC, 1);
         main_set_bits(BIT_7D4, 0);
@@ -721,7 +738,7 @@ static int dll_713_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* animO
 
     objdata = actor->data;
     actor->unkAF |= ARROW_FLAG_8_No_Targetting;
-    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->unk3B8, 3, 3) != 0) {
+    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->movedata, 3, 3) != 0) {
         return 1;
     }
     if (objdata->unkA60_1 && !objdata->unkA60_2) {
@@ -766,7 +783,7 @@ s32 dll_713_func_21A8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (objdata->unkA5C != 1) {
         objdata->unkA58 |= 0x20;
     }
-    return 2;
+    return 1 + 1;
 }
 
 // offset: 0x21DC | func: 27
@@ -777,6 +794,7 @@ s32 dll_713_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     dll_713_func_2174(self, fsa);
     if (fsa->unk33A != 0) {
+        // idle or idle attack(?) anims
         if (rand_next(0, 5) == 0) {
             temp_v0 = rand_next(0, 1);
             fsa->animTickDelta = _data_AC[temp_v0];
@@ -793,23 +811,24 @@ s32 dll_713_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk32A = 0;
         fsa->analogInputPower = 0.0f;
     }
-    if (objdata->unkA56 <= 0) {
-        return 3;
+    if (objdata->energy <= 0) {
+        return 2 + 1;
     }
     if (fsa->enteredAnimState != 0) {
         fsa->animStateTime = 0;
         fsa->animTickDelta = 0.01f;
         fsa->unk2B0 = 18.0f;
         if (self->curModAnimId != _data_DC[0]) {
+            // standing idle anim?
             func_80023D30(self, _data_DC[0], 0.0f, 0);
             func_80024D74(self, 0x14);
         }
     }
     if ((fsa->prevAnalogInputPower > 0.0f) && (fsa->analogInputPower > 0.0f)) {
-        return 5;
+        return 4 + 1;
     }
     if (fsa->unk310 & 0x8000) {
-        return 6;
+        return 5 + 1;
     }
     if (rand_next(0, 60) == 0) {
         func_80034B54(self, &objdata->unk394, _data_8[rand_next(0, 2)], 0);
@@ -821,16 +840,17 @@ s32 dll_713_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DRearthwalk_Data* objdata = self->data;
 
-    fsa->flags |= 0x200000;
-    objdata->unkA62 = 3;
+    fsa->flags |= OBJFSA_FLAG_200000;
+    objdata->talkSeq = EWSEQ_3_INeedEnergy;
     switch (self->curModAnimId) {
     case 10:
-        self->unkAF |= 8;
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
         if (fsa->unk33A != 0) {
+            // laying anim
             func_80023D30(self, 0xE, 0.0f, 0);
             fsa->animTickDelta = 0.01f;
         }
-        if (objdata->unkA56 > 0) {
+        if (objdata->energy > 0) {
             if ((fsa->animTickDelta > 0.0f) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
                 fsa->animTickDelta = -fsa->animTickDelta;
             }
@@ -843,27 +863,29 @@ s32 dll_713_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     case 18:
     case 19:
         fsa->animTickDelta = 0.005f;
-        if ((objdata->unkA56 != 0) && (objdata->unkA56 >= 5)) {
+        if ((objdata->energy != 0) && (objdata->energy >= 5)) {
+            // transition to standing up anim
             func_80023D30(self, 0xB, 0.0f, 0U);
             fsa->animTickDelta = 0.01f;
         }
         break;
     case 11:
         if (fsa->unk33A != 0) {
-            objdata->unk3B8.unk4A9 &= ~0x2;
+            objdata->movedata.unk4A9 &= ~0x2;
             if (objdata->unkA58 & 0x20) {
                 objdata->unkA60_4 = 1;
             } else {
-                objdata->unkA62 = 9;
+                objdata->talkSeq = EWSEQ_9_IfICouldGetOutOfTheseChains;
             }
-            objdata->unk3B8.unk4A9 &= ~1;
-            return 2;
+            objdata->movedata.unk4A9 &= ~1;
+            return 1 + 1;
         }
         break;
     default:
         objdata->unkA60_4 = 0;
+        // transition to laying down anim
         func_80023D30(self, 0xA, 0.0f, 0);
-        objdata->unk3B8.unk4A9 |= 2;
+        objdata->movedata.unk4A9 |= 2;
         dll_713_func_2174(self, fsa);
         fsa->animTickDelta = 0.01f;
         break;
@@ -882,20 +904,21 @@ s32 dll_713_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     fsa->flags |= OBJFSA_FLAG_200000;
     if ((fsa->unk328 < (objdata->unkA52 / 3)) || (fsa->analogInputPower == 0.0f)) {
-        return 5;
+        return 4 + 1;
     }
     if (fsa->unk32A < -0xAF) {
         fsa->unk32A = -fsa->unk32A;
     }
     if (self->curModAnimId != 5) {
-        func_80023D30(self, 5, 0.0f, 0U);
+        // running attack?
+        func_80023D30(self, 5, 0.0f, 0);
     }
     temp_ft1 = (f32) fsa->unk32A * updateRate * 182.04f;
     self->srt.yaw += temp_ft1 >> 4;
     dll_713_func_3210(self, temp_ft1, 0);
     fsa->animTickDelta = fsa->analogInputPower * 0.08f;
     if (fsa->unk310 & 0x8000) {
-        return 6;
+        return 5 + 1;
     }
     return 0;
 }
@@ -921,7 +944,7 @@ s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     sp2C = self->data;
     sp20 = 1;
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
     if (fsa->enteredAnimState != 0) {
         fsa->unk32A = 0;
         fsa->unk328 = 0;
@@ -978,7 +1001,7 @@ s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     while (sp20) {
         if (fsa->speed < _data_B4[var_v1_3][0]) {
             if (var_v1_3 == 1) {
-                return 2;
+                return 1 + 1;
             }
             var_v1_3 -= 1;
             var_t0 = 1;
@@ -993,13 +1016,14 @@ s32 dll_713_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
     }
     if (var_t0 != 0) {
+        // walking/running anims
         func_80023D30(self, _data_DC[var_v1_3], temp_fv1, 0);
         func_80024D74(self, 0xA);
     }
     func_8002493C(self, fsa->unk278, &fsa->animTickDelta);
     if (fsa->unk310 & 0x8000) {
-        joy_disable_buttons(0, 0x8000);
-        return 6;
+        joy_disable_buttons(0, A_BUTTON);
+        return 5 + 1;
     }
     return 0;
 }
@@ -1017,10 +1041,12 @@ s32 dll_713_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objdata->unkA58 &= ~0x8;
         hit->unk58 |= 0x200;
         if (fsa->unk278 > 0.45f) {
+            // running attack anim
             func_80023D30(self, 0x14, 0.0f, 0);
             fsa->animTickDelta = 0.021f;
             hit->unk60 = fsa->unk278 > 1.93f ? 3 : 2;
         } else {
+            // standing attack anim
             func_80023D30(self, 0x15, 0.0f, 0);
             fsa->animTickDelta = 0.011f;
             hit->unk60 = 1;
@@ -1034,7 +1060,7 @@ s32 dll_713_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     hit->unk5F = 5;
     if (fsa->unk33A != 0) {
         objdata->unkA60_5 = 0;
-        return 2;
+        return 1 + 1;
     }
     if (self->curModAnimId == 0x14) {
         gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 1);
@@ -1048,28 +1074,32 @@ s32 dll_713_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     dll_713_func_2174(self, fsa);
     if (fsa->enteredAnimState != 0) {
-        if (objdata->unkA56 > 0) {
+        if (objdata->energy > 0) {
+            // hurt while standing anims
             if (objdata->unkA60_0 != 0) {
                 func_80023D30(self, 7, 0.0f, 0);
             } else {
                 func_80023D30(self, 8, 0.0f, 0);
             }
-        } else if (objdata->unkA60_0 != 0) {
-            func_80023D30(self, 0x12, 0.0f, 0);
         } else {
-            func_80023D30(self, 0x13, 0.0f, 0);
+            // hurt while laying anims
+            if (objdata->unkA60_0 != 0) {
+                func_80023D30(self, 0x12, 0.0f, 0);
+            } else {
+                func_80023D30(self, 0x13, 0.0f, 0);
+            }
         }
         fsa->animTickDelta = 0.02f;
     }
     if (self->animProgress > 0.9f) {
-        objdata->unkA56--;
-        if (objdata->unkA56 <= 0) {
-            if (objdata->unkA56 < -20) {
+        objdata->energy--;
+        if (objdata->energy <= 0) {
+            if (objdata->energy < -20) {
                 main_set_bits(BIT_5DE, 1);
             }
-            return 3;
+            return 2 + 1;
         }
-        return 2;
+        return 1 + 1;
     }
     return 0;
 }
@@ -1085,7 +1115,7 @@ s32 dll_713_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if ((main_get_bits(BIT_5CF) == 0) && (main_get_bits(BIT_5CD) != 0)) {
         main_set_bits(BIT_656, 1);
         objdata->unkA60_4 = 1;
-        return 2;
+        return 1 + 1;
     }
     return 0;
 }
@@ -1118,14 +1148,14 @@ static s32 dll_713_func_32EC(Object* self, u8 arg1) {
     switch (arg1) {
         case 5:
             objdata->unkA58 |= 0x80;
-            objdata->unkA62 = 0xA;
+            objdata->talkSeq = EWSEQ_10_TeethChattering;
             //Set Mind Read text
             if (!gDLL_22_Subtitles->vtbl->func_21C0(self->id, GAMETEXT_0CF_DR_Mind_Read_messages_4)) {
                 break;
             }
         // fallthrough
         case 1:
-            objdata->unkA62 = 2;
+            objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
             func_80000450(self, self, 0x22C, 0, 0, 0);
             break;
         case 2:
@@ -1142,7 +1172,7 @@ static s32 dll_713_func_32EC(Object* self, u8 arg1) {
 void dll_713_func_3420(Object* self, s32 arg1, s32 arg2) {
     DRearthwalk_Data* objdata = self->data;
     if (arg1 == 1) {
-        objdata->unkA56 += 12;
+        objdata->energy += 12;
         func_80034B54(self, &objdata->unk394, _data_24[0], 1);
     }
 }

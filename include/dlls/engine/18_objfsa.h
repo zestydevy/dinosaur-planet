@@ -10,6 +10,7 @@ typedef enum {
     OBJFSA_FLAG_4000 = 0x4000,
     OBJFSA_FLAG_8000 = 0x8000, // Set after first iteration?
     OBJFSA_FLAG_200000 = 0x200000,
+    OBJFSA_FLAG_400000 = 0x400000,
     OBJFSA_FLAG_1000000 = 0x1000000
 } ObjFSAFlags;
 

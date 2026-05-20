@@ -1580,7 +1580,7 @@ typedef enum {
     BIT_625 = 0x625, // len:1 group:1
     BIT_626 = 0x626, // len:1 group:1
     BIT_627 = 0x627, // len:3 group:2 //Seems to be meant as an inventory counter for the Shiny Nuggets!
-    BIT_628 = 0x628, // len:1 group:1
+    BIT_628 = 0x628, // len:1 group:1  DR EarthWarrior no longer in danger
     BIT_629 = 0x629, // len:1 group:0
     BIT_62A = 0x62A, // len:1 group:1
     BIT_62B = 0x62B, // len:1 group:1
@@ -1625,7 +1625,7 @@ typedef enum {
     BIT_652 = 0x652, // len:1 group:1
     BIT_653 = 0x653, // len:1 group:1
     BIT_654 = 0x654, // len:1 group:1
-    BIT_655 = 0x655, // len:1 group:1
+    BIT_655 = 0x655, // len:1 group:1 Tells the DR EarthWarrior to move through the tunnel
     BIT_656 = 0x656, // len:1 group:1
     BIT_657 = 0x657, // len:1 group:1
     BIT_658 = 0x658, // len:1 group:1
