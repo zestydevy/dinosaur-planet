@@ -1,0 +1,15 @@
+.text = 0x0:
+DR_CloudPerch_ctor = 0x0;
+DR_CloudPerch_dtor = 0xC;
+DR_CloudPerch_setup = 0x18;
+DR_CloudPerch_control = 0x164;
+DR_CloudPerch_update = 0x170;
+DR_CloudPerch_print = 0x17C;
+DR_CloudPerch_free = 0x194;
+DR_CloudPerch_get_model_flags = 0x1F4;
+DR_CloudPerch_get_data_size = 0x204;
+DR_CloudPerch_land = 0x218;
+DR_CloudPerch_call = 0x28C;
+
+.rodata = 0x3AC:
+str_0 = 0x0; // absolute:0x3AC

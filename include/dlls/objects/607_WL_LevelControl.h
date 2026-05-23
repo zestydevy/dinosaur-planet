@@ -11,7 +11,7 @@ typedef struct {
     u8 interval;                    //Only used during setup7 (last Spirits), stores a decreasing interval for `objData->timer` to set a gamebit
     u8 galleonIsLoaded;             //Only Used during setup1 (Krystal meeting Randorn)
     u8 flags;                       //Galleon-related flags
-    u8 setup;                       //Current level setup number
+    u8 act;                       //Current level setup number
 } WL_LevelControl_Data;
 
 typedef enum {

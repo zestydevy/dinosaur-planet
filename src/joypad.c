@@ -51,11 +51,11 @@ s8 gMenuJoystickDelay;
  * This is the same message queue that is passed to osContInit.
  * Offical name: joyMessageQ
  */
-OSMesgQueue *joy_get_mesgq() {
+OSMesgQueue *joy_get_mesgq(void) {
     return &gContInterruptQueue;
 }
 
-void joy_read_nonblocking() {
+void joy_read_nonblocking(void) {
     gContQueue2Message = 0xA;
     osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
 }
@@ -67,7 +67,7 @@ void joy_read_nonblocking() {
  *
  * @see gContThreadMesgQueue
  */
-void joy_read() {
+void joy_read(void) {
     // Tell controller thread to apply controller inputs
     gContQueue2Message = 0xA;
     osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
@@ -77,7 +77,7 @@ void joy_read() {
 }
 
 // Official name: joyInit
-s32 joy_init() {
+s32 joy_init(void) {
     s32 lastControllerIndex;
     s32 i;
     // Bits 0-3 specify which controllers are inserted
@@ -330,7 +330,7 @@ u8 joy_get_controller(int virtualPort) {
 /**
  * Swaps the first 2 virtual controller ports.
  */
-void joy_swap_controllers() {
+void joy_swap_controllers(void) {
     u8 port0 = gVirtualContPortMap[0];
 
     gVirtualContPortMap[0] = gVirtualContPortMap[1];
@@ -544,12 +544,12 @@ s8 joy_handle_joystick_deadzone(s8 stick) {
 }
 
 // Official name: joySetSecurity
-void joy_set_security() {
+void joy_set_security(void) {
     D_8008C8A4 = 0;
 }
 
-void joy_set_button_mask(int port, u16 mask) {
-    gButtonMask[port] &= ~mask;
+void joy_disable_buttons(int port, u16 buttons) {
+    gButtonMask[port] &= ~buttons;
 }
 
 // Clear joystick x/y to zero until the next controller read.
@@ -561,10 +561,10 @@ void joy_set_menu_joystick_delay(s8 delay) {
     gMenuJoystickDelay = delay;
 }
 
-void joy_reset_menu_joystick_delay() {
+void joy_reset_menu_joystick_delay(void) {
     gMenuJoystickDelay = 5;
 }
 
-int ret1_800112d8() {
+int ret1_800112d8(void) {
     return 1;
 }

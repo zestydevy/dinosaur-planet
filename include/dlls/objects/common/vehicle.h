@@ -20,7 +20,7 @@ DLL_INTERFACE(DLL_IVehicle) {
 	/*17*/ s32 (*func17)(Object *self); // get_race_position?
 	/*18*/ void (*func18)(Object *self);
 	/*19*/ void (*func19)(Object *self, f32 scale);
-	/*20*/ void (*func20)(s32 a0, s32 a1, s32 a2);
+	/*20*/ void (*func20)(Object *self, s32 a1, s32 a2);
 };
 
 #endif //_DLLS_COMMON_VEHICLE_H

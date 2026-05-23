@@ -71,7 +71,7 @@ void WMWizard_control(Object* self) {
     objdata->walkIndexFlags &= ~WMWizard_FLAG_80;
     
     //Handle setup-specific behaviour
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
     case WM_Setup3_Spirit2_Sabre_DB:
     case WM_Setup5_Spirit4_Sabre_WC:
@@ -97,7 +97,7 @@ void WMWizard_update(Object *self) { }
 // offset: 0x244 | func: 3 | export: 3
 void WMWizard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
+        if (gDLL_29_Gplay->vtbl->get_act(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
             if (main_get_bits(BIT_WM_Setup4_Show_Randorn)) {
                 draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
             }
@@ -123,7 +123,7 @@ u32 WMWizard_get_data_size(Object *self, u32 a1) {
 // offset: 0x364 | func: 7
 int WMWizard_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
     //Setup-specific anim callback behaviours
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
     case WM_Setup3_Spirit2_Sabre_DB:
     case WM_Setup5_Spirit4_Sabre_WC:
@@ -241,7 +241,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             main_set_bits(BIT_WM_Played_Randorn_First_Meeting, 1);
             objData->hasMetKrystal = TRUE;
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
         }
 
         //Call out to Krystal randomly
@@ -272,7 +272,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
             //Remind about visiting Discovery Falls
             objData->activeSeqIndex = WMWizard_OBJSEQ_2_Discovery_Falls_Reminder;
             gDLL_3_Animation->vtbl->start_obj_sequence(WMWizard_OBJSEQ_2_Discovery_Falls_Reminder, self, -1);
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
 
         //Otherwise, restore Krystal's magic if she hasn't deactivated the lasers yet
         } else if (
@@ -282,7 +282,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
         ) {
             objData->activeSeqIndex = WMWizard_OBJSEQ_1_Offering_Magic_Refill;
             gDLL_3_Animation->vtbl->start_obj_sequence(WMWizard_OBJSEQ_1_Offering_Magic_Refill, self, -1);
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
         }
     }
 }
@@ -324,7 +324,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
 
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
                 ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, foodGamebit);
-                joy_set_button_mask(0, A_BUTTON);
+                joy_disable_buttons(0, A_BUTTON);
             }
         }
         return;
@@ -495,7 +495,7 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (main_get_bits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE)) {
         main_set_bits(BIT_WM_Setup6_Randorn_Sitting_Up, 1);
         objdata->timesFed = 0;
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
     
     //Check if player offers food to Randorn while he's sitting up
     } else if (
@@ -514,7 +514,7 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
             objdata->timesFed++;
             foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, foodGamebit);
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
         }
     }
 }

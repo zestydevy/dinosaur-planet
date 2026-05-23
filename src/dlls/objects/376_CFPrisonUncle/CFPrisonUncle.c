@@ -91,7 +91,7 @@ void dll_376_control(Object* self) {
     if (objData->unk0 == NULL) {
         objects = get_world_objects(&initialIndex, &objectsCount);
         for (i = initialIndex; i < objectsCount; i++){
-            if (objects[i]->group == 0x40) {
+            if (objects[i]->controlNo == OBJCONTROL_CFPerch) {
                 objData->unk0 = objects[i];
                 i = objectsCount;
             }

@@ -27,6 +27,7 @@
 #define MAX_SEQSLOTS 45
 // Maximum number of actors in an object sequence
 #define MAX_ACTORS 16
+#define MAX_ACTIVATES 16
 #define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
 
 // Some names inferred from default.dol
@@ -126,7 +127,7 @@ enum AnimCounterAddCodeEventType {
 
 // Subtypes for ANIM_CODE_EVT_6
 enum Anim6CodeEventType {
-    ANIM_CODE_EVT_6_0 = 0, // remove override?
+    ANIM_CODE_EVT_6_END = 0, // signal end of seq for the current object
     ANIM_CODE_EVT_6_2 = 2, // curve related
     ANIM_CODE_EVT_6_5 = 5, // sfx related, noop
     ANIM_CODE_EVT_6_6 = 6, // sfx related, noop
@@ -154,8 +155,8 @@ enum Anim6CodeEventType {
     ANIM_CODE_EVT_6_RESTART_GOTO = 32,
     ANIM_CODE_EVT_6_33 = 33,
     ANIM_CODE_EVT_6_34 = 34,
-    ANIM_CODE_EVT_6_CHECKPOINT = 35,
-    ANIM_CODE_EVT_6_CHECKPOINT_NO_LOCATION = 36,
+    ANIM_CODE_EVT_6_SAVEPOINT = 35,
+    ANIM_CODE_EVT_6_SAVEPOINT_NO_LOCATION = 36,
     ANIM_CODE_EVT_6_TOGGLE_PLAYER_CONTROL = 37
 };
 
@@ -247,14 +248,9 @@ typedef struct {
 } CameraFunc15Unk_unk74; //Related to CameraAction and Unk_DLL2_Func888? TO-DO: figure out
 
 typedef struct {
-    s32 unk0;
-    s32 unk4;
-} AnimBSS0;
-
-typedef struct {
-    Object *unk0;
-    s32 unk4;
-} ANIMBSSUnk0;
+    Object *obj;
+    s32 preemptTime;
+} PreemptTime;
 
 typedef struct{
     Object* object;
@@ -262,10 +258,10 @@ typedef struct{
 } ANIMActorOverride;
 
 typedef struct {
-    s16 unk0;
-    s16 unk2;
-    u16 unk4;
-} ANIMUnk698;
+    s16 seqSlot;
+    s16 startTime;
+    u16 numActors;
+} Activate;
 
 typedef struct {
     Object* actor;
@@ -313,8 +309,8 @@ typedef struct {
 };
 /*0xC4*/ static s16 _data_C4 = 0;
 
-/*0x0*/ static ANIMBSSUnk0 _bss_0[4];
-/*0x20*/ static s8 _bss_20; //count of items in bss0?
+/*0x0*/ static PreemptTime sPreemptTimeList[4];
+/*0x20*/ static s8 sPreemptTimeListCount;
 /*0x24*/ static f32 _bss_24;
 /*0x28*/ static f32 _bss_28;
 /*0x2C*/ static f32 _bss_2C;
@@ -332,7 +328,7 @@ typedef struct {
 /*0x98*/ static s32 _bss_98;
 /*0x9C*/ static s16 sPendingWarpID;
 /*0xA0*/ static f32 _bss_A0;
-/*0xA4*/ static s8 _bss_A4;
+/*0xA4*/ static s8 sSeqEnded; // when true, the seq for the current object ended
 /*0xA8*/ static s8 _bss_A8[MAX_SEQSLOTS];
 /*0xD8*/ static s8 _bss_D8[MAX_SEQSLOTS];
 /*0x108*/ static s8 _bss_108[MAX_SEQSLOTS];
@@ -368,50 +364,50 @@ typedef struct {
 /*0x5F0*/ static CodeEventList sCodeEvtQueue[20];
 /*0x690*/ static s32 sCodeEvtQueueCount;
 /*0x694*/ static u8 _bss_694[0x4]; // unused gap
-/*0x698*/ static ANIMUnk698 _bss_698[16];
-/*0x6F8*/ static s8 _bss_6F8;
+/*0x698*/ static Activate sActivates[MAX_ACTIVATES];
+/*0x6F8*/ static s8 sActivatesCount;
 /*0x6FC*/ static Object *_bss_6FC; // camera animobj (AnimCamera)?
 /*0x700*/ static s16 _bss_700;
-/*0x708*/ static ANIMActorOverride _bss_708[45][16];
+/*0x708*/ static ANIMActorOverride sOverrides[MAX_SEQSLOTS][16];
 typedef struct {
     u32 unk0_8: 1;
     u32 unk0_1: 31; // unused
 } UnkBss1D88;
 /*0x1D88*/ static UnkBss1D88 _bss_1D88;
 
-void anim_func_98(void);
-static s32 anim_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup);
-void anim_func_7B64(AnimObj_Data* st);
+void anim_init(void);
+static s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup);
+void anim_init_curve_keyframes(AnimObj_Data* st);
 s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4, s16 arg5, s16 arg6);
 static void anim_func_9DD4(void);
 static void anim_func_9B70(Object* arg1, Object* animObj, AnimObj_Data* st);
-static void anim_func_9BC0(s32 slot);
+static void anim_override_list_clear(s32 slot);
 void anim_end_obj_sequence(s32 slot);
-static s32 anim_func_93A0(Object* obj);
+static s32 anim_get_preempt_time(Object* obj);
 static void anim_func_9CE8(s32 arg0);
-static Object* anim_func_9C08(s32 animCurvesIndex, Object* searchObject);
+static Object* anim_override_list_get(s32 seqSlot, Object* searchObject);
 static Object* anim_find_animobj_target_in_world(Object* animObj);
 s32 anim_func_8878(void);
 static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 count, s32 time);
 static void anim_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s8 a5);
-static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 arg3, s8 arg4);
+static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st, s32 arg3, s8 arg4);
 static void anim_func_57A4(UnkAnimStruct* arg0, f32 arg1);
 static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4);
 static s32 anim_check_condition(s32 cond, AnimObj_Data* st, AnimObj_Setup* setup);
-s16 anim_func_8598(Object* animObj);
-static void anim_func_9C94(s32 seqSlot, Object* actor, Object* animObj);
+s16 anim_find_override_target(Object* animObj);
+static void anim_override_list_add(s32 seqSlot, Object* actor, Object* animObj);
 static void anim_func_4FC4(Object* animObj, AnimObj_Data* st);
-static void anim_func_4B20(Object* animObj, AnimObj_Setup* setup);
+static void anim_snap_obj_to_ground(Object* animObj, AnimObj_Setup* setup);
 static f32 anim_channel_value(AnimObj_Data* st, s32 channel, s32 time);
 static s8 anim_get_free_sfx_slot(AnimObj_Data* st);
-static Object* anim_func_2FE8(Object* animObj, AnimObj_Data* st, AnimObj_Setup* setup);
+static Object* anim_toggle_override(Object* animObj, AnimObj_Data* st, AnimObj_Setup* setup);
 static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, AnimCurvesEvent** events, s8 arg3, s32* arg4);
 static void anim_get_actor_and_model_inst(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance);
 static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, s32* codeEvents, s16 codeEventTime, s16 numCodeEvents, s8 arg6, s8 arg7);
 static void anim_func_9EC8(Object* actor, s16* arg1, s32 arg2);
 static void anim_func_72E0(Object* animObj);
 static void anim_do_obj_anim_callback(Object* actor, Object* animObj, AnimObj_Data* st, s8 arg3);
-static void anim_func_71C0(Object* animObj, Object* actor, AnimObj_Data* st);
+static void anim_handle_seq_end(Object* animObj, Object* actor, AnimObj_Data* st);
 static void anim_process_envfx_queue(AnimObj_Data* st, Object* actor, u8 skipping);
 static void anim_process_remaining_events_immediate(Object* animObj, Object* _actor, AnimObj_Data* st, AnimObj_Setup* setup);
 static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Data* st, s32 time);
@@ -420,7 +416,7 @@ static void anim_func_2EB4(Object* animObj, Object* actor, AnimObj_Data* st);
 static void anim_tick_seq_sfx(AnimObj_Data* st, s32 updateRate);
 static void anim_time_skip(Object* animObj, Object* actor, AnimObj_Data* st, s32 arg3);
 static void anim_func_3170(Object* animObj, Object* actor, AnimObj_Data* st);
-static void anim_func_3414(Object* animObj, Object **actorPtr, AnimObj_Data* st, AnimObj_Setup* setup, ModelInstance **modelInstPtr);
+static void anim_activate_obj(Object* animObj, Object **actorPtr, AnimObj_Data* st, AnimObj_Setup* setup, ModelInstance **modelInstPtr);
 static s32 anim_func_495C(AnimObj_Data* st, Object* animObj);
 static s32 anim_check_decision(Object* animObj, s32 cond, AnimObj_Data* st);
 static s32 anim_func_3268(Object* animObj, Object* actor, AnimObj_Data* st);
@@ -428,7 +424,7 @@ static s32 anim_func_3268(Object* animObj, Object* actor, AnimObj_Data* st);
 // offset: 0x0 | ctor
 void anim_ctor(void *dll) {
     sTempBuffer = mmAlloc(0x10, ALLOC_TAG_ANIMSEQ_COL, ALLOC_NAME("anim:acbuff"));
-    anim_func_98();
+    anim_init();
 }
 
 // offset: 0x58 | dtor
@@ -437,7 +433,7 @@ void anim_dtor(void *dll) {
 }
 
 // offset: 0x98 | func: 0 | export: 0
-void anim_func_98(void) {
+void anim_init(void) {
     s32 i;
 
     for (i = 0; i < MAX_SEQSLOTS; i++) {
@@ -455,21 +451,21 @@ void anim_func_98(void) {
         _bss_490[i] = 0;
     }
 
-    _bss_20 = 0;
+    sPreemptTimeListCount = 0;
     sCameraModule = 0;
     _bss_8B = 0;
     _bss_A0 = 0.0f;
     _bss_6FC = 0;
-    _bss_6F8 = 0;
+    sActivatesCount = 0;
 }
 
 // offset: 0x2C0 | func: 1 | export: 1
-void anim_func_2C0(s32 arg0, s32 arg1, s32 arg2) {   
-    if (arg0 >= 0 && arg0 < MAX_SEQSLOTS) {
-        if (_bss_6F8 < MAX_ACTORS) {
-            _bss_698[_bss_6F8].unk0 = arg0;
-            _bss_698[_bss_6F8].unk4 = arg2;
-            _bss_698[_bss_6F8++].unk2 = arg1; 
+void anim_queue_activate(s32 seqSlot, s32 startTime, s32 numActors) {   
+    if (seqSlot >= 0 && seqSlot < MAX_SEQSLOTS) {
+        if (sActivatesCount < MAX_ACTIVATES) {
+            sActivates[sActivatesCount].seqSlot = seqSlot;
+            sActivates[sActivatesCount].numActors = numActors;
+            sActivates[sActivatesCount++].startTime = startTime; 
         } else {
             STUBBED_PRINTF("Max activates reached\n");
         }
@@ -477,18 +473,18 @@ void anim_func_2C0(s32 arg0, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x324 | func: 2 | export: 2
-void anim_func_324(s32 arg0, s32 arg1) {
-    if (arg0 >= 0 && arg0 < MAX_SEQSLOTS) {
-        sEventFlags[arg0] = arg1;
+void anim_set_flag(s32 seqSlot, s32 value) {
+    if (seqSlot >= 0 && seqSlot < MAX_SEQSLOTS) {
+        sEventFlags[seqSlot] = value;
     }
 }
 
 // offset: 0x358 | func: 3 | export: 3
-s8 anim_func_358(s32 arg0) {
-    if (arg0 < 0 || arg0 >= MAX_SEQSLOTS) {
+s8 anim_get_flag(s32 seqSlot) {
+    if (seqSlot < 0 || seqSlot >= MAX_SEQSLOTS) {
         return 0;
     }
-    return sEventFlags[arg0];
+    return sEventFlags[seqSlot];
 }
 
 // offset: 0x394 | func: 4 | export: 28
@@ -524,12 +520,12 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
     }
     st = animObj->data;
     actor = st->actor;
-    _bss_A4 = 0;
+    sSeqEnded = FALSE;
     _bss_32 = 0;
     _bss_89 = 0;
     _bss_8A = 0;
     if ((_bss_3A8[st->seqSlot] & ACTORUSETTING_SKIPPABLE) && ((_bss_4C0[st->seqSlot] != 0) || (joy_get_pressed(0) & L_TRIG))) {
-        if (st->unk8B == 0) {
+        if (st->state == ANIMOBJ_STATE_Completed) {
             return 1;
         }
         st->unk9D |= 0x80;
@@ -548,7 +544,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                     } else {
                         gDLL_28_ScreenFade->vtbl->fade_reversed(30, SCREEN_FADE_BLACK);
                     }
-                    anim_func_71C0(animObj, actor, st);
+                    anim_handle_seq_end(animObj, actor, st);
                     return 1;
                 }
                 if (_bss_4F0[st->seqSlot] > 40.0f) {
@@ -557,7 +553,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                 }
             } else {
                 if (_bss_4F0[st->seqSlot] > 50.0f) {
-                    anim_func_71C0(animObj, actor, st);
+                    anim_handle_seq_end(animObj, actor, st);
                     return 1;
                 }
                 if (_bss_4F0[st->seqSlot] > 40.0f) {
@@ -576,8 +572,8 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
             anim_do_obj_anim_callback(actor, animObj, st, 0);
         }
         anim_func_4FC4(animObj, st);
-        if (st->unk86 == 1) {
-            anim_func_4B20(animObj, setup);
+        if (st->groundMode == 1) {
+            anim_snap_obj_to_ground(animObj, setup);
         }
         animObj->srt.yaw += st->seqYaw;
         anim_update_actor_transform(animObj, actor, st);
@@ -586,7 +582,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
         }
         return 0;
     }
-    if (st->unk8B == 3) {
+    if (st->state == ANIMOBJ_STATE_WaitingForActors) {
         if (st->actor != NULL) {
             actor->animObj = animObj;
             actor->stateFlags |= OBJSTATE_IN_SEQ;
@@ -604,7 +600,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
     _bss_33 = 0;
     do {
         sEnvFxQueueCount = 0;
-        if (st->unk8B == 0) {
+        if (st->state == ANIMOBJ_STATE_Completed) {
             animObj->opacity = 0;
             return 1;
         }
@@ -632,8 +628,8 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
             sProcessedAnimCallback = TRUE;
         }
         anim_func_3170(animObj, actor, st);
-        if (st->unk8B == 2) {
-            anim_func_3414(animObj, &actor, st, setup, &actorModelInst);
+        if (st->state == ANIMOBJ_STATE_Ready) {
+            anim_activate_obj(animObj, &actor, st, setup, &actorModelInst);
             return 0;
         }
         if (_bss_A8[st->seqSlot] == 1) {
@@ -655,9 +651,10 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
         if (_bss_378[st->seqSlot] != 0) {
             st->seqYaw = _bss_318[st->seqSlot];
         }
-        if (st->unk88 != 0) {
-            if (anim_check_condition(st->unk88 - 1, st, setup) == 0) {
-                st->unk88 = 0;
+        if (st->pauseCond != 0) {
+            if (anim_check_condition(st->pauseCond - 1, st, setup) == 0) {
+                // No longer paused
+                st->pauseCond = 0;
             } else {
                 _bss_258[st->seqSlot] = st->time;
                 return 0;
@@ -783,8 +780,8 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
             actorModelInst->animState0->unk58[0] = (s16) (st->unk20 * 1023.0f);
         }
         anim_func_4FC4(animObj, st);
-        if (st->unk86 == 1) {
-            anim_func_4B20(animObj, setup);
+        if (st->groundMode == 1) {
+            anim_snap_obj_to_ground(animObj, setup);
         }
         animObj->srt.yaw += st->seqYaw;
         anim_update_actor_transform(animObj, actor, st);
@@ -802,9 +799,9 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
         }
         // Save previous timestamp
         st->prevTime = st->time;
-        if (_bss_A4 != 0) {
+        if (sSeqEnded) {
             anim_get_actor_and_model_inst(animObj, &actor, &actorModelInst);
-            anim_func_71C0(animObj, actor, st);
+            anim_handle_seq_end(animObj, actor, st);
         } else {
             if (_bss_33 != 0) {
                 _bss_2B8[st->seqSlot] = st->time;
@@ -815,7 +812,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                 _bss_258[st->seqSlot] = _bss_1F8[st->seqSlot] + updateRate;
             }
         }
-    } while ((_bss_A4 == 0) && (st->time < st->duration) && sp94--);
+    } while (!sSeqEnded && (st->time < st->duration) && sp94--);
     
     return 0;
 }
@@ -1198,8 +1195,8 @@ static void anim_time_skip(Object* animObj, Object* actor, AnimObj_Data* st, s32
     st->eventIdx = 0;
     st->eventTime = -50;
     st->unk84 = 0;
-    st->unk86 = 0;
-    st->unk85 = 0;
+    st->groundMode = 0;
+    st->overrideMode = 0;
     st->actor = NULL;
     st->unk87 = 0;
     st->unk20 = 0.0f;
@@ -1211,7 +1208,7 @@ static void anim_time_skip(Object* animObj, Object* actor, AnimObj_Data* st, s32
         switch (evt->type) {
         case ANIM_EVT_OVERRIDE:
             sp8B |= 4;
-            actor = anim_func_2FE8(animObj, st, setup);
+            actor = anim_toggle_override(animObj, st, setup);
             actor->curModAnimIdLayered = -1;
             break;
         case ANIM_EVT_SETTIME:
@@ -1373,19 +1370,19 @@ static void anim_func_2EB4(Object* animObj, Object* actor, AnimObj_Data* st) {
 }
 
 // offset: 0x2FE8 | func: 11
-static Object* anim_func_2FE8(Object* animObj, AnimObj_Data* st, AnimObj_Setup* setup) {
+static Object* anim_toggle_override(Object* animObj, AnimObj_Data* st, AnimObj_Setup* setup) {
     Object* actor;
 
     actor = animObj;
-    st->unk85 ^= 1;
-    if (st->unk85 != 0) {
-        anim_func_8598(animObj);
+    st->overrideMode ^= 1;
+    if (st->overrideMode != 0) {
+        anim_find_override_target(animObj);
         if (st->actor != NULL) {
             actor = st->actor;
             actor->animObj = animObj;
             actor->stateFlags |= OBJSTATE_IN_SEQ;
-            st->unk11C = actor;
-            anim_func_9C94(st->seqSlot, st->actor, animObj);
+            st->overrideTarget = actor;
+            anim_override_list_add(st->seqSlot, st->actor, animObj);
         }
     } else {
         if (st->actor != NULL) {
@@ -1396,8 +1393,8 @@ static Object* anim_func_2FE8(Object* animObj, AnimObj_Data* st, AnimObj_Setup* 
                 actor->srt.roll = animObj->srt.roll;
                 anim_func_4FC4(actor, st);
             }
-            if (st->unk86 == 1) {
-                anim_func_4B20(actor, setup);
+            if (st->groundMode == 1) {
+                anim_snap_obj_to_ground(actor, setup);
             }
             if (st->unk7A & ANIM7AFLAG_OVERRIDE_ROT) {
                 actor->srt.yaw += st->seqYaw;
@@ -1478,19 +1475,19 @@ static void anim_tick_seq_sfx(AnimObj_Data* st, s32 updateRate) {
 }
 
 // offset: 0x3414 | func: 15
-static void anim_func_3414(Object* animObj, Object **actorPtr, AnimObj_Data* st, AnimObj_Setup* setup, ModelInstance **modelInstPtr) {
+static void anim_activate_obj(Object* animObj, Object **actorPtr, AnimObj_Data* st, AnimObj_Setup* setup, ModelInstance **modelInstPtr) {
     Object* actor;
 
     _bss_90 = 1;
     _bss_98 = 0x5A;
-    st->time = st->unk6A;
+    st->time = st->startTime;
     st->prevTime = -60;
     anim_apply_channel_values(animObj, *actorPtr, st, 0);
     anim_time_skip(animObj, *actorPtr, st, 1);
     anim_get_actor_and_model_inst(animObj, actorPtr, modelInstPtr);
     anim_func_4FC4(animObj, st);
-    if (st->unk86 == 1) {
-        anim_func_4B20(animObj, setup);
+    if (st->groundMode == 1) {
+        anim_snap_obj_to_ground(animObj, setup);
     }
     
     animObj->srt.yaw += st->seqYaw;
@@ -1502,10 +1499,10 @@ static void anim_func_3414(Object* animObj, Object **actorPtr, AnimObj_Data* st,
     anim_update_actor_transform(animObj, actor, st);
     st->blinkFrameR = 0;
     st->blinkFrameL = 0;
-    st->unk8B = 1;
+    st->state = ANIMOBJ_STATE_Playing;
     st->prevTime = st->time;
-    if (_bss_A4 != 0) {
-        anim_func_71C0(animObj, *actorPtr, st);
+    if (sSeqEnded) {
+        anim_handle_seq_end(animObj, *actorPtr, st);
     }
     _bss_258[st->seqSlot] = st->time;
 }
@@ -1585,13 +1582,13 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
         }
         break;
     case ANIM_EVT_GROUND_MODE:
-        st->unk86 = 1 - st->unk86;
+        st->groundMode = 1 - st->groundMode;
         break;
     case ANIM_EVT_OVERRIDE:
         if (arg3_8) { break; }
 
         if (!(arg3 & 4)) {
-            actor = anim_func_2FE8(animObj, st, setup);
+            actor = anim_toggle_override(animObj, st, setup);
             actor->curModAnimIdLayered = -1;
         }
         break;
@@ -1886,7 +1883,7 @@ static void anim_do_obj_anim_callback(Object* actor, Object* animObj, AnimObj_Da
         animCallback = actor->animCallback;
         callbackResult = animCallback(actor, animObj, st, arg3);
         if (callbackResult == 4) {
-            _bss_A4 = 1;
+            sSeqEnded = TRUE;
         } else if (callbackResult != 0) {
             if (_bss_D8[st->seqSlot] < 2) {
                 _bss_D8[st->seqSlot] = callbackResult;
@@ -2006,10 +2003,10 @@ static s32 anim_find_jump_target_time(AnimObj_Data* st, s32 jumplabel) {
 }
 
 // offset: 0x4B20 | func: 23
-static void anim_func_4B20(Object* animObj, AnimObj_Setup* setup) {
+static void anim_snap_obj_to_ground(Object* animObj, AnimObj_Setup* setup) {
     f32 floatVal;
 
-    if (anim_func_4BAC(animObj, 
+    if (anim_find_obj_ground_y(animObj, 
                         animObj->parent, 
                         animObj->globalPosition.x, 
                         animObj->globalPosition.y, 
@@ -2022,7 +2019,7 @@ static void anim_func_4B20(Object* animObj, AnimObj_Setup* setup) {
 
 // offset: 0x4BAC | func: 24
 /** Something to do with snapping characters to mesh height? */
-s32 anim_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup) {
+s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup) {
     s32 lowestIndex;
     f32 sampleY;
     Func_80057F1C_Struct** sp5C;
@@ -2130,7 +2127,7 @@ static void anim_func_4FC4(Object* animObj, AnimObj_Data* st) {
         return;
     }
     
-    if (anim_func_51E0(st->unk2C, &delta, &sp54, &st->seqYaw, st->unk86)) {
+    if (anim_func_51E0(st->unk2C, &delta, &sp54, &st->seqYaw, st->groundMode)) {
         animObj->srt.transl.x = sp54.f[0];
         animObj->srt.transl.y = sp54.f[1];
         animObj->srt.transl.z = sp54.f[2];
@@ -2387,7 +2384,7 @@ static s32 anim_check_decision(Object* animObj, s32 cond, AnimObj_Data* st) {
         case ANIM_DECISION_CUSTOM5:
         case ANIM_DECISION_CUSTOM6:
             if (st->decisionCallback != NULL) {
-                return st->decisionCallback(st->unk11C, animObj, cond);
+                return st->decisionCallback(st->overrideTarget, animObj, cond);
             }
             break;
     }
@@ -2520,7 +2517,7 @@ static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, 
         }
         switch (evtType) {
         case ANIM_CODE_EVT_6:
-            if (anim_func_6620(animObj, actor, st, (var_s1 << 8) | var_s0, (s8) arg7) == 0) {
+            if (anim_do_code_event_6(animObj, actor, st, (var_s1 << 8) | var_s0, (s8) arg7) == 0) {
                 return 1;
             }
             var_a3 = -1;
@@ -2645,7 +2642,7 @@ static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, 
                 if (arg7 == 0) {
                     st->time = codeEventTime;
                     st->prevTime = codeEventTime;
-                    st->unk88 = var_s0 + 1;
+                    st->pauseCond = var_s0 + 1;
                     _bss_33 = 1;
                     return 1;
                 }
@@ -2671,7 +2668,7 @@ void anim_set_camera_module(s32 module, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x6620 | func: 34
-static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 arg3, s8 arg4) {
+static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st, s32 arg3, s8 arg4) {
     s32 sp54;
     s32 sp4C[2];
     Object *player;
@@ -2744,7 +2741,7 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
             break;
         }
         if (sp54 < actor->def->numModels) {
-            if ((actor->group == 1) && (actor->modelInstIdx == 2)) {
+            if ((actor->controlNo == OBJCONTROL_Player) && (actor->modelInstIdx == 2)) {
                 return 1;
             }
             STUBBED_PRINTF(" MODEL NO %i \n", actor->modelInstIdx);
@@ -2752,12 +2749,12 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
         }
         break;
     case ANIM_CODE_EVT_6_24:
-        if (actor->group == 1) {
+        if (actor->controlNo == OBJCONTROL_Player) {
             ((DLL_210_Player*)actor->dll)->vtbl->func28(actor, sp54);
         }
         break;
     case ANIM_CODE_EVT_6_25:
-        if (actor->group == 1) {
+        if (actor->controlNo == OBJCONTROL_Player) {
             ((DLL_210_Player*)actor->dll)->vtbl->func29(actor, sp54);
         }
         break;
@@ -2772,11 +2769,11 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
         st->unk7A &= ~ANIM7AFLAG_UNK400;
         st->unk142_4 = 0;
         break;
-    case ANIM_CODE_EVT_6_CHECKPOINT:
-        gDLL_29_Gplay->vtbl->checkpoint(&actor->srt.transl, actor->srt.yaw, 0, map_get_layer());
+    case ANIM_CODE_EVT_6_SAVEPOINT:
+        gDLL_29_Gplay->vtbl->savepoint(&actor->srt.transl, actor->srt.yaw, 0, map_get_layer());
         break;
-    case ANIM_CODE_EVT_6_CHECKPOINT_NO_LOCATION:
-        gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
+    case ANIM_CODE_EVT_6_SAVEPOINT_NO_LOCATION:
+        gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, map_get_layer());
         break;
     case ANIM_CODE_EVT_6_TOGGLE_PLAYER_CONTROL:
         ((DLL_210_Player*)get_player()->dll)->vtbl->func69(get_player(), sp54);
@@ -2786,8 +2783,8 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
     }
 
     switch (arg3) {
-    case ANIM_CODE_EVT_6_0: 
-        _bss_A4 = 1;
+    case ANIM_CODE_EVT_6_END: 
+        sSeqEnded = TRUE;
         return 0;
     case ANIM_CODE_EVT_6_5: 
         gDLL_6_AMSFX->vtbl->func_480(actor);
@@ -2839,7 +2836,7 @@ static s32 anim_func_6620(Object *animObj, Object *actor, AnimObj_Data *st, s32 
         gDLL_29_Gplay->vtbl->set_obj_group_status(actor->mapID, sp54, 0);
         break;
     case ANIM_CODE_EVT_6_SET_ACT:
-        gDLL_29_Gplay->vtbl->set_map_setup(actor->mapID, sp54);
+        gDLL_29_Gplay->vtbl->set_act(actor->mapID, sp54);
         break;
     case ANIM_CODE_EVT_6_ENABLE_LETTERBOX:
         if (arg4 == 0) {
@@ -3003,12 +3000,12 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
 }
 
 // offset: 0x71C0 | func: 37
-static void anim_func_71C0(Object* animObj, Object* actor, AnimObj_Data* st) {
+static void anim_handle_seq_end(Object* animObj, Object* actor, AnimObj_Data* st) {
     s32 i;
     u32 soundHandle;
 
     if (st->unkF4 != NULL) {
-        st->unkF4(st->unk11C, animObj, st);
+        st->unkF4(st->overrideTarget, animObj, st);
     }
 
     for (i = 0; i < 4; i++){
@@ -3018,17 +3015,17 @@ static void anim_func_71C0(Object* animObj, Object* actor, AnimObj_Data* st) {
         }
     }
     
-    if (st->unk8B != 0) {
+    if (st->state != ANIMOBJ_STATE_Completed) {
         if (st->unk87 != 0) {
             st->unk87 = 0;
         }
-        if (st->actor != 0) {
+        if (st->actor != NULL) {
             actor->animObj = NULL;
             actor->stateFlags &= ~OBJSTATE_IN_SEQ;
             st->actor = NULL;
         }
     }
-    st->unk8B = 0;
+    st->state = ANIMOBJ_STATE_Completed;
 }
 
 // offset: 0x72E0 | func: 38
@@ -3169,7 +3166,7 @@ void anim_update_camera(void) {
 }
 
 // offset: 0x7974 | func: 40 | export: 6
-void anim_func_7974(AnimObj_Data* st, AnimObj_Setup* setup) {
+void anim_init_curve(AnimObj_Data* st, AnimObj_Setup* setup) {
     s32 animcurves_bin_offset;
     s32 size;
     s32 animCurvesIndex;
@@ -3213,17 +3210,17 @@ void anim_func_7974(AnimObj_Data* st, AnimObj_Setup* setup) {
         _bss_198[st->seqSlot] = 0;
     }
 
-    if (setup->unk22 != 0) {
-        st->unk8B = 2;
+    if (setup->activate != 0) {
+        st->state = ANIMOBJ_STATE_Ready;
     } else {
-        st->unk8B = 0;
+        st->state = ANIMOBJ_STATE_Completed;
     }
 
-    anim_func_7B64(st);
+    anim_init_curve_keyframes(st);
 }
 
 // offset: 0x7B64 | func: 41 | export: 7
-void anim_func_7B64(AnimObj_Data* st) {
+void anim_init_curve_keyframes(AnimObj_Data* st) {
     s32 channelKeyIndex;
     s32 index;
     s32 channelIndex;
@@ -3261,34 +3258,34 @@ void anim_func_7B64(AnimObj_Data* st) {
 }
 
 // offset: 0x7C6C | func: 42 | export: 8
-void anim_func_7C6C(AnimObj_Data* state) {
-    if (state->animCurvesEvents) {
-        mmFree(state->animCurvesEvents);
-        state->animCurvesEvents = 0;
-        state->animCurvesKeyframes = 0;
+void anim_free_curve(AnimObj_Data* st) {
+    if (st->animCurvesEvents) {
+        mmFree(st->animCurvesEvents);
+        st->animCurvesEvents = 0;
+        st->animCurvesKeyframes = 0;
     }
 
-    if (state->unk2C) {
-        mmFree(state->unk2C);
-        state->unk2C = 0;
+    if (st->unk2C) {
+        mmFree(st->unk2C);
+        st->unk2C = 0;
     }
 }
 
 // offset: 0x7CF0 | func: 43 | export: 9
-void anim_func_7CF0(void) {
+void anim_tick(void) {
     s32 i;
     s32 k;
     s32 numAnimObjs;
-    s32 var_s6;
+    s32 allActorsPresent;
     AnimObj_Setup* setup;
     AnimObj_Data* st;
     Object* animObjs[20];
-    s32 temp_fp;
+    s32 startTime;
     s32 slot;
     Object* obj;
-    ANIMUnk698 *temp;
-    s32 spCC;
-    ANIMUnk698 sp6C[MAX_ACTORS];
+    Activate *resume;
+    s32 numUnready;
+    Activate unreadyResumes[MAX_ACTORS];
     Object** objList;
     s32 numObjs;
     s32 start;
@@ -3312,26 +3309,27 @@ void anim_func_7CF0(void) {
             _bss_490[i] = 0;
         }
     }
-    k = _bss_6F8;
-    spCC = 0;
+    // Try to activate anim objects
+    k = sActivatesCount;
+    numUnready = 0;
     while (k > 0) {
         k--;
-        temp = &_bss_698[k];
-        slot = temp->unk0;
-        temp_fp = temp->unk2;
+        resume = &sActivates[k];
+        slot = resume->seqSlot;
+        startTime = resume->startTime;
         sEventFlags[slot] = 0;
         _bss_108[slot] = 0;
         _bss_198[slot] = 0;
         numAnimObjs = 0;
-        var_s6 = 1;
+        allActorsPresent = TRUE;
         for (i = 0; i < numObjs; i++) {
             obj = objList[i];
-            if (obj->group == 0x10) {
+            if (obj->controlNo == OBJCONTROL_AnimObj) {
                 setup = (AnimObj_Setup*)obj->setup;
                 st = obj->data;
                 if ((setup != NULL) && (slot == setup->seqSlot)) {
                     if ((setup->target >= 4) && (anim_find_animobj_target_in_world(obj) == NULL)) {
-                        var_s6 = 0;
+                        allActorsPresent = FALSE;
                         STUBBED_PRINTF(" Could Not FInd Obj %i  over %i \n", obj->id, setup->target);
                     } else {
                         st->actor = NULL;
@@ -3351,28 +3349,29 @@ void anim_func_7CF0(void) {
             setup = (AnimObj_Setup*)obj->setup;
             if ((setup != NULL) && (slot == setup->seqSlot)) {
                 st = obj->data;
-                if (var_s6 != 0) {
-                    st->unk8B = 2;
-                    st->unk6A = temp_fp;
+                if (allActorsPresent) {
+                    // seq is ready, all actors/targets are present in the world
+                    st->state = ANIMOBJ_STATE_Ready;
+                    st->startTime = startTime;
                     anim_tick_obj(obj, 1);
                     get_object_child_position(obj, 
                         &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
                 } else {
-                    st->unk8B = 3;
+                    st->state = ANIMOBJ_STATE_WaitingForActors;
                 }
             }
         }
-        if (var_s6 == 0) {
-            sp6C[spCC].unk0 = slot;
-            sp6C[spCC].unk2 = temp_fp;
-            spCC += 1;
+        if (!allActorsPresent) {
+            unreadyResumes[numUnready].seqSlot = slot;
+            unreadyResumes[numUnready].startTime = startTime;
+            numUnready += 1;
         }
     }
-    for (i = 0; i < spCC; i++) {
-        _bss_698[i].unk0 = sp6C[i].unk0;
-        _bss_698[i].unk2 = sp6C[i].unk2;
+    for (i = 0; i < numUnready; i++) {
+        sActivates[i].seqSlot = unreadyResumes[i].seqSlot;
+        sActivates[i].startTime = unreadyResumes[i].startTime;
     }
-    _bss_6F8 = (s8) spCC;
+    sActivatesCount = (s8) numUnready;
 }
 
 // offset: 0x81F8 | func: 44
@@ -3432,10 +3431,10 @@ static Object* anim_find_animobj_target_in_world(Object* animObj) {
 }
 
 // offset: 0x8598 | func: 45 | export: 10
-s16 anim_func_8598(Object* animObj) {
+s16 anim_find_override_target(Object* animObj) {
     AnimObj_Data* st;
     AnimObj_Setup* setup;
-    Object* temp_v0_2;
+    Object* overrideObj;
     Object* obj;
     s32 targetObjID;
     s32 i;
@@ -3451,7 +3450,7 @@ s16 anim_func_8598(Object* animObj) {
     objList = get_world_objects(&start, &numObjs);
     st = animObj->data;
     setup = (AnimObj_Setup*)animObj->setup;
-    if (animObj->group == 17) {
+    if (animObj->controlNo == OBJCONTROL_Unk17) {
         st->actor = NULL;
         return -1;
     }
@@ -3483,13 +3482,13 @@ s16 anim_func_8598(Object* animObj) {
             closestDist = -1.0f;
             for (i = 0; i < numObjs; i++) {
                 obj = objList[i];
-                temp_v0_2 = anim_func_9C08(st->seqSlot, obj);
-                if (temp_v0_2 == animObj) {
+                overrideObj = anim_override_list_get(st->seqSlot, obj);
+                if (overrideObj == animObj) {
                     st->actor = obj;
                     break;
                 }
 
-                if ((temp_v0_2 == NULL) && (targetObjID == obj->id)) {
+                if ((overrideObj == NULL) && (targetObjID == obj->id)) {
                     distX = animObj->srt.transl.x - obj->srt.transl.x;
                     distY = animObj->srt.transl.y - obj->srt.transl.y;
                     distZ = animObj->srt.transl.z - obj->srt.transl.z;
@@ -3556,7 +3555,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
     s32 i;
     s32 temp_v1_4;
     Actor* actors;
-    s32 temp_v0_7;
+    s32 preemptTime;
     Object* actorParent;
     s32 j;
     AnimObj_Data* actorObjData;
@@ -3575,7 +3574,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
         if (sSlotInUse[i] == 0) {
             slot = i;
             sSlotInUse[i] = 1;
-            anim_func_9BC0(i);
+            anim_override_list_clear(i);
             i = MAX_SEQSLOTS + 1; // break
         }
     }
@@ -3668,7 +3667,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
                 actorSetup->base.z = object->srt.transl.z;
             }
             actorSetup->seqSlot = slot;
-            actorSetup->unk22 = 1;
+            actorSetup->activate = 1;
             actorSetup->unk24 = actors[i].settings & 0x7F;
             actorSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
             actorSetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
@@ -3732,11 +3731,11 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
     _bss_318[object->seqSlot] = yaw;
     _bss_378[object->seqSlot] = 0;
     _bss_490[object->seqSlot] = 0;
-    temp_v0_7 = anim_func_93A0(object);
-    if (temp_v0_7 != 0) {
+    preemptTime = anim_get_preempt_time(object);
+    if (preemptTime != 0) {
         _bss_3A8[object->seqSlot] |= ACTORUSETTING_NO_LETTERBOX;
     }
-    anim_func_2C0(slot, temp_v0_7, numActors);
+    anim_queue_activate(slot, preemptTime, numActors);
     if (sp48 != 0) {
         anim_func_9CE8(sp4C);
     }
@@ -3767,7 +3766,7 @@ void anim_end_obj_sequence(s32 slot) {
         if (slot == obj->seqSlot) {
             obj->seqSlot = SEQSLOT_NONE;
         }
-        if (obj->group == 0x10) {
+        if (obj->controlNo == OBJCONTROL_AnimObj) {
             animObjData = (AnimObj_Data*)obj->data;
             if (slot == animObjData->seqSlot) {
                 if (obj == _bss_6FC) {
@@ -3792,41 +3791,39 @@ void anim_end_obj_sequence(s32 slot) {
 
 // offset: 0x9358 | func: 54 | export: 20
 // official name: preemptSequenceTime
-void anim_preempt_sequence_time(Object *arg0, s32 arg1) {
-    ANIMBSSUnk0 *temp;
+void anim_preempt_sequence_time(Object *obj, s32 preemptTime) {
+    PreemptTime *t;
     s8 count;
 
-    count = _bss_20;    
+    count = sPreemptTimeListCount;    
     if (count < 4) {
-        temp = &_bss_0[count];
-        temp->unk0 = arg0;
-        temp->unk4 = arg1;
-        _bss_20 = count + 1;
+        t = &sPreemptTimeList[count];
+        t->obj = obj;
+        t->preemptTime = preemptTime;
+        sPreemptTimeListCount = count + 1;
     } else {
         STUBBED_PRINTF("preemptSequenceTime() Overflow!!\n");
     }
 }
 
 // offset: 0x93A0 | func: 55
-static s32 anim_func_93A0(Object* obj) {
-    s32 objectValue;
+static s32 anim_get_preempt_time(Object* obj) {
+    s32 preemptTime;
     s32 i;
-    s32 j;
 
-    for (i = 0; i < _bss_20; i++) {
-        if (obj == (&_bss_0[i])->unk0) {
-            _bss_20 -= 1;
-            objectValue = (&_bss_0[i])->unk4;
+    for (i = 0; i < sPreemptTimeListCount; i++) {
+        if (obj == (&sPreemptTimeList[i])->obj) {
+            sPreemptTimeListCount -= 1;
+            preemptTime = (&sPreemptTimeList[i])->preemptTime;
 
             //Remove item from array and shift subsequent items down in array
-            while (i < _bss_20) {
-                (&_bss_0[i])->unk0 = (&_bss_0[i + 1])->unk0;
-                (&_bss_0[i])->unk4 = (&_bss_0[i + 1])->unk4;
+            while (i < sPreemptTimeListCount) {
+                (&sPreemptTimeList[i])->obj = (&sPreemptTimeList[i + 1])->obj;
+                (&sPreemptTimeList[i])->preemptTime = (&sPreemptTimeList[i + 1])->preemptTime;
                 i++;
             }
 
-            //Return actor's associated value
-            return objectValue;
+            return preemptTime;
         }
     }
     
@@ -3834,9 +3831,9 @@ static s32 anim_func_93A0(Object* obj) {
 }
 
 // offset: 0x9440 | func: 56 | export: 21
-void anim_func_9440(AnimObj_Data* arg0, s32 arg1) {
-    arg0->unk80 = arg1;
-    arg0->unk9D |= 0x40;
+void anim_func_9440(AnimObj_Data* st, s32 arg1) {
+    st->unk80 = arg1;
+    st->unk9D |= 0x40;
 }
 
 // offset: 0x9458 | func: 57 | export: 22
@@ -4014,20 +4011,20 @@ static void anim_func_9B70(Object* arg1, Object* animObj, AnimObj_Data* st) {
 }
 
 // offset: 0x9BC0 | func: 65
-static void anim_func_9BC0(s32 slot) {
+static void anim_override_list_clear(s32 slot) {
     s32 index;
 
     for (index = 0; index < MAX_ACTORS; index++) { 
-        _bss_708[slot][index].object = 0; 
+        sOverrides[slot][index].object = 0; 
     }
 }
 
 // offset: 0x9C08 | func: 66
-static Object* anim_func_9C08(s32 animCurvesIndex, Object* searchObject) {
+static Object* anim_override_list_get(s32 seqSlot, Object* searchObject) {
     s32 i;
     ANIMActorOverride* actors;
 
-    actors = _bss_708[animCurvesIndex];
+    actors = sOverrides[seqSlot];
 
     for (i = 0; i < MAX_ACTORS; i++) {
         if (searchObject == actors[i].object) {
@@ -4038,13 +4035,13 @@ static Object* anim_func_9C08(s32 animCurvesIndex, Object* searchObject) {
 }
 
 // offset: 0x9C94 | func: 67
-static void anim_func_9C94(s32 seqSlot, Object* actor, Object* animObj) {
+static void anim_override_list_add(s32 seqSlot, Object* actor, Object* animObj) {
     s32 offset;
     u8 *actors;
     ANIMActorOverride *over;
     Object *actorObject;
 
-    actors = (u8*)&_bss_708[seqSlot][0];
+    actors = (u8*)&sOverrides[seqSlot][0];
     actorObject = NULL;
 
     for (offset = 0; offset < 0x80; offset += 8) {

@@ -248,7 +248,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     snowhorn->animCallback = dll_496_func_84C;
     
     if (arg2 == 0) {
-        obj_add_object_type(snowhorn, OBJTYPE_12);
+        obj_add_object_type(snowhorn, OBJTYPE_SnowHorn);
         objdata->unk50 = 0.005f;
         objdata->unkRadius = mapsObj->unkRadius;
         objdata->unk6 = mapsObj->unk1A * 0x3C;
@@ -334,7 +334,7 @@ void dll_496_control(Object* snowhorn) {
     }
     
     objdata->flags &= 0xBFFF;
-    objdata->unk427 = gDLL_29_Gplay->vtbl->get_map_setup(snowhorn->mapID);
+    objdata->unk427 = gDLL_29_Gplay->vtbl->get_act(snowhorn->mapID);
     _data_270 = gDLL_7_Newday->vtbl->func8(&daytime); //check if night
 
     if (objdata->flags & 0x8000 && (dll_496_func_980(snowhorn) != 0)){
@@ -396,7 +396,7 @@ void dll_496_control(Object* snowhorn) {
             objdata->unk425 = 0;
         }
         gDLL_3_Animation->vtbl->start_obj_sequence(objdata->chatSequenceList[seqIndex], snowhorn, -1);
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
     }
 
 }
@@ -642,7 +642,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
         snowhorn->unkAF &= ~1;
         if (objdata->flags < 7) {
             gDLL_3_Animation->vtbl->start_obj_sequence(objdata->flags, snowhorn, -1);
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
         }
     }
 
@@ -977,7 +977,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             }
             
-            frostWeed = obj_get_nearest_type_to(OBJTYPE_4, self, 0);
+            frostWeed = obj_get_nearest_type_to(OBJTYPE_Baddie, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
             if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->globalPosition, &frostWeed->globalPosition) < setup->unkRadius * setup->unkRadius) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {

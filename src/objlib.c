@@ -300,7 +300,7 @@ int func_80032538(Object* objInteracted) {
     ) {
         player = get_player();
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
             return TRUE;
         }
     }

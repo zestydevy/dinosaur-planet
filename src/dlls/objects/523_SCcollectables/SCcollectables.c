@@ -42,7 +42,7 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
 
     objdata = self->data;
 
-    obj_add_object_type(self, OBJTYPE_5);
+    obj_add_object_type(self, OBJTYPE_Collectable);
     obj_init_mesg_queue(self, 2);
 
     self->srt.yaw = objsetup->yaw << 8;
@@ -217,7 +217,7 @@ void SCcollectables_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x684 | func: 4 | export: 4
 void SCcollectables_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_5);
+    obj_free_object_type(self, OBJTYPE_Collectable);
 }
 
 // offset: 0x6C4 | func: 5 | export: 5

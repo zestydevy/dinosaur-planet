@@ -82,6 +82,7 @@ enum SoundID {
     SOUND_4E_Tricky_Slow_Snarl = 0x4E,     //Tricky low & slow, starting to think he's all talk
     SOUND_4F_Bassy_Pulse_Loop = 0X4F,      //wWwWwWwWwWwWwWwWwWwWwWwWwWw
 
+    SOUND_57 = 0x57,
     SOUND_58_Water_Splash = 0x58,          //Water Splash
     SOUND_59_Rattling = 0x59,              //sounds like 0x08 but higher pitch kinda
     SOUND_5A = 0X5A,                       //some worm roar
@@ -142,6 +143,7 @@ enum SoundID {
     SOUND_9B_Transporter_Hiss = 0x9B,
 
     SOUND_9D_Fire_Loop = 0x9D,          //10 HOURS of Relaxing Fireplace Sounds - Burning Fireplace & Crackling Fire Sounds
+    SOUND_9E = 0x9E,
 
     SOUND_A0_Cmdmenu_Item_Locked = 0xA0, // cmdmenu (spooky sound) - plays if an inventory item can't be used (unused in practice)
 
@@ -523,6 +525,11 @@ enum SoundID {
     
     SOUND_851_Laser_Blast = 0x851, // DRbullet
 
+    SOUND_855 = 0x855,
+    SOUND_856 = 0x856,
+    SOUND_857 = 0x857,
+    SOUND_858 = 0x858,
+
     SOUND_860_Explosion_Mid = 0x860, //DRexplodeDoor
     
     SOUND_87B_Ting = 0x87B, // Duster
@@ -543,6 +550,8 @@ enum SoundID {
 
     SOUND_8DB_Eerie_Alarm_Loop = 0x8DB,         //DR_tube
     SOUND_8DC_Ominous_Thrumming_Loop = 0x8DC,   //DR_tube
+
+    SOUND_8ED = 0x8ED,
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
     

@@ -205,10 +205,10 @@ typedef struct {
 /*56*/ u8 numPlayerObjs; //if > 0, objAddObjectType(obj, 8) // TODO: confirm
 /*57*/ u8 unk57; //never read?
 /*58*/ u16 dllID;
-/*5a*/ s16 group; // TODO: rename to controlNo
+/*5a*/ s16 controlNo; // see ObjectControlNumber enum. official name: controlNo
 /*5c*/ s8 modLinesSize; //ignored in file // TODO: confirm
 /*5d*/ s8 numModels; // number of pModelList (called "noframes" (number of frames?) by default.dol)
-/*5e*/ s8 unk5e;
+/*5e*/ s8 unk5e; // when >= 1, causes certain NPCs to look at nearby objects of this type
 /*5f*/ char name[16]; // not always the full name, cutoff after 15 characters (16 including null terminator)
 /*6f*/ u8 unk6f; // class (according to default.dol)
 /*70*/ u8 numAttachPoints; // "noplacements" in default.dol

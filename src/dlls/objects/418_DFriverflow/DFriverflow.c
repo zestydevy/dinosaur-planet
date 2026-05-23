@@ -15,7 +15,7 @@ void DFriverflow_setup(Object* self, DFriverflow_Setup* objSetup, s32 arg2) {
     DFriverflow_Data* objData;
 
     if (objSetup->toggleGamebit <= 0) {
-        obj_add_object_type(self, OBJTYPE_22);
+        obj_add_object_type(self, OBJTYPE_Riverflow);
         objData = self->data;
         objData->activated = TRUE;
     }
@@ -42,11 +42,11 @@ void DFriverflow_control(Object* self) {
             if (objData->activated) {
                 STUBBED_PRINTF("tryint to deactivate the river flow\n");
                 objData->activated = FALSE;
-                obj_free_object_type(self, OBJTYPE_22);
+                obj_free_object_type(self, OBJTYPE_Riverflow);
             }
         } else if (!objData->activated) {
             objData->activated = TRUE;
-            obj_add_object_type(self, OBJTYPE_22);
+            obj_add_object_type(self, OBJTYPE_Riverflow);
         }
     }
 }
@@ -61,7 +61,7 @@ void DFriverflow_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 void DFriverflow_free(Object* self, s32 arg1) {
     DFriverflow_Data* objData = self->data;
     if (objData->activated) {
-        obj_free_object_type(self, OBJTYPE_22);
+        obj_free_object_type(self, OBJTYPE_Riverflow);
     }
 }
 

@@ -103,7 +103,7 @@ void BWlog_setup(Object *self, ObjSetup *setup, s32 arg2) {
         DLL27MODE_1);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->collider, ARRAYCOUNT(dLocalEndpointCoords), dLocalEndpointCoords, dCollisionRadii, dColliderParams);
     objdata->collider.boundsYExtension = 100;
-    obj_add_object_type(self, OBJTYPE_11);
+    obj_add_object_type(self, OBJTYPE_Vehicle);
     objdata->unk31C[1] = 0x2000;
     objdata->unk2B4 = 15.0f;
     
@@ -139,7 +139,7 @@ void BWlog_control(Object* self) {
     objdata = (BWlog_Data*)self->data;
 
     distance = 10000.0f;
-    objdata->dockpoint = obj_get_nearest_type_to(OBJTYPE_23, self, &distance);
+    objdata->dockpoint = obj_get_nearest_type_to(OBJTYPE_Dockpoint, self, &distance);
     if (objdata->dockpoint != NULL) {
         dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
         distance = vec3_distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
@@ -259,7 +259,7 @@ void BWlog_free(Object *self, s32 a1) {
     BWlog_Data *objdata;
 
     objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_11);
+    obj_free_object_type(self, OBJTYPE_Vehicle);
     //Stop sound loop
     if (objdata->soundHandle != 0) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
@@ -707,7 +707,7 @@ static void BWlog_func_1C18(Object* self, BWlog_Data* objdata) {
     }
 
     // Grabs DFriverflow instances (and possibly more)
-    objList = obj_get_all_of_type(OBJTYPE_22, &objListLength);
+    objList = obj_get_all_of_type(OBJTYPE_Riverflow, &objListLength);
 
     for (i = 0; i < objListLength; i++) {
         obj = objList[i];

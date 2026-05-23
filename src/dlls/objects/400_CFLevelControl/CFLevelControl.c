@@ -9,7 +9,7 @@
 #include "sys/dll.h"
 #include "sys/objtype.h"
 #include "sys/gfx/projgfx.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/373_CFCloudBaby.h"
 
 // CFGuardian/CFSupTreasureCh
@@ -424,7 +424,7 @@ void CFLevelControl_func_BB8(Data6C *data, s32 count) {
             objPos = CFLevelControl_get_position_of_saved_obj(data->uID);
             if (objPos) {
                 distance = camera_get_distance_to_point(objPos->x, objPos->y, objPos->z);
-                obj_get_nearest_type(OBJTYPE_53, objPos, &distance);
+                obj_get_nearest_type(OBJTYPE_CFTreasRobo, objPos, &distance);
                 chestOrGuardian = func_800211B4(data->uID);
                 if (chestOrGuardian) {
                     if (data->distance < distance && ((data->gamebit1 == NO_GAMEBIT) || (!main_get_bits(data->gamebit1))) && (((DLL_CFGuardianCFSupTreasureCh*)chestOrGuardian->dll)->vtbl->func7(chestOrGuardian))) {
@@ -452,7 +452,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
         setup = map_find_obj_setup(data->uID, NULL, NULL, NULL, NULL);
         if (setup) {
             if (data->unk12) {
-                ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
+                ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
                 setup->x = transform.transl.x;
                 setup->y = transform.transl.y;
                 setup->z = transform.transl.z;

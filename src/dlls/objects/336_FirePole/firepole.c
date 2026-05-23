@@ -22,7 +22,7 @@ void dll_336_setup(Object* self, DLL336Setup* setup, s32 arg2) {
     SRT sp30;
 
     sp4C = (s32) setup->base.objId;
-    obj_add_object_type(self, OBJTYPE_55);
+    obj_add_object_type(self, OBJTYPE_Torch);
     if (sp4C == OBJ_FirePole) {
         self->srt.yaw = setup->unk18 << 8;
         self->srt.pitch = 0;
@@ -57,7 +57,7 @@ void dll_336_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 void dll_336_free(Object* self, s32 a1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
-    obj_free_object_type(self, OBJTYPE_55);
+    obj_free_object_type(self, OBJTYPE_Torch);
 }
 
 // offset: 0x22C | func: 5 | export: 5

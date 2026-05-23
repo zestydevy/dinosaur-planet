@@ -14,7 +14,7 @@ typedef struct {
 /*1E*/ u8 _unk1E;
 /*1F*/ u8 gamebitDisableValue; // disabled if the target gamebit is this value
 /*20*/ s16 gamebit; // -1 if this effect box is always enabled
-/*22*/ u8 target; // 0 = player, 1 = sidekick, 2 = objtype 6
+/*22*/ u8 target; // 0 = player, 1 = sidekick, 2 = pushblock
 } EffectBox_Setup;
 
 // offset: 0x0 | ctor
@@ -84,7 +84,7 @@ void EffectBox_control(Object *self) {
             }
             return;
         case 2:
-            objList = obj_get_all_of_type(OBJTYPE_6, &numObjs);
+            objList = obj_get_all_of_type(OBJTYPE_PushBlock, &numObjs);
             if (objList != NULL) {
                 break;
             }

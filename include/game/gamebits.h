@@ -1506,7 +1506,7 @@ typedef enum {
     BIT_DR_Top_ObjGroup_Bits = 0x5DB, // len:32 group:3
     BIT_DR_Bottom_ObjGroup_Bits = 0x5DC, // len:32 group:3
     BIT_5DD = 0x5DD, // len:4 group:1
-    BIT_5DE = 0x5DE, // len:1 group:1
+    BIT_5DE = 0x5DE, // len:1 group:1 DR EarthWarrior defeated by Skeetlas
     BIT_5DF = 0x5DF, // len:1 group:1
     BIT_5E0 = 0x5E0, // len:1 group:0
     BIT_5E1 = 0x5E1, // len:1 group:0
@@ -1580,7 +1580,7 @@ typedef enum {
     BIT_625 = 0x625, // len:1 group:1
     BIT_626 = 0x626, // len:1 group:1
     BIT_627 = 0x627, // len:3 group:2 //Seems to be meant as an inventory counter for the Shiny Nuggets!
-    BIT_628 = 0x628, // len:1 group:1
+    BIT_DR_SavedEarthWarriorFromSkeetlas = 0x628, // len:1 group:1
     BIT_629 = 0x629, // len:1 group:0
     BIT_62A = 0x62A, // len:1 group:1
     BIT_62B = 0x62B, // len:1 group:1
@@ -1625,8 +1625,8 @@ typedef enum {
     BIT_652 = 0x652, // len:1 group:1
     BIT_653 = 0x653, // len:1 group:1
     BIT_654 = 0x654, // len:1 group:1
-    BIT_655 = 0x655, // len:1 group:1
-    BIT_656 = 0x656, // len:1 group:1
+    BIT_655 = 0x655, // len:1 group:1 Tells the DR EarthWarrior to move through the tunnel
+    BIT_DR_EarthWarriorBroughtToSurface = 0x656, // len:1 group:1
     BIT_657 = 0x657, // len:1 group:1
     BIT_658 = 0x658, // len:1 group:1
     BIT_659 = 0x659, // len:1 group:1

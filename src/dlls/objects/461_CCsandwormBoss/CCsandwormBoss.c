@@ -67,7 +67,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
     setup = self->setup;
     objdata->unk18 += gUpdateRateF;
     dist = 3.4028235e38f;
-    obj_get_nearest_type_to(OBJTYPE_18, self, &dist);
+    obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
 
     diPrintf("worm %d, barrel %d\n", (s32) vec3_distance_xz(&self->globalPosition, &objdata->unk4->globalPosition), (s32) dist);
     switch (objdata->unk0) {
@@ -156,7 +156,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
                 objdata->unk1 = 3;
             } else {
                 dist = 50.0f;
-                objdata->unk10 = obj_get_nearest_type_to(OBJTYPE_18, self, &dist);
+                objdata->unk10 = obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
                 if ((objdata->unk10 != NULL) && (gDLL_54->vtbl->func4.withOneArgS32((s32)objdata->unk10->data) == 0)) {
                     objdata->unk0 = 0xD;
                     objdata->unk3 = 0;

@@ -6,6 +6,7 @@
 #include "dll_def.h"
 #include "PR/gbi.h"
 
+// TODO: rename IWeapon
 typedef struct {
     u8 pad0[0x18];
     f32 unk18[2];

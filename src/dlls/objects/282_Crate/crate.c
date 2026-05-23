@@ -172,7 +172,7 @@ void crate_control(Object* self) {
         //Or reposition a nearby Collectable
         } else {
             distance = 50.0f;
-            obj = obj_get_nearest_type_to(OBJTYPE_5, self, &distance);
+            obj = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &distance);
             if (obj != NULL) {
                 obj->srt.transl.x = obj->globalPosition.x = self->srt.transl.x;
                 obj->srt.transl.y = obj->globalPosition.y = self->srt.transl.y + 10.0f;

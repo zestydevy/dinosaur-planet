@@ -107,7 +107,7 @@ void SCTotemStrength_control(Object* self) {
     objData = self->data;
     
     //Do nothing if SwapStone Circle isn't in Setup 6
-    if ((gDLL_29_Gplay)->vtbl->get_map_setup(MAP_SWAPSTONE_CIRCLE) != 6) {
+    if ((gDLL_29_Gplay)->vtbl->get_act(MAP_SWAPSTONE_CIRCLE) != 6) {
         return;
     }
 

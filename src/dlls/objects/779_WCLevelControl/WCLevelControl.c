@@ -126,8 +126,7 @@ void WCLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (main_get_bits(BIT_2A5)) {
         objdata->flags |= FLAG_40;
     }
-
-    obj_add_object_type(self, OBJTYPE_10);
+    obj_add_object_type(self, OBJTYPE_LevelControl);
     main_set_bits(BIT_226, 1);
     main_set_bits(BIT_2A6, 1);
     main_set_bits(BIT_206, 1);
@@ -148,8 +147,7 @@ void WCLevelControl_control(Object *self) {
         func_80000450(self, self, 0x24F, 0, 0, 0);
         self->unkDC = 1;
     }
-
-    act = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     if ((act == 1) || (act != 2)) {
         WCLevelControl_handle_act1(self, objdata);
     } else {
@@ -177,8 +175,8 @@ void WCLevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 }
 
 // offset: 0x400 | func: 4 | export: 4
-void WCLevelControl_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_10);
+void dll_779_free(Object *self, s32 a1) {
+    obj_free_object_type(self, OBJTYPE_LevelControl);
 }
 
 // offset: 0x440 | func: 5 | export: 5

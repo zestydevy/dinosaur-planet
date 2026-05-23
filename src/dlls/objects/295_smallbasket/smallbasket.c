@@ -104,7 +104,7 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
     self->objhitInfo->unk44 = 0x10;
     self->objhitInfo->unk40 = 0x10;
     func_800267A4(self);
-    obj_add_object_type(self, OBJTYPE_18);
+    obj_add_object_type(self, OBJTYPE_Pickup);
 
     if (setup->unk1C == 0) {
         objData->unk4 = 0;
@@ -425,7 +425,7 @@ s32 smallbasket_handle_being_lifted(Object* self, Object* player, SmallBasket_Da
     gDLL_2_Camera->vtbl->get_target_object();
     outVal = 0;
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (self->unkE0 == 0)) {
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
         objData->playerMessageLo = -0x8000;
         objData->playerMessageHi = 0;
         func_800267A4(self);

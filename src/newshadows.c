@@ -365,7 +365,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             shadow->gdl = NULL;
             return 0;
         }
-    } else if (obj->group == GROUP_UNK1) {
+    } else if (obj->controlNo == OBJCONTROL_Player) {
         if (arg2 == 0) {
             if (D_800BB170 != 0) {
                 if (!(shadow->flags & OBJ_SHADOW_FLAG_ENABLED)) {
@@ -827,7 +827,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     sp1C0 = shadow->visibility * (1.0f / 64.0f);
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
         sp1C0 = shadow->a;
-    } else if ((obj->group == GROUP_UNK1) && (D_80092C3C > 0.0f)) {
+    } else if ((obj->controlNo == OBJCONTROL_Player) && (D_80092C3C > 0.0f)) {
         sp1C0 = (((1.0f - D_80092BE4) * D_80092C3C) + D_80092BE4) * sp1C0;
     } else {
         sp1C0 = D_80092BE4 * sp1C0;

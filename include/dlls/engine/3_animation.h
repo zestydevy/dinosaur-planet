@@ -7,17 +7,17 @@
 
 DLL_INTERFACE(DLL_3_animation) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func0)(void);
-/*1*/ void (*func1)(s32 arg0, s32 arg1); // @bug: missing 3rd param
-/*2*/ void (*func2)(s32 arg0, s32 arg1);
-/*3*/ s8 (*func3)(s32 arg0);
+/*0*/ void (*init)(void);
+/*1*/ void (*queue_activate)(s32 seqSlot, s32 startTime); // @bug: missing 3rd param
+/*2*/ void (*set_flag)(s32 seqSlot, s32 value);
+/*3*/ s8 (*get_flag)(s32 seqSlot);
 /*4*/ s32 (*tick_obj)(Object* animObj, s32 updateRate);
 /*5*/ void (*update_camera)(void);
-/*6*/ void (*func6)(AnimObj_Data* arg0, AnimObj_Setup* setup);
-/*7*/ void (*func7)(AnimObj_Data* state);
-/*8*/ void (*func8)(AnimObj_Data* state);
-/*9*/ void (*func9)(void);
-/*10*/ s16 (*func10)(Object* animObj);
+/*6*/ void (*init_curve)(AnimObj_Data* state, AnimObj_Setup* setup);
+/*7*/ void (*init_curve_keyframes)(AnimObj_Data* state);
+/*8*/ void (*free_curve)(AnimObj_Data* state);
+/*9*/ void (*tick)(void);
+/*10*/ s16 (*find_override_target)(Object* animObj);
 /*11*/ s32 (*func11)(s32 arg0);
 /*12*/ s32 (*func12)(void);
 /*13*/ s32 (*func13)(void);
@@ -27,7 +27,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*17*/ s32 (*start_obj_sequence)(s32 objectSeqIndex, Object* object, s32 enabledActors);
 /*18*/ void (*end_obj_sequence)(s32 arg0);
 /*19*/ void (*set_camera_module)(s32 module, s32 arg1, s32 arg2, s32 arg3);
-/*20*/ void (*preempt_sequence_time)(Object *arg0, s32 arg1);
+/*20*/ void (*preempt_sequence_time)(Object *obj, s32 preemptTime); // sets the start time for the next seq started for the given object
 /*21*/ void (*func21)(AnimObj_Data* state, s32 arg1);
 /*22*/ s8 (*func22)(void);
 /*23*/ void (*func23)(s8 arg0);

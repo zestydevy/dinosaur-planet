@@ -22,7 +22,7 @@ void dll_499_dtor(void *dll) { }
 void dll_499_setup(Object* self, ObjSetup* setup, s32 arg2) {
     self->srt.flags |= OBJFLAG_INVISIBLE;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-    obj_add_object_type(self, OBJTYPE_61);
+    obj_add_object_type(self, OBJTYPE_NWice);
 }
 
 // offset: 0x74 | func: 1 | export: 1
@@ -44,7 +44,7 @@ void dll_499_control(Object* self) {
         self->srt.transl.y = objdata->unk0->srt.transl.y;
         self->srt.transl.z = objdata->unk0->srt.transl.z;
         self->srt.yaw = objdata->unk0->srt.yaw;
-        obj_get_nearest_type_to_excluding_self(OBJTYPE_61, self, &dist);
+        obj_get_nearest_type_to_excluding_self(OBJTYPE_NWice, self, &dist);
         if (objdata->unk0->opacity < 128) {
             func_800267A4(self);
         } else {
@@ -58,7 +58,7 @@ void dll_499_control(Object* self) {
         return;
     }
 
-    objList = obj_get_all_of_type(OBJTYPE_62, &numObjs);
+    objList = obj_get_all_of_type(OBJTYPE_NWanimice, &numObjs);
     setup = (UnkObjType3E_Setup*)self->setup;
     for (i = 0; i < numObjs; i++) {
         if (self != objList[i]) {
@@ -80,7 +80,7 @@ void dll_499_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x240 | func: 4 | export: 4
 void dll_499_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_61);
+    obj_free_object_type(self, OBJTYPE_NWice);
 }
 
 // offset: 0x280 | func: 5 | export: 5

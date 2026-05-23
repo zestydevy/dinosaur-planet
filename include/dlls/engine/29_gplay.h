@@ -38,9 +38,9 @@ typedef struct {
     s16 unkA;
     s16 unkC;
     s16 unkE;
-    s16 unk10;
+    s16 isInside;
     s16 unk12; //cameraActionID?
-} GplayStruct6;
+} PlayerLightActions;
 
 // size: 0xB4
 typedef struct {
@@ -94,8 +94,8 @@ typedef struct {
     PlayerStats players[2];
     SidekickStats sidekicks[2];
     u8 _unk1E[0x2];
-    FoodbagContents unk20[2];
-    FoodbagContents unk188[2];
+    FoodbagContents playerFoodbags[2];
+    FoodbagContents dinoFoodbags[2];
     /*0x2F0*/char name[6]; // name of save
     u8 isEmpty; // whether this savefile is empty
     /*0x2f7*/u8 playerno; // currently active player (sabre or krystal)
@@ -112,7 +112,7 @@ typedef struct {
 typedef struct {
     Savefile file;
     /*0x13d4*/u8 bitString[512];
-} CheckpointSaveData;
+} MainSaveData;
 
 // size: 0x40
 typedef struct {
@@ -137,21 +137,21 @@ typedef struct {
     s8 unk3D;
     s8 unk3E;
     s8 unk3F;
-} GplayStruct12;
+} PlayerEnvActions;
 
 // size: 0x8
 typedef struct {
     s16 actionNums[4];
-} PlayerMusicAction;
+} PlayerMusicActions;
 
 // size: 0x17ac
 typedef struct {
-    CheckpointSaveData chkpnt;
+    MainSaveData main;
     /*0x15d4*/u8 bitString[256];
     PlayerLocation playerLocations[2]; // saved locations of each player
-    GplayStruct6 unk16F4[2];
-    GplayStruct12 unk171C[2];
-    PlayerMusicAction unk179C[2];
+    PlayerLightActions lightActions[2];
+    PlayerEnvActions envActions[2];
+    PlayerMusicActions musicActions[2];
 } MapSaveData;
 
 enum Languages {
@@ -217,7 +217,7 @@ typedef struct {
 // size: 0x17ac
 typedef union {
     MapSaveData map;
-    CheckpointSaveData chkpnt;
+    MainSaveData main;
     Savefile file;
 } Savegame;
 
@@ -233,6 +233,11 @@ typedef union {
     Savegame asSave;
 } GplaySaveFlash;
 
+enum GplaySavePointFlags {
+    // Don't include map save data in savepoint.
+    GPLAY_SAVEPOINT_SkipMapSave = 0x1
+};
+
 DLL_INTERFACE(DLL_29_gplay) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*erase_save)(s8 idx);
@@ -242,7 +247,7 @@ DLL_INTERFACE(DLL_29_gplay) {
     /** Used by the Pause Menu to save the game */
     /*4*/ void (*save_game)(void);
     /*5*/ void (*func_94C)(s32 param1);
-    /*6*/ void (*checkpoint)(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer);
+    /*6*/ void (*savepoint)(Vec3f *position, s16 yaw, s32 flags, s32 mapLayer);
     /*7*/ void (*start_loaded_game)(void);
     /*8*/ void (*restart_set)(Vec3f *position, s16 yaw, s32 mapLayer);
     /*9*/ void (*restart_goto)(void);
@@ -251,9 +256,9 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*12*/ void (*save_game_options)(void);
     /*13*/ u32 (*load_game_options)(void);
     /*14*/ GplayOptions *(*get_game_options)(void);
-    /*15*/ u8 (*get_map_setup)(s32 mapID);
-    /*16*/ void (*set_map_setup)(s32 mapID, s32 setupID);
-    /*17*/ void (*func_1378)(s32 param1, s32 param2);
+    /*15*/ u8 (*get_act)(s32 mapID);
+    /*16*/ void (*set_act)(s32 mapID, s32 act);
+    /*17*/ void (*set_mobile_map)(s32 mapID, s32 slot);
     /*18*/ u8 (*get_obj_group_status)(s32 mapID, s32 group);
     /*19*/ void (*set_obj_group_status)(s32 mapID, s32 group, s32 status);
     /*20*/ u16 (*get_obj_group_bit_key)(s32 mapID);
@@ -276,11 +281,11 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*34*/ PlayerStats *(*get_player_stats)(void);
     /*35*/ PlayerLocation *(*get_player_saved_location)(void);
     /*36*/ SidekickStats *(*get_sidekick_stats)(void);
-    /*37*/ GplayStruct6 *(*func_F60)(void);
-    /*38*/ GplayStruct12 *(*func_FA8)(void);
-    /*39*/ PlayerMusicAction *(*func_FE8)(void);
-    /*40*/ FoodbagContents *(*func_1974)(void); //get player foodbag struct
-    /*41*/ FoodbagContents *(*func_19B8)(void); //get dino foodbag struct
+    /*37*/ PlayerLightActions *(*get_current_player_lactions)(void);
+    /*38*/ PlayerEnvActions *(*get_current_player_envactions)(void);
+    /*39*/ PlayerMusicActions *(*get_current_player_musicactions)(void);
+    /*40*/ FoodbagContents *(*get_player_foodbag)(void);
+    /*41*/ FoodbagContents *(*get_dino_foodbag)(void);
     /*42*/ u32 (*get_time_played)(void);
     /*43*/ u32 (*is_cheat_unlocked)(u8 cheatIdx);
     /*44*/ void (*unlock_cheat)(u8 cheatIdx);

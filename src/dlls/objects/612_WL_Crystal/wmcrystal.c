@@ -63,7 +63,7 @@ void WL_Crystal_setup(Object* self, WL_Crystal_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
     
-    if ((gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == 3) && !main_get_bits(BIT_Set_During_Spirit_Release_1)){
+    if ((gDLL_29_Gplay->vtbl->get_act(self->mapID) == 3) && !main_get_bits(BIT_Set_During_Spirit_Release_1)){
         main_set_bits(BIT_Set_During_Spirit_Release_1, TRUE);
     }
     

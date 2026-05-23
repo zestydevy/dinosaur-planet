@@ -26,12 +26,12 @@ void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
     self->unkE0 = 0;
     
     if ((self->unkDC == 0) && (objSetup->sequenceIdBitfield != 1)) {
-        gDLL_3_Animation->vtbl->func6(objData, objSetup);
+        gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     } else if ((self->unkDC != 0) && ((objSetup->sequenceIdBitfield + 1) != self->unkDC)) {
-        gDLL_3_Animation->vtbl->func8(objData);
+        gDLL_3_Animation->vtbl->free_curve(objData);
         if (objSetup->sequenceIdBitfield != -1) {
-            gDLL_3_Animation->vtbl->func6(objData, objSetup);
+            gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
         }
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     }
@@ -77,7 +77,7 @@ void SCAnimObj_control(Object* self) {
                 matchObj = obj;
             }
             
-            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->group == GROUP_UNK16)) {
+            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->controlNo == OBJCONTROL_AnimObj)) {
                 objData = obj->data;
                 if (temp == objData->seqSlot) {
                     matchCount++;
@@ -172,7 +172,7 @@ void SCAnimObj_free(Object* self, s32 arg1) {
 
     objData = self->data;
     
-    gDLL_3_Animation->vtbl->func8(objData);
+    gDLL_3_Animation->vtbl->free_curve(objData);
 
     for (i = 0; i < 4; i++) {
         if (objData->sfxHandles[i]) {

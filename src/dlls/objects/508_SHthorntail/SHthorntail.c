@@ -1,7 +1,7 @@
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/27.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
@@ -18,11 +18,7 @@
 #include "macros.h"
 
 typedef struct {
-    // dll 53 start
-/*000*/ u8 _unk0[0x4A9 - 0x0];
-/*4A9*/ u8 unk4A9;
-/*4AA*/ u8 _unk4AA[0x4B8 - 0x4AA];
-    // dll 53 end (probably)
+/*000*/ MoveLibData unk0;
 /*4B8*/ s8 unk4B8;
 /*4B9*/ u8 unk4B9;
 /*4BA*/ u8 unk4BA;
@@ -215,9 +211,9 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
     self->animCallback = thorntail_func_8CC;
     objdata->unk4B8 = -1;
     create_temp_dll(53);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func2(self, objdata, -0x1FFF, 0x2AAA, 3);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func5(objdata, 0x190, 0x1E);
-    objdata->unk4A9 &= ~0x8;
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->unk0, -0x1FFF, 0x2AAA, 3);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->unk0, 0x190, 0x1E);
+    objdata->unk0.unk4A9 &= ~0x8;
     obj_add_object_type(self, OBJTYPE_40);
 }
 
@@ -233,7 +229,7 @@ void thorntail_control(Object* self) {
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     if (func_80026DF4(self, data_40, 15, objdata->unk874, &objdata->unk84C) == 0) {
         objdata->unk874 = 0;
-        objdata->mapAct = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+        objdata->mapAct = gDLL_29_Gplay->vtbl->get_act(self->mapID);
         objdata->playerDist = vec3_distance(&self->globalPosition, &player->globalPosition);
         switch (setup->unk18) {
         case 1:
@@ -266,7 +262,7 @@ void thorntail_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     objdata = self->data;
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, objdata, 0);
+        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->unk0, 0);
     }
 }
 
@@ -329,7 +325,7 @@ static CurveSetup* thorntail_func_608(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 static int thorntail_func_8CC(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3) {
     SHthorntail_Data *objdata = actor->data;
 
-    if (((DLL_53*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, objdata, 1, 1) != 0) {
+    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->unk0, 1, 1) != 0) {
         return 1;
     }
     if (a3 != 0) {

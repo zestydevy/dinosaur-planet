@@ -430,7 +430,7 @@ typedef enum {
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 mapSetupID;
+/*18*/ u8 mapAct;
 /*19*/ u8 unk19;
 /*1C*/ u32 objGroupStatusBits;
 } SetupPoint_Setup;

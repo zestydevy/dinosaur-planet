@@ -106,7 +106,7 @@ void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     }
 
     objData->capacity = 0;
-    objData->bagSlots = gDLL_29_Gplay->vtbl->func_1974();
+    objData->bagSlots = gDLL_29_Gplay->vtbl->get_player_foodbag();
 
     if (main_get_bits(BIT_Foodbag_Setting_Eat_First)) {
         objData->eatFirst = TRUE;

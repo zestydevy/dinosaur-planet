@@ -1,0 +1,15 @@
+.text = 0x0:
+DR_EarthCallPad_ctor = 0x0;
+DR_EarthCallPad_dtor = 0xC;
+DR_EarthCallPad_setup = 0x18;
+DR_EarthCallPad_control = 0x7C;
+DR_EarthCallPad_update = 0x88;
+DR_EarthCallPad_print = 0x94;
+DR_EarthCallPad_free = 0xAC;
+DR_EarthCallPad_get_model_flags = 0x120;
+DR_EarthCallPad_get_data_size = 0x130;
+DR_EarthCallPad_call = 0x144;
+DR_EarthCallPad_create_fx = 0x224;
+
+.rodata = 0x31C:
+str_0 = 0x0; // absolute:0x31C

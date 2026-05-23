@@ -106,7 +106,7 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SB_Galleon_Data *objdata;
 
     objdata = self->data;
-    obj_add_object_type(self, OBJTYPE_4);
+    obj_add_object_type(self, OBJTYPE_Baddie);
     obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = SB_Galleon_anim_callback;
     objdata->x2 = self->srt.transl.x;
@@ -126,7 +126,7 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (0) { }
     objdata->soundHandle2 = 0;
     objdata->unk8E = 100;
-    gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
+    gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
     func_80000450(self, self, 88, 0, 0, 0);
 }
 
@@ -167,7 +167,7 @@ void SB_Galleon_control(Object *self) {
         SB_Galleon_func_B88(self);
         break;
     case STATE_3:
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 1);
+        gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 1);
         self->mapID = -1;
         gDLL_28_ScreenFade->vtbl->fade_reversed(80, SCREEN_FADE_BLACK);
         gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
@@ -211,7 +211,7 @@ void SB_Galleon_free(Object *self, s32 a1) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
     }
     if (_data_0.tex1) { }
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
     if ((objdata->unk8A != 0) && (a1 == 0)) {
         objdata->unk8A = 0;
     }

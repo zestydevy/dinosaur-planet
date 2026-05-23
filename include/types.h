@@ -35,6 +35,7 @@ typedef union {
     f32 (*withOneArgF32)(s32);
     f32 (*withOneVoidArgF32)(void*);
     f32 (*withTwoArgsF32)(s32, s32);
+    f32 (*withTwoArgsF32Custom)(void*, f32);
     f32 (*withThreeArgsF32)(s32, s32, s32);
     f32 (*withFourArgsF32)(s32, s32, s32, s32);
     f32 (*withFiveArgsF32)(s32, s32, s32, s32, s32);
@@ -45,6 +46,7 @@ typedef union {
     void (*withThreeArgsCustom3)(void *, s32, void *);
     void (*withOneS32OneF32)(s32, f32);
     void (*withTwoArgsCustom)(void *, s32);
+    void (*withTwoArgsCustom2)(void *, f32);
     void (*withFourArgsCustom)(void *, void *, f32, s32);
     void (*withFourArgsCustom2)(void*, void *, void*, void *);
     void (*withFiveArgsCustom)(void *, f32, f32 *, f32 *, f32 *);
@@ -52,6 +54,7 @@ typedef union {
     s32 (*withFiveArgsCustom3)(void *, void *, s8, f32 *, f32 *);
     void (*withSixArgsCustom)(void *, s32, void *, s32, s32, s32);
     s32 (*withSevenArgsCustom)(void *, f32, f32, f32, void*, void*, void*);
+    void (*objtype57Func7)(void *, void *, s32, void *, void *, void *, void *);
 } UnknownDLLFunc;
 
 // "Unknown" DLL interface to help match code calling DLLs where the exact

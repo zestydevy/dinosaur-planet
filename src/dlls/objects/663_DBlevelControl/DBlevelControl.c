@@ -70,7 +70,7 @@ void DBlevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
         }
     }
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
-    obj_add_object_type(self, OBJTYPE_52);
+    obj_add_object_type(self, OBJTYPE_DBlevelcontrol);
 }
 
 // offset: 0xE4 | func: 1 | export: 1
@@ -109,8 +109,8 @@ void DBlevelControl_control(Object *self) {
             objdata->mapSetup++;
         } while (main_get_bits(_data_20[objdata->mapSetup-1]));
     }
-    if (objdata->mapSetup != gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
-        gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, objdata->mapSetup);
+    if (objdata->mapSetup != gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
+        gDLL_29_Gplay->vtbl->set_act(self->mapID, objdata->mapSetup);
     }
 
     player = get_player();
@@ -127,7 +127,7 @@ void DBlevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x384 | func: 4 | export: 4
 void DBlevelControl_free(Object *self, s32 arg1) {
-   obj_free_object_type(self, OBJTYPE_52);
+   obj_free_object_type(self, OBJTYPE_DBlevelcontrol);
 }
 
 // offset: 0x3C4 | func: 5 | export: 5

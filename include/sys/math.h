@@ -28,6 +28,7 @@
     if ((x) > (high)) (x) = (high); \
     if ((x) < (low)) (x) = (low);   \
 }
+#define CLAMP_EXPR(x, low, high) ((x) < (low) ? (low) : ((x) > (high) ? (high) : (x)))
 
 /**
  * Allows an arbitrary range the number can wrap around.

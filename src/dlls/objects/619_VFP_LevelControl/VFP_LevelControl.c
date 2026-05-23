@@ -30,12 +30,12 @@ void VFP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void VFP_LevelControl_setup(Object* self, ObjSetup* setup, s32 a2) {
-    u8 mapSetupID;
+    u8 act;
 
-    obj_add_object_type(self, OBJTYPE_10);
-    gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
-    mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
-    switch (mapSetupID) {
+    obj_add_object_type(self, OBJTYPE_LevelControl);
+    gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
+    switch (act) {
     case 1:
     case 2:
         break;
@@ -63,13 +63,13 @@ void VFP_LevelControl_control(Object* self) {
     /*0x0*/ static s16 _data_0 = 130;
     
     Object* player;
-    u8 mapSetupID;
+    u8 act;
 
     player = get_player();
     map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
-    diPrintf("ACT %d \n", gDLL_29_Gplay->vtbl->get_map_setup(self->mapID));
-    mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
-    switch (mapSetupID) {
+    diPrintf("ACT %d \n", gDLL_29_Gplay->vtbl->get_act(self->mapID));
+    act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
+    switch (act) {
     case 1:
         if (_data_0 != 0) {
             _data_0 -= (s16)gUpdateRateF;
@@ -142,7 +142,7 @@ void VFP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
 
 // offset: 0x888 | func: 4 | export: 4
 void VFP_LevelControl_free(Object *obj, s32 a1) {
-    obj_free_object_type(obj, OBJTYPE_10);
+    obj_free_object_type(obj, OBJTYPE_LevelControl);
 }
 
 // offset: 0x8C8 | func: 5 | export: 5

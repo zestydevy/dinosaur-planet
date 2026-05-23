@@ -20,7 +20,7 @@ void dll_54_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_54_func_18(Object* arg0, Object* arg1, s16 arg2) {
-    obj_add_object_type(arg0, OBJTYPE_18);
+    obj_add_object_type(arg0, OBJTYPE_Pickup);
     arg1->srt.pitch = arg2;
 }
 
@@ -53,7 +53,7 @@ int dll_54_func_5DC(Object* obj, s32 arg1) {
 
 // offset: 0x664 | func: 3 | export: 3
 void dll_54_func_664(Object* arg0) {
-    obj_free_object_type(arg0, OBJTYPE_18);
+    obj_free_object_type(arg0, OBJTYPE_Pickup);
 }
 
 // offset: 0x6A0 | func: 4 | export: 4
@@ -133,7 +133,7 @@ s32 dll_54_func_838(Object* arg0, s32 arg1, DLL54Unk_Func798* arg2) {
     returnVal = 0;
     if (((arg0->unk78[arg0->unkD4].flags & 0xF) == 6) && (arg0->unkAF & 1) && (arg0->unkE0 == 0)) {
         arg2->unk0 = 0;
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
         returnVal = 1;
     }
     return returnVal;

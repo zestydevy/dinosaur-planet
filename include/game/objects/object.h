@@ -18,16 +18,127 @@
 
 struct Object;
 
-// This could be bit fields? so 0, 1, 2, 4, 8 (0 << 0, 0 << 1, 0 << 2 etc)
-enum ObjectGroup {
-	GROUP_NONE = 0,
-	GROUP_UNK1 = 1, // player?
-	GROUP_UNK16 = 16,
-	GROUP_UNK29 = 29,
-	GROUP_UNK41 = 41,
-	GROUP_UNK46 = 46,
-	GROUP_UNK48 = 48,
-	GROUP_UNK54 = 54
+// Enum for ObjDef/Object controlNo
+enum ObjectControlNumber {
+	OBJCONTROL_None = 0,
+	OBJCONTROL_Player = 1,
+	OBJCONTROL_Sidekick = 2,
+	OBJCONTROL_SphereTest = 3,
+	OBJCONTROL_SetupPoint = 4,
+	OBJCONTROL_Checkpoint = 5, // race checkpoint
+	OBJCONTROL_Collectable = 6,
+	OBJCONTROL_RgbaLight = 7,
+	OBJCONTROL_InfoPoint = 8,
+	OBJCONTROL_EffectBox = 9,
+	OBJCONTROL_Animator = 11,
+	OBJCONTROL_AnimObj = 16,
+	OBJCONTROL_Unk17 = 17, // no object is defined with this ctrl #
+	OBJCONTROL_StaticCamera = 18,
+	OBJCONTROL_WalkCamera = 19,
+	OBJCONTROL_TriggerPoint = 21,
+	OBJCONTROL_TriggerPlane = 22,
+	OBJCONTROL_TriggerCylinder = 23,
+	OBJCONTROL_TriggerArea = 24,
+	OBJCONTROL_TriggerTime = 25,
+	OBJCONTROL_TriggerButton = 26,
+	OBJCONTROL_TriggerSetup = 27,
+	OBJCONTROL_TriggerBits = 28,
+	OBJCONTROL_Baddie = 29, // does not contain all baddies
+	OBJCONTROL_Unk30 = 30, // props?
+	OBJCONTROL_SideSetup = 31,
+	OBJCONTROL_SideLoad = 32,
+	OBJCONTROL_DigHole = 34,
+	OBJCONTROL_Texscroll = 35,
+	OBJCONTROL_Cannon = 37,
+	OBJCONTROL_Projectile = 38,
+	OBJCONTROL_Warp = 39,
+	OBJCONTROL_SnowHorn = 40,
+	OBJCONTROL_InvHit = 41,
+	OBJCONTROL_Icicle = 42,
+	OBJCONTROL_BlueMushroom = 43,
+	OBJCONTROL_RedMushroom = 44, // aka killer mushroom
+	OBJCONTROL_PurpleMushroom = 45, // aka rocket mushroom
+	OBJCONTROL_Curve = 46,
+	OBJCONTROL_GroundQuake = 47,
+	OBJCONTROL_Weapon = 48,
+	OBJCONTROL_SnowBike = 49,
+	OBJCONTROL_SecretPoint = 50,
+	OBJCONTROL_Unk51 = 51, // very broad group... is there anything in common?
+	OBJCONTROL_CampFire = 52,
+	OBJCONTROL_Switch = 53,
+	OBJCONTROL_Unk54 = 54, // no object is defined with this ctrl #
+	OBJCONTROL_Riverflow = 55,
+	OBJCONTROL_RopeNode = 56,
+	OBJCONTROL_ObjCreator = 57,
+	OBJCONTROL_RobotPatrol = 58,
+	OBJCONTROL_Door = 59, // not all doors, but many
+	OBJCONTROL_LevelControl = 60,
+	OBJCONTROL_PushBlock = 61,
+	OBJCONTROL_TriggerCurve = 62,
+	OBJCONTROL_SidekickBall = 63,
+	OBJCONTROL_CFPerch = 64,
+	OBJCONTROL_CFPrisonUncle = 65,
+	OBJCONTROL_CFPrisonCage = 66,
+	OBJCONTROL_CFCloudBaby = 67,
+	OBJCONTROL_Area = 68,
+	OBJCONTROL_NWsfx = 69,
+	OBJCONTROL_DigTunnel = 70,
+	OBJCONTROL_LevelName = 71,
+	OBJCONTROL_Thorntail = 72,
+	OBJCONTROL_DIMLavaBallGenerator = 73,
+	OBJCONTROL_DIMSnowBallGenerator = 74,
+	OBJCONTROL_DIM2PathGenerator = 75,
+	OBJCONTROL_WaveAnimator = 76,
+	OBJCONTROL_AlphaAnimator = 77,
+	OBJCONTROL_GroundAnimator = 78,
+	OBJCONTROL_HitAnimator = 79,
+	OBJCONTROL_WallAnimator = 80,
+	OBJCONTROL_XYZAnimator = 81,
+	OBJCONTROL_VisAnimator = 82,
+	OBJCONTROL_ExplodeAnimator = 83,
+	OBJCONTROL_Debris = 84,
+	OBJCONTROL_ProjectileTarget = 85,
+	OBJCONTROL_PressurePad = 86,
+	OBJCONTROL_Door2 = 87, // more doors
+	OBJCONTROL_UseObj = 88,
+	OBJCONTROL_SeqObj = 89,
+	OBJCONTROL_SeqObj2 = 90, // more seqobjs
+	OBJCONTROL_IMMultiSeq = 91,
+	OBJCONTROL_NWMultiSeq = 92,
+	OBJCONTROL_Unk93 = 93, // test of knowledge stuff?
+	OBJCONTROL_CClogpush = 95,
+	OBJCONTROL_SfxPlayer = 96,
+	OBJCONTROL_TreeFruit = 97,
+	OBJCONTROL_FruitTree = 98,
+	OBJCONTROL_Fish = 99,
+	OBJCONTROL_EWTrobotpatrolB = 100,
+	OBJCONTROL_Crate2 = 101,
+	OBJCONTROL_LFXEmitter = 102,
+	OBJCONTROL_Unk103 = 103, // broad group
+	OBJCONTROL_DFbarrelcreator = 104,
+	OBJCONTROL_ExplodeSurface = 105, // stuff related to explode floors/walls
+	OBJCONTROL_DB_RockFallgen = 107,
+	OBJCONTROL_MagicPlant = 108,
+	OBJCONTROL_IMIcePillar = 109,
+	OBJCONTROL_EnergyCoil = 110,
+	OBJCONTROL_CCfirecrystal = 111,
+	OBJCONTROL_TrickyWarp = 112,
+	OBJCONTROL_TrickyGuard = 113,
+	OBJCONTROL_Unk114 = 114,
+	OBJCONTROL_KyteTarget = 115, // stuff that kyte can interact with, like with flame
+	OBJCONTROL_CurveFish = 116,
+	OBJCONTROL_Unk117 = 117,
+	OBJCONTROL_FXEmit = 118, // more than just FXEmit
+	OBJCONTROL_KTRexFloorSwitch = 119,
+	OBJCONTROL_KTRex = 120,
+	OBJCONTROL_CCgrub = 121,
+	OBJCONTROL_SPShop = 122,
+	OBJCONTROL_SPShopKeeper = 123,
+	OBJCONTROL_SPShopItem = 124,
+	OBJCONTROL_CannonClaw = 125,
+	OBJCONTROL_SkeetlaWall = 126,
+	OBJCONTROL_WaterFallSpray = 127,
+	OBJCONTROL_WGbouncyVine = 128
 };
 
 #define OBJPRIORITY_TRIGGER 40
@@ -64,13 +175,6 @@ enum ObjectStateFlags {
     // Control function will not be run
     OBJSTATE_CONTROL_DISABLED = 0x8000
 };
-
-// base objdata of objects in group 16?
-typedef struct {
-/*0000*/ struct Object *unk0;
-/*0004*/ u8 unk4[0x9C - 0x4];
-/*009C*/ u8 unk9C;
-} ObjectAnim_Data;
 
 // Stored in the flags of Object.srt
 enum ObjectFlags {
@@ -228,7 +332,7 @@ enum ObjShadowFlags {
     // Related to opacity?
     OBJ_SHADOW_FLAG_8000 = 0x8000,
     // Prevents shadow from fading back in if set. 
-    // Ignored if the object is in group 1 (the player's group).
+    // Ignored if the object is a player.
     OBJ_SHADOW_FLAG_PREVENT_FADE_IN = 0x10000,
     // Not used by shadow renderer.
     OBJ_SHADOW_FLAG_20000 = 0x20000,
@@ -351,7 +455,7 @@ typedef struct Object {
 /*0038*/    struct Object *next; // the object after this in a linked list
 /*003C*/    f32 loadDistance; // Note: If setup loadFlags & 0x10 is set, this value is garbage
 /*0040*/    f32 fadeDistance;
-/*0044*/    s16 group; // complete guess at a name, needs more investigation
+/*0044*/    s16 controlNo; // see ObjectControlNumber enum
 /*0046*/    s16 id; // called "romdefno" in default.dol
 /*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB
 /*004A*/    u8 unk4A[0x4c - 0x4a];

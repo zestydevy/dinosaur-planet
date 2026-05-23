@@ -115,8 +115,8 @@ void Tumbleweed_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup*
         }
     }
     
-    obj_add_object_type(self, OBJTYPE_4);
-    obj_add_object_type(self, OBJTYPE_51);
+    obj_add_object_type(self, OBJTYPE_Baddie);
+    obj_add_object_type(self, OBJTYPE_TrickyTarget);
     func_800267A4(self);
 }
 
@@ -547,8 +547,8 @@ void Tumbleweed_free(Object* self, s32 arg1) {
         objData->goldenNugget = NULL;
     }
 
-    obj_free_object_type(self, OBJTYPE_4);
-    obj_free_object_type(self, OBJTYPE_51);
+    obj_free_object_type(self, OBJTYPE_Baddie);
+    obj_free_object_type(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x16F8 | func: 8 | export: 5
@@ -763,7 +763,7 @@ int Tumbleweed_handle_carry_behaviour(Object* self) {
 
         //Stop being carried when A button pressed (@bug: desync can occur with player FSA)
         if (joy_get_pressed(0) & A_BUTTON) {
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
             objData->beingCarried = FALSE;
         }
 
@@ -795,7 +795,7 @@ int Tumbleweed_did_player_lift_twig(Object* self) {
     returnVal = FALSE;
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && self->unkE0 == 0) {
         objData->carryMessageArgLo = 0;
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
         objData->twigSqueakTimer = rand_next(120, 240);
         returnVal = TRUE;
     }

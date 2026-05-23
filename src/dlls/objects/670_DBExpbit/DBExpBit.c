@@ -47,7 +47,7 @@ void dll_670_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0x12C | func: 4 | export: 4
 void dll_670_free(Object* arg0, s32 arg1) {
-    obj_free_object_type(arg0, OBJTYPE_41);
+    obj_free_object_type(arg0, OBJTYPE_DBExpbit);
 }
 
 // offset: 0x16C | func: 5 | export: 5

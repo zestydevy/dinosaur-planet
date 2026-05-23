@@ -211,7 +211,7 @@ void dll_232_free(Object* self, s32 a1) {
     Object* temp_a0;
 
     baddie = self->data;
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
     temp_a0 = self->linkedObject;
     if (temp_a0 != NULL) {
         obj_destroy_object(temp_a0);

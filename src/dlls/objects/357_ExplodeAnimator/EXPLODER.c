@@ -24,7 +24,7 @@ void ExplodeAnimator_setup(Object* self, ExplodeAnimator_Setup* objSetup, s32 ar
         objData->flags = ExplodeAnimator_FLAG_Waiting_to_Explode;
     }
 
-    obj_add_object_type(self, OBJTYPE_28);
+    obj_add_object_type(self, OBJTYPE_ExplodeAnimator);
 }
 
 // offset: 0x94 | func: 1 | export: 1
@@ -53,7 +53,7 @@ void ExplodeAnimator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0x164 | func: 4 | export: 4
 void ExplodeAnimator_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_28);
+    obj_free_object_type(self, OBJTYPE_ExplodeAnimator);
 }
 
 // offset: 0x1A4 | func: 5 | export: 5

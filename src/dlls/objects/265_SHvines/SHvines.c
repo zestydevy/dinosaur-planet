@@ -2,7 +2,7 @@
 #include "game/objects/object.h"
 #include "macros.h"
 #include "sys/objtype.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/sidekick.h"
 
 typedef struct {
@@ -30,7 +30,7 @@ void SHvines_setup(Object* self, SHvines_Setup* objSetup, s32 arg2) {
     Model* model;
 
     objData = self->data;
-    obj_add_object_type(self, OBJTYPE_51);
+    obj_add_object_type(self, OBJTYPE_TrickyTarget);
 
     if (main_get_bits(objSetup->gamebitBurnt)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
@@ -107,7 +107,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         if (self->opacity < OBJECT_OPACITY_MAX) {
             srt.scale = self->visRadius * 0.03f;
             for (i = 0; i < gUpdateRate; i++) {
-                ((DLL_53*)gTempDLLInsts[1])->vtbl->func12(self, rand_next(0, objData->vertexCount - 1), transl);
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->get_vtx_world_pos(self, rand_next(0, objData->vertexCount - 1), transl);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_672, &srt, 0x200001, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_673, &srt, 0x200001, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_674, &srt, 0x200001, -1, NULL);
@@ -118,7 +118,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0x470 | func: 4 | export: 4
 void SHvines_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_51);
+    obj_free_object_type(self, OBJTYPE_TrickyTarget);
     remove_temp_dll(DLL_ID_53);
 }
 

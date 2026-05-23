@@ -13,7 +13,7 @@ void dll_498_dtor(void *dll) { }
 void dll_498_setup(Object* self, ObjSetup* setup, s32 arg2) {
     self->animCallback = dll_498_func_108;
     self->stateFlags |= (OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
-    obj_add_object_type(self, OBJTYPE_62);
+    obj_add_object_type(self, OBJTYPE_NWanimice);
 }
 
 // offset: 0x74 | func: 1 | export: 1
@@ -27,7 +27,7 @@ void dll_498_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0xA4 | func: 4 | export: 4
 void dll_498_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_62);
+    obj_free_object_type(self, OBJTYPE_NWanimice);
 }
 
 // offset: 0xE4 | func: 5 | export: 5

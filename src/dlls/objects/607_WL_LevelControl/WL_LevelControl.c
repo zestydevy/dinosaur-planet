@@ -41,17 +41,17 @@ void WL_LevelControl_dtor(void *dll) { }
 void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     WL_LevelControl_Data* objData;
 
-    obj_add_object_type(self, OBJTYPE_10);
+    obj_add_object_type(self, OBJTYPE_LevelControl);
     objData = self->data;
 
     objData->galleonIsLoaded = FALSE;
     objData->timer = 30;
 
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
         break;
     case WM_Setup1_Krystal_Meeting_Randorn:
-        gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, SC_Act1_Meeting_Rubble_Autoswap);
+        gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, SC_Act1_Meeting_Rubble_Autoswap);
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup0_Main_SwapStone_Area, 1);
         break;
     case WM_Setup2_Spirit1_Krystal_DF:
@@ -86,7 +86,7 @@ void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
 // offset: 0x25C | func: 1 | export: 1
 void WL_LevelControl_control(Object* self) {
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case 0:
         break;
     case WM_Setup1_Krystal_Meeting_Randorn:
@@ -125,7 +125,7 @@ void WL_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0x3F4 | func: 4 | export: 4
 void WL_LevelControl_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_10);
+    obj_free_object_type(self, OBJTYPE_LevelControl);
     if (self){} // @fake
 }
 
@@ -152,7 +152,7 @@ static void WL_LevelControl_load_galleon_if_needed(Object* self, WL_LevelControl
     }
 
     //Try to find the Galleon
-    objs = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &count);
+    objs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
     for (galleonNotFound = TRUE, i = 0; i < count; i++) {
         if ((objs[i]->id == OBJ_WL_Galleon) || (objs[i]->id == OBJ_SB_Galleon)) {
             galleonNotFound = FALSE;
@@ -193,7 +193,7 @@ static void WL_LevelControl_unload_galleon_if_needed(Object* self, WL_LevelContr
 
     //Search for the Galleon once (@bug?: does nothing with this)
     if (((objData->flags & WL_LevelControl_FLAG_Galleon_Leaving_Search) == FALSE) && krystalIsLeaving) {
-        objs = obj_get_all_of_type(OBJTYPE_MOBILE_MAP, &count);
+        objs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
         for (i = 0; i < count; i++) {
             if (objs[i]->id == OBJ_WL_Galleon) {
                 i = count; //index break
@@ -229,13 +229,13 @@ static void WL_LevelControl_setup1_tick(Object* self) {
     //Handle the Galleon
     switch (objData->galleonIsLoaded) {
         case TRUE:
-            if (objData->setup == WM_Setup1_Krystal_Meeting_Randorn) {
+            if (objData->act == WM_Setup1_Krystal_Meeting_Randorn) {
                 WL_LevelControl_unload_galleon_if_needed(self, objData);
             }
             break;
         case FALSE:
-            objData->setup = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
-            switch (objData->setup) {
+            objData->act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
+            switch (objData->act) {
             case WM_Setup1_Krystal_Meeting_Randorn:
                 WL_LevelControl_load_galleon_if_needed(self, objData);
                 break;
@@ -448,7 +448,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
         main_set_bits(BIT_CFExplodeTunnel_Trigger_31B6F, 1);
         main_set_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
 
-        guardClaw = obj_get_nearest_type_to(OBJTYPE_4, self, &distance);
+        guardClaw = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
         if (guardClaw != NULL) {
             //@bug: may potentially delete a Skeetla instead, since they're also objType4
             obj_destroy_object(guardClaw);
@@ -459,7 +459,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
 
     //Search through the objects, and delete the hall's SharpClaw and GuardClaw
     if (main_get_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws)) {
-        objects = obj_get_all_of_type(OBJTYPE_4, &count);
+        objects = obj_get_all_of_type(OBJTYPE_Baddie, &count);
         for (i = 0; i < count; i++) {
             someObjsetup = objects[i]->setup;
             if ((someObjsetup->uID == 0x296E) ||    //SharpClaw

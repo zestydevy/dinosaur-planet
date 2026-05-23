@@ -34,12 +34,12 @@ void Spirit_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
     temp_v0 = self->unkDC;
     
     if ((temp_v0 == 0) && (objSetup->sequenceIdBitfield != 1)) {
-        gDLL_3_Animation->vtbl->func6(objData, objSetup);
+        gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     } else if (temp_v0 && (temp_v0 != objSetup->sequenceIdBitfield + 1)) {
-        gDLL_3_Animation->vtbl->func8(objData);
+        gDLL_3_Animation->vtbl->free_curve(objData);
         if (objSetup->sequenceIdBitfield != -1) {
-            gDLL_3_Animation->vtbl->func6(objData, objSetup);
+            gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
         }
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     }
@@ -101,7 +101,7 @@ void Spirit_control(Object* self) {
             if (searchValue == obj->seqSlot) {
                 matchObject = obj;
             }
-            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->group == 0x10)){
+            if ((obj->seqSlot == SEQSLOT_ANIMOBJ) && (obj->controlNo == OBJCONTROL_AnimObj)){
                 objData2 = (AnimObj_Data *)obj->data;
                 if (searchValue == objData2->seqSlot) {
                     otherMatchCount++;
@@ -210,7 +210,7 @@ void Spirit_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
 void Spirit_free(Object* self, s32 arg1) {
     s16 id;
 
-    gDLL_3_Animation->vtbl->func8(self->data);
+    gDLL_3_Animation->vtbl->free_curve(self->data);
     
     id = self->id;
     if (id == OBJ_DBSH_SpiritPriz || 

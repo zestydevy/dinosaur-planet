@@ -15,7 +15,7 @@ class Obj(TypedDict):
     tabidx: int
     dll_num: int
     dll_id: int
-    group: int
+    control_no: int
     name: str
     folder: str
 
@@ -42,11 +42,11 @@ def emit_markdown(objects: list[Obj]):
 
     objects.sort(key=lambda o: o["id"])
     with open(dir.joinpath("objects.md"), "w", encoding="utf-8") as objects_md:
-        objects_md.write("|ID|Tab Idx|DLL #|Group|Name|\n")
+        objects_md.write("|ID|Tab Idx|DLL #|Ctrl #|Name|\n")
         objects_md.write("|--|-------|-----|-----|----|\n")
         for obj in objects:
             objects_md.write("|{}|{}|{}|{}|{}|\n".format(
-                obj["id"], obj["tabidx"], obj["dll_num"], obj["group"], obj["name"]))
+                obj["id"], obj["tabidx"], obj["dll_num"], obj["control_no"], obj["name"]))
     
     objects.sort(key=lambda o: o["dll_num"])
     with open(dir.joinpath("objects_by_dll.md"), "w", encoding="utf-8") as objects_md:
@@ -54,37 +54,37 @@ def emit_markdown(objects: list[Obj]):
             objs = list(group)
             objs.sort(key=lambda o: o["id"])
             objects_md.write("### DLL {}\n".format(key))
-            objects_md.write("|ID|Tab Idx|DLL #|Group|Name|\n")
+            objects_md.write("|ID|Tab Idx|DLL #|Ctrl #|Name|\n")
             objects_md.write("|--|-------|-----|-----|----|\n")
             for obj in objs:
                 objects_md.write("|{}|{}|{}|{}|{}|\n".format(
-                    obj["id"], obj["tabidx"], obj["dll_num"], obj["group"], obj["name"]))
+                    obj["id"], obj["tabidx"], obj["dll_num"], obj["control_no"], obj["name"]))
             objects_md.write("\n")
     
-    objects.sort(key=lambda o: o["group"])
-    with open(dir.joinpath("objects_by_group.md"), "w", encoding="utf-8") as objects_md:
-        for key, group in itertools.groupby(objects, lambda o: o["group"]):
+    objects.sort(key=lambda o: o["control_no"])
+    with open(dir.joinpath("objects_by_control_no.md"), "w", encoding="utf-8") as objects_md:
+        for key, group in itertools.groupby(objects, lambda o: o["control_no"]):
             objs = list(group)
             objs.sort(key=lambda o: o["id"])
-            objects_md.write("### Group {}\n".format(key))
-            objects_md.write("|ID|Tab Idx|DLL #|Group|Name|\n")
+            objects_md.write("### Control No {}\n".format(key))
+            objects_md.write("|ID|Tab Idx|DLL #|Ctrl #|Name|\n")
             objects_md.write("|--|-------|-----|-----|----|\n")
             for obj in objs:
                 objects_md.write("|{}|{}|{}|{}|{}|\n".format(
-                    obj["id"], obj["tabidx"], obj["dll_num"], obj["group"], obj["name"]))
+                    obj["id"], obj["tabidx"], obj["dll_num"], obj["control_no"], obj["name"]))
             objects_md.write("\n")
 
 def print_objects(objects: Iterable[Obj], dll_ids: bool):
     print("{:>5} {:>6} {:>6} {:>6} {}".format(
-            "id", "tabidx", "dll", "group", "folder", "name"))
+            "id", "tabidx", "dll", "ctrl", "folder", "name"))
     for obj in objects:
         if dll_ids:
             id_str = "0x{:X}".format(obj["dll_id"])
             print("{:>5} {:>6} {:>6} {:>6} {:>6} {}".format(
-                obj["id"], obj["tabidx"], id_str, obj["group"], obj["folder"], obj["name"]))
+                obj["id"], obj["tabidx"], id_str, obj["control_no"], obj["folder"], obj["name"]))
         else:
             print("{:>5} {:>6} {:>6} {:>6} {:>6} {}".format(
-                obj["id"], obj["tabidx"], obj["dll_num"], obj["group"], obj["folder"], obj["name"]))
+                obj["id"], obj["tabidx"], obj["dll_num"], obj["control_no"], obj["folder"], obj["name"]))
 
 def list_objects(objects: list[Obj], sort_key: str, dll_ids: bool):
     objects.sort(key=lambda o: o[sort_key])
@@ -136,7 +136,7 @@ def read_objects(objects_bin: BufferedReader,
 
         objects_bin.seek(offset + 0x58, os.SEEK_SET)
         dll_id = struct.unpack_from(">H", objects_bin.read(2))[0]
-        obj_group = struct.unpack_from(">h", objects_bin.read(2))[0]
+        obj_control_no = struct.unpack_from(">h", objects_bin.read(2))[0]
         objects_bin.seek(offset + 0x6f, os.SEEK_SET)
         folder = struct.unpack_from(">B", objects_bin.read(1))[0]
 
@@ -156,7 +156,7 @@ def read_objects(objects_bin: BufferedReader,
             "tabidx": tabidx,
             "dll_num": dll_num,
             "dll_id": dll_id,
-            "group": obj_group,
+            "control_no": obj_control_no,
             "name": name,
             "folder": folder
         })
@@ -168,11 +168,11 @@ def read_objects(objects_bin: BufferedReader,
 def main():
     parser = argparse.ArgumentParser(description="Lists Dinosaur Planet object definitions.")
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
-    parser.add_argument("--by", type=str, choices=["dll", "group", "tabidx", "id", "folder"], help="Group/sort by.")
+    parser.add_argument("--by", type=str, choices=["dll", "ctrl", "tabidx", "id", "folder"], help="Group/sort by.")
     parser.add_argument("--id", type=str, help="Filter by object ID.")
     parser.add_argument("--tabidx", type=str, help="Filter by object tab index.")
     parser.add_argument("--dll", type=str, help="Filter by DLL.")
-    parser.add_argument("--group", type=str, help="Filter by object group.")
+    parser.add_argument("--ctrl", type=str, help="Filter by object control no.")
     parser.add_argument("--name", type=str, help="Filter by object name.")
     parser.add_argument("--folder", type=str, help="Filter by folder.")
     parser.add_argument("--dll-id", action="store_true", default=False, dest="dll_id", 
@@ -210,9 +210,9 @@ def main():
             objects = [o for o in objects if o["dll_id"] == dll]
         else:
             objects = [o for o in objects if o["dll_num"] == dll]
-    if args.group != None:
-        group = int(args.group, base=0)
-        objects = [o for o in objects if o["group"] == group]
+    if args.ctrl != None:
+        ctrl = int(args.ctrl, base=0)
+        objects = [o for o in objects if o["control_no"] == ctrl]
     if args.folder != None:
         folder = int(args.folder, base=0)
         objects = [o for o in objects if o["folder"] == folder]
@@ -222,8 +222,8 @@ def main():
 
     if args.by == "dll":
         list_grouped(objects, group_key="dll_num", dll_ids=args.dll_id)
-    elif args.by == "group":
-        list_grouped(objects, group_key="group", dll_ids=args.dll_id)
+    elif args.by == "ctrl":
+        list_grouped(objects, group_key="control_no", dll_ids=args.dll_id)
     elif args.by == "folder":
         list_grouped(objects, group_key="folder", dll_ids=args.dll_id)
     elif args.by == "tabidx":

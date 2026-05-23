@@ -270,43 +270,43 @@ void SC_levelcontrol_func_8B4(Object *self) {
     Object *player;
 
     objdata = self->data;
-    mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(MAP_SWAPSTONE_CIRCLE);
+    mapSetup = gDLL_29_Gplay->vtbl->get_act(MAP_SWAPSTONE_CIRCLE);
     player = get_player();
 
     if (mapSetup < 3) {
         if (main_get_bits(BIT_CC_Rescued_Kyte)) {
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 3);
+            gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 3);
         }
     } else switch (mapSetup) {
     case 3:
         if (((DLL_210_Player*)player->dll)->vtbl->func38(player, 1)) {
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 8);
+            gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 8);
         }
         break;
     case 8:
         if (main_get_bits(BIT_Spirit_2_Release_Sabre)) {
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 9);
+            gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 9);
         }
         break;
     case 9:
         if (main_get_bits(BIT_SpellStone_CRF_Activated)) {
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 5);
+            gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 5);
         }
         break;
     case 5:
         if (main_get_bits(BIT_317)) {
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 6);
+            gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 6);
         }
         break;
     case 6:
         if (((DLL_210_Player*)player->dll)->vtbl->func38(player, 0x80)) {
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 7);
+            gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 7);
         }
         break;
     }
 
     // check map setup of previous map
-    mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+    mapSetup = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     SC_levelcontrol_func_BBC(self, 1);
     switch (mapSetup) {
     case 1:

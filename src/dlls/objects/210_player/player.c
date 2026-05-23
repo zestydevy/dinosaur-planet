@@ -37,6 +37,7 @@
 #include "dlls/objects/common/vehicle.h"
 #include "dlls/objects/common/foodbag.h"
 #include "dlls/objects/common/group48.h"
+#include "dlls/objects/common/dinocaller.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/277_iceblast.h"
 #include "dlls/objects/338_LFXEmitter.h"
@@ -483,7 +484,7 @@ void dll_210_setup(Object* player, u32 arg1) {
     Player_Data* data;
 
     data = player->data;
-    obj_add_object_type(player, OBJTYPE_PLAYER);
+    obj_add_object_type(player, OBJTYPE_Player);
     obj_add_object_type(player, OBJTYPE_39);
     obj_set_update_priority(player, OBJPRIORITY_PLAYER);
     obj_init_mesg_queue(player, 20);
@@ -831,7 +832,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
                 if (arg1->stats->health <= 0) {
                     gDLL_18_objfsa->vtbl->set_anim_state(player, &arg1->unk0, PLAYER_ASTATE_Dead);
                 } else {
-                    gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
+                    gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, map_get_layer());
                     gDLL_29_Gplay->vtbl->start_loaded_game();
                 }
             }
@@ -925,7 +926,7 @@ void dll_210_func_1CA8(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             return;
         }
         sp28 = 500.0f;
-        fsa->target = obj_get_nearest_type_to(OBJTYPE_4, player, &sp28);
+        fsa->target = obj_get_nearest_type_to(OBJTYPE_Baddie, player, &sp28);
         return;
     }
     if (temp_v0 != NULL) {
@@ -1591,7 +1592,7 @@ void dll_210_free(Object* player, UNK_TYPE_32 arg1) {
         }
     }
 
-    obj_free_object_type(player, OBJTYPE_PLAYER);
+    obj_free_object_type(player, OBJTYPE_Player);
     obj_free_object_type(player, OBJTYPE_39);
 }
 
@@ -2113,7 +2114,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         for (var_s1 = 0; var_s1 < arg2->messageCount; var_s1++) {
             switch (arg2->messages[var_s1]) {
             case 3:
-                objects = obj_get_all_of_type(OBJTYPE_11, &spC0);
+                objects = obj_get_all_of_type(OBJTYPE_Vehicle, &spC0);
                 for (var_s1 = 0; var_s1 < spC0; var_s1++) {
                     // @fake
                     if (var_s1) {}
@@ -2251,7 +2252,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 16:
                 sp60 = 400.0f;
-                tempObj = obj_get_nearest_type_to(OBJTYPE_MOBILE_MAP, arg0, &sp60);
+                tempObj = obj_get_nearest_type_to(OBJTYPE_MobileMap, arg0, &sp60);
                 if (tempObj != NULL) {
                     func_8005B5B8(arg0, tempObj, 1);
                 }
@@ -2343,7 +2344,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
             } else {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             }
-            obj_send_mesg_many(0, 3U, player, 0xE0000U, player);
+            obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000U, player);
         }
     }
     player->objhitInfo->unk5F = 0;
@@ -2413,7 +2414,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             if (player->animProgressLayered > 0.59f) {
                 arg1->unk8A8 = 2;
             }
-            if ((temp_s2 != NULL) && (player->animProgressLayered > 0.7f) && (temp_s2->group == GROUP_UNK48)) {
+            if ((temp_s2 != NULL) && (player->animProgressLayered > 0.7f) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func7(temp_s2, 0.15f);
             }
             if (temp_s3 != 0) {
@@ -2422,7 +2423,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             }
             break;
         case 13:
-            if ((temp_s2 != NULL) && (temp_s2->group == GROUP_UNK48)) {
+            if ((temp_s2 != NULL) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func7(temp_s2, 1.0f);
             }
             arg1->unk8A8 = 2;
@@ -2440,7 +2441,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             if (player->animProgressLayered < 0.24f) {
                 arg1->unk8A8 = 0;
             }
-            if ((temp_s2 != NULL) && (player->animProgressLayered < 0.7f) && (temp_s2->group == GROUP_UNK48)) {
+            if ((temp_s2 != NULL) && (player->animProgressLayered < 0.7f) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func8(temp_s2);
             }
             if (temp_s3 != 0) {
@@ -2450,7 +2451,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             }
             break;
         case 14:
-            if (temp_s2->group == GROUP_UNK48) {
+            if (temp_s2->controlNo == OBJCONTROL_Weapon) {
                 ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func8(temp_s2);
             }
             arg1->unk87C = -1;
@@ -3267,7 +3268,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                 case 10:
                     if (spCC < 14.0f) {
                         sp6C = 50.0f;
-                        sp88 = obj_get_nearest_type_to(OBJTYPE_37, player, &sp6C);
+                        sp88 = obj_get_nearest_type_to(OBJTYPE_WallAnimator, player, &sp6C);
                         var_s0_2 = TRUE;
                         if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32((s32)sp88) == 0)) {
                             var_s0_2 = FALSE;
@@ -3290,7 +3291,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
     }
     if (fsa->unk310 & 0x8000) {
         if (arg5 & 0x800) {
-            objects = obj_get_all_of_type(OBJTYPE_11, &sp80);
+            objects = obj_get_all_of_type(OBJTYPE_Vehicle, &sp80);
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
                 if (((DLL_IVehicle*)sp88->dll)->vtbl->func7(sp88, player) != 0) {
@@ -3300,7 +3301,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
             }
         }
         if ((arg5 & 0x1000) && (main_get_bits(BIT_880) != 0)) {
-            objects = obj_get_all_of_type(OBJTYPE_25, &sp80);
+            objects = obj_get_all_of_type(OBJTYPE_RopeNode, &sp80);
             arg1->unk6B0.unk34 = NULL;
             arg1->unk6B0.unk3C = 200.0f;
             for (i = 0; i < sp80; i++) {
@@ -3820,7 +3821,7 @@ static void dll_210_func_9F1C(Object* player, s32 arg1) {
     func_800267A4(player);
     menu_set(9);
     func_80010038(1);
-    obj_send_mesg_many(0, 3, player, 0xE0000, player);
+    obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000, player);
 }
 
 // offset: 0xA018 | func: 53
@@ -4374,8 +4375,8 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s8 sp8E;
     s16 sp8C;
     Object* sp88;
-    Object* temp_v0_5;
-    f32 sp80 = 200.0f;
+    Object* dinoCaller;
+    f32 callerMaxRange = 200.0f;
     s32 camDLLID;
     s32 sp38[17] = {
         0x0166, 0x0167, 0x0256, 0x036e, 0x037f, 0x0380, 0x0381, 0x0543, 
@@ -4466,14 +4467,14 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     if (gDLL_1_cmdmenu->vtbl->was_any_item_used()) {
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Horn_of_Truth)) {
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
             if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
             } else {
-                temp_v0_5 = obj_get_nearest_type_to(OBJTYPE_59, player, &sp80);
-                if (temp_v0_5 != NULL) {
-                    ((DLL_Unknown*)temp_v0_5->dll)->vtbl->func[7].withOneArg((s32)temp_v0_5);
+                dinoCaller = obj_get_nearest_type_to(OBJTYPE_DinoCallSpot, player, &callerMaxRange);
+                if (dinoCaller != NULL) {
+                    ((DLL_IDinoCaller*)dinoCaller->dll)->vtbl->call(dinoCaller);
                 }
                 gDLL_3_Animation->vtbl->start_obj_sequence(7, player, -1);
             }
@@ -4508,7 +4509,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (gDLL_1_cmdmenu->vtbl->get_subpage_gamebit() == BIT_Foodbag_Give) {
         sp8C = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(sp38, 0x10);
         if (sp8C != -1 && (player->unkC4 == NULL)) {
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
             player->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)v1objdata->foodbag->dll)->vtbl->func[16].withOneArgS32(sp8C);
             sp88 = gDLL_2_Camera->vtbl->get_highlighted_object();
@@ -6580,7 +6581,7 @@ static void dll_210_func_128F4(f32* velocityX, f32* velocityZ, f32 deltaT, Objec
 
     objdata = player->data;
     pushX = pushZ = 0.0f;
-    objects = obj_get_all_of_type(OBJTYPE_22, &objCount);
+    objects = obj_get_all_of_type(OBJTYPE_Riverflow, &objCount);
     
     riverInfluences = 0;
     for (i = 0; i < objCount; i++) {
@@ -8382,7 +8383,7 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
     } else {
-        if (sp40->group == GROUP_UNK48) {
+        if (sp40->controlNo == OBJCONTROL_Weapon) {
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func11(sp40);
         }
         sp47 = 1;
@@ -8412,7 +8413,7 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (player->objhitInfo != NULL) {
             player->objhitInfo->unk61 = 0;
         }
-        if (sp40->group == GROUP_UNK48) {
+        if (sp40->controlNo == OBJCONTROL_Weapon) {
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func12(sp40, 1);
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func13(sp40, sp3C->unk3B4[sp3C->unk8A1].unk30);
             ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func18(sp40, sp3C->unk3B4[sp3C->unk8A1].unk1C, sp3C->unk3B4[sp3C->unk8A1].unk20);
@@ -8450,7 +8451,7 @@ static void dll_210_func_18DB0(Object* player, ObjFSA_Data* fsa) {
     Object* temp_a2;
 
     temp_a2 = player->linkedObject;
-    if (temp_a2->group == GROUP_UNK48) {
+    if (temp_a2->controlNo == OBJCONTROL_Weapon) {
         ((DLL_Unknown *)temp_a2->dll)->vtbl->func[12].withTwoArgsCustom(temp_a2, 0);
     }
 }

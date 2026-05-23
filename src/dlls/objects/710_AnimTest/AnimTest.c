@@ -16,7 +16,7 @@ void AnimTest_setup(Object *self, ObjSetup *setup, s32 arg2) { }
 void AnimTest_control(Object *self) {
     gDLL_6_AMSFX->vtbl->water_falls_control();
     if (!get_sidekick()) {
-        obj_send_mesg_many(0x1F, 0, self, 0x11, 0);
+        obj_send_mesg_many(OBJCONTROL_SideSetup, 0, self, 0x11, 0);
     }
 }
 

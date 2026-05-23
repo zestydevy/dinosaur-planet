@@ -10,7 +10,7 @@ typedef enum {
     // Don't apply a filter.
     OBJMSG_SEND_ALL = 2,
     // Only valid for obj_send_mesg_many_nearby.
-    // Whether to filter by ID instead of by group.
+    // Whether to filter by ID instead of by controlNo.
     OBJMSG_SEND_FILTER_ID = 4
 } ObjMsgSendFilter;
 

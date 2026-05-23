@@ -455,7 +455,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             arg8->globalPosition.f[1] = arg8->srt.transl.f[1];
             arg8->globalPosition.f[2] = arg8->srt.transl.f[2];
         }
-        if (arg8->def->numAttachPoints >= 2 && arg8->group == GROUP_UNK48) {
+        if (arg8->def->numAttachPoints >= 2 && arg8->controlNo == OBJCONTROL_Weapon) {
             if (arg8->parent != NULL) {
                 camera_load_parent_projection(arg0);
             }
@@ -478,7 +478,7 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
     Vec3f sp70;
     ObjGroup48_Data* objData;
 
-    if (obj->def->numAttachPoints < 2 || obj->group != GROUP_UNK48) {
+    if (obj->def->numAttachPoints < 2 || obj->controlNo != OBJCONTROL_Weapon) {
         return;
     }
 

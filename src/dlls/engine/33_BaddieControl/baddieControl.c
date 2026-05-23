@@ -547,7 +547,7 @@ Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
         }
         
         sp34 = 750.0f;
-        temp_v0 = obj_get_nearest_type_to(OBJTYPE_5, arg0, &sp34);
+        temp_v0 = obj_get_nearest_type_to(OBJTYPE_Collectable, arg0, &sp34);
         arg0->globalPosition.x = sp40;
         arg0->globalPosition.y = sp3C;
         arg0->globalPosition.z = sp38;
@@ -792,7 +792,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     sp38 = arg6 & 1;
     sp3C = (s32) arg6;
     if ((sp38 == 0) && !(arg6 & 0x20)) {
-        obj_add_object_type(obj, OBJTYPE_4);
+        obj_add_object_type(obj, OBJTYPE_Baddie);
         obj_init_mesg_queue(obj, 4);
     }
     gDLL_18_objfsa->vtbl->func0(obj, &baddie->fsa, arg3, arg4);

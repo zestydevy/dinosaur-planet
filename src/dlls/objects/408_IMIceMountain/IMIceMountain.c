@@ -34,7 +34,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->animCallback = IMIceMountain_anim_callback;
     gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup1, 0);
 
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case IM_Act1_Rescuing_Tricky:
         player = get_player();
         if (player && (vec3_distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
@@ -84,7 +84,7 @@ void IMIceMountain_control(Object *self) {
 
     vi_set_update_rate_target(1); // 60 FPS
 
-    switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
+    switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case IM_Act1_Rescuing_Tricky:
         IMIceMountain_do_act1(self);
         break;
@@ -195,7 +195,7 @@ void IMIceMountain_do_act1(Object *self) {
         break;
     case STATE_Race_Won:
         if (objdata->flags & IMICEMOUNTAIN_FLAG_1) {
-            gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 2);
+            gDLL_29_Gplay->vtbl->set_act(self->mapID, 2);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup3_Cave_Jetbikes_SharpClaw, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup4_Cave_Jetbikes_SharpClaw, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup6_Track_Icicles, 0);

@@ -30,13 +30,13 @@ void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
     objdata->unk28 = -1;
 
     if (self->unkDC == 0 && setup->sequenceIdBitfield != 1){
-        gDLL_3_Animation->vtbl->func6(objdata, setup);
+        gDLL_3_Animation->vtbl->init_curve(objdata, setup);
         self->unkDC = setup->sequenceIdBitfield + 1;
     } else {
         if (self->unkDC != 0 && (setup->sequenceIdBitfield + 1 != self->unkDC)){
-            gDLL_3_Animation->vtbl->func8(objdata);
+            gDLL_3_Animation->vtbl->free_curve(objdata);
             if (setup->sequenceIdBitfield != -1){
-                gDLL_3_Animation->vtbl->func6(objdata, setup);
+                gDLL_3_Animation->vtbl->init_curve(objdata, setup);
             }
             self->unkDC = setup->sequenceIdBitfield + 1;
         }
@@ -81,7 +81,7 @@ void animobj_control(Object *self) {
             matchObject = object;
         }
 
-        if (object->seqSlot == SEQSLOT_ANIMOBJ && object->group == GROUP_UNK16) {
+        if (object->seqSlot == SEQSLOT_ANIMOBJ && object->controlNo == OBJCONTROL_AnimObj) {
             objdata = object->data;    
             if (new_var == objdata->seqSlot) {
                 matches++;
@@ -112,7 +112,7 @@ void animobj_free(Object *self, s32 arg1) {
     s32 i;
 
     objdata = self->data;
-    gDLL_3_Animation->vtbl->func8(objdata);
+    gDLL_3_Animation->vtbl->free_curve(objdata);
     for (i = 0; i < 4; i++){
         if (objdata->sfxHandles[i]){
             gDLL_6_AMSFX->vtbl->stop(objdata->sfxHandles[i]);

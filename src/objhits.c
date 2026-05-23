@@ -1227,7 +1227,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
         dz = z;
     }
 
-    if ((obj->group == GROUP_UNK1) && !(otherObjhitInfo->unk58 & 0x400)) {
+    if ((obj->controlNo == OBJCONTROL_Player) && !(otherObjhitInfo->unk58 & 0x400)) {
         obj->srt.transl.x -= ox;
         obj->srt.transl.y -= oy;
         obj->srt.transl.z -= oz;
@@ -1241,7 +1241,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
         return;
     }
     
-    if ((otherObj->group == GROUP_UNK1) && !((objhitInfo->unk58) & 0x400)) {
+    if ((otherObj->controlNo == OBJCONTROL_Player) && !((objhitInfo->unk58) & 0x400)) {
         otherObj->srt.transl.x += dx;
         otherObj->srt.transl.y += dy;
         otherObj->srt.transl.z += dz;
@@ -1375,7 +1375,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 up
     sp2F = 0;
     var_v1 = sp3C->unk40;
     if ((var_v1 != 0) && (sp3C->unk61 == 0)) {
-        if (obj->group == GROUP_UNK1) {
+        if (obj->controlNo == OBJCONTROL_Player) {
             sp28 = obj->modelInsts[obj->modelInstIdx];
             sp30 = ((s32) sp28->unk34 >> 2) & 1;
             if (sp3C->unk58 & 0x2000) {
@@ -1408,7 +1408,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 up
         }
         temp_v0_4 = sp2F;
         sp2F = 0;
-        if ((((u32)sp2F < temp_v0_4) == 0) && (obj->group == GROUP_UNK1)) {
+        if ((((u32)sp2F < temp_v0_4) == 0) && (obj->controlNo == OBJCONTROL_Player)) {
             func_8002949C(obj, obj2, obj3, sp3C, sp44, updateRate);
         }
     }
@@ -1418,7 +1418,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 up
 
     var_v1 = sp38->unk40;
     if ((var_v1 != 0) && (sp38->unk61 == 0)) {
-        if (obj2->group == GROUP_UNK1) {
+        if (obj2->controlNo == OBJCONTROL_Player) {
             sp28 = obj2->modelInsts[obj2->modelInstIdx];
             sp30 = (sp28->unk34 >> 2) & 1;
             if (sp38->unk58 & 0x2000) {
@@ -1449,7 +1449,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 up
                 sp2F = func_80029C04(obj4, obj, obj2, 1, 0, sp38->unk40 & 0xF, sp38->unk44 & 0xF);
             }
         }
-        if ((sp2F == 0) && (obj2->group == GROUP_UNK1)) {
+        if ((sp2F == 0) && (obj2->controlNo == OBJCONTROL_Player)) {
             func_8002949C(obj2, obj, obj4, sp38, sp40, updateRate);
         }
     }

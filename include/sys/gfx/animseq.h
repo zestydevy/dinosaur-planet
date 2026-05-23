@@ -39,6 +39,13 @@ enum Field7AFlags {
     ANIM7AFLAG_UNK400 = 0x400
 };
 
+enum AnimObjState {
+    ANIMOBJ_STATE_Completed = 0,
+    ANIMOBJ_STATE_Playing = 1,
+    ANIMOBJ_STATE_Ready = 2,
+    ANIMOBJ_STATE_WaitingForActors = 3
+};
+
 typedef struct {
 /*0*/ f32 value;
 /*4*/ s8 interpolation;
@@ -62,7 +69,7 @@ typedef struct {
     s8 seqSlot;
     s8 unk20;
     s8 unk21;
-    s8 unk22;
+    s8 activate;
     s8 unk23;
     u8 unk24;
 } AnimObj_Setup;
@@ -105,7 +112,7 @@ typedef struct AnimObj_Data {
 /*064*/ s16 time;
 /*066*/ s16 prevTime;
 /*068*/ s16 duration;
-/*06A*/ s16 unk6A;
+/*06A*/ s16 startTime; // when resuming from preemption, this is the time to skip to when starting the seq
 /*06C*/ s16 counter;
 /*06E*/ s16 animCurvesEventCount;
 /*070*/ s16 animCurvesKeyframeCount;
@@ -118,13 +125,13 @@ typedef struct AnimObj_Data {
 /*07E*/ s8 unk7E[0x80 - 0x7E];
 /*08B*/ s32 unk80;
 /*084*/ s8 unk84; // unk type
-/*085*/ s8 unk85;
-/*086*/ s8 unk86;
+/*085*/ s8 overrideMode;
+/*086*/ s8 groundMode;
 /*087*/ s8 unk87;
-/*088*/ s8 unk88; // unk type
+/*088*/ s8 pauseCond; // condition type + 1
 /*088*/ s8 unk89;
 /*08A*/ s8 sfxNextSlot; // next free sfx handle slot
-/*08B*/ u8 unk8B; // "activation" state?
+/*08B*/ u8 state; // see AnimObjState enum
 /*08C*/ u8 unk8C;
 /*08D*/ u8 lastMessage;
 /*08E*/ u8 messages[10];
@@ -132,7 +139,7 @@ typedef struct AnimObj_Data {
 /*099*/ u8 modAnimStartFrame;
 /*09A*/ u8 blinkFrameR; // eyelid frame for right eye
 /*09B*/ u8 blinkFrameL; // eyelid frame for left eye
-/*09C*/ s8 unk9C[0x9D - 0x9C];
+/*09C*/ u8 unk9C;
 /*09D*/ u8 unk9D; // TODO: flags?
 /*09E*/ s8 unk9E[0xA0 - 0x9E];
 /*0A0*/ AnimCurvesEvent* animCurvesEvents;
@@ -143,7 +150,7 @@ typedef struct AnimObj_Data {
 /*0F8*/ AnimObj_DecisionCallback decisionCallback;
 /*0FC*/ UnkFunc_80024108Struct unkFC;
 /*118*/ s32 actorUID;
-/*11C*/ Object* unk11C;
+/*11C*/ Object* overrideTarget; // same as actor, but only set if override was enabled
 /*120*/ s16 unk120;
 /*122*/ s16 unk122;
 /*124*/ s16 decisionTimes[MAX_DECISION]; // timestamp of decision target

@@ -59,7 +59,7 @@ void SPItem_control(Object* self) {
 
     //Get SPShop object
     if (objData->shop == NULL) {
-        objData->shop = obj_get_nearest_type_to(OBJTYPE_10, self, &distance);
+        objData->shop = obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &distance);
         if (objData->shop) {
             //Hide item if not in stock or already purchased
             if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 
@@ -90,7 +90,7 @@ void SPItem_control(Object* self) {
         } else {
             gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         }
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
     }
 
     func_80024108(self, 0.005f, gUpdateRateF, NULL);

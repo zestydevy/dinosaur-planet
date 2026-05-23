@@ -166,7 +166,7 @@ void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 
 // offset: 0x3F0 | func: 5 | export: 4
 void BossDrakor_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_4);
+    obj_free_object_type(self, OBJTYPE_Baddie);
 }
 
 // offset: 0x430 | func: 6 | export: 5

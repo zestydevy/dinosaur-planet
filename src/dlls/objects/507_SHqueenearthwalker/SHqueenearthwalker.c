@@ -63,7 +63,7 @@ void SHqueenearthwalker_control(Object* self) {
         break;
     case 2:
         if (self->unkAF & 1) {
-            joy_set_button_mask(0, A_BUTTON);
+            joy_disable_buttons(0, A_BUTTON);
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             main_set_bits(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
             objdata->questProgress = 3;
@@ -72,7 +72,7 @@ void SHqueenearthwalker_control(Object* self) {
     case 3:
         if (self->unkAF & 4) {
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_White_Mushrooms) != 0) {
-                joy_set_button_mask(0, A_BUTTON);
+                joy_disable_buttons(0, A_BUTTON);
                 objdata->eatenWhiteMushrooms += main_get_bits(BIT_Inventory_White_Mushrooms);
                 if (objdata->eatenWhiteMushrooms <= 0) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
@@ -84,7 +84,7 @@ void SHqueenearthwalker_control(Object* self) {
                 main_set_bits(BIT_Inventory_White_Mushrooms, 0);
                 main_set_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten, objdata->eatenWhiteMushrooms);
             } else if (self->unkAF & 1) {
-                joy_set_button_mask(0, A_BUTTON);
+                joy_disable_buttons(0, A_BUTTON);
                 gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             }
         }
@@ -148,13 +148,13 @@ static int SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2,
         switch (a2->messages[i]) {
         case 3:
             objdata->questProgress = 5;
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
+            gDLL_29_Gplay->vtbl->set_act(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
             main_set_bits(BIT_Play_Seq_0298_Queen_Shows_VFPT, 1);
             warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         case 4:
             objdata->questProgress = 6;
-            gDLL_29_Gplay->vtbl->set_map_setup(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
+            gDLL_29_Gplay->vtbl->set_act(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
             main_set_bits(BIT_Play_Seq_0299_Queen_Shows_SpellStones, 1);
             warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
