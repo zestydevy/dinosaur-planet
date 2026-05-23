@@ -1857,7 +1857,7 @@ void func_800591EC(void) {
         sp6D0 = map_get_block_grid_layer(sp6F8);
         for (sp6FC = 0; sp6FC < BLOCKS_GRID_SPAN; sp6FC++) {
             for (sp700 = 0; sp700 < BLOCKS_GRID_SPAN; sp700++) {
-                gridIndex = GRID_INDEX(sp6FC, sp700);
+                gridIndex = (sp6FC << 4)  + sp700; // can't use the GRID_INDEX macro here, bitshift required
                 if (sp6D0[gridIndex] >= 0) {
                     temp_v0_2 = (Block *)map_get_block_by_index(sp6D0[gridIndex]);
                     for (var_s6 = 0; var_s6 < temp_v0_2->hits_line_count; var_s6++) {

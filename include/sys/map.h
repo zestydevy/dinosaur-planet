@@ -462,7 +462,7 @@ typedef struct MapObjSetupList {
 #define MAX_TEXTURE_SCROLLERS 58
 #define MAX_TEXTURE_ANIMS 20
 
-#define GRID_INDEX(z, x) ((((z) << 4) + (x)))
+#define GRID_INDEX(z, x) ((z) * BLOCKS_GRID_SPAN  + (x))
 
 #define MAX_VISIBLE_OBJECTS 180
 
