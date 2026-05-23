@@ -32,12 +32,6 @@ typedef struct {
     u8 unk5D;
 } ModgfxStruct;
 
-// size: 0x10
-typedef struct {
-    s16 unk0[3];
-    u8 _unk6[0x10 - 0x6];
-} BSS0_78;
-
 // size: 0x18
 typedef struct {
     s32 unk0;
@@ -62,10 +56,10 @@ typedef struct {
     f32 unk64;
     f32 unk68;
     Vec3f unk6C;
-    Vtx* unk78[1]; // array size?
-    u8 _unk7C[0x84 - 0x7C];
-    DLTri* unk84[1]; // array size?
-    u8 _unk88[0x98 - 0x88];
+    Vtx* unk78[2];
+    u8 _unk80[0x84 - 0x80];
+    DLTri* unk84[2];
+    u8 _unk8C[0x98 - 0x8C];
     Texture* unk98;
     BSS0_9C* unk9C;
     LightAction* unkA0;
@@ -118,7 +112,7 @@ typedef struct {
     u8 unk13D;
     u8 unk13E;
     u8 unk13F;
-} BSS0;
+} ModgfxInstance;
 
 /*0x0*/ static u32 data_0 = 0x00000000;
 /*0x4*/ static u32 data_4 = 0x00000000;
@@ -126,7 +120,7 @@ typedef struct {
 /*0xC*/ static f32 data_C = 0.0;
 /*0x10*/ static f32 data_10 = 0.0;
 
-/*0x0*/ static BSS0* bss_0[496];
+/*0x0*/ static ModgfxInstance* bss_0[496];
 /*0x7C0*/ static u8 bss_7C0[0x300];
 /*0xAC0*/ static u8 bss_AC0[0x4];
 /*0xAC4*/ static u8 bss_AC4[0x4];
@@ -139,7 +133,7 @@ typedef struct {
 /*0x0*/ static const char str_0[] = "warning in modgfx dll no spare memory available\n";
 
 static void dll_14_func_4C0C(s16 arg0, s32 arg1);
-static void dll_14_func_4EDC(BSS0* arg0, u8 arg1);
+static void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1);
 
 // offset: 0x0 | ctor
 void dll_14_ctor(void* dll) {
@@ -172,7 +166,9 @@ void dll_14_func_88(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_C90.s")
 
 // offset: 0x21F0 | func: 3 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_21F0.s")
+void dll_14_func_21F0(void) {
+    dll_14_func_4C0C(0, 1);
+}
 
 // offset: 0x2234 | func: 4 | export: 4
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_2234.s")
@@ -820,7 +816,7 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4E58.s")
 
 // offset: 0x4EDC | func: 15
-void dll_14_func_4EDC(BSS0* arg0, u8 arg1) {
+void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
     Vtx* var_s1;
     s32 var_s0;
     SRT sp38;
