@@ -821,15 +821,15 @@ static void trigger_bits_set(u16 param1) {
     s32 gamebitID;
     u32 valueToSet;
 
-    gamebitID = mode & 0x3FFF;
-    mode >>= 14;
+    gamebitID = param1 & 0x3FFF;
+    param1 >>= 14;
 
     valueToSet = main_get_bits(gamebitID);
-    if (mode == TriggerCommand_Bits_0_Unset) {
+    if (param1 == TriggerCommand_Bits_0_Unset) {
         valueToSet = 0;
-    } else if (mode == TriggerCommand_Bits_1_Set) {
+    } else if (param1 == TriggerCommand_Bits_1_Set) {
         valueToSet = -1;
-    } else if (mode == TriggerCommand_Bits_2_Toggle) {
+    } else if (param1 == TriggerCommand_Bits_2_Toggle) {
         valueToSet = ~valueToSet;
     }
 

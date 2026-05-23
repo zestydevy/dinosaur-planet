@@ -31,7 +31,7 @@ void DFbarrel_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DFbarrel_setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
-    obj_add_object_type(self, OBJTYPE_27);
+    obj_add_object_type(self, OBJTYPE_Barrel);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     gDLL_54->vtbl->func0(self, (s32)self->data, 33); //TODO: remove cast once function signature understood
@@ -81,7 +81,7 @@ void DFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 
 // offset: 0x278 | func: 4 | export: 4
 void DFbarrel_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_27);
+    obj_free_object_type(self, OBJTYPE_Barrel);
     gDLL_54->vtbl->func3(self);
 }
 
@@ -118,7 +118,7 @@ void DFbarrel_handle_movement(Object* self) {
     {
         objData->accelerationX = objData->accelerationZ = 0.0f;
 
-        for (objects = obj_get_all_of_type(OBJTYPE_22, &count), i = 0; i < count; i++) {
+        for (objects = obj_get_all_of_type(OBJTYPE_Riverflow, &count), i = 0; i < count; i++) {
             riverFlow = objects[i];
             dy = riverFlow->srt.transl.y - self->srt.transl.y;
             if ((dy <= 200.0f) && (dy >= -200.0f)) {
@@ -250,7 +250,7 @@ void DFbarrel_handle_damage(Object* self) {
         distance = 110.0f;
 
         //Debris
-        if ((obj = obj_get_nearest_type_to(OBJTYPE_35, self, &distance))) {
+        if ((obj = obj_get_nearest_type_to(OBJTYPE_ExplodeObj, self, &distance))) {
             debrisSetup = (Debris_Setup*)obj->setup;
             if (debrisSetup->unk40 != NO_GAMEBIT) {
                 main_set_bits(debrisSetup->unk40, 1);
@@ -258,7 +258,7 @@ void DFbarrel_handle_damage(Object* self) {
         }
 
         //ExplodeAnimator
-        if ((obj = obj_get_nearest_type_to(OBJTYPE_28, self, &distance))) {
+        if ((obj = obj_get_nearest_type_to(OBJTYPE_ExplodeAnimator, self, &distance))) {
             explodeAnimSetup = (ExplodeAnimator_Setup*)obj->setup;
             if (explodeAnimSetup->gamebitExplodeTrigger != NO_GAMEBIT) {
                 main_set_bits(explodeAnimSetup->gamebitExplodeTrigger, 1);

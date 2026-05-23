@@ -332,28 +332,28 @@ void dll_734_func_133C(Object* self, DRPushCart_Data* objData) {
 }
 
 // offset: 0x1434 | func: 11
-s32 dll_734_func_1434(Object* self, u8* arg1) {
+s32 dll_734_func_1434(Object* self, u8* totalBarrelsAboard) {
     s32 count;
-    Object** objects;
-    s32 matches;
+    Object** barrels;
+    s32 barrelCount;
     s32 i;
 
-    matches = 0;
-    objects = obj_get_all_of_type(OBJTYPE_27, &count);
+    barrelCount = 0;
+    barrels = obj_get_all_of_type(OBJTYPE_Barrel, &count);
     
-    if (count == *arg1) {
-        return *arg1;
+    if (count == *totalBarrelsAboard) {
+        return *totalBarrelsAboard;
     }
 
     for (i = 0; i < count; i++) {
-        if (self == objects[i]->parent) {
-            matches++;
+        if (self == barrels[i]->parent) {
+            barrelCount++;
         }
     }   
 
-    matches = (matches < 0) ? 0 : MIN(6, matches);
-    *arg1 = matches;
-    return matches;
+    barrelCount = (barrelCount < 0) ? 0 : MIN(6, barrelCount);
+    *totalBarrelsAboard = barrelCount;
+    return barrelCount;
 }
 
 // offset: 0x1588 | func: 12

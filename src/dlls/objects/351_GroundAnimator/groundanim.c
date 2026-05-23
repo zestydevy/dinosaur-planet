@@ -89,7 +89,7 @@ void GroundAnimator_setup(Object* self, GroundAnimator_Setup* objSetup, s32 rese
             }
         }
 
-        obj_add_object_type(self, OBJTYPE_51);
+        obj_add_object_type(self, OBJTYPE_TrickyTarget);
 
         //Ensure the sound index is in bounds
         if (objSetup->soundIndex >= TOTAL_JINGLES) {
@@ -186,7 +186,7 @@ void GroundAnimator_control(Object* self) {
         
     //Update the dig spot's nearby collectable, if it has one
     if (objData->collectable == NULL) {
-        objData->collectable = obj_get_nearest_type_to(OBJTYPE_5, self, &distance);
+        objData->collectable = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &distance);
         collectable = objData->collectable;
         if (collectable != NULL) {
             //Pause the collectable if digging hasn't finished yet
@@ -299,7 +299,7 @@ void GroundAnimator_free(Object* self, s32 onlySelf) {
         mmFree(objData->vtxWeights);
     }
     
-    obj_free_object_type(self, OBJTYPE_51);
+    obj_free_object_type(self, OBJTYPE_TrickyTarget);
     gDLL_14_Modgfx->vtbl->func4(self);
 }
 

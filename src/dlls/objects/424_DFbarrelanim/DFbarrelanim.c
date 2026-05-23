@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/gfx/animseq.h"
+#include "sys/objtype.h"
 #include "dlls/objects/541_DIMexplosion.h"
 
 // offset: 0x0 | ctor
@@ -21,12 +22,12 @@ void DFbarrelanim_setup(Object* self, AnimObj_Setup* objSetup, s32 reset) {
     objData->unk28 = -1;
 
     if ((self->unkDC == 0) && (objSetup->sequenceIdBitfield != 1)) {
-        gDLL_3_Animation->vtbl->func6(objData, objSetup);
+        gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     } else if ((self->unkDC) && ((objSetup->sequenceIdBitfield + 1) != self->unkDC)) {
-        gDLL_3_Animation->vtbl->func8(objData);
+        gDLL_3_Animation->vtbl->free_curve(objData);
         if (objSetup->sequenceIdBitfield != -1) {
-            gDLL_3_Animation->vtbl->func6(objData, objSetup);
+            gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
         }
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     }
@@ -71,7 +72,7 @@ void DFbarrelanim_control(Object* self) {
                     matchObj = obj;
                 }
                 
-                if (obj->seqSlot == SEQSLOT_ANIMOBJ && obj->group == GROUP_UNK16) {
+                if (obj->seqSlot == SEQSLOT_ANIMOBJ && obj->controlNo == OBJTYPE_Door) {
                     objData = obj->data;    
                     if (seqSlot == objData->seqSlot) {
                         matches++;
@@ -120,7 +121,7 @@ void DFbarrelanim_free(Object* self, s32 arg1) {
     s32 i;
 
     objData = self->data;
-    gDLL_3_Animation->vtbl->func8(objData);
+    gDLL_3_Animation->vtbl->free_curve(objData);
 
     for (i = 0; i < 4; i++) {
         if (objData->sfxHandles[i]) {

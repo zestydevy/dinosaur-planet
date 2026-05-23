@@ -1,10 +1,11 @@
 #include "common.h"
 #include "macros.h"
 #include "PR/os.h"
+#include "sys/joypad.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 #include "game/objects/interaction_arrow.h"
-#include "dlls/engine/53.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
 
@@ -154,7 +155,7 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
         objData->behaviourFunction = DR_NPC_guardclaw_behaviour;
         objData->soundsAttack = dSoundsGuardClawAttack;
         objData->soundsTalk   = dSoundsGuardClaw;
-        obj_add_object_type(self, OBJTYPE_4);
+        obj_add_object_type(self, OBJTYPE_Baddie);
 
         //Hide self and stop updating after Illusion Spell used
         if (objData->finished) {
@@ -173,9 +174,9 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     create_temp_dll(DLL_ID_53);
-    ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func2(self, objData, -0x11C7, 0x3554, 3);
-    ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func5(objData, 300, 120);
-    ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func6(objData, dDLL53Array2, dDLL53Array1, 3);
+    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func2(self, objData, -0x11C7, 0x3554, 3);
+    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func5(objData, 300, 120);
+    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func6(objData, dDLL53Array2, dDLL53Array1, 3);
 
     objData->unk4A9 |= 10;
 }
@@ -253,12 +254,12 @@ void DR_NPC_control(Object* self) {
     }
 
     DR_NPC_play_sounds(self, &objData->animData, objData->soundsAttack);
-    ((DLL_53*)gTempDLLInsts[1])->vtbl->func0(self, objData);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, objData);
     func_80032A08(self, &objData->headAnimLook);
     func_80034BC0(self, &objData->headAnimTalk);
 
     //Show Distract command option
-    sidekick = obj_get_nearest_type_to(OBJTYPE_SIDEKICK, self, &distance);
+    sidekick = obj_get_nearest_type_to(OBJTYPE_Sidekick, self, &distance);
     if (sidekick != NULL) {
         ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_2_Distract);
     }
@@ -273,7 +274,7 @@ void DR_NPC_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func3(self, objData, 0);
+        ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func3(self, objData, 0);
     }
 }
 
@@ -283,8 +284,8 @@ void DR_NPC_free(Object* self, s32 onlySelf) {
 
     remove_temp_dll(DLL_ID_53);
 
-    if (objSetup->characterType) {
-        obj_free_object_type(self, OBJTYPE_4);
+    if (objSetup->characterType != DR_NPC_SharpClaw) {
+        obj_free_object_type(self, OBJTYPE_Baddie);
     }
 }
 
@@ -324,7 +325,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
     }
 
     modAnimID = objData->modAnims[2];
-    if (((DLL_53*)(gTempDLLInsts[1]))->vtbl->func4(self, animData, objData, modAnimID, modAnimID) != 0) {
+    if (((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func4(self, animData, objData, modAnimID, modAnimID) != 0) {
         return 1;
     }
 
@@ -358,7 +359,7 @@ s32 DR_NPC_sharpclaw_behaviour(Object* self) {
 
     //Talking to the SharpClaw
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
         if (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
@@ -398,7 +399,7 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
 
     //Talking to GuardClaw
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == FALSE)) {
-        joy_set_button_mask(0, A_BUTTON);
+        joy_disable_buttons(0, A_BUTTON);
         self->objhitInfo->unk5F = 11;
         self->objhitInfo->unk60 = 4;
         gDLL_3_Animation->vtbl->start_obj_sequence(rand_next(0, 1), self, -1);

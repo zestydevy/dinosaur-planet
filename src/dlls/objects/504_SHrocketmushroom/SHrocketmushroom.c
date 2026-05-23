@@ -434,7 +434,7 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
     self->objhitInfo->unk58 |= 0x40;
     
     //Set nearby ExplodeAnimator's gamebit (when used to blast open walls)
-    obj = obj_get_nearest_type_to(OBJTYPE_28, self, &distance);
+    obj = obj_get_nearest_type_to(OBJTYPE_ExplodeAnimator, self, &distance);
     if (obj != NULL) {
         exploderSetup = (ExplodeAnimator_Setup*)obj->setup;
         if (exploderSetup->gamebitExplodeTrigger != NO_GAMEBIT) {
