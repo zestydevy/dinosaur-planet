@@ -71,9 +71,9 @@ enum ParticleID {
     PARTICLE_286 = 0x286,
     PARTICLE_2BB = 0x2BB,
     /* --- DLL 35 END --- */
-    PARTICLE_320 = 0x320,
-    PARTICLE_321 = 0x321,
-    PARTICLE_322 = 0x322,
+    PARTICLE_320 = 0x320, // big expanding cloud of mist         (WaterWallSpray)
+    PARTICLE_321 = 0x321, // spray droplet, affected by gravity  (WaterWallSpray)
+    PARTICLE_322 = 0x322, // small expanding cloud of mist       (WaterWallSpray)
     PARTICLE_323 = 0x323, // used by objhits.c
     PARTICLE_324 = 0x324, // used by objhits.c
     PARTICLE_325 = 0x325, // used by objhits.c
@@ -96,9 +96,10 @@ enum ParticleID {
     PARTICLE_34E = 0x34E,
     PARTICLE_350 = 0x350,
     /* --- DLL 43 END --- */
-    PARTICLE_351 = 0x351,
+    PARTICLE_351 = 0x351,  //small cloud of mist, jetting forward (WaterWallSpray)
     /* --- DLL 41 START --- */
     PARTICLE_352 = 0x352,
+    PARTICLE_355 = 0x355,
     PARTICLE_383 = 0x383,
     /* --- DLL 41 END --- */
     /* --- DLL 34 START --- */
@@ -117,6 +118,7 @@ enum ParticleID {
     PARTICLE_Gasvent_Gas = 0x3DF,
     /* --- DLL 48 START --- */
     PARTICLE_3E8 = 0x3E8,
+    PARTICLE_3E9 = 0x3E9,
     PARTICLE_3EA = 0x3EA,
     PARTICLE_3EB = 0x3EB,
     PARTICLE_3EC = 0x3EC,

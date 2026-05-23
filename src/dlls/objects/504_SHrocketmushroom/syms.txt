@@ -1,0 +1,25 @@
+.text = 0x0:
+SHrocketmushroom_ctor = 0x0;
+SHrocketmushroom_dtor = 0xC;
+SHrocketmushroom_setup = 0x18;
+SHrocketmushroom_control = 0xEC;
+SHrocketmushroom_handle_state_1_hidden = 0x5C8;
+SHrocketmushroom_handle_state_2_growing = 0x70C;
+SHrocketmushroom_handle_state_3_launch_spore = 0x86C;
+SHrocketmushroom_handle_state_4_damaged = 0x970;
+SHrocketmushroom_handle_state_0_idle = 0xA40;
+SHrocketmushroom_set_state = 0xB08;
+SHrocketmushroom_update = 0xB20;
+SHrocketmushroom_print = 0xB2C;
+SHrocketmushroom_free = 0xB44;
+SHrocketmushroom_get_model_flags = 0xB54;
+SHrocketmushroom_get_data_size = 0xB64;
+SHrocketmushroom_create_spore = 0xB78;
+SHrocketmushroom_explode = 0xCF8;
+SHrocketmushroom_reset = 0x104C;
+SHrocketmushroom_is_player_far_away = 0x114C;
+
+.rodata = 0x1260:
+
+.data = 0x1290:
+dAnimData = 0x0; // absolute:0x1290

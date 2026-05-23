@@ -1,0 +1,12 @@
+.text = 0x0:
+DFbarrelcreator_ctor = 0x0;
+DFbarrelcreator_dtor = 0xC;
+DFbarrelcreator_setup = 0x18;
+DFbarrelcreator_control = 0x2C;
+DFbarrelcreator_update = 0x140;
+DFbarrelcreator_print = 0x14C;
+DFbarrelcreator_free = 0x1A0;
+DFbarrelcreator_get_model_flags = 0x1B0;
+DFbarrelcreator_get_data_size = 0x1C0;
+
+.rodata = 0x218:

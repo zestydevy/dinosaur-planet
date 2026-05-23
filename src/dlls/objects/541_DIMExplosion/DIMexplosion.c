@@ -1,9 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-} DIMExplosion_Setup;
+#include "dlls/objects/541_DIMexplosion.h"
 
 typedef struct {
     s32 unused0;

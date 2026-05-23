@@ -2,38 +2,7 @@
 
 #include "common.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 xMin;            //Random position variance for explosion particles
-    s16 yMin;            //Random position variance for explosion particles
-    s16 zMin;            //Random position variance for explosion particles
-    s16 xMax;            //Random position variance for explosion particles
-    s16 yMax;            //Random position variance for explosion particles
-    s16 zMax;            //Random position variance for explosion particles
-    s16 particleID;      //Type of particle to create for the explosion
-    s16 unused26;
-    s16 param0Max;       //Random variance for particle param 0
-    s16 param1Max;       //Random variance for particle param 1
-    u8 particleCount;    //Number of particles to create
-    u8 pad2D;
-    s16 param0Min;       //Random variance for particle param 0
-    s16 param1Min;       //Random variance for particle param 1
-    s16 gamebitExploded; //gamebit set when explosion has played out
-    s16 gamebitExplodeTrigger;  //gamebit checked to trigger the explosion
-} ExplodeAnimator_Setup;
-
-typedef struct {
-    s8 unused0;
-    s8 unused1;
-    u8 flags;
-    s8 unused3;
-} ExplodeAnimator_Data;
-
-typedef enum {
-    ExplodeAnimator_FLAG_Waiting_to_Explode = 0,
-    ExplodeAnimator_FLAG_Finished = 1
-} ExplodeAnimator_Flags;
+#include "dlls/objects/357_ExplodeAnimator.h"
 
 static void ExplodeAnimator_create_partfx(Object* self, ExplodeAnimator_Setup* objSetup);
 

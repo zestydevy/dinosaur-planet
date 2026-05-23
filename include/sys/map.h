@@ -58,7 +58,7 @@ enum ShapeRenderFlags {
 
 typedef struct {
 /*0000*/    Texture *texture;
-/*0004*/    u32 unk4;
+/*0004*/    u32 unk4; // frame value (for multi-frame textures?)
 /*0008*/    u32 flags; // RenderFlags
 /*000C*/    s16 refCount;
 /*000E*/    u8 animatorID;

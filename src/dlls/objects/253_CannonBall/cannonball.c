@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/objhits.h"
 #include "sys/objmsg.h"
 
 #include "dlls/objects/253_CannonBall.h"
@@ -45,7 +46,7 @@ void CannonBall_control(Object* self) {
     
     //Set up damaging collision
     if (objData->timer >= 0x10) {
-        func_80026128(self, 5, 1, 0);
+        func_80026128(self, Damage_Type_Explosion, 1, 0);
     }
     
     //Become destroyed upon colliding

@@ -158,13 +158,13 @@ enum RenderFlags {
 /*5*/  RENDER_UNK20 = 0x20,
 /*6*/  RENDER_TEX_BLEND = 0x40, // lerp tile 0 -> tile 1
 /*7*/  RENDER_CUTOUT = 0x80, // includes billboards
-/*8*/  RENDER_MIPMAPS = 0x100,
+/*8*/  RENDER_MIPMAPS = 0x100, //also envcolour x2?
 /*9*/  RENDER_SUBSURFACE = 0x200,
-/*10*/ RENDER_DECAL_SIMPLE = 0x400,
-/*11*/ RENDER_UNK800 = 0x800,
-/*12*/ RENDER_UNK1000 = 0x1000,
-/*13*/ RENDER_UNK2000 = 0x2000,
-/*14*/ RENDER_COMPOSITE_BASE = 0x4000,
+/*10*/ RENDER_DECAL_SIMPLE = 0x400, //vertex alpha used
+/*11*/ RENDER_UNK800 = 0x800, //no collision
+/*12*/ RENDER_UNK1000 = 0x1000, //receive character shadow
+/*13*/ RENDER_UNK2000 = 0x2000, //water
+/*14*/ RENDER_COMPOSITE_BASE = 0x4000, //also sphere map?
 /*15*/ RENDER_COMPOSITE_OVERLAY = 0x8000,
 /*16*/ RENDER_SHAPE_ANIMATED = 0x10000,
 /*17*/ RENDER_TEXANIM_RANDOM_PINGPONG = 0x20000,
@@ -172,16 +172,16 @@ enum RenderFlags {
 /*19*/ RENDER_TEXANIM_REVERSE = 0x80000,
 /*20*/ RENDER_DECAL = 0x100000,
 /*21*/ RENDER_SHAPE_HIDE = 0x200000,
-/*22*/ RENDER_UNK400000 = 0x400000,
+/*22*/ RENDER_UNK400000 = 0x400000, //animated vertex colours
 /*23*/ RENDER_UNK800000 = 0x800000,
 /*24*/ RENDER_UNK1000000 = 0x1000000,
-/*25*/ RENDER_UNK2000000 = 0x2000000,
-/*26*/ RENDER_UNK4000000 = 0x4000000,
-/*27*/ RENDER_UNK8000000 = 0x8000000,
-/*28*/ RENDER_SHAPE_VISIBLE = 0x10000000, // whether the shape is not culled. set at runtime
+/*25*/ RENDER_UNK2000000 = 0x2000000, //lighting - all vertices
+/*26*/ RENDER_UNK4000000 = 0x4000000, //lighting - per vertex
+/*27*/ RENDER_UNK8000000 = 0x8000000, //render front?
+/*28*/ RENDER_SHAPE_VISIBLE = 0x10000000, //at runtime: shape passes all visibility checks (i.e. not hidden, passes bitstream test (unimplemented), inside camera frustum, passes CPU-based backface culling test)
 /*29*/ RENDER_UNK20000000 = 0x20000000,
 /*30*/ RENDER_UNK40000000 = 0x40000000,
-/*31*/ RENDER_NO_CULL = 0x80000000
+/*31*/ RENDER_NO_CULL = 0x80000000 //disables backface culling (for textures: G_CULL_BACK geometry mode off, for block shapes: CPU culling off)
 };
 
 // Option flags for tex_gdl_set_texture_simple

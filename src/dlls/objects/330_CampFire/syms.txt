@@ -1,0 +1,12 @@
+.text = 0x0:
+campfire_ctor = 0x0;
+campfire_dtor = 0xC;
+campfire_setup = 0x18;
+campfire_control = 0x210;
+campfire_update = 0x580;
+campfire_print = 0x58C;
+campfire_free = 0x5E0;
+campfire_get_model_flags = 0x650;
+campfire_get_data_size = 0x660;
+
+.rodata = 0x6E4:

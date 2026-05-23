@@ -184,11 +184,15 @@ enum SoundID {
    
     SOUND_10A_Galleon_Roar = 0x10A,
 
+    SOUND_111_Heavy_Collision = 0x111, //DIMboulder
+
     SOUND_129_SnowHorn_Yawn_1 = 0x129,
     SOUND_12A_SnowHorn_SnoreHorn = 0x12A,
     SOUND_12B_SnowHorn_Yawn_2 = 0x12B,
 
     SOUND_140_Galleon_Propeller_Loop = 0x140,
+
+    SOUND_161_Toy_Squeak = 0x161,
 
     SOUND_174_Machinery_Move_A = 0x174, //SB_ShipGun
     SOUND_175_Machinery_Move_B = 0x175, //SB_ShipGun
@@ -219,6 +223,10 @@ enum SoundID {
     SOUND_222_NW_Tricky_Sharpclaw_Help = 0x222,
 
     SOUND_226_Fall_Impact = 0x226,
+
+    SOUND_236_SharpClaw_Argh = 0x236, //DR_NiceSharpy
+
+    SOUND_239_SharpClaw_Snort = 0x239, //DR_NiceSharpy
 
     SOUND_242_Failure_Glissando = 0x242,
 
@@ -284,6 +292,13 @@ enum SoundID {
 
     SOUND_35A_Low_Whoosh = 0x35A, // WMrock
     SOUND_35B_Rock_Slide = 0x35B, // WMrock
+
+    SOUND_35D_GuardClaw_Yawn = 0x35D,        //DR_SupGuardClaw
+    SOUND_35E_SharpClaw_Staff_Swing = 0x35E, //DR_SupGuardClaw
+    SOUND_35F_GuardClaw_Step = 0x35F,        //DR_SupGuardClaw
+
+    SOUND_361_GuardClaw_Go_Away = 0x361, //DR_SupGuardClaw
+    SOUND_362_GuardClaw_Hah = 0x362,     //DR_SupGuardClaw
 
     SOUND_368 = 0x368,
     SOUND_369 = 0x369,
@@ -526,9 +541,15 @@ enum SoundID {
     
     SOUND_88D = 0x88D,
     
-    SOUND_8A2_Spore_Disintegrate = 0x8A2, // used in SHspore
+    SOUND_8A0_Deflate_Honk = 0x8A0,             //SHrocketmushroom
+    SOUND_8A1_Spore_Launched = 0x8A1,           //SHrocketmushroom
+    SOUND_8A2_Spore_Disintegrate = 0x8A2,       //SHspore
+    SOUND_8A3_Rocket_Mushroom_Grow = 0x8A3,     //SHrocketmushroom
     
     SOUND_8C7_Explosion_High = 0x8C7, //DRexplodeDoor
+
+    SOUND_8DB_Eerie_Alarm_Loop = 0x8DB,         //DR_tube
+    SOUND_8DC_Ominous_Thrumming_Loop = 0x8DC,   //DR_tube
 
     SOUND_8ED = 0x8ED,
 

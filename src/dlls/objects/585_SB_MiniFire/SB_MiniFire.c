@@ -21,7 +21,7 @@ void SB_MiniFire_dtor(void *dll) { }
 void SB_MiniFire_setup(Object *self, ObjSetup *setup, s32 arg2) {
     s32 _pad[5];
     f32 rand;
-    void **dll133;
+    DLL_IModgfx* dll133;
 
     self->unkDC = 180;
     rand = rand_next(20, 40);
@@ -30,7 +30,7 @@ void SB_MiniFire_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->velocity.z = -0.3f;
     self->srt.scale *= 0.8f;
     dll133 = dll_load_deferred(DLL_ID_133, 1);
-    ((DLL_133*)dll133)->vtbl->base.func0(self, _data_0[0], NULL, 0x10000 | 0x2, -1, NULL);
+    ((DLL_IModgfx*)dll133)->vtbl->func0(self, _data_0[0], NULL, 0x10000 | 0x2, -1, NULL);
     _data_0[0]++;
     if (_data_0[0] > 3) {
         _data_0[0] = 1;

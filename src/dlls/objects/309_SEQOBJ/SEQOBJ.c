@@ -1,4 +1,6 @@
 #include "common.h"
+#include "game/gamebits.h"
+#include "macros.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 
@@ -6,7 +8,7 @@ typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s16 gamebitHasPlayed; // when gamebit is set, this objseq has played before
 /*1A*/ s16 gamebitPlay;    // when gamebit is set, triggers this seqobj to play
-/*1C*/ u8 rotate;
+/*1C*/ u8 yaw;
 /*1D*/ u8 playbackOptions;
 /*1E*/ s8 seqIndex;            //The index of the sequence in the Object.bin entry's sequence list
 /*1F*/ s8 modelInstIdx;        //Choose between 3D models, visible when debugging (usually a clapperboard)
@@ -30,9 +32,9 @@ typedef enum {
 typedef enum {
     SEQOBJ_OPTIONS_None = 0,
     SEQOBJ_OPTIONS_ManualHasPlayedBit = 1, // don't auto update the hasPlayed gamebit
-    SEQOBJ_OPTIONS_2 = 2,
-    SEQOBJ_OPTIONS_4 = 4,
-    SEQOBJ_OPTIONS_8 = 8,
+    SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd = 2, //_Set_GamebitFinished_via_SeqCommand = 2,        //gamebitFinished intended to be set via a seqCommand?
+    SEQOBJ_OPTIONS_ManualHasPlayed_Dont_Unset_Play_Gamebit = 4, //_Retain_GamebitPlay_Value = 4,                  //Avoids setting gamebitPlay back to 0 after sequence finishes, under some circumstances?
+    SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence = 8, //_Set_GamebitFinished_After_Sequence_Ends = 8,   //Set gamebitFinished after sequences finishes, instead of immediately?
     SEQOBJ_OPTIONS_HasReplayActorMask = 16 // if set, more than just the seqobj will be controlled by a replay
 } SeqObj_PlaybackOptions;
 
@@ -48,19 +50,21 @@ void SeqObj_dtor(void *dll) { }
 void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
     SeqObj_Data* objData;
 
-    self->srt.yaw = objSetup->rotate << 8;
+    self->srt.yaw = objSetup->yaw << 8;
     self->animCallback = SeqObj_anim_callback;
     
     objData = self->data;
+
     self->modelInstIdx = objSetup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
+        STUBBED_PRINTF("SEQOBJ.c: modelno out of range romdefno=%d\n", self->def->numModels);
         self->modelInstIdx = 0;
     }
     
     obj_add_object_type(self, OBJTYPE_UseObj);
     
     objData->flags = SEQOBJ_FLAG_None;
-    if (objSetup->gamebitHasPlayed != -1) {
+    if (objSetup->gamebitHasPlayed != NO_GAMEBIT) {
         if (main_get_bits(objSetup->gamebitHasPlayed)) {
             objData->flags |= SEQOBJ_FLAG_PlayedBefore;
             if (objSetup->replayStartTime != 0) {
@@ -88,11 +92,11 @@ void SeqObj_control(Object* self) {
     
     if (objData->flags & SEQOBJ_FLAG_Anim_Callback_Ran) {
         if (objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) {
-            if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_4) == FALSE) {
+            if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayed_Dont_Unset_Play_Gamebit) == FALSE) {
                 main_set_bits(objSetup->gamebitPlay, FALSE);
             }
         } else {
-            if (objSetup->playbackOptions & SEQOBJ_OPTIONS_8) {
+            if (objSetup->playbackOptions & SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence) {
                 main_set_bits(objSetup->gamebitHasPlayed, TRUE);
             }
             objData->flags |= SEQOBJ_FLAG_PlayedBefore;
@@ -119,7 +123,7 @@ void SeqObj_control(Object* self) {
                 }
                 // Mark seqobj as having been played at least once
                 if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) == FALSE && 
-                    (objSetup->playbackOptions & (SEQOBJ_OPTIONS_2 | SEQOBJ_OPTIONS_8)) == FALSE) {
+                    (objSetup->playbackOptions & (SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd | SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence)) == FALSE) {
                     main_set_bits(objSetup->gamebitHasPlayed, TRUE);
                 }
             }
@@ -188,9 +192,9 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     for (index = 0; index < animObjData->messageCount; index++){
         switch (animObjData->messages[index]) {
             case 1:
-                if (!(objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) && 
-                     (objSetup->playbackOptions & SEQOBJ_OPTIONS_2)) {
-                    main_set_bits(objSetup->gamebitHasPlayed, 1);
+                if (((objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) == FALSE) && 
+                     (objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd)) {
+                    main_set_bits(objSetup->gamebitHasPlayed, TRUE);
                 }
                 break;
             case 2:
@@ -205,5 +209,4 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     return 0;
 }
 
-/*0x0*/ static const char str_0[] = "SEQOBJ.c: modelno out of range romdefno=%d\n";
 /*0x2C*/ static const char str_2C[] = "";

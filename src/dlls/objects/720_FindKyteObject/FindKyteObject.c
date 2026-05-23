@@ -14,12 +14,12 @@ typedef struct {
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 unk18;
-/*19*/ u8 unk19;
+/*18*/ u8 findRange;
+/*19*/ u8 timerSeconds;
 /*1A*/ u16 kyteFlightCurve;
-/*1C*/ u8 unk1C;
+/*1C*/ u8 kyteTalkSeq;
 /*1D*/ u8 unk1D;
-/*1E*/ u8 unk1E;
+/*1E*/ u8 checkDistance2D;  //Use a lateral (2D) distance check instead of a 3D one
 } FindKyteObject_Setup;
 
 // offset: 0x0 | ctor
@@ -59,7 +59,7 @@ void FindKyteObject_control(Object *self) {
         break;
     case 1:
         gamebit = objdata->curveSetup->type22.usedBit;
-        if ((gamebit != -1) && (main_get_bits(gamebit))) {
+        if ((gamebit != NO_GAMEBIT) && (main_get_bits(gamebit))) {
             main_set_bits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
             objdata->state = 0;
             break;
@@ -68,13 +68,13 @@ void FindKyteObject_control(Object *self) {
         kyte = get_sidekick();
         if (kyte) {
             player = get_player();
-            if (setup->unk1E != 0) {
+            if (setup->checkDistance2D) {
                 dist = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition);
             } else {
                 dist = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
             }
 
-            if (dist <= SQ(setup->unk18 * 2)) {
+            if (dist <= SQ(setup->findRange * 2)) {
                 //Enable Find command option
                 ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_1_Find);
 
@@ -82,11 +82,11 @@ void FindKyteObject_control(Object *self) {
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                     objdata->flightCurve = main_get_bits(BIT_Kyte_Flight_Curve);
                     main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteFlightCurve);
-                    if (setup->unk1C != 0) {
-                        main_set_bits(BIT_488, setup->unk1C);
+                    if (setup->kyteTalkSeq != 0) {
+                        main_set_bits(BIT_Kyte_Flight_Talk_Sequence, setup->kyteTalkSeq);
                     }
                     
-                    objdata->timer = setup->unk19 * 60.0f;
+                    objdata->timer = setup->timerSeconds * 60.0f;
                     objdata->state = 2;
                 }
             }
@@ -94,9 +94,9 @@ void FindKyteObject_control(Object *self) {
         break;
     case 2:
         objdata->timer -= gUpdateRateF;
-        if ((objdata->timer <= 0.0f) || ((gamebit = objdata->curveSetup->type22.usedBit, (gamebit != -1)) && (main_get_bits(gamebit)))) {
-            if (setup->unk1C != 0) {
-                main_set_bits(BIT_488, -1);
+        if ((objdata->timer <= 0.0f) || ((gamebit = objdata->curveSetup->type22.usedBit, (gamebit != NO_GAMEBIT)) && (main_get_bits(gamebit)))) {
+            if (setup->kyteTalkSeq != 0) {
+                main_set_bits(BIT_Kyte_Flight_Talk_Sequence, -1);
             }
             objdata->state = 1;
             if (main_get_bits(BIT_Kyte_Flight_Curve) == setup->kyteFlightCurve) {

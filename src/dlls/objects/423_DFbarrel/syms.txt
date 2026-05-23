@@ -1,0 +1,14 @@
+.text = 0x0:
+DFbarrel_ctor = 0x0;
+DFbarrel_dtor = 0xC;
+DFbarrel_setup = 0x18;
+DFbarrel_control = 0xA4;
+DFbarrel_update = 0x1D0;
+DFbarrel_print = 0x1DC;
+DFbarrel_free = 0x278;
+DFbarrel_get_model_flags = 0x2E0;
+DFbarrel_get_data_size = 0x2F0;
+DFbarrel_handle_movement = 0x304;
+DFbarrel_handle_damage = 0x960;
+
+.rodata = 0xC44:

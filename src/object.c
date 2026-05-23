@@ -1766,7 +1766,7 @@ Object *get_player(void) {
 
     objectList = obj_get_all_of_type(OBJTYPE_Player, &count);
 
-    if(count > 1) {
+    if (count > 1) {
         STUBBED_PRINTF(" ERROR : Error in Get Main More Players Loaded ");
     }
 

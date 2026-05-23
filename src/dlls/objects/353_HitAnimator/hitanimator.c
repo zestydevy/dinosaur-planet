@@ -162,14 +162,14 @@ void HitAnimator_animate_blocks_shapes(Block* block, Object* self, HitAnimator_D
         if (shape->animatorID == objSetup->blocksAnimatorID) {
             //Show/hide (or fade in/out) Shapes
             if (objData->active) {
-                shape->flags &= ~0x800;
+                shape->flags &= ~RENDER_UNK800;
                 if (objSetup->mode & HitAnimator_Mode_No_Fade) {
-                    shape->flags &= 0xFFDFFFFF;
+                    shape->flags &= ~RENDER_SHAPE_HIDE;
                 }
             } else {
-                shape->flags |= 0x800;
+                shape->flags |= RENDER_UNK800;
                 if (objSetup->mode & HitAnimator_Mode_No_Fade) {
-                    shape->flags |= 0x200000;
+                    shape->flags |= RENDER_SHAPE_HIDE;
                 }
             }
         }

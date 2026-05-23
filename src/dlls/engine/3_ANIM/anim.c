@@ -188,6 +188,19 @@ enum KeyframeInterpolationType {
     KF_INTERP_Stepped = 2
 };
 
+typedef union {
+    struct {
+        f32 start;
+        f32 end;
+        f32 outTangentStart;
+        f32 inTangentEnd;
+    };
+    f32 v[4];
+} SplinePoints;
+
+#define KEY_TYPE(keyframe) (keyframe.interpolation & 3)
+#define KEY_EASE(keyframe) (keyframe.interpolation >> 2)
+
 enum AnimEventConditionType {
     ANIM_EVTCOND_COUNTER_LTE_ZERO = 1,
     ANIM_EVTCOND_COUNTER_GT_ZERO = 2,
@@ -2011,14 +2024,14 @@ s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z,
     f32 sampleY;
     Func_80057F1C_Struct** sp5C;
     f32 lowestFound;
-    s32 temp_v0;
+    s32 sampleCount;
     s32 index;
 
-    temp_v0 = func_80057F1C(animObj, x, animObj->globalPosition.f[1], z, &sp5C, 0, 1);
-    if (temp_v0) {
+    sampleCount = func_80057F1C(animObj, x, animObj->globalPosition.f[1], z, &sp5C, 0, 1);
+    if (sampleCount) {
         lowestIndex = 0;
         lowestFound = 1000.0f;
-        for (index = 0; index < temp_v0; index++) {
+        for (index = 0; index < sampleCount; index++) {
             if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
                 sampleY = y - sp5C[index]->unk0[0];
                 if (sampleY < 0.0f) {
@@ -2037,11 +2050,11 @@ s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z,
         }
     }
 
-    if (temp_v0) {
+    if (sampleCount) {
         y += *yOut - ySetup;
         lowestFound = 1000.0f;
         lowestIndex = 0;
-        for (index = 0; index < temp_v0; index++) {
+        for (index = 0; index < sampleCount; index++) {
            if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
                 sampleY = y + 5.0f - sp5C[index]->unk0[0];
                 if (sampleY < 0.0f) {
@@ -2868,13 +2881,14 @@ static f32 anim_channel_value(AnimObj_Data* st, s32 channel, s32 time) {
 // offset: 0x6F3C | func: 36
 static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 count, s32 time) {
     s32 i;
-    f32 temp;
-    f32 var_fa0;
     f32 value;
-    f32 var_fv0;
+    f32 prevDeltaOut;    //Value difference between the previous keyframe and the next keyframe
+    f32 prevDeltaIn;     //Value difference between the previous keyframe and the keyframe before it
     s32 interpType;
-    f32 t;
-    f32 curve[4];
+    f32 tangentUnit;     
+    f32 tValue;          //Interpolation position between previous keyframe and next keyframe: expressed from 0 to 1
+    SplinePoints curve;
+    f32 nextDeltaOut;    //Value difference between the next keyframe and the keyframe after it
 
     if (count <= 0) {
         return 0.0f;
@@ -2882,8 +2896,9 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
     // Find keyframe that we are currently interpolating into
     i = 0;
     while ((i < count && keyframes[i].timeOffset < time)) {
-        i += 1;
+        i++;
     }
+
     if (i == count) {
         // End of channel, repeat last value
         value = keyframes[count - 1].value;
@@ -2899,59 +2914,88 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
             }
             return value;
         }
-        // In between two keyframes, interpolate between them
-        // Look at start keyframe
-        i = i - 1;
-        interpType = keyframes[i].interpolation & 3;
-        curve[0] = keyframes[i].value;
+
+        // Otherwise: time is between two keyframes, need to interpolate from previous key to next key
+
+        /* For Bezier/cubic curves: 
+           Calculate the previous and upcoming keyframes' tangents based off their neighbouring keys' value deltas.
+           (similar to Catmull-Rom Splines) */
+
+        //Get the previous key's outTangent
+        i--; //Seek back by one key
+        interpType = KEY_TYPE(keyframes[i]);
+        curve.start = keyframes[i].value; //Store start value of interpolation range
         if (interpType == KF_INTERP_Bezier) {
-            var_fa0 = keyframes[i + 1].value - keyframes[i].value;
+            //Get the value differences between the previous key and its neighbouring keys
+            prevDeltaOut = keyframes[i + 1].value - keyframes[i].value;
             if (i > 0) {
-                var_fv0 = keyframes[i].value - keyframes[i - 1].value;
+                prevDeltaIn = keyframes[i].value - keyframes[i - 1].value;
             } else {
-                var_fv0 = var_fa0;
+                //For the 1st keyframe in the curve
+                prevDeltaIn = prevDeltaOut;
             }
-            if (var_fa0 < 0.0f) {
-                var_fa0 = -var_fa0;
+
+            //Ignore the value deltas' signs
+            if (prevDeltaOut < 0.0f) {
+                prevDeltaOut = -prevDeltaOut;
             }
-            if (var_fv0 < 0.0f) {
-                var_fv0 = -var_fv0;
+            if (prevDeltaIn < 0.0f) {
+                prevDeltaIn = -prevDeltaIn;
             }
-            temp = (var_fa0 + var_fv0) / 16.0f;
-            curve[2] = temp * (f32) ((s8) keyframes[i].interpolation >> 2);
+
+            //Calculate the previous key's outTangent strength based off its neighbouring value deltas
+            tangentUnit = (prevDeltaOut + prevDeltaIn) / 16.0f;
+            
+            //Adjust the previous key's outTangent by multiplying in its animatable ease factor
+            curve.outTangentStart = tangentUnit * KEY_EASE(keyframes[i]);
         }
-        t = (f32) (keyframes[i + 1].timeOffset - keyframes[i].timeOffset);
-        // Look at end keyframe
-        i = i + 1;
+        tValue = (keyframes[i + 1].timeOffset - keyframes[i].timeOffset);
+
+        //Get next key's inTangent
+        i++; //Seek forward by one key, back to the interpolation range
         if (i < count) {
-            curve[1] = keyframes[i].value;
+            curve.end = keyframes[i].value;  //Store end value of interpolation range
             if (interpType == KF_INTERP_Bezier) {
+                //Get the value difference between the upcoming key and the key after it
                 if ((i + 1) < count) {
-                    var_fv0 = keyframes[i + 1].value - keyframes[i].value;
+                    nextDeltaOut = keyframes[i + 1].value - keyframes[i].value;
                 } else {
-                    var_fv0 = var_fa0;
+                    //For the last keyframe in the curve
+                    nextDeltaOut = prevDeltaOut;
                 }
-                if (var_fv0 < 0.0f) {
-                    var_fv0 = -var_fv0;
+
+                //Ignore the value delta' sign
+                if (nextDeltaOut < 0.0f) {
+                    nextDeltaOut = -nextDeltaOut;
                 }
+                
                 if (0) {} // @fake
-                temp = (var_fa0 + var_fv0) / 16.0f;
-                curve[3] = temp * (f32) ((s8) keyframes[i].interpolation >> 2);
+
+                //Calculate the next key's inTangent strength based off its neighbouring value deltas
+                tangentUnit = (prevDeltaOut + nextDeltaOut) / 16.0f;
+
+                //Adjust the next key's inTangent by multiplying in its animatable ease factor
+                curve.inTangentEnd = tangentUnit * KEY_EASE(keyframes[i]);
             }
         }
-        if (t > 0.0f) {
-            t = (f32) (time - keyframes[i - 1].timeOffset) / t;
+
+        //Interpolate
+        if (tValue > 0.0f) {
+            tValue = (time - keyframes[i - 1].timeOffset) / tValue;
+
             if (interpType == KF_INTERP_Bezier) {
-                value = func_80004C5C((Vec4f* ) &curve, t, NULL);
+                value = func_80004C5C((Vec4f* ) &curve, tValue, NULL);
             } else if (interpType == KF_INTERP_Linear) {
-                value = curve[0] + ((curve[1] - curve[0]) * t);
+                value = curve.start + ((curve.end - curve.start) * tValue);
             } else {
-                value = curve[1];
+                //Stepped keyframes use the end value of the interpolation range
+                value = curve.end;
             }
         } else {
-            value = curve[1];
+            value = curve.end; //Note: this case doesn't use the start value of the interpolation range
         }
     }
+
     return value;
 }
 

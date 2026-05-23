@@ -3,11 +3,4 @@
 
 #include "game/objects/object.h"
 
-// Includes DFdockpoint
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[2];
-    s16 unk1A;
-} ObjType23Setup;
-
 #endif

@@ -1,0 +1,23 @@
+.text = 0x0:
+DR_Tube_ctor = 0x0;
+DR_Tube_dtor = 0xC;
+DR_Tube_setup = 0x18;
+DR_Tube_control = 0x15C;
+DR_Tube_update = 0x364;
+DR_Tube_print = 0x370;
+DR_Tube_free = 0x3C4;
+DR_Tube_get_model_flags = 0x3D4;
+DR_Tube_get_data_size = 0x3E4;
+DR_Tube_animate_all_sections = 0x3F8;
+DR_Tube_section_anim_on = 0x4B8;
+DR_Tube_section_anim_off = 0x548;
+DR_Tube_get_sections_bitfield = 0x58C;
+
+.rodata = 0x680:
+
+.data = 0x690:
+dAnimGamebits = 0x0; // absolute:0x690
+dTubeTopGamebits = 0x14; // absolute:0x6A4
+
+.bss = 0x6B0:
+sAllTubesActivated = 0x0; // absolute:0x6B0

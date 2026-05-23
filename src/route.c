@@ -201,7 +201,7 @@ void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx)
                     }
                     break;
                 case 0x24: // Tricky
-                    main_get_bits(BIT_4E2);
+                    main_get_bits(BIT_Tricky_Talk_Sequence);
                     if ((neighbor->type22.unk30 == -1 || main_get_bits(neighbor->type22.unk30) != 0) &&
                            (neighbor->type22.usedBit == -1 || main_get_bits(neighbor->type22.usedBit) == 0)) {
                         route_add_neighbor(route, basePoint, baseCurveIdx, 

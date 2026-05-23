@@ -39,7 +39,7 @@ typedef struct {
 /*1B*/ s8 unk1B;
 /*1C*/ s32 links[4]; // "links" in default.dol
 // TODO: struct split here?
-/*2C*/ s8 unk2C;
+/*2C*/ s8 unk2C; //yaw?
 /*2D*/ s8 unk2D;
 /*2E*/ u8 unk2E; 
 /*2E*/ s8 unk2F; 

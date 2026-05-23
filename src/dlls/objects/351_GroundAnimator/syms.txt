@@ -1,0 +1,20 @@
+.text = 0x0:
+GroundAnimator_ctor = 0x0;
+GroundAnimator_dtor = 0xC;
+GroundAnimator_setup = 0x18;
+GroundAnimator_control = 0x170;
+GroundAnimator_update = 0x950;
+GroundAnimator_print = 0x95C;
+GroundAnimator_free = 0x974;
+GroundAnimator_get_model_flags = 0xA04;
+GroundAnimator_get_data_size = 0xA14;
+GroundAnimator_store_shapeIDs_and_vertex_weights = 0xA28;
+GroundAnimator_tick_dig = 0xC90;
+GroundAnimator_is_dig_finished = 0xDFC;
+GroundAnimator_get_magic_cave_index = 0xE38;
+
+.rodata = 0xED8:
+str_0 = 0x0; // absolute:0xED8
+
+.data = 0xEF8:
+dDigJingles = 0x0; // absolute:0xEF8

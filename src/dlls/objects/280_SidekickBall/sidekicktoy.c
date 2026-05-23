@@ -53,11 +53,10 @@ static void SidekickToy_tick_collision(Object* self, SidekickToy_Data* objdata) 
 // offset: 0x250 | func: 2
 static s32 SidekickToy_tick_flight(Object* self) {
     Vec3f velocity;
-    Vec3f sp40;
+    Vec3f vNormal;
     f32 speed;
-    f32 temp_ft0;
     f32 dotProductDouble;
-    f32 tempSpeed;
+    f32 volume;
     SidekickToy_Data* objdata;
 
     objdata = self->data;
@@ -68,49 +67,66 @@ static s32 SidekickToy_tick_flight(Object* self) {
         self->velocity.y * gUpdateRateF,
         self->velocity.z * gUpdateRateF
     );
+
     SidekickToy_tick_collision(self, objdata);
+
+    //Handle bouncing off terrain
     if (objdata->collision.unk25D) {
         velocity.f[0] = -self->velocity.x;
         velocity.f[1] = -self->velocity.y;
         velocity.f[2] = -self->velocity.z;
         speed = VECTOR_MAGNITUDE(velocity);
-        tempSpeed = speed;
-        if (tempSpeed > 0.5f) {
-            if (tempSpeed > 2.0f) {
-                tempSpeed = 2.0f;
+
+        //Play a squeak sound, correlating speed with volume
+        volume = speed;
+        if (volume > 0.5f) {
+            if (volume > 2.0f) {
+                volume = 2.0f;
             }
-            gDLL_6_AMSFX->vtbl->play(self, 0x161, tempSpeed * 32.0f, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_161_Toy_Squeak, volume * 32.0f, 0, 0, 0, 0);
         }
-        //Getting normalised direction vector from velocity
+
+        //Get velocity unit vector
         if (speed != 0.0f) {
             velocity.f[0] *= 1.0f / speed;
             velocity.f[1] *= 1.0f / speed;
             velocity.f[2] *= 1.0f / speed;
         }
-        sp40.f[0] = objdata->collision.unk68.unk0[0].x;
-        sp40.f[1] = objdata->collision.unk68.unk0[0].y;
-        sp40.f[2] = objdata->collision.unk68.unk0[0].z;
-        dotProductDouble = 2.0f * DOT_PRODUCT(velocity, sp40);
 
-        self->velocity.x = sp40.x*dotProductDouble;
-        self->velocity.y = sp40.y*dotProductDouble;
-        self->velocity.z = sp40.z*dotProductDouble;
+        //Get surface normal
+        vNormal.f[0] = objdata->collision.unk68.unk0[0].x;
+        vNormal.f[1] = objdata->collision.unk68.unk0[0].y;
+        vNormal.f[2] = objdata->collision.unk68.unk0[0].z;
+
+        //Reflect velocity vector off surface normal
+        dotProductDouble = 2.0f * DOT_PRODUCT(velocity, vNormal);
+        self->velocity.x = vNormal.x*dotProductDouble;
+        self->velocity.y = vNormal.y*dotProductDouble;
+        self->velocity.z = vNormal.z*dotProductDouble;
         VECTOR_SUBTRACT(self->velocity, velocity, self->velocity)
 
+        //Handle when nearly at rest
         if (speed < 0.3f) {
+            //Come to a stop if the ground is mostly flat
             if (gDLL_25->vtbl->func_12FC(self->srt.transl.f)) {
                 return TOY_STATE_1_At_Rest;
             }
+
+            //Otherwise, gain a burst of momentum
             self->velocity.x *= 10.0f;
             self->velocity.y *= 10.0f;
             self->velocity.z *= 10.0f;
         }
+
+        //Lose some momentum on each bounce
         self->velocity.x *= speed * 0.7f;
         self->velocity.y *= speed * 0.70f; //NOTE: compiles as separate rodata
         self->velocity.z *= speed * 0.7f;
     }
+
     self->srt.pitch = self->velocity.z * 1000.0f;
     self->srt.roll -= self->velocity.x * 1000.0f;
+
     return TOY_STATE_2_In_Flight;
 }
 

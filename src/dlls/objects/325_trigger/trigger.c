@@ -722,7 +722,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_KYTE_TALK_SEQ:
             // "Trigger [%d], kyte flight talk sequence set\n" (default.dol)
-            main_set_bits(BIT_488, cmd->param2 | (cmd->param1 << 8));
+            main_set_bits(BIT_Kyte_Flight_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_ACT:
             // "Trigger [%d], Act change on map %d to act %d\n" (default.dol)
@@ -730,7 +730,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_TRICKY_TALK_SEQ:
             // "Trigger [%d], Tricky talk sequence set to %d\n" (default.dol)
-            main_set_bits(BIT_4E2, cmd->param2 | (cmd->param1 << 8));
+            main_set_bits(BIT_Tricky_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_POINT:
             // "Trigger [%d], Save Point\n" (default.dol)
@@ -818,35 +818,35 @@ static void trigger_func_1754(u8 param1, u8 param2) { }
 
 static void trigger_bits_set(u16 param1) {
     s32 _stack_pad[2];
-    s32 entry;
-    u32 value;
+    s32 gamebitID;
+    u32 valueToSet;
 
-    entry = param1 & 0x3FFF;
+    gamebitID = param1 & 0x3FFF;
     param1 >>= 14;
-    value = main_get_bits(entry);
 
-    if (param1 == 0) {
-        value = 0;
-    } else if (param1 == 1) {
-        value = -1;
-    } else if (param1 == 2) {
-        value = ~value;
+    valueToSet = main_get_bits(gamebitID);
+    if (param1 == TriggerCommand_Bits_0_Unset) {
+        valueToSet = 0;
+    } else if (param1 == TriggerCommand_Bits_1_Set) {
+        valueToSet = -1;
+    } else if (param1 == TriggerCommand_Bits_2_Toggle) {
+        valueToSet = ~valueToSet;
     }
 
-    main_set_bits(entry, value);
+    main_set_bits(gamebitID, valueToSet);
 }
 
 static void trigger_bits_toggle(u16 param1) {
     s32 _stack_pad[2];
-    s32 entry;
+    s32 gamebitID;
     u32 value;
 
-    entry = param1 & 0x1FFF;
+    gamebitID = param1 & 0x1FFF;
     param1 >>= 13;
 
-    value = main_get_bits(entry);
+    value = main_get_bits(gamebitID);
     value ^= (1 << param1);
-    main_set_bits(entry, value);
+    main_set_bits(gamebitID, value);
 }
 
 static void trigger_tex_load(u16 param1) {

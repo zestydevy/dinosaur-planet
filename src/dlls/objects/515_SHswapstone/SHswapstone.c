@@ -50,7 +50,7 @@ static int SHswapstone_anim_callback(Object* self, Object* a1, AnimObj_Data* a2,
 static s32 SHswapstone_get_held_spirit(void);
 static int SHswapstone_has_spellstone(void);
 static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, struct AnimObj_Data* arg2);
-static int SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 cond);
+static s32 SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 cond);
 
 // offset: 0x0 | ctor
 void SHswapstone_ctor(void *dll) { }
@@ -299,7 +299,7 @@ static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, st
 }
 
 // offset: 0xAD4 | func: 9
-static int SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 cond) {
+static s32 SHswapstone_is_stick_direction_available(Object* self, Object *override, s32 cond) {
     SHswapstone_Data* objdata;
     s8 joyXSign;
     s8 joyYSign;

@@ -1,0 +1,15 @@
+.text = 0x0:
+sideload_ctor = 0x0;
+sideload_dtor = 0xC;
+sideload_setup = 0x18;
+sideload_control = 0x70;
+sideload_update = 0x148;
+sideload_print = 0x154;
+sideload_free = 0x1A8;
+sideload_get_model_flags = 0x1B8;
+sideload_get_data_size = 0x1C8;
+
+.rodata = 0x218:
+
+.data = 0x218:
+dSidekickObjIDs = 0x0; // absolute:0x218

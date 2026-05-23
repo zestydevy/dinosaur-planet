@@ -2,11 +2,12 @@
 #include "dlls/engine/27.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/418_DFriverflow.h"
-#include "game/objects/unknown_setups.h"
+#include "dlls/objects/419_DFdockpoint.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/joypad.h"
 #include "sys/dll.h"
+#include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
@@ -32,7 +33,7 @@ typedef struct {
     u8 unk4ED;
     u8 unk4EE;
     s16 unk4F0[2];
-    Object *unk4F4; // dockpoint
+    Object *dockpoint; // dockpoint
 } DFlog_Data;
 
 /*0x0*/ static DLL_IModgfx *_data_0 = NULL;
@@ -166,7 +167,7 @@ static int dll_417_func_3B8(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
 // offset: 0x400 | func: 8 | export: 7
 s32 dll_417_func_400(Object *self, Object *a1) {
     DFlog_Data *objdata = (DFlog_Data*)self->data;
-    if ((objdata->unk4EC == 0) && (objdata->unk4F4 != NULL)) {
+    if ((objdata->unk4EC == 0) && (objdata->dockpoint != NULL)) {
         return vec3_distance(&a1->globalPosition, &self->globalPosition) < 50.0f;
     }
     return 0;
@@ -174,8 +175,8 @@ s32 dll_417_func_400(Object *self, Object *a1) {
 
 // offset: 0x490 | func: 9 | export: 8
 s32 dll_417_func_490(Object *self) {
-    SRT sp88;
-    MtxF sp48;
+    SRT srt;
+    MtxF mtx;
     f32 sp44;
     f32 sp40;
     f32 sp3C;
@@ -185,15 +186,15 @@ s32 dll_417_func_490(Object *self) {
 
     player = get_player();
     if (player != NULL) {
-        sp88.yaw = self->srt.yaw + 0x4000;
-        sp88.pitch = self->srt.pitch;
-        sp88.roll = self->srt.roll;
-        sp88.transl.x = 0.0f;
-        sp88.transl.y = 0.0f;
-        sp88.transl.z = 0.0f;
-        sp88.scale = 1.0f;
-        matrix_from_srt(&sp48, &sp88);
-        vec3_transform(&sp48, 0.0f, 0.0f, 1.0f, &sp44, &sp40, &sp3C);
+        srt.yaw = self->srt.yaw + M_90_DEGREES;
+        srt.pitch = self->srt.pitch;
+        srt.roll = self->srt.roll;
+        srt.transl.x = 0.0f;
+        srt.transl.y = 0.0f;
+        srt.transl.z = 0.0f;
+        srt.scale = 1.0f;
+        matrix_from_srt(&mtx, &srt);
+        vec3_transform(&mtx, 0.0f, 0.0f, 1.0f, &sp44, &sp40, &sp3C);
         temp2 = -((self->srt.transl.x * sp44) + (sp40 * self->srt.transl.y) + (sp3C * self->srt.transl.z));
         temp = (player->srt.transl.x * sp44) + (sp40 * player->srt.transl.y) + (sp3C * player->srt.transl.z) + temp2;
         if (temp < 0) {
@@ -204,21 +205,22 @@ s32 dll_417_func_490(Object *self) {
 }
 
 // offset: 0x5D8 | func: 10 | export: 9
-void dll_417_func_5D8(Object *self, f32 *a1, f32 *a2, f32 *a3) {
-    *a1 = self->srt.transl.x;
-    *a2 = self->srt.transl.y;
-    *a3 = self->srt.transl.z;
+void dll_417_func_5D8(Object *self, f32 *ox, f32 *oy, f32 *oz) {
+    *ox = self->srt.transl.x;
+    *oy = self->srt.transl.y;
+    *oz = self->srt.transl.z;
 }
 
 // offset: 0x5F8 | func: 11 | export: 10
-s32 dll_417_func_5F8(Object* arg0, Object* arg1) {
+s32 dll_417_func_5F8(Object* self, Object* player) {
     DFlog_Data* objdata;
     f32 var_fs0;
     s32 camDLLID;
     s32 i;
 
-    objdata = (DFlog_Data*)arg0->data;
-    if ((objdata->unk4F4 != 0) && (objdata->unk4EC == 2)) {
+    objdata = (DFlog_Data*)self->data;
+
+    if ((objdata->dockpoint != NULL) && (objdata->unk4EC == 2)) {
         camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
         if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAMSHIPBATTLE2) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
             var_fs0 = 0.0f;
@@ -229,7 +231,8 @@ s32 dll_417_func_5F8(Object* arg0, Object* arg1) {
             return var_fs0 < 2.0f;
         }
     }
-    ((DLL_210_Player*)arg1->dll)->vtbl->func28(arg1, 1);
+
+    ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
     return 0;
 }
 
@@ -239,22 +242,22 @@ UNK_TYPE_32 dll_417_func_75C(Object *self) {
 }
 
 // offset: 0x76C | func: 13 | export: 12
-void dll_417_func_76C(Object *self, f32 *a1, f32 *a2, f32 *a3) {
-    MtxF sp48;
-    SRT sp30;
+void dll_417_func_76C(Object *self, f32 *ox, f32 *oy, f32 *oz) {
+    MtxF mtx;
+    SRT srt;
 
-    sp30.transl.x = self->srt.transl.x;
-    sp30.transl.y = self->srt.transl.y;
-    sp30.transl.z = self->srt.transl.z;
-    sp30.yaw = self->srt.yaw;
-    sp30.pitch = self->srt.pitch;
-    sp30.roll = self->srt.roll;
-    sp30.scale = 1.0f;
-    matrix_from_srt(&sp48, &sp30);
-    vec3_transform(&sp48, 0.0f, 1.5f, -1.0f, a1, a2, a3);
-    *a1 = self->srt.transl.x;
-    *a2 = self->srt.transl.y + 30.0f;
-    *a3 = self->srt.transl.z;
+    srt.transl.x = self->srt.transl.x;
+    srt.transl.y = self->srt.transl.y;
+    srt.transl.z = self->srt.transl.z;
+    srt.yaw = self->srt.yaw;
+    srt.pitch = self->srt.pitch;
+    srt.roll = self->srt.roll;
+    srt.scale = 1.0f;
+    matrix_from_srt(&mtx, &srt);
+    vec3_transform(&mtx, 0.0f, 1.5f, -1.0f, ox, oy, oz);
+    *ox = self->srt.transl.x;
+    *oy = self->srt.transl.y + 30.0f;
+    *oz = self->srt.transl.z;
 }
 
 // offset: 0x85C | func: 14 | export: 13
@@ -269,7 +272,7 @@ void dll_417_func_86C(Object *self, s32 a1) {
     Object *player;
 
     player = get_player();
-    objdata->unk4EC = (s8) a1;
+    objdata->unk4EC = a1;
     if (a1 != 0) {
         ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
         gDLL_2_Camera->vtbl->change_mode(0, 0x2B);
@@ -334,33 +337,33 @@ void dll_417_func_A80(UNK_TYPE_32 a0, UNK_TYPE_32 a1) { }
 static void dll_417_func_A90(Object *self) {
     DFlog_Data *objdata;
     DLL27_Data *d27data;
-    SRT spA8;
-    MtxF sp68;
+    SRT srt;
+    MtxF mtx;
     s32 i;
     s32 j;
 
     objdata = (DFlog_Data*)self->data;
 
-    spA8.yaw = self->srt.yaw;
-    spA8.pitch = self->srt.pitch;
-    spA8.roll = self->srt.roll;
-    spA8.scale = 1.0f;
-    spA8.transl.x = self->srt.transl.x;
-    spA8.transl.y = self->srt.transl.y;
-    spA8.transl.z = self->srt.transl.z;
-    matrix_from_srt(&sp68, &spA8);
+    srt.yaw = self->srt.yaw;
+    srt.pitch = self->srt.pitch;
+    srt.roll = self->srt.roll;
+    srt.scale = 1.0f;
+    srt.transl.x = self->srt.transl.x;
+    srt.transl.y = self->srt.transl.y;
+    srt.transl.z = self->srt.transl.z;
+    matrix_from_srt(&mtx, &srt);
 
     d27data = &objdata->unk28C;
 
     for (i = 0, j = 0; i < (d27data->numTestPoints & 0xF); i++, j++) {
-        vec3_transform(&sp68, 
+        vec3_transform(&mtx, 
             _data_EC[j].x, _data_EC[j].y, _data_EC[j].z, 
             &objdata->unk240[i].x, &objdata->unk240[i].y, &objdata->unk240[i].z);
     }
 }
 
 // offset: 0xBC8 | func: 22
-static void dll_417_func_BC8(Object* arg0) {
+static void dll_417_func_BC8(Object* self) {
     DFlog_Data* objdata;
     s32 i;
     s32 k;
@@ -368,12 +371,12 @@ static void dll_417_func_BC8(Object* arg0) {
     s32 objListLength;
     Object* obj;
     Object** objList;
-    f32 temp_fs0;
+    f32 dx;
     f32 temp_fv0;
-    f32 temp_fv0_2;
+    f32 dz;
     f32 temp_fv1;
 
-    objdata = (DFlog_Data*)arg0->data;
+    objdata = (DFlog_Data*)self->data;
 
     for (i = 0; i < 2; i++) {
         objdata->unk270[i] = 0.0f;
@@ -389,15 +392,15 @@ static void dll_417_func_BC8(Object* arg0) {
             for (k = 0; k < 2; k++) {
                 temp_fv0 = obj->srt.transl.y - objdata->unk240[k].y;
                 if ((temp_fv0 <= 200.0f) && (temp_fv0 >= -200.0f)) {
-                    temp_fs0 = obj->srt.transl.x - objdata->unk240[k].x;
-                    temp_fv0_2 = obj->srt.transl.z - objdata->unk240[k].z;
-                    temp_fs0 = sqrtf(SQ(temp_fs0) + SQ(temp_fv0_2));
-                    temp_fv1 = (f32) ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
-                    if (temp_fs0 < temp_fv1) {
-                        temp_fs0 = ((temp_fv1 - temp_fs0) / temp_fv1);
-                        temp_fs0 *= (obj->srt.scale * 10.0f);
-                        objdata->unk270[k] += (fsin16_precise(obj->srt.yaw) * temp_fs0);
-                        objdata->unk278[k] += (fcos16_precise(obj->srt.yaw) * temp_fs0);
+                    dx = obj->srt.transl.x - objdata->unk240[k].x;
+                    dz = obj->srt.transl.z - objdata->unk240[k].z;
+                    dx = sqrtf(SQ(dx) + SQ(dz));
+                    temp_fv1 = ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
+                    if (dx < temp_fv1) {
+                        dx = ((temp_fv1 - dx) / temp_fv1);
+                        dx *= (obj->srt.scale * 10.0f);
+                        objdata->unk270[k] += (fsin16_precise(obj->srt.yaw) * dx);
+                        objdata->unk278[k] += (fcos16_precise(obj->srt.yaw) * dx);
                         sp9C[k] += 1;
                     }
                 }
@@ -414,7 +417,7 @@ static void dll_417_func_BC8(Object* arg0) {
 }
 
 // offset: 0xE8C | func: 23
-static void dll_417_func_E8C(Object* arg0) {
+static void dll_417_func_E8C(Object* self) {
     f32 var_fa0;
     f32 var_fa1;
     SRT spE0;
@@ -424,8 +427,8 @@ static void dll_417_func_E8C(Object* arg0) {
     f32 spD0;
     f32 spC8[2];
     f32 spC4;
-    ObjType23Setup* temp_s0;
-    f32 spBC;
+    DFdockpoint_Setup* dockpointSetup;
+    f32 distance;
     Object* temp_a0;
     Vec3f spAC;
     Vec3f spA0;
@@ -439,27 +442,29 @@ static void dll_417_func_E8C(Object* arg0) {
     DFlog_Data* objdata;
     f32 pad;
 
-    objdata = (DFlog_Data*)arg0->data;
+    objdata = (DFlog_Data*)self->data;
     sp8D = 0;
-    spBC = 10000.0f;
-    objdata->unk4F4 = obj_get_nearest_type_to(OBJTYPE_Dockpoint, arg0, &spBC);
-    if (objdata->unk4F4 != NULL) {
-        temp_s0 = (ObjType23Setup*)objdata->unk4F4->setup;
-        spBC = vec3_distance(&arg0->globalPosition, &objdata->unk4F4->globalPosition);
+    distance = 10000.0f;
+    objdata->dockpoint = obj_get_nearest_type_to(OBJTYPE_Dockpoint, self, &distance);
+    if (objdata->dockpoint != NULL) {
+        dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
+        distance = vec3_distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
         if (objdata->unk4EC == 2) {
             var_fv1 = 0.95f;
         } else {
             var_fv1 = 0.5f;
         }
-        if (spBC < (f32) temp_s0->unk1A) {
+
+        if (distance < (f32) dockpointSetup->unk1A) {
             for (i = 0; i < 2; i++) {
                 objdata->unk258[i].x *= var_fv1;
                 objdata->unk258[i].z *= var_fv1;
             }
         } else {
-            objdata->unk4F4 = NULL;
+            objdata->dockpoint = NULL;
         }
     }
+
     if ((objdata->unk4EC == 2) && (gDLL_2_Camera->vtbl->get_dll_ID() != 0x60)) {
         objdata->unk280 = (f32) ((f32) joy_get_stick_x(0) * 0.01f);
         if (joy_get_pressed(0) & A_BUTTON) {
@@ -499,33 +504,33 @@ static void dll_417_func_E8C(Object* arg0) {
             objdata->unk284 = var_fa0;
         }
     }
-    spC4 = fsin16_precise(arg0->srt.yaw) * objdata->unk284;
-    var_fv1 = fcos16_precise(arg0->srt.yaw) * objdata->unk284;
+    spC4 = fsin16_precise(self->srt.yaw) * objdata->unk284;
+    var_fv1 = fcos16_precise(self->srt.yaw) * objdata->unk284;
     objdata->unk258[0].x = (f32) (objdata->unk258[0].x + spC4);
     objdata->unk258[0].z = (f32) (objdata->unk258[0].z + var_fv1);
     objdata->unk258[1].x = (f32) (objdata->unk258[1].x + spC4);
     objdata->unk258[1].z = (f32) (objdata->unk258[1].z + var_fv1);
-    spC4 = fsin16_precise((s16) (arg0->srt.yaw + 0x4000)) * objdata->unk280;
-    var_fv1 = fcos16_precise((s16) (arg0->srt.yaw + 0x4000)) * objdata->unk280;
+    spC4 = fsin16_precise((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
+    var_fv1 = fcos16_precise((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
     objdata->unk258[0].x = (f32) (objdata->unk258[0].x + (spC4 * 0.05f));
     objdata->unk258[0].z = (f32) (objdata->unk258[0].z + (var_fv1 * 0.05f));
     objdata->unk258[1].x = (f32) (objdata->unk258[1].x - (spC4 * 0.025f));
     objdata->unk258[1].z = (f32) (objdata->unk258[1].z - (var_fv1 * 0.025f));
-    spD0 = dll_417_func_1E9C(arg0, arg0->srt.transl.y, arg0->srt.transl.x, arg0->srt.transl.z);
+    spD0 = dll_417_func_1E9C(self, self->srt.transl.y, self->srt.transl.x, self->srt.transl.z);
     for (i = 0; i < 2; i++) {
         objdata->unk258[i].x -= (objdata->unk270[i] * 0.05f);
         objdata->unk258[i].z -= (objdata->unk278[i] * 0.050f);
         objdata->unk258[i].x *= 0.99f;
         objdata->unk258[i].z *= 0.99f;
-        spBC = sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
-        if (spBC > 0.95f) {
-            spBC = 0.95f / spBC;
-            objdata->unk258[i].x = (f32) (objdata->unk258[i].x * spBC);
-            objdata->unk258[i].z = (f32) (objdata->unk258[i].z * spBC);
+        distance = sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
+        if (distance > 0.95f) {
+            distance = 0.95f / distance;
+            objdata->unk258[i].x = (f32) (objdata->unk258[i].x * distance);
+            objdata->unk258[i].z = (f32) (objdata->unk258[i].z * distance);
         }
-        spC8[i] = dll_417_func_1E9C(arg0, objdata->unk240[i].y, objdata->unk240[i].x, objdata->unk240[i].z);
+        spC8[i] = dll_417_func_1E9C(self, objdata->unk240[i].y, objdata->unk240[i].x, objdata->unk240[i].z);
         if (((spC8[i] - objdata->unk240[i].y) > -2.0f) && ((spC8[i] - objdata->unk240[i].y) < 2.0f)) {
-            var_fa0 = spD0 - arg0->srt.transl.y;
+            var_fa0 = spD0 - self->srt.transl.y;
             if ((var_fa0 > -2.0f) && (var_fa0 < 2.0f)) {
                 objdata->unk258[i].y += ((spC8[i] - objdata->unk240[i].y) * 0.02f);
                 objdata->unk258[i].y *= 0.95f;
@@ -568,18 +573,18 @@ static void dll_417_func_E8C(Object* arg0) {
         objdata->unk240[i].y += objdata->unk258[i].y * gUpdateRateF;
         objdata->unk240[i].z += objdata->unk258[i].z * gUpdateRateF;
     }
-    arg0->srt.transl.x = (objdata->unk240[0].x + objdata->unk240[1].x) * 0.5f;
-    arg0->srt.transl.y = (objdata->unk240[0].y + objdata->unk240[1].y) * 0.5f;
-    arg0->srt.transl.z = (objdata->unk240[0].z + objdata->unk240[1].z) * 0.5f;
+    self->srt.transl.x = (objdata->unk240[0].x + objdata->unk240[1].x) * 0.5f;
+    self->srt.transl.y = (objdata->unk240[0].y + objdata->unk240[1].y) * 0.5f;
+    self->srt.transl.z = (objdata->unk240[0].z + objdata->unk240[1].z) * 0.5f;
     spD4 = objdata->unk240[1].x - objdata->unk240[0].x;
     spD8 = objdata->unk240[1].y - objdata->unk240[0].y;
     spDC = objdata->unk240[1].z - objdata->unk240[0].z;
-    spBC = sqrtf((spD4 * spD4) + (spDC * spDC));
-    arg0->srt.pitch = -arctan2_f(spD8, spBC);
-    arg0->srt.yaw = arctan2_f(spD4, spDC);
-    gDLL_27->vtbl->func_1E8(arg0, &objdata->unk28C, gUpdateRateF);
-    gDLL_27->vtbl->func_5A8(arg0, &objdata->unk28C);
-    gDLL_27->vtbl->func_624(arg0, &objdata->unk28C, gUpdateRateF);
+    distance = sqrtf((spD4 * spD4) + (spDC * spDC));
+    self->srt.pitch = -arctan2_f(spD8, distance);
+    self->srt.yaw = arctan2_f(spD4, spDC);
+    gDLL_27->vtbl->func_1E8(self, &objdata->unk28C, gUpdateRateF);
+    gDLL_27->vtbl->func_5A8(self, &objdata->unk28C);
+    gDLL_27->vtbl->func_624(self, &objdata->unk28C, gUpdateRateF);
     temp_s2 = (objdata->unk28C.hitsTouchBits | objdata->unk28C.unk25C) & 3;
     temp_s1_5 = temp_s2 & (temp_s2 ^ objdata->unk4EE);
     if (temp_s1_5 & 1) {
@@ -594,7 +599,7 @@ static void dll_417_func_E8C(Object* arg0) {
         }
     }
     if ((s32) sp8D >= 0xB) {
-        gDLL_6_AMSFX->vtbl->play(arg0, SOUND_76D_Log_Bump, sp8D, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_76D_Log_Bump, sp8D, NULL, NULL, 0, NULL);
     }
     objdata->unk4EE = temp_s2;
     if ((objdata->unk4EC == 2) && (sp90[0] != 0) && (sp90[1] != 0)) {
@@ -604,7 +609,7 @@ static void dll_417_func_E8C(Object* arg0) {
             sp9C = (spAC.y - spD0) / (spAC.y - spA0.y);
             if ((sp9C >= 0.0f) && (sp9C <= 1.0f)) {
                 if (objdata->unk4ED == 0) {
-                    gDLL_6_AMSFX->vtbl->play(arg0, SOUND_8F_Water_Paddle, 0x7F, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_8F_Water_Paddle, 0x7F, NULL, NULL, 0, NULL);
                     objdata->unk4ED = 2;
                 }
                 spE0.transl.x = ((spA0.x - spAC.x) * sp9C) + spAC.x;
@@ -622,11 +627,11 @@ static void dll_417_func_E8C(Object* arg0) {
                     spE0.scale = var_fa0;
                 }
                 spE0.yaw = (arctan2_f(objdata->unk240[0].x - objdata->unk240[1].x, objdata->unk240[0].z - objdata->unk240[1].z) + 0x8000) & 0xFFFF & 0xFFFF;
-                spE0.transl.x -= arg0->srt.transl.x;
-                spE0.transl.y -= arg0->srt.transl.y;
-                spE0.transl.z -= arg0->srt.transl.z;
-                gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
-                gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_3C5, &spE0, PARTFXFLAG_NONE, -1, NULL);
+                spE0.transl.x -= self->srt.transl.x;
+                spE0.transl.y -= self->srt.transl.y;
+                spE0.transl.z -= self->srt.transl.z;
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C5, &spE0, PARTFXFLAG_NONE, -1, NULL);
             } else {
                 if (objdata->unk4ED != 0) {
                     objdata->unk4ED >>= 1;
@@ -638,8 +643,8 @@ static void dll_417_func_E8C(Object* arg0) {
     for (i = 0; i < 2; i++) {
         if (sp90[i] != 0) {
             if (sp90[i] >= 0xB) {
-                if (arg0->srt.transl.y != objdata->unk240[i].y) {
-                    sp9C = (objdata->unk240[i].y - spC8[i]) / (objdata->unk240[i].y - arg0->srt.transl.y);
+                if (self->srt.transl.y != objdata->unk240[i].y) {
+                    sp9C = (objdata->unk240[i].y - spC8[i]) / (objdata->unk240[i].y - self->srt.transl.y);
                 } else {
                     sp9C = 1.0f;
                 }
@@ -654,13 +659,13 @@ static void dll_417_func_E8C(Object* arg0) {
                 spE0.transl.x = objdata->unk240[i].x;
                 spE0.scale = sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
                 if (spE0.scale > 0.1f) {
-                    spE0.transl.y = arg0->srt.transl.y;
+                    spE0.transl.y = self->srt.transl.y;
                     spE0.transl.z = objdata->unk240[i].z;
                     spE0.yaw = (arctan2_f(objdata->unk258[i].x, objdata->unk258[i].z) + 0x8000) & 0xFFFF & 0xFFFF;
-                    spE0.transl.x -= arg0->srt.transl.x;
-                    spE0.transl.y -= arg0->srt.transl.y;
-                    spE0.transl.z -= arg0->srt.transl.z;
-                    gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
+                    spE0.transl.x -= self->srt.transl.x;
+                    spE0.transl.y -= self->srt.transl.y;
+                    spE0.transl.z -= self->srt.transl.z;
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
                 }
             }
         }

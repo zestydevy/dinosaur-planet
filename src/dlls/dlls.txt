@@ -83,6 +83,7 @@
 266 = objects/266_sfxplayer
 267 = objects/267_checkpoint4
 268 = objects/268_setuppoint
+269 = objects/269_sideload
 270 = objects/270_sidesetup
 271 = objects/271_InfoPoint
 272 = objects/272_collectable
@@ -125,6 +126,7 @@
 324 = objects/324_curve
 325 = objects/325_trigger
 327 = objects/327
+330 = objects/330_CampFire
 331 = objects/331_genprops
 332 = objects/332_FXEmit
 334 = objects/334_Transporter
@@ -135,6 +137,7 @@
 346 = objects/346_animator
 347 = objects/347_texscroll2
 348 = objects/348_texscroll
+351 = objects/351_GroundAnimator
 353 = objects/353_HitAnimator
 354 = objects/354_VisAnimator
 357 = objects/357_ExplodeAnimator
@@ -159,6 +162,9 @@
 417 = objects/417_DFlog
 418 = objects/418_DFriverflow
 419 = objects/419_DFdockpoint
+423 = objects/423_DFbarrel
+424 = objects/424_DFbarrelanim
+425 = objects/425_DFbarrelcreator
 426 = objects/426_DFcavedoor
 427 = objects/427_DFlevelcontrol
 428 = objects/428_DFmole
@@ -203,6 +209,7 @@
 501 = objects/501_SHtricky
 502 = objects/502_SHmushroom
 503 = objects/503_SHkillermushroom
+504 = objects/504_SHrocketmushroom
 505 = objects/505_SHspore
 506 = objects/506_SHPlantSpore
 507 = objects/507_SHqueenearthwalker
@@ -225,6 +232,7 @@
 528 = objects/528_SC_totemstrength
 530 = objects/530_DIMLavaBallGenerator
 535 = objects/535_DIMicewall
+536 = objects/536_DIMBoulder
 537 = objects/537_DIMCannon
 541 = objects/541_DIMExplosion
 544 = objects/544_DIM_LevelControl
@@ -313,8 +321,11 @@
 729 = objects/729_CRCloudRace
 730 = objects/730_CRspellStone
 731 = objects/731_CRFuelTank
+734 = objects/734_DR_PushCart
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
+739 = objects/739_DR_SupGuardClaw
+740 = objects/740_DR_tube
 742 = objects/742_DR_ExplodeDoor
 762 = objects/762_DRSpecialLoader
 764 = objects/764_DR_CloudPerch

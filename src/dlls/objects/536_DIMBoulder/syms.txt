@@ -1,0 +1,15 @@
+.text = 0x0:
+DIMBoulder_ctor = 0x0;
+DIMBoulder_dtor = 0xC;
+DIMBoulder_setup = 0x18;
+DIMBoulder_control = 0xD0;
+DIMBoulder_update = 0x634;
+DIMBoulder_print = 0x640;
+DIMBoulder_free = 0x694;
+DIMBoulder_get_model_flags = 0x6A4;
+DIMBoulder_get_data_size = 0x6B4;
+
+.rodata = 0x730:
+
+.data = 0x740:
+dBounceVelocities = 0x0; // absolute:0x740

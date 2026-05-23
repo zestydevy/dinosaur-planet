@@ -10,8 +10,13 @@ typedef struct {
     u8 id;
     // For some commands, param1 and 2 are read as a single u16, but 
     // in code they are read individually and then combined with bit math.
-    u8 param1;
-    u8 param2;
+    union {
+        struct {
+            u8 param1;
+            u8 param2;
+        };
+        u16 paramCombined;
+    };
 } TriggerCommand;
 
 typedef struct {
@@ -138,5 +143,12 @@ typedef enum {
     TRG_CMD_WATER_FALLS_FLAGS2 = 0x25,
     TRG_CMD_SIDEKICK = 0x26
 } TriggerCommandID;
+
+/* For use with `TRG_CMD_FLAG` / `trigger_set_bits` */
+typedef enum {
+    TriggerCommand_Bits_0_Unset,
+    TriggerCommand_Bits_1_Set,
+    TriggerCommand_Bits_2_Toggle
+} TriggerCommand_Bits_Modes;
 
 #endif
