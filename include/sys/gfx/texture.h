@@ -164,7 +164,7 @@ enum RenderFlags {
 /*11*/ RENDER_UNK800 = 0x800, //no collision
 /*12*/ RENDER_UNK1000 = 0x1000, //receive character shadow
 /*13*/ RENDER_UNK2000 = 0x2000, //water
-/*14*/ RENDER_COMPOSITE_BASE = 0x4000, //also sphere map?
+/*14*/ RENDER_COMPOSITE_BASE = 0x4000, // for textures only. for shapes, this bit is for sphere mapping
 /*15*/ RENDER_COMPOSITE_OVERLAY = 0x8000,
 /*16*/ RENDER_SHAPE_ANIMATED = 0x10000,
 /*17*/ RENDER_TEXANIM_RANDOM_PINGPONG = 0x20000,
@@ -181,7 +181,7 @@ enum RenderFlags {
 /*28*/ RENDER_SHAPE_VISIBLE = 0x10000000, //at runtime: shape passes all visibility checks (i.e. not hidden, passes bitstream test (unimplemented), inside camera frustum, passes CPU-based backface culling test)
 /*29*/ RENDER_UNK20000000 = 0x20000000,
 /*30*/ RENDER_UNK40000000 = 0x40000000,
-/*31*/ RENDER_NO_CULL = 0x80000000 //disables backface culling (for textures: G_CULL_BACK geometry mode off, for block shapes: CPU culling off)
+/*31*/ RENDER_NO_CULL = 0x80000000 //disables backface culling (for textures: G_CULL_BACK geometry mode off, for block shapes: CPU backface culling off)
 };
 
 // Option flags for tex_gdl_set_texture_simple

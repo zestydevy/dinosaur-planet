@@ -8,6 +8,7 @@
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
+#include "dll.h"
 
 typedef struct {
     s16 soundID;
@@ -24,9 +25,8 @@ typedef struct {
 } DR_NPC_Setup;
 
 typedef struct {
-    u8 _unk0[0x4A9 - 0];
-    u8 unk4A9;
-    u8 _unk4AA[0x4DC - 0x4AA];
+    MoveLibData movedata;
+    u8 _unk4B8[0x4DC - 0x4B8];
     HeadAnimation headAnimLook;
     HeadAnimation headAnimTalk;
     UnkFunc_80024108Struct animData;
@@ -131,8 +131,8 @@ void DR_NPC_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
     DR_NPC_Data* objData = self->data;
-    u16 dDLL53Array1[] = {30, 0, 0};
-    u16 dDLL53Array2[] = {25, 25, 25};
+    s16 dDLL53Array1[] = {30, 0, 0};
+    s16 dDLL53Array2[] = {25, 25, 25};
 
     self->animCallback = (void*)DR_NPC_anim_callback;
     self->srt.yaw = objSetup->yaw << 8;
@@ -173,12 +173,12 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
-    create_temp_dll(DLL_ID_53);
-    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func2(self, objData, -0x11C7, 0x3554, 3);
-    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func5(objData, 300, 120);
-    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func6(objData, dDLL53Array2, dDLL53Array1, 3);
+    create_temp_dll(DLL_ID_53_MOVELIB);
+    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func2(self, &objData->movedata, -0x11C7, 0x3554, 3);
+    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func5(&objData->movedata, 300, 120);
+    ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func6(&objData->movedata, dDLL53Array2, dDLL53Array1, 3);
 
-    objData->unk4A9 |= 10;
+    objData->movedata.unk4A9 |= 10;
 }
 
 // offset: 0x290 | func: 1 | export: 1
@@ -254,7 +254,7 @@ void DR_NPC_control(Object* self) {
     }
 
     DR_NPC_play_sounds(self, &objData->animData, objData->soundsAttack);
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, objData);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objData->movedata);
     func_80032A08(self, &objData->headAnimLook);
     func_80034BC0(self, &objData->headAnimTalk);
 
@@ -274,7 +274,7 @@ void DR_NPC_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func3(self, objData, 0);
+        ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func3(self, &objData->movedata, 0);
     }
 }
 
@@ -282,7 +282,7 @@ void DR_NPC_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 void DR_NPC_free(Object* self, s32 onlySelf) {
     DR_NPC_Setup* objSetup = (DR_NPC_Setup*)self->setup;
 
-    remove_temp_dll(DLL_ID_53);
+    remove_temp_dll(DLL_ID_53_MOVELIB);
 
     if (objSetup->characterType != DR_NPC_SharpClaw) {
         obj_free_object_type(self, OBJTYPE_Baddie);
@@ -325,7 +325,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
     }
 
     modAnimID = objData->modAnims[2];
-    if (((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func4(self, animData, objData, modAnimID, modAnimID) != 0) {
+    if (((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func4(self, animData, &objData->movedata, modAnimID, modAnimID) != 0) {
         return 1;
     }
 

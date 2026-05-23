@@ -97,7 +97,7 @@ enum DLL_ID {
     DLL_ID_50 = 50, // partfx related
     DLL_ID_51 = 51, // partfx related
     DLL_ID_52 = 52, // partfx related
-    DLL_ID_53 = 53,
+    DLL_ID_53_MOVELIB = 53,
     DLL_ID_54 = 54,
     
     DLL_ID_56 = 56,

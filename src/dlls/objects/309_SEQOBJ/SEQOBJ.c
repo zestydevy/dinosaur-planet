@@ -32,9 +32,9 @@ typedef enum {
 typedef enum {
     SEQOBJ_OPTIONS_None = 0,
     SEQOBJ_OPTIONS_ManualHasPlayedBit = 1, // don't auto update the hasPlayed gamebit
-    SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd = 2, //_Set_GamebitFinished_via_SeqCommand = 2,        //gamebitFinished intended to be set via a seqCommand?
-    SEQOBJ_OPTIONS_ManualHasPlayed_Dont_Unset_Play_Gamebit = 4, //_Retain_GamebitPlay_Value = 4,                  //Avoids setting gamebitPlay back to 0 after sequence finishes, under some circumstances?
-    SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence = 8, //_Set_GamebitFinished_After_Sequence_Ends = 8,   //Set gamebitFinished after sequences finishes, instead of immediately?
+    SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd = 2, //gamebitFinished intended to be set via a seqCommand?
+    SEQOBJ_OPTIONS_ManualHasPlayed_Dont_Unset_Play_Gamebit = 4, //Avoids setting gamebitPlay back to 0 after sequence finishes, under some circumstances?
+    SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence = 8, //Set gamebitFinished after sequences finishes, instead of immediately?
     SEQOBJ_OPTIONS_HasReplayActorMask = 16 // if set, more than just the seqobj will be controlled by a replay
 } SeqObj_PlaybackOptions;
 

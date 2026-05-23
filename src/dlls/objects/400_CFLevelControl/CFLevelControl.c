@@ -179,7 +179,7 @@ void CFLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     sTriggerPassed = main_get_bits(BIT_CF_Entrance_Trigger_Passed);
     CFLevelControl_func_67C(self, _data_D0, _data_110);
     sDLL190 = dll_load_deferred(DLL_ID_190, 1);
-    create_temp_dll(DLL_ID_53);
+    create_temp_dll(DLL_ID_53_MOVELIB);
 }
 
 // offset: 0xCC | func: 1 | export: 1
@@ -220,7 +220,7 @@ void CFLevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x314 | func: 4 | export: 4
 void CFLevelControl_free(Object *self, s32 a1) {
-    remove_temp_dll(DLL_ID_53);
+    remove_temp_dll(DLL_ID_53_MOVELIB);
     if (sDLL190) {
         dll_unload(sDLL190);
     }
