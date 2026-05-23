@@ -611,72 +611,72 @@ void func_80036438(Object* arg0) {
     }
 }
 
-#ifndef NON_EQUIVALENT
+#ifndef NON_MATCHING
 void func_80036890(Object* arg0, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036890.s")
 #else
 // https://decomp.me/scratch/cjUgO
-
-// size: 0x10
-typedef struct {
-    s32 unk0;
-    s32 pad4;
-    s16 unk8;
-    s16 unkA;
-    s32 padC;
-} UnkS6;
-
 void func_80036890(Object* arg0, s32 arg1) {
-    s32 i; // sp6C
+    s32 sp6C; // a1
     Gfx* temp_a1_2;
     s32 sp64;
     Gfx* temp_t0;
     Model* temp_t5;
     ModelFacebatch* temp_t4;
-    ModelInstance* modelInst;
+    ModelInstance* temp_s2;
     Texture* temp_a2;
     Texture* var_v1;
     Vtx* temp_a1_4;
     Vtx* temp_v0_2;
+    Vtx* var_v0_2;
     Vtx* var_a2;
+    Vtx* var_s6;
+    u8 *sp34;
     Vtx* var_v1_3;
-    s32 temp_s3;
+    s16 temp_t3;
+    u8 temp_s3;
     u16 temp_t6_2;
-    u16 *sp34;
+    s32 temp_v0;
     s32 var_a0;
-    s32 j;
-    s32 k;
+    s32 var_a0_2;
+    s32 var_s0;
+    s32 var_s1;
+    s32 var_v0;
     TextureAnimation* temp_v1_2;
-    UnkS6* var_s6;
+    s16 var_t1;
+    s16 var_t2;
+    s32 new_var_2;
+    u8 *var_s7;
 
-    modelInst = arg0->modelInsts[arg0->modelInstIdx];
-    temp_t5 = modelInst->model;
+    var_s6 = arg0->unk70;
+    temp_t5 =  arg0->modelInsts[arg0->modelInstIdx]->model;
     sp34 = arg0->def->pTextures;
     sp64 = arg0->def->numAnimatedFrames;
-    var_s6 = arg0->unk70;
-    for (i = 0; i < sp64; i++) {
-        for (j = 0; j < temp_t5->textureAnimationCount; j++) {
-            temp_v1_2 = &((TextureAnimation*)temp_t5->textureAnimations)[j];
-            temp_t4 = &temp_t5->faces[temp_v1_2->unkB];
-            if (temp_t4->tagB == (u8)sp34[i]) {
+    temp_s2 = arg0->modelInsts[arg0->modelInstIdx];
+    for (sp6C = 0; sp6C < sp64; sp6C++, var_s6++) {
+        var_t1 = var_s6->n.tc[0];
+        var_t2 = var_s6->n.tc[1];
+        var_s7 = sp34;
+        var_s7 += sp6C << 1;
+        var_s7++;
+        for (var_s0 = 0; var_s0 < temp_t5->textureAnimationCount; var_s0++) {
+            temp_t4 = &temp_t5->faces[temp_t5->textureAnimations[var_s0].unkB];
+            if (temp_t4->tagB == var_s7[0]) {
                 if (temp_t4->materialID != 0xFF) {
-                    temp_s3 = var_s6->unk0;
+                    temp_t3 = temp_t5->textureAnimations[var_s0].unk4;
                     temp_a2 = temp_t5->materials[temp_t4->materialID].texture;
-                    var_a0 = (temp_s3 >> 8) & 0xFF;
-                    temp_s3 &= 0xFF;
+                    var_a0 = (((s32*)var_s6)[0] >> 8) & 0xFF;
+                    temp_s3 = (((s32*)var_s6)[0]) & 0xFF;
                     temp_t6_2 = temp_a2->animDuration >> 8;
-                    if (temp_v1_2->unk4 >= 0) {
+                    if (temp_t3 >= 0) {
                         if (var_a0 >= temp_t6_2) {
                             var_a0 = temp_t6_2 - 1;
                         }
-                        var_v1 = temp_a2;
-                        k = 0;
-                        while (k < var_a0 && var_v1 != NULL) {
-                            k++;
-                            var_v1 = var_v1->next;
-                        }
+
+                        for (var_v1 = temp_a2, var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++, var_v1 = var_v1->next);
+
+                        temp_a1_2 = &temp_s2->displayList[new_var_2 = temp_t3];
                         temp_t0 = var_v1->gdl;
-                        temp_a1_2 = &modelInst->displayList[temp_v1_2->unk4];
                         gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
                         temp_t0 += var_v1->gdl2Offset + 1;
                         if (temp_t6_2 >= 2) {
@@ -690,36 +690,32 @@ void func_80036890(Object* arg0, s32 arg1) {
                                     }
                                 }
                                 var_v1 = temp_a2;
-                                k = 0;
-                                while (k < var_a0 && var_v1 != NULL) {
-                                    k++;
-                                    var_v1 = var_v1->next;
-                                }
-                                (temp_a1_2 + 1)[0].words.w1 = (u32)OS_PHYSICAL_TO_K0(var_v1 + 1);
-                                temp_a1_2 += 2;
+                                for (var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++, var_v1 = var_v1->next);
+                                temp_a1_2++;
+                                temp_a1_2->words.w1 = OS_PHYSICAL_TO_K0(var_v1 + 1);
+                                temp_a1_2++;
                                 gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
                                 temp_a1_2++;
                                 gDPSetEnvColor(temp_a1_2, temp_s3, temp_s3, temp_s3, 0);
                             }
                         }
                     }
-                    temp_v0_2 = modelInst->vertices[(((s32) modelInst->unk34 >> 1) & 1) ^ 1];
+                    temp_v0_2 = temp_s2->vertices[((temp_s2->unk34 >> 1) & 1) ^ 1];
+                    var_v1_3 = &temp_t5->vertices[temp_t4->baseVertexID];
                     temp_a1_4 = &temp_v0_2[temp_t4[1].baseVertexID];
                     var_a2 = &temp_v0_2[temp_t4->baseVertexID];
-                    var_v1_3 = &temp_t5->vertices[temp_t4->baseVertexID];
-                    // while current vertex ID < next vertex ID
                     while ((u32) var_a2 < (u32) temp_a1_4) {
-                        var_a2->v.tc[0] = var_v1_3->v.tc[0] + var_s6->unk8;
-                        var_a2->v.tc[1] = var_v1_3->v.tc[1] + var_s6->unkA;
-                        var_a2 += 1;
+                        var_a2->n.tc[0] = var_v1_3->v.tc[0] + var_t1;
+                        var_a2->n.tc[1] = var_v1_3->v.tc[1] + var_t2;
                         var_v1_3 += 1;
+                        var_a2 += 1;
                     }
                 }
             }
         }
-        var_s6 += 1;
     }
 }
+
 #endif
 
 void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {

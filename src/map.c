@@ -1992,9 +1992,6 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     return gMapActiveStreamMap;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
-#else
 s32 map_load_streammap_add_to_table(s32 arg0) {
     s32 sp2C;
     Struct_D_800B9768_unk4* temp_a3;
@@ -2004,11 +2001,11 @@ s32 map_load_streammap_add_to_table(s32 arg0) {
     if (sp2C == gMapNumStreamMaps) {
         gMapNumStreamMaps += 1;
     }
-    gMapActiveStreamMap = map_load_streammap(arg0, 0);
-    gMapStreamMapTable[sp2C].header = gMapActiveStreamMap;
+    gMapStreamMapTable[sp2C].header = map_load_streammap(arg0, 0);
     gMapStreamMapTable[sp2C].mapID = arg0;
     temp_a3 = &D_800B9768.unk4[arg0];
-    gMapStreamMapTable[sp2C].header->unk19 = D_800B9768.unkC[arg0];
+    gMapActiveStreamMap = gMapStreamMapTable[sp2C].header;
+    gMapActiveStreamMap->unk19 = D_800B9768.unkC[arg0];
     gMapActiveStreamMap->originWorldX = (temp_a3->xMin + gMapActiveStreamMap->originOffsetX) * BLOCKS_GRID_UNIT_F;
     gMapActiveStreamMap->originWorldZ = (temp_a3->zMin + gMapActiveStreamMap->originOffsetZ) * BLOCKS_GRID_UNIT_F;
     map_convert_objpositions_to_ws(gMapActiveStreamMap, gMapActiveStreamMap->originWorldX, gMapActiveStreamMap->originWorldZ);
@@ -2016,7 +2013,6 @@ s32 map_load_streammap_add_to_table(s32 arg0) {
     D_80092A94 = arg0;
     return sp2C;
 }
-#endif
 
 /** Returns one of the loaded maps' mapID (as defined in MAPINFO.bin) */
 s32 func_80045D58(void) {

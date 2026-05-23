@@ -339,7 +339,8 @@ void fbfx_func_8003F4C0(s32 arg0) {
 void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003F660.s")
 #else
-// https://decomp.me/scratch/wArrS
+// N64: https://decomp.me/scratch/wArrS
+// default.dol: https://decomp.me/scratch/GDk8g
 void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 width;
     s32 height;

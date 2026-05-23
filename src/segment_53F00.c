@@ -272,17 +272,18 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
     var_s0->unk4 = D_800BB264;
 }
 
-#ifndef NON_EQUIVALENT
+#ifndef NON_MATCHING
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053B24.s")
 #else
-// https://decomp.me/scratch/s5P5f
+// N64: https://decomp.me/scratch/s5P5f
+// default.dol: https://decomp.me/scratch/pyduQ
+
+
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 upperY, s32 arg3, s32 arg4, s32 lowerY, s32 arg6, u8 arg7) {
     Block* temp_s0;
     Block* temp_v0;
-    BlockShape* temp_t9;
-    BlockShape* var_s3;
-    Block *sp138[6]; // unknown size, max 10
+    Block *sp138[8];
     f32 temp_fs1;
     Vtx_t* sp128[3];
     Vtx_t *sp124;
@@ -293,10 +294,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     f32 temp_fs2;
     s32 sp10C;
     s32 sp108;
-    s32 lowerX;
-    s32 upperX;
-    s32 lowerZ;
-    s32 upperZ;
+    s32 temp_s4; // sp104
+    s32 temp_s5; // sp100
+    s32 temp_s7; // spFC
+    s32 temp_s3; // spF8
+    s32 lowerZ; // pad
+    s32 upperZ; // pad
+    BlockShape* temp_t9;
+    BlockShape* var_s3;
     f32 temp_fv0;
     f32 temp_fv1;
     s32 var_a0_3;
@@ -309,12 +314,8 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     s32 minZ;
     s16 var_v0;
     s32 var_v1_2;
-    s32 pad;
-    u32 temp_s3;
-    u32 temp_s4;
-    u32 temp_s5;
-    u32 xDiff;
-    u32 temp_s7;
+    s32 zDiff;
+    s32 xDiff;
     s32 temp_t9_4;
     s32 var_t0;
     u8 var_v0_3;
@@ -325,8 +326,8 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     BlockShape* sp9C;
 
     arg1 -= D_80092A60;
-    arg4 -= D_80092A60;
     arg3 -= D_80092A64;
+    arg4 -= D_80092A60;
     arg6 -= D_80092A64;
     if (arg4 < arg1) {
         arg1 ^= arg4;
@@ -344,16 +345,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     temp_s3 = floor_f(arg6 / BLOCKS_GRID_UNIT_F);
     sp108 = 0;
     for (sp118 = 0; sp118 < 5; sp118++) {
-        temp_v0 = map_get_block_from_grid(temp_s4, temp_s7, sp118);
-        if (temp_v0 != NULL) {
+        if ((temp_v0 = map_get_block_from_grid(temp_s4, temp_s7, sp118)) != NULL) {
             sp138[sp108] = temp_v0;
             D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
             D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
             sp108++;
         }
         if (temp_s5 != temp_s4) {
-            temp_v0 = map_get_block_from_grid(temp_s5, temp_s7, sp118);
-            if (temp_v0 != NULL) {
+            if ((temp_v0 = map_get_block_from_grid(temp_s5, temp_s7, sp118)) != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
                 D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
@@ -361,16 +360,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
             }
         }
         if (temp_s3 != temp_s7) {
-            temp_v0 = map_get_block_from_grid(temp_s4, temp_s3, sp118);
-            if (temp_v0 != NULL) {
+            if ((temp_v0 = map_get_block_from_grid(temp_s4, temp_s3, sp118)) != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
                 D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
                 sp108++;
             }
             if (temp_s5 != temp_s4) {
-                temp_v0 = map_get_block_from_grid(temp_s5, temp_s3, sp118);
-                if (temp_v0 != NULL) {
+                if ((temp_v0 = map_get_block_from_grid(temp_s5, temp_s3, sp118)) != NULL) {
                     sp138[sp108] = temp_v0;
                     D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
                     D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
@@ -381,41 +378,37 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     }
 
     for (sp118 = 0; sp118 < sp108; sp118++) {
-        lowerX = arg1 - D_800BB200[sp118].x;
-        upperX = arg4 - D_800BB200[sp118].x;
-        lowerZ = arg3 - D_800BB200[sp118].z;
-        upperZ = arg6 - D_800BB200[sp118].z;
+        temp_s4 = arg1 - D_800BB200[sp118].x;
+        temp_s5 = arg4 - D_800BB200[sp118].x;
+        temp_s7 = arg3 - D_800BB200[sp118].z;
+        temp_s3 = arg6 - D_800BB200[sp118].z;
         D_800BB200[sp118].x += D_80092A60;
         D_800BB200[sp118].z += D_80092A64;
-        // lowerX = MAX(0, lowerX);
-        if (lowerX < 0) {
-            lowerX = 0;
+        if (temp_s4 < 0) {
+            temp_s4 = 0;
         }
-        // upperX = MIN(BLOCKS_GRID_UNIT, upperX);
-        if (upperX > BLOCKS_GRID_UNIT) {
-            upperX = BLOCKS_GRID_UNIT;
+        if (temp_s5 > BLOCKS_GRID_UNIT) {
+            temp_s5 = BLOCKS_GRID_UNIT;
         }
-        // lowerZ = MAX(0, lowerZ);
-        if (lowerZ < 0) {
-            lowerZ = 0;
+        if (temp_s7 < 0) {
+            temp_s7 = 0;
         }
-        // upperZ = MIN(BLOCKS_GRID_UNIT, upperZ);
-        if (upperZ > BLOCKS_GRID_UNIT) {
-            upperZ = BLOCKS_GRID_UNIT;
+        if (temp_s3 > BLOCKS_GRID_UNIT) {
+            temp_s3 = BLOCKS_GRID_UNIT;
         }
-        xDiff = D_800BB200->x - D_800BB200[sp118].x;
-        temp_s7 = D_800BB200->z - D_800BB200[sp118].z;
+        xDiff = D_800BB200[sp118].x - D_800BB200->x;
+        zDiff = D_800BB200[sp118].z - D_800BB200->z;
         temp_s0 = sp138[sp118];
         var_v0 = 1;
         sp122 = 0;
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
-            if ((var_t0 + 80) >= lowerX && upperX >= var_t0) {
+            if ((var_t0 + 80) >= temp_s4 && temp_s5 >= var_t0) {
                 sp122 |= var_v0;
             }
             var_v0 <<= 1;
         }
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
-            if (var_t0 >= (lowerZ - 80) && upperZ >= var_t0) {
+            if ((var_t0 + 80) >= temp_s7 && temp_s3 >= var_t0) {
                 sp122 |= var_v0;
             }
             var_v0 <<= 1;
@@ -423,123 +416,121 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
         sp9C = &temp_s0->shapes[temp_s0->shapeCount];
         for (var_s3 = temp_s0->shapes; var_s3 < sp9C; var_s3++) {
             if (var_s3->flags & 0x2000) {
-                if (!(var_s3->flags & 0x300000)) {
-                    spA6 = 4;
-                    if (!(arg7 & 0x20)) {
-                        spA6 |= 0x10;
-                    }
-                    goto block_55;
+                if ((var_s3->flags & 0x300000)) {
+                    continue;
+                }
+                spA6 = 4;
+                if (!(arg7 & 0x20)) {
+                    spA6 |= 0x10;
                 }
             } else if (!(var_s3->flags & 0x800) || (arg7 & 0x20)) {
                 spA6 = 2;
-block_55:
-                if (
-                    lowerY >= var_s3->Ymin &&
-                    var_s3->Ymax >= upperY &&
-                    (upperX >> 2) >= var_s3->Xmin &&
-                    var_s3->Xmax >= (lowerX >> 2) &&
-                    (upperZ >> 2) >= var_s3->Zmin &&
-                    var_s3->Zmax >= (lowerZ >> 2)
-                ) {
-                    if (var_s3->flags & 0x1000) {
-                        spA6 |= 8;
-                    }
-                    sp124 = &temp_s0->vertices2[temp_s0->vtxFlags & 1][var_s3->vtxBase];
-                    sp11C = var_s3->triBase;
-                    sp10C = var_s3[1].triBase;
-                    for (; sp11C < sp10C; sp11C++) {
-                        if ((!temp_s0) && (!temp_s0)) {}
-                        var_t0 = temp_s0->xzBitmap[sp11C] & sp122;
-                        if ((var_t0 & 0xFF) && (var_t0 & 0xFF00)) {
-                            minX = SOME_MIN;
-                            maxX = SOME_MAX;
-                            minY = SOME_MIN;
-                            maxY = SOME_MAX;
-                            minZ = SOME_MIN;
-                            maxZ = SOME_MAX;
-                            sp128[0] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 13) & 0x1F];
-                            sp128[1] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 7) & 0x1F];
-                            sp128[2] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 1) & 0x1F];
-                            for (var_t0 = 0; var_t0 < 3; var_t0++) {
-                                var_a0_3 = sp128[var_t0]->ob[0];
-                                var_v1_2 = sp128[var_t0]->ob[1];
-                                var_a1_3 = sp128[var_t0]->ob[2];
-                                if (var_s3->flags & 0x20000000) {
-                                    var_a0_3 *= 1.0f; // not necessary, forces a float cast tho
-                                    var_v1_2 *= 0.05f;
-                                    var_a1_3 *= 1.0f; // not necessary, forces a float cast tho
-                                    var_v1_2 += temp_s0->minY;
-                                }
-                                if (maxX < var_a0_3) {
-                                    maxX = var_a0_3;
-                                }
-                                if (var_a0_3 < minX) {
-                                    minX = var_a0_3;
-                                }
-                                if (maxY < var_v1_2) {
-                                    maxY = var_v1_2;
-                                    highestYIndex = var_t0;
-                                }
-                                if (var_v1_2 < minY) {
-                                    minY = var_v1_2;
-                                    lowestYIndex = var_t0;
-                                }
-                                if (maxZ < var_a1_3) {
-                                    maxZ = var_a1_3;
-                                }
-                                if (var_a1_3 < minZ) {
-                                    minZ = var_a1_3;
-                                }
-                                // @fake
-                                if ((!temp_s7) && (!temp_s7)) {}
-                                arg0->unkA[var_t0] = var_a0_3 + xDiff;
-                                arg0->unk10[var_t0] = var_v1_2;
-                                arg0->unk16[var_t0] = var_a1_3 + temp_s7;
+            } else  {
+                continue;
+            }
+
+            if (
+                lowerY >= var_s3->Ymin &&
+                var_s3->Ymax >= upperY &&
+                (temp_s5 >> 2) >= var_s3->Xmin &&
+                var_s3->Xmax >= (temp_s4 >> 2) &&
+                (temp_s3 >> 2) >= var_s3->Zmin &&
+                var_s3->Zmax >= (temp_s7 >> 2)
+            ) {
+                if (var_s3->flags & 0x1000) {
+                    spA6 |= 8;
+                }
+                sp124 = &temp_s0->vertices2[temp_s0->vtxFlags & 1][var_s3->vtxBase];
+                sp11C = var_s3->triBase;
+                sp10C = var_s3[1].triBase;
+                for (;sp11C < sp10C; sp11C++) {
+                    var_t0 = sp122 & temp_s0->xzBitmap[sp11C];
+                    if ((var_t0 & 0xFF) && (var_t0 & 0xFF00)) {
+                        minX = SOME_MIN;
+                        maxX = SOME_MAX;
+                        minZ = minY = minX;
+                        maxZ = maxY = maxX;
+                        sp128[0] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 13) & 0x1F];
+                        sp128[1] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 7) & 0x1F];
+                        sp128[2] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 1) & 0x1F];
+                        // how to slti here?
+                        for (var_t0 = 0; var_t0 != 3; var_t0++) {
+                            var_a0_3 = sp128[var_t0]->ob[0];
+                            var_v1_2 = sp128[var_t0]->ob[1];
+                            var_a1_3 = sp128[var_t0]->ob[2];
+                            if (var_s3->flags & 0x20000000) {
+                                var_a0_3 *= 1.0f; // not necessary, forces a float cast tho
+                                var_v1_2 *= 0.05f;
+                                var_v1_2 += temp_s0->minY;
+                                var_a1_3 *= 1.0f; // not necessary, forces a float cast tho
                             }
-                            if (
-                                lowerY >= minY &&
-                                maxY >= upperY &&
-                                upperX >= minX &&
-                                maxX >= lowerX &&
-                                upperZ >= minZ &&
-                                maxZ >= lowerZ
-                            ) {
-                                if (var_s3->animatorID != 0) {
-                                    temp_fs0 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
-                                    temp_fs1 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
-                                    temp_fs2 = (arg0->unkA[0] * (arg0->unk10[1] - arg0->unk10[2])) + (arg0->unkA[1] * (arg0->unk10[2] - arg0->unk10[0])) + (arg0->unkA[2] * (arg0->unk10[0] - arg0->unk10[1]));
-                                    temp_fv0 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1) + SQ(temp_fs2));
-                                    if (temp_fv0 > 0.0f) {
-                                        temp_fv1 = 8191.0f / temp_fv0;
-                                        arg0->unk4 = temp_fs0 * temp_fv1;
-                                        arg0->unk6 = temp_fs1 * temp_fv1;
-                                        arg0->unk8 = temp_fs2 * temp_fv1;
-                                    }
+                            if (var_a0_3 > maxX) {
+                                maxX = var_a0_3;
+                            }
+                            if (var_a0_3 < minX) {
+                                minX = var_a0_3;
+                            }
+                            if (var_v1_2 > maxY) {
+                                maxY = var_v1_2;
+                                highestYIndex = var_t0;
+                            }
+                            if (var_v1_2 < minY) {
+                                minY = var_v1_2;
+                                lowestYIndex = var_t0;
+                            }
+                            if (var_a1_3 > maxZ) {
+                                maxZ = var_a1_3;
+                            }
+                            if (var_a1_3 < minZ) {
+                                minZ = var_a1_3;
+                            }
+                            arg0->unkA[var_t0] = var_a0_3 + xDiff;
+                            arg0->unk10[var_t0] = var_v1_2;
+                            arg0->unk16[var_t0] = var_a1_3 + zDiff;
+                        }
+                        if (
+                            lowerY >= minY &&
+                            maxY >= upperY &&
+                            temp_s5 >= minX &&
+                            maxX >= temp_s4 &&
+                            temp_s3 >= minZ &&
+                            maxZ >= temp_s7
+                        ) {
+                            if (var_s3->animatorID != 0) {
+                                temp_fs0 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
+                                temp_fs1 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
+                                temp_fs2 = (arg0->unkA[0] * (arg0->unk10[1] - arg0->unk10[2])) + (arg0->unkA[1] * (arg0->unk10[2] - arg0->unk10[0])) + (arg0->unkA[2] * (arg0->unk10[0] - arg0->unk10[1]));
+                                temp_fv0 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1) + SQ(temp_fs2));
+                                if (temp_fv0 > 0.0f) {
+                                    temp_fv1 = 8191.0f / temp_fv0;
+                                    arg0->unk4 = temp_fs0 * temp_fv1;
+                                    arg0->unk6 = temp_fs1 * temp_fv1;
+                                    arg0->unk8 = temp_fs2 * temp_fv1;
+                                }
+                            } else {
+                                arg0->unk4 = temp_s0->encodedTris[sp11C].d0 >> 0x12;
+                                arg0->unk6 = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
+                                arg0->unk8 = temp_s0->encodedTris[sp11C].d1 >> 0x12;
+                            }
+                            if ((!(arg7 & 8) || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
+                                arg0->unk0 = -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * (1.0f / 8191.0f);
+                                temp = (sp11C) * 9;
+                                for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
+                                    arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
+                                }
+                                if (var_s3->flags & 0x2000) {
+                                    var_v0_3 = 0xE;
                                 } else {
-                                    arg0->unk4 = temp_s0->encodedTris[sp11C].d0 >> 0x12;
-                                    arg0->unk6 = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
-                                    arg0->unk8 = temp_s0->encodedTris[sp11C].d1 >> 0x12;
-                                }
-                                if (((arg7 & 8) == 0 || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
-                                    arg0->unk0 = (f32) -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * (1.0f / 8191.0f);
-                                    temp = (sp11C) * 9;
-                                    for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
-                                        arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
-                                    }
-                                    if (var_s3->flags & 0x2000) {
-                                        var_v0_3 = 0xE;
+                                    if (var_s3->materialIndex == 0xFF) {
+                                        var_v0_3 = 0;
                                     } else {
-                                        if (var_s3->materialIndex == 0xFF) {
-                                            var_v0_3 = 0;
-                                        } else {
-                                            var_v0_3 = temp_s0->materials[var_s3->materialIndex].terrain_type;
-                                        }
+                                        var_v0_3 = temp_s0->materials[var_s3->materialIndex].terrain_type;
                                     }
-                                    arg0->unk2E = var_v0_3;
-                                    arg0->unk30 = (highestYIndex * 0x10) | lowestYIndex;
-                                    arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
-                                    arg0++;
                                 }
+                                arg0->unk2E = var_v0_3;
+                                arg0->unk30 = (highestYIndex << 4) | lowestYIndex;
+                                arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
+                                arg0++;
                             }
                         }
                     }
@@ -549,13 +540,10 @@ block_55:
     }
     return arg0;
 }
+
+
 #endif
 
-#ifndef NON_MATCHING
-UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, u8 arg9);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005471C.s")
-#else
-// https://decomp.me/scratch/Nabui
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 upperX, f32 upperY, f32 upperZ, f32 lowerX, f32 lowerY, f32 lowerZ, u8 arg9) {
     s32 var_s1;
     s16 spDC[3];
@@ -573,10 +561,11 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
     s32 i;
     u8 lowestYIndex; // s4
     u8 highestYIndex; // s3
+    s16 pad;
     f32 xBounds[4]; // sp98
     f32 zBounds[4]; // sp88
     f32 sp84;
-    s32 pad;
+    FacebatchBound *bound;
     Model* sp7C;
 
     sp7C = arg2->model;
@@ -599,90 +588,93 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
     for (spB4 = 0; spB4 < spB0; spB4++) {
         if (
             (sp7C->faces[spB4].tagC & 0x100000) == 0 &&
-            (!(sp7C->faces[spB4].tagC & 0x800) || (arg9 & 0x20)) &&
-            !(sp7C->facebatchBounds[(0, spB4)].minX < upperX) &&
-            !(lowerX < sp7C->facebatchBounds[(0, spB4)].maxX) &&
-            !(sp7C->facebatchBounds[(0, spB4)].minY < upperY) &&
-            !(lowerY < sp7C->facebatchBounds[(0, spB4)].maxY) &&
-            !(sp7C->facebatchBounds[(0, spB4)].minZ < upperZ) &&
-            !(lowerZ < sp7C->facebatchBounds[(0, spB4)].maxZ)
+            (!(sp7C->faces[spB4].tagC & 0x800) || (arg9 & 0x20))
        ) {
-            var_s0 = (sp7C->faces[spB4].tagC & 0x7FF);
-            var_s0 *= 9;
-            var_s1 = sp7C->faces[spB4].baseVertexID;
-            pad = sp7C->faces[spB4].baseF3DCommandIndex;
-            var_s5 = (u32*)&sp7C->displayList[pad];
-            for (;; var_s0 += 9) {
-                minX = SOME_MIN;
-                maxX = SOME_MAX;
-                minY = SOME_MIN;
-                maxY = SOME_MAX;
-                minZ = SOME_MIN;
-                maxZ = SOME_MAX;
-                if ((var_s5[0] >> 24) != 6 && (var_s5[0] >> 24) != 5) {
-                    break;
-                }
-                spDC[0] = (var_s5[0] >> 17) & 0x1F;
-                spDC[1] = (var_s5[0] >> 9) & 0x1F;
-                spDC[2] = (var_s5[0] >> 1) & 0x1F;
-                var_s5 += 1;
-                for (i = 0; i < 3; i++) {
-                    currVtx = &sp7C->vertices[spDC[i] + var_s1];
-                    if (maxX < currVtx->v.ob[0]) {
-                        maxX = currVtx->v.ob[0];
+            bound = (FacebatchBound *)((u8*)sp7C->facebatchBounds + ((spB4 * 3) << 2));
+            if (
+                !(bound->minX < upperX) &&
+                !(lowerX < bound->maxX) &&
+                !(bound->minY < upperY) &&
+                !(lowerY < bound->maxY) &&
+                !(bound->minZ < upperZ) &&
+                !(lowerZ < bound->maxZ)
+           ) {
+                var_s0 = (sp7C->faces[spB4].tagC & 0x7FF);
+                var_s0 *= 9;
+                var_s1 = sp7C->faces[spB4].baseVertexID;
+                pad = sp7C->faces[spB4].baseF3DCommandIndex;
+                var_s5 = (u32*)&sp7C->displayList[pad];
+                for (;; var_s0 += 9) {
+                    minX = SOME_MIN;
+                    maxX = SOME_MAX;
+                    minY = SOME_MIN;
+                    maxY = SOME_MAX;
+                    minZ = SOME_MIN;
+                    maxZ = SOME_MAX;
+                    if ((var_s5[0] >> 24) != 6 && (var_s5[0] >> 24) != 5) {
+                        break;
                     }
-                    if (currVtx->v.ob[0] < minX) {
-                        minX = currVtx->v.ob[0];
-                    }
-                    if (maxY < currVtx->v.ob[1]) {
-                        maxY = currVtx->v.ob[1];
-                        highestYIndex = i;
-                    }
-                    if (currVtx->v.ob[1] < minY) {
-                        minY = currVtx->v.ob[1];
-                        lowestYIndex = i;
-                    }
-                    if (maxZ < currVtx->v.ob[2]) {
-                        if (1) maxZ = currVtx->v.ob[2];
-                    }
-                    if (currVtx->v.ob[2] < minZ) {
-                        minZ = currVtx->v.ob[2];
-                    }
-                    arg0->unkA[i] = currVtx->v.ob[0];
-                    arg0->unk10[i] = currVtx->v.ob[1];
-                    arg0->unk16[i] = currVtx->v.ob[2];
-                }
-                if (!(lowerY < minY) && !(maxY < upperY) && !(lowerX < minX) && !(maxX < upperX) && !(lowerZ < minZ) && !(maxZ < upperZ)) {
-                    if (sp7C->edgeVectors != NULL) {
-                        for (i = var_s0; i < (var_s0 + 9); i++) {
-                            arg0->unk1C[i-var_s0] = sp7C->edgeVectors[i];
+                    spDC[0] = (var_s5[0] >> 17) & 0x1F;
+                    spDC[1] = (var_s5[0] >> 9) & 0x1F;
+                    spDC[2] = (var_s5[0] >> 1) & 0x1F;
+                    var_s5 += 1;
+                    for (i = 0; i < 3; i++) {
+                        currVtx = &sp7C->vertices[spDC[i] + var_s1];
+                        if (maxX < currVtx->v.ob[0]) {
+                            maxX = currVtx->v.ob[0];
                         }
-                    } else {
-                        for (i = var_s0; i < (var_s0 + 9); i++) {
-                            arg0->unk1C[i-var_s0] = 0;
+                        if (currVtx->v.ob[0] < minX) {
+                            minX = currVtx->v.ob[0];
                         }
-                        // @fake
-                        do {
-                            arg0->unk1C[1] = 0x7FFF;
-                            arg0->unk1C[4] = 0x7FFF;
-                            arg0->unk1C[7] = 0x7FFF;
-                        } while (0);
+                        if (maxY < currVtx->v.ob[1]) {
+                            maxY = currVtx->v.ob[1];
+                            highestYIndex = i;
+                        }
+                        if (currVtx->v.ob[1] < minY) {
+                            minY = currVtx->v.ob[1];
+                            lowestYIndex = i;
+                        }
+                        if (maxZ < currVtx->v.ob[2]) {
+                            if (1) maxZ = currVtx->v.ob[2];
+                        }
+                        if (currVtx->v.ob[2] < minZ) {
+                            minZ = currVtx->v.ob[2];
+                        }
+                        arg0->unkA[i] = currVtx->v.ob[0];
+                        arg0->unk10[i] = currVtx->v.ob[1];
+                        arg0->unk16[i] = currVtx->v.ob[2];
                     }
-                    if (sp7C->faces[spB4].materialID == 0xFF) {
-                        arg0->unk30 = 0;
-                    } else {
-                        arg0->unk30 = sp7C->materials[sp7C->faces[spB4].materialID].unk7;
+                    if (!(lowerY < minY) && !(maxY < upperY) && !(lowerX < minX) && !(maxX < upperX) && !(lowerZ < minZ) && !(maxZ < upperZ)) {
+                        if (sp7C->edgeVectors != NULL) {
+                            for (i = var_s0; i < (var_s0 + 9); i++) {
+                                arg0->unk1C[i-var_s0] = sp7C->edgeVectors[i];
+                            }
+                        } else {
+                            for (i = var_s0; i < (var_s0 + 9); i++) {
+                                arg0->unk1C[i-var_s0] = 0;
+                            }
+                            // @fake
+                            do {
+                                arg0->unk1C[1] = 0x7FFF;
+                                arg0->unk1C[4] = 0x7FFF;
+                                arg0->unk1C[7] = 0x7FFF;
+                            } while (0);
+                        }
+                        if (sp7C->faces[spB4].materialID == 0xFF) {
+                            arg0->unk2E = 0;
+                        } else {
+                            arg0->unk2E = sp7C->materials[sp7C->faces[spB4].materialID].unk7;
+                        }
+                        arg0->unk30 = (highestYIndex * 0x10) | lowestYIndex;
+                        arg0->unk2F = 1;
+                        arg0 += 1;
                     }
-                    arg0->unk32 = (highestYIndex * 0x10) | lowestYIndex;
-                    arg0->unk2F = 1;
-                    arg0 += 1;
                 }
             }
         }
     }
     return arg0;
 }
-#endif
 
 void func_80054DF8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, u8 arg2) {
     f32 temp_fv0;
@@ -1097,34 +1089,28 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
     return spB7 | (spB5 * 0x10);
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800564C8.s")
-#else
-// https://decomp.me/scratch/iUTQF
 s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
     f32 temp_fa0;
     f32 temp_fa1;
     f32 temp_fs4;
-    f32 temp_ft3;
     f32 temp_ft4;
     f32 temp_ft5;
     f32 temp_fv1;
     s32 var_v0;
+    f32 var_fs1;
     f32 sp7C;
     f32 sp78;
-    f32 var_fs1;
     f32 var_fs2;
     s32 var_a0;
     s32 var_a1;
+    s32 var_v1;
     f32 sp64;
     f32 sp60;
-    s32 var_v1;
     s32 var_v1_2;
     s32 i;
+    s32 temp2;
     UnkFunc80051D68Arg3 *temp;
 
-    var_a0 = 0;
-    var_a1 = 1;
     if (arg5 != 0) {
         sp64 = 0;
         sp60 = 0;
@@ -1133,10 +1119,13 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
         sp60 = D_800BB200->z;
     }
     i = 0;
+    temp2 = 0;
+    var_a0 = 0;
+    var_a1 = 1;
     do {
-        temp_fs4 = arg2[i].f[1];
-        var_fs1 = arg2[i].f[0];
-        var_fs2 = arg2[i].f[2];
+        var_fs1 = arg2[temp2].f[0];
+        temp_fs4 = arg2[temp2].f[1];
+        var_fs2 = arg2[temp2].f[2];
         sp7C = arg4->unk40[i];
         sp78 = sp7C + 0.1f;
         var_fs1 -= sp64;
@@ -1146,9 +1135,9 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
             var_v1 = FALSE;
             temp = arg0;
             for (; (u32) temp < (u32) arg1; temp++) {
-                temp_fa1 = temp->unk4 * (1.0f / 8191.0f);
-                temp_fa0 = temp->unk6 * (1.0f / 8191.0f);
-                temp_ft4 = temp->unk8 * (1.0f / 8191.0f);
+                temp_fa1 = temp->unk4 * 0.00012208521f;
+                temp_fa0 = temp->unk6 * 0.00012208521f;
+                temp_ft4 = temp->unk8 * 0.00012208521f;
                 temp_ft5 = temp->unk0;
                 if (temp_fa0 >= 0.707f) {
                     continue;
@@ -1156,15 +1145,17 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
 
                 temp_fv1 = ((temp_fa1 * var_fs1) + (temp_fa0 * temp_fs4) + (temp_ft4 * var_fs2) + temp_ft5) - sp7C;
                 if ((2.0f * -sp7C) <= temp_fv1 && temp_fv1 <= 0.0f) {
-                    if (temp_fs4 < (temp->unk10[temp->unk32 & 0xF] - sp78)) {
+                    if (temp_fs4 < (temp->unk10[temp->unk30 & 0xF] - sp78)) {
                         continue;
                     }
 
-                    if ((temp->unk10[temp->unk32 >> 4] + sp78) < temp_fs4) {
+                    if ((temp->unk10[temp->unk30 >> 4] + sp78) < temp_fs4) {
                         continue;
                     }
 
                     var_v1_2 = 0;
+                    // @fake to fix floats
+                    do { } while (0);
                     var_fs1 -= temp_fv1 * temp_fa1;
                     var_fs2 -= temp_fv1 * temp_ft4;
                     while (var_v1_2 < 0x65 && ((var_fs1 * temp_fa1) + (temp_fa0 * temp_fs4) + (var_fs2 * temp_ft4) + temp_ft5) < sp78) {
@@ -1177,8 +1168,8 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
                     if (var_v0 > 20) {
                         var_v1 = FALSE;
                     }
-                    arg2[i].f[0] = var_fs1 + sp64;
-                    arg2[i].f[2] = var_fs2 + sp60;
+                    arg2[temp2].f[0] = var_fs1 + sp64;
+                    arg2[temp2].f[2] = var_fs2 + sp60;
                     break;
                 }
             }
@@ -1189,11 +1180,11 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
         }
         var_a1 <<= 1;
         i++;
+        temp2++;
     } while (i < arg3);
 
     return var_a0;
 }
-#endif
 
 s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, Vec4f* arg5) {
     Vec3f sp64;
@@ -1826,10 +1817,6 @@ void func_80059038(s32 animatorID, Object* parentObject, s32 enableLines) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800591EC.s")
-#else
-
 void func_800591EC(void) {
     s32 a3;
     f32 f0;
@@ -1838,11 +1825,11 @@ void func_800591EC(void) {
     s32 sp6FC;
     s32 sp6F8;
     ModLineReencoded* var_s2;
-    ModLineReencoded* var_v0_2;
     f32 temp_fs0;
     f32 temp_fs1;
     s16 temp_a2;
-    s16 var_a1;
+    s16 var_a1_2;
+    s32 var_a1;
     s32 gridIndex;
     s32 var_a0;
     s32 var_a2;
@@ -1871,9 +1858,9 @@ void func_800591EC(void) {
         sp6D0 = map_get_block_grid_layer(sp6F8);
         for (sp6FC = 0; sp6FC < BLOCKS_GRID_SPAN; sp6FC++) {
             for (sp700 = 0; sp700 < BLOCKS_GRID_SPAN; sp700++) {
-                gridIndex = GRID_INDEX(sp6FC, sp700);
+                gridIndex = (sp6FC << 4)  + sp700; // can't use the GRID_INDEX macro here, bitshift required
                 if (sp6D0[gridIndex] >= 0) {
-                    temp_v0_2 = map_get_block_by_index(sp6D0[gridIndex]);
+                    temp_v0_2 = (Block *)map_get_block_by_index(sp6D0[gridIndex]);
                     for (var_s6 = 0; var_s6 < temp_v0_2->hits_line_count; var_s6++) {
                         var_s0 = &temp_v0_2->ptr_hits_lines[var_s6];
                         var_s2 = &D_80092E74[D_800BB4D6];
@@ -1894,15 +1881,15 @@ void func_800591EC(void) {
         }
     }
     for (var_a0 = 0; var_a0 < D_800BB4D6; var_a0++) {
-        var_v0_2 = &D_80092E74[var_a0];
+        var_s2 = &D_80092E74[var_a0];
         for (var_a2 = 0; var_a2 < 2; var_a2++) {
-            if (sp84[var_v0_2->indexes[var_a2] * 2 + 0] >= 0 && var_a0 != sp84[var_v0_2->indexes[var_a2] * 2 + 0]) {
-                var_v0_2->indexes[var_a2 + 2] = sp84[var_v0_2->indexes[var_a2] * 2 + 0];
+            if (sp84[var_s2->indexes[var_a2] * 2 + 0] >= 0 && var_a0 != sp84[var_s2->indexes[var_a2] * 2 + 0]) {
+                var_s2->indexes[var_a2 + 2] = sp84[var_s2->indexes[var_a2] * 2 + 0];
             } else {
-                if (sp84[var_v0_2->indexes[var_a2] * 2 + 1] >= 0 && var_a0 != sp84[var_v0_2->indexes[var_a2] * 2 + 1]) {
-                    var_v0_2->indexes[var_a2 + 2] = sp84[var_v0_2->indexes[var_a2] * 2 + 1];
+                if (sp84[var_s2->indexes[var_a2] * 2 + 1] >= 0 && var_a0 != sp84[var_s2->indexes[var_a2] * 2 + 1]) {
+                    var_s2->indexes[var_a2 + 2] = sp84[var_s2->indexes[var_a2] * 2 + 1];
                 } else {
-                    var_v0_2->indexes[var_a2 + 2] = -1;
+                    var_s2->indexes[var_a2 + 2] = -1;
                 }
             }
         }
@@ -1913,9 +1900,8 @@ void func_800591EC(void) {
     do {
         isSorted = TRUE;
         for (var_a0 = 0; var_a0 < D_800BB4D6 - 1; var_a0++) {
-            var_a1 = D_80092E7C[var_a0];
-            var_a2 = D_80092E7C[var_a0 + 1];
-            if ((D_80092E74[var_a1].settingsB & 0x3F) < (D_80092E74[D_80092E7C[var_a0 + 1]].settingsB & 0x3F)) {
+            if ((D_80092E74[ D_80092E7C[var_a0]].settingsB & 0x3F) < (D_80092E74[D_80092E7C[var_a0 + 1]].settingsB & 0x3F)) {
+                var_a1 = D_80092E7C[var_a0];
                 D_80092E7C[var_a0] = D_80092E7C[var_a0 + 1] & 0xFFFF;
                 D_80092E7C[var_a0 + 1] = var_a1;
                 isSorted = FALSE;
@@ -1927,16 +1913,16 @@ void func_800591EC(void) {
     }
     temp_a2 = -1;
     for (var_a0 = 0; var_a0 < D_800BB4D6; var_a0++) {
-        var_a1 = D_80092E74[D_80092E7C[var_a0]].settingsB & 0x3F;
-        if (var_a1 > 18) {
-            var_a1 = 1;
+        var_a1_2 = D_80092E74[D_80092E7C[var_a0]].settingsB & 0x3F;
+        if (var_a1_2 > 18) {
+            var_a1_2 = 1;
         }
-        if (temp_a2 != var_a1) {
-            D_800BB4E0[var_a1 * 2] = var_a0;
+        if (temp_a2 != var_a1_2) {
+            D_800BB4E0[var_a1_2 * 2] = var_a0;
             if (temp_a2 != -1) {
                 D_800BB4E0[temp_a2 * 2 + 1] = var_a0;
             }
-            temp_a2 = var_a1;
+            temp_a2 = var_a1_2;
         }
     }
     if (temp_a2 != -1) {
@@ -1944,11 +1930,8 @@ void func_800591EC(void) {
     }
     D_80092E80 = 1;
 }
-#endif
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800596BC.s")
-#else
+
 void func_800596BC(ObjDef* arg0) {
     ModLineReencoded* var_s2;
     ModLine* var_s0;
@@ -1973,15 +1956,16 @@ void func_800596BC(ObjDef* arg0) {
     D_800BB4D8 = 0;
     var_s0 = arg0->pModLines;        
     sp6C8 = arg0->modLineCount;
-    for (var_s3 = 0; var_s3 < sp6C8; var_s3++, var_s0++, D_800BB4D6++) {
+    for (var_s3 = 0; var_s3 < sp6C8; var_s3++, D_800BB4D6++) {
+        var_s7 = &var_s0[var_s3];
         var_s2 = &D_80092E74[D_800BB4D6];
-        var_s2->heightA = var_s0->heightA;
-        var_s2->heightB = var_s0->heightB;
-        var_s2->settingsB = var_s0->settingsB;
-        var_s2->settingsA = var_s0->settingsA;
-        var_s2->animatorID = var_s0->animatorID;
+        var_s2->heightA = var_s7->heightA;
+        var_s2->heightB = var_s7->heightB;
+        var_s2->settingsB = var_s7->settingsB;
+        var_s2->settingsA = var_s7->settingsA;
+        var_s2->animatorID = var_s7->animatorID;
         for (var_s1 = 0; var_s1 < 2; var_s1++) {
-            var_s2->indexes[var_s1] = func_8005A2BC(var_s0->somePos[var_s1], var_s0->somePos[var_s1 + 2], f0 = var_s0->somePos[var_s1 + 4], D_800BB4D6, sp68);
+            var_s2->indexes[var_s1] = func_8005A2BC(var_s7->somePos[var_s1], var_s7->somePos[var_s1 + 2], f0 = var_s7->somePos[var_s1 + 4], D_800BB4D6, sp68);
         }
 
         if (D_800BB4D8 >= 400) {
@@ -2060,7 +2044,6 @@ void func_800596BC(ObjDef* arg0) {
     D_800BB4D6 = 0;
     D_800BB4D8 = 0;
 }
-#endif
 
 s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_Struct* arg4, Object* arg5, s8 arg6, s8 arg7, u8 arg8, s8 arg9) {
     f32 spE0[2];
@@ -2219,10 +2202,6 @@ s32 func_8005A2BC(f32 arg0, f32 arg1, f32 arg2, s32 arg3, s16* arg4) {
     return D_800BB4D8 - 1;
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005A3F8.s")
-#else
-// https://decomp.me/scratch/vjc1Z
 s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_Struct* arg4, Object* arg5, s8 arg6, s8 arg7, s8 arg8, Object* arg9) {
     f32 sp1C0[2];
     f32 sp1B8[2];
@@ -2242,37 +2221,39 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
     f32 temp_fs3;
     f32 temp_ft0;
     f32 var_ft4;
-    f32 var_ft5;
+    f32 temp_fs1_2;
     f32 var_ft1;
-    // f32 sp13C; // also fv1 / f2
-    f32 sp138[2]; // also fa0 / f12
+    f32 sp13C;
+    f32 sp138;
     f32 sp134;
     f32 sp130;
     f32 sp128[2];
-    s32 sp124; // v1
-    f32 var_ft3;
+    s32 sp124;
+    f32 temp_fs0_2;
     f32 var_fv0;
-    f32 var_fv1;
+    f32 temp_fa0_2;
     s16 var_v1_2;
+    s16 var_v1_4;
     s32 sp110;
-    s32 var_s0;
     s32 var_s1;
+    s32 var_s3;
     s32 sp104;
     s32 sp100;
-    s32 var_s3;
-    s16 spF8[2];
-    s32 temp;
     s32 j;
+    s16 spF8[2];
+    s32 a1;
+    s32 a2;
     s16* spEC;
     ModLineReencoded* spE8;
     s32 i;
     Vec3f* spE0;
-    s32 a1;
+    s8 var_r25;
+    s8 var_s0;
     s8 spDF;
-    s16 spD0[5]; // unk size
+    s8 spDE;
+    s16 spD0[5];
     f32 spBC[5];
     f32 spA8[5];
-    s32 a2;
 
     if (arg5 != NULL) {
         if (arg7 != -1) {
@@ -2300,16 +2281,18 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         spE8 = D_80092E74;
         spE0 = D_80092E78;
     }
+    spDF = !(arg3 & 1);
+    spDE = arg3 & 2;
     sp1C0[0] = arg0->f[0];
     sp1B8[0] = arg0->f[2];
     sp1C0[1] = arg1->f[0];
     sp1B8[1] = arg1->f[2];
     if (sp1C0[0] < sp1C0[1]) {
-        sp138[1] = sp1C0[0];
-        sp138[0] = sp1C0[1];
+        sp13C = sp1C0[0];
+        sp138 = sp1C0[1];
     } else {
-        sp138[0] = sp1C0[0];
-        sp138[1] = sp1C0[1];
+        sp138 = sp1C0[0];
+        sp13C = sp1C0[1];
     }
     if (sp1B8[0] < sp1B8[1]) {
         sp134 = sp1B8[0];
@@ -2318,14 +2301,17 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         sp134 = sp1B8[1];
         sp130 = sp1B8[0];
     }
-    sp110 = 0;
+    sp13C -= arg2;
+    sp138 += arg2;
     sp134 -= arg2;
     sp130 += arg2;
-    sp138[1] -= arg2 - 200.0f;
-    sp138[0] += arg2 + 200.0f;
+    sp13C -= 200.0f;
+    sp138 += 200.0f;
     sp134 -= 200.0f;
     sp130 += 200.0f;
-    do {
+    sp110 = 0;
+    var_s3 = 1;
+    while (var_s3 != 0) {
         var_s3 = 0;
         for (sp124 = sp104; sp124 < sp100; sp124++) {
             sp190 = -1.0f;
@@ -2334,154 +2320,167 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
             } else {
                 var_a0_2 = &spE8[sp124];
             }
-            // continue might work here
-            if ((~var_a0_2->settingsA & arg6)) {
-                if (var_a0_2->settingsB & 0x40) {
-                    continue;
-                }
-                a1 = var_a0_2->indexA;
-                a2 = var_a0_2->indexB;
-                temp = var_a0_2->settingsB & 0x80;
-                spDF = (temp) == 0;
-                if ((s8) (arg3 & 2)) {
-                    spDF = 1;
-                }
-                sp1A8[0] = spE0[a1].f[0];
-                sp1A0[0] = spE0[a1].f[1];
-                sp198[0] = spE0[a1].f[2];
-                sp1A8[1] = spE0[a2].f[0];
-                sp1A0[1] = spE0[a2].f[1];
-                sp198[1] = spE0[a2].f[2];
-                if ((sp1A8[0] < sp138[1] && sp1A8[1] < sp138[1]) || (sp138[0] < sp1A8[0] && sp138[0] < sp1A8[1]) || (sp198[0] < sp134 && sp198[1] < sp134) || (sp130 < sp198[0] && sp130 < sp198[1])) {
-                    continue;
-                }
-                if (sp1A0[1] < sp1A0[0]) {
-                    sp1A0[0] = sp1A0[1];
-                }
-                if (var_a0_2->settingsA & 0x80) {
-                    sp128[0] = ((s16*)var_a0_2)[0]; // should be heightA
-                    sp128[1] = sp128[0];
-                } else {
-                    sp128[0] = var_a0_2->heightA;
-                    sp128[1] = var_a0_2->heightB;
-                }
-                var_fv0 = sp128[0] + sp1A0[0];
-                temp_fa1 = sp128[1] + sp1A0[1];
-                if (var_fv0 < temp_fa1) {
-                    var_fv0 = temp_fa1;
-                }
-                var_fv0 += arg8;
-                if ((arg0->f[1] < (sp1A0[0] - arg8)) || (var_fv0 < arg0->f[1])) {
-                    continue;
-                }
-                temp_fs0 = sp1A8[1] - sp1A8[0];
-                temp_fs1 = sp198[1] - sp198[0];
-                temp_fa0 = SQ(temp_fs0) + SQ(temp_fs1);
-                if (temp_fa0 == 0.0f) {
-                    continue;
-                }
-                var_fv0 = sqrtf(temp_fa0);
-                temp_fs1 /= var_fv0;
-                sp194 = var_fv0;
-                var_ft4 = temp_fs0 / var_fv0;
-                sp168[0] = temp_fs1;
-                sp178[3] = temp_fs1;
-                temp_fa1 = -temp_fs1;
-                sp168[1] = temp_fa1;
-                sp178[2] = temp_fa1;
-                sp178[0] = var_ft4;
-                sp168[2] = var_ft4;
-                sp178[1] = -var_ft4;
-                sp168[3] = -var_ft4;
-                sp158[0] = -((sp198[0] * sp168[0]) + (sp178[0] * sp1A8[0]));
-                sp158[1] = -((sp198[1] * sp168[1]) + (sp178[1] * sp1A8[1]));
-                sp158[2] = -((((2.0f * var_ft4) + sp198[0]) * var_ft4) + (temp_fa1 * (sp1A8[0] + (2.0f * temp_fa1))));
-                var_ft5 = sp168[3] * arg2;
-                temp_fs3 = arg2 * sp178[3];
-                sp158[3] = -(((var_ft5 + sp198[0]) * sp168[3]) + (sp178[3] * (sp1A8[0] + temp_fs3)));
-                D_800BB530 = temp_fs3 * 0.5f;
-                D_800BB534 = var_ft5 * 0.5f;
-                for (i = 0; i < 2; i++) {
-                    var_v1_2 = 1;
-                    spF8[i] = 0;
-                    for (j = 0; j < 4; j++) {
-                        if ((sp158[j] + ((sp1C0[i] * sp178[j]) + (sp1B8[i] * sp168[j]))) < 0.0f) {
-                            spF8[i] |= var_v1_2;
-                        }
-                        var_v1_2 *= 2;
+
+            if (!(~var_a0_2->settingsA & arg6)) {
+                continue;
+            }
+
+            if (var_a0_2->settingsB & 0x40) {
+                continue;
+            }
+            a1 = var_a0_2->indexA;
+            a2 = var_a0_2->indexB;
+            var_r25 = !(var_a0_2->settingsB & 0x80);
+            if (spDE) {
+                var_r25 = 1;
+            }
+            sp1A8[0] = spE0[a1].f[0];
+            sp1A0[0] = spE0[a1].f[1];
+            sp198[0] = spE0[a1].f[2];
+            sp1A8[1] = spE0[a2].f[0];
+            sp1A0[1] = spE0[a2].f[1];
+            sp198[1] = spE0[a2].f[2];
+            if (
+                (sp1A8[0] < sp13C && sp1A8[1] < sp13C) ||
+                (sp138 < sp1A8[0] && sp138 < sp1A8[1]) ||
+                (sp198[0] < sp134 && sp198[1] < sp134) ||
+                (sp130 < sp198[0] && sp130 < sp198[1])
+            ) {
+                continue;
+            }
+            temp_fa0_2 = sp1A0[0];
+            if (sp1A0[1] < temp_fa0_2) {
+                temp_fa0_2 = sp1A0[1];
+            }
+            temp_fa0_2 -= arg8;
+            if (var_a0_2->settingsA & 0x80) {
+                sp128[0] = ((s16*)var_a0_2)[0]; // should be heightA
+                sp128[1] = sp128[0];
+            } else {
+                sp128[0] = var_a0_2->heightA;
+                sp128[1] = var_a0_2->heightB;
+            }
+            var_fv0 = sp1A0[0] + sp128[0];
+            temp_fa1 = sp1A0[1] + sp128[1];
+            if (var_fv0 < temp_fa1) {
+                var_fv0 = temp_fa1;
+            }
+            var_fv0 += arg8;
+            if (arg0->f[1] < temp_fa0_2 || var_fv0 < arg0->f[1]) {
+                continue;
+            }
+            temp_fs0 = sp1A8[1] - sp1A8[0];
+            temp_fs1 = sp198[1] - sp198[0];
+            sp194 = SQ(temp_fs0) + SQ(temp_fs1);
+            if (sp194 == 0.0f) {
+                continue;
+            }
+            sp194 = sqrtf(sp194);
+            temp_fs0 = temp_fs0 / sp194;
+            temp_fs1 = temp_fs1 / sp194;
+            sp178[0] = temp_fs0;
+            sp168[0] = temp_fs1;
+            sp158[0] = -((sp178[0] * sp1A8[0]) + (sp168[0] * sp198[0]));
+            sp178[1] = -temp_fs0;
+            sp168[1] = -temp_fs1;
+            sp158[1] = -((sp178[1] * sp1A8[1]) + (sp168[1] * sp198[1]));
+            sp178[2] = -temp_fs1;
+            sp168[2] = temp_fs0;
+            sp158[2] = -((sp178[2] * (sp1A8[0] + (2.0f * sp178[2]))) + (sp168[2] * ((sp198[0] + (2.0f * sp168[2])))));
+            sp178[3] = temp_fs1;
+            sp168[3] = -temp_fs0;
+            sp158[3] = -((sp178[3] * (sp1A8[0] + (arg2 * sp178[3]))) + (sp168[3] * (sp198[0] + (sp168[3] * arg2))));
+            D_800BB530 = 0.5f * (sp178[3] * arg2);
+            D_800BB534 = 0.5f * (sp168[3] * arg2);
+            for (i = 0; i < 2; i++) {
+                var_v1_2 = 1;
+                spF8[i] = 0;
+                for (j = 0; j < 4; j++) {
+                    temp_fa1 = (sp1C0[i] * sp178[j]) + (sp1B8[i] * sp168[j]) + sp158[j];
+                    if (temp_fa1 < 0.0f) {
+                        spF8[i] |= var_v1_2;
                     }
+                    var_v1_2 <<= 1;
                 }
-                sp190 = 1.0f;
-                if ((spF8[0] & 0xC) == 0xC) {
-                    if (spF8[0] & 1) {
-                        var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[0], sp198[0], arg2, spDF);
+            }
+            var_v1_2 = spF8[0] ^ spF8[1];
+            var_v1_4 = spF8[0] & spF8[1];
+            sp190 = 1.0f;
+            if ((spF8[0] & 0xC) == 0xC) {
+                if (spF8[0] & 1) {
+                    var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[0], sp198[0], arg2, var_r25);
+                    sp190 = 0.0f;
+                } else if (spF8[0] & 2) {
+                    var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[1], sp198[1], arg2, var_r25);
+                    sp190 = 1.0f;
+                } else if (var_r25 != 0) {
+                    sp1C0[1] += D_800BB530;
+                    sp1B8[1] += D_800BB534;
+                }
+            } else {
+                if (var_v1_2 & 0xC) {
+                    if (var_v1_4 & 1) {
+                        var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[0], sp198[0], arg2, var_r25);
                         sp190 = 0.0f;
-                    } else if (spF8[0] & 2) {
-                        var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[1], sp198[1], arg2, spDF);
-                    } else if (spDF != 0) {
-                        sp1C0[1] += D_800BB530;
-                        sp1B8[1] += D_800BB534;
-                    }
-                } else {
-                    var_v1_2 = spF8[0] & spF8[1];
-                    if ((spF8[0] ^ spF8[1]) & 0xC) {
-                        if (var_v1_2 & 1) {
-                            var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[0], sp198[0], arg2, spDF);
+                    } else if (var_v1_4 & 2) {
+                        var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[1], sp198[1], arg2, var_r25);
+                        sp190 = 1.0f;
+                    } else if (spF8[0] & 4) {
+                        temp_fs0 = (sp1C0[1] - sp1C0[0]);
+                        temp_fs1 = (sp1B8[1] - sp1B8[0]);
+                        temp_fa0 = (sp1C0[0] * sp178[3]) + (sp1B8[0] * sp168[3]) + sp158[3];
+                        temp_fa1 = (sp1C0[1] * sp178[3]) + (sp1B8[1] * sp168[3]) + sp158[3];
+                        if (temp_fa0 != temp_fa1) {
+                            temp_fa1 = temp_fa0 / (temp_fa0 - temp_fa1);
+                        } else {
+                            temp_fa1 = 0.0f;
+                        }
+                        temp_fs0_2 = (temp_fs0 * temp_fa1) + sp1C0[0];
+                        temp_fs1_2 = (temp_fs1 * temp_fa1) + sp1B8[0];
+                        D_800BB52C = temp_fa1;
+                        var_s0 = TRUE;
+                        var_fv0 = (temp_fs0_2 * sp178[0]) + (temp_fs1_2 * sp168[0]) + sp158[0];
+                        if (var_fv0 < 0.0f) {
+                            var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[0], sp198[0], arg2, var_r25);
+                            var_s0 = FALSE;
                             sp190 = 0.0f;
-                        } else if (var_v1_2 & 2) {
-                            var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[1], sp198[1], arg2, spDF);
-                        } else if (spF8[0] & 4) {
-                            var_s0 = TRUE;
-                            temp_fa0 = sp158[3] + ((sp1C0[0] * sp178[3]) + (sp1B8[0] * sp168[3]));
-                            temp_fa1 = sp158[3] + ((sp1C0[1] * sp178[3]) + (sp1B8[1] * sp168[3]));
-                            if (temp_fa0 != temp_fa1) {
-                                var_fv1 = temp_fa0 / (temp_fa0 - temp_fa1);
-                            } else {
-                                var_fv1 = 0.0f;
-                            }
-                            D_800BB52C = var_fv1;
-                            temp_fs0 = sp1C0[0] + ((sp1C0[1] - sp1C0[0]) * var_fv1);
-                            temp_fs1 = sp1B8[0] + ((sp1B8[1] - sp1B8[0]) * var_fv1);
-                            if ((sp158[0] + ((temp_fs0 * sp178[0]) + (temp_fs1 * sp168[0]))) < 0.0f) {
-                                var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[0], sp198[0], arg2, spDF);
-                                var_s0 = FALSE;
-                                sp190 = 0.0f;
-                            }
-                            if ((sp158[1] + ((temp_fs0 * sp178[1]) + (temp_fs1 * sp168[1]))) < 0.0f) {
-                                sp190 = 1.0f;
-                                var_s0 = FALSE;
-                                var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[1], sp198[1], arg2, spDF);
-                            }
-                            if (var_s0 != FALSE) {
-                                var_s3 = 1;
-                                if (spDF != 0) {
-                                    if ((s8) ((arg3 & 1) == 0) != 0) {
-                                        var_fv1 = sp158[3] + ((sp1C0[1] * sp178[3]) + (sp1B8[1] * sp168[3]));
-                                        temp_fs0 = sp1C0[1] - (var_fv1 * sp178[3]);
-                                        temp_fs1 = sp1B8[1] - (var_fv1 * sp168[3]);
-                                        while ((sp158[3] + ((temp_fs0 * sp178[3]) + (temp_fs1 * sp168[3]))) < 0.1f) {
-                                            temp_fs0 += sp178[3] * 0.1f;
-                                            temp_fs1 += sp168[3] * 0.1f;
-                                        }
-                                    } else {
-                                        while ((sp158[3] + ((temp_fs0 * sp178[3]) + (temp_fs1 * sp168[3]))) < 0.1f) {
-                                            temp_fs0 += sp178[3] * 0.1f;
-                                            temp_fs1 += sp168[3] * 0.1f;
-                                        }
+                        }
+                        var_fv0 = (temp_fs0_2 * sp178[1]) + (temp_fs1_2 * sp168[1]) + sp158[1];
+                        if (var_fv0 < 0.0f) {
+                            var_s3 = func_8005B274(sp1C0, sp1B8, sp1A8[1], sp198[1], arg2, var_r25);
+                            var_s0 = FALSE;
+                            sp190 = 1.0f;
+                        }
+                        if (var_s0 != FALSE) {
+                            var_s3 = 1;
+                            if (var_r25 != 0) {
+                                if (spDF) {
+                                    temp_fa1 = (sp1C0[1] * sp178[3]) + (sp1B8[1] * sp168[3]) + sp158[3];
+                                    sp1C0[1] -= temp_fa1 * sp178[3];
+                                    sp1B8[1] -= temp_fa1 * sp168[3];
+                                    while ((temp_fa1 = (sp1C0[1] * sp178[3]) + (sp1B8[1] * sp168[3]) + sp158[3]) < 0.1f) {
+                                        sp1C0[1] += sp178[3] * 0.1f;
+                                        sp1B8[1] += sp168[3] * 0.1f;
                                     }
-                                    sp1B8[1] = temp_fs1;
-                                    sp1C0[1] = temp_fs0;
-                                    temp_fs0 -= sp1A8[0];
-                                    temp_fs1 -= sp198[0];
-                                    sp190 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1)) / sp194;
+                                } else {
+                                    sp1C0[1] = temp_fs0_2;
+                                    sp1B8[1] = temp_fs1_2;
+                                    while ((temp_fa1 = (sp1C0[1] * sp178[3]) + (sp1B8[1] * sp168[3]) + sp158[3]) < 0.1f) {
+                                        sp1C0[1] += sp178[3] * 0.1f;
+                                        sp1B8[1] += sp168[3] * 0.1f;
+                                    }
                                 }
+                                temp_fs0 = sp1C0[1] - sp1A8[0];
+                                temp_fs1 = sp1B8[1] - sp198[0];
+                                sp190 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1));
+                                sp190 /= sp194;
                             }
                         }
                     }
                 }
-                if (var_s3 != 0) {
-                    break;
-                }
+            }
+            if (var_s3 != 0) {
+                break;
             }
         }
         if (var_s3 != 0) {
@@ -2489,20 +2488,17 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
             spBC[sp110] = D_800BB52C;
             spA8[sp110] = sp190;
             sp110++;
-            if (sp110 >= 5) {
+            if (sp110 > 4) {
                 var_s3 = 0;
-                if (spDF != 0) {
+                if (var_r25 != 0) {
                     sp1C0[1] = sp1C0[0];
                     sp1B8[1] = sp1B8[0];
                 }
             }
         }
-    } while (var_s3 != 0);
-    sp190 = sp190;
-    spDF = spDF;
+    }
     if ((sp110 != 0) && (arg4 != NULL)) {
         var_s1 = sp110 - 1;
-        spDF = (arg3 & 1) == 0;
         if (spDF == 0) {
             var_s1 = 0;
         }
@@ -2510,7 +2506,7 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         temp_fs0 -= sp1C0[0];
         temp_fs1 = arg1->f[2];
         temp_fs1 -= sp1B8[0];
-        arg4->unk44 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1)) * spBC[var_s1];
+        arg4->unk44 = temp_fa1 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1)) * spBC[0];
         arg4->unk48 = spA8[var_s1];
         sp124 = spD0[var_s1];
         if (spEC != NULL) {
@@ -2524,7 +2520,7 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
             sp128[0] = ((s16*)var_a0_2)[0]; // should be heightA
             sp128[1] = sp128[0];
         } else {
-            sp128[0] = ((s8*)var_a0_2)[0]; // should be heightA
+            sp128[0] = var_a0_2->heightA;
             sp128[1] = var_a0_2->heightB;
         }
         arg4->unk4 = spE0[a1].f[0];
@@ -2550,7 +2546,6 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
     }
     return sp110;
 }
-#endif
 
 Unk8005B17C* func_8005B17C(Object* arg0, Object* arg1, u8 arg2) {
     Unk8005B17C* temp_v1;
