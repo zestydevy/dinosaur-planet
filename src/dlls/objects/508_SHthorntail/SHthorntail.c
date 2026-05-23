@@ -8,6 +8,7 @@
 #include "sys/curves.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objexpr.h"
 #include "sys/objprint.h"
@@ -18,10 +19,10 @@
 #include "macros.h"
 
 typedef struct {
-/*000*/ MoveLibData unk0;
+/*000*/ MoveLibData movelib;
 /*4B8*/ s8 unk4B8;
 /*4B9*/ u8 unk4B9;
-/*4BA*/ u8 unk4BA;
+/*4BA*/ u8 flags;
 /*4BB*/ u8 mapAct;
 /*4BC*/ s8 unk4BC;
 /*4BD*/ u8 nextSeq; // next seq in rotation to play on interact
@@ -35,12 +36,12 @@ typedef struct {
 /*4D6*/ s16 unk4D6;
 /*4D8*/ s16 unk4D8;
 /*4DA*/ s16 unk4DA;
-/*4DC*/ s16 unk4DC;
+/*4DC*/ s16 gamebitUnk;
 /*4E0*/ s32 unk4E0;
-/*4E4*/ DLL27_Data unk4E4;
+/*4E4*/ DLL27_Data collision;
 /*744*/ u8 _unk744[0x75C - 0x744];
 /*75C*/ CurveSetup* unk75C;
-/*760*/ CurveSetup* unk760;
+/*760*/ CurveSetup* curveNode;
 /*764*/ CurveSetup* unk764;
 /*768*/ u8 _unk768[0x804 - 0x768];
 /*804*/ f32 unk804;
@@ -57,7 +58,7 @@ typedef struct {
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ u8 unk18;
+/*18*/ u8 thornTailIndex;
 } SHthorntail_Setup;
 
 enum ThorntailSeq {
@@ -150,28 +151,28 @@ enum ThorntailSeq {
     0xffff0000
 };
 
-static void thorntail_func_584(Object* self);
-static void thorntail_func_B40(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void thorntail_tick_shadow(Object* self);
+static void thorntail_control_sleepy(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static int thorntail_func_8CC(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3);
-static void thorntail_func_9B8(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void thorntail_setup_sleepy(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_A04(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_BEC(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static void thorntail_func_19E0(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_func_1B9C(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_func_1E4C(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void thorntail_control_log_trader(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void thorntail_control_elder(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static void thorntail_func_1F28(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static void thorntail_func_1F3C(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static void thorntail_func_1F50(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static void thorntail_func_1F64(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static void thorntail_func_19F4(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 static void thorntail_func_1A08(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_func_1A1C(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void thorntail_setup_log_trader(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_1A58(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_1C48(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_1D70(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_1D84(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_1D98(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_func_1DAC(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void thorntail_setup_elder(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 static void thorntail_func_1DF8(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
 
 // offset: 0x0 | ctor
@@ -179,6 +180,12 @@ void thorntail_ctor(void *dll) { }
 
 // offset: 0xC | dtor
 void thorntail_dtor(void *dll) { }
+
+typedef enum {
+    THORNTAIL_1_Sleepy = 1, //The sleepy-voiced ThornTail near the tree hollow/river crossing
+    THORNTAIL_2_Log_Trader, //The ThornTail near the burrows behind Rocky
+    THORNTAIL_3_Elder       //The elderly ThornTail near Willow Grove
+} ThornTail_Indices;
 
 // offset: 0x18 | func: 0 | export: 0
 // @bug: Missing 3rd param
@@ -191,29 +198,34 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
     s32 _pad;
     u8 sp3C[] = {1, 1, 1, 1}; // data_224
 
-    switch (setup->unk18) {
-    case 1:
-        thorntail_func_9B8(self, objdata, setup);
+    switch (setup->thornTailIndex) {
+    case THORNTAIL_1_Sleepy:
+        thorntail_setup_sleepy(self, objdata, setup);
         break;
-    case 2:
-        thorntail_func_1A1C(self, objdata, setup);
+    case THORNTAIL_2_Log_Trader:
+        thorntail_setup_log_trader(self, objdata, setup);
         break;
-    case 3:
-        thorntail_func_1DAC(self, objdata, setup);
+    case THORNTAIL_3_Elder:
+        thorntail_setup_elder(self, objdata, setup);
         break;
     }
-    gDLL_27->vtbl->init(&objdata->unk4E4, DLL27FLAG_4000000 | DLL27FLAG_2000000, DLL27FLAG_400, DLL27MODE_1);
-    gDLL_27->vtbl->setup_terrain_collider(&objdata->unk4E4, 4, data_0, data_30, sp3C);
-    gDLL_27->vtbl->reset(self, &objdata->unk4E4);
+
+    gDLL_27->vtbl->init(&objdata->collision, DLL27FLAG_4000000 | DLL27FLAG_2000000, DLL27FLAG_400, DLL27MODE_1);
+    gDLL_27->vtbl->setup_terrain_collider(&objdata->collision, 4, data_0, data_30, sp3C);
+    gDLL_27->vtbl->reset(self, &objdata->collision);
+
     self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     self->shadow->distFadeMaxOpacity = 128;
     self->shadow->distFadeMinOpacity = 90;
     self->animCallback = thorntail_func_8CC;
+
     objdata->unk4B8 = -1;
+
     create_temp_dll(53);
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->unk0, -0x1FFF, 0x2AAA, 3);
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->unk0, 0x190, 0x1E);
-    objdata->unk0.unk4A9 &= ~0x8;
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movelib, -0x1FFF, 0x2AAA, 3);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->movelib, 400, 30);
+    objdata->movelib.unk4A9 &= ~0x8;
+
     obj_add_object_type(self, OBJTYPE_40);
 }
 
@@ -227,25 +239,30 @@ void thorntail_control(Object* self) {
     setup = (SHthorntail_Setup*)self->setup;
     player = get_player();
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+
     if (func_80026DF4(self, data_40, 15, objdata->unk874, &objdata->unk84C) == 0) {
         objdata->unk874 = 0;
         objdata->mapAct = gDLL_29_Gplay->vtbl->get_act(self->mapID);
         objdata->playerDist = vec3_distance(&self->globalPosition, &player->globalPosition);
-        switch (setup->unk18) {
-        case 1:
-            thorntail_func_B40(self, objdata, setup);
+
+        switch (setup->thornTailIndex) {
+        case THORNTAIL_1_Sleepy:
+            thorntail_control_sleepy(self, objdata, setup);
             break;
-        case 2:
-            thorntail_func_1B9C(self, objdata, setup);
+        case THORNTAIL_2_Log_Trader:
+            thorntail_control_log_trader(self, objdata, setup);
             break;
-        case 3:
-            thorntail_func_1E4C(self, objdata, setup);
+        case THORNTAIL_3_Elder:
+            thorntail_control_elder(self, objdata, setup);
             break;
         }
-        thorntail_func_584(self);
-        gDLL_27->vtbl->func_1E8(self, &objdata->unk4E4, gUpdateRateF);
-        gDLL_27->vtbl->func_5A8(self, &objdata->unk4E4);
-        gDLL_27->vtbl->func_624(self, &objdata->unk4E4, gUpdateRateF);
+        
+        thorntail_tick_shadow(self);
+
+        gDLL_27->vtbl->func_1E8(self, &objdata->collision, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, &objdata->collision);
+        gDLL_27->vtbl->func_624(self, &objdata->collision, gUpdateRateF);
+
         if (!(data_1A8[objdata->unk4B8] & 2)) {
             func_80032A08(self, &objdata->unk850);
         }
@@ -262,7 +279,7 @@ void thorntail_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     objdata = self->data;
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->unk0, 0);
+        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->movelib, 0);
     }
 }
 
@@ -283,7 +300,7 @@ u32 thorntail_get_data_size(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0x584 | func: 7
-static void thorntail_func_584(Object *self) {
+static void thorntail_tick_shadow(Object *self) {
     MtxF mtx;
 
     matrix_from_srt(&mtx, &self->srt);
@@ -291,41 +308,43 @@ static void thorntail_func_584(Object *self) {
 }
 
 // offset: 0x608 | func: 8
-static CurveSetup* thorntail_func_608(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
-    CurveNode* temp_v0;
-    CurveSetup* temp_a0_2;
-    CurveSetup* var_t0;
-    f32 var_fa1;
-    s32 var_a2;
-    f32 var_fv0;
-    f32 var_fv1;
-    f32 var_fa0;
-    s32 sp4C;
+static CurveSetup* thorntail_find_closest_curve(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
+    CurveNode* curves;
+    CurveSetup* curve;
+    CurveSetup* closestCurve;
+    f32 closestDistance;
+    s32 i;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    s32 curveCount;
 
-    temp_v0 = gDLL_26_Curves->vtbl->func_1BC(&sp4C);
-    var_t0 = NULL;
-    var_fa1 = 2.5e9f;
-    for (var_a2 = 0; var_a2 < sp4C; var_a2++) {
-        temp_a0_2 = temp_v0[var_a2].setup;
-        if ((temp_a0_2->curveType == 0x1D) && (arg3 == temp_a0_2->type1D.unk34)) {
-            var_fv0 = temp_a0_2->pos.x - arg0;
-            var_fv1 = temp_a0_2->pos.y - arg1;
-            var_fa0 = temp_a0_2->pos.z - arg2;
-            var_fv0 = SQ(var_fv0) + SQ(var_fv1) + SQ(var_fa0);
-            if (var_fv0 < var_fa1) {
-                var_fa1 = var_fv0;
-                var_t0 = temp_a0_2;
+    curves = gDLL_26_Curves->vtbl->func_1BC(&curveCount);
+
+    closestCurve = NULL;
+    closestDistance = 2500000000;
+    for (i = 0; i < curveCount; i++) {
+        curve = curves[i].setup;
+        if ((curve->curveType == 0x1D) && (arg3 == curve->type1D.unk34)) {
+            dx = curve->pos.x - arg0;
+            dy = curve->pos.y - arg1;
+            dz = curve->pos.z - arg2;
+            dx = SQ(dx) + SQ(dy) + SQ(dz);
+            if (dx < closestDistance) {
+                closestDistance = dx;
+                closestCurve = curve;
             }
         }
     }
-    return var_t0;
+
+    return closestCurve;
 }
 
 // offset: 0x8CC | func: 9
 static int thorntail_func_8CC(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3) {
     SHthorntail_Data *objdata = actor->data;
 
-    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->unk0, 1, 1) != 0) {
+    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->movelib, 1, 1) != 0) {
         return 1;
     }
     if (a3 != 0) {
@@ -338,9 +357,9 @@ static int thorntail_func_8CC(Object *actor, Object *animObj, AnimObj_Data *anim
 }
 
 // offset: 0x9B8 | func: 10
-static void thorntail_func_9B8(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
-    objdata->unk4BA |= 0x40;
-    objdata->unk4DC = BIT_SH_Move_Thorntail_Blocking_Hollow_Log;
+static void thorntail_setup_sleepy(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+    objdata->flags |= 0x40;
+    objdata->gamebitUnk = BIT_SH_Move_Thorntail_Blocking_Hollow_Log;
     thorntail_func_A04(self, objdata, setup);
 }
 
@@ -348,31 +367,33 @@ static void thorntail_func_9B8(Object *self, SHthorntail_Data *objdata, SHthornt
 static void thorntail_func_A04(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     s32 var_a3;
 
-    if (main_get_bits(objdata->unk4DC) == 0) {
-        objdata->unk4BA |= 0x20;
+    if (main_get_bits(objdata->gamebitUnk) == 0) {
+        objdata->flags |= 0x20;
         var_a3 = 3;
     } else {
-        objdata->unk4DC = -1;
+        objdata->gamebitUnk = NO_GAMEBIT;
         var_a3 = 8;
     }
-    objdata->unk760 = thorntail_func_608(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, var_a3);
-    if (objdata->unk760 == NULL) {
+
+    objdata->curveNode = thorntail_find_closest_curve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, var_a3);
+    if (objdata->curveNode == NULL) {
         STUBBED_PRINTF("THORNTAIL: cannot find a node\n");
     }
-    objdata->unk4BA |= 2;
-    self->srt.transl.x = objdata->unk760->pos.x;
-    self->srt.transl.y = objdata->unk760->pos.y;
-    self->srt.transl.z = objdata->unk760->pos.z;
-    self->srt.yaw = objdata->unk760->unk2C << 8;
-    objdata->unk4D0 = rand_next(0x1F4, 0x320);
-    objdata->unk4D2 = rand_next(0x7D0, 0xBB8);
+
+    objdata->flags |= 2;
+    self->srt.transl.x = objdata->curveNode->pos.x;
+    self->srt.transl.y = objdata->curveNode->pos.y;
+    self->srt.transl.z = objdata->curveNode->pos.z;
+    self->srt.yaw = objdata->curveNode->unk2C << 8;
+    objdata->unk4D0 = rand_next(500, 800);
+    objdata->unk4D2 = rand_next(2000, 3000);
     objdata->unk4BC = rand_next(1, 2);
     objdata->seqRotation = data_1F4;
     objdata->seqRotationCount = ARRAYCOUNT(data_1F4);
 }
 
 // offset: 0xB40 | func: 12
-static void thorntail_func_B40(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+static void thorntail_control_sleepy(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
     switch (objdata->mapAct) {
     default:
     case 1:
@@ -394,26 +415,26 @@ static void thorntail_func_B40(Object* self, SHthorntail_Data* objdata, SHthornt
 
 // offset: 0xBEC | func: 13
 static void thorntail_func_BEC(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
-    s32 var_a1;
+    s32 uID;
     s32 var_a0;
-    s32 var_a3;
+    s32 curveCount;
     s32 sp90;
-    s32 sp80[4];
+    s32 curveUIDs[4];
     s32 i;
-    CurveSetup* temp_v0_3;
+    CurveSetup* curve;
     CurveSetup* sp68[4];
-    TextureAnimator* temp_v0_6;
-    f32 var_fv1;
-    f32 var_fv0;
+    TextureAnimator* texAnimB;
+    f32 dz;
+    f32 dx;
     f32 sp58;
     UnkFunc_80024108Struct sp3C;
-    TextureAnimator* sp38;
+    TextureAnimator* texAnimA;
     s32 temp;
 
-    objdata->unk4BA &= ~0x4;
+    objdata->flags &= ~0x4;
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqRotation[objdata->nextSeq], self, -1);
-        if (objdata->unk4BA & 0x40) {
+        if (objdata->flags & 0x40) {
             objdata->nextSeq++;
             if (objdata->nextSeq >= objdata->seqRotationCount) {
                 objdata->nextSeq = 0;
@@ -421,107 +442,117 @@ static void thorntail_func_BEC(Object* self, SHthorntail_Data* objdata, SHthornt
         }
         return;
     }
-    if (objdata->unk4BA & 0x10) {
-        if ((objdata->unk75C != NULL) && (objdata->unk760->type1D.unk34 != 4)) {
-            var_a1 = objdata->unk75C->uID;
+
+    if (objdata->flags & 0x10) {
+        if ((objdata->unk75C != NULL) && (objdata->curveNode->type1D.unk34 != 4)) {
+            uID = objdata->unk75C->uID;
         } else {
-            var_a1 = -1;
+            uID = -1;
         }
-        var_a3 = gDLL_26_Curves->vtbl->func_4F0(objdata->unk760, var_a1, sp80);
+
+        curveCount = gDLL_26_Curves->vtbl->func_4F0(objdata->curveNode, uID, curveUIDs);
         sp90 = 0;
-        for (i = 0; i < var_a3; i++) {
-            temp_v0_3 = gDLL_26_Curves->vtbl->func_39C(sp80[i]);
-            if (temp_v0_3 != NULL) {
-                var_a0 = 0;
+        for (i = 0; i < curveCount; i++) {
+            curve = gDLL_26_Curves->vtbl->func_39C(curveUIDs[i]);
+            if (curve != NULL) {
+                var_a0 = FALSE;
                 switch (objdata->unk4E0) {
                 case 9:
-                    if ((temp_v0_3->type1D.unk34 == 9) || (temp_v0_3->type1D.unk34 == 4) || (temp_v0_3->type1D.unk34 == 0)) {
-                        var_a0 = 1;
+                    if ((curve->type1D.unk34 == 9) || (curve->type1D.unk34 == 4) || (curve->type1D.unk34 == 0)) {
+                        var_a0 = TRUE;
                     }
                     break;
                 case 8:
                 default:
-                    if ((temp_v0_3->type1D.unk34 == 8) || (temp_v0_3->type1D.unk34 == 9) || (temp_v0_3->type1D.unk34 == 0)) {
-                        var_a0 = 1;
+                    if ((curve->type1D.unk34 == 8) || (curve->type1D.unk34 == 9) || (curve->type1D.unk34 == 0)) {
+                        var_a0 = TRUE;
                     }
                     break;
                 }
-                if (var_a0 != 0) {
-                    sp68[sp90] = temp_v0_3;
-                    sp90 += 1;
+
+                if (var_a0) {
+                    sp68[sp90] = curve;
+                    sp90++;
                 }
             }
         }
+
         if (sp90 != 0) {
             objdata->unk764 = sp68[rand_next(0, sp90 - 1)];
-            objdata->unk75C = objdata->unk760;
-            objdata->unk4BA &= ~0x2;
+            objdata->unk75C = objdata->curveNode;
+            objdata->flags &= ~0x2;
         } else {
             // STUBBED_PRINTF("Thorntail %d, is on a network with a deadend\n", setup->base.uID); // default.dol
-            objdata->unk764 = thorntail_func_608(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 0);
+            objdata->unk764 = thorntail_find_closest_curve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 0);
             if (objdata->unk764 != NULL) {
-                objdata->unk75C = objdata->unk760;
-                objdata->unk4BA &= ~0x2;
+                objdata->unk75C = objdata->curveNode;
+                objdata->flags &= ~0x2;
             }
         }
-        objdata->unk4BA &= ~0x10;
+
+        objdata->flags &= ~0x10;
     }
-    if (objdata->unk4BA & 2) {
+
+    if (objdata->flags & 2) {
         objdata->unk4D2 -= gUpdateRate;
         if (objdata->unk4D2 < 0) {
             objdata->unk4D2 = 0;
         }
+
         if (!(data_1A8[objdata->unk4B8] & 2) && (gDLL_7_Newday->vtbl->func8(&sp58) != 0)) {
             objdata->unk4B8 = 0xE;
         }
+
         switch (objdata->unk4B8) {
         case 0:
             objdata->unk4D0 -= gUpdateRate;
             if (objdata->unk4D0 < 0) {
                 objdata->unk4D0 = 0;
             }
-            if ((objdata->unk4BA & 1) && (objdata->unk4D0 <= 0)) {
+
+            if ((objdata->flags & 1) && (objdata->unk4D0 <= 0)) {
                 if (objdata->unk4BC <= 0) {
                     objdata->unk4B8 = 2;
                 } else {
                     objdata->unk4B8 = 1;
                 }
             }
+
             if (objdata->unk4D2 <= 0) {
                 if (objdata->unk4E0 == 9) {
-                    objdata->unk4BA |= 0x10;
+                    objdata->flags |= 0x10;
                 } else {
                     objdata->unk4B8 = 0xC;
                 }
             } else if (joy_get_pressed(0) & D_JPAD) {
                 objdata->unk4E0 = 9;
-                objdata->unk4BA |= 0x10;
+                objdata->flags |= 0x10;
             }
             break;
         case 12:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4E0 = 8;
-                objdata->unk4BA |= 0x10;
+                objdata->flags |= 0x10;
             }
             break;
         case 1:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4B8 = 0;
                 objdata->unk4BC = objdata->unk4BC - 1;
-                objdata->unk4D0 = rand_next(0x1F4, 0x320);
+                objdata->unk4D0 = rand_next(500, 800);
             }
             break;
         case 2:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4B8 = 0;
                 objdata->unk4BC = rand_next(1, 2);
-                objdata->unk4D0 = rand_next(0x1F4, 0x320);
+                objdata->unk4D0 = rand_next(500, 800);
             }
             break;
         case 6:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4B8 = 7;
-                objdata->unk4D4 = rand_next(0x3E8, 0x7D0);
+                objdata->unk4D4 = rand_next(1000, 2000);
             }
             break;
         case 7:
@@ -529,36 +560,36 @@ static void thorntail_func_BEC(Object* self, SHthorntail_Data* objdata, SHthornt
             if (objdata->unk4D4 < 0) {
                 objdata->unk4D4 = 0;
             }
-            if ((objdata->unk4BA & 1) && (objdata->unk4D4 <= 0)) {
+            if ((objdata->flags & 1) && (objdata->unk4D4 <= 0)) {
                 objdata->unk4B8 = 8;
             }
             break;
         case 8:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4B8 = 9;
             }
             break;
         case 9:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4E0 = 8;
-                objdata->unk4BA |= 0x10;
+                objdata->flags |= 0x10;
             }
             break;
         case 10:
-            if (main_get_bits(objdata->unk4DC) != 0) {
-                objdata->unk4BA &= ~0x20;
-                objdata->unk4BA |= 8;
+            if (main_get_bits(objdata->gamebitUnk)) {
+                objdata->flags &= ~0x20;
+                objdata->flags |= 8;
                 objdata->unk4B8 = 0xB;
             }
             break;
         case 11:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4E0 = 8;
-                objdata->unk4BA |= 0x10;
+                objdata->flags |= 0x10;
             }
             break;
         case 14:
-            if (objdata->unk4BA & 1) {
+            if (objdata->flags & 1) {
                 objdata->unk4B8 = 0xD;
             }
             break;
@@ -568,54 +599,54 @@ static void thorntail_func_BEC(Object* self, SHthorntail_Data* objdata, SHthornt
             }
             break;
         default:
-            if (objdata->unk4BA & 0x20) {
-                objdata->unk4B8 = 0xA;
-            } else if (objdata->unk760->type1D.unk34 == 4) {
+            if (objdata->flags & 0x20) {
+                objdata->unk4B8 = 10;
+            } else if (objdata->curveNode->type1D.unk34 == 4) {
                 objdata->unk4B8 = 6;
-            } else if (gDLL_7_Newday->vtbl->func8(&sp58) != 0) {
-                objdata->unk4B8 = 0xE;
+            } else if (gDLL_7_Newday->vtbl->func8(&sp58)) {
+                objdata->unk4B8 = 14;
             } else {
                 objdata->unk4B8 = 0;
-                objdata->unk4D0 = rand_next(0x1F4, 0x320);
-                objdata->unk4D2 = rand_next(0x7D0, 0xBB8);
+                objdata->unk4D0 = rand_next(500, 800);
+                objdata->unk4D2 = rand_next(2000, 3000);
             }
             break;
         }
     } else {
         objdata->unk844 = vec3_distance_xz(&self->globalPosition, &objdata->unk764->pos);
-        if ((objdata->unk844 < 30.0f) && ((objdata->unk4BA & 1) != 0)) {
-            objdata->unk4BA |= 2;
-            objdata->unk760 = objdata->unk764;
-            if (((objdata->unk4E0 == 9) && ((u8) objdata->unk760->type1D.unk34 != 4)) || ((u8) objdata->unk760->type1D.unk34 == 0)) {
+        if ((objdata->unk844 < 30.0f) && ((objdata->flags & 1) != 0)) {
+            objdata->flags |= 2;
+            objdata->curveNode = objdata->unk764;
+            if (((objdata->unk4E0 == 9) && (objdata->curveNode->type1D.unk34 != 4)) || (objdata->curveNode->type1D.unk34 == 0)) {
                 objdata->unk4B8 = -1;
-                objdata->unk4BA |= 0x10;
+                objdata->flags |= 0x10;
             }
         } else {
             switch (objdata->unk4B8) {
             case 0:
             default:
-                var_fv0 = objdata->unk764->pos.x - objdata->unk75C->pos.x;
-                var_fv1 = objdata->unk764->pos.z - objdata->unk75C->pos.z;
-                objdata->unk4D6 = arctan2_f(-var_fv0, -var_fv1);
+                dx = objdata->unk764->pos.x - objdata->unk75C->pos.x;
+                dz = objdata->unk764->pos.z - objdata->unk75C->pos.z;
+                objdata->unk4D6 = arctan2_f(-dx, -dz);
                 objdata->unk4DA = self->srt.yaw;
                 objdata->unk4D8 = self->srt.yaw - (objdata->unk4D6 & 0xFFFF);
                 CIRCLE_WRAP(objdata->unk4D8);
-                if ((objdata->unk4D8 < 0x1F4) && (objdata->unk4D8 >= -0x1F3)) {
+                if ((objdata->unk4D8 < 500) && (objdata->unk4D8 > -500)) {
                     objdata->unk4B8 = 3;
                 } else {
-                    if (objdata->unk4D8 > 0x4000) {
-                        objdata->unk4D8 = 0x4000;
-                    } else if (objdata->unk4D8 < -0x4000) {
-                        objdata->unk4D8 = -0x4000;
+                    if (objdata->unk4D8 > M_90_DEGREES) {
+                        objdata->unk4D8 = M_90_DEGREES;
+                    } else if (objdata->unk4D8 < -M_90_DEGREES) {
+                        objdata->unk4D8 = -M_90_DEGREES;
                     }
                     if (objdata->unk4D8 < 0) {
                         objdata->unk4B8 = 4;
-                        objdata->unk848 = (f32) -objdata->unk4D8;
+                        objdata->unk848 = -objdata->unk4D8;
                     } else {
                         objdata->unk4B8 = 5;
-                        objdata->unk848 = (f32) objdata->unk4D8;
+                        objdata->unk848 = objdata->unk4D8;
                     }
-                    objdata->unk848 = (f32) (objdata->unk848 / 16384.0f);
+                    objdata->unk848 /= 16384.0f;
                     if (objdata->unk848 > 1.0f) {
                         objdata->unk848 = 1.0f;
                     } else if (objdata->unk848 < 0.0f) {
@@ -624,7 +655,7 @@ static void thorntail_func_BEC(Object* self, SHthorntail_Data* objdata, SHthornt
                 }
                 break;
             case 3:
-                if ((objdata->unk4E0 == 8) && ((u8) objdata->unk764->type1D.unk34 != 0)) {
+                if ((objdata->unk4E0 == 8) && (objdata->unk764->type1D.unk34)) {
                     objdata->unk848 = (objdata->unk844 - 35.0f) / 45.0f;
                     if (objdata->unk848 < 0.0f) {
                         objdata->unk848 = 0.0f;
@@ -634,92 +665,97 @@ static void thorntail_func_BEC(Object* self, SHthorntail_Data* objdata, SHthornt
                 } else {
                     objdata->unk848 = 1.0f;
                 }
-                var_fv0 = objdata->unk764->pos.x - self->srt.transl.x;
-                var_fv1 = objdata->unk764->pos.z - self->srt.transl.z;
+
+                dx = objdata->unk764->pos.x - self->srt.transl.x;
+                dz = objdata->unk764->pos.z - self->srt.transl.z;
                 if (objdata->unk844 != 0.0f) {
-                    var_fv0 /= objdata->unk844;
-                    var_fv1 /= objdata->unk844;
+                    dx /= objdata->unk844;
+                    dz /= objdata->unk844;
                 }
-                objdata->unk4BA |= 4;
+
+                objdata->flags |= 4;
                 objdata->unk808 = 0.28f;
-                self->velocity.x = objdata->unk808 * var_fv0;
-                self->velocity.z = objdata->unk808 * var_fv1;
+                self->velocity.x = objdata->unk808 * dx;
+                self->velocity.z = objdata->unk808 * dz;
                 obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
                 func_8002493C(self, objdata->unk808, &objdata->unk804);
                 break;
             case 4:
             case 5:
-                if (objdata->unk4BA & 1) {
+                if (objdata->flags & 1) {
                     objdata->unk4DA = self->srt.yaw;
                     objdata->unk4D8 = self->srt.yaw - (objdata->unk4D6 & 0xFFFF);
                     CIRCLE_WRAP(objdata->unk4D8);
-                    if ((objdata->unk4D8 < 0x1F4) && (objdata->unk4D8 >= -0x1F3)) {
+                    if ((objdata->unk4D8 < 500) && (objdata->unk4D8 > -500)) {
                         objdata->unk4B8 = 3;
                         objdata->unk848 = 1.0f;
                     } else {
-                        if (objdata->unk4D8 > 0x4000) {
-                            objdata->unk4D8 = 0x4000;
-                        } else if (objdata->unk4D8 < -0x4000) {
-                            objdata->unk4D8 = 0x4000;
+                        if (objdata->unk4D8 > M_90_DEGREES) {
+                            objdata->unk4D8 = M_90_DEGREES;
+                        } else if (objdata->unk4D8 < -M_90_DEGREES) {
+                            objdata->unk4D8 = M_90_DEGREES;
                         }
                         if (objdata->unk4D8 < 0) {
-                            objdata->unk848 = (f32) -objdata->unk4D8;
+                            objdata->unk848 = -objdata->unk4D8;
                         } else {
-                            objdata->unk848 = (f32) objdata->unk4D8;
+                            objdata->unk848 = objdata->unk4D8;
                         }
-                        objdata->unk848 = (f32) (objdata->unk848 / 16384.0f);
+                        objdata->unk848 /= 16384.0f;
                         if (objdata->unk848 > 1.0f) {
                             objdata->unk848 = 1.0f;
                         } else if (objdata->unk848 < 0.0f) {
                             objdata->unk848 = 0.0f;
                         }
-                        objdata->unk4BA |= 8;
+                        objdata->flags |= 8;
                     }
                 } else {
-                    self->srt.yaw = (s16) ((f32) objdata->unk4DA - (self->animProgress * (f32) objdata->unk4D8));
+                    self->srt.yaw = objdata->unk4DA - (self->animProgress * objdata->unk4D8);
                 }
                 break;
             }
         }
     }
+
     if (objdata->unk4B8 != -1) {
         temp = objdata->unk4B8 * 2;
-        if ((data_16C[temp] != self->curModAnimId) || (objdata->unk4BA & 8)) {
+        if ((data_16C[temp] != self->curModAnimId) || (objdata->flags & 8)) {
             func_80023D30(self, data_16C[temp], 0.0f, 0U);
-            if (!(objdata->unk4BA & 4)) {
+            if (!(objdata->flags & 4)) {
                 objdata->unk804 = data_1B8[objdata->unk4B8];
             }
-            objdata->unk4BA &= ~0x9;
+            objdata->flags &= ~0x9;
         }
         if (data_16C[temp + 1] != -1) {
-            func_80025540(self, data_16C[temp + 1], (s32) (objdata->unk848 * 1023.0f));
+            func_80025540(self, data_16C[temp + 1], (objdata->unk848 * 1023.0f));
         }
     }
     if (data_1A8[objdata->unk4B8] & 1) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
-    sp38 = func_800348A0(self, 5, 0);
-    temp_v0_6 = func_800348A0(self, 4, 0);
+
+    texAnimA = func_800348A0(self, 5, 0);
+    texAnimB = func_800348A0(self, 4, 0);
     if (data_1A8[objdata->unk4B8] & 2) {
-        if (sp38 != NULL) {
-            sp38->frame = 0x200;
+        if (texAnimA != NULL) {
+            texAnimA->frame = 0x200;
         }
-        if (temp_v0_6 != NULL) {
-            temp_v0_6->frame = 0x200;
+        if (texAnimB != NULL) {
+            texAnimB->frame = 0x200;
         }
     } else {
-        if (sp38 != NULL) {
-            sp38->frame = 0;
+        if (texAnimA != NULL) {
+            texAnimA->frame = 0;
         }
-        if (temp_v0_6 != NULL) {
-            temp_v0_6->frame = 0;
+        if (texAnimB != NULL) {
+            texAnimB->frame = 0;
         }
     }
+
     if (func_80024108(self, objdata->unk804, gUpdateRateF, &sp3C) != 0) {
-        objdata->unk4BA |= 1;
+        objdata->flags |= 1;
         return;
     }
-    objdata->unk4BA &= ~0x1;
+    objdata->flags &= ~0x1;
 }
 
 // offset: 0x19E0 | func: 14
@@ -732,7 +768,7 @@ static void thorntail_func_19F4(Object *self, SHthorntail_Data *objdata, SHthorn
 static void thorntail_func_1A08(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1A1C | func: 17
-static void thorntail_func_1A1C(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void thorntail_setup_log_trader(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     thorntail_func_1A58(self, objdata, setup);
 }
 
@@ -741,22 +777,24 @@ static void thorntail_func_1A58(Object *self, SHthorntail_Data *objdata, SHthorn
     s32 var_a3;
 
     if (main_get_bits(BIT_14) == 0) {
-        objdata->unk4DC = BIT_14;
-        objdata->unk4BA |= 0x20;
+        objdata->gamebitUnk = BIT_14;
+        objdata->flags |= 0x20;
         var_a3 = 3;
     } else {
-        objdata->unk4DC = -1;
+        objdata->gamebitUnk = -1;
         var_a3 = 8;
     }
-    objdata->unk760 = thorntail_func_608(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, var_a3);
-    if (objdata->unk760 == NULL) {
+
+    objdata->curveNode = thorntail_find_closest_curve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, var_a3);
+    if (objdata->curveNode == NULL) {
         STUBBED_PRINTF("THORNTAIL: cannot find a node\n");
     }
-    objdata->unk4BA |= 2;
-    self->srt.transl.x = objdata->unk760->pos.x;
-    self->srt.transl.y = objdata->unk760->pos.y;
-    self->srt.transl.z = objdata->unk760->pos.z;
-    self->srt.yaw = objdata->unk760->unk2C << 8;
+
+    objdata->flags |= 2;
+    self->srt.transl.x = objdata->curveNode->pos.x;
+    self->srt.transl.y = objdata->curveNode->pos.y;
+    self->srt.transl.z = objdata->curveNode->pos.z;
+    self->srt.yaw = objdata->curveNode->unk2C << 8;
     objdata->unk4D0 = rand_next(0x1F4, 0x320);
     objdata->unk4D2 = rand_next(0x7D0, 0xBB8);
     objdata->unk4BC = rand_next(1, 2);
@@ -765,7 +803,7 @@ static void thorntail_func_1A58(Object *self, SHthorntail_Data *objdata, SHthorn
 }
 
 // offset: 0x1B9C | func: 19
-static void thorntail_func_1B9C(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void thorntail_control_log_trader(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     switch (objdata->mapAct) {
     default:
     case 1:
@@ -796,7 +834,7 @@ static void thorntail_func_1C48(Object *self, SHthorntail_Data *objdata, SHthorn
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 2);
         }
         if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0) {
-            main_set_bits(objdata->unk4DC, 1);
+            main_set_bits(objdata->gamebitUnk, 1);
         }
     }
 }
@@ -811,9 +849,9 @@ static void thorntail_func_1D84(Object *self, SHthorntail_Data *objdata, SHthorn
 static void thorntail_func_1D98(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1DAC | func: 24
-static void thorntail_func_1DAC(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
-    objdata->unk4BA |= 0x40;
-    objdata->unk4DC = BIT_SH_Move_Thorntail_Blocking_Swapstone;
+static void thorntail_setup_elder(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+    objdata->flags |= 0x40;
+    objdata->gamebitUnk = BIT_SH_Move_Thorntail_Blocking_Swapstone;
     thorntail_func_1DF8(self, objdata, setup);
 }
 
@@ -825,8 +863,8 @@ static void thorntail_func_1DF8(Object *self, SHthorntail_Data *objdata, SHthorn
 }
 
 // offset: 0x1E4C | func: 26
-static void thorntail_func_1E4C(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
-    thorntail_func_B40(self, objdata, setup);
+static void thorntail_control_elder(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+    thorntail_control_sleepy(self, objdata, setup);
     switch (objdata->mapAct) {
     case 1:
         thorntail_func_1F28(self, objdata, setup);
