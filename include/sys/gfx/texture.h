@@ -178,10 +178,10 @@ enum RenderFlags {
 /*25*/ RENDER_UNK2000000 = 0x2000000, //lighting - all vertices
 /*26*/ RENDER_UNK4000000 = 0x4000000, //lighting - per vertex
 /*27*/ RENDER_UNK8000000 = 0x8000000, //render front?
-/*28*/ RENDER_SHAPE_VISIBLE = 0x10000000, //shape visible (bounds inside frustum)?
+/*28*/ RENDER_SHAPE_VISIBLE = 0x10000000, //at runtime: shape passes all visibility checks (i.e. not hidden, passes bitstream test (unimplemented), inside camera frustum, passes CPU-based backface culling test)
 /*29*/ RENDER_UNK20000000 = 0x20000000,
 /*30*/ RENDER_UNK40000000 = 0x40000000,
-/*31*/ RENDER_NO_CULL = 0x80000000 //disable face-level frustum culling / render back?
+/*31*/ RENDER_NO_CULL = 0x80000000 //disables backface culling (for textures: G_CULL_BACK geometry mode off, for block shapes: CPU culling off)
 };
 
 // Option flags for tex_gdl_set_texture_simple
