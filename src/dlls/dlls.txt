@@ -240,6 +240,7 @@
 546 = objects/546_DIMBikeDoor
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
+550 = objects/550_WGbouncyVine
 552 = objects/552_WGboulder
 553 = objects/553_WGmutant
 562 = objects/562_DIM2Icicle
