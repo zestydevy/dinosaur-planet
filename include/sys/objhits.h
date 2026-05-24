@@ -182,5 +182,6 @@ u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHit
 void update_obj_hitboxes(s32 arg0);
 void func_80025E58(void);
 void func_8002B6EC(void);
+void func_800267C4(Object* obj);
 
 #endif

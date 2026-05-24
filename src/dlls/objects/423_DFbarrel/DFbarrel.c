@@ -9,7 +9,7 @@
 #include "sys/objtype.h"
 
 typedef struct {
-    u8 _unk0[0xA - 0x0];
+    Pickup pickup;
     u8 damage;                  //Damage accumulated by the barrel (explodes if it's damaged at all, though!)
     u8 framesSinceDetonation;   //Seems intended to count up to deleting the barrel after it explodes, but it's deleted immediately anyway
     s32 _unusedC;
@@ -34,7 +34,7 @@ void DFbarrel_setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
     obj_add_object_type(self, OBJTYPE_Barrel);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-    gDLL_54->vtbl->func0(self, (s32)self->data, 33); //TODO: remove cast once function signature understood
+    gDLL_54_pickup->vtbl->setup(self, (Pickup*)self->data, 33);
 }
 
 // offset: 0xA4 | func: 1 | export: 1
@@ -48,7 +48,7 @@ void DFbarrel_control(Object* self) {
     
     switch (objData->framesSinceDetonation) {
     case 0:
-        if (gDLL_54->vtbl->func1.withOneArgS32(self) == 0) {
+        if (gDLL_54_pickup->vtbl->control(self) == 0) {
             DFbarrel_handle_movement(self);
             DFbarrel_handle_damage(self);
         }
@@ -74,7 +74,7 @@ void DFbarrel_update(Object *self) { }
 void DFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DFBarrel_Data* objData = self->data;
     
-    if ((objData->framesSinceDetonation == 0) && gDLL_54->vtbl->func2(self, visibility)) {
+    if ((objData->framesSinceDetonation == 0) && gDLL_54_pickup->vtbl->should_print(self, visibility)) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
@@ -82,7 +82,7 @@ void DFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 // offset: 0x278 | func: 4 | export: 4
 void DFbarrel_free(Object* self, s32 onlySelf) {
     obj_free_object_type(self, OBJTYPE_Barrel);
-    gDLL_54->vtbl->func3(self);
+    gDLL_54_pickup->vtbl->free(self);
 }
 
 // offset: 0x2E0 | func: 5 | export: 5

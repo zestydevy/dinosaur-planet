@@ -103,7 +103,7 @@ DLL_76 *gDLL_76 = NULL;
 DLL_32 *gDLL_32 = NULL;
 DLL_33_BaddieControl *gDLL_33_BaddieControl = NULL;
 DLL_59_minimap *gDLL_59_Minimap = NULL;
-DLL_54 *gDLL_54 = NULL;
+DLL_54 *gDLL_54_pickup = NULL;
 
 s32 gTempDLLIds[3] = {-1, 53, 55};
 void *gTempDLLInsts[3] = {NULL, NULL, NULL};
@@ -257,7 +257,7 @@ void game_init(void) {
         gDLL_32 = dll_load_deferred(DLL_ID_32, 6);          // 0x18 in SFA
         gDLL_33_BaddieControl = dll_load_deferred(DLL_ID_33, 22);         // 0x19 in SFA
         gDLL_59_Minimap = dll_load_deferred(DLL_ID_MINIMAP, 2);
-        gDLL_54 = dll_load_deferred(DLL_ID_54, 12); // 0x2F in SFA
+        gDLL_54_pickup = dll_load_deferred(DLL_ID_54, 12); // 0x2F in SFA
         gDLL_57 = dll_load_deferred(DLL_ID_57, 4);
         gDLL_58 = dll_load_deferred(DLL_ID_58, 2);
         gDLL_30_Task->vtbl->load_recently_completed();

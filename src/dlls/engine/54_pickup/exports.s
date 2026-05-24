@@ -4,19 +4,19 @@
 _exports:
 
 # ctor/dtor
-.dword dll_54_ctor
-.dword dll_54_dtor
+.dword pickup_ctor
+.dword pickup_dtor
 
 # export table
-/*0*/ .dword dll_54_func_18
-/*1*/ .dword dll_54_func_64
-/*2*/ .dword dll_54_func_5DC
-/*3*/ .dword dll_54_func_664
-/*4*/ .dword dll_54_func_6A0
-/*5*/ .dword dll_54_func_6AC
-/*6*/ .dword dll_54_func_6C0
-/*7*/ .dword dll_54_func_6CC
-/*8*/ .dword dll_54_func_704
-/*9*/ .dword dll_54_func_73C
-/*10*/ .dword dll_54_func_760
-/*11*/ .dword dll_54_func_798
+/*0*/ .dword pickup_setup
+/*1*/ .dword pickup_control
+/*2*/ .dword pickup_should_print
+/*3*/ .dword pickup_free
+/*4*/ .dword pickup_get_state
+/*5*/ .dword pickup_was_just_picked_up
+/*6*/ .dword pickup_func_6C0
+/*7*/ .dword pickup_set_gravity
+/*8*/ .dword pickup_set_drop_disabled
+/*9*/ .dword pickup_get_drop_disabled
+/*10*/ .dword pickup_set_dont_save
+/*11*/ .dword pickup_drop

@@ -157,7 +157,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
             } else {
                 dist = 50.0f;
                 objdata->unk10 = obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
-                if ((objdata->unk10 != NULL) && (gDLL_54->vtbl->func4.withOneArgS32((s32)objdata->unk10->data) == 0)) {
+                if ((objdata->unk10 != NULL) && (gDLL_54_pickup->vtbl->get_state(objdata->unk10->data) == PICKUP_NotHeld)) {
                     objdata->unk0 = 0xD;
                     objdata->unk3 = 0;
                     objdata->unk18 = 0.0f;

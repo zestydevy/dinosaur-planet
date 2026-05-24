@@ -33,7 +33,7 @@
 #include "dlls/engine/31_flash.h"
 #include "dlls/engine/32.h"
 #include "dlls/engine/33_BaddieControl.h"
-#include "dlls/engine/54.h"
+#include "dlls/engine/54_pickup.h"
 #include "dlls/engine/56.h"
 #include "dlls/engine/57.h"
 #include "dlls/engine/58.h"
@@ -232,7 +232,7 @@ extern DLL_56 *gDLL_56;
 extern DLL_32 *gDLL_32;
 extern DLL_33_BaddieControl *gDLL_33_BaddieControl;
 extern DLL_59_minimap *gDLL_59_Minimap;
-extern DLL_54 *gDLL_54;
+extern DLL_54 *gDLL_54_pickup;
 
 // Other common DLLs that aren't always loaded but are accessed globally
 
