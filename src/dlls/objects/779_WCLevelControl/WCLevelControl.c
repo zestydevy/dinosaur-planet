@@ -175,7 +175,7 @@ void WCLevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 }
 
 // offset: 0x400 | func: 4 | export: 4
-void dll_779_free(Object *self, s32 a1) {
+void WCLevelControl_free(Object *self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_LevelControl);
 }
 
