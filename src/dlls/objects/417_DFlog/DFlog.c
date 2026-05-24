@@ -455,7 +455,7 @@ static void dll_417_func_E8C(Object* self) {
             var_fv1 = 0.5f;
         }
 
-        if (distance < (f32) dockpointSetup->unk1A) {
+        if (distance < (f32) dockpointSetup->range) {
             for (i = 0; i < 2; i++) {
                 objdata->unk258[i].x *= var_fv1;
                 objdata->unk258[i].z *= var_fv1;

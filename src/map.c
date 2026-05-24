@@ -1034,7 +1034,7 @@ void track_draw_object(Object* obj, s32 visibility) {
     someBool = TRUE;
     if ((obj->id == OBJ_IMSnowBike) || (obj->id == OBJ_CRSnowBike)) {
         someBool = TRUE;
-        if (((DLL_IVehicle*)obj->dll)->vtbl->func13(obj) != 0) {
+        if (((DLL_IVehicle*)obj->dll)->vtbl->get_mount_state(obj) != VEHICLE_NoRider) {
             someBool = FALSE;
         }
     }

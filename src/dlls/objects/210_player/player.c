@@ -1294,7 +1294,7 @@ void dll_210_update(Object* player) {
     vehicle = objdata->vehicle;
     objdata->flags |= 2;
     if ((vehicle != NULL) && ((player->stateFlags & OBJSTATE_IN_SEQ) || objdata->unk0.animState == 0x24 || objdata->unk0.animState == 0x25)) {
-        ((DLL_IVehicle*)vehicle->dll)->vtbl->func12(vehicle, &sp58, &sp54, &sp50);
+        ((DLL_IVehicle*)vehicle->dll)->vtbl->get_camera_position(vehicle, &sp58, &sp54, &sp50);
         gDLL_2_Camera->vtbl->reposition_player(sp58, sp54, sp50);
         dll_210_func_8EA4(player, objdata, objdata->vehicle, NULL, NULL, NULL, NULL, 0);
     }
@@ -1375,7 +1375,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
         }
         gDLL_16->vtbl->func1(player);
         if (data->vehicle != NULL && ((player->stateFlags & OBJSTATE_IN_SEQ) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
-            ((DLL_IVehicle*)data->vehicle->dll)->vtbl->func19(data->vehicle, player->def->scale);
+            ((DLL_IVehicle*)data->vehicle->dll)->vtbl->handle_rider_scale(data->vehicle, player->def->scale);
         }
         if (data->unk818 > 0.0f) {
             func_80036FBC(0xC8U, 0U, 0U, data->unk81C);
@@ -2136,7 +2136,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     objdata->unk72C.x = objdata->unk7EC.x;
                     objdata->unk72C.y = objdata->unk7EC.y;
                     objdata->unk72C.z = objdata->unk7EC.z;
-                    ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 2);
+                    ((DLL_IVehicle*)vehicle->dll)->vtbl->set_mount_state(vehicle, VEHICLE_Mounted);
                     arg0->srt.flags |= OBJFLAG_MANUAL_PREV_POSITIONS;
                     arg0->shadow->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
                     arg2->unk7A &= ~0x4;
@@ -2165,7 +2165,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
                 vehicle = objdata->vehicle;
                 if (vehicle != NULL) {
-                    ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 0);
+                    ((DLL_IVehicle*)vehicle->dll)->vtbl->set_mount_state(vehicle, VEHICLE_NoRider);
                     arg0->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
                     arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
                     vehicle = NULL;
@@ -2297,7 +2297,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         }
     }
     if ((objdata->vehicle != NULL) &&
-        (((DLL_IVehicle*)objdata->vehicle->dll)->vtbl->func13(objdata->vehicle) == 2)) {
+        (((DLL_IVehicle*)objdata->vehicle->dll)->vtbl->get_mount_state(objdata->vehicle) == VEHICLE_Mounted)) {
         arg2->unk7A &= ~0x3;
     }
     ((void (*)(Object*, Player_Data*, f32)) objdata->unk3BC)(arg0, objdata, gUpdateRateF);
@@ -3294,7 +3294,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
             objects = obj_get_all_of_type(OBJTYPE_Vehicle, &sp80);
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
-                if (((DLL_IVehicle*)sp88->dll)->vtbl->func7(sp88, player) != 0) {
+                if (((DLL_IVehicle*)sp88->dll)->vtbl->can_mount(sp88, player) != 0) {
                     arg1->vehicle = sp88;
                     return 0xD;
                 }
@@ -3441,9 +3441,9 @@ static s32 dll_210_func_8AE0(Object* player, s32 arg1, s32 arg2, Vec3f* arg3, Ve
 
 // offset: 0x8EA4 | func: 47
 static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7) {
-    f32 sp44;
-    f32 sp40;
-    f32 sp3C;
+    f32 riderX;
+    f32 riderY;
+    f32 riderZ;
     s16* temp_v0;
 
     if (arg7) {
@@ -3469,10 +3469,10 @@ static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle
         player->prevLocalPosition.y = player->srt.transl.y;
         player->prevLocalPosition.z = player->srt.transl.z;
     }
-    ((DLL_IVehicle*)vehicle->dll)->vtbl->func9(vehicle, &sp44, &sp40, &sp3C);
-    player->srt.transl.x = sp44;
-    player->srt.transl.y = sp40;
-    player->srt.transl.z = sp3C;
+    ((DLL_IVehicle*)vehicle->dll)->vtbl->get_rider_position(vehicle, &riderX, &riderY, &riderZ);
+    player->srt.transl.x = riderX;
+    player->srt.transl.y = riderY;
+    player->srt.transl.z = riderZ;
     player->srt.yaw = vehicle->srt.yaw;
     player->srt.pitch = vehicle->srt.pitch;
     player->srt.roll = vehicle->srt.roll;
@@ -6882,9 +6882,9 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 // offset: 0x13D08 | func: 95
 s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s32 pad;
-    s32 sp88;
+    s32 mountSide;
     ObjectShadow* temp_v0_3;
-    Object* temp_s2;
+    Object* vehicle;
     Vec3f sp74;
     Vec3f sp68;
     f32 sp64;
@@ -6897,7 +6897,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     ModelInstance* sp44;
 
     objdata = player->data;
-    temp_s2 = objdata->vehicle;
+    vehicle = objdata->vehicle;
     {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0 != 0) { return temp_v0; }
@@ -6911,7 +6911,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     player->velocity.f[1] = 0.0f;
     if (fsa->enteredAnimState != 0) {
         objdata->unk8A9 = 1;
-        switch (temp_s2->id) {
+        switch (vehicle->id) {
         case OBJ_IMSnowBike:
         case OBJ_CRSnowBike:
             objdata->unk76C = _data_158;
@@ -6938,9 +6938,9 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             gDLL_2_Camera->vtbl->change_mode(0, 0x1D);
             break;
         }
-        sp88 = ((DLL_IVehicle*)temp_s2->dll)->vtbl->func8(temp_s2);
-        ((DLL_IVehicle*)temp_s2->dll)->vtbl->func14(temp_s2, 1);
-        switch (sp88) {
+        mountSide = ((DLL_IVehicle*)vehicle->dll)->vtbl->get_mount_side(vehicle);
+        ((DLL_IVehicle*)vehicle->dll)->vtbl->set_mount_state(vehicle, VEHICLE_Mounting);
+        switch (mountSide) {
             case 1:
                 v0 = 6;
                 break;
@@ -6949,12 +6949,12 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 v0 = 7;
                 break;
         }
-        player->srt.yaw = temp_s2->srt.yaw;
+        player->srt.yaw = vehicle->srt.yaw;
         func_80023D30(player, objdata->unk76C[v0], 0.0f, 4U);
         sp44 = player->modelInsts[player->modelInstIdx];
         func_8001A3FC(sp44, 0U, 0, 0.0f, player->srt.scale, &sp74, &sp48);
         func_8001A3FC(sp44, 0U, 0, 1.0f, player->srt.scale, &sp68, &sp48);
-        ((DLL_IVehicle*)temp_s2->dll)->vtbl->func9(temp_s2, &sp5C, &sp60, &sp64);
+        ((DLL_IVehicle*)vehicle->dll)->vtbl->get_rider_position(vehicle, &sp5C, &sp60, &sp64);
         sp5C -= player->srt.transl.f[0];
         sp60 -= player->srt.transl.f[1];
         sp64 -= player->srt.transl.f[2];
@@ -6971,15 +6971,15 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     player->srt.transl.f[0] = objdata->unk738.f[0] + (player->animProgress * objdata->unk744.x);
     player->srt.transl.f[1] = objdata->unk738.f[1] + (player->animProgress * objdata->unk744.y);
     player->srt.transl.f[2] = objdata->unk738.f[2] + (player->animProgress * objdata->unk744.z);
-    ((DLL_IVehicle*)temp_s2->dll)->vtbl->func12(temp_s2, &sp5C, &sp60, &sp64);
+    ((DLL_IVehicle*)vehicle->dll)->vtbl->get_camera_position(vehicle, &sp5C, &sp60, &sp64);
     sp50.z = ((sp5C - objdata->unk738.x) * player->animProgress) + objdata->unk738.x;
     sp50.y = ((sp60 - objdata->unk738.y) * player->animProgress) + objdata->unk738.y;
     sp50.x = ((sp64 - objdata->unk738.z) * player->animProgress) + objdata->unk738.z;
     gDLL_2_Camera->vtbl->reposition_player(sp50.z, sp50.y, sp50.x);
     if ((fsa->enteredAnimState == 0) && (fsa->unk33A != 0)) {
-        func_80023D30(player, *objdata->unk76C, 0.0f, 1U);
-        ((DLL_IVehicle*)temp_s2->dll)->vtbl->func14(temp_s2, 2);
-        if (temp_s2->id == 0x22) {
+        func_80023D30(player, *objdata->unk76C, 0.0f, 1);
+        ((DLL_IVehicle*)vehicle->dll)->vtbl->set_mount_state(vehicle, VEHICLE_Mounted);
+        if (vehicle->id == 0x22) {
             return 0x26;
         }
         return 0x25;
@@ -7033,7 +7033,7 @@ s32 dll_210_func_142C4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     if (temp_s0->unk770 & 4) {
         func_800240BC(player, sp48->animProgress);
-        fsa->animTickDelta = NULL;
+        fsa->animTickDelta = 0;
     } else {
         sp3C = ((DLL_IVehicle*)sp48->dll)->vtbl->func16(sp48, &sp44);
         if (sp44 <= 1.0f) {
@@ -7043,7 +7043,7 @@ s32 dll_210_func_142C4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
     }
     if (temp_s0->unk770 & 1) {
-        ((DLL_IVehicle*)sp48->dll)->vtbl->func15(sp48, &sp40, &sp34);
+        ((DLL_IVehicle*)sp48->dll)->vtbl->get_player_anim(sp48, &sp40, &sp34);
         sp38 = (sp40 * 1023.0f);
         if (sp38 < 0) {
             sp38 = -sp38;
@@ -7064,7 +7064,7 @@ s32 dll_210_func_142C4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80024DD0(player, 1, 0, sp3C * 1023.0f);
         func_80025140(player, fsa->animTickDelta, arg2, 0);
     }
-    if (((DLL_IVehicle*)sp48->dll)->vtbl->func10(sp48, player) != 0) {
+    if (((DLL_IVehicle*)sp48->dll)->vtbl->can_dismount(sp48, player) != 0) {
         return 0x27;
     }
     return 0;
@@ -7094,7 +7094,7 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0;
     }
     sp60 = objdata->vehicle;
-    if (((DLL_IVehicle*)sp60->dll)->vtbl->func10(sp60, player) != 0) {
+    if (((DLL_IVehicle*)sp60->dll)->vtbl->can_dismount(sp60, player) != 0) {
         temp_v0 = func_80034804(player, 9);
         if (temp_v0 != NULL) {
             temp_v0[2] = 0;
@@ -7129,7 +7129,7 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         temp_v0[0] = -var_a1;
     }
-    ((DLL_IVehicle*)sp60->dll)->vtbl->func15(sp60, &sp48, &sp50);
+    ((DLL_IVehicle*)sp60->dll)->vtbl->get_player_anim(sp60, &sp48, &sp50);
     sp4C = player->curModAnimId;
     switch (player->curModAnimId) {
     case 0x1B:
@@ -7184,13 +7184,13 @@ static void dll_210_func_14B70(Object* player, ObjFSA_Data *fsa) {
 
 // offset: 0x14BE8 | func: 100
 s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
-    Object* temp_s2;
-    s32 spA0;
+    Object* vehicle;
+    s32 dismountSide;
     f32 temp;
     s32 var_v0_2;
     Vec3f sp8C;
     Vec3f sp80;
-    Player_Data* temp_s1;
+    Player_Data* objdata;
     f32 sp78;
     f32 sp74;
     f32 sp70;
@@ -7202,8 +7202,8 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState != 0) {
         fsa->unk270 = PLAYER_ASTATE_Vehicle_Getting_Off;
     }
-    temp_s1 = player->data;
-    temp_s2 = temp_s1->vehicle;
+    objdata = player->data;
+    vehicle = objdata->vehicle;
     {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0 != 0) { return temp_v0; }
@@ -7211,15 +7211,15 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     func_800267A4(player);
     player->velocity.f[1] = 0.0f;
     if (fsa->enteredAnimState != 0) {
-        ((DLL_IVehicle*)temp_s2->dll)->vtbl->func9(temp_s2, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
-        if ((temp_s2->id == OBJ_IMSnowBike) || (temp_s2->id == OBJ_CRSnowBike)) {
+        ((DLL_IVehicle*)vehicle->dll)->vtbl->get_rider_position(vehicle, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
+        if ((vehicle->id == OBJ_IMSnowBike) || (vehicle->id == OBJ_CRSnowBike)) {
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 100, 0xFF);
         } else {
             gDLL_2_Camera->vtbl->change_mode(0, 1);
         }
-        spA0 = ((DLL_IVehicle*)temp_s2->dll)->vtbl->func11(temp_s2);
-        ((DLL_IVehicle*)temp_s2->dll)->vtbl->func14(temp_s2, 3);
-        switch (spA0) {
+        dismountSide = ((DLL_IVehicle*)vehicle->dll)->vtbl->get_dismount_side(vehicle);
+        ((DLL_IVehicle*)vehicle->dll)->vtbl->set_mount_state(vehicle, VEHICLE_Dismounting);
+        switch (dismountSide) {
             case 1:
             var_v0_2 = 8;
             break;
@@ -7228,10 +7228,10 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             var_v0_2 = 9;
             break;
         }
-        player->srt.yaw = temp_s2->srt.yaw;
+        player->srt.yaw = vehicle->srt.yaw;
         player->srt.pitch = 0;
         player->srt.roll = 0;
-        func_80023D30(player, temp_s1->unk76C[var_v0_2], 0.0f, 1U);
+        func_80023D30(player, objdata->unk76C[var_v0_2], 0.0f, 1U);
         sp50 = player->modelInsts[player->modelInstIdx];
         func_8001A3FC(sp50, 0U, 0, 0.0f, player->srt.scale, &sp8C, &sp54.yaw);
         func_8001A3FC(sp50, 0U, 0, 1.0f, player->srt.scale, &sp80, &sp54.yaw);
@@ -7243,17 +7243,17 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp80.f[2] += player->srt.transl.f[2];
         player->srt.transl.f[1] -= sp8C.f[1];
         temp_fv0 = gDLL_27->vtbl->func_DF4(player, sp80.f[0], player->srt.transl.f[1], sp80.f[2], 20.0f);
-        temp_s1->unk738.x = sp80.f[0];
-        temp_s1->unk738.y = temp_fv0;
-        temp_s1->unk738.z = sp80.f[2];
-        temp_s1->unk744.y = player->srt.transl.f[1] - temp_s1->unk738.y;
-        temp_s1->unk750 = spA0;
+        objdata->unk738.x = sp80.f[0];
+        objdata->unk738.y = temp_fv0;
+        objdata->unk738.z = sp80.f[2];
+        objdata->unk744.y = player->srt.transl.f[1] - objdata->unk738.y;
+        objdata->unk750 = dismountSide;
         player->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
         player->curModAnimIdLayered = -1;
         fsa->animTickDelta = 0.016f;
     }
     temp_fv0 = (1.0f - player->animProgress);
-    player->srt.transl.y = temp_s1->unk738.y + (temp_s1->unk744.y * temp_fv0);
+    player->srt.transl.y = objdata->unk738.y + (objdata->unk744.y * temp_fv0);
     sp54.transl.x = temp_fv0;
     sp4C = func_80034804(player, 5);
     temp_fv0 = sp54.transl.x;
@@ -7261,31 +7261,31 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp4C++;
     sp4C--;
     if (sp4C != NULL) {
-        sp4C[0] = temp_s2->srt.pitch * temp_fv0;
-        sp4C[2] = temp_s2->srt.roll * temp_fv0;
+        sp4C[0] = vehicle->srt.pitch * temp_fv0;
+        sp4C[2] = vehicle->srt.roll * temp_fv0;
     }
-    ((DLL_IVehicle*)temp_s2->dll)->vtbl->func12(temp_s2, &sp70, &sp74, &sp78);
-    gDLL_2_Camera->vtbl->reposition_player(((temp_s1->unk738.x - sp70) * player->animProgress) + sp70, ((temp_s1->unk738.y - sp74) * player->animProgress) + sp74, temp= ((temp_s1->unk738.z - sp78) * player->animProgress) + sp78);
+    ((DLL_IVehicle*)vehicle->dll)->vtbl->get_camera_position(vehicle, &sp70, &sp74, &sp78);
+    gDLL_2_Camera->vtbl->reposition_player(((objdata->unk738.x - sp70) * player->animProgress) + sp70, ((objdata->unk738.y - sp74) * player->animProgress) + sp74, temp= ((objdata->unk738.z - sp78) * player->animProgress) + sp78);
     if ((fsa->enteredAnimState == 0) && (fsa->unk33A != 0)) {
         if (sp4C != NULL) {
             sp4C[0] = 0;
             sp4C[2] = 0;
         }
         player->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
-        player->globalPosition.x = temp_s1->unk7EC.x;
-        player->globalPosition.z = temp_s1->unk7EC.z;
+        player->globalPosition.x = objdata->unk7EC.x;
+        player->globalPosition.z = objdata->unk7EC.z;
         inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp54.scale, &player->srt.transl.z, player->parent);
-        if (temp_s1->unk750 == 1) {
+        if (objdata->unk750 == 1) {
             player->srt.yaw += 0x4000;
         } else {
             player->srt.yaw -= 0x4000;
         }
         func_80023D30(player, 0, 0.0f, 1U);
         func_80024DD0(player, 0, 0, 0);
-        ((DLL_IVehicle*)temp_s2->dll)->vtbl->func14(temp_s2, 0);
-        dll_210_func_7260(player, (Player_Data* ) temp_s1);
+        ((DLL_IVehicle*)vehicle->dll)->vtbl->set_mount_state(vehicle, VEHICLE_NoRider);
+        dll_210_func_7260(player, (Player_Data* ) objdata);
         func_8002674C(player);
-        temp_s1->vehicle = 0;
+        objdata->vehicle = 0;
         return -1;
     }
     return 0;

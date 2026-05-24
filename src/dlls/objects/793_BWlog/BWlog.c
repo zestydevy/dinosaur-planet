@@ -2,6 +2,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/419_DFdockpoint.h"
+#include "dlls/objects/common/vehicle.h"
 #include "macros.h"
 #include "sys/joypad.h"
 #include "sys/math.h"
@@ -12,60 +13,53 @@
 #include "dll.h"
 
 typedef enum {
-    BWLog_PLAYER_STATE_0_Off_Log,       //Player not on log
-    BWLog_PLAYER_STATE_1_Hopping_On,    //Player clambering onto log
-    BWLog_PLAYER_STATE_2_On_Log,        //Player onboard
-    BWLog_PLAYER_STATE_3_Hopping_Off    //Player dismounting log
-} BWlog_PlayerStates;
-
-typedef enum {
-    BWLog_STATE_0_Not_Rolling,
+    BWLog_STATE_0_Main,
     BWLog_STATE_1_Roll_Left,
     BWLog_STATE_2_Roll_Right,
-    BWLog_STATE_3_Placeholder_Left,
-    BWLog_STATE_4_Placeholder_Right
+    BWLog_STATE_3_Placeholder1,
+    BWLog_STATE_4_Placeholder2
 } BWlog_States;
 
 typedef struct {
-    DLL27_Data collider;
-    Vec3f endPoints[2];
-    Vec3f unk278[2];
-    f32 unk290[2];
-    f32 unk298[2];
-    Vec4f rollCurve; //Roll speed spline
-    f32 rollSpeed; // wobble (smoothed)
-    f32 unk2B4;
-    f32 paddleTimer; // move timer (when > 0, move forward)
-    f32 rollTimer;
-    f32 rollAcceleration; // wobble
-    f32 unk2C4;
-    f32 rollCurveProgress;
-    f32 tValueRoll;
-    f32 flowX[2]; //DFriverflow objects' combined push strength in X (values for both ends of log)
-    f32 flowY[2]; //DFriverflow objects' combined push strength in Y (values for both ends of log)
-    f32 flowZ[2]; //DFriverflow objects' combined push strength in Z (values for both ends of log)
-    u8 _unk2E8[0x2F8 - 0x2E8];
-    f32 joyATimer;
-    f32 unk2FC;
-    f32 unk300[2];
-    f32 soundPitch;
-    f32 soundVolume;
-    f32 unk310;
-    u32 soundHandle; //Controls rushing water sound loop
-    s32 rollAngle; // when rolling, the current roll rotation
-    u16 unk31C[2];
-    u16 joyPressed; // controller buttons pressed
-    s16 joyStickX; // joystick x
-    s16 joyStickY; // joystick y
-    s16 soundPitchPhase;
-    s16 soundVolumePhase;
-    u8 state; // roll state (0 = not rolling, 1 = left, 2 = right)
-    u8 unk32B;
-    u8 joyARecentTap; // a pressed (turns off automatically after a time or if a is pressed again)
-    u8 unk32D; // bitfield of which side of the log is touching terrain (0x1 = front, 0x2 = back, 0x3 = both)
-    u8 playerState; // 0 = off log, 1 = hopping on log, 2 = on log, 3 = hopping off log
-    u8 _unk32F[0x338 - 0x32F];
-    Object *dockpoint; // dockpoint
+/*000*/ DLL27_Data collider;
+/*260*/ Vec3f endPoints[2];
+/*278*/ Vec3f velocity[2];
+/*290*/ f32 powerZ[2]; // forward/backward
+/*298*/ f32 powerX[2]; // lateral
+/*2A0*/ Vec4f rollCurve; //Roll speed spline
+/*2B0*/ f32 rollSpeed; // wobble (smoothed)
+/*2B4*/ f32 targetWaterYOffset;
+/*2B8*/ f32 paddleTimer; // move timer (when > 0, move forward)
+/*2BC*/ f32 rollTimer;
+/*2C0*/ f32 rollAcceleration; // wobble
+/*2C4*/ s32 _unk2C4;
+/*2C8*/ f32 rollCurveProgress;
+/*2CC*/ f32 tValueRoll;
+/*2D0*/ f32 flowX[2]; //DFriverflow objects' combined push strength in X (values for both ends of log)
+/*2D8*/ f32 flowY[2]; //DFriverflow objects' combined push strength in Y (values for both ends of log)
+/*2E0*/ f32 flowZ[2]; //DFriverflow objects' combined push strength in Z (values for both ends of log)
+/*2E8*/ u8 _unk2E8[0x2F8 - 0x2E8];
+/*2F8*/ f32 joyATimer;
+/*2FC*/ f32 paddlePower;
+/*300*/ f32 unk300[2];
+/*308*/ f32 soundPitch;
+/*30C*/ f32 soundVolume;
+/*310*/ f32 riverflowMagnitude;
+/*314*/ u32 soundHandle; //Controls rushing water sound loop
+/*318*/ s32 rollAngle; // when rolling, the current roll rotation
+/*31C*/ u16 wiggleYOffsets[2]; // y offset for each end point to pitch the log up/down to simulate small waves
+/*320*/ u16 joyPressed; // controller buttons pressed
+/*322*/ s16 joyStickX; // joystick x
+/*324*/ s16 joyStickY; // joystick y
+/*326*/ s16 soundPitchPhase;
+/*328*/ s16 soundVolumePhase;
+/*32A*/ u8 state; // roll state (0 = not rolling, 1 = left, 2 = right)
+/*32B*/ u8 playerVehicleAnim;
+/*32C*/ u8 joyARecentTap; // a pressed (turns off automatically after a time or if a is pressed again)
+/*32D*/ u8 unk32D; // bitfield of which side of the log is touching terrain (0x1 = front, 0x2 = back, 0x3 = both)
+/*32E*/ u8 mountState; // see VehicleMountState
+/*32F*/ u8 _unk32F[0x338 - 0x32F];
+/*338*/ Object *dockpoint;
 } BWlog_Data;
 
 /*0x0*/ static Vec3f dLocalEndpointCoords[] = {
@@ -76,15 +70,15 @@ typedef struct {
 /*0x20*/ static u8 dColliderParams[] = {1, 1};
 /*0x24*/ static f32 _data_24[] = {500.0f, 500.0f, 0.0f, 0.0f};
 
-static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2);
+static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 arg2);
 static void BWlog_handle_controls_a_button(Object* self, BWlog_Data* objdata);
 static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft);
 static void BWlog_handle_roll(Object* self, BWlog_Data* objdata);
 static void BWlog_handle_unknown_state(Object* self, BWlog_Data* objdata);
 static void BWlog_handle_paddle_motion(Object* self, BWlog_Data* objdata);
-static void BWlog_func_1C18(Object* self, BWlog_Data* objdata);
+static void BWlog_find_riverflows(Object* self, BWlog_Data* objdata);
 static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata);
-static void BWlog_func_2444(Object* self, BWlog_Data* objdata);
+static void BWlog_handle_fx(Object* self, BWlog_Data* objdata);
 
 // offset: 0x0 | ctor
 void BWlog_ctor(void *dll) { }
@@ -104,8 +98,8 @@ void BWlog_setup(Object *self, ObjSetup *setup, s32 arg2) {
     gDLL_27->vtbl->setup_terrain_collider(&objdata->collider, ARRAYCOUNT(dLocalEndpointCoords), dLocalEndpointCoords, dCollisionRadii, dColliderParams);
     objdata->collider.boundsYExtension = 100;
     obj_add_object_type(self, OBJTYPE_Vehicle);
-    objdata->unk31C[1] = 0x2000;
-    objdata->unk2B4 = 15.0f;
+    objdata->wiggleYOffsets[1] = 0x2000;
+    objdata->targetWaterYOffset = 15.0f;
     
     //Use a white "shadow" to create wave effect around the log
     self->shadow->flags |= (OBJ_SHADOW_FLAG_WATER_SURFACE | OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_COLOR | OBJ_SHADOW_FLAG_CUSTOM_DIR);
@@ -124,9 +118,9 @@ void BWlog_setup(Object *self, ObjSetup *setup, s32 arg2) {
 // offset: 0x170 | func: 1 | export: 1
 void BWlog_control(Object* self) {
     BWlog_Data* objdata;
-    f32 var_fv1;
-    f32 sp184[3];
-    Vec3f sp178;
+    f32 damp;
+    f32 vel[3];
+    Vec3f vec;
     SRT srt;
     MtxF logMtx;
     MtxF pitchYawMtx;
@@ -143,25 +137,25 @@ void BWlog_control(Object* self) {
     if (objdata->dockpoint != NULL) {
         dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
         distance = vec3_distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
-        if (objdata->playerState == BWLog_PLAYER_STATE_2_On_Log) {
-            var_fv1 = 0.95f;
+        // Reduce velocity while near a dockpoint
+        if (objdata->mountState == VEHICLE_Mounted) {
+            damp = 0.95f;
         } else {
-            var_fv1 = 0.5f;
+            damp = 0.5f;
         }
-
-        if (distance < dockpointSetup->unk1A) {
+        if (distance < dockpointSetup->range) {
             for (i = 0; i < 2; i++) {
-                objdata->unk278[i].x *= var_fv1;
-                objdata->unk278[i].z *= var_fv1;
+                objdata->velocity[i].x *= damp;
+                objdata->velocity[i].z *= damp;
             }
         } else {
             objdata->dockpoint = NULL;
         }
     }
 
-    BWlog_func_1C18(self, objdata);
+    BWlog_find_riverflows(self, objdata);
 
-    if (objdata->playerState == BWLog_PLAYER_STATE_2_On_Log) {
+    if (objdata->mountState == VEHICLE_Mounted) {
         BWlog_handle_controls_a_button(self, objdata);
 
         switch (objdata->state) {
@@ -169,8 +163,8 @@ void BWlog_control(Object* self) {
         case BWLog_STATE_2_Roll_Right:
             BWlog_handle_roll(self, objdata);
             break;
-        case BWLog_STATE_3_Placeholder_Left:
-        case BWLog_STATE_4_Placeholder_Right:
+        case BWLog_STATE_3_Placeholder1:
+        case BWLog_STATE_4_Placeholder2:
             BWlog_handle_unknown_state(self, objdata); //Placeholder for other left/right state? Maybe getting hurt?
             break;
         default:
@@ -178,6 +172,7 @@ void BWlog_control(Object* self) {
             break;
         }
 
+        // Apply turning
         self->srt.yaw -= (s32) (objdata->joyStickX * (60.0f - (objdata->joyStickY * 0.05f)) * 0.2f) & 0xFFFF & 0xFFFF;
     }
 
@@ -200,48 +195,54 @@ void BWlog_control(Object* self) {
 
     //Update the log's two endpoints
     for (i = 0; i < 2; i++) {
-        //Use the log's matrix to transform the local endpoint coordinates into worldSpace
+        // Recalculate log end points from current matrix
         vec3_transform(&logMtx, 
                        dLocalEndpointCoords[i].x, dLocalEndpointCoords[i].y, dLocalEndpointCoords[i].z, 
                        &objdata->endPoints[i].x, &objdata->endPoints[i].y, &objdata->endPoints[i].z);
-
-        BWlog_func_EB0(self, objdata, i);
+        // Do water physics for this side of the log
+        BWlog_handle_water(self, objdata, i);
+        // Factor in riverflow influence
         vec3_transform(&invPitchYawMtx, 
                        objdata->flowX[i], 0.0f, objdata->flowZ[i], 
-                       &sp184[0], &sp184[1], &sp184[2]);
-        sp184[0] *= -0.5f;
-        sp184[2] *= 0.5f;
-        objdata->unk310 = sqrtf(SQ(sp184[2]) + SQ(sp184[0]));
-        sp184[2] += objdata->unk2FC;
-        objdata->unk290[i] += ((sp184[2] - objdata->unk290[i]) * gUpdateRateF * 0.1f);
-
-        if (objdata->state == BWLog_STATE_0_Not_Rolling) {
-            objdata->unk298[i] += ((sp184[0] - objdata->unk298[i]) * gUpdateRateF * 0.1f);
+                       &vel[0], &vel[1], &vel[2]);
+        vel[0] *= -0.5f;
+        vel[2] *= 0.5f;
+        objdata->riverflowMagnitude = sqrtf(SQ(vel[2]) + SQ(vel[0]));
+        // Factor in paddle forward power
+        vel[2] += objdata->paddlePower;
+        // Interpolate to target forward/lateral powers
+        objdata->powerZ[i] += ((vel[2] - objdata->powerZ[i]) * gUpdateRateF * 0.1f);
+        if (objdata->state == BWLog_STATE_0_Main) {
+            objdata->powerX[i] += ((vel[0] - objdata->powerX[i]) * gUpdateRateF * 0.1f);
         }
-
+        // Convert powers to velocity in world space
         vec3_transform(&pitchYawMtx, 
-                       objdata->unk298[i], 0.0f, -objdata->unk290[i], 
-                       &objdata->unk278[i].x, &sp9C, &objdata->unk278[i].z);
-        sp184[0] = objdata->unk278[i].x * gUpdateRateF;
-        sp184[1] = objdata->unk278[i].y * gUpdateRateF;
-        sp184[2] = objdata->unk278[i].z * gUpdateRateF;
-        objdata->endPoints[i].x = objdata->endPoints[i].x + sp184[0];
-        objdata->endPoints[i].y = objdata->endPoints[i].y + sp184[1];
-        objdata->endPoints[i].z = objdata->endPoints[i].z + sp184[2];
+                       objdata->powerX[i], 0.0f, -objdata->powerZ[i], 
+                       &objdata->velocity[i].x, &sp9C, &objdata->velocity[i].z);
+        // Apply velocity
+        vel[0] = objdata->velocity[i].x * gUpdateRateF;
+        vel[1] = objdata->velocity[i].y * gUpdateRateF;
+        vel[2] = objdata->velocity[i].z * gUpdateRateF;
+        objdata->endPoints[i].x = objdata->endPoints[i].x + vel[0];
+        objdata->endPoints[i].y = objdata->endPoints[i].y + vel[1];
+        objdata->endPoints[i].z = objdata->endPoints[i].z + vel[2];
     }
 
-    VECTOR_ADD(objdata->endPoints[0], objdata->endPoints[1], sp178);
-    self->srt.transl.x = sp178.f[0] * 0.5f;
-    self->srt.transl.y = sp178.f[1] * 0.5f;
-    self->srt.transl.z = sp178.f[2] * 0.5f;
-    VECTOR_SUBTRACT(objdata->endPoints[1], objdata->endPoints[0], sp178);
-    self->srt.pitch = -arctan2_f(sp178.f[1], sqrtf(SQ(sp178.f[2]) + SQ(sp178.f[0])));
+    // Set object position to average of end point positions
+    VECTOR_ADD(objdata->endPoints[0], objdata->endPoints[1], vec);
+    self->srt.transl.x = vec.f[0] * 0.5f;
+    self->srt.transl.y = vec.f[1] * 0.5f;
+    self->srt.transl.z = vec.f[2] * 0.5f;
+    // Align object pitch with pitch of end points line
+    VECTOR_SUBTRACT(objdata->endPoints[1], objdata->endPoints[0], vec);
+    self->srt.pitch = -arctan2_f(vec.f[1], sqrtf(SQ(vec.f[2]) + SQ(vec.f[0])));
+    // Collider updates
     gDLL_27->vtbl->func_1E8(self, &objdata->collider, gUpdateRateF);
     gDLL_27->vtbl->func_5A8(self, &objdata->collider);
     gDLL_27->vtbl->func_624(self, &objdata->collider, gUpdateRateF);
 
     BWlog_handle_sounds(self, objdata);
-    BWlog_func_2444(self, objdata);
+    BWlog_handle_fx(self, objdata);
 }
 
 // offset: 0x85C | func: 2 | export: 2
@@ -278,16 +279,16 @@ u32 BWlog_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x950 | func: 7 | export: 7
-int BWlog_func_950(Object *self, Object *rider) {
+s32 BWlog_vehicle_can_mount(Object *self, Object *rider) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
-    if ((objdata->playerState == BWLog_PLAYER_STATE_0_Off_Log) && (objdata->dockpoint != NULL)) {
+    if ((objdata->mountState == VEHICLE_NoRider) && (objdata->dockpoint != NULL)) {
         return vec3_distance(&rider->globalPosition, &self->globalPosition) < 50.0f;
     }
     return FALSE;
 }
 
 // offset: 0x9E0 | func: 8 | export: 8
-s32 BWlog_func_9E0(Object *self) {
+s32 BWlog_vehicle_get_mount_side(Object *self) {
     SRT srt;
     MtxF mtx;
     f32 sp44;
@@ -314,43 +315,43 @@ s32 BWlog_func_9E0(Object *self) {
         temp2 = -((self->srt.transl.x * sp44) + (sp40 * self->srt.transl.y) + (sp3C * self->srt.transl.z));
         temp = (player->srt.transl.x * sp44) + (sp40 * player->srt.transl.y) + (sp3C * player->srt.transl.z) + temp2;
         if (temp < 0) {
-            return 1;
+            return 1; // left
         }
     }
-    return 2;
+    return 2; // right
 }
 
 // offset: 0xB28 | func: 9 | export: 9
-void BWlog_get_position(Object *self, f32 *ox, f32 *oy, f32 *oz) {
+void BWlog_vehicle_get_rider_position(Object *self, f32 *ox, f32 *oy, f32 *oz) {
     *ox = self->srt.transl.x;
     *oy = self->srt.transl.y;
     *oz = self->srt.transl.z;
 }
 
 // offset: 0xB48 | func: 10 | export: 10
-s32 BWlog_func_B48(Object *self, Object *rider) {
+s32 BWlog_vehicle_can_dismount(Object *self, Object *rider) {
     BWlog_Data *objdata;
-    f32 var_fs0;
+    f32 speed;
     s32 i;
 
     objdata = (BWlog_Data*)self->data;
-    if ((objdata->dockpoint != NULL) && (objdata->playerState == BWLog_PLAYER_STATE_2_On_Log) && (joy_get_pressed(0) & B_BUTTON)) {
-        var_fs0 = 0.0f;
+    if ((objdata->dockpoint != NULL) && (objdata->mountState == VEHICLE_Mounted) && (joy_get_pressed(0) & B_BUTTON)) {
+        speed = 0.0f;
         for (i = 0; i < 2; i++) {
-            var_fs0 += sqrtf(SQ(objdata->unk278[i].x) + SQ(objdata->unk278[i].z));
+            speed += sqrtf(SQ(objdata->velocity[i].x) + SQ(objdata->velocity[i].z));
         }
-        return var_fs0 < 2.0f;
+        return speed < 2.0f;
     }
     return FALSE;
 }
 
 // offset: 0xC3C | func: 11 | export: 11
-s32 BWlog_func_C3C(Object *self) {
+s32 BWlog_vehicle_get_dismount_side(Object *self) {
     return 0;
 }
 
 // offset: 0xC4C | func: 12 | export: 12
-void BWlog_func_C4C(Object *self, f32 *x, f32 *y, f32 *z) {
+void BWlog_vehicle_get_camera_position(Object *self, f32 *x, f32 *y, f32 *z) {
     MtxF mtx;
     SRT srt;
 
@@ -366,17 +367,17 @@ void BWlog_func_C4C(Object *self, f32 *x, f32 *y, f32 *z) {
 }
 
 // offset: 0xD08 | func: 13 | export: 13
-s32 BWlog_get_state(Object *self) {
+s32 BWlog_vehicle_get_mount_state(Object *self) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
-    return objdata->playerState;
+    return objdata->mountState;
 }
 
 // offset: 0xD18 | func: 14 | export: 14
-void BWlog_func_D18(Object *self, s32 state) {
+void BWlog_vehicle_set_mount_state(Object *self, s32 state) {
     Object *player = get_player();
     BWlog_Data *objdata = (BWlog_Data*)self->data;
 
-    if (state != 0) {
+    if (state != VEHICLE_NoRider) {
         obj_clear_map_id(self);
         ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
         gDLL_2_Camera->vtbl->change_mode(0, 0x2B);
@@ -386,14 +387,14 @@ void BWlog_func_D18(Object *self, s32 state) {
         gDLL_2_Camera->vtbl->change_mode(0, 1);
     }
 
-    objdata->playerState = state;
+    objdata->mountState = state;
 }
 
 // offset: 0xE2C | func: 15 | export: 15
-void BWlog_get_roll_info(Object *self, f32 *tValueRoll, s32 *stateRoll) {
+void BWlog_vehicle_get_player_anim(Object *self, f32 *tValue, s32 *animIndex) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
-    *tValueRoll = objdata->tValueRoll;
-    *stateRoll = objdata->unk32B;
+    *tValue = objdata->tValueRoll;
+    *animIndex = objdata->playerVehicleAnim;
 }
 
 // offset: 0xE48 | func: 16 | export: 16
@@ -403,7 +404,7 @@ f32 BWlog_func_E48(Object *self, f32 *a1) {
 }
 
 // offset: 0xE70 | func: 17 | export: 17
-s32 BWlog_func_E70(Object *self) {
+s32 BWlog_vehicle_get_race_position(Object *self) {
     return 0;
 }
 
@@ -411,13 +412,13 @@ s32 BWlog_func_E70(Object *self) {
 void BWlog_func_E80(Object *self) { }
 
 // offset: 0xE8C | func: 19 | export: 19
-void BWlog_func_E8C(Object *self, f32 scale) { }
+void BWlog_vehicle_handle_rider_scale(Object *self, f32 scale) { }
 
 // offset: 0xE9C | func: 20 | export: 20
 void BWlog_func_E9C(s32 a0, s32 a1, s32 a2) { }
 
 // offset: 0xEB0 | func: 21
-static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 side) {
+static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 side) {
     f32 temp_fa1;
     f32 temp_ft5;
     f32 temp_fv0;
@@ -425,19 +426,22 @@ static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 side) {
     s32 sp50;
     f32 volume;
     f32 var_fv1;
-    s32 var_v1;
-    f32 temp;
+    s32 i;
+    f32 targetY;
 
-    temp = objdata->unk2B4 + objdata->collider.waterYList[side];
-    if ((objdata->endPoints[side].y + 30.0f) < temp) {
+    // Calculate target Y coordinate
+    targetY = objdata->targetWaterYOffset + objdata->collider.waterYList[side];
+    if ((objdata->endPoints[side].y + 30.0f) < targetY) {
         diPrintf("Water too high\n");
     }
 
-    temp += (fsin16_precise(objdata->unk31C[side]) * 1.5f);
-    objdata->unk31C[side] += (gUpdateRateF * 512.0f);
-    sp60 = temp - objdata->endPoints[side].y;
+    // Pitch log slightly to simulate small waves
+    targetY += (fsin16_precise(objdata->wiggleYOffsets[side]) * 1.5f);
+    objdata->wiggleYOffsets[side] += (gUpdateRateF * 512.0f);
+
+    sp60 = targetY - objdata->endPoints[side].y;
     if ((sp60 > 0.0f) && (objdata->unk300[side] < 0.0f)) {
-        volume = objdata->unk278[side].y * 127.0f;
+        volume = objdata->velocity[side].y * 127.0f;
         if (volume < 0.0f) {
             volume = -volume;
         }
@@ -448,7 +452,7 @@ static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 side) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_A75, (u8)volume, NULL, NULL, 0, NULL);
         }
     } else if ((sp60 < 0.0f) && (objdata->unk300[side] > 0.0f)) {
-        volume = objdata->unk278[side].y * 127.0f;
+        volume = objdata->velocity[side].y * 127.0f;
         if (volume < 0.0f) {
             volume = -volume;
         }
@@ -467,12 +471,12 @@ static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 side) {
     if (sp60 < 0.0f) {
         sp60 = 0.0f;
     }
-    objdata->unk278[side].y += ((sp60 / 15.0f) * 0.15f * gUpdateRateF);
-    objdata->unk278[side].y -= (0.1f * gUpdateRateF);
-    var_v1 = (s32) gUpdateRate;
+    objdata->velocity[side].y += ((sp60 / 15.0f) * 0.15f * gUpdateRateF);
+    objdata->velocity[side].y -= (0.1f * gUpdateRateF);
+    i = (s32) gUpdateRate;
     diPrintf("[%d]=%f\n", side, &sp60);
     if (sp60 > 0.0f) {
-        if (objdata->unk278[side].y < 0.0f) {
+        if (objdata->velocity[side].y < 0.0f) {
             var_fv1 = sp60 / 25.0f;
             temp_ft5 = 1.0f + var_fv1;
             if (var_fv1 > 1.0f) {
@@ -480,48 +484,46 @@ static void BWlog_func_EB0(Object* self, BWlog_Data* objdata, s32 side) {
             }
             var_fv1 = (1.0f - var_fv1);
             temp_fa1 = (0.007000029f * var_fv1) + 0.988f;
-            while (var_v1--) {
-                temp_fv0 = objdata->unk278[side].y;
+            while (i--) {
+                temp_fv0 = objdata->velocity[side].y;
                 if (temp_fv0 > 0/*.0f*/) {
                     var_fv1 = temp_fv0;
                 } else {
                     var_fv1 = -temp_fv0;
                 }
-                objdata->unk278[side].y = temp_fv0 - (temp_fv0 * var_fv1 * 0.1f * temp_ft5);
-                objdata->unk290[side] *= temp_fa1;
-                objdata->unk298[side] *= temp_fa1;
-                objdata->unk2FC *= 0.99f;
+                objdata->velocity[side].y = temp_fv0 - (temp_fv0 * var_fv1 * 0.1f * temp_ft5);
+                objdata->powerZ[side] *= temp_fa1;
+                objdata->powerX[side] *= temp_fa1;
+                objdata->paddlePower *= 0.99f;
             }
-            return;
-        }
-        
-        var_fv1 = sp60 / 25.0f;
-        temp_ft5 = 1.0f + var_fv1;
-        if (var_fv1 > 1.0f) {
-            var_fv1 = 1.0f;
-        }
-        var_fv1 = (1.0f - var_fv1);
-        temp_fa1 = (0.007000029f * var_fv1) + 0.988f;
-        while (var_v1--) {
-            temp_fv0 = objdata->unk278[side].y;
-            if (temp_fv0 > 0/*.0f*/) {
-                var_fv1 = temp_fv0;
-            } else {
-                var_fv1 = -temp_fv0;
+        } else {
+            var_fv1 = sp60 / 25.0f;
+            temp_ft5 = 1.0f + var_fv1;
+            if (var_fv1 > 1.0f) {
+                var_fv1 = 1.0f;
             }
-            objdata->unk278[side].y = temp_fv0 - (temp_fv0 * var_fv1 * 0.1f * temp_ft5);
-            objdata->unk290[side] *= temp_fa1;
-            objdata->unk298[side] *= temp_fa1;
-            objdata->unk2FC *= 0.99f;
+            var_fv1 = (1.0f - var_fv1);
+            temp_fa1 = (0.007000029f * var_fv1) + 0.988f;
+            while (i--) {
+                temp_fv0 = objdata->velocity[side].y;
+                if (temp_fv0 > 0/*.0f*/) {
+                    var_fv1 = temp_fv0;
+                } else {
+                    var_fv1 = -temp_fv0;
+                }
+                objdata->velocity[side].y = temp_fv0 - (temp_fv0 * var_fv1 * 0.1f * temp_ft5);
+                objdata->powerZ[side] *= temp_fa1;
+                objdata->powerX[side] *= temp_fa1;
+                objdata->paddlePower *= 0.99f;
+            }
         }
-        return;
-    }
-    
-    while (var_v1--) {
-        objdata->unk278[side].y *= 0.994f;
-        objdata->unk290[side] *= 0.995f;
-        objdata->unk298[side] *= 0.99f;
-        objdata->unk2FC *= 0.99f;
+    } else {
+        while (i--) {
+            objdata->velocity[side].y *= 0.994f;
+            objdata->powerZ[side] *= 0.995f;
+            objdata->powerX[side] *= 0.99f;
+            objdata->paddlePower *= 0.99f;
+        }
     }
 }
 
@@ -579,17 +581,17 @@ static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft) {
         objdata->rollCurve.y = 500.0f;
         objdata->rollCurve.z = 2000.0f;
         objdata->rollCurve.w = 4000.0f;
-        objdata->unk32B = 2;
-        objdata->unk298[0] = -2.5f;
-        objdata->unk298[1] = -2.5f;
+        objdata->playerVehicleAnim = 2;
+        objdata->powerX[0] = -2.5f;
+        objdata->powerX[1] = -2.5f;
     } else {
         objdata->rollCurve.x = -1500.0f;
         objdata->rollCurve.y = -500.0f;
         objdata->rollCurve.z = -2000.0f;
         objdata->rollCurve.w = -4000.0f;
-        objdata->unk32B = 3;
-        objdata->unk298[0] = 2.5f;
-        objdata->unk298[1] = 2.5f;
+        objdata->playerVehicleAnim = 3;
+        objdata->powerX[0] = 2.5f;
+        objdata->powerX[1] = 2.5f;
     }
 
     objdata->rollAngle = 0;
@@ -608,7 +610,7 @@ static void BWlog_handle_roll(Object* self, BWlog_Data* objdata) {
     if (objdata->rollCurveProgress < 0.0f) {
         objdata->rollCurveProgress = 0.0f;
     } else if (objdata->rollCurveProgress > 1.0f) {
-        objdata->state = BWLog_STATE_0_Not_Rolling;
+        objdata->state = BWLog_STATE_0_Main;
         objdata->rollCurveProgress = 1.0f;
     }
 
@@ -617,8 +619,8 @@ static void BWlog_handle_roll(Object* self, BWlog_Data* objdata) {
 
     i = gUpdateRate;
     while (i--) {
-        objdata->unk298[0] *= 0.985f;
-        objdata->unk298[1] *= 0.985f;
+        objdata->powerX[0] *= 0.985f;
+        objdata->powerX[1] *= 0.985f;
     }
 
     objdata->rollAngle += gUpdateRateF * objdata->rollSpeed;
@@ -634,13 +636,13 @@ static void BWlog_handle_roll(Object* self, BWlog_Data* objdata) {
 
     //Finish rolling after a full 360 rotation
     if ((objdata->rollAngle >= M_360_DEGREES) || (objdata->rollAngle <= -M_360_DEGREES)) {
-        objdata->state = BWLog_STATE_0_Not_Rolling;
+        objdata->state = BWLog_STATE_0_Main;
     }
 
     if (objdata->rollCurveProgress > 0.7f) {
-        objdata->unk2B4 = 15.0f;
+        objdata->targetWaterYOffset = 15.0f;
     } else {
-        objdata->unk2B4 = -2.0f;
+        objdata->targetWaterYOffset = -2.0f;
     }
 
     self->srt.roll = objdata->rollAngle;
@@ -651,13 +653,13 @@ static void BWlog_handle_unknown_state(Object* self, BWlog_Data* objdata) { }
 
 // offset: 0x1A5C | func: 26
 static void BWlog_handle_paddle_motion(Object* self, BWlog_Data* objdata) {
-    s32 frame;
+    s32 i;
 
-    objdata->unk2B4 = 15.0f;
+    objdata->targetWaterYOffset = 15.0f;
     objdata->rollSpeed += objdata->rollAcceleration * gUpdateRateF;
 
-    frame = gUpdateRate;
-    while (frame--) {
+    i = gUpdateRate;
+    while (i--) {
         objdata->rollSpeed *= 0.97f;
     }
     self->srt.roll += (s32) (objdata->rollSpeed * gUpdateRateF);
@@ -669,21 +671,21 @@ static void BWlog_handle_paddle_motion(Object* self, BWlog_Data* objdata) {
 
     objdata->rollAcceleration = -self->srt.roll / 100.0f;
     if (objdata->paddleTimer > 0.0f) {
-        objdata->unk32B = 1;
-        objdata->unk2B4 = 13.5f;
+        objdata->playerVehicleAnim = 1;
+        objdata->targetWaterYOffset = 13.5f;
         objdata->rollAcceleration -= 5.0f;
-        objdata->unk2FC = 2.0f;
+        objdata->paddlePower = 2.0f;
     } else {
-        objdata->unk32B = 0;
+        objdata->playerVehicleAnim = 0;
     }
 
     objdata->rollAcceleration -= objdata->joyStickX * 0.5f;
-    objdata->unk298[0] += (( objdata->unk290[0] * objdata->joyStickX * 0.03f) - objdata->unk298[0]) * gUpdateRateF * 0.02f;
-    objdata->unk298[1] += ((-objdata->unk290[1] * objdata->joyStickX * 0.05f) - objdata->unk298[1]) * gUpdateRateF * 0.02f;
+    objdata->powerX[0] += (( objdata->powerZ[0] * objdata->joyStickX * 0.03f) - objdata->powerX[0]) * gUpdateRateF * 0.02f;
+    objdata->powerX[1] += ((-objdata->powerZ[1] * objdata->joyStickX * 0.05f) - objdata->powerX[1]) * gUpdateRateF * 0.02f;
 }
 
 // offset: 0x1C18 | func: 27
-static void BWlog_func_1C18(Object* self, BWlog_Data* objdata) {
+static void BWlog_find_riverflows(Object* self, BWlog_Data* objdata) {
     s32 i;
     s32 k;
     s32 flowInfluences[2];
@@ -768,7 +770,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_A77, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
     } else {
         //Adjust sound volume sinusoidally
-        objdata->soundVolume = objdata->unk310 * 127.0f;
+        objdata->soundVolume = objdata->riverflowMagnitude * 127.0f;
         objdata->soundVolume += fsin16_precise(objdata->soundVolumePhase) * 30.0f;
         if (objdata->soundVolume < 30.0f) {
             objdata->soundVolume = 30.0f;
@@ -796,13 +798,13 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
     colliderFlags = objdata->collider.unk25C & 3;
     bumpSide = colliderFlags & (colliderFlags ^ objdata->unk32D);
     if (bumpSide & 1) {
-        volume = (s32) ((sqrtf(SQ(objdata->unk290[0]) + SQ(objdata->unk298[0])) * 127.0f) / 0.95f);
+        volume = (s32) ((sqrtf(SQ(objdata->powerZ[0]) + SQ(objdata->powerX[0])) * 127.0f) / 0.95f);
     }
     if (bumpSide & 2) {
-        if (volume > ((sqrtf(SQ(objdata->unk290[1]) + SQ(objdata->unk298[1])) * 127.0f) / 0.95f)) {
+        if (volume > ((sqrtf(SQ(objdata->powerZ[1]) + SQ(objdata->powerX[1])) * 127.0f) / 0.95f)) {
             volume = (s32) (f32) volume; // what
         } else {
-            volume = (s32) ((sqrtf(SQ(objdata->unk290[1]) + SQ(objdata->unk298[1])) * 127.0f) / 0.95f);
+            volume = (s32) ((sqrtf(SQ(objdata->powerZ[1]) + SQ(objdata->powerX[1])) * 127.0f) / 0.95f);
         }
     }
     if (volume > 10) {
@@ -816,7 +818,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
 }
 
 // offset: 0x2444 | func: 29
-static void BWlog_func_2444(Object* self, BWlog_Data* objdata) {
+static void BWlog_handle_fx(Object* self, BWlog_Data* objdata) {
     f32 x;
     f32 z;
     f32 sin;
@@ -852,8 +854,8 @@ static void BWlog_func_2444(Object* self, BWlog_Data* objdata) {
     srt.transl.x = 0.0f;
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
-    spC8.y = (objdata->unk278[0].x + objdata->unk278[1].x) * 0.5f;
-    spC8.x = (objdata->unk278[0].z + objdata->unk278[1].z) * 0.5f;
+    spC8.y = (objdata->velocity[0].x + objdata->velocity[1].x) * 0.5f;
+    spC8.x = (objdata->velocity[0].z + objdata->velocity[1].z) * 0.5f;
     matrix_from_srt_reversed(&mtx, &srt);
     vec3_transform(&mtx, spC8.y, 0, spC8.x, &sin, &spC8.z, &spE0.z);
     magnitude *= 1.5f;
