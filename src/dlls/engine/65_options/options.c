@@ -59,9 +59,10 @@
         /*upLink*/ 4, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x178*/ static u8 data_178[] = {
-    5, 6, 2, 3, 4, 7
+/*0x178*/ static s8 data_178[] = {
+    5, 6, 2, 3, 4, 7 //Text lineIDs?
 };
+
 /*0x180*/ static PicMenuItem data_180[] = {
     /*0*/ NEW_PICMENU_ITEM(
         /*textX*/ 83, /*textY*/ 254, /*innerWidth*/ 0, 
@@ -79,7 +80,8 @@
         /*upLink*/ 0, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x1F8*/ static u32 data_1F8 = 0x080b0000;
+/*0x1F8*/ static s8 data_1F8[] = {0x08, 0x0b}; //Text lineIDs?
+
 /*0x1FC*/ static u32 data_1FC[] = {
     0x00000000, 0x00000000
 };
@@ -100,28 +102,66 @@
         /*upLink*/ 0, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x27C*/ static u32 data_27C = 0x0d110000;
+/*0x27C*/ static s8 data_27C[] = {0x0d, 0x11};  //Text lineIDs?
 /*0x280*/ static u32 data_280[] = {
     0x00000000, 0x00000000, 0x00000000
 };
 
-//Submenu?
-/*0x28C*/ static u32 data_28C[] = {
-    (u32)&data_0, 
+#define NEW_PICMENU_ITEM_HASTEXT(textPtr, textX, textY, innerWidth, itemX, itemY, textureID, outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith) \
+    {(void*)textPtr, textX, textY, innerWidth, itemX, itemY, {((void *)textureID)}, outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith, {0}, 0}
 
-    //More PicMenuItems?
-    0x013600d2, 0x00000136, 0x00d20000, 0xffffffff, 0x00000182, 0x0504ff01, 0xffffff00, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0x005300fe, 0x00000053, 0x00fe0000, 0xffffffff, 0x00000181, 0x00000002, 0xffffff00, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0x00530118, 0x00000053, 0x01180000, 0xffffffff, 0x00000181, 0x00000103, 0xffffff00, 0, 0, 0, 0, 0, 0, 0, 0,
-    0x00530132, 0x00000053, 0x01320000, 0xffffffff, 0x00000181, 0x00000204, 0xffffff00, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0x0053014c, 0x00000053, 0x014c0000, 0xffffffff, 0x00000181, 0x00000305, 0xffffff00, 0, 0, 0, 0, 0, 0, 0
+/*0x28C*/ static PicMenuItem data_28C[] = {
+    /*0*/ NEW_PICMENU_ITEM_HASTEXT(
+        &data_0, 
+        /*textX*/ 310, /*textY*/ 210, /*innerWidth*/ 0, 
+        /*itemX*/ 310, /*itemY*/ 210, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_ALIGN_TEXT_CENTER), 
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*upLink*/ NONE, /*downLink*/ 1, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    ),
+
+    /*1*/ NEW_PICMENU_ITEM(
+        /*textX*/ 83, /*textY*/ 254, /*innerWidth*/ 0, 
+        /*itemX*/ 83, /*itemY*/ 254, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | 1), 
+        /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
+        /*upLink*/ 0, /*downLink*/ 2, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    ), 
+
+    /*2*/ NEW_PICMENU_ITEM(
+        /*textX*/ 83, /*textY*/ 280, /*innerWidth*/ 0, 
+        /*itemX*/ 83, /*itemY*/ 280, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | 1), 
+        /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
+        /*upLink*/ 1, /*downLink*/ 3, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    ),
+
+    /*3*/ NEW_PICMENU_ITEM(
+        /*textX*/ 83, /*textY*/ 306, /*innerWidth*/ 0, 
+        /*itemX*/ 83, /*itemY*/ 306, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | 1), 
+        /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
+        /*upLink*/ 2, /*downLink*/ 4, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    ), 
+
+    /*4*/ NEW_PICMENU_ITEM(
+        /*textX*/ 83, /*textY*/ 332, /*innerWidth*/ 0, 
+        /*itemX*/ 83, /*itemY*/ 332, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | 1), 
+        /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
+        /*upLink*/ 3, /*downLink*/ 5, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    )
 };
 
-//Submenu?
-/*0x3B8*/ static u32 data_3B8[] = {
-    (u32)&data_4, 
-    0x01360164, 0x00000136, 0x01640000, 0xffffffff, 0x00000182, 0x050404ff, 0xffffff00, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
+/*0x3B8*/ static PicMenuItem data_3B8[] = {
+    /*0*/ NEW_PICMENU_ITEM_HASTEXT(
+        &data_4, 
+        /*textX*/ 310, /*textY*/ 356, /*innerWidth*/ 0, 
+        /*itemX*/ 310, /*itemY*/ 356, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_ALIGN_TEXT_CENTER), 
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*upLink*/ 4, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    )
 };
 
 /*0x3F4*/ static PicMenuItem data_3F4[] = {
@@ -138,7 +178,7 @@
         /*itemX*/ 83, /*itemY*/ 278, /*textureID*/ NONE, /*outerWidth*/ 0, 
         /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_DISABLED | 1), 
         /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
-        /*upLink*/ 0x00, /*downLink*/ 2, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+        /*upLink*/ 0, /*downLink*/ 2, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ), 
     
     /*2*/ NEW_PICMENU_ITEM(
@@ -146,7 +186,7 @@
         /*itemX*/ 83, /*itemY*/ 302, /*textureID*/ NONE, /*outerWidth*/ 0, 
         /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | 1),                  //NOTE: ENABLED
         /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
-        /*upLink*/ 0x01, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+        /*upLink*/ 1, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ), 
 
     /*3*/ NEW_PICMENU_ITEM(
@@ -154,10 +194,11 @@
         /*itemX*/ 83, /*itemY*/ 326, /*textureID*/ NONE, /*outerWidth*/ 0, 
         /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_DISABLED | 1), 
         /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
-        /*upLink*/ 0x02, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+        /*upLink*/ 2, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x4E4*/ static u32 data_4E4 = 0x15191c1d;
+/*0x4E4*/ static s8 data_4E4[] = {0x15, 0x19, 0x1c, 0x1d};  //Text lineIDs?
+
 /*0x4E8*/ static u32 data_4E8[] = {
     0x00000000, 0x00000000, 0x00000000
 };
@@ -165,7 +206,7 @@
     0x00000000, 0x00000000
 };
 /*0x4FC*/ static PicMenuItem data_4FC[] = {
-    NEW_PICMENU_ITEM(
+    /*0*/ NEW_PICMENU_ITEM(
         /*textX*/ 83, /*textY*/ 254, /*innerWidth*/ 0, 
         /*itemX*/ 83, /*itemY*/ 254, /*textureID*/ NONE, /*outerWidth*/ 0, 
         /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_DISABLED | 1), 
@@ -173,7 +214,7 @@
         /*upLink*/ NONE, /*downLink*/ 1, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ), 
 
-    NEW_PICMENU_ITEM( 
+    /*1*/ NEW_PICMENU_ITEM( 
         /*textX*/ 83, /*textY*/ 278, /*innerWidth*/ 0, 
         /*itemX*/ 83, /*itemY*/ 278, /*textureID*/ NONE, /*outerWidth*/ 0, 
         /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_DISABLED | 1), 
@@ -181,15 +222,15 @@
         /*upLink*/ 0, /*downLink*/ 2, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ), 
 
-    NEW_PICMENU_ITEM(
+    /*2*/ NEW_PICMENU_ITEM(
         /*textX*/ 83, /*textY*/ 302, /*innerWidth*/ 0, 
         /*itemX*/ 83, /*itemY*/ 302, /*textureID*/ NONE, /*outerWidth*/ 0, 
         /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_DISABLED | 1), 
         /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
-        /*upLink*/ 0x01, /*1*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+        /*upLink*/ 1, /*1*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ), 
 
-    NEW_PICMENU_ITEM(
+    /*3*/ NEW_PICMENU_ITEM(
         /*textX*/ 83, /*textY*/ 326, /*innerWidth*/ 0, 
         /*itemX*/ 83, /*itemY*/ 326, /*textureID*/ NONE, /*outerWidth*/ 0, 
         /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | PICMENU_DISABLED | 1), 
@@ -197,83 +238,89 @@
         /*upLink*/ 2, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x5EC*/ static u32 data_5EC = 0x1e232425;
+/*0x5EC*/ static s8 data_5EC[] = {0x1e, 0x23, 0x24, 0x25}; //Text lineIDs?
+
 /*0x5F0*/ static u32 data_5F0[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 /*0x600*/ static PicMenuItem data_600[] = {
-    NEW_PICMENU_ITEM(
-        0x0053, 0x00fe, 0x0000, 
-        0x0053, 0x00fe, 0xffffffff, 0x0000, 
-        0x0181, 
-        0x00, 0x00, 
-        0xff, 0x01, 0xff, 0xff, 0xff
+    /*0*/ NEW_PICMENU_ITEM(
+        /*textX*/ 83, /*textY*/ 254, /*innerWidth*/ 0, 
+        /*itemX*/ 83, /*itemY*/ 254, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | 1), 
+        /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
+        /*upLink*/ NONE, /*downLink*/ 1, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ), 
 
-    NEW_PICMENU_ITEM(
-        0x0053, 0x0116, 0x0000, 
-        0x0053, 0x0116, 0xffffffff, 0x0000, 
-        0x0181, 
-        0x00, 0x00, 
-        0x00, 0xff, 0xff, 0xff, 0xff
+    /*1*/ NEW_PICMENU_ITEM(
+        /*textX*/ 83, /*textY*/ 278, /*innerWidth*/ 0, 
+        /*itemX*/ 83, /*itemY*/ 278, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_RAISED_EFFECT | PICMENU_USE_TEXT_COLOR | 1), 
+        /*fontID*/ FONT_FUN_FONT, /*highlightFontID*/ FONT_FUN_FONT, 
+        /*upLink*/ 0, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
 /*0x678*/ static u32 data_678 = 0;
 /*0x67C*/ static u32 data_67C = 0;
 /*0x680*/ static u32 data_680 = 0;
 /*0x684*/ static PicMenuItem data_684[] = {
-    NEW_PICMENU_ITEM(
-    /*textX*/ 265, /*textY*/ 392, /*innerWidth*/ 0, 
-    /*itemX*/ 265, /*itemY*/ 380, /*textureID*/ NONE, /*outerWidth*/ 0, 
-    /*flags*/ (PICMENU_AUTO_WIDTH | PICMENU_HAS_BACKGROUND | PICMENU_ALIGN_TEXT_CENTER),
-    /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
-    /*upLink*/ NONE, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    /*0*/ NEW_PICMENU_ITEM(
+        /*textX*/ 265, /*textY*/ 392, /*innerWidth*/ 0, 
+        /*itemX*/ 265, /*itemY*/ 380, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_AUTO_WIDTH | PICMENU_HAS_BACKGROUND | PICMENU_ALIGN_TEXT_CENTER),
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*upLink*/ NONE, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ),
 };
-/*0x6C0*/ static u32 data_6C0 = 0x28000000;
+/*0x6C0*/ static s8 data_6C0[] = {0x28};
 /*0x6C4*/ static PicMenuItem data_6C4[] = {
-    NEW_PICMENU_ITEM( 
-    /*textX*/ 320, /*textY*/ 237, /*innerWidth*/ 0,
-    /*itemX*/ 320, /*itemY*/ 225, /*textureID*/ NONE, /*outerWidth*/ 0, 
-    /*flags*/ (PICMENU_ALIGN_ITEM_CENTER | PICMENU_AUTO_WIDTH | PICMENU_HAS_BACKGROUND | PICMENU_ALIGN_TEXT_CENTER), 
-    /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
-    /*upLink*/ NONE, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
+    /*0*/ NEW_PICMENU_ITEM( 
+        /*textX*/ 320, /*textY*/ 237, /*innerWidth*/ 0,
+        /*itemX*/ 320, /*itemY*/ 225, /*textureID*/ NONE, /*outerWidth*/ 0, 
+        /*flags*/ (PICMENU_ALIGN_ITEM_CENTER | PICMENU_AUTO_WIDTH | PICMENU_HAS_BACKGROUND | PICMENU_ALIGN_TEXT_CENTER), 
+        /*fontID*/ FONT_DINO_MEDIUM_FONT_OUT, /*highlightFontID*/ FONT_DINO_MEDIUM_FONT_IN, 
+        /*upLink*/ NONE, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ),
 };
-/*0x700*/ static u32 data_700 = 0x28000000;
-/*0x704*/ static u32 data_704 = (u32)&data_10;
-/*0x708*/ static u32 data_708[] = {
-    (u32)&data_178, 0x06ff0004, 0x05040000
+/*0x700*/ static s8 data_700[] = {0x28};
+
+typedef struct {
+    PicMenuItem *menuItems;
+    s8 *textIDs;
+    u8 count;
+    u8 unk9;
+    u8 unkA;
+    u8 unkB;
+    u8 unkC;
+    u8 unkD;
+} OptionsSubmenu;
+
+/*0x704*/ static OptionsSubmenu data_704 = {
+    data_10, data_178, 0x06, 0xff, 0x00, 0x04, 0x05, 0x04
 };
-/*0x714*/ static u32 data_714 = (u32)&data_3F4;
-/*0x718*/ static u32 data_718[] = {
-    (u32)&data_4E4, 0x03050003, 0x00000000
+/*0x714*/ static OptionsSubmenu data_714 = { 
+    data_3F4, data_4E4, 0x03, 0x05, 0x00, 0x03, 0x00, 0x00
 };
-/*0x724*/ static u32 data_724 = (u32)&data_4FC;
-/*0x728*/ static u32 data_728[] = {
-    (u32)&data_5EC, 0x03060003, 0x00000000
+/*0x724*/ static OptionsSubmenu data_724 = {
+    data_4FC, data_5EC, 0x03, 0x06, 0x00, 0x03, 0x00, 0x00
 };
-/*0x734*/ static u32 data_734 = (u32)&data_180;
-/*0x738*/ static u32 data_738[] = {
-    (u32)&data_1F8, 0x02020003, 0x00000000
+/*0x734*/ static OptionsSubmenu data_734 ={
+    data_180, data_1F8, 0x02, 0x02, 0x00, 0x03, 0x00, 0x00
 };
-/*0x744*/ static u32 data_744 = (u32)&data_204;
-/*0x748*/ static u32 data_748[] = {
-    (u32)&data_27C, 0x02030003, 0x00000000
+/*0x744*/ static OptionsSubmenu data_744 = {
+    data_204, data_27C, 0x02, 0x03, 0x00, 0x03, 0x00, 0x00
 };
-/*0x754*/ static u32 data_754[] = {
-    (u32)&data_28C, 0x00000000, 0x06040003, 0x00000000
+/*0x754*/ static OptionsSubmenu data_754 = {
+    data_28C, NULL, 0x06, 0x04, 0x00, 0x03, 0x00, 0x00
 };
-/*0x764*/ static u32 data_764[] = {
-    (u32)&data_600, 0x00000000, 0x02070003, 0x00000000
+/*0x764*/ static OptionsSubmenu data_764 = {
+    data_600, NULL, 0x02, 0x07, 0x00, 0x03, 0x00, 0x00
 };
-/*0x774*/ static u32 data_774 = (u32)&data_684;
-/*0x778*/ static u32 data_778[] = {
-    (u32)&data_6C0, 0x01ffff05, 0x05040000
+/*0x774*/ static OptionsSubmenu data_774 = {
+    data_684, data_6C0, 0x01, 0xff, 0xff, 0x05, 0x05, 0x04
 };
-/*0x784*/ static u32 data_784 = (u32)&data_6C4;
-/*0x788*/ static u32 data_788[] = {
-    (u32)&data_700, 0x01ffff05, 0x05040000
+/*0x784*/ static OptionsSubmenu data_784 = {
+    data_6C4, data_700, 0x01, 0xff, 0xff, 0x05, 0x05, 0x04
 };
 /*0x794*/ static u32 data_794 = 0x00000000;
 /*0x798*/ static u32 data_798 = 0x00000000;
