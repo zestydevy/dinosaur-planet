@@ -9,6 +9,7 @@
 #include "sys/dll.h"
 #include "sys/fs.h"
 #include "sys/joypad.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
 #include "sys/objlib.h"
@@ -929,6 +930,7 @@ static void anim_update_actor_transform(Object* animObj, Object* actor, AnimObj_
         var_fv1 = _bss_28;
         var_fa0 = _bss_2C;
     }
+    
     temp_a1 = animObj->srt.pitch;
     temp_a3 = animObj->srt.roll;
     if (actor != animObj) {
@@ -945,9 +947,9 @@ static void anim_update_actor_transform(Object* animObj, Object* actor, AnimObj_
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_ROT) {
             if (st->unk62 == 2) {
-                actor->srt.yaw = var_v1 + (s16) ((f32) st->yawDiff * st->unk58);
-                actor->srt.pitch = temp_a1 + (s16) ((f32) st->pitchDiff * st->unk58);
-                actor->srt.roll = temp_a3 + (s16) ((f32) st->rollDiff * st->unk58);
+                actor->srt.yaw = var_v1 + (s16) (st->yawDiff * st->unk58);
+                actor->srt.pitch = temp_a1 + (s16) (st->pitchDiff * st->unk58);
+                actor->srt.roll = temp_a3 + (s16) (st->rollDiff * st->unk58);
             } else {
                 actor->srt.yaw = var_v1;
                 actor->srt.pitch = temp_a1;
@@ -3067,7 +3069,7 @@ void anim_update_camera(void) {
                 sp54.srt.transl.x = sp184;
                 sp54.srt.transl.y = sp180;
                 sp54.srt.transl.z = sp17C;
-                sp54.srt.yaw = 0x8000 - sp17A;
+                sp54.srt.yaw = M_180_DEGREES - sp17A;
                 sp54.srt.pitch = -sp178;
                 sp54.srt.roll = sp176;
                 if (_data_30 != 0) {
@@ -3083,7 +3085,7 @@ void anim_update_camera(void) {
                 temp_v0->srt.transl.x = sp184;
                 temp_v0->srt.transl.y = sp180;
                 temp_v0->srt.transl.z = sp17C;
-                temp_v0->srt.yaw = 0x8000 - sp17A;
+                temp_v0->srt.yaw = M_180_DEGREES - sp17A;
                 temp_v0->srt.pitch = -sp178;
                 temp_v0->srt.roll = sp176;
                 if (_data_30 != 0) {
@@ -3095,9 +3097,9 @@ void anim_update_camera(void) {
                 _bss_5A4 = temp_v0->srt.transl.x;
                 _bss_5A8 = temp_v0->srt.transl.y;
                 _bss_5B0 = temp_v0->srt.transl.z;
-                _bss_5C8 = (s32) temp_v0->srt.yaw;
-                _bss_5D0 = (s32) temp_v0->srt.pitch;
-                _bss_5D4 = (s32) temp_v0->srt.roll;
+                _bss_5C8 = temp_v0->srt.yaw;
+                _bss_5D0 = temp_v0->srt.pitch;
+                _bss_5D4 = temp_v0->srt.roll;
                 _bss_5C4 = temp_v0->fov;
             }
         }
@@ -3123,10 +3125,10 @@ void anim_update_camera(void) {
         case DLL_ID_CAMTALK1:
             sp54.srt.transl.x = _bss_5A4;
             sp54.srt.transl.y = _bss_5A8;
-            sp54.srt.yaw = (s16) _bss_5C8;
-            sp54.srt.pitch = (s16) _bss_5D0;
+            sp54.srt.yaw = _bss_5C8;
+            sp54.srt.pitch = _bss_5D0;
             sp54.srt.transl.z = _bss_5B0;
-            sp54.srt.roll = (s16) _bss_5D4;
+            sp54.srt.roll = _bss_5D4;
             sp54.fov = _bss_5C4;
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK1, 1, 0, sizeof(sp54), &sp54, 0, 0xFF);
             break;
