@@ -35,6 +35,7 @@
 62 = engine/62_mainmenu
 63 = engine/63_gameselect
 64 = engine/64_nameentry
+65 = engine/65_options
 66 = engine/66_pausemenu
 68 = engine/68_old_mainmenu
 74 = engine/74_picmenu
