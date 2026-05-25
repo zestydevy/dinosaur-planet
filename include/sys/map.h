@@ -464,6 +464,7 @@ typedef struct MapObjSetupList {
 
 #define GRID_INDEX(z, x) ((z) * BLOCKS_GRID_SPAN  + (x))
 
+// @bug: The render list bitfield only has room for a max of 127 visible objects
 #define MAX_VISIBLE_OBJECTS 180
 
 

@@ -19,6 +19,8 @@
 #include "macros.h"
 #include "dll.h"
 
+#define MAX_OBJECTS 180
+
 typedef struct {
 /*00*/  u8 _unk0[0x8 - 0x0];
 /*08*/  f32 unk8;
@@ -109,7 +111,7 @@ void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gObjDeferredFreeList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
+    gObjDeferredFreeList = mmAlloc(sizeof(Object*) * MAX_OBJECTS, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
     sObjLockList = mmAlloc(sizeof(Object*) * 24, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
     D_800B18E4 = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
 
@@ -136,7 +138,7 @@ void init_objects(void) {
     while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
     //allocate global object list and some other buffers
-    gObjList = mmAlloc(sizeof(Object*) * 180, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
+    gObjList = mmAlloc(sizeof(Object*) * MAX_OBJECTS, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
     objhits_init();
     obj_clear_all();
 }
@@ -802,7 +804,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
         gNumObjs += 1;
 
         /* default.dol
-        if (gNumObjs > 349) {
+        if (gNumObjs >= MAX_OBJECTS) {
             // "Failed assertion ObjListSize<MAX_OBJECTS"
         }
         */
@@ -1068,7 +1070,7 @@ void obj_destroy_object(Object *obj) {
                 gObjDeferredFreeList[gObjDeferredFreeListCount] = obj;
                 gObjDeferredFreeListCount++;
                 
-                if (gObjDeferredFreeListCount == 180) {
+                if (gObjDeferredFreeListCount == MAX_OBJECTS) {
                     STUBBED_PRINTF("objFreeObject: delete list size overrun\n");
                     gObjDeferredFreeListCount--;
                 }
