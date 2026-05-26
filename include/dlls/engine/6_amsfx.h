@@ -551,6 +551,8 @@ enum SoundID {
     SOUND_8DB_Eerie_Alarm_Loop = 0x8DB,         //DR_tube
     SOUND_8DC_Ominous_Thrumming_Loop = 0x8DC,   //DR_tube
 
+    SOUND_8E2 = 0x8E2,
+
     SOUND_8ED = 0x8ED,
 
     SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)

@@ -237,7 +237,8 @@ typedef struct {
 /*8e*/ u8 colorIdx; //related to textures; 1=dark, 2=default, 3+=corrupt, 77=crash, 0=normal // TODO: confirm
 /*8f*/ u8 unk8F; //related to hitbox // TODO: confirm
 /*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62) // TODO: confirm
-/*91*/ u8 _unk91[2];
+/*91*/ u8 unk91;
+/*91*/ u8 unk92;
 /*93*/ s8 unk93; //render settings (can switch off vertex shading)
 /*94*/ s16 unk94;
 /*96*/ s16 unk96;

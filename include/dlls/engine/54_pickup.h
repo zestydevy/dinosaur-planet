@@ -13,6 +13,13 @@ enum PickupState {
     PICKUP_Held = 2
 };
 
+enum PickupFlags {
+    PICKUPFLAG_PickedUpThisTick = 0x1,
+    PICKUPFLAG_NoGravity = 0x2,
+    PICKUPFLAG_DropDisabled = 0x4,
+    PICKUPFLAG_DontSave = 0x8
+};
+
 // size: 0xA
 typedef struct {
 /*0*/ s16 unk0;
@@ -27,7 +34,7 @@ typedef struct {
 DLL_INTERFACE(DLL_54) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*setup)(Object* obj, Pickup* pickup, s16 arg2);
-/*1*/ s32 (*control)(Object* obj); // returns pickup state
+/*1*/ s32 (*control)(Object* obj, Pickup* pickup); // returns pickup state
 /*2*/ s32 (*should_print)(Object* obj, s32 visibility);
 /*3*/ void (*free)(Object* obj);
 /*4*/ s32 (*get_state)(Pickup* pickup);

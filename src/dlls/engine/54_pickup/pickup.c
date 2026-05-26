@@ -9,16 +9,10 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "dll.h"
+#include "macros.h"
 
 // Note: Object.unkE0 determines whether the object is being held by the player.
 //       This field is set by the player DLL partway through the pickup animation.
-
-enum PickupFlags {
-    PICKUPFLAG_PickedUpThisTick = 0x1,
-    PICKUPFLAG_NoGravity = 0x2,
-    PICKUPFLAG_DropDisabled = 0x4,
-    PICKUPFLAG_DontSave = 0x8
-};
 
 static s32 pickup_should_pickup(Object* obj, Object* player, Pickup* pickup);
 
@@ -35,7 +29,12 @@ void pickup_setup(Object* obj, Pickup* pickup, s16 arg2) {
 }
 
 // offset: 0x64 | func: 1 | export: 1
+// @bug: Missing 2nd param
+#ifndef AVOID_UB
 s32 pickup_control(Object* obj) {
+#else
+s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
+#endif
     Object* player;
     Pickup* pickup;
     Object* var_t2;
