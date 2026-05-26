@@ -1,69 +1,72 @@
-#include "common.h"
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/engine/17_partfx.h"
 #include "dlls/engine/53_movelib.h"
+#include "dlls/engine/54_pickup.h"
 #include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "sys/main.h"
+#include "sys/objects.h"
 #include "sys/objhits.h"
+#include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
+#include "sys/print.h"
+#include "sys/rand.h"
+#include "sys/segment_53F00.h"
+#include "dll.h"
+#include "macros.h"
 
 typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
+/*00*/ ObjSetup base;
+/*18*/ s8 unk18;
+/*19*/ s8 unk19;
 } CFbarrel_Setup;
 
 typedef struct {
-    Pickup pickup;
-    u8 _unkA[0xC - 0xA];
-    Object* unkC;
-    u8 _unk10[0x11 - 0x10];
-    u8 unk11;
-    u8 unk12;
-    u8 unk13;
-    s32 unk14;
-    Vec3f unk18;
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    s16 unk30;
-    s8 unk32;
-    s32 unk34;
-    s16 unk38;
-    s16 unk3A;
-    u8 unk3C_0 : 1;
-    u8 unk3C_1 : 1;
-    u8 unk3C_2 : 1;
-    u8 unk3D;
-    u8 unk3E_0 : 1;
-    u8 unk3E_1 : 1;
+/*00*/ Pickup pickup;
+/*0C*/ Object* unkC;
+/*10*/ u8 _unk10;
+/*11*/ u8 unk11;
+/*12*/ u8 unk12;
+/*13*/ u8 unk13;
+/*14*/ s32 unk14;
+/*18*/ Vec3f unk18;
+/*24*/ f32 unk24;
+/*28*/ f32 unk28;
+/*2C*/ f32 unk2C;
+/*30*/ s16 unk30;
+/*32*/ s8 unk32;
+/*34*/ s32 unk34;
+/*38*/ s16 unk38;
+/*3A*/ s16 unk3A;
+/*3C:0*/ u8 unk3C_0 : 1;
+/*3C:1*/ u8 unk3C_1 : 1;
+/*3C:2*/ u8 unk3C_2 : 1;
+/*3D*/ u8 unk3D;
+/*3E:0*/ u8 unk3E_0 : 1;
+/*3E:1*/ u8 unk3E_1 : 1;
 } CFbarrel_Data;
 
-/*0x0*/ static u32 data_0 = 0x00000000;
-/*0x4*/ static u32 data_4[] = {
-    0xffff0000, 0x00000001, 0x00010000, 0x0000ffff
-};
-/*0x14*/ static u32 data_14[] = {
-    0x00020003, 0x00000001, 0x00000000
-};
+/*0x0*/ static u32 data_0 = 0x00000000; // unused
 
-/*static*/ void dll_388_func_AD4(Object* self);
-/*static*/ void dll_388_func_1214(Object* self);
-void dll_388_func_14A0(Object* self, s16 a1, s16 a2);
-/*static*/ void dll_388_func_1848(Object* self);
-static void dll_388_func_1948(Object* self, u8 a1);
+static void CFbarrel_func_AD4(Object* self);
+static void CFbarrel_func_1214(Object* self);
+static void CFbarrel_func_14A0(Object* self, s16 a1, s16 a2);
+static void CFbarrel_func_1848(Object* self);
+static void CFbarrel_func_1948(Object* self, u8 a1);
 
 // offset: 0x0 | ctor
-void dll_388_ctor(void *dll) { }
+void CFbarrel_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_388_dtor(void *dll) { }
+void CFbarrel_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_388_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
+void CFbarrel_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     CFbarrel_Data* objdata;
     Pickup* pickup;
-    s32 temp;
 
     objdata = self->data;
     pickup = self->data;
@@ -96,14 +99,9 @@ void dll_388_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
 }
 
 // offset: 0x190 | func: 1 | export: 1
-#ifndef NON_MATCHING
-void dll_388_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/388_CFbarrel/dll_388_control.s")
-#else
-void dll_388_control(Object* self) {
-    CFbarrel_Data* objdata;
-
-    objdata = self->data;
+void CFbarrel_control(Object* self) {
+    CFbarrel_Data* objdata = self->data;
+    
     if (objdata->unk14 != 0) {
         objdata->unk14 = objdata->unk14 - gUpdateRate;
         if (objdata->unk14 < 0) {
@@ -128,7 +126,9 @@ void dll_388_control(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_353, NULL, 0, -1, NULL);
                 if (objdata->unk13 >= 0x15) {
                     objdata->unk3E_0 = 0;
+                    // Move to "create point" node
                     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0x1A, &self->srt);
+                    STUBBED_PRINTF(" Should has Set position  %i %f %f \n", 0x1A, &self->srt.transl.x, &self->srt.transl.z);
                     self->srt.transl.x += (f32) rand_next(-30, 30) * 0.1f;
                     self->srt.transl.z += (f32) rand_next(-30, 30) * 0.1f;
                     bzero(&objdata->unk18, sizeof(Vec3f));
@@ -152,15 +152,15 @@ void dll_388_control(Object* self) {
                     objdata->unk11 = 0;
                     func_8002674C(self);
                     if (objdata->unk3D & 1) {
-                        dll_388_func_AD4(self);
+                        CFbarrel_func_AD4(self);
                     }
-                    dll_388_func_1214(self);
+                    CFbarrel_func_1214(self);
                 } else {
                     objdata->unk3D |= 1;
                     objdata->unk11 = 1;
                     objdata->unk3E_1 = 1;
                 }
-                dll_388_func_1848(self);
+                CFbarrel_func_1848(self);
                 if (objdata->unk3E_0) {
                     self->unkAF |= ARROW_FLAG_8_No_Targetting;
                     if ((objdata->unk3E_1) && (objdata->unk3E_0)) {
@@ -178,12 +178,9 @@ void dll_388_control(Object* self) {
         }
     }
 }
-#endif
-
-/*0x0*/ static const char str_0[] = " Should has Set position  %i %f %f \n";
 
 // offset: 0x6B8 | func: 2 | export: 2
-void dll_388_update(Object* self) {
+void CFbarrel_update(Object* self) {
     CFbarrel_Data* objdata = self->data;
     f32 sp90[3];
     Func_80059C40_Struct sp3C;
@@ -214,7 +211,7 @@ void dll_388_update(Object* self) {
             if (func_80059C40(&self->prevLocalPosition, &self->srt.transl, 4.0f, 1, &sp3C, self, 8, -1, 0xFF, 0) != 0) {
                 STUBBED_PRINTF(" Line IDNO %i \n", sp3C.unk51);
                 if ((objdata->unk3E_0) && (sp3C.unk51 == 3)) {
-                    dll_388_func_1948(self, 0);
+                    CFbarrel_func_1948(self, 0);
                 } else {
                     self->velocity.x *= -1.1f;
                     self->velocity.z *= -1.1f;
@@ -231,7 +228,7 @@ void dll_388_update(Object* self) {
 }
 
 // offset: 0x92C | func: 3 | export: 3
-void dll_388_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     CFbarrel_Data* objdata = self->data;
     if (objdata->unk13 == 0) {
         if (objdata->unk11 != 0) {
@@ -245,7 +242,7 @@ void dll_388_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 }
 
 // offset: 0x9DC | func: 4 | export: 4
-void dll_388_free(Object* self, s32 onlySelf) {
+void CFbarrel_free(Object* self, s32 onlySelf) {
     CFbarrel_Data* objdata = self->data;
     gDLL_54_pickup->vtbl->free(self);
     obj_free_object_type(self, OBJTYPE_Barrel);
@@ -257,129 +254,91 @@ void dll_388_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0xAB0 | func: 5 | export: 5
-u32 dll_388_get_model_flags(Object *self) {
+u32 CFbarrel_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0xAC0 | func: 6 | export: 6
-u32 dll_388_get_data_size(Object *self, u32 offsetAddr) {
+u32 CFbarrel_get_data_size(Object *self, u32 offsetAddr) {
     return sizeof(CFbarrel_Data);
 }
 
+/*0x50*/ static const char str_50[] = " No check ";
+
 // offset: 0xAD4 | func: 7
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/388_CFbarrel/dll_388_func_AD4.s")
-#else
-void dll_388_func_14A0(Object* self, s16 a1, s16 a2);
-void dll_388_func_AD4(Object* self) {
-    CFbarrel_Data* temp_s5 = self->data;
+static void CFbarrel_func_AD4(Object* self) {
+    CFbarrel_Data* objdata = self->data;
+    Object* obj;
+    f32 temp_fa1;
+    f32 temp_fv1;
+    f32 var_fa0;
+    f32 pad;
+    s16 var_s2;
+    s32 temp_v0;
     s32 spCC[1]; // size?
-    s32 spC8;
+    s32 spC8; // s0
+    s32 var_s3;
+    s32 var_s4;
+    s32 var_v1;
     f32 spB8;
+    f32 temp;
     f32 spB0;
     f32 spAC;
     Func_80057F1C_Struct** spA8;
     s16 sp98[] = {0xffff, 0x0000, 0x0000, 0x0001, 0x0001, 0x0000, 0x0000, 0xffff};
     s16 sp90[] = {0x0002, 0x0003, 0x0000, 0x0001};
-    f32 sp84;
-    f32 sp80;
-    Func_80057F1C_Struct** var_a0;
-    Func_80057F1C_Struct** var_a0_2;
-    Object* temp_v0_3;
-    f32 temp_fa1;
-    f32 temp_fs0;
-    f32 temp_fs0_2;
-    f32 temp_fs0_3;
-    f32 temp_ft3;
-    f32 temp_fv0_2;
-    f32 temp_fv0_3;
-    f32 temp_fv0_4;
-    f32 temp_fv1;
-    f32 temp_fv1_2;
-    f32 var_fa0;
-    f32 var_fs0;
-    f32 var_fs0_2;
-    f32 var_fs0_3;
-    f32 var_fs0_4;
-    f32 var_fs0_5;
-    s16 var_s2;
-    s32 temp_a2;
-    s32 temp_v0;
-    s32 var_s0;
-    s32 var_s3;
-    s32 var_s4;
-    s32 var_v1;
     s32* temp_v0_2;
-    u32 temp_v1;
-    f32 temp;
-    f32 temp2;
 
     self->srt.yaw = 0;
     var_s2 = 0;
     var_s4 = 0;
-    if (temp_s5->unk18.y > 0.01f) {
-        temp_s5->unk18.y -= 0.1f;
-        self->velocity.x = temp_s5->unk18.x * gUpdateRateF;
-        self->velocity.y = temp_s5->unk18.y * gUpdateRateF;
-        self->velocity.z = temp_s5->unk18.z * gUpdateRateF;
+    if (objdata->unk18.y > 0.01f) {
+        objdata->unk18.y -= 0.1f;
+        self->velocity.x = objdata->unk18.x * gUpdateRateF;
+        self->velocity.y = objdata->unk18.y * gUpdateRateF;
+        self->velocity.z = objdata->unk18.z * gUpdateRateF;
         obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
-        self->srt.roll += (temp_s5->unk18.y * 500.0f);
+        self->srt.roll += (objdata->unk18.y * 500.0f);
         return;
     }
-    //var_s0 = spC8;
-    spAC = 0/*.0f*/;
+    spAC = 0.0f;
     for (var_s3 = 0; var_s3 < 4; var_s3++) {
-        temp_fs0 = fsin16_precise(var_s2);
-        spB8 = 10.0f * fcos16_precise(self->srt.roll) * temp_fs0;
-        
-        temp_fs0 = fcos16_precise(var_s2);
-        spB0 = 10.0f * fcos16_precise(self->srt.pitch) * temp_fs0;
-        
-        sp80 = fsin16_precise(var_s2);
-        sp84 = fsin16_precise(self->srt.roll);
-        
-        temp_fs0 = fsin16_precise(self->srt.pitch);
-        temp = ((10.0f * fcos16_precise(var_s2) * temp_fs0));
+        spB8 =  (10.0f * fsin16_precise(var_s2)) * fcos16_precise(self->srt.roll);
+        spB0 = (10.0f * fcos16_precise(var_s2)) * fcos16_precise(self->srt.pitch);
+        temp = ((10.0f * fsin16_precise(self->srt.roll)) * fsin16_precise(var_s2)) + (10.0f * fsin16_precise(self->srt.pitch) * fcos16_precise(var_s2));
 
-       // if (1) { } if (1) { } if (1) { }
-        
         var_s2 += 0x3FD2;
+
         temp_v0 = func_80057F1C(self, 
                                 self->srt.transl.x + spB8, 
-                                self->srt.transl.y + temp + (10.0f * sp84 * sp80), 
+                                self->srt.transl.y + temp,
                                 self->srt.transl.z + spB0, 
                                 &spA8, 0, 1);
         if (temp_v0 != 0) {
-            var_v1 = 0;
             var_fa0 = 10000.0f;
 
-            for (; var_v1 < temp_v0; var_v1++) {
-                temp_fv1 = self->srt.transl.y;
-                temp_fv1 -= (spA8[var_v1])->unk0[0];
-                if (temp_fv1 > 0.0f) {
-                    if (var_fa0 >= 0.0f) {
-                        var_fs0 = var_fa0;
-                    } else {
-                        var_fs0 = -var_fa0;
-                    }
-                    if ((temp_fv1 < var_fs0) || ((temp_fv1 <= 0.0f) && (temp_fv1 > -20.0f))) {
-                        var_fa0 = temp_fv1;
-                        var_s0 = var_v1;
-                    }
+            for (var_v1 = 0; var_v1 < temp_v0; var_v1++) {
+                temp_fv1 = self->srt.transl.y - spA8[var_v1]->unk0[0];
+                if (
+                    (temp_fv1 > 0.0f && temp_fv1 < (var_fa0 >= 0 ? var_fa0 : -var_fa0)) || 
+                    (temp_fv1 <= 0.0f && temp_fv1 > -20.0f)
+                ) {
+                    var_fa0 = temp_fv1;
+                    spC8 = var_v1;
                 }
             }
           
             if (var_fa0 <= 0.0f) {
-                temp_v0_2 = &(&spCC[0])[var_s4];
+                temp_v0_2 = &spCC[var_s4];
                 var_s4 += 1;
                 if (var_fa0 < spAC) {
                     spAC = var_fa0;
                 }
-                temp_s5->unk18.y = 0.0f;
+                objdata->unk18.y = 0.0f;
                 if (var_fa0 > 0.0f) {
                     *temp_v0_2 = var_s3;
                 } else {
-                    *temp_v0_2 = (s32) (&sp90[0])[var_s3];
+                    *temp_v0_2 = sp90[var_s3];
                 }
             }
         }
@@ -388,42 +347,38 @@ void dll_388_func_AD4(Object* self) {
         self->velocity.y = -spAC;
     }
     if (var_s4 == 0) {
-        temp_s5->unk18.y = (f32) (temp_s5->unk18.y - 0.1f);
-        self->velocity.y = temp_s5->unk18.y * gUpdateRateF;
-        self->velocity.x = temp_s5->unk18.x * gUpdateRateF;
-        self->velocity.z = temp_s5->unk18.z * gUpdateRateF;
-        if (temp_s5->unk18.y < -0.2f) {
-            dll_388_func_14A0(self, temp_s5->unk38, temp_s5->unk3A);
+        objdata->unk18.y -= 0.1f;
+        self->velocity.y = objdata->unk18.y * gUpdateRateF;
+        self->velocity.x = objdata->unk18.x * gUpdateRateF;
+        self->velocity.z = objdata->unk18.z * gUpdateRateF;
+        if (objdata->unk18.y < -0.2f) {
+            CFbarrel_func_14A0(self, objdata->unk38, objdata->unk3A);
         }
     }
     if (var_s4 > 0) {
-        temp_s5->unk3D &= ~0x1;
-        temp_v0_3 = spA8[var_s0]->unk10;
-        if (temp_v0_3 != NULL) {
-            temp_v1 = temp_v0_3->def->flags;
-            if ((temp_v1 & 0x40) && !(temp_v1 & 0x8000)) {
-                temp_s5->unkC = temp_v0_3;
+        STUBBED_PRINTF(" Landed On World Obj ");
+        objdata->unk3D &= ~0x1;
+        obj = spA8[spC8]->unk10;
+        if (obj != NULL) {
+            if ((obj->def->flags & OBJDEF_IS_MOBILE_MAP) && !(obj->def->flags & OBJDEF_MOBILE_MAP_NEVER_PLAYER_PARENT)) {
+                objdata->unkC = obj;
+                STUBBED_PRINTF(" ob Obj %x  Defno %i \n\n", obj, obj->id);
             }
         }
-        temp_s5->unk18.x = 0.0f;
-        temp_s5->unk18.y = 0.0f;
-        temp_s5->unk18.z = 0.0f;
+        objdata->unk18.x = 0.0f;
+        objdata->unk18.y = 0.0f;
+        objdata->unk18.z = 0.0f;
         self->srt.roll = 0;
         self->srt.pitch = 0;
     }
-    if ((temp_s5->unk3E_0) && (var_s4 == 4)) {
-        dll_388_func_1948(self, 0);
+    if ((objdata->unk3E_0) && (var_s4 == 4)) {
+        CFbarrel_func_1948(self, 0);
     }
     obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
 }
-#endif
-
-/*0x50*/ static const char str_50[] = " No check ";
-/*0x5C*/ static const char str_5C[] = " Landed On World Obj ";
-/*0x74*/ static const char str_74[] = " ob Obj %x  Defno %i \n\n";
 
 // offset: 0x1214 | func: 8
-void dll_388_func_1214(Object* self) {
+static void CFbarrel_func_1214(Object* self) {
     CFbarrel_Data* objdata = self->data;
     Object* hitBy;
     DIMExplosion_Setup* explSetup;
@@ -467,7 +422,7 @@ void dll_388_func_1214(Object* self) {
 }
 
 // offset: 0x14A0 | func: 9
-void dll_388_func_14A0(Object* self, s16 arg1, s16 arg2) {
+static void CFbarrel_func_14A0(Object* self, s16 arg1, s16 arg2) {
     Object* sp5C;
     f32 sp58[1];
     f32 var_fa0;
@@ -475,17 +430,17 @@ void dll_388_func_14A0(Object* self, s16 arg1, s16 arg2) {
     f32 var_fv0;
     f32 var_fv1;
     f32 sp44;
-    Object* sp40;
+    Object* player;
     s32 pad[2];
 
     sp44 = 300.0f;
-    sp40 = get_player();
+    player = get_player();
     sp5C = obj_get_nearest_type_to(OBJTYPE_32, self, &sp44);
     if (sp5C == NULL) {
         return;
     }
     var_fv0 = sp5C->srt.transl.y;
-    var_fv1 = sp40->srt.transl.y;
+    var_fv1 = player->srt.transl.y;
     if (var_fv1 <= var_fv0) {
         var_fa0 = var_fv0 - var_fv1;
     } else {
@@ -547,7 +502,7 @@ void dll_388_func_14A0(Object* self, s16 arg1, s16 arg2) {
 }
 
 // offset: 0x17F4 | func: 10 | export: 7
-void dll_388_func_17F4(Object* self, Vec3f* arg1) {
+void CFbarrel_func_17F4(Object* self, Vec3f* arg1) {
     CFbarrel_Data* objdata = self->data;
     if (objdata->unk11 == 0) {
         STUBBED_PRINTF(" Force Applied x %f y %f z%f \n", &arg1->x, &arg1->y, &arg1->z);
@@ -559,7 +514,7 @@ void dll_388_func_17F4(Object* self, Vec3f* arg1) {
 }
 
 // offset: 0x1848 | func: 11
-void dll_388_func_1848(Object* self) {
+static void CFbarrel_func_1848(Object* self) {
     u32 mesgID;
     void* mesgArg;
 
@@ -568,17 +523,17 @@ void dll_388_func_1848(Object* self) {
     while (obj_recv_mesg(self, &mesgID, NULL, &mesgArg) != 0) {
         switch (mesgID) {
         case 15:
-            dll_388_func_1948(self, 1);
+            CFbarrel_func_1948(self, 1);
             break;
         case 16:
-            dll_388_func_1948(self, 0);
+            CFbarrel_func_1948(self, 0);
             break;
         }
     }
 }
 
 // offset: 0x1948 | func: 12
-static void dll_388_func_1948(Object* self, u8 a1) {
+static void CFbarrel_func_1948(Object* self, u8 a1) {
     CFbarrel_Data* objdata = self->data;
     ObjectHitInfo* hit = self->objhitInfo;
     
