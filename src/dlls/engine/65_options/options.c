@@ -2,14 +2,15 @@
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/74_picmenu.h"
 #include "sys/fonts.h"
+#include "sys/audio/speaker.h"
 #include "game/gametexts.h"
 
 #define NONE -1
 
-/*0x0*/ static u32 data_0 = 0xab000000;
-/*0x4*/ static u32 data_4 = 0xbb000000;
-/*0x8*/ static u32 data_8 = 0x3c000000;
-/*0xC*/ static u32 data_C = 0x3e000000;
+/*0x0*/ static u8 data_0 = 171;
+/*0x4*/ static u8 data_4 = 187;
+/*0x8*/ static u8 data_8 = 60;
+/*0xC*/ static u8 data_C = 62;
 
 /*0x10*/ static PicMenuItem data_10[] = {
     /*0*/ NEW_PICMENU_ITEM(
@@ -81,10 +82,10 @@
         /*upLink*/ 0, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x1F8*/ static s8 data_1F8[] = {0x08, 0x0b}; //Text lineIDs?
+/*0x1F8*/ static s8 data_1F8[] = {8, 11}; //Text lineIDs?
 
-/*0x1FC*/ static u32 data_1FC[] = {
-    0x00000000, 0x00000000
+/*0x1FC*/ static char* data_1FC[] = {
+    NULL, NULL
 };
 /*0x204*/ static PicMenuItem data_204[] = {
     /*0*/ NEW_PICMENU_ITEM(
@@ -103,9 +104,9 @@
         /*upLink*/ 0, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x27C*/ static s8 data_27C[] = {0x0d, 0x11};  //Text lineIDs?
-/*0x280*/ static u32 data_280[] = {
-    0x00000000, 0x00000000, 0x00000000
+/*0x27C*/ static s8 data_27C[] = {13, 17};  //Text lineIDs?
+/*0x280*/ static char* data_280[] = {
+    NULL, NULL, NULL
 };
 
 #define NEW_PICMENU_ITEM_HASTEXT(textPtr, textX, textY, innerWidth, itemX, itemY, textureID, outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith) \
@@ -196,13 +197,13 @@
         /*upLink*/ 2, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x4E4*/ static s8 data_4E4[] = {0x15, 0x19, 0x1c, 0x1d};  //Text lineIDs?
+/*0x4E4*/ static s8 data_4E4[] = {21, 25, 28, 29};  //Text lineIDs?
 
 /*0x4E8*/ static char* data_4E8[] = {
-    0x00000000, 0x00000000, 0x00000000
+    NULL, NULL, NULL
 };
 /*0x4F4*/ static char* data_4F4[] = {
-    0x00000000, 0x00000000
+    NULL, NULL
 };
 /*0x4FC*/ static PicMenuItem data_4FC[] = {
     /*0*/ NEW_PICMENU_ITEM(
@@ -237,10 +238,10 @@
         /*upLink*/ 2, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     )
 };
-/*0x5EC*/ static s8 data_5EC[] = {0x1e, 0x23, 0x24, 0x25}; //Text lineIDs?
+/*0x5EC*/ static s8 data_5EC[] = {30, 35, 36, 37}; //Text lineIDs?
 
 /*0x5F0*/ static char* data_5F0[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
+    NULL, NULL, NULL, NULL
 };
 /*0x600*/ static PicMenuItem data_600[] = {
     /*0*/ NEW_PICMENU_ITEM(
@@ -271,7 +272,7 @@
         /*upLink*/ NONE, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ),
 };
-/*0x6C0*/ static s8 data_6C0[] = {0x28};
+/*0x6C0*/ static s8 data_6C0[] = {40};
 /*0x6C4*/ static PicMenuItem data_6C4[] = {
     /*0*/ NEW_PICMENU_ITEM( 
         /*textX*/ 320, /*textY*/ 237, /*innerWidth*/ 0,
@@ -281,7 +282,7 @@
         /*upLink*/ NONE, /*downLink*/ NONE, /*leftLink*/ NONE, /*rightLink*/ NONE, /*overrideWith*/ NONE
     ),
 };
-/*0x700*/ static s8 data_700[] = {0x28};
+/*0x700*/ static s8 data_700[] = {40};
 
 typedef struct {
     PicMenuItem *menuItems;
@@ -320,12 +321,15 @@ typedef struct {
     0x0320, 0x02f5, 0x02f6, 0x02f7, 0x02f8, 0x02f9, 0x02fa, 0x02fb, 0x02fc, 0x0313, 0x02fd, 0x02fe, 0x02ff, 0x0300, 0x0301, 0x0302, 
     0x0303, 0x0304
 };
-/*0x830*/ static u32 data_830[] = {
-    0x00040010, 0x00110011, 0x00100011, 0x00110005, 0xffff0006, 0x0009000c, 0x0009000b, 0x000a0009, 
-    0x000dffff, 0x00070009, 0x000b0009, 0x0009000c, 0x000a000e, 0xffff0008, 0x000a0009, 0x000c000a, 
-    0x0009000b, 0x000fffff, 0x00020000, 0x00010000, 0x00010001, 0x00000003, 0xffff0000
+/*0x830*/ static s16 data_830[] = {
+    0x0004, 0x0010, 0x0011, 0x0011, 0x0010, 0x0011, 0x0011, 0x0005, 
+    0xffff, 0x0006, 0x0009, 0x000c, 0x0009, 0x000b, 0x000a, 0x0009,
+    0x000d, 0xffff, 0x0007, 0x0009, 0x000b, 0x0009, 0x0009, 0x000c, 
+    0x000a, 0x000e, 0xffff, 0x0008, 0x000a, 0x0009, 0x000c, 0x000a,
+    0x0009, 0x000b, 0x000f, 0xffff, 0x0002, 0x0000, 0x0001, 0x0000, 
+    0x0001, 0x0001, 0x0000, 0x0003, 0xffff, 0x0000
 };
-/*0x88C*/ static u32 data_88C = 0x02040103;
+/*0x88C*/ static u8 data_88C[] = {0x02, 0x04, 0x01, 0x03};
 
 /*0x0*/ static s8 bss_0;
 /*0x1*/ static s8 bss_1;
@@ -344,8 +348,7 @@ typedef struct {
 /*0x12D*/ static s8 bss_12D;
 /*0x12E*/ static s8 bss_12E;
 /*0x12F*/ static s8 bss_12F;
-/*0x130*/ static s32 bss_130[4]; //Unknown length
-/*0x140*/ static u8 bss_140[0x8];
+/*0x130*/ static s32 bss_130[6]; //Unknown length
 /*0x148*/ static GplayOptions* bss_148;
 
 static void dll_65_func_1718(void);
@@ -355,9 +358,9 @@ void dll_65_ctor(void* dll) {
     s32 i;
 
     gDLL_28_ScreenFade->vtbl->fade_reversed(0x14, 1);
-    bss_118 = tex_load_deferred(0x2DF);
-    bss_120 = tex_load_deferred(0x30E);
-    bss_11C = tex_load_deferred(0x30D);
+    bss_118 = tex_load_deferred(TEXTABLE_2DF_Paper_BG_Sabre_Cape);
+    bss_120 = tex_load_deferred(TEXTABLE_30E);
+    bss_11C = tex_load_deferred(TEXTABLE_30D);
     
     if (data_794 == 0) {
         data_794 = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EF_Menu_Main_Menu);
@@ -383,7 +386,195 @@ void dll_65_ctor(void* dll) {
 void dll_65_dtor(void *dll) { }
 
 // offset: 0x1FC | func: 0 | export: 0
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_1FC.s")
+#else
+
+static void dll_65_func_1718(void);                 //matched
+static void dll_65_func_1AE4(s32 arg0);             //matched
+static void dll_65_func_2088(s32 arg0);             //matched
+static s32 dll_65_func_2A1C(s32 a0, s32 a1);        //NOT matched
+static void dll_65_func_2B50(s32 arg0, s32 arg1);   //matched
+static void dll_65_func_2C58(s32 arg0, s32 arg1);   //matched
+static void dll_65_func_2D50(s32 arg0, s32 arg1);   //NOT matched
+static void dll_65_func_320C(s32 arg0, s32 arg1);   //NOT matched
+static void dll_65_func_32B8(s32 arg0, s32 arg1);   //matched
+static void dll_65_func_3404(s32 arg0, s32 arg1);   //matched
+static void dll_65_func_3414(void);                 //matched
+
+s32 dll_65_func_1FC(void) {
+    s8 timeBefore;
+    s32 selectedIdx; //58
+    s32 i;
+    s8 sp53; //53
+    s8 sp52; //52
+    s32 frames;
+    s32 action;
+
+    timeBefore = bss_3;
+    
+    frames = gUpdateRate;
+    if (frames > 3) {
+        frames = 3;
+    }
+    
+    if (bss_3 > 0) {
+        bss_3 -= frames;
+    }
+    
+    if (gDLL_28_ScreenFade->vtbl->is_complete() == 0) {
+        gDLL_74_Picmenu->vtbl->redraw_all();
+        bss_0 = 2;
+    }
+    
+    if (bss_2 != 0) {
+        if ((timeBefore >= 0xD) && (bss_3 < 0xD)) {
+            vi_init(1, get_ossched(), 0);
+            dll_65_func_3414();
+            track_set_z_buffer_on(1);
+            track_set_sky_on(1);
+        } else if (bss_3 <= 0) {
+            main_demo_reset();
+            main_start_game(12457.1f, -1474.875f, -6690.398f, 1);
+            menu_set(4);
+            if (1) { }
+        }
+        
+        if (bss_3 < 0xD) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
+    action = gDLL_74_Picmenu->vtbl->update();
+    selectedIdx = gDLL_74_Picmenu->vtbl->get_selected_item();
+
+    switch (data_79C) {
+    case 0:
+        bss_12D = selectedIdx;
+        if (dll_65_func_2A1C(action, selectedIdx) != 0) {
+            return 0;
+        }
+        break;
+    case 3:
+        dll_65_func_2B50(action, selectedIdx);
+        if (action == PICMENU_ACTION_BACK) {
+            bss_148->showSubtitles = gDLL_75->vtbl->func8(bss_130[0]);
+            bss_148->showInstruments = gDLL_75->vtbl->func8(bss_130[1]);
+            dll_65_func_1718();
+        }
+        break;
+    case 4:
+        dll_65_func_2C58(action, selectedIdx);
+        if (action == PICMENU_ACTION_BACK) {
+            bss_148->zTargetMode = gDLL_75->vtbl->func8(bss_130[0]);
+            dll_65_func_1718();
+        }
+        break;
+    case 5:
+        dll_65_func_2D50(action, selectedIdx);
+        if (action == PICMENU_ACTION_BACK) {
+            for (i = 0; i < 4; i++) {
+                gDLL_29_Gplay->vtbl->set_cheat_enabled((bss_1 + i), gDLL_75->vtbl->func8(bss_130[i + 1]));
+            }
+            dll_65_func_1718();
+        }
+        break;
+    case 1:
+        dll_65_func_320C(action, selectedIdx);
+        if (action == PICMENU_ACTION_BACK) {
+            bss_148->screenSizeAnamorphic = gDLL_75->vtbl->func8(bss_130[0]);
+            bss_148->screenAspectRatio = gDLL_75->vtbl->func8(bss_130[1]);
+            dll_65_func_1718();
+        }
+        break;
+    case 2:
+        dll_65_func_32B8(action, selectedIdx);
+        if (action == PICMENU_ACTION_BACK) {
+            bss_148->audioMode = gDLL_75->vtbl->func8(bss_130[0]);
+            bss_148->volumeMusic = gDLL_75->vtbl->func8(bss_130[1]);
+            bss_148->volumeAudio = gDLL_75->vtbl->func8(bss_130[2]);
+            dll_65_func_1718();
+        }
+        break;
+    case 6:
+        dll_65_func_3404(action, selectedIdx);
+        if (action == PICMENU_ACTION_BACK) {
+            dll_65_func_1718();
+        }
+        break;
+    case 7:
+        if (action != PICMENU_ACTION_NONE) {
+            tex_free(bss_118);
+            bss_118 = tex_load_deferred(0x2DF);
+            dll_65_func_1AE4(1);
+            return 0;
+        }
+        break;
+    case 8:
+        joy_get_stick_menu_xy_sign(0, &sp53, &sp52);
+        if (sp53 > 0) {
+            gDLL_6_AMSFX->vtbl->play(NULL, 0x5D5U, 0x7F, NULL, NULL, 0, NULL);
+            bss_148->screenOffsetX += 1;
+            if (bss_148->screenOffsetX >= 8) {
+                bss_148->screenOffsetX = 7;
+                sp53 = 0;
+            }
+        } else if (sp53 < 0) {
+            gDLL_6_AMSFX->vtbl->play(NULL, 0x5D5U, 0x7F, NULL, NULL, 0, NULL);
+            bss_148->screenOffsetX -= 1;
+            if (bss_148->screenOffsetX < -7) {
+                bss_148->screenOffsetX = -7;
+                sp53 = 0;
+            }
+        }
+        
+        if (sp52 > 0) {
+            gDLL_6_AMSFX->vtbl->play(NULL, 0x5D5U, 0x7F, NULL, NULL, 0, NULL);
+            bss_148->screenOffsetY -= 1;
+            if (bss_148->screenOffsetY < -7) {
+                bss_148->screenOffsetY = -7;
+                sp52 = 0;
+            }
+        } else if (sp52 < 0) {
+            gDLL_6_AMSFX->vtbl->play(NULL, 0x5D5U, 0x7F, NULL, NULL, 0, NULL);
+            bss_148->screenOffsetY += 1;
+            if (bss_148->screenOffsetY > 7) {
+                bss_148->screenOffsetY = 7;
+                sp52 = 0;
+            }
+        }
+        
+        if ((sp53 != 0) || (sp52 != 0)) {
+            vi_set_modifiers(1, bss_148->screenOffsetX, bss_148->screenOffsetY);
+        }
+        if (action != PICMENU_ACTION_NONE) {
+            joy_reset_menu_joystick_delay();
+            dll_65_func_2088(2);
+            return 0;
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (data_79C != 0) {
+        for (i = 0; i < bss_12C; i++) {
+            if (bss_130[i] != 0) {
+                if (i == selectedIdx) {
+                    gDLL_75->vtbl->func7.withTwoArgs(bss_130[i], 1);
+                } else {
+                    gDLL_75->vtbl->func7.withTwoArgs(bss_130[i], 0);
+                }
+                gDLL_75->vtbl->func4.withOneArg(bss_130[i]);
+            }
+        }
+    }
+    
+    return 0;
+}
+#endif
 
 // offset: 0xB84 | func: 1 | export: 1
 void dll_65_func_B84(void) {
@@ -431,13 +622,186 @@ void dll_65_func_1718(void) {
 }
 
 // offset: 0x1898 | func: 5
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_1898.s")
+void dll_65_func_1898(void) {
+    OptionsSubmenu* submenu;
+    char** strings;
+    
+    if (data_79C != -1) {
+        gDLL_74_Picmenu->vtbl->clear_items();
+    }
+    
+    data_79C = 3;
+    
+    submenu = &data_704[data_79C];
+    dll_65_func_16A4(submenu);
+    gDLL_74_Picmenu->vtbl->set_items(
+        submenu->menuItems, submenu->count, 0, NULL, submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+    );
+
+    strings = data_1FC;    
+    strings[0] = data_794->strings[10];
+    strings[1] = data_794->strings[9];
+    
+    bss_12C = 0;
+    bss_130[bss_12C] = gDLL_75->vtbl->func2.withSevenArgsS32(0x1dc, 0xfe, 0, 1, bss_148->showSubtitles, strings, 0x32);
+    bss_12C++;
+    bss_130[bss_12C] = gDLL_75->vtbl->func2.withSevenArgsS32(0x1dc, 0x116, 0, 1, bss_148->showInstruments, strings, 0x32);
+    bss_12C++;
+    
+    gDLL_75->vtbl->func7.withTwoArgs(bss_130[0], 1);
+    bss_0 = 2;
+}
 
 // offset: 0x1AE4 | func: 6
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_1AE4.s")
+void dll_65_func_1AE4(s32 arg0) {
+    OptionsSubmenu* submenu;
+
+    if (data_79C != -1) {
+        gDLL_74_Picmenu->vtbl->clear_items();
+    }
+    
+    data_79C = 4;
+    submenu = &data_704[data_79C];
+    dll_65_func_16A4(submenu);
+    gDLL_74_Picmenu->vtbl->set_items(
+        submenu->menuItems, submenu->count, arg0, NULL, submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+    );
+    
+    data_280[0] = data_794->strings[14];
+    data_280[1] = data_794->strings[15];
+    data_280[2] = data_794->strings[16];
+    
+    bss_12C = 0;
+    bss_130[bss_12C] = gDLL_75->vtbl->func2.withSevenArgsS32(0x1aa,0xfe,0,2,bss_148->zTargetMode, data_280, 0x64);
+    bss_12C++;
+    bss_130[bss_12C] = 0;
+    bss_12C++;
+    
+    if (bss_130[arg0]) {
+        gDLL_75->vtbl->func7.withTwoArgs(bss_130[arg0], 1);
+    }
+    
+    bss_0 = 2;
+}
 
 // offset: 0x1CF4 | func: 7
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_1CF4.s")
+#else
+void dll_65_func_1CF4(void) {
+    OptionsSubmenu* submenu;
+    s32 i;
+    s32 cheatActive;
+    s32 sVar8;
+    char* var_s4;
+    PicMenuItem* temp_v1;
+
+    if (data_79C != -1) {
+        gDLL_74_Picmenu->vtbl->clear_items();
+    }
+    
+    data_79C = 5;
+    bss_12C = 0;
+    bss_1 = 0;
+    bss_130[bss_12C] = 0;
+    var_s4 = bss_8;
+    submenu = &data_704[data_79C];
+    sVar8 = 0xfc;
+    bss_12C++;
+    
+    for (i = 0; i < 4; i++, var_s4+=50) {
+        if (gDLL_29_Gplay->vtbl->is_cheat_unlocked((bss_1 + i) & 0xFF)) {
+            sprintf((char* ) var_s4, "%2d: %s", bss_1 + i + 1, bss_128->strings[bss_1 + i]);
+            submenu->menuItems[i + 1].text = var_s4;
+            submenu->menuItems[i + 1].flags &= 0xF7DF;
+        } else {
+            sprintf((char* ) var_s4, "%2d:", bss_1 + i + 1);
+            submenu->menuItems[i + 1].text = var_s4;
+            submenu->menuItems[i + 1].flags  |= 0x820;
+        }
+        
+        if (gDLL_29_Gplay->vtbl->is_cheat_active(bss_1 + i) != 0) {
+            cheatActive = 1;
+        } else {
+            cheatActive = 0;
+        }
+        
+        bss_130[bss_12C] = gDLL_75->vtbl->func1.withFiveArgsS32(0x201, (s16)sVar8, 0, 1, cheatActive);
+        bss_12C++;
+        
+        gDLL_75->vtbl->func11.withTwoArgs(bss_130[bss_12C - 1], i);
+        
+        sVar8 += 0x1a;
+    }
+    
+    bss_130[bss_12C] = 0;
+    bss_12C++;
+    
+    submenu->menuItems->flags |= 0x1000;
+    gDLL_74_Picmenu->vtbl->set_items(
+        submenu->menuItems, submenu->count, 1, NULL, submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+    );
+    gDLL_75->vtbl->func7.withTwoArgs(bss_134, 1);
+    bss_0 = 2;
+}
+
+
+
+/*
+
+  if (DAT_810cc044 != -1) {
+    dll_074.picmenu_func_0001_LE();
+  }
+  DAT_810cc044 = 5;
+  DAT_810cc139 = '\0';
+  DAT_810cc268 = 0;
+  DAT_810cc264 = '\x01';
+  puVar7 = &DAT_810cc140;
+  sVar8 = 0xfc;
+  iVar4 = 0;
+  iVar5 = 0;
+  puVar6 = puVar7;
+  do {
+    lVar1 = dll_029.gplay_func_0043_LE(DAT_810cc139 + iVar4 & 0xff);
+    if (lVar1 == 0) {
+      sprintf(puVar6,&DAT_810cb850,DAT_810cc139 + iVar4 + 1);
+      *(undefined **)(PTR_PTR_DAT_810cbffc + iVar5 + 0x3c) = puVar7;
+      *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) =
+           *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) | 0x820;
+    }
+    else {
+      sprintf(puVar6,s_%2d:_%s_810cb848,DAT_810cc139 + iVar4 + 1,
+              *(undefined4 *)(*(int *)(DAT_810cc260 + 8) + (DAT_810cc139 + iVar4) * 4));
+      *(undefined **)(PTR_PTR_DAT_810cbffc + iVar5 + 0x3c) = puVar7;
+      *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) =
+           *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) & 0xf7df;
+    }
+    lVar2 = dll_029.gplay_func_0045_LE(DAT_810cc139 + iVar4 & 0xff);
+    uVar3 = dll_075.frontend_func_0001_LE(0x201,sVar8,0,1,lVar2 != 0);
+    (&DAT_810cc268)[DAT_810cc264] = uVar3;
+    DAT_810cc264 = DAT_810cc264 + '\x01';
+    dll_075.frontend_func_0011_E(*(undefined4 *)(&DAT_810cc264 + DAT_810cc264 * 4),lVar1);
+    iVar4 = iVar4 + 1;
+    puVar6 = puVar6 + 0x32;
+    iVar5 = iVar5 + 0x3c;
+    puVar7 = puVar7 + 0x32;
+    sVar8 = sVar8 + 0x1a;
+  } while (iVar4 != 4);
+  (&DAT_810cc268)[DAT_810cc264] = 0;
+  DAT_810cc264 = DAT_810cc264 + '\x01';
+  *(ushort *)(PTR_PTR_DAT_810cbffc + 0x16) = *(ushort *)(PTR_PTR_DAT_810cbffc + 0x16) | 0x1000;
+  dll_074.picmenu_func_0000_LE
+            (PTR_PTR_DAT_810cbffc,DAT_810cc004,1,0,DAT_810cc008,DAT_810cc009,0xb7,0x8b,0x61,0xff,
+             0xd7,0x3d);
+  dll_075.frontend_func_0007_E(DAT_810cc26c,1);
+  DAT_810cc138 = 2;
+  return;
+
+*/
+#endif
 
 // offset: 0x2088 | func: 8
 void dll_65_func_2088(s32 arg0) {
@@ -580,7 +944,20 @@ void dll_65_func_2888(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_2A1C.s")
 
 // offset: 0x2B50 | func: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_2B50.s")
+void dll_65_func_2B50(s32 arg0, s32 arg1) {   
+    if (!gDLL_75->vtbl->func10.withOneArgS32(bss_130[arg1])) {
+        return;
+    }
+    
+    switch (arg1) {
+    case 0:
+        gDLL_22_Subtitles->vtbl->func_2D0(gDLL_75->vtbl->func8(bss_130[arg1]));
+        break;
+    case 1:
+        gDLL_1_cmdmenu->vtbl->toggle_forced_stats_display(gDLL_75->vtbl->func8(bss_130[arg1]));
+        break;
+    }
+}
 
 // offset: 0x2C58 | func: 14
 void dll_65_func_2C58(s32 arg0, s32 arg1) {
@@ -593,6 +970,7 @@ void dll_65_func_2C58(s32 arg0, s32 arg1) {
         dll_65_func_26D8();
     }
 }
+
 // offset: 0x2D50 | func: 15
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_2D50.s")
 
@@ -600,15 +978,99 @@ void dll_65_func_2C58(s32 arg0, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_320C.s")
 
 // offset: 0x32B8 | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_32B8.s")
+void dll_65_func_32B8(s32 arg0, s32 arg1) {
+    if (gDLL_75->vtbl->func10.withOneArgS32(bss_130[arg1]) == 0) {
+        return;
+    }
+        
+    switch (arg1) {
+    case 0:
+        speaker_set_mode(data_88C[gDLL_75->vtbl->func8(bss_130[arg1])]);
+        break;
+    case 2:
+        gDLL_6_AMSFX->vtbl->func_7E4(gDLL_75->vtbl->func8(bss_130[arg1]));
+        break;
+    case 1:
+        gDLL_5_AMSEQ->vtbl->set_volume_option(gDLL_75->vtbl->func8(bss_130[arg1]));
+        break;
+    }
+}
 
 // offset: 0x3404 | func: 18
-void dll_65_func_3404(s32 arg0, s32 arg1) {
+void dll_65_func_3404(s32 arg0, s32 arg1) { //cinema menu?
 
 }
 
 // offset: 0x3414 | func: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_3414.s")
+void dll_65_func_3414(void) {
+    Texture** textures;
+    Texture* tex;
+    s32 i;
+
+    if (data_794 != NULL) {
+        mmFree(data_794);
+        data_794 = NULL;
+    }
+    
+    mmFree(data_798);
+    mmFree(bss_128);
+    mmFree(bss_124);
+    
+    if (data_79C != -1) {
+        gDLL_74_Picmenu->vtbl->clear_items();
+        data_79C = -1;
+    }
+    
+    textures = bss_D0;
+    do {
+        tex = *textures;
+        if (tex != NULL) {
+            tex_free(tex);
+            *textures = NULL;
+        }
+        textures++;
+    } while ((u32) textures < (u32) &bss_118);
+    
+    tex_free(bss_118);
+    tex_free(bss_120);
+    tex_free(bss_11C);
+    
+    for (i = 0; i < bss_12C; i++) {
+        if (bss_130[i] != 0) {
+            gDLL_75->vtbl->func3(bss_130[i]);
+        }
+        bss_130[i] = 0;
+    }
+    
+    bss_12C = 0;
+}
 
 // offset: 0x35D0 | func: 20
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_35D0.s")
+#else
+void dll_65_func_35D0-2(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY) {
+    s16* texIdxPtr;
+    s16* end;
+    Texture* tex;
+    s32 x;
+    s32 y;
+
+    x = initialX;
+    y = initialY;
+    
+    texIdxPtr = data_830;
+    end = data_830 + 45;
+    do {
+        if (*texIdxPtr == -1) {
+            x = initialX;
+            y += 0x20;
+        } else {
+            tex = bss_D0[*texIdxPtr];
+            rcp_screen_scroll_write(arg0, tex, x, y, endX, endY, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            x += 0x40;
+        }
+        texIdxPtr++;
+    } while ((u32) texIdxPtr < (u32) end);
+}
+#endif

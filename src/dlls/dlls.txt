@@ -39,6 +39,7 @@
 66 = engine/66_pausemenu
 68 = engine/68_old_mainmenu
 74 = engine/74_picmenu
+75 = engine/75_frontend
 77 = engine/77_scarab
 78 = engine/78_credits
 79 = engine/79_selection

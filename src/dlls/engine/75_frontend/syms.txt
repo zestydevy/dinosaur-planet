@@ -1,0 +1,29 @@
+.text = 0x0:
+dll_75_ctor = 0x0;
+dll_75_dtor = 0x7C;
+dll_75_func_E0 = 0xE0;
+dll_75_func_1C4 = 0x1C4;
+dll_75_func_284 = 0x284;
+dll_75_func_354 = 0x354;
+dll_75_func_38C = 0x38C;
+dll_75_func_6A0 = 0x6A0;
+dll_75_func_77C = 0x77C;
+dll_75_func_790 = 0x790;
+dll_75_func_7C0 = 0x7C0;
+dll_75_func_7CC = 0x7CC;
+dll_75_func_7E0 = 0x7E0;
+dll_75_func_7F4 = 0x7F4;
+dll_75_func_820 = 0x820;
+dll_75_func_938 = 0x938;
+dll_75_func_A00 = 0xA00;
+
+.rodata = 0xE28:
+
+.data = 0xE28:
+data_0 = 0x0; // absolute:0xE28
+data_10 = 0x10; // absolute:0xE38
+data_14 = 0x14; // absolute:0xE3C
+
+.bss = 0xE48:
+bss_0 = 0x0; // absolute:0xE48
+bss_1C = 0x1C; // absolute:0xE64
