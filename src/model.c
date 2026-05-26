@@ -7,6 +7,8 @@
 #define ALIGN16(a)  ((u32) (a) & ~0xF)
 #define PAD16(a) while (a & 7){a++;}
 
+
+#define ANIM_SLOT_COUNT 128
 #define ANIM_SLOT_RC(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[0]
 #define ANIM_SLOT_ANIM(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[1]
 
@@ -64,7 +66,7 @@ void init_models() {
     gAuxBuffer = (s16*)temp_v0;
     D_800B17BC = temp_v0 + 0x200;
     gBuffer_ANIM_TAB = (s32*)(temp_v0 + 0x204);
-    gLoadedAnims = mmAlloc(0x400, ALLOC_TAG_ANIMS_COL, NULL);
+    gLoadedAnims = mmAlloc(ANIM_SLOT_COUNT * sizeof(AnimSlot), ALLOC_TAG_ANIMS_COL, NULL);
     gNumLoadedAnims = 0;
 }
 
@@ -729,22 +731,22 @@ Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 #pragma GLOBAL_ASM("asm/nonmatchings/model/anim_load.s")
 #else
-// https://decomp.me/scratch/cSAZB
+// https://decomp.me/scratch/j3qkH
+
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model) {
-    Animation* temp_v0;
+    s32 i;
     s32 sp28;
     s32 sp24;
     s32 sp20;
     Animation* var_s1;
-    s32 i;
 
     if (anim == NULL) {
         sp28 = -1;
         for (i = 0; i < gNumLoadedAnims; i++) {
             if (animId == ANIM_SLOT_RC(gLoadedAnims, i)) {
-                temp_v0 = (Animation*) ANIM_SLOT_ANIM(gLoadedAnims, i);
-                temp_v0->referenceCount++;
-                return temp_v0;
+                var_s1 = (Animation*) ANIM_SLOT_ANIM(gLoadedAnims, i);
+                var_s1->referenceCount++;
+                return var_s1;
             }
             if (ANIM_SLOT_RC(gLoadedAnims, i) == -1) {
                 sp28 = i;
@@ -752,37 +754,55 @@ Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* 
         }
     }
 
+    // FAKE
+    if (gNumLoadedAnims == 128) {}
+
     read_file_region(ANIM_TAB, gBuffer_ANIM_TAB, (animId & ~1) << 2, 0x10);
     sp24 = gBuffer_ANIM_TAB[(animId & 1) + 0];
     sp20 = gBuffer_ANIM_TAB[(animId & 1) + 1] - sp24;
+
+    // FAKE
+    if (model->unk5C);
+
     if (anim == NULL) {
         var_s1 = mmAlloc(sp20, ALLOC_TAG_ANIMS_COL, NULL);
     } else {
         var_s1 = &anim->anim;
     }
+    
     if (var_s1 == NULL) {
         return NULL;
     }
+
+    // FAKE
+    if (gNumLoadedAnims == 128) {}
+
     read_file_region(ANIM_BIN, var_s1, sp24, sp20);
     if (anim != NULL) {
         sp20 = ALIGN8(model->jointCount - 1);
         read_file_region(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
-        if (gNumLoadedAnims) {}
     }
+
     if (anim == NULL) {
         var_s1->referenceCount = 1;
-        if (sp28 == -1) {
-            sp28 = gNumLoadedAnims;
-            gNumLoadedAnims++;
-            if (gNumLoadedAnims == 0x80) {
+        if ((sp28 == -1) != 0) {
+            sp28 = gNumLoadedAnims++;
+            if (gNumLoadedAnims == 128) {
                 gNumLoadedAnims--;
             }
         }
+
         ANIM_SLOT_RC(gLoadedAnims, sp28) = animId;
         ANIM_SLOT_ANIM(gLoadedAnims, sp28) = var_s1;
     }
+
+    // FAKE to fix s0/s1 swap
+    if (1) { }
+    if (1) { }
+    if (1) { }
     return var_s1;
 }
+
 #endif
 
 void anim_destroy(Animation* anim) {

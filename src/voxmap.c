@@ -947,22 +947,15 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
     return sp28;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000921C.s")
-#else
-// N64: https://decomp.me/scratch/ZVLXX
-// default.dol: https://decomp.me/scratch/a9bwY
-
 s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     Unk80008E40Unk0* var_s1;
     Unk80008E40Unk0* next;
     Unk80008E40Unk0* var_s5;
     Vec3f sp68;
     s32 var_s3;
-    s32 pad[2];
-    Unk80008E40Unk0 sp4C;
     s32 currentIdx;
-    u8 nextIdx;
+    s32 nextIdx;
+    Unk80008E40Unk0 sp4C;
 
     if (arg1 < 0) {
         arg1 = 0xA;
@@ -970,9 +963,12 @@ s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     currentIdx = arg0->unk18;
     next = &arg0->unk0[currentIdx];
     next->unkB = 0xFF;
-    nextIdx = next->unkA;
-    while (nextIdx != 0xFF) {
-        next = &arg0->unk0[nextIdx];
+
+    // This converts a singly-linked list to a doubly-linked list by setting up backward pointers.
+    // It assumes unkB (previous pointers) were not properly initialized and need to be set based on the forward links (unkA).
+    while (next->unkA != 0xFF) {
+        nextIdx = next->unkA;
+        next = &arg0->unk0[next->unkA];
         next->unkB = currentIdx;
         currentIdx = nextIdx;
         nextIdx = next->unkA;
@@ -1011,8 +1007,6 @@ s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     arg0->unk22 = 0;
     return var_s3;
 }
-
-#endif
 
 s32 func_80009528(Unk80008E40* arg0, Unk80009024* arg1) {
     if (arg0->unk22 < arg0->unk20) {
