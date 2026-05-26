@@ -1303,36 +1303,30 @@ void func_80009F5C(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2) {
     func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
 }
 
-#ifndef NON_EQUIVALENT
-void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4);
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A078.s")
-#else
-// N64: https://decomp.me/scratch/jUNws
-// default.dol: https://decomp.me/scratch/62Vc9
 void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4) {
-    Unk80008E40Unk0* temp_v1_3;
-    s32 var_v0;
+    s32 pad3;
+    s32 temp_v0_3;
     s32 sp9C;
     s32 sp98;
-    s32 temp_a0;
+    u8 temp_a0;
     s32 temp_a2_2;
-    s32 temp_t6;
+    s32 new_var2;
     s32 sp84[2];
     s32 sp7C[2];
     s32 sp78;
-    s32 temp_v0;
+    s32 new_var;
     s32 sp70;
     s32 sp6C;
-    u8 *temp_v0_2;
-    s32 new_var;
-    s32 new_var2;
+    s32 new_var3;
+    s32 pad2;
     s32 var_v1; // sp30
     s32 var_a0; // sp2C?
+    s32 pad;
     VoxmapSlotData* sp54;
     Unk80008E40Unk0* sp50;
-    s32 var_a1;
-    u8 sp40;
-    u8 sp3C[12];
+    u8 *temp_v0_2; // sp30 in GC
+    s32 i; // sp2C in GC
+    u8 sp3C[3][4]; // sp1C in GC
 
     if ((arg0->unkC.s[0] == arg4->s[0]) && (arg0->unkC.s[2] == arg4->s[2])) {
         sp78 = arg0->unk1C;
@@ -1343,108 +1337,110 @@ void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3,
     var_a0 = arg4->s[2] - gVoxmapLastSearchedSlot.unkC;
     if ((var_v1 >> 6) || (var_a0 >> 6)) {
         voxmap_find_closest_slot(arg4);
+        var_v1 = arg4->s[0] - gVoxmapLastSearchedSlot.unk8;
+        var_a0 = arg4->s[2] - gVoxmapLastSearchedSlot.unkC;
     }
-    var_v1 = arg4->s[0] - gVoxmapLastSearchedSlot.unk8;
-    var_v1 &= 0x3F;
-    var_a0 = arg4->s[2] - gVoxmapLastSearchedSlot.unkC;
-    var_a0 &= 0x3F;
+    var_v1 = var_v1 & 0x3F;
+    var_a0 = var_a0 & 0x3F;
     sp54 = gVoxmapLastSearchedSlot.data;
     if (sp54 == NULL) {
         return;
     }
+
+    // optimized out code, required to match, exists in default.dol (somewhat)
+    if (arg4->s[1] < sp54->unk4) {
+        new_var2 = (var_v1 >> 1) >> 1;
+    } else if (arg4->s[1] < sp54->unkC) {
+        new_var2 = var_v1 >> 2;
+    }
+
+    new_var2 = var_v1 >> 2;
+    new_var = var_a0 >> 2;
+    new_var3 = new_var2 & 7;
     sp84[0] = (var_v1 & 3) << 1;
     sp84[1] = sp84[0] + 2;
     sp7C[0] = var_a0 & 3;
     sp7C[1] = sp7C[0] + 1;
     sp6C = 0;
     for (; sp6C < 3; sp6C++) {
-        temp_v0 = (arg4->s[1] + sp6C) - 1;
-        if (temp_v0){}
-        if (temp_v0 < sp54->unk4) {
-            temp_v0 = 0;
+        temp_v0_3 = (arg4->s[1] + sp6C);
+        temp_v0_3--;
+        if (temp_v0_3 < sp54->unk4) {
+            temp_v0_3 = 0;
+        } else if (temp_v0_3 >= sp54->unkC) {
+            temp_v0_3 = (sp54->unkC - sp54->unk4);
+            temp_v0_3--;
         } else {
-            if (temp_v0 >= sp54->unkC) {
-                temp_v0 = (sp54->unkC - sp54->unk4);
-                temp_v0--;
-            } else {
-                temp_v0 = temp_v0 - sp54->unk4;
-            }
+            temp_v0_3 = temp_v0_3 - sp54->unk4;
         }
-        new_var2 = var_v1 >> 2;
-        new_var = var_a0 >> 2;
-        temp_a0 = sp54->unk24[(temp_v0 << 5) | ((new_var * 2) + (new_var2 >> 3))];
-        if ((temp_a0 >> (new_var2 & 7)) & 1) {
-            temp_v0_2 = func_80007D08(sp54->unk1C, sp54->unk14, sp54->unk24, new_var2, temp_v0, new_var);
+        temp_a0 = sp54->unk24[(temp_v0_3 << 5) | ((new_var * 2) + (new_var2 >> 3))];
+        temp_a0 = (temp_a0 >> new_var3) & 1;
+        if (temp_a0) {
+            temp_v0_2 = func_80007D08(sp54->unk1C, sp54->unk14, sp54->unk24, new_var2, temp_v0_3, new_var);
             temp_a0 = temp_v0_2[sp7C[0]];
-            sp3C[sp6C * 4 + 0] = (temp_a0 >> sp84[0]) & 3;
-            sp3C[sp6C * 4 + 1] = (temp_a0 >> sp84[1]) & 3;
+            sp3C[sp6C][0] = (temp_a0 >> sp84[0]) & 3;
+            sp3C[sp6C][1] = (temp_a0 >> sp84[1]) & 3;
             temp_a0 = temp_v0_2[sp7C[1]];
-            sp3C[sp6C * 4 + 2] = (temp_a0 >> sp84[0]) & 3;
-            sp3C[sp6C * 4 + 3] = (temp_a0 >> sp84[1]) & 3;
+            sp3C[sp6C][2] = (temp_a0 >> sp84[0]) & 3;
+            sp3C[sp6C][3] = (temp_a0 >> sp84[1]) & 3;
         } else {
-            sp3C[sp6C * 4 + 0] = 0;
-            sp3C[sp6C * 4 + 1] = 0;
-            sp3C[sp6C * 4 + 2] = 0;
-            sp3C[sp6C * 4 + 3] = 0;
+            sp3C[sp6C][0] = 0;
+            sp3C[sp6C][1] = 0;
+            sp3C[sp6C][2] = 0;
+            sp3C[sp6C][3] = 0;
         }
     }
     if (arg0->unk26 != 0) {
-        sp6C = -1;
-        if ((sp3C[4 + 0] & 2) || (sp3C[4 + 1] & 2) || (sp3C[4 + 2] & 2) || (sp3C[4 + 3] & 2)) {
+        sp6C = 1;
+        if ((sp3C[sp6C][0] & 2) || (sp3C[sp6C][1] & 2) || (sp3C[sp6C][2] & 2) || (sp3C[sp6C][3] & 2)) {
             sp98 = 1;
         }
+        sp6C = -1;
     } else {
         sp6C = 1;
     }
 
-    while (sp6C >= 0) {
+    for (;sp6C >= 0; sp6C--) {
         temp_a2_2 = sp6C + 1;
         sp98 = 0;
         sp70 = sp6C;
-        if ((sp3C[sp6C * 4 + 0] & 2) || (sp3C[sp6C * 4 + 1] & 2) || (sp3C[sp6C * 4 + 2] & 2) || (sp3C[sp6C * 4 + 3] & 2)) {
+        if ((sp3C[sp6C][0] & 2) || (sp3C[sp6C][1] & 2) || (sp3C[sp6C][2] & 2) || (sp3C[sp6C][3] & 2)) {
             sp98 = 1;
             sp6C = 0;
         }
-        if ((sp98 == 0) && (((sp3C[temp_a2_2 * 4 + 0] & 2)) || (sp3C[temp_a2_2 * 4 + 1] & 2) || (sp3C[temp_a2_2 * 4 + 2] & 2) || (sp3C[temp_a2_2 * 4 + 3] & 2))) {
+        if ((sp98 == 0) && (((sp3C[temp_a2_2][0] & 2)) || (sp3C[temp_a2_2][1] & 2) || (sp3C[temp_a2_2][2] & 2) || (sp3C[temp_a2_2][3] & 2))) {
             sp98 = 1;
             sp6C = 0;
         }
         if (sp98 == 0) {
-            temp_a0 = sp3C[temp_a2_2 * 4 + 0];
-            var_a1 = sp3C[sp6C * 4 + 0];
-
-            temp_a0 += sp3C[temp_a2_2 * 4 + 1];
-            var_a1 += sp3C[sp6C * 4 + 1];
-
-            temp_a0 += sp3C[temp_a2_2 * 4 + 2];
-            var_a1 += sp3C[sp6C * 4 + 2];
-
-            temp_a0 += sp3C[temp_a2_2 * 4 + 3];
-            var_a1 += sp3C[sp6C * 4 + 3];
+            new_var = 0, new_var2 = 0, i = 0;
+            while (i < 4) {
+                new_var += sp3C[sp6C][i];
+                new_var2 += sp3C[temp_a2_2][i];
+                i++;
+            }
             
-            if (&sp3C[temp_a2_2 * 4] == &sp3C[2 * 4] && temp_a0 == 0) {
+            if (temp_a2_2 == 2 && new_var2 == 0) {
                 sp98 = 1;
             } else {
-                if (&sp3C[temp_a2_2 * 4] == &sp3C[1 * 4]) {
-                    if (var_a1 >= temp_a0) {
+                if (temp_a2_2 == 1) {
+                    if (new_var >= new_var2) {
                         sp70 -= 1;
                     } else {
-                        var_a1 = temp_a0;
+                        new_var = new_var2;
                     }
-                } else if (temp_a0 < var_a1) {
+                } else if (new_var2 < new_var) {
                     sp70 -= 1;
                 } else {
-                    var_a1 = temp_a0;
+                    new_var = new_var2;
                 }
-                if (var_a1 < 2) {
+                if (new_var < 2) {
                     sp98 = 1;
                 } else {
                     sp6C = 0;
                 }
             }
         }
-
-        sp6C--;
     }
 
     if (sp98 != 0) {
@@ -1452,37 +1448,35 @@ void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3,
     }
 
     arg4->s[1] += sp70;
-    temp_v0 = func_8000AB18(arg0, arg4->s[0], arg4->s[2], &sp9C);
-    if ((temp_v0 >= 0) && (sp9C == 0)) {
-        temp_v1_3 = &arg0->unk0[temp_v0];
-        if (arg3 < temp_v1_3->unk8) {
-            temp_v1_3->unkA = arg2;
-            temp_v1_3->unk8 = arg3;
-            func_8000A884(arg0->unk4, arg0->unk1E, temp_v0, temp_v1_3->unk6 + arg3);
+    new_var3 = func_8000AB18(arg0, arg4->s[0], arg4->s[2], &sp9C);
+    if ((new_var3 >= 0) && (sp9C == 0)) {
+        sp50 = &arg0->unk0[new_var3];
+        if (arg3 < sp50->unk8) {
+            sp50->unkA = arg2;
+            sp50->unk8 = arg3;
+            func_8000A884(arg0->unk4, arg0->unk1E, new_var3, sp50->unk6 + sp50->unk8);
         }
-    } else if (temp_v0 < 0) {
+    } else if (new_var3 < 0) {
         sp78 = arg0->unk1C;
         sp50 = func_8000A9AC(arg0, arg4, arg3, arg2);
         if (sp50 == NULL) {
             return;
         }
 
-        if (arg0->unk24 < sp50->unk6) {
+        if (sp50->unk6 > arg0->unk24) {
             if (func_8000A640(arg4) == 0) {
                 arg0->unk1C -= 1;
             } else {
                 func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
             }
         } else {
-            sp6C = sp50->unk6;
-            if (sp6C < arg0->unk24) {
-                arg0->unk24 = sp6C;
+            if (sp50->unk6 < arg0->unk24) {
+                arg0->unk24 = sp50->unk6;
             }
             func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
         }
     }
 }
-#endif
 
 s32 func_8000A640(Vec3s16* arg0) {
     return 1;
