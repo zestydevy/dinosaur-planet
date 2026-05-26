@@ -336,7 +336,7 @@ typedef struct {
 /*0x2*/ static s8 bss_2;
 /*0x3*/ static s8 bss_3;
 /*0x4*/ static u8 _bss_4[0x4];
-/*0x8*/ static u8 bss_8[0x8];
+/*0x8*/ static char* bss_8[2];
 /*0x10*/ static u8 _bss_10[0xc0];
 /*0xD0*/ static  Texture* bss_D0[18];
 /*0x118*/ static Texture* bss_118;
@@ -972,7 +972,97 @@ void dll_65_func_2C58(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x2D50 | func: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_2D50.s")
+void dll_65_func_2D50(s32 arg0, s32 arg1) {
+    OptionsSubmenu* submenu;
+    s32 idx2;
+    s32 i;
+    s32 var_s2;
+    s32 var_v0;
+    char* var_s3;
+    char* var_s4;
+    s32 enabled;
+    u8 temp;
+
+    //Unlock the selected cheat with C-right! (Need to back out and re-enter menu before it shows up)
+    if (joy_get_pressed(0) & R_CBUTTONS) {
+        gDLL_29_Gplay->vtbl->unlock_cheat(((bss_1 + arg1) - 1));
+    }
+    
+    if (arg0 != 1) {
+        return;
+    }
+    
+    var_v0 = 0;
+
+    temp = bss_1;
+    if (arg1 == 0) {
+        bss_1 -= 4;
+        if (bss_1 < 0) {
+            bss_1 = 0;
+        } else {
+            var_v0 = 1;
+        }
+    } else if (arg1 == 5) {
+        bss_1 += 4;
+        if (bss_1 > 28) {
+            bss_1 = 28;
+        } else {
+            var_v0 = 1;
+        }
+    }
+    
+    if (var_v0 == 0) {
+        return;
+    }
+
+    submenu = &data_704[data_79C];
+    submenu->menuItems[0].flags &= ~0x1000;
+    submenu->menuItems[5].flags &= ~0x1000;
+    if (bss_1 == 0) {
+        submenu->menuItems[0].flags |= 0x1000;
+    }
+    if (bss_1 == 28) {
+        submenu->menuItems[5].flags |= 0x1000;
+    }
+    
+    if (bss_8[0] == NULL){}     // FAKE
+    
+    for (i = 0, var_s2 = 0; i < 4; var_s2++, i++) {
+        gDLL_29_Gplay->vtbl->set_cheat_enabled(temp + i, gDLL_75->vtbl->func8(bss_130[var_s2 + 1]));
+    }
+
+    var_s4 = var_s3 = bss_8;
+    for (i = 0, var_s2 = 0; i < 4; var_s2++, var_s3 += 50, i++, var_s4 += 50) {
+        if (gDLL_29_Gplay->vtbl->is_cheat_unlocked(bss_1 + i)) {
+            sprintf(var_s3, "%2d: %s", (int)(bss_1 + i + 1), bss_128->strings[bss_1 + i]);
+            submenu->menuItems[i + 1].text = var_s4;
+            submenu->menuItems[i + 1].flags &= ~0x820;
+            gDLL_75->vtbl->func11.withTwoArgs(bss_130[var_s2 + 1], 1);
+            
+            enabled = gDLL_29_Gplay->vtbl->is_cheat_active(bss_1 + i);
+            gDLL_75->vtbl->func9.withTwoArgs(bss_130[var_s2 + 1], enabled ? 1 : 0);
+        } else {
+            sprintf(var_s3, "%2d:", (int)(bss_1 + i + 1));
+            submenu->menuItems[i + 1].text = var_s4;
+            submenu->menuItems[i + 1].flags |= 0x820;
+            gDLL_75->vtbl->func11.withTwoArgs(bss_130[var_s2 + 1], 0);
+            gDLL_75->vtbl->func9.withTwoArgs(bss_130[var_s2 + 1], 0);
+        }
+    }
+    
+    gDLL_74_Picmenu->vtbl->update_text(submenu->menuItems);
+    gDLL_74_Picmenu->vtbl->update_flags(submenu->menuItems);
+    
+    if (bss_1 == 0) {
+        gDLL_75->vtbl->func7.withTwoArgs(bss_130[1], 1);
+        gDLL_74_Picmenu->vtbl->set_selected_item(1);
+    } else if (bss_1 == 0x1C) {
+        gDLL_75->vtbl->func7.withTwoArgs(bss_130[4], 1);
+        gDLL_74_Picmenu->vtbl->set_selected_item(4);
+    }
+    
+    bss_0 = 2;
+}
 
 // offset: 0x320C | func: 16
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_320C.s")
