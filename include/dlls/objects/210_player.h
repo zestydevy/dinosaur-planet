@@ -455,7 +455,7 @@ DLL_INTERFACE(DLL_210_Player) {
     // arg2 might be an s16 *
     /*71*/ void (*func71)(Object* player, Vec3f* arg1, SRT* arg2, UNK_TYPE_32 arg3);
     /*72*/ void (*func72)(Object* player, s16 arg1);
-    /*73*/ void (*func73)(s32 arg0, f32 arg1, f32 arg2);
+    /*73*/ void (*func73)(Object* player, f32 arg1, f32 arg2);
     /*74*/ s16 (*func74)(Object* player);
     /*75*/ s32 (*func75)(Object* player, s32 arg1);
     /*76*/ void (*func76)(Object* player);

@@ -1,0 +1,19 @@
+.text = 0x0:
+DFP_ForceAway_ctor = 0x0;
+DFP_ForceAway_dtor = 0xC;
+DFP_ForceAway_setup = 0x18;
+DFP_ForceAway_control = 0x70;
+DFP_ForceAway_update = 0x128;
+DFP_ForceAway_print = 0x134;
+DFP_ForceAway_free = 0x14C;
+DFP_ForceAway_get_model_flags = 0x194;
+DFP_ForceAway_get_data_size = 0x1A4;
+DFP_ForceAway_type0_control = 0x1B8;
+DFP_ForceAway_type1_control = 0x548;
+DFP_ForceAway_type2_control = 0x7A8;
+DFP_ForceAway_type3_control = 0xBB4;
+
+.rodata = 0xFCC:
+
+.data = 0xFDC:
+data_0 = 0x0; // absolute:0xFDC

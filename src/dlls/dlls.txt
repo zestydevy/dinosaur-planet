@@ -284,6 +284,7 @@
 638 = objects/638_DFPlevcontrol
 641 = objects/641_DFPLift
 644 = objects/644_DFP_floorbar
+646 = objects/646_DFP_ForceAway
 652 = objects/652_DFP_SpellPlace
 654 = objects/654_textblock
 658 = objects/658_DBPointMum

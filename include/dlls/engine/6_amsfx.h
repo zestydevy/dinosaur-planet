@@ -516,6 +516,8 @@ enum SoundID {
     SOUND_80C_Steam_Hissing = 0x80C,
 
     SOUND_814_Cmdmenu_OpenSubMenu = 0x814,
+
+    SOUND_837 = 0x837,
     
     SOUND_83F = 0x83F, 
     
@@ -654,6 +656,8 @@ enum SoundID {
     SOUND_B2B_Magic_Chime = 0xB2B, //MagicDust (when vanishing)
 
     SOUND_B31_Item_Collection_Chime = 0xB31,
+
+    SOUND_B47 = 0xB47,
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
