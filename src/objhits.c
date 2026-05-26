@@ -313,8 +313,8 @@ void func_800264D0(Object* arg0) {
 
     objHitInfo->unk58 = arg0->def->helpText;
     objHitInfo->unk5A = arg0->def->unk93;
-    objHitInfo->unk5B = arg0->def->_unk91[0];
-    objHitInfo->unk5C = arg0->def->_unk91[1];
+    objHitInfo->unk5B = arg0->def->unk91;
+    objHitInfo->unk5C = arg0->def->unk92;
     objHitInfo->unk52 = arg0->def->hitbox_flagsB6;
     objHitInfo->unk54 = arg0->def->unk94;
     objHitInfo->unk56 = arg0->def->unk96;

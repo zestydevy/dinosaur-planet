@@ -151,6 +151,7 @@
 379 = objects/379_CF_ObjCreator
 382 = objects/382_CFIllusionClaw
 385 = objects/385
+388 = objects/388_CFbarrel
 393 = objects/393_CFMainSlideDoor
 396 = objects/396_CFSupTreasureCh
 398 = objects/398_CFMagicWall

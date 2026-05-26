@@ -48,7 +48,7 @@ void DFbarrel_control(Object* self) {
     
     switch (objData->framesSinceDetonation) {
     case 0:
-        if (gDLL_54_pickup->vtbl->control(self) == 0) {
+        if (gDLL_54_pickup->vtbl->control(self, &objData->pickup) == 0) {
             DFbarrel_handle_movement(self);
             DFbarrel_handle_damage(self);
         }
