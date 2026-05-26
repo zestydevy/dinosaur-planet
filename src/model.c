@@ -239,12 +239,6 @@ bail:
     return NULL;
 }
 
-#ifndef NON_MATCHING
-ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/model/createModelInstance.s")
-#else
-// N64: https://decomp.me/scratch/znF3e
-// default.dol: https://decomp.me/scratch/4v6UJ
 ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
     ModelInstance* temp_v0;
     s32 i;
@@ -333,9 +327,9 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
     if ((model->joints != NULL) && (model->jointCount != 0) && (model->collisionA != NULL) && (model->collisionB != NULL)) {
         s0 = (u8*) mmAlign4((u32)s0);
         temp_v0->unk14 = (ModelInstance_0x14*)s0;
-        s0 += 0x1C;
+        s0 += sizeof(ModelInstance_0x14);
         temp_v0->unk14->unk0 = (Vec3f*)s0;
-        s0 += (model->jointCount * sizeof(Vec3f));
+        s0 += model->jointCount * sizeof(Vec3f);
         temp_v0->unk14->unk4 = (f32*)s0;
         s0 += model->jointCount * sizeof(f32 *);
         temp_v0->unk14->unk8 = (f32*)s0;
@@ -343,11 +337,17 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
         temp_v0->unk14->unkC = (f32*)s0;
         s0 += model->jointCount * sizeof(f32 *);
         temp_v0->unk14->unk10 = (f32*)s0;
-        s0 += model->jointCount * sizeof(f32 *);
+        s0 += model->jointCount * sizeof(s8 *);
         temp_v0->unk14->unk18 = (s8*)s0;
     } else {
         temp_v0->unk14 = NULL;
+        // FAKE code to force a register shift
+        s0 = NULL;
+        s0 += model->jointCount * 2;
+        s0 += model->jointCount * 2;
+        s0 += model->jointCount * 2;
     }
+
     if (arg2 == 0) {
         temp_v0->displayList = mmAlloc(model->displayListLength * sizeof(Gfx), ALLOC_TAG_MODELS_COL, 0);
         bcopy(model->displayList, temp_v0->displayList, model->displayListLength * sizeof(Gfx));
@@ -358,7 +358,6 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
     temp_v0->model = model;
     return temp_v0;
 }
-#endif
 
 void patch_model_display_list_for_textures(Model* model) {
     Gfx *gfx;
