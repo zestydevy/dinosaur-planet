@@ -309,13 +309,36 @@ typedef struct {
 /*0x794*/ static GameTextChunk* data_794 = NULL;
 /*0x798*/ static GameTextChunk* data_798 = NULL; //Controls text
 /*0x79C*/ static s8 data_79C = -1;
-/*0x7A0*/ static u16 data_7A0[] = {
-    0x01d6, 0x00c4, 0x01d0, 0x011c, 0x01cc, 0x003e, 0x019b, 0x0175, 0x003f, 0x008d, 0x003f, 0x013f, 0x013a, 0x003e, 0x01d9, 0x0096, 
-    0x01d9, 0x0071, 0x01d6, 0x005c, 0x01d6, 0x0082
+/*0x7A0*/ static u16 data_7A0[][2] = {
+    {0x01d6, 0x00c4}, 
+    {0x01d0, 0x011c}, 
+    {0x01cc, 0x003e}, 
+    {0x019b, 0x0175}, 
+    {0x003f, 0x008d}, 
+    {0x003f, 0x013f}, 
+    {0x013a, 0x003e}, 
+    {0x01d9, 0x0096}, 
+    {0x01d9, 0x0071}, 
+    {0x01d6, 0x005c}, 
+    {0x01d6, 0x0082}
 };
-/*0x7CC*/ static u16 data_7CC[] = {
-    0x01ea, 0x0059, 0x01ea, 0x0073, 0x01ea, 0x0086, 0x01ea, 0x0098, 0x01d8, 0x00de, 0x01d8, 0x00ef, 0x01ce, 0x0100, 0x01cc, 0x0133, 
-    0x01c6, 0x0145, 0x01ef, 0x0154, 0x019d, 0x018a, 0x019d, 0x0199, 0x0041, 0x0153, 0x0041, 0x0162, 0x0041, 0x00a3, 0x0131, 0x0053
+/*0x7CC*/ static u16 data_7CC[][2] = {
+    {0x01ea, 0x0059}, 
+    {0x01ea, 0x0073}, 
+    {0x01ea, 0x0086}, 
+    {0x01ea, 0x0098}, 
+    {0x01d8, 0x00de}, 
+    {0x01d8, 0x00ef}, 
+    {0x01ce, 0x0100}, 
+    {0x01cc, 0x0133}, 
+    {0x01c6, 0x0145}, 
+    {0x01ef, 0x0154}, 
+    {0x019d, 0x018a}, 
+    {0x019d, 0x0199}, 
+    {0x0041, 0x0153}, 
+    {0x0041, 0x0162}, 
+    {0x0041, 0x00a3}, 
+    {0x0131, 0x0053}
 };
 /*0x80C*/ static s16 data_80C[] = {
     0x0320, 0x02f5, 0x02f6, 0x02f7, 0x02f8, 0x02f9, 0x02fa, 0x02fb, 0x02fc, 0x0313, 0x02fd, 0x02fe, 0x02ff, 0x0300, 0x0301, 0x0302, 
@@ -336,8 +359,7 @@ typedef struct {
 /*0x2*/ static s8 bss_2;
 /*0x3*/ static s8 bss_3;
 /*0x4*/ static u8 _bss_4[0x4];
-/*0x8*/ static char* bss_8[2];
-/*0x10*/ static u8 _bss_10[0xc0];
+/*0x8*/ static char bss_8[4][50];
 /*0xD0*/ static  Texture* bss_D0[18];
 /*0x118*/ static Texture* bss_118;
 /*0x11C*/ static Texture* bss_11C;
@@ -393,10 +415,10 @@ void dll_65_dtor(void *dll) { }
 static void dll_65_func_1718(void);                 //matched
 static void dll_65_func_1AE4(s32 arg0);             //matched
 static void dll_65_func_2088(s32 arg0);             //matched
-static s32 dll_65_func_2A1C(s32 a0, s32 a1);        //NOT matched
+static s32 dll_65_func_2A1C(s32 a0, s32 a1);        //matched
 static void dll_65_func_2B50(s32 arg0, s32 arg1);   //matched
 static void dll_65_func_2C58(s32 arg0, s32 arg1);   //matched
-static void dll_65_func_2D50(s32 arg0, s32 arg1);   //NOT matched
+static void dll_65_func_2D50(s32 arg0, s32 arg1);   //matched
 static void dll_65_func_320C(s32 arg0, s32 arg1);   //NOT matched
 static void dll_65_func_32B8(s32 arg0, s32 arg1);   //matched
 static void dll_65_func_3404(s32 arg0, s32 arg1);   //matched
@@ -622,7 +644,7 @@ void dll_65_func_1718(void) {
 }
 
 // offset: 0x1898 | func: 5
-void dll_65_func_1898(void) {
+static void dll_65_func_1898(void) {
     OptionsSubmenu* submenu;
     char** strings;
     
@@ -654,7 +676,7 @@ void dll_65_func_1898(void) {
 }
 
 // offset: 0x1AE4 | func: 6
-void dll_65_func_1AE4(s32 arg0) {
+static void dll_65_func_1AE4(s32 arg0) {
     OptionsSubmenu* submenu;
 
     if (data_79C != -1) {
@@ -687,124 +709,57 @@ void dll_65_func_1AE4(s32 arg0) {
 }
 
 // offset: 0x1CF4 | func: 7
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_1CF4.s")
-#else
-void dll_65_func_1CF4(void) {
-    OptionsSubmenu* submenu;
-    s32 i;
-    s32 cheatActive;
-    s32 sVar8;
-    char* var_s4;
-    PicMenuItem* temp_v1;
-
+static void dll_65_func_1CF4(void) {
+    OptionsSubmenu *submenu;
+    s32 enabled;
+    s32 unlocked;
+    u32 i;
+    u32 y;
+    
     if (data_79C != -1) {
         gDLL_74_Picmenu->vtbl->clear_items();
     }
     
     data_79C = 5;
+    submenu = &data_704[data_79C];
     bss_12C = 0;
     bss_1 = 0;
-    bss_130[bss_12C] = 0;
-    var_s4 = bss_8;
-    submenu = &data_704[data_79C];
-    sVar8 = 0xfc;
+    y = 0xfc;
+    bss_130[bss_12C] = NULL;
     bss_12C++;
-    
-    for (i = 0; i < 4; i++, var_s4+=50) {
-        if (gDLL_29_Gplay->vtbl->is_cheat_unlocked((bss_1 + i) & 0xFF)) {
-            sprintf((char* ) var_s4, "%2d: %s", bss_1 + i + 1, bss_128->strings[bss_1 + i]);
-            submenu->menuItems[i + 1].text = var_s4;
-            submenu->menuItems[i + 1].flags &= 0xF7DF;
+
+    for (i = 0; i < 4; i++) {
+        unlocked = gDLL_29_Gplay->vtbl->is_cheat_unlocked(bss_1 + i);
+        
+        if (unlocked) {
+            sprintf(bss_8[i], "%2d: %s", (int) ((bss_1 + i) + 1), bss_128->strings[bss_1 + i]);
+            submenu->menuItems[i + 1].text = bss_8[i];
+            submenu->menuItems[i + 1].flags &= ~0x820;
         } else {
-            sprintf((char* ) var_s4, "%2d:", bss_1 + i + 1);
-            submenu->menuItems[i + 1].text = var_s4;
-            submenu->menuItems[i + 1].flags  |= 0x820;
+            sprintf(bss_8[i], "%2d:", (int) ((bss_1 + i) + 1));
+            submenu->menuItems[i + 1].text = bss_8[i];
+            submenu->menuItems[i + 1].flags |= 0x820;
         }
         
-        if (gDLL_29_Gplay->vtbl->is_cheat_active(bss_1 + i) != 0) {
-            cheatActive = 1;
-        } else {
-            cheatActive = 0;
-        }
+        enabled = gDLL_29_Gplay->vtbl->is_cheat_active(bss_1 + i);
         
-        bss_130[bss_12C] = gDLL_75->vtbl->func1.withFiveArgsS32(0x201, (s16)sVar8, 0, 1, cheatActive);
+        bss_130[bss_12C] = gDLL_75->vtbl->func1.withFiveArgsS32(0x201, (s16) y, 0, 1, enabled ? 1 : 0);
         bss_12C++;
-        
-        gDLL_75->vtbl->func11.withTwoArgs(bss_130[bss_12C - 1], i);
-        
-        sVar8 += 0x1a;
+        gDLL_75->vtbl->func11.withTwoArgs(bss_130[bss_12C - 1], unlocked);
+        y += 0x1a;
     }
     
     bss_130[bss_12C] = 0;
     bss_12C++;
     
     submenu->menuItems->flags |= 0x1000;
-    gDLL_74_Picmenu->vtbl->set_items(
-        submenu->menuItems, submenu->count, 1, NULL, submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
-    );
-    gDLL_75->vtbl->func7.withTwoArgs(bss_134, 1);
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count, 1, NULL, submenu->unkC, submenu->unkD, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
+    gDLL_75->vtbl->func7.withTwoArgs(bss_130[1], 1);
     bss_0 = 2;
 }
 
-
-
-/*
-
-  if (DAT_810cc044 != -1) {
-    dll_074.picmenu_func_0001_LE();
-  }
-  DAT_810cc044 = 5;
-  DAT_810cc139 = '\0';
-  DAT_810cc268 = 0;
-  DAT_810cc264 = '\x01';
-  puVar7 = &DAT_810cc140;
-  sVar8 = 0xfc;
-  iVar4 = 0;
-  iVar5 = 0;
-  puVar6 = puVar7;
-  do {
-    lVar1 = dll_029.gplay_func_0043_LE(DAT_810cc139 + iVar4 & 0xff);
-    if (lVar1 == 0) {
-      sprintf(puVar6,&DAT_810cb850,DAT_810cc139 + iVar4 + 1);
-      *(undefined **)(PTR_PTR_DAT_810cbffc + iVar5 + 0x3c) = puVar7;
-      *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) =
-           *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) | 0x820;
-    }
-    else {
-      sprintf(puVar6,s_%2d:_%s_810cb848,DAT_810cc139 + iVar4 + 1,
-              *(undefined4 *)(*(int *)(DAT_810cc260 + 8) + (DAT_810cc139 + iVar4) * 4));
-      *(undefined **)(PTR_PTR_DAT_810cbffc + iVar5 + 0x3c) = puVar7;
-      *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) =
-           *(ushort *)(PTR_PTR_DAT_810cbffc + iVar5 + 0x52) & 0xf7df;
-    }
-    lVar2 = dll_029.gplay_func_0045_LE(DAT_810cc139 + iVar4 & 0xff);
-    uVar3 = dll_075.frontend_func_0001_LE(0x201,sVar8,0,1,lVar2 != 0);
-    (&DAT_810cc268)[DAT_810cc264] = uVar3;
-    DAT_810cc264 = DAT_810cc264 + '\x01';
-    dll_075.frontend_func_0011_E(*(undefined4 *)(&DAT_810cc264 + DAT_810cc264 * 4),lVar1);
-    iVar4 = iVar4 + 1;
-    puVar6 = puVar6 + 0x32;
-    iVar5 = iVar5 + 0x3c;
-    puVar7 = puVar7 + 0x32;
-    sVar8 = sVar8 + 0x1a;
-  } while (iVar4 != 4);
-  (&DAT_810cc268)[DAT_810cc264] = 0;
-  DAT_810cc264 = DAT_810cc264 + '\x01';
-  *(ushort *)(PTR_PTR_DAT_810cbffc + 0x16) = *(ushort *)(PTR_PTR_DAT_810cbffc + 0x16) | 0x1000;
-  dll_074.picmenu_func_0000_LE
-            (PTR_PTR_DAT_810cbffc,DAT_810cc004,1,0,DAT_810cc008,DAT_810cc009,0xb7,0x8b,0x61,0xff,
-             0xd7,0x3d);
-  dll_075.frontend_func_0007_E(DAT_810cc26c,1);
-  DAT_810cc138 = 2;
-  return;
-
-*/
-#endif
-
 // offset: 0x2088 | func: 8
-void dll_65_func_2088(s32 arg0) {
+static void dll_65_func_2088(s32 arg0) {
     OptionsSubmenu* submenu;
     s8 languageID = gDLL_21_Gametext->vtbl->curr_bank();
     
@@ -851,7 +806,7 @@ void dll_65_func_2088(s32 arg0) {
 }
 
 // offset: 0x2438 | func: 9
-void dll_65_func_2438(void) {
+static void dll_65_func_2438(void) {
     OptionsSubmenu* submenu;
 
     if (data_79C != -1) {
@@ -941,7 +896,33 @@ void dll_65_func_2888(void) {
 }
 
 // offset: 0x2A1C | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_2A1C.s")
+s32 dll_65_func_2A1C(s32 arg0, u32 arg1) {
+    if (arg0 == 1) {
+        switch (arg1) {
+        case 2:
+            dll_65_func_1898();
+            return 1;
+        case 3:
+            dll_65_func_1AE4(0);
+            return 1;
+        case 4:
+            dll_65_func_1CF4();
+            return 1;
+        case 0:
+            dll_65_func_2088(0);
+            return 1;
+        case 1:
+            dll_65_func_2438();
+            return 1;
+        }
+    } else if (arg0 == 0) {
+        gDLL_28_ScreenFade->vtbl->fade(0x14, 1);
+        bss_3 = 0x23;
+        bss_2 = 1;
+    }
+
+    return 0;
+}
 
 // offset: 0x2B50 | func: 13
 void dll_65_func_2B50(s32 arg0, s32 arg1) {   
@@ -974,14 +955,10 @@ void dll_65_func_2C58(s32 arg0, s32 arg1) {
 // offset: 0x2D50 | func: 15
 void dll_65_func_2D50(s32 arg0, s32 arg1) {
     OptionsSubmenu* submenu;
-    s32 idx2;
     s32 i;
-    s32 var_s2;
     s32 var_v0;
-    char* var_s3;
-    char* var_s4;
     s32 enabled;
-    u8 temp;
+    u8 bss1_before;
 
     //Unlock the selected cheat with C-right! (Need to back out and re-enter menu before it shows up)
     if (joy_get_pressed(0) & R_CBUTTONS) {
@@ -994,7 +971,7 @@ void dll_65_func_2D50(s32 arg0, s32 arg1) {
     
     var_v0 = 0;
 
-    temp = bss_1;
+    bss1_before = bss_1;
     if (arg1 == 0) {
         bss_1 -= 4;
         if (bss_1 < 0) {
@@ -1004,8 +981,8 @@ void dll_65_func_2D50(s32 arg0, s32 arg1) {
         }
     } else if (arg1 == 5) {
         bss_1 += 4;
-        if (bss_1 > 28) {
-            bss_1 = 28;
+        if (bss_1 > 0x1C) {
+            bss_1 = 0x1C;
         } else {
             var_v0 = 1;
         }
@@ -1021,32 +998,29 @@ void dll_65_func_2D50(s32 arg0, s32 arg1) {
     if (bss_1 == 0) {
         submenu->menuItems[0].flags |= 0x1000;
     }
-    if (bss_1 == 28) {
+    if (bss_1 == 0x1C) {
         submenu->menuItems[5].flags |= 0x1000;
     }
     
-    if (bss_8[0] == NULL){}     // FAKE
-    
-    for (i = 0, var_s2 = 0; i < 4; var_s2++, i++) {
-        gDLL_29_Gplay->vtbl->set_cheat_enabled(temp + i, gDLL_75->vtbl->func8(bss_130[var_s2 + 1]));
+    for (i = 0; i < 4; i++) {
+        gDLL_29_Gplay->vtbl->set_cheat_enabled(bss1_before + i, gDLL_75->vtbl->func8(bss_130[i + 1]));
     }
 
-    var_s4 = var_s3 = bss_8;
-    for (i = 0, var_s2 = 0; i < 4; var_s2++, var_s3 += 50, i++, var_s4 += 50) {
+    for (i = 0; i < 4; i++) {
         if (gDLL_29_Gplay->vtbl->is_cheat_unlocked(bss_1 + i)) {
-            sprintf(var_s3, "%2d: %s", (int)(bss_1 + i + 1), bss_128->strings[bss_1 + i]);
-            submenu->menuItems[i + 1].text = var_s4;
+            sprintf(bss_8[i], "%2d: %s", (int)(bss_1 + i + 1), bss_128->strings[bss_1 + i]);
+            submenu->menuItems[i + 1].text = bss_8[i];
             submenu->menuItems[i + 1].flags &= ~0x820;
-            gDLL_75->vtbl->func11.withTwoArgs(bss_130[var_s2 + 1], 1);
+            gDLL_75->vtbl->func11.withTwoArgs(bss_130[i + 1], 1);
             
             enabled = gDLL_29_Gplay->vtbl->is_cheat_active(bss_1 + i);
-            gDLL_75->vtbl->func9.withTwoArgs(bss_130[var_s2 + 1], enabled ? 1 : 0);
+            gDLL_75->vtbl->func9.withTwoArgs(bss_130[i + 1], enabled ? 1 : 0);
         } else {
-            sprintf(var_s3, "%2d:", (int)(bss_1 + i + 1));
-            submenu->menuItems[i + 1].text = var_s4;
+            sprintf(bss_8[i], "%2d:", (int)(bss_1 + i + 1));
+            submenu->menuItems[i + 1].text = bss_8[i];
             submenu->menuItems[i + 1].flags |= 0x820;
-            gDLL_75->vtbl->func11.withTwoArgs(bss_130[var_s2 + 1], 0);
-            gDLL_75->vtbl->func9.withTwoArgs(bss_130[var_s2 + 1], 0);
+            gDLL_75->vtbl->func11.withTwoArgs(bss_130[i + 1], 0);
+            gDLL_75->vtbl->func9.withTwoArgs(bss_130[i + 1], 0);
         }
     }
     
@@ -1065,7 +1039,19 @@ void dll_65_func_2D50(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x320C | func: 16
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_320C.s")
+#else
+void dll_65_func_320C(s32 arg0, s32 arg1) {
+    if ((arg0 != 1) || (arg1 != 2)) {
+        return;
+    }
+    
+    bss_148->screenSizeAnamorphic = gDLL_75->vtbl->func8(bss_130[1]);
+    bss_148->screenAspectRatio = gDLL_75->vtbl->func8(bss_130[1]);
+    dll_65_func_2888();
+}
+#endif
 
 // offset: 0x32B8 | func: 17
 void dll_65_func_32B8(s32 arg0, s32 arg1) {
