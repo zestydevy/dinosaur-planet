@@ -87,5 +87,6 @@ void func_80033224(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3);
 void func_800332A4(Object* arg0, s32* arg1, s32 arg2);
 void func_80033350(HeadAnimation* arg0, s32 arg1, s16 arg2, s16 arg3);
 void func_80034D94(u8 arg0, u8 arg1);
+void func_800349C0(Object* arg0, HeadAnimation* arg1, s32 soundID, s16 arg3, s32 arg4, u8 arg5);
 
 #endif

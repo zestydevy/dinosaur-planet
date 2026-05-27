@@ -598,7 +598,7 @@ Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
     var_v0->base.byte6 = sp4C->base.byte6;
     var_v0->base.byte5 = sp4C->base.byte5;
     var_v0->base.fadeDistance = sp4C->base.fadeDistance;
-    temp_v0 = obj_create((ObjSetup*)var_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, (s32) arg0->mapID, -1, arg0->parent);
+    temp_v0 = obj_create(&var_v0->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, (s32) arg0->mapID, -1, arg0->parent);
     _bss_0 = temp_v0;
     return temp_v0;
 }
