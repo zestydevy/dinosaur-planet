@@ -1,25 +1,23 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
-#include "sys/math.h"
 #include "sys/objects.h"
+#include "sys/objexpr.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "types.h"
-
-s16* func_80034804(Object* obj, s32 sequenceBoneID);
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ s32 unk18;
+/*18*/ s32 _unk18;
 /*1C*/ s16 flag1;
-/*1C*/ s16 unk1E;
-/*1C*/ s16 unk20;
-/*1C*/ s16 unk22;
-/*1C*/ s16 flag2;
+/*1E*/ s16 _unk1E;
+/*20*/ s16 _unk20;
+/*22*/ s16 _unk22;
+/*24*/ s16 flag2;
 } DBDiamond_Setup;
 
 typedef struct {
@@ -61,10 +59,10 @@ void DBdiamond_control(Object *self) {
     setup = (DBDiamond_Setup *)self->setup;
     objdata = self->data;
 
-    if (objdata->unk0 != 1 && objdata->unk0 == 2 && self->unkAF & 1) {
+    if (objdata->unk0 != 1 && objdata->unk0 == 2 && (self->unkAF & ARROW_FLAG_1_Interacted)) {
         if (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < 60.0f) {
             obj_free_object_type(self, OBJTYPE_39);
-            self->unkAF |= 8;
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
             main_set_bits(setup->flag1, 1);
             obj_send_mesg(player, 0x7000A, self, (void*)0x10000);
             objdata->unk0 = 1;
@@ -84,8 +82,9 @@ void DBdiamond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     if (!visibility)
         return;
     
-    if (objdata->unk0 & 3)
+    if (objdata->unk0 & 3) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    }
 }
 
 // offset: 0x27C | func: 4 | export: 4
