@@ -592,43 +592,49 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
     return 1;
 }
 
-#ifndef NON_EQUIVALENT
-void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4);
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_80008524.s")
-#else
-// N64: https://decomp.me/scratch/x1DTn
-// default.dol: https://decomp.me/scratch/9Nci8
-void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4) {
+s32* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4) {
     f32 temp_fv0;
     s32 temp_a2;
+    s32 temp_a2_2;
     s32 temp_t2;
-    s32 temp_t3;
-    u16 temp_v0_3;
-    u16 temp_v1_3;
     s32 var_a0;
     s32 var_a1;
     s32 var_a3;
     s32 var_t0;
     s32 var_t1;
+    s32 sp138;
     s32 var_v0;
     s32 var_v1;
-    s32 sp138;
-    s32 spDC[0x14];
-    s32 sp8C[0x14];
+    s32 temp1;
+    s32 spDC[20];
+    s32 sp8C[20];
+    s32 temp2;
+    s32 temp3;
+    s32 temp4;
+    s32 temp5;
+    s32 temp6;
+    s32 temp7;
+    s32 temp8;
+    s32 temp9;
+    s32 temp10;
+    s32 tempX = arg0->s[0] - arg1->s[0];
+    s32 tempZ = arg0->s[2] - arg1->s[2];
+    s32 new_var;
 
-    temp_fv0 = sqrtf(SQ(arg0->s[0] - arg1->s[0]) + SQ(arg0->s[2] - arg1->s[2]));
-    var_a3 = 0;
+    temp_fv0 = sqrtf(SQ(tempX) + SQ(tempZ));
     var_v0 = temp_fv0;
     if (var_v0 < (temp_fv0 - 0.5f)) {
-        var_v0 = var_v0 + 1;
+        var_v0++;
     }
-    var_a0 = (var_v0 * -2) + 5;
-    var_t0 = var_v0;
-    var_v1 = 1 - var_t0;
+
+    var_a3 = 0;
+    var_t0 = var_v0;\
+    var_v1 = 1 - var_t0;\
+    var_a0 = (var_t0 * -2) + 5;\
     var_a1 = 3;
+    spDC[0] = var_a3;
+    sp8C[0] = var_t0;
     sp138 = 0;
-    spDC[sp138] = var_a3;
-    sp8C[sp138] = var_t0;
     while (var_t0 > var_a3) {
         if (var_v1 > 0) {
             var_v1 += var_a0;
@@ -638,76 +644,86 @@ void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg
             var_v1 += var_a1;
             var_a0 += 2;
         }
-        var_a3++;
-        spDC[sp138] = var_a3;
-        sp8C[sp138] = var_t0;
         var_a1 += 2;
-        sp138++;
-        if (sp138 >= 0x14) {
+        new_var = sp138 + 1;
+        sp138++;\
+        spDC[new_var] = ++var_a3;\
+        sp8C[sp138] = var_t0;
+
+        if (sp138 >= 20) {
             return NULL;
         }
     }
-    var_t1 = 0;
-    temp_a2 = sp138 * 2;
-    while (var_t1 <= sp138) {
-        s32 var_s2 = ((arg0->s[1] + sp8C[var_t1]) << 0x10);
-        s32 var_s0 = ((arg0->s[1] + spDC[var_t1]) << 0x10);
-        s32 temp = ((arg0->s[1] - spDC[var_t1]) << 0x10);
-        s32 temp2 = ((arg0->s[1] - sp8C[var_t1]) << 0x10);
-        temp_t3 = temp_a2 - var_t1;
-        var_a0 = var_t1 + temp_a2;
-        var_a1 = temp_t3 + temp_a2;
-        temp_v0_3 = arg0->s[0] + spDC[var_t1];
-        temp_v1_3 = arg0->s[0] + sp8C[var_t1];
-        D_800A7C98[var_t1] = temp_v0_3 | var_s2;
-        D_800A7C98[temp_t3] = temp_v1_3 | var_s0;
-        D_800A7C98[var_a0] = temp_v1_3 | temp;
-        D_800A7C98[var_a1] = temp_v0_3 | temp2;
-        var_a0 += temp_a2;
-        var_a1 += temp_a2;
-        temp_v0_3 = arg0->s[0] - spDC[var_t1];
-        temp_v1_3 = arg0->s[0] - sp8C[var_t1];
-        D_800A7C98[var_a0] = temp_v0_3 | temp2;
-        D_800A7C98[var_a1] = temp_v1_3 | temp;
-        D_800A7C98[var_a0 + temp_a2] = temp_v1_3 | var_s0;
-        D_800A7C98[var_a1 + temp_a2] = temp_v0_3 | var_s2;
-        var_t1 += 1;
+
+    temp_a2 = sp138 << 1;
+    for (var_t1 = 0; var_t1 <= sp138; ) {
+        var_a3 = spDC[var_t1];
+        var_t0 = sp8C[var_t1];
+        temp1 = arg0->s[0] + var_a3;\
+        temp2 = arg0->s[0] - var_a3;\
+        temp3 = arg0->s[0] + var_t0;\
+        temp4 = arg0->s[0] - var_t0;
+        temp5 = (arg0->s[2] + var_a3) << 0x10;\
+        temp6 = (arg0->s[2] - var_a3) << 0x10;\
+        temp7 = (arg0->s[2] + var_t0) << 0x10;\
+        temp8 = (arg0->s[2] - var_t0) << 0x10;
+
+        temp9 = var_t1;
+        temp10 = temp_a2 - var_t1;
+        D_800A7C98[temp9] = (temp1 & 0xFFFF) | temp7;
+        D_800A7C98[temp10] = (temp3 & 0xFFFF) | temp5;
+
+        temp9 += temp_a2;
+        temp10 += temp_a2;
+        D_800A7C98[temp9] = (temp3 & 0xFFFF) | temp6;
+        D_800A7C98[temp10] = (temp1 & 0xFFFF) | temp8;
+
+        temp9 += temp_a2;
+        temp10 += temp_a2;
+        D_800A7C98[temp9] = (temp2 & 0xFFFF) | temp8;
+        D_800A7C98[temp10] = (temp4 & 0xFFFF) | temp6;
+
+        temp9 += temp_a2;
+        temp10 += temp_a2;
+        D_800A7C98[temp9] = (temp4 & 0xFFFF) | temp5;
+        D_800A7C98[temp10] = (temp2 & 0xFFFF) | temp7;
+        var_t1++;
     }
-    *arg2 = sp138 * 8;
+
+    *arg2 = temp_a2 << 2;
     *arg3 = -2;
     *arg4 = -2;
-    temp_a2 = (arg1->s[0] & 0xFFFF) | (arg1->s[2] << 0x10);
+    temp_t2 = (arg1->s[0] & 0xFFFF) | (arg1->s[2] << 0x10);
     var_t1 = 0;
-    while (var_t1 < *arg2 && (temp_a2 != D_800A7C98[var_t1])) {
+    while (var_t1 < *arg2 && (temp_t2 != D_800A7C98[var_t1])) {
         var_t1 += 1;
     }
     if (var_t1 == *arg2) {
-        temp_t2 = (arg1->s[0] & 0xFFFF) |  ((arg1->s[2] - 1) << 0x10);
-        temp_a2 = (arg1->s[0] & 0xFFFF) |  ((arg1->s[2] + 1) << 0x10);
-        var_t1 = 0;
-        while (var_t1 < *arg2 && *arg3 == -2 && *arg4 == -2) {
+        temp_t2 = (arg1->s[0] & 0xFFFF) | ((arg1->s[2] - 1) << 0x10);
+        temp_a2_2 = (arg1->s[0] & 0xFFFF) | ((arg1->s[2] + 1) << 0x10);
+        for (var_t1 = 0; var_t1 < *arg2 && *arg3 == -2 && *arg4 == -2; var_t1++) {
             if (temp_t2 == D_800A7C98[var_t1]) {
                 *arg3 = var_t1;
                 *arg4 = var_t1 + 1;
-            } else if (temp_a2 == D_800A7C98[var_t1]) {
+            } else if (temp_a2_2 == D_800A7C98[var_t1]) {
                 *arg3 = var_t1 - 1;
                 *arg4 = var_t1;
             }
-            var_t1 += 1;
         }
     } else {
         *arg3 = var_t1 - 1;
         *arg4 = var_t1 + 1;
     }
+
     if (*arg3 < 0) {
         *arg3 += *arg2;
     }
     if (*arg4 >= *arg2) {
-        *arg4 = *arg4 - *arg2;
+        *arg4 -= *arg2;
     }
+
     return D_800A7C98;
 }
-#endif
 
 s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
     s32 pad;
@@ -1319,14 +1335,14 @@ void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3,
     s32 sp6C;
     s32 new_var3;
     s32 pad2;
-    s32 var_v1; // sp30
-    s32 var_a0; // sp2C?
+    s32 var_v1;
+    s32 var_a0;
     s32 pad;
     VoxmapSlotData* sp54;
     Unk80008E40Unk0* sp50;
-    u8 *temp_v0_2; // sp30 in GC
-    s32 i; // sp2C in GC
-    u8 sp3C[3][4]; // sp1C in GC
+    u8 *temp_v0_2;
+    s32 i;
+    u8 sp3C[3][4];
 
     if ((arg0->unkC.s[0] == arg4->s[0]) && (arg0->unkC.s[2] == arg4->s[2])) {
         sp78 = arg0->unk1C;
