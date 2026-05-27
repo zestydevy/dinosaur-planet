@@ -335,76 +335,61 @@ void fbfx_func_8003F4C0(s32 arg0) {
     }
 }
 
-#ifndef NON_MATCHING
-void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003F660.s")
-#else
-// N64: https://decomp.me/scratch/wArrS
-// default.dol: https://decomp.me/scratch/GDk8g
 void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 width;
     s32 height;
-    s32 resolution;
-    s32 i;
-    s32 j;
-    s32 var_v0;
-    s32 temp_a1;
-    s32 temp_v1;
     u16* currentFB;
     u16* currentFB2;
-
-    s32 otherTemp;
-    u16 temp;
-    u16 temp2;
-    u16 temp3;
-    u16 temp4;
-    u16 temp5;
-    u16 temp6;
+    s32 resolution;
+    s32 var_r29;
+    s32 var_r27;
+    s32 var_r26;
+    s32 var_r25;
+    u16 var_r23;
+    u16 var_r21;
+    u16 var_r20;
+    u16 var_r19;
 
     resolution = vi_get_current_size();
     width = GET_VIDEO_WIDTH(resolution);  
     height = GET_VIDEO_HEIGHT(resolution);
     if (arg3 != 0) {
-        var_v0 = (height - ((height * 0xB6) / 240)) >> 1;
-        height -= var_v0;
+        var_r29 = height - ((height * 0xB6) / 240);
+        var_r29 >>= 1;
+        height -= var_r29;
     } else {
-        var_v0 = 0;
+        var_r29 = 0;
     }
+
     if (arg0 == 0) {
-        currentFB = &(&(&gFrontFramebuffer[width * var_v0])[arg1])[arg2 * width];
+        currentFB = &(&(&gFrontFramebuffer[width * var_r29])[arg1])[arg2 * width];
         currentFB[-1] = 0;
-        currentFB2 = &gFrontFramebuffer[width * var_v0];
-        for (i = var_v0; i < height; i++) {
-            for (j = 0; j < width; j++) {
-                temp_v1 = currentFB[width];
-                temp_a1 = (currentFB - width)[0];
-                if (1){}
-                temp = (((u32)temp_v1 & 0xF800) + (temp_a1 & 0xF800) + (currentFB[1] & 0xF800) + (currentFB[-1] & 0xF800)) >> 2;
-                temp2 = (((s32)temp_v1 & 0x7C0) + (temp_a1 & 0x7C0) + (currentFB[1] & 0x7C0) + (currentFB[-1] & 0x7C0)) >> 2;
-                temp3 = (((s32)temp_v1 & 0x3E) + (temp_a1 & 0x3E) + (currentFB[1] & 0x3E) + (currentFB[-1] & 0x3E)) >> 2;
-                currentFB2[0] = (temp & 0xF800) + (temp2 & 0x7C0) + (temp3 & 0x3E);
+        currentFB2 = &gFrontFramebuffer[width * var_r29];
+        for (var_r27 = var_r29; var_r27 < height; var_r27++) {
+            for (var_r26 = 0; var_r26 < width; var_r26++) {
+                var_r21 = ((u32) ((currentFB[-1] & 0xF800) + (*(currentFB - width) & 0xF800) + (currentFB[1] & 0xF800) + (currentFB[width] & 0xF800))) >> 2;
+                var_r20 = ((s32) ((currentFB[-1] & 0x7C0) + (*(currentFB - width) & 0x7C0) + (currentFB[1] & 0x7C0) + (currentFB[width] & 0x7C0))) >> 2;
+                var_r19 = ((s32) ((currentFB[-1] & 0x3E) + (*(currentFB - width) & 0x3E) + (currentFB[1] & 0x3E) + (currentFB[width] & 0x3E))) >> 2;
+                *currentFB2 = (var_r21 & 0xF800) + (var_r20 & 0x7C0) + (var_r19 & 0x3E);
                 currentFB2++;
                 currentFB++;
             }
         }
     } else {
-        currentFB = &(&(&gFrontFramebuffer[width * var_v0])[arg1])[arg2 * width];
+        var_r25 = 0xFFFF >> (0x10 - arg0);
+        currentFB = &(&(&gFrontFramebuffer[width * var_r29])[arg1])[arg2 * width];
         currentFB[-1] = 0;
-        currentFB2 = &gFrontFramebuffer[width * var_v0];
-        for (i = var_v0; i < height; i++) {
-            for (j = 0; j < width; j++) {
-                var_v0 = 0xFFFF >> (0x10 - arg0);
-                // apparently this is var_v0 * 0x842
-                var_v0 = ~((var_v0 << 0xB) + (var_v0 << 6) + (var_v0 << 1));
-                otherTemp = fbfx_func_8003FB88(currentFB[-1], *(currentFB - width), currentFB[1], currentFB[width]) & var_v0;
-                currentFB2[0] = otherTemp >> arg0;
+        currentFB2 = &gFrontFramebuffer[width * var_r29];
+        for (var_r27 = var_r29; var_r27 < height; var_r27++) {
+            for (var_r26 = 0; var_r26 < width; var_r26++) {
+                var_r23 = fbfx_func_8003FB88(currentFB[-1], *(currentFB - width), currentFB[1], currentFB[width]);
+                *currentFB2 = (var_r23 & ~((var_r25 << 0xB) + (var_r25 << 6) + (var_r25 << 1))) >> arg0;
                 currentFB2++;
                 currentFB++;
             }
         }
     }
 }
-#endif
 
 u16 fbfx_func_8003F928(u16* arg0, s32 arg1) {
     u32 temp;
