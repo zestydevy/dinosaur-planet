@@ -257,6 +257,7 @@ class BuildNinjaWriter:
         self.writer.variable("DINODLL", f"{sys.executable} tools/dino_dll.py")
         self.writer.variable("DLLSYMS2LD", f"{sys.executable} tools/dllsyms2ld.py")
         self.writer.variable("SYNTAX_CHECK", f"{sys.executable} tools/syntax_check.py")
+        self.writer.variable("PATCHMIPS3", f"{sys.executable} tools/patchmips3.py")
         
         self.writer.newline()
 
@@ -294,6 +295,7 @@ class BuildNinjaWriter:
         self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         self.writer.rule("elf2dll_wrapper", "$ELF2DLL_WRAPPER -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
+        self.writer.rule("patchmips3", "$PATCHMIPS3 $in $out", "Patching $in...")
 
         self.writer.newline()
 
@@ -310,6 +312,7 @@ class BuildNinjaWriter:
 
             # Determine command
             command: str
+            mips3_c = False
             if file.type == BuildFileType.C:
                 with_asmproc = file.config != None and file.config.has_global_asm
                 if with_asmproc and file.config != None:
@@ -331,6 +334,9 @@ class BuildNinjaWriter:
                         command = "cc_nosyntax"
                     else:
                         command = "cc_noasmproc"
+
+                if file.config != None and file.config.mips_iset != None and "-mips3" in file.config.mips_iset:
+                    mips3_c = True
             elif file.type == BuildFileType.ASM:
                 command = "as"
             elif file.type == BuildFileType.BIN:
@@ -341,7 +347,13 @@ class BuildNinjaWriter:
             # Write command
             obj_build_path = f"$BUILD_DIR/{Path(file.obj_path).as_posix()}"
             src_build_path = Path(file.src_path).as_posix()
-            self.writer.build(obj_build_path, command, src_build_path, variables=variables)
+            if mips3_c:
+                # Patch mips3 object files so they can be linked
+                unpatched_path = Path(obj_build_path).with_suffix(".unpatched.o").as_posix()
+                self.writer.build(unpatched_path, command, src_build_path, variables=variables)
+                self.writer.build(obj_build_path, "patchmips3", unpatched_path)
+            else:
+                self.writer.build(obj_build_path, command, src_build_path, variables=variables)
             self.link_deps.append(obj_build_path)
 
             # Build expected object file from asm
