@@ -20,11 +20,12 @@ typedef struct {
     u8 unk1B; //bitfield of available sidekick commands
     u8 unk1C;
     u8 unk1D;
-    u8 pad1E[0x24 - 0x1E];
+    u16 pad1E;
+    f32 unk20;
     f32 unk24;
     Object *unk28;
     Vec3f *unk2C;
-    u8 pad30[0x38 - 0x30];
+    f32 unk30[2];
     f32 unk38;
     u8 pad3C[0x4C - 0x3C];
     s32 unk4C; // some sort of flag
@@ -46,6 +47,7 @@ typedef struct {
     u8 pad5F4[0x610-0x5F4];
 } DLL211_Data;
 
+static void dll_211_func_88F4(Object* arg0, s16 arg1);
 static void dll_211_func_9024(DLL211_Data* arg0, Vec3f *arg1);
 static s32 dll_211_func_9668(DLL27_Data* arg0);
 
@@ -496,16 +498,75 @@ static void dll_211_func_83BC(Object* arg0, DLL211_Data* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_8470.s")
 
 // offset: 0x871C | func: 70
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_871C.s")
+void dll_211_func_871C(Object* arg0, s8* arg1) {
+    s16 temp_a2;
+    s16 var_a1;
+    s16 var_v0;
+    s32 var_v1;
+
+    temp_a2 = arg1[0x2C] << 8;
+    var_v0 = temp_a2 - (arg0->srt.yaw & 0xFFFF);
+    CIRCLE_WRAP(var_v0);
+    var_a1 = temp_a2;
+    if (var_v0 >= 0) {
+        var_v1 = var_v0;
+    } else {
+        var_v1 = -var_v0;
+    }
+    if (var_v1 >= 0x4000) {
+        var_a1 = temp_a2 + 0x8000;
+    }
+    dll_211_func_88F4(arg0, var_a1);
+}
 
 // offset: 0x87E4 | func: 71
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_87E4.s")
+void dll_211_func_87E4(Object* arg0) {
+    f32* data;
+    f32 x, z;
+
+    data = arg0->data;
+    data += 12;
+    z = -data[1];
+    x = -data[0];
+    dll_211_func_88F4(arg0, arctan2_f(x, z));
+}
 
 // offset: 0x885C | func: 72
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_885C.s")
+void dll_211_func_885C(Object* arg0) {
+    DLL211_Data* data;
+    f32 sp24[2];
+
+    data = arg0->data;
+    sp24[0] = data->unk2C->x - arg0->srt.transl.x;
+    sp24[1] = data->unk2C->z - arg0->srt.transl.z;
+    dll_211_func_88F4(arg0, arctan2_f(-sp24[0], -sp24[1]));
+}
 
 // offset: 0x88F4 | func: 73
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_88F4.s")
+static void dll_211_func_88F4(Object* arg0, s16 arg1) {
+    s32 temp_a2;
+    s32 var_v1;
+
+    temp_a2 = arg0->srt.yaw;
+    var_v1 = arg0->srt.yaw - (arg1 & 0xFFFF);
+    // can't use the CIRCLE_WRAP macro here as we need the repeated calc of var_v1
+    if ((arg0->srt.yaw - (arg1 & 0xFFFF)) > 0x8000) {
+        var_v1 += 0xFFFF0001;
+    }
+    if (var_v1 < -0x8000) {
+        var_v1 += 0xFFFF;
+    }
+    temp_a2 = var_v1 >> 8;
+    if (temp_a2 > 0x10) {
+        arg0->srt.yaw -= 0x1000;
+        return;
+    }
+    if (temp_a2 < -0x10) {
+        arg0->srt.yaw += 0x1000;
+        return;
+    }
+    arg0->srt.yaw = arg1;
+}
 
 // offset: 0x8974 | func: 74
 void dll_211_func_8974(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
