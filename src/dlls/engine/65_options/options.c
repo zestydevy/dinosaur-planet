@@ -1,9 +1,10 @@
 #include "common.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/74_picmenu.h"
+#include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/audio/speaker.h"
-#include "game/gametexts.h"
+#include "sys/menu.h"
 
 #define NONE -1
 
@@ -288,8 +289,8 @@ typedef struct {
     PicMenuItem *menuItems;
     s8 *textIDs;
     u8 count;
-    u8 unk9;
-    u8 unkA;
+    s8 unk9;
+    s8 unkA;
     u8 unkB;
     u8 unkC;
     u8 unkD;
@@ -320,9 +321,9 @@ typedef struct {
     {0x01d9, 0x0096}, 
     {0x01d9, 0x0071}, 
     {0x01d6, 0x005c}, 
-    {0x01d6, 0x0082}
-};
-/*0x7CC*/ static u16 data_7CC[][2] = {
+    {0x01d6, 0x0082},
+// };
+// /*0x7CC*/ static u16 data_7CC[][2] = {
     {0x01ea, 0x0059}, 
     {0x01ea, 0x0073}, 
     {0x01ea, 0x0086}, 
@@ -604,7 +605,120 @@ void dll_65_func_B84(void) {
 }
 
 // offset: 0xB8C | func: 2 | export: 2
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_B8C.s")
+#else
+static void dll_65_func_35D0(Gfx** gdl, s32 initialX, s32 initialY, s32 endX, s32 endY) {}
+
+void dll_65_func_B8C-3(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
+    s32 uly; //7C
+    s32 lry; //78
+    s32 ulx; //74
+    s32 lrx; //70
+    OptionsSubmenu* submenu;
+    s32 i2;
+    s32 i;
+    s32 end;
+    s32 pad;
+
+    submenu = &data_704[data_79C];
+    
+    if ((bss_2 == 0) || (bss_3 >= 0xB)) {
+        font_window_set_coords(1, 0, 0, 
+            GET_VIDEO_WIDTH(vi_get_current_size()), 
+            GET_VIDEO_HEIGHT(vi_get_current_size())
+        );
+        font_window_flush_strings(1);
+        
+        if (data_79C == 8) {
+            rcp_screen_full_write(gdl, bss_118, 0, 0, 0, 0, 0xFF, 2);
+            rcp_screen_full_write(gdl, bss_11C, 0x26, 0x24, 0, 0, 0xFF, 1);
+            rcp_screen_full_write(gdl, bss_120, 0x26, 0x24, 0, 0, 0xFF, 1);
+            rcp_screen_full_write(gdl, bss_11C, 0x257, 0x24, 0, 0, 0xFF, 1);
+            rcp_screen_full_write(gdl, bss_120, 0x26, 0x1B6, 0, 0, 0xFF, 1);
+            font_window_use_font(1, 4);
+            font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, gDLL_74_Picmenu->vtbl->get_highlight_alpha());
+            font_window_add_string_xy(1, 0x140, 0x2A, &data_0, 1, ALIGN_TOP_CENTER);
+            font_window_add_string_xy(1, 0x140, 0x190, &data_4, 1, ALIGN_TOP_CENTER);
+            font_window_add_string_xy(1, 0x30, 0xEB, &data_8, 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(1, 0x242, 0xEB, &data_C, 1, ALIGN_TOP_LEFT);
+        } else if (data_79C == 7) {
+            rcp_screen_full_write(gdl, bss_118, 0, 0, 0, 0, 0xFF, 2);
+            font_window_use_font(1, 0);
+            
+            for (i = 0; i < 0xB; i++) {
+                font_window_set_text_colour(1, 0xE1, 0xAB, 0x61, 0xFF, 0xFF);
+                font_window_add_string_xy(1, data_7A0[i][0], data_7A0[i][1], data_798->strings[i], 1, ALIGN_TOP_LEFT);
+                font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0x96);
+                font_window_add_string_xy(1, data_7A0[i][0] - 1, data_7A0[i][1] - 1, data_798->strings[i], 2, ALIGN_TOP_LEFT);
+            }
+            
+            font_window_use_font(1, 1);
+            
+            for (; i < 0x1B; i++) {
+                font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
+                font_window_add_string_xy(1, data_7A0[i][0], data_7A0[i][1], data_798->strings[i], 1, ALIGN_TOP_LEFT);
+                font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0x96);
+                font_window_add_string_xy(1, data_7A0[i][0] - 1, data_7A0[i][1] - 1, data_798->strings[i], 2, ALIGN_TOP_LEFT);
+            }
+            
+        } else {
+            if (bss_0) {
+                rcp_screen_full_write(gdl, bss_118, 0, 0, 0, 0, 0xFF, 2);
+                font_window_use_font(1, 4);
+                font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
+                font_window_add_string_xy(1, 0x238, 0x3F, data_794->strings[1], 1, ALIGN_TOP_RIGHT);
+                font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
+                font_window_add_string_xy(1, 0x233, 0x3A, data_794->strings[1], 2, ALIGN_TOP_RIGHT);
+                if (submenu->unk9 != -1) {
+                    font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
+                    font_window_add_string_xy(1, 0x53, 0xB2, data_794->strings[submenu->unk9], 1, ALIGN_TOP_LEFT);
+                    font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
+                    font_window_add_string_xy(1, 0x4E, 0xAD, data_794->strings[submenu->unk9], 2, ALIGN_TOP_LEFT);
+                }
+                if (submenu->unkA != -1) {
+                    font_window_use_font(1, 0);
+                    font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
+                    font_window_add_string_xy(1, 0x140, 0x195, data_794->strings[submenu->unkA], 1, ALIGN_TOP_CENTER);
+                    font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
+                    font_window_add_string_xy(1, 0x13E, 0x193, data_794->strings[submenu->unkA], 2, ALIGN_TOP_CENTER);
+                }
+                if (submenu->unk9 != -1) {
+                    dll_65_func_35D0(gdl, 0x38, 0xDC, 0, 0x1E0);
+                }
+            } else {
+                func_80010158(&ulx, &lrx, &uly, &lry);
+                rcp_screen_scroll_write(gdl, bss_118, 0, 0, uly, lry, 0xFF, 2);
+                if (submenu->unk9 != -1) {
+                    dll_65_func_35D0(gdl, 0x38, 0xDC, uly, lry);
+                }
+                if ((data_79C == 0) && (uly < 0x64)) {
+                    font_window_use_font(1, 4);
+                    font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
+                    font_window_add_string_xy(1, 0x238, 0x3F, data_794->strings[1], 1, ALIGN_TOP_RIGHT);
+                    font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
+                    font_window_add_string_xy(1, 0x233, 0x3A, data_794->strings[1], 2, ALIGN_TOP_RIGHT);
+                }
+            }
+
+            for (i = 0; i < bss_12C; i++) {
+                if (bss_130[i] != 0) {
+                    gDLL_75->vtbl->func5.withTwoArgs(bss_130[i], gdl);
+                }
+            }
+        }
+        
+        gDLL_74_Picmenu->vtbl->draw(gdl);
+        
+        font_window_draw(gdl, NULL, NULL, 1);
+        
+        bss_0--;
+        if (bss_0 < 0) {
+            bss_0 = 0;
+        }
+    }
+}
+#endif
 
 // offset: 0x16A4 | func: 3
 static void dll_65_func_16A4(OptionsSubmenu* submenu) {
@@ -1125,28 +1239,30 @@ void dll_65_func_3414(void) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_35D0.s")
 #else
-void dll_65_func_35D0-2(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY) {
-    s16* texIdxPtr;
-    s16* end;
-    Texture* tex;
-    s32 x;
-    s32 y;
+void dll_65_func_35D0(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY) {
+    s16 *texIdxPtr;
+    s16 *new_var;
+    u32 end;
+    u32 x;
+    u32 y;
+    u32 i;
+    
+    end = 45;
 
     x = initialX;
     y = initialY;
     
     texIdxPtr = data_830;
-    end = data_830 + 45;
-    do {
-        if (*texIdxPtr == -1) {
+    new_var = texIdxPtr++; //fake
+    
+    for (i = 0; i < end; i++) {
+        if (texIdxPtr[i] == -1) {
             x = initialX;
             y += 0x20;
         } else {
-            tex = bss_D0[*texIdxPtr];
-            rcp_screen_scroll_write(arg0, tex, x, y, endX, endY, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_scroll_write(arg0, bss_D0[texIdxPtr[i]], x, y, endX, endY, 0xFF, SCREEN_WRITE_TRANSLUCENT);
             x += 0x40;
         }
-        texIdxPtr++;
-    } while ((u32) texIdxPtr < (u32) end);
+    }
 }
 #endif
