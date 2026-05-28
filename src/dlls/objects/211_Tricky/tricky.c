@@ -41,12 +41,20 @@ typedef struct {
     HeadAnimation unk360; // maybe a pointer
     u8 pad384[0x3B4 - 0x384];
     Vec3f unk3B4;
-    u8 pad3C0[0x5E4 - 0x3C0];
+    u8 pad3C0[0x5D4 - 0x3C0];
+    Vec3f *unk5D4;
+    Vec3f unk5D8;
     Object *unk5E4[3];
     Object *unk5F0;
-    u8 pad5F4[0x610-0x5F4];
+    f32 unk5F4;
+    f32 unk5F8;
+    f32 unk5FC;
+    f32 unk600;
+    u8 pad604[0x610-0x604];
 } DLL211_Data;
 
+/* static */ void dll_211_func_87E4(Object* arg0);
+/* static */ void dll_211_func_8F84(Object* arg0, Vec3f* arg1, f32* arg2);
 static void dll_211_func_88F4(Object* arg0, s16 arg1);
 static void dll_211_func_9024(DLL211_Data* arg0, Vec3f *arg1);
 static s32 dll_211_func_9668(DLL27_Data* arg0);
@@ -448,19 +456,116 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7DB8.s")
 
 // offset: 0x7EFC | func: 62
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7EFC.s")
+#else
+typedef struct {
+    u32 pad0;
+    u8 unk4[4]; // unknown size
+    u8 pad8[0x1B - 0x8];
+    s8 unk1B;
+    s32 unk1C[4];
+} UnkDLL211_7EFC;
+
+CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, UnkDLL211_7EFC* arg1, s32 arg2, s32 arg3) {
+    CurveSetup *sp68[4];
+    f32 temp_fv0;
+    f32 var_fs0;
+    u16 var_s0;
+    u16 var_s1;
+    u16 var_s2;
+    u16 var_s3;
+
+    for (var_s0 = 0, var_s2 = 0, var_s3 = 1; var_s0 < 4; var_s0++, var_s3 <<= 1, arg3 <<= 1) {
+        if (arg1->unk1C[var_s0] >= 0 && (arg1->unk1B & var_s3) == arg3) {
+            // FAKE
+            if (1);
+            sp68[var_s2] = gDLL_26_Curves->vtbl->func_39C(arg1->unk1C[var_s0]);
+            if (sp68[var_s2] != NULL && (arg2 == 0 || arg2 == (arg1->unk4[var_s2]))) {
+                if (
+                    (sp68[var_s2]->type22.unk30 == -1 || main_get_bits(sp68[var_s2]->type22.unk30) != 0) &&
+                    (sp68[var_s2]->type22.usedBit == -1 || main_get_bits(sp68[var_s2]->type22.usedBit) == 0)
+                ) {
+                    var_s2++;
+                }
+            }
+        }
+    }
+
+    if (var_s2) {
+        var_fs0 = vec3_distance_xz_squared(&arg0->unk8->globalPosition, &sp68[0]->pos);
+        var_s1 = 0;
+        for (var_s0 = 1; var_s0 < var_s2; var_s0++) {
+            temp_fv0 = vec3_distance_xz_squared(&arg0->unk8->globalPosition, &sp68[var_s0]->pos);
+            if (temp_fv0 < var_fs0) {
+                var_fs0 = temp_fv0;
+                var_s1 = var_s0;
+            }
+        }
+        return sp68[var_s1];
+    }
+
+    return NULL;
+}
+#endif
 
 // offset: 0x8114 | func: 63
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_8114.s")
+s16* dll_211_func_8114(CurveSetup* arg0) {
+    if ((arg0->type22.unk30 == -1 || main_get_bits(arg0->type22.unk30) != 0) && (arg0->type22.usedBit == -1 || main_get_bits(arg0->type22.usedBit) == 0)) {
+        return arg0;
+    }
+    return NULL;
+}
 
 // offset: 0x81A8 | func: 64
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_81A8.s")
+void dll_211_func_81A8(Object* arg0) {
+    DLL211_Data* temp_v0;
+    Vec3f* temp_v1;
+
+    temp_v0 = arg0->data;
+    temp_v1 = temp_v0->unk2C;
+    temp_v0->unk5D4 = temp_v1;
+    if (temp_v1 != NULL) {
+        temp_v0->unk5D8.x = temp_v1->x;
+        temp_v0->unk5D8.y = temp_v1->y;
+        temp_v0->unk5D8.z = temp_v1->z;
+    }
+}
 
 // offset: 0x81D8 | func: 65
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_81D8.s")
+f32 dll_211_func_81D8(Object* arg0) {
+    DLL211_Data* data;
+    Vec3f* sp28;
+    f32 sp24;
+    f32 temp_fa1;
+    f32 temp_fv1;
+
+    data = arg0->data;
+    sp28 = data->unk2C;
+    if (sp28 == data->unk5D4) {
+        temp_fv1 = data->unk5D8.x - arg0->srt.transl.x;
+        temp_fa1 = data->unk5D8.z - arg0->srt.transl.z;
+        sp24 = sqrtf(SQ(temp_fv1) + SQ(temp_fa1)) / gUpdateRateF;
+        temp_fv1 = sp28->x - arg0->srt.transl.x;
+        temp_fa1 = sp28->z - arg0->srt.transl.z;
+        temp_fv1 = sqrtf(SQ(temp_fv1) + SQ(temp_fa1)) / gUpdateRateF;
+        return temp_fv1 - sp24;
+    }
+
+    return 0.0f;
+}
 
 // offset: 0x82B8 | func: 66
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_82B8.s")
+void dll_211_func_82B8(DLL211_Data* arg0) {
+    arg0->unk18 = 1;
+    arg0->unk1A = 0;
+    arg0->unk5F4 = 0.0f;
+    arg0->unk5F8 = 0.0f;
+    arg0->unk5FC = 0.0f;
+    arg0->unk600 = 600.0f;
+    arg0->unk4C &= ~0x10;
+    arg0->unk1D = 0;
+}
 
 // offset: 0x8308 | func: 67
 static void dll_211_func_8308(Object* arg0, s32 arg1) {
@@ -495,7 +600,59 @@ static void dll_211_func_83BC(Object* arg0, DLL211_Data* arg1) {
 }
 
 // offset: 0x8470 | func: 69
+#ifndef NON_MATCHING
+void dll_211_func_8470(Object* arg0, Vec3f* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_8470.s")
+#else
+void dll_211_func_8470(Object* arg0, Vec3f* arg1) {
+    s32 temp;
+    f32 sp38[1];
+    f32* temp_a2;
+    DLL211_Data* data;
+    s16 sp2E;
+    f32 var_f0;
+    DLL27_Data* sp24; // doesn't actually exist
+
+    data = arg0->data;
+    sp24 = &data->unkCC;
+    sp38[0] = data->unk20;
+    temp_a2 = data->unk30;
+    dll_211_func_8F84(arg0, arg1, data->unk30);
+    temp = sp2E - (arg0->srt.yaw & 0xFFFF);
+    if (sp38[0] > 0.0f) {
+        sp2E = arg0->srt.yaw;
+        dll_211_func_87E4(arg0);
+
+        // FAKE code that probably got optimized out?
+        temp = sp2E - (arg0->srt.yaw & 0xFFFF);
+        CIRCLE_WRAP(temp);
+        if (dll_211_func_9668(&data->unkCC) != 0) {
+            dll_211_func_8308(arg0, 7);
+            arg0->srt.transl.f[1] = sp24->waterY;
+        } else if (sp38[0] > 1.0f) {
+            dll_211_func_8308(arg0, 5);
+        } else if (sp38[0] > 0.66f) {
+            dll_211_func_8308(arg0, 4);
+        } else if (sp38[0] > 0.33f) {
+            dll_211_func_8308(arg0, 2);
+        } else {
+            dll_211_func_8308(arg0, 1);
+        }
+        var_f0 = sp38[0];
+        arg0->srt.transl.x += temp_a2[0] * var_f0 * gUpdateRateF;
+        arg0->srt.transl.z += temp_a2[1] * var_f0 * gUpdateRateF;
+        func_8002493C(arg0, var_f0, &data->unk38);
+        return;
+    }
+    if (dll_211_func_9668(&data->unkCC) != 0) {
+        dll_211_func_8308(arg0, 7);
+        arg0->srt.transl.f[1] = sp24->waterY;
+    } else {
+        dll_211_func_8308(arg0, 0);
+        data->unk38 = 0.005f;
+    }
+}
+#endif
 
 // offset: 0x871C | func: 70
 void dll_211_func_871C(Object* arg0, s8* arg1) {
