@@ -11,22 +11,19 @@
 #define SCALE_X 20.0f
 #define SCALE_Z 20.0f
 
-#define TRI_FLAGS (0x40 | 0x1)
-#define MASK_TRI(v0, v1, v2) {TRI_FLAGS, v0, v1, v2, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-
 /*0x0*/ static const DLTri sMaskTris[12] = {
-    MASK_TRI(2, 0, 1),
-    MASK_TRI(3, 2, 1),
-    MASK_TRI(4, 6, 5),
-    MASK_TRI(6, 7, 5),
-    MASK_TRI(6, 2, 3),
-    MASK_TRI(3, 7, 6),
-    MASK_TRI(3, 1, 7),
-    MASK_TRI(7, 1, 5),
-    MASK_TRI(4, 1, 0),
-    MASK_TRI(4, 5, 1),
-    MASK_TRI(0, 2, 4),
-    MASK_TRI(2, 6, 4)
+    MASK_TRI(0x40 | 1, 2, 0, 1),
+    MASK_TRI(0x40 | 1, 3, 2, 1),
+    MASK_TRI(0x40 | 1, 4, 6, 5),
+    MASK_TRI(0x40 | 1, 6, 7, 5),
+    MASK_TRI(0x40 | 1, 6, 2, 3),
+    MASK_TRI(0x40 | 1, 3, 7, 6),
+    MASK_TRI(0x40 | 1, 3, 1, 7),
+    MASK_TRI(0x40 | 1, 7, 1, 5),
+    MASK_TRI(0x40 | 1, 4, 1, 0),
+    MASK_TRI(0x40 | 1, 4, 5, 1),
+    MASK_TRI(0x40 | 1, 0, 2, 4),
+    MASK_TRI(0x40 | 1, 2, 6, 4)
 };
 
 /*0xC0*/ static const Vec3f sMaskVertCoords[8] = {

@@ -5,6 +5,7 @@
 #include "dlls/objects/278_flameblast.h"
 #include "sys/objexpr.h"
 #include "sys/objtype.h"
+#include "sys/route.h"
 
 #include "prevent_bss_reordering.h"
 
@@ -41,7 +42,18 @@ typedef struct {
     HeadAnimation unk360; // maybe a pointer
     u8 pad384[0x3B4 - 0x384];
     Vec3f unk3B4;
-    u8 pad3C0[0x5D4 - 0x3C0];
+    u8 pad3C0[0x448 - 0x3C0];
+    s32 unk448;
+    u8 pad44C[0x4D0 - 0x44C];
+    CurveSetup *unk4D0;
+    CurveSetup *unk4D4;
+    u16 unk4D8;
+    u8 unk4DA;
+    u8 pad4DB;
+    Route unk4DC[4];
+    Route unk59C;
+    CurveSetup *unk5CC;
+    void *unk5D0;
     Vec3f *unk5D4;
     Vec3f unk5D8;
     Object *unk5E4[3];
@@ -53,6 +65,7 @@ typedef struct {
     u8 pad604[0x610-0x604];
 } DLL211_Data;
 
+static CurveSetup* dll_211_func_8114(CurveSetup* arg0);
 /* static */ void dll_211_func_87E4(Object* arg0);
 /* static */ void dll_211_func_8F84(Object* arg0, Vec3f* arg1, f32* arg2);
 static void dll_211_func_88F4(Object* arg0, s16 arg1);
@@ -423,51 +436,285 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 /*0x720*/ static const char str_720[] = "entered a non valid movementstate\n";
 /*0x744*/ static const char str_744[] = "tricky left a valid area, pushing him back...\n";
 /*0x774*/ static const char str_774[] = "";
-/*0x778*/ static const u32 _rodata_778[] = {
-    0x40020100, 0x00000000, 0x00000000, 0x00000000, 0x40030102, 0x00000000, 0x00000000, 0x00000000, 
-    0x40040506, 0x00000000, 0x00000000, 0x00000000, 0x40060507, 0x00000000, 0x00000000, 0x00000000, 
-    0x40060302, 0x00000000, 0x00000000, 0x00000000, 0x40030607, 0x00000000, 0x00000000, 0x00000000, 
-    0x40030701, 0x00000000, 0x00000000, 0x00000000, 0x40070501, 0x00000000, 0x00000000, 0x00000000, 
-    0x40040001, 0x00000000, 0x00000000, 0x00000000, 0x40040105, 0x00000000, 0x00000000, 0x00000000, 
-    0x40000402, 0x00000000, 0x00000000, 0x00000000, 0x40020406, 0x00000000, 0x00000000, 0x00000000
+/*0x778*/ static const DLTri _rodata_778[] = {
+    MASK_TRI(0x40, 2, 1, 0),
+    MASK_TRI(0x40, 3, 1, 2),
+    MASK_TRI(0x40, 4, 5, 6),
+    MASK_TRI(0x40, 6, 5, 7),
+    MASK_TRI(0x40, 6, 3, 2),
+    MASK_TRI(0x40, 3, 6, 7),
+    MASK_TRI(0x40, 3, 7, 1),
+    MASK_TRI(0x40, 7, 5, 1),
+    MASK_TRI(0x40, 4, 0, 1),
+    MASK_TRI(0x40, 4, 1, 5),
+    MASK_TRI(0x40, 0, 4, 2),
+    MASK_TRI(0x40, 2, 4, 6)
 };
-/*0x838*/ static const u32 _rodata_838[] = {
-    0xc1400000, 0x41a00000, 0xc1a00000, 0x41400000, 0x41a00000, 0xc1a00000, 0xc1400000, 0x41a00000, 
-    0x41a00000, 0x41400000, 0x41a00000, 0x41a00000
+/*0x838*/ static const Vec3f _rodata_838[] = {
+    VEC3F(-12.0f, 20.0f, -20.0f),
+    VEC3F(12.0f, 20.0f, -20.0f),
+    VEC3F(-12.0f, 20.0f, 20.0f),
+    VEC3F(12.0f, 20.0f, 20.0f),
+    VEC3F(-12.0f, -7.0f, -20.0f),
+    VEC3F(12.0f, -7.0f, -20.0f),
+    VEC3F(-12.0f, -7.0f, 20.0f),
+    VEC3F(12.0f, -7.0f, 20.0f)
 };
-/*0x868*/ static const u32 _rodata_868[] = {
-    0xc1400000, 0xc0e00000, 0xc1a00000, 0x41400000, 0xc0e00000, 0xc1a00000, 0xc1400000, 0xc0e00000, 
-    0x41a00000, 0x41400000, 0xc0e00000, 0x41a00000
-};
+/*0x898*/ static const char str_898[] = "Reached end of network, curve %d at (%f,%f)\n";
+/*0x8C8*/ static const char str_8C8[] = "in water\n";
+/*0x8D4*/ static const char str_8D4[] = "out of water\n";
+/*0x8E4*/ static const char str_8E4[] = "Vel %f\n";
+/*0x8EC*/ static const char str_8EC[] = "in water\n";
+/*0x8F8*/ static const char str_8F8[] = "out of water\n";
+/*0x908*/ static const char str_908[] = "in water\n";
+/*0x914*/ static const char str_914[] = "out of water\n";
 
 // offset: 0x74C4 | func: 57
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_74C4.s")
+void dll_211_func_74C4(Object* arg0, Gfx** arg1, Mtx** arg2, Vtx** arg3) {
+    Vtx* sp6C;
+    DLL211_Data* data;
+    s32 i;
+    f32 sp60;
+    SRT sp48;
+    Vtx* var_s0;
+
+    data = arg0->data;
+    // unk5E4 is an array of Object pointers? Unless the given objects data is not Tricky?
+    sp60 = ((f32*)data->unk5E4)[0];
+    sp6C = *arg3;
+    sp48.transl.x = arg0->srt.transl.x;
+    var_s0 = sp6C;
+    sp48.transl.y = arg0->srt.transl.y + sp60;
+    if (data->unk1A != 2) {
+        sp48.transl.y += 5.0f;
+    }
+    sp48.transl.z = arg0->srt.transl.z;
+    sp48.scale = 0.001f;
+    gDLL_17_partfx->vtbl->spawn(arg0, 0x1B6, &sp48, 0x200001, -1, NULL);
+    dl_set_prim_color(arg1, 0xFF, 0xFF, 0xFF, 0x80);
+    gSPGeometryMode(*arg1, 0xFFFFFF, 0x210405);
+    dl_apply_geometry_mode(arg1);
+    gDPSetCombineLERP((*arg1), TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED);
+    dl_apply_combine(arg1);
+    for (i = 0; i < 8; i++) {
+        var_s0->v.ob[0] = _rodata_838[i].x * 20.0f;
+        if (i < 4) {
+            var_s0->v.ob[1] = sp60 * 20.0f;
+        } else {
+            var_s0->v.ob[1] = -0x8C;
+        }
+        var_s0->v.ob[2] = _rodata_838[i].z * 20.0f;
+        var_s0->v.cn[0] = 0xFF;
+        var_s0->v.cn[1] = 0;
+        var_s0->v.cn[2] = 0;
+        var_s0->v.cn[3] = 0x40;
+        var_s0++;
+    }
+    gDPSetOtherMode(
+        (*arg1),
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
+        G_AC_NONE | G_ZS_PIXEL | Z_CMP | Z_UPD | IM_RD | CVG_DST_SAVE | ZMODE_XLU | FORCE_BL | G_RM_FOG_SHADE_A | GBL_c2(G_BL_CLR_IN, G_BL_0, G_BL_CLR_MEM, G_BL_1MA)
+    );
+    dl_apply_other_mode(arg1);
+    sp48.transl.x = arg0->srt.transl.x;
+    sp48.transl.y = arg0->srt.transl.y;
+    sp48.transl.z = arg0->srt.transl.z;
+    sp48.yaw = arg0->srt.yaw;
+    sp48.pitch = 0;
+    sp48.roll = 0;
+    sp48.scale = 0.05f;
+    camera_setup_object_srt_matrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
+    gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp6C), 8, 0);
+    dl_triangles(arg1, _rodata_778, 0xC);
+    *arg3 = var_s0;
+}
 
 // offset: 0x7794 | func: 58
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7794.s")
+void dll_211_func_7794(Object* arg0, u8 *arg1, s16 arg2, CurveSetup** arg3) {
+    s32 i;
+    f32 sp7C[4];
+    CurveNode* temp_a1;
+    s32 sp74;
+    CurveSetup* temp_s1;
+    f32 temp_fs0;
+    u8 var_a1;
+    u8 sp6A;
+    u8 var_a2;
+    DLL211_Data* data;
+
+    data = arg0->data;
+    temp_a1 = gDLL_26_Curves->vtbl->func_1BC(&sp74);
+    for (i = 0; i < 4; i++) {
+        sp7C[i] = 3.4028235e38f;
+        arg3[i] = 0;   
+    }
+
+    if (arg2 == 0) {
+        return;
+    }
+
+    for (i = 0; i < sp74; i++) {
+        temp_s1 = temp_a1[i].setup;
+        if (temp_s1->curveType == 0x24 && temp_s1->unk3 == 0) {
+            if (
+                (temp_s1->type22.unk30 == -1 || main_get_bits(temp_s1->type22.unk30) != 0) &&
+                (temp_s1->type22.usedBit == -1 || main_get_bits(temp_s1->type22.usedBit) == 0)
+            ) {
+                temp_fs0 = 
+                    SQ(data->unk2C->z - temp_s1->pos.z) + (
+                        (SQ(arg0->globalPosition.x - temp_s1->pos.x) + SQ(arg0->globalPosition.z - temp_s1->pos.z)) +
+                        SQ(data->unk2C->x - temp_s1->pos.x)
+                    );
+                if (temp_fs0 < sp7C[3]) {
+                    for (var_a1 = 0; var_a1 < 4; var_a1++) {
+                        if ((temp_s1->links[var_a1] >= 0) && (arg2 == temp_s1->unk4_u8[var_a1])) {
+                            sp6A = temp_s1->unk1B >> var_a1;
+                            break;
+                        }
+                    }
+
+                    if (var_a1 != 4) {
+                        for (var_a1 = 0; var_a1 < 4; var_a1++) {
+                            if (temp_fs0 < sp7C[var_a1]) {
+                                for (var_a2 = 3; var_a2 > var_a1; var_a2--) {
+                                    arg1[var_a2] = arg1[var_a2 - 1];
+                                    arg3[var_a2] = arg3[var_a2 - 1];
+                                    sp7C[var_a2] = sp7C[var_a2 - 1];
+                                }
+                                arg1[var_a1] = (sp6A & 1) ^ 1;
+                                arg3[var_a1] = temp_s1;
+                                sp7C[var_a1] = temp_fs0;
+                                break;
+                            }    
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 // offset: 0x7A7C | func: 59
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7A7C.s")
+#else
+// matches but requires dll_211_func_7EFC and dll_211_func_7DB8 (matched) as static
+CurveSetup* dll_211_func_7A7C(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, u8 arg3) {
+    CurveSetup* var_v1;
+
+    var_v1 = NULL;
+    if (arg0->unk4D0 == arg1 && arg0->unk4D8 == arg2 && arg0->unk4DA == arg3) {
+        var_v1 = dll_211_func_8114(arg0->unk4D4);
+    }
+    if (var_v1 == NULL) {
+        var_v1 = dll_211_func_7EFC(arg0, arg1, arg2, arg3);
+        if (var_v1 == NULL) {
+            var_v1 = dll_211_func_7DB8(arg0, arg1, (void* ) arg2);
+            if (var_v1 == NULL) {
+                var_v1 = dll_211_func_7EFC(arg0, arg1, 0, arg3);
+                if (var_v1 == NULL) {
+                    return NULL;
+                }
+            }
+        }
+    }
+    arg0->unk4D0 = arg1;
+    arg0->unk4D4 = var_v1;
+    arg0->unk4D8 = arg2;
+    arg0->unk4DA = arg3;
+    return var_v1;
+}
+#endif
 
 // offset: 0x7BAC | func: 60
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7BAC.s")
+s8 dll_211_func_7BAC(DLL211_Data* arg0, CurveSetup** arg1, u8 *arg2, void* arg3) {
+    s8 sp5C[4];
+    s8 sp5B;
+    s8 temp_v0;
+    s8 var_s0;
+    s8 var_s2;
+
+    for (sp5B = 0; sp5B < 4; sp5B++) {
+        if (arg1[sp5B] != NULL) {
+            route_setup(&arg0->unk4DC[sp5B], arg1[sp5B], arg0->unk2C, arg3, arg2[sp5B]);
+        }
+    }
+
+    for (sp5B = 0; sp5B < 0x64; sp5B++) {
+        var_s2 = 0;
+        for (var_s0 = 0; var_s0 < 4; var_s0++) {
+            if (arg1[var_s0] != NULL) {
+                sp5C[var_s0] = route_find(&arg0->unk4DC[var_s0], 5);
+            } else {
+                sp5C[var_s0] = -1;
+            }
+            temp_v0 = sp5C[var_s0];
+            if (temp_v0 != -1) {
+                if (temp_v0 == 1) {
+                    return var_s0;
+                }
+            } else {
+                arg1[var_s0] = NULL;
+                var_s2++;
+            } 
+        }
+
+        switch (var_s2) {
+            case 3:
+                if (*arg1 != NULL) {
+                    sp5C[0] = route_find(arg0->unk4DC, 500);
+                }
+            
+                if (sp5C[0] == 1) {
+                    return 0;
+                }
+            
+                return -1;
+            case 4:
+                return -1;
+            default:
+                break;
+        }    
+    }
+
+    return -1;
+}
 
 // offset: 0x7DB8 | func: 61
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7DB8.s")
+CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2) {
+    if (arg2 == NULL) {
+        return NULL;
+    }
+
+    if (arg2 == arg0->unk5D0 && arg1 == arg0->unk5CC) {
+        arg0->unk5CC = route_next(&arg0->unk59C);
+        if (arg0->unk5CC == NULL) {
+            return NULL;
+        }
+
+        arg0->unk5CC = dll_211_func_8114(arg0->unk5CC);
+        if (arg0->unk5CC != NULL) {
+            return arg0->unk5CC;
+        }
+    }
+
+    route_setup(&arg0->unk59C, arg1, arg0->unk2C, arg2, arg0->unk448);
+    if (route_find(&arg0->unk59C, 500) != 1) {
+        return NULL;
+    }
+
+    route_reconstruct(&arg0->unk59C);
+    arg0->unk5CC = route_next(&arg0->unk59C);
+    arg0->unk5D0 = arg2;
+    return arg0->unk5CC;
+}
 
 // offset: 0x7EFC | func: 62
 #ifndef NON_MATCHING
+CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7EFC.s")
 #else
-typedef struct {
-    u32 pad0;
-    u8 unk4[4]; // unknown size
-    u8 pad8[0x1B - 0x8];
-    s8 unk1B;
-    s32 unk1C[4];
-} UnkDLL211_7EFC;
-
-CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, UnkDLL211_7EFC* arg1, s32 arg2, s32 arg3) {
+CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3) {
     CurveSetup *sp68[4];
     f32 temp_fv0;
     f32 var_fs0;
@@ -477,11 +724,11 @@ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, UnkDLL211_7EFC* arg1, s32 arg2,
     u16 var_s3;
 
     for (var_s0 = 0, var_s2 = 0, var_s3 = 1; var_s0 < 4; var_s0++, var_s3 <<= 1, arg3 <<= 1) {
-        if (arg1->unk1C[var_s0] >= 0 && (arg1->unk1B & var_s3) == arg3) {
+        if (arg1->links[var_s0] >= 0 && (arg1->unk1B & var_s3) == arg3) {
             // FAKE
             if (1);
-            sp68[var_s2] = gDLL_26_Curves->vtbl->func_39C(arg1->unk1C[var_s0]);
-            if (sp68[var_s2] != NULL && (arg2 == 0 || arg2 == (arg1->unk4[var_s2]))) {
+            sp68[var_s2] = gDLL_26_Curves->vtbl->func_39C(arg1->links[var_s0]);
+            if (sp68[var_s2] != NULL && (arg2 == 0 || arg2 == (arg1->unk4_u8[var_s2]))) {
                 if (
                     (sp68[var_s2]->type22.unk30 == -1 || main_get_bits(sp68[var_s2]->type22.unk30) != 0) &&
                     (sp68[var_s2]->type22.usedBit == -1 || main_get_bits(sp68[var_s2]->type22.usedBit) == 0)
@@ -510,7 +757,7 @@ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, UnkDLL211_7EFC* arg1, s32 arg2,
 #endif
 
 // offset: 0x8114 | func: 63
-s16* dll_211_func_8114(CurveSetup* arg0) {
+static CurveSetup* dll_211_func_8114(CurveSetup* arg0) {
     if ((arg0->type22.unk30 == -1 || main_get_bits(arg0->type22.unk30) != 0) && (arg0->type22.usedBit == -1 || main_get_bits(arg0->type22.usedBit) == 0)) {
         return arg0;
     }
@@ -907,6 +1154,7 @@ void dll_211_func_9050(Object* arg0, DLL211_Data* arg1) {
 
 // offset: 0x9200 | func: 83
 #ifndef NON_MATCHING
+void dll_211_func_9200(Object* arg0, DLL211_Data* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_9200.s")
 #else
 // make dll_211_func_95E0 static
