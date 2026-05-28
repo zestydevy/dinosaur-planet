@@ -65,13 +65,15 @@ typedef struct {
     u8 pad604[0x610-0x604];
 } DLL211_Data;
 
+/* static */ CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2);
+/* static */ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
 static CurveSetup* dll_211_func_8114(CurveSetup* arg0);
 /* static */ void dll_211_func_87E4(Object* arg0);
-/* static */ void dll_211_func_8F84(Object* arg0, Vec3f* arg1, f32* arg2);
 static void dll_211_func_88F4(Object* arg0, s16 arg1);
+/* static */ void dll_211_func_8F84(Object* arg0, Vec3f* arg1, f32* arg2);
 static void dll_211_func_9024(DLL211_Data* arg0, Vec3f *arg1);
 static s32 dll_211_func_9668(DLL27_Data* arg0);
-
+/* static */ void dll_211_func_95E0(Object* arg0, DLL211_Data *arg1, s16* arg2);
 /*0x0*/ static u32 _data_0[] = {
     0x06d70500, 0x000001dc, 0x05000000
 };
