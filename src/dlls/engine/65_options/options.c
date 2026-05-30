@@ -310,20 +310,21 @@ typedef struct {
 /*0x794*/ static GameTextChunk* data_794 = NULL;
 /*0x798*/ static GameTextChunk* data_798 = NULL; //Controls text
 /*0x79C*/ static s8 data_79C = -1;
-/*0x7A0*/ static u16 data_7A0[][2] = {
+
+/*0x7A0*/ static s16 data_7A0[][2] = {
     {0x01d6, 0x00c4}, 
     {0x01d0, 0x011c}, 
     {0x01cc, 0x003e}, 
-    {0x019b, 0x0175}, 
+    {0x019b, 0x0175},
     {0x003f, 0x008d}, 
     {0x003f, 0x013f}, 
     {0x013a, 0x003e}, 
-    {0x01d9, 0x0096}, 
+    {0x01d9, 0x0096},
     {0x01d9, 0x0071}, 
     {0x01d6, 0x005c}, 
-    {0x01d6, 0x0082},
-// };
-// /*0x7CC*/ static u16 data_7CC[][2] = {
+    {0x01d6, 0x0082}
+};
+/*0x7CC*/ static s16 data_7CC[][2] = {
     {0x01ea, 0x0059}, 
     {0x01ea, 0x0073}, 
     {0x01ea, 0x0086}, 
@@ -331,7 +332,7 @@ typedef struct {
     {0x01d8, 0x00de}, 
     {0x01d8, 0x00ef}, 
     {0x01ce, 0x0100}, 
-    {0x01cc, 0x0133}, 
+    {0x01cc, 0x0133},
     {0x01c6, 0x0145}, 
     {0x01ef, 0x0154}, 
     {0x019d, 0x018a}, 
@@ -608,21 +609,19 @@ void dll_65_func_B84(void) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_B8C.s")
 #else
-static void dll_65_func_35D0(Gfx** gdl, s32 initialX, s32 initialY, s32 endX, s32 endY) {}
+static void dll_65_func_35D0(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY);
 
-void dll_65_func_B8C-3(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
-    s32 uly; //7C
-    s32 lry; //78
-    s32 ulx; //74
-    s32 lrx; //70
-    OptionsSubmenu* submenu;
-    s32 i2;
+void dll_65_func_B8C(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 i;
+    s32 i2;
+    s32 uly;
+    s32 lry;
+    s32 ulx;
+    s32 lrx;
     s32 end;
-    s32 pad;
-
-    submenu = &data_704[data_79C];
+    OptionsSubmenu *submenu;
     
+    submenu = &data_704[data_79C];
     if ((bss_2 == 0) || (bss_3 >= 0xB)) {
         font_window_set_coords(1, 0, 0, 
             GET_VIDEO_WIDTH(vi_get_current_size()), 
@@ -643,25 +642,30 @@ void dll_65_func_B8C-3(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
             font_window_add_string_xy(1, 0x30, 0xEB, &data_8, 1, ALIGN_TOP_LEFT);
             font_window_add_string_xy(1, 0x242, 0xEB, &data_C, 1, ALIGN_TOP_LEFT);
         } else if (data_79C == 7) {
+            
             rcp_screen_full_write(gdl, bss_118, 0, 0, 0, 0, 0xFF, 2);
             font_window_use_font(1, 0);
             
-            for (i = 0; i < 0xB; i++) {
+            i2 = 0x1B;
+            for (end = 0xB, i = 0; i < end;) {
                 font_window_set_text_colour(1, 0xE1, 0xAB, 0x61, 0xFF, 0xFF);
                 font_window_add_string_xy(1, data_7A0[i][0], data_7A0[i][1], data_798->strings[i], 1, ALIGN_TOP_LEFT);
                 font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0x96);
                 font_window_add_string_xy(1, data_7A0[i][0] - 1, data_7A0[i][1] - 1, data_798->strings[i], 2, ALIGN_TOP_LEFT);
+                i++;
             }
             
             font_window_use_font(1, 1);
             
-            for (; i < 0x1B; i++) {
+            for (end = i2, i2 = 0; i < end;) {
                 font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
-                font_window_add_string_xy(1, data_7A0[i][0], data_7A0[i][1], data_798->strings[i], 1, ALIGN_TOP_LEFT);
+                font_window_add_string_xy(1, data_7CC[i2][0], data_7CC[i2][1], data_798->strings[i], 1, ALIGN_TOP_LEFT);
                 font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0x96);
-                font_window_add_string_xy(1, data_7A0[i][0] - 1, data_7A0[i][1] - 1, data_798->strings[i], 2, ALIGN_TOP_LEFT);
+                font_window_add_string_xy(1, data_7CC[i2][0] - 1, data_7CC[i2][1] - 1, data_798->strings[i], 2, ALIGN_TOP_LEFT);
+                i++;
+                i2++;
             }
-            
+        
         } else {
             if (bss_0) {
                 rcp_screen_full_write(gdl, bss_118, 0, 0, 0, 0, 0xFF, 2);
@@ -670,12 +674,13 @@ void dll_65_func_B8C-3(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
                 font_window_add_string_xy(1, 0x238, 0x3F, data_794->strings[1], 1, ALIGN_TOP_RIGHT);
                 font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
                 font_window_add_string_xy(1, 0x233, 0x3A, data_794->strings[1], 2, ALIGN_TOP_RIGHT);
+                
                 if (submenu->unk9 != -1) {
                     font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
                     font_window_add_string_xy(1, 0x53, 0xB2, data_794->strings[submenu->unk9], 1, ALIGN_TOP_LEFT);
                     font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
                     font_window_add_string_xy(1, 0x4E, 0xAD, data_794->strings[submenu->unk9], 2, ALIGN_TOP_LEFT);
-                }
+                } 
                 if (submenu->unkA != -1) {
                     font_window_use_font(1, 0);
                     font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
@@ -700,16 +705,16 @@ void dll_65_func_B8C-3(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
                     font_window_add_string_xy(1, 0x233, 0x3A, data_794->strings[1], 2, ALIGN_TOP_RIGHT);
                 }
             }
-
+            
             for (i = 0; i < bss_12C; i++) {
                 if (bss_130[i] != 0) {
                     gDLL_75->vtbl->func5.withTwoArgs(bss_130[i], gdl);
                 }
             }
+        
         }
         
         gDLL_74_Picmenu->vtbl->draw(gdl);
-        
         font_window_draw(gdl, NULL, NULL, 1);
         
         bss_0--;
@@ -980,7 +985,7 @@ static void dll_65_func_26D8(void) {
 }
 
 // offset: 0x2888 | func: 11
-void dll_65_func_2888(void) {
+static void dll_65_func_2888(void) {
     OptionsSubmenu* submenu;
     s32 i;
 
@@ -1153,19 +1158,15 @@ void dll_65_func_2D50(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x320C | func: 16
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_320C.s")
-#else
 void dll_65_func_320C(s32 arg0, s32 arg1) {
     if ((arg0 != 1) || (arg1 != 2)) {
         return;
     }
     
-    bss_148->screenSizeAnamorphic = gDLL_75->vtbl->func8(bss_130[1]);
+    bss_148->screenSizeAnamorphic = gDLL_75->vtbl->func8(bss_130[0]);
     bss_148->screenAspectRatio = gDLL_75->vtbl->func8(bss_130[1]);
     dll_65_func_2888();
 }
-#endif
 
 // offset: 0x32B8 | func: 17
 void dll_65_func_32B8(s32 arg0, s32 arg1) {
@@ -1236,33 +1237,26 @@ void dll_65_func_3414(void) {
 }
 
 // offset: 0x35D0 | func: 20
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_35D0.s")
-#else
 void dll_65_func_35D0(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY) {
-    s16 *texIdxPtr;
-    s16 *new_var;
     u32 end;
     u32 x;
     u32 y;
+    s16 *new_var;
     u32 i;
     
     end = 45;
-
+    
     x = initialX;
     y = initialY;
     
-    texIdxPtr = data_830;
-    new_var = texIdxPtr++; //fake
-    
     for (i = 0; i < end; i++) {
-        if (texIdxPtr[i] == -1) {
+        new_var = &data_830[(s32)i];
+        if ((*new_var) == -1) {
             x = initialX;
             y += 0x20;
         } else {
-            rcp_screen_scroll_write(arg0, bss_D0[texIdxPtr[i]], x, y, endX, endY, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcp_screen_scroll_write(arg0, bss_D0[*new_var], x, y, endX, endY, 0xFF, SCREEN_WRITE_TRANSLUCENT);
             x += 0x40;
         }
     }
 }
-#endif
