@@ -6,6 +6,8 @@
 #include "sys/audio/speaker.h"
 #include "sys/menu.h"
 
+extern void vi_set_modifiers(u8 updateViMode, s8 hStartMod, s8 vScaleMod);
+
 #define NONE -1
 
 /*0x0*/ static u8 data_0 = 171;
@@ -375,7 +377,17 @@ typedef struct {
 /*0x130*/ static s32 bss_130[6]; //Unknown length
 /*0x148*/ static GplayOptions* bss_148;
 
-static void dll_65_func_1718(void);
+static void dll_65_func_1718(void);                 
+static void dll_65_func_1AE4(s32 arg0);             
+static void dll_65_func_2088(s32 arg0);             
+static s32 dll_65_func_2A1C(s32 arg0, u32 arg1);
+static void dll_65_func_2B50(s32 arg0, s32 arg1);  
+static void dll_65_func_2C58(s32 arg0, s32 arg1);  
+static void dll_65_func_2D50(s32 arg0, s32 arg1);  
+static void dll_65_func_320C(s32 arg0, s32 arg1);  
+static void dll_65_func_32B8(s32 arg0, s32 arg1);  
+static void dll_65_func_3404(s32 arg0, s32 arg1);  
+static void dll_65_func_3414(void);                
 
 // offset: 0x0 | ctor
 void dll_65_ctor(void* dll) {
@@ -410,22 +422,6 @@ void dll_65_ctor(void* dll) {
 void dll_65_dtor(void *dll) { }
 
 // offset: 0x1FC | func: 0 | export: 0
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_1FC.s")
-#else
-
-static void dll_65_func_1718(void);                 //matched
-static void dll_65_func_1AE4(s32 arg0);             //matched
-static void dll_65_func_2088(s32 arg0);             //matched
-static s32 dll_65_func_2A1C(s32 a0, s32 a1);        //matched
-static void dll_65_func_2B50(s32 arg0, s32 arg1);   //matched
-static void dll_65_func_2C58(s32 arg0, s32 arg1);   //matched
-static void dll_65_func_2D50(s32 arg0, s32 arg1);   //matched
-static void dll_65_func_320C(s32 arg0, s32 arg1);   //NOT matched
-static void dll_65_func_32B8(s32 arg0, s32 arg1);   //matched
-static void dll_65_func_3404(s32 arg0, s32 arg1);   //matched
-static void dll_65_func_3414(void);                 //matched
-
 s32 dll_65_func_1FC(void) {
     s8 timeBefore;
     s32 selectedIdx; //58
@@ -598,7 +594,6 @@ s32 dll_65_func_1FC(void) {
     
     return 0;
 }
-#endif
 
 // offset: 0xB84 | func: 1 | export: 1
 void dll_65_func_B84(void) {
