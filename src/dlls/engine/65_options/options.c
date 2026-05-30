@@ -387,7 +387,8 @@ static void dll_65_func_2D50(s32 arg0, s32 arg1);
 static void dll_65_func_320C(s32 arg0, s32 arg1);  
 static void dll_65_func_32B8(s32 arg0, s32 arg1);  
 static void dll_65_func_3404(s32 arg0, s32 arg1);  
-static void dll_65_func_3414(void);                
+static void dll_65_func_3414(void);  
+static void dll_65_func_35D0(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY);              
 
 // offset: 0x0 | ctor
 void dll_65_ctor(void* dll) {
@@ -601,11 +602,6 @@ void dll_65_func_B84(void) {
 }
 
 // offset: 0xB8C | func: 2 | export: 2
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/65_options/dll_65_func_B8C.s")
-#else
-static void dll_65_func_35D0(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY);
-
 void dll_65_func_B8C(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 i;
     s32 i2;
@@ -718,7 +714,6 @@ void dll_65_func_B8C(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
         }
     }
 }
-#endif
 
 // offset: 0x16A4 | func: 3
 static void dll_65_func_16A4(OptionsSubmenu* submenu) {
