@@ -396,21 +396,22 @@ typedef struct {
 } OptionsSubmenu;
 
 /*0x704*/ static OptionsSubmenu dMenus[] = {
-    {dItemsMain,            dTextIDsMain,           ARRAYCOUNT(dItemsMain),           NONE,   LINE_0_A_Select_B_Cancel, 4, 5, 4},
-    {dItemsVideo,           dTextIDsVideo,          ARRAYCOUNT(dItemsVideo) - 1,      LINE_5_Video, LINE_0_A_Select_B_Cancel, 3, 0, 0},
-    {dItemsAudio,           dTextIDsAudio,          ARRAYCOUNT(dItemsAudio) - 1,      LINE_6_Audio, LINE_0_A_Select_B_Cancel, 3, 0, 0},
-    {dItemsDisplay,         dTextIDsDisplay,        ARRAYCOUNT(dItemsDisplay),        LINE_2_Display, LINE_0_A_Select_B_Cancel, 3, 0, 0},
-    {dItemsControl,         dTextIDsControl,        ARRAYCOUNT(dItemsControl),        LINE_3_Control, LINE_0_A_Select_B_Cancel, 3, 0, 0},
-    {dItemsCheats,          NULL,                   ARRAYCOUNT(dItemsCheats),         LINE_4_Cheats, LINE_0_A_Select_B_Cancel, 3, 0, 0},
-    {dItemsCinema,          NULL,                   ARRAYCOUNT(dItemsCinema),         LINE_7_Cinema, LINE_0_A_Select_B_Cancel, 3, 0, 0},
-    {dItemsViewLayout,      dTextIDsViewLayout,     ARRAYCOUNT(dItemsViewLayout),     NONE,   NONE,   5, 5, 4},
-    {dItemsScreenPosition,  dTextIDsScreenPosition, ARRAYCOUNT(dItemsScreenPosition), NONE,   NONE,   5, 5, 4}
+    {dItemsMain,            dTextIDsMain,           ARRAYCOUNT(dItemsMain),           NONE,             LINE_0_A_Select_B_Cancel,  4, 5, 4},
+    {dItemsVideo,           dTextIDsVideo,          ARRAYCOUNT(dItemsVideo) - 1,      LINE_5_Video,     LINE_0_A_Select_B_Cancel,  3, 0, 0}, //NOTE: one unused item
+    {dItemsAudio,           dTextIDsAudio,          ARRAYCOUNT(dItemsAudio) - 1,      LINE_6_Audio,     LINE_0_A_Select_B_Cancel,  3, 0, 0}, //NOTE: one unused item
+    {dItemsDisplay,         dTextIDsDisplay,        ARRAYCOUNT(dItemsDisplay),        LINE_2_Display,   LINE_0_A_Select_B_Cancel,  3, 0, 0},
+    {dItemsControl,         dTextIDsControl,        ARRAYCOUNT(dItemsControl),        LINE_3_Control,   LINE_0_A_Select_B_Cancel,  3, 0, 0},
+    {dItemsCheats,          NULL,                   ARRAYCOUNT(dItemsCheats),         LINE_4_Cheats,    LINE_0_A_Select_B_Cancel,  3, 0, 0},
+    {dItemsCinema,          NULL,                   ARRAYCOUNT(dItemsCinema),         LINE_7_Cinema,    LINE_0_A_Select_B_Cancel,  3, 0, 0},
+    {dItemsViewLayout,      dTextIDsViewLayout,     ARRAYCOUNT(dItemsViewLayout),     NONE,             NONE,                      5, 5, 4},
+    {dItemsScreenPosition,  dTextIDsScreenPosition, ARRAYCOUNT(dItemsScreenPosition), NONE,             NONE,                      5, 5, 4}
 };
 
 /*0x794*/ static GameTextChunk* dGametextMenu = NULL;
 /*0x798*/ static GameTextChunk* dGametextControls = NULL;
 /*0x79C*/ static s8 dMenuID = NONE;
 
+/* Coords for the View Layout screen's heading labels */
 /*0x7A0*/ static s16 dLayoutCoordsHeadings[][2] = {
     {470,   196},   //A BUTTON
     {464,   284},   //B BUTTON
@@ -425,6 +426,7 @@ typedef struct {
     {470,  130}    //▼
 };
 
+/* Coords for the View Layout screen's description labels */
 /*0x7CC*/ static s16 dLayoutCoordsDescriptions[][2] = {
     {490,   89},    //Head Cam
     {490,   115},   //Objects
@@ -497,32 +499,32 @@ typedef enum {
 };
 /*0x88C*/ static u8 dSpeakerModes[] = {SPEAKERMODE_STEREO, SPEAKERMODE_SURROUND, SPEAKERMODE_MONO, SPEAKERMODE_HEADPHONE};
 
-/*0x0*/ static s8 sRedrawFrames;    //The number of updates that should be drawn before idling
-/*0x1*/ static s8 sCheatsTopIdx;    //The index of the first cheat shown in the scrollable box (4 cheats are shown at a time)
-/*0x2*/ static s8 sFadeOutActive;       //
-/*0x3*/ static s8 sFadeOutTimer;    //Timer for backing out to the Title Screen
-/*0x8*/ static char sCheatStrings[4][50];
-/*0xD0*/ static  Texture* dBoxTextures[18];
-/*0x118*/ static Texture* sBGTex;
-/*0x11C*/ static Texture* sCropFrameVertical;
-/*0x120*/ static Texture* sCropFrameHorizontal;
-/*0x124*/ static GameTextChunk* sGametextCinema;
-/*0x128*/ static GameTextChunk* sGametextCheats;
-/*0x12C*/ static s8 sCtrlCount;
-/*0x12D*/ static s8 sDefaultItemIdx;
-/*0x130*/ static s32 sCtrls[6];              //Pointers to Front End controls (checkboxes/sliders/lists)
-/*0x148*/ static GplayOptions* sGameOptions; //Player's saved game options
+/*0x0*/ static s8 sRedrawFrames;                 //The number of updates that should be drawn before idling
+/*0x1*/ static s8 sCheatsTopIdx;                 //The index of the first cheat shown in the scrollable box (4 cheats are shown at a time)
+/*0x2*/ static s8 sFadeOutActive;                //For fading out and cutting back to the Title Screen
+/*0x3*/ static s8 sFadeOutTimer;                 //Timer for backing out to the Title Screen
+/*0x8*/ static char sCheatStrings[4][50];        //A buffer for the displayed cheats' text
+/*0xD0*/ static  Texture* dBoxTextures[18];      //Textures for the multi-tile picmenu boxes, used to frame Front End UI controls
+/*0x118*/ static Texture* sBGTex;                //The page's high-res background image
+/*0x11C*/ static Texture* sCropFrameVertical;    //A white frame shown while adjusting the screen position
+/*0x120*/ static Texture* sCropFrameHorizontal;  //A white frame shown while adjusting the screen position
+/*0x124*/ static GameTextChunk* sGametextCinema; //Text for the cinema menu
+/*0x128*/ static GameTextChunk* sGametextCheats; //Text for the cheats menu
+/*0x12C*/ static s8 sCtrlCount;                  //The number of Front End controllers currently being used (checkboxes/sliders/lists)
+/*0x12D*/ static s8 sTopLevelItemIdx;            //The selected item index on the main top-level page of the Options menu (used to restore selection when backing out of a submenu)
+/*0x130*/ static s32 sCtrls[6];                  //Pointers to Front End controls (checkboxes/sliders/lists)
+/*0x148*/ static GplayOptions* sGameOptions;     //Player's saved game options
 
-static void options_func_1718(void);                 
-static void options_func_1AE4(s32 arg0);             
-static void options_func_2088(s32 arg0);             
-static s32 options_func_2A1C(s32 arg0, u32 arg1);
-static void options_func_2B50(s32 arg0, s32 arg1);  
-static void options_func_2C58(s32 arg0, s32 arg1);  
-static void options_func_2D50(s32 arg0, s32 arg1);  
-static void options_func_320C(s32 arg0, s32 arg1);  
-static void options_func_32B8(s32 arg0, s32 arg1);  
-static void options_func_3404(s32 arg0, s32 arg1);  
+static void options_goto_main_page(void);                 
+static void options_goto_control_page(s32 arg0);             
+static void options_goto_video_page(s32 arg0);             
+static int options_exit_main_page(s32 action, s32 selectedItemIdx);
+static void options_handle_action_display_page(s32 action, s32 selectedItemIdx);  
+static void options_handle_action_control_page(s32 action, s32 selectedItemIdx);  
+static void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx);  
+static void options_handle_action_video_page(s32 action, s32 selectedItemIdx);  
+static void options_handle_action_audio_page(s32 action, s32 selectedItemIdx);  
+static void options_handle_action_cinema_page(s32 action, s32 selectedItemIdx);  
 static void options_clean_up(void);  
 static void options_draw_box(Gfx** arg0, s32 initialX, s32 initialY, s32 endX, s32 endY);              
 
@@ -548,9 +550,9 @@ void options_ctor(void* dll) {
         dBoxTextures[i] = tex_load_deferred(dBoxTextureIDs[i]);
     }
     
-    options_func_1718();
+    options_goto_main_page();
     sCtrlCount = 0;
-    sDefaultItemIdx = 0;
+    sTopLevelItemIdx = 0;
     sGameOptions = gDLL_29_Gplay->vtbl->get_game_options();
     sRedrawFrames = 2;
     sFadeOutActive = FALSE;
@@ -613,28 +615,28 @@ s32 options_update1(void) {
 
     switch (dMenuID) {
     case OPTIONS_PAGE_0_Main_Page:
-        sDefaultItemIdx = selectedIdx;
-        if (options_func_2A1C(action, selectedIdx)) {
+        sTopLevelItemIdx = selectedIdx;
+        if (options_exit_main_page(action, selectedIdx)) {
             return 0;
         }
         break;
     case OPTIONS_PAGE_3_Display:
-        options_func_2B50(action, selectedIdx);
+        options_handle_action_display_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
             sGameOptions->showSubtitles = gDLL_75->vtbl->func8(sCtrls[0]);
             sGameOptions->showInstruments = gDLL_75->vtbl->func8(sCtrls[1]);
-            options_func_1718();
+            options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_4_Control:
-        options_func_2C58(action, selectedIdx);
+        options_handle_action_control_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
             sGameOptions->zTargetMode = gDLL_75->vtbl->func8(sCtrls[0]);
-            options_func_1718();
+            options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_5_Cheats:
-        options_func_2D50(action, selectedIdx);
+        options_handle_action_cheats_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
             for (i = 0; i < 4; i++) {
                 gDLL_29_Gplay->vtbl->set_cheat_enabled(
@@ -642,37 +644,37 @@ s32 options_update1(void) {
                     gDLL_75->vtbl->func8(sCtrls[i + 1])
                 );
             }
-            options_func_1718();
+            options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_1_Video:
-        options_func_320C(action, selectedIdx);
+        options_handle_action_video_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
             sGameOptions->screenSizeAnamorphic = gDLL_75->vtbl->func8(sCtrls[0]);
             sGameOptions->screenAspectRatio = gDLL_75->vtbl->func8(sCtrls[1]);
-            options_func_1718();
+            options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_2_Audio:
-        options_func_32B8(action, selectedIdx);
+        options_handle_action_audio_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
             sGameOptions->audioMode = gDLL_75->vtbl->func8(sCtrls[0]);
             sGameOptions->volumeMusic = gDLL_75->vtbl->func8(sCtrls[1]);
             sGameOptions->volumeAudio = gDLL_75->vtbl->func8(sCtrls[2]);
-            options_func_1718();
+            options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_6_Cinema:
-        options_func_3404(action, selectedIdx);
+        options_handle_action_cinema_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
-            options_func_1718();
+            options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_7_View_Layout:
         if (action != PICMENU_ACTION_NONE) {
             tex_free(sBGTex);
             sBGTex = tex_load_deferred(TEXTABLE_2DF_Paper_BG_Sabre_Cape);
-            options_func_1AE4(1);
+            options_goto_control_page(1);
             return 0;
         }
         break;
@@ -718,7 +720,7 @@ s32 options_update1(void) {
 
         if (action != PICMENU_ACTION_NONE) {
             joy_reset_menu_joystick_delay();
-            options_func_2088(2);
+            options_goto_video_page(2);
             return 0;
         }
         break;
@@ -774,10 +776,12 @@ void options_draw(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
     
     if (dMenuID == OPTIONS_PAGE_8_Screen_Position) {
         rcp_screen_full_write(gdl, sBGTex,               0,   0,   0, 0, 0xFF, 2);
+
         rcp_screen_full_write(gdl, sCropFrameVertical,   38,  36,  0, 0, 0xFF, 1);
         rcp_screen_full_write(gdl, sCropFrameHorizontal, 38,  36,  0, 0, 0xFF, 1);
         rcp_screen_full_write(gdl, sCropFrameVertical,   599, 36,  0, 0, 0xFF, 1);
         rcp_screen_full_write(gdl, sCropFrameHorizontal, 38,  438, 0, 0, 0xFF, 1);
+
         font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
         font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, gDLL_74_Picmenu->vtbl->get_highlight_alpha());
         font_window_add_string_xy(1, 320, 42,  &dDownArrowChar,  1, ALIGN_TOP_CENTER);
@@ -826,19 +830,19 @@ void options_draw(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
             //Print "OPTIONS" title, with drop-shadow
             {
                 font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
-                font_window_add_string_xy(1, 0x238, 0x3F, dGametextMenu->strings[LINE_1_Options], 1, ALIGN_TOP_RIGHT);
+                font_window_add_string_xy(1, 568, 63, dGametextMenu->strings[LINE_1_Options], 1, ALIGN_TOP_RIGHT);
 
                 font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
-                font_window_add_string_xy(1, 0x233, 0x3A, dGametextMenu->strings[LINE_1_Options], 2, ALIGN_TOP_RIGHT);
+                font_window_add_string_xy(1, 563, 58, dGametextMenu->strings[LINE_1_Options], 2, ALIGN_TOP_RIGHT);
             }
 
             //Print a heading label for the page's box, if it uses one
             if (submenu->boxLabel != NONE) {
                 font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
-                font_window_add_string_xy(1, 0x53, 0xB2, dGametextMenu->strings[submenu->boxLabel], 1, ALIGN_TOP_LEFT);
+                font_window_add_string_xy(1, 83, 178, dGametextMenu->strings[submenu->boxLabel], 1, ALIGN_TOP_LEFT);
 
                 font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
-                font_window_add_string_xy(1, 0x4E, 0xAD, dGametextMenu->strings[submenu->boxLabel], 2, ALIGN_TOP_LEFT);
+                font_window_add_string_xy(1, 78, 173, dGametextMenu->strings[submenu->boxLabel], 2, ALIGN_TOP_LEFT);
             } 
 
             //Print the menu navigation info, if the page uses it (A-SELECT, B-CANCEL)
@@ -859,15 +863,19 @@ void options_draw(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
         } else {
             func_80010158(&ulx, &lrx, &uly, &lry);
             rcp_screen_scroll_write(gdl, sBGTex, 0, 0, uly, lry, 0xFF, 2);
+
             if (submenu->boxLabel != NONE) {
                 options_draw_box(gdl, 56, 220, uly, lry);
             }
+
             if ((dMenuID == OPTIONS_PAGE_0_Main_Page) && (uly < 100)) {
                 font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
+
                 font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
-                font_window_add_string_xy(1, 0x238, 0x3F, dGametextMenu->strings[LINE_1_Options], 1, ALIGN_TOP_RIGHT);
+                font_window_add_string_xy(1, 568, 63, dGametextMenu->strings[LINE_1_Options], 1, ALIGN_TOP_RIGHT);
+
                 font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0xFF);
-                font_window_add_string_xy(1, 0x233, 0x3A, dGametextMenu->strings[LINE_1_Options], 2, ALIGN_TOP_RIGHT);
+                font_window_add_string_xy(1, 563, 58, dGametextMenu->strings[LINE_1_Options], 2, ALIGN_TOP_RIGHT);
             }
         }
         
@@ -898,7 +906,7 @@ static void options_set_up_menu_strings(OptionsSubmenu* submenu) {
 }
 
 // offset: 0x1718 | func: 4
-void options_func_1718(void) {
+void options_goto_main_page(void) {
     OptionsSubmenu* submenu;
     s32 i;
 
@@ -911,9 +919,10 @@ void options_func_1718(void) {
     options_set_up_menu_strings(submenu);
     gDLL_74_Picmenu->vtbl->set_items(
         submenu->menuItems, submenu->count, 
-        sDefaultItemIdx, NULL, 
+        sTopLevelItemIdx, NULL, 
         submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
     );
 
     for (i = 0; i < sCtrlCount; i++) {
@@ -928,7 +937,7 @@ void options_func_1718(void) {
 }
 
 // offset: 0x1898 | func: 5
-static void options_func_1898(void) {
+static void options_goto_display_page(void) {
     OptionsSubmenu* submenu;
     char** strings;
     
@@ -940,8 +949,11 @@ static void options_func_1898(void) {
     submenu = &dMenus[dMenuID];
     options_set_up_menu_strings(submenu);
     gDLL_74_Picmenu->vtbl->set_items(
-        submenu->menuItems, submenu->count, 0, NULL, submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+        submenu->menuItems, submenu->count, 
+        0, NULL, 
+        submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
     );
 
     strings = dDisplayChoiceStrings;    
@@ -959,7 +971,7 @@ static void options_func_1898(void) {
 }
 
 // offset: 0x1AE4 | func: 6
-static void options_func_1AE4(s32 arg0) {
+static void options_goto_control_page(s32 selectedItemIdx) {
     OptionsSubmenu* submenu;
 
     if (dMenuID != NONE) {
@@ -970,8 +982,11 @@ static void options_func_1AE4(s32 arg0) {
     submenu = &dMenus[dMenuID];
     options_set_up_menu_strings(submenu);
     gDLL_74_Picmenu->vtbl->set_items(
-        submenu->menuItems, submenu->count, arg0, NULL, submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+        submenu->menuItems, submenu->count, 
+        selectedItemIdx, NULL, 
+        submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
     );
     
     dControlZButtonStrings[0] = dGametextMenu->strings[LINE_14_Combo];
@@ -984,15 +999,15 @@ static void options_func_1AE4(s32 arg0) {
     sCtrls[sCtrlCount] = 0;
     sCtrlCount++;
     
-    if (sCtrls[arg0]) {
-        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[arg0], 1);
+    if (sCtrls[selectedItemIdx]) {
+        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[selectedItemIdx], 1);
     }
     
     sRedrawFrames = 2;
 }
 
 // offset: 0x1CF4 | func: 7
-static void options_func_1CF4(void) {
+static void options_goto_cheats_page(void) {
     OptionsSubmenu *submenu;
     s32 enabled;
     s32 unlocked;
@@ -1005,23 +1020,25 @@ static void options_func_1CF4(void) {
     
     dMenuID = OPTIONS_PAGE_5_Cheats;
     submenu = &dMenus[dMenuID];
+
     sCtrlCount = 0;
     sCheatsTopIdx = 0;
     y = 252;
     sCtrls[sCtrlCount] = NULL;
     sCtrlCount++;
 
+    //Set up the four cheats displayed in the box
     for (i = 0; i < 4; i++) {
         unlocked = gDLL_29_Gplay->vtbl->is_cheat_unlocked(sCheatsTopIdx + i);
         
         if (unlocked) {
             sprintf(sCheatStrings[i], "%2d: %s", (int) ((sCheatsTopIdx + i) + 1), sGametextCheats->strings[sCheatsTopIdx + i]);
             submenu->menuItems[i + 1].text = sCheatStrings[i];
-            submenu->menuItems[i + 1].flags &= ~0x820;
+            submenu->menuItems[i + 1].flags &= ~(PICMENU_TRANSPARENT | PICMENU_DISABLED);
         } else {
             sprintf(sCheatStrings[i], "%2d:", (int) ((sCheatsTopIdx + i) + 1));
             submenu->menuItems[i + 1].text = sCheatStrings[i];
-            submenu->menuItems[i + 1].flags |= 0x820;
+            submenu->menuItems[i + 1].flags |= (PICMENU_TRANSPARENT | PICMENU_DISABLED);
         }
         
         enabled = gDLL_29_Gplay->vtbl->is_cheat_active(sCheatsTopIdx + i);
@@ -1029,20 +1046,30 @@ static void options_func_1CF4(void) {
         sCtrls[sCtrlCount] = gDLL_75->vtbl->func1.withFiveArgsS32(0x201, (s16) y, 0, 1, enabled ? 1 : 0);
         sCtrlCount++;
         gDLL_75->vtbl->func11.withTwoArgs(sCtrls[sCtrlCount - 1], unlocked);
-        y += 0x1a;
+        y += 26;
     }
     
     sCtrls[sCtrlCount] = 0;
     sCtrlCount++;
     
-    submenu->menuItems->flags |= 0x1000;
-    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count, 1, NULL, submenu->unkC, submenu->unkD, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
+    //Don't allow scrolling up when starting at the top
+    submenu->menuItems[0].flags |= PICMENU_INTANGIBLE;
+
+    gDLL_74_Picmenu->vtbl->set_items(
+        submenu->menuItems, submenu->count, 
+        1, NULL, 
+        submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
+    );
+
     gDLL_75->vtbl->func7.withTwoArgs(sCtrls[1], 1);
+
     sRedrawFrames = 2;
 }
 
 // offset: 0x2088 | func: 8
-static void options_func_2088(s32 arg0) {
+static void options_goto_video_page(s32 selectedItemIdx) {
     OptionsSubmenu* submenu;
     u8 languageID = gDLL_21_Gametext->vtbl->curr_bank();
     
@@ -1054,8 +1081,11 @@ static void options_func_2088(s32 arg0) {
     submenu = &dMenus[dMenuID];
     options_set_up_menu_strings(submenu);
     gDLL_74_Picmenu->vtbl->set_items(
-        submenu->menuItems, submenu->count, arg0, NULL, submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+        submenu->menuItems, submenu->count, 
+        selectedItemIdx, NULL, 
+        submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
     );
     
     dVideoSizeStrings[0] = dGametextMenu->strings[LINE_22_Full];
@@ -1081,15 +1111,15 @@ static void options_func_2088(s32 arg0) {
     sCtrls[sCtrlCount] = 0;
     sCtrlCount++;
     
-    if (sCtrls[arg0]) {
-        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[arg0], 1);
+    if (sCtrls[selectedItemIdx]) {
+        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[selectedItemIdx], 1);
     }
     
     sRedrawFrames = 2;
 }
 
 // offset: 0x2438 | func: 9
-static void options_func_2438(void) {
+static void options_goto_audio_page(void) {
     OptionsSubmenu* submenu;
 
     if (dMenuID != NONE) {
@@ -1100,8 +1130,11 @@ static void options_func_2438(void) {
     submenu = &dMenus[dMenuID];
     options_set_up_menu_strings(submenu);
     gDLL_74_Picmenu->vtbl->set_items(
-        submenu->menuItems, submenu->count, 0, NULL, submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+        submenu->menuItems, submenu->count, 
+        0, NULL, 
+        submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
     );
     
     dAudioSetupStrings[0] = dGametextMenu->strings[LINE_31_Stereo];
@@ -1122,7 +1155,7 @@ static void options_func_2438(void) {
 }
 
 // offset: 0x26D8 | func: 10
-static void options_func_26D8(void) {
+static void options_goto_view_layout_page(void) {
     OptionsSubmenu* submenu;
     s32 i;
 
@@ -1134,8 +1167,11 @@ static void options_func_26D8(void) {
     submenu = &dMenus[dMenuID];
     options_set_up_menu_strings(submenu);
     gDLL_74_Picmenu->vtbl->set_items(
-        submenu->menuItems, submenu->count, 0, NULL, submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+        submenu->menuItems, submenu->count, 
+        0, NULL, 
+        submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
     );
     
     for (i = 0; i < sCtrlCount; i++) {
@@ -1152,7 +1188,7 @@ static void options_func_26D8(void) {
 }
 
 // offset: 0x2888 | func: 11
-static void options_func_2888(void) {
+static void options_goto_screen_position_page(void) {
     OptionsSubmenu* submenu;
     s32 i;
 
@@ -1165,8 +1201,10 @@ static void options_func_2888(void) {
     options_set_up_menu_strings(submenu);
     gDLL_74_Picmenu->vtbl->set_items(
         submenu->menuItems, submenu->count, 
-        0, NULL, submenu->unkC, submenu->unkD, 
-        0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D
+        0, NULL, 
+        submenu->unkC, submenu->unkD, 
+        0xB7, 0x8B, 0x61, 
+        0xFF, 0xD7, 0x3D
     );
     
     for (i = 0; i < sCtrlCount; i++) {
@@ -1181,27 +1219,31 @@ static void options_func_2888(void) {
     sRedrawFrames = 2;
 }
 
+#define MAIN_PAGE_INDEX(pageID) (pageID - 1)
+
 // offset: 0x2A1C | func: 12
-s32 options_func_2A1C(s32 arg0, u32 arg1) {
-    if (arg0 == 1) {
-        switch (arg1) {
-        case 2:
-            options_func_1898();
+int options_exit_main_page(s32 action, s32 selectedItemIdx) {
+    if (action == PICMENU_ACTION_SELECT) {
+        switch (selectedItemIdx) {
+        case MAIN_PAGE_INDEX(OPTIONS_PAGE_3_Display):
+            options_goto_display_page();
             return 1;
-        case 3:
-            options_func_1AE4(0);
+        case MAIN_PAGE_INDEX(OPTIONS_PAGE_4_Control):
+            options_goto_control_page(0);
             return 1;
-        case 4:
-            options_func_1CF4();
+        case MAIN_PAGE_INDEX(OPTIONS_PAGE_5_Cheats):
+            options_goto_cheats_page();
             return 1;
-        case 0:
-            options_func_2088(0);
+        case MAIN_PAGE_INDEX(OPTIONS_PAGE_1_Video):
+            options_goto_video_page(0);
             return 1;
-        case 1:
-            options_func_2438();
+        case MAIN_PAGE_INDEX(OPTIONS_PAGE_2_Audio):
+            options_goto_audio_page();
             return 1;
+        //NOTE: Cinema page not handled
         }
-    } else if (arg0 == 0) {
+    } else if (action == PICMENU_ACTION_BACK) {
+        //Start fadeout back to Title Screen
         gDLL_28_ScreenFade->vtbl->fade(20, 1);
         sFadeOutTimer = 35;
         sFadeOutActive = TRUE;
@@ -1211,81 +1253,84 @@ s32 options_func_2A1C(s32 arg0, u32 arg1) {
 }
 
 // offset: 0x2B50 | func: 13
-void options_func_2B50(s32 arg0, s32 arg1) {   
-    if (!gDLL_75->vtbl->func10.withOneArgS32(sCtrls[arg1])) {
+void options_handle_action_display_page(s32 action, s32 selectedItemIdx) {   
+    if (!gDLL_75->vtbl->func10.withOneArgS32(sCtrls[selectedItemIdx])) {
         return;
     }
     
-    switch (arg1) {
+    switch (selectedItemIdx) {
     case 0:
-        gDLL_22_Subtitles->vtbl->func_2D0(gDLL_75->vtbl->func8(sCtrls[arg1]));
+        gDLL_22_Subtitles->vtbl->func_2D0(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
         break;
     case 1:
-        gDLL_1_cmdmenu->vtbl->toggle_forced_stats_display(gDLL_75->vtbl->func8(sCtrls[arg1]));
+        gDLL_1_cmdmenu->vtbl->toggle_forced_stats_display(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
         break;
     }
 }
 
 // offset: 0x2C58 | func: 14
-void options_func_2C58(s32 arg0, s32 arg1) {
-    if (arg1 == 0) {
-        if (gDLL_75->vtbl->func10.withOneArgS32(sCtrls[arg1]) != 0) {
-            gDLL_2_Camera->vtbl->apply_target_flags(gDLL_75->vtbl->func8(sCtrls[arg1]));
+void options_handle_action_control_page(s32 action, s32 selectedItemIdx) {
+    if (selectedItemIdx == 0) {
+        if (gDLL_75->vtbl->func10.withOneArgS32(sCtrls[selectedItemIdx])) {
+            gDLL_2_Camera->vtbl->apply_target_flags(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
         }
-    } else if (arg0 == 1) {
+    } else if (action == PICMENU_ACTION_SELECT) {
         sGameOptions->zTargetMode = gDLL_75->vtbl->func8(sCtrls[0]);
-        options_func_26D8();
+        options_goto_view_layout_page();
     }
 }
 
 // offset: 0x2D50 | func: 15
-void options_func_2D50(s32 arg0, s32 arg1) {
+void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
     OptionsSubmenu* submenu;
     s32 i;
-    s32 var_v0;
+    s32 cheatWasPressed;
     s32 enabled;
     u8 bss1_before;
 
-    //Unlock the selected cheat with C-right! (Need to back out and re-enter menu before it shows up)
+    //@debug: Unlock the selected cheat with C-right! (Need to back out and re-enter menu before it shows up)
     if (joy_get_pressed(0) & R_CBUTTONS) {
-        gDLL_29_Gplay->vtbl->unlock_cheat(((sCheatsTopIdx + arg1) - 1));
+        gDLL_29_Gplay->vtbl->unlock_cheat(((sCheatsTopIdx + selectedItemIdx) - 1));
     }
     
-    if (arg0 != 1) {
+    if (action != PICMENU_ACTION_SELECT) {
         return;
     }
     
-    var_v0 = 0;
-
     bss1_before = sCheatsTopIdx;
-    if (arg1 == 0) {
+
+    //Check whether the user pressed a scroll arrow or a cheat
+    cheatWasPressed = FALSE;
+    if (selectedItemIdx == 0) {
+        //Scroll up arrow selected
         sCheatsTopIdx -= 4;
         if (sCheatsTopIdx < 0) {
             sCheatsTopIdx = 0;
         } else {
-            var_v0 = 1;
+            cheatWasPressed = TRUE;
         }
-    } else if (arg1 == 5) {
+    } else if (selectedItemIdx == 5) {
+        //Scroll down arrow selected
         sCheatsTopIdx += 4;
         if (sCheatsTopIdx > 28) {
             sCheatsTopIdx = 28;
         } else {
-            var_v0 = 1;
+            cheatWasPressed = TRUE;
         }
     }
-    
-    if (var_v0 == 0) {
+    if (cheatWasPressed == FALSE) {
         return;
     }
 
     submenu = &dMenus[dMenuID];
-    submenu->menuItems[0].flags &= ~0x1000;
-    submenu->menuItems[5].flags &= ~0x1000;
+
+    submenu->menuItems[0].flags &= ~PICMENU_INTANGIBLE;
+    submenu->menuItems[5].flags &= ~PICMENU_INTANGIBLE;
     if (sCheatsTopIdx == 0) {
-        submenu->menuItems[0].flags |= 0x1000;
+        submenu->menuItems[0].flags |= PICMENU_INTANGIBLE;
     }
-    if (sCheatsTopIdx == 0x1C) {
-        submenu->menuItems[5].flags |= 0x1000;
+    if (sCheatsTopIdx == 28) {
+        submenu->menuItems[5].flags |= PICMENU_INTANGIBLE;
     }
     
     for (i = 0; i < 4; i++) {
@@ -1296,7 +1341,7 @@ void options_func_2D50(s32 arg0, s32 arg1) {
         if (gDLL_29_Gplay->vtbl->is_cheat_unlocked(sCheatsTopIdx + i)) {
             sprintf(sCheatStrings[i], "%2d: %s", (int)(sCheatsTopIdx + i + 1), sGametextCheats->strings[sCheatsTopIdx + i]);
             submenu->menuItems[i + 1].text = sCheatStrings[i];
-            submenu->menuItems[i + 1].flags &= ~0x820;
+            submenu->menuItems[i + 1].flags &= ~(PICMENU_TRANSPARENT | PICMENU_DISABLED);
             gDLL_75->vtbl->func11.withTwoArgs(sCtrls[i + 1], 1);
             
             enabled = gDLL_29_Gplay->vtbl->is_cheat_active(sCheatsTopIdx + i);
@@ -1304,7 +1349,7 @@ void options_func_2D50(s32 arg0, s32 arg1) {
         } else {
             sprintf(sCheatStrings[i], "%2d:", (int)(sCheatsTopIdx + i + 1));
             submenu->menuItems[i + 1].text = sCheatStrings[i];
-            submenu->menuItems[i + 1].flags |= 0x820;
+            submenu->menuItems[i + 1].flags |= (PICMENU_TRANSPARENT | PICMENU_DISABLED);
             gDLL_75->vtbl->func11.withTwoArgs(sCtrls[i + 1], 0);
             gDLL_75->vtbl->func9.withTwoArgs(sCtrls[i + 1], 0);
         }
@@ -1316,7 +1361,7 @@ void options_func_2D50(s32 arg0, s32 arg1) {
     if (sCheatsTopIdx == 0) {
         gDLL_75->vtbl->func7.withTwoArgs(sCtrls[1], 1);
         gDLL_74_Picmenu->vtbl->set_selected_item(1);
-    } else if (sCheatsTopIdx == 0x1C) {
+    } else if (sCheatsTopIdx == 28) {
         gDLL_75->vtbl->func7.withTwoArgs(sCtrls[4], 1);
         gDLL_74_Picmenu->vtbl->set_selected_item(4);
     }
@@ -1325,37 +1370,37 @@ void options_func_2D50(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x320C | func: 16
-void options_func_320C(s32 arg0, s32 arg1) {
-    if ((arg0 != 1) || (arg1 != 2)) {
+void options_handle_action_video_page(s32 action, s32 selectedItemIdx) {
+    if ((action != PICMENU_ACTION_SELECT) || (selectedItemIdx != 2)) {
         return;
     }
     
     sGameOptions->screenSizeAnamorphic = gDLL_75->vtbl->func8(sCtrls[0]);
     sGameOptions->screenAspectRatio = gDLL_75->vtbl->func8(sCtrls[1]);
-    options_func_2888();
+    options_goto_screen_position_page();
 }
 
 // offset: 0x32B8 | func: 17
-void options_func_32B8(s32 arg0, s32 arg1) {
-    if (gDLL_75->vtbl->func10.withOneArgS32(sCtrls[arg1]) == 0) {
+void options_handle_action_audio_page(s32 action, s32 selectedItemIdx) {
+    if (gDLL_75->vtbl->func10.withOneArgS32(sCtrls[selectedItemIdx]) == 0) {
         return;
     }
         
-    switch (arg1) {
+    switch (selectedItemIdx) {
     case 0:
-        speaker_set_mode(dSpeakerModes[gDLL_75->vtbl->func8(sCtrls[arg1])]);
+        speaker_set_mode(dSpeakerModes[gDLL_75->vtbl->func8(sCtrls[selectedItemIdx])]);
         break;
     case 2:
-        gDLL_6_AMSFX->vtbl->func_7E4(gDLL_75->vtbl->func8(sCtrls[arg1]));
+        gDLL_6_AMSFX->vtbl->func_7E4(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
         break;
     case 1:
-        gDLL_5_AMSEQ->vtbl->set_volume_option(gDLL_75->vtbl->func8(sCtrls[arg1]));
+        gDLL_5_AMSEQ->vtbl->set_volume_option(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
         break;
     }
 }
 
 // offset: 0x3404 | func: 18
-void options_func_3404(s32 arg0, s32 arg1) { //cinema menu?
+void options_handle_action_cinema_page(s32 action, s32 selectedItemIdx) {
 
 }
 
