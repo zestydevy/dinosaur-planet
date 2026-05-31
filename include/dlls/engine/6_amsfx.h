@@ -259,7 +259,6 @@ enum SoundID {
     SOUND_289_Engine_Loop = 0x289,
     
     SOUND_28A_Cmdmenu_MoveSelection = 0x28A,
-
     SOUND_28B_Cmdmenu_Use = 0x28B,
     SOUND_28C_Cmdmenu_Close = 0x28C,
     SOUND_28D_Cmdmenu_OpenBag_HighPitch = 0x28D, // cmdmenu

@@ -8,6 +8,6 @@ _exports:
 .dword options_dtor
 
 # export table
-/*0*/ .dword options_func_1FC
-/*1*/ .dword options_func_B84
-/*2*/ .dword options_func_B8C
+/*0*/ .dword options_update1
+/*1*/ .dword options_update2
+/*2*/ .dword options_draw
