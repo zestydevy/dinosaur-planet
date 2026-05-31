@@ -11,8 +11,27 @@
 extern void vi_set_modifiers(u8 updateViMode, s8 hStartMod, s8 vScaleMod);
 
 #define NONE -1
-
+#define MAX_CONTROLS_PER_PAGE 6
 #define MAIN_PAGE_INDEX(pageID) (pageID - 1)
+
+#define CHEATS_PER_SCREEN 4
+
+//NOTE: causes a crash because the Gametext file only has 7 strings
+#define TOTAL_CHEATS 32
+
+//The index of the first cheat shown when scrolled all the way to the bottom of the cheats list
+#define CHEATS_FIRST_IDX_LAST_GROUP (TOTAL_CHEATS - CHEATS_PER_SCREEN)
+
+typedef struct {
+    PicMenuItem *menuItems;
+    s8 *textIDs;
+    u8 count;               //Number of PicMenuItems on
+    s8 boxLabel;            //LineID for the page title shown on pages that use a control box
+    s8 navigationInfo;      //LineID for the navigation controls shown at the bottom of most pages
+    u8 unkB;
+    u8 unkC;
+    u8 unkD;
+} OptionsSubmenu;
 
 typedef enum {
     OPTIONS_PAGE_0_Main_Page,       //Top-level options page, navigating to Video/Audio/Display/Control/Cheats/Cinema pages
@@ -25,7 +44,6 @@ typedef enum {
     OPTIONS_PAGE_7_View_Layout,     //Diagram of control scheme
     OPTIONS_PAGE_8_Screen_Position  //Adjusting screen X/Y offset
 } OptionsMenuPages;
-
 
 typedef enum {
     OPTIONS_VIDEO_0_Screen_Size,
@@ -50,14 +68,6 @@ typedef enum {
     OPTIONS_CONTROL_0_Z_Button,
     OPTIONS_CONTROL_1_View_Layout
 } OptionsMenu_ControlItems;
-
-#define CHEATS_PER_SCREEN 4
-
-//NOTE: causes a crash because the Gametext file only has 7 strings
-#define TOTAL_CHEATS 32
-
-//The index of the first cheat shown when scrolled all the way to the bottom of the cheats list
-#define CHEATS_FIRST_IDX_LAST_GROUP (TOTAL_CHEATS - CHEATS_PER_SCREEN)
 
 typedef enum {
     OPTIONS_CHEATS_0_Up,
@@ -126,8 +136,6 @@ typedef enum {
 
     LINE_40_OK
 } MenuLines;
-
-#define MAX_CONTROLS_PER_PAGE 6
 
 /*0x0*/ static char dDownArrowChar = 0xab;
 /*0x4*/ static char dUpArrowChar = 0xbb;
@@ -430,17 +438,6 @@ typedef enum {
     ),
 };
 /*0x700*/ static s8 dTextIDsScreenPosition[] = {LINE_40_OK};
-
-typedef struct {
-    PicMenuItem *menuItems;
-    s8 *textIDs;
-    u8 count;               //Number of PicMenuItems on
-    s8 boxLabel;            //LineID for the page title shown on pages that use a control box
-    s8 navigationInfo;      //LineID for the navigation controls shown at the bottom of most pages
-    u8 unkB;
-    u8 unkC;
-    u8 unkD;
-} OptionsSubmenu;
 
 /*0x704*/ static OptionsSubmenu dMenus[] = {
     {dItemsMain,            dTextIDsMain,           ARRAYCOUNT(dItemsMain),           NONE,             LINE_0_A_Select_B_Cancel,  4, 5, 4},

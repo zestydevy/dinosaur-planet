@@ -7,14 +7,26 @@
 typedef struct {
 /*0*/    s16 unk0;  //width?
 /*2*/    s16 unk2;  //y?
-/*4*/    u8 unk4;   //flags?
-/*5*/    s8 unk5;
+/*4*/    u8 flags;
+/*5*/    u8 type; 
 /*6*/    s8 unk6;
 /*8*/    s16 min;
 /*A*/    s16 max;
-/*C*/    s16 initialValue;
-/*E*/    s16 unkE;
+/*C*/    s16 value;
 } FrontEndSlider; //Maybe checkbox as well?
+
+typedef struct {
+/*0*/    s16 unk0;  //width?
+/*2*/    s16 unk2;  //y?
+/*4*/    u8 flags;
+/*5*/    u8 type;
+/*6*/    s8 unk6;
+/*8*/    s16 min;
+/*A*/    s16 max;
+/*C*/    s16 value;
+/*10*/   char** unk10; //strings
+/*14*/   u8 unk14;
+} FrontEndOther; //Maybe list/choices? 0x18
 
 DLL_INTERFACE(DLL_75) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
