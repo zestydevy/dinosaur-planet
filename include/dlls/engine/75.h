@@ -70,7 +70,7 @@ typedef struct {
 
 DLL_INTERFACE(DLL_75) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ UnknownDLLFunc func0;
+/*0*/ FrontEndSlider* (*create_slider)(s16 x, s16 y, s16 min, s16 max, s16 initialValue);
 /*1*/ UnknownDLLFunc func1;
 /*2*/ UnknownDLLFunc func2;
 // /*3*/ void (*func3)(FrontEndSlider* slider);
@@ -80,8 +80,7 @@ DLL_INTERFACE(DLL_75) {
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
 // /*7*/ s32 (*func7)(FrontEndSlider* slider, s32 enable);
-// /*8*/ s32 (*func8)(FrontEndSlider* slider); //get_initial_value/get_value?
-/*8*/ s32 (*func8)(s32 slider); //get_initial_value/get_value?
+/*8*/ s32 (*get_value)(FrontEndControl* ctrl);
 /*9*/ UnknownDLLFunc func9;
 /*10*/ UnknownDLLFunc func10;
 /*11*/ UnknownDLLFunc func11;

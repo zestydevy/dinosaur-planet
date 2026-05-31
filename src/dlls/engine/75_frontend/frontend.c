@@ -11,7 +11,7 @@ typedef enum {
     FRONTEND_TEXTURE_3_Checkbox_Ticked_HL,
     FRONTEND_TEXTURE_4_Checkbox_Ticked,
     FRONTEND_TEXTURE_5_Checkbox_Empty_HL,
-    FRONTEND_TEXTURE_6_Checkbox_Empty,
+    FRONTEND_TEXTURE_6_Checkbox_Empty
 } FrontEndTextureIDs;
 
 /*0x0*/ static s16 dTextureIDs[] = {
@@ -231,12 +231,12 @@ void frontend_draw(FrontEndControl* ctrl, Gfx** gdl) {
 }
 
 // offset: 0x77C | func: 6 | export: 6
-s32 frontend_get_selection_state(FrontEndCheckbox* ctrl) {
+s32 frontend_get_selection_state(FrontEndControl* ctrl) {
     return ctrl->flags & FRONTEND_FLAG_1_Selected;
 }
 
 // offset: 0x790 | func: 7 | export: 7
-void frontend_set_selection_state(FrontEndCheckbox* slider, s32 select) {
+void frontend_set_selection_state(FrontEndControl* slider, s32 select) {
     if (select) {
         slider->flags |= FRONTEND_FLAG_1_Selected;
     } else {
@@ -245,23 +245,23 @@ void frontend_set_selection_state(FrontEndCheckbox* slider, s32 select) {
 }
 
 // offset: 0x7C0 | func: 8 | export: 8
-s16 frontend_get_value(FrontEndCheckbox* ctrl) {
+s16 frontend_get_value(FrontEndControl* ctrl) {
     return ctrl->value;
 }
 
 // offset: 0x7CC | func: 9 | export: 9
-void frontend_set_value(FrontEndCheckbox* ctrl, s32 value) {
+void frontend_set_value(FrontEndControl* ctrl, s32 value) {
     ctrl->value = value;
     ctrl->redrawFrames = 2;
 }
 
 // offset: 0x7E0 | func: 10 | export: 10
-s32 frontend_did_value_change(FrontEndSlider* ctrl) {
+s32 frontend_did_value_change(FrontEndControl* ctrl) {
     return ctrl->flags & FRONTEND_FLAG_10_Value_Changed;
 }
 
 // offset: 0x7F4 | func: 11 | export: 11
-void frontend_set_locked_state(FrontEndCheckbox* ctrl, s32 unlock) {
+void frontend_set_locked_state(FrontEndControl* ctrl, s32 unlock) {
     if (unlock) {
         ctrl->flags &= ~FRONTEND_FLAG_20_Locked;
     } else {

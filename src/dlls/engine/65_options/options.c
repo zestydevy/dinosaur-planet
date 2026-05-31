@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/29_gplay.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/74_picmenu.h"
 #include "game/gametexts.h"
 #include "macros.h"
@@ -667,15 +668,15 @@ s32 options_update1(void) {
     case OPTIONS_PAGE_3_Display:
         options_handle_action_display_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
-            sGameOptions->showSubtitles = gDLL_75->vtbl->func8(sCtrls[OPTIONS_DISPLAY_0_Subtitles]);
-            sGameOptions->showInstruments = gDLL_75->vtbl->func8(sCtrls[OPTIONS_DISPLAY_1_Instruments]);
+            sGameOptions->showSubtitles = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_DISPLAY_0_Subtitles]);
+            sGameOptions->showInstruments = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_DISPLAY_1_Instruments]);
             options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_4_Control:
         options_handle_action_control_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
-            sGameOptions->zTargetMode = gDLL_75->vtbl->func8(sCtrls[OPTIONS_CONTROL_0_Z_Button]);
+            sGameOptions->zTargetMode = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_CONTROL_0_Z_Button]);
             options_goto_main_page();
         }
         break;
@@ -685,7 +686,7 @@ s32 options_update1(void) {
             for (i = 0; i < 4; i++) {
                 gDLL_29_Gplay->vtbl->set_cheat_enabled(
                     (sCheatsTopIdx + i),
-                    gDLL_75->vtbl->func8(sCtrls[i + 1])
+                    gDLL_75->vtbl->get_value(sCtrls[i + 1])
                 );
             }
             options_goto_main_page();
@@ -694,17 +695,17 @@ s32 options_update1(void) {
     case OPTIONS_PAGE_1_Video:
         options_handle_action_video_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
-            sGameOptions->screenSizeAnamorphic = gDLL_75->vtbl->func8(sCtrls[OPTIONS_VIDEO_0_Screen_Size]);
-            sGameOptions->screenAspectRatio = gDLL_75->vtbl->func8(sCtrls[OPTIONS_VIDEO_1_Ratio]);
+            sGameOptions->screenSizeAnamorphic = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_VIDEO_0_Screen_Size]);
+            sGameOptions->screenAspectRatio = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_VIDEO_1_Ratio]);
             options_goto_main_page();
         }
         break;
     case OPTIONS_PAGE_2_Audio:
         options_handle_action_audio_page(action, selectedIdx);
         if (action == PICMENU_ACTION_BACK) {
-            sGameOptions->audioMode = gDLL_75->vtbl->func8(sCtrls[OPTIONS_AUDIO_0_Setup]);
-            sGameOptions->volumeMusic = gDLL_75->vtbl->func8(sCtrls[OPTIONS_AUDIO_1_Music]);
-            sGameOptions->volumeAudio = gDLL_75->vtbl->func8(sCtrls[OPTIONS_AUDIO_2_SFX]);
+            sGameOptions->audioMode = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_AUDIO_0_Setup]);
+            sGameOptions->volumeMusic = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_AUDIO_1_Music]);
+            sGameOptions->volumeAudio = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_AUDIO_2_SFX]);
             options_goto_main_page();
         }
         break;
@@ -1191,11 +1192,11 @@ static void options_goto_audio_page(void) {
     dAudioSetupStrings[3] = dGametextMenu->strings[LINE_34_Headphones];
 
     sCtrlCount = 0;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(0x1aa, 0xfe, 0, 3, sGameOptions->audioMode, dAudioSetupStrings, 100);
+    sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(426, 254, 0, 3, sGameOptions->audioMode, dAudioSetupStrings, 100);
     sCtrlCount++;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->func0.withFiveArgsS32(0x13e, 0x11d, 0, 0xff, sGameOptions->volumeMusic);
+    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_slider(318, 285, 0, 0xff, sGameOptions->volumeMusic);
     sCtrlCount++;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->func0.withFiveArgsS32(0x13e, 0x135, 0, 0x7f, sGameOptions->volumeAudio);
+    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_slider(318, 309, 0, MAX_VOLUME, sGameOptions->volumeAudio);
     sCtrlCount++;
 
     gDLL_75->vtbl->func7.withTwoArgs(sCtrls[0], 1);
@@ -1306,10 +1307,10 @@ void options_handle_action_display_page(s32 action, s32 selectedItemIdx) {
 
     switch (selectedItemIdx) {
     case OPTIONS_DISPLAY_0_Subtitles:
-        gDLL_22_Subtitles->vtbl->func_2D0(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
+        gDLL_22_Subtitles->vtbl->func_2D0(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
         break;
     case OPTIONS_DISPLAY_1_Instruments:
-        gDLL_1_cmdmenu->vtbl->toggle_forced_stats_display(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
+        gDLL_1_cmdmenu->vtbl->toggle_forced_stats_display(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
         break;
     }
 }
@@ -1318,10 +1319,10 @@ void options_handle_action_display_page(s32 action, s32 selectedItemIdx) {
 void options_handle_action_control_page(s32 action, s32 selectedItemIdx) {
     if (selectedItemIdx == OPTIONS_CONTROL_0_Z_Button) {
         if (gDLL_75->vtbl->func10.withOneArgS32(sCtrls[selectedItemIdx])) {
-            gDLL_2_Camera->vtbl->apply_target_flags(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
+            gDLL_2_Camera->vtbl->apply_target_flags(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
         }
     } else if (action == PICMENU_ACTION_SELECT) {
-        sGameOptions->zTargetMode = gDLL_75->vtbl->func8(sCtrls[OPTIONS_CONTROL_0_Z_Button]);
+        sGameOptions->zTargetMode = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_CONTROL_0_Z_Button]);
         options_goto_view_layout_page();
     }
 }
@@ -1384,7 +1385,7 @@ void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
     for (i = 0; i < CHEATS_PER_SCREEN; i++) {
         gDLL_29_Gplay->vtbl->set_cheat_enabled(
             previousCheatsTopIdx + i, 
-            gDLL_75->vtbl->func8(sCtrls[i + 1])
+            gDLL_75->vtbl->get_value(sCtrls[i + 1])
         );
     }
 
@@ -1427,8 +1428,8 @@ void options_handle_action_video_page(s32 action, s32 selectedItemIdx) {
         return;
     }
 
-    sGameOptions->screenSizeAnamorphic = gDLL_75->vtbl->func8(sCtrls[OPTIONS_VIDEO_0_Screen_Size]);
-    sGameOptions->screenAspectRatio = gDLL_75->vtbl->func8(sCtrls[OPTIONS_VIDEO_1_Ratio]);
+    sGameOptions->screenSizeAnamorphic = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_VIDEO_0_Screen_Size]);
+    sGameOptions->screenAspectRatio = gDLL_75->vtbl->get_value(sCtrls[OPTIONS_VIDEO_1_Ratio]);
     options_goto_screen_position_page();
 }
 
@@ -1440,13 +1441,13 @@ void options_handle_action_audio_page(s32 action, s32 selectedItemIdx) {
 
     switch (selectedItemIdx) {
     case OPTIONS_AUDIO_0_Setup:
-        speaker_set_mode(dSpeakerModes[gDLL_75->vtbl->func8(sCtrls[selectedItemIdx])]);
+        speaker_set_mode(dSpeakerModes[gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx])]);
         break;
     case OPTIONS_AUDIO_2_SFX:
-        gDLL_6_AMSFX->vtbl->func_7E4(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
+        gDLL_6_AMSFX->vtbl->func_7E4(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
         break;
     case OPTIONS_AUDIO_1_Music:
-        gDLL_5_AMSEQ->vtbl->set_volume_option(gDLL_75->vtbl->func8(sCtrls[selectedItemIdx]));
+        gDLL_5_AMSEQ->vtbl->set_volume_option(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
         break;
     }
 }
