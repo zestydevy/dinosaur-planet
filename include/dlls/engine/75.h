@@ -79,20 +79,11 @@ DLL_INTERFACE(DLL_75) {
 /*5*/ UnknownDLLFunc func5;
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
-// /*7*/ s32 (*func7)(FrontEndSlider* slider, s32 enable);
+// /*7*/ void (*func7)(FrontEndControl* slider, s32 select);
 /*8*/ s32 (*get_value)(FrontEndControl* ctrl);
 /*9*/ UnknownDLLFunc func9;
 /*10*/ UnknownDLLFunc func10;
-/*11*/ UnknownDLLFunc func11;
-/*12*/ UnknownDLLFunc func12;
-/*13*/ UnknownDLLFunc func13;
-/*14*/ UnknownDLLFunc func14;
-/*15*/ UnknownDLLFunc func15;
-/*16*/ UnknownDLLFunc func16;
-/*17*/ UnknownDLLFunc func17;
-/*18*/ UnknownDLLFunc func18;
-/*19*/ UnknownDLLFunc func19;
-/*20*/ UnknownDLLFunc func20;
+/*11*/ void (*set_lock_state)(FrontEndControl* ctrl, s32 unlock);
 };
 
 #endif // _DLL_75_H

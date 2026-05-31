@@ -19,4 +19,4 @@ _exports:
 /*8*/ .dword frontend_get_value
 /*9*/ .dword frontend_set_value
 /*10*/ .dword frontend_did_value_change
-/*11*/ .dword frontend_set_locked_state
+/*11*/ .dword frontend_set_lock_state
