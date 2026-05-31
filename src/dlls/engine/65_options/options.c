@@ -12,6 +12,8 @@ extern void vi_set_modifiers(u8 updateViMode, s8 hStartMod, s8 vScaleMod);
 
 #define NONE -1
 
+#define MAIN_PAGE_INDEX(pageID) (pageID - 1)
+
 typedef enum {
     OPTIONS_PAGE_0_Main_Page,       //Top-level options page, navigating to Video/Audio/Display/Control/Cheats/Cinema pages
     OPTIONS_PAGE_1_Video,           //Choices for screen size/ratio, and navigating to Screen Position page
@@ -1267,8 +1269,6 @@ static void options_goto_screen_position_page(void) {
     sCtrlCount = 0;
     sRedrawFrames = 2;
 }
-
-#define MAIN_PAGE_INDEX(pageID) (pageID - 1)
 
 // offset: 0x2A1C | func: 12
 int options_exit_main_page(s32 action, s32 selectedItemIdx) {
