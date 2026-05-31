@@ -4,29 +4,69 @@
 #include "dll_def.h"
 #include "types.h"
 
+typedef enum {
+    FRONTEND_CONTROL_Slider,
+    FRONTEND_CONTROL_Checkbox,
+    FRONTEND_CONTROL_List
+} FrontEnd_Control_Types;
+
+typedef enum {
+    FRONTEND_FLAG_0_None = 0x0,
+    FRONTEND_FLAG_1_Selected = 0x1,
+    FRONTEND_FLAG_2_Wrap_Value = 0x2,       //Sliders can wrap or clamp when moving past min/max values
+    FRONTEND_FLAG_4_Moved_Left = 0x4,       //Lists highlight their left arrow when moving left
+    FRONTEND_FLAG_8_Moved_Right = 0x8,      //Lists highlight their right arrow when moving right
+    FRONTEND_FLAG_10_Value_Changed = 0x10,
+    FRONTEND_FLAG_20_Locked = 0x20          //No interaction possible
+} FrontEnd_Flags;
+
+/* Generic FrontEnd control */
 typedef struct {
-/*0*/    s16 unk0;  //width?
-/*2*/    s16 unk2;  //y?
+/*0*/    s16 x;
+/*2*/    s16 y;
 /*4*/    u8 flags;
 /*5*/    u8 type; 
-/*6*/    s8 unk6;
+/*6*/    s8 redrawFrames;
 /*8*/    s16 min;
 /*A*/    s16 max;
 /*C*/    s16 value;
-} FrontEndSlider; //Maybe checkbox as well?
+} FrontEndControl;
 
 typedef struct {
-/*0*/    s16 unk0;  //width?
-/*2*/    s16 unk2;  //y?
+/*0*/    s16 x;
+/*2*/    s16 y;
 /*4*/    u8 flags;
 /*5*/    u8 type;
-/*6*/    s8 unk6;
+/*6*/    s8 redrawFrames;
 /*8*/    s16 min;
 /*A*/    s16 max;
 /*C*/    s16 value;
-/*10*/   char** unk10; //strings
-/*14*/   u8 unk14;
-} FrontEndOther; //Maybe list/choices? 0x18
+/*E*/    s16 width;
+} FrontEndSlider;
+
+typedef struct {
+/*0*/    s16 x;
+/*2*/    s16 y;
+/*4*/    u8 flags;
+/*5*/    u8 type; 
+/*6*/    s8 redrawFrames;
+/*8*/    s16 min;
+/*A*/    s16 max;
+/*C*/    s16 value;
+} FrontEndCheckbox;
+
+typedef struct {
+/*0*/    s16 x;
+/*2*/    s16 y;
+/*4*/    u8 flags;
+/*5*/    u8 type;
+/*6*/    s8 redrawFrames;
+/*8*/    s16 min;
+/*A*/    s16 max;
+/*C*/    s16 value;
+/*10*/   char** strings;
+/*14*/   u8 halfWidth;
+} FrontEndList;
 
 DLL_INTERFACE(DLL_75) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

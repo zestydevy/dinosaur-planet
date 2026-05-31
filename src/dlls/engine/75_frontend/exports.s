@@ -8,15 +8,15 @@ _exports:
 .dword frontend_dtor
 
 # export table
-/*0*/ .dword frontend_func_E0
-/*1*/ .dword frontend_func_1C4
-/*2*/ .dword frontend_func_284
-/*3*/ .dword frontend_func_354
-/*4*/ .dword frontend_func_38C
-/*5*/ .dword frontend_func_6A0
-/*6*/ .dword frontend_func_77C
-/*7*/ .dword frontend_func_790
-/*8*/ .dword frontend_func_7C0
-/*9*/ .dword frontend_func_7CC
-/*10*/ .dword frontend_func_7E0
-/*11*/ .dword frontend_func_7F4
+/*0*/ .dword frontend_create_slider
+/*1*/ .dword frontend_create_checkbox
+/*2*/ .dword frontend_create_list
+/*3*/ .dword frontend_free
+/*4*/ .dword frontend_update
+/*5*/ .dword frontend_draw
+/*6*/ .dword frontend_get_selection_state
+/*7*/ .dword frontend_set_selection_state
+/*8*/ .dword frontend_get_value
+/*9*/ .dword frontend_set_value
+/*10*/ .dword frontend_did_value_change
+/*11*/ .dword frontend_set_locked_state

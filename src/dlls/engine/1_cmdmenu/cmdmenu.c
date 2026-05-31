@@ -24,7 +24,7 @@
 #include "sys/vi.h"
 #include "macros.h"
 #include "gbi_extra.h"
-#include "prevent_bss_reordering2.h"
+#include "prevent_bss_reordering.h"
 
 // official filename: 9slcommandmenu.c (default.dol)
 
