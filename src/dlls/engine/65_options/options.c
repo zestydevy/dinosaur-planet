@@ -24,15 +24,30 @@ typedef enum {
     OPTIONS_PAGE_8_Screen_Position  //Adjusting screen X/Y offset
 } OptionsMenuPages;
 
+
 typedef enum {
-    OPTIONS_CONTROL_0_Z_Button,
-    OPTIONS_CONTROL_1_View_Layout
-} OptionsMenu_ControlItems;
+    OPTIONS_VIDEO_0_Screen_Size,
+    OPTIONS_VIDEO_1_Ratio,
+    OPTIONS_VIDEO_2_Screen_Position,
+    OPTIONS_VIDEO_3_Brightness //Unused
+} OptionsMenu_VideoItems;
+
+typedef enum {
+    OPTIONS_AUDIO_0_Setup,
+    OPTIONS_AUDIO_1_Music,
+    OPTIONS_AUDIO_2_SFX,
+    OPTIONS_AUDIO_3_Speech //Unused
+} OptionsMenu_AudioItems;
 
 typedef enum {
     OPTIONS_DISPLAY_0_Subtitles,
     OPTIONS_DISPLAY_1_Instruments
 } OptionsMenu_DisplayItems;
+
+typedef enum {
+    OPTIONS_CONTROL_0_Z_Button,
+    OPTIONS_CONTROL_1_View_Layout
+} OptionsMenu_ControlItems;
 
 #define CHEATS_PER_SCREEN 4
 
@@ -50,20 +65,6 @@ typedef enum {
     OPTIONS_CHEATS_4_CheatShown4,
     OPTIONS_CHEATS_5_Down
 } OptionsMenu_CheatsItems;
-
-typedef enum {
-    OPTIONS_VIDEO_0_Screen_Size,
-    OPTIONS_VIDEO_1_Ratio,
-    OPTIONS_VIDEO_2_Screen_Position,
-    OPTIONS_VIDEO_3_Brightness //Unused
-} OptionsMenu_VideoItems;
-
-typedef enum {
-    OPTIONS_AUDIO_0_Setup,
-    OPTIONS_AUDIO_1_Music,
-    OPTIONS_AUDIO_2_SFX,
-    OPTIONS_AUDIO_3_Speech //Unused
-} OptionsMenu_AudioItems;
 
 typedef enum {
     LINE_0_A_Select_B_Cancel,
