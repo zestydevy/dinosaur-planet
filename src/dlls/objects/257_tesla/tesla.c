@@ -166,15 +166,15 @@ void dll_257_control(Object* self) {
             objdata->unkA--;
             if (var_s0 == NULL || sp68 <= sp64) {
                 if (sp68 < setup->unk19) {
-                    objdata->unk0->vtbl->func0(self, 0, NULL, 1, -1, 0x13, (s32)player);
-                    objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, (s32)player);
+                    objdata->unk0->vtbl->func0(self, 0, NULL, 1, -1, 0x13, player);
+                    objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, player);
                     goto bail;
                 }
             }
             if (var_s0 != NULL) {
                 if (sp64 < setup->unk19) {
-                    objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, (s32)var_s0);
-                    objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, (s32)var_s0);
+                    objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, var_s0);
+                    objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, var_s0);
                     goto bail;
                 }
             }
@@ -188,7 +188,7 @@ void dll_257_control(Object* self) {
                         goto start;
                     }
                 }
-                objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, (s32)objects[temp_v0_5]);
+                objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, objects[temp_v0_5]);
             }
         }
         bail:
@@ -203,7 +203,7 @@ void dll_257_control(Object* self) {
         if (objdata->unkC > 10.0f) {
             objdata->unkC -= 10.0f;
             func_8002635C(player, self, 1, 0, 0);
-            objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, (s32)player);
+            objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, player);
             gDLL_6_AMSFX->vtbl->play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         if (setup->unk1A < sp68) {

@@ -32,8 +32,8 @@ struct ObjFSA_Data;
  * Synchronous transitions will run immediately after this callback, within the same tick.
  * Asynchronous transitions will run on the next tick.
  */
-typedef s32 (*ObjFSA_StateCallback)(Object *obj, struct ObjFSA_Data *fsa, f32 updateRate);
-typedef void (*ObjFSA_ExitCallback)(Object *obj, struct ObjFSA_Data *fsa);
+typedef s32 (*ObjFSA_StateCallback)(Object* obj, struct ObjFSA_Data* fsa, f32 updateRate);
+typedef void (*ObjFSA_ExitCallback)(Object* obj, struct ObjFSA_Data* fsa);
 
 /**
  * objfsa ("object finite-state automata") implements finite-state machines for object related stuff.
