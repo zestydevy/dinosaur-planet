@@ -64,6 +64,7 @@
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
 232 = objects/232_VampireBat
+234 = objects/234_ScorpionRobot
 236 = objects/236_WG_Triffid
 241 = objects/241_SkeetlaWall
 243 = objects/243_Lunaimar

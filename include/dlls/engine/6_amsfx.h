@@ -186,6 +186,8 @@ enum SoundID {
 
     SOUND_111_Heavy_Collision = 0x111, //DIMboulder
 
+    SOUND_115_ScorpionRobot_LaserFire = 0x115,
+
     SOUND_129_SnowHorn_Yawn_1 = 0x129,
     SOUND_12A_SnowHorn_SnoreHorn = 0x12A,
     SOUND_12B_SnowHorn_Yawn_2 = 0x12B,
@@ -310,6 +312,8 @@ enum SoundID {
     SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat, SmallBasket
     SOUND_372_Crate_Struck = 0x372, // used by MediumMetalCrat
 
+    SOUND_375_Smack1 = 0x375,
+    SOUND_376_Smack2 = 0x376,
     SOUND_377_Metal_Smack = 0x377,
 
     SOUND_380_Scorching_Impact = 0x380, //DRbullet
@@ -439,8 +443,8 @@ enum SoundID {
     SOUND_6B5_Crate_Struck = 0x6B5, // used by MediumCrate
     SOUND_6B6_Crate_Smash = 0x6B6,  // used by MediumCrate, SmallBasket
     SOUND_6B7_Crate_Hiss = 0x6B7,   // used by MediumCrate, SmallBasket
-    SOUND_6B8_Crate_Hiss = 0x6B7,   // used by SmallBasket
-    SOUND_6B9_Crate_Hiss = 0x6B7,   // used by SmallBasket
+    SOUND_6B8_Crate_Hiss = 0x6B8,   // used by SmallBasket
+    SOUND_6B9_Crate_Hiss = 0x6B9,   // used by SmallBasket
 
     SOUND_6BB_Creature_Cry = 0x6BB, // Scarab
     SOUND_6BC_Creature_Cry = 0x6BC, // Duster, Scarab
@@ -450,10 +454,14 @@ enum SoundID {
 
     SOUND_6E2 = 0x6E2, // used by KT_RexFloorSwitch
 
+    SOUND_6E4_ScorpionRobot_Activate = 0x6E4,
+    SOUND_6E5_ScorpionRobot_Moving = 0x6E5,
     SOUND_6E6_Interaction_Refused = 0x6E6, // camera DLL
+    SOUND_6E7_ScorpionRobot_Damaged = 0x6E7,
 
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
 
+    SOUND_6F8_ScorpionRobot_Destroyed = 0x6F8,
     SOUND_6F9_Explosion = 0x6F9, // used by KT_Rex
     SOUND_6FA = 0x6FA, // used by KT_Rex
     SOUND_6FB = 0x6FB, // used by KT_Rex
