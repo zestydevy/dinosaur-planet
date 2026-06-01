@@ -6,7 +6,7 @@
 
 DLL_INTERFACE(DLL_IProjgfx) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*func0)(Object*, s32, SRT*, s32, s32, s32, s32);
+    /*0*/ s32 (*func0)(Object*, s32, SRT*, s32, s32, s32, void*); // last arg might always be SRT*?
 };
 
 #endif

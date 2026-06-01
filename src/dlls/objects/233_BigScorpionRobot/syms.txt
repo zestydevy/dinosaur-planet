@@ -1,0 +1,33 @@
+.text = 0x0:
+BigScorpionRobot_func_0 = 0x0;
+BigScorpionRobot_ctor = 0x80;
+BigScorpionRobot_dtor = 0xC0;
+BigScorpionRobot_setup = 0xCC;
+BigScorpionRobot_control = 0x204;
+BigScorpionRobot_update = 0x7B0;
+BigScorpionRobot_print = 0x7BC;
+BigScorpionRobot_free = 0x9E4;
+BigScorpionRobot_get_model_flags = 0xA88;
+BigScorpionRobot_get_data_size = 0xA98;
+BigScorpionRobot_is_obj_in_range = 0xAAC;
+BigScorpionRobot_func_B28 = 0xB28;
+BigScorpionRobot_func_B88 = 0xB88;
+BigScorpionRobot_state_0_idle = 0xBCC;
+BigScorpionRobot_state_1_unfold = 0xCC0;
+BigScorpionRobot_state_2_attacking = 0xE48;
+BigScorpionRobot_state_3_fold = 0x11CC;
+BigScorpionRobot_state_4_damage_recoil = 0x1358;
+BigScorpionRobot_state_5_dying = 0x14A4;
+BigScorpionRobot_state_6_dead = 0x161C;
+BigScorpionRobot_ai_state_0 = 0x18DC;
+
+.rodata = 0x19D4:
+
+.data = 0x1A04:
+data_0 = 0x0; // absolute:0x1A04
+sHitSounds = 0x1C; // absolute:0x1A20
+data_24 = 0x24; // absolute:0x1A28
+
+.bss = 0x1A34:
+sStateCallbacks = 0x0; // absolute:0x1A34
+sAIStateCallbacks = 0x1C; // absolute:0x1A50
