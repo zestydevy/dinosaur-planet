@@ -4,15 +4,15 @@
 _exports:
 
 # ctor/dtor
-.dword dll_234_ctor
-.dword dll_234_dtor
+.dword ScorpionRobot_ctor
+.dword ScorpionRobot_dtor
 
 # export table
-/*0*/ .dword dll_234_setup
-/*1*/ .dword dll_234_control
-/*2*/ .dword dll_234_update
-/*3*/ .dword dll_234_print
-/*4*/ .dword dll_234_free
-/*5*/ .dword dll_234_get_model_flags
-/*6*/ .dword dll_234_get_data_size
-/*7*/ .dword dll_234_func_A8C
+/*0*/ .dword ScorpionRobot_setup
+/*1*/ .dword ScorpionRobot_control
+/*2*/ .dword ScorpionRobot_update
+/*3*/ .dword ScorpionRobot_print
+/*4*/ .dword ScorpionRobot_free
+/*5*/ .dword ScorpionRobot_get_model_flags
+/*6*/ .dword ScorpionRobot_get_data_size
+/*7*/ .dword ScorpionRobot_func_A8C
