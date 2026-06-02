@@ -14,17 +14,17 @@
 #include "dll.h"
 
 typedef struct {
-/*0*/ f32 unk0;
-/*4*/ s16 unk4;
-/*6*/ s16 unk6;
-/*8*/ s16 unk8;
-/*A*/ s16 unkA;
-/*C*/ u16 unkC;
-/*E*/ u8 unkE;
-/*F*/ u8 unkF_0 : 1;
-/*F*/ u8 unkF_1 : 1;
-/*F*/ u8 unkF_2 : 1;
-/*F*/ u8 unkF_3 : 1;
+/*0*/ f32 animDelta;
+/*4*/ s16 turnStart;
+/*6*/ s16 turnDir;
+/*8*/ s16 spin; // extra yaw (unused leftover from ScorpionRobot)
+/*A*/ s16 spinSpeed; // spin change per tick (unused leftover from ScorpionRobot)
+/*C*/ u16 fireCooldown;
+/*E*/ u8 hitCount;
+/*F*/ u8 enteredState : 1;
+/*F*/ u8 fire : 1;
+/*F*/ u8 animFinished : 1;
+/*F*/ u8 playedDestroyedSound : 1;
 } BigScorpionRobot_Data;
 
 enum BigScorpionRobotModAnims {
@@ -108,9 +108,9 @@ void BigScorpionRobot_setup(Object* self, Baddie_Setup* setup, s32 reset) {
     self->animCallback = NULL;
     objdata = baddie->objdata;
     bzero(objdata, sizeof(BigScorpionRobot_Data));
-    objdata->unk8 = 0;
-    objdata->unkF_0 = 1;
-    objdata->unkA = 0x10E1;
+    objdata->spin = 0;
+    objdata->enteredState = 1;
+    objdata->spinSpeed = 0x10E1;
     func_80023D30(self, BIGSCORP_ROBO_MODANIM_2_Fold, 1.0f, 0);
     baddie->fsa.animState = BIGSCORP_ROBO_STATE_0_Idle;
     baddie->fsa.logicState = 0;
@@ -142,12 +142,12 @@ void BigScorpionRobot_control(Object* self) {
             return;
         }
         if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 0) != 0) {
-            objdata->unk8 += objdata->unkA;
-            objdata->unkF_2 = func_80024108(self, objdata->unk0 * 0.3f, gUpdateRateF, NULL);
-            if (gUpdateRate < objdata->unkC) {
-                objdata->unkC -= gUpdateRate;
+            objdata->spin += objdata->spinSpeed;
+            objdata->animFinished = func_80024108(self, objdata->animDelta * 0.3f, gUpdateRateF, NULL);
+            if (gUpdateRate < objdata->fireCooldown) {
+                objdata->fireCooldown -= gUpdateRate;
             } else {
-                objdata->unkC = 0;
+                objdata->fireCooldown = 0;
             }
             if (baddie->fsa.target != NULL) {
                 targVec[0] = baddie->fsa.target->globalPosition.x - self->globalPosition.x;
@@ -162,24 +162,24 @@ void BigScorpionRobot_control(Object* self) {
             if ((baddie->fsa.animState != BIGSCORP_ROBO_STATE_6_Dead) && (baddie->fsa.animState != BIGSCORP_ROBO_STATE_5_Dying)) {
                 if ((func_80025F40(self, &hitBy, &sp44, NULL) != 0) && (hitBy != NULL) && (hitBy->id == OBJ_projball)) {
                     if (sp44 == 1) {
-                        objdata->unkE++;
+                        objdata->hitCount++;
                         gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
                         camera_enable_y_offset();
                         camera_set_shake_offset(1.0f);
                         gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, BIGSCORP_ROBO_STATE_4_DamageRecoil);
-                        objdata->unkF_0 = 1;
+                        objdata->enteredState = 1;
                     } else {
                         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
-                if (objdata->unkE >= 6) {
+                if (objdata->hitCount >= 6) {
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
                     camera_enable_y_offset();
                     camera_set_shake_offset(6.0f);
                     gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, BIGSCORP_ROBO_STATE_5_Dying);
-                    objdata->unkF_0 = 1;
+                    objdata->enteredState = 1;
                     baddie->fsa.target = NULL;
                 }
             }
@@ -207,7 +207,7 @@ void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
     
     if ((visibility != 0) && (self->unkDC == 0)) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        if ((objdata->unkF_1) && (baddie->fsa.target != NULL)) {
+        if ((objdata->fire) && (baddie->fsa.target != NULL)) {
             SRT srcSRT;
             SRT dstSRT;
             modelInst = self->modelInsts[self->modelInstIdx];
@@ -232,7 +232,7 @@ void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
                 dll_unload(projgfx);
             }
         }
-        objdata->unkF_1 = 0;
+        objdata->fire = 0;
     }
 }
 
@@ -275,26 +275,26 @@ static s32 BigScorpionRobot_is_obj_in_range(Object* self, Object* obj, f32 range
 }
 
 // offset: 0xB28 | func: 9
-static void BigScorpionRobot_func_B28(BigScorpionRobot_Data* objdata) {
-    if (objdata->unkA < 0x10E1) {
-        objdata->unkA += (gUpdateRate * 0x46);
-        if (objdata->unkA > 0x10E1) {
-            objdata->unkA = 0x10E1;
+static void BigScorpionRobot_ramp_up_spin_speed(BigScorpionRobot_Data* objdata) {
+    if (objdata->spinSpeed < 0x10E1) {
+        objdata->spinSpeed += (gUpdateRate * 0x46);
+        if (objdata->spinSpeed > 0x10E1) {
+            objdata->spinSpeed = 0x10E1;
         }
     }
 }
 
 // offset: 0xB88 | func: 10
-static void BigScorpionRobot_func_B88(BigScorpionRobot_Data* objdata) {
-    if (objdata->unkA >= (gUpdateRate * 40)) {
-        objdata->unkA -= (gUpdateRate * 40);
+static void BigScorpionRobot_ramp_down_spin_speed(BigScorpionRobot_Data* objdata) {
+    if (objdata->spinSpeed >= (gUpdateRate * 40)) {
+        objdata->spinSpeed -= (gUpdateRate * 40);
     } else {
-        objdata->unkA = 0;
+        objdata->spinSpeed = 0;
     }
 }
 
 // offset: 0xBCC | func: 11 | state 0
-s32 BigScorpionRobot_state_0_idle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_state_0_idle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
     Object* player = get_player();
@@ -302,39 +302,39 @@ s32 BigScorpionRobot_state_0_idle(Object* self, ObjFSA_Data* fsa, f32 updateRate
     fsa->unk341 = 0;
     if (BigScorpionRobot_is_obj_in_range(self, player, (f32) baddie->unk3E2) != 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, BIGSCORP_ROBO_STATE_1_Unfold);
-        objdata->unkF_0 = 1;
+        objdata->enteredState = 1;
         fsa->target = player;
     }
-    objdata->unkA = 0;
+    objdata->spinSpeed = 0;
     return 0;
 }
 
 // offset: 0xCC0 | func: 12 | state 1
-s32 BigScorpionRobot_state_1_unfold(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_state_1_unfold(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
     
     fsa->unk341 = 1;
-    if (objdata->unkF_0) {
-        objdata->unkF_0 = 0;
+    if (objdata->enteredState) {
+        objdata->enteredState = 0;
         func_80023D30(self, BIGSCORP_ROBO_MODANIM_0_Unfold, 0.0f, 0);
-        objdata->unk0 = 0.024f;
+        objdata->animDelta = 0.024f;
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    if ((self->curModAnimId == 0) && (self->animProgress == 1.0f)) {
+    if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_0_Unfold) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, BIGSCORP_ROBO_STATE_2_Attacking);
-        objdata->unkF_0 = 1;
+        objdata->enteredState = 1;
     }
-    BigScorpionRobot_func_B88(objdata);
+    BigScorpionRobot_ramp_down_spin_speed(objdata);
     return 0;
 }
 
 // offset: 0xE48 | func: 13 | state 2
-s32 BigScorpionRobot_state_2_attacking(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_state_2_attacking(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
     s16 temp_v0_4;
@@ -342,145 +342,146 @@ s32 BigScorpionRobot_state_2_attacking(Object* self, ObjFSA_Data* fsa, f32 updat
     s16 temp;
     
     fsa->unk341 = 1;
-    if (objdata->unkF_0) {
-        objdata->unkF_0 = 0;
+    if (objdata->enteredState) {
+        objdata->enteredState = 0;
     }
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    if (objdata->unkF_2) {
+    if (objdata->animFinished) {
         func_80023D30(self, BIGSCORP_ROBO_MODANIM_0_Unfold, 1.0f, 0);
-        objdata->unk0 = 0.0f;
+        objdata->animDelta = 0.0f;
     }
-    if ((self->curModAnimId == 7) || (self->curModAnimId == 6)) {
-        self->srt.yaw = (s16) ((f32) objdata->unk4 + (5461.3335f * (f32) objdata->unk6 * self->animProgress));
+    if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_7_TurnLeft) || (self->curModAnimId == BIGSCORP_ROBO_MODANIM_6_TurnRight)) {
+        self->srt.yaw = (s16) ((f32) objdata->turnStart + (5461.3335f * (f32) objdata->turnDir * self->animProgress));
     }
-    if ((self->curModAnimId == 0) && (self->animProgress == 1.0f)) {
+    if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_0_Unfold) && (self->animProgress == 1.0f)) {
         if (fsa->target != NULL) {
             temp = (u16)arctan2_f(
                 self->srt.transl.x - fsa->target->srt.transl.x, 
                 self->srt.transl.z - fsa->target->srt.transl.z);
             temp_v0_4 = (u16)rotation16_sub_wrap(
                 temp, 
-                self->srt.yaw + objdata->unk8);
+                self->srt.yaw + objdata->spin);
             if (temp_v0_4 > 0x2000) {
                 modanimIdx = BIGSCORP_ROBO_MODANIM_6_TurnRight;
-                objdata->unk6 = -1;
+                objdata->turnDir = -1;
             } else if (temp_v0_4 < -0x2000) {
                 modanimIdx = BIGSCORP_ROBO_MODANIM_7_TurnLeft;
-                objdata->unk6 = 1;
+                objdata->turnDir = 1;
             } else {
                 modanimIdx = -1;
             }
             if (modanimIdx != -1) {
-                objdata->unk0 = 0.04f;
-                objdata->unk4 = self->srt.yaw;
+                objdata->animDelta = 0.04f;
+                objdata->turnStart = self->srt.yaw;
                 func_80023D30(self, modanimIdx, 0.0f, 0);
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
-            } else if ( objdata->unkC == 0) {
-                objdata->unkC = rand_next(0x96, 0x138);
-                objdata->unkF_1 = 1;
-                objdata->unk0 = 0.04f;
+            } else if (objdata->fireCooldown == 0) {
+                objdata->fireCooldown = rand_next(0x96, 0x138);
+                objdata->fire = 1;
+                objdata->animDelta = 0.04f;
                 func_80023D30(self, BIGSCORP_ROBO_MODANIM_3_Firing, 0.0f, 0);
             }
         }
     }
     if (BigScorpionRobot_is_obj_in_range(self, fsa->target, (f32) baddie->unk3E2 * 1.2f) == 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, BIGSCORP_ROBO_STATE_3_Fold);
-        objdata->unkF_0 = 1;
+        objdata->enteredState = 1;
         fsa->target = NULL;
     }
-    BigScorpionRobot_func_B88(objdata);
+    BigScorpionRobot_ramp_down_spin_speed(objdata);
     return 0;
 }
 
 // offset: 0x11CC | func: 14 | state 3
-s32 BigScorpionRobot_state_3_fold(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_state_3_fold(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
     
     fsa->unk341 = 0;
-    if (objdata->unkF_0) {
-        objdata->unkF_0 = 0;
+    if (objdata->enteredState) {
+        objdata->enteredState = 0;
         func_80023D30(self, BIGSCORP_ROBO_MODANIM_2_Fold, 0.0f, 0);
-        objdata->unk0 = 0.024f;
+        objdata->animDelta = 0.024f;
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    if ((self->curModAnimId == 2) && (self->animProgress == 1.0f)) {
+    if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_2_Fold) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, BIGSCORP_ROBO_STATE_0_Idle);
-        objdata->unkF_0 = 1;
+        objdata->enteredState = 1;
         fsa->target = NULL;
     }
-    BigScorpionRobot_func_B28(objdata);
+    // @bug: Big robo doesn't spin, so incrementing the spin speed here desyncs its rotation for the next attack
+    BigScorpionRobot_ramp_up_spin_speed(objdata);
     return 0;
 }
 
 // offset: 0x1358 | func: 15 | state 4
-s32 BigScorpionRobot_state_4_damage_recoil(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_state_4_damage_recoil(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
 
     fsa->unk341 = 0;
-    if (objdata->unkF_0) {
-        objdata->unkF_0 = 0;
+    if (objdata->enteredState) {
+        objdata->enteredState = 0;
         func_80023D30(self, BIGSCORP_ROBO_MODANIM_4_DamageRecoil, 0.0f, 0);
-        objdata->unk0 = 0.02f;
+        objdata->animDelta = 0.02f;
     }
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    if ((self->curModAnimId == 4) && (self->animProgress == 1.0f)) {
+    if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_4_DamageRecoil) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, BIGSCORP_ROBO_STATE_2_Attacking);
-        objdata->unkF_0 = 1;
+        objdata->enteredState = 1;
     }
-    BigScorpionRobot_func_B88(objdata);
+    BigScorpionRobot_ramp_down_spin_speed(objdata);
     return 0;
 }
 
 // offset: 0x14A4 | func: 16 | state 5
-s32 BigScorpionRobot_state_5_dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_state_5_dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
 
     fsa->unk341 = 0;
-    if (objdata->unkF_0) {
-        objdata->unkF_0 = 0;
+    if (objdata->enteredState) {
+        objdata->enteredState = 0;
         func_80023D30(self, BIGSCORP_ROBO_MODANIM_5_Die, 0.0f, 0);
-        objdata->unk0 = 0.012f;
+        objdata->animDelta = 0.012f;
     }
-    if ((self->animProgress > 0.186f) && !objdata->unkF_3) {
+    if ((self->animProgress > 0.186f) && !objdata->playedDestroyedSound) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
-        objdata->unkF_3 = 1;
+        objdata->playedDestroyedSound = 1;
     }
-    if ((self->curModAnimId == 5) && (self->animProgress == 1.0f)) {
+    if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_5_Die) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, BIGSCORP_ROBO_STATE_6_Dead);
-        objdata->unkF_0 = 1;
+        objdata->enteredState = 1;
         fsa->target = NULL;
     }
-    BigScorpionRobot_func_B88(objdata);
+    BigScorpionRobot_ramp_down_spin_speed(objdata);
     return 0;
 }
 
 // offset: 0x161C | func: 17 | state 6
-s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
     u8 partCount = 30; // why init up here?
     DLL_IModgfx* modgfx;
     
     fsa->unk341 = 3;
-    if (objdata->unkF_0) {
+    if (objdata->enteredState) {
         while (partCount--) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_555, NULL, PARTFXFLAG_2, -1, NULL);
         }
         modgfx = dll_load_deferred(DLL_ID_107, 1);
-        objdata->unkF_0 = 0;
+        objdata->enteredState = 0;
         gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0);
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);
@@ -501,11 +502,11 @@ s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 updateRate
     } else {
         self->opacity = 0;
     }
-    BigScorpionRobot_func_B88(objdata);
+    BigScorpionRobot_ramp_down_spin_speed(objdata);
     return 0;
 }
 
 // offset: 0x18DC | func: 18 | ai state 0
-s32 BigScorpionRobot_ai_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+static s32 BigScorpionRobot_ai_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 }

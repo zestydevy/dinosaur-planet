@@ -15,4 +15,4 @@ _exports:
 /*4*/ .dword ScorpionRobot_free
 /*5*/ .dword ScorpionRobot_get_model_flags
 /*6*/ .dword ScorpionRobot_get_data_size
-/*7*/ .dword ScorpionRobot_func_A8C
+/*7*/ .dword ScorpionRobot_get_spin
