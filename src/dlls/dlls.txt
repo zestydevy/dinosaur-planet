@@ -117,6 +117,7 @@
 308 = objects/308_USEOBJ
 309 = objects/309_SEQOBJ
 311 = objects/311_IMMultiSeq
+312 = objects/312_NWMultiSeq
 314 = objects/314_foodbag
 315 = objects/315_sidefoodbag
 318 = objects/318_fish
