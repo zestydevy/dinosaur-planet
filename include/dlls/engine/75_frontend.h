@@ -73,13 +73,11 @@ DLL_INTERFACE(DLL_75) {
 /*0*/ FrontEndSlider* (*create_slider)(s16 x, s16 y, s16 min, s16 max, s16 initialValue);
 /*1*/ FrontEndCheckbox* (*create_checkbox)(s16 x, s16 y, s16 min, s16 max, s16 initialValue);
 /*2*/ FrontEndList* (*create_list)(s16 x, s16 y, s16 min, s16 max, s16 initialValue, char** strings, u8 halfWidth);
-// /*3*/ void (*func3)(FrontEndSlider* slider);
-/*3*/ void (*func3)(s32 slider);
-/*4*/ UnknownDLLFunc func4;
-/*5*/ UnknownDLLFunc func5;
-/*6*/ UnknownDLLFunc func6;
-/*7*/ UnknownDLLFunc func7;
-// /*7*/ void (*func7)(FrontEndControl* slider, s32 select);
+/*3*/ void (*free)(FrontEndControl* ctrl);
+/*4*/ void (*update)(FrontEndControl* ctrl);
+/*5*/ void (*draw)(FrontEndControl* ctrl, Gfx** gdl);
+/*6*/ s32 (*get_selection_state)(FrontEndControl* ctrl);
+/*7*/ void (*set_selection_state)(FrontEndControl* slider, s32 select);
 /*8*/ s32 (*get_value)(FrontEndControl* ctrl);
 /*9*/ void (*set_value)(FrontEndControl* ctrl, s32 value);
 /*10*/ s32 (*did_value_change)(FrontEndControl* ctrl);

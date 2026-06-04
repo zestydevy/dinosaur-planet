@@ -39,7 +39,7 @@
 #include "dlls/engine/58.h"
 #include "dlls/engine/59_minimap.h"
 #include "dlls/engine/74_picmenu.h"
-#include "dlls/engine/75.h"
+#include "dlls/engine/75_frontend.h"
 #include "dlls/engine/76.h"
 
 // Note: These are DLL IDs not indices

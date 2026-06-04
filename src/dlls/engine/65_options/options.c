@@ -3,6 +3,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/74_picmenu.h"
+#include "dlls/engine/75_frontend.h"
 #include "game/gametexts.h"
 #include "macros.h"
 #include "sys/fonts.h"
@@ -557,7 +558,7 @@ typedef enum {
 /*0x128*/ static GameTextChunk* sGametextCheats;    //Text for the cheats menu
 /*0x12C*/ static s8 sCtrlCount;                     //The number of Front End controllers currently being used (checkboxes/sliders/lists)
 /*0x12D*/ static s8 sTopLevelItemIdx;               //The selected item index on the main top-level page of the Options menu (used to restore selection when backing out of a submenu)
-/*0x130*/ static s32 sCtrls[MAX_CONTROLS_PER_PAGE]; //Pointers to Front End controls (checkboxes/sliders/lists)
+/*0x130*/ static FrontEndControl* sCtrls[MAX_CONTROLS_PER_PAGE]; //Pointers to Front End controls (checkboxes/sliders/lists)
 /*0x148*/ static GplayOptions* sGameOptions;        //Player's saved game options
 
 static void options_goto_main_page(void);
@@ -778,11 +779,11 @@ s32 options_update1(void) {
         for (i = 0; i < sCtrlCount; i++) {
             if (sCtrls[i] != NULL) {
                 if (i == selectedIdx) {
-                    gDLL_75->vtbl->func7.withTwoArgs(sCtrls[i], TRUE);
+                    gDLL_75->vtbl->set_selection_state(sCtrls[i], TRUE);
                 } else {
-                    gDLL_75->vtbl->func7.withTwoArgs(sCtrls[i], FALSE);
+                    gDLL_75->vtbl->set_selection_state(sCtrls[i], FALSE);
                 }
-                gDLL_75->vtbl->func4.withOneArg(sCtrls[i]);
+                gDLL_75->vtbl->update(sCtrls[i]);
             }
         }
     }
@@ -926,7 +927,7 @@ void options_draw(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
 
         for (i = 0; i < sCtrlCount; i++) {
             if (sCtrls[i] != NULL) {
-                gDLL_75->vtbl->func5.withTwoArgs(sCtrls[i], gdl);
+                gDLL_75->vtbl->draw(sCtrls[i], gdl);
             }
         }
 
@@ -972,7 +973,7 @@ void options_goto_main_page(void) {
 
     for (i = 0; i < sCtrlCount; i++) {
         if (sCtrls[i]) {
-            gDLL_75->vtbl->func3(sCtrls[i]);
+            gDLL_75->vtbl->free(sCtrls[i]);
         }
         sCtrls[i] = NULL;
     }
@@ -1011,7 +1012,7 @@ static void options_goto_display_page(void) {
     sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(476, 278, 0, 1, sGameOptions->showInstruments, strings, 50);
     sCtrlCount++;
 
-    gDLL_75->vtbl->func7.withTwoArgs(sCtrls[0], 1);
+    gDLL_75->vtbl->set_selection_state(sCtrls[0], 1);
     sRedrawFrames = 2;
 }
 
@@ -1045,7 +1046,7 @@ static void options_goto_control_page(s32 selectedItemIdx) {
     sCtrlCount++;
 
     if (sCtrls[selectedItemIdx]) {
-        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[selectedItemIdx], 1);
+        gDLL_75->vtbl->set_selection_state(sCtrls[selectedItemIdx], 1);
     }
 
     sRedrawFrames = 2;
@@ -1112,7 +1113,7 @@ static void options_goto_cheats_page(void) {
         0xFF, 0xD7, 0x3D
     );
 
-    gDLL_75->vtbl->func7.withTwoArgs(sCtrls[OPTIONS_CHEATS_1_CheatShown1], 1);
+    gDLL_75->vtbl->set_selection_state(sCtrls[OPTIONS_CHEATS_1_CheatShown1], 1);
 
     sRedrawFrames = 2;
 }
@@ -1161,7 +1162,7 @@ static void options_goto_video_page(s32 selectedItemIdx) {
     sCtrlCount++;
 
     if (sCtrls[selectedItemIdx]) {
-        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[selectedItemIdx], 1);
+        gDLL_75->vtbl->set_selection_state(sCtrls[selectedItemIdx], 1);
     }
 
     sRedrawFrames = 2;
@@ -1199,7 +1200,7 @@ static void options_goto_audio_page(void) {
     sCtrls[sCtrlCount] = gDLL_75->vtbl->create_slider(318, 309, 0, MAX_VOLUME, sGameOptions->volumeAudio);
     sCtrlCount++;
 
-    gDLL_75->vtbl->func7.withTwoArgs(sCtrls[0], 1);
+    gDLL_75->vtbl->set_selection_state(sCtrls[0], 1);
     sRedrawFrames = 2;
 }
 
@@ -1225,7 +1226,7 @@ static void options_goto_view_layout_page(void) {
 
     for (i = 0; i < sCtrlCount; i++) {
         if (sCtrls[i] != NULL) {
-            gDLL_75->vtbl->func3(sCtrls[i]);
+            gDLL_75->vtbl->free(sCtrls[i]);
         }
         sCtrls[i] = NULL;
     }
@@ -1258,7 +1259,7 @@ static void options_goto_screen_position_page(void) {
 
     for (i = 0; i < sCtrlCount; i++) {
         if (sCtrls[i] != NULL) {
-            gDLL_75->vtbl->func3(sCtrls[i]);
+            gDLL_75->vtbl->free(sCtrls[i]);
         }
         sCtrls[i] = NULL;
     }
@@ -1412,10 +1413,10 @@ void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
     gDLL_74_Picmenu->vtbl->update_flags(submenu->menuItems);
 
     if (sCheatsTopIdx == 0) {
-        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[OPTIONS_CHEATS_1_CheatShown1], 1);
+        gDLL_75->vtbl->set_selection_state(sCtrls[OPTIONS_CHEATS_1_CheatShown1], 1);
         gDLL_74_Picmenu->vtbl->set_selected_item(OPTIONS_CHEATS_1_CheatShown1);
     } else if (sCheatsTopIdx == CHEATS_FIRST_IDX_LAST_GROUP) {
-        gDLL_75->vtbl->func7.withTwoArgs(sCtrls[OPTIONS_CHEATS_4_CheatShown4], 1);
+        gDLL_75->vtbl->set_selection_state(sCtrls[OPTIONS_CHEATS_4_CheatShown4], 1);
         gDLL_74_Picmenu->vtbl->set_selected_item(OPTIONS_CHEATS_4_CheatShown4);
     }
 
@@ -1493,7 +1494,7 @@ void options_clean_up(void) {
 
     for (i = 0; i < sCtrlCount; i++) {
         if (sCtrls[i] != NULL) {
-            gDLL_75->vtbl->func3(sCtrls[i]);
+            gDLL_75->vtbl->free(sCtrls[i]);
         }
         sCtrls[i] = NULL;
     }

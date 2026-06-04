@@ -1,6 +1,6 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/engine/75.h"
+#include "dlls/engine/75_frontend.h"
 #include "macros.h"
 #include "sys/fonts.h"
 #include "sys/menu.h"
@@ -130,7 +130,7 @@ FrontEndList* frontend_create_list(s16 x, s16 y, s16 min, s16 max, s16 initialVa
 }
 
 // offset: 0x354 | func: 3 | export: 3
-void frontend_free(FrontEndCheckbox* ctrl) {
+void frontend_free(FrontEndControl* ctrl) {
     mmFree(ctrl);
 }
 
