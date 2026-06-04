@@ -81,7 +81,7 @@ DLL_INTERFACE(DLL_75) {
 /*7*/ UnknownDLLFunc func7;
 // /*7*/ void (*func7)(FrontEndControl* slider, s32 select);
 /*8*/ s32 (*get_value)(FrontEndControl* ctrl);
-/*9*/ UnknownDLLFunc func9;
+/*9*/ void (*set_value)(FrontEndControl* ctrl, s32 value);
 /*10*/ s32 (*did_value_change)(FrontEndControl* ctrl);
 /*11*/ void (*set_lock_state)(FrontEndControl* ctrl, s32 unlock);
 };
