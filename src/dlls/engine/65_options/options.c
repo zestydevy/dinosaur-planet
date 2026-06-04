@@ -1301,7 +1301,7 @@ int options_exit_main_page(s32 action, s32 selectedItemIdx) {
 
 // offset: 0x2B50 | func: 13
 void options_handle_action_display_page(s32 action, s32 selectedItemIdx) {
-    if (!gDLL_75->vtbl->func10.withOneArgS32(sCtrls[selectedItemIdx])) {
+    if (!gDLL_75->vtbl->did_value_change(sCtrls[selectedItemIdx])) {
         return;
     }
 
@@ -1318,7 +1318,7 @@ void options_handle_action_display_page(s32 action, s32 selectedItemIdx) {
 // offset: 0x2C58 | func: 14
 void options_handle_action_control_page(s32 action, s32 selectedItemIdx) {
     if (selectedItemIdx == OPTIONS_CONTROL_0_Z_Button) {
-        if (gDLL_75->vtbl->func10.withOneArgS32(sCtrls[selectedItemIdx])) {
+        if (gDLL_75->vtbl->did_value_change(sCtrls[selectedItemIdx])) {
             gDLL_2_Camera->vtbl->apply_target_flags(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
         }
     } else if (action == PICMENU_ACTION_SELECT) {
@@ -1435,7 +1435,7 @@ void options_handle_action_video_page(s32 action, s32 selectedItemIdx) {
 
 // offset: 0x32B8 | func: 17
 void options_handle_action_audio_page(s32 action, s32 selectedItemIdx) {
-    if (gDLL_75->vtbl->func10.withOneArgS32(sCtrls[selectedItemIdx]) == 0) {
+    if (gDLL_75->vtbl->did_value_change(sCtrls[selectedItemIdx]) == FALSE) {
         return;
     }
 
