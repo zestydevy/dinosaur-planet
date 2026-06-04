@@ -32,7 +32,7 @@ typedef struct {
     u8 unkB;
     u8 unkC;
     u8 unkD;
-} OptionsSubmenu;
+} OptionsPage;
 
 typedef enum {
     OPTIONS_PAGE_0_Main_Page,       //Top-level options page, navigating to Video/Audio/Display/Control/Cheats/Cinema pages
@@ -44,7 +44,7 @@ typedef enum {
     OPTIONS_PAGE_6_Cinema,          //Inaccessible, but would display a control box like the other pages
     OPTIONS_PAGE_7_View_Layout,     //Diagram of control scheme
     OPTIONS_PAGE_8_Screen_Position  //Adjusting screen X/Y offset
-} OptionsMenuPages;
+} OptionsMenuPageIDs;
 
 typedef enum {
     OPTIONS_VIDEO_0_Screen_Size,
@@ -440,7 +440,7 @@ typedef enum {
 };
 /*0x700*/ static s8 dTextIDsScreenPosition[] = {LINE_40_OK};
 
-/*0x704*/ static OptionsSubmenu dMenus[] = {
+/*0x704*/ static OptionsPage dMenus[] = {
     {dItemsMain,            dTextIDsMain,           ARRAYCOUNT(dItemsMain),           NONE,             LINE_0_A_Select_B_Cancel,  4, 5, 4},
     {dItemsVideo,           dTextIDsVideo,          ARRAYCOUNT(dItemsVideo) - 1,      LINE_5_Video,     LINE_0_A_Select_B_Cancel,  3, 0, 0}, //NOTE: one unused item
     {dItemsAudio,           dTextIDsAudio,          ARRAYCOUNT(dItemsAudio) - 1,      LINE_6_Audio,     LINE_0_A_Select_B_Cancel,  3, 0, 0}, //NOTE: one unused item
@@ -804,7 +804,7 @@ void options_draw(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 ulx;
     s32 lrx;
     s32 end;
-    OptionsSubmenu *submenu;
+    OptionsPage *submenu;
 
     submenu = &dMenus[dMenuID];
 
@@ -942,7 +942,7 @@ void options_draw(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
 }
 
 // offset: 0x16A4 | func: 3
-static void options_set_up_menu_strings(OptionsSubmenu* submenu) {
+static void options_set_up_menu_strings(OptionsPage* submenu) {
     s32 i;
 
     for (i = 0; i < submenu->count; i++) {
@@ -952,7 +952,7 @@ static void options_set_up_menu_strings(OptionsSubmenu* submenu) {
 
 // offset: 0x1718 | func: 4
 void options_goto_main_page(void) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
     s32 i;
 
     if (dMenuID != NONE) {
@@ -983,7 +983,7 @@ void options_goto_main_page(void) {
 
 // offset: 0x1898 | func: 5
 static void options_goto_display_page(void) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
     char** strings;
 
     if (dMenuID != NONE) {
@@ -1006,9 +1006,9 @@ static void options_goto_display_page(void) {
     strings[1] = dGametextMenu->strings[LINE_9_On];
 
     sCtrlCount = 0;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(476, 254, 0, 1, sGameOptions->showSubtitles, strings, 50);
+    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(476, 254, 0, 1, sGameOptions->showSubtitles, strings, 50);
     sCtrlCount++;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(476, 278, 0, 1, sGameOptions->showInstruments, strings, 50);
+    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(476, 278, 0, 1, sGameOptions->showInstruments, strings, 50);
     sCtrlCount++;
 
     gDLL_75->vtbl->func7.withTwoArgs(sCtrls[0], 1);
@@ -1017,7 +1017,7 @@ static void options_goto_display_page(void) {
 
 // offset: 0x1AE4 | func: 6
 static void options_goto_control_page(s32 selectedItemIdx) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
 
     if (dMenuID != NONE) {
         gDLL_74_Picmenu->vtbl->clear_items();
@@ -1039,7 +1039,7 @@ static void options_goto_control_page(s32 selectedItemIdx) {
     dControlZButtonStrings[2] = dGametextMenu->strings[LINE_16_Hold];
 
     sCtrlCount = 0;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(426, 254, 0, 2, sGameOptions->zTargetMode, dControlZButtonStrings, 100);
+    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 254, 0, 2, sGameOptions->zTargetMode, dControlZButtonStrings, 100);
     sCtrlCount++;
     sCtrls[sCtrlCount] = NULL;
     sCtrlCount++;
@@ -1053,7 +1053,7 @@ static void options_goto_control_page(s32 selectedItemIdx) {
 
 // offset: 0x1CF4 | func: 7
 static void options_goto_cheats_page(void) {
-    OptionsSubmenu *submenu;
+    OptionsPage *submenu;
     s32 enabled;
     s32 unlocked;
     u32 i;
@@ -1087,7 +1087,7 @@ static void options_goto_cheats_page(void) {
         }
 
         enabled = gDLL_29_Gplay->vtbl->is_cheat_active(sCheatsTopIdx + i);
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->func1.withFiveArgsS32(
+        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_checkbox(
             513, (s16) y, 
             0, 1, 
             enabled ? 1 : 0
@@ -1119,7 +1119,7 @@ static void options_goto_cheats_page(void) {
 
 // offset: 0x2088 | func: 8
 static void options_goto_video_page(s32 selectedItemIdx) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
     u8 languageID = gDLL_21_Gametext->vtbl->curr_bank();
 
     if (dMenuID != NONE) {
@@ -1146,14 +1146,14 @@ static void options_goto_video_page(s32 selectedItemIdx) {
 
     sCtrlCount = 0;
     if ((languageID == LANGUAGE_ESPANOL) || (languageID == LANGUAGE_ITALIANO)) {
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(451, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 75);
+        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(451, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 75);
         sCtrlCount++;
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(451, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 75);
+        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(451, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 75);
         sCtrlCount++;
     } else {
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(426, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 100);
+        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 100);
         sCtrlCount++;
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(426, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 100);
+        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 100);
         sCtrlCount++;
     }
 
@@ -1169,7 +1169,7 @@ static void options_goto_video_page(s32 selectedItemIdx) {
 
 // offset: 0x2438 | func: 9
 static void options_goto_audio_page(void) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
 
     if (dMenuID != NONE) {
         gDLL_74_Picmenu->vtbl->clear_items();
@@ -1192,7 +1192,7 @@ static void options_goto_audio_page(void) {
     dAudioSetupStrings[3] = dGametextMenu->strings[LINE_34_Headphones];
 
     sCtrlCount = 0;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->func2.withSevenArgsS32(426, 254, 0, 3, sGameOptions->audioMode, dAudioSetupStrings, 100);
+    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 254, 0, 3, sGameOptions->audioMode, dAudioSetupStrings, 100);
     sCtrlCount++;
     sCtrls[sCtrlCount] = gDLL_75->vtbl->create_slider(318, 285, 0, 0xff, sGameOptions->volumeMusic);
     sCtrlCount++;
@@ -1205,7 +1205,7 @@ static void options_goto_audio_page(void) {
 
 // offset: 0x26D8 | func: 10
 static void options_goto_view_layout_page(void) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
     s32 i;
 
     if (dMenuID != NONE) {
@@ -1238,7 +1238,7 @@ static void options_goto_view_layout_page(void) {
 
 // offset: 0x2888 | func: 11
 static void options_goto_screen_position_page(void) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
     s32 i;
 
     if (dMenuID != NONE) {
@@ -1329,7 +1329,7 @@ void options_handle_action_control_page(s32 action, s32 selectedItemIdx) {
 
 // offset: 0x2D50 | func: 15
 void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
-    OptionsSubmenu* submenu;
+    OptionsPage* submenu;
     s32 i;
     s32 cheatWasPressed;
     s32 enabled;

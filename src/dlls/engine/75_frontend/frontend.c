@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/engine/75.h"
 #include "macros.h"
 #include "sys/fonts.h"
 #include "sys/menu.h"
@@ -104,7 +105,7 @@ FrontEndCheckbox* frontend_create_checkbox(s16 x, s16 y, s16 min, s16 max, s16 i
 }
 
 // offset: 0x284 | func: 2 | export: 2
-FrontEndList* frontend_create_list(s16 x, s16 y, s16 min, s16 max, s16 initialValue, char** strings, u8 arg6) {
+FrontEndList* frontend_create_list(s16 x, s16 y, s16 min, s16 max, s16 initialValue, char** strings, u8 halfWidth) {
     FrontEndList *ctrl;
     
     if (initialValue < min) {
@@ -123,7 +124,7 @@ FrontEndList* frontend_create_list(s16 x, s16 y, s16 min, s16 max, s16 initialVa
     ctrl->y = y;
     ctrl->flags = FRONTEND_FLAG_2_Wrap_Value;
     ctrl->redrawFrames = 4;
-    ctrl->halfWidth = arg6;
+    ctrl->halfWidth = halfWidth;
 
     return ctrl;
 }

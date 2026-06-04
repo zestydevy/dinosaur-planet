@@ -71,8 +71,8 @@ typedef struct {
 DLL_INTERFACE(DLL_75) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ FrontEndSlider* (*create_slider)(s16 x, s16 y, s16 min, s16 max, s16 initialValue);
-/*1*/ UnknownDLLFunc func1;
-/*2*/ UnknownDLLFunc func2;
+/*1*/ FrontEndCheckbox* (*create_checkbox)(s16 x, s16 y, s16 min, s16 max, s16 initialValue);
+/*2*/ FrontEndList* (*create_list)(s16 x, s16 y, s16 min, s16 max, s16 initialValue, char** strings, u8 halfWidth);
 // /*3*/ void (*func3)(FrontEndSlider* slider);
 /*3*/ void (*func3)(s32 slider);
 /*4*/ UnknownDLLFunc func4;
