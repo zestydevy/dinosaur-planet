@@ -10,7 +10,7 @@ extern DLL_20_screens *gDLL_20_Screens;
 extern DLL_21_gametext *gDLL_21_Gametext;
 extern DLL_Unknown* dll_throw_fault; //NOTE: BROKEN! This is a function now, not a DLL.
 
-extern u8 D_8008C8B4;
+extern s8 D_8008C8B4;
 
 typedef struct {
     s16 unk0;

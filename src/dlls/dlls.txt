@@ -39,6 +39,7 @@
 66 = engine/66_pausemenu
 68 = engine/68_old_mainmenu
 69 = engine/69
+71 = engine/71
 72 = engine/72
 74 = engine/74_picmenu
 75 = engine/75_frontend
