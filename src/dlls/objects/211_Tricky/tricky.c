@@ -71,8 +71,8 @@ typedef struct {
 /* static */ void dll_211_func_514C(Object* arg0, DLL211_Data* arg1);
 /* static */ void dll_211_func_52B8(Object* arg0, DLL211_Data* arg1);
 /* static */ s32 dll_211_func_53E4(Object* arg0, f32 arg1, DLL211_Data* arg2);
-/* static */ CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2);
-/* static */ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
+static CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2);
+static CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
 static CurveSetup* dll_211_func_8114(CurveSetup* arg0);
 /* static */ void dll_211_func_82B8(DLL211_Data* arg0);
 /* static */ void dll_211_func_87E4(Object* arg0);
@@ -711,7 +711,7 @@ Requires these as static:
 - dll_211_func_507C (matched)
 - dll_211_func_514C (matched)
 - dll_211_func_52B8 (matched)
-- dll_211_func_7A7C (matching, requires other statics)
+- dll_211_func_7A7C (matched)
 - dll_211_func_8A94 (matched)
 */
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_53E4.s")
@@ -1003,10 +1003,6 @@ void dll_211_func_7794(Object* arg0, u8 *arg1, s16 arg2, CurveSetup** arg3) {
 }
 
 // offset: 0x7A7C | func: 59
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7A7C.s")
-#else
-// matches but requires dll_211_func_7EFC and dll_211_func_7DB8 (matched) as static
 CurveSetup* dll_211_func_7A7C(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, u8 arg3) {
     CurveSetup* var_v1;
 
@@ -1032,7 +1028,6 @@ CurveSetup* dll_211_func_7A7C(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, u8 
     arg0->unk4DA = arg3;
     return var_v1;
 }
-#endif
 
 // offset: 0x7BAC | func: 60
 s8 dll_211_func_7BAC(DLL211_Data* arg0, CurveSetup** arg1, u8 *arg2, void* arg3) {
@@ -1089,7 +1084,7 @@ s8 dll_211_func_7BAC(DLL211_Data* arg0, CurveSetup** arg1, u8 *arg2, void* arg3)
 }
 
 // offset: 0x7DB8 | func: 61
-CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2) {
+static CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2) {
     if (arg2 == NULL) {
         return NULL;
     }
@@ -1118,12 +1113,7 @@ CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2) {
 }
 
 // offset: 0x7EFC | func: 62
-#ifndef NON_MATCHING
-CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7EFC.s")
-#else
-// https://decomp.me/scratch/TMWGG
-CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3) {
+static CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3) {
     CurveSetup *sp68[4];
     f32 temp_fv0;
     f32 var_fs0;
@@ -1131,19 +1121,20 @@ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32
     u16 var_s1;
     u16 var_s2;
     u16 var_s3;
-    CurveSetup* setup;
 
     for (var_s0 = 0, var_s2 = 0, var_s3 = 1; var_s0 < 4; var_s0++, var_s3 <<= 1, arg3 <<= 1) {
-        if (arg1->links[var_s0] >= 0 && (arg3^0) == (arg1->unk1B & var_s3)) {
-            // FAKE
-            if (1);
+        if (arg1->links[var_s0] >= 0 && ((arg3^0) != (arg1->unk1B & var_s3)) == 0) {
             sp68[var_s2] = gDLL_26_Curves->vtbl->func_39C(arg1->links[var_s0]);
-            if (sp68[var_s2] != NULL && (arg2 == 0 || arg2 == (arg1->unk4_u8[var_s2]))) {
-                if (
-                    (sp68[var_s2]->type22.unk30 == -1 || main_get_bits(sp68[var_s2]->type22.unk30) != 0) &&
-                    (sp68[var_s2]->type22.usedBit == -1 || main_get_bits(sp68[var_s2]->type22.usedBit) == 0)
-                ) {
-                    var_s2++;
+            // FAKE
+            if (1) { }
+            if (sp68[var_s2] != NULL) {
+                if ((arg2 == 0 || arg2 == (arg1->unk4_u8[var_s2]))) {
+                    if (
+                        (sp68[var_s2]->type22.unk30 == -1 || main_get_bits(sp68[var_s2]->type22.unk30) != 0) &&
+                        (sp68[var_s2]->type22.usedBit == -1 || main_get_bits(sp68[var_s2]->type22.usedBit) == 0)
+                    ) {
+                        var_s2++;
+                    }
                 }
             }
         }
@@ -1165,7 +1156,6 @@ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32
 
     return NULL;
 }
-#endif
 
 // offset: 0x8114 | func: 63
 static CurveSetup* dll_211_func_8114(CurveSetup* arg0) {
