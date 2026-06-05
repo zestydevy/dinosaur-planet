@@ -5,6 +5,7 @@
 #include "dlls/objects/278_flameblast.h"
 #include "sys/objexpr.h"
 #include "sys/objtype.h"
+#include "sys/objlib.h"
 #include "sys/route.h"
 
 #include "prevent_bss_reordering.h"
@@ -39,8 +40,8 @@ typedef struct {
     s32 unk334;
     Object *unk338;
     u8 pad33C[0x360 - 0x33C];
-    HeadAnimation unk360; // maybe a pointer
-    u8 pad384[0x3B4 - 0x384];
+    HeadAnimation unk360;
+    Vec3f unk384[4];
     Vec3f unk3B4;
     u8 pad3C0[0x448 - 0x3C0];
     s32 unk448;
@@ -355,10 +356,54 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_53E4.s")
 
 // offset: 0x7188 | func: 55
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7188.s")
+void dll_211_func_7188(Object* arg0) {
+    s32 i;
+    DLL211_Data* data;
+
+    data = arg0->data;
+    for (i = 0; i < 4; i++) {
+        func_80031F6C(arg0, i + 1, &data->unk384[i].x, &data->unk384[i].y, &data->unk384[i].z, 0);
+    }
+
+    func_80031F6C(arg0, 5, &data->unk3B4.x, &data->unk3B4.y, &data->unk3B4.z, 0);
+}
 
 // offset: 0x726C | func: 56
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_726C.s")
+void dll_211_func_726C(Object* arg0) {
+    DLL211_Data* data; // sp4C
+    Object* temp_a1;
+    SRT sp30;
+
+    data = arg0->data;
+    temp_a1 = data->unk28;
+    sp30.transl.x = data->unk384[0].x;
+    sp30.transl.y = data->unk384[0].y;
+    sp30.transl.z = data->unk384[0].z;
+    sp30.yaw = arg0->srt.yaw;
+    if (temp_a1->id == OBJ_GroundAnimator) {
+        sp30.roll = ((DLL_Unknown*)temp_a1->dll)->vtbl->func[9].withOneArgS32((s32)temp_a1);
+    } else if (temp_a1->id == OBJ_WallAnimator) {
+        sp30.roll = ((DLL_Unknown*)temp_a1->dll)->vtbl->func[9].withOneArgS32((s32)temp_a1);
+    } else {
+        sp30.roll = 0;
+    }
+    if (rand_next(0, 4) == 0) {
+        gDLL_17_partfx->vtbl->spawn(arg0, 0xCA, &sp30, 1, -1, NULL);
+    }
+    if (rand_next(0, 4) == 0) {
+        gDLL_17_partfx->vtbl->spawn(arg0, 0xCB, &sp30, 1, -1, NULL);
+    }
+    sp30.transl.x = data->unk384[1].x;
+    sp30.transl.y = data->unk384[1].y;
+    sp30.transl.z = data->unk384[1].z;
+    sp30.yaw = arg0->srt.yaw;
+    if (rand_next(0, 4) == 0) {
+        gDLL_17_partfx->vtbl->spawn(arg0, 0xCA, &sp30, 1, -1, NULL);
+    }
+    if (rand_next(0, 4) == 0) {
+        gDLL_17_partfx->vtbl->spawn(arg0, 0xCB, &sp30, 1, -1, NULL);
+    }
+}
 
 /*0x0*/ static const char str_0[] = "%d %d %d %d\n";
 /*0x10*/ static const char str_10[] = "hits: %d %d %d %d %d %d %d %d";
@@ -1001,7 +1046,17 @@ void dll_211_func_8974(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
 }
 
 // offset: 0x8A94 | func: 75
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_8A94.s")
+void dll_211_func_8A94(s32 arg0, UnkCurvesStruct* arg1) {
+    if (arg1->unk80 != 0) {
+        while (arg1->unk10 != 0) {
+            func_800053B0(arg1, -2.0f);
+        }
+    } else{
+        while (arg1->unk10 == 0) {
+            func_800053B0(arg1, 2.0f);
+        }
+    }
+}
 
 // offset: 0x8B5C | func: 76
 void dll_211_func_8B5C(Object* arg0, s32 arg1) {
