@@ -663,7 +663,7 @@ typedef enum {
     BIT_290 = 0x290, // len:1 group:1
     BIT_291 = 0x291, // len:1 group:1
     BIT_292 = 0x292, // len:1 group:3
-    BIT_293 = 0x293, // len:1 group:0
+    BIT_DF_Cave_Door_Hidden = 0x293, // len:1 group:0
     BIT_294 = 0x294, // len:1 group:1
     BIT_295 = 0x295, // len:1 group:3
     BIT_296 = 0x296, // len:1 group:2
