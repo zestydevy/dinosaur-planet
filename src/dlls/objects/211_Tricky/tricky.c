@@ -18,7 +18,7 @@ typedef struct {
     u8 padC[0x18 - 0xC];
     u8 unk18;
     u8 unk19;
-    u8 unk1A;
+    u8 unk1A; // some sort of state?
     u8 unk1B; //bitfield of available sidekick commands
     u8 unk1C;
     u8 unk1D;
@@ -70,6 +70,7 @@ typedef struct {
 
 /* static */ void dll_211_func_514C(Object* arg0, DLL211_Data* arg1);
 /* static */ void dll_211_func_52B8(Object* arg0, DLL211_Data* arg1);
+/* static */ s32 dll_211_func_53E4(Object* arg0, f32 arg1, DLL211_Data* arg2);
 /* static */ CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2);
 /* static */ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
 static CurveSetup* dll_211_func_8114(CurveSetup* arg0);
@@ -117,10 +118,10 @@ static s32 dll_211_func_9668(DLL27_Data* arg0);
     0x00000000, 0x00000000, 0x00000000
 };
 /*0xA0*/ static u32 _data_A0 = 0x41000000;
-/*0xA4*/ static u32 _data_A4[] = {
-    0x00000000, 0x3ea8f5c3, 0x3f7d70a4, 0x3ffd70a4, 0x40533333, 0x409e6666, 0x40ddc28f, 0x4113d70a, 
-    0x413e147b, 0x416d999a, 0x419170a4, 0x41aeb852, 0x41cea3d7, 0x41f13333, 0x420b3333, 0x421f1eb8, 
-    0x42345c29, 0x424aeb85
+/*0xA4*/ static f32 _data_A4[] = {
+    0.0f, 0.33f, 0.99f, 1.98f, 3.3f, 4.95f,
+    6.93f, 9.24f, 11.88f, 14.85f, 18.18f, 21.84f,
+    25.83f, 30.15f, 34.8f, 39.78f, 45.09f, 50.73f
 };
 /*0xEC*/ static u32 _data_EC[] = {
     0x00000200, 0x04000007, 0x07000a00, 0x000d0000, 0x00000013, 0x00000000, 0x00001a1c, 0x1c000000, 
@@ -335,25 +336,175 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3A78.s")
 
 // offset: 0x3C1C | func: 42
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3C1C.s")
+s32 dll_211_func_3C1C(Object *arg0) {
+    s32 count;
+    Object** objects;
+    s16 i;
+
+    objects = obj_get_all_of_type(4, &count);
+    for (i = 0; i < count; i++) {
+        if (arg0 == objects[i]) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
 
 // offset: 0x3CAC | func: 43
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3CAC.s")
 
 // offset: 0x4340 | func: 44
+#ifndef NON_MATCHING
+void dll_211_func_4340(Object* arg0, DLL211_Data* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_4340.s")
+#else
+// matches but requires dll_211_func_53E4 to be static
+void dll_211_func_4340(Object* arg0, DLL211_Data* arg1) {
+    if (dll_211_func_53E4(arg0, 15.0f, arg1) == 0) {
+        dll_211_func_83BC(arg0, arg1);
+    }
+}
+#endif
 
 // offset: 0x43AC | func: 45
+#ifndef NON_MATCHING
+void dll_211_func_43AC(Object* arg0, DLL211_Data* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_43AC.s")
+#else
+// matches but requires dll_211_func_53E4 to be static
+void dll_211_func_43AC(Object* arg0, DLL211_Data* arg1) {
+    if (dll_211_func_53E4(arg0, 5.0f, arg1) == 0) {
+        dll_211_func_83BC(arg0, arg1);
+    }
+}
+#endif
 
 // offset: 0x4418 | func: 46
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_4418.s")
+void dll_211_func_4418(Object* arg0, DLL211_Data* arg1);
+#else
+// matches but requires dll_211_func_82B8 (matched) and dll_211_func_53E4 to be static
+void dll_211_func_4418(Object* arg0, DLL211_Data* arg1) {
+    s32 pad;
+    f32 sp30;
+
+    switch (arg1->unk1A) {
+    case 0:
+        arg1->unk5E4[0] = arg1->unk28;
+        arg1->unk1A = 1;
+        ((f32*)arg1->unk5E4)[1] = 180.0f;
+        /* fallthrough */
+    case 1:
+        if (((DLL_Unknown*)arg1->unk5E4[0]->dll)->vtbl->func[9].withOneArgS32((s32)arg1->unk5E4[0]) != 0) {
+            if (dll_211_func_53E4(arg0, 13.0f, arg1) == 0) {
+                func_80023D30(arg0, 0x11, 0.0f, 0U);
+                arg1->unk38 = 0.03f;
+                arg1->unk4C |= 0x10;
+                arg1->unk1A = 3;
+                ((DLL_Unknown*)arg1->unk5E4[0]->dll)->vtbl->func[8].withTwoArgs(arg1->unk5E4[0], arg0);
+            }
+            return;
+        }
+        if (dll_211_func_53E4(arg0, 25.0f, arg1) == 0) {
+            if (((f32*)arg1->unk5E4)[1] > 0.0f) {
+                dll_211_func_83BC(arg0, arg1);
+                arg1->unk38 = 0.005f;
+                ((f32*)arg1->unk5E4)[1] -= gUpdateRateF;
+                if (((f32*)arg1->unk5E4)[1] <= 0.0f) {
+                    ((f32*)arg1->unk5E4)[2] = 60.0f;
+                }
+            } else {
+                dll_211_func_8308(arg0, 0x10);
+                arg1->unk38 = 0.02f;
+                ((f32*)arg1->unk5E4)[2] -= gUpdateRateF;
+                if (((f32*)arg1->unk5E4)[2] <= 0.0f) {
+                    ((f32*)arg1->unk5E4)[1] = 180.0f;
+                }
+            }
+        }
+        return;
+    default:
+        return;
+    case 6:
+        if (arg0->animProgress >= 0.65f) {
+            arg1->unk5E4[0]->srt.transl.f[1] += 5.0f;
+            sp30 = fsin16_precise(arg0->srt.yaw);
+            ((DLL_Unknown*)arg1->unk5E4[0]->dll)->vtbl->func[7].withFiveArgsCustom4(arg1->unk5E4[0], arg0, -sp30, 1.0f, -fcos16_precise(arg0->srt.yaw));
+            arg1->unk1A = 2;
+        }
+        return;
+    case 2:
+        if (arg0->animProgress >= 0.95f) {
+            dll_211_func_82B8(arg1);
+        }
+        return;
+    case 3:
+        if (arg0->animProgress >= 0.5f) {
+            arg1->unk1A = 4;
+        }
+        return;
+    case 4:
+        if (arg0->animProgress >= 0.95f) {
+            arg1->unk28 = arg1->unk8;
+            dll_211_func_9024(arg1, &arg1->unk8->globalPosition);
+            arg1->unk1A = 5;
+            /* fallthrough */
+        } else {
+            return;
+        }
+    case 5:
+        if (dll_211_func_53E4(arg0, 50.0f, arg1) == 0) {
+            func_80023D30(arg0, 0x13, 0.0f, 0U);
+            arg1->unk38 = 0.03f;
+            arg1->unk1A = 6;
+        }
+        return;
+    }
+}
+#endif
 
 // offset: 0x47E8 | func: 47
+#ifndef NON_MATCHING
+void dll_211_func_47E8(Object* arg0, DLL211_Data* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_47E8.s")
+#else
+// matches but requires dll_211_func_53E4 to be static
+void dll_211_func_47E8(Object* arg0, DLL211_Data* arg1) {
+    s32 sp24;
+    s32 var_v0;
+    s32 var_v1_2;
+
+    sp24 = atan2f_to_s(arg1->unk28->srt.transl.x - arg0->srt.transl.x, arg1->unk28->srt.transl.f[2] - arg0->srt.transl.f[2]);
+    if (arg1->unk1A == 0) {
+        ((s32*)arg1->unk5E4)[0] = rand_next(0, 1);
+        if (((s32*)arg1->unk5E4)[0] == 0) {
+            ((s32*)arg1->unk5E4)[0] = -1;
+        }
+        ((s32*)arg1->unk5E4)[1] = sp24;
+        arg1->unk1A = 1;
+    }
+    var_v0 = sp24 - (((s32*)arg1->unk5E4)[1] & 0xFFFF);
+    CIRCLE_WRAP(var_v0);
+    if (var_v0 >= 0) {
+        var_v1_2 = var_v0;
+    } else {
+        var_v1_2 = -var_v0;
+    }
+    if (var_v1_2 < 0x2000) {
+        ((s32*)arg1->unk5E4)[1] += (((s32*)arg1->unk5E4)[0] << 0xB);
+    }
+    ((f32*)arg1->unk5E4)[2] = arg1->unk28->srt.transl.x - (fsin16(((s32*)arg1->unk5E4)[1]) * 50.0f);
+    ((f32*)arg1->unk5E4)[3] = arg1->unk28->srt.transl.f[1];
+    arg1->unk5F4 = arg1->unk28->srt.transl.f[2] - (fcos16(((s32*)arg1->unk5E4)[1]) * 50.0f);
+    dll_211_func_53E4(arg0, 5.0f, arg1);
+}
+#endif
 
 // offset: 0x4974 | func: 48
 #ifndef NON_MATCHING
+void dll_211_func_4974(Object* arg0, DLL211_Data* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_4974.s")
 #else
 // matches but requires these as static:
@@ -424,13 +575,104 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
 #endif
 
 // offset: 0x4C94 | func: 49
+#ifndef NON_MATCHING
+void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_4C94.s")
+#else
+// matches but requires these as static:
+// - dll_211_func_53E4
+// - dll_211_func_82B8 (matched)
+// - dll_211_func_885C (matched)
+// - dll_211_func_9050 (matched)
+// - dll_211_func_940C (matched)
+void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
+    switch (arg1->unk1A) {
+    case 0:
+        if (dll_211_func_53E4(arg0, 50.0f, arg1) == 0) {
+            dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xA, 0xC)]);
+            arg1->unk1A = 1;
+            func_80023D30(arg0, 0x106, 0.0f, 0U);
+            arg1->unk5F8 = 0.0f;
+            return;
+        }
+        return;
+    case 1:
+        if ((arg1->unk4[1] != 0) && (arg1->unk5F8 != 0)) {
+            arg1->unk1A = 2;
+            return;
+        }
+        dll_211_func_885C(arg0);
+        if (rand_next(0, 0xA) == 0) {
+            dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xA, 0xC)]);
+        }
+        break;
+    case 2:
+        if (dll_211_func_53E4(arg0, 25.0f, arg1) == 0) {
+            dll_211_func_9050(arg0, arg1);
+            arg1->unk4[1]--;
+            func_80023D30(arg0, 0x205, 0.0f, 0U);
+            arg1->unk38 = 0.005f;
+            arg1->unk4C |= 0x10;
+            arg1->unk1A = 3;
+            arg1->unk5F8 = 0.0f;
+            return;
+        }
+        break;
+    case 3:
+        if (arg0->animProgress >= 0.95f) {
+            dll_211_func_940C(arg0, arg1);
+            dll_211_func_82B8(arg1);
+        } else {
+            dll_211_func_885C(arg0);
+        }
+        break;
+    }
+}
+#endif
 
 // offset: 0x4F3C | func: 50
+#ifndef NON_MATCHING
+s32 dll_211_func_4F3C(Object* arg0, f32 arg1, DLL211_Data* arg2, Vec3f* arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_4F3C.s")
+#else
+// matches but requires dll_211_func_8ED0 (matched) and dll_211_func_8470 as static
+s32 dll_211_func_4F3C(Object* arg0, f32 arg1, DLL211_Data* arg2, Vec3f* arg3) {
+    f32 temp2;
+    f32 temp_fa0;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 temp;
+
+    temp_fv1 = arg3->f[0] - arg0->srt.transl.f[0];
+    temp_fa0 = arg3->f[2] - arg0->srt.transl.f[2];
+    temp = arg2->unk20 * 10.0f;
+    temp_fv0 = _data_A4[temp] + arg1;
+    temp_fv0 *= temp_fv0;
+    temp2 = SQ(temp_fv1) + SQ(temp_fa0);
+    if (temp_fv0 < temp2) {
+        dll_211_func_8ED0(arg2->unk20, 1.5f, &arg2->unk20);
+    } else {
+        arg2->unk20 += -0.03f * gUpdateRateF;
+        if (arg2->unk20 < 0.0f) {
+            arg2->unk20 = 0.0f;
+            return 0;
+        }
+    }
+
+    dll_211_func_8470(arg0, arg3);
+    return 1;
+}
+#endif
 
 // offset: 0x507C | func: 51
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_507C.s")
+void dll_211_func_507C(Object* arg0, DLL211_Data* arg1) {
+    dll_211_func_8F84(arg0, &arg1->unk3C8.unkA0->pos, arg1->unk30);
+    arg1->unk20 = 1.5f;
+    func_80023D30(arg0, 0x15, 0.0f, 0U);
+    arg1->unk19 = 9;
+    dll_211_func_95E0(arg0, arg1, _data_0[rand_next(7, 9)]);
+}
+
 
 // offset: 0x514C | func: 52
 /* static */ void dll_211_func_514C(Object* arg0, DLL211_Data* arg1) {
@@ -466,10 +708,10 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
 // offset: 0x53E4 | func: 54
 /*
 Requires these as static:
-- dll_211_func_507C
+- dll_211_func_507C (matched)
 - dll_211_func_514C (matched)
 - dll_211_func_52B8 (matched)
-- dll_211_func_7A7C (nonmatching)
+- dll_211_func_7A7C (matching, requires other statics)
 - dll_211_func_8A94 (matched)
 */
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_53E4.s")
@@ -880,6 +1122,7 @@ CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2) {
 CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_7EFC.s")
 #else
+// https://decomp.me/scratch/TMWGG
 CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3) {
     CurveSetup *sp68[4];
     f32 temp_fv0;
@@ -888,9 +1131,10 @@ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32
     u16 var_s1;
     u16 var_s2;
     u16 var_s3;
+    CurveSetup* setup;
 
     for (var_s0 = 0, var_s2 = 0, var_s3 = 1; var_s0 < 4; var_s0++, var_s3 <<= 1, arg3 <<= 1) {
-        if (arg1->links[var_s0] >= 0 && (arg1->unk1B & var_s3) == arg3) {
+        if (arg1->links[var_s0] >= 0 && (arg3^0) == (arg1->unk1B & var_s3)) {
             // FAKE
             if (1);
             sp68[var_s2] = gDLL_26_Curves->vtbl->func_39C(arg1->links[var_s0]);
@@ -906,8 +1150,9 @@ CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32
     }
 
     if (var_s2) {
-        var_fs0 = vec3_distance_xz_squared(&arg0->unk8->globalPosition, &sp68[0]->pos);
-        var_s1 = 0;
+        var_s0 = 0;
+        var_fs0 = vec3_distance_xz_squared(&arg0->unk8->globalPosition, &sp68[var_s0]->pos);
+        var_s1 = var_s0;
         for (var_s0 = 1; var_s0 < var_s2; var_s0++) {
             temp_fv0 = vec3_distance_xz_squared(&arg0->unk8->globalPosition, &sp68[var_s0]->pos);
             if (temp_fv0 < var_fs0) {
@@ -1017,6 +1262,7 @@ static void dll_211_func_83BC(Object* arg0, DLL211_Data* arg1) {
 void dll_211_func_8470(Object* arg0, Vec3f* arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_8470.s")
 #else
+// https://decomp.me/scratch/d6C7p
 void dll_211_func_8470(Object* arg0, Vec3f* arg1) {
     s32 temp;
     f32 sp38[1];
