@@ -1107,7 +1107,7 @@ typedef enum {
     BIT_44C = 0x44C, // len:1 group:1
     BIT_44D = 0x44D, // len:1 group:1
     BIT_44E = 0x44E, // len:1 group:1
-    BIT_44F = 0x44F, // len:1 group:0
+    BIT_Menus_Selection_Blocked = 0x44F, // len:1 group:0
     BIT_450 = 0x450, // len:1 group:1
     BIT_451 = 0x451, // len:1 group:0
     BIT_SH_ObjGroup_Bits = 0x452, // len:32 group:3

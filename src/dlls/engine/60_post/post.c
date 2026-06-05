@@ -52,7 +52,7 @@ void dll_60_ctor(void *dll) {
         dExpansionPakMissing = FALSE;
         main_change_map(MAP_FRONT_END2, 0, PLAYER_NONE, -1);
         gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
-        main_set_bits(BIT_44F, 1);
+        main_set_bits(BIT_Menus_Selection_Blocked, 1);
         gDLL_2_Camera->vtbl->set_letterbox_goal(30, 1);
         dTexN64Logo = tex_load_deferred(TEXTABLE_2D2_N64LogoFull);
         dTexN64LogoShadow = tex_load_deferred(TEXTABLE_2D3_N64LogoFull_Shadow);

@@ -8,12 +8,12 @@ _exports:
 .dword dll_73_dtor
 
 # export table
-/*0*/ .dword dll_73_func_6C
-/*1*/ .dword dll_73_func_118
+/*0*/ .dword dll_73_init_text_window
+/*1*/ .dword dll_73_init_text_window_with_margin
 /*2*/ .dword dll_73_func_204
 /*3*/ .dword dll_73_func_46C
-/*4*/ .dword dll_73_func_540
+/*4*/ .dword dll_73_set_exit_value
 /*5*/ .dword dll_73_func_55C
-/*6*/ .dword dll_73_func_6D0
-/*7*/ .dword dll_73_func_764
-/*8*/ .dword dll_73_func_780
+/*6*/ .dword dll_73_set_font_and_colour
+/*7*/ .dword dll_73_enable_joy_buttons
+/*8*/ .dword dll_73_get_total_items
