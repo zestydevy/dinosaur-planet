@@ -1,0 +1,24 @@
+.text = 0x0:
+dll_73_ctor = 0x0;
+dll_73_dtor = 0x60;
+dll_73_func_6C = 0x6C;
+dll_73_func_118 = 0x118;
+dll_73_func_204 = 0x204;
+dll_73_func_46C = 0x46C;
+dll_73_func_540 = 0x540;
+dll_73_func_55C = 0x55C;
+dll_73_func_6D0 = 0x6D0;
+dll_73_func_764 = 0x764;
+dll_73_func_780 = 0x780;
+
+.rodata = 0x810:
+
+.data = 0x810:
+data_0 = 0x0; // absolute:0x810
+
+.bss = 0x820:
+bss_0 = 0x0; // absolute:0x820
+bss_1 = 0x1; // absolute:0x821
+bss_2 = 0x2; // absolute:0x822
+bss_4 = 0x4; // absolute:0x824
+bss_8 = 0x8; // absolute:0x828
