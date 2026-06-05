@@ -61,22 +61,22 @@ void old_mainmenu_ctor(void* dll) {
 }
 
 // offset: 0x84 | dtor
-void old_mainmenu_dtor(s32 arg0) {
+void old_mainmenu_dtor(void* dll) {
     mmFree(sGametext);
 }
 
 // offset: 0xC4 | func: 0 | export: 0
-s32 old_mainmenu_func_C4(void) {
+s32 old_mainmenu_update1(void) {
     return 0;
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-void old_mainmenu_func_D0(void) {
+void old_mainmenu_update2(void) {
 
 }
 
 // offset: 0xD8 | func: 2 | export: 2
-void old_mainmenu_func_D8(Gfx** gdl, Mtx** mtx, Vertex** vtx) {   
+void old_mainmenu_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {   
     D_8008C8B4 = 1;
     
     bss_10 += gUpdateRate;    
