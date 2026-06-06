@@ -351,7 +351,30 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_2938.s")
 
 // offset: 0x2B50 | func: 35
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_2B50.s")
+void dll_211_func_2B50(Object* arg0, DLL211_Data* arg1) {
+    switch (arg1->unk1A) {
+    case 0:
+        dll_211_func_9024(arg1, (Vec3f* ) &arg1->unk5E4[1]->srt.scale);
+        arg1->unk1A = 1;
+        /* fallthrough */
+    case 1:
+        if (dll_211_func_53E4(arg0, 5.0f, arg1) == 0) {
+            arg1->unk1A = 3;
+            ((f32*)&arg1->unk5F0)[0] = NULL;
+        } else {
+            return;
+        }
+        /* fallthrough */
+    case 3:
+        arg1->unk4C |= 0x4010;
+        gDLL_3_Animation->vtbl->start_obj_sequence(4, arg0, -1);
+        arg1->unk1A = 4;
+        return;
+    case 4:
+        dll_211_func_82B8(arg1);
+        break;
+    }
+}
 
 // offset: 0x2C64 | func: 36
 void dll_211_func_2C64(Object* arg0, DLL211_Data* arg1) {
