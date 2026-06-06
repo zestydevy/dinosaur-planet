@@ -553,7 +553,7 @@ void dll_210_setup(Object* player, u32 arg1) {
         }
     }
     dll_210_func_A058(player);
-    *_bss_220 = 0x2D;
+    *_bss_220 = BIT_Spell_Projectile;
     _bss_224[0] = dll_210_func_90A0;
 }
 #endif
@@ -2650,16 +2650,16 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
     }
 
     switch (arg2) {
-        case 0x777:
-            *_bss_220 = 0x777;
+        case BIT_Spell_Grenade:
+            *_bss_220 = BIT_Spell_Grenade;
             _bss_224[0] = &dll_210_func_955C;
             break;
-        case 0x2D:
-            *_bss_220 = 0x2D;
+        case BIT_Spell_Projectile:
+            *_bss_220 = BIT_Spell_Projectile;
             _bss_224[0] = &dll_210_func_90A0;
             break;
-        case 0x40:
-            if (objdata->unk87C == 0x40) {
+        case BIT_Spell_Illusion:
+            if (objdata->unk87C == BIT_Spell_Illusion) {
                 objdata->unk8BF = -1;
                 arg2 = -1;
                 dll_210_func_1DE64(_data_38);
@@ -2672,18 +2672,18 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
             }
             gDLL_6_AMSFX->vtbl->play(player, SOUND_6B4_Basket_Carry, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
-        case 0x1D7:
-            if (objdata->unk87C == 0x1D7) {
+        case BIT_Spell_Forcefield:
+            if (objdata->unk87C == BIT_Spell_Forcefield) {
                 arg2 = -1;
                 break;
             }
             *_data_0 = 0;
             break;
-        case 0x5CE:
-            *_bss_220 = 0x5CE;
+        case BIT_Spell_Ice_Blast:
+            *_bss_220 = BIT_Spell_Ice_Blast;
             _bss_224[0] = &dll_210_func_98CC;
             break;
-        case 0x5FC:
+        case BIT_Spell_Mind_Read:
             arg2 = -1;
             sp3C = gDLL_2_Camera->vtbl->get_highlighted_object();
             // @fake
@@ -2702,12 +2702,12 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
                 }
                 player->unkC4 = sp3C;
             }
-        case 0x5BD:
+        case BIT_Spell_Portal:
             arg2 = -1;
             sp3C = (Object *)gDLL_2_Camera->vtbl->get_highlighted_object();
-            if ((sp3C != NULL) && (sp3C->id == 0x414 || sp3C->id == 0x4A9)) {
+            if ((sp3C != NULL) && (sp3C->id == OBJ_PortalSpellDoor || sp3C->id == OBJ_DR_SupPortal)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(5, player, -1);
-                arg2 = 0x5BD;
+                arg2 = BIT_Spell_Portal;
                 temp_v1 = sp3C->unk74;
                 temp = arctan2_f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
                 gDLL_3_Animation->vtbl->func28(player->seqSlot, temp);
@@ -8559,15 +8559,15 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         ((DLL_Unknown*)weapon->dll)->vtbl->func[14].withTwoArgs((s32)weapon, 0);
     }
     switch (player->curModAnimId) {
-    case 0x43D:
+    case 0x43D: // entering aim (weapon already pulled out)
         if (fsa->unk33A != 0) {
             func_80023D30(player, 0x43E, 0.0f, 0);
-            dll_210_func_6DD8(player, temp_s1, 0x2D);
+            dll_210_func_6DD8(player, temp_s1, BIT_Spell_Projectile);
             gDLL_6_AMSFX->vtbl->play(player, SOUND_BA4_Spell_Aim_Hum_Loop, MAX_VOLUME, &temp_s1->unk848, NULL, 0, NULL);
             fsa->animTickDelta = 0.015f;
         }
         break;
-    case 0x449:
+    case 0x449: // exiting aim
         if (fsa->unk33A != 0) {
             if (fsa->target != NULL) {
                 return 0x36;
@@ -8575,7 +8575,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             return -1;
         }
         break;
-    case 0x448:
+    case 0x448: // entering aim and pulling out weapon
         if ((player->animProgress > 0.4f) && (temp_s1->unk8A8 == 0)) {
             gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[4], MAX_VOLUME, NULL, NULL, 0, NULL);
             temp_s1->unk8A8 = 2U;
@@ -8585,12 +8585,12 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         if (fsa->unk33A != 0) {
             func_80023D30(player, 0x43E, 0.0f, 0);
-            dll_210_func_6DD8(player, temp_s1, 0x2D);
+            dll_210_func_6DD8(player, temp_s1, BIT_Spell_Projectile);
             gDLL_6_AMSFX->vtbl->play(player, SOUND_BA4_Spell_Aim_Hum_Loop, MAX_VOLUME, &temp_s1->unk848, NULL, 0, NULL);
             fsa->animTickDelta = 0.015f;
         }
         break;
-    case 0x43E:
+    case 0x43E: // aiming
         if (fsa->target != NULL) {
             if (fsa->target->unk74 != NULL) {
                 var_fv0 = ((f32 *)fsa->target->unk74)[3] - player->srt.transl.x;
@@ -8614,7 +8614,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             var_fv1 += (var_fv0) * 0.01f * arg2;
             _bss_28 = var_fv1;
         } else {
-            if (*_bss_220 == 0x777) {
+            if (*_bss_220 == BIT_Spell_Grenade) {
                 var_fa0 = fsa->yAnalogInput / 50.0f;
                 if (var_fa0 < -1.45f) {
                     var_fa0 = -1.45f;
@@ -8674,7 +8674,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     _bss_34 ^= 1;
                 }
             }
-            if (*_bss_220 != 0x5CE) {
+            if (*_bss_220 != 0x5CE) { // 5ce = ice blast
                 if ((_bss_2C >= 10.0f) && (temp_s1->unk848 == 0)) {
                     gDLL_6_AMSFX->vtbl->play(player, SOUND_6AB_Electric_Arcing_Loop, 1U, &temp_s1->unk848, NULL, 0, NULL);
                     gDLL_6_AMSFX->vtbl->set_pitch(temp_s1->unk848, 0.5f);
@@ -8722,7 +8722,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     if (sp80 > 1.0f) {
                         sp80 = 1.0f;
                     }
-                    if (*_bss_220 == 0x777) {
+                    if (*_bss_220 == BIT_Spell_Grenade) {
                         temp_ft5 = ((sp80 - 0.5f) * 127.0f);
                         diPrintf("throwdist %d\n", temp_ft5);
                         weapon = player->linkedObject;
@@ -8743,7 +8743,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     }
                 }
             } else {
-                if (*_bss_220 == 0x5CE) {
+                if (*_bss_220 == BIT_Spell_Ice_Blast) {
                     //Using Ice Blast Spell
                     if (temp_s1->unk848 == 0) {
                         gDLL_6_AMSFX->vtbl->play(player->linkedObject, SOUND_95A_Frigid_Air_Loop, 1U, &temp_s1->unk848, NULL, 0, NULL);
@@ -8802,7 +8802,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if ((fsa->target == NULL) && (dll_210_func_1A9D4(player, &temp_s1->aimX, &temp_s1->aimY, &temp_s1->aimZ, temp_s1->unk82C, temp_s1->unk830) != 0)) {
             temp_s1->flags |= 0x400;
         }
-        if ((((fsa->target != NULL) && !(temp_s1->unk764 & 0x8000)) || ((fsa->target == NULL) && (temp_s1->unk768 & 0x8000))) && (magic != 0) && (*_bss_220 != 0x5CE)) {
+        if ((((fsa->target != NULL) && !(temp_s1->unk764 & 0x8000)) || ((fsa->target == NULL) && (temp_s1->unk768 & 0x8000))) && (magic != 0) && (*_bss_220 != BIT_Spell_Ice_Blast)) {
             gDLL_13_Expgfx->vtbl->func4(player->linkedObject);
             fxTransform.transl.x = player->linkedObject->srt.transl.x;
             fxTransform.transl.y = player->linkedObject->srt.transl.y;
@@ -8841,7 +8841,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             _bss_2C = 0.0f;
             ((DLL_Unknown*)weapon->dll)->vtbl->func[14].withTwoArgs((s32)weapon, 0);
             temp_s1->flags &= ~0x400;
-        } else if ((temp_s1->unk768 & 0x8000) && (magic != 0) && (*_bss_220 == 0x5CE)) {
+        } else if ((temp_s1->unk768 & 0x8000) && (magic != 0) && (*_bss_220 == BIT_Spell_Ice_Blast)) {
             if (_data_7C0 != 0) {
                 dll_unload(_data_7C0);
             }
@@ -8859,7 +8859,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
         break;
-    case 0x43F:
+    case 0x43F: // fired spell
         if (temp_s1->unk830 > 0.0f) {
             func_80025540(player, 0x44B, temp_s1->unk830 * 1023.0f);
         } else {
@@ -8871,7 +8871,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         if (fsa->unk33A != 0) {
             _bss_34--;
-            if (_bss_34 < 0 || *_bss_220 == 0x777) {
+            if (_bss_34 < 0 || *_bss_220 == BIT_Spell_Grenade) {
                 _bss_34 = 0;
                 if (fsa->target != NULL) {
                     return 0x36;

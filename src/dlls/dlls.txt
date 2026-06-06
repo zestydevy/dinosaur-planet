@@ -64,6 +64,8 @@
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
 232 = objects/232_VampireBat
+233 = objects/233_BigScorpionRobot
+234 = objects/234_ScorpionRobot
 236 = objects/236_WG_Triffid
 241 = objects/241_SkeetlaWall
 243 = objects/243_Lunaimar
@@ -335,6 +337,7 @@
 767 = objects/767_SPItem
 768 = objects/768_SPShop
 772 = objects/772_SPitembeam
+775 = objects/775_WCTrex
 776 = objects/776_WCbouncycrate
 777 = objects/777_WCTrexChase
 778 = objects/778_WCSabreChase

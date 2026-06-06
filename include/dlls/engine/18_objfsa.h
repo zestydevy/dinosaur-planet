@@ -11,7 +11,8 @@ typedef enum {
     OBJFSA_FLAG_8000 = 0x8000, // Set after first iteration?
     OBJFSA_FLAG_200000 = 0x200000,
     OBJFSA_FLAG_400000 = 0x400000,
-    OBJFSA_FLAG_1000000 = 0x1000000
+    OBJFSA_FLAG_1000000 = 0x1000000,
+    OBJFSA_FLAG_2000000 = 0x2000000
 } ObjFSAFlags;
 
 typedef struct {
@@ -31,8 +32,8 @@ struct ObjFSA_Data;
  * Synchronous transitions will run immediately after this callback, within the same tick.
  * Asynchronous transitions will run on the next tick.
  */
-typedef s32 (*ObjFSA_StateCallback)(Object *obj, struct ObjFSA_Data *fsa, f32 updateRate);
-typedef void (*ObjFSA_ExitCallback)(Object *obj, struct ObjFSA_Data *fsa);
+typedef s32 (*ObjFSA_StateCallback)(Object* obj, struct ObjFSA_Data* fsa, f32 updateRate);
+typedef void (*ObjFSA_ExitCallback)(Object* obj, struct ObjFSA_Data* fsa);
 
 /**
  * objfsa ("object finite-state automata") implements finite-state machines for object related stuff.

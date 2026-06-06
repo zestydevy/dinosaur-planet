@@ -720,45 +720,45 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
 }
 
 // offset: 0x1D88 | func: 16 | export: 20
-s32 BaddieControl_func_1D88(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7) {
-    Object* sp64;
-    u32 sp60;
-    u32 sp5C;
+s32 BaddieControl_func_1D88(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7) {
+    Object* sender;
+    u32 mesgID;
+    u32 mesgArg;
 
-    sp5C = NULL;
-    while (obj_recv_mesg(arg0, &sp60, &sp64, (void*)&sp5C) != 0) {
-        switch (sp60) {
+    mesgArg = NULL;
+    while (obj_recv_mesg(obj, &mesgID, &sender, (void*)&mesgArg) != 0) {
+        switch (mesgID) {
             case 0x140001:
-                gDLL_6_AMSFX->vtbl->play(arg0, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(obj, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
                 break;
             case 0x4:
-                obj_send_mesg(sp64, 5, arg0, NULL);
+                obj_send_mesg(sender, 5, obj, NULL);
                 break;
             case 0xE0000:
-                if (sp64 == arg1->target) {
-                    arg1->logicState = arg5;
-                    arg1->target = NULL;
-                    arg1->unk33D = 0;
+                if (sender == fsa->target) {
+                    fsa->logicState = arg5;
+                    fsa->target = NULL;
+                    fsa->unk33D = 0;
                 }
                 break;
             case 0xB:
-                arg1->unk342 = sp5C;
+                fsa->unk342 = mesgArg;
                 break;
             case 0x1:
             case 0xA0001:
-                if (arg6 != arg1->logicState) {
-                    BaddieControl_func_148C(arg0, arg1, arg2, arg3, arg4, arg5, arg7, 0, 1);
-                    arg1->logicState = arg6;
-                    arg1->unk33D = 0;
-                    arg1->target = sp64;
+                if (arg6 != fsa->logicState) {
+                    BaddieControl_func_148C(obj, fsa, arg2, arg3, arg4, arg5, arg7, 0, 1);
+                    fsa->logicState = arg6;
+                    fsa->unk33D = 0;
+                    fsa->target = sender;
                     return 1;
                 }
                 break;
             case 0x3:
-                if (arg6 == arg1->logicState) {
-                    arg1->unk33D = 0;
-                    arg1->target = NULL;
-                    arg1->logicState = arg5;
+                if (arg6 == fsa->logicState) {
+                    fsa->unk33D = 0;
+                    fsa->target = NULL;
+                    fsa->logicState = arg5;
                     return 2;
                 }
                 break;

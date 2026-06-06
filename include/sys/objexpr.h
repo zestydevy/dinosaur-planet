@@ -82,7 +82,7 @@ void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3)
 void func_80032B44(Object *obj, u32 arg1);
 s32* func_800349B0(void);
 s32 func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3);
-s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4, f32 arg5, s16 arg6, s16 arg7);
+s32 func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnimation* anims, s16* arg4, f32 yOffset, s16 arg6, s16 arg7);
 void func_80033224(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3);
 void func_800332A4(Object* arg0, s32* arg1, s32 arg2);
 void func_80033350(HeadAnimation* arg0, s32 arg1, s16 arg2, s16 arg3);

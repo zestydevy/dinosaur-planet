@@ -179,6 +179,7 @@ enum DLL_ID {
     DLL_ID_PROJGFX_BASE = 0x2000,
     DLL_ID_186 = 0x2000,
     DLL_ID_190 = 0x2004,
+    DLL_ID_193 = 0x2007,
     DLL_ID_194 = 0x2008,
     DLL_ID_202 = 0x2010,
     DLL_ID_205 = 0x2013,
