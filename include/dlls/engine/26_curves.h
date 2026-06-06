@@ -15,7 +15,7 @@ typedef struct {
 DLL_INTERFACE(DLL_26_curves) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func_18)(void);
-/*1*/ void (*func_34)(CurveSetup* arg0);
+/*1*/ void (*add_curve_def)(CurveSetup* arg0);
 /*2*/ void (*func_10C)(CurveSetup* setup);
 /*3*/ CurveNode *(*func_1BC)(s32 *count);
 /*4*/ s32 (*func_1E4)(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5);

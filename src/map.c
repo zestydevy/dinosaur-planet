@@ -2133,7 +2133,7 @@ void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 map
         } else {
             if ((OBJ_curve == objSetup->objId) || (OBJ_checkpoint4 == objSetup->objId)) {
                 if (OBJ_curve == objSetup->objId) {
-                    gDLL_26_Curves->vtbl->func_34((CurveSetup*)objSetup);
+                    gDLL_26_Curves->vtbl->add_curve_def((CurveSetup*)objSetup);
                 } else {
                     gDLL_4_Race->vtbl->func1((RaceCheckpointSetup*)objSetup);
                 }
