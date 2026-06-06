@@ -354,7 +354,61 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_2B50.s")
 
 // offset: 0x2C64 | func: 36
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_2C64.s")
+void dll_211_func_2C64(Object* arg0, DLL211_Data* arg1) {
+    Object* sp44;
+    CurveSetup* sp40;
+    CurveSetup* var_a3;
+    CurveSetup* sp38;
+    CurveSetup* sp34;
+    s32 pad;
+
+    if (arg1->unk4C & 0x10) {
+        if (arg1->unk3C8.unk80 == 0) {
+            if (arg1->unk3C8.unk10 != 0) {
+                pad = gDLL_26_Curves->vtbl->func_438(arg1->unk3C8.unkA4, 0);
+                gDLL_25->vtbl->func_21F4(&arg1->unk3C8, gDLL_26_Curves->vtbl->func_39C(pad));
+            }
+        } else if (arg1->unk3C8.unk10 == 0) {
+            pad = gDLL_26_Curves->vtbl->func_590(arg1->unk3C8.unkA4, 0);
+            gDLL_25->vtbl->func_21F4(&arg1->unk3C8, gDLL_26_Curves->vtbl->func_39C(pad));
+        }
+        dll_211_func_8ED0(arg1->unk20, 0.8f, &arg1->unk20);
+        dll_211_func_8974(arg0, &arg1->unk3C8, arg1->unk20);
+        dll_211_func_8470(arg0, &arg1->unk3C8.unk68);
+        if ((((s16*)arg1->unk5E4)[0] != 0) && (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) != 0)) {
+            dll_211_func_82B8(arg1);
+        }
+        ((f32*)&arg1->unk5F0)[0] -= gUpdateRateF;
+        if (((f32*)&arg1->unk5F0)[0] < 0.0f) {
+            ((f32*)&arg1->unk5F0)[0] = rand_next(200, 600);
+            dll_211_func_95E0(arg0, arg1, _data_0[rand_next(3, 5)]);
+        }
+    } else {
+        dll_211_func_53E4(arg0, 5.0f, arg1);
+        if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) == gDLL_25->vtbl->func_1158((Vec3f* ) &arg1->unk5E4[1]->srt.scale, NULL)) {
+            sp44 = arg1->unk5E4[1];
+            arg1->unk4C |= 0x10;
+            sp38 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438((CurveSetup* ) sp44, 0));
+            sp34 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_590((CurveSetup* ) sp44, 0));
+            if (vec3_distance_xz_squared(&arg0->globalPosition, &sp38->pos) > vec3_distance_xz_squared(&arg0->globalPosition, &sp34->pos)) {
+                sp40 = sp38;
+                var_a3 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp38, 0));
+                arg1->unk3C8.unk80 = 0;
+            } else {
+                sp40 = sp34;
+                var_a3 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_590(sp34, 0));
+                arg1->unk3C8.unk80 = 1;
+            }
+            gDLL_25->vtbl->func_1D30(&arg1->unk3C8, (CurveSetup* ) sp44, sp40, var_a3);
+            if (arg1->unk3C8.unk80 != 0) {
+                func_800053B0(&arg1->unk3C8, -10.0f);
+            } else {
+                func_800053B0(&arg1->unk3C8, -10.0f);
+            }
+            ((f32*)&arg1->unk5F0)[0] = NULL;
+        }
+    }
+}
 
 // offset: 0x3188 | func: 37
 void dll_211_func_3188(Object* arg0, DLL211_Data* arg1) {
