@@ -345,10 +345,54 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_23B8.s")
 
 // offset: 0x2928 | func: 33
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_2928.s")
+void dll_211_func_2928(s32 arg0, UNK_TYPE_32 arg1) {
+}
 
 // offset: 0x2938 | func: 34
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_2938.s")
+void dll_211_func_2938(Object* arg0, DLL211_Data* arg1) {
+    CurveSetup* temp_v0;
+
+    switch (arg1->unk1A) {
+    case 0:
+        temp_v0 = gDLL_26_Curves->vtbl->func_39C(((s32*)arg1->unk5E4[1])[7 /* unk1C */]);
+        arg1->unk5E4[2] = temp_v0;
+        dll_211_func_9024(arg1, &temp_v0->pos);
+        arg1->unk1A = 1;
+        /* fallthrough */
+    case 1:
+        if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) == ((u8*)arg1->unk5E4[2])[3]) {
+            arg1->unk1A = 2;
+        } else {
+            dll_211_func_53E4(arg0, 5.0f, arg1);
+            return;
+        }
+        /* fallthrough */
+    case 2:
+        if (dll_211_func_4F3C(arg0, 2.5f, arg1, (Vec3f* ) &arg1->unk5E4[1]->srt.scale) == 0) {
+            arg1->unk4C |= 0x10;
+            arg1->unk1A = 3;
+            ((f32*)&arg1->unk5F0)[0] = 0.0f;
+        } else {
+            if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) == 0) {
+                arg1->unk4C |= 0x10;
+            }
+            return;
+        }
+        /* fallthrough */
+    case 3:
+        arg1->unk4C |= 0x4010;
+        arg1->unk1A = 4;
+        return;
+    default:
+        return;
+    case 4:
+        dll_211_func_4F3C(arg0, 2.5f, arg1, (Vec3f* ) &arg1->unk5E4[2]->srt.scale);
+        if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) != 0) {
+            dll_211_func_82B8(arg1);
+        }
+        return;
+    }
+}
 
 // offset: 0x2B50 | func: 35
 void dll_211_func_2B50(Object* arg0, DLL211_Data* arg1) {
@@ -428,7 +472,7 @@ void dll_211_func_2C64(Object* arg0, DLL211_Data* arg1) {
             } else {
                 func_800053B0(&arg1->unk3C8, -10.0f);
             }
-            ((f32*)&arg1->unk5F0)[0] = NULL;
+            ((f32*)&arg1->unk5F0)[0] = 0.0f;
         }
     }
 }
