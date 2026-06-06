@@ -22,7 +22,7 @@
 /* 0xE8 */ static u8 _bss_E8[0x8];
 
 static s32 dll_25_func_DF8(Dll25BssDC *arg0, f32 arg1, f32 arg2);
-static void dll_25_func_D00(Vec3 arg0, Vec3 arg1, s8 *arg2, f32 *arg3);
+static void dll_25_func_D00(Vec3f *arg0, Vec3f *arg1, s8 *arg2, f32 *arg3);
 
 // offset: 0x0 | ctor
 void dll_25_ctor(s32 arg0)
@@ -51,8 +51,8 @@ void dll_25_func_D8(void)
     s32 otherCount;
     Dll25BssDC *temp_s2_2;
     Dll25BssE0 *var_v1_3;
-    Vec3 sp24C;
-    Vec3 sp240;
+    Vec3f sp24C;
+    Vec3f sp240;
     CurveNode *curvesResult;
     CurveSetup *temp_s4;
     CurveSetup *var_s7;
@@ -88,20 +88,20 @@ void dll_25_func_D8(void)
             temp_v0 = temp_s4->unk3;
             temp_s0 = &_bss_DC[temp_v0];
             _bss_0[temp_v0] = 1;
-            sp24C[0] = (temp_s4->base_type26.unk4 * 5.7f) + temp_s4->pos.x;
-            sp24C[2] = (temp_s4->base_type26.unk5 * 5.7f) + temp_s4->pos.z;
-            sp240[0] = (temp_s4->base_type26.unk6 * 5.7f) + temp_s4->pos.x;
-            sp240[2] = (temp_s4->base_type26.unk7 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(sp24C, sp240, &temp_s0->unk0[0], &temp_s0->unk8[0]);
-            sp24C[0] = (temp_s4->type26.unk30 * 5.7f) + temp_s4->pos.x;
-            sp24C[2] = (temp_s4->type26.unk31 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(sp240, sp24C, &temp_s0->unk0[2], &temp_s0->unk8[1]);
-            sp240[0] = (temp_s4->type26.unk32 * 5.7f) + temp_s4->pos.x;
-            sp240[2] = (temp_s4->type26.unk33 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(sp24C, sp240, &temp_s0->unk0[4], &temp_s0->unk8[2]);
-            sp24C[0] = (temp_s4->base_type26.unk4 * 5.7f) + temp_s4->pos.x;
-            sp24C[2] = (temp_s4->base_type26.unk5 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(sp240, sp24C, &temp_s0->unk0[6], &temp_s0->unk8[3]);
+            sp24C.f[0] = (temp_s4->base_type26.unk4 * 5.7f) + temp_s4->pos.x;
+            sp24C.f[2] = (temp_s4->base_type26.unk5 * 5.7f) + temp_s4->pos.z;
+            sp240.f[0] = (temp_s4->base_type26.unk6 * 5.7f) + temp_s4->pos.x;
+            sp240.f[2] = (temp_s4->base_type26.unk7 * 5.7f) + temp_s4->pos.z;
+            dll_25_func_D00(&sp24C, &sp240, &temp_s0->unk0[0], &temp_s0->unk8[0]);
+            sp24C.f[0] = (temp_s4->type26.unk30 * 5.7f) + temp_s4->pos.x;
+            sp24C.f[2] = (temp_s4->type26.unk31 * 5.7f) + temp_s4->pos.z;
+            dll_25_func_D00(&sp240, &sp24C, &temp_s0->unk0[2], &temp_s0->unk8[1]);
+            sp240.f[0] = (temp_s4->type26.unk32 * 5.7f) + temp_s4->pos.x;
+            sp240.f[2] = (temp_s4->type26.unk33 * 5.7f) + temp_s4->pos.z;
+            dll_25_func_D00(&sp24C, &sp240, &temp_s0->unk0[4], &temp_s0->unk8[2]);
+            sp24C.f[0] = (temp_s4->base_type26.unk4 * 5.7f) + temp_s4->pos.x;
+            sp24C.f[2] = (temp_s4->base_type26.unk5 * 5.7f) + temp_s4->pos.z;
+            dll_25_func_D00(&sp240, &sp24C, &temp_s0->unk0[6], &temp_s0->unk8[3]);
 
             temp_s0->unk18 = temp_s4->pos.y + (2.0f * temp_s4->unk18);
             temp_s0->unk1A.word = temp_s4->pos.y - (2.0f * temp_s4->unk1A);
@@ -133,24 +133,24 @@ void dll_25_func_D8(void)
                         _bss_E0[_bss_E4].unk1C = temp_t1;
                         sp80[_bss_E4 * 2 + 0] = temp_s4->unk3;
                         sp80[_bss_E4 * 2 + 1] = temp_v0_2->unk3;
-                        sp24C[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->pos.x;
-                        sp24C[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->pos.z;
-                        sp240[0] = (temp_s4->type26.unk34[var_v1_2][2] * 5.7f) + temp_s4->pos.x;
-                        sp240[2] = (temp_s4->type26.unk34[var_v1_2][3] * 5.7f) + temp_s4->pos.z;
-                        _bss_E0[_bss_E4].unk1E = (sp24C[0] + sp240[0]) / 2; // use 2 instead of 2.0f to force a div.s
-                        _bss_E0[_bss_E4].unk20 = (sp24C[2] + sp240[2]) / 2; // use 2 instead of 2.0f to force a div.s
-                        dll_25_func_D00(sp24C, sp240, &_bss_E0[_bss_E4].unk0[0], &_bss_E0[_bss_E4].unk8[0]);
-                        sp24C[0] = (temp_v0_2->type26.unk34[var_s0][0] * 5.7f) + temp_v0_2->pos.x;
-                        sp24C[2] = (temp_v0_2->type26.unk34[var_s0][1] * 5.7f) + temp_v0_2->pos.z;
-                        dll_25_func_D00(sp240, sp24C, &_bss_E0[_bss_E4].unk0[2], &_bss_E0[_bss_E4].unk8[1]);
-                        sp240[0] = (temp_v0_2->type26.unk34[var_s0][2] * 5.7f) + temp_v0_2->pos.x;
-                        sp240[2] = (temp_v0_2->type26.unk34[var_s0][3] * 5.7f) + temp_v0_2->pos.z;
-                        _bss_E0[_bss_E4].unk22 = (sp24C[0] + sp240[0]) / 2; // use 2 instead of 2.0f to force a div.s
-                        _bss_E0[_bss_E4].unk24 = (sp24C[2] + sp240[2]) / 2; // use 2 instead of 2.0f to force a div.s
-                        dll_25_func_D00(sp24C, sp240, &_bss_E0[_bss_E4].unk0[4], &_bss_E0[_bss_E4].unk8[2]);
-                        sp24C[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->pos.x;
-                        sp24C[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->pos.z;
-                        dll_25_func_D00(sp240, sp24C, &_bss_E0[_bss_E4].unk0[6], &_bss_E0[_bss_E4].unk8[3]);
+                        sp24C.f[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->pos.x;
+                        sp24C.f[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->pos.z;
+                        sp240.f[0] = (temp_s4->type26.unk34[var_v1_2][2] * 5.7f) + temp_s4->pos.x;
+                        sp240.f[2] = (temp_s4->type26.unk34[var_v1_2][3] * 5.7f) + temp_s4->pos.z;
+                        _bss_E0[_bss_E4].unk1E = (sp24C.f[0] + sp240.f[0]) / 2; // use 2 instead of 2.0f to force a div.s
+                        _bss_E0[_bss_E4].unk20 = (sp24C.f[2] + sp240.f[2]) / 2; // use 2 instead of 2.0f to force a div.s
+                        dll_25_func_D00(&sp24C, &sp240, &_bss_E0[_bss_E4].unk0[0], &_bss_E0[_bss_E4].unk8[0]);
+                        sp24C.f[0] = (temp_v0_2->type26.unk34[var_s0][0] * 5.7f) + temp_v0_2->pos.x;
+                        sp24C.f[2] = (temp_v0_2->type26.unk34[var_s0][1] * 5.7f) + temp_v0_2->pos.z;
+                        dll_25_func_D00(&sp240, &sp24C, &_bss_E0[_bss_E4].unk0[2], &_bss_E0[_bss_E4].unk8[1]);
+                        sp240.f[0] = (temp_v0_2->type26.unk34[var_s0][2] * 5.7f) + temp_v0_2->pos.x;
+                        sp240.f[2] = (temp_v0_2->type26.unk34[var_s0][3] * 5.7f) + temp_v0_2->pos.z;
+                        _bss_E0[_bss_E4].unk22 = (sp24C.f[0] + sp240.f[0]) / 2; // use 2 instead of 2.0f to force a div.s
+                        _bss_E0[_bss_E4].unk24 = (sp24C.f[2] + sp240.f[2]) / 2; // use 2 instead of 2.0f to force a div.s
+                        dll_25_func_D00(&sp24C, &sp240, &_bss_E0[_bss_E4].unk0[4], &_bss_E0[_bss_E4].unk8[2]);
+                        sp24C.f[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->pos.x;
+                        sp24C.f[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->pos.z;
+                        dll_25_func_D00(&sp240, &sp24C, &_bss_E0[_bss_E4].unk0[6], &_bss_E0[_bss_E4].unk8[3]);
                         temp_fv0 = temp_s4->pos.y + (2.0f * temp_s4->unk18);
                         temp_fv1 = temp_v0_2->pos.y + (2.0f * temp_v0_2->unk18);
                         if (temp_fv1 < temp_fv0)
@@ -201,14 +201,14 @@ void dll_25_func_D8(void)
 }
 
 // offset: 0xD00 | func: 1
-static void dll_25_func_D00(Vec3 arg0, Vec3 arg1, s8 *arg2, f32 *arg3)
+static void dll_25_func_D00(Vec3f *arg0, Vec3f *arg1, s8 *arg2, f32 *arg3)
 {
     f32 noramlized;
     f32 z;
     f32 x;
 
-    z = arg1[2] - arg0[2];
-    x = arg0[0] - arg1[0];
+    z = arg1->z - arg0->z;
+    x = arg0->x - arg1->x;
     noramlized = sqrtf((z * z) + (x * x));
     if (noramlized != 0.0f)
     {
@@ -217,7 +217,7 @@ static void dll_25_func_D00(Vec3 arg0, Vec3 arg1, s8 *arg2, f32 *arg3)
     }
     arg2[0] = z * 127.0f;
     arg2[1] = x * 127.0f;
-    arg3[0] = -((arg2[0] * arg0[0]) + (arg2[1] * arg0[2]));
+    arg3[0] = -((arg2[0] * arg0->f[0]) + (arg2[1] * arg0->f[2]));
 }
 
 // offset: 0xDF8 | func: 2
@@ -247,7 +247,7 @@ static s32 dll_25_func_DF8(Dll25BssDC *arg0, f32 arg1, f32 arg2)
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_EAC.s")
 #else
-static s32 dll_25_func_EAC(f32 *arg0)
+static s32 dll_25_func_EAC(Vec3f *arg0)
 {
     s16 var_s0;
     s16 var_s1;
@@ -269,7 +269,7 @@ static s32 dll_25_func_EAC(f32 *arg0)
         if (_bss_0[var_s1] != 0)
         {
             temp_a0 = &_bss_DC[var_s1];
-            if ((arg0[1] < temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0[1]) && (dll_25_func_DF8(temp_a0, arg0[0], arg0[2]) != 0))
+            if ((arg0->y < temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0->y) && (dll_25_func_DF8(temp_a0, arg0->x, arg0->z) != 0))
             {
                 _data_400[0] = var_s1;
                 return var_s1;
@@ -278,7 +278,7 @@ static s32 dll_25_func_EAC(f32 *arg0)
         if (_bss_0[var_s0] != 0)
         {
             temp_a0 = &_bss_DC[var_s0];
-            if ((arg0[1] < temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0[1]) && (dll_25_func_DF8(temp_a0, arg0[0], arg0[2]) != 0))
+            if ((arg0->y < temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0->y) && (dll_25_func_DF8(temp_a0, arg0->x, arg0->z) != 0))
             {
                 _data_400[0] = var_s0;
                 return var_s0;
@@ -299,7 +299,7 @@ static s32 dll_25_func_EAC(f32 *arg0)
     if (_bss_0[var_s1] != 0)
     {
         temp_a0 = &_bss_DC[var_s1];
-        if ((arg0[1] < (f32)temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0[1]) && (dll_25_func_DF8(temp_a0, arg0[0], arg0[2]) != 0))
+        if ((arg0->y < (f32)temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0->y) && (dll_25_func_DF8(temp_a0, arg0->x, arg0->z) != 0))
         {
             _data_400[0] = var_s1;
             return var_s1;
@@ -314,7 +314,7 @@ static s32 dll_25_func_EAC(f32 *arg0)
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_1158.s")
 #else
 // Matches on dll_25_func_EAC is static
-s32 dll_25_func_1158(f32 *arg0, Dll25BssDC *arg1)
+s32 dll_25_func_1158(Vec3f *arg0, Dll25BssDC *arg1)
 {
     u8 temp_v0;
     u8 var_a0;
@@ -338,7 +338,7 @@ s32 dll_25_func_1158(f32 *arg0, Dll25BssDC *arg1)
                 arg1->unk0[var_a3 + 2] = temp_v1->unk1C;
                 for (var_v0 = 0, var_a0 = 0; var_v0 < 4; var_v0++, var_a0 += 2)
                 {
-                    if (((temp_v1->unk0[var_a0] * arg0[0]) + (temp_v1->unk0[var_a0 + 1] * arg0[2]) + ((f32 *)temp_v1)[(u32)var_v0 + 2]) > 0.0f)
+                    if (((temp_v1->unk0[var_a0] * arg0->x) + (temp_v1->unk0[var_a0 + 1] * arg0->z) + ((f32 *)temp_v1)[(u32)var_v0 + 2]) > 0.0f)
                     {
                         break;
                     }
@@ -363,7 +363,7 @@ s32 dll_25_func_1158(f32 *arg0, Dll25BssDC *arg1)
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_12FC.s")
 #else
 // Matching if dll_25_func_EAC is static
-s32 dll_25_func_12FC(Vec3 arg0)
+s32 dll_25_func_12FC(Vec3f *arg0)
 {
     Dll25BssE0 *temp_a1;
     s16 var_a0;
@@ -380,14 +380,14 @@ s32 dll_25_func_12FC(Vec3 arg0)
     while (var_a2 < _bss_E4)
     {
         temp_a1 = &_bss_E0[var_a2];
-        if (arg0[1] < temp_a1->unk18)
+        if (arg0->y < temp_a1->unk18)
         {
-            if (temp_a1->unk1A.bytes.unk1A < arg0[1])
+            if (temp_a1->unk1A.bytes.unk1A < arg0->y)
             {
                 for (var_a0 = 0, var_v1 = 0; var_a0 < 4;)
                 {
                     temp_v0 = &temp_a1->unk0[var_v1];
-                    if (((((temp_v0[0] * arg0[0]) + (temp_v0[1] * arg0[2])) + ((f32 *)temp_a1)[var_a0 + 2]) > 0.0f))
+                    if (((((temp_v0[0] * arg0->x) + (temp_v0[1] * arg0->z)) + ((f32 *)temp_a1)[var_a0 + 2]) > 0.0f))
                     {
                         break;
                     }
@@ -408,7 +408,7 @@ s32 dll_25_func_12FC(Vec3 arg0)
 #endif
 
 // offset: 0x1474 | func: 6 | export: 3
-s32 dll_25_func_1474(Vec3 arg0, s32 arg1)
+s32 dll_25_func_1474(Vec3f *arg0, s32 arg1)
 {
     Dll25BssE0 *temp_a2;
     u8 var_a3;
@@ -426,7 +426,7 @@ s32 dll_25_func_1474(Vec3 arg0, s32 arg1)
                 temp_a2 = &_bss_E0[temp_a0];
                 for (var_a3 = 0, var_t0 = 0; var_a3 < 4; var_a3++, var_t0 += 2)
                 {
-                    if ((((temp_a2->unk0[var_t0] * arg0[0]) + (temp_a2->unk0[var_t0 + 1] * arg0[2])) + ((f32 *)temp_a2)[(u32)var_a3 + 2]) > 0.0f)
+                    if ((((temp_a2->unk0[var_t0] * arg0->x) + (temp_a2->unk0[var_t0 + 1] * arg0->z)) + ((f32 *)temp_a2)[(u32)var_a3 + 2]) > 0.0f)
                     {
                         break;
                     }
@@ -443,7 +443,7 @@ s32 dll_25_func_1474(Vec3 arg0, s32 arg1)
 }
 
 // offset: 0x15B0 | func: 7 | export: 4
-s32 dll_25_func_15B0(Vec3 arg0, s32 arg1, s32 arg2)
+s32 dll_25_func_15B0(Vec3f *arg0, s32 arg1, s32 arg2)
 {
     Dll25BssE0 *temp_a0;
     u8 var_v0;
@@ -463,7 +463,7 @@ s32 dll_25_func_15B0(Vec3 arg0, s32 arg1, s32 arg2)
                 for (var_v0_2 = 0, var_v1 = 0; var_v0_2 < 4; var_v0_2++, var_v1 += 2)
                 {
                     temp = &temp_a0->unk0[var_v1];
-                    if (((temp[0] * arg0[0]) + (temp_a0->unk0[var_v1 + 1] * arg0[2]) + ((f32 *)temp_a0)[(u32)var_v0_2 + 2]) > 0.0f)
+                    if (((temp[0] * arg0->x) + (temp_a0->unk0[var_v1 + 1] * arg0->z) + ((f32 *)temp_a0)[(u32)var_v0_2 + 2]) > 0.0f)
                     {
                         break;
                     }
@@ -512,7 +512,7 @@ s32 dll_25_func_16D4(Vec3f *arg0, Vec3f *arg1, s32 arg2)
 }
 
 // offset: 0x1864 | func: 9 | export: 5
-CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
+CurveSetup *dll_25_func_1864(Vec3f *arg0, s32 arg1, s32 arg2)
 {
     f32 temp_fa0;
     f32 temp_fa1;
@@ -539,9 +539,9 @@ CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
             ((temp_s0->type24.unk30 == -1) || (main_get_bits(temp_s0->type24.unk30) != 0)) &&
             ((temp_s0->type24.unk32 == -1) || (main_get_bits(temp_s0->type24.unk32) == 0)))
         {
-            temp_fv0 = arg0[0] - temp_s0->pos.x;
-            temp_fv1 = arg0[1] - temp_s0->pos.y;
-            temp_fa0 = arg0[2] - temp_s0->pos.z;
+            temp_fv0 = arg0->f[0] - temp_s0->pos.x;
+            temp_fv1 = arg0->f[1] - temp_s0->pos.y;
+            temp_fa0 = arg0->f[2] - temp_s0->pos.z;
             temp_fa1 = (temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0);
             if (temp_fa1 < var_fs0)
             {
@@ -554,7 +554,7 @@ CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
 }
 
 // offset: 0x1A2C | func: 10 | export: 6
-CurveSetup *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
+CurveSetup *dll_25_func_1A2C(Vec3f *arg0, s32 arg1, s32 arg2)
 {
     CurveNode *result;
     CurveSetup *temp_v1;
@@ -580,9 +580,9 @@ CurveSetup *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
             ((arg2 == -1) || (arg2 == temp_v1->unk1A)) &&
             ((temp_v1->links[0] != -1) || (temp_v1->unk2F == -1)))
         {
-            temp_fa1 = arg0[0] - temp_v1->pos.x;
-            temp_ft4 = arg0[1] - temp_v1->pos.y;
-            temp_ft5 = arg0[2] - temp_v1->pos.z;
+            temp_fa1 = arg0->f[0] - temp_v1->pos.x;
+            temp_ft4 = arg0->f[1] - temp_v1->pos.y;
+            temp_ft5 = arg0->f[2] - temp_v1->pos.z;
             if (((temp_fa1 * temp_fa1) + (temp_ft4 * temp_ft4) + (temp_ft5 * temp_ft5)) < var_fs0)
             {
                 out = temp_v1;
