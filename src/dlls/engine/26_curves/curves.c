@@ -1056,9 +1056,94 @@ static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* 
 }
 
 // offset: 0x2C20 | func: 29 | export: 30
-s32 dll_26_func_2C20(s32 *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4, f32 *arg5, f32 *arg6);
-// https://decomp.me/scratch/229KB
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_2C20.s")
+s32 dll_26_func_2C20(s32* arg0, f32 farg0, f32 farg1, f32 farg2, f32* arg4, f32* arg5, f32* arg6) {
+    f32 var_f31;
+    f32 var_f30;
+    f32 temp_f27;
+    f32 temp_f25;
+    f32 temp_f1;
+    f32 var_f24;
+    f32 var_f23;
+    f32 temp_f29;
+    f32 var_f28;
+    f32 var_f22;
+    CurveSetup* sp34[4];
+    Vec3f sp24;
+    f32 temp_f26;
+    s32 var_r31;
+
+    var_r31 = 0;
+    while (var_r31 < 4) {
+        sp34[var_r31] = dll_26_func_39C(arg0[var_r31]);
+        var_r31 += 1;
+    }
+    temp_f27 = sp34[2]->pos.x - sp34[1]->pos.x;
+    var_f24 = temp_f27;
+    temp_f26 = sp34[2]->pos.z - sp34[1]->pos.z;
+    var_f23 = temp_f26;
+    if (sp34[0] != NULL) {
+        var_f31 = sp34[1]->pos.x - sp34[0]->pos.x;
+        var_f30 = sp34[1]->pos.z - sp34[0]->pos.z;
+    } else {
+        var_f31 = temp_f27;
+        var_f30 = temp_f26;
+    }
+    var_f31 = 0.5f * (var_f31 + temp_f27);
+    var_f30 = 0.5f * (var_f30 + temp_f26);
+    temp_f1 = sqrtf(SQ(var_f31) + SQ(var_f30));
+    if (temp_f1 != 0.0f) {
+        var_f31 /= temp_f1;
+        var_f30 /= temp_f1;
+    }
+    sp24.x = var_f31;
+    sp24.y = var_f30;
+    sp24.z = -((sp24.x * sp34[1]->pos.x) + (sp24.y * sp34[1]->pos.z));
+    var_f28 = (sp24.x * var_f24) + (sp24.y * var_f23);
+    if (var_f28 != 0.0f) {
+        var_f28 = -(sp24.z + ((sp24.x * farg0) + (sp24.y * farg2))) / var_f28;
+    }
+    temp_f27 = sp34[2]->pos.x - sp34[1]->pos.x;
+    temp_f26 = sp34[2]->pos.z - sp34[1]->pos.z;
+    if (sp34[3] != NULL) {
+        var_f31 = sp34[3]->pos.x - sp34[2]->pos.x;
+        var_f30 = sp34[3]->pos.z - sp34[2]->pos.z;
+    } else {
+        var_f31 = temp_f27;
+        var_f30 = temp_f26;
+    }
+    var_f31 = 0.5f * (var_f31 + temp_f27);
+    var_f30 = 0.5f * (var_f30 + temp_f26);
+    temp_f1 = sqrtf(SQ(var_f31) + SQ(var_f30));
+    if (temp_f1 != 0.0f) {
+        var_f31 /= temp_f1;
+        var_f30 /= temp_f1;
+    }
+    sp24.x = var_f31;
+    sp24.y = var_f30;
+    sp24.z = -((sp24.x * sp34[2]->pos.x) + (sp24.y * sp34[2]->pos.z));
+    var_f22 = (sp24.x * var_f24) + (sp24.y * var_f23);
+    if (var_f22 != 0.0f) {
+        var_f22 = -(sp24.z + ((sp24.x * farg0) + (sp24.y * farg2))) / var_f22;
+    }
+    var_f28 = -var_f28 / (var_f22 - var_f28);
+    if ((var_f28 >= 0.0f) && (var_f28 < 1.0f)) {
+        temp_f25 = sp34[2]->pos.y - sp34[1]->pos.y;
+        temp_f1 = sqrtf(SQ(temp_f27) + SQ(temp_f25) + SQ(temp_f26));
+        if (temp_f1 > 0.0f) {
+            temp_f29 = 1.0f / temp_f1;
+            var_f24 = -temp_f27 * temp_f29;
+            var_f23 = -temp_f26 * temp_f29;
+        }
+        temp_f27 = ((temp_f27 * var_f28) + sp34[1]->pos.x);
+        temp_f25 = ((temp_f25 * var_f28) + sp34[1]->pos.y);
+        temp_f26 = ((temp_f26 * var_f28) + sp34[1]->pos.z);
+        *arg4 = -((temp_f27 * var_f23) - (temp_f26 * var_f24)) + ((farg0 * var_f23) - (farg2 * var_f24));
+        *arg5 = farg1 - temp_f25;
+        *arg6 = var_f28;
+        return 1;
+    }
+    return 0;
+}
 
 // offset: 0x3018 | func: 30 | export: 31
 CurveSetup *dll_26_func_3018(CurveSetup *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4) {
