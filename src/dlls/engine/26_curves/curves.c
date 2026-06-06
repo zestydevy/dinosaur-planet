@@ -817,10 +817,14 @@ s32 dll_26_func_218C(s32 arg0) {
     CurveSetup* temp_a0;
     s32 i;
 
+    STUBBED_PRINTF(" Curve Id %i ", arg0);
     for (i = 0; i < _bss_28A8; i++) {
         temp_a0 = _bss_8[i].setup;
-        if ((temp_a0->curveType == 0x15) && (arg0 == temp_a0->type15.unk34)) {
-            return temp_a0->uID;
+        if (temp_a0->curveType == 0x15) {
+            STUBBED_PRINTF(" CI %i ", temp_a0->type15.unk34);
+            if (arg0 == temp_a0->type15.unk34) {
+                return temp_a0->uID;
+            }
         }
     }
     return -1;
@@ -1343,17 +1347,135 @@ s32 dll_26_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     return -1;
 }
 
-/*0x4C*/ static const char str_4C[] = " Curve Id %i ";
-/*0x5C*/ static const char str_5C[] = " CI %i ";
-
-/*0x64*/ static const char str_64[] = "Search\n";
-/*0x6C*/ static const char str_6C[] = "link:(%d) %d\n";
-/*0x7C*/ static const char str_7C[] = "Found: %d\n";
-/*0x88*/ static const char str_88[] = "%d\n";
-
 // offset: 0x3930 | func: 35 | export: 25
-s32 dll_26_func_3930(CurveSetup *arg0, f32 arg1, f32 arg2, s32 *arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_3930.s")
+s32 dll_26_func_3930(CurveSetup* arg0, f32 arg1, f32 arg2, s32* arg3) {
+    s32 var_r26;
+    s32 var_r28;
+    s32 var_r31;
+    s32 var_r27;
+    s32 var_r23;
+    CurveSetup* temp_r30;
+    s32 var_r21;
+    CurveSetup* temp_r3_2;
+    s32 sp684[4];
+    s32 sp680;
+    s32 sp67C;
+    f32 temp_f31;
+    f32 temp_f30;
+    f32 sp66C[4];
+    CurveSetup* temp;
+    s32 var_r22;
+    s32 var_r25;
+    s8 sp158[1300];
+    s32 spB8[40];
+    f32 sp18[40];
+
+    if (arg0 == NULL) {
+        return -1;
+    }
+    STUBBED_PRINTF("Search\n");
+    dll_26_func_1420(arg0->uID, &sp67C);
+    var_r28 = 0;
+    var_r25 = 0;
+    while (var_r25 < 4) {
+        if (arg0->links[var_r25] > -1) {
+            STUBBED_PRINTF("link:(%d) %d\n", var_r25, arg0->links[var_r25]);
+            var_r31 = 0;
+            while (var_r31 < 1300) {
+                sp158[var_r31] = 0;
+                var_r31 += 1;
+            }
+            sp158[sp67C] = 1;
+            temp_r30 = dll_26_func_1420(arg0->links[var_r25], &sp680);
+            var_r27 = 0;
+            sp18[var_r27] = SQ(temp_r30->pos.x - arg0->pos.x) + SQ(temp_r30->pos.y - arg0->pos.y) + SQ(temp_r30->pos.z - arg0->pos.z);
+            spB8[var_r27] = sp680;
+            var_r27++;
+            sp158[sp680] = 1;
+            var_r21 = 0;
+            do {
+                if (var_r27 > 0) {
+                    var_r27 -= 1;
+                    sp680 = spB8[var_r27];
+                    temp_r30 = _bss_8[sp680].setup;
+                    temp_f31 = sp18[var_r27];
+                    temp = temp_r30;
+                    if (temp->unk.unk34 == 1) {
+                        var_r21 = 1;
+                        sp66C[var_r28] = temp_f31;
+                        sp684[var_r28] = arg0->links[var_r25];
+                        var_r28 += 1;
+                        STUBBED_PRINTF("Found: %d\n", temp_r30->uID);
+                    } else {
+                        var_r22 = 0;
+                        while (var_r22 < 4) {
+                            if (temp_r30->links[var_r22] > -1) {
+                                temp_r3_2 = dll_26_func_1420(temp_r30->links[var_r22], &sp680);
+                                if ((temp_r3_2 != NULL) && (sp158[sp680] == 0) && (var_r27 < 0x28)) {
+                                    temp_f30 = temp_f31
+                                        + SQ(temp_r30->pos.x - temp_r3_2->pos.x) 
+                                        + SQ(temp_r30->pos.y - temp_r3_2->pos.y)
+                                        + SQ(temp_r30->pos.z - temp_r3_2->pos.z);
+                                    var_r26 = 0;
+                                    while ((var_r26 < var_r27) && (sp18[var_r26] > temp_f30)) {
+                                        var_r26 += 1;
+                                    }
+                                    var_r23 = var_r27;
+                                    while (var_r23 > var_r26) {
+                                        spB8[var_r23] = spB8[var_r23 - 1];
+                                        sp18[var_r23] = sp18[var_r23 - 1];
+                                        var_r23 -= 1;
+                                    }
+                                    var_r27 += 1;
+                                    sp18[var_r26] = temp_f30;
+                                    spB8[var_r26] = sp680;
+                                    sp158[sp680] = 1;
+                                }
+                            }
+                            var_r22 += 1;
+                        }
+                    }
+                } else {
+                    var_r21 = 1;
+                }
+            } while (var_r21 == 0);
+        }
+        var_r25 += 1;
+    }
+    STUBBED_PRINTF("%d\n", var_r28);
+    if (var_r28 == 0) {
+        return -1;
+    }
+    if (var_r28 == 1) {
+        *arg3 = arg0->uID;
+        return sp684[0];
+    }
+    if (var_r28 > 1) {
+        var_r31 = 0;
+        while (var_r31 < var_r28) {
+            if (sp684[var_r31] == *arg3) {
+                while (var_r31 < (var_r28 - 1)) {
+                    sp684[var_r31] = sp684[var_r31 + 1];
+                    sp66C[var_r31] = sp66C[var_r31 + 1];
+                    var_r31 += 1;
+                }
+                var_r28 -= 1;
+            }
+            var_r31 += 1;
+        }
+        *arg3 = arg0->uID;
+        var_r26 = 0;
+        var_r31 = 0;
+        while (var_r31 < var_r28) {
+            if (sp66C[var_r31] < sp66C[var_r26]) {
+                var_r26 = var_r31;
+            }
+            var_r31 += 1;
+        }
+        return sp684[var_r26];
+    }
+    return -1;
+}
 
 // offset: 0x3F00 | func: 36 | export: 5
 s32 dll_26_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {

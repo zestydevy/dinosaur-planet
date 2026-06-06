@@ -79,6 +79,7 @@ typedef struct {
         /*31*/ u8 unk31;
         /*32*/ u8 unk32;
         /*33*/ u8 unk33;
+        /*34*/ u8 unk34;
     } unk;
 };
 } CurveSetup;
