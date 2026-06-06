@@ -557,22 +557,11 @@ static s32 dll_211_func_3570(Object* arg0, DLL211_Data* arg1) {
     if (arg0->animProgress > 0.25f) {
         if (!(arg1->unk4C & 0x800)) {
             dll_211_func_9050(arg0, arg1);
-        } else {
-            if (arg1->unk5FC != 0) {
-                if (arg1->unk5FC(arg1->unk28, 1, arg1, arg0) == 0) {
-                    goto out;
-                }
-                goto next;
-            }
-            next:
-            if (arg0->animProgress > 0.8f) {
-                dll_211_func_940C(arg0, arg1);
-                return 0;
-            }
+        } else if ((arg1->unk5FC == 0 || arg1->unk5FC(arg1->unk28, 1, arg1, arg0) != 0) && arg0->animProgress > 0.8f) {
+            dll_211_func_940C(arg0, arg1);
+            return 0;
         }
     }
-
-    out:
     return 1;
 }
 
