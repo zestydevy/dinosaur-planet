@@ -72,15 +72,23 @@ typedef struct {
     void *unk5D0;
     Vec3f *unk5D4;
     Vec3f unk5D8;
-    Object *unk5E4[3];
+    Object *unk5E4[3]; // objects or floats?
     Object *unk5F0;
-    Vec3f unk5F4; // TODO: Re-check data type, seems to differ? y value sometimes treated as a s32
+    union {
+        Vec3f unk5F4_vec;
+        struct {
+            CurveSetup *unk5F4;
+            CurveSetup *unk5F8;
+            s32 (*unk5FC)(Object *, s32, void *, Object *);
+        };
+    };
     f32 unk600;
     Object *unk604;
     s32 unk608;
     u8 unk60C;
 } DLL211_Data;
 
+static s32 dll_211_func_4F3C(Object* arg0, f32 arg1, DLL211_Data* arg2, Vec3f* arg3);
 static void dll_211_func_514C(Object* arg0, DLL211_Data* arg1);
 static void dll_211_func_52B8(Object* arg0, DLL211_Data* arg1);
 static s32 dll_211_func_53E4(Object* arg0, f32 arg1, DLL211_Data* arg2);
@@ -95,6 +103,7 @@ static void dll_211_func_82B8(DLL211_Data* arg0);
 static void dll_211_func_8308(Object* arg0, s32 arg1);
 static void dll_211_func_83BC(Object* arg0, DLL211_Data* arg1);
 static void dll_211_func_8470(Object* arg0, Vec3f* arg1);
+static void dll_211_func_871C(Object* arg0, s8* arg1);
 static void dll_211_func_87E4(Object* arg0);
 static void dll_211_func_885C(Object* arg0);
 static void dll_211_func_88F4(Object* arg0, s16 arg1);
@@ -349,10 +358,103 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3560.s")
 
 // offset: 0x3570 | func: 39
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3570.s")
+static s32 dll_211_func_3570(Object* arg0, DLL211_Data* arg1) {
+    if (arg0->animProgress > 0.25f) {
+        if (!(arg1->unk4C & 0x800)) {
+            dll_211_func_9050(arg0, arg1);
+        } else {
+            if (arg1->unk5FC != 0) {
+                if (arg1->unk5FC(arg1->unk28, 1, arg1, arg0) == 0) {
+                    goto out;
+                }
+                goto next;
+            }
+            next:
+            if (arg0->animProgress > 0.8f) {
+                dll_211_func_940C(arg0, arg1);
+                return 0;
+            }
+        }
+    }
+
+    out:
+    return 1;
+}
 
 // offset: 0x3664 | func: 40
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3664.s")
+void dll_211_func_3664(Object* arg0, DLL211_Data* arg1) {
+    switch (arg1->unk1A) {
+    case 0:
+        arg1->unk5F4 = gDLL_25->vtbl->func_1A2C(&arg1->unk8->srt.transl, -1, 4);
+        if (arg1->unk5F4->unk3 != 0) {
+            dll_211_func_9024(arg1, &arg1->unk5F4->pos);
+            arg1->unk1A = 1;
+        } else {
+            arg1->unk5F8 = gDLL_26_Curves->vtbl->func_39C(arg1->unk5F4->links[0]);
+            dll_211_func_9024(arg1, &arg1->unk5F8->pos);
+            arg1->unk1A = 2;
+        }
+        dll_211_func_53E4(arg0, 5.0f, arg1);
+        return;
+    default:
+        return;
+    case 2:
+        dll_211_func_53E4(arg0, 5.0f, arg1);
+        if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) == arg1->unk5F8->unk3) {
+            arg1->unk19 = 1;
+            arg1->unk1A = 3;
+        }
+        return;
+    case 3:
+        dll_211_func_4F3C(arg0, 2.5f, arg1, &arg1->unk5F4->pos);
+        if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) == 0) {
+            arg1->unk4C |= 0x10;
+            arg1->unk1A = 4;
+        }
+        return;
+    case 4:
+        if (dll_211_func_4F3C(arg0, 2.5f, arg1, &arg1->unk5F4->pos) == 0) {
+            func_80023D30(arg0, 0x1A, 0.0f, 0U);
+            arg1->unk38 = 0.004f;
+            arg1->unk1A = 6;
+        } else {
+            return;
+        }
+        /* fallthrough */
+    case 6:
+        dll_211_func_871C(arg0, (s8* ) arg1->unk5F4);
+        if (dll_211_func_3570(arg0, arg1) == 0) {
+            arg1->unk1A = 7;
+            arg1->unk600 = 60.0f;
+        }
+        return;
+    case 1:
+        if (dll_211_func_53E4(arg0, 5.0f, arg1) == 0) {
+            func_80023D30(arg0, 0x1A, 0.0f, 0U);
+            arg1->unk38 = 0.004f;
+            arg1->unk4C |= 0x10;
+            arg1->unk1A = 5;
+            arg1->unk30[0] = arg1->unk28->srt.transl.x - arg0->srt.transl.x;
+            arg1->unk30[1] = arg1->unk28->srt.transl.z - arg0->srt.transl.z;
+        }
+        return;
+    case 5:
+        dll_211_func_87E4(arg0);
+        if (dll_211_func_3570(arg0, arg1) == 0) {
+            dll_211_func_82B8(arg1);
+        }
+        return;
+    case 7:
+        arg1->unk600 -= gUpdateRateF;
+        if (arg1->unk600 <= 0.0f) {
+            dll_211_func_4F3C(arg0, 2.5f, arg1, &arg1->unk5F8->pos);
+            if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) != 0) {
+                dll_211_func_82B8(arg1);
+            }
+        }
+        return;
+    }
+}
 
 // offset: 0x3A78 | func: 41
 static s32 dll_211_func_3A78(DLL211_Data* arg0) {
@@ -366,7 +468,7 @@ static s32 dll_211_func_3A78(DLL211_Data* arg0) {
     var_s2 = NULL;
     temp_s5 = obj_get_all_of_type(OBJTYPE_Baddie, &count);
     for (i = 0; i < count; i++) {
-        temp_fs0 = vec3_distance_xz_squared(&temp_s5[i]->globalPosition, &arg0->unk5F4);
+        temp_fs0 = vec3_distance_xz_squared(&temp_s5[i]->globalPosition, &arg0->unk5F4_vec);
         if (var_s2 == NULL) {
             if (gDLL_25->vtbl->func_1158(&temp_s5[i]->globalPosition, NULL) == arg0->unk608) {
                 sp58 = temp_fs0;
@@ -410,10 +512,10 @@ void dll_211_func_3CAC(Object* arg0, DLL211_Data* arg1) {
     switch (arg1->unk1A) {
     case 0:
         arg1->unk608 = gDLL_25->vtbl->func_1158(arg1->unk2C, NULL);
-        arg1->unk5F4.x = arg1->unk28->globalPosition.x - (fsin16_precise(arg1->unk28->srt.yaw) * 15.0f);
-        arg1->unk5F4.y = arg1->unk28->globalPosition.y;
+        arg1->unk5F4_vec.x = arg1->unk28->globalPosition.x - (fsin16_precise(arg1->unk28->srt.yaw) * 15.0f);
+        arg1->unk5F4_vec.y = arg1->unk28->globalPosition.y;
         temp_ft0 = fcos16_precise(arg1->unk28->srt.yaw) * 15.0f;
-        arg1->unk5F4.z = arg1->unk28->globalPosition.z - temp_ft0;
+        arg1->unk5F4_vec.z = arg1->unk28->globalPosition.z - temp_ft0;
         arg1->unk60C = 0;
         arg1->unk1A = 1;
         return;
@@ -427,7 +529,7 @@ void dll_211_func_3CAC(Object* arg0, DLL211_Data* arg1) {
         return;
     case 2:
         if (dll_211_func_53E4(arg0, 5.0f, arg1) == 0) {
-            dll_211_func_9024(arg1, &arg1->unk5F4);
+            dll_211_func_9024(arg1, &arg1->unk5F4_vec);
             arg1->unk1A = 3;
         } else {
             dll_211_func_3A78(arg1);
@@ -631,7 +733,7 @@ void dll_211_func_47E8(Object* arg0, DLL211_Data* arg1) {
     }
     ((f32*)arg1->unk5E4)[2] = arg1->unk28->srt.transl.x - (fsin16(((s32*)arg1->unk5E4)[1]) * 50.0f);
     ((f32*)arg1->unk5E4)[3] = arg1->unk28->srt.transl.f[1];
-    arg1->unk5F4.x = arg1->unk28->srt.transl.f[2] - (fcos16(((s32*)arg1->unk5E4)[1]) * 50.0f);
+    arg1->unk5F4_vec.x = arg1->unk28->srt.transl.f[2] - (fcos16(((s32*)arg1->unk5E4)[1]) * 50.0f);
     dll_211_func_53E4(arg0, 5.0f, arg1);
 }
 
@@ -648,8 +750,8 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
     case 0:
         if (dll_211_func_53E4(arg0, 50.0f, arg1) == 0) {
             arg1->unk1A = 1;
-            ((s32*)&arg1->unk5F4)[1] = 0;
-            arg1->unk5F4.x = 0.0f;
+            arg1->unk5F8 = 0;
+            arg1->unk5F4_vec.x = 0.0f;
             dll_211_func_83BC(arg0, arg1);
         }
         return;
@@ -659,13 +761,13 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
             arg1->unk1A = 0;
             return;
         }
-        if (arg1->unk4[1] != 0 && ((s32*)&arg1->unk5F4)[1] != 0) {
+        if (arg1->unk4[1] != 0 && arg1->unk5F8 != 0) {
             arg1->unk1A = 2;
             return;
         }
-        arg1->unk5F4.x -= gUpdateRateF;
-        if (arg1->unk5F4.x < 0.0f) {
-            arg1->unk5F4.x = rand_next(200, 600) * 0.5f;
+        arg1->unk5F4_vec.x -= gUpdateRateF;
+        if (arg1->unk5F4_vec.x < 0.0f) {
+            arg1->unk5F4_vec.x = rand_next(200, 600) * 0.5f;
             dll_211_func_95E0(arg0, arg1, _data_0[6]);
         }
         break;
@@ -677,7 +779,7 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
             arg1->unk38 = 0.005f;
             arg1->unk4C |= 0x10;
             arg1->unk1A = 3;
-            ((s32*)&arg1->unk5F4)[1] = 0;
+            arg1->unk5F8 = 0;
             return;
         }
         break;
@@ -703,12 +805,12 @@ void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
             dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xA, 0xC)]);
             arg1->unk1A = 1;
             func_80023D30(arg0, 0x106, 0.0f, 0U);
-            ((s32*)&arg1->unk5F4)[1] = 0;
+            arg1->unk5F8 = 0;
             return;
         }
         return;
     case 1:
-        if ((arg1->unk4[1] != 0) && (((s32*)&arg1->unk5F4)[1] != 0)) {
+        if ((arg1->unk4[1] != 0) && (arg1->unk5F8 != 0)) {
             arg1->unk1A = 2;
             return;
         }
@@ -725,7 +827,7 @@ void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
             arg1->unk38 = 0.005f;
             arg1->unk4C |= 0x10;
             arg1->unk1A = 3;
-            ((s32*)&arg1->unk5F4)[1] = 0;
+            arg1->unk5F8 = 0;
             return;
         }
         break;
@@ -741,7 +843,7 @@ void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
 }
 
 // offset: 0x4F3C | func: 50
-s32 dll_211_func_4F3C(Object* arg0, f32 arg1, DLL211_Data* arg2, Vec3f* arg3) {
+static s32 dll_211_func_4F3C(Object* arg0, f32 arg1, DLL211_Data* arg2, Vec3f* arg3) {
     f32 temp2;
     f32 temp_fa0;
     f32 temp_fv0;
@@ -1851,9 +1953,9 @@ static f32 dll_211_func_81D8(Object* arg0) {
 static void dll_211_func_82B8(DLL211_Data* arg0) {
     arg0->unk18 = 1;
     arg0->unk1A = 0;
-    arg0->unk5F4.x = 0.0f;
-    arg0->unk5F4.y = 0.0f;
-    arg0->unk5F4.z = 0.0f;
+    arg0->unk5F4_vec.x = 0.0f;
+    arg0->unk5F4_vec.y = 0.0f;
+    arg0->unk5F4_vec.z = 0.0f;
     arg0->unk600 = 600.0f;
     arg0->unk4C &= ~0x10;
     arg0->unk1D = 0;
@@ -1942,7 +2044,7 @@ static void dll_211_func_8470(Object* arg0, Vec3f* arg1) {
 }
 
 // offset: 0x871C | func: 70
-void dll_211_func_871C(Object* arg0, s8* arg1) {
+static void dll_211_func_871C(Object* arg0, s8* arg1) {
     s16 temp_a2;
     s16 var_a1;
     s16 var_v0;
