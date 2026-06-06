@@ -74,11 +74,11 @@ typedef struct {
     Vec3f unk5D8;
     Object *unk5E4[3];
     Object *unk5F0;
-    f32 unk5F4;
-    f32 unk5F8;
-    f32 unk5FC;
+    Vec3f unk5F4;
     f32 unk600;
-    u8 pad604[0x610-0x604];
+    Object *unk604;
+    s32 unk608;
+    u32 pad60C;
 } DLL211_Data;
 
 /* static */ void dll_211_func_514C(Object* arg0, DLL211_Data* arg1);
@@ -353,7 +353,37 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3664.s")
 
 // offset: 0x3A78 | func: 41
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_3A78.s")
+s32 dll_211_func_3A78(DLL211_Data* arg0) {
+    s32 count;
+    Object* var_s2;
+    Object** temp_s5;
+    f32 sp58;
+    f32 temp_fs0;
+    s16 i;
+
+    var_s2 = NULL;
+    temp_s5 = obj_get_all_of_type(OBJTYPE_Baddie, &count);
+    for (i = 0; i < count; i++) {
+        temp_fs0 = vec3_distance_xz_squared(&temp_s5[i]->globalPosition, &arg0->unk5F4);
+        if (var_s2 == NULL) {
+            if (gDLL_25->vtbl->func_1158(&temp_s5[i]->globalPosition.x, NULL) == arg0->unk608) {
+                sp58 = temp_fs0;
+                var_s2 = temp_s5[i];
+            }
+        } else if ((temp_fs0 < sp58) && (gDLL_25->vtbl->func_1158(&temp_s5[i]->globalPosition.x, NULL) == arg0->unk608)) {
+            sp58 = temp_fs0;
+            var_s2 = temp_s5[i];
+        }
+    }
+    if (var_s2 != NULL) {
+        arg0->unk604 = var_s2;
+        dll_211_func_9024(arg0, &var_s2->globalPosition);
+        arg0->unk1A = 4;
+        return 1;
+    }
+
+    return 0;
+}
 
 // offset: 0x3C1C | func: 42
 s32 dll_211_func_3C1C(Object *arg0) {
@@ -361,7 +391,7 @@ s32 dll_211_func_3C1C(Object *arg0) {
     Object** objects;
     s16 i;
 
-    objects = obj_get_all_of_type(4, &count);
+    objects = obj_get_all_of_type(OBJTYPE_Baddie, &count);
     for (i = 0; i < count; i++) {
         if (arg0 == objects[i]) {
             return TRUE;
@@ -517,7 +547,7 @@ void dll_211_func_47E8(Object* arg0, DLL211_Data* arg1) {
     }
     ((f32*)arg1->unk5E4)[2] = arg1->unk28->srt.transl.x - (fsin16(((s32*)arg1->unk5E4)[1]) * 50.0f);
     ((f32*)arg1->unk5E4)[3] = arg1->unk28->srt.transl.f[1];
-    arg1->unk5F4 = arg1->unk28->srt.transl.f[2] - (fcos16(((s32*)arg1->unk5E4)[1]) * 50.0f);
+    arg1->unk5F4.x = arg1->unk28->srt.transl.f[2] - (fcos16(((s32*)arg1->unk5E4)[1]) * 50.0f);
     dll_211_func_53E4(arg0, 5.0f, arg1);
 }
 #endif
@@ -546,8 +576,8 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
     case 0:
         if (dll_211_func_53E4(arg0, 50.0f, arg1) == 0) {
             arg1->unk1A = 1;
-            arg1->unk5F8 = 0;
-            arg1->unk5F4 = 0.0f;
+            arg1->unk5F4.y = 0;
+            arg1->unk5F4.x = 0.0f;
             dll_211_func_83BC(arg0, arg1);
         }
         return;
@@ -557,13 +587,13 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
             arg1->unk1A = 0;
             return;
         }
-        if (arg1->unk4[1] != 0 && arg1->unk5F8 != 0) {
+        if (arg1->unk4[1] != 0 && arg1->unk5F4.y != 0) {
             arg1->unk1A = 2;
             return;
         }
-        arg1->unk5F4 -= gUpdateRateF;
-        if (arg1->unk5F4 < 0.0f) {
-            arg1->unk5F4 = rand_next(200, 600) * 0.5f;
+        arg1->unk5F4.x -= gUpdateRateF;
+        if (arg1->unk5F4.x < 0.0f) {
+            arg1->unk5F4.x = rand_next(200, 600) * 0.5f;
             dll_211_func_95E0(arg0, arg1, _data_0[6]);
         }
         break;
@@ -575,7 +605,7 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
             arg1->unk38 = 0.005f;
             arg1->unk4C |= 0x10;
             arg1->unk1A = 3;
-            arg1->unk5F8 = 0.0f;
+            arg1->unk5F4.y = 0.0f;
             return;
         }
         break;
@@ -612,12 +642,12 @@ void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
             dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xA, 0xC)]);
             arg1->unk1A = 1;
             func_80023D30(arg0, 0x106, 0.0f, 0U);
-            arg1->unk5F8 = 0.0f;
+            arg1->unk5F4.y = 0.0f;
             return;
         }
         return;
     case 1:
-        if ((arg1->unk4[1] != 0) && (arg1->unk5F8 != 0)) {
+        if ((arg1->unk4[1] != 0) && (arg1->unk5F4.y != 0)) {
             arg1->unk1A = 2;
             return;
         }
@@ -634,7 +664,7 @@ void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
             arg1->unk38 = 0.005f;
             arg1->unk4C |= 0x10;
             arg1->unk1A = 3;
-            arg1->unk5F8 = 0.0f;
+            arg1->unk5F4.y = 0.0f;
             return;
         }
         break;
@@ -1776,9 +1806,9 @@ void dll_211_func_81A8(Object* arg0) {
 /* static */ void dll_211_func_82B8(DLL211_Data* arg0) {
     arg0->unk18 = 1;
     arg0->unk1A = 0;
-    arg0->unk5F4 = 0.0f;
-    arg0->unk5F8 = 0.0f;
-    arg0->unk5FC = 0.0f;
+    arg0->unk5F4.x = 0.0f;
+    arg0->unk5F4.y = 0.0f;
+    arg0->unk5F4.z = 0.0f;
     arg0->unk600 = 600.0f;
     arg0->unk4C &= ~0x10;
     arg0->unk1D = 0;
@@ -2183,7 +2213,7 @@ void dll_211_func_9200(Object* arg0, DLL211_Data* arg1) {
     s32 i;
 
     var_s3 = NULL;
-    temp_v0 = obj_get_all_of_type(4, &sp48);
+    temp_v0 = obj_get_all_of_type(OBJTYPE_Baddie, &sp48);
     arg1 = SQ(arg1);
     for (i = 0; i < sp48; i++) {
         if ((obj_is_object_type(temp_v0[i], 0x33) == 0) && (gDLL_33_BaddieControl->vtbl->get_health_ratio(temp_v0[i]) > 0.0f)) {
