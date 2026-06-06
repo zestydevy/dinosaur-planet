@@ -30,7 +30,7 @@ DLL_INTERFACE(DLL_26_curves) {
 /*13*/ s32 (*func_19C8)(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3);
 /*14*/ s32 (*func_1B90)(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3);
 /*15*/ s32 (*func_218C)(s32 arg0);
-/*16*/ s32 (*func_21FC)(s32 arg1, s32 arg2, s32* arg3);
+/*16*/ s32 (*func_21FC)(s32 arg0, s32 arg1, s32 arg2, s32* arg3);
 /*17*/ s32 (*func_277C)(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
 /*18*/ s32 (*func_291C)(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4);
 /*19*/ s32 (*func_35AC)(f32 arg0, f32 arg1, f32 arg2);

@@ -827,8 +827,119 @@ s32 dll_26_func_218C(s32 arg0) {
 }
 
 // offset: 0x21FC | func: 25 | export: 16
-s32 dll_26_func_21FC(s32 arg1, s32 arg2, s32* arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_21FC.s")
+s32 dll_26_func_21FC(s32 arg0, s32 arg1, s32 arg2, s32* arg3) {
+    s32 var_r23;
+    s32 var_r25;
+    CurveSetup* temp_r31;
+    s32 var_r30;
+    s32 var_r27;
+    f32 temp_f31;
+    s32 var_r21;
+    s32 var_r29;
+    s32 sp688[4];
+    s32 sp684;
+    s32 sp680;
+    s32 var_r24;
+    CurveSetup* temp_r3;
+    f32 sp670[4];
+    CurveSetup *new_var;
+    s32 var_r22;
+    f32 temp_f30;
+    s8 sp15C[1300];
+    s32 spBC[40];
+    f32 sp1C[40];
+    s8 sp18[4];
+
+    new_var = dll_26_func_1420(arg0, &sp680);
+    if (new_var == NULL) {
+        return -1;
+    }
+    var_r25 = 0;
+    var_r23 = 0;
+    while (var_r23 < 4) {
+        if (new_var->links[var_r23] > -1) {
+            var_r27 = 0;
+            while (var_r27 < 1300) {
+                sp15C[var_r27] = 0;
+                var_r27 += 1;
+            }
+            sp15C[sp680] = 1;
+            temp_r3 = dll_26_func_1420(new_var->links[var_r23], &sp684);
+            var_r29 = 0;
+            sp1C[var_r29] = SQ(temp_r3->pos.x - new_var->pos.x) 
+                + SQ(temp_r3->pos.y - new_var->pos.y) 
+                + SQ(temp_r3->pos.z - new_var->pos.z);
+            spBC[var_r29] = sp684;
+            var_r29++;
+            sp15C[sp684] = 1;
+            var_r21 = 0;
+            do {
+                if (var_r29 > 0) {
+                    var_r29 -= 1;
+                    sp684 = spBC[var_r29];
+                    temp_r31 = _bss_8[sp684].setup;
+                    temp_f31 = sp1C[var_r29];
+                    if (((temp_r31->curveType == arg1) || (arg1 == -1)) 
+                            && ((temp_r31->unk.unk31 == arg2) || (temp_r31->unk.unk32 == arg2) || (temp_r31->unk.unk33 == arg2))) {
+                        var_r21 = 1;
+                        sp670[var_r25] = temp_f31;
+                        if (var_r25 < 4) {
+                            sp688[var_r25] = temp_r31->uID;
+                            sp18[var_r25] = var_r23;
+                            var_r25 += 1;
+                        }
+                    } else {
+                        var_r22 = 0;
+                        while (var_r22 < 4) {
+                            if (temp_r31->links[var_r22] > -1) {
+                                temp_r3 = dll_26_func_1420(temp_r31->links[var_r22], &sp684);
+                                if ((temp_r3 != NULL) && (sp15C[sp684] == 0) && (var_r29 < 0x28)) {
+                                    temp_f30 = temp_f31
+                                        + SQ(temp_r31->pos.x - temp_r3->pos.x) 
+                                        + SQ(temp_r31->pos.y - temp_r3->pos.y) 
+                                        + SQ(temp_r31->pos.z - temp_r3->pos.z);
+                                    var_r30 = 0;
+                                    while ((var_r30 < var_r29) && (sp1C[var_r30] > temp_f30)) {
+                                        var_r30 += 1;
+                                    }
+                                    var_r24 = var_r29;
+                                    while (var_r24 > var_r30) {
+                                        spBC[var_r24] = spBC[var_r24 - 1];
+                                        sp1C[var_r24] = sp1C[var_r24 - 1];
+                                        var_r24 -= 1;
+                                    }
+                                    var_r29 += 1;
+                                    sp1C[var_r30] = temp_f30;
+                                    spBC[var_r30] = sp684;
+                                    sp15C[sp684] = 1;
+                                }
+                            }
+                            var_r22 += 1;
+                        }
+                    }
+                } else {
+                    var_r21 = 1;
+                }
+            } while (var_r21 == 0);
+        }
+        var_r23 += 1;
+    }
+    if (var_r25 > 0) {
+        var_r30 = 0;
+        var_r27 = 0;
+        while (var_r27 < var_r25) {
+            if (sp670[var_r27] < sp670[var_r30]) {
+                var_r30 = var_r27;
+            }
+            var_r27 += 1;
+        }
+        if (arg3 != NULL) {
+            *arg3 = sp18[var_r30];
+        }
+        return sp688[var_r30];
+    }
+    return -1;
+}
 
 // offset: 0x277C | func: 26 | export: 17
 s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
