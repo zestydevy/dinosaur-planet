@@ -12,7 +12,7 @@ DLL_INTERFACE(DLL_73) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*init_text_window)(s32 y);
 /*1*/ void (*init_text_window_with_margin)(s32 marginX, s32 y);
-/*2*/ void (*add_string)(s32 enterValue, char* text, s32 lineHeight, s32 selectedIndex);
+/*2*/ void (*add_string)(s32 valueEnter, char* text, s32 lineHeight, s32 selectedIndex);
 /*3*/ void (*add_string_x)(s32 valueEnter, char* text, s32 x, s32 lineHeight, s32 selectedIndex);
 /*4*/ void (*set_exit_value)(s32 value);
 /*5*/ s16 (*handle_joystick_and_buttons)(s32* idx);

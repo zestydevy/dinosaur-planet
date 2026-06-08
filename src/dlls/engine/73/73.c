@@ -63,13 +63,13 @@ void dll_73_init_text_window_with_margin(s32 marginX, s32 y) {
   *
   * The selected line has an animation, fading between the Dino Medium In/Out fonts.
   */
-void dll_73_add_string(s32 enterValue, char* text, s32 lineHeight, s32 selectedIndex) {
+void dll_73_add_string(s32 valueEnter, char* text, s32 lineHeight, s32 selectedIndex) {
     f32 tValue;
     f32 opacity;
     f32 opacityRemainder;
 
     if (selectedIndex == sTotalItems) {
-        sValueEnter = enterValue;
+        sValueEnter = valueEnter;
         if (sTimer <= 100.0f) {
             tValue = sTimer / 100.0f;
             opacity = (s32)(tValue * 255.0f);
