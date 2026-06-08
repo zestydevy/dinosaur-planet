@@ -1,6 +1,7 @@
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/29_gplay.h"
+#include "dlls/engine/73.h"
 #include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/main.h"
@@ -11,7 +12,7 @@
 #include "sys/objtype.h"
 
 extern DLL_29_gplay *gDLL_29_Gplay;
-extern DLL_Unknown* dll_throw_fault; //NOTE: BROKEN! This is a function now, not a DLL.
+extern DLL_73* dll_throw_fault; //NOTE: BROKEN! This is a function now, not DLL 73.
 
 extern s8 D_8008C8B4;
 
@@ -21,13 +22,13 @@ typedef enum {
     SwapStone_Old_To_Warlock
 } SwapStone_Old_Options;
 
-/*0x0*/ static s32 bss_0;
-/*0x4*/ static s32 bss_4;
+/*0x0*/ static s32 sIndexSelected;
+/*0x4*/ static s32 sButtonsEnabled;
 
 // offset: 0x0 | ctor
 void dll_71_ctor(void *dll) {
-    bss_0 = 0;
-    bss_4 = 0;
+    sIndexSelected = 0;
+    sButtonsEnabled = FALSE;
 }
 
 // offset: 0x28 | dtor
@@ -51,14 +52,14 @@ void dll_71_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     playerNumber = gDLL_29_Gplay->vtbl->get_playerno();
     D_8008C8B4 = FALSE;
     
-    ((DLL_Unknown*)dll_throw_fault)->vtbl->func[7].withOneArg(bss_4);
-    ((DLL_Unknown*)dll_throw_fault)->vtbl->func[0].withOneArg(60);
-    ((DLL_Unknown*)dll_throw_fault)->vtbl->func[2].withFourArgs(0, "CONTINUE",   20, bss_0);
-    ((DLL_Unknown*)dll_throw_fault)->vtbl->func[2].withFourArgs(1, "SWAP",       20, bss_0);
-    ((DLL_Unknown*)dll_throw_fault)->vtbl->func[2].withFourArgs(2, "TO WARLOCK", 20, bss_0);
-    ((DLL_Unknown*)dll_throw_fault)->vtbl->func[4].withOneArg(0);
+    dll_throw_fault->vtbl->enable_joy_buttons(sButtonsEnabled);
+    dll_throw_fault->vtbl->init_text_window(60);
+    dll_throw_fault->vtbl->add_string(0, "CONTINUE",   20, sIndexSelected);
+    dll_throw_fault->vtbl->add_string(1, "SWAP",       20, sIndexSelected);
+    dll_throw_fault->vtbl->add_string(2, "TO WARLOCK", 20, sIndexSelected);
+    dll_throw_fault->vtbl->set_exit_value(0);
     
-    switch (((DLL_Unknown*)dll_throw_fault)->vtbl->func[5].withOneArgS32((s32)&bss_0)) {
+    switch (dll_throw_fault->vtbl->handle_joystick_and_buttons(&sIndexSelected)) {
     default:
         D_8008C8B4 = TRUE;
         break;
@@ -83,5 +84,5 @@ void dll_71_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     font_window_flush_strings(3);
     font_window_draw(gdl, 0, 0, 3);
     font_window_draw(gdl, 0, 0, 1);
-    bss_4 = TRUE;
+    sButtonsEnabled = TRUE;
 }
