@@ -1,11 +1,19 @@
 #include "dll.h"
+#include "dlls/engine/29_gplay.h"
 #include "dlls/engine/73.h"
+#include "macros.h"
 #include "sys/fonts.h"
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/map_enums.h"
 
 extern DLL_73* dll_throw_fault; //NOTE: BROKEN! This is a function now, not DLL 73.
+
+#define LINE_HEIGHT 0x20
+#define TOTAL_STRINGS 53
+#define STRING_LENGTH 0x40
+#define STRINGS_PER_PAGE 9
+#define LAST_PAGE_FIRST_IDX (TOTAL_STRINGS - STRINGS_PER_PAGE)
 
 typedef enum {
     LEVELSELECT_IDX_00_NEW_GAME,
@@ -63,7 +71,7 @@ typedef enum {
     LEVELSELECT_IDX_34_WARLOCK_ACT_SIX
 } LevelSelectOld_Indices;
 
-/*0x0*/ static char data_0[][64] = {
+/*0x0*/ static char dStrings[TOTAL_STRINGS][STRING_LENGTH] = {
     "NEW GAME",
     "LOAD GAME",
     "",
@@ -108,8 +116,6 @@ typedef enum {
     "DESERT FORCE POINT",
     "VOLCANO FORCE POINT",
     "",
-// };
-// /*0xB00*/ static char data_B00[][64] = {
     "EARTHWALKER ACT TWO", 
     "ENERGY DEMO",
     "", 
@@ -121,7 +127,7 @@ typedef enum {
     "WARLOCK ACT SIX"
 };
 
-static void dll_70_func_B58(s32 mapID, s32 act, s32 playerNo);
+static void dll_70_start(MapIDs mapID, s32 act, PlayerNo playerNo);
 
 // offset: 0x0 | ctor
 void dll_70_ctor(void *dll) { }
@@ -130,89 +136,99 @@ void dll_70_ctor(void *dll) { }
 void dll_70_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_70_func_18(void) {
+s32 dll_70_update1(void) {
     return 0;
 }
 
 // offset: 0x24 | func: 1 | export: 1
-void dll_70_func_24(void) {
+void dll_70_update2(void) {
 
 }
 
 // offset: 0x2C | func: 2 | export: 2
-void dll_70_func_2C(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
-    /*0xD40*/ static s32 data_D40 = 0;
-    /*0xD44*/ static s32 data_D44 = 0; //selected textID?
-    /*0xD48*/ static s32 data_D48 = FALSE;
-    /*0x000*/ static s32 bss_0;
+void dll_70_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
+    /*0xD40*/ static s32 dSelectedPrintIdx = 0;         //Selected index within 9 strings currently shown
+    /*0xD44*/ static s32 dSelectedListIdx = 0;          //Selected index within full list of strings
+    /*0xD48*/ static s32 dShowLevelUnavailable = FALSE; //Shows a "LEVEL NOT AVAILABLE" message instead of the level list
+    /*0x000*/ static s32 sButtonsEnabled;
     
     s32 start;
     s32 menuAction;
     s32 i;
     char *string;
-    s32 prevSelectedIdx;
-    s32 var_a0;
-    s32 end;
+    s32 prevSelectedPrintIdx;
 
     func_80014508(20);
-    gDLL_20_Screens->vtbl->show_screen(2);
+    gDLL_20_Screens->vtbl->show_screen(2); //NOTE: this screen is missing - maybe it contained the old Dinosaur Planet logo?
     
-    if (data_D48 == FALSE) {
+    //Display either the Level Select list, or a "LEVEL NOT AVAILABLE" message
+    if (dShowLevelUnavailable == FALSE) {
         dll_throw_fault->vtbl->init_text_window(120);
-        
-        if (data_D44 < 4) { //first page of strings
-            for (i = 0, string = data_0[0]; i < 9; i++, string += 0x40) {
-                dll_throw_fault->vtbl->add_string(i, string, 0x20, data_D40);
+    
+        //Print 9 strings at a time
+        if (dSelectedListIdx < 4) { 
+            //Upper half of first page of strings
+            for (i = 0, string = dStrings[0]; i < STRINGS_PER_PAGE; i++, string += STRING_LENGTH) {
+                dll_throw_fault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
                 
                 if (gDLL_20_Screens){} //fake
             }
+        } else if (dSelectedListIdx >= (TOTAL_STRINGS - 4)) { 
+            //Lower half of last page of strings
+            for (i = LAST_PAGE_FIRST_IDX, string = dStrings[LAST_PAGE_FIRST_IDX]; i < TOTAL_STRINGS; i++, string += STRING_LENGTH) {
+                dll_throw_fault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
+            }
         } else {
-            start = data_D44 - 4;
-            if ((start + 4) > 48) { //last page of strings
-                for (i = 44, string = data_0[44]; i < 53; i++, string += 0x40) {
-                    dll_throw_fault->vtbl->add_string(i, string, 0x20, data_D40);
-                }
+            //Scrolling between top/bottom of list
+            start = dSelectedListIdx - 4;
+            i = start;
+            if (start < (dSelectedListIdx + 5)) {
+                string = dStrings[start];
+                do {
+                    dll_throw_fault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
+                    i++;
+                    string += STRING_LENGTH;
+                } while (i < (dSelectedListIdx + 5));
+            }
+        }
+        
+        //Handle moving up/down the list
+        {
+            prevSelectedPrintIdx = dSelectedPrintIdx;
+            menuAction = dll_throw_fault->vtbl->handle_joystick_and_buttons(&dSelectedPrintIdx);
+            
+            if ((prevSelectedPrintIdx == 0) && (dSelectedPrintIdx == (STRINGS_PER_PAGE - 1))) {
+                //Wrapping from top to bottom
+                dSelectedListIdx = TOTAL_STRINGS - 1;
+            } else if ((prevSelectedPrintIdx == (STRINGS_PER_PAGE - 1)) && (dSelectedPrintIdx == 0)) {
+                //Wrapping from bottom to top
+                dSelectedListIdx = 0;
             } else {
-                i = start;
-                if (start < (data_D44 + 5)) {
-                    string = data_0[start];
+                //Moving up/down (starting on nearest string that isn't blank)
+                if (prevSelectedPrintIdx > dSelectedPrintIdx) {             
                     do {
-                        dll_throw_fault->vtbl->add_string(i, string, 0x20, data_D40);
-                        i += 1;
-                        string += 0x40;
-                    } while (i < (data_D44 + 5));
+                        dSelectedListIdx--;
+                    } while (dStrings[dSelectedListIdx][0] == '\0');
+                } else if (prevSelectedPrintIdx < dSelectedPrintIdx) {
+                    do {
+                        dSelectedListIdx++;
+                    } while (dStrings[dSelectedListIdx][0] == '\0');
                 }
                 
+                //Determine which string is selected (out of the 9 shown)
+                if (dSelectedListIdx < 4) {
+                    dSelectedPrintIdx = dSelectedListIdx;
+                } else if (dSelectedListIdx > (TOTAL_STRINGS - 5)) {
+                    dSelectedPrintIdx = dSelectedListIdx - (TOTAL_STRINGS - STRINGS_PER_PAGE);
+                } else {
+                    dSelectedPrintIdx = 4;
+                }
             }
         }
-        
-        prevSelectedIdx = data_D40;
-        menuAction = dll_throw_fault->vtbl->handle_joystick_and_buttons(&data_D40);
-        
-        if ((prevSelectedIdx == 0) && (data_D40 == 8)) {
-            data_D44 = 52;
-        } else if ((prevSelectedIdx == 8) && (data_D40 == 0)) {
-            data_D44 = 0;
-        } else {
-            if (data_D40 < prevSelectedIdx) {             
-                do {
-                    data_D44--;
-                } while (data_0[data_D44][0] == 0);
-            } else if (prevSelectedIdx < data_D40) {
-                do {
-                    data_D44++;
-                } while (data_0[data_D44][0] == 0);
-            }
-            
-            if (data_D44 < 4) {
-                data_D40 = data_D44;
-            } else {
-                data_D40 = (data_D44 >= 0x31) ? (data_D44 - 0x2C) : 4;
-            }
-        }
-        
+
+        //Handle selecting an item
         if (menuAction >= 0) {
-            switch (data_D44) {
+            switch (dSelectedListIdx) {
             case LEVELSELECT_IDX_00_NEW_GAME:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
                 gDLL_29_Gplay->vtbl->init_save(0, NULL);
@@ -221,117 +237,117 @@ void dll_70_func_2C(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
                 gDLL_29_Gplay->vtbl->load_save(0, 1);
                 return;
-            case 0x2:
-                dll_70_func_B58(MAP_FRONT_END, 0, 1);
+            case LEVELSELECT_IDX_02: //NOTE: blank string
+                dll_70_start(MAP_FRONT_END, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_03_SWAPSTONE_HOLLOW:
-                dll_70_func_B58(MAP_SWAPSTONE_HOLLOW, 0, 0);
+                dll_70_start(MAP_SWAPSTONE_HOLLOW, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_04_SWAPSTONE_CIRCLE:
-                dll_70_func_B58(MAP_SWAPSTONE_CIRCLE, 1, 1);
+                dll_70_start(MAP_SWAPSTONE_CIRCLE, 1, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_06_DARKICE_MINES:
-                dll_70_func_B58(MAP_DARK_ICE_MINES_1, 0, 0);
+                dll_70_start(MAP_DARK_ICE_MINES_1, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_07_DARKICE_MINES_TWO:
-                dll_70_func_B58(MAP_ANIMTEST, 0, 0); //DIM2 may have been moved down by one index, after Animtest?
+                dll_70_start(MAP_ANIMTEST, 0, PLAYER_SABRE); //DIM2 may have been moved down by one index, after Animtest?
                 return;
             case LEVELSELECT_IDX_08_WALLED_CITY:
-                data_D48 = TRUE;
+                dShowLevelUnavailable = TRUE;
                 break;
             case LEVELSELECT_IDX_09_DRAGON_ROCK:
-                data_D48 = TRUE; //Wasn't created at this stage? (conflicts with how Kev Bayliss mentioned it was one of the earliest areas they created!)
+                dShowLevelUnavailable = TRUE; //Wasn't created at this stage?
                 break;
             case LEVELSELECT_IDX_0A_CLOUDRUNNER_FORTRESS:
-                dll_70_func_B58(MAP_CLOUDRUNNER_FORTRESS, 0, 1);
+                dll_70_start(MAP_CLOUDRUNNER_FORTRESS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_0B_KRAZOA_PALACE:
-                data_D48 = TRUE;  //Wasn't created at this stage?
+                dShowLevelUnavailable = TRUE;  //Wasn't created at this stage?
                 break;
             case LEVELSELECT_IDX_0C_BLACKWATER_CANYON:
-                data_D48 = TRUE;  //Wasn't created at this stage?
+                dShowLevelUnavailable = TRUE;  //Wasn't created at this stage?
                 break;
             case LEVELSELECT_IDX_0E_NORTHERN_WASTES:
-                dll_70_func_B58(MAP_SNOWHORN_WASTES, 0, 0);
+                dll_70_start(MAP_SNOWHORN_WASTES, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_0F_EARTHWALKER_TEMPLE:
-                dll_70_func_B58(MAP_EARTHWALKER_TEMPLE, 1, 0);
+                dll_70_start(MAP_EARTHWALKER_TEMPLE, 1, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_10_WILLOW_GROVE:
-                dll_70_func_B58(MAP_WILLOW_GROVE, 0, 1);
+                dll_70_start(MAP_WILLOW_GROVE, 0, PLAYER_KRYSTAL); //Starting as Krystal by mistake?
                 return;
             case LEVELSELECT_IDX_11_DIAMOND_BAY:
-                dll_70_func_B58(MAP_DIAMOND_BAY, 0, 0);
+                dll_70_start(MAP_DIAMOND_BAY, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_12_DISCOVERY_FALLS:
-                dll_70_func_B58(MAP_DISCOVERY_FALLS, 0, 1);
+                dll_70_start(MAP_DISCOVERY_FALLS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_13_MOON_MOUNTAIN_PASS:
-                dll_70_func_B58(MAP_MOON_MOUNTAIN_PASS, 0, 1);
+                dll_70_start(MAP_MOON_MOUNTAIN_PASS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_14_CAPE_CLAW:
-                dll_70_func_B58(MAP_CAPE_CLAW, 0, 1);
+                dll_70_start(MAP_CAPE_CLAW, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_15_GOLDEN_PLAINS:
-                dll_70_func_B58(MAP_GOLDEN_PLAINS, 0, 1);
+                dll_70_start(MAP_GOLDEN_PLAINS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_17_TEST_OF_COMBAT:
-                dll_70_func_B58(MAP_SHRINE_DISCOVERY_FALLS, 0, 1);
+                dll_70_start(MAP_SHRINE_DISCOVERY_FALLS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_18_TEST_OF_STRENGTH:
-                dll_70_func_B58(MAP_SHRINE_DIAMOND_BAY, 0, 0);
+                dll_70_start(MAP_SHRINE_DIAMOND_BAY, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_19_TEST_OF_FEAR:
-                dll_70_func_B58(MAP_SHRINE_MOON_MOUNTAIN_PASS, 0, 1);
+                dll_70_start(MAP_SHRINE_MOON_MOUNTAIN_PASS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_1A_TEST_OF_CHARACTER:
-                dll_70_func_B58(MAP_SHRINE_CAPE_CLAW, 0, 1);
+                dll_70_start(MAP_SHRINE_CAPE_CLAW, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_1B_TEST_OF_KNOWLEDGE:
-                dll_70_func_B58(MAP_SHRINE_GOLDEN_PLAINS, 0, 1);
+                dll_70_start(MAP_SHRINE_GOLDEN_PLAINS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_1C_TEST_OF_SACRIFICE:
-                dll_70_func_B58(MAP_SHRINE_SNOWHORN_WASTES, 0, 0);
+                dll_70_start(MAP_SHRINE_SNOWHORN_WASTES, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_1D_TEST_OF_SKILL:
-                dll_70_func_B58(MAP_SHRINE_WALLED_CITY, 0, 0);
+                dll_70_start(MAP_SHRINE_WALLED_CITY, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_1E_TEST_OF_MAGIC:
-                dll_70_func_B58(MAP_SHRINE_WILLOW_GROVE, 0, 0);
+                dll_70_start(MAP_SHRINE_WILLOW_GROVE, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_21_DARKICE_BOSS:
-                dll_70_func_B58(MAP_BOSS_GALADON, 0, 1);
+                dll_70_start(MAP_BOSS_GALADON, 0, PLAYER_KRYSTAL); //Starting as Krystal, just like in the old trailer!
                 return;
             case LEVELSELECT_IDX_22_GENERAL_SCALES_BOSS:
-                data_D48 = TRUE;
+                dShowLevelUnavailable = TRUE;
                 break;
             case LEVELSELECT_IDX_23_BLACKWATER_BOSS:
-                data_D48 = TRUE;
+                dShowLevelUnavailable = TRUE;
                 break;
             case LEVELSELECT_IDX_24_CLOUDRUNNER_RACE:
-                dll_70_func_B58(MAP_CLOUDRUNNER_RACETRACK, 0, 1); //CRF Trap Rooms scrapped by this stage?
+                dll_70_start(MAP_CLOUDRUNNER_RACETRACK, 0, PLAYER_KRYSTAL); //CRF Trap Rooms scrapped by this stage?
                 return;
             case LEVELSELECT_IDX_25_KAMERIA_DRAGON_BOSS:
-                data_D48 = TRUE; //Wasn't created at this stage?
+                dShowLevelUnavailable = TRUE; //Wasn't created at this stage?
                 break;
             case LEVELSELECT_IDX_26_DRAKOR_FINAL_BOSS:
-                dll_70_func_B58(MAP_BOSS_DRAKOR, 0, 0);
+                dll_70_start(MAP_BOSS_DRAKOR, 0, PLAYER_SABRE);
                 break;
             case LEVELSELECT_IDX_27_ICE_MOUNTAIN:
-                dll_70_func_B58(MAP_ICE_MOUNTAIN_1, 0, 0);
+                dll_70_start(MAP_ICE_MOUNTAIN_1, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_29_DESERT_FORCE_POINT:
-                dll_70_func_B58(MAP_DESERT_FORCE_POINT_TEMPLE_BOTTOM, 0, 1);
+                dll_70_start(MAP_DESERT_FORCE_POINT_TEMPLE_BOTTOM, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_2A_VOLCANO_FORCE_POINT:
-                dll_70_func_B58(MAP_VOLCANO_FORCE_POINT_TEMPLE, 0, 1);
+                dll_70_start(MAP_VOLCANO_FORCE_POINT_TEMPLE, 0, PLAYER_KRYSTAL); //Starting as Krystal by mistake?
                 return;
             case LEVELSELECT_IDX_2C_EARTHWALKER_ACT_TWO:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
                 gDLL_29_Gplay->vtbl->load_save(8, 1);
                 return;
             case LEVELSELECT_IDX_2D_ENERGY_DEMO:
-                dll_70_func_B58(MAP_EARTHWALKER_TEMPLE, 5, 1);
+                dll_70_start(MAP_EARTHWALKER_TEMPLE, 5, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_2F_WARLOCK_ACT_ONE:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
@@ -358,7 +374,7 @@ void dll_70_func_2C(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
                 gDLL_29_Gplay->vtbl->load_save(0xF, 1);
                 return;
             default:
-                data_D48 = TRUE;
+                dShowLevelUnavailable = TRUE;
                 break;
             case LEVELSELECT_IDX_05:
             case LEVELSELECT_IDX_0D:
@@ -373,11 +389,11 @@ void dll_70_func_2C(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
         }
     } else {
         //Display message if option/level can't be accessed
-        bss_0 = 0;
+        sButtonsEnabled = FALSE;
         dll_throw_fault->vtbl->init_text_window(180);
         dll_throw_fault->vtbl->add_string(0, "LEVEL NOT AVAILABLE", 12, 0);
-        if (dll_throw_fault->vtbl->handle_joystick_and_buttons(&bss_0) >= 0) {
-            data_D48 = FALSE;
+        if (dll_throw_fault->vtbl->handle_joystick_and_buttons(&sButtonsEnabled) >= 0) {
+            dShowLevelUnavailable = FALSE;
         }
     }
 
@@ -385,7 +401,10 @@ void dll_70_func_2C(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
 }
 
 // offset: 0xB58 | func: 3
-void dll_70_func_B58(s32 mapID, s32 act, s32 playerNo) {
+/**
+  * Starts the game with a specific mapID, Act number, and player character.
+  */
+void dll_70_start(MapIDs mapID, s32 act, PlayerNo playerNo) {
     gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
     gDLL_29_Gplay->vtbl->init_save(0, NULL);
     main_change_map(mapID, act, playerNo, MENU_GAMEPLAY);

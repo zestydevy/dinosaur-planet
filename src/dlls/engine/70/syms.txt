@@ -1,19 +1,18 @@
 .text = 0x0:
 dll_70_ctor = 0x0;
 dll_70_dtor = 0xC;
-dll_70_func_18 = 0x18;
-dll_70_func_24 = 0x24;
-dll_70_func_2C = 0x2C;
-dll_70_func_B58 = 0xB58;
+dll_70_update1 = 0x18;
+dll_70_update2 = 0x24;
+dll_70_draw = 0x2C;
+dll_70_start = 0xB58;
 
 .rodata = 0xC40:
 
 .data = 0xD30:
-data_0 = 0x0; // absolute:0xD30
-data_B00 = 0xB00; // absolute:0x1830
-data_D40 = 0xD40; // absolute:0x1A70
-data_D44 = 0xD44; // absolute:0x1A74
-data_D48 = 0xD48; // absolute:0x1A78
+dStrings = 0x0; // absolute:0xD30
+dSelectedPrintIdx = 0xD40; // absolute:0x1A70
+dSelectedListIdx = 0xD44; // absolute:0x1A74
+dShowLevelUnavailable = 0xD48; // absolute:0x1A78
 
 .bss = 0x1A80:
-bss_0 = 0x0; // absolute:0x1A80
+sButtonsEnabled = 0x0; // absolute:0x1A80
