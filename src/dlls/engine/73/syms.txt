@@ -3,10 +3,10 @@ dll_73_ctor = 0x0;
 dll_73_dtor = 0x60;
 dll_73_init_text_window = 0x6C;
 dll_73_init_text_window_with_margin = 0x118;
-dll_73_func_204 = 0x204;
-dll_73_func_46C = 0x46C;
+dll_73_add_string = 0x204;
+dll_73_add_string_x = 0x46C;
 dll_73_set_exit_value = 0x540;
-dll_73_func_55C = 0x55C;
+dll_73_handle_joystick_and_buttons = 0x55C;
 dll_73_set_font_and_colour = 0x6D0;
 dll_73_enable_joy_buttons = 0x764;
 dll_73_get_total_items = 0x780;
@@ -14,7 +14,7 @@ dll_73_get_total_items = 0x780;
 .rodata = 0x810:
 
 .data = 0x810:
-data_0 = 0x0; // absolute:0x810
+dButtonsEnabled = 0x0; // absolute:0x810
 
 .bss = 0x820:
 sValueEnter = 0x0; // absolute:0x820

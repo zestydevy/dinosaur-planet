@@ -3,6 +3,7 @@
 #include "PR/os.h"
 #include "common.h"
 #include "sys/fonts.h"
+#include "dlls/engine/73.h"
 
 /*0x0*/ static s8 dButtonsEnabled = FALSE;  //Whether to check button presses (for backing out/advancing)
 
@@ -35,7 +36,7 @@ void dll_73_init_text_window(s32 y) {
     font_window_flush_strings(1);
     sTextY = y;
     sTotalItems = 0;
-    sValueExit = -1;
+    sValueExit = DLL73_ACTION_None;
 }
 
 // offset: 0x118 | func: 1 | export: 1
@@ -53,16 +54,21 @@ void dll_73_init_text_window_with_margin(s32 marginX, s32 y) {
     font_window_flush_strings(1);
     sTextY = y;
     sTotalItems = 0;
-    sValueExit = -1;
+    sValueExit = DLL73_ACTION_None;
 }
 
 // offset: 0x204 | func: 2 | export: 2
-void dll_73_func_204(s32 enterValue, char* text, s32 lineHeight, s32 arg3) {
+/**
+  * Adds a string to the font window, centred horizontally.
+  *
+  * The selected line has an animation, fading between the Dino Medium In/Out fonts.
+  */
+void dll_73_add_string(s32 enterValue, char* text, s32 lineHeight, s32 selectedIndex) {
     f32 tValue;
     f32 opacity;
     f32 opacityRemainder;
 
-    if (arg3 == sTotalItems) {
+    if (selectedIndex == sTotalItems) {
         sValueEnter = enterValue;
         if (sTimer <= 100.0f) {
             tValue = sTimer / 100.0f;
@@ -90,10 +96,13 @@ void dll_73_func_204(s32 enterValue, char* text, s32 lineHeight, s32 arg3) {
 }
 
 // offset: 0x46C | func: 3 | export: 3
-void dll_73_func_46C(s32 valueEnter, char* text, s32 x, s32 lineHeight, s32 arg4) {
-    dll_73_set_font_and_colour(arg4 == sTotalItems);
+/**
+  * Adds a string to the font window, using a specific horizontal position.
+  */
+void dll_73_add_string_x(s32 valueEnter, char* text, s32 x, s32 lineHeight, s32 selectedIndex) {
+    dll_73_set_font_and_colour(selectedIndex == sTotalItems);
     
-    if (arg4 == sTotalItems) {
+    if (selectedIndex == sTotalItems) {
         sValueEnter = valueEnter;
     }
     
@@ -103,13 +112,13 @@ void dll_73_func_46C(s32 valueEnter, char* text, s32 x, s32 lineHeight, s32 arg4
 }
 
 // offset: 0x540 | func: 4 | export: 4
-/* Sets a value for `dll_73_func_55C` to return when backing out with the B button */
+/* Sets a value for `dll_73_handle_joystick_and_buttons` to return when backing out with the B button */
 void dll_73_set_exit_value(s32 value) {
     sValueExit = value;
 }
 
 // offset: 0x55C | func: 5 | export: 5
-s16 dll_73_func_55C(s32* idx) {
+s16 dll_73_handle_joystick_and_buttons(s32* idx) {
     s32 joyPressed;
     s8 joyX;
     s8 joyY;
@@ -154,7 +163,7 @@ s16 dll_73_func_55C(s32* idx) {
     }
     dButtonsEnabled = TRUE;
     
-    return -1;
+    return DLL73_ACTION_None;
 }
 
 // offset: 0x6D0 | func: 6 | export: 6

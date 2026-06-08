@@ -10,10 +10,10 @@ _exports:
 # export table
 /*0*/ .dword dll_73_init_text_window
 /*1*/ .dword dll_73_init_text_window_with_margin
-/*2*/ .dword dll_73_func_204
-/*3*/ .dword dll_73_func_46C
+/*2*/ .dword dll_73_add_string
+/*3*/ .dword dll_73_add_string_x
 /*4*/ .dword dll_73_set_exit_value
-/*5*/ .dword dll_73_func_55C
+/*5*/ .dword dll_73_handle_joystick_and_buttons
 /*6*/ .dword dll_73_set_font_and_colour
 /*7*/ .dword dll_73_enable_joy_buttons
 /*8*/ .dword dll_73_get_total_items

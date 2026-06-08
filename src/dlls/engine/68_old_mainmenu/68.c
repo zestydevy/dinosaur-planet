@@ -1,62 +1,63 @@
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
+#include "dlls/engine/73.h"
 #include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
+#include "sys/rcp.h"
 
 extern DLL_20_screens *gDLL_20_Screens;
 extern DLL_21_gametext *gDLL_21_Gametext;
-extern DLL_Unknown* dll_throw_fault; //NOTE: BROKEN! This is a function now, not a DLL. (Seems to have been DLL 73!)
+extern DLL_73* dll_throw_fault; //NOTE: BROKEN! This is a function now, not a DLL 73.
 
 extern s8 D_8008C8B4;
 
-typedef struct {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-    s16 unkA;
-} OldMainMenuUnk;
+#define END {NULL, -1, 0, 0}
 
-/*0x0*/ static OldMainMenuUnk data_0[] = {
-    {0,   0,  0,   0,   -96, -32}, 
-    {0,   0,  0,   0,   -64, -32}, 
-    {0,   0,  0,   0,   -32, -32}, 
-    {0,   0,  0,   0,   0,   -32}, 
-    {0,   0,  0,   0,   32,  -32}, 
-    {0,   0,  0,   0,   64,  -32}, 
-    {0,   0,  0,   0,   -96, 0}, 
-    {0,   0,  0,   0,   -64, 0}, 
-    {0,   0,  0,   0,   -32, 0},
-    {0,   0,  0,   0,   0,   0}, 
-    {0,  0,  0,   0,   32,  0}, 
-    {0,  0,  0,   0,   64,  0}, 
-    {0,  0,  0,   0,   -96, 32}, 
-    {0,  0,  0,   0,   -64, 32}, 
-    {0,  0,  0,   0,   -32, 32}, 
-    {0,  0,  0,   0,   0,   32}, 
-    {0,  0,  0,   0,   32,  32}, 
-    {0,  0,  0,   0,   64,  32}, 
-    {0,  0,  -1,  -1,  0,   0}, 
-    {0,  0,  0,   0,   0,   0}
+/* Possibly TextureTiles for the old Dinosaur Planet logo? Unused! */
+/*0x0*/ static TextureTile dTexTiles[] = {
+    /* Row 0 */
+    {NULL,   0,   -96, -32}, //missing
+    {NULL,   0,   -64, -32}, //TEX0 688
+    {NULL,   0,   -32, -32}, //TEX0 689
+    {NULL,   0,   0,   -32}, //TEX0 690 
+    {NULL,   0,   32,  -32}, //TEX0 691
+    {NULL,   0,   64,  -32}, //TEX0 692
+
+    /* Row 1 */
+    {NULL,   0,   -96, 0}, //TEX0 693
+    {NULL,   0,   -64, 0}, //TEX0 694 
+    {NULL,   0,   -32, 0}, //TEX0 695
+    {NULL,   0,   0,   0}, //TEX0 696
+    {NULL,  0,   32,  0}, //TEX0 697
+    {NULL,  0,   64,  0}, //TEX0 698
+
+    /* Row 2 */
+    {NULL,  0,   -96, 32}, //TEX0 699 
+    {NULL,  0,   -64, 32}, //TEX0 700
+    {NULL,  0,   -32, 32}, //TEX0 701
+    {NULL,  0,   0,   32}, //TEX0 702
+    {NULL,  0,   32,  32}, //TEX0 703
+    {NULL,  0,   64,  32}, //TEX0 704
+
+    END
 };
 
 /*0x0*/ static GameTextChunk* sGametext;
-/*0x4*/ static s32 bss_4;
-/*0x8*/ static s32 bss_8;
-/*0xC*/ static s32 bss_C;
-/*0x10*/ static s32 bss_10;
+/*0x4*/ static s32 sIndexSelected;
+/*0x8*/ static s32 sTextTimer;
+/*0xC*/ static s32 sButtonsEnabled;
+/*0x10*/ static s32 sTimer;
 
 // offset: 0x0 | ctor
 void old_mainmenu_ctor(void* dll) {
     sGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_005_Title_Menu);
-    bss_4 = 0;
-    bss_8 = 0;
-    bss_C = 0;
-    bss_10 = 0;
+    sIndexSelected = 0;
+    sTextTimer = 0;
+    sButtonsEnabled = FALSE;
+    sTimer = 0;
     func_80010018(2);
 }
 
@@ -79,9 +80,9 @@ void old_mainmenu_update2(void) {
 void old_mainmenu_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {   
     D_8008C8B4 = 1;
     
-    bss_10 += gUpdateRate;    
-    if (bss_10 >= 41) {
-        bss_10 = 41;
+    sTimer += gUpdateRate;    
+    if (sTimer >= 41) {
+        sTimer = 41;
     }
 
     // There were more than 2 SCREENS.bin images at one stage!
@@ -90,22 +91,22 @@ void old_mainmenu_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     
     func_80014508(20);
 
-    // NOTE: this section is very broken!
+    // NOTE: this section is very broken, since it's expecting DLL 73 to be at the address of `dll_throw_fault`!
     // Maybe it used to call a DLL for the old title screen text seen in the One Hour Footage?
-    dll_throw_fault->vtbl->func[7].withOneArg(bss_C);
-    dll_throw_fault->vtbl->func[0].withOneArg(180);
-    dll_throw_fault->vtbl->func[2].withFourArgs(0, (s32)sGametext->strings[0], 20, bss_4);
-    if (dll_throw_fault->vtbl->func[5].withOneArgS32((s32)&bss_4) == FALSE) {
+    dll_throw_fault->vtbl->enable_joy_buttons(sButtonsEnabled);
+    dll_throw_fault->vtbl->init_text_window(180);
+    dll_throw_fault->vtbl->add_string(0, sGametext->strings[0], 20, sIndexSelected);
+    if (dll_throw_fault->vtbl->handle_joystick_and_buttons(&sIndexSelected) == FALSE) {
         menu_set(MENU_13);
     }
     
     // Maybe this was the blinking "PRESS START" text?
     {
-        if (bss_8 > 20) {
+        if (sTextTimer > 20) {
             font_window_draw(gdl, NULL, NULL, 1);
         }
-        bss_8 = (gUpdateRate + bss_8) & 0x3F;
+        sTextTimer = (gUpdateRate + sTextTimer) & 0x3F;
     }
 
-    bss_C = 1;
+    sButtonsEnabled = TRUE;
 }
