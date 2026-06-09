@@ -1,0 +1,16 @@
+.text = 0x0:
+dll_355_ctor = 0x0;
+dll_355_dtor = 0xC;
+dll_355_setup = 0x18;
+dll_355_control = 0x1E8;
+dll_355_update = 0x6E8;
+dll_355_print = 0x6F4;
+dll_355_free = 0x748;
+dll_355_get_model_flags = 0x7D0;
+dll_355_get_data_size = 0x7E0;
+dll_355_func_7F4 = 0x7F4;
+dll_355_func_B54 = 0xB54;
+dll_355_func_C20 = 0xC20;
+dll_355_func_C3C = 0xC3C;
+
+.rodata = 0xCD4:

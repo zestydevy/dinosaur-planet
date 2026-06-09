@@ -337,11 +337,11 @@ void GroundAnimator_store_shapeIDs_and_vertex_weights(Object* self, GroundAnimat
     }
         
     //Get the GroundAnimator's position relative to the Blocks model's local origin
-    blockWorldGridX = floor_f((self->srt.transl.x - gWorldX) / 640.0f);
-    blockWorldGridZ = floor_f((self->srt.transl.z - gWorldZ) / 640.0f);
+    blockWorldGridX = floor_f((self->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+    blockWorldGridZ = floor_f((self->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
 
-    digBlockX = self->srt.transl.x - (blockWorldGridX * 640.0f + gWorldX);
-    digBlockZ = self->srt.transl.z - (blockWorldGridZ * 640.0f + gWorldZ);
+    digBlockX = self->srt.transl.x - (blockWorldGridX * BLOCKS_GRID_UNIT_F + gWorldX);
+    digBlockZ = self->srt.transl.z - (blockWorldGridZ * BLOCKS_GRID_UNIT_F + gWorldZ);
     
     //Search through the Block's shapes, looking for any tagged with the animatorID
     objData->animatedShapesCount = 0;
