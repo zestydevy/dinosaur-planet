@@ -1,11 +1,12 @@
 #include "common.h"
 #include "dlls/objects/common/sidekick.h"
 #include "sys/map.h"
+#include "sys/memory.h"
 #include "sys/objtype.h"
 
 typedef struct {
     ObjSetup base;
-    s16 unk18;
+    s16 gamebitA;
     s16 _unk1A;
     s16 unk1C;
     u8 _unk1E;
@@ -14,7 +15,7 @@ typedef struct {
     u8 unk21;
     s8 _unk22;
     u8 unk23;
-    s16 unk24; //yaw
+    s16 yaw;        //NOTE: 16-bit precision, instead of setups' usual 8-bit yaw.
     u8 unk26;
 } DLL355_Setup;
 
@@ -29,13 +30,15 @@ typedef struct {
     f32 unk24;
     f32 unk28;
     s8 unk2C;
-    u8 unk2D; //animatorID
+    u8 animatorID; //animatorID
     u8 unk2E;
     u8 unk2F;
     u8 unk30;
     s8 unk31;
-    s16 unk32;
-} DLL355_Data; //0x34
+    s16 gamebitDug;
+} DLL355_Data;
+
+#define OPACITY_MAX 0xFF
 
 static void dll_355_func_7F4(Object* self, DLL355_Data* objData);
 
@@ -48,40 +51,40 @@ void dll_355_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void dll_355_setup(Object* self, DLL355_Setup* objSetup, s32 reset) {
     s32 pad[2];
-    s32 sp2C; //2C
+    s32 animatedVtxCount; //2C
     DLL355_Data* objData;
 
     objData = self->data;
     
-    self->srt.yaw = objSetup->unk24;
+    self->srt.yaw = objSetup->yaw;
     
-    objData->unk2D = objSetup->unk23;
+    objData->animatorID = objSetup->unk23;
     objData->unk2E = objSetup->unk1C;
     objData->unk20 = 0;
     objData->unk2C = -1;
 
     objData->unk24 = objSetup->unk21;
-    objData->unk32 = objSetup->unk18;
+    objData->gamebitDug = objSetup->gamebitA;
     objData->unk28 = objSetup->unk26;
     
 
-    sp2C = block_get_animator_vertex_count(self, objData->unk2D);
-    if (sp2C == 0) {
-        objData->unk2D = 0;
+    animatedVtxCount = block_get_animator_vertex_count(self, objData->animatorID);
+    if (animatedVtxCount == 0) {
+        objData->animatorID = 0;
     }
 
-    if (objData->unk2D != 0) {
+    if (objData->animatorID != 0) {
         objData->unk0 = fsin16_precise(self->srt.yaw);
         objData->unk4 = 0.0f;
         objData->unk8 = fcos16_precise(self->srt.yaw);
         objData->unkC = 0.0f;
         
         if (reset == 0) {
-            objData->unk10 = mmAlloc(sp2C * sizeof(f32), 5, NULL);
+            objData->unk10 = mmAlloc(animatedVtxCount * sizeof(f32), ALLOC_TAG_TRACK_COL, NULL);
             dll_355_func_7F4(self, objData);
         }
         
-        if (main_get_bits(objSetup->unk18)) {
+        if (main_get_bits(objSetup->gamebitA)) {
             objData->unk30 = 1;
             objData->unk20 = 3000;
         }
@@ -92,35 +95,30 @@ void dll_355_setup(Object* self, DLL355_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x1E8 | func: 1 | export: 1
-// void dll_355_control(Object *self);
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/355_WallAnimator/dll_355_control.s")
-#else
 void dll_355_control(Object* self) {
-    DLL355_Data* objData; //7C
-    Block* block; //78
-    DLL355_Setup* objSetup; //74
-    BlockVertex* vertices;
+    DLL355_Data* objData;
+    Block* block;
+    DLL355_Setup* objSetup;
+    BlockVertex *vertices;
     BlockShape* shapes;
     s32 shapeIdx;
     s32 animVtxIdx;
     Object* pushblock;
     f32 displacement;
-    f32 distance; //58
+    f32 distance;
     u8 fadeOut;
-    Object* player; //50
+    Object* player;
     Object* sidekick;
     s32 vertexIdx;
-    Vtx_t *new_var;
 
     objData = self->data;
     
-    if (objData->unk2D == 0) {
+    if (objData->animatorID == 0) {
         return;
     }
     
     objSetup = (DLL355_Setup*)self->setup;
-    if (objData->unk20 != 0xBB8) {
+    if (objData->unk20 != 3000) {
         player = get_player();
         sidekick = get_sidekick();
         distance = M_INFINITY_F;
@@ -137,6 +135,7 @@ void dll_355_control(Object* self) {
         return;
     }
     
+    //Get local Blocks model and make sure its vertices are animatable
     block = map_get_block_by_index(map_world_coords_to_block_index(
         self->srt.transl.x, self->srt.transl.y, self->srt.transl.z)
     );
@@ -152,30 +151,25 @@ void dll_355_control(Object* self) {
     if (objData->unk2F == 0) {
         return;
     }
-    
     objData->unk2F--;
-    if ((objData->unk20 >= 0xBB8) && (objData->unk30 == 0)) {
+    
+    if ((objData->unk20 >= 3000) && (objData->unk30 == 0)) {
         objData->unk30 = 1;
-        objData->unk20 = 0xBB8;
-        shapeIdx = objData->unk32; //fake
-        main_set_bits(shapeIdx, 1);
-        gDLL_6_AMSFX->vtbl->play(self, 0xB01, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objData->unk20 = 3000;
+        main_set_bits(objData->gamebitDug, TRUE);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_B01_Success_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 
-    new_var = block->vertices2[block->vtxFlags & 1]; 
-    animVtxIdx = (shapeIdx = 0);
+    vertices = (BlockVertex*)block->vertices2[block->vtxFlags & 1]; 
+    shapeIdx = 0;
+    animVtxIdx = 0;
     shapes = block->shapes;
-
-    
     for (; shapeIdx < block->shapeCount; shapeIdx++){
-        if (objData->unk2D == shapes[shapeIdx].animatorID) {
+        if (objData->animatorID == shapes[shapeIdx].animatorID) {
 
             for (vertexIdx = shapes[shapeIdx].vtxBase; vertexIdx < shapes[shapeIdx + 1].vtxBase; vertexIdx++, animVtxIdx++) {
                 
                 if (objData->unk10[animVtxIdx] > 0.0f) {
-                    
-                    vertices = (BlockVertex*)new_var;
-                    
                     displacement = (objData->unk20 / 100.0f);
                     
                     //Extrude vertices
@@ -190,17 +184,15 @@ void dll_355_control(Object* self) {
                     //Animate vertex colours
                     displacement = displacement / 30;
                     fadeOut = displacement * 255;
-                    vertices->cn[0] = (block->vertices[vertexIdx].cn[0] * (0xFF - fadeOut)) >> 8;
-                    vertices->cn[1] = (block->vertices[vertexIdx].cn[1] * (0xFF - fadeOut)) >> 8;
-                    vertices->cn[2] = (block->vertices[vertexIdx].cn[2] * (0xFF - fadeOut)) >> 8;
-                    vertices->cn[3] = 0xFF - fadeOut;
+                    vertices[vertexIdx].cn[0] = (block->vertices[vertexIdx].cn[0] * (0xFF - fadeOut)) >> 8;
+                    vertices[vertexIdx].cn[1] = (block->vertices[vertexIdx].cn[1] * (0xFF - fadeOut)) >> 8;
+                    vertices[vertexIdx].cn[2] = (block->vertices[vertexIdx].cn[2] * (0xFF - fadeOut)) >> 8;
+                    vertices[vertexIdx].cn[3] = 0xFF - fadeOut;
                 }
             }
         }
     }
 }
-
-#endif
 
 // offset: 0x6E8 | func: 2 | export: 2
 void dll_355_update(Object *self) { }
@@ -273,7 +265,7 @@ void dll_355_func_7F4(Object* self, DLL355_Data* objData) {
     closestVtxBase = -1;
     shapes = block->shapes;
     for (; shapeIdx < block->shapeCount; shapeIdx++) {
-        if (objData->unk2D == shapes[shapeIdx].animatorID) {
+        if (objData->animatorID == shapes[shapeIdx].animatorID) {
             for (vtxID = shapes[shapeIdx].vtxBase; vtxID < shapes[shapeIdx + 1].vtxBase; vtxID++) {
                 dx = block->vertices[vtxID].ob[0];
                 dz = block->vertices[vtxID].ob[2];
@@ -297,7 +289,7 @@ void dll_355_func_7F4(Object* self, DLL355_Data* objData) {
 
     shapes = block->shapes;
     for (shapeIdx = 0, animVtxIdx = 0; shapeIdx < block->shapeCount; shapeIdx++) {
-        if (objData->unk2D == shapes[shapeIdx].animatorID) {
+        if (objData->animatorID == shapes[shapeIdx].animatorID) {
             for (vtxID = shapes[shapeIdx].vtxBase; vtxID < shapes[shapeIdx + 1].vtxBase; vtxID++, animVtxIdx++) {
                 dx = block->vertices[vtxID].ob[0];
                 dy = block->vertices[vtxID].ob[1];
