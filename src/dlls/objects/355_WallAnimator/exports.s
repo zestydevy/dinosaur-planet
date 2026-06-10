@@ -4,17 +4,17 @@
 _exports:
 
 # ctor/dtor
-.dword dll_355_ctor
-.dword dll_355_dtor
+.dword WallAnimator_ctor
+.dword WallAnimator_dtor
 
 # export table
-/*0*/ .dword dll_355_setup
-/*1*/ .dword dll_355_control
-/*2*/ .dword dll_355_update
-/*3*/ .dword dll_355_print
-/*4*/ .dword dll_355_free
-/*5*/ .dword dll_355_get_model_flags
-/*6*/ .dword dll_355_get_data_size
-/*7*/ .dword dll_355_func_B54
-/*8*/ .dword dll_355_func_C20
-/*9*/ .dword dll_355_func_C3C
+/*0*/ .dword WallAnimator_setup
+/*1*/ .dword WallAnimator_control
+/*2*/ .dword WallAnimator_update
+/*3*/ .dword WallAnimator_print
+/*4*/ .dword WallAnimator_free
+/*5*/ .dword WallAnimator_get_model_flags
+/*6*/ .dword WallAnimator_get_data_size
+/*7*/ .dword WallAnimator_tick_dig
+/*8*/ .dword WallAnimator_is_dig_finished
+/*9*/ .dword WallAnimator_get_energy_cost
