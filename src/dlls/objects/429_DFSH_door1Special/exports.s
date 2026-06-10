@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_429_ctor
-.dword dll_429_dtor
+.dword DFSH_Door1Special_ctor
+.dword DFSH_Door1Special_dtor
 
 # export table
-/*0*/ .dword dll_429_setup
-/*1*/ .dword dll_429_control
-/*2*/ .dword dll_429_update
-/*3*/ .dword dll_429_print
-/*4*/ .dword dll_429_free
-/*5*/ .dword dll_429_get_model_flags
-/*6*/ .dword dll_429_get_data_size
+/*0*/ .dword DFSH_Door1Special_setup
+/*1*/ .dword DFSH_Door1Special_control
+/*2*/ .dword DFSH_Door1Special_update
+/*3*/ .dword DFSH_Door1Special_print
+/*4*/ .dword DFSH_Door1Special_free
+/*5*/ .dword DFSH_Door1Special_get_model_flags
+/*6*/ .dword DFSH_Door1Special_get_data_size
