@@ -491,7 +491,7 @@ s32 dll_4_func_119C(SRT* arg0, RaceStruct* arg1, f32 arg2, s32 arg3, u8 arg4, u8
             return 1;
         }
         var_s2 = 0;
-        temp = (arg2 / sqrtf(SQ(spD0.x - spD0.y) + (SQ(spF0.x - spF0.y) + SQ(spE0.x - spE0.y))));
+        temp = (arg2 / sqrtf(SQ(spF0.f[0] - spF0.f[1]) + SQ(spE0.f[0] - spE0.f[1]) + SQ(spD0.f[0] - spD0.f[1])));
         var_fs0 = temp + arg1->unk8;
         if (var_fs0 < 0.0f) {
             var_fs0 = 0.0f;
@@ -501,9 +501,9 @@ s32 dll_4_func_119C(SRT* arg0, RaceStruct* arg1, f32 arg2, s32 arg3, u8 arg4, u8
             var_fs0 = 1.0f;
             var_s2 = 1;
         }
-        temp_fs2 = func_80004C5C(&spF0, var_fs0, &spB8);
-        temp_fs5 = func_80004C5C(&spE0, var_fs0, &spB4);
-        temp_fs3 = func_80004C5C(&spD0, var_fs0, &spB0);
+        temp_fs2 = curves_hermite(spF0.f, var_fs0, &spB8);
+        temp_fs5 = curves_hermite(spE0.f, var_fs0, &spB4);
+        temp_fs3 = curves_hermite(spD0.f, var_fs0, &spB0);
         sp98 = arctan2_f(spB8, spB0) + 0x8000;
         if (arg4) {
             sp94 = arctan2_f(sqrtf((spB8 * spB8) + (spB0 * spB0)), spB4) - 0x4000;

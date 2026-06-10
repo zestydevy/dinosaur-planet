@@ -26,7 +26,7 @@ typedef struct {
 /*278*/ Vec3f velocity[2];
 /*290*/ f32 powerZ[2]; // forward/backward
 /*298*/ f32 powerX[2]; // lateral
-/*2A0*/ Vec4f rollCurve; //Roll speed spline
+/*2A0*/ f32 rollCurve[4]; //Roll speed spline
 /*2B0*/ f32 rollSpeed; // wobble (smoothed)
 /*2B4*/ f32 targetWaterYOffset;
 /*2B8*/ f32 paddleTimer; // move timer (when > 0, move forward)
@@ -577,18 +577,18 @@ static void BWlog_handle_controls_a_button(Object* self, BWlog_Data* objdata) {
 // offset: 0x178C | func: 23
 static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft) {
     if (rollLeft) {
-        objdata->rollCurve.x = 1500.0f;
-        objdata->rollCurve.y = 500.0f;
-        objdata->rollCurve.z = 2000.0f;
-        objdata->rollCurve.w = 4000.0f;
+        objdata->rollCurve[0] = 1500.0f;
+        objdata->rollCurve[1] = 500.0f;
+        objdata->rollCurve[2] = 2000.0f;
+        objdata->rollCurve[3] = 4000.0f;
         objdata->playerVehicleAnim = 2;
         objdata->powerX[0] = -2.5f;
         objdata->powerX[1] = -2.5f;
     } else {
-        objdata->rollCurve.x = -1500.0f;
-        objdata->rollCurve.y = -500.0f;
-        objdata->rollCurve.z = -2000.0f;
-        objdata->rollCurve.w = -4000.0f;
+        objdata->rollCurve[0] = -1500.0f;
+        objdata->rollCurve[1] = -500.0f;
+        objdata->rollCurve[2] = -2000.0f;
+        objdata->rollCurve[3] = -4000.0f;
         objdata->playerVehicleAnim = 3;
         objdata->powerX[0] = 2.5f;
         objdata->powerX[1] = 2.5f;
@@ -596,7 +596,7 @@ static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft) {
 
     objdata->rollAngle = 0;
     objdata->rollTimer = 0.0f;
-    objdata->rollSpeed = objdata->rollCurve.x;
+    objdata->rollSpeed = objdata->rollCurve[0];
     objdata->rollCurveProgress = 0.0f;
     objdata->tValueRoll = 0.0f;
 }
@@ -615,7 +615,7 @@ static void BWlog_handle_roll(Object* self, BWlog_Data* objdata) {
     }
 
     //Get the log's roll speed via a spline
-    objdata->rollSpeed = func_80004C5C(&objdata->rollCurve, objdata->rollCurveProgress, NULL);
+    objdata->rollSpeed = curves_hermite(objdata->rollCurve, objdata->rollCurveProgress, NULL);
 
     i = gUpdateRate;
     while (i--) {

@@ -485,8 +485,8 @@ static s32 movelib_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
 }
 
 // offset: 0x17F4 | func: 13
-static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* arg3, f32 arg4) {
-    Vec4f sp48;
+static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F4Arg2* arg2, f32* tValue, f32 arg4) {
+    f32 spline[4];
     s16 sp40[3];
     s32 sp3C;
 
@@ -505,31 +505,31 @@ static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F
         sp40[0] = (s16) arg1->unk2C;
         rotate_vec_inv((const SRT*)&sp40, &arg2->unk24);
         STUBBED_PRINTF(" Tangent 2 %f %f %f \n", &arg2->unk24.x, &arg2->unk24.y, &arg2->unk24.z);
-        *arg3 = 0.0f;
+        *tValue = 0.0f;
         arg2->unk34 = movelib_func_1A1C(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
     } else {
-        *arg3 += (arg4 * (f32) gUpdateRate) / arg2->unk34;
-        STUBBED_PRINTF("t value %f ", arg3);
-        if (*arg3 >= 1.0f) {
+        *tValue += (arg4 * (f32) gUpdateRate) / arg2->unk34;
+        STUBBED_PRINTF("t value %f ", tValue);
+        if (*tValue >= 1.0f) {
             sp3C = 1;
-            *arg3 = 1.0f;
+            *tValue = 1.0f;
         }
     }
-    sp48.x = arg2->unk0.x;
-    sp48.y = arg2->unkC.x;
-    sp48.z = arg2->unk18.x;
-    sp48.w = arg2->unk24.x;
-    arg0->srt.transl.x = func_80004C5C(&sp48, *arg3, NULL);
-    sp48.x = arg2->unk0.y;
-    sp48.y = arg2->unkC.y;
-    sp48.z = arg2->unk18.y;
-    sp48.w = arg2->unk24.y;
-    arg0->srt.transl.y = func_80004C5C(&sp48, *arg3, NULL);
-    sp48.x = arg2->unk0.z;
-    sp48.y = arg2->unkC.z;
-    sp48.z = arg2->unk18.z;
-    sp48.w = arg2->unk24.z;
-    arg0->srt.transl.z = func_80004C5C(&sp48, *arg3, NULL);
+    spline[0] = arg2->unk0.x;
+    spline[1] = arg2->unkC.x;
+    spline[2] = arg2->unk18.x;
+    spline[3] = arg2->unk24.x;
+    arg0->srt.transl.x = curves_hermite(spline, *tValue, NULL);
+    spline[0] = arg2->unk0.y;
+    spline[1] = arg2->unkC.y;
+    spline[2] = arg2->unk18.y;
+    spline[3] = arg2->unk24.y;
+    arg0->srt.transl.y = curves_hermite(spline, *tValue, NULL);
+    spline[0] = arg2->unk0.z;
+    spline[1] = arg2->unkC.z;
+    spline[2] = arg2->unk18.z;
+    spline[3] = arg2->unk24.z;
+    arg0->srt.transl.z = curves_hermite(spline, *tValue, NULL);
     return sp3C;
 }
 
@@ -538,7 +538,7 @@ static f32 movelib_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, 
     f32 var_fs2;
     f32 var_fs5;
     s32 var_s1;
-    f32 temp_fs0;
+    f32 tValue;
     f32 spA4;
     f32 spA0;
     f32 temp_fs1;
@@ -546,7 +546,7 @@ static f32 movelib_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, 
     f32 temp_fv0;
     f32 temp_fv0_2;
     f32 temp_fv0_3;
-    Vec4f sp7C;
+    f32 spline[4];
     f32 temp_fv1;
     
     var_fs2 = arg0->unk0.x;
@@ -554,27 +554,27 @@ static f32 movelib_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, 
     spA0 = arg0->unk0.z;
     var_fs5 = 0.0f;
     for (var_s1 = 1; var_s1 < arg4 + 1; var_s1++) {
-        temp_fs0 = (f32) var_s1 / (f32) arg4;
+        tValue = (f32) var_s1 / (f32) arg4;
         
-        sp7C.x = arg0->unk0.x;
-        sp7C.y = arg2->x;
-        sp7C.z = arg1->x;
-        sp7C.w = arg3->x;
-        temp_fv0 = func_80004C5C(&sp7C, temp_fs0, NULL);
+        spline[0] = arg0->unk0.x;
+        spline[1] = arg2->x;
+        spline[2] = arg1->x;
+        spline[3] = arg3->x;
+        temp_fv0 = curves_hermite(spline, tValue, NULL);
         temp_fs1 = temp_fv0 - var_fs2;
         
-        sp7C.x = arg0->unk0.y;
-        sp7C.y = arg2->y;
-        sp7C.z = arg1->y;
-        sp7C.w = arg3->y;
-        temp_fv0_2 = func_80004C5C(&sp7C, temp_fs0, NULL);
+        spline[0] = arg0->unk0.y;
+        spline[1] = arg2->y;
+        spline[2] = arg1->y;
+        spline[3] = arg3->y;
+        temp_fv0_2 = curves_hermite(spline, tValue, NULL);
         temp_fs2 = temp_fv0_2 - spA4;
         
-        sp7C.x = arg0->unk0.z;
-        sp7C.y = arg2->z;
-        sp7C.z = arg1->z;
-        sp7C.w = arg3->z;
-        temp_fv0_3 = func_80004C5C(&sp7C, temp_fs0, NULL);
+        spline[0] = arg0->unk0.z;
+        spline[1] = arg2->z;
+        spline[2] = arg1->z;
+        spline[3] = arg3->z;
+        temp_fv0_3 = curves_hermite(spline, tValue, NULL);
         temp_fv1 = temp_fv0_3 - spA0;
         
         var_fs5 += sqrtf(SQ(temp_fs1) + SQ(temp_fs2) + SQ(temp_fv1));

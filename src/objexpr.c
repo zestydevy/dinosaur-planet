@@ -675,14 +675,14 @@ void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
   * Returns 1 when finished, or 0 while interpolating
   */
 s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
-    Vec4f sp38;
+    f32 spline[4];
     f32 tValue;
     f32 rotateSpeed;
 
-    sp38.x = 10.0f;
-    sp38.y = 10.0f;
-    sp38.z = 500.0f;
-    sp38.w = -500.0f;
+    spline[0] = 10.0f;
+    spline[1] = 10.0f;
+    spline[2] = 500.0f;
+    spline[3] = -500.0f;
 
     //Calculate head turn animation's tValue (from 0.0f to 1.0f)
     if (arg0->headGoalAngle != arg0->headStartAngle) {
@@ -699,7 +699,7 @@ s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
     }
     
     //Get eased rotation speed (ease-in-out)
-    rotateSpeed = func_80004C5C(&sp38, tValue, NULL);
+    rotateSpeed = curves_hermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         rotateSpeed = -rotateSpeed;
     }
@@ -715,31 +715,31 @@ s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
 }
 
 s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
-    Vec4f sp38;
-    f32 sp34;
+    f32 spline[4];
+    f32 tValue;
     f32 var_fa0;
 
-    sp38.x = arg2;
-    sp38.y = arg2;
-    sp38.z = arg3;
-    sp38.w = -arg3;
+    spline[0] = arg2;
+    spline[1] = arg2;
+    spline[2] = arg3;
+    spline[3] = -arg3;
     if (arg0->headGoalAngle != arg0->headStartAngle) {
-        sp34 = ((f32) arg1[1] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
+        tValue = ((f32) arg1[1] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
     } else {
         return 1;
     }
 
-    if (sp34 > 1.0f) {
-        sp34 = 1.0f;
-    } else if (sp34 < 0.0f) {
-        sp34 = 0.0f;
+    if (tValue > 1.0f) {
+        tValue = 1.0f;
+    } else if (tValue < 0.0f) {
+        tValue = 0.0f;
     }
-    var_fa0 = func_80004C5C(&sp38, sp34, NULL);
+    var_fa0 = curves_hermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }
     arg1[1] += var_fa0 * gUpdateRateF;
-    if (sp34 == 1.0f || !(arg1[1] < 0x1FFF) || arg1[1] < -0x1FFE) {
+    if (tValue == 1.0f || !(arg1[1] < 0x1FFF) || arg1[1] < -0x1FFE) {
         arg1[1] = (s16) arg0->headGoalAngle;
         return 1;
     }
@@ -748,31 +748,31 @@ s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
 }
 
 s32 func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
-    Vec4f sp38;
-    f32 sp34;
+    f32 spline[4];
+    f32 tValue;
     f32 var_fa0;
 
-    sp38.x = arg2;
-    sp38.y = arg2;
-    sp38.z = arg3;
-    sp38.w = -arg3;
+    spline[0] = arg2;
+    spline[1] = arg2;
+    spline[2] = arg3;
+    spline[3] = -arg3;
     if (arg0->headGoalAngle != arg0->headStartAngle) {
-        sp34 = ((f32) arg1[0] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
+        tValue = ((f32) arg1[0] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
     } else {
         return 1;
     }
 
-    if (sp34 > 1.0f) {
-        sp34 = 1.0f;
-    } else if (sp34 < 0.0f) {
-        sp34 = 0.0f;
+    if (tValue > 1.0f) {
+        tValue = 1.0f;
+    } else if (tValue < 0.0f) {
+        tValue = 0.0f;
     }
-    var_fa0 = func_80004C5C((Vec4f* ) &sp38, sp34, NULL);
+    var_fa0 = curves_hermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }
     arg1[0] += var_fa0 * gUpdateRateF;
-    if (sp34 == 1.0f || !(arg1[0] < 0x1FFF) || arg1[0] < -0x1FFE) {
+    if (tValue == 1.0f || !(arg1[0] < 0x1FFF) || arg1[0] < -0x1FFE) {
         arg1[0] = arg0->headGoalAngle;
         return 1;
     }
