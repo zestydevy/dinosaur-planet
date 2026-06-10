@@ -176,8 +176,8 @@
 426 = objects/426_DFcavedoor
 427 = objects/427_DFlevelcontrol
 428 = objects/428_DFmole
-429 = objects/429_DFSH_door1
-430 = objects/430_DFSH_door2
+429 = objects/429_DFSH_door1Special
+430 = objects/430_DFSH_door2Special
 431 = objects/431_DFwhirlpool
 433 = objects/433_DFSH_Shrine
 435 = objects/435_KrazoaSpirit

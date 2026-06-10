@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/gamebits.h"
 
 typedef struct {
     ObjSetup base;
@@ -57,7 +58,7 @@ void dll_429_setup(Object* self, DLL429_Setup* objSetup, s32 reset) {
         objSetup->unk21 = 0x40;
     }
     
-    self->srt.scale = objSetup->unk21 * 0.015625f;
+    self->srt.scale = objSetup->unk21 * ONE_SIXTY_FOURTH_F;
     if (self->srt.scale == 0.0f) {
         self->srt.scale = 1.0f;
     }
@@ -153,7 +154,7 @@ int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3
     default:
         texAnim = func_800348A0(self, 0, 0);
         if (texAnim != NULL) {
-            objData->unk0 += gUpdateRate * 0x320;
+            objData->unk0 += gUpdateRate * 800;
             texAnim->frame = 0x100 - ((1.0f - fcos16_precise(objData->unk0)) * 50.0f);
         }
         break;
@@ -171,7 +172,7 @@ int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == 2) {
                 objData->unk2 = 1;
-                if (objSetup->unk1A != -1) {
+                if (objSetup->unk1A != NO_GAMEBIT) {
                     main_set_bits(objSetup->unk1A, 1);
                 }
             }
@@ -180,7 +181,7 @@ int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == 1) {
                 objData->unk2 = 0;
-                if (objSetup->unk1A != 1) {
+                if (objSetup->unk1A != 1) { //@bug?: should this be != -1 (NO_GAMEBIT)?
                     main_set_bits(objSetup->unk1A, 0);
                 }
             }
