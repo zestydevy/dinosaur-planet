@@ -3,6 +3,7 @@
 #include "sys/newshadows.h"
 #include "sys/camera.h"
 #include "sys/gfx/textable.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
 #include "sys/segment_1D900.h"
@@ -1145,7 +1146,7 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
     sp344 = 0;
     spAC = arg0->shadow;
     bzero(&D_800B9B10, sizeof(D_800B9B10) - 4);
-    temp_fs4 = (f32) spAC->visibility * 0.015625f;
+    temp_fs4 = (f32) spAC->visibility * ONE_SIXTY_FOURTH_F;
     camera = get_camera();
     spD0.x = camera->tx - arg0->globalPosition.x;
     spD0.y = camera->ty - arg0->globalPosition.y;

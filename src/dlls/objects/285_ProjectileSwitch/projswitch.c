@@ -25,8 +25,6 @@ typedef enum {
     Switch_FLAG_Resets_After_Delay = 2          //Switch resets resets to its unpressed state after a number of seconds (specified by `objData->resetDelay`)
 } ProjectileSwitch_Flags;
 
-#define ONE_SIXTY_FOURTH_F 0.015625f
-
 static void ProjectileSwitch_change_state(Object* self, int switchPressed, int playSound);
 
 // offset: 0x0 | ctor

@@ -46,7 +46,7 @@ void dll_307_setup(Object* self, DLL307_Setup* setup, s32 arg2) {
     self->srt.yaw = setup->unk1F << 8;
     self->animCallback = dll_307_func_33C;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-    self->srt.scale = (f32) setup->unk21 * 0.015625f;
+    self->srt.scale = (f32) setup->unk21 * ONE_SIXTY_FOURTH_F;
     if (self->srt.scale == 0.0f) {
         self->srt.scale = 1.0f;
     }
