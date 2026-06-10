@@ -292,12 +292,12 @@ void dll_210_add_magic(Object* player, s32 amount);
     { 0x96, 0x96, 0xa, 0x01, 0xff, NULL, 0.017f, -1.0f, -1.0f, -1.0f, 0.2f, 0.7f, 0.35f, 0.46f, 0xe5, TRUE, NULL, { NULL, NULL } }
 };
 /*0x2F8*/ static Player_Data3B4 _data_2F8[] = {
-    { 0x99, 0x99, 0xb, 0x01, 0xff, NULL, 0.025f, -1.0f, -1.0f, -1.0f, 0.16f, 0.4f, 0.25f, 0.35f, 0x0661, FALSE, NULL, { NULL, NULL } },
-    { 0x9a, 0x9a, 0xc, 0x01, 0x02, NULL, 0.025f, 0.1f, 0.5f, 0.5f, 0.2f, 0.45f, 0.25f, 0.3f, 0x0662, FALSE, NULL, { NULL, NULL } },
-    { 0x9b, 0x9b, 0xa, 0x01, 0xff, NULL, 0.026f, -1.0f, -1.0f, -1.0f, 0.15f, 0.36f, 0.26f, 0.36f, 0x0663, FALSE, NULL, { NULL, NULL } },
-    { 0x9b, 0x9b, 0xa, 0x01, 0x04, NULL, 0.026f, 0.1f, 0.5f, 0.5f, 0.15f, 0.36f, 0.26f, 0.36f, 0x0663, FALSE, NULL, { NULL, NULL } },
-    { 0x9a, 0x9a, 0xc, 0x01, 0xff, NULL, 0.025f, -1.0f, -1.0f, -1.0f, 0.2f, 0.45f, 0.25f, 0.3f, 0x0662, FALSE, NULL, { NULL, NULL } },
-    { 0x96, 0x96, 0xa, 0x02, 0xff, NULL, 0.016f, -1.0f, -1.0f, -1.0f, 0.4f, 0.6f, 0.35f, 0.46f, 0x0661, FALSE, NULL, { NULL, NULL } }
+    { 0x99, 0x99, 0xb, 0x01, 0xff, NULL, 0.025f, -1.0f, -1.0f, -1.0f, 0.16f, 0.4f, 0.25f, 0.35f, 0x0661, FALSE, NULL, { NULL, NULL } }, // overhead attack
+    { 0x9a, 0x9a, 0xc, 0x01, 0x02, NULL, 0.025f, 0.1f, 0.5f, 0.5f, 0.2f, 0.45f, 0.25f, 0.3f, 0x0662, FALSE, NULL, { NULL, NULL } }, // attack left -> right
+    { 0x9b, 0x9b, 0xa, 0x01, 0xff, NULL, 0.026f, -1.0f, -1.0f, -1.0f, 0.15f, 0.36f, 0.26f, 0.36f, 0x0663, FALSE, NULL, { NULL, NULL } }, // attack right -> left
+    { 0x9b, 0x9b, 0xa, 0x01, 0x04, NULL, 0.026f, 0.1f, 0.5f, 0.5f, 0.15f, 0.36f, 0.26f, 0.36f, 0x0663, FALSE, NULL, { NULL, NULL } }, // attack right -> left
+    { 0x9a, 0x9a, 0xc, 0x01, 0xff, NULL, 0.025f, -1.0f, -1.0f, -1.0f, 0.2f, 0.45f, 0.25f, 0.3f, 0x0662, FALSE, NULL, { NULL, NULL } }, // attack left -> right
+    { 0x96, 0x96, 0xa, 0x02, 0xff, NULL, 0.016f, -1.0f, -1.0f, -1.0f, 0.4f, 0.6f, 0.35f, 0.46f, 0x0661, FALSE, NULL, { NULL, NULL } } // flip overhead attack
 };
 /*0x460*/ static s16 _data_460[] = {
     0x00b6, 0x00b7, 0x00b8, 0x0675, 0x0676, 0x0370, 0x00df, 0x00e0,
@@ -7330,7 +7330,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         func_8002493C(player, fsa->unk278, &fsa->animTickDelta);
         // incorrect cast?
-        v0 = func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        v0 = curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
         if (v0 != 0) {
             func_80023D30(player, 0x40F, 0.0f, 0U);
@@ -7353,7 +7353,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 0x40E:
         fsa->animTickDelta = 0.015f;
         gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 1);
-        func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
         player->srt.transl.f[0] = temp_s0->unk550.f[0];
         player->srt.transl.f[1] = temp_s0->unk550.f[1];
@@ -7379,9 +7379,9 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             temp_s0->unk56C = &temp_s0->unk584;
             temp_s0->unk570 = &temp_s0->unk5D4;
             temp_s0->unk574 = &temp_s0->unk624;
-            temp_s0->unk57C = func_80004C5C;
-            temp_s0->unk580 = func_80004CE8;
-            func_80005094((UnkCurvesStruct*)&temp_s0->unk4D8.unk10);
+            temp_s0->unk57C = curves_hermite;
+            temp_s0->unk580 = curves_hermite_converter;
+            curves_move((UnkCurvesStruct*)&temp_s0->unk4D8.unk10);
         }
         func_80023D30(player, 0x40E, 0.0f, 0U);
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCANNON, 1, 0, 0, NULL, 40, 0xFF);
@@ -9000,66 +9000,73 @@ s32 dll_210_func_1AC3C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 // offset: 0x1ADA4 | func: 127
+// selects which melee attack to do
 s32 dll_210_func_1ADA4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s32 pad[2];
     f32 sp4C;
     f32 temp_fv0;
-    f32 sp44;
-    Object* sp40;
-    u8 sp3F;
-    u8 sp3E;
-    Vec3f sp30;
-    Player_Data* temp_s0;
+    f32 range;
+    Object* obj;
+    u8 altAttack;
+    u8 normalAttack;
+    Vec3f vec;
+    Player_Data* objdata = player->data;
 
-    temp_s0 = player->data;
-    sp3F = 0;
-    sp3E = 1;
-    sp44 = 100.0f;
-    sp40 = obj_get_nearest_type_to(OBJTYPE_63, player, &sp44);
-    if (sp40 != NULL) {
-        sp30.f[0] = sp40->srt.transl.f[0] - player->srt.transl.f[0];
-        sp30.f[1] = sp40->srt.transl.f[1] - player->srt.transl.f[1];
-        sp30.f[2] = sp40->srt.transl.f[2] - player->srt.transl.f[2];
-        sp30.f[1] = 0.0f;
-        vec3_normalize(&sp30);
+    altAttack = 0;
+    normalAttack = 1;
+    // change melee attack selection logic depending on certain nearby objects
+    range = 100.0f;
+    obj = obj_get_nearest_type_to(OBJTYPE_63, player, &range);
+    if (obj != NULL) {
+        vec.f[0] = obj->srt.transl.f[0] - player->srt.transl.f[0];
+        vec.f[1] = obj->srt.transl.f[1] - player->srt.transl.f[1];
+        vec.f[2] = obj->srt.transl.f[2] - player->srt.transl.f[2];
+        vec.f[1] = 0.0f;
+        vec3_normalize(&vec);
         sp4C = fsin16_precise(player->srt.yaw);
         temp_fv0 = fcos16_precise(player->srt.yaw);
-        switch (sp40->def->_unk9e[0]) {
-            case 3:
-                if ((sp30.f[0] * temp_fv0) < (sp30.f[2] * sp4C)) {
-                    sp3E = 3;
+        switch (obj->def->playerAttackConfig) {
+            case 3: // magic plant
+                if ((vec.f[0] * temp_fv0) < (vec.f[2] * sp4C)) {
+                    normalAttack = 3; // attack right -> left
                 }
-                sp3F = sp3E;
+                altAttack = normalAttack; // override overhead attack to do lateral swing
                 break;
             case 2:
-                sp3E = 0;
+                normalAttack = 0; // always overhead attack
                 break;
             case 1:
-                sp3F = 1;
-                sp3E = 0;
+                // reverse (move forward to lateral, stand to overhead)
+                altAttack = 1;
+                normalAttack = 0;
                 break;
-            case 0:
+            case 0: // sharpclaw, crate, bigcrate
             default:
-                temp_s0->unk8A2 ^= 1;
-                if (temp_s0->unk8A2) {
-                    sp3E = 3;
+                // alternate lateral attack dir
+                objdata->lateralAttackSelector ^= 1;
+                if (objdata->lateralAttackSelector) {
+                    normalAttack = 3;
                 }
                 break;
         }
     } else {
-        temp_s0->unk8A2 ^= 1;
-        if (temp_s0->unk8A2) {
-            sp3E = 3;
+        // alternate lateral attack dir
+        objdata->lateralAttackSelector ^= 1;
+        if (objdata->lateralAttackSelector) {
+            normalAttack = 3;
         }
     }
     if ((fsa->unk33F == 2) && (fsa->analogInputPower > 0.3f)) {
-        func_80023D30(player, temp_s0->unk3B4[sp3F].unk2, 0.0f, 0U);
-        temp_s0->unk8A1 = sp3F;
+        // moving straight foward, do alternate attack
+        func_80023D30(player, objdata->unk3B4[altAttack].unk2, 0.0f, 0);
+        objdata->unk8A1 = altAttack;
+        return 0x38;
+    } else {
+        // do normal attack
+        func_80023D30(player, objdata->unk3B4[normalAttack].unk2, 0.0f, 0);
+        objdata->unk8A1 = normalAttack;
         return 0x38;
     }
-    func_80023D30(player, temp_s0->unk3B4[sp3E].unk2, 0.0f, 0U);
-    temp_s0->unk8A1 = sp3E;
-    return 0x38;
 }
 
 // offset: 0x1AFF8 | func: 128

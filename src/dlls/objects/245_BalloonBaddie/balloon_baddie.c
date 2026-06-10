@@ -244,7 +244,7 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     UnkCurvesStruct* curveStruct;
 
     curveStruct = objdata->curveStruct;
-    if (((func_800053B0(curveStruct, objdata->unk8) != 0) || (_bss_0 != curveStruct->unk10))
+    if (((curves_func_800053B0(curveStruct, objdata->unk8) != 0) || (_bss_0 != curveStruct->unk10))
         && (gDLL_26_Curves->vtbl->func_4704(curveStruct) != 0)
         && (gDLL_26_Curves->vtbl->func_4288(objdata->curveStruct, self, 400.0f, (s32*) _data_0, -1) != 0)) {
         objdata->flags &= ~1;

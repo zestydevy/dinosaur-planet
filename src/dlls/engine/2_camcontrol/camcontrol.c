@@ -695,7 +695,7 @@ s32 CamControl_load_module(u16 dllID, s32 doDeferredFree) {
 static void CamControl_update_camera(CamControl_Data* camData) {
     Camera* camera;
     f32 tValue;
-    Vec4f ease;
+    f32 spline[4];
 
     set_camera_selector(0);
     camera = get_main_camera();
@@ -711,12 +711,12 @@ static void CamControl_update_camera(CamControl_Data* camData) {
     if (camData->tValue > 0.0f) {
         camData->tValue -= camData->tSpeed * gUpdateRateF;
 
-        //Get Bezier-eased tValue for interpolation
-        ease.w = 0.0f;
-        ease.z = 0.0f;
-        ease.x = 0.0f;
-        ease.y = 1.0f;
-        tValue = 1.0f - func_80004C5C(&ease, camData->tValue, 0);
+        //Get Hermite-eased tValue for interpolation
+        spline[3] = 0.0f;
+        spline[2] = 0.0f;
+        spline[0] = 0.0f;
+        spline[1] = 1.0f;
+        tValue = 1.0f - curves_hermite(spline, camData->tValue, 0);
 
         //Linear interpolation (position)
         if (camData->lerpFlags & CamControl_Ease_X) {

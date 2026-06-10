@@ -63,7 +63,7 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
         sp34 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(temp_v0_2, -1));
         gDLL_25->vtbl->func_1D30(&sp3C->unk0, temp_v0_2, sp34, gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp34, -1)));
         CCgrub_func_AB0(self, sp3C, 0.2f);
-        func_800053B0(&sp3C->unk0, 0.1f);
+        curves_func_800053B0(&sp3C->unk0, 0.1f);
         self->srt.transl.x = temp_v0_2->pos.x;
         self->srt.transl.y = temp_v0_2->pos.y;
         self->srt.transl.z = temp_v0_2->pos.z;
@@ -158,7 +158,7 @@ void CCgrub_control(Object* self) {
                     } else {
                         var_fv0 = -10.0f;
                     }
-                    func_800053B0(&objdata->unk0, var_fv0);
+                    curves_func_800053B0(&objdata->unk0, var_fv0);
                     var_v1 = (objdata->unk13C) - (objdata->unk13E & 0xFFFF);
                     CIRCLE_WRAP(var_v1);
                 }
@@ -279,7 +279,7 @@ static void CCgrub_func_BE8(Object* self, CCgrub_Data* objdata, f32 a2, f32 a3) 
             break;
         }
 
-        func_800053B0(&objdata->unk0, var_fs0);
+        curves_func_800053B0(&objdata->unk0, var_fs0);
 
         var_fv0 = objdata->unk0.unk68.x - self->srt.transl.x;
         var_fv1 = objdata->unk0.unk68.z - self->srt.transl.z;

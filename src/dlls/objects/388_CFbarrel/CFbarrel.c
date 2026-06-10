@@ -538,6 +538,7 @@ static void CFbarrel_func_1948(Object* self, u8 a1) {
     ObjectHitInfo* hit = self->objhitInfo;
     
     if (a1) {
+        // Let barrel be pushed
         hit->unk5B = 1;
         hit->unk5C = 1;
         STUBBED_PRINTF(" In ELEVATOR");
@@ -545,6 +546,7 @@ static void CFbarrel_func_1948(Object* self, u8 a1) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->unk3E_0 = 1;
     } else {
+        // Disable push
         hit->unk5B = self->def->unk91;
         hit->unk5C = self->def->unk92;
         obj_free_object_type(self, OBJTYPE_24);

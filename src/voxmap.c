@@ -803,12 +803,12 @@ s32 func_80008BE4(UnkCurvesStruct* arg0, s32 arg1) {
     Vec3f sp5C;
 
     stepCount = 1;
-    if ((arg0->unk94 == func_80004C5C) || (arg0->unk94 == func_80004D70)) {
+    if ((arg0->splineFunc == curves_hermite) || (arg0->splineFunc == curves_bezier)) {
         stepCount = 4;
     }
 
-    for (i = 0; i <= (arg0->unk90 - 4); ) {
-        func_8000598C(&arg0->unk84[i], &arg0->unk88[i], &arg0->unk8C[i], sp120, spCC, sp78, arg1, arg0->unk98);
+    for (i = 0; i <= (arg0->numControlPoints - 4); ) {
+        curves_func_8000598C(&arg0->unk84[i], &arg0->unk88[i], &arg0->unk8C[i], sp120, spCC, sp78, arg1, arg0->splineConverterFunc);
         for (j = 0; j < arg1; j++) {
             sp5C.f[0] = sp120[j];
             sp5C.f[1] = spCC[j];

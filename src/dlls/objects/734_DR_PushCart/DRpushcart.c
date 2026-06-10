@@ -450,7 +450,7 @@ void dll_734_func_25A4(Object* self, DRPushCart_Data* objData) {
     } else {
         gDLL_26_Curves->vtbl->func_4288(&objData->unk0, self, 300.0f, &sp34, -1);
     }
-    func_800053B0(&objData->unk0, 0.01f);
+    curves_func_800053B0(&objData->unk0, 0.01f);
     self->srt.transl.x = objData->unk0.unk68.f[0];
     self->srt.transl.y = objData->unk0.unk68.f[1];
     self->srt.transl.z = objData->unk0.unk68.f[2];

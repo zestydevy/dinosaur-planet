@@ -399,7 +399,7 @@ s32 dll_658_func_1944(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
     s32 var_v1;
 
     var_v1 = 0;
-    if (func_800053B0(arg1, arg2) || arg1->unk10) {
+    if (curves_func_800053B0(arg1, arg2) || arg1->unk10) {
         var_v1 = gDLL_26_Curves->vtbl->func_4704(arg1);
     }
     
@@ -411,7 +411,8 @@ s32 dll_658_func_1944(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
 
 // offset: 0x19FC | func: 18
 s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_arg2* arg2, f32* arg3, f32 arg4) {
-    SRT transform;
+    f32 spline[4];
+    s16 rot[3];
     s32 returnVal;
 
     returnVal = 0;
@@ -422,12 +423,12 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
         arg2->unk24.z = 0.0f;
         arg2->unk18.x = -150.0f;
         arg2->unk24.x = -150.0f;
-        rotate_vec_inv(&self->srt, (Vec3f*)&arg2->unk18);
+        rotate_vec_inv(&self->srt, &arg2->unk18);
         
-        transform.roll = 0;
-        transform.pitch = arg1->unk2D;
-        transform.yaw = arg1->unk2C;
-        rotate_vec_inv(&transform, (Vec3f*)&arg2->unk24);
+        rot[2] = 0;
+        rot[1] = arg1->unk2D;
+        rot[0] = arg1->unk2C;
+        rotate_vec_inv((SRT*)&rot, &arg2->unk24);
         
         *arg3 = 0.0f;
         arg2->unk34 = dll_658_func_1C24(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
@@ -439,23 +440,23 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
         }
     }
     
-    transform.scale = arg2->unk0.x;
-    transform.transl.x = arg2->unkC.x;
-    transform.transl.y = arg2->unk18.x;
-    transform.transl.z = arg2->unk24.x;
-    self->srt.transl.x = func_80004C5C((Vec4f*)&transform.scale, *arg3, 0);
+    spline[0] = arg2->unk0.x;
+    spline[1] = arg2->unkC.x;
+    spline[2] = arg2->unk18.x;
+    spline[3] = arg2->unk24.x;
+    self->srt.transl.x = curves_hermite(spline, *arg3, 0);
     
-    transform.scale = arg2->unk0.y;
-    transform.transl.x = arg2->unkC.y;
-    transform.transl.y = arg2->unk18.y;
-    transform.transl.z = arg2->unk24.y;
-    self->srt.transl.y = func_80004C5C((Vec4f*)&transform.scale, *arg3, 0);
+    spline[0] = arg2->unk0.y;
+    spline[1] = arg2->unkC.y;
+    spline[2] = arg2->unk18.y;
+    spline[3] = arg2->unk24.y;
+    self->srt.transl.y = curves_hermite(spline, *arg3, 0);
     
-    transform.scale = arg2->unk0.z;
-    transform.transl.x = arg2->unkC.z;
-    transform.transl.y = arg2->unk18.z;
-    transform.transl.z = arg2->unk24.z;
-    self->srt.transl.z = func_80004C5C((Vec4f*)&transform.scale, *arg3, 0);
+    spline[0] = arg2->unk0.z;
+    spline[1] = arg2->unkC.z;
+    spline[2] = arg2->unk18.z;
+    spline[3] = arg2->unk24.z;
+    self->srt.transl.z = curves_hermite(spline, *arg3, 0);
     
     return returnVal;
 }
@@ -473,7 +474,7 @@ f32 dll_658_func_1C24(DLL658_func19FC_arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3
     f32 resultZ;
     f32 sum;
     s32 steps;
-    Vec4f sp7C;
+    f32 sp7C[4];
     f32 tValue;
     s32 i;
 
@@ -488,25 +489,25 @@ f32 dll_658_func_1C24(DLL658_func19FC_arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3
         do {
             tValue = (f32) i / arg4;
             
-            sp7C.x = arg0->unk0.x;
-            sp7C.y = arg2->x;
-            sp7C.z = arg1->x;
-            sp7C.w = arg3->x;
-            resultX = func_80004C5C(&sp7C, tValue, 0);
+            sp7C[0] = arg0->unk0.x;
+            sp7C[1] = arg2->x;
+            sp7C[2] = arg1->x;
+            sp7C[3] = arg3->x;
+            resultX = curves_hermite(sp7C, tValue, 0);
             dx = resultX - baseX;
             
-            sp7C.x = arg0->unk0.y;
-            sp7C.y = arg2->y;
-            sp7C.z = arg1->y;
-            sp7C.w = arg3->y;
-            resultY = func_80004C5C(&sp7C, tValue, 0);
+            sp7C[0] = arg0->unk0.y;
+            sp7C[1] = arg2->y;
+            sp7C[2] = arg1->y;
+            sp7C[3] = arg3->y;
+            resultY = curves_hermite(sp7C, tValue, 0);
             dy = resultY - baseY;
             
-            sp7C.x = arg0->unk0.z;
-            sp7C.y = arg2->z;
-            sp7C.z = arg1->z;
-            sp7C.w = arg3->z;
-            resultZ = func_80004C5C(&sp7C, tValue, 0);
+            sp7C[0] = arg0->unk0.z;
+            sp7C[1] = arg2->z;
+            sp7C[2] = arg1->z;
+            sp7C[3] = arg3->z;
+            resultZ = curves_hermite(sp7C, tValue, 0);
             dz = resultZ - baseZ;
             
             sum += sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
