@@ -19,6 +19,8 @@ typedef struct {
     u8 unk4;
 } DLL429_Data;
 
+static int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3);
+
 // offset: 0x0 | ctor
 void dll_429_ctor(void *dll) { }
 
@@ -26,8 +28,49 @@ void dll_429_ctor(void *dll) { }
 void dll_429_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_429_setup(Object *self, ObjSetup *setup, s32 reset);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/429_DFSH_door1/dll_429_setup.s")
+void dll_429_setup(Object* self, DLL429_Setup* objSetup, s32 reset) {
+    DLL429_Data* objData;
+    TextureAnimator* texAnim;
+
+    objData = self->data;
+    
+    if (main_get_bits(objSetup->unk22)) {
+        objData->unk3 = 2;
+    } else {
+        objData->unk3 = 0;
+    }
+    
+    texAnim = func_800348A0(self, 0, 0);
+    if (texAnim != NULL) {
+        if (objData->unk3 == 2) {
+            texAnim->frame = 1;
+        } else {
+            texAnim->frame = 0;
+        }
+    }
+    
+    objData->unk4 = 1;
+    self->srt.yaw = objSetup->unk1F << 8;
+    self->animCallback = dll_429_func_324;
+    
+    if (objSetup->unk21 == 0) {
+        objSetup->unk21 = 0x40;
+    }
+    
+    self->srt.scale = objSetup->unk21 * 0.015625f;
+    if (self->srt.scale == 0.0f) {
+        self->srt.scale = 1.0f;
+    }
+    self->srt.scale *= self->def->scale;
+    
+    if (objSetup->unk1A != NO_GAMEBIT) {
+        objData->unk2 = main_get_bits(objSetup->unk1A);
+    } else {
+        objData->unk2 = 0;
+    }
+    
+    objData->unk0 = 0;
+}
 
 // offset: 0x1B0 | func: 1 | export: 1
 void dll_429_control(Object* self) {
@@ -79,16 +122,12 @@ u32 dll_429_get_data_size(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0x324 | func: 7
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/429_DFSH_door1/dll_429_func_324.s")
-#else 
 int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3) {
     DLL429_Data* objData;
     DLL429_Setup* objSetup;
     TextureAnimator* texAnim;
     s32 i;
     s32 frame;
-    s32 var_a0;
 
     objData = self->data;
     objSetup = (DLL429_Setup*)self->setup;
@@ -108,7 +147,6 @@ int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3
                 objData->unk3 = 2;
             }
             texAnim->frame = frame;
-            // break;
         }
         break;
     case 2:
@@ -129,8 +167,7 @@ int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3
         objData->unk2 = 3;
     }
     
-    var_a0 = objData->unk2 == 2;
-    if (var_a0) {
+    if (objData->unk2 == 2) {
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == 2) {
                 objData->unk2 = 1;
@@ -139,7 +176,6 @@ int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3
                 }
             }
         }
-        var_a0 = (objData->unk2 ^ 2) == 0;
     } else if (objData->unk2 == 3) {
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == 1) {
@@ -149,13 +185,7 @@ int dll_429_func_324(Object* self, Object* arg1, AnimObj_Data* animData, s8 arg3
                 }
             }
         }
-        var_a0 = (objData->unk2 ^ 2) == 0;
     }
     
-    if (var_a0 == 0) {
-       return (objData->unk2 == 3) == 0;
-    } else {
-        return (var_a0 == 0);
-    }
+    return !(objData->unk2 == 2) && !(objData->unk2 == 3);
 }
-#endif
