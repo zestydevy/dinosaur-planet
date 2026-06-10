@@ -6,35 +6,35 @@
 #include "dlls/objects/272_collectable.h"
 
 typedef struct {
-    ObjSetup base;
-    s16 gamebitDug;         //Gamebit to set when Tricky digs up the spot
-    s16 unused1A;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    s16 unused1C;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    s16 magicCaveID;        //Values 3 onwards cause the dig spot to become be a Magic Cave entrance
-    u8 digDepthMax;         //Dig distance (stored at 100x scale)
-    u8 soundIndex;          //Index of the sound to play when digging has finished (0: small secret, 1: big secret)
-    u8 unused22;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    u8 findCommandRadius;   //Range for Find command to show up in inventory
-    u8 unused24;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    u8 animatorID;          //Block shapes with this tag will be animated
-    u8 falloffRadius;       //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
-    u8 collectableDepth;    //How far down the collectable is buried beneath the dig spot
+/*00*/ ObjSetup base;
+/*18*/ s16 gamebitDug;         //Gamebit to set when Tricky digs up the spot
+/*1A*/ s16 sidekickExperience; //Not used by the GroundAnimator itself, but Tricky must have this much experience to dig the spot ("It's too deep, I need more practice!") 
+/*1C*/ s16 sidekickCost;       //Not used by the GroundAnimator itself, but Tricky must have this much energy to dig the spot ("I'm too tired to do this right now!")
+/*1E*/ s16 magicCaveID;        //Values 3 onwards cause the dig spot to become be a Magic Cave entrance
+/*20*/ u8 digDepthMax;         //Dig distance (stored at 100x scale)
+/*21*/ u8 soundIndex;          //Index of the sound to play when digging has finished (0: small secret, 1: big secret)
+/*22*/ u8 unused22;            //Not used by the GroundAnimator itself, most (but not all) GroundAnimator objSetups have this set to 0
+/*23*/ u8 findCommandRadius;   //Range for Find command to show up in inventory
+/*24*/ u8 unused24;            //Unused - all existing GroundAnimator objSetups have this set to 0
+/*25*/ u8 animatorID;          //Block shapes with this tag will be animated
+/*26*/ u8 falloffRadius;       //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
+/*27*/ u8 collectableDepth;    //How far down the collectable is buried beneath the dig spot
 } GroundAnimator_Setup;
 
 typedef struct {
-    f32* vtxWeights;        //Displacement strengths (from 0 to 1) for each vertex being animated (influence falls off from centre)
-    Object* collectable;
-    s32 digDepth;           //Current dig progress (starts at 0, increases while digging)
-    f32 falloffRadius;      //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
-    f32 collectableDepth;   //Affects how far down the collectable is buried
+    f32* vtxWeights;          //Displacement strengths (from 0 to 1) for each vertex being animated (influence falls off from centre)
+    Object* collectable;      //A nearby collectable buried under the GroundAnimator, if found
+    s32 digDepth;             //Current dig progress (starts at 0, increases while digging)
+    f32 falloffRadius;        //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
+    f32 collectableDepth;     //Affects how far down the collectable is buried
     s16 animatedShapeIDs[5];
-    s16 misconfiguredShapeID;
-    s16 animatedVtxCount;   //The total number of vertices being animated
-    u8 animatedShapesCount; //Total shapes animated (i.e. number of items in `animatedShapeIDs`)
-    s8 previousDigDepth;    //Previous dig progress value (vertex updates are queued when this differs from current dig value)
-    u8 magicCaveID;         //Seems intended as an index for a specific Magic Cave instance (can be queried with `get_magic_cave_index` export)
-    u8 animUpdates;         //Used to queue vertex animation updates
-    u8 flags;               //Various state flags: Block search, dig finished, Magic Cave entrance/glow
+    s16 misconfiguredShapeID; //Highest-indexed animatorID-tagged shapeID that doesn't have `RENDER_SUBSURFACE` enabled - unused, but maybe to assist with debugging?
+    s16 animatedVtxCount;     //The total number of vertices being animated
+    u8 animatedShapesCount;   //Total shapes animated (i.e. number of items in `animatedShapeIDs`)
+    s8 previousDigDepth;      //Previous dig progress value (vertex updates are queued when this differs from current dig value)
+    u8 magicCaveID;           //Seems intended as an index for a specific Magic Cave instance (can be queried with `get_magic_cave_index` export)
+    u8 animUpdates;           //Used to queue vertex animation updates
+    u8 flags;                 //Various state flags: Block search, dig finished, Magic Cave entrance/glow
 } GroundAnimator_Data;
 
 typedef enum {
@@ -219,7 +219,7 @@ void GroundAnimator_control(Object* self) {
         if (objData->animUpdates) {
             objData->animUpdates--;
             
-            //Finish digging
+            //Handle when digging is finished
             if (objData->digDepth > (objSetup->digDepthMax * 100)) {
                 objData->digDepth = objSetup->digDepthMax * 100;
                 
@@ -330,8 +330,8 @@ void GroundAnimator_store_shapeIDs_and_vertex_weights(Object* self, GroundAnimat
     f32 dz;
     s32 vtxID;
     
+    //Get local Block and make sure its vertices are animatable
     block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
-    
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return;
     }
