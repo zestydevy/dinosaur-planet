@@ -7330,7 +7330,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         func_8002493C(player, fsa->unk278, &fsa->animTickDelta);
         // incorrect cast?
-        v0 = func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        v0 = curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
         if (v0 != 0) {
             func_80023D30(player, 0x40F, 0.0f, 0U);
@@ -7353,7 +7353,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 0x40E:
         fsa->animTickDelta = 0.015f;
         gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 1);
-        func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
         player->srt.transl.f[0] = temp_s0->unk550.f[0];
         player->srt.transl.f[1] = temp_s0->unk550.f[1];

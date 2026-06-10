@@ -138,9 +138,9 @@ void curves_linear_converter(f32* in, f32* out);
 
 void curves_move(UnkCurvesStruct *arg0);
 void curves_setup_move_network_curve(UnkCurvesStruct *arg0);
-f32 func_80006E04(Unk80006784 *, f32);
-f32 func_80006CFC(Unk80006784 *, f32, f32);
-s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1);
-void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, SplineConverterFunc arg7);
+f32 curves_func_80006E04(Unk80006784 *, f32);
+f32 curves_func_80006CFC(Unk80006784 *, f32, f32);
+s32 curves_func_800053B0(UnkCurvesStruct* arg0, f32 arg1);
+void curves_func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, SplineConverterFunc arg7);
 
 #endif

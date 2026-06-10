@@ -465,7 +465,7 @@ void dll_211_func_8974(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
         if (square < distanceSquared){
             break;
         }
-        func_800053B0(arg1, var_fs0);
+        curves_func_800053B0(arg1, var_fs0);
         distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk68), &arg0->srt.transl);
     }
 }

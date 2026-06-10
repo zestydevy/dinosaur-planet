@@ -15,7 +15,7 @@ f32 D_800A7C40;
 
 #define ONE_OVER_SIX (1.0f / 6.0f)
 
-void func_800065C0(UnkCurvesStruct *, s32);
+void curves_func_800065C0(UnkCurvesStruct *, s32);
 
 f32 curves_b_spline(f32* s, f32 t, f32* rate) {
     f32 v[4];
@@ -140,7 +140,7 @@ void curves_move(UnkCurvesStruct *arg0) {
     arg0->unkC = 0.0f;
 
     while (arg0->unk10 < (arg0->numControlPoints - 3)) {
-        func_800065C0(arg0, 5);
+        curves_func_800065C0(arg0, 5);
         
         arg0->unkC += arg0->unk14[0];
         
@@ -157,7 +157,7 @@ void curves_move(UnkCurvesStruct *arg0) {
         arg0->unk10 = 0;
     }
 
-    func_800065C0(arg0, 0x14);
+    curves_func_800065C0(arg0, 0x14);
 
     if (arg0->unk80 != 0) {
         arg0->unk0 = 1.0f;
@@ -195,7 +195,7 @@ void curves_setup_move_network_curve(UnkCurvesStruct *arg0) {
     arg0->unkC = 0.0f;
     
     while (arg0->unk10 < (arg0->numControlPoints - 3)) {
-        func_800065C0(arg0, 5);
+        curves_func_800065C0(arg0, 5);
 
         arg0->unkC += arg0->unk14[0];
 
@@ -212,7 +212,7 @@ void curves_setup_move_network_curve(UnkCurvesStruct *arg0) {
         arg0->unk10 = 0;
     }
 
-    func_800065C0(arg0, 0x14);
+    curves_func_800065C0(arg0, 0x14);
     
     if (arg0->unk80 != 0) {
         arg0->unk8 = arg0->unkC - arg0->unk4;
@@ -221,7 +221,7 @@ void curves_setup_move_network_curve(UnkCurvesStruct *arg0) {
     }
 }
 
-void func_8000535C(UnkCurvesStruct *arg0) {
+void curves_func_8000535C(UnkCurvesStruct *arg0) {
     if (arg0->unk80 != 0) {
         arg0->unk0 = 1.0f;
         arg0->unk4 = arg0->unk64;
@@ -235,7 +235,7 @@ void func_8000535C(UnkCurvesStruct *arg0) {
     }
 }
 
-s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
+s32 curves_func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
     f32 temp_fs1;
     s32 var_t0;
     f32 temp_fv0;
@@ -283,7 +283,7 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
                         arg0->unk8 = arg0->unkC;
                         return 1;
                     }
-                    func_800065C0(arg0, 20);
+                    curves_func_800065C0(arg0, 20);
                     var_v1 = 0;
                 }
             }
@@ -343,7 +343,7 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
                         arg0->unk10 = 0;
                         return 1;
                     }
-                    func_800065C0(arg0, 20);
+                    curves_func_800065C0(arg0, 20);
                     var_v1 = 19;
                 }
             }
@@ -366,7 +366,7 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
     return 0;
 }
 
-void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, SplineConverterFunc arg7) {
+void curves_func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, SplineConverterFunc arg7) {
     f32 spC0[4];
     f32 spB0[4];
     f32 spA0[4];
@@ -442,7 +442,7 @@ void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* a
     }
 }
 
-void func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *arg5, f32 *arg6, f32 *arg7, f32 *arg8, s32 arg9, void (*arg10)(f32*, f32*, f32*, f32*)) {
+void curves_func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *arg5, f32 *arg6, f32 *arg7, f32 *arg8, s32 arg9, void (*arg10)(f32*, f32*, f32*, f32*)) {
     static f32 D_800A7C48[7];
     static f32 D_800A7C64;
     f32 spC0[4];
@@ -552,7 +552,7 @@ void func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *a
     }
 }
 
-void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
+void curves_func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     f32 *phi_s4;
     f32 *phi_s5;
     f32 *phi_s6;
@@ -579,7 +579,7 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     }
 
     if (arg0->splineConverterFunc != NULL) {
-        func_8000598C(phi_s4, phi_s5, phi_s6, xCoords, yCoords, zCoords, arg1, arg0->splineConverterFunc);
+        curves_func_8000598C(phi_s4, phi_s5, phi_s6, xCoords, yCoords, zCoords, arg1, arg0->splineConverterFunc);
     } else {
         
     }
@@ -613,7 +613,7 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     }
 }
 
-f32 func_80006784(Unk80006784* arg0, s32 arg1, f32 arg2, f32 arg3) {
+f32 curves_func_80006784(Unk80006784* arg0, s32 arg1, f32 arg2, f32 arg3) {
     f32 temp_fv0;
     f32 temp_fv0_2;
     f32 temp_fv1;
@@ -640,7 +640,7 @@ f32 func_80006784(Unk80006784* arg0, s32 arg1, f32 arg2, f32 arg3) {
     var_fs0 = (arg2 - temp_s0->unk0[0]) * arg3;
     do {
         temp_fv0 = (var_fs1 + var_fs2) * 0.5f;
-        temp_fv0_2 = func_80006CFC(temp_s0, var_fs1, temp_fv0);
+        temp_fv0_2 = curves_func_80006CFC(temp_s0, var_fs1, temp_fv0);
         temp_fv1 = temp_fv0_2 + 0.0001f;
         if (var_fs0 < temp_fv1) {
             var_fs2 = temp_fv0;
@@ -652,7 +652,7 @@ f32 func_80006784(Unk80006784* arg0, s32 arg1, f32 arg2, f32 arg3) {
     return temp_fv0;
 }
 
-f32 func_80006908(Unk80006908* arg0, s32 arg1, f32 arg2) {
+f32 curves_func_80006908(Unk80006908* arg0, s32 arg1, f32 arg2) {
     f32 temp_fa0;
     f32 temp_fv0;
     f32 var_ft4;
@@ -709,7 +709,7 @@ f32 func_80006908(Unk80006908* arg0, s32 arg1, f32 arg2) {
     return var_fv1;
 }
 
-void func_80006B28(Vec2f* arg0, s32 arg1, Unk80006908* arg2) {
+void curves_func_80006B28(Vec2f* arg0, s32 arg1, Unk80006908* arg2) {
     f32 sp88[4];
     f32 sp78[4];
     f32 sp68[4];
@@ -748,7 +748,7 @@ void func_80006B28(Vec2f* arg0, s32 arg1, Unk80006908* arg2) {
     arg2[arg1 - 1].unk20 = 1.0f;
 }
 
-f32 func_80006CFC(Unk80006784 *arg0, f32 arg1, f32 arg2) {
+f32 curves_func_80006CFC(Unk80006784 *arg0, f32 arg1, f32 arg2) {
     f32 var_fs0;
     f32 sp48;
     f32 var_fs1;
@@ -759,17 +759,17 @@ f32 func_80006CFC(Unk80006784 *arg0, f32 arg1, f32 arg2) {
     var_fs0 = arg1 + sp48;
     for (i = 2; i < 0x1A; i++) {
         if (!(i & 1)) {
-            var_fs1 += 4.0f * func_80006E04(arg0, var_fs0);
+            var_fs1 += 4.0f * curves_func_80006E04(arg0, var_fs0);
         } else {
-            var_fs1 += 2.0f * func_80006E04(arg0, var_fs0);
+            var_fs1 += 2.0f * curves_func_80006E04(arg0, var_fs0);
         }
         var_fs0 += sp48;
     }
-    var_fs0 = func_80006E04(arg0, arg1);
-    return ((func_80006E04(arg0, arg2) + (var_fs0 + var_fs1)) * sp48) / 3.0f;
+    var_fs0 = curves_func_80006E04(arg0, arg1);
+    return ((curves_func_80006E04(arg0, arg2) + (var_fs0 + var_fs1)) * sp48) / 3.0f;
 }
 
-f32 func_80006E04(Unk80006784* arg0, f32 arg1) {
+f32 curves_func_80006E04(Unk80006784* arg0, f32 arg1) {
     return sqrtf(arg0->unk0[5] +
         (arg0->unk0[4] +
             (arg0->unk0[3] +
@@ -781,7 +781,7 @@ f32 func_80006E04(Unk80006784* arg0, f32 arg1) {
     );
 }
 
-void func_80006E58(UnkCurvesStruct* arg0, f32 arg1, f32 arg2, s32 arg3) {
+void curves_func_80006E58(UnkCurvesStruct* arg0, f32 arg1, f32 arg2, s32 arg3) {
     f32 temp_fv0;
     f32 var_fa0;
     f32 var_fa1;
@@ -810,5 +810,5 @@ void func_80006E58(UnkCurvesStruct* arg0, f32 arg1, f32 arg2, s32 arg3) {
             var_ft5 = temp_fv0;
         }
     }
-    func_800065C0(arg0, 0x14);
+    curves_func_800065C0(arg0, 0x14);
 }

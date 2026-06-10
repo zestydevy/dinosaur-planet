@@ -202,7 +202,7 @@ static s32 WCTrex_func_800(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objdata->flags &= ~1;
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 2);
     }
-    if ((func_800053B0(temp_a0, 0.5f) != 0) || (temp_a0->unk10 != 0)) {
+    if ((curves_func_800053B0(temp_a0, 0.5f) != 0) || (temp_a0->unk10 != 0)) {
         if (gDLL_26_Curves->vtbl->func_4704(temp_a0) != 0) {
             STUBBED_PRINTF("ERROR: end of curve reached\n");
         }

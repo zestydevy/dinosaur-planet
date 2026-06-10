@@ -399,7 +399,7 @@ s32 dll_658_func_1944(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
     s32 var_v1;
 
     var_v1 = 0;
-    if (func_800053B0(arg1, arg2) || arg1->unk10) {
+    if (curves_func_800053B0(arg1, arg2) || arg1->unk10) {
         var_v1 = gDLL_26_Curves->vtbl->func_4704(arg1);
     }
     

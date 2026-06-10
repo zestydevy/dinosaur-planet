@@ -549,7 +549,7 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
     baddie = self->data;
     baddieCurves = baddie->unk3F8;
     capydata = baddie->objdata;
-    temp2 = func_800053B0(baddieCurves, 5.0f / (SQ(baddieCurves->unk68.f[2] - self->srt.transl.f[2]) + SQ(baddieCurves->unk68.f[0] - self->srt.transl.f[0])));
+    temp2 = curves_func_800053B0(baddieCurves, 5.0f / (SQ(baddieCurves->unk68.f[2] - self->srt.transl.f[2]) + SQ(baddieCurves->unk68.f[0] - self->srt.transl.f[0])));
     if (((temp2 != 0) || (baddieCurves->unk10 != 0)) && (gDLL_26_Curves->vtbl->func_4704(baddieCurves) != 0)) {
         fsa->animState = CAPY_ASTATE_7_DigWall;
         fsa->enteredAnimState = FALSE;

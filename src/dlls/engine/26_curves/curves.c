@@ -1703,10 +1703,10 @@ s32 curves_func_4704(UnkCurvesStruct* arg0) {
                 curves_setup_move_network_curve(arg0);
             }
             if (arg0->unk80 != 0) {
-                func_800053B0(arg0, -1.0f);
+                curves_func_800053B0(arg0, -1.0f);
                 return 0;
             }
-            func_800053B0(arg0, 1.0f);
+            curves_func_800053B0(arg0, 1.0f);
             return 0;
         }
     } else {
@@ -1842,10 +1842,10 @@ s32 curves_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
                 curves_setup_move_network_curve(arg0);
             }
             if (arg0->unk80 != 0) {
-                func_800053B0(arg0, -1.0f);
+                curves_func_800053B0(arg0, -1.0f);
                 return 0;
             }
-            func_800053B0(arg0, 1.0f);
+            curves_func_800053B0(arg0, 1.0f);
             return 0;
         }
     } else {

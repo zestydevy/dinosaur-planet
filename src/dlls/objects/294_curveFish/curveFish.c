@@ -122,7 +122,7 @@ void dll_294_control(Object* self) {
                 var_fa1 = curvefishdata->unk11C;
             }
             curvefishdata->unk120 = (var_fa1 * 0.06f) / (curvefishdata->unk110 * 0.5f);
-            func_800053B0(&curvefishdata->unk4, curvefishdata->unk11C);
+            curves_func_800053B0(&curvefishdata->unk4, curvefishdata->unk11C);
             if ((curvefishdata->unk4.unk10 != 0) && (gDLL_26_Curves->vtbl->func_4704(&curvefishdata->unk4) != 0)) {
                 curvefishdata->unk10C = 0;
                 curvefishdata->unk124 = 0.0f;

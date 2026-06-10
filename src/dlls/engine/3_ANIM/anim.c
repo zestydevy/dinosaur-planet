@@ -2346,7 +2346,7 @@ void anim_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4,
     spD0[2] = fcos16_precise((s16) (a2->unk2C << 8)) * sp104;
     spD0[1] = a3->pos.z;
     spD0[3] = fcos16_precise((s16) (a3->unk2C << 8)) * sp100;
-    func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, curves_hermite_converter);
+    curves_func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, curves_hermite_converter);
     arg0->unk8[0] = 0.0f;
     for (i = 0; i < 8; i++) {
         temp_fv0 = spAC[i + 1] - spAC[i];

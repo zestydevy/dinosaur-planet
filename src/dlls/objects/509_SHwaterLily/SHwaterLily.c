@@ -50,7 +50,7 @@ void dll_509_control(Object* self) {
     f32 temp;
 
     if (LilyData->unk19 == 1) {
-        if ((func_800053B0(&WLData->unk0, WLData->unk108) != 0) || (WLData->unk0.unk10 != 0)) {
+        if ((curves_func_800053B0(&WLData->unk0, WLData->unk108) != 0) || (WLData->unk0.unk10 != 0)) {
             gDLL_26_Curves->vtbl->func_4704(&WLData->unk0);
         }
         self->srt.transl.f[0] = WLData->unk0.unk68.f[0];
