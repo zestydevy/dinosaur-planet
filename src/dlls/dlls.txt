@@ -122,6 +122,7 @@
 299 = objects/299_EndObject
 300 = objects/300_food
 301 = objects/301_barrel
+302 = objects/302_Fall_Ladders
 305 = objects/305_PortalSpellDoor
 307 = objects/307
 308 = objects/308_USEOBJ
