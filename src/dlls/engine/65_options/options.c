@@ -1007,9 +1007,9 @@ static void options_goto_display_page(void) {
     strings[1] = dGametextMenu->strings[LINE_9_On];
 
     sCtrlCount = 0;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(476, 254, 0, 1, sGameOptions->showSubtitles, strings, 50);
+    sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(476, 254, 0, 1, sGameOptions->showSubtitles, strings, 50);
     sCtrlCount++;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(476, 278, 0, 1, sGameOptions->showInstruments, strings, 50);
+    sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(476, 278, 0, 1, sGameOptions->showInstruments, strings, 50);
     sCtrlCount++;
 
     gDLL_75->vtbl->set_selection_state(sCtrls[0], 1);
@@ -1040,7 +1040,7 @@ static void options_goto_control_page(s32 selectedItemIdx) {
     dControlZButtonStrings[2] = dGametextMenu->strings[LINE_16_Hold];
 
     sCtrlCount = 0;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 254, 0, 2, sGameOptions->zTargetMode, dControlZButtonStrings, 100);
+    sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(426, 254, 0, 2, sGameOptions->zTargetMode, dControlZButtonStrings, 100);
     sCtrlCount++;
     sCtrls[sCtrlCount] = NULL;
     sCtrlCount++;
@@ -1088,7 +1088,7 @@ static void options_goto_cheats_page(void) {
         }
 
         enabled = gDLL_29_Gplay->vtbl->is_cheat_active(sCheatsTopIdx + i);
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_checkbox(
+        sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_checkbox(
             513, (s16) y, 
             0, 1, 
             enabled ? 1 : 0
@@ -1147,14 +1147,14 @@ static void options_goto_video_page(s32 selectedItemIdx) {
 
     sCtrlCount = 0;
     if ((languageID == LANGUAGE_ESPANOL) || (languageID == LANGUAGE_ITALIANO)) {
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(451, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 75);
+        sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(451, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 75);
         sCtrlCount++;
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(451, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 75);
+        sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(451, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 75);
         sCtrlCount++;
     } else {
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 100);
+        sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(426, 254, 0, 2, sGameOptions->screenSizeAnamorphic, dVideoSizeStrings, 100);
         sCtrlCount++;
-        sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 100);
+        sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(426, 278, 0, 1, sGameOptions->screenAspectRatio, dVideoRatioStrings, 100);
         sCtrlCount++;
     }
 
@@ -1193,11 +1193,11 @@ static void options_goto_audio_page(void) {
     dAudioSetupStrings[3] = dGametextMenu->strings[LINE_34_Headphones];
 
     sCtrlCount = 0;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_list(426, 254, 0, 3, sGameOptions->audioMode, dAudioSetupStrings, 100);
+    sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(426, 254, 0, 3, sGameOptions->audioMode, dAudioSetupStrings, 100);
     sCtrlCount++;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_slider(318, 285, 0, 0xff, sGameOptions->volumeMusic);
+    sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_slider(318, 285, 0, 0xff, sGameOptions->volumeMusic);
     sCtrlCount++;
-    sCtrls[sCtrlCount] = gDLL_75->vtbl->create_slider(318, 309, 0, MAX_VOLUME, sGameOptions->volumeAudio);
+    sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_slider(318, 309, 0, MAX_VOLUME, sGameOptions->volumeAudio);
     sCtrlCount++;
 
     gDLL_75->vtbl->set_selection_state(sCtrls[0], 1);
