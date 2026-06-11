@@ -40,10 +40,10 @@
 67 = engine/67_gameover
 68 = engine/68_old_mainmenu
 69 = engine/69
-70 = engine/70
-71 = engine/71
+70 = engine/70_old_levelselect
+71 = engine/71_old_selection
 72 = engine/72
-73 = engine/73
+73 = engine/73_old_picmenu
 74 = engine/74_picmenu
 75 = engine/75_frontend
 77 = engine/77_scarab

@@ -1,4 +1,4 @@
-//NOTE: seems to be the DLL that some older menus used for text printing, which was once located at `dll_throw_fault`'s address
+// NOTE: seems to be the DLL that some older menus used for text list printing/selection, which was once located at `dll_throw_fault`'s address
 
 #include "PR/os.h"
 #include "common.h"

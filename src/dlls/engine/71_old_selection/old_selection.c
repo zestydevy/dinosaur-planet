@@ -1,3 +1,5 @@
+//Seems to be an old version of the SwapStone choice menu (DLL 71 selection)
+
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/29_gplay.h"
