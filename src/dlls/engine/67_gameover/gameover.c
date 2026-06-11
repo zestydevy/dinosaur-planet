@@ -57,14 +57,14 @@ typedef enum {
 
 /*0x0*/ static GameTextChunk* bss_0;
 /*0x4*/ static Texture* bss_4; //Duster counter box
-/*0x8*/ static f32 bss_8;
+/*0x8*/ static s16 bss_8;
 /*0xC*/ static f32 bss_C;
 /*0x10*/ static f32 bss_10;
-/*0x14*/ static s8 bss_14;
+/*0x14*/ static u8 bss_14;
 /*0x15*/ static u8 bss_15;
 /*0x16*/ static s8 bss_16;
 /*0x17*/ static s8 bss_17;
-/*0x18*/ static u8 bss_18[0x8];
+/*0x18*/ static char bss_18[0x8];
 
 // offset: 0x0 | ctor
 void dll_67_ctor(void* dll) {
@@ -111,16 +111,12 @@ void dll_67_dtor(void *dll) {
 }
 
 // offset: 0x200 | func: 0 | export: 0
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/67_gameover/dll_67_func_200.s")
-#else
 s32 dll_67_func_200(void) {
     s32 action; //2C
     s32 delay;
     PlayerStats* stats;
     Object* player; //20
     s8 prevTimer;
-    s32 timer;
     s32 selectedIdx;
     s32 index;
 
@@ -252,12 +248,83 @@ s32 dll_67_func_200(void) {
 
     return 0;
 }
-#endif
 
 // offset: 0x868 | func: 1 | export: 1
 void dll_67_func_868(void) {
     return;
 }
 
+#define SHADOW_OPACITY(opacity) ((((u8)opacity) * 0x96) >> 8)
+
 // offset: 0x870 | func: 2 | export: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/67_gameover/dll_67_func_870.s")
+void dll_67_func_870(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
+    s32 ulx;
+    s32 uly;
+    s32 lrx;
+    s32 lry;
+    f32 opacity;
+    PlayerStats* stats;
+
+    stats = gDLL_29_Gplay->vtbl->get_player_stats();
+    
+    if ((bss_15 == 2) && (bss_16 < 0xB)) {
+        return;
+    }
+
+    opacity = ((f32)bss_8 / 140.0f) * 255.0f;
+    
+    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    gDPSetCombineMode(*gfx, G_CC_PRIMITIVE, G_CC_PRIMITIVE); 
+    dl_apply_combine(gfx);
+    gDPSetOtherMode(*gfx, 
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | 
+        G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | 
+        G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2);
+    dl_apply_other_mode(gfx);
+    dl_set_prim_color(gfx, 0, 0, 0, bss_8);
+    gDPFillRectangle((*gfx)++, ulx, uly, lrx, lry);
+    gDLBuilder->needsPipeSync = TRUE;
+    
+    font_window_set_coords(1, 0, 0, 
+        GET_VIDEO_WIDTH(vi_get_current_size()), 
+        GET_VIDEO_HEIGHT(vi_get_current_size())
+    );
+    font_window_flush_strings(1);
+    font_window_use_font(1, 0);
+    font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, opacity);
+    
+    switch (bss_14) {
+    case 1:
+        font_window_add_string_xy(1, 0xA0, 0x61, bss_0->strings[0], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(1, 0xA0, 0x7B, bss_0->strings[1], 1, ALIGN_TOP_CENTER);
+        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        font_window_add_string_xy(1, 0x9F, 0x60, bss_0->strings[0], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(1, 0x9F, 0x7A, bss_0->strings[1], 1, ALIGN_TOP_CENTER);
+        break;
+    case 2:
+        font_window_add_string_xy(1, 0xA0, 0x61, bss_0->strings[3], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(1, 0xA0, 0x7B, bss_0->strings[4], 1, ALIGN_TOP_CENTER);
+        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        font_window_add_string_xy(1, 0x9F, 0x60, bss_0->strings[3], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(1, 0x9F, 0x7A, bss_0->strings[4], 1, ALIGN_TOP_CENTER);
+        break;
+    case 3:
+        font_window_add_string_xy(1, 0xA0, 0x73, bss_0->strings[5], 1, ALIGN_TOP_CENTER);
+        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        font_window_add_string_xy(1, 0x9F, 0x72, bss_0->strings[5], 1, ALIGN_TOP_CENTER);
+        break;
+    case 0:
+        font_window_add_string_xy(1, 0x12, 0x12, bss_0->strings[6], 1, ALIGN_TOP_LEFT);
+        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        font_window_add_string_xy(1, 0x11, 0x11, bss_0->strings[6], 1, ALIGN_TOP_LEFT);
+        rcp_screen_full_write(gfx, bss_4, 0xF, 0x24, 0, 0, opacity, 0);
+        font_window_use_font(1, 1);
+        sprintf(bss_18, "%02d", stats->dusters);
+        font_window_add_string_xy(1, 0x46, 0x3A, bss_18, 1, ALIGN_TOP_RIGHT);
+        break;
+    }
+    
+    gDLL_74_Picmenu->vtbl->set_opacity(opacity);
+    gDLL_74_Picmenu->vtbl->draw(gfx);
+    font_window_draw(gfx, NULL, NULL, 1);
+}
