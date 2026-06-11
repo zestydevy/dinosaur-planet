@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_303_ctor = 0x0;
+dll_303_dtor = 0xC;
+dll_303_setup = 0x18;
+dll_303_control = 0x10C;
+dll_303_update = 0x1B0;
+dll_303_print = 0x1BC;
+dll_303_free = 0x1D4;
+dll_303_get_model_flags = 0x214;
+dll_303_get_data_size = 0x224;
+dll_303_func_238 = 0x238;
+dll_303_func_39C = 0x39C;
+
+.rodata = 0x4CC:
