@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_300_ctor = 0x0;
+dll_300_dtor = 0xC;
+dll_300_setup = 0x18;
+dll_300_control = 0xF8;
+dll_300_update = 0x82C;
+dll_300_print = 0x838;
+dll_300_free = 0x850;
+dll_300_get_model_flags = 0x860;
+dll_300_get_data_size = 0x870;
+dll_300_func_884 = 0x884;
+
+.rodata = 0x8E0:

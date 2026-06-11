@@ -120,6 +120,7 @@
 296 = objects/296_medium_crate
 297 = objects/297_scarab
 299 = objects/299_EndObject
+300 = objects/300_food
 305 = objects/305_PortalSpellDoor
 307 = objects/307
 308 = objects/308_USEOBJ
