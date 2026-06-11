@@ -52,7 +52,7 @@ void WGboulder_control(Object* self) {
         }
         break;
     case WGBoulder_STATE_1_Moving:
-        if ((func_800053B0(&objData->curves, 2.0f) || objData->curves.unk10) && gDLL_26_Curves->vtbl->func_4704(&objData->curves)) {
+        if ((curves_func_800053B0(&objData->curves, 2.0f) || objData->curves.unk10) && gDLL_26_Curves->vtbl->func_4704(&objData->curves)) {
             objData->state = WGBoulder_STATE_0_Stopped;
         }
         
