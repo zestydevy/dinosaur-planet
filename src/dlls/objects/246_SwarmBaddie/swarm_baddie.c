@@ -164,7 +164,7 @@ static void dll_246_func_6C8(Object* self, DLL246_Data* objdata) {
 
     temp_s1 = objdata->unk0;
     if (
-        ((func_800053B0(temp_s1, objdata->unk8) != 0) || (_bss_0 != temp_s1->unk10)) && 
+        ((curves_func_800053B0(temp_s1, objdata->unk8) != 0) || (_bss_0 != temp_s1->unk10)) && 
         (gDLL_26_Curves->vtbl->func_4704(temp_s1) != 0) && 
         (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, 400.0f, _data_0, -1) != 0)
    ) {

@@ -1,0 +1,35 @@
+.text = 0x0:
+CFbarrel_ctor = 0x0;
+CFbarrel_dtor = 0xC;
+CFbarrel_setup = 0x18;
+CFbarrel_control = 0x190;
+CFbarrel_update = 0x6B8;
+CFbarrel_print = 0x92C;
+CFbarrel_free = 0x9DC;
+CFbarrel_get_model_flags = 0xAB0;
+CFbarrel_get_data_size = 0xAC0;
+CFbarrel_func_AD4 = 0xAD4;
+CFbarrel_func_1214 = 0x1214;
+CFbarrel_func_14A0 = 0x14A0;
+CFbarrel_func_17F4 = 0x17F4;
+CFbarrel_func_1848 = 0x1848;
+CFbarrel_func_1948 = 0x1948;
+
+.rodata = 0x1B00:
+str_0 = 0x0; // absolute:0x1B00
+str_28 = 0x28; // absolute:0x1B28 type:char
+str_34 = 0x34; // absolute:0x1B34 type:char
+str_44 = 0x44; // absolute:0x1B44 type:char
+str_50 = 0x50; // absolute:0x1B50 type:char
+str_5C = 0x5C; // absolute:0x1B5C type:char
+str_74 = 0x74; // absolute:0x1B74 type:char
+str_8C = 0x8C; // absolute:0x1B8C type:char
+str_9C = 0x9C; // absolute:0x1B9C type:char
+str_A8 = 0xA8; // absolute:0x1BA8 type:char
+str_C8 = 0xC8; // absolute:0x1BC8 type:char
+str_D8 = 0xD8; // absolute:0x1BD8 type:char
+
+.data = 0x1C10:
+data_0 = 0x0; // absolute:0x1C10
+data_4 = 0x4; // absolute:0x1C14
+data_14 = 0x14; // absolute:0x1C24

@@ -1,0 +1,31 @@
+.text = 0x0:
+WCTrex_func_0 = 0x0;
+WCTrex_ctor = 0x84;
+WCTrex_dtor = 0xC4;
+WCTrex_setup = 0xD0;
+WCTrex_control = 0x270;
+WCTrex_update = 0x3B0;
+WCTrex_print = 0x3BC;
+WCTrex_free = 0x444;
+WCTrex_get_model_flags = 0x484;
+WCTrex_get_data_size = 0x494;
+WCTrex_func_4A8 = 0x4A8;
+WCTrex_func_584 = 0x584;
+WCTrex_func_59C = 0x59C;
+WCTrex_func_608 = 0x608;
+WCTrex_func_728 = 0x728;
+WCTrex_func_7E8 = 0x7E8;
+WCTrex_func_800 = 0x800;
+WCTrex_func_8DC = 0x8DC;
+WCTrex_func_9E4 = 0x9E4;
+
+.rodata = 0xB14:
+str_0 = 0x0; // absolute:0xB14
+
+.data = 0xB44:
+data_0 = 0x0; // absolute:0xB44
+data_10 = 0x10; // absolute:0xB54
+
+.bss = 0xB64:
+bss_0 = 0x0; // absolute:0xB64
+bss_10 = 0x10; // absolute:0xB74

@@ -12,7 +12,9 @@
 #define HEAD_TURN_LIMIT 0x1FFF //~45 degrees (giving a 90 degree turn range)
 
 // -------- .bss start 800b2e00 -------- //
-u8 D_800B2E00;
+struct {
+    u8 unk0_0 : 1;
+} D_800B2E00;
 // -------- .bss end 80091754 -------- //
 
 // -------- .data start 80091720 -------- //
@@ -291,9 +293,9 @@ void func_800332A4(Object* arg0, s32* arg1, s32 arg2) {
             continue;
         }
 
-        temp_v0[1] = (temp_v0[1] * 3) >> 2;
-        temp_v0[0] = (temp_v0[0] * 3) >> 2;
-        temp_v0[2] = (temp_v0[2] * 3) >> 2;
+        temp_v0[1] = (temp_v0[1] * 3) >> 2; // *= 0.75
+        temp_v0[0] = (temp_v0[0] * 3) >> 2; // *= 0.75
+        temp_v0[2] = (temp_v0[2] * 3) >> 2; // *= 0.75
     }
 }
 
@@ -325,19 +327,19 @@ s32 func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
     return var_s1 == (arg2 * 2);
 }
 
-s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4, f32 arg5, s16 arg6, s16 arg7) {
-    f32 temp_fs0;
-    f32 sp90;
-    f32 sp8C; // fa1
-    f32 sp88;
+s32 func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnimation* anims, s16* arg4, f32 yOffset, s16 arg6, s16 arg7) {
+    f32 dx;
+    f32 dy;
+    f32 dz; // fa1
+    f32 xzDist;
     s16 sp84[2];
-    s16 sp80[2];
+    s16 goal[2];
     s32 temp_lo;
     s16 var_a0;
     s16 var_a1;
     s32 pad;
     s32 var_v1;
-    s16* temp_v0;
+    s16* bone;
     u8 sp6B;
     s32 temp_ft0;
     s16* var_t3;
@@ -345,22 +347,21 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
     s32 j;
 
     sp6B = 0;
-    temp_fs0 = arg2->x - otherObj->srt.transl.x;
-    sp8C = arg2->z - otherObj->srt.transl.z;
-    sp90 = (arg2->y + arg5) - otherObj->srt.transl.y;
-    sp88 = sqrtf(SQ(temp_fs0) + SQ(sp8C));
-    sp84[0] = (s16)(u16)arctan2_f(temp_fs0, sp8C) - (obj->srt.yaw & 0xFFFF);
+    dx = refPoint->x - lookat->srt.transl.x;
+    dz = refPoint->z - lookat->srt.transl.z;
+    dy = (refPoint->y + yOffset) - lookat->srt.transl.y;
+    xzDist = sqrtf(SQ(dx) + SQ(dz));
+    sp84[0] = (s16)(u16)arctan2_f(dx, dz) - (obj->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(sp84[0]);
-    sp84[1] = arg7 - (-arctan2_f(sp88, sp90) & 0xFFFF);
+    sp84[1] = arg7 - (-arctan2_f(xzDist, dy) & 0xFFFF);
     CIRCLE_WRAP(sp84[1]);
-    // ugly cast hack to fix instruction
-    if ((*(u32*)(&D_800B2E00) >> 0x1F) != 0) {
+    if (D_800B2E00.unk0_0) {
         sp84[0] -= 0x8000;
         sp84[1] = -sp84[1];
     }
     for (i = 0; i < 10; i++) {
-        temp_v0 = func_80034804(obj, D_80091720[i]);
-        if (temp_v0 == NULL) {
+        bone = func_80034804(obj, D_80091720[i]);
+        if (bone == NULL) {
             return sp6B;
         }
         for (j = 0; j < 2; j++) {
@@ -369,27 +370,27 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
             } else {
                 var_a0 = arg4[i] * 182.04f;
             }
-            sp80[j] = sp84[j];
+            goal[j] = sp84[j];
             if (var_a0 < sp84[j]) {
-                sp80[j] = var_a0;
+                goal[j] = var_a0;
                 sp84[j] -= var_a0;
             } else if (sp84[j] < -var_a0) {
-                sp80[j] = -var_a0;
+                goal[j] = -var_a0;
                 sp84[j] += var_a0;
             } else {
                 sp84[j] = 0;
             }
         }
-        if (arg3 != NULL) {
-            arg3->headGoalAngle = sp80[0];
-            func_80034250(arg3, temp_v0);
-            arg3[1].headGoalAngle = sp80[1];
-            func_80034518(arg3 + 1, temp_v0, 10.0f, 500.0f);
-            arg3 += 2;
+        if (anims != NULL) {
+            anims->headGoalAngle = goal[0];
+            func_80034250(anims, bone);
+            anims[1].headGoalAngle = goal[1];
+            func_80034518(anims + 1, bone, 10.0f, 500.0f);
+            anims += 2;
         } else {
             var_t3 = arg4 + 15;
-            var_a1 = (temp_v0[1] + sp80[0]) >> 1;
-            var_a1 -= temp_v0[1];
+            var_a1 = (bone[1] + goal[0]) >> 1;
+            var_a1 -= bone[1];
             temp_lo = ((s16) (-arg4[i] * 182.04f) / 10) * gUpdateRate;
             if (var_a1 < temp_lo) {
                 var_a1 = temp_lo;
@@ -402,8 +403,8 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
                 }
                 var_a1 = var_v1;
             }
-            var_a0 = (temp_v0[0] + sp80[1]) >> 1;
-            var_a0 -= temp_v0[0];
+            var_a0 = (bone[0] + goal[1]) >> 1;
+            var_a0 -= bone[0];
             temp_ft0 = (s16) (var_t3[i] * 182.04f);
             pad = (- temp_ft0 / 10) * gUpdateRate;
             if (var_a0 < pad) {
@@ -416,18 +417,18 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
                 }
                 var_a0 = var_v1;
             }
-            temp_v0[0] += var_a0;
-            temp_v0[1] += var_a1;
+            bone[0] += var_a0;
+            bone[1] += var_a1;
         }
         if (i == 0) {
-            var_v1 = (sp80[0] - 4) < temp_v0[1];
+            var_v1 = (goal[0] - 4) < bone[1];
             if (var_v1 != 0) {
-                var_v1 = temp_v0[1] < (sp80[0] + 4);
+                var_v1 = bone[1] < (goal[0] + 4);
             }
             sp6B = var_v1;
         }
     }
-    D_800B2E00 &= ~0x80;
+    D_800B2E00.unk0_0 = 0;
     return sp84[0];
 }
 
@@ -674,14 +675,14 @@ void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
   * Returns 1 when finished, or 0 while interpolating
   */
 s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
-    Vec4f sp38;
+    f32 spline[4];
     f32 tValue;
     f32 rotateSpeed;
 
-    sp38.x = 10.0f;
-    sp38.y = 10.0f;
-    sp38.z = 500.0f;
-    sp38.w = -500.0f;
+    spline[0] = 10.0f;
+    spline[1] = 10.0f;
+    spline[2] = 500.0f;
+    spline[3] = -500.0f;
 
     //Calculate head turn animation's tValue (from 0.0f to 1.0f)
     if (arg0->headGoalAngle != arg0->headStartAngle) {
@@ -698,7 +699,7 @@ s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
     }
     
     //Get eased rotation speed (ease-in-out)
-    rotateSpeed = func_80004C5C(&sp38, tValue, NULL);
+    rotateSpeed = curves_hermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         rotateSpeed = -rotateSpeed;
     }
@@ -714,31 +715,31 @@ s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
 }
 
 s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
-    Vec4f sp38;
-    f32 sp34;
+    f32 spline[4];
+    f32 tValue;
     f32 var_fa0;
 
-    sp38.x = arg2;
-    sp38.y = arg2;
-    sp38.z = arg3;
-    sp38.w = -arg3;
+    spline[0] = arg2;
+    spline[1] = arg2;
+    spline[2] = arg3;
+    spline[3] = -arg3;
     if (arg0->headGoalAngle != arg0->headStartAngle) {
-        sp34 = ((f32) arg1[1] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
+        tValue = ((f32) arg1[1] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
     } else {
         return 1;
     }
 
-    if (sp34 > 1.0f) {
-        sp34 = 1.0f;
-    } else if (sp34 < 0.0f) {
-        sp34 = 0.0f;
+    if (tValue > 1.0f) {
+        tValue = 1.0f;
+    } else if (tValue < 0.0f) {
+        tValue = 0.0f;
     }
-    var_fa0 = func_80004C5C(&sp38, sp34, NULL);
+    var_fa0 = curves_hermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }
     arg1[1] += var_fa0 * gUpdateRateF;
-    if (sp34 == 1.0f || !(arg1[1] < 0x1FFF) || arg1[1] < -0x1FFE) {
+    if (tValue == 1.0f || !(arg1[1] < 0x1FFF) || arg1[1] < -0x1FFE) {
         arg1[1] = (s16) arg0->headGoalAngle;
         return 1;
     }
@@ -747,31 +748,31 @@ s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
 }
 
 s32 func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
-    Vec4f sp38;
-    f32 sp34;
+    f32 spline[4];
+    f32 tValue;
     f32 var_fa0;
 
-    sp38.x = arg2;
-    sp38.y = arg2;
-    sp38.z = arg3;
-    sp38.w = -arg3;
+    spline[0] = arg2;
+    spline[1] = arg2;
+    spline[2] = arg3;
+    spline[3] = -arg3;
     if (arg0->headGoalAngle != arg0->headStartAngle) {
-        sp34 = ((f32) arg1[0] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
+        tValue = ((f32) arg1[0] - arg0->headStartAngle) / ((f32) arg0->headGoalAngle - arg0->headStartAngle);
     } else {
         return 1;
     }
 
-    if (sp34 > 1.0f) {
-        sp34 = 1.0f;
-    } else if (sp34 < 0.0f) {
-        sp34 = 0.0f;
+    if (tValue > 1.0f) {
+        tValue = 1.0f;
+    } else if (tValue < 0.0f) {
+        tValue = 0.0f;
     }
-    var_fa0 = func_80004C5C((Vec4f* ) &sp38, sp34, NULL);
+    var_fa0 = curves_hermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }
     arg1[0] += var_fa0 * gUpdateRateF;
-    if (sp34 == 1.0f || !(arg1[0] < 0x1FFF) || arg1[0] < -0x1FFE) {
+    if (tValue == 1.0f || !(arg1[0] < 0x1FFF) || arg1[0] < -0x1FFE) {
         arg1[0] = arg0->headGoalAngle;
         return 1;
     }
@@ -940,7 +941,7 @@ void func_80034BC0(Object* obj, HeadAnimation* arg1) {
 
 void func_80034D94(u8 arg0, u8 arg1) {
     if (!arg0) {
-        D_800B2E00 = ((arg1 & 0xFF & 0xFF) << 7) | (D_800B2E00 & ~0x80);
+        D_800B2E00.unk0_0 = arg1;
     } else {
         STUBBED_PRINTF(" WARNING: Expr Contrl Flag does not exist \n");
     }

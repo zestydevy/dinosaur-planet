@@ -72,6 +72,8 @@
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
 232 = objects/232_VampireBat
+233 = objects/233_BigScorpionRobot
+234 = objects/234_ScorpionRobot
 236 = objects/236_WG_Triffid
 241 = objects/241_SkeetlaWall
 243 = objects/243_Lunaimar
@@ -123,6 +125,7 @@
 308 = objects/308_USEOBJ
 309 = objects/309_SEQOBJ
 311 = objects/311_IMMultiSeq
+312 = objects/312_NWMultiSeq
 314 = objects/314_foodbag
 315 = objects/315_sidefoodbag
 318 = objects/318_fish
@@ -160,6 +163,7 @@
 379 = objects/379_CF_ObjCreator
 382 = objects/382_CFIllusionClaw
 385 = objects/385
+388 = objects/388_CFbarrel
 393 = objects/393_CFMainSlideDoor
 396 = objects/396_CFSupTreasureCh
 398 = objects/398_CFMagicWall
@@ -182,6 +186,7 @@
 431 = objects/431_DFwhirlpool
 433 = objects/433_DFSH_Shrine
 435 = objects/435_KrazoaSpirit
+437 = objects/437_EWTrobotpatrol
 438 = objects/438_RobotBeam
 441 = objects/441_MMP_levelcontrol
 447 = objects/447_CCguardgiving
@@ -296,6 +301,7 @@
 638 = objects/638_DFPlevcontrol
 641 = objects/641_DFPLift
 644 = objects/644_DFP_floorbar
+646 = objects/646_DFP_ForceAway
 652 = objects/652_DFP_SpellPlace
 654 = objects/654_textblock
 658 = objects/658_DBPointMum
@@ -346,6 +352,7 @@
 767 = objects/767_SPItem
 768 = objects/768_SPShop
 772 = objects/772_SPitembeam
+775 = objects/775_WCTrex
 776 = objects/776_WCbouncycrate
 777 = objects/777_WCTrexChase
 778 = objects/778_WCSabreChase

@@ -1,0 +1,14 @@
+.text = 0x0:
+NWMultiSeq_ctor = 0x0;
+NWMultiSeq_dtor = 0xC;
+NWMultiSeq_setup = 0x18;
+NWMultiSeq_control = 0x138;
+NWMultiSeq_update = 0x338;
+NWMultiSeq_print = 0x344;
+NWMultiSeq_free = 0x398;
+NWMultiSeq_get_model_flags = 0x3D8;
+NWMultiSeq_get_data_size = 0x3E8;
+NWMultiSeq_anim_callback = 0x3FC;
+
+.rodata = 0x558:
+str_0 = 0x0; // absolute:0x558

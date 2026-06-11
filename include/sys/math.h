@@ -56,9 +56,9 @@
 // There are many cases where CIRCLE_WRAP is given a 16-bit value, 
 // which causes incorrect behavior on other compilers.
 #define CIRCLE_WRAP(x) { \
-    s32 angle = (s32)x; \
-    WRAP(angle, -0x8000, 0x8000) \
-    x = angle; \
+    s32 __angle = (s32)x; \
+    WRAP(__angle, -0x8000, 0x8000) \
+    x = __angle; \
 }
 #else
 #define CIRCLE_WRAP(x) WRAP(x, -0x8000, 0x8000)

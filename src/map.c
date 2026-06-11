@@ -48,6 +48,32 @@ Warp D_800B4A60;
 s16 gMobileMapID;
 s16 gMobileMapUnknown;
 Plane gFrustumPlanes[MAP_LAYER_COUNT];
+/**
+ * Render list values are a bitfield containing the index of the object or block & shape 
+ * being drawn and draw order. The layout is as follows:
+ *
+ * |-----|-------------------------------------------|-----------------|---|---------------|
+ * | bit |                 31 - 14                   |     13 - 7      | 6 |     5 - 0     |
+ * |-----|-------------------------------------------|-----------------|---|---------------|
+ * |     |                draw order                 | obj/shape index | * |  block index  |
+ * |-----|-------------------------------------------|-----------------|---|---------------|
+ *
+ * * Bit 6 denotes whether this represents an object or a block shape (1 = object, 0 = shape)
+ *
+ * Note that the block index in this case is an index into gBlocksToDraw and not the main
+ * array of loaded blocks.
+ *
+ * Draw order value ranges (max of 180 objects, 40 blocks, 400 shapes per block):
+ * - Opaque shapes   183600 - 200000 (16400)
+ * - Opaque objects  149820 - 150000 (180)
+ * - Transp shapes    83400 - 100000 (16600)   // +200 for render flag 0x2000
+ * - Transp objects   50000 -  50180 (180)
+ *
+ * @bug: Despite the intended maximum number of visible objects being 180 and the maximum
+ *       number of shapes being 400 (per block), the index for these in the bitfield is only large
+ *       enough to support a maximum of 127. Additionally, this is not 127 *visible* objects/shapes
+ *       (even though that's the implied intent), so the actual limit ends up being smaller.
+ */
 u32 gRenderList[MAX_RENDER_LIST_LENGTH];
 s16 gRenderListLength;
 Block *gBlocksToDraw[MAX_BLOCKS];
@@ -600,7 +626,7 @@ void init_maps(void) {
     sBlockTexScrollTable = mmAlloc(sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:texscroll"));
     bzero(sBlockTexScrollTable, sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS);
     bzero(gRenderList, sizeof(u32) * MAX_RENDER_LIST_LENGTH);
-    gRenderList[0] = -0x4000;
+    gRenderList[0] = ((1 << 18) - 1) << 14; // all draw order bits set (18 bits, starts at bit 14)
 }
 
 void track_tick(s32 arg0) {
@@ -2107,7 +2133,7 @@ void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 map
         } else {
             if ((OBJ_curve == objSetup->objId) || (OBJ_checkpoint4 == objSetup->objId)) {
                 if (OBJ_curve == objSetup->objId) {
-                    gDLL_26_Curves->vtbl->func_34((CurveSetup*)objSetup);
+                    gDLL_26_Curves->vtbl->add_curve_def((CurveSetup*)objSetup);
                 } else {
                     gDLL_4_Race->vtbl->func1((RaceCheckpointSetup*)objSetup);
                 }

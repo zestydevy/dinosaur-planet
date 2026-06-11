@@ -5,47 +5,47 @@
 #include "sys/rand.h"
 #include "sys/voxmap.h"
 #include "sys/segment_53F00.h"
+#include "macros.h"
+
+#define MAX_ROMCURVES 1300
 
 /*0x0*/ static CurveSetup *_bss_0;
 /*0x4*/ static CurveSetup *_bss_4;
-/*0x8*/ static CurveNode _bss_8[1300];
+/*0x8*/ static CurveNode _bss_8[MAX_ROMCURVES];
 /*0x28A8*/ static s32 _bss_28A8;
 
-s32 dll_26_func_1880(CurveSetup* arg0);
-s32 dll_26_func_1924(CurveSetup *setup);
-static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* a4, f32 a5);
-s32 dll_26_func_4704(UnkCurvesStruct* arg0);
-s32 dll_26_func_5698(CurveSetup* setup, s32 arg1, s32 arg2);
-s32 dll_26_func_577C(CurveSetup* setup, s32 arg1, s32 arg2);
+s32 curves_func_1880(CurveSetup* arg0);
+s32 curves_func_1924(CurveSetup* setup);
+static s32 curves_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* a4, f32 a5);
+s32 curves_func_4704(UnkCurvesStruct* arg0);
+s32 curves_func_5698(CurveSetup* setup, s32 arg1, s32 arg2);
+s32 curves_func_577C(CurveSetup* setup, s32 arg1, s32 arg2);
 
 // offset: 0x0 | ctor
-void dll_26_ctor(void *dll) { }
+void curves_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_26_dtor(void *dll) { }
+void curves_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_26_func_18(void) {
+void curves_func_18(void) {
     _bss_28A8 = 0;
 }
 
 // offset: 0x34 | func: 1 | export: 1
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_34.s")
-#else
-void dll_26_func_34(CurveSetup* arg0) {
+// official name: addCurveDef
+void curves_add_curve_def(CurveSetup* def) {
     s32 var_v1;
     s32 temp;
 
-    if ((_bss_28A8 && _bss_28A8) && _bss_28A8) {} // @fake
-    
-    if (_bss_28A8 == 1300) {
+    if (_bss_28A8 == MAX_ROMCURVES) {
+        STUBBED_PRINTF("curves.c: MAX_ROMCURVES exceeded!!\n");
         return;
     }
     
     var_v1 = 0;
-    while (var_v1 < _bss_28A8 && _bss_8[var_v1].uID < arg0->uID) {
-        var_v1 += 1;
+    while (var_v1 < _bss_28A8 && _bss_8[var_v1].uID < def->uID) {
+        var_v1++;
     }
     
     temp = _bss_28A8;
@@ -56,13 +56,15 @@ void dll_26_func_34(CurveSetup* arg0) {
     }
 
     _bss_28A8 += 1;
-    _bss_8[var_v1].setup = arg0;
-    _bss_8[var_v1].uID = arg0->uID;
+    if (_bss_28A8 == MAX_ROMCURVES) {
+        STUBBED_PRINTF("addCurveDef: max curves reached %d/%d\n", _bss_28A8, MAX_ROMCURVES);
+    }
+    _bss_8[var_v1].setup = def;
+    _bss_8[var_v1].uID = def->uID;
 }
-#endif
 
 // offset: 0x10C | func: 2 | export: 2
-void dll_26_func_10C(CurveSetup* setup) {
+void curves_func_10C(CurveSetup* setup) {
     s32 i;
     
     i = 0;
@@ -82,13 +84,13 @@ void dll_26_func_10C(CurveSetup* setup) {
 }
 
 // offset: 0x1BC | func: 3 | export: 3
-CurveNode *dll_26_func_1BC(s32 *count) {
+CurveNode *curves_func_1BC(s32 *count) {
     *count = _bss_28A8;
     return _bss_8;
 }
 
 // offset: 0x1E4 | func: 4 | export: 4
-s32 dll_26_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
+s32 curves_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
     CurveSetup* curveSetup;
     CurveSetup* var_s4;
     CurveSetup* var_s5;
@@ -140,7 +142,7 @@ s32 dll_26_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
 }
 
 // offset: 0x39C | func: 5 | export: 6
-CurveSetup* dll_26_func_39C(s32 curveUID) {
+CurveSetup* curves_func_39C(s32 curveUID) {
     s32 temp_t6;
     s32 max;
     s32 min;
@@ -168,7 +170,7 @@ CurveSetup* dll_26_func_39C(s32 curveUID) {
 }
 
 // offset: 0x438 | func: 6 | export: 20
-s32 dll_26_func_438(CurveSetup* arg0, s32 arg1) {
+s32 curves_func_438(CurveSetup* arg0, s32 arg1) {
     s32 sp38[4];
     s32 var_t0;
     s32 var_a2;
@@ -195,7 +197,7 @@ s32 dll_26_func_438(CurveSetup* arg0, s32 arg1) {
 }
 
 // offset: 0x4F0 | func: 7 | export: 21
-s32 dll_26_func_4F0(CurveSetup* arg0, s32 arg1, s32* arg2) {
+s32 curves_func_4F0(CurveSetup* arg0, s32 arg1, s32* arg2) {
     s32 var_v1;
     s32 i;
     s32 v0;
@@ -211,7 +213,7 @@ s32 dll_26_func_4F0(CurveSetup* arg0, s32 arg1, s32* arg2) {
 }
 
 // offset: 0x590 | func: 8 | export: 23
-s32 dll_26_func_590(CurveSetup* arg0, s32 arg1) {
+s32 curves_func_590(CurveSetup* arg0, s32 arg1) {
     s32 sp38[4];
     s32 var_t0;
     s32 var_a2;
@@ -238,80 +240,51 @@ s32 dll_26_func_590(CurveSetup* arg0, s32 arg1) {
 }
 
 // offset: 0x648 | func: 9
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_648.s")
-#else
-// probably correct but way off on the match
-f32 dll_26_func_648(f32 arg0, f32 arg1, f32 arg2, Vec3f* arg3) {
-    f32 diff[3];
-    f32 z0;
-    f32 x0;
-    f32 y0;
-    f32 y1;
-    f32 z1;
-    f32 x1;
-    f32 temp_fv0;
-    f32 temp_fv1_2;
-    f32 temp_fa0;
-    f32 var_fa1;
-    f32 var_ft2;
-    f32 zResult;
-    f32 xResult;
-    f32 yResult;
+static f32 curves_func_648(f32 arg0, f32 arg1, f32 arg2, Vec3f* arg3) {
+    f32 temp_f26;
+    f32 temp_f25;
+    f32 temp_f24;
+    f32 var_f27;
+    f32 var_f31;
+    f32 var_f30;
+    f32 var_f29;
+    f32 var_f28;
 
-    x1 = arg3[1].x;
-    x0 = arg3[0].x;
-    y1 = arg3[1].y;
-    y0 = arg3[0].y;
-    z1 = arg3[1].z;
-    z0 = arg3[0].z;
-    diff[0] = x1 - x0;
-    diff[1] = y1 - y0;
-    diff[2] = z1 - z0;
-    if ((diff[0] == 0.0f) && (diff[1] == 0.0f) && (diff[2] == 0.0f)) {
-        var_fa1 = 0.0f;
+    temp_f26 = arg3[1].x - arg3[0].x;
+    temp_f25 = arg3[1].y - arg3[0].y;
+    temp_f24 = arg3[1].z - arg3[0].z;
+    if ((0.0f == temp_f26) && (0.0f == temp_f25) && (0.0f == temp_f24)) {
+        var_f27 = 0.0f;
     } else {
-        var_fa1 = (((arg2 - z0) * diff[2]) + (((arg0 - x0) * diff[0]) + ((arg1 - y0) * diff[1]))) 
-            / ((diff[0] * diff[0]) + (diff[1] * diff[1]) + (diff[2] * diff[2]));
+        var_f27 = ((((arg0 - arg3[0].x) * temp_f26) + ((arg1 - arg3[0].y) * temp_f25) + ((arg2 - arg3[0].z) * temp_f24))) 
+            / ((SQ(temp_f26) + SQ(temp_f25) + SQ(temp_f24)));
     }
-    if (var_fa1 < 0.0f) {
-        xResult = x0;
-        yResult = y0;
-        zResult = z0;
-        temp_fv0 = xResult - arg0;
-        temp_fv1_2 = yResult - arg1;
-        temp_fa0 = zResult - arg2;
-        var_ft2 = -((temp_fv0 * temp_fv0) + (temp_fv1_2 * temp_fv1_2) + (temp_fa0 * temp_fa0));
-    } else if (var_fa1 > 1.0f) {
-        xResult = x1;
-        yResult = y1;
-        zResult = z1;
-        temp_fv0 = xResult - arg0;
-        temp_fv1_2 = yResult - arg1;
-        temp_fa0 = zResult - arg2;
-        var_ft2 = -((temp_fv0 * temp_fv0) + (temp_fv1_2 * temp_fv1_2) + (temp_fa0 * temp_fa0));
+    if (var_f27 < 0.0f) {
+        var_f31 = arg3[0].x;
+        var_f30 = arg3[0].y;
+        var_f29 = arg3[0].z;
+        var_f28 = ((var_f31 - arg0) * (var_f31 - arg0)) + ((var_f30 - arg1) * (var_f30 - arg1)) + ((var_f29 - arg2) * (var_f29 - arg2));
+        var_f28 = -var_f28;
+    } else if (var_f27 > 1.0f) {
+        var_f31 = arg3[1].x;
+        var_f30 = arg3[1].y;
+        var_f29 = arg3[1].z;
+        var_f28 = ((var_f31 - arg0) * (var_f31 - arg0)) + ((var_f30 - arg1) * (var_f30 - arg1)) + ((var_f29 - arg2) * (var_f29 - arg2));
+        var_f28 = -var_f28;
     } else {
-        xResult = x0 + (var_fa1 * diff[0]);
-        yResult = y0 + (var_fa1 * diff[1]);
-        zResult = z0 + (var_fa1 * diff[2]);
-        temp_fv0 = xResult - arg0;
-        temp_fv1_2 = yResult - arg1;
-        temp_fa0 = zResult - arg2;
-        var_ft2 = (temp_fv0 * temp_fv0) + (temp_fv1_2 * temp_fv1_2) + (temp_fa0 * temp_fa0);
+        var_f31 = (var_f27 * temp_f26) + arg3[0].x;
+        var_f30 = (var_f27 * temp_f25) + arg3[0].y;
+        var_f29 = (var_f27 * temp_f24) + arg3[0].z;
+        var_f28 = ((var_f31 - arg0) * (var_f31 - arg0)) + ((var_f30 - arg1) * (var_f30 - arg1)) + ((var_f29 - arg2) * (var_f29 - arg2));
     }
-    arg3[2].x = xResult;
-    arg3[2].y = yResult;
-    arg3[2].z = zResult;
-    return var_ft2;
+    arg3[2].x = var_f31;
+    arg3[2].y = var_f30;
+    arg3[2].z = var_f29;
+    return var_f28;
 }
-#endif
 
 // offset: 0x854 | func: 10 | export: 22
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_854.s")
-#else
-// needs dll_26_func_648 to be static
-s32 dll_26_func_854(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
+s32 curves_func_854(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     CurveSetup* temp_v0;
     s32 spAC[2];
     f32 temp_fa0;
@@ -330,13 +303,13 @@ s32 dll_26_func_854(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     sp6C[0].z = arg0->pos.z;
     for (var_s1 = 0, s3 = 1; var_s1 < 4; var_s1++, s3 <<= 1) {
         if (arg0->links[var_s1] >= 0) {
-            temp_v0 = dll_26_func_39C(arg0->links[var_s1]);
+            temp_v0 = curves_func_39C(arg0->links[var_s1]);
             if (temp_v0 != NULL) {
                 temp_s2 = arg1 == arg0->links[var_s1];
                 sp6C[1].x = temp_v0->pos.x;
                 sp6C[1].y = temp_v0->pos.y;
                 sp6C[1].z = temp_v0->pos.z;
-                dll_26_func_648(arg2, arg3, arg4, sp6C);
+                curves_func_648(arg2, arg3, arg4, sp6C);
                 temp_fv0 = sp6C[2].x - arg2;
                 temp_fv1 = sp6C[2].y - arg3;
                 temp_fa0 = sp6C[2].z - arg4;
@@ -356,10 +329,9 @@ s32 dll_26_func_854(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     }
     return -1;
 }
-#endif
 
 // offset: 0xA34 | func: 11 | export: 26
-void dll_26_func_A34(CurveSetup* arg0, s32* arg1) {
+void curves_func_A34(CurveSetup* arg0, s32* arg1) {
     CurveSetup* temp_v0_2;
     s32 temp_v1;
     s32 var_a0;
@@ -383,7 +355,7 @@ void dll_26_func_A34(CurveSetup* arg0, s32* arg1) {
         }
 
         if (arg1[2] >= 0) {
-            temp_v0_2 = dll_26_func_39C(arg1[2]);
+            temp_v0_2 = curves_func_39C(arg1[2]);
             if (temp_v0_2 != NULL) {
                 for (var_a0 = 0; var_a0 < 4; var_a0++) {
                     if ((temp_v0_2->links[var_a0] != -1) && !(temp_v0_2->unk1B & (1 << var_a0))) {
@@ -396,14 +368,14 @@ void dll_26_func_A34(CurveSetup* arg0, s32* arg1) {
 }
 
 // offset: 0xB8C | func: 12 | export: 27
-s32 dll_26_func_B8C(s32* arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
+s32 curves_func_B8C(s32* arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
     s32 var_s3;
     s32 i;
     CurveSetup* sp50[4];
 
     var_s3 = 0;
     for (i = 0; i < 4; i++) {
-        sp50[i] = dll_26_func_39C(arg0[i]);
+        sp50[i] = curves_func_39C(arg0[i]);
         if (sp50[i] != NULL) {
             arg1[i] = sp50[i]->pos.x;
             arg2[i] = sp50[i]->pos.y;
@@ -433,12 +405,12 @@ s32 dll_26_func_B8C(s32* arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
 }
 
 // offset: 0xD8C | func: 13 | export: 28
-s32 dll_26_func_D8C(CurveSetup* arg0) {
+s32 curves_func_D8C(CurveSetup* arg0) {
     s32 var_s1;
 
     var_s1 = 1;
-    while ((arg0 != NULL) && (dll_26_func_1924(arg0) == 0)) {
-        arg0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
+    while ((arg0 != NULL) && (curves_func_1924(arg0) == 0)) {
+        arg0 = curves_func_39C(curves_func_438(arg0, 0));
         if (arg0 != NULL) {
             var_s1 += 1;
         }
@@ -447,20 +419,20 @@ s32 dll_26_func_D8C(CurveSetup* arg0) {
 }
 
 // offset: 0xE40 | func: 14 | export: 29
-s32 dll_26_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4) {
+s32 curves_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4) {
     CurveSetup* temp_v0;
     s32 var_s5;
     s32 var_v0;
 
-    if (dll_26_func_1924(arg0) != 0) {
+    if (curves_func_1924(arg0) != 0) {
         var_v0 = 1;
     } else {
         var_v0 = 0;
     }
     var_s5 = 0;
     if (var_v0 == 0) {
-        while ((arg0 != NULL) && (dll_26_func_1924(arg0) == 0)) {
-            temp_v0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
+        while ((arg0 != NULL) && (curves_func_1924(arg0) == 0)) {
+            temp_v0 = curves_func_39C(curves_func_438(arg0, 0));
             if (temp_v0 != NULL) {
                 if (arg4 != NULL) {
                     arg4[var_s5 >> 2] = arg0->curveType;
@@ -485,8 +457,8 @@ s32 dll_26_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4)
             arg0 = temp_v0;
         }
     } else {
-        while ((arg0 != NULL) && (dll_26_func_1880(arg0) == 0)) {
-            temp_v0 = dll_26_func_39C(dll_26_func_590(arg0, 0));
+        while ((arg0 != NULL) && (curves_func_1880(arg0) == 0)) {
+            temp_v0 = curves_func_39C(curves_func_590(arg0, 0));
             if (temp_v0 != NULL) {
                 if (arg4 != NULL) {
                     arg4[var_s5 >> 2] = arg0->curveType;
@@ -515,7 +487,7 @@ s32 dll_26_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4)
 }
 
 // offset: 0x1420 | func: 15
-CurveSetup* dll_26_func_1420(s32 curveUID, s32* arg1) {
+static CurveSetup* curves_func_1420(s32 curveUID, s32* arg1) {
     s32 temp_t6;
     s32 max;
     s32 min;
@@ -546,17 +518,13 @@ CurveSetup* dll_26_func_1420(s32 curveUID, s32* arg1) {
 }
 
 // offset: 0x14C8 | func: 16 | export: 10
-void dll_26_func_14C8(CurveSetup** arg0, CurveSetup** arg1) {
+void curves_func_14C8(CurveSetup** arg0, CurveSetup** arg1) {
     *arg0 = _bss_0;
     *arg1 = _bss_4;
 }
 
 // offset: 0x14F4 | func: 17 | export: 7
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_14F4.s")
-#else
-// needs dll_26_func_648 to be static
-f32 dll_26_func_14F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5, f32* arg6, f32* arg7) {
+f32 curves_func_14F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5, f32* arg6, f32* arg7) {
     f32 var_fs0;
     s32 var_s1;
     s32 spAC;
@@ -579,12 +547,12 @@ f32 dll_26_func_14F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5
             sp7C[0].z = temp_s2->pos.z;
             for (var_s1 = 0; var_s1 < 4; var_s1++) {
                 if (!(temp_s2->unk1B & (1 << var_s1))) {
-                    temp_v0 = dll_26_func_39C(temp_s2->links[var_s1]);
+                    temp_v0 = curves_func_39C(temp_s2->links[var_s1]);
                     if (temp_v0 != NULL) {
                         sp7C[1].x = temp_v0->pos.x;
                         sp7C[1].y = temp_v0->pos.y;
                         sp7C[1].z = temp_v0->pos.z;
-                        temp_fv0 = dll_26_func_648(arg2, arg3, arg4, sp7C);
+                        temp_fv0 = curves_func_648(arg2, arg3, arg4, sp7C);
                         if (temp_fv0 < 0) {
                             var_fa0 = -temp_fv0;
                         } else {
@@ -610,16 +578,15 @@ f32 dll_26_func_14F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5
     }
     return var_fs0;
 }
-#endif
 
 // offset: 0x174C | func: 18 | export: 8
-f32 dll_26_func_174C(Object* arg0, s32 arg1) {
+f32 curves_func_174C(Object* arg0, s32 arg1) {
     CurveSetup* temp_v0;
     f32 temp_fa1;
     f32 temp_fv0;
     f32 temp_fv1;
 
-    temp_v0 = dll_26_func_39C(arg1);
+    temp_v0 = curves_func_39C(arg1);
     if ((temp_v0 != NULL) && (arg0 != NULL)) {
         temp_fv0 = temp_v0->pos.x - arg0->srt.transl.x;
         temp_fv1 = temp_v0->pos.y - arg0->srt.transl.y;
@@ -630,12 +597,12 @@ f32 dll_26_func_174C(Object* arg0, s32 arg1) {
 }
 
 // offset: 0x17F4 | func: 19 | export: 9
-f32 dll_26_func_17F4(f32 arg0, f32 arg1, s32 arg2) {
+f32 curves_func_17F4(f32 arg0, f32 arg1, s32 arg2) {
     CurveSetup* temp_v0;
     f32 temp_fv0;
     f32 temp_fv1;
 
-    temp_v0 = dll_26_func_39C(arg2);
+    temp_v0 = curves_func_39C(arg2);
     if (temp_v0 != NULL) {
         temp_fv0 = temp_v0->pos.x - arg0;
         temp_fv1 = temp_v0->pos.z - arg1;
@@ -645,7 +612,7 @@ f32 dll_26_func_17F4(f32 arg0, f32 arg1, s32 arg2) {
 }
 
 // offset: 0x1880 | func: 20 | export: 11
-s32 dll_26_func_1880(CurveSetup* arg0) {
+s32 curves_func_1880(CurveSetup* arg0) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
@@ -658,7 +625,7 @@ s32 dll_26_func_1880(CurveSetup* arg0) {
 }
 
 // offset: 0x1924 | func: 21 | export: 12
-s32 dll_26_func_1924(CurveSetup* arg0) {
+s32 curves_func_1924(CurveSetup* arg0) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
@@ -671,7 +638,7 @@ s32 dll_26_func_1924(CurveSetup* arg0) {
 }
 
 // offset: 0x19C8 | func: 22 | export: 13
-s32 dll_26_func_19C8(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3) {
+s32 curves_func_19C8(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3) {
     CurveSetup* temp_v0;
     s32 temp_a0_2;
     s32 var_s0;
@@ -687,7 +654,7 @@ s32 dll_26_func_19C8(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3) {
     
     for (var_s6 = 0; var_s6 < 4; var_s6++) {
         if (arg0->links[var_s6] >= 0) {
-            temp_v0 = dll_26_func_39C(arg0->links[var_s6]);
+            temp_v0 = curves_func_39C(arg0->links[var_s6]);
             for (var_s0 = 0; var_s0 < arg2; var_s0++) {
                 if (temp_v0->curveType == arg1[var_s0]) {
                     sp50[var_s2] = arg0->links[var_s6];
@@ -725,144 +692,264 @@ s32 dll_26_func_19C8(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3) {
 }
 
 // offset: 0x1B90 | func: 23 | export: 14
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_1B90.s")
-#else
-// https://decomp.me/scratch/AOhwW
-s32 dll_26_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
-    s32 temp;
-    s32 sp720;
-    s32 var_v0_2;
-    f32 temp_fa1;
-    f32 temp_fs0;
-    s32 temp_a0;
-    s32 sp70C;
-    s32 var_s2;
-    s32 sp6F8[4];
-    s32 sp6F4;
-    s32 sp6F0;
-    f32 sp6D8[4];
-    CurveSetup* temp_s4;
-    CurveSetup* temp_v0;
-    s32 temp_a1;
-    s32 var_a0;
-    s8 sp1BC[1300];
-    s32 sp11C[40];
-    f32 sp7C[40];
-    s32 var_a2;
-    s32 sp70;
-    s32 var_a3;
-    s32 var_s0;
+s32 curves_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
+    s32 var_r27;
+    s32 var_r26;
+    s32 var_r31;
+    s32 var_r28;
+    s32 var_r24;
+    CurveSetup* temp_r30;
+    s32 var_r21;
+    CurveSetup* temp_r3;
+    s32 sp684[4];
+    s32 sp680;
+    s32 sp67C;
+    f32 temp_f31;
+    f32 temp_f30;
+    f32 sp66C[4];
+    s32 var_r23;
+    s32 var_r22;
+    s8 sp158[MAX_ROMCURVES];
+    s32 spB8[40];
+    f32 sp18[40];
 
     if (arg0 == NULL) {
         return -1;
     }
-    dll_26_func_1420(arg0->uID, &sp6F0);
-    sp720 = 0;
-    for (sp70 = 0; sp70 < 4; sp70++) {
-        if (arg0->links[sp70] >= 0) {
-            for (var_v0_2 = 0; var_v0_2 < 1300; var_v0_2++) { sp1BC[var_v0_2] = 0; }
-            var_s0 = 1;
-            sp1BC[sp6F0] = 1;
-            temp_v0 = dll_26_func_1420(arg0->links[sp70], &sp6F4);
-            sp7C[0] = SQ(temp_v0->pos.x - arg0->pos.x) + SQ(temp_v0->pos.y - arg0->pos.y) + SQ(temp_v0->pos.z - arg0->pos.z);
-            sp11C[0] = sp6F4;
-            sp1BC[sp6F4] = 1;
-            sp70C = 0;
-            while (sp70C == 0) {
-                if (var_s0 > 0) {
-                    var_s0--;
-                    sp6F4 = sp11C[var_s0];
-                    temp_s4 = _bss_8[sp6F4].setup;
-                    temp_fs0 = sp7C[var_s0];
-                    if (arg1 == temp_s4->curveType && (arg2 == -1 || arg2 == temp_s4->unk18)) {
-                        sp70C = 1;
-                        sp6D8[sp720] = temp_fs0;
-                        sp6F8[sp720] = arg0->links[sp70];
-                        sp720 += 1;
-                        continue;
-                    }
-
-                    for (var_s2 = 0; var_s2 < 4; var_s2 += 1) {
-                        if (temp_s4->links[var_s2] >= 0) {
-                            temp_v0 = dll_26_func_1420(temp_s4->links[var_s2], &sp6F4);
-                            if (temp_v0 != NULL && sp1BC[sp6F4] == 0 && var_s0 < 40) {
-                                temp_fa1 = SQ(temp_s4->pos.x - temp_v0->pos.x) + temp_fs0 + SQ(temp_s4->pos.y - temp_v0->pos.y) + SQ(temp_s4->pos.z - temp_v0->pos.z);
-                                var_a2 = 0;
-                                while (var_a2 < var_s0 && temp_fa1 < sp7C[var_a2]) {
-                                    var_a2++;
+    curves_func_1420(arg0->uID, &sp67C);
+    var_r26 = 0;
+    var_r23 = 0;
+    while (var_r23 < 4) {
+        if (arg0->links[var_r23] > -1) {
+            var_r31 = 0;
+            while (var_r31 < MAX_ROMCURVES) {
+                sp158[var_r31] = 0;
+                var_r31 += 1;
+            }
+            sp158[sp67C] = 1;
+            temp_r30 = curves_func_1420(arg0->links[var_r23], &sp680);
+            var_r28 = 0;
+            sp18[var_r28] = SQ(temp_r30->pos.x - arg0->pos.x) + SQ(temp_r30->pos.y - arg0->pos.y) + SQ(temp_r30->pos.z - arg0->pos.z);
+            spB8[var_r28] = sp680;
+            var_r28++;
+            sp158[sp680] = 1;
+            var_r21 = 0;
+            do {
+                if (var_r28 > 0) {
+                    var_r28 -= 1;
+                    sp680 = spB8[var_r28];
+                    temp_r30 = _bss_8[sp680].setup;
+                    temp_f31 = sp18[var_r28];
+                    if ((temp_r30->curveType == arg1) && ((arg2 == -1) || (arg2 == temp_r30->unk18))) {
+                        var_r21 = 1;
+                        sp66C[var_r26] = temp_f31;
+                        sp684[var_r26] = arg0->links[var_r23];
+                        var_r26 += 1;
+                    } else {
+                        var_r22 = 0;
+                        while (var_r22 < 4) {
+                            if (temp_r30->links[var_r22] > -1) {
+                                temp_r3 = curves_func_1420(temp_r30->links[var_r22], &sp680);
+                                if ((temp_r3 != NULL) && (sp158[sp680] == 0) && (var_r28 < 0x28)) {
+                                    temp_f30 = temp_f31 
+                                            + SQ(temp_r30->pos.x - temp_r3->pos.x)
+                                            + SQ(temp_r30->pos.y - temp_r3->pos.y) 
+                                            + SQ(temp_r30->pos.z - temp_r3->pos.z);
+                                    var_r27 = 0;
+                                    while ((var_r27 < var_r28) && (sp18[var_r27] > temp_f30)) {
+                                        var_r27 += 1;
+                                    }
+                                    var_r24 = var_r28;
+                                    while (var_r24 > var_r27) {
+                                        spB8[var_r24] = spB8[var_r24 - 1];
+                                        sp18[var_r24] = sp18[var_r24 - 1];
+                                        var_r24 -= 1;
+                                    }
+                                    var_r28 += 1;
+                                    sp18[var_r27] = temp_f30;
+                                    spB8[var_r27] = sp680;
+                                    sp158[sp680] = 1;
                                 }
-                                var_a0 = var_s0;
-                                while (var_a2 < var_a0) {
-                                    sp11C[var_a0] = sp11C[var_a0 - 1];
-                                    sp7C[var_a0] = sp7C[var_a0 - 1];
-                                    var_a0--;
-                                }
-                                sp7C[var_a2] = temp_fa1;
-                                sp11C[var_a2] = sp6F4;
-                                sp1BC[sp6F4] = 1;
-                                var_s0 += 1;
                             }
+                            var_r22 += 1;
                         }
                     }
                 } else {
-                    sp70C = 1;
+                    var_r21 = 1;
                 }
-            }
+            } while (var_r21 == 0);
         }
+        var_r23 += 1;
     }
-
-    if (sp720 == 0) {
+    if (var_r26 == 0) {
         return -1;
     }
-    if (sp720 == 1) {
+    if (var_r26 == 1) {
         *arg3 = arg0->uID;
-        return sp6F8[0];
+        return sp684[0];
     }
-    if (sp720 >= 2) {
-        for (var_a3 = 0, temp = 0; var_a3 < sp720; var_a3++) {
-            temp_a1 = sp720 - 1;
-            if (sp6F8[var_a3] == *arg3) {
-                while (var_a3 < temp_a1) {
-                    sp6F8[var_a3] = sp6F8[var_a3 + 1];
-                    sp6D8[var_a3] = sp6D8[var_a3 + 1];
-                    var_a3++;
+    if (var_r26 > 1) {
+        var_r31 = 0;
+        while (var_r31 < var_r26) {
+            if (sp684[var_r31] == *arg3) {
+                while (var_r31 < (var_r26 - 1)) {
+                    sp684[var_r31] = sp684[var_r31 + 1];
+                    sp66C[var_r31] = sp66C[var_r31 + 1];
+                    var_r31 += 1;
                 }
-                sp720--;
+                var_r26 -= 1;
             }
+            var_r31 += 1;
         }
         *arg3 = arg0->uID;
-        for (var_a3 = 0; var_a3 < sp720; var_a3++) {
-            if (sp6D8[var_a3] < sp6D8[temp]) {
-                temp = var_a3;
-            }            
+        var_r27 = 0;
+        var_r31 = 0;
+        while (var_r31 < var_r26) {
+            if (sp66C[var_r31] < sp66C[var_r27]) {
+                var_r27 = var_r31;
+            }
+            var_r31 += 1;
         }
-        return sp6F8[temp];
+        return sp684[var_r27];
     }
     return -1;
 }
-#endif
 
 // offset: 0x218C | func: 24 | export: 15
-s32 dll_26_func_218C(s32 arg0) {
+s32 curves_func_218C(s32 arg0) {
     CurveSetup* temp_a0;
     s32 i;
 
+    STUBBED_PRINTF(" Curve Id %i ", arg0);
     for (i = 0; i < _bss_28A8; i++) {
         temp_a0 = _bss_8[i].setup;
-        if ((temp_a0->curveType == 0x15) && (arg0 == temp_a0->type15.unk34)) {
-            return temp_a0->uID;
+        if (temp_a0->curveType == 0x15) {
+            STUBBED_PRINTF(" CI %i ", temp_a0->type15.unk34);
+            if (arg0 == temp_a0->type15.unk34) {
+                return temp_a0->uID;
+            }
         }
     }
     return -1;
 }
 
 // offset: 0x21FC | func: 25 | export: 16
-s32 dll_26_func_21FC(s32 arg1, s32 arg2, s32* arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_21FC.s")
+s32 curves_func_21FC(s32 arg0, s32 arg1, s32 arg2, s32* arg3) {
+    s32 var_r23;
+    s32 var_r25;
+    CurveSetup* temp_r31;
+    s32 var_r30;
+    s32 var_r27;
+    f32 temp_f31;
+    s32 var_r21;
+    s32 var_r29;
+    s32 sp688[4];
+    s32 sp684;
+    s32 sp680;
+    s32 var_r24;
+    CurveSetup* temp_r3;
+    f32 sp670[4];
+    CurveSetup *new_var;
+    s32 var_r22;
+    f32 temp_f30;
+    s8 sp15C[MAX_ROMCURVES];
+    s32 spBC[40];
+    f32 sp1C[40];
+    s8 sp18[4];
+
+    new_var = curves_func_1420(arg0, &sp680);
+    if (new_var == NULL) {
+        return -1;
+    }
+    var_r25 = 0;
+    var_r23 = 0;
+    while (var_r23 < 4) {
+        if (new_var->links[var_r23] > -1) {
+            var_r27 = 0;
+            while (var_r27 < MAX_ROMCURVES) {
+                sp15C[var_r27] = 0;
+                var_r27 += 1;
+            }
+            sp15C[sp680] = 1;
+            temp_r3 = curves_func_1420(new_var->links[var_r23], &sp684);
+            var_r29 = 0;
+            sp1C[var_r29] = SQ(temp_r3->pos.x - new_var->pos.x) 
+                + SQ(temp_r3->pos.y - new_var->pos.y) 
+                + SQ(temp_r3->pos.z - new_var->pos.z);
+            spBC[var_r29] = sp684;
+            var_r29++;
+            sp15C[sp684] = 1;
+            var_r21 = 0;
+            do {
+                if (var_r29 > 0) {
+                    var_r29 -= 1;
+                    sp684 = spBC[var_r29];
+                    temp_r31 = _bss_8[sp684].setup;
+                    temp_f31 = sp1C[var_r29];
+                    if (((temp_r31->curveType == arg1) || (arg1 == -1)) 
+                            && ((temp_r31->unk.unk31 == arg2) || (temp_r31->unk.unk32 == arg2) || (temp_r31->unk.unk33 == arg2))) {
+                        var_r21 = 1;
+                        sp670[var_r25] = temp_f31;
+                        if (var_r25 < 4) {
+                            sp688[var_r25] = temp_r31->uID;
+                            sp18[var_r25] = var_r23;
+                            var_r25 += 1;
+                        }
+                    } else {
+                        var_r22 = 0;
+                        while (var_r22 < 4) {
+                            if (temp_r31->links[var_r22] > -1) {
+                                temp_r3 = curves_func_1420(temp_r31->links[var_r22], &sp684);
+                                if ((temp_r3 != NULL) && (sp15C[sp684] == 0) && (var_r29 < 0x28)) {
+                                    temp_f30 = temp_f31
+                                        + SQ(temp_r31->pos.x - temp_r3->pos.x) 
+                                        + SQ(temp_r31->pos.y - temp_r3->pos.y) 
+                                        + SQ(temp_r31->pos.z - temp_r3->pos.z);
+                                    var_r30 = 0;
+                                    while ((var_r30 < var_r29) && (sp1C[var_r30] > temp_f30)) {
+                                        var_r30 += 1;
+                                    }
+                                    var_r24 = var_r29;
+                                    while (var_r24 > var_r30) {
+                                        spBC[var_r24] = spBC[var_r24 - 1];
+                                        sp1C[var_r24] = sp1C[var_r24 - 1];
+                                        var_r24 -= 1;
+                                    }
+                                    var_r29 += 1;
+                                    sp1C[var_r30] = temp_f30;
+                                    spBC[var_r30] = sp684;
+                                    sp15C[sp684] = 1;
+                                }
+                            }
+                            var_r22 += 1;
+                        }
+                    }
+                } else {
+                    var_r21 = 1;
+                }
+            } while (var_r21 == 0);
+        }
+        var_r23 += 1;
+    }
+    if (var_r25 > 0) {
+        var_r30 = 0;
+        var_r27 = 0;
+        while (var_r27 < var_r25) {
+            if (sp670[var_r27] < sp670[var_r30]) {
+                var_r30 = var_r27;
+            }
+            var_r27 += 1;
+        }
+        if (arg3 != NULL) {
+            *arg3 = sp18[var_r30];
+        }
+        return sp688[var_r30];
+    }
+    return -1;
+}
 
 // offset: 0x277C | func: 26 | export: 17
-s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
+s32 curves_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     f32 var_fs0;
     f32 var_fs1;
     s32 i;
@@ -900,7 +987,7 @@ s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 }
 
 // offset: 0x291C | func: 27 | export: 18
-s32 dll_26_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
+s32 curves_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
     CurveSetup* temp_v0;
     CurveSetup* var_s1;
     s32 sp64;
@@ -912,7 +999,7 @@ s32 dll_26_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
     s32 var_v0;
 
     sp64 = arg0;
-    var_s1 = dll_26_func_39C(sp64);
+    var_s1 = curves_func_39C(sp64);
     var_s5 = 0;
     arg4[0] = 200000.0f;
 
@@ -927,8 +1014,8 @@ s32 dll_26_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
         }
 
         if (var_s0 != -1) {
-            temp_v0 = dll_26_func_39C(var_s0);
-            if (dll_26_func_2AE8(arg1, arg2, arg3, var_s1, temp_v0, 1000.0f) != 0) {
+            temp_v0 = curves_func_39C(var_s0);
+            if (curves_func_2AE8(arg1, arg2, arg3, var_s1, temp_v0, 1000.0f) != 0) {
                 temp_fv0 = var_s1->pos.x - arg1;
                 temp_fv1 = var_s1->pos.y - arg2;
                 temp_fa1 = var_s1->pos.z - arg3;
@@ -952,7 +1039,7 @@ s32 dll_26_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
 }
 
 // offset: 0x2AE8 | func: 28
-static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* a4, f32 a5) {
+static s32 curves_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* a4, f32 a5) {
     f32 temp_fa1;
     f32 temp_ft4;
     f32 temp_ft5;
@@ -976,35 +1063,120 @@ static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* 
 }
 
 // offset: 0x2C20 | func: 29 | export: 30
-s32 dll_26_func_2C20(s32 *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4, f32 *arg5, f32 *arg6);
-// https://decomp.me/scratch/229KB
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_2C20.s")
+s32 curves_func_2C20(s32* arg0, f32 farg0, f32 farg1, f32 farg2, f32* arg4, f32* arg5, f32* arg6) {
+    f32 var_f31;
+    f32 var_f30;
+    f32 temp_f27;
+    f32 temp_f25;
+    f32 temp_f1;
+    f32 var_f24;
+    f32 var_f23;
+    f32 temp_f29;
+    f32 var_f28;
+    f32 var_f22;
+    CurveSetup* sp34[4];
+    Vec3f sp24;
+    f32 temp_f26;
+    s32 var_r31;
+
+    var_r31 = 0;
+    while (var_r31 < 4) {
+        sp34[var_r31] = curves_func_39C(arg0[var_r31]);
+        var_r31 += 1;
+    }
+    temp_f27 = sp34[2]->pos.x - sp34[1]->pos.x;
+    var_f24 = temp_f27;
+    temp_f26 = sp34[2]->pos.z - sp34[1]->pos.z;
+    var_f23 = temp_f26;
+    if (sp34[0] != NULL) {
+        var_f31 = sp34[1]->pos.x - sp34[0]->pos.x;
+        var_f30 = sp34[1]->pos.z - sp34[0]->pos.z;
+    } else {
+        var_f31 = temp_f27;
+        var_f30 = temp_f26;
+    }
+    var_f31 = 0.5f * (var_f31 + temp_f27);
+    var_f30 = 0.5f * (var_f30 + temp_f26);
+    temp_f1 = sqrtf(SQ(var_f31) + SQ(var_f30));
+    if (temp_f1 != 0.0f) {
+        var_f31 /= temp_f1;
+        var_f30 /= temp_f1;
+    }
+    sp24.x = var_f31;
+    sp24.y = var_f30;
+    sp24.z = -((sp24.x * sp34[1]->pos.x) + (sp24.y * sp34[1]->pos.z));
+    var_f28 = (sp24.x * var_f24) + (sp24.y * var_f23);
+    if (var_f28 != 0.0f) {
+        var_f28 = -(sp24.z + ((sp24.x * farg0) + (sp24.y * farg2))) / var_f28;
+    }
+    temp_f27 = sp34[2]->pos.x - sp34[1]->pos.x;
+    temp_f26 = sp34[2]->pos.z - sp34[1]->pos.z;
+    if (sp34[3] != NULL) {
+        var_f31 = sp34[3]->pos.x - sp34[2]->pos.x;
+        var_f30 = sp34[3]->pos.z - sp34[2]->pos.z;
+    } else {
+        var_f31 = temp_f27;
+        var_f30 = temp_f26;
+    }
+    var_f31 = 0.5f * (var_f31 + temp_f27);
+    var_f30 = 0.5f * (var_f30 + temp_f26);
+    temp_f1 = sqrtf(SQ(var_f31) + SQ(var_f30));
+    if (temp_f1 != 0.0f) {
+        var_f31 /= temp_f1;
+        var_f30 /= temp_f1;
+    }
+    sp24.x = var_f31;
+    sp24.y = var_f30;
+    sp24.z = -((sp24.x * sp34[2]->pos.x) + (sp24.y * sp34[2]->pos.z));
+    var_f22 = (sp24.x * var_f24) + (sp24.y * var_f23);
+    if (var_f22 != 0.0f) {
+        var_f22 = -(sp24.z + ((sp24.x * farg0) + (sp24.y * farg2))) / var_f22;
+    }
+    var_f28 = -var_f28 / (var_f22 - var_f28);
+    if ((var_f28 >= 0.0f) && (var_f28 < 1.0f)) {
+        temp_f25 = sp34[2]->pos.y - sp34[1]->pos.y;
+        temp_f1 = sqrtf(SQ(temp_f27) + SQ(temp_f25) + SQ(temp_f26));
+        if (temp_f1 > 0.0f) {
+            temp_f29 = 1.0f / temp_f1;
+            var_f24 = -temp_f27 * temp_f29;
+            var_f23 = -temp_f26 * temp_f29;
+        }
+        temp_f27 = ((temp_f27 * var_f28) + sp34[1]->pos.x);
+        temp_f25 = ((temp_f25 * var_f28) + sp34[1]->pos.y);
+        temp_f26 = ((temp_f26 * var_f28) + sp34[1]->pos.z);
+        *arg4 = -((temp_f27 * var_f23) - (temp_f26 * var_f24)) + ((farg0 * var_f23) - (farg2 * var_f24));
+        *arg5 = farg1 - temp_f25;
+        *arg6 = var_f28;
+        return 1;
+    }
+    return 0;
+}
 
 // offset: 0x3018 | func: 30 | export: 31
-CurveSetup *dll_26_func_3018(CurveSetup *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4) {
+CurveSetup *curves_func_3018(CurveSetup *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4) {
     f32 sp8C;
     f32 sp88;
     f32 sp84;
     s32 sp74[4];
 
-    while (!dll_26_func_1924(arg0)) {
-        dll_26_func_A34(arg0, sp74);
-        if ((dll_26_func_2C20(sp74, arg1, arg2, arg3, &sp8C, &sp88, &sp84) != 0) && (sp8C > -300.0f) && (sp8C < 300.0f) && (sp88 > -100.0f) && (sp88 < 100.0f)) {
+    while (!curves_func_1924(arg0)) {
+        curves_func_A34(arg0, sp74);
+        if ((curves_func_2C20(sp74, arg1, arg2, arg3, &sp8C, &sp88, &sp84) != 0) && (sp8C > -300.0f) && (sp8C < 300.0f) && (sp88 > -100.0f) && (sp88 < 100.0f)) {
             *arg4 = sp84;
             return arg0;
         }
-        arg0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
+        arg0 = curves_func_39C(curves_func_438(arg0, 0));
     }
     *arg4 = 0.0f;
     return arg0;
 }
 
 // offset: 0x31E0 | func: 31 | export: 32
-void dll_26_func_31E0(CurveSetup *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg4) {
+void curves_func_31E0(CurveSetup *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg4) {
     CurveSetup *temp_v0;
     f32 xDiff, yDiff, zDiff;
 
-    temp_v0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
+    temp_v0 = curves_func_39C(curves_func_438(arg0, 0));
     if (temp_v0 == NULL) {
         *arg1 = arg0->pos.x;
         *arg2 = arg0->pos.y;
@@ -1022,7 +1194,7 @@ void dll_26_func_31E0(CurveSetup *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg
 }
 
 // offset: 0x32D8 | func: 32 | export: 33
-f32 dll_26_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f32 arg4, f32 arg5) {
+f32 curves_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f32 arg4, f32 arg5) {
     CurveSetup *temp_v0_4;
     CurveSetup *var_s1;
     f32 *temp_v0_2;
@@ -1046,11 +1218,11 @@ f32 dll_26_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
         var_s2 = 0;
         var_s1 = arg0;
         do {
-            if (dll_26_func_1924(var_s1) != 0) {
+            if (curves_func_1924(var_s1) != 0) {
                 var_s2 = 1;
                 var_s5 = 0;
             } else {
-                var_s1 = dll_26_func_39C(dll_26_func_438(var_s1, 0));
+                var_s1 = curves_func_39C(curves_func_438(var_s1, 0));
                 if (var_s1 == arg1) {
                     var_s2 = 1;
                     var_s5 = 1;
@@ -1067,7 +1239,7 @@ f32 dll_26_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
             arg1 = var_s1;
             arg3 = temp_v0_2;
         }
-        arg0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
+        arg0 = curves_func_39C(curves_func_438(arg0, 0));
         xDiff = arg0->pos.x - arg2[0];
         yDiff = arg0->pos.y - arg2[1];
         zDiff = arg0->pos.z - arg2[2];
@@ -1080,7 +1252,7 @@ f32 dll_26_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
                 var_s2 = 1;
                 magnitude += sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
             } else {
-                temp_v0_4 = dll_26_func_39C(dll_26_func_438(arg0, 0));
+                temp_v0_4 = curves_func_39C(curves_func_438(arg0, 0));
                 xDiff = temp_v0_4->pos.x - arg0->pos.x;
                 yDiff = temp_v0_4->pos.y - arg0->pos.y;
                 zDiff = temp_v0_4->pos.z - arg0->pos.z;
@@ -1096,7 +1268,7 @@ f32 dll_26_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
 }
 
 // offset: 0x35AC | func: 33 | export: 19
-s32 dll_26_func_35AC(f32 arg0, f32 arg1, f32 arg2) {
+s32 curves_func_35AC(f32 arg0, f32 arg1, f32 arg2) {
     CurveSetup* temp_v1;
     s32 sp6C[20];
     s32 var_s1;
@@ -1114,13 +1286,13 @@ s32 dll_26_func_35AC(f32 arg0, f32 arg1, f32 arg2) {
     }
    
     while (var_s1 != 0) {
-        if (dll_26_func_291C(sp6C[0], arg0, arg1, arg2, &sp5C) != 0) {
+        if (curves_func_291C(sp6C[0], arg0, arg1, arg2, &sp5C) != 0) {
             return sp6C[0];
         }
-        temp_s2 = dll_26_func_39C(sp6C[0])->unk18;
+        temp_s2 = curves_func_39C(sp6C[0])->unk18;
         var_v0 = 0;
         while (var_v0 < var_s1) {
-            if (temp_s2 == dll_26_func_39C(sp6C[var_v0])->unk18) {
+            if (temp_s2 == curves_func_39C(sp6C[var_v0])->unk18) {
                 var_s1 -= 1;
                 sp6C[var_v0] = sp6C[var_s1];
             } else {
@@ -1132,11 +1304,7 @@ s32 dll_26_func_35AC(f32 arg0, f32 arg1, f32 arg2) {
 }
 
 // offset: 0x374C | func: 34 | export: 24
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_374C.s")
-#else
-// needs dll_26_func_648 to be static
-s32 dll_26_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
+s32 curves_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     CurveSetup* temp_v0;
     s32 spAC[2];
     f32 temp_fa0;
@@ -1155,13 +1323,13 @@ s32 dll_26_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     sp6C[0].z = arg0->pos.z;
     for (var_s1 = 0, s3 = 1; var_s1 < 4; var_s1++, s3 <<= 1) {
         if (arg0->links[var_s1] >= 0) {
-            temp_v0 = dll_26_func_39C(arg0->links[var_s1]);
+            temp_v0 = curves_func_39C(arg0->links[var_s1]);
             if (temp_v0 != NULL) {
                 temp_s2 = arg1 == arg0->links[var_s1];
                 sp6C[1].x = temp_v0->pos.x;
                 sp6C[1].y = temp_v0->pos.y;
                 sp6C[1].z = temp_v0->pos.z;
-                dll_26_func_648(arg2, arg3, arg4, sp6C);
+                curves_func_648(arg2, arg3, arg4, sp6C);
                 temp_fv0 = sp6C[2].x - arg2;
                 temp_fv1 = sp6C[2].y - arg3;
                 temp_fa0 = sp6C[2].z - arg4;
@@ -1181,14 +1349,139 @@ s32 dll_26_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     }
     return -1;
 }
-#endif
 
 // offset: 0x3930 | func: 35 | export: 25
-s32 dll_26_func_3930(CurveSetup *arg0, f32 arg1, f32 arg2, s32 *arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_3930.s")
+s32 curves_func_3930(CurveSetup* arg0, f32 arg1, f32 arg2, s32* arg3) {
+    s32 var_r26;
+    s32 var_r28;
+    s32 var_r31;
+    s32 var_r27;
+    s32 var_r23;
+    CurveSetup* temp_r30;
+    s32 var_r21;
+    CurveSetup* temp_r3_2;
+    s32 sp684[4];
+    s32 sp680;
+    s32 sp67C;
+    f32 temp_f31;
+    f32 temp_f30;
+    f32 sp66C[4];
+    CurveSetup* temp;
+    s32 var_r22;
+    s32 var_r25;
+    s8 sp158[MAX_ROMCURVES];
+    s32 spB8[40];
+    f32 sp18[40];
+
+    if (arg0 == NULL) {
+        return -1;
+    }
+    STUBBED_PRINTF("Search\n");
+    curves_func_1420(arg0->uID, &sp67C);
+    var_r28 = 0;
+    var_r25 = 0;
+    while (var_r25 < 4) {
+        if (arg0->links[var_r25] > -1) {
+            STUBBED_PRINTF("link:(%d) %d\n", var_r25, arg0->links[var_r25]);
+            var_r31 = 0;
+            while (var_r31 < MAX_ROMCURVES) {
+                sp158[var_r31] = 0;
+                var_r31 += 1;
+            }
+            sp158[sp67C] = 1;
+            temp_r30 = curves_func_1420(arg0->links[var_r25], &sp680);
+            var_r27 = 0;
+            sp18[var_r27] = SQ(temp_r30->pos.x - arg0->pos.x) + SQ(temp_r30->pos.y - arg0->pos.y) + SQ(temp_r30->pos.z - arg0->pos.z);
+            spB8[var_r27] = sp680;
+            var_r27++;
+            sp158[sp680] = 1;
+            var_r21 = 0;
+            do {
+                if (var_r27 > 0) {
+                    var_r27 -= 1;
+                    sp680 = spB8[var_r27];
+                    temp_r30 = _bss_8[sp680].setup;
+                    temp_f31 = sp18[var_r27];
+                    temp = temp_r30;
+                    if (temp->unk.unk34 == 1) {
+                        var_r21 = 1;
+                        sp66C[var_r28] = temp_f31;
+                        sp684[var_r28] = arg0->links[var_r25];
+                        var_r28 += 1;
+                        STUBBED_PRINTF("Found: %d\n", temp_r30->uID);
+                    } else {
+                        var_r22 = 0;
+                        while (var_r22 < 4) {
+                            if (temp_r30->links[var_r22] > -1) {
+                                temp_r3_2 = curves_func_1420(temp_r30->links[var_r22], &sp680);
+                                if ((temp_r3_2 != NULL) && (sp158[sp680] == 0) && (var_r27 < 0x28)) {
+                                    temp_f30 = temp_f31
+                                        + SQ(temp_r30->pos.x - temp_r3_2->pos.x) 
+                                        + SQ(temp_r30->pos.y - temp_r3_2->pos.y)
+                                        + SQ(temp_r30->pos.z - temp_r3_2->pos.z);
+                                    var_r26 = 0;
+                                    while ((var_r26 < var_r27) && (sp18[var_r26] > temp_f30)) {
+                                        var_r26 += 1;
+                                    }
+                                    var_r23 = var_r27;
+                                    while (var_r23 > var_r26) {
+                                        spB8[var_r23] = spB8[var_r23 - 1];
+                                        sp18[var_r23] = sp18[var_r23 - 1];
+                                        var_r23 -= 1;
+                                    }
+                                    var_r27 += 1;
+                                    sp18[var_r26] = temp_f30;
+                                    spB8[var_r26] = sp680;
+                                    sp158[sp680] = 1;
+                                }
+                            }
+                            var_r22 += 1;
+                        }
+                    }
+                } else {
+                    var_r21 = 1;
+                }
+            } while (var_r21 == 0);
+        }
+        var_r25 += 1;
+    }
+    STUBBED_PRINTF("%d\n", var_r28);
+    if (var_r28 == 0) {
+        return -1;
+    }
+    if (var_r28 == 1) {
+        *arg3 = arg0->uID;
+        return sp684[0];
+    }
+    if (var_r28 > 1) {
+        var_r31 = 0;
+        while (var_r31 < var_r28) {
+            if (sp684[var_r31] == *arg3) {
+                while (var_r31 < (var_r28 - 1)) {
+                    sp684[var_r31] = sp684[var_r31 + 1];
+                    sp66C[var_r31] = sp66C[var_r31 + 1];
+                    var_r31 += 1;
+                }
+                var_r28 -= 1;
+            }
+            var_r31 += 1;
+        }
+        *arg3 = arg0->uID;
+        var_r26 = 0;
+        var_r31 = 0;
+        while (var_r31 < var_r28) {
+            if (sp66C[var_r31] < sp66C[var_r26]) {
+                var_r26 = var_r31;
+            }
+            var_r31 += 1;
+        }
+        return sp684[var_r26];
+    }
+    return -1;
+}
 
 // offset: 0x3F00 | func: 36 | export: 5
-s32 dll_26_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
+s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     f32 temp_fs0;
     f32 temp_fv0;
     f32 temp_fv1;
@@ -1264,7 +1557,7 @@ s32 dll_26_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
 }
 
 // offset: 0x4288 | func: 37 | export: 34
-s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s32 arg4) {
+s32 curves_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s32 arg4) {
     f32 zDiff;
     f32 xDiff;
     f32 yDiff;
@@ -1275,31 +1568,31 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
         return 1;
     }
     
-    var_a0 = dll_26_func_3F00(arg1, arg3, 1, arg4, 0xC);
+    var_a0 = curves_func_3F00(arg1, arg3, 1, arg4, 0xC);
     if (var_a0 != -1) {
         if (arg0->unk80 != 0) {
-            arg0->unkA0 = dll_26_func_39C(var_a0);
-            var_a0 = dll_26_func_438(arg0->unkA0, -1);
+            arg0->unkA0 = curves_func_39C(var_a0);
+            var_a0 = curves_func_438(arg0->unkA0, -1);
             if (var_a0 == -1) {
                 return 1;
             }
         }
         
-        arg0->unkA0 = dll_26_func_39C(var_a0);
+        arg0->unkA0 = curves_func_39C(var_a0);
         if (arg0->unkA0 == NULL) {
             arg0->unkA0 = NULL;
             return 1;
         }
         if (arg0->unk80 != 0) {
-            var_v0 = dll_26_func_590(arg0->unkA0, -1);
+            var_v0 = curves_func_590(arg0->unkA0, -1);
         } else {
-            var_v0 = dll_26_func_438(arg0->unkA0, -1);
+            var_v0 = curves_func_438(arg0->unkA0, -1);
         }
         if (var_v0 == -1) {
             return 1;
         }
         
-        arg0->unkA4 = dll_26_func_39C(var_v0);
+        arg0->unkA4 = curves_func_39C(var_v0);
         if (arg0->unkA4 == NULL) {
             arg0->unkA4 = NULL;
             return 1;
@@ -1333,18 +1626,18 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
         arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
         
-        if (dll_26_func_4704(arg0) != 0) {
+        if (curves_func_4704(arg0) != 0) {
             return 1;
         }
         
-        arg0->unk94 = func_80004C5C;
-        arg0->unk98 = (unk_curve_func_2)func_80004CE8;
+        arg0->splineFunc = curves_hermite;
+        arg0->splineConverterFunc = curves_hermite_converter;
         arg0->unk84 = arg0->unkA8;
         arg0->unk88 = arg0->unkC8;
         arg0->unk8C = arg0->unkE8;
-        arg0->unk90 = 8;
+        arg0->numControlPoints = 8;
         
-        func_80005094(arg0);
+        curves_move(arg0);
         
         return 0;
     }
@@ -1353,7 +1646,7 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
 }
 
 // offset: 0x4704 | func: 38 | export: 35
-s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
+s32 curves_func_4704(UnkCurvesStruct* arg0) {
     s32 var_v0;
 
     if (arg0 == NULL) {
@@ -1368,12 +1661,12 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
     memcpy(arg0->unkC8, arg0->unkD8, sizeof(f32) * 4);
     memcpy(arg0->unkE8, arg0->unkF8, sizeof(f32) * 4);
     if (arg0->unk80 != 0) {
-        var_v0 = dll_26_func_590(arg0->unkA0, -1);
+        var_v0 = curves_func_590(arg0->unkA0, -1);
     } else {
-        var_v0 = dll_26_func_438(arg0->unkA0, -1);
+        var_v0 = curves_func_438(arg0->unkA0, -1);
     }
     if (var_v0 != -1) {
-        arg0->unkA4 = dll_26_func_39C(var_v0);
+        arg0->unkA4 = curves_func_39C(var_v0);
         if (arg0->unkA4 != NULL) {
             if (arg0->unk80 != 0) {
                 arg0->unkB8[0] = arg0->unkA0->pos.x;
@@ -1406,14 +1699,14 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
                 arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
             }
-            if (arg0->unk90 != 0) {
-                func_8000523C(arg0);
+            if (arg0->numControlPoints != 0) {
+                curves_setup_move_network_curve(arg0);
             }
             if (arg0->unk80 != 0) {
-                func_800053B0(arg0, -1.0f);
+                curves_func_800053B0(arg0, -1.0f);
                 return 0;
             }
-            func_800053B0(arg0, 1.0f);
+            curves_func_800053B0(arg0, 1.0f);
             return 0;
         }
     } else {
@@ -1424,7 +1717,7 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
 }
 
 // offset: 0x4CB4 | func: 39 | export: 36
-s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
+s32 curves_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
     f32 sp24;
     CurveSetup* temp_t7;
 
@@ -1458,24 +1751,24 @@ s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
     arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
     arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
     
-    if (dll_26_func_4704(arg0) != 0) {
+    if (curves_func_4704(arg0) != 0) {
         return 1;
     }
     
-    arg0->unk94 = func_80004C5C;
-    arg0->unk98 = (unk_curve_func_2)func_80004CE8;
+    arg0->splineFunc = curves_hermite;
+    arg0->splineConverterFunc = curves_hermite_converter;
     arg0->unk84 = arg0->unkA8;
     arg0->unk88 = arg0->unkC8;
     arg0->unk8C = arg0->unkE8;
-    arg0->unk90 = 8;
+    arg0->numControlPoints = 8;
     
-    func_80005094(arg0);
+    curves_move(arg0);
     arg0->unk0 = sp24;
     return 0;
 }
 
 // offset: 0x4FA8 | func: 40 | export: 37
-void dll_26_func_4FA8(UnkCurvesStruct* arg0, CurveSetup* arg1) {
+void curves_func_4FA8(UnkCurvesStruct* arg0, CurveSetup* arg1) {
     if ((arg1 != NULL) && (arg1 != arg0->unkA4)) {
         arg0->unkA4 = arg1;
         
@@ -1491,7 +1784,7 @@ void dll_26_func_4FA8(UnkCurvesStruct* arg0, CurveSetup* arg1) {
 }
 
 // offset: 0x50E4 | func: 41 | export: 38
-s32 dll_26_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
+s32 curves_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
     s32 var_v0;
 
     if (arg0 == NULL) {
@@ -1507,12 +1800,12 @@ s32 dll_26_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
     memcpy(arg0->unkC8, arg0->unkD8, sizeof(f32)*4);
     memcpy(arg0->unkE8, arg0->unkF8, sizeof(f32)*4);
     if (arg0->unk80 != 0) {
-        var_v0 = dll_26_func_577C(arg0->unkA0, -1, arg1);
+        var_v0 = curves_func_577C(arg0->unkA0, -1, arg1);
     } else {
-        var_v0 = dll_26_func_5698(arg0->unkA0, -1, arg1);
+        var_v0 = curves_func_5698(arg0->unkA0, -1, arg1);
     }
     if (var_v0 != -1) {
-        arg0->unkA4 = dll_26_func_39C(var_v0);
+        arg0->unkA4 = curves_func_39C(var_v0);
         if (arg0->unkA4 != NULL) {
             if (arg0->unk80 != 0) {
                 arg0->unkB8[0] = arg0->unkA0->pos.x;
@@ -1545,14 +1838,14 @@ s32 dll_26_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
                 arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
             }
-            if (arg0->unk90 != 0) {
-                func_8000523C(arg0);
+            if (arg0->numControlPoints != 0) {
+                curves_setup_move_network_curve(arg0);
             }
             if (arg0->unk80 != 0) {
-                func_800053B0(arg0, -1.0f);
+                curves_func_800053B0(arg0, -1.0f);
                 return 0;
             }
-            func_800053B0(arg0, 1.0f);
+            curves_func_800053B0(arg0, 1.0f);
             return 0;
         }
     } else {
@@ -1563,11 +1856,7 @@ s32 dll_26_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
 }
 
 // offset: 0x5698 | func: 42 | export: 39
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_5698.s")
-#else
-// regalloc
-s32 dll_26_func_5698(CurveSetup* arg0, s32 arg1, s32 arg2) {
+s32 curves_func_5698(CurveSetup* arg0, s32 arg1, s32 arg2) {
     s32 sp40[4];
     s32 var_a3;
     s32 var_t1;
@@ -1577,7 +1866,7 @@ s32 dll_26_func_5698(CurveSetup* arg0, s32 arg1, s32 arg2) {
     var_v1 = 1;
     var_a3 = 0;
     while (var_a3 < 4) {
-        if ((arg0->links[var_a3] >= 0) && !(arg0->unk1B & var_v1) && (arg1 != arg0->links[var_a3])) {
+        if ((arg0->links[var_a3] > -1) && !(arg0->unk1B & var_v1) && (arg1 != arg0->links[var_a3])) {
             sp40[var_t1] = arg0->links[var_a3];
             var_t1 += 1;
         }
@@ -1585,6 +1874,9 @@ s32 dll_26_func_5698(CurveSetup* arg0, s32 arg1, s32 arg2) {
         var_v1 <<= 1;
     }
     if (var_t1 != 0) {
+        if (arg2 != -1) {
+            STUBBED_PRINTF(" list Branch No %i ", sp40[arg2]);
+        }
         if (arg2 > (var_t1 - 1)) {
             arg2 = var_t1 - 1;
         }
@@ -1593,17 +1885,11 @@ s32 dll_26_func_5698(CurveSetup* arg0, s32 arg1, s32 arg2) {
         }
         return sp40[arg2];
     }
-    if (var_t1 && var_t1){}
     return -1;
 }
-#endif
 
 // offset: 0x577C | func: 43 | export: 40
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_577C.s")
-#else
-// regalloc
-s32 dll_26_func_577C(CurveSetup* arg0, s32 arg1, s32 arg2) {
+s32 curves_func_577C(CurveSetup* arg0, s32 arg1, s32 arg2) {
     s32 sp40[4];
     s32 var_a3;
     s32 var_t1;
@@ -1613,7 +1899,7 @@ s32 dll_26_func_577C(CurveSetup* arg0, s32 arg1, s32 arg2) {
     var_v1 = 1;
     var_a3 = 0;
     while (var_a3 < 4) {
-        if ((arg0->links[var_a3] >= 0) && (arg0->unk1B & var_v1) && (arg1 != arg0->links[var_a3])) {
+        if ((arg0->links[var_a3] > -1) && (arg0->unk1B & var_v1) && (arg1 != arg0->links[var_a3])) {
             sp40[var_t1] = arg0->links[var_a3];
             var_t1 += 1;
         }
@@ -1621,6 +1907,9 @@ s32 dll_26_func_577C(CurveSetup* arg0, s32 arg1, s32 arg2) {
         var_v1 <<= 1;
     }
     if (var_t1 != 0) {
+        if (arg2 != -1) {
+            STUBBED_PRINTF(" list Branch %i Max %i Branch No %i ", arg2, var_t1 - 1, sp40[arg2]);
+        }
         if (arg2 > (var_t1 - 1)) {
             arg2 = var_t1 - 1;
         }
@@ -1629,13 +1918,11 @@ s32 dll_26_func_577C(CurveSetup* arg0, s32 arg1, s32 arg2) {
         }
         return sp40[arg2];
     }
-    if (var_t1 && var_t1){}
     return -1;
 }
-#endif
 
 // offset: 0x5860 | func: 44 | export: 41
-s32 dll_26_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
+s32 curves_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
     s32 var_v0_2;
 
     if (arg0 == NULL) {
@@ -1644,26 +1931,26 @@ s32 dll_26_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
     
     if (arg2 != -1) {
         if (arg0->unk80 != 0) {
-            arg0->unkA0 = dll_26_func_39C(arg2);
-            arg2 = dll_26_func_438(arg0->unkA0, -1);
+            arg0->unkA0 = curves_func_39C(arg2);
+            arg2 = curves_func_438(arg0->unkA0, -1);
             if (arg2 == -1) {
                 return 1;
             }
         }
-        arg0->unkA0 = dll_26_func_39C(arg2);
+        arg0->unkA0 = curves_func_39C(arg2);
         if (arg0->unkA0 == NULL) {
             arg0->unkA0 = NULL;
             return 1;
         }
         if (arg0->unk80 != 0) {
-            var_v0_2 = dll_26_func_590(arg0->unkA0, -1);
+            var_v0_2 = curves_func_590(arg0->unkA0, -1);
         } else {
-            var_v0_2 = dll_26_func_438(arg0->unkA0, -1);
+            var_v0_2 = curves_func_438(arg0->unkA0, -1);
         }
         if (var_v0_2 == -1) {
             return 1;
         }
-        arg0->unkA4 = dll_26_func_39C(var_v0_2);
+        arg0->unkA4 = curves_func_39C(var_v0_2);
         if (arg0->unkA4 == NULL) {
             arg0->unkA4 = NULL;
             return 1;
@@ -1684,32 +1971,21 @@ s32 dll_26_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
         arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
         
-        if (dll_26_func_4704(arg0) != 0) {
+        if (curves_func_4704(arg0) != 0) {
             return 1;
         
         }
 
-        arg0->unk94 = func_80004C5C;
-        arg0->unk98 = (unk_curve_func_2)func_80004CE8;
+        arg0->splineFunc = curves_hermite;
+        arg0->splineConverterFunc = curves_hermite_converter;
         arg0->unk84 = arg0->unkA8;
         arg0->unk88 = arg0->unkC8;
         arg0->unk8C = arg0->unkE8;
-        arg0->unk90 = 8;
+        arg0->numControlPoints = 8;
         
-        func_80005094(arg0);
+        curves_move(arg0);
 
         return 0;
     }
     return 1;
 }
-
-/*0x0*/ static const char str_0[] = "curves.c: MAX_ROMCURVES exceeded!!\n";
-/*0x24*/ static const char str_24[] = "addCurveDef: max curves reached %d/%d\n";
-/*0x4C*/ static const char str_4C[] = " Curve Id %i ";
-/*0x5C*/ static const char str_5C[] = " CI %i ";
-/*0x64*/ static const char str_64[] = "Search\n";
-/*0x6C*/ static const char str_6C[] = "link:(%d) %d\n";
-/*0x7C*/ static const char str_7C[] = "Found: %d\n";
-/*0x88*/ static const char str_88[] = "%d\n";
-/*0x8C*/ static const char str_8C[] = " list Branch No %i ";
-/*0xA0*/ static const char str_A0[] = " list Branch %i Max %i Branch No %i ";

@@ -184,7 +184,7 @@ enum AnimCurvesKeyframeChannels {
 };
 
 enum KeyframeInterpolationType {
-    KF_INTERP_Bezier = 0,
+    KF_INTERP_Hermite = 0,
     KF_INTERP_Linear = 1,
     KF_INTERP_Stepped = 2
 };
@@ -2149,9 +2149,9 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
     CurveSetup* sp84;
     f32 sp80;
     f32 sp7C;
-    Vec4f sp6C;
-    Vec4f sp5C;
-    Vec4f sp4C;
+    f32 sp6C[4];
+    f32 sp5C[4];
+    f32 sp4C[4];
     f32 sp48;
     f32 sp44;
     f32 sp40;
@@ -2173,23 +2173,23 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
             sp7C /= 8/*.0f*/;
             sp3C = 2.0f * var_s1->unk2E;
             sp38 = 2.0f * sp84->unk2E;
-            sp6C.f[0] = var_s1->pos.f[0];
-            sp6C.f[2] = fsin16_precise(var_s1->unk2C << 8) * sp3C;
-            sp6C.f[1] = sp84->pos.f[0];
-            sp6C.f[3] = fsin16_precise(sp84->unk2C << 8) * sp38;
-            sp5C.f[0] = var_s1->pos.f[1];
-            sp5C.f[2] = fsin16_precise(var_s1->unk2D << 8) * sp3C;
-            sp5C.f[1] = sp84->pos.f[1];
-            sp5C.f[3] = fsin16_precise(sp84->unk2D << 8) * sp38;
-            sp4C.f[0] = var_s1->pos.f[2];
-            sp4C.f[2] = fcos16_precise(var_s1->unk2C << 8) * sp3C;
-            sp4C.f[1] = sp84->pos.f[2];
-            sp4C.f[3] = fcos16_precise(sp84->unk2C << 8) * sp38;
-            arg2->f[0] = func_80004C5C(&sp6C, sp7C, &sp48);
+            sp6C[0] = var_s1->pos.f[0];
+            sp6C[2] = fsin16_precise(var_s1->unk2C << 8) * sp3C;
+            sp6C[1] = sp84->pos.f[0];
+            sp6C[3] = fsin16_precise(sp84->unk2C << 8) * sp38;
+            sp5C[0] = var_s1->pos.f[1];
+            sp5C[2] = fsin16_precise(var_s1->unk2D << 8) * sp3C;
+            sp5C[1] = sp84->pos.f[1];
+            sp5C[3] = fsin16_precise(sp84->unk2D << 8) * sp38;
+            sp4C[0] = var_s1->pos.f[2];
+            sp4C[2] = fcos16_precise(var_s1->unk2C << 8) * sp3C;
+            sp4C[1] = sp84->pos.f[2];
+            sp4C[3] = fcos16_precise(sp84->unk2C << 8) * sp38;
+            arg2->f[0] = curves_hermite(sp6C, sp7C, &sp48);
             if (arg4 == 0) {
-                arg2->f[1] = func_80004C5C(&sp5C, sp7C, &sp44);
+                arg2->f[1] = curves_hermite(sp5C, sp7C, &sp44);
             }
-            arg2->f[2] = func_80004C5C(&sp4C, sp7C, &sp40);
+            arg2->f[2] = curves_hermite(sp4C, sp7C, &sp40);
             temp_fv0_2 = sqrtf(SQ(sp48) + SQ(sp40));
             if (temp_fv0_2 > 0.1f) {
                 sp3C = arg1->f[0] / temp_fv0_2;
@@ -2348,7 +2348,7 @@ void anim_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4,
     spD0[2] = fcos16_precise((s16) (a2->unk2C << 8)) * sp104;
     spD0[1] = a3->pos.z;
     spD0[3] = fcos16_precise((s16) (a3->unk2C << 8)) * sp100;
-    func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, (unk_curve_func_2)func_80004CE8); // TODO: fix cast
+    curves_func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, curves_hermite_converter);
     arg0->unk8[0] = 0.0f;
     for (i = 0; i < 8; i++) {
         temp_fv0 = spAC[i + 1] - spAC[i];
@@ -2919,7 +2919,7 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
 
         // Otherwise: time is between two keyframes, need to interpolate from previous key to next key
 
-        /* For Bezier/cubic curves: 
+        /* For cubic Hermite curves: 
            Calculate the previous and upcoming keyframes' tangents based off their neighbouring keys' value deltas.
            (similar to Catmull-Rom Splines) */
 
@@ -2927,7 +2927,7 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
         i--; //Seek back by one key
         interpType = KEY_TYPE(keyframes[i]);
         curve.start = keyframes[i].value; //Store start value of interpolation range
-        if (interpType == KF_INTERP_Bezier) {
+        if (interpType == KF_INTERP_Hermite) {
             //Get the value differences between the previous key and its neighbouring keys
             prevDeltaOut = keyframes[i + 1].value - keyframes[i].value;
             if (i > 0) {
@@ -2957,7 +2957,7 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
         i++; //Seek forward by one key, back to the interpolation range
         if (i < count) {
             curve.end = keyframes[i].value;  //Store end value of interpolation range
-            if (interpType == KF_INTERP_Bezier) {
+            if (interpType == KF_INTERP_Hermite) {
                 //Get the value difference between the upcoming key and the key after it
                 if ((i + 1) < count) {
                     nextDeltaOut = keyframes[i + 1].value - keyframes[i].value;
@@ -2985,8 +2985,8 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
         if (tValue > 0.0f) {
             tValue = (time - keyframes[i - 1].timeOffset) / tValue;
 
-            if (interpType == KF_INTERP_Bezier) {
-                value = func_80004C5C((Vec4f* ) &curve, tValue, NULL);
+            if (interpType == KF_INTERP_Hermite) {
+                value = curves_hermite(curve.v, tValue, NULL);
             } else if (interpType == KF_INTERP_Linear) {
                 value = curve.start + ((curve.end - curve.start) * tValue);
             } else {

@@ -266,7 +266,7 @@ typedef struct {
 /*89C*/ UNK_PTR *unk89C;
 /*8A0*/ u8 unk8A0;
 /*8A1*/ u8 unk8A1;
-/*8A2*/ u8 unk8A2;
+/*8A2*/ u8 lateralAttackSelector; // 0 or 1 to select left -> right attack swing or right -> left
 /*8A3*/ u8 pad8A3;
 /*8A4*/ u8 unk8A4;
 /*8A5*/ u8 unk8A5;
@@ -455,7 +455,7 @@ DLL_INTERFACE(DLL_210_Player) {
     // arg2 might be an s16 *
     /*71*/ void (*func71)(Object* player, Vec3f* arg1, SRT* arg2, UNK_TYPE_32 arg3);
     /*72*/ void (*func72)(Object* player, s16 arg1);
-    /*73*/ void (*func73)(s32 arg0, f32 arg1, f32 arg2);
+    /*73*/ void (*func73)(Object* player, f32 arg1, f32 arg2);
     /*74*/ s16 (*func74)(Object* player);
     /*75*/ s32 (*func75)(Object* player, s32 arg1);
     /*76*/ void (*func76)(Object* player);

@@ -9,41 +9,41 @@
 
 // size: 0x4B8
 typedef struct {
-    f32 unk0;
-    Vec3f unk4;
-    Vec3f unk10;
-    HeadAnimation unk1C[30];
-    s16 unk454[30];
-    s32 unk490;
-    s32 unk494;
-    u8 unk498;
-    u8 unk499;
-    Object* unk49C;
-    Object* unk4A0;
-    s16 unk4A4;
-    s16 unk4A6;
-    u8 unk4A8;
-    u8 unk4A9;
-    s32 unk4AC;
-    s32 unk4B0;
-    s32 unk4B4;
+/*000*/ f32 unk0;
+/*004*/ Vec3f unk4;
+/*010*/ Vec3f headRefPoint;
+/*01C*/ HeadAnimation unk1C[30];
+/*454*/ s16 unk454[30];
+/*490*/ s32 unk490;
+/*494*/ s32 unk494;
+/*498*/ u8 unk498;
+/*499*/ u8 unk499;
+/*49C*/ Object* prevLookat;
+/*4A0*/ Object* lookat;
+/*4A4*/ s16 unk4A4;
+/*4A6*/ s16 unk4A6;
+/*4A8*/ u8 jointCount;
+/*4A9*/ u8 unk4A9;
+/*4AC*/ s32 unk4AC;
+/*4B0*/ s32 unk4B0;
+/*4B4*/ s32 unk4B4;
 } MoveLibData;
 
 // unknown size
 typedef struct {
-    u8 _unk0[0x2C - 0x0];
-    s8 unk2C;
-    s8 unk2D;
+/*00*/ u8 _unk0[0x2C - 0x0];
+/*2C*/ s8 unk2C;
+/*2D*/ s8 unk2D;
 } DLL53Func17F4Arg1;
 
 // unknown size
 typedef struct {
-    Vec3f unk0;
-    Vec3f unkC;
-    Vec3f unk18;
-    Vec3f unk24;
-    f32 unk30;
-    f32 unk34;
+/*00*/ Vec3f unk0;
+/*0C*/ Vec3f unkC;
+/*18*/ Vec3f unk18;
+/*24*/ Vec3f unk24;
+/*30*/ f32 unk30;
+/*34*/ f32 unk34;
 } DLL53Func17F4Arg2;
 
 // Temp DLL 1 (see main.c)
