@@ -4,10 +4,10 @@
 _exports:
 
 # ctor/dtor
-.dword dll_67_ctor
-.dword dll_67_dtor
+.dword gameover_ctor
+.dword gameover_dtor
 
 # export table
-/*0*/ .dword dll_67_func_200
-/*1*/ .dword dll_67_func_868
-/*2*/ .dword dll_67_func_870
+/*0*/ .dword gameover_update1
+/*1*/ .dword gameover_update2
+/*2*/ .dword gameover_draw
