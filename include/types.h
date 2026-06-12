@@ -49,6 +49,7 @@ typedef union {
     void (*withTwoArgsCustom2)(void *, f32);
     void (*withFourArgsCustom)(void *, void *, f32, s32);
     void (*withFourArgsCustom2)(void*, void *, void*, void *);
+    void (*withFourArgsCustom3)(void*, f32, f32, f32);
     void (*withFiveArgsCustom)(void *, f32, f32 *, f32 *, f32 *);
     void (*withFiveArgsCustom2)(void *, void *, f32, s32, f32);
     s32 (*withFiveArgsCustom3)(void *, void *, s8, f32 *, f32 *);

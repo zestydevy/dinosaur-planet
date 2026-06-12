@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_303_ctor
-.dword dll_303_dtor
+.dword FireFlyLantern_ctor
+.dword FireFlyLantern_dtor
 
 # export table
-/*0*/ .dword dll_303_setup
-/*1*/ .dword dll_303_control
-/*2*/ .dword dll_303_update
-/*3*/ .dword dll_303_print
-/*4*/ .dword dll_303_free
-/*5*/ .dword dll_303_get_model_flags
-/*6*/ .dword dll_303_get_data_size
+/*0*/ .dword FireFlyLantern_setup
+/*1*/ .dword FireFlyLantern_control
+/*2*/ .dword FireFlyLantern_update
+/*3*/ .dword FireFlyLantern_print
+/*4*/ .dword FireFlyLantern_free
+/*5*/ .dword FireFlyLantern_get_model_flags
+/*6*/ .dword FireFlyLantern_get_data_size
