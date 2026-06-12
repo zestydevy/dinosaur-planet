@@ -1,14 +1,14 @@
 .text = 0x0:
-dll_302_ctor = 0x0;
-dll_302_dtor = 0xC;
-dll_302_setup = 0x18;
-dll_302_control = 0xC4;
-dll_302_update = 0x2B4;
-dll_302_print = 0x2C0;
-dll_302_free = 0x2D8;
-dll_302_get_model_flags = 0x320;
-dll_302_get_data_size = 0x330;
-dll_302_func_344 = 0x344;
-dll_302_func_42C = 0x42C;
+Fall_Ladders_ctor = 0x0;
+Fall_Ladders_dtor = 0xC;
+Fall_Ladders_setup = 0x18;
+Fall_Ladders_control = 0xC4;
+Fall_Ladders_update = 0x2B4;
+Fall_Ladders_print = 0x2C0;
+Fall_Ladders_free = 0x2D8;
+Fall_Ladders_get_model_flags = 0x320;
+Fall_Ladders_get_data_size = 0x330;
+Fall_Ladders_fall_or_rise_by_sequence = 0x344;
+Fall_Ladders_anim_callback = 0x42C;
 
 .rodata = 0x494:

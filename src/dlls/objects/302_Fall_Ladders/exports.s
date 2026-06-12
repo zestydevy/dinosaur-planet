@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_302_ctor
-.dword dll_302_dtor
+.dword Fall_Ladders_ctor
+.dword Fall_Ladders_dtor
 
 # export table
-/*0*/ .dword dll_302_setup
-/*1*/ .dword dll_302_control
-/*2*/ .dword dll_302_update
-/*3*/ .dword dll_302_print
-/*4*/ .dword dll_302_free
-/*5*/ .dword dll_302_get_model_flags
-/*6*/ .dword dll_302_get_data_size
+/*0*/ .dword Fall_Ladders_setup
+/*1*/ .dword Fall_Ladders_control
+/*2*/ .dword Fall_Ladders_update
+/*3*/ .dword Fall_Ladders_print
+/*4*/ .dword Fall_Ladders_free
+/*5*/ .dword Fall_Ladders_get_model_flags
+/*6*/ .dword Fall_Ladders_get_data_size

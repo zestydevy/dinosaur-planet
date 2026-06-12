@@ -3,139 +3,152 @@
 
 typedef struct {
     ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-} DLL302_Setup;
+    s8 yaw;
+    s8 modelIdx;        //Which ladder model to use
+    s16 raisedOffsetY;  //When raised, the ladder starts off this far above its base position
+    s16 unused1C;
+    s16 gamebitRaise;   //Ladder rises up by sequence when this gamebit is set (exclusive to `VFP_Ladders2`)
+    s16 gamebitFall;    //Ladder starts falling when this gamebit is set
+} Fall_Ladders_Setup;
 
 typedef struct {
-    f32 unk0;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-    s16 unkA;
-} DLL302_Data;
+    f32 raisedOffsetY;  //When raised, the ladder starts off this far above its base position
+    s16 gamebitRaise;   //Ladder rises up by sequence when this gamebit is set (exclusive to `VFP_Ladders2`)
+    s16 gamebitFall;    //Ladder starts falling when this gamebit is set
+    s16 state;          //Raised/Falling/Lowered
+    s16 dropTimer;      //Counts down to ladder falling, after gamebitFall set
+} Fall_Ladders_Data;
 
-static void dll_302_func_344(Object* self);
-static int dll_302_func_42C(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
+typedef enum {
+    Fall_Ladders_STATE_0_Raised,
+    Fall_Ladders_STATE_1_Falling,
+    Fall_Ladders_STATE_2_Lowered
+} Fall_Ladders_States;
+
+static void Fall_Ladders_fall_or_rise_by_sequence(Object* self);
+static int Fall_Ladders_anim_callback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
-void dll_302_ctor(void *dll) { }
+void Fall_Ladders_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_302_dtor(void *dll) { }
+void Fall_Ladders_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_302_setup(Object* self, DLL302_Setup* objSetup, s32 reset) {
-    DLL302_Data* objData = self->data;
+void Fall_Ladders_setup(Object* self, Fall_Ladders_Setup* objSetup, s32 reset) {
+    Fall_Ladders_Data* objData = self->data;
     
-    self->srt.yaw = objSetup->unk18 << 8;
+    self->srt.yaw = objSetup->yaw << 8;
     
-    objData->unk6 = objSetup->unk20;
-    objData->unk4 = objSetup->unk1E;
-    objData->unk0 = objSetup->unk1A;
+    objData->gamebitFall = objSetup->gamebitFall;
+    objData->gamebitRaise = objSetup->gamebitRaise;
+    objData->raisedOffsetY = objSetup->raisedOffsetY;
     
     self->stateFlags |= OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED;
-    self->animCallback = dll_302_func_42C;
-    self->srt.transl.y = objSetup->base.y + objData->unk0;
+    self->animCallback = Fall_Ladders_anim_callback;
+    self->srt.transl.y = objSetup->base.y + objData->raisedOffsetY;
     
-    obj_set_model(self, objSetup->unk19);
+    obj_set_model(self, objSetup->modelIdx);
     
-    objData->unk8 = 0;
+    objData->state = Fall_Ladders_STATE_0_Raised;
 }
 
 // offset: 0xC4 | func: 1 | export: 1
-void dll_302_control(Object* self) {
-    DLL302_Setup* objSetup;
-    DLL302_Data* objData;
+void Fall_Ladders_control(Object* self) {
+    Fall_Ladders_Setup* objSetup;
+    Fall_Ladders_Data* objData;
     f32 magnitude;
 
-    objSetup = (DLL302_Setup*)self->setup;
+    objSetup = (Fall_Ladders_Setup*)self->setup;
     objData = self->data;
     
+    //For the special Fall Ladder in VFPT Act 2, use sequences to handle lowering (and uniquely: raising!) instead
     if (self->id == OBJ_VFP_Ladders2) {
-        dll_302_func_344(self);
+        Fall_Ladders_fall_or_rise_by_sequence(self);
         return;
     }
     
-    if (objData->unkA != 0) {
-        objData->unkA -= (s16)gUpdateRateF;
-        if (objData->unkA <= 0) {
-            objData->unk8 = 1;
-            gDLL_6_AMSFX->vtbl->play(self, 0x6E9, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objData->unkA = 0;
+    //Start falling after a short delay (when gamebit is set)
+    if (objData->dropTimer != 0) {
+        objData->dropTimer -= (s16)gUpdateRateF;
+        if (objData->dropTimer <= 0) {
+            objData->state = Fall_Ladders_STATE_1_Falling;
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_6E9_Wooden_Ratcheting, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objData->dropTimer = 0;
         }
         return;
     }
         
-    if (objData->unk8 == 0) {
-        if (main_get_bits(objData->unk6)) {
-            objData->unkA = 10;
+    //Check if the ladder should start falling
+    if (objData->state == Fall_Ladders_STATE_0_Raised) {
+        if (main_get_bits(objData->gamebitFall)) {
+            objData->dropTimer = 10;
         }
     }
     
-    if (objData->unk8 != 1) {
-        return;
-    }
-
-    if (objSetup->base.y <= self->srt.transl.y) {
-        self->velocity.y -= 0.9f;
-        self->srt.transl.y += self->velocity.y * gUpdateRateF;
-
-        if (self->srt.transl.y <= objSetup->base.y) {
-            self->srt.transl.y = objSetup->base.y;
-            self->velocity.y = -self->velocity.y * 0.3f;
-
-            if (self->velocity.y >= 0.0f) {
-                magnitude = self->velocity.y;
-            } else {
-                magnitude = -self->velocity.y;
-            }
-            if (magnitude < 0.01f) {
-                objData->unk8 = 2;
+    //Handle falling
+    if (objData->state == Fall_Ladders_STATE_1_Falling) {
+        if (objSetup->base.y <= self->srt.transl.y) {
+            self->velocity.y -= 0.9f;
+            self->srt.transl.y += self->velocity.y * gUpdateRateF;
+            
+            //Bounce off the ground
+            if (self->srt.transl.y <= objSetup->base.y) {
+                self->srt.transl.y = objSetup->base.y;
+                self->velocity.y = -self->velocity.y * 0.3f; //lose a lot of momentum
+                
+                if (self->velocity.y >= 0.0f) {
+                    magnitude = self->velocity.y;
+                } else {
+                    magnitude = -self->velocity.y;
+                }
+                
+                //Advance to lowered state when mostly stopped
+                if (magnitude < 0.01f) {
+                    objData->state = Fall_Ladders_STATE_2_Lowered;
+                }
             }
         }
     }
 }
 
 // offset: 0x2B4 | func: 2 | export: 2
-void dll_302_update(Object *self) { }
+void Fall_Ladders_update(Object *self) { }
 
 // offset: 0x2C0 | func: 3 | export: 3
-void dll_302_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void Fall_Ladders_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x2D8 | func: 4 | export: 4
-void dll_302_free(Object* self, s32 onlySelf) {
+void Fall_Ladders_free(Object* self, s32 onlySelf) {
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
 // offset: 0x320 | func: 5 | export: 5
-u32 dll_302_get_model_flags(Object *self) {
+u32 Fall_Ladders_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x330 | func: 6 | export: 6
-u32 dll_302_get_data_size(Object *self, u32 offsetAddr) {
-    return sizeof(DLL302_Data);
+u32 Fall_Ladders_get_data_size(Object *self, u32 offsetAddr) {
+    return sizeof(Fall_Ladders_Data);
 }
 
 // offset: 0x344 | func: 7
-void dll_302_func_344(Object* self) {
-    DLL302_Data* objData = self->data;
+void Fall_Ladders_fall_or_rise_by_sequence(Object* self) {
+    Fall_Ladders_Data* objData = self->data;
     
-    if (main_get_bits(objData->unk6) && (main_get_bits(objData->unk4) == FALSE)) {
+    //Fall
+    if (main_get_bits(objData->gamebitFall) && (main_get_bits(objData->gamebitRaise) == FALSE)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
     }
     
-    if ((main_get_bits(objData->unk6) == FALSE) && main_get_bits(objData->unk4)) {
+    //Rise
+    if ((main_get_bits(objData->gamebitFall) == FALSE) && main_get_bits(objData->gamebitRaise)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
     }
 }
 
 // offset: 0x42C | func: 8
-int dll_302_func_42C(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
+int Fall_Ladders_anim_callback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     return 0;
 }

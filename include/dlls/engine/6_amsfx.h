@@ -458,6 +458,8 @@ enum SoundID {
     SOUND_6E6_Interaction_Refused = 0x6E6, // camera DLL
     SOUND_6E7_ScorpionRobot_Damaged = 0x6E7,
 
+    SOUND_6E9_Wooden_Ratcheting = 0x6E9,
+
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
 
     SOUND_6F8_ScorpionRobot_Destroyed = 0x6F8,
