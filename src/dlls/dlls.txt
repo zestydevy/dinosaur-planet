@@ -124,6 +124,7 @@
 301 = objects/301_barrel
 302 = objects/302_Fall_Ladders
 303 = objects/303_FireFlyLantern
+304 = objects/304_LanternFireFly
 305 = objects/305_PortalSpellDoor
 307 = objects/307
 308 = objects/308_USEOBJ
