@@ -1,15 +1,16 @@
 #include "common.h"
+#include "game/gamebits.h"
+#include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "sys/objmsg.h"
+#include "dlls/objects/210_player.h"
+#include "dlls/objects/315_sidefoodbag.h"
+#include "dlls/objects/common/foodbag.h"
 
 typedef struct {
-    ObjSetup base;
-    s8 unk18;
-} DLL300_Setup;
-
-typedef struct {
-    u8 unk0;
-    u8 unk1;
-} DLL300_Data;
+    u8 sequencePlayed;
+    u8 destroyTimer;
+} PlacedFood_Data;
 
 // offset: 0x0 | ctor
 void dll_300_ctor(void *dll) { }
@@ -18,37 +19,36 @@ void dll_300_ctor(void *dll) { }
 void dll_300_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_300_setup(Object* self, DLL300_Setup* objSetup, s32 reset) {
-    DLL300_Data* objData;
+void dll_300_setup(Object* self, PlacedFood_Setup* objSetup, s32 reset) {
+    PlacedFood_Data* objData;
 
     objData = self->data;
 
-    objData->unk0 = 0;
+    objData->sequencePlayed = FALSE;
     self->srt.yaw = get_player()->srt.yaw;
 
     self->srt.scale = 0.01f;
-    self->stateFlags |= 0x4000;
-    self->stateFlags |= 0x2000;
+    self->stateFlags |= OBJSTATE_PRINT_DISABLED;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     
     switch (self->id) {
-    case (OBJ_foodbagNewMeat - 1):
+    case (OBJ_foodbagNewMeat - 1): //fake?
+    case OBJ_foodbagNewMeat:
+    case OBJ_foodbagNewFish:
         break;
-    case (OBJ_foodbagNewMeat): //0x314
-    case (OBJ_foodbagNewFish): //0x315
-        break;
-    case OBJ_foodbagBlueMush: //0x400
-    case OBJ_foodbagBlueGrub: //0x401
-    case OBJ_foodbagGreenApp: //0x41A
-    case OBJ_foodbagBrownApp: //0x41B
-    case OBJ_foodbagSmokedFi: //0x41C
-    case OBJ_foodbagOldMeat: //0x41D
-    case OBJ_foodbagRedBean: //0x41E
-    case OBJ_foodbagBrownBea: //0x41F
-    case OBJ_foodbagBlueBean: //0x420
-    case OBJ_foodbagRedMushr: //0x421
-    case OBJ_foodbagRedGrub: //0x422
-    case OBJ_foodbagOldMushr: //0x423
-    case OBJ_foodbagOldGrub: //0x424
+    case OBJ_foodbagBlueMush:
+    case OBJ_foodbagBlueGrub:
+    case OBJ_foodbagGreenApp:
+    case OBJ_foodbagBrownApp:
+    case OBJ_foodbagSmokedFi:
+    case OBJ_foodbagOldMeat:
+    case OBJ_foodbagRedBean:
+    case OBJ_foodbagBrownBea:
+    case OBJ_foodbagBlueBean:
+    case OBJ_foodbagRedMushr:
+    case OBJ_foodbagRedGrub:
+    case OBJ_foodbagOldMushr:
+    case OBJ_foodbagOldGrub:
         break;
     }
     
@@ -57,186 +57,166 @@ void dll_300_setup(Object* self, DLL300_Setup* objSetup, s32 reset) {
 
 // offset: 0xF8 | func: 1 | export: 1
 void dll_300_control(Object* self) {
-    s32 sp34;
+    u32 outMessage;
     Object* foodbag;
     Object* player;
-    DLL300_Data* objData;
+    PlacedFood_Data* objData;
 
     player = get_player();
     objData = self->data;
     
-    if (objData->unk0 == 0) {
+    if (objData->sequencePlayed == FALSE) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-        objData->unk0 = 1;
+        objData->sequencePlayed = TRUE;
         return;
     }
     
-    if (objData->unk1 != 0) {
-        objData->unk1 += gUpdateRateF;
-        if (objData->unk1 > 0x80) {
+    //Unload food after being collected
+    if (objData->destroyTimer) {
+        objData->destroyTimer += gUpdateRateF;
+        if (objData->destroyTimer > 0x80) {
             switch (self->id) {
-            case 0x3B:
-            case 0x2DB:
-            case 0x313:
-            case 0x314:                             
-            case 0x41A:                             
-            case 0x41B:                             
-            case 0x41C:                             
-            case 0x41D:                             
-            case 0x41E:                             
-            case 0x41F:                             
-            case 0x420:                             
-                foodbag = ((DLL_Unknown*)player->dll)->vtbl->func[66].withTwoArgsS32(player, 0xF);
-                ((DLL_Unknown*)foodbag->dll)->vtbl->func[9].withTwoArgs(foodbag, self);
+            case OBJ_foodbagRedApple:
+            case OBJ_foodbagGreenBea:
+            case OBJ_foodbagNewMeat:
+            case OBJ_foodbagNewFish:                             
+            case OBJ_foodbagGreenApp:                             
+            case OBJ_foodbagBrownApp:                             
+            case OBJ_foodbagSmokedFi:                             
+            case OBJ_foodbagOldMeat:                             
+            case OBJ_foodbagRedBean:                             
+            case OBJ_foodbagBrownBea:                             
+            case OBJ_foodbagBlueBean:                             
+                foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
+                ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, self);
                 break;
-            case 0x400:                         
-            case 0x401:                         
-            case 0x421:                         
-            case 0x422:                         
-            case 0x423:                         
-            case 0x424:                         
-                foodbag = ((DLL_Unknown*)player->dll)->vtbl->func[66].withTwoArgsS32(player, 0x10);
-                ((DLL_Unknown*)foodbag->dll)->vtbl->func[9].withTwoArgs(foodbag, self);
+            case OBJ_foodbagBlueMush:                         
+            case OBJ_foodbagRedMushr:                         
+            case OBJ_foodbagOldMushr:                         
+            case OBJ_foodbagBlueGrub:                         
+            case OBJ_foodbagRedGrub:                         
+            case OBJ_foodbagOldGrub:                         
+                foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0x10);
+                ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, self);
                 break;
             }
         }
         return;
     }
-        
-    while (obj_recv_mesg(self, &sp34, 0, 0) != 0) {
-        if (sp34 == 0x7000B) {
+    
+    //Handle storing the food back into the foodbag when re-collected
+    while (obj_recv_mesg(self, &outMessage, NULL, 0)) {
+        if (outMessage == 0x7000B) {
             switch (self->id) {
-            case 0x3B:
-            case 0x2DB:
-            case 0x313:
-            case 0x314:                         
-            case 0x41A:                         
-            case 0x41B:                         
-            case 0x41C:                         
-            case 0x41D:                         
-            case 0x41E:                         
-            case 0x41F:                         
-            case 0x420:                         
-                foodbag = ((DLL_Unknown*)player->dll)->vtbl->func[66].withTwoArgsS32(player, 0xF);
+            case OBJ_foodbagGreenApp:                         
+            case OBJ_foodbagRedApple:
+            case OBJ_foodbagBrownApp:                         
+            case OBJ_foodbagNewFish:                         
+            case OBJ_foodbagSmokedFi:                         
+            case OBJ_foodbagNewMeat:
+            case OBJ_foodbagOldMeat:                         
+            case OBJ_foodbagGreenBea:
+            case OBJ_foodbagRedBean:                         
+            case OBJ_foodbagBrownBea:                         
+            case OBJ_foodbagBlueBean:                         
+                foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
                 switch (self->id) {
-                case 0x41A:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 1);
+                case OBJ_foodbagGreenApp:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
                     break;
-                case 0x3B:                      
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 2);
+                case OBJ_foodbagRedApple:                      
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
                     break;
-                case 0x41B:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 4);
+                case OBJ_foodbagBrownApp:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Brown_Apple);
                     break;
-                case 0x314:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 8);
+                case OBJ_foodbagNewFish:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
                     break;
-                case 0x41C:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x10);
+                case OBJ_foodbagSmokedFi:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Smoked_Fish);
                     break;
-                case 0x313:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x20);
+                case OBJ_foodbagNewMeat:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Dino_Egg);
                     break;
-                case 0x41D:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x40);
+                case OBJ_foodbagOldMeat:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Moldy_Meat);
                     break;
-                case 0x2DB:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x80);
+                case OBJ_foodbagGreenBea:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Bean);
                     break;
-                case 0x41E:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x100);
+                case OBJ_foodbagRedBean:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Bean);
                     break;
-                case 0x41F:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x200);
+                case OBJ_foodbagBrownBea:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Brown_Bean);
                     break;
-                case 0x420:                     
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x400);
+                case OBJ_foodbagBlueBean:                     
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Blue_Bean);
                     break;
                 }
                 break;
-            case 0x400:                     
-            case 0x401:                     
-            case 0x421:                     
-            case 0x422:                     
-            case 0x423:                     
-            case 0x424:                     
-                foodbag = ((DLL_Unknown*)player->dll)->vtbl->func[66].withTwoArgsS32(player, 0x10);
+            case OBJ_foodbagBlueMush:                     
+            case OBJ_foodbagRedMushr:                     
+            case OBJ_foodbagOldMushr:                     
+            case OBJ_foodbagBlueGrub:                     
+            case OBJ_foodbagRedGrub:                     
+            case OBJ_foodbagOldGrub:                     
+                foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0x10);
                 switch (self->id) {
-                case 0x400:                 
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 1);
+                case OBJ_foodbagBlueMush:                 
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, SIDEFOOD_Blue_Mushrooms);
                     break;
-                case 0x421:                 
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 2);
+                case OBJ_foodbagRedMushr:                 
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, SIDEFOOD_Red_Mushrooms);
                     break;
-                case 0x423:                 
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 4);
+                case OBJ_foodbagOldMushr:                 
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, SIDEFOOD_Old_Mushrooms);
                     break;
-                case 0x401:                 
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 8);
+                case OBJ_foodbagBlueGrub:                 
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, SIDEFOOD_Blue_Grubs);
                     break;
-                case 0x422:                 
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x10);
+                case OBJ_foodbagRedGrub:                 
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, SIDEFOOD_Red_Grubs);
                     break;
-                case 0x424:                 
-                    ((DLL_Unknown*)foodbag->dll)->vtbl->func[11].withTwoArgs(foodbag, 0x20);
+                case OBJ_foodbagOldGrub:                 
+                    ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, SIDEFOOD_Old_Grubs);
                     break;
                 }
                 break;
             }
-            objData->unk1 = 1;
+            objData->destroyTimer = 1;
             return;
         }
     }
 
+    //Handle advancing food's animation (only for grubs)
     switch (self->id) {
-    case 0x3B:                                  
-    case 0x2DB:                                 
-    case 0x313:                                 
-    case 0x314:                                 
-    case 0x400:                                 
-    case 0x402:                                 
-    case 0x403:                                 
-    case 0x404:                                 
-    case 0x405:                                 
-    case 0x406:                                 
-    case 0x407:                                 
-    case 0x408:                                 
-    case 0x409:                                 
-    case 0x40A:                                 
-    case 0x40B:                                 
-    case 0x40C:                                 
-    case 0x40D:                                 
-    case 0x40E:                                 
-    case 0x40F:                                 
-    case 0x410:                                 
-    case 0x411:                                 
-    case 0x412:                                 
-    case 0x413:                                 
-    case 0x414:                                 
-    case 0x415:                                 
-    case 0x416:                                 
-    case 0x417:                                 
-    case 0x418:                                 
-    case 0x419:                                 
-    case 0x41A:                                 
-    case 0x41B:                                 
-    case 0x41C:                                 
-    case 0x41D:                                 
-    case 0x41E:                                 
-    case 0x41F:                                 
-    case 0x420:                                 
-    case 0x421:                                 
-    case 0x423:                                 
+    case OBJ_foodbagRedApple:                                  
+    case OBJ_foodbagGreenBea:                                 
+    case OBJ_foodbagNewMeat:                                 
+    case OBJ_foodbagNewFish:                                 
+    case OBJ_foodbagBlueMush:                                                                                        
+    case OBJ_foodbagGreenApp:                                 
+    case OBJ_foodbagBrownApp:                                 
+    case OBJ_foodbagSmokedFi:                                 
+    case OBJ_foodbagOldMeat:                                 
+    case OBJ_foodbagRedBean:                                 
+    case OBJ_foodbagBrownBea:                                 
+    case OBJ_foodbagBlueBean:                                 
+    case OBJ_foodbagRedMushr:                                 
+    case OBJ_foodbagOldMushr:                                 
         break;
-    case 0x401:                                 
-    case 0x422:                                 
-    case 0x424:                                 
+    case OBJ_foodbagBlueGrub:                                 
+    case OBJ_foodbagRedGrub:                                 
+    case OBJ_foodbagOldGrub:                                 
         func_80024108(self, 0.01f, gUpdateRateF, NULL);
         break;
     }
     
-    if (self->unkAF & 1) {
-        obj_send_mesg(get_player(), 0x7000A, self, 0x95);
+    //Handle re-collecting the food
+    if (self->unkAF & ARROW_FLAG_1_Interacted) {
+        obj_send_mesg(get_player(), 0x7000A, self, (void*)BIT_ALWAYS_1);
     }
 }
 
@@ -256,11 +236,11 @@ u32 dll_300_get_model_flags(Object *self) {
 
 // offset: 0x870 | func: 6 | export: 6
 u32 dll_300_get_data_size(Object *self, u32 offsetAddr) {
-    return sizeof(DLL300_Data);
+    return sizeof(PlacedFood_Data);
 }
 
 // offset: 0x884 | func: 7 | export: 7
 u8 dll_300_func_884(Object* self, s32 arg1) {
-    DLL300_Data* objData = self->data;
-    return objData->unk1;
+    PlacedFood_Data* objData = self->data;
+    return objData->destroyTimer;
 }
