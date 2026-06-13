@@ -302,22 +302,43 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 }
 
 // offset: 0x1270 | func: 16 | export: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1270.s")
+u8 dll_211_func_1270(Object* arg0) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    return data->unk4[0];
+}
 
 // offset: 0x1284 | func: 17 | export: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1284.s")
+u8 dll_211_func_1284(Object* arg0) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    return data->unk4[1];
+}
 
 // offset: 0x1298 | func: 18 | export: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1298.s")
+s32 dll_211_func_1298(Object* arg0) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    return data->unk4[1] + data->unk4[0];
+}
 
 // offset: 0x12B4 | func: 19 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_12B4.s")
+void dll_211_func_12B4(Object* arg0, s32 arg1) {
+    DLL211_Data *data = arg0->data;
+    data->unk4[1] = arg1;
+}
 
 // offset: 0x12C8 | func: 20 | export: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_12C8.s")
+s32 dll_211_func_12C8(s32 arg0) {
+    return 1;
+}
 
 // offset: 0x12D8 | func: 21 | export: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_12D8.s")
+void dll_211_func_12D8(Object *arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3) {
+}
 
 // offset: 0x12F0 | func: 22 | export: 21
 void dll_211_func_12F0(Object* arg0, s32 arg1, Object *arg2) {
