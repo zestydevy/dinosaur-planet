@@ -2,8 +2,9 @@
 
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "dlls/objects/278_flameblast.h"
+#include "dlls/objects/280_sidekicktoy.h"
+#include "dlls/objects/332_FXEmit.h"
 #include "sys/objexpr.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
@@ -11,12 +12,16 @@
 
 #include "prevent_bss_reordering.h"
 
+typedef s32 (*DLL210_Unk5FC_Callback)(Object *, s32, void *, Object *);
+
 // size: 0x610
 typedef struct {
     void *unk0; // holds a pointer to a (loaded) DLL
     u8 *unk4;
     Object *unk8;
-    u8 padC[0x18 - 0xC];
+    s32 unkC;
+    s32 unk10;
+    s32 unk14;
     u8 unk18;
     u8 unk19;
     u8 unk1A; // some sort of state?
@@ -55,7 +60,7 @@ typedef struct {
     f32 unk330;
     s32 unk334;
     Object *unk338;
-    u8 pad33C[0x360 - 0x33C];
+    HeadAnimation unk33C;
     HeadAnimation unk360;
     Vec3f unk384[4];
     Vec3f unk3B4;
@@ -89,8 +94,14 @@ typedef struct {
                 CurveSetup *unk5F4;
                 u32 unk5F4_amsFxID;
             };
-            CurveSetup *unk5F8;
-            s32 (*unk5FC)(Object *, s32, void *, Object *);
+            union {
+                CurveSetup *unk5F8;
+                s32 unk5F8_s32;
+            };
+            union {
+                DLL210_Unk5FC_Callback unk5FC;
+                s32 unk5FC_s32;
+            };
         };
     };
     f32 unk600;
@@ -110,6 +121,7 @@ static s8 dll_211_func_7BAC(DLL211_Data* arg0, CurveSetup** arg1, u8 *arg2, s32 
 static CurveSetup* dll_211_func_7DB8(DLL211_Data* arg0, CurveSetup* arg1, void* arg2);
 static CurveSetup* dll_211_func_7EFC(DLL211_Data* arg0, CurveSetup* arg1, s32 arg2, s32 arg3);
 static CurveSetup* dll_211_func_8114(CurveSetup* arg0);
+static void dll_211_func_81A8(Object* arg0);
 static f32 dll_211_func_81D8(Object* arg0);
 static void dll_211_func_82B8(DLL211_Data* arg0);
 static void dll_211_func_8308(Object* arg0, s32 arg1);
@@ -122,7 +134,9 @@ static void dll_211_func_88F4(Object* arg0, s16 arg1);
 static void dll_211_func_8974(Object* arg0, UnkCurvesStruct* arg1, f32 arg2);
 static void dll_211_func_8A94(Object* arg0, UnkCurvesStruct* arg1);
 static void dll_211_func_8B5C(Object* arg0, s32 arg1);
+static void dll_211_func_8BEC(Object* arg0);
 static void dll_211_func_8ED0(f32 arg0, f32 arg1, f32* arg2);
+static void dll_211_func_8F18(DLL211_Data* arg0);
 static void dll_211_func_8F84(Object* arg0, Vec3f* arg1, f32* arg2);
 static void dll_211_func_9024(DLL211_Data* arg0, Vec3f *arg1);
 static void dll_211_func_9050(Object* arg0, DLL211_Data* arg1);
@@ -167,19 +181,17 @@ static s32 dll_211_func_9668(DLL27_Data* arg0);
     6.93f, 9.24f, 11.88f, 14.85f, 18.18f, 21.84f,
     25.83f, 30.15f, 34.8f, 39.78f, 45.09f, 50.73f
 };
-/*0xEC*/ static u32 _data_EC[] = {
-    0x00000200, 0x04000007, 0x07000a00, 0x000d0000, 0x00000013, 0x00000000, 0x00001a1c, 0x1c000000, 
-    0x00000023, 0x00000000, 0x00000000, 0x00001313, 0x00000000, 0x02000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
+/*0xEC*/ static u8 _data_EC[] = {
+    0, 0, 2, 0, 4, 0, 0, 7, 7, 0, 10, 0, 0, 13, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 26, 28, 28, 0, 0, 0,
+    0, 0, 0, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 19, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 /*0x164*/ static u32 _data_164 = 0x01020000;
-/*0x168*/ static u32 _data_168[] = {
-    0x00000000, 0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005
-};
 
 /*0x0*/ static u8 _bss_0[0x8];
-/*0x8*/ static u8 _bss_8[0x8];
+typedef void (*Bss8)(Object *, DLL211_Data *);
+/*0x8*/ static Bss8 _bss_8[2];
 /*0x10*/ static u8 _bss_10[0x40];
 
 // offset: 0x0 | ctor
@@ -194,15 +206,263 @@ void dll_211_setup(Object *self, ObjSetup *setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_setup.s")
 
 // offset: 0x3FC | func: 1 | export: 1
-void dll_211_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_control.s")
+void dll_211_control(Object* self) {
+    s32 temp_v0;
+    s32 sp90;
+    ObjSetup* temp_v0_2;
+    DLL211_Data* data = self->data;
+    f32 sp84;
+    UnkFunc_80024108Struct sp68;
+    s32 sp50[6] = { 0, 1, 2, 3, 4, 5 };
+    Object* sp4C;
+    Object* temp_v0_3;
+
+    // FAKE
+    if ((s32)self);
+    sp90 = _data_EC[func_80045D58()];
+    data->unk14 = _data_EC[map_world_xz_to_map_id(data->unk8->globalPosition.x, data->unk8->globalPosition.z)];
+    if ((sp90 != data->unkC) && (sp90 != data->unk10)) {
+        if (data->unkC == data->unk14) {
+            data->unk10 = sp90;
+        } else {
+            data->unkC = sp90;
+        }
+        gDLL_25->vtbl->func_D8();
+    }
+    if (data->unk4C & 0x200) {
+        if (!(data->unk4C & 0x4000)) {
+            gDLL_27->vtbl->reset(self, &data->unkCC);
+            dll_211_func_82B8(data);
+            data->unk19 = 0;
+            data->unk20 = 0.0f;
+        }
+        data->unk4C &= ~0x4200;
+    }
+    if (data->unk28 != NULL && (data->unk28->stateFlags & 0x40)) {
+        dll_211_func_82B8(data);
+        data->unk28 = NULL;
+    }
+    temp_v0 = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(sp50, 6);
+    if ((data->unk18 == 0xB) && (temp_v0 == 4)) {
+        data->unk60C ^= 1;
+    } else if ((data->unk18 == 0x10) && (temp_v0 == 4)) {
+        data->unk5F8_s32 = 1;
+    } else if ((data->unk18 == 0x11) && (temp_v0 == 4)) {
+        data->unk5F8_s32 = 1;
+    } else if (!(data->unk4C & 0x10)) {
+        switch (temp_v0) {
+        case 0:
+            dll_211_func_82B8(data);
+            data->unk5F4_vec.x = 600.0f;
+            break;
+        case 1:
+            data->unk1D = 1;
+            dll_211_func_8F18(data);
+            gDLL_6_AMSFX->vtbl->play(self, rand_next(50, 51), 0x7F, NULL, NULL, 0, NULL);
+            switch (data->unk28->id) {
+            case 0x1CA:
+                data->unk18 = 2;
+                temp_v0_2 = data->unk28->setup;
+                data->unk5F8_s32 = ((s16*)temp_v0_2)[13];
+                data->unk5FC_s32 = ((s16*)temp_v0_2)[14];
+                break;
+            case 0x160:
+                data->unk18 = 3;
+                break;
+            case 0x31C:
+                data->unk18 = 8;
+                break;
+            case 0x6A:
+            case 0x3FB:
+                data->unk18 = 12;
+                break;
+            case 0x352:
+                data->unk18 = 2;
+                data->unk5F8_s32 = 0;
+                data->unk5FC_s32 = 1;
+                break;
+            case 0x358:
+                data->unk18 = 0x11;
+                break;
+            default:
+                dll_211_func_82B8(data);
+                break;
+            }
+            break;
+        case 2:
+            data->unk1D = 2;
+            sp84 = M_INFINITY_F;
+            sp4C = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &sp84);
+            temp_v0_3 = obj_get_nearest_type_to(OBJTYPE_40, self, &sp84);
+            if (temp_v0_3 != NULL) {
+                dll_211_func_1408(self, temp_v0_3);
+            } else {
+                dll_211_func_1408(self, sp4C);
+            }
+            break;
+        case 3:
+            data->unk1D = 3;
+            dll_211_func_8F18(data);
+            switch (data->unk28->id) {
+            case OBJ_DR_PressurePad:
+                data->unk18 = 13;
+                break;
+            case OBJ_VFP_PuzzlePad:
+                data->unk18 = 13;
+                break;
+            default:
+                switch (data->unk28->id) {
+                    default:
+                        data->unk18 = 11;
+                }
+            }
+            break;
+        case 4:
+            data->unk1D = 4;
+            dll_211_func_8F18(data);
+            data->unk18 = 10;
+            switch (data->unk28->id) {
+            case OBJ_DIMIceWall:
+                data->unk5FC = (DLL210_Unk5FC_Callback) ((DLL_Unknown*)data->unk28->dll)->vtbl->func[7].withFourArgsS32;
+                break;
+            case OBJ_VFP_flamepoint:
+                data->unk5FC = (DLL210_Unk5FC_Callback) ((DLL_Unknown*)data->unk28->dll)->vtbl->func[7].withFourArgsS32;
+                break;
+            case OBJ_DIMLogFire:
+                data->unk5FC = (DLL210_Unk5FC_Callback) ((DLL_Unknown*)data->unk28->dll)->vtbl->func[7].withFourArgsS32;
+                break;
+            case 0x470:
+                data->unk5FC = (DLL210_Unk5FC_Callback) ((DLL_Unknown*)data->unk28->dll)->vtbl->func[7].withFourArgsS32;
+                break;
+            case OBJ_SHvines:
+            case OBJ_DR_Vines:
+            case OBJ_DB_FlameSwitch:
+                data->unk5FC = 0;
+                break;
+            default:
+                dll_211_func_82B8(data);
+                break;
+            }
+            break;
+        case 5:
+            data->unk1D = 5;
+            temp_v0_2 = obj_alloc_setup(sizeof(SidekickToy_Setup), OBJ_SidekickBall);
+            temp_v0_2->fadeDistance = 0x96;
+            temp_v0_2->loadFlags = 2;
+            temp_v0_2->x = self->globalPosition.x;
+            temp_v0_2->y = self->globalPosition.y;
+            temp_v0_2->z = self->globalPosition.z;
+            data->unk28 = obj_create(temp_v0_2, 5U, -1, -1, self->parent);
+            dll_211_func_9024(data, &data->unk28->globalPosition);
+            data->unk1A = 0;
+            data->unk18 = 14;
+            break;
+        default:
+            if ((data->unk18 == 1) && (data->unk5F4_vec.x <= 0.0f)) {
+                sp84 = 150.0f;
+                if (dll_211_func_94BC(data->unk8, 150.0f) != NULL) {
+                    data->unk18 = 0x10;
+                    data->unk1A = 0;
+                }
+            }
+            break;
+        }
+    } else if ((gDLL_1_cmdmenu->vtbl->was_this_item_used(0) != 0) && (data->unk18 == 7)) {
+        ((s16*)data->unk5E4)[0] = 1;
+    }
+    self->unkAF |= 8;
+    data->unkCC.mode = 1;
+    data->unk24 += gUpdateRateF;
+    _bss_8[data->unk18](self, data);
+    func_80024108(self, data->unk38, gUpdateRateF, &sp68);
+    if (data->unk4C & 0x40) {
+        self->srt.transl.x += data->unk30[0] * -sp68.unk0[2] * data->unk40;
+        self->srt.transl.z += data->unk30[1] * -sp68.unk0[2] * data->unk40;
+    }
+    if (data->unk4C & 0x80) {
+        self->srt.transl.y += sp68.unk0[1] * data->unk44;
+    }
+    if (data->unk4C & 0x20) {
+        self->srt.transl.x += data->unk30[1] * sp68.unk0[0] * data->unk3C;
+        self->srt.transl.z += data->unk30[0] * -sp68.unk0[0] * data->unk3C;
+    }
+    if (data->unk4C & 0x100) {
+        self->srt.yaw += sp68.unkC[1] * data->unk48;
+    }
+    if (data->unk28 != NULL) {
+        data->unk33C.aimIsActive = 1;
+        data->unk33C.headAimX = data->unk28->srt.transl.x;
+        data->unk33C.headAimY = data->unk28->srt.transl.y;
+        data->unk33C.headAimZ = data->unk28->srt.transl.z;
+    } else {
+        data->unk33C.aimIsActive = 0;
+    }
+    func_800328F0(self, &data->unk33C, 0.0f);
+    func_80032A08(self, &data->unk33C);
+    func_80034BC0(self, &data->unk360);
+    dll_211_func_81A8(self);
+    dll_211_func_8BEC(self);
+}
 
 // offset: 0xD1C | func: 2 | export: 2
 void dll_211_update(Object *self) { }
 
 // offset: 0xD28 | func: 3 | export: 3
+#ifndef NON_MATCHING
 void dll_211_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_print.s")
+#else
+// matches but requires these as static:
+// - dll_211_func_9200
+// - dll_211_func_74C4 (matched)
+// - dll_211_func_726C (matched)
+// - dll_211_func_7188 (matched)
+void dll_211_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    DLL211_Data* data;
+
+    if (visibility == 0) {
+        return;
+    }
+
+    data = self->data;
+    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    dll_211_func_7188(self);
+    if (data->unk4C & 0x10) {
+        switch (data->unk18) {
+        case 2:
+            dll_211_func_726C(self);
+            break;
+        case 3:
+            if (data->unk1A == 4) {
+                dll_211_func_726C(self);
+            }
+            break;
+        case 8:
+            if ((data->unk1A == 3) || (data->unk1A == 2)) {
+                dll_211_func_74C4(self, gdl, mtxs, (Vtx** ) vtxs, pols);
+                break;
+            }
+            if (data->unk1A != 4) {
+                break;
+            }
+            return;
+        }
+
+        if (data->unk18 == 0xE) {
+            if (data->unk1A >= 3) {
+                if (data->unk1A != 3) {
+                    data->unk5E4[0]->srt.transl.x = data->unk3B4.x;
+                    data->unk5E4[0]->srt.transl.y = data->unk3B4.y;
+                    data->unk5E4[0]->srt.transl.z = data->unk3B4.z;
+                }
+                draw_object(data->unk5E4[0], gdl, mtxs, vtxs, pols, 1.0f);
+            }
+        }
+    }
+
+    dll_211_func_9200(self, data);
+}
+#endif
 
 // offset: 0xF20 | func: 4 | export: 4
 void dll_211_free(Object* self, s32 a1) {
@@ -2281,7 +2541,7 @@ void dll_211_func_726C(Object* arg0) {
 /*0x914*/ static const char str_914[] = "out of water\n";
 
 // offset: 0x74C4 | func: 57
-void dll_211_func_74C4(Object* arg0, Gfx** arg1, Mtx** arg2, Vtx** arg3) {
+void dll_211_func_74C4(Object* arg0, Gfx** arg1, Mtx** arg2, Vtx** arg3, Triangle** pols) {
     Vtx* sp6C;
     DLL211_Data* data;
     s32 i;
@@ -2356,7 +2616,7 @@ static void dll_211_func_7794(Object* arg0, u8 *arg1, s16 arg2, CurveSetup** arg
     data = arg0->data;
     temp_a1 = gDLL_26_Curves->vtbl->func_1BC(&sp74);
     for (i = 0; i < 4; i++) {
-        sp7C[i] = 3.4028235e38f;
+        sp7C[i] = M_INFINITY_F;
         arg3[i] = 0;   
     }
 
@@ -2569,7 +2829,7 @@ static CurveSetup* dll_211_func_8114(CurveSetup* arg0) {
 }
 
 // offset: 0x81A8 | func: 64
-void dll_211_func_81A8(Object* arg0) {
+static void dll_211_func_81A8(Object* arg0) {
     DLL211_Data* temp_v0;
     Vec3f* temp_v1;
 
@@ -2822,7 +3082,7 @@ static void dll_211_func_8B5C(Object* arg0, s32 arg1) {
 }
 
 // offset: 0x8BEC | func: 77
-void dll_211_func_8BEC(Object* arg0) {
+static void dll_211_func_8BEC(Object* arg0) {
     DLL211_Data* data;
     f32 sp38;
     Object* sp34;
@@ -2888,10 +3148,10 @@ static void dll_211_func_8ED0(f32 arg0, f32 arg1, f32* arg2) {
 }
 
 // offset: 0x8F18 | func: 79
-void dll_211_func_8F18(DLL211_Data* arg0) {
+static void dll_211_func_8F18(DLL211_Data* arg0) {
     Object* temp_v0;
 
-    temp_v0 = obj_get_nearest_type_to(0x33, arg0->unk8, NULL);
+    temp_v0 = obj_get_nearest_type_to(OBJTYPE_TrickyTarget, arg0->unk8, NULL);
     arg0->unk28 = temp_v0;
     dll_211_func_9024(arg0, &temp_v0->globalPosition);
     arg0->unk1A = 0;
