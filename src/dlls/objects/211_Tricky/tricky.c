@@ -325,10 +325,50 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1398.s")
 
 // offset: 0x1408 | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1408.s")
+void dll_211_func_1408(Object* arg0, Object* arg1) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    data->unk5E4[1] = gDLL_25->vtbl->func_1864(&arg1->srt.transl, -1, 3);
+    if (data->unk5E4[1] == NULL) {
+        return;
+    }
+
+    ((s16*)data->unk5E4)[0] = 0;
+    if (((u8*)data->unk5E4[1])[3] != 0) {
+        if (((s32*)data->unk5E4[1])[7] == -1) {
+            data->unk18 = 6;
+        } else {
+            data->unk18 = 7;
+        }
+    } else {
+        data->unk18 = 5;
+    }
+    data->unk28 = arg1;
+    dll_211_func_9024(data, (Vec3f* ) &data->unk5E4[1]->srt.scale);
+    data->unk1A = 0;
+}
 
 // offset: 0x14E8 | func: 25 | export: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_14E8.s")
+s32 dll_211_func_14E8(Object* arg0) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    switch (data->unk18) {
+    case 5:
+    case 6:
+        if (data->unk4C & 0x200) {
+            return 1;
+        }
+        break;
+    case 7:
+        if (data->unk4C & 0x10) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 // offset: 0x1550 | func: 26 | export: 25
 s32 dll_211_func_1550(Object* arg0) {
