@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/objects/234_ScorpionRobot.h"
 #include "sys/gfx/model_asm.h"
 #include "sys/rarezip.h"
 #include "sys/segment_20490.h"
@@ -855,7 +856,7 @@ void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
     } else {
         matrix_from_srt(mf, &object->srt);
         if (object->id == OBJ_ScorpionRobot) {
-            matrix_from_yaw(((DLL_Unknown *)object->dll)->vtbl->func[7].withOneArgS32((s32)object), mf);
+            matrix_from_yaw(((DLL_234_ScorpionRobot*)object->dll)->vtbl->get_spin(object), mf);
         }
         if (yPrescale != 1.0f) {
             matrix_prescale_y(mf, yPrescale);

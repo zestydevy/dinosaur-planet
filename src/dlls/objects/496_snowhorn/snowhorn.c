@@ -902,7 +902,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
             objdata->flags = 0;
             return;
         }
-        if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
+        if ((curves_func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
             gDLL_26_Curves->vtbl->func_4704(curveStruct);
         }
         dx = curveStruct->unk68.x - snowhorn->srt.transl.x;

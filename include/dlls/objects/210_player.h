@@ -266,7 +266,7 @@ typedef struct {
 /*89C*/ UNK_PTR *unk89C;
 /*8A0*/ u8 unk8A0;
 /*8A1*/ u8 unk8A1;
-/*8A2*/ u8 unk8A2;
+/*8A2*/ u8 lateralAttackSelector; // 0 or 1 to select left -> right attack swing or right -> left
 /*8A3*/ u8 pad8A3;
 /*8A4*/ u8 unk8A4;
 /*8A5*/ u8 unk8A5;

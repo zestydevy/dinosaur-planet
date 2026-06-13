@@ -311,14 +311,14 @@ void func_800264D0(Object* arg0) {
         return;
     }
 
-    objHitInfo->unk58 = arg0->def->helpText;
+    objHitInfo->unk58 = arg0->def->unk7C;
     objHitInfo->unk5A = arg0->def->unk93;
     objHitInfo->unk5B = arg0->def->unk91;
     objHitInfo->unk5C = arg0->def->unk92;
     objHitInfo->unk52 = arg0->def->hitbox_flagsB6;
     objHitInfo->unk54 = arg0->def->unk94;
     objHitInfo->unk56 = arg0->def->unk96;
-    objHitInfo->unkA0 = arg0->def->colorIdx;
+    objHitInfo->unkA0 = arg0->def->unk8E;
     objHitInfo->unk50 = 0x400;
     temp_fv0 = (f32) objHitInfo->unk52;
     objHitInfo->unkC = temp_fv0 * temp_fv0;
@@ -790,7 +790,7 @@ void obj_do_hit_detection(s32 arg0) {
                         var_fv1 = currentObjHitInfo->unk2C + parentObjInfo->unk2C;
                         if (var_fv0 < var_fv1 && parentObjInfo->unk58 & 1) {
                             if (!(currentObjHitInfo->unk58 & 0x40) && !(parentObjInfo->unk58 & 0x40) && (!(parentObjInfo->unk58 & 4) || (var_s6 >= s4))) {
-                                if ((parentObj->def->_unk98[0] & currentObj->def->_unk98[2]) && (currentObj->def->_unk98[0] & parentObj->def->_unk98[2])) {
+                                if ((currentObj->def->unk9A & parentObj->def->unk98) && (parentObj->def->unk9A & currentObj->def->unk98)) {
                                     if (parentObjInfo->unk5A & 0x20) {
                                         func_80027DAC(parentObj, currentObj, D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
                                     } else if (currentObjHitInfo->unk5A & 0x20) {
@@ -805,8 +805,8 @@ void obj_do_hit_detection(s32 arg0) {
                                 }
                             }
                             if (!(currentObjHitInfo->unk58 & 0x100) && !(parentObjInfo->unk58 & 0x100)) {
-                                if (parentObj->def->_unk98[0] & currentObj->def->_unk98[1]) {
-                                    if (parentObj->def->_unk98[1] & 0x80 || currentObj->def->_unk98[0] & parentObj->def->_unk98[1]) {
+                                if (currentObj->def->unk99 & parentObj->def->unk98) {
+                                    if (parentObj->def->unk99 & 0x80 || parentObj->def->unk99 & currentObj->def->unk98) {
                                         linkedParentObj = parentObj->linkedObject;
                                         if (linkedParentObj != NULL && (linkedParentObj->objhitInfo == NULL || !(linkedParentObj->objhitInfo->unk58 & 1))) {
                                             linkedParentObj = NULL;
@@ -1186,6 +1186,7 @@ void func_80028238(Object* obj, Object* otherObj) {
     }
 }
 
+// TODO: handles pushing two objects apart
 void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5) {
     f32 sp74;
     f32 cosSquared;
@@ -1412,7 +1413,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 up
             func_8002949C(obj, obj2, obj3, sp3C, sp44, updateRate);
         }
     }
-    if (obj2->def->_unk98[1] & 0x80) {
+    if (obj2->def->unk99 & 0x80) {
         return;
     }
 

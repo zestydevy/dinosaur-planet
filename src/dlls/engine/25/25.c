@@ -640,10 +640,10 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, 
     arg0->unk84 = arg0->unkA8;
     arg0->unk88 = arg0->unkC8;
     arg0->unk8C = arg0->unkE8;
-    arg0->unk90 = 8;
-    arg0->unk94 = func_80004C5C;
-    arg0->unk98 = (unk_curve_func_2)func_80004CE8;
-    func_80005094(arg0);
+    arg0->numControlPoints = 8;
+    arg0->splineFunc = curves_hermite;
+    arg0->splineConverterFunc = curves_hermite_converter;
+    curves_move(arg0);
     return 0;
 }
 #endif
@@ -676,9 +676,9 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
         arg0->unkE8[1] = arg0->unkA0->pos.z;
         arg0->unkE8[2] = 2.0f * (fcos16_precise(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
         arg0->unkE8[3] = 2.0f * (fcos16_precise(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
-        if (arg0->unk90 != 0)
+        if (arg0->numControlPoints != 0)
         {
-            func_8000523C(arg0);
+            curves_setup_move_network_curve(arg0);
             if (arg0->unk0 <= 0.0f)
             {
                 arg0->unk0 = 0.01f;
@@ -705,9 +705,9 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
         arg0->unkF8[1] = arg0->unkA4->pos.z;
         arg0->unkF8[2] = 2.0f * (fcos16_precise(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
-        if (arg0->unk90 != 0)
+        if (arg0->numControlPoints != 0)
         {
-            func_8000523C(arg0);
+            curves_setup_move_network_curve(arg0);
             if (arg0->unk0 >= 1.0f)
             {
                 arg0->unk0 = 0.99f;

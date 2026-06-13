@@ -1,2 +1,2 @@
-func_800065C0 = 0x800065C0;
-func_8000598C = 0x8000598C;
+curves_func_800065C0 = 0x800065C0;
+curves_func_8000598C = 0x8000598C;

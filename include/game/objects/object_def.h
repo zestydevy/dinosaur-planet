@@ -41,13 +41,6 @@ enum ObjShadowType { //copied from SFA; may be incorrect
     OBJ_SHADOW_BLUE_GLOWING_RECT = 0x4
 };
 
-enum HitboxFlags60 { //copied from SFA; may be incorrect
-    HITBOX_DISABLED        = 0x0001,
-    HITBOX_NEED_POS_UPDATE = 0x0040,
-    HITBOX_LOCK_ROT_Y      = 0x0800,
-    HITBOX_LOCK_ROT_Z      = 0x1000
-};
-
 enum HitboxFlags62 { //copied from SFA; may be incorrect
     HITBOX_SCALE_BY_SIZE      = 0x01,
     HITBOX_SIZE_FLAG_02       = 0x02,
@@ -186,23 +179,23 @@ typedef struct {
 /*24*/ ObjDefHit *pHits;       // [optional] table of OBJHITS offsets (offset in file, pointer after load)
 /*28*/ ObjDefWeaponData *pWeaponData;   // [optional] table of WEAPONDATA offsets (offset in file, pointer after load)
 /*2c*/ AttachPoint *pAttachPoints;      // (offset in file, pointer after load)
-/*30*/ ModLine *pModLines; //ignored in file (zeroed on load) // TODO: confirm
-/*34*/ ModLineReencoded* pIntersectPoints; //ignored in file (zeroed on load) (wObjList?) // TODO: confirm
-/*38*/ u8 *nextIntersectPoint; // TODO: confirm
-/*3c*/ Vec3f *nextIntersectLine; // TODO: confirm
+/*30*/ ModLine *pModLines; //ignored in file (zeroed on load)
+/*34*/ ModLineReencoded* pIntersectPoints; //ignored in file (zeroed on load) (wObjList?)
+/*38*/ u8 *nextIntersectPoint; // runtime only
+/*3c*/ Vec3f *nextIntersectLine; // runtime only
 /*40*/ ObjDefLockData *lockdata; //z-targetting data ("lockdata" in default.dol)
 /*44*/ u32 flags; // ObjDefFlags
-/*48*/ s16 shadowType; //ObjShadowType // TODO: confirm
-/*4a*/ s16 shadowTexture; // TODO: confirm
+/*48*/ s16 shadowType; // ObjShadowType
+/*4a*/ s16 shadowTexture; // ID of shadow texture
 /*4c*/ UNK_TYPE_8 unk4C;
 /*4d*/ UNK_TYPE_8 unk4D;
-/*4e*/ u16 hitbox_flags60; //HitboxFlags60 // TODO: confirm
+/*4e*/ u16 unk4E;
 /*50*/ UNK_TYPE_16 unk50;
 /*52*/ UNK_TYPE_8 unk52;
 /*53*/ UNK_TYPE_8 unk53;
 /*54*/ UNK_TYPE_8 unk54;
 /*55*/ u8 unk55;
-/*56*/ u8 numPlayerObjs; //if > 0, objAddObjectType(obj, 8) // TODO: confirm
+/*56*/ u8 unk56;
 /*57*/ u8 unk57; //never read?
 /*58*/ u16 dllID;
 /*5a*/ s16 controlNo; // see ObjectControlNumber enum. official name: controlNo
@@ -215,38 +208,50 @@ typedef struct {
 /*71*/ u8 numAnimatedFrames;
 /*72*/ u8 numSequenceBones;
 /*73*/ u8 stateVar73; //1=translucent; 3=invincible - not flags // TODO: confirm
-/*74*/ u8 unk74;
+/*74*/ u8 unk74; // objhit, must be != 0 for OBJHITS.bin to be read
 /*75*/ u8 unk75;
 /*76*/ s16 modLineCount;
 /*78*/ s16 modLineNo;
 /*7a*/ s16 numSequences;
-/*7c*/ s16 helpText; //one per model (GameTextId) // TODO: confirm //NOTE: possibly objHits flags?
-/*7E*/ s8 unk7E;
-/*7F*/ u8 unk7F;
-/*80*/ s8 unk80;
+/*7c*/ s16 unk7C; // objhit configuration
+/*7E*/ s8 unk7E; // voxmap related
+/*7F*/ u8 unk7F; // voxmap related
+/*80*/ s8 unk80; // voxmap related
 /*81*/ u8 pad81;
-/*82*/ s8 unk82;
-/*83*/ s8 unk83;
-/*84*/ s8 unk84;
-/*85*/ u8 unk85;
-/*86*/ u8 unk86;
-/*87*/ u8 unk87; //lighting-related flags?
+/*82*/ s8 unk82; // voxmap related
+/*83*/ s8 unk83; // lighting related
+/*84*/ s8 unk84; // lighting related
+/*85*/ u8 unk85; // lighting related
+/*86*/ u8 unk86; // lighting related
+/*87*/ u8 unk87; // lighting flags
 /*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads? // TODO: confirm
-/*8c*/ u8 nLights; // TODO: confirm
-/*8d*/ u8 lightIdx; // TODO: confirm
-/*8e*/ u8 colorIdx; //related to textures; 1=dark, 2=default, 3+=corrupt, 77=crash, 0=normal // TODO: confirm
-/*8f*/ u8 unk8F; //related to hitbox // TODO: confirm
-/*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62) // TODO: confirm
-/*91*/ u8 unk91;
-/*91*/ u8 unk92;
-/*93*/ s8 unk93; //render settings (can switch off vertex shading)
-/*94*/ s16 unk94;
-/*96*/ s16 unk96;
-/*98*/ u8 _unk98[3];
+/*8c*/ u8 nLights; // lfx related // TODO: confirm
+/*8d*/ u8 lightIdx; // lfx related // TODO: confirm
+/*8e*/ u8 unk8E; // model inst index, related to collision
+/*8f*/ u8 unk8F; // must be != 0 for objhitinfo to be allocated
+/*90*/ u8 hitbox_flagsB6; // objhit related
+/*91*/ u8 unk91; // objhit, how strong we can be pushed?
+/*91*/ u8 unk92; // objhit, how strong we repel?
+/*93*/ s8 unk93; // objhit configuration
+/*94*/ s16 unk94; // objhit related
+/*96*/ s16 unk96; // objhit related
+/*98*/ u8 unk98; // objhit related
+/*99*/ u8 unk99; // objhit related
+/*9a*/ u8 unk9A; // objhit related
 /*9b*/ u8 numLockdata; // length of lockdata (z-targetting data)
 /*9c*/ u8 minVisRadiusSixteenth; // minimum vis radius for this object, divided by 16
 /*9d*/ u8 staticDepthSortVal; // pre-calculated depth sort value. only used if flags has the "static depth sort" bit set
-/*9e*/ u8 _unk9e[2];
+       // determines how the player melee attacks when nearby an object of this def. 
+       // 
+       // 3 = disable overhead attack.
+       // 2 = always overhead attack.
+       // 1 = reverse conditions for overhead vs lateral attack.
+       // 0 = normal (alternate lateral attack direction).
+       //
+       // object must be type 63 for this to take effect.
+       // does not apply when player is z-locked?
+/*9e*/ u8 playerAttackConfig;
+/*9f*/ u8 unk9F;
 /*a0*/ s16 mobileMapID;
 /*a2*/ s16 gametextIndex[4]; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
 /*aa*/ s16 unkAA; //gametextID for tutorial textbox

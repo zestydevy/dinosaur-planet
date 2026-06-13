@@ -4,8 +4,8 @@
 #include "game/objects/object.h"
 #include "sys/math.h"
 
-typedef f32 (*unk_curve_func)(Vec4f*, f32, f32*); // TODO: first arg is actually f32[4]
-typedef void (*unk_curve_func_2)(f32*, f32*);
+typedef f32 (*SplineFunc)(f32* spline, f32 t, f32* rate);
+typedef void (*SplineConverterFunc)(f32* in, f32* out);
 
 // Note: This is a curve-specific version of the base ObjSetup struct, with additions
 typedef struct {
@@ -76,6 +76,13 @@ typedef struct {
         /*33*/ s8 unk33;
         /*34*/ s8 unk34[4][4];
     } type26;
+    struct {
+        /*30*/ u8 unk30; 
+        /*31*/ u8 unk31;
+        /*32*/ u8 unk32;
+        /*33*/ u8 unk33;
+        /*34*/ u8 unk34;
+    } unk;
 };
 } CurveSetup;
 
@@ -93,12 +100,12 @@ typedef struct {
     /* 0078 */ f32 unk78; //some y component
     /* 007C */ f32 unk7C; //some z component
     /* 0080 */ s32 unk80;
-    /* 0084 */ f32 *unk84;
-    /* 0088 */ f32 *unk88;
-    /* 008C */ f32 *unk8C;
-    /* 0090 */ s32 unk90;
-    /* 0094 */ unk_curve_func unk94;
-    /* 0098 */ unk_curve_func_2 unk98;
+    /* 0084 */ f32* unk84;
+    /* 0088 */ f32* unk88;
+    /* 008C */ f32* unk8C;
+    /* 0090 */ s32 numControlPoints;
+    /* 0094 */ SplineFunc splineFunc;
+    /* 0098 */ SplineConverterFunc splineConverterFunc;
     CurveSetup *unk9C;
     CurveSetup *unkA0;
     CurveSetup *unkA4;
@@ -120,15 +127,22 @@ typedef struct Unk80006908 {
     f32 unk20;
 } Unk80006908;
 
-void func_80005094(UnkCurvesStruct *arg0);
-f32 func_80004C5C(Vec4f *a0, f32 a1, f32 *a2);
-f32 func_80004D70(Vec4f *a0, f32 a1, f32 *a2);
-void func_80004CE8(Vec4f *in, Vec4f *out);
-void func_8000523C(UnkCurvesStruct *arg0);
-f32 func_80006E04(Unk80006784 *, f32);
-f32 func_80006CFC(Unk80006784 *, f32, f32);
-f32 func_80004A60(Vec4f *a0, f32 a1, f32 *a2);
-s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1);
-void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, unk_curve_func_2 arg7);
+f32 curves_b_spline(f32* spline, f32 t, f32* rate);
+void curves_b_spline_converter(f32* in, f32* out);
+f32 curves_hermite(f32* spline, f32 t, f32* rate);
+void curves_hermite_converter(f32* in, f32* out);
+f32 curves_bezier(f32* spline, f32 t, f32* rate);
+void curves_bezier_converter(f32* in, f32* out);
+f32 curves_catmull_rom(f32* s, f32 t, f32* rate);
+void curves_catmull_rom_converter(f32* in, f32* out);
+f32 curves_linear(f32* s, f32 t, f32* rate);
+void curves_linear_converter(f32* in, f32* out);
+
+void curves_move(UnkCurvesStruct *arg0);
+void curves_setup_move_network_curve(UnkCurvesStruct *arg0);
+f32 curves_func_80006E04(Unk80006784 *, f32);
+f32 curves_func_80006CFC(Unk80006784 *, f32, f32);
+s32 curves_func_800053B0(UnkCurvesStruct* arg0, f32 arg1);
+void curves_func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, SplineConverterFunc arg7);
 
 #endif

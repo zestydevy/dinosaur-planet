@@ -1272,9 +1272,9 @@ static void dll_211_func_2C64(Object* self, DLL211_Data* objData) {
             }
             gDLL_25->vtbl->func_1D30(&objData->unk3C8, sp44, sp40, var_a3);
             if (objData->unk3C8.unk80 != 0) {
-                func_800053B0(&objData->unk3C8, -10.0f);
+                curves_func_800053B0(&objData->unk3C8, -10.0f);
             } else {
-                func_800053B0(&objData->unk3C8, -10.0f);
+                curves_func_800053B0(&objData->unk3C8, -10.0f);
             }
             ((f32*)&objData->unk5F0)[0] = 0.0f;
         }
@@ -2180,7 +2180,7 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
             objData->unk3C8.unk80 = objData->unk3C4;
             spA0 = dll_211_func_7A7C(objData, setup, spB8, objData->unk3C4);
             gDLL_25->vtbl->func_1D30(&objData->unk3C8, setup, spA0, dll_211_func_7A7C(objData, spA0, spB8, objData->unk3C4));
-            func_800053B0(&objData->unk3C8, 0.1f);
+            curves_func_800053B0(&objData->unk3C8, 0.1f);
             dll_211_func_8974(self, &objData->unk3C8, objData->unk20);
             dll_211_func_8470(self, &objData->unk3C8.unk68);
             switch (setup->unk1A) {
@@ -2267,9 +2267,9 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
                 temp_s1_4 = objData->unk3C8.unk80 ^ 1;
                 objData->unk50 = 120.0f;
                 if (!temp_s1_4) {
-                    func_800053B0(&objData->unk3C8, 2.0f);
+                    curves_func_800053B0(&objData->unk3C8, 2.0f);
                 } else {
-                    func_800053B0(&objData->unk3C8, -2.0f);
+                    curves_func_800053B0(&objData->unk3C8, -2.0f);
                 }
                 objData->unk3C8.unk80 = temp_s1_4;
                 gDLL_25->vtbl->func_29FC(&objData->unk3C8);
@@ -2292,9 +2292,9 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
                 }
             } else {
                 if (objData->unk3C8.unk80 != 0) {
-                    func_800053B0(&objData->unk3C8, 2.0f);
+                    curves_func_800053B0(&objData->unk3C8, 2.0f);
                 } else {
-                    func_800053B0(&objData->unk3C8, -2.0f);
+                    curves_func_800053B0(&objData->unk3C8, -2.0f);
                 }
                 objData->unk3C8.unk9C = (CurveSetup *)((s32)objData->unk3C8.unk9C ^ (s32)objData->unk3C8.unkA4);\
                 objData->unk3C8.unkA4 = (CurveSetup *)((s32)objData->unk3C8.unkA4 ^ (s32)objData->unk3C8.unk9C);\
@@ -3123,7 +3123,7 @@ static void dll_211_func_8974(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
         if (square < distanceSquared){
             break;
         }
-        func_800053B0(arg1, var_fs0);
+        curves_func_800053B0(arg1, var_fs0);
         distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk68), &self->srt.transl);
     }
 }
@@ -3132,11 +3132,11 @@ static void dll_211_func_8974(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
 static void dll_211_func_8A94(Object* self, UnkCurvesStruct* arg1) {
     if (arg1->unk80 != 0) {
         while (arg1->unk10 != 0) {
-            func_800053B0(arg1, -2.0f);
+            curves_func_800053B0(arg1, -2.0f);
         }
     } else{
         while (arg1->unk10 == 0) {
-            func_800053B0(arg1, 2.0f);
+            curves_func_800053B0(arg1, 2.0f);
         }
     }
 }

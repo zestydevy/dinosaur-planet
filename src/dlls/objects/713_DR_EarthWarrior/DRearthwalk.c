@@ -398,7 +398,7 @@ static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
         temp_fa1 = SQ(temp_fv0) + SQ(temp_fa1);
         dist = sqrtf(temp_fa1);
         if ((dist < 50.0f) && (sp4C != 0)) {
-            if ((func_800053B0(sp28, 0.9f) != 0) || (sp28->unk10 != 0)) {
+            if ((curves_func_800053B0(sp28, 0.9f) != 0) || (sp28->unk10 != 0)) {
                 if (DRearthwalk_func_32EC(self, (u8) sp28->unkA0->unk18) != 0) {
                     if (gDLL_26_Curves->vtbl->func_4704(sp28) != 0) {
                         objdata->unkA58 &= ~0x140;

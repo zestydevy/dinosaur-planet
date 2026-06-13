@@ -223,7 +223,7 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
     s32* pad;
 
     temp_s2 = objdata->unk0;
-    if (((func_800053B0(temp_s2, objdata->unk8) != 0) || (_bss_0 != temp_s2->unk10)) && 
+    if (((curves_func_800053B0(temp_s2, objdata->unk8) != 0) || (_bss_0 != temp_s2->unk10)) && 
         (gDLL_26_Curves->vtbl->func_4704(temp_s2) != 0) && 
         (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, 400.0f, (s32* ) _data_0, -1) != 0)) {
         objdata->flags &= ~8;

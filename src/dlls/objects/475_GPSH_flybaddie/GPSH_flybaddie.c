@@ -18,29 +18,29 @@
 #include "types.h"
 
 typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
+/*00*/ ObjSetup base;
+/*18*/ s16 unk18;
+/*1A*/ s16 unk1A;
 } GPSH_flybaddie_Setup;
 
 typedef struct {
-    Vec4f unk0;
-    Vec4f unk10;
-    Vec4f unk20;
-    f32 unk30;
-    f32 unk34;
-    f32 unk38;
-    f32 unk3C;
-    f32 unk40;
-    f32 unk44;
-    s16 unk48;
-    s16 unk4A;
-    s16 unk4C;
-    s16 unk4E;
-    s8 unk50;
-    s8 unk51;
-    u8 unk52;
-    s8 unk53;
+/*00*/ f32 xCurve[4];
+/*10*/ f32 yCurve[4];
+/*20*/ f32 zCurve[4];
+/*30*/ f32 curveT;
+/*34*/ f32 unk34;
+/*38*/ f32 unk38;
+/*3C*/ f32 unk3C;
+/*40*/ f32 unk40;
+/*44*/ f32 unk44;
+/*48*/ s16 unk48;
+/*4A*/ s16 unk4A;
+/*4C*/ s16 unk4C;
+/*4E*/ s16 unk4E;
+/*50*/ s8 unk50;
+/*51*/ s8 unk51;
+/*52*/ u8 unk52;
+/*53*/ s8 unk53;
 } GPSH_flybaddie_Data;
 
 /*0x0*/ static u8 _data_0 = 0;
@@ -57,29 +57,29 @@ void GPSH_flybaddie_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void GPSH_flybaddie_setup(Object* self, GPSH_flybaddie_Setup* setup, s32 arg2) {
     GPSH_flybaddie_Data* objdata;
-    f32 sp20[3];
+    f32 pos[3];
 
     objdata = self->data;
     objdata->unk38 = self->srt.transl.x;
     objdata->unk3C = self->srt.transl.y;
     objdata->unk40 = self->srt.transl.z;
-    sp20[0] = self->srt.transl.x;
-    sp20[1] = self->srt.transl.y;
-    sp20[2] = self->srt.transl.z;
-    objdata->unk0.x = sp20[0];
-    objdata->unk10.x = sp20[1];
-    objdata->unk20.x = sp20[2];
-    objdata->unk0.y = sp20[0];
-    objdata->unk10.y = sp20[1];
-    objdata->unk20.y = sp20[2];
-    objdata->unk0.z = sp20[0];
-    objdata->unk10.z = sp20[1];
-    objdata->unk20.z = sp20[2];
-    objdata->unk0.w = sp20[0];
-    objdata->unk10.w = sp20[1];
-    objdata->unk20.w = sp20[2];
+    pos[0] = self->srt.transl.x;
+    pos[1] = self->srt.transl.y;
+    pos[2] = self->srt.transl.z;
+    objdata->xCurve[0] = pos[0];
+    objdata->yCurve[0] = pos[1];
+    objdata->zCurve[0] = pos[2];
+    objdata->xCurve[1] = pos[0];
+    objdata->yCurve[1] = pos[1];
+    objdata->zCurve[1] = pos[2];
+    objdata->xCurve[2] = pos[0];
+    objdata->yCurve[2] = pos[1];
+    objdata->zCurve[2] = pos[2];
+    objdata->xCurve[3] = pos[0];
+    objdata->yCurve[3] = pos[1];
+    objdata->zCurve[3] = pos[2];
     objdata->unk34 = 0.0055f;
-    objdata->unk30 = 1.0f;
+    objdata->curveT = 1.0f;
     objdata->unk51 = 0;
     objdata->unk50 = 0;
     objdata->unk48 = rand_next(0, 65000);
@@ -118,14 +118,14 @@ void GPSH_flybaddie_control(Object* self) {
         GPSH_flybaddie_func_7F8(self);
         objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
     }
-    if (objdata->unk30 > 1.0f) {
-        objdata->unk30 -= 1.0f;
+    if (objdata->curveT > 1.0f) {
+        objdata->curveT -= 1.0f;
         GPSH_flybaddie_func_654(self);
     }
-    self->srt.transl.x = func_80004A60(&objdata->unk0, objdata->unk30, NULL);
-    self->srt.transl.y = func_80004A60(&objdata->unk10, objdata->unk30, NULL);
-    self->srt.transl.z = func_80004A60(&objdata->unk20, objdata->unk30, NULL);
-    objdata->unk30 += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
+    self->srt.transl.x = curves_b_spline(objdata->xCurve, objdata->curveT, NULL);
+    self->srt.transl.y = curves_b_spline(objdata->yCurve, objdata->curveT, NULL);
+    self->srt.transl.z = curves_b_spline(objdata->zCurve, objdata->curveT, NULL);
+    objdata->curveT += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
     if ((func_80025F40(self, &hitBy, NULL, NULL) == Damage_Type_Projectile) && (hitBy != NULL)) {
@@ -178,15 +178,15 @@ static void GPSH_flybaddie_func_654(Object* self) {
     SRT sp30;
 
     objdata = self->data;
-    objdata->unk0.x = objdata->unk0.y;
-    objdata->unk10.x = objdata->unk10.y;
-    objdata->unk20.x = objdata->unk20.y;
-    objdata->unk0.y = objdata->unk0.z;
-    objdata->unk10.y = objdata->unk10.z;
-    objdata->unk20.y = objdata->unk20.z;
-    objdata->unk0.z = objdata->unk0.w;
-    objdata->unk10.z = objdata->unk10.w;
-    objdata->unk20.z = objdata->unk20.w;
+    objdata->xCurve[0] = objdata->xCurve[1];
+    objdata->yCurve[0] = objdata->yCurve[1];
+    objdata->zCurve[0] = objdata->zCurve[1];
+    objdata->xCurve[1] = objdata->xCurve[2];
+    objdata->yCurve[1] = objdata->yCurve[2];
+    objdata->zCurve[1] = objdata->zCurve[2];
+    objdata->xCurve[2] = objdata->xCurve[3];
+    objdata->yCurve[2] = objdata->yCurve[3];
+    objdata->zCurve[2] = objdata->zCurve[3];
     sp48[0] = 0.0f;
     sp48[1] = 0.0f;
     sp48[2] = objdata->unk44;
@@ -203,9 +203,9 @@ static void GPSH_flybaddie_func_654(Object* self) {
     sp30.pitch = objdata->unk4A;
     sp30.yaw = objdata->unk48;
     rotate_vec3(&sp30, sp48);
-    objdata->unk0.w = (sp48[0] + objdata->unk38);
-    objdata->unk10.w = (sp48[1] + (objdata->unk3C + 20.0f));
-    objdata->unk20.w = (sp48[2] + objdata->unk40);
+    objdata->xCurve[3] = (sp48[0] + objdata->unk38);
+    objdata->yCurve[3] = (sp48[1] + (objdata->unk3C + 20.0f));
+    objdata->zCurve[3] = (sp48[2] + objdata->unk40);
 }
 
 typedef struct {

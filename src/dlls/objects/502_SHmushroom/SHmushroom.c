@@ -382,7 +382,7 @@ s16 SHmushroom_flee_along_curve(Object* self, Object* fleeingFrom, SHmushroom_Da
 		dz = objData->curves.unk68.z - self->srt.transl.z;
 
 		if ((SQ(dx) + SQ(dz)) < SQ(distance)) {
-			if ((func_800053B0(&objData->curves, objData->curvesDelta) || objData->curves.unk10)) {
+			if ((curves_func_800053B0(&objData->curves, objData->curvesDelta) || objData->curves.unk10)) {
 				if (gDLL_26_Curves->vtbl->func_4704(&objData->curves) != 0) {
 					STUBBED_PRINTF("MUSHROOM ERROR: no node found\n");
 				}
