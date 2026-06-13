@@ -331,7 +331,15 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_14E8.s")
 
 // offset: 0x1550 | func: 26 | export: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1550.s")
+s32 dll_211_func_1550(Object* arg0) {
+    DLL211_Data* data = arg0->data;
+
+    if (data->unk18 == 0xB) {
+        return 1;
+    }
+
+    return 0;
+}
 
 // offset: 0x1578 | func: 27 | export: 23
 void dll_211_func_1578(Object* arg0) {
