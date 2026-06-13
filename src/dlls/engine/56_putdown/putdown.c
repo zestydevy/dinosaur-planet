@@ -47,7 +47,7 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
         foodSetup->unk18 = 0;
 
         placed->objects[placed->nextIndex] = obj_create(
-            (ObjSetup*)foodSetup, 
+            &foodSetup->base,
             1, -1, -1, foodbag->parent);
         placed->foodType[placed->nextIndex] = foodType;
 

@@ -351,7 +351,10 @@ enum SoundID {
     SOUND_4B1 = 0x4B1,
     
     SOUND_LightFoot_Shout = 0x4B7,
+
+    SOUND_4B9 = 0x4B9,
     
+    SOUND_4BB = 0x4BB,
     SOUND_4BC_Tricky_Dig_EMPTY = 0x4BC, //NWtricky (empty)
 
     SOUND_506_Chomping_Food = 0x506, //collectable

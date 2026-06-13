@@ -101,7 +101,7 @@ void perchobject_control(Object* self) {
 
             //Set Kyte's flight curve when player calls her
             if (playerIsNearby){
-                ((DLL_ISidekick*) kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_1_Find);
+                ((DLL_ISidekick*) kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)){
                     STUBBED_PRINTF("should activate the command\n");
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
@@ -210,7 +210,7 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
     if (kyte) {
         if (vec3_distance_squared(&get_player()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
             //Enable Find command option
-            ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_1_Find);
+            ((DLL_ISidekick*)kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
             
             //Check if Find command was used
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {

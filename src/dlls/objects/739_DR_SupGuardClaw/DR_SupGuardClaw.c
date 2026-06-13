@@ -261,7 +261,7 @@ void DR_NPC_control(Object* self) {
     //Show Distract command option
     sidekick = obj_get_nearest_type_to(OBJTYPE_Sidekick, self, &distance);
     if (sidekick != NULL) {
-        ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_2_Distract);
+        ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
     }
 }
 

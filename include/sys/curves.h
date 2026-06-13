@@ -30,6 +30,8 @@ typedef struct {
 	/*06*/ s8 unk6;
 	/*07*/ s8 unk7;
 	} base_type22;
+    s8 unk4_s8[4];
+    u8 unk4_u8[4];
 };
 /*08*/ Vec3f pos;
 /*14*/ u32 uID;
