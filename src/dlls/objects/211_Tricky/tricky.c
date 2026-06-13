@@ -99,6 +99,7 @@ typedef struct {
     u8 unk60C;
 } DLL211_Data;
 
+static void dll_211_func_1408(Object* arg0, Object* arg1);
 static s32 dll_211_func_4F3C(Object* arg0, f32 arg1, DLL211_Data* arg2, Vec3f* arg3);
 static void dll_211_func_514C(Object* arg0, DLL211_Data* arg1);
 static void dll_211_func_52B8(Object* arg0, DLL211_Data* arg1);
@@ -319,13 +320,40 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_12D8.s")
 
 // offset: 0x12F0 | func: 22 | export: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_12F0.s")
+void dll_211_func_12F0(Object* arg0, s32 arg1, Object *arg2) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    if (arg1 != 0) {
+        if (!(data->unk4C & 0x10)) {
+            dll_211_func_1408(arg0, arg2);
+        }
+    } else {
+        if (data->unk18 >= 5 && data->unk18 < 8) {
+            if (data->unk4C & 0x10) {
+                ((s16*)data->unk5E4)[0] = 1;
+                return;
+            }
+            dll_211_func_82B8(data);
+        }
+    }
+}
 
 // offset: 0x1398 | func: 23 | export: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1398.s")
+void dll_211_func_1398(Object* arg0, Object* arg1) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    if (!(data->unk4C & 0x10)) {
+        data->unk28 = arg1;
+        dll_211_func_9024(data, &arg1->globalPosition);
+        data->unk1A = 0;
+        data->unk18 = 0xD;
+    }
+}
 
 // offset: 0x1408 | func: 24
-void dll_211_func_1408(Object* arg0, Object* arg1) {
+static void dll_211_func_1408(Object* arg0, Object* arg1) {
     DLL211_Data* data;
 
     data = arg0->data;
