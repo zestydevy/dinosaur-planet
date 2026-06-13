@@ -334,7 +334,19 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1550.s")
 
 // offset: 0x1578 | func: 27 | export: 23
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1578.s")
+void dll_211_func_1578(Object* arg0) {
+    DLL211_Data* data;
+
+    data = arg0->data;
+    if (!(data->unk4C & 0x10)) {
+        dll_211_func_82B8(data);
+        data->unk5F4_vec.x = 600.0f;
+    } else if (data->unk18 >= 5 && data->unk18 < 8) {
+        if (main_get_bits(0x4E4) != 0) {
+            ((s16*)data->unk5E4)[0] = 1;
+        }
+    }
+}
 
 // offset: 0x1624 | func: 28
 s32 dll_211_func_1624(Object* arg0, UNK_TYPE_32 arg1, AnimObj_Data* arg2, UNK_TYPE_32 arg3) {
