@@ -588,12 +588,12 @@ f32 dll_211_func_10B4(Object* self) {
 }
 
 // offset: 0x10C4 | func: 12 | export: 12
-s32 dll_211_func_10C4(s32 arg0) {
-    return 0;
+DLL27_Data* dll_211_func_10C4(s32 arg0) {
+    return NULL;
 }
 
 // offset: 0x10D4 | func: 13 | export: 13
-s32 dll_211_func_10D4(Object* self) {
+s32 dll_211_get_available_commands(Object* self) {
     DLL211_Data* objData;
     s32 sideCmdBits;
 
@@ -639,17 +639,17 @@ s32 dll_211_func_10D4(Object* self) {
 }
 
 // offset: 0x1230 | func: 14 | export: 26
-int dll_211_func_1230(Object* self, s32* arg1) {
+s32 dll_211_func_1230(Object* self, s32* arg1) {
     DLL211_Data* objData = self->data;
     *arg1 = objData->unk1D;
     return TRUE;
 }
 
-// offset: 0x1248 | func: 15 | export: 14
 /**
-  * Enables a sidekick command (e.g. allowing Flame when near vines).
-  */
-void dll_211_func_1248(Object* self, s32 commandIndex) {
+ * Enables a sidekick command (e.g. allowing Flame when near vines).
+ */
+// offset: 0x1248 | func: 15 | export: 14
+void dll_211_enable_command(Object* self, s32 commandIndex) {
     DLL211_Data* objData = self->data;
     
     if (commandIndex < TOTAL_SIDEKICK_COMMANDS) {
@@ -658,7 +658,7 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 }
 
 // offset: 0x1270 | func: 16 | export: 15
-u8 dll_211_func_get_blue_food(Object* self) {
+u8 dll_211_get_blue_food_count(Object* self) {
     DLL211_Data* objData;
 
     objData = self->data;
@@ -666,7 +666,7 @@ u8 dll_211_func_get_blue_food(Object* self) {
 }
 
 // offset: 0x1284 | func: 17 | export: 16
-u8 dll_211_func_get_red_food(Object* self) {
+u8 dll_211_get_red_food_count(Object* self) {
     DLL211_Data* objData;
 
     objData = self->data;
@@ -674,7 +674,7 @@ u8 dll_211_func_get_red_food(Object* self) {
 }
 
 // offset: 0x1298 | func: 18 | export: 17
-s32 dll_211_func_get_blue_and_red_food(Object* self) {
+s32 dll_211_get_blue_and_red_food_count(Object* self) {
     DLL211_Data* objData;
 
     objData = self->data;
@@ -682,9 +682,9 @@ s32 dll_211_func_get_blue_and_red_food(Object* self) {
 }
 
 // offset: 0x12B4 | func: 19 | export: 18
-void dll_211_func_set_red_food(Object* self, s32 amount) {
+void dll_211_set_red_food_count(Object* self, s32 count) {
     DLL211_Data* objData = self->data;
-    objData->unk4->redFood = amount;
+    objData->unk4->redFood = count;
 }
 
 // offset: 0x12C8 | func: 20 | export: 19
@@ -772,6 +772,7 @@ s32 dll_211_func_14E8(Object* self) {
         }
         break;
     }
+
     return 0;
 }
 

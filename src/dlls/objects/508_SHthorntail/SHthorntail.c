@@ -892,7 +892,7 @@ static void thorntail_trader_act1_control(Object *self, SHthorntail_Data *objdat
     if ((objdata->state == THORNTAILSTATE_BlockingProgression) && (sidekick != NULL)) {
         if (vec3_distance_squared(&player->globalPosition, &self->globalPosition) < SQ(70.0f)) {
             // Allow distract command
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, 2);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
         }
         if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0) {
             // Distract successfully used

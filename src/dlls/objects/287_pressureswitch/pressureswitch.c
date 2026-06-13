@@ -153,7 +153,7 @@ void pressureswitch_control(Object* self) {
         sidekick = get_sidekick();
         if (sidekick) {
             if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(setup->distanceGuardCommand)) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_3_Guard);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_3_Guard);
             }
         }
     }

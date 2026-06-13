@@ -155,7 +155,7 @@ void GPbonfire_control(Object* self) {
         case STATE_2_WAIT_FOR_KYTE:
             sidekick = get_sidekick();
             if (sidekick && playerIsNearby) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_4_Flame);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
                     main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
                 }

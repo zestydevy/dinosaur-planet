@@ -81,7 +81,7 @@ void SCTotemBond_control(Object* self) {
     
     if (objData->flags & SCTotemBond_FLAG_Minigame_Active) {
         if (sidekick != NULL) {
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->func18(sidekick, objData->flameEnergyCount);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->set_red_food_count(sidekick, objData->flameEnergyCount);
         }
         
         ((DLL_210_Player*)player->dll)->vtbl->func71(player, &self->srt.transl, &self->srt, 0);
