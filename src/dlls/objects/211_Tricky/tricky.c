@@ -17,7 +17,7 @@ typedef s32 (*DLL210_Unk5FC_Callback)(Object *, s32, void *, Object *);
 // size: 0x610
 typedef struct {
     void *unk0; // holds a pointer to a (loaded) DLL
-    u8 *unk4;
+    SidekickStats *unk4;
     Object *unk8;
     s32 unkC;
     s32 unk10;
@@ -111,6 +111,7 @@ typedef struct {
 } DLL211_Data;
 
 static void dll_211_func_1408(Object* arg0, Object* arg1);
+static s32 dll_211_func_1624(Object* arg0, Object *animObj, AnimObj_Data* animObjData, s8 arg3);
 static s32 dll_211_func_4F3C(Object* arg0, f32 arg1, DLL211_Data* arg2, Vec3f* arg3);
 static void dll_211_func_514C(Object* arg0, DLL211_Data* arg1);
 static void dll_211_func_52B8(Object* arg0, DLL211_Data* arg1);
@@ -166,16 +167,13 @@ static s32 dll_211_func_9668(DLL27_Data* arg0);
     { 0x003e, 0x0100, 0x0000 },
     { 0x003f, 0x1500, 0x0000 },
 };
-/*0x74*/ static u32 _data_74[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x41880000, 0x00000000
+/*0x74*/ static Vec3f _data_74[] = {
+    VEC3F(0.0f, 0.0f, 0.0f),
+    VEC3F(0.0f, 17.0f, 0.0f)
 };
-/*0x8C*/ static u32 _data_8C[] = {
-    0x00000000, 0x41080000
-};
-/*0x94*/ static u32 _data_94[] = {
-    0x00000000, 0x00000000, 0x00000000
-};
-/*0xA0*/ static u32 _data_A0 = 0x41000000;
+/*0x8C*/ static f32 _data_8C[] = { 0.0f, 8.5f };
+/*0x94*/ static Vec3f _data_94[] = VEC3F(0.0f, 0.0f, 0.0f);
+/*0xA0*/ static f32 _data_A0 = 8.0f;
 /*0xA4*/ static f32 _data_A4[] = {
     0.0f, 0.33f, 0.99f, 1.98f, 3.3f, 4.95f,
     6.93f, 9.24f, 11.88f, 14.85f, 18.18f, 21.84f,
@@ -187,7 +185,7 @@ static s32 dll_211_func_9668(DLL27_Data* arg0);
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-/*0x164*/ static u32 _data_164 = 0x01020000;
+/*0x164*/ static u16 _data_164 = 0x0102;
 
 /*0x0*/ static u8 _bss_0[0x8];
 typedef void (*Bss8)(Object *, DLL211_Data *);
@@ -202,8 +200,54 @@ void dll_211_ctor(void *dll);
 void dll_211_dtor(void *dll) { }
 
 // offset: 0x104 | func: 0 | export: 0
-void dll_211_setup(Object *self, ObjSetup *setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_setup.s")
+void dll_211_setup(Object* self, ObjSetup* setup, s32 arg2) {
+    f32 var_ft5;
+    f32 var_fv0;
+    f32 var_fv1;
+    DLL211_Data* data;
+    s32 pad;
+    s32 pad2;
+    s32 i;
+    u8 pad3;
+    u16 sp50;
+    s32 pad4;
+    s32 temp_v1;
+
+    data = self->data;
+    sp50 = _data_164;
+    main_set_bits(0x4E3, 0xFF);
+    if (main_get_bits(0x25) != 0) {
+        main_set_bits(0x3F8, 1);
+    }
+
+    self->animCallback = (AnimationCallback ) dll_211_func_1624;
+    obj_add_object_type(self, 1);
+    route_init(&data->unk4DC[0]);
+    route_init(&data->unk4DC[1]);
+    route_init(&data->unk4DC[2]);
+    route_init(&data->unk4DC[3]);
+    route_init(&data->unk59C);
+    data->unk4 = gDLL_29_Gplay->vtbl->get_sidekick_stats();
+    data->unk8 = get_player();
+    temp_v1 = _data_EC[func_80045D58()];
+    data->unk18 = 0;
+    data->unk1B = 0;
+    data->unk5D4 = 0;
+    data->unkA4 = 0;
+    data->unk14 = temp_v1;
+    data->unk10 = temp_v1;
+    data->unkC = temp_v1;
+    gDLL_27->vtbl->init(&data->unkCC, 0x02000000, 0xA7, 1);
+    gDLL_27->vtbl->setup_hits_collider(&data->unkCC, 1, _data_94, &_data_A0, 2);
+    gDLL_27->vtbl->setup_terrain_collider(&data->unkCC, 2, _data_74, _data_8C, (u8* ) &sp50);
+    gDLL_25->vtbl->func_D8();
+    for (i = 0, var_ft5 = 0/*.0f*/; var_ft5 < 1.8f; i++, var_ft5 += 0.1f) {
+        for (var_fv0 = var_ft5, var_fv1 = 0.0f; var_fv0 > 0.0f; var_fv0 -= 0.09f) {
+            var_fv1 += var_fv0 * 3.0f;
+        }
+        _data_A4[i] = var_fv1 * 1.75f;
+    }
+}
 
 // offset: 0x3FC | func: 1 | export: 1
 void dll_211_control(Object* self) {
@@ -588,33 +632,33 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 }
 
 // offset: 0x1270 | func: 16 | export: 15
-u8 dll_211_func_1270(Object* arg0) {
+u8 dll_211_func_get_blue_food(Object* arg0) {
     DLL211_Data* data;
 
     data = arg0->data;
-    return data->unk4[0];
+    return data->unk4->blueFood;
 }
 
 // offset: 0x1284 | func: 17 | export: 16
-u8 dll_211_func_1284(Object* arg0) {
+u8 dll_211_func_get_red_food(Object* arg0) {
     DLL211_Data* data;
 
     data = arg0->data;
-    return data->unk4[1];
+    return data->unk4->redFood;
 }
 
 // offset: 0x1298 | func: 18 | export: 17
-s32 dll_211_func_1298(Object* arg0) {
+s32 dll_211_func_get_blue_and_red_food(Object* arg0) {
     DLL211_Data* data;
 
     data = arg0->data;
-    return data->unk4[1] + data->unk4[0];
+    return data->unk4->blueFood + data->unk4->redFood;
 }
 
 // offset: 0x12B4 | func: 19 | export: 18
-void dll_211_func_12B4(Object* arg0, s32 arg1) {
-    DLL211_Data *data = arg0->data;
-    data->unk4[1] = arg1;
+void dll_211_func_set_red_food(Object* self, s32 amount) {
+    DLL211_Data *data = self->data;
+    data->unk4->redFood = amount;
 }
 
 // offset: 0x12C8 | func: 20 | export: 19
@@ -732,7 +776,7 @@ void dll_211_func_1578(Object* arg0) {
 }
 
 // offset: 0x1624 | func: 28
-s32 dll_211_func_1624(Object* arg0, UNK_TYPE_32 arg1, AnimObj_Data* arg2, UNK_TYPE_32 arg3) {
+static s32 dll_211_func_1624(Object* arg0, Object *animObj, AnimObj_Data* animObjData, s8 arg3) {
     DLL211_Data* data;
     s32 i;
 
@@ -742,7 +786,7 @@ s32 dll_211_func_1624(Object* arg0, UNK_TYPE_32 arg1, AnimObj_Data* arg2, UNK_TY
             dll_211_func_940C(arg0, data);
         }
         data->unk4C |= 0x200;
-        if (!(arg2->unk7A & 3)) {
+        if (!(animObjData->unk7A & 3)) {
             data->unk4C |= 0x4000;
         }
     }
@@ -752,12 +796,12 @@ s32 dll_211_func_1624(Object* arg0, UNK_TYPE_32 arg1, AnimObj_Data* arg2, UNK_TY
             (((s16*)data->unk5E4))[0] = 1;
         }
         if (((((s16*)data->unk5E4))[0] != 0) && (arg0->curModAnimId == 0)) {
-            gDLL_3_Animation->vtbl->end_obj_sequence((s32) arg2->seqSlot);
+            gDLL_3_Animation->vtbl->end_obj_sequence((s32) animObjData->seqSlot);
         }
     }
 
-    for (i = 0; i < arg2->messageCount; i++) {
-        switch (arg2->messages[i]) {
+    for (i = 0; i < animObjData->messageCount; i++) {
+        switch (animObjData->messages[i]) {
             case 1:
                 if (data->unk4C & 0x800) {
                     dll_211_func_940C(arg0, data);
@@ -774,7 +818,7 @@ s32 dll_211_func_1624(Object* arg0, UNK_TYPE_32 arg1, AnimObj_Data* arg2, UNK_TY
         return 0;
     }
 
-    return gDLL_3_Animation->vtbl->func29(arg0, arg2, 2, 0, 0, 1, 1);
+    return gDLL_3_Animation->vtbl->func29(arg0, animObjData, 2, 0, 0, 1, 1);
 }
 
 // offset: 0x183C | func: 29
@@ -819,7 +863,7 @@ void dll_211_func_18C4(Object* arg0, DLL211_Data* arg1) {
                 break;
             }
 
-            if (*arg1->unk4 == 0) {
+            if (arg1->unk4->blueFood == 0) {
                 arg1->unk600 -= gUpdateRateF;
                 if (arg1->unk600 < 0.0f) {
                     dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xD, 0x11)]);
@@ -841,7 +885,7 @@ void dll_211_func_18C4(Object* arg0, DLL211_Data* arg1) {
                 if (arg0->unkAF & 1) {
                     if (gDLL_1_cmdmenu->vtbl->was_this_item_used(sp2A) != 0) {
                         main_set_bits(0xC1, sp2E - 1);
-                        arg1->unk4[0] += 2;
+                        arg1->unk4->blueFood += 2;
                         dll_211_func_8B5C(arg0, 2);
                         arg1->unk4C |= 1;
                     }
@@ -939,12 +983,12 @@ void dll_211_func_1F3C(Object* arg0, DLL211_Data* arg1) {
         ((f32*)arg1->unk5E4)[0] += gUpdateRateF;
         dll_211_func_87E4(arg0);
         if (((f32*)arg1->unk5E4)[0] >= 60.0f) {
-            if (arg1->unk4[2] < ((s32)arg1->unk5F8)) {
+            if (arg1->unk4->_unk2[0] < ((s32)arg1->unk5F8)) {
                 gDLL_6_AMSFX->vtbl->stop((u32) arg1->unk5E4[1]);
                 dll_211_func_95E0(arg0, arg1, _data_0[1]);
                 gDLL_22_Subtitles->vtbl->func_368(0xBDU);
                 dll_211_func_82B8(arg1);
-            } else if (arg1->unk4[0] < ((s32)arg1->unk5FC)) {
+            } else if (arg1->unk4->blueFood < ((s32)arg1->unk5FC)) {
                 gDLL_6_AMSFX->vtbl->stop((u32) arg1->unk5E4[1]);
                 dll_211_func_95E0(arg0, arg1, _data_0[0]);
                 gDLL_22_Subtitles->vtbl->func_368(0xBCU);
@@ -967,8 +1011,8 @@ void dll_211_func_1F3C(Object* arg0, DLL211_Data* arg1) {
         arg0->srt.transl.z = arg1->unk5F0_f32 - (temp[1] * (temp_fv0 / arg1->unk600));
         dll_211_func_87E4(arg0);
         if (((DLL_Unknown*)sp34->dll)->vtbl->func[8].withOneArgS32((s32)sp34) != 0) {
-            arg1->unk4[0] -= (s32)arg1->unk5FC;
-            arg1->unk4[2]++;
+            arg1->unk4->blueFood -= (s32)arg1->unk5FC;
+            arg1->unk4->_unk2[0]++;
             gDLL_6_AMSFX->vtbl->stop((u32)arg1->unk5E4[1]);
             dll_211_func_82B8(arg1);
         }
@@ -1463,9 +1507,9 @@ void dll_211_func_3CAC(Object* arg0, DLL211_Data* arg1) {
     case 4:
         if (dll_211_func_53E4(arg0, 15.0f, arg1) == 0) {
             arg1->unk4C |= 0x10;
-            if ((arg1->unk4[1] != 0) && (arg1->unk60C != 0)) {
+            if ((arg1->unk4->redFood != 0) && (arg1->unk60C != 0)) {
                 dll_211_func_9050(arg0, arg1);
-                arg1->unk4[1]--;
+                arg1->unk4->redFood--;
                 func_80023D30(arg0, 0x205, 0.0f, 0U);
                 arg1->unk38 = 0.005f;
                 arg1->unk1A = 5;
@@ -1678,7 +1722,7 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
             arg1->unk1A = 0;
             return;
         }
-        if (arg1->unk4[1] != 0 && arg1->unk5F8 != 0) {
+        if (arg1->unk4->redFood != 0 && arg1->unk5F8 != 0) {
             arg1->unk1A = 2;
             return;
         }
@@ -1691,7 +1735,7 @@ void dll_211_func_4974(Object* arg0, DLL211_Data* arg1) {
     case 2:
         if (dll_211_func_53E4(arg0, 25.0f, arg1) == 0) {
             dll_211_func_9050(arg0, arg1);
-            arg1->unk4[1]--;
+            arg1->unk4->redFood--;
             func_80023D30(arg0, 0x205, 0.0f, 0U);
             arg1->unk38 = 0.005f;
             arg1->unk4C |= 0x10;
@@ -1727,7 +1771,7 @@ void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
         }
         return;
     case 1:
-        if ((arg1->unk4[1] != 0) && (arg1->unk5F8 != 0)) {
+        if ((arg1->unk4->redFood != 0) && (arg1->unk5F8 != 0)) {
             arg1->unk1A = 2;
             return;
         }
@@ -1739,7 +1783,7 @@ void dll_211_func_4C94(Object* arg0, DLL211_Data* arg1) {
     case 2:
         if (dll_211_func_53E4(arg0, 25.0f, arg1) == 0) {
             dll_211_func_9050(arg0, arg1);
-            arg1->unk4[1]--;
+            arg1->unk4->redFood--;
             func_80023D30(arg0, 0x205, 0.0f, 0U);
             arg1->unk38 = 0.005f;
             arg1->unk4C |= 0x10;
