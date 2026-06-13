@@ -74,8 +74,8 @@ typedef struct {
     Vec3f unk5D8;
 
     // unk5E4 .. unk600 are dynamic based on something?
-    Object *unk5E4[3]; // objects or floats?
-    Object *unk5F0;
+    Object *unk5E4[3]; // objects or floats or curve setups or object setups?
+    Object *unk5F0; // sometimes float or u32 as well
     union {
         Vec3f unk5F4_vec;
         struct {
@@ -342,7 +342,105 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1F3C.s")
 
 // offset: 0x23B8 | func: 32
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_23B8.s")
+void dll_211_func_23B8(Object* arg0, DLL211_Data* arg1) {
+    Object* temp_a0;
+    CurveSetup* sp38;
+    CurveSetup* temp_t0;
+    s32 sp30;
+    CurveSetup* var_a1;
+    f32 temp_fv0;
+    s32 i;
+
+    switch (arg1->unk1A) {
+    case 0:
+        sp38 = gDLL_25->vtbl->func_1A2C(arg1->unk2C, -1, 2);
+        arg1->unk5E4[2] = (Object*) gDLL_26_Curves->vtbl->func_39C(sp38->links[0]);
+        arg1->unk5E4[0] = (Object*) sp38;
+        arg1->unk5E4[1] = (Object*) gDLL_26_Curves->vtbl->func_39C(sp38->links[1]);
+        if (((CurveSetup*)arg1->unk5E4[1])->unk3 != 0) {
+            arg1->unk5E4[1] = (Object*)((s32)arg1->unk5E4[2] ^ (s32)arg1->unk5E4[1]);\
+            arg1->unk5E4[2] = (Object*)((s32)arg1->unk5E4[1] ^ (s32)arg1->unk5E4[2]);\
+            arg1->unk5E4[1] = (Object*)((s32)arg1->unk5E4[2] ^ (s32)arg1->unk5E4[1]);\
+        }
+        dll_211_func_9024(arg1, &((CurveSetup*)arg1->unk5E4[2])->pos);
+        arg1->unk1A = 1;
+        /* fallthrough */
+    case 1:
+        dll_211_func_53E4(arg0, 5.0f, arg1);
+        if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) == ((u8*)arg1->unk5E4[2])[3]) {
+            arg1->unk19 = 1;
+            arg1->unk1A = 2;
+            return;
+        }
+    default:
+        return;
+    case 2:
+        if (dll_211_func_4F3C(arg0, 2.5f, arg1, (Vec3f* ) &arg1->unk5E4[0]->srt.scale) == 0) {
+            arg1->unk20 = vec3_distance_xz(&arg0->globalPosition, (Vec3f* ) &arg1->unk5E4[0]->srt.scale) / gUpdateRateF;
+            dll_211_func_8470(arg0, (Vec3f* ) &arg1->unk5E4[0]->srt.scale);
+            arg1->unk4C |= 0x10;
+            arg1->unk1A = 3;
+        } else if (gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL) == 0) {
+            arg1->unk4C |= 0x2010;
+        }
+        return;
+    case 3:
+        func_80023D30(arg0, 0xE, 0.0f, 0U);
+        temp_t0 = (CurveSetup *) arg1->unk5E4[1];
+        arg1->unk38 = 0.033f;
+        arg1->unk30[0] = temp_t0->pos.x - arg1->unk5E4[0]->srt.scale;
+        arg1->unk30[1] = temp_t0->pos.z - arg1->unk5E4[0]->srt.transl.f[1];
+        arg1->unk5F0 = (Object *) gDLL_6_AMSFX->vtbl->play(arg0, 0x48U, 0x7FU, NULL, NULL, 0, NULL);
+        arg1->unk1A = 4;
+        /* fallthrough */
+    case 4:
+        temp_a0 = arg1->unk28;
+        temp_fv0 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[7].withTwoArgsF32((s32)temp_a0, (s32)arg0);
+        arg0->srt.transl.x = arg1->unk5E4[0]->srt.scale + (arg1->unk30[0] * temp_fv0);
+        arg0->srt.transl.z = arg1->unk5E4[0]->srt.transl.f[1] + (arg1->unk30[1] * temp_fv0);
+        dll_211_func_87E4(arg0);
+        temp_a0 = arg1->unk28;
+        if (((DLL_Unknown*)temp_a0->dll)->vtbl->func[8].withOneArgS32((s32)temp_a0) != 0) {
+            temp_t0 = (CurveSetup *) arg1->unk5E4[1];
+            for (i = 0; i < 4; i++) {
+                if ((temp_t0->links[i] >= 0) && (((CurveSetup*)arg1->unk5E4[0])->uID != temp_t0->links[i])) {
+                    arg1->unk5E4[0] = (Object *) temp_t0;
+                    arg1->unk5E4[1] = (Object *) gDLL_26_Curves->vtbl->func_39C(temp_t0->links[i]);
+                    break;
+                }
+            }
+            gDLL_6_AMSFX->vtbl->stop((u32)arg1->unk5F0);
+            arg1->unk1A = 5;
+        }
+        return;
+    case 5:
+        if (dll_211_func_4F3C(arg0, 2.5f, arg1, (Vec3f* ) &arg1->unk5E4[1]->srt.scale) == 0) {
+            temp_t0 = (CurveSetup *) arg1->unk5E4[1];
+            for (i = 0; i < 4; i++) {
+                if ((temp_t0->links[i] >= 0) && (((CurveSetup*)arg1->unk5E4[0])->uID != temp_t0->links[i])) {
+                    arg1->unk5E4[0] = (Object *) temp_t0;
+                    arg1->unk5E4[1] = (Object *) gDLL_26_Curves->vtbl->func_39C(temp_t0->links[i]);
+                    break;
+                }
+            }
+            arg1->unk1A = 6;
+        }
+        return;
+    case 6:
+        if (dll_211_func_4F3C(arg0, 2.5f, arg1, (Vec3f* ) &arg1->unk5E4[1]->srt.scale) == 0) {
+            dll_211_func_83BC(arg0, arg1);
+            arg1->unk4C &= ~0x2010;
+            arg1->unk1A = 7;
+        }
+        return;
+    case 7:
+        sp30 = gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL);
+        if (gDLL_25->vtbl->func_1158(&arg1->unk8->srt.transl, NULL) == sp30) {
+            dll_211_func_82B8(arg1);
+        }
+        return;
+    }
+}
 
 // offset: 0x2928 | func: 33
 void dll_211_func_2928(s32 arg0, UNK_TYPE_32 arg1) {
