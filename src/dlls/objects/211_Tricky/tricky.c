@@ -337,7 +337,50 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1578.s")
 
 // offset: 0x1624 | func: 28
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1624.s")
+s32 dll_211_func_1624(Object* arg0, UNK_TYPE_32 arg1, AnimObj_Data* arg2, UNK_TYPE_32 arg3) {
+    DLL211_Data* data;
+    s32 i;
+
+    data = arg0->data;
+    if (!(data->unk4C & 0x200)) {
+        if (data->unk4C & 0x800) {
+            dll_211_func_940C(arg0, data);
+        }
+        data->unk4C |= 0x200;
+        if (!(arg2->unk7A & 3)) {
+            data->unk4C |= 0x4000;
+        }
+    }
+
+    if ((data->unk4C & 0x4000) && (data->unk18 == 5 || data->unk18 == 6)) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(0) != 0) {
+            (((s16*)data->unk5E4))[0] = 1;
+        }
+        if (((((s16*)data->unk5E4))[0] != 0) && (arg0->curModAnimId == 0)) {
+            gDLL_3_Animation->vtbl->end_obj_sequence((s32) arg2->seqSlot);
+        }
+    }
+
+    for (i = 0; i < arg2->messageCount; i++) {
+        switch (arg2->messages[i]) {
+            case 1:
+                if (data->unk4C & 0x800) {
+                    dll_211_func_940C(arg0, data);
+                } else {
+                    dll_211_func_9050(arg0, data);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (data->unk4C & 1) {
+        return 0;
+    }
+
+    return gDLL_3_Animation->vtbl->func29(arg0, arg2, 2, 0, 0, 1, 1);
+}
 
 // offset: 0x183C | func: 29
 void dll_211_func_183C(Object *arg0, DLL211_Data* arg1) {
