@@ -205,8 +205,22 @@ void dll_211_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_print.s")
 
 // offset: 0xF20 | func: 4 | export: 4
-void dll_211_free(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_free.s")
+void dll_211_free(Object* self, s32 a1) {
+    DLL211_Data* temp_s0;
+
+    temp_s0 = self->data;
+    route_free(&temp_s0->unk4DC[0]);
+    route_free(&temp_s0->unk4DC[1]);
+    route_free(&temp_s0->unk4DC[2]);
+    route_free(&temp_s0->unk4DC[3]);
+    route_free(&temp_s0->unk59C);
+    obj_free_object_type(self, 1);
+    gDLL_13_Expgfx->vtbl->func4(self);
+    gDLL_14_Modgfx->vtbl->func4(self);
+    if (a1 == 0) {
+        dll_211_func_940C(self, temp_s0);
+    }
+}
 
 // offset: 0x1040 | func: 5 | export: 5
 u32 dll_211_get_model_flags(Object *self) {
