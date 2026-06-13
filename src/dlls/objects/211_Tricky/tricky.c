@@ -340,7 +340,15 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_1624.s")
 
 // offset: 0x183C | func: 29
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_183C.s")
+void dll_211_func_183C(Object *arg0, DLL211_Data* arg1) {
+    s32 temp_v0;
+
+    temp_v0 = gDLL_25->vtbl->func_1158(&arg0->srt.transl, NULL);
+    if (temp_v0 != 0) {
+        main_set_bits(0x4E2, temp_v0);
+        dll_211_func_82B8(arg1);
+    }
+}
 
 // offset: 0x18C4 | func: 30
 void dll_211_func_18C4(Object* arg0, DLL211_Data* arg1) {
