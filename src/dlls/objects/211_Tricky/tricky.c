@@ -1,6 +1,7 @@
 #include "common.h"
 
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/210_player.h"
 #include "dlls/objects/332_FXEmit.h"
 #include "dlls/objects/278_flameblast.h"
 #include "sys/objexpr.h"
@@ -119,6 +120,7 @@ static void dll_211_func_885C(Object* arg0);
 static void dll_211_func_88F4(Object* arg0, s16 arg1);
 static void dll_211_func_8974(Object* arg0, UnkCurvesStruct* arg1, f32 arg2);
 static void dll_211_func_8A94(Object* arg0, UnkCurvesStruct* arg1);
+static void dll_211_func_8B5C(Object* arg0, s32 arg1);
 static void dll_211_func_8ED0(f32 arg0, f32 arg1, f32* arg2);
 static void dll_211_func_8F84(Object* arg0, Vec3f* arg1, f32* arg2);
 static void dll_211_func_9024(DLL211_Data* arg0, Vec3f *arg1);
@@ -341,7 +343,115 @@ void dll_211_func_1248(Object* self, s32 commandIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_183C.s")
 
 // offset: 0x18C4 | func: 30
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/211_Tricky/dll_211_func_18C4.s")
+void dll_211_func_18C4(Object* arg0, DLL211_Data* arg1) {
+    u8 var_v0;
+    u8 sp2E;
+    s16 pad;
+    s16 sp2A;
+    s16 sp28;
+    Object* temp_v0_2;
+
+    switch (arg1->unk1A) {
+    case 0:
+        arg1->unk28 = arg1->unk8;
+        dll_211_func_9024(arg1, &arg1->unk28->globalPosition);
+        arg1->unk5F4_vec.x -= gUpdateRateF;
+        if (arg1->unk5F4_vec.x < 0.0f) {
+            var_v0 = dll_211_func_53E4(arg0, 50.0f, arg1);
+            arg1->unk5F4_vec.x = 0.0f;
+        } else {
+            var_v0 = dll_211_func_53E4(arg0, 25.0f, arg1);
+        }
+        if (var_v0 != 1) {
+            dll_211_func_83BC(arg0, arg1);
+            if ((arg1->unk334 != 0) && (arg1->unk338->id == 0x23)) {
+                arg1->unk5F4_vec.f[1] = 300.0f;
+                dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xA, 0xC)]);
+                arg1->unk1A = 1;
+                arg1->unk4C |= 0x10;
+                func_80023D30(arg0, 0x106, 0.0f, 0U);
+                break;
+            }
+
+            if (*arg1->unk4 == 0) {
+                arg1->unk600 -= gUpdateRateF;
+                if (arg1->unk600 < 0.0f) {
+                    dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xD, 0x11)]);
+                    arg1->unk600 = 600.0f;
+                }
+            }
+
+            temp_v0_2 = (Object*) ((DLL_210_Player*)arg1->unk8->dll)->vtbl->func66(arg1->unk8, 16);
+            if (((DLL_Unknown *)temp_v0_2->dll)->vtbl->func[7].withOneArgS32((s32)temp_v0_2) != 0) {
+                sp2A = 0x12E;
+                sp28 = 6;
+            } else {
+                sp2A = 0xC1;
+                sp28 = 3;
+            }
+
+            sp2E = main_get_bits(sp2A);
+            if (sp2E && gDLL_1_cmdmenu->vtbl->get_page_category() == sp28) {
+                if (arg0->unkAF & 1) {
+                    if (gDLL_1_cmdmenu->vtbl->was_this_item_used(sp2A) != 0) {
+                        main_set_bits(0xC1, sp2E - 1);
+                        arg1->unk4[0] += 2;
+                        dll_211_func_8B5C(arg0, 2);
+                        arg1->unk4C |= 1;
+                    }
+                } else {
+                    arg0->unkAF &= ~8;
+                }
+            } else {
+                var_v0 = main_get_bits(0x4E3);
+                if (var_v0 != 0xFF) {
+                    if (arg0->unkAF & 1) {
+                        main_set_bits(0x4E3, 0xFFU);
+                        dll_211_func_8B5C(arg0, var_v0);
+                    } else {
+                        arg0->unkAF &= ~8;
+                    }
+                }
+            }
+        }
+        break;
+    case 1:
+        arg1->unk5F4_vec.f[1] -= gUpdateRateF;
+        arg1->unk5F4_vec.f[2] += gUpdateRateF;
+        if (arg1->unk5F4_vec.f[1] < 0.0f) {
+            arg1->unk1A = 0;
+            arg1->unk4C &= ~0x10;
+            dll_211_func_83BC(arg0, arg1);
+        } else {
+            dll_211_func_885C(arg0);
+            if (rand_next(0, 10) == 0) {
+                dll_211_func_95E0(arg0, arg1, _data_0[rand_next(10, 12)]);
+            }
+            if (arg1->unk334 != 0 && arg1->unk338->id == OBJ_sword) {
+                arg1->unk5F4_vec.f[1] = 300.0f;
+            }
+            if (arg1->unk5F4_vec.f[2] > 3000.0f) {
+                arg1->unk1A = 2;
+                func_80023D30(arg0, 0x1A, 0.0f, 0U);
+                arg1->unk38 = 0.004f;
+            }
+        }
+        break;
+    case 2:
+        if ((arg0->animProgress > 0.25f) && !(arg1->unk4C & 0x800)) {
+            dll_211_func_9050(arg0, arg1);
+        } else if (arg0->animProgress > 0.99f) {
+            dll_211_func_940C(arg0, arg1);
+            arg1->unk5F4_vec.f[1] = 300.0f;
+            arg1->unk5F4_vec.f[2] = 0.0f;
+            dll_211_func_95E0(arg0, arg1, _data_0[rand_next(0xA, 0xC)]);
+            arg1->unk1A = 1;
+            arg1->unk4C |= 0x10;
+            func_80023D30(arg0, 0x106, 0.0f, 0U);
+        }
+        break;
+    }
+}
 
 // offset: 0x1F3C | func: 31
 void dll_211_func_1F3C(Object* arg0, DLL211_Data* arg1) {
@@ -2515,7 +2625,7 @@ static void dll_211_func_8A94(Object* arg0, UnkCurvesStruct* arg1) {
 }
 
 // offset: 0x8B5C | func: 76
-void dll_211_func_8B5C(Object* arg0, s32 arg1) {
+static void dll_211_func_8B5C(Object* arg0, s32 arg1) {
     DLL211_Data* data;
 
     data = arg0->data;
