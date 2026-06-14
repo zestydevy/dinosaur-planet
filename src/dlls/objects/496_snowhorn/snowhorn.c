@@ -16,6 +16,7 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
+#include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
@@ -62,7 +63,7 @@ typedef struct {
 /*00A*/ s16 sleepTimer; //randomly-assigned value?
 /*00c*/ u16 flags;
 /*00e*/ u16 unkE; //yaw?
-/*010*/ s32 unk10;
+/*010*/ f32 unk10;
 /*014*/ Vec3f playerPositionCopy;
 /*020*/ f32 distanceFromPlayer;
 /*024*/ s8 unk24;
@@ -74,9 +75,9 @@ typedef struct {
 /*02e*/ s16 unk2E;
 /*030*/ s32 unk30;
 /*034*/ s32 unk34;
-/*038*/ s32 unk38;
-/*03c*/ s32 unk3C;
-/*040*/ s32 unk40;
+/*038*/ f32 unk38;
+/*03c*/ f32 unk3C;
+/*040*/ f32 unk40;
 /*044*/ s16* someAnimIDList;
 /*048*/ f32* unk48;
 /*04c*/ s32* chatSequenceList;
@@ -134,6 +135,20 @@ typedef struct {
 /*08E*/ u8 unk8E[10];
 /*098*/ u8 unk98[10];
 } UnkStruct2;
+
+static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3);
+static s32 dll_496_func_980(Object* snowhorn);
+static void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
+static void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_11E0(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_174C(Object *snowHorn, SnowHorn_Data *objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_1D68(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 
 static const char _rodata_0[] = "MAM: curve setup failed\n";
 
@@ -218,27 +233,16 @@ static s32 _data_2E0[] = {
 static s32 _data_2E8[] = {
     0x9, 0xb, 0xc, 0xd, 0xe, 0xf
 };
-static s8 _data_300[] = {
-    1,1,1,1
+static s32 _data_300[] = {
+    0x01010101, 0, 0, 0
 };
 
 void dll_496_ctor(s32 arg0) { }
 
 void dll_496_dtor(s32 arg0) { }
 
-//https://decomp.me/scratch/tHX03
-//NOTE: dll_496_setup itself matches, it's just that these declared functions need to also be matched in order to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_setup.s")
-#else
-int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3);
-void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_174C(Object *snowHorn, SnowHorn_Data *objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-
 void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
+    s32 pad;
     SnowHorn_Data* objdata;
     s32 sp34;
 
@@ -282,20 +286,6 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
         snowhorn->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
 }
-#endif
-
-//https://decomp.me/scratch/HgWtR
-// referenced funcs just need to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_control.s")
-#else
-void dll_496_func_11E0(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_1D68(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-s32 dll_496_func_980(Object* snowhorn);
-void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
-void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 
 void dll_496_control(Object* snowhorn) {
     SnowHorn_Data* objdata;
@@ -317,7 +307,7 @@ void dll_496_control(Object* snowhorn) {
         }
     } else {
         if (objdata->unk424 & 0x80) {
-            objdata->unk424 &= 0xFF7F;
+            objdata->unk424 &= ~0x80;
         }
     }
     
@@ -400,11 +390,8 @@ void dll_496_control(Object* snowhorn) {
     }
 
 }
-#endif
 
 void dll_496_update(u32 a0){ }
-
-s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
 
 void dll_496_print(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **pols, s8 visibility) {
     SnowHorn_Data* objdata;
@@ -430,7 +417,7 @@ u32 dll_496_get_data_size(Object *self, s32 arg1) {
 }
 
 /** When talking with SnowHorn */
-int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3) {
+static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3) {
     SnowHorn_Data* objdata;
     s32 i;
 
@@ -549,7 +536,7 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     objdata->lookAtUnk.aimIsActive = 0;
 }
 
-void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
+static void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
     objdata->flags = 0;
     objdata->unk424 |= 0x44;
     objdata->unkRadius = mapsObj->unkRadius;
@@ -648,35 +635,28 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
 
 }
 
-void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
+static void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
     objdata->unk424 |= 0x44;
 }
 
-//https://decomp.me/scratch/KhEPZ
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_11E0.s")
-#else
 void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Setup* setup) {
     SnowHorn_Data* objdata;
-    u32 questValue;
-    u16 seqBoneAngle;
+    s16* temp_v0_2;
+    Object* player;
     SRT srt;
     Vec3f v;
-    s32 pad[3];
-    Object* player;
-    // Vec3f* position;
-    u8 temp_t3;
-    s32 var_v1;
+    u32 questValue;
+    s32 seqBoneAngle;
     s32 temp_v0;
-    s16* temp_v0_2;
+    s16 *temp;
+    s32 var_v1;
+    f32 f2, f12, f14;
 
-    // object = self;
     objdata = self->data;
     
     temp_v0 = func_80024108(self, 0.005f, gUpdateRate, NULL);
     questValue = objdata->flags;
 
-    // position = &objdata->playerPositionCopy;
     switch (questValue) {
         case 0:
             v.x = 0.0f;
@@ -690,9 +670,9 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
             rotate_vec3(&srt, v.f);
-            srt.transl.x = v.x + objdata->playerPositionCopy.x;
-            srt.transl.y = v.y + self->srt.transl.y;
-            srt.transl.z = v.z + objdata->playerPositionCopy.z;
+            srt.transl.f[0] = objdata->playerPositionCopy.f[0] + v.f[0];
+            srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
+            srt.transl.f[2] = objdata->playerPositionCopy.f[2] + v.f[2];
             srt.yaw = 0;
             objdata->flags = 1;
             break;
@@ -709,9 +689,9 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
                 rotate_vec3(&srt, v.f);
-                srt.transl.x = v.x + objdata->playerPositionCopy.x;
-                srt.transl.y = v.y + self->srt.transl.y;
-                srt.transl.z = v.z + objdata->playerPositionCopy.z;
+                srt.transl.f[0] = objdata->playerPositionCopy.f[0] + v.f[0];
+                srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
+                srt.transl.f[2] = objdata->playerPositionCopy.f[2] + v.f[2];
                 srt.yaw = 0;
                 objdata->flags = 2;
             }
@@ -729,14 +709,18 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
                 rotate_vec3(&srt, v.f);
-                self->globalPosition.x = objdata->unk10 + 40.0f;
-                self->globalPosition.z = self->srt.transl.z;
-                self->globalPosition.y = objdata->playerPositionCopy.x;
+                f2 = self->globalPosition.x;
+                f12 = self->globalPosition.y;
+                f14 = self->globalPosition.z;
 
+                self->globalPosition.x = objdata->playerPositionCopy.x;
+                self->globalPosition.y = self->srt.transl.y + 40.0f;
+                self->globalPosition.z = objdata->playerPositionCopy.z;
                 srt.yaw = 0;
-                self->globalPosition.x = self->globalPosition.x;                
-                self->globalPosition.y = self->globalPosition.y;
-                self->globalPosition.z = self->globalPosition.z;
+
+                self->globalPosition.x = f2;
+                self->globalPosition.y = f12;
+                self->globalPosition.z = f14;
                 objdata->flags = 3;
             }
             break;
@@ -752,10 +736,19 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
             rotate_vec3(&srt, v.f);
-            srt.transl.x = v.x + objdata->playerPositionCopy.x;
-            srt.transl.y = v.y + self->srt.transl.y;
-            srt.transl.z = v.z + objdata->playerPositionCopy.z;
+
+            f2 = self->globalPosition.x;
+            f12 = self->globalPosition.y;
+            f14 = self->globalPosition.z;
+
+            self->globalPosition.x = objdata->playerPositionCopy.f[0] + v.f[0];
+            self->globalPosition.y = self->globalPosition.f[1] + v.f[1];
+            self->globalPosition.z = objdata->playerPositionCopy.f[2] + v.f[2];
             srt.yaw = 0;
+
+            self->globalPosition.x = f2;
+            self->globalPosition.y = f12;
+            self->globalPosition.z = f14;
             objdata->flags = 4;
             break;
         case 4:
@@ -766,12 +759,11 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             }
             break;
         case 5:
-            questValue |= 0x8000;
             if (_data_270 != 0) {
+                questValue |= 0x8000;
                 objdata->flags = questValue;
-                temp_t3 = self->unkAF | 8;
-                self->unkAF = temp_t3;
-                self->unkAF = temp_t3 & 0xFFFE;
+                self->unkAF |= 8;
+                self->unkAF &= ~1;
                 break;
             }
             objdata->unk8 = (s16) (objdata->unk8 + gUpdateRate);
@@ -779,7 +771,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 objdata->unk8 = 0;
                 temp_v0_2 = func_80034804(self, 0);
 
-                objdata->unkE = (u16) (0x8000 - *&temp_v0_2[1]);
+                objdata->unkE = (u16) (0x8000 - temp_v0_2[1]);
                 player = get_player();
                 
                 var_v1 = (arctan2_f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
@@ -792,10 +784,11 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                     objdata->unk40 = player->srt.transl.z;
                     objdata->unk2C = objdata->unkE;
                 } else {
-                    seqBoneAngle = self->srt.yaw + *&temp_v0_2[1];
+                    temp = &self->srt.yaw;
+                    seqBoneAngle = temp_v0_2[1] + *temp;
                     objdata->unk38 = self->srt.transl.x - (fsin16_precise(seqBoneAngle) * 250.0f);
                     objdata->unk3C = self->srt.transl.y;
-                    objdata->unk40 = self->srt.transl.z - (fsin16_precise(seqBoneAngle) * 250.0f);
+                    objdata->unk40 = self->srt.transl.z - (fcos16_precise(seqBoneAngle) * 250.0f);
                     objdata->unk2C = 0;
                 }
                 objdata->flags = 0;
@@ -803,22 +796,16 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             break;
     }
 }
-#endif
 
-//https://decomp.me/scratch/fe0rJ
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_174C.s")
-#else
-void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* setup){
+static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* setup){
     s32 sp2C = 0x19;
-    s32 result;
+    s32 new_var = 1;
     
     objdata->unk424 |= 0x45;
     objdata->someAnimIDList = (s16*)_data_27C;
     objdata->unk48 = _data_280;
 
-    result = gDLL_26_Curves->vtbl->func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
-    if (!result){
+    if (!gDLL_26_Curves->vtbl->func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1)){
         snowhorn->srt.transl.x = objdata->unk60.unk68.x;
         snowhorn->srt.transl.z = objdata->unk60.unk68.z;
         
@@ -828,7 +815,10 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         objdata->flags = 0;
     }
 
-    if (setup->unk1D == result){
+    // FAKE
+    new_var++;
+    new_var--;
+    if (setup->unk1D == new_var){
         if (main_get_bits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E8;
             objdata->unk426 = 2.0f;
@@ -858,7 +848,6 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         }
     }
 }
-#endif
 
 void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* arg2) {
     f32 temp_walkSpeed;
@@ -928,7 +917,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
 }
 
 /** snowHorn_handleGarundaTeFlags? */
-void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
+static void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
     u16 questValue;
     u16 questEnd = 6;
 
@@ -1046,7 +1035,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
     }
 }
 
-void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
+static void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
     objdata->someAnimIDList = _data_2B8;
     objdata->unk48 = _data_2BC;
 }
