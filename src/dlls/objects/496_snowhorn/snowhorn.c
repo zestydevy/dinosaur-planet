@@ -63,7 +63,7 @@ typedef struct {
 /*00A*/ s16 sleepTimer; //randomly-assigned value?
 /*00c*/ u16 flags;
 /*00e*/ u16 unkE; //yaw?
-/*010*/ s32 unk10;
+/*010*/ f32 unk10;
 /*014*/ Vec3f playerPositionCopy;
 /*020*/ f32 distanceFromPlayer;
 /*024*/ s8 unk24;
@@ -75,9 +75,9 @@ typedef struct {
 /*02e*/ s16 unk2E;
 /*030*/ s32 unk30;
 /*034*/ s32 unk34;
-/*038*/ s32 unk38;
-/*03c*/ s32 unk3C;
-/*040*/ s32 unk40;
+/*038*/ f32 unk38;
+/*03c*/ f32 unk3C;
+/*040*/ f32 unk40;
 /*044*/ s16* someAnimIDList;
 /*048*/ f32* unk48;
 /*04c*/ s32* chatSequenceList;
@@ -137,11 +137,18 @@ typedef struct {
 } UnkStruct2;
 
 static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3);
+static s32 dll_496_func_980(Object* snowhorn);
+static void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
 static void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 static void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_11E0(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 static void dll_496_func_174C(Object *snowHorn, SnowHorn_Data *objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 static void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_1D68(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 static void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 
 static const char _rodata_0[] = "MAM: curve setup failed\n";
 
@@ -280,19 +287,6 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     }
 }
 
-//https://decomp.me/scratch/HgWtR
-// referenced funcs just need to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_control.s")
-#else
-void dll_496_func_11E0(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_1D68(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-s32 dll_496_func_980(Object* snowhorn);
-void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
-void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-
 void dll_496_control(Object* snowhorn) {
     SnowHorn_Data* objdata;
     f32 daytime;
@@ -313,7 +307,7 @@ void dll_496_control(Object* snowhorn) {
         }
     } else {
         if (objdata->unk424 & 0x80) {
-            objdata->unk424 &= 0xFF7F;
+            objdata->unk424 &= ~0x80;
         }
     }
     
@@ -396,11 +390,8 @@ void dll_496_control(Object* snowhorn) {
     }
 
 }
-#endif
 
 void dll_496_update(u32 a0){ }
-
-s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
 
 void dll_496_print(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **pols, s8 visibility) {
     SnowHorn_Data* objdata;
@@ -648,10 +639,6 @@ static void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     objdata->unk424 |= 0x44;
 }
 
-//https://decomp.me/scratch/KhEPZ
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_11E0.s")
-#else
 void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Setup* setup) {
     SnowHorn_Data* objdata;
     s16* temp_v0_2;
@@ -809,7 +796,6 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             break;
     }
 }
-#endif
 
 static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* setup){
     s32 sp2C = 0x19;
