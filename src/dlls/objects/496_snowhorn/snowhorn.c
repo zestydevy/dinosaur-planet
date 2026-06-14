@@ -8,6 +8,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/227_tumbleweed.h"
 #include "game/gamebits.h"
+#include "game/objects/object_id.h"
 #include "game/objects/object.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
@@ -323,7 +324,7 @@ void dll_496_control(Object* snowhorn) {
         return;
     }
     
-    objdata->flags &= 0xBFFF;
+    objdata->flags &= ~0x4000;
     objdata->unk427 = gDLL_29_Gplay->vtbl->get_act(snowhorn->mapID);
     _data_270 = gDLL_7_Newday->vtbl->func8(&daytime); //check if night
 
@@ -336,10 +337,10 @@ void dll_496_control(Object* snowhorn) {
         case 0:
             dll_496_func_D80(snowhorn, objdata, mapsObj);
             break;
-        case 1:
         case 2:
             dll_496_func_11E0(snowhorn, objdata, mapsObj);
             break;
+        case 1:
         case 3:
             dll_496_func_1980(snowhorn, objdata, mapsObj);
             break;
@@ -358,19 +359,19 @@ void dll_496_control(Object* snowhorn) {
     }
 
     if (objdata->someAnimIDList) {
-        animIndex = objdata->flags & 0xFFFF7FFF;
+        animIndex = objdata->flags & ~0x8000;
         if (snowhorn->curModAnimId != objdata->someAnimIDList[animIndex]) {
             func_80023D30(snowhorn, objdata->someAnimIDList[animIndex], 0.0f, 0);
 
             if (objdata->unk48[animIndex] >= 0.0f) {
                 objdata->unk50 = objdata->unk48[animIndex];
             }
-            objdata->unk424 &= 0xFFF7;
+            objdata->unk424 &= ~8;
         }
         if (func_80024108(snowhorn, objdata->unk50, gUpdateRateF, &sp44) != 0) {
             objdata->unk424 |= 8;
         } else {
-            objdata->unk424 &= 0xFFF7;
+            objdata->unk424 &= ~8;
         }
         func_80025780(snowhorn, gUpdateRateF, &sp44, 0);
     }
@@ -443,7 +444,7 @@ static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* 
 }
 
 /** SnowHorn sleep state machine: handles anims and sounds */
-s32 dll_496_func_980(Object* snowhorn) {
+static s32 dll_496_func_980(Object* snowhorn) {
     UnkFunc_80024108Struct sp4c;
     SnowHorn_Data* objdata;
     TextureAnimator* temp1;
@@ -501,8 +502,8 @@ s32 dll_496_func_980(Object* snowhorn) {
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
-                objdata->flags &= 0x7FFF;
-                snowhorn->unkAF &= 0xFFF7;
+                objdata->flags &= ~0x8000;
+                snowhorn->unkAF &= ~8;
                 return 0;
             }
             break;
@@ -518,7 +519,7 @@ s32 dll_496_func_980(Object* snowhorn) {
 }
 
 /** Updates the SnowHorn's player position reference when nearby (for the look-at behaviour) */
-void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
+static void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     SnowHorn_Data *objdata;
     Object *player;
       
@@ -543,7 +544,7 @@ static void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_
 }
 
 /** Called by the standing SnowHorn (not by the ones that walk around) */
-void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
+static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
     Object* player;
 
     if (_data_270 != 0) {
@@ -555,7 +556,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
         return;
     }
     
-    objdata->flags &= 0x7FFF;
+    objdata->flags &= ~0x8000;
     if (snowhorn->curModAnimId != 0) {
         func_80023D30(snowhorn, 0, 0.0f, 0);
     }
@@ -575,7 +576,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
     } 
     
     objdata->sleepTimer = 0;
-    snowhorn->unkAF &= 0xFFF7;
+    snowhorn->unkAF &= ~8;
 
     switch (objdata->flags) {
         u32 rootsEaten;
@@ -639,7 +640,7 @@ static void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     objdata->unk424 |= 0x44;
 }
 
-void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Setup* setup) {
+static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Setup* setup) {
     SnowHorn_Data* objdata;
     s16* temp_v0_2;
     Object* player;
@@ -755,7 +756,6 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             if (temp_v0 != 0) {
                 func_80023D30(self, 0, 0.0f, 0);
                 objdata->flags = 5;
-                return;
             }
             break;
         case 5:
@@ -849,7 +849,7 @@ static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     }
 }
 
-void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* arg2) {
+static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* arg2) {
     f32 temp_walkSpeed;
     f32 dx;
     f32 dz;
@@ -883,7 +883,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         gDLL_3_Animation->vtbl->start_obj_sequence(0x10, snowhorn, -1); //setAnimation?
         return;
     }
-    snowhorn->unkAF &= 0xFFF7;
+    snowhorn->unkAF &= ~8;
 
     if (objdata->flags != 0) {
         curveStruct = &objdata->unk60;
@@ -898,18 +898,18 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         dz = curveStruct->unk68.z - snowhorn->srt.transl.z;
 
         //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
-        speed = sqrtf((dx * dx) + (dz * dz)) * gUpdateRateInverseF;
+        speed = sqrtf(SQ(dx) + SQ(dz)) * gUpdateRateInverseF;
         func_8002493C(snowhorn, speed, &objdata->unk50);
         snowhorn->srt.yaw = arctan2_f(curveStruct->unk74, curveStruct->unk7C) + 0x8000;
         snowhorn->srt.transl.x = curveStruct->unk68.x;
         snowhorn->srt.transl.z = curveStruct->unk68.z;
-        objdata->unk424 &= 0xFFFB;
+        objdata->unk424 &= ~0x4;
         
         if (objdata->walkSpeed <= 0.0f) {
             objdata->flags = 0;
         }
     } else {
-        objdata->unk424 = (u8) (objdata->unk424 | 4);
+        objdata->unk424 |= 4;
         if (0.1f < objdata->walkSpeed) {
             objdata->flags = 1;
         }
@@ -935,16 +935,16 @@ static void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     objdata->garundaTe_weedsEaten = main_get_bits(BIT_Garunda_Te_Weeds_Eaten);
 }
 
-void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* setup) {
+static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* setup) {
     Object* frostWeed;
     s32 weeds;
     
-    self->unkAF &= 0xFFF7;
+    self->unkAF &= ~8;
     switch (objdata->flags) {
         case 0:
             //Calling out to the player periodically
             objdata->unk8 += gUpdateRate;
-            if (objdata->unk8 >= 0x3E9) {
+            if (objdata->unk8 > 1000) {
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here, MAX_VOLUME, 0, 0, 0, 0);
                 gDLL_22_Subtitles->vtbl->func_368(0xA);
                 objdata->unk8 = 0;
@@ -968,7 +968,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             
             frostWeed = obj_get_nearest_type_to(OBJTYPE_Baddie, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
-            if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->globalPosition, &frostWeed->globalPosition) < setup->unkRadius * setup->unkRadius) {
+            if (frostWeed && frostWeed->id == OBJ_Tumbleweed2 && vec3_distance_xz_squared(&self->globalPosition, &frostWeed->globalPosition) < SQ(setup->unkRadius)) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {
                     ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->gravitate_towards_point(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
@@ -1040,4 +1040,4 @@ static void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     objdata->unk48 = _data_2BC;
 }
 
-void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) { }
+static void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) { }
