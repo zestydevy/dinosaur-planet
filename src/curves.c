@@ -3,16 +3,6 @@
 #include "sys/main.h"
 #include "macros.h"
 
-/* -------- .data start -------- */
-s32 D_8008C7D0 = -1;
-s32 D_8008C7D4 = -1;
-/* -------- .data end -------- */
-
-/* -------- .bss start 800a7c30 -------- */
-f32 D_800A7C30[4];
-f32 D_800A7C40;
-/* -------- .bss end 800a7c70 -------- */
-
 #define ONE_OVER_SIX (1.0f / 6.0f)
 
 void curves_func_800065C0(UnkCurvesStruct *, s32);
@@ -367,6 +357,9 @@ s32 curves_func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
 }
 
 void curves_func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, SplineConverterFunc arg7) {
+    static s32 D_8008C7D0 = -1;
+    static f32 D_800A7C30[4];
+    static f32 D_800A7C40;
     f32 spC0[4];
     f32 spB0[4];
     f32 spA0[4];
@@ -417,9 +410,6 @@ void curves_func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4,
         sp70 = (D_800A7C30[3] * spA0[0]);
     }
 
-    // @fake
-    D_8008C7D0 = D_8008C7D0;
-
     for (i = 0; i <= arg6; i++) {
         if (arg0 != NULL) {
             arg3[i] = sp9C;
@@ -443,6 +433,7 @@ void curves_func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4,
 }
 
 void curves_func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *arg5, f32 *arg6, f32 *arg7, f32 *arg8, s32 arg9, void (*arg10)(f32*, f32*, f32*, f32*)) {
+    static s32 D_8008C7D4 = -1;
     static f32 D_800A7C48[7];
     static f32 D_800A7C64;
     f32 spC0[4];
@@ -524,8 +515,6 @@ void curves_func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4,
         sp8C = spB0[2];
         sp88 = (D_800A7C48[4] * spB0[0]) + (D_800A7C48[6] * spB0[1]);
         sp84 = D_800A7C48[5] * spB0[0];
-        // @fake
-        D_8008C7D4 = D_8008C7D4;
     }
     if (arg2 != NULL) {
         sp7C = spA0[2];
