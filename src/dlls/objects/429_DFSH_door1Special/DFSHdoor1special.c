@@ -21,7 +21,7 @@ typedef struct {
 } DFSH_DoorSpecial_Data;
 
 typedef enum {
-    DFSH_Door1Special_STATE_0,
+    DFSH_Door1Special_STATE_0, //TODO: describe/document these
     DFSH_Door1Special_STATE_1,
     DFSH_Door1Special_STATE_2,
     DFSH_Door1Special_STATE_3
