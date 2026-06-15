@@ -149,6 +149,7 @@
 336 = objects/336_FirePole
 339 = objects/339
 341 = objects/341_DoorOpen
+343 = objects/343_LightPole
 344 = objects/344_SpellOverlay
 345 = objects/345_WaterFallSpray
 346 = objects/346_animator
