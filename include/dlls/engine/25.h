@@ -44,14 +44,14 @@ typedef struct Dll25BssE0 {
 DLL_INTERFACE(DLL_25) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func_D8)(void);
-/*1*/ s32 (*func_1158)(f32 *arg0, Dll25BssDC *arg1);
-/*2*/ s32 (*func_12FC)(Vec3 arg0);
-/*3*/ s32 (*func_1474)(Vec3 arg0, s32 arg1);
-/*4*/ s32 (*func_15B0)(Vec3 arg0, s32 arg1, s32 arg2);
+/*1*/ s32 (*func_1158)(Vec3f *arg0, Dll25BssDC *arg1);
+/*2*/ s32 (*func_12FC)(Vec3f *arg0);
+/*3*/ s32 (*func_1474)(Vec3f *arg0, s32 arg1);
+/*4*/ s32 (*func_15B0)(Vec3f *arg0, s32 arg1, s32 arg2);
 // returns a CurveSetup of type 0x24
-/*5*/ CurveSetup *(*func_1864)(Vec3 arg0, s32 arg1, s32 arg2);
+/*5*/ CurveSetup *(*func_1864)(Vec3f *arg0, s32 arg1, s32 arg2);
 // returns a CurveSetup of type 0x24
-/*6*/ CurveSetup *(*func_1A2C)(Vec3 arg0, s32 arg1, s32 arg2);
+/*6*/ CurveSetup *(*func_1A2C)(Vec3f *arg0, s32 arg1, s32 arg2);
 /*7*/ s32 (*func_16D4)(Vec3f *arg0, Vec3f *arg1, s32 arg2);
 /*8*/ s32 (*func_1D30)(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, CurveSetup *arg3);
 /*9*/ s32 (*func_21F4)(UnkCurvesStruct *arg0, CurveSetup *arg1);

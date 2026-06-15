@@ -63,7 +63,7 @@ void SCFlameGameFlame_control(Object* self) {
                 objData->flags |= SCFlameGameFlame_FLAG_Kyte_is_Nearby;
 
                 //Show Flame command option
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_4_Flame);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
             } else {
                 objData->flags &= ~SCFlameGameFlame_FLAG_Kyte_is_Nearby;
             }

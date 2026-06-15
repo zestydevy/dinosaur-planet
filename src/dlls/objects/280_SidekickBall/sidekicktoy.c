@@ -108,7 +108,7 @@ static s32 SidekickToy_tick_flight(Object* self) {
         //Handle when nearly at rest
         if (speed < 0.3f) {
             //Come to a stop if the ground is mostly flat
-            if (gDLL_25->vtbl->func_12FC(self->srt.transl.f)) {
+            if (gDLL_25->vtbl->func_12FC(&self->srt.transl)) {
                 return TOY_STATE_1_At_Rest;
             }
 

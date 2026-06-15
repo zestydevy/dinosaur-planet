@@ -45,7 +45,7 @@ void cannon_claw_control(Object *self) {
         if (self->parent) {
             setup = (CannonClaw_Setup*)self->parent->setup;
             main_set_bits(setup->gamebit, 1);
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
         }
         
         cannon_claw_func_1B4(self);

@@ -1,6 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/objects/278_flameblast.h"
 #include "game/objects/object.h"
 #include "sys/math.h"
 #include "sys/gfx/model.h"
@@ -8,13 +9,6 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 timer;
-} FlameBlast_Setup;
 
 typedef struct {
     s16 timer;

@@ -173,7 +173,7 @@ void mmp_mseedrecept_control(Object* self) {
             }
             if (kyte && (self->unkAF & ARROW_FLAG_4_Highlighted)){
                 //Enable Flame command option
-                ((DLL_ISidekick*)kyte->dll)->vtbl->func14(kyte, Sidekick_Command_INDEX_4_Flame);
+                ((DLL_ISidekick*)kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_4_Flame);
 
                 //Check if Flame command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)){

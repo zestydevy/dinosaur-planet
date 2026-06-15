@@ -37,33 +37,30 @@ typedef struct {
 
 /*0x0*/ static DLL_IModgfx* dModGfxDLL = NULL;
 
-#define TRI_FLAG (0x40)
-#define MASK_TRI(v0, v1, v2) {TRI_FLAG, v0, v1, v2, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
-
 /*0x0*/ static const DLTri sMaskTris[12] = {
-    MASK_TRI(2, 1, 0),
-    MASK_TRI(3, 1, 2),
-    MASK_TRI(4, 5, 6),
-    MASK_TRI(6, 5, 7),
-    MASK_TRI(6, 3, 2),
-    MASK_TRI(3, 6, 7),
-    MASK_TRI(3, 7, 1),
-    MASK_TRI(7, 5, 1),
-    MASK_TRI(4, 0, 1),
-    MASK_TRI(4, 1, 5),
-    MASK_TRI(0, 4, 2),
-    MASK_TRI(2, 4, 6)
+    MASK_TRI(0x40, 2, 1, 0),
+    MASK_TRI(0x40, 3, 1, 2),
+    MASK_TRI(0x40, 4, 5, 6),
+    MASK_TRI(0x40, 6, 5, 7),
+    MASK_TRI(0x40, 6, 3, 2),
+    MASK_TRI(0x40, 3, 6, 7),
+    MASK_TRI(0x40, 3, 7, 1),
+    MASK_TRI(0x40, 7, 5, 1),
+    MASK_TRI(0x40, 4, 0, 1),
+    MASK_TRI(0x40, 4, 1, 5),
+    MASK_TRI(0x40, 0, 4, 2),
+    MASK_TRI(0x40, 2, 4, 6)
 };
 
 /*0xC0*/ static const Vec3f sMaskVertCoords[8] = {
-   {{-MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP}},
-   {{ MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP}},
-   {{-MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP}},
-   {{ MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP}},
-   {{-MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE}},
-   {{ MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE}},
-   {{-MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE}},
-   {{ MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE}}
+   VEC3F(-MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP),
+   VEC3F( MASK_WIDTH_TOP,  MASK_TOP_Y,  -MASK_WIDTH_TOP),
+   VEC3F(-MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP),
+   VEC3F( MASK_WIDTH_TOP,  MASK_TOP_Y,   MASK_WIDTH_TOP),
+   VEC3F(-MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE),
+   VEC3F( MASK_WIDTH_BASE, MASK_BASE_Y, -MASK_WIDTH_BASE),
+   VEC3F(-MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE),
+   VEC3F( MASK_WIDTH_BASE, MASK_BASE_Y,  MASK_WIDTH_BASE)
 };
 
 /*0x120*/ static const f32 sMaskSpeeds[1] = {

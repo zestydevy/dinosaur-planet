@@ -2363,7 +2363,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
 
         //Get a bitfield of the sidekick's available commands
         if (sidekick != NULL) {
-            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->func13(sidekick);
+            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_available_commands(sidekick);
         } else {
             availableCommands = 0;
         }
@@ -2444,7 +2444,7 @@ static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekic
     } else {
         sidekick = get_sidekick();
         if (sidekick != NULL) {
-            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->func13(sidekick);
+            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_available_commands(sidekick);
         } else {
             availableCommands = 0;
         }
