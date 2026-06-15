@@ -1557,7 +1557,7 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
 }
 
 // offset: 0x4288 | func: 37 | export: 34
-s32 curves_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s32 arg4) {
+u8 curves_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s32 arg4) {
     f32 zDiff;
     f32 xDiff;
     f32 yDiff;
