@@ -6,25 +6,26 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/315_sidefoodbag.h"
 #include "dlls/objects/common/foodbag.h"
+#include "unktypes.h"
 
 typedef struct {
-    u8 sequencePlayed;
-    u8 destroyTimer;
+    u8 sequenceWasPlayed;
+    u8 unloadTimer;
 } PlacedFood_Data;
 
 // offset: 0x0 | ctor
-void dll_300_ctor(void *dll) { }
+void PlacedFood_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_300_dtor(void *dll) { }
+void PlacedFood_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_300_setup(Object* self, PlacedFood_Setup* objSetup, s32 reset) {
+void PlacedFood_setup(Object* self, PlacedFood_Setup* objSetup, s32 reset) {
     PlacedFood_Data* objData;
 
     objData = self->data;
 
-    objData->sequencePlayed = FALSE;
+    objData->sequenceWasPlayed = FALSE;
     self->srt.yaw = get_player()->srt.yaw;
 
     self->srt.scale = 0.01f;
@@ -56,7 +57,7 @@ void dll_300_setup(Object* self, PlacedFood_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0xF8 | func: 1 | export: 1
-void dll_300_control(Object* self) {
+void PlacedFood_control(Object* self) {
     u32 outMessage;
     Object* foodbag;
     Object* player;
@@ -65,16 +66,16 @@ void dll_300_control(Object* self) {
     player = get_player();
     objData = self->data;
     
-    if (objData->sequencePlayed == FALSE) {
+    if (objData->sequenceWasPlayed == FALSE) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-        objData->sequencePlayed = TRUE;
+        objData->sequenceWasPlayed = TRUE;
         return;
     }
     
     //Unload food after being collected
-    if (objData->destroyTimer) {
-        objData->destroyTimer += gUpdateRateF;
-        if (objData->destroyTimer > 0x80) {
+    if (objData->unloadTimer) {
+        objData->unloadTimer += gUpdateRateF;
+        if (objData->unloadTimer > 0x80) {
             switch (self->id) {
             case OBJ_foodbagRedApple:
             case OBJ_foodbagGreenBea:
@@ -185,7 +186,7 @@ void dll_300_control(Object* self) {
                 }
                 break;
             }
-            objData->destroyTimer = 1;
+            objData->unloadTimer = 1;
             return;
         }
     }
@@ -221,26 +222,26 @@ void dll_300_control(Object* self) {
 }
 
 // offset: 0x82C | func: 2 | export: 2
-void dll_300_update(Object *self) { }
+void PlacedFood_update(Object *self) { }
 
 // offset: 0x838 | func: 3 | export: 3
-void dll_300_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void PlacedFood_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x850 | func: 4 | export: 4
-void dll_300_free(Object *self, s32 onlySelf) { }
+void PlacedFood_free(Object *self, s32 onlySelf) { }
 
 // offset: 0x860 | func: 5 | export: 5
-u32 dll_300_get_model_flags(Object *self) {
+u32 PlacedFood_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x870 | func: 6 | export: 6
-u32 dll_300_get_data_size(Object *self, u32 offsetAddr) {
+u32 PlacedFood_get_data_size(Object *self, u32 offsetAddr) {
     return sizeof(PlacedFood_Data);
 }
 
 // offset: 0x884 | func: 7 | export: 7
-u8 dll_300_func_884(Object* self, s32 arg1) {
+u8 PlacedFood_get_unload_timer_value(Object* self, UNK_TYPE_32 arg1) {
     PlacedFood_Data* objData = self->data;
-    return objData->destroyTimer;
+    return objData->unloadTimer;
 }
