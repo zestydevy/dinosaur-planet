@@ -1692,7 +1692,7 @@ typedef enum {
     BIT_695 = 0x695, // len:1 group:1
     BIT_696 = 0x696, // len:1 group:1
     BIT_697 = 0x697, // len:1 group:0
-    BIT_698 = 0x698, // len:3 group:1
+    BIT_698 = 0x698, // len:3 group:1 (Active firefly count?)
     BIT_699 = 0x699, // len:1 group:0
     BIT_Discovered_Duster_1  = 0x69A, // len:1 group:1
     BIT_Discovered_Duster_2  = 0x69B, // len:1 group:1

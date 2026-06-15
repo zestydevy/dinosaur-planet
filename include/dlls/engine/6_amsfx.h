@@ -521,6 +521,8 @@ enum SoundID {
     SOUND_7B0 = 0x7B0,
     SOUND_7B1 = 0x7B1,
 
+    SOUND_7F6_Firefly_Twinkle_Loop = 0x7F6,
+
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 

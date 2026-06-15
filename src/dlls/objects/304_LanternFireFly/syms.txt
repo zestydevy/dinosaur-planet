@@ -1,22 +1,22 @@
 .text = 0x0:
-dll_304_ctor = 0x0;
-dll_304_dtor = 0xC;
-dll_304_setup = 0x18;
-dll_304_control = 0x190;
-dll_304_update = 0x84C;
-dll_304_print = 0x858;
-dll_304_free = 0x8AC;
-dll_304_get_model_flags = 0x960;
-dll_304_get_data_size = 0x970;
-dll_304_func_984 = 0x984;
-dll_304_func_AB0 = 0xAB0;
-dll_304_func_BE0 = 0xBE0;
-dll_304_func_C3C = 0xC3C;
-dll_304_func_E54 = 0xE54;
+LanternFireFly_ctor = 0x0;
+LanternFireFly_dtor = 0xC;
+LanternFireFly_setup = 0x18;
+LanternFireFly_control = 0x190;
+LanternFireFly_update = 0x84C;
+LanternFireFly_print = 0x858;
+LanternFireFly_free = 0x8AC;
+LanternFireFly_get_model_flags = 0x960;
+LanternFireFly_get_data_size = 0x970;
+LanternFireFly_set_spline_point = 0x984;
+LanternFireFly_func_AB0 = 0xAB0;
+LanternFireFly_func_BE0 = 0xBE0;
+LanternFireFly_func_C3C = 0xC3C;
+LanternFireFly_set_home = 0xE54;
 
 .rodata = 0xF1C:
 str_0 = 0x0; // absolute:0xF1C
 
 .data = 0xF7C:
 data_0 = 0x0; // absolute:0xF7C
-data_4 = 0x4; // absolute:0xF80
+dLightCreated = 0x4; // absolute:0xF80
