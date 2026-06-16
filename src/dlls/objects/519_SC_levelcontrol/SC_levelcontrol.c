@@ -279,7 +279,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
         }
     } else switch (mapSetup) {
     case 3:
-        if (((DLL_210_Player*)player->dll)->vtbl->func38(player, 1)) {
+        if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_1)) {
             gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 8);
         }
         break;
@@ -299,7 +299,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
         }
         break;
     case 6:
-        if (((DLL_210_Player*)player->dll)->vtbl->func38(player, 0x80)) {
+        if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_8)) {
             gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 7);
         }
         break;

@@ -1,0 +1,14 @@
+.text = 0x0:
+WL_seqpoint_ctor = 0x0;
+WL_seqpoint_dtor = 0xC;
+WL_seqpoint_setup = 0x18;
+WL_seqpoint_control = 0x8C;
+WL_seqpoint_update = 0x420;
+WL_seqpoint_print = 0x42C;
+WL_seqpoint_free = 0x480;
+WL_seqpoint_get_model_flags = 0x490;
+WL_seqpoint_get_data_size = 0x4A0;
+WL_seqpoint_anim_callback = 0x4B4;
+
+.rodata = 0x128C:
+str_0 = 0x0; // absolute:0x128C

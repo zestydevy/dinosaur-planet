@@ -46,6 +46,4 @@ typedef enum {
     WM_ObjGroup13_EMPTY = 13 //Empty, but loaded when entering Krystal antechamber (specifically in setup6)
 } WM_ObjectGroups;
 
-#define SPIRIT_INDEX(value) (1 << (value - 1))
-
 #endif // _DLLS_607_H

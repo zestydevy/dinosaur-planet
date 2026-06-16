@@ -106,7 +106,7 @@ void DFlevelcontrol_func_388(Object *self) {
 
     player = get_player();
     DFlevelcontrol_func_420(self, 1);
-    if (((DLL_210_Player*)player->dll)->vtbl->func38(player, PLAYER_SPIRIT_1)) {
+    if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_1)) {
         main_set_bits(BIT_DF_Returned_From_Shrine_With_Spirit, 1);
     }
 }

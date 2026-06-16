@@ -122,13 +122,14 @@ void WLpressureswitch_control(Object* self) {
              && !playerIsFarAway) {
         if (objdata->pressed) {
             deltaY = setup->base.y - self->srt.transl.y;
+            // Trigger seq for pointing the camera at the door to Randorn's room partway through descending
             if (2.5f < deltaY && deltaY < 5.0f) {
-                main_set_bits(BIT_WM_Randorn_Hall_Opened, TRUE);
-            } else if (main_get_bits(BIT_WM_Randorn_Hall_Opened)) {
-                main_set_bits(BIT_WM_Randorn_Hall_Opened, FALSE);
+                main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, TRUE);
+            } else if (main_get_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
+                main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
             }
-        } else if (main_get_bits(BIT_WM_Randorn_Hall_Opened)) {
-            main_set_bits(BIT_WM_Randorn_Hall_Opened, FALSE);
+        } else if (main_get_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
+            main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
         }
     }
 

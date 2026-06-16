@@ -46,8 +46,8 @@ _exports:
 .dword dll_210_func_1D588
 .dword dll_210_func_1D368
 .dword dll_210_func_1D380
-.dword dll_210_func_1D390
-.dword dll_210_func_1D3A4
+.dword dll_210_get_spirit_bits
+.dword dll_210_set_spirit_bits
 .dword dll_210_func_1D40C
 .dword dll_210_func_1D438
 .dword dll_210_func_1D5B0

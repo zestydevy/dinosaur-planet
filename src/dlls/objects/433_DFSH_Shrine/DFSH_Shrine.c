@@ -238,7 +238,7 @@ void dll_433_control(Object* self) {
                 objdata->unk2 = 0xA;
                 return;
             }
-            if (((DLL_210_Player*)player->dll)->vtbl->func38(player, 1) != 0) {
+            if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_1) != 0) {
                 objdata->unk8 = 1;
                 gDLL_5_AMSEQ->vtbl->play_ex(3U, 0x2CU, 0x50, (u8) objdata->unk8, 0U);
                 objdata->unkA = 1;
@@ -254,7 +254,7 @@ void dll_433_control(Object* self) {
         case 4:
             main_set_bits(BIT_125, 0U);
             objdata->unk11 = 5U;
-            ((DLL_210_Player*)player->dll)->vtbl->func39(player, 1, 1);
+            ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_1, TRUE);
             gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 2);
             break;
         case 5:
