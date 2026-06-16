@@ -328,6 +328,7 @@
 684 = objects/684_DBDustGeezer
 685 = objects/685_DBbonedust
 691 = objects/691_DB_FakeHorizon
+695 = objects/695_BossDrakorDiamond
 697 = objects/697_BossDrakor
 698 = objects/698_BossDrakor_Laser
 700 = objects/700_BossDrakor_Dumm

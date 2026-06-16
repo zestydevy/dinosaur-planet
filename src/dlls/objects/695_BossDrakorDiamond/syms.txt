@@ -1,0 +1,20 @@
+.text = 0x0:
+BossDrakorDiamond_ctor = 0x0;
+BossDrakorDiamond_dtor = 0xC;
+BossDrakorDiamond_setup = 0x18;
+BossDrakorDiamond_control = 0xAC;
+BossDrakorDiamond_update = 0x128;
+BossDrakorDiamond_print = 0x134;
+BossDrakorDiamond_free = 0x14C;
+BossDrakorDiamond_get_model_flags = 0x1A4;
+BossDrakorDiamond_get_data_size = 0x1B4;
+BossDrakorDiamond_anim_callback = 0x1C8;
+
+.rodata = 0x2CC:
+
+.data = 0x2CC:
+dModGfxDLL = 0x0; // absolute:0x2CC
+dFlags = 0x4; // absolute:0x2D0
+
+.bss = 0x2DC:
+sTimer = 0x0; // absolute:0x2DC
