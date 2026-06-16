@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_336_ctor
-.dword dll_336_dtor
+.dword FirePole_ctor
+.dword FirePole_dtor
 
 # export table
-/*0*/ .dword dll_336_setup
-/*1*/ .dword dll_336_control
-/*2*/ .dword dll_336_update
-/*3*/ .dword dll_336_print
-/*4*/ .dword dll_336_free
-/*5*/ .dword dll_336_get_model_flags
-/*6*/ .dword dll_336_get_data_size
+/*0*/ .dword FirePole_setup
+/*1*/ .dword FirePole_control
+/*2*/ .dword FirePole_update
+/*3*/ .dword FirePole_print
+/*4*/ .dword FirePole_free
+/*5*/ .dword FirePole_get_model_flags
+/*6*/ .dword FirePole_get_data_size
