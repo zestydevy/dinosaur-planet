@@ -30,7 +30,7 @@ typedef struct {
 /*22*/ s16 timerEnvFxAction;    //[OUTBOUND] Countdown to applying envFX  (after powering up finished)
 /*24*/ u8 isPoweringUp;         //The Transporter power-up sequence is active (ends when a blue magic explosion effect ripples out from base)
 /*25*/ u8 isOutbound;           //Whether the player is warping into/away from the Transporter
-/*26*/ u8 runOutboundTimers;    //[OUTBOUND] Enables countdown to applying enxFX / warping player away (after powering up finished)
+/*26*/ u8 runTimersPostPowerUp; //[OUTBOUND] Enables countdown to applying enxFX / warping player away (after powering up finished)
 } Transporter_Data;
 
 typedef struct {
@@ -125,7 +125,7 @@ void Transporter_control(Object *self) {
             }
             objdata->isPoweringUp = TRUE;
             D_80092A78 = 2;
-            objdata->runOutboundTimers = FALSE;
+            objdata->runTimersPostPowerUp = FALSE;
         } else {
             //Set up outbound warp when the player interacts with the Transporter's LockIcon
             if (((setup->gamebitEnabled == NO_GAMEBIT) || main_get_bits(setup->gamebitEnabled)) && 
@@ -143,7 +143,7 @@ void Transporter_control(Object *self) {
                     objdata->dll130 = dll_load_deferred(DLL_ID_130, 1);
                 }
                 objdata->isPoweringUp = TRUE;
-                objdata->runOutboundTimers = TRUE;
+                objdata->runTimersPostPowerUp = TRUE;
             }
         }
 
@@ -289,7 +289,7 @@ void Transporter_control(Object *self) {
     }
 
     //Count down to applying an envFxAction (outbound only)
-    if (objdata->timerEnvFxAction && objdata->runOutboundTimers) {
+    if (objdata->timerEnvFxAction && objdata->runTimersPostPowerUp) {
         objdata->timerEnvFxAction -= gUpdateRate;
         if (objdata->timerEnvFxAction <= 0) {
             func_80000860(self, self, D_80092A7C[0], 0);
@@ -298,11 +298,11 @@ void Transporter_control(Object *self) {
     }
 
     //Count down to warping the player away (outbound only)
-    if (objdata->timerWarpPlayer && objdata->runOutboundTimers) {
+    if (objdata->timerWarpPlayer && objdata->runTimersPostPowerUp) {
         objdata->timerWarpPlayer -= gUpdateRate;
         if (objdata->timerWarpPlayer <= 0) {
             warpPlayer(setup->warpID, FALSE);
-            objdata->runOutboundTimers = FALSE;
+            objdata->runTimersPostPowerUp = FALSE;
             objdata->timerWarpPlayer = 0;
         }
     }
