@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/engine/17_partfx.h"
+#include "dlls/objects/304_LanternFireFly.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "macros.h"
 #include "sys/math.h"
@@ -7,48 +8,37 @@
 #include "sys/curves.h"
 
 typedef struct {
-    ObjSetup base;
-    s8 varianceY;
-    s8 effectType;
-    s16 lifetime;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-} LanternFireFly_Setup;
-
-typedef struct {
     Object* lfxEmitter;
     f32 splineX[4];
     f32 splineY[4];
     f32 splineZ[4];
-    Vec3f homeRelativeToPlayer;
-    f32 tValueSpline; //tValue
-    f32 tValueSpeed;
-    f32 unk48;
-    f32 unk4C;
-    f32 unk50;
+    Vec3f nextSplineCoord;  //The next point that will be appended to the spline coords arrays. This is a local coordinate delta, relative to the firefly's home position.
+    f32 tValueSpline; //The current spline interpolation position (expressed from 0 to 1)
+    f32 tValueSpeed;  //The current spline interpolation speed
+    f32 unk48;        //Assigned a value but otherwise unused. Maybe intended as spline interpolation acceleration?
+    f32 unk4C;        //Set to 0 in setup, and set to 1 when sending firefly. Otherwise unused?
+    f32 varianceZ;
     Vec3f home;         //Firefly's initial coordinates in worldSpace 
-    s32 lifetime;
+    s32 lifetime;       //Timer counting down until firefly is unloaded
     u32 soundHandle;    //Handle for the firefly's twinkling sound loop
     s16 randomYaw;
     s16 unk6A;
     s16 varianceY;
     u8 effectType;      //Decides what kind of partFX are created for the firefly, and whether to create LFXEmitters
     s8 unk6F;
-    u8 unk70;
+    u8 splinePointNum;
     s8 unk71;
     u8 lightCreated;
     s8 unk73;
     u32 flagLightPerFirefly : 2;
-} LanternFireFly_Data; //0x78
+} LanternFireFly_Data;
 
 /*0x0*/ static s8 data_0 = 0;
-/*0x4*/ static u8 dLightCreated = 0;
+/*0x4*/ static u8 dLightCreated = FALSE;
 
-static void LanternFireFly_set_spline_point(Object* self);
-static void LanternFireFly_func_AB0(Object* self);
-void LanternFireFly_func_BE0(Object* self, Vec3f* arg1);
+static void LanternFireFly_append_spline_point(Object* self);
+static void LanternFireFly_set_next_spline_coord_randomised(Object* self);
+void LanternFireFly_set_next_spline_coord_by_player_position(Object* self, Vec3f* arg1);
 void LanternFireFly_set_home(Object* self, f32 x, f32 y, f32 z);
 
 // offset: 0x0 | ctor
@@ -93,21 +83,21 @@ void LanternFireFly_setup(Object* self, LanternFireFly_Setup* objSetup, s32 rese
     objData->tValueSpeed = 0.08f;
     objData->unk48 = 0.0275f;
     objData->tValueSpline = 1.0f;
-    objData->unk70 = 0;
+    objData->splinePointNum = 0;
     objData->unk6F = 0;
     objData->unk6A = rand_next(500, 1500);
     objData->randomYaw = rand_next(0, 65000);
     objData->varianceY = 4;
     objData->effectType = objSetup->effectType;
     objData->unk4C = 0.0f;
-    objData->unk50 = 5;
+    objData->varianceZ = 5;
 
     objData->home.x = objSetup->base.x;
     objData->home.y = objSetup->base.y;
     objData->home.z = objSetup->base.z;
 
     objData->unk73 = 0;
-    objData->flagLightPerFirefly = 0;
+    objData->flagLightPerFirefly = FALSE;
 }
 
 // offset: 0x190 | func: 1 | export: 1
@@ -132,16 +122,17 @@ void LanternFireFly_control(Object* self) {
     
     if (objData->tValueSpline > 1.0f) {
         objData->tValueSpline--;
-        if (objData->unk70 >= 4) {
-            if (objData->unk70 != 7) {
-                objData->unk70++;
+        if (objData->splinePointNum >= 4) {
+            if (objData->splinePointNum != 7) {
+                objData->splinePointNum++;
             } else {
-                objData->unk70 = 0;
+                objData->splinePointNum = 0;
             }
         } else {
-            LanternFireFly_func_AB0(self);
+            LanternFireFly_set_next_spline_coord_randomised(self);
         }
-        LanternFireFly_set_spline_point(self);
+
+        LanternFireFly_append_spline_point(self);
     }
     
     self->srt.transl.x = objData->home.x + curves_b_spline(objData->splineX, objData->tValueSpline, NULL);
@@ -245,7 +236,6 @@ void LanternFireFly_control(Object* self) {
     }
 }
 
-const char rodata_str[] = " Sending FireFly ";
 
 // offset: 0x84C | func: 2 | export: 2
 void LanternFireFly_update(Object *self) { }
@@ -265,7 +255,7 @@ void LanternFireFly_free(Object* self, s32 onlySelf) {
         if (objData->lfxEmitter != NULL) {
             obj_destroy_object(objData->lfxEmitter);
             objData->lfxEmitter = NULL;
-
+            
             if ((objData->flagLightPerFirefly) != TRUE) {
                 dLightCreated = FALSE;
             }
@@ -287,9 +277,14 @@ u32 LanternFireFly_get_data_size(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0x984 | func: 7
-void LanternFireFly_set_spline_point(Object* self) {
+/**
+  * Discards the first spline point by shifts all the existing spline points up by one index,
+  * and appends a new spline point at the end of the spline point arrays.
+  */
+void LanternFireFly_append_spline_point(Object* self) {
     LanternFireFly_Data* objData = self->data;
     
+    //Shift all the existing spline points up by one index
     objData->splineX[0] = objData->splineX[1];
     objData->splineY[0] = objData->splineY[1];
     objData->splineZ[0] = objData->splineZ[1];
@@ -302,34 +297,39 @@ void LanternFireFly_set_spline_point(Object* self) {
     objData->splineY[2] = objData->splineY[3];
     objData->splineZ[2] = objData->splineZ[3];
     
-    if ((objData->flagLightPerFirefly) == TRUE) {
+    //Depending on flags, set either tValueSpeed based on either player distance or randomisation
+    if (objData->flagLightPerFirefly == TRUE) {
         objData->tValueSpeed = (vec3_distance(&self->globalPosition, &get_player()->globalPosition) * 0.0015f) + 0.0001f;
     } else {
         objData->tValueSpeed = rand_next(60, 90) * 0.0015f;
     }
     
-    objData->splineX[3] = objData->homeRelativeToPlayer.x;
-    objData->splineY[3] = objData->homeRelativeToPlayer.y;
-    objData->splineZ[3] = objData->homeRelativeToPlayer.z;
+    //Append a new spline point
+    objData->splineX[3] = objData->nextSplineCoord.x;
+    objData->splineY[3] = objData->nextSplineCoord.y;
+    objData->splineZ[3] = objData->nextSplineCoord.z;
 }
 
 // offset: 0xAB0 | func: 8
-void LanternFireFly_func_AB0(Object* self) {
+void LanternFireFly_set_next_spline_coord_randomised(Object* self) {
     LanternFireFly_Data* objData;
     SRT transform;
-
+    
     objData = self->data;
     
-    objData->homeRelativeToPlayer.x = 0.0f;
-    objData->homeRelativeToPlayer.y = rand_next(-objData->varianceY, objData->varianceY);
-    if (objData->unk50 < 21.0f) {
-        objData->homeRelativeToPlayer.z = 0.0f; //@bug? should this be 21, given `rand_next(/*min*/ 20, /*max*/ objData->unk50)`?
+    //Randomise Y and Z components
+    objData->nextSplineCoord.x = 0.0f;
+    objData->nextSplineCoord.y = rand_next(-objData->varianceY, objData->varianceY);
+    if (objData->varianceZ < 21.0f) {
+        objData->nextSplineCoord.z = 0.0f;
     } else {
-        objData->homeRelativeToPlayer.z = objData->unk50 - rand_next(20, (s16)objData->unk50);
+        objData->nextSplineCoord.z = objData->varianceZ - rand_next(20, (s16)objData->varianceZ);
     }
-
+    
+    //Pick random yaw
     objData->randomYaw += (s16)rand_next(3000, 5000);
     
+    //Rotate nextSplineCoord around random yaw
     transform.transl.x = 0;
     transform.transl.y = 0;
     transform.transl.z = 0;
@@ -337,30 +337,33 @@ void LanternFireFly_func_AB0(Object* self) {
     transform.roll = 0;
     transform.pitch = 0;
     transform.yaw = objData->randomYaw;
-    rotate_vec3(&transform, objData->homeRelativeToPlayer.f);
+    rotate_vec3(&transform, objData->nextSplineCoord.f);
 }
 
 // offset: 0xBE0 | func: 9 | export: 7
-void LanternFireFly_func_BE0(Object* self, Vec3f* coordsPlayer) {
+void LanternFireFly_set_next_spline_coord_by_player_position(Object* self, Vec3f* coordsPlayer) {
     LanternFireFly_Data* objData = self->data;
     
+    //Transform player's worldSpace coords into local coordinates relative to firefly's home position
     coordsPlayer->x -= objData->home.x;
     coordsPlayer->y -= objData->home.y;
     coordsPlayer->z -= objData->home.z;
     
-    objData->homeRelativeToPlayer.x = coordsPlayer->x;
-    objData->homeRelativeToPlayer.y = coordsPlayer->y;
-    objData->homeRelativeToPlayer.z = coordsPlayer->z;
-
-    objData->unk70 = 4;
+    objData->nextSplineCoord.x = coordsPlayer->x;
+    objData->nextSplineCoord.y = coordsPlayer->y;
+    objData->nextSplineCoord.z = coordsPlayer->z;
+    
+    objData->splinePointNum = 4;
 }
 
 // offset: 0xC3C | func: 10 | export: 8
-void LanternFireFly_func_C3C(Object* self) {
+void LanternFireFly_send(Object* self) {
     LanternFireFly_Data* objData;
     LanternFireFly_Setup* objSetup;
     Object* player;
     Vec3f coordsPlayer;
+
+    STUBBED_PRINTF(" Sending FireFly ");
 
     objSetup = (LanternFireFly_Setup*)self->setup;
     objData = self->data;
@@ -368,7 +371,7 @@ void LanternFireFly_func_C3C(Object* self) {
     objData->varianceY = objSetup->varianceY;
     objData->effectType = objSetup->effectType;
     objData->unk4C = 1.0f;
-    objData->unk50 = objSetup->unk1C;
+    objData->varianceZ = objSetup->varianceZ;
     objData->unk73 = 0;
     func_8005B5B8(self, NULL, 1);
     
@@ -380,20 +383,21 @@ void LanternFireFly_func_C3C(Object* self) {
 
     LanternFireFly_set_home(self, player->globalPosition.x, player->globalPosition.y + 34.0f, player->globalPosition.z);
     
-    LanternFireFly_func_BE0(self, &coordsPlayer);
+    LanternFireFly_set_next_spline_coord_by_player_position(self, &coordsPlayer);
     
-    LanternFireFly_set_spline_point(self);
-    LanternFireFly_set_spline_point(self);
-    LanternFireFly_set_spline_point(self);
-    LanternFireFly_set_spline_point(self);
-    LanternFireFly_set_spline_point(self);
-    LanternFireFly_set_spline_point(self);
+    LanternFireFly_append_spline_point(self);
+    LanternFireFly_append_spline_point(self);
+    LanternFireFly_append_spline_point(self);
+    LanternFireFly_append_spline_point(self);
+    LanternFireFly_append_spline_point(self);
+    LanternFireFly_append_spline_point(self);
     
-    objData->flagLightPerFirefly = 1;
+    objData->flagLightPerFirefly = TRUE;
 
     if (objData->soundHandle == 0) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_7F6_Firefly_Twinkle_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
     }
+
     objData->lifetime = objSetup->lifetime;
     
     main_increment_bits(BIT_698);

@@ -1,17 +1,7 @@
 #include "common.h"
+#include "dlls/objects/304_LanternFireFly.h"
 #include "game/objects/object_id.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-} LanternFireFly_Setup; //0x24 (TO-DO: move into DLL 304)
 
 typedef struct {
     ObjSetup base;
@@ -20,10 +10,7 @@ typedef struct {
 typedef struct {
     Object* fireflies[20];
     u8 fireflyCount;
-    union {
-        s8 flagDone : 1;
-        u8 flags;
-    };
+    u8 flagDone : 1;
     s16 gamebitFireflies;
 } FireFlyLantern_Data;
 
@@ -114,7 +101,7 @@ int FireFlyLantern_anim_callback(Object* self, Object* overrideObj, AnimObj_Data
         if ((animData->messages[i] == 1) && (objData->fireflyCount)) {
             firefly = objData->fireflies[objData->fireflyCount - 1];
             if (firefly) {
-                ((DLL_Unknown*)firefly->dll)->vtbl->func[8].withOneArg(firefly);
+                ((DLL_304_LanternFireFly*)firefly->dll)->vtbl->send(firefly);
             }
                 
             objData->fireflyCount--;
@@ -124,11 +111,11 @@ int FireFlyLantern_anim_callback(Object* self, Object* overrideObj, AnimObj_Data
         if (0) { } //fake
     }
     
-    objData->flags = (objData->flags & 0xFF) | 0x80;
+    objData->flagDone = TRUE;
 
     for (i = 0; i < objData->fireflyCount; i++) {
         firefly = objData->fireflies[i];
-        ((DLL_Unknown*)firefly->dll)->vtbl->func[9].withFourArgsCustom3(firefly, self->srt.transl.x, self->srt.transl.y + 5.0f, self->srt.transl.z);
+        ((DLL_304_LanternFireFly*)firefly->dll)->vtbl->set_home(firefly, self->srt.transl.x, self->srt.transl.y + 5.0f, self->srt.transl.z);
     }
     
     return 0;
@@ -148,9 +135,9 @@ Object* FireFlyLantern_create_firefly(Object* self) {
     firefly->base.x = self->srt.transl.x;
     firefly->base.y = self->srt.transl.y + 2.0f;
     firefly->base.z = self->srt.transl.z;
-    firefly->unk19 = 4;
-    firefly->unk1A = 2600;
-    firefly->unk1C = 40;
-    firefly->unk18 = 30;
+    firefly->effectType = 4;
+    firefly->lifetime = 2600;
+    firefly->varianceZ = 40;
+    firefly->varianceY = 30;
     return obj_create((ObjSetup*)firefly, 5, -1, -1, self->parent);
 }

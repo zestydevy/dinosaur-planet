@@ -8,10 +8,10 @@ LanternFireFly_print = 0x858;
 LanternFireFly_free = 0x8AC;
 LanternFireFly_get_model_flags = 0x960;
 LanternFireFly_get_data_size = 0x970;
-LanternFireFly_set_spline_point = 0x984;
-LanternFireFly_func_AB0 = 0xAB0;
-LanternFireFly_func_BE0 = 0xBE0;
-LanternFireFly_func_C3C = 0xC3C;
+LanternFireFly_append_spline_point = 0x984;
+LanternFireFly_set_next_spline_coord_randomised = 0xAB0;
+LanternFireFly_set_next_spline_coord_by_player_position = 0xBE0;
+LanternFireFly_send = 0xC3C;
 LanternFireFly_set_home = 0xE54;
 
 .rodata = 0xF1C:
