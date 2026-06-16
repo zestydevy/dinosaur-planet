@@ -114,7 +114,7 @@ void DBlevelControl_control(Object *self) {
     }
 
     player = get_player();
-    if (((DLL_210_Player*)(player->dll))->vtbl->func38(player, 2)) {
+    if (((DLL_210_Player*)(player->dll))->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_2)) {
         main_set_bits(BIT_21F_Spirit_Collected, 1);
     }
 }

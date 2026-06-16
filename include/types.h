@@ -43,16 +43,13 @@ typedef union {
     f32 (*withSevenArgsF32)(s32, s32, s32, s32, s32, s32, s32);
     void (*withThreeArgsCustom)(void *, void *, f32);
     void (*withThreeArgsCustom2)(void *, f32, f32);
-    void (*withThreeArgsCustom3)(void *, s32, void *);
     void (*withOneS32OneF32)(s32, f32);
     void (*withTwoArgsCustom)(void *, s32);
     void (*withTwoArgsCustom2)(void *, f32);
-    void (*withFourArgsCustom)(void *, void *, f32, s32);
-    void (*withFourArgsCustom2)(void*, void *, void*, void *);
-    void (*withFourArgsCustom3)(void*, f32, f32, f32);
     void (*withFiveArgsCustom)(void *, f32, f32 *, f32 *, f32 *);
     void (*withFiveArgsCustom2)(void *, void *, f32, s32, f32);
     s32 (*withFiveArgsCustom3)(void *, void *, s8, f32 *, f32 *);
+    void (*withFiveArgsCustom4)(void *, void *, f32, f32, f32);
     void (*withSixArgsCustom)(void *, s32, void *, s32, s32, s32);
     s32 (*withSevenArgsCustom)(void *, f32, f32, f32, void*, void*, void*);
     void (*objtype57Func7)(void *, void *, s32, void *, void *, void *, void *);

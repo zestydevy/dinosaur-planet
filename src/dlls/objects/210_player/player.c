@@ -197,12 +197,18 @@ void dll_210_add_scarab(Object *player, s32 amount);
 void dll_210_add_magic(Object* player, s32 amount);
 
 /*0x0*/ static const DLTri _rodata_0[] = {
-    { 0x40, 0x02, 0x01, 0x00, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x03, 0x01, 0x02, { 0, 0, 0, 0, 0, 0 }},
-    { 0x40, 0x04, 0x05, 0x06, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x06, 0x05, 0x07, { 0, 0, 0, 0, 0, 0 }},
-    { 0x40, 0x06, 0x03, 0x02, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x03, 0x06, 0x07, { 0, 0, 0, 0, 0, 0 }},
-    { 0x40, 0x03, 0x07, 0x01, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x07, 0x05, 0x01, { 0, 0, 0, 0, 0, 0 }},
-    { 0x40, 0x04, 0x00, 0x01, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x04, 0x01, 0x05, { 0, 0, 0, 0, 0, 0 }},
-    { 0x40, 0x00, 0x04, 0x02, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x02, 0x04, 0x06, { 0, 0, 0, 0, 0, 0 }}
+    MASK_TRI(0x40, 0x02, 0x01, 0x00),
+    MASK_TRI(0x40, 0x03, 0x01, 0x02),
+    MASK_TRI(0x40, 0x04, 0x05, 0x06),
+    MASK_TRI(0x40, 0x06, 0x05, 0x07),
+    MASK_TRI(0x40, 0x06, 0x03, 0x02),
+    MASK_TRI(0x40, 0x03, 0x06, 0x07),
+    MASK_TRI(0x40, 0x03, 0x07, 0x01),
+    MASK_TRI(0x40, 0x07, 0x05, 0x01),
+    MASK_TRI(0x40, 0x04, 0x00, 0x01),
+    MASK_TRI(0x40, 0x04, 0x01, 0x05),
+    MASK_TRI(0x40, 0x00, 0x04, 0x02),
+    MASK_TRI(0x40, 0x02, 0x04, 0x06)
 };
 /*0xC0*/ static const Vec3f _rodata_C0[] = {
     VEC3F(-14.5f, 20.0f, -14.5f),
@@ -540,7 +546,7 @@ void dll_210_setup(Object* player, u32 arg1) {
         data->unk3B4[i].unk34.data = mmAlloc(0x320, 0x1A, NULL);
         obj_load_weapondata(player, player->id, &data->unk3B4[i].unk34, data->unk3B4[i].unk0, 0U);
     }
-    data->unk8BA = main_get_bits(BIT_Spirit_Bits);
+    data->spirits = main_get_bits(BIT_Spirit_Bits);
     for (i = 0; i < 7; i++) {
         if (main_get_bits(_data_4E0[i]) != 0) {
             data->unk8BB = (u8) (data->unk8BB | (1 << i));
@@ -1461,7 +1467,7 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
     if (arg1->unk8BE == 1) {
         dll_210_func_9E00(player);
     }
-    if (arg1->unk8BA != 0) {
+    if (arg1->spirits != 0) {
         gDLL_32->vtbl->func5(arg2, arg3, player);
     }
     if (gDLL_7_Newday->vtbl->func12() != 0) {
@@ -10013,23 +10019,23 @@ void dll_210_func_1D380(Object* player, s32 arg1) {
 
 // offset: 0x1D390 | func: 187 | export: 38
 /** Get Krazoa Spirit bit value (spirit index provided as mask, e.g. 4th spirit queried via 0x8) */
-s32 dll_210_func_1D390(Object* player, s32 spiritIndex) {
+s32 dll_210_get_spirit_bits(Object* player, s32 mask) {
     Player_Data* objdata = player->data;
-    return objdata->unk8BA & spiritIndex;
+    return objdata->spirits & mask;
 }
 
 // offset: 0x1D3A4 | func: 188 | export: 39
-/** Set Krazoa Spirit bit value (spirit indexindex provided as mask, e.g. 4th spirit edited via 0x8) */
-void dll_210_func_1D3A4(Object* player, s32 spiritIndex, s32 value) {
+/** Set Krazoa Spirit bit value (spirit index provided as mask, e.g. 4th spirit edited via 0x8) */
+void dll_210_set_spirit_bits(Object* player, s32 mask, s32 value) {
     Player_Data* objdata;
 
     objdata = player->data;
     if (value != 0) {
-        objdata->unk8BA |= spiritIndex;
+        objdata->spirits |= mask;
     } else {
-        objdata->unk8BA &= ~spiritIndex;
+        objdata->spirits &= ~mask;
     }
-    main_set_bits(BIT_Spirit_Bits, objdata->unk8BA);
+    main_set_bits(BIT_Spirit_Bits, objdata->spirits);
 }
 
 // offset: 0x1D40C | func: 189 | export: 40

@@ -13,8 +13,6 @@
 
 #include "dlls/objects/469_ECSHshrine.h"
 
-#define SPIRIT_NUMBER(spiritNum) (1 << (spiritNum - 1))
-
 #define NO_CHOICE_YET -1
 
 #define WHISPERS_VOL_MIN 12
@@ -413,7 +411,7 @@ void ECSHshrine_control(Object* self) {
         break;
     case ECShrine_STATE_Test_Successful:
         //Check if player has Spirit #2 (Diamond Bay: Test of Strength) @bug?: should check for Spirit #4?
-        if (((DLL_210_Player*)player->dll)->vtbl->func38(player, SPIRIT_NUMBER(2)) != 0) {
+        if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_2) != 0) {
             objdata->musCorridorVol = 1;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->musCorridorVol, 0);
             objdata->musCorridorVolSpeed = 1;
@@ -430,7 +428,7 @@ void ECSHshrine_control(Object* self) {
     case ECShrine_STATE_Grant_Spirit:
         main_set_bits(BIT_143, 0);
         objdata->state = ECShrine_STATE_Warp_Away;
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_NUMBER(4), 1);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_4, TRUE);
         gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 5);
         break;
     case ECShrine_STATE_Warp_Away:

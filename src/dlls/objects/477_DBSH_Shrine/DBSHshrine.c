@@ -229,7 +229,7 @@ void DBSHshrine_control(Object* self) {
         }
         break;
     case 4:
-        if (((DLL_210_Player*)player->dll)->vtbl->func38(player, 2) != 0) {
+        if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_2) != 0) {
             objData->unk8 = 1;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8)objData->unk8, 0);
             objData->unkA = 1;
@@ -246,7 +246,7 @@ void DBSHshrine_control(Object* self) {
     case 5:
         main_set_bits(BIT_15F, 0);
         objData->state = 6;
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, 2, 1);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_2, TRUE);
         gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 3);
         break;
     case 6:

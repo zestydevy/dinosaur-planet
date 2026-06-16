@@ -219,8 +219,8 @@ s32 cos16(s16 theta);
 // returns: [-65536..65536] => [-1..1]
 s32 sin16(s16 theta);
 
-f32 fcos16(s16 theta);
-f32 fsin16(s16 theta);
+f32 fcos16(s32 theta);
+f32 fsin16(s32 theta);
 
 f32 sinf(f32);
 

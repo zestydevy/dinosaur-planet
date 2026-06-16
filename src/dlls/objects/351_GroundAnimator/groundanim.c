@@ -238,7 +238,7 @@ void GroundAnimator_control(Object* self) {
         if (sidekick != NULL) {
             distance = vec3_distance_squared(&self->globalPosition, &player->globalPosition);
             if (distance <= SQ(objSetup->findCommandRadius)) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func14(sidekick, Sidekick_Command_INDEX_1_Find);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
             }
         }
     }

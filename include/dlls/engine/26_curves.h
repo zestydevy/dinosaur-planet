@@ -48,7 +48,7 @@ DLL_INTERFACE(DLL_26_curves) {
 /*31*/ CurveSetup *(*func_3018)(CurveSetup *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4);
 /*32*/ void (*func_31E0)(CurveSetup *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg4);
 /*33*/ f32 (*func_32D8)(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f32 arg4, f32 arg5);
-/*34*/ s32 (*func_4288)(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s32 arg4);
+/*34*/ u8 (*func_4288)(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s32 arg4);
 /*35*/ s32 (*func_4704)(UnkCurvesStruct* arg0);
 /*36*/ s32 (*func_4CB4)(UnkCurvesStruct* arg0, s32 arg1);
 /*37*/ void (*func_4FA8)(UnkCurvesStruct* arg0, CurveSetup* arg1);

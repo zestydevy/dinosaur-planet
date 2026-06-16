@@ -348,7 +348,7 @@ static s32 SHswapstone_get_held_spirit(void) {
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
     player = get_player();
     
-    spiritBits = ((DLL_210_Player*)player->dll)->vtbl->func38(player, PLAYER_SPIRIT_ANY);
+    spiritBits = ((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_ANY);
     if (playerno == PLAYER_SABRE) {
         if (spiritBits & PLAYER_SPIRIT_2) {
             return PLAYER_SPIRIT_2;

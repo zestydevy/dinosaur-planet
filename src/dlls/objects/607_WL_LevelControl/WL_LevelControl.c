@@ -270,7 +270,7 @@ static void WL_LevelControl_setup2_tick(Object* self) {
 
         //Restore some magic and make sure the player has the 1st Spirit
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(1), TRUE);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_1, TRUE);
 
         //Use envFxActions
         func_80000860(self, self, 0x204, 0);
@@ -321,7 +321,7 @@ static void WL_LevelControl_setup3_tick(Object* self) {
 
         //Restore some magic and make sure the player has the 2nd Spirit
         player = get_player();
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(2), TRUE);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_2, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
         dInitSpirit2Visit = FALSE;
@@ -359,7 +359,7 @@ static void WL_LevelControl_setup4_tick(Object* self) {
 
         //Restore some magic and make sure the player has the 3rd Spirit
         player = get_player();
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(3), TRUE);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_3, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
         dInitSpirit3Visit = FALSE;
@@ -430,7 +430,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
         main_set_bits(BIT_Spell_Illusion, 1);
 
         //Restore some magic and make sure the player has the 4th Spirit
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(4), TRUE);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_4, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
         main_set_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
@@ -545,7 +545,7 @@ static void WL_LevelControl_setup6_tick(Object* self) {
         main_set_bits(BIT_Spell_Forcefield, 1);
 
         //Restore some magic and make sure the player has the 6th Spirit
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(6), TRUE);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_6, TRUE);
 
         dInitSpirit6Visit = FALSE;
     }
@@ -574,7 +574,7 @@ static void WL_LevelControl_setup7_tick(Object* self) {
 
         //Restore some magic and make sure the player has the 7th Spirit
         player = get_player();
-        ((DLL_210_Player*)player->dll)->vtbl->func39(player, SPIRIT_INDEX(7), TRUE);
+        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_7, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
         dInitSpirit7Visit = FALSE;

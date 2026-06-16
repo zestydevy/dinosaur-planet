@@ -2312,7 +2312,7 @@ typedef enum {
     BIT_902 = 0x902, // len:1 group:1
     BIT_903 = 0x903, // len:1 group:2
     BIT_904 = 0x904, // len:1 group:2
-    BIT_WM_Randorn_Hall_Opened = 0x905, // len:1 group:2
+    BIT_WM_Seq_446_LookAt_Randorn_Hall_Door = 0x905, // len:1 group:2
     BIT_SB_Destroyed_Right_Gun = 0x906, // len:1 group:1
     BIT_SB_Destroyed_Left_Gun = 0x907, // len:1 group:1
     BIT_908 = 0x908, // len:1 group:0

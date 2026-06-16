@@ -53,19 +53,19 @@ typedef struct Player_Data490 {
 
 // TODO: not necessarily in story order
 // Which spirit the player is currently holding
-typedef enum {
+enum PlayerSpirit {
     PLAYER_NO_SPIRIT = 0x0,
-    PLAYER_SPIRIT_1 = 0x1,
-    PLAYER_SPIRIT_2 = 0x2,
-    PLAYER_SPIRIT_3 = 0x4,
-    PLAYER_SPIRIT_4 = 0x8,
-    PLAYER_SPIRIT_5 = 0x10,
-    PLAYER_SPIRIT_6 = 0x20,
-    PLAYER_SPIRIT_7 = 0x40,
-    PLAYER_SPIRIT_8 = 0x80,
+    PLAYER_SPIRIT_1 = 0x1, // Krystal (DF)
+    PLAYER_SPIRIT_2 = 0x2, // Sabre (DB)
+    PLAYER_SPIRIT_3 = 0x4, // Krystal (MMP, implied)
+    PLAYER_SPIRIT_4 = 0x8, // Sabre (EC/WC)
+    PLAYER_SPIRIT_6 = 0x20, // Krystal (CC, implied)
+    PLAYER_SPIRIT_7 = 0x40, // Sabre (WG, implied)
+    PLAYER_SPIRIT_8 = 0x80, // Krystal (GP, implied)
+    PLAYER_SPIRIT_5 = 0x10, // Sabre (NW, implied)
     // Mask to check for any spirit flag
     PLAYER_SPIRIT_ANY = 0xFF
-} PlayerSpiritFlags;
+};
 
 // It's possible this is the same as ObjectStruct74
 // size: 0x58
@@ -286,7 +286,7 @@ typedef struct {
 /*8B7*/ u8 unk8B7;
 /*8B8*/ s8 unk8B8;
 /*8B9*/ s8 unk8B9;
-/*8BA*/ u8 unk8BA; //Krazoa Spirit bitfield
+/*8BA*/ u8 spirits; //Krazoa Spirit bitfield
 /*8BB*/ u8 unk8BB; // player has magic? (bitfield for magic spells obtained?)
 /*8BC*/ u8 unk8BC;
 /*8BD*/ u8 unk8BD;
@@ -418,8 +418,8 @@ DLL_INTERFACE(DLL_210_Player) {
     /*35*/ s32 (*func35)(s32 player);
     /*36*/ u8 (*func36)(Object* player, f32* arg1);
     /*37*/ void (*func37)(Object* player, s32 arg1);
-    /*38*/ s32 (*func38)(Object* player, s32 spiritIndex); //Get Krazoa Spirit bit value
-    /*39*/ void (*func39)(Object* player, s32 spiritIndex, s32 value); //Set Krazoa Spirit bit value
+    /*38*/ s32 (*get_spirit_bits)(Object* player, s32 mask); //Get Krazoa Spirit bit value (see PlayerSpirit enum)
+    /*39*/ void (*set_spirit_bits)(Object* player, s32 mask, s32 value); //Set Krazoa Spirit bit value (see PlayerSpirit enum)
     /*40*/ s32 (*func40)(Object* player, u32 arg1);
     /*41*/ void (*func41)(Object* player, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
     /*42*/ u8 (*func42)(Object* player);

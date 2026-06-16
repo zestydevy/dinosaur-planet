@@ -3,6 +3,7 @@
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "dlls/engine/27.h"
 #include "dll_def.h"
 
 #define NO_SIDEKICK_COMMAND -1
@@ -31,26 +32,26 @@ typedef enum {
 
 DLL_INTERFACE(DLL_ISidekick) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-	/*7*/ UnknownDLLFunc func7;
-	/*8*/ UnknownDLLFunc func8;
-	/*9*/ UnknownDLLFunc func9;
-	/*10*/ UnknownDLLFunc func10;
-	/*11*/ UnknownDLLFunc func11;
-	/*12*/ UnknownDLLFunc func12;
-	/*13*/ s32 (*func13)(Object*);	//Returns a bitfield of the sidekick's available commands (see `SidekickCommands`)
-	/*14*/ void (*func14)(Object* self, s32 gamebitID); //Show a sidekick command in the inventory (e.g. Flame available when near vines)
-	/*15*/ s32 (*get_blue_food_count)(Object *); // How much blue food they currently have
-	/*16*/ s32 (*get_red_food_count)(Object *);  // How much red food they currently have
-	/*17*/ UnknownDLLFunc func17;
-	/*18*/ void (*func18)(Object* self, s32);
-	/*19*/ UnknownDLLFunc func19;
-	/*20*/ UnknownDLLFunc func20;
-	/*21*/ void (*func21)(Object *, s32, s32);
-	/*22*/ void (*func22)(Object *, Object *);
-	/*23*/ void (*func23)(Object *);
-	/*24*/ s32 (*func24)(Object *);
-	/*25*/ s32 (*func25)(Object*);
- 	/*26*/ s32 (*func26)(Object*, s32*);
+	/*7*/ s32 (*func7)(s32 arg0);
+	/*8*/ void (*func8)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
+	/*9*/ void (*func9)(Object* self, UNK_TYPE_32 arg1);
+	/*10*/ void (*func10)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
+	/*11*/ f32 (*func11)(Object* self);
+	/*12*/ DLL27_Data* (*func12)(s32 arg0);
+	/*13*/ s32 (*get_available_commands)(Object* self); //Returns a bitfield of the sidekick's available commands (see `SidekickCommands`)
+	/*14*/ void (*enable_command)(Object* self, s32 commandIndex); // Enables a sidekick command (e.g. allowing Flame when near vines).
+	/*15*/ u8 (*get_blue_food_count)(Object* self);
+	/*16*/ u8 (*get_red_food_count)(Object* self);
+	/*17*/ s32 (*get_blue_and_red_food_count)(Object* self);
+	/*18*/ void (*set_red_food_count)(Object* self, s32 amount);
+	/*19*/ s32 (*func19)(s32 arg0);
+	/*20*/ void (*func20)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
+	/*21*/ void (*func21)(Object* self, s32 arg1, Object* arg2);
+	/*22*/ void (*func22)(Object* self, Object* arg1);
+	/*23*/ void (*func23)(Object* self);
+	/*24*/ s32 (*func24)(Object* self);
+	/*25*/ s32 (*func25)(Object* self);
+	/*26*/ int (*func26)(Object* self, s32* arg1);
 };
 
 #endif //_DLLS_COMMON_SIDEKICK_H
