@@ -225,6 +225,7 @@
 488 = objects/488_WGSH_Shrine
 489 = objects/489_WGSH_ObjCreator
 490 = objects/490_WGSH_flybaddie
+493 = objects/493_NWsfx
 494 = objects/494_NWtreebridge
 496 = objects/496_snowhorn
 497 = objects/497_NWtricky

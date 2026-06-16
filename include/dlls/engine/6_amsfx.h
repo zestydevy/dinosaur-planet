@@ -194,6 +194,12 @@ enum SoundID {
 
     SOUND_140_Galleon_Propeller_Loop = 0x140,
 
+    SOUND_157_Bird_Call_Warbling = 0x157, //NWsfx
+    SOUND_158_Bird_Call_Whistle_Descending = 0x158, //NWsfx
+
+    SOUND_15A_Bird_Call_Whistle_Ascending = 0x15A, //NWsfx
+    SOUND_15B_Bird_Call_Squawk = 0x15B, //NWsfx
+
     SOUND_161_Toy_Squeak = 0x161,
 
     SOUND_174_Machinery_Move_A = 0x174, //SB_ShipGun
