@@ -1,0 +1,14 @@
+.text = 0x0:
+DIMGate_ctor = 0x0;
+DIMGate_dtor = 0xC;
+DIMGate_setup = 0x18;
+DIMGate_control = 0x54;
+DIMGate_update = 0x1E4;
+DIMGate_print = 0x1F0;
+DIMGate_free = 0x244;
+DIMGate_get_model_flags = 0x254;
+DIMGate_get_data_size = 0x264;
+DIMGate_anim_callback = 0x278;
+
+.rodata = 0x2E4:
+_oob_rodata_0 = 0x0; // absolute:0x2E4
