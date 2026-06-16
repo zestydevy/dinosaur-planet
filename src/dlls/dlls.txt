@@ -131,6 +131,7 @@
 309 = objects/309_SEQOBJ
 311 = objects/311_IMMultiSeq
 312 = objects/312_NWMultiSeq
+313 = objects/313_pickobj
 314 = objects/314_foodbag
 315 = objects/315_sidefoodbag
 318 = objects/318_fish
