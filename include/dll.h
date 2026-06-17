@@ -63,7 +63,7 @@ enum DLL_ID {
     DLL_ID_16 = 16,
     DLL_ID_PARTFX = 17,
     DLL_ID_18 = 18,
-
+    DLL_ID_GAMEPLAY = 19,
     DLL_ID_SCREENS = 20,
     DLL_ID_TEXT = 21,
     DLL_ID_SUBTITLES = 22,
@@ -112,14 +112,22 @@ enum DLL_ID {
     DLL_ID_OPTIONS = 65,
     DLL_ID_PAUSEMENU = 66,
     DLL_ID_GAMEOVER = 67,
+    DLL_ID_OLD_MAINMENU = 68,
+    DLL_ID_69 = 69, //empty
+    DLL_ID_OLD_LEVELSELECT = 70,
+    DLL_ID_OLD_SELECTION = 71, //SwapStone choices
 
+    DLL_ID_OLD_PICMENU = 73,
     DLL_ID_PICMENU = 74,
     DLL_ID_75 = 75,
     DLL_ID_76 = 76,
+    DLL_ID_SCARAB = 77,     //Shop minigame counter
+    DLL_ID_CREDITS = 78,
+    DLL_ID_SELECTION = 79,  //SwapStone/ShopKeeper selection screens
+    DLL_ID_80 = 80,         //empty
 
-    DLL_ID_SELECTION = 79, //SwapStone/ShopKeeper selection screens
-
-    DLL_ID_CAMNORMAL = 84,              //Start of camera module DLLs
+    // Camera module DLLs
+    DLL_ID_CAMNORMAL = 84,
     DLL_ID_ATTENTIONCAM1 = 85,
     DLL_ID_CAM1STPERSON = 86,
     DLL_ID_CAMSLIDE = 87,

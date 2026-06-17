@@ -86,21 +86,22 @@ void old_mainmenu_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     }
 
     // There were more than 2 SCREENS.bin images at one stage!
-    // Maybe the static Rare logo from the One Hour Footage?
+    // Maybe this showed the static Rare logo from the One Hour Footage, or the old Dinosaur Planet logo?
     gDLL_20_Screens->vtbl->show_screen(2);
     
     func_80014508(20);
 
     // NOTE: this section is very broken, since it's expecting DLL 73 to be at the address of `dll_throw_fault`!
-    // Maybe it used to call a DLL for the old title screen text seen in the One Hour Footage?
     dll_throw_fault->vtbl->enable_joy_buttons(sButtonsEnabled);
     dll_throw_fault->vtbl->init_text_window(180);
     dll_throw_fault->vtbl->add_string(0, sGametext->strings[0], 20, sIndexSelected);
+    
+    // Advance to old Level Select
     if (dll_throw_fault->vtbl->handle_joystick_and_buttons(&sIndexSelected) == FALSE) {
-        menu_set(MENU_13);
+        menu_set(MENU_OLD_LEVEL_SELECT);
     }
     
-    // Maybe this was the blinking "PRESS START" text?
+    // Blinking "PRESS START" text
     {
         if (sTextTimer > 20) {
             font_window_draw(gdl, NULL, NULL, 1);

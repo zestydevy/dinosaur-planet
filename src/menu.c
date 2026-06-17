@@ -12,23 +12,23 @@
 /* -------- .data start -------- */
 s32 gMenuDLLIDs[] = {
     /*0*/  -1,
-    /*1*/  19, //gameplay
-    /*2*/  60, //post
-    /*3*/  61, //rareware
-    /*4*/  62, //mainmenu
-    /*5*/  63, //gameselect
-    /*6*/  64, //nameentry
-    /*7*/  65, //options
-    /*8*/  66, //pausemenu
-    /*9*/  67, //gameover
-    /*10*/ 71, //old options
-    /*11*/ 68, //old title screen
-    /*12*/ 69, //?
-    /*13*/ 70, //old level select
-    /*14*/ 77, //scarab (shop minigame counter)
-    /*15*/ 78, //credits
-    /*16*/ 79, //selection (used by SwapStone/ShopKeeper)
-    /*17*/ 80
+    /*1*/  DLL_ID_GAMEPLAY,
+    /*2*/  DLL_ID_POST,              //boot screen
+    /*3*/  DLL_ID_RAREWARE,
+    /*4*/  DLL_ID_MAINMENU,
+    /*5*/  DLL_ID_GAMESELECT,
+    /*6*/  DLL_ID_NAMEENTRY,
+    /*7*/  DLL_ID_OPTIONS,
+    /*8*/  DLL_ID_PAUSEMENU,
+    /*9*/  DLL_ID_GAMEOVER,
+    /*10*/ DLL_ID_OLD_SELECTION,    // SwapStone choices
+    /*11*/ DLL_ID_OLD_MAINMENU,
+    /*12*/ DLL_ID_69,               // empty
+    /*13*/ DLL_ID_OLD_LEVELSELECT,
+    /*14*/ DLL_ID_SCARAB,           // shop minigame counter
+    /*15*/ DLL_ID_CREDITS,
+    /*16*/ DLL_ID_SELECTION,        // SwapStone/ShopKeeper choices
+    /*17*/ DLL_ID_80                // empty
 };
 
 s32 D_8008C888 = -1;
