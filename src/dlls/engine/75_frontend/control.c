@@ -1,3 +1,5 @@
+//Seems to have been named "frontend/control.c", based on default.dol
+
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/75_frontend.h"
