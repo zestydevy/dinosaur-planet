@@ -6,7 +6,7 @@
 typedef struct {
     ObjSetup base;
     s16 unk18;
-    s16 unk1A;
+    s16 health;
     s16 flameCommandRange;
     s16 gamebitFlamed;
 } VFP_FlamePoint_Setup;
@@ -28,7 +28,7 @@ void VFP_FlamePoint_dtor(void* dll) { }
 void VFP_FlamePoint_setup(Object* self, VFP_FlamePoint_Setup* objSetup, s32 reset) {
     VFP_FlamePoint_Data* objData = self->data;
     
-    objData->health = objSetup->unk1A;
+    objData->health = objSetup->health;
     objData->flameCommandRange = objSetup->flameCommandRange;
     objData->gamebitFlamed = objSetup->gamebitFlamed;
     obj_add_object_type(self, OBJTYPE_TrickyTarget);
@@ -44,6 +44,7 @@ void VFP_FlamePoint_control(Object* self) {
     objSetup = (VFP_FlamePoint_Setup*)self->setup;
     objData = self->data;
     
+    //Do nothing after Flame is used
     if (objData->flameWasUsed) {
         return;
     }
