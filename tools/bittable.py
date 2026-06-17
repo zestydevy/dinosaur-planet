@@ -70,7 +70,7 @@ def main():
     with open(path, "rb") as file:
         read_bittable(file,
                       only_tasks=args.tasks,
-                      only_entries=set([int(i) for i in args.index]))
+                      only_entries=set([int(i, base=0) for i in args.index]))
 
 if __name__ == "__main__":
     main()
