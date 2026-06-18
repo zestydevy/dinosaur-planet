@@ -169,4 +169,3 @@ u32 GPSH_ObjCreator_get_model_flags(Object* self) {
 u32 GPSH_ObjCreator_get_data_size(Object* self, u32 offsetAddr) {
     return sizeof(GPSH_ObjCreator_Data);
 }
-

@@ -174,6 +174,7 @@
 428 = objects/428_DFmole
 431 = objects/431_DFwhirlpool
 433 = objects/433_DFSH_Shrine
+434 = objects/434_DFSH_ObjCreator
 435 = objects/435_KrazoaSpirit
 437 = objects/437_EWTrobotpatrol
 438 = objects/438_RobotBeam
