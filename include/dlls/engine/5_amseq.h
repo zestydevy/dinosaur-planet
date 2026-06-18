@@ -19,7 +19,7 @@ typedef struct MusicAction {
 /*11*/ u8 seqID; // music/ambient ID
 /*12*/ u8 volume; // 0-127
 /*13*/ u8 bpm;
-/*14*/ u8 unk14; // unused, by set by some actions
+/*14*/ u8 unk14; // unused, set by some actions
 /*15*/ u8 fadeTimeDs; // the time it takes to fade volume in/out in tenths of a second (deciseconds)
 /*16*/ u16 unk16;
 /*18*/ u16 unk18;
@@ -29,20 +29,20 @@ typedef struct MusicAction {
 
 DLL_INTERFACE(DLL_5_AMSEQ) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*set)(Object *arg0, u16 actionNo, s32 arg2, s32 arg3, s32 arg4);
-    /*1*/ void (*free)(Object *arg0, u16 actionNo, s32 arg2, s32 arg3, s32 arg4);
-    /*2*/ s32 (*is_set)(Object *arg0, u16 arg1);
-    /*3*/ void (*set_focus_obj)(Object *arg0);
-    /*4*/ void (*play)(u8 arg0, u8 arg1);
-    /*5*/ void (*play_ex)(u8 arg0, u8 arg1, s16 arg2, s16 arg3, u16 arg4);
-    /*6*/ void (*stop)(u8 arg0);
-    /*7*/ u8 (*get_no)(u8 arg0);
+    /*0*/ s32 (*set)(Object *obj, u16 actionNo, const char *filename, s32 lineNo, const char *debugStr);
+    /*1*/ void (*free)(Object *obj, u16 actionNo, const char *filename, s32 lineNo, const char *debugStr);
+    /*2*/ s32 (*is_set)(Object *obj, u16 actionNo);
+    /*3*/ void (*set_focus_obj)(Object *obj);
+    /*4*/ void (*play)(u8 playerNo, u8 seqID);
+    /*5*/ void (*play_ex)(u8 playerNo, u8 seqID, s16 bpm, s16 volume, u16 arg4);
+    /*6*/ void (*stop)(u8 playerNo);
+    /*7*/ u8 (*get_no)(u8 playerNo);
     /*8*/ u16 (*get_volume_option)(void);
     /*9*/ void (*set_volume_option)(u32 volume);
     /*10*/ UNK_TYPE_32 (*func10)(void);
     /*11*/ void (*func11)(UNK_TYPE_32 arg0);
-    /*12*/ u8 (*get_volume)(u8 arg0);
-    /*13*/ void (*set_volume)(u8 arg0, u8 arg1);
+    /*12*/ u8 (*get_volume)(u8 playerNo);
+    /*13*/ void (*set_volume)(u8 playerNo, u8 volume);
     /*14*/ UNK_TYPE_32 (*func14)(UNK_TYPE_32 arg0);
     /*15*/ void (*func15)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1);
     /*16*/ void (*func16)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1);
