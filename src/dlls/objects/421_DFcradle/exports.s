@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_421_ctor
-.dword dll_421_dtor
+.dword DFCradle_ctor
+.dword DFCradle_dtor
 
 # export table
-/*0*/ .dword dll_421_setup
-/*1*/ .dword dll_421_control
-/*2*/ .dword dll_421_update
-/*3*/ .dword dll_421_print
-/*4*/ .dword dll_421_free
-/*5*/ .dword dll_421_get_model_flags
-/*6*/ .dword dll_421_get_data_size
+/*0*/ .dword DFCradle_setup
+/*1*/ .dword DFCradle_control
+/*2*/ .dword DFCradle_update
+/*3*/ .dword DFCradle_print
+/*4*/ .dword DFCradle_free
+/*5*/ .dword DFCradle_get_model_flags
+/*6*/ .dword DFCradle_get_data_size

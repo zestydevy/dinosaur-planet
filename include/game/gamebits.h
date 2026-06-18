@@ -29,7 +29,7 @@ typedef enum {
     BIT_16 = 0x16, // len:1 group:1
     BIT_17 = 0x17, // len:1 group:0
     BIT_18 = 0x18, // len:1 group:1
-    BIT_19 = 0x19, // len:1 group:1
+    BIT_DF_Cradle_Powered = 0x19, // len:1 group:1
     BIT_1A = 0x1A, // len:1 group:1
     BIT_1B = 0x1B, // len:1 group:1
     BIT_1C = 0x1C, // len:1 group:0
