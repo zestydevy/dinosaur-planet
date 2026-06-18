@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_421_ctor = 0x0;
+dll_421_dtor = 0xC;
+dll_421_setup = 0x18;
+dll_421_control = 0x240;
+dll_421_update = 0x908;
+dll_421_print = 0x914;
+dll_421_free = 0x968;
+dll_421_get_model_flags = 0x978;
+dll_421_get_data_size = 0x988;
+dll_421_func_99C = 0x99C;
+
+.rodata = 0xAC0:
+
+.data = 0xAF0:
+data_0 = 0x0; // absolute:0xAF0
+data_8 = 0x8; // absolute:0xAF8
+data_18 = 0x18; // absolute:0xB08
