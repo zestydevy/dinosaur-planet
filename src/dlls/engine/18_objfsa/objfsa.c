@@ -481,25 +481,25 @@ void objfsa_turn_to_target(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 t
 }
 
 // offset: 0x1120 | func: 12 | export: 12
-void objfsa_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4) {
+void objfsa_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 *soundIDs) {
     s32 temp_v0;
 
     temp_v0 = 1 << arg2;
     if (data->unk308 & temp_v0) {
         data->unk308 = data->unk308 & ~temp_v0;
-        gDLL_6_AMSFX->vtbl->play(obj, arg4[arg3].soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(obj, soundIDs[arg3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 
 // offset: 0x11BC | func: 13 | export: 13
-void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4, f32 arg5, u8 volume) {
+void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 *soundIDs, f32 arg5, u8 volume) {
     s32 temp_v0;
     u32 temp_v0_2;
 
     temp_v0 = 1 << arg2;
     if (data->unk308 & temp_v0) {
         data->unk308 = data->unk308 & ~temp_v0;
-        temp_v0_2 = gDLL_6_AMSFX->vtbl->play(obj, arg4[arg3].soundID, volume, NULL, NULL, 0, NULL);
+        temp_v0_2 = gDLL_6_AMSFX->vtbl->play(obj, soundIDs[arg3], volume, NULL, NULL, 0, NULL);
         if (temp_v0_2 != 0) {
             gDLL_6_AMSFX->vtbl->set_pitch(temp_v0_2, arg5);
         }

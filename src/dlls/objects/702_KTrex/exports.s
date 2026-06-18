@@ -16,4 +16,4 @@ _exports:
 /*5*/ .dword dll_702_get_model_flags
 /*6*/ .dword dll_702_get_data_size
 /*7*/ .dword dll_702_get_fsa_anim_state
-/*8*/ .dword dll_702_func_B88
+/*8*/ .dword dll_702_Baddie_send_message

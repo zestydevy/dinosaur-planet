@@ -298,9 +298,14 @@ enum SoundID {
     SOUND_35D_GuardClaw_Yawn = 0x35D,        //DR_SupGuardClaw
     SOUND_35E_SharpClaw_Staff_Swing = 0x35E, //DR_SupGuardClaw
     SOUND_35F_GuardClaw_Step = 0x35F,        //DR_SupGuardClaw
-
+    SOUND_360_GuardClaw_Step2 = 0x360,
     SOUND_361_GuardClaw_Go_Away = 0x361, //DR_SupGuardClaw
     SOUND_362_GuardClaw_Hah = 0x362,     //DR_SupGuardClaw
+    SOUND_363_GuardClaw_Hey_You = 0x363,
+
+    SOUND_365_GuardClaw_Come_Here = 0x365,
+    SOUND_366_GuardClaw_Rawr = 0x366,
+    SOUND_367_GuardClaw_SharpClaw_Only = 0x367,
 
     SOUND_368 = 0x368,
     SOUND_369 = 0x369,

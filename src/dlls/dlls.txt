@@ -58,6 +58,7 @@
 211 = objects/211_Tricky
 213 = objects/213
 214 = objects/214_animobj
+217 = objects/217_GuardClaw
 220 = objects/220_Chuka
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie

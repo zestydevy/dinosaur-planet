@@ -39,7 +39,7 @@ void BaddieControl_ctor(void *dll) { }
 void BaddieControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 5
-s32 BaddieControl_func_18(Object* arg0, Baddie* arg1, f32 arg2) {
+s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
     Object* temp_v1;
     Vec3s16 spEC;
     Vec3s16 spE4;
@@ -53,23 +53,23 @@ s32 BaddieControl_func_18(Object* arg0, Baddie* arg1, f32 arg2) {
 
     var_s5 = 0;
 
-    spD8.x = arg0->srt.transl.x;
-    spD8.y = arg0->srt.transl.y + 10.0f;
-    spD8.z = arg0->srt.transl.z;
+    spD8.x = obj->srt.transl.x;
+    spD8.y = obj->srt.transl.y + 10.0f;
+    spD8.z = obj->srt.transl.z;
     func_80007EE0(&spD8, &spE4);
-    if (arg0->parent != NULL) {
-        spD0 = (u16)(arg0->srt.yaw + arg0->parent->srt.yaw);
+    if (obj->parent != NULL) {
+        spD0 = (u16)(obj->srt.yaw + obj->parent->srt.yaw);
     } else {
-        spD0 = arg0->srt.yaw;
+        spD0 = obj->srt.yaw;
     }
 
     for (i = 0; i < 4; i++) {
         var_s0 = spD0 + (i << 0xE);
-        spD8.x = arg0->srt.transl.x - (fsin16_precise(var_s0) * arg2);
-        spD8.y = arg0->srt.transl.y + 10.0f;
-        spD8.z = arg0->srt.transl.z - (fcos16_precise(var_s0) * arg2);
+        spD8.x = obj->srt.transl.x - (fsin16_precise(var_s0) * arg2);
+        spD8.y = obj->srt.transl.y + 10.0f;
+        spD8.z = obj->srt.transl.z - (fcos16_precise(var_s0) * arg2);
         func_80007EE0(&spD8, &spEC);
-        if (arg0->parent != NULL) {
+        if (obj->parent != NULL) {
             var_s0 = 1;
         } else{
             var_s0 = func_80008048(&spEC, &spE4, NULL, &spD3, 0) & 0xFF;
@@ -77,7 +77,7 @@ s32 BaddieControl_func_18(Object* arg0, Baddie* arg1, f32 arg2) {
                 var_s0 = 1;
             }
         }
-        if ((var_s0 != 0) && (func_80059C40(&arg0->srt.transl, &spD8, 1.0f, 0, &sp7C, arg0, arg1->fsa.unk4.unk259, -1, 0, 0) != 0)) {
+        if ((var_s0 != 0) && (func_80059C40(&obj->srt.transl, &spD8, 1.0f, 0, &sp7C, obj, fsa->unk4.unk259, -1, 0, 0) != 0)) {
             var_s0 = 0;
         }
 
