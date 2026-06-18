@@ -76,7 +76,7 @@ typedef struct {
 /*0x2A*/ static u16 sUnkVolume; // set to 256 and never changed, scales amseq volume
 /*0x2C*/ static u16 sCurrGlobalVolume;
 
-void amseq_play_ex(u8 arg0, u8 arg1, s16 arg2, s16 arg3, u16 arg4);
+void amseq_play_ex(u8 playerNo, u8 seqID, s16 bpm, s16 volume, u16 arg4);
 /*static*/ void amseq_update_dist_falloff(void);
 /*static*/ void amseq_start_next_sequence(u8 arg0);
 /*static*/ void amseq_update_fade(u8 arg0);
@@ -433,8 +433,8 @@ void amseq_tick(void) {
 #endif
 
 // offset: 0x1228 | func: 17 | export: 3
-void amseq_set_focus_obj(Object *arg0) {
-    sFocusObj = arg0;
+void amseq_set_focus_obj(Object *obj) {
+    sFocusObj = obj;
 }
 
 // offset: 0x1244 | func: 18 | export: 19

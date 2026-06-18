@@ -198,6 +198,7 @@
 430 = objects/430_DFSH_door2Special
 431 = objects/431_DFwhirlpool
 433 = objects/433_DFSH_Shrine
+434 = objects/434_DFSH_ObjCreator
 435 = objects/435_KrazoaSpirit
 437 = objects/437_EWTrobotpatrol
 438 = objects/438_RobotBeam
@@ -223,10 +224,12 @@
 469 = objects/469_ECSHshrine
 470 = objects/470_ECSH_Cup
 472 = objects/472_GPSH_Shrine
+473 = objects/473_GPSH_ObjCreator
 475 = objects/475_GPSH_flybaddie
 477 = objects/477_DBSH_Shrine
 478 = objects/478_DBSH_Symbol
 481 = objects/481_NWSH_Shrine
+486 = objects/486_CCSH_Shrine
 488 = objects/488_WGSH_Shrine
 489 = objects/489_WGSH_ObjCreator
 490 = objects/490_WGSH_flybaddie

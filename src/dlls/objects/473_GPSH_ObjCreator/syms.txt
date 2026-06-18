@@ -1,0 +1,16 @@
+.text = 0x0:
+GPSH_ObjCreator_ctor = 0x0;
+GPSH_ObjCreator_dtor = 0xC;
+GPSH_ObjCreator_setup = 0x18;
+GPSH_ObjCreator_control = 0x5C;
+GPSH_ObjCreator_update = 0x494;
+GPSH_ObjCreator_print = 0x4A0;
+GPSH_ObjCreator_free = 0x4F4;
+GPSH_ObjCreator_get_model_flags = 0x504;
+GPSH_ObjCreator_get_data_size = 0x514;
+
+.rodata = 0x574:
+str_0 = 0x0; // absolute:0x574
+
+.data = 0x584:
+data_0 = 0x0; // absolute:0x584

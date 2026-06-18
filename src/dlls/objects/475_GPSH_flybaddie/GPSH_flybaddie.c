@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/475_GPSH_flybaddie.h"
 #include "PR/gbi.h"
 #include "PR/os.h"
 #include "game/gamebits.h"
@@ -16,12 +17,6 @@
 #include "sys/rand.h"
 #include "dll.h"
 #include "types.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 unk18;
-/*1A*/ s16 unk1A;
-} GPSH_flybaddie_Setup;
 
 typedef struct {
 /*00*/ f32 xCurve[4];

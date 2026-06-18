@@ -1,0 +1,13 @@
+.text = 0x0:
+DFSH_ObjCreator_ctor = 0x0;
+DFSH_ObjCreator_dtor = 0xC;
+DFSH_ObjCreator_setup = 0x18;
+DFSH_ObjCreator_control = 0x50;
+DFSH_ObjCreator_update = 0x3D8;
+DFSH_ObjCreator_print = 0x3E4;
+DFSH_ObjCreator_free = 0x438;
+DFSH_ObjCreator_get_model_flags = 0x448;
+DFSH_ObjCreator_get_data_size = 0x458;
+
+.rodata = 0x4B4:
+_oob_rodata_0 = 0x0; // absolute:0x4B4

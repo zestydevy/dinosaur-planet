@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_433_ctor
-.dword dll_433_dtor
+.dword DFShrine_ctor
+.dword DFShrine_dtor
 
 # export table
-/*0*/ .dword dll_433_setup
-/*1*/ .dword dll_433_control
-/*2*/ .dword dll_433_update
-/*3*/ .dword dll_433_print
-/*4*/ .dword dll_433_free
-/*5*/ .dword dll_433_get_model_flags
-/*6*/ .dword dll_433_get_data_size
+/*0*/ .dword DFShrine_setup
+/*1*/ .dword DFShrine_control
+/*2*/ .dword DFShrine_update
+/*3*/ .dword DFShrine_print
+/*4*/ .dword DFShrine_free
+/*5*/ .dword DFShrine_get_model_flags
+/*6*/ .dword DFShrine_get_data_size

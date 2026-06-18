@@ -1,0 +1,17 @@
+.text = 0x0:
+CCSH_Shrine_ctor = 0x0;
+CCSH_Shrine_dtor = 0xC;
+CCSH_Shrine_setup = 0x18;
+CCSH_Shrine_control = 0x1EC;
+CCSH_Shrine_update = 0xC7C;
+CCSH_Shrine_print = 0xC88;
+CCSH_Shrine_free = 0xCDC;
+CCSH_Shrine_get_model_flags = 0xD6C;
+CCSH_Shrine_get_data_size = 0xD7C;
+CCSH_Shrine_anim_callback = 0xD90;
+CCSH_Shrine_process_obj_messages = 0x1194;
+
+.rodata = 0x1324:
+
+.data = 0x1384:
+data_0 = 0x0; // absolute:0x1384
