@@ -1,0 +1,12 @@
+.text = 0x0:
+DFPulley_ctor = 0x0;
+DFPulley_dtor = 0xC;
+DFPulley_setup = 0x18;
+DFPulley_control = 0x100;
+DFPulley_update = 0x4B0;
+DFPulley_print = 0x4BC;
+DFPulley_free = 0x510;
+DFPulley_get_model_flags = 0x5A0;
+DFPulley_get_data_size = 0x5B0;
+
+.rodata = 0x61C:
