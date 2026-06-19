@@ -815,9 +815,11 @@ static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
         objdata->flags = 0;
     }
 
-    // FAKE
-    new_var++;
-    new_var--;
+    switch (objdata->unk427) {
+        case 1:
+            break;
+    }
+
     if (setup->unk1D == new_var){
         if (main_get_bits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E8;
