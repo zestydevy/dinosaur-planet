@@ -21,6 +21,12 @@ typedef struct {
     u8 state;
 } DFPulley_Data;
 
+typedef enum {
+    STATE_0_Unpowered,          //Stopped
+    STATE_1_Powered,            //Pulley: plays sound when nearby, Turbine: starts sound and advances state
+    STATE_2_Spin_Turbine        //Turbine only: spins
+} DFPulley_States;
+
 #define SOUND_RANGE 120.0f
 
 // offset: 0x0 | ctor
@@ -45,7 +51,8 @@ void DFPulley_setup(Object* self, DFPulley_Setup* objSetup, s32 reset) {
     self->stateFlags = objSetup->stateFlags;
     
     objData->state = main_get_bits(BIT_DF_Cradle_Powered);
-    if (objData->state) {
+
+    if (objData->state != STATE_0_Unpowered) {
         objData->rotateSpeed = 350;
     } else {
         objData->rotateSpeed = 0;
@@ -58,21 +65,21 @@ void DFPulley_control(Object* self) {
     DFPulley_Data* objData;
     Object* cradle;
     f32 distance;
-    f32 temp_fv1;
     f32 pitch;
+    f32 audioValue;
 
     objData = self->data;
     
     switch (objData->state) {
-    case 0:
+    case STATE_0_Unpowered:
         objData->state = main_get_bits(BIT_DF_Cradle_Powered);
-        return;
-    case 1:
+        break;
+    case STATE_1_Powered:
         //Turbine behaviour
         if (self->id == OBJ_DFturbine) {
-            objData->state = 2;
-            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, 0x76F, MAX_VOLUME, NULL, NULL, 0, NULL);
-            return;
+            objData->state = STATE_2_Spin_Turbine;
+            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_76F, MAX_VOLUME, NULL, NULL, 0, NULL);
+            break;
         }
 
         //Pulley behaviour
@@ -80,40 +87,38 @@ void DFPulley_control(Object* self) {
             cradle = func_800211B4(0x2CA7);
             cradleData = cradle->data;
             distance = vec3_distance(&self->globalPosition, &cradle->globalPosition);
+
+            //Play sound loop when nearby
             if (distance < SOUND_RANGE) {
                 if (objData->soundHandle == 0) {
-                    objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, 0x782, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_782, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 
+                //Adjust pitch and volume
                 if (objData->soundHandle) {
-                    temp_fv1 = (cradleData->unk9C / 2.0f * 0.5f) + 0.5f;
+                    pitch = (cradleData->unk9C / 2.0f * 0.5f) + 0.5f;
 
-                    if (temp_fv1 > 1.0f) {
-                        pitch = 1.0f;
+                    if (pitch > 1.0f) {
+                        audioValue = 1.0f;
                     } else {
-                        pitch = temp_fv1;
+                        audioValue = pitch;
                     }
-                    gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle, pitch);
+                    gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle, audioValue);
                     
                     if (cradleData->unkB6 != 0) {
-                        pitch = 0.0f;
+                        audioValue = 0.0f;
                     }
-                    gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle, (((SOUND_RANGE - distance) / SOUND_RANGE) * MAX_VOLUME * pitch));
-                    return;
+                    gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle, (((SOUND_RANGE - distance) / SOUND_RANGE) * MAX_VOLUME * audioValue));
                 }
-            } else {
-                if (objData->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
-                    objData->soundHandle = 0;
-                    return;
-                }
+
+            //Otherwise, stop sound
+            } else if (objData->soundHandle) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                objData->soundHandle = 0;
             }
-        } else {
-            return;
         }
         break;
-    case 2:
-        //Turbine behaviour
+    case STATE_2_Spin_Turbine:
         if (objData->rotateSpeed < 350) {
             objData->rotateSpeed += 30;
         }

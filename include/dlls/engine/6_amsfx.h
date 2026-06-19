@@ -504,6 +504,8 @@ enum SoundID {
 
     SOUND_76D_Log_Bump = 0x76D, // used by DFlog, BWlog
 
+    SOUND_76F = 0x76F, //DFturbine
+
     SOUND_775_Timer_Countdown = 0x775,
     SOUND_776_Wooden_Creaking_Loop = 0x776, //used by SCtotemstrength
     
@@ -513,6 +515,7 @@ enum SoundID {
     SOUND_77C_Capy_Sniff = 0x77C,
     SOUND_77D_Capy_Eat = 0x77D,
 
+    SOUND_782 = 0x782, //DFpulley
     SOUND_783_Rope_Strain = 0x783, //DFcradle
     SOUND_784_Rope_Strain = 0x784, //DFcradle
     SOUND_785_Rope_Strain = 0x785, //DFcradle
