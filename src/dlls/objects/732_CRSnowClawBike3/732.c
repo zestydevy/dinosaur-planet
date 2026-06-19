@@ -43,7 +43,9 @@ typedef struct {
     void* unk2F4; //DLL
     void* unk2F8; //DLL
     s16* unk2FC; //soundIDs?
-    s8 _unk300[0x388 - 0x300];
+    s8 _unk300[0x330 - 0x300];
+    Vec3f unk330[6];
+    s8 _unk378[0x388 - 0x378];
     Vec3f unk388;
     s8 _unk394[0x3A0 - 0x394];
     Vec3f unk3A0; //previous position?
@@ -52,7 +54,11 @@ typedef struct {
     u32 unk3BC; //soundHandle
     u32 unk3C0; //soundHandle
     u32 unk3C4; //soundHandle
-    s8 _unk3C8[0x3DC - 0x3C8];
+    s32 unk3C8;
+    f32 unk3CC;
+    f32 unk3D0;
+    f32 unk3D4;
+    s8 _unk3D8[0x3DC - 0x3D8];
     s16 unk3DC;
     s16 unk3DE;
     s16 unk3E0;
@@ -88,9 +94,12 @@ typedef struct {
 /*0x54*/ static f32 data_54[] = {
     0.0f, 0.0f, 0.0f, 0.0f
 };
-/*0x64*/ static f32 data_64[] = {
-    0, 1, -18, -6.5, 1, -7, 6.5, 1, 
-    -7, -6, 1, 11, 6, 1, 11
+/*0x64*/ static Vec3f data_64[] = {
+    VEC3F(0, 1, -18), 
+    VEC3F(-6.5, 1, -7), 
+    VEC3F(6.5, 1, -7), 
+    VEC3F(-6, 1, 11), 
+    VEC3F(6, 1, 11)
 };
 /*0xA0*/ static f32 data_A0[] = {
     5, 4, 4, 4.5, 4.5, -5, 0, 0, 
@@ -279,7 +288,18 @@ s8 dll_732_func_1A58(Object* self) {
 }
 
 // offset: 0x1A68 | func: 15 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_1A68.s")
+void dll_732_func_1A68(Object* self, s32 arg1) {
+    DLL732_Data* objData = self->data;
+    
+    objData->unk3F0 = arg1;
+    if ((arg1 == 2) && !(objData->unk3EF & 0x20)) {
+        objData->unk3C8 = 0x2710;
+        objData->unk3CC = 2.0f;
+        objData->unk3D0 = 4.0f;
+        objData->unk3D4 = 4.6f;
+        gDLL_1_cmdmenu->vtbl->energy_bar_create(0, 13000, TEXTABLE_569, TEXTABLE_56A, 1);
+    }
+}
 
 // offset: 0x1B10 | func: 16 | export: 15
 void dll_732_func_1B10(Object* self, f32* arg1, s32* arg2) {
@@ -345,7 +365,7 @@ void dll_732_func_3618(Object* self, DLL732_Unk_3618* arg1, u8 controllerPort, s
 }
 
 // offset: 0x3694 | func: 26
-void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch) {
+static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch) {
     SRT sp20;
 
     sp20.yaw = objData->unk3E0;
@@ -376,7 +396,20 @@ void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addTo
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3DAC.s")
 
 // offset: 0x3FE0 | func: 31
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3FE0.s")
+void dll_732_func_3FE0(Object* self, DLL732_Data* objData) {
+    MtxF sp60;
+    s32 i;
+
+    gDLL_27->vtbl->reset(self, &objData->unk4C);
+    dll_732_func_3694(self, objData, &sp60, 0, 0, 0);
+    
+    for (i = 0; i < objData->unk3EE; i++) {
+        vec3_transform(&sp60, 
+            data_64[i].x, data_64[i].y, data_64[i].z, 
+            &objData->unk330[i].x, &objData->unk330[i].y, &objData->unk330[i].z
+        );
+    }
+}
 
 // offset: 0x40FC | func: 32
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_40FC.s")
