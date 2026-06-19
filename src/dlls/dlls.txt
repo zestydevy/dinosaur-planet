@@ -363,6 +363,7 @@
 729 = objects/729_CRCloudRace
 730 = objects/730_CRspellStone
 731 = objects/731_CRFuelTank
+732 = objects/732_CRSnowClawBike3
 734 = objects/734_DR_PushCart
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
