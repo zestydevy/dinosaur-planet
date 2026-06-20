@@ -521,12 +521,12 @@ segments:
     # - { type: .bss, vram: 0x800d3ef0, name: libultra/rmon/rmonmain }
 
   # Asset filesystem
+  - [0xA4970, bin, assets_tab]
   - name: assets
     type: code
-    start: 0xA4970
+    start: 0xA4AA0
     subalign: 4
     subsegments:
-    - [0xA4970, bin, assets_tab]
     - [0xA4AA0, bin, assets]
     # Leftover older version of the end of the assets segment that wasn't cleared to 0 or 0xFF
     - [0x3B1ECF4, bin, leftovers/DLLS_partial_leftover]

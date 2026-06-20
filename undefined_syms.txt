@@ -1,3 +1,3 @@
 gControllerThreadStack = 0x800A8200;
-__fstAddress = 0xA4970;
-__file1Address = 0xA4AA0;
+__fstAddress = assets_tab_ROM_START;
+__file1Address = assets_ROM_START;
