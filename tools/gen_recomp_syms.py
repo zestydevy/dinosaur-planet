@@ -294,7 +294,7 @@ def scan_dll_elf(
                 symbol_renames[sym.name] = (rename, vram)
 
 def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO, include_dir: Path):
-    with open(BIN_PATH.joinpath("assets/DLLS_tab.bin"), "rb") as tab_file:
+    with open(BIN_PATH.joinpath("assets/DLLS.tab"), "rb") as tab_file:
         tab = DLLTab.parse(tab_file.read())
 
     with open(BIN_PATH.joinpath("assets/DLLS.bin"), "rb") as dlls_file:

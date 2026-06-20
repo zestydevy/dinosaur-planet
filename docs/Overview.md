@@ -76,7 +76,7 @@ The root of the repository and the `tools` directory contain many scripts and pr
 - `tools/asm_processor` - Processes `GLOBAL_ASM` pragmas when compiling C code by patching in the included assembly into the resulting object file.
 - `tools/ido_static_recomp` - Contains recompiled IDO executables to run on a modern system.
 - `tools/configure.py` - Configures the Ninja build script file (`build.ninja`) for the project.
-- `tools/dino_dll.py` - Packs and unpacks the `DLLS.bin` and `DLLS_tab.bin` files.
+- `tools/dino_dll.py` - Packs and unpacks the `DLLS.bin` and `DLLS.tab` files.
 - `tools/dll_split.py` - Like splat, but for Dinosaur Planet DLLs. Extracts assembly and data from each unpacked DLL and sets up a directory under `src/dlls` containing a C stub, the DLL's export table, and automatically discovered symbols. 
 - `tools/dlldump.py` - Displays the header, relocation tables, and executable assembly for a given Dinosaur Planet `.dll` file.
 - `tools/dllimports.py` - Displays and provides address/index lookup for DLLSIMPORT.tab entries.

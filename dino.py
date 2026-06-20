@@ -49,6 +49,7 @@ BUILD_ARTIFACTS = [
 ]
 
 DINO_DLL_PY = TOOLS_PATH.joinpath("dino_dll.py")
+DINO_FS_PY = TOOLS_PATH.joinpath("dino_fs.py")
 DLL_SPLIT_PY = TOOLS_PATH.joinpath("dll_split.py")
 CONFIGURE_PY = TOOLS_PATH.joinpath("configure.py")
 DIFF_PY = TOOLS_PATH.joinpath("asm_differ/diff.py")
@@ -127,16 +128,26 @@ class DinoCommandRunner:
         
         args.append("splat.yaml")
         self.__run_cmd(args)
+        print()
+
+        # Unpack assets
+        print("Unpacking assets...")
+        self.__run_cmd([
+            sys.executable, str(DINO_FS_PY),
+            "unpack",
+            "--tab", BIN_PATH.joinpath("assets_tab.bin").as_posix(),
+            "--bin", BIN_PATH.joinpath("assets.bin").as_posix(),
+            "--output", BIN_PATH.joinpath("assets").as_posix()
+        ])
         
         # Unpack DLLs
-        print()
         print("Unpacking DLLs...")
         self.__run_cmd([
             sys.executable, str(DINO_DLL_PY),
             "unpack",
             str(BIN_PATH.joinpath("assets/dlls")),
             str(BIN_PATH.joinpath("assets/DLLS.bin")),
-            str(BIN_PATH.joinpath("assets/DLLS_tab.bin"))
+            str(BIN_PATH.joinpath("assets/DLLS.tab"))
         ])
 
         # Extract DLLs

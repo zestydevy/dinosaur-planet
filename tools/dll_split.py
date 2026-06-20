@@ -42,7 +42,7 @@ class DLLSplitter:
         if self.verbose:
             print("Loading DLLS.tab...")
         
-        tab_path = BIN_PATH.joinpath("assets/DLLS_tab.bin")
+        tab_path = BIN_PATH.joinpath("assets/DLLS.tab")
         with open(tab_path, "rb") as tab_file:
             tab = DLLTab.parse(tab_file.read())
 
