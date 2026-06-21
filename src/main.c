@@ -157,12 +157,15 @@ void test_write(void);
 void check_dongle(void);
 
 void mainproc(void *arg) {
+#ifndef NON_MATCHING
     test_write(); // ROM write check
+#endif
     game_init();
 
     while(TRUE) {
+#ifndef NON_MATCHING
         check_dongle();  // copy protection check
-
+#endif
         if (osMemSize != EXPANSION_RAM_SIZE) {
             game_tick_no_expansion();
         } else {

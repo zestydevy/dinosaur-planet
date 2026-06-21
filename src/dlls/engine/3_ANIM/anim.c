@@ -2594,6 +2594,7 @@ static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, 
             case ANIM_CODE_EVT_SET:
                 switch (subEvtType) {
                 case ANIM_CODE_EVT_SET_MESSAGE:
+#ifndef NON_MATCHING
                     // Security dongle check
                     dongleCode = ACCESS_1;
                     dongleCode <<= 0x10;
@@ -2602,6 +2603,7 @@ static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, 
                         // goodbye object!
                         bzero(actor, 0x100000);
                     }
+#endif
                     st->lastMessage = (u8) var_s1;
                     if (st->messageCount < 10) {
                         st->messages[st->messageCount] = (u8) var_s1;
