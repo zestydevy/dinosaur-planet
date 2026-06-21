@@ -272,6 +272,7 @@ class BuildNinjaWriter:
         self.writer.variable("DLLSYMS2LD", f"{sys.executable} tools/dllsyms2ld.py")
         self.writer.variable("SYNTAX_CHECK", f"{sys.executable} tools/syntax_check.py")
         self.writer.variable("PATCHMIPS3", f"{sys.executable} tools/patchmips3.py")
+        self.writer.variable("N64CKSUM", f"{sys.executable} tools/n64cksum.py")
         
         self.writer.newline()
 
@@ -311,6 +312,7 @@ class BuildNinjaWriter:
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
         self.writer.rule("pack_assets", "$DINOFS pack --bin $ASSETS_BIN_OUT --tab $ASSETS_TAB_OUT $in", "Packing assets...")
         self.writer.rule("patchmips3", "$PATCHMIPS3 $in $out", "Patching $in...")
+        self.writer.rule("n64cksum", "$N64CKSUM $in $out", "Recalculating checksum...")
 
         self.writer.newline()
 
@@ -594,7 +596,11 @@ class BuildNinjaWriter:
         self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", [], implicit=self.link_deps)
 
         # Convert .elf to .z64
-        self.writer.build("$BUILD_DIR/$TARGET.z64", "to_bin", "$BUILD_DIR/$TARGET.elf")
+        if self.nonmatching:
+            self.writer.build("$BUILD_DIR/$TARGET.prechecksum.z64", "to_bin", "$BUILD_DIR/$TARGET.elf")
+            self.writer.build("$BUILD_DIR/$TARGET.z64", "n64cksum", "$BUILD_DIR/$TARGET.prechecksum.z64")
+        else:
+            self.writer.build("$BUILD_DIR/$TARGET.z64", "to_bin", "$BUILD_DIR/$TARGET.elf")
         
     def __detect_cross(self) -> str:
         # Ordered by preference
