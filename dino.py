@@ -38,7 +38,6 @@ CLEAN_PATHS = [
     SCRIPT_DIR.joinpath(".ninja_log"),
     SCRIPT_DIR.joinpath(".splat_cache"),
     SCRIPT_DIR.joinpath(f"{TARGET}.ld"),
-    SCRIPT_DIR.joinpath("undefined_funcs_auto.txt"),
     SCRIPT_DIR.joinpath("undefined_syms_auto.txt"),
 ]
 

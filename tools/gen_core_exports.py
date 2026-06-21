@@ -30,10 +30,6 @@ def main():
 
     with open("symbol_addrs.txt", "r", encoding="utf-8") as syms_file:
         read_syms(syms_file)
-    with open("undefined_funcs.txt", "r", encoding="utf-8") as syms_file:
-        read_syms(syms_file)
-    with open("undefined_funcs_auto.txt", "r", encoding="utf-8") as syms_file:
-        read_syms(syms_file)
     with open("undefined_syms.txt", "r", encoding="utf-8") as syms_file:
         read_syms(syms_file)
     with open("undefined_syms_auto.txt", "r", encoding="utf-8") as syms_file:

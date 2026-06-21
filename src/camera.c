@@ -144,10 +144,12 @@ void camera_init(void) {
 
     WAIT_ON_IOBUSY(stat);
 
+#ifndef NON_MATCHING
     // 0xB0000578 is a direct read from the ROM as opposed to RAM
     if (((D_B0000578 & 0xFFFF) & 0xFFFF) != 0x8965) {
         gAntiPiracyFlag = TRUE;
     }
+#endif
 
     gAspect = 1.3333334f;
     gFovY = 60.0f;

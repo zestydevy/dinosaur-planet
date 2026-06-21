@@ -55,8 +55,8 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     text_start = 0x80000400
     text_size = 0x89350
     text_end = text_start + text_size
-    segment_start = text_start
-    segment_size = 0xA3AA0
+    core_start = text_start
+    core_size = 0xA3AA0
 
     funcs = []
     vrams: dict[int, int] = {}
@@ -121,10 +121,10 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     
     # Write function symbols
     syms_toml.write("[[section]]\n")
-    syms_toml.write("name = \".segment\"\n")
+    syms_toml.write("name = \".core\"\n")
     syms_toml.write("rom = 0x00001000\n")
-    syms_toml.write("vram = 0x{:X}\n".format(segment_start))
-    syms_toml.write("size = 0x{:X}\n".format(segment_size))
+    syms_toml.write("vram = 0x{:X}\n".format(core_start))
+    syms_toml.write("size = 0x{:X}\n".format(core_size))
     syms_toml.write("\n")
 
     syms_toml.write("functions = [\n")
@@ -149,10 +149,10 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
 
     # Write data symbols
     datasyms_toml.write("[[section]]\n")
-    datasyms_toml.write("name = \".segment\"\n")
+    datasyms_toml.write("name = \".core\"\n")
     datasyms_toml.write("rom = 0x00001000\n")
-    datasyms_toml.write("vram = 0x{:X}\n".format(segment_start))
-    datasyms_toml.write("size = 0x{:X}\n".format(segment_size))
+    datasyms_toml.write("vram = 0x{:X}\n".format(core_start))
+    datasyms_toml.write("size = 0x{:X}\n".format(core_size))
     datasyms_toml.write("\n")
 
     datasyms_toml.write("symbols = [\n")

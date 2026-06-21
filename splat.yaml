@@ -10,7 +10,9 @@ options:
   asset_path: bin
   asm_path: asm
   src_path: src
+  hasm_in_src_path: True
   symbol_addrs_path: ./symbol_addrs.txt
+  create_undefined_funcs_auto: False
   mnemonic_ljust: 11
   # Use .o instead of .bin.o suffix in linker script
   o_as_suffix: True
@@ -26,7 +28,7 @@ options:
 segments:
   - [0x000000, header]
   - [0x000040, bin, boot]
-  - name: segment
+  - name: core
     type: code
     start: 0x1000
     vram: 0x80000400
@@ -34,7 +36,7 @@ segments:
     subalign: 16
     subsegments:
     
-    - [0x1000, asm, entrypoint]
+    - [0x1000, hasm, entrypoint]
     - [0x1050, c, segment_1050]
     - [0x13D0, c, segment_13D0]
     - [0x1460, c, segment_1460]
@@ -526,6 +528,7 @@ segments:
     type: code
     start: 0xA4AA0
     subalign: 4
+    follows_vram: core
     subsegments:
     - [0xA4AA0, bin, assets]
     # Leftover older version of the end of the assets segment that wasn't cleared to 0 or 0xFF

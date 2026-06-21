@@ -93,11 +93,18 @@ class BuildNinjaWriter:
         self.writer = writer
         self.input = input
         self.config = config
-        self.link_deps: "list[str]" = [
-            "undefined_syms.txt", 
-            "undefined_funcs.txt", 
-            "undefined_syms_auto.txt", 
-        ]
+        self.nonmatching: bool = "NON_MATCHING" in config.defines
+        if self.nonmatching:
+            self.symbol_files: "list[str]" = [
+                "undefined_syms.txt", 
+            ]
+        else:
+            self.symbol_files: "list[str]" = [
+                "undefined_syms.txt", 
+                "undefined_syms_auto.txt", 
+                "undefined_syms_hack.txt", 
+            ]
+        self.link_deps: "list[str]" = [] + self.symbol_files
         self.expected_targets: "list[str]" = []
 
     def write(self):
@@ -206,10 +213,8 @@ class BuildNinjaWriter:
             "-KPIC",
         ]))
 
-        self.writer.variable("LD_FLAGS", " ".join([
-            "-T undefined_syms.txt", 
-            "-T undefined_funcs.txt", 
-            "-T undefined_syms_auto.txt", 
+        symbol_files_link_args = [f"-T {x}" for x in self.symbol_files]
+        self.writer.variable("LD_FLAGS", " ".join(symbol_files_link_args + [
             "-T $LINK_SCRIPT",
             "-Map $BUILD_DIR/$TARGET.map",
             "--no-check-sections",
@@ -718,6 +723,7 @@ class InputScanner:
         self.dlls: "list[DLL]" = []
 
         c_paths = self.__scan_c_files()
+        self.__scan_hasm_files()
         self.__scan_asm_files(c_paths)
         self.__scan_bin_files()
         self.__scan_asset_files()
@@ -734,6 +740,14 @@ class InputScanner:
             obj_path = self.__make_obj_path(src_path)
             file_config = self.__get_file_config(src_path)
             self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
+        
+        return set(path.relative_to("src") for path in paths)
+
+    def __scan_hasm_files(self):
+        paths = [Path(path) for path in glob.glob("src/**/*.s", recursive=True) if not Path(path).is_relative_to(Path("src/dlls"))]
+        for src_path in paths:
+            obj_path = self.__make_obj_path(src_path)
+            self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
         
         return set(path.relative_to("src") for path in paths)
 

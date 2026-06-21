@@ -163,7 +163,7 @@ void mainproc(void *arg) {
     while(TRUE) {
         check_dongle();  // copy protection check
 
-        if (osMemSize != EXPANSION_SIZE) {
+        if (osMemSize != EXPANSION_RAM_SIZE) {
             game_tick_no_expansion();
         } else {
             game_tick();
@@ -214,7 +214,7 @@ void game_init(void) {
     menu_init();
     init_audio(&osscheduler_, /*threadPriority=*/14);
     init_global_map();
-    if (osMemSize != EXPANSION_SIZE) {
+    if (osMemSize != EXPANSION_RAM_SIZE) {
         gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dll_load_deferred(DLL_ID_AMSEQ, 36);
         gDLL_6_AMSFX = dll_load_deferred(DLL_ID_AMSFX, 18);
         gDLL_21_Gametext = dll_load_deferred(DLL_ID_TEXT, 5);
@@ -271,7 +271,7 @@ void game_init(void) {
     gSPEndDisplayList(gCurGfx++);
     dl_init_debug_infos();
     menu_set(MENU_POST);
-    if (osMemSize == EXPANSION_SIZE) {
+    if (osMemSize == EXPANSION_RAM_SIZE) {
         main_handle_map_change();
     }
     track_set_z_buffer_on(FALSE);
@@ -680,10 +680,10 @@ void check_dongle(void) {
     if ((head == DONGLE_LSFS) || (head == DONGLE_MPFS)) {
         return;
     } else {
-        int *write = (int *)(u32)EXPANSION_RAM_START;
+        int *write = (int *)(u32)NO_EXPANSION_RAM_END;
         // copy protection failed. Wipe every 2nd word to prevent RAM analysis.
         // probably hackers trying to view our precious data.
-        while ((u32)write != 0x80000000) {
+        while ((u32)write != RAM_START) {
             *write = 0;
             write -= 2; // hmm...
         }
