@@ -130,9 +130,9 @@ typedef struct {
 /*0x8*/ static Texture* bss_8;
 /*0x10*/ static f32 bss_10[6];
 /*0x28*/ static u8 bss_28[0x4];
-// /*0x2C*/ static u8 bss_2C[0x4];
 
 static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
+static void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
 
 // offset: 0x0 | func: 0
 static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2) {
@@ -481,7 +481,65 @@ void dll_732_func_3748(Object* self, DLL732_Data* objData) {
 }
 
 // offset: 0x3860 | func: 28
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3860.s")
+s32 dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    DLL732_Data* objData;
+    DLL732_Unk_2E0* unkSubstruct;
+    SRT* srt;
+    Vec3f spB8; //B8
+    SRT spA0; //A0
+    s32 i;
+    MtxF sp5C; //5C
+
+    objData = self->data;
+
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
+        case 2:
+            main_set_bits(0x499, 1);
+            break;
+        case 3:
+            gDLL_1_cmdmenu->vtbl->energy_bar_free();
+            break;
+        }
+    }
+    
+    if (objData->unk3F0 == 2) {
+        spB8.f[0] = (self->srt.transl.x - objData->unk3A0.f[0]) * gUpdateRateInverseF;
+        spB8.f[1] = (self->srt.transl.y - objData->unk3A0.f[1]) * gUpdateRateInverseF;
+        spB8.f[2] = (self->srt.transl.z - objData->unk3A0.f[2]) * gUpdateRateInverseF;
+
+        spB8.f[0] *= 0.93749994f;
+        spB8.f[1] *= 0.93749994f;
+        spB8.f[2] *= 0.93749994f;
+        
+        spA0.transl.x = 0.0f;
+        spA0.transl.y = 0.0f;
+        spA0.transl.z = 0.0f;
+        spA0.scale = 1.0f;
+        spA0.yaw = -self->srt.yaw;
+        spA0.pitch = -self->srt.pitch;
+        spA0.roll = -self->srt.roll;
+        srt = &objData->unk2AC.unk0;
+        matrix_from_srt_reversed(&sp5C, &spA0);
+        
+        vec3_transform(&sp5C, spB8.f[0], spB8.f[1], spB8.f[2], &srt->transl.f[0], &srt->transl.f[1], &srt->transl.f[2]);
+        unkSubstruct = &objData->unk2E0;
+        // FAKE?
+        if (unkSubstruct->unkF);
+        unkSubstruct->unkF += gUpdateRate * 8;
+        if (unkSubstruct->unkF > 0x46) {
+            unkSubstruct->unkF = 0x46;
+        }
+        dll_732_func_40FC(self, objData, srt->transl.f[2], unkSubstruct->unkF, &unkSubstruct->unk10, 4);
+    }
+    
+    objData->unk3A0.x = self->srt.transl.x;
+    objData->unk3A0.y = self->srt.transl.y;
+    objData->unk3A0.z = self->srt.transl.z;
+    objData->unk3EF |= 0x10;
+    objData->unk3EF &= ~8;
+    return 0;
+}
 
 // offset: 0x3AF8 | func: 29
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3AF8.s")
@@ -556,7 +614,7 @@ void dll_732_func_3FE0(Object* self, DLL732_Data* objData) {
 }
 
 // offset: 0x40FC | func: 32
-void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, u8 arg6, u8 arg5) {
+void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5) {
     /*0x2C*/ static f32 bss_2C;
     f32 sp54 = 1.0f;
     SRT sp3C;
