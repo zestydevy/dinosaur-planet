@@ -1,7 +1,9 @@
 #include "common.h"
+#include "dlls/engine/6_amsfx.h"
 #include "game/gamebits.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/objtype.h"
 #include "dlls/objects/267_checkpoint4.h"
 
@@ -48,15 +50,17 @@ typedef struct {
     DLL27_Data unk4C;
     DLL732_Data2AC unk2AC;
     DLL732_Unk_2E0 unk2E0;
-    void* unk2F4; //DLL
-    void* unk2F8; //DLL
+    DLL_IModgfx* unk2F4; //DLL
+    DLL_IModgfx* unk2F8; //DLL
     s16* unk2FC; //soundIDs?
     s8 _unk300[0x330 - 0x300];
     Vec3f unk330[6];
     s8 _unk378[0x384 - 0x378];
     f32 unk384;
     Vec3f unk388;
-    s8 _unk394[0x3A0 - 0x394];
+    f32 unk394;
+    f32 unk398;
+    f32 unk39C;
     Vec3f unk3A0; //previous position?
     Vec3f unk3AC;
     u32 unk3B8; //soundHandle
@@ -71,14 +75,15 @@ typedef struct {
     s16 unk3DC;
     s16 unk3DE;
     s16 unk3E0;
-    s8 _unk3E2[0x3EC - 0x3E2];
+    s8 _unk3E2[0x3EA - 0x3E2];
+    s16 unk3EA;
     u8 unk3EC;
     u8 unk3ED;
     u8 unk3EE;
     u8 unk3EF; //flags
     s8 unk3F0;
     u8 unk3F1;
-    u8 _unk3F2;
+    s8 unk3F2;
     u8 _unk3F3;
     u8 unk3F4_0 : 1; //flags
 } DLL732_Data; //0x3F8
@@ -125,7 +130,7 @@ typedef struct {
 /*0x8*/ static Texture* bss_8;
 /*0x10*/ static f32 bss_10[6];
 /*0x28*/ static u8 bss_28[0x4];
-/*0x2C*/ static u8 bss_2C[0x4];
+// /*0x2C*/ static u8 bss_2C[0x4];
 
 static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
 
@@ -551,7 +556,150 @@ void dll_732_func_3FE0(Object* self, DLL732_Data* objData) {
 }
 
 // offset: 0x40FC | func: 32
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_40FC.s")
+void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, u8 arg6, u8 arg5) {
+    /*0x2C*/ static f32 bss_2C;
+    f32 sp54 = 1.0f;
+    SRT sp3C;
+    s32 var_v0;
+    
+    if (arg5 & 1) {
+        if (objData->unk3B8 == 0) {
+            gDLL_6_AMSFX->vtbl->play(self, 0x289, MAX_VOLUME, &objData->unk3B8, NULL, 0, NULL);
+        }
+        if (objData->unk3B8 != 0) {
+            bss_2C = arg2 * 11.6f;
+            if (bss_2C < 0.0f) {
+                bss_2C = -bss_2C;
+            }
+            
+            if (bss_2C < 40.0f) {
+                bss_2C = 40.0f;
+            }
+            if (bss_2C > 200.0f) {
+                bss_2C = 200.0f;
+            }
+            
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3B8, (bss_2C / 70.0f) + 0.1f);
+            if (objData->unk3F2 < 0x12) {
+                var_v0 = arg2 * 30.0f;
+                if (var_v0 < 0) {
+                    var_v0 = -var_v0;
+                }
+                if (var_v0 > MAX_VOLUME) {
+                    var_v0 = MAX_VOLUME;
+                }
+                gDLL_6_AMSFX->vtbl->set_vol(objData->unk3B8, var_v0);
+            } else {
+                gDLL_6_AMSFX->vtbl->set_vol(objData->unk3B8, 0);
+            }
+        }
+    }
+    
+    if (arg5 & 2) {
+        if (objData->unk3C0 == 0) {
+            gDLL_6_AMSFX->vtbl->play(self, 0x28F, MAX_VOLUME, &objData->unk3C0, NULL, 0, NULL);
+        }
+        if (objData->unk3C0 != 0) {
+            bss_2C = arg2 ? ((self->srt.roll * arg2) / 30000.0f) : 0;
+            if (bss_2C < 0) {
+                bss_2C = -bss_2C;
+            } else if (bss_2C > 1.0f) {
+                bss_2C = 1.0f;
+            }
+            
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3C0, 0.1f + bss_2C);
+            if (objData->unk3F2 < 0x12) {
+                bss_2C *= MAX_VOLUME_F;
+                if (bss_2C > MAX_VOLUME_F) {
+                    bss_2C = MAX_VOLUME_F;
+                } else if (bss_2C < 0.0f) {
+                    bss_2C = 0.0f;
+                }
+
+                gDLL_6_AMSFX->vtbl->set_vol(objData->unk3C0, bss_2C);
+            } else {
+                gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
+                objData->unk3C0 = 0;
+            }
+        }
+    }
+    
+    if (arg5 & 4) {
+        if (objData->unk3EA <= 0) {
+            if (objData->unk3BC == 0) {
+                gDLL_6_AMSFX->vtbl->play(self, 0x50D, MAX_VOLUME, &objData->unk3BC, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, 0x28E, MAX_VOLUME, NULL, NULL, 0, NULL);
+            }
+            if (objData->unk3C4 == 0) {
+                gDLL_6_AMSFX->vtbl->play(self, 0x50C, MAX_VOLUME, &objData->unk3C4, NULL, 0, NULL);
+            }
+        }
+        
+        if (objData->unk3BC != 0) {
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3BC, (objData->unk398 * 0.00048828125f) + 0.5f);
+            if (arg3 >= 6) {
+                objData->unk398 += gUpdateRateF;
+            } else {
+                if (objData->unk398 > 55.0f) {
+                    objData->unk398 -= (0.5f * gUpdateRateF);
+                } else {
+                    objData->unk398 += (0.2f * gUpdateRateF);
+                }
+            }
+            if (objData->unk398 > 90.0f) {
+                objData->unk398 = 90.0f;
+            }
+            gDLL_6_AMSFX->vtbl->set_vol(objData->unk3BC, objData->unk398);
+        }
+
+        if (objData->unk3C4 != 0) {
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3C4, (objData->unk394 / 75.0f) + 0.2f);
+            if (arg3 >= 6) {
+                objData->unk394 = (arg3 * 0.6f) + 15.0f;
+            } else {
+                if (0.5f * gUpdateRateF < objData->unk394) {
+                    objData->unk394 -= 0.5f * gUpdateRateF;
+                } else {
+                    objData->unk394 = 0.0f;
+                }
+            }
+            if (objData->unk394 > MAX_VOLUME_F) {
+                objData->unk394 = MAX_VOLUME_F;
+            }
+            gDLL_6_AMSFX->vtbl->set_vol(objData->unk3C4, objData->unk394);
+        }
+    }
+    
+    if (objData->unk2F4 == NULL) {
+        objData->unk2F4 = dll_load_deferred(0x1025, 1);
+    }
+    
+    if (objData->unk2F8 == NULL) {
+        objData->unk2F8 = dll_load_deferred(0x1026, 1);
+    }
+    
+    if (objData->unk3EA <= 0) {
+        sp54 = 0.7f;
+        if (arg3 > 10) {
+            sp54 = arg3;
+            sp54 = (0.01f * sp54) + 0.1f;
+            objData->unk2F4->vtbl->func0(self, 0, 0, 0x404, -1, &sp54);
+        }
+
+        objData->unk3EA = 30;
+
+        if ((self->srt.roll > 1000) && (arg2 < -1.0f)) {
+            sp3C.scale = self->srt.roll / 8000.0f;
+            sp3C.scale *= (-arg2 / 3.8f);
+            objData->unk2F8->vtbl->func0(self, 0, &sp3C, 0x404, -1, 0);
+        } else if ((self->srt.roll < -0x3E8) && (arg2 < -1.0f)) {
+            sp3C.scale = self->srt.roll / -8000.0f;
+            sp3C.scale *= (-arg2 / 3.8f);
+            objData->unk2F8->vtbl->func0(self, 1, &sp3C, 0x404, -1, 0);
+        }
+    }
+    objData->unk3EA -= gUpdateRate;
+}
 
 // offset: 0x4B30 | func: 33 | export: 20
 void dll_732_func_4B30(s32 arg0, s32 arg1, s32 arg2) {
