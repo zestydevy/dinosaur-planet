@@ -25,6 +25,7 @@ typedef struct {
     u8 unk1C;
     u8 unk1D;
     s16 unk1E;
+    u8 unk20;
 } DLL732_Setup;
 
 typedef struct {
@@ -71,11 +72,6 @@ typedef struct {
     u8 _unk3F3;
     u8 unk3F4_0 : 1; //flags
 } DLL732_Data; //0x3F8
-
-typedef struct {
-    SRT unk0;
-    RaceStruct unk18;
-} DLL732_Func0_Unk;
 
 /*0x0*/ static s16 data_0[][3] = {
     { 0x0497, 0x0498, 0x049c },
@@ -124,16 +120,16 @@ typedef struct {
 static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
 
 // offset: 0x0 | func: 0
-void dll_732_func_0(Object* self, DLL732_Func0_Unk* arg1, f32 arg2) {
+static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2) {
     s32 pad;
     s32 sp30;
-    DLL732_Data* objData;
+    DLL732_Data* objData2;
 
-    objData = self->data;
-    if (gDLL_4_Race->vtbl->func8(arg1->unk18.unk10, &sp30)->unk20[1] == -1) {
-        objData->unk3F4_0 = rand_next(0, 1);
+    objData2 = self->data;
+    if (gDLL_4_Race->vtbl->func8(objData->unk18.unk10, &sp30)->unk20[1] == -1) {
+        objData2->unk3F4_0 = rand_next(0, 1);
     }
-    gDLL_4_Race->vtbl->func5(&arg1->unk0, &arg1->unk18, arg2, 1, 0, objData->unk3F4_0);
+    return gDLL_4_Race->vtbl->func5(&objData->unk0, &objData->unk18, arg2, 1, 0, objData2->unk3F4_0);
 }
 
 // offset: 0xE4 | ctor
@@ -464,7 +460,57 @@ void dll_732_func_3748(Object* self, DLL732_Data* objData) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3AF8.s")
 
 // offset: 0x3DAC | func: 30
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3DAC.s")
+s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_3618* arg3) {
+    f32 dx;
+    f32 dz;
+    s32 sp3C;
+    f32 var_fv1;
+    s32 dYaw;
+    s32 angle;
+    DLL732_Setup* objSetup;
+
+    objSetup = (DLL732_Setup*)self->setup;
+    
+    dx = self->srt.transl.x - objData->unk0.transl.x;
+    dz = self->srt.transl.z - objData->unk0.transl.z;
+    dx = sqrtf(SQ(dx) + SQ(dz));
+    
+    var_fv1 = 100.0f - dx;
+    if (dx > 100.0f) {
+        var_fv1 = 0.0f;
+    }
+    
+    sp3C = dll_732_func_0(self, objData, var_fv1);
+    
+    gDLL_4_Race->vtbl->func4(self, &objData->unk18);
+    gDLL_4_Race->vtbl->func10(&objData->unk18);
+    if (sp3C != 0) {
+        arg3->unkE = 0;
+        arg3->unkF = 0;
+        return 1;
+    }
+
+    dx = self->srt.transl.x - objData->unk0.transl.x;
+    dz = self->srt.transl.z - objData->unk0.transl.z;
+    dYaw = arctan2_f(dx, dz) - (self->srt.yaw & 0xFFFF);
+    CIRCLE_WRAP(dYaw);
+    
+    angle = dYaw >> 5;
+    if (angle > 65) {
+        angle = 65;
+    } else if (angle < -65) {
+        angle = -65;
+    }
+    
+    arg3->unkE = -angle;
+    if (angle < 0) {
+        angle = -angle;
+    }
+
+    arg3->unkF = (objSetup->unk20 - 8.0f) - (angle * (objSetup->unk20 * 0.02f));
+    diPrintf(" YJOY %i ", arg3->unkF);
+    return 0;
+}
 
 // offset: 0x3FE0 | func: 31
 void dll_732_func_3FE0(Object* self, DLL732_Data* objData) {
