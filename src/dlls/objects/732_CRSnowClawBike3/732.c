@@ -15,7 +15,18 @@ typedef struct {
     s8 unk0[0xE];
     s8 unkE;
     s8 unkF;
-} DLL732_Unk_3618; //Maybe the same as Unk_2E0?
+} DLL732_Unk_3618; //Maybe the same as Unk_2E0? Controller/joystick-related
+
+typedef struct {
+    SRT unk0;
+    f32 unk18;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    f32 unk28;
+    f32 unk2C;
+    f32 unk30;
+} DLL732_Data2AC;
 
 typedef struct {
     ObjSetup base;
@@ -35,8 +46,7 @@ typedef struct {
     u8 unk48;
     u8 unk49;
     DLL27_Data unk4C;
-    SRT unk2AC;
-    s8 _unk2C4[0x2E0 - 0x2C4];
+    DLL732_Data2AC unk2AC;
     DLL732_Unk_2E0 unk2E0;
     void* unk2F4; //DLL
     void* unk2F8; //DLL
@@ -113,7 +123,7 @@ typedef struct {
 /*0x0*/ static Texture* bss_0;
 /*0x4*/ static Texture* bss_4;
 /*0x8*/ static Texture* bss_8;
-/*0x10*/ static u8 bss_10[0x18];
+/*0x10*/ static f32 bss_10[6];
 /*0x28*/ static u8 bss_28[0x4];
 /*0x2C*/ static u8 bss_2C[0x4];
 
@@ -323,7 +333,7 @@ f32 dll_732_func_1B9C(Object* self, f32* arg1) {
     
     *arg1 = 5.0f;
 
-    distance = sqrtf(SQ(objData->unk2AC.transl.f[0]) + SQ(objData->unk2AC.transl.f[1]) + SQ(objData->unk2AC.transl.f[2])) * 0.2f;
+    distance = sqrtf(SQ(objData->unk2AC.unk0.transl.f[0]) + SQ(objData->unk2AC.unk0.transl.f[1]) + SQ(objData->unk2AC.unk0.transl.f[2])) * 0.2f;
     if (distance > 1.0f) {
         distance = 1.0f;
     }
@@ -387,7 +397,19 @@ void dll_732_func_1DB8(s32 arg0, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_1DC8.s")
 
 // offset: 0x22BC | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_22BC.s")
+void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
+    arg1->unk1C = 90;
+    arg1->unk20 = 1/arg1->unk1C;
+    arg1->unk28 = -11.0f;
+    arg1->unk2C = 0.1f;
+    arg1->unk30 = 13.0f;
+    arg1->unk18 = (1/arg1->unk1C) * 0.01666666f;
+    
+    bss_10[3] = 0;
+    bss_10[4] = 0;
+    bss_10[5] = 0;
+    bss_10[2] = 1;
+}
 
 // offset: 0x2340 | func: 23
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_2340.s")
