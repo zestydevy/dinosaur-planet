@@ -75,8 +75,10 @@ typedef struct {
     s8 _unk3D8[0x3DC - 0x3D8];
     s16 unk3DC;
     s16 unk3DE;
-    s16 unk3E0;
-    s8 _unk3E2[0x3EA - 0x3E2];
+    s16 unk3E0; //yaw
+    s16 unk3E2; //pitch
+    s16 unk3E4; //roll
+    s8 _unk3E6[0x3EA - 0x3E6];
     s16 unk3EA;
     u8 unk3EC;
     u8 unk3ED;
@@ -85,7 +87,7 @@ typedef struct {
     s8 unk3F0;
     u8 unk3F1;
     s8 unk3F2;
-    u8 _unk3F3;
+    s8 unk3F3;
     u8 unk3F4_0 : 1; //flags
 } DLL732_Data; //0x3F8
 
@@ -121,18 +123,18 @@ typedef struct {
 /*0xF0*/ static f32 data_F0[] = {
     14.5, 0, 9, -14.5, 0, 9
 };
-// /*0x108*/ static u8 data_108[] = {0x05, 0x05, 0x05, 0x05};
 
 /*0x0*/ static Texture* bss_0;
 /*0x4*/ static Texture* bss_4;
 /*0x8*/ static Texture* bss_8;
-/*0x10*/ static f32 bss_10[6];
-/*0x28*/ static u8 bss_28[0x4];
+/*0x10*/ static SRT bss_10;
+/*0x28*/ static u32 bss_28;
 
 static void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1);
+static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch);
+static int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
 static void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
-static int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | func: 0
 static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2) {
@@ -220,20 +222,69 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
     objData->unk2FC = &data_0[setup->unk1C][0];
 }
 
-/*0x10C*/ static u32 data_10C[] = {
-    0x00000006, 0x00000069, 0x00000069, 0x000000ff, 0x00000000
-};
-
 /*0x0*/ static const char str_0[] = " FInished Is SEt for Some Reason \n";
 /*0x24*/ static const char str_24[] = " FInished Is SEt for Some Reason \n";
+
 
 // offset: 0x398 | func: 2 | export: 1
 void dll_732_control(Object* self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_control.s")
 
 // offset: 0x123C | func: 3 | export: 2
-void dll_732_update(Object* self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_update.s")
+void dll_732_update(Object* self) {
+    DLL732_Data* objData;
+    ObjectHitInfo* objHitInfo;
+    Vec3f spDC;
+    MtxF sp9C;
+    MtxF sp5C;
+    DLL732_Data2AC* temp_v0;
+    Object* obj;
+    s32 objID;
+    s32 i;
+
+    objHitInfo = self->objhitInfo;
+    objData = self->data;
+
+    if (objHitInfo->unk48) {
+        obj = objHitInfo->unk48;
+        objID = obj->id;
+        
+        switch (objID){
+        case 0x389:
+        case 0x38A:
+            camera_enable_y_offset();
+            camera_set_shake_offset(1.0f);
+            gDLL_17_partfx->vtbl->spawn(self, 0x551, NULL, 4, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, 0x552, NULL, 4, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, 0x554, NULL, 4, -1, NULL);
+            i = 10;
+            while (i--) {
+                gDLL_17_partfx->vtbl->spawn(self, 0x553, NULL, 2, -1, NULL);
+            }
+            objData->unk3EC = 5;
+            objData->unk384 = 0.2f;
+            break;
+        }
+    }
+    
+    if (!(objData->unk3EF & 0x20)) {
+        bss_10.yaw = -objData->unk3E0;
+        bss_10.pitch = -objData->unk3E2;
+        bss_10.roll = -objData->unk3E4;
+        matrix_from_srt_reversed(&sp9C, (SRT* ) &bss_10);
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
+        self->velocity.f[1] = (self->srt.transl.f[1] - self->prevLocalPosition.f[1]) * gUpdateRateInverseF;
+        self->velocity.f[2] = (self->srt.transl.f[2] - self->prevLocalPosition.f[2]) * gUpdateRateInverseF;
+        spDC.f[0] = self->velocity.f[0] * 0.93749994f;
+        spDC.f[1] = self->velocity.f[1] * 0.93749994f;
+        spDC.f[2] = self->velocity.f[2] * 0.93749994f;
+        temp_v0 = &objData->unk2AC;
+        if (!temp_v0){ } //fake?
+        vec3_transform(&sp9C, spDC.f[0], spDC.f[1], spDC.f[2], &temp_v0->unk0.transl.f[0], &temp_v0->unk0.transl.f[1], &temp_v0->unk0.transl.f[2]);
+        dll_732_func_3694(self, objData, &sp5C, 0, 0, 0);
+        vec3_transform(&sp5C, 0.0f, 0.0f, -10.0f, &objData->unk3AC.f[0], &objData->unk3AC.f[1], &objData->unk3AC.f[2]);
+    }
+}
 
 // offset: 0x1534 | func: 4 | export: 3
 void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
@@ -465,8 +516,93 @@ void dll_732_func_1DB8(s32 arg0, s32 arg1) {
 
 }
 
+/*0x10C*/ static u32 data_10C[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff };
+
 // offset: 0x1DC8 | func: 21
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_1DC8.s")
+#else
+void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
+/*0x28*/ static u32 bss_28;
+    Vertex* spA4; //A4
+    Gfx* spA0; //A0
+    Triangle* sp9C; //9C
+    s32 pad1[6];
+    SRT sp6C; //6C
+    s32 i;
+    f32 var_fv0;
+    s32 pad2;
+    DLL732_Data2AC* temp_v1; //3C
+    u32 data_10C[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff};
+    s32 volume; //48
+    s32 pad3;
+
+    temp_v1 = &objData->unk2AC;
+    spA0 = *gdl;
+    spA4 = *vtxs;
+    sp9C = *pols;
+    
+    var_fv0 = 0.0f;
+    if (temp_v1->unk0.transl.z < 0.0f) {
+        var_fv0 = temp_v1->unk0.transl.z;
+    }
+    sp6C.transl.z = var_fv0;
+
+    if (temp_v1->unk0.transl.z < 0.0f) {
+        var_fv0 = temp_v1->unk0.transl.x;
+    }
+    sp6C.transl.x = var_fv0;
+    
+    dl_set_prim_color(&spA0, 0xFF, 0xFF, 0xFF, 0xFF);
+    
+    if (temp_v1->unk0.transl.z < -0.5f) {
+        if (1) { }
+        gDLL_17_partfx->vtbl->spawn(self, 0x12E, &sp6C, 4, -1, NULL);
+    }
+    if (temp_v1->unk0.transl.z < -1.5f) {
+        if (1) { }
+        gDLL_17_partfx->vtbl->spawn(self, 0x12F, &sp6C, 4, -1, NULL);
+    }
+    if (temp_v1->unk0.transl.z < -2.1f) {
+        if (1) { }
+        gDLL_17_partfx->vtbl->spawn(self, 0x130, &sp6C, 4, -1, NULL);
+    }
+    
+    i = 0;
+    if (objData->unk2E0.unkF > 0) {
+        i = 2;
+    }
+
+    while (i) {
+        gDLL_17_partfx->vtbl->spawn(self, 0x131, NULL, 4, -1, NULL);
+        i--;
+    }
+    
+    sp6C.yaw = 0;
+    sp6C.pitch = 0;
+    sp6C.roll = 0;
+    sp6C.scale = 1.0f;
+    if (objData->unk39C < -1.2f) {
+        data_10C[1] += rand_next(0, 0x9B);
+        data_10C[2] += rand_next(0, 0x9B);
+        volume = ((0.0f - objData->unk39C) * 21.0f);
+        if (objData->unk3F3 & 1) {
+            gDLL_6_AMSFX->vtbl->play(self, 0x292, volume, &bss_28, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(bss_28, (volume / 127.0f) + 0.5f);
+        } else if (objData->unk3F3 & 2) {
+            gDLL_6_AMSFX->vtbl->play(self, 0x292, volume, &bss_28, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(bss_28, (volume / 127.0f) + 0.5f);
+        } else if (objData->unk3F3 & 4) {
+            gDLL_6_AMSFX->vtbl->play(self, 0x292, volume, &bss_28, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(bss_28, (volume / 127.0f) + 0.5f);
+        }
+    }
+    
+    *gdl = spA0;
+    *vtxs = spA4;
+    *pols = sp9C;
+}
+#endif
 
 // offset: 0x22BC | func: 22
 void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
@@ -477,10 +613,10 @@ void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
     arg1->unk30 = 13.0f;
     arg1->unk18 = (1/arg1->unk1C) * 0.01666666f;
     
-    bss_10[3] = 0;
-    bss_10[4] = 0;
-    bss_10[5] = 0;
-    bss_10[2] = 1;
+    bss_10.transl.x = 0;
+    bss_10.transl.y = 0;
+    bss_10.transl.z = 0;
+    bss_10.scale = 1;
 }
 
 // offset: 0x2340 | func: 23
@@ -496,7 +632,7 @@ void dll_732_func_3618(Object* self, DLL732_Unk_3618* arg1, u8 controllerPort, s
 }
 
 // offset: 0x3694 | func: 26
-static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch) {
+void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch) {
     SRT sp20;
 
     sp20.yaw = objData->unk3E0;
