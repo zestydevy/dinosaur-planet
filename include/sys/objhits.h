@@ -123,6 +123,7 @@ typedef enum {
     Damage_Type_Flame_Command = 0x1A,
     Damage_Type_1B = 0x1B, //player-related, causes falling?
     Damage_Type_Icy_Water = 0x1C,
+    Damage_Type_1D = 0x1D,
     Damage_Type_None = 0x7F
 } DamageTypes;
 

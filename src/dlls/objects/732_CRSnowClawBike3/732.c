@@ -3,6 +3,7 @@
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/objtype.h"
+#include "dlls/objects/267_checkpoint4.h"
 
 typedef struct {
     s8 unk0[0xF];
@@ -27,13 +28,9 @@ typedef struct {
 } DLL732_Setup;
 
 typedef struct {
-    s8 _unk0[0xC - 0];
-    Vec3f unkC;
-    s8 _unk18[0x28 - 0x18];
-    s32 unk28;
-    s32 unk2C;
-    s32 unk30;
-    s8 _unk34[0x48 - 0x34];
+    SRT unk0;
+    RaceStruct unk18;
+    s8 _unk3A[0x48 - 0x3A];
     u8 unk48;
     u8 unk49;
     DLL27_Data unk4C;
@@ -45,7 +42,8 @@ typedef struct {
     s16* unk2FC; //soundIDs?
     s8 _unk300[0x330 - 0x300];
     Vec3f unk330[6];
-    s8 _unk378[0x388 - 0x378];
+    s8 _unk378[0x384 - 0x378];
+    f32 unk384;
     Vec3f unk388;
     s8 _unk394[0x3A0 - 0x394];
     Vec3f unk3A0; //previous position?
@@ -54,7 +52,7 @@ typedef struct {
     u32 unk3BC; //soundHandle
     u32 unk3C0; //soundHandle
     u32 unk3C4; //soundHandle
-    s32 unk3C8;
+    s32 unk3C8; //total damage taken?
     f32 unk3CC;
     f32 unk3D0;
     f32 unk3D4;
@@ -62,7 +60,8 @@ typedef struct {
     s16 unk3DC;
     s16 unk3DE;
     s16 unk3E0;
-    s8 _unk3E2[0x3ED - 0x3E2];
+    s8 _unk3E2[0x3EC - 0x3E2];
+    u8 unk3EC;
     u8 unk3ED;
     u8 unk3EE;
     u8 unk3EF; //flags
@@ -82,8 +81,9 @@ typedef struct {
     { 0x0497, 0x0498, 0x049c },
     { 0x0479, 0x077e, 0x077f }
 };
-/*0xC*/ static u32 data_C[] = {
-    0x00030c60, 0x00030c60, 0x00030c60, 0x00034dd3, 0x00034dc7, 0x00034dc9
+/*0xC*/ static u32 data_C[][3] = {
+    {0x00030c60, 0x00030c60, 0x00030c60}, 
+    {0x00034dd3, 0x00034dc7, 0x00034dc9}
 };
 /*0x24*/ static Vec3f data_24[] = {
     VEC3F(-6.5, 0, -7),
@@ -120,6 +120,8 @@ typedef struct {
 /*0x10*/ static u8 bss_10[0x18];
 /*0x28*/ static u8 bss_28[0x4];
 /*0x2C*/ static u8 bss_2C[0x4];
+
+static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
 
 // offset: 0x0 | func: 0
 void dll_732_func_0(Object* self, DLL732_Func0_Unk* arg1, f32 arg2) {
@@ -339,7 +341,46 @@ s8 dll_732_func_1C28(Object* self) {
 }
 
 // offset: 0x1C38 | func: 19 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_1C38.s")
+void dll_732_func_1C38(Object* self) {
+    s32 checkpointUID;
+    checkpoint4_Setup* checkpointSetup;
+    DLL732_Data* objData;
+    DLL732_Setup* objSetup;
+
+    objSetup = (DLL732_Setup*)self->setup;
+    objData = self->data;
+    
+    switch (self->id) {
+    default:
+    case 0x38D:
+        checkpointUID = data_C[objSetup->unk1C][0];
+        break;
+    case 0x38E:
+        checkpointUID = data_C[objSetup->unk1C][1];
+        break;
+    case 0x4D4:
+        checkpointUID = data_C[objSetup->unk1C][2];
+        break;
+    }
+    
+    checkpointSetup = (checkpoint4_Setup*)map_find_obj_setup(checkpointUID, NULL, NULL, NULL, NULL);
+    if (checkpointSetup == NULL) {
+        return;
+    }
+    
+    self->srt.transl.x = checkpointSetup->base.x;
+    self->srt.transl.y = checkpointSetup->base.y;
+    self->srt.transl.z = checkpointSetup->base.z;
+    self->srt.yaw = checkpointSetup->yaw << 8;
+
+    dll_732_func_3FE0(self, objData);
+    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->unk1C);
+    
+    objData->unk0.transl.x = self->srt.transl.x;
+    objData->unk0.transl.y = self->srt.transl.y;
+    objData->unk0.transl.z = self->srt.transl.z;
+    objData->unk0.yaw = self->srt.yaw;
+}
 
 // offset: 0x1DB8 | func: 20 | export: 19
 void dll_732_func_1DB8(s32 arg0, s32 arg1) {
@@ -384,7 +425,37 @@ static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s3
 }
 
 // offset: 0x3748 | func: 27
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3748.s")
+void dll_732_func_3748(Object* self, DLL732_Data* objData) {
+    s32 damageType;
+    s32 hitSphereID;
+    s32 hitDamage;
+    Object* hitBy;
+
+    damageType = func_80025F40(self, &hitBy, &hitSphereID, &hitDamage);
+    if (!(self->objhitInfo->unk58 & 1) || (damageType == 0)) {
+        return;
+    }
+    
+    switch (damageType) {
+    case Damage_Type_D:
+        objData->unk3EC = 20;
+        objData->unk384 = 0.8f;
+        return;
+    case Damage_Type_14:
+        objData->unk3EC = 5;
+        objData->unk384 = 0.75f;
+        return;
+    case Damage_Type_1D:
+        objData->unk3C8 += (hitDamage * 100);
+        objData->unk3CC = 2.0f;
+        objData->unk3D0 = 4.0f;
+        objData->unk3D4 = 4.6f;
+        if (objData->unk3C8 > 13000) {
+            objData->unk3C8 = 13000;
+        }
+        break;
+    }
+}
 
 // offset: 0x3860 | func: 28
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3860.s")
