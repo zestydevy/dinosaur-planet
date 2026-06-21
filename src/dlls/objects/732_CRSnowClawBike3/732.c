@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/gamebits.h"
+#include "game/objects/object.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -44,7 +45,7 @@ typedef struct {
 typedef struct {
     SRT unk0;
     RaceStruct unk18;
-    s8 _unk3A[0x48 - 0x3A];
+    s8 _unk3C[0x48 - 0x3C];
     u8 unk48;
     u8 unk49;
     DLL27_Data unk4C;
@@ -120,10 +121,7 @@ typedef struct {
 /*0xF0*/ static f32 data_F0[] = {
     14.5, 0, 9, -14.5, 0, 9
 };
-/*0x108*/ static u8 data_108[] = {0x05, 0x05, 0x05, 0x05};
-/*0x10C*/ static u32 data_10C[] = {
-    0x00000006, 0x00000069, 0x00000069, 0x000000ff, 0x00000000
-};
+// /*0x108*/ static u8 data_108[] = {0x05, 0x05, 0x05, 0x05};
 
 /*0x0*/ static Texture* bss_0;
 /*0x4*/ static Texture* bss_4;
@@ -131,8 +129,10 @@ typedef struct {
 /*0x10*/ static f32 bss_10[6];
 /*0x28*/ static u8 bss_28[0x4];
 
+static void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1);
 static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
 static void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
+static int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | func: 0
 static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2) {
@@ -154,8 +154,75 @@ void dll_732_ctor(void* dll) { }
 void dll_732_dtor(void* dll) { }
 
 // offset: 0xFC | func: 1 | export: 0
-void dll_732_setup(Object* self, ObjSetup* setup, s32 reset);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_setup.s")
+void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
+    s32 pad;
+    s32 pad2;
+    s32 var_v0;
+    DLL732_Setup* objSetup; //40
+    u8 data_108[] = {5, 5, 5, 5};
+    DLL732_Data* objData;
+
+    objSetup = (DLL732_Setup*)self->setup;
+    objData = self->data;
+    bzero(objData, sizeof(DLL732_Data));
+    
+    objData->unk3E0 = (setup->unk18 & 0xFF) << 8;
+    objData->unk2F4 = 0;
+    objData->unk2F8 = 0;
+    self->srt.yaw = objData->unk3E0;
+
+    self->animCallback = dll_732_func_3860;
+    
+    gDLL_27->vtbl->init(&objData->unk4C, 0, 0x01040007, 1);
+    gDLL_27->vtbl->setup_terrain_collider(&objData->unk4C, 4, data_24, data_54, data_108);
+    
+    if (setup->unk19 != 0) {
+        objData->unk3EE = 3;
+    } else {
+        objData->unk3EE = 5;
+    }
+
+    dll_732_func_3FE0(self, objData);
+    dll_732_func_22BC(self, &objData->unk2AC);
+
+    func_80023D30(self, 0, 0.0f, 0);
+
+    if (self->shadow != NULL) {
+        self->shadow->flags |= OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR;
+    }
+
+    if (setup->unk19 != 0) {
+        objData->unk3EF |= 0x20;
+    }
+
+    objData->unk18.unk10 = -1;
+    objData->unk18.unk14 = -1;
+    objData->unk18.unk18 = -1;
+    objData->unk48 = setup->unk1C;
+    objData->unk49 = setup->unk1D;
+    
+    objData->unk0.transl.x = self->srt.transl.x;
+    objData->unk0.transl.y = self->srt.transl.y;
+    objData->unk0.transl.z = self->srt.transl.z;
+    
+    obj_add_object_type(self, OBJTYPE_Vehicle);
+    bss_0 = tex_load_deferred(TEXTABLE_186);
+    bss_4 = tex_load_deferred(TEXTABLE_89);
+    bss_8 = tex_load_deferred(TEXTABLE_3C);
+    
+    if (main_get_bits(objSetup->unk1E) != 0) {
+        var_v0 = 1;
+    } else {
+        var_v0 = 0;
+    }
+    objData->unk3EF |= var_v0;
+    
+    objData->unk2FC = &data_0[setup->unk1C][0];
+}
+
+/*0x10C*/ static u32 data_10C[] = {
+    0x00000006, 0x00000069, 0x00000069, 0x000000ff, 0x00000000
+};
 
 /*0x0*/ static const char str_0[] = " FInished Is SEt for Some Reason \n";
 /*0x24*/ static const char str_24[] = " FInished Is SEt for Some Reason \n";
@@ -481,14 +548,14 @@ void dll_732_func_3748(Object* self, DLL732_Data* objData) {
 }
 
 // offset: 0x3860 | func: 28
-s32 dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     DLL732_Data* objData;
     DLL732_Unk_2E0* unkSubstruct;
     SRT* srt;
-    Vec3f spB8; //B8
-    SRT spA0; //A0
+    Vec3f spB8;
+    SRT spA0;
     s32 i;
-    MtxF sp5C; //5C
+    MtxF sp5C;
 
     objData = self->data;
 
