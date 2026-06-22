@@ -1456,13 +1456,14 @@ void dll_732_func_3748(Object* self, DLL732_Data* objData) {
 int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     DLL732_Data* objData;
     DLL732_Unk_2E0* unkSubstruct;
-    SRT* srt;
+    DLL732_Data2AC* v;
     Vec3f spB8;
     SRT spA0;
     s32 i;
     MtxF sp5C;
 
     objData = self->data;
+    unkSubstruct = &objData->unk2E0;
 
     for (i = 0; i < animData->messageCount; i++) {
         switch (animData->messages[i]) {
@@ -1491,18 +1492,16 @@ int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData,
         spA0.yaw = -self->srt.yaw;
         spA0.pitch = -self->srt.pitch;
         spA0.roll = -self->srt.roll;
-        srt = &objData->unk2AC.unk0;
+        v = &objData->unk2AC;
         matrix_from_srt_reversed(&sp5C, &spA0);
         
-        vec3_transform(&sp5C, spB8.f[0], spB8.f[1], spB8.f[2], &srt->transl.f[0], &srt->transl.f[1], &srt->transl.f[2]);
-        unkSubstruct = &objData->unk2E0;
-        // FAKE?
-        if (unkSubstruct->unkF);
+        vec3_transform(&sp5C, spB8.f[0], spB8.f[1], spB8.f[2], &v->unkC.f[0], &v->unkC.f[1], &v->unkC.f[2]);
+
         unkSubstruct->unkF += gUpdateRate * 8;
-        if (unkSubstruct->unkF > 0x46) {
-            unkSubstruct->unkF = 0x46;
+        if (unkSubstruct->unkF > 70) {
+            unkSubstruct->unkF = 70;
         }
-        dll_732_func_40FC(self, objData, srt->transl.f[2], unkSubstruct->unkF, &unkSubstruct->unk10, 4);
+        dll_732_func_40FC(self, objData, v->unkC.f[2], unkSubstruct->unkF, &unkSubstruct->unk10, 4);
     }
     
     objData->unk3A0.x = self->srt.transl.x;
