@@ -907,7 +907,48 @@ int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData,
 }
 
 // offset: 0x3AF8 | func: 29
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_3AF8.s")
+void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* arg2) {
+    s32 pad;
+    MtxF spDC;
+    Vec3f sp88[7];
+    s8 sp87;
+    s8 sp86;
+    s32 i;
+
+    sp86 = -0x80 >> (7 - objData->unk3EE);
+    sp86 = ~sp86;
+    objData->unk3F3 = -1;
+    objData->unk39C = objData->unk2AC.unkC.f[2];
+    
+    if (sp86) {
+        do {
+            sp87 = sp86;
+            for (i = 0; i < objData->unk3EE; i++){
+                dll_732_func_3694(self, objData, &spDC, 1, 1, 1);
+                vec3_transform(&spDC, data_64[i].x, data_64[i].y, data_64[i].z, 
+                               &sp88[i].x, &sp88[i].y, &sp88[i].z);
+                if (func_80059C40(&objData->unk330[i], 
+                        &sp88[i], data_A0[i], 0, NULL, self, 8, 1, 0xFF, 0) == 0) {
+                    sp87 &= ~(1 << i);
+                } else {
+                    bcopy(&sp88[i], &objData->unk330[i], sizeof(Vec3f));
+                    spDC.m[3][0] = sp88[i].x;
+                    spDC.m[3][1] = sp88[i].y;
+                    spDC.m[3][2] = sp88[i].z;
+                    vec3_transform(&spDC, -data_64[i].x, -data_64[i].y, -data_64[i].z, 
+                        &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z
+                    );
+                }
+            }
+            
+            if (objData->unk3F3 == -1) {
+                objData->unk3F3 = sp87;
+            }
+        } while (sp87);
+    }
+    
+    bcopy(&sp88, objData->unk330, objData->unk3EE * sizeof(Vec3f));
+}
 
 // offset: 0x3DAC | func: 30
 s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_3618* arg3) {
