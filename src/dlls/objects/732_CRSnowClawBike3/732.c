@@ -226,7 +226,6 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
 
 
 // offset: 0x398 | func: 2 | export: 1
-// void dll_732_control(Object* self);
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_control.s")
 #else
@@ -241,22 +240,21 @@ static s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL73
 
 void dll_732_control(Object* self) {
     DLL732_Setup* objSetup;
-    Object* player; //C8
+    Object* player;
     s32 pad;
-    f32 spC0; //C0
-    MtxF sp80; //80
-    Vec3f sp74; //74
+    f32 spC0;
+    MtxF sp80;
+    Vec3f sp74;
     DLL732_Data2AC* innerData;
     DLL732_Data* objData;
     DLL732_Unk_2E0* new_var;
     f32 dx;
     f32 dz;
-    s32 sp5C; //5C
+    s32 sp5C;
     f32 var_fv1;
-    // s32 temp_t2;
     s32 updateIdx;
     s32 flagValue;
-    DLL732_Data2AC* sp44; //44                          /* compiler-managed */
+    DLL732_Data2AC* sp44;
 
     objData = self->data;
     objSetup = (DLL732_Setup*)self->setup;
@@ -282,8 +280,6 @@ void dll_732_control(Object* self) {
     objData->unk3A0.f[2] = self->srt.transl.f[2];
     
     if (objData->unk3EF & 0x10) {
-        // temp_t4 = objData->unk3EF & 0xFFEF;
-        // var_v1 = temp_t4 & 0xFF;
         objData->unk3EF &= 0xFFEF;
         if (!(objData->unk3EF & 0x20)) {
             innerData->unkC.f[0] = 0.0f;
@@ -297,11 +293,10 @@ void dll_732_control(Object* self) {
             objData->unk3E2 = self->srt.pitch;
             objData->unk3E4 = self->srt.roll;
             dll_732_func_3FE0(self, objData);
-            // var_v1 = objData->unk3EF;
         }
     }
 
-    switch (objData->unk3F0) {                        /* irregular */
+    switch (objData->unk3F0) {
     case 0:
         if (!(objData->unk3EF & 0x20)) {
             self->objhitInfo->unk5B = 0;
@@ -309,7 +304,7 @@ void dll_732_control(Object* self) {
             objData->unk3ED = 0;
             self->unkAF &= 0xFFF7;
 
-            if ((objSetup->unk1A == -1) || (main_get_bits(objSetup->unk1A) != 0)) {
+            if ((objSetup->unk1A == NO_GAMEBIT) || (main_get_bits(objSetup->unk1A) != 0)) {
                 self->unkAF &= ~0x10;
             } else {
                 self->unkAF |= 0x10;
@@ -362,9 +357,6 @@ void dll_732_control(Object* self) {
         }
 
         objData->unk3EF = objData->unk3EF & 0xFFF7;
-        // var_v0 = objData->unk3EF & 0x20;
-// block_84:
-
         break;
     case 2:
         if (!(objData->unk3EF & 8)) {
@@ -377,8 +369,6 @@ void dll_732_control(Object* self) {
             } else {
                 flagValue = 0;
             }
-            // temp_t4_2 = objData->unk3EF | flagValue;
-            // temp_v1 = temp_t4_2 & 0xFF;
             objData->unk3EF |= flagValue;
             if (objData->unk3EF & 8) {
                 if (objData->unk3EF & 0x20) {
@@ -394,146 +384,139 @@ void dll_732_control(Object* self) {
         dll_732_func_3748(self, objData);
 
         if (objData->unk3EF & 0x20) {
-            if (objData->unk3EF & 8) {
-                if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2]) >= 0) {
-                    if (objData->unk3EF & 2) {
-                        sp5C = dll_732_func_0(self, objData, 2.8f * gUpdateRateF);
-                        gDLL_4_Race->vtbl->func4(self, &objData->unk18);
-                        gDLL_4_Race->vtbl->func10(&objData->unk18);
-                        if (sp5C == 0) {
-                            sp44 = &objData->unk2AC;
-                            self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
-                            self->srt.transl.x = objData->unk0.transl.x;
-                            self->srt.transl.f[1] = objData->unk0.transl.f[1];
-                            self->srt.transl.f[2] = objData->unk0.transl.f[2];
-                            sp44->unkC.f[0] = 0.0f;
-                            sp44->unkC.f[1] = 0.0f;
-                            sp44->unkC.f[2] = -2.0f;
-                            objData->unk3DC = 0;
-                            objData->unk3DE = 0;
-                            objData->unk3F2 = 0;
-                            objData->unk3E6 = 0;
-                            objData->unk3E0 = self->srt.yaw;
-                            objData->unk3E2 = self->srt.pitch;
-                            objData->unk3E4 = self->srt.roll;
-                            dll_732_func_3FE0(self, objData);
-                            func_80058680(self, self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &spC0, 0);
-                            self->srt.transl.f[1] -= spC0;
-                            objData->unk3EF &= ~2;
-                            return;
-                        }
-                    } else {
-                        if (dll_732_func_3DAC(self, objData, objData, &objData->unk2E0) != 0) {
-                            return;
-                        }
-                        goto block_54;
-                    }
-                } else {
+            if (!(objData->unk3EF & 8)) {
+                return;
+            }
+            
+            if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2]) >= 0) {
+                if (objData->unk3EF & 2) {
                     sp5C = dll_732_func_0(self, objData, 2.8f * gUpdateRateF);
                     gDLL_4_Race->vtbl->func4(self, &objData->unk18);
                     gDLL_4_Race->vtbl->func10(&objData->unk18);
                     if (sp5C == 0) {
+                        sp44 = &objData->unk2AC;
                         self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
                         self->srt.transl.x = objData->unk0.transl.x;
-                        self->srt.transl.f[1] = objData->unk0.transl.f[1];
-                        self->srt.transl.f[2] = objData->unk0.transl.f[2];
-                        objData->unk3EF |= 2;
-                        return;
+                        self->srt.transl.y = objData->unk0.transl.y;
+                        self->srt.transl.z = objData->unk0.transl.z;
+                        sp44->unkC.f[0] = 0.0f;
+                        sp44->unkC.f[1] = 0.0f;
+                        sp44->unkC.f[2] = -2.0f;
+                        objData->unk3DC = 0;
+                        objData->unk3DE = 0;
+                        objData->unk3F2 = 0;
+                        objData->unk3E6 = 0;
+                        objData->unk3E0 = self->srt.yaw;
+                        objData->unk3E2 = self->srt.pitch;
+                        objData->unk3E4 = self->srt.roll;
+                        dll_732_func_3FE0(self, objData);
+                        func_80058680(self, self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &spC0, 0);
+                        self->srt.transl.f[1] -= spC0;
+                        objData->unk3EF &= ~2;
                     }
+                    return;
+                } else if (dll_732_func_3DAC(self, objData, objData, &objData->unk2E0) != 0) {
+                    return;
                 }
+            } else {
+                sp5C = dll_732_func_0(self, objData, 2.8f * gUpdateRateF);
+                gDLL_4_Race->vtbl->func4(self, &objData->unk18);
+                gDLL_4_Race->vtbl->func10(&objData->unk18);
+                if (sp5C == 0) {
+                    self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
+                    self->srt.transl.x = objData->unk0.transl.x;
+                    self->srt.transl.f[1] = objData->unk0.transl.f[1];
+                    self->srt.transl.f[2] = objData->unk0.transl.f[2];
+                    objData->unk3EF |= 2;
+                }
+                return;
             }
         } else {
             self->objhitInfo->unk5B = 0xA;
             self->objhitInfo->unk5C = 0xA;
-block_54:
-
-            if ((objData->unk3EF & 0x20) == 0) {
-                if (objData->unk3EF & 8) {
-                    // temp_s0 = &objData->unk18;
-                    gDLL_4_Race->vtbl->func4(self, &objData->unk18);
-                    gDLL_4_Race->vtbl->func10(&objData->unk18);
-                    objData->unk3F1 = gDLL_4_Race->vtbl->func12(&objData->unk18);
-                }
-
-                for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++){
-                    dll_732_func_3618(self, &objData->unk2E0, 0, updateIdx);
-                    dll_732_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                    objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
-                    objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
-                    self->srt.yaw = objData->unk3E0 + objData->unk3DC;
-                    self->srt.roll = objData->unk3E4 + objData->unk3DE;
-                }
-                
-                sp44 = &objData->unk2AC;
-                if (objData->unk3C8 >= 0) {
-                    objData->unk3C8 = objData->unk3C8 - (s32) (VECTOR_MAGNITUDE(sp44->unkC) * gUpdateRateF * 1.5f) - gUpdateRate;
-                    diPrintf(" FUEL AMT %i \n", objData->unk3C8 / 10);
-                    gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->unk3C8);
-                } else if (objData->unk3CC > 0.1f) {
-                    diPrintf(" \tRAN OUT OF FUEL \t");
-
-                    /*
-                        Other strings that need placing:
-                        " HIT OBJECT %i \n"
-                        " Bike Can Mount %i "
-                        "tracks %d\n"
-                        "ident %d\n"
-                    */
-                    
-                    if (rand_next(0, 0xA) == 0) {
-                        gDLL_6_AMSFX->vtbl->play(self, 0xB38, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    }
-                    objData->unk3CC *= 0.95f;
-                    objData->unk3D0 *= 0.95f;
-                    objData->unk3D4 *= 0.95f;
-                    if (objData->unk3CC < 0.1f) {
-                        gDLL_1_cmdmenu->vtbl->energy_bar_free();
-                        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                        objData->unk3CC = 0.01f;
-                        objData->unk3D0 = 0.01f;
-                        objData->unk3D4 = 0.01f;
-                    }
-                }
-            } else {
-                for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++) {
-                    dll_732_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                    objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
-                    objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
-                    self->srt.yaw = objData->unk3E0 + objData->unk3DC;
-                    self->srt.roll = objData->unk3E4 + objData->unk3DE;
-                }
-            }
-            
-            if (!(objData->unk3EF & 0x20)) {
-                dll_732_func_40FC(self, objData, objData->unk2AC.unkC.f[2], new_var->unkF, &new_var->unk10, 7);
-            } else {
-            
-                if (objData->unk3B8 != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->unk3B8);
-                    objData->unk3B8 = 0;
-                }
-                if (objData->unk3BC != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->unk3BC);
-                    objData->unk3BC = 0;
-                }
-                if (objData->unk3C0 != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
-                    objData->unk3C0 = 0;
-                }
-                if (objData->unk3C4 != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->unk3C4);
-                    objData->unk3C4 = 0;
-                }
-            }
-            break;
         }
-        return;
+
+        if ((objData->unk3EF & 0x20) == 0) {
+            if (objData->unk3EF & 8) {
+                gDLL_4_Race->vtbl->func4(self, &objData->unk18);
+                gDLL_4_Race->vtbl->func10(&objData->unk18);
+                objData->unk3F1 = gDLL_4_Race->vtbl->func12(&objData->unk18);
+            }
+
+            for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++){
+                dll_732_func_3618(self, &objData->unk2E0, 0, updateIdx);
+                dll_732_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
+                objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
+                self->srt.yaw = objData->unk3E0 + objData->unk3DC;
+                self->srt.roll = objData->unk3E4 + objData->unk3DE;
+            }
+            
+            sp44 = &objData->unk2AC;
+            if (objData->unk3C8 >= 0) {
+                objData->unk3C8 = objData->unk3C8 - (s32) (VECTOR_MAGNITUDE(sp44->unkC) * gUpdateRateF * 1.5f) - gUpdateRate;
+                diPrintf(" FUEL AMT %i \n", objData->unk3C8 / 10);
+                gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->unk3C8);
+            } else if (objData->unk3CC > 0.1f) {
+                diPrintf(" \tRAN OUT OF FUEL \t");
+
+                /*
+                    Other strings that need placing:
+                    " HIT OBJECT %i \n"
+                    " Bike Can Mount %i "
+                    "tracks %d\n"
+                    "ident %d\n"
+                */
+                
+                if (rand_next(0, 0xA) == 0) {
+                    gDLL_6_AMSFX->vtbl->play(self, 0xB38, MAX_VOLUME, NULL, NULL, 0, NULL);
+                }
+                objData->unk3CC *= 0.95f;
+                objData->unk3D0 *= 0.95f;
+                objData->unk3D4 *= 0.95f;
+                if (objData->unk3CC < 0.1f) {
+                    gDLL_1_cmdmenu->vtbl->energy_bar_free();
+                    gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
+                    objData->unk3CC = 0.01f;
+                    objData->unk3D0 = 0.01f;
+                    objData->unk3D4 = 0.01f;
+                }
+            }
+        } else {
+            for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++) {
+                dll_732_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
+                objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
+                self->srt.yaw = objData->unk3E0 + objData->unk3DC;
+                self->srt.roll = objData->unk3E4 + objData->unk3DE;
+            }
+        }
+        
+        if (!(objData->unk3EF & 0x20)) {
+            dll_732_func_40FC(self, objData, objData->unk2AC.unkC.f[2], new_var->unkF, &new_var->unk10, 7);
+        } else {
+            if (objData->unk3B8 != 0) {
+                gDLL_6_AMSFX->vtbl->stop(objData->unk3B8);
+                objData->unk3B8 = 0;
+            }
+            if (objData->unk3BC != 0) {
+                gDLL_6_AMSFX->vtbl->stop(objData->unk3BC);
+                objData->unk3BC = 0;
+            }
+            if (objData->unk3C0 != 0) {
+                gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
+                objData->unk3C0 = 0;
+            }
+            if (objData->unk3C4 != 0) {
+                gDLL_6_AMSFX->vtbl->stop(objData->unk3C4);
+                objData->unk3C4 = 0;
+            }
+        }
+        break;
     case 1:
-        // goto block_84;
         break;
     }
 
-//block_84:
     if (((objData->unk3EF & 0x20) == 0) && (objData->unk3F0 == 2)) {
         if (objData->unk39C >= 0.0f) {
             var_fv1 = objData->unk39C;
