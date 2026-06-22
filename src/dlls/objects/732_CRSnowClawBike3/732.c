@@ -9,7 +9,8 @@
 #include "dlls/objects/267_checkpoint4.h"
 
 typedef struct {
-    s8 unk0[0xF];
+    s8 unk0[0xE];
+    s8 unkE;
     s8 unkF;
     s8 unk10;
 } DLL732_Unk_2E0;
@@ -79,7 +80,8 @@ typedef struct {
     s16 unk3E0; //yaw
     s16 unk3E2; //pitch
     s16 unk3E4; //roll
-    s8 _unk3E6[0x3EA - 0x3E6];
+    s16 unk3E6;
+    s8 _unk3E8[0x3EA - 0x3E8];
     s16 unk3EA;
     u8 unk3EC;
     u8 unk3ED;
@@ -627,7 +629,163 @@ void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_2340.s")
 
 // offset: 0x2E64 | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_2E64.s")
+void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
+    MtxF sp120;
+    MtxF spE0;
+    MtxF spA0;
+    DLL27_Data* collision;
+    f32 temp_fv0;
+    f32 var_fv1;
+    f32 sp90;
+    s32 temp_a1;
+    Vec3f sp80;
+    Vec3f sp74;
+    Vec3f sp68;
+    s32 pad;
+    s32 var_a0;
+    s32 var_s0;
+    s32 var_v1;
+    s32 i;
+    f32 temp;
+
+    collision = &objData->unk4C;
+    
+    if (arg2->unkC.f[0] > 4.0f) {
+        arg2->unkC.f[0] = 4.0f;
+    }
+    if (arg2->unkC.f[0] < -4.0f) {
+        arg2->unkC.f[0] = -4.0f;
+    }
+    if (arg2->unkC.f[1] > 4.0f) {
+        arg2->unkC.f[1] = 4.0f;
+    }
+    if (arg2->unkC.f[1] < -4.0f) {
+        arg2->unkC.f[1] = -4.0f;
+    }
+    if (arg2->unkC.f[2] > 5.0f) {
+        arg2->unkC.f[2] = 5.0f;
+    }
+    if (arg2->unkC.f[2] < -5.8f) {
+        arg2->unkC.f[2] = -5.8f;
+    }
+    
+    bss_10.yaw = objData->unk3E0;
+    bss_10.pitch = objData->unk3E2;
+    bss_10.roll = objData->unk3E4;
+    matrix_from_srt(&sp120, &bss_10);
+    
+    bss_10.yaw = -objData->unk3E0;
+    bss_10.pitch = -objData->unk3E2;
+    bss_10.roll = -objData->unk3E4;
+    matrix_from_srt_reversed(&spE0, &bss_10);
+    
+    vec3_transform(&spE0, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp80.f[0], &sp80.f[1], &sp80.f[2]);
+
+    temp_fv0 = -(f32) objData->unk2E0.unkF * 50.0f;
+    temp_fv0 *= arg2->unk18;
+    arg2->unkC.f[2] += temp_fv0;
+    arg2->unk0.f[0] = sp80.f[0] * arg2->unk18;
+    arg2->unk0.f[1] = sp80.f[1] * arg2->unk18;
+    arg2->unk0.f[2] = sp80.f[2] * arg2->unk18;
+    arg2->unkC.f[0] = arg2->unkC.f[0] + arg2->unk0.f[0];
+    arg2->unkC.f[1] = arg2->unkC.f[1] + arg2->unk0.f[1];
+    arg2->unkC.f[2] = arg2->unkC.f[2] + arg2->unk0.f[2];
+    
+    if (collision->unk25D != 0) {
+        arg2->unkC.f[0] = 0.0f;
+        var_fv1 = arg2->unk2C * sp80.y;
+        
+        if (arg2->unkC.f[2] < 0.0f) {
+            if (var_fv1 < 0.0f) {
+                var_fv1 = -var_fv1;
+            }
+        } else if (var_fv1 > 0.0f) {
+            var_fv1 = -var_fv1;
+        }
+
+        var_fv1 *= arg2->unk18;
+        temp_fv0 = arg2->unkC.f[2] + var_fv1;
+        if (temp_fv0 > 0.0f) {
+            arg2->unkC.f[2] = 0.0f;
+        } else {
+            arg2->unkC.f[2] = temp_fv0;
+        }
+    }
+
+    temp = SQ(arg2->unkC.f[2]);
+    var_fv1 = arg2->unk30 * temp;
+    var_fv1 *= arg2->unk18;
+    
+    temp_fv0 = arg2->unkC.f[2] + var_fv1;
+    if (temp_fv0 > 0.0f) {
+        arg2->unkC.f[2] = 0.0f;
+    } else {
+        arg2->unkC.f[2] = temp_fv0;
+    }
+    
+    vec3_transform(&sp120, arg2->unkC.f[0], arg2->unkC.f[1], arg2->unkC.f[2], &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
+    VECTOR_SCALE(self->velocity, 1.0666667f);
+    obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
+    
+    if (arg4 != 0) {
+        sp90 = 1.0f / updateRate;
+        gDLL_27->vtbl->func_1E8(self, collision, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, collision);
+        gDLL_27->vtbl->func_624(self, collision, updateRate);
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * sp90;
+        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * sp90;
+        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * sp90;
+        sp68.f[0] = self->velocity.x * 0.93749994f;
+        sp68.f[1] = self->velocity.y * 0.93749994f;
+        sp68.f[2] = self->velocity.z * 0.93749994f;
+        vec3_transform(&spE0, sp68.f[0], sp68.f[1], sp68.f[2], &arg2->unkC.f[0], &arg2->unkC.f[1], &arg2->unkC.f[2]);
+        
+        sp74.f[0] = 0.0f;
+        sp74.f[1] = 1.0f;
+        sp74.f[2] = 0.0f;
+        
+        if (collision->unk25C & 0xF) {
+            objData->unk3EF |= 4;
+        } else {
+            objData->unk3EF &= ~4;
+        }
+
+        for (var_a0 = 0, i = 0; i < 4; i++) {
+            if (collision->unk25C & (1 << i)) {
+                sp74.f[0] = sp74.f[0] + collision->unk68.unk0[i].f[0];
+                sp74.f[1] = sp74.f[1] + collision->unk68.unk0[i].f[1];
+                sp74.f[2] = sp74.f[2] + collision->unk68.unk0[i].f[2];
+                var_a0++;
+            }
+        }
+        
+        if (var_a0 != 0) {
+            VECTOR_SCALE(sp74, 1.0f / var_a0);
+        } else {
+            sp74.f[0] = 0.0f;
+            sp74.f[1] = 1.0f;
+            sp74.f[2] = 0.0f;
+        }
+        
+        bss_10.yaw = -objData->unk3E0;
+        bss_10.pitch = 0;
+        bss_10.roll = 0;
+        matrix_from_srt_reversed(&spA0, &bss_10);
+        vec3_transform(&spA0, sp74.f[0], sp74.f[1], sp74.f[2], &sp74.f[0], &sp74.f[1], &sp74.f[2]);
+        
+        var_s0 = M_90_DEGREES - arctan2_f(sp74.f[1], sp74.f[2]);
+        temp_a1 = -(M_90_DEGREES - arctan2_f(sp74.f[1], sp74.f[0]));
+        var_s0 -= (objData->unk3E2 & 0xFFFF);
+        CIRCLE_WRAP(var_s0);
+        objData->unk3E2 += ((var_s0 >> 2) / 3) * (s32)updateRate;
+        self->srt.pitch = objData->unk3E2 + objData->unk3E6;
+        temp_a1 -= (objData->unk3E4 & 0xFFFF);
+        CIRCLE_WRAP(temp_a1);
+        objData->unk3E4 += ((temp_a1 >> 2) / 3) * (s32)updateRate;
+    }
+    
+    objData->unk3E0 -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
+}
 
 // offset: 0x3618 | func: 25
 void dll_732_func_3618(Object* self, DLL732_Unk_3618* arg1, u8 controllerPort, s32 buffer) {
