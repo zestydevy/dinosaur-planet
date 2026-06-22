@@ -6,6 +6,7 @@
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/math.h"
+#include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "dlls/objects/267_checkpoint4.h"
 
@@ -14,13 +15,7 @@ typedef struct {
     s8 unkE;
     s8 unkF;
     s8 unk10;
-} DLL732_Unk_2E0;
-
-typedef struct {
-    s8 unk0[0xE];
-    s8 unkE;
-    s8 unkF;
-} DLL732_Unk_3618; //Maybe the same as Unk_2E0? Controller/joystick-related
+} DLL732_Unk_2E0; //Controller/joystick-related
 
 typedef struct {
     Vec3f unk0;
@@ -294,8 +289,46 @@ void dll_732_update(Object* self) {
 }
 
 // offset: 0x1534 | func: 4 | export: 3
-void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_print.s")
+#else
+
+static void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
+
+//Matches, but needs dll_732_func_1DC8 static
+void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    DLL732_Data* objData;
+    s32 sp38;
+
+    objData = self->data;
+    if (objData->unk3EF & 1) {
+        return;
+    }
+    
+    if (visibility == -1) {
+        sp38 = gDLL_13_Expgfx->vtbl->func10(self);
+        if (!(objData->unk3EF & 0x20)) {
+            dll_732_func_1DC8(self, objData, gdl, mtxs, vtxs, pols);
+        }
+        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        func_80031F6C(self, 0, &objData->unk388.x, &objData->unk388.y, &objData->unk388.z, 0);
+        if (sp38 != 0) {
+            gDLL_13_Expgfx->vtbl->func6(self, gdl, mtxs, NULL, 0, 0, 0);
+        }
+        return;
+    } else if (objData->unk3F0 == 2) {
+        objData->unk388.x = self->srt.transl.x;
+        objData->unk388.y = self->srt.transl.y;
+        objData->unk388.z = self->srt.transl.z;
+        return;
+    }
+    
+    if (visibility) {
+        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        func_80031F6C(self, 0, &objData->unk388.x, &objData->unk388.y, &objData->unk388.z, 0);
+    }
+}
+#endif
 
 // offset: 0x1724 | func: 5 | export: 4
 void dll_732_free(Object* self, s32 onlySelf) {
@@ -1050,7 +1083,7 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
 }
 
 // offset: 0x3618 | func: 25
-void dll_732_func_3618(Object* self, DLL732_Unk_3618* arg1, u8 controllerPort, s32 buffer) {
+void dll_732_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer) {
     arg1->unkE = joy_get_stick_x_buffered(controllerPort, buffer);
     arg1->unkF = joy_get_stick_y_buffered(controllerPort, buffer);
 }
@@ -1213,7 +1246,7 @@ void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision
 }
 
 // offset: 0x3DAC | func: 30
-s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_3618* arg3) {
+s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3) {
     f32 dx;
     f32 dz;
     s32 sp3C;
