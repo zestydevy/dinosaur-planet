@@ -5,6 +5,7 @@
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/math.h"
 #include "sys/objtype.h"
 #include "dlls/objects/267_checkpoint4.h"
 
@@ -83,7 +84,7 @@ typedef struct {
     s16 unk3E6;
     s8 _unk3E8[0x3EA - 0x3E8];
     s16 unk3EA;
-    u8 unk3EC;
+    s8 unk3EC;
     u8 unk3ED;
     u8 unk3EE;
     u8 unk3EF; //flags
@@ -456,17 +457,17 @@ void dll_732_func_1B10(Object* self, f32* arg1, s32* arg2) {
 // offset: 0x1B9C | func: 17 | export: 16
 f32 dll_732_func_1B9C(Object* self, f32* arg1) {
     DLL732_Data* objData;
-    f32 distance;
+    f32 magnitude;
 
     objData = self->data;
     
     *arg1 = 5.0f;
 
-    distance = sqrtf(SQ(objData->unk2AC.unkC.f[0]) + SQ(objData->unk2AC.unkC.f[1]) + SQ(objData->unk2AC.unkC.f[2])) * 0.2f;
-    if (distance > 1.0f) {
-        distance = 1.0f;
+    magnitude = VECTOR_MAGNITUDE(objData->unk2AC.unkC) * 0.2f;
+    if (magnitude > 1.0f) {
+        magnitude = 1.0f;
     }
-    return distance;
+    return magnitude;
 }
 
 // offset: 0x1C28 | func: 18 | export: 17
@@ -528,6 +529,8 @@ void dll_732_func_1DB8(s32 arg0, s32 arg1) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_1DC8.s")
 #else
+
+//Matches on decomp.me, but causes a diff in dll_732_control somehow?
 void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
 /*0x28*/ static u32 bss_28;
     Vertex* spA4; //A4
@@ -549,27 +552,27 @@ void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs
     sp9C = *pols;
     
     var_fv0 = 0.0f;
-    if (temp_v1->unk0.transl.z < 0.0f) {
-        var_fv0 = temp_v1->unk0.transl.z;
+    if (temp_v1->unkC.z < 0.0f) {
+        var_fv0 = temp_v1->unkC.z;
     }
     sp6C.transl.z = var_fv0;
 
-    if (temp_v1->unk0.transl.z < 0.0f) {
-        var_fv0 = temp_v1->unk0.transl.x;
+    if (temp_v1->unkC.z < 0.0f) {
+        var_fv0 = temp_v1->unkC.x;
     }
     sp6C.transl.x = var_fv0;
     
     dl_set_prim_color(&spA0, 0xFF, 0xFF, 0xFF, 0xFF);
     
-    if (temp_v1->unk0.transl.z < -0.5f) {
+    if (temp_v1->unkC.z < -0.5f) {
         if (1) { }
         gDLL_17_partfx->vtbl->spawn(self, 0x12E, &sp6C, 4, -1, NULL);
     }
-    if (temp_v1->unk0.transl.z < -1.5f) {
+    if (temp_v1->unkC.z < -1.5f) {
         if (1) { }
         gDLL_17_partfx->vtbl->spawn(self, 0x12F, &sp6C, 4, -1, NULL);
     }
-    if (temp_v1->unk0.transl.z < -2.1f) {
+    if (temp_v1->unkC.z < -2.1f) {
         if (1) { }
         gDLL_17_partfx->vtbl->spawn(self, 0x130, &sp6C, 4, -1, NULL);
     }
@@ -626,7 +629,266 @@ void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
 }
 
 // offset: 0x2340 | func: 23
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_2340.s")
+#else
+
+static void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision);
+
+//Matches on decomp.me, but causes a diff in dll_732_control somehow?
+void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
+    MtxF sp130;
+    MtxF spF0;
+    MtxF spB0;
+    s32 pad1;
+    f32 temp3;
+    f32 temp2;
+    f32 temp_fv0;
+    f32 temp_fv1_7;
+    f32 temp_fa0_4;
+    f32 sp94;
+    f32 var_fv1;
+    Vec3f sp84;
+    f32 var_fv0_4;
+    f32 var_fa0;
+    s32 var_a0;
+    Vec3f sp6C;
+    Vec3f sp60;
+    s32 pad2;
+    DLL27_Data* collision; //44
+    s32 angle1;
+    s32 angle2;
+    s32 i;
+
+    collision = &objData->unk4C;
+    
+    if (objData->unk3EC != 0) {
+        VECTOR_SCALE(arg2->unkC, objData->unk384);
+        objData->unk3EC--;
+        if (objData->unk3EC < 0) {
+            objData->unk3EC = 0;
+        }
+    }
+
+    temp3 = -objData->unk3CC;
+    arg2->unkC.f[0] = (arg2->unkC.x < temp3) ? temp3 : (
+                      (objData->unk3CC < arg2->unkC.x) ? objData->unk3CC : arg2->unkC.x);
+    
+    temp3 = -objData->unk3D0;
+    arg2->unkC.f[1] = (arg2->unkC.f[1] < temp3) ? temp3 : (
+                      (objData->unk3D0 < arg2->unkC.f[1]) ? objData->unk3D0 : arg2->unkC.f[1]);
+
+    temp3 = -objData->unk3D4;
+    arg2->unkC.f[2] = (arg2->unkC.f[2] < temp3) ? temp3 : (
+                      (objData->unk3D4 < arg2->unkC.f[2]) ? objData->unk3D4 : arg2->unkC.f[2]);
+    
+    
+    bss_10.yaw = objData->unk3E0;
+    bss_10.pitch = objData->unk3E2;
+    bss_10.roll = objData->unk3E4;
+    matrix_from_srt(&sp130, &bss_10);
+    bss_10.yaw = -objData->unk3E0;
+    bss_10.pitch = -objData->unk3E2;
+    bss_10.roll = -objData->unk3E4;
+    matrix_from_srt_reversed(&spF0, &bss_10);
+    
+    if (!(objData->unk3EF & 4)) {
+        var_fv0_4 = (f32) -objData->unk2E0.unkF / 60.0f;
+        if (var_fv0_4 > 1.0f) {
+            var_fv0_4 = 1.0f;
+        } else if (var_fv0_4 < -1.0f) {
+            var_fv0_4 = -1.0f;
+        }
+        var_fv0_4 *= 6144.0f;
+        objData->unk3E6 += ((s32) (var_fv0_4) - objData->unk3E6) >> 5;
+    } else {
+        if (objData->unk3E6 != 0) {
+            objData->unk3E6 -= (-objData->unk3E6 >> 5);
+        }
+    }
+    
+    vec3_transform(&spF0, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp84.f[0], &sp84.f[1], &sp84.f[2]);
+
+    if (objData->unk2E0.unkF < 0) {
+        var_fv1 = -(f32) objData->unk2E0.unkF * 4.0f;
+    } else {
+        var_fv1 = -(f32) objData->unk2E0.unkF * 10.0f;
+    }
+    
+    temp_fv0 = arg2->unk20 * var_fv1;
+    if (temp_fv0 < 0.0f) {
+        arg2->unkC.f[2] += (temp_fv0 * 0.01666666f);
+    } else {
+        if (arg2->unkC.f[2] <= 0.0f) {
+            arg2->unkC.f[2] += (temp_fv0 * 0.01666666f);
+            if (arg2->unkC.f[2] > 0.0f) {
+                arg2->unkC.f[2] = 0.0f;
+            }
+        }
+    }
+    
+    arg2->unk0.x = sp84.f[0] * arg2->unk18;
+    arg2->unk0.y = sp84.f[1] * arg2->unk18;
+    arg2->unk0.z = sp84.f[2] * arg2->unk18;
+    arg2->unkC.x = arg2->unk0.x + arg2->unkC.x;
+    arg2->unkC.y = arg2->unk0.y + arg2->unkC.y;
+    arg2->unkC.z = arg2->unk0.z + arg2->unkC.z;
+    
+    if (collision->unk25D != 0) {
+        temp_fv0 = arg2->unk2C * sp84.y;
+        if (arg2->unkC.f[2] < 0.0f) {
+            if (temp_fv0 < 0.0f) {
+                temp_fv0 = -temp_fv0;
+            }
+        } else if (temp_fv0 > 0.0f) {
+            temp_fv0 = -temp_fv0;
+        }
+        temp_fv0 *= arg2->unk18;
+        var_fa0 = arg2->unkC.f[2] + temp_fv0;
+        if (arg2->unkC.f[2] < 0.0f) {
+            if (var_fa0 > 0.0f) {
+                arg2->unkC.f[2] = 0.0f;
+            } else {
+                arg2->unkC.f[2] = var_fa0;
+            }
+        } else if (var_fa0 < 0.0f) {
+            arg2->unkC.f[2] = 0.0f;
+        } else {
+            arg2->unkC.f[2] = var_fa0;
+        }
+        
+        if (arg2->unkC.f[2] < 0.0f) {
+            var_fa0 = -arg2->unkC.f[2];
+        } else {
+            var_fa0 = arg2->unkC.f[2];
+        }
+        
+        temp_fv0 = arg2->unk2C * sp84.y * (4.0f + SQ(var_fa0)); //SQ should be on temp?
+        if (arg2->unkC.f[0] < 0.0f) {
+            if (temp_fv0 < 0.0f) {
+                temp_fv0 = -temp_fv0;
+            }
+        } else if (temp_fv0 > 0.0f) {
+            temp_fv0 = -temp_fv0;
+        }
+        temp_fv0 *= arg2->unk18;
+        
+        temp_fv1_7 = arg2->unkC.f[0] + temp_fv0;
+        if (arg2->unkC.f[0] < 0.0f) {
+            if (temp_fv1_7 > 0.0f) {
+                arg2->unkC.f[0] = 0.0f;
+            } else {
+                arg2->unkC.f[0] = temp_fv1_7;
+            }
+        } else if (temp_fv1_7 < 0.0f) {
+            arg2->unkC.f[0] = 0.0f;
+        } else {
+            arg2->unkC.f[0] = temp_fv1_7;
+        }
+        
+        objData->unk3F2 = 0;
+        objData->unk3E6 = 0;
+    } else {
+        objData->unk3F2++;
+        if (objData->unk3F2 > 0x64) {
+            objData->unk3F2 = 0x64;
+        }
+    }
+
+    temp2 = SQ(arg2->unkC.f[2]);
+    temp_fv0 = arg2->unk30 * temp2; //SQ on temp?
+    if (arg2->unkC.f[2] > 0.0f) {
+        temp_fv0 = -temp_fv0;
+    }
+    temp_fv0 *= arg2->unk18;
+    temp_fa0_4 = arg2->unkC.f[2] + temp_fv0;
+    if (arg2->unkC.f[2] < 0.0f) {
+        if (temp_fa0_4 > 0.0f) {
+            arg2->unkC.f[2] = 0.0f;
+        } else {
+            arg2->unkC.f[2] = temp_fa0_4;
+        }
+    } else if (temp_fa0_4 < 0.0f) {
+        arg2->unkC.f[2] = 0.0f;
+    } else {
+        arg2->unkC.f[2] = temp_fa0_4;
+    }
+    
+    vec3_transform(&sp130, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, 
+                   &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
+    VECTOR_SCALE(self->velocity, 1.0666667f);
+    obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
+    if (arg4 != 0) {
+        sp94 = 1.0f / updateRate;
+        dll_732_func_3AF8(self, objData, collision);
+        gDLL_27->vtbl->func_1E8(self, collision, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, collision);
+        gDLL_27->vtbl->func_624(self, collision, updateRate);
+        
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * sp94;
+        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * sp94;
+        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * sp94;
+        
+        sp60.f[0] = self->velocity.x * 0.93749994f;
+        sp60.f[1] = self->velocity.y * 0.93749994f;
+        sp60.f[2] = self->velocity.z * 0.93749994f;
+        vec3_transform(&spF0, sp60.f[0], sp60.f[1], sp60.f[2], 
+                       &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
+        sp6C.f[0] = 0.0f;
+        sp6C.f[1] = 1.0f;
+        sp6C.f[2] = 0.0f;
+        
+        if (collision->unk25C & 0xF) {
+            objData->unk3EF |= 4;
+        } else {
+            objData->unk3EF &= ~4;
+        }
+        
+        for (var_a0 = 0, i = 0; i < 4; i++) {
+            if (collision->unk25C & (1 << i)) {
+                sp6C.x = collision->unk68.unk0[i].x + sp6C.x;
+                sp6C.y = collision->unk68.unk0[i].y + sp6C.y;
+                sp6C.z = collision->unk68.unk0[i].z + sp6C.z;
+                var_a0++;
+            }
+        }
+        
+        VECTOR_SCALE(sp6C, 0.25f);
+        if (var_a0 != 0) {
+            temp_fv0 = 1.0f / var_a0;
+            VECTOR_SCALE(sp6C, temp_fv0);
+        } else {
+            sp6C.f[0] = 0.0f;
+            sp6C.f[1] = 1.0f;
+            sp6C.f[2] = 0.0f;
+        }
+        
+        bss_10.yaw = -objData->unk3E0;
+        bss_10.pitch = 0;
+        bss_10.roll = 0;
+        matrix_from_srt_reversed(&spB0, &bss_10);
+        vec3_transform(&spB0, sp6C.f[0], sp6C.f[1], sp6C.f[2], &sp6C.f[0], &sp6C.f[1], &sp6C.f[2]);
+        
+        angle1 = M_90_DEGREES - arctan2_f(sp6C.f[1], sp6C.f[2]);
+        angle2 = -(M_90_DEGREES - arctan2_f(sp6C.f[1], sp6C.f[0]));
+        angle1 -= (objData->unk3E2 & 0xFFFF);
+        CIRCLE_WRAP(angle1);
+        objData->unk3E2 += (((angle1 >> 2) / 3) * (s32) updateRate);
+        self->srt.pitch = objData->unk3E2 + objData->unk3E6;
+        
+        angle2 -= (objData->unk3E4 & 0xFFFF);
+        CIRCLE_WRAP(angle2);
+        objData->unk3E4 += (((angle2 >> 2) / 3) * (s32) updateRate);
+    }
+    
+    objData->unk3E0 -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
+}
+
+
+
+
+
+#endif
 
 // offset: 0x2E64 | func: 24
 void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
@@ -907,7 +1169,7 @@ int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData,
 }
 
 // offset: 0x3AF8 | func: 29
-void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* arg2) {
+void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision) {
     s32 pad;
     MtxF spDC;
     Vec3f sp88[7];
