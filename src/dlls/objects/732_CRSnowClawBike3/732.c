@@ -1,5 +1,4 @@
 #include "common.h"
-#include "dlls/engine/6_amsfx.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/curves.h"
@@ -8,6 +7,7 @@
 #include "sys/math.h"
 #include "sys/objlib.h"
 #include "sys/objtype.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/267_checkpoint4.h"
 
 typedef struct {
@@ -226,8 +226,337 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
 
 
 // offset: 0x398 | func: 2 | export: 1
-void dll_732_control(Object* self);
+// void dll_732_control(Object* self);
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_control.s")
+#else
+
+static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2);
+void dll_732_func_1C38(Object* self);
+static void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
+static void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
+static void dll_732_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer);
+static void dll_732_func_3748(Object* self, DLL732_Data* objData);
+static s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3);
+
+void dll_732_control(Object* self) {
+    DLL732_Setup* objSetup;
+    Object* player; //C8
+    s32 pad;
+    f32 spC0; //C0
+    MtxF sp80; //80
+    Vec3f sp74; //74
+    DLL732_Data2AC* innerData;
+    DLL732_Data* objData;
+    DLL732_Unk_2E0* new_var;
+    f32 dx;
+    f32 dz;
+    s32 sp5C; //5C
+    f32 var_fv1;
+    // s32 temp_t2;
+    s32 updateIdx;
+    s32 flagValue;
+    DLL732_Data2AC* sp44; //44                          /* compiler-managed */
+
+    objData = self->data;
+    objSetup = (DLL732_Setup*)self->setup;
+    
+    innerData = &objData->unk2AC;
+    new_var = &objData->unk2E0;
+    
+    spC0 = 0.0f;
+    
+    if ((objData->unk3EF & 1)) {
+        return;
+    }
+        
+    if (main_get_bits(objSetup->unk1E)) {
+        objData->unk3EF |= 1;
+        return;
+    }
+    
+    player = get_player();
+    self->unkAF |= 8;
+    objData->unk3A0.f[0] = self->srt.transl.f[0];
+    objData->unk3A0.f[1] = self->srt.transl.f[1];
+    objData->unk3A0.f[2] = self->srt.transl.f[2];
+    
+    if (objData->unk3EF & 0x10) {
+        // temp_t4 = objData->unk3EF & 0xFFEF;
+        // var_v1 = temp_t4 & 0xFF;
+        objData->unk3EF &= 0xFFEF;
+        if (!(objData->unk3EF & 0x20)) {
+            innerData->unkC.f[0] = 0.0f;
+            innerData->unkC.f[1] = 0.0f;
+            innerData->unkC.f[2] = -2.0f;
+            objData->unk3DC = 0;
+            objData->unk3DE = 0;
+            objData->unk3F2 = 0;
+            objData->unk3E6 = 0;
+            objData->unk3E0 = self->srt.yaw;
+            objData->unk3E2 = self->srt.pitch;
+            objData->unk3E4 = self->srt.roll;
+            dll_732_func_3FE0(self, objData);
+            // var_v1 = objData->unk3EF;
+        }
+    }
+
+    switch (objData->unk3F0) {                        /* irregular */
+    case 0:
+        if (!(objData->unk3EF & 0x20)) {
+            self->objhitInfo->unk5B = 0;
+            self->objhitInfo->unk5C = 0;
+            objData->unk3ED = 0;
+            self->unkAF &= 0xFFF7;
+
+            if ((objSetup->unk1A == -1) || (main_get_bits(objSetup->unk1A) != 0)) {
+                self->unkAF &= ~0x10;
+            } else {
+                self->unkAF |= 0x10;
+            }
+            
+            if ((player != NULL) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
+                objData->unk3ED = 1;
+                dll_732_func_3694(self, objData, &sp80, 0, 1, 1);
+                vec3_transform(&sp80, data_F0[0], data_F0[1], data_F0[2], &sp74.z, &sp74.y, &sp74.x);
+                dx = player->srt.transl.x - sp74.z;
+                dz = player->srt.transl.z - sp74.x;
+                if ((SQ(dx) + SQ(dz)) < 100.0f) {
+                    self->unkAF &= ~8;
+                    objData->unk3ED = 2;
+                } else {
+                    vec3_transform(&sp80, data_F0[3], data_F0[4], data_F0[5], &sp74.z, &sp74.y, &sp74.x);
+                    dx = player->srt.transl.x - sp74.z;
+                    dz = player->srt.transl.z - sp74.x;
+                    if ((SQ(dx) + SQ(dz)) < 100.0f) {
+                        self->unkAF &= 0xFFF7;
+                        objData->unk3ED = 1;
+                    }
+                }
+            }
+        }
+
+        if (objData->unk3BC != 0) {
+            gDLL_6_AMSFX->vtbl->stop(objData->unk3BC);
+            objData->unk3BC = 0;
+        }
+
+        if (objData->unk3C0 != 0) {
+            gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
+            objData->unk3C0 = 0;
+        }
+
+        if (objData->unk3C4 != 0) {
+            gDLL_6_AMSFX->vtbl->stop(objData->unk3C4);
+            objData->unk3C4 = 0;
+        }
+
+        if (objData->unk2F4 != NULL) {
+            dll_unload(objData->unk2F4);
+            objData->unk2F4 = NULL;
+        }
+
+        if (objData->unk2F8 != NULL) {
+            dll_unload(objData->unk2F8);
+            objData->unk2F8 = NULL;
+        }
+
+        objData->unk3EF = objData->unk3EF & 0xFFF7;
+        // var_v0 = objData->unk3EF & 0x20;
+// block_84:
+
+        break;
+    case 2:
+        if (!(objData->unk3EF & 8)) {
+            objData->unk18.unk10 = -1;
+            objData->unk18.unk14 = -1;
+            objData->unk18.unk18 = -1;
+            objData->unk18.unk1C = 0;
+            if (main_get_bits(objData->unk2FC[0]) != 0) {
+                flagValue = 8;
+            } else {
+                flagValue = 0;
+            }
+            // temp_t4_2 = objData->unk3EF | flagValue;
+            // temp_v1 = temp_t4_2 & 0xFF;
+            objData->unk3EF |= flagValue;
+            if (objData->unk3EF & 8) {
+                if (objData->unk3EF & 0x20) {
+                    dll_732_func_1C38(self);
+                } else {
+                    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->unk1C);
+                }
+                gDLL_4_Race->vtbl->func9(&objData->unk18);
+            }
+        } else if (main_get_bits(objData->unk2FC[1]) != 0) {
+            objData->unk3EF &= 0xFFF7;
+        }
+        dll_732_func_3748(self, objData);
+
+        if (objData->unk3EF & 0x20) {
+            if (objData->unk3EF & 8) {
+                if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2]) >= 0) {
+                    if (objData->unk3EF & 2) {
+                        sp5C = dll_732_func_0(self, objData, 2.8f * gUpdateRateF);
+                        gDLL_4_Race->vtbl->func4(self, &objData->unk18);
+                        gDLL_4_Race->vtbl->func10(&objData->unk18);
+                        if (sp5C == 0) {
+                            sp44 = &objData->unk2AC;
+                            self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
+                            self->srt.transl.x = objData->unk0.transl.x;
+                            self->srt.transl.f[1] = objData->unk0.transl.f[1];
+                            self->srt.transl.f[2] = objData->unk0.transl.f[2];
+                            sp44->unkC.f[0] = 0.0f;
+                            sp44->unkC.f[1] = 0.0f;
+                            sp44->unkC.f[2] = -2.0f;
+                            objData->unk3DC = 0;
+                            objData->unk3DE = 0;
+                            objData->unk3F2 = 0;
+                            objData->unk3E6 = 0;
+                            objData->unk3E0 = self->srt.yaw;
+                            objData->unk3E2 = self->srt.pitch;
+                            objData->unk3E4 = self->srt.roll;
+                            dll_732_func_3FE0(self, objData);
+                            func_80058680(self, self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &spC0, 0);
+                            self->srt.transl.f[1] -= spC0;
+                            objData->unk3EF &= ~2;
+                            return;
+                        }
+                    } else {
+                        if (dll_732_func_3DAC(self, objData, objData, &objData->unk2E0) != 0) {
+                            return;
+                        }
+                        goto block_54;
+                    }
+                } else {
+                    sp5C = dll_732_func_0(self, objData, 2.8f * gUpdateRateF);
+                    gDLL_4_Race->vtbl->func4(self, &objData->unk18);
+                    gDLL_4_Race->vtbl->func10(&objData->unk18);
+                    if (sp5C == 0) {
+                        self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
+                        self->srt.transl.x = objData->unk0.transl.x;
+                        self->srt.transl.f[1] = objData->unk0.transl.f[1];
+                        self->srt.transl.f[2] = objData->unk0.transl.f[2];
+                        objData->unk3EF |= 2;
+                        return;
+                    }
+                }
+            }
+        } else {
+            self->objhitInfo->unk5B = 0xA;
+            self->objhitInfo->unk5C = 0xA;
+block_54:
+
+            if ((objData->unk3EF & 0x20) == 0) {
+                if (objData->unk3EF & 8) {
+                    // temp_s0 = &objData->unk18;
+                    gDLL_4_Race->vtbl->func4(self, &objData->unk18);
+                    gDLL_4_Race->vtbl->func10(&objData->unk18);
+                    objData->unk3F1 = gDLL_4_Race->vtbl->func12(&objData->unk18);
+                }
+
+                for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++){
+                    dll_732_func_3618(self, &objData->unk2E0, 0, updateIdx);
+                    dll_732_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                    objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
+                    objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
+                    self->srt.yaw = objData->unk3E0 + objData->unk3DC;
+                    self->srt.roll = objData->unk3E4 + objData->unk3DE;
+                }
+                
+                sp44 = &objData->unk2AC;
+                if (objData->unk3C8 >= 0) {
+                    objData->unk3C8 = objData->unk3C8 - (s32) (VECTOR_MAGNITUDE(sp44->unkC) * gUpdateRateF * 1.5f) - gUpdateRate;
+                    diPrintf(" FUEL AMT %i \n", objData->unk3C8 / 10);
+                    gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->unk3C8);
+                } else if (objData->unk3CC > 0.1f) {
+                    diPrintf(" \tRAN OUT OF FUEL \t");
+
+                    /*
+                        Other strings that need placing:
+                        " HIT OBJECT %i \n"
+                        " Bike Can Mount %i "
+                        "tracks %d\n"
+                        "ident %d\n"
+                    */
+                    
+                    if (rand_next(0, 0xA) == 0) {
+                        gDLL_6_AMSFX->vtbl->play(self, 0xB38, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    }
+                    objData->unk3CC *= 0.95f;
+                    objData->unk3D0 *= 0.95f;
+                    objData->unk3D4 *= 0.95f;
+                    if (objData->unk3CC < 0.1f) {
+                        gDLL_1_cmdmenu->vtbl->energy_bar_free();
+                        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
+                        objData->unk3CC = 0.01f;
+                        objData->unk3D0 = 0.01f;
+                        objData->unk3D4 = 0.01f;
+                    }
+                }
+            } else {
+                for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++) {
+                    dll_732_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                    objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
+                    objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
+                    self->srt.yaw = objData->unk3E0 + objData->unk3DC;
+                    self->srt.roll = objData->unk3E4 + objData->unk3DE;
+                }
+            }
+            
+            if (!(objData->unk3EF & 0x20)) {
+                dll_732_func_40FC(self, objData, objData->unk2AC.unkC.f[2], new_var->unkF, &new_var->unk10, 7);
+            } else {
+            
+                if (objData->unk3B8 != 0) {
+                    gDLL_6_AMSFX->vtbl->stop(objData->unk3B8);
+                    objData->unk3B8 = 0;
+                }
+                if (objData->unk3BC != 0) {
+                    gDLL_6_AMSFX->vtbl->stop(objData->unk3BC);
+                    objData->unk3BC = 0;
+                }
+                if (objData->unk3C0 != 0) {
+                    gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
+                    objData->unk3C0 = 0;
+                }
+                if (objData->unk3C4 != 0) {
+                    gDLL_6_AMSFX->vtbl->stop(objData->unk3C4);
+                    objData->unk3C4 = 0;
+                }
+            }
+            break;
+        }
+        return;
+    case 1:
+        // goto block_84;
+        break;
+    }
+
+//block_84:
+    if (((objData->unk3EF & 0x20) == 0) && (objData->unk3F0 == 2)) {
+        if (objData->unk39C >= 0.0f) {
+            var_fv1 = objData->unk39C;
+        } else {
+            var_fv1 = -objData->unk39C;
+        }
+        if (var_fv1 > 2.0f) {
+            self->objhitInfo->unk5F = 0x14;
+            self->objhitInfo->unk60 = 1;
+            self->objhitInfo->unk58 |= 1;
+            self->objhitInfo->unk40 = 0x10;
+            self->objhitInfo->unk58 |= 4;
+            self->srt.flags &= 0xBFFF;
+        }
+    }
+}
+
+static const char str_extra0[] = " HIT OBJECT %i \n";
+static const char str_extra1[] = " Bike Can Mount %i ";
+static const char str_extra2[] = "tracks %d\n";
+static const char str_extra3[] = "ident %d\n";
+
+#endif
 
 // offset: 0x123C | func: 3 | export: 2
 void dll_732_update(Object* self) {
@@ -243,6 +572,7 @@ void dll_732_update(Object* self) {
 
     objHitInfo = self->objhitInfo;
     objData = self->data;
+    temp_v0 = &objData->unk2AC;
 
     if (objHitInfo->unk48) {
         obj = objHitInfo->unk48;
@@ -279,8 +609,7 @@ void dll_732_update(Object* self) {
         spDC.x = self->velocity.f[0] * 0.93749994f;
         spDC.y = self->velocity.f[1] * 0.93749994f;
         spDC.z = self->velocity.f[2] * 0.93749994f;
-        temp_v0 = &objData->unk2AC;
-        if (!temp_v0){ } //fake?
+        
         vec3_transform(&sp9C, spDC.f[0], spDC.f[1], spDC.f[2], 
                        &temp_v0->unkC.f[0], &temp_v0->unkC.f[1], &temp_v0->unkC.f[2]);
         dll_732_func_3694(self, objData, &sp5C, 0, 0, 0);
