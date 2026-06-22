@@ -21,7 +21,8 @@ typedef struct {
 } DLL732_Unk_3618; //Maybe the same as Unk_2E0? Controller/joystick-related
 
 typedef struct {
-    SRT unk0;
+    Vec3f unk0;
+    Vec3f unkC;
     f32 unk18;
     f32 unk1C;
     f32 unk20;
@@ -250,17 +251,19 @@ void dll_732_update(Object* self) {
         objID = obj->id;
         
         switch (objID){
-        case 0x389:
-        case 0x38A:
+        case OBJ_CRSnowClaw:
+        case OBJ_CRSnowClaw2:
             camera_enable_y_offset();
             camera_set_shake_offset(1.0f);
             gDLL_17_partfx->vtbl->spawn(self, 0x551, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, 0x552, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, 0x554, NULL, 4, -1, NULL);
+
             i = 10;
             while (i--) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x553, NULL, 2, -1, NULL);
             }
+            
             objData->unk3EC = 5;
             objData->unk384 = 0.2f;
             break;
@@ -271,18 +274,19 @@ void dll_732_update(Object* self) {
         bss_10.yaw = -objData->unk3E0;
         bss_10.pitch = -objData->unk3E2;
         bss_10.roll = -objData->unk3E4;
-        matrix_from_srt_reversed(&sp9C, (SRT* ) &bss_10);
-        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
-        self->velocity.f[1] = (self->srt.transl.f[1] - self->prevLocalPosition.f[1]) * gUpdateRateInverseF;
-        self->velocity.f[2] = (self->srt.transl.f[2] - self->prevLocalPosition.f[2]) * gUpdateRateInverseF;
-        spDC.f[0] = self->velocity.f[0] * 0.93749994f;
-        spDC.f[1] = self->velocity.f[1] * 0.93749994f;
-        spDC.f[2] = self->velocity.f[2] * 0.93749994f;
+        matrix_from_srt_reversed(&sp9C, &bss_10);
+        self->velocity.f[0] = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
+        self->velocity.f[1] = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
+        self->velocity.f[2] = (self->srt.transl.z - self->prevLocalPosition.z) * gUpdateRateInverseF;
+        spDC.x = self->velocity.f[0] * 0.93749994f;
+        spDC.y = self->velocity.f[1] * 0.93749994f;
+        spDC.z = self->velocity.f[2] * 0.93749994f;
         temp_v0 = &objData->unk2AC;
         if (!temp_v0){ } //fake?
-        vec3_transform(&sp9C, spDC.f[0], spDC.f[1], spDC.f[2], &temp_v0->unk0.transl.f[0], &temp_v0->unk0.transl.f[1], &temp_v0->unk0.transl.f[2]);
+        vec3_transform(&sp9C, spDC.f[0], spDC.f[1], spDC.f[2], 
+                       &temp_v0->unkC.f[0], &temp_v0->unkC.f[1], &temp_v0->unkC.f[2]);
         dll_732_func_3694(self, objData, &sp5C, 0, 0, 0);
-        vec3_transform(&sp5C, 0.0f, 0.0f, -10.0f, &objData->unk3AC.f[0], &objData->unk3AC.f[1], &objData->unk3AC.f[2]);
+        vec3_transform(&sp5C, 0.0f, 0.0f, -10.0f, &objData->unk3AC.x, &objData->unk3AC.y, &objData->unk3AC.z);
     }
 }
 
@@ -456,7 +460,7 @@ f32 dll_732_func_1B9C(Object* self, f32* arg1) {
     
     *arg1 = 5.0f;
 
-    distance = sqrtf(SQ(objData->unk2AC.unk0.transl.f[0]) + SQ(objData->unk2AC.unk0.transl.f[1]) + SQ(objData->unk2AC.unk0.transl.f[2])) * 0.2f;
+    distance = sqrtf(SQ(objData->unk2AC.unkC.f[0]) + SQ(objData->unk2AC.unkC.f[1]) + SQ(objData->unk2AC.unkC.f[2])) * 0.2f;
     if (distance > 1.0f) {
         distance = 1.0f;
     }
