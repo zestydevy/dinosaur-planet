@@ -129,10 +129,18 @@ typedef struct {
 /*0x10*/ static SRT bss_10;
 // /*0x28*/ static u32 bss_28;
 
+static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2);
+void dll_732_func_1C38(Object* self);
 static void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
+static void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
 static void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1);
+static void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
+static void dll_732_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer);
 static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch);
+static void dll_732_func_3748(Object* self, DLL732_Data* objData);
 static int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision);
+static s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3);
 static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
 static void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
 
@@ -225,20 +233,7 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
 /*0x0*/ static const char str_0[] = " FInished Is SEt for Some Reason \n";
 /*0x24*/ static const char str_24[] = " FInished Is SEt for Some Reason \n";
 
-
 // offset: 0x398 | func: 2 | export: 1
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_control.s")
-#else
-
-static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2);
-void dll_732_func_1C38(Object* self);
-static void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
-static void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
-static void dll_732_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer);
-static void dll_732_func_3748(Object* self, DLL732_Data* objData);
-static s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3);
-
 void dll_732_control(Object* self) {
     DLL732_Setup* objSetup;
     Object* player;
@@ -460,14 +455,6 @@ void dll_732_control(Object* self) {
                 gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->unk3C8);
             } else if (objData->unk3CC > 0.1f) {
                 diPrintf(" \tRAN OUT OF FUEL \t");
-
-                /*
-                    Other strings that need placing:
-                    " HIT OBJECT %i \n"
-                    " Bike Can Mount %i "
-                    "tracks %d\n"
-                    "ident %d\n"
-                */
                 
                 if (rand_next(0, 0xA) == 0) {
                     gDLL_6_AMSFX->vtbl->play(self, 0xB38, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -539,8 +526,6 @@ static const char str_extra0[] = " HIT OBJECT %i \n";
 static const char str_extra1[] = " Bike Can Mount %i ";
 static const char str_extra2[] = "tracks %d\n";
 static const char str_extra3[] = "ident %d\n";
-
-#endif
 
 // offset: 0x123C | func: 3 | export: 2
 void dll_732_update(Object* self) {
@@ -861,10 +846,6 @@ void dll_732_func_1DB8(s32 arg0, s32 arg1) {
 
 }
 
-// /*0x10C*/ static u32 data_10C[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff };
-
-
-// #include "prevent_bss_reordering2.h"
 #include "prevent_bss_reordering.h"
 
 // offset: 0x1DC8 | func: 21
@@ -965,13 +946,6 @@ void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
 }
 
 // offset: 0x2340 | func: 23
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_2340.s")
-#else
-
-static void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision);
-
-//Matches on decomp.me, but causes a diff in dll_732_setup somehow?
 void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
     MtxF sp130;
     MtxF spF0;
@@ -1219,12 +1193,6 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     
     objData->unk3E0 -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
 }
-
-
-
-
-
-#endif
 
 // offset: 0x2E64 | func: 24
 void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
