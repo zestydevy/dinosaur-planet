@@ -29,12 +29,17 @@ typedef struct {
     f32 unk30;
 } DLL732_Data2AC;
 
+typedef enum {
+    RACETRACK_0_CloudRunner_Fortress,
+    RACETRACK_1_Golden_Plains
+} DLL732_Racetracks;
+
 typedef struct {
     ObjSetup base;
-    u8 unk18;
+    u8 yaw;
     u8 unk19;
-    s16 unk1A;
-    u8 unk1C;
+    s16 gamebitLocked;
+    u8 racetrackIdx;
     u8 unk1D;
     s16 unk1E;
     u8 unk20;
@@ -44,14 +49,14 @@ typedef struct {
     SRT unk0;
     RaceStruct unk18;
     s8 _unk3C[0x48 - 0x3C];
-    u8 unk48;
+    u8 racetrackIdx;                //See `DLL732_Racetracks`
     u8 unk49;
     DLL27_Data unk4C;
     DLL732_Data2AC unk2AC;
     DLL732_Unk_2E0 unk2E0;
-    DLL_IModgfx* unk2F4; //DLL
-    DLL_IModgfx* unk2F8; //DLL
-    s16* unk2FC; //soundIDs?
+    DLL_IModgfx* unk2F4;
+    DLL_IModgfx* unk2F8;
+    s16* gamebitIDs;
     s8 _unk300[0x330 - 0x300];
     Vec3f unk330[6];
     s8 _unk378[0x384 - 0x378];
@@ -66,16 +71,14 @@ typedef struct {
     u32 unk3BC; //soundHandle
     u32 unk3C0; //soundHandle
     u32 unk3C4; //soundHandle
-    s32 unk3C8; //total damage taken?
-    f32 unk3CC;
-    f32 unk3D0;
-    f32 unk3D4;
+    s32 fuelAmount;
+    Vec3f unk3CC;
     s8 _unk3D8[0x3DC - 0x3D8];
-    s16 unk3DC;
-    s16 unk3DE;
-    s16 unk3E0; //yaw
-    s16 unk3E2; //pitch
-    s16 unk3E4; //roll
+    s16 yawOffset;
+    s16 rollOffset;
+    s16 yaw;
+    s16 pitch;
+    s16 roll;
     s16 unk3E6;
     s8 _unk3E8[0x3EA - 0x3E8];
     s16 unk3EA;
@@ -91,8 +94,8 @@ typedef struct {
 } DLL732_Data; //0x3F8
 
 /*0x0*/ static s16 data_0[][3] = {
-    { 0x0497, 0x0498, 0x049c },
-    { 0x0479, 0x077e, 0x077f }
+    { BIT_CF_Race_Started, BIT_498, BIT_49C },
+    { BIT_GP_Sharpclaw_Jetbike_Cutscene2, BIT_77E, BIT_77F }
 };
 /*0xC*/ static u32 data_C[][3] = {
     {0x00030c60, 0x00030c60, 0x00030c60}, 
@@ -127,7 +130,8 @@ typedef struct {
 /*0x4*/ static Texture* bss_4;
 /*0x8*/ static Texture* bss_8;
 /*0x10*/ static SRT bss_10;
-// /*0x28*/ static u32 bss_28;
+
+#include "prevent_bss_reordering.h"
 
 static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2);
 void dll_732_func_1C38(Object* self);
@@ -140,7 +144,7 @@ static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s3
 static void dll_732_func_3748(Object* self, DLL732_Data* objData);
 static int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 static void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision);
-static s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3);
+static s32 dll_732_func_3DAC(Object* self, DLL732_Data* arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3);
 static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
 static void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
 
@@ -157,6 +161,7 @@ static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2) {
     return gDLL_4_Race->vtbl->func5(&objData->unk0, &objData->unk18, arg2, 1, 0, objData2->unk3F4_0);
 }
 
+
 // offset: 0xE4 | ctor
 void dll_732_ctor(void* dll) { }
 
@@ -168,7 +173,7 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
     s32 pad;
     s32 pad2;
     s32 var_v0;
-    DLL732_Setup* objSetup; //40
+    DLL732_Setup* objSetup;
     u8 data_108[] = {5, 5, 5, 5};
     DLL732_Data* objData;
 
@@ -176,10 +181,10 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
     objData = self->data;
     bzero(objData, sizeof(DLL732_Data));
     
-    objData->unk3E0 = (setup->unk18 & 0xFF) << 8;
+    objData->yaw = (setup->yaw & 0xFF) << 8;
     objData->unk2F4 = 0;
     objData->unk2F8 = 0;
-    self->srt.yaw = objData->unk3E0;
+    self->srt.yaw = objData->yaw;
 
     self->animCallback = dll_732_func_3860;
     
@@ -208,7 +213,7 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
     objData->unk18.unk10 = -1;
     objData->unk18.unk14 = -1;
     objData->unk18.unk18 = -1;
-    objData->unk48 = setup->unk1C;
+    objData->racetrackIdx = setup->racetrackIdx;
     objData->unk49 = setup->unk1D;
     
     objData->unk0.transl.x = self->srt.transl.x;
@@ -227,7 +232,7 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
     }
     objData->unk3EF |= var_v0;
     
-    objData->unk2FC = &data_0[setup->unk1C][0];
+    objData->gamebitIDs = &data_0[setup->racetrackIdx][0];
 }
 
 /*0x0*/ static const char str_0[] = " FInished Is SEt for Some Reason \n";
@@ -276,18 +281,18 @@ void dll_732_control(Object* self) {
     objData->unk3A0.f[2] = self->srt.transl.f[2];
     
     if (objData->unk3EF & 0x10) {
-        objData->unk3EF &= 0xFFEF;
+        objData->unk3EF &= ~0x10;
         if (!(objData->unk3EF & 0x20)) {
             innerData->unkC.f[0] = 0.0f;
             innerData->unkC.f[1] = 0.0f;
             innerData->unkC.f[2] = -2.0f;
-            objData->unk3DC = 0;
-            objData->unk3DE = 0;
+            objData->yawOffset = 0;
+            objData->rollOffset = 0;
             objData->unk3F2 = 0;
             objData->unk3E6 = 0;
-            objData->unk3E0 = self->srt.yaw;
-            objData->unk3E2 = self->srt.pitch;
-            objData->unk3E4 = self->srt.roll;
+            objData->yaw = self->srt.yaw;
+            objData->pitch = self->srt.pitch;
+            objData->roll = self->srt.roll;
             dll_732_func_3FE0(self, objData);
         }
     }
@@ -298,9 +303,9 @@ void dll_732_control(Object* self) {
             self->objhitInfo->unk5B = 0;
             self->objhitInfo->unk5C = 0;
             objData->unk3ED = 0;
-            self->unkAF &= 0xFFF7;
+            self->unkAF &= ~8;
 
-            if ((objSetup->unk1A == NO_GAMEBIT) || (main_get_bits(objSetup->unk1A) != 0)) {
+            if ((objSetup->gamebitLocked == NO_GAMEBIT) || (main_get_bits(objSetup->gamebitLocked) != 0)) {
                 self->unkAF &= ~0x10;
             } else {
                 self->unkAF |= 0x10;
@@ -320,7 +325,7 @@ void dll_732_control(Object* self) {
                     dx = player->srt.transl.x - sp74.z;
                     dz = player->srt.transl.z - sp74.x;
                     if ((SQ(dx) + SQ(dz)) < 100.0f) {
-                        self->unkAF &= 0xFFF7;
+                        self->unkAF &= ~8;
                         objData->unk3ED = 1;
                     }
                 }
@@ -360,7 +365,7 @@ void dll_732_control(Object* self) {
             objData->unk18.unk14 = -1;
             objData->unk18.unk18 = -1;
             objData->unk18.unk1C = 0;
-            if (main_get_bits(objData->unk2FC[0]) != 0) {
+            if (main_get_bits(objData->gamebitIDs[0]) != 0) {
                 flagValue = 8;
             } else {
                 flagValue = 0;
@@ -370,12 +375,12 @@ void dll_732_control(Object* self) {
                 if (objData->unk3EF & 0x20) {
                     dll_732_func_1C38(self);
                 } else {
-                    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->unk1C);
+                    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->racetrackIdx);
                 }
                 gDLL_4_Race->vtbl->func9(&objData->unk18);
             }
-        } else if (main_get_bits(objData->unk2FC[1]) != 0) {
-            objData->unk3EF &= 0xFFF7;
+        } else if (main_get_bits(objData->gamebitIDs[1]) != 0) {
+            objData->unk3EF &= ~8;
         }
         dll_732_func_3748(self, objData);
 
@@ -398,13 +403,13 @@ void dll_732_control(Object* self) {
                         sp44->unkC.f[0] = 0.0f;
                         sp44->unkC.f[1] = 0.0f;
                         sp44->unkC.f[2] = -2.0f;
-                        objData->unk3DC = 0;
-                        objData->unk3DE = 0;
+                        objData->yawOffset = 0;
+                        objData->rollOffset = 0;
                         objData->unk3F2 = 0;
                         objData->unk3E6 = 0;
-                        objData->unk3E0 = self->srt.yaw;
-                        objData->unk3E2 = self->srt.pitch;
-                        objData->unk3E4 = self->srt.roll;
+                        objData->yaw = self->srt.yaw;
+                        objData->pitch = self->srt.pitch;
+                        objData->roll = self->srt.roll;
                         dll_732_func_3FE0(self, objData);
                         func_80058680(self, self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &spC0, 0);
                         self->srt.transl.f[1] -= spC0;
@@ -442,41 +447,41 @@ void dll_732_control(Object* self) {
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++){
                 dll_732_func_3618(self, &objData->unk2E0, 0, updateIdx);
                 dll_732_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
-                objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
-                self->srt.yaw = objData->unk3E0 + objData->unk3DC;
-                self->srt.roll = objData->unk3E4 + objData->unk3DE;
+                objData->yawOffset += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->yawOffset) >> 4;
+                objData->rollOffset += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->rollOffset) >> 4;
+                self->srt.yaw = objData->yaw + objData->yawOffset;
+                self->srt.roll = objData->roll + objData->rollOffset;
             }
             
             sp44 = &objData->unk2AC;
-            if (objData->unk3C8 >= 0) {
-                objData->unk3C8 = objData->unk3C8 - (s32) (VECTOR_MAGNITUDE(sp44->unkC) * gUpdateRateF * 1.5f) - gUpdateRate;
-                diPrintf(" FUEL AMT %i \n", objData->unk3C8 / 10);
-                gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->unk3C8);
-            } else if (objData->unk3CC > 0.1f) {
+            if (objData->fuelAmount >= 0) {
+                objData->fuelAmount = objData->fuelAmount - (s32) (VECTOR_MAGNITUDE(sp44->unkC) * gUpdateRateF * 1.5f) - gUpdateRate;
+                diPrintf(" FUEL AMT %i \n", objData->fuelAmount / 10);
+                gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->fuelAmount);
+            } else if (objData->unk3CC.f[0] > 0.1f) {
                 diPrintf(" \tRAN OUT OF FUEL \t");
                 
-                if (rand_next(0, 0xA) == 0) {
+                if (rand_next(0, 10) == 0) {
                     gDLL_6_AMSFX->vtbl->play(self, 0xB38, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
-                objData->unk3CC *= 0.95f;
-                objData->unk3D0 *= 0.95f;
-                objData->unk3D4 *= 0.95f;
-                if (objData->unk3CC < 0.1f) {
+                objData->unk3CC.f[0] *= 0.95f;
+                objData->unk3CC.f[1] *= 0.95f;
+                objData->unk3CC.f[2] *= 0.95f;
+                if (objData->unk3CC.f[0] < 0.1f) {
                     gDLL_1_cmdmenu->vtbl->energy_bar_free();
                     gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                    objData->unk3CC = 0.01f;
-                    objData->unk3D0 = 0.01f;
-                    objData->unk3D4 = 0.01f;
+                    objData->unk3CC.f[0] = 0.01f;
+                    objData->unk3CC.f[1] = 0.01f;
+                    objData->unk3CC.f[2] = 0.01f;
                 }
             }
         } else {
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++) {
                 dll_732_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                objData->unk3DC += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->unk3DC) >> 4;
-                objData->unk3DE += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->unk3DE) >> 4;
-                self->srt.yaw = objData->unk3E0 + objData->unk3DC;
-                self->srt.roll = objData->unk3E4 + objData->unk3DE;
+                objData->yawOffset += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->yawOffset) >> 4;
+                objData->rollOffset += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->rollOffset) >> 4;
+                self->srt.yaw = objData->yaw + objData->yawOffset;
+                self->srt.roll = objData->roll + objData->rollOffset;
             }
         }
         
@@ -568,9 +573,9 @@ void dll_732_update(Object* self) {
     }
     
     if (!(objData->unk3EF & 0x20)) {
-        bss_10.yaw = -objData->unk3E0;
-        bss_10.pitch = -objData->unk3E2;
-        bss_10.roll = -objData->unk3E4;
+        bss_10.yaw = -objData->yaw;
+        bss_10.pitch = -objData->pitch;
+        bss_10.roll = -objData->roll;
         matrix_from_srt_reversed(&sp9C, &bss_10);
         self->velocity.f[0] = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
         self->velocity.f[1] = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
@@ -689,8 +694,8 @@ u8 dll_732_func_18FC(Object* self, s32 arg1) {
         return 0;
     }
 
-    if (objSetup->unk1A != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->unk1A) == FALSE) {
+    if (objSetup->gamebitLocked != NO_GAMEBIT) {
+        if (main_get_bits(objSetup->gamebitLocked) == FALSE) {
             return 0;
         }
     }
@@ -754,10 +759,10 @@ void dll_732_func_1A68(Object* self, s32 arg1) {
     
     objData->unk3F0 = arg1;
     if ((arg1 == 2) && !(objData->unk3EF & 0x20)) {
-        objData->unk3C8 = 0x2710;
-        objData->unk3CC = 2.0f;
-        objData->unk3D0 = 4.0f;
-        objData->unk3D4 = 4.6f;
+        objData->fuelAmount = 0x2710;
+        objData->unk3CC.f[0] = 2.0f;
+        objData->unk3CC.f[1] = 4.0f;
+        objData->unk3CC.f[2] = 4.6f;
         gDLL_1_cmdmenu->vtbl->energy_bar_create(0, 13000, TEXTABLE_569, TEXTABLE_56A, 1);
     }
 }
@@ -766,7 +771,7 @@ void dll_732_func_1A68(Object* self, s32 arg1) {
 void dll_732_func_1B10(Object* self, f32* arg1, s32* arg2) {
     DLL732_Data* objData = self->data;
     
-    *arg1 = objData->unk3DC / 2500.0f;
+    *arg1 = objData->yawOffset / 2500.0f;
     
     if (*arg1 > 1.0f) {
         *arg1 = 1.0f;
@@ -774,7 +779,7 @@ void dll_732_func_1B10(Object* self, f32* arg1, s32* arg2) {
         *arg1 = -1.0f;
     }
     
-    *arg2 = objData->unk3DC < 0;
+    *arg2 = objData->yawOffset < 0;
 }
 
 // offset: 0x1B9C | func: 17 | export: 16
@@ -811,14 +816,14 @@ void dll_732_func_1C38(Object* self) {
     
     switch (self->id) {
     default:
-    case 0x38D:
-        checkpointUID = data_C[objSetup->unk1C][0];
+    case OBJ_CRSnowClawBike:
+        checkpointUID = data_C[objSetup->racetrackIdx][0];
         break;
-    case 0x38E:
-        checkpointUID = data_C[objSetup->unk1C][1];
+    case OBJ_CRSnowClawBike2:
+        checkpointUID = data_C[objSetup->racetrackIdx][1];
         break;
-    case 0x4D4:
-        checkpointUID = data_C[objSetup->unk1C][2];
+    case OBJ_CRSnowClawBike3:
+        checkpointUID = data_C[objSetup->racetrackIdx][2];
         break;
     }
     
@@ -833,7 +838,7 @@ void dll_732_func_1C38(Object* self) {
     self->srt.yaw = checkpointSetup->yaw << 8;
 
     dll_732_func_3FE0(self, objData);
-    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->unk1C);
+    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->racetrackIdx);
     
     objData->unk0.transl.x = self->srt.transl.x;
     objData->unk0.transl.y = self->srt.transl.y;
@@ -846,22 +851,21 @@ void dll_732_func_1DB8(s32 arg0, s32 arg1) {
 
 }
 
-#include "prevent_bss_reordering.h"
 
 // offset: 0x1DC8 | func: 21
 void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
 /*0x28*/ static u32 bss_28;
-    Vertex* spA4; //A4
-    Gfx* spA0; //A0
-    Triangle* sp9C; //9C
+    Vertex* spA4;
+    Gfx* spA0;
+    Triangle* sp9C;
     s32 pad1[6];
-    SRT sp6C; //6C
+    SRT sp6C;
     s32 i;
     f32 var_fv0;
     s32 pad2;
-    DLL732_Data2AC* temp_v1; //3C
-    u32 data_10C[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff};
-    s32 volume; //48
+    DLL732_Data2AC* temp_v1;
+    u32 data_10C[] = { 6, 105, 105, 255};
+    s32 volume;
     s32 pad3;
 
     temp_v1 = &objData->unk2AC;
@@ -910,8 +914,8 @@ void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs
     sp6C.roll = 0;
     sp6C.scale = 1.0f;
     if (objData->unk39C < -1.2f) {
-        data_10C[1] += rand_next(0, 0x9B);
-        data_10C[2] += rand_next(0, 0x9B);
+        data_10C[1] += rand_next(0, 155);
+        data_10C[2] += rand_next(0, 155);
         volume = ((0.0f - objData->unk39C) * 21.0f);
         if (objData->unk3F3 & 1) {
             gDLL_6_AMSFX->vtbl->play(self, 0x292, volume, &bss_28, NULL, 0, NULL);
@@ -965,7 +969,7 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     Vec3f sp6C;
     Vec3f sp60;
     s32 pad2;
-    DLL27_Data* collision; //44
+    DLL27_Data* collision;
     s32 angle1;
     s32 angle2;
     s32 i;
@@ -980,26 +984,26 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         }
     }
 
-    temp3 = -objData->unk3CC;
+    temp3 = -objData->unk3CC.f[0];
     arg2->unkC.f[0] = (arg2->unkC.x < temp3) ? temp3 : (
-                      (objData->unk3CC < arg2->unkC.x) ? objData->unk3CC : arg2->unkC.x);
+                      (objData->unk3CC.f[0] < arg2->unkC.x) ? objData->unk3CC.f[0] : arg2->unkC.x);
     
-    temp3 = -objData->unk3D0;
+    temp3 = -objData->unk3CC.f[1];
     arg2->unkC.f[1] = (arg2->unkC.f[1] < temp3) ? temp3 : (
-                      (objData->unk3D0 < arg2->unkC.f[1]) ? objData->unk3D0 : arg2->unkC.f[1]);
+                      (objData->unk3CC.f[1] < arg2->unkC.f[1]) ? objData->unk3CC.f[1] : arg2->unkC.f[1]);
 
-    temp3 = -objData->unk3D4;
+    temp3 = -objData->unk3CC.f[2];
     arg2->unkC.f[2] = (arg2->unkC.f[2] < temp3) ? temp3 : (
-                      (objData->unk3D4 < arg2->unkC.f[2]) ? objData->unk3D4 : arg2->unkC.f[2]);
+                      (objData->unk3CC.f[2] < arg2->unkC.f[2]) ? objData->unk3CC.f[2] : arg2->unkC.f[2]);
     
     
-    bss_10.yaw = objData->unk3E0;
-    bss_10.pitch = objData->unk3E2;
-    bss_10.roll = objData->unk3E4;
+    bss_10.yaw = objData->yaw;
+    bss_10.pitch = objData->pitch;
+    bss_10.roll = objData->roll;
     matrix_from_srt(&sp130, &bss_10);
-    bss_10.yaw = -objData->unk3E0;
-    bss_10.pitch = -objData->unk3E2;
-    bss_10.roll = -objData->unk3E4;
+    bss_10.yaw = -objData->yaw;
+    bss_10.pitch = -objData->pitch;
+    bss_10.roll = -objData->roll;
     matrix_from_srt_reversed(&spF0, &bss_10);
     
     if (!(objData->unk3EF & 4)) {
@@ -1073,7 +1077,7 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
             var_fa0 = arg2->unkC.f[2];
         }
         
-        temp_fv0 = arg2->unk2C * sp84.y * (4.0f + SQ(var_fa0)); //SQ should be on temp?
+        temp_fv0 = arg2->unk2C * sp84.y * (4.0f + SQ(var_fa0));
         if (arg2->unkC.f[0] < 0.0f) {
             if (temp_fv0 < 0.0f) {
                 temp_fv0 = -temp_fv0;
@@ -1106,7 +1110,7 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     }
 
     temp2 = SQ(arg2->unkC.f[2]);
-    temp_fv0 = arg2->unk30 * temp2; //SQ on temp?
+    temp_fv0 = arg2->unk30 * temp2;
     if (arg2->unkC.f[2] > 0.0f) {
         temp_fv0 = -temp_fv0;
     }
@@ -1173,7 +1177,7 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
             sp6C.f[2] = 0.0f;
         }
         
-        bss_10.yaw = -objData->unk3E0;
+        bss_10.yaw = -objData->yaw;
         bss_10.pitch = 0;
         bss_10.roll = 0;
         matrix_from_srt_reversed(&spB0, &bss_10);
@@ -1181,17 +1185,17 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         
         angle1 = M_90_DEGREES - arctan2_f(sp6C.f[1], sp6C.f[2]);
         angle2 = -(M_90_DEGREES - arctan2_f(sp6C.f[1], sp6C.f[0]));
-        angle1 -= (objData->unk3E2 & 0xFFFF);
+        angle1 -= (objData->pitch & 0xFFFF);
         CIRCLE_WRAP(angle1);
-        objData->unk3E2 += (((angle1 >> 2) / 3) * (s32) updateRate);
-        self->srt.pitch = objData->unk3E2 + objData->unk3E6;
+        objData->pitch += (((angle1 >> 2) / 3) * (s32) updateRate);
+        self->srt.pitch = objData->pitch + objData->unk3E6;
         
-        angle2 -= (objData->unk3E4 & 0xFFFF);
+        angle2 -= (objData->roll & 0xFFFF);
         CIRCLE_WRAP(angle2);
-        objData->unk3E4 += (((angle2 >> 2) / 3) * (s32) updateRate);
+        objData->roll += (((angle2 >> 2) / 3) * (s32) updateRate);
     }
     
-    objData->unk3E0 -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
+    objData->yaw -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x2E64 | func: 24
@@ -1235,14 +1239,14 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         arg2->unkC.f[2] = -5.8f;
     }
     
-    bss_10.yaw = objData->unk3E0;
-    bss_10.pitch = objData->unk3E2;
-    bss_10.roll = objData->unk3E4;
+    bss_10.yaw = objData->yaw;
+    bss_10.pitch = objData->pitch;
+    bss_10.roll = objData->roll;
     matrix_from_srt(&sp120, &bss_10);
     
-    bss_10.yaw = -objData->unk3E0;
-    bss_10.pitch = -objData->unk3E2;
-    bss_10.roll = -objData->unk3E4;
+    bss_10.yaw = -objData->yaw;
+    bss_10.pitch = -objData->pitch;
+    bss_10.roll = -objData->roll;
     matrix_from_srt_reversed(&spE0, &bss_10);
     
     vec3_transform(&spE0, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp80.f[0], &sp80.f[1], &sp80.f[2]);
@@ -1333,7 +1337,7 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
             sp74.f[2] = 0.0f;
         }
         
-        bss_10.yaw = -objData->unk3E0;
+        bss_10.yaw = -objData->yaw;
         bss_10.pitch = 0;
         bss_10.roll = 0;
         matrix_from_srt_reversed(&spA0, &bss_10);
@@ -1341,16 +1345,16 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         
         var_s0 = M_90_DEGREES - arctan2_f(sp74.f[1], sp74.f[2]);
         temp_a1 = -(M_90_DEGREES - arctan2_f(sp74.f[1], sp74.f[0]));
-        var_s0 -= (objData->unk3E2 & 0xFFFF);
+        var_s0 -= (objData->pitch & 0xFFFF);
         CIRCLE_WRAP(var_s0);
-        objData->unk3E2 += ((var_s0 >> 2) / 3) * (s32)updateRate;
-        self->srt.pitch = objData->unk3E2 + objData->unk3E6;
-        temp_a1 -= (objData->unk3E4 & 0xFFFF);
+        objData->pitch += ((var_s0 >> 2) / 3) * (s32)updateRate;
+        self->srt.pitch = objData->pitch + objData->unk3E6;
+        temp_a1 -= (objData->roll & 0xFFFF);
         CIRCLE_WRAP(temp_a1);
-        objData->unk3E4 += ((temp_a1 >> 2) / 3) * (s32)updateRate;
+        objData->roll += ((temp_a1 >> 2) / 3) * (s32)updateRate;
     }
     
-    objData->unk3E0 -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
+    objData->yaw -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x3618 | func: 25
@@ -1363,7 +1367,7 @@ void dll_732_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s3
 void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch) {
     SRT sp20;
 
-    sp20.yaw = objData->unk3E0;
+    sp20.yaw = objData->yaw;
     sp20.pitch = usePitch ? self->srt.pitch : 0;
     sp20.roll = useRoll ? self->srt.roll : 0;
     sp20.scale = 1.0f;
@@ -1372,7 +1376,7 @@ void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addTo
     sp20.transl.z = self->srt.transl.z;
     
     if (addToYaw) {
-        sp20.yaw += objData->unk3DC;
+        sp20.yaw += objData->yawOffset;
     }
     
     matrix_from_srt(arg2, &sp20);
@@ -1400,12 +1404,12 @@ void dll_732_func_3748(Object* self, DLL732_Data* objData) {
         objData->unk384 = 0.75f;
         return;
     case Damage_Type_1D:
-        objData->unk3C8 += (hitDamage * 100);
-        objData->unk3CC = 2.0f;
-        objData->unk3D0 = 4.0f;
-        objData->unk3D4 = 4.6f;
-        if (objData->unk3C8 > 13000) {
-            objData->unk3C8 = 13000;
+        objData->fuelAmount += (hitDamage * 100);
+        objData->unk3CC.f[0] = 2.0f;
+        objData->unk3CC.f[1] = 4.0f;
+        objData->unk3CC.f[2] = 4.6f;
+        if (objData->fuelAmount > 13000) {
+            objData->fuelAmount = 13000;
         }
         break;
     }
@@ -1516,7 +1520,7 @@ void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision
 }
 
 // offset: 0x3DAC | func: 30
-s32 dll_732_func_3DAC(Object* self, s32 arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3) {
+s32 dll_732_func_3DAC(Object* self, DLL732_Data* arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3) {
     f32 dx;
     f32 dz;
     s32 sp3C;
