@@ -12,6 +12,8 @@
 #include "unktypes.h"
 #include "dll.h"
 
+#include "prevent_bss_reordering.h"
+
 typedef struct {
     f32 unk0;
     f32 unk4;
