@@ -127,8 +127,9 @@ typedef struct {
 /*0x4*/ static Texture* bss_4;
 /*0x8*/ static Texture* bss_8;
 /*0x10*/ static SRT bss_10;
-/*0x28*/ static u32 bss_28;
+// /*0x28*/ static u32 bss_28;
 
+static void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
 static void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1);
 static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch);
 static int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
@@ -601,13 +602,6 @@ void dll_732_update(Object* self) {
 }
 
 // offset: 0x1534 | func: 4 | export: 3
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_print.s")
-#else
-
-static void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
-
-//Matches, but needs dll_732_func_1DC8 static
 void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DLL732_Data* objData;
     s32 sp38;
@@ -640,7 +634,6 @@ void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         func_80031F6C(self, 0, &objData->unk388.x, &objData->unk388.y, &objData->unk388.z, 0);
     }
 }
-#endif
 
 // offset: 0x1724 | func: 5 | export: 4
 void dll_732_free(Object* self, s32 onlySelf) {
@@ -868,14 +861,13 @@ void dll_732_func_1DB8(s32 arg0, s32 arg1) {
 
 }
 
-/*0x10C*/ static u32 data_10C[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff };
+// /*0x10C*/ static u32 data_10C[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff };
+
+
+// #include "prevent_bss_reordering2.h"
+#include "prevent_bss_reordering.h"
 
 // offset: 0x1DC8 | func: 21
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/732_CRSnowClawBike3/dll_732_func_1DC8.s")
-#else
-
-//Matches on decomp.me, but causes a diff in dll_732_control somehow?
 void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
 /*0x28*/ static u32 bss_28;
     Vertex* spA4; //A4
@@ -956,7 +948,6 @@ void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs
     *vtxs = spA4;
     *pols = sp9C;
 }
-#endif
 
 // offset: 0x22BC | func: 22
 void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
@@ -980,7 +971,7 @@ void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
 
 static void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision);
 
-//Matches on decomp.me, but causes a diff in dll_732_control somehow?
+//Matches on decomp.me, but causes a diff in dll_732_setup somehow?
 void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
     MtxF sp130;
     MtxF spF0;
