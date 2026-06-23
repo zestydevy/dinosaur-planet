@@ -504,7 +504,7 @@ s16 dll_702_get_fsa_anim_state(Object* self) {
 }
 
 // offset: 0xB88 | func: 9 | export: 8
-void dll_702_func_B88(Object *self, s32 arg1) { 
+void dll_702_Baddie_send_message(Object *self, u8 message) { 
 
 }
 

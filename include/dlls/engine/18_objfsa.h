@@ -15,11 +15,6 @@ typedef enum {
     OBJFSA_FLAG_2000000 = 0x2000000
 } ObjFSAFlags;
 
-typedef struct {
-/*0*/ u8 _unk0[2];
-/*2*/ u16 soundID;
-} ObjFSA_Func_11BC_Struct;
-
 struct ObjFSA_Data;
 
 /**
@@ -130,8 +125,8 @@ DLL_INTERFACE(DLL_18_objfsa) {
 /*10*/ void (*func10)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
        // turnDuration = duration of the turn in 3rds of a second.
 /*11*/ void (*turn_to_target)(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 turnDuration);
-/*12*/ void (*func12)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4);
-/*13*/ void (*func13)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4, f32 arg5, u8 volume);
+/*12*/ void (*func12)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 *soundIDs);
+/*13*/ void (*func13)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 *soundIDs, f32 arg5, u8 volume);
 /*14*/ void (*func14)(Object *obj, ObjFSA_Data *data, s32 arg2);
 /*15*/ void (*func15)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
 /*16*/ void (*func16)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
