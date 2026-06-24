@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -21,18 +22,18 @@ typedef struct {
 
 typedef struct {
     Vec3f unk0;
-    Vec3f unkC;
-    f32 unk18;
+    Vec3f velocity; //Bike's objectSpace velocity (Z points out the back of the bike, so forward velocity unit vector is {0,0,-1}) 
+    f32 maxAccelerationPerFrame; //Per sixtieth of a second
     f32 unk1C;
-    f32 unk20;
+    f32 maxAcceleration;         //Per second
     f32 unk24;
     f32 unk28;
     f32 unk2C;
     f32 unk30;
-} DLL732_Data2AC;
+} CRSnowBike_Motion;
 
 typedef enum {
-    STATE_0,
+    STATE_0_Parked,
     STATE_1,
     STATE_2,
     STATE_3
@@ -40,8 +41,8 @@ typedef enum {
 
 typedef enum {
     CRSnowBike_FLAG_0 = 0,
-    CRSnowBike_FLAG_1 = 1,
-    CRSnowBike_FLAG_2 = 2,
+    CRSnowBike_FLAG_1_Finished = 1,
+    CRSnowBike_FLAG_2_Driving_In_Void = 2,
     CRSnowBike_FLAG_4_Grounded = 4,
     CRSnowBike_FLAG_8_Race_Started = 8,
     CRSnowBike_FLAG_10_Was_In_Sequence = 0x10,
@@ -49,19 +50,44 @@ typedef enum {
 } CRSnowBike_Flags;
 
 typedef enum {
+    CRSnowBike_SOUNDFLAG_0 = 0,
+    CRSnowBike_SOUNDFLAG_Engine = 1,
+    CRSnowBike_SOUNDFLAG_Hiss = 2,
+    CRSnowBike_SOUNDFLAG_Jets = 4,
+    CRSnowBike_SOUNDFLAG_8 = 8
+} CRSnowBike_SoundFlags;
+
+typedef struct {
+    s16 started;
+    s16 ended;
+    s16 unk;
+} CRSnowBike_Gamebits;
+
+typedef enum {
     RACETRACK_0_CloudRunner_Fortress,
     RACETRACK_1_Golden_Plains
 } CRSnowBike_Racetracks;
 
+#define PLAYER_NOT_NEARBY 0
+typedef enum {
+    SIDE_LEFT = 1,
+    SIDE_RIGHT = 2
+} CRSnowBike_Sides;
+
+typedef enum {
+    CRSnowBike_ANIMCMD_2_Lose_Race = 2,
+    CRSnowBike_ANIMCMD_3_Free_Fuel_Gauge = 3
+} CRSnowBike_AnimCommands;
+
 typedef struct {
     ObjSetup base;
     u8 yaw;
-    u8 unk19;
+    u8 isSharpClawBike;
     s16 gamebitUnlocked;
     u8 racetrackIdx;
     u8 unk1D;
-    s16 gamebitA;
-    u8 unk20;
+    s16 gamebitFinished;
+    u8 yJoySharpClaw;
 } CRSnowBike_Setup;
 
 typedef struct {
@@ -71,102 +97,113 @@ typedef struct {
     u8 racetrackIdx;                //See `DLL732_Racetracks`
     u8 unk49;
     DLL27_Data collision;
-    DLL732_Data2AC unk2AC;
-    DLL732_Unk_2E0 unk2E0;
-    DLL_IModgfx* unk2F4;
-    DLL_IModgfx* unk2F8;
-    s16* gamebitIDs;
+    CRSnowBike_Motion unk2AC;
+    DLL732_Unk_2E0 steering;
+    DLL_IModgfx* modGfxDLLFlames;
+    DLL_IModgfx* modGfxDLLWaves;
+    CRSnowBike_Gamebits* gamebitIDs;
     s8 _unk300[0x330 - 0x300];
-    Vec3f unk330[6];
-    s8 _unk378[0x384 - 0x378];
-    f32 unk384;
-    Vec3f unk388;
-    f32 unk394;
-    f32 unk398;
-    f32 unk39C;
-    Vec3f unk3A0; //previous position?
+    Vec3f wsCollisionCoords[5]; //worldSpace coords of dCollisionPoints' collisions
+    s8 _unk36C[0x384 - 0x36C];
+    f32 stallFactor;
+    Vec3f attachPointCoords;
+    f32 soundFactorRumble;
+    f32 soundFactorJets;
+    f32 forwardSpeed;
+    Vec3f prevTranslate;        //worldSpace coordinates at the start of the tick
     Vec3f unk3AC;
-    u32 soundHandle1;
-    u32 soundHandle2;
-    u32 soundHandle3;
-    u32 soundHandle4;
+    u32 soundHandleEngine;
+    u32 soundHandleJets;
+    u32 soundHandleHiss;
+    u32 soundHandleRumble;
     s32 fuelAmount;
-    Vec3f unk3CC;
+    Vec3f maxVelocity;
     s8 _unk3D8[0x3DC - 0x3D8];
     s16 yawOffset;
     s16 rollOffset;
     s16 yaw;
     s16 pitch;
     s16 roll;
-    s16 unk3E6;
+    s16 pitchOffset;    //Tilt forward/back while airborne, based on joyY
     s8 _unk3E8[0x3EA - 0x3E8];
-    s16 unk3EA;
-    s8 unk3EC;
-    u8 unk3ED;
-    u8 unk3EE;
+    s16 fxTimer;
+    s8 stallFrames;
+    u8 mountingFrom;
+    u8 numCollisionPoints;
     u8 flags;
     s8 state;
     u8 unk3F1;
-    s8 unk3F2;
+    s8 framesInAir;
     s8 unk3F3;
     u8 unk3F4_0 : 1;
 } CRSnowBike_Data;
 
-/*0x0*/ static s16 dRaceGamebits[][3] = {
+/*0x0*/ static CRSnowBike_Gamebits dRaceGamebits[] = {
     { BIT_CF_Race_Started, BIT_498, BIT_49C },
     { BIT_GP_Sharpclaw_Jetbike_Cutscene2, BIT_77E, BIT_77F }
 };
-/*0xC*/ static u32 data_C[][3] = {
+/*0xC*/ static u32 dCheckpointUIDs[][3] = {
     {0x00030c60, 0x00030c60, 0x00030c60}, 
     {0x00034dd3, 0x00034dc7, 0x00034dc9}
 };
-/*0x24*/ static Vec3f data_24[] = {
+/*0x24*/ static Vec3f dTerrainTestPoints[] = {
     VEC3F(-6.5, 0, -7),
     VEC3F(6.5, 0, -7),
     VEC3F(6.5, 0, 7),
     VEC3F(-6.5, 0, 7)
 };
-/*0x54*/ static f32 data_54[] = {
+/*0x54*/ static f32 dTerrainRadii[] = {
     0.0f, 0.0f, 0.0f, 0.0f
 };
-/*0x64*/ static Vec3f data_64[] = {
+/*0x64*/ static Vec3f dCollisionPoints[] = {
     VEC3F(0, 1, -18), 
     VEC3F(-6.5, 1, -7), 
     VEC3F(6.5, 1, -7), 
     VEC3F(-6, 1, 11), 
     VEC3F(6, 1, 11)
 };
-/*0xA0*/ static f32 data_A0[] = {
-    5, 4, 4, 4.5, 4.5, -5, 0, 0, 
-    5, 0, 0, 0, 2.0001223, 0, 0, 0, 
-    2.0157478, 0, 0, 0
+/*0xA0*/ static f32 dCollisionRadii[] = {
+    5, 
+    4, 
+    4, 
+    4.5, 
+    4.5
 };
-/*0xF0*/ static Vec3f data_F0[] = {
+/*0xDC*/ static Vec3f data_DC[] = { //unused?
+    VEC3F(-5, 0, 0), 
+    VEC3F(5, 0, 0), 
+    VEC3F(0, 2.0001223, 0), 
+    VEC3F(0, 0, 2.0157478), 
+    VEC3F(0, 0, 0)
+};
+/*0xF0*/ static Vec3f dBikeSidePoints[] = {
     VEC3F(14.5, 0, 9), 
     VEC3F(-14.5, 0, 9)
 };
 
-/*0x0*/ static Texture* sTexVerticalWave;       //(TEX0_486) 1 vertical wave? 
-/*0x4*/ static Texture* sTexFlames;             //(TEX0_253) thruster flames 
-/*0x8*/ static Texture* sTexHorizontalWaves;    //(TEX0_136) 3 horizontal waves?
-/*0x10*/ static SRT bss_10;
+//Textures: not referenced in the DLL itself, but possibly intended to keep the modGfx's textures loaded
+/*0x0*/ static Texture* sTexVerticalWave;       //(TEX0_486) 1 vertical wave 
+/*0x4*/ static Texture* sTexThrusterFlames;     //(TEX0_253) thruster flames 
+/*0x8*/ static Texture* sTexDriftWaves;         //(TEX0_136) 3 horizontal waves, used for effect when turning
+
+/*0x10*/ static SRT sRotationTransform;
 
 #include "prevent_bss_reordering.h"
 
 static s32 CRSnowBike_func_0(Object* self, CRSnowBike_Data* objData, f32 arg2);
-void CRSnowBike_func_1C38(Object* self);
+void CRSnowBike_sharpclaw_start_race(Object* self);
 static void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
-static void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
-static void CRSnowBike_func_22BC(Object* self, DLL732_Data2AC* arg1);
-static void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
+static void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* arg2, f32 updateRate, s32 arg4);
+static void CRSnowBike_func_22BC(Object* self, CRSnowBike_Motion* arg1);
+static void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* arg2, f32 updateRate, s32 arg4);
 static void CRSnowBike_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer);
 static void CRSnowBike_get_bike_matrix(Object* self, CRSnowBike_Data* objData, MtxF* oMtx, s32 useYawOffset, s32 useRoll, s32 usePitch);
 static void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData);
 static int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 static void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision);
-static s32 CRSnowBike_func_3DAC(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* arg3);
-static void CRSnowBike_func_3FE0(Object* self, CRSnowBike_Data* objData);
-static void CRSnowBike_func_40FC(Object* self, CRSnowBike_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
+static s32 CRSnowBike_sharpclaw_do_steering(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* arg3);
+static void CRSnowBike_update_collision_points(Object* self, CRSnowBike_Data* objData);
+static void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objData, f32 forwardSpeed, s32 yJoy, s8* arg6, u8 soundFlags);
 
 // offset: 0x0 | func: 0
 static s32 CRSnowBike_func_0(Object* self, CRSnowBike_Data* data, f32 arg2) {
@@ -196,7 +233,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     s32 pad2;
     s32 flagsValue;
     CRSnowBike_Setup* objSetup;
-    u8 data_108[] = {5, 5, 5, 5};
+    u8 dTerrainColliderArgs[] = {5, 5, 5, 5};
     CRSnowBike_Data* objData;
 
     objSetup = (CRSnowBike_Setup*)self->setup;
@@ -204,22 +241,22 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     bzero(objData, sizeof(CRSnowBike_Data));
     
     objData->yaw = (setup->yaw & 0xFF) << 8;
-    objData->unk2F4 = 0;
-    objData->unk2F8 = 0;
+    objData->modGfxDLLFlames = NULL;
+    objData->modGfxDLLWaves = NULL;
     self->srt.yaw = objData->yaw;
 
     self->animCallback = CRSnowBike_anim_callback;
     
     gDLL_27->vtbl->init(&objData->collision, 0, 0x01040007, 1);
-    gDLL_27->vtbl->setup_terrain_collider(&objData->collision, 4, data_24, data_54, data_108);
+    gDLL_27->vtbl->setup_terrain_collider(&objData->collision, ARRAYCOUNT(dTerrainTestPoints), dTerrainTestPoints, dTerrainRadii, dTerrainColliderArgs);
     
-    if (setup->unk19 != 0) {
-        objData->unk3EE = 3;
+    if (setup->isSharpClawBike) {
+        objData->numCollisionPoints = 3;
     } else {
-        objData->unk3EE = 5;
+        objData->numCollisionPoints = 5;
     }
 
-    CRSnowBike_func_3FE0(self, objData);
+    CRSnowBike_update_collision_points(self, objData);
     CRSnowBike_func_22BC(self, &objData->unk2AC);
 
     func_80023D30(self, 0, 0.0f, 0);
@@ -228,7 +265,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR;
     }
 
-    if (setup->unk19 != 0) {
+    if (setup->isSharpClawBike) {
         objData->flags |= CRSnowBike_FLAG_20_SharpClaw_Bike;
     }
 
@@ -244,21 +281,23 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     
     obj_add_object_type(self, OBJTYPE_Vehicle);
 
+    //Load textures (not used by DLL itself, possibly just intended to cache the modgfx textures)
     sTexVerticalWave = tex_load_deferred(TEXTABLE_186);     //(TEX0_486) 1 vertical wave? 
-    sTexFlames = tex_load_deferred(TEXTABLE_89);            //(TEX0_253) thruster flames 
-    sTexHorizontalWaves = tex_load_deferred(TEXTABLE_3C);   //(TEX0_136) 3 horizontal waves?
+    sTexThrusterFlames = tex_load_deferred(TEXTABLE_89);    //(TEX0_253) thruster flames 
+    sTexDriftWaves = tex_load_deferred(TEXTABLE_3C);        //(TEX0_136) 3 horizontal waves, for drift effect
 
-    if (main_get_bits(objSetup->gamebitA)) {
-        flagsValue = CRSnowBike_FLAG_1;
+    //Hide the bike if a gamebit is set
+    if (main_get_bits(objSetup->gamebitFinished)) {
+        STUBBED_PRINTF(" FInished Is SEt for Some Reason \n");
+        flagsValue = CRSnowBike_FLAG_1_Finished;
     } else {
         flagsValue = CRSnowBike_FLAG_0;
     }
     objData->flags |= flagsValue;
     
-    objData->gamebitIDs = &dRaceGamebits[setup->racetrackIdx][0];
+    objData->gamebitIDs = &dRaceGamebits[setup->racetrackIdx];
 }
 
-/*0x0*/ static const char str_0[] = " FInished Is SEt for Some Reason \n";
 /*0x24*/ static const char str_24[] = " FInished Is SEt for Some Reason \n";
 
 // offset: 0x398 | func: 2 | export: 1
@@ -269,31 +308,31 @@ void CRSnowBike_control(Object* self) {
     f32 yOffset;
     MtxF bikeMtx;
     Vec3f wsPoint;
-    DLL732_Data2AC* innerData;
+    CRSnowBike_Motion* bikeMotion;
     CRSnowBike_Data* objData;
-    DLL732_Unk_2E0* new_var;
+    DLL732_Unk_2E0* driverSteering;
     f32 dx;
     f32 dz;
     s32 sp5C;
     f32 var_fv1;
     s32 updateIdx;
     s32 flagValue;
-    DLL732_Data2AC* sp44;
+    CRSnowBike_Motion* motion;
 
     objData = self->data;
     objSetup = (CRSnowBike_Setup*)self->setup;
     
-    innerData = &objData->unk2AC;
-    new_var = &objData->unk2E0;
+    bikeMotion = &objData->unk2AC;
+    driverSteering = &objData->steering;
     
     yOffset = 0.0f;
     
-    if ((objData->flags & CRSnowBike_FLAG_1)) {
+    if ((objData->flags & CRSnowBike_FLAG_1_Finished)) {
         return;
     }
         
-    if (main_get_bits(objSetup->gamebitA)) {
-        objData->flags |= CRSnowBike_FLAG_1;
+    if (main_get_bits(objSetup->gamebitFinished)) {
+        objData->flags |= CRSnowBike_FLAG_1_Finished;
         return;
     }
     
@@ -301,34 +340,34 @@ void CRSnowBike_control(Object* self) {
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
-    objData->unk3A0.f[0] = self->srt.transl.f[0];
-    objData->unk3A0.f[1] = self->srt.transl.f[1];
-    objData->unk3A0.f[2] = self->srt.transl.f[2];
+    objData->prevTranslate.x = self->srt.transl.x;
+    objData->prevTranslate.y = self->srt.transl.y;
+    objData->prevTranslate.z = self->srt.transl.z;
     
     if (objData->flags & CRSnowBike_FLAG_10_Was_In_Sequence) {
         objData->flags &= ~CRSnowBike_FLAG_10_Was_In_Sequence;
 
         if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
-            innerData->unkC.f[0] = 0.0f;
-            innerData->unkC.f[1] = 0.0f;
-            innerData->unkC.f[2] = -2.0f;
+            bikeMotion->velocity.x = 0.0f;
+            bikeMotion->velocity.y = 0.0f;
+            bikeMotion->velocity.z = -2.0f; //flings bike forward after sequence
             objData->yawOffset = 0;
             objData->rollOffset = 0;
-            objData->unk3F2 = 0;
-            objData->unk3E6 = 0;
+            objData->framesInAir = 0;
+            objData->pitchOffset = 0;
             objData->yaw = self->srt.yaw;
             objData->pitch = self->srt.pitch;
             objData->roll = self->srt.roll;
-            CRSnowBike_func_3FE0(self, objData);
+            CRSnowBike_update_collision_points(self, objData);
         }
     }
 
     switch (objData->state) {
-    case STATE_0:
+    case STATE_0_Parked:
         if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
             self->objhitInfo->unk5B = 0;
             self->objhitInfo->unk5C = 0;
-            objData->unk3ED = 0;
+            objData->mountingFrom = PLAYER_NOT_NEARBY;
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
             if ((objSetup->gamebitUnlocked == NO_GAMEBIT) || main_get_bits(objSetup->gamebitUnlocked)) {
@@ -337,64 +376,68 @@ void CRSnowBike_control(Object* self) {
                 self->unkAF |= ARROW_FLAG_10_Greyed_Out;
             }
             
-            //Check if the player is near the bike
+            //Check if the player is near the bike, and which side of the bike they're on
             if ((player != NULL) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
-                objData->unk3ED = 1;
+                objData->mountingFrom = SIDE_LEFT;
+
                 CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 1, 1);
-                vec3_transform(&bikeMtx, data_F0[0].x, data_F0[0].y, data_F0[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                
+                //Show LockIcon if the player is close to the left side of the bike
+                vec3_transform(&bikeMtx, dBikeSidePoints[0].x, dBikeSidePoints[0].y, dBikeSidePoints[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                 dx = player->srt.transl.x - wsPoint.z;
                 dz = player->srt.transl.z - wsPoint.x;
-
                 if ((SQ(dx) + SQ(dz)) < SQ(10)) {
                     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-                    objData->unk3ED = 2;
+                    objData->mountingFrom = SIDE_RIGHT;
                 } else {
-                    vec3_transform(&bikeMtx, data_F0[1].x, data_F0[1].y, data_F0[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                    //Show LockIcon if the player is close to the right side of the bike
+                    vec3_transform(&bikeMtx, dBikeSidePoints[1].x, dBikeSidePoints[1].y, dBikeSidePoints[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                     dx = player->srt.transl.x - wsPoint.z;
                     dz = player->srt.transl.z - wsPoint.x;
                     if ((SQ(dx) + SQ(dz)) < SQ(10)) {
                         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-                        objData->unk3ED = 1;
+                        objData->mountingFrom = SIDE_LEFT;
                     }
                 }
             }
         }
 
-        if (objData->soundHandle2) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle2);
-            objData->soundHandle2 = 0;
+        if (objData->soundHandleJets) {
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+            objData->soundHandleJets = 0;
         }
 
-        if (objData->soundHandle3) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
-            objData->soundHandle3 = 0;
+        if (objData->soundHandleHiss) {
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+            objData->soundHandleHiss = 0;
         }
 
-        if (objData->soundHandle4) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle4);
-            objData->soundHandle4 = 0;
+        if (objData->soundHandleRumble) {
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+            objData->soundHandleRumble = 0;
         }
 
-        if (objData->unk2F4 != NULL) {
-            dll_unload(objData->unk2F4);
-            objData->unk2F4 = NULL;
+        if (objData->modGfxDLLFlames != NULL) {
+            dll_unload(objData->modGfxDLLFlames);
+            objData->modGfxDLLFlames = NULL;
         }
 
-        if (objData->unk2F8 != NULL) {
-            dll_unload(objData->unk2F8);
-            objData->unk2F8 = NULL;
+        if (objData->modGfxDLLWaves != NULL) {
+            dll_unload(objData->modGfxDLLWaves);
+            objData->modGfxDLLWaves = NULL;
         }
 
         objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
         break;
     case STATE_2:
-        if (!(objData->flags & CRSnowBike_FLAG_8_Race_Started)) {
+        if ((objData->flags & CRSnowBike_FLAG_8_Race_Started) == FALSE) {
             objData->raceData.unk10 = -1;
             objData->raceData.unk14 = -1;
             objData->raceData.unk18 = -1;
             objData->raceData.unk1C = 0;
 
-            if (main_get_bits(objData->gamebitIDs[0])) {
+            //Check if the race has started
+            if (main_get_bits(objData->gamebitIDs->started)) {
                 flagValue = CRSnowBike_FLAG_8_Race_Started;
             } else {
                 flagValue = CRSnowBike_FLAG_0;
@@ -403,51 +446,53 @@ void CRSnowBike_control(Object* self) {
 
             if (objData->flags & CRSnowBike_FLAG_8_Race_Started) {
                 if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
-                    CRSnowBike_func_1C38(self);
+                    CRSnowBike_sharpclaw_start_race(self);
                 } else {
                     gDLL_4_Race->vtbl->func3(self, &objData->raceData, objSetup->racetrackIdx);
                 }
                 gDLL_4_Race->vtbl->func9(&objData->raceData);
             }
-        } else if (main_get_bits(objData->gamebitIDs[1])) {
+        } else if (main_get_bits(objData->gamebitIDs->ended)) {
+            //Check if the race ended
             objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
         }
 
         CRSnowBike_func_3748(self, objData);
 
         if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
-            if (!(objData->flags & CRSnowBike_FLAG_8_Race_Started)) {
+            if ((objData->flags & CRSnowBike_FLAG_8_Race_Started) == FALSE) {
                 return;
             }
             
-            if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2]) >= 0) {
-                if (objData->flags & CRSnowBike_FLAG_2) {
+            if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
+                if (objData->flags & CRSnowBike_FLAG_2_Driving_In_Void) {
                     sp5C = CRSnowBike_func_0(self, objData, 2.8f * gUpdateRateF);
                     gDLL_4_Race->vtbl->func4(self, &objData->raceData);
                     gDLL_4_Race->vtbl->func10(&objData->raceData);
+                    
                     if (sp5C == 0) {
-                        sp44 = &objData->unk2AC;
-                        self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
+                        motion = &objData->unk2AC;
+                        self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.z - objData->unk0.transl.z);
                         self->srt.transl.x = objData->unk0.transl.x;
                         self->srt.transl.y = objData->unk0.transl.y;
                         self->srt.transl.z = objData->unk0.transl.z;
-                        sp44->unkC.f[0] = 0.0f;
-                        sp44->unkC.f[1] = 0.0f;
-                        sp44->unkC.f[2] = -2.0f;
+                        motion->velocity.x = 0.0f;
+                        motion->velocity.y = 0.0f;
+                        motion->velocity.z = -2.0f;
                         objData->yawOffset = 0;
                         objData->rollOffset = 0;
-                        objData->unk3F2 = 0;
-                        objData->unk3E6 = 0;
+                        objData->framesInAir = 0;
+                        objData->pitchOffset = 0;
                         objData->yaw = self->srt.yaw;
                         objData->pitch = self->srt.pitch;
                         objData->roll = self->srt.roll;
-                        CRSnowBike_func_3FE0(self, objData);
-                        func_80058680(self, self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &yOffset, 0);
+                        CRSnowBike_update_collision_points(self, objData);
+                        func_80058680(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &yOffset, 0);
                         self->srt.transl.y -= yOffset;
-                        objData->flags &= ~CRSnowBike_FLAG_2;
+                        objData->flags &= ~CRSnowBike_FLAG_2_Driving_In_Void;
                     }
                     return;
-                } else if (CRSnowBike_func_3DAC(self, objData, objData, &objData->unk2E0)) {
+                } else if (CRSnowBike_sharpclaw_do_steering(self, objData, objData, &objData->steering)) {
                     return;
                 }
             } else {
@@ -455,11 +500,11 @@ void CRSnowBike_control(Object* self) {
                 gDLL_4_Race->vtbl->func4(self, &objData->raceData);
                 gDLL_4_Race->vtbl->func10(&objData->raceData);
                 if (sp5C == 0) {
-                    self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
+                    self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.z - objData->unk0.transl.z);
                     self->srt.transl.x = objData->unk0.transl.x;
                     self->srt.transl.y = objData->unk0.transl.y;
                     self->srt.transl.z = objData->unk0.transl.z;
-                    objData->flags |= CRSnowBike_FLAG_2;
+                    objData->flags |= CRSnowBike_FLAG_2_Driving_In_Void;
                 }
                 return;
             }
@@ -476,66 +521,76 @@ void CRSnowBike_control(Object* self) {
             }
 
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++){
-                CRSnowBike_func_3618(self, &objData->unk2E0, 0, updateIdx);
+                CRSnowBike_func_3618(self, &objData->steering, 0, updateIdx);
                 CRSnowBike_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                objData->yawOffset += (s16) ((-objData->unk2E0.xJoy * 60.0f) - objData->yawOffset) >> 4;
-                objData->rollOffset += (s16) ((-objData->unk2E0.xJoy * 105.0f) - objData->rollOffset) >> 4;
+                objData->yawOffset += (s16) ((-objData->steering.xJoy * 60.0f) - objData->yawOffset) >> 4;
+                objData->rollOffset += (s16) ((-objData->steering.xJoy * 105.0f) - objData->rollOffset) >> 4;
                 self->srt.yaw = objData->yaw + objData->yawOffset;
                 self->srt.roll = objData->roll + objData->rollOffset;
             }
             
-            sp44 = &objData->unk2AC;
+            motion = &objData->unk2AC;
+
+            //Handle fuel depletion
             if (objData->fuelAmount >= 0) {
-                objData->fuelAmount = objData->fuelAmount - (s32) (VECTOR_MAGNITUDE(sp44->unkC) * gUpdateRateF * 1.5f) - gUpdateRate;
+                //Deplete fuel based on bike's speed
+                objData->fuelAmount = objData->fuelAmount - (s32) (VECTOR_MAGNITUDE(motion->velocity) * gUpdateRateF * 1.5f) - gUpdateRate;
                 diPrintf(" FUEL AMT %i \n", objData->fuelAmount / 10);
                 gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->fuelAmount);
-            } else if (objData->unk3CC.f[0] > 0.1f) {
+            } else if (objData->maxVelocity.x > 0.1f) {
                 diPrintf(" \tRAN OUT OF FUEL \t");
                 
+                //Play sound randomly while out of fuel
                 if (rand_next(0, 10) == 0) {
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
 
-                objData->unk3CC.f[0] *= 0.95f;
-                objData->unk3CC.f[1] *= 0.95f;
-                objData->unk3CC.f[2] *= 0.95f;
+                //Max velocity dwindles
+                objData->maxVelocity.x *= 0.95f;
+                objData->maxVelocity.y *= 0.95f;
+                objData->maxVelocity.z *= 0.95f;
 
-                if (objData->unk3CC.f[0] < 0.1f) {
+                //Free the fuel gauge and play the defeat cutscene when max speed is approximately 0
+                if (objData->maxVelocity.x < 0.1f) {
                     gDLL_1_cmdmenu->vtbl->energy_bar_free();
                     gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                    objData->unk3CC.f[0] = 0.01f;
-                    objData->unk3CC.f[1] = 0.01f;
-                    objData->unk3CC.f[2] = 0.01f;
+                    objData->maxVelocity.x = 0.01f;
+                    objData->maxVelocity.y = 0.01f;
+                    objData->maxVelocity.z = 0.01f;
                 }
             }
         } else {
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++) {
                 CRSnowBike_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                objData->yawOffset += (s16) ((-objData->unk2E0.xJoy * 60.0f) - objData->yawOffset) >> 4;
-                objData->rollOffset += (s16) ((-objData->unk2E0.xJoy * 105.0f) - objData->rollOffset) >> 4;
+                objData->yawOffset += (s16) ((-objData->steering.xJoy * 60.0f) - objData->yawOffset) >> 4;
+                objData->rollOffset += (s16) ((-objData->steering.xJoy * 105.0f) - objData->rollOffset) >> 4;
                 self->srt.yaw = objData->yaw + objData->yawOffset;
                 self->srt.roll = objData->roll + objData->rollOffset;
             }
         }
         
-        if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
-            CRSnowBike_func_40FC(self, objData, objData->unk2AC.unkC.f[2], new_var->yJoy, &new_var->unk10, 7);
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
+            CRSnowBike_handle_engine_sfx_and_modgfx(self, objData, 
+                objData->unk2AC.velocity.z, driverSteering->yJoy, 
+                &driverSteering->unk10, 
+                (CRSnowBike_SOUNDFLAG_Engine | CRSnowBike_SOUNDFLAG_Hiss | CRSnowBike_SOUNDFLAG_Jets)
+            );
         } else {
-            if (objData->soundHandle1) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle1);
-                objData->soundHandle1 = 0;
+            if (objData->soundHandleEngine) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleEngine);
+                objData->soundHandleEngine = 0;
             }
-            if (objData->soundHandle2) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle2);
-                objData->soundHandle2 = 0;
+            if (objData->soundHandleJets) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+                objData->soundHandleJets = 0;
             }
-            if (objData->soundHandle3) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
-                objData->soundHandle3 = 0;
+            if (objData->soundHandleHiss) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                objData->soundHandleHiss = 0;
             }
-            if (objData->soundHandle4) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle4);
-                objData->soundHandle4 = 0;
+            if (objData->soundHandleRumble) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+                objData->soundHandleRumble = 0;
             }
         }
         break;
@@ -543,11 +598,11 @@ void CRSnowBike_control(Object* self) {
         break;
     }
 
-    if (((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == 0) && (objData->state == STATE_2)) {
-        if (objData->unk39C >= 0.0f) {
-            var_fv1 = objData->unk39C;
+    if (((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) && (objData->state == STATE_2)) {
+        if (objData->forwardSpeed >= 0.0f) {
+            var_fv1 = objData->forwardSpeed;
         } else {
-            var_fv1 = -objData->unk39C;
+            var_fv1 = -objData->forwardSpeed;
         }
         if (var_fv1 > 2.0f) {
             self->objhitInfo->unk5F = 0x14;
@@ -555,7 +610,7 @@ void CRSnowBike_control(Object* self) {
             self->objhitInfo->unk58 |= 1;
             self->objhitInfo->unk40 = 0x10;
             self->objhitInfo->unk58 |= 4;
-            self->srt.flags &= 0xBFFF;
+            self->srt.flags &= ~OBJFLAG_INVISIBLE;
         }
     }
 }
@@ -564,17 +619,17 @@ void CRSnowBike_control(Object* self) {
 void CRSnowBike_update(Object* self) {
     CRSnowBike_Data* objData;
     ObjectHitInfo* objHitInfo;
-    Vec3f spDC;
+    Vec3f wsVelocity;
     MtxF sp9C;
-    MtxF sp5C;
-    DLL732_Data2AC* temp_v0;
+    MtxF bikeMtx;
+    CRSnowBike_Motion* bikeMotion;
     Object* obj;
     s32 objID;
     s32 i;
 
     objHitInfo = self->objhitInfo;
     objData = self->data;
-    temp_v0 = &objData->unk2AC;
+    bikeMotion = &objData->unk2AC;
 
     if (objHitInfo->unk48) {
         obj = objHitInfo->unk48;
@@ -596,28 +651,28 @@ void CRSnowBike_update(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_553, NULL, 2, -1, NULL);
             }
             
-            objData->unk3EC = 5;
-            objData->unk384 = 0.2f;
+            objData->stallFrames = 5;
+            objData->stallFactor = 0.2f;
             break;
         }
     }
     
-    if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
-        bss_10.yaw = -objData->yaw;
-        bss_10.pitch = -objData->pitch;
-        bss_10.roll = -objData->roll;
-        matrix_from_srt_reversed(&sp9C, &bss_10);
+    if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
+        sRotationTransform.yaw = -objData->yaw;
+        sRotationTransform.pitch = -objData->pitch;
+        sRotationTransform.roll = -objData->roll;
+        matrix_from_srt_reversed(&sp9C, &sRotationTransform);
         self->velocity.f[0] = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
         self->velocity.f[1] = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
         self->velocity.f[2] = (self->srt.transl.z - self->prevLocalPosition.z) * gUpdateRateInverseF;
-        spDC.x = self->velocity.f[0] * 0.93749994f;
-        spDC.y = self->velocity.f[1] * 0.93749994f;
-        spDC.z = self->velocity.f[2] * 0.93749994f;
+        wsVelocity.x = self->velocity.f[0] * 0.93749994f;
+        wsVelocity.y = self->velocity.f[1] * 0.93749994f;
+        wsVelocity.z = self->velocity.f[2] * 0.93749994f;
         
-        vec3_transform(&sp9C, spDC.f[0], spDC.f[1], spDC.f[2], 
-                       &temp_v0->unkC.f[0], &temp_v0->unkC.f[1], &temp_v0->unkC.f[2]);
-        CRSnowBike_get_bike_matrix(self, objData, &sp5C, 0, 0, 0);
-        vec3_transform(&sp5C, 0.0f, 0.0f, -10.0f, &objData->unk3AC.x, &objData->unk3AC.y, &objData->unk3AC.z);
+        vec3_transform(&sp9C, wsVelocity.f[0], wsVelocity.f[1], wsVelocity.f[2], 
+                       &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z);
+        CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, FALSE, FALSE, FALSE);
+        vec3_transform(&bikeMtx, 0.0f, 0.0f, -10.0f, &objData->unk3AC.x, &objData->unk3AC.y, &objData->unk3AC.z);
     }
 }
 
@@ -628,31 +683,44 @@ void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
 
     objData = self->data;
 
-    if (objData->flags & CRSnowBike_FLAG_1) {
+    if (objData->flags & CRSnowBike_FLAG_1_Finished) {
         return;
     }
     
     if (visibility == -1) {
         sp38 = gDLL_13_Expgfx->vtbl->func10(self);
-        if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
             CRSnowBike_func_1DC8(self, objData, gdl, mtxs, vtxs, pols);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 0, &objData->unk388.x, &objData->unk388.y, &objData->unk388.z, 0);
+
+        func_80031F6C(self, 0, 
+            &objData->attachPointCoords.x, 
+            &objData->attachPointCoords.y, 
+            &objData->attachPointCoords.z, 
+            0
+        );
         if (sp38 != 0) {
             gDLL_13_Expgfx->vtbl->func6(self, gdl, mtxs, NULL, 0, 0, 0);
         }
         return;
-    } else if (objData->state == STATE_2) {
-        objData->unk388.x = self->srt.transl.x;
-        objData->unk388.y = self->srt.transl.y;
-        objData->unk388.z = self->srt.transl.z;
+    } 
+    
+    if (objData->state == STATE_2) {
+        objData->attachPointCoords.x = self->srt.transl.x;
+        objData->attachPointCoords.y = self->srt.transl.y;
+        objData->attachPointCoords.z = self->srt.transl.z;
         return;
     }
     
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 0, &objData->unk388.x, &objData->unk388.y, &objData->unk388.z, 0);
+        func_80031F6C(self, 0, 
+            &objData->attachPointCoords.x,
+            &objData->attachPointCoords.y,
+            &objData->attachPointCoords.z, 
+            0
+        );
     }
 }
 
@@ -662,35 +730,35 @@ void CRSnowBike_free(Object* self, s32 onlySelf) {
 
     objData = self->data;
 
-    if (objData->soundHandle1) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle1);
-        objData->soundHandle1 = 0;
+    if (objData->soundHandleEngine) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleEngine);
+        objData->soundHandleEngine = 0;
     }
 
-    if (objData->soundHandle2) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle2);
-        objData->soundHandle2 = 0;
+    if (objData->soundHandleJets) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+        objData->soundHandleJets = 0;
     }
 
-    if (objData->soundHandle3) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
-        objData->soundHandle3 = 0;
+    if (objData->soundHandleHiss) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+        objData->soundHandleHiss = 0;
     }
 
-    if (objData->soundHandle4) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle4);
-        objData->soundHandle4 = 0;
+    if (objData->soundHandleRumble) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+        objData->soundHandleRumble = 0;
     }
 
-    if (objData->unk2F4 != NULL) {
-        dll_unload(objData->unk2F4);
+    if (objData->modGfxDLLFlames != NULL) {
+        dll_unload(objData->modGfxDLLFlames);
     }
-    objData->unk2F4 = NULL;
+    objData->modGfxDLLFlames = NULL;
     
-    if (objData->unk2F8 != NULL) {
-        dll_unload(objData->unk2F8);
+    if (objData->modGfxDLLWaves != NULL) {
+        dll_unload(objData->modGfxDLLWaves);
     }
-    objData->unk2F8 = NULL;
+    objData->modGfxDLLWaves = NULL;
     
     obj_free_object_type(self, OBJTYPE_Vehicle);
     
@@ -699,8 +767,8 @@ void CRSnowBike_free(Object* self, s32 onlySelf) {
     }
     
     tex_free(sTexVerticalWave);
-    tex_free(sTexFlames);
-    tex_free(sTexHorizontalWaves);
+    tex_free(sTexThrusterFlames);
+    tex_free(sTexDriftWaves);
 }
 
 // offset: 0x18D8 | func: 6 | export: 5
@@ -714,7 +782,7 @@ u32 CRSnowBike_get_data_size(Object* self, u32 offsetAddr) {
 }
 
 // offset: 0x18FC | func: 8 | export: 7
-u8 CRSnowBike_func_18FC(Object* self, s32 arg1) {
+u8 CRSnowBike_can_bike_be_mounted(Object* self, s32 arg1) {
     CRSnowBike_Data* objData;
     CRSnowBike_Setup* objSetup;
 
@@ -729,27 +797,27 @@ u8 CRSnowBike_func_18FC(Object* self, s32 arg1) {
         return 0;
     }
 
-    STUBBED_PRINTF(" Bike Can Mount %i ", objData->unk3ED);
+    STUBBED_PRINTF(" Bike Can Mount %i ", objData->mountingFrom);
     
-    return objData->unk3ED;
+    return objData->mountingFrom;
 }
 
 // offset: 0x1980 | func: 9 | export: 8
-u8 CRSnowBike_func_1980(Object* self) {
+u8 CRSnowBike_get_mount_side(Object* self) {
     CRSnowBike_Data* objData = self->data;
-    return objData->unk3ED;
+    return objData->mountingFrom;
 }
 
 static const char str_extra2[] = "tracks %d\n";
 static const char str_extra3[] = "ident %d\n";
 
 // offset: 0x1990 | func: 10 | export: 9
-void CRSnowBike_func_1990(Object* self, f32* ox, f32* oy, f32* oz) {
+void CRSnowBike_get_attach_position(Object* self, f32* ox, f32* oy, f32* oz) {
     CRSnowBike_Data* objData = self->data;
     
-    *ox = objData->unk388.x;
-    *oy = objData->unk388.y;
-    *oz = objData->unk388.z;
+    *ox = objData->attachPointCoords.x;
+    *oy = objData->attachPointCoords.y;
+    *oz = objData->attachPointCoords.z;
 }
 
 // offset: 0x19B4 | func: 11 | export: 10
@@ -795,42 +863,42 @@ void CRSnowBike_set_state(Object* self, s32 state) {
 
     if ((state == STATE_2) && !(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
         objData->fuelAmount = 10000;
-        objData->unk3CC.f[0] = 2.0f;
-        objData->unk3CC.f[1] = 4.0f;
-        objData->unk3CC.f[2] = 4.6f;
+        objData->maxVelocity.x = 2.0f;
+        objData->maxVelocity.y = 4.0f;
+        objData->maxVelocity.z = 4.6f;
         gDLL_1_cmdmenu->vtbl->energy_bar_create(0, 13000, TEXTABLE_569, TEXTABLE_56A, 1);
     }
 }
 
 // offset: 0x1B10 | func: 16 | export: 15
-void CRSnowBike_func_1B10(Object* self, f32* arg1, s32* arg2) {
+void CRSnowBike_get_turn_tvalue_and_direction(Object* self, f32* tValueTurn, s32* turnDirection) {
     CRSnowBike_Data* objData = self->data;
     
-    *arg1 = objData->yawOffset / 2500.0f;
+    *tValueTurn = objData->yawOffset / 2500.0f;
     
-    if (*arg1 > 1.0f) {
-        *arg1 = 1.0f;
-    } else if (*arg1 < -1.0f) {
-        *arg1 = -1.0f;
+    if (*tValueTurn > 1.0f) {
+        *tValueTurn = 1.0f;
+    } else if (*tValueTurn < -1.0f) {
+        *tValueTurn = -1.0f;
     }
     
-    *arg2 = objData->yawOffset < 0;
+    *turnDirection = objData->yawOffset < 0;
 }
 
 // offset: 0x1B9C | func: 17 | export: 16
-f32 CRSnowBike_func_1B9C(Object* self, f32* arg1) {
+f32 CRSnowBike_get_speed_tvalue_and_max(Object* self, f32* maxSpeed) {
     CRSnowBike_Data* objData;
-    f32 magnitude;
+    f32 tValueSpeed;
 
     objData = self->data;
     
-    *arg1 = 5.0f;
+    *maxSpeed = 5;
 
-    magnitude = VECTOR_MAGNITUDE(objData->unk2AC.unkC) * 0.2f;
-    if (magnitude > 1.0f) {
-        magnitude = 1.0f;
+    tValueSpeed = VECTOR_MAGNITUDE(objData->unk2AC.velocity) * 0.2f;
+    if (tValueSpeed > 1.0f) {
+        tValueSpeed = 1.0f;
     }
-    return magnitude;
+    return tValueSpeed;
 }
 
 // offset: 0x1C28 | func: 18 | export: 17
@@ -840,7 +908,7 @@ s8 CRSnowBike_func_1C28(Object* self) {
 }
 
 // offset: 0x1C38 | func: 19 | export: 18
-void CRSnowBike_func_1C38(Object* self) {
+void CRSnowBike_sharpclaw_start_race(Object* self) {
     s32 checkpointUID;
     checkpoint4_Setup* checkpointSetup;
     CRSnowBike_Data* objData;
@@ -852,13 +920,13 @@ void CRSnowBike_func_1C38(Object* self) {
     switch (self->id) {
     default:
     case OBJ_CRSnowClawBike:
-        checkpointUID = data_C[objSetup->racetrackIdx][0];
+        checkpointUID = dCheckpointUIDs[objSetup->racetrackIdx][0];
         break;
     case OBJ_CRSnowClawBike2:
-        checkpointUID = data_C[objSetup->racetrackIdx][1];
+        checkpointUID = dCheckpointUIDs[objSetup->racetrackIdx][1];
         break;
     case OBJ_CRSnowClawBike3:
-        checkpointUID = data_C[objSetup->racetrackIdx][2];
+        checkpointUID = dCheckpointUIDs[objSetup->racetrackIdx][2];
         break;
     }
     
@@ -872,7 +940,7 @@ void CRSnowBike_func_1C38(Object* self) {
     self->srt.transl.z = checkpointSetup->base.z;
     self->srt.yaw = checkpointSetup->yaw << 8;
 
-    CRSnowBike_func_3FE0(self, objData);
+    CRSnowBike_update_collision_points(self, objData);
     gDLL_4_Race->vtbl->func3(self, &objData->raceData, objSetup->racetrackIdx);
     
     objData->unk0.transl.x = self->srt.transl.x;
@@ -898,45 +966,51 @@ void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx
     s32 i;
     f32 translateX;
     s32 pad2;
-    DLL732_Data2AC* temp_v1;
+    CRSnowBike_Motion* bikeMotion;
     u32 dColourRGBA[] = { 6, 105, 105, 255}; //Unused RGBA colour, maybe for randomised spark colours?
     s32 volume;
     s32 pad3;
 
-    temp_v1 = &objData->unk2AC;
+    bikeMotion = &objData->unk2AC;
 
     gfx = *gdl;
     vertex = *vtxs;
     tri = *pols;
     
     translateX = 0.0f;
-    if (temp_v1->unkC.z < 0.0f) {
-        translateX = temp_v1->unkC.z;
+    if (bikeMotion->velocity.z < 0.0f) {
+        translateX = bikeMotion->velocity.z;
     }
     fxTransform.transl.z = translateX;
 
-    if (temp_v1->unkC.z < 0.0f) {
-        translateX = temp_v1->unkC.x;
+    if (bikeMotion->velocity.z < 0.0f) {
+        translateX = bikeMotion->velocity.x;
     }
     fxTransform.transl.x = translateX;
     
+    //Set particle colour (just set to white, but maybe once intended to use dColourRGBA?)
     dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
     
-    if (temp_v1->unkC.z < -0.5f) {
-        if (1) { }
-        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12E, &fxTransform, 4, -1, NULL);
-    }
-    if (temp_v1->unkC.z < -1.5f) {
-        if (1) { }
-        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12F, &fxTransform, 4, -1, NULL);
-    }
-    if (temp_v1->unkC.z < -2.1f) {
-        if (1) { }
-        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_130, &fxTransform, 4, -1, NULL);
+    //Create different particles based on bike's forward speed
+    {
+        if (bikeMotion->velocity.z < -0.5f) {
+            if (1) { }
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12E, &fxTransform, 4, -1, NULL);
+        }
+
+        if (bikeMotion->velocity.z < -1.5f) {
+            if (1) { }
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12F, &fxTransform, 4, -1, NULL);
+        }
+
+        if (bikeMotion->velocity.z < -2.1f) {
+            if (1) { }
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_130, &fxTransform, 4, -1, NULL);
+        }
     }
     
     i = 0;
-    if (objData->unk2E0.yJoy > 0) {
+    if (objData->steering.yJoy > 0) {
         i = 2;
     }
 
@@ -949,10 +1023,11 @@ void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx
     fxTransform.pitch = 0;
     fxTransform.roll = 0;
     fxTransform.scale = 1.0f;
-    if (objData->unk39C < -1.2f) {
+
+    if (objData->forwardSpeed < -1.2f) {
         dColourRGBA[1] += rand_next(0, 155);
         dColourRGBA[2] += rand_next(0, 155);
-        volume = ((0.0f - objData->unk39C) * 21.0f);
+        volume = ((0.0f - objData->forwardSpeed) * 21.0f);
         if (objData->unk3F3 & 1) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
@@ -971,36 +1046,36 @@ void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx
 }
 
 // offset: 0x22BC | func: 22
-void CRSnowBike_func_22BC(Object* self, DLL732_Data2AC* arg1) {
-    arg1->unk1C = 90;
-    arg1->unk20 = 1/arg1->unk1C;
-    arg1->unk28 = -11.0f;
-    arg1->unk2C = 0.1f;
-    arg1->unk30 = 13.0f;
-    arg1->unk18 = (1/arg1->unk1C) * 0.01666666f;
+void CRSnowBike_func_22BC(Object* self, CRSnowBike_Motion* motion) {
+    motion->unk1C = 90;
+    motion->maxAcceleration = 1/motion->unk1C;  
+    motion->unk28 = -11.0f;
+    motion->unk2C = 0.1f;
+    motion->unk30 = 13.0f;
+    motion->maxAccelerationPerFrame = (1/motion->unk1C) * ONE_OVER_SIXTY_F;
     
-    bss_10.transl.x = 0;
-    bss_10.transl.y = 0;
-    bss_10.transl.z = 0;
-    bss_10.scale = 1;
+    sRotationTransform.transl.x = 0;
+    sRotationTransform.transl.y = 0;
+    sRotationTransform.transl.z = 0;
+    sRotationTransform.scale = 1;
 }
 
 // offset: 0x2340 | func: 23
-void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
-    MtxF sp130;
-    MtxF spF0;
+void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* motion, f32 updateRate, s32 arg4) {
+    MtxF mtx;
+    MtxF invMtx;
     MtxF spB0;
-    s32 pad1;
-    f32 temp3;
-    f32 temp2;
-    f32 temp_fv0;
-    f32 temp_fv1_7;
-    f32 temp_fa0_4;
+    f32 pad1;
+    f32 minusLimit;
+    f32 sqForwardSpeed;
+    f32 acceleration;
+    f32 newVelocityX;
+    f32 newVelocityZ2;
     f32 sp94;
-    f32 var_fv1;
+    f32 accelerationAmount;
     Vec3f sp84;
-    f32 var_fv0_4;
-    f32 var_fa0;
+    f32 yValue;
+    f32 newVelocityZ;
     s32 var_a0;
     Vec3f sp6C;
     Vec3f sp60;
@@ -1012,159 +1087,177 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
 
     collision = &objData->collision;
     
-    if (objData->unk3EC != 0) {
-        VECTOR_SCALE(arg2->unkC, objData->unk384);
-        objData->unk3EC--;
-        if (objData->unk3EC < 0) {
-            objData->unk3EC = 0;
+    //Stall the bike's velocity for a few frames after being hit
+    if (objData->stallFrames != 0) {
+        VECTOR_SCALE(motion->velocity, objData->stallFactor);
+        objData->stallFrames--;
+        if (objData->stallFrames < 0) {
+            objData->stallFrames = 0;
         }
     }
 
-    temp3 = -objData->unk3CC.f[0];
-    arg2->unkC.f[0] = (arg2->unkC.x < temp3) ? temp3 : (
-                      (objData->unk3CC.f[0] < arg2->unkC.x) ? objData->unk3CC.f[0] : arg2->unkC.x);
+    //Limit velocity
+    minusLimit = -objData->maxVelocity.x;
+    motion->velocity.x = (motion->velocity.x < minusLimit) ? minusLimit : (
+                      (objData->maxVelocity.f[0] < motion->velocity.x) ? objData->maxVelocity.f[0] : motion->velocity.x);
     
-    temp3 = -objData->unk3CC.f[1];
-    arg2->unkC.f[1] = (arg2->unkC.f[1] < temp3) ? temp3 : (
-                      (objData->unk3CC.f[1] < arg2->unkC.f[1]) ? objData->unk3CC.f[1] : arg2->unkC.f[1]);
+    minusLimit = -objData->maxVelocity.y;
+    motion->velocity.y = (motion->velocity.f[1] < minusLimit) ? minusLimit : (
+                      (objData->maxVelocity.f[1] < motion->velocity.f[1]) ? objData->maxVelocity.f[1] : motion->velocity.f[1]);
 
-    temp3 = -objData->unk3CC.f[2];
-    arg2->unkC.f[2] = (arg2->unkC.f[2] < temp3) ? temp3 : (
-                      (objData->unk3CC.f[2] < arg2->unkC.f[2]) ? objData->unk3CC.f[2] : arg2->unkC.f[2]);
+    minusLimit = -objData->maxVelocity.z;
+    motion->velocity.z = (motion->velocity.f[2] < minusLimit) ? minusLimit : (
+                      (objData->maxVelocity.f[2] < motion->velocity.f[2]) ? objData->maxVelocity.f[2] : motion->velocity.f[2]);
     
-    bss_10.yaw = objData->yaw;
-    bss_10.pitch = objData->pitch;
-    bss_10.roll = objData->roll;
-    matrix_from_srt(&sp130, &bss_10);
-    bss_10.yaw = -objData->yaw;
-    bss_10.pitch = -objData->pitch;
-    bss_10.roll = -objData->roll;
-    matrix_from_srt_reversed(&spF0, &bss_10);
+    sRotationTransform.yaw = objData->yaw;
+    sRotationTransform.pitch = objData->pitch;
+    sRotationTransform.roll = objData->roll;
+    matrix_from_srt(&mtx, &sRotationTransform);
+    sRotationTransform.yaw = -objData->yaw;
+    sRotationTransform.pitch = -objData->pitch;
+    sRotationTransform.roll = -objData->roll;
+    matrix_from_srt_reversed(&invMtx, &sRotationTransform);
     
+    //Calculate pitch while airborne
     if ((objData->flags & CRSnowBike_FLAG_4_Grounded) == FALSE) {
-        var_fv0_4 = (f32) -objData->unk2E0.yJoy / 60.0f;
-        if (var_fv0_4 > 1.0f) {
-            var_fv0_4 = 1.0f;
-        } else if (var_fv0_4 < -1.0f) {
-            var_fv0_4 = -1.0f;
+        yValue = (f32) -objData->steering.yJoy / 60.0f;
+        if (yValue > 1.0f) {
+            yValue = 1.0f;
+        } else if (yValue < -1.0f) {
+            yValue = -1.0f;
         }
-        var_fv0_4 *= 6144.0f;
-        objData->unk3E6 += ((s32) (var_fv0_4) - objData->unk3E6) >> 5;
-    } else if (objData->unk3E6 != 0) {
-        objData->unk3E6 -= (-objData->unk3E6 >> 5);
+        yValue *= 0x1800;
+        objData->pitchOffset += ((s32)yValue - objData->pitchOffset) >> 5;
+    } else if (objData->pitchOffset != 0) {
+        objData->pitchOffset -= (-objData->pitchOffset >> 5);
     }
     
-    vec3_transform(&spF0, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp84.f[0], &sp84.f[1], &sp84.f[2]);
+    vec3_transform(&invMtx, 
+        0.0f, motion->unk28 * motion->unk1C, 0.0f, 
+        &sp84.f[0], &sp84.f[1], &sp84.f[2]);
 
-    if (objData->unk2E0.yJoy < 0) {
-        var_fv1 = -(f32) objData->unk2E0.yJoy * 4.0f;
-    } else {
-        var_fv1 = -(f32) objData->unk2E0.yJoy * 10.0f;
-    }
-    
-    temp_fv0 = arg2->unk20 * var_fv1;
-    if (temp_fv0 < 0.0f) {
-        arg2->unkC.f[2] += (temp_fv0 * 0.01666666f);
-    } else {
-        if (arg2->unkC.f[2] <= 0.0f) {
-            arg2->unkC.f[2] += (temp_fv0 * 0.01666666f);
-            if (arg2->unkC.f[2] > 0.0f) {
-                arg2->unkC.f[2] = 0.0f;
+    //Handle forward acceleration/deceleration
+    {
+        if (objData->steering.yJoy < 0) {
+            accelerationAmount = -(f32) objData->steering.yJoy * 4.0f;
+        } else {
+            accelerationAmount = -(f32) objData->steering.yJoy * 10.0f;
+        }
+        
+        acceleration = motion->maxAcceleration * accelerationAmount;
+
+        //NOTE: motion->velocity Z points out the back of the bike, so negative values mean forward
+        if (acceleration < 0.0f) {
+            //Acceleration
+            motion->velocity.z += acceleration * ONE_OVER_SIXTY_F;
+        } else {
+            //Deceleration
+            
+            if (motion->velocity.z <= 0.0f) {
+                motion->velocity.z += acceleration * ONE_OVER_SIXTY_F;
+                
+                //Clamp velocity so bike can't move backwards
+                if (motion->velocity.z > 0.0f) {
+                    motion->velocity.z = 0.0f;
+                }
             }
         }
     }
     
-    arg2->unk0.x = sp84.f[0] * arg2->unk18;
-    arg2->unk0.y = sp84.f[1] * arg2->unk18;
-    arg2->unk0.z = sp84.f[2] * arg2->unk18;
-    arg2->unkC.x = arg2->unk0.x + arg2->unkC.x;
-    arg2->unkC.y = arg2->unk0.y + arg2->unkC.y;
-    arg2->unkC.z = arg2->unk0.z + arg2->unkC.z;
+    motion->unk0.x = sp84.f[0] * motion->maxAccelerationPerFrame;
+    motion->unk0.y = sp84.f[1] * motion->maxAccelerationPerFrame;
+    motion->unk0.z = sp84.f[2] * motion->maxAccelerationPerFrame;
+    motion->velocity.x = motion->unk0.x + motion->velocity.x;
+    motion->velocity.y = motion->unk0.y + motion->velocity.y;
+    motion->velocity.z = motion->unk0.z + motion->velocity.z;
     
     if (collision->unk25D != 0) {
-        temp_fv0 = arg2->unk2C * sp84.y;
-        if (arg2->unkC.f[2] < 0.0f) {
-            if (temp_fv0 < 0.0f) {
-                temp_fv0 = -temp_fv0;
+        acceleration = motion->unk2C * sp84.y;
+        if (motion->velocity.z < 0.0f) {
+            if (acceleration < 0.0f) {
+                acceleration = -acceleration;
             }
-        } else if (temp_fv0 > 0.0f) {
-            temp_fv0 = -temp_fv0;
+        } else if (acceleration > 0.0f) {
+            acceleration = -acceleration;
         }
-        temp_fv0 *= arg2->unk18;
-        var_fa0 = arg2->unkC.f[2] + temp_fv0;
-        if (arg2->unkC.f[2] < 0.0f) {
-            if (var_fa0 > 0.0f) {
-                arg2->unkC.f[2] = 0.0f;
+        acceleration *= motion->maxAccelerationPerFrame;
+
+        newVelocityZ = motion->velocity.z + acceleration;
+        if (motion->velocity.z < 0.0f) {
+            if (newVelocityZ > 0.0f) {
+                motion->velocity.z = 0.0f;
             } else {
-                arg2->unkC.f[2] = var_fa0;
+                motion->velocity.z = newVelocityZ;
             }
-        } else if (var_fa0 < 0.0f) {
-            arg2->unkC.f[2] = 0.0f;
+        } else if (newVelocityZ < 0.0f) {
+            motion->velocity.z = 0.0f;
         } else {
-            arg2->unkC.f[2] = var_fa0;
+            motion->velocity.z = newVelocityZ;
         }
         
-        if (arg2->unkC.f[2] < 0.0f) {
-            var_fa0 = -arg2->unkC.f[2];
+        if (motion->velocity.z < 0.0f) {
+            newVelocityZ = -motion->velocity.z;
         } else {
-            var_fa0 = arg2->unkC.f[2];
+            newVelocityZ = motion->velocity.z;
         }
         
-        temp_fv0 = arg2->unk2C * sp84.y * (4.0f + SQ(var_fa0));
-        if (arg2->unkC.f[0] < 0.0f) {
-            if (temp_fv0 < 0.0f) {
-                temp_fv0 = -temp_fv0;
+        acceleration = motion->unk2C * sp84.y * (4.0f + SQ(newVelocityZ));
+        if (motion->velocity.x < 0.0f) {
+            if (acceleration < 0.0f) {
+                acceleration = -acceleration;
             }
-        } else if (temp_fv0 > 0.0f) {
-            temp_fv0 = -temp_fv0;
+        } else if (acceleration > 0.0f) {
+            acceleration = -acceleration;
         }
-        temp_fv0 *= arg2->unk18;
+        acceleration *= motion->maxAccelerationPerFrame;
         
-        temp_fv1_7 = arg2->unkC.f[0] + temp_fv0;
-        if (arg2->unkC.f[0] < 0.0f) {
-            if (temp_fv1_7 > 0.0f) {
-                arg2->unkC.f[0] = 0.0f;
+        newVelocityX = motion->velocity.x + acceleration;
+        if (motion->velocity.x < 0.0f) {
+            if (newVelocityX > 0.0f) {
+                motion->velocity.x = 0.0f;
             } else {
-                arg2->unkC.f[0] = temp_fv1_7;
+                motion->velocity.x = newVelocityX;
             }
-        } else if (temp_fv1_7 < 0.0f) {
-            arg2->unkC.f[0] = 0.0f;
+        } else if (newVelocityX < 0.0f) {
+            motion->velocity.x = 0.0f;
         } else {
-            arg2->unkC.f[0] = temp_fv1_7;
+            motion->velocity.x = newVelocityX;
         }
         
-        objData->unk3F2 = 0;
-        objData->unk3E6 = 0;
+        objData->framesInAir = 0;
+        objData->pitchOffset = 0;
     } else {
-        objData->unk3F2++;
-        if (objData->unk3F2 > 0x64) {
-            objData->unk3F2 = 0x64;
+        objData->framesInAir++;
+        if (objData->framesInAir > 100) {
+            objData->framesInAir = 100;
         }
     }
 
-    temp2 = SQ(arg2->unkC.f[2]);
-    temp_fv0 = arg2->unk30 * temp2;
-    if (arg2->unkC.f[2] > 0.0f) {
-        temp_fv0 = -temp_fv0;
+    sqForwardSpeed = SQ(motion->velocity.z);
+    acceleration = motion->unk30 * sqForwardSpeed;
+    if (motion->velocity.z > 0.0f) {
+        acceleration = -acceleration;
     }
-    temp_fv0 *= arg2->unk18;
-    temp_fa0_4 = arg2->unkC.f[2] + temp_fv0;
-    if (arg2->unkC.f[2] < 0.0f) {
-        if (temp_fa0_4 > 0.0f) {
-            arg2->unkC.f[2] = 0.0f;
+    acceleration *= motion->maxAccelerationPerFrame;
+
+    newVelocityZ2 = motion->velocity.z + acceleration;
+    if (motion->velocity.z < 0.0f) {
+        if (newVelocityZ2 > 0.0f) {
+            motion->velocity.z = 0.0f;
         } else {
-            arg2->unkC.f[2] = temp_fa0_4;
+            motion->velocity.z = newVelocityZ2;
         }
-    } else if (temp_fa0_4 < 0.0f) {
-        arg2->unkC.f[2] = 0.0f;
+    } else if (newVelocityZ2 < 0.0f) {
+        motion->velocity.z = 0.0f;
     } else {
-        arg2->unkC.f[2] = temp_fa0_4;
+        motion->velocity.z = newVelocityZ2;
     }
     
-    vec3_transform(&sp130, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, 
+    vec3_transform(&mtx, motion->velocity.x, motion->velocity.y, motion->velocity.z, 
                    &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
     VECTOR_SCALE(self->velocity, 1.0666667f);
     obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
+
     if (arg4 != 0) {
         sp94 = 1.0f / updateRate;
         CRSnowBike_func_3AF8(self, objData, collision);
@@ -1179,8 +1272,8 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
         sp60.f[0] = self->velocity.x * 0.93749994f;
         sp60.f[1] = self->velocity.y * 0.93749994f;
         sp60.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&spF0, sp60.f[0], sp60.f[1], sp60.f[2], 
-                       &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
+        vec3_transform(&invMtx, sp60.f[0], sp60.f[1], sp60.f[2], 
+                       &motion->velocity.x, &motion->velocity.y, &motion->velocity.z);
         sp6C.f[0] = 0.0f;
         sp6C.f[1] = 1.0f;
         sp6C.f[2] = 0.0f;
@@ -1202,18 +1295,18 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
         
         VECTOR_SCALE(sp6C, 0.25f);
         if (var_a0 != 0) {
-            temp_fv0 = 1.0f / var_a0;
-            VECTOR_SCALE(sp6C, temp_fv0);
+            acceleration = 1.0f / var_a0;
+            VECTOR_SCALE(sp6C, acceleration);
         } else {
             sp6C.f[0] = 0.0f;
             sp6C.f[1] = 1.0f;
             sp6C.f[2] = 0.0f;
         }
         
-        bss_10.yaw = -objData->yaw;
-        bss_10.pitch = 0;
-        bss_10.roll = 0;
-        matrix_from_srt_reversed(&spB0, &bss_10);
+        sRotationTransform.yaw = -objData->yaw;
+        sRotationTransform.pitch = 0;
+        sRotationTransform.roll = 0;
+        matrix_from_srt_reversed(&spB0, &sRotationTransform);
         vec3_transform(&spB0, sp6C.f[0], sp6C.f[1], sp6C.f[2], &sp6C.f[0], &sp6C.f[1], &sp6C.f[2]);
         
         angle1 = M_90_DEGREES - arctan2_f(sp6C.f[1], sp6C.f[2]);
@@ -1221,18 +1314,18 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
         angle1 -= (objData->pitch & 0xFFFF);
         CIRCLE_WRAP(angle1);
         objData->pitch += (((angle1 >> 2) / 3) * (s32) updateRate);
-        self->srt.pitch = objData->pitch + objData->unk3E6;
+        self->srt.pitch = objData->pitch + objData->pitchOffset;
         
         angle2 -= (objData->roll & 0xFFFF);
         CIRCLE_WRAP(angle2);
         objData->roll += (((angle2 >> 2) / 3) * (s32) updateRate);
     }
     
-    objData->yaw -= (s16) (objData->unk2E0.xJoy * (70.0f - (objData->unk2E0.yJoy * 0.05f)) * 0.0666f);
+    objData->yaw -= (s16) (objData->steering.xJoy * (70.0f - (objData->steering.yJoy * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x2E64 | func: 24
-void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
+void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* arg2, f32 updateRate, s32 arg4) {
     MtxF sp120;
     MtxF spE0;
     MtxF spA0;
@@ -1253,52 +1346,55 @@ void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
 
     collision = &objData->collision;
     
-    if (arg2->unkC.f[0] > 4.0f) {
-        arg2->unkC.f[0] = 4.0f;
+    if (arg2->velocity.f[0] > 4.0f) {
+        arg2->velocity.f[0] = 4.0f;
     }
-    if (arg2->unkC.f[0] < -4.0f) {
-        arg2->unkC.f[0] = -4.0f;
+    if (arg2->velocity.f[0] < -4.0f) {
+        arg2->velocity.f[0] = -4.0f;
     }
-    if (arg2->unkC.f[1] > 4.0f) {
-        arg2->unkC.f[1] = 4.0f;
+    if (arg2->velocity.f[1] > 4.0f) {
+        arg2->velocity.f[1] = 4.0f;
     }
-    if (arg2->unkC.f[1] < -4.0f) {
-        arg2->unkC.f[1] = -4.0f;
+    if (arg2->velocity.f[1] < -4.0f) {
+        arg2->velocity.f[1] = -4.0f;
     }
-    if (arg2->unkC.f[2] > 5.0f) {
-        arg2->unkC.f[2] = 5.0f;
+    if (arg2->velocity.f[2] > 5.0f) {
+        arg2->velocity.f[2] = 5.0f;
     }
-    if (arg2->unkC.f[2] < -5.8f) {
-        arg2->unkC.f[2] = -5.8f;
+    if (arg2->velocity.f[2] < -5.8f) {
+        arg2->velocity.f[2] = -5.8f;
     }
     
-    bss_10.yaw = objData->yaw;
-    bss_10.pitch = objData->pitch;
-    bss_10.roll = objData->roll;
-    matrix_from_srt(&sp120, &bss_10);
+    sRotationTransform.yaw = objData->yaw;
+    sRotationTransform.pitch = objData->pitch;
+    sRotationTransform.roll = objData->roll;
+    matrix_from_srt(&sp120, &sRotationTransform);
     
-    bss_10.yaw = -objData->yaw;
-    bss_10.pitch = -objData->pitch;
-    bss_10.roll = -objData->roll;
-    matrix_from_srt_reversed(&spE0, &bss_10);
+    sRotationTransform.yaw = -objData->yaw;
+    sRotationTransform.pitch = -objData->pitch;
+    sRotationTransform.roll = -objData->roll;
+    matrix_from_srt_reversed(&spE0, &sRotationTransform);
     
-    vec3_transform(&spE0, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp80.f[0], &sp80.f[1], &sp80.f[2]);
+    vec3_transform(&spE0, 
+        0.0f, arg2->unk28 * arg2->unk1C, 0.0f, 
+        &sp80.f[0], &sp80.f[1], &sp80.f[2]
+    );
 
-    temp_fv0 = -(f32) objData->unk2E0.yJoy * 50.0f;
-    temp_fv0 *= arg2->unk18;
-    arg2->unkC.f[2] += temp_fv0;
-    arg2->unk0.f[0] = sp80.f[0] * arg2->unk18;
-    arg2->unk0.f[1] = sp80.f[1] * arg2->unk18;
-    arg2->unk0.f[2] = sp80.f[2] * arg2->unk18;
-    arg2->unkC.f[0] = arg2->unkC.f[0] + arg2->unk0.f[0];
-    arg2->unkC.f[1] = arg2->unkC.f[1] + arg2->unk0.f[1];
-    arg2->unkC.f[2] = arg2->unkC.f[2] + arg2->unk0.f[2];
+    temp_fv0 = -(f32) objData->steering.yJoy * 50.0f;
+    temp_fv0 *= arg2->maxAccelerationPerFrame;
+    arg2->velocity.f[2] += temp_fv0;
+    arg2->unk0.f[0] = sp80.f[0] * arg2->maxAccelerationPerFrame;
+    arg2->unk0.f[1] = sp80.f[1] * arg2->maxAccelerationPerFrame;
+    arg2->unk0.f[2] = sp80.f[2] * arg2->maxAccelerationPerFrame;
+    arg2->velocity.f[0] = arg2->velocity.f[0] + arg2->unk0.f[0];
+    arg2->velocity.f[1] = arg2->velocity.f[1] + arg2->unk0.f[1];
+    arg2->velocity.f[2] = arg2->velocity.f[2] + arg2->unk0.f[2];
     
     if (collision->unk25D != 0) {
-        arg2->unkC.f[0] = 0.0f;
+        arg2->velocity.f[0] = 0.0f;
         var_fv1 = arg2->unk2C * sp80.y;
         
-        if (arg2->unkC.f[2] < 0.0f) {
+        if (arg2->velocity.f[2] < 0.0f) {
             if (var_fv1 < 0.0f) {
                 var_fv1 = -var_fv1;
             }
@@ -1306,27 +1402,27 @@ void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
             var_fv1 = -var_fv1;
         }
 
-        var_fv1 *= arg2->unk18;
-        temp_fv0 = arg2->unkC.f[2] + var_fv1;
+        var_fv1 *= arg2->maxAccelerationPerFrame;
+        temp_fv0 = arg2->velocity.f[2] + var_fv1;
         if (temp_fv0 > 0.0f) {
-            arg2->unkC.f[2] = 0.0f;
+            arg2->velocity.f[2] = 0.0f;
         } else {
-            arg2->unkC.f[2] = temp_fv0;
+            arg2->velocity.f[2] = temp_fv0;
         }
     }
 
-    sq = SQ(arg2->unkC.f[2]);
+    sq = SQ(arg2->velocity.f[2]);
     var_fv1 = arg2->unk30 * sq;
-    var_fv1 *= arg2->unk18;
+    var_fv1 *= arg2->maxAccelerationPerFrame;
     
-    temp_fv0 = arg2->unkC.f[2] + var_fv1;
+    temp_fv0 = arg2->velocity.f[2] + var_fv1;
     if (temp_fv0 > 0.0f) {
-        arg2->unkC.f[2] = 0.0f;
+        arg2->velocity.f[2] = 0.0f;
     } else {
-        arg2->unkC.f[2] = temp_fv0;
+        arg2->velocity.f[2] = temp_fv0;
     }
     
-    vec3_transform(&sp120, arg2->unkC.f[0], arg2->unkC.f[1], arg2->unkC.f[2], &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
+    vec3_transform(&sp120, arg2->velocity.f[0], arg2->velocity.f[1], arg2->velocity.f[2], &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
     VECTOR_SCALE(self->velocity, 1.0666667f);
     obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
     
@@ -1341,7 +1437,7 @@ void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
         sp68.f[0] = self->velocity.x * 0.93749994f;
         sp68.f[1] = self->velocity.y * 0.93749994f;
         sp68.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&spE0, sp68.f[0], sp68.f[1], sp68.f[2], &arg2->unkC.f[0], &arg2->unkC.f[1], &arg2->unkC.f[2]);
+        vec3_transform(&spE0, sp68.f[0], sp68.f[1], sp68.f[2], &arg2->velocity.f[0], &arg2->velocity.f[1], &arg2->velocity.f[2]);
         
         sp74.f[0] = 0.0f;
         sp74.f[1] = 1.0f;
@@ -1370,10 +1466,10 @@ void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
             sp74.f[2] = 0.0f;
         }
         
-        bss_10.yaw = -objData->yaw;
-        bss_10.pitch = 0;
-        bss_10.roll = 0;
-        matrix_from_srt_reversed(&spA0, &bss_10);
+        sRotationTransform.yaw = -objData->yaw;
+        sRotationTransform.pitch = 0;
+        sRotationTransform.roll = 0;
+        matrix_from_srt_reversed(&spA0, &sRotationTransform);
         vec3_transform(&spA0, sp74.f[0], sp74.f[1], sp74.f[2], &sp74.f[0], &sp74.f[1], &sp74.f[2]);
         
         var_s0 = M_90_DEGREES - arctan2_f(sp74.f[1], sp74.f[2]);
@@ -1381,13 +1477,13 @@ void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC
         var_s0 -= (objData->pitch & 0xFFFF);
         CIRCLE_WRAP(var_s0);
         objData->pitch += ((var_s0 >> 2) / 3) * (s32)updateRate;
-        self->srt.pitch = objData->pitch + objData->unk3E6;
+        self->srt.pitch = objData->pitch + objData->pitchOffset;
         temp_a1 -= (objData->roll & 0xFFFF);
         CIRCLE_WRAP(temp_a1);
         objData->roll += ((temp_a1 >> 2) / 3) * (s32)updateRate;
     }
     
-    objData->yaw -= (s16) (objData->unk2E0.xJoy * (70.0f - (objData->unk2E0.yJoy * 0.05f)) * 0.0666f);
+    objData->yaw -= (s16) (objData->steering.xJoy * (70.0f - (objData->steering.yJoy * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x3618 | func: 25
@@ -1432,18 +1528,18 @@ void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData) {
     
     switch (damageType) {
     case Damage_Type_D:
-        objData->unk3EC = 20;
-        objData->unk384 = 0.8f;
+        objData->stallFrames = 20;
+        objData->stallFactor = 0.8f;
         return;
     case Damage_Type_14:
-        objData->unk3EC = 5;
-        objData->unk384 = 0.75f;
+        objData->stallFrames = 5;
+        objData->stallFactor = 0.75f;
         return;
-    case Damage_Type_1D:
+    case Damage_Type_Bike_Fuel:
         objData->fuelAmount += (hitDamage * 100);
-        objData->unk3CC.f[0] = 2.0f;
-        objData->unk3CC.f[1] = 4.0f;
-        objData->unk3CC.f[2] = 4.6f;
+        objData->maxVelocity.x = 2.0f;
+        objData->maxVelocity.y = 4.0f;
+        objData->maxVelocity.z = 4.6f;
         if (objData->fuelAmount > 13000) {
             objData->fuelAmount = 13000;
         }
@@ -1455,114 +1551,140 @@ void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData) {
 int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     CRSnowBike_Data* objData;
     DLL732_Unk_2E0* unkSubstruct;
-    DLL732_Data2AC* v;
-    Vec3f spB8;
+    CRSnowBike_Motion* bikeMotion;
+    Vec3f wsVelocity;
     SRT transform;
     s32 i;
     MtxF mtx;
 
     objData = self->data;
-    unkSubstruct = &objData->unk2E0;
+    unkSubstruct = &objData->steering;
 
     for (i = 0; i < animData->messageCount; i++) {
         switch (animData->messages[i]) {
-        case 2:
+        case CRSnowBike_ANIMCMD_2_Lose_Race:
             main_set_bits(BIT_Play_Seq_02AA_CF_Lose_Race, TRUE);
             break;
-        case 3:
+        case CRSnowBike_ANIMCMD_3_Free_Fuel_Gauge:
             gDLL_1_cmdmenu->vtbl->energy_bar_free();
             break;
         }
     }
     
     if (objData->state == STATE_2) {
-        spB8.f[0] = (self->srt.transl.x - objData->unk3A0.f[0]) * gUpdateRateInverseF;
-        spB8.f[1] = (self->srt.transl.y - objData->unk3A0.f[1]) * gUpdateRateInverseF;
-        spB8.f[2] = (self->srt.transl.z - objData->unk3A0.f[2]) * gUpdateRateInverseF;
+        //Get the bike's objectSpace velocity vector
+        {
+            //Get bike's worldSpace velocity vector (from position delta)
+            wsVelocity.x = (self->srt.transl.x - objData->prevTranslate.x) * gUpdateRateInverseF;
+            wsVelocity.y = (self->srt.transl.y - objData->prevTranslate.y) * gUpdateRateInverseF;
+            wsVelocity.z = (self->srt.transl.z - objData->prevTranslate.z) * gUpdateRateInverseF;
 
-        spB8.f[0] *= 0.93749994f;
-        spB8.f[1] *= 0.93749994f;
-        spB8.f[2] *= 0.93749994f;
-        
-        transform.transl.x = 0.0f;
-        transform.transl.y = 0.0f;
-        transform.transl.z = 0.0f;
-        transform.scale = 1.0f;
-        transform.yaw = -self->srt.yaw;
-        transform.pitch = -self->srt.pitch;
-        transform.roll = -self->srt.roll;
-        v = &objData->unk2AC;
-        matrix_from_srt_reversed(&mtx, &transform);
-        
-        vec3_transform(&mtx, spB8.f[0], spB8.f[1], spB8.f[2], &v->unkC.f[0], &v->unkC.f[1], &v->unkC.f[2]);
+            //Apply drag
+            wsVelocity.f[0] *= 0.93749994f;
+            wsVelocity.f[1] *= 0.93749994f;
+            wsVelocity.f[2] *= 0.93749994f;
+            
+            //Get bike's rotation matrix
+            transform.transl.x = 0.0f;
+            transform.transl.y = 0.0f;
+            transform.transl.z = 0.0f;
+            transform.scale = 1.0f;
+            transform.yaw = -self->srt.yaw;
+            transform.pitch = -self->srt.pitch;
+            transform.roll = -self->srt.roll;
+            bikeMotion = &objData->unk2AC;
+            matrix_from_srt_reversed(&mtx, &transform);
+            
+            //Transform velocity from worldSpace to the bike's own objectSpace
+            vec3_transform(&mtx, 
+                wsVelocity.x, wsVelocity.y, wsVelocity.z, 
+                &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z
+            );
+        }
 
         unkSubstruct->yJoy += gUpdateRate * 8;
         if (unkSubstruct->yJoy > 70) {
             unkSubstruct->yJoy = 70;
         }
-        CRSnowBike_func_40FC(self, objData, v->unkC.f[2], unkSubstruct->yJoy, &unkSubstruct->unk10, 4);
+
+        CRSnowBike_handle_engine_sfx_and_modgfx(self, objData, 
+            bikeMotion->velocity.z, unkSubstruct->yJoy, &unkSubstruct->unk10, 
+            CRSnowBike_SOUNDFLAG_Jets
+        );
     }
     
-    objData->unk3A0.x = self->srt.transl.x;
-    objData->unk3A0.y = self->srt.transl.y;
-    objData->unk3A0.z = self->srt.transl.z;
+    objData->prevTranslate.x = self->srt.transl.x;
+    objData->prevTranslate.y = self->srt.transl.y;
+    objData->prevTranslate.z = self->srt.transl.z;
+
     objData->flags |= CRSnowBike_FLAG_10_Was_In_Sequence;
     objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
+    
     return 0;
 }
 
 // offset: 0x3AF8 | func: 29
 void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision) {
     s32 pad;
-    MtxF spDC;
-    Vec3f sp88[7];
-    s8 sp87;
+    MtxF bikeMtx;
+    Vec3f wsPoint[7];
+    s8 flags;
     s8 sp86;
     s32 i;
 
-    sp86 = -0x80 >> (7 - objData->unk3EE);
+    sp86 = -0x80 >> (7 - objData->numCollisionPoints);
     sp86 = ~sp86;
     objData->unk3F3 = -1;
-    objData->unk39C = objData->unk2AC.unkC.f[2];
+    objData->forwardSpeed = objData->unk2AC.velocity.z;
     
     if (sp86) {
         do {
-            sp87 = sp86;
-            for (i = 0; i < objData->unk3EE; i++){
-                CRSnowBike_get_bike_matrix(self, objData, &spDC, 1, 1, 1);
-                vec3_transform(&spDC, data_64[i].x, data_64[i].y, data_64[i].z, 
-                               &sp88[i].x, &sp88[i].y, &sp88[i].z);
-                if (func_80059C40(&objData->unk330[i], 
-                        &sp88[i], data_A0[i], 0, NULL, self, 8, 1, 0xFF, 0) == 0) {
-                    sp87 &= ~(1 << i);
+            flags = sp86;
+            for (i = 0; i < objData->numCollisionPoints; i++){
+                //Get bike's transformation matrix
+                CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, TRUE, TRUE, TRUE);
+                
+                //Transform the bike's objectSpace collision point into worldSpace
+                vec3_transform(&bikeMtx, 
+                        dCollisionPoints[i].x, dCollisionPoints[i].y, dCollisionPoints[i].z, 
+                        &wsPoint[i].x, &wsPoint[i].y, &wsPoint[i].z);
+
+                //Check for collisions
+                if (func_80059C40(&objData->wsCollisionCoords[i], &wsPoint[i], dCollisionRadii[i], 
+                    0, NULL, self, 8, 1, 0xFF, 0) == 0
+                ) {
+                    //Unset bit if there's no collision
+                    flags &= ~(1 << i);
                 } else {
-                    bcopy(&sp88[i], &objData->unk330[i], sizeof(Vec3f));
-                    spDC.m[3][0] = sp88[i].x;
-                    spDC.m[3][1] = sp88[i].y;
-                    spDC.m[3][2] = sp88[i].z;
-                    vec3_transform(&spDC, -data_64[i].x, -data_64[i].y, -data_64[i].z, 
+                    //Otherwise, store collision's worldSpace point, and move self away from point
+                    bcopy(&wsPoint[i], &objData->wsCollisionCoords[i], sizeof(Vec3f));
+                    bikeMtx.m[3][0] = wsPoint[i].x;
+                    bikeMtx.m[3][1] = wsPoint[i].y;
+                    bikeMtx.m[3][2] = wsPoint[i].z;
+                    vec3_transform(&bikeMtx, 
+                        -dCollisionPoints[i].x, -dCollisionPoints[i].y, -dCollisionPoints[i].z, 
                         &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z
                     );
                 }
             }
             
             if (objData->unk3F3 == -1) {
-                objData->unk3F3 = sp87;
+                objData->unk3F3 = flags;
             }
-        } while (sp87);
+        } while (flags);
     }
     
-    bcopy(&sp88, objData->unk330, objData->unk3EE * sizeof(Vec3f));
+    bcopy(&wsPoint, objData->wsCollisionCoords, objData->numCollisionPoints * sizeof(Vec3f));
 }
 
 // offset: 0x3DAC | func: 30
-s32 CRSnowBike_func_3DAC(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* arg3) {
+s32 CRSnowBike_sharpclaw_do_steering(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* steering) {
     f32 dx;
     f32 dz;
-    s32 sp3C;
-    f32 var_fv1;
+    s32 checkpointsReturn;
+    f32 speed;
     s32 dYaw;
-    s32 angle;
+    s32 value;
     CRSnowBike_Setup* objSetup;
 
     objSetup = (CRSnowBike_Setup*)self->setup;
@@ -1571,18 +1693,19 @@ s32 CRSnowBike_func_3DAC(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* o
     dz = self->srt.transl.z - objData->unk0.transl.z;
     dx = sqrtf(SQ(dx) + SQ(dz));
     
-    var_fv1 = 100.0f - dx;
+    speed = 100.0f - dx;
     if (dx > 100.0f) {
-        var_fv1 = 0.0f;
+        speed = 0.0f;
     }
     
-    sp3C = CRSnowBike_func_0(self, objData, var_fv1);
+    checkpointsReturn = CRSnowBike_func_0(self, objData, speed);
     
     gDLL_4_Race->vtbl->func4(self, &objData->raceData);
     gDLL_4_Race->vtbl->func10(&objData->raceData);
-    if (sp3C != 0) {
-        arg3->xJoy = 0;
-        arg3->yJoy = 0;
+
+    if (checkpointsReturn != 0) {
+        steering->xJoy = 0;
+        steering->yJoy = 0;
         return 1;
     }
 
@@ -1591,53 +1714,53 @@ s32 CRSnowBike_func_3DAC(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* o
     dYaw = arctan2_f(dx, dz) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(dYaw);
     
-    angle = dYaw >> 5;
-    if (angle > 65) {
-        angle = 65;
-    } else if (angle < -65) {
-        angle = -65;
+    value = dYaw >> 5;
+    if (value > 65) {
+        value = 65;
+    } else if (value < -65) {
+        value = -65;
     }
     
-    arg3->xJoy = -angle;
-    if (angle < 0) {
-        angle = -angle;
+    steering->xJoy = -value;
+    if (value < 0) {
+        value = -value;
     }
 
-    arg3->yJoy = (objSetup->unk20 - 8.0f) - (angle * (objSetup->unk20 * 0.02f));
-    diPrintf(" YJOY %i ", arg3->yJoy);
+    steering->yJoy = (objSetup->yJoySharpClaw - 8.0f) - (value * (objSetup->yJoySharpClaw * 0.02f));
+    diPrintf(" YJOY %i ", steering->yJoy);
     return 0;
 }
 
 // offset: 0x3FE0 | func: 31
-void CRSnowBike_func_3FE0(Object* self, CRSnowBike_Data* objData) {
-    MtxF sp60;
+void CRSnowBike_update_collision_points(Object* self, CRSnowBike_Data* objData) {
+    MtxF bikeMtx;
     s32 i;
 
     gDLL_27->vtbl->reset(self, &objData->collision);
-    CRSnowBike_get_bike_matrix(self, objData, &sp60, 0, 0, 0);
+    CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 0, 0);
     
-    for (i = 0; i < objData->unk3EE; i++) {
-        vec3_transform(&sp60, 
-            data_64[i].x, data_64[i].y, data_64[i].z, 
-            &objData->unk330[i].x, &objData->unk330[i].y, &objData->unk330[i].z
+    for (i = 0; i < objData->numCollisionPoints; i++) {
+        vec3_transform(&bikeMtx, 
+            dCollisionPoints[i].x, dCollisionPoints[i].y, dCollisionPoints[i].z, 
+            &objData->wsCollisionCoords[i].x, &objData->wsCollisionCoords[i].y, &objData->wsCollisionCoords[i].z
         );
     }
 }
 
 // offset: 0x40FC | func: 32
-void CRSnowBike_func_40FC(Object* self, CRSnowBike_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5) {
+void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objData, f32 forwardSpeed, s32 yJoy, s8* arg6, u8 soundFlags) {
     /*0x2C*/ static f32 sEngineAudioTweak;
-    f32 sp54 = 1.0f;
-    SRT sp3C;
+    f32 flamesArg = 1.0f;
+    SRT fxTransform;
     s32 volume;
     
-    if (arg5 & 1) {
-        if (objData->soundHandle1 == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objData->soundHandle1, NULL, 0, NULL);
+    if (soundFlags & CRSnowBike_SOUNDFLAG_Engine) {
+        if (objData->soundHandleEngine == 0) {
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objData->soundHandleEngine, NULL, 0, NULL);
         }
 
-        if (objData->soundHandle1 != 0) {
-            sEngineAudioTweak = arg2 * 11.6f;
+        if (objData->soundHandleEngine != 0) {
+            sEngineAudioTweak = forwardSpeed * 11.6f;
             if (sEngineAudioTweak < 0.0f) {
                 sEngineAudioTweak = -sEngineAudioTweak;
             }
@@ -1647,37 +1770,37 @@ void CRSnowBike_func_40FC(Object* self, CRSnowBike_Data* objData, f32 arg2, s32 
             if (sEngineAudioTweak > 200.0f) {
                 sEngineAudioTweak = 200.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle1, (sEngineAudioTweak / 70.0f) + 0.1f);
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleEngine, (sEngineAudioTweak / 70.0f) + 0.1f);
 
-            if (objData->unk3F2 < 0x12) {
-                volume = arg2 * 30.0f;
+            if (objData->framesInAir < 18) {
+                volume = forwardSpeed * 30.0f;
                 if (volume < 0) {
                     volume = -volume;
                 }
                 if (volume > MAX_VOLUME) {
                     volume = MAX_VOLUME;
                 }
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle1, volume);
+                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleEngine, volume);
             } else {
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle1, 0);
+                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleEngine, 0);
             }
         }
     }
     
-    if (arg5 & 2) {
-        if (objData->soundHandle3 == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F, MAX_VOLUME, &objData->soundHandle3, NULL, 0, NULL);
+    if (soundFlags & CRSnowBike_SOUNDFLAG_Hiss) {
+        if (objData->soundHandleHiss == 0) {
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F_Hiss_Loop, MAX_VOLUME, &objData->soundHandleHiss, NULL, 0, NULL);
         }
-        if (objData->soundHandle3 != 0) {
-            sEngineAudioTweak = arg2 ? ((self->srt.roll * arg2) / 30000.0f) : 0;
+        if (objData->soundHandleHiss != 0) {
+            sEngineAudioTweak = forwardSpeed ? ((self->srt.roll * forwardSpeed) / 30000.0f) : 0;
             if (sEngineAudioTweak < 0) {
                 sEngineAudioTweak = -sEngineAudioTweak;
             } else if (sEngineAudioTweak > 1.0f) {
                 sEngineAudioTweak = 1.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle3, 0.1f + sEngineAudioTweak);
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleHiss, 0.1f + sEngineAudioTweak);
 
-            if (objData->unk3F2 < 0x12) {
+            if (objData->framesInAir < 18) {
                 sEngineAudioTweak *= MAX_VOLUME_F;
                 if (sEngineAudioTweak > MAX_VOLUME_F) {
                     sEngineAudioTweak = MAX_VOLUME_F;
@@ -1685,89 +1808,95 @@ void CRSnowBike_func_40FC(Object* self, CRSnowBike_Data* objData, f32 arg2, s32 
                     sEngineAudioTweak = 0.0f;
                 }
 
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle3, sEngineAudioTweak);
+                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleHiss, sEngineAudioTweak);
             } else {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
-                objData->soundHandle3 = 0;
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                objData->soundHandleHiss = 0;
             }
         }
     }
     
-    if (arg5 & 4) {
-        if (objData->unk3EA <= 0) {
-            if (objData->soundHandle2 == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objData->soundHandle2, NULL, 0, NULL);
+    if (soundFlags & CRSnowBike_SOUNDFLAG_Jets) {
+        if (objData->fxTimer <= 0) {
+            if (objData->soundHandleJets == 0) {
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objData->soundHandleJets, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
-            if (objData->soundHandle4 == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objData->soundHandle4, NULL, 0, NULL);
+            if (objData->soundHandleRumble == 0) {
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objData->soundHandleRumble, NULL, 0, NULL);
             }
         }
         
-        if (objData->soundHandle2 != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle2, (objData->unk398 * 0.00048828125f) + 0.5f);
-            if (arg3 >= 6) {
-                objData->unk398 += gUpdateRateF;
+        if (objData->soundHandleJets != 0) {
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleJets, (objData->soundFactorJets * ONE_OVER_2048_F) + 0.5f);
+            if (yJoy >= 6) {
+                objData->soundFactorJets += gUpdateRateF;
             } else {
-                if (objData->unk398 > 55.0f) {
-                    objData->unk398 -= (0.5f * gUpdateRateF);
+                if (objData->soundFactorJets > 55.0f) {
+                    objData->soundFactorJets -= (0.5f * gUpdateRateF);
                 } else {
-                    objData->unk398 += (0.2f * gUpdateRateF);
+                    objData->soundFactorJets += (0.2f * gUpdateRateF);
                 }
             }
-            if (objData->unk398 > 90.0f) {
-                objData->unk398 = 90.0f;
+            if (objData->soundFactorJets > 90.0f) {
+                objData->soundFactorJets = 90.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle2, objData->unk398);
+            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleJets, objData->soundFactorJets);
         }
 
-        if (objData->soundHandle4 != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle4, (objData->unk394 / 75.0f) + 0.2f);
-            if (arg3 >= 6) {
-                objData->unk394 = (arg3 * 0.6f) + 15.0f;
+        if (objData->soundHandleRumble != 0) {
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleRumble, (objData->soundFactorRumble / 75.0f) + 0.2f);
+            if (yJoy >= 6) {
+                objData->soundFactorRumble = (yJoy * 0.6f) + 15.0f;
             } else {
-                if (0.5f * gUpdateRateF < objData->unk394) {
-                    objData->unk394 -= 0.5f * gUpdateRateF;
+                if (0.5f * gUpdateRateF < objData->soundFactorRumble) {
+                    objData->soundFactorRumble -= 0.5f * gUpdateRateF;
                 } else {
-                    objData->unk394 = 0.0f;
+                    objData->soundFactorRumble = 0.0f;
                 }
             }
-            if (objData->unk394 > MAX_VOLUME_F) {
-                objData->unk394 = MAX_VOLUME_F;
+            if (objData->soundFactorRumble > MAX_VOLUME_F) {
+                objData->soundFactorRumble = MAX_VOLUME_F;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle4, objData->unk394);
+            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleRumble, objData->soundFactorRumble);
         }
     }
     
-    if (objData->unk2F4 == NULL) {
-        objData->unk2F4 = dll_load_deferred(0x1025, 1);
-    }
-    
-    if (objData->unk2F8 == NULL) {
-        objData->unk2F8 = dll_load_deferred(0x1026, 1);
-    }
-    
-    if (objData->unk3EA <= 0) {
-        sp54 = 0.7f;
-        if (arg3 > 10) {
-            sp54 = arg3;
-            sp54 = (0.01f * sp54) + 0.1f;
-            objData->unk2F4->vtbl->func0(self, 0, 0, 0x404, -1, &sp54);
+    //Handle modGfx
+    {
+        if (objData->modGfxDLLFlames == NULL) {
+            objData->modGfxDLLFlames = dll_load_deferred(DLL_ID_141, 1);
         }
+        
+        if (objData->modGfxDLLWaves == NULL) {
+            objData->modGfxDLLWaves = dll_load_deferred(DLL_ID_142, 1);
+        }
+        
+        if (objData->fxTimer <= 0) {
+            //Create thruster flames when moving forward
+            flamesArg = 0.7f;
+            if (yJoy > 10) {
+                flamesArg = yJoy;
+                flamesArg = (0.01f * flamesArg) + 0.1f;
+                objData->modGfxDLLFlames->vtbl->func0(self, 0, 0, 0x404, -1, &flamesArg);
+            }
 
-        objData->unk3EA = 30;
+            objData->fxTimer = 30;
 
-        if ((self->srt.roll > 1000) && (arg2 < -1.0f)) {
-            sp3C.scale = self->srt.roll / 8000.0f;
-            sp3C.scale *= (-arg2 / 3.8f);
-            objData->unk2F8->vtbl->func0(self, 0, &sp3C, 0x404, -1, 0);
-        } else if ((self->srt.roll < -0x3E8) && (arg2 < -1.0f)) {
-            sp3C.scale = self->srt.roll / -8000.0f;
-            sp3C.scale *= (-arg2 / 3.8f);
-            objData->unk2F8->vtbl->func0(self, 1, &sp3C, 0x404, -1, 0);
+            //Create wave modGfx when turning sharply
+            if ((self->srt.roll > 1000) && (forwardSpeed < -1.0f)) {
+                fxTransform.scale = self->srt.roll / 8000.0f;
+                fxTransform.scale *= (-forwardSpeed / 3.8f);
+                objData->modGfxDLLWaves->vtbl->func0(self, 0, &fxTransform, 0x404, -1, 0);
+            } else if ((self->srt.roll < -1000) && (forwardSpeed < -1.0f)) {
+                fxTransform.scale = self->srt.roll / -8000.0f;
+                fxTransform.scale *= (-forwardSpeed / 3.8f);
+                objData->modGfxDLLWaves->vtbl->func0(self, 1, &fxTransform, 0x404, -1, 0);
+            }
         }
     }
-    objData->unk3EA -= gUpdateRate;
+
+    objData->fxTimer -= gUpdateRate;
 }
 
 // offset: 0x4B30 | func: 33 | export: 20

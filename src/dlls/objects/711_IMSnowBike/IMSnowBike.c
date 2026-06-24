@@ -1435,7 +1435,7 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
     }
     if (arg6 & 2) {
         if (objdata->unk3BC == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F, MAX_VOLUME, &objdata->unk3BC, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F_Hiss_Loop, MAX_VOLUME, &objdata->unk3BC, NULL, 0, NULL);
         }
         if (objdata->unk3BC != 0) {
             if (arg2 != 0.0f) {

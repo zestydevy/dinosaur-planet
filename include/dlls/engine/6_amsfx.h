@@ -271,7 +271,7 @@ enum SoundID {
     SOUND_28C_Cmdmenu_Close = 0x28C,
     SOUND_28D_Cmdmenu_OpenBag_HighPitch = 0x28D, // cmdmenu
     SOUND_28E = 0x28E,
-    SOUND_28F = 0x28F,
+    SOUND_28F_Hiss_Loop = 0x28F,
     SOUND_290_Propeller_Loop = 0x290,
 
     SOUND_292_Impact = 0x292, // used by IMSnowBike
