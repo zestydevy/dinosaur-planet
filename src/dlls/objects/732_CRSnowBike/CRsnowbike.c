@@ -1,6 +1,8 @@
 #include "common.h"
 #include "game/gamebits.h"
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "macros.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -12,8 +14,8 @@
 
 typedef struct {
     s8 unk0[0xE];
-    s8 unkE;
-    s8 unkF;
+    s8 xJoy;
+    s8 yJoy;
     s8 unk10;
 } DLL732_Unk_2E0; //Controller/joystick-related
 
@@ -30,28 +32,45 @@ typedef struct {
 } DLL732_Data2AC;
 
 typedef enum {
+    STATE_0,
+    STATE_1,
+    STATE_2,
+    STATE_3
+} CRSnowBike_States;
+
+typedef enum {
+    CRSnowBike_FLAG_0 = 0,
+    CRSnowBike_FLAG_1 = 1,
+    CRSnowBike_FLAG_2 = 2,
+    CRSnowBike_FLAG_4_Grounded = 4,
+    CRSnowBike_FLAG_8_Race_Started = 8,
+    CRSnowBike_FLAG_10_Was_In_Sequence = 0x10,
+    CRSnowBike_FLAG_20_SharpClaw_Bike = 0x20
+} CRSnowBike_Flags;
+
+typedef enum {
     RACETRACK_0_CloudRunner_Fortress,
     RACETRACK_1_Golden_Plains
-} DLL732_Racetracks;
+} CRSnowBike_Racetracks;
 
 typedef struct {
     ObjSetup base;
     u8 yaw;
     u8 unk19;
-    s16 gamebitLocked;
+    s16 gamebitUnlocked;
     u8 racetrackIdx;
     u8 unk1D;
-    s16 unk1E;
+    s16 gamebitA;
     u8 unk20;
-} DLL732_Setup;
+} CRSnowBike_Setup;
 
 typedef struct {
     SRT unk0;
-    RaceStruct unk18;
+    RaceStruct raceData;
     s8 _unk3C[0x48 - 0x3C];
     u8 racetrackIdx;                //See `DLL732_Racetracks`
     u8 unk49;
-    DLL27_Data unk4C;
+    DLL27_Data collision;
     DLL732_Data2AC unk2AC;
     DLL732_Unk_2E0 unk2E0;
     DLL_IModgfx* unk2F4;
@@ -67,10 +86,10 @@ typedef struct {
     f32 unk39C;
     Vec3f unk3A0; //previous position?
     Vec3f unk3AC;
-    u32 unk3B8; //soundHandle
-    u32 unk3BC; //soundHandle
-    u32 unk3C0; //soundHandle
-    u32 unk3C4; //soundHandle
+    u32 soundHandle1;
+    u32 soundHandle2;
+    u32 soundHandle3;
+    u32 soundHandle4;
     s32 fuelAmount;
     Vec3f unk3CC;
     s8 _unk3D8[0x3DC - 0x3D8];
@@ -85,15 +104,15 @@ typedef struct {
     s8 unk3EC;
     u8 unk3ED;
     u8 unk3EE;
-    u8 unk3EF; //flags
-    s8 unk3F0;
+    u8 flags;
+    s8 state;
     u8 unk3F1;
     s8 unk3F2;
     s8 unk3F3;
-    u8 unk3F4_0 : 1; //flags
-} DLL732_Data; //0x3F8
+    u8 unk3F4_0 : 1;
+} CRSnowBike_Data;
 
-/*0x0*/ static s16 data_0[][3] = {
+/*0x0*/ static s16 dRaceGamebits[][3] = {
     { BIT_CF_Race_Started, BIT_498, BIT_49C },
     { BIT_GP_Sharpclaw_Jetbike_Cutscene2, BIT_77E, BIT_77F }
 };
@@ -122,74 +141,77 @@ typedef struct {
     5, 0, 0, 0, 2.0001223, 0, 0, 0, 
     2.0157478, 0, 0, 0
 };
-/*0xF0*/ static f32 data_F0[] = {
-    14.5, 0, 9, -14.5, 0, 9
+/*0xF0*/ static Vec3f data_F0[] = {
+    VEC3F(14.5, 0, 9), 
+    VEC3F(-14.5, 0, 9)
 };
 
-/*0x0*/ static Texture* bss_0;
-/*0x4*/ static Texture* bss_4;
-/*0x8*/ static Texture* bss_8;
+/*0x0*/ static Texture* sTexVerticalWave;       //(TEX0_486) 1 vertical wave? 
+/*0x4*/ static Texture* sTexFlames;             //(TEX0_253) thruster flames 
+/*0x8*/ static Texture* sTexHorizontalWaves;    //(TEX0_136) 3 horizontal waves?
 /*0x10*/ static SRT bss_10;
 
 #include "prevent_bss_reordering.h"
 
-static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2);
-void dll_732_func_1C38(Object* self);
-static void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
-static void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
-static void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1);
-static void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
-static void dll_732_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer);
-static void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch);
-static void dll_732_func_3748(Object* self, DLL732_Data* objData);
-static int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
-static void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision);
-static s32 dll_732_func_3DAC(Object* self, DLL732_Data* arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3);
-static void dll_732_func_3FE0(Object* self, DLL732_Data* objData);
-static void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
+static s32 CRSnowBike_func_0(Object* self, CRSnowBike_Data* objData, f32 arg2);
+void CRSnowBike_func_1C38(Object* self);
+static void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
+static void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
+static void CRSnowBike_func_22BC(Object* self, DLL732_Data2AC* arg1);
+static void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4);
+static void CRSnowBike_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer);
+static void CRSnowBike_get_bike_matrix(Object* self, CRSnowBike_Data* objData, MtxF* oMtx, s32 useYawOffset, s32 useRoll, s32 usePitch);
+static void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData);
+static int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision);
+static s32 CRSnowBike_func_3DAC(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* arg3);
+static void CRSnowBike_func_3FE0(Object* self, CRSnowBike_Data* objData);
+static void CRSnowBike_func_40FC(Object* self, CRSnowBike_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5);
 
 // offset: 0x0 | func: 0
-static s32 dll_732_func_0(Object* self, DLL732_Data* objData, f32 arg2) {
-    s32 pad;
+static s32 CRSnowBike_func_0(Object* self, CRSnowBike_Data* data, f32 arg2) {
+    RaceCheckpointSetup* checkpointSetup;
     s32 sp30;
-    DLL732_Data* objData2;
+    CRSnowBike_Data* objData;
+    
+    objData = self->data;
 
-    objData2 = self->data;
-    if (gDLL_4_Race->vtbl->func8(objData->unk18.unk10, &sp30)->unk20[1] == -1) {
-        objData2->unk3F4_0 = rand_next(0, 1);
+    checkpointSetup = gDLL_4_Race->vtbl->func8(data->raceData.unk10, &sp30);
+    if (checkpointSetup->unk20[1] == -1) {
+        objData->unk3F4_0 = rand_next(0, 1);
     }
-    return gDLL_4_Race->vtbl->func5(&objData->unk0, &objData->unk18, arg2, 1, 0, objData2->unk3F4_0);
+    
+    return gDLL_4_Race->vtbl->func5(&data->unk0, &data->raceData, arg2, 1, 0, objData->unk3F4_0);
 }
 
-
 // offset: 0xE4 | ctor
-void dll_732_ctor(void* dll) { }
+void CRSnowBike_ctor(void* dll) { }
 
 // offset: 0xF0 | dtor
-void dll_732_dtor(void* dll) { }
+void CRSnowBike_dtor(void* dll) { }
 
 // offset: 0xFC | func: 1 | export: 0
-void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
+void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     s32 pad;
     s32 pad2;
-    s32 var_v0;
-    DLL732_Setup* objSetup;
+    s32 flagsValue;
+    CRSnowBike_Setup* objSetup;
     u8 data_108[] = {5, 5, 5, 5};
-    DLL732_Data* objData;
+    CRSnowBike_Data* objData;
 
-    objSetup = (DLL732_Setup*)self->setup;
+    objSetup = (CRSnowBike_Setup*)self->setup;
     objData = self->data;
-    bzero(objData, sizeof(DLL732_Data));
+    bzero(objData, sizeof(CRSnowBike_Data));
     
     objData->yaw = (setup->yaw & 0xFF) << 8;
     objData->unk2F4 = 0;
     objData->unk2F8 = 0;
     self->srt.yaw = objData->yaw;
 
-    self->animCallback = dll_732_func_3860;
+    self->animCallback = CRSnowBike_anim_callback;
     
-    gDLL_27->vtbl->init(&objData->unk4C, 0, 0x01040007, 1);
-    gDLL_27->vtbl->setup_terrain_collider(&objData->unk4C, 4, data_24, data_54, data_108);
+    gDLL_27->vtbl->init(&objData->collision, 0, 0x01040007, 1);
+    gDLL_27->vtbl->setup_terrain_collider(&objData->collision, 4, data_24, data_54, data_108);
     
     if (setup->unk19 != 0) {
         objData->unk3EE = 3;
@@ -197,8 +219,8 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
         objData->unk3EE = 5;
     }
 
-    dll_732_func_3FE0(self, objData);
-    dll_732_func_22BC(self, &objData->unk2AC);
+    CRSnowBike_func_3FE0(self, objData);
+    CRSnowBike_func_22BC(self, &objData->unk2AC);
 
     func_80023D30(self, 0, 0.0f, 0);
 
@@ -207,12 +229,12 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
     }
 
     if (setup->unk19 != 0) {
-        objData->unk3EF |= 0x20;
+        objData->flags |= CRSnowBike_FLAG_20_SharpClaw_Bike;
     }
 
-    objData->unk18.unk10 = -1;
-    objData->unk18.unk14 = -1;
-    objData->unk18.unk18 = -1;
+    objData->raceData.unk10 = -1;
+    objData->raceData.unk14 = -1;
+    objData->raceData.unk18 = -1;
     objData->racetrackIdx = setup->racetrackIdx;
     objData->unk49 = setup->unk1D;
     
@@ -221,33 +243,34 @@ void dll_732_setup(Object* self, DLL732_Setup* setup, s32 reset) {
     objData->unk0.transl.z = self->srt.transl.z;
     
     obj_add_object_type(self, OBJTYPE_Vehicle);
-    bss_0 = tex_load_deferred(TEXTABLE_186);
-    bss_4 = tex_load_deferred(TEXTABLE_89);
-    bss_8 = tex_load_deferred(TEXTABLE_3C);
-    
-    if (main_get_bits(objSetup->unk1E) != 0) {
-        var_v0 = 1;
+
+    sTexVerticalWave = tex_load_deferred(TEXTABLE_186);     //(TEX0_486) 1 vertical wave? 
+    sTexFlames = tex_load_deferred(TEXTABLE_89);            //(TEX0_253) thruster flames 
+    sTexHorizontalWaves = tex_load_deferred(TEXTABLE_3C);   //(TEX0_136) 3 horizontal waves?
+
+    if (main_get_bits(objSetup->gamebitA)) {
+        flagsValue = CRSnowBike_FLAG_1;
     } else {
-        var_v0 = 0;
+        flagsValue = CRSnowBike_FLAG_0;
     }
-    objData->unk3EF |= var_v0;
+    objData->flags |= flagsValue;
     
-    objData->gamebitIDs = &data_0[setup->racetrackIdx][0];
+    objData->gamebitIDs = &dRaceGamebits[setup->racetrackIdx][0];
 }
 
 /*0x0*/ static const char str_0[] = " FInished Is SEt for Some Reason \n";
 /*0x24*/ static const char str_24[] = " FInished Is SEt for Some Reason \n";
 
 // offset: 0x398 | func: 2 | export: 1
-void dll_732_control(Object* self) {
-    DLL732_Setup* objSetup;
+void CRSnowBike_control(Object* self) {
+    CRSnowBike_Setup* objSetup;
     Object* player;
     s32 pad;
-    f32 spC0;
-    MtxF sp80;
-    Vec3f sp74;
+    f32 yOffset;
+    MtxF bikeMtx;
+    Vec3f wsPoint;
     DLL732_Data2AC* innerData;
-    DLL732_Data* objData;
+    CRSnowBike_Data* objData;
     DLL732_Unk_2E0* new_var;
     f32 dx;
     f32 dz;
@@ -258,31 +281,34 @@ void dll_732_control(Object* self) {
     DLL732_Data2AC* sp44;
 
     objData = self->data;
-    objSetup = (DLL732_Setup*)self->setup;
+    objSetup = (CRSnowBike_Setup*)self->setup;
     
     innerData = &objData->unk2AC;
     new_var = &objData->unk2E0;
     
-    spC0 = 0.0f;
+    yOffset = 0.0f;
     
-    if ((objData->unk3EF & 1)) {
+    if ((objData->flags & CRSnowBike_FLAG_1)) {
         return;
     }
         
-    if (main_get_bits(objSetup->unk1E)) {
-        objData->unk3EF |= 1;
+    if (main_get_bits(objSetup->gamebitA)) {
+        objData->flags |= CRSnowBike_FLAG_1;
         return;
     }
     
     player = get_player();
-    self->unkAF |= 8;
+
+    self->unkAF |= ARROW_FLAG_8_No_Targetting;
+
     objData->unk3A0.f[0] = self->srt.transl.f[0];
     objData->unk3A0.f[1] = self->srt.transl.f[1];
     objData->unk3A0.f[2] = self->srt.transl.f[2];
     
-    if (objData->unk3EF & 0x10) {
-        objData->unk3EF &= ~0x10;
-        if (!(objData->unk3EF & 0x20)) {
+    if (objData->flags & CRSnowBike_FLAG_10_Was_In_Sequence) {
+        objData->flags &= ~CRSnowBike_FLAG_10_Was_In_Sequence;
+
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
             innerData->unkC.f[0] = 0.0f;
             innerData->unkC.f[1] = 0.0f;
             innerData->unkC.f[2] = -2.0f;
@@ -293,58 +319,60 @@ void dll_732_control(Object* self) {
             objData->yaw = self->srt.yaw;
             objData->pitch = self->srt.pitch;
             objData->roll = self->srt.roll;
-            dll_732_func_3FE0(self, objData);
+            CRSnowBike_func_3FE0(self, objData);
         }
     }
 
-    switch (objData->unk3F0) {
-    case 0:
-        if (!(objData->unk3EF & 0x20)) {
+    switch (objData->state) {
+    case STATE_0:
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
             self->objhitInfo->unk5B = 0;
             self->objhitInfo->unk5C = 0;
             objData->unk3ED = 0;
-            self->unkAF &= ~8;
+            self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
-            if ((objSetup->gamebitLocked == NO_GAMEBIT) || (main_get_bits(objSetup->gamebitLocked) != 0)) {
-                self->unkAF &= ~0x10;
+            if ((objSetup->gamebitUnlocked == NO_GAMEBIT) || main_get_bits(objSetup->gamebitUnlocked)) {
+                self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
             } else {
-                self->unkAF |= 0x10;
+                self->unkAF |= ARROW_FLAG_10_Greyed_Out;
             }
             
+            //Check if the player is near the bike
             if ((player != NULL) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
                 objData->unk3ED = 1;
-                dll_732_func_3694(self, objData, &sp80, 0, 1, 1);
-                vec3_transform(&sp80, data_F0[0], data_F0[1], data_F0[2], &sp74.z, &sp74.y, &sp74.x);
-                dx = player->srt.transl.x - sp74.z;
-                dz = player->srt.transl.z - sp74.x;
-                if ((SQ(dx) + SQ(dz)) < 100.0f) {
-                    self->unkAF &= ~8;
+                CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 1, 1);
+                vec3_transform(&bikeMtx, data_F0[0].x, data_F0[0].y, data_F0[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                dx = player->srt.transl.x - wsPoint.z;
+                dz = player->srt.transl.z - wsPoint.x;
+
+                if ((SQ(dx) + SQ(dz)) < SQ(10)) {
+                    self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
                     objData->unk3ED = 2;
                 } else {
-                    vec3_transform(&sp80, data_F0[3], data_F0[4], data_F0[5], &sp74.z, &sp74.y, &sp74.x);
-                    dx = player->srt.transl.x - sp74.z;
-                    dz = player->srt.transl.z - sp74.x;
-                    if ((SQ(dx) + SQ(dz)) < 100.0f) {
-                        self->unkAF &= ~8;
+                    vec3_transform(&bikeMtx, data_F0[1].x, data_F0[1].y, data_F0[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                    dx = player->srt.transl.x - wsPoint.z;
+                    dz = player->srt.transl.z - wsPoint.x;
+                    if ((SQ(dx) + SQ(dz)) < SQ(10)) {
+                        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
                         objData->unk3ED = 1;
                     }
                 }
             }
         }
 
-        if (objData->unk3BC != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objData->unk3BC);
-            objData->unk3BC = 0;
+        if (objData->soundHandle2) {
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle2);
+            objData->soundHandle2 = 0;
         }
 
-        if (objData->unk3C0 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
-            objData->unk3C0 = 0;
+        if (objData->soundHandle3) {
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
+            objData->soundHandle3 = 0;
         }
 
-        if (objData->unk3C4 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objData->unk3C4);
-            objData->unk3C4 = 0;
+        if (objData->soundHandle4) {
+            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle4);
+            objData->soundHandle4 = 0;
         }
 
         if (objData->unk2F4 != NULL) {
@@ -357,43 +385,46 @@ void dll_732_control(Object* self) {
             objData->unk2F8 = NULL;
         }
 
-        objData->unk3EF = objData->unk3EF & 0xFFF7;
+        objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
         break;
-    case 2:
-        if (!(objData->unk3EF & 8)) {
-            objData->unk18.unk10 = -1;
-            objData->unk18.unk14 = -1;
-            objData->unk18.unk18 = -1;
-            objData->unk18.unk1C = 0;
-            if (main_get_bits(objData->gamebitIDs[0]) != 0) {
-                flagValue = 8;
-            } else {
-                flagValue = 0;
-            }
-            objData->unk3EF |= flagValue;
-            if (objData->unk3EF & 8) {
-                if (objData->unk3EF & 0x20) {
-                    dll_732_func_1C38(self);
-                } else {
-                    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->racetrackIdx);
-                }
-                gDLL_4_Race->vtbl->func9(&objData->unk18);
-            }
-        } else if (main_get_bits(objData->gamebitIDs[1]) != 0) {
-            objData->unk3EF &= ~8;
-        }
-        dll_732_func_3748(self, objData);
+    case STATE_2:
+        if (!(objData->flags & CRSnowBike_FLAG_8_Race_Started)) {
+            objData->raceData.unk10 = -1;
+            objData->raceData.unk14 = -1;
+            objData->raceData.unk18 = -1;
+            objData->raceData.unk1C = 0;
 
-        if (objData->unk3EF & 0x20) {
-            if (!(objData->unk3EF & 8)) {
+            if (main_get_bits(objData->gamebitIDs[0])) {
+                flagValue = CRSnowBike_FLAG_8_Race_Started;
+            } else {
+                flagValue = CRSnowBike_FLAG_0;
+            }
+            objData->flags |= flagValue;
+
+            if (objData->flags & CRSnowBike_FLAG_8_Race_Started) {
+                if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
+                    CRSnowBike_func_1C38(self);
+                } else {
+                    gDLL_4_Race->vtbl->func3(self, &objData->raceData, objSetup->racetrackIdx);
+                }
+                gDLL_4_Race->vtbl->func9(&objData->raceData);
+            }
+        } else if (main_get_bits(objData->gamebitIDs[1])) {
+            objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
+        }
+
+        CRSnowBike_func_3748(self, objData);
+
+        if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
+            if (!(objData->flags & CRSnowBike_FLAG_8_Race_Started)) {
                 return;
             }
             
             if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2]) >= 0) {
-                if (objData->unk3EF & 2) {
-                    sp5C = dll_732_func_0(self, objData, 2.8f * gUpdateRateF);
-                    gDLL_4_Race->vtbl->func4(self, &objData->unk18);
-                    gDLL_4_Race->vtbl->func10(&objData->unk18);
+                if (objData->flags & CRSnowBike_FLAG_2) {
+                    sp5C = CRSnowBike_func_0(self, objData, 2.8f * gUpdateRateF);
+                    gDLL_4_Race->vtbl->func4(self, &objData->raceData);
+                    gDLL_4_Race->vtbl->func10(&objData->raceData);
                     if (sp5C == 0) {
                         sp44 = &objData->unk2AC;
                         self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
@@ -410,25 +441,25 @@ void dll_732_control(Object* self) {
                         objData->yaw = self->srt.yaw;
                         objData->pitch = self->srt.pitch;
                         objData->roll = self->srt.roll;
-                        dll_732_func_3FE0(self, objData);
-                        func_80058680(self, self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &spC0, 0);
-                        self->srt.transl.f[1] -= spC0;
-                        objData->unk3EF &= ~2;
+                        CRSnowBike_func_3FE0(self, objData);
+                        func_80058680(self, self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &yOffset, 0);
+                        self->srt.transl.y -= yOffset;
+                        objData->flags &= ~CRSnowBike_FLAG_2;
                     }
                     return;
-                } else if (dll_732_func_3DAC(self, objData, objData, &objData->unk2E0) != 0) {
+                } else if (CRSnowBike_func_3DAC(self, objData, objData, &objData->unk2E0)) {
                     return;
                 }
             } else {
-                sp5C = dll_732_func_0(self, objData, 2.8f * gUpdateRateF);
-                gDLL_4_Race->vtbl->func4(self, &objData->unk18);
-                gDLL_4_Race->vtbl->func10(&objData->unk18);
+                sp5C = CRSnowBike_func_0(self, objData, 2.8f * gUpdateRateF);
+                gDLL_4_Race->vtbl->func4(self, &objData->raceData);
+                gDLL_4_Race->vtbl->func10(&objData->raceData);
                 if (sp5C == 0) {
                     self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.f[2] - objData->unk0.transl.f[2]);
                     self->srt.transl.x = objData->unk0.transl.x;
-                    self->srt.transl.f[1] = objData->unk0.transl.f[1];
-                    self->srt.transl.f[2] = objData->unk0.transl.f[2];
-                    objData->unk3EF |= 2;
+                    self->srt.transl.y = objData->unk0.transl.y;
+                    self->srt.transl.z = objData->unk0.transl.z;
+                    objData->flags |= CRSnowBike_FLAG_2;
                 }
                 return;
             }
@@ -437,18 +468,18 @@ void dll_732_control(Object* self) {
             self->objhitInfo->unk5C = 0xA;
         }
 
-        if ((objData->unk3EF & 0x20) == 0) {
-            if (objData->unk3EF & 8) {
-                gDLL_4_Race->vtbl->func4(self, &objData->unk18);
-                gDLL_4_Race->vtbl->func10(&objData->unk18);
-                objData->unk3F1 = gDLL_4_Race->vtbl->func12(&objData->unk18);
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
+            if (objData->flags & CRSnowBike_FLAG_8_Race_Started) {
+                gDLL_4_Race->vtbl->func4(self, &objData->raceData);
+                gDLL_4_Race->vtbl->func10(&objData->raceData);
+                objData->unk3F1 = gDLL_4_Race->vtbl->func12(&objData->raceData);
             }
 
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++){
-                dll_732_func_3618(self, &objData->unk2E0, 0, updateIdx);
-                dll_732_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                objData->yawOffset += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->yawOffset) >> 4;
-                objData->rollOffset += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->rollOffset) >> 4;
+                CRSnowBike_func_3618(self, &objData->unk2E0, 0, updateIdx);
+                CRSnowBike_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                objData->yawOffset += (s16) ((-objData->unk2E0.xJoy * 60.0f) - objData->yawOffset) >> 4;
+                objData->rollOffset += (s16) ((-objData->unk2E0.xJoy * 105.0f) - objData->rollOffset) >> 4;
                 self->srt.yaw = objData->yaw + objData->yawOffset;
                 self->srt.roll = objData->roll + objData->rollOffset;
             }
@@ -462,11 +493,13 @@ void dll_732_control(Object* self) {
                 diPrintf(" \tRAN OUT OF FUEL \t");
                 
                 if (rand_next(0, 10) == 0) {
-                    gDLL_6_AMSFX->vtbl->play(self, 0xB38, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
+
                 objData->unk3CC.f[0] *= 0.95f;
                 objData->unk3CC.f[1] *= 0.95f;
                 objData->unk3CC.f[2] *= 0.95f;
+
                 if (objData->unk3CC.f[0] < 0.1f) {
                     gDLL_1_cmdmenu->vtbl->energy_bar_free();
                     gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
@@ -477,40 +510,40 @@ void dll_732_control(Object* self) {
             }
         } else {
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++) {
-                dll_732_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
-                objData->yawOffset += (s16) ((-objData->unk2E0.unkE * 60.0f) - objData->yawOffset) >> 4;
-                objData->rollOffset += (s16) ((-objData->unk2E0.unkE * 105.0f) - objData->rollOffset) >> 4;
+                CRSnowBike_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                objData->yawOffset += (s16) ((-objData->unk2E0.xJoy * 60.0f) - objData->yawOffset) >> 4;
+                objData->rollOffset += (s16) ((-objData->unk2E0.xJoy * 105.0f) - objData->rollOffset) >> 4;
                 self->srt.yaw = objData->yaw + objData->yawOffset;
                 self->srt.roll = objData->roll + objData->rollOffset;
             }
         }
         
-        if (!(objData->unk3EF & 0x20)) {
-            dll_732_func_40FC(self, objData, objData->unk2AC.unkC.f[2], new_var->unkF, &new_var->unk10, 7);
+        if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
+            CRSnowBike_func_40FC(self, objData, objData->unk2AC.unkC.f[2], new_var->yJoy, &new_var->unk10, 7);
         } else {
-            if (objData->unk3B8 != 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->unk3B8);
-                objData->unk3B8 = 0;
+            if (objData->soundHandle1) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle1);
+                objData->soundHandle1 = 0;
             }
-            if (objData->unk3BC != 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->unk3BC);
-                objData->unk3BC = 0;
+            if (objData->soundHandle2) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle2);
+                objData->soundHandle2 = 0;
             }
-            if (objData->unk3C0 != 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
-                objData->unk3C0 = 0;
+            if (objData->soundHandle3) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
+                objData->soundHandle3 = 0;
             }
-            if (objData->unk3C4 != 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->unk3C4);
-                objData->unk3C4 = 0;
+            if (objData->soundHandle4) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle4);
+                objData->soundHandle4 = 0;
             }
         }
         break;
-    case 1:
+    case STATE_1:
         break;
     }
 
-    if (((objData->unk3EF & 0x20) == 0) && (objData->unk3F0 == 2)) {
+    if (((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == 0) && (objData->state == STATE_2)) {
         if (objData->unk39C >= 0.0f) {
             var_fv1 = objData->unk39C;
         } else {
@@ -527,14 +560,9 @@ void dll_732_control(Object* self) {
     }
 }
 
-static const char str_extra0[] = " HIT OBJECT %i \n";
-static const char str_extra1[] = " Bike Can Mount %i ";
-static const char str_extra2[] = "tracks %d\n";
-static const char str_extra3[] = "ident %d\n";
-
 // offset: 0x123C | func: 3 | export: 2
-void dll_732_update(Object* self) {
-    DLL732_Data* objData;
+void CRSnowBike_update(Object* self) {
+    CRSnowBike_Data* objData;
     ObjectHitInfo* objHitInfo;
     Vec3f spDC;
     MtxF sp9C;
@@ -551,19 +579,21 @@ void dll_732_update(Object* self) {
     if (objHitInfo->unk48) {
         obj = objHitInfo->unk48;
         objID = obj->id;
+
+        STUBBED_PRINTF(" HIT OBJECT %i \n"), objID;
         
         switch (objID){
         case OBJ_CRSnowClaw:
         case OBJ_CRSnowClaw2:
             camera_enable_y_offset();
             camera_set_shake_offset(1.0f);
-            gDLL_17_partfx->vtbl->spawn(self, 0x551, NULL, 4, -1, NULL);
-            gDLL_17_partfx->vtbl->spawn(self, 0x552, NULL, 4, -1, NULL);
-            gDLL_17_partfx->vtbl->spawn(self, 0x554, NULL, 4, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_551, NULL, 4, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_552, NULL, 4, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_554, NULL, 4, -1, NULL);
 
             i = 10;
             while (i--) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x553, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_553, NULL, 2, -1, NULL);
             }
             
             objData->unk3EC = 5;
@@ -572,7 +602,7 @@ void dll_732_update(Object* self) {
         }
     }
     
-    if (!(objData->unk3EF & 0x20)) {
+    if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
         bss_10.yaw = -objData->yaw;
         bss_10.pitch = -objData->pitch;
         bss_10.roll = -objData->roll;
@@ -586,25 +616,26 @@ void dll_732_update(Object* self) {
         
         vec3_transform(&sp9C, spDC.f[0], spDC.f[1], spDC.f[2], 
                        &temp_v0->unkC.f[0], &temp_v0->unkC.f[1], &temp_v0->unkC.f[2]);
-        dll_732_func_3694(self, objData, &sp5C, 0, 0, 0);
+        CRSnowBike_get_bike_matrix(self, objData, &sp5C, 0, 0, 0);
         vec3_transform(&sp5C, 0.0f, 0.0f, -10.0f, &objData->unk3AC.x, &objData->unk3AC.y, &objData->unk3AC.z);
     }
 }
 
 // offset: 0x1534 | func: 4 | export: 3
-void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    DLL732_Data* objData;
+void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    CRSnowBike_Data* objData;
     s32 sp38;
 
     objData = self->data;
-    if (objData->unk3EF & 1) {
+
+    if (objData->flags & CRSnowBike_FLAG_1) {
         return;
     }
     
     if (visibility == -1) {
         sp38 = gDLL_13_Expgfx->vtbl->func10(self);
-        if (!(objData->unk3EF & 0x20)) {
-            dll_732_func_1DC8(self, objData, gdl, mtxs, vtxs, pols);
+        if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
+            CRSnowBike_func_1DC8(self, objData, gdl, mtxs, vtxs, pols);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         func_80031F6C(self, 0, &objData->unk388.x, &objData->unk388.y, &objData->unk388.z, 0);
@@ -612,7 +643,7 @@ void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             gDLL_13_Expgfx->vtbl->func6(self, gdl, mtxs, NULL, 0, 0, 0);
         }
         return;
-    } else if (objData->unk3F0 == 2) {
+    } else if (objData->state == STATE_2) {
         objData->unk388.x = self->srt.transl.x;
         objData->unk388.y = self->srt.transl.y;
         objData->unk388.z = self->srt.transl.z;
@@ -626,29 +657,29 @@ void dll_732_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 }
 
 // offset: 0x1724 | func: 5 | export: 4
-void dll_732_free(Object* self, s32 onlySelf) {
-    DLL732_Data* objData;
+void CRSnowBike_free(Object* self, s32 onlySelf) {
+    CRSnowBike_Data* objData;
 
     objData = self->data;
 
-    if (objData->unk3B8 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk3B8);
-        objData->unk3B8 = 0;
+    if (objData->soundHandle1) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle1);
+        objData->soundHandle1 = 0;
     }
 
-    if (objData->unk3BC != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk3BC);
-        objData->unk3BC = 0;
+    if (objData->soundHandle2) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle2);
+        objData->soundHandle2 = 0;
     }
 
-    if (objData->unk3C0 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
-        objData->unk3C0 = 0;
+    if (objData->soundHandle3) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
+        objData->soundHandle3 = 0;
     }
 
-    if (objData->unk3C4 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk3C4);
-        objData->unk3C4 = 0;
+    if (objData->soundHandle4) {
+        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle4);
+        objData->soundHandle4 = 0;
     }
 
     if (objData->unk2F4 != NULL) {
@@ -663,55 +694,58 @@ void dll_732_free(Object* self, s32 onlySelf) {
     
     obj_free_object_type(self, OBJTYPE_Vehicle);
     
-    if (!(objData->unk3EF & 0x20)) {
+    if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
         gDLL_1_cmdmenu->vtbl->energy_bar_free();
     }
     
-    tex_free(bss_0);
-    tex_free(bss_4);
-    tex_free(bss_8);
+    tex_free(sTexVerticalWave);
+    tex_free(sTexFlames);
+    tex_free(sTexHorizontalWaves);
 }
 
 // offset: 0x18D8 | func: 6 | export: 5
-u32 dll_732_get_model_flags(Object* self) {
+u32 CRSnowBike_get_model_flags(Object* self) {
     return MODFLAGS_1 | MODFLAGS_SHADOW;
 }
 
 // offset: 0x18E8 | func: 7 | export: 6
-u32 dll_732_get_data_size(Object* self, u32 offsetAddr) {
-    return sizeof(DLL732_Data);
+u32 CRSnowBike_get_data_size(Object* self, u32 offsetAddr) {
+    return sizeof(CRSnowBike_Data);
 }
 
 // offset: 0x18FC | func: 8 | export: 7
-u8 dll_732_func_18FC(Object* self, s32 arg1) {
-    DLL732_Data* objData;
-    DLL732_Setup* objSetup;
+u8 CRSnowBike_func_18FC(Object* self, s32 arg1) {
+    CRSnowBike_Data* objData;
+    CRSnowBike_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (DLL732_Setup*)self->setup;
+    objSetup = (CRSnowBike_Setup*)self->setup;
     
-    if (objData->unk3EF & 0x20) {
+    if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
         return 0;
     }
 
-    if (objSetup->gamebitLocked != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitLocked) == FALSE) {
-            return 0;
-        }
+    if ((objSetup->gamebitUnlocked != NO_GAMEBIT) && (main_get_bits(objSetup->gamebitUnlocked) == FALSE)) {
+        return 0;
     }
+
+    STUBBED_PRINTF(" Bike Can Mount %i ", objData->unk3ED);
     
     return objData->unk3ED;
 }
 
 // offset: 0x1980 | func: 9 | export: 8
-u8 dll_732_func_1980(Object* self) {
-    DLL732_Data* objData = self->data;
+u8 CRSnowBike_func_1980(Object* self) {
+    CRSnowBike_Data* objData = self->data;
     return objData->unk3ED;
 }
 
+static const char str_extra2[] = "tracks %d\n";
+static const char str_extra3[] = "ident %d\n";
+
 // offset: 0x1990 | func: 10 | export: 9
-void dll_732_func_1990(Object* self, f32* ox, f32* oy, f32* oz) {
-    DLL732_Data* objData = self->data;
+void CRSnowBike_func_1990(Object* self, f32* ox, f32* oy, f32* oz) {
+    CRSnowBike_Data* objData = self->data;
     
     *ox = objData->unk388.x;
     *oy = objData->unk388.y;
@@ -719,14 +753,14 @@ void dll_732_func_1990(Object* self, f32* ox, f32* oy, f32* oz) {
 }
 
 // offset: 0x19B4 | func: 11 | export: 10
-s32 dll_732_func_19B4(Object* self, s32 arg1) {
-    DLL732_Data* objData = self->data;
+s32 CRSnowBike_func_19B4(Object* self, s32 arg1) {
+    CRSnowBike_Data* objData = self->data;
     
-    if (objData->unk3EF & 8) {
+    if (objData->flags & CRSnowBike_FLAG_8_Race_Started) {
         return 0;
     }
     
-    if (!(joy_get_pressed(0) & B_BUTTON)) {
+    if ((joy_get_pressed(0) & B_BUTTON) == FALSE) {
         return 0;
     }
     
@@ -734,13 +768,13 @@ s32 dll_732_func_19B4(Object* self, s32 arg1) {
 }
 
 // offset: 0x1A24 | func: 12 | export: 11
-s32 dll_732_func_1A24(s32 arg0) {
+s32 CRSnowBike_func_1A24(s32 arg0) {
     return 2;
 }
 
 // offset: 0x1A34 | func: 13 | export: 12
-void dll_732_func_1A34(Object* self, f32* ox, f32* oy, f32* oz) {
-    DLL732_Data* objData = self->data;
+void CRSnowBike_func_1A34(Object* self, f32* ox, f32* oy, f32* oz) {
+    CRSnowBike_Data* objData = self->data;
     
     *ox = objData->unk3AC.x;
     *oy = objData->unk3AC.y;
@@ -748,18 +782,19 @@ void dll_732_func_1A34(Object* self, f32* ox, f32* oy, f32* oz) {
 }
 
 // offset: 0x1A58 | func: 14 | export: 13
-s8 dll_732_func_1A58(Object* self) {
-    DLL732_Data* objData = self->data;
-    return objData->unk3F0;
+s8 CRSnowBike_get_state(Object* self) {
+    CRSnowBike_Data* objData = self->data;
+    return objData->state;
 }
 
 // offset: 0x1A68 | func: 15 | export: 14
-void dll_732_func_1A68(Object* self, s32 arg1) {
-    DLL732_Data* objData = self->data;
+void CRSnowBike_set_state(Object* self, s32 state) {
+    CRSnowBike_Data* objData = self->data;
     
-    objData->unk3F0 = arg1;
-    if ((arg1 == 2) && !(objData->unk3EF & 0x20)) {
-        objData->fuelAmount = 0x2710;
+    objData->state = state;
+
+    if ((state == STATE_2) && !(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
+        objData->fuelAmount = 10000;
         objData->unk3CC.f[0] = 2.0f;
         objData->unk3CC.f[1] = 4.0f;
         objData->unk3CC.f[2] = 4.6f;
@@ -768,8 +803,8 @@ void dll_732_func_1A68(Object* self, s32 arg1) {
 }
 
 // offset: 0x1B10 | func: 16 | export: 15
-void dll_732_func_1B10(Object* self, f32* arg1, s32* arg2) {
-    DLL732_Data* objData = self->data;
+void CRSnowBike_func_1B10(Object* self, f32* arg1, s32* arg2) {
+    CRSnowBike_Data* objData = self->data;
     
     *arg1 = objData->yawOffset / 2500.0f;
     
@@ -783,8 +818,8 @@ void dll_732_func_1B10(Object* self, f32* arg1, s32* arg2) {
 }
 
 // offset: 0x1B9C | func: 17 | export: 16
-f32 dll_732_func_1B9C(Object* self, f32* arg1) {
-    DLL732_Data* objData;
+f32 CRSnowBike_func_1B9C(Object* self, f32* arg1) {
+    CRSnowBike_Data* objData;
     f32 magnitude;
 
     objData = self->data;
@@ -799,19 +834,19 @@ f32 dll_732_func_1B9C(Object* self, f32* arg1) {
 }
 
 // offset: 0x1C28 | func: 18 | export: 17
-s8 dll_732_func_1C28(Object* self) {
-    DLL732_Data* objData = self->data;
+s8 CRSnowBike_func_1C28(Object* self) {
+    CRSnowBike_Data* objData = self->data;
     return objData->unk3F1;
 }
 
 // offset: 0x1C38 | func: 19 | export: 18
-void dll_732_func_1C38(Object* self) {
+void CRSnowBike_func_1C38(Object* self) {
     s32 checkpointUID;
     checkpoint4_Setup* checkpointSetup;
-    DLL732_Data* objData;
-    DLL732_Setup* objSetup;
+    CRSnowBike_Data* objData;
+    CRSnowBike_Setup* objSetup;
 
-    objSetup = (DLL732_Setup*)self->setup;
+    objSetup = (CRSnowBike_Setup*)self->setup;
     objData = self->data;
     
     switch (self->id) {
@@ -837,8 +872,8 @@ void dll_732_func_1C38(Object* self) {
     self->srt.transl.z = checkpointSetup->base.z;
     self->srt.yaw = checkpointSetup->yaw << 8;
 
-    dll_732_func_3FE0(self, objData);
-    gDLL_4_Race->vtbl->func3(self, &objData->unk18, objSetup->racetrackIdx);
+    CRSnowBike_func_3FE0(self, objData);
+    gDLL_4_Race->vtbl->func3(self, &objData->raceData, objSetup->racetrackIdx);
     
     objData->unk0.transl.x = self->srt.transl.x;
     objData->unk0.transl.y = self->srt.transl.y;
@@ -847,95 +882,96 @@ void dll_732_func_1C38(Object* self) {
 }
 
 // offset: 0x1DB8 | func: 20 | export: 19
-void dll_732_func_1DB8(s32 arg0, s32 arg1) {
+void CRSnowBike_func_1DB8(s32 arg0, s32 arg1) {
 
 }
 
 
 // offset: 0x1DC8 | func: 21
-void dll_732_func_1DC8(Object* self, DLL732_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
-/*0x28*/ static u32 bss_28;
-    Vertex* spA4;
-    Gfx* spA0;
-    Triangle* sp9C;
+void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
+/*0x28*/ static u32 sImpactSoundHandle;
+    Vertex* vertex;
+    Gfx* gfx;
+    Triangle* tri;
     s32 pad1[6];
-    SRT sp6C;
+    SRT fxTransform;
     s32 i;
-    f32 var_fv0;
+    f32 translateX;
     s32 pad2;
     DLL732_Data2AC* temp_v1;
-    u32 data_10C[] = { 6, 105, 105, 255};
+    u32 dColourRGBA[] = { 6, 105, 105, 255}; //Unused RGBA colour, maybe for randomised spark colours?
     s32 volume;
     s32 pad3;
 
     temp_v1 = &objData->unk2AC;
-    spA0 = *gdl;
-    spA4 = *vtxs;
-    sp9C = *pols;
+
+    gfx = *gdl;
+    vertex = *vtxs;
+    tri = *pols;
     
-    var_fv0 = 0.0f;
+    translateX = 0.0f;
     if (temp_v1->unkC.z < 0.0f) {
-        var_fv0 = temp_v1->unkC.z;
+        translateX = temp_v1->unkC.z;
     }
-    sp6C.transl.z = var_fv0;
+    fxTransform.transl.z = translateX;
 
     if (temp_v1->unkC.z < 0.0f) {
-        var_fv0 = temp_v1->unkC.x;
+        translateX = temp_v1->unkC.x;
     }
-    sp6C.transl.x = var_fv0;
+    fxTransform.transl.x = translateX;
     
-    dl_set_prim_color(&spA0, 0xFF, 0xFF, 0xFF, 0xFF);
+    dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
     
     if (temp_v1->unkC.z < -0.5f) {
         if (1) { }
-        gDLL_17_partfx->vtbl->spawn(self, 0x12E, &sp6C, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12E, &fxTransform, 4, -1, NULL);
     }
     if (temp_v1->unkC.z < -1.5f) {
         if (1) { }
-        gDLL_17_partfx->vtbl->spawn(self, 0x12F, &sp6C, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12F, &fxTransform, 4, -1, NULL);
     }
     if (temp_v1->unkC.z < -2.1f) {
         if (1) { }
-        gDLL_17_partfx->vtbl->spawn(self, 0x130, &sp6C, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_130, &fxTransform, 4, -1, NULL);
     }
     
     i = 0;
-    if (objData->unk2E0.unkF > 0) {
+    if (objData->unk2E0.yJoy > 0) {
         i = 2;
     }
 
     while (i) {
-        gDLL_17_partfx->vtbl->spawn(self, 0x131, NULL, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_131, NULL, 4, -1, NULL);
         i--;
     }
     
-    sp6C.yaw = 0;
-    sp6C.pitch = 0;
-    sp6C.roll = 0;
-    sp6C.scale = 1.0f;
+    fxTransform.yaw = 0;
+    fxTransform.pitch = 0;
+    fxTransform.roll = 0;
+    fxTransform.scale = 1.0f;
     if (objData->unk39C < -1.2f) {
-        data_10C[1] += rand_next(0, 155);
-        data_10C[2] += rand_next(0, 155);
+        dColourRGBA[1] += rand_next(0, 155);
+        dColourRGBA[2] += rand_next(0, 155);
         volume = ((0.0f - objData->unk39C) * 21.0f);
         if (objData->unk3F3 & 1) {
-            gDLL_6_AMSFX->vtbl->play(self, 0x292, volume, &bss_28, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(bss_28, (volume / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         } else if (objData->unk3F3 & 2) {
-            gDLL_6_AMSFX->vtbl->play(self, 0x292, volume, &bss_28, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(bss_28, (volume / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         } else if (objData->unk3F3 & 4) {
-            gDLL_6_AMSFX->vtbl->play(self, 0x292, volume, &bss_28, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(bss_28, (volume / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         }
     }
     
-    *gdl = spA0;
-    *vtxs = spA4;
-    *pols = sp9C;
+    *gdl = gfx;
+    *vtxs = vertex;
+    *pols = tri;
 }
 
 // offset: 0x22BC | func: 22
-void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
+void CRSnowBike_func_22BC(Object* self, DLL732_Data2AC* arg1) {
     arg1->unk1C = 90;
     arg1->unk20 = 1/arg1->unk1C;
     arg1->unk28 = -11.0f;
@@ -950,7 +986,7 @@ void dll_732_func_22BC(Object* self, DLL732_Data2AC* arg1) {
 }
 
 // offset: 0x2340 | func: 23
-void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
+void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
     MtxF sp130;
     MtxF spF0;
     MtxF spB0;
@@ -974,7 +1010,7 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     s32 angle2;
     s32 i;
 
-    collision = &objData->unk4C;
+    collision = &objData->collision;
     
     if (objData->unk3EC != 0) {
         VECTOR_SCALE(arg2->unkC, objData->unk384);
@@ -996,7 +1032,6 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     arg2->unkC.f[2] = (arg2->unkC.f[2] < temp3) ? temp3 : (
                       (objData->unk3CC.f[2] < arg2->unkC.f[2]) ? objData->unk3CC.f[2] : arg2->unkC.f[2]);
     
-    
     bss_10.yaw = objData->yaw;
     bss_10.pitch = objData->pitch;
     bss_10.roll = objData->roll;
@@ -1006,8 +1041,8 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     bss_10.roll = -objData->roll;
     matrix_from_srt_reversed(&spF0, &bss_10);
     
-    if (!(objData->unk3EF & 4)) {
-        var_fv0_4 = (f32) -objData->unk2E0.unkF / 60.0f;
+    if ((objData->flags & CRSnowBike_FLAG_4_Grounded) == FALSE) {
+        var_fv0_4 = (f32) -objData->unk2E0.yJoy / 60.0f;
         if (var_fv0_4 > 1.0f) {
             var_fv0_4 = 1.0f;
         } else if (var_fv0_4 < -1.0f) {
@@ -1015,18 +1050,16 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         }
         var_fv0_4 *= 6144.0f;
         objData->unk3E6 += ((s32) (var_fv0_4) - objData->unk3E6) >> 5;
-    } else {
-        if (objData->unk3E6 != 0) {
-            objData->unk3E6 -= (-objData->unk3E6 >> 5);
-        }
+    } else if (objData->unk3E6 != 0) {
+        objData->unk3E6 -= (-objData->unk3E6 >> 5);
     }
     
     vec3_transform(&spF0, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp84.f[0], &sp84.f[1], &sp84.f[2]);
 
-    if (objData->unk2E0.unkF < 0) {
-        var_fv1 = -(f32) objData->unk2E0.unkF * 4.0f;
+    if (objData->unk2E0.yJoy < 0) {
+        var_fv1 = -(f32) objData->unk2E0.yJoy * 4.0f;
     } else {
-        var_fv1 = -(f32) objData->unk2E0.unkF * 10.0f;
+        var_fv1 = -(f32) objData->unk2E0.yJoy * 10.0f;
     }
     
     temp_fv0 = arg2->unk20 * var_fv1;
@@ -1134,7 +1167,7 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
     if (arg4 != 0) {
         sp94 = 1.0f / updateRate;
-        dll_732_func_3AF8(self, objData, collision);
+        CRSnowBike_func_3AF8(self, objData, collision);
         gDLL_27->vtbl->func_1E8(self, collision, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, collision);
         gDLL_27->vtbl->func_624(self, collision, updateRate);
@@ -1153,9 +1186,9 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         sp6C.f[2] = 0.0f;
         
         if (collision->unk25C & 0xF) {
-            objData->unk3EF |= 4;
+            objData->flags |= CRSnowBike_FLAG_4_Grounded;
         } else {
-            objData->unk3EF &= ~4;
+            objData->flags &= ~CRSnowBike_FLAG_4_Grounded;
         }
         
         for (var_a0 = 0, i = 0; i < 4; i++) {
@@ -1195,11 +1228,11 @@ void dll_732_func_2340(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         objData->roll += (((angle2 >> 2) / 3) * (s32) updateRate);
     }
     
-    objData->yaw -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
+    objData->yaw -= (s16) (objData->unk2E0.xJoy * (70.0f - (objData->unk2E0.yJoy * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x2E64 | func: 24
-void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
+void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, DLL732_Data2AC* arg2, f32 updateRate, s32 arg4) {
     MtxF sp120;
     MtxF spE0;
     MtxF spA0;
@@ -1216,9 +1249,9 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     s32 var_s0;
     s32 var_v1;
     s32 i;
-    f32 temp;
+    f32 sq;
 
-    collision = &objData->unk4C;
+    collision = &objData->collision;
     
     if (arg2->unkC.f[0] > 4.0f) {
         arg2->unkC.f[0] = 4.0f;
@@ -1251,7 +1284,7 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
     
     vec3_transform(&spE0, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp80.f[0], &sp80.f[1], &sp80.f[2]);
 
-    temp_fv0 = -(f32) objData->unk2E0.unkF * 50.0f;
+    temp_fv0 = -(f32) objData->unk2E0.yJoy * 50.0f;
     temp_fv0 *= arg2->unk18;
     arg2->unkC.f[2] += temp_fv0;
     arg2->unk0.f[0] = sp80.f[0] * arg2->unk18;
@@ -1282,8 +1315,8 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         }
     }
 
-    temp = SQ(arg2->unkC.f[2]);
-    var_fv1 = arg2->unk30 * temp;
+    sq = SQ(arg2->unkC.f[2]);
+    var_fv1 = arg2->unk30 * sq;
     var_fv1 *= arg2->unk18;
     
     temp_fv0 = arg2->unkC.f[2] + var_fv1;
@@ -1315,9 +1348,9 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         sp74.f[2] = 0.0f;
         
         if (collision->unk25C & 0xF) {
-            objData->unk3EF |= 4;
+            objData->flags |= CRSnowBike_FLAG_4_Grounded;
         } else {
-            objData->unk3EF &= ~4;
+            objData->flags &= ~CRSnowBike_FLAG_4_Grounded;
         }
 
         for (var_a0 = 0, i = 0; i < 4; i++) {
@@ -1354,36 +1387,39 @@ void dll_732_func_2E64(Object* self, DLL732_Data* objData, DLL732_Data2AC* arg2,
         objData->roll += ((temp_a1 >> 2) / 3) * (s32)updateRate;
     }
     
-    objData->yaw -= (s16) (objData->unk2E0.unkE * (70.0f - (objData->unk2E0.unkF * 0.05f)) * 0.0666f);
+    objData->yaw -= (s16) (objData->unk2E0.xJoy * (70.0f - (objData->unk2E0.yJoy * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x3618 | func: 25
-void dll_732_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer) {
-    arg1->unkE = joy_get_stick_x_buffered(controllerPort, buffer);
-    arg1->unkF = joy_get_stick_y_buffered(controllerPort, buffer);
+void CRSnowBike_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer) {
+    arg1->xJoy = joy_get_stick_x_buffered(controllerPort, buffer);
+    arg1->yJoy = joy_get_stick_y_buffered(controllerPort, buffer);
 }
 
 // offset: 0x3694 | func: 26
-void dll_732_func_3694(Object* self, DLL732_Data* objData, MtxF* arg2, s32 addToYaw, s32 useRoll, s32 usePitch) {
-    SRT sp20;
+/**
+  * Retrieves the bike's current transformation matrix. Pitch/roll can optionally be excluded, as can the bike's yaw offset.
+  */
+void CRSnowBike_get_bike_matrix(Object* self, CRSnowBike_Data* objData, MtxF* oMtx, s32 useYawOffset, s32 useRoll, s32 usePitch) {
+    SRT transform;
 
-    sp20.yaw = objData->yaw;
-    sp20.pitch = usePitch ? self->srt.pitch : 0;
-    sp20.roll = useRoll ? self->srt.roll : 0;
-    sp20.scale = 1.0f;
-    sp20.transl.x = self->srt.transl.x;
-    sp20.transl.y = self->srt.transl.y;
-    sp20.transl.z = self->srt.transl.z;
+    transform.yaw = objData->yaw;
+    transform.pitch = usePitch ? self->srt.pitch : 0;
+    transform.roll = useRoll ? self->srt.roll : 0;
+    transform.scale = 1.0f;
+    transform.transl.x = self->srt.transl.x;
+    transform.transl.y = self->srt.transl.y;
+    transform.transl.z = self->srt.transl.z;
     
-    if (addToYaw) {
-        sp20.yaw += objData->yawOffset;
+    if (useYawOffset) {
+        transform.yaw += objData->yawOffset;
     }
     
-    matrix_from_srt(arg2, &sp20);
+    matrix_from_srt(oMtx, &transform);
 }
 
 // offset: 0x3748 | func: 27
-void dll_732_func_3748(Object* self, DLL732_Data* objData) {
+void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData) {
     s32 damageType;
     s32 hitSphereID;
     s32 hitDamage;
@@ -1416,14 +1452,14 @@ void dll_732_func_3748(Object* self, DLL732_Data* objData) {
 }
 
 // offset: 0x3860 | func: 28
-int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
-    DLL732_Data* objData;
+int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    CRSnowBike_Data* objData;
     DLL732_Unk_2E0* unkSubstruct;
     DLL732_Data2AC* v;
     Vec3f spB8;
-    SRT spA0;
+    SRT transform;
     s32 i;
-    MtxF sp5C;
+    MtxF mtx;
 
     objData = self->data;
     unkSubstruct = &objData->unk2E0;
@@ -1431,7 +1467,7 @@ int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData,
     for (i = 0; i < animData->messageCount; i++) {
         switch (animData->messages[i]) {
         case 2:
-            main_set_bits(0x499, 1);
+            main_set_bits(BIT_Play_Seq_02AA_CF_Lose_Race, TRUE);
             break;
         case 3:
             gDLL_1_cmdmenu->vtbl->energy_bar_free();
@@ -1439,7 +1475,7 @@ int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData,
         }
     }
     
-    if (objData->unk3F0 == 2) {
+    if (objData->state == STATE_2) {
         spB8.f[0] = (self->srt.transl.x - objData->unk3A0.f[0]) * gUpdateRateInverseF;
         spB8.f[1] = (self->srt.transl.y - objData->unk3A0.f[1]) * gUpdateRateInverseF;
         spB8.f[2] = (self->srt.transl.z - objData->unk3A0.f[2]) * gUpdateRateInverseF;
@@ -1448,35 +1484,35 @@ int dll_732_func_3860(Object* self, Object* overrideObj, AnimObj_Data* animData,
         spB8.f[1] *= 0.93749994f;
         spB8.f[2] *= 0.93749994f;
         
-        spA0.transl.x = 0.0f;
-        spA0.transl.y = 0.0f;
-        spA0.transl.z = 0.0f;
-        spA0.scale = 1.0f;
-        spA0.yaw = -self->srt.yaw;
-        spA0.pitch = -self->srt.pitch;
-        spA0.roll = -self->srt.roll;
+        transform.transl.x = 0.0f;
+        transform.transl.y = 0.0f;
+        transform.transl.z = 0.0f;
+        transform.scale = 1.0f;
+        transform.yaw = -self->srt.yaw;
+        transform.pitch = -self->srt.pitch;
+        transform.roll = -self->srt.roll;
         v = &objData->unk2AC;
-        matrix_from_srt_reversed(&sp5C, &spA0);
+        matrix_from_srt_reversed(&mtx, &transform);
         
-        vec3_transform(&sp5C, spB8.f[0], spB8.f[1], spB8.f[2], &v->unkC.f[0], &v->unkC.f[1], &v->unkC.f[2]);
+        vec3_transform(&mtx, spB8.f[0], spB8.f[1], spB8.f[2], &v->unkC.f[0], &v->unkC.f[1], &v->unkC.f[2]);
 
-        unkSubstruct->unkF += gUpdateRate * 8;
-        if (unkSubstruct->unkF > 70) {
-            unkSubstruct->unkF = 70;
+        unkSubstruct->yJoy += gUpdateRate * 8;
+        if (unkSubstruct->yJoy > 70) {
+            unkSubstruct->yJoy = 70;
         }
-        dll_732_func_40FC(self, objData, v->unkC.f[2], unkSubstruct->unkF, &unkSubstruct->unk10, 4);
+        CRSnowBike_func_40FC(self, objData, v->unkC.f[2], unkSubstruct->yJoy, &unkSubstruct->unk10, 4);
     }
     
     objData->unk3A0.x = self->srt.transl.x;
     objData->unk3A0.y = self->srt.transl.y;
     objData->unk3A0.z = self->srt.transl.z;
-    objData->unk3EF |= 0x10;
-    objData->unk3EF &= ~8;
+    objData->flags |= CRSnowBike_FLAG_10_Was_In_Sequence;
+    objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
     return 0;
 }
 
 // offset: 0x3AF8 | func: 29
-void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision) {
+void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision) {
     s32 pad;
     MtxF spDC;
     Vec3f sp88[7];
@@ -1493,7 +1529,7 @@ void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision
         do {
             sp87 = sp86;
             for (i = 0; i < objData->unk3EE; i++){
-                dll_732_func_3694(self, objData, &spDC, 1, 1, 1);
+                CRSnowBike_get_bike_matrix(self, objData, &spDC, 1, 1, 1);
                 vec3_transform(&spDC, data_64[i].x, data_64[i].y, data_64[i].z, 
                                &sp88[i].x, &sp88[i].y, &sp88[i].z);
                 if (func_80059C40(&objData->unk330[i], 
@@ -1520,16 +1556,16 @@ void dll_732_func_3AF8(Object* self, DLL732_Data* objData, DLL27_Data* collision
 }
 
 // offset: 0x3DAC | func: 30
-s32 dll_732_func_3DAC(Object* self, DLL732_Data* arg1, DLL732_Data* objData, DLL732_Unk_2E0* arg3) {
+s32 CRSnowBike_func_3DAC(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* arg3) {
     f32 dx;
     f32 dz;
     s32 sp3C;
     f32 var_fv1;
     s32 dYaw;
     s32 angle;
-    DLL732_Setup* objSetup;
+    CRSnowBike_Setup* objSetup;
 
-    objSetup = (DLL732_Setup*)self->setup;
+    objSetup = (CRSnowBike_Setup*)self->setup;
     
     dx = self->srt.transl.x - objData->unk0.transl.x;
     dz = self->srt.transl.z - objData->unk0.transl.z;
@@ -1540,13 +1576,13 @@ s32 dll_732_func_3DAC(Object* self, DLL732_Data* arg1, DLL732_Data* objData, DLL
         var_fv1 = 0.0f;
     }
     
-    sp3C = dll_732_func_0(self, objData, var_fv1);
+    sp3C = CRSnowBike_func_0(self, objData, var_fv1);
     
-    gDLL_4_Race->vtbl->func4(self, &objData->unk18);
-    gDLL_4_Race->vtbl->func10(&objData->unk18);
+    gDLL_4_Race->vtbl->func4(self, &objData->raceData);
+    gDLL_4_Race->vtbl->func10(&objData->raceData);
     if (sp3C != 0) {
-        arg3->unkE = 0;
-        arg3->unkF = 0;
+        arg3->xJoy = 0;
+        arg3->yJoy = 0;
         return 1;
     }
 
@@ -1562,23 +1598,23 @@ s32 dll_732_func_3DAC(Object* self, DLL732_Data* arg1, DLL732_Data* objData, DLL
         angle = -65;
     }
     
-    arg3->unkE = -angle;
+    arg3->xJoy = -angle;
     if (angle < 0) {
         angle = -angle;
     }
 
-    arg3->unkF = (objSetup->unk20 - 8.0f) - (angle * (objSetup->unk20 * 0.02f));
-    diPrintf(" YJOY %i ", arg3->unkF);
+    arg3->yJoy = (objSetup->unk20 - 8.0f) - (angle * (objSetup->unk20 * 0.02f));
+    diPrintf(" YJOY %i ", arg3->yJoy);
     return 0;
 }
 
 // offset: 0x3FE0 | func: 31
-void dll_732_func_3FE0(Object* self, DLL732_Data* objData) {
+void CRSnowBike_func_3FE0(Object* self, CRSnowBike_Data* objData) {
     MtxF sp60;
     s32 i;
 
-    gDLL_27->vtbl->reset(self, &objData->unk4C);
-    dll_732_func_3694(self, objData, &sp60, 0, 0, 0);
+    gDLL_27->vtbl->reset(self, &objData->collision);
+    CRSnowBike_get_bike_matrix(self, objData, &sp60, 0, 0, 0);
     
     for (i = 0; i < objData->unk3EE; i++) {
         vec3_transform(&sp60, 
@@ -1589,87 +1625,87 @@ void dll_732_func_3FE0(Object* self, DLL732_Data* objData) {
 }
 
 // offset: 0x40FC | func: 32
-void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5) {
-    /*0x2C*/ static f32 bss_2C;
+void CRSnowBike_func_40FC(Object* self, CRSnowBike_Data* objData, f32 arg2, s32 arg3, s8* arg6, u8 arg5) {
+    /*0x2C*/ static f32 sEngineAudioTweak;
     f32 sp54 = 1.0f;
     SRT sp3C;
-    s32 var_v0;
+    s32 volume;
     
     if (arg5 & 1) {
-        if (objData->unk3B8 == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, 0x289, MAX_VOLUME, &objData->unk3B8, NULL, 0, NULL);
+        if (objData->soundHandle1 == 0) {
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objData->soundHandle1, NULL, 0, NULL);
         }
-        if (objData->unk3B8 != 0) {
-            bss_2C = arg2 * 11.6f;
-            if (bss_2C < 0.0f) {
-                bss_2C = -bss_2C;
+
+        if (objData->soundHandle1 != 0) {
+            sEngineAudioTweak = arg2 * 11.6f;
+            if (sEngineAudioTweak < 0.0f) {
+                sEngineAudioTweak = -sEngineAudioTweak;
             }
-            
-            if (bss_2C < 40.0f) {
-                bss_2C = 40.0f;
+            if (sEngineAudioTweak < 40.0f) {
+                sEngineAudioTweak = 40.0f;
             }
-            if (bss_2C > 200.0f) {
-                bss_2C = 200.0f;
+            if (sEngineAudioTweak > 200.0f) {
+                sEngineAudioTweak = 200.0f;
             }
-            
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3B8, (bss_2C / 70.0f) + 0.1f);
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle1, (sEngineAudioTweak / 70.0f) + 0.1f);
+
             if (objData->unk3F2 < 0x12) {
-                var_v0 = arg2 * 30.0f;
-                if (var_v0 < 0) {
-                    var_v0 = -var_v0;
+                volume = arg2 * 30.0f;
+                if (volume < 0) {
+                    volume = -volume;
                 }
-                if (var_v0 > MAX_VOLUME) {
-                    var_v0 = MAX_VOLUME;
+                if (volume > MAX_VOLUME) {
+                    volume = MAX_VOLUME;
                 }
-                gDLL_6_AMSFX->vtbl->set_vol(objData->unk3B8, var_v0);
+                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle1, volume);
             } else {
-                gDLL_6_AMSFX->vtbl->set_vol(objData->unk3B8, 0);
+                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle1, 0);
             }
         }
     }
     
     if (arg5 & 2) {
-        if (objData->unk3C0 == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, 0x28F, MAX_VOLUME, &objData->unk3C0, NULL, 0, NULL);
+        if (objData->soundHandle3 == 0) {
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F, MAX_VOLUME, &objData->soundHandle3, NULL, 0, NULL);
         }
-        if (objData->unk3C0 != 0) {
-            bss_2C = arg2 ? ((self->srt.roll * arg2) / 30000.0f) : 0;
-            if (bss_2C < 0) {
-                bss_2C = -bss_2C;
-            } else if (bss_2C > 1.0f) {
-                bss_2C = 1.0f;
+        if (objData->soundHandle3 != 0) {
+            sEngineAudioTweak = arg2 ? ((self->srt.roll * arg2) / 30000.0f) : 0;
+            if (sEngineAudioTweak < 0) {
+                sEngineAudioTweak = -sEngineAudioTweak;
+            } else if (sEngineAudioTweak > 1.0f) {
+                sEngineAudioTweak = 1.0f;
             }
-            
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3C0, 0.1f + bss_2C);
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle3, 0.1f + sEngineAudioTweak);
+
             if (objData->unk3F2 < 0x12) {
-                bss_2C *= MAX_VOLUME_F;
-                if (bss_2C > MAX_VOLUME_F) {
-                    bss_2C = MAX_VOLUME_F;
-                } else if (bss_2C < 0.0f) {
-                    bss_2C = 0.0f;
+                sEngineAudioTweak *= MAX_VOLUME_F;
+                if (sEngineAudioTweak > MAX_VOLUME_F) {
+                    sEngineAudioTweak = MAX_VOLUME_F;
+                } else if (sEngineAudioTweak < 0.0f) {
+                    sEngineAudioTweak = 0.0f;
                 }
 
-                gDLL_6_AMSFX->vtbl->set_vol(objData->unk3C0, bss_2C);
+                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle3, sEngineAudioTweak);
             } else {
-                gDLL_6_AMSFX->vtbl->stop(objData->unk3C0);
-                objData->unk3C0 = 0;
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle3);
+                objData->soundHandle3 = 0;
             }
         }
     }
     
     if (arg5 & 4) {
         if (objData->unk3EA <= 0) {
-            if (objData->unk3BC == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, 0x50D, MAX_VOLUME, &objData->unk3BC, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play(self, 0x28E, MAX_VOLUME, NULL, NULL, 0, NULL);
+            if (objData->soundHandle2 == 0) {
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objData->soundHandle2, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
-            if (objData->unk3C4 == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, 0x50C, MAX_VOLUME, &objData->unk3C4, NULL, 0, NULL);
+            if (objData->soundHandle4 == 0) {
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objData->soundHandle4, NULL, 0, NULL);
             }
         }
         
-        if (objData->unk3BC != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3BC, (objData->unk398 * 0.00048828125f) + 0.5f);
+        if (objData->soundHandle2 != 0) {
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle2, (objData->unk398 * 0.00048828125f) + 0.5f);
             if (arg3 >= 6) {
                 objData->unk398 += gUpdateRateF;
             } else {
@@ -1682,11 +1718,11 @@ void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s
             if (objData->unk398 > 90.0f) {
                 objData->unk398 = 90.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->unk3BC, objData->unk398);
+            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle2, objData->unk398);
         }
 
-        if (objData->unk3C4 != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->unk3C4, (objData->unk394 / 75.0f) + 0.2f);
+        if (objData->soundHandle4 != 0) {
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle4, (objData->unk394 / 75.0f) + 0.2f);
             if (arg3 >= 6) {
                 objData->unk394 = (arg3 * 0.6f) + 15.0f;
             } else {
@@ -1699,7 +1735,7 @@ void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s
             if (objData->unk394 > MAX_VOLUME_F) {
                 objData->unk394 = MAX_VOLUME_F;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->unk3C4, objData->unk394);
+            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle4, objData->unk394);
         }
     }
     
@@ -1735,6 +1771,6 @@ void dll_732_func_40FC(Object* self, DLL732_Data* objData, f32 arg2, s32 arg3, s
 }
 
 // offset: 0x4B30 | func: 33 | export: 20
-void dll_732_func_4B30(s32 arg0, s32 arg1, s32 arg2) {
+void CRSnowBike_func_4B30(s32 arg0, s32 arg1, s32 arg2) {
 
 }

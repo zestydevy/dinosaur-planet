@@ -274,7 +274,7 @@ enum SoundID {
     SOUND_28F = 0x28F,
     SOUND_290_Propeller_Loop = 0x290,
 
-    SOUND_292 = 0x292, // used by IMSnowBike
+    SOUND_292_Impact = 0x292, // used by IMSnowBike
 
     SOUND_2B8_Spell_Fired = 0x2B8, //used by Projectile Spell and Grenade Spell (and by Ice Beam?)
 
@@ -690,6 +690,8 @@ enum SoundID {
     SOUND_B2B_Magic_Chime = 0xB2B, //MagicDust (when vanishing)
 
     SOUND_B31_Item_Collection_Chime = 0xB31,
+
+    SOUND_B38 = 0xB38,
 
     SOUND_B47 = 0xB47,
 
