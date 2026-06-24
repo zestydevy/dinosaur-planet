@@ -428,23 +428,23 @@ RaceStruct* dll_4_func_1028(s32 arg0) {
 }
 
 // offset: 0x1100 | func: 10 | export: 12
-s32 dll_4_func_1100(RaceStruct* arg0) {
-    s32 var_a0;
-    s32 var_v1;
-    RaceStruct* temp_v0;
+s32 dll_4_func_1100(RaceStruct* raceNode) {
+    s32 i;
+    s32 count;
+    RaceStruct* otherNode;
 
-    var_v1 = 1;
-    for (var_a0 = 0; var_a0 < _bss_5A; var_a0++) {
-        temp_v0 = _bss_54[var_a0];
-        if (temp_v0 != arg0) {
-            if (arg0->unk1C < temp_v0->unk1C) {
-                var_v1 += 1;
-            } else if ((temp_v0->unk1C == arg0->unk1C) && (arg0->unkC < temp_v0->unkC)) {
-                var_v1 += 1;
+    count = 1;
+    for (i = 0; i < _bss_5A; i++) {
+        otherNode = _bss_54[i];
+        if (otherNode != raceNode) {
+            if (raceNode->unk1C < otherNode->unk1C) {
+                count++;
+            } else if ((otherNode->unk1C == raceNode->unk1C) && (raceNode->unkC < otherNode->unkC)) {
+                count++;
             }
         }
     }
-    return var_v1;
+    return count;
 }
 
 // offset: 0x119C | func: 11 | export: 5
