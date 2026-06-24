@@ -428,23 +428,28 @@ RaceStruct* dll_4_func_1028(s32 arg0) {
 }
 
 // offset: 0x1100 | func: 10 | export: 12
-s32 dll_4_func_1100(RaceStruct* raceNode) {
+/**
+  * Get race ordinal position, relative to other racers.
+  */
+s32 dll_4_func_1100(RaceStruct* racer) {
     s32 i;
-    s32 count;
-    RaceStruct* otherNode;
+    s32 position;
+    RaceStruct* otherRacer;
 
-    count = 1;
+    position = 1;
     for (i = 0; i < _bss_5A; i++) {
-        otherNode = _bss_54[i];
-        if (otherNode != raceNode) {
-            if (raceNode->unk1C < otherNode->unk1C) {
-                count++;
-            } else if ((otherNode->unk1C == raceNode->unk1C) && (raceNode->unkC < otherNode->unkC)) {
-                count++;
+        otherRacer = _bss_54[i];
+        if (otherRacer != racer) {
+            if (racer->unk1C < otherRacer->unk1C) {
+                //Increase position if the other racer is at a higher-indexed checkpoint
+                position++;
+            } else if ((otherRacer->unk1C == racer->unk1C) && (racer->unkC < otherRacer->unkC)) {
+                //Or increase position if the other racer is closer to the next checkpoint
+                position++;
             }
         }
     }
-    return count;
+    return position;
 }
 
 // offset: 0x119C | func: 11 | export: 5
