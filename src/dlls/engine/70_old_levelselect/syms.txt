@@ -1,10 +1,10 @@
 .text = 0x0:
-dll_70_ctor = 0x0;
-dll_70_dtor = 0xC;
-dll_70_update1 = 0x18;
-dll_70_update2 = 0x24;
-dll_70_draw = 0x2C;
-dll_70_start = 0xB58;
+old_levelselect_ctor = 0x0;
+old_levelselect_dtor = 0xC;
+old_levelselect_update1 = 0x18;
+old_levelselect_update2 = 0x24;
+old_levelselect_draw = 0x2C;
+old_levelselect_start = 0xB58;
 
 .rodata = 0xC40:
 

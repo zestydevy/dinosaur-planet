@@ -127,31 +127,31 @@ typedef enum {
     "WARLOCK ACT SIX"
 };
 
-static void dll_70_start(MapIDs mapID, s32 act, PlayerNo playerNo);
+static void old_levelselect_start(MapIDs mapID, s32 act, PlayerNo playerNo);
 
 // offset: 0x0 | ctor
-void dll_70_ctor(void *dll) { }
+void old_levelselect_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_70_dtor(void *dll) { }
+void old_levelselect_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_70_update1(void) {
+s32 old_levelselect_update1(void) {
     return 0;
 }
 
 // offset: 0x24 | func: 1 | export: 1
-void dll_70_update2(void) {
+void old_levelselect_update2(void) {
 
 }
 
 // offset: 0x2C | func: 2 | export: 2
-void dll_70_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
+void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     /*0xD40*/ static s32 dSelectedPrintIdx = 0;         //Selected index within 9 strings currently shown
     /*0xD44*/ static s32 dSelectedListIdx = 0;          //Selected index within full list of strings
     /*0xD48*/ static s32 dShowLevelUnavailable = FALSE; //Shows a "LEVEL NOT AVAILABLE" message instead of the level list
     /*0x000*/ static s32 sButtonsEnabled;
-    
+  
     s32 start;
     s32 menuAction;
     s32 i;
@@ -238,19 +238,19 @@ void dll_70_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
                 gDLL_29_Gplay->vtbl->load_save(0, 1);
                 return;
             case LEVELSELECT_IDX_02: //NOTE: blank string
-                dll_70_start(MAP_FRONT_END, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_FRONT_END, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_03_SWAPSTONE_HOLLOW:
-                dll_70_start(MAP_SWAPSTONE_HOLLOW, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_SWAPSTONE_HOLLOW, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_04_SWAPSTONE_CIRCLE:
-                dll_70_start(MAP_SWAPSTONE_CIRCLE, 1, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_SWAPSTONE_CIRCLE, 1, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_06_DARKICE_MINES:
-                dll_70_start(MAP_DARK_ICE_MINES_1, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_DARK_ICE_MINES_1, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_07_DARKICE_MINES_TWO:
-                dll_70_start(MAP_ANIMTEST, 0, PLAYER_SABRE); //DIM2 may have been moved down by one index, after Animtest?
+                old_levelselect_start(MAP_ANIMTEST, 0, PLAYER_SABRE); //DIM2 may have been moved down by one index, after Animtest?
                 return;
             case LEVELSELECT_IDX_08_WALLED_CITY:
                 dShowLevelUnavailable = TRUE;
@@ -259,7 +259,7 @@ void dll_70_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
                 dShowLevelUnavailable = TRUE; //Wasn't created at this stage?
                 break;
             case LEVELSELECT_IDX_0A_CLOUDRUNNER_FORTRESS:
-                dll_70_start(MAP_CLOUDRUNNER_FORTRESS, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_CLOUDRUNNER_FORTRESS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_0B_KRAZOA_PALACE:
                 dShowLevelUnavailable = TRUE;  //Wasn't created at this stage?
@@ -268,55 +268,55 @@ void dll_70_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
                 dShowLevelUnavailable = TRUE;  //Wasn't created at this stage?
                 break;
             case LEVELSELECT_IDX_0E_NORTHERN_WASTES:
-                dll_70_start(MAP_SNOWHORN_WASTES, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_SNOWHORN_WASTES, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_0F_EARTHWALKER_TEMPLE:
-                dll_70_start(MAP_EARTHWALKER_TEMPLE, 1, PLAYER_SABRE);
+                old_levelselect_start(MAP_EARTHWALKER_TEMPLE, 1, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_10_WILLOW_GROVE:
-                dll_70_start(MAP_WILLOW_GROVE, 0, PLAYER_KRYSTAL); //Starting as Krystal by mistake?
+                old_levelselect_start(MAP_WILLOW_GROVE, 0, PLAYER_KRYSTAL); //Starting as Krystal by mistake?
                 return;
             case LEVELSELECT_IDX_11_DIAMOND_BAY:
-                dll_70_start(MAP_DIAMOND_BAY, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_DIAMOND_BAY, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_12_DISCOVERY_FALLS:
-                dll_70_start(MAP_DISCOVERY_FALLS, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_DISCOVERY_FALLS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_13_MOON_MOUNTAIN_PASS:
-                dll_70_start(MAP_MOON_MOUNTAIN_PASS, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_MOON_MOUNTAIN_PASS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_14_CAPE_CLAW:
-                dll_70_start(MAP_CAPE_CLAW, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_CAPE_CLAW, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_15_GOLDEN_PLAINS:
-                dll_70_start(MAP_GOLDEN_PLAINS, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_GOLDEN_PLAINS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_17_TEST_OF_COMBAT:
-                dll_70_start(MAP_SHRINE_DISCOVERY_FALLS, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_SHRINE_DISCOVERY_FALLS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_18_TEST_OF_STRENGTH:
-                dll_70_start(MAP_SHRINE_DIAMOND_BAY, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_SHRINE_DIAMOND_BAY, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_19_TEST_OF_FEAR:
-                dll_70_start(MAP_SHRINE_MOON_MOUNTAIN_PASS, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_SHRINE_MOON_MOUNTAIN_PASS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_1A_TEST_OF_CHARACTER:
-                dll_70_start(MAP_SHRINE_CAPE_CLAW, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_SHRINE_CAPE_CLAW, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_1B_TEST_OF_KNOWLEDGE:
-                dll_70_start(MAP_SHRINE_GOLDEN_PLAINS, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_SHRINE_GOLDEN_PLAINS, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_1C_TEST_OF_SACRIFICE:
-                dll_70_start(MAP_SHRINE_SNOWHORN_WASTES, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_SHRINE_SNOWHORN_WASTES, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_1D_TEST_OF_SKILL:
-                dll_70_start(MAP_SHRINE_WALLED_CITY, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_SHRINE_WALLED_CITY, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_1E_TEST_OF_MAGIC:
-                dll_70_start(MAP_SHRINE_WILLOW_GROVE, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_SHRINE_WILLOW_GROVE, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_21_DARKICE_BOSS:
-                dll_70_start(MAP_BOSS_GALADON, 0, PLAYER_KRYSTAL); //Starting as Krystal, just like in the old trailer!
+                old_levelselect_start(MAP_BOSS_GALADON, 0, PLAYER_KRYSTAL); //Starting as Krystal, just like in the old trailer!
                 return;
             case LEVELSELECT_IDX_22_GENERAL_SCALES_BOSS:
                 dShowLevelUnavailable = TRUE;
@@ -325,53 +325,56 @@ void dll_70_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
                 dShowLevelUnavailable = TRUE;
                 break;
             case LEVELSELECT_IDX_24_CLOUDRUNNER_RACE:
-                dll_70_start(MAP_CLOUDRUNNER_RACETRACK, 0, PLAYER_KRYSTAL); //CRF Trap Rooms scrapped by this stage?
+                old_levelselect_start(MAP_CLOUDRUNNER_RACETRACK, 0, PLAYER_KRYSTAL); //CRF Trap Rooms scrapped by this stage?
                 return;
             case LEVELSELECT_IDX_25_KAMERIA_DRAGON_BOSS:
                 dShowLevelUnavailable = TRUE; //Wasn't created at this stage?
                 break;
             case LEVELSELECT_IDX_26_DRAKOR_FINAL_BOSS:
-                dll_70_start(MAP_BOSS_DRAKOR, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_BOSS_DRAKOR, 0, PLAYER_SABRE);
                 break;
             case LEVELSELECT_IDX_27_ICE_MOUNTAIN:
-                dll_70_start(MAP_ICE_MOUNTAIN_1, 0, PLAYER_SABRE);
+                old_levelselect_start(MAP_ICE_MOUNTAIN_1, 0, PLAYER_SABRE);
                 return;
             case LEVELSELECT_IDX_29_DESERT_FORCE_POINT:
-                dll_70_start(MAP_DESERT_FORCE_POINT_TEMPLE_BOTTOM, 0, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_DESERT_FORCE_POINT_TEMPLE_BOTTOM, 0, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_2A_VOLCANO_FORCE_POINT:
-                dll_70_start(MAP_VOLCANO_FORCE_POINT_TEMPLE, 0, PLAYER_KRYSTAL); //Starting as Krystal by mistake?
+                old_levelselect_start(MAP_VOLCANO_FORCE_POINT_TEMPLE, 0, PLAYER_KRYSTAL); //Starting as Krystal by mistake?
                 return;
             case LEVELSELECT_IDX_2C_EARTHWALKER_ACT_TWO:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
                 gDLL_29_Gplay->vtbl->load_save(8, 1);
                 return;
             case LEVELSELECT_IDX_2D_ENERGY_DEMO:
-                dll_70_start(MAP_EARTHWALKER_TEMPLE, 5, PLAYER_KRYSTAL);
+                old_levelselect_start(MAP_EARTHWALKER_TEMPLE, 5, PLAYER_KRYSTAL);
                 return;
             case LEVELSELECT_IDX_2F_WARLOCK_ACT_ONE:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
-                gDLL_29_Gplay->vtbl->load_save(0xA, 1);
+                
+                //NOTE: crashes due to out-of-bounds save index? They must've had some extra debug/demo saves at some stage!
+                //All the following entries crash for the same reason, too.
+                gDLL_29_Gplay->vtbl->load_save(10, 1);
                 return;
             case LEVELSELECT_IDX_30_WARLOCK_ACT_TWO:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
-                gDLL_29_Gplay->vtbl->load_save(0xB, 1);
+                gDLL_29_Gplay->vtbl->load_save(11, 1);
                 return;
             case LEVELSELECT_IDX_31_WARLOCK_ACT_THREE:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
-                gDLL_29_Gplay->vtbl->load_save(0xC, 1);
+                gDLL_29_Gplay->vtbl->load_save(12, 1);
                 return;
             case LEVELSELECT_IDX_32_WARLOCK_ACT_FOUR:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
-                gDLL_29_Gplay->vtbl->load_save(0xD, 1);
+                gDLL_29_Gplay->vtbl->load_save(13, 1);
                 return;
             case LEVELSELECT_IDX_33_WARLOCK_ACT_FIVE:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
-                gDLL_29_Gplay->vtbl->load_save(0xE, 1);
+                gDLL_29_Gplay->vtbl->load_save(14, 1);
                 return;
             case LEVELSELECT_IDX_34_WARLOCK_ACT_SIX:
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
-                gDLL_29_Gplay->vtbl->load_save(0xF, 1);
+                gDLL_29_Gplay->vtbl->load_save(15, 1);
                 return;
             default:
                 dShowLevelUnavailable = TRUE;
@@ -404,7 +407,7 @@ void dll_70_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
 /**
   * Starts the game with a specific mapID, Act number, and player character.
   */
-void dll_70_start(MapIDs mapID, s32 act, PlayerNo playerNo) {
+void old_levelselect_start(MapIDs mapID, s32 act, PlayerNo playerNo) {
     gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
     gDLL_29_Gplay->vtbl->init_save(0, NULL);
     main_change_map(mapID, act, playerNo, MENU_GAMEPLAY);

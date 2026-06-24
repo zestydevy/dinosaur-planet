@@ -4,10 +4,10 @@
 _exports:
 
 # ctor/dtor
-.dword dll_70_ctor
-.dword dll_70_dtor
+.dword old_levelselect_ctor
+.dword old_levelselect_dtor
 
 # export table
-/*0*/ .dword dll_70_update1
-/*1*/ .dword dll_70_update2
-/*2*/ .dword dll_70_draw
+/*0*/ .dword old_levelselect_update1
+/*1*/ .dword old_levelselect_update2
+/*2*/ .dword old_levelselect_draw
