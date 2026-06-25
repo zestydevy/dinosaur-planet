@@ -1127,7 +1127,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
     }
 
     if (objData->vehicle != NULL && hitType != 0) {
-        hitType = Damage_Type_14;
+        hitType = Damage_Type_Speeding_Vehicle;
     }
 
     if (hitType == 0) {
@@ -1174,7 +1174,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
     case Damage_Type_1:
         hitDamage = objData->stats->health;
         break;
-    case Damage_Type_14:
+    case Damage_Type_Speeding_Vehicle:
         gDLL_6_AMSFX->vtbl->play(self, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
         break;
     case Damage_Type_Toxic:

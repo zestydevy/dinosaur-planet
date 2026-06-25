@@ -114,7 +114,7 @@ typedef enum {
     Damage_Type_Fishing_Net = 0x11,
     Damage_Type_Bullet = 0x12,
     Damage_Type_13 = 0x13,
-    Damage_Type_14 = 0x14, //vehicle-related?
+    Damage_Type_Speeding_Vehicle = 0x14, //CRsnowbike
     Damage_Type_Toxic = 0x15, //stuns player (SHkillermushroom spores)
     Damage_Type_16 = 0x16,
     Damage_Type_17 = 0x17,

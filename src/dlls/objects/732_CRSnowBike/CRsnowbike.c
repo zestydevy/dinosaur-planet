@@ -8,53 +8,53 @@
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/math.h"
+#include "sys/objhits.h"
 #include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/267_checkpoint4.h"
+#include "unktypes.h"
 
 typedef struct {
     s8 unk0[0xE];
-    s8 xJoy;
-    s8 yJoy;
+    s8 xJoy;            //Joystick X (simulated for CPU racers)
+    s8 yJoy;            //Joystick Y (simulated for CPU racers)
     s8 unk10;
-} DLL732_Unk_2E0; //Controller/joystick-related
+} CRSnowBike_SteerData;
 
 typedef struct {
-    Vec3f unk0;
+    Vec3f vGravity; //Gravity acceleration vector (relative to bike's own coordinate space)
     Vec3f velocity; //Bike's objectSpace velocity (Z points out the back of the bike, so forward velocity unit vector is {0,0,-1}) 
-    f32 maxAccelerationPerFrame; //Per sixtieth of a second
-    f32 unk1C;
-    f32 maxAcceleration;         //Per second
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    f32 unk30;
-} CRSnowBike_Motion;
+    f32 accelerationFactorPerFrame; // Per sixtieth of a second
+    f32 gravityFactor;              // Scaling factor for gravity
+    f32 accelerationFactor;         // Per second
+    f32 unk24;                      // Unused
+    f32 gravity;                    // Base unit for gravity
+    f32 friction;                   // Applied while in contact with the ground
+    f32 airResistance;              // Applied in proportion with square of speed
+} CRSnowBike_MotionData;
 
 typedef enum {
     STATE_0_Parked,
     STATE_1,
-    STATE_2,
-    STATE_3
+    STATE_2_Driving
 } CRSnowBike_States;
 
 typedef enum {
-    CRSnowBike_FLAG_0 = 0,
+    CRSnowBike_FLAG_0_None = 0,
     CRSnowBike_FLAG_1_Finished = 1,
     CRSnowBike_FLAG_2_Driving_In_Void = 2,
     CRSnowBike_FLAG_4_Grounded = 4,
     CRSnowBike_FLAG_8_Race_Started = 8,
     CRSnowBike_FLAG_10_Was_In_Sequence = 0x10,
-    CRSnowBike_FLAG_20_SharpClaw_Bike = 0x20
+    CRSnowBike_FLAG_20_SharpClaw_Driver = 0x20
 } CRSnowBike_Flags;
 
 typedef enum {
-    CRSnowBike_SOUNDFLAG_0 = 0,
+    CRSnowBike_SOUNDFLAG_None = 0,
     CRSnowBike_SOUNDFLAG_Engine = 1,
     CRSnowBike_SOUNDFLAG_Hiss = 2,
-    CRSnowBike_SOUNDFLAG_Jets = 4,
-    CRSnowBike_SOUNDFLAG_8 = 8
+    CRSnowBike_SOUNDFLAG_Jets = 4
 } CRSnowBike_SoundFlags;
 
 typedef struct {
@@ -82,60 +82,60 @@ typedef enum {
 typedef struct {
     ObjSetup base;
     u8 yaw;
-    u8 isSharpClawBike;
-    s16 gamebitUnlocked;
-    u8 racetrackIdx;
+    u8 isSharpClawBike;             // Whether the bike can only be driven by SharpClaw
+    s16 gamebitUnlocked;            // The bike can only be mounted when this gamebit is set
+    u8 racetrackIdx;                // Which race the bike is used in (CloudRunner Fortress vs. Golden Plains)
     u8 unk1D;
-    s16 gamebitFinished;
-    u8 yJoySharpClaw;
+    s16 gamebitFinished;            // Bike disappears and stops updating when this gamebit is set
+    u8 yJoySharpClaw;               // Strength factor for SharpClaws' simulated yJoy steering value
 } CRSnowBike_Setup;
 
 typedef struct {
-    SRT unk0;
-    RaceStruct raceData;
+    SRT srtCurves;                   //Stores CPU racers' current checkpoint/curve-interpolated position
+    RaceStruct raceData;             //Race/checkpoints-related data
     s8 _unk3C[0x48 - 0x3C];
-    u8 racetrackIdx;                //See `DLL732_Racetracks`
+    u8 racetrackIdx;                 //See `CRSnowBike_Racetracks`
     u8 unk49;
-    DLL27_Data collision;
-    CRSnowBike_Motion unk2AC;
-    DLL732_Unk_2E0 steering;
-    DLL_IModgfx* modGfxDLLFlames;
-    DLL_IModgfx* modGfxDLLWaves;
-    CRSnowBike_Gamebits* gamebitIDs;
+    DLL27_Data collision;            //Terrain collider
+    CRSnowBike_MotionData motion;    //Bike motion: objectSpace velocity (-Z forward), gravity, resistance, etc.
+    CRSnowBike_SteerData steering;   //Driver controls
+    DLL_IModgfx* modGfxDLLFlames;    //Effects DLL for bike's thruster flames
+    DLL_IModgfx* modGfxDLLWaves;     //Effects DLL for bike's wave effects when turning sharply
+    CRSnowBike_Gamebits* gamebitIDs; //Gamebits used when starting a race/etc.
     s8 _unk300[0x330 - 0x300];
-    Vec3f wsCollisionCoords[5]; //worldSpace coords of dCollisionPoints' collisions
+    Vec3f wsCollisionCoords[5];      //worldSpace coords of dCollisionPoints' collisions
     s8 _unk36C[0x384 - 0x36C];
-    f32 stallFactor;
+    f32 stallFactor;                 //Affects how quickly the bike loses speed after a damaging impact
     Vec3f attachPointCoords;
     f32 soundFactorRumble;
     f32 soundFactorJets;
     f32 forwardSpeed;
-    Vec3f prevTranslate;        //worldSpace coordinates at the start of the tick
-    Vec3f unk3AC;
+    Vec3f prevTranslate;        //The bike's worldSpace coordinates at the start of the tick
+    Vec3f wsFrontOfBike;        //The front end of the bike's worldSpace coordinates
     u32 soundHandleEngine;
     u32 soundHandleJets;
     u32 soundHandleHiss;
     u32 soundHandleRumble;
-    s32 fuelAmount;
-    Vec3f maxVelocity;
-    s8 _unk3D8[0x3DC - 0x3D8];
+    s32 fuelAmount;         //Fuel gauge level
+    Vec3f maxVelocity;      //Velocity component limits, in bike's objectSpace 
+    s32 _unk3D8;
     s16 yawOffset;
     s16 rollOffset;
     s16 yaw;
     s16 pitch;
     s16 roll;
-    s16 pitchOffset;    //Tilt forward/back while airborne, based on joyY
-    s8 _unk3E8[0x3EA - 0x3E8];
+    s16 pitchOffset;        //Tilt forward/back while airborne, based on joyY
+    s16 _unk3E8;
     s16 fxTimer;
-    s8 stallFrames;
-    u8 mountingFrom;
+    s8 stallFrames;         //Slows the bike down for this many frames, after it's damaged
+    u8 mountingFrom;        //Which side the player's approaching from when the bike's parked
     u8 numCollisionPoints;
     u8 flags;
     s8 state;
-    u8 unk3F1;
-    s8 framesInAir;
-    s8 unk3F3;
-    u8 unk3F4_0 : 1;
+    u8 raceRanking;         //Race placement/ordinal ranking
+    s8 framesInAir;         //How long the bike's been airborne, in frames
+    s8 collisionFlags;      //Bitfield tracking collisions on different points on the bike
+    u8 branchFlagCPU : 1;   //Randomised Boolean used for SharpClaw racers' checkpoint pathing
 } CRSnowBike_Data;
 
 /*0x0*/ static CRSnowBike_Gamebits dRaceGamebits[] = {
@@ -176,7 +176,7 @@ typedef struct {
     VEC3F(0, 0, 2.0157478), 
     VEC3F(0, 0, 0)
 };
-/*0xF0*/ static Vec3f dBikeSidePoints[] = {
+/*0xF0*/ static Vec3f dBikeMountSidePoints[] = {
     VEC3F(14.5, 0, 9), 
     VEC3F(-14.5, 0, 9)
 };
@@ -190,23 +190,23 @@ typedef struct {
 
 #include "prevent_bss_reordering.h"
 
-static s32 CRSnowBike_func_0(Object* self, CRSnowBike_Data* objData, f32 arg2);
+static s32 CRSnowBike_sharpclaw_update_race_pathing(Object* self, CRSnowBike_Data* objData, f32 arg2);
 void CRSnowBike_sharpclaw_start_race(Object* self);
-static void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
-static void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* arg2, f32 updateRate, s32 arg4);
-static void CRSnowBike_func_22BC(Object* self, CRSnowBike_Motion* arg1);
-static void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* arg2, f32 updateRate, s32 arg4);
-static void CRSnowBike_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer);
+static void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
+static void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike_MotionData* motion, f32 updateRate, s32 applyTerrainCollision);
+static void CRSnowBike_init_motion_data(Object* self, CRSnowBike_MotionData* motion);
+static void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike_MotionData* motion, f32 updateRate, s32 applyTerrainCollision);
+static void CRSnowBike_read_joy_stick(Object* self, CRSnowBike_SteerData* steering, u8 controllerPort, s32 buffer);
 static void CRSnowBike_get_bike_matrix(Object* self, CRSnowBike_Data* objData, MtxF* oMtx, s32 useYawOffset, s32 useRoll, s32 usePitch);
-static void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData);
+static void CRSnowBike_handle_damage_or_fuel_collisions(Object* self, CRSnowBike_Data* objData);
 static int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
-static void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision);
-static s32 CRSnowBike_sharpclaw_do_steering(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* arg3);
+static void CRSnowBike_handle_collisions(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision);
+static s32 CRSnowBike_sharpclaw_handle_steering(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, CRSnowBike_SteerData* steering);
 static void CRSnowBike_update_collision_points(Object* self, CRSnowBike_Data* objData);
 static void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objData, f32 forwardSpeed, s32 yJoy, s8* arg6, u8 soundFlags);
 
 // offset: 0x0 | func: 0
-static s32 CRSnowBike_func_0(Object* self, CRSnowBike_Data* data, f32 arg2) {
+static s32 CRSnowBike_sharpclaw_update_race_pathing(Object* self, CRSnowBike_Data* data, f32 arg2) {
     RaceCheckpointSetup* checkpointSetup;
     s32 sp30;
     CRSnowBike_Data* objData;
@@ -215,10 +215,10 @@ static s32 CRSnowBike_func_0(Object* self, CRSnowBike_Data* data, f32 arg2) {
 
     checkpointSetup = gDLL_4_Race->vtbl->func8(data->raceData.unk10, &sp30);
     if (checkpointSetup->unk20[1] == -1) {
-        objData->unk3F4_0 = rand_next(0, 1);
+        objData->branchFlagCPU = rand_next(0, 1);
     }
     
-    return gDLL_4_Race->vtbl->func5(&data->unk0, &data->raceData, arg2, 1, 0, objData->unk3F4_0);
+    return gDLL_4_Race->vtbl->func5(&data->srtCurves, &data->raceData, arg2, 1, 0, objData->branchFlagCPU);
 }
 
 // offset: 0xE4 | ctor
@@ -257,7 +257,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     }
 
     CRSnowBike_update_collision_points(self, objData);
-    CRSnowBike_func_22BC(self, &objData->unk2AC);
+    CRSnowBike_init_motion_data(self, &objData->motion);
 
     func_80023D30(self, 0, 0.0f, 0);
 
@@ -266,7 +266,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     }
 
     if (setup->isSharpClawBike) {
-        objData->flags |= CRSnowBike_FLAG_20_SharpClaw_Bike;
+        objData->flags |= CRSnowBike_FLAG_20_SharpClaw_Driver;
     }
 
     objData->raceData.unk10 = -1;
@@ -275,9 +275,9 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     objData->racetrackIdx = setup->racetrackIdx;
     objData->unk49 = setup->unk1D;
     
-    objData->unk0.transl.x = self->srt.transl.x;
-    objData->unk0.transl.y = self->srt.transl.y;
-    objData->unk0.transl.z = self->srt.transl.z;
+    objData->srtCurves.transl.x = self->srt.transl.x;
+    objData->srtCurves.transl.y = self->srt.transl.y;
+    objData->srtCurves.transl.z = self->srt.transl.z;
     
     obj_add_object_type(self, OBJTYPE_Vehicle);
 
@@ -291,7 +291,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
         STUBBED_PRINTF(" FInished Is SEt for Some Reason \n");
         flagsValue = CRSnowBike_FLAG_1_Finished;
     } else {
-        flagsValue = CRSnowBike_FLAG_0;
+        flagsValue = CRSnowBike_FLAG_0_None;
     }
     objData->flags |= flagsValue;
     
@@ -308,21 +308,21 @@ void CRSnowBike_control(Object* self) {
     f32 yOffset;
     MtxF bikeMtx;
     Vec3f wsPoint;
-    CRSnowBike_Motion* bikeMotion;
+    CRSnowBike_MotionData* bikeMotion;
     CRSnowBike_Data* objData;
-    DLL732_Unk_2E0* driverSteering;
+    CRSnowBike_SteerData* driverSteering;
     f32 dx;
     f32 dz;
     s32 sp5C;
-    f32 var_fv1;
+    f32 forwardSpeed;
     s32 updateIdx;
     s32 flagValue;
-    CRSnowBike_Motion* motion;
+    CRSnowBike_MotionData* motion;
 
     objData = self->data;
     objSetup = (CRSnowBike_Setup*)self->setup;
     
-    bikeMotion = &objData->unk2AC;
+    bikeMotion = &objData->motion;
     driverSteering = &objData->steering;
     
     yOffset = 0.0f;
@@ -347,10 +347,10 @@ void CRSnowBike_control(Object* self) {
     if (objData->flags & CRSnowBike_FLAG_10_Was_In_Sequence) {
         objData->flags &= ~CRSnowBike_FLAG_10_Was_In_Sequence;
 
-        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
             bikeMotion->velocity.x = 0.0f;
             bikeMotion->velocity.y = 0.0f;
-            bikeMotion->velocity.z = -2.0f; //flings bike forward after sequence
+            bikeMotion->velocity.z = -2.0f;
             objData->yawOffset = 0;
             objData->rollOffset = 0;
             objData->framesInAir = 0;
@@ -364,7 +364,7 @@ void CRSnowBike_control(Object* self) {
 
     switch (objData->state) {
     case STATE_0_Parked:
-        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
             self->objhitInfo->unk5B = 0;
             self->objhitInfo->unk5C = 0;
             objData->mountingFrom = PLAYER_NOT_NEARBY;
@@ -383,7 +383,7 @@ void CRSnowBike_control(Object* self) {
                 CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 1, 1);
                 
                 //Show LockIcon if the player is close to the left side of the bike
-                vec3_transform(&bikeMtx, dBikeSidePoints[0].x, dBikeSidePoints[0].y, dBikeSidePoints[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                vec3_transform(&bikeMtx, dBikeMountSidePoints[0].x, dBikeMountSidePoints[0].y, dBikeMountSidePoints[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                 dx = player->srt.transl.x - wsPoint.z;
                 dz = player->srt.transl.z - wsPoint.x;
                 if ((SQ(dx) + SQ(dz)) < SQ(10)) {
@@ -391,7 +391,7 @@ void CRSnowBike_control(Object* self) {
                     objData->mountingFrom = SIDE_RIGHT;
                 } else {
                     //Show LockIcon if the player is close to the right side of the bike
-                    vec3_transform(&bikeMtx, dBikeSidePoints[1].x, dBikeSidePoints[1].y, dBikeSidePoints[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                    vec3_transform(&bikeMtx, dBikeMountSidePoints[1].x, dBikeMountSidePoints[1].y, dBikeMountSidePoints[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                     dx = player->srt.transl.x - wsPoint.z;
                     dz = player->srt.transl.z - wsPoint.x;
                     if ((SQ(dx) + SQ(dz)) < SQ(10)) {
@@ -402,34 +402,40 @@ void CRSnowBike_control(Object* self) {
             }
         }
 
-        if (objData->soundHandleJets) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
-            objData->soundHandleJets = 0;
+        //Stop sound loops
+        {
+            if (objData->soundHandleJets) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+                objData->soundHandleJets = 0;
+            }
+
+            if (objData->soundHandleHiss) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                objData->soundHandleHiss = 0;
+            }
+
+            if (objData->soundHandleRumble) {
+                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+                objData->soundHandleRumble = 0;
+            }
         }
 
-        if (objData->soundHandleHiss) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
-            objData->soundHandleHiss = 0;
-        }
+        //Remove modGfx
+        {
+            if (objData->modGfxDLLFlames != NULL) {
+                dll_unload(objData->modGfxDLLFlames);
+                objData->modGfxDLLFlames = NULL;
+            }
 
-        if (objData->soundHandleRumble) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
-            objData->soundHandleRumble = 0;
-        }
-
-        if (objData->modGfxDLLFlames != NULL) {
-            dll_unload(objData->modGfxDLLFlames);
-            objData->modGfxDLLFlames = NULL;
-        }
-
-        if (objData->modGfxDLLWaves != NULL) {
-            dll_unload(objData->modGfxDLLWaves);
-            objData->modGfxDLLWaves = NULL;
+            if (objData->modGfxDLLWaves != NULL) {
+                dll_unload(objData->modGfxDLLWaves);
+                objData->modGfxDLLWaves = NULL;
+            }
         }
 
         objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
         break;
-    case STATE_2:
+    case STATE_2_Driving:
         if ((objData->flags & CRSnowBike_FLAG_8_Race_Started) == FALSE) {
             objData->raceData.unk10 = -1;
             objData->raceData.unk14 = -1;
@@ -440,12 +446,12 @@ void CRSnowBike_control(Object* self) {
             if (main_get_bits(objData->gamebitIDs->started)) {
                 flagValue = CRSnowBike_FLAG_8_Race_Started;
             } else {
-                flagValue = CRSnowBike_FLAG_0;
+                flagValue = CRSnowBike_FLAG_0_None;
             }
             objData->flags |= flagValue;
 
             if (objData->flags & CRSnowBike_FLAG_8_Race_Started) {
-                if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
+                if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) {
                     CRSnowBike_sharpclaw_start_race(self);
                 } else {
                     gDLL_4_Race->vtbl->func3(self, &objData->raceData, objSetup->racetrackIdx);
@@ -457,25 +463,27 @@ void CRSnowBike_control(Object* self) {
             objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
         }
 
-        CRSnowBike_func_3748(self, objData);
+        //Handle slowdown after being damaged, and handle fuel replenishment
+        CRSnowBike_handle_damage_or_fuel_collisions(self, objData);
 
-        if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
+        //Handle SharpClaw driving
+        if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) {
             if ((objData->flags & CRSnowBike_FLAG_8_Race_Started) == FALSE) {
                 return;
             }
             
             if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
                 if (objData->flags & CRSnowBike_FLAG_2_Driving_In_Void) {
-                    sp5C = CRSnowBike_func_0(self, objData, 2.8f * gUpdateRateF);
+                    sp5C = CRSnowBike_sharpclaw_update_race_pathing(self, objData, 2.8f * gUpdateRateF);
                     gDLL_4_Race->vtbl->func4(self, &objData->raceData);
                     gDLL_4_Race->vtbl->func10(&objData->raceData);
                     
                     if (sp5C == 0) {
-                        motion = &objData->unk2AC;
-                        self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.z - objData->unk0.transl.z);
-                        self->srt.transl.x = objData->unk0.transl.x;
-                        self->srt.transl.y = objData->unk0.transl.y;
-                        self->srt.transl.z = objData->unk0.transl.z;
+                        motion = &objData->motion;
+                        self->srt.yaw = arctan2_f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
+                        self->srt.transl.x = objData->srtCurves.transl.x;
+                        self->srt.transl.y = objData->srtCurves.transl.y;
+                        self->srt.transl.z = objData->srtCurves.transl.z;
                         motion->velocity.x = 0.0f;
                         motion->velocity.y = 0.0f;
                         motion->velocity.z = -2.0f;
@@ -492,55 +500,59 @@ void CRSnowBike_control(Object* self) {
                         objData->flags &= ~CRSnowBike_FLAG_2_Driving_In_Void;
                     }
                     return;
-                } else if (CRSnowBike_sharpclaw_do_steering(self, objData, objData, &objData->steering)) {
+                } else if (CRSnowBike_sharpclaw_handle_steering(self, objData, objData, &objData->steering)) {
                     return;
                 }
             } else {
-                sp5C = CRSnowBike_func_0(self, objData, 2.8f * gUpdateRateF);
+                sp5C = CRSnowBike_sharpclaw_update_race_pathing(self, objData, 2.8f * gUpdateRateF);
                 gDLL_4_Race->vtbl->func4(self, &objData->raceData);
                 gDLL_4_Race->vtbl->func10(&objData->raceData);
                 if (sp5C == 0) {
-                    self->srt.yaw = arctan2_f(self->srt.transl.x - objData->unk0.transl.x, self->srt.transl.z - objData->unk0.transl.z);
-                    self->srt.transl.x = objData->unk0.transl.x;
-                    self->srt.transl.y = objData->unk0.transl.y;
-                    self->srt.transl.z = objData->unk0.transl.z;
+                    self->srt.yaw = arctan2_f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
+                    self->srt.transl.x = objData->srtCurves.transl.x;
+                    self->srt.transl.y = objData->srtCurves.transl.y;
+                    self->srt.transl.z = objData->srtCurves.transl.z;
                     objData->flags |= CRSnowBike_FLAG_2_Driving_In_Void;
                 }
                 return;
             }
         } else {
-            self->objhitInfo->unk5B = 0xA;
-            self->objhitInfo->unk5C = 0xA;
+            //Otherwise: configure player driving objHits
+            self->objhitInfo->unk5B = 10;
+            self->objhitInfo->unk5C = 10;
         }
 
-        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
+        //Handle player driving
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
+            //Update race-related data
             if (objData->flags & CRSnowBike_FLAG_8_Race_Started) {
                 gDLL_4_Race->vtbl->func4(self, &objData->raceData);
                 gDLL_4_Race->vtbl->func10(&objData->raceData);
-                objData->unk3F1 = gDLL_4_Race->vtbl->func12(&objData->raceData);
+                objData->raceRanking = gDLL_4_Race->vtbl->func12(&objData->raceData);
             }
 
+            //Run control logic, iterating for each frame (including any skipped)
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++){
-                CRSnowBike_func_3618(self, &objData->steering, 0, updateIdx);
-                CRSnowBike_func_2340(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                CRSnowBike_read_joy_stick(self, &objData->steering, 0, updateIdx);
+                CRSnowBike_update_motion(self, objData, &objData->motion, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
                 objData->yawOffset += (s16) ((-objData->steering.xJoy * 60.0f) - objData->yawOffset) >> 4;
                 objData->rollOffset += (s16) ((-objData->steering.xJoy * 105.0f) - objData->rollOffset) >> 4;
                 self->srt.yaw = objData->yaw + objData->yawOffset;
                 self->srt.roll = objData->roll + objData->rollOffset;
             }
             
-            motion = &objData->unk2AC;
+            motion = &objData->motion;
 
             //Handle fuel depletion
             if (objData->fuelAmount >= 0) {
-                //Deplete fuel based on bike's speed
+                //Deplete fuel gradually and based on bike's speed
                 objData->fuelAmount = objData->fuelAmount - (s32) (VECTOR_MAGNITUDE(motion->velocity) * gUpdateRateF * 1.5f) - gUpdateRate;
                 diPrintf(" FUEL AMT %i \n", objData->fuelAmount / 10);
                 gDLL_1_cmdmenu->vtbl->energy_bar_set(objData->fuelAmount);
             } else if (objData->maxVelocity.x > 0.1f) {
                 diPrintf(" \tRAN OUT OF FUEL \t");
                 
-                //Play sound randomly while out of fuel
+                //Play bump sound randomly while out of fuel
                 if (rand_next(0, 10) == 0) {
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
@@ -560,8 +572,9 @@ void CRSnowBike_control(Object* self) {
                 }
             }
         } else {
+            //SharpClaw driver: run control logic, iterating for each frame (including any skipped)
             for (updateIdx = 0; updateIdx < gUpdateRate; updateIdx++) {
-                CRSnowBike_func_2E64(self, objData, &objData->unk2AC, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
+                CRSnowBike_sharpclaw_update_motion(self, objData, &objData->motion, gUpdateRateF, (updateIdx + 1) == gUpdateRate);
                 objData->yawOffset += (s16) ((-objData->steering.xJoy * 60.0f) - objData->yawOffset) >> 4;
                 objData->rollOffset += (s16) ((-objData->steering.xJoy * 105.0f) - objData->rollOffset) >> 4;
                 self->srt.yaw = objData->yaw + objData->yawOffset;
@@ -569,9 +582,9 @@ void CRSnowBike_control(Object* self) {
             }
         }
         
-        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
             CRSnowBike_handle_engine_sfx_and_modgfx(self, objData, 
-                objData->unk2AC.velocity.z, driverSteering->yJoy, 
+                objData->motion.velocity.z, driverSteering->yJoy, 
                 &driverSteering->unk10, 
                 (CRSnowBike_SOUNDFLAG_Engine | CRSnowBike_SOUNDFLAG_Hiss | CRSnowBike_SOUNDFLAG_Jets)
             );
@@ -598,17 +611,19 @@ void CRSnowBike_control(Object* self) {
         break;
     }
 
-    if (((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) && (objData->state == STATE_2)) {
+    //Set up player objHits to cause damage
+    if (((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) && (objData->state == STATE_2_Driving)) {
         if (objData->forwardSpeed >= 0.0f) {
-            var_fv1 = objData->forwardSpeed;
+            forwardSpeed = objData->forwardSpeed;
         } else {
-            var_fv1 = -objData->forwardSpeed;
+            forwardSpeed = -objData->forwardSpeed;
         }
-        if (var_fv1 > 2.0f) {
-            self->objhitInfo->unk5F = 0x14;
+
+        if (forwardSpeed > 2.0f) {
+            self->objhitInfo->unk5F = Damage_Type_Speeding_Vehicle;
             self->objhitInfo->unk60 = 1;
             self->objhitInfo->unk58 |= 1;
-            self->objhitInfo->unk40 = 0x10;
+            self->objhitInfo->unk40 = 16;
             self->objhitInfo->unk58 |= 4;
             self->srt.flags &= ~OBJFLAG_INVISIBLE;
         }
@@ -620,16 +635,16 @@ void CRSnowBike_update(Object* self) {
     CRSnowBike_Data* objData;
     ObjectHitInfo* objHitInfo;
     Vec3f wsVelocity;
-    MtxF sp9C;
+    MtxF invRotMtx;
     MtxF bikeMtx;
-    CRSnowBike_Motion* bikeMotion;
+    CRSnowBike_MotionData* bikeMotion;
     Object* obj;
     s32 objID;
     s32 i;
 
     objHitInfo = self->objhitInfo;
     objData = self->data;
-    bikeMotion = &objData->unk2AC;
+    bikeMotion = &objData->motion;
 
     if (objHitInfo->unk48) {
         obj = objHitInfo->unk48;
@@ -657,22 +672,36 @@ void CRSnowBike_update(Object* self) {
         }
     }
     
-    if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
-        sRotationTransform.yaw = -objData->yaw;
-        sRotationTransform.pitch = -objData->pitch;
-        sRotationTransform.roll = -objData->roll;
-        matrix_from_srt_reversed(&sp9C, &sRotationTransform);
-        self->velocity.f[0] = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
-        self->velocity.f[1] = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
-        self->velocity.f[2] = (self->srt.transl.z - self->prevLocalPosition.z) * gUpdateRateInverseF;
-        wsVelocity.x = self->velocity.f[0] * 0.93749994f;
-        wsVelocity.y = self->velocity.f[1] * 0.93749994f;
-        wsVelocity.z = self->velocity.f[2] * 0.93749994f;
+    if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
+        //Update velocity based on position/time delta
+        {
+            //Set worldSpace velocity
+            sRotationTransform.yaw = -objData->yaw;
+            sRotationTransform.pitch = -objData->pitch;
+            sRotationTransform.roll = -objData->roll;
+            matrix_from_srt_reversed(&invRotMtx, &sRotationTransform);
+
+            self->velocity.f[0] = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
+            self->velocity.f[1] = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
+            self->velocity.f[2] = (self->srt.transl.z - self->prevLocalPosition.z) * gUpdateRateInverseF;
+
+            //Store objectSpace velocity too
+            wsVelocity.x = self->velocity.f[0] * 0.93749994f;
+            wsVelocity.y = self->velocity.f[1] * 0.93749994f;
+            wsVelocity.z = self->velocity.f[2] * 0.93749994f;
+            
+            vec3_transform(&invRotMtx, 
+                wsVelocity.f[0], wsVelocity.f[1], wsVelocity.f[2], 
+                &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z
+            );
+        }
         
-        vec3_transform(&sp9C, wsVelocity.f[0], wsVelocity.f[1], wsVelocity.f[2], 
-                       &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z);
+        //Store the worldSpace coordinates of a point on the bike
         CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, FALSE, FALSE, FALSE);
-        vec3_transform(&bikeMtx, 0.0f, 0.0f, -10.0f, &objData->unk3AC.x, &objData->unk3AC.y, &objData->unk3AC.z);
+        vec3_transform(&bikeMtx, 
+            0.0f, 0.0f, -10.0f, 
+            &objData->wsFrontOfBike.x, &objData->wsFrontOfBike.y, &objData->wsFrontOfBike.z
+        );
     }
 }
 
@@ -689,8 +718,8 @@ void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     
     if (visibility == -1) {
         sp38 = gDLL_13_Expgfx->vtbl->func10(self);
-        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) == FALSE) {
-            CRSnowBike_func_1DC8(self, objData, gdl, mtxs, vtxs, pols);
+        if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
+            CRSnowBike_handle_partfx_and_impact_sounds(self, objData, gdl, mtxs, vtxs, pols);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 
@@ -706,7 +735,7 @@ void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         return;
     } 
     
-    if (objData->state == STATE_2) {
+    if (objData->state == STATE_2_Driving) {
         objData->attachPointCoords.x = self->srt.transl.x;
         objData->attachPointCoords.y = self->srt.transl.y;
         objData->attachPointCoords.z = self->srt.transl.z;
@@ -762,7 +791,7 @@ void CRSnowBike_free(Object* self, s32 onlySelf) {
     
     obj_free_object_type(self, OBJTYPE_Vehicle);
     
-    if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
+    if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver)) {
         gDLL_1_cmdmenu->vtbl->energy_bar_free();
     }
     
@@ -789,7 +818,7 @@ u8 CRSnowBike_can_bike_be_mounted(Object* self, s32 arg1) {
     objData = self->data;
     objSetup = (CRSnowBike_Setup*)self->setup;
     
-    if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike) {
+    if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) {
         return 0;
     }
 
@@ -841,12 +870,15 @@ s32 CRSnowBike_func_1A24(s32 arg0) {
 }
 
 // offset: 0x1A34 | func: 13 | export: 12
-void CRSnowBike_func_1A34(Object* self, f32* ox, f32* oy, f32* oz) {
+/**
+  * Retrieves worldSpace coords of a point on the bike.
+  */
+void CRSnowBike_get_front_of_bike_coords(Object* self, f32* ox, f32* oy, f32* oz) {
     CRSnowBike_Data* objData = self->data;
     
-    *ox = objData->unk3AC.x;
-    *oy = objData->unk3AC.y;
-    *oz = objData->unk3AC.z;
+    *ox = objData->wsFrontOfBike.x;
+    *oy = objData->wsFrontOfBike.y;
+    *oz = objData->wsFrontOfBike.z;
 }
 
 // offset: 0x1A58 | func: 14 | export: 13
@@ -861,7 +893,7 @@ void CRSnowBike_set_state(Object* self, s32 state) {
     
     objData->state = state;
 
-    if ((state == STATE_2) && !(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Bike)) {
+    if ((state == STATE_2_Driving) && !(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver)) {
         objData->fuelAmount = 10000;
         objData->maxVelocity.x = 2.0f;
         objData->maxVelocity.y = 4.0f;
@@ -886,15 +918,19 @@ void CRSnowBike_get_turn_tvalue_and_direction(Object* self, f32* tValueTurn, s32
 }
 
 // offset: 0x1B9C | func: 17 | export: 16
-f32 CRSnowBike_get_speed_tvalue_and_max(Object* self, f32* maxSpeed) {
+/**
+  * Returns the bike's current speed divided by its max speed.
+  * Also retrieves the max speed value.
+  */
+f32 CRSnowBike_get_speed_tvalue_and_max(Object* self, f32* oMaxSpeed) {
     CRSnowBike_Data* objData;
     f32 tValueSpeed;
 
     objData = self->data;
     
-    *maxSpeed = 5;
+    *oMaxSpeed = 5;
 
-    tValueSpeed = VECTOR_MAGNITUDE(objData->unk2AC.velocity) * 0.2f;
+    tValueSpeed = VECTOR_MAGNITUDE(objData->motion.velocity) * 0.2f;
     if (tValueSpeed > 1.0f) {
         tValueSpeed = 1.0f;
     }
@@ -902,9 +938,12 @@ f32 CRSnowBike_get_speed_tvalue_and_max(Object* self, f32* maxSpeed) {
 }
 
 // offset: 0x1C28 | func: 18 | export: 17
-s8 CRSnowBike_func_1C28(Object* self) {
+/**
+  * Returns the racer's ranking (1st, 2nd, 3rd, etc.)
+  */
+s8 CRSnowBike_get_ranking(Object* self) {
     CRSnowBike_Data* objData = self->data;
-    return objData->unk3F1;
+    return objData->raceRanking;
 }
 
 // offset: 0x1C38 | func: 19 | export: 18
@@ -943,20 +982,20 @@ void CRSnowBike_sharpclaw_start_race(Object* self) {
     CRSnowBike_update_collision_points(self, objData);
     gDLL_4_Race->vtbl->func3(self, &objData->raceData, objSetup->racetrackIdx);
     
-    objData->unk0.transl.x = self->srt.transl.x;
-    objData->unk0.transl.y = self->srt.transl.y;
-    objData->unk0.transl.z = self->srt.transl.z;
-    objData->unk0.yaw = self->srt.yaw;
+    objData->srtCurves.transl.x = self->srt.transl.x;
+    objData->srtCurves.transl.y = self->srt.transl.y;
+    objData->srtCurves.transl.z = self->srt.transl.z;
+    objData->srtCurves.yaw = self->srt.yaw;
 }
 
 // offset: 0x1DB8 | func: 20 | export: 19
-void CRSnowBike_func_1DB8(s32 arg0, s32 arg1) {
+void CRSnowBike_func_1DB8(Object* self, UNK_TYPE_32 arg1) {
 
 }
 
 
 // offset: 0x1DC8 | func: 21
-void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
+void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
 /*0x28*/ static u32 sImpactSoundHandle;
     Vertex* vertex;
     Gfx* gfx;
@@ -966,32 +1005,35 @@ void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx
     s32 i;
     f32 translateX;
     s32 pad2;
-    CRSnowBike_Motion* bikeMotion;
+    CRSnowBike_MotionData* bikeMotion;
     u32 dColourRGBA[] = { 6, 105, 105, 255}; //Unused RGBA colour, maybe for randomised spark colours?
     s32 volume;
     s32 pad3;
 
-    bikeMotion = &objData->unk2AC;
+    bikeMotion = &objData->motion;
 
     gfx = *gdl;
     vertex = *vtxs;
     tri = *pols;
     
-    translateX = 0.0f;
-    if (bikeMotion->velocity.z < 0.0f) {
-        translateX = bikeMotion->velocity.z;
-    }
-    fxTransform.transl.z = translateX;
+    //Get transform for particles, based on bike's velocity (bike velocity uses -Z forward, so axes are swapped for fxTransform)
+    {
+        translateX = 0.0f;
+        if (bikeMotion->velocity.z < 0.0f) {
+            translateX = bikeMotion->velocity.z;
+        }
+        fxTransform.transl.z = translateX;
 
-    if (bikeMotion->velocity.z < 0.0f) {
-        translateX = bikeMotion->velocity.x;
+        if (bikeMotion->velocity.z < 0.0f) {
+            translateX = bikeMotion->velocity.x;
+        }
+        fxTransform.transl.x = translateX;
     }
-    fxTransform.transl.x = translateX;
-    
+
     //Set particle colour (just set to white, but maybe once intended to use dColourRGBA?)
     dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
     
-    //Create different particles based on bike's forward speed
+    //Create different smoke particles based on bike's forward speed
     {
         if (bikeMotion->velocity.z < -0.5f) {
             if (1) { }
@@ -1009,14 +1051,17 @@ void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx
         }
     }
     
-    i = 0;
-    if (objData->steering.yJoy > 0) {
-        i = 2;
-    }
+    //Create starry particles when jets are firing
+    {
+        i = 0;
+        if (objData->steering.yJoy > 0) {
+            i = 2;
+        }
 
-    while (i) {
-        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_131, NULL, 4, -1, NULL);
-        i--;
+        while (i) {
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_131, NULL, 4, -1, NULL);
+            i--;
+        }
     }
     
     fxTransform.yaw = 0;
@@ -1024,17 +1069,18 @@ void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx
     fxTransform.roll = 0;
     fxTransform.scale = 1.0f;
 
+    //Play impact sound effects while colliding (not debounced)
     if (objData->forwardSpeed < -1.2f) {
         dColourRGBA[1] += rand_next(0, 155);
         dColourRGBA[2] += rand_next(0, 155);
         volume = ((0.0f - objData->forwardSpeed) * 21.0f);
-        if (objData->unk3F3 & 1) {
+        if (objData->collisionFlags & 1) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
-        } else if (objData->unk3F3 & 2) {
+        } else if (objData->collisionFlags & 2) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
-        } else if (objData->unk3F3 & 4) {
+        } else if (objData->collisionFlags & 4) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         }
@@ -1046,13 +1092,13 @@ void CRSnowBike_func_1DC8(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx
 }
 
 // offset: 0x22BC | func: 22
-void CRSnowBike_func_22BC(Object* self, CRSnowBike_Motion* motion) {
-    motion->unk1C = 90;
-    motion->maxAcceleration = 1/motion->unk1C;  
-    motion->unk28 = -11.0f;
-    motion->unk2C = 0.1f;
-    motion->unk30 = 13.0f;
-    motion->maxAccelerationPerFrame = (1/motion->unk1C) * ONE_OVER_SIXTY_F;
+void CRSnowBike_init_motion_data(Object* self, CRSnowBike_MotionData* motion) {
+    motion->gravityFactor = 90;
+    motion->accelerationFactor = 1/motion->gravityFactor;  
+    motion->gravity = -11.0f;
+    motion->friction = 0.1f;
+    motion->airResistance = 13.0f;
+    motion->accelerationFactorPerFrame = (1/motion->gravityFactor) * ONE_OVER_SIXTY_F;
     
     sRotationTransform.transl.x = 0;
     sRotationTransform.transl.y = 0;
@@ -1061,28 +1107,31 @@ void CRSnowBike_func_22BC(Object* self, CRSnowBike_Motion* motion) {
 }
 
 // offset: 0x2340 | func: 23
-void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* motion, f32 updateRate, s32 arg4) {
+/**
+  * Handles bike motion when the player is driving the bike.
+  */
+void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike_MotionData* motion, f32 updateRate, s32 applyTerrainCollision) {
     MtxF mtx;
     MtxF invMtx;
-    MtxF spB0;
+    MtxF invMtxYaw;
     f32 pad1;
     f32 minusLimit;
     f32 sqForwardSpeed;
     f32 acceleration;
     f32 newVelocityX;
-    f32 newVelocityZ2;
-    f32 sp94;
+    f32 newVelocityZA;
+    f32 oneOverUpdateRate;
     f32 accelerationAmount;
-    Vec3f sp84;
+    Vec3f osGravity;
     f32 yValue;
     f32 newVelocityZ;
-    s32 var_a0;
-    Vec3f sp6C;
-    Vec3f sp60;
+    s32 countCollision;
+    Vec3f vNormal;
+    Vec3f velocityReduced;
     s32 pad2;
     DLL27_Data* collision;
-    s32 angle1;
-    s32 angle2;
+    s32 anglePitch;
+    s32 angleRoll;
     s32 i;
 
     collision = &objData->collision;
@@ -1109,10 +1158,12 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Mot
     motion->velocity.z = (motion->velocity.f[2] < minusLimit) ? minusLimit : (
                       (objData->maxVelocity.f[2] < motion->velocity.f[2]) ? objData->maxVelocity.f[2] : motion->velocity.f[2]);
     
+    //Get rotation matrices
     sRotationTransform.yaw = objData->yaw;
     sRotationTransform.pitch = objData->pitch;
     sRotationTransform.roll = objData->roll;
     matrix_from_srt(&mtx, &sRotationTransform);
+
     sRotationTransform.yaw = -objData->yaw;
     sRotationTransform.pitch = -objData->pitch;
     sRotationTransform.roll = -objData->roll;
@@ -1132,9 +1183,10 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Mot
         objData->pitchOffset -= (-objData->pitchOffset >> 5);
     }
     
+    //Transform gravity vector into bike's objectSpace
     vec3_transform(&invMtx, 
-        0.0f, motion->unk28 * motion->unk1C, 0.0f, 
-        &sp84.f[0], &sp84.f[1], &sp84.f[2]);
+        0.0f, motion->gravity * motion->gravityFactor, 0.0f, 
+        &osGravity.f[0], &osGravity.f[1], &osGravity.f[2]);
 
     //Handle forward acceleration/deceleration
     {
@@ -1144,7 +1196,7 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Mot
             accelerationAmount = -(f32) objData->steering.yJoy * 10.0f;
         }
         
-        acceleration = motion->maxAcceleration * accelerationAmount;
+        acceleration = motion->accelerationFactor * accelerationAmount;
 
         //NOTE: motion->velocity Z points out the back of the bike, so negative values mean forward
         if (acceleration < 0.0f) {
@@ -1152,7 +1204,6 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Mot
             motion->velocity.z += acceleration * ONE_OVER_SIXTY_F;
         } else {
             //Deceleration
-            
             if (motion->velocity.z <= 0.0f) {
                 motion->velocity.z += acceleration * ONE_OVER_SIXTY_F;
                 
@@ -1164,64 +1215,82 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Mot
         }
     }
     
-    motion->unk0.x = sp84.f[0] * motion->maxAccelerationPerFrame;
-    motion->unk0.y = sp84.f[1] * motion->maxAccelerationPerFrame;
-    motion->unk0.z = sp84.f[2] * motion->maxAccelerationPerFrame;
-    motion->velocity.x = motion->unk0.x + motion->velocity.x;
-    motion->velocity.y = motion->unk0.y + motion->velocity.y;
-    motion->velocity.z = motion->unk0.z + motion->velocity.z;
-    
-    if (collision->unk25D != 0) {
-        acceleration = motion->unk2C * sp84.y;
-        if (motion->velocity.z < 0.0f) {
-            if (acceleration < 0.0f) {
-                acceleration = -acceleration;
-            }
-        } else if (acceleration > 0.0f) {
-            acceleration = -acceleration;
-        }
-        acceleration *= motion->maxAccelerationPerFrame;
+    //Apply gravity
+    {
+        motion->vGravity.x = osGravity.f[0] * motion->accelerationFactorPerFrame;
+        motion->vGravity.y = osGravity.f[1] * motion->accelerationFactorPerFrame;
+        motion->vGravity.z = osGravity.f[2] * motion->accelerationFactorPerFrame;
 
-        newVelocityZ = motion->velocity.z + acceleration;
-        if (motion->velocity.z < 0.0f) {
-            if (newVelocityZ > 0.0f) {
+        motion->velocity.x = motion->vGravity.x + motion->velocity.x;
+        motion->velocity.y = motion->vGravity.y + motion->velocity.y;
+        motion->velocity.z = motion->vGravity.z + motion->velocity.z;
+    }
+
+    //Handle being on ground/in air
+    if (collision->unk25D != 0) {        
+        //Apply friction
+
+        //Forward component (relative to bike's own coordinate space)
+        {
+            acceleration = motion->friction * osGravity.y;
+            if (motion->velocity.z < 0.0f) {
+                if (acceleration < 0.0f) {
+                    acceleration = -acceleration;
+                }
+            } else {
+                if (acceleration > 0.0f) {
+                    acceleration = -acceleration;
+                }
+            }
+            acceleration *= motion->accelerationFactorPerFrame;
+
+            newVelocityZ = motion->velocity.z + acceleration;
+            if (motion->velocity.z < 0.0f) {
+                if (newVelocityZ > 0.0f) {
+                    motion->velocity.z = 0.0f;
+                } else {
+                    motion->velocity.z = newVelocityZ;
+                }
+            } else if (newVelocityZ < 0.0f) {
                 motion->velocity.z = 0.0f;
             } else {
                 motion->velocity.z = newVelocityZ;
             }
-        } else if (newVelocityZ < 0.0f) {
-            motion->velocity.z = 0.0f;
-        } else {
-            motion->velocity.z = newVelocityZ;
         }
         
-        if (motion->velocity.z < 0.0f) {
-            newVelocityZ = -motion->velocity.z;
-        } else {
-            newVelocityZ = motion->velocity.z;
-        }
-        
-        acceleration = motion->unk2C * sp84.y * (4.0f + SQ(newVelocityZ));
-        if (motion->velocity.x < 0.0f) {
-            if (acceleration < 0.0f) {
+        //Lateral component (relative to bike's own coordinate space)
+        {
+            //Note: this value's squared afterwards anyway, so there's no need to check sign
+            {
+                if (motion->velocity.z < 0.0f) {
+                    newVelocityZ = -motion->velocity.z;
+                } else {
+                    newVelocityZ = motion->velocity.z;
+                }
+            }
+            
+            acceleration = motion->friction * osGravity.y * (4.0f + SQ(newVelocityZ));
+            if (motion->velocity.x < 0.0f) {
+                if (acceleration < 0.0f) {
+                    acceleration = -acceleration;
+                }
+            } else if (acceleration > 0.0f) {
                 acceleration = -acceleration;
             }
-        } else if (acceleration > 0.0f) {
-            acceleration = -acceleration;
-        }
-        acceleration *= motion->maxAccelerationPerFrame;
-        
-        newVelocityX = motion->velocity.x + acceleration;
-        if (motion->velocity.x < 0.0f) {
-            if (newVelocityX > 0.0f) {
+            acceleration *= motion->accelerationFactorPerFrame;
+            
+            newVelocityX = motion->velocity.x + acceleration;
+            if (motion->velocity.x < 0.0f) {
+                if (newVelocityX > 0.0f) {
+                    motion->velocity.x = 0.0f;
+                } else {
+                    motion->velocity.x = newVelocityX;
+                }
+            } else if (newVelocityX < 0.0f) {
                 motion->velocity.x = 0.0f;
             } else {
                 motion->velocity.x = newVelocityX;
             }
-        } else if (newVelocityX < 0.0f) {
-            motion->velocity.x = 0.0f;
-        } else {
-            motion->velocity.x = newVelocityX;
         }
         
         objData->framesInAir = 0;
@@ -1233,263 +1302,337 @@ void CRSnowBike_func_2340(Object* self, CRSnowBike_Data* objData, CRSnowBike_Mot
         }
     }
 
-    sqForwardSpeed = SQ(motion->velocity.z);
-    acceleration = motion->unk30 * sqForwardSpeed;
-    if (motion->velocity.z > 0.0f) {
-        acceleration = -acceleration;
-    }
-    acceleration *= motion->maxAccelerationPerFrame;
+    //Apply air resistance (proportionate to square of speed)
+    {
+        sqForwardSpeed = SQ(motion->velocity.z);
+        acceleration = motion->airResistance * sqForwardSpeed;
+        if (motion->velocity.z > 0.0f) {
+            acceleration = -acceleration;
+        }
+        acceleration *= motion->accelerationFactorPerFrame;
 
-    newVelocityZ2 = motion->velocity.z + acceleration;
-    if (motion->velocity.z < 0.0f) {
-        if (newVelocityZ2 > 0.0f) {
+        newVelocityZA = motion->velocity.z + acceleration;
+        if (motion->velocity.z < 0.0f) {
+            if (newVelocityZA > 0.0f) {
+                motion->velocity.z = 0.0f;
+            } else {
+                motion->velocity.z = newVelocityZA;
+            }
+        } else if (newVelocityZA < 0.0f) {
             motion->velocity.z = 0.0f;
         } else {
-            motion->velocity.z = newVelocityZ2;
+            motion->velocity.z = newVelocityZA;
         }
-    } else if (newVelocityZ2 < 0.0f) {
-        motion->velocity.z = 0.0f;
-    } else {
-        motion->velocity.z = newVelocityZ2;
     }
-    
+
     vec3_transform(&mtx, motion->velocity.x, motion->velocity.y, motion->velocity.z, 
                    &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
     VECTOR_SCALE(self->velocity, 1.0666667f);
     obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
 
-    if (arg4 != 0) {
-        sp94 = 1.0f / updateRate;
-        CRSnowBike_func_3AF8(self, objData, collision);
+    /* Run terrain calculations 
+       (the bike iterates its motion logic for each skipped frame plus the current one, 
+       but only runs collision for the last iteration - i.e. once per update) */
+    if (applyTerrainCollision) {
+        oneOverUpdateRate = 1.0f / updateRate;
+        CRSnowBike_handle_collisions(self, objData, collision);
         gDLL_27->vtbl->func_1E8(self, collision, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, collision);
         gDLL_27->vtbl->func_624(self, collision, updateRate);
         
-        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * sp94;
-        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * sp94;
-        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * sp94;
+        //Get velocity based on position delta and time delta
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * oneOverUpdateRate;
+        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * oneOverUpdateRate;
+        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * oneOverUpdateRate;
         
-        sp60.f[0] = self->velocity.x * 0.93749994f;
-        sp60.f[1] = self->velocity.y * 0.93749994f;
-        sp60.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&invMtx, sp60.f[0], sp60.f[1], sp60.f[2], 
-                       &motion->velocity.x, &motion->velocity.y, &motion->velocity.z);
-        sp6C.f[0] = 0.0f;
-        sp6C.f[1] = 1.0f;
-        sp6C.f[2] = 0.0f;
-        
-        if (collision->unk25C & 0xF) {
-            objData->flags |= CRSnowBike_FLAG_4_Grounded;
-        } else {
-            objData->flags &= ~CRSnowBike_FLAG_4_Grounded;
-        }
-        
-        for (var_a0 = 0, i = 0; i < 4; i++) {
-            if (collision->unk25C & (1 << i)) {
-                sp6C.x = collision->unk68.unk0[i].x + sp6C.x;
-                sp6C.y = collision->unk68.unk0[i].y + sp6C.y;
-                sp6C.z = collision->unk68.unk0[i].z + sp6C.z;
-                var_a0++;
+        //Lose some momentum
+        velocityReduced.f[0] = self->velocity.x * 0.93749994f;
+        velocityReduced.f[1] = self->velocity.y * 0.93749994f;
+        velocityReduced.f[2] = self->velocity.z * 0.93749994f;
+
+        //Transform velocity into bike's local objectSpace
+        vec3_transform(&invMtx, 
+            velocityReduced.f[0], velocityReduced.f[1], velocityReduced.f[2], 
+            &motion->velocity.x, &motion->velocity.y, &motion->velocity.z
+        );
+
+        //Get the surface normal vector, averaged out over the bike's test points
+        {
+            vNormal.f[0] = 0.0f;
+            vNormal.f[1] = 1.0f;
+            vNormal.f[2] = 0.0f;
+            
+            if (collision->unk25C & 0xF) {
+                objData->flags |= CRSnowBike_FLAG_4_Grounded;
+            } else {
+                objData->flags &= ~CRSnowBike_FLAG_4_Grounded;
+            }
+            
+            for (countCollision = 0, i = 0; i < 4; i++) {
+                if (collision->unk25C & (1 << i)) {
+                    vNormal.x = collision->unk68.unk0[i].x + vNormal.x;
+                    vNormal.y = collision->unk68.unk0[i].y + vNormal.y;
+                    vNormal.z = collision->unk68.unk0[i].z + vNormal.z;
+                    countCollision++;
+                }
+            }
+            
+            VECTOR_SCALE(vNormal, 0.25f);
+            if (countCollision != 0) {
+                acceleration = 1.0f / countCollision;
+                VECTOR_SCALE(vNormal, acceleration);
+            } else {
+                vNormal.f[0] = 0.0f;
+                vNormal.f[1] = 1.0f;
+                vNormal.f[2] = 0.0f;
             }
         }
         
-        VECTOR_SCALE(sp6C, 0.25f);
-        if (var_a0 != 0) {
-            acceleration = 1.0f / var_a0;
-            VECTOR_SCALE(sp6C, acceleration);
-        } else {
-            sp6C.f[0] = 0.0f;
-            sp6C.f[1] = 1.0f;
-            sp6C.f[2] = 0.0f;
-        }
-        
+        //Transform the normal vector around the bike's yaw
         sRotationTransform.yaw = -objData->yaw;
         sRotationTransform.pitch = 0;
         sRotationTransform.roll = 0;
-        matrix_from_srt_reversed(&spB0, &sRotationTransform);
-        vec3_transform(&spB0, sp6C.f[0], sp6C.f[1], sp6C.f[2], &sp6C.f[0], &sp6C.f[1], &sp6C.f[2]);
+        matrix_from_srt_reversed(&invMtxYaw, &sRotationTransform);
+        vec3_transform(&invMtxYaw, 
+            vNormal.f[0], vNormal.f[1], vNormal.f[2], 
+            &vNormal.f[0], &vNormal.f[1], &vNormal.f[2]
+        );
         
-        angle1 = M_90_DEGREES - arctan2_f(sp6C.f[1], sp6C.f[2]);
-        angle2 = -(M_90_DEGREES - arctan2_f(sp6C.f[1], sp6C.f[0]));
-        angle1 -= (objData->pitch & 0xFFFF);
-        CIRCLE_WRAP(angle1);
-        objData->pitch += (((angle1 >> 2) / 3) * (s32) updateRate);
+        //Get the bike's goal pitch and roll, based on the surface normal
+        anglePitch = M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[2]);
+        angleRoll = -(M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[0]));
+
+        //Blend towards goal pitch
+        anglePitch -= (objData->pitch & 0xFFFF);
+        CIRCLE_WRAP(anglePitch);
+        objData->pitch += (((anglePitch >> 2) / 3) * (s32) updateRate);
         self->srt.pitch = objData->pitch + objData->pitchOffset;
         
-        angle2 -= (objData->roll & 0xFFFF);
-        CIRCLE_WRAP(angle2);
-        objData->roll += (((angle2 >> 2) / 3) * (s32) updateRate);
+        //Blend towards goal roll
+        angleRoll -= (objData->roll & 0xFFFF);
+        CIRCLE_WRAP(angleRoll);
+        objData->roll += (((angleRoll >> 2) / 3) * (s32) updateRate);
     }
     
+    //Turn
     objData->yaw -= (s16) (objData->steering.xJoy * (70.0f - (objData->steering.yJoy * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x2E64 | func: 24
-void CRSnowBike_func_2E64(Object* self, CRSnowBike_Data* objData, CRSnowBike_Motion* arg2, f32 updateRate, s32 arg4) {
-    MtxF sp120;
-    MtxF spE0;
-    MtxF spA0;
+/**
+  * Handles bike motion when a SharpClaw is driving the bike.
+  */
+void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike_MotionData* motion, f32 updateRate, s32 applyTerrainCollision) {
+    MtxF rotMtx;
+    MtxF invRotMtx;
+    MtxF invMtxYaw;
     DLL27_Data* collision;
-    f32 temp_fv0;
-    f32 var_fv1;
-    f32 sp90;
-    s32 temp_a1;
-    Vec3f sp80;
-    Vec3f sp74;
-    Vec3f sp68;
+    f32 updateVelocityZ;
+    f32 acceleration;
+    f32 oneOverUpdateRate;
+    s32 angleRoll;
+    Vec3f osGravity;
+    Vec3f vNormal;
+    Vec3f velocityReduced;
     s32 pad;
-    s32 var_a0;
-    s32 var_s0;
-    s32 var_v1;
+    s32 countCollision;
+    s32 anglePitch;
+    f32 temp;
     s32 i;
     f32 sq;
 
     collision = &objData->collision;
     
-    if (arg2->velocity.f[0] > 4.0f) {
-        arg2->velocity.f[0] = 4.0f;
+    //Limit velocity
+    if (motion->velocity.f[0] > 4.0f) {
+        motion->velocity.f[0] = 4.0f;
     }
-    if (arg2->velocity.f[0] < -4.0f) {
-        arg2->velocity.f[0] = -4.0f;
+    if (motion->velocity.f[0] < -4.0f) {
+        motion->velocity.f[0] = -4.0f;
     }
-    if (arg2->velocity.f[1] > 4.0f) {
-        arg2->velocity.f[1] = 4.0f;
+    if (motion->velocity.f[1] > 4.0f) {
+        motion->velocity.f[1] = 4.0f;
     }
-    if (arg2->velocity.f[1] < -4.0f) {
-        arg2->velocity.f[1] = -4.0f;
+    if (motion->velocity.f[1] < -4.0f) {
+        motion->velocity.f[1] = -4.0f;
     }
-    if (arg2->velocity.f[2] > 5.0f) {
-        arg2->velocity.f[2] = 5.0f;
+    if (motion->velocity.f[2] > 5.0f) {
+        motion->velocity.f[2] = 5.0f;
     }
-    if (arg2->velocity.f[2] < -5.8f) {
-        arg2->velocity.f[2] = -5.8f;
+    if (motion->velocity.f[2] < -5.8f) {
+        motion->velocity.f[2] = -5.8f;
     }
     
+    //Get rotation matrices
     sRotationTransform.yaw = objData->yaw;
     sRotationTransform.pitch = objData->pitch;
     sRotationTransform.roll = objData->roll;
-    matrix_from_srt(&sp120, &sRotationTransform);
+    matrix_from_srt(&rotMtx, &sRotationTransform);
     
     sRotationTransform.yaw = -objData->yaw;
     sRotationTransform.pitch = -objData->pitch;
     sRotationTransform.roll = -objData->roll;
-    matrix_from_srt_reversed(&spE0, &sRotationTransform);
+    matrix_from_srt_reversed(&invRotMtx, &sRotationTransform);
     
-    vec3_transform(&spE0, 
-        0.0f, arg2->unk28 * arg2->unk1C, 0.0f, 
-        &sp80.f[0], &sp80.f[1], &sp80.f[2]
+    //Transform gravity vector into bike's objectSpace
+    vec3_transform(&invRotMtx, 
+        0.0f, motion->gravity * motion->gravityFactor, 0.0f, 
+        &osGravity.f[0], &osGravity.f[1], &osGravity.f[2]
     );
 
-    temp_fv0 = -(f32) objData->steering.yJoy * 50.0f;
-    temp_fv0 *= arg2->maxAccelerationPerFrame;
-    arg2->velocity.f[2] += temp_fv0;
-    arg2->unk0.f[0] = sp80.f[0] * arg2->maxAccelerationPerFrame;
-    arg2->unk0.f[1] = sp80.f[1] * arg2->maxAccelerationPerFrame;
-    arg2->unk0.f[2] = sp80.f[2] * arg2->maxAccelerationPerFrame;
-    arg2->velocity.f[0] = arg2->velocity.f[0] + arg2->unk0.f[0];
-    arg2->velocity.f[1] = arg2->velocity.f[1] + arg2->unk0.f[1];
-    arg2->velocity.f[2] = arg2->velocity.f[2] + arg2->unk0.f[2];
-    
+    //Handle forward acceleration
+    updateVelocityZ = -(f32) objData->steering.yJoy * 50.0f;
+    updateVelocityZ *= motion->accelerationFactorPerFrame;
+    motion->velocity.z += updateVelocityZ;
+
+    //Apply gravity
+    {
+        motion->vGravity.x = osGravity.f[0] * motion->accelerationFactorPerFrame;
+        motion->vGravity.y = osGravity.f[1] * motion->accelerationFactorPerFrame;
+        motion->vGravity.z = osGravity.f[2] * motion->accelerationFactorPerFrame;
+
+        motion->velocity.x = motion->velocity.x + motion->vGravity.f[0];
+        motion->velocity.y = motion->velocity.y + motion->vGravity.f[1];
+        motion->velocity.z = motion->velocity.z + motion->vGravity.f[2];
+    }
+
+    //Apply friction while grounded
     if (collision->unk25D != 0) {
-        arg2->velocity.f[0] = 0.0f;
-        var_fv1 = arg2->unk2C * sp80.y;
+        motion->velocity.f[0] = 0.0f;
+        acceleration = motion->friction * osGravity.y;
         
-        if (arg2->velocity.f[2] < 0.0f) {
-            if (var_fv1 < 0.0f) {
-                var_fv1 = -var_fv1;
+        if (motion->velocity.f[2] < 0.0f) {
+            if (acceleration < 0.0f) {
+                acceleration = -acceleration;
             }
-        } else if (var_fv1 > 0.0f) {
-            var_fv1 = -var_fv1;
+        } else if (acceleration > 0.0f) {
+            acceleration = -acceleration;
         }
 
-        var_fv1 *= arg2->maxAccelerationPerFrame;
-        temp_fv0 = arg2->velocity.f[2] + var_fv1;
-        if (temp_fv0 > 0.0f) {
-            arg2->velocity.f[2] = 0.0f;
+        acceleration *= motion->accelerationFactorPerFrame;
+
+        updateVelocityZ = motion->velocity.f[2] + acceleration;
+        if (updateVelocityZ > 0.0f) {
+            motion->velocity.f[2] = 0.0f;
         } else {
-            arg2->velocity.f[2] = temp_fv0;
+            motion->velocity.f[2] = updateVelocityZ;
         }
     }
 
-    sq = SQ(arg2->velocity.f[2]);
-    var_fv1 = arg2->unk30 * sq;
-    var_fv1 *= arg2->maxAccelerationPerFrame;
-    
-    temp_fv0 = arg2->velocity.f[2] + var_fv1;
-    if (temp_fv0 > 0.0f) {
-        arg2->velocity.f[2] = 0.0f;
-    } else {
-        arg2->velocity.f[2] = temp_fv0;
+    //Apply air resistance (proportionate to square of speed)
+    {
+        sq = SQ(motion->velocity.f[2]);
+        acceleration = motion->airResistance * sq;
+        acceleration *= motion->accelerationFactorPerFrame;
+        
+        updateVelocityZ = motion->velocity.f[2] + acceleration;
+        if (updateVelocityZ > 0.0f) {
+            motion->velocity.f[2] = 0.0f;
+        } else {
+            motion->velocity.f[2] = updateVelocityZ;
+        }
     }
     
-    vec3_transform(&sp120, arg2->velocity.f[0], arg2->velocity.f[1], arg2->velocity.f[2], &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
+    vec3_transform(&rotMtx, 
+        motion->velocity.f[0], motion->velocity.f[1], motion->velocity.f[2], 
+        &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]
+    );
     VECTOR_SCALE(self->velocity, 1.0666667f);
-    obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
-    
-    if (arg4 != 0) {
-        sp90 = 1.0f / updateRate;
+    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+
+    /* Run terrain calculations 
+       (the bike iterates its motion logic for each skipped frame plus the current one, 
+       but only runs collision for the last iteration - i.e. once per update) */
+
+    if (applyTerrainCollision) {
+        oneOverUpdateRate = 1.0f / updateRate;
         gDLL_27->vtbl->func_1E8(self, collision, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, collision);
         gDLL_27->vtbl->func_624(self, collision, updateRate);
-        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * sp90;
-        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * sp90;
-        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * sp90;
-        sp68.f[0] = self->velocity.x * 0.93749994f;
-        sp68.f[1] = self->velocity.y * 0.93749994f;
-        sp68.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&spE0, sp68.f[0], sp68.f[1], sp68.f[2], &arg2->velocity.f[0], &arg2->velocity.f[1], &arg2->velocity.f[2]);
-        
-        sp74.f[0] = 0.0f;
-        sp74.f[1] = 1.0f;
-        sp74.f[2] = 0.0f;
-        
-        if (collision->unk25C & 0xF) {
-            objData->flags |= CRSnowBike_FLAG_4_Grounded;
-        } else {
-            objData->flags &= ~CRSnowBike_FLAG_4_Grounded;
-        }
 
-        for (var_a0 = 0, i = 0; i < 4; i++) {
-            if (collision->unk25C & (1 << i)) {
-                sp74.f[0] = sp74.f[0] + collision->unk68.unk0[i].f[0];
-                sp74.f[1] = sp74.f[1] + collision->unk68.unk0[i].f[1];
-                sp74.f[2] = sp74.f[2] + collision->unk68.unk0[i].f[2];
-                var_a0++;
+        //Get velocity based on position delta and time delta
+        self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * oneOverUpdateRate;
+        self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * oneOverUpdateRate;
+        self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * oneOverUpdateRate;
+
+        //Lose some momentum
+        velocityReduced.f[0] = self->velocity.x * 0.93749994f;
+        velocityReduced.f[1] = self->velocity.y * 0.93749994f;
+        velocityReduced.f[2] = self->velocity.z * 0.93749994f;
+        vec3_transform(&invRotMtx, 
+            velocityReduced.f[0], velocityReduced.f[1], velocityReduced.f[2], 
+            &motion->velocity.f[0], &motion->velocity.f[1], &motion->velocity.f[2]
+        );
+        
+        //Get the surface normal vector, averaged out over the bike's test points
+        {
+            vNormal.f[0] = 0.0f;
+            vNormal.f[1] = 1.0f;
+            vNormal.f[2] = 0.0f;
+            
+            if (collision->unk25C & 0xF) {
+                objData->flags |= CRSnowBike_FLAG_4_Grounded;
+            } else {
+                objData->flags &= ~CRSnowBike_FLAG_4_Grounded;
+            }
+
+            for (countCollision = 0, i = 0; i < 4; i++) {
+                if (collision->unk25C & (1 << i)) {
+                    vNormal.f[0] = vNormal.f[0] + collision->unk68.unk0[i].f[0];
+                    vNormal.f[1] = vNormal.f[1] + collision->unk68.unk0[i].f[1];
+                    vNormal.f[2] = vNormal.f[2] + collision->unk68.unk0[i].f[2];
+                    countCollision++;
+                }
+            }
+            
+            if (countCollision != 0) {
+                VECTOR_SCALE(vNormal, 1.0f / countCollision);
+            } else {
+                vNormal.f[0] = 0.0f;
+                vNormal.f[1] = 1.0f;
+                vNormal.f[2] = 0.0f;
             }
         }
         
-        if (var_a0 != 0) {
-            VECTOR_SCALE(sp74, 1.0f / var_a0);
-        } else {
-            sp74.f[0] = 0.0f;
-            sp74.f[1] = 1.0f;
-            sp74.f[2] = 0.0f;
-        }
-        
+        //Transform the normal vector around the bike's yaw
         sRotationTransform.yaw = -objData->yaw;
         sRotationTransform.pitch = 0;
         sRotationTransform.roll = 0;
-        matrix_from_srt_reversed(&spA0, &sRotationTransform);
-        vec3_transform(&spA0, sp74.f[0], sp74.f[1], sp74.f[2], &sp74.f[0], &sp74.f[1], &sp74.f[2]);
+        matrix_from_srt_reversed(&invMtxYaw, &sRotationTransform);
+        vec3_transform(&invMtxYaw, 
+            vNormal.f[0], vNormal.f[1], vNormal.f[2], 
+            &vNormal.f[0], &vNormal.f[1], &vNormal.f[2]
+        );
         
-        var_s0 = M_90_DEGREES - arctan2_f(sp74.f[1], sp74.f[2]);
-        temp_a1 = -(M_90_DEGREES - arctan2_f(sp74.f[1], sp74.f[0]));
-        var_s0 -= (objData->pitch & 0xFFFF);
-        CIRCLE_WRAP(var_s0);
-        objData->pitch += ((var_s0 >> 2) / 3) * (s32)updateRate;
+        //Get the bike's goal pitch and roll, based on the surface normal
+        anglePitch = M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[2]);
+        angleRoll = -(M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[0]));
+
+        //Blend towards goal pitch
+        anglePitch -= (objData->pitch & 0xFFFF);
+        CIRCLE_WRAP(anglePitch);
+        objData->pitch += ((anglePitch >> 2) / 3) * (s32)updateRate;
         self->srt.pitch = objData->pitch + objData->pitchOffset;
-        temp_a1 -= (objData->roll & 0xFFFF);
-        CIRCLE_WRAP(temp_a1);
-        objData->roll += ((temp_a1 >> 2) / 3) * (s32)updateRate;
+
+        //Blend towards goal roll
+        angleRoll -= (objData->roll & 0xFFFF);
+        CIRCLE_WRAP(angleRoll);
+        objData->roll += ((angleRoll >> 2) / 3) * (s32)updateRate;
     }
     
+    //Turn
     objData->yaw -= (s16) (objData->steering.xJoy * (70.0f - (objData->steering.yJoy * 0.05f)) * 0.0666f);
 }
 
 // offset: 0x3618 | func: 25
-void CRSnowBike_func_3618(Object* self, DLL732_Unk_2E0* arg1, u8 controllerPort, s32 buffer) {
-    arg1->xJoy = joy_get_stick_x_buffered(controllerPort, buffer);
-    arg1->yJoy = joy_get_stick_y_buffered(controllerPort, buffer);
+/**
+  * Used to read the controller joystick when the player is driving the bike.
+  *
+  * Interesting to note arg2 being `controllerPort`! It may suggest Rare's were at least considering the idea of multiplayer bike races.
+  */
+void CRSnowBike_read_joy_stick(Object* self, CRSnowBike_SteerData* steering, u8 controllerPort, s32 buffer) {
+    steering->xJoy = joy_get_stick_x_buffered(controllerPort, buffer);
+    steering->yJoy = joy_get_stick_y_buffered(controllerPort, buffer);
 }
 
 // offset: 0x3694 | func: 26
@@ -1515,7 +1658,7 @@ void CRSnowBike_get_bike_matrix(Object* self, CRSnowBike_Data* objData, MtxF* oM
 }
 
 // offset: 0x3748 | func: 27
-void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData) {
+void CRSnowBike_handle_damage_or_fuel_collisions(Object* self, CRSnowBike_Data* objData) {
     s32 damageType;
     s32 hitSphereID;
     s32 hitDamage;
@@ -1531,7 +1674,7 @@ void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData) {
         objData->stallFrames = 20;
         objData->stallFactor = 0.8f;
         return;
-    case Damage_Type_14:
+    case Damage_Type_Speeding_Vehicle:
         objData->stallFrames = 5;
         objData->stallFactor = 0.75f;
         return;
@@ -1550,15 +1693,15 @@ void CRSnowBike_func_3748(Object* self, CRSnowBike_Data* objData) {
 // offset: 0x3860 | func: 28
 int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     CRSnowBike_Data* objData;
-    DLL732_Unk_2E0* unkSubstruct;
-    CRSnowBike_Motion* bikeMotion;
+    CRSnowBike_SteerData* steering;
+    CRSnowBike_MotionData* bikeMotion;
     Vec3f wsVelocity;
     SRT transform;
     s32 i;
     MtxF mtx;
 
     objData = self->data;
-    unkSubstruct = &objData->steering;
+    steering = &objData->steering;
 
     for (i = 0; i < animData->messageCount; i++) {
         switch (animData->messages[i]) {
@@ -1571,7 +1714,7 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
         }
     }
     
-    if (objData->state == STATE_2) {
+    if (objData->state == STATE_2_Driving) {
         //Get the bike's objectSpace velocity vector
         {
             //Get bike's worldSpace velocity vector (from position delta)
@@ -1592,7 +1735,7 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
             transform.yaw = -self->srt.yaw;
             transform.pitch = -self->srt.pitch;
             transform.roll = -self->srt.roll;
-            bikeMotion = &objData->unk2AC;
+            bikeMotion = &objData->motion;
             matrix_from_srt_reversed(&mtx, &transform);
             
             //Transform velocity from worldSpace to the bike's own objectSpace
@@ -1602,13 +1745,13 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
             );
         }
 
-        unkSubstruct->yJoy += gUpdateRate * 8;
-        if (unkSubstruct->yJoy > 70) {
-            unkSubstruct->yJoy = 70;
+        steering->yJoy += gUpdateRate * 8;
+        if (steering->yJoy > 70) {
+            steering->yJoy = 70;
         }
 
         CRSnowBike_handle_engine_sfx_and_modgfx(self, objData, 
-            bikeMotion->velocity.z, unkSubstruct->yJoy, &unkSubstruct->unk10, 
+            bikeMotion->velocity.z, steering->yJoy, &steering->unk10, 
             CRSnowBike_SOUNDFLAG_Jets
         );
     }
@@ -1624,7 +1767,7 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
 }
 
 // offset: 0x3AF8 | func: 29
-void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision) {
+void CRSnowBike_handle_collisions(Object* self, CRSnowBike_Data* objData, DLL27_Data* collision) {
     s32 pad;
     MtxF bikeMtx;
     Vec3f wsPoint[7];
@@ -1634,8 +1777,8 @@ void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* co
 
     sp86 = -0x80 >> (7 - objData->numCollisionPoints);
     sp86 = ~sp86;
-    objData->unk3F3 = -1;
-    objData->forwardSpeed = objData->unk2AC.velocity.z;
+    objData->collisionFlags = -1;
+    objData->forwardSpeed = objData->motion.velocity.z;
     
     if (sp86) {
         do {
@@ -1668,8 +1811,8 @@ void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* co
                 }
             }
             
-            if (objData->unk3F3 == -1) {
-                objData->unk3F3 = flags;
+            if (objData->collisionFlags == -1) {
+                objData->collisionFlags = flags;
             }
         } while (flags);
     }
@@ -1678,7 +1821,7 @@ void CRSnowBike_func_3AF8(Object* self, CRSnowBike_Data* objData, DLL27_Data* co
 }
 
 // offset: 0x3DAC | func: 30
-s32 CRSnowBike_sharpclaw_do_steering(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, DLL732_Unk_2E0* steering) {
+s32 CRSnowBike_sharpclaw_handle_steering(Object* self, CRSnowBike_Data* arg1, CRSnowBike_Data* objData, CRSnowBike_SteerData* steering) {
     f32 dx;
     f32 dz;
     s32 checkpointsReturn;
@@ -1689,8 +1832,8 @@ s32 CRSnowBike_sharpclaw_do_steering(Object* self, CRSnowBike_Data* arg1, CRSnow
 
     objSetup = (CRSnowBike_Setup*)self->setup;
     
-    dx = self->srt.transl.x - objData->unk0.transl.x;
-    dz = self->srt.transl.z - objData->unk0.transl.z;
+    dx = self->srt.transl.x - objData->srtCurves.transl.x;
+    dz = self->srt.transl.z - objData->srtCurves.transl.z;
     dx = sqrtf(SQ(dx) + SQ(dz));
     
     speed = 100.0f - dx;
@@ -1698,7 +1841,7 @@ s32 CRSnowBike_sharpclaw_do_steering(Object* self, CRSnowBike_Data* arg1, CRSnow
         speed = 0.0f;
     }
     
-    checkpointsReturn = CRSnowBike_func_0(self, objData, speed);
+    checkpointsReturn = CRSnowBike_sharpclaw_update_race_pathing(self, objData, speed);
     
     gDLL_4_Race->vtbl->func4(self, &objData->raceData);
     gDLL_4_Race->vtbl->func10(&objData->raceData);
@@ -1709,8 +1852,8 @@ s32 CRSnowBike_sharpclaw_do_steering(Object* self, CRSnowBike_Data* arg1, CRSnow
         return 1;
     }
 
-    dx = self->srt.transl.x - objData->unk0.transl.x;
-    dz = self->srt.transl.z - objData->unk0.transl.z;
+    dx = self->srt.transl.x - objData->srtCurves.transl.x;
+    dz = self->srt.transl.z - objData->srtCurves.transl.z;
     dYaw = arctan2_f(dx, dz) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(dYaw);
     
@@ -1900,6 +2043,6 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
 }
 
 // offset: 0x4B30 | func: 33 | export: 20
-void CRSnowBike_func_4B30(s32 arg0, s32 arg1, s32 arg2) {
+void CRSnowBike_func_4B30(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
 
 }
