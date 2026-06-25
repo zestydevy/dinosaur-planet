@@ -187,6 +187,7 @@
 417 = objects/417_DFlog
 418 = objects/418_DFriverflow
 419 = objects/419_DFdockpoint
+420 = objects/420_DFropenode
 421 = objects/421_DFcradle
 422 = objects/422_DFpulley
 423 = objects/423_DFbarrel
