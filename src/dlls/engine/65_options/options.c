@@ -644,7 +644,7 @@ s32 options_update1(void) {
             track_set_sky_on(1);
         } else if (sFadeOutTimer <= 0) {
             main_demo_reset();
-            main_start_game(12457.1f, -1474.875f, -6690.398f, 1);
+            main_start_game(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
             menu_set(MENU_TITLE_SCREEN);
             if (1) { }
         }
