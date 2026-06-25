@@ -1332,7 +1332,7 @@ void options_handle_action_control_page(s32 action, s32 selectedItemIdx) {
 void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
     OptionsPage* submenu;
     s32 i;
-    s32 cheatWasPressed;
+    s32 cheatsHaveScrolled;
     s32 enabled;
     u8 previousCheatsTopIdx;
 
@@ -1347,15 +1347,15 @@ void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
 
     previousCheatsTopIdx = sCheatsTopIdx;
 
-    //Check whether the user pressed a scroll arrow or a cheat
-    cheatWasPressed = FALSE;
+    //Check if the user pressed a scroll arrow
+    cheatsHaveScrolled = FALSE;
     if (selectedItemIdx == 0) {
         //Scroll up arrow selected
         sCheatsTopIdx -= CHEATS_PER_SCREEN;
         if (sCheatsTopIdx < 0) {
             sCheatsTopIdx = 0;
         } else {
-            cheatWasPressed = TRUE;
+            cheatsHaveScrolled = TRUE;
         }
     } else if (selectedItemIdx == (CHEATS_PER_SCREEN + 1)) {
         //Scroll down arrow selected (NOTE: causes a crash because the Gametext file only has 7 strings)
@@ -1363,10 +1363,11 @@ void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
         if (sCheatsTopIdx > CHEATS_FIRST_IDX_LAST_GROUP) {
             sCheatsTopIdx = CHEATS_FIRST_IDX_LAST_GROUP;
         } else {
-            cheatWasPressed = TRUE;
+            cheatsHaveScrolled = TRUE;
         }
     }
-    if (cheatWasPressed == FALSE) {
+
+    if (cheatsHaveScrolled == FALSE) {
         return;
     }
 
