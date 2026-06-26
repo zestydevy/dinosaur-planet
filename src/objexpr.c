@@ -840,28 +840,31 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
     pupilR->positionV = 0;
 }
 
-/** object_get_seq_joint? */
+/** objexpr_get_seq_joint? */
 s16* func_80034804(Object* obj, s32 sequenceJointID) {
     ObjDef* romdef;
     u8* seqBones;
     s32 index;
     s32 listPosition;
     u32 jointID;
-    s16* sequenceBoneData;
+    s16* seqJoint;
 
     romdef = obj->def;
-    sequenceBoneData = NULL;
+    seqJoint = NULL;
+
     if (romdef) {
         listPosition = 0;
         for (index = 0; index < romdef->numSequenceBones; index++){
             jointID = romdef->pSequenceBones[(listPosition + 1) + obj->modelInstIdx];
-            if (jointID != 0xFF && sequenceJointID == romdef->pSequenceBones[listPosition])
-                sequenceBoneData = obj->unk6C[index];
+            if ((jointID != 0xFF) && (sequenceJointID == romdef->pSequenceBones[listPosition])) {
+                seqJoint = obj->unk6C[index];
+            }
 
             listPosition += 1 + romdef->numModels;
         }
     }
-    return sequenceBoneData;
+    
+    return seqJoint;
 }
 
 TextureAnimator* func_800348A0(Object* obj, s32 texTag, s32 arg2) {
