@@ -18,8 +18,8 @@ _exports:
 /*7*/ .dword CRSnowBike_can_bike_be_mounted
 /*8*/ .dword CRSnowBike_get_mount_side
 /*9*/ .dword CRSnowBike_get_attach_position
-/*10*/ .dword CRSnowBike_func_19B4
-/*11*/ .dword CRSnowBike_func_1A24
+/*10*/ .dword CRSnowBike_can_bike_be_dismounted
+/*11*/ .dword CRSnowBike_get_dismount_side
 /*12*/ .dword CRSnowBike_get_front_of_bike_coords
 /*13*/ .dword CRSnowBike_get_state
 /*14*/ .dword CRSnowBike_set_state

@@ -69,6 +69,7 @@ typedef enum {
 } CRSnowBike_Racetracks;
 
 #define PLAYER_NOT_NEARBY 0
+#define PLAYER_NOT_ALLOWED_DISMOUNT 0
 typedef enum {
     SIDE_LEFT = 1,
     SIDE_RIGHT = 2
@@ -850,23 +851,23 @@ void CRSnowBike_get_attach_position(Object* self, f32* ox, f32* oy, f32* oz) {
 }
 
 // offset: 0x19B4 | func: 11 | export: 10
-s32 CRSnowBike_func_19B4(Object* self, s32 arg1) {
+s32 CRSnowBike_can_bike_be_dismounted(Object* self, s32 arg1) {
     CRSnowBike_Data* objData = self->data;
     
     if (objData->flags & CRSnowBike_FLAG_8_Race_Started) {
-        return 0;
+        return PLAYER_NOT_ALLOWED_DISMOUNT;
     }
     
     if ((joy_get_pressed(0) & B_BUTTON) == FALSE) {
-        return 0;
+        return PLAYER_NOT_ALLOWED_DISMOUNT;
     }
     
-    return 2;
+    return SIDE_RIGHT;
 }
 
 // offset: 0x1A24 | func: 12 | export: 11
-s32 CRSnowBike_func_1A24(s32 arg0) {
-    return 2;
+s32 CRSnowBike_get_dismount_side(s32 arg0) {
+    return SIDE_RIGHT;
 }
 
 // offset: 0x1A34 | func: 13 | export: 12
