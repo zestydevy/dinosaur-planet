@@ -12,11 +12,11 @@ typedef enum {
 
 typedef enum {
     FRONTEND_FLAG_0_None = 0x0,
-    FRONTEND_FLAG_1_Selected = 0x1,
+    FRONTEND_FLAG_1_Selected = 0x1,         //Control is currently highlighted
     FRONTEND_FLAG_2_Wrap_Value = 0x2,       //Sliders can wrap or clamp when moving past min/max values
     FRONTEND_FLAG_4_Moved_Left = 0x4,       //Lists highlight their left arrow when moving left
     FRONTEND_FLAG_8_Moved_Right = 0x8,      //Lists highlight their right arrow when moving right
-    FRONTEND_FLAG_10_Value_Changed = 0x10,
+    FRONTEND_FLAG_10_Value_Changed = 0x10,  //Can be used to drive logic when the player interacts with the control
     FRONTEND_FLAG_20_Locked = 0x20          //No interaction possible
 } FrontEnd_Flags;
 
