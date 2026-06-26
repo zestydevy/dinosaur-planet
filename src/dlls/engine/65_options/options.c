@@ -1094,7 +1094,7 @@ static void options_goto_cheats_page(void) {
             enabled ? 1 : 0
         );
         sCtrlCount++;
-        gDLL_75->vtbl->set_lock_state(sCtrls[sCtrlCount - 1], unlocked);
+        gDLL_75->vtbl->set_unlock_state(sCtrls[sCtrlCount - 1], unlocked);
 
         y += 26;
     }
@@ -1397,7 +1397,7 @@ void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
             sprintf(sCheatStrings[i], "%2d: %s", (int)(sCheatsTopIdx + i + 1), sGametextCheats->strings[sCheatsTopIdx + i]);
             submenu->menuItems[i + 1].text = sCheatStrings[i];
             submenu->menuItems[i + 1].flags &= ~(PICMENU_TRANSPARENT | PICMENU_DISABLED);
-            gDLL_75->vtbl->set_lock_state(sCtrls[i + 1], 1);
+            gDLL_75->vtbl->set_unlock_state(sCtrls[i + 1], 1);
 
             enabled = gDLL_29_Gplay->vtbl->is_cheat_active(sCheatsTopIdx + i);
             gDLL_75->vtbl->set_value(sCtrls[i + 1], enabled ? 1 : 0);
@@ -1405,7 +1405,7 @@ void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
             sprintf(sCheatStrings[i], "%2d:", (int)(sCheatsTopIdx + i + 1));
             submenu->menuItems[i + 1].text = sCheatStrings[i];
             submenu->menuItems[i + 1].flags |= (PICMENU_TRANSPARENT | PICMENU_DISABLED);
-            gDLL_75->vtbl->set_lock_state(sCtrls[i + 1], 0);
+            gDLL_75->vtbl->set_unlock_state(sCtrls[i + 1], 0);
             gDLL_75->vtbl->set_value(sCtrls[i + 1], 0);
         }
     }

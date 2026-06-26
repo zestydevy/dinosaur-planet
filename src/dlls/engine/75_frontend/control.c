@@ -264,7 +264,7 @@ s32 frontend_did_value_change(FrontEndControl* ctrl) {
 }
 
 // offset: 0x7F4 | func: 11 | export: 11
-void frontend_set_lock_state(FrontEndControl* ctrl, s32 unlock) {
+void frontend_set_unlock_state(FrontEndControl* ctrl, s32 unlock) {
     if (unlock) {
         ctrl->flags &= ~FRONTEND_FLAG_20_Locked;
     } else {

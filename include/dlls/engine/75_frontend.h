@@ -81,7 +81,7 @@ DLL_INTERFACE(DLL_75) {
 /*8*/ s32 (*get_value)(FrontEndControl* ctrl);
 /*9*/ void (*set_value)(FrontEndControl* ctrl, s32 value);
 /*10*/ s32 (*did_value_change)(FrontEndControl* ctrl);
-/*11*/ void (*set_lock_state)(FrontEndControl* ctrl, s32 unlock);
+/*11*/ void (*set_unlock_state)(FrontEndControl* ctrl, s32 unlock);
 };
 
 #endif // _DLL_75_H
