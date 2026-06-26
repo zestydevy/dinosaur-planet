@@ -843,7 +843,7 @@ void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
         object->srt.transl.f[2] -= gWorldZ;
     }
 
-    if (object->srt.transl.f[0] > 32767.0f || object->srt.transl.f[0] < -32767.0f || object->srt.transl.f[2] > 32767.0f || object->srt.transl.f[2] < -32767.0f) {
+    if (object->srt.transl.f[0] > 0x7FFF || object->srt.transl.f[0] < -0x7FFF || object->srt.transl.f[2] > 0x7FFF || object->srt.transl.f[2] < -0x7FFF) {
         bzero(mf, 0x40);
         mf->m[0][0] = 1.0f;
         mf->m[1][1] = 1.0f;
@@ -868,7 +868,7 @@ void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
     }
 }
 
-void func_800195F8(f32 scale, UNK_TYPE_32 arg1, Model* model, MtxF* rootMtx, f32 *modelJointMtxs) {
+void func_800195F8(f32 scale, UNK_TYPE_32 arg1, Model* model, MtxF* topMtx, f32 *modelJointMtxs) {
     s32 i;
     s32 j;
     MtxF* jointMtx;
@@ -897,9 +897,9 @@ void func_800195F8(f32 scale, UNK_TYPE_32 arg1, Model* model, MtxF* rootMtx, f32
         jointMtx->m[3][3] = 1.0f;
 
         if (joint[i].parentJointID == -1) {
-            jointMtx->m[3][0] = rootMtx->m[3][0] + (joint[i].x * scale);
-            jointMtx->m[3][1] = rootMtx->m[3][1] + (joint[i].y * scale);
-            jointMtx->m[3][2] = rootMtx->m[3][2] + (joint[i].z * scale);
+            jointMtx->m[3][0] = topMtx->m[3][0] + (joint[i].x * scale);
+            jointMtx->m[3][1] = topMtx->m[3][1] + (joint[i].y * scale);
+            jointMtx->m[3][2] = topMtx->m[3][2] + (joint[i].z * scale);
         } else {
             parentMtx = (MtxF *) &modelJointMtxs[joint[i].parentJointID << 4];
             jointMtx->m[3][0] = parentMtx->m[3][0] + (joint[i].x * scale);
@@ -909,60 +909,62 @@ void func_800195F8(f32 scale, UNK_TYPE_32 arg1, Model* model, MtxF* rootMtx, f32
     }
 }
 
-void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3) {
-    AnimState* temp_a2;
+void func_80019730(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3) {
+    AnimState* animState0;
     s32 sp60;
     s32 pad;
-    AnimState* sp58;
+    AnimState* animState1;
     Vec3f sp4C;
     s16 sp44[3];
 
-    func_8001A640(arg2, arg0, arg1);
-    arg0->unk34 ^= 1;
-    sp60 = arg0->unk34 & 1;
-    temp_a2 = arg0->animState0;
-    if (temp_a2->unk62[1] & 4) {
-        func_8001A3FC(arg0, 0, 0, arg2->animProgress, arg2->srt.scale, &sp4C, sp44);
+    func_8001A640(obj, modelInst, model);
+    modelInst->unk34 ^= 1;
+    sp60 = modelInst->unk34 & 1;
+    animState0 = modelInst->animState0;
+    if (animState0->unk62[1] & 4) {
+        func_8001A3FC(modelInst, 0, 0, obj->animProgress, obj->srt.scale, &sp4C, sp44);
         D_800903DC = sp44[0];
         D_800903DE = sp44[1];
         D_800903E0 = sp44[2];
     }
-    if (arg0->model->unk71 & 8) {
-        func_800199A8(arg3, arg0, arg0->animState0, arg2->animProgress, 0x7F);
-    } else if (arg0->animState0->unk62[1] & 8) {
-        sp58 = arg0->animState1;
-        func_80019FC0(arg3, arg0, temp_a2, arg2->animProgress, 0x7F, 0, 0, 2, 0x14, temp_a2->unk58[1]);
-        func_80019FC0(arg3, arg0, sp58, arg2->animProgressLayered, 0x7F, 0, 0, 2, 0x18, sp58->unk58[1]);
-        func_80019FC0(arg3, arg0, temp_a2, arg2->animProgress, 0x7F, 0, 0, 0, 7, sp58->unk58[0]);
-        func_80019FC0(arg3, arg0, temp_a2, arg2->animProgress, 0x7F, 0, 1, 1, 1, temp_a2->unk58[0]);
+    if (modelInst->model->unk71 & 8) {
+        func_800199A8(arg3, modelInst, modelInst->animState0, obj->animProgress, 0x7F);
+    } else if (modelInst->animState0->unk62[1] & 8) {
+        animState1 = modelInst->animState1;
+        func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 0, 2, 0x14, animState0->unk58[1]);
+        func_80019FC0(arg3, modelInst, animState1, obj->animProgressLayered, 0x7F, 0, 0, 2, 0x18, animState1->unk58[1]);
+        func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 0, 0, 7, animState1->unk58[0]);
+        func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 1, 1, 1, animState0->unk58[0]);
     } else {
-        func_800199A8(arg3, arg0, arg0->animState0, arg2->animProgress, 0x7F);
-        if ((arg0->animState1 != NULL) && (arg2->curModAnimIdLayered >= 0)) {
-            func_800199A8(arg3, arg0, arg0->animState1, arg2->animProgressLayered, -1U);
+        func_800199A8(arg3, modelInst, modelInst->animState0, obj->animProgress, 0x7F);
+        if ((modelInst->animState1 != NULL) && (obj->curModAnimIdLayered >= 0)) {
+            func_800199A8(arg3, modelInst, modelInst->animState1, obj->animProgressLayered, -1U);
         }
     }
-    add_matrix_to_pool(arg0->matrices[sp60], arg1->jointCount);
+    add_matrix_to_pool(modelInst->matrices[sp60], model->jointCount);
 }
 
-void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 arg3, u32 arg4) {
-    MtxF* spEC;
+void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 animProgress, u32 arg4) {
+    MtxF* jointMtxs;
     Model* model;
     s32 var_s0;
     s32 var_s1;
     s32 var_v1;
-    s32 var_s4;
+    s32 animFlags;
     s32 temp_v0;
-    AnimState sp6C;
+    AnimState animStateN;
 
+    animFlags = 0;
     model = modelInst->model;
-    var_s4 = 0;
-    spEC = modelInst->matrices[modelInst->unk34 & 1];
-    animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * arg3;
+    jointMtxs = modelInst->matrices[modelInst->unk34 & 1];
+    animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * animProgress;
+    
     if (model->unk71 & 8) {
-        sp6C.anims[0] = animState->anims[0];
-        sp6C.anims[1] = animState->anims[1];
-        sp6C.anims2[0] = animState->anims2[0];
-        sp6C.anims2[1] = animState->anims2[1];
+        animStateN.anims[0] = animState->anims[0];
+        animStateN.anims[1] = animState->anims[1];
+        animStateN.anims2[0] = animState->anims2[0];
+        animStateN.anims2[1] = animState->anims2[1];
+
         var_s0 = 0;
         for (; var_s0 < 2; var_s0++) {
             if (animState->unk58[0] != 0) {
@@ -970,24 +972,28 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
             } else {
                 var_s1 = 0;
             }
-            sp6C.animIndexes[var_s0] = animState->animIndexes[var_s1];
-            sp6C.unk60[var_s0] = animState->unk60[var_s1];
-            sp6C.totalAnimationFrames[var_s0] = animState->totalAnimationFrames[var_s1];
-            sp6C.curAnimationFrame[var_s0] = animState->curAnimationFrame[var_s1];
-            sp6C.unk34[var_s0] = animState->unk34[var_s1];
+            animStateN.animIndexes[var_s0] = animState->animIndexes[var_s1];
+            animStateN.unk60[var_s0] = animState->unk60[var_s1];
+            animStateN.totalAnimationFrames[var_s0] = animState->totalAnimationFrames[var_s1];
+            animStateN.curAnimationFrame[var_s0] = animState->curAnimationFrame[var_s1];
+            animStateN.unk34[var_s0] = animState->unk34[var_s1];
         }
-        sp6C.unk58[0] = animState->unk58[0];
-        func_8001A1D4(model, &sp6C, 2);
+
+        animStateN.unk58[0] = animState->unk58[0];
+        func_8001A1D4(model, &animStateN, 2);
         temp_v0 = animState->unk62[1];
         if (temp_v0 & 1) {
-            var_s4 = 0x10;
+            animFlags = 0x10;
         }
+
         if (temp_v0 & 4) {
-            var_s4 |= 0x20;
+            animFlags |= 0x20;
         }
-        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s4 | 0x40);
+
+        func_8001B4F0(&jointMtxs, arg0, &animStateN, model->joints, model->jointCount, SHORT_ARRAY_800b17d0, arg4, animFlags | 0x40);
         return;
     }
+
     for (var_s0 = 0; var_s0 < 2; var_s0++) {
         if (var_s0 != 0) {
             var_v1 = animState->unk5C[0];
@@ -1000,57 +1006,59 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
             } else {
                 var_s1 = 0;
             }
-            sp6C.unk60[0] = animState->unk60[var_s0];
-            sp6C.totalAnimationFrames[0] = animState->totalAnimationFrames[var_s0];
-            sp6C.curAnimationFrame[0] = animState->curAnimationFrame[var_s0];
-            sp6C.unk34[0] = animState->unk34[var_s0];
-            sp6C.unk60[1] = animState->unk60[var_s0];
-            sp6C.totalAnimationFrames[1] = animState->totalAnimationFrames[var_s0];
-            sp6C.curAnimationFrame[1] = animState->curAnimationFrame[var_s0];
-            sp6C.unk34[1] = animState->unk3C[var_s0];
+            animStateN.unk60[0] = animState->unk60[var_s0];
+            animStateN.totalAnimationFrames[0] = animState->totalAnimationFrames[var_s0];
+            animStateN.curAnimationFrame[0] = animState->curAnimationFrame[var_s0];
+            animStateN.unk34[0] = animState->unk34[var_s0];
+            animStateN.unk60[1] = animState->unk60[var_s0];
+            animStateN.totalAnimationFrames[1] = animState->totalAnimationFrames[var_s0];
+            animStateN.curAnimationFrame[1] = animState->curAnimationFrame[var_s0];
+            animStateN.unk34[1] = animState->unk3C[var_s0];
             if (model->unk71 & 0x40) {
-                sp6C.animIndexes[0] = 0;
-                sp6C.animIndexes[1] = 1;
-                sp6C.anims[0] = animState->anims[animState->animIndexes[var_s0]];
-                sp6C.anims[1] = animState->anims2[animState->unk48[var_s0]];
+                animStateN.animIndexes[0] = 0;
+                animStateN.animIndexes[1] = 1;
+                animStateN.anims[0] = animState->anims[animState->animIndexes[var_s0]];
+                animStateN.anims[1] = animState->anims2[animState->unk48[var_s0]];
             } else {
-                sp6C.animIndexes[0] = animState->animIndexes[var_s0];
-                sp6C.animIndexes[1] = animState->unk48[var_s0];
+                animStateN.animIndexes[0] = animState->animIndexes[var_s0];
+                animStateN.animIndexes[1] = animState->unk48[var_s0];
             }
-            sp6C.unk58[0] = var_v1;
-            func_8001A1D4(model, &sp6C, 2);
-            func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s1);
+            animStateN.unk58[0] = var_v1;
+            func_8001A1D4(model, &animStateN, 2);
+            func_8001B4F0(&jointMtxs, arg0, &animStateN, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s1);
             if (var_s1 != 0) {
-                var_s4 |= 1 << var_s0;
+                animFlags |= 1 << var_s0;
             }
         }
     }
-    if (((animState->unk58[1] == 0) && (animState->unk5C[0] == 0)) || (var_s4 != 0)) {
+    if (((animState->unk58[1] == 0) && (animState->unk5C[0] == 0)) || (animFlags != 0)) {
         var_s1 = 1;
         if (animState->unk58[0] != 0) {
             var_s1 = 2;
         }
-        sp6C.anims[0] = animState->anims[0];
-        sp6C.anims[1] = animState->anims[1];
-        sp6C.anims2[0] = animState->anims2[0];
-        sp6C.anims2[1] = animState->anims2[1];
+        animStateN.anims[0] = animState->anims[0];
+        animStateN.anims[1] = animState->anims[1];
+        animStateN.anims2[0] = animState->anims2[0];
+        animStateN.anims2[1] = animState->anims2[1];
+
         for (var_s0 = 0; var_s0 < var_s1; var_s0++) {
-            sp6C.animIndexes[var_s0] = animState->animIndexes[var_s0];
-            sp6C.unk60[var_s0] = animState->unk60[var_s0];
-            sp6C.totalAnimationFrames[var_s0] = animState->totalAnimationFrames[var_s0];
-            sp6C.curAnimationFrame[var_s0] = animState->curAnimationFrame[var_s0];
-            sp6C.unk34[var_s0] = animState->unk34[var_s0];
+            animStateN.animIndexes[var_s0] = animState->animIndexes[var_s0];
+            animStateN.unk60[var_s0] = animState->unk60[var_s0];
+            animStateN.totalAnimationFrames[var_s0] = animState->totalAnimationFrames[var_s0];
+            animStateN.curAnimationFrame[var_s0] = animState->curAnimationFrame[var_s0];
+            animStateN.unk34[var_s0] = animState->unk34[var_s0];
         }
-        sp6C.unk58[0] = animState->unk58[0];
-        func_8001A1D4(model, &sp6C, var_s1);
+        
+        animStateN.unk58[0] = animState->unk58[0];
+        func_8001A1D4(model, &animStateN, var_s1);
         temp_v0 = animState->unk62[1];
         if (temp_v0 & 1) {
-            var_s4 |= 0x10;
+            animFlags |= 0x10;
         }
         if (temp_v0 & 4) {
-            var_s4 |= 0x20;
+            animFlags |= 0x20;
         }
-        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s4);
+        func_8001B4F0(&jointMtxs, arg0, &animStateN, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, animFlags);
     }
 }
 
@@ -1103,10 +1111,10 @@ void func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
 }
 
 void func_8001A1D4(Model* model, AnimState* animState, s32 count) {
-    AmapPlusAnimation* var_a1;
-    Animation* var_t0;
-    s32 var_t1;
-    s32 temp_a1;
+    AmapPlusAnimation* mapAnim;
+    Animation* anim;
+    s32 keyIdx;
+    s32 keyStride;
     s32 j;
     s32 i;
     s32 k;
@@ -1114,38 +1122,47 @@ void func_8001A1D4(Model* model, AnimState* animState, s32 count) {
     for (i = 0; i < count; i++) {
         k = i;
         if (model->unk71 & 0x40) {
-            var_a1 = animState->anims[animState->animIndexes[k]];
-            var_t0 = &var_a1->anim;
+            mapAnim = animState->anims[animState->animIndexes[k]];
+            anim = &mapAnim->anim;
         } else {
-            var_a1 = (AmapPlusAnimation* ) &model->amap[animState->animIndexes[k] * ALIGN8(model->jointCount - 1)];
-            var_t0 = model->anims[animState->animIndexes[k]];
+            mapAnim = (AmapPlusAnimation* ) &model->amap[animState->animIndexes[k] * ALIGN8(model->jointCount - 1)];
+            anim = model->anims[animState->animIndexes[k]];
         }
+
         for (j = 0; j < model->jointCount; j++) {
-            ((u8*)&model->joints[j])[k + 2] = var_a1->boneRemaps[j];
+            ((u8*)&model->joints[j])[k + 2] = mapAnim->boneRemaps[j];
         }
-        temp_a1 = animState->unk34[k]->keyframeStride & 0xFF;
-        var_t1 = (s32) animState->curAnimationFrame[i] - 1;
-        if ((var_t1 < 0) && (animState->unk60[i] != 0)) {
-            var_t1 += (s32) animState->totalAnimationFrames[k];
+
+        keyStride = animState->unk34[k]->keyframeStride & 0xFF;
+        keyIdx = (s32) animState->curAnimationFrame[i] - 1;
+        if ((keyIdx < 0) && (animState->unk60[i] != 0)) {
+            keyIdx += (s32) animState->totalAnimationFrames[k];
         }
-        animState->unk4C[i][0] = temp_a1;
-        animState->unk4C[i][1] = temp_a1 * 2;
-        animState->unk4C[i][2] = temp_a1 * 3;
-        if (var_t1 < 0) {
-            var_t1 = 0;
+
+        animState->unk4C[i][0] = keyStride;
+        animState->unk4C[i][1] = keyStride * 2;
+        animState->unk4C[i][2] = keyStride * 3;
+
+        if (keyIdx < 0) {
+            keyIdx = 0;
         }
-        animState->unk2C[k] = (u8*)var_t0 + var_t0->unk2 + (temp_a1 * var_t1);
-        temp_a1 = animState->unk34[k]->keyframeStride & 0xFF;
-        var_t1 = animState->curAnimationFrame[i];
-        if (var_t1 != animState->curAnimationFrame[i]) {
-            animState->unk4C[0][k] = temp_a1;
+
+        animState->unk2C[k] = (u8*)anim + anim->offsetKeyframes + (keyStride * keyIdx);
+
+        keyStride = animState->unk34[k]->keyframeStride & 0xFF;
+        keyIdx = animState->curAnimationFrame[i];
+
+        if (keyIdx != animState->curAnimationFrame[i]) {
+            animState->unk4C[0][k] = keyStride;
         } else {
             animState->unk4C[0][k] = 0;
         }
-        if ((animState->unk60[i] != 0) && (var_t1 == (animState->totalAnimationFrames[k] - 1.0f))) {
-            animState->unk4C[0][k] = -temp_a1 * var_t1;
+
+        if ((animState->unk60[i] != 0) && (keyIdx == (animState->totalAnimationFrames[k] - 1))) {
+            animState->unk4C[0][k] = -keyStride * keyIdx;
         }
-        animState->unk2C[k] = (u8*)var_t0 + var_t0->unk2 + (temp_a1 * var_t1);
+
+        animState->unk2C[k] = (u8*)anim + anim->offsetKeyframes + (keyStride * keyIdx);
     }
 }
 
@@ -1185,7 +1202,7 @@ void func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f3
     if ((sp44->unk60[0] != 0) && (temp == (sp44->totalAnimationFrames[0] - 1.0f))) {
         sp44->unk4C[0][0] = -temp_t1 * temp;
     }
-    sp44->unk2C[0] = (u8*)var_a3 + var_a3->unk2 + (temp_t1 * temp);
+    sp44->unk2C[0] = (u8*)var_a3 + var_a3->offsetKeyframes + (temp_t1 * temp);
     func_8001CAA4(sp44, sp2C, arg6);
     sp44->unk34[0] = sp28;
     arg5->f[0] = sp2C[0] * 0.03125f;
@@ -1384,12 +1401,14 @@ void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3
     ModelInstanceBlendshape* blendshape;
     s16 totalBlendshapes;
 
-    if (layer >= BLENDSHAPE_LAYER_LIMIT)
+    if (layer >= BLENDSHAPE_LAYER_LIMIT) {
         return;
+    }
 
     blendshapes = modelInstance->model->blendshapes;
-    if (blendshapes == NULL)
+    if (blendshapes == NULL) {
         return;
+    }
 
     totalBlendshapes = blendshapes->totalBlendshapes;
     if (arg1 >= -1 && shapeId >= -1 && arg1 < totalBlendshapes && shapeId < totalBlendshapes) {

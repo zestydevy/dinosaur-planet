@@ -83,12 +83,12 @@ typedef struct {
 /*06*/ s16 influences; //Array of vertexGroupIDs
 } BlendshapeHeader;
 
-enum BlendshapeLayers {
+typedef enum {
     BLENDSHAPE_LAYER_EYES = 0,
     BLENDSHAPE_LAYER_UNK = 1,
     BLENDSHAPE_LAYER_MOUTH = 2,
     BLENDSHAPE_LAYER_LIMIT = 3
-};
+} BlendshapeLayers;
 
 typedef struct {
 /*0000*/	Gfx gfx; //when opaque?

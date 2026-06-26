@@ -976,7 +976,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
     ObjSetup* setup;
     Object* player;
     s32 _pad2;
-    s16* temp_v0_3;
+    s16* headSeqJoint;
 
     setup = animObj->setup;
     animObj->srt.transl.x = setup->x;
@@ -1071,41 +1071,44 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             actor->srt.scale = actor->def->scale * var_fv1;
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_HEAD) {
-            temp_v0_3 = func_80034804(actor, 0);
-            if (temp_v0_3 != NULL) {
+            headSeqJoint = func_80034804(actor, 0);
+            if (headSeqJoint != NULL) {
                 if (st->channelTotalKeys[CHANNEL_headRotateX] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateX, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[0] = st->unk122 + (s16) (var_fv1 * 182.044f);
+                headSeqJoint[0] = st->unk122 + (s16) (var_fv1 * 182.044f);
+                
                 if (st->channelTotalKeys[CHANNEL_headRotateY] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateY, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[1] = st->unk120 + (s16) (var_fv1 * 182.044f);
+                headSeqJoint[1] = st->unk120 + (s16) (var_fv1 * 182.044f);
+
                 if (st->channelTotalKeys[CHANNEL_headRotateZ] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateZ, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[2] = (s16) (var_fv1 * 182.044f);
+                headSeqJoint[2] = (s16) (var_fv1 * 182.044f);
+
                 if (st->unk7A & ANIM7AFLAG_UNK400) {
-                    anim_func_9EC8(actor, temp_v0_3, st->unk142_4);
+                    anim_func_9EC8(actor, headSeqJoint, st->unk142_4);
                 }
             }
             if (1){} // @fake
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_JAW) {
-            temp_v0_3 = func_80034804(actor, 1);
-            if (temp_v0_3 != NULL) {
+            headSeqJoint = func_80034804(actor, 1);
+            if (headSeqJoint != NULL) {
                 if (st->channelTotalKeys[CHANNEL_jaw] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_jaw, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[0] = (s16) (var_fv1 * 182.044f);
+                headSeqJoint[0] = (s16) (var_fv1 * 182.044f);
             }
             if (1){} // @fake
         }
