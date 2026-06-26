@@ -1215,72 +1215,97 @@ void func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f3
 }
 
 void func_8001A640(Object* object, ModelInstance* modelInst, Model* model) {
-    s8* var_v1;
-    AnimState* temp_v0;
-    ObjDef* temp_a0;
-    s32 temp_t8;
-    s16* temp_t1;
-    s32 var_a1;
+    s8* amap;
+    AnimState* animState0;
+    ObjDef* def;
+    s32 jointOffset;
+    s16* seqJoint;
+    s32 seqJointDefPos;
     s32 i;
-    s32 var_v0;
-    u8 temp_t0;
+    s32 tiltListIdx;
+    u8 jointID;
 
-    var_v0 = 0;
+    tiltListIdx = 0;
     if (model->unk71 & 0x40) {
-        temp_v0 = modelInst->animState0;
-        var_v1 = (s8*) temp_v0->anims[temp_v0->animIndexes[0]];
+        animState0 = modelInst->animState0;
+        amap = (s8*) animState0->anims[animState0->animIndexes[0]];
     } else {
-        var_v1 = (s8*) &model->amap[modelInst->animState0->animIndexes[0] * ALIGN8(model->jointCount - 1)];
+        amap = (s8*) &model->amap[modelInst->animState0->animIndexes[0] * ALIGN8(model->jointCount - 1)];
     }
-    temp_a0 = object->def;
-    var_a1 = 0;
-    var_v0 = 0;
-    for (i = 0; i < temp_a0->numSequenceBones; i++) {
-        temp_t0 = temp_a0->pSequenceBones[var_a1 + object->modelInstIdx + 1];
-        if (temp_t0 != 0xFF) {
-            temp_t1 = object->unk6C[i];
-            temp_t8 = var_v1[temp_t0] << 6;
-            if (temp_t1[0] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[0];
+
+    def = object->def;
+    seqJointDefPos = 0;
+
+    tiltListIdx = 0;
+    for (i = 0; i < def->numSequenceBones; i++) {
+        jointID = def->pSequenceBones[seqJointDefPos + 1 + object->modelInstIdx];
+        if (jointID != 0xFF) {
+            seqJoint = object->unk6C[i];
+            jointOffset = amap[jointID] << 6;
+
+            // pitch
+            if (seqJoint[0] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[0];
             }
-            if (temp_t1[1] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 2;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[1];
+
+            // yaw
+            if (seqJoint[1] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 2;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[1];
             }
-            if (temp_t1[2] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 4;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[2];
+
+            // roll
+            if (seqJoint[2] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 4;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[2];
             }
-            if (temp_t1[3] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0xC;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[3];
+
+            // scaleX
+            if (seqJoint[3] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 0xC;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[3];
             }
-            if (temp_t1[4] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0xE;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[4];
+
+            // scaleY
+            if (seqJoint[4] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 0xE;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[4]; //scaleY
             }
-            if (temp_t1[5] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x10;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[5];
+
+            // scaleZ
+            if (seqJoint[5] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 0x10;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[5];
             }
-            if (temp_t1[6] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x18;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[6];
+
+            // translateX
+            if (seqJoint[6] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 0x18;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[6];
             }
-            if (temp_t1[7] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x1A;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[7];
+
+            // translateY
+            if (seqJoint[7] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 0x1A;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[7];
             }
-            if (temp_t1[8] != 0) {
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x1C;
-                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[8];
+
+            // translateZ
+            if (seqJoint[8] != 0) {
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = jointOffset + 0x1C;
+                SHORT_ARRAY_800b17d0[tiltListIdx++] = seqJoint[8]; //translateZ
             }
         }
-        var_a1 += temp_a0->numModels + 1;
+
+        //Move to next seqJointDef
+        seqJointDefPos += 1 + def->numModels;
     }
-    SHORT_ARRAY_800b17d0[var_v0] = 0x1000;
-    if (var_v0 > 44) {
+
+    //End tilt-list?
+    SHORT_ARRAY_800b17d0[tiltListIdx] = 0x1000;
+
+    if (tiltListIdx > 44) {
         STUBBED_PRINTF("Warning! Tiltlist overflow!!\n");
     }
 }
