@@ -467,7 +467,7 @@ typedef struct Object {
 /*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectShadow* shadow;
 /*0068*/    DLL_IObject *dll;
-/*006C*/    s16 (*unk6C)[9];
+/*006C*/    s16 (*unk6C)[9]; //Sequence joints
 /*0070*/    Vtx* unk70;
 /*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40

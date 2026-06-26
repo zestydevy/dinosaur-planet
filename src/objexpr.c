@@ -11,6 +11,18 @@
 #define TWENTY_DEGREES 0xE38
 #define HEAD_TURN_LIMIT 0x1FFF //~45 degrees (giving a 90 degree turn range)
 
+typedef struct {
+    s16 pitch;
+    s16 yaw;
+    s16 roll;
+    s16 scaleX; //0x400 (or 0) is 1.0x scale
+    s16 scaleY;
+    s16 scaleZ;
+    s16 translateX;
+    s16 translateY;
+    s16 translateZ;
+} SeqJoint;
+
 // -------- .bss start 800b2e00 -------- //
 struct {
     u8 unk0_0 : 1;
@@ -828,8 +840,8 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
     pupilR->positionV = 0;
 }
 
-/** object_find_seq_bone_data_by_bone_id? */
-s16* func_80034804(Object* obj, s32 sequenceBoneID) {
+/** object_get_seq_joint? */
+s16* func_80034804(Object* obj, s32 sequenceJointID) {
     ObjDef* romdef;
     u8* seqBones;
     s32 index;
@@ -843,7 +855,7 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
         listPosition = 0;
         for (index = 0; index < romdef->numSequenceBones; index++){
             jointID = romdef->pSequenceBones[(listPosition + 1) + obj->modelInstIdx];
-            if (jointID != 0xFF && sequenceBoneID == romdef->pSequenceBones[listPosition])
+            if (jointID != 0xFF && sequenceJointID == romdef->pSequenceBones[listPosition])
                 sequenceBoneData = obj->unk6C[index];
 
             listPosition += 1 + romdef->numModels;
