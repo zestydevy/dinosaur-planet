@@ -1,26 +1,29 @@
 #include "common.h"
+#include "dlls/objects/278_flameblast.h"
+#include "dlls/objects/332_FXEmit.h"
 
 typedef struct {
     s16 unk0;
     u16 pad2;
     s32 unk4;
     u8 unk8;
-    u8 pad9[0x1D8 - 0x9];
+} DLL212_3FF4;
+
+typedef struct {
+    void *unk0; // loaded dll
+    Object *unk4[3];
+    Object *unk10;
+    s32 unk14;
+    u8 pad18[0x24 - 0x18];
+    Vec3f unk24;
+    s32 unk30;
+    u8 pad34[0x1D8 - 0x34];
     s16 unk1D8;
     u16 pad1DA;
     u32 pad1DC;
     u32 unk1E0;
     u8 pad1E4[0x278 - 0x1E4];
 } DLL212_Data;
-
-typedef struct {
-    void *unk0;
-    Object *unk4[3];
-    Object *unk10;
-    s32 unk14;
-    u8 pad18[0x24 - 0x18];
-    Vec3f unk24;
-} Unk212_3F44;
 
 /*0x0*/ static u32 data_0[] = {
     0x0000000d, 0x00000005, 0xffffffff, 0x0000000b, 0x0000030a, 0x3f800000, 0x3f800000, 0x3f800000, 
@@ -67,10 +70,7 @@ typedef struct {
 /*0x19C*/ static u32 data_19C[] = {
     0x00000000, 0x00000030, 0x00000004, 0x00000032
 };
-/*0x1AC*/ static u32 data_1AC[] = {
-    0x00000015, 0x00000009, 0x00000008, 0x00000016
-};
-/*0x1BC*/ static u32 data_1BC = 0x00000000;
+/*0x1AC*/ static s32 data_1AC[] = { 0x15, 0x09, 0x08, 0x16 };
 
 /*0x0*/ static u8 bss_0[0x10];
 
@@ -227,34 +227,103 @@ u32 dll_212_get_data_size(Object* self, u32 offsetAddr) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/dll_212_func_35C0.s")
 
 // offset: 0x3A2C | func: 46
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/dll_212_func_3A2C.s")
+s32 dll_212_func_3A2C(Object* self, DLL212_Data* objdata) {
+    FlameBlast_Setup* temp_v0_2;
+    FXEmit_Setup* temp_v0_3;
+    SidekickStats* temp_v0;
+    s32 i;
+
+    gDLL_29_Gplay->vtbl->get_sidekick_stats();
+    temp_v0 = gDLL_29_Gplay->vtbl->get_sidekick_stats();
+    if ((temp_v0->redFood == 0) || (objdata->unk14 == 1)) {
+        return 0;
+    }
+
+    temp_v0->redFood -= 1;
+    objdata->unk14 = 1;
+    objdata->unk30 = 0x1F4; // maybe: BIT_Used_Tricky_Cell_Key
+    objdata->unk0 = dll_load_deferred(DLL_ID_178, 1);
+    for (i = 0; i < 3; i++) {
+        temp_v0_2 = obj_alloc_setup(sizeof(FlameBlast_Setup), OBJ_flameblast);
+        temp_v0_2->base.x = self->srt.transl.x;
+        temp_v0_2->base.y = self->srt.transl.y;
+        temp_v0_2->base.z = self->srt.transl.z;
+        temp_v0_2->base.loadFlags = 2;
+        temp_v0_2->base.byte5 = 1;
+        temp_v0_2->timer = i * 10;
+        objdata->unk4[i] = obj_create(&temp_v0_2->base, 5, self->mapID, -1, self->parent);
+    }
+
+    temp_v0_3 = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    temp_v0_3->base.loadFlags = 2;
+    temp_v0_3->base.byte5 = 1;
+    temp_v0_3->base.x = self->srt.transl.x;
+    temp_v0_3->base.y = self->srt.transl.y;
+    temp_v0_3->base.z = self->srt.transl.z;
+    temp_v0_3->toggleGamebit = -1;
+    temp_v0_3->disableGamebit = -1;
+    temp_v0_3->yaw = 0;
+    temp_v0_3->flagConfig = 1;
+    temp_v0_3->pitch = 0;
+    temp_v0_3->roll = 0;
+    temp_v0_3->rollSpeed = 0;
+    temp_v0_3->pitchSpeed = 0;
+    temp_v0_3->yawSpeed = 0;
+    temp_v0_3->activationRange = 0;
+    temp_v0_3->bank = 1;
+    temp_v0_3->indexInBank = 0x4A;
+    temp_v0_3->fxRate = -0x1E;
+    objdata->unk10 = obj_create(&temp_v0_3->base, 5, self->mapID, -1, self->parent);
+    return 1;
+}
 
 // offset: 0x3C4C | func: 47
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/dll_212_func_3C4C.s")
+CurveSetup* dll_212_func_3C4C(Object* self) {
+    CurveSetup* temp_v0;
+    CurveSetup* var_s3;
+    f32 temp_fv0;
+    f32 var_fs0;
+    s32 i;
+
+    var_fs0 = 700.0f;
+    var_s3 = NULL;
+    for (i = 0; i < 4; i++) {
+        temp_v0 = gDLL_25->vtbl->func_2CF8(self, data_1AC[i]);
+        if (temp_v0 != NULL) {
+            temp_fv0 = vec3_distance(&self->globalPosition, &temp_v0->pos);
+            if (temp_fv0 < var_fs0) {
+                var_fs0 = temp_fv0;
+                var_s3 = temp_v0;
+            }
+        }
+    }
+
+    return var_s3;
+}
 
 // offset: 0x3D30 | func: 48
-void dll_212_func_3D30(Object* self, Unk212_3F44* arg1) {
+void dll_212_func_3D30(Object* self, DLL212_Data* objdata) {
     SRT sp48;
     u8 var_s0;
 
-    if (arg1->unk14 == 0) {
+    if (objdata->unk14 == 0) {
         return;
     }
 
-    sp48.transl.x = arg1->unk24.x - self->srt.transl.x;
-    sp48.transl.y = arg1->unk24.y - self->srt.transl.y;
-    sp48.transl.z = arg1->unk24.z - self->srt.transl.z;
+    sp48.transl.x = objdata->unk24.x - self->srt.transl.x;
+    sp48.transl.y = objdata->unk24.y - self->srt.transl.y;
+    sp48.transl.z = objdata->unk24.z - self->srt.transl.z;
     sp48.scale = 1.0f;
     sp48.yaw = self->srt.yaw;
     sp48.pitch = self->srt.pitch;
     sp48.roll = self->srt.roll;
-    if (arg1->unk14 == 1) {
-        arg1->unk10->srt.transl.x = arg1->unk24.x;
-        arg1->unk10->srt.transl.y = arg1->unk24.y;
-        arg1->unk10->srt.transl.z = arg1->unk24.z;
-        arg1->unk10->srt.roll = self->srt.roll;
-        arg1->unk10->srt.pitch = self->srt.pitch;
-        arg1->unk10->srt.yaw = self->srt.yaw;
+    if (objdata->unk14 == 1) {
+        objdata->unk10->srt.transl.x = objdata->unk24.x;
+        objdata->unk10->srt.transl.y = objdata->unk24.y;
+        objdata->unk10->srt.transl.z = objdata->unk24.z;
+        objdata->unk10->srt.roll = self->srt.roll;
+        objdata->unk10->srt.pitch = self->srt.pitch;
+        objdata->unk10->srt.yaw = self->srt.yaw;
         gDLL_17_partfx->vtbl->spawn(self, 0x535, &sp48, 2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, 0x532, &sp48, 2, -1, NULL);
         return;
@@ -267,30 +336,30 @@ void dll_212_func_3D30(Object* self, Unk212_3F44* arg1) {
     while (var_s0--) {
         gDLL_17_partfx->vtbl->spawn(self, 0x533, &sp48, 2, -1, NULL);
     }
-    arg1->unk14 = 0;
+    objdata->unk14 = 0;
 }
 
 // offset: 0x3F44 | func: 49
-void dll_212_func_3F44(s32 arg0, Unk212_3F44* arg1) {
+void dll_212_func_3F44(s32 arg0, DLL212_Data* objdata) {
     s32 i;
 
-    if (arg1->unk14 == 1) {
-        arg1->unk14 = 2;
-        dll_unload(arg1->unk0);
-        obj_destroy_object(arg1->unk10);
-        for (i = 0; i < 3; i++) { obj_destroy_object(arg1->unk4[i]); }
+    if (objdata->unk14 == 1) {
+        objdata->unk14 = 2;
+        dll_unload(objdata->unk0);
+        obj_destroy_object(objdata->unk10);
+        for (i = 0; i < 3; i++) { obj_destroy_object(objdata->unk4[i]); }
     }
 }
 
 // offset: 0x3FF4 | func: 50
-void dll_212_func_3FF4(DLL212_Data* arg0, s32 arg1, s16 arg2) {
+void dll_212_func_3FF4(DLL212_3FF4* arg0, s32 arg1, s16 arg2) {
     arg0->unk4 = arg1;
     arg0->unk0 = arg2;
     arg0->unk8 = (arg0->unk8 & 0xFF7F) | 0x80;
 }
 
 // offset: 0x4020 | func: 51
-void dll_212_func_4020(DLL212_Data* arg0, s32 arg1) {
+void dll_212_func_4020(DLL212_3FF4* arg0, s32 arg1) {
     if (arg1 == arg0->unk4) {
         arg0->unk8 &= ~0x80;
     }
