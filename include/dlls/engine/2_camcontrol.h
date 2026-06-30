@@ -5,6 +5,7 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 #include "sys/camera.h"
+#include "sys/objhits.h"
 #include "types.h"
 #include "unktypes.h"
 
@@ -29,14 +30,15 @@ typedef enum {
 typedef struct {
 /*000*/    SRT srt;                 //Camera transform
 /*018*/    Vec3f initialCoords;     //Camera's initial coordinates
-/*024*/    s8 unk24[0xA0 - 0x24];
+/*024*/    u8 _unk24[0x34 - 0x24];
+/*034*/    Unk80027934 unk34;
 /*0A0*/    Object* player;
 /*0A4*/    Vec3f positionMirror;    //Mirror of camera's position
 /*0B0*/    f32 fov;                 //Field of view
 /*0B4*/    f32 speedAverage;        //Player's average lateral speed over the past 5 frames
 /*0B8*/    f32 speedSamples[5];     //Player lateral speed samples
 /*0C8*/    Vec3f newPlayerPosition; //Where to move player when `setPlayerPosition` is nonzero
-/*0D8*/    s8 unkD8[0xE4 - 0xD8];
+/*0D8*/    u8 _unkD8[0xE4 - 0xD8];
 /*0E4*/    f32 tValue;      //Bezier ease tValue
 /*0E8*/    f32 tSpeed;      //Rate of change of tValue
 /*0EC*/    f32 unkEC;
