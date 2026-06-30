@@ -308,6 +308,7 @@
 605 = objects/605_WLworm
 606 = objects/606_WL_Wallpower
 607 = objects/607_WL_LevelControl
+609 = objects/609_WLFireFly
 610 = objects/610_WL_spiritplace
 611 = objects/611_WL_seqpoint
 612 = objects/612_WL_Crystal

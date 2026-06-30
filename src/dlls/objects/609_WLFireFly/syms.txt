@@ -1,0 +1,19 @@
+.text = 0x0:
+dll_609_ctor = 0x0;
+dll_609_dtor = 0xC;
+dll_609_setup = 0x18;
+dll_609_control = 0x1B4;
+dll_609_update = 0x7B8;
+dll_609_print = 0x7C4;
+dll_609_free = 0x818;
+dll_609_get_model_flags = 0x8A4;
+dll_609_get_data_size = 0x8B4;
+dll_609_func_8C8 = 0x8C8;
+dll_609_func_98C = 0x98C;
+dll_609_func_ADC = 0xADC;
+
+.rodata = 0xB84:
+str_0 = 0x0; // absolute:0xB84
+
+.data = 0xBB4:
+data_0 = 0x0; // absolute:0xBB4
