@@ -2,18 +2,7 @@
 #include "macros.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
-#include "dlls/objects/304_LanternFireFly.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-} DLL609_Setup; //0x24
+#include "dlls/objects/609_WMFireFly.h"
 
 typedef struct {
     ObjSetup base;
@@ -154,7 +143,7 @@ s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
                 splineCoord.y = self->srt.transl.y;
                 splineCoord.z = self->srt.transl.z;
                 splineCoord.y += 25.0f;
-                ((DLL_304_LanternFireFly*)firefly->dll)->vtbl->set_next_spline_coord(firefly, &splineCoord);
+                ((DLL_609_WMFireFly*)firefly->dll)->vtbl->set_next_spline_coord(firefly, &splineCoord);
                 outValue = objSetup->kyteCommandOutValue;
             }
         }
@@ -185,20 +174,20 @@ s32 KyteFireFlys_func_4CC(Object* arg0) {
 // offset: 0x4DC | func: 11
 Object* KyteFireFlys_create_firefly(Object* self, s32 variance, s32 quarterVariance) {
     ObjSetup* objSetup;
-    DLL609_Setup* setup;
+    WMFireFly_Setup* setup;
 
     objSetup = self->setup;
 
-    setup = obj_alloc_setup(sizeof(DLL609_Setup), OBJ_WLFireFly);
+    setup = obj_alloc_setup(sizeof(WMFireFly_Setup), OBJ_WLFireFly);
     setup->base.fadeDistance = objSetup->fadeDistance;
     setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     setup->base.fadeFlags = objSetup->byte5;
     setup->base.x = rand_next(-quarterVariance, quarterVariance) + self->srt.transl.x;
     setup->base.y = self->srt.transl.y;
     setup->base.z = rand_next(-quarterVariance, quarterVariance) + self->srt.transl.z;
-    setup->unk19 = 3;
-    setup->unk1A = variance;
-    setup->unk1C = quarterVariance;
-    setup->unk18 = quarterVariance;
+    setup->effectType = 3;
+    setup->fxRange = variance;
+    setup->varianceZ = quarterVariance;
+    setup->varianceY = quarterVariance;
     return obj_create(&setup->base, (4 | 1), -1, -1, NULL);
 }

@@ -13,10 +13,10 @@ typedef struct {
     f32 splineY[4];
     f32 splineZ[4];
     Vec3f nextSplineCoord;  //The next point that will be appended to the spline coords arrays. This is a local coordinate delta, relative to the firefly's home position.
-    f32 tValueSpline; //The current spline interpolation position (expressed from 0 to 1)
-    f32 tValueSpeed;  //The current spline interpolation speed
-    f32 unk48;        //Assigned a value but otherwise unused. Maybe intended as spline interpolation acceleration?
-    f32 unk4C;        //Set to 0 in setup, and set to 1 when sending firefly. Otherwise unused?
+    f32 tValueSpline;   //The current spline interpolation position (expressed from 0 to 1)
+    f32 tValueSpeed;    //The current spline interpolation speed
+    f32 unk48;          //Assigned a value but otherwise unused. Maybe intended as spline interpolation acceleration?
+    f32 fxRange;        //Set to 0 in setup, and set to 1 when sending firefly. Otherwise unused?
     f32 varianceZ;
     Vec3f home;         //Firefly's initial coordinates in worldSpace 
     s32 lifetime;       //Timer counting down until firefly is unloaded
@@ -89,7 +89,7 @@ void LanternFireFly_setup(Object* self, LanternFireFly_Setup* objSetup, s32 rese
     objData->randomYaw = rand_next(0, 65000);
     objData->varianceY = 4;
     objData->effectType = objSetup->effectType;
-    objData->unk4C = 0.0f;
+    objData->fxRange = 0.0f;
     objData->varianceZ = 5;
 
     objData->home.x = objSetup->base.x;
@@ -370,7 +370,7 @@ void LanternFireFly_send(Object* self) {
     
     objData->varianceY = objSetup->varianceY;
     objData->effectType = objSetup->effectType;
-    objData->unk4C = 1.0f;
+    objData->fxRange = 1.0f;
     objData->varianceZ = objSetup->varianceZ;
     objData->unk73 = 0;
     func_8005B5B8(self, NULL, 1);
