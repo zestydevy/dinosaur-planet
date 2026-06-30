@@ -43,6 +43,7 @@
 79 = engine/79_selection
 82 = engine/82
 83 = engine/83
+84 = engine/84_camnormal
 92 = engine/92_camclimb
 94 = engine/94_camtalk1
 98 = engine/98_camcannon

@@ -179,6 +179,7 @@ enum ObjectStateFlags {
 // Stored in the flags of Object.srt
 enum ObjectFlags {
 /*1*/ OBJFLAG_UNK_2 = 0x2,
+/*2*/ OBJFLAG_UNK_4 = 0x4,
 
       // don't automatically calculate previous local/global position object fields
 /*3*/ OBJFLAG_MANUAL_PREV_POSITIONS = 0x8,
