@@ -1,61 +1,92 @@
 #include "common.h"
+#include "macros.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/304_LanternFireFly.h"
 
-typedef struct {
-    u8 _unk0[0x34-0x00];
-    u8 unk34;
-    u8 _unk35;
-    u8 unk36;
-    u8 _unk37;
-    CurveSetup* unk38;
-    //[0x3C];
-} DLL716_Data;
 typedef struct {
     ObjSetup base;
     u8 unk18;
     u8 unk19;
     u16 unk1A;
     s16 unk1C;
-}DLL716_Setup;
+    s16 unk1E;
+    s16 unk20;
+    s16 unk22;
+} DLL609_Setup; //0x24
+
+typedef struct {
+    ObjSetup base;
+    u8 variance;
+    u8 kyteCommandOutValue;
+    u16 kyteFlightGroup;
+    u8 fireflyCount;
+} DLL716_Setup;
+
+typedef struct {
+    Object* fireflies[10];
+    u8 _unk28[0x34 - 0x28];
+    u8 fireflyCount;
+    u8 initialFireflyCount;
+    u8 haveCurveSetup;
+    u8 _unk37;
+    CurveSetup* curve;
+} DLL716_Data; //0x3C
+
+static Object* KyteFireFlys_create_firefly(Object* self, s32 variance, s32 quarterVariance);
 
 // offset: 0x0 | ctor
-void dll_716_ctor(void *dll) { }
+void KyteFireFlys_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_716_dtor(void *dll) { }
+void KyteFireFlys_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_716_setup(Object *self, ObjSetup *setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/716_kyteFireFlys/dll_716_setup.s")
+void KyteFireFlys_setup(Object* self, DLL716_Setup* objSetup, s32 reset) {
+    DLL716_Data* objData;
+    s32 i;
+
+    objData = self->data;
+    
+    for (i = 0; i < objSetup->fireflyCount; i++) {
+        objData->fireflies[i] = KyteFireFlys_create_firefly(self, objSetup->variance, objSetup->variance >> 2);
+    }
+    
+    objData->initialFireflyCount = objData->fireflyCount = objSetup->fireflyCount;
+    objData->haveCurveSetup = FALSE;
+    obj_add_object_type(self, OBJTYPE_KyteTarget);
+}
 
 // offset: 0xE0 | func: 1 | export: 1
-void dll_716_control(Object* self) {
-    DLL716_Data* objdata;
-    DLL716_Setup* setup;
+void KyteFireFlys_control(Object* self) {
+    DLL716_Data* objData;
+    DLL716_Setup* objSetup;
     Object* sidekick;
-    CurveSetup* temp_v0_2;
 
-    objdata = self->data;
-    setup = (DLL716_Setup*)self->setup;
-    if (objdata->unk36 == 0) {
-        temp_v0_2 = gDLL_25->vtbl->func_2A50(self, (s32) setup->unk1A);
-        objdata->unk38 = temp_v0_2;
-        if (temp_v0_2 != NULL) {
-            objdata->unk36 = 1U;
-            self->srt.transl.x = objdata->unk38->pos.x;
-            self->srt.transl.y = objdata->unk38->pos.y;
-            self->srt.transl.z = objdata->unk38->pos.z;
+    objData = self->data;
+    objSetup = (DLL716_Setup*)self->setup;
+
+    if (objData->haveCurveSetup == FALSE) {
+        objData->curve = gDLL_25->vtbl->func_2A50(self, objSetup->kyteFlightGroup);
+        if (objData->curve != NULL) {
+            objData->haveCurveSetup = TRUE;
+            self->srt.transl.x = objData->curve->pos.x;
+            self->srt.transl.y = objData->curve->pos.y;
+            self->srt.transl.z = objData->curve->pos.z;
         }
-    } else if (objdata->unk34 != 0) {
+        return;
+    } 
+    
+    if (objData->fireflyCount != 0) {
         sidekick = get_sidekick();
         if (sidekick != NULL) {
-            if (vec3_distance_squared(&get_player()-> globalPosition, &objdata->unk38->pos) <= SQ(setup->unk18)) {
+            if (vec3_distance_squared(&get_player()->globalPosition, &objData->curve->pos) <= SQ(objSetup->variance)) {
                 //Show Find command option
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
 
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
-                    main_set_bits(BIT_Kyte_Flight_Curve, setup->unk1A);
+                    STUBBED_PRINTF("should activate the command\n");
+                    main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }
         }
@@ -63,61 +94,113 @@ void dll_716_control(Object* self) {
 }
 
 // offset: 0x26C | func: 2 | export: 2
-void dll_716_update(Object *self) { }
+void KyteFireFlys_update(Object *self) { }
 
 // offset: 0x278 | func: 3 | export: 3
-void dll_716_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void KyteFireFlys_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x290 | func: 4 | export: 4
-void dll_716_free(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/716_kyteFireFlys/dll_716_free.s")
+void KyteFireFlys_free(Object* self, s32 onlySelf) {
+    DLL716_Data* objData;
+    s32 i;
+
+    objData = self->data;
+    
+    if (onlySelf == FALSE) {
+        for (i = 0; i < objData->fireflyCount; i++) {
+            obj_destroy_object(objData->fireflies[i]);
+        }
+    }
+
+    obj_free_object_type(self, OBJTYPE_KyteTarget);
+}
 
 // offset: 0x330 | func: 5 | export: 5
-u32 dll_716_get_model_flags(Object *self) {
+u32 KyteFireFlys_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x340 | func: 6 | export: 6
-u32 dll_716_get_data_size(Object *self, u32 a1) {
+u32 KyteFireFlys_get_data_size(Object *self, u32 a1) {
     return sizeof(DLL716_Data);
 }
 
 // offset: 0x354 | func: 7 | export: 7
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/716_kyteFireFlys/dll_716_func_354.s")
+s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
+    DLL716_Setup* objSetup;
+    DLL716_Data* objData;
+    s32 outValue;
+    Object* firefly;
+    Vec3f splineCoord;
+    s16 gamebitID;
+    u8 count;
+
+    objSetup = (DLL716_Setup*)self->setup;
+    objData = self->data;
+    
+    outValue = 0;
+
+    if (arg1 == 2) {
+        count = objData->fireflyCount;
+        if (count != 0) {
+            gamebitID = objData->curve->type22.usedBit;
+            if (gamebitID != NO_GAMEBIT) {
+                outValue = 0;
+                main_set_bits(gamebitID, 1);
+            }
+            
+            if (objData->fireflyCount != 0) {
+                objData->fireflyCount--;
+                firefly = objData->fireflies[objData->fireflyCount];
+                splineCoord.x = self->srt.transl.x;
+                splineCoord.y = self->srt.transl.y;
+                splineCoord.z = self->srt.transl.z;
+                splineCoord.y += 25.0f;
+                ((DLL_304_LanternFireFly*)firefly->dll)->vtbl->set_next_spline_coord(firefly, &splineCoord);
+                outValue = objSetup->kyteCommandOutValue;
+            }
+        }
+    }
+    
+    if (arg1 == 3) {
+        obj_destroy_object(objData->fireflies[objData->fireflyCount]);
+    }
+    
+    return outValue;
+}
 
 // offset: 0x49C | func: 8 | export: 8
-s32 dll_716_func_49C(s32 arg0, s32 arg1, s32 arg2) {
+s32 KyteFireFlys_func_49C(s32 arg0, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x4B4 | func: 9 | export: 9
-s32 dll_716_func_4B4(s32 arg0, s32 arg1, s32 arg2) {
+s32 KyteFireFlys_func_4B4(s32 arg0, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x4CC | func: 10 | export: 10
-s32 dll_716_func_4CC(s32 arg0) {
+s32 KyteFireFlys_func_4CC(Object* arg0) {
     return 8;
 }
 
 // offset: 0x4DC | func: 11
-void dll_716_func_4DC(Object* self, s32 arg1, s32 arg2) {
+Object* KyteFireFlys_create_firefly(Object* self, s32 variance, s32 quarterVariance) {
     ObjSetup* objSetup;
-    DLL716_Setup* setup;
+    DLL609_Setup* setup;
 
     objSetup = self->setup;
-    setup = obj_alloc_setup(0x24, 0x259);
-    setup->base.fadeDistance = objSetup->fadeDistance;
-    setup->base.loadFlags = 2;
-    setup->base.byte5 = objSetup->byte5;
-    setup->base.x = rand_next(-arg2, arg2) + self->srt.transl.x;
-    setup->base.y = self->srt.transl.y;
-    setup->base.z = rand_next(-arg2, arg2) + self->srt.transl.z;
-    setup->unk19 = 3;
-    setup->unk1A = arg1;
-    setup->unk1C = arg2;
-    setup->unk18 = arg2;
-    obj_create(&setup->base, 5U, -1, -1, NULL);
-}
 
-/*0x0*/ static const char str_0[] = "should activate the command\n";
+    setup = obj_alloc_setup(sizeof(DLL609_Setup), OBJ_WLFireFly);
+    setup->base.fadeDistance = objSetup->fadeDistance;
+    setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    setup->base.fadeFlags = objSetup->byte5;
+    setup->base.x = rand_next(-quarterVariance, quarterVariance) + self->srt.transl.x;
+    setup->base.y = self->srt.transl.y;
+    setup->base.z = rand_next(-quarterVariance, quarterVariance) + self->srt.transl.z;
+    setup->unk19 = 3;
+    setup->unk1A = variance;
+    setup->unk1C = quarterVariance;
+    setup->unk18 = quarterVariance;
+    return obj_create(&setup->base, (4 | 1), -1, -1, NULL);
+}
