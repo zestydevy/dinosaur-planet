@@ -341,17 +341,17 @@ void LanternFireFly_set_next_spline_coord_randomised(Object* self) {
 }
 
 // offset: 0xBE0 | func: 9 | export: 7
-void LanternFireFly_set_next_spline_coord(Object* self, Vec3f* coordsPlayer) {
+void LanternFireFly_set_next_spline_coord(Object* self, Vec3f* coords) {
     LanternFireFly_Data* objData = self->data;
     
-    //Transform player's worldSpace coords into local coordinates relative to firefly's home position
-    coordsPlayer->x -= objData->home.x;
-    coordsPlayer->y -= objData->home.y;
-    coordsPlayer->z -= objData->home.z;
+    //Transform worldSpace coords into local coordinates relative to firefly's home position
+    coords->x -= objData->home.x;
+    coords->y -= objData->home.y;
+    coords->z -= objData->home.z;
     
-    objData->nextSplineCoord.x = coordsPlayer->x;
-    objData->nextSplineCoord.y = coordsPlayer->y;
-    objData->nextSplineCoord.z = coordsPlayer->z;
+    objData->nextSplineCoord.x = coords->x;
+    objData->nextSplineCoord.y = coords->y;
+    objData->nextSplineCoord.z = coords->z;
     
     objData->splinePointNum = 4;
 }
