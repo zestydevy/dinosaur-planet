@@ -193,7 +193,7 @@ typedef enum {
     BIT_BA = 0xBA, // len:1 group:0
     BIT_BB = 0xBB, // len:1 group:0
     BIT_BC = 0xBC, // len:1 group:0
-    BIT_BD = 0xBD, // len:1 group:2
+    BIT_WM_EarthWalker_Died = 0xBD, // len:1 group:2
     BIT_BE = 0xBE, // len:1 group:1
     BIT_SH_Move_Thorntail_Blocking_Hollow_Log = 0xBF, // len:1 group:1 task:10
     BIT_C0 = 0xC0, // len:1 group:1
@@ -2328,7 +2328,7 @@ typedef enum {
     BIT_Shown_ZLock_Interact_Message = 0x912, // len:1 group:2
     BIT_913 = 0x913, // len:1 group:2
     BIT_Tutorial_Magic_Plant = 0x914, // len:1 group:2 [TUTORIAL]
-    BIT_915 = 0x915, // len:1 group:2
+    BIT_Tutorial_ZLock_Talk = 0x915, // len:1 group:2 [TUTORIAL]
     BIT_916 = 0x916, // len:1 group:2
     BIT_GP_Bonfire_Kindling_Placed = 0x917, // len:1 group:0
     BIT_GP_Bonfire_Burning = 0x918, // len:1 group:0

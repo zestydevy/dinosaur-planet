@@ -228,6 +228,8 @@ enum SoundID {
 
     SOUND_1EB_Wooden_Partition_Sliding = 0x1EB, // used when WM transporter room door moves
 
+    SOUND_1FB_EarthWalker_Help = 0x1FB,
+
     SOUND_222_NW_Tricky_Sharpclaw_Help = 0x222,
 
     SOUND_226_Fall_Impact = 0x226,
