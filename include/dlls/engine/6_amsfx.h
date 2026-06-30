@@ -41,6 +41,8 @@ enum SoundID {
     SOUND_1A = 0x1A,        
     SOUND_1B = 0x1B,     
     SOUND_1C = 0x1C,          
+    
+    SOUND_1E = 0x1E,
 
     SOUND_20_Sabre_Heel = 0x20,            //"*whistle* Here boy!"
     SOUND_21_Sabre_Find = 0x21,            //"Seek it out!"

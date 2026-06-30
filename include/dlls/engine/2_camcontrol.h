@@ -106,8 +106,8 @@ DLL_INTERFACE(DLL_2_camera) {
 /*1*/ void (*tick)(u8 updateRate);							//Main CamControl function (NOTE: actual function doesn't seem to take any arguments, though it's called using `updateRate`)
 /*2*/ CamControl_Data* (*get_data)(void);					//Returns a pointer to the CamControl DLL's main data struct
 /*3*/ s32 (*get_dll_ID)(void); 								//Returns the DLL ID of the current camera module
-/*4*/ CamControl_Module (*get_active_module)(void);			//Returns the CamControl_Module that's currently in use
-/*5*/ CamControl_Module (*get_camnormal_module)(void);		//Returns the CamControl_Module for DLL 84: CAMNORMAL (if it's loaded)
+/*4*/ CamControl_Module* (*get_active_module)(void);		//Returns the CamControl_Module that's currently in use
+/*5*/ CamControl_Module* (*get_camnormal_module)(void);		//Returns the CamControl_Module for DLL 84: CAMNORMAL (if it's loaded)
 /*6*/ void (*change_camera_module)(s32 dllID, s32 doDeferredFree, s32 setupVal, s32 actionSize, void* action, s32 easeDuration, u8 easeFlags);	
 /*7*/ CameraAction* (*get_camera_action)(s32 actionIndex);	//Returns a pointer to a `CameraAction` read from CAMERAACTIONS.BIN
 /*8*/ void (*change_mode)(u32 cameraMode, s32 index); 		//Can apply a CameraAction (or a different 8-byte struct) depending on the mode value. Depending on mode `params` can be the camera DLL index (relative to CAMNORMAL's ID), or the index of the CameraAction to use, or params for the 8-byte struct. TO-DO: update description once better understood!

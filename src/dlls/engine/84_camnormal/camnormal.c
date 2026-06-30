@@ -1,4 +1,6 @@
 #include "dlls/engine/2_camcontrol.h"
+#include "dlls/engine/85_attentioncam.h"
+#include "dlls/engine/86_cam1stperson.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
@@ -8,20 +10,6 @@
 #include "sys/voxmap.h"
 #include "dll.h"
 #include "macros.h"
-
-// TODO: move
-typedef struct {
-    f32 unk0;
-    f32 unk4;
-    s16 unk8;
-} Cam56Params;
-
-// TODO: move
-typedef struct {
-    s16 unk0;
-    s8 unk2;
-    s8 unk3;
-} Cam55Params;
 
 typedef struct {
     f32 unk0;
@@ -121,7 +109,7 @@ static void dll_84_func_2A5C(CamControl_Data* data, Object* obj);
 
 // offset: 0x0 | ctor
 void dll_84_ctor(void* dll) {
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
+    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camnormal"));
     bzero(bss_0, sizeof(BSS0));
 }
 
@@ -806,8 +794,8 @@ static s32 dll_84_func_250C(CamControl_Data* arg0, Vec3s16* arg1, Vec3s16* arg2,
 // offset: 0x26E4 | func: 15
 static void dll_84_func_26E4(CamControl_Data* arg0, Object* arg1) {
     u16 btns;
-    Cam55Params sp48;
-    Cam56Params sp3C;
+    AttentionCam_Params attentionCam;
+    Cam1stPerson_Params cam1stPerson;
     u8 temp_v1;
 
     if (arg1->animObj == NULL) {
@@ -819,15 +807,15 @@ static void dll_84_func_26E4(CamControl_Data* arg0, Object* arg1) {
                 ((((DLL_210_Player*)arg1->dll)->vtbl->func60(arg1) != 0))) {
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE1, 1, 0, 4, &arg0->highlight, 0x3C, 0xFF);
         } else if ((btns & U_CBUTTONS) && !(arg0->highlightFlags & 1)) {
-            sp3C.unk0 = bss_0->unk4;
-            sp3C.unk4 = bss_0->unk8;
-            sp3C.unk8 = (s16) (u32) bss_0->unk8C;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, 1, 0, sizeof(sp3C), &sp3C, 0, 0xFF);
+            cam1stPerson.unk0 = bss_0->unk4;
+            cam1stPerson.unk4 = bss_0->unk8;
+            cam1stPerson.unk8 = (s16) (u32) bss_0->unk8C;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, 1, 0, sizeof(cam1stPerson), &cam1stPerson, 0, 0xFF);
         } else if ((btns & Z_TRIG) && !(arg0->srt.flags & OBJFLAG_UNK_4)) {
-            sp48.unk0 = 5;
-            sp48.unk2 = 1;
-            sp48.unk3 = 1;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM1, 1, 0, sizeof(sp48), &sp48, 0, 0xFF);
+            attentionCam.unk0 = 5;
+            attentionCam.unk2 = 1;
+            attentionCam.unk3 = 1;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM1, 1, 0, sizeof(attentionCam), &attentionCam, 0, 0xFF);
         }
     }
 }
