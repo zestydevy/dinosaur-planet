@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/engine/18_objfsa.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
@@ -19,15 +20,28 @@ typedef struct {
     0x02060167, 0x01650206, 0x00000000, 0x00000000, 0x00000000
 };
 
-/*0x0*/ static u8 _bss_0[0x10];
-/*0x10*/ static u8 _bss_10[0x10];
+/*0x0*/ static ObjFSA_StateCallback _bss_0[4];
+/*0x10*/ static ObjFSA_StateCallback _bss_10[1];
+
+static void dll_236_func_0(void);
+static s32 dll_236_func_A20(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_236_func_B44(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_236_func_C60(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_236_func_D64(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_236_func_EA0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_func_0.s")
-
+void dll_236_func_0(void) {
+    _bss_0[0] = dll_236_func_A20;
+    _bss_0[1] = dll_236_func_B44;
+    _bss_0[2] = dll_236_func_C60;
+    _bss_0[3] = dll_236_func_D64;
+    _bss_10[0] = dll_236_func_EA0;
+}
 // offset: 0x5C | ctor
-void dll_236_ctor(void *dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_ctor.s")
+void dll_236_ctor(void* dll) {
+    dll_236_func_0();
+}
 
 // offset: 0x9C | dtor
 void dll_236_dtor(void *dll) { }
@@ -143,7 +157,7 @@ static void dll_236_func_7F8(Object* self, Baddie* baddie) {
 }
 
 // offset: 0xA20 | func: 9
-s32 dll_236_func_A20(Object* self, ObjFSA_Data* fsa, s8 arg2) {
+s32 dll_236_func_A20(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DLL236_Data* objData;
     Baddie* baddie;
 
@@ -174,14 +188,14 @@ s32 dll_236_func_A20(Object* self, ObjFSA_Data* fsa, s8 arg2) {
 }
 
 // offset: 0xB44 | func: 10
-s32 dll_236_func_B44(Object* self, ObjFSA_Data* arg1, s32 arg2) {
+s32 dll_236_func_B44(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DLL236_Data* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
     
-    arg1->unk341 = 1;
+    fsa->unk341 = 1;
     if (objData->unk5 != 0) {
         objData->unk5 = 0;
         objData->unk6 = 0;
@@ -203,7 +217,7 @@ s32 dll_236_func_B44(Object* self, ObjFSA_Data* arg1, s32 arg2) {
 }
 
 // offset: 0xC60 | func: 11
-s32 dll_236_func_C60(Object* self, ObjFSA_Data* fsaData, s32 arg2) {
+s32 dll_236_func_C60(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DLL236_Data* objData;
     void* sp20;
@@ -211,7 +225,7 @@ s32 dll_236_func_C60(Object* self, ObjFSA_Data* fsaData, s32 arg2) {
     baddie = self->data;
     objData = baddie->objdata;
     
-    fsaData->unk341 = 0;
+    fsa->unk341 = 0;
     if (objData->unk5 != 0) {
         objData->unk5 = 0;
         objData->unk0 = 0.01f;
@@ -222,7 +236,7 @@ s32 dll_236_func_C60(Object* self, ObjFSA_Data* fsaData, s32 arg2) {
     self->objhitInfo->unk5E = 0;
     
     if ((self->curModAnimId == 0) && (self->animProgress == 1.0f)) {
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsaData, 3);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 3);
         objData->unk5 = 1;
     }
     
@@ -230,20 +244,20 @@ s32 dll_236_func_C60(Object* self, ObjFSA_Data* fsaData, s32 arg2) {
 }
 
 // offset: 0xD64 | func: 12
-s32 dll_236_func_D64(Object* self, ObjFSA_Data* arg1, s8 arg2) {
+s32 dll_236_func_D64(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DLL236_Data* triffid;
 
     baddie = self->data;
     triffid = baddie->objdata;
 
-    arg1->unk341 = 0;
+    fsa->unk341 = 0;
 
     if (triffid->unk5 != 0) {
         triffid->unk5 = 0;
         obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, 0xE0000U, self);
         gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0);
-        gDLL_18_objfsa->vtbl->func21(self, arg1, PARTICLE_3C, 0xA, 0);
+        gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0);
         baddie->unk3B4 = 0;
     }
 
@@ -263,7 +277,7 @@ s32 dll_236_func_D64(Object* self, ObjFSA_Data* arg1, s8 arg2) {
 }
 
 // offset: 0xEA0 | func: 13
-s32 dll_236_func_EA0(s32 arg0, s32 arg1, s32 arg2) {
+s32 dll_236_func_EA0(Object* arg0, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 } 
 
