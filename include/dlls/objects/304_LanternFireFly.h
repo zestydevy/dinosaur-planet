@@ -18,7 +18,7 @@ typedef struct {
 
 DLL_INTERFACE(DLL_304_LanternFireFly) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ void (*set_next_spline_coord_by_player_position)(Object* self, Vec3f* coordsPlayer);
+    /*7*/ void (*set_next_spline_coord)(Object* self, Vec3f* coords);
     /*8*/ void (*send)(Object *self);
     /*9*/ void (*set_home)(Object* self, f32 x, f32 y, f32 z);
 };

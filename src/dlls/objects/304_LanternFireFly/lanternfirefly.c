@@ -38,7 +38,7 @@ typedef struct {
 
 static void LanternFireFly_append_spline_point(Object* self);
 static void LanternFireFly_set_next_spline_coord_randomised(Object* self);
-void LanternFireFly_set_next_spline_coord_by_player_position(Object* self, Vec3f* arg1);
+void LanternFireFly_set_next_spline_coord(Object* self, Vec3f* arg1);
 void LanternFireFly_set_home(Object* self, f32 x, f32 y, f32 z);
 
 // offset: 0x0 | ctor
@@ -341,7 +341,7 @@ void LanternFireFly_set_next_spline_coord_randomised(Object* self) {
 }
 
 // offset: 0xBE0 | func: 9 | export: 7
-void LanternFireFly_set_next_spline_coord_by_player_position(Object* self, Vec3f* coordsPlayer) {
+void LanternFireFly_set_next_spline_coord(Object* self, Vec3f* coordsPlayer) {
     LanternFireFly_Data* objData = self->data;
     
     //Transform player's worldSpace coords into local coordinates relative to firefly's home position
@@ -383,7 +383,7 @@ void LanternFireFly_send(Object* self) {
 
     LanternFireFly_set_home(self, player->globalPosition.x, player->globalPosition.y + 34.0f, player->globalPosition.z);
     
-    LanternFireFly_set_next_spline_coord_by_player_position(self, &coordsPlayer);
+    LanternFireFly_set_next_spline_coord(self, &coordsPlayer);
     
     LanternFireFly_append_spline_point(self);
     LanternFireFly_append_spline_point(self);

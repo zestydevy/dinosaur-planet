@@ -10,7 +10,7 @@ LanternFireFly_get_model_flags = 0x960;
 LanternFireFly_get_data_size = 0x970;
 LanternFireFly_append_spline_point = 0x984;
 LanternFireFly_set_next_spline_coord_randomised = 0xAB0;
-LanternFireFly_set_next_spline_coord_by_player_position = 0xBE0;
+LanternFireFly_set_next_spline_coord = 0xBE0;
 LanternFireFly_send = 0xC3C;
 LanternFireFly_set_home = 0xE54;
 

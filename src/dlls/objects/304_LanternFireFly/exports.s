@@ -15,6 +15,6 @@ _exports:
 /*4*/ .dword LanternFireFly_free
 /*5*/ .dword LanternFireFly_get_model_flags
 /*6*/ .dword LanternFireFly_get_data_size
-/*7*/ .dword LanternFireFly_set_next_spline_coord_by_player_position
+/*7*/ .dword LanternFireFly_set_next_spline_coord
 /*8*/ .dword LanternFireFly_send
 /*9*/ .dword LanternFireFly_set_home
