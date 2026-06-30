@@ -3,8 +3,32 @@
 #include "sys/objtype.h"
 
 typedef struct {
+    Object* unk0;
+    struct DLL420_Func18FCUnk* unk4;
+    struct DLL420_Func18FCUnk* unk8;
+    u8 _unkC[0x14 - 0xC];
+    f32 unk14; 
+    s16 unk18; 
+    f32 unk1C;
+    f32 unk20;
+    u8 unk24;
+    s32 unk28[3];
+} DLL420_Func18FCUnk;
+
+typedef struct {
+    Vec3f unk0;
+    u8 _unkC[0x14 - 0xC];
+    f32 unk14; 
+    s16 unk18; 
+    f32 unk1C;
+    f32 unk20;
+    u8 unk24;
+    s32 unk28[3];
+} DLL420_FuncF04Unk;
+
+typedef struct {
     ObjSetup base;
-    s16 unk18;
+    u8 unk18;
 } DLL420_Setup;
 
 typedef struct DLL420_Data {
@@ -13,7 +37,7 @@ typedef struct DLL420_Data {
     f32 unk14; 
     s16 unk18; 
     f32 unk1C[4];
-    struct DLL420_Data** unk2C;
+    DLL420_FuncF04Unk** unk2C;
     u32 unk30 : 1;
 } DLL420_Data;
 
@@ -22,6 +46,8 @@ typedef struct DLL420_Data {
 /*0x4*/ static u32 data_8[] = {
     0x00000000, 0x00000000
 };
+
+static void dll_420_func_18BC(DLL420_FuncF04Unk** nodeData);
 
 // offset: 0x0 | ctor
 void dll_420_ctor(void* dll) { }
@@ -59,8 +85,39 @@ void dll_420_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_print.s")
 
 // offset: 0x984 | func: 4 | export: 4
-void dll_420_free(Object* self, s32 onlySelf);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_free.s")
+void dll_420_free(Object* self, s32 onlySelf) {
+    DLL420_Data* objData;
+    DLL420_Setup* objSetup;
+    s32 i;
+    s32 count; //38
+    Object** objects;
+    Object* otherNode;
+
+    objSetup = (DLL420_Setup*)self->setup;
+    objData = self->data;
+
+    data_4--;
+    if (data_4 == 0) {
+        tex_free(data_0);
+    }
+    
+    obj_free_object_type(self, OBJTYPE_RopeNode);
+    if (objSetup->unk18 & 1) {
+        dll_420_func_18BC(objData->unk2C);
+    }
+    
+    otherNode = objData->unk0;
+    if (otherNode == NULL) {
+        return;
+    }
+    
+    objects = obj_get_all_of_type(0x19, &count);
+    for (i = 0; i < count; i++) {
+        if (otherNode == objects[i]) {
+            ((DLL_Unknown*)otherNode->dll)->vtbl->func[16].withOneArg(otherNode);
+        }
+    }
+}
 
 // offset: 0xAB4 | func: 5 | export: 5
 u32 dll_420_get_model_flags(Object* self) {
@@ -86,10 +143,41 @@ void dll_420_func_DFC(Object* self, f32* arg1) {
 }
 
 // offset: 0xE28 | func: 9 | export: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_func_E28.s")
+void dll_420_func_E28(Object* self, f32 arg1, f32* ox, f32* oy, f32* oz) {
+    DLL420_Data* objData;
+    s8 index;
+    Vec3f d;
+
+    objData = self->data;
+    
+    index = (s8) arg1;
+    arg1 -= index;
+    
+    d.x = (objData->unk2C[0] + index + 1)->unk0.f[0] - (objData->unk2C[0] + index)->unk0.f[0];
+    d.y = (objData->unk2C[0] + index + 1)->unk0.f[1] - (objData->unk2C[0] + index)->unk0.f[1];
+    d.z = (objData->unk2C[0] + index + 1)->unk0.f[2] - (objData->unk2C[0] + index)->unk0.f[2];
+    
+    *ox = (objData->unk2C[0] + index)->unk0.x + self->srt.transl.x + d.x * arg1;
+    *oy = (objData->unk2C[0] + index)->unk0.y + self->srt.transl.y + d.y * arg1;
+    *oz = (objData->unk2C[0] + index)->unk0.z + self->srt.transl.z + d.z * arg1;
+}
 
 // offset: 0xF04 | func: 10 | export: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_func_F04.s")
+void dll_420_func_F04(Object* self, f32* arg1, f32 arg2) {
+    DLL420_Data* objData = self->data;
+    DLL420_FuncF04Unk* temp_v0;
+    s8 index;
+    
+    index = (s8)*arg1;
+    
+    *arg1 -= index;
+    
+    temp_v0 = objData->unk2C[0] + index;
+
+    arg2 /= sqrtf(SQ(temp_v0[0].unk0.z - temp_v0[1].unk0.z) + SQ(temp_v0[0].unk0.x - temp_v0[1].unk0.x));
+    *arg1 += arg2;
+    *arg1 +=  index;
+}
 
 // offset: 0xFDC | func: 11 | export: 10
 void dll_420_func_FDC(Object* self, f32 arg1, f32 arg2) {
@@ -102,8 +190,8 @@ void dll_420_func_FDC(Object* self, f32 arg1, f32 arg2) {
     idx = arg1;
     arg1 -= idx;
     
-    objData->unk2C[0][idx].unk1C[0] += arg2 * arg1;
-    objData->unk2C[0][idx].unk1C[0] += arg2 * (1.0f - arg1);
+    objData->unk2C[0][idx].unk1C += arg2 * arg1;
+    objData->unk2C[0][idx].unk1C += arg2 * (1.0f - arg1);
 }
 
 // offset: 0x1098 | func: 12 | export: 11
@@ -153,14 +241,35 @@ void dll_420_func_1514(Object* self, f32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_func_152C.s")
 
 // offset: 0x18BC | func: 20
-void dll_420_func_18BC(void* arg0) {
-    if (arg0 != NULL) {
-        mmFree(arg0);
+void dll_420_func_18BC(DLL420_FuncF04Unk** nodeData) {
+    if (nodeData != NULL) {
+        mmFree(nodeData);
     }
 }
 
 // offset: 0x18FC | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_func_18FC.s")
+void dll_420_func_18FC(DLL420_Func18FCUnk* arg0, DLL420_Func18FCUnk* arg1, DLL420_Func18FCUnk* arg2) {
+    s32 idx1;
+    s32 idx2;
+
+    idx1 = 0;
+    idx2 = 0;
+    
+    while(arg1->unk28[idx1]) {
+        idx1++;
+    }
+    
+    while(arg2->unk28[idx2]) {
+        idx2++;
+    }
+    
+    if ((arg1->unk24 >= idx1) && (arg2->unk24 >= idx2)) {
+        arg1->unk28[idx1] = arg0;
+        arg2->unk28[idx2] = arg0;
+        arg0->unk4 = arg1;
+        arg0->unk8 = arg2;
+    }
+}
 
 // offset: 0x1994 | func: 22
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_func_1994.s")
