@@ -21,17 +21,15 @@ typedef struct {
     u8 kyteCommandOutValue;
     u16 kyteFlightGroup;
     u8 fireflyCount;
-} DLL716_Setup;
+} KyteFireFlys_Setup;
 
 typedef struct {
-    Object* fireflies[10];
-    u8 _unk28[0x34 - 0x28];
+    Object* fireflies[13];
     u8 fireflyCount;
     u8 initialFireflyCount;
     u8 haveCurveSetup;
-    u8 _unk37;
     CurveSetup* curve;
-} DLL716_Data; //0x3C
+} KyteFireFlys_Data;
 
 static Object* KyteFireFlys_create_firefly(Object* self, s32 variance, s32 quarterVariance);
 
@@ -42,8 +40,8 @@ void KyteFireFlys_ctor(void *dll) { }
 void KyteFireFlys_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void KyteFireFlys_setup(Object* self, DLL716_Setup* objSetup, s32 reset) {
-    DLL716_Data* objData;
+void KyteFireFlys_setup(Object* self, KyteFireFlys_Setup* objSetup, s32 reset) {
+    KyteFireFlys_Data* objData;
     s32 i;
 
     objData = self->data;
@@ -59,12 +57,12 @@ void KyteFireFlys_setup(Object* self, DLL716_Setup* objSetup, s32 reset) {
 
 // offset: 0xE0 | func: 1 | export: 1
 void KyteFireFlys_control(Object* self) {
-    DLL716_Data* objData;
-    DLL716_Setup* objSetup;
+    KyteFireFlys_Data* objData;
+    KyteFireFlys_Setup* objSetup;
     Object* sidekick;
 
     objData = self->data;
-    objSetup = (DLL716_Setup*)self->setup;
+    objSetup = (KyteFireFlys_Setup*)self->setup;
 
     if (objData->haveCurveSetup == FALSE) {
         objData->curve = gDLL_25->vtbl->func_2A50(self, objSetup->kyteFlightGroup);
@@ -101,7 +99,7 @@ void KyteFireFlys_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 
 // offset: 0x290 | func: 4 | export: 4
 void KyteFireFlys_free(Object* self, s32 onlySelf) {
-    DLL716_Data* objData;
+    KyteFireFlys_Data* objData;
     s32 i;
 
     objData = self->data;
@@ -122,20 +120,20 @@ u32 KyteFireFlys_get_model_flags(Object *self) {
 
 // offset: 0x340 | func: 6 | export: 6
 u32 KyteFireFlys_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL716_Data);
+    return sizeof(KyteFireFlys_Data);
 }
 
 // offset: 0x354 | func: 7 | export: 7
 s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
-    DLL716_Setup* objSetup;
-    DLL716_Data* objData;
+    KyteFireFlys_Setup* objSetup;
+    KyteFireFlys_Data* objData;
     s32 outValue;
     Object* firefly;
     Vec3f splineCoord;
     s16 gamebitID;
     u8 count;
 
-    objSetup = (DLL716_Setup*)self->setup;
+    objSetup = (KyteFireFlys_Setup*)self->setup;
     objData = self->data;
     
     outValue = 0;
@@ -146,7 +144,7 @@ s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
             gamebitID = objData->curve->type22.usedBit;
             if (gamebitID != NO_GAMEBIT) {
                 outValue = 0;
-                main_set_bits(gamebitID, 1);
+                main_set_bits(gamebitID, TRUE);
             }
             
             if (objData->fireflyCount != 0) {
