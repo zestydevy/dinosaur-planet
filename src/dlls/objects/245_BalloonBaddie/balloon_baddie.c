@@ -157,7 +157,7 @@ void BalloonBaddie_control(Object* self) {
             objdata->distToPlayer = VECTOR_MAGNITUDE(delta);
         }
         if (curveStruct) {
-            VECTOR_SUBTRACT(*((Vec3f*)&curveStruct->unk68), self->globalPosition, delta);
+            VECTOR_SUBTRACT(curveStruct->unk0.unk68, self->globalPosition, delta);
             objdata->distToCurve = VECTOR_MAGNITUDE(delta);
         }
         // start retreating
@@ -244,12 +244,12 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     UnkCurvesStruct* curveStruct;
 
     curveStruct = objdata->curveStruct;
-    if (((curves_func_800053B0(curveStruct, objdata->unk8) != 0) || (_bss_0 != curveStruct->unk10))
+    if (((curves_func_800053B0(&curveStruct->unk0, objdata->unk8) != 0) || (_bss_0 != curveStruct->unk0.unk10))
         && (gDLL_26_Curves->vtbl->func_4704(curveStruct) != 0)
         && (gDLL_26_Curves->vtbl->func_4288(objdata->curveStruct, self, 400.0f, (s32*) _data_0, -1) != 0)) {
         objdata->flags &= ~1;
     }
-    _bss_0 = curveStruct->unk10;
+    _bss_0 = curveStruct->unk0.unk10;
 
     objdata->theta[0] += (u16)(128.0f * gUpdateRateF);
     objdata->theta[1] += (u16)(256.0f * gUpdateRateF);
@@ -263,13 +263,13 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->velocity.y += ((objdata->player->srt.transl.y + 60.0f) - self->srt.transl.y) * 0.001f;
         self->velocity.z += (objdata->player->srt.transl.z - self->srt.transl.z) * 0.001f;
     } else if (objdata->flags & BALLOONBADDIE_RETREAT) {
-        self->velocity.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
-        self->velocity.y += (curveStruct->unk68.y - self->srt.transl.y) * 0.001f;
-        self->velocity.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
+        self->velocity.x += (curveStruct->unk0.unk68.x - self->srt.transl.x) * 0.001f;
+        self->velocity.y += (curveStruct->unk0.unk68.y - self->srt.transl.y) * 0.001f;
+        self->velocity.z += (curveStruct->unk0.unk68.z - self->srt.transl.z) * 0.001f;
     } else {
-        self->velocity.x += (curveStruct->unk68.x - self->srt.transl.x) * 0.001f;
-        self->velocity.y += (curveStruct->unk68.y + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
-        self->velocity.z += (curveStruct->unk68.z - self->srt.transl.z) * 0.001f;
+        self->velocity.x += (curveStruct->unk0.unk68.x - self->srt.transl.x) * 0.001f;
+        self->velocity.y += (curveStruct->unk0.unk68.y + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
+        self->velocity.z += (curveStruct->unk0.unk68.z - self->srt.transl.z) * 0.001f;
     }
 
     VECTOR_SCALE(self->velocity, 0.9f);

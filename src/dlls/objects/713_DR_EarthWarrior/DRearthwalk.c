@@ -381,24 +381,24 @@ static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
         objdata->movedata.unk4A9 |= 2;
         objdata->rideable = 0;
         sp28 = &objdata->unk870;
-        temp_fv0 = sp28->unk68.x - self->srt.transl.x;
-        temp_fa1 = sp28->unk68.z - self->srt.transl.z;
+        temp_fv0 = sp28->unk0.unk68.x - self->srt.transl.x;
+        temp_fa1 = sp28->unk0.unk68.z - self->srt.transl.z;
         sqrtf(SQ(temp_fv0) + SQ(temp_fa1));
         if ((objdata->unkA58 & 0x80) && ((gDLL_11_Newlfx->vtbl->func4.withTwoArgsF32Custom(&self->srt.transl, 128.0f) < 0.0f) || (temp_v1->stateFlags & 0x1000))) {
             sp4C = 0;
         }
-        temp_fv0 = sp28->unk68.x - temp_v1->srt.transl.x;
-        temp_fa1 = sp28->unk68.z - temp_v1->srt.transl.z;
+        temp_fv0 = sp28->unk0.unk68.x - temp_v1->srt.transl.x;
+        temp_fa1 = sp28->unk0.unk68.z - temp_v1->srt.transl.z;
         temp_fa1 = SQ(temp_fv0) + SQ(temp_fa1);
         if (sqrtf(temp_fa1) < 22.0f) {
             sp4C = 0;
         }
-        temp_fv0 = sp28->unk68.x - self->srt.transl.x;
-        temp_fa1 = sp28->unk68.z - self->srt.transl.z;
+        temp_fv0 = sp28->unk0.unk68.x - self->srt.transl.x;
+        temp_fa1 = sp28->unk0.unk68.z - self->srt.transl.z;
         temp_fa1 = SQ(temp_fv0) + SQ(temp_fa1);
         dist = sqrtf(temp_fa1);
         if ((dist < 50.0f) && (sp4C != 0)) {
-            if ((curves_func_800053B0(sp28, 0.9f) != 0) || (sp28->unk10 != 0)) {
+            if ((curves_func_800053B0(&sp28->unk0, 0.9f) != 0) || (sp28->unk0.unk10 != 0)) {
                 if (DRearthwalk_func_32EC(self, (u8) sp28->unkA0->unk18) != 0) {
                     if (gDLL_26_Curves->vtbl->func_4704(sp28) != 0) {
                         objdata->unkA58 &= ~0x140;
@@ -414,7 +414,7 @@ static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
         } else {
             sp30 = 11.0f;
         }
-        sp3A = arctan2_f(self->srt.transl.x - sp28->unk68.x, self->srt.transl.z - sp28->unk68.z) & 0xFFFF;
+        sp3A = arctan2_f(self->srt.transl.x - sp28->unk0.unk68.x, self->srt.transl.z - sp28->unk0.unk68.z) & 0xFFFF;
         objdata->fsa.xAnalogInput = -fsin16_precise(-sp3A) * sp30;
         objdata->fsa.yAnalogInput = -fcos16_precise(-sp3A) * sp30;
         objdata->fsa.unk324 = 0;

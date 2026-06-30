@@ -86,36 +86,27 @@ typedef struct {
 };
 } CurveSetup;
 
-// NOTE: If the size of this struct changes, SnowHorn_Data must also be adjusted!
+// size: 0x9C
 typedef struct {
-    /* 0000 */ f32 unk0;
-    /* 0004 */ f32 unk4; // curveProgress? (lerp t-value from 0 to 100?)
-    /* 0008 */ f32 unk8;
-    /* 000C */ f32 unkC;
-    /* 0010 */ s32 unk10;
-    /* 0014 */ f32 unk14[20];
-    /* 0064 */ f32 unk64;
-    /* 0068 */ Vec3f unk68; //lerp_result_x?
-    /* 0074 */ f32 unk74; //some x component
-    /* 0078 */ f32 unk78; //some y component
-    /* 007C */ f32 unk7C; //some z component
-    /* 0080 */ s32 unk80;
-    /* 0084 */ f32* unk84;
-    /* 0088 */ f32* unk88;
-    /* 008C */ f32* unk8C;
-    /* 0090 */ s32 numControlPoints;
-    /* 0094 */ SplineFunc splineFunc;
-    /* 0098 */ SplineConverterFunc splineConverterFunc;
-    CurveSetup *unk9C;
-    CurveSetup *unkA0;
-    CurveSetup *unkA4;
-    f32 unkA8[4];
-    f32 unkB8[4];
-    f32 unkC8[4];
-    f32 unkD8[4];
-    f32 unkE8[4];
-    f32 unkF8[4];
-} UnkCurvesStruct;
+/*00*/ f32 unk0;
+/*04*/ f32 unk4; // curveProgress? (lerp t-value from 0 to 100?)
+/*08*/ f32 unk8;
+/*0C*/ f32 unkC;
+/*10*/ s32 unk10;
+/*14*/ f32 unk14[20];
+/*64*/ f32 unk64;
+/*68*/ Vec3f unk68; //lerp_result_x?
+/*74*/ f32 unk74; //some x component
+/*78*/ f32 unk78; //some y component
+/*7C*/ f32 unk7C; //some z component
+/*80*/ s32 unk80;
+/*84*/ f32* unk84;
+/*88*/ f32* unk88;
+/*8C*/ f32* unk8C;
+/*90*/ s32 numControlPoints;
+/*94*/ SplineFunc splineFunc;
+/*98*/ SplineConverterFunc splineConverterFunc;
+} CurvesStruct;
 
 typedef struct Unk80006784 {
     f32 unk0[6];
@@ -138,11 +129,11 @@ void curves_catmull_rom_converter(f32* in, f32* out);
 f32 curves_linear(f32* s, f32 t, f32* rate);
 void curves_linear_converter(f32* in, f32* out);
 
-void curves_move(UnkCurvesStruct *arg0);
-void curves_setup_move_network_curve(UnkCurvesStruct *arg0);
+void curves_move(CurvesStruct *arg0);
+void curves_setup_move_network_curve(CurvesStruct *arg0);
 f32 curves_func_80006E04(Unk80006784 *, f32);
 f32 curves_func_80006CFC(Unk80006784 *, f32, f32);
-s32 curves_func_800053B0(UnkCurvesStruct* arg0, f32 arg1);
+s32 curves_func_800053B0(CurvesStruct* arg0, f32 arg1);
 void curves_func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, SplineConverterFunc arg7);
 
 #endif

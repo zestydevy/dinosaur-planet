@@ -1234,18 +1234,18 @@ static void dll_211_func_2C64(Object* self, DLL211_Data* objData) {
     s32 pad;
 
     if (objData->unk4C & 0x10) {
-        if (objData->unk3C8.unk80 == 0) {
-            if (objData->unk3C8.unk10 != 0) {
+        if (objData->unk3C8.unk0.unk80 == 0) {
+            if (objData->unk3C8.unk0.unk10 != 0) {
                 pad = gDLL_26_Curves->vtbl->func_438(objData->unk3C8.unkA4, 0);
                 gDLL_25->vtbl->func_21F4(&objData->unk3C8, gDLL_26_Curves->vtbl->func_39C(pad));
             }
-        } else if (objData->unk3C8.unk10 == 0) {
+        } else if (objData->unk3C8.unk0.unk10 == 0) {
             pad = gDLL_26_Curves->vtbl->func_590(objData->unk3C8.unkA4, 0);
             gDLL_25->vtbl->func_21F4(&objData->unk3C8, gDLL_26_Curves->vtbl->func_39C(pad));
         }
         dll_211_func_8ED0(objData->unk20, 0.8f, &objData->unk20);
         dll_211_func_8974(self, &objData->unk3C8, objData->unk20);
-        dll_211_func_8470(self, &objData->unk3C8.unk68);
+        dll_211_func_8470(self, &objData->unk3C8.unk0.unk68);
         if ((((s16*)objData->unk5E4)[0] != 0) && (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) != 0)) {
             dll_211_func_82B8(objData);
         }
@@ -1264,17 +1264,17 @@ static void dll_211_func_2C64(Object* self, DLL211_Data* objData) {
             if (vec3_distance_xz_squared(&self->globalPosition, &sp38->pos) > vec3_distance_xz_squared(&self->globalPosition, &sp34->pos)) {
                 sp40 = sp38;
                 var_a3 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp38, 0));
-                objData->unk3C8.unk80 = 0;
+                objData->unk3C8.unk0.unk80 = 0;
             } else {
                 sp40 = sp34;
                 var_a3 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_590(sp34, 0));
-                objData->unk3C8.unk80 = 1;
+                objData->unk3C8.unk0.unk80 = 1;
             }
             gDLL_25->vtbl->func_1D30(&objData->unk3C8, sp44, sp40, var_a3);
-            if (objData->unk3C8.unk80 != 0) {
-                curves_func_800053B0(&objData->unk3C8, -10.0f);
+            if (objData->unk3C8.unk0.unk80 != 0) {
+                curves_func_800053B0(&objData->unk3C8.unk0, -10.0f);
             } else {
-                curves_func_800053B0(&objData->unk3C8, -10.0f);
+                curves_func_800053B0(&objData->unk3C8.unk0, -10.0f);
             }
             ((f32*)&objData->unk5F0)[0] = 0.0f;
         }
@@ -2177,12 +2177,12 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         vec3_distance_xz_squared(&objData->unk3C0->pos, &self->srt.transl);
         if (vec3_distance_xz_squared(&objData->unk3C0->pos, &self->srt.transl) < 60.0f) {
             setup = objData->unk3C0;
-            objData->unk3C8.unk80 = objData->unk3C4;
+            objData->unk3C8.unk0.unk80 = objData->unk3C4;
             spA0 = dll_211_func_7A7C(objData, setup, spB8, objData->unk3C4);
             gDLL_25->vtbl->func_1D30(&objData->unk3C8, setup, spA0, dll_211_func_7A7C(objData, spA0, spB8, objData->unk3C4));
-            curves_func_800053B0(&objData->unk3C8, 0.1f);
+            curves_func_800053B0(&objData->unk3C8.unk0, 0.1f);
             dll_211_func_8974(self, &objData->unk3C8, objData->unk20);
-            dll_211_func_8470(self, &objData->unk3C8.unk68);
+            dll_211_func_8470(self, &objData->unk3C8.unk0.unk68);
             switch (setup->unk1A) {
             case 1:
                 dll_211_func_507C(self, objData);
@@ -2232,14 +2232,14 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         sp60[2] = 0;
         rotate_vec3(&sp60, sp74.f);
         if (sp74.z > 0.0f && objData->unk20 != 0.0f) {
-            if (!(objData->unk4C & 2) || (objData->unk64 != spB8) || (objData->unk68 != objData->unk2C) || (objData->unk66 != objData->unk3C8.unk80)) {
+            if (!(objData->unk4C & 2) || (objData->unk64 != spB8) || (objData->unk68 != objData->unk2C) || (objData->unk66 != objData->unk3C8.unk0.unk80)) {
                 objData->unk4C |= 2;
                 objData->unk4C &= ~4;
                 objData->unk64 = spB8;
                 objData->unk68 = objData->unk2C;
-                objData->unk66 = objData->unk3C8.unk80;
-                route_setup(objData->unk4DC, objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk80 ^ 1);
-                route_setup(&objData->unk4DC[1], objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk80);
+                objData->unk66 = objData->unk3C8.unk0.unk80;
+                route_setup(objData->unk4DC, objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80 ^ 1);
+                route_setup(&objData->unk4DC[1], objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80);
             }
             if (!(objData->unk4C & 4)) {
                 temp_v1_4 = route_find(&objData->unk4DC[1], 10);
@@ -2264,22 +2264,22 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
             }
             objData->unk50 -= gUpdateRateF;
             if (objData->unk50 <= 0.0f && objData->unk4C & 4) {
-                temp_s1_4 = objData->unk3C8.unk80 ^ 1;
+                temp_s1_4 = objData->unk3C8.unk0.unk80 ^ 1;
                 objData->unk50 = 120.0f;
                 if (!temp_s1_4) {
-                    curves_func_800053B0(&objData->unk3C8, 2.0f);
+                    curves_func_800053B0(&objData->unk3C8.unk0, 2.0f);
                 } else {
-                    curves_func_800053B0(&objData->unk3C8, -2.0f);
+                    curves_func_800053B0(&objData->unk3C8.unk0, -2.0f);
                 }
-                objData->unk3C8.unk80 = temp_s1_4;
+                objData->unk3C8.unk0.unk80 = temp_s1_4;
                 gDLL_25->vtbl->func_29FC(&objData->unk3C8);
             }
         } else {
             objData->unk50 = 120.0f;
             objData->unk4C &= ~2;
         }
-        if ((objData->unk3C8.unk80 == 0 && objData->unk3C8.unk10 != 0) || (objData->unk3C8.unk80 != 0 && objData->unk3C8.unk10 == 0)) {
-            setup2 = dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk80);
+        if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
+            setup2 = dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80);
             if (setup2 != NULL) {
                 dummy:
                 gDLL_25->vtbl->func_21F4(&objData->unk3C8, setup2);
@@ -2291,24 +2291,24 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
                     }
                 }
             } else {
-                if (objData->unk3C8.unk80 != 0) {
-                    curves_func_800053B0(&objData->unk3C8, 2.0f);
+                if (objData->unk3C8.unk0.unk80 != 0) {
+                    curves_func_800053B0(&objData->unk3C8.unk0, 2.0f);
                 } else {
-                    curves_func_800053B0(&objData->unk3C8, -2.0f);
+                    curves_func_800053B0(&objData->unk3C8.unk0, -2.0f);
                 }
                 objData->unk3C8.unk9C = (CurveSetup *)((s32)objData->unk3C8.unk9C ^ (s32)objData->unk3C8.unkA4);\
                 objData->unk3C8.unkA4 = (CurveSetup *)((s32)objData->unk3C8.unkA4 ^ (s32)objData->unk3C8.unk9C);\
                 objData->unk3C8.unk9C = (CurveSetup *)((s32)objData->unk3C8.unk9C ^ (s32)objData->unk3C8.unkA4);
             }
         } else {
-            setup2 = dll_211_func_7A7C(objData, objData->unk3C8.unkA0, spB8, objData->unk3C8.unk80);
+            setup2 = dll_211_func_7A7C(objData, objData->unk3C8.unkA0, spB8, objData->unk3C8.unk0.unk80);
             if (setup2 != objData->unk3C8.unkA4) {
                 dummy2:
                 gDLL_25->vtbl->func_27A8(&objData->unk3C8, setup2);
             }
         }
         dll_211_func_8974(self, &objData->unk3C8, objData->unk20);
-        dll_211_func_8470(self, &objData->unk3C8.unk68);
+        dll_211_func_8470(self, &objData->unk3C8.unk0.unk68);
         switch (var_v1 = objData->unk3C8.unkA0->unk1A) {
         case 1:
             objData->unk19 = 8;
@@ -2324,9 +2324,9 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
     case 8:
         dll_211_func_8ED0(sp84, 1.5f, &objData->unk20);
         dll_211_func_8974(self, &objData->unk3C8, objData->unk20);
-        dll_211_func_8470(self, &objData->unk3C8.unk68);
-        if ((objData->unk3C8.unk80 == 0 && objData->unk3C8.unk10 != 0) || (objData->unk3C8.unk80 != 0 && objData->unk3C8.unk10 == 0)) {
-            gDLL_25->vtbl->func_21F4(&objData->unk3C8, dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk80));
+        dll_211_func_8470(self, &objData->unk3C8.unk0.unk68);
+        if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
+            gDLL_25->vtbl->func_21F4(&objData->unk3C8, dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80));
             dll_211_func_507C(self, objData);
         }
         break;
@@ -2393,9 +2393,9 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
     case 11:
         dll_211_func_8ED0(sp84, 1.5f, &objData->unk20);
         dll_211_func_8974(self, &objData->unk3C8, objData->unk20);
-        dll_211_func_8470(self, &objData->unk3C8.unk68);
-        if ((objData->unk3C8.unk80 == 0 && objData->unk3C8.unk10 != 0) || (objData->unk3C8.unk80 != 0 && objData->unk3C8.unk10 == 0)) {
-            gDLL_25->vtbl->func_21F4(&objData->unk3C8, dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk80));
+        dll_211_func_8470(self, &objData->unk3C8.unk0.unk68);
+        if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
+            gDLL_25->vtbl->func_21F4(&objData->unk3C8, dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80));
             dll_211_func_514C(self, objData);
         }
         break;
@@ -2406,16 +2406,16 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         dll_211_func_87E4(self);
         if (self->animProgress >= 0.95f) {
             objData->unk20 = 0.375f;
-            dll_211_func_8470(self, &objData->unk3C8.unk68);
+            dll_211_func_8470(self, &objData->unk3C8.unk0.unk68);
             objData->unk19 = 7;
         }
         break;
     case 13:
         dll_211_func_8ED0(sp84, 1.5f, &objData->unk20);
         dll_211_func_8974(self, &objData->unk3C8, objData->unk20);
-        dll_211_func_8470(self, &objData->unk3C8.unk68);
-        if ((objData->unk3C8.unk80 == 0 && objData->unk3C8.unk10 != 0) || (objData->unk3C8.unk80 != 0 && objData->unk3C8.unk10 == 0)) {
-            gDLL_25->vtbl->func_21F4(&objData->unk3C8, dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk80));
+        dll_211_func_8470(self, &objData->unk3C8.unk0.unk68);
+        if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
+            gDLL_25->vtbl->func_21F4(&objData->unk3C8, dll_211_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80));
             dll_211_func_52B8(self, objData);
         }
         break;
@@ -2835,7 +2835,7 @@ static CurveSetup* dll_211_func_7DB8(DLL211_Data* objData, CurveSetup* arg1, voi
         }
     }
 
-    route_setup(&objData->unk59C, arg1, objData->unk2C, arg2, objData->unk3C8.unk80);
+    route_setup(&objData->unk59C, arg1, objData->unk2C, arg2, objData->unk3C8.unk0.unk80);
     if (route_find(&objData->unk59C, 500) != 1) {
         return NULL;
     }
@@ -3111,9 +3111,9 @@ static void dll_211_func_8974(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
     
     distanceSquared = (arg2 * gUpdateRateF) * 1.5f;
     square = distanceSquared * distanceSquared;
-    distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk68), &self->srt.transl);
+    distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk0.unk68), &self->srt.transl);
     
-    if (arg1->unk80 != 0){
+    if (arg1->unk0.unk80 != 0){
         var_fs0 = -2.0f;
     } else {
         var_fs0 = 2.0f;
@@ -3123,20 +3123,20 @@ static void dll_211_func_8974(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
         if (square < distanceSquared){
             break;
         }
-        curves_func_800053B0(arg1, var_fs0);
-        distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk68), &self->srt.transl);
+        curves_func_800053B0(&arg1->unk0, var_fs0);
+        distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk0.unk68), &self->srt.transl);
     }
 }
 
 // offset: 0x8A94 | func: 75
 static void dll_211_func_8A94(Object* self, UnkCurvesStruct* arg1) {
-    if (arg1->unk80 != 0) {
-        while (arg1->unk10 != 0) {
-            curves_func_800053B0(arg1, -2.0f);
+    if (arg1->unk0.unk80 != 0) {
+        while (arg1->unk0.unk10 != 0) {
+            curves_func_800053B0(&arg1->unk0, -2.0f);
         }
     } else{
-        while (arg1->unk10 == 0) {
-            curves_func_800053B0(arg1, 2.0f);
+        while (arg1->unk0.unk10 == 0) {
+            curves_func_800053B0(&arg1->unk0, 2.0f);
         }
     }
 }

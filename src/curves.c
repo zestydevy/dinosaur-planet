@@ -5,7 +5,7 @@
 
 #define ONE_OVER_SIX (1.0f / 6.0f)
 
-void curves_func_800065C0(UnkCurvesStruct *, s32);
+void curves_func_800065C0(CurvesStruct *, s32);
 
 f32 curves_b_spline(f32* s, f32 t, f32* rate) {
     f32 v[4];
@@ -116,7 +116,7 @@ void curves_linear_converter(f32* in, f32* out) {
 }
 
 // official name: curvesMove
-void curves_move(UnkCurvesStruct *arg0) {
+void curves_move(CurvesStruct *arg0) {
     if (arg0->numControlPoints < 4) {
         STUBBED_PRINTF("curvesMove: There must be at least four control points\n");
     }
@@ -171,7 +171,7 @@ void curves_move(UnkCurvesStruct *arg0) {
 }
 
 // official name: curvesSetupMoveNetworkCurve
-void curves_setup_move_network_curve(UnkCurvesStruct *arg0) {
+void curves_setup_move_network_curve(CurvesStruct *arg0) {
     if (arg0->numControlPoints < 4) {
         STUBBED_PRINTF("curvesSetupMoveNetworkCurve: There must be at least four control points\n");
     }
@@ -211,7 +211,7 @@ void curves_setup_move_network_curve(UnkCurvesStruct *arg0) {
     }
 }
 
-void curves_func_8000535C(UnkCurvesStruct *arg0) {
+void curves_func_8000535C(CurvesStruct *arg0) {
     if (arg0->unk80 != 0) {
         arg0->unk0 = 1.0f;
         arg0->unk4 = arg0->unk64;
@@ -225,7 +225,7 @@ void curves_func_8000535C(UnkCurvesStruct *arg0) {
     }
 }
 
-s32 curves_func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
+s32 curves_func_800053B0(CurvesStruct* arg0, f32 arg1) {
     f32 temp_fs1;
     s32 var_t0;
     f32 temp_fv0;
@@ -541,7 +541,7 @@ void curves_func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4,
     }
 }
 
-void curves_func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
+void curves_func_800065C0(CurvesStruct *arg0, s32 arg1) {
     f32 *phi_s4;
     f32 *phi_s5;
     f32 *phi_s6;
@@ -770,7 +770,7 @@ f32 curves_func_80006E04(Unk80006784* arg0, f32 arg1) {
     );
 }
 
-void curves_func_80006E58(UnkCurvesStruct* arg0, f32 arg1, f32 arg2, s32 arg3) {
+void curves_func_80006E58(CurvesStruct* arg0, f32 arg1, f32 arg2, s32 arg3) {
     f32 temp_fv0;
     f32 var_fa0;
     f32 var_fa1;

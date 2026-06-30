@@ -56,7 +56,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
 static void dll_210_func_7260(Object* player, Player_Data* arg1);
 static s32 dll_210_func_7300(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Player_Data490* arg3, Vec3f* arg4, f32 arg5);
 static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Vec3f* arg3, Player_Data430* arg4, s32 arg5);
-static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, UnkArg2* arg2);
+static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, Vec4f* arg2);
 static void dll_210_func_7CF8(ObjFSA_Data* fsa, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* player, ObjFSA_Data* fsa, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa, Player_Data3B4* arg3, f32 arg4, s32 arg5);
@@ -2964,11 +2964,11 @@ static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, Func_80059C40_St
 }
 
 // offset: 0x7B98 | func: 41
-static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, UnkArg2* arg2) {
-    arg2->unk0.x = arg1->unk1C.x;
-    arg2->unk0.y = arg1->unk1C.y;
-    arg2->unk0.z = arg1->unk1C.z;
-    arg2->unk0.w = arg1->unk1C.w;
+static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, Vec4f* arg2) {
+    arg2->x = arg1->unk1C.x;
+    arg2->y = arg1->unk1C.y;
+    arg2->z = arg1->unk1C.z;
+    arg2->w = arg1->unk1C.w;
 }
 
 // offset: 0x7BC4 | func: 42
@@ -7336,17 +7336,17 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         func_8002493C(player, fsa->unk278, &fsa->animTickDelta);
         // incorrect cast?
-        v0 = curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        v0 = curves_func_800053B0(&temp_s0->unk4E8, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
         if (v0 != 0) {
             func_80023D30(player, 0x40F, 0.0f, 0U);
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 1, 1, 0, NULL, 0, 0xFF);
         } else {
-            player->srt.transl.f[0] = temp_s0->unk550.f[0];
-            player->srt.transl.f[1] = temp_s0->unk550.f[1];
-            player->srt.transl.f[2] = temp_s0->unk550.f[2];
-            player->srt.yaw = arctan2_f(-temp_s0->unk55C.f[0], -temp_s0->unk55C.f[2]);
-            player->srt.pitch = arctan2_f(temp_s0->unk55C.f[1], sqrtf(SQ(temp_s0->unk55C.x) + SQ(temp_s0->unk55C.z)));
+            player->srt.transl.f[0] = temp_s0->unk4E8.unk68.f[0];
+            player->srt.transl.f[1] = temp_s0->unk4E8.unk68.f[1];
+            player->srt.transl.f[2] = temp_s0->unk4E8.unk68.f[2];
+            player->srt.yaw = arctan2_f(-temp_s0->unk4E8.unk74, -temp_s0->unk4E8.unk7C);
+            player->srt.pitch = arctan2_f(temp_s0->unk4E8.unk78, sqrtf(SQ(temp_s0->unk4E8.unk74) + SQ(temp_s0->unk4E8.unk7C)));
         }
         break;
     case 0x40F:
@@ -7359,13 +7359,13 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 0x40E:
         fsa->animTickDelta = 0.015f;
         gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 1);
-        curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        curves_func_800053B0(&temp_s0->unk4E8, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
-        player->srt.transl.f[0] = temp_s0->unk550.f[0];
-        player->srt.transl.f[1] = temp_s0->unk550.f[1];
-        player->srt.transl.f[2] = temp_s0->unk550.f[2];
-        player->srt.yaw = arctan2_f(temp_s0->unk4D8.unk0.x, temp_s0->unk4D8.unk0.z);
-        player->srt.pitch = arctan2_f(temp_s0->unk4D8.unk0.y, sqrtf(SQ(temp_s0->unk4D8.unk0.x) + SQ(temp_s0->unk4D8.unk0.z)));
+        player->srt.transl.f[0] = temp_s0->unk4E8.unk68.f[0];
+        player->srt.transl.f[1] = temp_s0->unk4E8.unk68.f[1];
+        player->srt.transl.f[2] = temp_s0->unk4E8.unk68.f[2];
+        player->srt.yaw = arctan2_f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
+        player->srt.pitch = arctan2_f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
         if (fsa->unk33A != 0) {
             func_80023D30(player, 0x40D, 0.0f, 0U);
         }
@@ -7378,16 +7378,16 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->srt.transl.f[0] = sp64->pos.x;
             player->srt.transl.f[1] = sp64->pos.y;
             player->srt.transl.f[2] = sp64->pos.z;
-            player->srt.yaw = arctan2_f(temp_s0->unk4D8.unk0.x, temp_s0->unk4D8.unk0.z);
-            player->srt.pitch = arctan2_f(temp_s0->unk4D8.unk0.y, sqrtf(SQ(temp_s0->unk4D8.unk0.x) + SQ(temp_s0->unk4D8.unk0.z)));
-            temp_s0->unk578 = gDLL_26_Curves->vtbl->func_E40(sp64, &temp_s0->unk584, &temp_s0->unk5D4, &temp_s0->unk624, NULL);
-            temp_s0->unk568 = 0;
-            temp_s0->unk56C = &temp_s0->unk584;
-            temp_s0->unk570 = &temp_s0->unk5D4;
-            temp_s0->unk574 = &temp_s0->unk624;
-            temp_s0->unk57C = curves_hermite;
-            temp_s0->unk580 = curves_hermite_converter;
-            curves_move((UnkCurvesStruct*)&temp_s0->unk4D8.unk10);
+            player->srt.yaw = arctan2_f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
+            player->srt.pitch = arctan2_f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
+            temp_s0->unk4E8.numControlPoints = gDLL_26_Curves->vtbl->func_E40(sp64, &temp_s0->unk584, &temp_s0->unk5D4, &temp_s0->unk624, NULL);
+            temp_s0->unk4E8.unk80 = 0;
+            temp_s0->unk4E8.unk84 = &temp_s0->unk584;
+            temp_s0->unk4E8.unk88 = &temp_s0->unk5D4;
+            temp_s0->unk4E8.unk8C = &temp_s0->unk624;
+            temp_s0->unk4E8.splineFunc = curves_hermite;
+            temp_s0->unk4E8.splineConverterFunc = curves_hermite_converter;
+            curves_move(&temp_s0->unk4E8);
         }
         func_80023D30(player, 0x40E, 0.0f, 0U);
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCANNON, 1, 0, 0, NULL, 40, 0xFF);

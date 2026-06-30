@@ -319,10 +319,10 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
     }
 
     if (baddie->unk3B2 & 8) {
-        temp_fs0 = sp54->unk68.x - self->srt.transl.x;
-        temp_fa1 = sp54->unk68.z - self->srt.transl.z;
+        temp_fs0 = sp54->unk0.unk68.x - self->srt.transl.x;
+        temp_fa1 = sp54->unk0.unk68.z - self->srt.transl.z;
         temp = 10.0f / sqrtf(SQ(temp_fs0) + SQ(temp_fa1));
-        if (((curves_func_800053B0(sp54, temp) != 0) || (sp54->unk10 != 0)) 
+        if (((curves_func_800053B0(&sp54->unk0, temp) != 0) || (sp54->unk0.unk10 != 0)) 
                 && (gDLL_26_Curves->vtbl->func_4704(sp54) != 0) 
                 && (gDLL_26_Curves->vtbl->func_4288(baddie->unk3F8, self, 500.0f, data_24, -1) != 0)) {
             baddie->unk3B2 &= ~8;
@@ -330,8 +330,8 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
             objdata->enteredState = 1;
             return 0;
         }
-        temp_fs0 = (sp54->unk68.x - self->srt.transl.x) * 0.02f;
-        temp_fa1 = (sp54->unk68.z - self->srt.transl.z) * 0.02f;
+        temp_fs0 = (sp54->unk0.unk68.x - self->srt.transl.x) * 0.02f;
+        temp_fa1 = (sp54->unk0.unk68.z - self->srt.transl.z) * 0.02f;
         if (temp_fs0 > 0.25f) {
             temp_fs0 = 0.25f;
         } else if (temp_fs0 < -0.25f) {

@@ -122,16 +122,16 @@ void dll_294_control(Object* self) {
                 var_fa1 = curvefishdata->unk11C;
             }
             curvefishdata->unk120 = (var_fa1 * 0.06f) / (curvefishdata->unk110 * 0.5f);
-            curves_func_800053B0(&curvefishdata->unk4, curvefishdata->unk11C);
-            if ((curvefishdata->unk4.unk10 != 0) && (gDLL_26_Curves->vtbl->func_4704(&curvefishdata->unk4) != 0)) {
+            curves_func_800053B0(&curvefishdata->unk4.unk0, curvefishdata->unk11C);
+            if ((curvefishdata->unk4.unk0.unk10 != 0) && (gDLL_26_Curves->vtbl->func_4704(&curvefishdata->unk4) != 0)) {
                 curvefishdata->unk10C = 0;
                 curvefishdata->unk124 = 0.0f;
                 self->objhitInfo->unk58 = 0x100;
                 self->opacity = 0;
             }
-            self->srt.transl.f[0] = curvefishdata->unk4.unk68.x;
-            self->srt.transl.f[2] = curvefishdata->unk4.unk68.z;
-            self->srt.yaw = arctan2_f(curvefishdata->unk4.unk74, curvefishdata->unk4.unk7C) + 0x4000;
+            self->srt.transl.f[0] = curvefishdata->unk4.unk0.unk68.x;
+            self->srt.transl.f[2] = curvefishdata->unk4.unk0.unk68.z;
+            self->srt.yaw = arctan2_f(curvefishdata->unk4.unk0.unk74, curvefishdata->unk4.unk0.unk7C) + 0x4000;
             switch (curvefishdata->unk10C) {
             case 0:
                 self->unkAF |= 8;
@@ -153,7 +153,7 @@ void dll_294_control(Object* self) {
                 }
                 break;
             case 2:
-                self->srt.transl.f[1] = curvefishdata->unk4.unk68.y + (f32) sp40->unk22;
+                self->srt.transl.f[1] = curvefishdata->unk4.unk0.unk68.y + (f32) sp40->unk22;
                 if ((f32) sp40->unk1C < curvefishdata->unk124) {
                     curvefishdata->unk10C = 3U;
                     func_80023D30(self, 2, 0.0f, 0U);
@@ -179,8 +179,8 @@ void dll_294_control(Object* self) {
                 break;
             case 5:
                 self->srt.transl.f[1] -= curvefishdata->unk118 * gUpdateRateF;
-                if (self->srt.transl.f[1] < curvefishdata->unk4.unk68.y + (f32) sp40->unk22) {
-                    self->srt.transl.f[1] = curvefishdata->unk4.unk68.y + (f32) sp40->unk22;
+                if (self->srt.transl.f[1] < curvefishdata->unk4.unk0.unk68.y + (f32) sp40->unk22) {
+                    self->srt.transl.f[1] = curvefishdata->unk4.unk0.unk68.y + (f32) sp40->unk22;
                     curvefishdata->unk10C = 2U;
                     curvefishdata->unk124 = 0.0f;
                     func_80023D30(self, 0, 0.0f, 0U);
