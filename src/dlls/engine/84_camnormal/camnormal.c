@@ -7,6 +7,7 @@
 #include "sys/memory.h"
 #include "sys/voxmap.h"
 #include "dll.h"
+#include "macros.h"
 
 // TODO: move
 typedef struct {
@@ -224,6 +225,7 @@ void dll_84_func_A8(CamControl_Data* camData, s32 arg1, CamNormal_Params* action
         bss_0->unk54 = bss_0->unk14;
         break;
     case 3:
+        STUBBED_PRINTF(" CUT CAM ");
         camData->fov = bss_0->unk70;
         camData->srt.transl.x = bss_0->unk74;
         camData->srt.transl.y = bss_0->unk78;
@@ -872,5 +874,3 @@ static void dll_84_func_2A5C(CamControl_Data* data, Object* obj) {
     data->srt.transl.y = p2[0].y;
     data->srt.transl.z = p2[0].z;
 }
-
-/*0x0*/ static const char str_0[] = " CUT CAM ";
