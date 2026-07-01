@@ -216,7 +216,7 @@ void dll_85_func_848(CamControl_Data* camData) {
     CamControl_Module* camnormal;
 
     if (bss_0->unk1B8 != 0) {
-        gDLL_2_Camera->vtbl->change_camera_module(0x54, 0, 1, 0, NULL, 0, 0xFFU);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
         return;
     }
     sp3C = camData->player;
@@ -237,7 +237,7 @@ void dll_85_func_848(CamControl_Data* camData) {
     dll_85_func_109C(camData, sp58, sp50);
     ((DLL_84_camnormal*)camnormal->dll)->vtbl->func5(camData, sp3C->srt.transl.y, sp4C);
     if (sp5F != 0) {
-        gDLL_2_Camera->vtbl->change_camera_module(0x54, 0, 1, 0, NULL, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
     }
     dll_85_func_B14(camData, sp3C);
 }

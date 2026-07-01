@@ -1,0 +1,16 @@
+.text = 0x0:
+dll_86_ctor = 0x0;
+dll_86_dtor = 0xC;
+dll_86_func_18 = 0x18;
+dll_86_func_4F8 = 0x4F8;
+dll_86_func_A04 = 0xA04;
+dll_86_func_A64 = 0xA64;
+dll_86_func_A74 = 0xA74;
+dll_86_func_D90 = 0xD90;
+dll_86_func_1008 = 0x1008;
+dll_86_func_1524 = 0x1524;
+
+.rodata = 0x165C:
+
+.bss = 0x16AC:
+bss_0 = 0x0; // absolute:0x16AC
