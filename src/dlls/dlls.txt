@@ -70,6 +70,7 @@
 214 = objects/214_animobj
 217 = objects/217_GuardClaw
 220 = objects/220_Chuka
+221 = objects/221_ChukaChuck
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
 226 = objects/226_tumbleweedbush
