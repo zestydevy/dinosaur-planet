@@ -4,13 +4,13 @@
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s16 gamebitOpened;
-/*1A*/ s16 gamebitB;
+/*1A*/ s16 gamebitDoorState;    //Restores the door's state during setup
 /*1C*/ s16 seqPreemptTime;
 /*1E*/ s8 seqIndex;
 /*1F*/ u8 yaw;
 /*20*/ u8 enabledActors;
 /*21*/ u8 scale;
-/*22*/ s16 gamebitLit;
+/*22*/ s16 gamebitLit;          //A point on the door's Krazoa symbol lights up when this gamebit is set (through pressing ancient switches around Discovery Falls)
 } DFSH_Door1Special_Setup;
 
 typedef struct {
@@ -20,11 +20,12 @@ typedef struct {
     u8 runControl;
 } DFSH_DoorSpecial_Data;
 
+//TODO: describe/document these:
 typedef enum {
-    DFSH_Door1Special_STATE_0, //TODO: describe/document these
+    DFSH_Door1Special_STATE_0_Closed,
     DFSH_Door1Special_STATE_1,
     DFSH_Door1Special_STATE_2,
-    DFSH_Door1Special_STATE_3
+    DFSH_Door1Special_STATE_3   //Open?
 } DFSH_DoorSpecial_States;
 
 typedef enum {
@@ -33,7 +34,7 @@ typedef enum {
     DFSH_DoorSpecial_GLOW_2_Pulse
 } DFSH_DoorSpecial_GlowStates;
 
-static int DFSH_Door1Special_anim_callback(Object* self, Object* arg1, AnimObj_Data* animData, s8 prevCallbackResult);
+static int DFSH_Door1Special_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackResult);
 
 // offset: 0x0 | ctor
 void DFSH_Door1Special_ctor(void *dll) { }
@@ -83,10 +84,10 @@ void DFSH_Door1Special_setup(Object* self, DFSH_Door1Special_Setup* objSetup, s3
     }
 
     //Restore state by gamebit
-    if (objSetup->gamebitB != NO_GAMEBIT) {
-        objData->state = main_get_bits(objSetup->gamebitB);
+    if (objSetup->gamebitDoorState != NO_GAMEBIT) {
+        objData->state = main_get_bits(objSetup->gamebitDoorState);
     } else {
-        objData->state = DFSH_Door1Special_STATE_0;
+        objData->state = DFSH_Door1Special_STATE_0_Closed;
     }
     
     objData->phase = 0;
@@ -145,7 +146,7 @@ u32 DFSH_Door1Special_get_data_size(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0x324 | func: 7
-int DFSH_Door1Special_anim_callback(Object* self, Object* arg1, AnimObj_Data* animData, s8 prevCallbackResult) {
+int DFSH_Door1Special_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackResult) {
     DFSH_DoorSpecial_Data* objData;
     DFSH_Door1Special_Setup* objSetup;
     TextureAnimator* texAnim;
@@ -185,7 +186,8 @@ int DFSH_Door1Special_anim_callback(Object* self, Object* arg1, AnimObj_Data* an
         break;
     }
     
-    if (objData->state == DFSH_Door1Special_STATE_0) {
+    //Door opening State Machine
+    if (objData->state == DFSH_Door1Special_STATE_0_Closed) {
         if (main_get_bits(objSetup->gamebitOpened)) {
             objData->state = DFSH_Door1Special_STATE_2;
         }
@@ -197,17 +199,17 @@ int DFSH_Door1Special_anim_callback(Object* self, Object* arg1, AnimObj_Data* an
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == 2) {
                 objData->state = DFSH_Door1Special_STATE_1;
-                if (objSetup->gamebitB != NO_GAMEBIT) {
-                    main_set_bits(objSetup->gamebitB, TRUE);
+                if (objSetup->gamebitDoorState != NO_GAMEBIT) {
+                    main_set_bits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_1);
                 }
             }
         }
     } else if (objData->state == DFSH_Door1Special_STATE_3) {
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == 1) {
-                objData->state = DFSH_Door1Special_STATE_0;
-                if (objSetup->gamebitB != 1) { //@bug?: should this be -1 (NO_GAMEBIT)?
-                    main_set_bits(objSetup->gamebitB, FALSE);
+                objData->state = DFSH_Door1Special_STATE_0_Closed;
+                if (objSetup->gamebitDoorState != 1) { //@bug?: should this be -1 (NO_GAMEBIT)?
+                    main_set_bits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_0_Closed);
                 }
             }
         }
