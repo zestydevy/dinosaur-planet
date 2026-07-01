@@ -10,11 +10,11 @@ WGTriffid_free = 0x730;
 WGTriffid_get_model_flags = 0x7D4;
 WGTriffid_get_data_size = 0x7E4;
 WGTriffid_create_pollen = 0x7F8;
-WGTriffid_fsa_astate_0 = 0xA20;
-WGTriffid_fsa_astate_1 = 0xB44;
-WGTriffid_fsa_astate_2 = 0xC60;
-WGTriffid_fsa_astate_3 = 0xD64;
-WGTriffid_fsa_lstate_0 = 0xEA0;
+WGTriffid_anim_state_0 = 0xA20;
+WGTriffid_anim_state_1 = 0xB44;
+WGTriffid_anim_state_2 = 0xC60;
+WGTriffid_anim_state_3 = 0xD64;
+WGTriffid_logic_state_0 = 0xEA0;
 
 .rodata = 0xF68:
 

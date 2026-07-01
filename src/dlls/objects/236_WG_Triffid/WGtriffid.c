@@ -11,12 +11,16 @@ typedef struct {
 } WGTriffid_Setup;
 
 typedef struct {
-    f32 unk0;
-    s8 _unk4;
-    u8 unk5;
-    u8 unk6;
-    u8 _unk7[0x404-0x07];
-} WGTriffid_Data; //404
+    f32 animSpeed;
+    s8 unk4;
+    u8 changedState;
+    u8 createdPollen;
+} WGTriffid_ActualData;
+
+typedef struct {
+/*000*/    Baddie baddie;
+/*3FC*/    WGTriffid_ActualData data;
+} WGTriffid_Data;
 
 typedef enum {
     WGTriffid_ASTATE_0,
@@ -38,20 +42,20 @@ typedef enum {
 /*0x10*/ static ObjFSA_StateCallback sLogicStates[sizeof(WGTriffid_FSA_LogicStates)];
 
 static void WGTriffid_fsa_state_setup(void);
-static s32 WGTriffid_fsa_astate_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_fsa_astate_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_fsa_astate_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_fsa_astate_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_fsa_lstate_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGTriffid_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGTriffid_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGTriffid_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
 void WGTriffid_fsa_state_setup(void) {
-    sAnimStates[WGTriffid_ASTATE_0] = WGTriffid_fsa_astate_0;
-    sAnimStates[WGTriffid_ASTATE_1] = WGTriffid_fsa_astate_1;
-    sAnimStates[WGTriffid_ASTATE_2] = WGTriffid_fsa_astate_2;
-    sAnimStates[WGTriffid_ASTATE_3] = WGTriffid_fsa_astate_3;
+    sAnimStates[WGTriffid_ASTATE_0] = WGTriffid_anim_state_0;
+    sAnimStates[WGTriffid_ASTATE_1] = WGTriffid_anim_state_1;
+    sAnimStates[WGTriffid_ASTATE_2] = WGTriffid_anim_state_2;
+    sAnimStates[WGTriffid_ASTATE_3] = WGTriffid_anim_state_3;
 
-    sLogicStates[WGTriffid_LSTATE_0] = WGTriffid_fsa_lstate_0;
+    sLogicStates[WGTriffid_LSTATE_0] = WGTriffid_logic_state_0;
 }
 // offset: 0x5C | ctor
 void WGTriffid_ctor(void* dll) {
@@ -64,7 +68,7 @@ void WGTriffid_dtor(void *dll) { }
 // offset: 0xA8 | func: 1 | export: 0
 void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
     s32 pad[2];
-    WGTriffid_Data* objData;
+    WGTriffid_ActualData* objData;
     Baddie* baddie;
     u8 flags;
 
@@ -84,8 +88,8 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
     
     objData = baddie->objdata;
     bzero(objData, 8);
-    objData->unk5 = TRUE;
-    objData->unk0 = 0.0f;
+    objData->changedState = TRUE;
+    objData->animSpeed = 0.0f;
     
     func_80023D30(self, 0, 0.5f, 0);
     
@@ -105,7 +109,7 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
 // offset: 0x1EC | func: 2 | export: 1
 void WGTriffid_control(Object* self) {
     /*0x1C*/ s16 dFXScales[] = { 0x0206, 0x0167, 0x0165, 0x00206};
-    WGTriffid_Data* objData;
+    WGTriffid_ActualData* objData;
     Baddie* baddie;
     WGTriffid_Setup* objSetup;
     Object* player;
@@ -138,7 +142,7 @@ void WGTriffid_control(Object* self) {
         return;
     }
     
-    func_80024108(self, objData->unk0, gUpdateRateF, NULL);
+    func_80024108(self, objData->animSpeed, gUpdateRateF, NULL);
     baddie->fsa.target = NULL;
     baddie->fsa.targetDist = 0.0f;
     
@@ -185,7 +189,7 @@ void WGTriffid_control(Object* self) {
     } else {
         if ((baddie->fsa.animState != WGTriffid_ASTATE_3) && (baddie->fsa.animState != WGTriffid_ASTATE_2)) {
             gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, WGTriffid_ASTATE_2);
-            objData->unk5 = TRUE;
+            objData->changedState = TRUE;
         }
     }
     
@@ -227,7 +231,7 @@ u32 WGTriffid_get_model_flags(Object* self) {
 }
 
 // offset: 0x7E4 | func: 7 | export: 6
-u32 WGTriffid_get_data_size(Object *self, u32 a1) {
+u32 WGTriffid_get_data_size(Object *self, u32 offsetAddr) {
     return sizeof(WGTriffid_Data);
 }
 
@@ -264,8 +268,8 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
 }
 
 // offset: 0xA20 | func: 9
-s32 WGTriffid_fsa_astate_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    WGTriffid_Data* objData;
+s32 WGTriffid_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    WGTriffid_ActualData* objData;
     Baddie* baddie;
 
     baddie = self->data;
@@ -273,9 +277,9 @@ s32 WGTriffid_fsa_astate_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     fsa->unk341 = 0;
 
-    if (objData->unk5) {
-        objData->unk5 = FALSE;
-        objData->unk0 = 0.0f;
+    if (objData->changedState) {
+        objData->changedState = FALSE;
+        objData->animSpeed = 0.0f;
         func_80023D30(self, 0, 0.5f, 0);
         func_8002674C(self);
     }
@@ -288,26 +292,26 @@ s32 WGTriffid_fsa_astate_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (fsa->target != NULL) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, WGTriffid_ASTATE_1);
-        objData->unk5 = TRUE;
+        objData->changedState = TRUE;
     }
 
     return 0;
 }
 
 // offset: 0xB44 | func: 10
-s32 WGTriffid_fsa_astate_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGTriffid_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    WGTriffid_Data* objData;
+    WGTriffid_ActualData* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
     
     fsa->unk341 = 1;
 
-    if (objData->unk5) {
-        objData->unk5 = FALSE;
-        objData->unk6 = 0;
-        objData->unk0 = 0.02f;
+    if (objData->changedState) {
+        objData->changedState = FALSE;
+        objData->createdPollen = FALSE;
+        objData->animSpeed = 0.02f;
         func_80023D30(self, 0, 0.5f, 0);
         func_8002674C(self);
     }
@@ -316,8 +320,9 @@ s32 WGTriffid_fsa_astate_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    if (objData->unk6 == 0) {
-        objData->unk6 = 1;
+
+    if (objData->createdPollen == FALSE) {
+        objData->createdPollen = TRUE;
         WGTriffid_create_pollen(self, baddie);
     }
     
@@ -325,9 +330,9 @@ s32 WGTriffid_fsa_astate_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0xC60 | func: 11
-s32 WGTriffid_fsa_astate_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    WGTriffid_Data* objData;
+    WGTriffid_ActualData* objData;
     void* sp20;
 
     baddie = self->data;
@@ -335,9 +340,9 @@ s32 WGTriffid_fsa_astate_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     fsa->unk341 = 0;
     
-    if (objData->unk5) {
-        objData->unk5 = FALSE;
-        objData->unk0 = 0.01f;
+    if (objData->changedState) {
+        objData->changedState = FALSE;
+        objData->animSpeed = 0.01f;
         func_80023D30(self, 0, 0.5f, 0);
         func_800267A4(self);
     }
@@ -346,24 +351,24 @@ s32 WGTriffid_fsa_astate_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if ((self->curModAnimId == 0) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, WGTriffid_ASTATE_3);
-        objData->unk5 = TRUE;
+        objData->changedState = TRUE;
     }
     
     return 0;
 }
 
 // offset: 0xD64 | func: 12
-s32 WGTriffid_fsa_astate_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    WGTriffid_Data* objData;
+    WGTriffid_ActualData* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
 
     fsa->unk341 = 0;
 
-    if (objData->unk5) {
-        objData->unk5 = FALSE;
+    if (objData->changedState) {
+        objData->changedState = FALSE;
         obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, 0xE0000, self);
         gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0);
         gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0);
@@ -386,7 +391,7 @@ s32 WGTriffid_fsa_astate_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0xEA0 | func: 13
-s32 WGTriffid_fsa_lstate_0(Object* arg0, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGTriffid_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 } 
 
