@@ -587,7 +587,7 @@ static s32 dll_243_anim_state_5(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
         gDLL_6_AMSFX->vtbl->play(self, SOUND_AA5_Heavy_Thwack, MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 1;
-        gDLL_33_BaddieControl->vtbl->func18(self, (s32) baddie->unk3E0, -1, 0);
+        gDLL_33_BaddieControl->vtbl->drop_collectable(self, (s32) baddie->unk3E0, -1, 0);
     }
     if (!(fsa->unk34A & 2) && (self->animProgress > 0.3f)) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);

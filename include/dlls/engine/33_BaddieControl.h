@@ -79,6 +79,19 @@ typedef struct {
 /*34*/ u16 unk34;
 } Baddie_Setup;
 
+typedef enum {
+    BaddieDrop_0,
+    BaddieDrop_1_MagicDust_Mid,
+    BaddieDrop_2_Energy_Gem,
+    BaddieDrop_3_Energy_Egg,
+    BaddieDrop_4_MagicDust_Mid, //objSetup->gamebitCollected assigned
+    BaddieDrop_5_Nearby_Collectable,
+    BaddieDrop_6_MagicDust_Small,
+    BaddieDrop_7_MagicDust_Mid,
+    BaddieDrop_8_MagicDust_Large,
+    BaddieDrop_9_MagicDust_Huge
+} BaddieDrop_IDs;
+
 // Note: Not all baddies implement this?
 DLL_INTERFACE(DLL_IBaddie) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
@@ -106,7 +119,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*15*/ void (*free)(Object* arg0, Baddie* baddie, u8 arg2);
 /*16*/ s32 (*func16)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
 /*17*/ Object *(*func17)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
-/*18*/ Object *(*func18)(Object* arg0, s32 arg1, s32 arg2, u8 arg3);
+/*18*/ Object *(*drop_collectable)(Object* obj, BaddieDrop_IDs droppedItemIdx, s32 gamebitID, u8 arg3);
 /*19*/ s32 (*check_hit)(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT); // Returns hit type
 /*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7);
 /*21*/ void (*setup)(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7);

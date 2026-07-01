@@ -370,7 +370,7 @@ s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (objData->changedState) {
         objData->changedState = FALSE;
         obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, 0xE0000, self);
-        gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0);
+        gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0);
         gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0);
         baddie->unk3B4 = 0;
     }

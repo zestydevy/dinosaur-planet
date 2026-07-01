@@ -482,7 +482,7 @@ static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 upd
         }
         modgfx = dll_load_deferred(DLL_ID_107, 1);
         objdata->enteredState = 0;
-        gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0);
+        gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0);
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);
