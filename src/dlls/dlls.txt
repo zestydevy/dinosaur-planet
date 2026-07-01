@@ -46,6 +46,7 @@
 84 = engine/84_camnormal
 85 = engine/85_attentioncam
 86 = engine/86_cam1stperson
+87 = engine/87_camslide
 92 = engine/92_camclimb
 94 = engine/94_camtalk1
 98 = engine/98_camcannon

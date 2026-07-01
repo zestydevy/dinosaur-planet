@@ -361,8 +361,8 @@ void dll_86_func_1008(CamControl_Data* arg0) {
     spE8 = fcos16_precise(player->srt.yaw);
     temp_fv0 = sqrtf(SQ(bss_0->unk0) - SQ(bss_0->unk4));
     bss_0->unk10[1] = player->globalPosition.x + (spEC * temp_fv0);
-    bss_0->unk20[1] = player->globalPosition.f[1] + bss_0->unk114 + bss_0->unk4;
-    bss_0->unk30[1] = player->globalPosition.f[2] + (spE8 * temp_fv0);
+    bss_0->unk20[1] = player->globalPosition.y + bss_0->unk114 + bss_0->unk4;
+    bss_0->unk30[1] = player->globalPosition.z + (spE8 * temp_fv0);
     spF8 = bss_0->unk10[1] - bss_0->unk10[0];
     temp_ft4 = bss_0->unk20[1] - bss_0->unk20[0];
     spF0 = bss_0->unk30[1] - bss_0->unk30[0];
