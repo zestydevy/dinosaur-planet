@@ -1,7 +1,7 @@
 #include "common.h"
 
 typedef struct {
-    f32 yOffset;
+    f32 zoom;
 } BSS0;
 
 /*0x0*/ static BSS0* bss_0;
@@ -15,7 +15,7 @@ void dll_88_dtor(void* dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void dll_88_func_18(CamControl_Data* camData, s32 arg1, void* action) {
     bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
-    bss_0->yOffset = 50.0f;
+    bss_0->zoom = 50.0f;
 }
 
 // offset: 0x78 | func: 1 | export: 1
@@ -39,16 +39,16 @@ void dll_88_func_78(CamControl_Data* camData) {
         return;
     }
     if (sp56 & U_JPAD) {
-        bss_0->yOffset -= 8.0f;
+        bss_0->zoom -= 8.0f;
     }
     if (sp56 & D_JPAD) {
-        bss_0->yOffset += 8.0f;
+        bss_0->zoom += 8.0f;
     }
-    if (bss_0->yOffset < 20.0f) {
-        bss_0->yOffset = 20.0f;
+    if (bss_0->zoom < 20.0f) {
+        bss_0->zoom = 20.0f;
     }
-    if (bss_0->yOffset > 2000.0f) {
-        bss_0->yOffset = 2000.0f;
+    if (bss_0->zoom > 2000.0f) {
+        bss_0->zoom = 2000.0f;
     }
     temp_fa1 = 0; // @fake
     var_v0 = 0;
@@ -71,8 +71,8 @@ void dll_88_func_78(CamControl_Data* camData) {
     sp3C = fcos16_precise((s16) (camData->srt.yaw - 0x4000));
     sp38 = fcos16_precise(camData->srt.pitch);
     temp_ft4 = fsin16_precise(camData->srt.pitch);
-    temp_ft4 = temp_ft4 * bss_0->yOffset;
-    temp_fv1 = bss_0->yOffset * sp38;
+    temp_ft4 = temp_ft4 * bss_0->zoom;
+    temp_fv1 = bss_0->zoom * sp38;
     temp_fa1 = temp_fv1 * sp3C;
     temp_fv1 *= sp40;
     camData->srt.transl.x = sp30->globalPosition.x + (temp_fa1);
