@@ -6,6 +6,22 @@
 #include "dlls/objects/260_Pollen.h"
 
 typedef struct {
+    ObjSetup base;
+    s16 unk18;
+    s16 unk1A;
+    s16 unk1C;
+    s16 unk1E;
+    s16 unk20;
+    s16 unk22;
+    s16 unk24;
+    s16 unk26;
+    s16 unk28;
+    s16 unk2A;
+    s16 unk2C;
+    s8 unk2E;
+} DLL236_Setup;
+
+typedef struct {
     f32 unk0;
     s8 _unk4;
     u8 unk5;
@@ -13,12 +29,19 @@ typedef struct {
     u8 _unk7[0x404-0x07];
 } DLL236_Data; //404
 
-/*0x0*/ static u32 _data_0[] = {
-    0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffff0000
+/*0x0*/ static s8 _data_0[] = {
+    0xff, 0xff, 0xff, 0xff, 
+    0xff, 0xff, 0xff, 0xff, 
+    0xff, 0xff, 0xff, 0xff, 
+    0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 
+    0xff, 0xff, 0x00, 0x00
 };
-/*0x1C*/ static u32 _data_1C[] = {
-    0x02060167, 0x01650206, 0x00000000, 0x00000000, 0x00000000
-};
+
+// /*0x1C*/ static u32 _data_1C[] = {
+//     0x02060167, 0x01650206, 0x00000000, 0x00000000, 0x00000000
+// };
 
 /*0x0*/ static ObjFSA_StateCallback _bss_0[4];
 /*0x10*/ static ObjFSA_StateCallback _bss_10[1];
@@ -87,8 +110,98 @@ void dll_236_setup(Object* self, Baddie_Setup* arg1, s32 reset) {
 }
 
 // offset: 0x1EC | func: 2 | export: 1
-void dll_236_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/236_WG_Triffid/dll_236_control.s")
+void dll_236_control(Object* self) {
+    /*0x1C*/ s16 _data_1C[] = { 0x0206, 0x0167, 0x0165, 0x00206};
+    DLL236_Data* objData;
+    Baddie* baddie;
+    DLL236_Setup* objSetup;
+    Object* player;
+    Object* weapon;
+    Vec3f d;
+    SRT fxTransform;
+    s32 scaleIdx;
+    f32 distance;
+    s32 i;
+    
+    baddie = self->data;
+    objSetup = (DLL236_Setup*)self->setup;
+    objData = baddie->objdata;
+    player = get_player();
+    
+    if (self->unkDC) {
+        return;
+    }
+    
+    if (self->unkE0 == 0) {
+        self->srt.transl.f[0] = objSetup->base.x;
+        self->srt.transl.f[1] = objSetup->base.y;
+        self->srt.transl.f[2] = objSetup->base.z;
+        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->unk2E, self, -1);
+        self->unkE0 = 1;
+        return;
+    }
+    
+    if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 0) == 0) {
+        return;
+    }
+    
+    func_80024108(self, objData->unk0, gUpdateRateF, NULL);
+    baddie->fsa.target = NULL;
+    baddie->fsa.targetDist = 0.0f;
+    
+    if (player != NULL) {
+        if ((baddie->fsa.animState != 2) && (baddie->fsa.animState != 3)) {
+            d.f[0] = player->globalPosition.f[0] - self->globalPosition.f[0];
+            d.f[1] = player->globalPosition.f[1] - self->globalPosition.f[1];
+            d.f[2] = player->globalPosition.f[2] - self->globalPosition.f[2];
+            distance = sqrtf(SQ(d.f[0]) + SQ(d.f[1]) + SQ(d.f[2]));
+            
+            if (distance < baddie->unk3E2) {
+                baddie->fsa.target = player;
+                baddie->fsa.targetDist = distance;
+            }
+        }
+    }
+    
+    if ((baddie->unk3B0 & 0x20) == FALSE) {
+        gDLL_33_BaddieControl->vtbl->func14(self, baddie, &baddie->unk3B2, -1, -1, baddie->unk3A6, baddie->unk3A4);
+    }
+
+    gDLL_33_BaddieControl->vtbl->func20(self, &baddie->fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 0);
+    
+    if (baddie->fsa.hitpoints > 0) {
+        if (gDLL_33_BaddieControl->vtbl->check_hit(self, &baddie->fsa, &baddie->unk34C, baddie->unk39E, NULL, _data_0, 0, &baddie->unk3A8, &fxTransform)) {
+            weapon = player->linkedObject;
+            scaleIdx = ((DLL_Unknown*)weapon->dll)->vtbl->func[19].withOneArgS32(weapon);
+            if (scaleIdx > 3) {
+                scaleIdx = 3;
+            }
+            
+            fxTransform.scale = _data_1C[scaleIdx];
+            gDLL_17_partfx->vtbl->spawn(self, 0x323, &fxTransform, 0x200001, -1, NULL);
+            fxTransform.transl.f[0] -= self->srt.transl.f[0];
+            fxTransform.transl.f[1] -= self->srt.transl.f[1];
+            fxTransform.transl.f[2] -= self->srt.transl.f[2];
+            fxTransform.scale = _data_1C[scaleIdx];
+            
+            i = 4;
+            while (i--) {
+                gDLL_17_partfx->vtbl->spawn(self, 0x324, &fxTransform, 2, -1, NULL);   
+            }
+        }
+    } else {
+        if ((baddie->fsa.animState != 3) && (baddie->fsa.animState != 2)) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, 2);
+            objData->unk5 = 1;
+        }
+    }
+    
+    gDLL_33_BaddieControl->vtbl->func10(self, &baddie->fsa, 0.0f, -1);
+    baddie->unk3AC = self->animObj;
+    self->animObj = NULL;
+    gDLL_18_objfsa->vtbl->tick(self, &baddie->fsa, gUpdateRateF, gUpdateRateF, _bss_0, _bss_10);
+    self->animObj = baddie->unk3AC;
+}
 
 // offset: 0x6C4 | func: 3 | export: 2
 void dll_236_update(Object *self) { }
@@ -111,6 +224,7 @@ void dll_236_free(Object* self, s32 a1) {
         obj_destroy_object(self->linkedObject);
         self->linkedObject = NULL;
     }
+    
     gDLL_33_BaddieControl->vtbl->free(self, objData, 0x20);
 }
 
