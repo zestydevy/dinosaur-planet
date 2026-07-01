@@ -69,9 +69,9 @@ typedef struct {
 /*28*/ s8 unk28;
 /*29*/ u8 unk29;
 /*2A*/ s8 unk2A;
-/*2B*/ u8 unk2B;
+/*2B*/ u8 unk2B; //flags?
 /*2C*/ s16 unk2C;
-/*2E*/ s8 unk2E;
+/*2E*/ s8 unk2E; //objSeqID, played when lifetime expires?
 /*2F*/ u8 unk2F;
 /*30*/ s16 unk30;
 /*32*/ u8 quarterHitpoints; // HP / 4
