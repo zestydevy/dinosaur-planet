@@ -8,7 +8,7 @@ Chuka_print = 0x67C;
 Chuka_free = 0x6D0;
 Chuka_get_model_flags = 0x6E0;
 Chuka_get_data_size = 0x6F0;
-Chuka_play_sound = 0x704;
+Chuka_receive_message = 0x704;
 Chuka_chuck = 0x778;
 Chuka_die = 0x8A4;
 

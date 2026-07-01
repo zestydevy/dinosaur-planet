@@ -1,15 +1,15 @@
 .text = 0x0:
-dll_221_ctor = 0x0;
-dll_221_dtor = 0xC;
-dll_221_setup = 0x18;
-dll_221_control = 0xA0;
-dll_221_update = 0x2D4;
-dll_221_print = 0x2E0;
-dll_221_free = 0x334;
-dll_221_get_model_flags = 0x374;
-dll_221_get_data_size = 0x384;
-dll_221_func_398 = 0x398;
-dll_221_func_620 = 0x620;
-dll_221_func_77C = 0x77C;
+ChukaChuck_ctor = 0x0;
+ChukaChuck_dtor = 0xC;
+ChukaChuck_setup = 0x18;
+ChukaChuck_control = 0xA0;
+ChukaChuck_update = 0x2D4;
+ChukaChuck_print = 0x2E0;
+ChukaChuck_free = 0x334;
+ChukaChuck_get_model_flags = 0x374;
+ChukaChuck_get_data_size = 0x384;
+ChukaChuck_handle_player_or_sidekick_collision = 0x398;
+ChukaChuck_handle_terrain_collision = 0x620;
+ChukaChuck_does_parent_exist = 0x77C;
 
 .rodata = 0x898:

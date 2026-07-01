@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_221_ctor
-.dword dll_221_dtor
+.dword ChukaChuck_ctor
+.dword ChukaChuck_dtor
 
 # export table
-/*0*/ .dword dll_221_setup
-/*1*/ .dword dll_221_control
-/*2*/ .dword dll_221_update
-/*3*/ .dword dll_221_print
-/*4*/ .dword dll_221_free
-/*5*/ .dword dll_221_get_model_flags
-/*6*/ .dword dll_221_get_data_size
+/*0*/ .dword ChukaChuck_setup
+/*1*/ .dword ChukaChuck_control
+/*2*/ .dword ChukaChuck_update
+/*3*/ .dword ChukaChuck_print
+/*4*/ .dword ChukaChuck_free
+/*5*/ .dword ChukaChuck_get_model_flags
+/*6*/ .dword ChukaChuck_get_data_size

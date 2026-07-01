@@ -1,7 +1,10 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/220_Chuka.h"
+#include "dlls/objects/221_ChukaChuck.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "macros.h"
 #include "sys/math.h"
 
 typedef struct {
@@ -57,14 +60,14 @@ static u8 dBlinkFrames[16] = {
 
 typedef struct {
     u32 idle;
-    u32 unk;
+    u32 attackLanded;
     u32 attack;
     u32 die;
 } ChukaSoundIDs;
 
 static ChukaSoundIDs dSoundIDs = {
     SOUND_491, 
-    SOUND_492, //not referenced, but the same soundID is used by `Chuka_play_sound` 
+    SOUND_492, //not referenced, but the same soundID is used by `Chuka_receive_message` 
     SOUND_493, 
     SOUND_4B1
 }; 
@@ -220,10 +223,16 @@ u32 Chuka_get_data_size(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0x704 | func: 7 | export: 7
-void Chuka_play_sound(Object* self, u8 arg1) {
-    if (arg1 == 0x80) {
+/**
+  * Called when the Chuka's projectile (ChukaChuck) successfully hits the player or the sidekick.
+  */
+void Chuka_receive_message(Object* self, u8 message) {
+    if (message == 0x80) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
+        return;
     }
+
+    STUBBED_PRINTF("BADDIE:Chuka Unknown message [%d]\n", message);
 }
 
 // offset: 0x778 | func: 8
@@ -232,19 +241,19 @@ void Chuka_play_sound(Object* self, u8 arg1) {
   */
 static void Chuka_chuck(Object* self) {
     Chuka_Data* objData;
-    ObjSetup* chuckSetup;
+    ChukaChuck_Setup* chuckSetup;
     Object* chuck;
     Object* player;
 
     objData = self->data;
-    chuckSetup = obj_alloc_setup(0x24, OBJ_ChukaChuck); //TODO: use ChukaChuck_Setup
-    chuckSetup->x = self->srt.transl.x;
-    chuckSetup->y = self->srt.transl.y;
-    chuckSetup->z = self->srt.transl.z;
-    chuckSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
-    chuckSetup->fadeFlags = OBJSETUP_FADE_CAMERA;
-    chuckSetup->fadeDistance = 0xFF;
-    chuck = obj_create(chuckSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);;
+    chuckSetup = obj_alloc_setup(sizeof(ChukaChuck_Setup), OBJ_ChukaChuck);
+    chuckSetup->base.x = self->srt.transl.x;
+    chuckSetup->base.y = self->srt.transl.y;
+    chuckSetup->base.z = self->srt.transl.z;
+    chuckSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    chuckSetup->base.fadeFlags = OBJSETUP_FADE_CAMERA;
+    chuckSetup->base.fadeDistance = 0xFF;
+    chuck = obj_create(&chuckSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);;
     if (chuck != NULL) {
         player = get_player();
         chuck->velocity.x = (player->srt.transl.x - self->srt.transl.x) / CHUCK_DURATION;
@@ -260,9 +269,3 @@ static void Chuka_die(Object* self, Chuka_Data* objData) {
     self->srt.flags |= OBJFLAG_INVISIBLE;
     objData->flags |= Chuka_FLAG_2_Dead;
 }
-
-
-/*0x0*/ static const char str_0[] = "BADDIE:Chuka Unknown message [%d]\n";
-/*0x24*/ static const char str_24[] = "";
-/*0x28*/ static const char str_28[] = "";
-/*0x2C*/ static const char str_2C[] = "";
