@@ -142,7 +142,7 @@ enum Anim6CodeEventType {
     ANIM_CODE_EVT_6_16 = 16,
     ANIM_CODE_EVT_6_TOGGLE_LETTERBOX = 18,
     ANIM_CODE_EVT_6_ENABLE_LETTERBOX = 19,
-    ANIM_CODE_EVT_6_STATIC_CAMERA = 20,
+    ANIM_CODE_EVT_6_PATH_CAMERA = 20,
     ANIM_CODE_EVT_6_SET_MODEL = 23,
     ANIM_CODE_EVT_6_24 = 24,
     ANIM_CODE_EVT_6_25 = 25,
@@ -2733,8 +2733,8 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
             gDLL_28_ScreenFade->vtbl->fade_reversed(sp54, SCREEN_FADE_BLACK);
         }
         break;
-    case ANIM_CODE_EVT_6_STATIC_CAMERA:
-        anim_set_camera_module(DLL_ID_CAMSTATIC, sp54 & 0x7F, 1, 0x78);
+    case ANIM_CODE_EVT_6_PATH_CAMERA:
+        anim_set_camera_module(DLL_ID_CAMPATH, sp54 & 0x7F, 1, 0x78);
         break;
     case ANIM_CODE_EVT_6_SET_MODEL:
         if (arg4 != 0) {
@@ -3103,10 +3103,10 @@ void anim_update_camera(void) {
         }
     } else if (_bss_8B != 0) {
         switch (sCameraModule) {
-        case DLL_ID_CAMSTATIC:
+        case DLL_ID_CAMPATH:
             sp4C.unk0 = _bss_90;
             sp4C.unk4 = (s8) _bss_94;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSTATIC, 1, 3, sizeof(sp4C), &sp4C, _bss_98, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMPATH, 1, 3, sizeof(sp4C), &sp4C, _bss_98, 0xFF);
             dummy_label_1: ; // @fake
             break;
         case DLL_ID_CAMLOCKON:

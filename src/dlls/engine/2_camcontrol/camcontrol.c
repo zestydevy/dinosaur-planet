@@ -323,10 +323,10 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
         actionLockOn.unk4 = params & 0x80; //store uppermost bit
         CamControl_change_camera_module(DLL_ID_CAMLOCKON, 1, 0, sizeof(Unk_DLL2_Func888), &actionLockOn, 120, 0xFF);
         break;
-    case Camera_MODE_2_Static:
+    case Camera_MODE_2_Path:
         actionStatic.unk0 = params & 0x7F; //extract lower bits
         actionStatic.unk4 = params & 0x80; //store uppermost bit
-        CamControl_change_camera_module(DLL_ID_CAMSTATIC, 1, 0, sizeof(Unk_DLL2_Func888), &actionStatic, 120, 0xFF);
+        CamControl_change_camera_module(DLL_ID_CAMPATH, 1, 0, sizeof(Unk_DLL2_Func888), &actionStatic, 120, 0xFF);
         break;
     case Camera_MODE_3_Normal:
         CamControl_change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 120, 0xFF);

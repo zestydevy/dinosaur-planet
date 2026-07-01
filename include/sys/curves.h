@@ -83,6 +83,17 @@ typedef struct {
         /*33*/ u8 unk33;
         /*34*/ u8 unk34;
     } unk;
+    struct {
+        /*30*/ u8 unk30;
+        /*31*/ u8 unk31;
+        /*32*/ u8 unk32;
+        /*33*/ u8 unk33;
+        /*34*/ s16 unk34;
+        /*36*/ s16 unk36;
+        /*38*/ s16 unk38;
+        /*3A*/ s8 unk3A;
+        /*3B*/ u8 unk3B;
+    } campath;
 };
 } CurveSetup;
 

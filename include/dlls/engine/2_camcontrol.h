@@ -12,7 +12,7 @@
 typedef enum {
     Camera_MODE_0_CameraAction = 0,
     Camera_MODE_1_Lock_On = 1,
-    Camera_MODE_2_Static = 2,
+    Camera_MODE_2_Path = 2,
     Camera_MODE_3_Normal = 3,
     Camera_MODE_4_Module = 4
 } CameraModes;

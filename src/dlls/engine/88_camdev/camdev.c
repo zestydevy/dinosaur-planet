@@ -1,4 +1,8 @@
-#include "common.h"
+#include "dlls/engine/2_camcontrol.h"
+#include "sys/joypad.h"
+#include "sys/main.h"
+#include "sys/memory.h"
+#include "dll.h"
 
 typedef struct {
     f32 zoom;
@@ -14,7 +18,7 @@ void dll_88_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_88_func_18(CamControl_Data* camData, s32 arg1, void* action) {
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
+    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camdev"));
     bss_0->zoom = 50.0f;
 }
 
