@@ -1,4 +1,6 @@
 #include "PR/ultratypes.h"
+#include "dlls/engine/89_campath.h"
+#include "dlls/engine/90_camstatic.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -245,7 +247,7 @@ typedef struct {
 typedef struct {
     Vec3f coord; 
     s8 unkC;
-} CameraFunc15Unk_unk74; //Related to CameraAction and Unk_DLL2_Func888? TO-DO: figure out
+} CameraFunc15Unk_unk74;
 
 typedef struct {
     Object *obj;
@@ -3046,8 +3048,8 @@ void anim_update_camera(void) {
     s16 sp176;
     CamControl_Data* temp_v0;
     CamControl_Data sp54;
-    Unk_DLL2_Func888 sp4C;
-    Unk_DLL2_Func888 sp44;
+    CamPath_Params sp4C;
+    CamStatic_Params sp44;
     DLL_86_CamAction sp38;
 
     if (_bss_6FC != NULL) {
@@ -3105,16 +3107,16 @@ void anim_update_camera(void) {
         switch (sCameraModule) {
         case DLL_ID_CAMPATH:
             sp4C.unk0 = _bss_90;
-            sp4C.unk4 = (s8) _bss_94;
+            sp4C.unk4 = _bss_94;
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMPATH, 1, 3, sizeof(sp4C), &sp4C, _bss_98, 0xFF);
             dummy_label_1: ; // @fake
             break;
-        case DLL_ID_CAMLOCKON:
+        case DLL_ID_CAMSTATIC:
             sp44.unk0 = _bss_90;
             if (_bss_98 == 0) {
                 sp44.unk4 = 1;
             }
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 3, sizeof(sp44), &sp44, _bss_98, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSTATIC, 1, 3, sizeof(sp44), &sp44, _bss_98, 0xFF);
             dummy_label_2: ; // @fake
             break;
         case DLL_ID_CAMCLIMB:

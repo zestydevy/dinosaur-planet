@@ -11,7 +11,7 @@
 
 typedef enum {
     Camera_MODE_0_CameraAction = 0,
-    Camera_MODE_1_Lock_On = 1,
+    Camera_MODE_1_Static = 1,
     Camera_MODE_2_Path = 2,
     Camera_MODE_3_Normal = 3,
     Camera_MODE_4_Module = 4
@@ -88,11 +88,6 @@ typedef struct {
 	s8 unkE; //pad?
 	s8 unkF; //pad?
 } CameraAction;
-
-typedef struct {
-    s32 unk0;
-    s8 unk4;
-} Unk_DLL2_Func888;  //Used in similar situations as CameraAction, but has different shorter structure (CameraFunc15Unk_unk74 seems related to all this, too!)
 
 typedef struct {
     f32 unk0;

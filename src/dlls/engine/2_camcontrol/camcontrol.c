@@ -1,4 +1,6 @@
 #include "common.h"
+#include "dlls/engine/89_campath.h"
+#include "dlls/engine/90_camstatic.h"
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
 #include "sys/dll.h"
@@ -312,21 +314,21 @@ CameraAction* CamControl_get_camera_action(s32 actionIndex) {
 
 // offset: 0x888 | func: 10 | export: 8
 void CamControl_change_mode(u32 cameraMode, s32 params) {
-    Unk_DLL2_Func888 actionLockOn; //TO-DO: figure out what this is/how to handle it (different struct from CameraAction? 8 bytes long)
-    Unk_DLL2_Func888 actionStatic;
+    CamStatic_Params staticCam;
+    CamPath_Params pathCam;
     CameraAction* camAction;
     s32 pad[2];
     
     switch (cameraMode) {
-    case Camera_MODE_1_Lock_On:
-        actionLockOn.unk0 = params & 0x7F; //extract lower bits
-        actionLockOn.unk4 = params & 0x80; //store uppermost bit
-        CamControl_change_camera_module(DLL_ID_CAMLOCKON, 1, 0, sizeof(Unk_DLL2_Func888), &actionLockOn, 120, 0xFF);
+    case Camera_MODE_1_Static:
+        staticCam.unk0 = params & 0x7F; //extract lower bits
+        staticCam.unk4 = params & 0x80; //store uppermost bit
+        CamControl_change_camera_module(DLL_ID_CAMSTATIC, 1, 0, sizeof(staticCam), &staticCam, 120, 0xFF);
         break;
     case Camera_MODE_2_Path:
-        actionStatic.unk0 = params & 0x7F; //extract lower bits
-        actionStatic.unk4 = params & 0x80; //store uppermost bit
-        CamControl_change_camera_module(DLL_ID_CAMPATH, 1, 0, sizeof(Unk_DLL2_Func888), &actionStatic, 120, 0xFF);
+        pathCam.unk0 = params & 0x7F; //extract lower bits
+        pathCam.unk4 = params & 0x80; //store uppermost bit
+        CamControl_change_camera_module(DLL_ID_CAMPATH, 1, 0, sizeof(pathCam), &pathCam, 120, 0xFF);
         break;
     case Camera_MODE_3_Normal:
         CamControl_change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 120, 0xFF);

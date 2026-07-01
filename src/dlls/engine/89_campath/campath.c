@@ -1,16 +1,12 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/2_camcontrol.h"
+#include "dlls/engine/89_campath.h"
 #include "sys/curves.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-    s32 unk0;
-    u8 unk4;
-} CamPath_Params;
 
 // size: 0x68
 typedef struct {
