@@ -18,29 +18,29 @@ void dll_99_ctor(void* dll) { }
 void dll_99_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_99_func_18(CamControl_Data* camData, s32 arg1, CamCannon_Params* action) {
+void dll_99_func_18(Cam* cam, s32 arg1, CamCannon_Params* action) {
     bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camcannon"));
     if (action != NULL) {
         bss_0->unk0 = action->unk0;
     } else {
         bss_0->unk0 = 0;
     }
-    camData->srt.pitch = 0xAF0;
+    cam->srt.pitch = 0xAF0;
 }
 
 // offset: 0x94 | func: 1 | export: 1
-void dll_99_func_94(CamControl_Data* camData) {
+void dll_99_func_94(Cam* cam) {
     if (bss_0->unk0 != NULL) {
-        s16 temp_v0 = -bss_0->unk0->srt.yaw - camData->srt.yaw;
-        camData->srt.yaw += ((f32) temp_v0 / 5.0f);
-        camData->srt.transl.x = bss_0->unk0->srt.transl.x - (fsin16_precise(bss_0->unk0->srt.yaw) * 60.0f);
-        camData->srt.transl.y = bss_0->unk0->srt.transl.y + 80.0f;
-        camData->srt.transl.z = bss_0->unk0->srt.transl.z - (fcos16_precise(bss_0->unk0->srt.yaw) * 60.0f);
+        s16 temp_v0 = -bss_0->unk0->srt.yaw - cam->srt.yaw;
+        cam->srt.yaw += ((f32) temp_v0 / 5.0f);
+        cam->srt.transl.x = bss_0->unk0->srt.transl.x - (fsin16_precise(bss_0->unk0->srt.yaw) * 60.0f);
+        cam->srt.transl.y = bss_0->unk0->srt.transl.y + 80.0f;
+        cam->srt.transl.z = bss_0->unk0->srt.transl.z - (fcos16_precise(bss_0->unk0->srt.yaw) * 60.0f);
     }
 }
 
 // offset: 0x1CC | func: 2 | export: 2
-void dll_99_func_1CC(CamControl_Data* camData) {
+void dll_99_func_1CC(Cam* cam) {
 
 }
 

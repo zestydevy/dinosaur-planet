@@ -31,25 +31,25 @@ void CCfloor_update(Object *self) { }
 
 // offset: 0x7C | func: 3 | export: 3
 void CCfloor_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    CamControl_Data* camData;
+    Cam* cam;
     CCfloor_Setup* objSetup;
 
-    camData = gDLL_2_Camera->vtbl->get_data();
+    cam = gDLL_2_Camera->vtbl->get_cam();
     objSetup = (CCfloor_Setup*)self->setup;
     
     //Rotate object with the camera
-    self->srt.yaw = -1*camData->srt.yaw + 0x8000;   
+    self->srt.yaw = -1*cam->srt.yaw + 0x8000;   
 
     //Lock object's X/Z coords to camera, with an offset based on the camera's yaw
     //The idea seems to be to create an ocean plane following the camera
-    self->srt.transl.x = camData->srt.transl.f[0] - (fsin16_precise(camData->srt.yaw) * (objSetup->radius * 0x10));
+    self->srt.transl.x = cam->srt.transl.f[0] - (fsin16_precise(cam->srt.yaw) * (objSetup->radius * 0x10));
     self->srt.transl.y = objSetup->base.y - objSetup->yOffset; //locked y coord, ignoring camera
-    self->srt.transl.z = camData->srt.transl.f[2] + (fcos16_precise(camData->srt.yaw) * (objSetup->radius * 0x10));
+    self->srt.transl.z = cam->srt.transl.f[2] + (fcos16_precise(cam->srt.yaw) * (objSetup->radius * 0x10));
    
     //Undo previous by just locking the object's coords directly to the camera
-    self->srt.transl.x = camData->srt.transl.x;
-    self->srt.transl.y = camData->srt.transl.y;
-    self->srt.transl.z = camData->srt.transl.z;
+    self->srt.transl.x = cam->srt.transl.x;
+    self->srt.transl.y = cam->srt.transl.y;
+    self->srt.transl.z = cam->srt.transl.z;
 
     //@bug?: doesn't draw the object in the end (likely just incomplete/abandoned) 
 }

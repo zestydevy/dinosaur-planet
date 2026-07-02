@@ -28,7 +28,7 @@ void camshipbattle_ctor(void *dll) { }
 void camshipbattle_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void camshipbattle_setup(CamControl_Data* arg0, s32 arg1, s32 arg2) {   
+void camshipbattle_setup(Cam* cam, s32 arg1, s32 arg2) {   
     _bss_0 = mmAlloc(sizeof(CamShipBattleUnk), ALLOC_TAG_CAM_COL, ALLOC_NAME("camshipbattle"));
     
     _bss_0->unk0 = 0.0f;
@@ -40,11 +40,11 @@ void camshipbattle_setup(CamControl_Data* arg0, s32 arg1, s32 arg2) {
     _bss_0->unk28 = 0;
     _bss_0->unk1C = 75.0f;
 
-    func_80000860(arg0->player, arg0->player, 0x84, 0);
+    func_80000860(cam->player, cam->player, 0x84, 0);
 }
 
 // offset: 0xF4 | func: 1 | export: 1
-void camshipbattle_control(CamControl_Data* camData) {
+void camshipbattle_control(Cam* cam) {
     Object* obj;
     f32 var_fa0;
     f32 var_fv0;
@@ -52,7 +52,7 @@ void camshipbattle_control(CamControl_Data* camData) {
     f32 speed;
     u32 returnVal;
 
-    obj = camData->player;
+    obj = cam->player;
     
     returnVal = 0;    
     if (obj != NULL) {
@@ -100,22 +100,22 @@ void camshipbattle_control(CamControl_Data* camData) {
         _bss_0->unk0 -= _bss_0->unk0 * 0.02f * gUpdateRateF;
         _bss_0->unk4 -= _bss_0->unk4 * 0.02f * gUpdateRateF;
         
-        camData->srt.transl.y = obj->srt.transl.y + _bss_0->unk1C + _bss_0->unk4;
+        cam->srt.transl.y = obj->srt.transl.y + _bss_0->unk1C + _bss_0->unk4;
     } else {
         _bss_0->unk4 -= obj->srt.pitch / 2275.0f;
         _bss_0->unk0 -= _bss_0->unk0 * 0.02f * gUpdateRateF;
         _bss_0->unk4 -= _bss_0->unk4 * 0.013f * gUpdateRateF;
         
-        camData->srt.transl.y = obj->srt.transl.y + _bss_0->unk1C;
+        cam->srt.transl.y = obj->srt.transl.y + _bss_0->unk1C;
     }
     
-    camData->srt.transl.x = obj->srt.transl.x + 98.0f + _bss_0->unk8;
-    camData->srt.transl.z = obj->srt.transl.z + _bss_0->unk0;
-    camData->srt.pitch = 0x708;
-    camData->srt.yaw = 0x4000;
-    camData->srt.roll = -obj->srt.roll >> 3;
-    camData->letterboxGoal = 30;
-    camData->fov = 40.0f;
+    cam->srt.transl.x = obj->srt.transl.x + 98.0f + _bss_0->unk8;
+    cam->srt.transl.z = obj->srt.transl.z + _bss_0->unk0;
+    cam->srt.pitch = 0x708;
+    cam->srt.yaw = 0x4000;
+    cam->srt.roll = -obj->srt.roll >> 3;
+    cam->letterboxGoal = 30;
+    cam->fov = 40.0f;
     
     speed = (_bss_0->unkC - _bss_0->unk8) / 100.0f;
     if (speed > 3.0f) {
@@ -128,11 +128,12 @@ void camshipbattle_control(CamControl_Data* camData) {
 }
 
 // offset: 0x4CC | func: 2 | export: 2
-void camshipbattle_free(CamControl_Data* camData) {
+void camshipbattle_free(Cam* cam) {
     mmFree(_bss_0);
 }
 
 // offset: 0x50C | func: 3 | export: 3
+// @bug: Missing 2nd parameter
 void camshipbattle_func_50C(s32 arg0) {
 
 }

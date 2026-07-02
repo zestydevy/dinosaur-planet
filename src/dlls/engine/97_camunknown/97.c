@@ -19,13 +19,13 @@ void dll_97_ctor(void* dll) { }
 void dll_97_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_97_func_18(CamControl_Data* camData, s32 arg1, void* action) {
+void dll_97_func_18(Cam* cam, s32 arg1, void* action) {
     bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
     bss_0->unk4 = 0.0f;
 }
 
 // offset: 0x74 | func: 1 | export: 1
-void dll_97_func_74(CamControl_Data* camData) {
+void dll_97_func_74(Cam* cam) {
     Object* sp4C;
     f32 sp48;
     f32 pad_sp44;
@@ -40,21 +40,21 @@ void dll_97_func_74(CamControl_Data* camData) {
     sp28[3] = 0.0f;
     sp28[1] = 1.0f;
     sp38 = curves_hermite(sp28, bss_0->unk4, NULL);
-    sp4C = camData->player;
+    sp4C = cam->player;
     sp26 = (0x8000 - sp4C->srt.yaw);
     sp26 += (s32) (14560.0f * sp38);
     sp48 = fcos16_precise(sp26);
     var_fv0 = fsin16_precise(sp26);
-    camData->srt.transl.x = sp4C->srt.transl.x + ((20.0f * sp48) - (-10.0f * var_fv0));
-    camData->srt.transl.z = sp4C->srt.transl.z + ((20.0f * var_fv0) + (-10.0f * sp48));
-    camData->srt.transl.y = (sp4C->srt.transl.y + 35.0f) - (sp38 * 15.0f);
-    camData->srt.pitch = 0x11C6 - (s32) (sp38 * 182.0f * 35.0f);
+    cam->srt.transl.x = sp4C->srt.transl.x + ((20.0f * sp48) - (-10.0f * var_fv0));
+    cam->srt.transl.z = sp4C->srt.transl.z + ((20.0f * var_fv0) + (-10.0f * sp48));
+    cam->srt.transl.y = (sp4C->srt.transl.y + 35.0f) - (sp38 * 15.0f);
+    cam->srt.pitch = 0x11C6 - (s32) (sp38 * 182.0f * 35.0f);
     // FAKE
     if (1){}
-    camData->srt.yaw = sp26 + 0x1FFE;
-    camData->srt.roll = 0;
-    camData->letterboxGoal = 0;
-    camData->fov = 60.0f;
+    cam->srt.yaw = sp26 + 0x1FFE;
+    cam->srt.roll = 0;
+    cam->letterboxGoal = 0;
+    cam->fov = 60.0f;
     bss_0->unk4 += 0.005f * gUpdateRateF;
     if (bss_0->unk4 > 1.0f) {
         bss_0->unk4 = 1.0f;
@@ -62,7 +62,7 @@ void dll_97_func_74(CamControl_Data* camData) {
 }
 
 // offset: 0x250 | func: 2 | export: 2
-void dll_97_func_250(CamControl_Data* camData) {
+void dll_97_func_250(Cam* cam) {
     mmFree(bss_0);
 }
 

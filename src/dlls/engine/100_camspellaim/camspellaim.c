@@ -6,7 +6,7 @@
 /*0x0*/ static f32 bss_0;
 /*0x4*/ static f32 bss_4;
 
-static void dll_100_func_2E4(CamControl_Data* camData, Object* arg1, f32* arg2);
+static void dll_100_func_2E4(Cam* cam, Object* arg1, f32* arg2);
 
 // offset: 0x0 | ctor
 void dll_100_ctor(void* dll) { }
@@ -15,12 +15,12 @@ void dll_100_ctor(void* dll) { }
 void dll_100_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_100_func_18(CamControl_Data* camData, s32 arg1, void* action) {
-    dll_100_func_2E4(camData, camData->player, &bss_0);
+void dll_100_func_18(Cam* cam, s32 arg1, void* action) {
+    dll_100_func_2E4(cam, cam->player, &bss_0);
 }
 
 // offset: 0x64 | func: 1 | export: 1
-void dll_100_func_64(CamControl_Data* camData) {
+void dll_100_func_64(Cam* cam) {
     Object* sp4C;
     f32 temp_ft5;
     f32 temp_fv1;
@@ -33,9 +33,9 @@ void dll_100_func_64(CamControl_Data* camData) {
     s16 sp2C;
     f32 sp20[3];
 
-    sp4C = camData->player;
+    sp4C = cam->player;
     var_f12 = bss_0;
-    camData->highlightFlags |= 2;
+    cam->highlightFlags |= 2;
     bss_4 = var_f12;
     ((DLL_210_Player*)sp4C->dll)->vtbl->func62(sp4C, &sp2E, &sp2C);
     sp2E = ((sp2E >> 1) - sp4C->srt.yaw) + 0x8000;
@@ -43,25 +43,25 @@ void dll_100_func_64(CamControl_Data* camData) {
     sp20[2] = sp4C->srt.transl.x;
     sp20[1] = sp4C->srt.transl.y + data_0;
     sp20[0] = sp4C->srt.transl.z;
-    sp2E -= (camData->srt.yaw & 0xFFFF);
+    sp2E -= (cam->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(sp2E);
-    camData->srt.yaw += (s32) (sp2E * gUpdateRate) >> 3;
-    sp2C -= (camData->srt.pitch & 0xFFFF);
+    cam->srt.yaw += (s32) (sp2E * gUpdateRate) >> 3;
+    sp2C -= (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(sp2C);
-    camData->srt.pitch += (s32) (sp2C * gUpdateRate) >> 3;
-    sp3C = fsin16_precise((s16) (camData->srt.yaw - 0x4000));
-    sp38 = fcos16_precise((s16) (camData->srt.yaw - 0x4000));
-    sp34 = fcos16_precise(camData->srt.pitch);
-    temp = fsin16_precise(camData->srt.pitch);
+    cam->srt.pitch += (s32) (sp2C * gUpdateRate) >> 3;
+    sp3C = fsin16_precise((s16) (cam->srt.yaw - 0x4000));
+    sp38 = fcos16_precise((s16) (cam->srt.yaw - 0x4000));
+    sp34 = fcos16_precise(cam->srt.pitch);
+    temp = fsin16_precise(cam->srt.pitch);
     var_f12 = bss_4;
     temp_fv1 = var_f12 * sp34;
-    camData->srt.transl.x = sp20[2] + (temp_fv1 * sp38);
-    camData->srt.transl.y = sp20[1] + (var_f12 * temp);
-    camData->srt.transl.z = sp20[0] + (temp_fv1 * sp3C);
+    cam->srt.transl.x = sp20[2] + (temp_fv1 * sp38);
+    cam->srt.transl.y = sp20[1] + (var_f12 * temp);
+    cam->srt.transl.z = sp20[0] + (temp_fv1 * sp3C);
 }
 
 // offset: 0x2C8 | func: 2 | export: 2
-void dll_100_func_2C8(CamControl_Data* camData) {
+void dll_100_func_2C8(Cam* cam) {
 
 }
 
@@ -71,7 +71,7 @@ void dll_100_func_2D4(void* arg0, s32 arg1) {
 }
 
 // offset: 0x2E4 | func: 4
-static void dll_100_func_2E4(CamControl_Data* camData, Object* arg1, f32* arg2) {
+static void dll_100_func_2E4(Cam* cam, Object* arg1, f32* arg2) {
     f32 spD4;
     f32 temp_ft2;
     f32 temp_fv0;

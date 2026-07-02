@@ -29,30 +29,30 @@ void dll_102_ctor(void* dll) { }
 void dll_102_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_102_func_18(CamControl_Data* camData, s32 arg1, CamControl_Data* action) {
+void dll_102_func_18(Cam* cam, s32 arg1, Cam* action) {
     bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camdrakor"));
     bzero(bss_0, sizeof(BSS0));
     bss_0->unk10 = 60.0f;
     bss_0->unkC = 0;
     if (action != NULL) {
-        camData->srt.transl.x = action->initialCoords.x;
-        camData->srt.transl.y = action->initialCoords.y;
-        camData->srt.transl.z = action->initialCoords.z;
-        camData->srt.yaw = action->srt.yaw;
-        camData->srt.pitch = action->srt.pitch;
-        camData->srt.roll = action->srt.roll;
-        camData->fov = action->fov;
+        cam->srt.transl.x = action->initialCoords.x;
+        cam->srt.transl.y = action->initialCoords.y;
+        cam->srt.transl.z = action->initialCoords.z;
+        cam->srt.yaw = action->srt.yaw;
+        cam->srt.pitch = action->srt.pitch;
+        cam->srt.roll = action->srt.roll;
+        cam->fov = action->fov;
     }
-    bss_0->unk14 = camData->srt.transl.x;
-    bss_0->unk18 = camData->srt.transl.y;
-    bss_0->unk1C = camData->srt.transl.z;
-    bss_0->unk20 = camData->srt.yaw;
-    bss_0->unk22 = camData->srt.pitch;
-    bss_0->unk24 = camData->srt.roll;
+    bss_0->unk14 = cam->srt.transl.x;
+    bss_0->unk18 = cam->srt.transl.y;
+    bss_0->unk1C = cam->srt.transl.z;
+    bss_0->unk20 = cam->srt.yaw;
+    bss_0->unk22 = cam->srt.pitch;
+    bss_0->unk24 = cam->srt.roll;
 }
 
 // offset: 0x138 | func: 1 | export: 1
-void dll_102_func_138(CamControl_Data* camData) {
+void dll_102_func_138(Cam* cam) {
     Object** temp_v0;
     s32 sp78;
     s32 sp74;
@@ -95,23 +95,23 @@ void dll_102_func_138(CamControl_Data* camData) {
     temp_ft4_2 = (bss_0->unk0->globalPosition.x - (sp64 * 140.0f)) - bss_0->unk8->globalPosition.x;
     temp_ft5_2 = (bss_0->unk0->globalPosition.z - (sp60 * 140.0f)) - bss_0->unk8->globalPosition.z;
     temp_fv1_3 = (200.0f - sqrtf(SQ(temp_ft4_2) + SQ(temp_ft5_2))) / 200.0f;
-    camData->fov = (temp_fv1_3 * 70.0f) + 45.0f;
-    camData->srt.transl.x = bss_0->unk0->srt.transl.x - (sp64 * (-30.0f + (temp_fv1_3 * 350.0f)));
-    camData->srt.transl.y = bss_0->unk0->srt.transl.y + 20.0f + (temp_fv1_3 * 60.0f);
-    camData->srt.transl.z = bss_0->unk0->srt.transl.z - (sp60 * (-30.0f + (temp_fv1_3 * 350.0f)));
-    camData->srt.yaw = -arctan2_f(sp70, sp68);
-    camData->srt.pitch = -arctan2_f(sp6C - ((sp5C / 400.0f) * 100.0f), sqrtf(SQ(sp70) + SQ(sp68)));
+    cam->fov = (temp_fv1_3 * 70.0f) + 45.0f;
+    cam->srt.transl.x = bss_0->unk0->srt.transl.x - (sp64 * (-30.0f + (temp_fv1_3 * 350.0f)));
+    cam->srt.transl.y = bss_0->unk0->srt.transl.y + 20.0f + (temp_fv1_3 * 60.0f);
+    cam->srt.transl.z = bss_0->unk0->srt.transl.z - (sp60 * (-30.0f + (temp_fv1_3 * 350.0f)));
+    cam->srt.yaw = -arctan2_f(sp70, sp68);
+    cam->srt.pitch = -arctan2_f(sp6C - ((sp5C / 400.0f) * 100.0f), sqrtf(SQ(sp70) + SQ(sp68)));
     if (bss_0->unkC == 0) {
         temp_fa1_3 = bss_0->unk10 / 60.0f;
-        camData->srt.transl.x += ((bss_0->unk14 - camData->srt.transl.x) * temp_fa1_3);
-        camData->srt.transl.y += ((bss_0->unk18 - camData->srt.transl.y) * temp_fa1_3);
-        camData->srt.transl.z += ((bss_0->unk1C - camData->srt.transl.z) * temp_fa1_3);
-        var_v0 = bss_0->unk20 - (camData->srt.yaw & 0xFFFF);
+        cam->srt.transl.x += ((bss_0->unk14 - cam->srt.transl.x) * temp_fa1_3);
+        cam->srt.transl.y += ((bss_0->unk18 - cam->srt.transl.y) * temp_fa1_3);
+        cam->srt.transl.z += ((bss_0->unk1C - cam->srt.transl.z) * temp_fa1_3);
+        var_v0 = bss_0->unk20 - (cam->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(var_v0);
-        camData->srt.yaw += ((f32) var_v0 * temp_fa1_3);
-        var_v0 = bss_0->unk22 - (camData->srt.pitch & 0xFFFF);
+        cam->srt.yaw += ((f32) var_v0 * temp_fa1_3);
+        var_v0 = bss_0->unk22 - (cam->srt.pitch & 0xFFFF);
         CIRCLE_WRAP(var_v0);
-        camData->srt.pitch += ((f32) var_v0 * temp_fa1_3);
+        cam->srt.pitch += ((f32) var_v0 * temp_fa1_3);
         bss_0->unk10 -= gUpdateRateF;
         if (bss_0->unk10 < 0.0f) {
             bss_0->unkC = 1;
@@ -121,7 +121,7 @@ void dll_102_func_138(CamControl_Data* camData) {
 }
 
 // offset: 0x61C | func: 2 | export: 2
-void dll_102_func_61C(CamControl_Data* camData) {
+void dll_102_func_61C(Cam* cam) {
     mmFree(bss_0);
 }
 

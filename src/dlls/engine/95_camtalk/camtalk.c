@@ -27,7 +27,7 @@ void dll_95_ctor(void* dll) { }
 void dll_95_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_95_func_18(CamControl_Data* camData, s32 arg1, CamTalk_Params* action) {
+void dll_95_func_18(Cam* cam, s32 arg1, CamTalk_Params* action) {
     s32 _pad;
     s32 _pad2;
     s32 var_v1;
@@ -91,11 +91,11 @@ void dll_95_func_18(CamControl_Data* camData, s32 arg1, CamTalk_Params* action) 
     bss_0->unk1C = (s32) ctype;
     bss_0->unk14 = 0.0f;
     bss_0->unk18 = rand_next(0x2000, 0x2C00);
-    xDiff = camData->srt.transl.x - bss_0->x;
-    zDiff = camData->srt.transl.z - bss_0->z;
+    xDiff = cam->srt.transl.x - bss_0->x;
+    zDiff = cam->srt.transl.z - bss_0->z;
     sp30 = arctan2_f(xDiff, zDiff);
-    xDiff = camData->player->srt.transl.x - bss_0->x;
-    zDiff = camData->player->srt.transl.z - bss_0->z;
+    xDiff = cam->player->srt.transl.x - bss_0->x;
+    zDiff = cam->player->srt.transl.z - bss_0->z;
     temp_v0_3 = arctan2_f(xDiff, zDiff);
     var_a0 = (bss_0->unk18 + temp_v0_3) - (sp30 & 0xFFFF);
     CIRCLE_WRAP(var_a0);
@@ -113,7 +113,7 @@ void dll_95_func_18(CamControl_Data* camData, s32 arg1, CamTalk_Params* action) 
 }
 
 // offset: 0x320 | func: 1 | export: 1
-void dll_95_func_320(CamControl_Data* camData) {
+void dll_95_func_320(Cam* cam) {
     s32 pad_sp6C;
     f32 sp68;
     f32 sp64;
@@ -126,7 +126,7 @@ void dll_95_func_320(CamControl_Data* camData) {
     s16 sp4A;
     f32 var_f26;
 
-    temp_s0 = camData->player;
+    temp_s0 = cam->player;
     if (temp_s0 == NULL) {
         return;
     }
@@ -149,18 +149,18 @@ void dll_95_func_320(CamControl_Data* camData) {
         var_f16 = 25.0f;
     }
     var_f16 += bss_0->unk10;
-    camData->srt.transl.x = (var_f24 * var_f16) + var_f20;
-    camData->srt.transl.y = temp_s0->srt.transl.y + 25.0f;
-    camData->srt.transl.z = (sp68 * var_f16) + var_f22;
-    var_f24 = camData->srt.transl.x - var_f20;
-    sp64 = camData->srt.transl.y - var_f26;
-    sp68 = camData->srt.transl.z - var_f22;
-    camData->srt.yaw = 0x8000 - arctan2_f(var_f24, sp68);
-    camData->srt.pitch = arctan2_f(sp64, sqrtf(SQ(var_f24) + SQ(sp68)));
+    cam->srt.transl.x = (var_f24 * var_f16) + var_f20;
+    cam->srt.transl.y = temp_s0->srt.transl.y + 25.0f;
+    cam->srt.transl.z = (sp68 * var_f16) + var_f22;
+    var_f24 = cam->srt.transl.x - var_f20;
+    sp64 = cam->srt.transl.y - var_f26;
+    sp68 = cam->srt.transl.z - var_f22;
+    cam->srt.yaw = 0x8000 - arctan2_f(var_f24, sp68);
+    cam->srt.pitch = arctan2_f(sp64, sqrtf(SQ(var_f24) + SQ(sp68)));
 }
 
 // offset: 0x544 | func: 2 | export: 2
-void dll_95_func_544(CamControl_Data* camData) {
+void dll_95_func_544(Cam* cam) {
     mmFree(bss_0);
 }
 

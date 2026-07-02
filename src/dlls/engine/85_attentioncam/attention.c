@@ -32,12 +32,12 @@ typedef struct {
 
 /*0x0*/ static BSS0* bss_0;
 
-static void dll_85_func_B14(CamControl_Data* arg0, Object* arg1);
+static void dll_85_func_B14(Cam* cam, Object* arg1);
 static void dll_85_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s16 arg6, s16 arg7, s32* arg8);
 static void dll_85_func_F84(s16* arg0, u16* arg1, s16 arg2, s16 arg3, s16 arg4);
-static void dll_85_func_109C(CamControl_Data* arg0, f32 arg1, f32 arg2);
+static void dll_85_func_109C(Cam* cam, f32 arg1, f32 arg2);
 static s32 dll_85_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3);
-static void dll_85_func_1374(CamControl_Data* arg0, Object* arg1);
+static void dll_85_func_1374(Cam* cam, Object* arg1);
 
 // offset: 0x0 | ctor
 void dll_85_ctor(void* dll) { }
@@ -46,7 +46,7 @@ void dll_85_ctor(void* dll) { }
 void dll_85_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_85_func_18(CamControl_Data* camData, s32 arg1, AttentionCam_Params* action) {
+void dll_85_func_18(Cam* cam, s32 arg1, AttentionCam_Params* action) {
     s16 var_a0;
     s16 sp14C;
     f32 sp148;
@@ -78,7 +78,7 @@ void dll_85_func_18(CamControl_Data* camData, s32 arg1, AttentionCam_Params* act
     }
 
     action->unk3 = 1;
-    player = camData->player;
+    player = cam->player;
     bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("attentioncam"));
     bzero(bss_0, sizeof(BSS0));
     camnormal = gDLL_2_Camera->vtbl->get_camnormal_module();
@@ -87,8 +87,8 @@ void dll_85_func_18(CamControl_Data* camData, s32 arg1, AttentionCam_Params* act
     bss_0->unk1B8 = 0;
     sp130 = fsin16_precise(player->srt.yaw);
     sp12C = fcos16_precise(player->srt.yaw);
-    var_fa0 = camData->srt.transl.x - player->srt.transl.x;
-    var_fa1 = camData->srt.transl.z - player->srt.transl.z;
+    var_fa0 = cam->srt.transl.x - player->srt.transl.x;
+    var_fa1 = cam->srt.transl.z - player->srt.transl.z;
     var_a0 = player->srt.yaw - (u16)arctan2_f(var_fa0, var_fa1);
     CIRCLE_WRAP(var_a0);
     if (var_a0 < 0) {
@@ -135,13 +135,13 @@ void dll_85_func_18(CamControl_Data* camData, s32 arg1, AttentionCam_Params* act
     }
     spEC = 0;
     while (spEC < 3) {
-        bss_0->unk18[spEC] = camData->srt.transl.x;
-        bss_0->unk68[spEC] = camData->srt.transl.y;
-        bss_0->unkB8[spEC] = camData->srt.transl.z;
+        bss_0->unk18[spEC] = cam->srt.transl.x;
+        bss_0->unk68[spEC] = cam->srt.transl.y;
+        bss_0->unkB8[spEC] = cam->srt.transl.z;
         spEC++;
     }
-    sp148 = camData->srt.transl.x - sp120.x;
-    sp140 = camData->srt.transl.z - sp120.z;
+    sp148 = cam->srt.transl.x - sp120.x;
+    sp140 = cam->srt.transl.z - sp120.z;
     sp13C = 0.5f * sqrtf(SQ(sp148) + SQ(sp140));
     temp_s0 = arctan2_f(-sp130, -sp12C);
     var_a0 = temp_s0 - (u16)arctan2_f(sp148, sp140);\
@@ -175,9 +175,9 @@ void dll_85_func_18(CamControl_Data* camData, s32 arg1, AttentionCam_Params* act
     dll_85_func_D70(
         var_fa0, 
         var_fa1, 
-        camData->srt.transl.x, 
-        camData->srt.transl.y, 
-        camData->srt.transl.z, 
+        cam->srt.transl.x, 
+        cam->srt.transl.y, 
+        cam->srt.transl.z, 
         sp120.y, 
         sp14C, 
         0x1555, 
@@ -206,7 +206,7 @@ void dll_85_func_18(CamControl_Data* camData, s32 arg1, AttentionCam_Params* act
 }
 
 // offset: 0x848 | func: 1 | export: 1
-void dll_85_func_848(CamControl_Data* camData) {
+void dll_85_func_848(Cam* cam) {
     u8 sp5F;
     f32 sp58;
     f32 sp54;
@@ -220,31 +220,31 @@ void dll_85_func_848(CamControl_Data* camData) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
         return;
     }
-    sp3C = camData->player;
-    sp40.y = camData->srt.transl.y;
+    sp3C = cam->player;
+    sp40.y = cam->srt.transl.y;
     sp5F = dll_85_func_112C(&sp40.x, &sp40.y, &sp40.z, sp3C);
-    camData->srt.transl.x = sp40.x;
-    camData->srt.transl.z = sp40.z;
+    cam->srt.transl.x = sp40.x;
+    cam->srt.transl.z = sp40.z;
     camnormal = gDLL_2_Camera->vtbl->get_camnormal_module();
-    ((DLL_84_camnormal*)camnormal->dll)->vtbl->func8(camData, 3, 3, &bss_0->unk10, &bss_0->unk14);
-    if (camData->unk34.unk68 != 0) {
+    ((DLL_84_camnormal*)camnormal->dll)->vtbl->func8(cam, 3, 3, &bss_0->unk10, &bss_0->unk14);
+    if (cam->unk34.unk68 != 0) {
         bss_0->unk118 = (f32) (bss_0->unk118 + gUpdateRateF);
     }
     if (bss_0->unk118 > 10.0f) {
-        dll_85_func_1374(camData, sp3C);
+        dll_85_func_1374(cam, sp3C);
         sp5F = 1;
     }
-    gDLL_2_Camera->vtbl->get_player_to_camera_distances((Camera* ) camData, &sp58, &sp54, &sp50, &sp4C, 0.0f);
-    dll_85_func_109C(camData, sp58, sp50);
-    ((DLL_84_camnormal*)camnormal->dll)->vtbl->func5(camData, sp3C->srt.transl.y, sp4C);
+    gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp58, &sp54, &sp50, &sp4C, 0.0f);
+    dll_85_func_109C(cam, sp58, sp50);
+    ((DLL_84_camnormal*)camnormal->dll)->vtbl->func5(cam, sp3C->srt.transl.y, sp4C);
     if (sp5F != 0) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
     }
-    dll_85_func_B14(camData, sp3C);
+    dll_85_func_B14(cam, sp3C);
 }
 
 // offset: 0xAC4 | func: 2 | export: 2
-void dll_85_func_AC4(CamControl_Data* camData) {
+void dll_85_func_AC4(Cam* cam) {
     mmFree(bss_0);
 }
 
@@ -254,20 +254,20 @@ void dll_85_func_B04(AttentionCam_Params* params, s32 arg1) {
 }
 
 // offset: 0xB14 | func: 4
-static void dll_85_func_B14(CamControl_Data* arg0, Object* arg1) {
+static void dll_85_func_B14(Cam* cam, Object* arg1) {
     u16 btns;
     Cam1stPerson_Params cam1stPerson;
     u8 temp_v1;
 
     if (arg1->animObj == NULL) {
         btns = joy_get_pressed(0);
-        if (((arg0->highlight != NULL) || (arg0->srt.flags & OBJFLAG_UNK_2)) && 
-                !(arg0->highlightFlags & 2) && 
-                (((temp_v1 = main_get_bits(BIT_4AD), (temp_v1 == 0)) && (btns & Z_TRIG)) || ((temp_v1 != 0) && (btns & R_TRIG)) || (arg0->targetFlags & 2)) && 
+        if (((cam->highlight != NULL) || (cam->srt.flags & OBJFLAG_UNK_2)) && 
+                !(cam->highlightFlags & 2) && 
+                (((temp_v1 = main_get_bits(BIT_4AD), (temp_v1 == 0)) && (btns & Z_TRIG)) || ((temp_v1 != 0) && (btns & R_TRIG)) || (cam->targetFlags & 2)) && 
                 (arg1->controlNo == OBJCONTROL_Player) && 
                 ((((DLL_210_Player*)arg1->dll)->vtbl->func60(arg1) != 0))) {
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 0, sizeof(&arg0->highlight), &arg0->highlight, 0x3C, 0xFF);
-        } else if ((btns & 8) && !(arg0->targetFlags & 1)) {
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 0, sizeof(&cam->highlight), &cam->highlight, 0x3C, 0xFF);
+        } else if ((btns & 8) && !(cam->targetFlags & 1)) {
             cam1stPerson.unk0 = bss_0->unk4;
             cam1stPerson.unk4 = bss_0->unk8;
             cam1stPerson.unk8 = (s16) (u32) bss_0->unkC;
@@ -329,10 +329,10 @@ static void dll_85_func_F84(s16* arg0, u16* arg1, s16 arg2, s16 arg3, s16 arg4) 
 }
 
 // offset: 0x109C | func: 7
-static void dll_85_func_109C(CamControl_Data* arg0, f32 arg1, f32 arg2) {
-    s32 var_v1 = (-arctan2_f(arg1, arg2) - (arg0->srt.yaw & 0xFFFF)) + 0x8000;
+static void dll_85_func_109C(Cam* cam, f32 arg1, f32 arg2) {
+    s32 var_v1 = (-arctan2_f(arg1, arg2) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
     CIRCLE_WRAP(var_v1);
-    arg0->srt.yaw += var_v1;
+    cam->srt.yaw += var_v1;
 }
 
 // offset: 0x112C | func: 8
@@ -340,24 +340,24 @@ static s32 dll_85_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3) {
     s32 var_v1;
     s32 temp_v0;
     f32 t;
-    CamControl_Module* camnormal;
-    CamControl_Data sp34;
+    CamControl_Module* camnormalMod;
+    Cam camnorm;
 
-    bzero(&sp34, sizeof(sp34));
-    sp34.srt.transl.x = bss_0->unk18[bss_0->unk11C.numControlPoints - 2];
-    sp34.srt.transl.y = *arg1;
-    sp34.srt.transl.z = bss_0->unkB8[bss_0->unk11C.numControlPoints - 2];
-    sp34.player = arg3;
-    sp34.positionMirror.x = sp34.srt.transl.x;
-    sp34.positionMirror.y = sp34.srt.transl.y;
-    sp34.positionMirror.z = sp34.srt.transl.z;
-    camnormal = gDLL_2_Camera->vtbl->get_camnormal_module();
-    ((DLL_84_camnormal*)camnormal->dll)->vtbl->func4(&sp34, arg3);
-    ((DLL_84_camnormal*)camnormal->dll)->vtbl->func8(&sp34, 1, 3, &bss_0->unk10, &bss_0->unk14);
+    bzero(&camnorm, sizeof(camnorm));
+    camnorm.srt.transl.x = bss_0->unk18[bss_0->unk11C.numControlPoints - 2];
+    camnorm.srt.transl.y = *arg1;
+    camnorm.srt.transl.z = bss_0->unkB8[bss_0->unk11C.numControlPoints - 2];
+    camnorm.player = arg3;
+    camnorm.positionMirror.x = camnorm.srt.transl.x;
+    camnorm.positionMirror.y = camnorm.srt.transl.y;
+    camnorm.positionMirror.z = camnorm.srt.transl.z;
+    camnormalMod = gDLL_2_Camera->vtbl->get_camnormal_module();
+    ((DLL_84_camnormal*)camnormalMod->dll)->vtbl->func4(&camnorm, arg3);
+    ((DLL_84_camnormal*)camnormalMod->dll)->vtbl->func8(&camnorm, 1, 3, &bss_0->unk10, &bss_0->unk14);
     var_v1 = bss_0->unk11C.numControlPoints - 3;
     while (var_v1 < bss_0->unk11C.numControlPoints) {
-        bss_0->unk18[var_v1] = sp34.srt.transl.x;
-        bss_0->unkB8[var_v1] = sp34.srt.transl.z;
+        bss_0->unk18[var_v1] = camnorm.srt.transl.x;
+        bss_0->unkB8[var_v1] = camnorm.srt.transl.z;
         var_v1 += 1;
     }
     if (bss_0->unk11C.unkC != 0.0f) {
@@ -381,7 +381,7 @@ static s32 dll_85_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3) {
 }
 
 // offset: 0x1374 | func: 9
-static void dll_85_func_1374(CamControl_Data* arg0, Object* arg1) {
+static void dll_85_func_1374(Cam* cam, Object* arg1) {
     f32 temp_fv0;
     f32 spD0;
     f32 spCC;
@@ -405,7 +405,7 @@ static void dll_85_func_1374(CamControl_Data* arg0, Object* arg1) {
     fit_aabb_around_cubes(&sp9C, &spC0, &spB4, &sp30.unk40[0], 1);
     func_80053750(arg1, &sp9C, 0);
     func_8005509C(arg1, spC0.f, spB4.f, 1, &sp30, 0);
-    arg0->srt.transl.x = spB4.x;
-    arg0->srt.transl.y = spB4.y;
-    arg0->srt.transl.z = spB4.z;
+    cam->srt.transl.x = spB4.x;
+    cam->srt.transl.y = spB4.y;
+    cam->srt.transl.z = spB4.z;
 }

@@ -35,7 +35,7 @@ typedef struct {
 
 /*0x0*/ static BSS0* bss_0;
 
-static void dll_93_func_63C(CamControl_Data* arg0);
+static void dll_93_func_63C(Cam* cam);
 
 // offset: 0x0 | ctor
 void dll_93_ctor(void* dll) { }
@@ -44,7 +44,7 @@ void dll_93_ctor(void* dll) { }
 void dll_93_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_93_func_18(CamControl_Data* camData, s32 arg1, CamClimb_Params* action) {
+void dll_93_func_18(Cam* cam, s32 arg1, CamClimb_Params* action) {
     s32 _pad;
     f32 sp60;
     f32 sp5C;
@@ -77,7 +77,7 @@ void dll_93_func_18(CamControl_Data* camData, s32 arg1, CamClimb_Params* action)
     bzero(bss_0, sizeof(BSS0));
     camnormal = gDLL_2_Camera->vtbl->get_camnormal_module();
     ((DLL_84_camnormal*)camnormal->dll)->vtbl->func7(&sp4C, &sp48, &sp44, &sp40, &sp3C);
-    gDLL_2_Camera->vtbl->get_player_to_camera_distances((Camera* ) camData, &sp60, &sp5C, &sp58, &sp54, (f32) bss_0->unk30);
+    gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp60, &sp5C, &sp58, &sp54, (f32) bss_0->unk30);
     bss_0->unk32 = (u16) sp3C;
     bss_0->unk1C = sp44;
     bss_0->unk24 = sp40;
@@ -93,7 +93,7 @@ void dll_93_func_18(CamControl_Data* camData, s32 arg1, CamClimb_Params* action)
 }
 
 // offset: 0x340 | func: 1 | export: 1
-void dll_93_func_340(CamControl_Data* camData) {
+void dll_93_func_340(Cam* cam) {
     Object* temp_s0;
     s32 var_v1;
     f32 sp54;
@@ -103,39 +103,39 @@ void dll_93_func_340(CamControl_Data* camData) {
     f32 temp_fa0;
     f32 temp_fa1;
 
-    temp_s0 = camData->player;
-    dll_93_func_63C(camData);
+    temp_s0 = cam->player;
+    dll_93_func_63C(cam);
     temp_fa0 = temp_s0->srt.transl.y + bss_0->unk10;
     temp_fa1 = temp_s0->srt.transl.y + bss_0->unkC;
-    if (camData->srt.transl.y < temp_fa1) {
-        sp50 = temp_fa1 - camData->srt.transl.y;
-    } else if (temp_fa0 < camData->srt.transl.y) {
-        sp50 = temp_fa0 - camData->srt.transl.y;
+    if (cam->srt.transl.y < temp_fa1) {
+        sp50 = temp_fa1 - cam->srt.transl.y;
+    } else if (temp_fa0 < cam->srt.transl.y) {
+        sp50 = temp_fa0 - cam->srt.transl.y;
     } else {
         sp50 = 0.0f;
     }
     sp50 *= (bss_0->unk8 * gUpdateRateF);
-    camData->srt.transl.y += sp50;
+    cam->srt.transl.y += sp50;
     sp48 = bss_0->unk0;
     sp48 -= bss_0->unk4;
     sp48 *= (0.05f * gUpdateRateF);
     bss_0->unk4 += sp48;
-    camData->srt.transl.x = (fsin16_precise(temp_s0->srt.yaw) * bss_0->unk4) + temp_s0->srt.transl.x;
-    camData->srt.transl.z = (fcos16_precise(temp_s0->srt.yaw) * bss_0->unk4) + temp_s0->srt.transl.z;
-    gDLL_2_Camera->vtbl->get_player_to_camera_distances((Camera* ) camData, &sp54, &sp50, &sp4C, &sp48, 0.0f);
+    cam->srt.transl.x = (fsin16_precise(temp_s0->srt.yaw) * bss_0->unk4) + temp_s0->srt.transl.x;
+    cam->srt.transl.z = (fcos16_precise(temp_s0->srt.yaw) * bss_0->unk4) + temp_s0->srt.transl.z;
+    gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp54, &sp50, &sp4C, &sp48, 0.0f);
     
-    var_v1 = (-arctan2_f(sp54, sp4C) - (camData->srt.yaw & 0xFFFF));
+    var_v1 = (-arctan2_f(sp54, sp4C) - (cam->srt.yaw & 0xFFFF));
     var_v1 += 0x8000;
     CIRCLE_WRAP(var_v1);
-    camData->srt.yaw += var_v1;
+    cam->srt.yaw += var_v1;
     
-    var_v1 = (arctan2_f(sp50, sp48) - bss_0->unk30) - (camData->srt.pitch & 0xFFFF);
+    var_v1 = (arctan2_f(sp50, sp48) - bss_0->unk30) - (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(var_v1);
-    camData->srt.pitch += ((s32) (var_v1 * gUpdateRate) / 6);
+    cam->srt.pitch += ((s32) (var_v1 * gUpdateRate) / 6);
 }
 
 // offset: 0x5E8 | func: 2 | export: 2
-void dll_93_func_5E8(CamControl_Data* camData) {
+void dll_93_func_5E8(Cam* cam) {
     mmFree(bss_0);
     bss_0 = NULL;
 }
@@ -146,7 +146,7 @@ void dll_93_func_62C(CamClimb_Params* arg0, s32 arg1) {
 }
 
 // offset: 0x63C | func: 4
-static void dll_93_func_63C(CamControl_Data* arg0) {
+static void dll_93_func_63C(Cam* cam) {
     f32 temp_fv0;
 
     if (bss_0->unk2C != 0) {

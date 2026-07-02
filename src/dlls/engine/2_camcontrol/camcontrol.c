@@ -1,15 +1,24 @@
-#include "common.h"
 #include "dlls/engine/89_campath.h"
 #include "dlls/engine/90_camstatic.h"
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object_id.h"
+#include "sys/asset_thread.h"
 #include "sys/dll.h"
+#include "sys/fs.h"
+#include "sys/joypad.h"
+#include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
 #include "sys/voxmap.h"
 #include "dlls/engine/2_camcontrol.h"
 #include "unktypes.h"
+#include "dll.h"
 #include "prevent_bss_reordering.h"
+
+// official filename: camcontrol.c
 
 /** Related to gametext that appears when holding R? */
 static s16 _data_0[] = {
@@ -24,8 +33,8 @@ typedef enum {
     LockIcon_STATE_Lock_On = 4
 } LockIcon_States;
 
-/*0x0*/ static CamControl_Data sCamDataStruct;
-/*0x11C*/ static CamControl_Data* sCamData;
+/*0x0*/ static Cam sCamInternal;
+/*0x11C*/ static Cam* sCam;
 /*0x120*/ static CamControl_Module* sCamModules[20]; //Camera module DLLs (camtalk, camclimb, cam1stperson, etc.)
 /*0x170*/ static u8 sCamModuleCount;     //Number of slots currently occupied in the `sCamModules` array
 /*0x174*/ static CamControl_Module* sActiveModule; //Active module: the camera module DLL currently in use
@@ -64,19 +73,19 @@ CameraAction* CamControl_get_camera_action(s32 index);
 static s32 CamControl_get_loaded_module_index(u16 arg0);
 static void CamControl_free_module(s32 arg0);
 static s32 CamControl_load_module(u16 arg0, s32 arg1);
-static void CamControl_update_camera(CamControl_Data* arg0);
+static void CamControl_update_camera(Cam* cam);
 static void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction);
 static void CamControl_store_player_coords(Object* arg0);
 static void CamControl_restore_player_coords(Object* obj);
-static void CamControl_average_player_speed(CamControl_Data* arg0, Object* arg1);
-static Object* CamControl_find_highlight_object(CamControl_Data* arg0, Object* arg1);
+static void CamControl_average_player_speed(Cam* cam, Object* arg1);
+static Object* CamControl_find_highlight_object(Cam* cam, Object* arg1);
 static void CamControl_create_LockIcon(void);
 static void CamControl_print(Object* arg0, s32 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
 
 // offset: 0x0 | ctor
 void CamControl_ctor(void* dll) {
-    sCamData = &sCamDataStruct;
-    bzero(sCamData, sizeof(CamControl_Data));
+    sCam = &sCamInternal;
+    bzero(sCam, sizeof(Cam));
     
     voxmap_init();
 
@@ -97,17 +106,17 @@ void CamControl_dtor(void* dll) {
 
 // offset: 0xE4 | func: 0 | export: 0
 void CamControl_init_data(Object* player, f32 initialX, f32 initialY, f32 initialZ) {
-    bzero(sCamData, sizeof(CamControl_Data));
-    sCamData->srt.transl.x = initialX;
-    sCamData->srt.transl.y = initialY;
-    sCamData->srt.transl.z = initialZ;
-    sCamData->initialCoords.x = initialX;
-    sCamData->initialCoords.y = initialY;
-    sCamData->initialCoords.z = initialZ;
-    sCamData->positionMirror.x = initialX;
-    sCamData->positionMirror.y = initialY;
-    sCamData->positionMirror.z = initialZ;
-    sCamData->player = player;
+    bzero(sCam, sizeof(Cam));
+    sCam->srt.transl.x = initialX;
+    sCam->srt.transl.y = initialY;
+    sCam->srt.transl.z = initialZ;
+    sCam->initialCoords.x = initialX;
+    sCam->initialCoords.y = initialY;
+    sCam->initialCoords.z = initialZ;
+    sCam->positionMirror.x = initialX;
+    sCam->positionMirror.y = initialY;
+    sCam->positionMirror.z = initialZ;
+    sCam->player = player;
 }
 
 // offset: 0x1A4 | func: 1 | export: 1
@@ -122,24 +131,24 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
         onTitleScreen = FALSE;
     }
     
-    player = sCamData->player;
+    player = sCam->player;
     if (player == NULL) {
         return;
     }
     
     func_80008D90(player->parent);
     CamControl_store_player_coords(player);
-    CamControl_average_player_speed(sCamData, player);
+    CamControl_average_player_speed(sCam, player);
     
     //Optionally override the player's position (restored at end of function)
-    if (sCamData->setPlayerPosition) {
-        player->srt.transl.x = sCamData->newPlayerPosition.x;
-        player->srt.transl.y = sCamData->newPlayerPosition.y;
-        player->srt.transl.z = sCamData->newPlayerPosition.z;
-        player->globalPosition.x = sCamData->newPlayerPosition.x;
-        player->globalPosition.y = sCamData->newPlayerPosition.y;
-        player->globalPosition.z = sCamData->newPlayerPosition.z;
-        sCamData->setPlayerPosition = FALSE;
+    if (sCam->setPlayerPosition) {
+        player->srt.transl.x = sCam->newPlayerPosition.x;
+        player->srt.transl.y = sCam->newPlayerPosition.y;
+        player->srt.transl.z = sCam->newPlayerPosition.z;
+        player->globalPosition.x = sCam->newPlayerPosition.x;
+        player->globalPosition.y = sCam->newPlayerPosition.y;
+        player->globalPosition.z = sCam->newPlayerPosition.z;
+        sCam->setPlayerPosition = FALSE;
     }
     
     //Transform the player's coordinates based on their parent Object
@@ -160,23 +169,23 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
             if ((tSpeed <= 0.0f) || (tSpeed > 1.0f)) {
                 tSpeed = 1.0f;
             }
-            sCamData->tValue = 1.0f;
-            sCamData->tSpeed = tSpeed;
-            sCamData->lerpFlags = sEaseFlags;
+            sCam->tValue = 1.0f;
+            sCam->tSpeed = tSpeed;
+            sCam->lerpFlags = sEaseFlags;
         } else {
-            sCamData->tValue = 0.0f;
-            sCamData->lerpFlags = CamControl_Ease_None;
+            sCam->tValue = 0.0f;
+            sCam->lerpFlags = CamControl_Ease_None;
         }
         
         //Store the current camera DLL's translation/rotation/fov as the ease startpoint
-        if (sCamData->tValue == 1.0f) {
-            sCamData->easeStartX = sCamData->srt.transl.x;
-            sCamData->easeStartY = sCamData->srt.transl.y;
-            sCamData->easeStartZ = sCamData->srt.transl.z;
-            sCamData->easeStartYaw = sCamData->srt.yaw;
-            sCamData->easeStartPitch = sCamData->srt.pitch;
-            sCamData->easeStartRoll = sCamData->srt.roll;
-            sCamData->goalFov = sCamData->fov;
+        if (sCam->tValue == 1.0f) {
+            sCam->easeStartX = sCam->srt.transl.x;
+            sCam->easeStartY = sCam->srt.transl.y;
+            sCam->easeStartZ = sCam->srt.transl.z;
+            sCam->easeStartYaw = sCam->srt.yaw;
+            sCam->easeStartPitch = sCam->srt.pitch;
+            sCam->easeStartRoll = sCam->srt.roll;
+            sCam->goalFov = sCam->fov;
         }
         
         sPreviousID = sActiveID;
@@ -193,33 +202,33 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
 
     //Advance the camera
     if (sActiveModule != NULL) {
-        sActiveModule->dll->vtbl->control(sCamData);
-        CamControl_update_camera(sCamData);
+        sActiveModule->dll->vtbl->control(sCam);
+        CamControl_update_camera(sCam);
     }
 
     //Update the LockIcon and related flags
     if (onTitleScreen == FALSE) {
-        if (sCamData->target == NULL) {
-            sCamData->highlight = CamControl_find_highlight_object(sCamData, player);
+        if (sCam->target == NULL) {
+            sCam->highlight = CamControl_find_highlight_object(sCam, player);
         }
         
         if (sActiveID != DLL_ID_ATTENTIONCAM) {
-            sCamData->targetFlags &= ~ARROW_FLAG_1_Interacted;
+            sCam->targetFlags &= ~ARROW_FLAG_1_Interacted;
         }
     }
     
-    sCamData->positionMirror.x = sCamData->srt.transl.x;
-    sCamData->positionMirror.y = sCamData->srt.transl.y;
-    sCamData->positionMirror.z = sCamData->srt.transl.z;
-    sCamData->highlightFlags = 0;
+    sCam->positionMirror.x = sCam->srt.transl.x;
+    sCam->positionMirror.y = sCam->srt.transl.y;
+    sCam->positionMirror.z = sCam->srt.transl.z;
+    sCam->highlightFlags = 0;
 
     //Restore the player's transl/globalPosition
     CamControl_restore_player_coords(player);
 }
 
 // offset: 0x57C | func: 2 | export: 2
-CamControl_Data* CamControl_get_data(void) {
-    return sCamData;
+Cam* CamControl_get_cam(void) {
+    return sCam;
 }
 
 // offset: 0x598 | func: 3 | export: 3
@@ -264,7 +273,7 @@ void CamControl_change_camera_module(s32 dllID, s32 doDeferredFree, s32 setupVal
     sEaseDuration = easeDuration;
     
     if (action != NULL) {
-        sCamAction = mmAlloc(actionSize, ALLOC_TAG_CAM_COL, 0);
+        sCamAction = mmAlloc(actionSize, ALLOC_TAG_CAM_COL, ALLOC_NAME("camcontrol1"));
         bcopy(action, sCamAction, actionSize);
     } else {
         sCamAction = NULL;
@@ -302,7 +311,7 @@ CameraAction* CamControl_get_camera_action(s32 actionIndex) {
     }
     actionIndex--;
     
-    camAction = mmAlloc(sizeof(CameraAction), ALLOC_TAG_CAM_COL, 0);
+    camAction = mmAlloc(sizeof(CameraAction), ALLOC_TAG_CAM_COL, ALLOC_NAME("camcontrol2"));
     queue_load_file_region_to_ptr(
         camAction, 
         CAMACTIONS_BIN, 
@@ -361,25 +370,25 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
 
 // offset: 0xB08 | func: 11 | export: 9
 void CamControl_store_player(Object* player, s32 arg1) {
-    if (player != sCamData->player) {
-        sCamData->player = player;
+    if (player != sCam->player) {
+        sCam->player = player;
     }
 }
 
 // offset: 0xB38 | func: 12 | export: 10
 void CamControl_reposition_player(f32 x, f32 y, f32 z) {
-    sCamData->setPlayerPosition = TRUE;
-    sCamData->newPlayerPosition.x = x;
-    sCamData->newPlayerPosition.y = y;
-    sCamData->newPlayerPosition.z = z;
+    sCam->setPlayerPosition = TRUE;
+    sCam->newPlayerPosition.x = x;
+    sCam->newPlayerPosition.y = y;
+    sCam->newPlayerPosition.z = z;
 }
 
 // offset: 0xB80 | func: 13 | export: 11
 /** Shifts the camera by a position delta */
 void CamControl_move_camera_by_delta(f32 dx, f32 dy, f32 dz) {
-    sCamData->srt.transl.x += dx;
-    sCamData->srt.transl.y += dy;
-    sCamData->srt.transl.z += dz;
+    sCam->srt.transl.x += dx;
+    sCam->srt.transl.y += dy;
+    sCam->srt.transl.z += dz;
 }
 
 // offset: 0xBD4 | func: 14 | export: 12
@@ -403,17 +412,15 @@ void CamControl_func_BD4(f32 xNumerator, Vec4f* vec4, f32 xDivisor, f32 xMin, f3
   * and optionally stores the absolute lateral distance as well (clamped to a minimum of 5).
   * 
   * The yOffset argument can be used to sample the vector from a point above the player's feet.
-  *
-  * NOTE: arg0 could also be an Object*, or a pointer to an SRT.
   */
-void CamControl_get_player_to_camera_distances(Camera* camera, f32* dx, f32* dy, f32* dz, f32* distance2D, f32 yOffset) {
+void CamControl_get_player_to_camera_distances(Cam* cam, f32* dx, f32* dy, f32* dz, f32* distance2D, f32 yOffset) {
     Object* player;
 
-    player = sCamData->player;
+    player = sCam->player;
     
-    *dx = camera->srt.transl.x - player->srt.transl.x;
-    *dy = camera->srt.transl.y - (player->srt.transl.y + yOffset);
-    *dz = camera->srt.transl.z - player->srt.transl.z;
+    *dx = cam->srt.transl.x - player->srt.transl.x;
+    *dy = cam->srt.transl.y - (player->srt.transl.y + yOffset);
+    *dz = cam->srt.transl.z - player->srt.transl.z;
     
     //Optional: store lateral distance
     if (distance2D != NULL) {
@@ -432,24 +439,24 @@ void CamControl_get_player_to_camera_distances(Camera* camera, f32* dx, f32* dy,
 // offset: 0xD10 | func: 16 | export: 14
 /** Returns the Object the LockIcon is currently locked onto */
 Object* CamControl_get_target_object(void) {
-    return sCamData->target;
+    return sCam->target;
 }
 
 // offset: 0xD30 | func: 17 | export: 15
 /** Returns the Object the LockIcon is hovering over (not necessarily Z-targetting) */
 Object* CamControl_get_highlighted_object(void) {
-    return sCamData->highlight;
+    return sCam->highlight;
 }
 
 // offset: 0xD50 | func: 18 | export: 17
 void CamControl_set_target_object(Object* target) {
-    sCamData->target = target;
-    sCamData->highlight = target;
+    sCam->target = target;
+    sCam->highlight = target;
 }
 
 // offset: 0xD7C | func: 19 | export: 18
 int CamControl_has_interpolation_finished(void) {
-    return (sCamData->tValue > 0.0f);
+    return (sCam->tValue > 0.0f);
 }
 
 // offset: 0xDB8 | func: 20 | export: 19
@@ -466,14 +473,14 @@ void CamControl_lock_icon_tick(void) {
     ObjectStruct74* targetCoords;
 
     arrow = sLockIcon;
-    hlObject = sCamData->highlight;
+    hlObject = sCam->highlight;
     player = get_player();
     
     if (menu_get_current() == MENU_TITLE_SCREEN) {
         return;
     }
     
-    sCamData->targetFlags &= ~ARROW_FLAG_4_Highlighted;
+    sCam->targetFlags &= ~ARROW_FLAG_4_Highlighted;
     
     if ((player == NULL) || (player->stateFlags & OBJSTATE_IN_SEQ)) {
         sIconState = LockIcon_STATE_Hidden;
@@ -499,7 +506,7 @@ void CamControl_lock_icon_tick(void) {
         //Highlight the target object when in range
         if ((SQ(dx) + SQ(dz) < distSquared) && ((dy > -100.0f) && (dy < 100.0f))) {
             hlObject->unkAF |= ARROW_FLAG_4_Highlighted;
-            sCamData->targetFlags |= 4;
+            sCam->targetFlags |= 4;
         }
         
         //Update target Object's interaction flags when A button pressed
@@ -615,15 +622,15 @@ void CamControl_lock_icon_tick(void) {
 void CamControl_lock_icon_print(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     if (menu_get_current() != MENU_TITLE_SCREEN) {
         _data_0[0] = -1;
-        CamControl_print(sCamData->highlight, sActiveID == DLL_ID_CAMLOCKON, gdl, mtxs, vtxs, pols);
+        CamControl_print(sCam->highlight, sActiveID == DLL_ID_CAMLOCKON, gdl, mtxs, vtxs, pols);
     }
 }
 
 // offset: 0x14A8 | func: 22 | export: 21
 void CamControl_set_letterbox_goal(s32 height, s32 startAtGoal) {
-    if (sCamData->letterboxGoal < height) {
-        sCamData->letterboxGoal = height;
-        sCamData->letterboxSpeed = 1;
+    if (sCam->letterboxGoal < height) {
+        sCam->letterboxGoal = height;
+        sCam->letterboxSpeed = 1;
         
         if (startAtGoal) {
             camera_set_letterbox(height);
@@ -634,7 +641,7 @@ void CamControl_set_letterbox_goal(s32 height, s32 startAtGoal) {
 // offset: 0x1520 | func: 23 | export: 24
 /** Can be used to prevent searching for nearby Objects to highlight with the LockIcon (when highlightFlags has bit 2 set) */
 void CamControl_apply_highlight_flags(s32 flags) {
-    sCamData->highlightFlags |= flags;
+    sCam->highlightFlags |= flags;
 }
 
 // offset: 0x1548 | func: 24 | export: 16
@@ -643,16 +650,16 @@ void CamControl_apply_highlight_flags(s32 flags) {
  */
 void CamControl_set_target_flag_2(s32 enable) {
     if (enable) {
-        sCamData->targetFlags |= 2;
+        sCam->targetFlags |= 2;
     } else {
-        sCamData->targetFlags &= ~2;
+        sCam->targetFlags &= ~2;
     }
 }
 
 // offset: 0x1594 | func: 25 | export: 25
-/** Can set bits 4 and/or 5 of `sCamData->targetFlags` (affects arrow being greyed out?) */
+/** Can set bits 4 and/or 5 of `sCam->targetFlags` (affects arrow being greyed out?) */
 void CamControl_apply_target_flags(s32 bits4and5) {
-    sCamData->targetFlags |= (bits4and5 * 8) & 0x18;
+    sCam->targetFlags |= (bits4and5 * 8) & 0x18;
 }
 
 // offset: 0x15C4 | func: 26
@@ -680,8 +687,15 @@ void CamControl_free_module(s32 idx) {
 s32 CamControl_load_module(u16 dllID, s32 doDeferredFree) {
     CamControl_Module *camModule;
     CamControl_Module *module;
+
+    /* default.dol
+    if (sCamModuleCount >= ARRAYCOUNT_S(sCamModules)) {
+        STUBBED_PRINTF("CAM DLL: no free dll slots left!!\n");
+        return -1;
+    }
+    */
     
-    module = mmAlloc(sizeof(CamControl_Module), ALLOC_TAG_CAM_COL, 0);
+    module = mmAlloc(sizeof(CamControl_Module), ALLOC_TAG_CAM_COL, ALLOC_NAME("camcontrol3"));
     
     sCamModules[sCamModuleCount] = module;
     sCamModuleCount++;
@@ -694,58 +708,58 @@ s32 CamControl_load_module(u16 dllID, s32 doDeferredFree) {
 }
 
 // offset: 0x1770 | func: 29
-static void CamControl_update_camera(CamControl_Data* camData) {
+static void CamControl_update_camera(Cam* cam) {
     Camera* camera;
     f32 tValue;
     f32 spline[4];
 
     set_camera_selector(0);
     camera = get_main_camera();
-    camera->srt.yaw = camData->srt.yaw;
-    camera->srt.pitch = camData->srt.pitch;
-    camera->srt.roll = camData->srt.roll;
-    camera->srt.transl.x = camData->srt.transl.x;
-    camera->srt.transl.y = camData->srt.transl.y;
-    camera->srt.transl.z = camData->srt.transl.z;
+    camera->srt.yaw = cam->srt.yaw;
+    camera->srt.pitch = cam->srt.pitch;
+    camera->srt.roll = cam->srt.roll;
+    camera->srt.transl.x = cam->srt.transl.x;
+    camera->srt.transl.y = cam->srt.transl.y;
+    camera->srt.transl.z = cam->srt.transl.z;
 
-    sFov = camData->fov;
+    sFov = cam->fov;
 
-    if (camData->tValue > 0.0f) {
-        camData->tValue -= camData->tSpeed * gUpdateRateF;
+    if (cam->tValue > 0.0f) {
+        cam->tValue -= cam->tSpeed * gUpdateRateF;
 
         //Get Hermite-eased tValue for interpolation
         spline[3] = 0.0f;
         spline[2] = 0.0f;
         spline[0] = 0.0f;
         spline[1] = 1.0f;
-        tValue = 1.0f - curves_hermite(spline, camData->tValue, 0);
+        tValue = 1.0f - curves_hermite(spline, cam->tValue, 0);
 
         //Linear interpolation (position)
-        if (camData->lerpFlags & CamControl_Ease_X) {
-            camera->srt.transl.x = camData->easeStartX + (camera->srt.transl.x - camData->easeStartX)*tValue;
+        if (cam->lerpFlags & CamControl_Ease_X) {
+            camera->srt.transl.x = cam->easeStartX + (camera->srt.transl.x - cam->easeStartX)*tValue;
         }
-        if (camData->lerpFlags & CamControl_Ease_Y) {
-            camera->srt.transl.y = camData->easeStartY + (camera->srt.transl.y - camData->easeStartY)*tValue;
+        if (cam->lerpFlags & CamControl_Ease_Y) {
+            camera->srt.transl.y = cam->easeStartY + (camera->srt.transl.y - cam->easeStartY)*tValue;
         }
-        if (camData->lerpFlags & CamControl_Ease_Z) {
-            camera->srt.transl.z = camData->easeStartZ + (camera->srt.transl.z - camData->easeStartZ)*tValue;
+        if (cam->lerpFlags & CamControl_Ease_Z) {
+            camera->srt.transl.z = cam->easeStartZ + (camera->srt.transl.z - cam->easeStartZ)*tValue;
         }
         
         //Linear interpolation (rotation)
-        if (camData->lerpFlags & CamControl_Ease_Yaw) {
-            camData->dYaw = camData->easeStartYaw - (camera->srt.yaw & 0xFFFF);
-            CIRCLE_WRAP(camData->dYaw)
-            camera->srt.yaw = camData->easeStartYaw - ((s16)(camData->dYaw * tValue));
+        if (cam->lerpFlags & CamControl_Ease_Yaw) {
+            cam->dYaw = cam->easeStartYaw - (camera->srt.yaw & 0xFFFF);
+            CIRCLE_WRAP(cam->dYaw)
+            camera->srt.yaw = cam->easeStartYaw - ((s16)(cam->dYaw * tValue));
         }
-        if (camData->lerpFlags & CamControl_Ease_Pitch) {
-            camData->dPitch = camData->easeStartPitch - (camera->srt.pitch & 0xFFFF);
-            CIRCLE_WRAP(camData->dPitch)
-            camera->srt.pitch = camData->easeStartPitch - ((s16)(camData->dPitch * tValue));
+        if (cam->lerpFlags & CamControl_Ease_Pitch) {
+            cam->dPitch = cam->easeStartPitch - (camera->srt.pitch & 0xFFFF);
+            CIRCLE_WRAP(cam->dPitch)
+            camera->srt.pitch = cam->easeStartPitch - ((s16)(cam->dPitch * tValue));
         }
-        if (camData->lerpFlags & CamControl_Ease_Roll) {
-            camData->dRoll = camData->easeStartRoll - (camera->srt.roll & 0xFFFF);
-            CIRCLE_WRAP(camData->dRoll)
-            camera->srt.roll = camData->easeStartRoll - ((s16)(camData->dRoll * tValue));
+        if (cam->lerpFlags & CamControl_Ease_Roll) {
+            cam->dRoll = cam->easeStartRoll - (camera->srt.roll & 0xFFFF);
+            CIRCLE_WRAP(cam->dRoll)
+            camera->srt.roll = cam->easeStartRoll - ((s16)(cam->dRoll * tValue));
         }
     }
     
@@ -759,29 +773,29 @@ static void CamControl_update_camera(CamControl_Data* camData) {
 
     //Update camera letterboxing
     sLetterboxHeight = camera_get_letterbox();
-    if (sLetterboxHeight != camData->letterboxGoal) {
-        if (sLetterboxHeight < camData->letterboxGoal) {
-            sLetterboxHeight += camData->letterboxSpeed * (s32) gUpdateRateF;
-            if (camData->letterboxGoal < sLetterboxHeight) {
-                sLetterboxHeight = camData->letterboxGoal;
+    if (sLetterboxHeight != cam->letterboxGoal) {
+        if (sLetterboxHeight < cam->letterboxGoal) {
+            sLetterboxHeight += cam->letterboxSpeed * (s32) gUpdateRateF;
+            if (cam->letterboxGoal < sLetterboxHeight) {
+                sLetterboxHeight = cam->letterboxGoal;
             }
         } else {
-            sLetterboxHeight -= camData->letterboxSpeed * (s32) gUpdateRateF;
-            if (sLetterboxHeight < camData->letterboxGoal) {
-                sLetterboxHeight = camData->letterboxGoal;
+            sLetterboxHeight -= cam->letterboxSpeed * (s32) gUpdateRateF;
+            if (sLetterboxHeight < cam->letterboxGoal) {
+                sLetterboxHeight = cam->letterboxGoal;
             }
         }
         camera_set_letterbox(sLetterboxHeight);
     }
     
-    camData->letterboxGoal = 0;
+    cam->letterboxGoal = 0;
 }
 
 // offset: 0x1BD0 | func: 30
 void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction) {   
     //Call the existing camera module's free method (if it's a different DLL ID)
     if ((sActiveModule != NULL) && (sActiveID != camDLLID)){
-        sActiveModule->dll->vtbl->free(sCamData);
+        sActiveModule->dll->vtbl->free(sCam);
         if (sActiveModule->doDeferredFree == TRUE){
             CamControl_free_module(sActiveLoadedIndex);
             sActiveModule = NULL;
@@ -800,7 +814,7 @@ void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction) {
     if (sActiveLoadedIndex != DLL_NONE) {
         sActiveModule = sCamModules[sActiveLoadedIndex];
         sActiveID = sActiveModule->id;
-        sActiveModule->dll->vtbl->setup(sCamData, sNextSetupVal, camAction);
+        sActiveModule->dll->vtbl->setup(sCam, sNextSetupVal, camAction);
     } else {
         sActiveModule = NULL;
         sActiveID = DLL_NONE;
@@ -840,13 +854,13 @@ void CamControl_restore_player_coords(Object* player) {
 
 // offset: 0x1E64 | func: 33
 /** Averages the player's speed over the past 5 frames, stored to `speedAverage` (absolute value) */
-void CamControl_average_player_speed(CamControl_Data* camData, Object* player) {
+void CamControl_average_player_speed(Cam* cam, Object* player) {
     f32 speedMagnitude;
     s32 i;
 
     //Copy speed samples up one slot
-    for (i = 0; i < ARRAYCOUNT_S(camData->speedSamples) - 1; i++) {
-        camData->speedSamples[i] = camData->speedSamples[i + 1];
+    for (i = 0; i < ARRAYCOUNT_S(cam->speedSamples) - 1; i++) {
+        cam->speedSamples[i] = cam->speedSamples[i + 1];
     }
 
     //Put player's absolute lateral speed into last slot
@@ -854,23 +868,23 @@ void CamControl_average_player_speed(CamControl_Data* camData, Object* player) {
     if (speedMagnitude > 0.0f) {
         speedMagnitude = sqrtf(speedMagnitude);
     }
-    camData->speedSamples[4] = speedMagnitude;
+    cam->speedSamples[4] = speedMagnitude;
 
     //Average the 5 speed samples
-    camData->speedAverage = 0.0f;
-    for (i = 0; i < ARRAYCOUNT_S(camData->speedSamples); i++) {
-        camData->speedAverage += camData->speedSamples[i];
+    cam->speedAverage = 0.0f;
+    for (i = 0; i < ARRAYCOUNT_S(cam->speedSamples); i++) {
+        cam->speedAverage += cam->speedSamples[i];
     }
-    camData->speedAverage *= 0.2f;
+    cam->speedAverage *= 0.2f;
     
-    if (camData->speedAverage < 0.0f) {
-        camData->speedAverage = -camData->speedAverage;
+    if (cam->speedAverage < 0.0f) {
+        cam->speedAverage = -cam->speedAverage;
     }
 }
 
 // offset: 0x1F8C | func: 34
 /** Searches through an array of highlightable Objects, finding which (if any) to display the LockIcon highlight over */
-Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* player) {
+Object* CamControl_find_highlight_object(Cam* cam, Object* player) {
     Object* objects[8]; //targettable Objects
     s32 matchCount;
     s32 i;
@@ -890,7 +904,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
     s32 angularRange;
 
     //Return early if flag set
-    if (camData->highlightFlags & 2) {
+    if (cam->highlightFlags & 2) {
         return NULL;
     }
     
@@ -957,12 +971,12 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
         }
     }
 
-    if (camData->lockObjIndex >= matchCount) {
-        camData->lockObjIndex = 0;
+    if (cam->lockObjIndex >= matchCount) {
+        cam->lockObjIndex = 0;
     }
     
     if (matchCount) {
-        return objects[camData->lockObjIndex];
+        return objects[cam->lockObjIndex];
     }
 
     return NULL;  
@@ -1015,7 +1029,7 @@ void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, V
             modelIndex *= 0;
         }
         
-        if ((obj->unkAF & ARROW_FLAG_10_Greyed_Out) || (!(sCamData->targetFlags & ARROW_FLAG_4_Highlighted))) {
+        if ((obj->unkAF & ARROW_FLAG_10_Greyed_Out) || (!(sCam->targetFlags & ARROW_FLAG_4_Highlighted))) {
             modelIndex += 6;
         }
         

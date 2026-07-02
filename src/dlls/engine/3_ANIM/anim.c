@@ -3042,8 +3042,8 @@ void anim_update_camera(void) {
     s16 sp17A;
     s16 sp178;
     s16 sp176;
-    CamControl_Data* temp_v0;
-    CamControl_Data sp54;
+    Cam* cam;
+    Cam camseqData;
     CamPath_Params sp4C;
     CamStatic_Params sp44;
     DLL_86_CamAction sp38;
@@ -3062,41 +3062,41 @@ void anim_update_camera(void) {
             }
             _bss_A0 = 1.0f;
             if (_bss_8B == 0) {
-                sp54.srt.transl.x = sp184;
-                sp54.srt.transl.y = sp180;
-                sp54.srt.transl.z = sp17C;
-                sp54.srt.yaw = 0x8000 - sp17A;
-                sp54.srt.pitch = -sp178;
-                sp54.srt.roll = sp176;
+                camseqData.srt.transl.x = sp184;
+                camseqData.srt.transl.y = sp180;
+                camseqData.srt.transl.z = sp17C;
+                camseqData.srt.yaw = 0x8000 - sp17A;
+                camseqData.srt.pitch = -sp178;
+                camseqData.srt.roll = sp176;
                 if (_data_30 != 0) {
-                    sp54.fov = _bss_5DC;
+                    camseqData.fov = _bss_5DC;
                     _data_C = _bss_5DC;
                 } else {
-                    sp54.fov = _data_C;
+                    camseqData.fov = _data_C;
                 }
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, 0, 1, sizeof(sp54), &sp54, animobjSetup->unk24, 0xFF);
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, 0, 1, sizeof(camseqData), &camseqData, animobjSetup->unk24, 0xFF);
                 _bss_8B = 1;
             } else {
-                temp_v0 = gDLL_2_Camera->vtbl->get_data();
-                temp_v0->srt.transl.x = sp184;
-                temp_v0->srt.transl.y = sp180;
-                temp_v0->srt.transl.z = sp17C;
-                temp_v0->srt.yaw = 0x8000 - sp17A;
-                temp_v0->srt.pitch = -sp178;
-                temp_v0->srt.roll = sp176;
+                cam = gDLL_2_Camera->vtbl->get_cam();
+                cam->srt.transl.x = sp184;
+                cam->srt.transl.y = sp180;
+                cam->srt.transl.z = sp17C;
+                cam->srt.yaw = 0x8000 - sp17A;
+                cam->srt.pitch = -sp178;
+                cam->srt.roll = sp176;
                 if (_data_30 != 0) {
-                    temp_v0->fov = _bss_5DC;
+                    cam->fov = _bss_5DC;
                     _data_C = _bss_5DC;
                 } else {
-                    temp_v0->fov = _data_C;
+                    cam->fov = _data_C;
                 }
-                _bss_5A4 = temp_v0->srt.transl.x;
-                _bss_5A8 = temp_v0->srt.transl.y;
-                _bss_5B0 = temp_v0->srt.transl.z;
-                _bss_5C8 = (s32) temp_v0->srt.yaw;
-                _bss_5D0 = (s32) temp_v0->srt.pitch;
-                _bss_5D4 = (s32) temp_v0->srt.roll;
-                _bss_5C4 = temp_v0->fov;
+                _bss_5A4 = cam->srt.transl.x;
+                _bss_5A8 = cam->srt.transl.y;
+                _bss_5B0 = cam->srt.transl.z;
+                _bss_5C8 = (s32) cam->srt.yaw;
+                _bss_5D0 = (s32) cam->srt.pitch;
+                _bss_5D4 = (s32) cam->srt.roll;
+                _bss_5C4 = cam->fov;
             }
         }
     } else if (_bss_8B != 0) {
@@ -3119,14 +3119,14 @@ void anim_update_camera(void) {
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE, 1, 0, 0, NULL, _bss_98, 0xFF);
             break;
         case DLL_ID_CAMSEQ:
-            sp54.srt.transl.x = _bss_5A4;
-            sp54.srt.transl.y = _bss_5A8;
-            sp54.srt.yaw = (s16) _bss_5C8;
-            sp54.srt.pitch = (s16) _bss_5D0;
-            sp54.srt.transl.z = _bss_5B0;
-            sp54.srt.roll = (s16) _bss_5D4;
-            sp54.fov = _bss_5C4;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, 1, 0, sizeof(sp54), &sp54, 0, 0xFF);
+            camseqData.srt.transl.x = _bss_5A4;
+            camseqData.srt.transl.y = _bss_5A8;
+            camseqData.srt.yaw = (s16) _bss_5C8;
+            camseqData.srt.pitch = (s16) _bss_5D0;
+            camseqData.srt.transl.z = _bss_5B0;
+            camseqData.srt.roll = (s16) _bss_5D4;
+            camseqData.fov = _bss_5C4;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, 1, 0, sizeof(camseqData), &camseqData, 0, 0xFF);
             break;
         case DLL_ID_CAMSLIDE:
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSLIDE, 1, 0, 0, NULL, _bss_98, 0xFF);
