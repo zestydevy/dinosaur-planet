@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_96_ctor = 0x0;
+dll_96_dtor = 0xC;
+dll_96_func_18 = 0x18;
+dll_96_func_4BC = 0x4BC;
+dll_96_func_93C = 0x93C;
+dll_96_func_990 = 0x990;
+dll_96_func_9C4 = 0x9C4;
+dll_96_func_CE0 = 0xCE0;
+dll_96_func_E60 = 0xE60;
+dll_96_func_137C = 0x137C;
+
+.rodata = 0x14B4:
+str_0 = 0x0; // absolute:0x14B4
+
+.bss = 0x1504:
+bss_0 = 0x0; // absolute:0x1504
+bss_4 = 0x4; // absolute:0x1508
