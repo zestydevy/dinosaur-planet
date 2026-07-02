@@ -288,6 +288,10 @@ enum SoundID {
 
     SOUND_336 = 0x336,
 
+    SOUND_33A_Worm_Roar = 0x33A, //SnowWormSmall
+
+    SOUND_33C_Hiss = 0x33C, //SnowWormSmall
+    SOUND_33D_Hiss_Long = 0x33D, //SnowWormSmall
     SOUND_33E_Reverse_Magic_Hiss = 0x33E, //ECSHshrine (when cups rise)
     SOUND_33F_Cup_Slide_Loop = 0x33F, //ECSH_Cup
 
@@ -324,6 +328,7 @@ enum SoundID {
     SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat, SmallBasket
     SOUND_372_Crate_Struck = 0x372, // used by MediumMetalCrat
 
+    SOUND_374_Whack = 0x374,
     SOUND_375_Smack1 = 0x375,
     SOUND_376_Smack2 = 0x376,
     SOUND_377_Metal_Smack = 0x377,
@@ -407,6 +412,15 @@ enum SoundID {
     SOUND_5F6_Tumbleweed_Roll = 0x5F6, // used in DLL 227
     SOUND_5F7_Tumbleweed_Disintegrate = 0x5F7, // used in DLL 227
 
+    SOUND_5FB_Chirp = 0x5FB, //SnowWormSmall
+    SOUND_5FC_Triple_Chirp = 0x5FC, //SnowWormSmall
+    SOUND_5FD_Trill = 0x5FD, //SnowWormSmall
+    SOUND_5FE_Squeak = 0x5FE, //SnowWormSmall
+    SOUND_5FF_Cry_Hurt = 0x5FF, //SnowWormSmall
+    SOUND_600_Cry_Hurt = 0x600, //SnowWormSmall
+    SOUND_601_Worm_Croak = 0x601, //SnowWormSmall
+    SOUND_602_Emerge_Snowy = 0x602, //SnowWormSmall
+    
     SOUND_613_Gold_Bounce = 0x613,  // used in SCcollectables
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227

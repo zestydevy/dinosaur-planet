@@ -12,98 +12,154 @@
 
 typedef struct {
     Baddie_Setup baddie;
-} DLL222_Setup;
+} SnowWormSmall_Setup;
 
 typedef struct {
     f32 unk0;
     f32 unk4;
-    u8 unk8; //flags
+    u8 flags;
     u8 unk9;
-} DLL222_DataActual;
+} SnowWormSmall_DataActual;
 
 typedef struct {
-    Baddie unk0;
-    DLL222_DataActual unk3FC;
-} DLL222_Data; //408
+    Baddie baddie;
+    SnowWormSmall_DataActual objData;
+} SnowWormSmall_Data;
 
-/*0x0*/ static u32 data_0[] = {
-    0x000005ff, 0x00000600, 0x00000601
+typedef enum {
+    SnowWormSmall_ASTATE_0,
+    SnowWormSmall_ASTATE_1,
+    SnowWormSmall_ASTATE_2,
+    SnowWormSmall_ASTATE_3,
+    SnowWormSmall_ASTATE_4,
+    SnowWormSmall_ASTATE_5,
+    SnowWormSmall_ASTATE_6
+} SnowWormSmall_AnimStates;
+
+typedef enum {
+    SnowWormSmall_LSTATE_0,
+    SnowWormSmall_LSTATE_1,
+    SnowWormSmall_LSTATE_2,
+    SnowWormSmall_LSTATE_3,
+    SnowWormSmall_LSTATE_4,
+    SnowWormSmall_LSTATE_5
+} SnowWormSmall_LogicStates;
+
+/*0x0*/ static u32 dHurtSounds[] = {
+    SOUND_5FF_Cry_Hurt, SOUND_600_Cry_Hurt, SOUND_601_Worm_Croak
 };
-/*0xC*/ static u32 data_C[] = {
-    0x000005fb, 0x000005fc, 0x000005fd, 0x000005fe
+/*0xC*/ static u32 dChirpSounds[] = {
+    SOUND_5FB_Chirp, SOUND_5FC_Triple_Chirp, SOUND_5FD_Trill, SOUND_5FE_Squeak
 };
-/*0x1C*/ static u32 data_1C[] = {
-    0x00000602, 0x0000033a, 0x0000033c, 0x0000033d
+/*0x1C*/ static u32 dBattleSounds[] = {
+    SOUND_602_Emerge_Snowy, SOUND_33A_Worm_Roar, SOUND_33C_Hiss, SOUND_33D_Hiss_Long
 };
-/*0x2C*/ static u32 data_2C[] = {
-    0x00000374, 0x00000375, 0x00000376, 0x0000025b, 0x0000025c
+/*0x2C*/ static u32 dWeaponHitSounds[] = {
+    SOUND_374_Whack, 
+    SOUND_375_Smack1, 
+    SOUND_376_Smack2, 
+    SOUND_25B_Magic_Attack_Deflected, 
+    SOUND_25C_Melee_Attack_Deflected
 };
-/*0x40*/ static u32 data_40[] = {
-    0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 
-    0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000002, 0x00000005, 
-    0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 
-    0x00000005, 0x00000005, 0x00000005, 0x00000005
-};
-/*0xB0*/ static s8 data_B0[] = {
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xff, 0xff, 0xff, 0xff
+/*0x40*/ static s32 dHitAnimStateMap[] = {
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_2, //NOTE: different!
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5, 
+    SnowWormSmall_ASTATE_5
 };
 
-/*0x0*/ static ObjFSA_StateCallback bss_0[7];
-/*0x20*/ static ObjFSA_StateCallback bss_20[6];
+typedef enum {
+    SnowWormSmall_FLAG_0 = 0,
+    SnowWormSmall_FLAG_1 = 1,
+    SnowWormSmall_FLAG_2 = 2,
+    SnowWormSmall_FLAG_4 = 4,
+    SnowWormSmall_FLAG_8 = 8
+} SnowWormSmall_Flags;
 
-static void dll_222_func_0(void);
-static void dll_222_func_8B8(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void dll_222_func_BF8(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void dll_222_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void dll_222_func_F50(Object* self, Baddie* baddie);
-static void dll_222_func_106C(Object* self, Baddie* baddie);
-static s32 dll_222_func_13F8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_164C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_17DC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_1A1C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_1B04(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_1C80(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_1E80(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_20A4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_2134(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_2170(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_227C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_2318(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 dll_222_func_2390(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+/*0xB0*/ static s8 dHitDamageMap[] = {
+    -1, -1, -1, -1, -1, -1, -1, 
+    -1, -1, -1, -1, -1, -1, -1, 
+    -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1
+};
+
+/*0x0*/ static ObjFSA_StateCallback sAnimStateCallbacks[7];
+/*0x20*/ static ObjFSA_StateCallback sLogicStateCallbacks[6];
+
+static void SnowWormSmall_init_fsa_callbacks(void);
+static void SnowWormSmall_func_8B8(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void SnowWormSmall_func_BF8(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void SnowWormSmall_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void SnowWormSmall_func_F50(Object* self, Baddie* baddie);
+static void SnowWormSmall_throw_ice_ball(Object* self, Baddie* baddie);
+static s32 SnowWormSmall_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-void dll_222_func_0(void) {
-    bss_0[0] = &dll_222_func_13F8;
-    bss_0[1] = &dll_222_func_164C;
-    bss_0[2] = &dll_222_func_17DC;
-    bss_0[3] = &dll_222_func_1A1C;
-    bss_0[4] = &dll_222_func_1B04;
-    bss_0[5] = &dll_222_func_1C80;
-    bss_0[6] = &dll_222_func_1E80;
+void SnowWormSmall_init_fsa_callbacks(void) {
+    sAnimStateCallbacks[0] = &SnowWormSmall_anim_state_0;
+    sAnimStateCallbacks[1] = &SnowWormSmall_anim_state_1;
+    sAnimStateCallbacks[2] = &SnowWormSmall_anim_state_2;
+    sAnimStateCallbacks[3] = &SnowWormSmall_anim_state_3;
+    sAnimStateCallbacks[4] = &SnowWormSmall_anim_state_4;
+    sAnimStateCallbacks[5] = &SnowWormSmall_anim_state_5;
+    sAnimStateCallbacks[6] = &SnowWormSmall_anim_state_6;
     
-    bss_20[0] = &dll_222_func_20A4;
-    bss_20[1] = &dll_222_func_2134;
-    bss_20[2] = &dll_222_func_2170;
-    bss_20[3] = &dll_222_func_227C;
-    bss_20[4] = &dll_222_func_2318;
-    bss_20[5] = &dll_222_func_2390;
+    sLogicStateCallbacks[0] = &SnowWormSmall_logic_state_0;
+    sLogicStateCallbacks[1] = &SnowWormSmall_logic_state_1;
+    sLogicStateCallbacks[2] = &SnowWormSmall_logic_state_2;
+    sLogicStateCallbacks[3] = &SnowWormSmall_logic_state_3;
+    sLogicStateCallbacks[4] = &SnowWormSmall_logic_state_4;
+    sLogicStateCallbacks[5] = &SnowWormSmall_logic_state_5;
 }
 
 // offset: 0xC0 | ctor
-void dll_222_ctor(void* dll) {
-    dll_222_func_0();
+void SnowWormSmall_ctor(void* dll) {
+    SnowWormSmall_init_fsa_callbacks();
 }
 
 // offset: 0x100 | dtor
-void dll_222_dtor(void* dll) { }
+void SnowWormSmall_dtor(void* dll) { }
 
 // offset: 0x10C | func: 1 | export: 0
-void dll_222_setup(Object* self, DLL222_Setup* objSetup, s32 reset) {
+void SnowWormSmall_setup(Object* self, SnowWormSmall_Setup* objSetup, s32 reset) {
     u8 flags;
-    DLL222_DataActual* objData;
+    SnowWormSmall_DataActual* objData;
     Baddie* baddie;
 
     baddie = self->data;
@@ -124,34 +180,34 @@ void dll_222_setup(Object* self, DLL222_Setup* objSetup, s32 reset) {
 
     func_80023D30(self, 8, 0.0f, 0);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, 0);
-    baddie->fsa.logicState = 0;
+    gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, SnowWormSmall_ASTATE_0);
+    baddie->fsa.logicState = SnowWormSmall_LSTATE_0;
     baddie->fsa.unk4.mode = 0;
     func_800267A4(self);
 }
 
 // offset: 0x250 | func: 2 | export: 1
-void dll_222_control(Object* self) {
+void SnowWormSmall_control(Object* self) {
     Baddie* baddie;
-    DLL222_Setup* objSetup;
+    SnowWormSmall_Setup* objSetup;
     ObjFSA_Data* fsa;
     f32 time;
 
     baddie = self->data;
-    objSetup = (DLL222_Setup*)self->setup;
+    objSetup = (SnowWormSmall_Setup*)self->setup;
     fsa = &baddie->fsa;
     
     if (self->unkDC) {
-        if (((baddie->fsa.logicState != 3) || (baddie->unk3B0 & 1)) && 
+        if (((baddie->fsa.logicState != SnowWormSmall_LSTATE_3) || (baddie->unk3B0 & SnowWormSmall_LSTATE_1)) && 
             (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->baddie.base.uID))
         ) {
             gDLL_33_BaddieControl->vtbl->setup(self, &objSetup->baddie, baddie, 7, 6, 0x102, 0x26, 20.0f);
             baddie->unk3B6 = 0;
-            gDLL_6_AMSFX->vtbl->play(self, 0xB20, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
             func_80023D30(self, 8, 0.0f, 0x10);
             baddie->fsa.unk33A = 0;
-            self->opacity = 0xFF;
-            self->unkAF |= 8;
+            self->opacity = OBJECT_OPACITY_MAX;
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
         }
         return;
     }
@@ -175,22 +231,22 @@ void dll_222_control(Object* self) {
         return;
     }
     
-    dll_222_func_8B8(self, baddie, fsa);
+    SnowWormSmall_func_8B8(self, baddie, fsa);
     
     if (baddie->unk3B6 == 0) {
-        dll_222_func_D0C(self, baddie, fsa);
+        SnowWormSmall_func_D0C(self, baddie, fsa);
     } else {
-        dll_222_func_BF8(self, baddie, fsa);
+        SnowWormSmall_func_BF8(self, baddie, fsa);
     }
     
     self->srt.transl.y = objSetup->baddie.base.y - 2.0f;
 }
 
 // offset: 0x4F0 | func: 3 | export: 2
-void dll_222_update(Object* self) { }
+void SnowWormSmall_update(Object* self) { }
 
 // offset: 0x4FC | func: 4 | export: 3
-void dll_222_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SnowWormSmall_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     Baddie* baddie = self->data;
     
     if (!visibility) {
@@ -217,7 +273,7 @@ void dll_222_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 }
 
 // offset: 0x6E8 | func: 5 | export: 4
-void dll_222_free(Object* self, s32 onlySelf) {
+void SnowWormSmall_free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
     obj_free_object_type(self, OBJTYPE_Baddie);
@@ -231,25 +287,25 @@ void dll_222_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0x78C | func: 6 | export: 5
-u32 dll_222_get_model_flags(Object* self) {
+u32 SnowWormSmall_get_model_flags(Object* self) {
     return MODFLAGS_EVENTS | MODFLAGS_8 | MODFLAGS_1;
 }
 
 // offset: 0x79C | func: 7 | export: 6
-u32 dll_222_get_data_size(Object* self, u32 offsetAddr) {
-    return sizeof(DLL222_Data);
+u32 SnowWormSmall_get_data_size(Object* self, u32 offsetAddr) {
+    return sizeof(SnowWormSmall_Data);
 }
 
 // offset: 0x7B0 | func: 8 | export: 7
-s16 dll_222_func_7B0(Object* self, s32 unused) {
+SnowWormSmall_AnimStates SnowWormSmall_get_anim_state(Object* self, s32 unused) {
     Baddie* baddie = self->data;
     return baddie->fsa.animState;
 }
 
 // offset: 0x7C4 | func: 9 | export: 8
-void dll_222_func_7C4(Object* self, u8 message, s32 unused) {
+void SnowWormSmall_receive_message(Object* self, u8 message, s32 unused) {
     Baddie* baddie;
-    DLL222_DataActual* objData;
+    SnowWormSmall_DataActual* objData;
 
     baddie = self->data;
     
@@ -257,9 +313,9 @@ void dll_222_func_7C4(Object* self, u8 message, s32 unused) {
     case 0x80:
         objData = baddie->objdata;
         objData->unk9 |= 2;
-        gDLL_6_AMSFX->vtbl->play(self, data_1C[1], MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, 1);
-        baddie->fsa.logicState = 4;
+        gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[1], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, SnowWormSmall_ASTATE_1);
+        baddie->fsa.logicState = SnowWormSmall_LSTATE_4;
         baddie->fsa.enteredLogicState = TRUE;
         break;
     case 0x81:
@@ -272,15 +328,15 @@ void dll_222_func_7C4(Object* self, u8 message, s32 unused) {
 }
 
 // offset: 0x8B8 | func: 10
-void dll_222_func_8B8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {    
+void SnowWormSmall_func_8B8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {    
     Vec3f d;
     s32 scaleIdx;
     s32 i;
-/*0xCC*/ s16 data_CC[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
-/*0xD4*/ s16 data_D4[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+    /*0xCC*/ s16 dFXScales1[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+    /*0xD4*/ s16 dFXScales2[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
     Object* player;
     Object* weapon;
-/*0x38*/ static SRT bss_38;
+    /*0x38*/ static SRT sFXTransform;
     
     player = get_player();
     if (fsa->target != NULL) {
@@ -296,40 +352,40 @@ void dll_222_func_8B8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8);
     
-    if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_40, data_B0, 1, &baddie->unk3A8, &bss_38)) {
+    if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, dHitAnimStateMap, dHitDamageMap, 1, &baddie->unk3A8, &sFXTransform)) {
         weapon = player->linkedObject;
         scaleIdx = ((DLL_Unknown*)weapon->dll)->vtbl->func[19].withOneArgS32(weapon);
         if (scaleIdx > 3) {
             scaleIdx = 3;
         }
         
-        bss_38.scale = data_CC[scaleIdx];
-        gDLL_17_partfx->vtbl->spawn(self, 0x323, &bss_38, 0x200001, -1, NULL);
-        bss_38.transl.x -= self->srt.transl.x;
-        bss_38.transl.y -= self->srt.transl.y;
-        bss_38.transl.z -= self->srt.transl.z;
-        bss_38.scale = data_D4[scaleIdx];
+        sFXTransform.scale = dFXScales1[scaleIdx];
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_323, &sFXTransform, 0x200001, -1, NULL);
+        sFXTransform.transl.x -= self->srt.transl.x;
+        sFXTransform.transl.y -= self->srt.transl.y;
+        sFXTransform.transl.z -= self->srt.transl.z;
+        sFXTransform.scale = dFXScales2[scaleIdx];
 
         for (i = 0; i < 4; i++) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x324, &bss_38, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, &sFXTransform, 2, -1, NULL);
         }
     }
 }
 
 // offset: 0xBF8 | func: 11
-void dll_222_func_BF8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
-    dll_222_func_F50(self, baddie);
+void SnowWormSmall_func_BF8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    SnowWormSmall_func_F50(self, baddie);
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
     baddie->unk3AC = self->animObj;
     self->animObj = NULL;
-    gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, bss_0, bss_20);
+    gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
     self->animObj = baddie->unk3AC;
 }
 
 // offset: 0xD0C | func: 12
-void dll_222_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
-    DLL222_DataActual* objData;
+void SnowWormSmall_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    SnowWormSmall_DataActual* objData;
     Object* target;
     Vec3f d;
     Object* player;
@@ -357,38 +413,38 @@ void dll_222_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     }
     
     if ((objData->unk4 < objData->unk0) && (distance < 400.0f)) {
-        gDLL_6_AMSFX->vtbl->play(self, data_1C[1], 0x1E, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[1], 0x1E, NULL, NULL, 0, NULL);
         objData->unk4 += rand_next(50, 250);
     }
     objData->unk0 += gUpdateRateF;
 }
 
 // offset: 0xF50 | func: 13
-void dll_222_func_F50(Object* self, Baddie* baddie) {
-    DLL222_DataActual* objData;
+void SnowWormSmall_func_F50(Object* self, Baddie* baddie) {
+    SnowWormSmall_DataActual* objData;
     s32 i;
 
     objData = baddie->objdata;
     
-    if (objData->unk8 & 1) {
-        dll_222_func_106C(self, baddie);
+    if (objData->flags & SnowWormSmall_FLAG_1) {
+        SnowWormSmall_throw_ice_ball(self, baddie);
     }
     
-    if (objData->unk8 & 2) {
-        gDLL_17_partfx->vtbl->spawn(self, 0x345, NULL, 1, -1, NULL);
+    if (objData->flags & SnowWormSmall_FLAG_2) {
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_345, NULL, 1, -1, NULL);
     }
     
-    if (objData->unk8 & 4) {
+    if (objData->flags & SnowWormSmall_FLAG_4) {
         for (i = 0; i < 10; i++) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x343, NULL, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_343, NULL, 1, -1, NULL);
         }
     }
     
-    objData->unk8 = 0;
+    objData->flags = SnowWormSmall_FLAG_0;
 }
 
 // offset: 0x106C | func: 14
-void dll_222_func_106C(Object* self, Baddie* baddie) {
+void SnowWormSmall_throw_ice_ball(Object* self, Baddie* baddie) {
     ChukaChuck_Setup* chuckSetup;
     Object* chuck;
     f32 throwFactor;
@@ -424,37 +480,37 @@ void dll_222_func_106C(Object* self, Baddie* baddie) {
 }
 
 // offset: 0x11E4 | func: 15
-static void dll_222_func_11E4(Object* self, s32* alliesLowestAnimState, s32* numAllies, s32* numAlliesInAnimState4) {
+static void SnowWormSmall_get_ally_info(Object* self, s32* oAlliesLowestAnimState, s32* oNumAllies, s32* oNumAlliesInAnimState4) {
     s32 index;
     s32 count;
     Object* obj;
     Object** objects;
     s32 animState;
 
-    *numAllies = 0;
-    *numAlliesInAnimState4 = 0;
-    *alliesLowestAnimState = 0;
+    *oNumAllies = 0;
+    *oNumAlliesInAnimState4 = 0;
+    *oAlliesLowestAnimState = 0;
     
     for (objects = get_world_objects(&index, &count); index < count; index++) {
         obj = objects[index];
         if ((self != obj) && (obj->id == OBJ_SnowWormSmall)) {
-            *numAllies += 1;
+            *oNumAllies += 1;
             obj = objects[index];
             animState = ((DLL_222_SnowWormSmall*)obj->dll)->vtbl->get_anim_state(obj, 0);
             
-            if (*alliesLowestAnimState < animState) {
-                *alliesLowestAnimState = animState;
+            if (*oAlliesLowestAnimState < animState) {
+                *oAlliesLowestAnimState = animState;
             }
-            if (animState == 4) {
-                *numAlliesInAnimState4 += 1;
+
+            if (animState == SnowWormSmall_ASTATE_4) {
+                *oNumAlliesInAnimState4 += 1;
             }
         }
     }
 }
 
 // offset: 0x132C | func: 16
-//SnowWormSmall_worm_to_worm_communication
-static void dll_222_func_132C(Object* self) {
+static void SnowWormSmall_worm_to_worm_communication(Object* self) {
     s32 index;
     s32 count;
     Object* obj;
@@ -469,10 +525,10 @@ static void dll_222_func_132C(Object* self) {
 }
 
 // offset: 0x13F8 | func: 17
-s32 dll_222_func_13F8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s32 pad;
     Baddie* baddie;
-    DLL222_DataActual* objData;
+    SnowWormSmall_DataActual* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
@@ -492,7 +548,7 @@ s32 dll_222_func_13F8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->animTickDelta = (baddie->unk3B8 / 10000.0f) + 0.012f;
         func_8002674C(self);
     } else {
-        func_80026128(self, 0xA, 1, -1);
+        func_80026128(self, Damage_Type_Sword_Staff_Strike1, 1, -1);
         self->objhitInfo->unk5D = 0xA;
         self->objhitInfo->unk5E = 1;
         func_80028D2C(self);
@@ -504,23 +560,23 @@ s32 dll_222_func_13F8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (fsa->unk308 & 0x200) {
         fsa->unk308 &= ~0x200;
-        objData->unk8 |= 4;
+        objData->flags |= SnowWormSmall_FLAG_4;
     }
     
     if (self->animProgress < 0.7f) {
-        objData->unk8 |= 2;
+        objData->flags |= SnowWormSmall_FLAG_2;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), data_C);
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, data_1C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
 }
 
 // offset: 0x164C | func: 18
-s32 dll_222_func_164C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    DLL222_DataActual* objData;
+    SnowWormSmall_DataActual* objData;
 
     baddie = self->data;
     
@@ -531,7 +587,7 @@ s32 dll_222_func_164C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (self->animProgress > 0.25f) {
         objData = baddie->objdata;
-        objData->unk8 |= 2;
+        objData->flags |= SnowWormSmall_FLAG_2;
     }
     
     if (fsa->enteredAnimState) {
@@ -553,13 +609,13 @@ s32 dll_222_func_164C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, data_1C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
 }
 
 // offset: 0x17DC | func: 19
-s32 dll_222_func_17DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
 
     baddie = self->data;
@@ -568,13 +624,13 @@ s32 dll_222_func_17DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         func_8002674C(self);
     }
     
-    func_80026128(self, 0xA, 1, -1);
+    func_80026128(self, Damage_Type_Sword_Staff_Strike1, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        dll_222_func_132C(self);
+        SnowWormSmall_worm_to_worm_communication(self);
         
         if (rand_next(0, 1)) {
             if (fsa->enteredAnimState) {
@@ -594,19 +650,19 @@ s32 dll_222_func_17DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     fsa->unk278 = 0.0f;
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 2), data_C);
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, rand_next(0, 2), data_C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 2), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, rand_next(0, 2), dChirpSounds);
     
     return 0;
 }
 
 // offset: 0x1A1C | func: 20
-s32 dll_222_func_1A1C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_8002674C(self);
     }
     
-    func_80026128(self, 0xA, 1, -1);
+    func_80026128(self, Damage_Type_Sword_Staff_Strike1, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
@@ -623,8 +679,8 @@ s32 dll_222_func_1A1C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1B04 | func: 21
-s32 dll_222_func_1B04(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    DLL222_DataActual* objData;
+s32 SnowWormSmall_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    SnowWormSmall_DataActual* objData;
     Baddie* baddie;
 
     baddie = self->data;
@@ -633,13 +689,13 @@ s32 dll_222_func_1B04(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         func_8002674C(self);
     }
     
-    func_80026128(self, 0xA, 1, -1);
+    func_80026128(self, Damage_Type_Sword_Staff_Strike1, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        dll_222_func_132C(self);
+        SnowWormSmall_worm_to_worm_communication(self);
     }
     
     fsa->animTickDelta = 0.01f;
@@ -653,15 +709,15 @@ s32 dll_222_func_1B04(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->unk308 & 1) {
         objData = baddie->objdata;
         fsa->unk308 &= ~1;
-        objData->unk8 |= 1;
-        gDLL_6_AMSFX->vtbl->play(self, data_C[3], MAX_VOLUME, NULL, NULL, 0, NULL);
+        objData->flags |= SnowWormSmall_FLAG_1;
+        gDLL_6_AMSFX->vtbl->play(self, dChirpSounds[3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     return 0;
 }
 
 // offset: 0x1C80 | func: 22
-s32 dll_222_func_1C80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Object* weapon;
 
     if (fsa->enteredAnimState) {
@@ -670,14 +726,15 @@ s32 dll_222_func_1C80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->enteredAnimState) {
-        dll_222_func_132C(self);
+        SnowWormSmall_worm_to_worm_communication(self);
+
         weapon = get_player()->linkedObject;
         if (((DLL_Unknown*)weapon->dll)->vtbl->func[16].withOneArgS32(weapon)) {
-            gDLL_6_AMSFX->vtbl->play(self, data_2C[rand_next(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, data_2C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        gDLL_6_AMSFX->vtbl->play(self, data_0[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     fsa->unk341 = 3;
@@ -688,7 +745,7 @@ s32 dll_222_func_1C80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1E80 | func: 23
-s32 dll_222_func_1E80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
 
     baddie = self->data;
@@ -704,14 +761,14 @@ s32 dll_222_func_1E80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if ((fsa->unk34A & 1) == FALSE) {
-        gDLL_6_AMSFX->vtbl->play(self, data_2C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, 0xB21, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, data_0[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[2], MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 1;
     }
     
     if (((fsa->unk34A & 2) == FALSE) && (self->animProgress > 0.3f)) {
-        gDLL_6_AMSFX->vtbl->play(self, 0xB1F, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 2;
         gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, NO_GAMEBIT, 0);
     }
@@ -720,12 +777,12 @@ s32 dll_222_func_1E80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x20A4 | func: 24
-s32 dll_222_func_20A4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->target != NULL) {
         if (fsa->enteredLogicState) {
             fsa->unk27C = 0.0f;
             fsa->unk278 = 0.0f;
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_0);
         }
         
         if (fsa->unk33A) {
@@ -737,7 +794,7 @@ s32 dll_222_func_20A4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2134 | func: 25
-s32 dll_222_func_2134(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->hitpoints <= 0) {
         return 3;
     }
@@ -748,8 +805,8 @@ s32 dll_222_func_2134(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2170 | func: 26
-s32 dll_222_func_2170(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    DLL222_DataActual* objData;
+s32 SnowWormSmall_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    SnowWormSmall_DataActual* objData;
     Baddie* baddie;
 
     baddie = self->data;
@@ -758,7 +815,7 @@ s32 dll_222_func_2170(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData = baddie->objdata;
         objData->unk0 = 0.0f;
         objData->unk4 = 0.0f;
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 6);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_6);
         fsa->target = NULL;
         fsa->unk4.mode = 0;
         fsa->unk33D = 0;
@@ -776,7 +833,7 @@ s32 dll_222_func_2170(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x227C | func: 27
-s32 dll_222_func_227C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
 
     if (fsa->enteredLogicState) {
@@ -796,14 +853,14 @@ s32 dll_222_func_227C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2318 | func: 28
-s32 dll_222_func_2318(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    DLL222_DataActual* objData;
+    SnowWormSmall_DataActual* objData;
 
     baddie = self->data;
     
     if (fsa->enteredLogicState) {
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_1);
         objData = baddie->objdata;
         objData->unk0 = 0.0f;
         objData->unk4 = 0.0f;
@@ -813,9 +870,9 @@ s32 dll_222_func_2318(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2390 | func: 29
-s32 dll_222_func_2390(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    DLL222_DataActual* objData;
+    SnowWormSmall_DataActual* objData;
     s32 random;
     s32 alliesLowestAnimState;
     s32 numAllies;
@@ -831,25 +888,25 @@ s32 dll_222_func_2390(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             return 5;
         }
 
-        dll_222_func_11E4(self, &alliesLowestAnimState, &numAllies, &numAlliesInAnimState4);
+        SnowWormSmall_get_ally_info(self, &alliesLowestAnimState, &numAllies, &numAlliesInAnimState4);
         
         random = rand_next(0, baddie->unk3B8);
         
-        if ((alliesLowestAnimState >= 5) || (objData->unk9 & 1)) {
+        if ((alliesLowestAnimState >= SnowWormSmall_ASTATE_5) || (objData->unk9 & 1)) {
             if (baddie->unk3B0 & 2) {
                 objData->unk9 |= 1;
             }
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
-        } else if (random > 0x20) {
-            if (numAlliesInAnimState4 >= 2) {
-                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 2);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_4);
+        } else if (random > 32) {
+            if (numAlliesInAnimState4 > 1) {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_2);
             } else {
-                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_4);
             }
-        } else if (random > 0x10) {
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 2);
+        } else if (random > 16) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_2);
         } else {
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 3);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_3);
         }
     }
     
