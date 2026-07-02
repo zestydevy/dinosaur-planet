@@ -173,7 +173,7 @@ void MMshrine_control(Object *self) {
             if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unkF = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0);
-                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMTALK1, 0, 0, 0);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAM94, 0, 0, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 temp_v0_5 = dll_load_deferred(DLL_ID_147, 1);
                 temp_v0_5->vtbl->func0(self, 1, 0, 1, -1, 0);

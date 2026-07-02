@@ -1,0 +1,9 @@
+.text = 0x0:
+dll_94_ctor = 0x0;
+dll_94_dtor = 0xC;
+dll_94_setup = 0x18;
+dll_94_control = 0x64;
+dll_94_free = 0x70;
+dll_94_func_7C = 0x7C;
+
+.bss = 0x90:
