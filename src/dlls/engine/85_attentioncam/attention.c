@@ -11,6 +11,7 @@
 #include "macros.h"
 
 // official filename: attention.c
+// This camera is active when the player presses Z to re-align the camera with the player
 
 // size: 0x1BC
 typedef struct {

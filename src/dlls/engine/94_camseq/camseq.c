@@ -1,5 +1,7 @@
 #include "dlls/engine/2_camcontrol.h"
 
+// Active camera during non-talk sequences
+
 // offset: 0x0 | ctor
 void dll_94_ctor(s32 arg0) { }
 

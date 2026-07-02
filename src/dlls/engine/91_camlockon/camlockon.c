@@ -7,6 +7,8 @@
 #include "sys/memory.h"
 #include "dll.h"
 
+// Camera used during Z-lock
+
 typedef struct {
     f32 unk0;
     f32 unk4;

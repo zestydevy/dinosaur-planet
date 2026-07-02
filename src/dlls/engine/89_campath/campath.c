@@ -8,6 +8,8 @@
 #include "dll.h"
 #include "macros.h"
 
+// Camera that follows a set curve as the player moves along it
+
 // size: 0x68
 typedef struct {
     SRT* unk0;

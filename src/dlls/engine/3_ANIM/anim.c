@@ -3074,7 +3074,7 @@ void anim_update_camera(void) {
                 } else {
                     sp54.fov = _data_C;
                 }
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM94, 0, 1, sizeof(sp54), &sp54, animobjSetup->unk24, 0xFF);
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, 0, 1, sizeof(sp54), &sp54, animobjSetup->unk24, 0xFF);
                 _bss_8B = 1;
             } else {
                 temp_v0 = gDLL_2_Camera->vtbl->get_data();
@@ -3118,7 +3118,7 @@ void anim_update_camera(void) {
         case DLL_ID_CAMSHIPBATTLE:
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE, 1, 0, 0, NULL, _bss_98, 0xFF);
             break;
-        case DLL_ID_CAM94:
+        case DLL_ID_CAMSEQ:
             sp54.srt.transl.x = _bss_5A4;
             sp54.srt.transl.y = _bss_5A8;
             sp54.srt.yaw = (s16) _bss_5C8;
@@ -3126,7 +3126,7 @@ void anim_update_camera(void) {
             sp54.srt.transl.z = _bss_5B0;
             sp54.srt.roll = (s16) _bss_5D4;
             sp54.fov = _bss_5C4;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM94, 1, 0, sizeof(sp54), &sp54, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, 1, 0, sizeof(sp54), &sp54, 0, 0xFF);
             break;
         case DLL_ID_CAMSLIDE:
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSLIDE, 1, 0, 0, NULL, _bss_98, 0xFF);
@@ -3148,8 +3148,8 @@ void anim_update_camera(void) {
         case DLL_ID_CAMLOCKON:
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 0, _bss_90, &_bss_94, _bss_98, 0xFF);
             break;
-        case DLL_ID_CAMDRAKOR:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDRAKOR, 1, 0, 0, NULL, 0, 0xFF);
+        case DLL_ID_CAMCLOUDRUNNER:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLOUDRUNNER, 1, 0, 0, NULL, 0, 0xFF);
             break;
         default:
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, _bss_90, 0, NULL, _bss_98, 0xFF);

@@ -5,6 +5,8 @@
 #include "dll.h"
 #include "macros.h"
 
+// Active camera during talk sequences
+
 typedef struct {
     f32 x;
     f32 y;

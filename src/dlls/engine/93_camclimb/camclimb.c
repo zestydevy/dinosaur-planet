@@ -3,6 +3,8 @@
 #include "sys/memory.h"
 #include "dll.h"
 
+// Active camera while climbing a wall/ladder
+
 typedef struct {
     s8 unk0;
     s8 unk1;

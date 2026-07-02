@@ -3,6 +3,8 @@
 #include "sys/memory.h"
 #include "dll.h"
 
+// Active camera while riding a snowbike
+
 typedef struct {
     f32 unk0;
     f32 unk4;

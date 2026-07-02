@@ -7,6 +7,8 @@
 #include "sys/objtype.h"
 #include "dll.h"
 
+// Positions camera at the location of a StaticCamera object
+
 typedef struct {
     Object* unk0;
     u8 _unk4[0x8 - 0x4];

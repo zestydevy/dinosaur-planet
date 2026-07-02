@@ -975,8 +975,8 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             if (messageArgument == BIT_Spell_Projectile) {
                 if (dll_210_func_24FC(player, fsa) != 0) {
                     camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-                    if ((camDLLID != DLL_ID_CAMTALK2) && (camDLLID != DLL_ID_CAM94)) {
-                        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK2, 1, 0, 0, NULL, 60, 0xFF);
+                    if ((camDLLID != DLL_ID_CAMSPELLAIM) && (camDLLID != DLL_ID_CAMSEQ)) {
+                        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSPELLAIM, 1, 0, 0, NULL, 60, 0xFF);
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Aiming_Spell);
                         arg1->flags |= 0x400000;
                     }
@@ -2197,7 +2197,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     gDLL_2_Camera->vtbl->change_mode(0, 0x69);
                     gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
                 } else if ((vehicle != NULL) && (vehicle->id == OBJ_DR_CloudRunner)) {
-                    gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMDRAKOR, 0, 0, 0);
+                    gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMCLOUDRUNNER, 0, 0, 0);
                 } else {
                     gDLL_2_Camera->vtbl->change_mode(0, 0x1D);
                     gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
@@ -4394,9 +4394,9 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (v1objdata->unk834 > 20.0f) {
         if (v1objdata->unk8BB != 0) {
             camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-            if ((camDLLID != DLL_ID_CAMTALK2) && (camDLLID != DLL_ID_CAM94)) {
+            if ((camDLLID != DLL_ID_CAMSPELLAIM) && (camDLLID != DLL_ID_CAMSEQ)) {
                 goto dummy_label_865524; dummy_label_865524: ;
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK2, 1, 0, 0, NULL, 60, 0xFF);
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSPELLAIM, 1, 0, 0, NULL, 60, 0xFF);
                 v1objdata->flags &= ~0x400000;
                 return 0x3B;
             }
@@ -4744,7 +4744,7 @@ s32 dll_210_func_CAA8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState != 0) {
         player->velocity.f[1] = -2.0f;
         gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[9], MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM103, 1, 0, 0, NULL, 0, 0);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDROP, 1, 0, 0, NULL, 0, 0);
         func_80023D30(player, 0xA, 0.0f, 0U);
     }
     player->velocity.f[1] -= 0.12f * arg2;
@@ -5059,7 +5059,7 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s0->unk490.unk10 = (temp_s0->unk490.unk4 - 26.0f);
         temp_s0->unk490.unk14 = temp_s0->unk490.unk2C.z;
         sp44.unkC = temp_s0->unk490.unk4;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM1, 1, 0, 4, &sp44, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, 1, 0, 4, &sp44, 0, 0xFF);
         break;
     }
 
@@ -6926,7 +6926,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             break;
         case OBJ_DR_CloudRunner:
             objdata->unk76C = _data_170;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDRAKOR, 1, 0, 0, NULL, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLOUDRUNNER, 1, 0, 0, NULL, 0, 0xFF);
             break;
         case OBJ_BWLog:
             objdata->unk76C = _data_188;
@@ -7390,7 +7390,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             curves_move(&temp_s0->unk4E8);
         }
         func_80023D30(player, 0x40E, 0.0f, 0U);
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCANNON, 1, 0, 0, NULL, 40, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCRAWL, 1, 0, 0, NULL, 40, 0xFF);
         break;
     }
 
@@ -7476,7 +7476,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         sp44.unk0 = 0;
         sp44.unk2 = 1;
         sp44.unk3 = 1;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM1, 1, 0, 4, &sp44, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, 1, 0, 4, &sp44, 0, 0xFF);
         arg1->flags |= 0x4000;
         arg1->animExitAction = dll_210_func_16204;
         arg1->unk278 = 0.0f;
@@ -8905,7 +8905,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80023D30(player, 0x449, 0.0f, 0);
         fsa->animTickDelta = 0.04f;
         camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-        if ((camDLLID != DLL_ID_CAMNORMAL) && (camDLLID != DLL_ID_CAM94)) {
+        if ((camDLLID != DLL_ID_CAMNORMAL) && (camDLLID != DLL_ID_CAMSEQ)) {
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 60, 0xFE);
         }
     }

@@ -1,24 +1,26 @@
-#include "common.h"
+#include "dlls/engine/2_camcontrol.h"
+#include "sys/main.h"
 #include "sys/memory.h"
 
-#include "dlls/engine/2_camcontrol.h"
-#include "unktypes.h"
+typedef struct {
+    u8 _unk0[0x8 - 0x0];
+} BSS0;
 
-/*0x0*/ static UNK_PTR* _bss_0;
+/*0x0*/ static BSS0* _bss_0;
 
 // offset: 0x0 | ctor
-void camcannon_ctor(void *dll) { }
+void camcrawl_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void camcannon_dtor(void *dll) { }
+void camcrawl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void camcannon_setup(CamControl_Data* camData, s32 arg1, UNK_PTR* arg2) {
-    _bss_0 = mmAlloc(8, ALLOC_TAG_CAM_COL, NULL);
+void camcrawl_setup(CamControl_Data* camData, s32 arg1, void* arg2) {
+    _bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
 }
 
 // offset: 0x68 | func: 1 | export: 1
-void camcannon_control(CamControl_Data* camData) {
+void camcrawl_control(CamControl_Data* camData) {
     Camera* camera;
     s32 dYaw;
     Object* obj;
@@ -38,11 +40,11 @@ void camcannon_control(CamControl_Data* camData) {
 }
 
 // offset: 0x1A8 | func: 2 | export: 2
-void camcannon_free(CamControl_Data* camData) {
+void camcrawl_free(CamControl_Data* camData) {
     mmFree(_bss_0);
 }
 
 // offset: 0x1E8 | func: 3 | export: 3
-void camcannon_func_1E8(UNK_PTR* arg0, s32 arg1) {
+void camcrawl_func_1E8(void* arg0, s32 arg1) {
 
 }

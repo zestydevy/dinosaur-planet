@@ -203,7 +203,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
             sCamData->highlight = CamControl_find_highlight_object(sCamData, player);
         }
         
-        if (sActiveID != DLL_ID_ATTENTIONCAM1) {
+        if (sActiveID != DLL_ID_ATTENTIONCAM) {
             sCamData->targetFlags &= ~ARROW_FLAG_1_Interacted;
         }
     }
@@ -343,7 +343,7 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
         }
         if (camAction != NULL) {
             gDLL_29_Gplay->vtbl->get_current_player_lactions()->unk12 = params;
-            if ((sActiveID == DLL_ID_CAMLOCKON) || (sActiveID == DLL_ID_CAM94)) {
+            if ((sActiveID == DLL_ID_CAMLOCKON) || (sActiveID == DLL_ID_CAMSEQ)) {
                 CamControl_get_camnormal_module()->dll->vtbl->func3(camAction, 16);
             } else {
                 if ((camAction->unk0 == 0) || (camAction->unk0 != 1)) {

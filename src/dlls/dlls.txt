@@ -53,11 +53,11 @@
 91 = engine/91_camlockon
 92 = engine/92_camshipbattle
 93 = engine/93_camclimb
-94 = engine/94
+94 = engine/94_camseq
 95 = engine/95_camtalk
 96 = engine/96_cam1stperson2
 97 = engine/97
-98 = engine/98_camcannon
+98 = engine/98_camcrawl
 
 # modgfx
 

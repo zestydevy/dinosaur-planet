@@ -3,6 +3,8 @@
 #include "sys/memory.h"
 #include "sys/segment_1460.h"
 
+// Active camera during intro Galleon fight while riding the CloudRunner
+
 typedef struct {
     f32 unk0;
     f32 unk4;

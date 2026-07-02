@@ -11,6 +11,8 @@
 #include "dll.h"
 #include "macros.h"
 
+// The default camera used during most of gameplay
+
 typedef struct {
     f32 unk0;
     f32 unk4;
@@ -815,7 +817,7 @@ static void dll_84_func_26E4(CamControl_Data* arg0, Object* arg1) {
             attentionCam.unk0 = 5;
             attentionCam.unk2 = 1;
             attentionCam.unk3 = 1;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM1, 1, 0, sizeof(attentionCam), &attentionCam, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, 1, 0, sizeof(attentionCam), &attentionCam, 0, 0xFF);
         }
     }
 }
