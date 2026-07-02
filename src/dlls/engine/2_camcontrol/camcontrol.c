@@ -343,7 +343,7 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
         }
         if (camAction != NULL) {
             gDLL_29_Gplay->vtbl->get_current_player_lactions()->unk12 = params;
-            if ((sActiveID == DLL_ID_CAMSHIPBATTLE1) || (sActiveID == DLL_ID_CAMTALK1)) {
+            if ((sActiveID == DLL_ID_CAMLOCKON) || (sActiveID == DLL_ID_CAMTALK1)) {
                 CamControl_get_camnormal_module()->dll->vtbl->func3(camAction, 16);
             } else {
                 if ((camAction->unk0 == 0) || (camAction->unk0 != 1)) {
@@ -539,8 +539,8 @@ void CamControl_lock_icon_tick(void) {
             gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
             sIconState = LockIcon_STATE_Vanish;
         } else {
-            //Automatically lock-on (during Ship Battle?)
-            if (sActiveID == DLL_ID_CAMSHIPBATTLE1) {
+            //Automatically lock-on
+            if (sActiveID == DLL_ID_CAMLOCKON) {
                 gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72D_Lock_On, MAX_VOLUME, 0, 0, 0, 0);
                 sIconState = LockIcon_STATE_Lock_On;
                 sIconRapidTimer = 60; //icon spins extra quickly for 1st second
@@ -561,7 +561,7 @@ void CamControl_lock_icon_tick(void) {
             break;
         }
         
-        if (sActiveID != DLL_ID_CAMSHIPBATTLE1) {
+        if (sActiveID != DLL_ID_CAMLOCKON) {
             sIconState = LockIcon_STATE_Highlighted;
         }
         
@@ -615,7 +615,7 @@ void CamControl_lock_icon_tick(void) {
 void CamControl_lock_icon_print(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     if (menu_get_current() != MENU_TITLE_SCREEN) {
         _data_0[0] = -1;
-        CamControl_print(sCamData->highlight, sActiveID == DLL_ID_CAMSHIPBATTLE1, gdl, mtxs, vtxs, pols);
+        CamControl_print(sCamData->highlight, sActiveID == DLL_ID_CAMLOCKON, gdl, mtxs, vtxs, pols);
     }
 }
 
@@ -929,7 +929,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
             distSquared *= distSquared;
             
             if (((SQ(dx) + SQ(dz)) < distSquared) && (dy > -100.0f) && (dy < 100.0f)) {
-                if (sActiveID == DLL_ID_CAMSHIPBATTLE1) {
+                if (sActiveID == DLL_ID_CAMLOCKON) {
                     angularRange = 0x8000;
                 } else {
                     angularRange = (s16)(targetDef[lockIndex].hlAngularRange * 182.04f);
@@ -941,7 +941,7 @@ Object* CamControl_find_highlight_object(CamControl_Data* camData, Object* playe
                 if ((dYaw < angularRange) && (-angularRange < dYaw)) {
                     if (targetDef[lockIndex].flags & 0x20) {
                         //Use VoxMaps (check if player has line-of-sight to Object, maybe?)
-                        func_80007EE0((Vec3f*)&targetCoords[lockIndex], &sp74);
+                        func_80007EE0(&targetCoords[lockIndex].drawPoint, &sp74);
                         func_80007EE0(&player->srt.transl, &sp6C);
                         sp6C.y += 2;
                         if (func_80008048(&sp74, &sp6C, 0, 0, 0) != 0) {

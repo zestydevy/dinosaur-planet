@@ -265,7 +265,7 @@ static void dll_85_func_B14(CamControl_Data* arg0, Object* arg1) {
                 (((temp_v1 = main_get_bits(BIT_4AD), (temp_v1 == 0)) && (btns & Z_TRIG)) || ((temp_v1 != 0) && (btns & R_TRIG)) || (arg0->targetFlags & 2)) && 
                 (arg1->controlNo == OBJCONTROL_Player) && 
                 ((((DLL_210_Player*)arg1->dll)->vtbl->func60(arg1) != 0))) {
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE1, 1, 0, 4, &arg0->highlight, 0x3C, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 0, sizeof(&arg0->highlight), &arg0->highlight, 0x3C, 0xFF);
         } else if ((btns & 8) && !(arg0->targetFlags & 1)) {
             cam1stPerson.unk0 = bss_0->unk4;
             cam1stPerson.unk4 = bss_0->unk8;

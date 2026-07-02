@@ -3149,8 +3149,8 @@ void anim_update_camera(void) {
             }
             dummy_label_3: ; // @fake
             break;
-        case DLL_ID_CAMSHIPBATTLE1:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE1, 1, 0, _bss_90, &_bss_94, _bss_98, 0xFF);
+        case DLL_ID_CAMLOCKON:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 0, _bss_90, &_bss_94, _bss_98, 0xFF);
             break;
         case DLL_ID_CAMDRAKOR:
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDRAKOR, 1, 0, 0, NULL, 0, 0xFF);

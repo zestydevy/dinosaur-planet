@@ -50,6 +50,7 @@
 88 = engine/88_camdev
 89 = engine/89_campath
 90 = engine/90_camstatic
+91 = engine/91_camlockon
 92 = engine/92_camclimb
 94 = engine/94_camtalk1
 98 = engine/98_camcannon
