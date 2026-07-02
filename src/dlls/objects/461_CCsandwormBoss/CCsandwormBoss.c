@@ -28,15 +28,15 @@ typedef struct {
 /*0xC*/ static u32 _data_C[] = {
     0x0000005a, 0x0000005b, 0x0000032b, 0x00000335
 };
-// /*0x1C*/ static u32 _data_1C = 0xffc09600;
+
+static void dll_461_func_1030(Object* a0, CCsandwormBoss_Data* a1);
+static void dll_461_func_1090(Object* self, Object* arg1, CCsandwormBoss_Data* objData, s32 arg3);
+static void dll_461_func_1250(Object* a0, CCsandwormBoss_Data* a1);
+static void dll_461_func_1384(Object* a0, Vec3f* a1, f32 a2);
+static void dll_461_func_14B0(Object* a0, CCsandwormBoss_Data* a1);
 
 static void dll_461_func_564(Object* self, CCsandwormBoss_Data* objData);
-void dll_461_func_1030(Object* a0, CCsandwormBoss_Data* a1);
-void dll_461_func_1090(Object* self, Object* arg1, CCsandwormBoss_Data* objData, s32 arg3);
-void dll_461_func_1250(Object* a0, CCsandwormBoss_Data* a1);
 static void dll_461_func_12B0(Object* a0, Object* a1);
-void dll_461_func_1384(Object* a0, Vec3f* a1, f32 a2);
-void dll_461_func_14B0(Object* a0, CCsandwormBoss_Data* a1);
 static void dll_461_func_1540(Object* a0, CCsandwormBoss_Data* a1);
 static int dll_461_func_1AE4(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
@@ -151,10 +151,6 @@ void dll_461_func_564(Object* self, CCsandwormBoss_Data* objData) {
 /*0x0*/ static const char str_0[] = "need to prempt fire crystal into correct position\n";
 
 // offset: 0x5E0 | func: 4
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_func_5E0.s")
-#else
-// needs called funcs to be static
 void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
     ObjSetup* setup;
     f32 dist;
@@ -246,7 +242,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
                 objdata->unk0 = 0xC;
                 objdata->unk14 = 0.005f;
                 func_80023D30(self, 8, 0, 0);
-                gDLL_6_AMSFX->vtbl->play(self, (u16)_data_C[rand_next(0, 3)], 0x7FU, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, _data_C[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                 objdata->unk2 = 0;
                 objdata->unk1 = 3;
             } else {
@@ -313,13 +309,13 @@ static const char str_2[] = "setting flight group to %d\n";
 static const char str_3[] = "eat player sequence\n";
 static const char str_4[] = "attack player from under ground\n";
 static const char str_5[] = "eat barrel\n";
+static const char str_5b[] = "get up without attack\n";
 static const char str_6[] = "barrel %x put to %f %f %f\n";
 static const char str_7[] = "worm at %f %f %f\n";
 static const char str_8[] = "boss dead\n";
 static const char str_9[] = "turning on parts\n";
 static const char str_10[] = "Parts all over\n";
 static const char str_11[] = "yaw to player\n";
-#endif
 
 // offset: 0x1030 | func: 5
 void dll_461_func_1030(Object* self, CCsandwormBoss_Data* objData) {
