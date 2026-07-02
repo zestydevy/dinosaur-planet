@@ -3,6 +3,8 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 
+// TODO: figure out what this camera is/when it's used
+
 typedef struct {
     u8 _unk0[0x4 - 0x0];
     f32 unk4;

@@ -56,7 +56,7 @@
 94 = engine/94_camseq
 95 = engine/95_camtalk
 96 = engine/96_cam1stperson2
-97 = engine/97
+97 = engine/97_camunknown
 98 = engine/98_camcrawl
 99 = engine/99_camcannon
 100 = engine/100_camspellaim
