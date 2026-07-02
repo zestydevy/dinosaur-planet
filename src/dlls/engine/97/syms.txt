@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_97_ctor = 0x0;
+dll_97_dtor = 0xC;
+dll_97_func_18 = 0x18;
+dll_97_func_74 = 0x74;
+dll_97_func_250 = 0x250;
+dll_97_func_290 = 0x290;
+
+.rodata = 0x2E0:
+
+.bss = 0x2F0:
+bss_0 = 0x0; // absolute:0x2F0

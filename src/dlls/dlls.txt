@@ -56,6 +56,7 @@
 94 = engine/94
 95 = engine/95_camtalk
 96 = engine/96_cam1stperson2
+97 = engine/97
 98 = engine/98_camcannon
 
 # modgfx
