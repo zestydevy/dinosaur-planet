@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_101_ctor = 0x0;
+dll_101_dtor = 0xC;
+dll_101_func_18 = 0x18;
+dll_101_func_17C = 0x17C;
+dll_101_func_2C4 = 0x2C4;
+dll_101_func_304 = 0x304;
+
+.rodata = 0x360:
+
+.bss = 0x360:
+bss_0 = 0x0; // absolute:0x360
