@@ -25,8 +25,8 @@ typedef struct {
 /*000*/ ObjFSA_Data fsa;
 /*34C*/ Unk80009024 unk34C;
 /*374*/ Unk80008E40 unk374;
-/*39C*/ s16 unk39C;
-/*39E*/ s16 unk39E;
+/*39C*/ s16 unk39C; // gamebitID
+/*39E*/ s16 unk39E; // gamebitID
 /*3A0*/ s16 unk3A0;
 /*3A2*/ s16 unk3A2;
 /*3A4*/ s16 unk3A4;
@@ -44,7 +44,7 @@ typedef struct {
 /*3BA*/ s8 unk3BA;
 /*3BB*/ s8 weaponID; // BaddieWeapon
 /*3BC*/ HeadAnimation unk3BC;
-/*3E0*/ s16 unk3E0;
+/*3E0*/ s16 unk3E0; //droppedItemIdx
 /*3E2*/ u16 unk3E2;
 /*3E4*/ f32 unk3E4;
 /*3E8*/ f32 unk3E8;
