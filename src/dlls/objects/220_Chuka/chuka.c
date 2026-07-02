@@ -227,12 +227,14 @@ u32 Chuka_get_data_size(Object *self, u32 offsetAddr) {
   * Called when the Chuka's projectile (ChukaChuck) successfully hits the player or the sidekick.
   */
 void Chuka_receive_message(Object* self, u8 message) {
-    if (message == 0x80) {
+    switch (message) {
+    case 0x80:
         gDLL_6_AMSFX->vtbl->play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
-        return;
+        break;
+    default:
+        STUBBED_PRINTF("BADDIE:Chuka Unknown message [%d]\n", message);
+        break;
     }
-
-    STUBBED_PRINTF("BADDIE:Chuka Unknown message [%d]\n", message);
 }
 
 // offset: 0x778 | func: 8
