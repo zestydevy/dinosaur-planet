@@ -108,7 +108,7 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
 
 // offset: 0x1EC | func: 2 | export: 1
 void WGTriffid_control(Object* self) {
-    /*0x1C*/ s16 dFXScales[] = { 0x0206, 0x0167, 0x0165, 0x00206};
+    /*0x1C*/ s16 dFXScales[] = { 0x0206, 0x0167, 0x0165, 0x0206};
     WGTriffid_ActualData* objData;
     Baddie* baddie;
     WGTriffid_Setup* objSetup;
