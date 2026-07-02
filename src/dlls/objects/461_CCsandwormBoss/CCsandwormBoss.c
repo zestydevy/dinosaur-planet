@@ -1,7 +1,12 @@
 #include "common.h"
+#include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "dlls/objects/common/sidekick.h"
+
+typedef struct {
+    ObjSetup base;
+} DLL461_Setup;
 
 typedef struct {
     u8 unk0;
@@ -14,7 +19,7 @@ typedef struct {
     Object *unk10;
     f32 unk14;
     f32 unk18;
-    u8 _unk1C[0x20 - 0x1C];
+    f32 unk1C;
 } CCsandwormBoss_Data;
 
 /*0x0*/ static u32 _data_0[] = {
@@ -23,15 +28,17 @@ typedef struct {
 /*0xC*/ static u32 _data_C[] = {
     0x0000005a, 0x0000005b, 0x0000032b, 0x00000335
 };
-/*0x1C*/ static u32 _data_1C = 0xffc09600;
+// /*0x1C*/ static u32 _data_1C = 0xffc09600;
 
+static void dll_461_func_564(Object* self, CCsandwormBoss_Data* objData);
 void dll_461_func_1030(Object* a0, CCsandwormBoss_Data* a1);
-void dll_461_func_1090(Object* a0, void* a1, void* a2, s32 a3);
+void dll_461_func_1090(Object* self, Object* arg1, CCsandwormBoss_Data* objData, s32 arg3);
 void dll_461_func_1250(Object* a0, CCsandwormBoss_Data* a1);
 static void dll_461_func_12B0(Object* a0, Object* a1);
 void dll_461_func_1384(Object* a0, Vec3f* a1, f32 a2);
 void dll_461_func_14B0(Object* a0, CCsandwormBoss_Data* a1);
 static void dll_461_func_1540(Object* a0, CCsandwormBoss_Data* a1);
+static int dll_461_func_1AE4(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
 void dll_461_ctor(void *dll) { }
@@ -40,15 +47,97 @@ void dll_461_ctor(void *dll) { }
 void dll_461_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_461_setup(Object *self, ObjSetup *setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_setup.s")
+void dll_461_setup(Object* self, DLL461_Setup* objSetup, s32 reset) {
+    CCsandwormBoss_Data* objData;
+
+    objData = self->data;
+    
+    self->srt.flags |= 0x4000;
+    self->stateFlags |= 0x2000;
+    
+    func_800267A4(self);
+    self->animCallback = dll_461_func_1AE4;
+    obj_add_object_type(self, OBJTYPE_Baddie);
+    
+    if (main_get_bits(BIT_3FB)) {
+        if (main_get_bits(BIT_3D4) == 0) {
+            objData->unk0 = 3;
+        } else {
+            objData->unk0 = 0xF;
+        }
+        return;
+    }
+    
+    if (main_get_bits(BIT_1EB)) {
+        
+        if (main_get_bits(BIT_1EC)) {
+            if (main_get_bits(BIT_22A)) {
+                objData->unk0 = 2;
+            } else {
+                main_set_bits(BIT_1EB, 0);
+                main_set_bits(BIT_22A, 1);
+                objData->unk0 = 0;
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0xC, 1);
+            }
+        } else if (main_get_bits(BIT_22A)) {
+            main_set_bits(BIT_1EB, 0);
+            main_set_bits(BIT_1EC, 1);
+            objData->unk0 = 0;
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0xC, 1);
+        } else {
+            main_set_bits(BIT_1EB, 0);
+            main_set_bits(BIT_22A, 1);
+            objData->unk0 = 0;
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0xC, 1);
+        }
+        return;
+    }
+    
+    objData->unk0 = 0;
+    gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0xC, 1);
+}
 
 // offset: 0x2C8 | func: 1 | export: 1
 void dll_461_control(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_control.s")
 
 // offset: 0x330 | func: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_func_330.s")
+void dll_461_func_330(Object* self, CCsandwormBoss_Data* objData) {
+    if (objData->unk4 == NULL) {
+        objData->unk4 = get_player();
+    }
+    
+    if (objData->unk8 == NULL) {
+        objData->unk8 = get_sidekick();
+    }
+    
+    if (objData->unkC == NULL) {
+        objData->unkC = obj_get_nearest_type_to(0x11, self, NULL);
+    }
+
+    switch (objData->unk0) {
+    case 0:
+        if (main_get_bits(BIT_1EB)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0xB, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0xC, 0);
+            objData->unk0 = 1;
+            return;
+        }
+    case 3:
+        return;
+    case 1:
+        if (main_get_bits(BIT_1EC) && main_get_bits(BIT_22A)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0xB, 0);
+            dll_461_func_564(self, objData);
+            gDLL_3_Animation->vtbl->start_obj_sequence(4, objData->unkC, -1);
+        }
+        break;
+    case 2:
+        dll_461_func_564(self, objData);
+        gDLL_3_Animation->vtbl->start_obj_sequence(4, objData->unkC, 2);
+        break;
+    }
+}
 
 // offset: 0x564 | func: 3
 void dll_461_func_564(Object* self, CCsandwormBoss_Data* objData) {
@@ -240,7 +329,19 @@ void dll_461_func_1030(Object* self, CCsandwormBoss_Data* objData) {
 }
 
 // offset: 0x1090 | func: 6
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_func_1090.s")
+void dll_461_func_1090(Object* self, Object* arg1, CCsandwormBoss_Data* objData, s32 arg3) {
+    if (vec3_distance_xz_squared(&self->globalPosition, &arg1->globalPosition) < 8100.0f) {
+        objData->unk0 = arg3;
+        objData->unk14 = 0.02f;
+        func_80023D30(self, 0x100, 0.0f, 0U);
+        gDLL_6_AMSFX->vtbl->play(self, _data_C[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        return;
+    }
+    objData->unk0 = arg3;
+    objData->unk14 = 0.009f;
+    func_80023D30(self, _data_0[rand_next(0, 2)], 0.0f, 0);
+    gDLL_6_AMSFX->vtbl->play(self, _data_C[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+}
 
 // offset: 0x1250 | func: 7
 void dll_461_func_1250(Object* self, CCsandwormBoss_Data* objData) {
@@ -270,7 +371,27 @@ static void dll_461_func_12B0(Object* self, Object* obj) {
 }
 
 // offset: 0x1384 | func: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_func_1384.s")
+void dll_461_func_1384(Object* self, Vec3f* arg1, f32 arg2) {
+    f32 d[2];
+    f32 distance;
+    f32 sp30;
+    s32 pad;
+
+    sp30 = vec3_distance_xz_squared(&self->srt.transl, arg1);
+ 
+    d[0] = arg1->f[0] - self->srt.transl.x;
+    d[1] = arg1->f[2] - self->srt.transl.z;
+    
+    distance = sqrtf(SQ(d[0]) + SQ(d[1]));
+    
+    self->srt.transl.f[0] += (d[0] / distance) * arg2 * gUpdateRateF;
+    self->srt.transl.f[2] += (d[1] / distance) * arg2 * gUpdateRateF;
+    
+    if (sp30 < vec3_distance_xz_squared(&self->srt.transl, arg1)) {
+        self->srt.transl.x = arg1->f[0];
+        self->srt.transl.z = arg1->f[2];
+    }
+}
 
 // offset: 0x14B0 | func: 10
 void dll_461_func_14B0(Object* self, CCsandwormBoss_Data* objData) {
@@ -298,8 +419,59 @@ static void dll_461_func_1540(Object* self, CCsandwormBoss_Data* objData) {
 void dll_461_update(Object *self) { }
 
 // offset: 0x1640 | func: 13 | export: 3
-void dll_461_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_print.s")
+void dll_461_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    CCsandwormBoss_Data* objData = self->data;
+    u8 var_a3;
+/*0x1C*/ u8 _data_1C[] = {0xff, 0xc0, 0x96};
+    SRT fxTransform; //38
+
+    if (!visibility) {
+        return;
+    }
+    
+    if (objData->unk0 == 0xD) {
+        objData->unk1C += gUpdateRateF * 5.0f;
+
+        if (objData->unk1C > 382.0f) {
+            objData->unk1C -= 382.0f;
+        }
+        
+        if (objData->unk1C >= 191.5f) {
+            var_a3 = 382 - objData->unk1C;
+        } else {
+            var_a3 = (s32) objData->unk1C;
+        }
+        func_80036FBC(0xC8, 0, 0, var_a3);
+    }
+    
+    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    
+    if (objData->unk2 == 0) {
+        if (objData->unk0 == 0xB) {
+            func_80031F6C(self, 2, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z, 0);
+        } else {
+            func_80031F6C(self, 0, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z, 0);
+        }
+        
+        fxTransform.yaw = 0;
+        fxTransform.pitch = 0;
+        fxTransform.roll = 0;
+        fxTransform.flags = 0;
+        fxTransform.transl.y = self->srt.transl.y + 15.0f;
+        fxTransform.transl.x -= fsin16_precise(self->srt.yaw) * 10.0f;
+        fxTransform.transl.z -= fcos16_precise(self->srt.yaw) * 10.0f;
+        fxTransform.scale = 1.7f;
+        
+        gDLL_17_partfx->vtbl->spawn(self, 0x56, &fxTransform, 0x200001, -1, &_data_1C);
+        gDLL_17_partfx->vtbl->spawn(self, 0x56, &fxTransform, 0x200001, -1, &_data_1C);
+        gDLL_17_partfx->vtbl->spawn(self, 0x57, &fxTransform, 0x200001, -1, &_data_1C);
+        
+        if (objData->unk1) {
+            gDLL_17_partfx->vtbl->spawn(self, 0x58, &fxTransform, 0x200001, -1, &_data_1C);
+            objData->unk1--;
+        }
+    }
+}
 
 // offset: 0x1A20 | func: 14 | export: 4
 void dll_461_free(Object* self, s32 onlySelf) {
@@ -314,7 +486,7 @@ u32 dll_461_get_model_flags(Object *self) {
 }
 
 // offset: 0x1AD0 | func: 16 | export: 6
-u32 dll_461_get_data_size(Object *self, u32 a1) {
+u32 dll_461_get_data_size(Object *self, u32 offsetAddr) {
     return sizeof(CCsandwormBoss_Data);
 }
 
