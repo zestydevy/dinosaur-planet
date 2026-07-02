@@ -33,10 +33,10 @@ typedef struct {
 /*0x0*/ static BSS0* bss_0;
 /*0x4*/ static s8 bss_4;
 
-s32 dll_96_func_9C4(CamControl_Data* arg0, Object* arg1);
-void dll_96_func_CE0(CamControl_Data* arg0);
-void dll_96_func_E60(CamControl_Data* arg0);
-void dll_96_func_137C(CamControl_Data* arg0, Object* arg1);
+static s32 dll_96_func_9C4(CamControl_Data* arg0, Object* arg1);
+static void dll_96_func_CE0(CamControl_Data* arg0);
+static void dll_96_func_E60(CamControl_Data* arg0);
+static void dll_96_func_137C(CamControl_Data* arg0, Object* arg1);
 
 // offset: 0x0 | ctor
 void dll_96_ctor(void* dll) { }
@@ -132,21 +132,16 @@ void dll_96_func_18(CamControl_Data* camData, s32 arg1, void* action) {
 }
 
 // offset: 0x4BC | func: 1 | export: 1
-#ifndef NON_MATCHING
-void dll_96_func_4BC(CamControl_Data* camData);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/96_cam1stperson2/dll_96_func_4BC.s")
-#else
 void dll_96_func_4BC(CamControl_Data* camData) {
-    CamControl_Module* sp3C;
     Object* temp_v0_4;
     f32 temp_fa0;
     f32 temp_fv0;
     f32 temp_fv1;
     f32 var_fv0;
-    s32 temp_a1;
     s32 var_a0;
     s16 var_v1;
     Object* temp_v0_5;
+    CamControl_Module* sp3C;
     s32 temp_v0;
 
     switch (bss_0->unk11C) {
@@ -211,8 +206,7 @@ void dll_96_func_4BC(CamControl_Data* camData) {
     temp_v0_4 = get_player();
     temp_v0_5 = ((DLL_210_Player*)temp_v0_4->dll)->vtbl->get_vehicle(temp_v0_4);
     if (temp_v0_5 != NULL) {
-        temp_a1 = -temp_v0_5->srt.yaw;
-        var_v1 = (camData->srt.yaw & 0xFFFF) - (temp_a1 & 0xFFFF);
+        var_v1 = (camData->srt.yaw & 0xFFFF) - ((-temp_v0_5->srt.yaw) & 0xFFFF);
         CIRCLE_WRAP(var_v1);
         if (var_v1 >= 0) {
             var_a0 = var_v1;
@@ -225,11 +219,11 @@ void dll_96_func_4BC(CamControl_Data* camData) {
             } else {
                 var_a0 = -0x3FFF;
             }
-            camData->srt.yaw = var_a0 + temp_a1;
+            // FAKE ^ 0
+            camData->srt.yaw = (var_a0^0) + -temp_v0_5->srt.yaw;
         }
     }
 }
-#endif
 
 // offset: 0x93C | func: 2 | export: 2
 void dll_96_func_93C(CamControl_Data* camData) {
@@ -245,7 +239,7 @@ void dll_96_func_990(Cam96_Params* arg0, s32 arg1) {
 }
 
 // offset: 0x9C4 | func: 4
-s32 dll_96_func_9C4(CamControl_Data* arg0, Object* arg1) {
+static s32 dll_96_func_9C4(CamControl_Data* arg0, Object* arg1) {
     s32 sp2C;
     s16 temp_a0;
     f32 temp_fv0;
@@ -296,7 +290,7 @@ s32 dll_96_func_9C4(CamControl_Data* arg0, Object* arg1) {
 }
 
 // offset: 0xCE0 | func: 5
-void dll_96_func_CE0(CamControl_Data* arg0) {
+static void dll_96_func_CE0(CamControl_Data* arg0) {
     s8 sp27;
     s8 var_a0;
     Object* temp_v0_2;
@@ -325,7 +319,7 @@ void dll_96_func_CE0(CamControl_Data* arg0) {
 }
 
 // offset: 0xE60 | func: 6
-void dll_96_func_E60(CamControl_Data* arg0) {
+static void dll_96_func_E60(CamControl_Data* arg0) {
     f32 temp_ft4;
     f32 spF8;
     f32 temp_fv0;
@@ -415,7 +409,7 @@ void dll_96_func_E60(CamControl_Data* arg0) {
 }
 
 // offset: 0x137C | func: 7
-void dll_96_func_137C(CamControl_Data* arg0, Object* arg1) {
+static void dll_96_func_137C(CamControl_Data* arg0, Object* arg1) {
     bss_0->unk78.unk84 = bss_0->unk10;
     bss_0->unk78.unk88 = bss_0->unk20;
     bss_0->unk78.unk8C = bss_0->unk30;
