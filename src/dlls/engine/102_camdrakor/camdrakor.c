@@ -30,7 +30,7 @@ void dll_102_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_102_func_18(CamControl_Data* camData, s32 arg1, CamControl_Data* action) {
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
+    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camdrakor"));
     bzero(bss_0, sizeof(BSS0));
     bss_0->unk10 = 60.0f;
     bss_0->unkC = 0;

@@ -62,6 +62,7 @@
 100 = engine/100_camspellaim
 101 = engine/101_camcloudrunner
 102 = engine/102_camdrakor
+103 = engine/103_camdrop
 
 # modgfx
 
