@@ -59,6 +59,7 @@
 97 = engine/97
 98 = engine/98_camcrawl
 99 = engine/99_camcannon
+100 = engine/100_camspellaim
 
 # modgfx
 
