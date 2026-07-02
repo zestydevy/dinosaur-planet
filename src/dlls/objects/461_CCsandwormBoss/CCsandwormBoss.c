@@ -29,15 +29,16 @@ typedef struct {
     0x0000005a, 0x0000005b, 0x0000032b, 0x00000335
 };
 
-static void dll_461_func_1030(Object* a0, CCsandwormBoss_Data* a1);
-static void dll_461_func_1090(Object* self, Object* arg1, CCsandwormBoss_Data* objData, s32 arg3);
-static void dll_461_func_1250(Object* a0, CCsandwormBoss_Data* a1);
-static void dll_461_func_1384(Object* a0, Vec3f* a1, f32 a2);
-static void dll_461_func_14B0(Object* a0, CCsandwormBoss_Data* a1);
-
+static void dll_461_func_330(Object* self, CCsandwormBoss_Data* objData);
 static void dll_461_func_564(Object* self, CCsandwormBoss_Data* objData);
-static void dll_461_func_12B0(Object* a0, Object* a1);
-static void dll_461_func_1540(Object* a0, CCsandwormBoss_Data* a1);
+static void dll_461_func_5E0(Object* self, CCsandwormBoss_Data *objData);
+static void dll_461_func_1030(Object* self, CCsandwormBoss_Data* objData);
+static void dll_461_func_1090(Object* self, Object* arg1, CCsandwormBoss_Data* objData, s32 arg3);
+static void dll_461_func_1250(Object* self, CCsandwormBoss_Data* objData);
+static void dll_461_func_12B0(Object* self, Object* a1);
+static void dll_461_func_1384(Object* self, Vec3f* a1, f32 a2);
+static void dll_461_func_14B0(Object* aself0, CCsandwormBoss_Data* objData);
+static void dll_461_func_1540(Object* self, CCsandwormBoss_Data* objData);
 static int dll_461_func_1AE4(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
@@ -98,8 +99,15 @@ void dll_461_setup(Object* self, DLL461_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x2C8 | func: 1 | export: 1
-void dll_461_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/461_CCsandwormBoss/dll_461_control.s")
+void dll_461_control(Object* self) {
+    CCsandwormBoss_Data* objData = self->data;
+    
+    if (objData->unk0 < 3) {
+        dll_461_func_330(self, objData);
+    } else {
+        dll_461_func_5E0(self, objData);
+    }
+}
 
 // offset: 0x330 | func: 2
 void dll_461_func_330(Object* self, CCsandwormBoss_Data* objData) {
@@ -151,146 +159,146 @@ void dll_461_func_564(Object* self, CCsandwormBoss_Data* objData) {
 /*0x0*/ static const char str_0[] = "need to prempt fire crystal into correct position\n";
 
 // offset: 0x5E0 | func: 4
-void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
+void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objData) {
     ObjSetup* setup;
     f32 dist;
   
     setup = self->setup;
-    objdata->unk18 += gUpdateRateF;
+    objData->unk18 += gUpdateRateF;
     dist = M_INFINITY_F;
     obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
 
-    diPrintf("worm %d, barrel %d\n", (s32) vec3_distance_xz(&self->globalPosition, &objdata->unk4->globalPosition), (s32) dist);
-    switch (objdata->unk0) {
+    diPrintf("worm %d, barrel %d\n", (s32) vec3_distance_xz(&self->globalPosition, &objData->unk4->globalPosition), (s32) dist);
+    switch (objData->unk0) {
     case 4:
-        dll_461_func_12B0(self, objdata->unk4);
-        if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition) < 32400.0f) {
-            dll_461_func_1090(self, objdata->unk4, objdata, 5);
+        dll_461_func_12B0(self, objData->unk4);
+        if (vec3_distance_xz_squared(&self->globalPosition, &objData->unk4->globalPosition) < 32400.0f) {
+            dll_461_func_1090(self, objData->unk4, objData, 5);
         } else {
-            if (((DLL_ISidekick*)objdata->unk8->dll)->vtbl->func24(objdata->unk8) != 0) {
-                diPrintf("kyte dist %d interest range 50.0F\n", (s32) vec3_distance_xz(&self->globalPosition, &objdata->unk8->globalPosition));
-                if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk8->globalPosition) < 3600.0f) {
-                    dll_461_func_1250(self, objdata);
-                    objdata->unk18 = 0.0f;
+            if (((DLL_ISidekick*)objData->unk8->dll)->vtbl->func24(objData->unk8) != 0) {
+                diPrintf("kyte dist %d interest range 50.0F\n", (s32) vec3_distance_xz(&self->globalPosition, &objData->unk8->globalPosition));
+                if (vec3_distance_xz_squared(&self->globalPosition, &objData->unk8->globalPosition) < 3600.0f) {
+                    dll_461_func_1250(self, objData);
+                    objData->unk18 = 0.0f;
                 }
             }
         }
         break;
     case 5:
-        dll_461_func_12B0(self, objdata->unk4);
+        dll_461_func_12B0(self, objData->unk4);
         if (self->animProgress > 0.95f) {
-            dll_461_func_1030(self, objdata);
+            dll_461_func_1030(self, objData);
         }
         break;
     case 6:
-        dll_461_func_12B0(self, objdata->unk4);
+        dll_461_func_12B0(self, objData->unk4);
         if (self->animProgress > 0.95f) {
-            dll_461_func_1250(self, objdata);
+            dll_461_func_1250(self, objData);
         }
         break;
     case 7:
-        dll_461_func_12B0(self, objdata->unk8);
+        dll_461_func_12B0(self, objData->unk8);
         if (self->animProgress > 0.95f) {
-            dll_461_func_1250(self, objdata);
+            dll_461_func_1250(self, objData);
         }
         break;
     case 8:
-        dll_461_func_12B0(self, objdata->unk4);
+        dll_461_func_12B0(self, objData->unk4);
         if (self->animProgress > 0.95f) {
-            objdata->unk0 = 0xD;
-            objdata->unk14 = 0.005f;
+            objData->unk0 = 0xD;
+            objData->unk14 = 0.005f;
             func_80023D30(self, 5, 0, 0);
         }
-        dll_461_func_14B0(self, objdata);
+        dll_461_func_14B0(self, objData);
         break;
     case 9:
-        dll_461_func_12B0(self, objdata->unk8);
-        if (objdata->unk18 > 300.0f) {
+        dll_461_func_12B0(self, objData->unk8);
+        if (objData->unk18 > 300.0f) {
             main_set_bits(0x46E, 0x65U);
         } else {
             main_set_bits(0x46E, 0xC3U);
         }
-        if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition) < 32400.0f) {
-            dll_461_func_1090(self, objdata->unk4, objdata, 6);
-        } else if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk8->globalPosition) < 32400.0f) {
-            dll_461_func_1090(self, objdata->unk8, objdata, 7);
+        if (vec3_distance_xz_squared(&self->globalPosition, &objData->unk4->globalPosition) < 32400.0f) {
+            dll_461_func_1090(self, objData->unk4, objData, 6);
+        } else if (vec3_distance_xz_squared(&self->globalPosition, &objData->unk8->globalPosition) < 32400.0f) {
+            dll_461_func_1090(self, objData->unk8, objData, 7);
         } else {
-            if ((((DLL_ISidekick*)objdata->unk8->dll)->vtbl->func24(objdata->unk8) != 0) || (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk8->globalPosition) < 90000.0f)) {
-                func_8002493C(self, 1.5f, &objdata->unk14);
-                dll_461_func_1384(self, &objdata->unk8->srt.transl, 1.5f);
+            if ((((DLL_ISidekick*)objData->unk8->dll)->vtbl->func24(objData->unk8) != 0) || (vec3_distance_xz_squared(&self->globalPosition, &objData->unk8->globalPosition) < 90000.0f)) {
+                func_8002493C(self, 1.5f, &objData->unk14);
+                dll_461_func_1384(self, &objData->unk8->srt.transl, 1.5f);
             } else if (vec3_distance_xz_squared(&self->globalPosition, (Vec3f* ) &setup->x) < 10000.0f) {
-                dll_461_func_1030(self, objdata);
+                dll_461_func_1030(self, objData);
             } else {
-                objdata->unk0 = 0xA;
-                objdata->unk14 = 0.01f;
+                objData->unk0 = 0xA;
+                objData->unk14 = 0.01f;
                 func_80023D30(self, 2, 0, 0);
             }
         }
         break;
     case 10:
         if (self->animProgress > 0.95f) {
-            objdata->unk0 = 0xB;
+            objData->unk0 = 0xB;
         }
         break;
     case 11:
         if (((s32) setup->x == (s32) self->srt.transl.f[0]) && ((s32) setup->z == (s32) self->srt.transl.f[2])) {
-            dist = vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition);
+            dist = vec3_distance_xz_squared(&self->globalPosition, &objData->unk4->globalPosition);
             if (dist < 2500.0f) {
-                objdata->unk3 = 0;
-                gDLL_3_Animation->vtbl->start_obj_sequence(8, objdata->unkC, -1);
+                objData->unk3 = 0;
+                gDLL_3_Animation->vtbl->start_obj_sequence(8, objData->unkC, -1);
             } else if (dist < 32400.0f) {
-                objdata->unk0 = 0xC;
-                objdata->unk14 = 0.005f;
+                objData->unk0 = 0xC;
+                objData->unk14 = 0.005f;
                 func_80023D30(self, 8, 0, 0);
                 gDLL_6_AMSFX->vtbl->play(self, _data_C[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
-                objdata->unk2 = 0;
-                objdata->unk1 = 3;
+                objData->unk2 = 0;
+                objData->unk1 = 3;
             } else {
                 dist = 50.0f;
-                objdata->unk10 = obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
-                if ((objdata->unk10 != NULL) && (gDLL_54_pickup->vtbl->get_state(objdata->unk10->data) == PICKUP_NotHeld)) {
-                    objdata->unk0 = 0xD;
-                    objdata->unk3 = 0;
-                    objdata->unk18 = 0.0f;
-                    gDLL_3_Animation->vtbl->start_obj_sequence(5, objdata->unkC, -1);
+                objData->unk10 = obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
+                if ((objData->unk10 != NULL) && (gDLL_54_pickup->vtbl->get_state(objData->unk10->data) == PICKUP_NotHeld)) {
+                    objData->unk0 = 0xD;
+                    objData->unk3 = 0;
+                    objData->unk18 = 0.0f;
+                    gDLL_3_Animation->vtbl->start_obj_sequence(5, objData->unkC, -1);
                 } else {
-                    objdata->unk0 = 0xC;
-                    objdata->unk14 = 0.01f;
+                    objData->unk0 = 0xC;
+                    objData->unk14 = 0.01f;
                     func_80023D30(self, 0xB, 0, 0);
-                    objdata->unk2 = 0;
-                    objdata->unk1 = 3;
+                    objData->unk2 = 0;
+                    objData->unk1 = 3;
                 }
             }
         } else {
             dll_461_func_1384(self, (Vec3f* ) &setup->x, 3.0f);
             if (vec3_distance_xz_squared(&self->globalPosition, (Vec3f* ) &setup->x) < 10000.0f) {
-                objdata->unk2 = 1;
+                objData->unk2 = 1;
             }
         }
         break;
     case 12:
-        dll_461_func_12B0(self, objdata->unk4);
+        dll_461_func_12B0(self, objData->unk4);
         if (self->animProgress > 0.95f) {
-            dll_461_func_1030(self, objdata);
+            dll_461_func_1030(self, objData);
         }
         break;
     case 13:
-        if (objdata->unk10 != NULL) {
-            setup = objdata->unk10->setup;
-            objdata->unk10->srt.transl.f[0] = setup->x;
-            objdata->unk10->srt.transl.f[1] = setup->y;
-            objdata->unk10->srt.transl.f[2] = setup->z;
-            objdata->unk10 = NULL;
+        if (objData->unk10 != NULL) {
+            setup = objData->unk10->setup;
+            objData->unk10->srt.transl.f[0] = setup->x;
+            objData->unk10->srt.transl.f[1] = setup->y;
+            objData->unk10->srt.transl.f[2] = setup->z;
+            objData->unk10 = NULL;
         }
-        if (objdata->unk18 > 3000.0f) {
-            objdata->unk0 = 4;
-        } else if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition) < 32400.0f) {
-            dll_461_func_1090(self, objdata->unk4, objdata, 8);
+        if (objData->unk18 > 3000.0f) {
+            objData->unk0 = 4;
+        } else if (vec3_distance_xz_squared(&self->globalPosition, &objData->unk4->globalPosition) < 32400.0f) {
+            dll_461_func_1090(self, objData->unk4, objData, 8);
         }
-        dll_461_func_14B0(self, objdata);
+        dll_461_func_14B0(self, objData);
         break;
     case 14:
-        objdata->unk0 = 0xF;
+        objData->unk0 = 0xF;
         self->srt.flags |= OBJFLAG_INVISIBLE;
         func_800267A4(self);
         func_80026160(self);
@@ -300,8 +308,8 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         return;
     }
 
-    func_80024108(self, objdata->unk14, gUpdateRateF, 0);
-    dll_461_func_1540(self, objdata);
+    func_80024108(self, objData->unk14, gUpdateRateF, 0);
+    dll_461_func_1540(self, objData);
 }
 
 static const char str_1[] = "setting flight group to %d\n";
