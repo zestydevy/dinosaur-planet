@@ -1,6 +1,7 @@
-#include "common.h"
+#include "dlls/engine/2_camcontrol.h"
+#include "sys/main.h"
+#include "sys/memory.h"
 #include "sys/segment_1460.h"
-#include "unktypes.h"
 
 typedef struct {
     f32 unk0;
@@ -14,19 +15,19 @@ typedef struct {
     f32 unk20;
     f32 unk24;
     u8 unk28;
-} CamClimbUnk; //len: 0x2C
+} CamShipBattleUnk; //len: 0x2C
 
-static CamClimbUnk* _bss_0;
+static CamShipBattleUnk* _bss_0;
 
 // offset: 0x0 | ctor
-void camclimb_ctor(void *dll) { }
+void camshipbattle_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void camclimb_dtor(void *dll) { }
+void camshipbattle_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void camclimb_setup(CamControl_Data* arg0, s32 arg1, s32 arg2) {   
-    _bss_0 = mmAlloc(sizeof(CamClimbUnk), ALLOC_TAG_CAM_COL, NULL);
+void camshipbattle_setup(CamControl_Data* arg0, s32 arg1, s32 arg2) {   
+    _bss_0 = mmAlloc(sizeof(CamShipBattleUnk), ALLOC_TAG_CAM_COL, ALLOC_NAME("camshipbattle"));
     
     _bss_0->unk0 = 0.0f;
     _bss_0->unk4 = 0.0f;
@@ -41,7 +42,7 @@ void camclimb_setup(CamControl_Data* arg0, s32 arg1, s32 arg2) {
 }
 
 // offset: 0xF4 | func: 1 | export: 1
-void camclimb_control(CamControl_Data* camData) {
+void camshipbattle_control(CamControl_Data* camData) {
     Object* obj;
     f32 var_fa0;
     f32 var_fv0;
@@ -53,10 +54,7 @@ void camclimb_control(CamControl_Data* camData) {
     
     returnVal = 0;    
     if (obj != NULL) {
-        /* TO-DO: the number of args doesn't match the player DLL's export 11. Maybe this isn't the player Object?
-           The "camclimb" DLL doesn't seem to load while climbing, so maybe the args here are outdated?
-           Check whether this DLL is used elsewhere!
-        */
+        // TODO: this is likely SB_Galleon export 11, confirm
         returnVal = ((DLL_Unknown*)obj->dll)->vtbl->func[11].withOneArgS32((s32)obj);
     }
     
@@ -128,11 +126,11 @@ void camclimb_control(CamControl_Data* camData) {
 }
 
 // offset: 0x4CC | func: 2 | export: 2
-void camclimb_free(CamControl_Data* camData) {
+void camshipbattle_free(CamControl_Data* camData) {
     mmFree(_bss_0);
 }
 
 // offset: 0x50C | func: 3 | export: 3
-void camclimb_func_50C(s32 arg0) {
+void camshipbattle_func_50C(s32 arg0) {
 
 }

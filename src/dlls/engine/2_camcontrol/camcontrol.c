@@ -350,7 +350,7 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
                     CamControl_change_camera_module(DLL_ID_CAMNORMAL, 0, 2, sizeof(CameraAction), camAction, 0, 0xFF);
                 } else {
                     //If camAction->unk0 == 1 (1st-person mode locked out?)
-                    CamControl_change_camera_module(DLL_ID_CAM93, 1, 2, sizeof(CameraAction), camAction, 0, 0xFF);
+                    CamControl_change_camera_module(DLL_ID_CAMCLIMB, 1, 2, sizeof(CameraAction), camAction, 0, 0xFF);
                 }
             }
             mmFree(camAction);

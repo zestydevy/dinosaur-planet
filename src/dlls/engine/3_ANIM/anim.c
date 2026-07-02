@@ -3119,8 +3119,8 @@ void anim_update_camera(void) {
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSTATIC, 1, 3, sizeof(sp44), &sp44, _bss_98, 0xFF);
             dummy_label_2: ; // @fake
             break;
-        case DLL_ID_CAMCLIMB:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLIMB, 1, 0, 0, NULL, _bss_98, 0xFF);
+        case DLL_ID_CAMSHIPBATTLE:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE, 1, 0, 0, NULL, _bss_98, 0xFF);
             break;
         case DLL_ID_CAMTALK1:
             sp54.srt.transl.x = _bss_5A4;
