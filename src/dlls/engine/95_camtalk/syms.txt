@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_95_ctor = 0x0;
+dll_95_dtor = 0xC;
+dll_95_func_18 = 0x18;
+dll_95_func_320 = 0x320;
+dll_95_func_544 = 0x544;
+dll_95_func_584 = 0x584;
+
+.rodata = 0x5E8:
+str_0 = 0x0; // absolute:0x5E8
+
+.bss = 0x618:
+bss_0 = 0x0; // absolute:0x618

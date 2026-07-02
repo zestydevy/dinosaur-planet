@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/89_campath.h"
 #include "dlls/engine/90_camstatic.h"
+#include "dlls/engine/95_camtalk.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -245,11 +246,6 @@ typedef struct {
 } Actor;
 
 typedef struct {
-    Vec3f coord; 
-    s8 unkC;
-} CameraFunc15Unk_unk74;
-
-typedef struct {
     Object *obj;
     s32 preemptTime;
 } PreemptTime;
@@ -386,7 +382,7 @@ static void anim_func_9B70(Object* arg1, Object* animObj, AnimObj_Data* st);
 static void anim_override_list_clear(s32 slot);
 void anim_end_obj_sequence(s32 slot);
 static s32 anim_get_preempt_time(Object* obj);
-static void anim_func_9CE8(s32 arg0);
+static void anim_func_9CE8(s32 ctype);
 static Object* anim_override_list_get(s32 seqSlot, Object* searchObject);
 static Object* anim_find_animobj_target_in_world(Object* animObj);
 s32 anim_func_8878(void);
@@ -4060,27 +4056,27 @@ static void anim_override_list_add(s32 seqSlot, Object* actor, Object* animObj) 
 }
 
 // offset: 0x9CE8 | func: 68
-static void anim_func_9CE8(s32 arg0) {
+static void anim_func_9CE8(s32 ctype) {
     Object* hlObject;
-    CameraFunc15Unk_unk74 action;
+    CamTalk_Params action;
 
-    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM95) {
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMTALK) {
         return;
     }
     
     hlObject = gDLL_2_Camera->vtbl->get_highlighted_object();
     if ((hlObject != NULL) && (hlObject->unk74 != NULL)) {
-        action.coord.x = hlObject->unk74->drawPoint.x;
-        action.coord.y = hlObject->unk74->drawPoint.y;
-        action.coord.z = hlObject->unk74->drawPoint.z;
-        action.unkC = arg0;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM95, 1, 0, sizeof(CameraFunc15Unk_unk74), &action, 60, 0xFF);
+        action.x = hlObject->unk74->drawPoint.x;
+        action.y = hlObject->unk74->drawPoint.y;
+        action.z = hlObject->unk74->drawPoint.z;
+        action.ctype = ctype;
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK, 1, 0, sizeof(action), &action, 60, 0xFF);
     }
 }
 
 // offset: 0x9DD4 | func: 69
 void anim_func_9DD4(void) {
-    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM95) {
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMTALK) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 3, 0, NULL, 0, 0);
     }
 }
