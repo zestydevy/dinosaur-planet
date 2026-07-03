@@ -14,15 +14,15 @@ typedef struct {
 
 typedef struct {
     u8 state;
-    u8 unk1;
+    u8 particleCount;
     u8 unk2;
     u8 facePlayerDuringSequence;
     Object* player;     // Krystal
     Object* sidekick;   // Kyte
     Object* seqObj;     // CCnewseqobj
-    Object* unk10;
+    Object* barrel;
     f32 animSpeed;
-    f32 kyteTimer;
+    f32 timer;
     f32 flashRedTimer;
 } CCsandwormBoss_Data;
 
@@ -30,7 +30,7 @@ typedef enum {
     CCsandwormBoss_STATE_0_Leadup_Fighting_One_SharpClaw,
     CCsandwormBoss_STATE_1_Leadup_Fighting_Two_SharpClaw,
     CCsandwormBoss_STATE_2_Leadup_Already_Completed, //Used during setup to skip directly to the battle when revisiting
-    CCsandwormBoss_STATE_3,
+    CCsandwormBoss_STATE_3_Revisit_Restore_Fire_Crystal,
     CCsandwormBoss_STATE_4_Idle, //Emerged from sand, stationary, attacks player when nearby.
     CCsandwormBoss_STATE_5_Attacking,
     CCsandwormBoss_STATE_6,
@@ -75,7 +75,7 @@ static void CCsandwormBoss_attack(Object* self, Object* obj, CCsandwormBoss_Data
 static void CCsandwormBoss_func_1250(Object* self, CCsandwormBoss_Data* objData);
 static void CCsandwormBoss_turn_towards_object(Object* self, Object* obj);
 static void CCsandwormBoss_move_towards_point(Object* self, Vec3f* point, f32 speed);
-static void CCsandwormBoss_func_14B0(Object* aself0, CCsandwormBoss_Data* objData);
+static void CCsandwormBoss_check_for_projectile_spell(Object* self, CCsandwormBoss_Data* objData);
 static void CCsandwormBoss_func_1540(Object* self, CCsandwormBoss_Data* objData);
 static int CCsandwormBoss_func_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
@@ -99,8 +99,9 @@ void CCsandwormBoss_setup(Object* self, CCsandwormBoss_Setup* objSetup, s32 rese
     obj_add_object_type(self, OBJTYPE_Baddie);
     
     if (main_get_bits(BIT_CC_SandWormBoss_Defeated)) {
-        if (main_get_bits(BIT_3D4) == FALSE) {
-            objData->state = CCsandwormBoss_STATE_3;
+        //Preempt the Fire Crystal into position if it hasn't been collected (unfinished)
+        if (main_get_bits(BIT_CC_Fire_Crystal_Collected_SandWorm_Boss) == FALSE) {
+            objData->state = CCsandwormBoss_STATE_3_Revisit_Restore_Fire_Crystal;
             STUBBED_PRINTF("need to prempt fire crystal into correct position\n");
         } else {
             objData->state = CCsandwormBoss_STATE_15_Defeated;
@@ -142,7 +143,7 @@ void CCsandwormBoss_setup(Object* self, CCsandwormBoss_Setup* objSetup, s32 rese
 void CCsandwormBoss_control(Object* self) {
     CCsandwormBoss_Data* objData = self->data;
     
-    if (objData->state < CCsandwormBoss_STATE_3) {
+    if (objData->state <= CCsandwormBoss_STATE_2_Leadup_Already_Completed) {
         CCsandwormBoss_tick_sharpclaw_leadup(self, objData);
     } else {
         CCsandwormBoss_tick_battle(self, objData);
@@ -151,7 +152,7 @@ void CCsandwormBoss_control(Object* self) {
 
 // offset: 0x330 | func: 2
 /**
-  * State Machine for the boss battle preamble, where you fight a single SharpClaw and a pair of SharpClaw.
+  * State Machine for the boss battle preamble, where you fight a single SharpClaw and then a pair of SharpClaw.
   */
 void CCsandwormBoss_tick_sharpclaw_leadup(Object* self, CCsandwormBoss_Data* objData) {
     //Find Krystal
@@ -177,7 +178,7 @@ void CCsandwormBoss_tick_sharpclaw_leadup(Object* self, CCsandwormBoss_Data* obj
             objData->state = CCsandwormBoss_STATE_1_Leadup_Fighting_Two_SharpClaw;
             return;
         }
-    case CCsandwormBoss_STATE_3:
+    case CCsandwormBoss_STATE_3_Revisit_Restore_Fire_Crystal:
         return;
     case CCsandwormBoss_STATE_1_Leadup_Fighting_Two_SharpClaw:
         //Start the main boss battle when both SharpClaw have been defeated
@@ -207,12 +208,15 @@ void CCsandwormBoss_init_boss(Object* self, CCsandwormBoss_Data* objData) {
 }
 
 // offset: 0x5E0 | func: 4
+/**
+  * State Machine for the main boss battle.
+  */
 void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
     ObjSetup* setup;
     f32 dist;
   
     setup = self->setup;
-    objData->kyteTimer += gUpdateRateF;
+    objData->timer += gUpdateRateF;
     dist = M_INFINITY_F;
     obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
 
@@ -228,7 +232,7 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
                 diPrintf("kyte dist %d interest range 50.0F\n", (s32) vec3_distance_xz(&self->globalPosition, &objData->sidekick->globalPosition));
                 if (vec3_distance_xz_squared(&self->globalPosition, &objData->sidekick->globalPosition) < SQ(60)) {
                     CCsandwormBoss_func_1250(self, objData);
-                    objData->kyteTimer = 0.0f;
+                    objData->timer = 0.0f;
                 }
             }
         }
@@ -258,12 +262,12 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
             objData->animSpeed = 0.005f;
             func_80023D30(self, 5, 0, 0);
         }
-        CCsandwormBoss_func_14B0(self, objData);
+        CCsandwormBoss_check_for_projectile_spell(self, objData);
         break;
     case CCsandwormBoss_STATE_9:
         CCsandwormBoss_turn_towards_object(self, objData->sidekick);
 
-        if (objData->kyteTimer > 300.0f) {
+        if (objData->timer > 300.0f) {
             STUBBED_PRINTF("setting flight group to %d\n", 0x65);
             main_set_bits(BIT_Kyte_Flight_Curve, 0x65);
         } else {
@@ -296,32 +300,38 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
     case CCsandwormBoss_STATE_11:
         if (((s32) setup->x == (s32) self->srt.transl.f[0]) && ((s32) setup->z == (s32) self->srt.transl.f[2])) {
             dist = vec3_distance_xz_squared(&self->globalPosition, &objData->player->globalPosition);
-            if (dist < 2500.0f) {
-                objData->facePlayerDuringSequence = FALSE;
-                
+            if (dist < SQ(50)) {
                 STUBBED_PRINTF("eat player sequence\n");
+
+                objData->facePlayerDuringSequence = FALSE;
                 gDLL_3_Animation->vtbl->start_obj_sequence(CCnewseqobj_ObjSeq_8_Eating_Player, objData->seqObj, -1);
-            } else if (dist < 32400.0f) {
+            } else if (dist < SQ(180)) {
+                STUBBED_PRINTF("attack player from under ground\n");
+
                 objData->state = CCsandwormBoss_STATE_12;
                 objData->animSpeed = 0.005f;
                 func_80023D30(self, 8, 0, 0);
                 gDLL_6_AMSFX->vtbl->play(self, dAttackSoundIDs[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                 objData->unk2 = FALSE;
-                objData->unk1 = 3;
+                objData->particleCount = 3;
             } else {
                 dist = 50.0f;
-                objData->unk10 = obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
-                if ((objData->unk10 != NULL) && (gDLL_54_pickup->vtbl->get_state(objData->unk10->data) == PICKUP_NotHeld)) {
+                objData->barrel = obj_get_nearest_type_to(OBJTYPE_Pickup, self, &dist);
+                if (objData->barrel && (gDLL_54_pickup->vtbl->get_state(objData->barrel->data) == PICKUP_NotHeld)) {
+                    STUBBED_PRINTF("eat barrel\n");
+                    
                     objData->state = CCsandwormBoss_STATE_13;
                     objData->facePlayerDuringSequence = FALSE;
-                    objData->kyteTimer = 0.0f;
+                    objData->timer = 0.0f;
                     gDLL_3_Animation->vtbl->start_obj_sequence(CCnewseqobj_ObjSeq_5, objData->seqObj, -1);
                 } else {
+                    STUBBED_PRINTF("get up without attack\n");
+
                     objData->state = CCsandwormBoss_STATE_12;
                     objData->animSpeed = 0.01f;
                     func_80023D30(self, 0xB, 0, 0);
                     objData->unk2 = FALSE;
-                    objData->unk1 = 3;
+                    objData->particleCount = 3;
                 }
             }
         } else {
@@ -339,21 +349,23 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
         }
         break;
     case CCsandwormBoss_STATE_13:
-        if (objData->unk10 != NULL) {
-            setup = objData->unk10->setup;
-            objData->unk10->srt.transl.f[0] = setup->x;
-            objData->unk10->srt.transl.f[1] = setup->y;
-            objData->unk10->srt.transl.f[2] = setup->z;
-            objData->unk10 = NULL;
+        if (objData->barrel != NULL) {
+            setup = objData->barrel->setup;
+            objData->barrel->srt.transl.f[0] = setup->x;
+            objData->barrel->srt.transl.f[1] = setup->y;
+            objData->barrel->srt.transl.f[2] = setup->z;
+
+            STUBBED_PRINTF("barrel %x put to %f %f %f\n", setup->uID, &setup->x, &setup->y, &setup->z);
+            objData->barrel = NULL;
         }
 
-        if (objData->kyteTimer > 3000.0f) {
+        if (objData->timer > 3000.0f) {
             objData->state = CCsandwormBoss_STATE_4_Idle;
         } else if (vec3_distance_xz_squared(&self->globalPosition, &objData->player->globalPosition) < SQ(180)) {
             CCsandwormBoss_attack(self, objData->player, objData, CCsandwormBoss_STATE_8);
         }
 
-        CCsandwormBoss_func_14B0(self, objData);
+        CCsandwormBoss_check_for_projectile_spell(self, objData);
         break;
     case CCsandwormBoss_STATE_14_Dying:
         objData->state = CCsandwormBoss_STATE_15_Defeated;
@@ -370,19 +382,6 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
     CCsandwormBoss_func_1540(self, objData);
 }
 
-// static const char str_1[] = "setting flight group to %d\n";
-// static const char str_2[] = "setting flight group to %d\n";
-// static const char str_3[] = "eat player sequence\n";
-static const char str_4[] = "attack player from under ground\n";
-static const char str_5[] = "eat barrel\n";
-static const char str_5b[] = "get up without attack\n";
-static const char str_6[] = "barrel %x put to %f %f %f\n";
-static const char str_7[] = "worm at %f %f %f\n";
-static const char str_8[] = "boss dead\n";
-static const char str_9[] = "turning on parts\n";
-static const char str_10[] = "Parts all over\n";
-static const char str_11[] = "yaw to player\n";
-
 // offset: 0x1030 | func: 5
 void CCsandwormBoss_enter_idle_state(Object* self, CCsandwormBoss_Data* objData) {
     objData->state = CCsandwormBoss_STATE_4_Idle;
@@ -393,11 +392,13 @@ void CCsandwormBoss_enter_idle_state(Object* self, CCsandwormBoss_Data* objData)
 // offset: 0x1090 | func: 6
 void CCsandwormBoss_attack(Object* self, Object* obj, CCsandwormBoss_Data* objData, s32 newState) {
     if (vec3_distance_xz_squared(&self->globalPosition, &obj->globalPosition) < SQ(90)) {
+        //Claw swipe when nearby
         objData->state = newState;
         objData->animSpeed = 0.02f;
         func_80023D30(self, 0x100, 0.0f, 0);
         gDLL_6_AMSFX->vtbl->play(self, dAttackSoundIDs[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
     } else {
+        //Bite attack when further away
         objData->state = newState;
         objData->animSpeed = 0.009f;
         func_80023D30(self, dAttackModanimIDs[rand_next(0, 2)], 0.0f, 0);
@@ -455,11 +456,15 @@ void CCsandwormBoss_move_towards_point(Object* self, Vec3f* point, f32 speed) {
         self->srt.transl.x = point->f[0];
         self->srt.transl.z = point->f[2];
     }
+
+    STUBBED_PRINTF("worm at %f %f %f\n", &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z);
 }
 
 // offset: 0x14B0 | func: 10
-void CCsandwormBoss_func_14B0(Object* self, CCsandwormBoss_Data* objData) {
+void CCsandwormBoss_check_for_projectile_spell(Object* self, CCsandwormBoss_Data* objData) {
+    //Die when struck by the Projectile Spell
     if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
+        STUBBED_PRINTF("boss dead\n");
         objData->facePlayerDuringSequence = FALSE;
         gDLL_3_Animation->vtbl->start_obj_sequence(CCsandwormBoss_ObjSeq_0_Dying, self, -1);
         objData->state = CCsandwormBoss_STATE_14_Dying;
@@ -531,9 +536,15 @@ void CCsandwormBoss_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tr
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_56, &fxTransform, 0x200001, -1, &dFXColour);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_57, &fxTransform, 0x200001, -1, &dFXColour);
         
-        if (objData->unk1) {
+        if (objData->particleCount) {
+            STUBBED_PRINTF("turning on parts\n");
+
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_58, &fxTransform, 0x200001, -1, &dFXColour);
-            objData->unk1--;
+            objData->particleCount--;
+
+            if (objData->particleCount == 0) {
+                STUBBED_PRINTF("Parts all over\n");
+            }
         }
     }
 }
@@ -569,7 +580,7 @@ int CCsandwormBoss_func_anim_callback(Object* self, Object* overrideObj, AnimObj
             objData->unk2 = FALSE;
             /* fallthrough */
         case 2:
-            objData->unk1 = 3;
+            objData->particleCount = 3;
             break;
         case 3:
             objData->facePlayerDuringSequence = TRUE;
@@ -581,6 +592,7 @@ int CCsandwormBoss_func_anim_callback(Object* self, Object* overrideObj, AnimObj
     
     objData2 = objData;
     if (objData2->facePlayerDuringSequence) {
+        STUBBED_PRINTF("yaw to player\n");
         CCsandwormBoss_turn_towards_object(self, objData2->player);
     }
     

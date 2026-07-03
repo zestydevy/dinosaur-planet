@@ -982,9 +982,9 @@ typedef enum {
     BIT_3CF = 0x3CF, // len:1 group:1
     BIT_3D0 = 0x3D0, // len:1 group:0
     BIT_3D1 = 0x3D1, // len:1 group:1
-    BIT_3D2 = 0x3D2, // len:1 group:2
-    BIT_3D3 = 0x3D3, // len:1 group:2
-    BIT_3D4 = 0x3D4, // len:1 group:2
+    BIT_CC_Fire_Crystal_Collected_Waterfall_Cave = 0x3D2, // len:1 group:2
+    BIT_CC_Fire_Crystal_Collected_Ruins_Cave = 0x3D3, // len:1 group:2
+    BIT_CC_Fire_Crystal_Collected_SandWorm_Boss = 0x3D4, // len:1 group:2
     BIT_CC_Fire_Crystal = 0x3D5, // len:2 group:2   [INVENTORY]
     BIT_3D6 = 0x3D6, // len:1 group:2
     BIT_3D7 = 0x3D7, // len:1 group:2
