@@ -1,18 +1,10 @@
 #include "dlls/engine/84_camnormal.h"
+#include "dlls/engine/93_camclimb.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
 
 // Active camera while climbing a wall/ladder
-
-typedef struct {
-    s8 unk0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    s8 unk4;
-    s8 unk5;
-} CamClimb_Params;
 
 typedef struct {
     f32 unk0;

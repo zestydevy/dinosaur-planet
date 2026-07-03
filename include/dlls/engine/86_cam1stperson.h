@@ -6,7 +6,7 @@
 typedef struct {
     f32 unk0;
     f32 unk4;
-    s16 unk8;
+    u16 unk8;
 } Cam1stPerson_Params;
 
 #endif

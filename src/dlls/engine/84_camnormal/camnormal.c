@@ -1,4 +1,5 @@
 #include "dlls/engine/2_camcontrol.h"
+#include "dlls/engine/84_camnormal.h"
 #include "dlls/engine/85_attentioncam.h"
 #include "dlls/engine/86_cam1stperson.h"
 #include "dlls/objects/210_player.h"
@@ -65,29 +66,6 @@ typedef struct {
     u8 unkAE;
     u8 _unkAF[0xB0 - 0xAF];
 } CamNormal;
-
-// TODO: this is partially a CameraAction?
-typedef struct {
-    s8 unk0;
-    s8 unk1;
-    s8 unk2;
-    u8 unk3;
-    u8 unk4;
-    s8 unk5;
-    u8 unk6;
-    s8 unk7;
-    u8 unk8;
-    u8 unk9;
-    u8 unkA;
-    u8 unkB;
-    u8 unkC;
-    u8 _unkD[0x19 - 0xD];
-    u8 unk19;
-    u16 unk1A;
-    u16 unk1C;
-    u8 unk1E;
-    u8 unk1F;
-} CamNormal_Params;
 
 /*0x0*/ static u32 data_0[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000

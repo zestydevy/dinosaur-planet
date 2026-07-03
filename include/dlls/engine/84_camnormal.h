@@ -5,6 +5,29 @@
 #include "dlls/engine/2_camcontrol.h"
 #include "dll_def.h"
 
+// TODO: this is partially a CameraAction?
+typedef struct {
+    s8 unk0;
+    s8 unk1;
+    s8 unk2;
+    u8 unk3;
+    u8 unk4;
+    s8 unk5;
+    u8 unk6;
+    s8 unk7;
+    u8 unk8;
+    u8 unk9;
+    u8 unkA;
+    u8 unkB;
+    u8 unkC;
+    u8 _unkD[0x19 - 0xD];
+    u8 unk19;
+    u16 unk1A;
+    u16 unk1C;
+    u8 unk1E;
+    u8 unk1F;
+} CamNormal_Params;
+
 DLL_INTERFACE(DLL_84_camnormal) {
 /*:*/ DLL_INTERFACE_BASE(DLL_ICamControlModule);
 /*4*/ void (*func4)(Cam* cam, Object* arg1);

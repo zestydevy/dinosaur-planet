@@ -1,5 +1,6 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/84_camnormal.h"
+#include "dlls/engine/86_cam1stperson.h"
 #include "sys/curves.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
@@ -29,12 +30,6 @@ typedef struct {
     f32 unk11C;
     u8 unk120;
 } Cam1stPerson;
-
-typedef struct {
-    f32 unk0;
-    f32 unk4;
-    u16 unk8;
-} Cam1stPerson_Params;
 
 /*0x0*/ static Cam1stPerson* sState;
 

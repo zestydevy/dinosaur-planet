@@ -1,9 +1,6 @@
 #include "dlls/engine/2_camcontrol.h"
+#include "dlls/engine/99_camcannon.h"
 #include "sys/memory.h"
-
-typedef struct {
-    Object* unk0;
-} CamCannon_Params;
 
 typedef struct {
     Object* unk0;

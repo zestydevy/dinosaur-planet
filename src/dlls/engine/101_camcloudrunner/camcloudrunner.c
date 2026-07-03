@@ -1,12 +1,6 @@
 #include "dlls/engine/2_camcontrol.h"
+#include "dlls/engine/101_camcloudrunner.h"
 #include "sys/memory.h"
-
-typedef struct {
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-} CamCloudRunner_Params;
 
 typedef struct {
     f32 unk0;
