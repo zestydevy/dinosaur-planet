@@ -114,7 +114,7 @@ void dll_90_func_278(Cam* cam) {
     s32 temp_v0;
 
     if (bss_0->unkF5 != 0) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
         return;
     }
     sp34 = cam->player;

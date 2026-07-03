@@ -206,7 +206,7 @@ void dll_86_func_4F8(Cam* cam) {
         var_fv0 *= 1.25f;
         cam->player->opacity = (u8) (s32) (var_fv0 * 255.0f);
         if (curves_func_800053B0(&bss_0->unk78, 5.0f) != 0) {
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
             cam->player->opacity = 0xFF;
         }
         cam->srt.transl.x = bss_0->unk78.unk68.x;
@@ -230,7 +230,7 @@ void dll_86_func_4F8(Cam* cam) {
         cam->srt.transl.x = bss_0->unk10[1];
         cam->srt.transl.y = bss_0->unk20[1];
         cam->srt.transl.z = bss_0->unk30[1];
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_None);
     }
 }
 

@@ -181,7 +181,7 @@ void dll_89_func_588(Cam* cam) {
     Object* player;
 
     if (bss_0->unk65 != 0) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
         return;
     }
     player = cam->player;

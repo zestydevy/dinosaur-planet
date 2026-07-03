@@ -39,7 +39,7 @@ void dll_88_func_78(Cam* cam) {
     sp30 = cam->player;
     sp56 = joy_get_buttons(0);
     if (joy_get_pressed(0) & L_TRIG) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
         return;
     }
     if (sp56 & U_JPAD) {

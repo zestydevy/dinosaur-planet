@@ -167,7 +167,7 @@ void dll_84_func_A8(Cam* cam, s32 arg1, CamNormal_Params* action) {
         bss_0->unk82 = 0;
         break;
     case 2:
-        if (action != 0) {
+        if (action != NULL) {
             bss_0->unk94 = (f32) action->unk5;
             bss_0->unk40 = bss_0->unk98 = (f32) action->unk6;
             bss_0->unk48 = bss_0->unk9C = (f32) action->unk8;
@@ -807,17 +807,17 @@ static void dll_84_func_26E4(Cam* cam, Object* arg1) {
                 (((temp_v1 = main_get_bits(BIT_4AD), (temp_v1 == 0)) && (btns & Z_TRIG)) || ((temp_v1 != 0) && (btns & R_TRIG)) || (cam->targetFlags & 2)) && 
                 (arg1->controlNo == OBJCONTROL_Player) && 
                 ((((DLL_210_Player*)arg1->dll)->vtbl->func60(arg1) != 0))) {
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 0, sizeof(&cam->highlight), &cam->highlight, 0x3C, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, TRUE, 0, sizeof(&cam->highlight), &cam->highlight, 0x3C, Cam_Ease_All);
         } else if ((btns & U_CBUTTONS) && !(cam->highlightFlags & 1)) {
             cam1stPerson.unk0 = bss_0->unk4;
             cam1stPerson.unk4 = bss_0->unk8;
             cam1stPerson.unk8 = (s16) (u32) bss_0->unk8C;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, 1, 0, sizeof(cam1stPerson), &cam1stPerson, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, TRUE, 0, sizeof(cam1stPerson), &cam1stPerson, 0, Cam_Ease_All);
         } else if ((btns & Z_TRIG) && !(cam->srt.flags & OBJFLAG_UNK_4)) {
             attentionCam.unk0 = 5;
             attentionCam.unk2 = 1;
             attentionCam.unk3 = 1;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, 1, 0, sizeof(attentionCam), &attentionCam, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, TRUE, 0, sizeof(attentionCam), &attentionCam, 0, Cam_Ease_All);
         }
     }
 }

@@ -18,14 +18,15 @@ typedef enum {
 } CameraModes;
 
 typedef enum {
-    CamControl_Ease_None = 0,
-    CamControl_Ease_Yaw = 1,
-    CamControl_Ease_Pitch = 2,
-    CamControl_Ease_Roll = 4,
-    CamControl_Ease_X = 8,
-    CamControl_Ease_Y = 0x10,
-    CamControl_Ease_Z = 0x20
-} CamControl_EaseFlags;
+    Cam_Ease_None = 0,
+    Cam_Ease_Yaw = 1,
+    Cam_Ease_Pitch = 2,
+    Cam_Ease_Roll = 4,
+    Cam_Ease_X = 8,
+    Cam_Ease_Y = 0x10,
+    Cam_Ease_Z = 0x20,
+    Cam_Ease_All = -1
+} CamEaseFlags;
 
 typedef struct {
 /*000*/    SRT srt;                 //Camera transform
@@ -59,7 +60,7 @@ typedef struct {
 /*116*/    s8 letterboxSpeed;  //Rate of change of letterbox height
 /*117*/    u8 setPlayerPosition;  //Changes the player's location to `newPlayerPosition` when nonzero
 /*118*/    s8 unk118;
-/*119*/    u8 lerpFlags;          //Which SRT components to interpolate
+/*119*/    u8 easeFlags;          //Which SRT components to interpolate (see CamEaseFlags)
 /*11A*/    u8 highlightFlags;     //Can disable LockIcon Object highlighting (stops searching for nearby highlightable Objects)
 /*11B*/    u8 targetFlags;        //Affects LockIcon being greyed out (Seems to use same flags as Object->unkAF, and generally mirrors unkAF value of Object being highlighted)
 } Cam;
@@ -89,12 +90,6 @@ typedef struct {
 	s8 unkF; //pad?
 } CameraAction;
 
-typedef struct {
-    f32 unk0;
-    f32 unk4;
-    u16 unk8;
-} DLL_86_CamAction;
-
 DLL_INTERFACE(DLL_2_camera) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*init_data)(Object* player, f32 initialX, f32 initialY, f32 initialZ); //Zeroes CamControl's data, stores a reference to the player Object, and stores the camera's initial position.
@@ -103,7 +98,7 @@ DLL_INTERFACE(DLL_2_camera) {
 /*3*/ s32 (*get_dll_ID)(void); 								//Returns the DLL ID of the current camera module
 /*4*/ CamControl_Module* (*get_active_module)(void);		//Returns the CamControl_Module that's currently in use
 /*5*/ CamControl_Module* (*get_camnormal_module)(void);		//Returns the CamControl_Module for DLL 84: CAMNORMAL (if it's loaded)
-/*6*/ void (*change_camera_module)(s32 dllID, s32 doDeferredFree, s32 setupVal, s32 actionSize, void* action, s32 easeDuration, u8 easeFlags);	
+/*6*/ void (*change_camera_module)(s32 dllID, s32 doDeferredFree, s32 setupVal, s32 dataSize, void* data, s32 easeDuration, u8 easeFlags);	
 /*7*/ CameraAction* (*get_camera_action)(s32 actionIndex);	//Returns a pointer to a `CameraAction` read from CAMERAACTIONS.BIN
 /*8*/ void (*change_mode)(u32 cameraMode, s32 index); 		//Can apply a CameraAction (or a different 8-byte struct) depending on the mode value. Depending on mode `params` can be the camera DLL index (relative to CAMNORMAL's ID), or the index of the CameraAction to use, or params for the 8-byte struct. TO-DO: update description once better understood!
 /*9*/ void (*store_player)(Object* player, s32 arg1); 		//Stores a reference to the player Object onto Cam 

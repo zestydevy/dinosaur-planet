@@ -259,7 +259,7 @@ static void dll_91_func_BC0(Cam* cam) {
             return;
         }
     }
-    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0x3C, 0xFE);
+    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0x3C, Cam_Ease_All & ~Cam_Ease_Yaw);
 }
 
 // offset: 0xC58 | func: 5

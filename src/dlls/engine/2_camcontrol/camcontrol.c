@@ -43,8 +43,8 @@ typedef enum {
 /*0x180*/ static s32 sNextID;            //Ease (End Module): DLL ID of next module (when switching camera DLLs)
 /*0x184*/ static s32 sActiveFree;        //Active module: free setting
 /*0x188*/ static s32 sActiveSetupVal;    //Active Module: arg1 for DLL's setup function (TO-DO: figure this out)
-/*0x18C*/ static UNK_PTR* sCamAction;    //Often a CameraAction*, but sometimes points to a shorter 8-byte struct? (TO-DO: figure this out)
-/*0x190*/ static u8 sEaseSetupNeeded;    //Boolean, starts a new camera ease
+/*0x18C*/ static void* sCamData;         //Cam module specific data
+/*0x190*/ static u8 sCamSwitchNeeded;    //Boolean, starts a new camera ease
 /*0x191*/ static s8 sNextSetupVal;       //Ease (End Module): arg1 for next module's setup function
 /*0x192*/ static s8 sNextFree;           //Ease (End Module): free setting for next module
 /*0x194*/ static s32 sEaseDuration;      //Duration of easing between camera modules, in frames
@@ -68,13 +68,12 @@ typedef enum {
 /*0x1D4*/ static s16 sLetterboxHeight;  //Controls the letterboxing at the top/bottom of frame
 
 CamControl_Module* CamControl_get_camnormal_module(void);
-void CamControl_change_camera_module(s32 dllID, s32 arg1, s32 arg2, s32 size, void* arg4, s32 easeDuration, u8 easeFlags);
 CameraAction* CamControl_get_camera_action(s32 index);
 static s32 CamControl_get_loaded_module_index(u16 arg0);
 static void CamControl_free_module(s32 arg0);
 static s32 CamControl_load_module(u16 arg0, s32 arg1);
 static void CamControl_update_camera(Cam* cam);
-static void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction);
+static void CamControl_replace_active_module(u16 camDLLID, void* data);
 static void CamControl_store_player_coords(Object* arg0);
 static void CamControl_restore_player_coords(Object* obj);
 static void CamControl_average_player_speed(Cam* cam, Object* arg1);
@@ -162,7 +161,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
     }
     
     //Set up easing into a different camera DLL (if needed)
-    if (sEaseSetupNeeded) {
+    if (sCamSwitchNeeded) {
         //If duration is less than 2 frames, skip lerp and arrive at goal immediately
         if (sEaseDuration > 1) {
             tSpeed = 1.0f / sEaseDuration;
@@ -171,10 +170,10 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
             }
             sCam->tValue = 1.0f;
             sCam->tSpeed = tSpeed;
-            sCam->lerpFlags = sEaseFlags;
+            sCam->easeFlags = sEaseFlags;
         } else {
             sCam->tValue = 0.0f;
-            sCam->lerpFlags = CamControl_Ease_None;
+            sCam->easeFlags = Cam_Ease_None;
         }
         
         //Store the current camera DLL's translation/rotation/fov as the ease startpoint
@@ -191,12 +190,12 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
         sPreviousID = sActiveID;
         sPreviousFree = sActiveFree;
         sPreviousSetupVal = sActiveSetupVal;
-        CamControl_replace_active_module(sNextID, sCamAction);
-        sEaseSetupNeeded = FALSE;
+        CamControl_replace_active_module(sNextID, sCamData);
+        sCamSwitchNeeded = FALSE;
         
-        if (sCamAction != NULL) {
-            mmFree(sCamAction);
-            sCamAction = NULL;
+        if (sCamData != NULL) {
+            mmFree(sCamData);
+            sCamData = NULL;
         }
     }
 
@@ -256,33 +255,32 @@ CamControl_Module* CamControl_get_camnormal_module(void) {
 }
 
 // offset: 0x630 | func: 6 | export: 6
-//TODO: unsure of type for arg4 - sometimes CameraAction*, other times something else (8 bytes long)?
-void CamControl_change_camera_module(s32 dllID, s32 doDeferredFree, s32 setupVal, s32 actionSize, void* action, s32 easeDuration, u8 easeFlags) {
-    void* currentCamAction;
+void CamControl_change_camera_module(s32 dllID, s32 doDeferredFree, s32 setupVal, s32 dataSize, void* data, s32 easeDuration, u8 easeFlags) {
+    void* currentCamData;
 
-    //Free the previously-used camera action
-    currentCamAction = sCamAction;
-    if (currentCamAction != NULL) {
-        mmFree(currentCamAction);
-        sCamAction = NULL;
-        sEaseSetupNeeded = FALSE;
+    //Free the previously-used camera data
+    currentCamData = sCamData;
+    if (currentCamData != NULL) {
+        mmFree(currentCamData);
+        sCamData = NULL;
+        sCamSwitchNeeded = FALSE;
     }
     
     //Set up the camera DLL to ease into
     sNextID = dllID;
     sEaseDuration = easeDuration;
     
-    if (action != NULL) {
-        sCamAction = mmAlloc(actionSize, ALLOC_TAG_CAM_COL, ALLOC_NAME("camcontrol1"));
-        bcopy(action, sCamAction, actionSize);
+    if (data != NULL) {
+        sCamData = mmAlloc(dataSize, ALLOC_TAG_CAM_COL, ALLOC_NAME("camcontrol1"));
+        bcopy(data, sCamData, dataSize);
     } else {
-        sCamAction = NULL;
+        sCamData = NULL;
     }
     
     sNextFree = doDeferredFree;
     sNextSetupVal = setupVal;
 
-    sEaseSetupNeeded = TRUE;
+    sCamSwitchNeeded = TRUE;
     sEaseFlags = easeFlags;
 }
 
@@ -295,7 +293,7 @@ void CamControl_revert_camera_module(s32 easeDuration, u8 easeFlags) {
 }
 
 // offset: 0x7B4 | func: 8 | export: 22
-void CamControl_func_7B4(UNK_PTR* arg0, s32 arg1) { //TODO: figure out type for arg0 (it's CameraAction* sometimes, but f32* when called in SB_Galleon)
+void CamControl_func_7B4(void* arg0, s32 arg1) {
     if (sActiveModule != NULL) {
         sActiveModule->dll->vtbl->func3(arg0, arg1);
     }
@@ -327,23 +325,28 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
     CamPath_Params pathCam;
     CameraAction* camAction;
     s32 pad[2];
+
+    // @bug: camAction is uninitialized if params == 0
+#ifdef AVOID_UB
+    camAction = NULL;
+#endif
     
     switch (cameraMode) {
     case Camera_MODE_1_Static:
         staticCam.unk0 = params & 0x7F; //extract lower bits
         staticCam.unk4 = params & 0x80; //store uppermost bit
-        CamControl_change_camera_module(DLL_ID_CAMSTATIC, 1, 0, sizeof(staticCam), &staticCam, 120, 0xFF);
+        CamControl_change_camera_module(DLL_ID_CAMSTATIC, TRUE, 0, sizeof(staticCam), &staticCam, 120, 0xFF);
         break;
     case Camera_MODE_2_Path:
         pathCam.unk0 = params & 0x7F; //extract lower bits
         pathCam.unk4 = params & 0x80; //store uppermost bit
-        CamControl_change_camera_module(DLL_ID_CAMPATH, 1, 0, sizeof(pathCam), &pathCam, 120, 0xFF);
+        CamControl_change_camera_module(DLL_ID_CAMPATH, TRUE, 0, sizeof(pathCam), &pathCam, 120, 0xFF);
         break;
     case Camera_MODE_3_Normal:
-        CamControl_change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 120, 0xFF);
+        CamControl_change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 120, 0xFF);
         break;
     case Camera_MODE_4_Module:
-        CamControl_change_camera_module(DLL_ID_CAMNORMAL + params, 1, 0, 0, NULL, 120, 0xFF);
+        CamControl_change_camera_module(DLL_ID_CAMNORMAL + params, TRUE, 0, 0, NULL, 120, 0xFF);
         break;
     case Camera_MODE_0_CameraAction:
     default:
@@ -356,10 +359,10 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
                 CamControl_get_camnormal_module()->dll->vtbl->func3(camAction, 16);
             } else {
                 if ((camAction->unk0 == 0) || (camAction->unk0 != 1)) {
-                    CamControl_change_camera_module(DLL_ID_CAMNORMAL, 0, 2, sizeof(CameraAction), camAction, 0, 0xFF);
+                    CamControl_change_camera_module(DLL_ID_CAMNORMAL, FALSE, 2, sizeof(CameraAction), camAction, 0, 0xFF);
                 } else {
                     //If camAction->unk0 == 1 (1st-person mode locked out?)
-                    CamControl_change_camera_module(DLL_ID_CAMCLIMB, 1, 2, sizeof(CameraAction), camAction, 0, 0xFF);
+                    CamControl_change_camera_module(DLL_ID_CAMCLIMB, TRUE, 2, sizeof(CameraAction), camAction, 0, 0xFF);
                 }
             }
             mmFree(camAction);
@@ -735,28 +738,28 @@ static void CamControl_update_camera(Cam* cam) {
         tValue = 1.0f - curves_hermite(spline, cam->tValue, 0);
 
         //Linear interpolation (position)
-        if (cam->lerpFlags & CamControl_Ease_X) {
+        if (cam->easeFlags & Cam_Ease_X) {
             camera->srt.transl.x = cam->easeStartX + (camera->srt.transl.x - cam->easeStartX)*tValue;
         }
-        if (cam->lerpFlags & CamControl_Ease_Y) {
+        if (cam->easeFlags & Cam_Ease_Y) {
             camera->srt.transl.y = cam->easeStartY + (camera->srt.transl.y - cam->easeStartY)*tValue;
         }
-        if (cam->lerpFlags & CamControl_Ease_Z) {
+        if (cam->easeFlags & Cam_Ease_Z) {
             camera->srt.transl.z = cam->easeStartZ + (camera->srt.transl.z - cam->easeStartZ)*tValue;
         }
         
         //Linear interpolation (rotation)
-        if (cam->lerpFlags & CamControl_Ease_Yaw) {
+        if (cam->easeFlags & Cam_Ease_Yaw) {
             cam->dYaw = cam->easeStartYaw - (camera->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(cam->dYaw)
             camera->srt.yaw = cam->easeStartYaw - ((s16)(cam->dYaw * tValue));
         }
-        if (cam->lerpFlags & CamControl_Ease_Pitch) {
+        if (cam->easeFlags & Cam_Ease_Pitch) {
             cam->dPitch = cam->easeStartPitch - (camera->srt.pitch & 0xFFFF);
             CIRCLE_WRAP(cam->dPitch)
             camera->srt.pitch = cam->easeStartPitch - ((s16)(cam->dPitch * tValue));
         }
-        if (cam->lerpFlags & CamControl_Ease_Roll) {
+        if (cam->easeFlags & Cam_Ease_Roll) {
             cam->dRoll = cam->easeStartRoll - (camera->srt.roll & 0xFFFF);
             CIRCLE_WRAP(cam->dRoll)
             camera->srt.roll = cam->easeStartRoll - ((s16)(cam->dRoll * tValue));
@@ -792,8 +795,9 @@ static void CamControl_update_camera(Cam* cam) {
 }
 
 // offset: 0x1BD0 | func: 30
-void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction) {   
+void CamControl_replace_active_module(u16 camDLLID, void* data) {   
     //Call the existing camera module's free method (if it's a different DLL ID)
+    //@bug: Switching to a module that's already active will result in its data not being freed!
     if ((sActiveModule != NULL) && (sActiveID != camDLLID)){
         sActiveModule->dll->vtbl->free(sCam);
         if (sActiveModule->doDeferredFree == TRUE){
@@ -814,7 +818,7 @@ void CamControl_replace_active_module(u16 camDLLID, CameraAction* camAction) {
     if (sActiveLoadedIndex != DLL_NONE) {
         sActiveModule = sCamModules[sActiveLoadedIndex];
         sActiveID = sActiveModule->id;
-        sActiveModule->dll->vtbl->setup(sCam, sNextSetupVal, camAction);
+        sActiveModule->dll->vtbl->setup(sCam, sNextSetupVal, data);
     } else {
         sActiveModule = NULL;
         sActiveID = DLL_NONE;

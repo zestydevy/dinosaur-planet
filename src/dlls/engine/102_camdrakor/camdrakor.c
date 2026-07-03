@@ -69,7 +69,7 @@ void dll_102_func_138(Cam* cam) {
     s16 var_v0;
 
     if (bss_0->unkD != 0) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
         return;
     }
     if (bss_0->unk4 == NULL) {
