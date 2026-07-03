@@ -1,0 +1,2 @@
+gControllerThreadStack = 0x800A8200; /* TODO: doesn't match without having its address overridden */
+D_B0000578 = 0xB0000578; /* camera antipiracy ROM read */

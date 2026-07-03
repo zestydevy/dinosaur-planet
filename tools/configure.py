@@ -46,6 +46,10 @@ class BuildFile:
         self.type = type
         self.config = config
 
+class AssetFile:
+    def __init__(self, src_path: str):
+        self.src_path = src_path
+
 class DLL:
     def __init__(self, 
                  number: str, 
@@ -60,8 +64,9 @@ class DLL:
         self.undefined_syms_file = undefined_syms_file
 
 class BuildFiles:
-    def __init__(self, files: "list[BuildFile]", dlls: "list[DLL]"):
+    def __init__(self, files: "list[BuildFile]", assets: "list[AssetFile]", dlls: "list[DLL]"):
         self.files = files # excludes DLLs
+        self.assets = assets
         self.dlls = dlls
 
 class BuildConfig:
@@ -88,11 +93,18 @@ class BuildNinjaWriter:
         self.writer = writer
         self.input = input
         self.config = config
-        self.link_deps: "list[str]" = [
-            "undefined_syms.txt", 
-            "undefined_funcs.txt", 
-            "undefined_syms_auto.txt", 
-        ]
+        self.nonmatching: bool = "NON_MATCHING" in config.defines
+        if self.nonmatching:
+            self.symbol_files: "list[str]" = [
+                "undefined_syms.txt", 
+            ]
+        else:
+            self.symbol_files: "list[str]" = [
+                "undefined_syms.txt", 
+                "undefined_syms_auto.txt", 
+                "undefined_syms_hack.txt", 
+            ]
+        self.link_deps: "list[str]" = [] + self.symbol_files
         self.expected_targets: "list[str]" = []
 
     def write(self):
@@ -104,6 +116,9 @@ class BuildNinjaWriter:
         
         # Write DLL builds/linking
         self.__write_dll_builds()
+
+        # Write asset builds/packing
+        self.__write_asset_builds()
 
         # Write main linker step
         self.__write_linking()
@@ -198,10 +213,8 @@ class BuildNinjaWriter:
             "-KPIC",
         ]))
 
-        self.writer.variable("LD_FLAGS", " ".join([
-            "-T undefined_syms.txt", 
-            "-T undefined_funcs.txt", 
-            "-T undefined_syms_auto.txt", 
+        symbol_files_link_args = [f"-T {x}" for x in self.symbol_files]
+        self.writer.variable("LD_FLAGS", " ".join(symbol_files_link_args + [
             "-T $LINK_SCRIPT",
             "-Map $BUILD_DIR/$TARGET.map",
             "--no-check-sections",
@@ -255,9 +268,11 @@ class BuildNinjaWriter:
         self.writer.variable("ELF2DLL", f"{sys.executable} tools/elf2dll.py")
         self.writer.variable("ELF2DLL_WRAPPER", f"{sys.executable} tools/elf2dll_wrapper.py")
         self.writer.variable("DINODLL", f"{sys.executable} tools/dino_dll.py")
+        self.writer.variable("DINOFS", f"{sys.executable} tools/dino_fs.py")
         self.writer.variable("DLLSYMS2LD", f"{sys.executable} tools/dllsyms2ld.py")
         self.writer.variable("SYNTAX_CHECK", f"{sys.executable} tools/syntax_check.py")
         self.writer.variable("PATCHMIPS3", f"{sys.executable} tools/patchmips3.py")
+        self.writer.variable("N64CKSUM", f"{sys.executable} tools/n64cksum.py")
         
         self.writer.newline()
 
@@ -295,7 +310,9 @@ class BuildNinjaWriter:
         self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         self.writer.rule("elf2dll_wrapper", "$ELF2DLL_WRAPPER -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
+        self.writer.rule("pack_assets", "$DINOFS pack --bin $ASSETS_BIN_OUT --tab $ASSETS_TAB_OUT $in", "Packing assets...")
         self.writer.rule("patchmips3", "$PATCHMIPS3 $in $out", "Patching $in...")
+        self.writer.rule("n64cksum", "$N64CKSUM $in $out", "Recalculating checksum...")
 
         self.writer.newline()
 
@@ -368,7 +385,7 @@ class BuildNinjaWriter:
                 self.expected_targets.append(exp_obj_build_path)
 
         self.writer.newline()
-    
+
     def __write_dll_builds(self):
         self.writer.comment("Convert export symbols to linker script")
         self.writer.build("$BUILD_DIR/export_symbol_addrs.ld", "dllsyms2ld", "export_symbol_addrs.txt")
@@ -517,27 +534,57 @@ class BuildNinjaWriter:
         if not self.config.skip_dlls:
             # Pack
             self.writer.build(
-                outputs=["$BUILD_DIR/bin/assets/DLLS.bin", "$BUILD_DIR/bin/assets/DLLS_tab.bin"], 
+                outputs=["$BUILD_DIR/bin/assets/DLLS.bin", "$BUILD_DIR/bin/assets/DLLS.tab"], 
                 rule="pack_dlls", 
                 inputs=pack_deps, 
                 variables={
                     "DLLS_DIR": "$BUILD_DIR/bin/assets/dlls",
                     "DLLS_BIN_OUT": "$BUILD_DIR/bin/assets/DLLS.bin",
-                    "DLLS_TAB_IN": "bin/assets/DLLS_tab.bin",
-                    "DLLS_TAB_OUT": "$BUILD_DIR/bin/assets/DLLS_tab.bin"
+                    "DLLS_TAB_IN": "bin/assets/DLLS.tab",
+                    "DLLS_TAB_OUT": "$BUILD_DIR/bin/assets/DLLS.tab"
                 })
-            # Link
-            self.writer.build("$BUILD_DIR/bin/assets/DLLS.o", "ld_bin", "$BUILD_DIR/bin/assets/DLLS.bin")
-            self.link_deps.append("$BUILD_DIR/bin/assets/DLLS.o")
-            self.writer.build("$BUILD_DIR/bin/assets/DLLS_tab.o", "ld_bin", "$BUILD_DIR/bin/assets/DLLS_tab.bin")
-            self.link_deps.append("$BUILD_DIR/bin/assets/DLLS_tab.o")
         else:
             # Nothing to pack, just link original DLLs.bin
             self.writer.comment("WARN: No DLLs to compile, using original DLLS.bin")
-            self.writer.build("$BUILD_DIR/bin/assets/DLLS.o", "ld_bin", "bin/assets/DLLS.bin")
-            self.link_deps.append("$BUILD_DIR/bin/assets/DLLS.o")
-            self.writer.build("$BUILD_DIR/bin/assets/DLLS_tab.o", "ld_bin", "bin/assets/DLLS_tab.bin")
-            self.link_deps.append("$BUILD_DIR/bin/assets/DLLS_tab.o")
+            self.writer.build("$BUILD_DIR/bin/assets/DLLS.bin", "file_copy", "bin/assets/DLLS.bin")
+            self.writer.build("$BUILD_DIR/bin/assets/DLLS.tab", "file_copy", "bin/assets/DLLS.tab")
+
+        self.writer.newline()
+
+    def __write_asset_builds(self):
+        self.writer.comment("Asset compilation")
+
+        # Copy assets to build directory
+        pack_deps: "list[str]" = []
+        for file in self.input.assets:
+            dst_build_path = f"$BUILD_DIR/{Path(file.src_path).as_posix()}"
+
+            # DLLS.bin and DLLS.tab are built from another part of the build process
+            if file.src_path.endswith("DLLS.bin") or file.src_path.endswith("DLLS.tab"):
+                pack_deps.append(dst_build_path)
+                continue
+
+            src_path = Path(file.src_path).as_posix()
+            self.writer.build(dst_build_path, "file_copy", src_path)
+            pack_deps.append(dst_build_path)
+        
+        self.writer.newline()
+        self.writer.comment("Asset packing")
+
+        # Pack
+        self.writer.build(
+            outputs=["$BUILD_DIR/bin/assets.bin", "$BUILD_DIR/bin/assets_tab.bin"], 
+            rule="pack_assets", 
+            inputs=pack_deps, 
+            variables={
+                "ASSETS_BIN_OUT": "$BUILD_DIR/bin/assets.bin",
+                "ASSETS_TAB_OUT": "$BUILD_DIR/bin/assets_tab.bin"
+            })
+        # Link
+        self.writer.build("$BUILD_DIR/bin/assets.o", "ld_bin", "$BUILD_DIR/bin/assets.bin")
+        self.link_deps.append("$BUILD_DIR/bin/assets.o")
+        self.writer.build("$BUILD_DIR/bin/assets_tab.o", "ld_bin", "$BUILD_DIR/bin/assets_tab.bin")
+        self.link_deps.append("$BUILD_DIR/bin/assets_tab.o")
 
         self.writer.newline()
 
@@ -549,7 +596,11 @@ class BuildNinjaWriter:
         self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", [], implicit=self.link_deps)
 
         # Convert .elf to .z64
-        self.writer.build("$BUILD_DIR/$TARGET.z64", "to_bin", "$BUILD_DIR/$TARGET.elf")
+        if self.nonmatching:
+            self.writer.build("$BUILD_DIR/$TARGET.prechecksum.z64", "to_bin", "$BUILD_DIR/$TARGET.elf")
+            self.writer.build("$BUILD_DIR/$TARGET.z64", "n64cksum", "$BUILD_DIR/$TARGET.prechecksum.z64")
+        else:
+            self.writer.build("$BUILD_DIR/$TARGET.z64", "to_bin", "$BUILD_DIR/$TARGET.elf")
         
     def __detect_cross(self) -> str:
         # Ordered by preference
@@ -662,7 +713,7 @@ class ObjDiffConfigWriter:
                     }
                 })
 
-        # Sort directories first, "OS" natsort for paths in the same
+        # Sort directories first, "OS" natsort for paths in the same directory
         natsort_key = os_sort_keygen(key=lambda u: (-u["name"].count(os.path.sep), u["name"]))
         units.sort(key=lambda u: natsort_key(u))
         
@@ -674,16 +725,19 @@ class InputScanner:
 
     def scan(self) -> BuildFiles:
         self.files: "list[BuildFile]" = []
+        self.assets: "list[AssetFile]" = []
         self.dlls: "list[DLL]" = []
 
         c_paths = self.__scan_c_files()
+        self.__scan_hasm_files()
         self.__scan_asm_files(c_paths)
         self.__scan_bin_files()
+        self.__scan_asset_files()
 
         if not self.config.skip_dlls:
             self.__scan_dlls()
 
-        return BuildFiles(self.files, self.dlls)
+        return BuildFiles(self.files, self.assets, self.dlls)
         
     def __scan_c_files(self):
         # Exclude DLLs here, that's done separately
@@ -692,6 +746,14 @@ class InputScanner:
             obj_path = self.__make_obj_path(src_path)
             file_config = self.__get_file_config(src_path)
             self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
+        
+        return set(path.relative_to("src") for path in paths)
+
+    def __scan_hasm_files(self):
+        paths = [Path(path) for path in glob.glob("src/**/*.s", recursive=True) if not Path(path).is_relative_to(Path("src/dlls"))]
+        for src_path in paths:
+            obj_path = self.__make_obj_path(src_path)
+            self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
         
         return set(path.relative_to("src") for path in paths)
 
@@ -710,13 +772,27 @@ class InputScanner:
             self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
 
     def __scan_bin_files(self):
-        # Exclude DLLS.bin and DLLS_tab.bin, we will be handling those uniquely
         paths = [Path(path) for path in glob.glob("bin/**/*.bin", recursive=True)]
         for src_path in paths:
-            if src_path.name == "DLLS.bin" or src_path.name == "DLLS_tab.bin":
+            if src_path.is_relative_to("bin/assets") or src_path.name == "assets.bin" or src_path.name == "assets_tab.bin":
                 continue
             obj_path = self.__make_obj_path(src_path)
             self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.BIN))
+    
+    def __scan_asset_files(self):
+        assets_path = Path("bin/assets")
+
+        assets_txt_path = Path("assets.txt")
+        assert assets_txt_path.exists(), f"Missing assets.txt file at {assets_txt_path.absolute()}"
+
+        with open(assets_txt_path, "r", encoding="utf-8") as assets_txt_file:
+            for filename in assets_txt_file.readlines():
+                filename = filename.strip()
+                if len(filename) == 0:
+                    continue
+                
+                src_path = assets_path.joinpath(filename)
+                self.assets.append(AssetFile(str(src_path)))
 
     def __scan_dlls(self):
         # Scan DLLs separately since we need to build them as their own thing
@@ -860,16 +936,13 @@ def main():
     scanner = InputScanner(config)
     input = scanner.scan()
 
-    # Create ninja build file
-    ninja_file = open("build.ninja", "w")
-
-    # Write
-    writer = BuildNinjaWriter(ninja_syntax.Writer(ninja_file), input, config)
-    writer.write()
-    writer.close()
+    # Write ninja build file
+    with open("build.ninja", "w", encoding="utf-8") as ninja_file:
+        writer = BuildNinjaWriter(ninja_syntax.Writer(ninja_file), input, config)
+        writer.write()
 
     # Write config for objdiff
-    with open("objdiff.json", "w") as objdiff_config_file:
+    with open("objdiff.json", "w", encoding="utf-8") as objdiff_config_file:
         objdiff_config_writer = ObjDiffConfigWriter(objdiff_config_file, input, config)
         objdiff_config_writer.write()
 

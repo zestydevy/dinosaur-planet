@@ -186,7 +186,7 @@ def main():
     os.chdir(Path(args.base_dir).resolve())
 
     with open(BIN_ASSETS_DIR.joinpath("OBJECTS.bin"), "rb") as objects_bin, \
-         open(BIN_ASSETS_DIR.joinpath("OBJECTS_tab.bin"), "rb") as objects_tab, \
+         open(BIN_ASSETS_DIR.joinpath("OBJECTS.tab"), "rb") as objects_tab, \
          open(BIN_ASSETS_DIR.joinpath("OBJINDEX.bin"), "rb") as objects_idx:
         objects = read_objects(objects_bin, objects_tab, objects_idx)
     

@@ -3954,12 +3954,14 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 func_80023D30(player, sp4C->modAnims[0], 0.0f, 0U);
             }
         }
+#ifndef NON_MATCHING
         // Security dongle check
         temp = ACCESS_1 << 0x10;
         temp |= ACCESS_2;
         if ((temp != DONGLE_LSFS) && (temp != 0x4D504653)) {
             bzero(player, 0x100000);
         }
+#endif
     }
     if (((player->curModAnimId == sp4C->modAnims[0x12]) || (player->curModAnimId == sp4C->modAnims[0x13])) && (fsa->unk33A != 0)) {
         func_80023D30(player, sp4C->modAnims[0], 0.0f, 0U);

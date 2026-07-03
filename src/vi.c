@@ -6,15 +6,15 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
+#include "constants.h"
 #include "macros.h"
+#include "memory_regions.h"
 
 #define REFRESH_50HZ 50
 #define REFRESH_60HZ 60
 
-// TODO: from DKR decomp, double check
 #define SCREEN_WIDTH 320
-// DKR defines this as 240
-#define SCREEN_HEIGHT 260
+#define SCREEN_HEIGHT 240
 #define HIGH_RES_SCREEN_WIDTH 640
 #define HIGH_RES_SCREEN_HEIGHT 480
 
@@ -32,15 +32,6 @@
 #define HEIGHT_RATIO_PAL  (LOW_RES_PAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
 #define HEIGHT_RATIO_NTSC (LOW_RES_NTSC_HEIGHT / LOW_RES_NTSC_HEIGHT)
 #define HEIGHT_RATIO_MPAL (LOW_RES_MPAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
-
-/**
- * Memory address of the framebuffers when an N64 Expansion Pak IS NOT detected.
- */
-#define FRAMEBUFFER_ADDRESS_NO_EXP_PAK 0x802d4000
-/**
- * Memory address of the framebuffers when an N64 Expansion Pak IS detected.
- */
-#define FRAMEBUFFER_ADDRESS_EXP_PAK 0x80119000
 
 /**
  * Holds the horizontal and vertical resolution for video related functions.
@@ -179,7 +170,7 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     }
 
     width = SCREEN_WIDTH;
-    height = SCREEN_HEIGHT;
+    height = SCREEN_HEIGHT + 20;
 
     if (videoMode == OS_VI_PAL_LPN1) {
         width = HIGH_RES_SCREEN_WIDTH;
@@ -331,28 +322,28 @@ void vi_init_framebuffers(int someBool, s32 width, s32 height) {
     gCurrentResolutionV[0] = vRes;
     gCurrentResolutionV[1] = vRes;
 
-    if (osMemSize != 0x800000) {
+    if (osMemSize != EXPANSION_RAM_SIZE) {
         // No expansion pack detected
-        gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK);
-        gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK + ((width * height) * 2));
+        gFramebufferPointers[0] = (u16*)(COLOR_BUFFERS_ADDR_NO_EXP_PAK);
+        gFramebufferPointers[1] = (u16*)(COLOR_BUFFERS_ADDR_NO_EXP_PAK + ((width * height) * 2));
         
-        gDepthBuffer = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK);
+        gDepthBuffer = (u16*)(COLOR_BUFFERS_ADDR_NO_EXP_PAK); // dummy depth buffer
         return;
     }
     
     if (height == 480) {
-        // PAL framebuffer height
-        gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
-        gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2));
+        // High resolution (menus, 640x480)
+        gFramebufferPointers[0] = (u16*)(COLOR_BUFFERS_ADDR_EXP_PAK);
+        gFramebufferPointers[1] = (u16*)(COLOR_BUFFERS_ADDR_EXP_PAK + ((width * height) * 2));
         
-        gDepthBuffer = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
+        gDepthBuffer = (u16*)(COLOR_BUFFERS_ADDR_EXP_PAK); // dummy depth buffer
     } else {
-        // NTSC/M-PAL framebuffer height
-        gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
-        gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2));
+        // Normal resolution (gameplay, 320x240)
+        gFramebufferPointers[0] = (u16*)(COLOR_BUFFERS_ADDR_EXP_PAK);
+        gFramebufferPointers[1] = (u16*)(COLOR_BUFFERS_ADDR_EXP_PAK + ((width * height) * 2));
         
-        gFramebufferEnd = (u16*)(((int) (FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2))) + ((width * height) * 2));
-        gDepthBuffer = (u16*)0x80200000;
+        gFramebufferEnd = (u16*)(((int) (COLOR_BUFFERS_ADDR_EXP_PAK + ((width * height) * 2))) + ((width * height) * 2));
+        gDepthBuffer = (u16*)DEPTH_BUFFER_ADDR;
     }
 }
 
@@ -422,7 +413,7 @@ s32 vi_frame_sync(s32 param1) {
         if (get_pause_state() == 1) {
             // Create pause screen screenshot
             set_pause_state(2);
-            bcopy(gBackFramebuffer, gFramebufferEnd, 0x25800);
+            bcopy(gBackFramebuffer, gFramebufferEnd, (320 * 240 * sizeof(u16)));
         } else {
             osViSwapBuffer(gFrontFramebuffer);
         }
