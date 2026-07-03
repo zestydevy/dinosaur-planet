@@ -475,12 +475,12 @@ static s32 movelib_func_173C(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
     s32 sp24;
 
     sp24 = 0;
-    if ((curves_func_800053B0(arg1, arg2) != 0) || (arg1->unk10 != 0)) {
+    if ((curves_func_800053B0(&arg1->unk0, arg2) != 0) || (arg1->unk0.unk10 != 0)) {
         sp24 = gDLL_26_Curves->vtbl->func_4704(arg1);
     }
-    arg0->srt.transl.x = arg1->unk68.x;
-    arg0->srt.transl.y = arg1->unk68.y;
-    arg0->srt.transl.z = arg1->unk68.z;
+    arg0->srt.transl.x = arg1->unk0.unk68.x;
+    arg0->srt.transl.y = arg1->unk0.unk68.y;
+    arg0->srt.transl.z = arg1->unk0.unk68.z;
     return sp24;
 }
 

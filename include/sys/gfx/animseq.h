@@ -71,7 +71,7 @@ typedef struct {
     s8 unk21;
     s8 activate;
     s8 unk23;
-    u8 unk24;
+    u8 camEaseDuration;
 } AnimObj_Setup;
 
 typedef void (*AnimObj_DataF4Callback)(Object *actor, Object *override, struct AnimObj_Data* arg2);

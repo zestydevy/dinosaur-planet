@@ -599,7 +599,7 @@ CurveSetup *dll_25_func_1A2C(Vec3f *arg0, s32 arg1, s32 arg2)
 #else
 s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, CurveSetup *arg3)
 {
-    if (arg0->unk80 != 0)
+    if (arg0->unk0.unk80 != 0)
     {
         arg0->unkA0 = arg1;
         arg0->unkA4 = arg2;
@@ -637,13 +637,13 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, 
     {
         return 1;
     }
-    arg0->unk84 = arg0->unkA8;
-    arg0->unk88 = arg0->unkC8;
-    arg0->unk8C = arg0->unkE8;
-    arg0->numControlPoints = 8;
-    arg0->splineFunc = curves_hermite;
-    arg0->splineConverterFunc = curves_hermite_converter;
-    curves_move(arg0);
+    arg0->unk0.unk84 = arg0->unkA8;
+    arg0->unk0.unk88 = arg0->unkC8;
+    arg0->unk0.unk8C = arg0->unkE8;
+    arg0->unk0.numControlPoints = 8;
+    arg0->unk0.splineFunc = curves_hermite;
+    arg0->unk0.splineConverterFunc = curves_hermite_converter;
+    curves_move(&arg0->unk0);
     return 0;
 }
 #endif
@@ -656,7 +656,7 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
         return 1;
     }
 
-    if (arg0->unk80 != 0)
+    if (arg0->unk0.unk80 != 0)
     {
         arg0->unk9C = arg0->unkA0;
         arg0->unkA0 = arg0->unkA4;
@@ -676,12 +676,12 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
         arg0->unkE8[1] = arg0->unkA0->pos.z;
         arg0->unkE8[2] = 2.0f * (fcos16_precise(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
         arg0->unkE8[3] = 2.0f * (fcos16_precise(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
-        if (arg0->numControlPoints != 0)
+        if (arg0->unk0.numControlPoints != 0)
         {
-            curves_setup_move_network_curve(arg0);
-            if (arg0->unk0 <= 0.0f)
+            curves_setup_move_network_curve(&arg0->unk0);
+            if (arg0->unk0.unk0 <= 0.0f)
             {
-                arg0->unk0 = 0.01f;
+                arg0->unk0.unk0 = 0.01f;
             }
         }
     }
@@ -705,12 +705,12 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
         arg0->unkF8[1] = arg0->unkA4->pos.z;
         arg0->unkF8[2] = 2.0f * (fcos16_precise(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
-        if (arg0->numControlPoints != 0)
+        if (arg0->unk0.numControlPoints != 0)
         {
-            curves_setup_move_network_curve(arg0);
-            if (arg0->unk0 >= 1.0f)
+            curves_setup_move_network_curve(&arg0->unk0);
+            if (arg0->unk0.unk0 >= 1.0f)
             {
-                arg0->unk0 = 0.99f;
+                arg0->unk0.unk0 = 0.99f;
             }
         }
     }
@@ -725,7 +725,7 @@ s32 dll_25_func_27A8(UnkCurvesStruct *arg0, CurveSetup *arg1)
         return 1;
     }
     arg0->unkA4 = arg1;
-    if (arg0->unk80 != 0)
+    if (arg0->unk0.unk80 != 0)
     {
         arg0->unkA8[0] = arg1->pos.x;
         arg0->unkA8[2] = 2.0f * (fsin16_precise(arg1->unk2C << 8) * arg1->unk2E);
@@ -751,8 +751,8 @@ void dll_25_func_29FC(UnkCurvesStruct* arg0) {
     arg0->unk9C = (CurveSetup *)((s32)arg0->unk9C ^ (s32)arg0->unkA4);\
     arg0->unkA4 = (CurveSetup *)((s32)arg0->unkA4 ^ (s32)arg0->unk9C);\
     arg0->unk9C = (CurveSetup *)((s32)arg0->unk9C ^ (s32)arg0->unkA4);
-    if (arg0->unk0 >= 1.0f) {
-        arg0->unk0 = 0.99f;
+    if (arg0->unk0.unk0 >= 1.0f) {
+        arg0->unk0.unk0 = 0.99f;
     }
 }
 

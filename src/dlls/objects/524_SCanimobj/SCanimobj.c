@@ -20,7 +20,7 @@ void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
     
     objData->eventGamebit = objSetup->unk1A;
     objData->unk7A = -1;
-    objData->unk24 = 1.0f / (objSetup->unk24 + 1.0f);
+    objData->unk24 = 1.0f / (objSetup->camEaseDuration + 1.0f);
     objData->unk28 = -1;
     
     self->unkE0 = 0;

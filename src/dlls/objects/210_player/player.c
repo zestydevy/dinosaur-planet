@@ -2,6 +2,7 @@
 #include "PR/gbi.h"
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
+#include "dlls/engine/85_attentioncam.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -56,7 +57,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
 static void dll_210_func_7260(Object* player, Player_Data* arg1);
 static s32 dll_210_func_7300(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Player_Data490* arg3, Vec3f* arg4, f32 arg5);
 static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Vec3f* arg3, Player_Data430* arg4, s32 arg5);
-static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, UnkArg2* arg2);
+static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, Vec4f* arg2);
 static void dll_210_func_7CF8(ObjFSA_Data* fsa, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* player, ObjFSA_Data* fsa, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa, Player_Data3B4* arg3, f32 arg4, s32 arg5);
@@ -975,8 +976,8 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             if (messageArgument == BIT_Spell_Projectile) {
                 if (dll_210_func_24FC(player, fsa) != 0) {
                     camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-                    if ((camDLLID != DLL_ID_CAMTALK2) && (camDLLID != DLL_ID_CAMTALK1)) {
-                        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK2, 1, 0, 0, NULL, 60, 0xFF);
+                    if ((camDLLID != DLL_ID_CAMSPELLAIM) && (camDLLID != DLL_ID_CAMSEQ)) {
+                        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSPELLAIM, TRUE, 0, 0, NULL, 60, Cam_Ease_All);
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Aiming_Spell);
                         arg1->flags |= 0x400000;
                     }
@@ -2197,7 +2198,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     gDLL_2_Camera->vtbl->change_mode(0, 0x69);
                     gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
                 } else if ((vehicle != NULL) && (vehicle->id == OBJ_DR_CloudRunner)) {
-                    gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMDRAKOR, 0, 0, 0);
+                    gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMCLOUDRUNNER, 0, 0, 0);
                 } else {
                     gDLL_2_Camera->vtbl->change_mode(0, 0x1D);
                     gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 4, 0, 0);
@@ -2964,11 +2965,11 @@ static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, Func_80059C40_St
 }
 
 // offset: 0x7B98 | func: 41
-static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, UnkArg2* arg2) {
-    arg2->unk0.x = arg1->unk1C.x;
-    arg2->unk0.y = arg1->unk1C.y;
-    arg2->unk0.z = arg1->unk1C.z;
-    arg2->unk0.w = arg1->unk1C.w;
+static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, Vec4f* arg2) {
+    arg2->x = arg1->unk1C.x;
+    arg2->y = arg1->unk1C.y;
+    arg2->z = arg1->unk1C.z;
+    arg2->w = arg1->unk1C.w;
 }
 
 // offset: 0x7BC4 | func: 42
@@ -4394,9 +4395,9 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (v1objdata->unk834 > 20.0f) {
         if (v1objdata->unk8BB != 0) {
             camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-            if ((camDLLID != DLL_ID_CAMTALK2) && (camDLLID != DLL_ID_CAMTALK1)) {
+            if ((camDLLID != DLL_ID_CAMSPELLAIM) && (camDLLID != DLL_ID_CAMSEQ)) {
                 goto dummy_label_865524; dummy_label_865524: ;
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK2, 1, 0, 0, NULL, 60, 0xFF);
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSPELLAIM, TRUE, 0, 0, NULL, 60, Cam_Ease_All);
                 v1objdata->flags &= ~0x400000;
                 return 0x3B;
             }
@@ -4744,7 +4745,7 @@ s32 dll_210_func_CAA8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState != 0) {
         player->velocity.f[1] = -2.0f;
         gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[9], MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM103, 1, 0, 0, NULL, 0, 0);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDROP, TRUE, 0, 0, NULL, 0, Cam_Ease_None);
         func_80023D30(player, 0xA, 0.0f, 0U);
     }
     player->velocity.f[1] -= 0.12f * arg2;
@@ -4879,8 +4880,8 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     }
 
-    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM93) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 2, 0, NULL, 0, 0xFF);
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMCLIMB) {
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 2, 0, NULL, 0, Cam_Ease_All);
     }
 
     if ((player->velocity.f[1] < 0.0f) && (fsa->unk4.underwaterDist > 5.0f)) {
@@ -4976,9 +4977,7 @@ s32 dll_210_func_D5F0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0xD788 | func: 75
 typedef struct {
-s16 unk0;
-s8 unk2;
-s8 unk3;
+AttentionCam_Params unk0;
 s32 pad;
 f32 unk8;
 f32 unkC;
@@ -5012,9 +5011,9 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             func_80023D30(player, _data_564[12], 0.0f, 0U);
             fsa->animTickDelta = 0.021f;
-            sp44.unk0 = 0;
-            sp44.unk2 = 0;
-            sp44.unk3 = 1;
+            sp44.unk0.unk0 = 0;
+            sp44.unk0.unk2 = 0;
+            sp44.unk0.unk3 = 1;
         }
         break;
     case 0x22:
@@ -5023,9 +5022,9 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             func_80023D30(player, _data_564[13], 0.0f, 0U);
             fsa->animTickDelta = 0.021f;
-            sp44.unk0 = 0;
-            sp44.unk2 = 0;
-            sp44.unk3 = 1;
+            sp44.unk0.unk0 = 0;
+            sp44.unk0.unk2 = 0;
+            sp44.unk0.unk3 = 1;
         }
         break;
     case 0x4F:
@@ -5059,7 +5058,8 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s0->unk490.unk10 = (temp_s0->unk490.unk4 - 26.0f);
         temp_s0->unk490.unk14 = temp_s0->unk490.unk2C.z;
         sp44.unkC = temp_s0->unk490.unk4;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM1, 1, 0, 4, &sp44, 0, 0xFF);
+        // @bug: sp44.unk0 is uninitialized
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, TRUE, 0, sizeof(sp44.unk0), &sp44.unk0, 0, Cam_Ease_All);
         break;
     }
 
@@ -5553,7 +5553,7 @@ s32 dll_210_func_F00C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         _bss_208 = _bss_1B0[1] + objdata->unk3CC.unk10;
         sp6C.x = objdata->unk3CC.unk4;
         sp6C.y = objdata->unk3CC.unk8;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM93, 1, 1, 8, &sp6C, 0, 0);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLIMB, TRUE, 1, 8, &sp6C, 0, Cam_Ease_None);
     } else if (player->animProgress > 0.9f) {
         func_80025140(player, fsa->animTickDelta, arg2, 0);
         return 0x19;
@@ -5740,7 +5740,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     }
                     _bss_204 = player->srt.transl.y;
                     _bss_208 = *_bss_1B0 + temp_s0->unk3CC.unk4;
-                    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 30, 0xFF);
+                    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 30, Cam_Ease_All);
                     break;
                 }
                 sp94 = (sp9C * 0.012f) + 0.025f;
@@ -5762,7 +5762,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     } else {
                         _bss_200 = 0xA;
                     }
-                    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 30, 0xFF);
+                    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 30, Cam_Ease_All);
                     player->srt.transl.y = temp_s0->unk3CC.unk8;
                     break;
                 }
@@ -5903,7 +5903,7 @@ s32 dll_210_func_1034C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->velocity.y = temp_fv1;
             if (temp_fv1 >= -0.01f) {
                 func_80023D30(player, 0x37, 0.0f, 1U);
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
                 fsa->animTickDelta = 0.02f;
                 temp_s2->unk3CC.unk1C = player->srt.transl.y;
                 player->srt.transl.y = temp_s2->unk3CC.unk8;
@@ -5981,7 +5981,7 @@ s32 dll_210_func_10898(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     } else {
         sp3C[0] = temp_s1->unk430.unk4;
         sp3C[1] = temp_s1->unk430.unk8;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM93, 1, 1, 8, &sp3C, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLIMB, TRUE, 1, 8, &sp3C, 0, Cam_Ease_All);
         func_80023D30(player, 0x41A, 0.0f, 1U);
         player->srt.yaw = arctan2_f(temp_s1->unk430.unk24.x, temp_s1->unk430.unk24.z);
         player->srt.transl.f[0] = temp_s1->unk430.unk44.x;
@@ -6059,7 +6059,7 @@ s32 dll_210_func_10A0C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s0->unk430.unk18.z = 0.0f;
         sp54[0] = temp_s0->unk430.unk4;
         sp54[1] = temp_s0->unk430.unk8;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM93, 1, 1, 8, &sp54, 0, 0);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLIMB, TRUE, 1, 8, &sp54, 0, Cam_Ease_None);
     } else if (fsa->unk33A != 0) {
         return 0x1D;
     }
@@ -6419,7 +6419,7 @@ s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         gDLL_6_AMSFX->vtbl->set_pitch(sp44, ((f32) rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
     }
     if (fsa->enteredAnimState != 0) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 60, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 60, Cam_Ease_All);
         gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[rand_next(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
         func_80023D30(player, _data_5DC[1], 0.0f, 1U);
         func_80025540(player, _data_5E0[0], 0);
@@ -6479,7 +6479,7 @@ s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         gDLL_6_AMSFX->vtbl->set_pitch(sp44, ((f32) rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
     }
     if (fsa->enteredAnimState != 0) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 60, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 60, Cam_Ease_All);
         func_80023D30(player, _data_5E0[1], 0.0f, 1U);
         func_80025540(player, _data_5E4[0], 0);
         fsa->animTickDelta = 0.015f;
@@ -6518,7 +6518,7 @@ static void dll_210_func_12514(Object* player, ObjFSA_Data *fsa) {
     Player_Data *objdata = player->data;
 
     if ((objdata->unk818 > 0.0f) && (gDLL_2_Camera->vtbl->get_dll_ID() != DLL_ID_CAMNORMAL)) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
     }
 }
 
@@ -6922,11 +6922,11 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         case OBJ_CRSnowBike:
             objdata->unk76C = _data_158;
             objdata->unk770 = 3;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSLIDE, 1, 0, 0, NULL, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSLIDE, TRUE, 0, 0, NULL, 0, Cam_Ease_All);
             break;
         case OBJ_DR_CloudRunner:
             objdata->unk76C = _data_170;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDRAKOR, 1, 0, 0, NULL, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLOUDRUNNER, TRUE, 0, 0, NULL, 0, Cam_Ease_All);
             break;
         case OBJ_BWLog:
             objdata->unk76C = _data_188;
@@ -7219,7 +7219,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState != 0) {
         ((DLL_IVehicle*)vehicle->dll)->vtbl->get_rider_position(vehicle, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
         if ((vehicle->id == OBJ_IMSnowBike) || (vehicle->id == OBJ_CRSnowBike)) {
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 100, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 100, Cam_Ease_All);
         } else {
             gDLL_2_Camera->vtbl->change_mode(0, 1);
         }
@@ -7336,17 +7336,17 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         func_8002493C(player, fsa->unk278, &fsa->animTickDelta);
         // incorrect cast?
-        v0 = curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        v0 = curves_func_800053B0(&temp_s0->unk4E8, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
         if (v0 != 0) {
             func_80023D30(player, 0x40F, 0.0f, 0U);
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 1, 1, 0, NULL, 0, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, TRUE, 1, 0, NULL, 0, Cam_Ease_All);
         } else {
-            player->srt.transl.f[0] = temp_s0->unk550.f[0];
-            player->srt.transl.f[1] = temp_s0->unk550.f[1];
-            player->srt.transl.f[2] = temp_s0->unk550.f[2];
-            player->srt.yaw = arctan2_f(-temp_s0->unk55C.f[0], -temp_s0->unk55C.f[2]);
-            player->srt.pitch = arctan2_f(temp_s0->unk55C.f[1], sqrtf(SQ(temp_s0->unk55C.x) + SQ(temp_s0->unk55C.z)));
+            player->srt.transl.f[0] = temp_s0->unk4E8.unk68.f[0];
+            player->srt.transl.f[1] = temp_s0->unk4E8.unk68.f[1];
+            player->srt.transl.f[2] = temp_s0->unk4E8.unk68.f[2];
+            player->srt.yaw = arctan2_f(-temp_s0->unk4E8.unk74, -temp_s0->unk4E8.unk7C);
+            player->srt.pitch = arctan2_f(temp_s0->unk4E8.unk78, sqrtf(SQ(temp_s0->unk4E8.unk74) + SQ(temp_s0->unk4E8.unk7C)));
         }
         break;
     case 0x40F:
@@ -7359,13 +7359,13 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 0x40E:
         fsa->animTickDelta = 0.015f;
         gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 1);
-        curves_func_800053B0((UnkCurvesStruct*)&temp_s0->unk4D8.unk10, fsa->unk278 / gUpdateRateF);
+        curves_func_800053B0(&temp_s0->unk4E8, fsa->unk278 / gUpdateRateF);
         fsa->unk278 = 0.0f;
-        player->srt.transl.f[0] = temp_s0->unk550.f[0];
-        player->srt.transl.f[1] = temp_s0->unk550.f[1];
-        player->srt.transl.f[2] = temp_s0->unk550.f[2];
-        player->srt.yaw = arctan2_f(temp_s0->unk4D8.unk0.x, temp_s0->unk4D8.unk0.z);
-        player->srt.pitch = arctan2_f(temp_s0->unk4D8.unk0.y, sqrtf(SQ(temp_s0->unk4D8.unk0.x) + SQ(temp_s0->unk4D8.unk0.z)));
+        player->srt.transl.f[0] = temp_s0->unk4E8.unk68.f[0];
+        player->srt.transl.f[1] = temp_s0->unk4E8.unk68.f[1];
+        player->srt.transl.f[2] = temp_s0->unk4E8.unk68.f[2];
+        player->srt.yaw = arctan2_f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
+        player->srt.pitch = arctan2_f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
         if (fsa->unk33A != 0) {
             func_80023D30(player, 0x40D, 0.0f, 0U);
         }
@@ -7378,19 +7378,19 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->srt.transl.f[0] = sp64->pos.x;
             player->srt.transl.f[1] = sp64->pos.y;
             player->srt.transl.f[2] = sp64->pos.z;
-            player->srt.yaw = arctan2_f(temp_s0->unk4D8.unk0.x, temp_s0->unk4D8.unk0.z);
-            player->srt.pitch = arctan2_f(temp_s0->unk4D8.unk0.y, sqrtf(SQ(temp_s0->unk4D8.unk0.x) + SQ(temp_s0->unk4D8.unk0.z)));
-            temp_s0->unk578 = gDLL_26_Curves->vtbl->func_E40(sp64, &temp_s0->unk584, &temp_s0->unk5D4, &temp_s0->unk624, NULL);
-            temp_s0->unk568 = 0;
-            temp_s0->unk56C = &temp_s0->unk584;
-            temp_s0->unk570 = &temp_s0->unk5D4;
-            temp_s0->unk574 = &temp_s0->unk624;
-            temp_s0->unk57C = curves_hermite;
-            temp_s0->unk580 = curves_hermite_converter;
-            curves_move((UnkCurvesStruct*)&temp_s0->unk4D8.unk10);
+            player->srt.yaw = arctan2_f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
+            player->srt.pitch = arctan2_f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
+            temp_s0->unk4E8.numControlPoints = gDLL_26_Curves->vtbl->func_E40(sp64, &temp_s0->unk584, &temp_s0->unk5D4, &temp_s0->unk624, NULL);
+            temp_s0->unk4E8.unk80 = 0;
+            temp_s0->unk4E8.unk84 = &temp_s0->unk584;
+            temp_s0->unk4E8.unk88 = &temp_s0->unk5D4;
+            temp_s0->unk4E8.unk8C = &temp_s0->unk624;
+            temp_s0->unk4E8.splineFunc = curves_hermite;
+            temp_s0->unk4E8.splineConverterFunc = curves_hermite_converter;
+            curves_move(&temp_s0->unk4E8);
         }
         func_80023D30(player, 0x40E, 0.0f, 0U);
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCANNON, 1, 0, 0, NULL, 40, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCRAWL, TRUE, 0, 0, NULL, 40, Cam_Ease_All);
         break;
     }
 
@@ -7447,12 +7447,6 @@ s32 dll_210_func_15744(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 // offset: 0x158E0 | func: 103
-typedef struct {
-    s16 unk0;
-    s8 unk2;
-    s8 unk3;
-} CameraStruct;
-
 s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     u8 temp_v1;
     s32 var_a3;
@@ -7464,7 +7458,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     s32 sp50;
     Player_Data* objdata;
     f32 temp_fv0_2;
-    CameraStruct sp44;
+    AttentionCam_Params sp44;
 
     if (arg1->enteredAnimState != 0) {
         arg1->unk270 = PLAYER_ASTATE_Block_Pushing;
@@ -7476,7 +7470,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         sp44.unk0 = 0;
         sp44.unk2 = 1;
         sp44.unk3 = 1;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM1, 1, 0, 4, &sp44, 0, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, TRUE, 0, sizeof(sp44), &sp44, 0, Cam_Ease_All);
         arg1->flags |= 0x4000;
         arg1->animExitAction = dll_210_func_16204;
         arg1->unk278 = 0.0f;
@@ -8905,8 +8899,8 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80023D30(player, 0x449, 0.0f, 0);
         fsa->animTickDelta = 0.04f;
         camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-        if ((camDLLID != DLL_ID_CAMNORMAL) && (camDLLID != DLL_ID_CAMTALK1)) {
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 60, 0xFE);
+        if ((camDLLID != DLL_ID_CAMNORMAL) && (camDLLID != DLL_ID_CAMSEQ)) {
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 60, Cam_Ease_All & ~Cam_Ease_Yaw);
         }
     }
     if (fsa->target != NULL) {
@@ -8959,7 +8953,7 @@ void dll_210_func_1AAD8(Object* player, ObjFSA_Data *fsa) {
         temp_s0->unk848 = 0;
     }
     if (gDLL_2_Camera->vtbl->get_dll_ID() != DLL_ID_CAMNORMAL) {
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 1, 0, NULL, 120, 0xFF);
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 120, Cam_Ease_All);
     }
     for (i = 0; i < 4; i++) {
         temp_a0 = _bss_210[i];
