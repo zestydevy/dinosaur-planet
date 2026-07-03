@@ -13,4 +13,4 @@ dll_87_func_5E8 = 0x5E8;
 .rodata = 0x6F0:
 
 .bss = 0x700:
-bss_0 = 0x0; // absolute:0x700
+sState = 0x0; // absolute:0x700

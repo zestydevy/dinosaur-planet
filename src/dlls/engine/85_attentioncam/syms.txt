@@ -16,4 +16,4 @@ dll_85_func_1374 = 0x1374;
 str_0 = 0x0; // absolute:0x159C
 
 .bss = 0x15DC:
-bss_0 = 0x0; // absolute:0x15DC
+sState = 0x0; // absolute:0x15DC

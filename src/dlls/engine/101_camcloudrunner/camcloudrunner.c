@@ -13,9 +13,9 @@ typedef struct {
     f32 unk4;
     f32 unk8;
     f32 unkC;
-} BSS0;
+} CamCloudRunner;
 
-/*0x0*/ static BSS0* bss_0;
+/*0x0*/ static CamCloudRunner* sState;
 
 // offset: 0x0 | ctor
 void dll_101_ctor(void* dll) { }
@@ -24,7 +24,7 @@ void dll_101_ctor(void* dll) { }
 void dll_101_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_101_func_18(Cam* cam, s32 arg1, CamCloudRunner_Params* action) {
+void dll_101_func_18(Cam* cam, s32 arg1, CamCloudRunner_Params* data) {
     s32 _pad;
     s32 _pad2;
     s32 _pad3;
@@ -37,24 +37,24 @@ void dll_101_func_18(Cam* cam, s32 arg1, CamCloudRunner_Params* action) {
     Object* sp20;
 
     sp20 = cam->player;
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
-    if (action != NULL) {
-        bss_0->unk0 = action->unk0;
-        bss_0->unk4 = (f32) action->unk4;
-        bss_0->unk8 = (f32) action->unk8;
-        var_fv0 = action->unkC;
+    sState = mmAlloc(sizeof(CamCloudRunner), ALLOC_TAG_CAM_COL, NULL);
+    if (data != NULL) {
+        sState->unk0 = data->unk0;
+        sState->unk4 = (f32) data->unk4;
+        sState->unk8 = (f32) data->unk8;
+        var_fv0 = data->unkC;
     } else {
-        bss_0->unk0 = sp20->srt.transl.x;
-        bss_0->unk4 = sp20->srt.transl.y;
-        bss_0->unk8 = sp20->srt.transl.z;
+        sState->unk0 = sp20->srt.transl.x;
+        sState->unk4 = sp20->srt.transl.y;
+        sState->unk8 = sp20->srt.transl.z;
         var_fv0 = 150.0f;
     }
-    bss_0->unkC = var_fv0;
-    v1 = cam->srt.transl.x - bss_0->unk0;
-    v2 = cam->srt.transl.z - bss_0->unk8;
+    sState->unkC = var_fv0;
+    v1 = cam->srt.transl.x - sState->unk0;
+    v2 = cam->srt.transl.z - sState->unk8;
     sp2C = arctan2_f(v1, v2);
-    v1 = cam->player->srt.transl.x - bss_0->unk0;
-    v2 = cam->player->srt.transl.z - bss_0->unk8;
+    v1 = cam->player->srt.transl.x - sState->unk0;
+    v2 = cam->player->srt.transl.z - sState->unk8;
     var_v1 = arctan2_f(v1, v2) - (sp2C & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     if (var_v1){}
@@ -72,9 +72,9 @@ void dll_101_func_17C(Cam* cam) {
     if (sp28 != NULL) {
         temp_fs0 = fsin16_precise(sp28->srt.yaw);
         temp_fv0 = fcos16_precise(sp28->srt.yaw);
-        cam->srt.transl.x = sp28->srt.transl.x + (temp_fs0 * bss_0->unkC);
+        cam->srt.transl.x = sp28->srt.transl.x + (temp_fs0 * sState->unkC);
         cam->srt.transl.y = sp28->srt.transl.y + 25.0f;
-        cam->srt.transl.z = sp28->srt.transl.z + (temp_fv0 * bss_0->unkC);
+        cam->srt.transl.z = sp28->srt.transl.z + (temp_fv0 * sState->unkC);
         temp_fs0 = cam->srt.transl.x - sp28->srt.transl.x;
         sp2C = cam->srt.transl.y - sp28->srt.transl.y;
         sp30 = cam->srt.transl.z - sp28->srt.transl.z;
@@ -85,10 +85,10 @@ void dll_101_func_17C(Cam* cam) {
 
 // offset: 0x2C4 | func: 2 | export: 2
 void dll_101_func_2C4(Cam* cam) {
-    mmFree(bss_0);
+    mmFree(sState);
 }
 
 // offset: 0x304 | func: 3 | export: 3
-void dll_101_func_304(CamCloudRunner_Params* arg0, s32 arg1) {
+void dll_101_func_304(void* arg0, s32 arg1) {
 
 }

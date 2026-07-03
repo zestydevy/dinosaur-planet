@@ -9,4 +9,4 @@ dll_97_func_290 = 0x290;
 .rodata = 0x2E0:
 
 .bss = 0x2F0:
-bss_0 = 0x0; // absolute:0x2F0
+sState = 0x0; // absolute:0x2F0

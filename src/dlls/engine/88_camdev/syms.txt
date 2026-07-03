@@ -9,4 +9,4 @@ dll_88_func_380 = 0x380;
 .rodata = 0x3D8:
 
 .bss = 0x3D8:
-bss_0 = 0x0; // absolute:0x3D8
+sState = 0x0; // absolute:0x3D8

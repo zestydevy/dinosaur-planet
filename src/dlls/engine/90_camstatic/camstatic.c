@@ -32,9 +32,9 @@ typedef struct {
     u8 _unk58[0xF4 - 0x58];
     u8 unkF4;
     u8 unkF5;
-} BSS0;
+} CamStatic;
 
-/*0x0*/ static BSS0* bss_0;
+/*0x0*/ static CamStatic* sState;
 
 static void dll_90_func_5D4(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5);
 static s32 dll_90_func_798(Cam* cam, u8 arg1);
@@ -47,7 +47,7 @@ void dll_90_ctor(void* dll) { }
 void dll_90_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* action) {
+void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
     Object* sp4C;
     DLL715_Setup* sp48;
     f32 sp44;
@@ -60,15 +60,15 @@ void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* action) {
     f32 var_fv0;
 
     temp_s0 = cam->player;
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camstatic"));
-    bss_0->unkF4 = 1;
-    bss_0->unkF5 = 0;
-    sp4C = dll_90_func_C04(temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, action->unk0, 0x12);
+    sState = mmAlloc(sizeof(CamStatic), ALLOC_TAG_CAM_COL, ALLOC_NAME("camstatic"));
+    sState->unkF4 = 1;
+    sState->unkF5 = 0;
+    sp4C = dll_90_func_C04(temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, data->unk0, 0x12);
     if (sp4C == NULL) {
-        bss_0->unkF5 = 1;
+        sState->unkF5 = 1;
         return;
     }
-    bss_0->unk0 = sp4C;
+    sState->unk0 = sp4C;
     sp48 = (DLL715_Setup*)sp4C->setup;
     sp44 = sp4C->globalPosition.x - temp_s0->globalPosition.x;
     sp40 = sp4C->globalPosition.y - temp_s0->globalPosition.y;
@@ -89,7 +89,7 @@ void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* action) {
         var_v0 = sp48->unk20;
     }
     var_fv0 = (f32) sp48->unk1A;
-    if (action->unk4 == 0) {
+    if (data->unk4 == 0) {
         dll_90_func_5D4(cam, &sp4C->globalPosition, sp36, var_a3, var_v0, var_fv0);
         return;
     }
@@ -113,12 +113,12 @@ void dll_90_func_278(Cam* cam) {
     Object* sp34;
     s32 temp_v0;
 
-    if (bss_0->unkF5 != 0) {
+    if (sState->unkF5 != 0) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
         return;
     }
     sp34 = cam->player;
-    sp4C = (DLL715_Setup*)bss_0->unk0->setup;
+    sp4C = (DLL715_Setup*)sState->unk0->setup;
     if (!(sp4C->unk1B & 1)) {
         cam->srt.yaw = sp4C->unk1C + 0x8000;
     }
@@ -128,14 +128,14 @@ void dll_90_func_278(Cam* cam) {
     if (!(sp4C->unk1B & 4)) {
         cam->srt.roll = sp4C->unk20;
     }
-    cam->srt.transl.x = bss_0->unk0->globalPosition.x;
-    cam->srt.transl.y = bss_0->unk0->globalPosition.y;
-    cam->srt.transl.z = bss_0->unk0->globalPosition.z;
+    cam->srt.transl.x = sState->unk0->globalPosition.x;
+    cam->srt.transl.y = sState->unk0->globalPosition.y;
+    cam->srt.transl.z = sState->unk0->globalPosition.z;
     cam->fov = (f32) sp4C->unk1A;
-    if (bss_0->unkF4 == 0) {
+    if (sState->unkF4 == 0) {
         temp_v0 = dll_90_func_798(cam, sp4C->unk1B);
         if (temp_v0 != 0) {
-            bss_0->unkF4 = 1;
+            sState->unkF4 = 1;
         }
     }
     sp40 = cam->srt.transl.x - sp34->globalPosition.x;
@@ -158,11 +158,11 @@ void dll_90_func_278(Cam* cam) {
 
 // offset: 0x584 | func: 2 | export: 2
 void dll_90_func_584(Cam* cam) {
-    mmFree(bss_0);
+    mmFree(sState);
 }
 
 // offset: 0x5C4 | func: 3 | export: 3
-void dll_90_func_5C4(CamStatic_Params* arg0, s32 arg1) {
+void dll_90_func_5C4(void* arg0, s32 arg1) {
 
 }
 
@@ -172,27 +172,27 @@ static void dll_90_func_5D4(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4,
     f32 temp_fv0;
     f32 temp_fv1;
 
-    bss_0->unkF4 = 0;
-    bss_0->unk8 = cam->srt.transl.x;
-    bss_0->unk10 = cam->srt.transl.y;
-    bss_0->unk18 = cam->srt.transl.z;
-    bss_0->unk20 = (f32) cam->srt.yaw;
-    bss_0->unk28 = (f32) cam->srt.pitch;
-    bss_0->unk30 = (f32) cam->srt.roll;
-    bss_0->unk38 = cam->fov;
-    bss_0->unkC = arg1->x;
-    bss_0->unk14 = arg1->y;
-    bss_0->unk1C = arg1->z;
-    bss_0->unk24 = (f32) arg2;
-    bss_0->unk2C = (f32) arg3;
-    bss_0->unk34 = (f32) arg4;
-    bss_0->unk3C = arg5;
-    bss_0->unk50 = 0.0f;
-    temp_fv0 = bss_0->unkC - bss_0->unk8;
-    temp_fv1 = bss_0->unk14 - bss_0->unk10;
-    temp_fa1 = bss_0->unk1C - bss_0->unk18;
-    bss_0->unk54 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
-    gDLL_2_Camera->vtbl->func12(bss_0->unk54, &bss_0->unk40, 100.0f, 0.1f, 0.1f, -5.0f);
+    sState->unkF4 = 0;
+    sState->unk8 = cam->srt.transl.x;
+    sState->unk10 = cam->srt.transl.y;
+    sState->unk18 = cam->srt.transl.z;
+    sState->unk20 = (f32) cam->srt.yaw;
+    sState->unk28 = (f32) cam->srt.pitch;
+    sState->unk30 = (f32) cam->srt.roll;
+    sState->unk38 = cam->fov;
+    sState->unkC = arg1->x;
+    sState->unk14 = arg1->y;
+    sState->unk1C = arg1->z;
+    sState->unk24 = (f32) arg2;
+    sState->unk2C = (f32) arg3;
+    sState->unk34 = (f32) arg4;
+    sState->unk3C = arg5;
+    sState->unk50 = 0.0f;
+    temp_fv0 = sState->unkC - sState->unk8;
+    temp_fv1 = sState->unk14 - sState->unk10;
+    temp_fa1 = sState->unk1C - sState->unk18;
+    sState->unk54 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
+    gDLL_2_Camera->vtbl->func12(sState->unk54, &sState->unk40, 100.0f, 0.1f, 0.1f, -5.0f);
 }
 
 // offset: 0x798 | func: 5
@@ -200,58 +200,58 @@ static s32 dll_90_func_798(Cam* cam, u8 arg1) {
     f32 var_fs0;
     f32 var_fv1;
 
-    bss_0->unkC = cam->srt.transl.x;
-    bss_0->unk14 = cam->srt.transl.y;
-    bss_0->unk1C = cam->srt.transl.z;
-    bss_0->unk24 = (f32) cam->srt.yaw;
-    bss_0->unk2C = (f32) cam->srt.pitch;
-    bss_0->unk34 = (f32) cam->srt.roll;
-    bss_0->unk3C = cam->fov;
-    var_fs0 = bss_0->unk50 / bss_0->unk54;
+    sState->unkC = cam->srt.transl.x;
+    sState->unk14 = cam->srt.transl.y;
+    sState->unk1C = cam->srt.transl.z;
+    sState->unk24 = (f32) cam->srt.yaw;
+    sState->unk2C = (f32) cam->srt.pitch;
+    sState->unk34 = (f32) cam->srt.roll;
+    sState->unk3C = cam->fov;
+    var_fs0 = sState->unk50 / sState->unk54;
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    var_fv1 = curves_hermite(&bss_0->unk40.x, var_fs0, NULL);
+    var_fv1 = curves_hermite(&sState->unk40.x, var_fs0, NULL);
     if (var_fv1 < 0.2f) {
         var_fv1 = 0.2f;
     }
-    bss_0->unk50 += var_fv1 * gUpdateRateF;
-    var_fs0 = bss_0->unk50 / bss_0->unk54;
+    sState->unk50 += var_fv1 * gUpdateRateF;
+    var_fs0 = sState->unk50 / sState->unk54;
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    cam->srt.transl.x = curves_linear(&bss_0->unk8, var_fs0, NULL);
-    cam->srt.transl.y = curves_linear(&bss_0->unk10, var_fs0, NULL);
-    cam->srt.transl.z = curves_linear(&bss_0->unk18, var_fs0, NULL);
-    if (((bss_0->unk20 - bss_0->unk24) > 32768.0f) || ((bss_0->unk20 - bss_0->unk24) < -32768.0f)) {
-        if (bss_0->unk20 < 0.0f) {
-            bss_0->unk20 += 65535.0f;
-        } else if (bss_0->unk24 < 0.0f) {
-            bss_0->unk24 += 65535.0f;
+    cam->srt.transl.x = curves_linear(&sState->unk8, var_fs0, NULL);
+    cam->srt.transl.y = curves_linear(&sState->unk10, var_fs0, NULL);
+    cam->srt.transl.z = curves_linear(&sState->unk18, var_fs0, NULL);
+    if (((sState->unk20 - sState->unk24) > 32768.0f) || ((sState->unk20 - sState->unk24) < -32768.0f)) {
+        if (sState->unk20 < 0.0f) {
+            sState->unk20 += 65535.0f;
+        } else if (sState->unk24 < 0.0f) {
+            sState->unk24 += 65535.0f;
         }
     }
-    if (((bss_0->unk28 - bss_0->unk2C) > 32768.0f) || ((bss_0->unk28 - bss_0->unk2C) < -32768.0f)) {
-        if (bss_0->unk28 < 0.0f) {
-            bss_0->unk28 += 65535.0f;
-        } else if (bss_0->unk2C < 0.0f) {
-            bss_0->unk2C += 65535.0f;
+    if (((sState->unk28 - sState->unk2C) > 32768.0f) || ((sState->unk28 - sState->unk2C) < -32768.0f)) {
+        if (sState->unk28 < 0.0f) {
+            sState->unk28 += 65535.0f;
+        } else if (sState->unk2C < 0.0f) {
+            sState->unk2C += 65535.0f;
         }
     }
-    if (((bss_0->unk30 - bss_0->unk34) > 32768.0f) || ((bss_0->unk30 - bss_0->unk34) < -32768.0f)) {
-        if (bss_0->unk30 < 0.0f) {
-            bss_0->unk30 += 65535.0f;
-        } else if (bss_0->unk34 < 0.0f) {
-            bss_0->unk34 += 65535.0f;
+    if (((sState->unk30 - sState->unk34) > 32768.0f) || ((sState->unk30 - sState->unk34) < -32768.0f)) {
+        if (sState->unk30 < 0.0f) {
+            sState->unk30 += 65535.0f;
+        } else if (sState->unk34 < 0.0f) {
+            sState->unk34 += 65535.0f;
         }
     }
     if (!(arg1 & 1)) {
-        cam->srt.yaw = (s16) curves_linear(&bss_0->unk20, var_fs0, NULL);
+        cam->srt.yaw = (s16) curves_linear(&sState->unk20, var_fs0, NULL);
     }
     if (!(arg1 & 2)) {
-        cam->srt.pitch = (s16) curves_linear(&bss_0->unk28, var_fs0, NULL);
+        cam->srt.pitch = (s16) curves_linear(&sState->unk28, var_fs0, NULL);
     }
     if (!(arg1 & 4)) {
-        cam->srt.roll = (s16) curves_linear(&bss_0->unk30, var_fs0, NULL);
+        cam->srt.roll = (s16) curves_linear(&sState->unk30, var_fs0, NULL);
     }
     return var_fs0 >= 1.0f;
 }

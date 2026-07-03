@@ -9,4 +9,4 @@ camshipbattle_func_50C = 0x50C;
 .rodata = 0x558:
 
 .bss = 0x578:
-_bss_0 = 0x0; // absolute:0x578
+sState = 0x0; // absolute:0x578

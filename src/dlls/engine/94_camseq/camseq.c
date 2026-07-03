@@ -9,15 +9,15 @@ void dll_94_ctor(s32 arg0) { }
 void dll_94_dtor(s32 arg0) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_94_setup(Cam* cam, s32 unused, Cam* arg2) {
-    if (arg2 != NULL) {
-        cam->srt.transl.x = arg2->srt.transl.x;
-        cam->srt.transl.y = arg2->srt.transl.y;
-        cam->srt.transl.z = arg2->srt.transl.z;
-        cam->srt.yaw = arg2->srt.yaw;
-        cam->srt.pitch = arg2->srt.pitch;
-        cam->srt.roll = arg2->srt.roll;
-        cam->fov = arg2->fov;
+void dll_94_setup(Cam* cam, s32 arg1, Cam* data) {
+    if (data != NULL) {
+        cam->srt.transl.x = data->srt.transl.x;
+        cam->srt.transl.y = data->srt.transl.y;
+        cam->srt.transl.z = data->srt.transl.z;
+        cam->srt.yaw = data->srt.yaw;
+        cam->srt.pitch = data->srt.pitch;
+        cam->srt.roll = data->srt.roll;
+        cam->fov = data->fov;
     }
 }
 

@@ -31,9 +31,9 @@ typedef struct {
     u16 unk30;
     u16 unk32;
     s16 unk34;
-} BSS0;
+} CamClimb;
 
-/*0x0*/ static BSS0* bss_0;
+/*0x0*/ static CamClimb* sState;
 
 static void dll_93_func_63C(Cam* cam);
 
@@ -44,7 +44,7 @@ void dll_93_ctor(void* dll) { }
 void dll_93_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_93_func_18(Cam* cam, s32 arg1, CamClimb_Params* action) {
+void dll_93_func_18(Cam* cam, s32 arg1, CamClimb_Params* data) {
     s32 _pad;
     f32 sp60;
     f32 sp5C;
@@ -58,38 +58,38 @@ void dll_93_func_18(Cam* cam, s32 arg1, CamClimb_Params* action) {
     f32 sp3C;
     CamControl_Module* camnormal;
 
-    if (bss_0 == NULL) {
-        bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camclimb"));
+    if (sState == NULL) {
+        sState = mmAlloc(sizeof(CamClimb), ALLOC_TAG_CAM_COL, ALLOC_NAME("camclimb"));
     }
     if ((arg1 != 1) && (arg1 == 2)) {
-        bss_0->unk32 = bss_0->unk30;
-        bss_0->unk1C = bss_0->unkC;
-        bss_0->unk24 = bss_0->unk10;
-        bss_0->unk14 = bss_0->unk0;
-        bss_0->unk34 = (s16) ((f32) action->unk3 * 182.04f);
-        bss_0->unk20 = (f32) action->unk5;
-        bss_0->unk28 = (f32) action->unk4;
-        bss_0->unk18 = (f32) action->unk2;
-        bss_0->unk2C = action->unk1;
-        bss_0->unk2E = action->unk1;
+        sState->unk32 = sState->unk30;
+        sState->unk1C = sState->unkC;
+        sState->unk24 = sState->unk10;
+        sState->unk14 = sState->unk0;
+        sState->unk34 = (s16) ((f32) data->unk3 * 182.04f);
+        sState->unk20 = (f32) data->unk5;
+        sState->unk28 = (f32) data->unk4;
+        sState->unk18 = (f32) data->unk2;
+        sState->unk2C = data->unk1;
+        sState->unk2E = data->unk1;
         return;
     }
-    bzero(bss_0, sizeof(BSS0));
+    bzero(sState, sizeof(CamClimb));
     camnormal = gDLL_2_Camera->vtbl->get_camnormal_module();
     ((DLL_84_camnormal*)camnormal->dll)->vtbl->func7(&sp4C, &sp48, &sp44, &sp40, &sp3C);
-    gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp60, &sp5C, &sp58, &sp54, (f32) bss_0->unk30);
-    bss_0->unk32 = (u16) sp3C;
-    bss_0->unk1C = sp44;
-    bss_0->unk24 = sp40;
-    bss_0->unk14 = sp54;
-    bss_0->unk34 = 0x71C;
-    bss_0->unk20 = 0.0f;
-    bss_0->unk28 = 0.0f;
-    bss_0->unk18 = (f32) ((sp48 + sp4C) * 0.5f);
-    bss_0->unk2C = 0x3C;
-    bss_0->unk2E = 0x3C;
-    bss_0->unk4 = sp54;
-    bss_0->unk8 = 0.05f;
+    gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp60, &sp5C, &sp58, &sp54, (f32) sState->unk30);
+    sState->unk32 = (u16) sp3C;
+    sState->unk1C = sp44;
+    sState->unk24 = sp40;
+    sState->unk14 = sp54;
+    sState->unk34 = 0x71C;
+    sState->unk20 = 0.0f;
+    sState->unk28 = 0.0f;
+    sState->unk18 = (f32) ((sp48 + sp4C) * 0.5f);
+    sState->unk2C = 0x3C;
+    sState->unk2E = 0x3C;
+    sState->unk4 = sp54;
+    sState->unk8 = 0.05f;
 }
 
 // offset: 0x340 | func: 1 | export: 1
@@ -105,8 +105,8 @@ void dll_93_func_340(Cam* cam) {
 
     temp_s0 = cam->player;
     dll_93_func_63C(cam);
-    temp_fa0 = temp_s0->srt.transl.y + bss_0->unk10;
-    temp_fa1 = temp_s0->srt.transl.y + bss_0->unkC;
+    temp_fa0 = temp_s0->srt.transl.y + sState->unk10;
+    temp_fa1 = temp_s0->srt.transl.y + sState->unkC;
     if (cam->srt.transl.y < temp_fa1) {
         sp50 = temp_fa1 - cam->srt.transl.y;
     } else if (temp_fa0 < cam->srt.transl.y) {
@@ -114,14 +114,14 @@ void dll_93_func_340(Cam* cam) {
     } else {
         sp50 = 0.0f;
     }
-    sp50 *= (bss_0->unk8 * gUpdateRateF);
+    sp50 *= (sState->unk8 * gUpdateRateF);
     cam->srt.transl.y += sp50;
-    sp48 = bss_0->unk0;
-    sp48 -= bss_0->unk4;
+    sp48 = sState->unk0;
+    sp48 -= sState->unk4;
     sp48 *= (0.05f * gUpdateRateF);
-    bss_0->unk4 += sp48;
-    cam->srt.transl.x = (fsin16_precise(temp_s0->srt.yaw) * bss_0->unk4) + temp_s0->srt.transl.x;
-    cam->srt.transl.z = (fcos16_precise(temp_s0->srt.yaw) * bss_0->unk4) + temp_s0->srt.transl.z;
+    sState->unk4 += sp48;
+    cam->srt.transl.x = (fsin16_precise(temp_s0->srt.yaw) * sState->unk4) + temp_s0->srt.transl.x;
+    cam->srt.transl.z = (fcos16_precise(temp_s0->srt.yaw) * sState->unk4) + temp_s0->srt.transl.z;
     gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp54, &sp50, &sp4C, &sp48, 0.0f);
     
     var_v1 = (-arctan2_f(sp54, sp4C) - (cam->srt.yaw & 0xFFFF));
@@ -129,19 +129,19 @@ void dll_93_func_340(Cam* cam) {
     CIRCLE_WRAP(var_v1);
     cam->srt.yaw += var_v1;
     
-    var_v1 = (arctan2_f(sp50, sp48) - bss_0->unk30) - (cam->srt.pitch & 0xFFFF);
+    var_v1 = (arctan2_f(sp50, sp48) - sState->unk30) - (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     cam->srt.pitch += ((s32) (var_v1 * gUpdateRate) / 6);
 }
 
 // offset: 0x5E8 | func: 2 | export: 2
 void dll_93_func_5E8(Cam* cam) {
-    mmFree(bss_0);
-    bss_0 = NULL;
+    mmFree(sState);
+    sState = NULL;
 }
 
 // offset: 0x62C | func: 3 | export: 3
-void dll_93_func_62C(CamClimb_Params* arg0, s32 arg1) {
+void dll_93_func_62C(void* arg0, s32 arg1) {
 
 }
 
@@ -149,15 +149,15 @@ void dll_93_func_62C(CamClimb_Params* arg0, s32 arg1) {
 static void dll_93_func_63C(Cam* cam) {
     f32 temp_fv0;
 
-    if (bss_0->unk2C != 0) {
-        bss_0->unk2C -= gUpdateRate;
-        if (bss_0->unk2C < 0) {
-            bss_0->unk2C = 0;
+    if (sState->unk2C != 0) {
+        sState->unk2C -= gUpdateRate;
+        if (sState->unk2C < 0) {
+            sState->unk2C = 0;
         }
-        temp_fv0 = (f32) (bss_0->unk2E - bss_0->unk2C) / (f32) bss_0->unk2E;
-        bss_0->unk30 = (u16) ((f32) bss_0->unk32 + ((f32) ((u16) bss_0->unk34 - bss_0->unk32) * temp_fv0));
-        bss_0->unk0 = bss_0->unk14 + ((bss_0->unk18 - bss_0->unk14) * temp_fv0);
-        bss_0->unkC = bss_0->unk1C + ((bss_0->unk20 - bss_0->unk1C) * temp_fv0);
-        bss_0->unk10 = bss_0->unk24 + ((bss_0->unk28 - bss_0->unk24) * temp_fv0);
+        temp_fv0 = (f32) (sState->unk2E - sState->unk2C) / (f32) sState->unk2E;
+        sState->unk30 = (u16) ((f32) sState->unk32 + ((f32) ((u16) sState->unk34 - sState->unk32) * temp_fv0));
+        sState->unk0 = sState->unk14 + ((sState->unk18 - sState->unk14) * temp_fv0);
+        sState->unkC = sState->unk1C + ((sState->unk20 - sState->unk1C) * temp_fv0);
+        sState->unk10 = sState->unk24 + ((sState->unk28 - sState->unk24) * temp_fv0);
     }
 }

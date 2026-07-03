@@ -12,4 +12,4 @@ dll_90_func_C04 = 0xC04;
 .rodata = 0xDAC:
 
 .bss = 0xDCC:
-bss_0 = 0x0; // absolute:0xDCC
+sState = 0x0; // absolute:0xDCC

@@ -20,9 +20,9 @@ typedef struct {
     u8 unk13;
     u8 unk14;
     f32 unk18;
-} BSS0;
+} CamLockOn;
 
-/*0x0*/ static BSS0* bss_0;
+/*0x0*/ static CamLockOn* sState;
 /*0x4*/ static s32 bss_4;
 
 static void dll_91_func_BC0(Cam* cam);
@@ -36,29 +36,29 @@ void dll_91_ctor(void* dll) { }
 void dll_91_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_91_func_18(Cam* cam, s32 arg1, CamLockOn_Params* action) {
+void dll_91_func_18(Cam* cam, s32 arg1, CamLockOn_Params* data) {
     Object* target;
     Object* sp20;
     f32 xDist;
     f32 zDist;
 
-    cam->target = action->unk0;
+    cam->target = data->unk0;
     sp20 = cam->player;
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camlockon"));
-    bss_0->unk4 = 0.0f;
-    bss_0->unk8 = 1.0f;
-    bss_0->unk12 = 0;
-    bss_0->unk11 = 0;
-    bss_0->unk13 = 1;
-    bss_0->unk14 = 1;
-    bss_0->unk18 = 0.0f;
+    sState = mmAlloc(sizeof(CamLockOn), ALLOC_TAG_CAM_COL, ALLOC_NAME("camlockon"));
+    sState->unk4 = 0.0f;
+    sState->unk8 = 1.0f;
+    sState->unk12 = 0;
+    sState->unk11 = 0;
+    sState->unk13 = 1;
+    sState->unk14 = 1;
+    sState->unk18 = 0.0f;
     if (sp20->controlNo != OBJCONTROL_Player) {
-        bss_0->unk12 = 1;
+        sState->unk12 = 1;
         return;
     }
     target = cam->target;
     if (target == NULL) {
-        bss_0->unk12 = 1;
+        sState->unk12 = 1;
         return;
     }
     if (target->unk74 == NULL) {
@@ -69,11 +69,11 @@ void dll_91_func_18(Cam* cam, s32 arg1, CamLockOn_Params* action) {
         zDist = target->unk74[target->unkD4].refPoint.z - sp20->globalPosition.z;
     }
     if (target->controlNo != OBJCONTROL_KTRex) {
-        bss_0->unk0 = sqrtf(SQ(xDist) + SQ(zDist));
+        sState->unk0 = sqrtf(SQ(xDist) + SQ(zDist));
     } else {
-        bss_0->unk0 = 200.0f;
+        sState->unk0 = 200.0f;
     }
-    bss_0->unk10 = 0;
+    sState->unk10 = 0;
 }
 
 // offset: 0x1B8 | func: 1 | export: 1
@@ -104,7 +104,7 @@ void dll_91_func_1B8(Cam* cam) {
     f32 pad_sp38;
     f32 pad_sp34;
 
-    if (bss_0->unk12 != 0) {
+    if (sState->unk12 != 0) {
         dll_91_func_BC0(cam);
         return;
     }
@@ -130,11 +130,11 @@ void dll_91_func_1B8(Cam* cam) {
         btns = joy_get_pressed(0);
     } else if (temp_a0 == 2) {
         btns = ~joy_get_buttons(0);
-    } else if (bss_0->unk10 >= 0xD) {
+    } else if (sState->unk10 >= 0xD) {
         btns = joy_get_released(0);
     } else {
         btns = 0;
-        bss_0->unk10 += gUpdateRate;
+        sState->unk10 += gUpdateRate;
     }
     if (!(btns & Z_TRIG) || (dll_91_func_BC0(cam), ((cam->targetFlags & 2) != 0))) {
         sp5C = sp3C->globalPosition.y + 20.0f;
@@ -193,18 +193,18 @@ void dll_91_func_1B8(Cam* cam) {
         if (var_v1 >= 0x2329) {
             var_v1 = 0x2328;
         }
-        bss_0->unk4 += ((30.0f - bss_0->unk4) * gUpdateRateF * 0.04f);
+        sState->unk4 += ((30.0f - sState->unk4) * gUpdateRateF * 0.04f);
         var_v1 = 0x2328 - var_v1;
-        bss_0->unk8 += (((((1.0f - (var_v1 / 9000.0f)) + 0.8f) / 1.8f) - bss_0->unk8) * gUpdateRateF * 0.1f);
+        sState->unk8 += (((((1.0f - (var_v1 / 9000.0f)) + 0.8f) / 1.8f) - sState->unk8) * gUpdateRateF * 0.1f);
         sp6C = fsin16_precise(cam->srt.yaw);
         var_fv0 = fcos16_precise(cam->srt.yaw);
-        temp_fa1 = bss_0->unk0 * sp6C;
-        temp_ft4 = bss_0->unk0 * var_fv0;
+        temp_fa1 = sState->unk0 * sp6C;
+        temp_ft4 = sState->unk0 * var_fv0;
         cam->srt.transl.x = sp90 + temp_fa1;
         cam->srt.transl.z = sp88 - temp_ft4;
         sp80 *= 0.6f;
         sp80 = sp5C - sp80;
-        sp80 += bss_0->unk4;
+        sp80 += sState->unk4;
         cam->srt.transl.y -= ((cam->srt.transl.y - sp80) * gUpdateRateF * 0.05f);
         dll_91_func_C58(cam, sp90, cam->srt.transl.y, sp88);
         sp90 = sp3C->globalPosition.x + (sp58 * 0.1f);
@@ -223,7 +223,7 @@ void dll_91_func_1B8(Cam* cam) {
         if (var_fv0 > 220.0f) {
             var_fv0 = 220.0f;
         }
-        var_fv0 -= bss_0->unk0;
+        var_fv0 -= sState->unk0;
         var_fv0 *= gUpdateRateF * 0.04f;
         if (var_fv0 > 5.0f) {
             var_fv0 = 5.0f;
@@ -233,7 +233,7 @@ void dll_91_func_1B8(Cam* cam) {
         if ((var_fv0 > -0.2f) && (var_fv0 < 0.2f)) {
             var_fv0 = 0.0f;
         }
-        bss_0->unk0 += var_fv0;
+        sState->unk0 += var_fv0;
     }
 }
 
@@ -242,7 +242,7 @@ void dll_91_func_B64(Cam* cam) {
     if (cam->target != NULL) {
         cam->target = NULL;
     }
-    mmFree(bss_0);
+    mmFree(sState);
 }
 
 // offset: 0xBB0 | func: 3 | export: 3
@@ -291,24 +291,24 @@ static void dll_91_func_D34(Cam* cam, f32* arg1, f32* arg2, f32* arg3, f32* arg4
     temp_v0 = cam->target;
     temp_v1 = cam->player;
     temp_t0 = temp_v0->unk74;
-    if (temp_v0->unkD4 != bss_0->unk14) {
-        bss_0->unk13 = bss_0->unk14;
-        bss_0->unk18 = 1.0f;
+    if (temp_v0->unkD4 != sState->unk14) {
+        sState->unk13 = sState->unk14;
+        sState->unk18 = 1.0f;
     }
-    if (bss_0->unk18 > 0.0f) {
-        bss_0->unk18 -= (0.02f * gUpdateRateF);
-        if (bss_0->unk18 < 0.0f) {
-            bss_0->unk18 = 0.0f;
-            bss_0->unk13 = temp_v0->unkD4;
+    if (sState->unk18 > 0.0f) {
+        sState->unk18 -= (0.02f * gUpdateRateF);
+        if (sState->unk18 < 0.0f) {
+            sState->unk18 = 0.0f;
+            sState->unk13 = temp_v0->unkD4;
         }
-        var_f2 = temp_t0[bss_0->unk13].refPoint.x - temp_t0[temp_v0->unkD4].refPoint.x;
-        var_f2 *= bss_0->unk18;
+        var_f2 = temp_t0[sState->unk13].refPoint.x - temp_t0[temp_v0->unkD4].refPoint.x;
+        var_f2 *= sState->unk18;
         var_f2 += temp_t0[temp_v0->unkD4].refPoint.x;
-        var_f14 = temp_t0[bss_0->unk13].refPoint.y - temp_t0[temp_v0->unkD4].refPoint.y;
-        var_f14 *= bss_0->unk18;
+        var_f14 = temp_t0[sState->unk13].refPoint.y - temp_t0[temp_v0->unkD4].refPoint.y;
+        var_f14 *= sState->unk18;
         var_f14 += temp_t0[temp_v0->unkD4].refPoint.y;
-        var_f18 = temp_t0[bss_0->unk13].refPoint.z - temp_t0[temp_v0->unkD4].refPoint.z;
-        var_f18 *= bss_0->unk18;
+        var_f18 = temp_t0[sState->unk13].refPoint.z - temp_t0[temp_v0->unkD4].refPoint.z;
+        var_f18 *= sState->unk18;
         var_f18 += temp_t0[temp_v0->unkD4].refPoint.z;
         *arg1 = var_f2 - temp_v1->globalPosition.x;
         *arg2 = var_f14 - *arg4;
@@ -318,5 +318,5 @@ static void dll_91_func_D34(Cam* cam, f32* arg1, f32* arg2, f32* arg3, f32* arg4
         *arg2 = temp_t0[temp_v0->unkD4].refPoint.y - *arg4;
         *arg3 = temp_t0[temp_v0->unkD4].refPoint.z - temp_v1->globalPosition.z;
     }
-    bss_0->unk14 = temp_v0->unkD4;
+    sState->unk14 = temp_v0->unkD4;
 }

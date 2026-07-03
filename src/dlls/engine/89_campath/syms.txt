@@ -17,4 +17,4 @@ dll_89_func_1F9C = 0x1F9C;
 str_0 = 0x0; // absolute:0x23EC
 
 .bss = 0x243C:
-bss_0 = 0x0; // absolute:0x243C
+sState = 0x0; // absolute:0x243C

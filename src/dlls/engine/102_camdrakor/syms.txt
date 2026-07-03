@@ -9,4 +9,4 @@ dll_102_func_65C = 0x65C;
 .rodata = 0x6BC:
 
 .bss = 0x6BC:
-bss_0 = 0x0; // absolute:0x6BC
+sState = 0x0; // absolute:0x6BC

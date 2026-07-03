@@ -9,4 +9,4 @@ camcrawl_func_1E8 = 0x1E8;
 .rodata = 0x244:
 
 .bss = 0x244:
-_bss_0 = 0x0; // absolute:0x244
+sState = 0x0; // absolute:0x244

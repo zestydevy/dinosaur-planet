@@ -17,9 +17,9 @@ typedef struct {
     f32 unk20;
     f32 unk24;
     u8 unk28;
-} CamShipBattleUnk; //len: 0x2C
+} CamShipBattle; //len: 0x2C
 
-static CamShipBattleUnk* _bss_0;
+static CamShipBattle* sState;
 
 // offset: 0x0 | ctor
 void camshipbattle_ctor(void *dll) { }
@@ -28,17 +28,17 @@ void camshipbattle_ctor(void *dll) { }
 void camshipbattle_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void camshipbattle_setup(Cam* cam, s32 arg1, s32 arg2) {   
-    _bss_0 = mmAlloc(sizeof(CamShipBattleUnk), ALLOC_TAG_CAM_COL, ALLOC_NAME("camshipbattle"));
+void camshipbattle_setup(Cam* cam, s32 arg1, void* data) {   
+    sState = mmAlloc(sizeof(CamShipBattle), ALLOC_TAG_CAM_COL, ALLOC_NAME("camshipbattle"));
     
-    _bss_0->unk0 = 0.0f;
-    _bss_0->unk4 = 0.0f;
-    _bss_0->unk8 = 100.0f;
-    _bss_0->unk10 = 120.0f;
-    _bss_0->unkC = _bss_0->unk10;
-    _bss_0->unk14 = 1.0f;
-    _bss_0->unk28 = 0;
-    _bss_0->unk1C = 75.0f;
+    sState->unk0 = 0.0f;
+    sState->unk4 = 0.0f;
+    sState->unk8 = 100.0f;
+    sState->unk10 = 120.0f;
+    sState->unkC = sState->unk10;
+    sState->unk14 = 1.0f;
+    sState->unk28 = 0;
+    sState->unk1C = 75.0f;
 
     func_80000860(cam->player, cam->player, 0x84, 0);
 }
@@ -60,7 +60,7 @@ void camshipbattle_control(Cam* cam) {
         returnVal = ((DLL_Unknown*)obj->dll)->vtbl->func[11].withOneArgS32((s32)obj);
     }
     
-    if (returnVal != _bss_0->unk28) {
+    if (returnVal != sState->unk28) {
         if (returnVal == 2) {
             var_fa0 = 220.0f;
         } else {
@@ -72,68 +72,68 @@ void camshipbattle_control(Cam* cam) {
             var_fv1 = 0.0f;
         } else {
             var_fv0 = 100.0f;
-            var_fv1 = _bss_0->unk4;
+            var_fv1 = sState->unk4;
         }
         
-        _bss_0->unk28 = returnVal;
-        _bss_0->unk18 = var_fa0 - _bss_0->unkC;
-        _bss_0->unk10 = _bss_0->unkC;
-        _bss_0->unk24 = var_fv0 - (_bss_0->unk1C + var_fv1);
-        _bss_0->unk20 = _bss_0->unk1C;
-        _bss_0->unk14 = 0.0f;
+        sState->unk28 = returnVal;
+        sState->unk18 = var_fa0 - sState->unkC;
+        sState->unk10 = sState->unkC;
+        sState->unk24 = var_fv0 - (sState->unk1C + var_fv1);
+        sState->unk20 = sState->unk1C;
+        sState->unk14 = 0.0f;
     }
     
-    if (_bss_0->unk14 < 1.0f) {
-        _bss_0->unk14 += 0.005f * gUpdateRateF;
-        if (_bss_0->unk14 > 1.0f) {
-            _bss_0->unk14 = 1.0f;
+    if (sState->unk14 < 1.0f) {
+        sState->unk14 += 0.005f * gUpdateRateF;
+        if (sState->unk14 > 1.0f) {
+            sState->unk14 = 1.0f;
         }
         
-        _bss_0->unkC = _bss_0->unk10 + (_bss_0->unk14 * _bss_0->unk18);
-        _bss_0->unk1C = _bss_0->unk20 + (_bss_0->unk14 * _bss_0->unk24);
+        sState->unkC = sState->unk10 + (sState->unk14 * sState->unk18);
+        sState->unk1C = sState->unk20 + (sState->unk14 * sState->unk24);
     }
     
     if ((returnVal != 2) && (returnVal != 5)) {
-        _bss_0->unk0 -= obj->srt.roll / 3367.0f;
-        _bss_0->unk4 -= obj->srt.pitch / 1365.0f;
+        sState->unk0 -= obj->srt.roll / 3367.0f;
+        sState->unk4 -= obj->srt.pitch / 1365.0f;
 
-        _bss_0->unk0 -= _bss_0->unk0 * 0.02f * gUpdateRateF;
-        _bss_0->unk4 -= _bss_0->unk4 * 0.02f * gUpdateRateF;
+        sState->unk0 -= sState->unk0 * 0.02f * gUpdateRateF;
+        sState->unk4 -= sState->unk4 * 0.02f * gUpdateRateF;
         
-        cam->srt.transl.y = obj->srt.transl.y + _bss_0->unk1C + _bss_0->unk4;
+        cam->srt.transl.y = obj->srt.transl.y + sState->unk1C + sState->unk4;
     } else {
-        _bss_0->unk4 -= obj->srt.pitch / 2275.0f;
-        _bss_0->unk0 -= _bss_0->unk0 * 0.02f * gUpdateRateF;
-        _bss_0->unk4 -= _bss_0->unk4 * 0.013f * gUpdateRateF;
+        sState->unk4 -= obj->srt.pitch / 2275.0f;
+        sState->unk0 -= sState->unk0 * 0.02f * gUpdateRateF;
+        sState->unk4 -= sState->unk4 * 0.013f * gUpdateRateF;
         
-        cam->srt.transl.y = obj->srt.transl.y + _bss_0->unk1C;
+        cam->srt.transl.y = obj->srt.transl.y + sState->unk1C;
     }
     
-    cam->srt.transl.x = obj->srt.transl.x + 98.0f + _bss_0->unk8;
-    cam->srt.transl.z = obj->srt.transl.z + _bss_0->unk0;
+    cam->srt.transl.x = obj->srt.transl.x + 98.0f + sState->unk8;
+    cam->srt.transl.z = obj->srt.transl.z + sState->unk0;
     cam->srt.pitch = 0x708;
     cam->srt.yaw = 0x4000;
     cam->srt.roll = -obj->srt.roll >> 3;
     cam->letterboxGoal = 30;
     cam->fov = 40.0f;
     
-    speed = (_bss_0->unkC - _bss_0->unk8) / 100.0f;
+    speed = (sState->unkC - sState->unk8) / 100.0f;
     if (speed > 3.0f) {
         speed = 3.0f;
     } else if (speed < -3.0f) {
         speed = -3.0f;
     }
     speed *= gUpdateRateF;
-    _bss_0->unk8 += speed;
+    sState->unk8 += speed;
 }
 
 // offset: 0x4CC | func: 2 | export: 2
 void camshipbattle_free(Cam* cam) {
-    mmFree(_bss_0);
+    mmFree(sState);
 }
 
 // offset: 0x50C | func: 3 | export: 3
 // @bug: Missing 2nd parameter
-void camshipbattle_func_50C(s32 arg0) {
+void camshipbattle_func_50C(void* arg0) {
 
 }

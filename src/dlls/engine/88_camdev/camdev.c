@@ -6,9 +6,9 @@
 
 typedef struct {
     f32 zoom;
-} BSS0;
+} CamDev;
 
-/*0x0*/ static BSS0* bss_0;
+/*0x0*/ static CamDev* sState;
 
 // offset: 0x0 | ctor
 void dll_88_ctor(void* dll) { }
@@ -17,9 +17,9 @@ void dll_88_ctor(void* dll) { }
 void dll_88_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_88_func_18(Cam* cam, s32 arg1, void* action) {
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, ALLOC_NAME("camdev"));
-    bss_0->zoom = 50.0f;
+void dll_88_func_18(Cam* cam, s32 arg1, void* data) {
+    sState = mmAlloc(sizeof(CamDev), ALLOC_TAG_CAM_COL, ALLOC_NAME("camdev"));
+    sState->zoom = 50.0f;
 }
 
 // offset: 0x78 | func: 1 | export: 1
@@ -43,16 +43,16 @@ void dll_88_func_78(Cam* cam) {
         return;
     }
     if (sp56 & U_JPAD) {
-        bss_0->zoom -= 8.0f;
+        sState->zoom -= 8.0f;
     }
     if (sp56 & D_JPAD) {
-        bss_0->zoom += 8.0f;
+        sState->zoom += 8.0f;
     }
-    if (bss_0->zoom < 20.0f) {
-        bss_0->zoom = 20.0f;
+    if (sState->zoom < 20.0f) {
+        sState->zoom = 20.0f;
     }
-    if (bss_0->zoom > 2000.0f) {
-        bss_0->zoom = 2000.0f;
+    if (sState->zoom > 2000.0f) {
+        sState->zoom = 2000.0f;
     }
     temp_fa1 = 0; // @fake
     var_v0 = 0;
@@ -75,8 +75,8 @@ void dll_88_func_78(Cam* cam) {
     sp3C = fcos16_precise((s16) (cam->srt.yaw - 0x4000));
     sp38 = fcos16_precise(cam->srt.pitch);
     temp_ft4 = fsin16_precise(cam->srt.pitch);
-    temp_ft4 = temp_ft4 * bss_0->zoom;
-    temp_fv1 = bss_0->zoom * sp38;
+    temp_ft4 = temp_ft4 * sState->zoom;
+    temp_fv1 = sState->zoom * sp38;
     temp_fa1 = temp_fv1 * sp3C;
     temp_fv1 *= sp40;
     cam->srt.transl.x = sp30->globalPosition.x + (temp_fa1);
@@ -86,7 +86,7 @@ void dll_88_func_78(Cam* cam) {
 
 // offset: 0x340 | func: 2 | export: 2
 void dll_88_func_340(Cam* cam) {
-    mmFree(bss_0);
+    mmFree(sState);
 }
 
 // offset: 0x380 | func: 3 | export: 3

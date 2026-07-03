@@ -4,9 +4,9 @@
 
 typedef struct {
     u8 _unk0[0x8 - 0x0];
-} BSS0;
+} CamCrawl;
 
-/*0x0*/ static BSS0* _bss_0;
+/*0x0*/ static CamCrawl* sState;
 
 // offset: 0x0 | ctor
 void camcrawl_ctor(void *dll) { }
@@ -15,8 +15,8 @@ void camcrawl_ctor(void *dll) { }
 void camcrawl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void camcrawl_setup(Cam* cam, s32 arg1, void* arg2) {
-    _bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
+void camcrawl_setup(Cam* cam, s32 arg1, void* data) {
+    sState = mmAlloc(sizeof(CamCrawl), ALLOC_TAG_CAM_COL, NULL);
 }
 
 // offset: 0x68 | func: 1 | export: 1
@@ -41,7 +41,7 @@ void camcrawl_control(Cam* cam) {
 
 // offset: 0x1A8 | func: 2 | export: 2
 void camcrawl_free(Cam* cam) {
-    mmFree(_bss_0);
+    mmFree(sState);
 }
 
 // offset: 0x1E8 | func: 3 | export: 3

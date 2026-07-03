@@ -13,4 +13,4 @@ dll_86_func_1524 = 0x1524;
 .rodata = 0x165C:
 
 .bss = 0x16AC:
-bss_0 = 0x0; // absolute:0x16AC
+sState = 0x0; // absolute:0x16AC

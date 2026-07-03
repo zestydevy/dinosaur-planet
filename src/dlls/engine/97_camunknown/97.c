@@ -8,9 +8,9 @@
 typedef struct {
     u8 _unk0[0x4 - 0x0];
     f32 unk4;
-} BSS0;
+} UnkCam;
 
-/*0x0*/ static BSS0* bss_0;
+/*0x0*/ static UnkCam* sState;
 
 // offset: 0x0 | ctor
 void dll_97_ctor(void* dll) { }
@@ -19,9 +19,9 @@ void dll_97_ctor(void* dll) { }
 void dll_97_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_97_func_18(Cam* cam, s32 arg1, void* action) {
-    bss_0 = mmAlloc(sizeof(BSS0), ALLOC_TAG_CAM_COL, NULL);
-    bss_0->unk4 = 0.0f;
+void dll_97_func_18(Cam* cam, s32 arg1, void* data) {
+    sState = mmAlloc(sizeof(UnkCam), ALLOC_TAG_CAM_COL, NULL);
+    sState->unk4 = 0.0f;
 }
 
 // offset: 0x74 | func: 1 | export: 1
@@ -39,7 +39,7 @@ void dll_97_func_74(Cam* cam) {
     sp28[2] = 0.0f;
     sp28[3] = 0.0f;
     sp28[1] = 1.0f;
-    sp38 = curves_hermite(sp28, bss_0->unk4, NULL);
+    sp38 = curves_hermite(sp28, sState->unk4, NULL);
     sp4C = cam->player;
     sp26 = (0x8000 - sp4C->srt.yaw);
     sp26 += (s32) (14560.0f * sp38);
@@ -55,15 +55,15 @@ void dll_97_func_74(Cam* cam) {
     cam->srt.roll = 0;
     cam->letterboxGoal = 0;
     cam->fov = 60.0f;
-    bss_0->unk4 += 0.005f * gUpdateRateF;
-    if (bss_0->unk4 > 1.0f) {
-        bss_0->unk4 = 1.0f;
+    sState->unk4 += 0.005f * gUpdateRateF;
+    if (sState->unk4 > 1.0f) {
+        sState->unk4 = 1.0f;
     }
 }
 
 // offset: 0x250 | func: 2 | export: 2
 void dll_97_func_250(Cam* cam) {
-    mmFree(bss_0);
+    mmFree(sState);
 }
 
 // offset: 0x290 | func: 3 | export: 3

@@ -15,7 +15,7 @@ void dll_100_ctor(void* dll) { }
 void dll_100_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_100_func_18(Cam* cam, s32 arg1, void* action) {
+void dll_100_func_18(Cam* cam, s32 arg1, void* data) {
     dll_100_func_2E4(cam, cam->player, &bss_0);
 }
 
