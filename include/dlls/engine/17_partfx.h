@@ -12,6 +12,9 @@ enum ParticleID {
     PARTICLE_3C = 0x3C,
     PARTICLE_42 = 0x42,
     PARTICLE_47 = 0x47,
+    PARTICLE_56 = 0x56,
+    PARTICLE_57 = 0x57,
+    PARTICLE_58 = 0x58,
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
     PARTICLE_69 = 0x69, //nothing?

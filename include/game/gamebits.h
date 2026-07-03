@@ -495,8 +495,8 @@ typedef enum {
     BIT_1E8 = 0x1E8, // len:1 group:1
     BIT_1E9 = 0x1E9, // len:1 group:1
     BIT_Tutorial_Fire_Crystal = 0x1EA, // len:1 group:1 [TUTORIAL]
-    BIT_1EB = 0x1EB, // len:1 group:2
-    BIT_1EC = 0x1EC, // len:1 group:2
+    BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated = 0x1EB, // len:1 group:2
+    BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_1 = 0x1EC, // len:1 group:2
     BIT_Dino_Bag_Red_Grubs = 0x1ED, // len:6 group:1    [INVENTORY]
     BIT_Horn_of_Truth = 0x1EE, // len:1 group:1         [INVENTORY]
     BIT_1EF = 0x1EF, // len:1 group:1
@@ -558,7 +558,7 @@ typedef enum {
     BIT_WM_Spirit_Release_Effect = 0x227, // len:1 group:0
     BIT_Played_Seq_022F_CC_Lightfoot_Gives_Spellpage = 0x228, // len:1 group:2
     BIT_Boss_Galadon_Map_Setup = 0x229, // len:4 group:1
-    BIT_22A = 0x22A, // len:1 group:2
+    BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2 = 0x22A, // len:1 group:2
     BIT_SpellStone_DIM_Activated = 0x22B, // len:1 group:1 (SpellStone #1, DarkIce Mines) [INVENTORY]
     BIT_Dino_Foodbag_Give = 0x22C, // len:1 group:1  set by sidefoodbag during setup
     BIT_22D = 0x22D, // len:1 group:3
@@ -1023,7 +1023,7 @@ typedef enum {
     BIT_Tricky_Ball_Unlocked = 0x3F8, // len:1 group:2 [SIDEKICK COMMAND]
     BIT_3F9 = 0x3F9, // len:1 group:2
     BIT_3FA = 0x3FA, // len:1 group:2
-    BIT_3FB = 0x3FB, // len:1 group:2
+    BIT_CC_SandWormBoss_Defeated = 0x3FB, // len:1 group:2
     BIT_3FC = 0x3FC, // len:1 group:2
     BIT_3FD = 0x3FD, // len:1 group:2
     BIT_3FE = 0x3FE, // len:1 group:1

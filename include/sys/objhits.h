@@ -104,7 +104,7 @@ typedef enum {
     Damage_Type_7 = 0x7,
     Damage_Type_8 = 0x8,
     Damage_Type_9 = 0x9,
-    Damage_Type_Sword_Staff_Strike1 = 0xA,     //Sabre: anticlockwise/jump-attack  Krystal: anticlockwise        (possibly meant for anticlockwise attacks?)
+    Damage_Type_Sword_Staff_Strike1 = 0xA,     //Sabre: anticlockwise/jump-attack  Krystal: anticlockwise        (possibly meant for anticlockwise attacks?) (seems to be used for a wide variety of attacks, so maybe DamageType_Physical_1?)
     Damage_Type_Sword_Staff_Strike2 = 0xB,     //Sabre: overhead                   Krystal: clockwise/overhead   (possibly meant for overhead/jump-attack?)
     Damage_Type_Sword_Strike_Clockwise = 0xC,  //Sabre: clockwise                  Krystal: N/A                  (possibly meant for clockwise attacks?)
     Damage_Type_D = 0xD,                 //Speeder bike checks this type
