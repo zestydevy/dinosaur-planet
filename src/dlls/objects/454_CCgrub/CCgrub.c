@@ -63,7 +63,7 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
         sp34 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(temp_v0_2, -1));
         gDLL_25->vtbl->func_1D30(&sp3C->unk0, temp_v0_2, sp34, gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp34, -1)));
         CCgrub_func_AB0(self, sp3C, 0.2f);
-        curves_func_800053B0(&sp3C->unk0, 0.1f);
+        curves_func_800053B0(&sp3C->unk0.unk0, 0.1f);
         self->srt.transl.x = temp_v0_2->pos.x;
         self->srt.transl.y = temp_v0_2->pos.y;
         self->srt.transl.z = temp_v0_2->pos.z;
@@ -114,9 +114,9 @@ void CCgrub_control(Object* self) {
         objdata->unk110 = 0.005f;
         objdata->unk109 = 0;
     }
-    if ((objdata->unk0.unk80 == 0) && (objdata->unk0.unk10 != 0)) {
+    if ((objdata->unk0.unk0.unk80 == 0) && (objdata->unk0.unk0.unk10 != 0)) {
         sp60 = gDLL_26_Curves->vtbl->func_438(objdata->unk0.unkA4, -1);
-    } else if ((objdata->unk0.unk80 != 0) && (objdata->unk0.unk10 == 0)) {
+    } else if ((objdata->unk0.unk0.unk80 != 0) && (objdata->unk0.unk0.unk10 == 0)) {
         sp60 = gDLL_26_Curves->vtbl->func_590(objdata->unk0.unkA4, -1);
     }
     if (sp60 >= 0) {
@@ -153,12 +153,12 @@ void CCgrub_control(Object* self) {
                 var_v0_2 = var_v1 >= 0 ? var_v1 : -var_v1;
                 if (var_v0_2 < 0x4000) {
                     objdata->unk13C += 0x8000;
-                    if (objdata->unk0.unk80 != 0) {
+                    if (objdata->unk0.unk0.unk80 != 0) {
                         var_fv0 = 10.0f;
                     } else {
                         var_fv0 = -10.0f;
                     }
-                    curves_func_800053B0(&objdata->unk0, var_fv0);
+                    curves_func_800053B0(&objdata->unk0.unk0, var_fv0);
                     var_v1 = (objdata->unk13C) - (objdata->unk13E & 0xFFFF);
                     CIRCLE_WRAP(var_v1);
                 }
@@ -211,7 +211,7 @@ void CCgrub_control(Object* self) {
     objdata->unk120.unk0[2] = -(objdata->unk120.unk0[2] / gUpdateRateF);
     if (objdata->unk109 != 6) {
         CCgrub_func_BE8(self, objdata, objdata->unk10C, 1.0f);
-        CCgrub_func_CEC(self, &objdata->unk0.unk68, objdata->unk120.unk0[2], &objdata->unk114);
+        CCgrub_func_CEC(self, &objdata->unk0.unk0.unk68, objdata->unk120.unk0[2], &objdata->unk114);
     }
     if (self->unkAF & 1) {
         // @bug: the gamebit used here is also used for disabling particles!
@@ -269,20 +269,20 @@ static void CCgrub_func_BE8(Object* self, CCgrub_Data* objdata, f32 a2, f32 a3) 
     s32 i;
 
     temp_fs1 = SQ(a2 * gUpdateRateF);
-    var_fv0 = objdata->unk0.unk68.x - self->srt.transl.x;
-    var_fv1 = objdata->unk0.unk68.z - self->srt.transl.z;
+    var_fv0 = objdata->unk0.unk0.unk68.x - self->srt.transl.x;
+    var_fv1 = objdata->unk0.unk0.unk68.z - self->srt.transl.z;
 
-    var_fs0 = objdata->unk0.unk80 != 0 ? -a3 : a3;
+    var_fs0 = objdata->unk0.unk0.unk80 != 0 ? -a3 : a3;
     
     for (i = 0; i < 5; i++) {
         if ((temp_fs1 < (SQ(var_fv0) + SQ(var_fv1)))) {
             break;
         }
 
-        curves_func_800053B0(&objdata->unk0, var_fs0);
+        curves_func_800053B0(&objdata->unk0.unk0, var_fs0);
 
-        var_fv0 = objdata->unk0.unk68.x - self->srt.transl.x;
-        var_fv1 = objdata->unk0.unk68.z - self->srt.transl.z;
+        var_fv0 = objdata->unk0.unk0.unk68.x - self->srt.transl.x;
+        var_fv1 = objdata->unk0.unk0.unk68.z - self->srt.transl.z;
     }
 }
 
@@ -314,7 +314,7 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
         objdata->unk140 -= 10.0f;
     }
     func_8002493C(self, objdata->unk10C, &objdata->unk110);
-    self->srt.transl.y = objdata->unk0.unk68.y;
+    self->srt.transl.y = objdata->unk0.unk0.unk68.y;
     self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
     objdata->unk11C += gUpdateRateF;
     if (objdata->unk11C >= 300.0f) {
@@ -357,8 +357,8 @@ void CCgrub_func_104C(Object* self, CCgrub_Data* objdata) {
         return;
     }
     CCgrub_func_BE8(self, objdata, objdata->unk10C, 1.0f);
-    CCgrub_func_CEC(self, &objdata->unk0.unk68, objdata->unk10C, &objdata->unk114);
-    self->srt.transl.y = objdata->unk0.unk68.y;
+    CCgrub_func_CEC(self, &objdata->unk0.unk0.unk68, objdata->unk10C, &objdata->unk114);
+    self->srt.transl.y = objdata->unk0.unk0.unk68.y;
     self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
 }
 

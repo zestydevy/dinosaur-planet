@@ -1,0 +1,17 @@
+.text = 0x0:
+camspellaim_ctor = 0x0;
+camspellaim_dtor = 0xC;
+camspellaim_func_18 = 0x18;
+camspellaim_func_64 = 0x64;
+camspellaim_func_2C8 = 0x2C8;
+camspellaim_func_2D4 = 0x2D4;
+camspellaim_func_2E4 = 0x2E4;
+
+.rodata = 0x4C4:
+
+.data = 0x4C4:
+data_0 = 0x0; // absolute:0x4C4
+
+.bss = 0x4D4:
+bss_0 = 0x0; // absolute:0x4D4
+bss_4 = 0x4; // absolute:0x4D8

@@ -10,7 +10,7 @@ _exports:
 # export table
 /*0*/ .dword CamControl_init_data
 /*1*/ .dword CamControl_tick
-/*2*/ .dword CamControl_get_data
+/*2*/ .dword CamControl_get_cam
 /*3*/ .dword CamControl_get_dll_ID
 /*4*/ .dword CamControl_get_active_module
 /*5*/ .dword CamControl_get_camnormal_module

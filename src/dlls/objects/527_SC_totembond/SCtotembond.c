@@ -270,7 +270,7 @@ void SCTotemBond_finish_minigame(Object* self, SCTotemBond_Data* objData) {
     player = get_player();
     
     gDLL_29_Gplay->vtbl->restart_clear();
-    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 3, 0, NULL, 0, 0);
+    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 3, 0, NULL, 0, Cam_Ease_None);
     self->opacity = OBJECT_OPACITY_MAX;
     ((DLL_210_Player*)player->dll)->vtbl->func71(player, 0, 0, 0);
     

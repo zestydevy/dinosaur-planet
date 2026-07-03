@@ -5,38 +5,41 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 #include "sys/camera.h"
+#include "sys/objhits.h"
 #include "types.h"
 #include "unktypes.h"
 
 typedef enum {
     Camera_MODE_0_CameraAction = 0,
-    Camera_MODE_1_Lock_On = 1,
-    Camera_MODE_2_Static = 2,
+    Camera_MODE_1_Static = 1,
+    Camera_MODE_2_Path = 2,
     Camera_MODE_3_Normal = 3,
     Camera_MODE_4_Module = 4
 } CameraModes;
 
 typedef enum {
-    CamControl_Ease_None = 0,
-    CamControl_Ease_Yaw = 1,
-    CamControl_Ease_Pitch = 2,
-    CamControl_Ease_Roll = 4,
-    CamControl_Ease_X = 8,
-    CamControl_Ease_Y = 0x10,
-    CamControl_Ease_Z = 0x20
-} CamControl_EaseFlags;
+    Cam_Ease_None = 0,
+    Cam_Ease_Yaw = 1,
+    Cam_Ease_Pitch = 2,
+    Cam_Ease_Roll = 4,
+    Cam_Ease_X = 8,
+    Cam_Ease_Y = 0x10,
+    Cam_Ease_Z = 0x20,
+    Cam_Ease_All = -1
+} CamEaseFlags;
 
 typedef struct {
 /*000*/    SRT srt;                 //Camera transform
 /*018*/    Vec3f initialCoords;     //Camera's initial coordinates
-/*024*/    s8 unk24[0xA0 - 0x24];
+/*024*/    u8 _unk24[0x34 - 0x24];
+/*034*/    Unk80027934 unk34;
 /*0A0*/    Object* player;
 /*0A4*/    Vec3f positionMirror;    //Mirror of camera's position
 /*0B0*/    f32 fov;                 //Field of view
 /*0B4*/    f32 speedAverage;        //Player's average lateral speed over the past 5 frames
 /*0B8*/    f32 speedSamples[5];     //Player lateral speed samples
 /*0C8*/    Vec3f newPlayerPosition; //Where to move player when `setPlayerPosition` is nonzero
-/*0D8*/    s8 unkD8[0xE4 - 0xD8];
+/*0D8*/    u8 _unkD8[0xE4 - 0xD8];
 /*0E4*/    f32 tValue;      //Bezier ease tValue
 /*0E8*/    f32 tSpeed;      //Rate of change of tValue
 /*0EC*/    f32 unkEC;
@@ -57,14 +60,14 @@ typedef struct {
 /*116*/    s8 letterboxSpeed;  //Rate of change of letterbox height
 /*117*/    u8 setPlayerPosition;  //Changes the player's location to `newPlayerPosition` when nonzero
 /*118*/    s8 unk118;
-/*119*/    u8 lerpFlags;          //Which SRT components to interpolate
+/*119*/    u8 easeFlags;          //Which SRT components to interpolate (see CamEaseFlags)
 /*11A*/    u8 highlightFlags;     //Can disable LockIcon Object highlighting (stops searching for nearby highlightable Objects)
 /*11B*/    u8 targetFlags;        //Affects LockIcon being greyed out (Seems to use same flags as Object->unkAF, and generally mirrors unkAF value of Object being highlighted)
-} CamControl_Data;
+} Cam;
 
 typedef struct {
     u16 id;         //DLL ID
-    struct DLL_ICamControlModule* dll;   //Camera module DLL (CAMNORMAL, ATTENTIONCAM1, CAM1STPERSON, etc.)
+    struct DLL_ICamControlModule* dll;   //Camera module DLL (CAMNORMAL, ATTENTIONCAM, CAM1STPERSON, etc.)
     u8 doDeferredFree;  	//when set to 1, the cam module and its DLL are freed when the module is no longer active
 } CamControl_Module;
 
@@ -87,33 +90,22 @@ typedef struct {
 	s8 unkF; //pad?
 } CameraAction;
 
-typedef struct {
-    s32 unk0;
-    s8 unk4;
-} Unk_DLL2_Func888;  //Used in similar situations as CameraAction, but has different shorter structure (CameraFunc15Unk_unk74 seems related to all this, too!)
-
-typedef struct {
-    f32 unk0;
-    f32 unk4;
-    u16 unk8;
-} DLL_86_CamAction;
-
 DLL_INTERFACE(DLL_2_camera) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*init_data)(Object* player, f32 initialX, f32 initialY, f32 initialZ); //Zeroes CamControl's data, stores a reference to the player Object, and stores the camera's initial position.
 /*1*/ void (*tick)(u8 updateRate);							//Main CamControl function (NOTE: actual function doesn't seem to take any arguments, though it's called using `updateRate`)
-/*2*/ CamControl_Data* (*get_data)(void);					//Returns a pointer to the CamControl DLL's main data struct
+/*2*/ Cam* (*get_cam)(void);					//Returns a pointer to the CamControl DLL's main data struct
 /*3*/ s32 (*get_dll_ID)(void); 								//Returns the DLL ID of the current camera module
-/*4*/ CamControl_Module (*get_active_module)(void);			//Returns the CamControl_Module that's currently in use
-/*5*/ CamControl_Module (*get_camnormal_module)(void);		//Returns the CamControl_Module for DLL 84: CAMNORMAL (if it's loaded)
-/*6*/ void (*change_camera_module)(s32 dllID, s32 doDeferredFree, s32 setupVal, s32 actionSize, void* action, s32 easeDuration, u8 easeFlags);	
+/*4*/ CamControl_Module* (*get_active_module)(void);		//Returns the CamControl_Module that's currently in use
+/*5*/ CamControl_Module* (*get_camnormal_module)(void);		//Returns the CamControl_Module for DLL 84: CAMNORMAL (if it's loaded)
+/*6*/ void (*change_camera_module)(s32 dllID, s32 doDeferredFree, s32 setupVal, s32 dataSize, void* data, s32 easeDuration, u8 easeFlags);	
 /*7*/ CameraAction* (*get_camera_action)(s32 actionIndex);	//Returns a pointer to a `CameraAction` read from CAMERAACTIONS.BIN
 /*8*/ void (*change_mode)(u32 cameraMode, s32 index); 		//Can apply a CameraAction (or a different 8-byte struct) depending on the mode value. Depending on mode `params` can be the camera DLL index (relative to CAMNORMAL's ID), or the index of the CameraAction to use, or params for the 8-byte struct. TO-DO: update description once better understood!
-/*9*/ void (*store_player)(Object* player, s32 arg1); 		//Stores a reference to the player Object onto CamControl_Data 
+/*9*/ void (*store_player)(Object* player, s32 arg1); 		//Stores a reference to the player Object onto Cam 
 /*10*/ void (*reposition_player)(f32 x, f32 y, f32 z);		//Changes the player's SRT transl and globalPosition (the next time export1 runs)
 /*11*/ void (*move_camera_by_delta)(f32 dx, f32 dy, f32 dz); //Shifts the camera by a position delta
 /*12*/ void (*func12)(f32 xNumerator, Vec4f* vec4, f32 xDivisor, f32 xMin, f32 y, f32 w); //TO-DO: figure out what this is for (related to interpolation ease tangents, maybe?)
-/*13*/ void (*get_player_to_camera_distances)(Camera* camera, f32* dx, f32* dy, f32* dz, f32* distance2D, f32 yOffset); //Stores the components of a player-to-camera vector onto the dx/dy/dz f32* arguments, and optionally stores the absolute lateral distance as well (clamped to a minimum of 5). The yOffset argument can be used to start the vector from a point above the player's feet. NOTE: arg0 could also be an Object*, or a pointer to an SRT.
+/*13*/ void (*get_player_to_camera_distances)(Cam* cam, f32* dx, f32* dy, f32* dz, f32* distance2D, f32 yOffset); //Stores the components of a player-to-camera vector onto the dx/dy/dz f32* arguments, and optionally stores the absolute lateral distance as well (clamped to a minimum of 5). The yOffset argument can be used to start the vector from a point above the player's feet. NOTE: arg0 could also be an Object*, or a pointer to an SRT.
 /*14*/ Object *(*get_target_object)(void); 					//Returns the Object the LockIcon is currently locked onto
 /*15*/ Object *(*get_highlighted_object)(void); 			//Returns the Object the LockIcon is hovering over (not necessarily Z-targetting)
 /*16*/ int *(*set_target_flag_2)(s32 enable); 				//Sets bit 2 of `camData->targetFlags` (or unsets it if the `enable` argument is false)
@@ -131,10 +123,10 @@ DLL_INTERFACE(DLL_2_camera) {
 
 DLL_INTERFACE(DLL_ICamControlModule) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*setup)(CamControl_Data* camData, s32 arg1, void* action);	//TODO: figure out what's going on with the variable typing of arg2 (sometimes CameraAction*, other times CamControl_Data*, other times something 8 bytes long, etc.), and figure out the purpose of arg1 (seems to be either 0, 1, 2)
-/*1*/ void (*control)(CamControl_Data* camData);
-/*2*/ void (*free)(CamControl_Data* camData);
-/*3*/ void (*func3)(UNK_PTR* arg0, s32 arg1); //TODO: figure out a func name, arg1, and type for arg0 (it's CameraAction* sometimes, but f32* when called in SB_Galleon)
+/*0*/ void (*setup)(Cam* cam, s32 arg1, void* data);
+/*1*/ void (*control)(Cam* cam);
+/*2*/ void (*free)(Cam* cam);
+/*3*/ void (*func3)(void* data, s32 arg1);
 };
 
 #endif //_DLLS_2_H

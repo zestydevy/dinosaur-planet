@@ -375,7 +375,7 @@ int DBSHshrine_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2E, 0x50, (u8)objData->unk8, 0);
                 break;
             case 13:
-                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMSTATIC, 1, 0, 0x50);
+                gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMPATH, 1, 0, 0x50);
                 break;
             case 14:
                 objData->unk8 = 100;

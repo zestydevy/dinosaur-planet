@@ -1,0 +1,12 @@
+.text = 0x0:
+camdrop_ctor = 0x0;
+camdrop_dtor = 0xC;
+camdrop_func_18 = 0x18;
+camdrop_func_98 = 0x98;
+camdrop_func_1A4 = 0x1A4;
+camdrop_func_1E4 = 0x1E4;
+
+.rodata = 0x23C:
+
+.bss = 0x24C:
+sState = 0x0; // absolute:0x24C

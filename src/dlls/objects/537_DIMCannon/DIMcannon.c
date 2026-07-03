@@ -180,7 +180,7 @@ void dll_537_control(Object* self) {
             objData->unk27 -= gUpdateRate;
         } else if (self->unkAF & 1) {
             sp3C = self;
-            gDLL_2_Camera->vtbl->change_camera_module(0x63, 1, 0, 4, &sp3C, 0x32, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCANNON, TRUE, 0, sizeof(&sp3C), &sp3C, 0x32, Cam_Ease_All);
             objData->unk24 = 3;
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objData->unk27 = 0x3C;
@@ -373,7 +373,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
             dll_537_func_1150(self);
             
             if (joy_get_pressed(0) & Z_TRIG) {
-                gDLL_2_Camera->vtbl->change_camera_module(0x54, 0, 1, 0, NULL, 0, 0xFF);
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
                 objData->unk24 = 5;
                 objData->unk27 = 60;
                 animData->unk9D |= 4;

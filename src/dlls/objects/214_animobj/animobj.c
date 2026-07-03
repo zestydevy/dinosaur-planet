@@ -26,7 +26,7 @@ void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
 
     objdata->eventGamebit = setup->unk1A;
     objdata->unk7A = -1;
-    objdata->unk24 = 1.0f / (setup->unk24 + 1.0f);
+    objdata->unk24 = 1.0f / (setup->camEaseDuration + 1.0f);
     objdata->unk28 = -1;
 
     if (self->unkDC == 0 && setup->sequenceIdBitfield != 1){

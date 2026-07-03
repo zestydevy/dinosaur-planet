@@ -1,0 +1,16 @@
+.text = 0x0:
+camslide_ctor = 0x0;
+camslide_dtor = 0xC;
+camslide_func_18 = 0x18;
+camslide_func_98 = 0x98;
+camslide_func_3CC = 0x3CC;
+camslide_func_40C = 0x40C;
+camslide_func_41C = 0x41C;
+camslide_func_4E4 = 0x4E4;
+camslide_func_558 = 0x558;
+camslide_func_5E8 = 0x5E8;
+
+.rodata = 0x6F0:
+
+.bss = 0x700:
+sState = 0x0; // absolute:0x700

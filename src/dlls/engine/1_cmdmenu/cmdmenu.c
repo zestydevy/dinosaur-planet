@@ -24,7 +24,6 @@
 #include "sys/vi.h"
 #include "macros.h"
 #include "gbi_extra.h"
-#include "prevent_bss_reordering2.h"
 
 // official filename: 9slcommandmenu.c (default.dol)
 
@@ -1047,8 +1046,7 @@ void cmdmenu_update2(void) {
         }
     }
 
-    //Keep the inventory closed during the Galleon battle
-    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMSHIPBATTLE2) {
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM1STPERSON2) {
         cmdmenu_close_inventory();
     } else if (dNextPageCategory != 0) {
         //Handle opening the inventory (or opening a different page category)

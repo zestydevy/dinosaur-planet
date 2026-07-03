@@ -399,13 +399,13 @@ s32 dll_658_func_1944(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
     s32 var_v1;
 
     var_v1 = 0;
-    if (curves_func_800053B0(arg1, arg2) || arg1->unk10) {
+    if (curves_func_800053B0(&arg1->unk0, arg2) || arg1->unk0.unk10) {
         var_v1 = gDLL_26_Curves->vtbl->func_4704(arg1);
     }
     
-    self->srt.transl.x = arg1->unk68.x;
-    self->srt.transl.y = arg1->unk68.y;
-    self->srt.transl.z = arg1->unk68.z;
+    self->srt.transl.x = arg1->unk0.unk68.x;
+    self->srt.transl.y = arg1->unk0.unk68.y;
+    self->srt.transl.z = arg1->unk0.unk68.z;
     return var_v1;
 }
 

@@ -1,4 +1,9 @@
 #include "PR/ultratypes.h"
+#include "dlls/engine/2_camcontrol.h"
+#include "dlls/engine/86_cam1stperson.h"
+#include "dlls/engine/89_campath.h"
+#include "dlls/engine/90_camstatic.h"
+#include "dlls/engine/95_camtalk.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -142,7 +147,7 @@ enum Anim6CodeEventType {
     ANIM_CODE_EVT_6_16 = 16,
     ANIM_CODE_EVT_6_TOGGLE_LETTERBOX = 18,
     ANIM_CODE_EVT_6_ENABLE_LETTERBOX = 19,
-    ANIM_CODE_EVT_6_STATIC_CAMERA = 20,
+    ANIM_CODE_EVT_6_PATH_CAMERA = 20,
     ANIM_CODE_EVT_6_SET_MODEL = 23,
     ANIM_CODE_EVT_6_24 = 24,
     ANIM_CODE_EVT_6_25 = 25,
@@ -243,11 +248,6 @@ typedef struct {
 } Actor;
 
 typedef struct {
-    Vec3f coord; 
-    s8 unkC;
-} CameraFunc15Unk_unk74; //Related to CameraAction and Unk_DLL2_Func888? TO-DO: figure out
-
-typedef struct {
     Object *obj;
     s32 preemptTime;
 } PreemptTime;
@@ -323,9 +323,9 @@ typedef struct {
 /*0x8A*/ static s8 _bss_8A;
 /*0x8B*/ static s8 _bss_8B;
 /*0x8C*/ static s32 sCameraModule;
-/*0x90*/ static s32 _bss_90;
-/*0x94*/ static s32 _bss_94;
-/*0x98*/ static s32 _bss_98;
+/*0x90*/ static s32 sCamParam1;
+/*0x94*/ static s32 sCamParam2;
+/*0x98*/ static s32 sCamEaseDuration;
 /*0x9C*/ static s16 sPendingWarpID;
 /*0xA0*/ static f32 _bss_A0;
 /*0xA4*/ static s8 sSeqEnded; // when true, the seq for the current object ended
@@ -384,7 +384,7 @@ static void anim_func_9B70(Object* arg1, Object* animObj, AnimObj_Data* st);
 static void anim_override_list_clear(s32 slot);
 void anim_end_obj_sequence(s32 slot);
 static s32 anim_get_preempt_time(Object* obj);
-static void anim_func_9CE8(s32 arg0);
+static void anim_func_9CE8(s32 ctype);
 static Object* anim_override_list_get(s32 seqSlot, Object* searchObject);
 static Object* anim_find_animobj_target_in_world(Object* animObj);
 s32 anim_func_8878(void);
@@ -1478,8 +1478,8 @@ static void anim_tick_seq_sfx(AnimObj_Data* st, s32 updateRate) {
 static void anim_activate_obj(Object* animObj, Object **actorPtr, AnimObj_Data* st, AnimObj_Setup* setup, ModelInstance **modelInstPtr) {
     Object* actor;
 
-    _bss_90 = 1;
-    _bss_98 = 0x5A;
+    sCamParam1 = 1;
+    sCamEaseDuration = 0x5A;
     st->time = st->startTime;
     st->prevTime = -60;
     anim_apply_channel_values(animObj, *actorPtr, st, 0);
@@ -2662,11 +2662,11 @@ static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, 
 }
 
 // offset: 0x65EC | func: 33 | export: 19
-void anim_set_camera_module(s32 module, s32 arg1, s32 arg2, s32 arg3) {
+void anim_set_camera_module(s32 module, s32 param1, s32 param2, s32 easeDuration) {
     sCameraModule = module;
-    _bss_90 = arg1;
-    _bss_94 = arg2;
-    _bss_98 = arg3;
+    sCamParam1 = param1;
+    sCamParam2 = param2;
+    sCamEaseDuration = easeDuration;
 }
 
 // offset: 0x6620 | func: 34
@@ -2735,8 +2735,8 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
             gDLL_28_ScreenFade->vtbl->fade_reversed(sp54, SCREEN_FADE_BLACK);
         }
         break;
-    case ANIM_CODE_EVT_6_STATIC_CAMERA:
-        anim_set_camera_module(DLL_ID_CAMSTATIC, sp54 & 0x7F, 1, 0x78);
+    case ANIM_CODE_EVT_6_PATH_CAMERA:
+        anim_set_camera_module(DLL_ID_CAMPATH, sp54 & 0x7F, 1, 0x78);
         break;
     case ANIM_CODE_EVT_6_SET_MODEL:
         if (arg4 != 0) {
@@ -3046,11 +3046,11 @@ void anim_update_camera(void) {
     s16 sp17A;
     s16 sp178;
     s16 sp176;
-    CamControl_Data* temp_v0;
-    CamControl_Data sp54;
-    Unk_DLL2_Func888 sp4C;
-    Unk_DLL2_Func888 sp44;
-    DLL_86_CamAction sp38;
+    Cam* cam;
+    Cam camseqData;
+    CamPath_Params campathData;
+    CamStatic_Params camstaticData;
+    Cam1stPerson_Params cam1stpersonData;
 
     if (_bss_6FC != NULL) {
         if (anim_func_8878() != 0) {
@@ -3066,97 +3066,97 @@ void anim_update_camera(void) {
             }
             _bss_A0 = 1.0f;
             if (_bss_8B == 0) {
-                sp54.srt.transl.x = sp184;
-                sp54.srt.transl.y = sp180;
-                sp54.srt.transl.z = sp17C;
-                sp54.srt.yaw = 0x8000 - sp17A;
-                sp54.srt.pitch = -sp178;
-                sp54.srt.roll = sp176;
+                camseqData.srt.transl.x = sp184;
+                camseqData.srt.transl.y = sp180;
+                camseqData.srt.transl.z = sp17C;
+                camseqData.srt.yaw = 0x8000 - sp17A;
+                camseqData.srt.pitch = -sp178;
+                camseqData.srt.roll = sp176;
                 if (_data_30 != 0) {
-                    sp54.fov = _bss_5DC;
+                    camseqData.fov = _bss_5DC;
                     _data_C = _bss_5DC;
                 } else {
-                    sp54.fov = _data_C;
+                    camseqData.fov = _data_C;
                 }
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK1, 0, 1, sizeof(sp54), &sp54, animobjSetup->unk24, 0xFF);
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, FALSE, 1, sizeof(camseqData), &camseqData, animobjSetup->camEaseDuration, Cam_Ease_All);
                 _bss_8B = 1;
             } else {
-                temp_v0 = gDLL_2_Camera->vtbl->get_data();
-                temp_v0->srt.transl.x = sp184;
-                temp_v0->srt.transl.y = sp180;
-                temp_v0->srt.transl.z = sp17C;
-                temp_v0->srt.yaw = 0x8000 - sp17A;
-                temp_v0->srt.pitch = -sp178;
-                temp_v0->srt.roll = sp176;
+                cam = gDLL_2_Camera->vtbl->get_cam();
+                cam->srt.transl.x = sp184;
+                cam->srt.transl.y = sp180;
+                cam->srt.transl.z = sp17C;
+                cam->srt.yaw = 0x8000 - sp17A;
+                cam->srt.pitch = -sp178;
+                cam->srt.roll = sp176;
                 if (_data_30 != 0) {
-                    temp_v0->fov = _bss_5DC;
+                    cam->fov = _bss_5DC;
                     _data_C = _bss_5DC;
                 } else {
-                    temp_v0->fov = _data_C;
+                    cam->fov = _data_C;
                 }
-                _bss_5A4 = temp_v0->srt.transl.x;
-                _bss_5A8 = temp_v0->srt.transl.y;
-                _bss_5B0 = temp_v0->srt.transl.z;
-                _bss_5C8 = (s32) temp_v0->srt.yaw;
-                _bss_5D0 = (s32) temp_v0->srt.pitch;
-                _bss_5D4 = (s32) temp_v0->srt.roll;
-                _bss_5C4 = temp_v0->fov;
+                _bss_5A4 = cam->srt.transl.x;
+                _bss_5A8 = cam->srt.transl.y;
+                _bss_5B0 = cam->srt.transl.z;
+                _bss_5C8 = (s32) cam->srt.yaw;
+                _bss_5D0 = (s32) cam->srt.pitch;
+                _bss_5D4 = (s32) cam->srt.roll;
+                _bss_5C4 = cam->fov;
             }
         }
     } else if (_bss_8B != 0) {
         switch (sCameraModule) {
-        case DLL_ID_CAMSTATIC:
-            sp4C.unk0 = _bss_90;
-            sp4C.unk4 = (s8) _bss_94;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSTATIC, 1, 3, sizeof(sp4C), &sp4C, _bss_98, 0xFF);
+        case DLL_ID_CAMPATH:
+            campathData.unk0 = sCamParam1;
+            campathData.unk4 = sCamParam2;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMPATH, TRUE, 3, sizeof(campathData), &campathData, sCamEaseDuration, Cam_Ease_All);
             dummy_label_1: ; // @fake
             break;
-        case DLL_ID_CAMLOCKON:
-            sp44.unk0 = _bss_90;
-            if (_bss_98 == 0) {
-                sp44.unk4 = 1;
+        case DLL_ID_CAMSTATIC:
+            camstaticData.unk0 = sCamParam1;
+            if (sCamEaseDuration == 0) {
+                camstaticData.unk4 = 1;
             }
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, 1, 3, sizeof(sp44), &sp44, _bss_98, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSTATIC, TRUE, 3, sizeof(camstaticData), &camstaticData, sCamEaseDuration, Cam_Ease_All);
             dummy_label_2: ; // @fake
             break;
-        case DLL_ID_CAMCLIMB:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLIMB, 1, 0, 0, NULL, _bss_98, 0xFF);
+        case DLL_ID_CAMSHIPBATTLE:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE, TRUE, 0, 0, NULL, sCamEaseDuration, Cam_Ease_All);
             break;
-        case DLL_ID_CAMTALK1:
-            sp54.srt.transl.x = _bss_5A4;
-            sp54.srt.transl.y = _bss_5A8;
-            sp54.srt.yaw = (s16) _bss_5C8;
-            sp54.srt.pitch = (s16) _bss_5D0;
-            sp54.srt.transl.z = _bss_5B0;
-            sp54.srt.roll = (s16) _bss_5D4;
-            sp54.fov = _bss_5C4;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK1, 1, 0, sizeof(sp54), &sp54, 0, 0xFF);
+        case DLL_ID_CAMSEQ:
+            camseqData.srt.transl.x = _bss_5A4;
+            camseqData.srt.transl.y = _bss_5A8;
+            camseqData.srt.yaw = (s16) _bss_5C8;
+            camseqData.srt.pitch = (s16) _bss_5D0;
+            camseqData.srt.transl.z = _bss_5B0;
+            camseqData.srt.roll = (s16) _bss_5D4;
+            camseqData.fov = _bss_5C4;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, TRUE, 0, sizeof(camseqData), &camseqData, 0, Cam_Ease_All);
             break;
         case DLL_ID_CAMSLIDE:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSLIDE, 1, 0, 0, NULL, _bss_98, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSLIDE, TRUE, 0, 0, NULL, sCamEaseDuration, Cam_Ease_All);
             break;
         case DLL_ID_CAM1STPERSON:
-            if (_bss_90 != 0) {
-                sp38.unk0 = 90.0f;
-                sp38.unk4 = 20.0f;
-                sp38.unk8 = 5;
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, 1, 1, sizeof(sp38), &sp38, 0, 0xFF);
+            if (sCamParam1 != 0) {
+                cam1stpersonData.unk0 = 90.0f;
+                cam1stpersonData.unk4 = 20.0f;
+                cam1stpersonData.unk8 = 5;
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, TRUE, 1, sizeof(cam1stpersonData), &cam1stpersonData, 0, Cam_Ease_All);
             } else {
-                sp38.unk0 = 90.0f;
-                sp38.unk4 = 20.0f;
-                sp38.unk8 = 30;
-                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, 1, 0, sizeof(sp38), &sp38, 0, 0xFF);
+                cam1stpersonData.unk0 = 90.0f;
+                cam1stpersonData.unk4 = 20.0f;
+                cam1stpersonData.unk8 = 30;
+                gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, TRUE, 0, sizeof(cam1stpersonData), &cam1stpersonData, 0, Cam_Ease_All);
             }
             dummy_label_3: ; // @fake
             break;
-        case DLL_ID_CAMSHIPBATTLE1:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSHIPBATTLE1, 1, 0, _bss_90, &_bss_94, _bss_98, 0xFF);
+        case DLL_ID_CAMLOCKON:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, TRUE, 0, sCamParam1, &sCamParam2, sCamEaseDuration, Cam_Ease_All);
             break;
-        case DLL_ID_CAMDRAKOR:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMDRAKOR, 1, 0, 0, NULL, 0, 0xFF);
+        case DLL_ID_CAMCLOUDRUNNER:
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLOUDRUNNER, TRUE, 0, 0, NULL, 0, Cam_Ease_All);
             break;
         default:
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, _bss_90, 0, NULL, _bss_98, 0xFF);
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, sCamParam1, 0, NULL, sCamEaseDuration, Cam_Ease_All);
             break;
         }
         sCameraModule = 0;
@@ -3670,7 +3670,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
             }
             actorSetup->seqSlot = slot;
             actorSetup->activate = 1;
-            actorSetup->unk24 = actors[i].settings & 0x7F;
+            actorSetup->camEaseDuration = actors[i].settings & 0x7F;
             actorSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
             actorSetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
             if (actorSetup->base.objId == OBJ_AnimCamera) {
@@ -4060,27 +4060,27 @@ static void anim_override_list_add(s32 seqSlot, Object* actor, Object* animObj) 
 }
 
 // offset: 0x9CE8 | func: 68
-static void anim_func_9CE8(s32 arg0) {
+static void anim_func_9CE8(s32 ctype) {
     Object* hlObject;
-    CameraFunc15Unk_unk74 action;
+    CamTalk_Params camtalkData;
 
-    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM95) {
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMTALK) {
         return;
     }
     
     hlObject = gDLL_2_Camera->vtbl->get_highlighted_object();
     if ((hlObject != NULL) && (hlObject->unk74 != NULL)) {
-        action.coord.x = hlObject->unk74->drawPoint.x;
-        action.coord.y = hlObject->unk74->drawPoint.y;
-        action.coord.z = hlObject->unk74->drawPoint.z;
-        action.unkC = arg0;
-        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM95, 1, 0, sizeof(CameraFunc15Unk_unk74), &action, 60, 0xFF);
+        camtalkData.x = hlObject->unk74->drawPoint.x;
+        camtalkData.y = hlObject->unk74->drawPoint.y;
+        camtalkData.z = hlObject->unk74->drawPoint.z;
+        camtalkData.ctype = ctype;
+        gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMTALK, 1, 0, sizeof(camtalkData), &camtalkData, 60, 0xFF);
     }
 }
 
 // offset: 0x9DD4 | func: 69
 void anim_func_9DD4(void) {
-    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM95) {
+    if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAMTALK) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 3, 0, NULL, 0, 0);
     }
 }

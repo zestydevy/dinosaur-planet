@@ -2,9 +2,9 @@
 #define _DLLS_502_H
 
 #include "PR/ultratypes.h"
+#include "dlls/engine/26_curves.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "sys/curves.h"
 #include "types.h"
 
 typedef struct {

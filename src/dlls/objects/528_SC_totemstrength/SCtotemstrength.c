@@ -236,7 +236,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
             
             func_80023D30(player, 0x401, 0.0f, 0);
             func_80023D30(objData->lightFoot, 0, 1.0f, 0);
-            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMLOCKON, 3, 0, 0);
+            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMSTATIC, 3, 0, 0);
             break;
         case SCTotemStrength_SEQCMD_3_Set_Level_State_3:
             STUBBED_PRINTF("Enable music change\n");

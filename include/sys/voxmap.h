@@ -102,4 +102,6 @@ void func_80008D90(Object* arg0);
 void voxmap_init(void);
 void voxmap_free(void);
 
+s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2);
+
 #endif

@@ -791,7 +791,7 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
     return var_s5;
 }
 
-s32 func_80008BE4(UnkCurvesStruct* arg0, s32 arg1) {
+s32 func_80008BE4(CurvesStruct* arg0, s32 arg1) {
     s32 i;
     s32 j;
     s32 stepCount;

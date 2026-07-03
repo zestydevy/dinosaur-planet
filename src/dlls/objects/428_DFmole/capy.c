@@ -549,8 +549,8 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
     baddie = self->data;
     baddieCurves = baddie->unk3F8;
     capydata = baddie->objdata;
-    temp2 = curves_func_800053B0(baddieCurves, 5.0f / (SQ(baddieCurves->unk68.f[2] - self->srt.transl.f[2]) + SQ(baddieCurves->unk68.f[0] - self->srt.transl.f[0])));
-    if (((temp2 != 0) || (baddieCurves->unk10 != 0)) && (gDLL_26_Curves->vtbl->func_4704(baddieCurves) != 0)) {
+    temp2 = curves_func_800053B0(&baddieCurves->unk0, 5.0f / (SQ(baddieCurves->unk0.unk68.f[2] - self->srt.transl.f[2]) + SQ(baddieCurves->unk0.unk68.f[0] - self->srt.transl.f[0])));
+    if (((temp2 != 0) || (baddieCurves->unk0.unk10 != 0)) && (gDLL_26_Curves->vtbl->func_4704(baddieCurves) != 0)) {
         fsa->animState = CAPY_ASTATE_7_DigWall;
         fsa->enteredAnimState = FALSE;
         fsa->unk33A = 0;
@@ -558,7 +558,7 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
         if (self){} // @fake
         return 0;
     } else {
-        temp4 = (arctan2_f(baddieCurves->unk74, baddieCurves->unk7C) & 0xFFFF);
+        temp4 = (arctan2_f(baddieCurves->unk0.unk74, baddieCurves->unk0.unk7C) & 0xFFFF);
         var_fv0 = (f32) (((temp4 - ((u16)self->srt.yaw & 0xFFFF))) + 0x8000);
         if (var_fv0 > 32768.0f) {
             var_fv0 = -65535.0f + var_fv0;
@@ -577,7 +577,7 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
         }
         fsa->unk278 *= (f32) capydata->unk2 / 100.0f;
         fsa->speed = fsa->unk278;
-        gDLL_18_objfsa->vtbl->func6(self, fsa, baddieCurves->unk68.f[0], baddieCurves->unk68.f[2], 0, 0, 60.0f);
+        gDLL_18_objfsa->vtbl->func6(self, fsa, baddieCurves->unk0.unk68.f[0], baddieCurves->unk0.unk68.f[2], 0, 0, 60.0f);
         fsa->animState = CAPY_ASTATE_8_Walking;
         return 0;
     }
