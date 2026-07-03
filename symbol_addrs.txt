@@ -2172,3 +2172,5 @@ curves_func_80006B28 = 0x80006B28; // type:func
 curves_func_80006CFC = 0x80006CFC; // type:func
 curves_func_80006E04 = 0x80006E04; // type:func
 curves_func_80006E58 = 0x80006E58; // type:func
+isObjectInWorld = 0x8003234C; // type:func
+registerObjectCallback = 0x800325C0; // type:func
