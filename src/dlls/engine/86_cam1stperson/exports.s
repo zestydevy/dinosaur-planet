@@ -4,11 +4,11 @@
 _exports:
 
 # ctor/dtor
-.dword dll_86_ctor
-.dword dll_86_dtor
+.dword cam1stperson_ctor
+.dword cam1stperson_dtor
 
 # export table
-/*0*/ .dword dll_86_func_18
-/*1*/ .dword dll_86_func_4F8
-/*2*/ .dword dll_86_func_A04
-/*3*/ .dword dll_86_func_A64
+/*0*/ .dword cam1stperson_func_18
+/*1*/ .dword cam1stperson_func_4F8
+/*2*/ .dword cam1stperson_func_A04
+/*3*/ .dword cam1stperson_func_A64

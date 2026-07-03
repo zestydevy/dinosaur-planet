@@ -4,11 +4,11 @@
 _exports:
 
 # ctor/dtor
-.dword dll_85_ctor
-.dword dll_85_dtor
+.dword attentioncam_ctor
+.dword attentioncam_dtor
 
 # export table
-/*0*/ .dword dll_85_func_18
-/*1*/ .dword dll_85_func_848
-/*2*/ .dword dll_85_func_AC4
-/*3*/ .dword dll_85_func_B04
+/*0*/ .dword attentioncam_func_18
+/*1*/ .dword attentioncam_func_848
+/*2*/ .dword attentioncam_func_AC4
+/*3*/ .dword attentioncam_func_B04

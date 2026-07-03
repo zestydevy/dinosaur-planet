@@ -32,21 +32,21 @@ typedef struct {
 
 /*0x0*/ static CamAttention* sState;
 
-static void dll_85_func_B14(Cam* cam, Object* arg1);
-static void dll_85_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s16 arg6, s16 arg7, s32* arg8);
-static void dll_85_func_F84(s16* arg0, u16* arg1, s16 arg2, s16 arg3, s16 arg4);
-static void dll_85_func_109C(Cam* cam, f32 arg1, f32 arg2);
-static s32 dll_85_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3);
-static void dll_85_func_1374(Cam* cam, Object* arg1);
+static void attentioncam_func_B14(Cam* cam, Object* arg1);
+static void attentioncam_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s16 arg6, s16 arg7, s32* arg8);
+static void attentioncam_func_F84(s16* arg0, u16* arg1, s16 arg2, s16 arg3, s16 arg4);
+static void attentioncam_func_109C(Cam* cam, f32 arg1, f32 arg2);
+static s32 attentioncam_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3);
+static void attentioncam_func_1374(Cam* cam, Object* arg1);
 
 // offset: 0x0 | ctor
-void dll_85_ctor(void* dll) { }
+void attentioncam_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_85_dtor(void* dll) { }
+void attentioncam_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_85_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
+void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     s16 var_a0;
     s16 sp14C;
     f32 sp148;
@@ -172,7 +172,7 @@ void dll_85_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     sState->unk11C.unk8C = sState->unkB8;
     sState->unk11C.splineFunc = curves_b_spline;
     sState->unk11C.splineConverterFunc = curves_b_spline_converter;
-    dll_85_func_D70(
+    attentioncam_func_D70(
         var_fa0, 
         var_fa1, 
         cam->srt.transl.x, 
@@ -206,7 +206,7 @@ void dll_85_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
 }
 
 // offset: 0x848 | func: 1 | export: 1
-void dll_85_func_848(Cam* cam) {
+void attentioncam_func_848(Cam* cam) {
     u8 sp5F;
     f32 sp58;
     f32 sp54;
@@ -222,7 +222,7 @@ void dll_85_func_848(Cam* cam) {
     }
     sp3C = cam->player;
     sp40.y = cam->srt.transl.y;
-    sp5F = dll_85_func_112C(&sp40.x, &sp40.y, &sp40.z, sp3C);
+    sp5F = attentioncam_func_112C(&sp40.x, &sp40.y, &sp40.z, sp3C);
     cam->srt.transl.x = sp40.x;
     cam->srt.transl.z = sp40.z;
     camnormal = gDLL_2_Camera->vtbl->get_camnormal_module();
@@ -231,30 +231,30 @@ void dll_85_func_848(Cam* cam) {
         sState->unk118 = (f32) (sState->unk118 + gUpdateRateF);
     }
     if (sState->unk118 > 10.0f) {
-        dll_85_func_1374(cam, sp3C);
+        attentioncam_func_1374(cam, sp3C);
         sp5F = 1;
     }
     gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp58, &sp54, &sp50, &sp4C, 0.0f);
-    dll_85_func_109C(cam, sp58, sp50);
+    attentioncam_func_109C(cam, sp58, sp50);
     ((DLL_84_camnormal*)camnormal->dll)->vtbl->func5(cam, sp3C->srt.transl.y, sp4C);
     if (sp5F != 0) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
     }
-    dll_85_func_B14(cam, sp3C);
+    attentioncam_func_B14(cam, sp3C);
 }
 
 // offset: 0xAC4 | func: 2 | export: 2
-void dll_85_func_AC4(Cam* cam) {
+void attentioncam_func_AC4(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0xB04 | func: 3 | export: 3
-void dll_85_func_B04(void* params, s32 arg1) {
+void attentioncam_func_B04(void* params, s32 arg1) {
 
 }
 
 // offset: 0xB14 | func: 4
-static void dll_85_func_B14(Cam* cam, Object* arg1) {
+static void attentioncam_func_B14(Cam* cam, Object* arg1) {
     u16 btns;
     Cam1stPerson_Params cam1stPerson;
     u8 temp_v1;
@@ -277,7 +277,7 @@ static void dll_85_func_B14(Cam* cam, Object* arg1) {
 }
 
 // offset: 0xD70 | func: 5
-static void dll_85_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s16 arg6, s16 arg7, s32* arg8) {
+static void attentioncam_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s16 arg6, s16 arg7, s32* arg8) {
     s16 spC0[20];
     s16 spB8[3];
     s16 var_s2;
@@ -295,7 +295,7 @@ static void dll_85_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f3
         var_s2 = arg6;
     }
     spB4 = 0;
-    dll_85_func_F84(spC0, &spB4, 0, var_s2, arg7);
+    attentioncam_func_F84(spC0, &spB4, 0, var_s2, arg7);
     temp1 = arg2 - arg0;
     temp_fs0 = arg5 - arg3;
     temp2 = arg4 - arg1;
@@ -319,24 +319,24 @@ static void dll_85_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f3
 }
 
 // offset: 0xF84 | func: 6
-static void dll_85_func_F84(s16* arg0, u16* arg1, s16 arg2, s16 arg3, s16 arg4) {
+static void attentioncam_func_F84(s16* arg0, u16* arg1, s16 arg2, s16 arg3, s16 arg4) {
     if (arg3 >= arg4) {
-        dll_85_func_F84(arg0, arg1, arg2, arg3 >> 1, arg4);
-        dll_85_func_F84(arg0, arg1, arg2 + (arg3 >> 1), arg3 >> 1, arg4);
+        attentioncam_func_F84(arg0, arg1, arg2, arg3 >> 1, arg4);
+        attentioncam_func_F84(arg0, arg1, arg2 + (arg3 >> 1), arg3 >> 1, arg4);
         return;
     }
     arg0[(*arg1)++] = arg2;
 }
 
 // offset: 0x109C | func: 7
-static void dll_85_func_109C(Cam* cam, f32 arg1, f32 arg2) {
+static void attentioncam_func_109C(Cam* cam, f32 arg1, f32 arg2) {
     s32 var_v1 = (-arctan2_f(arg1, arg2) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
     CIRCLE_WRAP(var_v1);
     cam->srt.yaw += var_v1;
 }
 
 // offset: 0x112C | func: 8
-static s32 dll_85_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3) {
+static s32 attentioncam_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3) {
     s32 var_v1;
     s32 temp_v0;
     f32 t;
@@ -381,7 +381,7 @@ static s32 dll_85_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3) {
 }
 
 // offset: 0x1374 | func: 9
-static void dll_85_func_1374(Cam* cam, Object* arg1) {
+static void attentioncam_func_1374(Cam* cam, Object* arg1) {
     f32 temp_fv0;
     f32 spD0;
     f32 spCC;

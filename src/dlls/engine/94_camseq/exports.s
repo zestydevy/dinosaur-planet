@@ -4,11 +4,11 @@
 _exports:
 
 # ctor/dtor
-.dword dll_94_ctor
-.dword dll_94_dtor
+.dword camseq_ctor
+.dword camseq_dtor
 
 # export table
-.dword dll_94_setup
-.dword dll_94_control
-.dword dll_94_free
-.dword dll_94_func_7C
+.dword camseq_setup
+.dword camseq_control
+.dword camseq_free
+.dword camseq_func_7C

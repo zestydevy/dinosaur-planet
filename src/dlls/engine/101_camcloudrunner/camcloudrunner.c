@@ -18,13 +18,13 @@ typedef struct {
 /*0x0*/ static CamCloudRunner* sState;
 
 // offset: 0x0 | ctor
-void dll_101_ctor(void* dll) { }
+void camcloudrunner_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_101_dtor(void* dll) { }
+void camcloudrunner_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_101_func_18(Cam* cam, s32 arg1, CamCloudRunner_Params* data) {
+void camcloudrunner_func_18(Cam* cam, s32 arg1, CamCloudRunner_Params* data) {
     s32 _pad;
     s32 _pad2;
     s32 _pad3;
@@ -61,7 +61,7 @@ void dll_101_func_18(Cam* cam, s32 arg1, CamCloudRunner_Params* data) {
 }
 
 // offset: 0x17C | func: 1 | export: 1
-void dll_101_func_17C(Cam* cam) {
+void camcloudrunner_func_17C(Cam* cam) {
     f32 temp_fs0;
     f32 sp30;
     f32 sp2C;
@@ -84,11 +84,11 @@ void dll_101_func_17C(Cam* cam) {
 }
 
 // offset: 0x2C4 | func: 2 | export: 2
-void dll_101_func_2C4(Cam* cam) {
+void camcloudrunner_func_2C4(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0x304 | func: 3 | export: 3
-void dll_101_func_304(void* arg0, s32 arg1) {
+void camcloudrunner_func_304(void* arg0, s32 arg1) {
 
 }

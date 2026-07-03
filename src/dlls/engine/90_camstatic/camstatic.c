@@ -36,18 +36,18 @@ typedef struct {
 
 /*0x0*/ static CamStatic* sState;
 
-static void dll_90_func_5D4(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5);
-static s32 dll_90_func_798(Cam* cam, u8 arg1);
-static Object* dll_90_func_C04(f32 x, f32 y, f32 z, s32 arg3, s32 controlNo);
+static void camstatic_func_5D4(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5);
+static s32 camstatic_func_798(Cam* cam, u8 arg1);
+static Object* camstatic_func_C04(f32 x, f32 y, f32 z, s32 arg3, s32 controlNo);
 
 // offset: 0x0 | ctor
-void dll_90_ctor(void* dll) { }
+void camstatic_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_90_dtor(void* dll) { }
+void camstatic_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
+void camstatic_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
     Object* sp4C;
     DLL715_Setup* sp48;
     f32 sp44;
@@ -63,7 +63,7 @@ void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
     sState = mmAlloc(sizeof(CamStatic), ALLOC_TAG_CAM_COL, ALLOC_NAME("camstatic"));
     sState->unkF4 = 1;
     sState->unkF5 = 0;
-    sp4C = dll_90_func_C04(temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, data->unk0, 0x12);
+    sp4C = camstatic_func_C04(temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, data->unk0, 0x12);
     if (sp4C == NULL) {
         sState->unkF5 = 1;
         return;
@@ -90,7 +90,7 @@ void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
     }
     var_fv0 = (f32) sp48->unk1A;
     if (data->unk4 == 0) {
-        dll_90_func_5D4(cam, &sp4C->globalPosition, sp36, var_a3, var_v0, var_fv0);
+        camstatic_func_5D4(cam, &sp4C->globalPosition, sp36, var_a3, var_v0, var_fv0);
         return;
     }
     cam->srt.transl.x = sp4C->globalPosition.x;
@@ -103,7 +103,7 @@ void dll_90_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
 }
 
 // offset: 0x278 | func: 1 | export: 1
-void dll_90_func_278(Cam* cam) {
+void camstatic_func_278(Cam* cam) {
     DLL715_Setup* sp4C;
     s32 var_v0;
     s32 var_v1;
@@ -133,7 +133,7 @@ void dll_90_func_278(Cam* cam) {
     cam->srt.transl.z = sState->unk0->globalPosition.z;
     cam->fov = (f32) sp4C->unk1A;
     if (sState->unkF4 == 0) {
-        temp_v0 = dll_90_func_798(cam, sp4C->unk1B);
+        temp_v0 = camstatic_func_798(cam, sp4C->unk1B);
         if (temp_v0 != 0) {
             sState->unkF4 = 1;
         }
@@ -157,17 +157,17 @@ void dll_90_func_278(Cam* cam) {
 }
 
 // offset: 0x584 | func: 2 | export: 2
-void dll_90_func_584(Cam* cam) {
+void camstatic_func_584(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0x5C4 | func: 3 | export: 3
-void dll_90_func_5C4(void* arg0, s32 arg1) {
+void camstatic_func_5C4(void* arg0, s32 arg1) {
 
 }
 
 // offset: 0x5D4 | func: 4
-static void dll_90_func_5D4(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) {
+static void camstatic_func_5D4(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) {
     f32 temp_fa1;
     f32 temp_fv0;
     f32 temp_fv1;
@@ -196,7 +196,7 @@ static void dll_90_func_5D4(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4,
 }
 
 // offset: 0x798 | func: 5
-static s32 dll_90_func_798(Cam* cam, u8 arg1) {
+static s32 camstatic_func_798(Cam* cam, u8 arg1) {
     f32 var_fs0;
     f32 var_fv1;
 
@@ -257,7 +257,7 @@ static s32 dll_90_func_798(Cam* cam, u8 arg1) {
 }
 
 // offset: 0xC04 | func: 6
-static Object* dll_90_func_C04(f32 x, f32 y, f32 z, s32 arg3, s32 controlNo) {
+static Object* camstatic_func_C04(f32 x, f32 y, f32 z, s32 arg3, s32 controlNo) {
     Object** staticCams;
     s32 numObjs;
     Object* closestStaticCam;

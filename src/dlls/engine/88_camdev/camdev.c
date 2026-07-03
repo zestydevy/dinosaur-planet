@@ -11,19 +11,19 @@ typedef struct {
 /*0x0*/ static CamDev* sState;
 
 // offset: 0x0 | ctor
-void dll_88_ctor(void* dll) { }
+void camdev_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_88_dtor(void* dll) { }
+void camdev_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_88_func_18(Cam* cam, s32 arg1, void* data) {
+void camdev_func_18(Cam* cam, s32 arg1, void* data) {
     sState = mmAlloc(sizeof(CamDev), ALLOC_TAG_CAM_COL, ALLOC_NAME("camdev"));
     sState->zoom = 50.0f;
 }
 
 // offset: 0x78 | func: 1 | export: 1
-void dll_88_func_78(Cam* cam) {
+void camdev_func_78(Cam* cam) {
     u16 sp56;
     f32 temp_fa0;
     f32 temp_ft4;
@@ -85,11 +85,11 @@ void dll_88_func_78(Cam* cam) {
 }
 
 // offset: 0x340 | func: 2 | export: 2
-void dll_88_func_340(Cam* cam) {
+void camdev_func_340(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0x380 | func: 3 | export: 3
-void dll_88_func_380(void* arg0, s32 arg1) {
+void camdev_func_380(void* arg0, s32 arg1) {
 
 }

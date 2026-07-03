@@ -38,19 +38,19 @@ typedef struct {
 
 /*0x0*/ static Cam1stPerson* sState;
 
-static s32 dll_86_func_A74(Cam* cam, Object* arg1);
-static void dll_86_func_D90(Cam* cam);
-static void dll_86_func_1008(Cam* cam);
-static void dll_86_func_1524(Cam* cam, Object* arg1);
+static s32 cam1stperson_func_A74(Cam* cam, Object* arg1);
+static void cam1stperson_func_D90(Cam* cam);
+static void cam1stperson_func_1008(Cam* cam);
+static void cam1stperson_func_1524(Cam* cam, Object* arg1);
 
 // offset: 0x0 | ctor
-void dll_86_ctor(void* dll) { }
+void cam1stperson_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_86_dtor(void* dll) { }
+void cam1stperson_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_86_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
+void cam1stperson_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
     f32 sp54;
     f32 sp50;
     f32 temp_fv0;
@@ -144,7 +144,7 @@ void dll_86_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
 }
 
 // offset: 0x4F8 | func: 1 | export: 1
-void dll_86_func_4F8(Cam* cam) {
+void cam1stperson_func_4F8(Cam* cam) {
     u16 sp56;
     s32 temp_v0;
     f32 temp_fa0;
@@ -159,7 +159,7 @@ void dll_86_func_4F8(Cam* cam) {
     sp56 = joy_get_pressed(0);
     switch (sState->unk120) {
     case 0:
-        sState->unk120 = dll_86_func_A74(cam, cam->player);
+        sState->unk120 = cam1stperson_func_A74(cam, cam->player);
         cam->unk118 = 1;
         break;
     case 1:
@@ -172,9 +172,9 @@ void dll_86_func_4F8(Cam* cam) {
         cam->unk118 = 1;
         break;
     case 2:
-        dll_86_func_D90(cam);
+        cam1stperson_func_D90(cam);
         if (sp56 != 0) {
-            dll_86_func_1008(cam);
+            cam1stperson_func_1008(cam);
             sState->unk120 = 3;
         }
         cam->unk118 = 0;
@@ -193,7 +193,7 @@ void dll_86_func_4F8(Cam* cam) {
         cam->srt.yaw = (s16) sState->unk78.unk68.x;
         cam->srt.pitch = (s16) sState->unk78.unk68.y;
         if (temp_v0 != 0) {
-            dll_86_func_1524(cam, cam->player);
+            cam1stperson_func_1524(cam, cam->player);
             sState->unk120 = 4;
         }
         cam->unk118 = 1;
@@ -226,7 +226,7 @@ void dll_86_func_4F8(Cam* cam) {
         break;
     }
     if (func_80025F40(cam->player, NULL, NULL, NULL) != 0) {
-        dll_86_func_1008(cam);
+        cam1stperson_func_1008(cam);
         cam->srt.transl.x = sState->unk10[1];
         cam->srt.transl.y = sState->unk20[1];
         cam->srt.transl.z = sState->unk30[1];
@@ -235,19 +235,19 @@ void dll_86_func_4F8(Cam* cam) {
 }
 
 // offset: 0xA04 | func: 2 | export: 2
-void dll_86_func_A04(Cam* cam) {
+void cam1stperson_func_A04(Cam* cam) {
     cam->player->srt.flags &= ~OBJFLAG_SKIP_MODEL_DL;
     cam->player->opacity = 0xFF;
     mmFree(sState);
 }
 
 // offset: 0xA64 | func: 3 | export: 3
-void dll_86_func_A64(void* arg0, s32 arg1) {
+void cam1stperson_func_A64(void* arg0, s32 arg1) {
 
 }
 
 // offset: 0xA74 | func: 4
-s32 dll_86_func_A74(Cam* cam, Object* arg1) {
+s32 cam1stperson_func_A74(Cam* cam, Object* arg1) {
     s32 sp2C;
     s16 sp2A;
     f32 temp_fv0;
@@ -298,7 +298,7 @@ s32 dll_86_func_A74(Cam* cam, Object* arg1) {
 }
 
 // offset: 0xD90 | func: 5
-void dll_86_func_D90(Cam* cam) {
+void cam1stperson_func_D90(Cam* cam) {
     s8 sp27;
     s8 var_a0;
     s16 var_v0;
@@ -334,7 +334,7 @@ void dll_86_func_D90(Cam* cam) {
 }
 
 // offset: 0x1008 | func: 6
-void dll_86_func_1008(Cam* cam) {
+void cam1stperson_func_1008(Cam* cam) {
     f32 temp_fv0;
     f32 spF8;
     f32 temp_ft4;
@@ -424,7 +424,7 @@ void dll_86_func_1008(Cam* cam) {
 }
 
 // offset: 0x1524 | func: 7
-void dll_86_func_1524(Cam* cam, Object* arg1) {
+void cam1stperson_func_1524(Cam* cam, Object* arg1) {
     sState->unk78.unk84 = sState->unk10;
     sState->unk78.unk88 = sState->unk20;
     sState->unk78.unk8C = sState->unk30;

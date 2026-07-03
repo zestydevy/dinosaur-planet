@@ -1,10 +1,10 @@
 .text = 0x0:
-dll_102_ctor = 0x0;
-dll_102_dtor = 0xC;
-dll_102_func_18 = 0x18;
-dll_102_func_138 = 0x138;
-dll_102_func_61C = 0x61C;
-dll_102_func_65C = 0x65C;
+camdrakor_ctor = 0x0;
+camdrakor_dtor = 0xC;
+camdrakor_func_18 = 0x18;
+camdrakor_func_138 = 0x138;
+camdrakor_func_61C = 0x61C;
+camdrakor_func_65C = 0x65C;
 
 .rodata = 0x6BC:
 

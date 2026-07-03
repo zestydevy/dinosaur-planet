@@ -40,21 +40,21 @@ typedef struct {
 
 /*0x0*/ static CamPath* sState;
 
-static void dll_89_func_E40(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5);
-static s32 dll_89_func_1004(Cam* cam, u8 arg1);
-static f32 dll_89_func_14D8(f32, f32, f32, s32*);
-static void dll_89_func_17A0(CurveSetup* arg0, s32* arg1, s32 arg2);
-static void dll_89_func_19AC(s32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, f32* arg6, f32* arg7);
-static void dll_89_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
+static void campath_func_E40(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5);
+static s32 campath_func_1004(Cam* cam, u8 arg1);
+static f32 campath_func_14D8(f32, f32, f32, s32*);
+static void campath_func_17A0(CurveSetup* arg0, s32* arg1, s32 arg2);
+static void campath_func_19AC(s32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, f32* arg6, f32* arg7);
+static void campath_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
 
 // offset: 0x0 | ctor
-void dll_89_ctor(void* dll) { }
+void campath_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_89_dtor(void* dll) { }
+void campath_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_89_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
+void campath_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
     Object* temp_s0;
     f32 sp140;
     f32 sp13C;
@@ -105,13 +105,13 @@ void dll_89_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
         return;
     }
     */
-    dll_89_func_1F9C(&sState->unkC, &sState->unk8, temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, sState->unk4);
+    campath_func_1F9C(&sState->unkC, &sState->unk8, temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, sState->unk4);
     sp118 = gDLL_26_Curves->vtbl->func_39C(sState->unk8);
     sp114 = gDLL_26_Curves->vtbl->func_39C(sState->unkC);
-    dll_89_func_17A0(sp118, spE8, sState->unk4);
-    dll_89_func_17A0(sp114, spF8, sState->unk4);
-    dll_89_func_19AC(spE8, sp90, sp80, sp70, spD0, spC0, spB0, spA0);
-    var_fs0 = dll_89_func_14D8(temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, spF8);
+    campath_func_17A0(sp118, spE8, sState->unk4);
+    campath_func_17A0(sp114, spF8, sState->unk4);
+    campath_func_19AC(spE8, sp90, sp80, sp70, spD0, spC0, spB0, spA0);
+    var_fs0 = campath_func_14D8(temp_s0->srt.transl.x, temp_s0->srt.transl.y, temp_s0->srt.transl.z, spF8);
     if (var_fs0 < 0.0f) {
         var_fs0 = 0.0f;
     } else if (var_fs0 > 1.0f) {
@@ -144,7 +144,7 @@ void dll_89_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
     sp108.y = sp13C;
     sp108.z = sp138;
     if ((data->unk4 == 0) && (arg1 != 3)) {
-        dll_89_func_E40(cam, &sp108, sp126, var_s0, sp122, temp_fv0_3);
+        campath_func_E40(cam, &sp108, sp126, var_s0, sp122, temp_fv0_3);
     } else {
         cam->srt.transl.x = sp140;
         cam->srt.transl.y = sp13C;
@@ -158,7 +158,7 @@ void dll_89_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
 }
 
 // offset: 0x588 | func: 1 | export: 1
-void dll_89_func_588(Cam* cam) {
+void campath_func_588(Cam* cam) {
     f32 sp104;
     f32 sp100;
     f32 spFC;
@@ -187,19 +187,19 @@ void dll_89_func_588(Cam* cam) {
     player = cam->player;
     btns = joy_get_pressed(0);
     spD4 = gDLL_26_Curves->vtbl->func_39C(sState->unkC);
-    dll_89_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unk8), spD8, sState->unk4);
-    dll_89_func_17A0(spD4, spE8, sState->unk4);
-    dll_89_func_19AC(spD8, spB8, spA8, sp98, sp88, sp78, sp68, sp58);
-    sp104 = dll_89_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
+    campath_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unk8), spD8, sState->unk4);
+    campath_func_17A0(spD4, spE8, sState->unk4);
+    campath_func_19AC(spD8, spB8, spA8, sp98, sp88, sp78, sp68, sp58);
+    sp104 = campath_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
     if (sp104 < 0.0f) {
         if (spE8[0] >= 0) {
             sState->unkC = spE8[0];
-            dll_89_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unkC), spE8, sState->unk4);
+            campath_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unkC), spE8, sState->unk4);
             if (spD8[0] >= 0) {
                 sState->unk8 = spD8[0];
-                dll_89_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unk8), spD8, sState->unk4);
-                dll_89_func_19AC(spD8, spB8, spA8, sp98, sp88, sp78, sp68, sp58);
-                sp104 = dll_89_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
+                campath_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unk8), spD8, sState->unk4);
+                campath_func_19AC(spD8, spB8, spA8, sp98, sp88, sp78, sp68, sp58);
+                sp104 = campath_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
                 sState->unk58 = (f32) (sState->unk58 + 1.0f);
             } else {
                 sp104 = 0.0f;
@@ -210,12 +210,12 @@ void dll_89_func_588(Cam* cam) {
     } else if (sp104 > 1.0f) {
         if ((spE8[2] >= 0) && (spE8[3] >= 0)) {
             sState->unkC = spE8[2];
-            dll_89_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unkC), spE8, sState->unk4);
+            campath_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unkC), spE8, sState->unk4);
             if ((spD8[2] >= 0) && (spD8[3] >= 0)) {
                 sState->unk8 = spD8[2];
-                dll_89_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unk8), spD8, sState->unk4);
-                dll_89_func_19AC(spD8, spB8, spA8, sp98, sp88, sp78, sp68, sp58);
-                sp104 = dll_89_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
+                campath_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unk8), spD8, sState->unk4);
+                campath_func_19AC(spD8, spB8, spA8, sp98, sp88, sp78, sp68, sp58);
+                sp104 = campath_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
                 sState->unk58 = (f32) (sState->unk58 - 1.0f);
             } else {
                 sp104 = 1.0f;
@@ -240,7 +240,7 @@ void dll_89_func_588(Cam* cam) {
         cam->srt.roll = (s16) curves_catmull_rom(sp68, sp104, NULL);
     }
     cam->fov = curves_b_spline(sp58, sp104, NULL);
-    if ((sState->unk64 == 0) && (dll_89_func_1004(cam, spCB) != 0)) {
+    if ((sState->unk64 == 0) && (campath_func_1004(cam, spCB) != 0)) {
         sState->unk64 = 1;
     }
     sp100 = cam->srt.transl.x - player->srt.transl.x;
@@ -278,17 +278,17 @@ void dll_89_func_588(Cam* cam) {
 }
 
 // offset: 0xDF0 | func: 2 | export: 2
-void dll_89_func_DF0(Cam* cam) {
+void campath_func_DF0(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0xE30 | func: 3 | export: 3
-void dll_89_func_E30(void* arg0, s32 arg1) {
+void campath_func_E30(void* arg0, s32 arg1) {
 
 }
 
 // offset: 0xE40 | func: 4
-static void dll_89_func_E40(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) {
+static void campath_func_E40(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4, f32 arg5) {
     f32 temp_fa1;
     f32 temp_fv0;
     f32 temp_fv1;
@@ -317,7 +317,7 @@ static void dll_89_func_E40(Cam* cam, Vec3f* arg1, s32 arg2, s32 arg3, s32 arg4,
 }
 
 // offset: 0x1004 | func: 5
-static s32 dll_89_func_1004(Cam* cam, u8 arg1) {
+static s32 campath_func_1004(Cam* cam, u8 arg1) {
     f32 var_fs0;
     f32 var_fv1;
 
@@ -388,7 +388,7 @@ static s32 dll_89_func_1004(Cam* cam, u8 arg1) {
 }
 
 // offset: 0x14D8 | func: 6
-static f32 dll_89_func_14D8(f32 arg0, f32 arg1, f32 arg2, s32* arg3) {
+static f32 campath_func_14D8(f32 arg0, f32 arg1, f32 arg2, s32* arg3) {
     f32 sp8C;
     f32 sp88;
     f32 var_f18;
@@ -454,7 +454,7 @@ static f32 dll_89_func_14D8(f32 arg0, f32 arg1, f32 arg2, s32* arg3) {
 }
 
 // offset: 0x17A0 | func: 7
-static void dll_89_func_17A0(CurveSetup* arg0, s32* arg1, s32 arg2) {
+static void campath_func_17A0(CurveSetup* arg0, s32* arg1, s32 arg2) {
     s32 i;
     CurveSetup* sp38;
     CurveSetup* temp_v0;
@@ -504,7 +504,7 @@ static void dll_89_func_17A0(CurveSetup* arg0, s32* arg1, s32 arg2) {
 }
 
 // offset: 0x19AC | func: 8
-static void dll_89_func_19AC(s32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, f32* arg6, f32* arg7) {
+static void campath_func_19AC(s32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, f32* arg6, f32* arg7) {
     f32* var_v1;
     s32 var_a1;
     s32 var_s0;
@@ -576,7 +576,7 @@ static void dll_89_func_19AC(s32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* ar
 }
 
 // offset: 0x1E5C | func: 9
-static CurveSetup* dll_89_func_1E5C(CurveSetup* arg0, s32* arg1, s32 arg2) {
+static CurveSetup* campath_func_1E5C(CurveSetup* arg0, s32* arg1, s32 arg2) {
     CurveSetup* temp_v0_2;
     s32 temp_a0;
     s32 var_s0;
@@ -608,7 +608,7 @@ static CurveSetup* dll_89_func_1E5C(CurveSetup* arg0, s32* arg1, s32 arg2) {
 }
 
 // offset: 0x1F9C | func: 10
-static void dll_89_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
+static void campath_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
     CurveSetup* temp_s1;
     CurveSetup* temp_s2;
     CurveSetup* temp_v0;
@@ -651,8 +651,8 @@ static void dll_89_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4,
     }
     do {
         var_s0 = 1;
-        dll_89_func_17A0(gDLL_26_Curves->vtbl->func_39C(*arg0), sp50, arg5);
-        temp_fv0 = dll_89_func_14D8(arg2, arg3, arg4, sp50);
+        campath_func_17A0(gDLL_26_Curves->vtbl->func_39C(*arg0), sp50, arg5);
+        temp_fv0 = campath_func_14D8(arg2, arg3, arg4, sp50);
         if (temp_fv0 < 0.0f) {
             if (sp50[0] >= 0) {
                 *arg0 = sp50[0];
@@ -665,8 +665,8 @@ static void dll_89_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4,
             }
         }
     } while (var_s0 == 0);
-    dll_89_func_1E5C(gDLL_26_Curves->vtbl->func_39C(*arg0), &sp68, arg5);
-    *arg1 = dll_89_func_1E5C(gDLL_26_Curves->vtbl->func_39C(*arg1), &sp64, arg5)->uID;
+    campath_func_1E5C(gDLL_26_Curves->vtbl->func_39C(*arg0), &sp68, arg5);
+    *arg1 = campath_func_1E5C(gDLL_26_Curves->vtbl->func_39C(*arg1), &sp64, arg5)->uID;
     var_s4 = 0;
     while (var_s4 < sp68) {
         temp_s2 = gDLL_26_Curves->vtbl->func_39C(*arg1);

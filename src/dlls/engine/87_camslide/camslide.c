@@ -18,19 +18,19 @@ typedef struct {
 
 /*0x0*/ static CamSlide* sState;
 
-static void dll_87_func_41C(Cam* cam, Object* arg1);
-static void dll_87_func_4E4(Cam* cam, Object* arg1);
-static void dll_87_func_558(Cam* cam, f32 arg1, f32 arg2);
-static void dll_87_func_5E8(Cam* cam, f32 arg1, f32 arg2);
+static void camslide_func_41C(Cam* cam, Object* arg1);
+static void camslide_func_4E4(Cam* cam, Object* arg1);
+static void camslide_func_558(Cam* cam, f32 arg1, f32 arg2);
+static void camslide_func_5E8(Cam* cam, f32 arg1, f32 arg2);
 
 // offset: 0x0 | ctor
-void dll_87_ctor(void* dll) { }
+void camslide_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_87_dtor(void* dll) { }
+void camslide_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_87_func_18(Cam* cam, s32 arg1, void* data) {
+void camslide_func_18(Cam* cam, s32 arg1, void* data) {
     sState = mmAlloc(sizeof(CamSlide), ALLOC_TAG_CAM_COL, ALLOC_NAME("camslide"));
     sState->unk18 = cam->fov;
     sState->unk0 = 80.0f;
@@ -38,7 +38,7 @@ void dll_87_func_18(Cam* cam, s32 arg1, void* data) {
 }
 
 // offset: 0x98 | func: 1 | export: 1
-void dll_87_func_98(Cam* cam) {
+void camslide_func_98(Cam* cam) {
     Object* sp64;
     f32 sp60;
     f32 sp5C;
@@ -76,11 +76,11 @@ void dll_87_func_98(Cam* cam) {
             sState->unk1C = 0x5B0;
             cam->fov = sState->unk0;
         }
-        dll_87_func_41C(cam, sp64);
-        dll_87_func_4E4(cam, sp64);
+        camslide_func_41C(cam, sp64);
+        camslide_func_4E4(cam, sp64);
         gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp60, &sp5C, &sp58, &sp54, 0.0f);
-        dll_87_func_558(cam, sp60, sp58);
-        dll_87_func_5E8(cam, sp5C, sp54);
+        camslide_func_558(cam, sp60, sp58);
+        camslide_func_5E8(cam, sp5C, sp54);
         ((DLL_84_camnormal*)sp40->dll)->vtbl->func8(cam, 2, 0, &sp38, &sp34);
         if (cam->srt.transl.y < sp38 + 5.0f) {
             cam->srt.transl.y = sp38 + 5.0f;
@@ -89,17 +89,17 @@ void dll_87_func_98(Cam* cam) {
 }
 
 // offset: 0x3CC | func: 2 | export: 2
-void dll_87_func_3CC(Cam* cam) {
+void camslide_func_3CC(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0x40C | func: 3 | export: 3
-void dll_87_func_40C(void* arg0, s32 arg1) {
+void camslide_func_40C(void* arg0, s32 arg1) {
 
 }
 
 // offset: 0x41C | func: 4
-static void dll_87_func_41C(Cam* cam, Object* arg1) {
+static void camslide_func_41C(Cam* cam, Object* arg1) {
     s32 _pad;
     f32 temp_fv1;
     f32 temp;
@@ -124,7 +124,7 @@ static void dll_87_func_41C(Cam* cam, Object* arg1) {
 }
 
 // offset: 0x4E4 | func: 5
-static void dll_87_func_4E4(Cam* cam, Object* arg1) {
+static void camslide_func_4E4(Cam* cam, Object* arg1) {
     f32 temp_fa0;
     f32 temp_fv0;
     f32 var_fv1;
@@ -142,14 +142,14 @@ static void dll_87_func_4E4(Cam* cam, Object* arg1) {
 }
 
 // offset: 0x558 | func: 6
-static void dll_87_func_558(Cam* cam, f32 arg1, f32 arg2) {
+static void camslide_func_558(Cam* cam, f32 arg1, f32 arg2) {
     s32 var_v1 = (-arctan2_f(arg1, arg2) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
     CIRCLE_WRAP(var_v1);
     cam->srt.yaw += var_v1;
 }
 
 // offset: 0x5E8 | func: 7
-static void dll_87_func_5E8(Cam* cam, f32 arg1, f32 arg2) {
+static void camslide_func_5E8(Cam* cam, f32 arg1, f32 arg2) {
     s32 var_v1 = (arctan2_f(arg1, 100.0f) - sState->unk1C) - (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     cam->srt.pitch += ((s32) (var_v1 * gUpdateRate) >> 3);

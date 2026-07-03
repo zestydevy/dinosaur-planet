@@ -4,11 +4,11 @@
 _exports:
 
 # ctor/dtor
-.dword dll_102_ctor
-.dword dll_102_dtor
+.dword camdrakor_ctor
+.dword camdrakor_dtor
 
 # export table
-/*0*/ .dword dll_102_func_18
-/*1*/ .dword dll_102_func_138
-/*2*/ .dword dll_102_func_61C
-/*3*/ .dword dll_102_func_65C
+/*0*/ .dword camdrakor_func_18
+/*1*/ .dword camdrakor_func_138
+/*2*/ .dword camdrakor_func_61C
+/*3*/ .dword camdrakor_func_65C

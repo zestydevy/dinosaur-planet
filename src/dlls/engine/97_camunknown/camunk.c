@@ -13,19 +13,19 @@ typedef struct {
 /*0x0*/ static UnkCam* sState;
 
 // offset: 0x0 | ctor
-void dll_97_ctor(void* dll) { }
+void camunk_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_97_dtor(void* dll) { }
+void camunk_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_97_func_18(Cam* cam, s32 arg1, void* data) {
+void camunk_func_18(Cam* cam, s32 arg1, void* data) {
     sState = mmAlloc(sizeof(UnkCam), ALLOC_TAG_CAM_COL, NULL);
     sState->unk4 = 0.0f;
 }
 
 // offset: 0x74 | func: 1 | export: 1
-void dll_97_func_74(Cam* cam) {
+void camunk_func_74(Cam* cam) {
     Object* sp4C;
     f32 sp48;
     f32 pad_sp44;
@@ -62,11 +62,11 @@ void dll_97_func_74(Cam* cam) {
 }
 
 // offset: 0x250 | func: 2 | export: 2
-void dll_97_func_250(Cam* cam) {
+void camunk_func_250(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0x290 | func: 3 | export: 3
-void dll_97_func_290(void* arg0, s32 arg1) {
+void camunk_func_290(void* arg0, s32 arg1) {
 
 }

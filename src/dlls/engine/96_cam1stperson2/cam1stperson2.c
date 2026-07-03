@@ -33,19 +33,19 @@ typedef struct {
 /*0x0*/ static Cam1stPerson2* sState;
 /*0x4*/ static s8 bss_4;
 
-static s32 dll_96_func_9C4(Cam* cam, Object* arg1);
-static void dll_96_func_CE0(Cam* cam);
-static void dll_96_func_E60(Cam* cam);
-static void dll_96_func_137C(Cam* cam, Object* arg1);
+static s32 cam1stperson2_func_9C4(Cam* cam, Object* arg1);
+static void cam1stperson2_func_CE0(Cam* cam);
+static void cam1stperson2_func_E60(Cam* cam);
+static void cam1stperson2_func_137C(Cam* cam, Object* arg1);
 
 // offset: 0x0 | ctor
-void dll_96_ctor(void* dll) { }
+void cam1stperson2_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_96_dtor(void* dll) { }
+void cam1stperson2_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_96_func_18(Cam* cam, s32 arg1, void* data) {
+void cam1stperson2_func_18(Cam* cam, s32 arg1, void* data) {
     f32 sp6C;
     f32 sp68;
     f32 temp;
@@ -132,7 +132,7 @@ void dll_96_func_18(Cam* cam, s32 arg1, void* data) {
 }
 
 // offset: 0x4BC | func: 1 | export: 1
-void dll_96_func_4BC(Cam* cam) {
+void cam1stperson2_func_4BC(Cam* cam) {
     Object* temp_v0_4;
     f32 temp_fa0;
     f32 temp_fv0;
@@ -146,7 +146,7 @@ void dll_96_func_4BC(Cam* cam) {
 
     switch (sState->unk11C) {
     case 0:
-        sState->unk11C = dll_96_func_9C4(cam, cam->player);
+        sState->unk11C = cam1stperson2_func_9C4(cam, cam->player);
         cam->unk118 = 1;
         break;
     case 1:
@@ -159,9 +159,9 @@ void dll_96_func_4BC(Cam* cam) {
         cam->unk118 = 1;
         break;
     case 2:
-        dll_96_func_CE0(cam);
+        cam1stperson2_func_CE0(cam);
         if (bss_4 != 0) {
-            dll_96_func_E60(cam);
+            cam1stperson2_func_E60(cam);
             sState->unk11C = 3;
         }
         cam->unk118 = 0;
@@ -171,7 +171,7 @@ void dll_96_func_4BC(Cam* cam) {
         cam->srt.yaw = (s16) sState->unk78.unk68.x;
         cam->srt.pitch = (s16) sState->unk78.unk68.y;
         if (temp_v0 != 0) {
-            dll_96_func_137C(cam, cam->player);
+            cam1stperson2_func_137C(cam, cam->player);
             sState->unk11C = 4;
         }
         cam->unk118 = 0;
@@ -226,20 +226,20 @@ void dll_96_func_4BC(Cam* cam) {
 }
 
 // offset: 0x93C | func: 2 | export: 2
-void dll_96_func_93C(Cam* cam) {
+void cam1stperson2_func_93C(Cam* cam) {
     cam->player->srt.flags &= ~OBJFLAG_INVISIBLE;
     mmFree(sState);
 }
 
 // offset: 0x990 | func: 3 | export: 3
-void dll_96_func_990(Cam1stPerson2_Params* arg0, s32 arg1) {
+void cam1stperson2_func_990(Cam1stPerson2_Params* arg0, s32 arg1) {
     if ((arg1 == 1) && (arg0->unk0 == 1)) {
         bss_4 = 1;
     }
 }
 
 // offset: 0x9C4 | func: 4
-static s32 dll_96_func_9C4(Cam* cam, Object* arg1) {
+static s32 cam1stperson2_func_9C4(Cam* cam, Object* arg1) {
     s32 sp2C;
     s16 temp_a0;
     f32 temp_fv0;
@@ -290,7 +290,7 @@ static s32 dll_96_func_9C4(Cam* cam, Object* arg1) {
 }
 
 // offset: 0xCE0 | func: 5
-static void dll_96_func_CE0(Cam* cam) {
+static void cam1stperson2_func_CE0(Cam* cam) {
     s8 sp27;
     s8 var_a0;
     Object* temp_v0_2;
@@ -319,7 +319,7 @@ static void dll_96_func_CE0(Cam* cam) {
 }
 
 // offset: 0xE60 | func: 6
-static void dll_96_func_E60(Cam* cam) {
+static void cam1stperson2_func_E60(Cam* cam) {
     f32 temp_ft4;
     f32 spF8;
     f32 temp_fv0;
@@ -409,7 +409,7 @@ static void dll_96_func_E60(Cam* cam) {
 }
 
 // offset: 0x137C | func: 7
-static void dll_96_func_137C(Cam* cam, Object* arg1) {
+static void cam1stperson2_func_137C(Cam* cam, Object* arg1) {
     sState->unk78.unk84 = sState->unk10;
     sState->unk78.unk88 = sState->unk20;
     sState->unk78.unk8C = sState->unk30;

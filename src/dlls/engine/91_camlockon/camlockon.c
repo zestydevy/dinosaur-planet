@@ -25,18 +25,18 @@ typedef struct {
 /*0x0*/ static CamLockOn* sState;
 /*0x4*/ static s32 bss_4;
 
-static void dll_91_func_BC0(Cam* cam);
-static void dll_91_func_C58(Cam* cam, f32 arg1, f32 arg2, f32 arg3);
-static void dll_91_func_D34(Cam* cam, f32*, f32*, f32*, f32*);
+static void camlockon_func_BC0(Cam* cam);
+static void camlockon_func_C58(Cam* cam, f32 arg1, f32 arg2, f32 arg3);
+static void camlockon_func_D34(Cam* cam, f32*, f32*, f32*, f32*);
 
 // offset: 0x0 | ctor
-void dll_91_ctor(void* dll) { }
+void camlockon_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_91_dtor(void* dll) { }
+void camlockon_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_91_func_18(Cam* cam, s32 arg1, CamLockOn_Params* data) {
+void camlockon_func_18(Cam* cam, s32 arg1, CamLockOn_Params* data) {
     Object* target;
     Object* sp20;
     f32 xDist;
@@ -77,7 +77,7 @@ void dll_91_func_18(Cam* cam, s32 arg1, CamLockOn_Params* data) {
 }
 
 // offset: 0x1B8 | func: 1 | export: 1
-void dll_91_func_1B8(Cam* cam) {
+void camlockon_func_1B8(Cam* cam) {
     Object* sp94;
     f32 sp90;
     f32 sp8C;
@@ -105,17 +105,17 @@ void dll_91_func_1B8(Cam* cam) {
     f32 pad_sp34;
 
     if (sState->unk12 != 0) {
-        dll_91_func_BC0(cam);
+        camlockon_func_BC0(cam);
         return;
     }
     sp3C = cam->player;
     if ((sp3C->controlNo == OBJCONTROL_Player) && (((DLL_210_Player*)sp3C->dll)->vtbl->func60(sp3C) == 0)) {
-        dll_91_func_BC0(cam);
+        camlockon_func_BC0(cam);
         return;
     }
     sp94 = cam->target;
     if ((sp94 == NULL) || (sp94->stateFlags & 0x40) || (sp94->unkAF & 0x28)) {
-        dll_91_func_BC0(cam);
+        camlockon_func_BC0(cam);
         return;
     }
     sp44 = sp94->unk74;
@@ -136,7 +136,7 @@ void dll_91_func_1B8(Cam* cam) {
         btns = 0;
         sState->unk10 += gUpdateRate;
     }
-    if (!(btns & Z_TRIG) || (dll_91_func_BC0(cam), ((cam->targetFlags & 2) != 0))) {
+    if (!(btns & Z_TRIG) || (camlockon_func_BC0(cam), ((cam->targetFlags & 2) != 0))) {
         sp5C = sp3C->globalPosition.y + 20.0f;
         if ((sp94->controlNo == OBJCONTROL_Baddie) || (sp94->controlNo == OBJCONTROL_KTRex)) {
             var_fv0 = gDLL_33_BaddieControl->vtbl->func8(sp94);
@@ -144,7 +144,7 @@ void dll_91_func_1B8(Cam* cam) {
                 sp5C = sp3C->globalPosition.y + var_fv0;
             }
             if (sp94->def->numLockdata >= 2) {
-                dll_91_func_D34(cam, &sp58, &sp80, &sp54, &sp5C);
+                camlockon_func_D34(cam, &sp58, &sp80, &sp54, &sp5C);
             } else {
                 sp58 = sp44[sp94->unkD4].refPoint.x - sp3C->globalPosition.x;
                 sp80 = sp44[sp94->unkD4].refPoint.y - sp5C;
@@ -160,7 +160,7 @@ void dll_91_func_1B8(Cam* cam) {
         cam->letterboxGoal = 24;
         cam->letterboxSpeed = 1;
         if (sp68 < sp78) {
-            dll_91_func_BC0(cam);
+            camlockon_func_BC0(cam);
             return;
         }
         sp90 = sp3C->globalPosition.x + (sp58 * 0.35f);
@@ -206,7 +206,7 @@ void dll_91_func_1B8(Cam* cam) {
         sp80 = sp5C - sp80;
         sp80 += sState->unk4;
         cam->srt.transl.y -= ((cam->srt.transl.y - sp80) * gUpdateRateF * 0.05f);
-        dll_91_func_C58(cam, sp90, cam->srt.transl.y, sp88);
+        camlockon_func_C58(cam, sp90, cam->srt.transl.y, sp88);
         sp90 = sp3C->globalPosition.x + (sp58 * 0.1f);
         sp88 = sp3C->globalPosition.z + (sp54 * 0.1f);
         temp_fa1 = cam->srt.transl.x - sp90;
@@ -238,7 +238,7 @@ void dll_91_func_1B8(Cam* cam) {
 }
 
 // offset: 0xB64 | func: 2 | export: 2
-void dll_91_func_B64(Cam* cam) {
+void camlockon_func_B64(Cam* cam) {
     if (cam->target != NULL) {
         cam->target = NULL;
     }
@@ -246,12 +246,12 @@ void dll_91_func_B64(Cam* cam) {
 }
 
 // offset: 0xBB0 | func: 3 | export: 3
-void dll_91_func_BB0(CamLockOn_Params* arg0, s32 arg1) {
+void camlockon_func_BB0(CamLockOn_Params* arg0, s32 arg1) {
 
 }
 
 // offset: 0xBC0 | func: 4
-static void dll_91_func_BC0(Cam* cam) {
+static void camlockon_func_BC0(Cam* cam) {
     if (cam->target != NULL) {
         if (!(cam->target->unkAF & ARROW_FLAG_40_Unlock_Disabled) && !(cam->targetFlags & 2)) {
             cam->target = NULL;
@@ -263,7 +263,7 @@ static void dll_91_func_BC0(Cam* cam) {
 }
 
 // offset: 0xC58 | func: 5
-static void dll_91_func_C58(Cam* cam, f32 arg1, f32 arg2, f32 arg3) {
+static void camlockon_func_C58(Cam* cam, f32 arg1, f32 arg2, f32 arg3) {
     Unk80027934 sp54;
     AABBs32 sp3C;
     Vec3f sp30;
@@ -280,7 +280,7 @@ static void dll_91_func_C58(Cam* cam, f32 arg1, f32 arg2, f32 arg3) {
 }
 
 // offset: 0xD34 | func: 6
-static void dll_91_func_D34(Cam* cam, f32* arg1, f32* arg2, f32* arg3, f32* arg4) {
+static void camlockon_func_D34(Cam* cam, f32* arg1, f32* arg2, f32* arg3, f32* arg4) {
     Object* temp_v0;
     Object* temp_v1;
     ObjectStruct74* temp_t0;

@@ -4,11 +4,11 @@
 _exports:
 
 # ctor/dtor
-.dword dll_89_ctor
-.dword dll_89_dtor
+.dword campath_ctor
+.dword campath_dtor
 
 # export table
-/*0*/ .dword dll_89_func_18
-/*1*/ .dword dll_89_func_588
-/*2*/ .dword dll_89_func_DF0
-/*3*/ .dword dll_89_func_E30
+/*0*/ .dword campath_func_18
+/*1*/ .dword campath_func_588
+/*2*/ .dword campath_func_DF0
+/*3*/ .dword campath_func_E30

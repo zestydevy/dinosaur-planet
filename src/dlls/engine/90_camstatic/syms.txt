@@ -1,13 +1,13 @@
 .text = 0x0:
-dll_90_ctor = 0x0;
-dll_90_dtor = 0xC;
-dll_90_func_18 = 0x18;
-dll_90_func_278 = 0x278;
-dll_90_func_584 = 0x584;
-dll_90_func_5C4 = 0x5C4;
-dll_90_func_5D4 = 0x5D4;
-dll_90_func_798 = 0x798;
-dll_90_func_C04 = 0xC04;
+camstatic_ctor = 0x0;
+camstatic_dtor = 0xC;
+camstatic_func_18 = 0x18;
+camstatic_func_278 = 0x278;
+camstatic_func_584 = 0x584;
+camstatic_func_5C4 = 0x5C4;
+camstatic_func_5D4 = 0x5D4;
+camstatic_func_798 = 0x798;
+camstatic_func_C04 = 0xC04;
 
 .rodata = 0xDAC:
 

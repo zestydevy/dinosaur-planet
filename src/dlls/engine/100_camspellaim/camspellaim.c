@@ -6,21 +6,21 @@
 /*0x0*/ static f32 bss_0;
 /*0x4*/ static f32 bss_4;
 
-static void dll_100_func_2E4(Cam* cam, Object* arg1, f32* arg2);
+static void camspellaim_func_2E4(Cam* cam, Object* arg1, f32* arg2);
 
 // offset: 0x0 | ctor
-void dll_100_ctor(void* dll) { }
+void camspellaim_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_100_dtor(void* dll) { }
+void camspellaim_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_100_func_18(Cam* cam, s32 arg1, void* data) {
-    dll_100_func_2E4(cam, cam->player, &bss_0);
+void camspellaim_func_18(Cam* cam, s32 arg1, void* data) {
+    camspellaim_func_2E4(cam, cam->player, &bss_0);
 }
 
 // offset: 0x64 | func: 1 | export: 1
-void dll_100_func_64(Cam* cam) {
+void camspellaim_func_64(Cam* cam) {
     Object* sp4C;
     f32 temp_ft5;
     f32 temp_fv1;
@@ -61,17 +61,17 @@ void dll_100_func_64(Cam* cam) {
 }
 
 // offset: 0x2C8 | func: 2 | export: 2
-void dll_100_func_2C8(Cam* cam) {
+void camspellaim_func_2C8(Cam* cam) {
 
 }
 
 // offset: 0x2D4 | func: 3 | export: 3
-void dll_100_func_2D4(void* arg0, s32 arg1) {
+void camspellaim_func_2D4(void* arg0, s32 arg1) {
 
 }
 
 // offset: 0x2E4 | func: 4
-static void dll_100_func_2E4(Cam* cam, Object* arg1, f32* arg2) {
+static void camspellaim_func_2E4(Cam* cam, Object* arg1, f32* arg2) {
     f32 spD4;
     f32 temp_ft2;
     f32 temp_fv0;

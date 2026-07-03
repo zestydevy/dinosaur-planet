@@ -35,16 +35,16 @@ typedef struct {
 
 /*0x0*/ static CamClimb* sState;
 
-static void dll_93_func_63C(Cam* cam);
+static void camclimb_func_63C(Cam* cam);
 
 // offset: 0x0 | ctor
-void dll_93_ctor(void* dll) { }
+void camclimb_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_93_dtor(void* dll) { }
+void camclimb_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_93_func_18(Cam* cam, s32 arg1, CamClimb_Params* data) {
+void camclimb_func_18(Cam* cam, s32 arg1, CamClimb_Params* data) {
     s32 _pad;
     f32 sp60;
     f32 sp5C;
@@ -93,7 +93,7 @@ void dll_93_func_18(Cam* cam, s32 arg1, CamClimb_Params* data) {
 }
 
 // offset: 0x340 | func: 1 | export: 1
-void dll_93_func_340(Cam* cam) {
+void camclimb_func_340(Cam* cam) {
     Object* temp_s0;
     s32 var_v1;
     f32 sp54;
@@ -104,7 +104,7 @@ void dll_93_func_340(Cam* cam) {
     f32 temp_fa1;
 
     temp_s0 = cam->player;
-    dll_93_func_63C(cam);
+    camclimb_func_63C(cam);
     temp_fa0 = temp_s0->srt.transl.y + sState->unk10;
     temp_fa1 = temp_s0->srt.transl.y + sState->unkC;
     if (cam->srt.transl.y < temp_fa1) {
@@ -135,18 +135,18 @@ void dll_93_func_340(Cam* cam) {
 }
 
 // offset: 0x5E8 | func: 2 | export: 2
-void dll_93_func_5E8(Cam* cam) {
+void camclimb_func_5E8(Cam* cam) {
     mmFree(sState);
     sState = NULL;
 }
 
 // offset: 0x62C | func: 3 | export: 3
-void dll_93_func_62C(void* arg0, s32 arg1) {
+void camclimb_func_62C(void* arg0, s32 arg1) {
 
 }
 
 // offset: 0x63C | func: 4
-static void dll_93_func_63C(Cam* cam) {
+static void camclimb_func_63C(Cam* cam) {
     f32 temp_fv0;
 
     if (sState->unk2C != 0) {

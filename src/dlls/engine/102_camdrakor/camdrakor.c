@@ -23,13 +23,13 @@ typedef struct {
 /*0x0*/ static CamDrakor* sState;
 
 // offset: 0x0 | ctor
-void dll_102_ctor(void* dll) { }
+void camdrakor_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_102_dtor(void* dll) { }
+void camdrakor_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_102_func_18(Cam* cam, s32 arg1, Cam* data) {
+void camdrakor_func_18(Cam* cam, s32 arg1, Cam* data) {
     sState = mmAlloc(sizeof(CamDrakor), ALLOC_TAG_CAM_COL, ALLOC_NAME("camdrakor"));
     bzero(sState, sizeof(CamDrakor));
     sState->unk10 = 60.0f;
@@ -52,7 +52,7 @@ void dll_102_func_18(Cam* cam, s32 arg1, Cam* data) {
 }
 
 // offset: 0x138 | func: 1 | export: 1
-void dll_102_func_138(Cam* cam) {
+void camdrakor_func_138(Cam* cam) {
     Object** temp_v0;
     s32 sp78;
     s32 sp74;
@@ -121,11 +121,11 @@ void dll_102_func_138(Cam* cam) {
 }
 
 // offset: 0x61C | func: 2 | export: 2
-void dll_102_func_61C(Cam* cam) {
+void camdrakor_func_61C(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0x65C | func: 3 | export: 3
-void dll_102_func_65C(void* arg0, s32 arg1) {
+void camdrakor_func_65C(void* arg0, s32 arg1) {
 
 }

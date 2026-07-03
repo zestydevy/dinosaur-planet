@@ -21,13 +21,13 @@ typedef struct {
 /*0x0*/ static CamTalk* sState;
 
 // offset: 0x0 | ctor
-void dll_95_ctor(void* dll) { }
+void camtalk_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_95_dtor(void* dll) { }
+void camtalk_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_95_func_18(Cam* cam, s32 arg1, CamTalk_Params* data) {
+void camtalk_func_18(Cam* cam, s32 arg1, CamTalk_Params* data) {
     s32 _pad;
     s32 _pad2;
     s32 var_v1;
@@ -113,7 +113,7 @@ void dll_95_func_18(Cam* cam, s32 arg1, CamTalk_Params* data) {
 }
 
 // offset: 0x320 | func: 1 | export: 1
-void dll_95_func_320(Cam* cam) {
+void camtalk_func_320(Cam* cam) {
     s32 pad_sp6C;
     f32 sp68;
     f32 sp64;
@@ -160,11 +160,11 @@ void dll_95_func_320(Cam* cam) {
 }
 
 // offset: 0x544 | func: 2 | export: 2
-void dll_95_func_544(Cam* cam) {
+void camtalk_func_544(Cam* cam) {
     mmFree(sState);
 }
 
 // offset: 0x584 | func: 3 | export: 3
-void dll_95_func_584(void* arg0, s32 arg1) {
+void camtalk_func_584(void* arg0, s32 arg1) {
 
 }

@@ -1,10 +1,10 @@
 .text = 0x0:
-dll_101_ctor = 0x0;
-dll_101_dtor = 0xC;
-dll_101_func_18 = 0x18;
-dll_101_func_17C = 0x17C;
-dll_101_func_2C4 = 0x2C4;
-dll_101_func_304 = 0x304;
+camcloudrunner_ctor = 0x0;
+camcloudrunner_dtor = 0xC;
+camcloudrunner_func_18 = 0x18;
+camcloudrunner_func_17C = 0x17C;
+camcloudrunner_func_2C4 = 0x2C4;
+camcloudrunner_func_304 = 0x304;
 
 .rodata = 0x360:
 
