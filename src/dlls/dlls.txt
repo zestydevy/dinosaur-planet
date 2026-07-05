@@ -85,6 +85,7 @@
 211 = objects/211_Tricky
 213 = objects/213
 214 = objects/214_animobj
+216 = objects/216_SnowWorm
 217 = objects/217_GuardClaw
 220 = objects/220_Chuka
 221 = objects/221_ChukaChuck
