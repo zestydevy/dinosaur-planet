@@ -162,11 +162,11 @@ static s32 WCTrex_func_608(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
         func_80023D30(self, 1, 0.0f, 0);
     }
-    self->velocity.x = (curveStruct->unk68.x - self->srt.transl.x) * gUpdateRateInverseF;
-    self->velocity.z = (curveStruct->unk68.z - self->srt.transl.z) * gUpdateRateInverseF;
-    self->srt.transl.x = curveStruct->unk68.x;
-    self->srt.transl.z = curveStruct->unk68.z;
-    self->srt.yaw = arctan2_f(-curveStruct->unk74, -curveStruct->unk7C);
+    self->velocity.x = (curveStruct->unk0.unk68.x - self->srt.transl.x) * gUpdateRateInverseF;
+    self->velocity.z = (curveStruct->unk0.unk68.z - self->srt.transl.z) * gUpdateRateInverseF;
+    self->srt.transl.x = curveStruct->unk0.unk68.x;
+    self->srt.transl.z = curveStruct->unk0.unk68.z;
+    self->srt.yaw = arctan2_f(-curveStruct->unk0.unk74, -curveStruct->unk0.unk7C);
     func_8002493C(self, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), &fsa->animTickDelta);
     return 0;
 }
@@ -202,7 +202,7 @@ static s32 WCTrex_func_800(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objdata->flags &= ~1;
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 2);
     }
-    if ((curves_func_800053B0(temp_a0, 0.5f) != 0) || (temp_a0->unk10 != 0)) {
+    if ((curves_func_800053B0(&temp_a0->unk0, 0.5f) != 0) || (temp_a0->unk0.unk10 != 0)) {
         if (gDLL_26_Curves->vtbl->func_4704(temp_a0) != 0) {
             STUBBED_PRINTF("ERROR: end of curve reached\n");
         }

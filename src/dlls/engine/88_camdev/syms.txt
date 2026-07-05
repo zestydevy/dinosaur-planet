@@ -1,0 +1,12 @@
+.text = 0x0:
+camdev_ctor = 0x0;
+camdev_dtor = 0xC;
+camdev_func_18 = 0x18;
+camdev_func_78 = 0x78;
+camdev_func_340 = 0x340;
+camdev_func_380 = 0x380;
+
+.rodata = 0x3D8:
+
+.bss = 0x3D8:
+sState = 0x0; // absolute:0x3D8

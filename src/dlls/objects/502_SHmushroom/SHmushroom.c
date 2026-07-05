@@ -115,8 +115,8 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	) {
 		objData->flags |= SHmushroom_FLAG_Follow_Curve;
 		gDLL_26_Curves->vtbl->func_4288(&objData->curves, self, 1000.0f, &curveEndpoint, -1);
-		self->srt.transl.x = objData->curves.unk68.x;
-		self->srt.transl.z = objData->curves.unk68.z;
+		self->srt.transl.x = objData->curves.unk0.unk68.x;
+		self->srt.transl.z = objData->curves.unk0.unk68.z;
 	}
 
 	objData->curvesDelta = 5.0f;
@@ -378,11 +378,11 @@ s16 SHmushroom_flee_along_curve(Object* self, Object* fleeingFrom, SHmushroom_Da
 	f32 dz;
 
 	while (TRUE) {
-		dx = objData->curves.unk68.x - self->srt.transl.x;
-		dz = objData->curves.unk68.z - self->srt.transl.z;
+		dx = objData->curves.unk0.unk68.x - self->srt.transl.x;
+		dz = objData->curves.unk0.unk68.z - self->srt.transl.z;
 
 		if ((SQ(dx) + SQ(dz)) < SQ(distance)) {
-			if ((curves_func_800053B0(&objData->curves, objData->curvesDelta) || objData->curves.unk10)) {
+			if ((curves_func_800053B0(&objData->curves.unk0, objData->curvesDelta) || objData->curves.unk0.unk10)) {
 				if (gDLL_26_Curves->vtbl->func_4704(&objData->curves) != 0) {
 					STUBBED_PRINTF("MUSHROOM ERROR: no node found\n");
 				}

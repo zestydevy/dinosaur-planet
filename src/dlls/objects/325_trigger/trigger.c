@@ -232,7 +232,7 @@ void trigger_control(Object* self) {
                 }
                 break;
             case 2:
-                activatorObj = (Object*)gDLL_2_Camera->vtbl->get_data();
+                activatorObj = (Object*)gDLL_2_Camera->vtbl->get_cam();
                 break;
             }
         }

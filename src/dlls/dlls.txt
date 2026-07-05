@@ -53,9 +53,26 @@
 81 = engine/81_swaphollow
 82 = engine/82
 83 = engine/83
-92 = engine/92_camclimb
-94 = engine/94_camtalk1
-98 = engine/98_camcannon
+84 = engine/84_camnormal
+85 = engine/85_attentioncam
+86 = engine/86_cam1stperson
+87 = engine/87_camslide
+88 = engine/88_camdev
+89 = engine/89_campath
+90 = engine/90_camstatic
+91 = engine/91_camlockon
+92 = engine/92_camshipbattle
+93 = engine/93_camclimb
+94 = engine/94_camseq
+95 = engine/95_camtalk
+96 = engine/96_cam1stperson2
+97 = engine/97_camunknown
+98 = engine/98_camcrawl
+99 = engine/99_camcannon
+100 = engine/100_camspellaim
+101 = engine/101_camcloudrunner
+102 = engine/102_camdrakor
+103 = engine/103_camdrop
 
 # modgfx
 

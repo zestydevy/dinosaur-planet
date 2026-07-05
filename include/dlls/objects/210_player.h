@@ -7,6 +7,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
+#include "sys/curves.h"
 #include "sys/objexpr.h"
 #include "sys/rand.h"
 #include "sys/main.h"
@@ -161,17 +162,8 @@ typedef struct {
 /*42E*/ u16 unk42E;
 /*430*/ Player_Data430 unk430;
 /*490*/ Player_Data490 unk490;
-/*4D8*/ UnkArg2 unk4D8;
-/*508*/ u8 pad508[0x550 - 0x508];
-/*550*/ Vec3f unk550;
-/*55C*/ Vec3f unk55C;
-/*568*/ UNK_TYPE_32 unk568;
-/*56C*/ f32 *unk56C;
-/*570*/ f32 *unk570;
-/*574*/ f32 *unk574;
-/*578*/ s32 unk578;
-/*57C*/ void *unk57C;
-/*580*/ void *unk580;
+/*4D8*/ Vec4f unk4D8;
+/*4E8*/ CurvesStruct unk4E8;
 /*584*/ f32 unk584;
 /*588*/ u8 pad588[0x5D4 - 0x588];
 /*5D4*/ f32 unk5D4;

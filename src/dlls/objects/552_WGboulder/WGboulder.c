@@ -47,12 +47,12 @@ void WGboulder_control(Object* self) {
             self->srt.transl.z = curveSetup->pos.z;
         }
 
-        if (gDLL_26_Curves->vtbl->func_4288(&objData->curves, self, 100.0f, dCurveTypes, -1) == 0) {
+        if (gDLL_26_Curves->vtbl->func_4288(&objData->curves.unk0, self, 100.0f, dCurveTypes, -1) == 0) {
             objData->state = WGBoulder_STATE_1_Moving;
         }
         break;
     case WGBoulder_STATE_1_Moving:
-        if ((curves_func_800053B0(&objData->curves, 2.0f) || objData->curves.unk10) && gDLL_26_Curves->vtbl->func_4704(&objData->curves)) {
+        if ((curves_func_800053B0(&objData->curves.unk0, 2.0f) || objData->curves.unk0.unk10) && gDLL_26_Curves->vtbl->func_4704(&objData->curves)) {
             objData->state = WGBoulder_STATE_0_Stopped;
         }
         
@@ -102,9 +102,9 @@ void WGboulder_handle_motion(Object* self) {
     //Roll along curve
     self->velocity.y -= 0.07f * gUpdateRateF;
     self->velocity.y *= 0.97f;
-    dx = self->srt.transl.x - objData->curves.unk68.x;
-    dz = self->srt.transl.z - objData->curves.unk68.z;
-    self->srt.yaw = arctan2_f(objData->curves.unk74, objData->curves.unk7C) + M_180_DEGREES;
+    dx = self->srt.transl.x - objData->curves.unk0.unk68.x;
+    dz = self->srt.transl.z - objData->curves.unk0.unk68.z;
+    self->srt.yaw = arctan2_f(objData->curves.unk0.unk74, objData->curves.unk0.unk7C) + M_180_DEGREES;
     
     magnitude = sqrtf(SQ(dx) + SQ(dz));
     magnitude -= 60.0f;
@@ -115,8 +115,8 @@ void WGboulder_handle_motion(Object* self) {
     objData->prevYaw = self->srt.yaw;
     self->srt.pitch -= magnitude * 80.0f;
     magnitude = magnitude * 0.001f;
-    self->velocity.x = (objData->curves.unk68.x - self->srt.transl.x) * magnitude;
-    self->velocity.z = (objData->curves.unk68.z - self->srt.transl.z) * magnitude;
+    self->velocity.x = (objData->curves.unk0.unk68.x - self->srt.transl.x) * magnitude;
+    self->velocity.z = (objData->curves.unk0.unk68.z - self->srt.transl.z) * magnitude;
     self->srt.yaw += self->velocity.x * 1200.0f;
     obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     

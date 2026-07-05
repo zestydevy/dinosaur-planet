@@ -339,7 +339,7 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x34, 0x50, (s16) (u8) objdata->unk8, 0);
             break;
         case 13:
-            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMLOCKON, 0x65, 0, 0x50);
+            gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMSTATIC, 0x65, 0, 0x50);
             break;
         }
     }

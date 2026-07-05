@@ -15,13 +15,6 @@ void stop_active_app_threads();
 
 void some_crash_print(OSThread **threads, s32 count, s32 offset);
 
-/**
- * - Sets D_800937F0 to 0
- * - Sets gSomeCrashVideoFlag if video mode is between 4-6
- * - Clears the current framebuffer 100 times
- */
-void check_video_mode_crash_and_clear_framebuffer();
-
 void clear_framebuffer_current();
 void pi_manager_entry(void *arg);
 void crash_controller_getter();

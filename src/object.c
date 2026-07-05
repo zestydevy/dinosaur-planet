@@ -1739,7 +1739,7 @@ void func_80023628(void) {
     D_80091668.unk10 = fcos16_precise(savedPlayerLocation->rotationY << 8) * 60.0f + z;
 
     gDLL_2_Camera->vtbl->init_data(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
-    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, 0, 0, sizeof(D_80091668), &D_80091668, 0, 0xFF);
+    gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 0, sizeof(D_80091668), &D_80091668, 0, Cam_Ease_All);
     gDLL_2_Camera->vtbl->tick(1);
     gDLL_6_AMSFX->vtbl->func_480(player);
     gDLL_5_AMSEQ->vtbl->set_focus_obj(player);

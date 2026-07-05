@@ -8,10 +8,12 @@ u64 gIdleThreadStack[STACKSIZE(IDLE_THREAD_SIZE) + 1];
 u64 gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE) + 1];
 OSThread gIdleThread;
 OSThread gMainThread;
-u8 D_800A6220[0x50];
+// The size of this array is nonsense. The entrypoint code assumes the stack is 0x1000 in size,
+// which is way out of bounds of the boot .bss.
+u64 gEntrypointThreadStack[STACKSIZE(0x50)]; 
 /* -------- .bss end 800a6270 -------- */
 
-void idle(void * arg);
+void idle(void* arg);
 
 // official name: boot
 void bootproc(void) {
@@ -22,8 +24,7 @@ void bootproc(void) {
     osStartThread(&gIdleThread);
 }
 
-void idle(void * arg)
-{
+void idle(void* arg) {
     osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainproc, NULL, 
         &gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)], MAIN_THREAD_PRIORITY);
 

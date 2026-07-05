@@ -100,9 +100,9 @@ void dll_246_control(Object* self) {
         objdata->unkC = VECTOR_MAGNITUDE(sp58);
     }
     if (sp68 != NULL) {
-        sp58.f[0] = sp68->unk68.x - self->globalPosition.x;
-        sp58.f[1] = sp68->unk68.y - self->globalPosition.y;
-        sp58.f[2] = sp68->unk68.z - self->globalPosition.z;
+        sp58.f[0] = sp68->unk0.unk68.x - self->globalPosition.x;
+        sp58.f[1] = sp68->unk0.unk68.y - self->globalPosition.y;
+        sp58.f[2] = sp68->unk0.unk68.z - self->globalPosition.z;
         objdata->unk10 = VECTOR_MAGNITUDE(sp58);
     }
     if (objdata->unk24 & 2) {
@@ -164,21 +164,21 @@ static void dll_246_func_6C8(Object* self, DLL246_Data* objdata) {
 
     temp_s1 = objdata->unk0;
     if (
-        ((curves_func_800053B0(temp_s1, objdata->unk8) != 0) || (_bss_0 != temp_s1->unk10)) && 
+        ((curves_func_800053B0(&temp_s1->unk0, objdata->unk8) != 0) || (_bss_0 != temp_s1->unk0.unk10)) && 
         (gDLL_26_Curves->vtbl->func_4704(temp_s1) != 0) && 
         (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, 400.0f, _data_0, -1) != 0)
    ) {
         objdata->unk24 &= ~1;
     }
-    _bss_0 = temp_s1->unk10;
+    _bss_0 = temp_s1->unk0.unk10;
     if (objdata->unk24 & 2) {
         self->velocity.f[0] += (objdata->player->srt.transl.f[0] - self->srt.transl.f[0]) * 0.003f;
         self->velocity.f[1] += ((objdata->player->srt.transl.f[1] + 30.0f) - self->srt.transl.f[1]) * 0.003f;
         self->velocity.f[2] += ((objdata->player->srt.transl.f[2] - self->srt.transl.f[2]) * 0.003f);
     } else {
-        self->velocity.f[0] += (temp_s1->unk68.f[0] - self->srt.transl.f[0]) * 0.003f;
-        self->velocity.f[1] += (temp_s1->unk68.f[1] - self->srt.transl.f[1]) * 0.003f;
-        self->velocity.f[2] += ((temp_s1->unk68.f[2] - self->srt.transl.f[2]) * 0.003f);
+        self->velocity.f[0] += (temp_s1->unk0.unk68.f[0] - self->srt.transl.f[0]) * 0.003f;
+        self->velocity.f[1] += (temp_s1->unk0.unk68.f[1] - self->srt.transl.f[1]) * 0.003f;
+        self->velocity.f[2] += ((temp_s1->unk0.unk68.f[2] - self->srt.transl.f[2]) * 0.003f);
     }
     self->velocity.f[0] *= 0.9f;
     self->velocity.f[1] *= 0.9f;

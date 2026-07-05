@@ -1,16 +1,6 @@
 #include "common.h"
+#include "dlls/objects/715_StaticCamera.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18;
-    u8 unk19;
-    u8 unk1A;
-    u8 _unk1B;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-}DLL715_Setup;
 
 typedef struct {
     u8 unk0;

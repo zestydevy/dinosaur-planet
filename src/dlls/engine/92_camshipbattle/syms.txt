@@ -1,0 +1,12 @@
+.text = 0x0:
+camshipbattle_ctor = 0x0;
+camshipbattle_dtor = 0xC;
+camshipbattle_setup = 0x18;
+camshipbattle_control = 0xF4;
+camshipbattle_free = 0x4CC;
+camshipbattle_func_50C = 0x50C;
+
+.rodata = 0x558:
+
+.bss = 0x578:
+sState = 0x0; // absolute:0x578
