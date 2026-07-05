@@ -47,7 +47,7 @@ void WGboulder_control(Object* self) {
             self->srt.transl.z = curveSetup->pos.z;
         }
 
-        if (gDLL_26_Curves->vtbl->func_4288(&objData->curves.unk0, self, 100.0f, dCurveTypes, -1) == 0) {
+        if (gDLL_26_Curves->vtbl->func_4288(&objData->curves, self, 100.0f, dCurveTypes, -1) == 0) {
             objData->state = WGBoulder_STATE_1_Moving;
         }
         break;
