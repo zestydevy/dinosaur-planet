@@ -154,19 +154,19 @@ void CCsandwormBoss_setup(Object* self, CCsandwormBoss_Setup* objSetup, s32 rese
             if (main_get_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2)) {
                 objData->state = CCsandwormBoss_STATE_2_Leadup_Already_Completed;
             } else {
-                main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated, 0);
-                main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2, 1);
+                main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated, FALSE);
+                main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2, TRUE);
                 objData->state = CCsandwormBoss_STATE_0_Leadup_Fighting_One_SharpClaw;
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, CC_OBJGROUP12_Boss_Beach_One_SharpClaw, 1);
             }
         } else if (main_get_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2)) {
-            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated, 0);
-            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_1, 1);
+            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated, FALSE);
+            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_1, TRUE);
             objData->state = CCsandwormBoss_STATE_0_Leadup_Fighting_One_SharpClaw;
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, CC_OBJGROUP12_Boss_Beach_One_SharpClaw, 1);
         } else {
-            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated, 0);
-            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2, 1);
+            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated, FALSE);
+            main_set_bits(BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2, TRUE);
             objData->state = CCsandwormBoss_STATE_0_Leadup_Fighting_One_SharpClaw;
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, CC_OBJGROUP12_Boss_Beach_One_SharpClaw, 1);
         }
