@@ -11,7 +11,9 @@ typedef struct {
 } DLL216_Setup;
 
 typedef struct {
-    u8 unk0[8];
+    f32 unk0;
+    s16 unk4;
+    s16 unk6;
     SRT unk8;
     SRT unk20;
     Vec3f unk38;
@@ -67,10 +69,8 @@ typedef struct {
 /*0x128*/ static u32 data_128[] = {
     0x02060167, 0x01650206
 };
-/*0x130*/ static u32 data_130 = 0x00000000;
-/*0x134*/ static u32 data_134[] = {
-    0x00000000, 0x00000000, 0x00000000
-};
+/*0x130*/ static u8 data_130 = 0;
+/*0x134*/ static u8 data_134 = 0;
 
 /*0x0*/ static ObjFSA_StateCallback bss_0[14];
 /*0x38*/ static ObjFSA_StateCallback bss_38[2];
@@ -205,7 +205,70 @@ void dll_216_func_88C(Object* self, u8 message) {
 }
 
 // offset: 0x908 | func: 10
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_908.s")
+#else
+void dll_216_func_908(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    DLL216_DataActual* objData = baddie->objdata;
+    Object* player = get_player(); //90
+    Vec3f sp84; //84
+    SRT sp6C; //6C
+    s32 i;
+    s32 scaleIdx;
+/*0x120*/ s16 data_120[4] = { 0x0206, 0x0167, 0x0165, 0x0206 }; //58
+/*0x120*/ s16 data_128[4] = { 0x0206, 0x0167, 0x0165, 0x0206 }; //50
+    Object* weapon;
+
+    if (fsa->target != NULL) {
+        sp84.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
+        sp84.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
+        sp84.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
+        fsa->targetDist = sqrtf(SQ(sp84.f[0]) + SQ(sp84.f[1]) + SQ(sp84.f[2]));
+    }
+    
+    if (!(baddie->unk3B0 & 0x20)) {
+        gDLL_33_BaddieControl->vtbl->func14(self, (Baddie*)fsa, &baddie->unk3B2, 2, 3, baddie->unk3A6, baddie->unk3A4);
+    }
+
+    // temp_a2 = &baddie->unk34C;
+    gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8);
+    objData->unk0 += gUpdateRateF;
+    if ((fsa->animState != 3) && (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_64, data_D4, 1, &baddie->unk3A8, &sp6C))) {
+        if (objData->unk0 < 240.0f) {
+            objData->unk6 = (s16) (objData->unk6 + 1);
+        } else {
+            objData->unk6 = 0;
+        }
+        
+        objData->unk0 = 0.0f;
+        
+        if ((fsa->hitpoints > 0) && (objData->unk6 >= 2)) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 3);
+            objData->unk6 = 0;
+            fsa->logicState = 5;
+        }
+        
+        weapon = player->linkedObject;
+        scaleIdx = ((DLL_Unknown*)weapon->dll)->vtbl->func[19].withOneArgS32(weapon);
+        if (scaleIdx > 3) {
+            scaleIdx = 3;
+        }
+        
+        sp6C.scale = data_120[scaleIdx];
+        gDLL_17_partfx->vtbl->spawn(self, 0x323, &sp6C, 0x200001, -1, NULL);
+        if (scaleIdx != 0) {
+            sp6C.transl.f[0] -= self->globalPosition.f[0];
+            sp6C.transl.f[1] -= self->globalPosition.f[1];
+            sp6C.transl.f[2] -= self->globalPosition.f[2];
+            sp6C.scale = data_128[scaleIdx];
+            
+            for (i = 0; i < 0xF; i++) {
+                gDLL_17_partfx->vtbl->spawn(self, 0x324, &sp6C, 2, -1, NULL);
+            }
+        }
+    }
+}
+#endif
 
 // offset: 0xCE8 | func: 11
 void dll_216_func_CE8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
@@ -550,10 +613,102 @@ s32 dll_216_func_1F74(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x20B4 | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_20B4.s")
+s32 dll_216_func_20B4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL216_DataActual* objData;
+
+    baddie = self->data;
+    objData = baddie->objdata;
+    
+    objData->unk44 |= 4;
+    
+    self->objhitInfo->unk5F = 0xA;
+    self->objhitInfo->unk60 = 1;
+
+    func_80028D2C(self);
+    if (fsa->enteredAnimState) {
+        if (rand_next(0, 1)) {
+            data_130 = rand_next(0, 2);
+            if (fsa->enteredAnimState) {
+                func_80023D30(self, 6, 0.0f, 0);
+                fsa->unk33A = 0;
+            }
+        } else {
+            data_130 = 3;
+            if (fsa->enteredAnimState) {
+                func_80023D30(self, 0xA, 0.0f, 0);
+                fsa->unk33A = 0;
+            }
+        }
+        
+        fsa->unk341 = 1;
+        fsa->animTickDelta = (baddie->unk3B8 / 20000.0f) + 0.005f;
+    }
+    
+    if ((baddie->unk3B8 >= 0x33) && !(baddie->unk3B0 & 2)) {
+        if ((fsa->targetDist > 55.0f) && (fsa->unk33A == 0)) {
+            fsa->unk278 = (fsa->targetDist / 55.0f) - 1.0f;
+            fsa->unk278 *= baddie->unk3B8 / 50.0f;
+        } else {
+            fsa->unk278 = 0.0f;
+        }
+    } else {
+        fsa->unk278 = 0.0f;
+    }
+    
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, data_130, data_C);
+    gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
+    
+    return 0;
+}
 
 // offset: 0x2354 | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_2354.s")
+s32 dll_216_func_2354(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL216_DataActual* objData;
+
+    baddie = self->data;
+    objData = baddie->objdata;
+    
+    objData->unk44 |= 4;
+    self->objhitInfo->unk5F = 0xA;
+    self->objhitInfo->unk60 = 1;
+    
+    func_80028D2C(self);
+    
+    if (fsa->enteredAnimState) {
+        data_134 = rand_next(0, 2);
+        if (rand_next(0, 1)) {
+            if (fsa->enteredAnimState) {
+                func_80023D30(self, 7, 0.0f, 0);
+                fsa->unk33A = 0;
+            }
+        } else if (fsa->enteredAnimState) {
+            func_80023D30(self, 3, 0.0f, 0);
+            fsa->unk33A = 0;
+        }
+        
+        fsa->unk341 = 1;
+        fsa->animTickDelta = (baddie->unk3B8 / 20000.0f) + 0.005f;
+    }
+    
+    if ((baddie->unk3B8 >= 0x33) && !(baddie->unk3B0 & 2)) {
+        if ((fsa->targetDist > 55.0f) && (fsa->unk33A == 0)) {
+            fsa->unk278 = (fsa->targetDist / 55.0f) - 1.0f;
+            fsa->unk278 *= baddie->unk3B8 / 50.0f;
+        } else {
+            fsa->unk278 = 0.0f;
+        }
+    } else {
+        fsa->unk278 = 0.0f;
+    }
+    
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, data_134, data_C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, data_134, data_C);
+    gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
+    
+    return 0;
+}
 
 // offset: 0x2620 | func: 23
 s32 dll_216_func_2620(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -899,7 +1054,56 @@ s32 dll_216_func_3580(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x3638 | func: 36
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_3638.s")
+s32 dll_216_func_3638(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    Unk80009024* sp3C;
+
+    baddie = self->data;
+    
+    if ((fsa->unk33A != 0) && !(gDLL_33_BaddieControl->vtbl->func5(self, fsa, 75.0f) & 1)) {
+        return 5;
+    }
+    
+    if (fsa->enteredLogicState) {
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xB);
+    } else if (baddie->unk3B6 == 3) {
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
+    } else if (baddie->unk3B6 == 4) {
+        if ((fsa->targetDist < 110.0f) && fsa->unk33A) {
+            if (baddie->unk3B8 >= 0x33) {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
+            } else {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+            }
+        }
+    } else if (baddie->unk3B6 == 1) {
+        return 8;
+    }
+    
+    fsa->xAnalogInput = 0.0f;
+    fsa->yAnalogInput = 0.0f;
+
+    
+    sp3C = &baddie->unk34C;
+    
+    bcopy(&self->srt.transl, sp3C, sizeof(Vec3f));
+    bcopy(&fsa->target->srt.transl, &baddie->unk34C.unkC, sizeof(Vec3f));
+    func_80009024(sp3C, &baddie->unk374);
+    
+    if (sp3C->unk25 == 0) {
+        gDLL_18_objfsa->vtbl->func6(self, fsa, sp3C->unk18.x, sp3C->unk18.f[2], 0.0f, 0.0f, 60.0f);
+    } else {
+        gDLL_18_objfsa->vtbl->func6(self, fsa, sp3C->unk18.x, sp3C->unk18.f[2], 15.0f, 30.0f, 60.0f);
+    }
+    
+    if (fsa->logicStateTime >= 0x79) {
+        if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2, 1)) {
+            return 5;
+        }
+    }
+
+    return 0;
+}
 
 // offset: 0x396C | func: 37
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_396C.s")
