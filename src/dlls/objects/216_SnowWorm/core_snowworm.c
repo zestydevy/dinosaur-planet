@@ -13,8 +13,7 @@ typedef struct {
 typedef struct {
     u8 unk0[8];
     SRT unk8;
-    u8 unk20[0x2C - 0x20];
-    Vec3f unk2C;
+    SRT unk20;
     Vec3f unk38;
     u8 unk44;
     u8 unk45;
@@ -56,8 +55,11 @@ typedef struct {
 /*0xF0*/ static u32 data_F0[] = {
     0xffffff00, 0xff00ffc0, 0x965a5a64, 0xff5a0000
 };
-/*0x100*/ static u32 data_100[] = {
-    0x00010200, 0x00000000, 0x00000000, 0x00000000, 0x02000300, 0x00000000, 0x03030400, 0x00000000
+/*0x100*/ static u8 data_100[] = {
+    0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x03, 0x03, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 /*0x120*/ static u32 data_120[] = {
     0x02060167, 0x01650206
@@ -286,14 +288,14 @@ void dll_216_func_10D8(Object* self, Baddie* baddie) {
     }
 
     if (baddie->fsa.animState != 4) {
-        func_80031F6C(self, 2, &objData->unk2C.x, &objData->unk2C.y, &objData->unk2C.z, 0);
+        func_80031F6C(self, 2, &objData->unk20.transl.x, &objData->unk20.transl.y, &objData->unk20.transl.z, 0);
     } else {
-        func_80031F6C(self, 0, &objData->unk2C.x, &objData->unk2C.y, &objData->unk2C.z, 0);
+        func_80031F6C(self, 0, &objData->unk20.transl.x, &objData->unk20.transl.y, &objData->unk20.transl.z, 0);
     }
     
-    objData->unk2C.f[1] = self->srt.transl.y + 8.0f;
-    objData->unk2C.f[0] -= fsin16_precise(self->srt.yaw) * 10.0f * sp64;
-    objData->unk2C.f[2] -= fcos16_precise(self->srt.yaw) * 10.0f * sp64;
+    objData->unk20.transl.f[1] = self->srt.transl.y + 8.0f;
+    objData->unk20.transl.f[0] -= fsin16_precise(self->srt.yaw) * 10.0f * sp64;
+    objData->unk20.transl.f[2] -= fcos16_precise(self->srt.yaw) * 10.0f * sp64;
     
     transform.transl.f[0] = 0.0f;
     transform.transl.f[1] = -15.0f;
@@ -340,7 +342,64 @@ void dll_216_func_16C4(Object* self, DLL216_DataActual* objData) {
 }
 
 // offset: 0x1790 | func: 16
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_1790.s")
+#else
+s32 dll_216_func_1790(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    s32 pad[2];
+    DLL216_DataActual *objData;
+    int new_var;
+    int new_var2;
+    Baddie *baddie;
+    
+    baddie = self->data;
+    objData = baddie->objdata;
+    
+    self->objhitInfo->unk58 |= 1;
+
+    fsa->unk4.mode = 1;
+    self->objhitInfo->unk5F = 9;
+    self->objhitInfo->unk60 = 1; 
+
+    func_80028D2C(self); 
+    
+    if (fsa->enteredAnimState) { 
+        func_80023D30(self, 8, 0.0f, 0); 
+        fsa->unk33A = 0; 
+    } 
+    
+    if (fsa->enteredAnimState) { 
+        main_set_bits(baddie->unk39E, 1); 
+        self->unkAF &= ~8; 
+        self->opacity = 0xFF; 
+        fsa->unk341 = 1; 
+        fsa->animTickDelta = (baddie->unk3B8 / 50000.0f) + 0.0025f;
+    }
+    
+    if (fsa->unk33A) {
+        baddie->unk3B6 = 1;
+    }
+    
+    if (fsa->unk308 & 0x200) {
+        fsa->unk308 &= ~0x200;
+        objData->unk44 |= 0x20;
+    }
+    
+    objData->unk44 |= 4;
+    if (self->animProgress < 0.4f) {
+        objData->unk44 |= 8;
+    }
+    
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), data_C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, data_1C);
+    gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
+    
+    return 0;
+}
+
+
+
+#endif
 
 // offset: 0x19F4 | func: 17
 s32 dll_216_func_19F4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
