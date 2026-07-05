@@ -85,8 +85,8 @@ enum SoundID {
     SOUND_57 = 0x57,
     SOUND_58_Water_Splash = 0x58,          //Water Splash
     SOUND_59_Rattling = 0x59,              //sounds like 0x08 but higher pitch kinda
-    SOUND_5A = 0X5A,                       //some worm roar
-    SOUND_5B = 0X5B,                       //some worm roar
+    SOUND_5A_SandWorm_Roar = 0X5A,         //CCsandwormBoss
+    SOUND_5B_SandWorm_Roar = 0X5B,         //CCsandwormBoss
     SOUND_5C = 0X5C,                       //
     SOUND_5D = 0x5D,                       //
     SOUND_5E_Bubbling = 0x5E,              //does not loop
@@ -286,6 +286,9 @@ enum SoundID {
     SOUND_303 = 0x303,
     SOUND_304_Burning_Loop = 0x304, // flame blast
 
+    SOUND_32B_SandWorm_Snarl = 0x32B, //CCsandwormBoss
+
+    SOUND_335_SandWorm_Snarl = 0x335, //CCsandwormBoss
     SOUND_336 = 0x336,
 
     SOUND_33A_Worm_Roar = 0x33A, //SnowWormSmall
