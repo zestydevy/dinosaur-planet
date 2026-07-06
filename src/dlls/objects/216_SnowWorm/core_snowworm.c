@@ -1,8 +1,10 @@
 #include "common.h"
+#include "macros.h"
 #include "sys/objmsg.h"
 #include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "dlls/objects/221_ChukaChuck.h"
+#include "dlls/objects/251_weapons.h"
 
 //"core_snowworm.c" seems to have been Rare's filename
 
@@ -36,26 +38,33 @@ typedef struct {
 /*0x1C*/ static u32 data_1C[] = {
     0x00000339, 0x00000338, 0x00000339, 0x0000033c, 0x0000033d
 };
-/*0x30*/ static u32 data_30[] = {
-    0x00050006, 0x00080006, 0x00050008, 0x00060000
+/*0x30*/ static s16 data_30[] = {
+    0x0005, 0x0006, 0x0008, 0x0006, 0x0005, 0x0008, 0x0006
 };
-/*0x40*/ static u32 data_40[] = {
-    0x00080006, 0x00090008, 0x00060009, 0x00090000
+/*0x40*/ static s16 data_40[] = {
+    0x0008, 0x0006, 0x0009, 0x0008, 0x0006, 0x0009, 0x0009
 };
 /*0x50*/ static u32 data_50[] = {
     0x00000374, 0x00000375, 0x00000376, 0x0000025b, 0x0000025c
 };
-/*0x64*/ static u32 data_64[] = {
+/*0x64*/ static s32 data_64[] = {
     0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 
     0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000c, 0x0000000a, 
     0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 
     0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a
 };
-/*0xD4*/ static u32 data_D4[] = {
-    0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff
+/*0xD4*/ static s8 data_D4[] = {
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff
 };
-/*0xF0*/ static u32 data_F0[] = {
-    0xffffff00, 0xff00ffc0, 0x965a5a64, 0xff5a0000
+/*0xF0*/ static u8 data_F0[5][3] = {
+    {0xff, 0xff, 0xff}, 
+    {0x00, 0xff, 0x00}, 
+    {0xff, 0xc0, 0x96}, 
+    {0x5a, 0x5a, 0x64},
+    {0xff, 0x5a, 0x00}
 };
 /*0x100*/ static u8 data_100[] = {
     0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -63,27 +72,73 @@ typedef struct {
     0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x03, 0x03, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-/*0x120*/ static u32 data_120[] = {
-    0x02060167, 0x01650206
-};
-/*0x128*/ static u32 data_128[] = {
-    0x02060167, 0x01650206
-};
-/*0x130*/ static u8 data_130 = 0;
-/*0x134*/ static u8 data_134 = 0;
 
 /*0x0*/ static ObjFSA_StateCallback bss_0[14];
-/*0x38*/ static ObjFSA_StateCallback bss_38[2];
-/*0x40*/ static u8 _bss_40[0x20];
+/*0x38*/ static ObjFSA_StateCallback bss_38[8];
+// /*0x40*/ static u8 _bss_40[0x20];
 
+static void dll_216_func_908(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_216_func_CE8(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_216_func_EBC(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void dll_216_func_10D8(Object* self, Baddie* baddie);
+static void dll_216_func_1374(Object* self, Baddie* baddie);
+static void dll_216_func_16C4(Object* self, DLL216_DataActual* objData);
+
+static s32 dll_216_func_1790(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_19F4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_1C34(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_1DEC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_1F74(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_20B4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2354(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2620(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2778(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2834(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2964(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2B64(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2CA4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_2E78(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
+static s32 dll_216_func_309C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_32E4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_33A8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_34A0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_3524(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_3580(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_3638(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_216_func_396C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_0.s")
+static void dll_216_func_0(void) {
+    bss_0[0] = dll_216_func_1790;
+    bss_0[1] = dll_216_func_19F4;
+    bss_0[2] = dll_216_func_1C34;
+    bss_0[3] = dll_216_func_1DEC;
+    bss_0[4] = dll_216_func_1F74;
+    bss_0[5] = dll_216_func_20B4;
+    bss_0[6] = dll_216_func_2354;
+    bss_0[7] = dll_216_func_2620;
+    bss_0[8] = dll_216_func_2778;
+    bss_0[9] = dll_216_func_2834;
+    bss_0[10] = dll_216_func_2964;
+    bss_0[11] = dll_216_func_2B64;
+    bss_0[12] = dll_216_func_2CA4;
+    bss_0[13] = dll_216_func_2E78;
+    
+    bss_38[0] = dll_216_func_309C;
+    bss_38[1] = dll_216_func_32E4;
+    bss_38[2] = dll_216_func_33A8;
+    bss_38[3] = dll_216_func_34A0;
+    bss_38[4] = dll_216_func_3524;
+    bss_38[5] = dll_216_func_3580;
+    bss_38[6] = dll_216_func_3638;
+    bss_38[7] = dll_216_func_396C;
+}
 
 // offset: 0x12C | ctor
-void dll_216_ctor(void* dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_ctor.s")
+void dll_216_ctor(void* dll) {
+    dll_216_func_0();
+}
 
 // offset: 0x16C | dtor
 void dll_216_dtor(void* dll) { }
@@ -120,8 +175,52 @@ void dll_216_setup(Object* self, DLL216_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x2C0 | func: 2 | export: 1
-void dll_216_control(Object* self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_control.s")
+void dll_216_control(Object* self) {
+    Baddie* baddie;
+    Baddie_Setup* objSetup;
+
+    baddie = self->data;
+    objSetup = (Baddie_Setup*)self->setup;
+    if (self->unkDC != 0) {
+        if (((baddie->fsa.logicState != 3) || (baddie->unk3B0 & 1)) && (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->base.uID))) {
+            gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 0xE, 8, 0x102, 0x26, 20.0f);
+            baddie->unk3B6 = 0;
+            gDLL_6_AMSFX->vtbl->play(self, 0xB20U, MAX_VOLUME, NULL, NULL, 0, NULL);
+            func_80023D30(self, 8, 0.0f, 0x10);
+            baddie->fsa.unk33A = 0;
+            self->opacity = 0xFF;
+            self->unkAF |= 8;
+        }
+        return;
+    }
+        
+    if (self->unkE0 == 0) {
+        self->srt.transl.x = objSetup->base.x;
+        self->srt.transl.y = objSetup->base.y;
+        self->srt.transl.z = objSetup->base.z;
+        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->unk2E, self, -1);
+        self->unkE0 = 1;
+        return;
+    }
+    
+    if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 0) == 0) {
+        baddie->unk3B6 = 0;
+        return;
+    }
+    
+    dll_216_func_908(self, baddie, &baddie->fsa);
+    dll_216_func_1374(self, baddie);
+    
+    if (baddie->unk3B6 == 0) {
+        dll_216_func_EBC(self, baddie, &baddie->fsa);
+    } else {
+        dll_216_func_CE8(self, baddie, &baddie->fsa);
+    }
+    
+    if (baddie->unk3B0 & 2) {
+        self->srt.transl.y = objSetup->base.y - 8.0f;
+    }
+}
 
 // offset: 0x554 | func: 3 | export: 2
 void dll_216_update(Object* self) {
@@ -205,37 +304,35 @@ void dll_216_func_88C(Object* self, u8 message) {
 }
 
 // offset: 0x908 | func: 10
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_908.s")
-#else
 void dll_216_func_908(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     DLL216_DataActual* objData = baddie->objdata;
-    Object* player = get_player(); //90
-    Vec3f sp84; //84
-    SRT sp6C; //6C
+    Object* player = get_player();
+    Vec3f sp84;
+    SRT sp6C;
     s32 i;
     s32 scaleIdx;
-/*0x120*/ s16 data_120[4] = { 0x0206, 0x0167, 0x0165, 0x0206 }; //58
-/*0x120*/ s16 data_128[4] = { 0x0206, 0x0167, 0x0165, 0x0206 }; //50
-    Object* weapon;
+/*0x120*/ s16 data_120[4] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+/*0x128*/ s16 data_128[4] = { 0x0206, 0x0167, 0x0165, 0x0206 };
 
     if (fsa->target != NULL) {
-        sp84.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
-        sp84.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
-        sp84.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
+        sp84.x = fsa->target->globalPosition.x - self->globalPosition.x;
+        sp84.y = fsa->target->globalPosition.y - self->globalPosition.y;
+        sp84.z = fsa->target->globalPosition.z - self->globalPosition.z;
         fsa->targetDist = sqrtf(SQ(sp84.f[0]) + SQ(sp84.f[1]) + SQ(sp84.f[2]));
     }
     
     if (!(baddie->unk3B0 & 0x20)) {
         gDLL_33_BaddieControl->vtbl->func14(self, (Baddie*)fsa, &baddie->unk3B2, 2, 3, baddie->unk3A6, baddie->unk3A4);
     }
-
-    // temp_a2 = &baddie->unk34C;
+    
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8);
     objData->unk0 += gUpdateRateF;
-    if ((fsa->animState != 3) && (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_64, data_D4, 1, &baddie->unk3A8, &sp6C))) {
+    if ((fsa->animState != 3) && 
+        (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, 
+            &baddie->unk34C, baddie->unk39E, data_64, data_D4, 1, &baddie->unk3A8, &sp6C))
+    ) {
         if (objData->unk0 < 240.0f) {
-            objData->unk6 = (s16) (objData->unk6 + 1);
+            objData->unk6++;
         } else {
             objData->unk6 = 0;
         }
@@ -248,8 +345,7 @@ void dll_216_func_908(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
             fsa->logicState = 5;
         }
         
-        weapon = player->linkedObject;
-        scaleIdx = ((DLL_Unknown*)weapon->dll)->vtbl->func[19].withOneArgS32(weapon);
+        scaleIdx = ((DLL_251_Weapons*)player->linkedObject->dll)->vtbl->func19(player->linkedObject);
         if (scaleIdx > 3) {
             scaleIdx = 3;
         }
@@ -268,7 +364,9 @@ void dll_216_func_908(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         }
     }
 }
-#endif
+
+/*0x130*/ static u8 data_130 = 0;
+/*0x134*/ static u8 data_134 = 0;
 
 // offset: 0xCE8 | func: 11
 void dll_216_func_CE8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
@@ -378,7 +476,73 @@ void dll_216_func_10D8(Object* self, Baddie* baddie) {
 }
 
 // offset: 0x1374 | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_1374.s")
+void dll_216_func_1374(Object* self, Baddie* baddie) {
+    DLL216_DataActual* objData;
+    s32 i;
+    SRT* fxTransform;
+    u8* colourRGB;
+    f32 shakeFactor;
+
+    objData = baddie->objdata;
+    
+    if (self->id == OBJ_SnowWormLarge) {
+        objData->unk20.scale = 1.7f;
+        shakeFactor = 2.0f;
+    } else {
+        objData->unk20.scale = 1.0f;
+        shakeFactor = 1.0f;
+    }
+    
+    i = 0;
+    if (baddie->fsa.unk4.mode != 0) {
+        i = data_100[baddie->fsa.unk4.unk68.unk50[0]];
+        if (i > 30) { //@bug? Should this be `i >= 5` (ARRAYCOUNT(data_f0))?
+            i = 0;
+        }
+    }
+    
+    colourRGB = data_F0[i];
+    fxTransform = &objData->unk20;
+    
+    if (objData->unk44 & 1) {
+        dll_216_func_16C4(self, objData);
+        objData->unk44 &= ~1;
+    }
+    
+    if ((objData->unk44 & 4) && !(baddie->unk3B0 & 0x40)) {
+        for (i = 0; i < 4; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, 0x56, fxTransform, 0x200001, -1, colourRGB);
+        }
+    }
+    
+    if ((objData->unk44 & 8) && !(baddie->unk3B0 & 0x40)) {
+        gDLL_17_partfx->vtbl->spawn(self, 0x57, fxTransform, 0x200001, -1, colourRGB);
+    }
+    
+    if (objData->unk44 & 0x10) {
+        camera_enable_y_offset();
+        camera_set_shake_offset(2.0f * shakeFactor);
+        
+        for (i = 0; i < 40; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, 0x57, fxTransform, 0x200001, -1, colourRGB);
+        }
+    }
+    
+    if (objData->unk44 & 0x20) {
+        camera_enable_y_offset();
+        camera_set_shake_offset(3.0f * shakeFactor);
+        
+        for (i = 0; i < 40; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, 0x57, fxTransform, 0x200001, -1, colourRGB);
+        }
+        
+        for (i = 0; i < 10; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, 0x58, fxTransform, 0x200001, -1, colourRGB);
+        }
+    }
+    
+    objData->unk44 = 0;
+}
 
 // offset: 0x16C4 | func: 15
 void dll_216_func_16C4(Object* self, DLL216_DataActual* objData) {
@@ -405,37 +569,32 @@ void dll_216_func_16C4(Object* self, DLL216_DataActual* objData) {
 }
 
 // offset: 0x1790 | func: 16
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_1790.s")
-#else
 s32 dll_216_func_1790(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s32 pad[2];
     DLL216_DataActual *objData;
-    int new_var;
-    int new_var2;
     Baddie *baddie;
     
     baddie = self->data;
     objData = baddie->objdata;
     
     self->objhitInfo->unk58 |= 1;
-
+    
     fsa->unk4.mode = 1;
     self->objhitInfo->unk5F = 9;
-    self->objhitInfo->unk60 = 1; 
-
-    func_80028D2C(self); 
+    self->objhitInfo->unk60 = 1;
     
-    if (fsa->enteredAnimState) { 
-        func_80023D30(self, 8, 0.0f, 0); 
-        fsa->unk33A = 0; 
-    } 
+    func_80028D2C(self);
     
-    if (fsa->enteredAnimState) { 
-        main_set_bits(baddie->unk39E, 1); 
-        self->unkAF &= ~8; 
-        self->opacity = 0xFF; 
-        fsa->unk341 = 1; 
+    if (fsa->enteredAnimState) {
+        func_80023D30(self, 8, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+    
+    if (fsa->enteredAnimState) {
+        main_set_bits(baddie->unk39E, 1);
+        self->unkAF &= ~8;
+        self->opacity = 0xFF;
+        fsa->unk341 = 1;
         fsa->animTickDelta = (baddie->unk3B8 / 50000.0f) + 0.0025f;
     }
     
@@ -459,10 +618,6 @@ s32 dll_216_func_1790(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     return 0;
 }
-
-
-
-#endif
 
 // offset: 0x19F4 | func: 17
 s32 dll_216_func_19F4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -1106,4 +1261,69 @@ s32 dll_216_func_3638(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x396C | func: 37
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/216_SnowWorm/dll_216_func_396C.s")
+s32 dll_216_func_396C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL216_DataActual* objData;
+
+    baddie = self->data;
+    
+    if (fsa->enteredLogicState) {
+        if ((s32) fsa->targetDist > 55) {
+            if ((baddie->unk3B0 & 2) == FALSE) {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 7);
+            } else {
+                objData = baddie->objdata;
+                if (baddie->unk3B0 & 0x10) {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, data_40[objData->unk4++]);
+                } else {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, data_30[objData->unk4++]);
+                }
+                if (objData->unk4 >= ARRAYCOUNT_S(data_40)) {
+                    objData->unk4 = 0;
+                }
+            }
+        } else if (fsa->animState == 6) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 5);
+        } else {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 6);
+        }
+        
+    } else if (fsa->unk33A) {
+        if ((gDLL_33_BaddieControl->vtbl->func5(self, fsa, 75.0f) & 1) == FALSE) {
+            return 5;
+        }
+        
+        if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2, 1)) {
+            return 5;
+        }
+        
+        if ((s32) fsa->targetDist > 55) {
+            if (!(baddie->unk3B0 & 2)) {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 7);
+            } else {
+                objData = baddie->objdata;
+                if (baddie->unk3B0 & 0x10) {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, data_40[objData->unk4++]);
+                } else {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, data_30[objData->unk4++]);
+                }
+                if (objData->unk4 >= ARRAYCOUNT_S(data_40)) {
+                    objData->unk4 = 0;
+                }
+            }
+        } else if (fsa->animState == 6) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 5);
+        } else {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 6);
+        }
+        
+    } else if ((fsa->animState == 7) && ((s32) fsa->targetDist < 55)) {
+        if (fsa->animState == 6) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 5);
+        } else {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 6);
+        }
+    }
+
+    return 0;
+}
