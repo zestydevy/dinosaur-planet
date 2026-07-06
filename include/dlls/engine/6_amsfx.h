@@ -514,6 +514,7 @@ enum SoundID {
     SOUND_711_Sabre_Test_of_Strength_2 = 0x711, //DBSH_Symbol
     SOUND_712_Sabre_Test_of_Strength_3 = 0x712, //DBSH_Symbol
 
+    SOUND_721 = 0x721,
     SOUND_722_Impact_Wobble = 0x722, //Pollen
 
     SOUND_72D_Lock_On = 0x72D,          //Z-targetting
@@ -577,7 +578,9 @@ enum SoundID {
     
     SOUND_840 = 0x840, 
     SOUND_841 = 0x841,
-    SOUND_842 = 0x842, 
+    SOUND_842 = 0x842,
+
+    SOUND_849 = 0x849, 
     
     SOUND_851_Laser_Blast = 0x851, // DRbullet
 

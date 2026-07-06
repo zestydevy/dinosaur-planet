@@ -109,6 +109,7 @@
 253 = objects/253_CannonBall
 254 = objects/254_PineCone
 257 = objects/257_tesla
+258 = objects/258_Caictua_Thorn
 260 = objects/260_Pollen
 261 = objects/261_PollenFragment
 264 = objects/264_kamerian_flame

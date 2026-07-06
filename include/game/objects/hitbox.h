@@ -15,7 +15,7 @@ typedef struct {
     /*0x10*/ Vec3f unk10;
     /*0x1c*/ f32 unk1C;
     /*0x20*/ Vec3f unk20;
-    /*0x2c*/ f32 unk2C;
+    /*0x2c*/ f32 unk2C; //collision point (Vec3f)?
     /*0x30*/ f32 unk30;
     /*0x34*/ f32 unk34;
     /*0x38*/ f32 unk38;
