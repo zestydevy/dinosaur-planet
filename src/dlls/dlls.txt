@@ -94,6 +94,7 @@
 225 = objects/225_SabreBaddie
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
+228 = objects/228_Caictua
 232 = objects/232_VampireBat
 233 = objects/233_BigScorpionRobot
 234 = objects/234_ScorpionRobot
