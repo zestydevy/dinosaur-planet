@@ -15,8 +15,8 @@ typedef struct {
 } SnowWormSmall_Setup;
 
 typedef struct {
-    f32 unk0;
-    f32 unk4;
+    f32 soundTimer;
+    f32 soundTimerThreshold;
     u8 flags;
     u8 unk9;
 } SnowWormSmall_DataActual;
@@ -44,6 +44,14 @@ typedef enum {
     SnowWormSmall_LSTATE_4,
     SnowWormSmall_LSTATE_5
 } SnowWormSmall_LogicStates;
+
+typedef enum {
+    SnowWormSmall_FLAG_0 = 0,
+    SnowWormSmall_FLAG_1 = 1,
+    SnowWormSmall_FLAG_2 = 2,
+    SnowWormSmall_FLAG_4 = 4,
+    SnowWormSmall_FLAG_8 = 8
+} SnowWormSmall_Flags;
 
 /*0x0*/ static u32 dHurtSounds[] = {
     SOUND_5FF_Cry_Hurt, SOUND_600_Cry_Hurt, SOUND_601_Worm_Croak
@@ -91,14 +99,6 @@ typedef enum {
     SnowWormSmall_ASTATE_5, 
     SnowWormSmall_ASTATE_5
 };
-
-typedef enum {
-    SnowWormSmall_FLAG_0 = 0,
-    SnowWormSmall_FLAG_1 = 1,
-    SnowWormSmall_FLAG_2 = 2,
-    SnowWormSmall_FLAG_4 = 4,
-    SnowWormSmall_FLAG_8 = 8
-} SnowWormSmall_Flags;
 
 /*0xB0*/ static s8 dHitDamageMap[] = {
     -1, -1, -1, -1, -1, -1, -1, 
@@ -176,7 +176,7 @@ void SnowWormSmall_setup(Object* self, SnowWormSmall_Setup* objSetup, s32 reset)
     self->animCallback = NULL;
     
     objData = baddie->objdata;
-    objData->unk0 = rand_next(10, 300);
+    objData->soundTimer = rand_next(10, 300);
 
     func_80023D30(self, 8, 0.0f, 0);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -412,11 +412,12 @@ void SnowWormSmall_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         distance = 10000.0f;
     }
     
-    if ((objData->unk4 < objData->unk0) && (distance < 400.0f)) {
+    //Play sound when nearby
+    if ((objData->soundTimer > objData->soundTimerThreshold) && (distance < 400.0f)) {
         gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[1], 0x1E, NULL, NULL, 0, NULL);
-        objData->unk4 += rand_next(50, 250);
+        objData->soundTimerThreshold += rand_next(50, 250);
     }
-    objData->unk0 += gUpdateRateF;
+    objData->soundTimer += gUpdateRateF;
 }
 
 // offset: 0xF50 | func: 13
@@ -458,7 +459,7 @@ void SnowWormSmall_throw_ice_ball(Object* self, Baddie* baddie) {
     chuckSetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     chuckSetup->base.loadDistance = 0xFF;
     chuckSetup->base.fadeDistance = 0xFF;
-    chuck = obj_create(&chuckSetup->base, 5, -1, -1, NULL);
+    chuck = obj_create(&chuckSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
     
     if (chuck != NULL) {
         throwFactor = baddie->fsa.targetDist / baddie->unk3E2;
@@ -813,8 +814,8 @@ s32 SnowWormSmall_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     
     if (fsa->enteredLogicState) {
         objData = baddie->objdata;
-        objData->unk0 = 0.0f;
-        objData->unk4 = 0.0f;
+        objData->soundTimer = 0.0f;
+        objData->soundTimerThreshold = 0.0f;
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_6);
         fsa->target = NULL;
         fsa->unk4.mode = 0;
@@ -862,8 +863,8 @@ s32 SnowWormSmall_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_1);
         objData = baddie->objdata;
-        objData->unk0 = 0.0f;
-        objData->unk4 = 0.0f;
+        objData->soundTimer = 0.0f;
+        objData->soundTimerThreshold = 0.0f;
     }
     
     return 0;

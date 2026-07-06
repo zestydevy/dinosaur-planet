@@ -1,19 +1,12 @@
 #include "common.h"
 #include "dlls/engine/17_partfx.h"
 #include "dlls/objects/220_Chuka.h"
+#include "dlls/objects/216_SnowWorm.h"
 #include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/222_SnowWormSmall.h"
 #include "game/objects/object.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
-
-    //TODO: find out what the DLL ID is, and move into a header
-    DLL_INTERFACE(DLL_Unk_IceBallParent) {
-        /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-        /*07*/ UnknownDLLFunc func7;
-        /*08*/ u8 (*receive_message)(Object* self, u8 message);
-        //TODO: there may be more exports
-    };
 
 typedef struct {
     s16 unk0;
@@ -145,7 +138,7 @@ void ChukaChuck_handle_player_or_sidekick_collision(Object* self) {
     if (self->id == OBJ_IceBall) {
         //Send a message to the parent ? object (TODO: find out what the parent DLL is)
         if (self->unkC4 && ChukaChuck_does_parent_exist(self->unkC4)) {
-            ((DLL_Unk_IceBallParent*)self->unkC4->dll)->vtbl->receive_message(self->unkC4, 0x80);
+            ((DLL_216_SnowWorm*)self->unkC4->dll)->vtbl->receive_message(self->unkC4, 0x80);
         }
         
         //Create particles

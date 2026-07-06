@@ -4,16 +4,16 @@
 _exports:
 
 # ctor/dtor
-.dword dll_216_ctor
-.dword dll_216_dtor
+.dword SnowWorm_ctor
+.dword SnowWorm_dtor
 
 # export table
-/*0*/ .dword dll_216_setup
-/*1*/ .dword dll_216_control
-/*2*/ .dword dll_216_update
-/*3*/ .dword dll_216_print
-/*4*/ .dword dll_216_free
-/*5*/ .dword dll_216_get_model_flags
-/*6*/ .dword dll_216_get_data_size
-/*7*/ .dword dll_216_func_87C
-/*8*/ .dword dll_216_func_88C
+/*0*/ .dword SnowWorm_setup
+/*1*/ .dword SnowWorm_control
+/*2*/ .dword SnowWorm_update
+/*3*/ .dword SnowWorm_print
+/*4*/ .dword SnowWorm_free
+/*5*/ .dword SnowWorm_get_model_flags
+/*6*/ .dword SnowWorm_get_data_size
+/*7*/ .dword SnowWorm_get_anim_state
+/*8*/ .dword SnowWorm_receive_message

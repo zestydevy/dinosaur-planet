@@ -291,10 +291,12 @@ enum SoundID {
     SOUND_32B_SandWorm_Snarl = 0x32B, //CCsandwormBoss
 
     SOUND_335_SandWorm_Snarl = 0x335, //CCsandwormBoss
-    SOUND_336 = 0x336,
-
+    SOUND_336_Worm_Wounded = 0x336,
+    SOUND_337_Worm_Wounded = 0x337,
+    SOUND_338_Blast = 0x338,
+    SOUND_339_Worm_Emerge = 0x339,
     SOUND_33A_Worm_Roar = 0x33A, //SnowWormSmall
-
+    SOUND_33B_Worm_Dying = 0x33B,
     SOUND_33C_Hiss = 0x33C, //SnowWormSmall
     SOUND_33D_Hiss_Long = 0x33D, //SnowWormSmall
     SOUND_33E_Reverse_Magic_Hiss = 0x33E, //ECSHshrine (when cups rise)

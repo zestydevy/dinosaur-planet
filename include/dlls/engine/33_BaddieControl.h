@@ -33,7 +33,7 @@ typedef struct {
 /*3A6*/ s16 unk3A6;
 /*3A8*/ u32 unk3A8;
 /*3AC*/ Object *unk3AC;
-/*3B0*/ u8 unk3B0;
+/*3B0*/ u8 unk3B0; //flags
 /*3B1*/ u8 _unk3B1;
 /*3B2*/ u16 unk3B2;
 /*3B4*/ u8 unk3B4;

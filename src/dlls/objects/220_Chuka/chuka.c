@@ -255,7 +255,8 @@ static void Chuka_chuck(Object* self) {
     chuckSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     chuckSetup->base.fadeFlags = OBJSETUP_FADE_CAMERA;
     chuckSetup->base.fadeDistance = 0xFF;
-    chuck = obj_create(&chuckSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);;
+    chuck = obj_create(&chuckSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);;
+    
     if (chuck != NULL) {
         player = get_player();
         chuck->velocity.x = (player->srt.transl.x - self->srt.transl.x) / CHUCK_DURATION;

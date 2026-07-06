@@ -30,6 +30,9 @@ struct ObjFSA_Data;
 typedef s32 (*ObjFSA_StateCallback)(Object* obj, struct ObjFSA_Data* fsa, f32 updateRate);
 typedef void (*ObjFSA_ExitCallback)(Object* obj, struct ObjFSA_Data* fsa);
 
+#define FSA_NEXTSTATE_SYNC(state) (state + 1)
+#define FSA_NEXTSTATE_ASYNC(state) (-state)
+
 /**
  * objfsa ("object finite-state automata") implements finite-state machines for object related stuff.
  */
@@ -125,8 +128,8 @@ DLL_INTERFACE(DLL_18_objfsa) {
 /*10*/ void (*func10)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
        // turnDuration = duration of the turn in 3rds of a second.
 /*11*/ void (*turn_to_target)(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 turnDuration);
-/*12*/ void (*func12)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 *soundIDs);
-/*13*/ void (*func13)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 *soundIDs, f32 arg5, u8 volume);
+/*12*/ void (*func12)(Object *obj, ObjFSA_Data *data, s32 bitIdx, s32 soundIdx, u32 *soundIDs);
+/*13*/ void (*func13)(Object *obj, ObjFSA_Data *data, s32 bitIdx, s32 soundIdx, u32 *soundIDs, f32 pitch, u8 volume);
 /*14*/ void (*func14)(Object *obj, ObjFSA_Data *data, s32 arg2);
 /*15*/ void (*func15)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
 /*16*/ void (*func16)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
