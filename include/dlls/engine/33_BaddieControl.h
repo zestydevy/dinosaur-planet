@@ -64,7 +64,8 @@ typedef struct {
 /*1E*/ s16 unk1E;
 /*20*/ s16 unk20;
 /*22*/ s16 unk22;
-/*24*/ u8 _unk24[0x27 - 0x24];
+/*24*/ s16 unk24; //objSeqID
+/*26*/ u8 _unk26[0x27 - 0x26];
 /*27*/ s8 initialWeaponID;
 /*28*/ s8 unk28;
 /*29*/ u8 unk29;
