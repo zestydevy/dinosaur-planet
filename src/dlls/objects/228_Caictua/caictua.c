@@ -1,10 +1,16 @@
 #include "common.h"
+#include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/251_weapons.h"
 #include "game/objects/object_id.h"
 #include "macros.h"
+#include "sys/objhits.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+
+typedef struct {
+    Baddie_Setup baddie;
+} DLL228_Setup;
 
 typedef struct {
     f32 unk0;
@@ -14,9 +20,10 @@ typedef struct {
     s16 unk10;
     s16 unk12;
     s16 unk14;
-    s8 unk16[0x20 - 0x16];
+    s16 unk16;
+    s8 unk18[8];
     Vec3f unk20;
-    s8 unk2C[0x38 - 0x2C];
+    s8 unk2C[12];
     Vec3f unk38;
 } DLL228_DataActual; //44
 
@@ -96,8 +103,63 @@ void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x244 | func: 2 | export: 1
-void dll_228_control(Object* self);
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_control.s")
+#else
+
+static void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+
+void dll_228_control(Object* self) {
+    s32 pad;
+    Baddie* objData;
+    Baddie_Setup* objSetup;
+    f32 time;
+
+    objData = self->data;
+    objSetup = (DLL228_Setup*)self->setup;
+    
+    if (self->unkDC != 0) {
+        return;
+    }
+    
+    if (self->unkE0 == 0) {
+        self->srt.transl.x = objSetup->base.x;
+        self->srt.transl.y = objSetup->base.y;
+        self->srt.transl.z = objSetup->base.z;
+        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->unk2E, self, -1);
+        self->unkE0 = 1;
+        return;
+    }
+    
+    if (gDLL_33_BaddieControl->vtbl->func11(self, objData, 0) == FALSE) {
+        objData->unk3B6 = 0;
+        return;
+    }
+    
+    if ((objData->unk3B0 & 0x10) && (gDLL_7_Newday->vtbl->func8(&time) == FALSE)) {
+        objData->unk3B6 = 0;
+        return;
+    }
+    
+    dll_228_func_618(self, objData, &objData->fsa);
+    
+    if (objData->unk3B6 == 1) {
+        if (gDLL_33_BaddieControl->vtbl->func16(self, &objData->fsa, objData->unk3E2, 1)) {
+            objData->unk3B6 = 0;
+        }
+    }
+    
+    if (objData->unk3B6 == 0) {
+        dll_228_func_EC0(self, objData, &objData->fsa);
+    } else {
+        dll_228_func_D08(self, objData, &objData->fsa);
+    }
+    
+    self->srt.transl.y = objSetup->base.y - 2.0f;
+}
+#endif
 
 // offset: 0x43C | func: 3 | export: 2
 void dll_228_update(Object* self) { }
@@ -208,7 +270,68 @@ void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 #endif
 
 // offset: 0x938 | func: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_938.s")
+f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
+    f32 temp_ft4;
+    f32 temp_ft4_2;
+    f32 temp_fv0;
+    f32 var_fa0;
+    s32 var_a0;
+    f32 var_fa1;
+    f32 var_fv0;
+    f32 var_fv1;
+    s32 isNegative;
+
+    var_fv0 = 0.0f;
+    var_fv1 = 0.0f;
+    var_fa0 = 0.0f;
+    
+    isNegative = yawDiff < 0;
+    if (isNegative != 0) {
+        yawDiff = -yawDiff;
+        yawSpeed = -yawSpeed;
+    }
+    
+    if (yawSpeed < 0.0f) {
+        return (isNegative) ? -maxAngle : maxAngle;
+    }
+    
+    do {
+        var_fv1 += maxAngle;
+        var_fv0 += var_fv1;
+    } while ((var_fv0 + var_fv1) < yawDiff);
+    
+    if ((yawDiff <= maxAngle) && (yawSpeed <= maxAngle) && 
+        (((yawDiff >= 0) && (yawSpeed >= 0.0f)) || ((yawDiff <= 0) && (yawSpeed <= 0.0f)))
+    ) {
+        var_fa0 = 0.0f;
+    } else {
+        temp_fv0 = var_fv1 - maxAngle;
+        temp_ft4 = yawSpeed + maxAngle;
+        if (temp_ft4 <= temp_fv0) {
+            var_fa0 = temp_ft4;
+        } else {
+            temp_ft4_2 = yawSpeed - maxAngle;
+            if (temp_ft4_2 < var_fv1) {
+                var_fa0 = temp_fv0;
+                if (var_fv1 == maxAngle) {
+                    var_fa0 = maxAngle;
+                }
+            } else {
+                var_fa0 = temp_ft4_2;
+                if (temp_ft4_2 == 0.0f) {
+                    var_fa0 = maxAngle;
+                }
+            }
+        }
+    }
+    
+    if (isNegative) {
+        var_fa0 = -var_fa0;
+        yawSpeed = -yawSpeed;
+    }
+    
+    return var_fa0 - yawSpeed;
+}
 
 // offset: 0xAA0 | func: 12
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_AA0.s")
@@ -247,7 +370,38 @@ void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 #endif
 
 // offset: 0xEC0 | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_EC0.s")
+void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    DLL228_DataActual* objData;
+    Object* target;
+    Baddie_Setup* objSetup;
+
+    objData = baddie->objdata;
+    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+    objSetup = (Baddie_Setup*)self->setup;
+    
+    if ((target != NULL) && !(baddie->unk3B0 & 4)) {
+        gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 0, -1);
+        fsa->unk33D = 0;
+        fsa->target = target;
+        baddie->unk3B6 = 1;
+        return;
+    }
+    
+    if ((objData->unk0 > 0.0f) && ((fsa->logicState != 3) || (baddie->unk3B0 & 1))) {
+        if (objData->unk4 <= objData->unk0) {
+            gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 0, -1);
+            objData->unk0 = 0.0f;
+            fsa->hitpoints = objSetup->quarterHitpoints * 4;
+            self->srt.transl.x = objSetup->base.x;
+            self->srt.transl.y = objSetup->base.y;
+            self->srt.transl.z = objSetup->base.z;
+            self->srt.yaw = objSetup->unk2A << 8;
+            return;
+        }
+        
+        objData->unk0 += gUpdateRateF;
+    }
+}
 
 // offset: 0x10BC | func: 15
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_10BC.s")
@@ -268,7 +422,63 @@ static void dll_228_func_1394(Object* self) {
 }
 
 // offset: 0x1460 | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_1460.s")
+s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    s16 angle;
+    DLL228_DataActual* objData;
+    s16 yawDiff;
+    Object* player;
+    Baddie* baddie;
+    Vec3f v;
+    Vec3s16 vCactus16;
+    Vec3s16 vPlayer16;
+    u8 sp37;
+
+    baddie = self->data;
+    objData = baddie->objdata;
+    
+    fsa->unk341 = 1;
+    
+    if (fsa->enteredAnimState) {
+        func_8002674C(self);
+    }
+    
+    func_80026128(self, Damage_Type_Sword_Staff_Strike1, 1, -1);
+    self->objhitInfo->unk5D = 0xA;
+    self->objhitInfo->unk5E = 1;
+    func_80028D2C(self);
+    
+    if (objData->unk12 >= gUpdateRate) {
+        objData->unk12 -= gUpdateRate;
+    } else {
+        //Check if the caictua has line-of-sight to the player
+        player = get_player();
+        
+        //Get yaw diff
+        angle = (u16)arctan2_f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.f[2] - player->srt.transl.f[2]);
+        yawDiff = angle - (self->srt.yaw & 0xFFFF);
+        CIRCLE_WRAP(yawDiff);
+        
+        //If the player is within a 90 viewing wedge
+        if ((-M_45_DEGREES < yawDiff) && (yawDiff < M_45_DEGREES)) {
+            v.f[0] = self->srt.transl.x; 
+            v.f[1] = self->srt.transl.y + 55.0f; 
+            v.f[2] = self->srt.transl.z; 
+            func_80007EE0(&v, &vCactus16);
+
+            v.f[0] = player->srt.transl.x;
+            v.f[1] = player->srt.transl.y + 25.0f; 
+            v.f[2] = player->srt.transl.z; 
+            func_80007EE0(&v, &vPlayer16);
+
+            if (func_80008048(&vPlayer16, &vCactus16, NULL, &sp37, 0) || (sp37 == 1)) {
+                objData->unk12 = rand_next(120, 240);
+                return 2;
+            }
+        }
+    }
+
+    return 0;
+}
 
 // offset: 0x16B0 | func: 18
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_16B0.s")
