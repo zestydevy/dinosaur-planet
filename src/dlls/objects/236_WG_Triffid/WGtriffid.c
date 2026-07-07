@@ -2,6 +2,7 @@
 #include "common.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/objects/260_Pollen.h"
+#include "game/objects/object.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
@@ -253,7 +254,7 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
         pollenSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
         pollenSetup->loadDistance = 0xFF;
         pollenSetup->fadeDistance = 0xFF;
-        pollen = obj_create(pollenSetup, 4 | 1, -1, -1, NULL);
+        pollen = obj_create(pollenSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
         
         if (pollen != NULL) {
             thetaA = rand_next(-2000, 2000) + self->srt.yaw;
