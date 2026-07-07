@@ -17,26 +17,61 @@
 #include "prevent_bss_reordering.h"
 
 typedef struct {
-    u8 unk0;
+    s8 unk0;
 } DLL255_DataActual;
 
 typedef struct {
     Baddie unk0;
 } DLL255_Data;
 
-/*0x0*/ static u32 _data_0[] = {
-    0x00990000, 0x0000000b, 0x01ff0000, 0x3c9374bc, 0xbf800000, 0xbf800000, 0xbf800000, 0x3e4ccccd, 
-    0x3f000000, 0x3e99999a, 0x3eb33333, 0x06610000, 0x00000000, 0x00000000, 0x00000000, 0x009a0000, 
-    0x0000000c, 0x01020000, 0x3c54fdf4, 0x3dcccccd, 0x3ecccccd, 0x3f000000, 0x3e9eb852, 0x3efae148, 
-    0x3e800000, 0x3e99999a, 0x06620000, 0x00000000, 0x00000000, 0x00000000, 0x009b0000, 0x0000000a, 
-    0x01ff0000, 0x3c449ba6, 0xbf800000, 0xbf800000, 0xbf800000, 0x3e99999a, 0x3f0a3d71, 0x3e851eb8, 
-    0x3eb851ec, 0x06630000, 0x00000000, 0x00000000, 0x00000000, 0x009c0000, 0x0000000b, 0x01ff0000, 
-    0x3c449ba6, 0x00000000, 0x3eb33333, 0x3f1eb852, 0x3ea3d70a, 0x3f19999a, 0x3e851eb8, 0x3ed70a3d, 
-    0x06610000, 0x00000000, 0x00000000, 0x00000000, 0x009d0000, 0x00000009, 0x01ff0000, 0x3c5d2f1b, 
-    0x00000000, 0x3ecccccd, 0x3f0ccccd, 0x3dcccccd, 0x3f07ae14, 0x3e75c28f, 0x3eb33333, 0x06610000, 
-    0x00000000, 0x00000000, 0x00000000, 0x009e0000, 0x0000000c, 0x01ff0000, 0x3c343958, 0xbf800000, 
-    0xbf800000, 0xbf800000, 0x3e851eb8, 0x3ebd70a4, 0x3eb33333, 0x3eeb851f, 0x06620000, 0x00000000, 
-    0x00000000, 0x00000000
+typedef struct {
+    s16 unk0;
+    s32 unk4; //FSA anim state?
+    s16 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24; //animProgress?
+    f32 unk28; //other animProgress?
+    s16 unk2C; //soundID
+    f32 unk30;
+    f32 unk34;
+    f32 unk38;
+} DLL225_Data0_Unk; //0x3C
+
+/*0x0*/ static DLL225_Data0_Unk _data_0[6] = {
+    {0x0099, 0x0000000b, 0x01ff, 0.018, 
+    -1, -1, -1, 0.2, 
+    0.5, 0.3, 0.35, 0x0661, 
+    0, 0, 0}, 
+    
+    {0x009a, 0x0000000c, 0x0102, 0.013, 
+    0.1, 0.4, 0.5, 0.31, 
+    0.49, 0.25, 0.3, 0x0662, 
+    0, 0, 0}, 
+    
+    {0x009b, 0x0000000a, 0x01ff, 0.012, 
+    -1, -1, -1, 0.3, 
+    0.54, 0.26, 0.36, 0x0663, 
+    0, 0, 0}, 
+    
+    {0x009c, 0x0000000b, 0x01ff, 0.012, 
+    0, 0.35, 0.62, 0.32, 
+    0.6, 0.26, 0.42, 0x0661, 
+    0, 0, 0}, 
+    
+    {0x009d, 0x00000009, 0x01ff, 0.0135, 
+    0, 0.4, 0.55, 0.1, 
+    0.53, 0.24, 0.35, 0x0661, 
+    0, 0, 0}, 
+    
+    {0x009e, 0x0000000c, 0x01ff, 0.011, 
+    -1, -1, -1, 0.26, 
+    0.37, 0.35, 0.46, 0x0662, 
+    0, 0, 0}
 };
 /*0x168*/ static s32 _data_168[] = {
     0x0000000c, 0x0000000c, 0x0000000c, 0x0000000c, 0x0000000c, 0x0000000c, 0x0000000c, 0x0000000c, 
@@ -68,12 +103,61 @@ static void dll_225_func_864(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void dll_225_func_A84(Object* self, AnimObj_Data* animData, Baddie* baddie, ObjFSA_Data* fsa);
 static void dll_225_func_C10(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 
+static s32 dll_225_func_D08(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_DB4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_F38(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_10EC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_11A4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1264(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_134C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1434(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_151C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1604(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1878(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1AEC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1D60(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1E60(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
+static s32 dll_225_func_1F20(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_1F38(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_2010(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_2028(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_209C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_2190(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_21F8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_225_func_2404(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
 // offset: 0x0 | func: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_0.s")
+static void dll_225_func_0(void) {
+    _bss_0[0] = dll_225_func_D08;
+    _bss_0[1] = dll_225_func_DB4;
+    _bss_0[2] = dll_225_func_F38;
+    _bss_0[3] = dll_225_func_10EC;
+    _bss_0[4] = dll_225_func_11A4;
+    _bss_0[5] = dll_225_func_1264;
+    _bss_0[6] = dll_225_func_134C;
+    _bss_0[7] = dll_225_func_1434;
+    _bss_0[8] = dll_225_func_151C;
+    _bss_0[9] = dll_225_func_1604;
+    _bss_0[10] = dll_225_func_1878;
+    _bss_0[11] = dll_225_func_1AEC;
+    _bss_0[12] = dll_225_func_1D60;
+    _bss_0[13] = dll_225_func_1E60;
+    
+    _bss_38[0] = dll_225_func_1F20;
+    _bss_38[1] = dll_225_func_1F38;
+    _bss_38[2] = dll_225_func_2010;
+    _bss_38[3] = dll_225_func_2028;
+    _bss_38[4] = dll_225_func_209C;
+    _bss_38[5] = dll_225_func_2190;
+    _bss_38[6] = dll_225_func_21F8;
+    _bss_38[7] = dll_225_func_2404;
+}
 
 // offset: 0x12C | ctor
-void dll_225_ctor(void *dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_ctor.s")
+void dll_225_ctor(void *dll) {
+    dll_225_func_0();
+}
 
 // offset: 0x16C | dtor
 void dll_225_dtor(void *dll) { }
@@ -113,8 +197,38 @@ void dll_225_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x2A8 | func: 2 | export: 1
-void dll_225_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_control.s")
+void dll_225_control(Object* self) {
+    Baddie* baddie;
+    Baddie_Setup* objSetup;
+
+    baddie = self->data;
+    objSetup = (Baddie_Setup*)self->setup;
+    
+    if (self->unkDC == 0) {
+        if (self->unkE0 == 0) {
+            self->srt.transl.x = objSetup->base.x;
+            self->srt.transl.f[1] = objSetup->base.y;
+            self->srt.transl.f[2] = objSetup->base.z;
+            gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->unk2E, self, -1);
+            self->unkE0 = 1;
+            return;
+        }
+        
+        if (baddie->unk3B2 & 2) {
+            gDLL_33_BaddieControl->vtbl->func9(self, &baddie->fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0, 1);
+            baddie->unk3B2 &= 0xFFFD;
+        }
+        
+        if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 1) != 0) {
+            dll_225_func_864(self, baddie, &baddie->fsa);
+            if ((baddie->fsa.target != NULL) || (baddie->fsa.hitpoints == 0)) {
+                dll_225_func_A84(self, 0, baddie, &baddie->fsa);
+            } else {
+                dll_225_func_C10(self, baddie, &baddie->fsa);
+            }
+        }
+    }
+}
 
 // offset: 0x450 | func: 3 | export: 2
 void dll_225_update(Object* self) {
@@ -473,13 +587,120 @@ s32 dll_225_func_151C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1604 | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_1604.s")
+s32 dll_225_func_1604(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    u8 idx;
+
+    self->objhitInfo->unk5F = 0xB;
+    self->objhitInfo->unk60 = 1;
+    func_80028D2C(self);
+    
+    if (fsa->enteredAnimState) {
+        func_80023D30(self, 0x9E, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+
+    idx = 0;
+    while (self->curModAnimId != _data_0[idx].unk0 && idx < 6) {idx++;}
+    
+    if (fsa->enteredAnimState == FALSE) {
+        if (!(fsa->unk34A & 1)) {
+            if (_data_0[idx].unk24 < self->animProgress) {
+                gDLL_6_AMSFX->vtbl->play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
+                fsa->unk34A |= 1;
+            }
+        }
+        
+        if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
+            gDLL_6_AMSFX->vtbl->play(self, _data_20C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            fsa->unk34A |= 2;
+        }
+    }
+    
+    fsa->unk341 = 1;
+    fsa->unk278 = 0.0f;
+    fsa->unk27C = 0.0f;
+    fsa->animTickDelta = 0.011f;
+    gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 1);
+    
+    return 0;
+}
 
 // offset: 0x1878 | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_1878.s")
+s32 dll_225_func_1878(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    u8 idx;
+
+    self->objhitInfo->unk5F = 0xB;
+    self->objhitInfo->unk60 = 1;
+    func_80028D2C(self);
+    
+    if (fsa->enteredAnimState) {
+        func_80023D30(self, 0x9A, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+
+    idx = 0;
+    while (self->curModAnimId != _data_0[idx].unk0 && idx < 6) {idx++;}
+    
+    if (fsa->enteredAnimState == FALSE) {
+        if (!(fsa->unk34A & 1)) {
+            if (_data_0[idx].unk24 < self->animProgress) {
+                gDLL_6_AMSFX->vtbl->play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
+                fsa->unk34A |= 1;
+            }
+        }
+        if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
+            gDLL_6_AMSFX->vtbl->play(self, _data_20C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            fsa->unk34A |= 2;
+        }
+    }
+    
+    fsa->unk341 = 1;
+    fsa->unk278 = 0.0f;
+    fsa->unk27C = 0.0f;
+    fsa->animTickDelta = 0.011f;
+    gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 1);
+    
+    return 0;
+}
 
 // offset: 0x1AEC | func: 23
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_1AEC.s")
+s32 dll_225_func_1AEC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    u8 idx;
+
+    self->objhitInfo->unk5F = 0xB;
+    self->objhitInfo->unk60 = 1;
+    func_80028D2C(self);
+    
+    if (fsa->enteredAnimState) {
+        func_80023D30(self, 0x9B, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+    
+    idx = 0;
+    while (self->curModAnimId != _data_0[idx].unk0 && idx < 6) {idx++;}
+    
+    if (fsa->enteredAnimState == FALSE) {
+        if (!(fsa->unk34A & 1)) {
+            if (_data_0[idx].unk24 < self->animProgress) {
+                gDLL_6_AMSFX->vtbl->play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
+                fsa->unk34A |= 1;
+            }
+        }
+        
+        if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
+            gDLL_6_AMSFX->vtbl->play(self, _data_20C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            fsa->unk34A |= 2;
+        }
+    }
+    
+    fsa->unk341 = 1;
+    fsa->unk278 = 0.0f;
+    fsa->unk27C = 0.0f;
+    fsa->animTickDelta = 0.011f;
+    gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 1);
+    
+    return 0;
+}
 
 // offset: 0x1D60 | func: 24
 s32 dll_225_func_1D60(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -630,4 +851,116 @@ s32 dll_225_func_21F8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2404 | func: 33
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_2404.s")
+s32 dll_225_func_2404(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL255_DataActual* objData;
+    s32 var_v0;
+    s32 pad;
+    u16 sp3E;
+    s16 sp3C;
+    u16 sp3A;
+    u8 sp39;
+    u8 sp28;
+
+    baddie = self->data;
+    
+    if (fsa->enteredLogicState || fsa->enteredAnimState || fsa->unk33A) {
+        if (gDLL_2_Camera->vtbl->get_target_object() != self) {
+            objData = baddie->objdata;
+
+            if (objData->unk0 >= 7) {
+                objData->unk0 = 0;
+                return 0;
+            }
+            
+            if (objData->unk0 > 0) {
+                objData->unk0++;
+            }
+        }
+
+        sp39 = gDLL_33_BaddieControl->vtbl->func5(self, fsa, 75.0f);
+        gDLL_33_BaddieControl->vtbl->func4(self, get_player(), 0x10, &sp3E, &sp3C, &sp3A);
+
+        if ((s32)sp3A >= (s32)(f32)baddie->unk3E2) { //?
+            return 7;
+        }
+
+        if (baddie->unk3B6 > 0x14) {
+            baddie->unk3B6 -= 0x14;
+        }
+        
+        if ((sp3E < 2) || (sp3E >= 0xE)) {
+            if (sp39 & 1) {
+                if ((s32) sp3A >= 0x56) {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 3);
+                } else if ((s32) sp3A >= 0x27) {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 2);
+                } else if ((s32) sp3A < 0x14) {
+                    if ((sp3E >= 0xE) && (sp39 & 8)) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 5);
+                    } else if (sp39 & 2) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 6);
+                    } else if (sp39 & 4) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
+                    } else {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xA);
+                    }
+                } else {
+                    if ((sp3E == 1) || (sp3E == 0xE)) {
+                        var_v0 = rand_next(0, 1);
+                    } else {
+                        var_v0 = rand_next(0, 2);
+                    }
+                    
+                    switch (var_v0) {
+                    case 0:
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 9);
+                        break;
+                    case 1:
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xA);
+                        break;
+                    default:
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xB);
+                        break;
+                    }
+                    
+                    fsa->unk34A = 0;
+                    baddie->unk3B6 = 0x190;
+                }
+            } else {
+                if (rand_next(0, 1) != 0) {
+                    if ((sp3E >= 0xE) && (sp39 & 8)) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 5);
+                    } else if (sp39 & 2) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 6);
+                    } else if (sp39 & 4) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
+                    } else {
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xA);
+                    }
+                } else {
+                    switch (rand_next(0, 2)) {
+                    case 0:
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 9);
+                        break;
+                    case 1:
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xA);
+                        break;
+                    default:
+                        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xB);
+                        break;
+                    }
+                    fsa->unk34A = 0;
+                    baddie->unk3B6 = 0x190;
+                }
+            }
+        } else if ((sp3E >= 2) && (sp3E < 7)) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 7);
+        } else {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 8);
+        }
+        fsa->unk33A = 0;
+    }
+
+    return 0;
+}
