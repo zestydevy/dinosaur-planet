@@ -334,7 +334,69 @@ f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
 }
 
 // offset: 0xAA0 | func: 12
+#ifdef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_AA0.s")
+#else
+s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 targetY, f32 targetZ, f32 speed, f32 arg7, s32 arg8) {
+    f32 sp6C;
+    f32 temp_fa0;
+    f32 temp_fs3;
+    f32 dy;
+    f32 dx;
+    f32 dz;
+    f32 var_fa1;
+    f32 temp;
+    s32 iterations;
+    s32 idx;
+    s16 sp7C[2]; //7C
+
+    idx = 0;
+    
+    dx = originX - targetX;
+    dz = originZ - targetZ;
+    dy = targetY - originY;
+    dx = sqrtf(SQ(dx) + SQ(dz));
+    
+    sp6C = ((dy * arg7) + SQ(speed));
+    dz = SQ(sp6C);
+    temp_fa0 = SQ(arg7) * (SQ(dx) + SQ(dy));
+    temp = dz - temp_fa0;
+    
+    if (temp_fa0 <= dz) {
+        iterations = 2;
+        temp_fs3 = sqrtf(temp);
+        while (iterations--) {
+            temp = (SQ(dy) / (SQ(dx))) + 1.0f;
+            var_fa1 = (((iterations != 0) ? temp_fs3 : -temp_fs3) + sp6C) / (2.0f * temp);
+            if (var_fa1 >= 0.0f) {
+                var_fa1 = sqrtf(var_fa1);
+                if (dx < 0.0f) {
+                    var_fa1 = -var_fa1;
+                }
+                sp7C[idx] = arctan2_f(((dy / dx) * var_fa1) - ((arg7 * dx) / (2.0f * var_fa1)), var_fa1);
+                idx++;
+            }
+        }
+    }
+
+    switch (idx) {
+        case 2:
+            if (sp7C[0] < sp7C[1]) {
+                return (arg8 != 0) ? sp7C[1] : sp7C[0];
+            } else {
+                return (arg8 != 0) ? sp7C[0] : sp7C[1];
+            }
+            break;
+
+        case 1:
+            return sp7C[0];
+            break;
+
+        default:
+            return M_45_DEGREES;
+    }
+}
+#endif
 
 // offset: 0xD08 | func: 13
 #if 1
