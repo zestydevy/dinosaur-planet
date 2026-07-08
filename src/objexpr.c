@@ -3,25 +3,13 @@
 #include "sys/curves.h"
 #include "dll.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/rand.h"
 #include "macros.h"
 
 // expr.c (default.dol)
 
-#define TWENTY_DEGREES 0xE38
 #define HEAD_TURN_LIMIT 0x1FFF //~45 degrees (giving a 90 degree turn range)
-
-typedef struct {
-    s16 pitch;
-    s16 yaw;
-    s16 roll;
-    s16 scaleX; //0x400 (or 0) is 1.0x scale
-    s16 scaleY;
-    s16 scaleZ;
-    s16 translateX;
-    s16 translateY;
-    s16 translateZ;
-} SeqJoint;
 
 // -------- .bss start 800b2e00 -------- //
 struct {
@@ -551,8 +539,8 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
             currentAngle = arg1->headGoalAngle;
             arg1->headGoalAngle = rand_next(0, HEAD_TURN_LIMIT);
             if (currentAngle > 0) {
-                if ((currentAngle - arg1->headGoalAngle) < TWENTY_DEGREES) {
-                    arg1->headGoalAngle += TWENTY_DEGREES;
+                if ((currentAngle - arg1->headGoalAngle) < M_20_DEGREES) {
+                    arg1->headGoalAngle += M_20_DEGREES;
                 }
                 //Left turn limit
                 if (arg1->headGoalAngle > HEAD_TURN_LIMIT) {
@@ -560,8 +548,8 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
                 }
                 arg1->headGoalAngle = -arg1->headGoalAngle;
             } else {
-                if ((arg1->headGoalAngle - currentAngle) < TWENTY_DEGREES) {
-                    arg1->headGoalAngle += TWENTY_DEGREES;
+                if ((arg1->headGoalAngle - currentAngle) < M_20_DEGREES) {
+                    arg1->headGoalAngle += M_20_DEGREES;
                 }
                 if (arg1->headGoalAngle > HEAD_TURN_LIMIT) {
                     arg1->headGoalAngle = HEAD_TURN_LIMIT;
