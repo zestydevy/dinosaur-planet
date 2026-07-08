@@ -7,6 +7,9 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "sys/dll.h"
+#include "sys/gfx/model.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
@@ -35,14 +38,14 @@ typedef struct {
     u8 _unk84[0x88 - 0x84];
     s8 unk88;
     Object* unk8C;
-    s32 unk90;
+    Object* unk90;
     Vec3f unk94;
     f32 unkA0;
     f32 unkA4;
     f32 unkA8;
-    f32 unkAC;
-    f32 unkB0;
-    f32 unkB4;
+    Vec3f unkAC;
+    // f32 unkB0;
+    // f32 unkB4;
     f32 unkB8;
     f32 unkBC;
     f32 unkC0;
@@ -208,8 +211,9 @@ void dll_274_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0x116C | func: 5 | export: 5
-u32 dll_274_get_model_flags(Object* self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_get_model_flags.s")
+u32 dll_274_get_model_flags(Object* self) {
+    return MODFLAGS_EVENTS | MODFLAGS_8;
+}
 
 // offset: 0x117C | func: 6 | export: 6
 u32 dll_274_get_data_size(Object *self, u32 a1) {
@@ -264,7 +268,7 @@ s32 dll_274_func_184C(Object* self, s32 arg1, f32 arg2, f32* arg3) {
 }
 
 // offset: 0x18C8 | func: 12
-void dll_274_func_18C8(Object* self, s32 arg1) {
+static void dll_274_func_18C8(Object* self, s32 arg1) {
     DLL274_Data* objData;
     Object* outSender;
     u32 outMessageID;
@@ -456,23 +460,23 @@ void dll_274_func_20A0(Object* self, DLL274_Data* objData) {
     objData->unk80 = objSetup->unk18;
     objData->unk82 = objSetup->unk1A;
     objData->unkC4 = 0.0f;
-    objData->unk90 = 0;
+    objData->unk90 = NULL;
     
     main_set_bits(objData->unk80, 0);
     texAnim = func_800348A0(self, 0, 0);
 
-    objData->unkB0 += objData->unkA4;
-    if (objData->unkB0 > 255.0f) {
-        objData->unkB0 = 255.0f;
-    } else if (objData->unkB0 < 0.0f) {
-        objData->unkB0 = 255.0f;
+    objData->unkAC.f[1] += objData->unkA4;
+    if (objData->unkAC.f[1] > 255.0f) {
+        objData->unkAC.f[1] = 255.0f;
+    } else if (objData->unkAC.f[1] < 0.0f) {
+        objData->unkAC.f[1] = 255.0f;
     }
     
-    objData->unkB4 += objData->unkA8;
-    if (objData->unkB4 > 255.0f) {
-        objData->unkB4 = 255.0f;
-    } else if (objData->unkB4 < 0.0f) {
-        objData->unkB4 = 255.0f;
+    objData->unkAC.f[2] += objData->unkA8;
+    if (objData->unkAC.f[2] > 255.0f) {
+        objData->unkAC.f[2] = 255.0f;
+    } else if (objData->unkAC.f[2] < 0.0f) {
+        objData->unkAC.f[2] = 255.0f;
     }
     
     texAnim->multiplyR = 0xA;
@@ -481,7 +485,122 @@ void dll_274_func_20A0(Object* self, DLL274_Data* objData) {
 }
 
 // offset: 0x225C | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_225C.s")
+s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
+    TextureAnimator* texAnim; //5C
+    DLL_IModgfx* sp58; //58
+    u8 sp57; //57
+    f32 dx;
+    f32 dz;
+    f32 distance; //48
+    f32 temp1;
+    f32 temp2;
+    s8 temp3;
+
+    sp57 = FALSE;
+    distance = 10000.0f;
+    
+    dll_274_func_18C8(self, 0);
+
+    if (main_get_bits(objData->unk80)) {
+        if (self->srt.scale > 0.001f) {
+            self->srt.scale -= 0.02f * gUpdateRateF;
+            if (self->srt.scale <= 0.001f) {
+                self->unkAF |= ARROW_FLAG_8_No_Targetting;
+                self->srt.scale = 0.0f;
+                self->srt.transl.f[1] -= 300.0f;
+            }
+        }
+        return 1;
+    }
+    
+    if (objData->unk90 == NULL) {
+        objData->unk90 = obj_get_nearest_type_to(0x13, self, &distance);
+    }
+    
+    if (objData->unk90 == NULL) {
+        return 0;
+    }
+    
+    if (objData->unkAC.f[0] < 150.0f) {
+        objData->unkAC.f[0] = 150.0f;
+    }
+    
+    dz = objData->unk90->srt.transl.f[2] - self->srt.transl.f[2];
+    if (dz < 0.0f) {
+        dz *= -1.0f;
+    }
+    
+    if (objData->unkC4 < dz + 10.0f) {
+        return 0;
+    }
+        
+    dx = objData->unk90->srt.transl.x - self->srt.transl.x;
+    if (dx < 0.0f) {
+        dx *= -1.0f;
+    }
+    if (dx > 30.0f) {
+        return 0;
+    }
+    
+    if ((dz + 10.0f <= objData->unkC4) && (objData->unkC4 <= (dz + 40.0f))) {
+        sp57 = TRUE;
+        main_set_bits(BIT_1C9, 1);
+    }
+    
+    texAnim = func_800348A0(self, 0, 0);
+
+    objData->unkC0 += objData->unkBC * gUpdateRateF;
+    if (objData->unkB8 <= objData->unkC0) {
+        objData->unkBC *= -1.0f;
+    } else if (objData->unkC0 < 0.0f) {
+        objData->unkB8 = rand_next(25, 75) * 0.01f;
+        objData->unkBC = objData->unkB8 / rand_next(40, 70);
+        objData->unkC0 = 0.0f;
+    }
+    
+    if (texAnim != NULL) {
+        objData->unkAC.f[0] += objData->unkA0;
+        if (objData->unkAC.f[0] >= 225.0f) {
+            main_set_bits(objData->unk80, 1);
+            if (sp57 != 0) {
+                main_set_bits(BIT_1C9, 0);
+            }
+            
+            sp58 = dll_load_deferred(0x1003, 1);
+            sp58->vtbl->func0(self, 0x14, 0, 2, -1, 0);
+            sp58->vtbl->func0(self, 0x14, 0, 2, -1, 0);
+            dll_unload(sp58);
+            
+            gDLL_6_AMSFX->vtbl->play(NULL, 0x778, 0x64, NULL, NULL, 0, NULL);
+        } else {
+            objData->unkAC.f[1] += objData->unkA4;
+
+            
+            if (objData->unkAC.f[1] > 255.0f) {
+                objData->unkAC.f[1] = 255.0f;
+            } else if (objData->unkAC.f[1] < 0.0f) {
+                objData->unkAC.f[1] = 255.0f;
+            }
+            
+            objData->unkAC.f[2] += objData->unkA8;
+            if (objData->unkAC.f[2] > 255.0f) {
+                objData->unkAC.f[2] = 255.0f;
+            } else if (objData->unkAC.f[2] < 0.0f) {
+                objData->unkAC.f[2] = 255.0f;
+            }
+
+            temp1 = objData->unkAC.f[1] * (0.25f + objData->unkC0);
+            temp2 = objData->unkAC.f[2] * (0.25f + objData->unkC0);
+            temp3 = objData->unkAC.f[0];
+            
+            texAnim->multiplyR = (s8)temp3 & 0xFF;
+            texAnim->multiplyG = (s16)temp1;
+            texAnim->multiplyB = (s16)temp2;
+        }
+    }
+    
+    return 0;
+}
 
 // offset: 0x27C8 | func: 18
 s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
