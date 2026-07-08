@@ -2,30 +2,49 @@
 #include "PR/gbi.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 #include "sys/objtype.h"
+#include "sys/rand.h"
 #include "types.h"
 
 typedef struct {
     ObjSetup base;
     s16 unk18;
+    s16 unk1A;
 } DLL274_Setup;
 
 typedef struct {
     u8 _unk0[0xC - 0x0];
     f32 unkC;
-    u8 _unk10[0x78 - 0x10];
+    u8 _unk10[0x14 - 0x10];
+    f32 unk14;
+    Vec3f unk18[4];
+    Vec3f unk48[4];
     u32 unk78;
     u32 unk7C;
     s16 unk80;
-    u8 _unk82[0x8C - 0x82];
+    s16 unk82;
+    u8 _unk84[0x88 - 0x84];
+    s8 unk88;
     Object* unk8C;
-    u8 _unk90[0xC4 - 0x90];
+    s32 unk90;
+    Vec3f unk94;
+    f32 unkA0;
+    f32 unkA4;
+    f32 unkA8;
+    f32 unkAC;
+    f32 unkB0;
+    f32 unkB4;
+    f32 unkB8;
+    f32 unkBC;
+    f32 unkC0;
     f32 unkC4;
     f32 unkC8;
     f32 unkCC;
@@ -43,9 +62,8 @@ typedef struct {
 /*0x30*/ static u32 _data_30[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
-/*0x40*/ static u32 _data_40[] = {
-    0x00000000, 0x00000000, 0x3dcccccd, 0x00000000
-};
+
+static void dll_274_func_2020(Object* self, MtxF* oMtx);
 
 // offset: 0x0 | ctor
 void dll_274_ctor(void *dll) { }
@@ -58,16 +76,105 @@ void dll_274_setup(Object *self, ObjSetup* setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_setup.s")
 
 // offset: 0x638 | func: 1 | export: 1
-void dll_274_control(Object *self);
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_control.s")
+#else
+void dll_274_control(Object* self) {
+    DLL274_Data* objData;
+    s32 damageType;
+    Object* hitBy;
+
+    objData = self->data;
+    
+    objData->unkD4 &= ~2;
+    if (self->velocity.y != 0.0f) {
+        objData->unkD4 |= 2;
+    }
+    
+    if ((self->unkAF & 4) && (main_get_bits(BIT_913) == 0)) {
+        gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
+        main_set_bits(BIT_913, 1);
+        return;
+    }
+    
+    switch (self->id) {
+    case OBJ_NWSH_colpush:
+        if (dll_274_func_225C(self, objData) != 0) {
+            return;
+        }
+        break;
+    case OBJ_NWSH_colpushped:
+        if (dll_274_func_225C(self, objData) != 0) {
+            return;
+        }
+        break;
+    case OBJ_VFP_Block2:
+        damageType = func_80025F40(self, &hitBy, NULL, NULL);
+        if (damageType && (hitBy != NULL) && (hitBy->id == OBJ_VFPDragBreath)) {
+            objData->unk14 = 100.0f;
+        } else if ((objData->unkD4 & 0x80) && damageType && (hitBy != NULL) && (hitBy->id == 0x14B)) {
+            main_set_bits(BIT_4FA, 1);
+        }
+        
+        dll_274_func_27C8(self, objData);
+        break;
+    case OBJ_DIM2IceBlock:
+        dll_274_func_2A74(self, objData);
+        break;
+    default:
+        break;
+    }
+
+    map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+}
+#endif
 
 // offset: 0x87C | func: 2 | export: 2
 void dll_274_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_update.s")
 
 // offset: 0xEE4 | func: 3 | export: 3
-void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_print.s")
+void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    DLL274_Data* objData;
+    ModelInstance* modelInst;
+    Model* model;
+
+    if (visibility == FALSE) {
+        return;
+    }
+    
+    objData = self->data;
+    
+    switch (self->id) {
+    case OBJ_NWSH_colpush:
+        if (main_get_bits(objData->unk80)) {
+            return;
+        }
+        break;
+    case OBJ_NWSH_colpushped:
+        if (main_get_bits(objData->unk80)) {
+            return;
+        }
+        break;
+    case OBJ_VFP_Block2:
+        if (objData->unk14 > 0) {
+            objData->unk14 -= gUpdateRateF;
+            if (objData->unk14 <= 0.0f) {
+                objData->unk14 = 0.0f;
+            } else {
+                func_80036FBC(0xC8, 0, 0, 0xFF);
+            }
+        }
+        break;
+    default:
+        break;
+    }
+
+    modelInst = self->modelInsts[self->modelInstIdx];
+    model = modelInst->model;
+    model->unk71 |= 2;
+    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+}
 
 // offset: 0x1058 | func: 4 | export: 4
 void dll_274_free(Object* self, s32 onlySelf) {
@@ -190,7 +297,58 @@ void dll_274_func_18C8(Object* self, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_1A24.s")
 
 // offset: 0x1D18 | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_1D18.s")
+static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
+    DLL274_Setup* objSetup;
+    Vec3f* var_s1;
+    MtxF mtx;
+    Vec3f* var_s0;
+    s32 pad1;
+    s32 pad2;
+    Vec3f spEC[6];
+    s8 spEB;
+    s8 spEA;
+    s32 i;
+    Func_80059C40_Struct sp90;
+    s32 pad;
+
+    objSetup = (DLL274_Setup*)self->setup;
+    
+    spEA = (-0x80 >> (7 - objData->unk88));
+    
+    spEB = ~spEA;
+    spEA = ~spEA;
+    if (spEA) {
+        do {
+            spEB = spEA;
+            var_s1 = objData->unk18;
+            for (i = 0; i < objData->unk88; i++) {
+                dll_274_func_2020(self, &mtx);
+                vec3_transform(&mtx, var_s1[i].x, var_s1[i].y, var_s1[i].z, &spEC[i].x, &spEC[i].y, &spEC[i].z);
+                if (func_80059C40(&objData->unk48[i], &spEC[i], 0.5f, 1, &sp90, self, 8, 0xD, 3 + i, 0xA) == 0) {
+                    spEB &= ~(1 << i);
+                } else {
+                    if ((sp90.unk51 != -1) && !(objData->unkD4 & 1)) {
+                        objData->unkD4 |= 1;
+                        if (objSetup->unk18 >= 0) {
+                            if ((self->id != 0x21E) && (self->id != 0x411)) {
+                                main_set_bits(objSetup->unk18, 1);
+                                gDLL_6_AMSFX->vtbl->play(self, 0xB01, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            }
+                        }
+                    }
+                    
+                    bcopy(&spEC[i], &objData->unk48[i], sizeof(Vec3f));
+                    mtx.m[3][0] = spEC[i].f[0];
+                    mtx.m[3][1] = spEC[i].f[1];
+                    mtx.m[3][2] = spEC[i].f[2];
+                    vec3_transform(&mtx, -var_s1[i].f[0], -var_s1[i].f[1], -var_s1[i].f[2], &self->srt.transl.x, &self->srt.transl.f[1], &self->srt.transl.f[2]);
+                }
+            }
+        } while (spEB);
+    }
+    
+    bcopy(spEC, objData->unk48, objData->unk88 * sizeof(Vec3f));
+}
 
 // offset: 0x2020 | func: 15
 void dll_274_func_2020(Object* self, MtxF* oMtx) {
@@ -208,19 +366,110 @@ void dll_274_func_2020(Object* self, MtxF* oMtx) {
 }
 
 // offset: 0x20A0 | func: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_20A0.s")
+void dll_274_func_20A0(Object* self, DLL274_Data* objData) {
+    DLL274_Setup* objSetup;
+    TextureAnimator* texAnim;
+
+    objSetup = (DLL274_Setup*)self->setup;
+    objData->unkA0 = 1.2f;
+    objData->unkA4 = 0.6f;
+    objData->unkA8 = 0.6f;
+    objData->unkB8 = rand_next(25, 75) * 0.01f;
+    objData->unkBC = objData->unkB8 / rand_next(40, 70);
+    objData->unkC0 = 0.0f;
+    objData->unk80 = objSetup->unk18;
+    objData->unk82 = objSetup->unk1A;
+    objData->unkC4 = 0.0f;
+    objData->unk90 = 0;
+    
+    main_set_bits(objData->unk80, 0);
+    texAnim = func_800348A0(self, 0, 0);
+
+    objData->unkB0 += objData->unkA4;
+    if (objData->unkB0 > 255.0f) {
+        objData->unkB0 = 255.0f;
+    } else if (objData->unkB0 < 0.0f) {
+        objData->unkB0 = 255.0f;
+    }
+    
+    objData->unkB4 += objData->unkA8;
+    if (objData->unkB4 > 255.0f) {
+        objData->unkB4 = 255.0f;
+    } else if (objData->unkB4 < 0.0f) {
+        objData->unkB4 = 255.0f;
+    }
+    
+    texAnim->multiplyR = 0xA;
+    texAnim->multiplyG = 0xA;
+    texAnim->multiplyB = 0xA;
+}
 
 // offset: 0x225C | func: 17
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_225C.s")
 
 // offset: 0x27C8 | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_27C8.s")
+s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
+    SRT sp50;
+/*0x40*/ Vec3f _data_40 = VEC3F(0, 0, 0.1);
+    Object* player = get_player();
+    
+    if (objData->unkD4 & 0x80) {
+        if (objData->unk78) {
+            gDLL_6_AMSFX->vtbl->stop(objData->unk78);
+            objData->unk78 = 0;
+        }
+        return 0;
+    } 
+    
+    if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xA)) {
+        if (objData->unk78) {
+            gDLL_6_AMSFX->vtbl->stop(objData->unk78);
+            objData->unk78 = 0;
+        }
+        return 0;
+    }
+    
+    if (objData->unk78 == 0) {
+        gDLL_6_AMSFX->vtbl->play(self, 0xA87, MAX_VOLUME, &objData->unk78, NULL, 0, NULL);
+    }
+    
+    objData->unkD4 |= 2;
+    
+    sp50.yaw = self->srt.yaw;
+    sp50.pitch = 0;
+    sp50.roll = 0;
+    sp50.transl.x = 0.0f;
+    sp50.transl.y = 0.0f;
+    sp50.transl.z = 0.0f;
+    sp50.scale = 1.0f;
+    rotate_vec3(&sp50, _data_40.f);
+    
+    objData->unk94.x = _data_40.f[0] * gUpdateRateF;
+    objData->unk94.z = _data_40.f[2] * gUpdateRateF;
+    obj_move(self, objData->unk94.x, objData->unk94.y, objData->unk94.z);
+    
+    dll_274_func_1D18(self, objData);
+    
+    if (self->srt.transl.x < -15870.0f) {
+        self->srt.transl.x = -15876.0f;
+        self->srt.transl.y = -1218.0f;
+        self->srt.transl.z = -766.0f;
+        self->srt.roll = 0;
+        self->srt.pitch = 0;
+        objData->unkD4 &= ~4;
+        objData->unkD4 |= 0x80;
+        main_set_bits(objData->unk80, 1);
+        gDLL_6_AMSFX->vtbl->play(self, 0xA88, MAX_VOLUME, NULL, NULL, 0, NULL);
+    }
+    
+    return 0;
+}
 
 // offset: 0x2A74 | func: 19
-s32 dll_274_func_2A74(Object* arg0, DLL274_Data* arg1) {
-    if ((arg1->unkCC == 0.0f) && (arg1->unkC8 > 0.0f)) {
-        gDLL_6_AMSFX->vtbl->play(arg0, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
-        main_set_bits(BIT_DIM_Pushed_Ice_Block_Into_Lake, 1);
+s32 dll_274_func_2A74(Object* self, DLL274_Data* objData) {
+    if ((objData->unkCC == 0.0f) && (objData->unkC8 > 0.0f)) {
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
+        main_set_bits(BIT_DIM_Pushed_Ice_Block_Into_Lake, TRUE);
     }
     return 0;
 }
