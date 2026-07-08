@@ -4,6 +4,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
@@ -294,7 +295,82 @@ void dll_274_func_18C8(Object* self, s32 arg1) {
 }
 
 // offset: 0x1A24 | func: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_1A24.s")
+int dll_274_func_1A24(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    DLL274_Data* objData;
+    s32 pad[2];
+    f32 dx;
+    f32 dz;
+    f32 magnitude;
+    Object* player;
+    Object* obj;
+
+    objData = self->data;
+
+    animData->unk7A = -1;
+    
+    if (animData->unk62 != 0) {
+        if (animData->unk62 != 2) {
+            animData->unk58 = 1.0f;
+            animData->unk4C.f[0] = self->srt.transl.x - animObj->srt.transl.x;
+            animData->unk4C.f[1] = self->srt.transl.y - animObj->srt.transl.y;
+            animData->unk4C.f[2] = self->srt.transl.z - animObj->srt.transl.z;
+            
+            animData->yawDiff = self->srt.yaw - (animObj->srt.yaw & 0xFFFF);
+            CIRCLE_WRAP(animData->yawDiff);
+            
+            animData->pitchDiff = self->srt.pitch - (animObj->srt.pitch & 0xFFFF);
+            CIRCLE_WRAP(animData->pitchDiff);
+ 
+            animData->rollDiff = ((animObj->srt.roll & 0xFFFF) - (self->srt.roll & 0xFFFF));
+            CIRCLE_WRAP(animData->rollDiff);
+            
+            animData->unk62 = 2;
+        }
+        
+        animData->unk58 -= animData->unk24 * gUpdateRateF;
+        if (animData->unk58 <= 0.0f) {
+            animData->unk62 = 0;
+        }
+    }
+    
+    if (animData->unk62 == 0) {
+        self->objhitInfo->unk5A = 8;
+    }
+    
+    if (self->unkE0 == 0) {
+        self->unkE0 = 2;
+    }
+    
+    if ((self->id == OBJ_NWSH_colpush) || (self->id == OBJ_NWSH_colpushped)) {
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        
+        if (self->polyhits->unk10F > 0){
+            obj = self->polyhits->unk100[0];
+
+            if ((obj->controlNo == OBJCONTROL_Projectile) && (main_get_bits(BIT_103) == 0)) {
+                main_set_bits(BIT_103, 1);
+                self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+                player = get_player();
+                
+                dx = self->srt.transl.f[0] - player->srt.transl.f[0];
+                dz = self->srt.transl.f[2] - player->srt.transl.f[2];
+                magnitude = sqrtf(SQ(dx) + SQ(dz));
+                if (magnitude != 0.0f) {
+                    dx /= magnitude;
+                    dz /= magnitude;
+                }
+                
+                objData->unk94.f[0] = dx * 4.0f;
+                objData->unk94.f[1] = 0;
+                objData->unk94.f[2] = dz * 4.0f;
+            
+                return 4;
+            }
+        }
+    }
+    
+    return 0;
+}
 
 // offset: 0x1D18 | func: 14
 static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
