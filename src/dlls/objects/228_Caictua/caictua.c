@@ -334,7 +334,7 @@ f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
 }
 
 // offset: 0xAA0 | func: 12
-#ifdef NON_MATCHING
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_AA0.s")
 #else
 s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 targetY, f32 targetZ, f32 speed, f32 arg7, s32 arg8) {
