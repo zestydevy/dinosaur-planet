@@ -344,7 +344,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
             
             jointAngle = func_80034804(self, 0);
             angle = -*jointAngle;
-            self->srt.yaw -= joy_get_stick_x(0) * 4;
+            self->srt.yaw -= joyGetStickX(0) * 4;
 
             if (objData->unk20 > 0) {
                 objData->unk20 -= gUpdateRate;
@@ -354,7 +354,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
                 objData->unk22 -= gUpdateRate;
             }
             
-            if ((joy_get_buttons(0) & A_BUTTON) && (objData->unk20 <= 0)) {
+            if ((joyGetButtons(0) & A_BUTTON) && (objData->unk20 <= 0)) {
                 angle += 800;
             } else {
                 angle -= 1200;
@@ -367,12 +367,12 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
                 angle = 0;
             }
             
-            if ((joy_get_released(0) & A_BUTTON) && (objData->unk20 <= 0)) {
+            if ((joyGetReleased(0) & A_BUTTON) && (objData->unk20 <= 0)) {
                 objData->unk25 = 1;
             }
             dll_537_func_1150(self);
             
-            if (joy_get_pressed(0) & Z_TRIG) {
+            if (joyGetPressed(0) & Z_TRIG) {
                 gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
                 objData->unk24 = 5;
                 objData->unk27 = 60;

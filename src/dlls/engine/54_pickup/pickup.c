@@ -96,8 +96,8 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
         // Currently held
         func_8002681C(obj);
         obj->unkAF |= ARROW_FLAG_8_No_Targetting;
-        if (joy_get_pressed(0) & A_BUTTON) {
-            joy_disable_buttons(0, A_BUTTON);
+        if (joyGetPressed(0) & A_BUTTON) {
+            joyDisableButtons(0, A_BUTTON);
             if ((pickup->flags & PICKUPFLAG_DropDisabled) || (((DLL_210_Player*)player->dll)->vtbl->func49(player) == 0)) {
                 gDLL_6_AMSFX->vtbl->play(player, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else {
@@ -225,7 +225,7 @@ static s32 pickup_should_pickup(Object* obj, Object* player, Pickup* pickup) {
             && (obj->unkAF & ARROW_FLAG_1_Interacted) 
             && (obj->unkE0 == 0)) {
         pickup->unk0 = 0;
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         shouldPickup = TRUE;
     }
 

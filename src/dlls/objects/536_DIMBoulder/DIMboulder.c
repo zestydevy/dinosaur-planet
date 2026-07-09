@@ -81,7 +81,7 @@ void DIMBoulder_control(Object* self) {
 
     if (objData->state == DIMBoulder_STATE_0_Stopped) {
         if ((func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Explosion) || 
-            ((joy_get_buttons(1) & A_BUTTON)) //Move the snowball with A button presses on Controller 2!
+            ((joyGetButtons(1) & A_BUTTON)) //Move the snowball with A button presses on Controller 2!
         ) {
             objData->state = DIMBoulder_STATE_1_Moving;
             self->velocity.x = dBounceVelocities[objData->timesHit].x;

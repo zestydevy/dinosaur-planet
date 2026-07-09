@@ -241,7 +241,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             main_set_bits(BIT_WM_Played_Randorn_First_Meeting, 1);
             objData->hasMetKrystal = TRUE;
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
 
         //Call out to Krystal randomly
@@ -272,7 +272,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
             //Remind about visiting Discovery Falls
             objData->activeSeqIndex = WMWizard_OBJSEQ_2_Discovery_Falls_Reminder;
             gDLL_3_Animation->vtbl->start_obj_sequence(WMWizard_OBJSEQ_2_Discovery_Falls_Reminder, self, -1);
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
 
         //Otherwise, restore Krystal's magic if she hasn't deactivated the lasers yet
         } else if (
@@ -282,7 +282,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
         ) {
             objData->activeSeqIndex = WMWizard_OBJSEQ_1_Offering_Magic_Refill;
             gDLL_3_Animation->vtbl->start_obj_sequence(WMWizard_OBJSEQ_1_Offering_Magic_Refill, self, -1);
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
     }
 }
@@ -324,7 +324,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
 
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
                 ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, foodGamebit);
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
             }
         }
         return;
@@ -495,7 +495,7 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (main_get_bits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE)) {
         main_set_bits(BIT_WM_Setup6_Randorn_Sitting_Up, 1);
         objdata->timesFed = 0;
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
     
     //Check if player offers food to Randorn while he's sitting up
     } else if (
@@ -514,7 +514,7 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
             objdata->timesFed++;
             foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, foodGamebit);
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
     }
 }

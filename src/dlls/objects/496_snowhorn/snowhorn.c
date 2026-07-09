@@ -387,7 +387,7 @@ void dll_496_control(Object* snowhorn) {
             objdata->unk425 = 0;
         }
         gDLL_3_Animation->vtbl->start_obj_sequence(objdata->chatSequenceList[seqIndex], snowhorn, -1);
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
     }
 
 }
@@ -630,7 +630,7 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
         snowhorn->unkAF &= ~1;
         if (objdata->flags < 7) {
             gDLL_3_Animation->vtbl->start_obj_sequence(objdata->flags, snowhorn, -1);
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
     }
 

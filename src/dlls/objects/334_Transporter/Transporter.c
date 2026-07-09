@@ -116,7 +116,7 @@ void Transporter_control(Object *self) {
                 objdata->unk26 = 0;
             } else {
                 if (((setup->gamebit == -1) || (main_get_bits(setup->gamebit))) && (self->unkAF & 1)) {
-                    joy_disable_buttons(0, A_BUTTON);
+                    joyDisableButtons(0, A_BUTTON);
                     func_80000860(self, self, 187, 0);
                     gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                     objdata->unk25 = 1;

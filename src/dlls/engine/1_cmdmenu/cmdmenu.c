@@ -983,15 +983,15 @@ void cmdmenu_update2(void) {
     }
 
     //Get controller button presses/holds
-    sJoyPressedButtons = joy_get_pressed(0);
-    sJoyHeldButtons = joy_get_buttons(0);
+    sJoyPressedButtons = joyGetPressed(0);
+    sJoyHeldButtons = joyGetButtons(0);
 
     if (player->stateFlags & OBJSTATE_IN_SEQ) {
-        joy_disable_buttons(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+        joyDisableButtons(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         sJoyPressedButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
         sJoyHeldButtons &= ~(R_TRIG | L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
     } else if (sJoyDisabledButtons != 0) {
-        joy_disable_buttons(0, sJoyDisabledButtons);
+        joyDisableButtons(0, sJoyDisabledButtons);
         sJoyPressedButtons &= ~sJoyDisabledButtons;
         sJoyHeldButtons &= ~sJoyDisabledButtons;
     }
@@ -1010,7 +1010,7 @@ void cmdmenu_update2(void) {
         //C-down: Sidekick Commands
         newPageIndex = sidekick->id == OBJ_Kyte ? CMDMENU_PAGE_8_Sidekick_Kyte : CMDMENU_PAGE_7_Sidekick_Tricky;
         if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, TRUE)) {
-            joy_disable_buttons(0, D_CBUTTONS);
+            joyDisableButtons(0, D_CBUTTONS);
             dNextPageCategory = CMDMENU_CATEGORY_2_Sidekick;
             sInventoryPageID = newPageIndex;
         }
@@ -1018,14 +1018,14 @@ void cmdmenu_update2(void) {
         //C-right: Items
         newPageIndex = player->id == OBJ_Krystal ? CMDMENU_PAGE_0_Items_Krystal : CMDMENU_PAGE_1_Items_Sabre;
         if (cmdmenu_page_count_shown_items(dCmdmenuPages[newPageIndex].items, FALSE)) {
-            joy_disable_buttons(0, R_CBUTTONS);
+            joyDisableButtons(0, R_CBUTTONS);
             dNextPageCategory = CMDMENU_CATEGORY_3_Items;
             sInventoryPageID = newPageIndex;
         }
     } else if ((sJoyPressedButtons & L_CBUTTONS) && (dPageCategory != CMDMENU_CATEGORY_4_Spells)) {
         //C-left: Magic Spells
         if (cmdmenu_page_count_shown_items(dCmdmenuPages[CMDMENU_PAGE_6_Spells].items, FALSE)) {
-            joy_disable_buttons(0, L_CBUTTONS);
+            joyDisableButtons(0, L_CBUTTONS);
             dNextPageCategory = CMDMENU_CATEGORY_4_Spells;
             sInventoryPageID = CMDMENU_PAGE_6_Spells;
         }
@@ -1142,7 +1142,7 @@ void cmdmenu_update2(void) {
         }
     }
 
-    joy_disable_buttons(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+    joyDisableButtons(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
     sJoyDisabledButtons = 0;
 }
 
@@ -1442,7 +1442,7 @@ static void cmdmenu_tick_tutorial_textbox(void) {
 
             //Check if the end of the gametext has been reached
             if (sTutorialBoxStringIndex < sTutorialBoxGametext->count) {
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
             } else {
                 //If so, close the tutorial box
                 sTutorialBoxStringIndex -= 3;
@@ -1744,16 +1744,16 @@ static void cmdmenu_tick_inventory_page(void) {
 
     //Lock/unlock accessing the C-button scroll menu
     if (player->stateFlags & OBJSTATE_IN_SEQ) {
-        joy_disable_buttons(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
+        joyDisableButtons(0, L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
     } else if (sJoyDisabledButtons != 0) {
-        joy_disable_buttons(0, sJoyDisabledButtons);
+        joyDisableButtons(0, sJoyDisabledButtons);
     }
 
     //Get button presses (or simulated ones, for tutorial sequences)
     if (sShouldOverrideJoypadButtons) {
         sJoyPressedButtons = sJoyPressedButtonsOverride;
     } else {
-        sJoyPressedButtons = joy_get_pressed(0);
+        sJoyPressedButtons = joyGetPressed(0);
         if ((player->stateFlags & OBJSTATE_IN_SEQ) || (sJoyDisabledButtons != 0)) {
             sJoyPressedButtons |= B_BUTTON;
         }
@@ -1902,7 +1902,7 @@ static void cmdmenu_tick_inventory_page(void) {
         sInventoryFrameCounter = 0;
         dInventoryMovesQueued = 0;
     } else {
-        joy_disable_buttons(0, A_BUTTON | B_BUTTON);
+        joyDisableButtons(0, A_BUTTON | B_BUTTON);
     }
 
     *pageSelectionIndex = sMenuSelectedItemIdx;

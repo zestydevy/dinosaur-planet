@@ -211,7 +211,7 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
             break;
 
         case NWtricky_DEMO_STATE_Show_Inventory:
-            STUBBED_PRINTF("menu cbuttons %d\n", joy_get_pressed_raw(0));
+            STUBBED_PRINTF("menu cbuttons %d\n", joyGetPressedRaw(0));
             for (i = 0; i < animObjData->messageCount; i++) {
                 if (animObjData->messages[i] == 4) {
                     objdata->demoState = NWtricky_DEMO_STATE_Close_Inventory;
@@ -221,7 +221,7 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
             }
 
             //Get player's C-button presses as well
-            buttonMask |= joy_get_pressed_raw(0) & D_CBUTTONS;
+            buttonMask |= joyGetPressedRaw(0) & D_CBUTTONS;
             break;
 
         case NWtricky_DEMO_STATE_Close_Inventory:
@@ -232,7 +232,7 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
             }
 
             //Get player's A presses as well
-            buttonMask |= joy_get_pressed_raw(0) & A_BUTTON;
+            buttonMask |= joyGetPressedRaw(0) & A_BUTTON;
 
             if (buttonMask & A_BUTTON) {
                 objdata->doneDemo = TRUE;

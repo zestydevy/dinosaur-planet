@@ -266,7 +266,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         }
         
         //Handle tapping A button
-        if (joy_get_released_buffered(0, i) & A_BUTTON) {
+        if (joyGetReleasedBuffered(0, i) & A_BUTTON) {
             //@bug: harder at smoother FPS, since it won't increase as much per press
             objData->yawSpeed += 18.8f;
 

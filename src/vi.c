@@ -419,7 +419,7 @@ s32 vi_frame_sync(s32 param1) {
         }
     }
 
-    joy_read_nonblocking();
+    joyReadNonblocking();
     vi_calc_obj_depths();
     osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_BLOCK);
 

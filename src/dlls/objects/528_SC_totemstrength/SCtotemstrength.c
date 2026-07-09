@@ -300,7 +300,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
         pushFactor = pushAbs * pushProgress + 1.0f;
         
         //Handle tapping A button
-        if (joy_get_released_buffered(0, i) & A_BUTTON) {
+        if (joyGetReleasedBuffered(0, i) & A_BUTTON) {
             //@bug: harder at smoother FPS, since it won't decrease as much per press
             objData->yawSpeed -= 2.5f;
         }

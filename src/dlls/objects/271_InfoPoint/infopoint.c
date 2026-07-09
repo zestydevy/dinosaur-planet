@@ -82,7 +82,7 @@ void InfoPoint_setup(Object* self, InfoPoint_Setup* objSetup, s32 arg2) {
 // offset: 0x134 | func: 1 | export: 1
 void InfoPoint_control(Object* self) {
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
     }
 }

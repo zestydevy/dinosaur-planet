@@ -590,7 +590,7 @@ void dll_210_control(Object* player) {
         return;
     }
 
-    if (joy_get_buttons(0) & U_JPAD) {
+    if (joyGetButtons(0) & U_JPAD) {
         dll_210_add_scarab(player, 1);
     }
     _bss_1AC = gUpdateRateF;
@@ -648,7 +648,7 @@ void dll_210_control(Object* player) {
         gDLL_6_AMSFX->vtbl->play(player, (player->id != PLAYER_SABRE ? _data_4C0 : _data_4CC)[i], 0x7FU, NULL, NULL, 0, NULL);
     }
     dll_210_func_7180(player, data, gUpdateRateF);
-    if ((data->unk87C != -1) && ((joy_get_pressed(0) & 0x4000) || (data->stats->magic == 0))) {
+    if ((data->unk87C != -1) && ((joyGetPressed(0) & 0x4000) || (data->stats->magic == 0))) {
         data->unk87C = -1;
         data->unk8BF = -1;
         if (*_data_38 != 0) {
@@ -729,11 +729,11 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
     if (!(arg1->flags & 0x200000)) {
         if (arg1->unk884 != -1) {
             if ((arg1->unk8BC != 0x56) && (arg1->unk8BC != 0x60)) {
-                arg1->unk754 = joy_get_stick_x_buffered(arg1->unk884, *_bss_1AA);
-                arg1->unk758 = joy_get_stick_y_buffered(arg1->unk884, *_bss_1AA);
-                arg1->unk764 = joy_get_buttons_buffered(arg1->unk884, *_bss_1AA);
-                arg1->unk766 = joy_get_pressed_buffered(arg1->unk884, *_bss_1AA);
-                arg1->unk768 = joy_get_released_buffered(arg1->unk884, *_bss_1AA);
+                arg1->unk754 = joyGetStickXBuffered(arg1->unk884, *_bss_1AA);
+                arg1->unk758 = joyGetStickYBuffered(arg1->unk884, *_bss_1AA);
+                arg1->unk764 = joyGetButtonsBuffered(arg1->unk884, *_bss_1AA);
+                arg1->unk766 = joyGetPressedBuffered(arg1->unk884, *_bss_1AA);
+                arg1->unk768 = joyGetReleasedBuffered(arg1->unk884, *_bss_1AA);
             }
         }
     }
@@ -4476,7 +4476,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     if (gDLL_1_cmdmenu->vtbl->was_any_item_used()) {
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Horn_of_Truth)) {
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
             if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
@@ -4518,7 +4518,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (gDLL_1_cmdmenu->vtbl->get_subpage_gamebit() == BIT_Foodbag_Give) {
         sp8C = gDLL_1_cmdmenu->vtbl->was_used_item_in_gamebit_array(sp38, 0x10);
         if (sp8C != -1 && (player->unkC4 == NULL)) {
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
             player->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)v1objdata->foodbag->dll)->vtbl->func[16].withOneArgS32(sp8C);
             sp88 = gDLL_2_Camera->vtbl->get_highlighted_object();

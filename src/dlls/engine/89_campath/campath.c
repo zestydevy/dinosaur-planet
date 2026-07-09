@@ -185,7 +185,7 @@ void campath_func_588(Cam* cam) {
         return;
     }
     player = cam->player;
-    btns = joy_get_pressed(0);
+    btns = joyGetPressed(0);
     spD4 = gDLL_26_Curves->vtbl->func_39C(sState->unkC);
     campath_func_17A0(gDLL_26_Curves->vtbl->func_39C(sState->unk8), spD8, sState->unk4);
     campath_func_17A0(spD4, spE8, sState->unk4);

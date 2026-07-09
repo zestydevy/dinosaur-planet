@@ -260,7 +260,7 @@ static void attentioncam_func_B14(Cam* cam, Object* arg1) {
     u8 temp_v1;
 
     if (arg1->animObj == NULL) {
-        btns = joy_get_pressed(0);
+        btns = joyGetPressed(0);
         if (((cam->highlight != NULL) || (cam->srt.flags & OBJFLAG_UNK_2)) && 
                 !(cam->highlightFlags & 2) && 
                 (((temp_v1 = main_get_bits(BIT_4AD), (temp_v1 == 0)) && (btns & Z_TRIG)) || ((temp_v1 != 0) && (btns & R_TRIG)) || (cam->targetFlags & 2)) && 

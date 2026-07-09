@@ -51,7 +51,7 @@ void SHswaplift_control(Object *self) {
                 main_set_bits(BIT_Play_Seq_035F_Rocky_Intro, 1);
             }
 
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
     } else {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;

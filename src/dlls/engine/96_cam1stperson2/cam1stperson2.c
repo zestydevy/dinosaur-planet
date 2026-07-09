@@ -295,8 +295,8 @@ static void cam1stperson2_func_CE0(Cam* cam) {
     s8 var_a0;
     Object* temp_v0_2;
 
-    sp27 = joy_get_stick_x(0);
-    var_a0 = joy_get_stick_y(0);
+    sp27 = joyGetStickX(0);
+    var_a0 = joyGetStickY(0);
     if ((sp27 < 8) && (sp27 > -8)) {
         sp27 = 0;
     }

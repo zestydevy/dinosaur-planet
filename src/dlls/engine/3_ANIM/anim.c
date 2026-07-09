@@ -524,7 +524,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
     _bss_32 = 0;
     _bss_89 = 0;
     _bss_8A = 0;
-    if ((_bss_3A8[st->seqSlot] & ACTORUSETTING_SKIPPABLE) && ((_bss_4C0[st->seqSlot] != 0) || (joy_get_pressed(0) & L_TRIG))) {
+    if ((_bss_3A8[st->seqSlot] & ACTORUSETTING_SKIPPABLE) && ((_bss_4C0[st->seqSlot] != 0) || (joyGetPressed(0) & L_TRIG))) {
         if (st->state == ANIMOBJ_STATE_Completed) {
             return 1;
         }
@@ -2367,13 +2367,13 @@ void anim_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4,
 static s32 anim_check_decision(Object* animObj, s32 cond, AnimObj_Data* st) {
     switch (cond) {
         case ANIM_DECISION_A_BUTTON:
-            if (joy_get_pressed(0) & A_BUTTON) {
+            if (joyGetPressed(0) & A_BUTTON) {
                 return 1;
             }
         default:
             break;
         case ANIM_DECISION_B_BUTTON:
-            if (joy_get_pressed(0) & B_BUTTON) {
+            if (joyGetPressed(0) & B_BUTTON) {
                 return 1;
             }
             break;

@@ -90,7 +90,7 @@ void krazoatext_control(Object* self) {
     }
 
     if (objdata->state != 0) {
-        if (!(self->unkAF & 4) || (joy_get_pressed(0) & B_BUTTON)) {
+        if (!(self->unkAF & 4) || (joyGetPressed(0) & B_BUTTON)) {
             objdata->state = 0;
         }
     } else if (self->unkAF & 1) {

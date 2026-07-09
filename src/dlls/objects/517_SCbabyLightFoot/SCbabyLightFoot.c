@@ -225,7 +225,7 @@ static s32 dll_517_func_7C4(Object* self, ObjFSA_Data* arg1, f32 arg2) {
         }
 
         if (sp20 < 0x1770 && (self->unkAF & 1)) {
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
             gDLL_3_Animation->vtbl->start_obj_sequence((s32) sp28->unk8, self, -1);
             sp28->unk8++;
             if (sp28->unk8 >= 2) {

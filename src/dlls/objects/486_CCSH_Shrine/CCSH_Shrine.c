@@ -361,11 +361,11 @@ static int CCSH_Shrine_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
         animObjData->messages[i] = 0;
     }
     if (objdata->unkF == 7) {
-        if (joy_get_buttons(0) & A_BUTTON) {
+        if (joyGetButtons(0) & A_BUTTON) {
             gDLL_3_Animation->vtbl->end_obj_sequence(animObjData->seqSlot);
             objdata->unkF = 8;
             objdata->unk2 = 0;
-        } else if (joy_get_buttons(0) & B_BUTTON) {
+        } else if (joyGetButtons(0) & B_BUTTON) {
             gDLL_3_Animation->vtbl->end_obj_sequence(animObjData->seqSlot);
             objdata->unkF = 7;
             objdata->unk2 = 0;

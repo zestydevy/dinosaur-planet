@@ -178,7 +178,7 @@ PicMenuAction picmenu_update() {
 
     ret = PICMENU_ACTION_NONE;
 
-    joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
+    joyGetStickMenuXYSign(0, &joyXSign, &joyYSign);
     if (joyYSign != 0) {
         joyXSign = 0;
     }
@@ -245,10 +245,10 @@ PicMenuAction picmenu_update() {
     }
 
     if (sAllowButtons) {
-        buttons = joy_get_pressed(0);
+        buttons = joyGetPressed(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
             if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && main_get_bits(BIT_44F) == 0) {
-                joy_disable_buttons(0, A_BUTTON | START_BUTTON);
+                joyDisableButtons(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {
                     gDLL_6_AMSFX->vtbl->play(0, sSounds->selectSoundID, MAX_VOLUME, 0, 0, 0, 0);
@@ -261,7 +261,7 @@ PicMenuAction picmenu_update() {
                 gDLL_6_AMSFX->vtbl->play(0, sSounds->backSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
 
-            joy_disable_buttons(0, B_BUTTON);
+            joyDisableButtons(0, B_BUTTON);
 
             ret = PICMENU_ACTION_BACK;
         }

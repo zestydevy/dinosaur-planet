@@ -151,7 +151,7 @@ void cam1stperson_func_4F8(Cam* cam) {
 
     sp38 = cam->player;
     cam->highlightFlags |= 2;
-    sp56 = joy_get_pressed(0);
+    sp56 = joyGetPressed(0);
     switch (sState->unk120) {
     case 0:
         sState->unk120 = cam1stperson_func_A74(cam, cam->player);
@@ -300,8 +300,8 @@ void cam1stperson_func_D90(Cam* cam) {
     Object* sp20;
 
     sp20 = cam->player;
-    sp27 = joy_get_stick_x(0);
-    var_a0 = joy_get_stick_y(0);
+    sp27 = joyGetStickX(0);
+    var_a0 = joyGetStickY(0);
     if ((sp27 < 8) && (sp27 > -8)) {
         sp27 = 0;
     }

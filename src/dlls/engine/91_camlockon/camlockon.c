@@ -127,11 +127,11 @@ void camlockon_func_1B8(Cam* cam) {
     sp68 = (f32) (lockdata->lockExitRadius * 4);
     temp_a0 = ((s32) (cam->srt.flags & 0x18) >> 3);
     if (temp_a0 == 1) {
-        btns = joy_get_pressed(0);
+        btns = joyGetPressed(0);
     } else if (temp_a0 == 2) {
-        btns = ~joy_get_buttons(0);
+        btns = ~joyGetButtons(0);
     } else if (sState->unk10 >= 0xD) {
-        btns = joy_get_released(0);
+        btns = joyGetReleased(0);
     } else {
         btns = 0;
         sState->unk10 += gUpdateRate;

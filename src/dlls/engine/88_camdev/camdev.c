@@ -37,8 +37,8 @@ void camdev_func_78(Cam* cam) {
     Object* sp30;
 
     sp30 = cam->player;
-    sp56 = joy_get_buttons(0);
-    if (joy_get_pressed(0) & L_TRIG) {
+    sp56 = joyGetButtons(0);
+    if (joyGetPressed(0) & L_TRIG) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
         return;
     }

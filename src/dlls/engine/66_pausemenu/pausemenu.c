@@ -108,7 +108,7 @@ s32 pausemenu_update1(void) {
                 gDLL_6_AMSFX->vtbl->play(0, SOUND_B73_Option_Selected, MAX_VOLUME, 0, 0, 0, 0);
                 menu_set(MENU_GAMEPLAY);
                 unpause();
-                joy_disable_buttons(0, A_BUTTON | B_BUTTON);
+                joyDisableButtons(0, A_BUTTON | B_BUTTON);
             } else {
                 gDLL_6_AMSFX->vtbl->play(0, SOUND_B72_Game_Saved, MAX_VOLUME, 0, 0, 0, 0);
                 gameSavedMessageTimer = 0;
@@ -123,7 +123,7 @@ s32 pausemenu_update1(void) {
         } else if (action == PICMENU_ACTION_BACK) {
             menu_set(MENU_GAMEPLAY);
             unpause();
-            joy_disable_buttons(0, A_BUTTON | B_BUTTON);
+            joyDisableButtons(0, A_BUTTON | B_BUTTON);
         }
 
     } else if (pauseScreenState == PAUSE_MENU_GAME_SAVED) {

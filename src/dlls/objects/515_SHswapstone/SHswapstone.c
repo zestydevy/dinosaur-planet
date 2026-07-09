@@ -305,7 +305,7 @@ static s32 SHswapstone_is_stick_direction_available(Object* self, Object *overri
     s8 joyYSign;
 
     objdata = self->data;
-    joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
+    joyGetStickMenuXYSign(0, &joyXSign, &joyYSign);
 
     switch (cond) {
     case ANIM_DECISION_CUSTOM1:

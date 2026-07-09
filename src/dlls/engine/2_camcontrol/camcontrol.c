@@ -515,10 +515,10 @@ void CamControl_lock_icon_tick(void) {
         //Update target Object's interaction flags when A button pressed
         if (hlObject->unkAF & ARROW_FLAG_4_Highlighted) {
             if (!(hlObject->unkAF & ARROW_FLAG_10_Greyed_Out)){
-                if (joy_get_pressed(0) & A_BUTTON) {
+                if (joyGetPressed(0) & A_BUTTON) {
                 hlObject->unkAF |= ARROW_FLAG_1_Interacted;
                 }
-            } else if (joy_get_pressed(0) & A_BUTTON) {
+            } else if (joyGetPressed(0) & A_BUTTON) {
                 gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_6E6_Interaction_Refused, MAX_VOLUME, 0, 0, 0, 0);
             }
         }

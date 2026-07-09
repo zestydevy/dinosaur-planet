@@ -762,8 +762,8 @@ int Tumbleweed_handle_carry_behaviour(Object* self) {
         objData->timer = 0.0f;
 
         //Stop being carried when A button pressed (@bug: desync can occur with player FSA)
-        if (joy_get_pressed(0) & A_BUTTON) {
-            joy_disable_buttons(0, A_BUTTON);
+        if (joyGetPressed(0) & A_BUTTON) {
+            joyDisableButtons(0, A_BUTTON);
             objData->beingCarried = FALSE;
         }
 
@@ -795,7 +795,7 @@ int Tumbleweed_did_player_lift_twig(Object* self) {
     returnVal = FALSE;
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && self->unkE0 == 0) {
         objData->carryMessageArgLo = 0;
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         objData->twigSqueakTimer = rand_next(120, 240);
         returnVal = TRUE;
     }

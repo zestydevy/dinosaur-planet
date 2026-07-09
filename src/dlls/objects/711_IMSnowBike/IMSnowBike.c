@@ -14,7 +14,7 @@
 #include "sys/segment_53F00.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "prevent_bss_reordering2.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 /*00*/ Vec3f unk0;
@@ -591,7 +591,7 @@ s32 dll_711_func_1534(Object *self, Object *rider) {
     if (objdata->flags & SNOWBIKEFLAG_8) {
         return 0;
     }
-    if (!(joy_get_pressed(0) & B_BUTTON)) {
+    if (!(joyGetPressed(0) & B_BUTTON)) {
         return 0;
     }
     return 2;
@@ -1203,8 +1203,8 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
 
 // offset: 0x33B4 | func: 24
 static void dll_711_func_33B4(Object *self, IMSnowBike_Data_2E0 *arg1, u8 port, s32 buffer) {
-    arg1->turnInput = joy_get_stick_x_buffered(port, buffer);
-    arg1->thrustInput = joy_get_stick_y_buffered(port, buffer);
+    arg1->turnInput = joyGetStickXBuffered(port, buffer);
+    arg1->thrustInput = joyGetStickYBuffered(port, buffer);
 }
 
 // offset: 0x3430 | func: 25

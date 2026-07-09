@@ -309,9 +309,9 @@ s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
 
     if (arg1 != NULL) {
         if (arg1->unk8E == 1) {
-            joy_get_pressed(0); //@bug: called without being used/stored
+            joyGetPressed(0); //@bug: called without being used/stored
             
-            if (joy_get_pressed(0) & B_BUTTON) {
+            if (joyGetPressed(0) & B_BUTTON) {
                 main_set_bits(BIT_42A, 1);
             } else {
                 return 1;

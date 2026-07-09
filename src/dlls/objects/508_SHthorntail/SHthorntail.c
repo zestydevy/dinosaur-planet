@@ -576,7 +576,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
                 } else {
                     objdata->state = THORNTAILSTATE_LookingAround;
                 }
-            } else if (joy_get_pressed(0) & D_JPAD) {
+            } else if (joyGetPressed(0) & D_JPAD) {
                 objdata->unk4E0 = 9;
                 objdata->flags |= THORNTAILFLAG_GoToNextNode;
             }

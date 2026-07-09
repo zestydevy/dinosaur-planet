@@ -649,7 +649,7 @@ void SB_Galleon_func_EAC(Object *self) {
             spD8 = 637.0f;
             spD4 = 0.01f;
             spD0 = 10.0f;
-            if (joy_get_pressed(0) & U_JPAD) {
+            if (joyGetPressed(0) & U_JPAD) {
                 objdata->unk2B++;
             }
             if (objdata->unk28 == 0) {

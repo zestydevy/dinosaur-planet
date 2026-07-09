@@ -235,7 +235,7 @@ void smallbasket_control(Object* self) {
                 self->unkAF |= ARROW_FLAG_8_No_Targetting;
                 
                 //Attempt to place down the basket when pressing A (refused if there isn't enough room to place it down)
-                if (joy_get_pressed(0) & A_BUTTON) {
+                if (joyGetPressed(0) & A_BUTTON) {
                     if (((DLL_210_Player*)player->dll)->vtbl->func49(player)) {
                         objData->beingCarried = FALSE;
                     } else {
@@ -425,7 +425,7 @@ s32 smallbasket_handle_being_lifted(Object* self, Object* player, SmallBasket_Da
     gDLL_2_Camera->vtbl->get_target_object();
     outVal = 0;
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (self->unkE0 == 0)) {
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         objData->playerMessageLo = -0x8000;
         objData->playerMessageHi = 0;
         func_800267A4(self);

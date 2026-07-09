@@ -370,7 +370,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
         if (vec3_distance(&self->globalPosition, &player->globalPosition) > 10.0f) {
             gDLL_3_Animation->vtbl->end_obj_sequence(arg2->seqSlot);
             objdata->unkF = 7;
-        } else if (joy_get_buttons(0)) {
+        } else if (joyGetButtons(0)) {
             gDLL_3_Animation->vtbl->end_obj_sequence(arg2->seqSlot);
             objdata->unkF = 7;
         }

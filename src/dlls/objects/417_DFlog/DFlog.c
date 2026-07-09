@@ -222,7 +222,7 @@ s32 dll_417_func_5F8(Object* self, Object* player) {
 
     if ((objdata->dockpoint != NULL) && (objdata->unk4EC == 2)) {
         camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAM1STPERSON2) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
+        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAM1STPERSON2) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) && (joyGetPressed(0) & B_BUTTON)) {
             var_fs0 = 0.0f;
             for (i = 0; i < 2; i++) {
                 var_fs0 += sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
@@ -466,18 +466,18 @@ static void dll_417_func_E8C(Object* self) {
     }
 
     if ((objdata->unk4EC == 2) && (gDLL_2_Camera->vtbl->get_dll_ID() != 0x60)) {
-        objdata->unk280 = (f32) ((f32) joy_get_stick_x(0) * 0.01f);
-        if (joy_get_pressed(0) & A_BUTTON) {
+        objdata->unk280 = (f32) ((f32) joyGetStickX(0) * 0.01f);
+        if (joyGetPressed(0) & A_BUTTON) {
             var_fa0 = ((1.3f - objdata->unk288) / 1.3f) * 0.8f;
         } else {
             var_fa0 = -0.05f;
         }
         objdata->unk288 = (f32) (objdata->unk288 + var_fa0);
-        if (joy_get_pressed(0) & A_BUTTON) {
+        if (joyGetPressed(0) & A_BUTTON) {
             objdata->unk258[0].y = (f32) (objdata->unk258[0].y + 0.08f);
             objdata->unk258[1].y = (f32) (objdata->unk258[1].y - 0.06f);
         }
-        if (joy_get_pressed(0) & A_BUTTON) {
+        if (joyGetPressed(0) & A_BUTTON) {
             var_fa0 = 0.08f;
         } else {
             var_fa0 = -0.02f;

@@ -290,7 +290,7 @@ void DRearthwalk_control(Object* self) {
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         objdata->unkA60_3 = 1;
         if ((objdata->unkA60_3) && (objdata->rideable)) {
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
             plAngle = self->srt.yaw - (player->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(plAngle);
             if (plAngle > 0) {
@@ -309,17 +309,17 @@ void DRearthwalk_control(Object* self) {
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_Blue_Mushrooms) != 0) {
             if (fsa->animState == 2) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(EWSEQ_0_EatBlueMushroom_Laying, self, -1);
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
             } else {
                 gDLL_3_Animation->vtbl->start_obj_sequence(EWSEQ_1_EatBlueMushroom_Standing, self, -1);
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
             }
             objdata->energy += 12;
             main_set_bits(BIT_Inventory_Blue_Mushrooms, main_get_bits(BIT_Inventory_Blue_Mushrooms) - 1);
         } else if ((objdata->talkSeq != -1) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0)) {
             if (!objdata->rideable) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objdata->talkSeq, self, -1);
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
             } else {
                 objdata->unkA60_3 = 1;
             }
@@ -372,10 +372,10 @@ static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
     objdata->fsa.hitpoints = 0;
     objdata->fsa.flags &= ~OBJFSA_FLAG_8000;
     if (objdata->unkA5A == 2) {
-        objdata->fsa.xAnalogInput = (f32) joy_get_stick_x_buffered(0, arg2);
-        objdata->fsa.yAnalogInput = (f32) joy_get_stick_y_buffered(0, arg2);
-        objdata->fsa.unk310 = joy_get_pressed_buffered(0, arg2);
-        objdata->fsa.unk30C = joy_get_buttons_buffered(0, arg2);
+        objdata->fsa.xAnalogInput = (f32) joyGetStickXBuffered(0, arg2);
+        objdata->fsa.yAnalogInput = (f32) joyGetStickYBuffered(0, arg2);
+        objdata->fsa.unk310 = joyGetPressedBuffered(0, arg2);
+        objdata->fsa.unk30C = joyGetButtonsBuffered(0, arg2);
         objdata->fsa.unk324 = sp54->srt.yaw;
     } else if (objdata->unkA58 & 0x40) {
         objdata->movedata.unk4A9 |= 2;
@@ -623,7 +623,7 @@ s32 DRearthwalk_func_19DC(Object* self, Object* rider) {
     DRearthwalk_Data* objdata = self->data;
     Vec3f sp48;
     
-    if ((objdata->energy != 0) && (joy_get_pressed(0) & B_BUTTON)) {
+    if ((objdata->energy != 0) && (joyGetPressed(0) & B_BUTTON)) {
         gDLL_5_AMSEQ2->vtbl->set(self, 0xF6, 0, 0, 0);
         sp48.x = self->srt.transl.x;
         sp48.y = self->srt.transl.y;
@@ -1022,7 +1022,7 @@ s32 DRearthwalk_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     func_8002493C(self, fsa->unk278, &fsa->animTickDelta);
     if (fsa->unk310 & 0x8000) {
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         return 5 + 1;
     }
     return 0;

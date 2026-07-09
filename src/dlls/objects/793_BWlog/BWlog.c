@@ -335,7 +335,7 @@ s32 BWlog_vehicle_can_dismount(Object *self, Object *rider) {
     s32 i;
 
     objdata = (BWlog_Data*)self->data;
-    if ((objdata->dockpoint != NULL) && (objdata->mountState == VEHICLE_Mounted) && (joy_get_pressed(0) & B_BUTTON)) {
+    if ((objdata->dockpoint != NULL) && (objdata->mountState == VEHICLE_Mounted) && (joyGetPressed(0) & B_BUTTON)) {
         speed = 0.0f;
         for (i = 0; i < 2; i++) {
             speed += sqrtf(SQ(objdata->velocity[i].x) + SQ(objdata->velocity[i].z));
@@ -531,9 +531,9 @@ static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 side) {
 static void BWlog_handle_controls_a_button(Object* self, BWlog_Data* objdata) {
     s32 doubleTappedA;
 
-    objdata->joyPressed = joy_get_pressed(0);
-    objdata->joyStickX = joy_get_stick_x(0);
-    objdata->joyStickY = joy_get_stick_y(0);
+    objdata->joyPressed = joyGetPressed(0);
+    objdata->joyStickX = joyGetStickX(0);
+    objdata->joyStickY = joyGetStickY(0);
 
     //Decrement timer (used for detecting A button double-tap)
     objdata->joyATimer -= gUpdateRateF;
