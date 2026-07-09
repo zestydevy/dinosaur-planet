@@ -435,7 +435,7 @@ enum SoundID {
     SOUND_618_Slice_Impact = 0x618, //magicplant
     SOUND_619_Twinkle_Loop = 0x619, //magicplant
     SOUND_61A_Crystal_Ringing = 0x61A, //magicplant
-
+    SOUND_61B = 0x61B, //DBStealerWorm
 
     SOUND_633 = 0x633, // empty? used by player DLL
     SOUND_634 = 0x634, // empty? used by SmallBasket
