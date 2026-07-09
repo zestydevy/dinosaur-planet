@@ -19,11 +19,11 @@ glabel entrypoint
     sw         $zero, 0x4($t0)
     bnez       $t1, .clear_bytes
      addi      $t0, $t0, 0x8
-    lui        $t2, %hi(bootproc)
+    lui        $t2, %hi(boot)
     /* Note: The stack size implied here is way bigger than what is actually allocated. This code
              starts the stack somewhere in the camera.c bss! */
     lui        $sp, %hi(gEntrypointThreadStack + 0x1000)
-    addiu      $t2, $t2, %lo(bootproc)
+    addiu      $t2, $t2, %lo(boot)
     jr         $t2
      addiu     $sp, $sp, %lo(gEntrypointThreadStack + 0x1000)
 endlabel entrypoint

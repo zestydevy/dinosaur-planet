@@ -172,7 +172,7 @@ void mainproc(void *arg) {
             game_tick();
         }
 
-        thread_timer_tick();
+        bootCheckStack();
     }
 }
 
