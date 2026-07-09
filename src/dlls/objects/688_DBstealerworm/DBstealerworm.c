@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/objects/221_ChukaChuck.h"
+#include "dlls/objects/251_weapons.h"
 #include "macros.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
@@ -10,10 +11,24 @@ typedef struct {
     f32 unk4;
     f32 unk8;
     f32 unkC;
-    u8 unk10;
-    u8 unk11;
-    u8 unk12_0 : 1;
-    u8 unk12_1 : 1;
+    union {
+        struct {
+            u32 pad10_19: 13;
+            u32 unk10_18: 1;
+            u32 pad10_15 : 3;
+            u32 unk10_14 : 1;
+            u32 pad10_2 : 10;
+            u32 pad10_1 : 1;
+            u32 pad10_0 : 1;
+        };
+        struct {
+            u8 unk10;
+            u8 unk11;
+            u8 unk12_0 : 1;
+            u8 unk12_1 : 1;
+            u8 unk13;
+        };
+    };
     Object* unk14;
     u8 unk18;
     f32 unk1C;
@@ -36,70 +51,131 @@ typedef struct {
 /*0x2C*/ static u32 data_2C[] = {
     0x00000374, 0x00000375, 0x00000376, 0x0000025b, 0x0000025c
 };
-/*0x40*/ static u32 data_40[] = {
+/*0x40*/ static s32 data_40[] = {
     0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 
     0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000002, 0x00000005, 0x00000005, 0x00000005, 
     0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005, 0x00000005
 };
-/*0x9C*/ static u32 data_9C[] = {
-    0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffff00
+/*0x9C*/ static s8 data_9C[] = {
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00
 };
-/*0xB4*/ static u32 data_B4[] = {
+/*0xB4*/ static s32 data_B4[] = {
     0x00000000, 0x00000001, 0x00000004
 };
-/*0xC0*/ static u32 data_C0[] = {
-    0x40000000, 0x40800000, 0x3fc00000
+/*0xC0*/ static f32 data_C0[] = {
+    2, 4, 1.5
 };
 /*0xCC*/ static u32 data_CC[] = {
     0x00000000, 0x00000007, 0x00000008, 0x00000007, 0x00000009, 0x00000001
 };
-/*0xE4*/ static u32 data_E4[] = {
-    0x00260026, 0x00000020, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x3f800000
-};
-/*0x110*/ static u32 data_110[] = {
-    0x02060167, 0x01650206
-};
-/*0x118*/ static u32 data_118[] = {
-    0x02060167, 0x01650206
+/*0xE4*/ static s16 data_E4[] = {
+    0x0026, 0x0026, 0x0000, 0x0020, 0x000, 0x00000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x000, 0x00000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 
+
+    0x3f80, 0x0000 //NOTE: this might be a separate bit of data, a f32 value?
 };
 
 /*0x0*/ static ObjFSA_StateCallback bss_0[10];
-/*0x28*/ static ObjFSA_StateCallback bss_28[2];
-/*0x30*/ static u8 _bss_30[0x10];
-/*0x40*/ static u8 bss_40[0x8];
-/*0x48*/ static u8 bss_48[0x4];
-/*0x4C*/ static u8 bss_4C[0x4];
-/*0x50*/ static u8 bss_50[0x4];
-/*0x54*/ static u8 bss_54[0x4];
-/*0x58*/ static u8 _bss_58[0x8];
+/*0x28*/ static ObjFSA_StateCallback bss_28[6];
 
+static void dll_688_func_72C(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_688_func_A74(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_688_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void dll_688_func_F20(Object* self, Baddie* baddie);
 static void dll_688_func_1048(Object* self, Baddie* baddie);
 
+static s32 dll_688_func_1734(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_19B0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_1B50(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_1DA4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_1E8C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2010(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2278(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_25BC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2924(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2A30(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
+static s32 dll_688_func_2B38(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2B98(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2BF8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2CE0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2D48(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_688_func_2DC4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
 // offset: 0x0 | func: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_0.s")
+static void dll_688_func_0(void) {
+    bss_0[0] = dll_688_func_1734;
+    bss_0[1] = dll_688_func_19B0;
+    bss_0[2] = dll_688_func_1B50;
+    bss_0[3] = dll_688_func_1DA4;
+    bss_0[4] = dll_688_func_1E8C;
+    bss_0[5] = dll_688_func_2010;
+    bss_0[6] = dll_688_func_2278;
+    bss_0[7] = dll_688_func_25BC;
+    bss_0[8] = dll_688_func_2924;
+    bss_0[9] = dll_688_func_2A30;
+    
+    bss_28[0] = dll_688_func_2B38;
+    bss_28[1] = dll_688_func_2B98;
+    bss_28[2] = dll_688_func_2BF8;
+    bss_28[3] = dll_688_func_2CE0;
+    bss_28[4] = dll_688_func_2D48;
+    bss_28[5] = dll_688_func_2DC4;
+}
 
 // offset: 0xE4 | ctor
-void dll_688_ctor(void* dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_ctor.s")
+void dll_688_ctor(void* dll) {
+    dll_688_func_0();
+}
 
 // offset: 0x124 | dtor
 void dll_688_dtor(void* dll) { }
 
 // offset: 0x130 | func: 1 | export: 0
-void dll_688_setup(Object* self, ObjSetup* setup, s32 reset);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_setup.s")
+void dll_688_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
+    Baddie* baddie;
+    DLL688_DataActual* objData;
+    u8 flags;
+
+    baddie = self->data;
+
+    flags = 2 | 4;
+    if (reset) {
+        flags = 1 | 2 | 4;
+    }
+    if (!(objSetup->unk2B & 0x20)) {
+        flags |= 8;
+    }
+    gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 0xA, 6, 0x102, flags, 20.0f);
+    
+    obj_add_object_type(self, OBJTYPE_Baddie);
+    
+    self->animCallback = NULL;
+    
+    objData = baddie->objdata;
+    bzero(objData, sizeof(DLL688_DataActual));
+    objData->unk4 = (f32) (objSetup->unk2C * 60.0f);
+    objData->unk8 = rand_next(10, 300);
+    
+    func_80023D30(self, 8, 0.0f, 0);
+    
+    self->unkAF |= 8;
+    
+    gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, 3);
+    baddie->fsa.logicState = 0;
+    baddie->fsa.unk4.mode = 1;
+    
+    func_8002674C(self);
+    obj_init_mesg_queue(self, 4);
+}
 
 // offset: 0x2E8 | func: 2 | export: 1
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_control.s")
 #else
-
-static void dll_688_func_72C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {}
-static void dll_688_func_A74(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {}
-static void dll_688_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {}
-
 void dll_688_control(Object* self) {
     Baddie* baddie;
     ObjFSA_Data* fsa;
@@ -226,7 +302,47 @@ void dll_688_func_6F0(Object* self, u8 message, s32 arg2) {
 }
 
 // offset: 0x72C | func: 10
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_72C.s")
+void dll_688_func_72C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    Vec3f d;
+    s32 scaleIdx;
+    s32 i;
+/*0x110*/ s16 data_110[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+/*0x118*/ s16 data_118[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+    Object* player;
+/*40*/ static SRT bss_40;
+
+    player = get_player();
+
+    if (fsa->target != NULL) {
+        d.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
+        d.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
+        d.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
+        fsa->targetDist = sqrtf(SQ(d.f[0]) + SQ(d.f[1]) + SQ(d.f[2]));
+    }
+    
+    if (!(baddie->unk3B0 & 0x20)) {
+        gDLL_33_BaddieControl->vtbl->func14(self, (Baddie*)fsa, &baddie->unk3B2, 2, 3, baddie->unk3A4, baddie->unk3A6);
+    }
+    
+    gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8);
+    if ((fsa->hitpoints > 0) && (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_40, data_9C, 1, &baddie->unk3A8, &bss_40) != 0)) {
+        scaleIdx = ((DLL_251_Weapons*)player->linkedObject->dll)->vtbl->func19(player->linkedObject);
+        if (scaleIdx >= 4) {
+            scaleIdx = 3;
+        }
+        
+        bss_40.scale = data_110[scaleIdx];
+        gDLL_17_partfx->vtbl->spawn(self, 0x323, &bss_40, 0x200001, -1, NULL);
+        bss_40.transl.x -= self->srt.transl.x;
+        bss_40.transl.y -= self->srt.transl.f[1];
+        bss_40.transl.z -= self->srt.transl.f[2];
+        bss_40.scale = data_118[scaleIdx];
+        
+        for (i = 0; i < 4; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, 0x324, &bss_40, 2, -1, NULL);
+        }
+    }
+}
 
 // offset: 0xA74 | func: 11
 void dll_688_func_A74(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
@@ -247,7 +363,71 @@ void dll_688_func_A74(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 }
 
 // offset: 0xBA0 | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_BA0.s")
+void dll_688_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    DLL688_DataActual* objData;
+    Object* target;
+    Vec3f d;
+    f32 playerDistance;
+    f32 searchDistance;
+    Object* player;
+    Baddie_Setup* objSetup;
+
+    objData = baddie->objdata;
+    searchDistance = 100.0f;
+    objSetup = (Baddie_Setup*)self->setup;
+
+    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+    if (target == NULL) {
+        target = obj_get_nearest_type_to(0x26, self, &searchDistance);
+    }
+    
+    if ((target != NULL) && !(baddie->unk3B0 & 4)) {
+        gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8, -1);
+        fsa->unk33D = 0;
+        
+        if (baddie) {}
+        
+        fsa->target = target;
+        baddie->unk3B6 = 1;
+        return;
+    }
+
+    objData->unk11 = 0;
+    
+    if (objData->unk0 > 0.0f) {
+        if ((fsa->logicState != 3) || (baddie->unk3B0 & 1)) {
+            if (objData->unk4 <= objData->unk0) {
+                gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8, -1);
+                objData->unk0 = 0.0f;
+                fsa->hitpoints = objSetup->quarterHitpoints * 4;
+                self->srt.transl.x = objSetup->base.x;
+                self->srt.transl.y = objSetup->base.y;
+                self->srt.transl.z = objSetup->base.z;
+                self->srt.yaw = objSetup->unk2A << 8;
+                return;
+            }
+            
+            objData->unk0 += gUpdateRateF;
+        }
+    } else {
+        player = get_player();
+        if (player != NULL) {
+            d.f[0] = player->globalPosition.f[0] - self->globalPosition.f[0];
+            d.f[1] = player->globalPosition.f[1] - self->globalPosition.f[1];
+            d.f[2] = player->globalPosition.f[2] - self->globalPosition.f[2];
+            playerDistance = sqrtf(SQ(d.f[0]) + SQ(d.f[1]) + SQ(d.f[2]));
+        } else {
+            playerDistance = 10000.0f;
+        }
+        
+        if ((objData->unkC < objData->unk8) && (playerDistance < 400.0f)) {
+            gDLL_6_AMSFX->vtbl->play(self, data_1C[1], 0x1E, NULL, NULL, 0, NULL);
+            objData->unkC += rand_next(0x32, 0xFA);
+        }
+        
+        objData->unk8 += gUpdateRateF;
+    }
+}
 
 // offset: 0xF20 | func: 13
 void dll_688_func_F20(Object* self, Baddie* baddie) {
@@ -310,7 +490,7 @@ void dll_688_func_1048(Object* self, Baddie* baddie) {
 }
 
 // offset: 0x11C0 | func: 15
-void dll_688_func_11C0(Object* self, s16 pitch, s16 roll) {
+static void dll_688_func_11C0(Object* self, s16 pitch, s16 roll) {
     SeqJoint* seqJoint;
     s32* seqJointID;
     s32 i;
@@ -327,11 +507,11 @@ void dll_688_func_11C0(Object* self, s16 pitch, s16 roll) {
 }
 
 // offset: 0x1284 | func: 16
-s32 dll_688_func_1284(Object* self, Object* arg1, f32 arg2, f32 arg3) {
-    Baddie* baddie; //3C
+static s32 dll_688_func_1284(Object* self, Object* arg1, f32 arg2, f32 arg3, f32 arg4) {
+    Baddie* baddie;
     f32 ySelf;
     f32 yTarget;
-    f32 sp30; //30
+    f32 sp30;
     s16 angle;
     f32 var_fa0;
 
@@ -369,10 +549,120 @@ s32 dll_688_func_1284(Object* self, Object* arg1, f32 arg2, f32 arg3) {
 /*0x64*/ static const char str_64[] = " WARNING AVOIDANCE FAILED: Obj Intersection \n";
 
 // offset: 0x13B0 | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_13B0.s")
+static s32 dll_688_func_13B0(Object* self, s32* objTypes, f32* arg2, s32 count, f32 arg4) {
+    Baddie* baddie;
+    s32 i;
+    Object* obj;
+    f32 normalisingFactor;
+    f32 distance;
+    f32 avoidScale;
+    f32 sin;
+    f32 cos;
+    Vec3f d;
+    f32 rotateFactor1;
+    f32 rotateFactor2;
+    f32 var_fv0;
+    f32 var_fv1;
+
+    rotateFactor1 = 0.0f;
+    rotateFactor2 = 0.0f;
+    
+    baddie = self->data;
+
+    for (i = 0; i < count; i++) {
+        distance = 260.0f;
+        obj = obj_get_nearest_type_to_excluding_self(objTypes[i], self, &distance);
+        if (obj != NULL) {
+            if (distance == 0) {
+                return 0;
+            }
+
+            avoidScale = 1.0f - (distance / 260.0f);
+            avoidScale = SQ(avoidScale);
+            avoidScale = SQ(avoidScale);
+            diPrintf(" Avoid Scale %f \n", &avoidScale);
+            d.f[0] = obj->srt.transl.x - self->srt.transl.x;
+            d.f[1] = obj->srt.transl.y - self->srt.transl.y;
+            d.f[2] = obj->srt.transl.z - self->srt.transl.z;
+            
+            normalisingFactor = 1.0f / distance;
+            
+            d.f[0] *= normalisingFactor;
+            d.f[1] *= normalisingFactor;
+            d.f[2] *= normalisingFactor;
+            
+            rotateFactor1 -= d.f[0] * avoidScale * arg2[i] * arg4;
+            rotateFactor2 -= d.f[2] * avoidScale * arg2[i] * arg4;
+        } 
+    }
+
+    sin = fsin16_precise(self->srt.yaw);
+    cos = fcos16_precise(self->srt.yaw);
+
+    baddie->fsa.unk27C += ((rotateFactor1 * cos) - (rotateFactor2 * sin));
+    baddie->fsa.unk278 += ((-rotateFactor2 * cos) - (rotateFactor1 * sin));
+
+    if (baddie->fsa.enteredAnimState) {}
+    
+    if (baddie->fsa.unk278 < -arg4) {
+        baddie->fsa.unk278 = -arg4;
+    } else {
+        var_fv0 = MIN(arg4, baddie->fsa.unk278);
+        baddie->fsa.unk278 = var_fv0;
+        
+        // FAKE
+        if (baddie->fsa.unk278) {}
+    }
+
+    if (baddie->fsa.enteredAnimState) {}
+    
+    if (baddie->fsa.unk27C < -arg4) {
+        baddie->fsa.unk27C = -arg4;
+    } else {
+        var_fv0 = MIN(arg4, baddie->fsa.unk27C);
+        baddie->fsa.unk27C = var_fv0;
+    }
+
+    return 0;
+}
+
+// OTHER STRINGS THAT NEED PLACING (throughout the DLL):
+static const char extra0[] = "New State [%s]\n";
+static const char extra1[] = "popOutOfGround";
+static const char extra2[] = "New State [%s]\n";
+static const char extra3[] = "burstIntoGround";
+static const char extra4[] = "New State [%s]\n";
+static const char extra5[] = "biteAttack";
+static const char extra6[] = "New State [%s]\n";
+static const char extra7[] = "standStill";
+static const char extra8[] = "New State [%s]\n";
+static const char extra9[] = "standAndSpit";
+static const char extra10[] = "New State [%s]\n";
+static const char extra11[] = "hitFightMain";
+static const char extra12[] = "New State [%s]\n";
+static const char extra13[] = "fight_die";
+static const char extra14[] = "New State [%s]\n";
+static const char extra15[] = "run to object";
+static const char extra16[] = " LOCK is Not of Given Type";
+static const char extra17[] = "New State [%s]\n";
+static const char extra18[] = "pick up egg object";
+static const char extra19[] = "New State [%s]\n";
+static const char extra20[] = "throw egg object";
+static const char extra21[] = "New AI State [%s]\n";
+static const char extra22[] = "aiTop";
+static const char extra23[] = "New AI State [%s]\n";
+static const char extra24[] = "aiIveBeenHit";
+static const char extra25[] = "New AI State [%s]\n";
+static const char extra26[] = "aiIamDying";
+static const char extra27[] = "New AI State [%s]\n";
+static const char extra28[] = "aiIamDead";
+static const char extra29[] = "New AI State [%s]\n";
+static const char extra30[] = "aiDormant";
+static const char extra31[] = "New AI State [%s]\n";
+static const char extra32[] = "aiL2_MainEngageControl";
 
 // offset: 0x169C | func: 18
-Object* dll_688_func_169C(Object* self, s32* objTypes, s32 count, f32* distance) {
+static Object* dll_688_func_169C(Object* self, s32* objTypes, s32 count, f32* distance) { //DBstealerworm_find_target?
     Object* obj;
     Object* matchObj;
 
@@ -389,13 +679,145 @@ Object* dll_688_func_169C(Object* self, s32* objTypes, s32 count, f32* distance)
 }
 
 // offset: 0x1734 | func: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_1734.s")
+s32 dll_688_func_1734(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    s32 pad;
+    Baddie* baddie;
+    DLL688_DataActual* objData;
+
+    baddie = self->data;
+    objData = baddie->objdata;
+    
+    if (fsa->enteredAnimState != 0) {
+        func_80023D30(self, 0xB, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+    
+    if (fsa->enteredAnimState) {
+        fsa->unk4.mode = 1;
+        main_set_bits(baddie->unk39E, 1);
+        self->unkAF &= ~8;
+        self->opacity = OBJECT_OPACITY_MAX;
+        fsa->unk341 = 1;
+        fsa->animTickDelta = (baddie->unk3B8 / 10000.0f) + 0.012f;
+        func_8002674C(self);
+    } else {
+        func_80026128(self, 0xA, 1, -1);
+        self->objhitInfo->unk5D = 0xA;
+        self->objhitInfo->unk5E = 1;
+        func_80028D2C(self);
+    }
+    
+    if (fsa->unk33A != 0) {
+        baddie->unk3B6 = 1;
+        objData->unk12_1 = 1;
+        objData->unk18++;
+    }
+
+    if (fsa->unk308 & 0x200) {
+        fsa->unk308 &= ~0x200;
+        objData->unk10 |= 4;
+    }
+    if (self->animProgress < 0.7f) {
+        objData->unk10 |= 2;
+    }
+    
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), data_C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, data_1C);
+    
+    return 0;
+}
 
 // offset: 0x19B0 | func: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_19B0.s")
+s32 dll_688_func_19B0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL688_DataActual* objData;
+    s8 entered;
+
+    baddie = self->data;
+
+    entered = fsa->enteredAnimState;
+    if (entered) {
+        func_80023D30(self, 0xE, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+    
+    self->unkAF |= 8;
+    
+    if (self->animProgress > 0.25f) {
+        objData = baddie->objdata;
+        objData->unk10 |= 2;
+    }
+    
+    if (fsa->enteredAnimState != 0) {
+        fsa->animTickDelta = 0.01f;
+        fsa->unk278 = 0.0f;
+    }
+    
+    if (fsa->unk33A) {
+        objData->unk0 = 1.0f;
+        main_set_bits(baddie->unk39E, 0);
+        func_80023D30(self, 8, 0.0f, 0);
+        fsa->target = NULL;
+        fsa->unk4.mode = 0;
+        fsa->unk33D = 0;
+        baddie->unk3B6 = 0;
+        self->unkAF |= 8;
+        objData->unk12_1 = 1;
+        objData->unk18++;
+    }
+    
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, data_1C);
+    
+    return 0;
+}
 
 // offset: 0x1B50 | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_1B50.s")
+s32 dll_688_func_1B50(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL688_DataActual* objData;
+    s8 entered;
+
+    baddie = self->data;
+    entered = fsa->enteredAnimState;
+    objData = baddie->objdata;
+    
+    if (entered) {
+        func_8002674C(self);
+    }
+    
+    func_80026128(self, 0xA, 1, -1);
+    
+    self->objhitInfo->unk5D = 0xA;
+    self->objhitInfo->unk5E = 1;
+    func_80028D2C(self);
+    
+    if (fsa->enteredAnimState) {
+        if (rand_next(0, 1)) {
+            if (fsa->enteredAnimState) {
+                func_80023D30(self, 6, 0.0f, 0);
+                fsa->unk33A = 0;
+            }
+        } else if (fsa->enteredAnimState) {
+            func_80023D30(self, 7, 0.0f, 0);
+            fsa->unk33A = 0;
+        }
+        
+        fsa->unk341 = 1;
+        fsa->animTickDelta = (baddie->unk3B8 / 20000.0f) + 0.005f;
+    }
+    
+    fsa->unk278 = 0.0f;
+    
+    if (fsa->unk33A) {
+        objData->unk12_1 = 1;
+    }
+    
+    objData->unk10 |= 2;
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 2), data_C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, rand_next(0, 2), data_C);
+    
+    return 0;
+}
 
 // offset: 0x1DA4 | func: 22
 s32 dll_688_func_1DA4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -463,13 +885,181 @@ s32 dll_688_func_1E8C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2010 | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_2010.s")
+s32 dll_688_func_2010(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Object* weapon;
+    Baddie* baddie;
+    DLL688_DataActual* objData;
+
+    baddie = self->data;
+    
+    if (fsa->enteredAnimState) {
+        if (1) {}
+        
+        func_80023D30(self, 0, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+    
+    if (fsa->enteredAnimState) {
+        objData = baddie->objdata;
+        if (objData->unk14 != NULL) {
+            obj_send_mesg(objData->unk14, 0x11, self, (void*)0x10);
+            obj_add_object_type(objData->unk14, 0x26);
+            objData->unk14 = NULL;
+            objData->unk18 = 1;
+        }
+        
+        weapon = get_player()->linkedObject;
+        if (((DLL_251_Weapons*)weapon->dll)->vtbl->func16(weapon)) {
+            gDLL_6_AMSFX->vtbl->play(self, data_2C[rand_next(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        } else {
+            gDLL_6_AMSFX->vtbl->play(self, data_2C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        }
+        gDLL_6_AMSFX->vtbl->play(self, data_0[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+    }
+    
+    fsa->unk341 = 0x10;
+    fsa->animTickDelta = 0.015f;
+    fsa->unk278 = 0.0f;
+    if (fsa->unk33A != 0) {
+        objData = baddie->objdata;
+        objData->unk12_1 = 1;
+    }
+    
+    return 0;
+}
 
 // offset: 0x2278 | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_2278.s")
+s32 dll_688_func_2278(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL688_DataActual* objData;
+
+    baddie = self->data;
+    
+    fsa->unk341 = 0x11;
+
+    if (fsa->enteredAnimState) {
+        if (fsa->enteredAnimState) {}
+
+        fsa->target = NULL;
+        fsa->unk4.mode = 0;
+        fsa->unk33D = 0;
+        fsa->unk27C = 0.0f;
+        fsa->unk278 = 0.0f;
+        self->unkAF |= 8;
+        gDLL_18_objfsa->vtbl->func21(self, fsa, 0x3C, 0xA, 0);
+        gDLL_6_AMSFX->vtbl->play(self, 0x57, MAX_VOLUME, NULL, NULL, 0, NULL);
+        func_800267A4(self);
+        objData = baddie->objdata;
+        objData->unk14 = 0;
+    }
+    
+    if (fsa->enteredAnimState) {
+        func_80023D30(self, 1, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+    
+    fsa->animTickDelta = 0.008f;
+    
+    if (gUpdateRateF <= self->opacity) {
+        self->opacity -= gUpdateRateF;
+    } else {
+        self->opacity = 0;
+    }
+    
+    if ((fsa->unk33A != 0) && (self->opacity == 0)) {
+        objData = baddie->objdata;
+        if (objData->unk0 == 0.0f) {
+            objData->unk0 = 1.0f;
+            main_set_bits(baddie->unk39E, 0);
+            main_set_bits(baddie->unk39C, 1);
+            func_80023D30(self, 8, 0.0f, 0U);
+            baddie->unk3B6 = 0;
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
+        }
+    }
+    
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, 2, data_0);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, data_1C);
+    
+    return 0;
+}
 
 // offset: 0x25BC | func: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_25BC.s")
+s32 dll_688_func_25BC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DLL688_DataActual* objData;
+    f32 sp2C;
+    s32 var_v0;
+    s16 temp_ft4;
+    s16 temp_ft5;
+    
+    baddie = self->data;
+    objData = baddie->objdata;
+    objData->unk10 |= 2;
+    objData->unk10_18 = 0;
+    
+    if (fsa->enteredAnimState != 0) {
+        func_8002674C(self);
+        func_80026160(self);
+    }
+    
+    func_80028D2C(self);
+    fsa->animTickDelta = 0.01f;
+    
+    if (objData->unk14 == 0) {
+        if (fsa->enteredAnimState != 0) {
+            func_80023D30(self, 0xF, 0.0f, 0);
+            fsa->unk33A = 0;
+        }
+    } else {
+        if (fsa->enteredAnimState != 0) {
+            func_80023D30(self, 0x11, 0.0f, 0);
+            fsa->unk33A = 0;
+        }
+        fsa->animTickDelta = 0.018f;
+    }
+    
+    fsa->unk341 = 0x1F;
+
+    sp2C = baddie->unk3B8 / 40.0f;
+    if (dll_688_func_1284(self, fsa->target, 7, sp2C, 0.2f) != 0) {
+        objData->unk10_14 = 1;
+        objData->unk18++;
+    }
+
+    if (obj_is_object_type(fsa->target, data_E4[objData->unk18]) == 0) {
+        objData->unk10_14 = 1;
+    }
+
+    dll_688_func_13B0(self, data_B4, data_C0, 3, sp2C);
+    
+    if (objData->unk10_14) {
+        dll_688_func_11C0(self, 0, 0);
+    } else if (objData->unk14 == 0) {
+        temp_ft5 = -(fsa->unk278 * 2535.0f);
+        temp_ft4 = -(fsa->unk27C * 2535.0f);
+        
+        if (temp_ft5 < -0x500) {
+            temp_ft5 = -0x500;
+        } else {
+            var_v0 = MIN(0x500, temp_ft5);
+            temp_ft5 = var_v0;
+        }
+        
+        if (temp_ft4 < -0x500) {
+            temp_ft4 = -0x500;
+        } else {
+            var_v0 = MIN(0x500, temp_ft4);
+            temp_ft4 = var_v0;
+        }
+        
+        dll_688_func_11C0(self, temp_ft5, temp_ft4);
+    }
+    
+    func_8002493C(self, fsa->unk278, &fsa->animTickDelta);
+    
+    return 0;
+}
 
 // offset: 0x2924 | func: 27
 s32 dll_688_func_2924(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -641,4 +1231,59 @@ s32 dll_688_func_2D48(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2DC4 | func: 34
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/688_DBstealerworm/dll_688_func_2DC4.s")
+s32 dll_688_func_2DC4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    s32 pad;
+    DLL688_DataActual* objData;
+    Baddie_Setup* objSetup;
+    f32 distance;
+    s16 objType;
+    u32 temp;
+    Baddie* baddie;
+    
+    baddie = self->data;
+    objSetup = (Baddie_Setup*)self->setup;
+    distance = 1500.0f;
+
+    if (fsa->enteredLogicState) {}
+    
+    objData = baddie->objdata;
+    if (fsa->enteredLogicState || objData->unk10_14) { 
+        objData->unk10_18 = 0;
+        objData->unk10_14 = 0;
+        
+        if (objData->unk18 == 0) {
+            self->srt.transl.x = objSetup->base.x;
+            self->srt.transl.y = objSetup->base.y;
+            self->srt.transl.z = objSetup->base.z;
+        }
+        
+        objType = data_E4[objData->unk18];
+        if (objType != 0) {
+            fsa->target = obj_get_nearest_type_to(objType, self, &distance);
+        }
+        
+        if (fsa->target != NULL) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, data_CC[objData->unk18]);
+        }
+
+        temp = objData->unk18;
+        if (temp >= 6) {
+            objData->unk18 = 0;
+        }
+    } else if ((fsa->unk33A != 0) && (objData->unk14 == 0)) {
+        if (objData->unk1C > 100.0f) {
+            objData->unk1C -= 100.0f;
+            distance = 200.0f;
+            fsa->target = dll_688_func_169C(self, data_B4, 2, &distance);
+            if (fsa->target != NULL) {
+                if (distance < 50.0f) {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 2);
+                } else {
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
+                }
+            }
+        }
+    }
+    
+    return 0;
+}
