@@ -1874,7 +1874,7 @@ void some_cell_func(BitStream* stream) {
         var_v1 += 1;
     }
     temp = ((cellY * (8 * 8)) + (cellZ * 8) + cellX);
-    bitstream_init(stream, &D_800B9798[(var_v1 * temp)], D_800B979E, D_800B979E);
+    bitstreamInit(stream, &D_800B9798[(var_v1 * temp)], D_800B979E, D_800B979E);
 }
 
 static const char str_8009a5e0[] = " ERROR: visible index greater than no vis blocks ";
@@ -1887,8 +1887,8 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     bitPosIndex = new_var[arg2 + arg3 * 16];
     
     if (bitPosIndex >= 0){
-        bitstream_set_pos(stream, D_800B97A0[bitPosIndex] + arg0);
-        return bitstream_read(stream, 1);
+        bitstreamSetPos(stream, D_800B97A0[bitPosIndex] + arg0);
+        return bitstreamRead(stream, 1);
     }
     diPrintf("SW ");
     return 0;
