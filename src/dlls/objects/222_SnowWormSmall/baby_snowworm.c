@@ -132,20 +132,20 @@ static s32 SnowWormSmall_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updat
 
 // offset: 0x0 | func: 0
 void SnowWormSmall_init_fsa_callbacks(void) {
-    sAnimStateCallbacks[0] = &SnowWormSmall_anim_state_0;
-    sAnimStateCallbacks[1] = &SnowWormSmall_anim_state_1;
-    sAnimStateCallbacks[2] = &SnowWormSmall_anim_state_2;
-    sAnimStateCallbacks[3] = &SnowWormSmall_anim_state_3;
-    sAnimStateCallbacks[4] = &SnowWormSmall_anim_state_4;
-    sAnimStateCallbacks[5] = &SnowWormSmall_anim_state_5;
-    sAnimStateCallbacks[6] = &SnowWormSmall_anim_state_6;
+    sAnimStateCallbacks[0] = SnowWormSmall_anim_state_0;
+    sAnimStateCallbacks[1] = SnowWormSmall_anim_state_1;
+    sAnimStateCallbacks[2] = SnowWormSmall_anim_state_2;
+    sAnimStateCallbacks[3] = SnowWormSmall_anim_state_3;
+    sAnimStateCallbacks[4] = SnowWormSmall_anim_state_4;
+    sAnimStateCallbacks[5] = SnowWormSmall_anim_state_5;
+    sAnimStateCallbacks[6] = SnowWormSmall_anim_state_6;
     
-    sLogicStateCallbacks[0] = &SnowWormSmall_logic_state_0;
-    sLogicStateCallbacks[1] = &SnowWormSmall_logic_state_1;
-    sLogicStateCallbacks[2] = &SnowWormSmall_logic_state_2;
-    sLogicStateCallbacks[3] = &SnowWormSmall_logic_state_3;
-    sLogicStateCallbacks[4] = &SnowWormSmall_logic_state_4;
-    sLogicStateCallbacks[5] = &SnowWormSmall_logic_state_5;
+    sLogicStateCallbacks[0] = SnowWormSmall_logic_state_0;
+    sLogicStateCallbacks[1] = SnowWormSmall_logic_state_1;
+    sLogicStateCallbacks[2] = SnowWormSmall_logic_state_2;
+    sLogicStateCallbacks[3] = SnowWormSmall_logic_state_3;
+    sLogicStateCallbacks[4] = SnowWormSmall_logic_state_4;
+    sLogicStateCallbacks[5] = SnowWormSmall_logic_state_5;
 }
 
 // offset: 0xC0 | ctor
