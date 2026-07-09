@@ -125,7 +125,7 @@ void amsfx_ctor(void *dll) {
     mmFree(tab);
 
     //AUDIO.bin
-    sSoundDefCache = acache_init(AUDIO_BIN, 0x40, sizeof(SoundDef), 0x40, 0);
+    sSoundDefCache = acacheInit(AUDIO_BIN, 0x40, sizeof(SoundDef), 0x40, 0);
     queue_alloc_load_file((void*)&tab, AUDIO_TAB);
     _bss_C = tab[0];
     _bss_10 = tab[1] - _bss_C;
@@ -440,7 +440,7 @@ s32 amsfx_get_default(u16 soundID, SoundDef* soundDef) {
     }
 
     soundID--;
-    temp_v0 = acache_get(sSoundDefCache, soundID);
+    temp_v0 = acacheGet(sSoundDefCache, soundID);
     if (temp_v0 != NULL) {
         bcopy(temp_v0, soundDef, sizeof(SoundDef));
     } else {
@@ -462,7 +462,7 @@ s32 amsfx_get_default(u16 soundID, SoundDef* soundDef) {
 
 // offset: 0xEE4 | func: 12 | export: 12
 s32 amsfx_flush_cache(s32 arg0, UNK_TYPE_32 arg1) {
-    acache_flush(sSoundDefCache);
+    acacheFlush(sSoundDefCache);
     return 1;
 }
 

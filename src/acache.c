@@ -9,7 +9,7 @@ static const char str_8009823c[] = "in cache %d\n";
 static const char str_8009824c[] = "flush\n";
 static const char str_80098254[] = "in load %d\n";
 
-ACache* acache_init(u8 fileID, u8 recordsPerLoad, u8 recordSize, u8 slotCount, ACacheCallback loadCallback) {
+ACache* acacheInit(u8 fileID, u8 recordsPerLoad, u8 recordSize, u8 slotCount, ACacheCallback loadCallback) {
     u8* slotBuffer;
     ACache* cache;
     s32 layoutOffsets[5];
@@ -47,11 +47,11 @@ ACache* acache_init(u8 fileID, u8 recordsPerLoad, u8 recordSize, u8 slotCount, A
     return cache;
 }
 
-void acache_free(ACache *cache) {
+void acacheFree(ACache *cache) {
     mmFree(cache);
 }
 
-void acache_flush(ACache *cache) {
+void acacheFlush(ACache *cache) {
     s32 slotIndex;
 
     cache->loadedStartIndex = -cache->recordSize - 1;
@@ -62,7 +62,7 @@ void acache_flush(ACache *cache) {
     }
 }
 
-void *acache_get(ACache *cache, s32 recordIndex) {
+void *acacheGet(ACache *cache, s32 recordIndex) {
     u8* slotBuffer;
     s32 slotIndex;
     s32 cacheIndex;
