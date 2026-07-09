@@ -56,11 +56,11 @@ typedef struct {
     AMDMABuffer *firstFree;
 } AMDMAState;
 
-void init_audio(OSSched* sched, OSPri threadPriority);
-void start_audio_thread(void);
-void stop_audio_thread(void);
-void audio_func_800121DC(void);
-void audio_func_80012224(s32 a0);
-u8 audio_func_80012348(void);
+void amCreateAudioMgr(OSSched* sched, OSPri threadPriority);
+void amGo(void);
+void amStop(void);
+void am_func_800121DC(void);
+void am_func_80012224(s32 a0);
+u8 am_func_80012348(void);
 
 #endif //_SYS_AUDIO_H

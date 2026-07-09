@@ -215,7 +215,7 @@ void game_init(void) {
     footsteps_init();
     fonts_init();
     menu_init();
-    init_audio(&osscheduler_, /*threadPriority=*/14);
+    amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
     init_global_map();
     if (osMemSize != EXPANSION_RAM_SIZE) {
         gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dll_load_deferred(DLL_ID_AMSEQ, 36);
@@ -267,8 +267,8 @@ void game_init(void) {
     }
     init_bittable();
     alSynFlag = 1;
-    start_audio_thread();
-    audio_func_80012224(0);
+    amGo();
+    am_func_80012224(0);
     if (0) {};
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
@@ -327,7 +327,7 @@ void game_tick(void) {
     rcp_clear_screen(&gCurGfx, &gCurMtx, clearFlags);
     voxmap_update_cache_timers();
     func_80013D80();
-    audio_func_800121DC();
+    am_func_800121DC();
     gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);
     gDLL_22_Subtitles->vtbl->func_578(gdl);
     camera_tick();

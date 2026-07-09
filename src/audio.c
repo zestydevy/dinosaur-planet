@@ -63,8 +63,8 @@ void __amHandleDoneMsg(void);
 void __clearAudioDMA(void);
 ALDMAproc __amDmaNew(AMDMAState **state);
 
-// Official name: amCreateAudioMgr ?
-void init_audio(OSSched* sched, OSPri threadPriority) {
+// Official name: amCreateAudioMgr
+void amCreateAudioMgr(OSSched* sched, OSPri threadPriority) {
     ALSynConfig c;
     f32 fsize;
     s32 frameSize;
@@ -186,14 +186,14 @@ void __amMain(void *arg) {
 }
 
 // Official Name: amGo
-void start_audio_thread(void) {
+void amGo(void) {
     if (alSynFlag) {
         osStartThread(&gAudioThread);
     }
 }
 
-// Official Name: amGoStop
-void stop_audio_thread(void) {
+// Official Name: amStop
+void amStop(void) {
     osStopThread(&gAudioThread);
 }
 
@@ -387,14 +387,14 @@ void __clearAudioDMA(void) {
     audFrameCt++;
 }
 
-void audio_func_800121DC(void) {
+void am_func_800121DC(void) {
     gDLL_5_AMSEQ2->vtbl->tick();
     gDLL_6_AMSFX->vtbl->func_338();
 }
 
-void audio_func_80012224(s32 a0) { }
+void am_func_80012224(s32 a0) { }
 
-void func_80012230(u8 a0) {
+void am_func_80012230(u8 a0) {
     u8 i;
     
     if (a0 == D_8008C8D4) {
@@ -419,11 +419,11 @@ void func_80012230(u8 a0) {
     }
 }
 
-u8 audio_func_80012348(void) {
+u8 am_func_80012348(void) {
     return D_8008C8D4;
 }
 
-void func_80012358(void) {
+void am_func_80012358(void) {
     alBnkfNew(NULL,NULL);
     alSeqFileNew(NULL,NULL);
     n_alCSPDelete(NULL);

@@ -259,7 +259,7 @@ Gfx *sc_func_8003BAD0(OSSched *sc,
     done = FALSE;
 
     // Stop audio thread
-    stop_audio_thread();
+    amStop();
 
     task = &sc->curRSPTask->list;
     cmdIndex = task->t.data_size / 2;

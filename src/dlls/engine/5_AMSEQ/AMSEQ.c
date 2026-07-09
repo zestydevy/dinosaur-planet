@@ -422,7 +422,7 @@ void amseq_func_1170(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1) {
 void amseq_tick(void) {
     s32 i;
 
-    if (audio_func_80012348() != 0) {
+    if (am_func_80012348() != 0) {
         for (i = 0; i < 4; i++) {
             amseq_start_next_sequence(i);
             amseq_update_fade(i);
