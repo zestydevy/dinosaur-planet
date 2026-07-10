@@ -1,9 +1,11 @@
 #include "common.h"
+#include "dlls/engine/18_objfsa.h"
 #include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/251_weapons.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "sys/math.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
@@ -152,7 +154,7 @@ static void DBStealerWorm_func_72C(Object* self, Baddie* baddie, ObjFSA_Data* fs
 static void DBStealerWorm_func_A74(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void DBStealerWorm_func_F20(Object* self, Baddie* baddie);
-static void DBStealerWorm_func_1048(Object* self, Baddie* baddie);
+static void DBStealerWorm_spit(Object* self, Baddie* baddie);
 
 static s32 DBStealerWorm_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 static s32 DBStealerWorm_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
@@ -440,7 +442,7 @@ void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     searchDistance = 100.0f;
     objSetup = (Baddie_Setup*)self->setup;
 
-    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, M_180_DEGREES);
     if (target == NULL) {
         target = obj_get_nearest_type_to(OBJTYPE_38, self, &searchDistance);
     }
@@ -449,9 +451,10 @@ void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8, -1);
         fsa->unk33D = 0;
         
-        if (baddie) {}
-        
         fsa->target = target;
+
+        if (baddie->fsa.target) {}
+
         baddie->unk3B6 = 1;
         return;
     }
@@ -501,7 +504,8 @@ void DBStealerWorm_func_F20(Object* self, Baddie* baddie) {
     objData = baddie->objdata;
     
     if ((objData->unk10 & 1) && (baddie->fsa.target != NULL)) {
-        DBStealerWorm_func_1048(self, baddie);
+        STUBBED_PRINTF(" Fireing Projectile at Player ");
+        DBStealerWorm_spit(self, baddie);
     }
     
     if (objData->unk10 & 2) {
@@ -518,7 +522,7 @@ void DBStealerWorm_func_F20(Object* self, Baddie* baddie) {
 }
 
 // offset: 0x1048 | func: 14
-void DBStealerWorm_func_1048(Object* self, Baddie* baddie) {
+void DBStealerWorm_spit(Object* self, Baddie* baddie) {
     ChukaChuck_Setup* chuckSetup;
     Object* chuck;
     f32 throwFactor;
@@ -571,49 +575,48 @@ static void DBStealerWorm_func_11C0(Object* self, s16 pitch, s16 roll) {
 }
 
 // offset: 0x1284 | func: 16
-static s32 DBStealerWorm_func_1284(Object* self, Object* arg1, f32 arg2, f32 arg3, f32 arg4) {
+static s32 DBStealerWorm_func_1284(Object* self, Object* target, f32 arg2, f32 turnSpeedFactor, f32 arg4) {
     Baddie* baddie;
     f32 ySelf;
     f32 yTarget;
-    f32 sp30;
-    s16 angle;
-    f32 var_fa0;
+    f32 distance;
+    s16 dYaw;
+    f32 yDiff;
 
     
     baddie = self->data;
-    angle = func_80031DD8(self, arg1, &sp30);
+    dYaw = func_80031DD8(self, target, &distance);
+
     if (gUpdateRateF == 0.0f) {
+        STUBBED_PRINTF(" Error : main_fdt is zero \n");
         return 0;
+    } else {
+        distance /= gUpdateRateF;
     }
-    
-    sp30 /= gUpdateRateF;
-    if (sp30 < arg2) {
+
+    if (distance < arg2) {
         ySelf = self->srt.transl.y;
-        yTarget = arg1->srt.transl.y;
+        yTarget = target->srt.transl.y;
         
         if (yTarget <= ySelf) {
-            var_fa0 = ySelf - yTarget;
+            yDiff = ySelf - yTarget;
         } else {
-            var_fa0 = -(ySelf - yTarget);
+            yDiff = -(ySelf - yTarget);
         }
         
-        if (var_fa0 < 3.0f) {
+        if (yDiff < 3.0f) {
             return 1;
         }
     }
 
-    baddie->fsa.unk278 = (1.0f - ((f32) angle / 65536.0f)) * arg3;
+    baddie->fsa.unk278 = (1.0f - ((f32) dYaw / M_360_DEGREES)) * turnSpeedFactor;
     baddie->fsa.unk27C = 0;
     
     return 0;
 }
 
-/*0x28*/ static const char str_28[] = " Fireing Projectile at Player ";
-/*0x48*/ static const char str_48[] = " Error : main_fdt is zero \n";
-/*0x64*/ static const char str_64[] = " WARNING AVOIDANCE FAILED: Obj Intersection \n";
-
 // offset: 0x13B0 | func: 17
-static s32 DBStealerWorm_func_13B0(Object* self, s32* objTypes, f32* avoidScaleFactors, s32 count, f32 arg4) {
+static s32 DBStealerWorm_avoid_objects(Object* self, s32* objTypes, f32* avoidScaleFactors, s32 count, f32 maxTurnSpeed) {
     Baddie* baddie;
     s32 i;
     Object* obj;
@@ -625,7 +628,7 @@ static s32 DBStealerWorm_func_13B0(Object* self, s32* objTypes, f32* avoidScaleF
     Vec3f d;
     f32 rotateFactor1;
     f32 rotateFactor2;
-    f32 var_fv0;
+    f32 speed;
     f32 var_fv1;
 
     rotateFactor1 = 0.0f;
@@ -638,6 +641,7 @@ static s32 DBStealerWorm_func_13B0(Object* self, s32* objTypes, f32* avoidScaleF
         obj = obj_get_nearest_type_to_excluding_self(objTypes[i], self, &distance);
         if (obj != NULL) {
             if (distance == 0) {
+                STUBBED_PRINTF(" WARNING AVOIDANCE FAILED: Obj Intersection \n");
                 return 0;
             }
 
@@ -655,8 +659,8 @@ static s32 DBStealerWorm_func_13B0(Object* self, s32* objTypes, f32* avoidScaleF
             d.f[1] *= normalisingFactor;
             d.f[2] *= normalisingFactor;
             
-            rotateFactor1 -= d.f[0] * avoidScale * avoidScaleFactors[i] * arg4;
-            rotateFactor2 -= d.f[2] * avoidScale * avoidScaleFactors[i] * arg4;
+            rotateFactor1 -= d.f[0] * avoidScale * avoidScaleFactors[i] * maxTurnSpeed;
+            rotateFactor2 -= d.f[2] * avoidScale * avoidScaleFactors[i] * maxTurnSpeed;
         } 
     }
 
@@ -668,11 +672,11 @@ static s32 DBStealerWorm_func_13B0(Object* self, s32* objTypes, f32* avoidScaleF
 
     if (baddie->fsa.enteredAnimState) {}
     
-    if (baddie->fsa.unk278 < -arg4) {
-        baddie->fsa.unk278 = -arg4;
+    if (baddie->fsa.unk278 < -maxTurnSpeed) {
+        baddie->fsa.unk278 = -maxTurnSpeed;
     } else {
-        var_fv0 = MIN(arg4, baddie->fsa.unk278);
-        baddie->fsa.unk278 = var_fv0;
+        speed = MIN(maxTurnSpeed, baddie->fsa.unk278);
+        baddie->fsa.unk278 = speed;
         
         // FAKE
         if (baddie->fsa.unk278) {}
@@ -680,11 +684,11 @@ static s32 DBStealerWorm_func_13B0(Object* self, s32* objTypes, f32* avoidScaleF
 
     if (baddie->fsa.enteredAnimState) {}
     
-    if (baddie->fsa.unk27C < -arg4) {
-        baddie->fsa.unk27C = -arg4;
+    if (baddie->fsa.unk27C < -maxTurnSpeed) {
+        baddie->fsa.unk27C = -maxTurnSpeed;
     } else {
-        var_fv0 = MIN(arg4, baddie->fsa.unk27C);
-        baddie->fsa.unk27C = var_fv0;
+        speed = MIN(maxTurnSpeed, baddie->fsa.unk27C);
+        baddie->fsa.unk27C = speed;
     }
 
     return 0;
@@ -1038,7 +1042,7 @@ s32 DBStealerWorm_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             objData->unk0 = 1.0f;
             main_set_bits(baddie->unk39E, 0);
             main_set_bits(baddie->unk39C, 1);
-            func_80023D30(self, 8, 0.0f, 0U);
+            func_80023D30(self, 8, 0.0f, 0);
             baddie->unk3B6 = 0;
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
         }
@@ -1055,9 +1059,9 @@ s32 DBStealerWorm_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
     f32 sp2C;
-    s32 var_v0;
-    s16 temp_ft4;
-    s16 temp_ft5;
+    s32 minAngle;
+    s16 roll;
+    s16 pitch;
     
     baddie = self->data;
     objData = baddie->objdata;
@@ -1097,29 +1101,29 @@ s32 DBStealerWorm_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->unk10_14 = 1;
     }
 
-    DBStealerWorm_func_13B0(self, dObjTypes, dAvoidScaleFactors, ARRAYCOUNT(dObjTypes), sp2C);
+    DBStealerWorm_avoid_objects(self, dObjTypes, dAvoidScaleFactors, ARRAYCOUNT(dObjTypes), sp2C);
     
     if (objData->unk10_14) {
         DBStealerWorm_func_11C0(self, 0, 0);
     } else if (objData->stolenEgg == NULL) {
-        temp_ft5 = -(fsa->unk278 * 2535.0f);
-        temp_ft4 = -(fsa->unk27C * 2535.0f);
+        pitch = -(fsa->unk278 * 2535.0f);
+        roll = -(fsa->unk27C * 2535.0f);
         
-        if (temp_ft5 < -0x500) {
-            temp_ft5 = -0x500;
+        if (pitch < -0x500) {
+            pitch = -0x500;
         } else {
-            var_v0 = MIN(0x500, temp_ft5);
-            temp_ft5 = var_v0;
+            minAngle = MIN(0x500, pitch);
+            pitch = minAngle;
         }
         
-        if (temp_ft4 < -0x500) {
-            temp_ft4 = -0x500;
+        if (roll < -0x500) {
+            roll = -0x500;
         } else {
-            var_v0 = MIN(0x500, temp_ft4);
-            temp_ft4 = var_v0;
+            minAngle = MIN(0x500, roll);
+            roll = minAngle;
         }
         
-        DBStealerWorm_func_11C0(self, temp_ft5, temp_ft4);
+        DBStealerWorm_func_11C0(self, pitch, roll);
     }
     
     func_8002493C(self, fsa->unk278, &fsa->animTickDelta);
@@ -1207,10 +1211,11 @@ s32 DBStealerWorm_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
         if (entered) {
             fsa->unk27C = 0.0f;
             fsa->unk278 = 0.0f;
-            return 6;
+            return FSA_NEXTSTATE_SYNC(DBStealerWorm_LSTATE_5);
         }
+
         if (fsa->unk33A != 0) {
-            return 6;
+            return FSA_NEXTSTATE_SYNC(DBStealerWorm_LSTATE_5);
         }
     }
     return 0;
@@ -1224,13 +1229,13 @@ s32 DBStealerWorm_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     baddie = self->data;
 
     if (fsa->hitpoints <= 0) {
-        return 3;
+        return FSA_NEXTSTATE_SYNC(DBStealerWorm_LSTATE_2);
     }
     
     if (fsa->unk33A) {
         objData = baddie->objdata;
         objData->unk1C += 170.0f;
-        return 6;
+        return FSA_NEXTSTATE_SYNC(DBStealerWorm_LSTATE_5);
     }
     
     return 0;
@@ -1259,8 +1264,9 @@ s32 DBStealerWorm_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
             obj_destroy_object(self);
         }
         
-        return 4;
+        return FSA_NEXTSTATE_SYNC(DBStealerWorm_LSTATE_3);
     }
+
     return 0;
 }
 
@@ -1286,7 +1292,7 @@ s32 DBStealerWorm_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
     entered = fsa->enteredLogicState;    
     if (entered) {
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DBStealerWorm_ASTATE_1);
         objData = baddie->objdata;
         objData->unk8 = 0.0f;
         objData->unkC = 0.0f;
@@ -1343,9 +1349,9 @@ s32 DBStealerWorm_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
             fsa->target = DBStealerWorm_func_169C(self, dObjTypes, 2, &distance);
             if (fsa->target != NULL) {
                 if (distance < 50.0f) {
-                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 2);
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DBStealerWorm_ASTATE_2);
                 } else {
-                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
+                    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DBStealerWorm_ASTATE_4);
                 }
             }
         }
