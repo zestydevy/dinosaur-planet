@@ -2,7 +2,7 @@
 #include "sys/generic_queue.h"
 #include "sys/memory.h"
 
-GenericQueue *generic_queue_init(GenericQueue *queue, void *data, s32 capacity, s32 elementSize) {
+GenericQueue *genericQueueInit(GenericQueue *queue, void *data, s32 capacity, s32 elementSize) {
     queue->data = data;
     queue->count = 0;
     queue->capacity = capacity;
@@ -13,7 +13,7 @@ GenericQueue *generic_queue_init(GenericQueue *queue, void *data, s32 capacity, 
     return queue;
 }
 
-GenericQueue *generic_queue_new(s32 capacity, s32 elementSize) {
+GenericQueue *genericQueueNew(s32 capacity, s32 elementSize) {
     GenericQueue *queue;
 
     queue = mmAlloc(
@@ -31,11 +31,11 @@ GenericQueue *generic_queue_new(s32 capacity, s32 elementSize) {
     return queue;
 }
 
-void generic_queue_free(GenericQueue *queue) {
+void genericQueueFree(GenericQueue *queue) {
     mmFree(queue);
 }
 
-void generic_queue_enqueue(GenericQueue *queue, void *element) {
+void genericQueueEnqueue(GenericQueue *queue, void *element) {
     bcopy(
         /*src*/element, 
         /*dst*/(void*)((u32)queue->data + queue->top * queue->elementSize), 
@@ -50,7 +50,7 @@ void generic_queue_enqueue(GenericQueue *queue, void *element) {
     queue->count += 1;
 }
 
-void generic_queue_dequeue(GenericQueue *queue, void *outElement) {
+void genericQueueDequeue(GenericQueue *queue, void *outElement) {
     bcopy(
         /*src*/(void*)((u32)queue->data + queue->bottom * queue->elementSize), 
         /*dst*/outElement, 
@@ -65,15 +65,15 @@ void generic_queue_dequeue(GenericQueue *queue, void *outElement) {
     queue->count -= 1;
 }
 
-void generic_queue_func_8000af78(GenericQueue *queue) {
+void genericQueue_func_8000af78(GenericQueue *queue) {
     queue->unk6 = queue->bottom;
 }
 
-s32 generic_queue_func_8000af88(GenericQueue *queue) {
+s32 genericQueue_func_8000af88(GenericQueue *queue) {
     return queue->unk6 == queue->top;
 }
 
-void *generic_queue_func_8000afa0(GenericQueue *queue) {
+void *genericQueue_func_8000afa0(GenericQueue *queue) {
     void *element;
 
     element = (void*)((u32)queue->data + queue->unk6 * queue->elementSize);
@@ -87,10 +87,10 @@ void *generic_queue_func_8000afa0(GenericQueue *queue) {
     return element;
 }
 
-s32 generic_queue_is_full(GenericQueue *queue) {
+s32 genericQueueIsFull(GenericQueue *queue) {
     return (queue->count + 1) == queue->capacity;
 }
 
-s32 generic_queue_is_empty(GenericQueue *queue) {
+s32 genericQueueIsEmpty(GenericQueue *queue) {
     return queue->count == 0;
 }

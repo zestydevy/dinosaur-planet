@@ -371,7 +371,7 @@ void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
         self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
     ktdata = (KTrex_Data*)baddie->objdata;
-    ktdata->stateStack = generic_stack_new(4, sizeof(s32));
+    ktdata->stateStack = genericStackNew(4, sizeof(s32));
 
     for (i = 0; i < 4; i++) {
         curve = gDLL_26_Curves->vtbl->func_39C(sSegStartCurvesCW[i]);
@@ -478,7 +478,7 @@ void dll_702_free(Object* self, s32 a1) {
     sKTData = sBaddie->objdata;
     obj_free_object_type(self, OBJTYPE_Baddie);
     gDLL_33_BaddieControl->vtbl->free(self, sBaddie, 0);
-    generic_stack_free(sKTData->stateStack);
+    genericStackFree(sKTData->stateStack);
     if (_data_E4 != NULL) {
         dllFree(_data_E4);
     }
@@ -570,8 +570,8 @@ static s32 dll_702_get_laser_wall_bitfield(u8 segmentBitfield) {
 
 // offset: 0xE24 | func: 14
 static void dll_702_push_state(s32 state) {
-    if (!generic_stack_is_full(sKTData->stateStack)) {
-        generic_stack_push(sKTData->stateStack, &state);
+    if (!genericStackIsFull(sKTData->stateStack)) {
+        genericStackPush(sKTData->stateStack, &state);
     }
 }
 
@@ -580,8 +580,8 @@ static s32 dll_702_pop_state(void) {
     s32 state;
 
     state = 0;
-    if (!generic_stack_is_empty(sKTData->stateStack)) {
-        generic_stack_pop(sKTData->stateStack, &state);
+    if (!genericStackIsEmpty(sKTData->stateStack)) {
+        genericStackPop(sKTData->stateStack, &state);
     }
     return state;
 }

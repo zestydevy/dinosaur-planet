@@ -39,13 +39,13 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load);
 void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
 
-    gAssetThreadQueue = generic_queue_init(
+    gAssetThreadQueue = genericQueueInit(
         &gAssetThreadQueueInternal, 
         (void*)&gAssetThreadQueueData, 
         100, 
         sizeof(UnkStructAssetThreadSingle));
     
-    gAssetThreadGenericStack = generic_stack_init(
+    gAssetThreadGenericStack = genericStackInit(
         &gAssetThreadStackInternal, 
         (void*)&gAssetThreadStackData, 
         5, 
@@ -71,7 +71,7 @@ void func_80012584(
 
     prevIE = interrupts_disable();
 
-    if (!generic_queue_is_full(gAssetThreadQueue)) {
+    if (!genericQueueIsFull(gAssetThreadQueue)) {
         element.unk0 = param2;
         element.unk4 = param3;
         element.unk8ObjSetup = param4;
@@ -80,7 +80,7 @@ void func_80012584(
         element.unk14 = param7;
         element.unk18 = param8;
 
-        generic_queue_enqueue(gAssetThreadQueue, &element);
+        genericQueueEnqueue(gAssetThreadQueue, &element);
     }
 
     interrupts_enable(prevIE);
@@ -208,7 +208,7 @@ void func_80012A4C(void) {
     while (osRecvMesg(&D_800ACB68, NULL, 0) != -1);
 
     while (gAssetThreadGenericStack->count != 0) {
-        generic_stack_pop(gAssetThreadGenericStack, &sp24);
+        genericStackPop(gAssetThreadGenericStack, &sp24);
 
         switch (sp24.unk0) {
             case 5:
@@ -246,17 +246,17 @@ void func_80012B54(s32 param1, s32 param2) {
     func_80012A4C();
 
     // Note: does not allocate, effectively just resets the temp queue
-    generic_queue_init(&D_800AD6C0, (void*)&D_800AD6D0, 100, sizeof(UnkStructAssetThreadSingle));
+    genericQueueInit(&D_800AD6C0, (void*)&D_800AD6D0, 100, sizeof(UnkStructAssetThreadSingle));
     qptr = &D_800AD6C0;
 
-    while (!generic_queue_is_empty(gAssetThreadQueue)) {
-        generic_queue_dequeue(gAssetThreadQueue, &elementTemp);
+    while (!genericQueueIsEmpty(gAssetThreadQueue)) {
+        genericQueueDequeue(gAssetThreadQueue, &elementTemp);
         
         if (param1 != elementTemp.unk0) {
-            generic_queue_enqueue(qptr, &elementTemp);
+            genericQueueEnqueue(qptr, &elementTemp);
         } else {
             if ((param1 == 4) && ((new_var = ((0, elementTemp)).unk8ObjSetup)->uID != param2)) {
-                generic_queue_enqueue(qptr, &elementTemp);
+                genericQueueEnqueue(qptr, &elementTemp);
             }
         }
     }
@@ -296,7 +296,7 @@ void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 pa
         element.unk10 = param5;
 
         // Copy element into stack
-        generic_stack_push(gAssetThreadGenericStack, &element);
+        genericStackPush(gAssetThreadGenericStack, &element);
     }
 
     interrupts_enable(prevIE);
@@ -342,8 +342,8 @@ void asset_thread_load_single(void) {
 
     prevIE = interrupts_disable();
 
-    if (!generic_queue_is_empty(gAssetThreadQueue)) {
-        generic_queue_dequeue(gAssetThreadQueue, &sp2C);
+    if (!genericQueueIsEmpty(gAssetThreadQueue)) {
+        genericQueueDequeue(gAssetThreadQueue, &sp2C);
 
         D_800AE29D = 1;
         D_800AE29E = sp2C.unk0;
