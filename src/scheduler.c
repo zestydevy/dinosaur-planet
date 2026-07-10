@@ -1,6 +1,6 @@
 #include "PR/os_internal.h"
 #include "sys/audio.h"
-#include "sys/dl_debug.h"
+#include "sys/di_rcp.h"
 #include "sys/vi.h"
 #include "sys/main.h"
 #include "sys/print.h"
@@ -357,7 +357,7 @@ Gfx *sc_func_8003BAD0(OSSched *sc,
         *retFile_2 = NULL;
         *retFile = NULL;
 
-        dl_get_debug_info2(displayListPtr,
+        diRcpTraceGetInfo2(displayListPtr,
             &dldi_unk4, &dldi_file, &dldi_unkC, &dldi_unk10,
             &dldi_unk4_2, &dldi_file_2, &dldi_unkC_2, &dldi_unk10_2);
         

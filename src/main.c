@@ -21,7 +21,7 @@
 #include "sys/menu.h"
 #include "sys/fonts.h"
 #include "sys/boot.h"
-#include "sys/dl_debug.h"
+#include "sys/di_rcp.h"
 #include "sys/rsp_segment.h"
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
@@ -272,7 +272,7 @@ void game_init(void) {
     if (0) {};
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
-    dl_init_debug_infos();
+    diRcpTraceInit();
     menu_set(MENU_POST);
     if (osMemSize == EXPANSION_RAM_SIZE) {
         main_handle_map_change();
@@ -287,7 +287,7 @@ void game_tick(void) {
     Gfx **gdl;
 
     osSetTime(0);
-    dl_next_debug_info_set();
+    diRcpTraceReset();
 
     gdl = &gCurGfx;
 
@@ -300,7 +300,7 @@ void game_tick(void) {
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
 
-    dl_add_debug_info(gCurGfx, 0, "main/main.c", 0x28E);
+    diRcpTrace(gCurGfx, 0, "main/main.c", 0x28E);
     rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
     rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);

@@ -103,7 +103,7 @@ segments:
     - [0x62B30, c, debug]
     - [0x62BA0, c, exception]
     - [0x63EA0, asm, get_stack_]
-    - [0x63EB0, c, dl_debug]
+    - [0x63EB0, c, di_rcp]
     - [0x64320, c, di_comm]
     - [0x645A0, c, libnaudio/n_sl]
     - [0x64660, c, libultra/audio/sl]
@@ -337,7 +337,7 @@ segments:
     - [0x93CE0, .data, print]
     - [0x93DF0, .data, debug]
     - [0x93E00, .data, exception]
-    - [0x94410, .data, dl_debug]
+    - [0x94410, .data, di_rcp]
     - [0x94420, .data, developer_names]
     - [0x94460, .data, di_comm]
     - [0x944B0, .data, libnaudio/n_sl]
@@ -415,7 +415,7 @@ segments:
     - [0x9B9F0, .rodata, print]
     - [0x9BC70, .rodata, debug]
     - [0x9BC90, .rodata, exception]
-    - [0x9C270, .rodata, dl_debug]
+    - [0x9C270, .rodata, di_rcp]
     - [0x9C2A0, .rodata, developer_names]
     - [0x9C320, .rodata, di_comm]
     - [0x9C420, .rodata, libnaudio/n_synthesizer]
@@ -492,7 +492,7 @@ segments:
     # - { type: .bss, vram: 0x800be110, name: libultra/flash }
     # - { type: .bss, vram: 0x800be1d0, name: print }
     # - { type: .bss, vram: 0x800beb10, name: exception }
-    # - { type: .bss, vram: 0x800bfe70, name: dl_debug }
+    # - { type: .bss, vram: 0x800bfe70, name: di_rcp }
     # - { type: .bss, vram: 0x800bfe80, name: audio/speaker }
     # - { type: .bss, vram: 0x800bfe90, name: libnaudio/n_sndplayer }
     # - { type: .bss, vram: 0x800bff00, name: mp3/mp3 }

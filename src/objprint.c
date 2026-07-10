@@ -2,7 +2,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/camera.h"
-#include "sys/dl_debug.h"
+#include "sys/di_rcp.h"
 #include "sys/exception.h"
 #include "sys/map.h"
 #include "sys/objects.h"
@@ -67,7 +67,7 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
     }
 
     update_pi_manager_array(2, obj->id);
-    dl_add_debug_info(*gdl, obj->id, "objects/objprint.c", 426);
+    diRcpTrace(*gdl, obj->id, "objects/objprint.c", 426);
     if (obj->dll != NULL) {
         if (!(obj->stateFlags & OBJSTATE_PRINT_DISABLED)) {
             obj->dll->vtbl->print(obj, gdl, mtxs, vtxs, tris, visibility);
@@ -83,7 +83,7 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
     if (obj->linkedObject != NULL && (obj->linkedObject->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH)) {
         obj_handle_model_switch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
     }
-    dl_add_debug_info(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
+    diRcpTrace(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
     update_pi_manager_array(2, -1);
 }
 

@@ -5,7 +5,7 @@
 #include "sys/gfx/texture.h"
 #include "sys/asset_thread.h"
 #include "sys/bitstream.h"
-#include "sys/dl_debug.h"
+#include "sys/di_rcp.h"
 #include "sys/fs.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -740,19 +740,19 @@ void track_draw_main(void) {
     s8 objVisibilities[MAX_VISIBLE_OBJECTS];
     Mtx* rspMtxs;
 
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1323);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1323);
     some_cell_func(&D_800B9780);
     shadows_func_8004D9B8();
     shadows_func_8004DABC();
     gRenderListLength = 1;
     gBlocksToDrawIdx = 0;
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1341);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1341);
     gDLL_9_Newclouds->vtbl->func6(&gMainDL, gUpdateRate, 0);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 3);
     if (gTrackFlags & TRACKFLAG_SKY) {
         gDLL_12_Minic->vtbl->func3(&gMainDL, &gWorldRSPMatrices);
     }
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1349);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1349);
     blockIdxMap = D_80092B0C;
     rspMtxs = gWorldRSPMatrices;
     layer = MAP_LAYER_COUNT;
@@ -830,7 +830,7 @@ void track_draw_main(void) {
     track_add_visible_objects(objVisibilities);
     // Draw blocks and objects
     draw_render_list(rspMtxs, objVisibilities);
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1458);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1458);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 2);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1);
     gDLL_14_Modgfx->vtbl->func11(objVisibilities);
@@ -841,7 +841,7 @@ void track_draw_main(void) {
     gDLL_59_Minimap->vtbl->func1(&gMainDL, &gWorldRSPMatrices);
     shadows_func_8004D974(0);
     D_800B1847 = 0;
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1478);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1478);
 }
 
 void draw_render_list(Mtx* rspMtxs, s8* visibilities) {

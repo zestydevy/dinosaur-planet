@@ -812,7 +812,6 @@ void write_c_file_label_pointers(const char *cFileLabel, s32 line) {
     gSomeCFileInts[gCFileLabelIndex] = line;
 }
 
-// diRcpTrace?
 s32 func_800631E0(void) {
     s32 labelsIndex;
     s32 i;
