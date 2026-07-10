@@ -76,7 +76,7 @@ segments:
     - [0x326A0, c, objlib]
     - [0x334F0, c, objexpr]
     - [0x359E0, c, objprint]
-    - [0x37C90, c, filesystem]
+    - [0x37C90, c, pi]
     - [0x38020, c, crash]
     - [0x38380, c, rcp]
     - [0x3A190, c, route]
@@ -474,7 +474,7 @@ segments:
     # - { type: .bss, vram: 0x800b2d40, name: objlib }
     # - { type: .bss, vram: 0x800b2e00, name: objexpr }
     # - { type: .bss, vram: 0x800b2e10, name: objprint }
-    # - { type: .bss, vram: 0x800b2e30, name: filesystem }
+    # - { type: .bss, vram: 0x800b2e30, name: pi }
     # - { type: .bss, vram: 0x800b2ed0, name: crash }
     # - { type: .bss, vram: 0x800b3790, name: rcp }
     # - { type: .bss, vram: 0x800b4920, name: route }

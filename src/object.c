@@ -2,7 +2,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object_id.h"
 #include "sys/camera.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/gfx/model.h"
 #include "sys/asset_thread.h"
 #include "sys/dll.h"
@@ -117,7 +117,7 @@ void init_objects(void) {
 
     //load OBJINDEX.BIN and count number of entries
     queue_alloc_load_file((void **) (&gFile_OBJINDEX), OBJINDEX_BIN);
-    gObjIndexCount = (get_file_size(OBJINDEX_BIN) >> 1) - 1;
+    gObjIndexCount = (piRomGetFileSize(OBJINDEX_BIN) >> 1) - 1;
     while(!gFile_OBJINDEX[gObjIndexCount]) gObjIndexCount--;
 
     //load OBJECTS.TAB and count number of entries
@@ -1238,7 +1238,7 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
             if (!dontQueueLoad) {
                 queue_load_file_region_to_ptr((void**)outEvent->data, OBJEVENT_BIN, offset, outEvent->size);
             } else {
-                read_file_region(OBJEVENT_BIN, outEvent->data, offset, outEvent->size);
+                piRomLoadSection(OBJEVENT_BIN, outEvent->data, offset, outEvent->size);
             }
 
             break;
@@ -1289,7 +1289,7 @@ void obj_load_weapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id
             if (queueLoad) {
                 queue_load_file_region_to_ptr((void**)outParam->data, WEAPONDATA_BIN, offset, outParam->size);
             } else {
-                read_file_region(WEAPONDATA_BIN, outParam->data, offset, outParam->size);
+                piRomLoadSection(WEAPONDATA_BIN, outParam->data, offset, outParam->size);
             }
 
             break;
@@ -1317,7 +1317,7 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
 
     def = (ObjDef*)mmAlloc(fileSize, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:def"));
     if (def != NULL) {
-        read_file_region(OBJECTS_BIN, (void*)def, fileOffset, fileSize);
+        piRomLoadSection(OBJECTS_BIN, (void*)def, fileOffset, fileSize);
 
         if (def->pEvent != 0) {
             def->pEvent = (ObjDefEvent*)((u32)def + (u32)def->pEvent);
@@ -1404,7 +1404,7 @@ ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount) {
 
     modLines = NULL;
 
-    fileSize = get_file_size(MODLINES_TAB);
+    fileSize = piRomGetFileSize(MODLINES_TAB);
     totalEntries = (fileSize - 4) >> 2;
 
     if (modLineNo > totalEntries) {
@@ -1412,14 +1412,14 @@ ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount) {
     }
 
     tabEntry = (s32*)mmAlloc(16, ALLOC_TAG_TEST_COL, ALLOC_NAME("obj:tempindex"));
-    read_file_region(MODLINES_TAB, (void*)tabEntry, modLineNo << 2, 8);
+    piRomLoadSection(MODLINES_TAB, (void*)tabEntry, modLineNo << 2, 8);
 
     offset = tabEntry[0];
     size = tabEntry[1] - tabEntry[0];
 
     if (size > 0) {
         modLines = (ModLine*)mmAlloc(size, ALLOC_TAG_TRACK_COL, ALLOC_NAME("obj:templine"));
-        read_file_region(MODLINES_BIN, (void*)modLines, offset, size);
+        piRomLoadSection(MODLINES_BIN, (void*)modLines, offset, size);
     }
 
     mmFree(tabEntry);

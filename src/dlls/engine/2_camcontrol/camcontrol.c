@@ -5,7 +5,7 @@
 #include "game/objects/object_id.h"
 #include "sys/asset_thread.h"
 #include "sys/dll.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/memory.h"

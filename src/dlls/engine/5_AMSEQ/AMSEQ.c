@@ -7,7 +7,7 @@
 #include "sys/audio/amAudio.h"
 #include "sys/asset_thread.h"
 #include "sys/audio.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
@@ -112,7 +112,7 @@ void amseq_ctor(void* dll) {
     if (sp48 != 0) {
         sBankFiles[0] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
         queue_load_file_region_to_ptr((void**)sBankFiles[0], AMBIENT_BIN, sp44, sp48);
-        alBnkfNew(sBankFiles[0], (u8*)file_get_romaddr(AMBIENT_BIN, tab[1]));
+        alBnkfNew(sBankFiles[0], (u8*)piRomGetSectionPtr(AMBIENT_BIN, tab[1]));
     }
     mmFree(tab);
     queue_alloc_load_file((void**)&tab, MUSIC_TAB);
@@ -121,7 +121,7 @@ void amseq_ctor(void* dll) {
     if (sp48 != 0) {
         sBankFiles[1] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
         queue_load_file_region_to_ptr((void**)sBankFiles[1], MUSIC_BIN, sp44, sp48);
-        alBnkfNew(sBankFiles[1], (u8*)file_get_romaddr(MUSIC_BIN, tab[1]));
+        alBnkfNew(sBankFiles[1], (u8*)piRomGetSectionPtr(MUSIC_BIN, tab[1]));
     }
     mmFree(tab);
     queue_alloc_load_file((void**)&tab, AUDIO_TAB);
@@ -133,7 +133,7 @@ void amseq_ctor(void* dll) {
         mmFree(sSeqFiles[0]);
         sSeqFiles[0] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
         queue_load_file_region_to_ptr((void** ) sSeqFiles[0], AUDIO_BIN, sp44, sp48);
-        alSeqFileNew(sSeqFiles[0], (u8*)file_get_romaddr(AUDIO_BIN, sp44));
+        alSeqFileNew(sSeqFiles[0], (u8*)piRomGetSectionPtr(AUDIO_BIN, sp44));
         for (sp40 = 0; sp40 < sSeqFiles[0]->seqCount; sp40++) {
             if (sSeqFiles[0]->seqArray[sp40].len & 1) {
                 sSeqFiles[0]->seqArray[sp40].len++;
@@ -148,7 +148,7 @@ void amseq_ctor(void* dll) {
         mmFree(sSeqFiles[1]);
         sSeqFiles[1] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
         queue_load_file_region_to_ptr((void**)sSeqFiles[1], AUDIO_BIN, sp44, sp48);
-        alSeqFileNew(sSeqFiles[1], (u8*)file_get_romaddr(AUDIO_BIN, sp44));
+        alSeqFileNew(sSeqFiles[1], (u8*)piRomGetSectionPtr(AUDIO_BIN, sp44));
         for (sp40 = 0; sp40 < sSeqFiles[1]->seqCount; sp40++) {
             if (sSeqFiles[1]->seqArray[sp40].len & 1) {
                 sSeqFiles[1]->seqArray[sp40].len++;
@@ -599,7 +599,7 @@ void amseq_start_next_sequence(u8 playerNo) {
         seqFileIdx = 0;
     }
     idx = player->currentSeqID - 1;
-    offset = sSeqFiles[seqFileIdx]->seqArray[idx].offset - (u8*)file_get_romaddr(AUDIO_BIN, 0);
+    offset = sSeqFiles[seqFileIdx]->seqArray[idx].offset - (u8*)piRomGetSectionPtr(AUDIO_BIN, 0);
     if (player->midiData != NULL) {
         mmFree(player->midiData);
     }

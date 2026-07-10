@@ -10,7 +10,7 @@
 #include "sys/joypad.h"
 #include "sys/crash.h"
 #include "sys/exception.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
 #include "sys/objects.h"
@@ -194,7 +194,7 @@ void game_init(void) {
 
     osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 0xD, tvMode, 1);
     start_pi_manager_thread();
-    init_filesystem();
+    piInit();
     gfxtask_init(&osscheduler_);
     alloc_frame_buffers();
     if (0) {};
@@ -700,7 +700,7 @@ OSSched *get_ossched(void) {
 void init_bittable(void) {
     queue_alloc_load_file((void **)&gFile_BITTABLE, BITTABLE_BIN);
     // @bug: This should be dividing by 4 (not 2) since each entry is 4 bytes long
-    gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
+    gSizeBittable = piRomGetFileSize(BITTABLE_BIN) >> 1;
     gGplayState = gDLL_29_Gplay->vtbl->get_state();
 }
 

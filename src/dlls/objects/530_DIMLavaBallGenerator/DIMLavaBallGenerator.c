@@ -5,7 +5,7 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/memory.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/asset_thread.h"
 
 DLL_INTERFACE(DLL_529_DIMLavaBall) {

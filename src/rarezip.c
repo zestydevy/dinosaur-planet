@@ -1,4 +1,4 @@
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/rarezip.h"
 #include "sys/asset_thread.h"
@@ -34,7 +34,7 @@ s32 rarezip_uncompress_size(u8 *b) {
 
 s32 rarezip_uncompress_size_rom(s32 fileId, s32 offset, s32 readImmediate) {
     if (readImmediate) {
-        read_file_region(fileId, gPackedHeader, offset, 8);
+        piRomLoadSection(fileId, gPackedHeader, offset, 8);
     } else {
         queue_load_file_region_to_ptr((void**)gPackedHeader, fileId, offset, 8);
     }

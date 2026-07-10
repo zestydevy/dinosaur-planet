@@ -98,7 +98,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     if (id < 0) {
         id = -id;
     } else {
-        read_file_region(MODELIND_BIN, gAuxBuffer, id * 2, 8);
+        piRomLoadSection(MODELIND_BIN, gAuxBuffer, id * 2, 8);
         id = gAuxBuffer[0];
     }
     for (i = 0; i < gNumLoadedModels; i++) {
@@ -133,7 +133,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     }
     sp4C = gFile_MODELS_TAB[id + 0];
     sp48 = gFile_MODELS_TAB[id + 1] - sp4C;
-    read_file_region(MODELS_BIN, gAuxBuffer, sp4C, 0x10);
+    piRomLoadSection(MODELS_BIN, gAuxBuffer, sp4C, 0x10);
     sp42 = gAuxBuffer[0];
     sp3E = gAuxBuffer[2];
     sp40 = ((u16)mmAlign8(gAuxBuffer[1]) & 0xFFFF) + 0x90;
@@ -152,7 +152,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     }
     temp = (((u32)model + sp28) - sp48) - 0x10;
     modelInst = (ModelInstance *) (temp - (temp % 16));
-    read_file_region(MODELS_BIN, (void*) modelInst, sp4C, sp48);
+    piRomLoadSection(MODELS_BIN, (void*) modelInst, sp4C, sp48);
     rarezip_uncompress((u8*)modelInst + 8, (u8*)model, sp28);
     model->materials = (ModelTexture*) ((u32)model->materials + (u32)model);
     model->vertices = (Vtx*) ((u32)model->vertices + (u32)model);
@@ -566,7 +566,7 @@ s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount) {
         PAD16(total_size);
        
         index = modelID & 3;
-        read_file_region(AMAP_TAB, D_800B17BC, (modelID & ~3) << 2, 0x20);
+        piRomLoadSection(AMAP_TAB, D_800B17BC, (modelID & ~3) << 2, 0x20);
 
         amap_size = D_800B17BC[index+1] - D_800B17BC[index];
         
@@ -591,7 +591,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
 
     temp_s0 = (s16*)D_800B17BC;
     var_s1 = 0;
-    read_file_region(MODANIM_TAB, temp_s0, id << 1, 0x10);
+    piRomLoadSection(MODANIM_TAB, temp_s0, id << 1, 0x10);
     temp_t0 = temp_s0[0];
     var_a0 = temp_s0[1];
     temp_t7 = (var_a0 - temp_t0) >> 1;
@@ -607,7 +607,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
     if (var_s0 > 0x800) {
         STUBBED_PRINTF("Warning: Model animation buffer overflow!! size=%d\n", var_s0);
     }
-    read_file_region(AMAP_TAB, D_800B17BC, (id & ~3) << 2, 0x20);
+    piRomLoadSection(AMAP_TAB, D_800B17BC, (id & ~3) << 2, 0x20);
     model->unk5C = D_800B17BC[id & 3];
     sp40 = D_800B17BC[(id & 3) + 1] - D_800B17BC[(id & 3) + 0];
     if (model->unk71 & 0x40) {
@@ -615,9 +615,9 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
         PAD16(var_s0);
         var_s1 = var_s0;
         data += var_s0;
-        read_file_region(MODANIM_BIN, model->modAnim, temp_t0, var_s0);
+        piRomLoadSection(MODANIM_BIN, model->modAnim, temp_t0, var_s0);
     } else {
-        read_file_region(MODANIM_BIN, gAuxBuffer, temp_t0, var_s0);
+        piRomLoadSection(MODANIM_BIN, gAuxBuffer, temp_t0, var_s0);
         model->modAnim = gAuxBuffer;
     }
     model->modAnimBankBases[0] = 0;
@@ -645,7 +645,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
             data += 1;
         }
         model->amap = (u8*)data;
-        read_file_region(AMAP_BIN, data, model->unk5C, sp40);
+        piRomLoadSection(AMAP_BIN, data, model->unk5C, sp40);
         var_s1 = 0;
         do {
             if (gAuxBuffer[var_s1] != -1) {
@@ -758,7 +758,7 @@ Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* 
     // FAKE
     if (gNumLoadedAnims == 128) {}
 
-    read_file_region(ANIM_TAB, gBuffer_ANIM_TAB, (animId & ~1) << 2, 0x10);
+    piRomLoadSection(ANIM_TAB, gBuffer_ANIM_TAB, (animId & ~1) << 2, 0x10);
     sp24 = gBuffer_ANIM_TAB[(animId & 1) + 0];
     sp20 = gBuffer_ANIM_TAB[(animId & 1) + 1] - sp24;
 
@@ -778,10 +778,10 @@ Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* 
     // FAKE
     if (gNumLoadedAnims == 128) {}
 
-    read_file_region(ANIM_BIN, var_s1, sp24, sp20);
+    piRomLoadSection(ANIM_BIN, var_s1, sp24, sp20);
     if (anim != NULL) {
         sp20 = ALIGN8(model->jointCount - 1);
-        read_file_region(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
+        piRomLoadSection(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
     }
 
     if (anim == NULL) {

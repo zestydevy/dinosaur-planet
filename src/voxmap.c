@@ -2,7 +2,7 @@
 #include "sys/asset_thread.h"
 #include "sys/camera.h"
 #include "sys/curves.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "sys/rarezip.h"
@@ -157,7 +157,7 @@ u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, 
     temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
     temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
     sp2C = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
-    read_file_region(TEXPRE_BIN, sp2C, offset, size);
+    piRomLoadSection(TEXPRE_BIN, sp2C, offset, size);
     rarezip_uncompress(sp2C, temp_v0, fileSize + 0x80);
     temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
@@ -201,7 +201,7 @@ u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
     temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
     temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
     sp24 = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
-    read_file_region(VOXOBJ_BIN, sp24, offset, size);
+    piRomLoadSection(VOXOBJ_BIN, sp24, offset, size);
     rarezip_uncompress(sp24, temp_v0, fileSize);
     temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {

@@ -5,7 +5,7 @@
 #include "sys/asset_thread.h"
 #include "sys/audio/speaker.h"
 #include "sys/audio.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/vi.h"
 #include "sys/main.h"
 #include "sys/memory.h"

@@ -1,7 +1,7 @@
 #include "game/objects/object.h"
 #include "sys/asset_thread.h"
 #include "sys/dll.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/interrupt_util.h"
 #include "sys/map.h"
 #include "sys/objects.h"
@@ -383,13 +383,13 @@ void asset_thread_load_single(void) {
 void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
     switch (load->loadType) {
         case ASSET_TYPE_FILE:
-            *load->p.file.dest = read_alloc_file(load->p.file.id, 0);
+            *load->p.file.dest = piRomLoad(load->p.file.id, 0);
             break;
         case ASSET_TYPE_ALLOCATED_FILE:
-            read_file(load->p.file.id, load->p.file.dest);
+            piRomLoadToDest(load->p.file.id, load->p.file.dest);
             break;
         case ASSET_TYPE_FILE_REGION:
-            read_file_region(load->p.file.id, load->p.file.dest,
+            piRomLoadSection(load->p.file.id, load->p.file.dest,
                 load->p.file.offset, load->p.file.length);
             break;
         case ASSET_TYPE_OBJECT:

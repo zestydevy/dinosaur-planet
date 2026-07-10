@@ -1,5 +1,5 @@
 #include "sys/asset_thread.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/dll.h"
 
@@ -289,7 +289,7 @@ DLLFile *dllLoadFromTab(u16 tabidx, s32 *sizeOut) {
 
     dll = mmAlloc((u32)(dllSize + bssSize), ALLOC_TAG_DLL_COL, NULL);
     if (dll != NULL) {
-        read_file_region(DLLS_BIN, dll, offset, dllSize);
+        piRomLoadSection(DLLS_BIN, dll, offset, dllSize);
     }
 
     if (dll != NULL) {

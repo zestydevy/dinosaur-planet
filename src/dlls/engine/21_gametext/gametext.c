@@ -1,6 +1,6 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/asset_thread.h"
 #include "dlls/engine/21_gametext.h"

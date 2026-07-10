@@ -13,7 +13,7 @@
 #include "sys/acache.h"
 #include "sys/asset_thread.h"
 #include "sys/camera.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/map.h"
 #include "sys/mpeg.h"
 #include "sys/math.h"
@@ -118,7 +118,7 @@ void amsfx_ctor(void *dll) {
     if (length != 0) {
         _bss_0 = mmAlloc(length, ALLOC_TAG_SFX_COL, NULL);
         queue_load_file_region_to_ptr((void*)_bss_0, SFX_BIN, start, length);
-        alBnkfNew(_bss_0, (u8*)file_get_romaddr(SFX_BIN, tab[1]));
+        alBnkfNew(_bss_0, (u8*)piRomGetSectionPtr(SFX_BIN, tab[1]));
     } else {
         STUBBED_PRINTF("AMSFX: Error sound effects bank missing!\n");
     }

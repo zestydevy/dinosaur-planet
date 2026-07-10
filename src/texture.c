@@ -3,7 +3,7 @@
 #include "PR/mbi.h"
 #include "sys/gfx/texture.h"
 #include "sys/asset_thread.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/memory.h"
@@ -845,7 +845,7 @@ Texture* tex_load(s32 id, u8 param2) {
     numFrames = (gFile_TEX_TAB[tab][tabEntry] >> 24) & 0xFF;
     compressedSize = (gFile_TEX_TAB[tab][tabEntry + 1] & 0xFFFFFF) - offset;
     if (numFrames > 1) {
-        read_file_region(binFileID, gTexLoadBuffer, offset, (numFrames + 1) << 3);
+        piRomLoadSection(binFileID, gTexLoadBuffer, offset, (numFrames + 1) << 3);
     } else {
         gTexLoadBuffer[0] = 0;
         gTexLoadBuffer[1] = rarezip_uncompress_size_rom(binFileID, offset, TRUE);
@@ -868,7 +868,7 @@ Texture* tex_load(s32 id, u8 param2) {
         } else {
             temp = (s32)((((u8*)tex + uncompressedSize) - compressedSize) + 0xE4);
             temp_s3 = (u8*)(temp - (temp % 16));
-            read_file_region(binFileID, temp_s3, gTexLoadBuffer[frame << 1] + offset, compressedSize);
+            piRomLoadSection(binFileID, temp_s3, gTexLoadBuffer[frame << 1] + offset, compressedSize);
             rarezip_uncompress(temp_s3, (u8*)tex, uncompressedSize);
             tex->next = NULL;
             if (prevTex != NULL) {

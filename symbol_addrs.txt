@@ -1188,7 +1188,7 @@ linked_list_append = 0x8000BAA8; // type:func
 linked_list_insert = 0x8000BB08; // type:func
 linked_list_remove = 0x8000BB5C; // type:func
 linked_list_remove_fast = 0x8000BBF4; // type:func
-init_filesystem = 0x80037090; // type:func
+piInit = 0x80037090; // type:func
 tex_init = 0x8003cc90; // type:func
 init_models = 0x80017c20; // type:func
 dllInit = 0x8000bc40; // type:func
@@ -1409,12 +1409,12 @@ draw_object = 0x80035000; // type:func
 gCurrTex0 = 0x800b49c4; // size:0x4
 gCurrTex1 = 0x800b49c8; // size:0x4
 
-file_get_romaddr = 0x800372c8; // type:func
-get_file_size = 0x80037310; // type:func
-read_alloc_file = 0x80037140; // type:func
-read_file = 0x800371dc; // type:func
-read_file_region = 0x80037244; // type:func
-read_from_rom = 0x8003734c; // type:func
+piRomGetSectionPtr = 0x800372c8; // type:func
+piRomGetFileSize = 0x80037310; // type:func
+piRomLoad = 0x80037140; // type:func
+piRomLoadToDest = 0x800371dc; // type:func
+piRomLoadSection = 0x80037244; // type:func
+romCopy = 0x8003734c; // type:func
 
 rarezip_uncompress = 0x8003a4b4; // type:func
 rarezip_uncompress_size = 0x8003a418; // type:func

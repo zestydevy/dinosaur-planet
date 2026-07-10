@@ -6,7 +6,7 @@
 #include "sys/asset_thread.h"
 #include "sys/bitstream.h"
 #include "sys/di_rcp.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
@@ -2350,7 +2350,7 @@ void init_global_map(void) {
     StructBuf *buf = NULL;
     Struct_D_800B9768_unk4 *thisunk4;
 
-    size = get_file_size(GLOBALMAP_BIN);
+    size = piRomGetFileSize(GLOBALMAP_BIN);
 
     queue_alloc_load_file((void**)&buf, GLOBALMAP_BIN);
 
@@ -2979,7 +2979,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
         }
         mmFree(map);
     }
-    mapInfoListLength = (u32)get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
+    mapInfoListLength = (u32)piRomGetFileSize(MAPINFO_BIN) / sizeof(MapInfo);
     if ((mapID < 0) || (mapID >= mapInfoListLength)) {
         gMapType = MAPTYPE_REGULAR;
     } else {
@@ -3001,7 +3001,7 @@ void map_func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
     MapInfo* mapInfo;
 
     mapID = map_world_xz_to_map_id(worldX, worldZ);
-    mapInfoCount = get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
+    mapInfoCount = piRomGetFileSize(MAPINFO_BIN) / sizeof(MapInfo);
 
     if (mapID < 0 || !(mapID < mapInfoCount)) {
         gMapType = MAPTYPE_REGULAR;
@@ -3112,7 +3112,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
 
     binOffset = gFile_BLOCKS_TAB[id];
     binSize = gFile_BLOCKS_TAB[id + 1] - binOffset;
-    read_file_region(BLOCKS_BIN, gMapReadBuffer, binOffset, 0x10);
+    piRomLoadSection(BLOCKS_BIN, gMapReadBuffer, binOffset, 0x10);
     size = ((s32*)gMapReadBuffer)[0];
     size += hits_get_size(id) + 8;
     block = mmAlloc(size, ALLOC_TAG_TRACK_COL, NULL);
@@ -3124,7 +3124,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
 
     tempLoadAddr = (((u32)block + size) - binSize) - 0x10;
     tempLoadAddr -= tempLoadAddr % 16;
-    read_file_region(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
+    piRomLoadSection(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
     rarezip_uncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
     block->vertices = (BlockVertex*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
@@ -3590,7 +3590,7 @@ HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_p
     
     if (hits_size > 0) {
         block->ptr_hits_lines = hits_ptr;
-        read_file_region(HITS_BIN, hits_ptr, hits_start, hits_size);        
+        piRomLoadSection(HITS_BIN, hits_ptr, hits_start, hits_size);        
         hits_ptr = (HitsLine*)((u8*)hits_ptr + hits_size);
     }
     block->hits_line_count = hits_size / sizeof(HitsLine);

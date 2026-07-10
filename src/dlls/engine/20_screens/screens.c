@@ -2,7 +2,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "sys/asset_thread.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "macros.h"
