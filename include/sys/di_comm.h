@@ -3,6 +3,6 @@
 
 #include "PR/ultratypes.h"
 
-void diCommDebugTick();
+void diCommDebugTick(void);
 
 #endif
