@@ -34,7 +34,7 @@ typedef struct {
         };
     };
     Object* stolenEgg;
-    u8 unk18;
+    u8 targetIdx;
     f32 unk1C;
 } DBStealerWorm_DataActual;
 
@@ -62,8 +62,7 @@ typedef enum {
     DBStealerWorm_LSTATE_2_Dying,
     DBStealerWorm_LSTATE_3_Dead,
     DBStealerWorm_LSTATE_4_Dormant,
-    DBStealerWorm_LSTATE_5_Engage,
-    DBStealerWorm_LSTATE_6
+    DBStealerWorm_LSTATE_5_Engage
 } DBStealerWorm_LogicStates;
 
 /*0x0*/ static u32 dHurtSounds[] = {
@@ -756,7 +755,7 @@ s32 DBStealerWorm_anim_state_0_pop_out_of_ground(Object* self, ObjFSA_Data* fsa,
     if (fsa->unk33A) {
         baddie->unk3B6 = TRUE;
         objData->unk12_1 = 1;
-        objData->unk18++;
+        objData->targetIdx++;
     }
 
     if (fsa->unk308 & 0x200) {
@@ -811,7 +810,7 @@ s32 DBStealerWorm_anim_state_1_burst_into_ground(Object* self, ObjFSA_Data* fsa,
         baddie->unk3B6 = FALSE;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objData->unk12_1 = 1;
-        objData->unk18++;
+        objData->targetIdx++;
     }
     
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
@@ -962,7 +961,7 @@ s32 DBStealerWorm_anim_state_5_hit(Object* self, ObjFSA_Data* fsa, f32 updateRat
             obj_send_mesg(objData->stolenEgg, 0x11, self, (void*)0x10);
             obj_add_object_type(objData->stolenEgg, OBJTYPE_38);
             objData->stolenEgg = NULL;
-            objData->unk18 = 1;
+            objData->targetIdx = 1;
         }
         
         weapon = get_player()->linkedObject;
@@ -1090,10 +1089,10 @@ s32 DBStealerWorm_anim_state_7_run_to_object(Object* self, ObjFSA_Data* fsa, f32
     turnSpeedFactor = baddie->unk3B8 / 40.0f;
     if (DBStealerWorm_func_1284(self, fsa->target, 7, turnSpeedFactor, 0.2f)) {
         objData->unk10_14 = 1;
-        objData->unk18++;
+        objData->targetIdx++;
     }
 
-    if (obj_is_object_type(fsa->target, dTargetObjTypes[objData->unk18]) == FALSE) {
+    if (obj_is_object_type(fsa->target, dTargetObjTypes[objData->targetIdx]) == FALSE) {
         STUBBED_PRINTF(" LOCK is Not of Given Type");
         objData->unk10_14 = 1;
     }
@@ -1160,7 +1159,7 @@ s32 DBStealerWorm_anim_state_8_pick_up_egg(Object* self, ObjFSA_Data* fsa, f32 u
     
     if (fsa->unk33A) {
         objData->unk12_1 = 1;
-        objData->unk18++;
+        objData->targetIdx++;
     }
     
     return 0;
@@ -1198,7 +1197,7 @@ s32 DBStealerWorm_anim_state_9_throw_egg(Object* self, ObjFSA_Data* fsa, f32 upd
 
     if (fsa->unk33A) {
         objData->unk12_1 = 1;
-        objData->unk18++;
+        objData->targetIdx++;
     }
     
     return 0;
@@ -1266,7 +1265,7 @@ s32 DBStealerWorm_logic_state_2_dying(Object* self, ObjFSA_Data* fsa, f32 update
         objData->roarSoundInterval = 0.0f;
         objData->resetTimer = 0.0f;
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DBStealerWorm_ASTATE_6_Dying);
-        objData->unk18 = 0;
+        objData->targetIdx = 0;
     } else if (fsa->unk33A) {
         obj_send_mesg_many(0, 3, self, 0xE0000, self);
         
@@ -1340,24 +1339,24 @@ s32 DBStealerWorm_logic_state_5_engage(Object* self, ObjFSA_Data* fsa, f32 updat
         objData->unk10_18 = 0;
         objData->unk10_14 = 0;
         
-        if (objData->unk18 == 0) {
+        if (objData->targetIdx == 0) {
             self->srt.transl.x = objSetup->base.x;
             self->srt.transl.y = objSetup->base.y;
             self->srt.transl.z = objSetup->base.z;
         }
         
-        objType = dTargetObjTypes[objData->unk18];
+        objType = dTargetObjTypes[objData->targetIdx];
         if (objType != 0) {
             fsa->target = obj_get_nearest_type_to(objType, self, &distance);
         }
         
         if (fsa->target != NULL) {
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, dTargetAnimStates[objData->unk18]);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, dTargetAnimStates[objData->targetIdx]);
         }
 
-        temp = objData->unk18;
+        temp = objData->targetIdx;
         if (temp >= 6) {
-            objData->unk18 = 0;
+            objData->targetIdx = 0;
         }
     } else if ((fsa->unk33A != 0) && (objData->stolenEgg == NULL)) {
         if (objData->unk1C > 100.0f) {
