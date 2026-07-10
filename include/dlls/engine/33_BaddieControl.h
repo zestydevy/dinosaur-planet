@@ -45,7 +45,7 @@ typedef struct {
 /*3BB*/ s8 weaponID; // BaddieWeapon
 /*3BC*/ HeadAnimation unk3BC;
 /*3E0*/ s16 unk3E0; //droppedItemIdx
-/*3E2*/ u16 unk3E2;
+/*3E2*/ u16 unk3E2; //max vision distance?
 /*3E4*/ f32 unk3E4;
 /*3E8*/ f32 unk3E8;
 /*3EC*/ f32 unk3EC;
@@ -119,7 +119,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*14*/ Object* (*func14)(Object* arg0, Baddie* baddie, u16 *arg2, s32 arg3, s32 arg4, s16 arg5, s16 arg6);
 /*15*/ void (*free)(Object* arg0, Baddie* baddie, u8 arg2);
 /*16*/ s32 (*func16)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
-/*17*/ Object *(*func17)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
+/*17*/ Object *(*func17)(Object* baddieObj, ObjFSA_Data* fsa, f32 distanceThreshold, s32 angleThreshold);
 /*18*/ Object *(*drop_collectable)(Object* obj, BaddieDrop_IDs droppedItemIdx, s32 gamebitID, u8 arg3);
 /*19*/ s32 (*check_hit)(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT); // Returns hit type
 /*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7);

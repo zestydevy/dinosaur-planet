@@ -405,61 +405,70 @@ s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
 }
 
 // offset: 0x10F4 | func: 12 | export: 17
-Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
+Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanceThreshold, s32 angleThreshold) {
     Object* curObj;
     s32 pad5;
-    Object* spF8[2];
-    s32 var_v1;
+    Object* targetObjs[2];
+    s32 angle;
     s32 stop;
     s32 i;
-    Vec3f spE0;
+    Vec3f delta;
     s32 pad;
     s32 pad2;
-    Vec3s16 spD0;
-    Vec3s16 spC8;
-    Vec3f spBC;
+    Vec3s16 pPlayerS;
+    Vec3s16 pBaddieS;
+    Vec3f pTemp;
     Func_80059C40_Struct sp68;
     u8 temp_t3;
     u8 sp66;
     
     stop = FALSE;
-    spF8[0] = get_player();
-    spF8[1] = 0;
+
+    targetObjs[0] = get_player();
+    targetObjs[1] = NULL;
+    
     i = 0;
-    while (stop == FALSE && (curObj = spF8[i]) != NULL) {
-        VECTOR_SUBTRACT(curObj->globalPosition, arg0->globalPosition, spE0);
-        if ((VECTOR_MAGNITUDE(spE0) < arg2) && (fsa->hitpoints != 0)) {
+    while (stop == FALSE && (curObj = targetObjs[i]) != NULL) {
+        VECTOR_SUBTRACT(curObj->globalPosition, baddieObj->globalPosition, delta);
+        if ((VECTOR_MAGNITUDE(delta) < distanceThreshold) && (fsa->hitpoints != 0)) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func56(curObj) > 0.5f) {
                 stop = TRUE;
             }
-            var_v1 = arctan2_f(-spE0.f[0], -spE0.f[2]);
-            if (arg0->parent != NULL) {
-                var_v1 -= ((arg0->srt.yaw + arg0->parent->srt.yaw) & 0xFFFF);
-                CIRCLE_WRAP(var_v1)
+
+            angle = arctan2_f(-delta.f[0], -delta.f[2]);
+            if (baddieObj->parent != NULL) {
+                angle -= ((baddieObj->srt.yaw + baddieObj->parent->srt.yaw) & 0xFFFF);
+                CIRCLE_WRAP(angle)
             } else {
-                var_v1 -= (arg0->srt.yaw & 0xFFFF);
-                CIRCLE_WRAP(var_v1)
+                angle -= (baddieObj->srt.yaw & 0xFFFF);
+                CIRCLE_WRAP(angle)
             }
-            if ((var_v1 < arg3) && (-arg3 < var_v1)) { // FOV check?
+
+            if ((angleThreshold > angle) && (angle > -angleThreshold)) { // FOV check?
                 stop = TRUE;
             }
+
             if (((DLL_210_Player*)curObj->dll)->vtbl->func66(curObj, 1) == 0) {
                 stop = FALSE;
             }
+            
             if (((DLL_210_Player*)curObj->dll)->vtbl->get_health(curObj) <= 0) {
                 stop = FALSE;
             } else {
-                spBC.x = arg0->srt.transl.x;
-                spBC.y = arg0->srt.transl.y + 10.0f;
-                spBC.z = arg0->srt.transl.z;
-                func_80007EE0(&spBC, &spC8);
-                spBC.x = curObj->srt.transl.x;
-                spBC.y = curObj->srt.transl.y + 10.0f;
-                spBC.z = curObj->srt.transl.z;
-                func_80007EE0(&spBC, &spD0);
-                temp_t3 = func_80008048(&spD0, &spC8, NULL, &sp66, 0);
+                //Checking line-of-sight between baddie and player?
+                pTemp.x = baddieObj->srt.transl.x;
+                pTemp.y = baddieObj->srt.transl.y + 10.0f;
+                pTemp.z = baddieObj->srt.transl.z;
+                func_80007EE0(&pTemp, &pBaddieS);
+
+                pTemp.x = curObj->srt.transl.x;
+                pTemp.y = curObj->srt.transl.y + 10.0f;
+                pTemp.z = curObj->srt.transl.z;
+                func_80007EE0(&pTemp, &pPlayerS);
+
+                temp_t3 = func_80008048(&pPlayerS, &pBaddieS, NULL, &sp66, 0);
                 if ((sp66 == 1) || (temp_t3 != 0)) {
-                    if (func_80059C40(&arg0->srt.transl, &spBC, 1.0f, 0, &sp68, arg0, 4, -1, 0, 0) != 0) {
+                    if (func_80059C40(&baddieObj->srt.transl, &pTemp, 1.0f, 0, &sp68, baddieObj, 4, -1, 0, 0) != 0) {
                         stop = FALSE;
                     }
                 } else {
