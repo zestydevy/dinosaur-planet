@@ -598,7 +598,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 5:
-                footsteps_toggle(cmd->param2);
+                footstepsTurnOn(cmd->param2);
                 // "Trigger [%d], footstepsTurnOn %d" (default.dol)
                 break;
             case 6:

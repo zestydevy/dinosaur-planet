@@ -79,7 +79,7 @@ f32 D_800BCC80[2];
 void footsteps_func_8005CF4C(Object *, UnkFootstepsStruct2*);
 void footsteps_func_8005CDFC(s32 _);
 
-void footsteps_init(void) {
+void footstepsInit(void) {
     s32 i;
 
     if (D_800BCC10 != NULL) {
@@ -137,7 +137,7 @@ void footsteps_init(void) {
     D_800BCC78 = (u8)0;
 }
 
-void footsteps_clear(void) {
+void footstepsClear(void) {
     s32 i;
 
     for (i = 0; i < ARRAYCOUNT_S(gUnkFootstepStructs); i++) {
@@ -156,11 +156,11 @@ void footsteps_clear(void) {
 }
 
 // officialName: footstepsTurnOn
-void footsteps_toggle(u32 enabled) {
+void footstepsTurnOn(u32 enabled) {
     D_800BCC78 = enabled;
 
     if (enabled == 0) {
-        footsteps_clear();
+        footstepsClear();
     }
 }
 
@@ -414,7 +414,7 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
     footsteps_func_8005CD80();
 }
 
-u16 *footsteps_get_sfx_bank(s32 bank) {
+u16 *footstepsGetSfxBank(s32 bank) {
     switch (bank) {
         case 1:
             return gFootstepSfxBank1;

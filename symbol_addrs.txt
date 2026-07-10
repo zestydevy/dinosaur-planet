@@ -2046,9 +2046,9 @@ fbfx_func_80040B8C = 0x80040B8C; // type:func
 fbfx_burn_paper = 0x80040CD0; // type:func
 fbfx_fill_full_alpha = 0x80040EFC; // type:func
 
-footsteps_init = 0x8005C780; // type:func
-footsteps_clear = 0x8005C998; // type:func
-footsteps_toggle = 0x8005CA5C; // type:func
+footstepsInit = 0x8005C780; // type:func
+footstepsClear = 0x8005C998; // type:func
+footstepsTurnOn = 0x8005CA5C; // type:func
 footsteps_func_8005CA88 = 0x8005CA88; // type:func
 footsteps_func_8005CB10 = 0x8005CB10; // type:func
 footsteps_func_8005CC74 = 0x8005CC74; // type:func
@@ -2060,7 +2060,7 @@ gFootstepSfxBank2 = 0x80092F0C;
 gFootstepSfxBank3 = 0x80092F54;
 gFootstepSfxBank4 = 0x80092F9C;
 gFootstepSfxBank5 = 0x80092FE4;
-footsteps_get_sfx_bank = 0x8005D3A4; // type:func
+footstepsGetSfxBank = 0x8005D3A4; // type:func
 
 n_alCSPSetAmSeqChlVol = 0x80075DCC; // type:func
 

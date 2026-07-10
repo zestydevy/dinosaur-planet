@@ -502,9 +502,9 @@ void dll_210_setup(Object* player, u32 arg1) {
     player->srt.yaw = gDLL_29_Gplay->vtbl->get_player_saved_location()->rotationY << 8;
     data->unk87C = -1;
     data->unk800 = 1.0f;
-    data->unk890 = footsteps_get_sfx_bank(3);
-    data->unk894 = footsteps_get_sfx_bank(4);
-    data->unk898 = footsteps_get_sfx_bank(5);
+    data->unk890 = footstepsGetSfxBank(3);
+    data->unk894 = footstepsGetSfxBank(4);
+    data->unk898 = footstepsGetSfxBank(5);
     data->unk89C = data->unk890;
     if (player->id == OBJ_Krystal) {
         data->unk8B4 = 0;
