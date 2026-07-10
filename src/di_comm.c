@@ -101,7 +101,7 @@ void diCommDebugTick() {
         case 4:
             break;
         case 5:
-            debug_toggle(0);
+            debugToggle(0);
             break;
     }
 
