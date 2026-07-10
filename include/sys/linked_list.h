@@ -16,11 +16,11 @@ typedef struct {
 // Also same as above but list is not a pointer
 #define LINKED_LIST_NEXT_FIELD3(list, node) ((void**)((u32)node + list.nextFieldOffset))
 
-LinkedList *linked_list_init(LinkedList *list, s16 nextFieldOffset);
-void linked_list_prepend(LinkedList *list, void *node);
-void linked_list_append(LinkedList *list, void *node);
-void linked_list_insert(LinkedList *list, void *after, void *node);
-void linked_list_remove(LinkedList *list, void *node);
-void linked_list_remove_fast(LinkedList *list, void *before, void *node);
+LinkedList *linkedListInit(LinkedList *list, s16 nextFieldOffset);
+void linkedListPrepend(LinkedList *list, void *node);
+void linkedListAppend(LinkedList *list, void *node);
+void linkedListInsert(LinkedList *list, void *after, void *node);
+void linkedListRemove(LinkedList *list, void *node);
+void linkedListRemoveFast(LinkedList *list, void *before, void *node);
 
 #endif

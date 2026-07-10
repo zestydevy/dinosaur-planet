@@ -302,7 +302,7 @@ void obj_free_all(void) {
     sObjLockListCount = 0;
     gNumObjs = 0;
 
-    linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
+    linkedListInit(&gObjUpdateList, OFFSETOF(Object, next));
 
     obj_clear_all();
 
@@ -315,7 +315,7 @@ void obj_clear_all(void) {
     D_800B1988 = 0;
     gNumObjs = 0;
 
-    linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
+    linkedListInit(&gObjUpdateList, OFFSETOF(Object, next));
 
     sObjListVisibleStartIdx = 0;
     obj_object_type_init();
@@ -980,7 +980,7 @@ void func_80022200(Object *obj, s32 param2, s32 param3) {
 // name guessed from leftover strings
 void obj_free_tick(Object *obj) {
     if (obj->stateFlags & OBJSTATE_STANDALONE) {
-        linked_list_remove(&gObjUpdateList, obj);
+        linkedListRemove(&gObjUpdateList, obj);
     }
 }
 
@@ -1002,7 +1002,7 @@ void obj_add_tick(Object *obj) {
             node = *((void**)(nextFieldOffset + (u32)node));
         }
 
-        linked_list_insert(&gObjUpdateList, insertAfter, (void*)obj);
+        linkedListInsert(&gObjUpdateList, insertAfter, (void*)obj);
     }
 }
 
