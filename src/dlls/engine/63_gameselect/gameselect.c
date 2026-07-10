@@ -455,15 +455,15 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     submenu = &sSubmenus[sSubmenuIdx];
 
     if ((!sExitToGame && !sExitToMainMenu) || sExitTransitionTimer > 10) {
-        font_window_set_coords(1, 0, 0,
+        fontWindowSetCoords(1, 0, 0,
             GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
             GET_VIDEO_HEIGHT(vi_get_current_size()));
-        font_window_flush_strings(1);
+        fontWindowFlushStrings(1);
 
-        font_window_set_coords(3, 105, 0,
+        fontWindowSetCoords(3, 105, 0,
             GET_VIDEO_WIDTH(vi_get_current_size()) - 200,
             GET_VIDEO_HEIGHT(vi_get_current_size()));
-        font_window_flush_strings(3);
+        fontWindowFlushStrings(3);
 
         if (sRedrawFrames != 0) {
             rcp_screen_full_write(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
@@ -477,27 +477,27 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                     numRecentTasks = 3;
                 }
 
-                font_window_enable_wordwrap(3);
-                font_window_use_font(1, FONT_FUN_FONT);
-                font_window_use_font(3, FONT_FUN_FONT);
-                font_window_set_text_colour(1, 183, 139, 97, 255, 255);
-                font_window_set_text_colour(3, 183, 139, 97, 255, 255);
+                fontWindowEnableWordwrap(3);
+                fontWindowUseFont(1, FONT_FUN_FONT);
+                fontWindowUseFont(3, FONT_FUN_FONT);
+                fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
+                fontWindowSetTextColour(3, 183, 139, 97, 255, 255);
 
                 y = 232;
                 for (i = 0; i < numRecentTasks; i++) {
                     sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
-                    font_window_add_string_xy(1, 75, y, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                    font_window_add_string_xy(3, 2, y, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                    fontWindowAddStringXY(1, 75, y, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
+                    fontWindowAddStringXY(3, 2, y, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
                     y += 40;
                 }
 
                 y = 232;
-                font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-                font_window_set_text_colour(3, 0, 0, 0, 255, 255);
+                fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+                fontWindowSetTextColour(3, 0, 0, 0, 255, 255);
                 for (i = 0; i < numRecentTasks; i++) {
                     sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
-                    font_window_add_string_xy(1, 73, y - 2, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                    font_window_add_string_xy(3, 0, y - 2, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                    fontWindowAddStringXY(1, 73, y - 2, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
+                    fontWindowAddStringXY(3, 0, y - 2, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
                     y += 40;
                 }
             } else {
@@ -505,27 +505,27 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                     dll_63_draw_save_game_box(gdl, sSaveGameBoxX, sSaveGameBoxY, &sSaveGameInfo[sSelectedSaveIdx]);
                 }
 
-                font_window_use_font(1, FONT_FUN_FONT);
-                font_window_set_text_colour(1, 183, 139, 97, 255, 255);
+                fontWindowUseFont(1, FONT_FUN_FONT);
+                fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
 
-                font_window_add_string_xy(1, 320, 405, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 1, ALIGN_TOP_CENTER);
-                font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-                font_window_add_string_xy(1, 318, 403, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 2, ALIGN_TOP_CENTER);
+                fontWindowAddStringXY(1, 320, 405, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 1, ALIGN_TOP_CENTER);
+                fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+                fontWindowAddStringXY(1, 318, 403, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 2, ALIGN_TOP_CENTER);
             }
 
-            font_window_set_coords(2, 0, 0,
+            fontWindowSetCoords(2, 0, 0,
                 GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
                 GET_VIDEO_HEIGHT(vi_get_current_size()));
-            font_window_flush_strings(2);
-            font_window_use_font(2, FONT_DINO_MEDIUM_FONT_IN);
-            font_window_enable_wordwrap(2);
-            font_window_set_text_colour(2, 255, 255, 255, 0, 255);
+            fontWindowFlushStrings(2);
+            fontWindowUseFont(2, FONT_DINO_MEDIUM_FONT_IN);
+            fontWindowEnableWordwrap(2);
+            fontWindowSetTextColour(2, 255, 255, 255, 0, 255);
 
-            font_window_add_string_xy(2, 69, 61, sGameTextChunk->strings[submenu->titleTextIdx], 1, ALIGN_TOP_LEFT);
-            font_window_set_text_colour(2, 0, 0, 0, 255, 255);
-            font_window_add_string_xy(2, 64, 56, sGameTextChunk->strings[submenu->titleTextIdx], 2, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 69, 61, sGameTextChunk->strings[submenu->titleTextIdx], 1, ALIGN_TOP_LEFT);
+            fontWindowSetTextColour(2, 0, 0, 0, 255, 255);
+            fontWindowAddStringXY(2, 64, 56, sGameTextChunk->strings[submenu->titleTextIdx], 2, ALIGN_TOP_LEFT);
 
-            font_window_draw(gdl, NULL, NULL, 2);
+            fontWindowDraw(gdl, NULL, NULL, 2);
         } else {
             // Always redraw background in case picmenu redraws
             func_80010158(&ulx, &lrx, &uly, &lry);
@@ -534,8 +534,8 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 
         gDLL_74_Picmenu->vtbl->draw(gdl);
 
-        font_window_draw(gdl, NULL, NULL, 1);
-        font_window_draw(gdl, NULL, NULL, 3);
+        fontWindowDraw(gdl, NULL, NULL, 1);
+        fontWindowDraw(gdl, NULL, NULL, 3);
 
         sRedrawFrames -= 1;
         if (sRedrawFrames < 0) {
@@ -577,9 +577,9 @@ static void dll_63_clean_up(s32 leavingMenus) {
     tex_free(sLogoShadowTexture);
 
     if (leavingMenus) {
-        font_unload(FONT_DINO_MEDIUM_FONT_IN);
-        font_unload(FONT_DINO_MEDIUM_FONT_OUT);
-        font_unload(FONT_FUN_FONT);
+        fontUnload(FONT_DINO_MEDIUM_FONT_IN);
+        fontUnload(FONT_DINO_MEDIUM_FONT_OUT);
+        fontUnload(FONT_FUN_FONT);
         main_unload_frontend();
     }
 }
@@ -1034,17 +1034,17 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
     rcp_screen_full_write(gdl, sSaveGameTextures[IconTexture_3_SpellStones], x2 + 14, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
 
     // Draw text
-    font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
-    font_window_set_text_colour(1, 255, 255, 255, 0, 255);
+    fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowSetTextColour(1, 255, 255, 255, 0, 255);
 
-    font_window_add_string_xy(1, x + 64, y + 18, saveInfo->filename, 1, ALIGN_TOP_LEFT);
+    fontWindowAddStringXY(1, x + 64, y + 18, saveInfo->filename, 1, ALIGN_TOP_LEFT);
 
     sprintf(sSaveGameTimeStr, "%3d:%02d:%02d", saveInfo->timeHours, saveInfo->timeMinutes, saveInfo->timeSeconds);
-    font_window_add_string_xy(1, x + 156, y + 49, sSaveGameTimeStr, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, x + 156, y + 49, sSaveGameTimeStr, 1, ALIGN_TOP_CENTER);
 
     sprintf(sSpiritCountStr, "%1d", 0);
-    font_window_add_string_xy(1, x + 234, y + 81, sSpiritCountStr, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, x + 234, y + 81, sSpiritCountStr, 1, ALIGN_TOP_CENTER);
 
     sprintf(sSpellStoneCountStr, "%1d", 0);
-    font_window_add_string_xy(1, x + 84, y + 81, sSpellStoneCountStr, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, x + 84, y + 81, sSpellStoneCountStr, 1, ALIGN_TOP_CENTER);
 }

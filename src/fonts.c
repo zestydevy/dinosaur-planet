@@ -43,7 +43,7 @@ s8 gFontWindowDimensions[] = {
 #undef INWARDS
 #undef OUTWARDS
 
-void fonts_init() {
+void fontsInit(void) {
     s32 i;
     s32 resolution;
     s32 fbWidth;
@@ -114,11 +114,11 @@ void fonts_init() {
     gFontSquash = FALSE;
 }
 
-void fonts_set_squash(s32 enabled) {
+void fontsSetSquash(s32 enabled) {
     gFontSquash = enabled;
 }
 
-void font_load(s32 fontID) {
+void fontLoad(s32 fontID) {
     if (fontID < gNumFonts) {
         FontData *fontData = &gFile_FONTS_BIN[fontID];
         fontData->referenceCount++;
@@ -135,7 +135,7 @@ void font_load(s32 fontID) {
     }
 }
 
-void font_unload(s32 fontID) {
+void fontUnload(s32 fontID) {
     if (fontID < gNumFonts) {
         FontData *fontData = &gFile_FONTS_BIN[fontID];
 
@@ -154,7 +154,7 @@ void font_unload(s32 fontID) {
     }
 }
 
-void font_window_set_text_coords(s32 windowID, s32 xPos, s32 yPos, s32 param4) {
+void fontWindowSetTextCoords(s32 windowID, s32 xPos, s32 yPos, s32 param4) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
 
@@ -174,17 +174,17 @@ void font_window_set_text_coords(s32 windowID, s32 xPos, s32 yPos, s32 param4) {
     }
 }
 
-void font_print_window(Gfx **gdl, s32 windowID, char *text, AlignmentFlags alignmentFlags) {
+void fontPrintWindow(Gfx **gdl, s32 windowID, char *text, AlignmentFlags alignmentFlags) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
 
-        font_render_text(gdl, window, text, alignmentFlags, 1.0f);
+        fontRenderText(gdl, window, text, alignmentFlags, 1.0f);
     } else {
         STUBBED_PRINTF("FONTS - trying to print a string to a no existent window!\n");
     }
 }
 
-void font_print_window_xy(Gfx **gdl, s32 windowID, s32 xPos, s32 yPos, char *text, AlignmentFlags alignmentFlags) {
+void fontPrintWindowXY(Gfx **gdl, s32 windowID, s32 xPos, s32 yPos, char *text, AlignmentFlags alignmentFlags) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
 
@@ -201,16 +201,16 @@ void font_print_window_xy(Gfx **gdl, s32 windowID, s32 xPos, s32 yPos, char *tex
         }
 
         if (alignmentFlags != 0) {
-            font_render_text(gdl, window, text, alignmentFlags, 1.0f);
+            fontRenderText(gdl, window, text, alignmentFlags, 1.0f);
         } else {
-            font_render_text_wordwrap(gdl, window, text, 1.0f);
+            fontRenderTextWordwrap(gdl, window, text, 1.0f);
         }
     } else {
         STUBBED_PRINTF("FONTS - trying to print a string to a no existent window!\n");
     }
 }
 
-void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags alignmentFlags, f32 scisScale) {
+void fontRenderText(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags alignmentFlags, f32 scisScale) {
     s32 charIndex; // spDC
     s32 charSpace;
     s32 scisOffset;
@@ -263,7 +263,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, window->x1, scisPos - scisOffset, window->x2, scisPos + scisOffset);
     }
     if (alignmentFlags & HORZ_ALIGN_CENTER) {
-        xAlignmentDiff = font_get_text_width_internal(window, text, xpos, window->font);
+        xAlignmentDiff = fontGetTextWidthInternal(window, text, xpos, window->font);
         xpos -= xAlignmentDiff >> 1;
     }
     if (alignmentFlags & VERT_ALIGN_BOTTOM) {
@@ -277,7 +277,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
         dl_set_env_color(gdl, window->textBGColourR, window->textBGColourG, window->textBGColourB, window->textBGColourA);
         
         if (xAlignmentDiff == -1) {
-            xAlignmentDiff = font_get_text_width_internal(window, text, xpos, window->font);
+            xAlignmentDiff = fontGetTextWidthInternal(window, text, xpos, window->font);
         }
 
         textureLrx = (xpos + xAlignmentDiff) - 1;
@@ -478,13 +478,13 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
     }
 }
 
-s32 font_get_text_width(s32 windowID, const char *text, s32 x, s32 fontID) {
+s32 fontGetTextWidth(s32 windowID, const char *text, s32 x, s32 fontID) {
     gFontWindows[windowID].extraCharacterSpacing = 0.0f;
 
-    return font_get_text_width_internal(&gFontWindows[windowID], text, x, fontID);
+    return fontGetTextWidthInternal(&gFontWindows[windowID], text, x, fontID);
 }
 
-s32 font_get_text_width_internal(FontWindow *window, const char *text, s32 x, s32 fontID) {
+s32 fontGetTextWidthInternal(FontWindow *window, const char *text, s32 x, s32 fontID) {
     s32 diffX;
     s32 thisDiffX;
     FontData *fontData;
@@ -540,7 +540,7 @@ s32 font_get_text_width_internal(FontWindow *window, const char *text, s32 x, s3
     return diffX - x;
 }
 
-void font_window_set_coords(s32 windowID, s32 x1, s32 y1, s32 x2, s32 y2) {
+void fontWindowSetCoords(s32 windowID, s32 x1, s32 y1, s32 x2, s32 y2) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->xpos = 0;
@@ -567,7 +567,7 @@ void font_window_set_coords(s32 windowID, s32 x1, s32 y1, s32 x2, s32 y2) {
     }
 }
 
-void font_window_use_font(s32 windowID, s32 fontID) {
+void fontWindowUseFont(s32 windowID, s32 fontID) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         if (fontID < gNumFonts) {
@@ -583,7 +583,7 @@ void font_window_use_font(s32 windowID, s32 fontID) {
     }
 }
 
-void font_window_set_extra_char_spacing(s32 windowID, f32 spacing) {
+void fontWindowSetExtraCharSpacing(s32 windowID, f32 spacing) {
     if (windowID >= 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->extraCharacterSpacing = spacing;
@@ -592,7 +592,7 @@ void font_window_set_extra_char_spacing(s32 windowID, f32 spacing) {
     }
 }
 
-void font_window_set_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha) {
+void fontWindowSetBgColour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->backgroundColourR = red;
@@ -604,7 +604,7 @@ void font_window_set_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 a
     }
 }
 
-void font_window_set_text_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha, s32 opacity) {
+void fontWindowSetTextColour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha, s32 opacity) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->textColourR = red;
@@ -617,7 +617,7 @@ void font_window_set_text_colour(s32 windowID, s32 red, s32 green, s32 blue, s32
     }
 }
 
-void font_window_set_text_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha) {
+void fontWindowSetTextBgColour(s32 windowID, s32 red, s32 green, s32 blue, s32 alpha) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->textBGColourR = red;
@@ -629,7 +629,7 @@ void font_window_set_text_bg_colour(s32 windowID, s32 red, s32 green, s32 blue, 
     }
 }
 
-void font_window_add_text_offset(s32 windowID, s32 x, s32 y) {
+void fontWindowAddTextOffset(s32 windowID, s32 x, s32 y) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->textOffsetX += x;
@@ -639,7 +639,7 @@ void font_window_add_text_offset(s32 windowID, s32 x, s32 y) {
     }
 }
 
-void font_window_reset_text_offset(s32 windowID) {
+void fontWindowResetTextOffset(s32 windowID) {
     if (windowID > 0 && windowID < FONT_WINDOW_COUNT) {
         FontWindow *window = &gFontWindows[windowID];
         window->textOffsetX = 0;
@@ -649,7 +649,7 @@ void font_window_reset_text_offset(s32 windowID) {
     }
 }
 
-void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 scisScale) {
+void fontRenderTextWordwrap(Gfx** gdl, FontWindow* window, char* text, f32 scisScale) {
     s32 loopCond;
     FontData* fontData;
     s32 ypos;
@@ -851,19 +851,19 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
     }
 }
 
-FontString *font_window_add_string(s32 windowID, char *text, s32 priority, AlignmentFlags alignmentFlags) {
+FontString *fontWindowAddString(s32 windowID, char *text, s32 priority, AlignmentFlags alignmentFlags) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
         STUBBED_PRINTF("FONTS - can't add a string to window %d, out of range./n", windowID);
         return NULL;
     } else {
-        return font_window_add_string_xy(windowID, 
+        return fontWindowAddStringXY(windowID, 
             gFontWindows[windowID].xpos, 
             gFontWindows[windowID].ypos, 
             text, priority, alignmentFlags);
     }
 }
 
-FontString *font_window_add_string_xy(s32 windowID, s32 posX, s32 posY, char *text, s32 priority, AlignmentFlags alignmentFlags) {
+FontString *fontWindowAddStringXY(s32 windowID, s32 posX, s32 posY, char *text, s32 priority, AlignmentFlags alignmentFlags) {
     s32 width;
     FontString *stringTemp;
     char buffer[256];
@@ -904,8 +904,8 @@ FontString *font_window_add_string_xy(s32 windowID, s32 posX, s32 posY, char *te
         if (window->font != 0xFF) {
             fontData = &gFile_FONTS_BIN[window->font];
             if (alignmentFlags & HORZ_ALIGN_CENTER) {
-                font_string_format(text, buffer, priority);
-                width = font_get_text_width_internal(window, buffer, posX, window->font);
+                fontStringFormat(text, buffer, priority);
+                width = fontGetTextWidthInternal(window, buffer, posX, window->font);
                 posX = posX - (width >> 1);
             }
             if (alignmentFlags & VERT_ALIGN_BOTTOM) {
@@ -952,7 +952,7 @@ FontString *font_window_add_string_xy(s32 windowID, s32 posX, s32 posY, char *te
     return string;
 }
 
-void font_window_add_font_string(s32 windowID, FontString *string) {
+void fontWindowAddFontString(s32 windowID, FontString *string) {
     FontWindow *window;
     FontString *curString;
     FontString **nextFieldPtr;
@@ -975,7 +975,7 @@ void font_window_add_font_string(s32 windowID, FontString *string) {
     }
 }
 
-void font_window_flush_strings(s32 windowID) {
+void fontWindowFlushStrings(s32 windowID) {
     FontWindow *window;
     FontString *string;
 
@@ -997,7 +997,7 @@ void font_window_flush_strings(s32 windowID) {
     }
 }
 
-void font_window_scroll_string(s32 windowID, FontString *string, s32 x, s32 y, s32 flags) {
+void fontWindowScrollString(s32 windowID, FontString *string, s32 x, s32 y, s32 flags) {
     FontData *fontData;
     FontWindow *window;
 
@@ -1030,7 +1030,7 @@ void font_window_scroll_string(s32 windowID, FontString *string, s32 x, s32 y, s
     }
 }
 
-void font_window_enable(s32 windowID) {
+void fontWindowEnable(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
         STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
@@ -1039,7 +1039,7 @@ void font_window_enable(s32 windowID) {
     gFontWindows[windowID].flags |= FONT_WINDOW_ENABLED;
 }
 
-void font_window_disable(s32 windowID) {
+void fontWindowDisable(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
         STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
@@ -1048,11 +1048,11 @@ void font_window_disable(s32 windowID) {
     gFontWindows[windowID].flags &= ~FONT_WINDOW_ENABLED;
 }
 
-s32 font_get_y_spacing(s32 fontID) {
+s32 fontGetYSpacing(s32 fontID) {
     return gFile_FONTS_BIN[fontID].y;
 }
 
-void font_window_enable_wordwrap(s32 windowID) {
+void fontWindowEnableWordwrap(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
         STUBBED_PRINTF("FONTS - cannot word wrap a window which is out of range!\n", windowID);
         return;
@@ -1061,7 +1061,7 @@ void font_window_enable_wordwrap(s32 windowID) {
     gFontWindows[windowID].flags |= FONT_WINDOW_WORDWRAP;
 }
 
-void font_window_disable_wordwrap(s32 windowID) {
+void fontWindowDisableWordwrap(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
         STUBBED_PRINTF("FONTS - cannot disable word wrap in a window which is out of range!\n", windowID);
         return;
@@ -1070,7 +1070,7 @@ void font_window_disable_wordwrap(s32 windowID) {
     gFontWindows[windowID].flags &= ~FONT_WINDOW_WORDWRAP;
 }
 
-void font_window_enable_verts(s32 windowID) {
+void fontWindowEnableVerts(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
         STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
@@ -1079,7 +1079,7 @@ void font_window_enable_verts(s32 windowID) {
     gFontWindows[windowID].flags |= FONT_WINDOW_VERTS;
 }
 
-void font_window_disable_verts(s32 windowID) {
+void fontWindowDisableVerts(s32 windowID) {
     if (windowID < 0 || windowID >= FONT_WINDOW_COUNT) {
         STUBBED_PRINTF("FONTS - cannot render a window which is out of range!\n", windowID);
         return;
@@ -1088,21 +1088,21 @@ void font_window_disable_verts(s32 windowID) {
     gFontWindows[windowID].flags &= ~FONT_WINDOW_VERTS;
 }
 
-void font_windows_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void fontWindowsDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 i;
 
     for (i = 1; i < FONT_WINDOW_COUNT; i++) {
         if (gFontWindows[i].flags & FONT_WINDOW_ENABLED) {
             if (gFontWindows[i].flags & FONT_WINDOW_VERTS) {
-                font_window_draw(gdl, mtxs, vtxs, i);
+                fontWindowDraw(gdl, mtxs, vtxs, i);
             } else {
-                font_window_draw(gdl, NULL, NULL, i);
+                fontWindowDraw(gdl, NULL, NULL, i);
             }
         }
     }
 }
 
-void font_number_to_string(char **outString, s32 number) {
+void fontNumberToString(char **outString, s32 number) {
     u8 digit;
     s32 i;
     s32 hasDigit; // boolean
@@ -1141,7 +1141,7 @@ void font_number_to_string(char **outString, s32 number) {
     *outString = ret;
 }
 
-void font_render_fill_rect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
+void fontRenderFillRect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
     u32 resolution = vi_get_current_size();
     u32 width = GET_VIDEO_WIDTH(resolution);
     u32 height = GET_VIDEO_HEIGHT(resolution);
@@ -1159,7 +1159,7 @@ void font_render_fill_rect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
     }
 }
 
-void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
+void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
     FontWindow *window;
     FontString *string;
     s32 vidMode;
@@ -1196,12 +1196,12 @@ void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
         dl_set_env_color(gdl, 0, 0, 0, 0);
 
         if (window->x2 - window->x1 < 10 || window->y2 - window->y1 < 10) {
-            font_render_fill_rect(gdl, window->x1 - 2, window->y1 - 2, window->x2 + 2, window->y2 + 2);
+            fontRenderFillRect(gdl, window->x1 - 2, window->y1 - 2, window->x2 + 2, window->y2 + 2);
         } else {
-            font_render_fill_rect(gdl, window->x1 - 2, window->y1 + 2, window->x1 + 2, window->y2 - 2);
-            font_render_fill_rect(gdl, window->x1 - 2, window->y1 - 2, window->x2 + 2, window->y1 + 2);
-            font_render_fill_rect(gdl, window->x2 - 2, window->y1 + 2, window->x2 + 2, window->y2 - 2);
-            font_render_fill_rect(gdl, window->x1 - 2, window->y2 - 2, window->x2 + 2, window->y2 + 2);
+            fontRenderFillRect(gdl, window->x1 - 2, window->y1 + 2, window->x1 + 2, window->y2 - 2);
+            fontRenderFillRect(gdl, window->x1 - 2, window->y1 - 2, window->x2 + 2, window->y1 + 2);
+            fontRenderFillRect(gdl, window->x2 - 2, window->y1 + 2, window->x2 + 2, window->y2 - 2);
+            fontRenderFillRect(gdl, window->x1 - 2, window->y2 - 2, window->x2 + 2, window->y2 + 2);
         }
 
         dl_set_env_color(gdl, window->backgroundColourR, window->backgroundColourG, window->backgroundColourB, window->backgroundColourA);
@@ -1228,7 +1228,7 @@ void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
             x2 = window->x2 - gFontWindowDimensions[i];
             y2 = (gFontWindowDimensions[i + 3]) ? gFontWindowDimensions[i + 4] + window->y2
                                                 : gFontWindowDimensions[i + 4] + window->y1;
-            font_render_fill_rect(gdl, x1, y1, x2, y2);
+            fontRenderFillRect(gdl, x1, y1, x2, y2);
 
             i += 5;
         }
@@ -1250,23 +1250,23 @@ void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
         window->font = string->font;
         window->extraCharacterSpacing = string->extraCharacterSpacing;
         
-        font_string_format(string->text, text, string->priority);
+        fontStringFormat(string->text, text, string->priority);
 
         if (string->flags & FONT_WINDOW_WORDWRAP) {
-            font_render_text_wordwrap(gdl, window, text, 1.0f);
+            fontRenderTextWordwrap(gdl, window, text, 1.0f);
         } else {
-            font_render_text(gdl, window, text, string->alignmentFlags & HORZ_ALIGN_RIGHT, 1.0f);
+            fontRenderText(gdl, window, text, string->alignmentFlags & HORZ_ALIGN_RIGHT, 1.0f);
         }
 
         string = string->next;
     }
 }
 
-void font_string_format(char *input, char *output, s32 number) {
+void fontStringFormat(char *input, char *output, s32 number) {
     while (*input) {
         if (*input == '~') { // ~ is equivalent to a %d.
             // output the number as part of the string
-            font_number_to_string(&output, number);
+            fontNumberToString(&output, number);
             input++;
         } else {
             *output = *input;

@@ -298,13 +298,13 @@ void credits_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     }
     
     //Set up text window and font
-    font_window_set_coords(
+    fontWindowSetCoords(
         1, 0, 0, 
         GET_VIDEO_WIDTH(vi_get_current_size()), 
         GET_VIDEO_HEIGHT(vi_get_current_size())
     );
-    font_window_flush_strings(1);
-    font_window_use_font(1, FONT_DINO_SUBTITLE_FONT_1);
+    fontWindowFlushStrings(1);
+    fontWindowUseFont(1, FONT_DINO_SUBTITLE_FONT_1);
         
     if (sGroupIdx == 0) {
         //Draw the Dinosaur Planet logo
@@ -322,12 +322,12 @@ void credits_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
             //Set text colour, alignment, and screen x
             if (line->alignment == CREDITS_L) {
                 //Section headings
-                font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0xFF, line->opacity);
+                fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0xFF, line->opacity);
                 align = ALIGN_TOP_LEFT;
                 x = BASE_X_LEFT;
             } else {
                 //Developer names
-                font_window_set_text_colour(1, 0x98, 0x9F, 0xBA, 0xFF, line->opacity);
+                fontWindowSetTextColour(1, 0x98, 0x9F, 0xBA, 0xFF, line->opacity);
                 align = ALIGN_TOP_RIGHT;
                 x = BASE_X_RIGHT;
             }
@@ -335,14 +335,14 @@ void credits_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
             y = BASE_Y + ((line->lineIndex - 1) << 4);
             
             //Text
-            font_window_set_extra_char_spacing(1, line->spacing);
-            font_window_add_string_xy(1, x, y, sText->strings[line->textID], 1, align);
+            fontWindowSetExtraCharSpacing(1, line->spacing);
+            fontWindowAddStringXY(1, x, y, sText->strings[line->textID], 1, align);
             
             //Text drop-shadow
-            font_window_set_text_colour(1, 0, 0, 0, 0xFF, line->opacity);
-            font_window_add_string_xy(1, x - 2, y - 2, sText->strings[line->textID], 2, align);
+            fontWindowSetTextColour(1, 0, 0, 0, 0xFF, line->opacity);
+            fontWindowAddStringXY(1, x - 2, y - 2, sText->strings[line->textID], 2, align);
         }
     }
     
-    font_window_draw(gdl, 0, 0, 1);
+    fontWindowDraw(gdl, 0, 0, 1);
 }

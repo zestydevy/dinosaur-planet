@@ -114,7 +114,7 @@ void menu_do_menu_swap() {
         }
 
         if (gCurrentMenuID == MENU_NONE) {
-            font_window_flush_strings(1);
+            fontWindowFlushStrings(1);
         }
 
         gPreviousMenuID = gCurrentMenuID;
@@ -308,15 +308,15 @@ void func_8000FB2C(Gfx **gdl) {
     }
 
     if (D_800A7D79 & 0x10) {
-        font_window_set_coords(2, 130, 25, 190, 50);
-        font_window_use_font(2, FONT_DINO_SUBTITLE_FONT_1);
-        font_window_set_bg_colour(2, 0, 0, 0, 128);
-        font_window_flush_strings(2);
+        fontWindowSetCoords(2, 130, 25, 190, 50);
+        fontWindowUseFont(2, FONT_DINO_SUBTITLE_FONT_1);
+        fontWindowSetBgColour(2, 0, 0, 0, 128);
+        fontWindowFlushStrings(2);
         sprintf(D_800A7D98, "%d", (int)D_800A7D70 / 60);
-        font_window_add_string_xy(2, 20, 10, D_800A7D98, 1, ALIGN_TOP_RIGHT);
+        fontWindowAddStringXY(2, 20, 10, D_800A7D98, 1, ALIGN_TOP_RIGHT);
         sprintf(D_800A7DA0, ".%02d", (int)D_800A7D70 % 60);
-        font_window_add_string_xy(2, 45, 10, D_800A7DA0, 1, ALIGN_TOP_RIGHT);
-        font_window_draw(gdl, NULL, NULL, 2);
+        fontWindowAddStringXY(2, 45, 10, D_800A7DA0, 1, ALIGN_TOP_RIGHT);
+        fontWindowDraw(gdl, NULL, NULL, 2);
     }
 }
 

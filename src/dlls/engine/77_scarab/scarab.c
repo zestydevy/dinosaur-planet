@@ -61,10 +61,10 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     }
     sprintf(scarabCountString, "%2d", (int)scarabCount);
     
-    font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
-    font_window_flush_strings(1);
-    font_window_use_font(1, FONT_DINO_SUBTITLE_FONT_1);
-    font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-    font_window_add_string_xy(1, 270, 202, scarabCountString, 1, ALIGN_TOP_LEFT);
-    font_window_draw(gdl, mtxs, vtxs, 1);
+    fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
+    fontWindowFlushStrings(1);
+    fontWindowUseFont(1, FONT_DINO_SUBTITLE_FONT_1);
+    fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+    fontWindowAddStringXY(1, 270, 202, scarabCountString, 1, ALIGN_TOP_LEFT);
+    fontWindowDraw(gdl, mtxs, vtxs, 1);
 }

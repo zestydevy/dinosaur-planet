@@ -1685,22 +1685,22 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     );
 
     //Set up the text window
-    font_window_set_coords(3, 
+    fontWindowSetCoords(3, 
         /*x1*/ dTutorialBoxX - dTutorialBoxHalfWidth, 
         /*y1*/ dTutorialBoxY, 
         /*x2*/ dTutorialBoxX + dTutorialBoxHalfWidth, 
         /*y2*/ dTutorialBoxY + sTutorialBoxHeight);
-    font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
-    font_window_set_bg_colour(3, 0, 0, 0, 0);
-    font_window_flush_strings(3);
-    font_window_set_text_colour(3, 0, 0, 255, 255, dTutorialBoxTextOpacity);
+    fontWindowUseFont(3, FONT_DINO_SUBTITLE_FONT_1);
+    fontWindowSetBgColour(3, 0, 0, 0, 0);
+    fontWindowFlushStrings(3);
+    fontWindowSetTextColour(3, 0, 0, 255, 255, dTutorialBoxTextOpacity);
 
     //Print 3 lines of text at a time
     for (i = sTutorialBoxStringIndex, y = TUTORIAL_BOX_TEXT_Y; 
         i < sTutorialBoxGametext->count && i < (sTutorialBoxStringIndex + 3); 
         i++, y += TUTORIAL_BOX_LINE_HEIGHT
     ) {
-        font_window_add_string_xy(
+        fontWindowAddStringXY(
             3, 
             -0x8000, 
             y, 
@@ -1710,7 +1710,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
         );
     }
 
-    font_window_draw(&dl, mtxs, vtxs, 3);
+    fontWindowDraw(&dl, mtxs, vtxs, 3);
 
     *gdl = dl;
 }
@@ -3257,28 +3257,28 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     //Draw text if the scroll's open
     if (sInfoScrollUnrollY > 0) {
-        font_window_set_coords(3, 
+        fontWindowSetCoords(3, 
             /*x1*/ dInfoScrollX - dInfoScrollWidthHalf, 
             /*y1*/ dInfoScrollY, 
             /*x2*/ dInfoScrollX + dInfoScrollWidthHalf, 
             /*y2*/ dInfoScrollY + sInfoScrollUnrollY);
-        font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
-        font_window_set_bg_colour(3, 0, 0, 0, 0);
-        font_window_flush_strings(3);
-        font_window_set_text_colour(3, 0, 0, 255, 255, 255);
+        fontWindowUseFont(3, FONT_DINO_SUBTITLE_FONT_1);
+        fontWindowSetBgColour(3, 0, 0, 0, 0);
+        fontWindowFlushStrings(3);
+        fontWindowSetTextColour(3, 0, 0, 255, 255, 255);
 
         //Print the text lines
         for (y = INFO_SCROLL_TEXT_Y, lineIdx = 0; lineIdx <= 3; lineIdx++) {
             if (dInfoScrollStrings[lineIdx] == NULL) {
                 break;
             }
-            font_window_add_string_xy(3, -0x8000, y, dInfoScrollStrings[lineIdx], 1, ALIGN_TOP_CENTER);
-            font_window_set_text_colour(3, 20, 20, 20, 255, 255);
-            font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
+            fontWindowAddStringXY(3, -0x8000, y, dInfoScrollStrings[lineIdx], 1, ALIGN_TOP_CENTER);
+            fontWindowSetTextColour(3, 20, 20, 20, 255, 255);
+            fontWindowUseFont(3, FONT_DINO_SUBTITLE_FONT_1);
             y += INFO_SCROLL_LINE_HEIGHT;
         }
 
-        font_window_draw(&dl, mtxs, vtxs, 3);
+        fontWindowDraw(&dl, mtxs, vtxs, 3);
     }
 
     *gdl = dl;
@@ -3662,15 +3662,15 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             );
 
             sprintf(playerScarabCountText, "%d", (int)sStats.playerScarabCount);
-            font_window_set_coords(3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-            font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
-            font_window_set_bg_colour(3, 0, 0, 0, 0);
-            font_window_flush_strings(3);
-            font_window_set_text_colour(3, 0xFF, 0xFF, 0xFF, 0xFF, statsOpacity);
-            font_window_add_string_xy(3, SCARABS_NUMBER_X, SCARABS_NUMBER_Y, playerScarabCountText, 1, ALIGN_TOP_LEFT);
-            font_window_set_text_colour(3, 0x14, 0x14, 0x14, 0xFF, 0xFF);
-            font_window_use_font(3, FONT_DINO_SUBTITLE_FONT_1);
-            font_window_draw(&dl, mtxs, vtxs, 3);
+            fontWindowSetCoords(3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            fontWindowUseFont(3, FONT_DINO_SUBTITLE_FONT_1);
+            fontWindowSetBgColour(3, 0, 0, 0, 0);
+            fontWindowFlushStrings(3);
+            fontWindowSetTextColour(3, 0xFF, 0xFF, 0xFF, 0xFF, statsOpacity);
+            fontWindowAddStringXY(3, SCARABS_NUMBER_X, SCARABS_NUMBER_Y, playerScarabCountText, 1, ALIGN_TOP_LEFT);
+            fontWindowSetTextColour(3, 0x14, 0x14, 0x14, 0xFF, 0xFF);
+            fontWindowUseFont(3, FONT_DINO_SUBTITLE_FONT_1);
+            fontWindowDraw(&dl, mtxs, vtxs, 3);
         }
     }
 

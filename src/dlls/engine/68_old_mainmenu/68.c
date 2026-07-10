@@ -102,7 +102,7 @@ void old_mainmenu_func_D8(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     // Maybe this was the blinking "PRESS START" text?
     {
         if (bss_8 > 20) {
-            font_window_draw(gdl, NULL, NULL, 1);
+            fontWindowDraw(gdl, NULL, NULL, 1);
         }
         bss_8 = (gUpdateRate + bss_8) & 0x3F;
     }

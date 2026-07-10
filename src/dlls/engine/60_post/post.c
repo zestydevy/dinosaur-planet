@@ -37,7 +37,7 @@ static Texture *sTexDolbyBig;
 static Texture *sTexDolbySmall;
 
 void dll_60_ctor(void *dll) {
-    font_load(FONT_FUN_FONT);
+    fontLoad(FONT_FUN_FONT);
 
     if (osMemSize != 0x800000) {
         dExpansionPakMissing = TRUE;
@@ -46,8 +46,8 @@ void dll_60_ctor(void *dll) {
     } else {
         bss_4 = 0;
         bss_0 = 0.0f;
-        font_load(FONT_DINO_MEDIUM_FONT_IN);
-        font_load(FONT_DINO_MEDIUM_FONT_OUT);
+        fontLoad(FONT_DINO_MEDIUM_FONT_IN);
+        fontLoad(FONT_DINO_MEDIUM_FONT_OUT);
         main_load_frontend();
         dExpansionPakMissing = FALSE;
         main_change_map(MAP_FRONT_END2, 0, PLAYER_NONE, -1);
@@ -125,35 +125,35 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     f32 var5;
     s32 fontYSpacing;
 
-    font_window_set_coords(2, 0, 0, 
+    fontWindowSetCoords(2, 0, 0, 
         (GET_VIDEO_WIDTH(vi_get_current_size())) - 50,
         (GET_VIDEO_HEIGHT(vi_get_current_size())));
     
-    font_window_flush_strings(2);
-    font_window_use_font(2, FONT_FUN_FONT);
+    fontWindowFlushStrings(2);
+    fontWindowUseFont(2, FONT_FUN_FONT);
     rcp_clear_screen(gdl, mtxs, CLEAR_COLOR);
 
     if (dExpansionPakMissing == TRUE) {
-        fontYSpacing = font_get_y_spacing(FONT_FUN_FONT);
+        fontYSpacing = fontGetYSpacing(FONT_FUN_FONT);
 
-        font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-        font_window_add_string_xy(2, 320, 198,                splashGametext->strings[0], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 272,                splashGametext->strings[1], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, fontYSpacing + 272, splashGametext->strings[2], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 356,                splashGametext->strings[3], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, fontYSpacing + 356, splashGametext->strings[4], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(2, 183, 139, 97, 255, 255);
+        fontWindowAddStringXY(2, 320, 198,                splashGametext->strings[0], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, 272,                splashGametext->strings[1], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, fontYSpacing + 272, splashGametext->strings[2], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, 356,                splashGametext->strings[3], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, fontYSpacing + 356, splashGametext->strings[4], 1, ALIGN_TOP_CENTER);
         rcp_screen_full_write(gdl, dTexExpansionPak, 0xfd, 0x42, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
     } else {
         gDLL_76->vtbl->func2(gdl, mtxs);
 
         if (bss_0 < 240.0f) {
-            font_window_enable_wordwrap(2);
-            font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-            font_window_add_string_xy(2, 57, 54,  splashGametext->strings[0], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 179, 88, splashGametext->strings[1], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 172, splashGametext->strings[2], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 222, splashGametext->strings[3], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 381, splashGametext->strings[4], 1, ALIGN_TOP_LEFT);
+            fontWindowEnableWordwrap(2);
+            fontWindowSetTextColour(2, 183, 139, 97, 255, 255);
+            fontWindowAddStringXY(2, 57, 54,  splashGametext->strings[0], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 179, 88, splashGametext->strings[1], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 57, 172, splashGametext->strings[2], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 57, 222, splashGametext->strings[3], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 57, 381, splashGametext->strings[4], 1, ALIGN_TOP_LEFT);
             rcp_screen_full_write(gdl, sTexDolbyBig, 0x3a, 0x65, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
             rcp_screen_full_write(gdl, sTexDolbySmall, 0x16d, 0x68, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
         }
@@ -206,7 +206,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         }
     }
 
-    font_window_draw(gdl, NULL, NULL, 2);
+    fontWindowDraw(gdl, NULL, NULL, 2);
     bss_5 -= 1;
     if (bss_5 < 0) {
         bss_5 = 0;

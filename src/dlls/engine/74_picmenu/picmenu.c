@@ -356,14 +356,14 @@ void picmenu_draw(Gfx **gdl) {
                         opacity = (sOpacity << 8) >> 8;
                     }
 
-                    font_window_set_text_colour(1, 
+                    fontWindowSetTextColour(1, 
                         r,
                         g,
                         b, 
                         255, 
                         opacity);
                 } else {
-                    font_window_set_text_colour(1, 
+                    fontWindowSetTextColour(1, 
                         sTextColorR, 
                         sTextColorG, 
                         sTextColorB,
@@ -371,23 +371,23 @@ void picmenu_draw(Gfx **gdl) {
                         opacity);
                 }
             } else {
-                font_window_set_text_colour(1, 255, 255, 255, 0, opacity);
+                fontWindowSetTextColour(1, 255, 255, 255, 0, opacity);
             }
 
-            font_window_use_font(1, item->fontID);
-            font_window_add_string_xy(1, item->textX, item->textY, item->text, 2, 
+            fontWindowUseFont(1, item->fontID);
+            fontWindowAddStringXY(1, item->textX, item->textY, item->text, 2, 
                 item->flags & PICMENU_ALIGN_TEXT_CENTER ? ALIGN_TOP_CENTER : ALIGN_TOP_LEFT);
 
             if (!(item->flags & PICMENU_USE_TEXT_COLOR) && i == sSelectedItem) {
-                font_window_set_text_colour(1, 255, 255, 255, 0, ((sHighlightAlpha + 1) * sOpacity) >> 8);
-                font_window_use_font(1, item->highlightFontID);
-                font_window_add_string_xy(1, item->textX, item->textY, item->text, 1, 
+                fontWindowSetTextColour(1, 255, 255, 255, 0, ((sHighlightAlpha + 1) * sOpacity) >> 8);
+                fontWindowUseFont(1, item->highlightFontID);
+                fontWindowAddStringXY(1, item->textX, item->textY, item->text, 1, 
                     item->flags & PICMENU_ALIGN_TEXT_CENTER ? ALIGN_TOP_CENTER : ALIGN_TOP_LEFT);
             }
 
             if (item->flags & PICMENU_RAISED_EFFECT) {
-                font_window_set_text_colour(1, 0, 0, 0, 255, (sOpacity * 150) >> 8);
-                font_window_add_string_xy(1, item->textX - 1, item->textY - 1, item->text, 3, 
+                fontWindowSetTextColour(1, 0, 0, 0, 255, (sOpacity * 150) >> 8);
+                fontWindowAddStringXY(1, item->textX - 1, item->textY - 1, item->text, 3, 
                     item->flags & PICMENU_ALIGN_TEXT_CENTER ? ALIGN_TOP_CENTER : ALIGN_TOP_LEFT);
             }
 
@@ -495,7 +495,7 @@ void picmenu_calculate_redraw_area() {
                 height = tex->height | ((tex->widthHeightHi & 0xF) << 8);
                 y = item->itemY;
             } else {
-                height = font_get_y_spacing(item->fontID) + 2;
+                height = fontGetYSpacing(item->fontID) + 2;
                 y = item->textY - 2;
             }
 
@@ -539,7 +539,7 @@ void picmenu_calculate_items_to_redraw() {
         selectedItemHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
         selectedItemY = item1->itemY;
     } else {
-        selectedItemHeight = font_get_y_spacing(item1->fontID) + 2;
+        selectedItemHeight = fontGetYSpacing(item1->fontID) + 2;
         selectedItemY = item1->textY - 2;
     }
 
@@ -557,7 +557,7 @@ void picmenu_calculate_items_to_redraw() {
                 otherItemHeight = tex2->height | ((tex2->widthHeightHi & 0xF) << 8);
                 otherItemY = item2->itemY;
             } else {
-                otherItemHeight = font_get_y_spacing(item2->fontID) + 2;
+                otherItemHeight = fontGetYSpacing(item2->fontID) + 2;
                 otherItemY = item2->textY - 2;
             }
 
@@ -576,7 +576,7 @@ static u16 picmenu_calculate_auto_width(const char *text, s32 fontID) {
     u16 width;
     u16 var;
 
-    width = font_get_text_width(1, text, 0, fontID) + 40;
+    width = fontGetTextWidth(1, text, 0, fontID) + 40;
     var = (width % 20);
     if (var != 0) {
         width = (width - var) + 20;

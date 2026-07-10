@@ -116,7 +116,7 @@ void dll_22_ctor(s32 arg0) {
 
     sFontID = 1;
     sWindowID = 6;
-    font_load(FONT_DINO_SUBTITLE_FONT_1);
+    fontLoad(FONT_DINO_SUBTITLE_FONT_1);
     _bss_780[0] = &_bss_38[0];
     _bss_780[1] = &_bss_38[1];
     _bss_780[2] = &_bss_38[2];
@@ -160,7 +160,7 @@ void dll_22_dtor(s32 arg0) {
     s32 i;
     s32 j;
 
-    font_unload(FONT_DINO_SUBTITLE_FONT_1);
+    fontUnload(FONT_DINO_SUBTITLE_FONT_1);
 
     for (j = 0; j < 3; j++) {
         temp = &_bss_38[j];
@@ -425,7 +425,7 @@ void dll_22_func_D9C(Gfx **gdl) {
         return;
     }
 
-    font_window_use_font(sWindowID, sFontID);
+    fontWindowUseFont(sWindowID, sFontID);
     temp_a2 = _bss_794 + _data_3C;
     _bss_8 = temp_a2;
     _bss_C = _bss_8;
@@ -452,7 +452,7 @@ void dll_22_func_D9C(Gfx **gdl) {
             rcp_tile_write(gdl, sBackground, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
         }
     }
-    font_window_set_coords(sWindowID, _bss_798, _bss_8, _bss_798 + _bss_79C, _bss_C);
+    fontWindowSetCoords(sWindowID, _bss_798, _bss_8, _bss_798 + _bss_79C, _bss_C);
     for (i = 0; i < 3; i++) {
         dll_22_func_10C8(&sp6C, i, gdl);
     }
@@ -617,7 +617,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
                 var_s0_2--;
             }
             arg0->chars[var_s1][var_s0_2] = 0;
-            var_v1 = arg0->unk80[var_s1].unk0[0] - font_get_text_width(0, arg0->chars[var_s1], 0, sFontID);
+            var_v1 = arg0->unk80[var_s1].unk0[0] - fontGetTextWidth(0, arg0->chars[var_s1], 0, sFontID);
             while (_bss_79C < (var_t0 - var_v1)) {
                 arg0->chars[var_s1][var_s0_2] = SPACE_CHAR;
 
@@ -628,7 +628,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
                 }
                 arg0->chars[var_s1][var_s0_2] = 0;
 
-                var_v1 = arg0->unk80[var_s1].unk0[0] - font_get_text_width(0, arg0->chars[var_s1], 0, sFontID);
+                var_v1 = arg0->unk80[var_s1].unk0[0] - fontGetTextWidth(0, arg0->chars[var_s1], 0, sFontID);
             }
             arg0->unk80[var_s1].unk0[0] -= var_v1;
             arg0->unk0[1].unk0 = arg0->chars[var_s1] + var_s0_2 + 1;
@@ -665,7 +665,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
 // offset: 0x1F44 | func: 16
 void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4) {
     arg0->unk0[arg3][arg4] = text;
-    arg0->unk80[arg3][arg4] += font_get_text_width(0, text, 0, sFontID);
+    arg0->unk80[arg3][arg4] += fontGetTextWidth(0, text, 0, sFontID);
     dll_22_func_2000((u8 *)&arg0->unk40[arg3][arg4], arg2);
 }
 

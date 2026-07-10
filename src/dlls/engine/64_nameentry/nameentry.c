@@ -145,27 +145,27 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 uly;
     s32 lry;
     
-    font_window_set_coords(1, 0, 0, 
+    fontWindowSetCoords(1, 0, 0, 
         GET_VIDEO_WIDTH(vi_get_current_size()), 
         GET_VIDEO_HEIGHT(vi_get_current_size()));
-    font_window_flush_strings(1);
-    font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowFlushStrings(1);
+    fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
 
     if (sMainRedrawFrames != 0) {
         rcp_screen_full_write(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
         
-        font_window_set_text_colour(1, 255, 255, 255, 0, 255);
-        font_window_add_string_xy(1, 320, 73, sGameTextChunk->strings[0x1E], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 255, 255, 255, 0, 255);
+        fontWindowAddStringXY(1, 320, 73, sGameTextChunk->strings[0x1E], 1, ALIGN_TOP_CENTER);
 
-        font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-        font_window_add_string_xy(1, 315, 68, sGameTextChunk->strings[0x1E], 2, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+        fontWindowAddStringXY(1, 315, 68, sGameTextChunk->strings[0x1E], 2, ALIGN_TOP_CENTER);
 
-        font_window_use_font(1, FONT_FUN_FONT);
-        font_window_set_text_colour(1, 183, 139, 97, 255, 255);
+        fontWindowUseFont(1, FONT_FUN_FONT);
+        fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
 
-        font_window_add_string_xy(1, 320, 405, sGameTextChunk->strings[0x1F], 1, ALIGN_TOP_CENTER);
-        font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-        font_window_add_string_xy(1, 318, 403, sGameTextChunk->strings[0x1F], 2, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, 320, 405, sGameTextChunk->strings[0x1F], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+        fontWindowAddStringXY(1, 318, 403, sGameTextChunk->strings[0x1F], 2, ALIGN_TOP_CENTER);
     } else {
         // Always redraw background in case picmenu redraws
         func_80010158(&ulx, &lrx, &uly, &lry);
@@ -184,7 +184,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         dll_64_draw_letters(gdl, 179, 110);
     }
 
-    font_window_draw(gdl, NULL, NULL, 1);
+    fontWindowDraw(gdl, NULL, NULL, 1);
 
     sMainRedrawFrames -= 1;
     if (sMainRedrawFrames < 0) {
@@ -217,13 +217,13 @@ static void dll_64_draw_letters(Gfx **gdl, s32 x, s32 y) {
         x2 += 52;
     }
 
-    font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
-    font_window_set_text_colour(1, 255, 255, 255, 0, 255);
+    fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowSetTextColour(1, 255, 255, 255, 0, 255);
     
     x2 = x;
 
     for (i = 0; i < sNumNameLetters; i++) {
-        font_window_add_string_xy(1, x2 + 30, y + 12, letterPtr, 2, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, x2 + 30, y + 12, letterPtr, 2, ALIGN_TOP_CENTER);
         x2 += 52;
         letterPtr += 2;
     }

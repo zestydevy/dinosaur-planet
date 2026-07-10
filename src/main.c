@@ -213,7 +213,7 @@ void game_init(void) {
     func_80053300();
     shadows_init();
     footsteps_init();
-    fonts_init();
+    fontsInit();
     menu_init();
     amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
     init_global_map();

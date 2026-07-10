@@ -283,13 +283,13 @@ void mainmenu_update2(void){ }
 // offset: 0x76C | func: 2 | export: 2
 void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
     if (!nextMenuID || sExitTransitionTimer >= (MENU_TRANSITION_THRESHOLD - 1)) {
-        font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
-        font_window_flush_strings(1);
+        fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
+        fontWindowFlushStrings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
         if (main_demo_finished()) {
             rcp_screen_full_write(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
-        font_window_draw(gfx, NULL, NULL, 1);
+        fontWindowDraw(gfx, NULL, NULL, 1);
     }
 }
 
