@@ -7,7 +7,7 @@
 
 void curves_func_800065C0(CurvesStruct *, s32);
 
-f32 curves_b_spline(f32* s, f32 t, f32* rate) {
+f32 curvesBSpline(f32* s, f32 t, f32* rate) {
     f32 v[4];
     
     v[0] = -s[0] + (3.0f * s[1]) + (-3.0f * s[2]) + s[3];
@@ -24,7 +24,7 @@ f32 curves_b_spline(f32* s, f32 t, f32* rate) {
     return ((((((v[0] * t) + v[1]) * t) + v[2]) * t) + v[3]) * ONE_OVER_SIX;
 }
 
-void curves_b_spline_converter(f32* in, f32* out) {
+void curvesBSplineConverter(f32* in, f32* out) {
     out[0] = -in[0] + (3.0f * in[1]) + (-3.0f * in[2]) + in[3];
     out[1] = (3.0f * in[0]) + (-6.0f * in[1]) + (3.0f * in[2]);
     out[2] = (-3.0f * in[0]) + (3.0f * in[2]);
@@ -36,10 +36,10 @@ void curves_b_spline_converter(f32* in, f32* out) {
     out[3] *= ONE_OVER_SIX;
 }
 
-f32 curves_hermite(f32* s, f32 t, f32* rate) {
+f32 curvesHermite(f32* s, f32 t, f32* rate) {
     f32 v[4];
 
-    curves_hermite_converter(s, v);
+    curvesHermiteConverter(s, v);
 
     if (rate != NULL) {
         *rate = (((3.0f * v[0] * t) + (2.0f * v[1])) * t) + v[2];
@@ -50,17 +50,17 @@ f32 curves_hermite(f32* s, f32 t, f32* rate) {
     return ((((v[0] * t + v[1]) * t) + v[2]) * t) + v[3];
 }
 
-void curves_hermite_converter(f32* in, f32* out) {
+void curvesHermiteConverter(f32* in, f32* out) {
     out[0] = (2.0f * in[0]) + (-2.0f * in[1]) + in[2] + in[3];
     out[1] = (-3.0f * in[0]) + (3.0f * in[1]) + (-2.0f * in[2]) - in[3];
     out[2] = in[2];
     out[3] = in[0];
 }
 
-f32 curves_bezier(f32* s, f32 t, f32* rate) {
+f32 curvesBezier(f32* s, f32 t, f32* rate) {
     f32 v[4];
 
-    curves_bezier_converter(s, v);
+    curvesBezierConverter(s, v);
 
     if (rate != NULL) {
         *rate = (((3.0f * v[0] * t) + (2.0f * v[1])) * t) + v[2];
@@ -71,14 +71,14 @@ f32 curves_bezier(f32* s, f32 t, f32* rate) {
     return ((((v[0] * t + v[1]) * t) + v[2]) * t) + v[3];
 }
 
-void curves_bezier_converter(f32* in, f32* out) {
+void curvesBezierConverter(f32* in, f32* out) {
     out[0] = -in[0] + (3.0f * in[1]) + (-3.0f * in[2]) + in[3];
     out[1] = (3.0f * in[0]) + (-6.0f * in[1]) + (3.0f * in[2]);
     out[2] = (-3.0f * in[0]) + (3.0f * in[1]);
     out[3] = in[0];
 }
 
-f32 curves_catmull_rom(f32* s, f32 t, f32* rate) {
+f32 curvesCatmullRom(f32* s, f32 t, f32* rate) {
     f32 v[4];
     
     v[0] = -s[0] + (3.0f * s[1]) + (-3.0f * s[2]) + s[3];
@@ -95,7 +95,7 @@ f32 curves_catmull_rom(f32* s, f32 t, f32* rate) {
     return ((((((v[0] * t) + v[1]) * t) + v[2]) * t) + v[3]) * 0.5f;
 }
 
-void curves_catmull_rom_converter(f32* in, f32* out) {
+void curvesCatmullRomConverter(f32* in, f32* out) {
     out[0] = -in[0] + (3.0f * in[1]) + (-3.0f * in[2]) + in[3];
     out[1] = (2.0f * in[0]) + (-5.0f * in[1]) + (4.0f * in[2]) - in[3];
     out[2] = -in[0] + in[2];
@@ -107,20 +107,20 @@ void curves_catmull_rom_converter(f32* in, f32* out) {
     out[3] *= 0.5f;
 }
 
-f32 curves_linear(f32* s, f32 t, f32* rate) {
+f32 curvesLinear(f32* s, f32 t, f32* rate) {
     return s[0] + (s[1] - s[0]) * t;
 }
 
-void curves_linear_converter(f32* in, f32* out) {
+void curvesLinearConverter(f32* in, f32* out) {
 
 }
 
 // official name: curvesMove
-void curves_move(CurvesStruct *arg0) {
+void curvesMove(CurvesStruct *arg0) {
     if (arg0->numControlPoints < 4) {
         STUBBED_PRINTF("curvesMove: There must be at least four control points\n");
     }
-    if ((arg0->splineFunc == &curves_bezier) || (arg0->splineFunc == &curves_hermite)) {
+    if ((arg0->splineFunc == &curvesBezier) || (arg0->splineFunc == &curvesHermite)) {
         if ((arg0->numControlPoints & 3) != 0) {
             STUBBED_PRINTF("curvesMove: There must be a multiple of four control points for bezier or hermite curves\n");
         }
@@ -134,7 +134,7 @@ void curves_move(CurvesStruct *arg0) {
         
         arg0->unkC += arg0->unk14[0];
         
-        if ((arg0->splineFunc == &curves_bezier) || (arg0->splineFunc == &curves_hermite)) {
+        if ((arg0->splineFunc == &curvesBezier) || (arg0->splineFunc == &curvesHermite)) {
             arg0->unk10 += 4;
         } else {
             arg0->unk10 += 1;
@@ -171,11 +171,11 @@ void curves_move(CurvesStruct *arg0) {
 }
 
 // official name: curvesSetupMoveNetworkCurve
-void curves_setup_move_network_curve(CurvesStruct *arg0) {
+void curvesSetupMoveNetworkCurve(CurvesStruct *arg0) {
     if (arg0->numControlPoints < 4) {
         STUBBED_PRINTF("curvesSetupMoveNetworkCurve: There must be at least four control points\n");
     }
-    if ((arg0->splineFunc == &curves_bezier) || (arg0->splineFunc == &curves_hermite)) {
+    if ((arg0->splineFunc == &curvesBezier) || (arg0->splineFunc == &curvesHermite)) {
         if ((arg0->numControlPoints & 3) != 0) {
             STUBBED_PRINTF("curvesSetupMoveNetworkCurve: There must be a multiple of four control points for bezier or hermite curves\n");
         }
@@ -189,7 +189,7 @@ void curves_setup_move_network_curve(CurvesStruct *arg0) {
 
         arg0->unkC += arg0->unk14[0];
 
-        if ((arg0->splineFunc == &curves_bezier) || (arg0->splineFunc == &curves_hermite)) {
+        if ((arg0->splineFunc == &curvesBezier) || (arg0->splineFunc == &curvesHermite)) {
             arg0->unk10 += 4;
         } else {
             arg0->unk10 += 1;
@@ -253,7 +253,7 @@ s32 curves_func_800053B0(CurvesStruct* arg0, f32 arg1) {
                 var_v1 += 1;
                 if (var_v1 >= 20) {
                     var_t0 = arg0->unk10;
-                    if ((arg0->splineFunc == curves_bezier) || (arg0->splineFunc == curves_hermite)) {
+                    if ((arg0->splineFunc == curvesBezier) || (arg0->splineFunc == curvesHermite)) {
                         arg0->unk10 += 3;
                     }
                     arg0->unk10 += 1;
@@ -313,7 +313,7 @@ s32 curves_func_800053B0(CurvesStruct* arg0, f32 arg1) {
                 var_v1 -= 1;
                 if (var_v1 < 0) {
                     var_t0 = arg0->unk10;
-                    if ((arg0->splineFunc == curves_bezier) || (arg0->splineFunc == curves_hermite)) {
+                    if ((arg0->splineFunc == curvesBezier) || (arg0->splineFunc == curvesHermite)) {
                         arg0->unk10 -= 3;
                     }
                     arg0->unk10 -= 1;
@@ -721,17 +721,17 @@ void curves_func_80006B28(Vec2f* arg0, s32 arg1, Unk80006908* arg2) {
             }
             var_a1++;
         }
-        curves_b_spline_converter(sp88, sp68);
+        curvesBSplineConverter(sp88, sp68);
         arg2[var_s3].unk0.x = sp68[0];
         arg2[var_s3].unk0.y = sp68[1];
         arg2[var_s3].unk0.z = sp68[2];
         arg2[var_s3].unk0.w = sp68[3];
-        curves_b_spline_converter(sp78, sp68);
+        curvesBSplineConverter(sp78, sp68);
         arg2[var_s3].unk10.x = sp68[0];
         arg2[var_s3].unk10.y = sp68[1];
         arg2[var_s3].unk10.z = sp68[2];
         arg2[var_s3].unk10.w = sp68[3];
-        arg2[var_s3].unk20 = curves_b_spline(sp78, 0, 0);
+        arg2[var_s3].unk20 = curvesBSpline(sp78, 0, 0);
     }
     arg2->unk20 = 0;
     arg2[arg1 - 1].unk20 = 1.0f;

@@ -117,29 +117,29 @@ void campath_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
     } else if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    sp140 = curves_b_spline(sp90, var_fs0, NULL);
-    sp13C = curves_b_spline(sp80, var_fs0, NULL);
-    sp138 = curves_b_spline(sp70, var_fs0, NULL);
+    sp140 = curvesBSpline(sp90, var_fs0, NULL);
+    sp13C = curvesBSpline(sp80, var_fs0, NULL);
+    sp138 = curvesBSpline(sp70, var_fs0, NULL);
     sp134 = sp140 - temp_s0->srt.transl.x;
     sp130 = sp13C - temp_s0->srt.transl.y;
     sp12C = sp138 - temp_s0->srt.transl.z;
     if (sp118->campath.unk3B & 1) {
         sp126 = 0x8000 - arctan2_f(sp134, sp12C);
     } else {
-        sp126 = (s16) curves_catmull_rom(spD0, var_fs0, NULL) + 0x8000;
+        sp126 = (s16) curvesCatmullRom(spD0, var_fs0, NULL) + 0x8000;
     }
     if (sp118->campath.unk3B & 4) {
         sp122 = temp_s0->srt.roll;
     } else {
-        sp122 = (s16) curves_catmull_rom(spB0, var_fs0, NULL);
+        sp122 = (s16) curvesCatmullRom(spB0, var_fs0, NULL);
     }
     if (sp118->campath.unk3B & 2) {
         var_s0 = arctan2_f(sp130, sqrtf(SQ(sp134) + SQ(sp12C)));
-        var_s0 = (s16) ((f32) var_s0 - curves_catmull_rom(spC0, var_fs0, NULL));
+        var_s0 = (s16) ((f32) var_s0 - curvesCatmullRom(spC0, var_fs0, NULL));
     } else {
-        var_s0 = (s16) curves_catmull_rom(spC0, var_fs0, NULL);
+        var_s0 = (s16) curvesCatmullRom(spC0, var_fs0, NULL);
     }
-    temp_fv0_3 = curves_b_spline(spA0, var_fs0, NULL);
+    temp_fv0_3 = curvesBSpline(spA0, var_fs0, NULL);
     sp108.x = sp140;
     sp108.y = sp13C;
     sp108.z = sp138;
@@ -226,20 +226,20 @@ void campath_func_588(Cam* cam) {
     }
     sp104 = sState->unk58 + ((sp104 - sState->unk58) * 0.3f);
     sState->unk58 = sp104;
-    cam->srt.transl.x = curves_b_spline(spB8, sp104, NULL);
-    cam->srt.transl.y = curves_b_spline(spA8, sp104, NULL);
-    cam->srt.transl.z = curves_b_spline(sp98, sp104, NULL);
+    cam->srt.transl.x = curvesBSpline(spB8, sp104, NULL);
+    cam->srt.transl.y = curvesBSpline(spA8, sp104, NULL);
+    cam->srt.transl.z = curvesBSpline(sp98, sp104, NULL);
     spCB = gDLL_26_Curves->vtbl->func_39C(sState->unk8)->campath.unk3B;
     if ((spCB & 1) == 0) {
-        cam->srt.yaw = (s16) curves_catmull_rom(sp88, sp104, NULL) + 0x8000;
+        cam->srt.yaw = (s16) curvesCatmullRom(sp88, sp104, NULL) + 0x8000;
     }
     if ((spCB & 2) == 0) {
-        cam->srt.pitch = (s16) curves_catmull_rom(sp78, sp104, NULL);
+        cam->srt.pitch = (s16) curvesCatmullRom(sp78, sp104, NULL);
     }
     if ((spCB & 4) == 0) {
-        cam->srt.roll = (s16) curves_catmull_rom(sp68, sp104, NULL);
+        cam->srt.roll = (s16) curvesCatmullRom(sp68, sp104, NULL);
     }
-    cam->fov = curves_b_spline(sp58, sp104, NULL);
+    cam->fov = curvesBSpline(sp58, sp104, NULL);
     if ((sState->unk64 == 0) && (campath_func_1004(cam, spCB) != 0)) {
         sState->unk64 = 1;
     }
@@ -252,7 +252,7 @@ void campath_func_588(Cam* cam) {
     if ((spCB & 2) != 0) {
         temp = sqrtf(SQ(sp100) + SQ(spF8));
         var_v1 = arctan2_f(spFC, temp);
-        var_v1 = ((var_v1 - curves_catmull_rom(sp78, sp104, NULL)) - (cam->srt.pitch & 0xFFFF));
+        var_v1 = ((var_v1 - curvesCatmullRom(sp78, sp104, NULL)) - (cam->srt.pitch & 0xFFFF));
         CIRCLE_WRAP(var_v1);
         cam->srt.pitch += (var_v1 * gUpdateRate) >> 3;
     }
@@ -336,7 +336,7 @@ static s32 campath_func_1004(Cam* cam, u8 arg1) {
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    var_fv1 = curves_hermite(&sState->unk48.x, var_fs0, NULL);
+    var_fv1 = curvesHermite(&sState->unk48.x, var_fs0, NULL);
     if (var_fv1 < 0.2f) {
         var_fv1 = 0.2f;
     }
@@ -349,10 +349,10 @@ static s32 campath_func_1004(Cam* cam, u8 arg1) {
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    cam->srt.transl.x = curves_linear(&sState->unk10, var_fs0, NULL);
-    cam->srt.transl.y = curves_linear(&sState->unk18, var_fs0, NULL);
-    cam->srt.transl.z = curves_linear(&sState->unk20, var_fs0, NULL);
-    cam->fov = curves_linear(&sState->unk40, var_fs0, NULL);
+    cam->srt.transl.x = curvesLinear(&sState->unk10, var_fs0, NULL);
+    cam->srt.transl.y = curvesLinear(&sState->unk18, var_fs0, NULL);
+    cam->srt.transl.z = curvesLinear(&sState->unk20, var_fs0, NULL);
+    cam->fov = curvesLinear(&sState->unk40, var_fs0, NULL);
     if (((sState->unk28 - sState->unk2C) > 32768.0f) || ((sState->unk28 - sState->unk2C) < -32768.0f)) {
         if (sState->unk28 < 0.0f) {
             sState->unk28 += 65535.0f;
@@ -375,13 +375,13 @@ static s32 campath_func_1004(Cam* cam, u8 arg1) {
         }
     }
     if (!(arg1 & 1)) {
-        cam->srt.yaw = (s16) curves_linear(&sState->unk28, var_fs0, NULL);
+        cam->srt.yaw = (s16) curvesLinear(&sState->unk28, var_fs0, NULL);
     }
     if (!(arg1 & 2)) {
-        cam->srt.pitch = (s16) curves_linear(&sState->unk30, var_fs0, NULL);
+        cam->srt.pitch = (s16) curvesLinear(&sState->unk30, var_fs0, NULL);
     }
     if (!(arg1 & 4)) {
-        cam->srt.roll = (s16) curves_linear(&sState->unk38, var_fs0, NULL);
+        cam->srt.roll = (s16) curvesLinear(&sState->unk38, var_fs0, NULL);
     }
  
     return var_fs0 >= 1.0f;

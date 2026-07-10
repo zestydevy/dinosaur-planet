@@ -170,8 +170,8 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     sState->unk11C.unk84 = sState->unk18;
     sState->unk11C.unk88 = sState->unk68;
     sState->unk11C.unk8C = sState->unkB8;
-    sState->unk11C.splineFunc = curves_b_spline;
-    sState->unk11C.splineConverterFunc = curves_b_spline_converter;
+    sState->unk11C.splineFunc = curvesBSpline;
+    sState->unk11C.splineConverterFunc = curvesBSplineConverter;
     attentioncam_func_D70(
         var_fa0, 
         var_fa1, 
@@ -191,7 +191,7 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     }
     sState->unk11C.numControlPoints = var_v1;
     sState->unk11C.unk80 = 0;
-    curves_move(&sState->unk11C);
+    curvesMove(&sState->unk11C);
     if (sp14C < 0) {
         var_a0 = sp14C * -1;
     } else {
@@ -370,7 +370,7 @@ static s32 attentioncam_func_112C(f32* arg0, f32* arg1, f32* arg2, Object* arg3)
     } else if (t < 0.0f) {
         t = 0.0f;
     }
-    t = curves_hermite(&sState->unk108.x, t, NULL);
+    t = curvesHermite(&sState->unk108.x, t, NULL);
     if (t < 0.2f) {
         t = 0.2f;
     }

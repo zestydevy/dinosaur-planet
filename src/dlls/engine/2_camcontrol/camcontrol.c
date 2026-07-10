@@ -735,7 +735,7 @@ static void CamControl_update_camera(Cam* cam) {
         spline[2] = 0.0f;
         spline[0] = 0.0f;
         spline[1] = 1.0f;
-        tValue = 1.0f - curves_hermite(spline, cam->tValue, 0);
+        tValue = 1.0f - curvesHermite(spline, cam->tValue, 0);
 
         //Linear interpolation (position)
         if (cam->easeFlags & Cam_Ease_X) {

@@ -7387,9 +7387,9 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             temp_s0->unk4E8.unk84 = &temp_s0->unk584;
             temp_s0->unk4E8.unk88 = &temp_s0->unk5D4;
             temp_s0->unk4E8.unk8C = &temp_s0->unk624;
-            temp_s0->unk4E8.splineFunc = curves_hermite;
-            temp_s0->unk4E8.splineConverterFunc = curves_hermite_converter;
-            curves_move(&temp_s0->unk4E8);
+            temp_s0->unk4E8.splineFunc = curvesHermite;
+            temp_s0->unk4E8.splineConverterFunc = curvesHermiteConverter;
+            curvesMove(&temp_s0->unk4E8);
         }
         func_80023D30(player, 0x40E, 0.0f, 0U);
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCRAWL, TRUE, 0, 0, NULL, 40, Cam_Ease_All);

@@ -117,9 +117,9 @@ void GPSH_flybaddie_control(Object* self) {
         objdata->curveT -= 1.0f;
         GPSH_flybaddie_func_654(self);
     }
-    self->srt.transl.x = curves_b_spline(objdata->xCurve, objdata->curveT, NULL);
-    self->srt.transl.y = curves_b_spline(objdata->yCurve, objdata->curveT, NULL);
-    self->srt.transl.z = curves_b_spline(objdata->zCurve, objdata->curveT, NULL);
+    self->srt.transl.x = curvesBSpline(objdata->xCurve, objdata->curveT, NULL);
+    self->srt.transl.y = curvesBSpline(objdata->yCurve, objdata->curveT, NULL);
+    self->srt.transl.z = curvesBSpline(objdata->zCurve, objdata->curveT, NULL);
     objdata->curveT += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);

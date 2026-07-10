@@ -519,17 +519,17 @@ static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F
     spline[1] = arg2->unkC.x;
     spline[2] = arg2->unk18.x;
     spline[3] = arg2->unk24.x;
-    arg0->srt.transl.x = curves_hermite(spline, *tValue, NULL);
+    arg0->srt.transl.x = curvesHermite(spline, *tValue, NULL);
     spline[0] = arg2->unk0.y;
     spline[1] = arg2->unkC.y;
     spline[2] = arg2->unk18.y;
     spline[3] = arg2->unk24.y;
-    arg0->srt.transl.y = curves_hermite(spline, *tValue, NULL);
+    arg0->srt.transl.y = curvesHermite(spline, *tValue, NULL);
     spline[0] = arg2->unk0.z;
     spline[1] = arg2->unkC.z;
     spline[2] = arg2->unk18.z;
     spline[3] = arg2->unk24.z;
-    arg0->srt.transl.z = curves_hermite(spline, *tValue, NULL);
+    arg0->srt.transl.z = curvesHermite(spline, *tValue, NULL);
     return sp3C;
 }
 
@@ -560,21 +560,21 @@ static f32 movelib_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, 
         spline[1] = arg2->x;
         spline[2] = arg1->x;
         spline[3] = arg3->x;
-        temp_fv0 = curves_hermite(spline, tValue, NULL);
+        temp_fv0 = curvesHermite(spline, tValue, NULL);
         temp_fs1 = temp_fv0 - var_fs2;
         
         spline[0] = arg0->unk0.y;
         spline[1] = arg2->y;
         spline[2] = arg1->y;
         spline[3] = arg3->y;
-        temp_fv0_2 = curves_hermite(spline, tValue, NULL);
+        temp_fv0_2 = curvesHermite(spline, tValue, NULL);
         temp_fs2 = temp_fv0_2 - spA4;
         
         spline[0] = arg0->unk0.z;
         spline[1] = arg2->z;
         spline[2] = arg1->z;
         spline[3] = arg3->z;
-        temp_fv0_3 = curves_hermite(spline, tValue, NULL);
+        temp_fv0_3 = curvesHermite(spline, tValue, NULL);
         temp_fv1 = temp_fv0_3 - spA0;
         
         var_fs5 += sqrtf(SQ(temp_fs1) + SQ(temp_fs2) + SQ(temp_fv1));

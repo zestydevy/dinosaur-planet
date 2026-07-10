@@ -615,7 +615,7 @@ static void BWlog_handle_roll(Object* self, BWlog_Data* objdata) {
     }
 
     //Get the log's roll speed via a spline
-    objdata->rollSpeed = curves_hermite(objdata->rollCurve, objdata->rollCurveProgress, NULL);
+    objdata->rollSpeed = curvesHermite(objdata->rollCurve, objdata->rollCurveProgress, NULL);
 
     i = gUpdateRate;
     while (i--) {

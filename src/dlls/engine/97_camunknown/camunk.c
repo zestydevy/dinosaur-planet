@@ -39,7 +39,7 @@ void camunk_func_74(Cam* cam) {
     sp28[2] = 0.0f;
     sp28[3] = 0.0f;
     sp28[1] = 1.0f;
-    sp38 = curves_hermite(sp28, sState->unk4, NULL);
+    sp38 = curvesHermite(sp28, sState->unk4, NULL);
     sp4C = cam->player;
     sp26 = (0x8000 - sp4C->srt.yaw);
     sp26 += (s32) (14560.0f * sp38);

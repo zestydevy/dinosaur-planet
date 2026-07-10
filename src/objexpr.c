@@ -699,7 +699,7 @@ s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
     }
     
     //Get eased rotation speed (ease-in-out)
-    rotateSpeed = curves_hermite(spline, tValue, NULL);
+    rotateSpeed = curvesHermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         rotateSpeed = -rotateSpeed;
     }
@@ -734,7 +734,7 @@ s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
     } else if (tValue < 0.0f) {
         tValue = 0.0f;
     }
-    var_fa0 = curves_hermite(spline, tValue, NULL);
+    var_fa0 = curvesHermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }
@@ -767,7 +767,7 @@ s32 func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
     } else if (tValue < 0.0f) {
         tValue = 0.0f;
     }
-    var_fa0 = curves_hermite(spline, tValue, NULL);
+    var_fa0 = curvesHermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }

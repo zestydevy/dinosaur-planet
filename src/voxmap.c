@@ -803,7 +803,7 @@ s32 func_80008BE4(CurvesStruct* arg0, s32 arg1) {
     Vec3f sp5C;
 
     stepCount = 1;
-    if ((arg0->splineFunc == curves_hermite) || (arg0->splineFunc == curves_bezier)) {
+    if ((arg0->splineFunc == curvesHermite) || (arg0->splineFunc == curvesBezier)) {
         stepCount = 4;
     }
 

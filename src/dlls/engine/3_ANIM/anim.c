@@ -2183,11 +2183,11 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
             sp4C[2] = fcos16_precise(var_s1->unk2C << 8) * sp3C;
             sp4C[1] = sp84->pos.f[2];
             sp4C[3] = fcos16_precise(sp84->unk2C << 8) * sp38;
-            arg2->f[0] = curves_hermite(sp6C, sp7C, &sp48);
+            arg2->f[0] = curvesHermite(sp6C, sp7C, &sp48);
             if (arg4 == 0) {
-                arg2->f[1] = curves_hermite(sp5C, sp7C, &sp44);
+                arg2->f[1] = curvesHermite(sp5C, sp7C, &sp44);
             }
-            arg2->f[2] = curves_hermite(sp4C, sp7C, &sp40);
+            arg2->f[2] = curvesHermite(sp4C, sp7C, &sp40);
             temp_fv0_2 = sqrtf(SQ(sp48) + SQ(sp40));
             if (temp_fv0_2 > 0.1f) {
                 sp3C = arg1->f[0] / temp_fv0_2;
@@ -2346,7 +2346,7 @@ void anim_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4,
     spD0[2] = fcos16_precise((s16) (a2->unk2C << 8)) * sp104;
     spD0[1] = a3->pos.z;
     spD0[3] = fcos16_precise((s16) (a3->unk2C << 8)) * sp100;
-    curves_func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, curves_hermite_converter);
+    curves_func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, curvesHermiteConverter);
     arg0->unk8[0] = 0.0f;
     for (i = 0; i < 8; i++) {
         temp_fv0 = spAC[i + 1] - spAC[i];
@@ -2986,7 +2986,7 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
             tValue = (time - keyframes[i - 1].timeOffset) / tValue;
 
             if (interpType == KF_INTERP_Hermite) {
-                value = curves_hermite(curve.v, tValue, NULL);
+                value = curvesHermite(curve.v, tValue, NULL);
             } else if (interpType == KF_INTERP_Linear) {
                 value = curve.start + ((curve.end - curve.start) * tValue);
             } else {

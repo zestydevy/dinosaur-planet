@@ -600,7 +600,7 @@ static void camnormal_func_1DEC(Cam* cam) {
         spline[2] = 0.0f;
         spline[3] = 0.0f;
         spline[1] = 1.0f;
-        t = curves_hermite(spline, t, NULL);
+        t = curvesHermite(spline, t, NULL);
         sState->unk8C = sState->unk90 + ((sState->unk94 - sState->unk90) * t);
         sState->unk0 = sState->unk2C + ((sState->unk30 - sState->unk2C) * t);
         sState->unk4 = sState->unk34 + ((sState->unk38 - sState->unk34) * t);

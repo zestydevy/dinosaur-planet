@@ -444,19 +444,19 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
     spline[1] = arg2->unkC.x;
     spline[2] = arg2->unk18.x;
     spline[3] = arg2->unk24.x;
-    self->srt.transl.x = curves_hermite(spline, *arg3, 0);
+    self->srt.transl.x = curvesHermite(spline, *arg3, 0);
     
     spline[0] = arg2->unk0.y;
     spline[1] = arg2->unkC.y;
     spline[2] = arg2->unk18.y;
     spline[3] = arg2->unk24.y;
-    self->srt.transl.y = curves_hermite(spline, *arg3, 0);
+    self->srt.transl.y = curvesHermite(spline, *arg3, 0);
     
     spline[0] = arg2->unk0.z;
     spline[1] = arg2->unkC.z;
     spline[2] = arg2->unk18.z;
     spline[3] = arg2->unk24.z;
-    self->srt.transl.z = curves_hermite(spline, *arg3, 0);
+    self->srt.transl.z = curvesHermite(spline, *arg3, 0);
     
     return returnVal;
 }
@@ -493,21 +493,21 @@ f32 dll_658_func_1C24(DLL658_func19FC_arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3
             sp7C[1] = arg2->x;
             sp7C[2] = arg1->x;
             sp7C[3] = arg3->x;
-            resultX = curves_hermite(sp7C, tValue, 0);
+            resultX = curvesHermite(sp7C, tValue, 0);
             dx = resultX - baseX;
             
             sp7C[0] = arg0->unk0.y;
             sp7C[1] = arg2->y;
             sp7C[2] = arg1->y;
             sp7C[3] = arg3->y;
-            resultY = curves_hermite(sp7C, tValue, 0);
+            resultY = curvesHermite(sp7C, tValue, 0);
             dy = resultY - baseY;
             
             sp7C[0] = arg0->unk0.z;
             sp7C[1] = arg2->z;
             sp7C[2] = arg1->z;
             sp7C[3] = arg3->z;
-            resultZ = curves_hermite(sp7C, tValue, 0);
+            resultZ = curvesHermite(sp7C, tValue, 0);
             dz = resultZ - baseZ;
             
             sum += sqrtf(SQ(dx) + SQ(dy) + SQ(dz));

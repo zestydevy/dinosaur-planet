@@ -77,8 +77,8 @@ void cam1stperson_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
     sState->unk78.unk8C = sState->unk30;
     sState->unk78.numControlPoints = 4;
     sState->unk78.unk80 = 0;
-    sState->unk78.splineFunc = curves_hermite;
-    sState->unk78.splineConverterFunc = curves_hermite_converter;
+    sState->unk78.splineFunc = curvesHermite;
+    sState->unk78.splineConverterFunc = curvesHermiteConverter;
     sp54 = cam->srt.transl.x - player->srt.transl.x;
     sp50 = cam->srt.transl.z - player->srt.transl.z;
     temp_fv0 = sqrtf(SQ(sp54) + SQ(sp50));
@@ -109,7 +109,7 @@ void cam1stperson_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
     sState->unk30[3] = 0.0f;
     sState->unk10[1] = sState->unk10[1];
     sState->unk30[1] = sState->unk30[1];
-    curves_move(&sState->unk78);
+    curvesMove(&sState->unk78);
     var_v1 = 0x8000 - arctan2_f(cam->srt.transl.x - sState->unk10[1], cam->srt.transl.z - sState->unk30[1]);\
     var_v1 = cam->srt.yaw - (u16)var_v1;\
     CIRCLE_WRAP(var_v1);
@@ -252,8 +252,8 @@ s32 cam1stperson_func_A74(Cam* cam, Object* arg1) {
     cam->srt.transl.x = sState->unk78.unk68.x;
     cam->srt.transl.y = sState->unk78.unk68.y;
     cam->srt.transl.z = sState->unk78.unk68.z;
-    cam->srt.pitch = (s16) curves_hermite(sState->unk50, sState->unk78.unk0, NULL);
-    sp2A = (s16) curves_hermite(sState->unk40, sState->unk78.unk0, NULL);
+    cam->srt.pitch = (s16) curvesHermite(sState->unk50, sState->unk78.unk0, NULL);
+    sp2A = (s16) curvesHermite(sState->unk40, sState->unk78.unk0, NULL);
     var_fv1 = sState->unk78.unk0 - 0.2f;
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
@@ -265,8 +265,8 @@ s32 cam1stperson_func_A74(Cam* cam, Object* arg1) {
         sState->unk78.unk88 = NULL;
         sState->unk78.unk8C = NULL;
         sState->unk78.numControlPoints = 4;
-        sState->unk78.splineFunc = curves_hermite;
-        sState->unk78.splineConverterFunc = curves_hermite_converter;
+        sState->unk78.splineFunc = curvesHermite;
+        sState->unk78.splineConverterFunc = curvesHermiteConverter;
         sState->unk78.unk80 = 0;
         sState->unk40[0] = (f32) cam->srt.yaw;
         sState->unk40[1] = (f32) (s16) (0x8000 - arg1->srt.yaw);
@@ -284,7 +284,7 @@ s32 cam1stperson_func_A74(Cam* cam, Object* arg1) {
         }
         sState->unk40[2] = 0.0f;
         sState->unk40[3] = 0.0f;
-        curves_move(&sState->unk78);
+        curvesMove(&sState->unk78);
         cam->player->srt.flags |= OBJFLAG_SKIP_MODEL_DL;
         return 1;
     }
@@ -389,8 +389,8 @@ void cam1stperson_func_1008(Cam* cam) {
     sState->unk78.unk8C = NULL;
     sState->unk78.numControlPoints = 4;
     sState->unk78.unk80 = 0;
-    sState->unk78.splineFunc = curves_hermite;
-    sState->unk78.splineConverterFunc = curves_hermite_converter;
+    sState->unk78.splineFunc = curvesHermite;
+    sState->unk78.splineConverterFunc = curvesHermiteConverter;
     sState->unk40[0] = (f32) cam->srt.yaw;
     sState->unk40[1] = (f32) (s16) (0x8000 - arctan2_f(
         sState->unk10[1] - player->globalPosition.x, 
@@ -415,7 +415,7 @@ void cam1stperson_func_1008(Cam* cam) {
             sState->unk50[1] += 65535.0f;
         }
     }
-    curves_move(&sState->unk78);
+    curvesMove(&sState->unk78);
 }
 
 // offset: 0x1524 | func: 7
@@ -425,8 +425,8 @@ void cam1stperson_func_1524(Cam* cam, Object* arg1) {
     sState->unk78.unk8C = sState->unk30;
     sState->unk78.numControlPoints = 4;
     sState->unk78.unk80 = 0;
-    sState->unk78.splineFunc = curves_hermite;
-    sState->unk78.splineConverterFunc = curves_hermite_converter;
-    curves_move(&sState->unk78);
+    sState->unk78.splineFunc = curvesHermite;
+    sState->unk78.splineConverterFunc = curvesHermiteConverter;
+    curvesMove(&sState->unk78);
     cam->player->srt.flags &= ~OBJFLAG_SKIP_MODEL_DL;
 }

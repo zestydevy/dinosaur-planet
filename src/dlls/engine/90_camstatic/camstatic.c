@@ -211,7 +211,7 @@ static s32 camstatic_func_798(Cam* cam, u8 arg1) {
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    var_fv1 = curves_hermite(&sState->unk40.x, var_fs0, NULL);
+    var_fv1 = curvesHermite(&sState->unk40.x, var_fs0, NULL);
     if (var_fv1 < 0.2f) {
         var_fv1 = 0.2f;
     }
@@ -220,9 +220,9 @@ static s32 camstatic_func_798(Cam* cam, u8 arg1) {
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    cam->srt.transl.x = curves_linear(&sState->unk8, var_fs0, NULL);
-    cam->srt.transl.y = curves_linear(&sState->unk10, var_fs0, NULL);
-    cam->srt.transl.z = curves_linear(&sState->unk18, var_fs0, NULL);
+    cam->srt.transl.x = curvesLinear(&sState->unk8, var_fs0, NULL);
+    cam->srt.transl.y = curvesLinear(&sState->unk10, var_fs0, NULL);
+    cam->srt.transl.z = curvesLinear(&sState->unk18, var_fs0, NULL);
     if (((sState->unk20 - sState->unk24) > 32768.0f) || ((sState->unk20 - sState->unk24) < -32768.0f)) {
         if (sState->unk20 < 0.0f) {
             sState->unk20 += 65535.0f;
@@ -245,13 +245,13 @@ static s32 camstatic_func_798(Cam* cam, u8 arg1) {
         }
     }
     if (!(arg1 & 1)) {
-        cam->srt.yaw = (s16) curves_linear(&sState->unk20, var_fs0, NULL);
+        cam->srt.yaw = (s16) curvesLinear(&sState->unk20, var_fs0, NULL);
     }
     if (!(arg1 & 2)) {
-        cam->srt.pitch = (s16) curves_linear(&sState->unk28, var_fs0, NULL);
+        cam->srt.pitch = (s16) curvesLinear(&sState->unk28, var_fs0, NULL);
     }
     if (!(arg1 & 4)) {
-        cam->srt.roll = (s16) curves_linear(&sState->unk30, var_fs0, NULL);
+        cam->srt.roll = (s16) curvesLinear(&sState->unk30, var_fs0, NULL);
     }
     return var_fs0 >= 1.0f;
 }

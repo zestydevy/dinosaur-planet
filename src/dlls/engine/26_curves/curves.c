@@ -1630,14 +1630,14 @@ u8 curves_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s3
             return 1;
         }
         
-        arg0->unk0.splineFunc = curves_hermite;
-        arg0->unk0.splineConverterFunc = curves_hermite_converter;
+        arg0->unk0.splineFunc = curvesHermite;
+        arg0->unk0.splineConverterFunc = curvesHermiteConverter;
         arg0->unk0.unk84 = arg0->unkA8;
         arg0->unk0.unk88 = arg0->unkC8;
         arg0->unk0.unk8C = arg0->unkE8;
         arg0->unk0.numControlPoints = 8;
         
-        curves_move(&arg0->unk0);
+        curvesMove(&arg0->unk0);
         
         return 0;
     }
@@ -1700,7 +1700,7 @@ s32 curves_func_4704(UnkCurvesStruct* arg0) {
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
             }
             if (arg0->unk0.numControlPoints != 0) {
-                curves_setup_move_network_curve(&arg0->unk0);
+                curvesSetupMoveNetworkCurve(&arg0->unk0);
             }
             if (arg0->unk0.unk80 != 0) {
                 curves_func_800053B0(&arg0->unk0, -1.0f);
@@ -1755,14 +1755,14 @@ s32 curves_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
         return 1;
     }
     
-    arg0->unk0.splineFunc = curves_hermite;
-    arg0->unk0.splineConverterFunc = curves_hermite_converter;
+    arg0->unk0.splineFunc = curvesHermite;
+    arg0->unk0.splineConverterFunc = curvesHermiteConverter;
     arg0->unk0.unk84 = arg0->unkA8;
     arg0->unk0.unk88 = arg0->unkC8;
     arg0->unk0.unk8C = arg0->unkE8;
     arg0->unk0.numControlPoints = 8;
     
-    curves_move(&arg0->unk0);
+    curvesMove(&arg0->unk0);
     arg0->unk0.unk0 = sp24;
     return 0;
 }
@@ -1839,7 +1839,7 @@ s32 curves_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
             }
             if (arg0->unk0.numControlPoints != 0) {
-                curves_setup_move_network_curve(&arg0->unk0);
+                curvesSetupMoveNetworkCurve(&arg0->unk0);
             }
             if (arg0->unk0.unk80 != 0) {
                 curves_func_800053B0(&arg0->unk0, -1.0f);
@@ -1976,14 +1976,14 @@ s32 curves_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
         
         }
 
-        arg0->unk0.splineFunc = curves_hermite;
-        arg0->unk0.splineConverterFunc = curves_hermite_converter;
+        arg0->unk0.splineFunc = curvesHermite;
+        arg0->unk0.splineConverterFunc = curvesHermiteConverter;
         arg0->unk0.unk84 = arg0->unkA8;
         arg0->unk0.unk88 = arg0->unkC8;
         arg0->unk0.unk8C = arg0->unkE8;
         arg0->unk0.numControlPoints = 8;
         
-        curves_move(&arg0->unk0);
+        curvesMove(&arg0->unk0);
 
         return 0;
     }
