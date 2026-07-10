@@ -241,22 +241,16 @@ s32 D_800937f8[3] = {0};
 u8 gCFileLabelIndex = 0;
 u8 gCFileLabelFlag = 0;
 
-// Length of gPiManagerArray
-#define PI_MANAGER_ARRAY_LENGTH 5
-// Length of gPiManagerEventQueueBuffer
-#define PI_MANAGER_EVENT_QUEUE_LENGTH 8
-// Length of gPiManagerCmdQueueBuffer
-#define PI_MANAGER_CMD_QUEUE_LENGTH 8
 // Length of gCFileLabels and gSomeCFileInts
 #define C_FILE_LABELS_LENGTH 10
 
 /* -------- .bss start 800beb10 -------- */
 u64 gPiManagerThreadStack[STACKSIZE(OS_PIM_STACKSIZE)];
 OSThread gPiManagerThread;
-s32 gPiManagerArray[PI_MANAGER_ARRAY_LENGTH];
+s32 gPiManagerArray[5];
 OSMesgQueue gPiManagerEventQueue;
-OSMesg gPiManagerEventQueueBuffer[PI_MANAGER_EVENT_QUEUE_LENGTH];
-OSMesg gPiManagerCmdQueueBuffer[PI_MANAGER_CMD_QUEUE_LENGTH];
+OSMesg gPiManagerEventQueueBuffer[8];
+OSMesg gPiManagerCmdQueueBuffer[8];
 OSMesgQueue gPiManagerCmdQueue;
 OSMesgQueue gCrashControllerMesgQueue;
 OSContPad gCrashContPadArray1[MAXCONTROLLERS];
@@ -267,7 +261,7 @@ s32 gSomeCFileInts[C_FILE_LABELS_LENGTH]; // line numbers
 /* -------- .bss end 800bfe70 -------- */
 
 void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4);
-void crash_copy_control_inputs();
+void crash_copy_control_inputs(void);
 void crash_print_line(s32 x, s32 y, char *fmt, ...);
 
 /**
@@ -275,12 +269,13 @@ void crash_print_line(s32 x, s32 y, char *fmt, ...);
  * in which case this function does nothing.
  */
 void update_pi_manager_array(s32 index, s32 value) {
-    if (index >= 0 && index < PI_MANAGER_ARRAY_LENGTH) {
+    if (index >= 0 && index < ARRAYCOUNT_S(gPiManagerArray)) {
         gPiManagerArray[index] = value;
     }
 }
 
-void start_pi_manager_thread() {
+// official name: diCpuTraceInit (probably)
+void start_pi_manager_thread(void) {
     int i;
 
     osCreateThread(
@@ -294,7 +289,7 @@ void start_pi_manager_thread() {
 
     osStartThread(&gPiManagerThread);
 
-    for (i = 0; i < PI_MANAGER_ARRAY_LENGTH; ++i) {
+    for (i = 0; i < ARRAYCOUNT_S(gPiManagerArray); ++i) {
         gPiManagerArray[i] = -1;
     }
 }
@@ -312,18 +307,18 @@ void pi_manager_entry(void *arg) {
     osCreateMesgQueue(
         /*mq*/      &gPiManagerEventQueue,
         /*msg*/     &gPiManagerEventQueueBuffer[0],
-        /*count*/   PI_MANAGER_EVENT_QUEUE_LENGTH
+        /*count*/   ARRAYCOUNT(gPiManagerEventQueueBuffer)
     );
 
     osSetEventMesg(OS_EVENT_FAULT, &gPiManagerEventQueue, (OSMesg)PI_OS_EVENT_FAULT);
     osSetEventMesg(OS_EVENT_CPU_BREAK, &gPiManagerEventQueue, (OSMesg)PI_OS_EVENT_CPU_BREAK);
 
-    // Start system PI manager thread
+    // Start system PI manager thread (if not already started)
     osCreatePiManager(
         /*pri*/         OS_PRIORITY_PIMGR,
         /*cmdQ*/        &gPiManagerCmdQueue,
         /*cmdBuf*/      &gPiManagerCmdQueueBuffer[0],
-        /*cmdMsgCnt*/   PI_MANAGER_CMD_QUEUE_LENGTH
+        /*cmdMsgCnt*/   ARRAYCOUNT(gPiManagerCmdQueueBuffer)
     );
 
     while (TRUE) {
@@ -346,7 +341,7 @@ void pi_manager_entry(void *arg) {
     }
 }
 
-void stop_active_app_threads() {
+void stop_active_app_threads(void) {
     OSThread *thread;
 
     thread = __osGetActiveQueue();
@@ -361,7 +356,7 @@ void stop_active_app_threads() {
     }
 }
 
-void crash_controller_getter() {
+void crash_controller_getter(void) {
     // Find first faulted/broke active thread
     OSThread *thread = __osGetActiveQueue();
 
@@ -717,6 +712,7 @@ void crash_display_line(s32 x, s32 y, char *str) {
     osWritebackDCacheAll();
 }
 
+// official name: cpuXYPrintf (probably)
 void crash_print_line(s32 x, s32 y, char *fmt, ...) {
     s32 var;
     va_list ap;
