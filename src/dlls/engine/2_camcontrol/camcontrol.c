@@ -680,7 +680,7 @@ s32 CamControl_get_loaded_module_index(u16 dllID) {
 
 // offset: 0x1630 | func: 27
 void CamControl_free_module(s32 idx) {
-    dll_unload(sCamModules[idx]->dll);
+    dllFree(sCamModules[idx]->dll);
     mmFree(sCamModules[idx]);
     sCamModules[idx] = sCamModules[sCamModuleCount - 1];
     sCamModuleCount--;
@@ -706,7 +706,7 @@ s32 CamControl_load_module(u16 dllID, s32 doDeferredFree) {
     camModule = module;
     camModule->id = dllID;
     camModule->doDeferredFree = doDeferredFree;
-    camModule->dll = dll_load_deferred(dllID, 4);
+    camModule->dll = dllLoadDeferred(dllID, 4);
     return sCamModuleCount - 1;
 }
 

@@ -90,10 +90,10 @@ void SB_ShipHead_control(Object *self) {
     if (obj_recv_mesg(self, &outMesgID, &outSender, &outMesgArg)) {
         switch (outMesgID) {
         case 0x130001:
-            dll = dll_load_deferred(DLL_ID_194, 1);
+            dll = dllLoadDeferred(DLL_ID_194, 1);
             ((DLL_194*)dll)->vtbl->base.func0(self, 0, NULL, 1, -1, 8, 0);
             if (dll != NULL) {
-                dll_unload(dll);
+                dllFree(dll);
             }
             break;
         case 0x130002:

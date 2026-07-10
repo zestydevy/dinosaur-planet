@@ -78,9 +78,9 @@ void dll_488_setup(Object *self, WGSH_Shrine_Setup *setup, s32 arg2) {
     objdata->unk16 = 0;
     objdata->unk10 = 0xC8;
     objdata->unkE = 0xFA0;
-    sp30 = dll_load_deferred(DLL_ID_122, 1);
+    sp30 = dllLoadDeferred(DLL_ID_122, 1);
     objdata->unkC = sp30->vtbl->func0(self, 1, 0, 0x402, -1, 0);
-    dll_unload(sp30);
+    dllFree(sp30);
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
@@ -161,12 +161,12 @@ void dll_488_control(Object *self) {
                 objdata->unk13 = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                sp44 = dll_load_deferred(DLL_ID_147, 1);
+                sp44 = dllLoadDeferred(DLL_ID_147, 1);
                 sp44->vtbl->func0(self, 1, 0, 1, -1, 0);
-                dll_unload(sp44);
-                sp44 = dll_load_deferred(DLL_ID_148, 1);
+                dllFree(sp44);
+                sp44 = dllLoadDeferred(DLL_ID_148, 1);
                 sp44->vtbl->func0(self, 0, 0, 1, -1, 0);
-                dll_unload(sp44);
+                dllFree(sp44);
                 main_set_bits(BIT_DB_Entered_Shrine_1, 0);
                 gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
             }
@@ -236,9 +236,9 @@ void dll_488_control(Object *self) {
             main_set_bits(BIT_DB_Entered_Shrine_3, 1);
             main_set_bits(BIT_DB_Entered_Shrine_1, 1);
             main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-            sp44 = dll_load_deferred(DLL_ID_122, 1);
+            sp44 = dllLoadDeferred(DLL_ID_122, 1);
             objdata->unkC = sp44->vtbl->func0(self, 2, 0, 0x402, -1, 0);
-            dll_unload(sp44);
+            dllFree(sp44);
             main_set_bits(BIT_1D8, 0);
             objdata->unk12 = 0;
             objdata->unkE = 0xFA0;

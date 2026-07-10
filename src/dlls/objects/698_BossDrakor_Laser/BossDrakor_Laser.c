@@ -145,9 +145,9 @@ void dll_698_func_564(Object *arg0, s32 arg1, s32 arg2) {
     objdata->unk0 = arg2;
     objdata->unk2 = arg1;
     objdata->unk4 = 0;
-    sp30 = dll_load_deferred(DLL_ID_177, 1);
+    sp30 = dllLoadDeferred(DLL_ID_177, 1);
     sp30->vtbl->func0(arg0, 0, 0, 4, -1, 0);
-    dll_unload(sp30);
+    dllFree(sp30);
     objdata->unk10 = 1;
     objdata->unk12 = 1;
     objdata->unk8 = gDLL_6_AMSFX->vtbl->play(NULL, SOUND_98F, (u8) objdata->unk10, NULL, NULL, 0, NULL);

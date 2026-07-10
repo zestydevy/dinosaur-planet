@@ -65,79 +65,79 @@ void partfx_dtor(void* dll) {
     }
     
     if (_data_4 != NULL) {
-        dll_unload(_data_4);
+        dllFree(_data_4);
     }
     _data_4 = NULL;
     if (_data_8 != NULL) {
-        dll_unload(_data_8);
+        dllFree(_data_8);
     }
     _data_8 = NULL;
     if (_data_C != NULL) {
-        dll_unload(_data_C);
+        dllFree(_data_C);
     }
     _data_C = NULL;
     if (_data_10 != NULL) {
-        dll_unload(_data_10);
+        dllFree(_data_10);
     }
     _data_10 = NULL;
     if (_data_14 != NULL) {
-        dll_unload(_data_14);
+        dllFree(_data_14);
     }
     _data_14 = NULL;
     if (_data_18 != NULL) {
-        dll_unload(_data_18);
+        dllFree(_data_18);
     }
     _data_18 = NULL;
     if (_data_1C != NULL) {
-        dll_unload(_data_1C);
+        dllFree(_data_1C);
     }
     _data_1C = NULL;
     if (_data_20 != NULL) {
-        dll_unload(_data_20);
+        dllFree(_data_20);
     }
     _data_20 = NULL;
     if (_data_24 != NULL) {
-        dll_unload(_data_24);
+        dllFree(_data_24);
     }
     _data_24 = NULL;
     if (_data_28 != NULL) {
-        dll_unload(_data_28);
+        dllFree(_data_28);
     }
     _data_28 = NULL;
     if (_data_2C != NULL) {
-        dll_unload(_data_2C);
+        dllFree(_data_2C);
     }
     _data_2C = NULL;
     if (_data_30 != NULL) {
-        dll_unload(_data_30);
+        dllFree(_data_30);
     }
     _data_30 = NULL;
     if (_data_34 != NULL) {
-        dll_unload(_data_34);
+        dllFree(_data_34);
     }
     _data_34 = NULL;
     if (_data_38 != NULL) {
-        dll_unload(_data_38);
+        dllFree(_data_38);
     }
     _data_38 = NULL;
     if (_data_3C != NULL) {
-        dll_unload(_data_3C);
+        dllFree(_data_3C);
     }
     _data_3C = NULL;
     if (_data_40 != NULL) {
-        dll_unload(_data_40);
+        dllFree(_data_40);
     }
     _data_40 = NULL;
     if (_data_44 != NULL) {
-        dll_unload(_data_44);
+        dllFree(_data_44);
     }
     _data_44 = NULL;
     if (_data_48 != NULL) {
-        dll_unload(_data_48);
+        dllFree(_data_48);
     }
     _data_48 = NULL;
     if (_data_4C != NULL) {
-        dll_unload(_data_4C);
+        dllFree(_data_4C);
     }
     _data_4C = NULL;
     
@@ -171,7 +171,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[0] -= gUpdateRate;
         if (sDLLTimers[0] <= 0) {
             if (_data_4 != NULL) {
-                dll_unload(_data_4);
+                dllFree(_data_4);
             }
             _data_4 = NULL;
             sDLLTimers[0] = 0;
@@ -182,7 +182,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[1] -= gUpdateRate;
         if (sDLLTimers[1] <= 0) {
             if (_data_8 != NULL) {
-                dll_unload(_data_8);
+                dllFree(_data_8);
             }
             _data_8 = NULL;
             sDLLTimers[1] = 0;
@@ -193,7 +193,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[2] -= gUpdateRate;
         if (sDLLTimers[2] <= 0) {
             if (_data_C != NULL) {
-                dll_unload(_data_C);
+                dllFree(_data_C);
             }
             _data_C = NULL;
             sDLLTimers[2] = 0;
@@ -204,7 +204,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[3] -= gUpdateRate;
         if (sDLLTimers[3] <= 0) {
             if (_data_10 != NULL) {
-                dll_unload(_data_10);
+                dllFree(_data_10);
             }
             _data_10 = NULL;
             sDLLTimers[3] = 0;
@@ -215,7 +215,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[4] -= gUpdateRate;
         if (sDLLTimers[4] <= 0) {
             if (_data_14 != NULL) {
-                dll_unload(_data_14);
+                dllFree(_data_14);
             }
             _data_14 = NULL;
             sDLLTimers[4] = 0;
@@ -226,7 +226,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[5] -= gUpdateRate;
         if (sDLLTimers[5] <= 0) {
             if (_data_18 != NULL) {
-                dll_unload(_data_18);
+                dllFree(_data_18);
             }
             _data_18 = NULL;
             sDLLTimers[5] = 0;
@@ -237,7 +237,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[16] -= gUpdateRate;
         if (sDLLTimers[16] <= 0) {
             if (_data_1C != NULL) {
-                dll_unload(_data_1C);
+                dllFree(_data_1C);
             }
             _data_1C = NULL;
             sDLLTimers[16] = 0;
@@ -248,7 +248,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[6] -= gUpdateRate;
         if (sDLLTimers[6] <= 0) {
             if (_data_20 != NULL) {
-                dll_unload(_data_20);
+                dllFree(_data_20);
             }
             _data_20 = NULL;
             sDLLTimers[6] = 0;
@@ -259,7 +259,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[7] -= gUpdateRate;
         if (sDLLTimers[7] <= 0) {
             if (_data_24 != NULL) {
-                dll_unload(_data_24);
+                dllFree(_data_24);
             }
             _data_24 = NULL;
             sDLLTimers[7] = 0;
@@ -270,7 +270,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[8] -= gUpdateRate;
         if (sDLLTimers[8] <= 0) {
             if (_data_28 != NULL) {
-                dll_unload(_data_28);
+                dllFree(_data_28);
             }
             _data_28 = NULL;
             sDLLTimers[8] = 0;
@@ -281,7 +281,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[9] -= gUpdateRate;
         if (sDLLTimers[9] <= 0) {
             if (_data_2C != NULL) {
-                dll_unload(_data_2C);
+                dllFree(_data_2C);
             }
             _data_2C = NULL;
             sDLLTimers[9] = 0;
@@ -292,7 +292,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[10] -= gUpdateRate;
         if (sDLLTimers[10] <= 0) {
             if (_data_30 != NULL) {
-                dll_unload(_data_30);
+                dllFree(_data_30);
             }
             _data_30 = NULL;
             sDLLTimers[10] = 0;
@@ -303,7 +303,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[11] -= gUpdateRate;
         if (sDLLTimers[11] <= 0) {
             if (_data_34 != NULL) {
-                dll_unload(_data_34);
+                dllFree(_data_34);
             }
             _data_34 = NULL;
             sDLLTimers[11] = 0;
@@ -314,7 +314,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[12] -= gUpdateRate;
         if (sDLLTimers[12] <= 0) {
             if (_data_38 != NULL) {
-                dll_unload(_data_38);
+                dllFree(_data_38);
             }
             _data_38 = NULL;
             sDLLTimers[12] = 0;
@@ -325,7 +325,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[13] -= gUpdateRate;
         if (sDLLTimers[13] <= 0) {
             if (_data_3C != NULL) {
-                dll_unload(_data_3C);
+                dllFree(_data_3C);
             }
             _data_3C = NULL;
             sDLLTimers[13] = 0;
@@ -336,7 +336,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[14] -= gUpdateRate;
         if (sDLLTimers[14] <= 0) {
             if (_data_40 != NULL) {
-                dll_unload(_data_40);
+                dllFree(_data_40);
             }
             _data_40 = NULL;
             sDLLTimers[14] = 0;
@@ -347,7 +347,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[15] -= gUpdateRate;
         if (sDLLTimers[15] <= 0) {
             if (_data_44 != NULL) {
-                dll_unload(_data_44);
+                dllFree(_data_44);
             }
             _data_44 = NULL;
             sDLLTimers[15] = 0;
@@ -358,7 +358,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[17] -= gUpdateRate;
         if (sDLLTimers[17] <= 0) {
             if (_data_48 != NULL) {
-                dll_unload(_data_48);
+                dllFree(_data_48);
             }
             _data_48 = NULL;
             sDLLTimers[17] = 0;
@@ -369,7 +369,7 @@ void partfx_func_3A0(s32 arg0) {
         sDLLTimers[18] -= gUpdateRate;
         if (sDLLTimers[18] <= 0) {
             if (_data_4C != NULL) {
-                dll_unload(_data_4C);
+                dllFree(_data_4C);
             }
             _data_4C = NULL;
             sDLLTimers[18] = 0;
@@ -405,7 +405,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[0] = 2000;
         if (_data_4 == NULL) {
             sLoadedDLLCount += 1;
-            _data_4 = dll_load_deferred(DLL_ID_34, 2);
+            _data_4 = dllLoadDeferred(DLL_ID_34, 2);
         }
         return _data_4->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -413,7 +413,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[1] = 2000;
         if (_data_8 == NULL) {
             sLoadedDLLCount += 1;
-            _data_8 = dll_load_deferred(DLL_ID_35, 2);
+            _data_8 = dllLoadDeferred(DLL_ID_35, 2);
         }
         return _data_8->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -421,7 +421,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[2] = 2000;
         if (_data_C == NULL) {
             sLoadedDLLCount += 1;
-            _data_C = dll_load_deferred(DLL_ID_36, 2);
+            _data_C = dllLoadDeferred(DLL_ID_36, 2);
         }
         return _data_C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[2] | void
     }
@@ -429,7 +429,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[3] = 2000;
         if (_data_10 == NULL) {
             sLoadedDLLCount += 1;
-            _data_10 = dll_load_deferred(DLL_ID_37, 2);
+            _data_10 = dllLoadDeferred(DLL_ID_37, 2);
         }
         return _data_10->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -437,7 +437,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[4] = 2000;
         if (_data_14 == NULL) {
             sLoadedDLLCount += 1;
-            _data_14 = dll_load_deferred(DLL_ID_38, 2);
+            _data_14 = dllLoadDeferred(DLL_ID_38, 2);
         }
         return _data_14->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[3] | void
     }
@@ -445,7 +445,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[5] = 2000;
         if (_data_18 == NULL) {
             sLoadedDLLCount += 1;
-            _data_18 = dll_load_deferred(DLL_ID_39, 2);
+            _data_18 = dllLoadDeferred(DLL_ID_39, 2);
         }
         return _data_18->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = u8[1] | void
     }
@@ -453,7 +453,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[0x10] = 2000;
         if (_data_1C == NULL) {
             sLoadedDLLCount += 1;
-            _data_1C = dll_load_deferred(DLL_ID_50, 2);
+            _data_1C = dllLoadDeferred(DLL_ID_50, 2);
         }
         return _data_1C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -461,7 +461,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[6] = 2000;
         if (_data_20 == NULL) {
             sLoadedDLLCount += 1;
-            _data_20 = dll_load_deferred(DLL_ID_40, 2);
+            _data_20 = dllLoadDeferred(DLL_ID_40, 2);
         }
         return _data_20->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = s32 | void
     }
@@ -469,7 +469,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[8] = 2000;
         if (_data_28 == NULL) {
             sLoadedDLLCount += 1;
-            _data_28 = dll_load_deferred(DLL_ID_42, 2);
+            _data_28 = dllLoadDeferred(DLL_ID_42, 2);
         }
         return _data_28->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -477,7 +477,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[7] = 2000;
         if (_data_24 == NULL) {
             sLoadedDLLCount += 1;
-            _data_24 = dll_load_deferred(DLL_ID_41, 2);
+            _data_24 = dllLoadDeferred(DLL_ID_41, 2);
         }
         return _data_24->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -485,7 +485,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[9] = 2000;
         if (_data_2C == NULL) {
             sLoadedDLLCount += 1;
-            _data_2C = dll_load_deferred(DLL_ID_43, 2);
+            _data_2C = dllLoadDeferred(DLL_ID_43, 2);
         }
         return _data_2C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | void
     }
@@ -493,7 +493,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[10] = 2000;
         if (_data_30 == NULL) {
             sLoadedDLLCount += 1;
-            _data_30 = dll_load_deferred(DLL_ID_44, 2);
+            _data_30 = dllLoadDeferred(DLL_ID_44, 2);
         }
         return _data_30->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -501,7 +501,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[11] = 2000;
         if (_data_34 == NULL) {
             sLoadedDLLCount += 1;
-            _data_34 = dll_load_deferred(DLL_ID_45, 2);
+            _data_34 = dllLoadDeferred(DLL_ID_45, 2);
         }
         return _data_34->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | void
     }
@@ -509,7 +509,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[12] = 2000;
         if (_data_38 == NULL) {
             sLoadedDLLCount += 1;
-            _data_38 = dll_load_deferred(DLL_ID_47, 2);
+            _data_38 = dllLoadDeferred(DLL_ID_47, 2);
         }
         return _data_38->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | f32[3] | void
     }
@@ -517,7 +517,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[13] = 2000;
         if (_data_3C == NULL) {
             sLoadedDLLCount += 1;
-            _data_3C = dll_load_deferred(DLL_ID_48, 2);
+            _data_3C = dllLoadDeferred(DLL_ID_48, 2);
         }
         return _data_3C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[2] | void
     }
@@ -525,7 +525,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[14] = 2000;
         if (_data_40 == NULL) {
             sLoadedDLLCount += 1;
-            _data_40 = dll_load_deferred(DLL_ID_46, 2);
+            _data_40 = dllLoadDeferred(DLL_ID_46, 2);
         }
         return _data_40->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -533,7 +533,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[15] = 2000;
         if (_data_44 == NULL) {
             sLoadedDLLCount += 1;
-            _data_44 = dll_load_deferred(DLL_ID_49, 2);
+            _data_44 = dllLoadDeferred(DLL_ID_49, 2);
         }
         return _data_44->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = s32 | void
     }
@@ -541,7 +541,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[17] = 2000;
         if (_data_48 == NULL) {
             sLoadedDLLCount += 1;
-            _data_48 = dll_load_deferred(DLL_ID_51, 2);
+            _data_48 = dllLoadDeferred(DLL_ID_51, 2);
         }
         return _data_48->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | s32[1] | u8[1] | void
     }
@@ -549,7 +549,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[18] = 2000;
         if (_data_4C == NULL) {
             sLoadedDLLCount += 1;
-            _data_4C = dll_load_deferred(DLL_ID_52, 2);
+            _data_4C = dllLoadDeferred(DLL_ID_52, 2);
         }
         return _data_4C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[3] | void
     }

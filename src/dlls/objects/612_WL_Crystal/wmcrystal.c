@@ -100,16 +100,16 @@ void WL_Crystal_setup(Object* self, WL_Crystal_Setup* objSetup, s32 arg2) {
 
         self->modelInstIdx = objSetup->modelIdx;        
         if (self->modelInstIdx == WMSun_Core) {
-            objData->sunFX = dll_load_deferred(0x2012, 1);
+            objData->sunFX = dllLoadDeferred(0x2012, 1);
             objData->yawSpeed = rand_next(300, 600);
             objData->rollSpeed = rand_next(300, 600);
-            data_sun_modGFX = dll_load_deferred(0x1036, 1);
+            data_sun_modGFX = dllLoadDeferred(0x1036, 1);
         } else {
             if (self->modelInstIdx == WMSun_Middle_Shell) {
                 objData->yawSpeed = rand_next(500, 800);
                 objData->rollSpeed = rand_next(500, 800);
             } else if (self->modelInstIdx == WMSun_Outer_Shell) {
-                objData->sunFX = dll_load_deferred(0x2012, 1);
+                objData->sunFX = dllLoadDeferred(0x2012, 1);
                 objData->yawSpeed = rand_next(700, 1000);
                 objData->rollSpeed = rand_next(700, 1000);
             }
@@ -476,7 +476,7 @@ void WL_Crystal_free(Object* self, s32 arg1) {
     
     //Free WMsun's flare modgfx DLL
     if (data_sun_modGFX && (self->id == OBJ_WMsun) && (self->modelInstIdx == WMSun_Core)) {
-        dll_unload(data_sun_modGFX);
+        dllFree(data_sun_modGFX);
         data_sun_modGFX = NULL;
     }
     
@@ -488,7 +488,7 @@ void WL_Crystal_free(Object* self, s32 arg1) {
     
     //Free WMsun's projgfx DLL
     if (objData->sunFX) {
-        dll_unload(objData->sunFX);
+        dllFree(objData->sunFX);
     }
     objData->sunFX = NULL;
 }

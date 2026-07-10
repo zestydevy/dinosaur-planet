@@ -11,10 +11,10 @@ s32 gDLLCount;
 u32 *gFile_DLLSIMPORTTAB;
 /* -------- .bss end 800a7d30 -------- */
 
-void dll_relocate(DLLFile *dll);
-DLLFile *dll_load_from_tab(u16 tabidx, s32 *sizeOut);
+void dllRelocate(DLLFile *dll);
+DLLFile *dllLoadFromTab(u16 tabidx, s32 *sizeOut);
 
-void init_dll_system(void) {
+void dllInit(void) {
     queue_alloc_load_file((void**)&gFile_DLLS_TAB, DLLS_TAB);
     queue_alloc_load_file((void**)&gFile_DLLSIMPORTTAB, DLLSIMPORTTAB_BIN);
 
@@ -31,7 +31,7 @@ void init_dll_system(void) {
     }
 }
 
-s32 find_executing_dll(u32 pc, void **start, void **end) {
+s32 dllFindExecutingDLL(u32 pc, void **start, void **end) {
     s32 i;
 
     for (i = 0; i < gLoadedDLLCount; i++) {
@@ -60,17 +60,17 @@ s32 find_executing_dll(u32 pc, void **start, void **end) {
     return DLL_NONE;
 }
 
-void replace_loaded_dll_list(DLLState list[], s32 count) {
+void dllReplaceLoadedDLLs(DLLState list[], s32 count) {
     gLoadedDLLCount = count;
     gLoadedDLLList = list;
 }
 
-DLLState *get_loaded_dlls(s32 *outLoadedDLLCount) {
+DLLState *dllGetLoadedDLLs(s32 *outLoadedDLLCount) {
     *outLoadedDLLCount = gLoadedDLLCount;
     return gLoadedDLLList;
 }
 
-void *dll_load_deferred(u16 idOrIdx, u16 exportCount) {
+void *dllLoadDeferred(u16 idOrIdx, u16 exportCount) {
     DLLFile *dll;
     DLLState *state;
     void *dllInterfacePtr;
@@ -96,7 +96,7 @@ void *dll_load_deferred(u16 idOrIdx, u16 exportCount) {
     return dllInterfacePtr;
 }
 
-void *dll_load(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
+void *dllLoad(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
     DLLFile *dll;
     u32 i;
     s32 totalSize;
@@ -125,7 +125,7 @@ void *dll_load(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
         }
     }
 
-    dll = dll_load_from_tab(idOrIdx, &totalSize);
+    dll = dllLoadFromTab(idOrIdx, &totalSize);
     if (!dll) {
         return NULL;
     }
@@ -170,7 +170,7 @@ void *dll_load(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
 }
 
 // unused
-void dll_load_from_bytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSize) {
+void dllLoadFromBytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSize) {
     DLLFile *dll;
     u32 i;
 
@@ -188,7 +188,7 @@ void dll_load_from_bytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSi
         bzero((void *)((u32)dll + dllBytesSize), bssSize);
     }
     
-    dll_relocate(dll);
+    dllRelocate(dll);
     osInvalICache(dll, 0x4000);
     osInvalDCache(dll, 0x4000);
 
@@ -215,7 +215,7 @@ void dll_load_from_bytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSi
     dll->ctor(dll);
 }
 
-s32 dll_unload(void *dllInterfacePtr) {
+s32 dllFree(void *dllInterfacePtr) {
     DLLFile *dll;
     u16 idx;
     u32 *dllClearAddr;
@@ -267,7 +267,7 @@ s32 dll_unload(void *dllInterfacePtr) {
     return FALSE;
 }
 
-s32 dll_throw_fault(void) {
+s32 dllThrowFault(void) {
     STUBBED_PRINTF("warning: using default DLL entry point.\n");
     
     *((volatile u8*)0) = 0;
@@ -275,7 +275,7 @@ s32 dll_throw_fault(void) {
     return 0;
 }
 
-DLLFile *dll_load_from_tab(u16 tabidx, s32 *sizeOut) {
+DLLFile *dllLoadFromTab(u16 tabidx, s32 *sizeOut) {
     DLLFile * dll;
     s32 offset;
     s32 dllSize; // t0
@@ -297,7 +297,7 @@ DLLFile *dll_load_from_tab(u16 tabidx, s32 *sizeOut) {
             bzero((void*)((u32)dll + dllSize), bssSize);
         }
 
-        dll_relocate(dll);
+        dllRelocate(dll);
         osInvalICache(dll, 0x4000);
         osInvalDCache(dll, 0x4000);
 
@@ -307,7 +307,7 @@ DLLFile *dll_load_from_tab(u16 tabidx, s32 *sizeOut) {
     return dll;
 }
 
-void dll_relocate(DLLFile *dll) {
+void dllRelocate(DLLFile *dll) {
     u32 *tmp_target;
     u32 *exports;
     u32 *target;
@@ -369,7 +369,7 @@ void dll_relocate(DLLFile *dll) {
 
 static const char str_80098854[] = "DLL %d usage %d %08x:%08x\n";
 
-void dll_unused_8000C648(void) {
+void dllUnusedFunc8000C648(void) {
     s32 v0 = 0;
     s32 count = gLoadedDLLCount;
 

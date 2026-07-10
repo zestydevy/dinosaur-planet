@@ -56,7 +56,7 @@ void Spirit_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
         id == OBJ_CCSH_SpiritPriz || 
         id == OBJ_WGSH_SpiritPriz || 
         id == OBJ_NWSH_SpiritPriz) {   
-        data_modGfx = dll_load_deferred(0x102D, 1);
+        data_modGfx = dllLoadDeferred(0x102D, 1);
     }
 }
 
@@ -221,7 +221,7 @@ void Spirit_free(Object* self, s32 arg1) {
         id == OBJ_CCSH_SpiritPriz || 
         id == OBJ_WGSH_SpiritPriz || 
         id == OBJ_NWSH_SpiritPriz) {
-        dll_unload(data_modGfx);
+        dllFree(data_modGfx);
     }
     if ((arg1 == 0) && data_lfxEmitter) {
         obj_destroy_object(data_lfxEmitter);

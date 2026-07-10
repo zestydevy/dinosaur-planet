@@ -73,11 +73,11 @@ void dll_257_control(Object* self) {
     setup = (Tesla_Setup*)self->setup;
     var_s0 = NULL;
     if (objdata->unk0 == NULL) {
-        objdata->unk0 = (DLL_IProjgfx*)dll_load_deferred(DLL_ID_205, 1U);
+        objdata->unk0 = (DLL_IProjgfx*)dllLoadDeferred(DLL_ID_205, 1U);
         if (objdata->unk0 == NULL) { return; }
     }
     if (objdata->unk4 == NULL) {
-        objdata->unk4 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_157, 1U);
+        objdata->unk4 = (DLL_IModgfx*)dllLoadDeferred(DLL_ID_157, 1U);
         if (objdata->unk4 == NULL) { return; }
     }
 
@@ -235,11 +235,11 @@ void dll_257_free(Object* self, s32 a1) {
     objdata = self->data;
     projgfxDLL = objdata->unk0;
     if (projgfxDLL != NULL) {
-        dll_unload(projgfxDLL);
+        dllFree(projgfxDLL);
     }
     modgfxDLL = objdata->unk4;
     if (modgfxDLL != NULL) {
-        dll_unload(modgfxDLL);
+        dllFree(modgfxDLL);
     }
     obj_free_object_type(self, OBJTYPE_Tesla);
 }

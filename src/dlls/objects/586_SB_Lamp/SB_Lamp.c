@@ -48,7 +48,7 @@ void SB_Lamp_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->unk24 = 600.0f;
     objdata->unk1C = 0.5f;
     self->animCallback = SB_Lamp_anim_callback;
-    sDLL107 = dll_load(DLL_ID_107, 1, FALSE);
+    sDLL107 = dllLoad(DLL_ID_107, 1, FALSE);
 }
 
 // offset: 0xB8 | func: 1 | export: 1
@@ -165,7 +165,7 @@ void SB_Lamp_free(Object *self, s32 a1) {
         obj_destroy_object(objdata->obj);
     }
     objdata->obj = NULL;
-    dll_unload(sDLL107);
+    dllFree(sDLL107);
 }
 
 // offset: 0x6C8 | func: 6 | export: 5

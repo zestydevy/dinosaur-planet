@@ -46,20 +46,20 @@ void dll_602_setup(Object* self, DLL602_Setup* setup, s32 arg2) {
     objdata->unk10 = setup->unk19;
     sp34.transl.y = -2.0f;
     if (objdata->unk10 == 0) {
-        sp4C = dll_load_deferred(DLL_ID_121, 1U);
+        sp4C = dllLoadDeferred(DLL_ID_121, 1U);
         self->srt.scale *= 0.5f;
         sp4C->vtbl->func0(self, 1, &sp34, 0x10004, -1, 0);
     } else if (objdata->unk10 == 0x7F) {
-        sp4C = dll_load_deferred(DLL_ID_121, 1U);
+        sp4C = dllLoadDeferred(DLL_ID_121, 1U);
         self->srt.scale *= 0.5f;
         sp4C->vtbl->func0(self, 2, &sp34, 0x10004, -1, 0);
     } else {
-        sp4C = dll_load_deferred(DLL_ID_115, 1U);
+        sp4C = dllLoadDeferred(DLL_ID_115, 1U);
         self->srt.scale *= 0.5f;
         sp4C->vtbl->func0(self, 2, &sp34, 0x10004, -1, 0);
     }
     self->srt.scale *= 2.0f;
-    dll_unload(sp4C);
+    dllFree(sp4C);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 

@@ -96,7 +96,7 @@ void crash_thread_entry(void *arg) {
     check_video_mode_crash_and_clear_framebuffer();
 
     // Display state from before the last NMI reset
-    replace_loaded_dll_list(gCrashDllListCopy->loadedDllList, gCrashDllListCopy->loadedDllCount);
+    dllReplaceLoadedDLLs(gCrashDllListCopy->loadedDllList, gCrashDllListCopy->loadedDllCount);
     some_crash_print(threads.threads, 2, 0);
 
     // Halt
@@ -135,9 +135,9 @@ s32 crash_nmi_handler() {
     }
 
     // Get current list of loaded DLLs
-    gCrashDllListCopy->loadedDllList = get_loaded_dlls(&gCrashDllListCopy->loadedDllCount);
+    gCrashDllListCopy->loadedDllList = dllGetLoadedDLLs(&gCrashDllListCopy->loadedDllCount);
     gCrashDllListCopy->loaded = TRUE;
 
     // Return ID of the DLL that the main thread was executing (if any)
-    return find_executing_dll(CRASH_MAIN_THREAD_COPY->context.pc, &dllStart, &dllEnd);
+    return dllFindExecutingDLL(CRASH_MAIN_THREAD_COPY->context.pc, &dllStart, &dllEnd);
 }

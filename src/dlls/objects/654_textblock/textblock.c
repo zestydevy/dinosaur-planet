@@ -50,7 +50,7 @@ void Textblock_setup(Object* self, Textblock_Setup* objSetup, s32 arg2) {
     objData->gamebitInteractable = objSetup->gamebitInteractable;
     objData->textureBlend = 0;
     objData->textureBlendSpeed = 4;
-    modGfxDLL = dll_load_deferred(DLL_ID_107, 1);
+    modGfxDLL = dllLoadDeferred(DLL_ID_107, 1);
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
@@ -69,7 +69,7 @@ void Textblock_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 // offset: 0x138 | func: 4 | export: 4
 void Textblock_free(Object* self, s32 arg1) {
     if (modGfxDLL != NULL) {
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
     }
     gDLL_13_Expgfx->vtbl->func5(self);
 }

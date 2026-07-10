@@ -43,7 +43,7 @@ void dll_320_setup(Object* self, DLL320_Setup* setup, s32 arg2) {
     if (sp20 < 0.05f) {
         sp20 = 0.05f;
     }
-    _data_0 = dll_load_deferred(0x1003U, 1U);
+    _data_0 = dllLoadDeferred(0x1003U, 1U);
     if (self->shadow != NULL) {
         self->shadow->flags |= 0x810;
         self->shadow->scale = self->def->shadowScale * sp20; 
@@ -133,7 +133,7 @@ void dll_320_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0x498 | func: 4 | export: 4
 void dll_320_free(Object* self, s32 a1) {
-    dll_unload( _data_0);
+    dllFree( _data_0);
 }
 
 // offset: 0x4DC | func: 5 | export: 5

@@ -401,7 +401,7 @@ void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     ktdata->segB_Y = ktdata->segEndCW_Y;
     ktdata->segB_Z = ktdata->segEndCW_Z;
     ktdata->health = 4;
-    _data_E4 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_106, 1);
+    _data_E4 = (DLL_IModgfx*)dllLoadDeferred(DLL_ID_106, 1);
 }
 #endif
 
@@ -480,7 +480,7 @@ void dll_702_free(Object* self, s32 a1) {
     gDLL_33_BaddieControl->vtbl->free(self, sBaddie, 0);
     generic_stack_free(sKTData->stateStack);
     if (_data_E4 != NULL) {
-        dll_unload(_data_E4);
+        dllFree(_data_E4);
     }
     _data_E4 = NULL;
 }

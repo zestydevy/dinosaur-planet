@@ -326,7 +326,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
                 objdata->unk80 = 1;
             break;
         case 3:
-            objdata->dll = tempDll = dll_load_deferred(DLL_ID_139, 1);
+            objdata->dll = tempDll = dllLoadDeferred(DLL_ID_139, 1);
             objects = get_world_objects(&objIndex, &objCount);
             for (i = objIndex; i < objCount; i++) {
                 if (objects[i]->id == OBJ_SB_ShipHead) {
@@ -340,7 +340,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
             objdata->unk82 = 0;
             break;
         case 4:
-            dll_unload(objdata->dll);
+            dllFree(objdata->dll);
             objdata->dll = NULL;
             break;
         case 5:

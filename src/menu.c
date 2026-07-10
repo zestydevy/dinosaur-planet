@@ -120,12 +120,12 @@ void menu_do_menu_swap() {
         gPreviousMenuID = gCurrentMenuID;
 
         if (gActiveMenuDLL != NULL) {
-            dll_unload(gActiveMenuDLL);
+            dllFree(gActiveMenuDLL);
             gActiveMenuDLL = NULL;
         }
 
         if (gMenuDLLIDs[gNextMenuID] != -1) {
-            gActiveMenuDLL = (DLL_IMenu*)dll_load_deferred(gMenuDLLIDs[gNextMenuID], 1);
+            gActiveMenuDLL = (DLL_IMenu*)dllLoadDeferred(gMenuDLLIDs[gNextMenuID], 1);
         } else {
             gActiveMenuDLL = NULL;
             gNextMenuID = 0;

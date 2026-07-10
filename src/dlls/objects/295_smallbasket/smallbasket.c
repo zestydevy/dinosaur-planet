@@ -112,7 +112,7 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
         objData->unk4 = setup->unk1C * 60;
     }
 
-    dModGfxDLL = dll_load_deferred(DLL_ID_107, 1);
+    dModGfxDLL = dllLoadDeferred(DLL_ID_107, 1);
 
     objData->shakeSoundTimer = rand_next(0, 100) + 300;
     objData->storedItemCount = setup->storedItemQuantity;
@@ -400,7 +400,7 @@ void smallbasket_free(Object* self, s32 arg1) {
     SmallBasket_Data* objdata = self->data;
 
     gDLL_14_Modgfx->vtbl->func5(self);
-    dll_unload(dModGfxDLL);
+    dllFree(dModGfxDLL);
 
     if (objdata->soundHandle) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);

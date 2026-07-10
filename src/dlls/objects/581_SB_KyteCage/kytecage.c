@@ -192,9 +192,9 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.transl.z += gWorldZ;
                 }
                 objData->createLightning = 0;
-                dll = dll_load_deferred(0x200D, 1);
+                dll = dllLoadDeferred(0x200D, 1);
                 ((DLL_Unknown*)dll)->vtbl->func[0].withSevenArgs((s32)self, 0, (s32)&boneTransform, 1, -1, 0xD, 0);
-                dll_unload(dll);
+                dllFree(dll);
 
             //Create a lightning trail across deck (at a random angle)
             } else if (objData->createLightningU == 2) {
@@ -228,9 +228,9 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.transl.z += gWorldZ;
                 }
                 objData->createLightning = 0;
-                dll = dll_load_deferred(0x200F, 1);
+                dll = dllLoadDeferred(0x200F, 1);
                 ((DLL_Unknown*)dll)->vtbl->func[0].withSevenArgs((s32)self, 0, (s32)&boneTransform, 1, -1, 0xF, 0);
-                dll_unload(dll);
+                dllFree(dll);
             }
         }
     }

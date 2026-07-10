@@ -92,7 +92,7 @@ void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
     }
 
     objData->maskSpeed = sMaskSpeeds[0];
-    dModGfxDLL = dll_load_deferred(DLL_ID_165, 1);
+    dModGfxDLL = dllLoadDeferred(DLL_ID_165, 1);
 }
 
 // offset: 0xD4 | func: 1 | export: 1
@@ -197,7 +197,7 @@ void DIMTent_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 // offset: 0x430 | func: 4 | export: 4
 void DIMTent_free(s32 self, s32 arg1) {
     if (dModGfxDLL) {
-        dll_unload(dModGfxDLL);
+        dllFree(dModGfxDLL);
     }
 }
 

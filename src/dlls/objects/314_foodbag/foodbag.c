@@ -85,7 +85,7 @@ void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     objData = self->data;
 
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
-    objData->dllPutdown = dll_load_deferred(56, 10);
+    objData->dllPutdown = dllLoadDeferred(56, 10);
     objData->placedObjects.nextIndex = 0;
 
     for (index = 0; index < 20; index++){
@@ -208,7 +208,7 @@ void Foodbag_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 // offset: 0x524 | func: 4 | export: 4
 void Foodbag_free(Object *self, s32 arg1) {
     Foodbag_Data *objData = self->data;
-    dll_unload(objData->dllPutdown);
+    dllFree(objData->dllPutdown);
 }
 
 // offset: 0x56C | func: 5 | export: 5

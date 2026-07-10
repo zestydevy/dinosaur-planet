@@ -602,7 +602,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {
-        objHeader.dll = (DLL_IObject*)dll_load(def->dllID, 6, 1);
+        objHeader.dll = (DLL_IObject*)dllLoad(def->dllID, 6, 1);
         // "OBJECTS: warning DLL load failed\n" (default.dol)
     }
 
@@ -1509,7 +1509,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
         update_pi_manager_array(4, obj->id);
         obj->dll->vtbl->free(obj, onlySelf);
         update_pi_manager_array(4, -1);
-        dll_unload(obj->dll);
+        dllFree(obj->dll);
     }
 
     gDLL_6_AMSFX->vtbl->free_object(obj);

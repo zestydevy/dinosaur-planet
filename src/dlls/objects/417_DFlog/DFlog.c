@@ -86,7 +86,7 @@ void dll_417_setup(Object* self, DFlog_Setup* setup, s32 arg2) {
     s32 i;
 
     objdata = (DFlog_Data*)self->data;
-    _data_0 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_136, 1);
+    _data_0 = (DLL_IModgfx*)dllLoadDeferred(DLL_ID_136, 1);
     obj_add_object_type(self, OBJTYPE_Vehicle);
     self->animCallback = dll_417_func_3B8;
     self->srt.yaw = (setup->unk18 & 0xFFFF) << 8;
@@ -144,7 +144,7 @@ void dll_417_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x338 | func: 4 | export: 4
 void dll_417_free(Object *self, s32 a1) {
-    dll_unload(_data_0);
+    dllFree(_data_0);
     obj_free_object_type(self, OBJTYPE_Vehicle);
 }
 

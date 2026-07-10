@@ -80,9 +80,9 @@ void WMvein_control(Object* self) {
     if (distance <= objdata->fxRadius) {
         if (objdata->effectCreated == FALSE) {
 
-            modGfxDLL = dll_load_deferred(DLL_ID_MODGFX_BASE + objdata->modGfxDLLIndex, 1);
+            modGfxDLL = dllLoadDeferred(DLL_ID_MODGFX_BASE + objdata->modGfxDLLIndex, 1);
             objdata->modgfxReturnVal = ((DLL_IModgfx*)modGfxDLL)->vtbl->func0(self, objdata->modGfxFuncArg1, 0, 1, -1, 0);
-            dll_unload(modGfxDLL);
+            dllFree(modGfxDLL);
             objdata->effectCreated = TRUE;
         }
         if (objdata->animateRoll == TRUE) {

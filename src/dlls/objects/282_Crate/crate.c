@@ -51,8 +51,8 @@ void crate_setup(Object* self, Crate_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     
-    dModGfxDLLDestroyed = dll_load(DLL_ID_107, 1, 0);
-    dModGfxDLLDamaged = dll_load(DLL_ID_106, 1, 0);
+    dModGfxDLLDestroyed = dllLoad(DLL_ID_107, 1, 0);
+    dModGfxDLLDamaged = dllLoad(DLL_ID_106, 1, 0);
     
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
@@ -216,8 +216,8 @@ void crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **
 // offset: 0x728 | func: 4 | export: 4
 void crate_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
-    dll_unload(dModGfxDLLDestroyed);
-    dll_unload(dModGfxDLLDamaged);
+    dllFree(dModGfxDLLDestroyed);
+    dllFree(dModGfxDLLDamaged);
     obj_free_object_type(self, OBJTYPE_63);
 }
 

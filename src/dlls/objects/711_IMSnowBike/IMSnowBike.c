@@ -168,7 +168,7 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
     objdata->unk3CC = (s16) ((setup->unk18 & 0xFFFF) << 8);
     objdata->unk2F4 = 0;
     objdata->unk2F8 = 0;
-    _data_A8 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_106, 1);
+    _data_A8 = (DLL_IModgfx*)dllLoadDeferred(DLL_ID_106, 1);
     self->srt.yaw = objdata->unk3CC;
     self->animCallback = dll_711_func_3598;
     gDLL_27->vtbl->init(&objdata->unk4C, 
@@ -321,11 +321,11 @@ void dll_711_control(Object *self) {
             objdata->unk3C0 = 0;
         }
         if (objdata->unk2F4 != NULL) {
-            dll_unload(objdata->unk2F4);
+            dllFree(objdata->unk2F4);
             objdata->unk2F4 = NULL;
         }
         if (objdata->unk2F8 != NULL) {
-            dll_unload(objdata->unk2F8);
+            dllFree(objdata->unk2F8);
             objdata->unk2F8 = NULL;
             return;
         }
@@ -536,15 +536,15 @@ void dll_711_free(Object *self, s32 a1) {
         objdata->unk3C0 = 0;
     }
     if (objdata->unk2F4 != NULL) {
-        dll_unload(objdata->unk2F4);
+        dllFree(objdata->unk2F4);
     }
     objdata->unk2F4 = 0;
     if (objdata->unk2F8 != NULL) {
-        dll_unload(objdata->unk2F8);
+        dllFree(objdata->unk2F8);
     }
     objdata->unk2F8 = 0;
     if (_data_A8 != NULL) {
-        dll_unload(_data_A8);
+        dllFree(_data_A8);
     }
     obj_free_object_type(self, OBJTYPE_Vehicle);
     tex_free(_bss_0);
@@ -1507,10 +1507,10 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
         }
     }
     if (objdata->unk2F4 == NULL) {
-        objdata->unk2F4 = dll_load_deferred(DLL_ID_141, 1);
+        objdata->unk2F4 = dllLoadDeferred(DLL_ID_141, 1);
     }
     if (objdata->unk2F8 == NULL) {
-        objdata->unk2F8 = dll_load_deferred(DLL_ID_142, 1);
+        objdata->unk2F8 = dllLoadDeferred(DLL_ID_142, 1);
     }
     if (objdata->unk3D6 <= 0) {
         sp54 = 0.7f;

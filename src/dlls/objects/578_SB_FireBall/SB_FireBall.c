@@ -29,9 +29,9 @@ void SB_FireBall_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SB_FireBall_Data *objdata;
 
     objdata = self->data;
-    dll = dll_load_deferred(DLL_ID_133, 1);
+    dll = dllLoadDeferred(DLL_ID_133, 1);
     ((DLL_133*)dll)->vtbl->base.func0(self, 4, NULL, 0x10000 | 0x2, -1, NULL);
-    dll_unload(dll);
+    dllFree(dll);
     self->unkDC = 1200;
     objdata->unk6 = 0;
     objdata->velocitySaved = FALSE;

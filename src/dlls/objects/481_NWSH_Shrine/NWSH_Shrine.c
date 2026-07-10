@@ -80,9 +80,9 @@ void dll_481_setup(Object *self, NWSH_Shrine_Setup *setup, s32 arg2) {
     objdata->unk16 = 0;
     objdata->unkE = 0x12C;
     objdata->unk10 = 0x514;
-    sp30 = dll_load_deferred(DLL_ID_122, 1);
+    sp30 = dllLoadDeferred(DLL_ID_122, 1);
     objdata->unkC = sp30->vtbl->func0(self, 3, 0, 0x402, -1, 0);
-    dll_unload(sp30);
+    dllFree(sp30);
 }
 
 // offset: 0x1E8 | func: 1 | export: 1

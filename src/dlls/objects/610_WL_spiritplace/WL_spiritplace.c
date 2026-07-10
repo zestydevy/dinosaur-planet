@@ -61,10 +61,10 @@ void WL_spiritplace_setup(Object *self, WL_spiritplace_Setup *objsetup, s32 arg2
     objdata->bit2 = objsetup->bit2;
     objdata->mode = objsetup->mode;
     if (objdata->mode == 0) {
-        _data_0 = dll_load_deferred(DLL_ID_155, 1);
-        _data_4 = dll_load_deferred(DLL_ID_149, 1);
+        _data_0 = dllLoadDeferred(DLL_ID_155, 1);
+        _data_4 = dllLoadDeferred(DLL_ID_149, 1);
     } else if (objdata->mode == 2) {
-        _data_0 = dll_load_deferred(DLL_ID_155, 1);
+        _data_0 = dllLoadDeferred(DLL_ID_155, 1);
     }
 }
 
@@ -121,10 +121,10 @@ void WL_spiritplace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 void WL_spiritplace_free(Object *self, s32 arg1) {
     WL_spiritplace_Data *objdata = self->data;
     if (objdata->mode == 0) {
-        dll_unload(_data_0);
-        dll_unload(_data_4);
+        dllFree(_data_0);
+        dllFree(_data_4);
     } else if (objdata->mode == 0) { // @bug: should be 2
-        dll_unload(_data_0);
+        dllFree(_data_0);
     }
 }
 

@@ -41,7 +41,7 @@ void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
     objdata->speed = rand_next(5, 20) * 0.1f;
     self->srt.transl.y = setup->unk1A + setup->base.y;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-    sDLL_182 = dll_load_deferred(DLL_ID_182, 1);
+    sDLL_182 = dllLoadDeferred(DLL_ID_182, 1);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3A3, NULL, PARTFXFLAG_800 | PARTFXFLAG_2, -1, NULL);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3A4, NULL, PARTFXFLAG_800 | PARTFXFLAG_2, -1, NULL);
 }
@@ -79,7 +79,7 @@ void VFP_lavastar_free(Object* self, s32 arg1) {
     objdata = (VFP_lavastar_Data*)self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
     gDLL_14_Modgfx->vtbl->func4(self);
-    dll_unload(sDLL_182);
+    dllFree(sDLL_182);
     gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     objdata->soundHandle = 0;
 }

@@ -60,9 +60,9 @@ void DRExplodeDoor_control(Object* self) {
     
     //Explode when gamebit set (only allowed when objSetup->mode is 2)
     if ((objSetup->mode == DRExplodeDoor_MODE_Enable_Control_Function) && main_get_bits(objSetup->gamebitExplode)) {
-        dll = dll_load_deferred(DLL_ID_107, 1);
+        dll = dllLoadDeferred(DLL_ID_107, 1);
         dll->vtbl->func0(self, 16, NULL, 2, -1, &modGfxArg);
-        dll_unload(dll);
+        dllFree(dll);
         
         gDLL_6_AMSFX->vtbl->play(self, SOUND_8C7_Explosion_High, MAX_VOLUME, 0, 0, 0, 0);
         obj_free_tick(self);
@@ -85,9 +85,9 @@ void DRExplodeDoor_update(Object* self) {
         bzero(&modGfxTrans, sizeof(SRT));
         modGfxTrans.scale = objSetup->explosionScale * 0.03125f;
         
-        modGfxDLL = dll_load_deferred(DLL_ID_180, 1);
+        modGfxDLL = dllLoadDeferred(DLL_ID_180, 1);
         modGfxDLL->vtbl->func0(self, objSetup->modGfxArg1, &modGfxTrans, 2, -1, &modGfxArg);
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
         
         gDLL_6_AMSFX->vtbl->play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, 0, 0, 0, 0);
         self->stateFlags |= OBJSTATE_UPDATE_DISABLED;

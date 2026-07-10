@@ -174,7 +174,7 @@ void WLgalleon_free(Object* self, s32 arg1) {
     }
 
     if (dataDLLUnused) {
-        dll_unload(dataDLLUnused);
+        dllFree(dataDLLUnused);
         dataDLLUnused = NULL;
     }
 }

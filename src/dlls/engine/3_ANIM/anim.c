@@ -1807,12 +1807,12 @@ static void anim_process_envfx_queue(AnimObj_Data* st, Object* actor, u8 skippin
             break;
         case ANIM_EVT_ENVFX_PROJGFX:
             if (skipping) { break; }
-            projgfx = dll_load_deferred((value + DLL_ID_PROJGFX_BASE), 1);
+            projgfx = dllLoadDeferred((value + DLL_ID_PROJGFX_BASE), 1);
             if (projgfx != NULL) {
                 projgfx->vtbl->func0(envfxActor, 0, 0, 1, -1, value, 0);
             }
             if (projgfx != NULL) {
-                dll_unload(projgfx);
+                dllFree(projgfx);
             }
             break;
         case ANIM_EVT_ENVFX_SCREEN_FX:

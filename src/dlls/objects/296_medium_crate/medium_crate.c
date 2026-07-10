@@ -86,8 +86,8 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
 
     objdata->unk15 = setup->unk19;
 
-    _data_0 = dll_load(DLL_ID_107, 1, /*bRunConstructor=*/FALSE);
-    _data_4 = dll_load(DLL_ID_106, 1, /*bRunConstructor=*/FALSE);
+    _data_0 = dllLoad(DLL_ID_107, 1, /*bRunConstructor=*/FALSE);
+    _data_4 = dllLoad(DLL_ID_106, 1, /*bRunConstructor=*/FALSE);
 
     objdata->unk8 = 0;
     objdata->unkE = rand_next(0, 100) + 300;
@@ -293,8 +293,8 @@ void medium_crate_free(Object *self, s32 param2) {
 
     gDLL_14_Modgfx->vtbl->func5(self);
 
-    dll_unload(_data_0);
-    dll_unload(_data_4);
+    dllFree(_data_0);
+    dllFree(_data_4);
 
     if (objdata->unk8 != 0) {
         gDLL_6_AMSFX->vtbl->stop(objdata->unk8);

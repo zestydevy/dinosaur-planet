@@ -163,7 +163,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
             // Is it the responsibility of the script to handle the previous state?
             s0 = cmd->param1 + 81; // scripts are DLLs 81-83
             if (s0 < 84 && param3 == 0) {
-                objdata->scripts[i] = dll_load_deferred(s0, 0);
+                objdata->scripts[i] = dllLoadDeferred(s0, 0);
             }
             // "TRIGGER: warning Script overflow\n"
         }
@@ -363,7 +363,7 @@ void trigger_free(Object *self, s32 param2) {
             gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[i]);
         }
         if (objdata->scripts[i] != NULL) {
-            dll_unload(objdata->scripts[i]);
+            dllFree(objdata->scripts[i]);
         }
 
         objdata->soundHandles[i] = 0;

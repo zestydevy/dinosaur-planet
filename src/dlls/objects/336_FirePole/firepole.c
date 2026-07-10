@@ -33,9 +33,9 @@ void dll_336_setup(Object* self, DLL336Setup* setup, s32 arg2) {
             self->srt.scale = 0.1f;
         }
         sp30.transl.y = 2.0f;
-        sp48 = dll_load_deferred(0x1011, 1);
+        sp48 = dllLoadDeferred(0x1011, 1);
         sp48->vtbl->func0(self, 0, &sp30, 0x10004, -1, 0);
-        dll_unload(sp48);
+        dllFree(sp48);
     }
 }
 

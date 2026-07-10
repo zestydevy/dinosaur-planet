@@ -53,11 +53,11 @@ void DFSH_ObjCreator_control(Object* self) {
         return;
     }
     if ((self->unkE0 == 0) && (main_get_bits(setup->type + BIT_F6) != 0)) {
-        modgfx = dll_load_deferred(DLL_ID_146, 1);
+        modgfx = dllLoadDeferred(DLL_ID_146, 1);
         modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
         modgfx->vtbl->func0(self, 1, 0, 1, -1, 0);
         gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
-        dll_unload(modgfx);
+        dllFree(modgfx);
         objdata->timerRate = 1;
         self->unkE0 = 1;
     }

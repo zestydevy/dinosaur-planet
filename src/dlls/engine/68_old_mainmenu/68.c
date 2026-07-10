@@ -8,7 +8,7 @@
 
 extern DLL_20_screens *gDLL_20_Screens;
 extern DLL_21_gametext *gDLL_21_Gametext;
-extern DLL_Unknown* dll_throw_fault; //NOTE: BROKEN! This is a function now, not a DLL.
+extern DLL_Unknown* dllThrowFault; //NOTE: BROKEN! This is a function now, not a DLL.
 
 extern u8 D_8008C8B4;
 
@@ -92,10 +92,10 @@ void old_mainmenu_func_D8(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
 
     // NOTE: this section is very broken!
     // Maybe it used to call a DLL for the old title screen text seen in the One Hour Footage?
-    dll_throw_fault->vtbl->func[7].withOneArg(bss_C);
-    dll_throw_fault->vtbl->func[0].withOneArg(180);
-    dll_throw_fault->vtbl->func[2].withFourArgs(0, (s32)sGametext->strings[0], 20, bss_4);
-    if (dll_throw_fault->vtbl->func[5].withOneArgS32((s32)&bss_4) == FALSE) {
+    dllThrowFault->vtbl->func[7].withOneArg(bss_C);
+    dllThrowFault->vtbl->func[0].withOneArg(180);
+    dllThrowFault->vtbl->func[2].withFourArgs(0, (s32)sGametext->strings[0], 20, bss_4);
+    if (dllThrowFault->vtbl->func[5].withOneArgS32((s32)&bss_4) == FALSE) {
         menu_set(MENU_13);
     }
     

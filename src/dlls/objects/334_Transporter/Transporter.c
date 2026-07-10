@@ -98,7 +98,7 @@ void Transporter_control(Object *self) {
         distToPlayer = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
         if ((objdata->unk25 == 0) && (objdata->unk24 == 0) && (distToPlayer < 40.0f)) {
             if (!objdata->dll140) {
-                objdata->dll140 = dll_load_deferred(DLL_ID_140, 1);
+                objdata->dll140 = dllLoadDeferred(DLL_ID_140, 1);
             }
             if (D_800B4A5E >= 0) {
                 objdata->unk25 = 0;
@@ -106,10 +106,10 @@ void Transporter_control(Object *self) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 self->unkDC = objdata->unk1C;
                 if (!objdata->dll129) {
-                    objdata->dll129 = dll_load_deferred(DLL_ID_129, 1);
+                    objdata->dll129 = dllLoadDeferred(DLL_ID_129, 1);
                 }
                 if (!objdata->dll130) {
-                    objdata->dll130 = dll_load_deferred(DLL_ID_130, 1);
+                    objdata->dll130 = dllLoadDeferred(DLL_ID_130, 1);
                 }
                 objdata->unk24 = 1;
                 D_80092A78 = 2;
@@ -122,10 +122,10 @@ void Transporter_control(Object *self) {
                     objdata->unk25 = 1;
                     self->unkDC = objdata->unk1C;
                     if (!objdata->dll129) {
-                        objdata->dll129 = dll_load_deferred(DLL_ID_129, 1);
+                        objdata->dll129 = dllLoadDeferred(DLL_ID_129, 1);
                     }
                     if (!objdata->dll130) {
-                        objdata->dll130 = dll_load_deferred(DLL_ID_130, 1);
+                        objdata->dll130 = dllLoadDeferred(DLL_ID_130, 1);
                     }
                     objdata->unk24 = 1;
                     objdata->unk26 = 1;
@@ -215,9 +215,9 @@ void Transporter_control(Object *self) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_7A, NULL, PARTFXFLAG_NONE, -1, NULL);
                 }
             }
-            dll_unload(objdata->dll129);
+            dllFree(objdata->dll129);
             objdata->dll129 = NULL;
-            dll_unload(objdata->dll130);
+            dllFree(objdata->dll130);
             objdata->dll130 = NULL;
             self->unkDC = 0;
             self->unkE0 = 150;
@@ -279,13 +279,13 @@ void Transporter_free(Object *self, s32 a1) {
     objdata = self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
     if (objdata->dll129) {
-        dll_unload(objdata->dll129);
+        dllFree(objdata->dll129);
     }
     if (objdata->dll130) {
-        dll_unload(objdata->dll130);
+        dllFree(objdata->dll130);
     }
     if (objdata->dll140) {
-        dll_unload(objdata->dll140);
+        dllFree(objdata->dll140);
     }
 }
 

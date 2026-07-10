@@ -332,9 +332,9 @@ void dll_331_control(Object* self) {
     case OBJ_DFdebris1: //0xab
         objData->roll -= gUpdateRate;
         if (objData->roll < 0) {
-            tempDLL2 = dll_load_deferred(0x1003, 1);
+            tempDLL2 = dllLoadDeferred(0x1003, 1);
             tempDLL2->vtbl->func[0].withSixArgs((s32)self, 0, 0, 1, -1, 0);
-            dll_unload(tempDLL2);
+            dllFree(tempDLL2);
             objData->roll = 30.0f;
             return;
         }
@@ -516,24 +516,24 @@ void dll_331_control(Object* self) {
             if ((distance < 400.0f) && (self->unkDC <= 0)) {
 
                 index = 1;
-                tempDLL2 = dll_load_deferred(0x1008, 1);
+                tempDLL2 = dllLoadDeferred(0x1008, 1);
 
                 while (index != 0){ 
                     tempDLL2->vtbl->func[0].withSixArgs((s32)self, 0, 0, 1, -1, 0);
                     index--;
                 }
                 
-                dll_unload(tempDLL2);
+                dllFree(tempDLL2);
                 self->unkDC = rand_next(100, 200);
             } else if (distance < 200.0f) {
                 self->unkDC -= 1;
             }
             if ((_data_0 != NULL) && (self->unkE0 == 0)) {
                 self->unkE0 = 1;
-                tempDLL = dll_load_deferred(0x200A, 1);
+                tempDLL = dllLoadDeferred(0x200A, 1);
                 tempDLL->vtbl->func[0].withSevenArgs((s32)self, 0, 0, 1, -1, 0xA, 0);
                 if (tempDLL != NULL) {
-                    dll_unload(tempDLL);
+                    dllFree(tempDLL);
                 }
             }
             if (_data_0 == NULL) {
@@ -550,10 +550,10 @@ void dll_331_control(Object* self) {
             if (self->unkDC != 0) {
                 self->unkDC -= gUpdateRate;
                 if (self->unkDC <= 0) {
-                    tempDLL = dll_load_deferred(0x2009, 1);
+                    tempDLL = dllLoadDeferred(0x2009, 1);
                     tempDLL->vtbl->func[0].withSevenArgs((s32)_data_0, 0, 0, 1, -1, 9, 0);
                     if (tempDLL != NULL) {
-                        dll_unload(tempDLL);
+                        dllFree(tempDLL);
                     }
                     _data_0 = NULL;
                     self->unkDC = 0;

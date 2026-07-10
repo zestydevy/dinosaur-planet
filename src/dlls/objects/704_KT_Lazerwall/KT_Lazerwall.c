@@ -36,7 +36,7 @@ void dll_704_dtor(void *dll) { }
 void dll_704_setup(Object* self, KT_Lazerwall_Setup* setup, s32 arg2) {
     KT_Lazerwall_Data* objdata = (KT_Lazerwall_Data*)self->data;
 
-    _data_0 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_170, 1);
+    _data_0 = (DLL_IModgfx*)dllLoadDeferred(DLL_ID_170, 1);
     self->srt.yaw = setup->unk18 << 8;
     objdata->unk10 = 0.0f;
 }
@@ -138,7 +138,7 @@ void dll_704_free(Object* self, s32 a1) {
         gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
     }
     gDLL_14_Modgfx->vtbl->func5(self);
-    dll_unload(_data_0);
+    dllFree(_data_0);
 }
 
 // offset: 0x73C | func: 5 | export: 5

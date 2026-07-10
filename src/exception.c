@@ -402,8 +402,8 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
 
     while (1) {
         thread = threads[offset];
-        var_s2 = find_executing_dll((u32)thread->context.ra, (void **) &raDllStart, (void **) &raDllEnd);
-        temp_s1 = find_executing_dll(thread->context.pc, (void **) &pcDllStart, (void **) &pcDllEnd);
+        var_s2 = dllFindExecutingDLL((u32)thread->context.ra, (void **) &raDllStart, (void **) &raDllEnd);
+        temp_s1 = dllFindExecutingDLL(thread->context.pc, (void **) &pcDllStart, (void **) &pcDllEnd);
         clear_framebuffer_current();
         gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
         crash_print_line(0xCC, 0xD6, "CPU + DLL INFO");
@@ -526,7 +526,7 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
     crash_print_line(0xC8, 0x24, "DLL#\tDLL ADDR");
     gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
     crash_print_line(0x10, 0x2A, "%02d\t%08x\t%08x", 0, var_s0, var_s2);
-    temp_v0_2 = find_executing_dll(var_s1, &sp54, &sp50);
+    temp_v0_2 = dllFindExecutingDLL(var_s1, &sp54, &sp50);
     if (temp_v0_2 != -1) {
         gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
         crash_print_line(0xC8, 0x2A, "%d", temp_v0_2);
@@ -566,7 +566,7 @@ void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
                 var_s0 = var_s1;
                 if (var_s1) {
                     crash_print_line(0x10, var_s3, "%02d\t%08x\t%08x", var_s4, var_s1, var_s2);
-                    temp_v0_2 = find_executing_dll(var_s1, &sp54, &sp50);
+                    temp_v0_2 = dllFindExecutingDLL(var_s1, &sp54, &sp50);
                     if (temp_v0_2 != -1) {
                         gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
                         crash_print_line(0xC8, var_s3, "%d", temp_v0_2);

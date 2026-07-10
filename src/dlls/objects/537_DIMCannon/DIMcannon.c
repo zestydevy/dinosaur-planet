@@ -92,7 +92,7 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
         self->unkAF |= 8;
         self->animCallback = dll_537_func_A94;
         self->srt.yaw = objSetup->unk28 << 8;
-        _data_0 = dll_load_deferred(DLL_ID_137, 1);
+        _data_0 = dllLoadDeferred(DLL_ID_137, 1);
         
         if (main_get_bits(objSetup->unk1A)) {
             objData->unk27 = 60;
@@ -297,7 +297,7 @@ void dll_537_free(Object* self, s32 arg1) {
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1640(self);
     } else {
-        dll_unload(_data_0);
+        dllFree(_data_0);
     }
     
     obj_free_object_type(self, OBJTYPE_Baddie);
