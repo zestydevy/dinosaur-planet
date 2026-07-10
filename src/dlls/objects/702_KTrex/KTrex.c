@@ -753,8 +753,8 @@ static void dll_702_fx_tick(Object *self) {
     if (sKTData->fxFlags & KTFX_Sound_Explosion) {
         // explosion sound, when he falls on the ground. also during intro
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-        camera_enable_y_offset();
-        camera_set_shake_offset(2.0f * sp48);
+        camUseShake();
+        camSetShakeOffset(2.0f * sp48);
     }
     if (sKTData->fxFlags & KTFX_Sound_Breathing1) {
         // breathing
@@ -770,8 +770,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            camera_enable_y_offset();
-            camera_set_shake_offset(sp48);
+            camUseShake();
+            camSetShakeOffset(sp48);
             main_set_bits(BIT_554, 1);
         }
     }
@@ -779,8 +779,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            camera_enable_y_offset();
-            camera_set_shake_offset(2.0f * sp48);
+            camUseShake();
+            camSetShakeOffset(2.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }
@@ -788,8 +788,8 @@ static void dll_702_fx_tick(Object *self) {
         // footfall
         gDLL_6_AMSFX->vtbl->play(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            camera_enable_y_offset();
-            camera_set_shake_offset(3.0f * sp48);
+            camUseShake();
+            camSetShakeOffset(3.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }

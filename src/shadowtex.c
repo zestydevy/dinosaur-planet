@@ -122,11 +122,11 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     }
     D_800BB558[slot] = D_800BB560[(obj->shadow->bufferIdx ^ 1)+(slot*SHADOWTEX_NUM_SLOTS)];
     D_800BB570[slot] = D_800BB578[(obj->shadow->bufferIdx ^ 1)+(slot*SHADOWTEX_NUM_SLOTS)];
-    set_camera_selector(1);
-    temp_s0 = get_camera();
-    sp88 = camera_get_fov();
-    camera_set_fov(70.0f);
-    camera_set_aspect(1.0f);
+    camSetCameraSelector(1);
+    temp_s0 = camGet();
+    sp88 = camGetFOV();
+    camSetFOV(70.0f);
+    camSetAspect(1.0f);
     spC4 = temp_s0->srt.transl.f[0];
     spC0 = temp_s0->srt.transl.f[1];
     spBC = temp_s0->srt.transl.f[2];
@@ -134,8 +134,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     spAC = temp_s0->srt.yaw;
     spA8 = temp_s0->srt.roll;
     if (arg6 != 0) {
-        set_camera_selector(0);
-        temp_v0_2 = get_camera();
+        camSetCameraSelector(0);
+        temp_v0_2 = camGet();
         someX = temp_v0_2->tx - obj->globalPosition.f[0];
         someY = temp_v0_2->ty - obj->globalPosition.f[1];
         someZ = temp_v0_2->tz - obj->globalPosition.f[2];
@@ -157,8 +157,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         temp_s0->srt.transl.f[0] = someX + obj->srt.transl.f[0];
         temp_s0->srt.transl.f[1] = arg7  + obj->srt.transl.f[1];
         temp_s0->srt.transl.f[2] = someZ + obj->srt.transl.f[2];
-        set_camera_selector(1);
-        camera_set_ortho_projection_matrix(-19.5f, 19.5f, 0.0f, var_fv0);
+        camSetCameraSelector(1);
+        camSetOrthoProjectionMatrix(-19.5f, 19.5f, 0.0f, var_fv0);
     } else {
         temp_s0->srt.pitch = 0;
         someX = obj->shadow->dir.f[0];
@@ -194,22 +194,22 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         temp_s0->srt.transl.f[1] = obj->srt.transl.f[1] + someY;
         temp_s0->srt.transl.f[2] = obj->srt.transl.f[2] + someZ;
         if (obj->id == OBJ_DIMSnowHorn1) {
-            camera_set_ortho_projection_matrix(-55.0f, 55.0f, -50.0f, 60.0f);
+            camSetOrthoProjectionMatrix(-55.0f, 55.0f, -50.0f, 60.0f);
         } else {
-            camera_set_ortho_projection_matrix(-26.0f, 26.0f, -29.0f, 23.0f);
+            camSetOrthoProjectionMatrix(-26.0f, 26.0f, -29.0f, 23.0f);
         }
     }
     if (obj->parent != NULL) {
         temp_s0->srt.transl.f[0] += gWorldX;
         temp_s0->srt.transl.f[2] += gWorldZ;
     }
-    spA4 = camera_is_y_offset_enabled();
+    spA4 = camIsUsingShake();
     if (spA4 != 0) {
-        camera_disable_y_offset();
+        camIgnoreShake();
     }
-    camera_setup_viewport_and_matrices(gdl, &sp84);
+    camSetupViewportAndMatrices(gdl, &sp84);
     if (spA4 != 0) {
-        camera_enable_y_offset();
+        camUseShake();
     }
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, gShadowTexWidth, gShadowTexHeight);
     rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gShadowTexCurrFb[slot]);
@@ -257,24 +257,24 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     temp_s0->srt.yaw = (s16) spAC;
     temp_s0->srt.roll = (s16) spA8;
     if (track_func_80041E08() != 0) {
-        set_camera_selector(0);
-        camera_set_fov(sp88);
+        camSetCameraSelector(0);
+        camSetFOV(sp88);
         if (track_func_80041DBC() != 0) {
-            camera_set_aspect(2.25f); // 9:4
+            camSetAspect(2.25f); // 9:4
         } else {
-            camera_set_aspect(1.66f); // 5:3
+            camSetAspect(1.66f); // 5:3
         }
-        camera_setup_viewport_and_matrices(gdl, &sp84);
+        camSetupViewportAndMatrices(gdl, &sp84);
     } else if (track_func_80041DBC() != 0) {
-        set_camera_selector(0);
-        camera_set_fov(sp88);
-        camera_set_aspect(1.7777778f);
-        camera_setup_viewport_and_matrices(gdl, &sp84);
+        camSetCameraSelector(0);
+        camSetFOV(sp88);
+        camSetAspect(1.7777778f);
+        camSetupViewportAndMatrices(gdl, &sp84);
     } else {
-        set_camera_selector(0);
-        camera_set_fov(sp88);
-        camera_set_aspect(gAspectRatio);
-        camera_setup_viewport_and_matrices(gdl, &sp84);
+        camSetCameraSelector(0);
+        camSetFOV(sp88);
+        camSetAspect(gAspectRatio);
+        camSetupViewportAndMatrices(gdl, &sp84);
     }
     rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     rsp_segment(gdl, SEGMENT_4, gFrontFramebuffer - (0x500 / sizeof(u16)));

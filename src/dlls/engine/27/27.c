@@ -91,7 +91,7 @@ void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 updateRate) {
         return;
     }
 
-    transform_point_by_object(
+    camTransformPointByObject(
         obj->srt.transl.f[0], obj->srt.transl.f[1], obj->srt.transl.f[2], 
         &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
         obj->parent);
@@ -217,7 +217,7 @@ void dll_27_func_624(Object* obj, DLL27_Data* arg1, f32 updateRate) {
             // Hit line detection and resolution
             dll_27_func_A74(obj, arg1);
             dll_27_func_1278(obj, arg1);
-            transform_point_by_object(
+            camTransformPointByObject(
                 obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
                 &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
                 obj->parent);
@@ -288,7 +288,7 @@ void dll_27_func_624(Object* obj, DLL27_Data* arg1, f32 updateRate) {
         dll_27_reset(obj, arg1);
     }
 
-    inverse_transform_point_by_object(
+    camInverseTransformPointByObject(
         obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z, 
         &obj->srt.transl.x, &obj->srt.transl.y, &obj->srt.transl.z, 
         obj->parent);
@@ -379,7 +379,7 @@ f32 dll_27_func_DF4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 void dll_27_reset(Object *obj, DLL27_Data *data) {
     s32 i;
 
-    transform_point_by_object(
+    camTransformPointByObject(
         obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
         &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
         obj->parent);

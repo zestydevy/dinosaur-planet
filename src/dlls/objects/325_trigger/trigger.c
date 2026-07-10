@@ -945,7 +945,7 @@ static void trigger_point_update(Object *self, Object *activator) {
             }
 
             if (self->parent != NULL) {
-                inverse_transform_point_by_object(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z,
+                camInverseTransformPointByObject(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z,
                     &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z, 
                     self->parent);
             }

@@ -30,7 +30,7 @@ void camcrawl_control(Cam* cam) {
         cam->srt.transl.x = (fsin16_precise(obj->srt.yaw) * 13.0f) + obj->srt.transl.x;
         cam->srt.transl.z = (fcos16_precise(obj->srt.yaw) * 13.0f) + obj->srt.transl.z;
         cam->srt.transl.y = obj->srt.transl.y + 20.0f;
-        camera = get_main_camera();
+        camera = camGetMain();
 
         dYaw = (-arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
         CIRCLE_WRAP(dYaw)

@@ -157,7 +157,7 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
         if ((sp44 > 0.0f) && (sp48 <= 1.0f)) {
             arg4->globalPosition.x -= sp5C * sp44;
             arg4->globalPosition.z -= sp58 * sp44;
-            inverse_transform_point_by_object(arg4->globalPosition.x, arg4->globalPosition.y, arg4->globalPosition.z, arg4->srt.transl.f, &arg4->srt.transl.y, &arg4->srt.transl.z, arg4->parent);
+            camInverseTransformPointByObject(arg4->globalPosition.x, arg4->globalPosition.y, arg4->globalPosition.z, arg4->srt.transl.f, &arg4->srt.transl.y, &arg4->srt.transl.z, arg4->parent);
         } else if (sp48 > 1.0f) {
             sp40 = 2.0f * arg3;
         }

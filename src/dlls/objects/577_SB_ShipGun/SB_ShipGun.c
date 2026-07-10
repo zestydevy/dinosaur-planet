@@ -198,7 +198,7 @@ void SB_ShipGun_control(Object *self) {
         *sp44 = objdata->unk6;
         objdata->unk8 -= gUpdateRate;
         if (objdata->unk8 < 0) {
-            get_object_child_position(self, &sp98, &sp94, &sp90);
+            camGetObjectChildPosition(self, &sp98, &sp94, &sp90);
             transform.transl.x = 0.0f;
             transform.transl.y = 0.0f;
             transform.transl.z = 0.0f;
@@ -236,8 +236,8 @@ void SB_ShipGun_control(Object *self) {
             cannonballObj->srt.yaw = arctan2_f(cannonballObj->velocity.x, cannonballObj->velocity.z);
             cannonballObj->unkDC = 0xB4;
             cannonballObj->unkE0 = (s32) objdata->cloudrunner;
-            camera_enable_y_offset();
-            camera_set_shake_offset(0.1f);
+            camUseShake();
+            camSetShakeOffset(0.1f);
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk10++;
             if (objdata->unk10 == 3) {
@@ -250,7 +250,7 @@ void SB_ShipGun_control(Object *self) {
         break;
     case STATE_3:
         self->objhitInfo->unk58 &= ~1;
-        get_object_child_position(self, &sp98, &sp94, &sp90);
+        camGetObjectChildPosition(self, &sp98, &sp94, &sp90);
         if (self->curModAnimId != 1) {
             for (i = 0; i != 6; i++) {
                 if (objdata->unkE == 1) {

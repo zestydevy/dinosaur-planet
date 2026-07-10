@@ -508,7 +508,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
     }
 
     for (i = 0; i < 30; i++) {
-        camera = get_camera();
+        camera = camGet();
         dl_clear_geometry_mode(gdl, G_CULL_BACK);
         if ((_data_64 != 1 || i != 29) && (_bss_F0[i] == 0 || _data_3C[i] == 0)) {
             continue;
@@ -620,7 +620,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
                             spEC.f[1] = var_s0->unk40.transl.f[1];
                             spEC.f[2] = var_s0->unk40.transl.f[2];
                             if (temp_s4 != NULL) {
-                                transform_point_by_object_matrix(&var_s0->unk40.transl, &spEC, temp_s4->matrixIdx);
+                                camTransformPointByObjectMatrix(&var_s0->unk40.transl, &spEC, temp_s4->matrixIdx);
                             }
                         }
                     }
@@ -666,7 +666,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
                     if ((spEC.f[2] > 65534.0f) || (spEC.f[2] < -65534.0f)) {
                         spEC.f[2] = -gWorldZ;
                     }
-                    camera_setup_object_srt_matrix(gdl, mtxs, &sp110, 1.0f, 0/*.0f*/, NULL);
+                    camSetupObjectSRTMatrix(gdl, mtxs, &sp110, 1.0f, 0/*.0f*/, NULL);
                     if ((temp_s3 != NULL) && (var_s0->unk80 & 0x80)) {
                         var_s2 = (temp_s3->opacity * var_s2) >> 8;
                     }

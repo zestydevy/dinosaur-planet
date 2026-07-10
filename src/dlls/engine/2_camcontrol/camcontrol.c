@@ -152,7 +152,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
     
     //Transform the player's coordinates based on their parent Object
     if (player->parent != NULL) {
-        transform_point_by_object(
+        camTransformPointByObject(
             player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, 
             &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z, 
             player->parent
@@ -636,7 +636,7 @@ void CamControl_set_letterbox_goal(s32 height, s32 startAtGoal) {
         sCam->letterboxSpeed = 1;
         
         if (startAtGoal) {
-            camera_set_letterbox(height);
+            camSetLetterbox(height);
         }
     }
 }
@@ -716,8 +716,8 @@ static void CamControl_update_camera(Cam* cam) {
     f32 tValue;
     f32 spline[4];
 
-    set_camera_selector(0);
-    camera = get_main_camera();
+    camSetCameraSelector(0);
+    camera = camGetMain();
     camera->srt.yaw = cam->srt.yaw;
     camera->srt.pitch = cam->srt.pitch;
     camera->srt.roll = cam->srt.roll;
@@ -767,15 +767,15 @@ static void CamControl_update_camera(Cam* cam) {
     }
     
     //Change FOV
-    if (camera_get_fov() != sFov) {
-        camera_set_fov(sFov);
+    if (camGetFOV() != sFov) {
+        camSetFOV(sFov);
     }
     
-    update_camera_for_object(camera);
+    camUpdateCameraForObject(camera);
     map_func_80046B58(camera->tx, camera->ty, camera->tz);
 
     //Update camera letterboxing
-    sLetterboxHeight = camera_get_letterbox();
+    sLetterboxHeight = camGetLetterbox();
     if (sLetterboxHeight != cam->letterboxGoal) {
         if (sLetterboxHeight < cam->letterboxGoal) {
             sLetterboxHeight += cam->letterboxSpeed * (s32) gUpdateRateF;
@@ -788,7 +788,7 @@ static void CamControl_update_camera(Cam* cam) {
                 sLetterboxHeight = cam->letterboxGoal;
             }
         }
-        camera_set_letterbox(sLetterboxHeight);
+        camSetLetterbox(sLetterboxHeight);
     }
     
     cam->letterboxGoal = 0;
@@ -1051,7 +1051,7 @@ void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, V
         lockIcon->parent = obj->parent;
         
         if (lockIcon->parent != 0){
-            inverse_transform_point_by_object(
+            camInverseTransformPointByObject(
                 lockIcon->globalPosition.x, lockIcon->globalPosition.y, lockIcon->globalPosition.z, 
                 &lockIcon->srt.transl.x, &lockIcon->srt.transl.y, &lockIcon->srt.transl.z, 
                 lockIcon->parent

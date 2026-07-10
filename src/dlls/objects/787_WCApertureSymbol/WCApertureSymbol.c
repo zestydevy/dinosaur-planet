@@ -181,8 +181,8 @@ static s16 dll_787_func_490(Object *self, WCApertureSymbol_Data *objdata, f32 ar
     var_fv0_2 = self->srt.transl.x - gWorldX;
     temp_fa0_3 = self->srt.transl.z - gWorldZ;
 
-    camera_project_point(var_fv0_2, self->srt.transl.y, temp_fa0_3, &sp6C, &sp68, &sp64);
-    camera_clip_to_screen(sp6C, sp68, sp64, &sp74, &sp70, NULL);
+    camProjectPoint(var_fv0_2, self->srt.transl.y, temp_fa0_3, &sp6C, &sp68, &sp64);
+    camClipToScreen(sp6C, sp68, sp64, &sp74, &sp70, NULL);
     if (vi_contains_point(sp74, sp70) == 0) {
         return 0;
     }

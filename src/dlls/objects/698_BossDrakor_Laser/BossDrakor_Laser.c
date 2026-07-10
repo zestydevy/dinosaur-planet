@@ -75,7 +75,7 @@ void dll_698_control(Object *self) {
             }
         }
         if ((objdata->unk8 != 0) || (objdata->unkC != 0)) {
-            camera = get_camera();
+            camera = camGet();
             sp40.f[0] = 0.0f;
             sp40.f[1] = 0.0f;
             sp34 = vec3_distance(&self->srt.transl, (Vec3f* ) &camera->tx);

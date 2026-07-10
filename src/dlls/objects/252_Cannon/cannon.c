@@ -164,7 +164,7 @@ dummy_label1: ;
         break;
     case Cannon_STATE_Firing:
         //Fire a cannonball
-        get_object_child_position(self, &x, &y, &z);
+        camGetObjectChildPosition(self, &x, &y, &z);
         cannonballSetup = obj_alloc_setup(sizeof(CannonBall_Setup), OBJ_CannonBall);
         cannonballSetup->x = x;
         cannonballSetup->y = y + 30.0f;
@@ -188,8 +188,8 @@ dummy_label1: ;
         obj->unkDC = 300;
 
         //Shake the screen
-        camera_enable_y_offset();
-        camera_set_shake_offset(0.9f);
+        camUseShake();
+        camSetShakeOffset(0.9f);
 
         //Create blast sound/particle effects
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_69, NULL, 4, -1, NULL);

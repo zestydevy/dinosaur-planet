@@ -280,7 +280,7 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     srt.pitch = 0;
     srt.roll = 0;
     srt.scale = 0.05f;
-    camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1, 0, NULL);
+    camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1, 0, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
     dl_triangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));

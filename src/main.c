@@ -330,7 +330,7 @@ void game_tick(void) {
     am_func_800121DC();
     gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);
     gDLL_22_Subtitles->vtbl->func_578(gdl);
-    camera_tick();
+    camTick();
     func_800129E4();
     diPrintfAll(gdl);
 
@@ -342,7 +342,7 @@ void game_tick(void) {
     mmFreeTick();
 
     if (gPauseState == 0) {
-        camera_apply_alternate_trigger();
+        camApplyAlternateTrigger();
     }
 
     gUpdateRate = vi_frame_sync(0);
@@ -434,7 +434,7 @@ void func_80013D80(void) {
             update_objects();
             track_tick(0);
 
-            if ((camera_is_alternate_active() == 0) 
+            if ((camIsAlternateActive() == 0) 
                     && (D_8008C94C == 0) 
                     && (func_800143FC() == 0) 
                     && ((button & START_BUTTON) != 0) 
@@ -505,7 +505,7 @@ void main_handle_map_change(void) {
         gMainDoMapChange = FALSE;
 
         mmSetDelay(0);
-        camera_init();
+        camInit();
 
         if (gMainMapChangeNextMenu >= 0) {
             menu_set(gMainMapChangeNextMenu);

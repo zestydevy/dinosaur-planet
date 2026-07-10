@@ -405,8 +405,8 @@ s32 amsfx_find_emitters_in_range(Object* listener, s32 distance, s32 minVolume, 
             continue;
         }
         if (distance != -1) {
-            get_object_child_position(listener, &sp74, &sp70, &sp6C);
-            get_object_child_position(soundSource, &sp68, &sp64, &sp60);
+            camGetObjectChildPosition(listener, &sp74, &sp70, &sp6C);
+            camGetObjectChildPosition(soundSource, &sp68, &sp64, &sp60);
             temp_fv1 = sp74 - sp68;
             temp_fv0 = sp70 - sp64;
             if (distance < (SQ(temp_fv1) + SQ(temp_fv0) + ((sp6C - sp60) * temp_fv0))) {
@@ -557,8 +557,8 @@ void amsfx_play_custom(Object* obj, u16 soundID, f32 pitch, f32 minDist, f32 max
     s32 volume;
     Camera* camera;
 
-    camera = get_camera_array();
-    update_camera_for_object(camera);
+    camera = camGetCameraArray();
+    camUpdateCameraForObject(camera);
     camX = camera->tx;
     camY = camera->ty;
     camZ = camera->tz;
@@ -662,7 +662,7 @@ void amsfx_water_falls_control(void) {
         return;
     }
 
-    camera = (Vec3f*)get_camera();
+    camera = (Vec3f*)camGet();
     highVolume = 0;
     lowVolume = 0;
     for (i = 0; i < sWaterFallSprayCount; i++) {
@@ -890,9 +890,9 @@ static void amsfx_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut)
     f32 sp24;
     f32 sp20;
 
-    get_object_child_position(obj, &sp28, &sp24, &sp20);
-    camera = get_camera_array();
-    update_camera_for_object(camera);
+    camGetObjectChildPosition(obj, &sp28, &sp24, &sp20);
+    camera = camGetCameraArray();
+    camUpdateCameraForObject(camera);
     *xo = camera->tx - sp28;
     *yo = camera->ty - sp24;
     *zo = camera->tz - sp20;

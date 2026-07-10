@@ -2665,7 +2665,7 @@ static void dll_211_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, 
     sp48.pitch = 0;
     sp48.roll = 0;
     sp48.scale = 0.05f;
-    camera_setup_object_srt_matrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
+    camSetupObjectSRTMatrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp6C), 8, 0);
     dl_triangles(arg1, _rodata_778, 12);
     *arg3 = var_s0;

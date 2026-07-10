@@ -176,7 +176,7 @@ void Spirit_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
     s16 id;
     Camera *camera;
 
-    camera = get_camera();
+    camera = camGet();
     if (self->id == OBJ_ECSH_SpiritCup && camera) {
         self->srt.yaw = 0xFFFF - camera->srt.yaw;
     }

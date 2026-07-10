@@ -607,7 +607,7 @@ void dll_210_control(Object* player) {
         data->unk854 = 0;
         gDLL_2_Camera->vtbl->set_target_object(NULL);
     }
-    _bss_20C = get_main_camera();
+    _bss_20C = camGetMain();
     dll_210_func_1DDC(player, data, &data->unk0);
     dll_210_func_1CA8(player, data, &data->unk0);
     if (player->parent != NULL) {
@@ -634,7 +634,7 @@ void dll_210_control(Object* player) {
         for (i = 0; i < sp80; i++) {
             *_bss_1AA = i;
             dll_210_func_11A0(player, data, sp70);
-            get_object_child_position(player, &player->globalPosition.x, &player->globalPosition.y, &player->globalPosition.z);
+            camGetObjectChildPosition(player, &player->globalPosition.x, &player->globalPosition.y, &player->globalPosition.z);
             data->unk7EC.x += player->velocity.x;
             data->unk7EC.y += player->velocity.y;
             data->unk7EC.z += player->velocity.z;
@@ -1186,8 +1186,8 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
         break;
     case Damage_Type_18:
         gDLL_6_AMSFX->vtbl->play(self, SOUND_D9_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
-        camera_enable_y_offset();
-        camera_set_shake_offset(1.0f);
+        camUseShake();
+        camSetShakeOffset(1.0f);
         break;
     case Damage_Type_1B:
         aState = fsa->unk270;
@@ -1568,7 +1568,7 @@ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tr
     sp48.scale = 0.05f;
     sp48.pitch = 0;
     sp48.roll = 0;
-    camera_setup_object_srt_matrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
+    camSetupObjectSRTMatrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp74), 8, 0);
     dl_triangles(arg1, (DLTri* ) _rodata_0, 0xC);
     if (sp44->unk844 >= 68.0f) {
@@ -2879,7 +2879,7 @@ static s32 dll_210_func_77DC(Object *player, Func_80059C40_Struct* arg1, UnkArg2
     arg2->unk0.w = arg1->unk38.x;
     arg2->unk2D = 0;
     if (player != 0) {
-        inverse_transform_point_by_object(arg3->x, arg3->y, arg3->z, &arg2->unk10.x, &arg2->unk10.y, &arg2->unk10.z, arg1->unk0);
+        camInverseTransformPointByObject(arg3->x, arg3->y, arg3->z, &arg2->unk10.x, &arg2->unk10.y, &arg2->unk10.z, arg1->unk0);
         arg2->unk28 = arg1->unk0;
     } else {
         arg2->unk10.x = arg3->x;
@@ -3525,7 +3525,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     var_s3 = NULL;
     var_s4 = 1;
     temp_fp = player->data;
-    mainCam = get_main_camera();
+    mainCam = camGetMain();
     gDLL_6_AMSFX->vtbl->play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
         objsetup = obj_alloc_setup(0x24, OBJ_projball);
@@ -3575,7 +3575,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 temp_v0_2->srt.pitch = 0;
             } else {
                 temp_v0_2->srt.yaw = mainCam->srt.yaw;
-                temp_fs1 = camera_get_fov() * 91.022f;
+                temp_fs1 = camGetFOV() * 91.022f;
                 temp_fv0 = fsin16_precise(temp_fs1);
                 temp_fv0 /= fcos16_precise(temp_fs1);
                 temp_fs1 = (100.0f * temp_fv0);
@@ -3588,7 +3588,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 sp104.x = temp_fs1 / temp_fv0;
                 sp104.y = temp_fs2 / temp_fv0;
                 sp104.z = temp / temp_fv0;
-                vec3_transform_no_translate(camera_get_view_mtx2(), &sp104, &sp104);
+                vec3_transform_no_translate(camGetViewMtx2(), &sp104, &sp104);
                 temp_v0_2->velocity.x = sp104.x * -5.0f;
                 temp_v0_2->velocity.y = sp104.y * -5.0f;
                 temp_v0_2->velocity.z = sp104.z * -5.0f;
@@ -5102,7 +5102,7 @@ s32 dll_210_func_DC10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 player->globalPosition.f[0] = temp_s1->unk7EC.x;
                 player->globalPosition.f[1] = temp_s1->unk490.unk4;
                 player->globalPosition.f[2] = temp_s1->unk7EC.z;
-                inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+                camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
                 player->curModAnimIdLayered = -1;
                 dll_210_func_7260(player, temp_s1);
                 func_80023D30(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
@@ -5204,7 +5204,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->globalPosition.f[0] = objdata->unk7EC.x;
             player->globalPosition.f[1] = objdata->unk7EC.y;
             player->globalPosition.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             func_80023D30(player, (s32) _data_564[2], 0.0f, 1U);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 2;
@@ -5290,7 +5290,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             player->globalPosition.f[0] = objdata->unk7EC.x;
             player->globalPosition.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.f[0], 0.0f, player->globalPosition.f[2], player->srt.transl.f, &sp68, &player->srt.transl.f[2], player->parent);
+            camInverseTransformPointByObject(player->globalPosition.f[0], 0.0f, player->globalPosition.f[2], player->srt.transl.f, &sp68, &player->srt.transl.f[2], player->parent);
             dll_210_func_7260(player, objdata);
             func_80023D30(player, (s32) *objdata->modAnims, 0.0f, 1U);
             return 2;
@@ -5389,7 +5389,7 @@ s32 dll_210_func_EB1C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             if (1) {}
             player->globalPosition.y = objdata->unk7EC.y;
             player->globalPosition.z = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.x, player->globalPosition.y, player->globalPosition.z, player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            camInverseTransformPointByObject(player->globalPosition.x, player->globalPosition.y, player->globalPosition.z, player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             func_80023D30(player, _data_564[8], 0.0f, 1U);
             fsa->animTickDelta = 0.02f;
             _bss_202 = _bss_200 = 8;
@@ -5682,7 +5682,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             player->globalPosition.x = temp_s0->unk7EC.x;
             player->globalPosition.z = temp_s0->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp84, &player->srt.transl.z, player->parent);
+            camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp84, &player->srt.transl.z, player->parent);
             dll_210_func_7260(player, temp_s0);
             func_80023D30(player, *temp_s0->modAnims, 0.0f, 1U);
             return -1;
@@ -5931,7 +5931,7 @@ s32 dll_210_func_1034C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             player->globalPosition.x = temp_s2->unk7EC.x;
             player->globalPosition.z = temp_s2->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp5C, &player->srt.transl.z, player->parent);
+            camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp5C, &player->srt.transl.z, player->parent);
             dll_210_func_7260(player, temp_s2);
             func_80023D30(player, (s32) *temp_s2->modAnims, 0.0f, 1U);
             return 2;
@@ -6442,7 +6442,7 @@ s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (player->animProgress > 0.99f) {
         player->globalPosition.x = temp_s1->unk7EC.x;
         player->globalPosition.z = temp_s1->unk7EC.z;
-        inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
+        camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
         dll_210_func_7260(player, temp_s1);
         func_80023D30(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
         return -1;
@@ -6501,7 +6501,7 @@ s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (player->animProgress > 0.99f) {
         player->globalPosition.x = temp_s1->unk7EC.x;
         player->globalPosition.z = temp_s1->unk7EC.z;
-        inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
+        camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
         dll_210_func_7260(player, temp_s1);
         func_80023D30(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
         return -1;
@@ -7282,7 +7282,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         player->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
         player->globalPosition.x = objdata->unk7EC.x;
         player->globalPosition.z = objdata->unk7EC.z;
-        inverse_transform_point_by_object(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp54.scale, &player->srt.transl.z, player->parent);
+        camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp54.scale, &player->srt.transl.z, player->parent);
         if (objdata->unk750 == 1) {
             player->srt.yaw += 0x4000;
         } else {
@@ -7563,7 +7563,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
             }
         }
         if (sp58 != NULL) {
-            transform_point_by_object(objdata->unk680.unk10.x, objdata->unk680.unk10.y, objdata->unk680.unk10.z, player->srt.transl.f, &sp64, &player->srt.transl.f[2], sp58);
+            camTransformPointByObject(objdata->unk680.unk10.x, objdata->unk680.unk10.y, objdata->unk680.unk10.z, player->srt.transl.f, &sp64, &player->srt.transl.f[2], sp58);
             player->srt.transl.f[0] += objdata->unk680.unk0.x * 14.5f;
             player->srt.transl.f[2] += objdata->unk680.unk0.z * 14.5f;
             dll_210_func_7260(player, objdata);
@@ -7597,7 +7597,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
             }
         }
         if (sp58 != NULL) {
-            transform_point_by_object(objdata->unk680.unk10.x, objdata->unk680.unk10.y, objdata->unk680.unk10.z, player->srt.transl.f, &sp64, &player->srt.transl.f[2], sp58);
+            camTransformPointByObject(objdata->unk680.unk10.x, objdata->unk680.unk10.y, objdata->unk680.unk10.z, player->srt.transl.f, &sp64, &player->srt.transl.f[2], sp58);
             player->srt.transl.f[0] += objdata->unk680.unk0.x * 9.0f;
             player->srt.transl.f[2] += objdata->unk680.unk0.z * 9.0f;
             dll_210_func_7260(player, objdata);
@@ -7617,7 +7617,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         objdata->unk680.unk2C = 0;
         player->srt.yaw = arctan2_f(objdata->unk680.unk0.x, objdata->unk680.unk0.z);
         if (sp58 != NULL) {
-            transform_point_by_object(objdata->unk680.unk10.x, objdata->unk680.unk10.y, objdata->unk680.unk10.z, player->srt.transl.f, &sp64, &player->srt.transl.f[2], sp58);
+            camTransformPointByObject(objdata->unk680.unk10.x, objdata->unk680.unk10.y, objdata->unk680.unk10.z, player->srt.transl.f, &sp64, &player->srt.transl.f[2], sp58);
             player->srt.transl.f[0] += objdata->unk680.unk0.x * 11.45f;
             player->srt.transl.f[2] += objdata->unk680.unk0.z * 11.45f;
             dll_210_func_7260(player, objdata);
@@ -7761,7 +7761,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->globalPosition.f[0] = objdata->unk7EC.x;
             player->globalPosition.f[1] = objdata->unk7EC.y;
             player->globalPosition.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             func_80023D30(player, _data_69C[1], 0.0f, 1U);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 1;
@@ -7819,7 +7819,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->globalPosition.f[0] = objdata->unk7EC.x;
             player->globalPosition.f[1] = objdata->unk7EC.y;
             player->globalPosition.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             dll_210_func_7260(player, objdata);
             func_80023D30(player, _data_6C0[0], 0.0f, 1U);
             return 0x2E;
@@ -7831,7 +7831,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 player->globalPosition.f[0] = objdata->unk7EC.x;
                 player->globalPosition.f[1] = objdata->unk7EC.y;
                 player->globalPosition.f[2] = objdata->unk7EC.z;
-                inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+                camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
                 dll_210_func_7260(player, objdata);
                 func_80023D30(player, _data_6C0[0], 0.0f, 1U);
                 return 0x2E;
@@ -7848,7 +7848,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->globalPosition.f[0] = objdata->unk7EC.x;
             player->globalPosition.f[1] = objdata->unk7EC.y;
             player->globalPosition.f[2] = objdata->unk7EC.z;
-            inverse_transform_point_by_object(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
             dll_210_func_7260(player, objdata);
             func_80023D30(player, _data_6C0[0], 0.0f, 1U);
             return 0x2E;

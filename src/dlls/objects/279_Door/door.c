@@ -95,7 +95,7 @@ void dll_279_func_1034(Vec3f* arg0, DLL279_Setup* objSetup) {
     f32 f0;
     u8 temp;
 
-    camera = get_main_camera();
+    camera = camGetMain();
     
     f0 = (arg0->x * camera->srt.transl.x) + (arg0->y * camera->srt.transl.z) + arg0->z;
     if (f0 < 0.0f) {

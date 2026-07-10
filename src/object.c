@@ -167,7 +167,7 @@ void update_objects(void) {
 
     for (obj = (Object*)node; node != NULL && (obj->def->flags & OBJDEF_IS_MOBILE_MAP); obj = (Object*)node) {
         update_object(obj);
-        obj->matrixIdx = camera_alloc_object_matrix(obj);
+        obj->matrixIdx = camAllocObjectMatrix(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
     }
 
@@ -396,7 +396,7 @@ void obj_depth_sort_objects(s32 start, s32 end) {
                 obj->depthSortVal = obj->def->staticDepthSortVal * 1000;
             } else {
                 // dot product based depth sorting
-                obj->depthSortVal = -camera_get_angle_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
+                obj->depthSortVal = -camGetAngleToPoint(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
             }
         }
 
@@ -749,7 +749,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
 void obj_add_object(Object *obj, u32 initFlags) {
     if (obj->parent != NULL) {
-        transform_point_by_object(
+        camTransformPointByObject(
             obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z,
             &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z,
             obj->parent
@@ -1130,7 +1130,7 @@ void update_object(Object *obj) {
         if (obj->dll != NULL && !(obj->stateFlags & OBJSTATE_CONTROL_DISABLED)) {
             obj->dll->vtbl->control(obj);
 
-            get_object_child_position(obj,
+            camGetObjectChildPosition(obj,
                 &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
         }
 
@@ -1161,7 +1161,7 @@ void func_8002272C(Object *obj) {
     if (obj->dll != NULL && !(obj->stateFlags & OBJSTATE_UPDATE_DISABLED)) {
         obj->dll->vtbl->update(obj);
 
-        get_object_child_position(obj,
+        camGetObjectChildPosition(obj,
             &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
     }
 

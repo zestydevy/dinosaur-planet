@@ -414,7 +414,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         bcopy(&obj->srt.transl, &sp220, sizeof(Vec3f));
         bcopy(&obj->globalPosition, &sp22C, sizeof(Vec3f));
         if (obj->parent != NULL) {
-            transform_point_by_object(
+            camTransformPointByObject(
                 shadow->tr.x,
                 shadow->tr.y,
                 shadow->tr.z,
@@ -511,7 +511,7 @@ s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
 
     sp1C = shadow->distFadeStart * 4;
     sp18 = shadow->distFadeEnd * 4;
-    var_fv1 = (camera_get_distance_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z) - sp1C) / (sp18 - sp1C);
+    var_fv1 = (camDistance(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z) - sp1C) / (sp18 - sp1C);
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     } else if (var_fv1 > 1.0f) {
@@ -537,7 +537,7 @@ void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtx
         bcopy(&obj->globalPosition, &sp50, sizeof(Vec3f));
         bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
         if (obj->parent != NULL) {
-            transform_point_by_object(shadow->tr.x, shadow->tr.y, shadow->tr.z, &shadow->tr.x, &shadow->tr.y, &shadow->tr.z, obj->parent);
+            camTransformPointByObject(shadow->tr.x, shadow->tr.y, shadow->tr.z, &shadow->tr.x, &shadow->tr.y, &shadow->tr.z, obj->parent);
         } else {
             bcopy(&shadow->tr, &obj->globalPosition, sizeof(Vec3f));
         }
@@ -601,7 +601,7 @@ void shadows_update_obj_box(Object* arg0) {
             bcopy(&arg0->srt.transl, &sp1D4, 0xC);
             bcopy(&arg0->globalPosition, &sp1E0, 0xC);
             if (arg0->parent != NULL) {
-                transform_point_by_object(
+                camTransformPointByObject(
                     temp_s1->tr.x,
                     temp_s1->tr.y,
                     temp_s1->tr.z,
@@ -984,9 +984,9 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     sp280 = 0;
     sp26C = 0;
     spAC = arg0->shadow;
-    camera = get_camera();
+    camera = camGet();
     if (arg0->parent != NULL) {
-        inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8.f[0], &spD8.f[1], &spD8.f[2], arg0->parent);
+        camInverseTransformPointByObject(camera->tx, camera->ty, camera->tz, &spD8.f[0], &spD8.f[1], &spD8.f[2], arg0->parent);
     } else {
         spD8.f[0] = camera->tx;
         spD8.f[1] = camera->ty;
@@ -1146,7 +1146,7 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
     spAC = arg0->shadow;
     bzero(&D_800B9B10, sizeof(D_800B9B10) - 4);
     temp_fs4 = (f32) spAC->visibility * 0.015625f;
-    camera = get_camera();
+    camera = camGet();
     spD0.x = camera->tx - arg0->globalPosition.x;
     spD0.y = camera->ty - arg0->globalPosition.y;
     spD0.z = camera->tz - arg0->globalPosition.z;
@@ -1477,8 +1477,8 @@ void shadows_func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     s32 i;
     s16 sp2A;
 
-    set_camera_selector(0);
-    camera = get_camera();
+    camSetCameraSelector(0);
+    camera = camGet();
     sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) & 0xFFFF;
     sp30 = fsin16_precise(-sp2A);
     temp_fv0 = fcos16_precise(-sp2A);

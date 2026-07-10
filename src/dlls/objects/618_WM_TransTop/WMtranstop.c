@@ -160,7 +160,7 @@ void WM_TransTop_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Tr
     srt.pitch = 0;
     srt.roll = 0;
     srt.scale = 0.05f;
-    camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+    camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
     dl_triangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));

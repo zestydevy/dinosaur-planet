@@ -662,31 +662,31 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
     mtx = get_some_model_view_mtx();
     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
-    camera_setup_viewport_and_matrices(&gMainDL, 0);
+    camSetupViewportAndMatrices(&gMainDL, 0);
     track_update_frustum();
     if (func_80010048() != 0) {
         if (!(gTrackFlags & TRACKFLAG_UNK8)) {
             gTrackFlags |= TRACKFLAG_UNK8;
         }
-        camera_set_aspect(1.7777778f);
+        camSetAspect(1.7777778f);
     } else {
         if (gTrackFlags & TRACKFLAG_UNK8) {
             gTrackFlags &= ~TRACKFLAG_UNK8;
-            camera_set_aspect(1.3333334f);
+            camSetAspect(1.3333334f);
         }
     }
     if (gTrackFlags & TRACKFLAG_UNK10000) {
         if (gTrackFlags & TRACKFLAG_UNK8) {
-            camera_set_aspect(1.7777778f);
+            camSetAspect(1.7777778f);
         } else {
-            camera_set_aspect(1.3333334f);
+            camSetAspect(1.3333334f);
         }
-        viewport_disable(get_camera_selector(), 0U);
+        camViewportDisable(camGetCameraSelector(), 0U);
         vi_some_video_setup(0);
         gTrackFlags &= ~TRACKFLAG_UNK10000;
     }
     if (gTrackFlags & TRACKFLAG_SKY) {
-        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+        camSetupRSPMatrices(&gMainDL, &gWorldRSPMatrices);
         gDLL_7_Newday->vtbl->func13(&gMainDL, &gWorldRSPMatrices);
 
         if (gTrackFlags & TRACKFLAG_SKY_OBJECTS) {
@@ -694,7 +694,7 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
         }
         gDLL_7_Newday->vtbl->func3(&gMainDL, &gWorldRSPMatrices, gTrackFlags & TRACKFLAG_SKY_OBJECTS);
     } else {
-        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+        camSetupRSPMatrices(&gMainDL, &gWorldRSPMatrices);
     }
     gDLL_11_Newlfx->vtbl->func2();
     gDLL_57->vtbl->func3();
@@ -706,11 +706,11 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
     } else {
         gDLL_8->vtbl->func3(&gMainDL);
     }
-    D_800B51E4 = get_camera();
+    D_800B51E4 = camGet();
     block_color_table_tick();
     track_draw_main();
     gDLL_9_Newclouds->vtbl->func4(&gMainDL);
-    camera_setup_fullscreen_viewport(&gMainDL);
+    camSetupFullscreenViewport(&gMainDL);
     *gdl = gMainDL;
     *mtxs = gWorldRSPMatrices;
     *vtxs = D_800B51D4;
@@ -1655,11 +1655,11 @@ void track_update_frustum(void) {
     s16 sp68;
     SRT srt;
 
-    camera = get_camera();
+    camera = camGet();
     if ((gTrackFlags & TRACKFLAG_UNK8) || (gTrackFlags & TRACKFLAG_UNK10000)) {
-        sp80 = camera_get_fov() / 1.5f;
+        sp80 = camGetFOV() / 1.5f;
     } else {
-        sp80 = camera_get_fov() * 0.5f;
+        sp80 = camGetFOV() * 0.5f;
     }
     spD0 = camera->tx - gWorldX;
     spCC = camera->ty;
@@ -1921,7 +1921,7 @@ u8 track_obj_vis_check(Object* obj) {
         if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = get_player(), (playerObj != NULL))) {
             dist = vec3_distance(&obj->globalPosition, &playerObj->globalPosition);
         } else {
-            dist = camera_get_distance_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
+            dist = camDistance(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
         }
         if (fadeDist < dist) {
             obj->opacityWithFade = 0;
@@ -2766,8 +2766,8 @@ void map_func_8004773C(void) {
         D_80092A78 = 8;
     }
     gDLL_3_Animation->vtbl->init();
-    camera_apply_alternate_trigger();
-    camera_apply_alternate_trigger();
+    camApplyAlternateTrigger();
+    camApplyAlternateTrigger();
     func_80053300();
 
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
@@ -2828,7 +2828,7 @@ void map_func_8004773C(void) {
     func_80023628();
     D_800B4A58 = 0;
 
-    camera = get_main_camera();
+    camera = camGetMain();
     camera->srt.transl.x = savedPlayerLocation->vec.x;
     camera->srt.transl.y = savedPlayerLocation->vec.y;
     camera->srt.transl.z = savedPlayerLocation->vec.z;
@@ -4091,8 +4091,8 @@ void func_8004A67C(void) {
     Object** mobileMapObjs;
 
     mobileMapObjs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
-    camera = get_camera();
-    update_camera_for_object(camera);
+    camera = camGet();
+    camUpdateCameraForObject(camera);
 
     for (i = 0; i < 20;) {
         Vec3_Int_array[i++].i = 0;
@@ -4117,7 +4117,7 @@ void func_8004A67C(void) {
             Vec3_Int_array[id].f.y = camera->srt.transl.y;
             Vec3_Int_array[id].f.z = camera->srt.transl.z;
         } else {
-            inverse_transform_point_by_object(
+            camInverseTransformPointByObject(
                 camera->tx,
                 camera->ty,
                 camera->tz,

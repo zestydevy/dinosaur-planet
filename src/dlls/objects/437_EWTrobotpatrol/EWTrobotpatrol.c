@@ -535,7 +535,7 @@ void dll_437_func_31F4(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
     beam->srt.transl.x = self->srt.transl.x;
     beam->srt.transl.y = self->srt.transl.y;
     beam->srt.transl.z = self->srt.transl.z;
-    get_object_child_position(beam, 
+    camGetObjectChildPosition(beam, 
         &beam->globalPosition.x, 
         &beam->globalPosition.y, 
         &beam->globalPosition.z);

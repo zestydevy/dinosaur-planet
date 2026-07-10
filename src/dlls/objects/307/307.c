@@ -195,7 +195,7 @@ static void dll_307_func_6E4(DLL307_Data *objdata, DLL307_Setup *setup) {
     f32 temp;
     u8 temp2;
 
-    camera = get_main_camera();
+    camera = camGetMain();
     temp = (objdata->unk0 * camera->srt.transl.x) + (objdata->unk4 * camera->srt.transl.z) + objdata->unk8;
     if (temp < 0.0f) {
         if (setup->unk24 != -1) {

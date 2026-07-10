@@ -1186,7 +1186,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     cmdmenu_draw_info_scroll(gdl, mtxs, vtxs);
     cmdmenu_draw_tutorial_textbox(gdl, mtxs, vtxs);
     cmdmenu_draw_main(gdl, mtxs, vtxs);
-    camera_apply_scissor(gdl);
+    camApplyScissor(gdl);
 }
 
 // offset: 0xDC4 | func: 5 | export: 6
@@ -1275,8 +1275,8 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
     s32 targetCount;
     s32 yaw;
 
-    set_camera_selector(0);
-    camera = get_main_camera();
+    camSetCameraSelector(0);
+    camera = camGetMain();
     objects = get_world_objects(&index, &count);
 
     //Get the subset of Objects that can be targetted
@@ -1290,7 +1290,7 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
             (targetCount < maxObjects) && 
             (arg3 & 1)
         ) {
-            get_object_child_position(obj, &objX, &objY, &objZ);
+            camGetObjectChildPosition(obj, &objX, &objY, &objZ);
             dx = objX - camera->srt.transl.x;
             dy = objY - camera->srt.transl.y;
             dz = objZ - camera->srt.transl.z;
@@ -3338,7 +3338,7 @@ static void cmdmenu_update_stats(void) {
     //(Causes health/magic to fade in and stay on-screen a little while longer than C buttons)
     if ((sJoyHeldButtons & R_TRIG) || 
         (gDLL_2_Camera->vtbl->get_target_object() != NULL) || 
-        (sForceStatsDisplay && (camera_get_letterbox() == 0))
+        (sForceStatsDisplay && (camGetLetterbox() == 0))
     ) {
         stats.unk14 = sPrevStats.unk14 + 1;
     } else {

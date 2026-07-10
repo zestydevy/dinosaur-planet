@@ -64,7 +64,7 @@ void DBFakeHorizon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
     
     objSetup = (DBFakeHorizon_Setup*)self->setup;
 
-    dy = get_main_camera()->srt.transl.y - self->srt.transl.y;
+    dy = camGetMain()->srt.transl.y - self->srt.transl.y;
     if (dy < 0.0f){
         return;
     }

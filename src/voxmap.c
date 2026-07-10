@@ -385,7 +385,7 @@ void func_80007E2C(Vec3f* arg0, Vec3s16 *arg1) {
     arg0->y = (arg1->s[1] * SOME_FACTOR) + 5;
     arg0->z = (arg1->s[2] * SOME_FACTOR) + 5;
     if (gVoxmapCurrentObject != NULL) {
-        transform_point_by_object(arg0->x, arg0->y, arg0->z, arg0->f, &arg0->y, &arg0->z, gVoxmapCurrentObject);
+        camTransformPointByObject(arg0->x, arg0->y, arg0->z, arg0->f, &arg0->y, &arg0->z, gVoxmapCurrentObject);
     }
 }
 
@@ -399,7 +399,7 @@ void func_80007EE0(Vec3f* arg0, Vec3s16 *arg1) {
     sp44.y = arg0->y;
     sp44.x = arg0->z;
     if (gVoxmapCurrentObject != NULL) {
-        inverse_transform_point_by_object(sp44.z, sp44.y, sp44.x, &sp44.z, &sp44.y, &sp44.x, gVoxmapCurrentObject);
+        camInverseTransformPointByObject(sp44.z, sp44.y, sp44.x, &sp44.z, &sp44.y, &sp44.x, gVoxmapCurrentObject);
     }
     var_a0 = sp44.z;
     var_a1 = sp44.y;
@@ -1049,7 +1049,7 @@ void func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics, Unk
     gfx = *gdl;
     tex_gdl_set_textures(&gfx, NULL, NULL, 3, 0, 0, 1);
     dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
-    camera_setup_world_matrix(&gfx, matrics, 0, 0, 0, 1.0f);
+    camSetupWorldMatrix(&gfx, matrics, 0, 0, 0, 1.0f);
     var_fp = 1;
     var_s4 = 0;
     temp_v0 = 0;

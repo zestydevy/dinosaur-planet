@@ -950,8 +950,8 @@ void amseq_update_dist_falloff(void) {
     }
 
     if (focus == NULL) {
-        camera = get_camera_array();
-        update_camera_for_object(camera);
+        camera = camGetCameraArray();
+        camUpdateCameraForObject(camera);
         focusX = camera->tx;
         focusY = camera->ty;
         focusZ = camera->tz;

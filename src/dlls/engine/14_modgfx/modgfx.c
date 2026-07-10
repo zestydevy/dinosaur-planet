@@ -212,7 +212,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
     if (func_80000824(-1) == 1) {
         return 1;
     }
-    camera = get_camera();
+    camera = camGet();
     for (i = 0; i < ARRAYCOUNT_S(bss_0); i++) {
         if (bss_0[i] == NULL) {
             continue;
@@ -276,7 +276,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
                 sp25C.x = bss_0[idx]->unk18.x;
                 sp25C.y = bss_0[idx]->unk18.y;
                 sp25C.z = bss_0[idx]->unk18.z;
-                transform_point_by_object_matrix(&bss_0[idx]->unk18, &sp25C, bss_0[idx]->unk135);
+                camTransformPointByObjectMatrix(&bss_0[idx]->unk18, &sp25C, bss_0[idx]->unk135);
             }
         }
         if ((sp25C.x > 65534.0f) || (sp25C.x < -65534.0f)) {
@@ -329,7 +329,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
             }
             srt.yaw += (s16) (f32) arctan2_f(sp26C[0], sp26C[2]);
         }
-        camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0/*.0f*/, NULL);
+        camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0/*.0f*/, NULL);
         if (bss_0[idx]->unk98 != NULL && bss_0[idx]->unk98->next != NULL && bss_0[idx]->unk132 != 0) {
             bss_0[idx]->unk133 -= 1;
             if (bss_0[idx]->unk133 <= 0) {

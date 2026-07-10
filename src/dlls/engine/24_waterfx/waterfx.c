@@ -463,7 +463,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = circRipple->yaw;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sCircularRippleVerts[i << 2]), 4, 0);
                 dl_triangles(gdl, &sCircularRippleTris[i << 1], 2);
             }
@@ -484,7 +484,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = 0;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sWaterSplashVerts[i * 14]), 14, 0);
                 dl_triangles(gdl, &sWaterSplashTris[i * 12], 12);
             }
@@ -505,7 +505,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = 0;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sWaterSplashPartVerts[i << 2]), 4, 0);
                 dl_triangles(gdl, &sWaterSplashPartTris[i << 1], 2);
             }
@@ -526,7 +526,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = movRipple->yaw;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sMovementRippleVerts[i << 2]), 4, 0);
                 dl_triangles(gdl, &sMovementRippleTris[i << 1], 2);
             }

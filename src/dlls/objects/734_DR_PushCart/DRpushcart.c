@@ -319,13 +319,13 @@ void dll_734_func_133C(Object* self, DRPushCart_Data* objData) {
     objData->unk118 = 0.0f;
     
     if (self == player->parent) {
-        camera_enable_y_offset();
+        camUseShake();
         if (objData->unk10C >= 0.0f) {
             camShake = objData->unk10C;
         } else {
             camShake = -objData->unk10C;
         }
-        camera_set_shake_offset(camShake);
+        camSetShakeOffset(camShake);
     }
     
     gDLL_6_AMSFX->vtbl->play(self, 0x856, MAX_VOLUME, NULL, NULL, 0, NULL);

@@ -101,8 +101,8 @@ void Pollen_control(Object* self) {
     if (self->objhitInfo->unk48 && 
         ((get_player() == self->objhitInfo->unk48) || (get_sidekick() == self->objhitInfo->unk48))
     ) {
-        camera_enable_y_offset();
-        camera_set_shake_offset(1.0f);
+        camUseShake();
+        camSetShakeOffset(1.0f);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_AFF_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->opacity = 0;
         func_800267A4(self);
@@ -157,7 +157,7 @@ void Pollen_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
 // offset: 0x688 | func: 5 | export: 4
 void Pollen_free(Object* self, s32 a1) {
-    camera_disable_y_offset();
+    camIgnoreShake();
 }
 
 // offset: 0x6C8 | func: 6 | export: 5

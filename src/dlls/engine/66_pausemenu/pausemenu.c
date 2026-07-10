@@ -170,7 +170,7 @@ void pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
     s32 opacity_drop_shadow;
 
     //Draw background and dimming overlay
-    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
     gDPSetCombineMode(*gfx, G_CC_PRIMITIVE, G_CC_PRIMITIVE);    
     dl_apply_combine(gfx);
     gDPSetOtherMode(*gfx, 

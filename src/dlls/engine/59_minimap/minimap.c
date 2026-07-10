@@ -441,7 +441,7 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
         }
         
         //Hide during cutscenes
-        if (camera_get_letterbox()) {
+        if (camGetLetterbox()) {
             loadTextureID = 0;
             sOpacity = 0;
         }

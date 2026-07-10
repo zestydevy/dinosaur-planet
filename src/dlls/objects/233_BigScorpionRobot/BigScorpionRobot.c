@@ -166,8 +166,8 @@ void BigScorpionRobot_control(Object* self) {
                         gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        camera_enable_y_offset();
-                        camera_set_shake_offset(1.0f);
+                        camUseShake();
+                        camSetShakeOffset(1.0f);
                         gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, BIGSCORP_ROBO_STATE_4_DamageRecoil);
                         objdata->enteredState = 1;
                     } else {
@@ -176,8 +176,8 @@ void BigScorpionRobot_control(Object* self) {
                 }
                 if (objdata->hitCount >= 6) {
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    camera_enable_y_offset();
-                    camera_set_shake_offset(6.0f);
+                    camUseShake();
+                    camSetShakeOffset(6.0f);
                     gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, BIGSCORP_ROBO_STATE_5_Dying);
                     objdata->enteredState = 1;
                     baddie->fsa.target = NULL;
@@ -493,8 +493,8 @@ static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 upd
             obj_destroy_object(self);
         }
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
-        camera_enable_y_offset();
-        camera_set_shake_offset(6.0f);
+        camUseShake();
+        camSetShakeOffset(6.0f);
         obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
     }
     if (self->opacity >= (gUpdateRate * 3)) {

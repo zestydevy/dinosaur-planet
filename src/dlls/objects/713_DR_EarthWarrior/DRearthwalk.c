@@ -367,7 +367,7 @@ static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
     } else {
         sp50 = 1;
     }
-    sp54 = get_main_camera();
+    sp54 = camGetMain();
     objdata = self->data;
     objdata->fsa.hitpoints = 0;
     objdata->fsa.flags &= ~OBJFSA_FLAG_8000;

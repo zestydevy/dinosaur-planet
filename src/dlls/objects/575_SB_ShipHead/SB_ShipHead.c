@@ -127,7 +127,7 @@ void SB_ShipHead_control(Object *self) {
         gDLL_6_AMSFX->vtbl->play(NULL, SOUND_17A_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->srt.transl.y += 50.0f;
         self->srt.transl.z -= 300.0f;
-        get_object_child_position(self, &ox, &oy, &oz);
+        camGetObjectChildPosition(self, &ox, &oy, &oz);
         self->srt.transl.y -= 50.0f;
         self->srt.transl.z += 300.0f;
         fireballSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_FireBall);

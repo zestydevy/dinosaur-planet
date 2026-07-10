@@ -130,7 +130,7 @@ static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) 
     s32 lrx;
     s32 lry;
 
-    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
 
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
 
@@ -148,7 +148,7 @@ static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) 
     gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
 
     gDLBuilder->needsPipeSync = TRUE;
-    camera_apply_scissor(gdl);
+    camApplyScissor(gdl);
 }
 
 // offset: 0x6DC | func: 7
@@ -158,7 +158,7 @@ static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 re
     s32 lrx;
     s32 lry;
 
-    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
 
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
 
@@ -175,7 +175,7 @@ static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 re
     gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
 
     gDLBuilder->needsPipeSync = TRUE;
-    camera_apply_scissor(gdl);
+    camApplyScissor(gdl);
 }
 
 // offset: 0x968 | func: 8
@@ -197,7 +197,7 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
     u8 spA4;
     s32 pad;
 
-    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
     width = lrx - ulx;
     height = lry - uly;
     if (sFadeAlpha > 127.0f) {
@@ -286,5 +286,5 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
     gDPFillRectangle((*gdl)++, ulx, uly, lrx, uly + temp_s4 + 1);
     gDLBuilder->needsPipeSync = 1;
 
-    camera_apply_scissor(gdl);
+    camApplyScissor(gdl);
 }

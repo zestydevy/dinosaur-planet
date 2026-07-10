@@ -178,9 +178,9 @@ void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
     s32 ulx, uly, lrx, lry;
     s32 letterbox;
 
-    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
 
-    letterbox = camera_get_letterbox();
+    letterbox = camGetLetterbox();
 
     viSize = vi_get_current_size();
     viWidth = GET_VIDEO_WIDTH(viSize);
@@ -235,7 +235,7 @@ void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
         }
     }
 
-    camera_apply_scissor(gdl);
+    camApplyScissor(gdl);
 }
 
 // unused

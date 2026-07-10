@@ -839,7 +839,7 @@ void obj_do_hit_detection(s32 arg0) {
         currentObjHitInfo->unk10.y = currentObj->srt.transl.y;
         currentObjHitInfo->unk10.z = currentObj->srt.transl.z;
         if (currentObj->parent != NULL) {
-            transform_point_by_object(currentObjHitInfo->unk10.x, currentObjHitInfo->unk10.y, currentObjHitInfo->unk10.z, &currentObjHitInfo->unk20.x, &currentObjHitInfo->unk20.y, &currentObjHitInfo->unk20.z, currentObj->parent);
+            camTransformPointByObject(currentObjHitInfo->unk10.x, currentObjHitInfo->unk10.y, currentObjHitInfo->unk10.z, &currentObjHitInfo->unk20.x, &currentObjHitInfo->unk20.y, &currentObjHitInfo->unk20.z, currentObj->parent);
         } else {
             currentObjHitInfo->unk20.x = currentObj->srt.transl.x;
             currentObjHitInfo->unk20.y = currentObj->srt.transl.y;
@@ -1213,7 +1213,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
     objhitInfo->unk0 = otherObj;
     otherObjhitInfo->unk0 = obj;
     if (obj->parent != NULL) {
-        inverse_rotate_point_by_object(x, y, z, &ox, &oy, &oz, obj->parent);
+        camInverseRotatePointByObject(x, y, z, &ox, &oy, &oz, obj->parent);
     } else {
         ox = x;
         oy = y;
@@ -1221,7 +1221,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
     }
 
     if (otherObj->parent != NULL) {
-        inverse_rotate_point_by_object(x, y, z, &dx, &dy, &dz, otherObj->parent);
+        camInverseRotatePointByObject(x, y, z, &dx, &dy, &dz, otherObj->parent);
     } else {
         dx = x;
         dy = y;

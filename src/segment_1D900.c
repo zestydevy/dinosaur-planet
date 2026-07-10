@@ -287,7 +287,7 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
                 D_800B1858[i].y = sp80.y;
                 D_800B1858[i].z = sp80.z;
             } else {
-                inverse_transform_point_by_object(D_800B1858[i].pos.x, D_800B1858[i].pos.y, D_800B1858[i].pos.z, &sp8C, &sp90, &sp94, obj->parent);
+                camInverseTransformPointByObject(D_800B1858[i].pos.x, D_800B1858[i].pos.y, D_800B1858[i].pos.z, &sp8C, &sp90, &sp94, obj->parent);
                 D_800B1858[i].x = sp8C;
                 D_800B1858[i].y = sp90;
                 D_800B1858[i].z = sp94;
@@ -619,7 +619,7 @@ void func_8001F094(ModelInstance* arg0) {
         return;
     }
 
-    camera = get_main_camera();
+    camera = camGetMain();
     spF0 = arg0->model;
     spEC = camera->srt.transl.f[0] - gWorldX;
     spE8 = camera->srt.transl.f[1];
@@ -724,7 +724,7 @@ void func_8001F4C0(Block* block, s32 blockX, s32 blockZ) {
     f32 temp;
     f32 temp2;
 
-    camera = get_main_camera();
+    camera = camGetMain();
     
     sp9C.f[2] = camera->srt.transl.f[0] - ((blockX * 640.0f) + gWorldX);
     sp9C.f[1] = camera->srt.transl.f[1];

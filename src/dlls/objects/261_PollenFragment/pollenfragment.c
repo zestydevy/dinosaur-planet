@@ -69,7 +69,7 @@ void PollenFragment_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x350 | func: 4 | export: 4
 void PollenFragment_free(Object* self, s32 arg1) {
-    camera_disable_y_offset();
+    camIgnoreShake();
 }
 
 // offset: 0x390 | func: 5 | export: 5

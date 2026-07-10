@@ -91,7 +91,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     sp74 = 0.0f;
     sp70 = 0.0f;
     objdata = self->data;
-    camera = get_camera();
+    camera = camGet();
     setup = (CFLamp_Setup*)self->setup;
     if (rand_next(0, 1) != 0) {
         arg2->unk9D = 4;
@@ -123,15 +123,15 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     sp50 = self->globalPosition.x - gWorldX;
     sp48 = self->globalPosition.z - gWorldZ;
     sp4C = self->globalPosition.y;
-    camera_project_point(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
-    camera_clip_to_screen(sp44, sp40, sp3C, &sp38, &sp34, NULL);
+    camProjectPoint(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
+    camClipToScreen(sp44, sp40, sp3C, &sp38, &sp34, NULL);
     sp2C = vi_obj_depth(sp38, sp34, self);
-    get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp7C, &sp74, &sp78);
+    camGetVec3ToCameraNormalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp7C, &sp74, &sp78);
     sp50 += (sp7C * 20.0f);
     sp4C += (sp74 * 20.0f); 
     sp48 += (sp78 * 20.0f);
-    camera_project_point(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
-    camera_clip_to_screen(sp44, sp40, sp3C, NULL, NULL, &sp30);
+    camProjectPoint(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
+    camClipToScreen(sp44, sp40, sp3C, NULL, NULL, &sp30);
     if ((vi_contains_point(sp38, sp34) != 0) && (sp30 > 0) && (sp30 < sp2C)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }

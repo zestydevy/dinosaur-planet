@@ -41,7 +41,7 @@ void fbfx_tick(Gfx **gdl, s32 updateRate) {
             gFbfxTimer = gFbfxEffectDuration;
             STUBBED_PRINTF("Freak a0 %x  a1 %x \n", gFrontFramebuffer, gBackFramebuffer); // args from default.dol (maybe wrong?)
         }
-        fbfx_do_effect(gdl, gFbfxEffectDuration, gFbfxEffectID, camera_get_letterbox());
+        fbfx_do_effect(gdl, gFbfxEffectDuration, gFbfxEffectID, camGetLetterbox());
         if (gFbfxEffectID == FBFX_MOTION_BLUR) {
             gFbfxTimer -= updateRate;
             if (gFbfxTimer <= 0) {

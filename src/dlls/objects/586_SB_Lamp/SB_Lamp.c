@@ -92,7 +92,7 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     pdz = 0.0f;
     pdy = 0.0f;
     objdata = self->data;
-    camera = get_camera();
+    camera = camGet();
     if (rand_next(0, 1) != 0) {
         animObjData->unk9D = 4;
     } else {
@@ -133,15 +133,15 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     x = self->globalPosition.x - gWorldX;
     z = self->globalPosition.z - gWorldZ;
     y = self->globalPosition.y;
-    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
-    camera_clip_to_screen(ox1, oy1, oz1, &ox, &oy, NULL);
+    camProjectPoint(x, y, z, &ox1, &oy1, &oz1);
+    camClipToScreen(ox1, oy1, oz1, &ox, &oy, NULL);
     sp30 = vi_obj_depth(ox, oy, self);
-    get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
+    camGetVec3ToCameraNormalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
     x += (pdx * 20.0f);
     y += (pdy * 20.0f);
     z += (pdz * 20.0f);
-    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
-    camera_clip_to_screen(ox1, oy1, oz1, NULL, NULL, &oz);
+    camProjectPoint(x, y, z, &ox1, &oy1, &oz1);
+    camClipToScreen(ox1, oy1, oz1, NULL, NULL, &oz);
     if ((vi_contains_point(ox, oy)) && (oz > 0) && (oz < sp30)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }

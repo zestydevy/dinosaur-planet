@@ -175,7 +175,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
     }
     parentObj = obj->parent;
     if (parentObj != NULL) {
-        setup_rsp_matrices_for_object(&tempGdl, &tempMtxs, parentObj);
+        camSetupRSPMatricesForObject(&tempGdl, &tempMtxs, parentObj);
         spC4 = obj->srt.transl.f[0];
         spC0 = obj->srt.transl.f[1];
         spBC = obj->srt.transl.f[2];
@@ -199,7 +199,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             spDC.transl.f[0] += gWorldX;
             spDC.transl.f[2] += gWorldZ;
         }
-        camera_setup_object_srt_matrix(&tempGdl, &tempMtxs, &spDC, 1.0f, 0.0f, NULL);
+        camSetupObjectSRTMatrix(&tempGdl, &tempMtxs, &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
         dl_set_all_dirty();
         tex_render_reset();
@@ -221,7 +221,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
                 } else {
                     bcopy((void* ) PTR_DAT_800b2e1c, sp70, 0x40);
                 }
-                add_matrix_to_pool(sp70, 1);
+                camAddMatrixToPool(sp70, 1);
             }
             modelInst->unk34 ^= 2;
             if ((obj->def->flags & OBJDEF_FLAG10) || (model->blendshapes != NULL)) {
@@ -285,7 +285,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         obj->srt.transl.f[1] = spC0;
         obj->srt.transl.f[2] = spBC;
         obj->srt.yaw = spBA;
-        camera_load_parent_projection(&tempGdl);
+        camLoadParentProjection(&tempGdl);
     }
     *gdl = tempGdl;
     *mtxs = tempMtxs;
@@ -409,7 +409,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
                 ((f32*)arg7->m)[i] = ((f32*)arg6->m)[i];
             }
             func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
-            add_matrix_to_pool(arg7, 1);
+            camAddMatrixToPool(arg7, 1);
             D_800B2E10 = sp74 = arg7;
         }
         modelInst->unk34 ^= 2;
@@ -447,7 +447,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         arg8->srt.transl.f[1] = D_800B2E10->m[3][1];
         arg8->srt.transl.f[2] = D_800B2E10->m[3][2];
         if (arg8->parent != NULL) {
-            transform_point_by_object(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->globalPosition.f, &arg8->globalPosition.f[1], &arg8->globalPosition.f[2], arg8->parent);
+            camTransformPointByObject(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->globalPosition.f, &arg8->globalPosition.f[1], &arg8->globalPosition.f[2], arg8->parent);
         } else {
             arg8->srt.transl.f[0] += gWorldX;
             arg8->srt.transl.f[2] += gWorldZ;
@@ -457,11 +457,11 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         }
         if (arg8->def->numAttachPoints >= 2 && arg8->controlNo == OBJCONTROL_Weapon) {
             if (arg8->parent != NULL) {
-                camera_load_parent_projection(arg0);
+                camLoadParentProjection(arg0);
             }
             ((DLL_IGROUP_48 *)arg8->dll)->vtbl->func10(arg8, arg0, arg1, arg2, arg3);
             if (arg8->parent != NULL) {
-                setup_rsp_matrices_for_object(arg0, arg1, arg8->parent);
+                camSetupRSPMatricesForObject(arg0, arg1, arg8->parent);
             }
         }
     }
@@ -493,7 +493,7 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
             sp7C.f[2] = obj->def->pAttachPoints[j + 1].pos.f[2];
             vec3_transform(tempMtx, sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2]);
             if (otherObj->parent != NULL) {
-                transform_point_by_object(sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2], otherObj->parent);
+                camTransformPointByObject(sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2], otherObj->parent);
             } else {
                 sp7C.f[0] += gWorldX;
                 sp7C.f[2] += gWorldZ;
@@ -510,7 +510,7 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
             sp70.f[2] = obj->def->pAttachPoints[j].pos.f[2];
             vec3_transform(tempMtx, sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2]);
             if (otherObj->parent != NULL) {
-                transform_point_by_object(sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2], otherObj->parent);
+                camTransformPointByObject(sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2], otherObj->parent);
             } else {
                 sp70.f[0] += gWorldX;
                 sp70.f[2] += gWorldZ;
@@ -572,7 +572,7 @@ void func_80036438(Object* arg0) {
                 sp118[i].drawPoint.f[0] += gWorldX;
                 sp118[i].drawPoint.f[2] += gWorldZ;
             } else {
-                transform_point_by_object_matrix(&sp118[i].drawPoint, &sp118[i].drawPoint, arg0->parent->matrixIdx);
+                camTransformPointByObjectMatrix(&sp118[i].drawPoint, &sp118[i].drawPoint, arg0->parent->matrixIdx);
             }
             temp_fs0 = sp11C[i].unk06 * 2;
             temp_fs1 = sp11C[i].unk08 * 2;
@@ -582,7 +582,7 @@ void func_80036438(Object* arg0) {
                 sp118[i].refPoint.f[0] += gWorldX;
                 sp118[i].refPoint.f[2] += gWorldZ;
             } else {
-                transform_point_by_object_matrix(&sp118[i].refPoint, &sp118[i].refPoint, arg0->parent->matrixIdx);
+                camTransformPointByObjectMatrix(&sp118[i].refPoint, &sp118[i].refPoint, arg0->parent->matrixIdx);
             }
         } else {
             spA8.transl.f[0] = arg0->globalPosition.f[0];
@@ -747,7 +747,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         sp44.roll = 0;
         sp44.pitch = 0;
         sp44.scale = 1.0f;
-        camera_setup_object_srt_matrix(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
+        camSetupObjectSRTMatrix(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
         gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
         dl_set_all_dirty();
         tex_render_reset();
@@ -780,15 +780,15 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
             case OBJ_TriggerCylinder:
                 sp60 = arg0->srt.scale;
                 arg0->srt.scale = 2.0f;
-                camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
                 arg0->srt.scale = sp60;
                 break;
             default:
-                camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
                 break;
             }
         } else {
-            camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+            camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
         }
         if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
             func_8001F848(arg1);
@@ -814,11 +814,11 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         shadowTransform.pitch = 0;
         shadowTransform.scale = 0.05f;
 
-        camera_setup_object_srt_matrix(gdl, mtx, &shadowTransform, 1.0f, 0.0f, NULL);
+        camSetupObjectSRTMatrix(gdl, mtx, &shadowTransform, 1.0f, 0.0f, NULL);
         gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->shadow->gdl));
 
         if (object->parent) {
-            setup_rsp_matrices_for_object(gdl, mtx, object->parent);
+            camSetupRSPMatricesForObject(gdl, mtx, object->parent);
         }
         dl_set_all_dirty();
         tex_render_reset();

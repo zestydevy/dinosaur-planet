@@ -2077,8 +2077,8 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
     }
 
     if (parentObj != NULL) {
-        transform_point_by_object(arg0->f[0], arg0->f[1], arg0->f[2], &spC0.f[0], &spC0.f[1], &spC0.f[2], parentObj);
-        transform_point_by_object(arg1->f[0], arg1->f[1], arg1->f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], parentObj);
+        camTransformPointByObject(arg0->f[0], arg0->f[1], arg0->f[2], &spC0.f[0], &spC0.f[1], &spC0.f[2], parentObj);
+        camTransformPointByObject(arg1->f[0], arg1->f[1], arg1->f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], parentObj);
     } else {
         bcopy(arg0, &spC0, sizeof(Vec3f));
         bcopy(arg1, &spB4, sizeof(Vec3f));
@@ -2119,13 +2119,13 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
                     spA8.f[1] = temp_v0_2->unk8.f[1];
                     spA8.f[2] = temp_v0_2->unk8.f[2];
                 } else {
-                    inverse_transform_point_by_object(spC0.f[0], spC0.f[1], spC0.f[2], &spA8.f[0], &spA8.f[1], &spA8.f[2], currentObj);
+                    camInverseTransformPointByObject(spC0.f[0], spC0.f[1], spC0.f[2], &spA8.f[0], &spA8.f[1], &spA8.f[2], currentObj);
                 }
 
-                inverse_transform_point_by_object(spB4.f[0], spB4.f[1], spB4.f[2], &sp9C.f[0], &sp9C.f[1], &sp9C.f[2], currentObj);
+                camInverseTransformPointByObject(spB4.f[0], spB4.f[1], spB4.f[2], &sp9C.f[0], &sp9C.f[1], &sp9C.f[2], currentObj);
                 
                 if (func_8005A3F8(&spA8, &sp9C, arg2, arg3, arg4, currentObj, arg6, arg7, arg9, arg5) != 0) {
-                    transform_point_by_object(sp9C.f[0], sp9C.f[1], sp9C.f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], currentObj);
+                    camTransformPointByObject(sp9C.f[0], sp9C.f[1], sp9C.f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], currentObj);
                 }
 
                 if (arg8 != 0xFF) {
@@ -2152,12 +2152,12 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         arg4->unk2C.f[2] *= dy;
         arg4->unk38.f[0] = -((arg4->unk14 * arg4->unk2C.z) + (arg4->unk2C.x * arg4->unk4));
         if (arg4->unk0 != NULL) {
-            transform_point_by_object(arg4->unk4, arg4->unkC, arg4->unk14, &arg4->unk4, &arg4->unkC, &arg4->unk14, arg4->unk0);
-            transform_point_by_object(arg4->unk8, arg4->unk10, arg4->unk18, &arg4->unk8, &arg4->unk10, &arg4->unk18, arg4->unk0);
+            camTransformPointByObject(arg4->unk4, arg4->unkC, arg4->unk14, &arg4->unk4, &arg4->unkC, &arg4->unk14, arg4->unk0);
+            camTransformPointByObject(arg4->unk8, arg4->unk10, arg4->unk18, &arg4->unk8, &arg4->unk10, &arg4->unk18, arg4->unk0);
         }
         if (parentObj != NULL) {
-            inverse_transform_point_by_object(arg4->unk4, arg4->unkC, arg4->unk14, &arg4->unk4, &arg4->unkC, &arg4->unk14, parentObj);
-            inverse_transform_point_by_object(arg4->unk8, arg4->unk10, arg4->unk18, &arg4->unk8, &arg4->unk10, &arg4->unk18, parentObj);
+            camInverseTransformPointByObject(arg4->unk4, arg4->unkC, arg4->unk14, &arg4->unk4, &arg4->unkC, &arg4->unk14, parentObj);
+            camInverseTransformPointByObject(arg4->unk8, arg4->unk10, arg4->unk18, &arg4->unk8, &arg4->unk10, &arg4->unk18, parentObj);
         }
         arg4->unk1C.f[0] = arg4->unk18 - arg4->unk14;
         arg4->unk1C.f[1] = 0.0f;
@@ -2172,7 +2172,7 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
 
     if (D_800BB53A != 0) {
         if (parentObj != NULL) {
-            inverse_transform_point_by_object(spB4.f[0], spB4.f[1], spB4.f[2], arg1->f, &arg1->f[1], &arg1->f[2], parentObj);
+            camInverseTransformPointByObject(spB4.f[0], spB4.f[1], spB4.f[2], arg1->f, &arg1->f[1], &arg1->f[2], parentObj);
         } else {
             bcopy(&spB4, arg1, sizeof(Vec3f));
         }
@@ -2665,19 +2665,19 @@ void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
 
     //Camera-related
     if (parent != NULL) {
-        camera_update_object_matrix(parent);
+        camUpdateObjectMatrix(parent);
     }
     if (arg1 != NULL) {
-        camera_update_object_matrix(arg1);
+        camUpdateObjectMatrix(arg1);
     }
 
     arg0->parent = arg1;
     hitInfo = arg0->objhitInfo;
 
     if (parent != NULL) {
-        transform_point_by_object(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &arg0->globalPosition.x, &arg0->globalPosition.y, &arg0->globalPosition.z, parent);
-        transform_point_by_object(arg0->prevLocalPosition.x, arg0->prevLocalPosition.y, arg0->prevLocalPosition.z, &arg0->prevGlobalPosition.x, &arg0->prevGlobalPosition.y, &arg0->prevGlobalPosition.z, parent);
-        rotate_point_by_object(arg0->velocity.x, 0, arg0->velocity.z, &speedX, &speedY, &speedZ, parent);
+        camTransformPointByObject(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &arg0->globalPosition.x, &arg0->globalPosition.y, &arg0->globalPosition.z, parent);
+        camTransformPointByObject(arg0->prevLocalPosition.x, arg0->prevLocalPosition.y, arg0->prevLocalPosition.z, &arg0->prevGlobalPosition.x, &arg0->prevGlobalPosition.y, &arg0->prevGlobalPosition.z, parent);
+        camRotatePointByObject(arg0->velocity.x, 0, arg0->velocity.z, &speedX, &speedY, &speedZ, parent);
         dYaw = parent->srt.yaw + arg0->srt.yaw;
     } else {
         speedX = arg0->velocity.x;
@@ -2688,9 +2688,9 @@ void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
     if (arg2 != 0) {
         parent = arg0->parent;
         if (arg0->parent != NULL) {
-            inverse_transform_point_by_object(arg0->globalPosition.x, arg0->globalPosition.y, arg0->globalPosition.z, &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, arg0->parent);
-            inverse_transform_point_by_object(arg0->prevGlobalPosition.x, arg0->prevGlobalPosition.y, arg0->prevGlobalPosition.z, &arg0->prevLocalPosition.x, &arg0->prevLocalPosition.y, &arg0->prevLocalPosition.z, arg0->parent);
-            inverse_rotate_point_by_object(speedX, 0, speedZ, &arg0->velocity.x, &speedY, &arg0->velocity.z, arg0->parent);
+            camInverseTransformPointByObject(arg0->globalPosition.x, arg0->globalPosition.y, arg0->globalPosition.z, &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, arg0->parent);
+            camInverseTransformPointByObject(arg0->prevGlobalPosition.x, arg0->prevGlobalPosition.y, arg0->prevGlobalPosition.z, &arg0->prevLocalPosition.x, &arg0->prevLocalPosition.y, &arg0->prevLocalPosition.z, arg0->parent);
+            camInverseRotatePointByObject(speedX, 0, speedZ, &arg0->velocity.x, &speedY, &arg0->velocity.z, arg0->parent);
             dYaw -= arg0->parent->srt.yaw;
             CIRCLE_WRAP(dYaw)
             arg0->srt.yaw = dYaw;

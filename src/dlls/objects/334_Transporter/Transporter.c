@@ -92,7 +92,7 @@ void Transporter_control(Object *self) {
         main_set_bits(BIT_Shown_ZLock_Interact_Message, 1);
         return;
     }
-    camera_enable_y_offset();
+    camUseShake();
     player = get_player();
     if (player) {
         distToPlayer = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
@@ -146,7 +146,7 @@ void Transporter_control(Object *self) {
                 ((DLL_130*)objdata->dll130)->vtbl->base.func0(self, 0, NULL, 1, -1, NULL);
                 objdata->unk18 = objdata->unk12;
             }
-            camera = get_camera();
+            camera = camGet();
             delta.f[0] = self->globalPosition.x - camera->tx;
             delta.f[1] = self->globalPosition.y - camera->ty;
             delta.f[2] = self->globalPosition.z - camera->tz;
@@ -168,9 +168,9 @@ void Transporter_control(Object *self) {
                     for (i = 0; i < objdata->unk14; i++) {
                         gDLL_17_partfx->vtbl->spawn(player, PARTICLE_79, NULL, PARTFXFLAG_4, -1, NULL);
                     }
-                    camera_set_shake_offset(rand_next(0, 10) * 0.1f);
+                    camSetShakeOffset(rand_next(0, 10) * 0.1f);
                 } else if ((objdata->unk25 == 0) && (self->unkDC < 200)) {
-                    camera_set_shake_offset(rand_next(0, 10) * 0.05f);
+                    camSetShakeOffset(rand_next(0, 10) * 0.05f);
                 }
                 transform.transl.x = delta.f[0] + self->globalPosition.x;
                 transform.transl.y = delta.f[1] + self->globalPosition.y;
@@ -188,7 +188,7 @@ void Transporter_control(Object *self) {
                     transform.yaw = 0;
                     transform.roll = 0;
                     transform.pitch = 0;
-                    camera_set_shake_offset(8.0f);
+                    camSetShakeOffset(8.0f);
                     gDLL_6_AMSFX->vtbl->play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 }
@@ -203,7 +203,7 @@ void Transporter_control(Object *self) {
             transform.pitch = 0;
             transform.scale = 1.0f;
             if (objdata->unk25 != 0) {
-                camera_set_shake_offset(8.0f);
+                camSetShakeOffset(8.0f);
                 gDLL_6_AMSFX->vtbl->play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 for (i = 0; i < 80; i++) {

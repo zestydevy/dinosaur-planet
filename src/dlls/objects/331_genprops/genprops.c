@@ -276,7 +276,7 @@ void dll_331_control(Object* self) {
 
     player = get_player();
     objData = self->data;
-    camera = get_camera();
+    camera = camGet();
     objSetup = (GenProps_Setup*)self->setup;
     
     id = self->id;
@@ -470,7 +470,7 @@ void dll_331_control(Object* self) {
             objData->roll *= 2;
             objData->pitch *= 2;
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
-            camera_set_shake_offset(0.5f);
+            camSetShakeOffset(0.5f);
         }
         if (objData->unk3E == 0) {
             if (objData->debugPrintDistance <= 40000.0f) {

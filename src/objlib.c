@@ -180,7 +180,7 @@ s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 use
     *oy = attachPointMtx.m[3][1];
     *oz = attachPointMtx.m[3][2];
     if (obj->parent != NULL) {
-        transform_point_by_object(*ox, *oy, *oz, ox, oy, oz, obj->parent);
+        camTransformPointByObject(*ox, *oy, *oz, ox, oy, oz, obj->parent);
     } else {
         *ox += gWorldX;
         *oz += gWorldZ;

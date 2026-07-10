@@ -938,7 +938,7 @@ void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3) {
             func_800199A8(arg3, arg0, arg0->animState1, arg2->animProgressLayered, -1U);
         }
     }
-    add_matrix_to_pool(arg0->matrices[sp60], arg1->jointCount);
+    camAddMatrixToPool(arg0->matrices[sp60], arg1->jointCount);
 }
 
 void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 arg3, u32 arg4) {
@@ -1325,7 +1325,7 @@ void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* ar
         modelInst->unk24[i].f[0] = obj2->srt.scale * f0;
         vec3_transform(var_s0, sp70[2], sp70[1], sp70[0], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
         if (obj2->parent != NULL) {
-            transform_point_by_object(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj2->parent);
+            camTransformPointByObject(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj2->parent);
             modelInst->unk24[i].f[1] -= gWorldX;
             modelInst->unk24[i].f[3] -= gWorldZ;
         }
@@ -1360,7 +1360,7 @@ void func_8001AC44(ModelInstance* modelInst, Model* model, Object* obj, MtxF* ar
             modelInst->unk24[i].f[0] = f0 * arg6;
             vec3_transform(var_s6, pos.x, pos.y, pos.z, &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
             if (obj->parent != NULL) {
-                transform_point_by_object(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj->parent);
+                camTransformPointByObject(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj->parent);
                 modelInst->unk24[i].f[1] -= gWorldX;
                 modelInst->unk24[i].f[3] -= gWorldZ;
             }

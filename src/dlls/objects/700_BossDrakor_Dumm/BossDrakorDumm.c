@@ -16,7 +16,7 @@ void dll_700_setup(Object* self, ObjSetup* setup, s32 arg2) {
 void dll_700_control(Object* self) {
     Camera* temp_v0;
 
-    temp_v0 = get_camera();
+    temp_v0 = camGet();
     self->srt.transl.f[0] = temp_v0->srt.transl.f[2];
     self->srt.transl.f[1] = temp_v0->srt.transl.f[1];
     self->srt.transl.f[2] = temp_v0->srt.transl.f[0];

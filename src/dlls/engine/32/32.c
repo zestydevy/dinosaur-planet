@@ -591,7 +591,7 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
     spD8.roll = 0;
     spD8.pitch = 0;
     spD8.scale = 1.0f;
-    camera = get_camera();
+    camera = camGet();
     if (camera != NULL) {
         VECTOR_SUBTRACT(camera->srt.transl, a2->srt.transl, spA8);
         var_fs0 = VECTOR_MAGNITUDE_SQUARED(spA8);

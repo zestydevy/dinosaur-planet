@@ -958,7 +958,7 @@ static void anim_update_actor_transform(Object* animObj, Object* actor, AnimObj_
     if ((st->unk87 != 0) && (st->unk84 != 0)) {
         anim_func_72E0(animObj);
     }
-    get_object_child_position(actor, &actor->globalPosition.x, &actor->globalPosition.y, &actor->globalPosition.z);
+    camGetObjectChildPosition(actor, &actor->globalPosition.x, &actor->globalPosition.y, &actor->globalPosition.z);
 }
 
 // offset: 0x1C04 | func: 8
@@ -1923,7 +1923,7 @@ static void anim_do_obj_anim_callback(Object* actor, Object* animObj, AnimObj_Da
         }
     }
     actor->unkAF &= ~(ARROW_FLAG_1_Interacted | ARROW_FLAG_2_Targeted | ARROW_FLAG_4_Highlighted);
-    get_object_child_position(actor, actor->globalPosition.f, &actor->globalPosition.y, &actor->globalPosition.z);
+    camGetObjectChildPosition(actor, actor->globalPosition.f, &actor->globalPosition.y, &actor->globalPosition.z);
     if (actor->objhitInfo != NULL) {
         actor->objhitInfo->unk48 = NULL;
         actor->objhitInfo->unk62 = 0;
@@ -2796,7 +2796,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         break;
     case ANIM_CODE_EVT_6_CAMERA_SHAKE: 
         if (arg4 == 0) {
-            camera_enable_y_offset();
+            camUseShake();
             player = get_player();
             if (player != NULL) {
                 temp_fv0 = vec3_distance_xz(&player->globalPosition, &animObj->globalPosition);
@@ -2806,7 +2806,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
                         temp_fv0 = (temp_fv0 - 50.0f) / 150.0f;
                         var_fa0 *= 1.0f - temp_fv0;
                     }
-                    camera_set_shake_offset(var_fa0);
+                    camSetShakeOffset(var_fa0);
                 }
             }
         }
@@ -3356,7 +3356,7 @@ void anim_tick(void) {
                     st->state = ANIMOBJ_STATE_Ready;
                     st->startTime = startTime;
                     anim_tick_obj(obj, 1);
-                    get_object_child_position(obj, 
+                    camGetObjectChildPosition(obj, 
                         &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
                 } else {
                     st->state = ANIMOBJ_STATE_WaitingForActors;

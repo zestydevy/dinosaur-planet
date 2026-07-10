@@ -42,12 +42,12 @@ static void SpellOverlay_animate_texture(Object* self, s32 arg1, u8 arg2);
 
 // offset: 0x0 | ctor
 void SpellOverlay_ctor(void *dll) {
-    camera_set_near_plane(dCameraNearPlane);
+    camSetNearPlane(dCameraNearPlane);
 }
 
 // offset: 0x40 | dtor
 void SpellOverlay_dtor(void *dll) {
-    camera_reset_near_plane();
+    camResetNearPlane();
 }
 
 // offset: 0x7C | func: 0 | export: 0
@@ -132,11 +132,11 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     if (!(player->stateFlags & OBJSTATE_IN_SEQ)){
         diPrintf(" DRAWING THE THING ");
 
-        get_main_camera(); //@bug?: not stored/used
-        fov = camera_get_fov();
-        set_camera_selector(2);
+        camGetMain(); //@bug?: not stored/used
+        fov = camGetFOV();
+        camSetCameraSelector(2);
 
-        camera = get_main_camera();
+        camera = camGetMain();
         camera->srt.transl.x = gWorldX;
         camera->srt.transl.y = 0;
         camera->srt.transl.z = gWorldZ;
@@ -144,7 +144,7 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         camera->srt.pitch = 0;
         camera->srt.yaw = 0;
         camera->dty = 0.0f;
-        camera_set_fov(40.0f);
+        camSetFOV(40.0f);
 
         self->srt.scale = self->def->scale;
         self->srt.roll = 0;
@@ -157,11 +157,11 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         self->globalPosition.y = -1.5f;
         self->globalPosition.z = gWorldZ;
 
-        camera_setup_viewport_and_matrices(gdl, mtxs);
+        camSetupViewportAndMatrices(gdl, mtxs);
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        set_camera_selector(0);
-        camera_set_fov(fov);
-        camera_setup_viewport_and_matrices(gdl, mtxs);
+        camSetCameraSelector(0);
+        camSetFOV(fov);
+        camSetupViewportAndMatrices(gdl, mtxs);
     }
 }
 
