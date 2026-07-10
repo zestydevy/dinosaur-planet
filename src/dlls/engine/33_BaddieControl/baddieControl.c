@@ -358,14 +358,16 @@ void BaddieControl_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
 }
 
 // offset: 0xED0 | func: 10 | export: 11
-s32 BaddieControl_func_ED0(Object* arg0, Baddie* arg1, u8 arg2) {
-    if (arg2 && (arg1->fsa.hitpoints <= 0) && (arg0->opacity == 0)) {
-        return 0;
+s32 BaddieControl_func_ED0(Object* baddieObj, Baddie* baddieData, u8 checkIfDead) {
+    if (checkIfDead && (baddieData->fsa.hitpoints <= 0) && (baddieObj->opacity == 0)) {
+        return FALSE;
     }
-    if ((arg0->parent == NULL) && (map_world_coords_to_block_index(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
-        return 0;
+
+    if ((baddieObj->parent == NULL) && (map_world_coords_to_block_index(baddieObj->srt.transl.x, baddieObj->srt.transl.y, baddieObj->srt.transl.z) < 0)) {
+        return FALSE;
     }
-    return 1;
+
+    return TRUE;
 }
 
 // offset: 0xF60 | func: 11 | export: 16
