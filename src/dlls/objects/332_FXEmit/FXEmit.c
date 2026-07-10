@@ -75,7 +75,7 @@ void FXEmit_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
         self->unkDC = 0;
     }
 
-    if (objdata->disableGamebit != NO_GAMEBIT && main_get_bits(objdata->disableGamebit)) {
+    if (objdata->disableGamebit != NO_GAMEBIT && mainGetBits(objdata->disableGamebit)) {
         objdata->disabled = TRUE;
     }
 
@@ -151,13 +151,13 @@ void FXEmit_control(Object* self) {
         }
 
         //Bail if not enabled
-        if (((objdata->toggleGamebit != NO_GAMEBIT) && main_get_bits(objdata->toggleGamebit) == FALSE) 
+        if (((objdata->toggleGamebit != NO_GAMEBIT) && mainGetBits(objdata->toggleGamebit) == FALSE) 
             || objdata->disabled) {
           return;
         }
 
         //Check if should be disabled (@bug?: continues with this tick when disabled, causing 1 frame flash)
-        if (objdata->disableGamebit != NO_GAMEBIT && main_get_bits(objdata->disableGamebit)) {
+        if (objdata->disableGamebit != NO_GAMEBIT && mainGetBits(objdata->disableGamebit)) {
             objdata->disabled = TRUE;
         }
         if (setup->interval == 0xFF) {

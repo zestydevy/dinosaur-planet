@@ -45,13 +45,13 @@ void dll_279_control(Object* self) {
         self->srt.yaw = setup->unk18 << 8;
 
         if (self->id == OBJ_WL_Door1) {
-            if (main_get_bits(objdata->unkC)) {
+            if (mainGetBits(objdata->unkC)) {
                 gDLL_3_Animation->vtbl->preempt_sequence_time(self, 0x82);
                 objdata->unk19 = 1;
             }
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         } else if (self->id == OBJ_WL_WarpDoor) {
-            if (main_get_bits(objdata->unkC)) {
+            if (mainGetBits(objdata->unkC)) {
                 gDLL_3_Animation->vtbl->preempt_sequence_time(self, 0x75);
                 objdata->unk19 = 1;
             }
@@ -100,15 +100,15 @@ void dll_279_func_1034(Vec3f* arg0, DLL279_Setup* objSetup) {
     f0 = (arg0->x * camera->srt.transl.x) + (arg0->y * camera->srt.transl.z) + arg0->z;
     if (f0 < 0.0f) {
         if (objSetup->unk20 != -1) {
-            temp = main_get_bits(objSetup->unk20) ^ (u8)objSetup->unk1C;
+            temp = mainGetBits(objSetup->unk20) ^ (u8)objSetup->unk1C;
             if ((u8)objSetup->unk1C) {}
-            main_set_bits(objSetup->unk20, temp & 0xFF & 0xFF);
+            mainSetBits(objSetup->unk20, temp & 0xFF & 0xFF);
         }
     } else {
         if (objSetup->unk1A != -1) {
-            temp = main_get_bits(objSetup->unk1A) ^ (u8)(objSetup->unk1C >> 8);
+            temp = mainGetBits(objSetup->unk1A) ^ (u8)(objSetup->unk1C >> 8);
             if (objSetup->unk1C) {}
-            main_set_bits(objSetup->unk1A, temp & 0xFF & 0xFF);
+            mainSetBits(objSetup->unk1A, temp & 0xFF & 0xFF);
         }
     }
 }

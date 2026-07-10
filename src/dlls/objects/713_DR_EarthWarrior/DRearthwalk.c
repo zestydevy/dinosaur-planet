@@ -211,7 +211,7 @@ void DRearthwalk_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
     gDLL_27->vtbl->setup_terrain_collider(&objdata->fsa.unk4, 4, _data_30, _data_60, sp50);
     gDLL_27->vtbl->reset(self, &objdata->fsa.unk4);
     func_8002674C(self);
-    create_temp_dll(53);
+    mainCreateTempDLL(53);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -4551, 5461, 2);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->movedata, 300, 120);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objdata->movedata, sp38, sp44, 2);
@@ -255,12 +255,12 @@ void DRearthwalk_control(Object* self) {
             var_a2 += 1;
         }
     } else {
-        if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_DR_SavedEarthWarriorFromSkeetlas) == 0)) {
+        if (!(objdata->unkA58 & 0x20) && (mainGetBits(BIT_DR_SavedEarthWarriorFromSkeetlas) == 0)) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
             obj_get_all_of_type(OBJTYPE_Baddie, &sp40);
             diPrintf(" num %i ", sp40);
-            if ((sp40 == 0) && (main_get_bits(BIT_DR_Lava_Pools_Cooled_Count) == 3)) {
-                main_set_bits(BIT_DR_SavedEarthWarriorFromSkeetlas, 1);
+            if ((sp40 == 0) && (mainGetBits(BIT_DR_Lava_Pools_Cooled_Count) == 3)) {
+                mainSetBits(BIT_DR_SavedEarthWarriorFromSkeetlas, 1);
                 objdata->talkSeq = EWSEQ_9_IfICouldGetOutOfTheseChains;
             }
         }
@@ -273,12 +273,12 @@ void DRearthwalk_control(Object* self) {
     func_80028D2C(self);
     func_80032A08(self, &objdata->unk370);
     func_80034BC0(self, &objdata->unk394);
-    if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_5FE) != 0) && (objdata->energy > 0)) {
-        main_set_bits(BIT_654, 1);
+    if (!(objdata->unkA58 & 0x20) && (mainGetBits(BIT_5FE) != 0) && (objdata->energy > 0)) {
+        mainSetBits(BIT_654, 1);
         objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
         objdata->unkA60_1 = 0;
     }
-    if (!(objdata->unkA58 & 0x20) && (main_get_bits(BIT_655) != 0)) {
+    if (!(objdata->unkA58 & 0x20) && (mainGetBits(BIT_655) != 0)) {
         objdata->unkA58 |= 0x40;
         objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
         objdata->unkA58 |= 0x20;
@@ -315,7 +315,7 @@ void DRearthwalk_control(Object* self) {
                 joyDisableButtons(0, A_BUTTON);
             }
             objdata->energy += 12;
-            main_set_bits(BIT_Inventory_Blue_Mushrooms, main_get_bits(BIT_Inventory_Blue_Mushrooms) - 1);
+            mainSetBits(BIT_Inventory_Blue_Mushrooms, mainGetBits(BIT_Inventory_Blue_Mushrooms) - 1);
         } else if ((objdata->talkSeq != -1) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0)) {
             if (!objdata->rideable) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objdata->talkSeq, self, -1);
@@ -325,7 +325,7 @@ void DRearthwalk_control(Object* self) {
             }
         }
     }
-    if ((objdata->unkA61 == 0) && (main_get_bits(BIT_7B6) == 0)) {
+    if ((objdata->unkA61 == 0) && (mainGetBits(BIT_7B6) == 0)) {
         DRearthwalk_func_ABC(self);
     }
     if (objdata->unkA61 != 0) {
@@ -524,7 +524,7 @@ void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 // offset: 0x160C | func: 7 | export: 4
 void DRearthwalk_free(Object* self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_Vehicle);
-    remove_temp_dll(53);
+    mainRemoveTempDLL(53);
 }
 
 // offset: 0x1660 | func: 8 | export: 5
@@ -676,12 +676,12 @@ void DRearthwalk_func_1CB4(Object* self, s32 arg1) {
     DRearthwalk_Data* objdata = self->data;
     objdata->unkA5A = arg1;
     if (arg1 == 0) {
-        main_set_bits(BIT_7BC, 0);
-        main_set_bits(BIT_7D4, 1);
+        mainSetBits(BIT_7BC, 0);
+        mainSetBits(BIT_7D4, 1);
         objdata->movedata.unk4A9 &= ~1;
     } else {
-        main_set_bits(BIT_7BC, 1);
-        main_set_bits(BIT_7D4, 0);
+        mainSetBits(BIT_7BC, 1);
+        mainSetBits(BIT_7D4, 0);
     }
 }
 
@@ -1095,7 +1095,7 @@ s32 DRearthwalk_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objdata->energy--;
         if (objdata->energy <= 0) {
             if (objdata->energy < -20) {
-                main_set_bits(BIT_5DE, 1);
+                mainSetBits(BIT_5DE, 1);
             }
             return 2 + 1;
         }
@@ -1112,8 +1112,8 @@ s32 DRearthwalk_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         DRearthwalk_func_2174(self, fsa);
         func_80023D30(self, _data_DC[0], 0.0f, 0);
     }
-    if ((main_get_bits(BIT_5CF) == 0) && (main_get_bits(BIT_5CD) != 0)) {
-        main_set_bits(BIT_DR_EarthWarriorBroughtToSurface, 1);
+    if ((mainGetBits(BIT_5CF) == 0) && (mainGetBits(BIT_5CD) != 0)) {
+        mainSetBits(BIT_DR_EarthWarriorBroughtToSurface, 1);
         objdata->rideable = 1;
         return 1 + 1;
     }

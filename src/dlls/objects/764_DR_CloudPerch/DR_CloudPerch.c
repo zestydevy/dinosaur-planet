@@ -44,7 +44,7 @@ void DR_CloudPerch_setup(Object* self, DR_CloudPerch_Setup* setup, s32 reset) {
     objdata->unk8 = fcos16_precise(self->srt.yaw);
     objdata->unkC = (f32) -((self->srt.transl.z * objdata->unk8) + ((objdata->unk0 * self->srt.transl.x) + (objdata->unk4 * self->srt.transl.y)));
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
-    if ((s32)main_get_bits(BIT_7A9) == setup->unk19) {
+    if ((s32)mainGetBits(BIT_7A9) == setup->unk19) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 12, 1);
     }
 }
@@ -77,7 +77,7 @@ u32 DR_CloudPerch_get_data_size(Object *self, u32 offsetAddr) {
 // offset: 0x218 | func: 7 | export: 8
 s32 DR_CloudPerch_land(Object* self) {
     DR_CloudPerch_Setup* setup = (DR_CloudPerch_Setup*)self->setup;
-    main_set_bits(BIT_7A9, setup->unk19);
+    mainSetBits(BIT_7A9, setup->unk19);
     gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
     return 0;
 }
@@ -85,11 +85,11 @@ s32 DR_CloudPerch_land(Object* self) {
 // offset: 0x28C | func: 8 | export: 7
 s32 DR_CloudPerch_call(Object* self) {
     DR_CloudPerch_Setup* setup = (DR_CloudPerch_Setup*)self->setup;
-    if (main_get_bits(setup->gamebitEnabled) == 0) {
+    if (mainGetBits(setup->gamebitEnabled) == 0) {
         return 0;
     }
     STUBBED_PRINTF(" Playing Sequence for Calling Dino ");
-    main_set_bits(BIT_7A9, setup->unk19);
+    mainSetBits(BIT_7A9, setup->unk19);
     gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 12, 1);
     gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
     return 1;

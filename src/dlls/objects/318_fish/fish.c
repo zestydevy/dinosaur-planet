@@ -172,13 +172,13 @@ void fish_control(Object* self) {
         fish_func_84(self);
     }
     if (player->id == 0x1F) {
-        if (main_get_bits(BIT_2EA) == 0) {
+        if (mainGetBits(BIT_2EA) == 0) {
             self->unkAF |= 8;
         } else {
             self->unkAF &= ~0x8;
         }
     } else {
-        if (main_get_bits(BIT_3E1) == 0) {
+        if (mainGetBits(BIT_3E1) == 0) {
             self->unkAF |= 8;
         } else {
             self->unkAF &= ~0x8;
@@ -638,7 +638,7 @@ static void fish_func_2150(Object *self) {
     objdata = self->data;
     setup = self->setup;
     if (self->id == OBJ_DF_Lantern) { // ????????
-        main_set_bits(BIT_Gold_Nugget_LFV, 1);
+        mainSetBits(BIT_Gold_Nugget_LFV, 1);
     } else {
         player = get_player();
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);

@@ -52,7 +52,7 @@ void dll_307_setup(Object* self, DLL307_Setup* setup, s32 arg2) {
     }
     self->srt.scale *= self->def->scale;
     if (setup->unk1A != -1) {
-        objdata->unkC = main_get_bits(setup->unk1A);
+        objdata->unkC = mainGetBits(setup->unk1A);
     } else {
         objdata->unkC = 0;
     }
@@ -60,10 +60,10 @@ void dll_307_setup(Object* self, DLL307_Setup* setup, s32 arg2) {
     objdata->unk4 = fcos16_precise(self->srt.yaw);
     objdata->unk8 = (f32) -((objdata->unk0 * self->srt.transl.x) + (objdata->unk4 * self->srt.transl.z));
     objdata->unkE = 0;
-    if (main_get_bits(setup->unk18) != 0) {
+    if (mainGetBits(setup->unk18) != 0) {
         objdata->unkE |= 1;
     }
-    if (main_get_bits(setup->unk22) != 0) {
+    if (mainGetBits(setup->unk22) != 0) {
         objdata->unkE |= 2;
     }
 }
@@ -140,9 +140,9 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         }
     }
     if (objdata->unkC == 0) {
-        temp_v0_3 = main_get_bits(setup->unk18);
+        temp_v0_3 = mainGetBits(setup->unk18);
         var_s1 = 0;
-        if ((setup->unk22 == -1) || (main_get_bits(setup->unk22) != 0)) {
+        if ((setup->unk22 == -1) || (mainGetBits(setup->unk22) != 0)) {
             var_s1 = 1;
         }
         if ((temp_v0_3 != 0) && !(objdata->unkE & 1)) {
@@ -161,7 +161,7 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             dll_307_func_6E4(objdata, setup);
             objdata->unkC = 2;
         }
-    } else if ((objdata->unkC == 1) && (main_get_bits(setup->unk18) == 0)) {
+    } else if ((objdata->unkC == 1) && (mainGetBits(setup->unk18) == 0)) {
         objdata->unkC = 3;
     }
     if (objdata->unkC == 2) {
@@ -169,7 +169,7 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             if (a2->messages[var_s1_2] == 2) {
                 objdata->unkC = 1;
                 if (setup->unk1A != -1) {
-                    main_set_bits(setup->unk1A, 1);
+                    mainSetBits(setup->unk1A, 1);
                 }
             }
         }
@@ -180,7 +180,7 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
                 objdata->unkC = 0;
                 objdata->unkE = 0;
                 if (setup->unk1A != -1) {
-                    main_set_bits(setup->unk1A, 0);
+                    mainSetBits(setup->unk1A, 0);
                 }
             }
         }
@@ -199,15 +199,15 @@ static void dll_307_func_6E4(DLL307_Data *objdata, DLL307_Setup *setup) {
     temp = (objdata->unk0 * camera->srt.transl.x) + (objdata->unk4 * camera->srt.transl.z) + objdata->unk8;
     if (temp < 0.0f) {
         if (setup->unk24 != -1) {
-            temp2 = main_get_bits(setup->unk24);
+            temp2 = mainGetBits(setup->unk24);
             temp2 ^= setup->unk28;
-            main_set_bits(setup->unk24, temp2);
+            mainSetBits(setup->unk24, temp2);
         }
     } else {
         if (setup->unk26 != -1) {
-            temp2 = main_get_bits(setup->unk26);
+            temp2 = mainGetBits(setup->unk26);
             temp2 ^= setup->unk29;
-            main_set_bits(setup->unk26, temp2);
+            mainSetBits(setup->unk26, temp2);
         }
     }
 }

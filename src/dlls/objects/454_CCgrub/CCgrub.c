@@ -102,7 +102,7 @@ void CCgrub_control(Object* self) {
                 gDLL_1_cmdmenu->vtbl->info_show(
                     BIT_CloudRunner_Grubs, 
                     300, 
-                    main_increment_bits(BIT_CloudRunner_Grubs)
+                    mainIncrementBits(BIT_CloudRunner_Grubs)
                 );
             }
             objdata->unk109 = 0xA;

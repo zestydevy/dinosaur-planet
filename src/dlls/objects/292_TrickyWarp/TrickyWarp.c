@@ -32,7 +32,7 @@ void TrickyWarp_control(Object *self) {
 
     setup = (TrickyWarp_Setup*)self->setup;
 
-    if (setup->gamebit == -1 || main_get_bits(setup->gamebit)) {
+    if (setup->gamebit == -1 || mainGetBits(setup->gamebit)) {
         player = get_player();
         sidekick = get_sidekick();
 

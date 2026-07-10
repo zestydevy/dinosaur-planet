@@ -50,7 +50,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         self->objhitInfo->unk58 = 0x100;
     } else {
         //If it's collectable, restore state via gamebit
-        objData->state = main_get_bits(objSetup->gamebitCollected);
+        objData->state = mainGetBits(objSetup->gamebitCollected);
     }
     
     //Create light effects and flame objects if the crystal isn't already collected
@@ -104,8 +104,8 @@ void CCfirecrystal_control(Object* self) {
     case FireCrystal_State_0_Collectable:
         //Handle being collected via player interaction
         if (func_80032538(self)) {
-            main_set_bits(objSetup->gamebitCollected, 1);
-            main_increment_bits(BIT_CC_Fire_Crystal);
+            mainSetBits(objSetup->gamebitCollected, 1);
+            mainIncrementBits(BIT_CC_Fire_Crystal);
             objData->state = FireCrystal_State_3_Collected;
             self->unkAF = ARROW_FLAG_8_No_Targetting;
             self->objhitInfo->unk58 = 0x100;

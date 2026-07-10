@@ -58,7 +58,7 @@ void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg
     objdata = self->data;
     self->animCallback = WLpressureswitch_anim_callback;
     self->srt.yaw = setup->yaw << 8;
-    if (main_get_bits(setup->gameBitPressed)) {
+    if (mainGetBits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - 25.0f;
         objdata->pressed = 30;
     }
@@ -124,12 +124,12 @@ void WLpressureswitch_control(Object* self) {
             deltaY = setup->base.y - self->srt.transl.y;
             // Trigger seq for pointing the camera at the door to Randorn's room partway through descending
             if (2.5f < deltaY && deltaY < 5.0f) {
-                main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, TRUE);
-            } else if (main_get_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
-                main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
+                mainSetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, TRUE);
+            } else if (mainGetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
+                mainSetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
             }
-        } else if (main_get_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
-            main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
+        } else if (mainGetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
+            mainSetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
         }
     }
 
@@ -143,12 +143,12 @@ void WLpressureswitch_control(Object* self) {
                 self->srt.transl.y = deltaY;
             }
             playSound = FALSE;
-            main_set_bits(setup->gameBitPressed, TRUE);
+            mainSetBits(setup->gameBitPressed, TRUE);
         } else {
             self->srt.transl.y -= 0.125f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
-                main_set_bits(setup->gameBitPressed, TRUE);
+                mainSetBits(setup->gameBitPressed, TRUE);
                 playSound = FALSE;
             } else {
                 playSound = TRUE;
@@ -162,7 +162,7 @@ void WLpressureswitch_control(Object* self) {
         } else {
             playSound = TRUE;
         }
-        main_set_bits(setup->gameBitPressed, FALSE);
+        mainSetBits(setup->gameBitPressed, FALSE);
     }
 
     //Play stone rumbling sound when moving

@@ -91,7 +91,7 @@ void DFPLift_control(Object* self) {
     
     switch (objdata->state) {
     case LIFT_STATE_INIT:
-        if ((main_get_bits(objdata->gamebitActivated) != 0) && (objdata->alreadyEnabled != TRUE) && 
+        if ((mainGetBits(objdata->gamebitActivated) != 0) && (objdata->alreadyEnabled != TRUE) && 
                 (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < PLAYER_INIT_ACTIVATE_RANGE)) {
             // go up with sound
             if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {

@@ -81,7 +81,7 @@ void GroundAnimator_setup(Object* self, GroundAnimator_Setup* objSetup, s32 rese
     
     if (objSetup->animatorID) {
         //Check if spot's already been dug up
-        if (main_get_bits(objSetup->gamebitDug)) {
+        if (mainGetBits(objSetup->gamebitDug)) {
             objData->digDepth = objSetup->digDepthMax * 100;
             objData->flags |= GroundAnimator_FLAG_2_Dig_Finished;
             if (objData->flags & GroundAnimator_FLAG_8_Magic_Cave_Entrance) {
@@ -191,7 +191,7 @@ void GroundAnimator_control(Object* self) {
         if (collectable != NULL) {
             //Pause the collectable if digging hasn't finished yet
             if ((objData->flags & GroundAnimator_FLAG_2_Dig_Finished) == FALSE) {
-                ((DLL_272_Collectable*)collectable->dll)->vtbl->set_pause_state(collectable, 1);
+                ((DLL_272_Collectable*)collectable->dll)->vtbl->mainSetPauseState(collectable, 1);
             }
             ((DLL_272_Collectable*)collectable->dll)->vtbl->save_position(collectable, 
                 self->srt.transl.x, self->srt.transl.y - objData->collectableDepth, self->srt.transl.z
@@ -225,10 +225,10 @@ void GroundAnimator_control(Object* self) {
                 
                 //Unpause the collectable
                 if ((objData->collectable != NULL) && (objData->collectable->data != NULL)) {
-                    ((DLL_272_Collectable*)objData->collectable->dll)->vtbl->set_pause_state(objData->collectable, 0);
+                    ((DLL_272_Collectable*)objData->collectable->dll)->vtbl->mainSetPauseState(objData->collectable, 0);
                 }
                 
-                main_set_bits(objSetup->gamebitDug, TRUE);
+                mainSetBits(objSetup->gamebitDug, TRUE);
                 objData->flags |= (GroundAnimator_FLAG_20_Glow_Required | GroundAnimator_FLAG_2_Dig_Finished);
 
                 //Play success sound
@@ -416,7 +416,7 @@ f32 GroundAnimator_tick_dig(Object* self, Object* sidekick) {
     if (objData->digDepth == 0) {
         collectable = objData->collectable;
         if (collectable != NULL) {
-            ((DLL_272_Collectable*)collectable->dll)->vtbl->set_pause_state(collectable, 0);
+            ((DLL_272_Collectable*)collectable->dll)->vtbl->mainSetPauseState(collectable, 0);
         }
     }
     

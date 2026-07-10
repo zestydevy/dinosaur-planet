@@ -377,7 +377,7 @@ s32 dll_63_update1() {
 
     if (sExitToGame || sExitToMainMenu) {
         if (prevExitTransitionTimer >= 13 && sExitTransitionTimer <= 12) {
-            vi_init(1, get_ossched(), FALSE);
+            vi_init(1, mainGetScheduler(), FALSE);
             if (sExitToGame) {
                 dll_63_clean_up(/*leavingMenus*/TRUE);
             } else {
@@ -390,8 +390,8 @@ s32 dll_63_update1() {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             } else {
                 // Exit to main menu
-                main_demo_reset();
-                main_start_game(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
+                mainDemoReset();
+                mainStartGame(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
                 menu_set(MENU_TITLE_SCREEN);
             }
         }
@@ -580,7 +580,7 @@ static void dll_63_clean_up(s32 leavingMenus) {
         fontUnload(FONT_DINO_MEDIUM_FONT_IN);
         fontUnload(FONT_DINO_MEDIUM_FONT_OUT);
         fontUnload(FONT_FUN_FONT);
-        main_unload_frontend();
+        mainUnloadFrontend();
     }
 }
 
@@ -627,7 +627,7 @@ static void dll_63_load_save_game_info() {
 
             if (!saveFile->isEmpty) {
                 sSaveGameInfo[i].playerno = saveFile->playerno;
-                sSaveGameInfo[i].spiritBits = main_get_bits(BIT_Spirit_Bits);
+                sSaveGameInfo[i].spiritBits = mainGetBits(BIT_Spirit_Bits);
                 sSaveGameInfo[i].unk3 = 0;
 
                 filenamePtr = sSaveGameInfo[i].filename;

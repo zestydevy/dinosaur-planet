@@ -45,7 +45,7 @@ void WL_SpiritSet_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 
     objdata = self->data;
     do {
-        if (objdata->gamebit != -1 && !main_get_bits(objdata->gamebit))
+        if (objdata->gamebit != -1 && !mainGetBits(objdata->gamebit))
             return;
 
         if (visibility) {

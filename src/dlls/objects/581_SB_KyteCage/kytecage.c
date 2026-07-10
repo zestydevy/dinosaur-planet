@@ -58,7 +58,7 @@ void kyteCage_setup(Object* self, KyteCage_Setup* setup, s32 arg2) {
     self->animCallback = kyteCage_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     data->createLightning = 0;
-    if (!main_get_bits(BIT_SB_Battle_Started)) {
+    if (!mainGetBits(BIT_SB_Battle_Started)) {
         func_80000450(self, self, 0x58, 0, 0, 0);
         func_80000450(self, self, 0x6D, 0, 0, 0);
     }
@@ -122,7 +122,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
     void** dll;
     ObjDef* objDef;
 
-    if (!visibility ||  main_get_bits(BIT_WM_Played_Randorn_First_Meeting)) {
+    if (!visibility ||  mainGetBits(BIT_WM_Played_Randorn_First_Meeting)) {
         return;
     }
 

@@ -44,7 +44,7 @@ void WMWizard_setup(Object* self, WMWizard_Setup* objSetup, s32 arg2) {
     objData->home.y = objSetup->base.y;
     objData->home.z = objSetup->base.z;
 
-    objData->hasMetKrystal = main_get_bits(BIT_WM_Played_Randorn_First_Meeting);
+    objData->hasMetKrystal = mainGetBits(BIT_WM_Played_Randorn_First_Meeting);
     objData->timesFed = 0;
     objData->walkIndexFlags = 1; //In setup2, always walk towards pillar first
     objData->prevWalkIndex = WALK_STOPPING;
@@ -98,7 +98,7 @@ void WMWizard_update(Object *self) { }
 void WMWizard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         if (gDLL_29_Gplay->vtbl->get_act(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
-            if (main_get_bits(BIT_WM_Setup4_Show_Randorn)) {
+            if (mainGetBits(BIT_WM_Setup4_Show_Randorn)) {
                 draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
             }
         } else {
@@ -169,7 +169,7 @@ int WMWizard_anim_visit_1_first_meeting(Object* self, Object* overrideObj, AnimO
         }
 
         if (animData->messages[i] == 1) {
-            main_set_bits(BIT_WM_Played_Randorn_First_Meeting, 1);
+            mainSetBits(BIT_WM_Played_Randorn_First_Meeting, 1);
             objData->hasMetKrystal = TRUE;
         } else if (animData->messages[i] == 2) {
             // very fake
@@ -213,7 +213,7 @@ int WMWizard_anim_visit_3_spirit_cc(Object* self, Object* overrideObj, AnimObj_D
         case 1:
             //Set a gamebit if Randorn has been fed at least 2 times before Krystal's last visit
             if (objData->timesFed >= 2) {
-                main_set_bits(BIT_Randorn_Saved, 1);
+                mainSetBits(BIT_Randorn_Saved, 1);
             }
             break;
         }
@@ -239,7 +239,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
     if (objData->hasMetKrystal == FALSE) {
         //Play Krystal and Randorn's first conversation sequence when talked to
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
-            main_set_bits(BIT_WM_Played_Randorn_First_Meeting, 1);
+            mainSetBits(BIT_WM_Played_Randorn_First_Meeting, 1);
             objData->hasMetKrystal = TRUE;
             joyDisableButtons(0, A_BUTTON);
         }
@@ -276,9 +276,9 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
 
         //Otherwise, restore Krystal's magic if she hasn't deactivated the lasers yet
         } else if (
-            main_get_bits(BIT_WM_Force_Field_1_Disabled) == 0 || 
-            main_get_bits(BIT_WM_Force_Field_2_Disabled) == 0 || 
-            main_get_bits(BIT_WM_Force_Field_3_Disabled) == 0
+            mainGetBits(BIT_WM_Force_Field_1_Disabled) == 0 || 
+            mainGetBits(BIT_WM_Force_Field_2_Disabled) == 0 || 
+            mainGetBits(BIT_WM_Force_Field_3_Disabled) == 0
         ) {
             objData->activeSeqIndex = WMWizard_OBJSEQ_1_Offering_Magic_Refill;
             gDLL_3_Animation->vtbl->start_obj_sequence(WMWizard_OBJSEQ_1_Offering_Magic_Refill, self, -1);
@@ -309,7 +309,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
     self->srt.transl.y = objData->home.y;
 
     //After Quan Ata Lachu cutscene (sitting at edge of podium)
-    if (main_get_bits(BIT_Play_Seq_0170_WM_Return_to_Randorn_Quan_Ata_Lachu_Speaks)) {
+    if (mainGetBits(BIT_Play_Seq_0170_WM_Return_to_Randorn_Quan_Ata_Lachu_Speaks)) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
         if ((self->unkAF & ARROW_FLAG_1_Interacted) && (gDLL_1_cmdmenu->vtbl->get_subpage_gamebit() == BIT_Foodbag_Give)) {
@@ -318,9 +318,9 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
                         );
             
             if (foodGamebit >= 0) {
-                main_set_bits(BIT_4D1, 1);
+                mainSetBits(BIT_4D1, 1);
                 objData->timesFed++;
-                main_set_bits(BIT_310, 1);
+                mainSetBits(BIT_310, 1);
 
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
                 ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, foodGamebit);
@@ -475,7 +475,7 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     }
 
     //Handle animations 
-    if (main_get_bits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE) {
+    if (mainGetBits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE) {
         //Randorn initially slumped to the side
         if (self->curModAnimId != Randorn_MODANIM_7_Sitting_Attempt_to_Stand_Collapse) {
             func_80023D30(self, Randorn_MODANIM_7_Sitting_Attempt_to_Stand_Collapse, 0.0f, 0);
@@ -492,8 +492,8 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     }
 
     //Check if player talks to Randorn while he's collapsed
-    if ((self->unkAF & ARROW_FLAG_1_Interacted) && (main_get_bits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE)) {
-        main_set_bits(BIT_WM_Setup6_Randorn_Sitting_Up, 1);
+    if ((self->unkAF & ARROW_FLAG_1_Interacted) && (mainGetBits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE)) {
+        mainSetBits(BIT_WM_Setup6_Randorn_Sitting_Up, 1);
         objdata->timesFed = 0;
         joyDisableButtons(0, A_BUTTON);
     
@@ -510,7 +510,7 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
         // @fake
         if (objdata) {}
         if (foodGamebit >= 0) {
-            main_set_bits(BIT_310, 1);
+            mainSetBits(BIT_310, 1);
             objdata->timesFed++;
             foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->delete_food_by_gamebit(foodbag, foodGamebit);

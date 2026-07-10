@@ -118,7 +118,7 @@ void WGSH_flybaddie_control(Object* self) {
         objdata->unk40 = player->srt.transl.z;
         data_4 = 0;
     }
-    if (main_get_bits(BIT_1D4) != 0) {
+    if (mainGetBits(BIT_1D4) != 0) {
         obj_destroy_object(self);
     } else {
         if (objdata->unk4E > 0) {
@@ -158,7 +158,7 @@ void WGSH_flybaddie_control(Object* self) {
                     obj_destroy_object(self);
                     data_0++;
                     if (data_0 >= 3) {
-                        main_set_bits(BIT_1D8, 1);
+                        mainSetBits(BIT_1D8, 1);
                     }
                 } else {
                     obj_set_model(self, self->modelInstIdx + 1);

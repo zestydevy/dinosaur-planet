@@ -585,7 +585,7 @@ void amseq_start_next_sequence(u8 playerNo) {
         player->unk0 &= ~0x1;
         return;
     }
-    if (((playerNo == 2) || (playerNo == 3)) && (main_get_bits(BIT_DisableMusic) != 0)) {
+    if (((playerNo == 2) || (playerNo == 3)) && (mainGetBits(BIT_DisableMusic) != 0)) {
         player->currentSeqID = 0;
         player->unk0 &= ~0x1;
         return;

@@ -134,7 +134,7 @@ void GPSH_flybaddie_control(Object* self) {
                 obj_destroy_object(self);
                 _data_0++;
                 if (_data_0 >= 3) {
-                    main_set_bits(BIT_5A9, 1);
+                    mainSetBits(BIT_5A9, 1);
                 }
             } else {
                 obj_set_model(self, self->modelInstIdx + 1);

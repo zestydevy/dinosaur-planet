@@ -26,7 +26,7 @@ void DFbarrelcreator_control(Object* self) {
     objSetup = (DFBarrelCreator_Setup*)self->setup;
 
     //Don't create a barrel if the specified gamebit is set
-    if ((objSetup->gamebitStop != NO_GAMEBIT) && main_get_bits(objSetup->gamebitStop)) {
+    if ((objSetup->gamebitStop != NO_GAMEBIT) && mainGetBits(objSetup->gamebitStop)) {
         return;
     }
 

@@ -60,18 +60,18 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->doneDemo = FALSE;
     objdata->demoState = NWtricky_DEMO_STATE_Initial;
 
-    if (!main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-        main_set_bits(BIT_4E3, 0xFF);
+    if (!mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+        mainSetBits(BIT_4E3, 0xFF);
         objdata->state = STATE_0_Initial;
     } else {
         objdata->state = STATE_2_Learning_Sidekick_Commands;
     }
 
-    if (!main_get_bits(BIT_4D4)) {
+    if (!mainGetBits(BIT_4D4)) {
         tricky = get_sidekick();
         if (tricky) {
             ((DLL_ISidekick*)tricky->dll)->vtbl->func22(tricky, self);
-            main_set_bits(BIT_4D4, 1);
+            mainSetBits(BIT_4D4, 1);
         }
     }
 
@@ -94,9 +94,9 @@ void NWtricky_control(Object *self) {
 
     switch (objdata->state) {
     case STATE_0_Initial:
-        if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-            main_set_bits(BIT_8, 1);
-            main_set_bits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
+        if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+            mainSetBits(BIT_8, 1);
+            mainSetBits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
             objdata->state = STATE_2_Learning_Sidekick_Commands;
         } else if (((DLL_ISidekick*)tricky->dll)->vtbl->func24(tricky) != 0) {
             objdata->state = STATE_1_Chased_by_SharpClaw;
@@ -105,10 +105,10 @@ void NWtricky_control(Object *self) {
         break;
 
     case STATE_1_Chased_by_SharpClaw:
-        if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+        if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
             ((DLL_ISidekick*)tricky->dll)->vtbl->func21(tricky, 0, 0);
             gDLL_6_AMSFX->vtbl->stop_object(tricky);
-            main_set_bits(BIT_4E3, 0);
+            mainSetBits(BIT_4E3, 0);
             objdata->state = STATE_2_Learning_Sidekick_Commands;
         } else {
             //Call out while being chased
@@ -123,11 +123,11 @@ void NWtricky_control(Object *self) {
     case STATE_2_Learning_Sidekick_Commands:
         objdata->timer += gUpdateRateF;
         if (objdata->timer >= NWTRICKY_INVERVAL_OFFER_HINT) {
-            if (main_get_bits(BIT_4E3) == 0xFF) {
+            if (mainGetBits(BIT_4E3) == 0xFF) {
                 objdata->timer = 0.0f;
                 if (objdata->sidekickStats->blueFood < 4) {
-                    main_set_bits(BIT_4E3, 1);
-                } else if (!main_get_bits(BIT_SW_Tricky_Toy_Unearthed) && main_get_bits(BIT_Tricky_Unlocked_Sidekick_Commands)) {
+                    mainSetBits(BIT_4E3, 1);
+                } else if (!mainGetBits(BIT_SW_Tricky_Toy_Unearthed) && mainGetBits(BIT_Tricky_Unlocked_Sidekick_Commands)) {
                     player = get_player();
 
                     //Get GroundAnimator object for the hole containing Tricky's ball
@@ -151,8 +151,8 @@ void NWtricky_control(Object *self) {
             }
         }
 
-        if (main_get_bits(BIT_SW_Tricky_Ball_Collected)) {
-            main_set_bits(BIT_Tricky_Ball_Unlocked, 1);
+        if (mainGetBits(BIT_SW_Tricky_Ball_Collected)) {
+            mainSetBits(BIT_Tricky_Ball_Unlocked, 1);
         }
         break;
     }
@@ -166,9 +166,9 @@ void NWtricky_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle
 
 // offset: 0x55C | func: 4 | export: 4
 void NWtricky_free(Object *self, s32 a1) {
-    if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw) && !main_get_bits(BIT_4E3)) {
-        main_set_bits(BIT_4E3, 0xFF);
-        main_set_bits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
+    if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw) && !mainGetBits(BIT_4E3)) {
+        mainSetBits(BIT_4E3, 0xFF);
+        mainSetBits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
     }
 }
 

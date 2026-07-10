@@ -94,10 +94,10 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
         self->srt.yaw = objSetup->unk28 << 8;
         _data_0 = dllLoadDeferred(DLL_ID_137, 1);
         
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             objData->unk27 = 60;
             objData->unk24 = 5;
-        } else if (main_get_bits(objSetup->unk1C)) {
+        } else if (mainGetBits(objSetup->unk1C)) {
             objData->unk24 = 4;
         }
     }
@@ -134,7 +134,7 @@ void dll_537_control(Object* self) {
     }
     
     if (self->unkAF & ARROW_FLAG_8_No_Targetting) {
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     }
@@ -192,9 +192,9 @@ void dll_537_control(Object* self) {
         break;
     case 4:
         dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             objData->unk24 = 5;
-        } else if ((objData->unk0 != NULL) && (main_get_bits(objSetup->unk1E) == 0) && (vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
+        } else if ((objData->unk0 != NULL) && (mainGetBits(objSetup->unk1E) == 0) && (vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
             objData->unk24 = 1;
         }
         objData->unk25 = 0;
@@ -202,9 +202,9 @@ void dll_537_control(Object* self) {
         objData->unk22 = 0;
         break;
     case 1:
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             objData->unk24 = 5;
-        } else if (main_get_bits(objSetup->unk1E)) {
+        } else if (mainGetBits(objSetup->unk1E)) {
             objData->unk24 = 4;
         } else {
             if (objData->unk0 != NULL) {
@@ -226,7 +226,7 @@ void dll_537_control(Object* self) {
                     if (sidekick != NULL) {
                         ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
                     }
-                    main_set_bits(objSetup->unk20, 1);
+                    mainSetBits(objSetup->unk20, 1);
                     objData->unk24 = 6;
                 } else {
                     dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
@@ -247,7 +247,7 @@ void dll_537_control(Object* self) {
             objData->unk4.z = objData->unk0->srt.transl.z;
             objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
             if (((objSetup->unk26 * 90000.0f) / 100.0f) < objData->unk10) {
-                main_set_bits(objSetup->unk22, 1);
+                mainSetBits(objSetup->unk22, 1);
                 objData->unk24 = 1;
             }
         }
@@ -258,7 +258,7 @@ void dll_537_control(Object* self) {
             if (sidekick != NULL) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
             }
-            main_set_bits(objSetup->unk20, 1);
+            mainSetBits(objSetup->unk20, 1);
             objData->unk24 = 6;
         }
         break;
@@ -390,7 +390,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
         self->srt.flags &= ~OBJFLAG_INVISIBLE;
         if (animData->lastMessage == 1) {
             objSetup = (DLL537_Setup*)self->setup;
-            main_set_bits(objSetup->unk18, 1);
+            mainSetBits(objSetup->unk18, 1);
         }
         
         animData->lastMessage = 0;

@@ -97,9 +97,9 @@ void Textblock_tick(Object* self) {
 
     //Check gamebits to tell if textblock is switched on, and whether it's been translated
     if (objData->gamebitInteractable != NO_GAMEBIT) {
-        interactable = main_get_bits(objData->gamebitInteractable);
+        interactable = mainGetBits(objData->gamebitInteractable);
     }
-    translatorUsed = main_get_bits(objData->gamebitTranslated);
+    translatorUsed = mainGetBits(objData->gamebitTranslated);
 
     if (translatorUsed || !interactable) {
         return;
@@ -132,8 +132,8 @@ void Textblock_tick(Object* self) {
     }
     
     //Set gamebit after using Krazoa Translator on textblock
-    if ((objData->activated) && (main_get_bits(objData->gamebitTranslated) == 0)) {
-        main_set_bits(objData->gamebitTranslated, 1);
+    if ((objData->activated) && (mainGetBits(objData->gamebitTranslated) == 0)) {
+        mainSetBits(objData->gamebitTranslated, 1);
     }
 }
 

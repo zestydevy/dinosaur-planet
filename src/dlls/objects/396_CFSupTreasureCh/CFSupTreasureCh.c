@@ -52,7 +52,7 @@ void CFSupTreasureCh_setup(Object *self, CFSupTreasureCh_Setup *setup, s32 arg2)
     self->animCallback = CFSupTreasureCh_func_424;
     self->srt.yaw = setup->yaw << 8;
     if (setup->hasBaby) {
-        if (main_get_bits(BIT_CF_Free_Cloudrunner_From_Chest)) {
+        if (mainGetBits(BIT_CF_Free_Cloudrunner_From_Chest)) {
             objdata->objectSeqIndex = -1;
         } else {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 4, 1);
@@ -62,7 +62,7 @@ void CFSupTreasureCh_setup(Object *self, CFSupTreasureCh_Setup *setup, s32 arg2)
     } else {
         objdata->objectSeqIndex = 0;
     }
-    if (!main_get_bits(BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away)) {
+    if (!mainGetBits(BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away)) {
         objdata->flags |= CFSUPTREASURECH_PLAY_SEQ;
     }
 }
@@ -93,7 +93,7 @@ void CFSupTreasureCh_control(Object *self) {
         }
     }
     if ((objdata->flags & CFSUPTREASURECH_FREED_BABY_1) && (objdata->flags & CFSUPTREASURECH_FREED_BABY_2)) {
-        if (main_get_bits(BIT_Play_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Five)) {
+        if (mainGetBits(BIT_Play_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Five)) {
             objdata->flags &= ~CFSUPTREASURECH_FREED_BABY_2;
         }
     }
@@ -109,7 +109,7 @@ void CFSupTreasureCh_control(Object *self) {
             objdata->yTheta = 0;
             objdata->flags &= ~CFSUPTREASURECH_16;
         }
-        if (main_get_bits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left)) {
+        if (mainGetBits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left)) {
             map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
         }
     }
@@ -158,7 +158,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
 
     objdata = self->data;
     distance = 500.0f;
-    if (main_get_bits(BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away)) {
+    if (mainGetBits(BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away)) {
         self->opacity = OBJECT_OPACITY_MAX;
         self->srt.scale = self->def->scale;
         return 0;
@@ -182,8 +182,8 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
         self->unkAF &= ~0x10;
         if (self->unkAF & 1) {
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_CRF_Treasure_Chest_Key)) {
-                main_set_bits(BIT_CF_Free_Cloudrunner_From_Chest, 1);
-                main_set_bits(BIT_CRF_Treasure_Chest_Key, 0);
+                mainSetBits(BIT_CF_Free_Cloudrunner_From_Chest, 1);
+                mainSetBits(BIT_CRF_Treasure_Chest_Key, 0);
                 if (cloudbaby) {
                     STUBBED_PRINTF(" FLY AWAY BADY ");
                     ((DLL_373_CFCloudBaby*)cloudbaby->dll)->vtbl->func8(cloudbaby);

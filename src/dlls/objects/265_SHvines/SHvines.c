@@ -32,7 +32,7 @@ void SHvines_setup(Object* self, SHvines_Setup* objSetup, s32 arg2) {
     objData = self->data;
     obj_add_object_type(self, OBJTYPE_TrickyTarget);
 
-    if (main_get_bits(objSetup->gamebitBurnt)) {
+    if (mainGetBits(objSetup->gamebitBurnt)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
         obj_free_tick(self);
         func_800267A4(self);
@@ -40,7 +40,7 @@ void SHvines_setup(Object* self, SHvines_Setup* objSetup, s32 arg2) {
     
     self->srt.yaw = objSetup->yaw << 8;
     
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
 
     modelInstance = self->modelInsts[self->modelInstIdx];
     model = modelInstance->model;
@@ -86,7 +86,7 @@ void SHvines_update(Object* self) {
     //Check for Flame command collisions
     if (func_80025F40(self, NULL, NULL, &hitDamage) == Damage_Type_Flame_Command) {
         STUBBED_PRINTF("\n HIT HIT HIT HIT Hit by Booldy Side Kick \n\n\n");
-        main_set_bits(objSetup->gamebitBurnt, 1);
+        mainSetBits(objSetup->gamebitBurnt, 1);
         self->opacity = OBJECT_OPACITY_MAX - 2; //start fade out
     }
 }
@@ -119,7 +119,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 // offset: 0x470 | func: 4 | export: 4
 void SHvines_free(Object* self, s32 arg1) {
     obj_free_object_type(self, OBJTYPE_TrickyTarget);
-    remove_temp_dll(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
 }
 
 // offset: 0x4C4 | func: 5 | export: 5

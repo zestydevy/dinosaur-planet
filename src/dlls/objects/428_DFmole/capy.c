@@ -447,7 +447,7 @@ s32 capy_anim_state_6_done_eating(Object* self, ObjFSA_Data* fsa, f32 updateRate
     fsa->unk27C = 0.0f;
     if (fsa->unk33A != 0) {
         if ((gDLL_26_Curves->vtbl->func_4288(baddie->unk3F8, self, 150.0f, _data_0, -1) == 0) 
-                && (main_get_bits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18]) == 0)) {
+                && (mainGetBits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18]) == 0)) {
             fsa->logicState = CAPY_LSTATE_2_GoToDigSpot;
             return CAPY_ASTATE_8_Walking + 1;
         }
@@ -477,7 +477,7 @@ s32 capy_anim_state_7_dig_wall(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) rand_next(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk308 & 0x200) {
-        main_set_bits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18], 1);
+        mainSetBits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18], 1);
     }
     if (fsa->unk33A != 0) {
         fsa->logicState = CAPY_LSTATE_4_Idle;

@@ -201,7 +201,7 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
     obj_add_object_type(self, OBJTYPE_Vehicle);
     _bss_0 = tex_load_deferred(0x89);
     _bss_4 = tex_load_deferred(0x3C);
-    if (main_get_bits(setup2->unk1E) != 0) {
+    if (mainGetBits(setup2->unk1E) != 0) {
         var_v0 = SNOWBIKEFLAG_1;
     } else {
         var_v0 = SNOWBIKEFLAG_NONE;
@@ -236,7 +236,7 @@ void dll_711_control(Object *self) {
     if ((objdata->flags & SNOWBIKEFLAG_1)) {
         return;
     }
-    if (main_get_bits(setup->unk1E) != 0) {
+    if (mainGetBits(setup->unk1E) != 0) {
         objdata->flags |= SNOWBIKEFLAG_1;
         return;
     }
@@ -284,7 +284,7 @@ void dll_711_control(Object *self) {
             self->objhitInfo->unk5B = 0;
             self->objhitInfo->unk5C = 0;
             objdata->unk3DB = 0;
-            if ((setup->unk1A == -1) || (main_get_bits(setup->unk1A) != 0)) {
+            if ((setup->unk1A == -1) || (mainGetBits(setup->unk1A) != 0)) {
                 self->unkAF &= ~0x10;
             } else {
                 self->unkAF |= 0x10;
@@ -338,7 +338,7 @@ void dll_711_control(Object *self) {
             objdata->unk18.unk14 = -1;
             objdata->unk18.unk18 = -1;
             objdata->unk18.unk1C = 0;
-            if (main_get_bits(BIT_IM_Race_Started) != 0) {
+            if (mainGetBits(BIT_IM_Race_Started) != 0) {
                 objdata->flags |= SNOWBIKEFLAG_8;
             } else {
                 objdata->flags &= ~SNOWBIKEFLAG_8;
@@ -351,7 +351,7 @@ void dll_711_control(Object *self) {
                 }
                 gDLL_4_Race->vtbl->func9(&objdata->unk18);
             }
-        } else if (main_get_bits(BIT_IM_Race_Ended) != 0) {
+        } else if (mainGetBits(BIT_IM_Race_Ended) != 0) {
             objdata->flags &= ~SNOWBIKEFLAG_8;
         }
         dll_711_func_34E4(self, objdata);
@@ -488,7 +488,7 @@ void dll_711_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     IMSnowBike_Data *objdata = self->data;
     s8 sp3B;
     
-    if (!(objdata->flags & SNOWBIKEFLAG_1) && ((main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro) == 0) || (main_get_bits(BIT_382) != 0))) {
+    if (!(objdata->flags & SNOWBIKEFLAG_1) && ((mainGetBits(BIT_Played_Seq_0063_IM_Sabre_Intro) == 0) || (mainGetBits(BIT_382) != 0))) {
         if (visibility == -1) {
             sp3B = gDLL_13_Expgfx->vtbl->func10(self);
             if (!(objdata->flags & SNOWBIKEFLAG_IS_CPU)) {
@@ -622,7 +622,7 @@ void dll_711_func_15E8(Object *self, s32 arg1) {
 
     objdata->unk3DE = arg1;
     if (arg1 == 2) {
-        main_set_bits(BIT_42D, 1);
+        mainSetBits(BIT_42D, 1);
     }
 }
 

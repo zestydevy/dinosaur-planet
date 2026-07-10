@@ -43,7 +43,7 @@ void TexFrameAnimator_setup(Object* self, TexFrameAnimator_Setup* objSetup, s32 
     }
 
     //Check if already finished playing
-    if ((objData->finished = main_get_bits(objSetup->gamebitFinished))){
+    if ((objData->finished = mainGetBits(objSetup->gamebitFinished))){
         objData->frame = objData->endFrame;
         objData->playing = TRUE;
     }
@@ -65,7 +65,7 @@ void TexFrameAnimator_control(Object* self) {
 
     //Check if texture animation should start
     if (objData->playing == FALSE && 
-        main_get_bits(objSetup->gamebitPlay) && 
+        mainGetBits(objSetup->gamebitPlay) && 
         objData->finished == FALSE) {
 
         objData->frame = 0;
@@ -101,7 +101,7 @@ void TexFrameAnimator_control(Object* self) {
         objData->frame = 0;
     } else if (objData->frame > objData->endFrame) {
         if (objSetup->gamebitFinished != NO_GAMEBIT) {
-            main_set_bits(objSetup->gamebitFinished, TRUE);
+            mainSetBits(objSetup->gamebitFinished, TRUE);
             if (0){
                 diPrintf(" Set bit %i ", objSetup->gamebitFinished);
             }

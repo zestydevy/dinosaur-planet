@@ -56,7 +56,7 @@ void PortalSpellDoor_setup(Object* self, PortalSpellDoor_Setup* objSetup, s32 ar
     objData->scale = self->visRadius * 0.5f;
 
     //Check if door is already open
-    if (main_get_bits(objSetup->gamebitActivated)) {
+    if (mainGetBits(objSetup->gamebitActivated)) {
         //Remove HITS line
         if (objSetup->hitsAnimatorID && !func_80058F50()) {
             func_80059038(objSetup->hitsAnimatorID, self->parent, 0);
@@ -90,7 +90,7 @@ void PortalSpellDoor_control(Object* self) {
 
         ((DLL_210_Player*)player->dll)->vtbl->func51(player, -1);
 
-        main_set_bits(objSetup->gamebitActivated, TRUE);
+        mainSetBits(objSetup->gamebitActivated, TRUE);
 
         //Remove HITS line
         if (objSetup->hitsAnimatorID && !func_80058F50()) {

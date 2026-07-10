@@ -222,7 +222,7 @@ void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
             srcSRT.yaw = 0;
             srcSRT.roll = 0;
             srcSRT.pitch = 0;
-            func_80014D34(0.5f, &dstSRT.transl.x, &dstSRT.transl.y, &dstSRT.transl.z);
+            mainGetBufferedPlayerPos(0.5f, &dstSRT.transl.x, &dstSRT.transl.y, &dstSRT.transl.z);
             dstSRT.yaw = 0;
             dstSRT.roll = 0;
             dstSRT.pitch = 0;
@@ -487,7 +487,7 @@ static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 upd
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);
         baddie->unk3B4 = 0;
-        main_set_bits(baddie->unk39C, 1);
+        mainSetBits(baddie->unk39C, 1);
         dllFree(modgfx);
         if (self->setup == NULL) {
             obj_destroy_object(self);

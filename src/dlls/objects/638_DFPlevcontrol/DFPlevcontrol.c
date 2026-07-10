@@ -57,17 +57,17 @@ void DFP_LevelControl_setup(Object* self, DFPTLevelControl_Setup* objSetup, s32 
             break;
         case 1:
             func_80000860(self, self, 415, 0);
-            main_set_bits(BIT_SpellStone_CRF, 1);
+            mainSetBits(BIT_SpellStone_CRF, 1);
             break;
         case 2:
             func_80000860(self, self, 415, 0);
-            main_set_bits(BIT_SpellStone_BWC, 1);
-            main_set_bits(BIT_Spell_Grenade, 1);
+            mainSetBits(BIT_SpellStone_BWC, 1);
+            mainSetBits(BIT_Spell_Grenade, 1);
             break;
         case 3:
             func_80000860(self, self, 415, 0);
-            main_set_bits(BIT_SpellStone_KP, 1);
-            main_set_bits(BIT_Spell_Grenade, 1);
+            mainSetBits(BIT_SpellStone_KP, 1);
+            mainSetBits(BIT_Spell_Grenade, 1);
             break;
     }
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
@@ -116,7 +116,7 @@ void DFP_LevelControl_control(Object* self) {
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
                 ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-                main_set_bits(BIT_Spell_Forcefield, 1);
+                mainSetBits(BIT_Spell_Forcefield, 1);
             }
         }
         DFP_LevelControl_handle_visit_2(self);
@@ -193,8 +193,8 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
     //Set up DFPT Act 1
     if (dInitialiseVisit1) {
         //Grant required Spells and refill magic
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
         //Zero out all floor tile rows
@@ -207,7 +207,7 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
             dFloorTiles[i] = rand_next(1, 4); 
         }
         
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
 
         //Apply lighting/envFX, and play sounds
         func_80000860(self, self, 0x19F, 0);
@@ -220,40 +220,40 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
     }
     
     //Apply extra lighting
-    if ((dLitVisit1 == FALSE) && (main_get_bits(BIT_5E3))) {
+    if ((dLitVisit1 == FALSE) && (mainGetBits(BIT_5E3))) {
         func_80000450(self, self, 0x27A, 0, 0, 0);
         dLitVisit1 = TRUE;
     }
     
     //Reroll safe floor tiles when player steps on switch
-    if (main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
+    if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
         
         for (i = 0; i < 3; i++){ 
             dFloorTiles[i] = rand_next(1, 4); 
         }
         
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
         objData->previousPadState = TRUE;
-    } else if (!main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == TRUE)) {
+    } else if (!mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == TRUE)) {
         objData->previousPadState = FALSE;
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
     }
     
     //Zap player
-    if (main_get_bits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
+    if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
         obj_send_mesg(player, 0x60005, self, 0);
     }
     
     //Enable object groups
-    if (main_get_bits(BIT_DFPT_Load_Block_Slide_Puzzle_1) && 
+    if (mainGetBits(BIT_DFPT_Load_Block_Slide_Puzzle_1) && 
         !gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, DFPT_ObjGroup6_Bottom_Block_Slide_Puzzle)
     ) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, DFPT_ObjGroup6_Bottom_Block_Slide_Puzzle, 1);
     }
     
-    if (main_get_bits(BIT_DFPT_Load_SpellStone_Holder_1_Interior) && 
+    if (mainGetBits(BIT_DFPT_Load_SpellStone_Holder_1_Interior) && 
         !gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, DFPT_ObjGroup4_Under_SpellStone_Holder_1)
     ) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, DFPT_ObjGroup4_Under_SpellStone_Holder_1, 1);
@@ -273,8 +273,8 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
     //Set up DFPT Act 2
     if (dInitialiseVisit2) {
         //Grant required Spells and refill magic
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
         //Zero out all floor tile rows
@@ -287,7 +287,7 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
             dFloorTiles[i] = rand_next(1, 4); 
         }
         
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
         objData->zappedTimer = 0;
 
         //Apply lighting/envFX, and play sounds
@@ -300,28 +300,28 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
     }
     
     //Reroll safe floor tiles when player steps on switch
-    if (main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
+    if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
         
         for (i = 0; i < 6; i++){ 
             dFloorTiles[i] = rand_next(1, 4); 
         }
         
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
         objData->previousPadState = TRUE;
-    } else if (!main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == TRUE)) {
+    } else if (!mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == TRUE)) {
         objData->previousPadState = FALSE;
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
     }
 
     //Zap player
-    if (main_get_bits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
+    if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
         obj_send_mesg(player, 0x60005, self, 0);
     }
     
     //Enable object groups
-    if (main_get_bits(DFPT_Load_Block_Slide_Puzzle_2) && 
+    if (mainGetBits(DFPT_Load_Block_Slide_Puzzle_2) && 
         !(gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, DFPT_ObjGroup6_Bottom_Block_Slide_Puzzle))
     ) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, DFPT_ObjGroup6_Bottom_Block_Slide_Puzzle, 1);
@@ -341,9 +341,9 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
     //Set up DFPT Act 3
     if (dInitialiseVisit3) {
         //Grant required Spells and refill magic
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
-        main_set_bits(BIT_Krazoa_Translator, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Krazoa_Translator, 1);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
         //Set safe tile indices for all 9 rows
@@ -351,11 +351,11 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
             dFloorTiles[i] = rand_next(1, 4); 
         }
         
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
-        main_set_bits(BIT_5E7, 1);
-        main_set_bits(BIT_5E8, 1);
-        main_set_bits(BIT_76D, 1);
-        main_set_bits(BIT_792, 1);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
+        mainSetBits(BIT_5E7, 1);
+        mainSetBits(BIT_5E8, 1);
+        mainSetBits(BIT_76D, 1);
+        mainSetBits(BIT_792, 1);
 
         //Apply lighting/envFX, and play sounds
         func_80000860(self, self, 0x19F, 0);
@@ -369,28 +369,28 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
     }
 
     //Reroll safe floor tiles when player steps on switch
-    if (main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
+    if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
 
         for (i = 0; i < 9; i++){ 
             dFloorTiles[i] = rand_next(1, 4); 
         }
         
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
         objData->previousPadState = TRUE;
-    } else if (!main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == TRUE)) {
+    } else if (!mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == TRUE)) {
         objData->previousPadState = FALSE;
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
     }
 
     //Zap player
-    if (main_get_bits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
+    if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
         obj_send_mesg(player, 0x60005, self, 0);
     }
 
     //Enable object groups
-    if (main_get_bits(DFPT_Load_Block_Slide_Puzzle_2) && 
+    if (mainGetBits(DFPT_Load_Block_Slide_Puzzle_2) && 
         !gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, DFPT_ObjGroup6_Bottom_Block_Slide_Puzzle)
     ) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, DFPT_ObjGroup6_Bottom_Block_Slide_Puzzle, 1);

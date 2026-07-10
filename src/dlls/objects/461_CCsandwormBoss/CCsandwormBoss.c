@@ -115,9 +115,9 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
     case 9:
         dll_461_func_12B0(self, objdata->unk8);
         if (objdata->unk18 > 300.0f) {
-            main_set_bits(0x46E, 0x65U);
+            mainSetBits(0x46E, 0x65U);
         } else {
-            main_set_bits(0x46E, 0xC3U);
+            mainSetBits(0x46E, 0xC3U);
         }
         if (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk4->globalPosition) < 32400.0f) {
             dll_461_func_1090(self, objdata->unk4, objdata, 6);
@@ -203,7 +203,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
         func_800267A4(self);
         func_80026160(self);
-        main_set_bits(0x3FB, 1);
+        mainSetBits(0x3FB, 1);
         break;
     case 15:
         return;

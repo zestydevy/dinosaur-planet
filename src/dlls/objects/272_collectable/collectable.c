@@ -103,13 +103,13 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
 
     //Check if hidden via gamebit
     if (objData->gamebitShow != NO_GAMEBIT) {
-        objData->isHidden = main_get_bits(objData->gamebitShow) == 0;
+        objData->isHidden = mainGetBits(objData->gamebitShow) == 0;
     }
 
     //Check if already collected
     objData->gamebitCollected = objSetup->gamebitCollected;
     if (objData->gamebitCollected != NO_GAMEBIT) {
-        self->unkDC = main_get_bits(objData->gamebitCollected);
+        self->unkDC = mainGetBits(objData->gamebitCollected);
     } else {
         self->unkDC = 0;
     }
@@ -223,7 +223,7 @@ void collectable_control(Object* self) {
     gDLL_7_Newday->vtbl->func5(&newdayValue);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     if (objdata->gamebitShow != NO_GAMEBIT) {
-        objdata->isHidden = main_get_bits(objdata->gamebitShow) == 0;
+        objdata->isHidden = mainGetBits(objdata->gamebitShow) == 0;
     }
 
     //End early if hidden/paused
@@ -280,7 +280,7 @@ void collectable_control(Object* self) {
 
         //Check if collection gamebit was reset
         if ((objdata->gamebitCollected != NO_GAMEBIT) && 
-            (main_get_bits(objdata->gamebitCollected) == FALSE)
+            (mainGetBits(objdata->gamebitCollected) == FALSE)
         ) {
             self->unkDC = 0;
         }
@@ -317,7 +317,7 @@ void collectable_control(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_549, 0, 1, -1, 0);
             }
 
-            if (main_get_bits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
+            if (mainGetBits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
                 gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 outMessage = 0;
                 obj_send_mesg(
@@ -326,7 +326,7 @@ void collectable_control(Object* self) {
                     self, 
                     0
                 );
-                main_set_bits(BIT_Tutorial_Collected_Energy_Egg, 1);
+                mainSetBits(BIT_Tutorial_Collected_Energy_Egg, 1);
             } else {
                 objdata->timerDestroy = 180.0f;
                 collectable_collect(self);
@@ -589,12 +589,12 @@ void collectable_collect(Object* self) {
 
     //Set the collection gamebit (usually for making sure the object doesn't reappear)
     if (objdata->gamebitCollected != NO_GAMEBIT) {
-        main_set_bits(objdata->gamebitCollected, TRUE);
+        mainSetBits(objdata->gamebitCollected, TRUE);
     }
 
     //Increment the counter gamebit (if one is being used)
     if (objsetup->gamebitCount > 0) {
-        main_increment_bits(objsetup->gamebitCount);
+        mainIncrementBits(objsetup->gamebitCount);
     }
 
     switch (collectableDef->type) {
@@ -606,7 +606,7 @@ void collectable_collect(Object* self) {
             break;
         case OBJ_DIMAlpineRoot2: 
             gDLL_6_AMSFX->vtbl->play(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
-            main_set_bits(BIT_3E9, 1);
+            mainSetBits(BIT_3E9, 1);
             self->unkDC = 1;
             objdata->rootTimer = 1200;
             return;

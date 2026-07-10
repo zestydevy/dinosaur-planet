@@ -60,13 +60,13 @@ void dll_783_control(Object *self) {
     if (objdata->unkE != 5) {
         sp3B = gDLL_7_Newday->vtbl->func8(&sp40);
         if (self->modelInstIdx == 1) {
-            if (main_get_bits(BIT_812) != 0) {
+            if (mainGetBits(BIT_812) != 0) {
                 objdata->unkE = 5;
             } else if (sp3B) {
                 objdata->unkE = 3;
             }
         } else {
-            if (main_get_bits(BIT_813) != 0) { // if moon block puzzle complete
+            if (mainGetBits(BIT_813) != 0) { // if moon block puzzle complete
                 objdata->unkE = 5;
             } else if (!sp3B) {
                 objdata->unkE = 3;

@@ -47,8 +47,8 @@ void MAGICMaker_control(Object *self) {
     Object *player;
     Object *bonedustObj;
 
-    if (main_get_bits(BIT_26B)) {
-        main_set_bits(BIT_26B, 0);
+    if (mainGetBits(BIT_26B)) {
+        mainSetBits(BIT_26B, 0);
         player = get_player();
         if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) < 10) {
             objects = obj_get_all_of_type(OBJTYPE_Collectable, &count);

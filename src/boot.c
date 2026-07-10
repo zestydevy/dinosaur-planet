@@ -25,7 +25,7 @@ void boot(void) {
 }
 
 void idle(void* arg) {
-    osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainproc, NULL, 
+    osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainThreadEntry, NULL, 
         &gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)], MAIN_THREAD_PRIORITY);
 
     gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)] = 0;

@@ -41,7 +41,7 @@ void sfxplayer_setup(Object* self, SfxPlayer_Setup* setup, s32 arg2) {
 
     objdata = self->data;
     setup2 = (SfxPlayer_Setup*)self->setup;
-    objdata->hasPlayed = main_get_bits(setup->flagPlay);
+    objdata->hasPlayed = mainGetBits(setup->flagPlay);
 
     if ((setup2->mode & 1) && (!objdata->hasPlayed) && (setup2->mode & 4)) {
         objdata->hasPlayed = 1;
@@ -66,7 +66,7 @@ void sfxplayer_control(Object* self) {
     objdata = self->data;
     flagValue = 0;
     if (setup->flagPlay){
-        flagValue = main_get_bits(setup->flagPlay);
+        flagValue = mainGetBits(setup->flagPlay);
     }
 
     mode = setup->mode;

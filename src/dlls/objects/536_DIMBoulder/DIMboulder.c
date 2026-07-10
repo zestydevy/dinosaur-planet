@@ -50,7 +50,7 @@ void DIMBoulder_setup(Object* self, DIMBoulder_Setup* objSetup, s32 arg2) {
     
     self->stateFlags |= OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED;
     
-    objData->timesHit = main_get_bits(BIT_4CE);
+    objData->timesHit = mainGetBits(BIT_4CE);
     if ((objData->timesHit) == 3) {
         objData->state = DIMBoulder_STATE_2_Finished;
     }
@@ -88,7 +88,7 @@ void DIMBoulder_control(Object* self) {
             self->velocity.y = dBounceVelocities[objData->timesHit].y;
             self->velocity.z = dBounceVelocities[objData->timesHit].z;
             objData->timesHit++;
-            main_set_bits(BIT_4CE, objData->timesHit);
+            mainSetBits(BIT_4CE, objData->timesHit);
         }
         return;
     } 

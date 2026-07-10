@@ -36,7 +36,7 @@ void dll_510_setup(Object* self, DLL510_Setup* setup, s32 arg2) {
     self->srt.scale = self->def->scale - (temp_v1->unk0 * 0.5f);
     self->srt.yaw = setup->unk18 << 8;
     self->velocity.f[1] = 0.0f;
-    if (main_get_bits((s32) setup->unk1E) != 0) {
+    if (mainGetBits((s32) setup->unk1E) != 0) {
         temp_v1->unk12 = 4;
     }
 }
@@ -113,7 +113,7 @@ void dll_510_control(Object* self) {
             }
         }
         if ((objData->unk13 & 2) && (self->srt.transl.f[1] < (objData->unk4 + 40.0f))) {
-            main_set_bits(objSetup->unk1E, 1);
+            mainSetBits(objSetup->unk1E, 1);
             objData->unk12 = 2;
             return;
         }

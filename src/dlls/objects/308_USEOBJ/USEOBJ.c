@@ -57,7 +57,7 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
         self->modelInstIdx = 0;
     }
     objdata = self->data;
-    objdata->used = main_get_bits(setup->gamebitUsed);
+    objdata->used = mainGetBits(setup->gamebitUsed);
     obj_add_object_type(self, OBJTYPE_UseObj);
     if ((setup->flags & USEOBJ_HideIfAlreadyUsed) && objdata->used != 0) {
         self->opacity = 0;
@@ -72,11 +72,11 @@ void UseObj_control(Object *self) {
 
     objdata = self->data;
     setup = (UseObj_Setup*)self->setup;
-    objdata->used = main_get_bits(setup->gamebitUsed);
+    objdata->used = mainGetBits(setup->gamebitUsed);
     if (objdata->used == 0) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         if (setup->gamebitEnabled != -1) {
-            if (main_get_bits(setup->gamebitEnabled)) {
+            if (mainGetBits(setup->gamebitEnabled)) {
                 self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
             } else {
                 self->unkAF |= ARROW_FLAG_10_Greyed_Out;
@@ -92,10 +92,10 @@ void UseObj_control(Object *self) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
             }
             if (!(setup->flags & USEOBJ_SeqControlsUsedBit)) {
-                main_set_bits(setup->gamebitUsed, 1);
+                mainSetBits(setup->gamebitUsed, 1);
             }
             if (setup->flags & USEOBJ_DisableAfterUse) {
-                main_set_bits(setup->gamebitEnabled, 0);
+                mainSetBits(setup->gamebitEnabled, 0);
             } else {
                 objdata->used = 1;
                 self->unkDC = 1;
@@ -163,7 +163,7 @@ static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     if (animObjData->lastMessage != 0) {
         if ((setup->flags & USEOBJ_SeqControlsUsedBit) && animObjData->lastMessage == 1) {
-            main_set_bits(setup->gamebitUsed, 1);
+            mainSetBits(setup->gamebitUsed, 1);
         }
         if (animObjData->lastMessage == 2) {
             if (setup->replayStartTime != 0) {

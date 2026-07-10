@@ -254,18 +254,18 @@ void putdown_delete_food_from_bag(u8 indexInBag, u16 foodType, FoodbagContents* 
   * Returns a foodbag's item capacity, based on whether small/medium/large bag gamebits are set 
   */
 s32 putdown_get_capacity(FoodbagGamebits* gamebitIDs) {
-    if (main_get_bits(gamebitIDs->large)) {
-        main_set_bits(gamebitIDs->medium, TRUE);
-        main_set_bits(gamebitIDs->small, TRUE);
+    if (mainGetBits(gamebitIDs->large)) {
+        mainSetBits(gamebitIDs->medium, TRUE);
+        mainSetBits(gamebitIDs->small, TRUE);
         return BAG_CAPACITY_LARGE;
     }
 
-    if (main_get_bits(gamebitIDs->medium)) {
-        main_set_bits(gamebitIDs->small, TRUE);
+    if (mainGetBits(gamebitIDs->medium)) {
+        mainSetBits(gamebitIDs->small, TRUE);
         return BAG_CAPACITY_MEDIUM;
     }
 
-    if (main_get_bits(gamebitIDs->small)) {
+    if (mainGetBits(gamebitIDs->small)) {
         return BAG_CAPACITY_SMALL;
     }
 
@@ -286,7 +286,7 @@ void putdown_update_food_quantity_gamebits(FoodbagContents* bagSlots, FoodbagIte
     //Iterate over food definitions (skip empty 1st entry)
     for (index = 1; index < MAX_FOOD_DEFINITIONS; index++){
         if (foodDefs[index].gamebitID > 0){
-            main_set_bits(foodDefs[index].gamebitID, food_quantities[index]);
+            mainSetBits(foodDefs[index].gamebitID, food_quantities[index]);
         }
     }
 }

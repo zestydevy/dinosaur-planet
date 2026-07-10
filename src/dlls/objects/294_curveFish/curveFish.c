@@ -95,12 +95,12 @@ void dll_294_control(Object* self) {
     } 
     if (curvefishdata->unk10D != 0) {
         if (sp3C->id == OBJ_Krystal) {
-            if (main_get_bits(BIT_2EA) == 0) {
+            if (mainGetBits(BIT_2EA) == 0) {
                 self->unkAF |= 8;
             } else {
                 self->unkAF &= ~0x8;
             }
-        } else if (main_get_bits(BIT_3E1) == 0) {
+        } else if (mainGetBits(BIT_3E1) == 0) {
             self->unkAF |= 8;
         } else {
             self->unkAF &= ~0x8;
@@ -226,7 +226,7 @@ static void dll_294_func_968(Object* self) {
 
     curvefishdata = self->data;
     if (self->id == OBJ_DF_Lantern) {
-        main_set_bits(BIT_Gold_Nugget_LFV, 1);
+        mainSetBits(BIT_Gold_Nugget_LFV, 1);
     } else {
         player = get_player();
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);

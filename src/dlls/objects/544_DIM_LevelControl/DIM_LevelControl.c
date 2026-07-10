@@ -26,9 +26,9 @@ void DIM_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata = self->data;
     objdata->unk0 = 0;
     
-    main_set_bits(BIT_DIM_Gear_3_Random_Tent, tentIndex);
+    mainSetBits(BIT_DIM_Gear_3_Random_Tent, tentIndex);
 
-    if (main_get_bits(BIT_42C)) {
+    if (mainGetBits(BIT_42C)) {
         gDLL_29_Gplay->vtbl->set_act(self->mapID, 2);
     } else {
         gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
@@ -44,18 +44,18 @@ void DIM_LevelControl_control(Object *self) {
     s32 sp34;
 
     objdata = self->data;
-    sp34 = !main_get_bits(BIT_3E3);
-    temp_a1 = main_get_bits(BIT_3E2) & sp34;
+    sp34 = !mainGetBits(BIT_3E3);
+    temp_a1 = mainGetBits(BIT_3E2) & sp34;
     if (temp_a1 != objdata->unk0) {
-        main_set_bits(BIT_3E8, temp_a1);
+        mainSetBits(BIT_3E8, temp_a1);
         objdata->unk0 = temp_a1;
     }
-    if (!((u8)main_get_bits(BIT_DIM_Lit_All_Igloo_Fires)) &&
-        (main_get_bits(BIT_DIM_Lit_Igloo_Fire_One)) &&
-        (main_get_bits(BIT_DIM_Lit_Igloo_Fire_Two)) &&
-        (main_get_bits(BIT_DIM_Lit_Igloo_Fire_Three))) {
+    if (!((u8)mainGetBits(BIT_DIM_Lit_All_Igloo_Fires)) &&
+        (mainGetBits(BIT_DIM_Lit_Igloo_Fire_One)) &&
+        (mainGetBits(BIT_DIM_Lit_Igloo_Fire_Two)) &&
+        (mainGetBits(BIT_DIM_Lit_Igloo_Fire_Three))) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
-        main_set_bits(BIT_DIM_Lit_All_Igloo_Fires, 1);
+        mainSetBits(BIT_DIM_Lit_All_Igloo_Fires, 1);
     }
 }
 

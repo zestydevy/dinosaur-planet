@@ -65,8 +65,8 @@ void SideFoodbag_setup(Object* self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     
     objData->capacity = 0;
     objData->bagSlots = gDLL_29_Gplay->vtbl->get_dino_foodbag();
-    main_set_bits(BIT_Dino_Foodbag_Place, TRUE);
-    main_set_bits(BIT_Dino_Foodbag_Give, TRUE);
+    mainSetBits(BIT_Dino_Foodbag_Place, TRUE);
+    mainSetBits(BIT_Dino_Foodbag_Give, TRUE);
     objData->dllPutdown->vtbl->update_food_quantity_gamebits(objData->bagSlots, dino_foodbag_items);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }

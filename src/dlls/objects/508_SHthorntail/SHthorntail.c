@@ -281,7 +281,7 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
     self->shadow->distFadeMinOpacity = 90;
     self->animCallback = thorntail_anim_callback;
     objdata->state = -1;
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -0x1FFF, 0x2AAA, 3);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->movedata, 0x190, 0x1E);
     objdata->movedata.unk4A9 &= ~0x8;
@@ -339,7 +339,7 @@ void thorntail_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 
 // offset: 0x504 | func: 4 | export: 4
 void thorntail_free(Object *self, s32 onlySelf) {
-    remove_temp_dll(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
     obj_free_object_type(self, OBJTYPE_40);
 }
 
@@ -419,7 +419,7 @@ static void thorntail_sleepy_setup(Object *self, SHthorntail_Data *objdata, SHth
 static void thorntail_sleepy_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     s32 curveSubtype;
 
-    if (main_get_bits(objdata->progressionBlockerGamebit) == 0) {
+    if (mainGetBits(objdata->progressionBlockerGamebit) == 0) {
         objdata->flags |= THORNTAILFLAG_ProgressionBlocker;
         curveSubtype = THORNTAILCURVE_3;
     } else {
@@ -630,7 +630,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
             break;
         case THORNTAILSTATE_BlockingProgression:
             // Sleep regardless of time of day to block player progression
-            if (main_get_bits(objdata->progressionBlockerGamebit) != 0) {
+            if (mainGetBits(objdata->progressionBlockerGamebit) != 0) {
                 objdata->flags &= ~THORNTAILFLAG_ProgressionBlocker;
                 objdata->flags |= THORNTAILFLAG_ForceModAnimChange;
                 objdata->state = THORNTAILSTATE_WakingUp;
@@ -838,7 +838,7 @@ static void thorntail_trader_setup(Object *self, SHthorntail_Data *objdata, SHth
 static void thorntail_trader_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     s32 curveSubtype;
 
-    if (main_get_bits(BIT_14) == 0) {
+    if (mainGetBits(BIT_14) == 0) {
         objdata->progressionBlockerGamebit = BIT_14;
         objdata->flags |= THORNTAILFLAG_ProgressionBlocker;
         curveSubtype = THORNTAILCURVE_3;
@@ -896,7 +896,7 @@ static void thorntail_trader_act1_control(Object *self, SHthorntail_Data *objdat
         }
         if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0) {
             // Distract successfully used
-            main_set_bits(objdata->progressionBlockerGamebit, 1);
+            mainSetBits(objdata->progressionBlockerGamebit, 1);
         }
     }
 }

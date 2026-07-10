@@ -141,7 +141,7 @@ void SB_Galleon_control(Object *self) {
     SB_Galleon_Data *objdata = self->data;
 
     self->mapID = objdata->mapID;
-    if (!main_get_bits(BIT_SB_Battle_Started)) {
+    if (!mainGetBits(BIT_SB_Battle_Started)) {
         if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 1)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 1);
         }
@@ -415,9 +415,9 @@ void SB_Galleon_func_B88(Object *self) {
     self->unkDC = 7;
     objdata = self->data;
 
-    if (main_get_bits(BIT_SB_Scales_Intro) && (!main_get_bits(BIT_SB_Found_Kyte))) {
+    if (mainGetBits(BIT_SB_Scales_Intro) && (!mainGetBits(BIT_SB_Found_Kyte))) {
         _data_0.fadeoutStarted = TRUE;
-        main_set_bits(BIT_SB_Found_Kyte, 1);
+        mainSetBits(BIT_SB_Found_Kyte, 1);
         gDLL_28_ScreenFade->vtbl->fade(10, SCREEN_FADE_BLACK);
     }
 

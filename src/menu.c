@@ -259,7 +259,7 @@ void func_8000FB2C(Gfx **gdl) {
     s32 bvar;
 
     delay = gUpdateRateF;
-    if (D_800A7D6C != 0 || get_pause_state() != 0) {
+    if (D_800A7D6C != 0 || mainGetPauseState() != 0) {
         delay = 0.0f;
     }
 

@@ -57,7 +57,7 @@ void IMMultiSeq_setup(Object *self, IMMultiSeq_Setup *setup, s32 arg2) {
     obj_add_object_type(self, OBJTYPE_UseObj);
     // find index of first unset gamebit
     for (i = 0; i != IMMULTISEQ_GAMEBIT_COUNT; i++) {
-        if (main_get_bits(setup->gamebits1[i]) == VALUE_GAMEBITS1(i)) {
+        if (mainGetBits(setup->gamebits1[i]) == VALUE_GAMEBITS1(i)) {
             break;
         }
     }
@@ -77,7 +77,7 @@ void IMMultiSeq_control(Object *self) {
     if (objdata->flags & IMMULTISEQ_SET_GAMEBIT) {
         value = VALUE_GAMEBITS1(objdata->setBitsCount) == 0;\
         gamebit = setup->gamebits1[objdata->setBitsCount];
-        main_set_bits(gamebit, value);
+        mainSetBits(gamebit, value);
         objdata->flags &= ~IMMULTISEQ_SET_GAMEBIT;
         objdata->setBitsCount++;
     }
@@ -90,7 +90,7 @@ void IMMultiSeq_control(Object *self) {
             objdata->setBitsCount = IMMULTISEQ_GAMEBIT_COUNT;
         } else {
             value = (VALUE_GAMEBITS2(objdata->setBitsCount) == 0);
-            if (main_get_bits(setup->gamebits2[objdata->setBitsCount]) == value) {
+            if (mainGetBits(setup->gamebits2[objdata->setBitsCount]) == value) {
                 if (setup->objectSeqIndex[objdata->setBitsCount] != -1) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex[objdata->setBitsCount], self, -1);
                 }
@@ -102,7 +102,7 @@ void IMMultiSeq_control(Object *self) {
     for (i = objdata->setBitsCount - 1; i >= 0; i--) {
         if (setup->gamebits1[i] == -1)
             break;
-        value = main_get_bits(setup->gamebits1[i]);
+        value = mainGetBits(setup->gamebits1[i]);
         if (value != VALUE_GAMEBITS1(i)) {
             break;
         }
@@ -158,7 +158,7 @@ int IMMultiSeq_anim_callback(Object *self, UNUSED Object *animObj, AnimObj_Data 
     nextSetBitsCount = currentSetBitsCount + 1;
     if (currentSetBitsCount != IMMULTISEQ_GAMEBIT_COUNT && nextSetBitsCount < IMMULTISEQ_GAMEBIT_COUNT && setup->gamebits2[nextSetBitsCount] != -1) {
         value = VALUE_GAMEBITS2(nextSetBitsCount) == 0;
-        if (main_get_bits(setup->gamebits2[nextSetBitsCount]) == value) {
+        if (mainGetBits(setup->gamebits2[nextSetBitsCount]) == value) {
             gDLL_3_Animation->vtbl->end_obj_sequence(self->seqSlot);
         }
     }

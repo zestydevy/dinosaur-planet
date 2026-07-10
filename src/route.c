@@ -142,8 +142,8 @@ CurveSetup* route_next(Route* route) {
 }
 
 s32 route_is_allowed_kyte_curve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
-    if ((arg0->type22.unk30 == -1 || main_get_bits(arg0->type22.unk30) != 0) && 
-        (arg0->type22.usedBit == -1 || main_get_bits(arg0->type22.usedBit) == 0)) {
+    if ((arg0->type22.unk30 == -1 || mainGetBits(arg0->type22.unk30) != 0) && 
+        (arg0->type22.usedBit == -1 || mainGetBits(arg0->type22.usedBit) == 0)) {
         if (arg0->base_type22.unk4 == arg1->unk0) {
             return TRUE;
         }
@@ -162,10 +162,10 @@ s32 route_is_allowed_kyte_curve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
     } else {
         /* default.dol
         // "bit test on kyteai node failed\n"
-        if ((arg0->type22.unk30 > -1 && main_get_bits(arg0->type22.unk30) == 0)) {
+        if ((arg0->type22.unk30 > -1 && mainGetBits(arg0->type22.unk30) == 0)) {
             // "node is not active yet\n"
         }
-        if ((arg0->type22.usedBit > -1 || main_get_bits(arg0->type22.usedBit) != 0)) {
+        if ((arg0->type22.usedBit > -1 || mainGetBits(arg0->type22.usedBit) != 0)) {
             // "node is has been used\n"
         }
         */
@@ -201,9 +201,9 @@ void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx)
                     }
                     break;
                 case 0x24: // Tricky
-                    main_get_bits(BIT_Tricky_Talk_Sequence);
-                    if ((neighbor->type22.unk30 == -1 || main_get_bits(neighbor->type22.unk30) != 0) &&
-                           (neighbor->type22.usedBit == -1 || main_get_bits(neighbor->type22.usedBit) == 0)) {
+                    mainGetBits(BIT_Tricky_Talk_Sequence);
+                    if ((neighbor->type22.unk30 == -1 || mainGetBits(neighbor->type22.unk30) != 0) &&
+                           (neighbor->type22.usedBit == -1 || mainGetBits(neighbor->type22.usedBit) == 0)) {
                         route_add_neighbor(route, basePoint, baseCurveIdx, 
                             (u32) (vec3_distance_squared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
                             neighbor);

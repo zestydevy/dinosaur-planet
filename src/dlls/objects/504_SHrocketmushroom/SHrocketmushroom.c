@@ -90,7 +90,7 @@ void SHrocketmushroom_setup(Object* self, SHrocketmushroom_Setup* objSetup, s32 
     objData->scaleInitial = self->srt.scale;
     
     if (reset == FALSE) {
-        if ((objSetup->gamebitGrow != NO_GAMEBIT) && (main_get_bits(objSetup->gamebitGrow) == FALSE)) {
+        if ((objSetup->gamebitGrow != NO_GAMEBIT) && (mainGetBits(objSetup->gamebitGrow) == FALSE)) {
             //If the plant only grows when a gamebit is set, start out hidden
             SHrocketmushroom_reset(self, objData, TRUE);
             objData->state = STATE_1_Hidden;
@@ -227,7 +227,7 @@ void SHrocketmushroom_handle_state_1_hidden(Object* self, SHrocketmushroom_AnimD
 
     //If the plant uses a gamebit, don't start growing until that gamebit is set (and the player is far away)
     if (objSetup->gamebitGrow != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitGrow) && SHrocketmushroom_is_player_far_away(self)) {
+        if (mainGetBits(objSetup->gamebitGrow) && SHrocketmushroom_is_player_far_away(self)) {
             SHrocketmushroom_set_state(objData, STATE_2_Growing);
         }
         return;
@@ -298,7 +298,7 @@ void SHrocketmushroom_handle_state_4_damaged(Object* self, SHrocketmushroom_Anim
 
     //If the plant only grows when a gamebit is set, switch off that gamebit when the plant's destroyed
     if (objSetup->gamebitGrow != NO_GAMEBIT) {
-        main_set_bits(objSetup->gamebitGrow, FALSE);
+        mainSetBits(objSetup->gamebitGrow, FALSE);
     }
 }
 
@@ -438,7 +438,7 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
     if (obj != NULL) {
         exploderSetup = (ExplodeAnimator_Setup*)obj->setup;
         if (exploderSetup->gamebitExplodeTrigger != NO_GAMEBIT) {
-            main_set_bits(exploderSetup->gamebitExplodeTrigger, 1);
+            mainSetBits(exploderSetup->gamebitExplodeTrigger, 1);
         }
     }
 }

@@ -112,16 +112,16 @@ int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     objdata = (CFMainSlideDoor_Data*)a0->data;
     setup = (CFMainSlideDoor_Setup*)a0->setup;
     if (objdata->unk0 == 0) {
-        if (main_get_bits(setup->unk18) != 0) {
-            if (setup->unk22 == -1 || main_get_bits(setup->unk22) != 0) {
-                main_set_bits(setup->unk1A, 1);
+        if (mainGetBits(setup->unk18) != 0) {
+            if (setup->unk22 == -1 || mainGetBits(setup->unk22) != 0) {
+                mainSetBits(setup->unk1A, 1);
                 if (var_t6 != 0 || var_t7 != 0) {
                     objdata->unk0 = 2;
                 }
             }
         }
     } else if (objdata->unk0 == 1) {
-        if (main_get_bits(setup->unk18) != 0 || (setup->unk22 != -1 && main_get_bits(setup->unk22) != 0)) {
+        if (mainGetBits(setup->unk18) != 0 || (setup->unk22 != -1 && mainGetBits(setup->unk22) != 0)) {
             if ((var_t6 == 0) && (var_t7 == 0)) {
                 objdata->unk0 = 3;
             }

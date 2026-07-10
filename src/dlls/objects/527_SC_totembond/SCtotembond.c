@@ -87,8 +87,8 @@ void SCTotemBond_control(Object* self) {
         ((DLL_210_Player*)player->dll)->vtbl->func71(player, &self->srt.transl, &self->srt, 0);
         
         //Rotate pole when gamebit set
-        if (main_get_bits(BIT_LFV_Flame_Game_Rotate_Pole)) {
-            main_set_bits(BIT_LFV_Flame_Game_Rotate_Pole, 0);
+        if (mainGetBits(BIT_LFV_Flame_Game_Rotate_Pole)) {
+            mainSetBits(BIT_LFV_Flame_Game_Rotate_Pole, 0);
             if (SCTotemBond_pick_new_direction(self, objData)) {
                 objData->flags |= SCTotemBond_FLAG_All_Directions_Defended;
             }
@@ -101,7 +101,7 @@ void SCTotemBond_control(Object* self) {
             self->srt.yaw -= 256.0f * gUpdateRateF;
             if ((u16)self->srt.yaw / M_90_DEGREES == objData->directionIndex) {
                 //Set gamebit to enable the direction's Flame target
-                main_set_bits(dActivateGamebits[objData->directionIndex], 1);
+                mainSetBits(dActivateGamebits[objData->directionIndex], 1);
             }
         }
         
@@ -245,7 +245,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
 
     //Create minigame objects, and enable first Flame target
     SCTotemBond_create_lightfoot_and_flame_targets(self, objData, -70.0f);
-    main_set_bits(dActivateGamebits[objData->directionIndex], 1);
+    mainSetBits(dActivateGamebits[objData->directionIndex], 1);
 
     //Hide totem (for first-person view)
     self->opacity = 0;
@@ -255,7 +255,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     objData->flags |= SCTotemBond_FLAG_Minigame_Active;
     
     //Set Kyte's initial flight curve
-    main_set_bits(BIT_Kyte_Flight_Curve, 0x83);
+    mainSetBits(BIT_Kyte_Flight_Curve, 0x83);
     
     //Create restart point
     player = get_player();
@@ -277,7 +277,7 @@ void SCTotemBond_finish_minigame(Object* self, SCTotemBond_Data* objData) {
     func_8002674C(self);
     
     if (objData->flags & SCTotemBond_FLAG_All_Directions_Defended) {
-        main_set_bits(BIT_LightFoot_Village_Krystal_Freed, 1);
+        mainSetBits(BIT_LightFoot_Village_Krystal_Freed, 1);
     }
     objData->flags = SCTotemBond_FLAG_None;
 }
@@ -296,7 +296,7 @@ s32 SCTotemBond_pick_new_direction(Object* self, SCTotemBond_Data* objData) {
     u8 i;
 
     for (i = 0, directions = 0; i < 4; i++) {
-        if (main_get_bits(dFinishedGamebits[i]) == 0) {
+        if (mainGetBits(dFinishedGamebits[i]) == 0) {
             directionsAvailable[directions++] = i;
         }
     }
@@ -307,7 +307,7 @@ s32 SCTotemBond_pick_new_direction(Object* self, SCTotemBond_Data* objData) {
     
     random = directionsAvailable[rand_next(0, directions - 1)];
     if (objData->directionIndex == random) {
-        main_set_bits(dActivateGamebits[objData->directionIndex], 1);
+        mainSetBits(dActivateGamebits[objData->directionIndex], 1);
     }
     objData->directionIndex = random;
     

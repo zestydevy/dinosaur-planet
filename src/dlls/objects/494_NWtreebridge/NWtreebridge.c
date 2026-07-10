@@ -39,7 +39,7 @@ void NWtreebridge_setup(Object* self, NWtreebridge_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
     objdata->sequenceIndex = objSetup->sequenceIndex;
     objdata->gamebit = objSetup->gamebit;
-    if (main_get_bits(objdata->gamebit)) {
+    if (mainGetBits(objdata->gamebit)) {
         objdata->seqValue = 380;
     }
     objdata->searchAttempts = 4;
@@ -118,7 +118,7 @@ s32 NWtreebridge_anim_callback(Object* self, Object* arg1, AnimObj_Data* arg2) {
     objdata = self->data;
     arg2->unk62 = 0;
     if (objdata->felled == FALSE) {
-        if (main_get_bits(objdata->gamebit)) {
+        if (mainGetBits(objdata->gamebit)) {
             objdata->felled = TRUE;
         } else {
             return 1;

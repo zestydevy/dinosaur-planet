@@ -247,7 +247,7 @@ PicMenuAction picmenu_update() {
     if (sAllowButtons) {
         buttons = joyGetPressed(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
-            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && main_get_bits(BIT_44F) == 0) {
+            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && mainGetBits(BIT_44F) == 0) {
                 joyDisableButtons(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {

@@ -33,13 +33,13 @@ void SCMeterBlock_setup(Object* self, SCMeterBlock_Setup* objSetup, s32 arg2) {
     objData->meterUnitY = METER_HEIGHT / objSetup->weedsNeeded;
 
     //Restore meter's position based on gamebit
-    objData->weedsOffered = main_get_bits(objSetup->gamebitMeterProgress);
+    objData->weedsOffered = mainGetBits(objSetup->gamebitMeterProgress);
     self->srt.transl.y += objData->weedsOffered * objData->meterUnitY;
     
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     
     //Using a gamebit to check when a Tumbleweed is damaged, initialise it to 0
-    main_set_bits(BIT_Damaged_a_Tumbleweed, 0);
+    mainSetBits(BIT_Damaged_a_Tumbleweed, 0);
 }
 
 // offset: 0xD4 | func: 1 | export: 1
@@ -51,26 +51,26 @@ void SCMeterBlock_control(Object* self) {
     objData = self->data;
 
     //Do nothing if deactivated, or if the puzzle's complete
-    if (!main_get_bits(objSetup->gamebitActivated) || 
-        main_get_bits(objSetup->gamebitDeactivated) || 
+    if (!mainGetBits(objSetup->gamebitActivated) || 
+        mainGetBits(objSetup->gamebitDeactivated) || 
         (objData->weedsOffered >= objSetup->weedsNeeded)) {
         return;
     }
     
     //Check if a Tumbleweed was damaged
-    if (main_get_bits(BIT_Damaged_a_Tumbleweed)) {
+    if (mainGetBits(BIT_Damaged_a_Tumbleweed)) {
         //Raise the meter block up by one step, and set gamebits
-        main_set_bits(BIT_Damaged_a_Tumbleweed, 0);
-        main_set_bits(objSetup->gamebitMeterProgress, objData->weedsOffered);
+        mainSetBits(BIT_Damaged_a_Tumbleweed, 0);
+        mainSetBits(objSetup->gamebitMeterProgress, objData->weedsOffered);
         self->srt.transl.y += objData->meterUnitY;
         objData->weedsOffered++;
         
         //Open the way to Golden Plains when the meter is fully raised
         if (objData->weedsOffered >= objSetup->weedsNeeded) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, 0, 0, 0, 0);
-            main_set_bits(BIT_SC_MeterBlock_Completed, TRUE);
+            mainSetBits(BIT_SC_MeterBlock_Completed, TRUE);
         } else {
-            main_set_bits(BIT_SC_MeterBlock_Completed, FALSE);
+            mainSetBits(BIT_SC_MeterBlock_Completed, FALSE);
         }
     }
 }
@@ -94,7 +94,7 @@ void SCMeterBlock_free(Object* self, s32 arg1) {
     objData = self->data;
 
     //Store meter progress to gamebit
-    main_set_bits(objSetup->gamebitMeterProgress, objData->weedsOffered);
+    mainSetBits(objSetup->gamebitMeterProgress, objData->weedsOffered);
 
     //Stop looping sound (may suggest the meter was intended to play a sound while moving up)
     if (objData->soundHandle != 0) {

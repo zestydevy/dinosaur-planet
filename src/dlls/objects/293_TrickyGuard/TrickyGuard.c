@@ -29,7 +29,7 @@ void TrickyGuard_control(Object* self) {
 
     objSetup = (TrickyGuard_Setup*)self->setup;
     
-    if (objSetup->gamebit != NO_GAMEBIT && !main_get_bits(objSetup->gamebit)) {
+    if (objSetup->gamebit != NO_GAMEBIT && !mainGetBits(objSetup->gamebit)) {
         return;
     }
 

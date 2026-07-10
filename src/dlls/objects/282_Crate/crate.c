@@ -145,7 +145,7 @@ void crate_control(Object* self) {
 
         //Set a gamebit (NOTE: not checked during setup, so crate still comes back)
         if (objSetup->gamebitDestroyed != NO_GAMEBIT) {
-            main_set_bits(objSetup->gamebitDestroyed, 1);
+            mainSetBits(objSetup->gamebitDestroyed, 1);
         }
         
         //Create an Energy Egg

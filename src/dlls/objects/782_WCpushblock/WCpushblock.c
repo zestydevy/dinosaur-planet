@@ -82,7 +82,7 @@ void dll_782_control(Object* self) {
         isNighttime = gDLL_7_Newday->vtbl->func8(&time);
         
         if (self->modelInstIdx == 1) {
-            if (main_get_bits(BIT_812) != 0) {
+            if (mainGetBits(BIT_812) != 0) {
                 objdata->unk274 = 6;
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func12(objdata->unk276, &objdata->unk270, &objdata->unk272);
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func7(&self->srt, objdata->unk270, objdata->unk272, &self->srt.transl.x, &self->srt.transl.z);
@@ -90,7 +90,7 @@ void dll_782_control(Object* self) {
                 objdata->unk274 = 3;
             }
         } else {
-            if (main_get_bits(BIT_813) != 0) {
+            if (mainGetBits(BIT_813) != 0) {
                 objdata->unk274 = 6;
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func19(objdata->unk276, &objdata->unk270, &objdata->unk272);
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func14(&self->srt, objdata->unk270, objdata->unk272, &self->srt.transl.x, &self->srt.transl.z);
@@ -227,9 +227,9 @@ void dll_782_control(Object* self) {
                 objdata->unk274 = 4;
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_9BB_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, 0, 0, 0);
                 if (self->modelInstIdx == 1) {
-                    main_increment_bits(BIT_810);
+                    mainIncrementBits(BIT_810);
                 } else {
-                    main_increment_bits(BIT_811);
+                    mainIncrementBits(BIT_811);
                 }
             } else if (objdata->unk277 == 1) {
                 objdata->unk274 = 1;

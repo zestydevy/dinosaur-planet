@@ -54,7 +54,7 @@ void campfire_setup(Object* self, CampFire_Setup* objSetup, s32 arg2) {
     
     //Set a flag based on a common gamebit
     //Does nothing, but maybe intended to put out fire under certain global conditions like rain?
-    if (main_get_bits(BIT_8C)) {
+    if (mainGetBits(BIT_8C)) {
         objData->flags |= CampFire_FLAG_1;
     }
     
@@ -62,7 +62,7 @@ void campfire_setup(Object* self, CampFire_Setup* objSetup, s32 arg2) {
     //Does nothing, but maybe intended to track whether fire is lit/extinguished?
     objData->gamebitID = objSetup->gamebitID;
     if (objData->gamebitID != NO_GAMEBIT) {
-        if (main_get_bits(objData->gamebitID)) {
+        if (mainGetBits(objData->gamebitID)) {
             objData->flags |= CampFire_FLAG_4;
         }
     }

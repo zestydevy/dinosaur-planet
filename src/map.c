@@ -5438,7 +5438,7 @@ void map_handle_transition(void) {
         playerLocation->vec.y = warpLocation->coord.y;
         playerLocation->vec.z = warpLocation->coord.z;
         playerLocation->mapLayer = (s8)warpLocation->layer;
-        func_800143A4();
+        main_func_800143A4();
         D_800B4A5E = D_800B4A5C;
         D_800B4A5C = -1;
         D_80092A78 = 8;

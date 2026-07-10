@@ -66,7 +66,7 @@ void CClogpush_control(Object *self) {
         if (setup->gamebit2 == -1) {
             objdata->unk1 = FALSE;
         } else {
-            objdata->unk1 = main_get_bits(setup->gamebit2);
+            objdata->unk1 = mainGetBits(setup->gamebit2);
         }
         if (objdata->unk1 && setup->unk1E != -1) {
             objdata->state = STATE_1;
@@ -94,7 +94,7 @@ void CClogpush_control(Object *self) {
             CClogpush_func_4E0(self, objdata->obj);
             objdata->state = STATE_4;
             break;
-        } else if (setup->gamebit1 != -1 && !main_get_bits(setup->gamebit1)) {
+        } else if (setup->gamebit1 != -1 && !mainGetBits(setup->gamebit1)) {
             CClogpush_func_4E0(self, objdata->obj);
             objdata->state = STATE_3;
             break;
@@ -102,10 +102,10 @@ void CClogpush_control(Object *self) {
 
         if ((self->unkAF & 0x1) && (( (setup->gamebit3 == -1)) || ((gDLL_1_cmdmenu->vtbl->was_this_item_used(setup->gamebit3) != 0)))) {
             if (setup->flags & 2) {
-                main_set_bits(setup->gamebit1, 0);
+                mainSetBits(setup->gamebit1, 0);
             }
             if (setup->gamebit2 != -1) {
-                main_set_bits(setup->gamebit2, 1);
+                mainSetBits(setup->gamebit2, 1);
             }
             self->unkAF |= 0x8;
             objdata->unk1 = TRUE;
@@ -116,7 +116,7 @@ void CClogpush_control(Object *self) {
         self->unkAF &= ~0x8;
         break;
     case STATE_3:
-        if (main_get_bits(setup->gamebit1)) {
+        if (mainGetBits(setup->gamebit1)) {
             objdata->state = STATE_2;
         }
         break;

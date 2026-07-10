@@ -536,8 +536,8 @@ CurveSetup *dll_25_func_1864(Vec3f *arg0, s32 arg1, s32 arg2)
             ((arg1 == -1) || (arg1 == temp_s0->unk3)) &&
             ((arg2 == -1) || (arg2 == temp_s0->unk1A)) &&
             ((temp_s0->links[0] != -1) || (temp_s0->unk2F == -1)) &&
-            ((temp_s0->type24.unk30 == -1) || (main_get_bits(temp_s0->type24.unk30) != 0)) &&
-            ((temp_s0->type24.unk32 == -1) || (main_get_bits(temp_s0->type24.unk32) == 0)))
+            ((temp_s0->type24.unk30 == -1) || (mainGetBits(temp_s0->type24.unk30) != 0)) &&
+            ((temp_s0->type24.unk32 == -1) || (mainGetBits(temp_s0->type24.unk32) == 0)))
         {
             temp_fv0 = arg0->f[0] - temp_s0->pos.x;
             temp_fv1 = arg0->f[1] - temp_s0->pos.y;
@@ -777,8 +777,8 @@ CurveSetup *dll_25_func_2A50(Object *obj, s32 arg1)
         if ((temp_s0->curveType == 0x22) &&
             ((arg1 == temp_s0->base_type22.unk4) || ((temp_s0->unk1A < 3) &&
                                                     (arg1 == -1))) &&
-            ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
-            ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
+            ((temp_s0->type22.unk30 == -1) || (mainGetBits(temp_s0->type22.unk30) != 0)) &&
+            ((temp_s0->type22.usedBit == -1) || (mainGetBits(temp_s0->type22.usedBit) == 0)))
         {
             temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)
@@ -845,8 +845,8 @@ CurveSetup *dll_25_func_2CF8(Object *obj, s32 arg1)
         temp_s0 = result[i].setup;
         if ((temp_s0->curveType == 0x22) &&
             (arg1 == temp_s0->unk1A) &&
-            ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
-            ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
+            ((temp_s0->type22.unk30 == -1) || (mainGetBits(temp_s0->type22.unk30) != 0)) &&
+            ((temp_s0->type22.usedBit == -1) || (mainGetBits(temp_s0->type22.usedBit) == 0)))
         {
             temp_fv0 = vec3_distance_squared(&obj->globalPosition, &temp_s0->pos);
             if (temp_fv0 < var_fs0)

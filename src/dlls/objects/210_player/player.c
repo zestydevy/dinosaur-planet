@@ -547,9 +547,9 @@ void dll_210_setup(Object* player, u32 arg1) {
         data->unk3B4[i].unk34.data = mmAlloc(0x320, 0x1A, NULL);
         obj_load_weapondata(player, player->id, &data->unk3B4[i].unk34, data->unk3B4[i].unk0, 0U);
     }
-    data->spirits = main_get_bits(BIT_Spirit_Bits);
+    data->spirits = mainGetBits(BIT_Spirit_Bits);
     for (i = 0; i < 7; i++) {
-        if (main_get_bits(_data_4E0[i]) != 0) {
+        if (mainGetBits(_data_4E0[i]) != 0) {
             data->unk8BB = (u8) (data->unk8BB | (1 << i));
         }
     }
@@ -804,7 +804,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             func_8002635C(player, NULL, Damage_Type_1, 0, 0);
             break;
         case 28:
-            if ((main_get_bits(BIT_21) == 0) && (arg1->unk87C != 0x1D7)) {
+            if ((mainGetBits(BIT_21) == 0) && (arg1->unk87C != 0x1D7)) {
                 arg1->unk88E = arg1->unk88E + arg2;
                 if (arg1->unk88E >= 0x79) {
                     arg1->unk88E -= 0x78;
@@ -845,7 +845,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             }
             break;
         case 31:
-            main_set_bits(BIT_643, 1U);
+            mainSetBits(BIT_643, 1U);
             break;
         default:
             arg1->unk87A = 0x3C;
@@ -1053,14 +1053,14 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             break;
         case 0x7000A:
             if (messageArgument > 0) {
-                if (main_get_bits(messageArgument) != 0) {
+                if (mainGetBits(messageArgument) != 0) {
                     // Not the first time this item was collected, skip sequence
                     obj_send_mesg(sp8C, 0x7000BU, player, NULL);
                     if (fsa->animState != PLAYER_ASTATE_Collecting) {
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Collecting);
                     }
                 } else {
-                    main_set_bits(messageArgument, 1U);
+                    mainSetBits(messageArgument, 1U);
                     if (fsa->animState != PLAYER_ASTATE_42) {
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_42);
                     }
@@ -1639,9 +1639,9 @@ void dll_210_func_4038(Object* player, Object *arg1, s32 arg2) {
     if (arg2 != 1) {
         func_80023894(arg1, sp28[arg2]);
         objdata->unk872 |= 1 << arg2;
-        temp = main_get_bits(BIT_2DA);
+        temp = mainGetBits(BIT_2DA);
         temp |= 1 << arg2;;
-        main_set_bits(BIT_2DA, temp);
+        mainSetBits(BIT_2DA, temp);
     }
 }
 
@@ -3307,7 +3307,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                 }
             }
         }
-        if ((arg5 & 0x1000) && (main_get_bits(BIT_880) != 0)) {
+        if ((arg5 & 0x1000) && (mainGetBits(BIT_880) != 0)) {
             objects = obj_get_all_of_type(OBJTYPE_RopeNode, &sp80);
             arg1->unk6B0.unk34 = NULL;
             arg1->unk6B0.unk3C = 200.0f;
@@ -4477,9 +4477,9 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (gDLL_1_cmdmenu->vtbl->was_any_item_used()) {
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Horn_of_Truth)) {
             joyDisableButtons(0, A_BUTTON);
-            if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
-                main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
-                main_set_bits(BIT_3D8, 1);
+            if ((mainGetBits(BIT_3DC) != 0) && (mainGetBits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
+                mainSetBits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
+                mainSetBits(BIT_3D8, 1);
             } else {
                 dinoCaller = obj_get_nearest_type_to(OBJTYPE_DinoCallSpot, player, &callerMaxRange);
                 if (dinoCaller != NULL) {
@@ -4496,14 +4496,14 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         } else {
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Sabre_Fireflies)) {
-                if (main_get_bits(BIT_7E2) != 0) {
+                if (mainGetBits(BIT_7E2) != 0) {
                     sp8E = 0xA;
                 } else {
                     // @fake
                     if (1) {}
                     if (1) {}
                     sp8E = 0xA;
-                    main_set_bits(BIT_7E2, 1);
+                    mainSetBits(BIT_7E2, 1);
                 }
             }
         }
@@ -6997,7 +6997,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x1426C | func: 96
 s32 dll_210_func_1426C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
-    if (main_get_bits(BIT_2D0) != 0) {
+    if (mainGetBits(BIT_2D0) != 0) {
         return -1;
     }
 
@@ -7964,7 +7964,7 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             func_800240BC(player, 0.0f);
         } else if (fsa->yAnalogInput < -5.0f) {
             func_800240BC(player, 0.0f);
-        } else if ((fsa->unk310 & 0x8000) && (main_get_bits(0x1F6) == 0)) {
+        } else if ((fsa->unk310 & 0x8000) && (mainGetBits(0x1F6) == 0)) {
             func_80023D30(player, 0x12, 0.0f, 1);
             fsa->animTickDelta = 0.2f;
             fsa->unk278 = 0.0f;
@@ -9880,9 +9880,9 @@ void dll_210_add_scarab(Object* player, s32 amount) {
     objdata->stats->scarabs = newScarabCount;
 
     if (player->id != PLAYER_SABRE) {
-        main_set_bits(BIT_Scarab_Count_Krystal, newScarabCount);
+        mainSetBits(BIT_Scarab_Count_Krystal, newScarabCount);
     } else {
-        main_set_bits(BIT_Scarab_Count_Sabre, newScarabCount);
+        mainSetBits(BIT_Scarab_Count_Sabre, newScarabCount);
     }
 }
 
@@ -10031,7 +10031,7 @@ void dll_210_set_spirit_bits(Object* player, s32 mask, s32 value) {
     } else {
         objdata->spirits &= ~mask;
     }
-    main_set_bits(BIT_Spirit_Bits, objdata->spirits);
+    mainSetBits(BIT_Spirit_Bits, objdata->spirits);
 }
 
 // offset: 0x1D40C | func: 189 | export: 40
@@ -10059,7 +10059,7 @@ void dll_210_func_1D438(Object* player, UNK_TYPE_32 spellIndex, UNK_TYPE_32 obta
     } else {
         objdata->unk8BB &= ~(1 << spellIndex);
     }
-    main_set_bits(_data_4E0[spellIndex], obtained);
+    mainSetBits(_data_4E0[spellIndex], obtained);
 }
 
 // offset: 0x1D4C8 | func: 191 | export: 44

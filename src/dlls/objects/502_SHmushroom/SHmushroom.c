@@ -64,7 +64,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	player = get_player();
 	self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 
-	if (main_get_bits(setup->gamebitCollected)) {
+	if (mainGetBits(setup->gamebitCollected)) {
 		objData->state = SHmushroom_STATE_8_Hidden;
 		self->objhitInfo->unk58 &= ~1;
 		self->srt.flags |= OBJFLAG_INVISIBLE;
@@ -184,11 +184,11 @@ void SHmushroom_control(Object* self) {
 
 					//Otherwise store Blue Mushrooms directly in the inventory
 					} else {
-						main_increment_bits(objData->gamebitInventory);
+						mainIncrementBits(objData->gamebitInventory);
 					}
 				} else {
 					//Other mushroom types (White Mushrooms) are always stored directly in the inventory
-					main_increment_bits(objData->gamebitInventory);
+					mainIncrementBits(objData->gamebitInventory);
 				}
 			}
 		}
@@ -598,10 +598,10 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	if (self->unkAF & ARROW_FLAG_1_Interacted) {
 		//Set the objectID for the item collection sequence, and set a gamebit
 		if ((self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) &&
-			(main_get_bits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj) == FALSE)
+			(mainGetBits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj) == FALSE)
 		) {
 			gDLL_3_Animation->vtbl->set_variable_obj(OBJ_SHmushroomanim, NULL, 0);
-			main_set_bits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj, TRUE);
+			mainSetBits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj, TRUE);
 		}
 
 		/* Send message to player, displaying Blue Mushroom's tutorial box
@@ -617,7 +617,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 
 		//Set this mushroom's collection gamebit, so it won't reappear
 		if (objSetup->gamebitCollected != NO_GAMEBIT) {
-			main_set_bits(objSetup->gamebitCollected, TRUE);
+			mainSetBits(objSetup->gamebitCollected, TRUE);
 		}
 
 		self->unkAF |= ARROW_FLAG_8_No_Targetting;

@@ -91,7 +91,7 @@ void dll_257_control(Object* self) {
         dll_257_func_1144(self, setup);
         if (
             setup->unk18 < sp68 || 
-            (setup->unk1C != -1 && main_get_bits(setup->unk1C) == 0)
+            (setup->unk1C != -1 && mainGetBits(setup->unk1C) == 0)
         ) {
             objdata->unk8 = 1U;
             gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
@@ -107,7 +107,7 @@ void dll_257_control(Object* self) {
         objdata->unk10 -= setup->unk1F * gUpdateRateF * 0.01f;
         self->srt.transl.f[1] += objdata->unk10 * gUpdateRateF;
         dll_257_func_1144(self, setup);
-        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || main_get_bits(setup->unk1C) != 0)) {
+        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || mainGetBits(setup->unk1C) != 0)) {
             objdata->unk8 = 0U;
             gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
             objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -117,7 +117,7 @@ void dll_257_control(Object* self) {
         }
         break;
     case 2:
-        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || main_get_bits(setup->unk1C) != 0)) {
+        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || mainGetBits(setup->unk1C) != 0)) {
             objdata->unk8 = 0U;
             objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
@@ -192,7 +192,7 @@ void dll_257_control(Object* self) {
             }
         }
         bail:
-        if (setup->unk18 < sp68 || (setup->unk1C != -1 && main_get_bits(setup->unk1C) == 0)) {
+        if (setup->unk18 < sp68 || (setup->unk1C != -1 && mainGetBits(setup->unk1C) == 0)) {
             objdata->unk8 = 1U;
             gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
             objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);

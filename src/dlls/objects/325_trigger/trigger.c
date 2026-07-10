@@ -150,7 +150,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     }
 
     objdata->bitFlagID = setup->bitFlagID;
-    s0 = main_get_bits(objdata->bitFlagID);
+    s0 = mainGetBits(objdata->bitFlagID);
 
     cmd = setup->commands;
 
@@ -299,7 +299,7 @@ void trigger_control(Object* self) {
         case OBJ_TriggerPlane:
             b_allBitsSet = TRUE;
             if (objdata->conditionBitFlagIDs[0] >= 0) {
-                if (main_get_bits(objdata->conditionBitFlagIDs[0]) == 0) {
+                if (mainGetBits(objdata->conditionBitFlagIDs[0]) == 0) {
                     b_allBitsSet = FALSE;
                 }
             }
@@ -320,7 +320,7 @@ void trigger_control(Object* self) {
             break;
         case OBJ_TriggerSetup:
             trigger_process_commands(self, player, 1, 0);
-            if (ret1_8001454c() != 0) {
+            if (main_ret1_8001454c() != 0) {
                 obj_destroy_object(self);
             }
             break;
@@ -328,7 +328,7 @@ void trigger_control(Object* self) {
             b_allBitsSet = TRUE;
             for (i = 0; i < 4 && b_allBitsSet; i++) {
                 if (objdata->conditionBitFlagIDs[i] >= 0) {
-                    if (main_get_bits(objdata->conditionBitFlagIDs[i]) == 0) {
+                    if (mainGetBits(objdata->conditionBitFlagIDs[i]) == 0) {
                         b_allBitsSet = FALSE;
                     }
                 }
@@ -718,11 +718,11 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_KYTE_FLIGHT_GROUP:
             // "Trigger [%d], kyte flight group change\n" (default.dol)
-            main_set_bits(BIT_Kyte_Flight_Curve, cmd->param2 | (cmd->param1 << 8));
+            mainSetBits(BIT_Kyte_Flight_Curve, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_KYTE_TALK_SEQ:
             // "Trigger [%d], kyte flight talk sequence set\n" (default.dol)
-            main_set_bits(BIT_Kyte_Flight_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
+            mainSetBits(BIT_Kyte_Flight_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_ACT:
             // "Trigger [%d], Act change on map %d to act %d\n" (default.dol)
@@ -730,7 +730,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_TRICKY_TALK_SEQ:
             // "Trigger [%d], Tricky talk sequence set to %d\n" (default.dol)
-            main_set_bits(BIT_Tricky_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
+            mainSetBits(BIT_Tricky_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_POINT:
             // "Trigger [%d], Save Point\n" (default.dol)
@@ -807,7 +807,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
     if (dir > 0) {
         // In
         objdata->flags |= TRG_ACTIVATOR_ENTERED;
-        main_set_bits(objdata->bitFlagID, 1);
+        mainSetBits(objdata->bitFlagID, 1);
     } else if (dir < 0) {
         // Out
         objdata->flags |= TRG_ACTIVATOR_EXITED;
@@ -824,7 +824,7 @@ static void trigger_bits_set(u16 param1) {
     gamebitID = param1 & 0x3FFF;
     param1 >>= 14;
 
-    valueToSet = main_get_bits(gamebitID);
+    valueToSet = mainGetBits(gamebitID);
     if (param1 == TriggerCommand_Bits_0_Unset) {
         valueToSet = 0;
     } else if (param1 == TriggerCommand_Bits_1_Set) {
@@ -833,7 +833,7 @@ static void trigger_bits_set(u16 param1) {
         valueToSet = ~valueToSet;
     }
 
-    main_set_bits(gamebitID, valueToSet);
+    mainSetBits(gamebitID, valueToSet);
 }
 
 static void trigger_bits_toggle(u16 param1) {
@@ -844,9 +844,9 @@ static void trigger_bits_toggle(u16 param1) {
     gamebitID = param1 & 0x1FFF;
     param1 >>= 13;
 
-    value = main_get_bits(gamebitID);
+    value = mainGetBits(gamebitID);
     value ^= (1 << param1);
-    main_set_bits(gamebitID, value);
+    mainSetBits(gamebitID, value);
 }
 
 static void trigger_tex_load(u16 param1) {

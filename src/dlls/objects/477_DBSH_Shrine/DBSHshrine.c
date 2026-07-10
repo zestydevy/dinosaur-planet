@@ -59,10 +59,10 @@ void DBSHshrine_setup(Object* self, DBSHshrine_Setup* objSetup, s32 arg2) {
 
     obj_init_mesg_queue(self, 4);
 
-    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-    main_set_bits(BIT_15F, 0);
-    main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+    mainSetBits(BIT_15F, 0);
+    mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
 
     objData->unk13 = 0;
     objData->unk4 = 12;
@@ -109,7 +109,7 @@ void DBSHshrine_control(Object* self) {
     }
 
     DBSHshrine_handle_messages(self);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
 
     if (objData->unk6 != 0) {
         objData->unk4 += objData->unk6;
@@ -189,7 +189,7 @@ void DBSHshrine_control(Object* self) {
             }
             
             objData->state = 1;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 0);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
             modGfxDLL = dllLoadDeferred(DLL_ID_147, 1);
@@ -200,7 +200,7 @@ void DBSHshrine_control(Object* self) {
             modGfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
             dllFree(modGfxDLL);
             
-            main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_14_Modgfx->vtbl->func7(&objData->unkC);
         }
         break;
@@ -208,18 +208,18 @@ void DBSHshrine_control(Object* self) {
         if (objData->unkF == 1) {
             objData->state = 2;
             objData->unk2 = 80;
-            main_set_bits(BIT_16A, 1);
+            mainSetBits(BIT_16A, 1);
         }
         break;
     case 2:
-        if (main_get_bits(BIT_DB_Shrine_Test_of_Strength_Win)) {
+        if (mainGetBits(BIT_DB_Shrine_Test_of_Strength_Win)) {
             objData->state = 4;
             objData->unk2 = 0;
             objData->unk6 = 1;
             return;
         }
 
-        if (main_get_bits(BIT_DB_Shrine_Test_of_Strength_Lose)) {
+        if (mainGetBits(BIT_DB_Shrine_Test_of_Strength_Lose)) {
             objData->state = 8;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (u8)objData->unk8, 0);
             objData->unkA = 1;
@@ -233,44 +233,44 @@ void DBSHshrine_control(Object* self) {
             objData->unk8 = 1;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8)objData->unk8, 0);
             objData->unkA = 1;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             objData->state = 6;
             return;
         }
-        main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+        mainSetBits(BIT_DB_Entered_Shrine_1, 0);
         gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8)objData->unk8, 0);
         objData->unkA = 1;
         gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         objData->state = 5;
         return;
     case 5:
-        main_set_bits(BIT_15F, 0);
+        mainSetBits(BIT_15F, 0);
         objData->state = 6;
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_2, TRUE);
         gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 3);
         break;
     case 6:
-        if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {
-            main_set_bits(BIT_Shrine_Do_Exit_Warp, 1);
+        if (mainGetBits(BIT_Shrine_Do_Exit_Warp) == 0) {
+            mainSetBits(BIT_Shrine_Do_Exit_Warp, 1);
         }
-        main_set_bits(BIT_DB_Entered_Shrine_2, 0);
-        main_set_bits(BIT_16A, 0);
-        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Win, 0);
-        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
-        main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+        mainSetBits(BIT_DB_Entered_Shrine_2, 0);
+        mainSetBits(BIT_16A, 0);
+        mainSetBits(BIT_DB_Shrine_Test_of_Strength_Win, 0);
+        mainSetBits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
+        mainSetBits(BIT_DB_Entered_Shrine_3, 0);
         objData->state = 7;
         return;
     case 8:
         objData->state = 0;
         objData->unkF = 0;
         objData->unk2 = 400;
-        main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-        main_set_bits(BIT_15F, 0);
-        main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-        main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-        main_set_bits(BIT_16A, 0);
-        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Win, 0);
-        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
+        mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+        mainSetBits(BIT_15F, 0);
+        mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+        mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+        mainSetBits(BIT_16A, 0);
+        mainSetBits(BIT_DB_Shrine_Test_of_Strength_Win, 0);
+        mainSetBits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
         
         modGfxDLL = dllLoadDeferred(DLL_ID_122, 1);
         objData->unkC = modGfxDLL->vtbl->func0(self, 3, 0, 0x402, -1, 0);
@@ -344,31 +344,31 @@ int DBSHshrine_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
                 break;
             case 4:
                 objData->unkF = 2;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-                main_set_bits(BIT_15F, 0);
-                main_set_bits(BIT_DB_Entered_Shrine_1, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_15F, 0);
+                mainSetBits(BIT_DB_Entered_Shrine_1, 1);
                 objData->unkA = -3;
                 break;
             case 5:
                 objData->unkF = 3;
                 objData->unkA = -3;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 7:
-                main_set_bits(BIT_15F, 1);
+                mainSetBits(BIT_15F, 1);
                 break;
             case 8:
-                main_set_bits(BIT_15F, 0);
+                mainSetBits(BIT_15F, 0);
                 objData->unkA = -3;
                 break;
             case 10:
-                main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
+                mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (data_0 == NULL) {
                     data_0 = block_texanim_get_tex(1);
                 }
                 break;
             case 9:
-                main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_2, 1);
                 break;
             case 11:
                 objData->unk8 = 80;

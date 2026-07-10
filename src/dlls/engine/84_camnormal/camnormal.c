@@ -783,7 +783,7 @@ static void camnormal_func_26E4(Cam* cam, Object* arg1) {
         btns = joyGetPressed(0);
         if (((cam->highlight != NULL) || (cam->srt.flags & OBJFLAG_UNK_2)) && 
                 !(cam->highlightFlags & 2) && 
-                (((temp_v1 = main_get_bits(BIT_4AD), (temp_v1 == 0)) && (btns & Z_TRIG)) || ((temp_v1 != 0) && (btns & R_TRIG)) || (cam->targetFlags & 2)) && 
+                (((temp_v1 = mainGetBits(BIT_4AD), (temp_v1 == 0)) && (btns & Z_TRIG)) || ((temp_v1 != 0) && (btns & R_TRIG)) || (cam->targetFlags & 2)) && 
                 (arg1->controlNo == OBJCONTROL_Player) && 
                 ((((DLL_210_Player*)arg1->dll)->vtbl->func60(arg1) != 0))) {
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMLOCKON, TRUE, 0, sizeof(&cam->highlight), &cam->highlight, 0x3C, Cam_Ease_All);

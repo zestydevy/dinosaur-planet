@@ -55,7 +55,7 @@ void dll_716_control(Object* self) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
 
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
-                    main_set_bits(BIT_Kyte_Flight_Curve, setup->unk1A);
+                    mainSetBits(BIT_Kyte_Flight_Curve, setup->unk1A);
                 }
             }
         }

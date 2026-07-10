@@ -25,10 +25,10 @@ void SHtricky_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
     objdata = (SHtricky_Data*)self->data;
     
-    if (main_get_bits(BIT_SH_Queen_EW_Quest_Progress) != 0) {
+    if (mainGetBits(BIT_SH_Queen_EW_Quest_Progress) != 0) {
         objdata->unk0 = 3;
     } else {
-        main_set_bits(BIT_Play_Seq_00D1, 0);
+        mainSetBits(BIT_Play_Seq_00D1, 0);
         objdata->unk0 = 0;
     }
 
@@ -45,7 +45,7 @@ void SHtricky_control(Object *self) {
 
     switch (objdata->unk0) {
     case 0:
-        if (main_get_bits(BIT_Play_Seq_00D1) != 0) {
+        if (mainGetBits(BIT_Play_Seq_00D1) != 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(3, sidekick, -1);
             objdata->unk0 = 1;
         } 

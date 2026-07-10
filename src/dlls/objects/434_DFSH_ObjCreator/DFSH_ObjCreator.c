@@ -48,11 +48,11 @@ void DFSH_ObjCreator_control(Object* self) {
     Baddie* sharpClawBaddie;
     DLL_IModgfx* modgfx;
 
-    if (main_get_bits(BIT_589) != 0) {
+    if (mainGetBits(BIT_589) != 0) {
         self->unkE0 = 0;
         return;
     }
-    if ((self->unkE0 == 0) && (main_get_bits(setup->type + BIT_F6) != 0)) {
+    if ((self->unkE0 == 0) && (mainGetBits(setup->type + BIT_F6) != 0)) {
         modgfx = dllLoadDeferred(DLL_ID_146, 1);
         modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
         modgfx->vtbl->func0(self, 1, 0, 1, -1, 0);
@@ -78,7 +78,7 @@ void DFSH_ObjCreator_control(Object* self) {
         sharpClawSetup->unk30 = -1;
         sharpClawSetup->unk2A = (s8) (self->srt.yaw >> 8);
         sharpClawSetup->unk2B = 2;
-        if (main_get_bits(BIT_FC) != 0) {
+        if (mainGetBits(BIT_FC) != 0) {
             sharpClawSetup->unk22 = 0x49;
         } else {
             sharpClawSetup->unk22 = -1;

@@ -57,7 +57,7 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
         STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", setup->base.objId);
     }
 
-    if (main_get_bits(setup->gameBitPressed)) {
+    if (mainGetBits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - setup->yOffsetAnimation;
         objdata->pressed = 30;
         objdata->state = 2;
@@ -83,7 +83,7 @@ void WCpressureswitch_control(Object* self) {
     objdata = self->data;
 
     //Bail if switch deactivated
-    if (setup->gameBitActivated > 0 && !main_get_bits(setup->gameBitActivated)) {
+    if (setup->gameBitActivated > 0 && !mainGetBits(setup->gameBitActivated)) {
         diPrintf(" Avitvate %i ", setup->gameBitActivated);
         return;
     }
@@ -122,7 +122,7 @@ void WCpressureswitch_control(Object* self) {
         case STATE_3_MOVING_DOWN:
             self->srt.transl.y -= 0.05f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
-                main_set_bits(setup->gameBitPressed, 1);
+                mainSetBits(setup->gameBitPressed, 1);
                 objdata->state = STATE_2_DOWN;
                 self->srt.transl.y = deltaY;
             }
@@ -130,7 +130,7 @@ void WCpressureswitch_control(Object* self) {
         case STATE_2_DOWN:
             /* Subtly different behaviour to other pressure switches,
              * waits for flag to unset before depressing the switch (for WC's timed challenges) */
-            if (!main_get_bits(setup->gameBitPressed)) {
+            if (!mainGetBits(setup->gameBitPressed)) {
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 objdata->state = STATE_1_MOVING_UP;
             }
@@ -255,7 +255,7 @@ static int WCpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj
         self->srt.transl.z = setup->base.x; //@bug? should be x component?
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
-        main_set_bits(setup->gameBitPressed, 0);
+        mainSetBits(setup->gameBitPressed, 0);
         animObjData->lastMessage = 0;
     }
 

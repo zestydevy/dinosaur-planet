@@ -52,7 +52,7 @@ void dll_327_setup(Object* self, DLL327_Setup* objSetup, s32 arg2) {
     
     //Set visibility based on a gamebit
     if (objSetup->gamebitVisible != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitVisible)) {
+        if (mainGetBits(objSetup->gamebitVisible)) {
             self->opacity = OBJECT_OPACITY_MAX;
         } else {
             self->opacity = 0;
@@ -76,7 +76,7 @@ void dll_327_control(Object* self) {
 
     //Set visibility based on a gamebit
     if (objSetup->gamebitVisible != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitVisible)) {
+        if (mainGetBits(objSetup->gamebitVisible)) {
             self->opacity = OBJECT_OPACITY_MAX;
         } else {
             self->opacity = 0;

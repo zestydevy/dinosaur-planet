@@ -55,7 +55,7 @@ void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2)
 
     objdata = (GP_ShrinePillar_Data*)self->data;
     if (setup->gamebitRaised != NO_GAMEBIT) {
-        if (main_get_bits(setup->gamebitRaised)) {
+        if (mainGetBits(setup->gamebitRaised)) {
             objdata->state = STATE_Raised;
         }
     } else {
@@ -141,7 +141,7 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
     switch (objdata->state) {
     case STATE_Underground:
         //Waiting for gamebit (set when leaving each act of Desert Force Point Temple)
-        if (main_get_bits(setup->gamebitRise)) {
+        if (mainGetBits(setup->gamebitRise)) {
             objdata->state = STATE_Rising;
         }
         break;
@@ -151,14 +151,14 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
             if (animObjData->messages[index] == 1) {
                 objdata->state = STATE_Raised;
                 if (setup->gamebitRaised != NO_GAMEBIT) {
-                    main_set_bits(setup->gamebitRaised, 1);
+                    mainSetBits(setup->gamebitRaised, 1);
                 }
             }
         }
         break;
     case STATE_Raised:
         //Waiting for door opening gamebit to be set
-        if (main_get_bits(setup->gamebitDoorOpen)) {
+        if (mainGetBits(setup->gamebitDoorOpen)) {
             objdata->state = STATE_Waiting_for_Door_Open;
         }
         break;

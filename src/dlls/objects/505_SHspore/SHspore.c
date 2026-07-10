@@ -115,7 +115,7 @@ void SHspore_control(Object* self) {
             particleCount = 20;
             if (get_player() == collidedObject) {
                 //Player collecting purple mushroom
-                main_increment_bits(BIT_Inventory_Purple_Mushrooms);
+                mainIncrementBits(BIT_Inventory_Purple_Mushrooms);
                 particleCount = 0;
             }
             if (collidedObject->id != OBJ_SHrocketmushroo) {

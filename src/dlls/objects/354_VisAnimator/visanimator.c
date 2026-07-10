@@ -43,7 +43,7 @@ void VisAnimator_setup(Object* self, VisAnimator_Setup* objSetup, s32 arg2) {
     //Set initial visibility, inverting if the relevant bit is set in the multi-bit flag 
     objData->visibility = objSetup->initialVisibility;
     objData->bitMask = 1 << objSetup->bitIndex;
-    if (main_get_bits(objSetup->gamebitID) & objData->bitMask) {
+    if (mainGetBits(objSetup->gamebitID) & objData->bitMask) {
         objData->visibility ^= VisAnimator_FLAG_Block_Animate_Needed;
     }
 
@@ -55,7 +55,7 @@ void VisAnimator_setup(Object* self, VisAnimator_Setup* objSetup, s32 arg2) {
     }
 
     //Check a specific bit from the multi-bit gamebit's current value
-    gamebitSet = main_get_bits(objSetup->gamebitID) & objData->bitMask;
+    gamebitSet = mainGetBits(objSetup->gamebitID) & objData->bitMask;
     objData->gamebitState = gamebitSet;
     objData->gamebitStatePrev = gamebitSet;
 
@@ -79,7 +79,7 @@ void VisAnimator_control(Object* self) {
     }
 
     //Check a specific bit from the multi-bit gamebit's current value
-    objData->gamebitState = main_get_bits(objSetup->gamebitID) & objData->bitMask;
+    objData->gamebitState = mainGetBits(objSetup->gamebitID) & objData->bitMask;
     if (objData->gamebitStatePrev != objData->gamebitState) {
         objData->visibility ^= 1;
         objData->flags |= VisAnimator_FLAG_Block_Animate_Needed;

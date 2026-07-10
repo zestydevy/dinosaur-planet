@@ -142,41 +142,42 @@ u8 gDemoState;
 s8 gDemoFinished;
 /* -------- .bss end 800b09d0 -------- */
 
-void func_8001440C(s32 arg0);
-void clear_PlayerPosBuffer(void);
-void game_init(void);
-void init_bittable(void);
-void game_tick_no_expansion(void);
-void game_tick(void);
-void main_handle_map_change(void);
-void alloc_frame_buffers(void);
-void func_80013D80(void);
-s8 func_800143FC(void);
-void update_PlayerPosBuffer();
-void test_write(void);
-void check_dongle(void);
+void main_func_8001440C(s32 arg0);
+void mainClearPlayerPosBuffer(void);
+void mainInit(void);
+void mainInitBits(void);
+void mainTickNoExpansion(void);
+void mainTick(void);
+void mainHandleMapChange(void);
+void mainAllocFrameBuffers(void);
+void main_func_80013D80(void);
+s8 main_func_800143FC(void);
+void mainUpdatePlayerPosBuffer();
+void mainTestWrite(void);
+void mainCheckDongle(void);
 
-void mainproc(void *arg) {
+// official name: mainThread ?
+void mainThreadEntry(void *arg) {
 #ifndef NON_MATCHING
-    test_write(); // ROM write check
+    mainTestWrite(); // ROM write check
 #endif
-    game_init();
+    mainInit();
 
     while(TRUE) {
 #ifndef NON_MATCHING
-        check_dongle();  // copy protection check
+        mainCheckDongle();  // copy protection check
 #endif
         if (osMemSize != EXPANSION_RAM_SIZE) {
-            game_tick_no_expansion();
+            mainTickNoExpansion();
         } else {
-            game_tick();
+            mainTick();
         }
 
         bootCheckStack();
     }
 }
 
-void game_init(void) {
+void mainInit(void) {
     s32 tvMode;
 
     mmInit();
@@ -196,7 +197,7 @@ void game_init(void) {
     start_pi_manager_thread();
     piInit();
     gfxtask_init(&osscheduler_);
-    alloc_frame_buffers();
+    mainAllocFrameBuffers();
     if (0) {};
     gFrameBufIdx = 0;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -265,7 +266,7 @@ void game_init(void) {
         gDLL_58 = dllLoadDeferred(DLL_ID_58, 2);
         gDLL_30_Task->vtbl->load_recently_completed();
     }
-    init_bittable();
+    mainInitBits();
     alSynFlag = 1;
     amGo();
     am_func_80012224(0);
@@ -275,13 +276,13 @@ void game_init(void) {
     diRcpTraceInit();
     menu_set(MENU_POST);
     if (osMemSize == EXPANSION_RAM_SIZE) {
-        main_handle_map_change();
+        mainHandleMapChange();
     }
     track_set_z_buffer_on(FALSE);
     track_set_sky_on(FALSE);
 }
 
-void game_tick(void) {
+void mainTick(void) {
     u8 clearFlags;
     u32 updateRate;
     Gfx **gdl;
@@ -326,7 +327,7 @@ void game_tick(void) {
 
     rcp_clear_screen(&gCurGfx, &gCurMtx, clearFlags);
     voxmap_update_cache_timers();
-    func_80013D80();
+    main_func_80013D80();
     am_func_800121DC();
     gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);
     gDLL_22_Subtitles->vtbl->func_578(gdl);
@@ -360,11 +361,11 @@ void game_tick(void) {
     gUpdateRateMirrorF = gUpdateRateF;
     gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 
-    main_handle_map_change();
+    mainHandleMapChange();
     write_c_file_label_pointers("main/main.c", 0x37C);
 }
 
-void game_tick_no_expansion(void) {
+void mainTickNoExpansion(void) {
     u32 updateRate;
     Gfx **tmp_s0;
 
@@ -416,7 +417,7 @@ void game_tick_no_expansion(void) {
     gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 }
 
-void func_80013D80(void) {
+void main_func_80013D80(void) {
     s32 button;
 
     joyDisableButtons(0, U_JPAD | R_JPAD);
@@ -436,9 +437,9 @@ void func_80013D80(void) {
 
             if ((camIsAlternateActive() == 0) 
                     && (D_8008C94C == 0) 
-                    && (func_800143FC() == 0) 
+                    && (main_func_800143FC() == 0) 
                     && ((button & START_BUTTON) != 0) 
-                    && (main_get_bits(BIT_44F) == 0)) {
+                    && (mainGetBits(BIT_44F) == 0)) {
                 gPauseState = 1;
                 joyDisableButtons(0, START_BUTTON);
                 menu_set(MENU_PAUSE);
@@ -450,7 +451,7 @@ void func_80013D80(void) {
         }
 
         if (gPauseState == 0) {
-            update_PlayerPosBuffer();
+            mainUpdatePlayerPosBuffer();
         }
 
         menu_update2();
@@ -476,7 +477,7 @@ void func_80013D80(void) {
     }
 }
 
-void func_80013FB4(void) {
+void main_func_80013FB4(void) {
     vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
     track_set_z_buffer_on(FALSE);
     track_set_sky_on(FALSE);
@@ -484,11 +485,11 @@ void func_80013FB4(void) {
     gDLL_5_AMSEQ->vtbl->stop(0);
     gDLL_5_AMSEQ->vtbl->stop(1);
     gDLL_22_Subtitles->vtbl->func_448();
-    unpause();
-    main_change_map(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, /*don't change menu*/-1);
+    mainUnpause();
+    mainChangeMap(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, /*don't change menu*/-1);
 }
 
-void main_handle_map_change(void) {
+void mainHandleMapChange(void) {
     if (gMainDoMapChange) {
         // "$$$$$  CHANGEMAP \n" (default.dol)
         mmSetDelay(0);
@@ -524,18 +525,18 @@ void main_handle_map_change(void) {
 }
 
 // officialName: mainChangeMap
-void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
+void mainChangeMap(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
     PlayerLocation *location;
 
     // "mainChangeMap(%d,%d,%d)\n" (default.dol)
 
-    func_8001440C(0);
+    main_func_8001440C(0);
 
     if (playerno <= PLAYER_NONE) {
         playerno = PLAYER_SABRE;
     }
 
-    clear_PlayerPosBuffer();
+    mainClearPlayerPosBuffer();
 
     gDLL_30_Task->vtbl->load_recently_completed();
     gDLL_29_Gplay->vtbl->set_playerno(playerno);
@@ -549,20 +550,20 @@ void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
     gMainMapChangeNextMenu = menuID;
 }
 
-void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
-    func_8001440C(0);
+void main_func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
+    main_func_8001440C(0);
     map_func_800483BC(arg0, arg1, arg2);
-    clear_PlayerPosBuffer();
+    mainClearPlayerPosBuffer();
     gMainDoMapChange = TRUE;
 }
 
-void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
+void mainStartGame(f32 x, f32 y, f32 z, s32 playerno) {
     Vec3f pos;
     pos.x = x;
     pos.y = y;
     pos.z = z;
 
-    func_8001440C(0);
+    main_func_8001440C(0);
 
     gDLL_29_Gplay->vtbl->init_save(-1, NULL);
     gDLL_29_Gplay->vtbl->set_playerno(playerno);
@@ -570,33 +571,35 @@ void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
     gDLL_29_Gplay->vtbl->start_loaded_game();
 }
 
-void func_800143A4(void) {
+void main_func_800143A4(void) {
     map_func_80048034();
     gMainDoMapChange = TRUE;
 }
 
-Gfx *func_800143D0(Gfx **arg0) {
+Gfx *main_func_800143D0(Gfx **arg0) {
     *arg0 = gMainGfx[gFrameBufIdx];
     return gCurGfx;
 }
 
-s8 func_800143FC(void) {
+s8 main_func_800143FC(void) {
     return D_8008C940;
 }
 
-void func_8001440C(s32 arg0) {
+void main_func_8001440C(s32 arg0) {
     D_8008C940 = arg0;
 }
 
-s8 get_pause_state(void) {
+// official name: mainGetPauseMode ?
+s8 mainGetPauseState(void) {
     return gPauseState;
 }
 
-void unpause(void) {
+void mainUnpause(void) {
     gPauseState = 0;
 }
 
-void set_pause_state(s32 state) {
+// official name: mainSetPauseMode ?
+void mainSetPauseState(s32 state) {
     gPauseState = state;
 }
 
@@ -605,7 +608,7 @@ void set_pause_state(s32 state) {
 #define MAIN_POL_BUF_SIZE (sizeof(Triangle) * 50)
 #define MAIN_VTX_BUF_SIZE (sizeof(Vertex) * 480)
 
-void alloc_frame_buffers(void) {
+void mainAllocFrameBuffers(void) {
     // in default.dol these have names as well.
     // alloc graphic display list command buffers. ("main:gfx" in default.dol)
     gMainGfx[0] = mmAlloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
@@ -624,16 +627,16 @@ void alloc_frame_buffers(void) {
     gMainVtx[1] = (Vertex *)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
 }
 
-void func_80014508(s8 arg0) {
+void main_func_80014508(s8 arg0) {
     D_8008C94C = arg0;
 }
 
 /**
  * @returns TRUE if no controllers are inserted.
- * @pre game_init must be called first.
- * @see game_init, joyInit
+ * @pre mainInit must be called first.
+ * @see mainInit, joyInit
  */
-s32 are_no_controllers_inserted(void) {
+s32 mainAreNoControllersInserted(void) {
     if (gLastInsertedControllerIndex == -1) {
         // No controllers are inserted
         return TRUE;
@@ -642,7 +645,7 @@ s32 are_no_controllers_inserted(void) {
     }
 }
 
-s32 ret1_8001454c(void) {
+s32 main_ret1_8001454c(void) {
     return 1;
 }
 
@@ -653,7 +656,7 @@ void func_initing_rumblepak(void) {
     _depth2Cents(0);
 }
 
-void test_write(void) {
+void mainTestWrite(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }
 
@@ -661,7 +664,7 @@ void test_write(void) {
  * Probe the copy protection dongle for the correct magic string and
  * if failed, wipe a majority of RAM to prevent RAM viewing.
  */
-void check_dongle(void) {
+void mainCheckDongle(void) {
     // attempt to get the first magic short from the dongle. if it is
     // connected, this will retrieve correctly.
     u32 head = ACCESS_1;
@@ -693,11 +696,11 @@ void check_dongle(void) {
     }
 }
 
-OSSched *get_ossched(void) {
+OSSched *mainGetScheduler(void) {
     return &osscheduler_;
 }
 
-void init_bittable(void) {
+void mainInitBits(void) {
     queue_alloc_load_file((void **)&gFile_BITTABLE, BITTABLE_BIN);
     // @bug: This should be dividing by 4 (not 2) since each entry is 4 bytes long
     gSizeBittable = piRomGetFileSize(BITTABLE_BIN) >> 1;
@@ -705,7 +708,7 @@ void init_bittable(void) {
 }
 
 // offical name: mainSetBits
-void main_set_bits(s32 entry, u32 value) {
+void mainSetBits(s32 entry, u32 value) {
     u8 *bitString;
     u8 _pad[12]; // fake match
     s32 idx;
@@ -750,7 +753,7 @@ void main_set_bits(s32 entry, u32 value) {
 }
 
 // offical name: mainGetBits
-u32 main_get_bits(s32 entry) {
+u32 mainGetBits(s32 entry) {
     u8 *bitString;
     u32 value;
     s32 idx;
@@ -800,16 +803,16 @@ u32 main_get_bits(s32 entry) {
     return value;
 }
 
-s32 main_increment_bits(s32 entry) {
+s32 mainIncrementBits(s32 entry) {
     s32 val;
     s32 maxVal;
 
-    val = main_get_bits(entry) + 1;
+    val = mainGetBits(entry) + 1;
 
     maxVal = 1 << ((gFile_BITTABLE[entry].field_0x2 & 0x1f) + 1);
 
     if (val < maxVal) {
-        main_set_bits(entry, val);
+        mainSetBits(entry, val);
     } else {
         val -= 1;
     }
@@ -817,16 +820,16 @@ s32 main_increment_bits(s32 entry) {
     return val;
 }
 
-s32 main_decrement_bits(s32 entry) {
-    s32 val = main_get_bits(entry);
+s32 mainDecrementBits(s32 entry) {
+    s32 val = mainGetBits(entry);
     if (val != 0) {
-        main_set_bits(entry, --val);
+        mainSetBits(entry, --val);
         return val;
     }
     return 0;
 }
 
-s32 create_temp_dll(s32 id) {
+s32 mainCreateTempDLL(s32 id) {
     u32 idx;
 
     idx = 0;
@@ -848,7 +851,7 @@ s32 create_temp_dll(s32 id) {
     return 1;
 }
 
-s32 remove_temp_dll(s32 id) {
+s32 mainRemoveTempDLL(s32 id) {
     u32 idx;
 
     idx = 0;
@@ -873,14 +876,14 @@ s32 remove_temp_dll(s32 id) {
     return 1;
 }
 
-void main_load_frontend(void) {
+void mainLoadFrontend(void) {
     if (gDLL_76 == 0) {
         gDLL_75 = dllLoadDeferred(DLL_ID_75, 10);
         gDLL_76 = dllLoadDeferred(DLL_ID_76, 3);
     }
 }
 
-void main_unload_frontend(void) {
+void mainUnloadFrontend(void) {
     if (gDLL_76 != 0) {
         dllFree(gDLL_75);
         gDLL_75 = 0;
@@ -889,12 +892,12 @@ void main_unload_frontend(void) {
     }
 }
 
-void main_demo_reset(void) {
+void mainDemoReset(void) {
     gDemoState = 0;
     gDemoFinished = 0;
 }
 
-void main_demo_start(f32 x, f32 y, f32 z, s32 playerno) {
+void mainDemoStart(f32 x, f32 y, f32 z, s32 playerno) {
     gDemoState++;
 
     if (gDemoState >= 5) {
@@ -902,30 +905,30 @@ void main_demo_start(f32 x, f32 y, f32 z, s32 playerno) {
         gDemoFinished = 1;
     }
 
-    main_start_game(x, y, z, playerno);
+    mainStartGame(x, y, z, playerno);
 }
 
-s32 main_demo_next(void) {
+s32 mainDemoNext(void) {
     s32 _v1 = gDemoState + 1;
     if (_v1 >= 5)
         _v1 = 0;
     return _v1;
 }
 
-u8 main_demo_state(void) {
+u8 mainDemoState(void) {
     return gDemoState;
 }
 
-u8 main_demo_finished(void) {
+u8 mainDemoFinished(void) {
     return gDemoFinished;
 }
 
-void clear_PlayerPosBuffer(void) {
+void mainClearPlayerPosBuffer(void) {
     bzero(&PlayerPosBuffer, PLAYER_POSBUF_SIZE * sizeof(struct Vec3_Int));
     PlayerPosBuffer_index = 0;
 }
 
-void update_PlayerPosBuffer(void) {
+void mainUpdatePlayerPosBuffer(void) {
     Object *player;
     struct Vec3_Int *pos;
 
@@ -945,7 +948,7 @@ void update_PlayerPosBuffer(void) {
     }
 }
 
-void func_80014D34(f32 param1, f32 *outX, f32 *outY, f32 *outZ) {
+void mainGetBufferedPlayerPos(f32 param1, f32 *outX, f32 *outY, f32 *outZ) {
     struct Vec3_Int *pos;
     u32 var;
     s32 i;

@@ -82,8 +82,8 @@ void DBSpike_control(Object* self) {
         }
         
         //Check gamebit for change in state
-        if (main_get_bits(objSetup->gamebit) != objData->state) {
-            objData->state = main_get_bits(objSetup->gamebit);
+        if (mainGetBits(objSetup->gamebit) != objData->state) {
+            objData->state = mainGetBits(objSetup->gamebit);
             objData->flags |= DBSpike_FLAG_Moving;
             objData->rollGoal = dRollGoals[objData->state] + self->srt.roll;
 
@@ -119,8 +119,8 @@ void DBSpike_control(Object* self) {
         }
 
         //Keep gamebit in sync with spike's state
-        if (main_get_bits(objSetup->gamebit) != objData->state) {
-            main_set_bits(objSetup->gamebit, objData->state);
+        if (mainGetBits(objSetup->gamebit) != objData->state) {
+            mainSetBits(objSetup->gamebit, objData->state);
         }
     }
 }

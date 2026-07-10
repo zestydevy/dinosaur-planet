@@ -29,7 +29,7 @@ void SB_ShipGunBroke_control(Object *self) {
 
     objdata = self->data;
     setup = (SB_ShipGunBroke_Setup*)self->setup;
-    if (main_get_bits(setup->gunDestroyedGamebit) && !objdata->soundHandle) {
+    if (mainGetBits(setup->gunDestroyedGamebit) && !objdata->soundHandle) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_BA3_Burning_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
     }
 }
@@ -42,7 +42,7 @@ void SB_ShipGunBroke_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
     SB_ShipGunBroke_Setup *setup;
 
     setup = (SB_ShipGunBroke_Setup*)self->setup;
-    if (main_get_bits(setup->gunDestroyedGamebit)) {
+    if (mainGetBits(setup->gunDestroyedGamebit)) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }

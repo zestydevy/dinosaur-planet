@@ -46,10 +46,10 @@ void CCguardgiving_setup(Object *self, ObjSetup *setup, s32 arg2) {
     CCguardgiving_Data *objdata = self->data;
 
     objdata->guardClaw = NULL;
-    if (main_get_bits(BIT_Map_CC)) {
+    if (mainGetBits(BIT_Map_CC)) {
         objdata->state = STATE_Finished;
         objdata->stepAside = TRUE;
-    } else if (main_get_bits(BIT_CC_Bribed_GuardClaw)) {
+    } else if (mainGetBits(BIT_CC_Bribed_GuardClaw)) {
         objdata->state = STATE_Waiting_to_Sell_Map;
         objdata->stepAside = TRUE;
     } else {
@@ -116,7 +116,7 @@ void CCguardgiving_control(Object *self) {
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Bribed_with_Gold, self, -1);
             objdata->state = STATE_Waiting_to_Sell_Map;
             func_80023BF8(self, 0, 0, 0, 0, 2);
-            main_set_bits(BIT_CC_Bribed_GuardClaw, 1);
+            mainSetBits(BIT_CC_Bribed_GuardClaw, 1);
         } else if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Scarab_Count_Krystal)) {
             //Refusing scarabs
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Bribe_with_Scarabs_Refused, self, -1);
@@ -146,7 +146,7 @@ void CCguardgiving_control(Object *self) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Selling_Map, self, -1);
                 objdata->state = STATE_Finished;
                 func_80023BF8(self, 0, 0, 0, 0, 2);
-                main_set_bits(BIT_Map_CC, 1);
+                mainSetBits(BIT_Map_CC, 1);
             }
         } else if (gDLL_1_cmdmenu->vtbl->get_page_category() != CMDMENU_CATEGORY_3_Items) {
             //If the object inventory closes, go back to waiting

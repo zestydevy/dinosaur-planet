@@ -68,14 +68,14 @@ void dll_734_setup(Object* self, DRPushCart_Setup* objSetup, s32 arg2) {
     
     objData->unk114 = objSetup->unk1A;
     objData->unk10C = 0.0f;
-    objData->unk15C_29 = main_get_bits(objSetup->unk20);
+    objData->unk15C_29 = mainGetBits(objSetup->unk20);
     objData->unk15C_29 = 1;
     objData->unk15C_21 = 1;
     
-    main_set_bits(BIT_649, 1);
+    mainSetBits(BIT_649, 1);
     
     if (arg2 == 0) {
-        dll_734_func_1588(self, main_get_bits(BIT_683));
+        dll_734_func_1588(self, mainGetBits(BIT_683));
     }
 }
 
@@ -88,12 +88,12 @@ void dll_734_control(Object *self);
 // offset: 0x7E0 | func: 2 | export: 2
 void dll_734_update(Object* self) {
     if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Explosion) {
-        main_set_bits(BIT_822, 0);
-        main_set_bits(BIT_823, 0);
-        main_set_bits(BIT_824, 0);
-        main_set_bits(BIT_825, 0);
-        main_set_bits(BIT_826, 0);
-        main_set_bits(BIT_827, 0);
+        mainSetBits(BIT_822, 0);
+        mainSetBits(BIT_823, 0);
+        mainSetBits(BIT_824, 0);
+        mainSetBits(BIT_825, 0);
+        mainSetBits(BIT_826, 0);
+        mainSetBits(BIT_827, 0);
     }
 }
 
@@ -106,7 +106,7 @@ void dll_734_free(Object* self, s32 arg1) {
     DRPushCart_Data* objData;
 
     objData = self->data;
-    main_set_bits(BIT_683, objData->unk14C);
+    mainSetBits(BIT_683, objData->unk14C);
     
     if (arg1 == 0) {
         if (objData->unk108 != NULL) {
@@ -195,11 +195,11 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
     case 4:
         if (!(objData->unk10C <= 0.0f)) {
             if (objData->unk15C_30) {
-                main_set_bits(BIT_660, 1);
+                mainSetBits(BIT_660, 1);
             } else {
-                main_get_bits(BIT_661);
-                if (main_get_bits(BIT_661) == 0) {
-                    main_set_bits(BIT_788, 1);
+                mainGetBits(BIT_661);
+                if (mainGetBits(BIT_661) == 0) {
+                    mainSetBits(BIT_788, 1);
                     objData->unk15C_28 = 1;
                     objData->unk118 = 0.0f;
                 } else {
@@ -215,7 +215,7 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
         break;
     case 9:
         if (!(objData->unk10C >= 0.0f)) {
-            if (main_get_bits(BIT_661) == 0) {
+            if (mainGetBits(BIT_661) == 0) {
                 objData->unk118 = 0.0f;
                 objData->unk15C_28 = 1;
             } else {
@@ -250,22 +250,22 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
         }
         break;        
     case 10:
-        if ((objData->unk15C_22) && (main_get_bits(BIT_689) == 0)) {
-            main_set_bits(BIT_689, 1);
+        if ((objData->unk15C_22) && (mainGetBits(BIT_689) == 0)) {
+            mainSetBits(BIT_689, 1);
         }
         break;
     case 11:
         if ((objData->unk15C_22) && (self == player->parent)) {
-            main_set_bits(BIT_68A, 1);
+            mainSetBits(BIT_68A, 1);
         }
         break;
     case 12:
         if ((objData->unk15C_22) && (self == player->parent)) {
-            main_set_bits(BIT_68B, 1);
+            mainSetBits(BIT_68B, 1);
         }
         break;
     case 13:
-        if ((main_get_bits(BIT_68A) != 0) && (objData->unk118 >= 0.0f)) {
+        if ((mainGetBits(BIT_68A) != 0) && (objData->unk118 >= 0.0f)) {
             dll_734_func_133C(self, objData);
         }
         break;
@@ -276,7 +276,7 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
         break;
     case 15:
         if (!(objData->unk15C_30)) {
-            main_set_bits(BIT_788, 1);
+            mainSetBits(BIT_788, 1);
         }
         break;
     case 16:
@@ -296,14 +296,14 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
 
     if (arg2 != 2) {
         if (arg2 == 8) {
-            if (main_get_bits(BIT_67F)) {
+            if (mainGetBits(BIT_67F)) {
                 *arg3 = 0;
             } else {
                 *arg3 = 1;
             }
         }
     } else {
-        main_set_bits(BIT_DR_Minecart_Track_Entrance_Demolished, 1);
+        mainSetBits(BIT_DR_Minecart_Track_Entrance_Demolished, 1);
     }
     
     return 1;
@@ -442,7 +442,7 @@ void dll_734_func_25A4(Object* self, DRPushCart_Data* objData) {
     s32 sp34;
 
     sp34 = 1;
-    if (main_get_bits(0x788) != 0) {
+    if (mainGetBits(0x788) != 0) {
         dll_734_func_21A0(objData, self, 0x34BD4);
         objData->unk15C_28 = 1;
     } else if (!objData->unk15C_29) {

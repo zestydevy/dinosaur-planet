@@ -83,13 +83,13 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
         self->modelInstIdx = 0;
     }
 
-    if (main_get_bits(BIT_Talking_to_Rocky) && main_get_bits(BIT_Talked_to_Rocky)) {
+    if (mainGetBits(BIT_Talking_to_Rocky) && mainGetBits(BIT_Talked_to_Rocky)) {
         objdata->awake = TRUE;
     } else {
         objdata->awake = FALSE;
     }
 
-    main_set_bits(objdata->bitIntroSeq, 0);
+    mainSetBits(objdata->bitIntroSeq, 0);
 }
 
 // offset: 0x140 | func: 1 | export: 1
@@ -103,7 +103,7 @@ void SHswapstone_control(Object* self) {
 
         func_80024108(self, 0.008f, gUpdateRateF, NULL);
 
-        if (main_get_bits(BIT_Talking_to_Rocky) && main_get_bits(BIT_Talked_to_Rocky)) {
+        if (mainGetBits(BIT_Talking_to_Rocky) && mainGetBits(BIT_Talked_to_Rocky)) {
             objdata->awake = TRUE;
         }
     } else {
@@ -113,7 +113,7 @@ void SHswapstone_control(Object* self) {
 
         func_80024108(self, 0.008f, gUpdateRateF, NULL);
 
-        if (main_get_bits(BIT_Talking_to_Rocky) == 0) {
+        if (mainGetBits(BIT_Talking_to_Rocky) == 0) {
             objdata->awake = FALSE;
         }
     }
@@ -200,7 +200,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
             objdata->flags |= SWAPSTONE_PLAYER_HAS_SPELLSTONE;
         }
         animData->unk62 = 0;
-        if (main_get_bits(objdata->bitSwapStoneSpokenTo) != 0) {
+        if (mainGetBits(objdata->bitSwapStoneSpokenTo) != 0) {
             animData->unk9D |= 4;
         }
     }
@@ -222,17 +222,17 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 0, 1);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 7, 1);
                 gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_HOLLOW, 1);
-                if ((main_get_bits(BIT_Play_Seq_0180_Release_Spirit_1) != 0) && (main_get_bits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract) == 0)) {
+                if ((mainGetBits(BIT_Play_Seq_0180_Release_Spirit_1) != 0) && (mainGetBits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract) == 0)) {
                     // Set Rocky to give Tricky the distract command
-                    main_set_bits(BIT_Play_Seq_01FD_Rocky_Teaches_Distract, 1);
+                    mainSetBits(BIT_Play_Seq_01FD_Rocky_Teaches_Distract, 1);
                 } else {
-                    main_set_bits(objdata->bitSwappedToSeq, 1);
+                    mainSetBits(objdata->bitSwappedToSeq, 1);
                 }
             } else {
                 // Going to SwapStone Circle
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 0, 1);
                 gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 2);
-                main_set_bits(objdata->bitSwappedToSeq, 1);
+                mainSetBits(objdata->bitSwappedToSeq, 1);
             }
             warpPlayer(sSwapStoneWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
@@ -384,10 +384,10 @@ static s32 SHswapstone_get_held_spirit(void) {
 // Whether the player has a SpellStone.
 // Only checks for the first two!
 static int SHswapstone_has_spellstone(void) {
-    if (main_get_bits(BIT_SpellStone_CRF) != 0) {
+    if (mainGetBits(BIT_SpellStone_CRF) != 0) {
         return TRUE;
     }
-    if (main_get_bits(BIT_SpellStone_DIM) != 0) {
+    if (mainGetBits(BIT_SpellStone_DIM) != 0) {
         return TRUE;
     }
     return FALSE;

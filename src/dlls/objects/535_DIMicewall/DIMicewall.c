@@ -47,7 +47,7 @@ void dll_535_control(Object* self) {
         if ((DLL535data->unk2 <= 0) && (DLL535data->unk3 == 0)) {
             temp_a0 = DLL535data->unk0;
             if (temp_a0 != -1) {
-                main_set_bits((s32) temp_a0, 1U);
+                mainSetBits((s32) temp_a0, 1U);
                 DLL535data->unk3 = 1;
             }
         } else {

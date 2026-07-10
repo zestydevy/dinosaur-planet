@@ -293,7 +293,7 @@ s32 BaddieControl_func_8B4(Object* arg0, AnimObj_Data* arg1, Baddie* arg2, ObjFS
         arg1->unk7A = -1;
         arg1->unk7A &= ~0x40;
         arg2->fsa.unk4.mode = 0;
-        main_set_bits(arg2->unk39E, 0);
+        mainSetBits(arg2->unk39E, 0);
     }
     return 1;
 }
@@ -330,7 +330,7 @@ s32 BaddieControl_func_C88(Object* arg0, Baddie* arg1, ObjFSA_StateCallback *arg
             arg1->fsa.animState = arg4;
             arg1->fsa.target = NULL;
             arg1->fsa.unk4.mode = 0;
-            main_set_bits(arg1->unk39E, 0);
+            mainSetBits(arg1->unk39E, 0);
         }
         return 1;
     }
@@ -498,7 +498,7 @@ void BaddieControl_func_148C(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2,
         arg1->unk4.mode = arg8;
     }
     if (arg3 != -1) {
-        main_set_bits(arg3, 1);
+        mainSetBits(arg3, 1);
     }
 }
 
@@ -810,7 +810,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     baddie->unk3A0 = setup->unk1A;
     baddie->unk3A2 = setup->unk1C;
     if (baddie->unk39E != -1) {
-        main_set_bits(baddie->unk39E, 0);
+        mainSetBits(baddie->unk39E, 0);
     }
     if (sp3C & 2) {
         gDLL_27->vtbl->init(&baddie->fsa.unk4, DLL27FLAG_NONE, arg5 | DLL27FLAG_200000, DLL27MODE_1);
@@ -848,7 +848,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     obj->unkAF &= ~0x8;
     baddie->unk39C = setup->unk18;
     if (baddie->unk39C != -1) {
-        obj->unkDC = main_get_bits(baddie->unk39C);
+        obj->unkDC = mainGetBits(baddie->unk39C);
     } else {
         obj->unkDC = 0;
     }

@@ -515,7 +515,7 @@ static s32 dll_702_get_player_segment_bitfield(void) {
 
     var_s2 = 0;
     for (i = 0;  i < 4; i++) {
-        if (main_get_bits(sPlayerSegmentGamebits[i]) != 0) {
+        if (mainGetBits(sPlayerSegmentGamebits[i]) != 0) {
             var_s2 |= (1 << i);
         }
     }
@@ -561,7 +561,7 @@ static s32 dll_702_get_laser_wall_bitfield(u8 segmentBitfield) {
     
     for (i = 0; i < 4; i++) {
         mask = 1 << i;
-        if ((segmentBitfield & mask) && (main_get_bits(sLaserWallGamebits[i]) != 0)) {
+        if ((segmentBitfield & mask) && (mainGetBits(sLaserWallGamebits[i]) != 0)) {
             var_s2 |= mask;
         }
     }
@@ -772,7 +772,7 @@ static void dll_702_fx_tick(Object *self) {
         if (sp48 > 0.1f) {
             camUseShake();
             camSetShakeOffset(sp48);
-            main_set_bits(BIT_554, 1);
+            mainSetBits(BIT_554, 1);
         }
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right2 | KTFX_Footfall_Left2)) {
@@ -781,7 +781,7 @@ static void dll_702_fx_tick(Object *self) {
         if (sp48 > 0.1f) {
             camUseShake();
             camSetShakeOffset(2.0f * sp48);
-            main_set_bits(BIT_554, 1);
+            mainSetBits(BIT_554, 1);
         }
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right3 | KTFX_Footfall_Left3)) {
@@ -790,7 +790,7 @@ static void dll_702_fx_tick(Object *self) {
         if (sp48 > 0.1f) {
             camUseShake();
             camSetShakeOffset(3.0f * sp48);
-            main_set_bits(BIT_554, 1);
+            mainSetBits(BIT_554, 1);
         }
     }
     if (!(sKTData->fxFlags & KTFX_EnablePartFx)) {
@@ -1099,7 +1099,7 @@ static s32 dll_702_logic_state_0(Object *self, ObjFSA_Data* fsa, f32 updateRate)
 static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
-        func_80013FB4();
+        main_func_80013FB4();
         self->unkAF |= 8;
         fsa->unk33D = 0;
         fsa->unk4.mode = 0;
@@ -1282,7 +1282,7 @@ static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate)
     } else if (fsa->unk33A != 0) {
         if (sKTData->flags & KTFLAG_DAMAGED) {
             sKTData->fightProgress += 1;
-            main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
+            mainSetBits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         }
         ktflags = sKTData->flags;
         sKTData->standingUpSegment = KTFLAG_GET_SEGMENT(ktflags);
@@ -1327,7 +1327,7 @@ static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate
             dll_702_push_state(KT_LSTATE_2_WALK);
         }
         gDLL_2_Camera->vtbl->change_mode(3, 0);
-        main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
+        mainSetBits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         return KT_LSTATE_6_CHARGE_END + 1;
     }
     return 0;

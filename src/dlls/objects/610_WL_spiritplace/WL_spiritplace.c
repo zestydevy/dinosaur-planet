@@ -72,7 +72,7 @@ void WL_spiritplace_setup(Object *self, WL_spiritplace_Setup *objsetup, s32 arg2
 void WL_spiritplace_control(Object *self) {
     WL_spiritplace_Data *objdata = self->data;
 
-    if (main_get_bits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 0) {
+    if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 0) {
         if (objdata->effectTimer <= 0) {
             if (objdata->unk6 == 0) {
                 _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
@@ -89,20 +89,20 @@ void WL_spiritplace_control(Object *self) {
             objdata->effectTimer = 15;
         }
         objdata->effectTimer -= gUpdateRate;
-    } else if (main_get_bits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
+    } else if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
         if (objdata->effectTimer <= 0) {
             _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
             objdata->effectTimer = 195 + rand_next(0, 35);
         }
         objdata->effectTimer -= gUpdateRate;
     } else if (
-        main_get_bits(objdata->bit1) &&
+        mainGetBits(objdata->bit1) &&
         objdata->mode == 0 &&
         rand_next(1, 2) == 2 &&
         vec3_distance(&get_player()->globalPosition, &self->globalPosition) < 90.0f) {
             _data_4->vtbl->base.func0(self, 4, NULL, 1, -1, NULL);
     }
-    if (main_get_bits(objdata->bit2) && objdata->unk0 == 0) {
+    if (mainGetBits(objdata->bit2) && objdata->unk0 == 0) {
         self->srt.roll += 200;
     }
 }

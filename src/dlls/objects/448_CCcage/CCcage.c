@@ -60,7 +60,7 @@ void CCcage_setup(Object* self, CCcage_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
     
     //Handle initial state
-    if (main_get_bits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
+    if (mainGetBits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
         objData->state = STATE_Already_On_Ground;
     } else {
         objData->state = STATE_Dangling;
@@ -117,7 +117,7 @@ void CCcage_control(Object* self) {
     case STATE_Already_On_Ground:
         CCcage_hit_ground(self);
         objData->unk3C = 1.0f;
-        if (main_get_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage) == FALSE) {
+        if (mainGetBits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage) == FALSE) {
             for (index = 0; index < 2; index++){
                 CCcage_transform_child(self, index);
             }
@@ -211,7 +211,7 @@ void CCcage_control(Object* self) {
             }
             
             //Play sequence: cage door opening and LightFoot hopping out
-            main_set_bits(BIT_CC_Shot_Down_Lightfoot_Cage, TRUE);
+            mainSetBits(BIT_CC_Shot_Down_Lightfoot_Cage, TRUE);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, objData->children[0], -1);
             objData->state = STATE_Finished;
         } else {

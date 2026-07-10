@@ -104,7 +104,7 @@ void mmp_mseedrecept_control(Object* self) {
     if (objData->unk1 & 1){
         objData->unk0 = 2;
         gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
-        main_set_bits(objData->gamebitPlanted, 1);
+        mainSetBits(objData->gamebitPlanted, 1);
         objData->unk1 &= ~1;
         self->opacity = OBJECT_OPACITY_MAX;
     }
@@ -120,24 +120,24 @@ void mmp_mseedrecept_control(Object* self) {
         case 0:
             objData->unk0 = 1;
             self->srt.transl.y = objSetup->base.y - 10.0f;
-            if (main_get_bits(objData->gamebitPlanted)){
+            if (mainGetBits(objData->gamebitPlanted)){
                 objData->unk0 = 2;
                 self->srt.transl.y = objSetup->base.y;
                 self->opacity = OBJECT_OPACITY_MAX;
             }
-            if (main_get_bits(objData->gamebitGrown)){
+            if (mainGetBits(objData->gamebitGrown)){
                 mmp_mseedrecept_func_D40(self);
             }
             return;
         
         case 1:
             if ((self->unkAF & ARROW_FLAG_1_Interacted) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_MoonSeeds)){
-                count = main_get_bits(BIT_Inventory_MoonSeeds);
+                count = mainGetBits(BIT_Inventory_MoonSeeds);
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
                     self->opacity = 0;
                     gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                    main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
+                    mainSetBits(BIT_Inventory_MoonSeeds, count - 1);
                 }
             }
             break;
@@ -177,7 +177,7 @@ void mmp_mseedrecept_control(Object* self) {
 
                 //Check if Flame command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)){
-                    main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }
             break;
@@ -248,8 +248,8 @@ s32 mmp_mseedrecept_func_BEC(Object* self, s32 arg1) {
     } else if (arg1 == 1) {
         if (objData->unk0 == 3) {
             returnVal = TRUE;
-            if (main_get_bits(objData->gamebitPlanted) && 
-                !main_get_bits(objData->gamebitGrown)) {
+            if (mainGetBits(objData->gamebitPlanted) && 
+                !mainGetBits(objData->gamebitGrown)) {
                 mmp_mseedrecept_func_D40(self);
             }
         } else {
@@ -283,16 +283,16 @@ void mmp_mseedrecept_func_D40(Object* self) {
     objData = self->data;
     objSetup = (MoonSeedReceptacle_Setup*)self->setup;
     
-    if (main_get_bits(objData->gamebitPlanted)) {
+    if (mainGetBits(objData->gamebitPlanted)) {
         self->unkAF |= 8;
         gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
-        main_set_bits(objData->gamebitGrown, 1);
+        mainSetBits(objData->gamebitGrown, 1);
         objData->unk0 = 4;
         self->srt.transl.y = objSetup->base.y;
         curveSetup = gDLL_25->vtbl->func_2BC4(self, objSetup->kyteFlightGroup);
         objData->curveSetup = curveSetup;
         if (curveSetup->type22.usedBit != -1) {
-            main_set_bits(curveSetup->type22.usedBit, 1);
+            mainSetBits(curveSetup->type22.usedBit, 1);
         }
     }
 }

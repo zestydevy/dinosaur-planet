@@ -91,7 +91,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
     objdata->timer = objdata->opacity;
 
     if (objdata->flagID != NO_GAMEBIT) {
-        if (main_get_bits(objdata->flagID)) {
+        if (mainGetBits(objdata->flagID)) {
             objdata->state = LEVELNAME_STATE_4_FINISHED;
         }
     }
@@ -110,7 +110,7 @@ void levelname_control(Object* self) {
             distance = vec3_distance(&self->globalPosition, &get_player()->globalPosition);
             if (distance < objdata->activationRadius) {
                 if (objdata->flagID != NO_GAMEBIT) {
-                    main_set_bits(objdata->flagID, 1);
+                    mainSetBits(objdata->flagID, 1);
                 }
                 objdata->state = LEVELNAME_STATE_1_FADING_IN;
             }
@@ -198,7 +198,7 @@ static int levelname_anim_callback(Object* self, Object *overrideObj, AnimObj_Da
     for (i = 0; i < animData->messageCount; i++){
         if (animData->messages[i] == 1) {
             if (objdata->flagID != -1) {
-                main_set_bits(objdata->flagID, 1);
+                mainSetBits(objdata->flagID, 1);
             }
             objdata->state = LEVELNAME_STATE_1_FADING_IN;
             return 4;

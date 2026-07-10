@@ -61,7 +61,7 @@ void dll_220_setup(Object* self, DLL220_Setup* setup, s32 arg2) {
     self->unkAF |= 8;
     objdata->unk10 =  setup->unk18;
     if (objdata->unk10 != -1) {
-        if (main_get_bits( objdata->unk10) != 0) {
+        if (mainGetBits( objdata->unk10) != 0) {
             dll_220_func_8A4(self, objdata);
             return;
         }
@@ -153,7 +153,7 @@ void dll_220_control(Object* self) {
             dll_220_func_8A4(self, objdata); //Suggests arg1 of dll_220_func_8A4 might be a DLL220_Data*
             gDLL_33_BaddieControl->vtbl->func18(self, objdata->unkA, -1, 1);
             gDLL_6_AMSFX->vtbl->play(self, _data_10[3], MAX_VOLUME, NULL, NULL, 0, NULL);
-            main_set_bits(objdata->unk10, 1);
+            mainSetBits(objdata->unk10, 1);
         }
     }
     objdata->unk4 &= ~5;

@@ -44,8 +44,8 @@ void dll_787_setup(Object *self, WCApertureSymbol_Setup *setup, s32 arg2) {
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
-    if (main_get_bits(setup->unk20) != 0) {
-        if (main_get_bits(setup->unk1E) != 0) {
+    if (mainGetBits(setup->unk20) != 0) {
+        if (mainGetBits(setup->unk1E) != 0) {
             objdata->state = 2;
         } else {
             objdata->state = 1;
@@ -83,7 +83,7 @@ void dll_787_control(Object *self) {
                     objdata->targetOpacity = dll_787_func_490(self, objdata, 77000.0f, 81500.0f, sp48);
                 }
                 if (setup->unk1A < (s32) self->opacity) {
-                    main_set_bits(setup->unk1E, 1);
+                    mainSetBits(setup->unk1E, 1);
                     objdata->state = 2;
                     objdata->targetOpacity = OBJECT_OPACITY_MAX;
                 }

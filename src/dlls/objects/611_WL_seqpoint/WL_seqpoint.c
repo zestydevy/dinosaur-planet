@@ -108,13 +108,13 @@ void WL_seqpoint_control(Object* self) {
     
     if (objdata->triggeredBit != -1) {
         if (objdata->triggered) {
-            if (main_get_bits(objdata->triggeredBit) == 0) {
-                main_set_bits(objdata->triggeredBit, 1);
+            if (mainGetBits(objdata->triggeredBit) == 0) {
+                mainSetBits(objdata->triggeredBit, 1);
                 objdata->triggered = TRUE;
             }
             return;
         } else {
-            if (main_get_bits(objdata->triggeredBit) != 0) {
+            if (mainGetBits(objdata->triggeredBit) != 0) {
                 objdata->triggered = TRUE;
                 return;
             }
@@ -130,14 +130,14 @@ void WL_seqpoint_control(Object* self) {
             }
             break;
         case 1: // cond bit set
-            if ((objdata->conditionBit != -1) && (main_get_bits(objdata->conditionBit) != 0)) {
+            if ((objdata->conditionBit != -1) && (mainGetBits(objdata->conditionBit) != 0)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);
                 objdata->triggered = TRUE;
             }
             break;
         case 2: // range and cond bit set
             if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
-                if ((objdata->conditionBit != -1) && (main_get_bits(objdata->conditionBit) != 0)) {
+                if ((objdata->conditionBit != -1) && (mainGetBits(objdata->conditionBit) != 0)) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);
                     objdata->triggered = TRUE;
                 }
@@ -145,23 +145,23 @@ void WL_seqpoint_control(Object* self) {
             break;
         case 3: // range and cond bit unset
             if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
-                if ((objdata->conditionBit != -1) && (main_get_bits(objdata->conditionBit) == 0)) {
+                if ((objdata->conditionBit != -1) && (mainGetBits(objdata->conditionBit) == 0)) {
                     STUBBED_PRINTF("starting seq %d\n", objdata->seqno); // printf location found via default.dol
                     gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);
-                    main_set_bits(objdata->conditionBit, 1);
+                    mainSetBits(objdata->conditionBit, 1);
                     objdata->triggered = TRUE;
                 }
             }
             break;
         case 4: // cond bit unset
-            if ((objdata->conditionBit != -1) && (main_get_bits(objdata->conditionBit) == 0)) {
+            if ((objdata->conditionBit != -1) && (mainGetBits(objdata->conditionBit) == 0)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);
-                main_set_bits(objdata->conditionBit, 1);
+                mainSetBits(objdata->conditionBit, 1);
                 objdata->triggered = TRUE;
             }
             break;
         case 5: // cond bit set, repeat as long as bit is still set
-            if ((objdata->conditionBit != -1) && (main_get_bits(objdata->conditionBit) != 0)) {
+            if ((objdata->conditionBit != -1) && (mainGetBits(objdata->conditionBit) != 0)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);
             }
             break;
@@ -207,14 +207,14 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
         case WL_SEQPOINT_SEQ_21_DF_Spirit_Conversation:
             switch (animObjData->messages[i]) {
             case 2:
-                main_set_bits(BIT_125, 1);
+                mainSetBits(BIT_125, 1);
                 break;
             case 3:
-                main_set_bits(BIT_125, 0);
+                mainSetBits(BIT_125, 0);
                 break;
             case 10:
                 ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_1, TRUE);
-                main_set_bits(BIT_Play_Seq_0170_WM_Return_to_Randorn_Quan_Ata_Lachu_Speaks, 1);
+                mainSetBits(BIT_Play_Seq_0170_WM_Return_to_Randorn_Quan_Ata_Lachu_Speaks, 1);
                 break;
             }
             break;
@@ -222,7 +222,7 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
             if (animObjData->messages[i] != 0) {
                 objdata->lastMesg = animObjData->messages[i];
                 if (animObjData->messages[i] == 1) {
-                    main_set_bits(objdata->conditionBit, 0);
+                    mainSetBits(objdata->conditionBit, 0);
                 }
             }
             break;
@@ -231,9 +231,9 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->lastMesg = animObjData->messages[i];
                 if (animObjData->messages[i] == 1) {
                     gDLL_29_Gplay->vtbl->set_act(MAP_CAPE_CLAW, 9);
-                    main_set_bits(BIT_367, 1);
-                    main_set_bits(BIT_368, 1);
-                    main_set_bits(BIT_Play_Seq_020D, 0);
+                    mainSetBits(BIT_367, 1);
+                    mainSetBits(BIT_368, 1);
+                    mainSetBits(BIT_Play_Seq_020D, 0);
                 }
             }
             break;
@@ -242,18 +242,18 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->lastMesg = animObjData->messages[i];
                 switch (animObjData->messages[i]) {
                 case 1:
-                    main_set_bits(BIT_1D2, 1);
+                    mainSetBits(BIT_1D2, 1);
                     break;
                 case 2:
-                    main_set_bits(BIT_1D2, 0);
+                    mainSetBits(BIT_1D2, 0);
                     break;
                 case 3:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 1);
                     break;
                 case 4:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 0);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 0);
                     ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_7, FALSE);
-                    main_set_bits(BIT_222, 1);
+                    mainSetBits(BIT_222, 1);
                     break;
                 }
             }
@@ -276,21 +276,21 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->lastMesg = animObjData->messages[i];
                 switch (animObjData->messages[i]) {
                 case 1:
-                    main_set_bits(BIT_1CF, 1);
+                    mainSetBits(BIT_1CF, 1);
                     break;
                 case 2:
-                    main_set_bits(BIT_1CF, 0);
+                    mainSetBits(BIT_1CF, 0);
                     break;
                 case 3:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 1);
                     break;
                 case 4:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 0);
-                    main_set_bits(BIT_221, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 0);
+                    mainSetBits(BIT_221, 1);
                     ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_6, FALSE);
-                    main_set_bits(BIT_31D, 1);
-                    main_set_bits(BIT_31E, 1);
-                    main_set_bits(BIT_31C, 1);
+                    mainSetBits(BIT_31D, 1);
+                    mainSetBits(BIT_31E, 1);
+                    mainSetBits(BIT_31C, 1);
                     break;
                 }
             }
@@ -300,21 +300,21 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->lastMesg = animObjData->messages[i];
                 switch (animObjData->messages[i]) {
                 case 1:
-                    main_set_bits(BIT_125, 1);
+                    mainSetBits(BIT_125, 1);
                     break;
                 case 2:
-                    main_set_bits(BIT_125, 0);
+                    mainSetBits(BIT_125, 0);
                     break;
                 case 3:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 1);
                     break;
                 case 4:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 0);
-                    main_set_bits(BIT_21F_Spirit_Collected, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 0);
+                    mainSetBits(BIT_21F_Spirit_Collected, 1);
                     ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_2, FALSE);
-                    main_set_bits(BIT_231, 1);
-                    main_set_bits(BIT_232, 1);
-                    main_set_bits(BIT_Spirit_2_Release_Sabre, 1);
+                    mainSetBits(BIT_231, 1);
+                    mainSetBits(BIT_232, 1);
+                    mainSetBits(BIT_Spirit_2_Release_Sabre, 1);
                     break;
                 }
             }
@@ -324,24 +324,24 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->lastMesg = animObjData->messages[i];
                 switch (animObjData->messages[i]) {
                 case 1:
-                    main_set_bits(BIT_125, 1);
+                    mainSetBits(BIT_125, 1);
                     break;
                 case 2:
-                    main_set_bits(BIT_125, 0);
+                    mainSetBits(BIT_125, 0);
                     break;
                 case 3:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 1);
                     break;
                 case 5:
-                    main_set_bits(BIT_Set_During_Spirit_Release_1, 1);
+                    mainSetBits(BIT_Set_During_Spirit_Release_1, 1);
                     break;
                 case 4:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 0);
-                    main_set_bits(BIT_Set_During_Spirit_Release_1, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 0);
+                    mainSetBits(BIT_Set_During_Spirit_Release_1, 1);
                     ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_1, FALSE);
-                    main_set_bits(BIT_231, 1);
-                    main_set_bits(BIT_232, 1);
-                    main_set_bits(BIT_Play_Seq_0180_Release_Spirit_1, 1);
+                    mainSetBits(BIT_231, 1);
+                    mainSetBits(BIT_232, 1);
+                    mainSetBits(BIT_Play_Seq_0180_Release_Spirit_1, 1);
                     break;
                 }
             }
@@ -351,21 +351,21 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->lastMesg = animObjData->messages[i];
                 switch (animObjData->messages[i]) {
                 case 1:
-                    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
+                    mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
                     break;
                 case 2:
-                    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+                    mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
                     break;
                 case 3:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 1);
                     break;
                 case 4:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 0);
-                    main_set_bits(BIT_21C, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 0);
+                    mainSetBits(BIT_21C, 1);
                     ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_3, FALSE);
-                    main_set_bits(BIT_231, 1);
-                    main_set_bits(BIT_232, 1);
-                    main_set_bits(BIT_317, 1);
+                    mainSetBits(BIT_231, 1);
+                    mainSetBits(BIT_232, 1);
+                    mainSetBits(BIT_317, 1);
                     break;
                 }
             }
@@ -375,21 +375,21 @@ static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->lastMesg = animObjData->messages[i];
                 switch (animObjData->messages[i]) {
                 case 1:
-                    main_set_bits(BIT_143, 1);
+                    mainSetBits(BIT_143, 1);
                     break;
                 case 2:
-                    main_set_bits(BIT_143, 0);
+                    mainSetBits(BIT_143, 0);
                     break;
                 case 3:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 1);
                     break;
                 case 4:
-                    main_set_bits(BIT_WM_Spirit_Release_Effect, 0);
-                    main_set_bits(BIT_21D, 1);
+                    mainSetBits(BIT_WM_Spirit_Release_Effect, 0);
+                    mainSetBits(BIT_21D, 1);
                     ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_4, FALSE);
-                    main_set_bits(BIT_2F5, 1);
-                    main_set_bits(BIT_2F6, 1);
-                    main_set_bits(BIT_318, 1);
+                    mainSetBits(BIT_2F5, 1);
+                    mainSetBits(BIT_2F6, 1);
+                    mainSetBits(BIT_318, 1);
                     break;
                 }
             }

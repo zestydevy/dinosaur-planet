@@ -77,7 +77,7 @@ void SCbeacon_control(Object* self) {
     if (objData->flags & SCbeacon_FLAG_Add_Tumbleweed) {
         objData->state = SCbeacon_STATE_Twigs_in_Bowl;
         self->modelInstIdx = SCbeacon_MODEL_Twigs_in_Bowl;
-        main_set_bits(objData->gamebitTwigs, 1);
+        mainSetBits(objData->gamebitTwigs, 1);
         objData->flags &= ~SCbeacon_FLAG_Add_Tumbleweed;
     }
 
@@ -87,12 +87,12 @@ void SCbeacon_control(Object* self) {
         self->modelInstIdx = SCbeacon_MODEL_Bowl_Empty;
         objData->state = SCbeacon_STATE_Bowl_Empty;
 
-        if (main_get_bits(objData->gamebitTwigs)) {
+        if (mainGetBits(objData->gamebitTwigs)) {
             self->modelInstIdx = SCbeacon_MODEL_Twigs_in_Bowl;
             objData->state = SCbeacon_STATE_Twigs_in_Bowl;
         }
 
-        if (main_get_bits(objData->gamebitLit)) {
+        if (mainGetBits(objData->gamebitLit)) {
             SCbeacon_attempt_to_light(self); //will only be successful here if twigs gamebit also set
         }
         break;
@@ -110,7 +110,7 @@ void SCbeacon_control(Object* self) {
 
             //Check if Flame command was selected
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-                main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteCurveID);
+                mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteCurveID);
             }
         }
         break;
@@ -193,16 +193,16 @@ int SCbeacon_handle_kyte_flame_seqs(Object* self, s32 finishLighting) {
         }
 
         //Finish lighting the beacon
-        if (main_get_bits(objData->gamebitTwigs) && (main_get_bits(objData->gamebitLit) == FALSE)) {
+        if (mainGetBits(objData->gamebitTwigs) && (mainGetBits(objData->gamebitLit) == FALSE)) {
             //Advance to "lit" state
             SCbeacon_attempt_to_light(self); //will always be successful here
 
             //Warp to Discovery Falls' entrance when all beacons are lit, and play pool-draining sequence
-            if (main_get_bits(BIT_SC_Beacon_Lit_1) && 
-                main_get_bits(BIT_SC_Beacon_Lit_2) && 
-                main_get_bits(BIT_SC_Beacon_Lit_3)
+            if (mainGetBits(BIT_SC_Beacon_Lit_1) && 
+                mainGetBits(BIT_SC_Beacon_Lit_2) && 
+                mainGetBits(BIT_SC_Beacon_Lit_3)
             ) {
-                main_set_bits(BIT_SC_All_Beacons_Lit, 1);
+                mainSetBits(BIT_SC_All_Beacons_Lit, 1);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup0_Main_SwapStone_Area, TRUE);
                 warpPlayer(WARP_SC_DISCOVERY_FALLS_ENTRANCE_POND, TRUE); //SC_warppoint auto-plays seq 0x77
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup3_Golden_Plains_Approach, FALSE);
@@ -249,7 +249,7 @@ void SCbeacon_attempt_to_light(Object* self) {
     objData = self->data;
     objSetup = (SCbeacon_Setup*)self->setup;
     
-    if (main_get_bits(objData->gamebitTwigs)) {
+    if (mainGetBits(objData->gamebitTwigs)) {
         //Play burning sound loops
         gDLL_6_AMSFX->vtbl->play(self, SOUND_50a_Fire_Burning_Low_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -262,13 +262,13 @@ void SCbeacon_attempt_to_light(Object* self) {
         
         //Disable targetting and advance to lit state
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
-        main_set_bits(objData->gamebitLit, 1);        
+        mainSetBits(objData->gamebitLit, 1);        
         objData->state = SCbeacon_STATE_Lit;
 
         //Set Kyte curve gamebit
         objData->kyteCurve = gDLL_25->vtbl->func_2BC4(self, objSetup->kyteCurveID);
         if (objData->kyteCurve->type22.usedBit != NO_GAMEBIT) {
-            main_set_bits(objData->kyteCurve->type22.usedBit, 1);
+            mainSetBits(objData->kyteCurve->type22.usedBit, 1);
         }
     }
 }

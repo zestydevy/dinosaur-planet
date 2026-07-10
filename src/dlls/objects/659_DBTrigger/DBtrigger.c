@@ -100,7 +100,7 @@ void DBTrigger_control(Object* self) {
         objData->pressed = seqIndex;
         objSetup = (DBTrigger_Setup*)self->setup;
         if (seqIndex != 0) {
-            main_set_bits(objSetup->gamebit, main_get_bits(objSetup->gamebit) ^ 1);
+            mainSetBits(objSetup->gamebit, mainGetBits(objSetup->gamebit) ^ 1);
         }
         gDLL_3_Animation->vtbl->start_obj_sequence(sequenceIndices[objData->pressed], self, -1);
     }

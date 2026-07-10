@@ -85,7 +85,7 @@ void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
     objData->hitPoints = 1;
 
     //Check if already burnt
-    if (main_get_bits(objSetup->gamebitBurnt)) {
+    if (mainGetBits(objSetup->gamebitBurnt)) {
         objData->hitPoints = 0;
         self->objhitInfo->unk58 &= ~1;
         self->opacity = 0;
@@ -155,11 +155,11 @@ void DIMTent_control(Object* self) {
         }
 
         //After being fully damaged, track that the tent has been burnt and start the burning effect
-        main_set_bits(objSetup->gamebitBurnt, 1);
+        mainSetBits(objSetup->gamebitBurnt, 1);
         objData->isBurning = TRUE;
 
         //Drop the bridge cog if this tent's index matches the random one picked by DIMLevelControl
-        if (main_get_bits(BIT_DIM_Gear_3_Random_Tent) == (u32)objSetup->tentIndex) {
+        if (mainGetBits(BIT_DIM_Gear_3_Random_Tent) == (u32)objSetup->tentIndex) {
             Collectable_Setup* cogSetup;
             cogSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_DIMBridgeCogCol);
             cogSetup->base.x = objSetup->base.x;

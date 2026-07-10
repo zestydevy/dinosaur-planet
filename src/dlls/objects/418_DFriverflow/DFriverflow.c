@@ -38,7 +38,7 @@ void DFriverflow_control(Object* self) {
     objSetup = (DFriverflow_Setup*)self->setup;
     if (objSetup->toggleGamebit > 0) {
         objData = self->data;
-        if (main_get_bits(objSetup->toggleGamebit)) {
+        if (mainGetBits(objSetup->toggleGamebit)) {
             if (objData->activated) {
                 STUBBED_PRINTF("tryint to deactivate the river flow\n");
                 objData->activated = FALSE;

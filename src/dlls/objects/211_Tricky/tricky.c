@@ -254,9 +254,9 @@ void dll_211_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
     objData = self->data;
     sp50 = _data_164;
-    main_set_bits(BIT_4E3, 0xFF);
-    if (main_get_bits(BIT_SW_Tricky_Ball_Collected) != 0) {
-        main_set_bits(BIT_Tricky_Ball_Unlocked, 1);
+    mainSetBits(BIT_4E3, 0xFF);
+    if (mainGetBits(BIT_SW_Tricky_Ball_Collected) != 0) {
+        mainSetBits(BIT_Tricky_Ball_Unlocked, 1);
     }
 
     self->animCallback = (AnimationCallback ) dll_211_func_1624;
@@ -599,7 +599,7 @@ s32 dll_211_get_available_commands(Object* self) {
 
     objData = self->data;
 
-    if (main_get_bits(BIT_Tricky_Unlocked_Sidekick_Commands)) {
+    if (mainGetBits(BIT_Tricky_Unlocked_Sidekick_Commands)) {
         sideCmdBits = objData->unk1B | Sidekick_Command_FLAG_01_Heel;
 
         //Check if Flame command should be shown
@@ -611,22 +611,22 @@ s32 dll_211_get_available_commands(Object* self) {
         }
 
         //Check if Tricky's ball is unlocked
-        if (main_get_bits(BIT_Tricky_Ball_Unlocked)) {
+        if (mainGetBits(BIT_Tricky_Ball_Unlocked)) {
             sideCmdBits |= Sidekick_Command_FLAG_20_Play;
         }
 
         //Check if Guard isn't unlocked
-        if (main_get_bits(BIT_Tricky_Learned_Guard) == FALSE) {
+        if (mainGetBits(BIT_Tricky_Learned_Guard) == FALSE) {
             sideCmdBits &= ~Sidekick_Command_FLAG_08_Guard;
         }
 
         //Check if Distract isn't unlocked
-        if (main_get_bits(BIT_Tricky_Learned_Distract) == FALSE) {
+        if (mainGetBits(BIT_Tricky_Learned_Distract) == FALSE) {
             sideCmdBits &= ~Sidekick_Command_FLAG_04_Distract;
         }
 
         //Check if Flame isn't unlocked
-        if (main_get_bits(BIT_Tricky_Learned_Flame) == FALSE) {
+        if (mainGetBits(BIT_Tricky_Learned_Flame) == FALSE) {
             sideCmdBits &= ~Sidekick_Command_FLAG_10_Flame;
         }
         
@@ -796,7 +796,7 @@ void dll_211_func_1578(Object* self) {
         dll_211_func_82B8(objData);
         objData->unk5F4_vec.x = 600.0f;
     } else if (objData->unk18 >= 5 && objData->unk18 < 8) {
-        if (main_get_bits(BIT_Tricky_Unlocked_Sidekick_Commands) != 0) {
+        if (mainGetBits(BIT_Tricky_Unlocked_Sidekick_Commands) != 0) {
             ((s16*)objData->unk5E4)[0] = 1;
         }
     }
@@ -854,7 +854,7 @@ static void dll_211_func_183C(Object* self, DLL211_Data* objData) {
 
     temp_v0 = gDLL_25->vtbl->func_1158(&self->srt.transl, NULL);
     if (temp_v0 != 0) {
-        main_set_bits(BIT_Tricky_Talk_Sequence, temp_v0);
+        mainSetBits(BIT_Tricky_Talk_Sequence, temp_v0);
         dll_211_func_82B8(objData);
     }
 }
@@ -907,11 +907,11 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
                 sp28 = 3;
             }
 
-            sp2E = main_get_bits(sp2A);
+            sp2E = mainGetBits(sp2A);
             if (sp2E && gDLL_1_cmdmenu->vtbl->get_page_category() == sp28) {
                 if (self->unkAF & 1) {
                     if (gDLL_1_cmdmenu->vtbl->was_this_item_used(sp2A) != 0) {
-                        main_set_bits(BIT_Inventory_Blue_Mushrooms, sp2E - 1);
+                        mainSetBits(BIT_Inventory_Blue_Mushrooms, sp2E - 1);
                         objData->unk4->blueFood += 2;
                         dll_211_func_8B5C(self, 2);
                         objData->unk4C |= 1;
@@ -920,10 +920,10 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
                     self->unkAF &= ~8;
                 }
             } else {
-                var_v0 = main_get_bits(BIT_4E3);
+                var_v0 = mainGetBits(BIT_4E3);
                 if (var_v0 != 0xFF) {
                     if (self->unkAF & 1) {
-                        main_set_bits(BIT_4E3, 0xFF);
+                        mainSetBits(BIT_4E3, 0xFF);
                         dll_211_func_8B5C(self, var_v0);
                     } else {
                         self->unkAF &= ~8;
@@ -1945,10 +1945,10 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         for (var_a0 = 0; var_a0 < 4; var_a0++) { objData->unk6C[var_a0] = 0; }
     }
     spBC = gDLL_25->vtbl->func_1158(temp_s1, &sp44);
-    spB8 = main_get_bits(BIT_Tricky_Talk_Sequence);
+    spB8 = mainGetBits(BIT_Tricky_Talk_Sequence);
     if (spBC != 0 && spBC != spB8) {
         spB8 = spBC;
-        main_set_bits(BIT_Tricky_Talk_Sequence, spBC);
+        mainSetBits(BIT_Tricky_Talk_Sequence, spBC);
     }
     sp84 = objData->unk20;
     objData->unk20 += -0.03f * gUpdateRateF;
@@ -2699,8 +2699,8 @@ static void dll_211_func_7794(Object* self, u8 *arg1, s16 arg2, CurveSetup** arg
         temp_s1 = temp_a1[i].setup;
         if (temp_s1->curveType == 0x24 && temp_s1->unk3 == 0) {
             if (
-                (temp_s1->type22.unk30 == -1 || main_get_bits(temp_s1->type22.unk30) != 0) &&
-                (temp_s1->type22.usedBit == -1 || main_get_bits(temp_s1->type22.usedBit) == 0)
+                (temp_s1->type22.unk30 == -1 || mainGetBits(temp_s1->type22.unk30) != 0) &&
+                (temp_s1->type22.usedBit == -1 || mainGetBits(temp_s1->type22.usedBit) == 0)
             ) {
                 temp_fs0 = 
                     SQ(objData->unk2C->z - temp_s1->pos.z) + (
@@ -2864,8 +2864,8 @@ static CurveSetup* dll_211_func_7EFC(DLL211_Data* objData, CurveSetup* arg1, s32
             if (sp68[var_s2] != NULL) {
                 if ((arg2 == 0 || arg2 == (arg1->unk4_u8[var_s2]))) {
                     if (
-                        (sp68[var_s2]->type22.unk30 == -1 || main_get_bits(sp68[var_s2]->type22.unk30) != 0) &&
-                        (sp68[var_s2]->type22.usedBit == -1 || main_get_bits(sp68[var_s2]->type22.usedBit) == 0)
+                        (sp68[var_s2]->type22.unk30 == -1 || mainGetBits(sp68[var_s2]->type22.unk30) != 0) &&
+                        (sp68[var_s2]->type22.usedBit == -1 || mainGetBits(sp68[var_s2]->type22.usedBit) == 0)
                     ) {
                         var_s2++;
                     }
@@ -2893,7 +2893,7 @@ static CurveSetup* dll_211_func_7EFC(DLL211_Data* objData, CurveSetup* arg1, s32
 
 // offset: 0x8114 | func: 63
 static CurveSetup* dll_211_func_8114(CurveSetup* setup) {
-    if ((setup->type22.unk30 == -1 || main_get_bits(setup->type22.unk30) != 0) && (setup->type22.usedBit == -1 || main_get_bits(setup->type22.usedBit) == 0)) {
+    if ((setup->type22.unk30 == -1 || mainGetBits(setup->type22.unk30) != 0) && (setup->type22.usedBit == -1 || mainGetBits(setup->type22.usedBit) == 0)) {
         return setup;
     }
     return NULL;

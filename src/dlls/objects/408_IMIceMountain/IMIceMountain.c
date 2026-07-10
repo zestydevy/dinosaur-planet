@@ -42,26 +42,26 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
             break;
         }
         
-        if (main_get_bits(BIT_IM_MultiSeq_3)) {
-            if (main_get_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring)) {
+        if (mainGetBits(BIT_IM_MultiSeq_3)) {
+            if (mainGetBits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring)) {
                 objdata->state = STATE_Race_Won;
             } else {
-                main_set_bits(BIT_IM_MultiSeq_3, 0);
-                main_set_bits(BIT_IM_Race_Ended, 0);
-                main_set_bits(BIT_IM_Race_Started, 0);
-                main_set_bits(BIT_Play_Seq_00EB_IM_Lose_Race, 0);
-                main_set_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 0);
+                mainSetBits(BIT_IM_MultiSeq_3, 0);
+                mainSetBits(BIT_IM_Race_Ended, 0);
+                mainSetBits(BIT_IM_Race_Started, 0);
+                mainSetBits(BIT_Play_Seq_00EB_IM_Lose_Race, 0);
+                mainSetBits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 0);
                 objdata->state = STATE_Race_Start_Sequence;
             }
         } else {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup0_AnimTricky, 1);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup5_Summit_Main, 1);
-            if (main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
+            if (mainGetBits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
                 objdata->state = STATE_Rescue_Tricky;
             } else {
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup2_AnimSpacecraft, 1);
                 objdata->state = STATE_Intro_Sequence;
-                main_set_bits(BIT_Play_Seq_0063_IM_Sabre_Intro, 1);
+                mainSetBits(BIT_Play_Seq_0063_IM_Sabre_Intro, 1);
             }
         }
 
@@ -156,24 +156,24 @@ void IMIceMountain_do_act1(Object *self) {
     objdata = self->data;
     switch (objdata->state) {
     case STATE_Intro_Sequence:
-        if (main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
+        if (mainGetBits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
             objdata->state = STATE_Rescue_Tricky;
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup2_AnimSpacecraft, 0);
         }
         break;
     case STATE_Rescue_Tricky:
-        if (main_get_bits(BIT_IM_MultiSeq_2)) {
+        if (mainGetBits(BIT_IM_MultiSeq_2)) {
             objdata->state = STATE_Race_Start_Sequence;
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup6_Track_Icicles, 1);
         }
         break;
     case STATE_Race_Start_Sequence:
-        if (main_get_bits(BIT_IM_MultiSeq_3)) {
+        if (mainGetBits(BIT_IM_MultiSeq_3)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup0_AnimTricky, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup5_Summit_Main, 0);
         }
 
-        if (main_get_bits(BIT_IM_Race_Started)) {
+        if (mainGetBits(BIT_IM_Race_Started)) {
             objdata->state = STATE_Race;
         }
 
@@ -231,9 +231,9 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
 
     vi_set_update_rate_target(3); // 20 FPS
 
-    if (main_get_bits(BIT_IM_Race_Ended)) {
-        main_set_bits(BIT_IM_Race_Ended, 0);
-        main_set_bits(BIT_IM_Race_Started, 0);
+    if (mainGetBits(BIT_IM_Race_Ended)) {
+        mainSetBits(BIT_IM_Race_Ended, 0);
+        mainSetBits(BIT_IM_Race_Started, 0);
         player = get_player();
         snowbike = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
         if (snowbike) {
@@ -247,10 +247,10 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
         if (racePosition == 1) {
             gDLL_1_cmdmenu->vtbl->disable_buttons(R_CBUTTONS);
             objdata->state = STATE_Race_Won;
-            main_set_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 1);
+            mainSetBits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 1);
         } else {
             objdata->state = STATE_Race_Lost;
-            main_set_bits(BIT_Play_Seq_00EB_IM_Lose_Race, 1);
+            mainSetBits(BIT_Play_Seq_00EB_IM_Lose_Race, 1);
         }
     }
 }

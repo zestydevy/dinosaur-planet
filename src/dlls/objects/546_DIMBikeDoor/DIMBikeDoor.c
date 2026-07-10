@@ -16,7 +16,7 @@ void dll_546_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_546_setup(Object* self, DLL546_Setup* setup, s32 arg2) {
-    if (main_get_bits(setup->unk1E) != 0) {
+    if (mainGetBits(setup->unk1E) != 0) {
         self->srt.pitch = ((setup->unk1A << 0xD) / 45);
     }
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_CONTROL_DISABLED);

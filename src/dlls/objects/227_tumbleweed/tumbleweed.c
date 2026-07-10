@@ -104,7 +104,7 @@ void Tumbleweed_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup*
                     goldSetup = (GoldenNugget_Setup*)objData->goldenNugget->setup;
                     objData->goldDroppedGamebit = goldSetup->gamebitDropped;
 
-                    if (main_get_bits(objData->goldDroppedGamebit)) {
+                    if (mainGetBits(objData->goldDroppedGamebit)) {
                         objData->goldenNugget = NULL;
                     }
 
@@ -270,12 +270,12 @@ void Tumbleweed_tick_chase_player(Object* self) {
 
         //Check for attack collisions
         if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage)) {
-            main_set_bits(BIT_Damaged_a_Tumbleweed, 1);
+            mainSetBits(BIT_Damaged_a_Tumbleweed, 1);
             objData->flags |= Tumbleweed_FLAG_Create_Leaves | Tumbleweed_FLAG_Create_Dust | Tumbleweed_FLAG_Expire;
 
             //Drop the Gold Nugget if it's being carried
             if (objData->goldenNugget != NULL) {
-                main_set_bits(objData->goldDroppedGamebit, 1);
+                mainSetBits(objData->goldDroppedGamebit, 1);
                 objData->goldenNugget = NULL;
                 return;
             }
@@ -422,12 +422,12 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
 
         //React to attack collisions
         if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage)) {
-            main_set_bits(BIT_Damaged_a_Tumbleweed, 1);
+            mainSetBits(BIT_Damaged_a_Tumbleweed, 1);
             objData->flags |= Tumbleweed_FLAG_Create_Leaves | Tumbleweed_FLAG_Create_Dust | Tumbleweed_FLAG_Expire;
             
             //Drop the Gold Nugget if it's being carried
             if (objData->goldenNugget != NULL) {
-                main_set_bits(objData->goldDroppedGamebit, 1);
+                mainSetBits(objData->goldDroppedGamebit, 1);
                 objData->goldenNugget = NULL;
                 return;
             }
@@ -543,7 +543,7 @@ void Tumbleweed_free(Object* self, s32 arg1) {
     }
     
     if (objData->goldenNugget) {
-        main_set_bits(objData->goldDroppedGamebit, 1);
+        mainSetBits(objData->goldDroppedGamebit, 1);
         objData->goldenNugget = NULL;
     }
 

@@ -69,11 +69,11 @@ void DBSH_Symbol_control(Object* self) {
     
     DBSH_Symbol_Data* objData = self->data;
 
-    if (main_get_bits(BIT_16A) == 0) {
+    if (mainGetBits(BIT_16A) == 0) {
         objData->timeLeft = 4000; //66.666 seconds
         objData->state = DBSH_Symbol_STATE_Initial;
         objData->krystal = NULL;
-        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
+        mainSetBits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
         dAnimOffsetSabre = 0;
         dAnimOffsetKrystal = 0;
         return;
@@ -152,9 +152,9 @@ void DBSH_Symbol_control(Object* self) {
 
             //Set win/lose gamebit once underground
             if ((self->srt.transl.y <= (objData->baseY - Y_UNDERGROUND)) && (objData->timeLeft <= 0)) {
-                main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 1);
+                mainSetBits(BIT_DB_Shrine_Test_of_Strength_Lose, 1);
             } else if (self->srt.transl.y <= (objData->baseY - Y_UNDERGROUND)) {
-                main_set_bits(BIT_DB_Shrine_Test_of_Strength_Win, 1);
+                mainSetBits(BIT_DB_Shrine_Test_of_Strength_Win, 1);
             }
             
             //Create glowing magic flare particles under the symbol's points

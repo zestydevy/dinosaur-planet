@@ -385,7 +385,7 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
                 if ((playerX >= mapTiles[index2].minX) && (playerX < mapTiles[index2].maxX) && 
                     (playerZ >= mapTiles[index2].minZ) && (playerZ < mapTiles[index2].maxZ) && 
                     (playerY >= mapTiles[index2].minY) && (playerY < mapTiles[index2].maxY) && 
-                    main_get_bits(mapTiles[index2].gamebitSection)) { //Make sure the tile's gamebit is set
+                    mainGetBits(mapTiles[index2].gamebitSection)) { //Make sure the tile's gamebit is set
 
                     tileIndex = 0;
                     mapFound = TRUE;
@@ -435,8 +435,8 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
         }
         
         //Set/get minimap gamebits
-        main_set_bits(BIT_Toggle_Minimap, mapFound);
-        if (sMinimapVisible == FALSE || main_get_bits(BIT_Hide_Minimap)) {
+        mainSetBits(BIT_Toggle_Minimap, mapFound);
+        if (sMinimapVisible == FALSE || mainGetBits(BIT_Hide_Minimap)) {
             loadTextureID = 0;
         }
         

@@ -118,7 +118,7 @@ void GPbonfire_control(Object* self) {
 
     objdata->currentState &= ~2;
     if (objdata->currentState & 1) {
-        main_set_bits(objdata->gameBitKindlingPlaced, TRUE);
+        mainSetBits(objdata->gameBitKindlingPlaced, TRUE);
         objdata->stateIndex = STATE_2_WAIT_FOR_KYTE;
         objdata->currentState &= ~1;
         self->modelInstIdx = 1;
@@ -137,11 +137,11 @@ void GPbonfire_control(Object* self) {
         case STATE_0_INITIALISE:
             self->modelInstIdx = 0;
             objdata->stateIndex = STATE_1_WAIT_FOR_PLAYER_INTERACTION;
-            if (main_get_bits(objdata->gameBitKindlingPlaced)) {
+            if (mainGetBits(objdata->gameBitKindlingPlaced)) {
                 self->modelInstIdx = 1;
                 objdata->stateIndex = STATE_2_WAIT_FOR_KYTE;
             }
-            if (main_get_bits(objdata->gameBitBurning)) {
+            if (mainGetBits(objdata->gameBitBurning)) {
                 objdata->timer = BONFIRE_DWINDLING_TIMER;
                 GPbonfire_func_A44(self);
             }
@@ -157,7 +157,7 @@ void GPbonfire_control(Object* self) {
             if (sidekick && playerIsNearby) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-                    main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
+                    mainSetBits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
                 }
             }
             break;
@@ -197,7 +197,7 @@ void GPbonfire_control(Object* self) {
 
                             //Lift up the ChimneySwipe once the fire's roaring
                             if (objdata->weedsDeposited == 4) {
-                                main_set_bits(BIT_GP_ChimneySwipe_Lifted, TRUE);
+                                mainSetBits(BIT_GP_ChimneySwipe_Lifted, TRUE);
                                 //Start a 60 second challenge timer
                                 func_8000F64C(0x15, 60);
                                 func_8000F6CC();
@@ -285,7 +285,7 @@ s32 GPbonfire_start_burning(Object* self, s32 skipSequence) {
             returnVal = 1;
         }
 
-        if (main_get_bits(objdata->gameBitKindlingPlaced)) {
+        if (mainGetBits(objdata->gameBitKindlingPlaced)) {
             objdata->timer = BONFIRE_DWINDLING_TIMER;
             GPbonfire_func_A44(self);
         } else {
@@ -321,7 +321,7 @@ void GPbonfire_func_A44(Object* self) {
     objdata = self->data;
     setup = (GPBonfire_Setup*)self->setup;
 
-    if (!main_get_bits(objdata->gameBitKindlingPlaced)) {
+    if (!mainGetBits(objdata->gameBitKindlingPlaced)) {
         return;
     }
 
@@ -340,14 +340,14 @@ void GPbonfire_func_A44(Object* self) {
     self->unkAF |= 8;
 
     //Advance state
-    main_set_bits(objdata->gameBitBurning, TRUE);
+    mainSetBits(objdata->gameBitBurning, TRUE);
     objdata->stateIndex = STATE_4_ADDING_TUMBLEWEEDS;
 
     //Set flag based on Kyte's curve motion
     curves = gDLL_25->vtbl->func_2BC4(self, setup->kyteCurveID);
     objdata->curves = curves;
     if (curves->type22.usedBit != -1) {
-        main_set_bits(curves->type22.usedBit, 1);
+        mainSetBits(curves->type22.usedBit, 1);
     }
 }
 

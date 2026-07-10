@@ -1847,10 +1847,10 @@ static void anim_process_envfx_queue(AnimObj_Data* st, Object* actor, u8 skippin
             gDLL_22_Subtitles->vtbl->func_368(value);
             break;
         case ANIM_EVT_ENVFX_SET_BIT:
-            main_set_bits(value, 1);
+            mainSetBits(value, 1);
             break;
         case ANIM_EVT_ENVFX_CLEAR_BIT:
-            main_set_bits(value, 0);
+            mainSetBits(value, 0);
             break;
         case ANIM_EVT_ENVFX_CMDMENU_BUTTON_OVERRIDE:
             if (skipping) { break; }
@@ -2625,7 +2625,7 @@ static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, 
                     sEventFlags[st->seqSlot] = (s8) var_s1;
                     break;
                 case ANIM_CODE_EVT_SET_BIT:
-                    main_set_bits(st->eventGamebit, var_s1 != 0);
+                    mainSetBits(st->eventGamebit, var_s1 != 0);
                     break;
                 }
                 break;

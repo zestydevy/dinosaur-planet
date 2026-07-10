@@ -57,7 +57,7 @@ void DBDustGeezer_setup(Object* self, DBDustGeezer_Setup* objSetup, int skipChil
     objData = self->data;
     
     //Hide geyser if its gamebit is set
-    if (main_get_bits(objSetup->gamebitHidden)) {
+    if (mainGetBits(objSetup->gamebitHidden)) {
         objData->state = DBDustGeezer_STATE_Hidden;
     } else {
         objData->state = DBDustGeezer_STATE_Main;
@@ -112,7 +112,7 @@ void DBDustGeezer_control(Object* self) {
                 objData->gemsToLaunch--;
                 if (objData->gemsToLaunch == 0) {
                     objData->flags &= ~DBDustGeezer_FLAG_Dug_Up;
-                    main_set_bits(objSetup->gamebitHidden, 0);
+                    mainSetBits(objSetup->gamebitHidden, 0);
                     objData->state = DBDustGeezer_STATE_Cooldown;
                     objData->cooldownTimer = objSetup->cooldownDuration;
                 }
@@ -134,7 +134,7 @@ void DBDustGeezer_control(Object* self) {
         //Small delay after launching all gems
         objData->cooldownTimer -= gUpdateRate;
         if (objData->cooldownTimer < 0) {
-            main_set_bits(objSetup->gamebitHidden, 1);
+            mainSetBits(objSetup->gamebitHidden, 1);
             objData->state = DBDustGeezer_STATE_Main;
         }
 

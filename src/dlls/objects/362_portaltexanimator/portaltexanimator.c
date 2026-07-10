@@ -101,7 +101,7 @@ void portaltexanimator_control(Object* self) {
         if (setup->gamebitEnable == NO_GAMEBIT) {
             objdata->enabled = TRUE;
         } else {
-            objdata->enabled = main_get_bits(setup->gamebitEnable);
+            objdata->enabled = mainGetBits(setup->gamebitEnable);
         }
 
         //Set both vertex animation buffers' animated vertices to max opacity

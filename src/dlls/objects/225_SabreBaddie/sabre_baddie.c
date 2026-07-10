@@ -162,7 +162,7 @@ s32 dll_225_func_1F38(Object* self, SabreBaddie_Data* objdata, s32 arg2) {
     }
 
     if (objdata->unk348 < 5) {
-        main_set_bits(0x391, 1);
+        mainSetBits(0x391, 1);
         objdata->unk348 = 1;
         return 3;
     }

@@ -291,7 +291,7 @@ void KamerianBoss_do_flame_attack(Object *self, KamerianBoss_Data *objdata) {
     headY = objdata->attachmentPositions[14].y;
     headZ = objdata->attachmentPositions[14].z;
     if (!(objdata->player->srt.transl.y < (objdata->playerStartY - 20.0f))) {
-        func_80014D34(0.5f, &playerX, &playerY, &playerZ);
+        mainGetBufferedPlayerPos(0.5f, &playerX, &playerY, &playerZ);
         playerY += 20.0f;
         sp42 = atan2f_to_s(playerX - headX, playerZ - headZ);
         temp_t7 = KamerianBoss_func_558(headX, headY, headZ, playerX, playerY, playerZ, 7.8f, -0.046f, 0);
@@ -362,7 +362,7 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
     temp_fv0_2 = player->globalPosition.x - sp80;
     temp_fv1_2 = player->globalPosition.z - sp7C;
     if (sqrtf(SQ(temp_fv0_2) + SQ(temp_fv1_2)) < 500.0f) {
-        func_80014D34(1.2f, &sp6C, &sp68, &sp64);
+        mainGetBufferedPlayerPos(1.2f, &sp6C, &sp68, &sp64);
         sp68 += 20.0f;
     } else {
         if (side != 0) {
@@ -709,7 +709,7 @@ void KamerianBoss_control(Object *self) {
             if (!objdata->loadedTempDLL) {
                 s16 sp8C[3] = {0x0002, 0x0000, 0x0000}; // _data_10
                 s16 sp84[3] = {0x0018, 0x0014, 0x0008}; // _data_18
-                create_temp_dll(53);
+                mainCreateTempDLL(53);
                 ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &_bss_40, -18000, 9800, 3);
                 ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&_bss_40, sp84, sp84, 3);
                 _bss_40.unk4A9 |= 8;

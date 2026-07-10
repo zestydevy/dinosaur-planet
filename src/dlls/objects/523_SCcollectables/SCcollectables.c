@@ -62,7 +62,7 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
 
     //Check if already knocked out of tree
     if (objdata->gamebitFall != NO_GAMEBIT) {
-        if (main_get_bits(objdata->gamebitFall)) {
+        if (mainGetBits(objdata->gamebitFall)) {
             SCcollectables_handle_motion(self, TRUE);
         }
     } else {
@@ -72,7 +72,7 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
     //Check if already collected
     objdata->gamebitCollected = objsetup->gamebitCollected;
     if (objdata->gamebitCollected != NO_GAMEBIT) {
-        self->unkDC = main_get_bits(objdata->gamebitCollected);
+        self->unkDC = mainGetBits(objdata->gamebitCollected);
     } else {
         self->unkDC = 0;
     }
@@ -115,7 +115,7 @@ void SCcollectables_control(Object* self) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
     //Check if should fall from tree
-    if (objdata->gamebitFall != NO_GAMEBIT && main_get_bits(objdata->gamebitFall)) {
+    if (objdata->gamebitFall != NO_GAMEBIT && mainGetBits(objdata->gamebitFall)) {
         objdata->fallFlags |= FLAG_Fall_Start;
     }
     
@@ -146,7 +146,7 @@ void SCcollectables_control(Object* self) {
 
         //Check if collection gamebit was reset
         if ((objdata->gamebitCollected != NO_GAMEBIT) && 
-            (main_get_bits(objdata->gamebitCollected) == FALSE)
+            (mainGetBits(objdata->gamebitCollected) == FALSE)
         ) {
             self->unkDC = 0;
         }
@@ -310,12 +310,12 @@ void SCcollectables_collect(Object* self) {
     
     //Set collection gamebit (if it's in use)
     if (objdata->gamebitCollected != NO_GAMEBIT) {
-        main_set_bits(objdata->gamebitCollected, 1);
+        mainSetBits(objdata->gamebitCollected, 1);
     }
 
     //Increment counter gamebit (if it's in use)
     if (objsetup->gamebitCount > 0) {
-        main_set_bits(objsetup->gamebitCount, main_get_bits(objsetup->gamebitCount) + 1);
+        mainSetBits(objsetup->gamebitCount, mainGetBits(objsetup->gamebitCount) + 1);
     }
     
     //Hide self

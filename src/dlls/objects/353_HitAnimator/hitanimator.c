@@ -51,7 +51,7 @@ void HitAnimator_setup(Object* self, HitAnimator_Setup* objSetup, s32 arg2) {
     objData->active = objSetup->mode & HitAnimator_Mode_Invert;
     objData->flags = HitAnimator_No_Flags;
 
-    if (main_get_bits(objSetup->gamebitActivate)) {
+    if (mainGetBits(objSetup->gamebitActivate)) {
         objData->active ^= 1;
         if (objSetup->enableFlag1 == TRUE) {
             objData->flags |= HitAnimator_Flag_1;
@@ -68,7 +68,7 @@ void HitAnimator_setup(Object* self, HitAnimator_Setup* objSetup, s32 arg2) {
         objData->flags |= HitAnimator_Flag_BLOCK_Animate_Needed;
     }
 
-    gamebitValue = main_get_bits(objSetup->gamebitActivate);
+    gamebitValue = mainGetBits(objSetup->gamebitActivate);
     objData->gamebitStatePrev = gamebitValue;
     objData->gamebitState = gamebitValue;
 }
@@ -92,7 +92,7 @@ void HitAnimator_control(Object* self) {
     }
 
     //Check if gamebit's value changed
-    objData->gamebitState = main_get_bits(objSetup->gamebitActivate);
+    objData->gamebitState = mainGetBits(objSetup->gamebitActivate);
     if (objData->gamebitStatePrev != objData->gamebitState) {
         objData->active ^= 1;
         if (objSetup->enableFlag1 == TRUE) {

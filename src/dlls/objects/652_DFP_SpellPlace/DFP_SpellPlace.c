@@ -45,7 +45,7 @@ void dll_652_setup(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
     self->animCallback = dll_652_func_45C;
     objdata->unk0 = setup->unk1E;
     objdata->unk2 = setup->unk20;
-    if (main_get_bits(objdata->unk2) != 0 && main_get_bits(objdata->unk0) != 0) {
+    if (mainGetBits(objdata->unk2) != 0 && mainGetBits(objdata->unk0) != 0) {
         objdata->unk4 = 1;
     } else {
         self->unkAF |= 8;
@@ -100,15 +100,15 @@ static void dll_652_func_254(Object* self) {
     s16 bit1Val;
 
     objdata = self->data;
-    bit2Val = main_get_bits(objdata->unk2);
-    bit1Val = main_get_bits(objdata->unk0);
+    bit2Val = mainGetBits(objdata->unk2);
+    bit1Val = mainGetBits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         if (bit2Val && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_CRF)) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
-            main_set_bits(objdata->unk0, 1);
+            mainSetBits(objdata->unk0, 1);
         }
     }
 }
@@ -120,8 +120,8 @@ static void dll_652_func_364(Object* self) {
     s16 bit1Val;
 
     objdata = (DLL652_Data*)self->data;
-    bit2Val = main_get_bits(objdata->unk2);
-    bit1Val = main_get_bits(objdata->unk0);
+    bit2Val = mainGetBits(objdata->unk2);
+    bit1Val = mainGetBits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~8;
         if (bit2Val && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {

@@ -97,12 +97,12 @@ void CRCloudRace_do(Object *self) {
     player = get_player();
     switch (objdata->state) {
     case STATE_Pre_Race:
-        if (main_get_bits(BIT_4A0)) {
-            main_set_bits(BIT_CF_Killed_Sharpclaw_In_Treasure_Room, 1);
+        if (mainGetBits(BIT_4A0)) {
+            mainSetBits(BIT_CF_Killed_Sharpclaw_In_Treasure_Room, 1);
         }
         if (((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player)) {
-            main_set_bits(BIT_Play_Seq_0206_CF_Race_Intro, 1);
-            main_set_bits(BIT_CF_Race_Started, 1);
+            mainSetBits(BIT_Play_Seq_0206_CF_Race_Intro, 1);
+            mainSetBits(BIT_CF_Race_Started, 1);
             objdata->state = STATE_Race;
         }
         break;
@@ -110,8 +110,8 @@ void CRCloudRace_do(Object *self) {
         CRCloudRace_do_race(self, objdata);
         break;
     case STATE_Race_Won:
-        main_set_bits(BIT_CF_Killed_Sharpclaw_In_Treasure_Room, 0);
-        if (main_get_bits(BIT_Played_Seq_02A9_CF_Race_End)) {
+        mainSetBits(BIT_CF_Killed_Sharpclaw_In_Treasure_Room, 0);
+        if (mainGetBits(BIT_Played_Seq_02A9_CF_Race_End)) {
             func_80000450(self, player, 464, 0, 0, 0);
         }
         break;
@@ -134,25 +134,25 @@ void CRCloudRace_do_race(Object *self, CRCloudRace_Data *objdata) {
 
     distance = 5e7f;
     player = get_player();
-    if (!main_get_bits(BIT_Play_Seq_02AA_CF_Lose_Race)) {
-        if (main_get_bits(BIT_SpellStone_CRF)) {
+    if (!mainGetBits(BIT_Play_Seq_02AA_CF_Lose_Race)) {
+        if (mainGetBits(BIT_SpellStone_CRF)) {
             objdata->state = STATE_Race_Won;
-            main_set_bits(BIT_CF_Race_Started, 0);
-            main_set_bits(BIT_Play_Seq_0206_CF_Race_Intro, 0);
+            mainSetBits(BIT_CF_Race_Started, 0);
+            mainSetBits(BIT_Play_Seq_0206_CF_Race_Intro, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 2, 0);
         }
     } else {
-        main_set_bits(BIT_Play_Seq_02AA_CF_Lose_Race, 1);
-        if (main_get_bits(BIT_Played_Seq_02AA_CF_Lose_Race) && !((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player)) {
-            main_set_bits(BIT_CF_Race_Started, 0);
+        mainSetBits(BIT_Play_Seq_02AA_CF_Lose_Race, 1);
+        if (mainGetBits(BIT_Played_Seq_02AA_CF_Lose_Race) && !((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player)) {
+            mainSetBits(BIT_CF_Race_Started, 0);
             // reset sequences
-            main_set_bits(BIT_Play_Seq_0206_CF_Race_Intro, 0);
-            main_set_bits(BIT_Played_Seq_0206_CF_Race_Intro, 0);
-            main_set_bits(BIT_Play_Seq_02AA_CF_Lose_Race, 0);
-            main_set_bits(BIT_Played_Seq_02AA_CF_Lose_Race, 0);
+            mainSetBits(BIT_Play_Seq_0206_CF_Race_Intro, 0);
+            mainSetBits(BIT_Played_Seq_0206_CF_Race_Intro, 0);
+            mainSetBits(BIT_Play_Seq_02AA_CF_Lose_Race, 0);
+            mainSetBits(BIT_Played_Seq_02AA_CF_Lose_Race, 0);
             // replay sharpclaw sequence
-            main_set_bits(BIT_Played_Seq_02AC_CF_Sharpclaw_With_Spellstone, 0);
-            main_set_bits(BIT_Play_Seq_02AC_CF_Sharpclaw_With_Spellstone, 1);
+            mainSetBits(BIT_Played_Seq_02AC_CF_Sharpclaw_With_Spellstone, 0);
+            mainSetBits(BIT_Play_Seq_02AC_CF_Sharpclaw_With_Spellstone, 1);
             spellstone = obj_get_nearest_type_to(OBJTYPE_32, self, &distance);
             if (spellstone) {
                 ((DLL_730_CRSpellstone*)spellstone->dll)->vtbl->func7(spellstone, 1);

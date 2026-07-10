@@ -212,7 +212,7 @@ s32 mainmenu_update1(void) {
     if (nextMenuID) {
         if (prevExitTransitionTimer > MENU_TRANSITION_THRESHOLD && sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {
             //Change resolution for game select
-            vi_init(14, get_ossched(), FALSE);
+            vi_init(14, mainGetScheduler(), FALSE);
             mainmenu_clean_up();
             track_set_z_buffer_on(FALSE);
             track_set_sky_on(FALSE);
@@ -220,7 +220,7 @@ s32 mainmenu_update1(void) {
                 gDLL_29_Gplay->vtbl->save_game_options();
             }
         } else if (sExitTransitionTimer < 1) {
-            main_change_map(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, nextMenuID);
+            mainChangeMap(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, nextMenuID);
         }
 
         if (sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {
@@ -286,7 +286,7 @@ void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
         fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
         fontWindowFlushStrings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
-        if (main_demo_finished()) {
+        if (mainDemoFinished()) {
             rcp_screen_full_write(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
         fontWindowDraw(gfx, NULL, NULL, 1);

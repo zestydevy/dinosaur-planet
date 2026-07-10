@@ -84,7 +84,7 @@ void VFP_LevelControl_control(Object* self) {
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
                 func_80000450(self, self, 0x178, 0, 0, 0);
-                main_set_bits(BIT_SpellStone_DIM, 1);
+                mainSetBits(BIT_SpellStone_DIM, 1);
             }
         }
         VFP_LevelControl_func_8EC(self);
@@ -95,7 +95,7 @@ void VFP_LevelControl_control(Object* self) {
             _data_0 -= (s16)gUpdateRateF;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                main_set_bits(BIT_DB_Unlock_Act_Two, 1);
+                mainSetBits(BIT_DB_Unlock_Act_Two, 1);
                 func_80000860(self, self, 0x105, 0);
                 func_80000860(self, self, 0x106, 0);
                 func_80000860(self, self, 0x107, 0);
@@ -105,8 +105,8 @@ void VFP_LevelControl_control(Object* self) {
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
                 func_80000450(self, self, 0x178, 0, 0, 0);
-                main_set_bits(BIT_SpellStone_WC, 1);
-                main_set_bits(BIT_SpellStone_DIM_Activated, 1);
+                mainSetBits(BIT_SpellStone_WC, 1);
+                mainSetBits(BIT_SpellStone_DIM_Activated, 1);
             }
         }
         VFP_LevelControl_func_A08(self);
@@ -116,8 +116,8 @@ void VFP_LevelControl_control(Object* self) {
             _data_0 -= (s16)gUpdateRateF;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                main_set_bits(BIT_DB_Unlock_Act_Two, 1);
-                main_set_bits(BIT_DB_Unlock_Act_Three, 1);
+                mainSetBits(BIT_DB_Unlock_Act_Two, 1);
+                mainSetBits(BIT_DB_Unlock_Act_Three, 1);
                 func_80000860(self, self, 0x105, 0);
                 func_80000860(self, self, 0x106, 0);
                 func_80000860(self, self, 0x107, 0);
@@ -126,7 +126,7 @@ void VFP_LevelControl_control(Object* self) {
                 func_80000450(self, self, 0x168, 0, 0, 0);
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
-                main_set_bits(BIT_SpellStone_DR, 1);
+                mainSetBits(BIT_SpellStone_DR, 1);
             }
         }
         VFP_LevelControl_func_AAC(self);
@@ -162,17 +162,17 @@ static void VFP_LevelControl_func_8EC(Object *self) {
     Object *player = get_player();
 
     if (_data_4 != 0) {
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_4 = 0;
     }
 
-    if (main_get_bits(BIT_VFP_Flamethrower_Turned_Off) == 0 && 
-            main_get_bits(BIT_VFP_Entered_Snake_Flame_Room_1) == 0 && 
-            main_get_bits(BIT_VFP_Entered_Snake_Flame_Room_1_2) == 0 && 
-            main_get_bits(BIT_VFP_Flamethrower_Turned_Off_2) != 0) {
-        main_set_bits(BIT_VFP_Flamethrower_Turned_Off, 1);
+    if (mainGetBits(BIT_VFP_Flamethrower_Turned_Off) == 0 && 
+            mainGetBits(BIT_VFP_Entered_Snake_Flame_Room_1) == 0 && 
+            mainGetBits(BIT_VFP_Entered_Snake_Flame_Room_1_2) == 0 && 
+            mainGetBits(BIT_VFP_Flamethrower_Turned_Off_2) != 0) {
+        mainSetBits(BIT_VFP_Flamethrower_Turned_Off, 1);
     }
 }
 
@@ -183,8 +183,8 @@ static void VFP_LevelControl_func_A08(Object *self) {
     Object *player = get_player();
 
     if (_data_8 != 0) {
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_8 = 0;
     }
@@ -197,8 +197,8 @@ static void VFP_LevelControl_func_AAC(Object *self) {
     Object *player = get_player();
 
     if (_data_C != 0) {
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_C = 0;
     }

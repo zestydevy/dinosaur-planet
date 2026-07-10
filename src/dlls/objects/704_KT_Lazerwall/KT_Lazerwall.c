@@ -53,13 +53,13 @@ void dll_704_control(Object* self) {
     objsetup = (KT_Lazerwall_Setup*)self->setup;
     objdata->unk1 = objdata->unk0;
     objdata->unk0 &= ~0x3;
-    temp_v0_2 = main_get_bits(objsetup->unk1A);
+    temp_v0_2 = mainGetBits(objsetup->unk1A);
     if (temp_v0_2 >= objsetup->unk1C) {
         objdata->unk0 |= 0x4;
     } else {
         objdata->unk0 &= ~0x4;
 
-        if (main_get_bits(objsetup->unk1E) == 0) {
+        if (mainGetBits(objsetup->unk1E) == 0) {
             return;
         }
     }
@@ -67,7 +67,7 @@ void dll_704_control(Object* self) {
     self->srt.roll += 0x38E;
     if (temp_v0_2 >= 0xF) {
         if (objdata->unkC <= 0.0f) {
-            main_set_bits(objsetup->unk1E, 1);
+            mainSetBits(objsetup->unk1E, 1);
             objdata->unk0 |= 9;
         }
         objdata->unkC = 120.0f;
@@ -75,7 +75,7 @@ void dll_704_control(Object* self) {
     if (objdata->unkC > 0.0f) {
         objdata->unkC -= gUpdateRateF;
         if (objdata->unkC <= 0.0f) {
-            main_set_bits(objsetup->unk1E, 0);
+            mainSetBits(objsetup->unk1E, 0);
             objdata->unk0 &= ~0x8;
         }
     }

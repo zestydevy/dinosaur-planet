@@ -84,9 +84,9 @@ void dll_662_func_1670(Object* self) {
     setup = (DBEgg_Setup*)self->setup;
     obj_free_object_type(self, OBJTYPE_38);
     objdata->unk10C = 3;
-    main_set_bits(BIT_DB_Picked_Up_Egg, 1U);
+    mainSetBits(BIT_DB_Picked_Up_Egg, 1U);
     self->unkAF |= 8;
-    main_set_bits((s32) setup->unk1C, 1U);
+    mainSetBits((s32) setup->unk1C, 1U);
     obj_send_mesg(sp2C, 0x7000AU, self, (void* )0x10000);
 }
 

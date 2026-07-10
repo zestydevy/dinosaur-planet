@@ -66,7 +66,7 @@ void DIMLavaBallGenerator_setup(Object *self, DIMLavaBallGenerator_Setup *setup,
     objdata->timerMax = setup->timerMax;
     objdata->timer = 0;
     objdata->index = setup->index;
-    objdata->unk14 = main_get_bits(setup->gamebit2);
+    objdata->unk14 = mainGetBits(setup->gamebit2);
     if ((setup->gamebit3 == -1) && !objdata->unk14) {
         objdata->unk17 = 1;
     }
@@ -97,9 +97,9 @@ void DIMLavaBallGenerator_control(Object *self) {
             ((objdata->index + 1) * size), size);
         objdata->loaded = TRUE;
     }
-    objdata->unk16 = main_get_bits(setup->gamebit3);
+    objdata->unk16 = mainGetBits(setup->gamebit3);
     if (objdata->unk17 != 0) {
-        if (main_get_bits(setup->gamebit1)) {
+        if (mainGetBits(setup->gamebit1)) {
             objdata->unk16 = 1;
             objdata->unk17 = 0;
             objdata->timer = 0;
@@ -136,7 +136,7 @@ void DIMLavaBallGenerator_control(Object *self) {
     }
 
     if (objdata->unk16 != 0) {
-        if (main_get_bits(setup->gamebit1) && (objdata->unk14 == 0)) {
+        if (mainGetBits(setup->gamebit1) && (objdata->unk14 == 0)) {
             var_a1 = setup->unk20;
             objdata->unk14 = 1;
         } else {

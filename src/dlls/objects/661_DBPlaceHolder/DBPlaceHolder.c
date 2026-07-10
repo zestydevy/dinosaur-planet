@@ -41,7 +41,7 @@ void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     self->animCallback = DBPlaceHolder_anim_callback;
     objdata->flags = 0;
-    if (main_get_bits(setup->gamebit1)) {
+    if (mainGetBits(setup->gamebit1)) {
         self->unkAF |= 8;
         objdata->flags |= 1;
         if (setup->unk20 != 0) {
@@ -63,17 +63,17 @@ void DBPlaceHolder_control(Object *self) {
 
     setup = (DBPlaceHolder_Setup*)self->setup;
     objdata = self->data;
-    if ((setup->unk1F == 1) && !(objdata->flags & 4) && main_get_bits(setup->gamebit2)) {
+    if ((setup->unk1F == 1) && !(objdata->flags & 4) && mainGetBits(setup->gamebit2)) {
         obj_add_object_type(self, OBJTYPE_39);
         objdata->flags |= 4;
     }
     if (objdata->flags & 2) {
-        main_set_bits(setup->gamebit1, 1);
+        mainSetBits(setup->gamebit1, 1);
         self->unkAF |= 8;
         objdata->flags &= ~2;
         objdata->flags |= 1;
     }
-    if (!(objdata->flags & 1) && (self->unkAF & 1) && main_get_bits(setup->gamebit2)) {
+    if (!(objdata->flags & 1) && (self->unkAF & 1) && mainGetBits(setup->gamebit2)) {
         player = get_player();
         x = player->srt.transl.x - self->srt.transl.x;
         z = player->srt.transl.z - self->srt.transl.z;
@@ -133,7 +133,7 @@ int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
 
     setup = (DBPlaceHolder_Setup*)self->setup;
     if (animObjData->lastMessage == 2) {
-        main_set_bits(setup->gamebit1, 1);
+        mainSetBits(setup->gamebit1, 1);
     }
     return 0;
 }

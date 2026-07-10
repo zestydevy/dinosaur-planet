@@ -434,7 +434,7 @@ static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* 
 
     for (i = 0; i < animObjdata->messageCount; i++){
         if (animObjdata->messages[i] == 3) {
-            main_set_bits(BIT_Map_SW, 1);
+            mainSetBits(BIT_Map_SW, 1);
             continue;
         }        
     }
@@ -581,16 +581,16 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     switch (objdata->flags) {
         u32 rootsEaten;
         case 0:
-            if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+            if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
                 objdata->flags = 1;
             }
             break;    
         case 1:
-            rootsEaten = main_get_bits(BIT_SnowHorn_Tutorial_NumRootsFed);
+            rootsEaten = mainGetBits(BIT_SnowHorn_Tutorial_NumRootsFed);
             switch (rootsEaten) {
                 case 0:
-                    if (main_get_bits(BIT_SnowHorn_Tutorial_GotAlpineRoot1) || 
-                        main_get_bits(BIT_SnowHorn_Tutorial_GotAlpineRoot2))
+                    if (mainGetBits(BIT_SnowHorn_Tutorial_GotAlpineRoot1) || 
+                        mainGetBits(BIT_SnowHorn_Tutorial_GotAlpineRoot2))
                     {
                         objdata->flags = 2;
                     }
@@ -605,8 +605,8 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
             break;
         case 2:
             if ((snowhorn->unkAF & 4) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
-                main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
-                main_decrement_bits(BIT_SW_Alpine_Roots);
+                mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
+                mainDecrementBits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
                 objdata->flags = 4;
                 return;
@@ -614,8 +614,8 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
             break;
         case 4:
             if ((snowhorn->unkAF & 4) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
-                main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
-                main_decrement_bits(BIT_SW_Alpine_Roots);
+                mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
+                mainDecrementBits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
                 objdata->flags = 6;
                 return;
@@ -821,13 +821,13 @@ static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     }
 
     if (setup->unk1D == new_var){
-        if (main_get_bits(BIT_SpellStone_DIM_Activated)){
+        if (mainGetBits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E8;
             objdata->unk426 = 2.0f;
-        } else if (main_get_bits(BIT_SpellStone_DIM)){
+        } else if (mainGetBits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2DC;
             objdata->unk426 = 1.0f;
-        } else if (main_get_bits(BIT_Tricky_Learned_Distract)){
+        } else if (mainGetBits(BIT_Tricky_Learned_Distract)){
             objdata->chatSequenceList = _data_2D4;
             objdata->unk426 = 1.0f;
         } else {
@@ -835,13 +835,13 @@ static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
             objdata->unk426 = 2.0f;
         }
     } else {
-        if (main_get_bits(BIT_SpellStone_DIM_Activated)){
+        if (mainGetBits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E0;
             objdata->unk426 = 2.0f;
-        } else if (main_get_bits(BIT_SpellStone_DIM)){
+        } else if (mainGetBits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2D8;
             objdata->unk426 = 1.0f;
-        } else if (main_get_bits(BIT_Tricky_Learned_Distract)){
+        } else if (mainGetBits(BIT_Tricky_Learned_Distract)){
             objdata->chatSequenceList = _data_2D0;
             objdata->unk426 = 1.0f;
         } else {
@@ -923,18 +923,18 @@ static void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     u16 questValue;
     u16 questEnd = 6;
 
-    questValue = (objdata->flags = main_get_bits(BIT_Garunda_Te_Quest_Progress));
+    questValue = (objdata->flags = mainGetBits(BIT_Garunda_Te_Quest_Progress));
     
     /** If the 1st SpellStone is activated, makes sure Garunda Te's flags are in their end state */
-    if (questValue < questEnd && main_get_bits(BIT_SpellStone_DIM)){
+    if (questValue < questEnd && mainGetBits(BIT_SpellStone_DIM)){
         objdata->flags = questEnd;
         questValue = objdata->flags;
-        main_set_bits(BIT_Garunda_Te_Quest_Progress, questValue);
+        mainSetBits(BIT_Garunda_Te_Quest_Progress, questValue);
     }
     
     objdata->someAnimIDList = _data_288;
     objdata->unk48 = _data_298;
-    objdata->garundaTe_weedsEaten = main_get_bits(BIT_Garunda_Te_Weeds_Eaten);
+    objdata->garundaTe_weedsEaten = mainGetBits(BIT_Garunda_Te_Weeds_Eaten);
 }
 
 static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* setup) {
@@ -959,7 +959,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->flags = 2;
-                main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
+                mainSetBits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
             }
             break;
         case 2:
@@ -981,7 +981,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
                     if (objdata->garundaTe_weedsEaten > GARUNDA_TE_WEEDS_NEEDED) {
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
                     }
-                    main_set_bits(BIT_Garunda_Te_Weeds_Eaten, objdata->garundaTe_weedsEaten);
+                    mainSetBits(BIT_Garunda_Te_Weeds_Eaten, objdata->garundaTe_weedsEaten);
                     objdata->flags = 3;
                 }
             }
@@ -995,9 +995,9 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             if (objdata->unk424 & 8) {
                 weeds = objdata->garundaTe_weedsEaten;
                 if (weeds >= GARUNDA_TE_WEEDS_NEEDED) {
-                    main_set_bits(BIT_Garunda_Te_Fed, 1);
+                    mainSetBits(BIT_Garunda_Te_Fed, 1);
                     objdata->flags = 5;
-                    main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
+                    mainSetBits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
                     break;
                 }
                 if (weeds % 3 == 0) {
@@ -1022,9 +1022,9 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             } else if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {
-                main_set_bits(BIT_SpellStone_DIM_Activated, 1);
+                mainSetBits(BIT_SpellStone_DIM_Activated, 1);
                 objdata->flags = 7;
-                main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
+                mainSetBits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
             }
             break;
         case 7:

@@ -198,7 +198,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x5B4 | func: 4 | export: 4
 void dll_658_free(Object *self, s32 arg1) {
-    remove_temp_dll(0x35);
+    mainRemoveTempDLL(0x35);
 }
 
 // offset: 0x5F8 | func: 5 | export: 5
@@ -227,7 +227,7 @@ s32 dll_658_func_61C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
     }
     
     if (temp_v1->unk4 != NO_GAMEBIT) {
-        if (main_get_bits(temp_v1->unk4)) {
+        if (mainGetBits(temp_v1->unk4)) {
             return 4;
         }
     }
@@ -284,14 +284,14 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
         }
         
         func_80024108(self, 0.004f, gUpdateRate, 0);
-        if (main_get_bits(BIT_424) && main_get_bits(BIT_425)) {
+        if (mainGetBits(BIT_424) && mainGetBits(BIT_425)) {
             objData = self->data;
             objData->unk524++;
             return 1;
         }
         
-        main_get_bits(BIT_428); //@bug: called without being stored/used
-        if (main_get_bits(BIT_428) >= 4) {
+        mainGetBits(BIT_428); //@bug: called without being stored/used
+        if (mainGetBits(BIT_428) >= 4) {
             return 1;
         }
     }
@@ -312,23 +312,23 @@ s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
             joyGetPressed(0); //@bug: called without being used/stored
             
             if (joyGetPressed(0) & B_BUTTON) {
-                main_set_bits(BIT_42A, 1);
+                mainSetBits(BIT_42A, 1);
             } else {
                 return 1;
             }
         }
         arg1->unk8E = 0;
         
-    } else if (main_get_bits(BIT_42A)) {
-        main_set_bits(BIT_41F, 0);
-        main_set_bits(BIT_425, 0);
-        main_set_bits(BIT_428, 0);
-        main_set_bits(BIT_420, 0);
-        main_set_bits(BIT_422, 0);
-        main_set_bits(BIT_423, 0);
-        main_set_bits(BIT_427, 0);
-        main_set_bits(BIT_42A, 0);
-        main_set_bits(BIT_426, 0);
+    } else if (mainGetBits(BIT_42A)) {
+        mainSetBits(BIT_41F, 0);
+        mainSetBits(BIT_425, 0);
+        mainSetBits(BIT_428, 0);
+        mainSetBits(BIT_420, 0);
+        mainSetBits(BIT_422, 0);
+        mainSetBits(BIT_423, 0);
+        mainSetBits(BIT_427, 0);
+        mainSetBits(BIT_42A, 0);
+        mainSetBits(BIT_426, 0);
         
         _bss_0[0].unk6 = 13;
         _bss_0[1].unk6 = -1;

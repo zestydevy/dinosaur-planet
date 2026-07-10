@@ -50,7 +50,7 @@ void dll_320_setup(Object* self, DLL320_Setup* setup, s32 arg2) {
         self->shadow->maxDistScale = self->shadow->scale * 0.5f;
     }
     objdata->unk1 = 2;
-    objdata->unk0 = main_get_bits((s32) setup->unk1C);
+    objdata->unk0 = mainGetBits((s32) setup->unk1C);
     temp_v1_3 = self->objhitInfo;
     self->srt.scale = self->def->scale * sp20;
     temp_v1_3->unk52 = (s16) (s32) ((f32) temp_v1_3->unk52 * sp20);
@@ -88,7 +88,7 @@ void dll_320_control(Object* self) {
         temp_v0->unk58 &= 0xFFFE;
         gDLL_6_AMSFX->vtbl->play(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp40->unk1C != -1) {
-            main_set_bits((s32) sp40->unk1C, 1U);
+            mainSetBits((s32) sp40->unk1C, 1U);
         }
         sp3C = 50.0f;
         temp_v0_2 = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &sp3C);

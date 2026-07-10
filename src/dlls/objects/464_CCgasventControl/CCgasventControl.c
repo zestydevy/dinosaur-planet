@@ -43,7 +43,7 @@ void CCgasventControl_dtor(void *dll) { }
 void CCgasventControl_setup(Object *self, CCgasventControl_Setup *setup, s32 arg2) {
     CCgasventControl_Data *objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    if (main_get_bits(BIT_CC_Completed_Gas_Chamber_Puzzle)) {
+    if (mainGetBits(BIT_CC_Completed_Gas_Chamber_Puzzle)) {
         objdata->state = STATE_Puzzle_Completed;
     }
 }
@@ -65,7 +65,7 @@ void CCgasventControl_control(Object *self) {
             objdata->state = STATE_Unstarted;
         break;
     case STATE_Unstarted:
-        if (main_get_bits(BIT_3EC)) {
+        if (mainGetBits(BIT_3EC)) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objdata->state = STATE_Puzzle;
         }

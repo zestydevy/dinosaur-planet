@@ -360,7 +360,7 @@ void SHkillermushroom_control(Object* self) {
 
         //Optionally set a gamebit when the mushroom is attacked
         if (objSetup->gamebitAttacked != NO_GAMEBIT) {
-            main_set_bits(objSetup->gamebitAttacked, TRUE);
+            mainSetBits(objSetup->gamebitAttacked, TRUE);
         }
 
         objData->state = SHkillermushroom_STATE_9_Stunned;

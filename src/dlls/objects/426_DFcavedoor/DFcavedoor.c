@@ -23,7 +23,7 @@ void dll_426_setup(Object* self, DLL426Setup* setup, s32 arg2) {
 
 // offset: 0x48 | func: 1 | export: 1
 void dll_426_control(Object* self) {
-    if (!(self->srt.flags & OBJFLAG_INVISIBLE) && (main_get_bits(BIT_293) != 0)) {
+    if (!(self->srt.flags & OBJFLAG_INVISIBLE) && (mainGetBits(BIT_293) != 0)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
     }
 }

@@ -46,8 +46,8 @@ void dll_780_setup(Object *self, WCBeacon_Setup *setup, s32 arg2) {
         self->modelInstIdx = 0;
     }
 
-    if (main_get_bits(setup->unk20) != 0) {
-        if (main_get_bits(setup->unk1E) != 0) {
+    if (mainGetBits(setup->unk20) != 0) {
+        if (mainGetBits(setup->unk1E) != 0) {
             objdata->state = WCBEACON_STATE_3;
         } else {
             objdata->state = WCBEACON_STATE_1;
@@ -71,7 +71,7 @@ void dll_780_control(Object *self) {
     setup = (WCBeacon_Setup*)self->setup;
     
     if (objdata->state == WCBEACON_STATE_1) {
-        if (main_get_bits(setup->unk20) == 0) {
+        if (mainGetBits(setup->unk20) == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->state = WCBEACON_STATE_0;
         }
@@ -83,7 +83,7 @@ void dll_780_control(Object *self) {
             objdata->unk0 = 0.0f;
         }
     } else if (objdata->state == WCBEACON_STATE_0) {
-        if (main_get_bits(setup->unk20) != 0) {
+        if (mainGetBits(setup->unk20) != 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objdata->state = WCBEACON_STATE_1;
         }
@@ -104,7 +104,7 @@ void dll_780_control(Object *self) {
         }
     } else if (objdata->state == WCBEACON_STATE_3) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_73A, NULL, PARTFXFLAG_2, -1, NULL);
-        main_set_bits(setup->unk1E, 1);
+        mainSetBits(setup->unk1E, 1);
         temp_v0_2 = func_800348A0(self, 0, 0);
         if (temp_v0_2 != NULL) {
             temp_v0_2->frame = MAX_FRAME;

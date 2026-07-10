@@ -102,11 +102,11 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
         objData->pStartZ = objSetup->base.z;
         objData->timer = 500;
         objData->speed = 1;
-        if ((id == OBJ_WM_Platform) && main_get_bits(BIT_322)) {
+        if ((id == OBJ_WM_Platform) && mainGetBits(BIT_322)) {
             self->srt.transl.x = 34022.0f;
             self->srt.transl.y = 457.0f;
             self->srt.transl.z = 22523.0f;
-        } else if ((id == OBJ_WM_Platform) && main_get_bits(BIT_369)) {
+        } else if ((id == OBJ_WM_Platform) && mainGetBits(BIT_369)) {
             self->srt.transl.x = 34022.0f;
             self->srt.transl.y = 457.0f;
             self->srt.transl.z = 22523.0f;
@@ -148,7 +148,7 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
         self->srt.yaw = objSetup->yaw << 8;
         self->modelInstIdx = objSetup->modelInstanceIdx;
         objData->gamebitA = objSetup->gamebitB;
-        if (main_get_bits(objData->gamebitA)) {
+        if (mainGetBits(objData->gamebitA)) {
             self->srt.transl.y = objSetup->base.y + 30.0f;
             return;
         }
@@ -315,7 +315,7 @@ void dll_331_control(Object* self) {
         }
         break;
     case OBJ_DFP_blockwall: //0x4bf
-        if ((self->srt.transl.f[1] < (objSetup->base.y + 30.0f)) && (main_get_bits(objData->gamebitA))) {
+        if ((self->srt.transl.f[1] < (objSetup->base.y + 30.0f)) && (mainGetBits(objData->gamebitA))) {
             self->srt.transl.f[1] += gUpdateRateF;
         }
         break;
@@ -340,7 +340,7 @@ void dll_331_control(Object* self) {
         }
         break;
     case OBJ_WMlargerock: //0x2b7
-        if (main_get_bits(objData->gamebitA) == 0) {
+        if (mainGetBits(objData->gamebitA) == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
         break;
@@ -352,7 +352,7 @@ void dll_331_control(Object* self) {
         break;
     case OBJ_WM_Walkway1: //0x293
     case OBJ_WM_Walkway2: //0x294
-        if ((objData->gamebitA != -1) && (main_get_bits(objData->gamebitA) != 0)) {
+        if ((objData->gamebitA != -1) && (mainGetBits(objData->gamebitA) != 0)) {
             if (self->srt.pitch <= 0) {
                 self->srt.pitch += 50;
             } else {
@@ -363,11 +363,11 @@ void dll_331_control(Object* self) {
     case OBJ_WM_Platform: //0x295
         if (objData->gamebitA != -1) {
             objData2 = objData;
-            if ((main_get_bits(objData2->gamebitA)) && (objData2->tValue <= 1.0f) && (objData2->timer == 0)) {
+            if ((mainGetBits(objData2->gamebitA)) && (objData2->tValue <= 1.0f) && (objData2->timer == 0)) {
                 if (objData2->gamebitB != -1) {
-                    if (main_get_bits(objData2->gamebitB)) {
+                    if (mainGetBits(objData2->gamebitB)) {
                         objData2->timer = 400;
-                        main_set_bits(objData2->gamebitB, 0);
+                        mainSetBits(objData2->gamebitB, 0);
                     }
                 }
                 objData2->tValue += 0.001f * objData2->speed * gUpdateRateF;
@@ -375,12 +375,12 @@ void dll_331_control(Object* self) {
                     objData2->tValue = 1.0f;
                     objData2->speed *= -1;
                     objData2->timer = 400;
-                    main_set_bits(BIT_322, 1);
+                    mainSetBits(BIT_322, 1);
                 } else if (objData2->tValue < 0.0f) {
                     objData2->tValue = 0.0f;
                     objData2->speed *= -1;
                     objData2->timer = 400;
-                    main_set_bits(BIT_322, 0);
+                    mainSetBits(BIT_322, 0);
                 }
 
                 //Lerping for the platform, with different paths based on gamebitID
@@ -409,10 +409,10 @@ void dll_331_control(Object* self) {
             objData->timer -= gUpdateRate;
             if (objData->timer <= 0) {
                 objData->timer = 0;
-                if (main_get_bits(BIT_322) != 0) {
-                    main_set_bits(BIT_322, 0);
-                } else if (main_get_bits(BIT_369) != 0) {
-                    main_set_bits(BIT_369, 0);
+                if (mainGetBits(BIT_322) != 0) {
+                    mainSetBits(BIT_322, 0);
+                } else if (mainGetBits(BIT_369) != 0) {
+                    mainSetBits(BIT_369, 0);
                 }
             }
         }
@@ -436,7 +436,7 @@ void dll_331_control(Object* self) {
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
             objData->vineHealth--;
             if (objData->vineHealth < 0) {
-                main_set_bits(objData->gamebitA, 1);
+                mainSetBits(objData->gamebitA, 1);
                 obj_destroy_object(self);
             }
         }
@@ -454,7 +454,7 @@ void dll_331_control(Object* self) {
         self->objhitInfo->unkC = 10.0f;
         self->objhitInfo->unk50 = 30;
         self->objhitInfo->unk58 |= 1;
-        if (main_get_bits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
+        if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
             self->objhitInfo->unk58 &= ~1;
         }
         if (objData->unk3E == 2) {
@@ -629,7 +629,7 @@ s32 dll_331_func_1D34(Object* self, Object* animObj, AnimObj_Data* animObjData, 
             }        
             break;
         case OBJ_WMlargerock:
-            if (main_get_bits(objData->gamebitB)) {
+            if (mainGetBits(objData->gamebitB)) {
                 animObjData->unk9D |= 4;
             }
             

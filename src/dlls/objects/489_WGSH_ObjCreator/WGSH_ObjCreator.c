@@ -49,10 +49,10 @@ void WGSH_ObjCreator_control(Object *self) {
 
     setup = (WGSH_ObjCreator_Setup*)self->setup;
     objdata = self->data;
-    if ((self->unkE0 != 0) && (main_get_bits(BIT_1D4) != 0)) {
+    if ((self->unkE0 != 0) && (mainGetBits(BIT_1D4) != 0)) {
         self->unkE0 = 0;
     }
-    if ((self->unkE0 == 0) && (main_get_bits(BIT_1D3) != 0)) {
+    if ((self->unkE0 == 0) && (mainGetBits(BIT_1D3) != 0)) {
         sp38 = dllLoadDeferred(DLL_ID_146, 1);
         sp38->vtbl->func0(self, 0, 0, 1, -1, 0);
         sp38->vtbl->func0(self, 1, 0, 1, -1, 0);

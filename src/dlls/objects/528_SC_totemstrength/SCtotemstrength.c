@@ -97,7 +97,7 @@ void SCTotemStrength_setup(Object* self, SCTotemStrength_Setup* objSetup, s32 ar
     objData->home.y = self->srt.transl.y;
     objData->home.z = self->srt.transl.z;
 
-    main_set_bits(BIT_SCTotemStrength_Inactive, 1);
+    mainSetBits(BIT_SCTotemStrength_Inactive, 1);
 }
 
 // offset: 0xB0 | func: 1 | export: 1
@@ -121,7 +121,7 @@ void SCTotemStrength_control(Object* self) {
         self->srt.yaw = YAW_NEUTRAL;
         objData->yaw = self->srt.yaw;
         objData->lightFoot = NULL;
-        main_set_bits(BIT_SCTotemStrength_Inactive, 1);
+        mainSetBits(BIT_SCTotemStrength_Inactive, 1);
     }
     
     //Handle LightFoot Strength Trial's states
@@ -147,7 +147,7 @@ void SCTotemStrength_control(Object* self) {
             objData->yaw = YAW_WIN;
             gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, 0, 0, 0, 0);
             gDLL_3_Animation->vtbl->func28(objData->pushSeq, objData->yaw);
-            main_set_bits(BIT_LightFoot_Strength_Game_Won, 1);
+            mainSetBits(BIT_LightFoot_Strength_Game_Won, 1);
             gDLL_6_AMSFX->vtbl->stop(objData->soundHandleCreak);
             objData->soundHandleCreak = 0;
             return;
@@ -160,7 +160,7 @@ void SCTotemStrength_control(Object* self) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_912_Object_Refused, MAX_VOLUME, 0, 0, 0, 0);
             gDLL_2_Camera->vtbl->change_mode(3, 0);
             gDLL_3_Animation->vtbl->func28(objData->pushSeq, objData->yaw);
-            main_set_bits(BIT_LightFoot_Strength_Game_Lost, 1);
+            mainSetBits(BIT_LightFoot_Strength_Game_Lost, 1);
             gDLL_6_AMSFX->vtbl->stop(objData->soundHandleCreak);
             objData->soundHandleCreak = 0;
             return;
@@ -214,7 +214,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
     objData = self->data;
     player = get_player();
     objData->flags |= SCTotemStrength_FLAG_Reset;
-    main_set_bits(BIT_SCTotemStrength_Inactive, 0);
+    mainSetBits(BIT_SCTotemStrength_Inactive, 0);
     
     //Handle sequence commands
     for (i = 0; i < animData->messageCount; i++) {

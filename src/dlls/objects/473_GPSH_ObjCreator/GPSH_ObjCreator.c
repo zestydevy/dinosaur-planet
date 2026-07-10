@@ -74,7 +74,7 @@ void GPSH_ObjCreator_control(Object* self) {
 
     setup = (GPSH_ObjCreator_Setup*)self->setup;
     objdata = self->data;
-    if (main_get_bits(BIT_5AF) != 0) {
+    if (mainGetBits(BIT_5AF) != 0) {
         // Reset
         self->unkE0 = 0;
         objdata->timer = 100;
@@ -84,7 +84,7 @@ void GPSH_ObjCreator_control(Object* self) {
         self->opacity = 0xFF;
     }
     if (!objdata->spawned) {
-        if ((objdata->type == 6) && (self->unkE0 == 0) && (main_get_bits(BIT_5AC) != 0)) {
+        if ((objdata->type == 6) && (self->unkE0 == 0) && (mainGetBits(BIT_5AC) != 0)) {
             // Start flybaddie spawn
             modgfx = dllLoadDeferred(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);
@@ -93,7 +93,7 @@ void GPSH_ObjCreator_control(Object* self) {
             dllFree(modgfx);
             objdata->timerRate = 1;
             self->unkE0 = 1;
-        } else if ((self->unkE0 == 0) && (main_get_bits(BIT_148) != 0)) {
+        } else if ((self->unkE0 == 0) && (mainGetBits(BIT_148) != 0)) {
             // Start pickup spawn
             modgfx = dllLoadDeferred(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);

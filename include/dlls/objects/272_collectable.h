@@ -7,7 +7,7 @@
 DLL_INTERFACE(DLL_272_Collectable) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ int (*is_collected)(Object *self);
-    /*8*/ void (*set_pause_state)(Object* self, s32 state);
+    /*8*/ void (*mainSetPauseState)(Object* self, s32 state);
     /*9*/ s32 (*get_area_value)(Object *self);
     /*10*/ void (*set_speed)(Object* self, f32 speedX, f32 speedY, f32 speedZ);
     /*11*/ void (*set_visibility)(Object* self, s32 visibility);

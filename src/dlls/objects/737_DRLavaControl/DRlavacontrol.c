@@ -67,7 +67,7 @@ void DRLavaControl_setup(Object* self, DRLavaControl_Setup* objSetup, s32 arg2) 
     objData->freezeTimer = objSetup->freezeDuration;
     objData->freezeDuration = objData->freezeTimer;
     
-    if (main_get_bits(objSetup->gameBitFrozen)) {
+    if (mainGetBits(objSetup->gameBitFrozen)) {
         isFrozen = TRUE;
     } else {
         isFrozen = FALSE;
@@ -142,9 +142,9 @@ void DRLavaControl_freeze(Object* self) {
         if (objData->freezeTimer == 0) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_80B_Crackling_Freezing, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->flags |= 1;
-            main_set_bits(objSetup->gameBitFrozen, TRUE);
+            mainSetBits(objSetup->gameBitFrozen, TRUE);
             // diPrintf(" bit set %i ", objSetup->gameBitFrozen);
-            main_increment_bits(BIT_DR_Lava_Pools_Cooled_Count);
+            mainIncrementBits(BIT_DR_Lava_Pools_Cooled_Count);
             gDLL_5_AMSEQ2->vtbl->set(self, 0x102, 0, 0, 0);
         }
     }

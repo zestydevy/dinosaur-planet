@@ -61,25 +61,25 @@ void dll_525_control(Object* self) {
 
     dll525Data = self->data;
     if (self->modelInstIdx == 5) {
-        if (main_get_bits(BIT_639) == 0) {
+        if (mainGetBits(BIT_639) == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             return;
         }
         sp40 = get_player();
         if (((DLL_210_Player*)sp40->dll)->vtbl->get_vehicle(sp40) != 0) {
-            main_set_bits(BIT_63B, 1U);
+            mainSetBits(BIT_63B, 1U);
             return;
         }
-        main_set_bits(BIT_63B, 0U);
+        mainSetBits(BIT_63B, 0U);
         return;
     }
-    if (main_get_bits(BIT_639) == 0) {
+    if (mainGetBits(BIT_639) == 0) {
         dll525Data->unk4 -= gUpdateRateF;
         if (func_80025F40(self, &sp40, &sp48, &sp44) != 0) {
             gDLL_6_AMSFX->vtbl->play(self, 0x797U, 0x7FU, NULL, NULL, 0, NULL);
             dll525Data->unkA = (s16) (dll525Data->unkA ^ 2);
             if (dll525Data->unkA & 2) {
-                main_set_bits(BIT_639, dll_525_func_684(self, dll525Data));
+                mainSetBits(BIT_639, dll_525_func_684(self, dll525Data));
             }
         }
         if (!(dll525Data->unkA & 2)) {
@@ -189,7 +189,7 @@ static s32 dll_525_func_684(Object* arg0, void* arg1) {
 static int dll_525_func_81C(Object* arg0, Object* arg1, AnimObj_Data*arg2, s8 arg3) {
     s32 var_v1;
 
-    if (main_get_bits(BIT_639) != 0) {
+    if (mainGetBits(BIT_639) != 0) {
         var_v1 = 0;
     } else {
         var_v1 = 1;

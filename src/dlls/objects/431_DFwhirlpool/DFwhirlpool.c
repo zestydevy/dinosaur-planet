@@ -34,7 +34,7 @@ void DFwhirlpool_setup(Object* self, DFwhirlpool_Setup* objSetup, s32 arg2) {
     DFwhirlpool_Data* objData = self->data;
     
     //Check if already lowered
-    if (main_get_bits(BIT_106)) {
+    if (mainGetBits(BIT_106)) {
         objData->state = DFwhirlpool_STATE_Water_Lowered;
         self->srt.transl.y -= WHIRLPOOL_LOWERED_HEIGHT;
         return;
@@ -55,7 +55,7 @@ void DFwhirlpool_control(Object* self) {
         self->srt.yaw -= gUpdateRate * WHIRLPOOL_SPEED_START;
 
         //Wait for cave wall to be demolished
-        if (main_get_bits(BIT_DF_Whirlpool_Cave_Wall_Demolished)) {
+        if (mainGetBits(BIT_DF_Whirlpool_Cave_Wall_Demolished)) {
             objData->state = DFwhirlpool_STATE_Draining;
             gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
             objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77A_Water_Draining_Loop, MAX_VOLUME, 0, 0, 0, 0);

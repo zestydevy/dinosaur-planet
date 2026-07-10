@@ -108,7 +108,7 @@ void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     objData->capacity = 0;
     objData->bagSlots = gDLL_29_Gplay->vtbl->get_player_foodbag();
 
-    if (main_get_bits(BIT_Foodbag_Setting_Eat_First)) {
+    if (mainGetBits(BIT_Foodbag_Setting_Eat_First)) {
         objData->eatFirst = TRUE;
     } else {
         objData->eatFirst = FALSE;
@@ -119,16 +119,16 @@ void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     objData->playerHealthMax = &playerStats->healthMax;
 
     //Set initial foodbag config, if none set
-    if (main_get_bits(BIT_Foodbag_Setting_Eat_Later) == FALSE &&
-        main_get_bits(BIT_Foodbag_Setting_Eat_First) == FALSE) {
+    if (mainGetBits(BIT_Foodbag_Setting_Eat_Later) == FALSE &&
+        mainGetBits(BIT_Foodbag_Setting_Eat_First) == FALSE) {
 
         //Make sure eat/place/give options are available
-        main_set_bits(BIT_Foodbag_Eat, TRUE);
-        main_set_bits(BIT_Foodbag_Place, TRUE);
-        main_set_bits(BIT_Foodbag_Give, TRUE);
+        mainSetBits(BIT_Foodbag_Eat, TRUE);
+        mainSetBits(BIT_Foodbag_Place, TRUE);
+        mainSetBits(BIT_Foodbag_Give, TRUE);
 
         //Default to "Eat Later" config
-        main_set_bits(BIT_Foodbag_Setting_Eat_Later, TRUE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_Later, TRUE);
     }
 }
 
@@ -256,12 +256,12 @@ int Foodbag_set_eat_config(Object* self, s32 eatFirst) {
 
     previousSetting = objData->eatFirst;
     if (eatFirst == FALSE) {
-        main_set_bits(BIT_Foodbag_Setting_Eat_First, FALSE);
-        main_set_bits(BIT_Foodbag_Setting_Eat_Later, TRUE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_First, FALSE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_Later, TRUE);
         objData->eatFirst = FALSE;
     } else {
-        main_set_bits(BIT_Foodbag_Setting_Eat_First, TRUE);
-        main_set_bits(BIT_Foodbag_Setting_Eat_Later, FALSE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_First, TRUE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_Later, FALSE);
         objData->eatFirst = TRUE;
     }
 

@@ -38,7 +38,7 @@ void CCkrazoaTablet_setup(Object *self, CCkrazoaTablet_Setup *setup, s32 arg2) {
     self->animCallback = CCkrazoaTablet_anim_callback;
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     self->srt.yaw = setup->yaw << 8;
-    if (main_get_bits(setup->gamebit)) {
+    if (mainGetBits(setup->gamebit)) {
         objdata->unk0 |= 1;
     } else {
         self->unkAF |= 8;
@@ -56,7 +56,7 @@ void CCkrazoaTablet_control(Object *self) {
     CCkrazoaTablet_func_48C(self, objdata);
 
     if (!(objdata->unk0 & 2)) {
-        if (main_get_bits(BIT_3A9)) {
+        if (mainGetBits(BIT_3A9)) {
             objdata->unk0 |= 2;
             self->unkAF |= 8;
         } else {
@@ -100,19 +100,19 @@ int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *an
     for (i = 0; i < animObjData->messageCount; i++) {
         switch (animObjData->messages[i]) {
             case 1:
-                main_set_bits(setup->gamebit, 1);
-                main_decrement_bits(BIT_CC_Krazoa_Tablets);
+                mainSetBits(setup->gamebit, 1);
+                mainDecrementBits(BIT_CC_Krazoa_Tablets);
                 self->unkAF &= ~8;
                 objdata->unk4 = 0.0f;
                 objdata->unk0 |= 1;
                 if (CCkrazoaTablet_func_3F8()) {
                     animObjData->unk9D |= 4;
-                    main_set_bits(BIT_3A9, 1);
+                    mainSetBits(BIT_3A9, 1);
                 }
                 break;
             case 2:
-                main_set_bits(setup->gamebit, 0);
-                main_increment_bits(BIT_CC_Krazoa_Tablets);
+                mainSetBits(setup->gamebit, 0);
+                mainIncrementBits(BIT_CC_Krazoa_Tablets);
                 self->unkAF |= 8;
                 objdata->unk4 = 256.0f;
                 objdata->unk0 &= ~1;
@@ -125,10 +125,10 @@ int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *an
 
 // offset: 0x3F8 | func: 8
 s32 CCkrazoaTablet_func_3F8(void) {
-    if ((!main_get_bits(BIT_3A9)) &&
-        (main_get_bits(BIT_CC_Placed_Krazoa_Tablet_One)) &&
-        (main_get_bits(BIT_CC_Placed_Krazoa_Tablet_Two)) &&
-        (main_get_bits(BIT_CC_Placed_Krazoa_Tablet_Three))) {
+    if ((!mainGetBits(BIT_3A9)) &&
+        (mainGetBits(BIT_CC_Placed_Krazoa_Tablet_One)) &&
+        (mainGetBits(BIT_CC_Placed_Krazoa_Tablet_Two)) &&
+        (mainGetBits(BIT_CC_Placed_Krazoa_Tablet_Three))) {
         return 1;
     }
     return 0;

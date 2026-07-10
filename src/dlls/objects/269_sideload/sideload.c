@@ -45,7 +45,7 @@ void sideload_control(Object* self) {
     s16 gamebit;
     
     if (get_player() && (get_sidekick() == FALSE) && (objData->loaded == FALSE) && 
-        ((gamebit = objSetup->gamebitUnlocked, gamebit == NO_GAMEBIT) || main_get_bits(gamebit))
+        ((gamebit = objSetup->gamebitUnlocked, gamebit == NO_GAMEBIT) || mainGetBits(gamebit))
     ) {
         objData->loaded = TRUE;
         func_80023894(self, dSidekickObjIDs[objSetup->sidekickIndex]);

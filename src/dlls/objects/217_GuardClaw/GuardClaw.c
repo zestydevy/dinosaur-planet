@@ -167,7 +167,7 @@ void GuardClaw_setup(Object* self, Baddie_Setup* setup, s32 reset) {
     bzero(objdata, sizeof(GuardClaw_Data));
     objdata->unkC = setup->unk28;
     if (self->id == OBJ_SCguardclaw) {
-        if (main_get_bits(BIT_2B9) != 0) {
+        if (mainGetBits(BIT_2B9) != 0) {
             baddie->unk3E2 = 0;
         }
     } else {
@@ -196,7 +196,7 @@ void GuardClaw_control(Object* self) {
         }
         if (self->id == OBJ_SCguardclaw) {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-            if (main_get_bits(BIT_SC_Platform_Rises_Totem_Challenge_Begins) != 0) {
+            if (mainGetBits(BIT_SC_Platform_Rises_Totem_Challenge_Begins) != 0) {
                 self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
             } else {
                 self->unkAF |= ARROW_FLAG_10_Greyed_Out;
@@ -204,7 +204,7 @@ void GuardClaw_control(Object* self) {
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SC_Platform_Rises_Totem_Challenge_Begins) != 0) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
-                    main_set_bits(BIT_2B9, 1);
+                    mainSetBits(BIT_2B9, 1);
                     baddie->unk3E2 = 0;
                 } else {
                     self->unkAF &= ~ARROW_FLAG_1_Interacted;
@@ -350,7 +350,7 @@ static int GuardClaw_anim_callback(Object* actor, Object* animObj, AnimObj_Data*
             return 1;
         }
         GuardClaw_func_D80(actor, baddie, &baddie->fsa);
-        if ((baddie->unk3A0 != -1) && (main_get_bits(baddie->unk3A0) != 0)) {
+        if ((baddie->unk3A0 != -1) && (mainGetBits(baddie->unk3A0) != 0)) {
             gDLL_3_Animation->vtbl->func21(animObjData, setup->unk2C);
             baddie->unk3A0 = -1;
         }
@@ -390,22 +390,22 @@ static void GuardClaw_func_C34(Object* self, Baddie* baddie, ObjFSA_Data* fsa, s
         fsa->unk4.mode = DLL27MODE_DISABLED;
         fsa->logicState = 0;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
-        main_set_bits(baddie->unk39E, 0);
+        mainSetBits(baddie->unk39E, 0);
     } else if (arg3 == 1) {
         fsa->unk4.mode = DLL27MODE_1;
         fsa->logicState = 1;
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-        main_set_bits(baddie->unk39E, 1);
+        mainSetBits(baddie->unk39E, 1);
     } else if (arg3 == 2) {
         fsa->unk4.mode = DLL27MODE_1;
         fsa->logicState = 2;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
-        main_set_bits(baddie->unk39E, 1);
+        mainSetBits(baddie->unk39E, 1);
     } else {
         fsa->unk4.mode = DLL27MODE_1;
         fsa->logicState = 3;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
-        main_set_bits(baddie->unk39E, 1);
+        mainSetBits(baddie->unk39E, 1);
     }
     fsa->unk278 = 0.0f;
     fsa->unk27C = 0.0f;

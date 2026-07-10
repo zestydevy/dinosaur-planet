@@ -37,7 +37,7 @@ void DIMbosscrackparticles_control(Object *self) {
     DIMbosscrackparticles_Setup *setup;
 
     setup = (DIMbosscrackparticles_Setup*)self->setup;
-    if (main_get_bits(setup->gamebit)) {
+    if (mainGetBits(setup->gamebit)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C6 + setup->partidx, NULL, PARTFXFLAG_2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C8, NULL, PARTFXFLAG_2, -1, NULL);
     }
@@ -69,7 +69,7 @@ int DIMbosscrackparticles_anim_callback(Object *self, Object *animObj, AnimObj_D
     DIMbosscrackparticles_Setup *setup;
 
     setup = (DIMbosscrackparticles_Setup*)self->setup;
-    if (!main_get_bits(setup->gamebit)) {
+    if (!mainGetBits(setup->gamebit)) {
         return 0;
     } else {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C6 + setup->partidx, NULL, PARTFXFLAG_2, -1, NULL);

@@ -46,9 +46,9 @@ void SHswaplift_control(Object *self) {
 
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             if (self->unkDC == MAP_SWAPSTONE_CIRCLE) {
-                main_set_bits(BIT_Play_Seq_0107_Rocky_Intro_Unused, 1);
+                mainSetBits(BIT_Play_Seq_0107_Rocky_Intro_Unused, 1);
             } else {
-                main_set_bits(BIT_Play_Seq_035F_Rocky_Intro, 1);
+                mainSetBits(BIT_Play_Seq_035F_Rocky_Intro, 1);
             }
 
             joyDisableButtons(0, A_BUTTON);

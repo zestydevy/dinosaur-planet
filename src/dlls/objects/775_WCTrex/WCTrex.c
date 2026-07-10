@@ -66,7 +66,7 @@ void WCTrex_setup(Object* self, ObjSetup* setup, s32 reset) {
     s16 sp3C[] = {5, 10, 20, 20, 20, 20, 20, 20};
     s32 sp38 = 2;
 
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -0x2AAA, 0x638D, 8);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objdata->movedata, sp3C, sp4C, 8);
     objdata->movedata.unk4A9 |= 0x22;

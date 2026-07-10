@@ -104,7 +104,7 @@ void perchobject_control(Object* self) {
                 ((DLL_ISidekick*) kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)){
                     STUBBED_PRINTF("should activate the command\n");
-                    main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }
             break;
@@ -151,7 +151,7 @@ s32 perchobject_land_on_perch(Object* self, s32 arg1) {
     landedOnPerch = FALSE;
     if (arg1 == 5) {
         if (objData->curveSetup->type22.usedBit != NO_GAMEBIT) {
-            main_set_bits(objData->curveSetup->type22.usedBit, 1);
+            mainSetBits(objData->curveSetup->type22.usedBit, 1);
             STUBBED_PRINTF("\n\n Setting Used Bit \n\n");
         }
         landedOnPerch = TRUE;
@@ -177,7 +177,7 @@ u32 perchobject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
     switch (arg1){
         case 0:
             flag = objData->curveSetup->type22.usedBit;
-            return main_get_bits(flag);
+            return mainGetBits(flag);
         case 1:
             *deltaY = self->srt.transl.y - kyte->srt.transl.y;
             return 1;
@@ -215,7 +215,7 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
             //Check if Find command was used
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                 STUBBED_PRINTF("should activate the command\n");
-                main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
             }
         }
     }

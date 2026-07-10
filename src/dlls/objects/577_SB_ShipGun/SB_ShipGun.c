@@ -265,7 +265,7 @@ void SB_ShipGun_control(Object *self) {
                     obj_create(debrisSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
                 }
                 gDLL_17_partfx->vtbl->spawn(self, 0x9B, NULL, PARTFXFLAG_2, -1, NULL);
-                main_set_bits(setup->gunIndex + BIT_SB_Destroyed_Right_Gun, 1);
+                mainSetBits(setup->gunIndex + BIT_SB_Destroyed_Right_Gun, 1);
             }
             if (objdata->unkE > 0) {
                 objdata->unkE--;

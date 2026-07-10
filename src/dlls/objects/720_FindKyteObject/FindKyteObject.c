@@ -59,8 +59,8 @@ void FindKyteObject_control(Object *self) {
         break;
     case 1:
         gamebit = objdata->curveSetup->type22.usedBit;
-        if ((gamebit != NO_GAMEBIT) && (main_get_bits(gamebit))) {
-            main_set_bits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
+        if ((gamebit != NO_GAMEBIT) && (mainGetBits(gamebit))) {
+            mainSetBits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
             objdata->state = 0;
             break;
         }
@@ -80,10 +80,10 @@ void FindKyteObject_control(Object *self) {
 
                 //Check if Find command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
-                    objdata->flightCurve = main_get_bits(BIT_Kyte_Flight_Curve);
-                    main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteFlightCurve);
+                    objdata->flightCurve = mainGetBits(BIT_Kyte_Flight_Curve);
+                    mainSetBits(BIT_Kyte_Flight_Curve, setup->kyteFlightCurve);
                     if (setup->kyteTalkSeq != 0) {
-                        main_set_bits(BIT_Kyte_Flight_Talk_Sequence, setup->kyteTalkSeq);
+                        mainSetBits(BIT_Kyte_Flight_Talk_Sequence, setup->kyteTalkSeq);
                     }
                     
                     objdata->timer = setup->timerSeconds * 60.0f;
@@ -94,13 +94,13 @@ void FindKyteObject_control(Object *self) {
         break;
     case 2:
         objdata->timer -= gUpdateRateF;
-        if ((objdata->timer <= 0.0f) || ((gamebit = objdata->curveSetup->type22.usedBit, (gamebit != NO_GAMEBIT)) && (main_get_bits(gamebit)))) {
+        if ((objdata->timer <= 0.0f) || ((gamebit = objdata->curveSetup->type22.usedBit, (gamebit != NO_GAMEBIT)) && (mainGetBits(gamebit)))) {
             if (setup->kyteTalkSeq != 0) {
-                main_set_bits(BIT_Kyte_Flight_Talk_Sequence, -1);
+                mainSetBits(BIT_Kyte_Flight_Talk_Sequence, -1);
             }
             objdata->state = 1;
-            if (main_get_bits(BIT_Kyte_Flight_Curve) == setup->kyteFlightCurve) {
-                main_set_bits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
+            if (mainGetBits(BIT_Kyte_Flight_Curve) == setup->kyteFlightCurve) {
+                mainSetBits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
             }
         }
         break;

@@ -68,7 +68,7 @@ int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
     for (i = 0; i < animObjData->messageCount; i++) {
         if (animObjData->messages[i] == 1) {
             dShowInfoScrollTimer = 100.0f;
-            main_set_bits(BIT_Spell_Forcefield, 1);
+            mainSetBits(BIT_Spell_Forcefield, 1);
         }
     }
 

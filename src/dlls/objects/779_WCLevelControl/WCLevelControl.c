@@ -111,26 +111,26 @@ void WCLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     WCLevelControl_sun_puzzle_init_hard();
     WCLevelControl_moon_puzzle_init_hard();
 
-    if (main_get_bits(BIT_7FA)) {
+    if (mainGetBits(BIT_7FA)) {
         objdata->flags |= FLAG_8;
     }
-    if (main_get_bits(BIT_7F9)) {
+    if (mainGetBits(BIT_7F9)) {
         objdata->flags |= FLAG_4;
     }
-    if (main_get_bits(BIT_813)) {
+    if (mainGetBits(BIT_813)) {
         objdata->flags |= FLAG_20;
     }
-    if (main_get_bits(BIT_812)) {
+    if (mainGetBits(BIT_812)) {
         objdata->flags |= FLAG_10;
     }
-    if (main_get_bits(BIT_2A5)) {
+    if (mainGetBits(BIT_2A5)) {
         objdata->flags |= FLAG_40;
     }
     obj_add_object_type(self, OBJTYPE_LevelControl);
-    main_set_bits(BIT_226, 1);
-    main_set_bits(BIT_2A6, 1);
-    main_set_bits(BIT_206, 1);
-    main_set_bits(BIT_25F, 1);
+    mainSetBits(BIT_226, 1);
+    mainSetBits(BIT_2A6, 1);
+    mainSetBits(BIT_206, 1);
+    mainSetBits(BIT_25F, 1);
 }
 
 // offset: 0x1B4 | func: 1 | export: 1
@@ -156,11 +156,11 @@ void WCLevelControl_control(Object *self) {
 
     //Check if night-time
     if (gDLL_7_Newday->vtbl->func8(&time)) {
-        main_set_bits(BIT_7F3, 1);
-        main_set_bits(BIT_7F1, 0);
+        mainSetBits(BIT_7F3, 1);
+        mainSetBits(BIT_7F1, 0);
     } else {
-        main_set_bits(BIT_7F3, 0);
-        main_set_bits(BIT_7F1, 1);
+        mainSetBits(BIT_7F3, 0);
+        mainSetBits(BIT_7F1, 1);
     }
 }
 
@@ -472,12 +472,12 @@ static int WCLevelControl_anim_callback(Object *self, Object *overrideObj, AnimO
     if (objdata->previousState == STATE_1) {
         objdata->timer -= gUpdateRateF;
         if (objdata->timer <= 0.0f) {
-            main_set_bits(BIT_7F7, 1);
+            mainSetBits(BIT_7F7, 1);
         }
     } else if (objdata->previousState == STATE_2) {
         objdata->timer -= gUpdateRateF;
         if (objdata->timer <= 0.0f) {
-            main_set_bits(BIT_802, 1);
+            mainSetBits(BIT_802, 1);
         }
     }
     for (i = 0; i < animData->messageCount; i++) {
@@ -510,11 +510,11 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
             func_8000F64C(0x11, 60);
             func_8000F6CC();
-        } else if (main_get_bits(BIT_7F9)) {
+        } else if (mainGetBits(BIT_7F9)) {
             objdata->flags |= FLAG_4;
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
-            if (main_get_bits(BIT_7FA) != 0) {
+            if (mainGetBits(BIT_7FA) != 0) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->state = STATE_3;
             } else {
@@ -523,8 +523,8 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
             }
         } else if (func_8000FB1C()) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
-            main_set_bits(BIT_7EF, 0);
-            main_set_bits(BIT_7ED, 0);
+            mainSetBits(BIT_7EF, 0);
+            mainSetBits(BIT_7ED, 0);
             objdata->state = STATE_0;
         }
         break;
@@ -533,11 +533,11 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
             func_8000F64C(0x11, 60);
             func_8000F6CC();
-        } else if (main_get_bits(BIT_7FA)) {
+        } else if (mainGetBits(BIT_7FA)) {
             objdata->flags |= FLAG_8;
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
-            if (main_get_bits(BIT_7F9) != 0) {
+            if (mainGetBits(BIT_7F9) != 0) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->state = STATE_3;
             } else {
@@ -546,21 +546,21 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
             }
         } else if (func_8000FB1C()) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
-            main_set_bits(BIT_7F0, 0);
-            main_set_bits(BIT_7EE, 0);
+            mainSetBits(BIT_7F0, 0);
+            mainSetBits(BIT_7EE, 0);
             objdata->state = STATE_0;
         }
         break;
     case STATE_3:
         break;
     default:
-        if (!(objdata->flags & FLAG_4) && (main_get_bits(BIT_7ED))) {
-            main_set_bits(BIT_7EF, 1);
+        if (!(objdata->flags & FLAG_4) && (mainGetBits(BIT_7ED))) {
+            mainSetBits(BIT_7EF, 1);
             objdata->state = STATE_1;
             objdata->flags |= FLAG_2;
             objdata->timer = 70.0f;
-        } else if (!(objdata->flags & FLAG_8) && (main_get_bits(BIT_7EE))) {
-            main_set_bits(BIT_7F0, 1);
+        } else if (!(objdata->flags & FLAG_8) && (mainGetBits(BIT_7EE))) {
+            mainSetBits(BIT_7F0, 1);
             objdata->state = STATE_2;
             objdata->flags |= FLAG_2;
             objdata->timer = 70.0f;
@@ -589,27 +589,27 @@ static void WCLevelControl_handle_act2(Object *self, WCLevelControl_Data *objdat
         case STATE_4:
             if (func_8000FB1C()) {
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
-                if (main_get_bits(BIT_2A5)) {
+                if (mainGetBits(BIT_2A5)) {
                     objdata->flags |= FLAG_40;
                 } else {
-                    main_set_bits(BIT_274, 0);
-                    main_set_bits(BIT_2B1, 0);
-                    main_set_bits(BIT_226, 1);
-                    main_set_bits(BIT_2A6, 1);
-                    main_set_bits(BIT_206, 1);
-                    main_set_bits(BIT_25F, 1);
+                    mainSetBits(BIT_274, 0);
+                    mainSetBits(BIT_2B1, 0);
+                    mainSetBits(BIT_226, 1);
+                    mainSetBits(BIT_2A6, 1);
+                    mainSetBits(BIT_206, 1);
+                    mainSetBits(BIT_25F, 1);
                 }
                 objdata->state = STATE_0;
             }
             break;
         default:
             if (!(objdata->flags & FLAG_40)) {
-                if (main_get_bits(BIT_2B1) && main_get_bits(BIT_204)) {
-                    main_set_bits(BIT_226, 0);
-                    main_set_bits(BIT_2A6, 0);
-                    main_set_bits(BIT_206, 0);
-                    main_set_bits(BIT_25F, 0);
-                    main_set_bits(BIT_274, 1);
+                if (mainGetBits(BIT_2B1) && mainGetBits(BIT_204)) {
+                    mainSetBits(BIT_226, 0);
+                    mainSetBits(BIT_2A6, 0);
+                    mainSetBits(BIT_206, 0);
+                    mainSetBits(BIT_25F, 0);
+                    mainSetBits(BIT_274, 1);
                     objdata->state = STATE_6;
                 }
             }
@@ -617,20 +617,20 @@ static void WCLevelControl_handle_act2(Object *self, WCLevelControl_Data *objdat
     }
 
     if (!(objdata->flags & FLAG_10)) {
-        temp = main_get_bits(BIT_810); // get sun block puzzle pieces in correct place
+        temp = mainGetBits(BIT_810); // get sun block puzzle pieces in correct place
         if (temp == 4) {
-            main_set_bits(BIT_812, 1);
+            mainSetBits(BIT_812, 1);
             objdata->flags |= FLAG_10;
-        } else if (isNightTime || main_get_bits(BIT_808)) {
+        } else if (isNightTime || mainGetBits(BIT_808)) {
             WCLevelControl_sun_puzzle_init_hard();
         }
     }
     if (!(objdata->flags & FLAG_20)) {
-        temp = main_get_bits(BIT_811); // get moon block puzzle pieces in correct place
+        temp = mainGetBits(BIT_811); // get moon block puzzle pieces in correct place
         if (temp == 4) {
-            main_set_bits(BIT_813, 1);
+            mainSetBits(BIT_813, 1);
             objdata->flags |= FLAG_20;
-        } else if (!isNightTime || main_get_bits(BIT_809)) {
+        } else if (!isNightTime || mainGetBits(BIT_809)) {
             WCLevelControl_moon_puzzle_init_hard();
         }
     }
@@ -639,12 +639,12 @@ static void WCLevelControl_handle_act2(Object *self, WCLevelControl_Data *objdat
 
 // offset: 0x1CF4 | func: 24
 static void WCLevelControl_sun_puzzle_init_hard(void) {
-    main_set_bits(BIT_810, 0);
+    mainSetBits(BIT_810, 0);
     bcopy(dSunPuzzleHard, sSunPuzzleCells, sizeof(sSunPuzzleCells));
 }
 
 // offset: 0x1D54 | func: 25
 static void WCLevelControl_moon_puzzle_init_hard(void) {
-    main_set_bits(BIT_811, 0);
+    mainSetBits(BIT_811, 0);
     bcopy(dMoonPuzzleHard, sMoonPuzzleCells, sizeof(sMoonPuzzleCells));
 }

@@ -463,7 +463,7 @@ static s32 dll_243_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     }
     if (fsa->enteredAnimState != 0) {
         fsa->unk4.mode = 1;
-        main_set_bits(baddie->unk39E, 1);
+        mainSetBits(baddie->unk39E, 1);
         self->unkAF &= ~0x8;
         self->opacity = 0xFF;
         fsa->unk341 = 1;
@@ -496,7 +496,7 @@ static s32 dll_243_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
         fsa->unk278 = 0.0f;
     }
     if (fsa->unk33A != 0) {
-        main_set_bits(baddie->unk39E, 0);
+        mainSetBits(baddie->unk39E, 0);
         func_80023D30(self, 4, 0.0f, 0);
         fsa->target = NULL;
         fsa->unk4.mode = 0;
@@ -648,8 +648,8 @@ static s32 dll_243_logic_state_3(Object *self, ObjFSA_Data *fsa, f32 updateRate)
     if (fsa->enteredLogicState != 0) {
         baddie = self->data;
         baddie->unk3B4 = 0;
-        main_set_bits(baddie->unk39E, 0);
-        main_set_bits(baddie->unk39C, 1);
+        mainSetBits(baddie->unk39E, 0);
+        mainSetBits(baddie->unk39C, 1);
     }
     return 0;
 }

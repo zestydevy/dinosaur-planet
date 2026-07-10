@@ -48,7 +48,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
 
     objData = self->data;
 
-    if (main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte) || 
+    if (mainGetBits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte) || 
             self->id == OBJ_SB_ShipShadow) {
         return;
     }
@@ -79,7 +79,7 @@ void WLgalleon_control(Object* self) {
     WLGalleon_Data* objData;
     u8 colourRGBA[4] = {0xe4, 0x9c, 0x44, 0xff}; //unused orange colour?
 
-    if (main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte)) {
+    if (mainGetBits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte)) {
         return;
     }
 
@@ -91,19 +91,19 @@ void WLgalleon_control(Object* self) {
     player = get_player();
     objData = self->data;
 
-    if (main_get_bits(BIT_429)) {
+    if (mainGetBits(BIT_429)) {
         if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 2)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 0);
         }
-    } else if (!main_get_bits(BIT_WM_Played_Randorn_First_Meeting) && 
+    } else if (!mainGetBits(BIT_WM_Played_Randorn_First_Meeting) && 
             !gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 2)) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 1);
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 1);
     }
 
-    if (!main_get_bits(BIT_WM_Played_Randorn_First_Meeting)) {
-        if (!objData->unk10 && !main_get_bits(BIT_429)) {
+    if (!mainGetBits(BIT_WM_Played_Randorn_First_Meeting)) {
+        if (!objData->unk10 && !mainGetBits(BIT_429)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 1);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 1);
             objData->unk10 = TRUE;
@@ -117,7 +117,7 @@ void WLgalleon_control(Object* self) {
         }
     }
 
-    arrivedAtWM = main_get_bits(BIT_Galleon_Arrived_at_Warlock_Mountain);
+    arrivedAtWM = mainGetBits(BIT_Galleon_Arrived_at_Warlock_Mountain);
 
     if (arrivedAtWM) {
         self->unkDC = 0xA;
@@ -148,7 +148,7 @@ void WLgalleon_update(Object *self) { }
 
 // offset: 0x4FC | func: 3 | export: 3
 void WLgalleon_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    if (main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte) || !visibility){
+    if (mainGetBits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte) || !visibility){
         return;
     }
 
@@ -215,7 +215,7 @@ static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 0);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 0);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 4, 0);
-                main_set_bits(BIT_WL_Load_Unload_Galleon, 0);
+                mainSetBits(BIT_WL_Load_Unload_Galleon, 0);
                 break;
             case 2:
                 //Setting envFxActions
@@ -234,7 +234,7 @@ static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
                 break;
         }
     }
-    if (main_get_bits(BIT_429) && gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 2)) {
+    if (mainGetBits(BIT_429) && gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 2)) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 0);
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 2, 0);
     }

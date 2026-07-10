@@ -88,7 +88,7 @@ void TexScroll_control(Object* self) {
     objData = self->data;
 
     //Only animate if activation gamebit is set (or if no gamebit is specified)
-    if (!(objData->gamebitActivate == NO_GAMEBIT || main_get_bits(objData->gamebitActivate))) {
+    if (!(objData->gamebitActivate == NO_GAMEBIT || mainGetBits(objData->gamebitActivate))) {
         return;
     }
 

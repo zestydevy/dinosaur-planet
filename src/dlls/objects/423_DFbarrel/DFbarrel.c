@@ -253,7 +253,7 @@ void DFbarrel_handle_damage(Object* self) {
         if ((obj = obj_get_nearest_type_to(OBJTYPE_ExplodeObj, self, &distance))) {
             debrisSetup = (Debris_Setup*)obj->setup;
             if (debrisSetup->unk40 != NO_GAMEBIT) {
-                main_set_bits(debrisSetup->unk40, 1);
+                mainSetBits(debrisSetup->unk40, 1);
             }
         }
 
@@ -261,7 +261,7 @@ void DFbarrel_handle_damage(Object* self) {
         if ((obj = obj_get_nearest_type_to(OBJTYPE_ExplodeAnimator, self, &distance))) {
             explodeAnimSetup = (ExplodeAnimator_Setup*)obj->setup;
             if (explodeAnimSetup->gamebitExplodeTrigger != NO_GAMEBIT) {
-                main_set_bits(explodeAnimSetup->gamebitExplodeTrigger, 1);
+                mainSetBits(explodeAnimSetup->gamebitExplodeTrigger, 1);
             }
         }
     }

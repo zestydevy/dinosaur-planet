@@ -55,7 +55,7 @@ void SCFlameGameFlame_control(Object* self) {
     
     if (
         (objData->flags & SCFlameGameFlame_FLAG_Target_in_View) && 
-        main_get_bits(objData->gamebitActive)
+        mainGetBits(objData->gamebitActive)
     ) {
         //Check if Kyte is nearby
         if (sidekick != NULL) {
@@ -71,7 +71,7 @@ void SCFlameGameFlame_control(Object* self) {
 
         //Check if the player issued the Flame command from the inventory
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-            main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightCurveID);
+            mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightCurveID);
             objData->flags |= SCFlameGameFlame_FLAG_Player_Gave_Command;
         }
     }
@@ -80,7 +80,7 @@ void SCFlameGameFlame_control(Object* self) {
     if ((objData->flags & SCFlameGameFlame_FLAG_Finished) && 
         (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= 400.0f)
     ) {
-        main_set_bits(objData->gamebitFinished, 1);
+        mainSetBits(objData->gamebitFinished, 1);
         objData->flags &= ~SCFlameGameFlame_FLAG_Finished;
         obj_destroy_object(self);
     }

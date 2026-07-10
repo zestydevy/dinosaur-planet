@@ -2296,7 +2296,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
     if (isSidekickMenu == FALSE) {
         sAutoSelectItemIdx = NO_ITEM;
         while (items[i].gamebitObtained > NO_GAMEBIT) {
-            obtained = main_get_bits(items[i].gamebitObtained);
+            obtained = mainGetBits(items[i].gamebitObtained);
             if (obtained) {
                 //Magic Spells
                 if (items == dPage6MagicSpells) {
@@ -2313,7 +2313,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
                     cmdmenu_store_loaded_item_metadata(items, loadIdx, i);
 
                     //Store item's visibility state (Spells never get taken away, though)
-                    if ((items[i].gamebitHide <= NO_GAMEBIT) || (main_get_bits(items[i].gamebitHide) == FALSE)) {
+                    if ((items[i].gamebitHide <= NO_GAMEBIT) || (mainGetBits(items[i].gamebitHide) == FALSE)) {
                         sMenuItemVisibilities[loadIdx] = TRUE;
                     } else {
                         sMenuItemVisibilities[loadIdx] = FALSE;
@@ -2324,7 +2324,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
                 //Other items
                 } else {
                     //Only load non-magic items if they aren't used/hidden
-                    if ((items[i].gamebitHide <= NO_GAMEBIT) || (main_get_bits(items[i].gamebitHide) == FALSE)) {
+                    if ((items[i].gamebitHide <= NO_GAMEBIT) || (mainGetBits(items[i].gamebitHide) == FALSE)) {
                         
                         /* Auto-select a specified item?
                           (Never runs, since `sAutoSelectItemGamebit` is always -1 (NO_GAMEBIT) and 
@@ -2426,11 +2426,11 @@ static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekic
     //Items/Spells
     if (isSidekickMenu == FALSE) {
         while (menuItems[itemIdx].gamebitObtained > NO_GAMEBIT) {
-            if (main_get_bits(menuItems[itemIdx].gamebitObtained)) {
+            if (mainGetBits(menuItems[itemIdx].gamebitObtained)) {
                 if (menuItems == dPage6MagicSpells) {
                     //Spells shown once obtained
                     shownCount++;
-                } else if ((menuItems[itemIdx].gamebitHide <= NO_GAMEBIT) || (main_get_bits(menuItems[itemIdx].gamebitHide) == FALSE)) {
+                } else if ((menuItems[itemIdx].gamebitHide <= NO_GAMEBIT) || (mainGetBits(menuItems[itemIdx].gamebitHide) == FALSE)) {
                     //Items shown if obtained and not yet used/hidden
                     shownCount++;
                 }
@@ -3623,7 +3623,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         }
 
         statsOpacity = sOpacityScarabs;
-        if (statsOpacity && main_get_bits(BIT_UI_Scarab_Counter_Enabled)) {
+        if (statsOpacity && mainGetBits(BIT_UI_Scarab_Counter_Enabled)) {
             sAnimFrameScarab = 0;
             if (statsOpacity == MAX_OPACITY) {
                 if ((i = sAnimScarabSpin)) { //@fake assignment of i

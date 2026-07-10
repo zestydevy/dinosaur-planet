@@ -79,7 +79,7 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
         objdata->unk0 = setup->unk1C * 60;
     }
 
-    if (main_get_bits(objdata->gamebit) != 0) {
+    if (mainGetBits(objdata->gamebit) != 0) {
         objdata->unk4 = 1.0f;
         func_800267A4(self);
     }
@@ -489,7 +489,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 7:
             case 8:
-                main_set_bits(objdata->gamebit, 1);
+                mainSetBits(objdata->gamebit, 1);
                 break;
         }
     }

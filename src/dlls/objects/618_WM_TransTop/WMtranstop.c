@@ -57,7 +57,7 @@ void WM_TransTop_dtor(void *dll) { }
 void WM_TransTop_setup(Object* self, DLL618_Setup* objSetup, s32 arg2) {
     WM_TransTop_Data* objData = self->data;
 
-    if (main_get_bits(BIT_WM_Sabre_Transporter_Visible)) {
+    if (mainGetBits(BIT_WM_Sabre_Transporter_Visible)) {
         objData->maskY = MASK_HEIGHT;
     } else {
         objData->maskY = 4;
@@ -74,7 +74,7 @@ void WM_TransTop_update(Object *self) { }
 void WM_TransTop_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** triangles, s8 visibility) {
     WM_TransTop_Data* objData = self->data;
 
-    if (main_get_bits(BIT_WM_Sabre_Transporter_Visible)) {
+    if (mainGetBits(BIT_WM_Sabre_Transporter_Visible)) {
         if (objData->maskY < MASK_HEIGHT) {
             WM_TransTop_draw_mask(self, gdl, mtxs, (Vtx_t**)vtxs, triangles);
         }

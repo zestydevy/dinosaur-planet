@@ -76,9 +76,9 @@ void MagicPlant_control(Object* self) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     if (self->unkAF & ARROW_FLAG_4_Highlighted) {
         //Display a tutorial box when the player first approaches a Magic Plant
-        if (main_get_bits(BIT_Tutorial_Magic_Plant) == 0) {
+        if (mainGetBits(BIT_Tutorial_Magic_Plant) == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-            main_set_bits(BIT_Tutorial_Magic_Plant, 1);
+            mainSetBits(BIT_Tutorial_Magic_Plant, 1);
             return;
         }
     }

@@ -49,7 +49,7 @@ void crash_thread_entry(void *arg) {
     CrashThreadCopies threads;
 
     // Get the OS scheduler
-    scheduler = get_ossched();
+    scheduler = mainGetScheduler();
 
     // Get pointers to copies of the main thread and asset thread
     // from before the last NMI reset

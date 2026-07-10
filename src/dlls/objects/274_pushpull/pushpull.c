@@ -102,7 +102,7 @@ u32 dll_274_get_data_size(Object *self, u32 a1) {
 s32 dll_274_func_2A74(Object* arg0, DLL274_Data* arg1) {
     if ((arg1->unkCC == 0.0f) && (arg1->unkC8 > 0.0f)) {
         gDLL_6_AMSFX->vtbl->play(arg0, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
-        main_set_bits(BIT_DIM_Pushed_Ice_Block_Into_Lake, 1);
+        mainSetBits(BIT_DIM_Pushed_Ice_Block_Into_Lake, 1);
     }
     return 0;
 }

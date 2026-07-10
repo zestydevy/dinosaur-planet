@@ -62,10 +62,10 @@ void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
         objdata->gamebitCollected = objdata->gamebitDiscovered;
     } else {
         // this is a hidden duster, check if it has been discovered
-        objdata->discovered = main_get_bits(objdata->gamebitDiscovered);
+        objdata->discovered = mainGetBits(objdata->gamebitDiscovered);
         objdata->gamebitCollected = objdata->gamebitDiscovered + DUSTER_TOTAL_COUNT;
     }
-    objdata->collected = main_get_bits(objdata->gamebitCollected);
+    objdata->collected = mainGetBits(objdata->gamebitCollected);
     objdata->unk11 = setup->unk1B;
 
     if (self->objhitInfo && !objdata->discovered) {
@@ -91,7 +91,7 @@ void Duster_control(Object *self) {
     player = get_player();
     if (!objdata->discovered || objdata->collected == TRUE) {
         if (!objdata->discovered) {
-            objdata->discovered = main_get_bits(objdata->gamebitDiscovered);
+            objdata->discovered = mainGetBits(objdata->gamebitDiscovered);
             objdata->timer1 = 0;
         }
         return;
@@ -174,7 +174,7 @@ void Duster_control(Object *self) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
-        main_set_bits(objdata->gamebitCollected, 1);
+        mainSetBits(objdata->gamebitCollected, 1);
         objdata->collected = TRUE;
         func_800267A4(self);
         stats = gDLL_29_Gplay->vtbl->get_player_stats();

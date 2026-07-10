@@ -63,8 +63,8 @@ void WL_Crystal_setup(Object* self, WL_Crystal_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
     
-    if ((gDLL_29_Gplay->vtbl->get_act(self->mapID) == 3) && !main_get_bits(BIT_Set_During_Spirit_Release_1)){
-        main_set_bits(BIT_Set_During_Spirit_Release_1, TRUE);
+    if ((gDLL_29_Gplay->vtbl->get_act(self->mapID) == 3) && !mainGetBits(BIT_Set_During_Spirit_Release_1)){
+        mainSetBits(BIT_Set_During_Spirit_Release_1, TRUE);
     }
     
     objData->inroomBuffer = NULL;
@@ -179,7 +179,7 @@ void WL_Crystal_control(Object* self) {
     //Handle Warlock Mountain's Crystal
     if (self->id == OBJ_WL_Crystal) {
         //Remove if gamebit 0x38F is set
-        if (main_get_bits(BIT_WM_Quan_Ata_Lachu_Sun)) {
+        if (mainGetBits(BIT_WM_Quan_Ata_Lachu_Sun)) {
             obj_destroy_object(self);
         }
         
@@ -194,22 +194,22 @@ void WL_Crystal_control(Object* self) {
 
         //Rotate faster as more spirits are placed
         //(for first 6 spirits - transforms into sun afterwards)
-        if (main_get_bits(BIT_Set_During_Spirit_Release_1)) {
+        if (mainGetBits(BIT_Set_During_Spirit_Release_1)) {
             goal = 100;
         }
-        if (main_get_bits(BIT_21C)) {
+        if (mainGetBits(BIT_21C)) {
             goal = 200;
         }
-        if (main_get_bits(BIT_21D)) {
+        if (mainGetBits(BIT_21D)) {
             goal = 400;
         }
-        if (main_get_bits(BIT_21F_Spirit_Collected)) {
+        if (mainGetBits(BIT_21F_Spirit_Collected)) {
             goal = 800;
         }
-        if (main_get_bits(BIT_221)) {
+        if (mainGetBits(BIT_221)) {
             goal = 1600;
         }
-        if (main_get_bits(BIT_222)) {
+        if (mainGetBits(BIT_222)) {
             yawAcceleration = 3;
             goal = 6400;
             transformSpeed = 0.00375f;
@@ -223,17 +223,17 @@ void WL_Crystal_control(Object* self) {
             //(@bug?: applies these float calcs while transformSpeed is zero - could check BIT_222 is set)
             self->srt.scale -= transformSpeed * gUpdateRateF;
             self->srt.transl.y += transformSpeed * gUpdateRateF * 50.0f;
-        } else if ((main_get_bits(BIT_222)) && (main_get_bits(BIT_38D) == 0)) {
+        } else if ((mainGetBits(BIT_222)) && (mainGetBits(BIT_38D) == 0)) {
             //When yawSpeed at goal and 6th spirit is deposited, set gamebits and destroy crystal 
-            main_set_bits(BIT_38D, 1);
-            main_set_bits(BIT_370, 0);
+            mainSetBits(BIT_38D, 1);
+            mainSetBits(BIT_370, 0);
             objData->showCrystal = FALSE;
         }
 
         //While gamebit 0x38D not set and crystal spinning rapidly, 1% chance of camera shake(?)
-        if (!main_get_bits(BIT_38D) && (objData->yawSpeed > 2400) && !rand_next(0, 100)) {
+        if (!mainGetBits(BIT_38D) && (objData->yawSpeed > 2400) && !rand_next(0, 100)) {
             camSetShakeOffset(((objData->yawSpeed - 2400) / 2400.0f) * 0.8f);
-            main_set_bits(BIT_370, 1);
+            mainSetBits(BIT_370, 1);
         }
         self->srt.yaw += objData->yawSpeed;
 
@@ -246,7 +246,7 @@ void WL_Crystal_control(Object* self) {
 
     //Handle room-filling electrified wall effect for main chamber of WM (unused)
     if (self->id == OBJ_WMinroom) {
-        if (main_get_bits(BIT_WM_Quan_Ata_Lachu_Sun)) {
+        if (mainGetBits(BIT_WM_Quan_Ata_Lachu_Sun)) {
             //Increase opacity
             if (self->opacity < WMinroom_Max_Opacity) {
                 opacity = self->opacity + gUpdateRate;
@@ -269,7 +269,7 @@ void WL_Crystal_control(Object* self) {
     }
 
     //Handle WMsun
-    if (main_get_bits(BIT_WM_Quan_Ata_Lachu_Sun)) {
+    if (mainGetBits(BIT_WM_Quan_Ata_Lachu_Sun)) {
         //Fade in the Quan Ata Lachu sun
         if (self->modelInstIdx == WMSun_Core && self->opacity != WMSun_Max_Opacity_Core) {
             if (self->opacity < WMSun_Max_Opacity_Core) {
@@ -331,7 +331,7 @@ void WL_Crystal_control(Object* self) {
 
     self->srt.roll += objData->rollSpeed;
     self->srt.yaw += objData->yawSpeed;
-    if (main_get_bits(BIT_38D) == 0) {
+    if (mainGetBits(BIT_38D) == 0) {
         return;
     }
 
@@ -358,8 +358,8 @@ void WL_Crystal_control(Object* self) {
                         goal--;
                         gDLL_17_partfx->vtbl->spawn(self, 0x1B2, NULL, 0x10000, -1, NULL);
                     }
-                    main_set_bits(BIT_38D, 0);
-                    main_set_bits(BIT_WM_Quan_Ata_Lachu_Sun, 1);
+                    mainSetBits(BIT_38D, 0);
+                    mainSetBits(BIT_WM_Quan_Ata_Lachu_Sun, 1);
                     func_80000860(self, self, 0x31, 0);
                     camSetShakeOffset(4.8f);
                 }

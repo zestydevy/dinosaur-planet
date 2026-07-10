@@ -61,8 +61,8 @@ void dll_376_setup(Object* self, ObjSetup* setup, s32 arg2) {
     objData->unk4C[1] = 0x1D1;
     objData->unk5C = 0;
     objData->unk60 = 0;
-    if (main_get_bits(BIT_4D)) {
-        main_set_bits(BIT_50, 1);
+    if (mainGetBits(BIT_4D)) {
+        mainSetBits(BIT_50, 1);
     }
 }
 
@@ -80,7 +80,7 @@ void dll_376_control(Object* self) {
     s16* sp40;
     
     objData = self->data;
-    if (!objData || main_get_bits(BIT_50)){
+    if (!objData || mainGetBits(BIT_50)){
         return;
     }
     
@@ -98,7 +98,7 @@ void dll_376_control(Object* self) {
         }
     }
     
-    objData->unk5F = main_get_bits(BIT_4D);
+    objData->unk5F = mainGetBits(BIT_4D);
     if (objData->unk5F == 0) {
         player = get_player();
         
@@ -172,14 +172,14 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
  
     objData = self->data;  
     
-    if (main_get_bits(BIT_50)) {
+    if (mainGetBits(BIT_50)) {
         if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
             draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
     }
     
-    if (main_get_bits(BIT_4D) && visibility) {
+    if (mainGetBits(BIT_4D) && visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
             draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);

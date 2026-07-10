@@ -274,7 +274,7 @@ void gplay_init_save(s8 idx, char *filename) {
         }
     }
 
-    main_set_bits(BIT_Tricky_Spawns, 1);
+    mainSetBits(BIT_Tricky_Spawns, 1);
 
     if (filename != NULL) {
         dst = &sState.save.file.name[0];
@@ -534,9 +534,9 @@ static void gplay_start_game(void) {
 
     bzero(&sState.bitString, sizeof(sState.bitString));
 
-    unpause();
+    mainUnpause();
 
-    func_800142A0(
+    main_func_800142A0(
         sState.save.map.playerLocations[sState.save.file.playerno].vec.x,
         sState.save.map.playerLocations[sState.save.file.playerno].vec.y,
         sState.save.map.playerLocations[sState.save.file.playerno].vec.z);
@@ -709,7 +709,7 @@ void gplay_set_act(s32 mapID, s32 act) {
     // "gplaySetAct: mapno(%d) doesn't have an entry in the bitflags\n" (default.dol)
     // "bitflags" is sMapActBitKeys (default.dol)
 
-    main_set_bits(sMapActBitKeys[mapID], act);
+    mainSetBits(sMapActBitKeys[mapID], act);
 
     sMapAct.mapID = mapID;
     sMapAct.act = act;
@@ -728,7 +728,7 @@ u8 gplay_get_act(s32 mapID) {
         if (mapID < 0 || mapID >= 120 || !sMapActBitKeys[mapID]) {
             sMapAct.act = 0;
         } else {
-            sMapAct.act = main_get_bits(sMapActBitKeys[mapID]);
+            sMapAct.act = mainGetBits(sMapActBitKeys[mapID]);
         }
     }
 
@@ -744,7 +744,7 @@ u8 gplay_get_obj_group_status(s32 mapID, s32 group) {
 
     if (mapID != sMapObjGroups.mapID) {
         sMapObjGroups.mapID = mapID;
-        sMapObjGroups.groupBits = main_get_bits(sMapObjGroupBitKeys[mapID]);
+        sMapObjGroups.groupBits = mainGetBits(sMapObjGroupBitKeys[mapID]);
     }
 
     return (sMapObjGroups.groupBits >> group) & 1;
@@ -759,7 +759,7 @@ void gplay_world_load_obj_group_bits(s32 mapID) {
         mapID = sMobileMaps[mapID - 80];
     }
 
-    sAllMapObjGroups[mapID] = main_get_bits(sMapObjGroupBitKeys[mapID]);
+    sAllMapObjGroups[mapID] = mainGetBits(sMapObjGroupBitKeys[mapID]);
 }
 
 u32 gplay_world_get_obj_group_bits(s32 mapID) {
@@ -798,7 +798,7 @@ void gplay_set_obj_group_status(s32 mapID, s32 group, s32 status) {
             status = 0;
         }
 
-        groupBits = main_get_bits(sMapObjGroupBitKeys[mapID]);
+        groupBits = mainGetBits(sMapObjGroupBitKeys[mapID]);
 
         newGroupBits = groupBits;
         if (status != 0) {
@@ -807,7 +807,7 @@ void gplay_set_obj_group_status(s32 mapID, s32 group, s32 status) {
             newGroupBits &= ~(1 << group);
         }
 
-        main_set_bits(sMapObjGroupBitKeys[mapID], newGroupBits);
+        mainSetBits(sMapObjGroupBitKeys[mapID], newGroupBits);
 
         sMapObjGroups.mapID = mapID;
         sMapObjGroups.groupBits = newGroupBits;

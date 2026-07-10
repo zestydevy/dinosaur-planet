@@ -56,13 +56,13 @@ void CRSpellStone_control(Object* self) {
         self->srt.yaw += 0x100;
     }
 
-    if (main_get_bits(objSetup->gamebitVehicleHit) != 0) {
+    if (mainGetBits(objSetup->gamebitVehicleHit) != 0) {
         STUBBED_PRINTF(" DO Win BIT ");
-        main_set_bits(dWinBits[objSetup->gamebitIndexWin], 1);
+        mainSetBits(dWinBits[objSetup->gamebitIndexWin], 1);
         self->srt.flags |= OBJFLAG_INVISIBLE;
         obj_free_tick(self);
     } else {
-        if (main_get_bits(objSetup->gamebitFreeTick) != 0) {
+        if (mainGetBits(objSetup->gamebitFreeTick) != 0) {
             self->srt.flags |= OBJFLAG_INVISIBLE;
             obj_free_tick(self);
         }
@@ -71,7 +71,7 @@ void CRSpellStone_control(Object* self) {
             (vec3_distance(&self->globalPosition, &get_player()->globalPosition) < 105.0f)
         ) {
             STUBBED_PRINTF("\n\n Hit By ONVEHICLE HIT \n\n");
-            main_set_bits(objSetup->gamebitVehicleHit, 1);
+            mainSetBits(objSetup->gamebitVehicleHit, 1);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
     }

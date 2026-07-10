@@ -18,7 +18,7 @@ void ExplodeAnimator_setup(Object* self, ExplodeAnimator_Setup* objSetup, s32 ar
 
     objData = self->data;
     
-    if (main_get_bits(objSetup->gamebitExploded)) {
+    if (mainGetBits(objSetup->gamebitExploded)) {
         objData->flags = ExplodeAnimator_FLAG_Finished;
     } else {
         objData->flags = ExplodeAnimator_FLAG_Waiting_to_Explode;
@@ -38,8 +38,8 @@ void ExplodeAnimator_control(Object* self) {
     }
     
     objSetup = (ExplodeAnimator_Setup*)self->setup;
-    if (main_get_bits(objSetup->gamebitExplodeTrigger)) {
-        main_set_bits(objSetup->gamebitExploded, 1);
+    if (mainGetBits(objSetup->gamebitExplodeTrigger)) {
+        mainSetBits(objSetup->gamebitExploded, 1);
         objData->flags |= ExplodeAnimator_FLAG_Finished;
         ExplodeAnimator_create_partfx(self, objSetup);
     }

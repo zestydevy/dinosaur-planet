@@ -130,7 +130,7 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
     self->prevLocalPosition.y = self->srt.transl.y;
     self->prevLocalPosition.x = self->srt.transl.z;
 
-    if (main_get_bits(objData->gamebit)) {
+    if (mainGetBits(objData->gamebit)) {
         objData->unk0 = 1;
         func_800267A4(self);
     }

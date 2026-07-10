@@ -39,7 +39,7 @@ void DIM2Icicle_dtor(void *dll) { }
 void DIM2Icicle_setup(Object* self, DIM2Icicle_Setup* setup, s32 arg2) {
     DIM2Icicle_Data* objdata = self->data;
     
-    if (main_get_bits(setup->gamebitFell)) {
+    if (mainGetBits(setup->gamebitFell)) {
         objdata->state = DIM2Icicle_STATE_Fall_Finished;
         self->opacity = 0;
     } else {
@@ -122,7 +122,7 @@ void DIM2Icicle_control(Object* self) {
 
         //Check for when icicle reaches ground
         if (self->srt.transl.y < objData->groundHeight) {
-            main_set_bits(objSetup->gamebitFell, 1);
+            mainSetBits(objSetup->gamebitFell, 1);
             objData->state = DIM2Icicle_STATE_Fall_Finished;
             gDLL_24_Waterfx->vtbl->spawn_splash(self->srt.transl.x, objData->groundHeight, self->srt.transl.z, 10.0f);
             gDLL_24_Waterfx->vtbl->spawn_circular_ripple(self->srt.transl.x, objData->groundHeight, self->srt.transl.z, 0, 0.0f, 2);

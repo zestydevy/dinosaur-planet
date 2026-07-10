@@ -410,9 +410,9 @@ s32 vi_frame_sync(s32 param1) {
 
         D_80093060 -= 1;
     } else {
-        if (get_pause_state() == 1) {
+        if (mainGetPauseState() == 1) {
             // Create pause screen screenshot
-            set_pause_state(2);
+            mainSetPauseState(2);
             bcopy(gBackFramebuffer, gFramebufferEnd, (320 * 240 * sizeof(u16)));
         } else {
             osViSwapBuffer(gFrontFramebuffer);

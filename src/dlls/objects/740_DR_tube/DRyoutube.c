@@ -83,7 +83,7 @@ void DR_Tube_setup(Object* self, DR_Tube_Setup* objSetup, s32 arg2) {
         }
     }
     
-    sAllTubesActivated = main_get_bits(BIT_DR_Tubes_All_Activated);
+    sAllTubesActivated = mainGetBits(BIT_DR_Tubes_All_Activated);
 
     if (sAllTubesActivated) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
@@ -121,7 +121,7 @@ void DR_Tube_control(Object* self) {
     if ((objData->tubeIndex == 0) && (sAllTubesActivated == FALSE) && 
         (DR_Tube_get_sections_bitfield(dTubeTopGamebits) >= DR_Tube_ALL_SECTIONS)
     ) {
-        main_set_bits(BIT_DR_Tubes_All_Activated, TRUE);
+        mainSetBits(BIT_DR_Tubes_All_Activated, TRUE);
         sAllTubesActivated = TRUE;
 
         //Stop the eerie alarm loop
@@ -217,7 +217,7 @@ s32 DR_Tube_get_sections_bitfield(s16* gamebits) {
     u8 i;
 
     for (bitfield = 0, i = 0; i < 3; i++, gamebits++) {
-        bitfield |= main_get_bits(*gamebits) << i;
+        bitfield |= mainGetBits(*gamebits) << i;
     }
     
     return bitfield;

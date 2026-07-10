@@ -35,7 +35,7 @@ void DRExplodeDoor_setup(Object* self, DRExplodeDoor_Setup* objSetup, s32 arg2) 
     }
     
     //Check if exploded previously
-    if (main_get_bits(objSetup->gamebitExplode)) {
+    if (mainGetBits(objSetup->gamebitExplode)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
         self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
         obj_free_tick(self);
@@ -59,7 +59,7 @@ void DRExplodeDoor_control(Object* self) {
     DLL_IModgfx* dll;
     
     //Explode when gamebit set (only allowed when objSetup->mode is 2)
-    if ((objSetup->mode == DRExplodeDoor_MODE_Enable_Control_Function) && main_get_bits(objSetup->gamebitExplode)) {
+    if ((objSetup->mode == DRExplodeDoor_MODE_Enable_Control_Function) && mainGetBits(objSetup->gamebitExplode)) {
         dll = dllLoadDeferred(DLL_ID_107, 1);
         dll->vtbl->func0(self, 16, NULL, 2, -1, &modGfxArg);
         dllFree(dll);
@@ -80,7 +80,7 @@ void DRExplodeDoor_update(Object* self) {
     
     //Check for damage from barrel explosions, or for the explosion gamebit
     if (func_80025F40(self, NULL, NULL, &hitDamage) == Damage_Type_Explosion || 
-        main_get_bits(objSetup->gamebitExplode)
+        mainGetBits(objSetup->gamebitExplode)
     ) {
         bzero(&modGfxTrans, sizeof(SRT));
         modGfxTrans.scale = objSetup->explosionScale * 0.03125f;
@@ -93,7 +93,7 @@ void DRExplodeDoor_update(Object* self) {
         self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
         self->srt.flags |= OBJFLAG_INVISIBLE;
         
-        main_set_bits(objSetup->gamebitExplode, 1);
+        mainSetBits(objSetup->gamebitExplode, 1);
         func_800267A4(self);
     }
 }

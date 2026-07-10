@@ -88,7 +88,7 @@ void old_mainmenu_func_D8(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     // Maybe the static Rare logo from the One Hour Footage?
     gDLL_20_Screens->vtbl->show_screen(2);
     
-    func_80014508(20);
+    main_func_80014508(20);
 
     // NOTE: this section is very broken!
     // Maybe it used to call a DLL for the old title screen text seen in the One Hour Footage?

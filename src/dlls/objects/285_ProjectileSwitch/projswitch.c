@@ -57,7 +57,7 @@ void ProjectileSwitch_setup(Object* self, ProjectileSwitch_Setup* objSetup, s32 
     }
     
     //Check if the switch is already pressed
-    objData->switchPressed = main_get_bits(objSetup->gamebit);
+    objData->switchPressed = mainGetBits(objSetup->gamebit);
     if (objData->switchPressed) {
         ProjectileSwitch_change_state(self, TRUE, FALSE);
     } else {
@@ -78,7 +78,7 @@ void ProjectileSwitch_control(Object* self) {
     objData = self->data;
     objSetup = (ProjectileSwitch_Setup*)self->setup;
     
-    if (objData->switchPressed && (main_get_bits(objSetup->gamebit) == FALSE)) {
+    if (objData->switchPressed && (mainGetBits(objSetup->gamebit) == FALSE)) {
         ProjectileSwitch_change_state(self, FALSE, TRUE);
     }
     
@@ -87,7 +87,7 @@ void ProjectileSwitch_control(Object* self) {
         objData->resetTimer -= (f32)gUpdateRate;
         if (objData->resetTimer <= 0.0f) {
             objData->resetTimer = 0.0f;
-            main_set_bits(objSetup->gamebit, 0);
+            mainSetBits(objSetup->gamebit, 0);
         } else {
             return;
         }
@@ -98,11 +98,11 @@ void ProjectileSwitch_control(Object* self) {
         if (objData->switchPressed) {
             if ((objSetup->modelIndexAndFlags & 3) == Switch_FLAG_Can_Be_Toggled_Via_Attacks) {
                 ProjectileSwitch_change_state(self, FALSE, TRUE);
-                main_set_bits(objSetup->gamebit, 0);
+                mainSetBits(objSetup->gamebit, 0);
             }
         } else {
             ProjectileSwitch_change_state(self, TRUE, TRUE);
-            main_set_bits(objSetup->gamebit, 1);
+            mainSetBits(objSetup->gamebit, 1);
             if ((objSetup->modelIndexAndFlags & 3) == Switch_FLAG_Resets_After_Delay) {
                 objData->resetTimer = objSetup->resetDelay * 0.1f * 60.0f;
             }

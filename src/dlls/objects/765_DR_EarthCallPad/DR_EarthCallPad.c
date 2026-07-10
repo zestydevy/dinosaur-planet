@@ -70,7 +70,7 @@ s32 DR_EarthCallPad_call(Object* self) {
 
     STUBBED_PRINTF(" Playing Sequence for Calling Dino ");
 
-    if (main_get_bits(setup->gamebitEnabled) == 0) {
+    if (mainGetBits(setup->gamebitEnabled) == 0) {
         return 1;
     } else {
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_DRAGON_ROCK_BOTTOM, 2, 1);

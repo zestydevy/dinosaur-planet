@@ -107,15 +107,15 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
 
     if (player != NULL) {
         if (objdata->conditionGamebit != -1) {
-            conditionGamebitValue = main_get_bits(objdata->conditionGamebit);
+            conditionGamebitValue = mainGetBits(objdata->conditionGamebit);
         }
-        gamebitValue = main_get_bits(objdata->setGamebit);
+        gamebitValue = mainGetBits(objdata->setGamebit);
         if ((gamebitValue == 0) && (objdata->unk4 == 0) && (conditionGamebitValue != 0)) {
             self->unkAF &= ~0x8;
             if ((gDLL_1_cmdmenu->vtbl->was_this_item_used(data_0) != 0) &&
                     (vec3_distance(&self->globalPosition, &player->globalPosition) < 100.0f)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                main_set_bits(objdata->setGamebit, 1);
+                mainSetBits(objdata->setGamebit, 1);
                 objdata->unk4 = 1;
                 self->unkAF |= 8;
             }
@@ -133,13 +133,13 @@ static int VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, s8
             act = gDLL_29_Gplay->vtbl->get_act(a0->mapID);
             switch (act) {
             case 1:
-                main_set_bits(BIT_VFP_Door_Seal_Break, 1);
+                mainSetBits(BIT_VFP_Door_Seal_Break, 1);
                 break;
             case 2:
-                main_set_bits(BIT_515, 1);
+                mainSetBits(BIT_515, 1);
                 break;
             case 3:
-                main_set_bits(BIT_VFP_Door_Open, 1);
+                mainSetBits(BIT_VFP_Door_Open, 1);
                 break;
             }
             a2->messages[i] = 0;
