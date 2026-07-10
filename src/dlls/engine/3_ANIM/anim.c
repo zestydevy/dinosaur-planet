@@ -1837,7 +1837,7 @@ static void anim_process_envfx_queue(AnimObj_Data* st, Object* actor, u8 skippin
                     gDLL_28_ScreenFade->vtbl->func3((value & 0xFC0) >> 4, SCREEN_FADE_RED, 0.2f);
                     break;
                 default:
-                    fbfx_play(value & 0x2F, (value & 0xFC0) >> 4);
+                    fbfxPlay(value & 0x2F, (value & 0xFC0) >> 4);
                     break;
             }
             break;

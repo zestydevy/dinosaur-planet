@@ -304,7 +304,7 @@ void game_tick(void) {
     rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
     rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
-    fbfx_tick(&gCurGfx, gUpdateRate);
+    fbfxTick(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
     tex_render_reset();
 
