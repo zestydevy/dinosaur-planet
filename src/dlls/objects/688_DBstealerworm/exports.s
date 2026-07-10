@@ -15,5 +15,5 @@ _exports:
 /*4*/ .dword DBStealerWorm_free
 /*5*/ .dword DBStealerWorm_get_model_flags
 /*6*/ .dword DBStealerWorm_get_data_size
-/*7*/ .dword DBStealerWorm_func_6DC
+/*7*/ .dword DBStealerWorm_get_anim_state
 /*8*/ .dword DBStealerWorm_receive_message

@@ -69,9 +69,9 @@ typedef struct {
 /*27*/ s8 initialWeaponID;
 /*28*/ s8 unk28;
 /*29*/ u8 unk29;
-/*2A*/ s8 unk2A;
+/*2A*/ s8 unk2A; //yaw (when respawned)?
 /*2B*/ u8 unk2B; //flags?
-/*2C*/ s16 unk2C;
+/*2C*/ s16 unk2C; //respawn time (in seconds)?
 /*2E*/ s8 unk2E; //objSeqID, played when lifetime expires?
 /*2F*/ u8 unk2F;
 /*30*/ s16 unk30;
