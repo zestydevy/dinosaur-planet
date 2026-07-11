@@ -59,9 +59,9 @@ void dll_662_update(Object* self) {
     if ((damageType == 0x11) && (objData->unk10C != 4)) {
         player = get_player();
         otherObj = (Object*) ((DLL_210_Player*)player->dll)->vtbl->func78(player);
-        if (((DLL_Unknown*)otherObj->dll)->vtbl->func[10].withThreeArgsS32(otherObj, 0x10, NULL) != 2) {
+        if (((DLL_Unknown*)otherObj->dll)->vtbl->func[10].withThreeArgsS32((s32)otherObj, 0x10, NULL) != 2) {
             self->objhitInfo->unk58 &= ~1;
-            ((DLL_Unknown*)otherObj->dll)->vtbl->func[10].withThreeArgsS32(otherObj, 2, self);
+            ((DLL_Unknown*)otherObj->dll)->vtbl->func[10].withThreeArgsS32((s32)otherObj, 2, (s32)self);
             objData->unk10C = 4;
         }
     }

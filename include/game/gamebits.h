@@ -1064,8 +1064,8 @@ typedef enum {
     BIT_Galleon_Inside_ObjGroup_Bits = 0x421, // len:32 group:3
     BIT_422 = 0x422, // len:1 group:1
     BIT_423 = 0x423, // len:1 group:1
-    BIT_424 = 0x424, // len:1 group:1
-    BIT_425 = 0x425, // len:1 group:1
+    BIT_DB_Nest_Egg_Added = 0x424, // len:1 group:1
+    BIT_DB_Nest_Added_All_Eggs = 0x425, // len:1 group:1
     BIT_426 = 0x426, // len:1 group:1
     BIT_427 = 0x427, // len:1 group:1
     BIT_428 = 0x428, // len:4 group:1

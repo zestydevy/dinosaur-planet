@@ -358,6 +358,7 @@
 663 = objects/663_DBlevelControl
 668 = objects/668_DBdiamond
 670 = objects/670_DBExpbit
+673 = objects/673_DBbignest
 678 = objects/678_DBbridgeanim
 683 = objects/683_DBSupShield
 684 = objects/684_DBDustGeezer
