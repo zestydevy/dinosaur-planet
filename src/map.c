@@ -1325,10 +1325,10 @@ void track_add_visible_objects(s8* objVisibilities) {
         } else {
             *vis = track_obj_vis_check(object);
             if (*vis && (object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
-                shadows_update_obj_geom(object, 0, 0, gUpdateRate);
+                shadowsUpdateObjGeom(object, 0, 0, gUpdateRate);
             }
             if ((object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
-                shadows_update_obj_box(object);
+                shadowsUpdateObjBox(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
                 if (object->def->flags & OBJDEF_FORCE_OPAQUE_DRAW_ORDER) {

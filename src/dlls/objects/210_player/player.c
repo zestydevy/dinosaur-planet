@@ -1428,7 +1428,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
             data->unk868->srt.yaw = player->srt.yaw;
             data->unk868->dll->vtbl->print(data->unk868, arg1, arg2, arg3, arg4, -1);
         }
-        shadows_update_dynamic_tex(player, arg1, arg2, arg3, arg4);
+        shadowsUpdateDynamicTex(player, arg1, arg2, arg3, arg4);
     }
 }
 #endif
@@ -2359,7 +2359,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
     player->objhitInfo->unk5D = 0;
     player->objhitInfo->unk5E = 0;
     arg1->unk0.unk4.mode = 1;
-    shadows_clear_custom_obj_pos(player);
+    shadowsClearCustomObjPos(player);
     arg1->unk8B8 = 0;
     arg1->flags &= ~0x2000;
     arg1->unk0.flags |= 0x01000000;
@@ -5159,7 +5159,7 @@ s32 dll_210_func_DC10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp5C += (temp_s1->unk490.unk4 - player->srt.transl.f[1]) * player->animProgress;
     sp58 = temp_s1->unk7EC.z;
     gDLL_2_Camera->vtbl->reposition_player(sp60, sp5C, sp58);
-    shadows_set_custom_obj_pos(player, sp60, sp5C, sp58);
+    shadowsSetCustomObjPos(player, sp60, sp5C, sp58);
     return 0;
 }
 
@@ -5255,7 +5255,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         objdata->unk490.unk10 += (player->srt.transl.f[1] - objdata->unk490.unk10) * 0.02f * arg2;
         gDLL_2_Camera->vtbl->reposition_player(objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
-        shadows_set_custom_obj_pos(player, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
+        shadowsSetCustomObjPos(player, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
         break;
     case 3:
         if (fsa->unk33A != 0) {
@@ -5273,7 +5273,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
         gDLL_2_Camera->vtbl->reposition_player(objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
-        shadows_set_custom_obj_pos(player, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
+        shadowsSetCustomObjPos(player, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
         break;
     case 6:
         if (fsa->yAnalogInput > 5.0f) {
@@ -5284,7 +5284,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             return 0x15;
         }
         gDLL_2_Camera->vtbl->reposition_player(objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
-        shadows_set_custom_obj_pos(player, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
+        shadowsSetCustomObjPos(player, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
         break;
     case 5:
         if (fsa->unk33A != 0) {
@@ -5299,7 +5299,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp88.y = objdata->unk490.unk10 + ((objdata->unk490.unk4 - objdata->unk490.unk10) * player->animProgress);
         sp88.x = objdata->unk490.unk14 + ((player->srt.transl.z - objdata->unk490.unk14) * player->animProgress);
         gDLL_2_Camera->vtbl->reposition_player(sp88.z, sp88.y, sp88.x);
-        shadows_set_custom_obj_pos(player, sp88.z, sp88.y, sp88.x);
+        shadowsSetCustomObjPos(player, sp88.z, sp88.y, sp88.x);
         break;
     default:
         player->velocity.f[1] = 0.0f;
@@ -5577,7 +5577,7 @@ s32 dll_210_func_F00C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp7C = player->srt.transl.y + ((objdata->unk3CC.unk10 - player->srt.transl.y) * player->animProgress);
     sp78 = objdata->unk3CC.unk24 + ((player->srt.transl.z - objdata->unk3CC.unk24) * player->animProgress);
     gDLL_2_Camera->vtbl->reposition_player(player->srt.transl.x, sp7C, player->srt.transl.z);
-    shadows_set_custom_obj_pos(player, sp80, sp7C, sp78);
+    shadowsSetCustomObjPos(player, sp80, sp7C, sp78);
     dll_210_func_7260(player, player->data);
     return 0;
 }
@@ -5844,7 +5844,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     }
     gDLL_2_Camera->vtbl->reposition_player(sp90, sp8C, sp88);
-    shadows_set_custom_obj_pos(player, sp90, sp8C, sp88);
+    shadowsSetCustomObjPos(player, sp90, sp8C, sp88);
     dll_210_func_7260(player, temp_s0);
     return 0;
 }
@@ -5956,7 +5956,7 @@ s32 dll_210_func_1034C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             break;
     }
     gDLL_2_Camera->vtbl->reposition_player(sp58, sp54, sp50);
-    shadows_set_custom_obj_pos(player, sp58, sp54, sp50);
+    shadowsSetCustomObjPos(player, sp58, sp54, sp50);
     return 0;
 }
 #endif
@@ -6070,7 +6070,7 @@ s32 dll_210_func_10A0C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp68 = player->srt.transl.y + (temp_s0->unk430.unk18.x * player->animProgress);
     sp64 = player->srt.transl.z + (temp_s0->unk430.unk18.z * player->animProgress);
     gDLL_2_Camera->vtbl->reposition_player(player->srt.transl.x, sp68, player->srt.transl.z);
-    shadows_set_custom_obj_pos(player, sp6C, sp68, sp64);
+    shadowsSetCustomObjPos(player, sp6C, sp68, sp64);
     dll_210_func_7260(player, player->data);
     return 0;
 }
@@ -6397,7 +6397,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp10C = player->srt.transl.y + (temp_s0->unk430.unk18.x * player->animProgress);
     sp108 = player->srt.transl.z + (temp_s0->unk430.unk18.z * player->animProgress);
     gDLL_2_Camera->vtbl->reposition_player(sp110, sp10C, sp108);
-    shadows_set_custom_obj_pos(player, sp110, sp10C, sp108);
+    shadowsSetCustomObjPos(player, sp110, sp10C, sp108);
     dll_210_func_7260(player, player->data);
     return 0;
 }
@@ -6451,7 +6451,7 @@ s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp58 = player->srt.transl.y - (temp_s1->unk430.unk18.x * (1.0f - player->animProgress));
     sp54 = player->srt.transl.z + (temp_s1->unk430.unk18.z * player->animProgress);
     gDLL_2_Camera->vtbl->reposition_player(sp5C, sp58, sp54);
-    shadows_set_custom_obj_pos(player, sp5C, sp58, sp54);
+    shadowsSetCustomObjPos(player, sp5C, sp58, sp54);
     dll_210_func_7260(player, temp_s1);
     return 0;
 }
@@ -6510,7 +6510,7 @@ s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp58 = player->srt.transl.y - (temp_s1->unk430.unk18.x * (1.0f - player->animProgress));
     sp54 = player->srt.transl.z + (temp_s1->unk430.unk18.z * player->animProgress);
     gDLL_2_Camera->vtbl->reposition_player(sp5C, sp58, sp54);
-    shadows_set_custom_obj_pos(player, sp5C, sp58, sp54);
+    shadowsSetCustomObjPos(player, sp5C, sp58, sp54);
     dll_210_func_7260(player, temp_s1);
     return 0;
 }

@@ -137,7 +137,7 @@ static void WCTrex_func_4A8(Object* self) {
     srt.scale = 1.0f;
     matrix_from_srt(&mtx, &srt);
     vec3_transform(&mtx, 0.0f, 0.0f, 0.0f, &x, &y, &z);
-    shadows_set_custom_obj_pos(self, x, y, z);
+    shadowsSetCustomObjPos(self, x, y, z);
 }
 
 // offset: 0x584 | func: 9 | anim state 0

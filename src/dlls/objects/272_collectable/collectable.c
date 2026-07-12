@@ -458,7 +458,7 @@ void collectable_handle_animation_and_fx(Object* self) {
                     opacity = OBJECT_OPACITY_MAX;
                 }
                 objdata->shadowOpacity = opacity;
-                temp = shadows_calc_opacity(self, shadow);
+                temp = shadowsCalcOpacity(self, shadow);
                 shadow->opacity = (temp * (opacity + 1)) >> 8;
             }
         }

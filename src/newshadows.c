@@ -83,16 +83,16 @@ void shadows_func_800516BC(Object* obj, Vec3f* arg1, f32 arg2);
 void shadows_func_800511E8(Object*, s32, Vec3f*, Unk8004FA58 arg3[12]);
 s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
 void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA);
-s32 shadows_draw2(Vtx* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
+s32 shadowsDraw2(Vtx* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
 s32 shadows_func_80051CFC(Vec3f* arg0, Vec3f* arg1);
 s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7);
-s32 shadows_draw1(Vtx* arg0, Gfx* gdl, ObjectShadow* arg2, Object *arg3, s32 arg4, s32* arg5);
+s32 shadowsDraw1(Vtx* arg0, Gfx* gdl, ObjectShadow* arg2, Object *arg3, s32 arg4, s32* arg5);
 s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max);
 void shadows_func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
 s32 shadows_func_80052148(Vec3f* arg0, Vec3f* arg1);
 void shadows_func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
 
-void shadows_init(void) {
+void shadowsInit(void) {
     void *temp_v0;
 
     D_80092BE8 = 10;
@@ -223,7 +223,7 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     }
 }
 
-void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z) {
+void shadowsSetCustomObjPos(Object *obj, f32 x, f32 y, f32 z) {
     ObjectShadow *shadow = obj->shadow;
 
     if (shadow) {
@@ -234,13 +234,13 @@ void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z) {
     }
 }
 
-void shadows_clear_custom_obj_pos(Object *obj) {
+void shadowsClearCustomObjPos(Object *obj) {
     if (obj->shadow != NULL) {
         obj->shadow->flags &= ~OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
     }
 }
 
-u32 shadows_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
+u32 shadowsInitObjShadow(Object *obj, u32 addr, s32 arg2) {
     ObjectShadow *shadow;
 
     shadow = (ObjectShadow*)mmAlign4(addr);
@@ -311,7 +311,7 @@ void shadows_func_8004DABC(void) {
     }
 }
 
-s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
+s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2A4; // end of loop
@@ -477,7 +477,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             }
             return 0;
         }
-        D_800BB150 += shadows_draw1(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
+        D_800BB150 += shadowsDraw1(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     } else {
         if (shadows_func_8004FA58(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
@@ -489,7 +489,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
 
             return 0;
         }
-        D_800BB150 += shadows_draw2(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
+        D_800BB150 += shadowsDraw2(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     }
 
     D_800BB14C += sp2B0;
@@ -504,7 +504,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     return 0;
 }
 
-s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
+s32 shadowsCalcOpacity(Object *obj, ObjectShadow *shadow) {
     s32 sp1C;
     s32 sp18;
     f32 var_fv1;
@@ -522,7 +522,7 @@ s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
     return sp1C >> 8;
 }
 
-void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     ObjectShadow* shadow;
     Vec3f sp50;
     Vec3f sp44;
@@ -553,7 +553,7 @@ void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtx
 
 static u8 _data_pad_80092c68[0xC] = {0};
 
-void shadows_update_obj_box(Object* arg0) {
+void shadowsUpdateObjBox(Object* arg0) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2AC;
@@ -647,7 +647,7 @@ void shadows_update_obj_box(Object* arg0) {
             }
             return;
         } else {
-            D_800BB184 += shadows_draw2(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
+            D_800BB184 += shadowsDraw2(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
             D_800BB180 += sp2B0;
             D_800BB178 = D_800BB174;
             D_80092C28 = D_800BB184 - D_800BB158[D_80092C0C];
@@ -663,7 +663,7 @@ void shadows_update_obj_box(Object* arg0) {
 
     if ((temp_s1->gdl != NULL) && (temp_s1->gdl2 != NULL)) {
         if (!(temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
-            alpha = shadows_calc_opacity(arg0, temp_s1);
+            alpha = shadowsCalcOpacity(arg0, temp_s1);
         } else {
             alpha = temp_s1->opacity;
         }
@@ -671,7 +671,7 @@ void shadows_update_obj_box(Object* arg0) {
     }
 }
 
-s32 shadows_draw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4, s32 *arg5) {
+s32 shadowsDraw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4, s32 *arg5) {
     DLTri* currentTri;
     s16 temp_v0_2;
     s16* var_s0;
@@ -800,7 +800,7 @@ s32 shadows_draw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg
     return (dl - sp1C0);
 }
 
-s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4, s32* arg5) {
+s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4, s32* arg5) {
     s32 sp1E4;
     s32 var_s0;
     s32 var_s4;
@@ -841,7 +841,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     }
     if (!(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR)) {
         if ((obj->def->shadowType == OBJ_SHADOW_GEOM) && !(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
-            sp1D0 = shadows_calc_opacity(obj, shadow);
+            sp1D0 = shadowsCalcOpacity(obj, shadow);
         } else {
             sp1D0 = shadow->opacity;
         }

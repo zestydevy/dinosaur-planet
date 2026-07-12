@@ -86,16 +86,16 @@ extern s32 D_80092CA4;
 
 extern Vec3f D_800BB198;
 
-void shadows_init(void);
-s32 shadows_update_obj_geom(Object *obj, s32 arg1, s32 arg2, s32 updateRate);
-void shadows_update_obj_box(Object* arg0);
+void shadowsInit(void);
+s32 shadowsUpdateObjGeom(Object *obj, s32 arg1, s32 arg2, s32 updateRate);
+void shadowsUpdateObjBox(Object* arg0);
 s32 shadows_func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5);
-void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z);
-void shadows_clear_custom_obj_pos(Object *arg0);
-void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
-u32 shadows_init_obj_shadow(Object *obj, u32 addr, s32);
+void shadowsSetCustomObjPos(Object *obj, f32 x, f32 y, f32 z);
+void shadowsClearCustomObjPos(Object *arg0);
+void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
+u32 shadowsInitObjShadow(Object *obj, u32 addr, s32);
 f32 shadows_func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
-s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow);
+s32 shadowsCalcOpacity(Object *obj, ObjectShadow *shadow);
 void shadows_func_8004D974(s32 arg0);
 void shadows_func_8004D9B8(void);
 void shadows_func_8004DABC(void);

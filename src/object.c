@@ -690,7 +690,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != OBJ_SHADOW_NONE)) {
-        addr = shadows_init_obj_shadow(obj, addr, 0);
+        addr = shadowsInitObjShadow(obj, addr, 0);
     }
 
     obj->visRadius = obj_calc_vis_radius(obj) * obj->srt.scale;

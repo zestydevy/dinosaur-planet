@@ -212,7 +212,7 @@ void mainInit(void) {
     init_objects();
     diPrintfInit();
     func_80053300();
-    shadows_init();
+    shadowsInit();
     footstepsInit();
     fontsInit();
     menuInit();
