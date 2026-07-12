@@ -108,7 +108,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         if (self->animProgress > 0.95f) {
             objdata->unk0 = 0xD;
             objdata->unk14 = 0.005f;
-            func_80023D30(self, 5, 0, 0);
+            objAnimSet(self, 5, 0, 0);
         }
         dll_461_func_14B0(self, objdata);
         break;
@@ -125,14 +125,14 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
             dll_461_func_1090(self, objdata->unk8, objdata, 7);
         } else {
             if ((((DLL_ISidekick*)objdata->unk8->dll)->vtbl->func24(objdata->unk8) != 0) || (vec3_distance_xz_squared(&self->globalPosition, &objdata->unk8->globalPosition) < 90000.0f)) {
-                func_8002493C(self, 1.5f, &objdata->unk14);
+                objGetAnimChange(self, 1.5f, &objdata->unk14);
                 dll_461_func_1384(self, &objdata->unk8->srt.transl, 1.5f);
             } else if (vec3_distance_xz_squared(&self->globalPosition, (Vec3f* ) &setup->x) < 10000.0f) {
                 dll_461_func_1030(self, objdata);
             } else {
                 objdata->unk0 = 0xA;
                 objdata->unk14 = 0.01f;
-                func_80023D30(self, 2, 0, 0);
+                objAnimSet(self, 2, 0, 0);
             }
         }
         break;
@@ -150,7 +150,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
             } else if (dist < 32400.0f) {
                 objdata->unk0 = 0xC;
                 objdata->unk14 = 0.005f;
-                func_80023D30(self, 8, 0, 0);
+                objAnimSet(self, 8, 0, 0);
                 gDLL_6_AMSFX->vtbl->play(self, (u16)_data_C[rand_next(0, 3)], 0x7FU, NULL, NULL, 0, NULL);
                 objdata->unk2 = 0;
                 objdata->unk1 = 3;
@@ -165,7 +165,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
                 } else {
                     objdata->unk0 = 0xC;
                     objdata->unk14 = 0.01f;
-                    func_80023D30(self, 0xB, 0, 0);
+                    objAnimSet(self, 0xB, 0, 0);
                     objdata->unk2 = 0;
                     objdata->unk1 = 3;
                 }
@@ -209,7 +209,7 @@ void dll_461_func_5E0(Object *self, CCsandwormBoss_Data *objdata) {
         return;
     }
 
-    func_80024108(self, objdata->unk14, gUpdateRateF, 0);
+    objAnimAdvance(self, objdata->unk14, gUpdateRateF, 0);
     dll_461_func_1540(self, objdata);
 }
 

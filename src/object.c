@@ -1855,7 +1855,7 @@ void obj_handle_model_switch(Object *obj, ModelInstance *modelInst, Model *model
     obj->curModAnimId = -1;
     obj->curModAnimIdLayered = -1;
 
-    func_80023D30(obj, prevAnimId, obj->animProgress, 0);
+    objAnimSet(obj, prevAnimId, obj->animProgress, 0);
 
     if (obj->objhitInfo != NULL) {
         if ((obj->objhitInfo->unk5A & 0x10)) {

@@ -111,7 +111,7 @@ void Duster_control(Object *self) {
     }
 
     if (objdata->timer1 == 0 && objdata->timer2 == 0) {
-        if (func_80024108(self, objdata->unk0, gUpdateRateF, NULL) || objdata->unkE) {
+        if (objAnimAdvance(self, objdata->unk0, gUpdateRateF, NULL) || objdata->unkE) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_87B_Ting, 0x25, NULL, NULL, 0, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);

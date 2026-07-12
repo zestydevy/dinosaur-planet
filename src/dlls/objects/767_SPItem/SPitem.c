@@ -93,7 +93,7 @@ void SPItem_control(Object* self) {
         joyDisableButtons(0, A_BUTTON);
     }
 
-    func_80024108(self, 0.005f, gUpdateRateF, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
 }
 
 // offset: 0x350 | func: 2 | export: 2

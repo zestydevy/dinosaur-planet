@@ -280,10 +280,10 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
 
     if (arg1 == 0) {
         if (self->curModAnimId != 0xD) {
-            func_80023D30(self, 0xD, 0, 0);
+            objAnimSet(self, 0xD, 0, 0);
         }
         
-        func_80024108(self, 0.004f, gUpdateRate, 0);
+        objAnimAdvance(self, 0.004f, gUpdateRate, 0);
         if (mainGetBits(BIT_424) && mainGetBits(BIT_425)) {
             objData = self->data;
             objData->unk524++;

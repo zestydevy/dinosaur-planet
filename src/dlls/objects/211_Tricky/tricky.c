@@ -454,7 +454,7 @@ void dll_211_control(Object* self) {
     objData->unkCC.mode = 1;
     objData->unk24 += gUpdateRateF;
     _bss_8[objData->unk18](self, objData);
-    func_80024108(self, objData->unk38, gUpdateRateF, &sp68);
+    objAnimAdvance(self, objData->unk38, gUpdateRateF, &sp68);
     if (objData->unk4C & 0x40) {
         self->srt.transl.x += objData->unk30[0] * -sp68.unk0[2] * objData->unk40;
         self->srt.transl.z += objData->unk30[1] * -sp68.unk0[2] * objData->unk40;
@@ -886,7 +886,7 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
                 dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
                 objData->unk1A = 1;
                 objData->unk4C |= 0x10;
-                func_80023D30(self, 0x106, 0.0f, 0);
+                objAnimSet(self, 0x106, 0.0f, 0);
                 break;
             }
 
@@ -949,7 +949,7 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
             }
             if (objData->unk5F4_vec.z > 3000.0f) {
                 objData->unk1A = 2;
-                func_80023D30(self, 0x1A, 0.0f, 0);
+                objAnimSet(self, 0x1A, 0.0f, 0);
                 objData->unk38 = 0.004f;
             }
         }
@@ -964,7 +964,7 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
             dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
             objData->unk1A = 1;
             objData->unk4C |= 0x10;
-            func_80023D30(self, 0x106, 0.0f, 0);
+            objAnimSet(self, 0x106, 0.0f, 0);
         }
         break;
     }
@@ -998,7 +998,7 @@ static void dll_211_func_1F3C(Object* self, DLL211_Data* objData) {
             objData->unk1A = 2;
             ((f32*)objData->unk5E4)[0] = 0.0f;
             ((u32*)objData->unk5E4)[1] = gDLL_6_AMSFX->vtbl->play(self, SOUND_48_Dig_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
-            func_80023D30(self, 14, 0.0f, 0);
+            objAnimSet(self, 14, 0.0f, 0);
             temp_v1_2 = objData->unk5F4;
             objData->unk38 = 0.033f;
             if (temp_v1_2 != 0) {
@@ -1091,7 +1091,7 @@ static void dll_211_func_23B8(Object* self, DLL211_Data* objData) {
         }
         return;
     case 3:
-        func_80023D30(self, 14, 0.0f, 0);
+        objAnimSet(self, 14, 0.0f, 0);
         temp_t0 = (CurveSetup *) objData->unk5E4[1];
         objData->unk38 = 0.033f;
         objData->unk30[0] = temp_t0->pos.x - objData->unk5E4[0]->srt.scale;
@@ -1402,7 +1402,7 @@ static void dll_211_func_3664(Object* self, DLL211_Data* objData) {
         return;
     case 4:
         if (dll_211_func_4F3C(self, 2.5f, objData, &objData->unk5F4->pos) == 0) {
-            func_80023D30(self, 0x1A, 0.0f, 0);
+            objAnimSet(self, 0x1A, 0.0f, 0);
             objData->unk38 = 0.004f;
             objData->unk1A = 6;
         } else {
@@ -1418,7 +1418,7 @@ static void dll_211_func_3664(Object* self, DLL211_Data* objData) {
         return;
     case 1:
         if (dll_211_func_53E4(self, 5.0f, objData) == 0) {
-            func_80023D30(self, 0x1A, 0.0f, 0);
+            objAnimSet(self, 0x1A, 0.0f, 0);
             objData->unk38 = 0.004f;
             objData->unk4C |= 0x10;
             objData->unk1A = 5;
@@ -1537,11 +1537,11 @@ static void dll_211_func_3CAC(Object* self, DLL211_Data* objData) {
             if ((objData->unk4->redFood != 0) && (objData->unk60C != 0)) {
                 dll_211_func_9050(self, objData);
                 objData->unk4->redFood--;
-                func_80023D30(self, 0x205, 0.0f, 0);
+                objAnimSet(self, 0x205, 0.0f, 0);
                 objData->unk38 = 0.005f;
                 objData->unk1A = 5;
             } else {
-                func_80023D30(self, 0x105, 0.0f, 0);
+                objAnimSet(self, 0x105, 0.0f, 0);
                 objData->unk38 = 0.01f;
                 objData->unk1A = 6;
             }
@@ -1567,7 +1567,7 @@ static void dll_211_func_3CAC(Object* self, DLL211_Data* objData) {
         return;
     case 6:
         if (self->animProgress >= 0.95f) {
-            func_80023D30(self, 0x106, 0.0f, 0);
+            objAnimSet(self, 0x106, 0.0f, 0);
             objData->unk38 = 0.005f;
             objData->unk600 = 0.0f;
             dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
@@ -1582,7 +1582,7 @@ static void dll_211_func_3CAC(Object* self, DLL211_Data* objData) {
         }
         objData->unk600 += gUpdateRateF;
         if (((objData->unk600 >= 150.0f) && (vec3_distance_xz_squared(objData->unk2C, &self->srt.transl) >= 2500.0f)) || (dll_211_func_3C1C(objData->unk604) == 0)) {
-            func_80023D30(self, 0x105, 1.0f, 0);
+            objAnimSet(self, 0x105, 1.0f, 0);
             objData->unk38 = -0.01f;
             objData->unk1A = 8;
         } else {
@@ -1629,7 +1629,7 @@ static void dll_211_func_4418(Object* self, DLL211_Data* objData) {
     case 1:
         if (((DLL_Unknown*)objData->unk5E4[0]->dll)->vtbl->func[9].withOneArgS32((s32)objData->unk5E4[0]) != 0) {
             if (dll_211_func_53E4(self, 13.0f, objData) == 0) {
-                func_80023D30(self, 17, 0.0f, 0);
+                objAnimSet(self, 17, 0.0f, 0);
                 objData->unk38 = 0.03f;
                 objData->unk4C |= 0x10;
                 objData->unk1A = 3;
@@ -1686,7 +1686,7 @@ static void dll_211_func_4418(Object* self, DLL211_Data* objData) {
         }
     case 5:
         if (dll_211_func_53E4(self, 50.0f, objData) == 0) {
-            func_80023D30(self, 0x13, 0.0f, 0);
+            objAnimSet(self, 0x13, 0.0f, 0);
             objData->unk38 = 0.03f;
             objData->unk1A = 6;
         }
@@ -1763,7 +1763,7 @@ static void dll_211_func_4974(Object* self, DLL211_Data* objData) {
         if (dll_211_func_53E4(self, 25.0f, objData) == 0) {
             dll_211_func_9050(self, objData);
             objData->unk4->redFood--;
-            func_80023D30(self, 0x205, 0.0f, 0);
+            objAnimSet(self, 0x205, 0.0f, 0);
             objData->unk38 = 0.005f;
             objData->unk4C |= 0x10;
             objData->unk1A = 3;
@@ -1792,7 +1792,7 @@ static void dll_211_func_4C94(Object* self, DLL211_Data* objData) {
         if (dll_211_func_53E4(self, 50.0f, objData) == 0) {
             dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
             objData->unk1A = 1;
-            func_80023D30(self, 0x106, 0.0f, 0);
+            objAnimSet(self, 0x106, 0.0f, 0);
             objData->unk5F8 = 0;
             return;
         }
@@ -1811,7 +1811,7 @@ static void dll_211_func_4C94(Object* self, DLL211_Data* objData) {
         if (dll_211_func_53E4(self, 25.0f, objData) == 0) {
             dll_211_func_9050(self, objData);
             objData->unk4->redFood--;
-            func_80023D30(self, 0x205, 0.0f, 0);
+            objAnimSet(self, 0x205, 0.0f, 0);
             objData->unk38 = 0.005f;
             objData->unk4C |= 0x10;
             objData->unk1A = 3;
@@ -1862,7 +1862,7 @@ static s32 dll_211_func_4F3C(Object* self, f32 arg1, DLL211_Data* arg2, Vec3f* a
 static void dll_211_func_507C(Object* self, DLL211_Data* objData) {
     dll_211_func_8F84(self, &objData->unk3C8.unkA0->pos, objData->unk30);
     objData->unk20 = 1.5f;
-    func_80023D30(self, 0x15, 0.0f, 0);
+    objAnimSet(self, 0x15, 0.0f, 0);
     objData->unk19 = 9;
     dll_211_func_95E0(self, objData, _data_0[rand_next(7, 9)]);
 }
@@ -1875,10 +1875,10 @@ static void dll_211_func_514C(Object* self, DLL211_Data* objData) {
     objData->unk44 = (objData->unk3C8.unkA0->pos.y - self->srt.transl.y) / 32.865f;
     objData->unk40 = 1.0f;
     if (objData->unk20 == 1.5f) {
-        func_80023D30(self, 0x17, 0.0f, 0);
+        objAnimSet(self, 0x17, 0.0f, 0);
         objData->unk38 = 0.0135f;
     } else {
-        func_80023D30(self, 0x18, 0.0f, 0);
+        objAnimSet(self, 0x18, 0.0f, 0);
         objData->unk38 = 0.00975f;
     }
     objData->unk19 = 12;
@@ -1892,7 +1892,7 @@ static void dll_211_func_52B8(Object* self, DLL211_Data* objData) {
     objData->unk4C |= 0xC0;
     objData->unk44 = (self->srt.transl.y - objData->unk3C8.unkA0->pos.y) / 33.114f;
     objData->unk40 = 1.0f;
-    func_80023D30(self, 0x19, 0.0f, 0);
+    objAnimSet(self, 0x19, 0.0f, 0);
     objData->unk38 = 0.0125f;
     objData->unk19 = 14;
     dll_211_func_8A94(self, &objData->unk3C8);
@@ -2142,23 +2142,23 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
                 var_s1 = (var_s1 * 5) / 4;
                 if (var_s1 > 0) {
                     if (var_s1 >= 0x342F) {
-                        func_80023D30(self, 12, 0.0f, 0);
+                        objAnimSet(self, 12, 0.0f, 0);
                         var_v1 = (var_s1 >= 0 ? var_s1 : -var_s1);
                         objData->unk48 = var_v1 / 24490.0f;
                         objData->unk38 = 0.01f;
                     } else {
-                        func_80023D30(self, 10, 0.0f, 0);
+                        objAnimSet(self, 10, 0.0f, 0);
                         var_v1 = (var_s1 >= 0 ? var_s1 : -var_s1);
                         objData->unk48 = var_v1 / 6679.0f;
                         objData->unk38 = 0.06f;
                     }
                 } else if (var_s1 >= 0x342F) {
-                    func_80023D30(self, 11, 0.0f, 0);
+                    objAnimSet(self, 11, 0.0f, 0);
                     var_v1 = (var_s1 >= 0 ? var_s1 : -var_s1);
                     objData->unk48 = var_v1 / 24490.0f;
                     objData->unk38 = 0.01f;
                 } else {
-                    func_80023D30(self, 9, 0.0f, 0);
+                    objAnimSet(self, 9, 0.0f, 0);
                     var_v1 = (var_s1 >= 0 ? var_s1 : -var_s1);
                     objData->unk48 = var_v1 / 6679.0f;
                     objData->unk38 = 0.06f;
@@ -2334,17 +2334,17 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         dll_211_func_8ED0(sp84, 2.3f, &objData->unk20);
         dll_211_func_87E4(self);
         if (self->animProgress < 0.5f) {
-            func_8002493C(self, objData->unk20, &sp44.unk10);
+            objGetAnimChange(self, objData->unk20, &sp44.unk10);
             self->srt.transl.x += objData->unk30[0] * objData->unk20 * gUpdateRateF;
             self->srt.transl.z += objData->unk30[1] * objData->unk20 * gUpdateRateF;
         } else {
-            func_8002493C(self, objData->unk20 * 0.25f, &sp44.unk10);
+            objGetAnimChange(self, objData->unk20 * 0.25f, &sp44.unk10);
             self->srt.transl.x += objData->unk30[0] * (objData->unk20 * 0.25f) * gUpdateRateF;
             // FAKE
             if (var_v1);
             self->srt.transl.z += objData->unk30[1] * (objData->unk20 * 0.25f) * gUpdateRateF;
         }
-        if (func_80024108(self, sp44.unk10, gUpdateRateF, NULL) != 0) {
+        if (objAnimAdvance(self, sp44.unk10, gUpdateRateF, NULL) != 0) {
             setup = objData->unk3C8.unkA0;
             temp_fv0 = setup->pos.x - self->srt.transl.x;
             var_fv1 = setup->pos.z - self->srt.transl.z;
@@ -2353,8 +2353,8 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
             objData->unk58 = 0.0f;
             objData->unk60 = self->srt.transl.y;
             objData->unk5C = (((setup->pos.y - self->srt.transl.y) - (-0.017f * objData->unk54 * objData->unk54)) / objData->unk54);
-            func_80023D30(self, 0x16, 0.0f, 0);
-            func_800240BC(self, objData->unk58 / objData->unk54);
+            objAnimSet(self, 0x16, 0.0f, 0);
+            objAnimSetProgress(self, objData->unk58 / objData->unk54);
             objData->unk20 = 2.3f;
             objData->unk19 = 10;
             dll_211_func_8A94(self, &objData->unk3C8);
@@ -2365,23 +2365,23 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         objData->unk58 += gUpdateRateF;
         if (objData->unk54 <= objData->unk58) {
             self->srt.transl.y = objData->unk3C8.unkA0->pos.y;
-            func_800240BC(self, 1.0f);
+            objAnimSetProgress(self, 1.0f);
             objData->unk19 = 7;
             objData->unk38 = 0.0f;
         } else {
             self->srt.transl.y = objData->unk60 + (objData->unk5C * objData->unk58) + (-0.017f * objData->unk58 * objData->unk58);
             var_fv1 = objData->unk54;
             if (var_fv1 <= 24.0f) {
-                func_800240BC(self, objData->unk58 / var_fv1);
+                objAnimSetProgress(self, objData->unk58 / var_fv1);
             } else {
                 sp44.unkC = 1.0f;
                 if (objData->unk58 <= 6.0f) {
-                    func_800240BC(self, objData->unk58 / 24.0f);
+                    objAnimSetProgress(self, objData->unk58 / 24.0f);
                 } else if ((var_fv1 - 6.0f) <= objData->unk58) {
-                    func_800240BC(self, ((24.0f - var_fv1) + objData->unk58) / 24.0f);
+                    objAnimSetProgress(self, ((24.0f - var_fv1) + objData->unk58) / 24.0f);
                     sp44.unkC = (((objData->unk54 - objData->unk58) / 6.0f) * 0.75f) + 0.25f;
                 } else {
-                    func_800240BC(self, (((objData->unk58 - 6.0f) / (var_fv1 - 12.0f)) * 0.5f) + 0.25f);
+                    objAnimSetProgress(self, (((objData->unk58 - 6.0f) / (var_fv1 - 12.0f)) * 0.5f) + 0.25f);
                 }
             }
             objData->unkCC.mode = 0;
@@ -2961,11 +2961,11 @@ static void dll_211_func_8308(Object* self, s32 arg1) {
     if (self->curModAnimId > 0 && self->curModAnimId < 6 && arg1 > 0 && arg1 < 6) {
         if (objData->unk24 > 20.0f) {
             objData->unk24 = 0.0f;
-            func_80023D30(self, arg1, self->animProgress, 0);
+            objAnimSet(self, arg1, self->animProgress, 0);
         }
     } else {
         objData->unk24 = 0.0f;
-        func_80023D30(self, arg1, self->animProgress, 0);
+        objAnimSet(self, arg1, self->animProgress, 0);
     }
 }
 
@@ -3019,7 +3019,7 @@ static void dll_211_func_8470(Object* self, Vec3f* arg1) {
         }
         self->srt.transl.x += temp_a2[0] * var_f0 * gUpdateRateF;
         self->srt.transl.z += temp_a2[1] * var_f0 * gUpdateRateF;
-        func_8002493C(self, var_f0, &objData->unk38);
+        objGetAnimChange(self, var_f0, &objData->unk38);
         return;
     }
     if (dll_211_func_9668(&objData->unkCC) != 0) {

@@ -294,7 +294,7 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     }
 
     obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
-    func_80024108(self, objdata->unkC, gUpdateRateF, &sp50);
+    objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
 
     angle = arctan2_f(self->globalPosition.x - objdata->player->globalPosition.x, self->globalPosition.z - objdata->player->globalPosition.z) - ((u16)self->srt.yaw);
     CIRCLE_WRAP(angle)

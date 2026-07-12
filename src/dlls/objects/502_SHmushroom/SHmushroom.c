@@ -88,8 +88,8 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	self->srt.scale = self->def->scale;
 
 	//Get root motion speed from jump animation?
-	func_80023D30(self, SHmushroom_MODANIM_1_Jump, 0.0f, 0);
-	func_80024108(self, 1.0f, 1.0f, &animInfo);
+	objAnimSet(self, SHmushroom_MODANIM_1_Jump, 0.0f, 0);
+	objAnimAdvance(self, 1.0f, 1.0f, &animInfo);
 	objData->jumpSpeed = animInfo.unk0[0];
 	if (objData->jumpSpeed < 0.0f) {
 		objData->jumpSpeed = -objData->jumpSpeed;
@@ -98,8 +98,8 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	objData->jumpSpeed += 20.0f;
 
 	//Get root motion speed from hop animation?
-	func_80023D30(self, SHmushroom_MODANIM_4_Look_Hop_LOOP, 0.0f, 0);
-	func_80024108(self, 1.0f, 1.0f, &animInfo);
+	objAnimSet(self, SHmushroom_MODANIM_4_Look_Hop_LOOP, 0.0f, 0);
+	objAnimAdvance(self, 1.0f, 1.0f, &animInfo);
 	objData->hopSpeed = animInfo.unk0[2];
 	if (objData->hopSpeed < 0.0f) {
 		objData->hopSpeed = -objData->hopSpeed;
@@ -633,11 +633,11 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 
 	//Change animation when needed
 	if (self->curModAnimId != dStateModAnimIDs[objData->state]) {
-		func_80023D30(self, dStateModAnimIDs[objData->state], 0.25f, 0);
+		objAnimSet(self, dStateModAnimIDs[objData->state], 0.25f, 0);
 	}
 
 	//Advance animation
-	if (func_80024108(self, dStateAnimSpeeds[objData->state], gUpdateRateF, &animInfo)) {
+	if (objAnimAdvance(self, dStateAnimSpeeds[objData->state], gUpdateRateF, &animInfo)) {
 		objData->flags |= SHmushroom_FLAG_Animation_Finished;
 	} else {
 		objData->flags &= ~SHmushroom_FLAG_Animation_Finished;

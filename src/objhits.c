@@ -630,7 +630,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
 
     if (arg3 != 0) {
         // STUBBED_PRINTF("hitstate frame=%f\n", obj->animProgress); // (default.dol)
-        if (func_80024108(obj, *arg4, gUpdateRateF, NULL)) {
+        if (objAnimAdvance(obj, *arg4, gUpdateRateF, NULL)) {
             arg3 = 0;
         }
     }
@@ -686,7 +686,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
         }
         if (!arg3) {
             if (sp68->unk4 >= 0) {
-                func_80023D30(obj, sp68->unk4, 0.0f, 0);
+                objAnimSet(obj, sp68->unk4, 0.0f, 0);
                 *arg4 = sp68->unkC;
                 arg3 = 1;
             }

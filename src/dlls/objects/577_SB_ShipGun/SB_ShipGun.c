@@ -124,9 +124,9 @@ void SB_ShipGun_control(Object *self) {
     case STATE_0:
         objdata->unkF = 0;
         if (self->curModAnimId != 1) {
-            func_80023D30(self, 1, 0.0f, 0);
+            objAnimSet(self, 1, 0.0f, 0);
         }
-        func_80024108(self, 0.0f, gUpdateRate, NULL);
+        objAnimAdvance(self, 0.0f, gUpdateRate, NULL);
         if ((parent != NULL) && (((DLL_572_SB_Galleon*)parent->dll)->vtbl->func9(parent) == 0)) {
             if (setup->gunIndex == 0) { // right gun
                 if ((var_s0_2 == 0) || (var_s0_2 == 3)) {
@@ -149,16 +149,16 @@ void SB_ShipGun_control(Object *self) {
         }
         self->objhitInfo->unk58 &= ~1;
         if (self->curModAnimId != 1) {
-            func_80023D30(self, 1, 0.0f, 0);
+            objAnimSet(self, 1, 0.0f, 0);
         }
-        if (func_80024108(self, 0.01f, gUpdateRate, NULL) != 0) {
+        if (objAnimAdvance(self, 0.01f, gUpdateRate, NULL) != 0) {
             objdata->state = STATE_2;
         }
         objdata->unk8 = 0x50;
         break;
     case STATE_2:
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.5f, 0);
+            objAnimSet(self, 0, 0.5f, 0);
         }
         self->objhitInfo->unk58 |= 1;
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
@@ -270,10 +270,10 @@ void SB_ShipGun_control(Object *self) {
             if (objdata->unkE > 0) {
                 objdata->unkE--;
             }
-            func_80023D30(self, 1, 1.0f, 0U);
+            objAnimSet(self, 1, 1.0f, 0U);
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_175_Machinery_Move_B, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        if (func_80024108(self, -0.01f, gUpdateRate, NULL) != 0) {
+        if (objAnimAdvance(self, -0.01f, gUpdateRate, NULL) != 0) {
             objdata->state = STATE_0;
         }
         break;

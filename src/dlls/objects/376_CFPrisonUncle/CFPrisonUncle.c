@@ -103,7 +103,7 @@ void dll_376_control(Object* self) {
         player = get_player();
         
         if (objData->unk58) {
-            func_80023D30(self, 0, 0.105f, 0);
+            objAnimSet(self, 0, 0.105f, 0);
             dll_376_func_A3C(self, player);
             sp40 = func_80034804(self, 1);
             if (rand_next(0, 8) != 0) {
@@ -149,7 +149,7 @@ void dll_376_control(Object* self) {
             if (objData->unk5C > 0) {
                 objData->unk5C -= gUpdateRate;
             }
-            func_80024108(self, 0.005f, gUpdateRate, NULL);
+            objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
         }
     } else {
         self->unkAF |= 8;

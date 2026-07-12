@@ -98,20 +98,20 @@ void SHswapstone_control(Object* self) {
 
     if (objdata->awake == FALSE) {
         if (self->curModAnimId != 0xC) {
-            func_80023D30(self, 0xC, 0.0f, 0);
+            objAnimSet(self, 0xC, 0.0f, 0);
         }
 
-        func_80024108(self, 0.008f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.008f, gUpdateRateF, NULL);
 
         if (mainGetBits(BIT_Talking_to_Rocky) && mainGetBits(BIT_Talked_to_Rocky)) {
             objdata->awake = TRUE;
         }
     } else {
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.0f, 0);
+            objAnimSet(self, 0, 0.0f, 0);
         }
 
-        func_80024108(self, 0.008f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.008f, gUpdateRateF, NULL);
 
         if (mainGetBits(BIT_Talking_to_Rocky) == 0) {
             objdata->awake = FALSE;

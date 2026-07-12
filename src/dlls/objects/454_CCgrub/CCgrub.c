@@ -110,7 +110,7 @@ void CCgrub_control(Object* self) {
     }
     
     if ((func_80025F40(self, NULL, NULL, NULL) != 0) && (objdata->unk109 != 0)) {
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
         objdata->unk110 = 0.005f;
         objdata->unk109 = 0;
     }
@@ -135,7 +135,7 @@ void CCgrub_control(Object* self) {
         if (self->animProgress >= 0.9f) {
             objdata->unk10C = ((f32) rand_next(objsetup->unk18, objsetup->unk19) / 100.0f);
             objdata->unk110 = 0.02f;
-            func_80023D30(self, 5, 0.0f, 0);
+            objAnimSet(self, 5, 0.0f, 0);
             objdata->unk109 = 4;
         }
         break;
@@ -207,7 +207,7 @@ void CCgrub_control(Object* self) {
         CCgrub_func_104C(self, objdata);
         break;
     }
-    func_80024108(self, objdata->unk110, gUpdateRateF, &objdata->unk120);
+    objAnimAdvance(self, objdata->unk110, gUpdateRateF, &objdata->unk120);
     objdata->unk120.unk0[2] = -(objdata->unk120.unk0[2] / gUpdateRateF);
     if (objdata->unk109 != 6) {
         CCgrub_func_BE8(self, objdata, objdata->unk10C, 1.0f);
@@ -217,7 +217,7 @@ void CCgrub_control(Object* self) {
         // @bug: the gamebit used here is also used for disabling particles!
         obj_send_mesg(get_player(), 0x7000A, self, (void* )BIT_5);
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.0f, 0);
+            objAnimSet(self, 0, 0.0f, 0);
             objdata->unk110 = 0.005f;
         }
         objdata->unk109 = 9;
@@ -227,9 +227,9 @@ void CCgrub_control(Object* self) {
 // offset: 0xAB0 | func: 2
 static void CCgrub_func_AB0(Object* self, CCgrub_Data* objdata, f32 a2) {
     if (a2 < 1.0f) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
     } else {
-        func_80023D30(self, 2, 0.0f, 0);
+        objAnimSet(self, 2, 0.0f, 0);
     }
     objdata->unk109 = 1;
     objdata->unk10C = a2;
@@ -313,7 +313,7 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
     if (objdata->unk140 > 10.0f) {
         objdata->unk140 -= 10.0f;
     }
-    func_8002493C(self, objdata->unk10C, &objdata->unk110);
+    objGetAnimChange(self, objdata->unk10C, &objdata->unk110);
     self->srt.transl.y = objdata->unk0.unk0.unk68.y;
     self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
     objdata->unk11C += gUpdateRateF;
@@ -321,14 +321,14 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
         temp_fv0 = vec3_distance_xz_squared(&self->globalPosition, &get_player()->globalPosition);
         if ((f32) (objsetup->unk1B * objsetup->unk1B) <= temp_fv0) {
             if ((f32) (objsetup->unk1A * objsetup->unk1A) <= temp_fv0) {
-                func_80023D30(self, 3, 0.0f, 0);
+                objAnimSet(self, 3, 0.0f, 0);
                 objdata->unk110 = 0.01f;
                 objdata->unk109 = 2;
                 return;
             }
             objdata->unk13C = self->srt.yaw;
             objdata->unk13E = self->srt.yaw;
-            func_80023D30(self, 6, 0.0f, 0);
+            objAnimSet(self, 6, 0.0f, 0);
             if (objdata->unk10C == ((f32) objsetup->unk19 / 50.0f)) {
                 objdata->unk110 = 0.015f;
             } else {
@@ -339,7 +339,7 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
             return;
         }
         self->unkAF |= 8;
-        func_80023D30(self, 4, 0.0f, 0);
+        objAnimSet(self, 4, 0.0f, 0);
         objdata->unk110 = 0.02f;
         objdata->unk109 = 6;
     }

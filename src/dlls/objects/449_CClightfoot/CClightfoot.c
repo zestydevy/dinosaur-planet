@@ -65,9 +65,9 @@ void CClightfoot_control(Object *self) {
         func_800328F0(self, &objdata->unk4, 0.0f);
         func_80032A08(self, &objdata->unk4);
         if (self->curModAnimId != 10) {
-            func_80023D30(self, 10, 0.0f, 0);
+            objAnimSet(self, 10, 0.0f, 0);
         }
-        func_80024108(self, 0.005f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
         if (mainGetBits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
             self->unkAF &= ~0x8;
             if (self->unkAF & 1) {

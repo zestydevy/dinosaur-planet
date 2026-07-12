@@ -375,11 +375,11 @@ void SHkillermushroom_control(Object* self) {
 
     //Change animation if needed
     if (self->curModAnimId != dStateModAnimIDs[objData->state]) {
-        func_80023D30(self, dStateModAnimIDs[objData->state], 0.0f, 0);
+        objAnimSet(self, dStateModAnimIDs[objData->state], 0.0f, 0);
     }
 
     //Advance animation
-    if (func_80024108(self, dStateAnimSpeeds[objData->state], gUpdateRateF, NULL)) {
+    if (objAnimAdvance(self, dStateAnimSpeeds[objData->state], gUpdateRateF, NULL)) {
         objData->flags |= SHkillermushroom_FLAG_Animation_Finished;
     } else {
         objData->flags &= ~SHkillermushroom_FLAG_Animation_Finished;

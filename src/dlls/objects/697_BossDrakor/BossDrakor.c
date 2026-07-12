@@ -305,7 +305,7 @@ static s32 BossDrakor_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRat
         func_80032C0C(self, fsa->target, &baddie->unk3BC, 0x19);
     }
     if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
-        func_80023D30(self, (s32) sAnimState0ModAnims[objdata->animIndex], 0.0f, 0);
+        objAnimSet(self, (s32) sAnimState0ModAnims[objdata->animIndex], 0.0f, 0);
     }
     fsa->animTickDelta = sAnimState0AnimTickDeltas[objdata->animIndex];
     self->srt.yaw += objdata->unk2;
@@ -322,7 +322,7 @@ static s32 BossDrakor_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRat
         func_80032C0C(self, fsa->target, &baddie->unk3BC, 0x19);
     }
     if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
-        func_80023D30(self, (s32) sAnimState1ModAnims[objdata->animIndex], 0.0f, 0);
+        objAnimSet(self, (s32) sAnimState1ModAnims[objdata->animIndex], 0.0f, 0);
     }
     fsa->animTickDelta = sAnimState1AnimTickDeltas[objdata->animIndex];
     gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 1);

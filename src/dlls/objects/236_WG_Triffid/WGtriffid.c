@@ -88,7 +88,7 @@ s32 dll_236_func_A20(Object* self, ObjFSA_Data* fsa, s8 arg2) {
     if (triffid->unk5 != 0) {
         triffid->unk5 = 0U;
         triffid->unk0 = 0.0f;
-        func_80023D30(self, 0, 0.5f, 0U);
+        objAnimSet(self, 0, 0.5f, 0U);
         func_8002674C(self);
     }
     func_80026128(self, 0xA, 1, -1);

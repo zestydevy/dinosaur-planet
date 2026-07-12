@@ -22,7 +22,7 @@ void SB_ShipMast_control(Object *self) {
         if (self->parent->id == OBJ_WL_Galleon) {
             if ((parentDC >= 10) && (parentDC < 13)) {
                 if (self->curModAnimId != 0) {
-                    func_80023D30(self, 0, 0.0f, 0);
+                    objAnimSet(self, 0, 0.0f, 0);
                 }
                 if (parentDC >= 12) {
                     animTickDelta = -0.003f;
@@ -31,17 +31,17 @@ void SB_ShipMast_control(Object *self) {
                 }
             } else {
                 if (self->curModAnimId != 1) {
-                    func_80023D30(self, 1, 0.0f, 0);
+                    objAnimSet(self, 1, 0.0f, 0);
                 }
                 animTickDelta = 0.03f;
             }
         } else {
             if (self->curModAnimId != 1) {
-                func_80023D30(self, 1, 0.0f, 0);
+                objAnimSet(self, 1, 0.0f, 0);
             }
             animTickDelta = 0.03f;
         }
-        func_80024108(self, animTickDelta, gUpdateRate, NULL);
+        objAnimAdvance(self, animTickDelta, gUpdateRate, NULL);
     }
 }
 

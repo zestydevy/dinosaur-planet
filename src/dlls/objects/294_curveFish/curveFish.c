@@ -156,8 +156,8 @@ void dll_294_control(Object* self) {
                 self->srt.transl.f[1] = curvefishdata->unk4.unk0.unk68.y + (f32) sp40->unk22;
                 if ((f32) sp40->unk1C < curvefishdata->unk124) {
                     curvefishdata->unk10C = 3U;
-                    func_80023D30(self, 2, 0.0f, 0U);
-                    func_80024D74(self, 0x1E);
+                    objAnimSet(self, 2, 0.0f, 0U);
+                    objAnim_func_80024D74(self, 0x1E);
                 }
                 break;
             case 3:
@@ -166,15 +166,15 @@ void dll_294_control(Object* self) {
                     self->srt.transl.f[1] = curvefishdata->unk0;
                     curvefishdata->unk10C = 4U;
                     curvefishdata->unk124 = 0.0f;
-                    func_80023D30(self, 0, 0.0f, 0U);
-                    func_80024D74(self, 0x1E);
+                    objAnimSet(self, 0, 0.0f, 0U);
+                    objAnim_func_80024D74(self, 0x1E);
                 }
                 break;
             case 4:
                 if ((f32) sp40->unk1E < curvefishdata->unk124) {
                     curvefishdata->unk10C = 5U;
-                    func_80023D30(self, 3, 0.0f, 0U);
-                    func_80024D74(self, 0x1E);
+                    objAnimSet(self, 3, 0.0f, 0U);
+                    objAnim_func_80024D74(self, 0x1E);
                 }
                 break;
             case 5:
@@ -183,12 +183,12 @@ void dll_294_control(Object* self) {
                     self->srt.transl.f[1] = curvefishdata->unk4.unk0.unk68.y + (f32) sp40->unk22;
                     curvefishdata->unk10C = 2U;
                     curvefishdata->unk124 = 0.0f;
-                    func_80023D30(self, 0, 0.0f, 0U);
-                    func_80024D74(self, 0x1E);
+                    objAnimSet(self, 0, 0.0f, 0U);
+                    objAnim_func_80024D74(self, 0x1E);
                 }
                 break;
             }
-            func_80024108(self, curvefishdata->unk120, gUpdateRateF, NULL);
+            objAnimAdvance(self, curvefishdata->unk120, gUpdateRateF, NULL);
         }
     }
 }

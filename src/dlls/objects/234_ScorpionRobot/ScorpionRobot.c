@@ -115,7 +115,7 @@ void ScorpionRobot_setup(Object* self, Baddie_Setup* setup, s32 reset) {
     objdata->enteredState = 1;
     objdata->spinSpeed = 0x10E1;
 
-    func_80023D30(self, SCORP_ROBO_MODANIM_2_Fold, 1.0f, 0);
+    objAnimSet(self, SCORP_ROBO_MODANIM_2_Fold, 1.0f, 0);
     baddie->fsa.animState = SCORP_ROBO_STATE_0_Spinning;
     baddie->fsa.logicState = 0;
     baddie->fsa.flags |= OBJFSA_FLAG_1000000;
@@ -150,7 +150,7 @@ void ScorpionRobot_control(Object* self) {
         }
         if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 0) != 0) {
             objdata->spin += objdata->spinSpeed;
-            objdata->animFinished = func_80024108(self, objdata->animDelta, gUpdateRateF, NULL);
+            objdata->animFinished = objAnimAdvance(self, objdata->animDelta, gUpdateRateF, NULL);
             if (gUpdateRate < objdata->fireCooldown) {
                 objdata->fireCooldown -= gUpdateRate;
             } else {
@@ -391,7 +391,7 @@ static s32 ScorpionRobot_state_2_unfold(Object* self, ObjFSA_Data* fsa, f32 upda
     fsa->unk341 = 1;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_0_Unfold, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_0_Unfold, 0.0f, 0);
         objdata->animDelta = 0.02f;
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
@@ -434,7 +434,7 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
     func_80028D2C(self);
     obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (objdata->animFinished) {
-        func_80023D30(self, SCORP_ROBO_MODANIM_0_Unfold, 1.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_0_Unfold, 1.0f, 0);
         objdata->animDelta = 0.0f;
     }
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_7_TurnLeft) || (self->curModAnimId == SCORP_ROBO_MODANIM_6_TurnRight)) {
@@ -460,13 +460,13 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
             if (modanimIdx != -1) {
                 objdata->animDelta = 0.04f;
                 objdata->turnStart = self->srt.yaw;
-                func_80023D30(self, modanimIdx, 0.0f, 0);
+                objAnimSet(self, modanimIdx, 0.0f, 0);
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else if (objdata->fireCooldown == 0) {
                 objdata->fireCooldown = rand_next(0x5A, 0xD2);
                 objdata->fire = 1;
                 objdata->animDelta = 0.04f;
-                func_80023D30(self, SCORP_ROBO_MODANIM_3_Firing, 0.0f, 0);
+                objAnimSet(self, SCORP_ROBO_MODANIM_3_Firing, 0.0f, 0);
             }
         }
     }
@@ -487,7 +487,7 @@ static s32 ScorpionRobot_state_4_fold(Object* self, ObjFSA_Data* fsa, f32 update
     fsa->unk341 = 0;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_2_Fold, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_2_Fold, 0.0f, 0);
         objdata->animDelta = 0.01f;
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
@@ -517,7 +517,7 @@ static s32 ScorpionRobot_state_5_damage_recoil(Object* self, ObjFSA_Data* fsa, f
     fsa->unk341 = 0;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_4_DamageRecoil, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_4_DamageRecoil, 0.0f, 0);
         objdata->animDelta = 0.02f;
     }
     func_80026128(self, 0xA, 1, -1);
@@ -540,7 +540,7 @@ static s32 ScorpionRobot_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updat
     fsa->unk341 = 0;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_5_Die, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_5_Die, 0.0f, 0);
         objdata->animDelta = 0.0042f;
     }
     self->velocity.x *= 0.97f;

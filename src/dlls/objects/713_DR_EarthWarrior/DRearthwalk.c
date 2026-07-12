@@ -803,8 +803,8 @@ s32 DRearthwalk_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             var_a1 = _data_DC[0];
         }
         fsa->animTickDelta = 0.01f;
-        func_80023D30(self, var_a1, 0.0f, 0);
-        func_80024D74(self, 0x14);
+        objAnimSet(self, var_a1, 0.0f, 0);
+        objAnim_func_80024D74(self, 0x14);
     }
     if (fsa->analogInputPower < 0.1f) {
         fsa->unk328 = 0;
@@ -820,8 +820,8 @@ s32 DRearthwalk_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk2B0 = 18.0f;
         if (self->curModAnimId != _data_DC[0]) {
             // standing idle anim?
-            func_80023D30(self, _data_DC[0], 0.0f, 0);
-            func_80024D74(self, 0x14);
+            objAnimSet(self, _data_DC[0], 0.0f, 0);
+            objAnim_func_80024D74(self, 0x14);
         }
     }
     if ((fsa->prevAnalogInputPower > 0.0f) && (fsa->analogInputPower > 0.0f)) {
@@ -847,7 +847,7 @@ s32 DRearthwalk_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         if (fsa->unk33A != 0) {
             // laying anim
-            func_80023D30(self, 0xE, 0.0f, 0);
+            objAnimSet(self, 0xE, 0.0f, 0);
             fsa->animTickDelta = 0.01f;
         }
         if (objdata->energy > 0) {
@@ -865,7 +865,7 @@ s32 DRearthwalk_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->animTickDelta = 0.005f;
         if ((objdata->energy != 0) && (objdata->energy >= 5)) {
             // transition to standing up anim
-            func_80023D30(self, 0xB, 0.0f, 0);
+            objAnimSet(self, 0xB, 0.0f, 0);
             fsa->animTickDelta = 0.01f;
         }
         break;
@@ -884,7 +884,7 @@ s32 DRearthwalk_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     default:
         objdata->rideable = 0;
         // transition to laying down anim
-        func_80023D30(self, 0xA, 0.0f, 0);
+        objAnimSet(self, 0xA, 0.0f, 0);
         objdata->movedata.unk4A9 |= 2;
         DRearthwalk_func_2174(self, fsa);
         fsa->animTickDelta = 0.01f;
@@ -911,7 +911,7 @@ s32 DRearthwalk_func_2704(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     if (self->curModAnimId != 5) {
         // running attack?
-        func_80023D30(self, 5, 0.0f, 0);
+        objAnimSet(self, 5, 0.0f, 0);
     }
     temp_ft1 = (f32) fsa->unk32A * updateRate * 182.04f;
     self->srt.yaw += temp_ft1 >> 4;
@@ -1017,10 +1017,10 @@ s32 DRearthwalk_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     if (var_t0 != 0) {
         // walking/running anims
-        func_80023D30(self, _data_DC[var_v1_3], temp_fv1, 0);
-        func_80024D74(self, 0xA);
+        objAnimSet(self, _data_DC[var_v1_3], temp_fv1, 0);
+        objAnim_func_80024D74(self, 0xA);
     }
-    func_8002493C(self, fsa->unk278, &fsa->animTickDelta);
+    objGetAnimChange(self, fsa->unk278, &fsa->animTickDelta);
     if (fsa->unk310 & 0x8000) {
         joyDisableButtons(0, A_BUTTON);
         return 5 + 1;
@@ -1042,12 +1042,12 @@ s32 DRearthwalk_func_2D80(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         hit->unk58 |= 0x200;
         if (fsa->unk278 > 0.45f) {
             // running attack anim
-            func_80023D30(self, 0x14, 0.0f, 0);
+            objAnimSet(self, 0x14, 0.0f, 0);
             fsa->animTickDelta = 0.021f;
             hit->unk60 = fsa->unk278 > 1.93f ? 3 : 2;
         } else {
             // standing attack anim
-            func_80023D30(self, 0x15, 0.0f, 0);
+            objAnimSet(self, 0x15, 0.0f, 0);
             fsa->animTickDelta = 0.011f;
             hit->unk60 = 1;
         }
@@ -1077,16 +1077,16 @@ s32 DRearthwalk_func_2F90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         if (objdata->energy > 0) {
             // hurt while standing anims
             if (objdata->unkA60_0 != 0) {
-                func_80023D30(self, 7, 0.0f, 0);
+                objAnimSet(self, 7, 0.0f, 0);
             } else {
-                func_80023D30(self, 8, 0.0f, 0);
+                objAnimSet(self, 8, 0.0f, 0);
             }
         } else {
             // hurt while laying anims
             if (objdata->unkA60_0 != 0) {
-                func_80023D30(self, 0x12, 0.0f, 0);
+                objAnimSet(self, 0x12, 0.0f, 0);
             } else {
-                func_80023D30(self, 0x13, 0.0f, 0);
+                objAnimSet(self, 0x13, 0.0f, 0);
             }
         }
         fsa->animTickDelta = 0.02f;
@@ -1110,7 +1110,7 @@ s32 DRearthwalk_func_311C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (fsa->enteredAnimState != 0) {
         DRearthwalk_func_2174(self, fsa);
-        func_80023D30(self, _data_DC[0], 0.0f, 0);
+        objAnimSet(self, _data_DC[0], 0.0f, 0);
     }
     if ((mainGetBits(BIT_5CF) == 0) && (mainGetBits(BIT_5CD) != 0)) {
         mainSetBits(BIT_DR_EarthWarriorBroughtToSurface, 1);

@@ -171,7 +171,7 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     self->animCallback = NULL;
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    func_80023D30(self, KD_MODANIM_DETATCH_RIGHT_PIPE, 0.0f, 0);
+    objAnimSet(self, KD_MODANIM_DETATCH_RIGHT_PIPE, 0.0f, 0);
     bzero(objdata, sizeof(KamerianBoss_Data));
     objdata->health = 10;
     objdata->animTickDelta = 0.0f;
@@ -306,7 +306,7 @@ void KamerianBoss_do_flame_attack(Object *self, KamerianBoss_Data *objdata) {
         }
         objdata->flameAttackTimer = rand_next(270, 372);
         if ((self->curModAnimId != KD_MODANIM_ATTACK) || (objdata->animTickDelta == 0.0f)) {
-            func_80023D30(self, KD_MODANIM_ATTACK, 0.0f, 0);
+            objAnimSet(self, KD_MODANIM_ATTACK, 0.0f, 0);
             objdata->animTickDelta = 0.0097f;
             objdata->flameDebounce = 0;
         }
@@ -529,7 +529,7 @@ void KamerianBoss_control(Object *self) {
             }
         }
         KamerianBoss_do_pipe_texture_anim(self, gUpdateRate);
-        objdata->animFinished = func_80024108(self, objdata->animTickDelta, gUpdateRateF, NULL);
+        objdata->animFinished = objAnimAdvance(self, objdata->animTickDelta, gUpdateRateF, NULL);
         if (objdata->rightPipeYOffset != 0) {
             if (objdata->rightPipeYOffset < 15000) {
                 objdata->rightPipeYOffset += gUpdateRate * 50;
@@ -604,7 +604,7 @@ void KamerianBoss_control(Object *self) {
             var_s0 |= 4;
         }
         if ((var_s0 == 3) && (self->curModAnimId < KD_MODANIM_OPEN_HATCH)) {
-            func_80023D30(self, KD_MODANIM_OPEN_HATCH, 0.0f, 0);
+            objAnimSet(self, KD_MODANIM_OPEN_HATCH, 0.0f, 0);
             objdata->animTickDelta = 0.01f;
             sHealthBarAlpha = gUpdateRate;
             gDLL_6_AMSFX->vtbl->play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle3, NULL, 0, NULL);
@@ -627,7 +627,7 @@ void KamerianBoss_control(Object *self) {
                     } else if ((collisionType == Damage_Type_Projectile) && (objdata->rightPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(13);
                         KamerianBoss_disable_hit_sphere(14);
-                        func_80023D30(self, 
+                        objAnimSet(self, 
                             objdata->leftWingOpened ? KD_MODANIM_DETATCH_RIGHT_PIPE_ALT : KD_MODANIM_DETATCH_RIGHT_PIPE, 
                             0.0f, 0);
                         objdata->animTickDelta = 0.005f;
@@ -648,7 +648,7 @@ void KamerianBoss_control(Object *self) {
                     } else if ((collisionType == Damage_Type_Projectile) && (objdata->leftPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(8);
                         KamerianBoss_disable_hit_sphere(9);
-                        func_80023D30(self, 
+                        objAnimSet(self, 
                             objdata->rightWingOpened ? KD_MODANIM_DETATCH_LEFT_PIPE_ALT : KD_MODANIM_DETATCH_LEFT_PIPE, 
                             0.0f, 0);
                         objdata->animTickDelta = 0.005f;
@@ -662,7 +662,7 @@ void KamerianBoss_control(Object *self) {
                     if (collisionType == Damage_Type_Projectile) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(0);
-                            func_80023D30(self, 
+                            objAnimSet(self, 
                                 objdata->leftWingOpened ? KD_MODANIM_OPEN_RIGHT_WING_ALT : KD_MODANIM_OPEN_RIGHT_WING, 
                                 0.0f, 0);
                             objdata->animTickDelta = 0.005f;
@@ -675,7 +675,7 @@ void KamerianBoss_control(Object *self) {
                     if (collisionType == Damage_Type_Projectile) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(1);
-                            func_80023D30(self, 
+                            objAnimSet(self, 
                                 objdata->rightWingOpened ? KD_MODANIM_OPEN_LEFT_WING_ALT : KD_MODANIM_OPEN_LEFT_WING, 
                                 0.0f, 0);
                             objdata->animTickDelta = 0.005f;

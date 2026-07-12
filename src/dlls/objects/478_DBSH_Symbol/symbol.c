@@ -301,7 +301,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
             menu_func_8000FA2C();
             objData->magicFxTimer = 10;
             objData->delayTimer = 20;
-            func_80023D30(player, 0, 0.0f, 0);
+            objAnimSet(player, 0, 0.0f, 0);
             break;
         }
         
@@ -317,8 +317,8 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
             }
             
             //Use stopped animation for Sabre/Krystal
-            func_80023D30(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
-            func_80023D30(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
+            objAnimSet(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
+            objAnimSet(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
             
             sPrevYaw = objData->yaw;
 
@@ -335,26 +335,26 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         }
     
         //Handle player anim progress/looping
-        if (func_80024108(player, ((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0) {
+        if (objAnimAdvance(player, ((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0) {
             dAnimOffsetSabre = 1 - dAnimOffsetSabre;
             if ((((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f) < 0.0f) {
                 //Start at end of animation
-                func_80023D30(player, dAnimOffsetSabre + 0x4A, 1.0f, 0);
+                objAnimSet(player, dAnimOffsetSabre + 0x4A, 1.0f, 0);
             } else {
                 //Start at beginning of animation
-                func_80023D30(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
+                objAnimSet(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
             }
         }
         
         //Handle phantom Krystal anim progress/looping
-        if (objData->krystal && (func_80024108(objData->krystal, -((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0)) {
+        if (objData->krystal && (objAnimAdvance(objData->krystal, -((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0)) {
             dAnimOffsetKrystal = 1 - dAnimOffsetKrystal;
             if ((((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f) < 0.0f) {
                 //Start at beginning of animation
-                func_80023D30(objData->krystal, dAnimOffsetKrystal + 0x4A, 0.0f, 0);
+                objAnimSet(objData->krystal, dAnimOffsetKrystal + 0x4A, 0.0f, 0);
             } else {
                 //Start at end of animation
-                func_80023D30(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
+                objAnimSet(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
             }
         }
         

@@ -80,12 +80,12 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
         *arg4 = 0.005f;
     } else if (*arg2 != 0) {
         if (sp3E > 0 && arg0->curModAnimId != arg5[1]) {
-            func_80023D30(arg0, arg5[1], 0.0f, 0);
-            func_80024D74(arg0, 30);
+            objAnimSet(arg0, arg5[1], 0.0f, 0);
+            objAnim_func_80024D74(arg0, 30);
         }
         if (sp3E < 0 && arg0->curModAnimId != arg5[0]) {
-            func_80023D30(arg0, arg5[0], 0.0f, 0);
-            func_80024D74(arg0, 30);
+            objAnimSet(arg0, arg5[0], 0.0f, 0);
+            objAnim_func_80024D74(arg0, 30);
         }
         if (sp3C == 0) {
             sp3E = sp3E > 0 ? (sp3E / 20) : (sp3E / 20);
@@ -339,7 +339,7 @@ s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 ar
     if (arg1->unk62 == 5) {
         if ((arg2->unk498 >= 2) && (arg2->unk498 < 8)) {
             movelib_func_3B4(arg0, temp_v0, arg2, sp38);
-            func_80024108(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
+            objAnimAdvance(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
             if (arg2->unk498 == 7) {
                 arg1->unk7A |= 8;
                 temp_v0_3 = func_80034804(arg0, 0);
@@ -408,13 +408,13 @@ s32 movelib_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8
     obj_move(arg0, arg0->velocity.x, arg0->velocity.f[1], arg0->velocity.f[2]);
     if (arg3 != -1) {
         if (arg3 != arg0->curModAnimId) {
-            func_80023D30(arg0, arg3, 0.0f, 0U);
+            objAnimSet(arg0, arg3, 0.0f, 0U);
         }
         var_a0 = (u16)arctan2_f(sp3C.f[0], sp3C.f[2]);
         var_a0 = arg0->srt.yaw - (var_a0 & 0xFFFF);
         CIRCLE_WRAP(var_a0);
         arg2 *= -fcos16_precise(var_a0);
-        func_8002493C(arg0, arg2, arg4);
+        objGetAnimChange(arg0, arg2, arg4);
     }
     
     return 0;
@@ -443,7 +443,7 @@ s32 movelib_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* ar
             *arg6 |= 0x10;
         }
     }
-    func_8002493C(arg0, arg3, arg5);
+    objGetAnimChange(arg0, arg3, arg5);
     if ((*arg6 & 1) && (func_80058680(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp38, 0) == 0)) {
         arg0->srt.transl.y -= sp38;
     }

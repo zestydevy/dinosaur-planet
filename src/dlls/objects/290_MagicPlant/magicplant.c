@@ -49,7 +49,7 @@ void MagicPlant_setup(Object* self, MagicPlant_Setup* objSetup, s32 arg2) {
 
     objData->animProgress = 0.0f;
     objData->state = MagicPlant_STATE_Growing;
-    func_800240BC(self, objData->growProgress);
+    objAnimSetProgress(self, objData->growProgress);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
@@ -103,7 +103,7 @@ void MagicPlant_control(Object* self) {
     }
 
     //Advance current animation's tValue
-    func_80024108(self, objData->animProgress, gUpdateRateF, NULL);
+    objAnimAdvance(self, objData->animProgress, gUpdateRateF, NULL);
 }
 
 // offset: 0x300 | func: 2 | export: 2
@@ -242,11 +242,11 @@ void MagicPlant_handle_state_growing(Object* self, MagicPlant_Setup* objSetup, M
 
     //Use the growing-from-bud animation
     if (self->curModAnimId != MagicPlant_MODANIM_Growing) {
-        func_80023D30(self, MagicPlant_MODANIM_Growing, objData->growProgress, 0);
+        objAnimSet(self, MagicPlant_MODANIM_Growing, objData->growProgress, 0);
     }
 
     //Set animation tValue
-    func_800240BC(self, objData->growProgress);
+    objAnimSetProgress(self, objData->growProgress);
 }
 
 
@@ -286,7 +286,7 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
         gDLL_6_AMSFX->vtbl->play(self, SOUND_618_Slice_Impact, MAX_VOLUME, 0, NULL, 0, NULL);
         objData->state = MagicPlant_STATE_Damaged;
         objData->animProgress = 0.03f;
-        func_80023D30(self, MagicPlant_MODANIM_Damage_Shake, 0.0f, 0);
+        objAnimSet(self, MagicPlant_MODANIM_Damage_Shake, 0.0f, 0);
         for (i = 20; i > 0; i--) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_34E, NULL, 2, -1, NULL);
         }
@@ -309,7 +309,7 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
             //Return to idle loop after playing (unused?) heavy sway idle variant!
             if (self->animProgress >= 1.0f) {
                 objData->animProgress = 0.005f;
-                func_80023D30(self, MagicPlant_MODANIM_Sway_Loop, 0.0f, 0);
+                objAnimSet(self, MagicPlant_MODANIM_Sway_Loop, 0.0f, 0);
             } else {
                 objData->animProgress = 0.01f;
             }
@@ -321,7 +321,7 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
             } else if (self->curModAnimId != MagicPlant_MODANIM_Sway_Loop) {
                 objData->animProgress = 0.005f;
                 random = rand_next(0, 99); //Start at random point in animation (likely to desync nearby idling plants)
-                func_80023D30(self, MagicPlant_MODANIM_Sway_Loop, random * 0.01f, 0);
+                objAnimSet(self, MagicPlant_MODANIM_Sway_Loop, random * 0.01f, 0);
             }
         }
     }
@@ -384,7 +384,7 @@ void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup *objSetup, M
     if (self->animProgress >= 1.0f) {
         objData->state = MagicPlant_STATE_Wilting;
         objData->animProgress = 0.004f;
-        func_80023D30(self, MagicPlant_MODANIM_Wilting, 0.0f, 0);
+        objAnimSet(self, MagicPlant_MODANIM_Wilting, 0.0f, 0);
     }
 }
 
@@ -407,8 +407,8 @@ void MagicPlant_handle_state_wilting(Object* self, MagicPlant_Setup* objSetup, M
             objData->state = MagicPlant_STATE_Bud;
             objData->growProgress = 0.0f;
             objData->animProgress = 0.0f;
-            func_80023D30(self, MagicPlant_MODANIM_Growing, 0.0f, 0);
-            func_800240BC(self, 0.0f);
+            objAnimSet(self, MagicPlant_MODANIM_Growing, 0.0f, 0);
+            objAnimSetProgress(self, 0.0f);
         }
         self->opacity = opacity;
     }

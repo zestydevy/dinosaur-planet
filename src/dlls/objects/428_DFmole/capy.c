@@ -255,7 +255,7 @@ s32 capy_anim_state_0_standing(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_3_Standing, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_3_Standing, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.03f;
@@ -292,7 +292,7 @@ s32 capy_anim_state_1_burrowed(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     capydata = objdata->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
         fsa->unk33A = 0;
     }
     if (capydata->timer != 0) {
@@ -307,7 +307,7 @@ s32 capy_anim_state_1_burrowed(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0xA0C | func: 14
 s32 capy_anim_state_2_unburrow(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -333,7 +333,7 @@ s32 capy_anim_state_3_burrow(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_0_Burrow, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_0_Burrow, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.04f;
@@ -361,7 +361,7 @@ s32 capy_anim_state_4_sniff(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_5_Sniffing, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_5_Sniffing, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.04f;
@@ -390,7 +390,7 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_6_Eating, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_6_Eating, 0.0f, 0);
         fsa->unk33A = 0;
     }
     target = fsa->target;
@@ -439,7 +439,7 @@ s32 capy_anim_state_6_done_eating(Object* self, ObjFSA_Data* fsa, f32 updateRate
 
     baddie = self->data;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_7_DoneEating, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_7_DoneEating, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.08f;
@@ -465,7 +465,7 @@ s32 capy_anim_state_7_dig_wall(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_2_DigWall, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_2_DigWall, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.015f;
@@ -496,7 +496,7 @@ s32 capy_anim_state_8_walking(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_4_Walking, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_4_Walking, 0.0f, 0);
         fsa->unk33A = 0;
     }
     if (fsa->enteredAnimState != 0) {

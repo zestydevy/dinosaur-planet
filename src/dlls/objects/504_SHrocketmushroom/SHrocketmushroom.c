@@ -204,11 +204,11 @@ void SHrocketmushroom_control(Object* self) {
     
     //Change modAnim when needed
     if (self->curModAnimId != animData->modAnimID) {
-        func_80023D30(self, animData->modAnimID, 0.0f, 0);
+        objAnimSet(self, animData->modAnimID, 0.0f, 0);
     }
     
     //Track when the current animation is finished
-    if (func_80024108(self, animData->animSpeed, gUpdateRateF, NULL) != 0) {
+    if (objAnimAdvance(self, animData->animSpeed, gUpdateRateF, NULL) != 0) {
         objData->flags |= FLAG_Animation_Finished;
     } else {
         objData->flags &= ~FLAG_Animation_Finished;

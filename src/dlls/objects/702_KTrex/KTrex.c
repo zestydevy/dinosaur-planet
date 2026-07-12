@@ -930,7 +930,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
 // offset: 0x23EC | func: 22
 static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_Idle, 0.0f, 0);
+        objAnimSet(self, KTANIM_Idle, 0.0f, 0);
     }
     fsa->animTickDelta = 0.01f;
     return 0;
@@ -944,7 +944,7 @@ static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     s32 speakFxFlags;
 
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sWalkModAnims[sKTData->anger], 0.0f, 0);
+        objAnimSet(self, sWalkModAnims[sKTData->anger], 0.0f, 0);
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
@@ -958,7 +958,7 @@ static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, speakFxFlags); // on event 0 -> breathing sfx
     temp_fv0 = (sKTData->pos.x - self->srt.transl.x) * gUpdateRateInverseF;
     temp_fa1 = (sKTData->pos.z - self->srt.transl.z) * gUpdateRateInverseF;
-    func_8002493C(self, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &fsa->animTickDelta);
+    objGetAnimChange(self, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &fsa->animTickDelta);
     self->srt.transl.x = sKTData->pos.x;
     self->srt.transl.z = sKTData->pos.z;
     return 0;
@@ -974,7 +974,7 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sTurn90ModAnims[sKTData->anger & 0xFFFF][reversed], 0.0f, 0);
+        objAnimSet(self, sTurn90ModAnims[sKTData->anger & 0xFFFF][reversed], 0.0f, 0);
         fsa->animTickDelta = sTurn90AnimTickDeltas[sKTData->anger];
         sKTData->turnStartYaw = self->srt.yaw;
     }
@@ -1008,7 +1008,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_Turn_180, 0.0f, 0);
+        objAnimSet(self, KTANIM_Turn_180, 0.0f, 0);
         fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1026,7 +1026,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Roar, standing in place. */
 static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sRoarModAnims[sKTData->roarType], 0.0f, 0);
+        objAnimSet(self, sRoarModAnims[sKTData->roarType], 0.0f, 0);
         fsa->animTickDelta = sRoarAnimTickDeltas[sKTData->roarType];
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1041,7 +1041,7 @@ static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Roar, after completing a charge. */
 static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sChargeEndModAnims[sKTData->anger], 0.0f, 0);
+        objAnimSet(self, sChargeEndModAnims[sKTData->anger], 0.0f, 0);
         fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1056,7 +1056,7 @@ static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Zapped, fall down. */
 static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_FallDown, 0.0f, 0);
+        objAnimSet(self, KTANIM_FallDown, 0.0f, 0);
         fsa->animTickDelta = 0.006f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1070,7 +1070,7 @@ static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Knocked over on the ground. */
 static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_FlailOnGround, 0.0f, 0);
+        objAnimSet(self, KTANIM_FlailOnGround, 0.0f, 0);
         fsa->animTickDelta = 0.01f;
     }
     dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_FlailRoar);
@@ -1082,7 +1082,7 @@ static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Standing back up, after being zapped and knocked down. */
 static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_GetBackUp, 0.0f, 0);
+        objAnimSet(self, KTANIM_GetBackUp, 0.0f, 0);
         fsa->animTickDelta = 0.0017f;
     }
     dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_FlailRoar);

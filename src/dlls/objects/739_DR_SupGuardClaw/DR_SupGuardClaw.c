@@ -169,7 +169,7 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
 
     //Start playing one of two idle animations, picked at random
     objData->animSpeed = 0.01f;
-    func_80023D30(self, objData->modAnims[rand_next(0, 1)], 0.0f, 0);
+    objAnimSet(self, objData->modAnims[rand_next(0, 1)], 0.0f, 0);
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
@@ -209,7 +209,7 @@ void DR_NPC_control(Object* self) {
     if (temp != 0) {
         diPrintf(" YAW DIFF ");
         if (self->curModAnimId != objData->modAnims[2]) {
-            func_80023D30(self, objData->modAnims[2], 0, 0);
+            objAnimSet(self, objData->modAnims[2], 0, 0);
         }
         self->srt.yaw += (temp + 1) >> 4;
         objData->animSpeed = (temp / 1024) * 0.01f;
@@ -217,7 +217,7 @@ void DR_NPC_control(Object* self) {
         //Return to idle animation when rotation finished
         if (((temp >= 0) ? temp : -temp) < 0x400) {
             self->srt.yaw = objSetup->yaw << 8;
-            func_80023D30(self, objData->modAnims[rand_next(0, 1)], 0, 0);
+            objAnimSet(self, objData->modAnims[rand_next(0, 1)], 0, 0);
             objData->animSpeed = 0.01f;
         }
     }
@@ -229,7 +229,7 @@ void DR_NPC_control(Object* self) {
     }
 
     //Pick the next animation to play after the current one ends
-    if (func_80024108(self, objData->animSpeed, gUpdateRateF, &objData->animData)) {
+    if (objAnimAdvance(self, objData->animSpeed, gUpdateRateF, &objData->animData)) {
         //87.5% chance of continuing idle
         if (rand_next(0, 7)) {
             temp = 0;
@@ -243,7 +243,7 @@ void DR_NPC_control(Object* self) {
             }
             temp = animIndex;
         }
-        func_80023D30(self, objData->modAnims[temp], 0, 0);
+        objAnimSet(self, objData->modAnims[temp], 0, 0);
 
         //Set animation playback speed
         if (temp == 0) {
@@ -410,7 +410,7 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
          (player && (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < 40.0f)))
         && (self->curModAnimId != GuardClaw_MODANIM_9_Staff_Swing_Left)
     ) {
-        func_80023D30(self, GuardClaw_MODANIM_9_Staff_Swing_Left, 0.0f, 0);
+        objAnimSet(self, GuardClaw_MODANIM_9_Staff_Swing_Left, 0.0f, 0);
         objData->animSpeed = 0.006f;
         if (sidekick != NULL) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);

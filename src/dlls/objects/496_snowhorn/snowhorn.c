@@ -361,19 +361,19 @@ void dll_496_control(Object* snowhorn) {
     if (objdata->someAnimIDList) {
         animIndex = objdata->flags & ~0x8000;
         if (snowhorn->curModAnimId != objdata->someAnimIDList[animIndex]) {
-            func_80023D30(snowhorn, objdata->someAnimIDList[animIndex], 0.0f, 0);
+            objAnimSet(snowhorn, objdata->someAnimIDList[animIndex], 0.0f, 0);
 
             if (objdata->unk48[animIndex] >= 0.0f) {
                 objdata->unk50 = objdata->unk48[animIndex];
             }
             objdata->unk424 &= ~8;
         }
-        if (func_80024108(snowhorn, objdata->unk50, gUpdateRateF, &sp44) != 0) {
+        if (objAnimAdvance(snowhorn, objdata->unk50, gUpdateRateF, &sp44) != 0) {
             objdata->unk424 |= 8;
         } else {
             objdata->unk424 &= ~8;
         }
-        func_80025780(snowhorn, gUpdateRateF, &sp44, 0);
+        objAnim_func_80025780(snowhorn, gUpdateRateF, &sp44, 0);
     }
 
     if ((objdata->chatSequenceList != 0) && (snowhorn->unkAF & 1)) {
@@ -424,7 +424,7 @@ static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* 
 
     objdata = self->data;
     if (arg3 != 0) {
-        func_80024108(self, 0.005f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     }
     if (objdata->unk424 & 1) {
         gDLL_27->vtbl->reset(self, &objdata->unk170);
@@ -453,7 +453,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
     s32 playSound; //toggles between 0 and 1 (when ready to play sound another time)
 
     objdata = (SnowHorn_Data*)snowhorn->data;
-    animIsFinished = func_80024108(snowhorn, 0.006f, gUpdateRateF, &sp4c);
+    animIsFinished = objAnimAdvance(snowhorn, 0.006f, gUpdateRateF, &sp4c);
     
     if (sp4c.unk1B != 0) {
         playSound = sp4c.unk13[0] == 0;
@@ -471,7 +471,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
                 gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
                 if (temp1 != NULL) {
                     temp1->frame = 0x200;
                 }
@@ -487,7 +487,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
             }
             objdata->sleepTimer-= gUpdateRate;
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
                 if (temp1 != NULL) {
                     temp1->frame = 0;
                 }
@@ -501,7 +501,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
                 gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
                 objdata->flags &= ~0x8000;
                 snowhorn->unkAF &= ~8;
                 return 0;
@@ -510,7 +510,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
         default:
             objdata->sleepTimer -= gUpdateRate;
             if (objdata->sleepTimer <= 0) { //Go back to sleep if interrupted (by flinch anim etc.)
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0.0f, 0);
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0.0f, 0);
                 objdata->walkSpeed = 0.0f;
             }
             break;
@@ -558,10 +558,10 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     
     objdata->flags &= ~0x8000;
     if (snowhorn->curModAnimId != 0) {
-        func_80023D30(snowhorn, 0, 0.0f, 0);
+        objAnimSet(snowhorn, 0, 0.0f, 0);
     }
 
-    func_80024108(snowhorn, objdata->unk50, gUpdateRate, NULL);
+    objAnimAdvance(snowhorn, objdata->unk50, gUpdateRate, NULL);
     player = get_player();
     if (!player) 
         return;
@@ -655,7 +655,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
 
     objdata = self->data;
     
-    temp_v0 = func_80024108(self, 0.005f, gUpdateRate, NULL);
+    temp_v0 = objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
     questValue = objdata->flags;
 
     switch (questValue) {
@@ -754,7 +754,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             break;
         case 4:
             if (temp_v0 != 0) {
-                func_80023D30(self, 0, 0.0f, 0);
+                objAnimSet(self, 0, 0.0f, 0);
                 objdata->flags = 5;
             }
             break;
@@ -777,7 +777,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 var_v1 = (arctan2_f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
                 CIRCLE_WRAP(var_v1)
                 
-                func_80023D30(self, 1, 0.0f, 0);
+                objAnimSet(self, 1, 0.0f, 0);
                 if ((var_v1 >= -0xBB7) && (var_v1 < 0xBB8)) {
                     objdata->unk38 = player->srt.transl.x;
                     objdata->unk3C = player->srt.transl.y;
@@ -899,9 +899,9 @@ static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn
         dx = curveStruct->unk0.unk68.x - snowhorn->srt.transl.x;
         dz = curveStruct->unk0.unk68.z - snowhorn->srt.transl.z;
 
-        //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
+        //a1 for objGetAnimChange seems to be speed (obtained by dividing magnitude of dPos by dt)!
         speed = sqrtf(SQ(dx) + SQ(dz)) * gUpdateRateInverseF;
-        func_8002493C(snowhorn, speed, &objdata->unk50);
+        objGetAnimChange(snowhorn, speed, &objdata->unk50);
         snowhorn->srt.yaw = arctan2_f(curveStruct->unk0.unk74, curveStruct->unk0.unk7C) + 0x8000;
         snowhorn->srt.transl.x = curveStruct->unk0.unk68.x;
         snowhorn->srt.transl.z = curveStruct->unk0.unk68.z;

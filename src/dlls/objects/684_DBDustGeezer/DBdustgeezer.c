@@ -76,7 +76,7 @@ void DBDustGeezer_setup(Object* self, DBDustGeezer_Setup* objSetup, int skipChil
     objData->soundHandle1 = 0;
     objData->range = objSetup->randomnessRange;
     self->srt.scale = self->def->scale * 0.5f;
-    func_80023D30(self, 0, 0, 0);
+    objAnimSet(self, 0, 0, 0);
 }
 
 // offset: 0x154 | func: 1 | export: 1
@@ -146,9 +146,9 @@ void DBDustGeezer_control(Object* self) {
         break;
     }
     
-    if (func_80024108(self, 0.012f, gUpdateRateF, 0)) {
+    if (objAnimAdvance(self, 0.012f, gUpdateRateF, 0)) {
         self->srt.scale = self->def->scale * 0.5f;
-        func_80023D30(self, 0, 0, 0);
+        objAnimSet(self, 0, 0, 0);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_A20_Electric_Surge_Quieter, MAX_VOLUME, 0, 0, 0, 0);
     }
     
@@ -222,7 +222,7 @@ f32 DBDustGeezer_dug_up(Object* self, s32 arg1) {
     
     if ((objData->gemsToLaunch == 0) && (objData->state != DBDustGeezer_STATE_Cooldown)) {
         objData->flags |= DBDustGeezer_FLAG_Dug_Up;
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_A22_Electric_Surge, MAX_VOLUME, 0, 0, 0, 0);
         self->srt.scale *= 1.5f;
         objData->gemsToLaunch = objSetup->launchedGemCount;

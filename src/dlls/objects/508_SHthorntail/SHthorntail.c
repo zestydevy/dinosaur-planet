@@ -400,7 +400,7 @@ static int thorntail_anim_callback(Object *actor, Object *animObj, AnimObj_Data 
         return 1;
     }
     if (a3 != 0) {
-        func_80024108(actor, data_1B8[objdata->state], gUpdateRateF, NULL);
+        objAnimAdvance(actor, data_1B8[objdata->state], gUpdateRateF, NULL);
     }
     animObjData->unk62 = 0;
     animObjData->unk7A &= ~(ANIM7AFLAG_OVERRIDE_EYES | ANIM7AFLAG_OVERRIDE_HEAD);
@@ -738,7 +738,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
                 self->velocity.x = objdata->walkSpeed * vx;
                 self->velocity.z = objdata->walkSpeed * vz;
                 obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
-                func_8002493C(self, objdata->walkSpeed, &objdata->modAnimDelta);
+                objGetAnimChange(self, objdata->walkSpeed, &objdata->modAnimDelta);
                 break;
             case THORNTAILSTATE_TurnLeft:
             case THORNTAILSTATE_TurnRight:
@@ -779,7 +779,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
         animIdx = objdata->state * 2;
         // Update model animation
         if ((sModAnimMap[animIdx] != self->curModAnimId) || (objdata->flags & THORNTAILFLAG_ForceModAnimChange)) {
-            func_80023D30(self, sModAnimMap[animIdx], 0.0f, 0);
+            objAnimSet(self, sModAnimMap[animIdx], 0.0f, 0);
             if (!(objdata->flags & THORNTAILFLAG_Walking)) {
                 objdata->modAnimDelta = data_1B8[objdata->state];
             }
@@ -787,7 +787,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
         }
         // Set layered model animation(?), if one is defined
         if (sModAnimMap[animIdx + 1] != -1) {
-            func_80025540(self, sModAnimMap[animIdx + 1], (s32) (objdata->unk848 * 1023.0f));
+            objAnimSetBlend(self, sModAnimMap[animIdx + 1], (s32) (objdata->unk848 * 1023.0f));
         }
     }
     // Update z lock state
@@ -813,7 +813,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
         }
     }
     // Check if model animation completed
-    if (func_80024108(self, objdata->modAnimDelta, gUpdateRateF, &sp3C) != 0) {
+    if (objAnimAdvance(self, objdata->modAnimDelta, gUpdateRateF, &sp3C) != 0) {
         objdata->flags |= THORNTAILFLAG_ModAnimDone;
     } else {
         objdata->flags &= ~THORNTAILFLAG_ModAnimDone;

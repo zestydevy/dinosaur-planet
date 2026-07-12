@@ -231,9 +231,9 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
 
     //Handle animation
     if (self->curModAnimId != Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP) {
-        func_80023D30(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0);
+        objAnimSet(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0);
     }
-    func_80024108(self, 0.005f, gUpdateRate, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
 
     //Before meeting Randorn
     if (objData->hasMetKrystal == FALSE) {
@@ -380,17 +380,17 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
             }
         } else {
             //Done rotating outwards: start the walk point's intro idle animation and go to stopped state
-            func_80023D30(self, dRandomWalkData[(objData->prevWalkIndex * 5) + 2], 0.0f, 0);
+            objAnimSet(self, dRandomWalkData[(objData->prevWalkIndex * 5) + 2], 0.0f, 0);
             objData->animSpeed = dRandomWalkData[(objData->prevWalkIndex * 5) + 4];
             objData->walkIndexFlags = WALK_STOPPED;
         }
     } else if (objData->walkIndexFlags == WALK_STOPPED) {
         //Stopped: wait for the intro idle animation to finish
-        if (func_80024108(self, objData->animSpeed, gUpdateRateF, &sp30)) {
+        if (objAnimAdvance(self, objData->animSpeed, gUpdateRateF, &sp30)) {
             //Start the walk point's secondary idle loop animation
             walkData = (RandomWalkData*)&dRandomWalkData[objData->prevWalkIndex * 5];
             if (walkData->modAnimIDIdleIntro == self->curModAnimId) {
-                func_80023D30(self, walkData->modAnimIDIdleLoop, 0.0f, 0);
+                objAnimSet(self, walkData->modAnimIDIdleLoop, 0.0f, 0);
                 objData->animSpeed = dRandomWalkData[(objData->prevWalkIndex * 5) + 4];
             }
         }
@@ -411,17 +411,17 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
         if ((dYaw >= -1000) && (dYaw <= 1000)) {
             //Walk towards destination
             if (self->curModAnimId != Randorn_MODANIM_59_Walk_LOOP) {
-                func_80023D30(self, Randorn_MODANIM_59_Walk_LOOP, 0.0f, 0);
+                objAnimSet(self, Randorn_MODANIM_59_Walk_LOOP, 0.0f, 0);
                 objData->animSpeed = 0.04f;
             }
 
             self->velocity.x = (dx / distance) * 0.25f;
             self->velocity.z = (dz / distance) * 0.25f;
-            func_8002493C(self, 0.25f, &objData->animSpeed);
+            objGetAnimChange(self, 0.25f, &objData->animSpeed);
         } else {
             //Limping on the spot, turn to face the next walk point
             if (self->curModAnimId != Randorn_MODANIM_12_Limp_Walk_LOOP) {
-                func_80023D30(self, Randorn_MODANIM_12_Limp_Walk_LOOP, 0.0f, 0);
+                objAnimSet(self, Randorn_MODANIM_12_Limp_Walk_LOOP, 0.0f, 0);
                 objData->animSpeed = 0.01f;
             }
             
@@ -443,7 +443,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
         //Move and advance animation playback
         self->srt.transl.x += (self->velocity.x * gUpdateRateF);
         self->srt.transl.z += (self->velocity.z * gUpdateRateF);
-        func_80024108(self, objData->animSpeed, gUpdateRateF, &sp30);
+        objAnimAdvance(self, objData->animSpeed, gUpdateRateF, &sp30);
     }
 }
 
@@ -453,9 +453,9 @@ void WMWizard_handle_visit_3_spirit_mmp(Object* self) {
 
     //Handle animation
     if (self->curModAnimId != Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP) {
-        func_80023D30(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0);
+        objAnimSet(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0);
     }
-    func_80024108(self, 0.005f, gUpdateRate, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
 }
 
 // offset: 0x11C8 | func: 15
@@ -478,17 +478,17 @@ void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     if (mainGetBits(BIT_WM_Setup6_Randorn_Sitting_Up) == FALSE) {
         //Randorn initially slumped to the side
         if (self->curModAnimId != Randorn_MODANIM_7_Sitting_Attempt_to_Stand_Collapse) {
-            func_80023D30(self, Randorn_MODANIM_7_Sitting_Attempt_to_Stand_Collapse, 0.0f, 0);
+            objAnimSet(self, Randorn_MODANIM_7_Sitting_Attempt_to_Stand_Collapse, 0.0f, 0);
         }
         
-        func_80024108(self, 0.005f, gUpdateRate, NULL);
+        objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
     } else {
         //He sits up after the player talks with him
         if (self->curModAnimId != Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP) {
-            func_80023D30(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0); 
+            objAnimSet(self, Randorn_MODANIM_2_Sitting_Hands_on_Knees_LOOP, 0.0f, 0); 
         }
     
-        func_80024108(self, 0.005f, gUpdateRate, NULL);
+        objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
     }
 
     //Check if player talks to Randorn while he's collapsed

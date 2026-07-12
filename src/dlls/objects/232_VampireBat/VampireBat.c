@@ -84,7 +84,7 @@ void dll_232_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     bat->unk8 = setup->base.z;
     bat->unk18 = 0;
     bat->unk1C = 0;
-    func_80023D30(self, 0, 0, 0);
+    objAnimSet(self, 0, 0, 0);
     baddie->fsa.animState = 0;
     baddie->fsa.logicState = 0;
     baddie->fsa.flags |= OBJFSA_FLAG_1000000;
@@ -138,7 +138,7 @@ void dll_232_control(Object* self) {
             if (var_fv0 > 0.1f) {
                 var_fv0 = 0.1f;
             }
-            func_80024108(self, var_fv0, gUpdateRateF, NULL);
+            objAnimAdvance(self, var_fv0, gUpdateRateF, NULL);
             sp6C.f[0] = bat->unk0 - sp78->srt.transl.f[0];
             sp6C.f[1] = bat->unk4 - sp78->srt.transl.f[1];
             sp6C.f[2] = bat->unk8 - sp78->srt.transl.f[2];

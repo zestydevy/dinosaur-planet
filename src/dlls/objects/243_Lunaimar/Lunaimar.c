@@ -137,7 +137,7 @@ void dll_243_setup(Object *self, Baddie_Setup *setup, s32 arg2) {
     gDLL_33_BaddieControl->vtbl->setup(self, setup, baddie, 6, 6, 0, (u8) var_v0, 20.0f);
     self->animCallback = NULL;
     temp_s2 = baddie->objdata;
-    func_80023D30(self, 4, 0.0f, 0);
+    objAnimSet(self, 4, 0.0f, 0);
     self->unkAF |= 8;
     gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, LUNAIMAR_ASTATE_0);
     baddie->fsa.logicState = LUNAIMAR_LSTATE_0;
@@ -163,7 +163,7 @@ void dll_243_control(Object *self) {
                 gDLL_33_BaddieControl->vtbl->setup(self, &setup->base, baddie, 6, 6, 0, 0x26, 20.0f);
                 baddie->unk3B6 = 0;
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
-                func_80023D30(self, 4, 0.0f, 0x10);
+                objAnimSet(self, 4, 0.0f, 0x10);
                 baddie->fsa.unk33A = 0;
                 self->opacity = 0xFF;
                 baddie->unk3B6 = 0;
@@ -458,7 +458,7 @@ static s32 dll_243_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
 
     baddie = self->data;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 4, 0.0f, 0);
+        objAnimSet(self, 4, 0.0f, 0);
         fsa->unk33A = 0;
     }
     if (fsa->enteredAnimState != 0) {
@@ -487,7 +487,7 @@ static s32 dll_243_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
 
     baddie = self->data;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 5, 0.0f, 0);
+        objAnimSet(self, 5, 0.0f, 0);
         fsa->unk33A = 0;
     }
     if (fsa->enteredAnimState != 0) {
@@ -497,7 +497,7 @@ static s32 dll_243_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     }
     if (fsa->unk33A != 0) {
         mainSetBits(baddie->unk39E, 0);
-        func_80023D30(self, 4, 0.0f, 0);
+        objAnimSet(self, 4, 0.0f, 0);
         fsa->target = NULL;
         fsa->unk4.mode = 0;
         fsa->unk33D = 0;
@@ -515,7 +515,7 @@ static s32 dll_243_anim_state_2(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     objdata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
         if (fsa->enteredAnimState != 0) {
-            func_80023D30(self, (s32) _data_C[rand_next(0, 4)], 0.0f, 0);
+            objAnimSet(self, (s32) _data_C[rand_next(0, 4)], 0.0f, 0);
             fsa->unk33A = 0;
         }
         func_8002674C(self);
@@ -535,7 +535,7 @@ static s32 dll_243_anim_state_3(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     if (fsa->enteredAnimState != 0) {
         func_8002674C(self);
         if (fsa->enteredAnimState != 0) {
-            func_80023D30(self, rand_next(6, 7), 0.0f, 0);
+            objAnimSet(self, rand_next(6, 7), 0.0f, 0);
             fsa->unk33A = 0;
         }
     }
@@ -555,7 +555,7 @@ static s32 dll_243_anim_state_4(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     if (fsa->enteredAnimState != 0) {
         baddie = self->data;
         if (fsa->enteredAnimState != 0) {
-            func_80023D30(self, 3, 0.0f, 0);
+            objAnimSet(self, 3, 0.0f, 0);
             fsa->unk33A = 0;
         }
         gDLL_6_AMSFX->vtbl->play(self, SOUND_A83_Lunaimar_Grunt, MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
@@ -577,7 +577,7 @@ static s32 dll_243_anim_state_5(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     fsa->unk278 = 0.0f;
     fsa->unk27C = 0.0f;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 5, 0.0f, 0);
+        objAnimSet(self, 5, 0.0f, 0);
         fsa->unk33A = 0;
     }
     if (!(fsa->unk34A & 1)) {

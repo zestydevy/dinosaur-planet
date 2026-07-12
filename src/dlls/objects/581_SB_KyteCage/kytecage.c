@@ -94,14 +94,14 @@ void kyteCage_control(Object* self) {
         rotate = (BoneRotation*)func_80034804(self, 0);
         if ((parentDC < 9) && (self->curModAnimId != 5)) {
             rotate->z = self->parent->srt.roll;
-            func_80023D30(self, 5, 0, 0);
+            objAnimSet(self, 5, 0, 0);
         } else if ((parentDC >= 9) && (self->curModAnimId != 9)) {
             rotate->z = 0;
-            func_80023D30(self, 9, 0, 0);
+            objAnimSet(self, 9, 0, 0);
         }
     }
 
-    func_80024108(self, 0.004, gUpdateRate, 0);
+    objAnimAdvance(self, 0.004, gUpdateRate, 0);
 }
 
 // offset: 0x298 | func: 2 | export: 2

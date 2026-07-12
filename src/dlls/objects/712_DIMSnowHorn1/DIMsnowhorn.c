@@ -322,12 +322,12 @@ s32 dll_712_func_2EEC(Object* self, DIMSnowHorn_Data* objData, f32 arg2) {
 
     if (animCondition1){
         if ((animIndex == 1) && animCondition2){
-            func_80023D30(self, 0x208, animProgress, 0);
+            objAnimSet(self, 0x208, animProgress, 0);
         } else {
-            func_80023D30(self, _data_80[animIndex], animProgress, 0);
+            objAnimSet(self, _data_80[animIndex], animProgress, 0);
         }
     }
-    func_8002493C(self, objData->unk278, &objData->unk298);
+    objGetAnimChange(self, objData->unk278, &objData->unk298);
 
     if (objData->unk310 & 0x8000){
         return 0xD;

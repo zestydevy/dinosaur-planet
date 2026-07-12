@@ -219,8 +219,8 @@ void fish_control(Object* self) {
             objdata->unk18 = 3U;
             objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk1C);
             fish_func_11C8(self, NULL, 0);
-            func_80023D30(self, 2, 0.0f, 0U);
-            func_80024D74(self, 0x1E);
+            objAnimSet(self, 2, 0.0f, 0U);
+            objAnim_func_80024D74(self, 0x1E);
         }
         break;
     case 3:
@@ -232,8 +232,8 @@ void fish_control(Object* self) {
             objdata->unk18 = 4U;
             objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk1A);
             fish_func_11C8(self, NULL, 0);
-            func_80023D30(self, 0, 0.0f, 0U);
-            func_80024D74(self, 0x1E);
+            objAnimSet(self, 0, 0.0f, 0U);
+            objAnim_func_80024D74(self, 0x1E);
         }
         break;
     case 4:
@@ -246,8 +246,8 @@ void fish_control(Object* self) {
                 objdata->unk60 = (f32) self->srt.transl.f[2];
                 objdata->unk54 = 0.0f;
                 
-                func_80023D30(self, 1, 0.0f, 0U);
-                func_80024D74(self, 0x1E);
+                objAnimSet(self, 1, 0.0f, 0U);
+                objAnim_func_80024D74(self, 0x1E);
                 fish_func_1EF4(self);
             } else {
                 fish_func_11C8(self, NULL, 0);
@@ -292,12 +292,12 @@ void fish_control(Object* self) {
             objdata->unk18 = 2U;
             objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk24);
             fish_func_11C8(self, NULL, 0);
-            func_80023D30(self, 0, 0.0f, 0U);
-            func_80024D74(self, 0x1E);
+            objAnimSet(self, 0, 0.0f, 0U);
+            objAnim_func_80024D74(self, 0x1E);
         }
         break;
     }
-    func_80024108(self, objdata->unk0, gUpdateRateF, NULL);
+    objAnimAdvance(self, objdata->unk0, gUpdateRateF, NULL);
 }
 
 // offset: 0xEA8 | func: 3 | export: 2
@@ -443,7 +443,7 @@ static void fish_func_11C8(Object *self, s16 a1, u8 a2) {
         return;
     }
     if (objdata->unk28 == objdata->unk20) {
-        func_800240BC(self, 0.0f);
+        objAnimSetProgress(self, 0.0f);
         objdata->unk0 = 0.0f;
     } else {
         objdata->unk0 = (f32) ((objdata->unk28 / objdata->unk20) * 0.06f);
@@ -561,8 +561,8 @@ static s32 fish_func_1978(Object *self) {
         self->srt.roll = 0;
         objdata->unk18 = 7;
         objdata->unk4 = (f32) (objdata->unk4 - objdata->unk48);
-        func_80023D30(self, 3, 0.0f, 0U);
-        func_80024D74(self, 0x1E);
+        objAnimSet(self, 3, 0.0f, 0U);
+        objAnim_func_80024D74(self, 0x1E);
         sp60 = 0;
     } else {
         sp6C.f[0] = objdata->unk4 * objdata->unk50;
@@ -601,8 +601,8 @@ static s32 fish_func_1EF4(Object* self) {
         sp34.f[1] = 0.0f;
         sp34.f[2] = 0.0f;
         self->srt.roll = 0;
-        func_80023D30(self, 0, 0.0f, 0U);
-        func_80024D74(self, 0x1E);
+        objAnimSet(self, 0, 0.0f, 0U);
+        objAnim_func_80024D74(self, 0x1E);
         objdata->unk0 = 0.0f;
         objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk23);
         objdata->unk18 = 6;

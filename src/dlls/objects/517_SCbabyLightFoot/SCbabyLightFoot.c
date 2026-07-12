@@ -161,7 +161,7 @@ static s32 dll_517_func_4AC(Object* self, ObjFSA_Data* arg1, f32 arg2) {
     sp28 = baddie->objdata;
     if ((arg1->enteredAnimState != 0) || (arg1->unk33A != 0)) {
         sp28->unk6 = rand_next(0, 6);
-        func_80023D30(self, _data_8[sp28->unk6], 0.0f, 0U);
+        objAnimSet(self, _data_8[sp28->unk6], 0.0f, 0U);
     }
     if (((s32) sp28->unk4 < (s32) baddie->unk3E2) && (arg1->logicState != 0)) {
         arg1->animTickDelta = ( f32) _data_18[sp28->unk6] * 5.0f;
@@ -190,9 +190,9 @@ static s32 dll_517_func_628(Object* arg0, ObjFSA_Data* FSAData, f32 arg2) {
     sp36 = d517Data->unk2;
     if ((FSAData->enteredAnimState != 0) || (FSAData->unk33A != 0)) {
         if (sp36 < 0x7FFF) {
-            func_80023D30(arg0, 0xE, 0.0f, 0U);
+            objAnimSet(arg0, 0xE, 0.0f, 0U);
         } else {
-            func_80023D30(arg0, 0xD, 0.0f, 0U);
+            objAnimSet(arg0, 0xD, 0.0f, 0U);
         }
     
     }

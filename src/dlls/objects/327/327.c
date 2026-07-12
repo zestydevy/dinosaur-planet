@@ -48,7 +48,7 @@ void dll_327_setup(Object* self, DLL327_Setup* objSetup, s32 arg2) {
     }
     
     //Set up animation
-    func_80023D30(self, objSetup->modAnimIndex, objSetup->animProgress / 256.0f, 0);
+    objAnimSet(self, objSetup->modAnimIndex, objSetup->animProgress / 256.0f, 0);
     
     //Set visibility based on a gamebit
     if (objSetup->gamebitVisible != NO_GAMEBIT) {
@@ -72,7 +72,7 @@ void dll_327_control(Object* self) {
     temp = objSetup->unk1B;
     temp = temp / 10000.0f;
     new_var = temp;
-    func_80024108(self, new_var, gUpdateRateF, 0);
+    objAnimAdvance(self, new_var, gUpdateRateF, 0);
 
     //Set visibility based on a gamebit
     if (objSetup->gamebitVisible != NO_GAMEBIT) {

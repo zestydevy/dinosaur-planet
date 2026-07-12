@@ -100,9 +100,9 @@ void DR_Tube_control(Object* self) {
     if (sAllTubesActivated) {
         //Play pulsing model animation
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.0f, 0);
+            objAnimSet(self, 0, 0.0f, 0);
         }
-        func_80024108(self, 0.01f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.01f, gUpdateRateF, NULL);
 
         //Continue animating tube's section textures
         DR_Tube_animate_all_sections(self, DR_Tube_ALL_SECTIONS);

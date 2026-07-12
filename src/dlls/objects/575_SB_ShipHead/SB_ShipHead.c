@@ -71,9 +71,9 @@ void SB_ShipHead_control(Object *self) {
         }
         self->objhitInfo->unk58 &= ~1;
         if (parentDC != 10) {
-            func_80024108(self, 0.005f, gUpdateRateF, NULL);
+            objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
         } else {
-            func_800240BC(self, 0);
+            objAnimSetProgress(self, 0);
         }
         return;
     }
@@ -163,7 +163,7 @@ void SB_ShipHead_control(Object *self) {
         minifireSetup->fadeDistance = 0xFF;
         obj_create(minifireSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     }
-    func_80024108(self, 0.005f, gUpdateRateF, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     _data_0[0] = parentDC;
 }
 

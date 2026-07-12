@@ -53,9 +53,9 @@ void SHqueenearthwalker_control(Object* self) {
     prevQuestProgress = objdata->questProgress;
     self->unkAF &= ~8;
     if (self->curModAnimId != 1) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
     }
-    func_80024108(self, 0.005f, gUpdateRate, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
     switch (objdata->questProgress) {
 
     case 1:

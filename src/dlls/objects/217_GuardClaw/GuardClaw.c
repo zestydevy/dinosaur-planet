@@ -550,7 +550,7 @@ static void GuardClaw_func_1520(Object* self, Baddie* baddie, ObjFSA_Data* fsa) 
 // offset: 0x1760 | func: 16 | state 0
 static s32 GuardClaw_func_1760(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 4, 0.0f, 0);
+        objAnimSet(self, 4, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.005f;
@@ -562,7 +562,7 @@ static s32 GuardClaw_func_1760(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x17E0 | func: 17 | state 1
 static s32 GuardClaw_func_17E0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 5, 0.0f, 0);
+        objAnimSet(self, 5, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.005f;
@@ -574,7 +574,7 @@ static s32 GuardClaw_func_17E0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1860 | func: 18 | state 2
 static s32 GuardClaw_func_1860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 6, 0.0f, 0);
+        objAnimSet(self, 6, 0.0f, 0);
         fsa->unk33A = 0;
     }
     gDLL_18_objfsa->vtbl->func12(self, fsa, 0, 0, data_C);
@@ -590,7 +590,7 @@ static s32 GuardClaw_func_191C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     GuardClaw_Data* objdata;
 
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
         fsa->unk33A = 0;
     }
     objdata = baddie->objdata;
@@ -621,7 +621,7 @@ static s32 GuardClaw_func_1AD4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     GuardClaw_Data* objdata;
     
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
         fsa->unk33A = 0;
     }
     objdata = baddie->objdata;
@@ -649,7 +649,7 @@ static s32 GuardClaw_func_1AD4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1C8C | func: 21 | state 5
 static s32 GuardClaw_func_1C8C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 2, 0.0f, 0);
+        objAnimSet(self, 2, 0.0f, 0);
         fsa->unk33A = 0;
     }
     self->objhitInfo->unk5F = 0xC;
@@ -666,7 +666,7 @@ static s32 GuardClaw_func_1C8C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1DD8 | func: 22 | state 6
 static s32 GuardClaw_func_1DD8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 3, 0.0f, 0);
+        objAnimSet(self, 3, 0.0f, 0);
         fsa->unk33A = 0;
     }
     self->objhitInfo->unk5F = 0xB;
@@ -683,7 +683,7 @@ static s32 GuardClaw_func_1DD8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1F24 | func: 23 | state 7
 static s32 GuardClaw_func_1F24(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 7, 0.0f, 0);
+        objAnimSet(self, 7, 0.0f, 0);
         fsa->unk33A = 0;
     }
     gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(1, 3), data_C);
@@ -696,7 +696,7 @@ static s32 GuardClaw_func_1F24(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1FF8 | func: 24 | state 8
 static s32 GuardClaw_func_1FF8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 9, 0.0f, 0);
+        objAnimSet(self, 9, 0.0f, 0);
         fsa->unk33A = 0;
     }
     self->objhitInfo->unk5F = 0xB;
@@ -712,7 +712,7 @@ static s32 GuardClaw_func_1FF8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x20E0 | func: 25 | state 9
 static s32 GuardClaw_func_20E0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 8, 0.0f, 0);
+        objAnimSet(self, 8, 0.0f, 0);
         fsa->unk33A = 0;
     }
     self->objhitInfo->unk5F = 0xC;
@@ -752,17 +752,17 @@ static s32 GuardClaw_func_21C8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
         if ((var_fv1_2 < 0.0f) && (sp4C & 8)) {
             if (fsa->enteredAnimState != 0) {
-                func_80023D30(self, 0, 0.0f, 0);
+                objAnimSet(self, 0, 0.0f, 0);
                 fsa->unk33A = 0;
             }
         } else if (sp4C & 2) {
             if (fsa->enteredAnimState != 0) {
-                func_80023D30(self, 1, 0.0f, 0);
+                objAnimSet(self, 1, 0.0f, 0);
                 fsa->unk33A = 0;
             }
         } else {
             if (fsa->enteredAnimState != 0) {
-                func_80023D30(self, 5, 0.0f, 0);
+                objAnimSet(self, 5, 0.0f, 0);
                 fsa->unk33A = 0;
             }
         }
@@ -779,7 +779,7 @@ static s32 GuardClaw_func_21C8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x2564 | func: 27 | state 11
 static s32 GuardClaw_func_2564(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 0xC, 0.0f, 0);
+        objAnimSet(self, 0xC, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.011f;
@@ -791,7 +791,7 @@ static s32 GuardClaw_func_2564(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x25E4 | func: 28 | state 12
 static s32 GuardClaw_func_25E4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 0xB, 0.0f, 0);
+        objAnimSet(self, 0xB, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.011f;
@@ -803,7 +803,7 @@ static s32 GuardClaw_func_25E4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x2664 | func: 29 | state 13
 static s32 GuardClaw_func_2664(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 0xC, 1.0f, 0);
+        objAnimSet(self, 0xC, 1.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = -0.011f;

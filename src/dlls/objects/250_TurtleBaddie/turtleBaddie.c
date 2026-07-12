@@ -269,7 +269,7 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
         self->velocity.f[2] = -0.5f;
     }
     obj_move(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
-    func_80024108(self, objdata->unkC, gUpdateRateF, &sp50);
+    objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
     var_v1 = arctan2_f(self->globalPosition.f[0] - objdata->player->globalPosition.f[0], self->globalPosition.f[2] - objdata->player->globalPosition.f[2]) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     self->srt.yaw = self->srt.yaw + (s32) (((f32) var_v1 * gUpdateRateF) / 12.0f);

@@ -689,15 +689,15 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                 if ((st->unk84 == 1) && (st->unk87 == 0) && (actorModelInst != NULL)) {
                     xDiff = newX - prevX;
                     var_fv1 = newZ - prevZ;
-                    if (func_8002493C(actor, sqrtf(SQ(xDiff) + SQ(var_fv1)), &modAnimSpeed) == 0) {
+                    if (objGetAnimChange(actor, sqrtf(SQ(xDiff) + SQ(var_fv1)), &modAnimSpeed) == 0) {
                         modAnimSpeed = anim_channel_value(st, CHANNEL_animSpeed, st->time - 1) * 0.0004f;
                     }
                 } else {
                     modAnimSpeed = anim_channel_value(st, CHANNEL_animSpeed, st->time - 1) * 0.0004f;
                 }
                 if (actorModelInst != NULL) {
-                    func_80024108(actor, modAnimSpeed, 1.0f, &st->unkFC);
-                    func_80025780(actor, 1.0f, &st->unkFC, 0);
+                    objAnimAdvance(actor, modAnimSpeed, 1.0f, &st->unkFC);
+                    objAnim_func_80025780(actor, 1.0f, &st->unkFC, 0);
                     if ((st->unk30 != 0) && (actorModelInst->model->unk71 & 1)) {
                         func_80032B44(actor, st->unk30);
                     }
@@ -901,7 +901,7 @@ static void anim_process_remaining_events_immediate(Object* animObj, Object* _ac
         }
         if (animObjModelInst != NULL) {
             if (st->modAnimIdx != -1) {
-                func_80023D30(actor, st->modAnimIdx, 0.0f, 0);
+                objAnimSet(actor, st->modAnimIdx, 0.0f, 0);
                 animObjModelInst->animState0->unk58[0] = 0;
             }
         }
@@ -1247,15 +1247,15 @@ static void anim_time_skip(Object* animObj, Object* actor, AnimObj_Data* st, s32
             if ((st->unk84 == 1) && (st->unk87 == 0) && (modelInst != NULL)) {
                 temp_fv0 = sp7C[0] - sp90;
                 var_fv1 = sp7C[2] - sp8C;
-                if (func_8002493C(actor, sqrtf(SQ(temp_fv0) + SQ(var_fv1)), &spA0) == 0) {
+                if (objGetAnimChange(actor, sqrtf(SQ(temp_fv0) + SQ(var_fv1)), &spA0) == 0) {
                     spA0 = anim_channel_value(st, CHANNEL_animSpeed, st->time - 1) * 0.0004f;
                 }
             } else {
                 spA0 = anim_channel_value(st, CHANNEL_animSpeed, st->time - 1) * 0.0004f;
             }
             if (modelInst != NULL) {
-                func_80024108(actor, spA0, 1.0f, &st->unkFC);
-                func_80025780(actor, 1.0f, &st->unkFC, 0);
+                objAnimAdvance(actor, spA0, 1.0f, &st->unkFC);
+                objAnim_func_80025780(actor, 1.0f, &st->unkFC, 0);
                 if ((arg3 != 0) && (st->unk20 > 0.0f)) {
                     if (st->channelTotalKeys[CHANNEL_animBlendSpeed] != 0) {
                         var_fv1 = anim_channel_value(st, CHANNEL_animBlendSpeed, st->time - 1);
@@ -1569,7 +1569,7 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
             } else {
                 var_v0 = 0;
             }
-            func_80023D30(actor, st->modAnimIdx, st->modAnimStartFrame * 0.00390625f, var_v0);
+            objAnimSet(actor, st->modAnimIdx, st->modAnimStartFrame * 0.00390625f, var_v0);
             st->unk20 = 1.0f;
         }
         break;
@@ -3939,10 +3939,10 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
             st->unk7A &= ~ANIM7AFLAG_OVERRIDE_MODEL;
             if (st->yawDiff < 0) {
                 if (arg6 != -1) {
-                    func_80023D30(actor, arg6, 0.0f, 0);
+                    objAnimSet(actor, arg6, 0.0f, 0);
                 }
             } else if (arg5 != -1) {
-                func_80023D30(actor, arg5, 0.0f, 0);
+                objAnimSet(actor, arg5, 0.0f, 0);
             }
         }
         st->unkF4 = anim_func_9B70;
@@ -3982,8 +3982,8 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
                 var_fv0 = -st->yawDiff;
             }
             var_fv0 = (var_fv0 * 3.142f) / 325767.0f;
-            func_8002493C(actor, var_fv0, &sp4C);
-            func_80024108(actor, sp4C, gUpdateRate, NULL);
+            objGetAnimChange(actor, var_fv0, &sp4C);
+            objAnimAdvance(actor, sp4C, gUpdateRate, NULL);
         }
         if (st->unk58 > 1.0f) {
             st->unk62 = 0;

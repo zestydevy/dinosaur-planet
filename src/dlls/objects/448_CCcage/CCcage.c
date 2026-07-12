@@ -3,7 +3,7 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 
-s32 func_80024108(Object*, f32, f32 updateRate, UnkFunc_80024108Struct*);
+s32 objAnimAdvance(Object*, f32, f32 updateRate, UnkFunc_80024108Struct*);
 
 typedef struct {
     ObjSetup base;
@@ -228,7 +228,7 @@ void CCcage_control(Object* self) {
         break;
     }
 
-    func_80024108(self, objData->unk3C, gUpdateRateF, 0);
+    objAnimAdvance(self, objData->unk3C, gUpdateRateF, 0);
 }
 
 // offset: 0x8A4 | func: 2 | export: 2

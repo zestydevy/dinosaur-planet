@@ -183,7 +183,7 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
     }
     dll_711_func_3C30(self, objdata);
     dll_711_func_1ED0(self, &objdata->unk2AC);
-    func_80023D30(self, 0, 0.0f, 0);
+    objAnimSet(self, 0, 0.0f, 0);
     if (self->shadow != NULL) {
         self->shadow->flags |= (OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }

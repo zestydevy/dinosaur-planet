@@ -76,7 +76,7 @@ void fishingnet_func_DC(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
     self->srt.transl.f[2] = arg5->z;
     arg6->y += 0.25f;
     if (objdata->unk1 != 0) {
-        func_80024108(self, 0.006f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.006f, gUpdateRateF, NULL);
         draw_object(self, arg1, arg2, arg3, arg4, 1.0f);
         self->srt.yaw = arctan2_f(arg5->x - arg6->x, arg5->z - arg6->z) - 0x4000;
         self->srt.roll = arctan2_f(arg5->y - arg6->y, sqrtf(SQ(arg5->z - arg6->z) + SQ(arg5->x - arg6->x)));

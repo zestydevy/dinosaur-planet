@@ -148,7 +148,7 @@ static s32 WCTrex_func_584(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x59C | func: 10 | anim state 1
 static s32 WCTrex_func_59C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
         fsa->animTickDelta = 0.005f;
     }
     return 0;
@@ -160,14 +160,14 @@ static s32 WCTrex_func_608(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     UnkCurvesStruct* curveStruct = &objdata->unk828;
     
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
     }
     self->velocity.x = (curveStruct->unk0.unk68.x - self->srt.transl.x) * gUpdateRateInverseF;
     self->velocity.z = (curveStruct->unk0.unk68.z - self->srt.transl.z) * gUpdateRateInverseF;
     self->srt.transl.x = curveStruct->unk0.unk68.x;
     self->srt.transl.z = curveStruct->unk0.unk68.z;
     self->srt.yaw = arctan2_f(-curveStruct->unk0.unk74, -curveStruct->unk0.unk7C);
-    func_8002493C(self, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), &fsa->animTickDelta);
+    objGetAnimChange(self, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), &fsa->animTickDelta);
     return 0;
 }
 

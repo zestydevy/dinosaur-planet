@@ -9,8 +9,6 @@
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 
-static const char str_80099800[] = "Error in loading Model Inst in ObjAnimSetMove ";
-
 /* -------- .data start 800916B0 -------- */
 u8 D_800916B0[33] = {
     0x00,
@@ -49,8 +47,11 @@ u8 D_800916B0[33] = {
 };
 /* -------- .data start 800916E0 -------- */
 
-//sets new modAnimIndex on model
-s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
+void setObjAnimBlend(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3);
+
+// sets new modAnimIndex on model.
+// official name: objAnimSetMove
+s32 objAnimSet(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     s32 temp_t0;
     Model* model;
     u8 changed;
@@ -67,12 +68,15 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     object->animProgress = animProgress;
 
     modelInstance = object->modelInsts[object->modelInstIdx];
-    if (!modelInstance)
+    if (!modelInstance) {
+        STUBBED_PRINTF("Error in loading Model Inst in ObjAnimSetMove ");
         return 0;
+    }
 
     model = modelInstance->model;
-    if (model->animCount == 0)
+    if (model->animCount == 0) {
         return 0;
+    }
 
     animState = modelInstance->animState0;
     animState->unk62[1] = arg3;
@@ -111,7 +115,13 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         if (changed) {
             animState->unk62[0] = (1 - animState->unk62[0]);
             animState->animIndexes[0] = animState->unk62[0] & 0xFFFF;
-            modLoadAnim(model->modAnim[modAnimIndex], modAnimIndex, (u8*)animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
+            /* default.dol
+            if (model->modAnim[modAnimIndex] == -1) {
+                STUBBED_PRINTF("<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d\n");    
+                modAnimIndex = 0;
+            }
+            */
+            modLoadAnim(model->modAnim[modAnimIndex], modAnimIndex, animState->anims[(u16)animState->unk62[0]], model);
         }
         anim = &animState->anims[animState->animIndexes[0]]->anim;
     } else {
@@ -146,7 +156,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     return 0;
 }
 
-s32 func_800240BC(Object* object, f32 progress) {
+s32 objAnimSetProgress(Object* object, f32 progress) {
     if (progress > 0.999f){
         progress = 0.999f; 
     } else if (progress < 0.0f) {
@@ -157,7 +167,7 @@ s32 func_800240BC(Object* object, f32 progress) {
 }
 
 //advances current animation playback
-s32 func_80024108(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3) {
+s32 objAnimAdvance(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3) {
     AnimState* temp_t0;
     Animation* var_t5_2;
     ModelInstance* temp_t2;
@@ -399,7 +409,9 @@ s32 func_80024108(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3
     return var_t3;
 }
 
-s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
+// Calculates how far the current animation must advance for the root motion to move the given distance.
+// official name: objGetAnimChange
+s32 objGetAnimChange(Object* obj, f32 dist, f32* change) {
     AnimState* temp_a1;
     Animation* var_v0;
     Model* temp_v1;
@@ -424,7 +436,7 @@ s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
     f32 sp20;
     f32 sp1C;
 
-    temp_v0 = arg0->modelInsts[arg0->modelInstIdx];
+    temp_v0 = obj->modelInsts[obj->modelInstIdx];
     temp_v1 = temp_v0->model;
     if (temp_v1->animCount <= 0) {
         return 0;
@@ -432,9 +444,9 @@ s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
     temp_a1 = temp_v0->animState0;
     temp_a2 = NULL;
     pad2 = temp_a1->unk58[1];
-    var_fv1 = sp50 = arg0->srt.scale;
-    var_fv0 = var_fv1 / arg0->def->scale;
-    arg1 *= var_fv0;
+    var_fv1 = sp50 = obj->srt.scale;
+    var_fv0 = var_fv1 / obj->def->scale;
+    dist *= var_fv0;
     if (temp_a1->unk58[1] != 0) {
         sp20 = temp_a1->unk58[1] / 1023.0f;
         sp1C = 1.0f - sp20;
@@ -489,7 +501,7 @@ s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
                 return 0;
             }
             sp3C = 1.0f / temp_a1_2;
-            sp50 = arg0->animProgress * temp_a1_2;
+            sp50 = obj->animProgress * temp_a1_2;
             var_a3 = sp50;
             sp50 -= var_a3;
             if (temp_a2 != NULL) {
@@ -504,7 +516,7 @@ s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
                 var_fa0 = var_v1[var_a3 + 0] * var_ft4;
                 var_fv0 = var_v1[var_a3 + 1] * var_ft4;
             }
-            temp_fa1 = ((var_fv0 - var_fa0) * sp50) + var_fa0 + arg1;
+            temp_fa1 = ((var_fv0 - var_fa0) * sp50) + var_fa0 + dist;
             var_fv1 = sp3C - (sp3C * sp50);
             stop = 0;
             // FAKE
@@ -529,8 +541,8 @@ s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
                     var_fv1 += sp3C;
                 }
             } while (stop == 0);
-            if (arg2 != NULL) {
-                *arg2 = var_fv1;
+            if (change != NULL) {
+                *change = var_fv1;
             }
             return 1;
         }
@@ -538,7 +550,7 @@ s32 func_8002493C(Object* arg0, f32 arg1, f32* arg2) {
     return 0;
 }
 
-void func_80024D74(Object* object, s32 arg1) {
+void objAnim_func_80024D74(Object* object, s32 arg1) {
     ModelInstance* model;
     AnimState* animState;
 
@@ -549,7 +561,7 @@ void func_80024D74(Object* object, s32 arg1) {
     }
 }
 
-void func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3) {
+void objAnim_func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3) {
     AnimState *animState;
     ModelInstance* model;
 
@@ -561,7 +573,7 @@ void func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3) {
     animState->unk58[arg2] = arg3;
 }
 
-s16 func_80024E2C(Object* arg0) {
+s16 objAnim_func_80024E2C(Object* arg0) {
   AnimState *animState;
   ModelInstance *model;
     
@@ -570,9 +582,9 @@ s16 func_80024E2C(Object* arg0) {
   return animState->unk58[0];
 }
 
-s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
+s32 objAnimSetLayered(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
     s32 temp_t9;
-    u8 curModanim_layered;
+    u8 changed;
     Model* model;
     AnimState* animState;
     Animation* anim;
@@ -604,7 +616,7 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
     animState->unk58[1] = 0;
     animState->modAnimIdBlend = -1;
     
-    curModanim_layered = modanimIndex != object->curModAnimIdLayered;
+    changed = modanimIndex != object->curModAnimIdLayered;
     object->curModAnimIdLayered = modanimIndex;
     
     modanimIndex = (model->modAnimBankBases[(modanimIndex >> 8)]) + (u8)modanimIndex;
@@ -617,10 +629,16 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
     }
     
     if (model->unk71 & 0x40) {
-        if (curModanim_layered) {
+        if (changed) {
             animState->unk62[0] = 1 - animState->unk62[0];
             animState->animIndexes[0] = animState->unk62[0];
-            modLoadAnim(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
+            /* default.dol
+            if (model->modAnim[modanimIndex] == -1) {
+                STUBBED_PRINTF("<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d\n");    
+                modanimIndex = 0;
+            }
+            */
+            modLoadAnim(model->modAnim[modanimIndex], modanimIndex, animState->anims[(u16)animState->animIndexes[0]], model);
         }
         anim = (Animation*)(&animState->anims[animState->animIndexes[0]]->anim);
     } else {
@@ -646,7 +664,7 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
     return 0;
 }
 
-s32 func_800250F4(Object* object, f32 progress) {
+s32 objAnimSetLayeredProgress(Object* object, f32 progress) {
     if (progress > 0.999f){
         progress = 0.999f;
     } else if (progress < 0.0f){
@@ -656,7 +674,7 @@ s32 func_800250F4(Object* object, f32 progress) {
     return 0;
 }
 
-s32 func_80025140(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3) {
+s32 objAnimAdvanceLayered(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3) {
     AnimState* temp_a1;
     ModelInstance* temp_v0;
     f32 temp_fv0;
@@ -776,31 +794,30 @@ s32 func_80025140(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg3
     return var_v1;
 }
 
-void func_800255F8(Model* model, AnimState* animState, s32 bank_and_index, s16 arg3);
-
-void func_80025540(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
+void objAnimSetBlend(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
     ModelInstance* modelInstance;
     Model* model;
 
     modelInstance = object->modelInsts[object->modelInstIdx];
     model = modelInstance->model;
     if (model->animCount) {
-        func_800255F8(model, modelInstance->animState0, modAnimBankAndIndex, arg2);
+        setObjAnimBlend(model, modelInstance->animState0, modAnimBankAndIndex, arg2);
     }
 }
 
-void func_8002559C(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
+void objAnimSetBlendLayered(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
     ModelInstance* modelInstance;
     Model* model;
 
     modelInstance = object->modelInsts[object->modelInstIdx];
     model = modelInstance->model;
     if (model->animCount) {
-        func_800255F8(model, modelInstance->animState1, modAnimBankAndIndex, arg2); //"probably ObjSetBlendMove"
+        setObjAnimBlend(model, modelInstance->animState1, modAnimBankAndIndex, arg2);
     }
 }
 
-void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3) {
+// official name: setBlendMove (probably)
+/*static*/ void setObjAnimBlend(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3) {
     f32 var_fv0;
     s16 temp_v0;
     s8 temp_v0_2;
@@ -821,6 +838,12 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
             temp_v0_2 = animState->unk62[0];
             animState->unk48[1] = 1 - temp_v0_2;
             animState->unk48[0] = temp_v0_2;
+            /* default.dol
+            if (model->modAnim[modanimIndex] == -1) {
+                STUBBED_PRINTF("<objanim.c -- setBlendMove> WARNING tried to load anim -1 from cache modno %d\n");    
+                modanimIndex = 0;
+            }
+            */
             modLoadAnim(model->modAnim[modanimIndex], modanimIndex, animState->anims2[(u16)temp_v0_2], model);
 
             animState->modAnimIdBlend = modanimIndex;
@@ -849,7 +872,7 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
     animState->unk58[1] = arg3;
 }
 
-void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u16 arg3) {
+void objAnim_func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u16 arg3) {
     Vec3f* sp94;
     Vec3f sp88;
     f32 sp84; // var_fv0
@@ -968,8 +991,9 @@ void func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct* arg2, u
     }
 }
 
-u8 func_80025CD4(s32 arg0) {
-    if (arg0 >= ARRAYCOUNT_S(D_800916B0))
+u8 objAnim_func_80025CD4(s32 arg0) {
+    if (arg0 >= ARRAYCOUNT_S(D_800916B0)) {
         return 0;
+    }
     return D_800916B0[arg0];
 }

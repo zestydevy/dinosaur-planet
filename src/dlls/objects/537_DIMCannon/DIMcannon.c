@@ -169,7 +169,7 @@ void dll_537_control(Object* self) {
     }
     
     if ((self->curModAnimId == 1) && (self->animProgress >= 1.0f)) {
-        func_80023D30(self, 0, 0, 0);
+        objAnimSet(self, 0, 0, 0);
     }
     
     self->srt.flags &= ~OBJFLAG_INVISIBLE;
@@ -269,7 +269,7 @@ void dll_537_control(Object* self) {
     } else {
         var_fv0 = 0.025f;
     }
-    func_80024108(self, var_fv0, gUpdateRateF, 0);
+    objAnimAdvance(self, var_fv0, gUpdateRateF, 0);
 }
 
 #endif
@@ -561,7 +561,7 @@ void dll_537_func_1150(Object* self) {
             objData->unk20 = rand_next(objSetup->unk29, objSetup->unk2A);
         }
         
-        func_80023D30(self, 1, 0, 0);
+        objAnimSet(self, 1, 0, 0);
     }
 }
 

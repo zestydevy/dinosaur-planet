@@ -491,7 +491,7 @@ void BaddieControl_func_148C(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2,
         *arg4 = 2;
     }
     if (arg7 != 0) {
-        func_80023D30(arg0, arg7, 0.0f, 0);
+        objAnimSet(arg0, arg7, 0.0f, 0);
     }
     gDLL_27->vtbl->reset(arg0, &arg1->unk4);
     if (arg8 != -1) {
