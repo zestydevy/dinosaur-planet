@@ -508,12 +508,12 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
     case STATE_1:
         if (objdata->flags & FLAG_1) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
-            func_8000F64C(0x11, 60);
-            func_8000F6CC();
+            menu_func_8000F64C(0x11, 60);
+            menu_func_8000F6CC();
         } else if (mainGetBits(BIT_7F9)) {
             objdata->flags |= FLAG_4;
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
-            func_8000FAC8();
+            menu_func_8000FAC8();
             if (mainGetBits(BIT_7FA) != 0) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->state = STATE_3;
@@ -521,7 +521,7 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 objdata->state = STATE_0;
             }
-        } else if (func_8000FB1C()) {
+        } else if (menu_func_8000FB1C()) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             mainSetBits(BIT_7EF, 0);
             mainSetBits(BIT_7ED, 0);
@@ -531,12 +531,12 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
     case STATE_2:
         if (objdata->flags & FLAG_1) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
-            func_8000F64C(0x11, 60);
-            func_8000F6CC();
+            menu_func_8000F64C(0x11, 60);
+            menu_func_8000F6CC();
         } else if (mainGetBits(BIT_7FA)) {
             objdata->flags |= FLAG_8;
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
-            func_8000FAC8();
+            menu_func_8000FAC8();
             if (mainGetBits(BIT_7F9) != 0) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->state = STATE_3;
@@ -544,7 +544,7 @@ static void WCLevelControl_handle_act1(Object *self, WCLevelControl_Data *objdat
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 objdata->state = STATE_0;
             }
-        } else if (func_8000FB1C()) {
+        } else if (menu_func_8000FB1C()) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             mainSetBits(BIT_7F0, 0);
             mainSetBits(BIT_7EE, 0);
@@ -582,12 +582,12 @@ static void WCLevelControl_handle_act2(Object *self, WCLevelControl_Data *objdat
     switch(objdata->state) {
         case STATE_6:
             gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
-            func_8000F64C(0x11, 60);
-            func_8000F6CC();
+            menu_func_8000F64C(0x11, 60);
+            menu_func_8000F6CC();
             objdata->state = STATE_4;
             break;
         case STATE_4:
-            if (func_8000FB1C()) {
+            if (menu_func_8000FB1C()) {
                 gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
                 if (mainGetBits(BIT_2A5)) {
                     objdata->flags |= FLAG_40;

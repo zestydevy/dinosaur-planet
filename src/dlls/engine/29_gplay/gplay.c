@@ -541,8 +541,8 @@ static void gplay_start_game(void) {
         sState.save.map.playerLocations[sState.save.file.playerno].vec.y,
         sState.save.map.playerLocations[sState.save.file.playerno].vec.z);
     
-    if (menu_get_current() != MENU_TITLE_SCREEN) {
-        menu_set(MENU_GAMEPLAY);
+    if (menuGetCurrent() != MENU_TITLE_SCREEN) {
+        menuSet(MENU_GAMEPLAY);
     }
 
     gDLL_28_ScreenFade->vtbl->fade_reversed(40, SCREEN_FADE_BLACK);

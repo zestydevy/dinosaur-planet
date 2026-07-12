@@ -44,7 +44,7 @@ void rareware_ctor(void *dll) {
     u8 dColourUnused[4] = {0xe4, 0x9c, 0x44, 0xff};
 
     rcp_set_border_color(0, 0, 0);
-    func_80010018(0);
+    menu_func_80010018(0);
 
     dFrame = 0;
     dState = Rareware_STATE_Initial;
@@ -83,7 +83,7 @@ s32 rareware_update1(void) {
     if (sCutToNextScreen) {
         mainSetBits(BIT_44F, 0);
         //@bug? Skips directly to Game Select screen, likely for developer convenience
-        menu_set(MENU_GAME_SELECT);
+        menuSet(MENU_GAME_SELECT);
     }
 
     dFrame += gUpdateRate;

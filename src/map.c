@@ -664,7 +664,7 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
     camSetupViewportAndMatrices(&gMainDL, 0);
     track_update_frustum();
-    if (func_80010048() != 0) {
+    if (menu_func_80010048() != 0) {
         if (!(gTrackFlags & TRACKFLAG_UNK8)) {
             gTrackFlags |= TRACKFLAG_UNK8;
         }

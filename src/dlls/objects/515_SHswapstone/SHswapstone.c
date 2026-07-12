@@ -184,8 +184,8 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
 
     objdata = self->data;
 
-    if (menu_get_current() != MENU_SELECTION) {
-        menu_set(MENU_SELECTION);
+    if (menuGetCurrent() != MENU_SELECTION) {
+        menuSet(MENU_SELECTION);
     }
 
     animData->decisionCallback = SHswapstone_is_stick_direction_available;
@@ -269,7 +269,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
             gDLL_29_Gplay->vtbl->set_playerno(1 - playerno);
             gDLL_29_Gplay->vtbl->set_act(MAP_ICE_MOUNTAIN_1, 1);
             gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 2);
-            menu_set(MENU_GAMEPLAY);
+            menuSet(MENU_GAMEPLAY);
             warpPlayer(WARP_ICE_MOUNTAIN_CAMPSITE, /*fadeToBlack=*/FALSE);
             break;
         case 12:
@@ -279,8 +279,8 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
         case (SELECT_SCREEN(SelectionMenu_STATE_1_SwapStone_Choices)):
         case (SELECT_SCREEN(SelectionMenu_STATE_2_Confirm_Right)):
         case (SELECT_SCREEN(SelectionMenu_STATE_3_Confirm_Left)):
-            if (menu_get_current() == MENU_SELECTION) {
-                ((DLL_Menu16*)menu_get_active_dll())->vtbl->set_selection_state(animData->messages[i] - CMD_BASE_SELECTION);
+            if (menuGetCurrent() == MENU_SELECTION) {
+                ((DLL_Menu16*)menuGetActiveDLL())->vtbl->set_selection_state(animData->messages[i] - CMD_BASE_SELECTION);
             }
             break;
         default:
@@ -295,7 +295,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
 
 // offset: 0xA8C | func: 8
 static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, struct AnimObj_Data* animData) {
-    menu_set(MENU_GAMEPLAY);
+    menuSet(MENU_GAMEPLAY);
 }
 
 // offset: 0xAD4 | func: 9

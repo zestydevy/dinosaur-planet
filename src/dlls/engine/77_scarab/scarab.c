@@ -45,7 +45,7 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     sp38 = 0;
     distance = 10000.0f;
     if (D_800A7D94 != 0) {
-        func_8000FB2C(gdl);
+        menu_func_8000FB2C(gdl);
     }
     
     object = obj_get_nearest_type_to(OBJTYPE_LevelControl, get_player(), &distance);

@@ -509,7 +509,7 @@ void picmenu_calculate_redraw_area() {
         }
     }
 
-    func_800100D4(0, 640, minY, maxY);
+    menu_func_800100D4(0, 640, minY, maxY);
 }
 
 // this is just missing some optimized-out control flow i think

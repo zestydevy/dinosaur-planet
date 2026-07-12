@@ -57,7 +57,7 @@ void old_mainmenu_ctor(void* dll) {
     bss_8 = 0;
     bss_C = 0;
     bss_10 = 0;
-    func_80010018(2);
+    menu_func_80010018(2);
 }
 
 // offset: 0x84 | dtor
@@ -96,7 +96,7 @@ void old_mainmenu_func_D8(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     dllThrowFault->vtbl->func[0].withOneArg(180);
     dllThrowFault->vtbl->func[2].withFourArgs(0, (s32)sGametext->strings[0], 20, bss_4);
     if (dllThrowFault->vtbl->func[5].withOneArgS32((s32)&bss_4) == FALSE) {
-        menu_set(MENU_13);
+        menuSet(MENU_13);
     }
     
     // Maybe this was the blinking "PRESS START" text?

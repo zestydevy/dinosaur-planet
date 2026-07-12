@@ -124,7 +124,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
     f32 tSpeed;
     u8 onTitleScreen;
 
-    if (menu_get_current() == MENU_TITLE_SCREEN) {
+    if (menuGetCurrent() == MENU_TITLE_SCREEN) {
         onTitleScreen = TRUE;
     } else {
         onTitleScreen = FALSE;
@@ -479,7 +479,7 @@ void CamControl_lock_icon_tick(void) {
     hlObject = sCam->highlight;
     player = get_player();
     
-    if (menu_get_current() == MENU_TITLE_SCREEN) {
+    if (menuGetCurrent() == MENU_TITLE_SCREEN) {
         return;
     }
     
@@ -623,7 +623,7 @@ void CamControl_lock_icon_tick(void) {
 
 // offset: 0x1408 | func: 21 | export: 20
 void CamControl_lock_icon_print(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
-    if (menu_get_current() != MENU_TITLE_SCREEN) {
+    if (menuGetCurrent() != MENU_TITLE_SCREEN) {
         _data_0[0] = -1;
         CamControl_print(sCam->highlight, sActiveID == DLL_ID_CAMLOCKON, gdl, mtxs, vtxs, pols);
     }

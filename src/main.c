@@ -215,7 +215,7 @@ void mainInit(void) {
     shadows_init();
     footstepsInit();
     fontsInit();
-    menu_init();
+    menuInit();
     amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
     init_global_map();
     if (osMemSize != EXPANSION_RAM_SIZE) {
@@ -274,7 +274,7 @@ void mainInit(void) {
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
     diRcpTraceInit();
-    menu_set(MENU_POST);
+    menuSet(MENU_POST);
     if (osMemSize == EXPANSION_RAM_SIZE) {
         mainHandleMapChange();
     }
@@ -393,8 +393,8 @@ void mainTickNoExpansion(void) {
     gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     rsp_init(&gCurGfx);
-    menu_update1(); // ignored return value
-    menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
+    menuUpdate1(); // ignored return value
+    menuDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
     func_800129E4();
     gDLL_28_ScreenFade->vtbl->draw(tmp_s0, &gCurMtx, &gCurVtx);
 
@@ -424,7 +424,7 @@ void main_func_80013D80(void) {
     gDLL_2_Camera->vtbl->lock_icon_tick();
     gDLL_22_Subtitles->vtbl->func_4C0();
 
-    if (menu_update1() == 0) {
+    if (menuUpdate1() == 0) {
         button = joyGetPressed(0);
 
         if (gPauseState != 0) {
@@ -442,7 +442,7 @@ void main_func_80013D80(void) {
                     && (mainGetBits(BIT_44F) == 0)) {
                 gPauseState = 1;
                 joyDisableButtons(0, START_BUTTON);
-                menu_set(MENU_PAUSE);
+                menuSet(MENU_PAUSE);
             }
 
             gDLL_29_Gplay->vtbl->tick();
@@ -454,7 +454,7 @@ void main_func_80013D80(void) {
             mainUpdatePlayerPosBuffer();
         }
 
-        menu_update2();
+        menuUpdate2();
         func_800591EC();
         func_8004A67C();
         map_update_streaming();
@@ -467,7 +467,7 @@ void main_func_80013D80(void) {
         }
 
         gDLL_20_Screens->vtbl->draw(&gCurGfx);
-        menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
+        menuDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
         D_8008C94C -= gUpdateRate;
 
@@ -509,7 +509,7 @@ void mainHandleMapChange(void) {
         camInit();
 
         if (gMainMapChangeNextMenu >= 0) {
-            menu_set(gMainMapChangeNextMenu);
+            menuSet(gMainMapChangeNextMenu);
             gMainMapChangeNextMenu = -1;
         }
 

@@ -105,8 +105,8 @@ void DBSH_Symbol_control(Object* self) {
         objData->pushSeq = gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
         //Start a UI countdown (66 seconds)
-        func_8000F64C(0x1D, 66);
-        func_8000F6CC();
+        menu_func_8000F64C(0x1D, 66);
+        menu_func_8000F6CC();
         return;
     }
     
@@ -187,7 +187,7 @@ void DBSH_Symbol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x64C | func: 4 | export: 4
 void DBSH_Symbol_free(Object* self, s32 arg1) {
-    func_8000FA2C();
+    menu_func_8000FA2C();
 }
 
 // offset: 0x68C | func: 5 | export: 5
@@ -262,7 +262,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         //Handle losing (time running out)
         if (objData->timeLeft <= 0) {
             gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
-            func_8000FA2C();
+            menu_func_8000FA2C();
         }
         
         //Handle tapping A button
@@ -298,7 +298,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         if (objData->yaw > YAW_WIN) {
             objData->yaw = YAW_WIN;
             gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
-            func_8000FA2C();
+            menu_func_8000FA2C();
             objData->magicFxTimer = 10;
             objData->delayTimer = 20;
             func_80023D30(player, 0, 0.0f, 0);

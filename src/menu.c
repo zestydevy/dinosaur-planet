@@ -63,10 +63,10 @@ char D_800A7D98[8];
 char D_800A7DA0[8];
 /* -------- .bss end 800a7db0 -------- */
 
-void menu_do_menu_swap();
-void func_80010088();
+void menuDoMenuSwap(void);
+void menu_func_80010088(void);
 
-void menu_init() {
+void menuInit(void) {
     gActiveMenuDLL = NULL;
     D_800A7D58 = 0;
     D_800A7D5C = 0;
@@ -83,29 +83,29 @@ void menu_init() {
     D_800A7D7C = 0;
 }
 
-void menu_set(s32 id) {
+void menuSet(s32 id) {
     if (id != gCurrentMenuID) {
         gNextMenuID = id + 1;
 
         if (gActiveMenuDLL == NULL) {
-            menu_do_menu_swap();
+            menuDoMenuSwap();
         }
     }
 }
 
-s32 menu_get_current() {
+s32 menuGetCurrent(void) {
     return gCurrentMenuID;
 }
 
-DLL_IMenu *menu_get_active_dll() {
+DLL_IMenu *menuGetActiveDLL(void) {
     return gActiveMenuDLL;
 }
 
-s32 menu_get_previous() {
+s32 menuGetPrevious(void) {
     return gPreviousMenuID;
 }
 
-void menu_do_menu_swap() {
+void menuDoMenuSwap(void) {
     if (gNextMenuID != 0) {
         gNextMenuID -= 1;
 
@@ -136,42 +136,42 @@ void menu_do_menu_swap() {
     }
 }
 
-s32 menu_update1() {
+s32 menuUpdate1(void) {
     s32 ret;
 
     ret = 0;
 
-    func_80010088();
+    menu_func_80010088();
 
     if (gActiveMenuDLL != NULL) {
         ret = gActiveMenuDLL->vtbl->update1();
     }
 
-    menu_do_menu_swap();
+    menuDoMenuSwap();
 
     return ret;
 }
 
-void menu_update2() {
+void menuUpdate2(void) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->vtbl->update2();
     }
 
-    menu_do_menu_swap();
+    menuDoMenuSwap();
 }
 
-void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void menuDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->vtbl->draw(gdl, mtxs, vtxs);
     }
 }
 
-void func_8000F640(s32 param1) { }
+void menu_func_8000F640(s32 param1) { }
 
 /** 
   * Starts a countdown timer
   */
-void func_8000F64C(s8 param1, s32 seconds) {
+void menu_func_8000F64C(s8 param1, s32 seconds) {
     seconds *= 60;
 
     D_800A7D79 = param1;
@@ -188,7 +188,7 @@ void func_8000F64C(s8 param1, s32 seconds) {
     D_800A7D94 = param1 & 3;
 }
 
-void func_8000F6CC() {
+void menu_func_8000F6CC(void) {
     if (D_800A7D6C == 0) {
         return;
     }
@@ -214,7 +214,7 @@ void func_8000F6CC() {
     }
 }
 
-void func_8000F9DC() {
+void menu_func_8000F9DC(void) {
     D_800A7D6C = 1;
 
     if (D_800A7D7C != 0) {
@@ -223,7 +223,7 @@ void func_8000F9DC() {
     }
 }
 
-void func_8000FA2C() {
+void menu_func_8000FA2C(void) {
     D_800A7D94 = 0;
 
     if (D_800A7D79 & 8) {
@@ -238,7 +238,7 @@ void func_8000FA2C() {
     D_800A7D79 = 0;
 }
 
-void func_8000FAC8() {
+void menu_func_8000FAC8(void) {
     D_800A7D94 = 0;
     
     if (D_800A7D7C != 0) {
@@ -249,11 +249,11 @@ void func_8000FAC8() {
     D_800A7D79 = 0;
 }
 
-s32 func_8000FB1C() {
+s32 menu_func_8000FB1C(void) {
     return D_800A7D78;
 }
 
-void func_8000FB2C(Gfx **gdl) {
+void menu_func_8000FB2C(Gfx **gdl) {
     s32 _stackPad[2];
     f32 delay;
     s32 bvar;
@@ -320,39 +320,39 @@ void func_8000FB2C(Gfx **gdl) {
     }
 }
 
-s32 func_80010008() {
+s32 menu_func_80010008(void) {
     return D_8008C888;
 }
 
-void func_80010018(s32 param1) {
+void menu_func_80010018(s32 param1) {
     D_8008C888 = param1;
 }
 
-s32 func_80010028() {
+s32 menu_func_80010028(void) {
     return D_8008C88C;
 }
 
-void func_80010038(s32 param1) {
+void menu_func_80010038(s32 param1) {
     D_8008C88C = param1;
 }
 
-s32 func_80010048() {
+s32 menu_func_80010048(void) {
     return D_8008C890;
 }
 
-void func_80010058(s32 param1) {
+void menu_func_80010058(s32 param1) {
     D_8008C890 = param1;
 }
 
-void set_save_game_idx(s32 idx) {
+void menuSetSaveGameIdx(s32 idx) {
     gSaveGameIdx = idx;
 }
 
-s32 get_save_game_idx() {
+s32 menuGetSaveGameIdx(void) {
     return gSaveGameIdx;
 }
 
-void func_80010088() {
+void menu_func_80010088(void) {
     u32 res;
 
     res = vi_get_current_size();
@@ -364,7 +364,7 @@ void func_80010088() {
     D_800A7D69 = 0;
 }
 
-void func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4) {
+void menu_func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4) {
     if (param1 < D_800A7D8C) {
         D_800A7D8C = param1;
     }
@@ -384,7 +384,7 @@ void func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4) {
     D_800A7D69 = 1;
 }
 
-void func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4) {
+void menu_func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4) {
     if (D_800A7D69 != 0) {
         *param1 = D_800A7D8C;
         *param2 = D_800A7D8E;

@@ -586,7 +586,7 @@ void dll_210_control(Object* player) {
     s32 pad2;
     s32 sp48[6] = { 0, 1, 2, 3, 4, 5 };
 
-    if (menu_get_current() == MENU_TITLE_SCREEN) {
+    if (menuGetCurrent() == MENU_TITLE_SCREEN) {
         return;
     }
 
@@ -2280,7 +2280,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 objdata->flags |= 0x8000;
                 break;
             case 19:
-                menu_set(1);
+                menuSet(1);
                 break;
             case 25:
                 dll_210_func_9F1C(arg0, 1);
@@ -3821,13 +3821,13 @@ static void dll_210_func_9F1C(Object* player, s32 arg1) {
             gDLL_29_Gplay->vtbl->restart_goto();
             return;
         }
-        menu_set(9);
-        func_80010038(0);
+        menuSet(9);
+        menu_func_80010038(0);
         return;
     }
     func_800267A4(player);
-    menu_set(9);
-    func_80010038(1);
+    menuSet(9);
+    menu_func_80010038(1);
     obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000, player);
 }
 

@@ -2462,13 +2462,13 @@ static s32 anim_check_condition(s32 cond, AnimObj_Data* st, AnimObj_Setup* setup
         break;
     case ANIM_EVTCOND_13:
         ret = 0;
-        if (func_8000FB1C() != 0) {
+        if (menu_func_8000FB1C() != 0) {
             ret = 1;
         }
         break;
     case ANIM_EVTCOND_14:
         ret = 0;
-        if (func_8000FB1C() == 0) {
+        if (menu_func_8000FB1C() == 0) {
             ret = 1;
         }
         break;
@@ -2812,13 +2812,13 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         }
         break;
     case ANIM_CODE_EVT_6_COUNTUP_TIMER:
-        func_8000F64C(0x12, sp54);
+        menu_func_8000F64C(0x12, sp54);
         break;
     case ANIM_CODE_EVT_6_COUNTDOWN_TIMER:
-        func_8000F64C(0x11, sp54);
+        menu_func_8000F64C(0x11, sp54);
         break;
     case ANIM_CODE_EVT_6_COUNTDOWN_TIMER_SFX:
-        func_8000F6CC();
+        menu_func_8000F6CC();
         break;
     case ANIM_CODE_EVT_6_SFX_STOP:
         gDLL_6_AMSFX->vtbl->stop_object(actor);

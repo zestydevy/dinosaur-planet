@@ -172,7 +172,7 @@ void mainmenu_ctor(void *dll) {
     }
 
     //Hide the DP logo at first when entering from the Rareware screen
-    if (menu_get_previous() == MENU_RAREWARE) {
+    if (menuGetPrevious() == MENU_RAREWARE) {
         gDLL_74_Picmenu->vtbl->set_items(pressStartItem, 1, 0, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
         showDPLogo = FALSE;
     } else {

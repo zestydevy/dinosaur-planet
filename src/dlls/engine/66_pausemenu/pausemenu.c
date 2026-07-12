@@ -106,7 +106,7 @@ s32 pausemenu_update1(void) {
         if (action == PICMENU_ACTION_SELECT) {
             if (selectedItem == 0) {
                 gDLL_6_AMSFX->vtbl->play(0, SOUND_B73_Option_Selected, MAX_VOLUME, 0, 0, 0, 0);
-                menu_set(MENU_GAMEPLAY);
+                menuSet(MENU_GAMEPLAY);
                 mainUnpause();
                 joyDisableButtons(0, A_BUTTON | B_BUTTON);
             } else {
@@ -121,7 +121,7 @@ s32 pausemenu_update1(void) {
                 gDLL_74_Picmenu->vtbl->update_flags(pauseMenuItems);
             }
         } else if (action == PICMENU_ACTION_BACK) {
-            menu_set(MENU_GAMEPLAY);
+            menuSet(MENU_GAMEPLAY);
             mainUnpause();
             joyDisableButtons(0, A_BUTTON | B_BUTTON);
         }

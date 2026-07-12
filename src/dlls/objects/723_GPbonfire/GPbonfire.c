@@ -199,8 +199,8 @@ void GPbonfire_control(Object* self) {
                             if (objdata->weedsDeposited == 4) {
                                 mainSetBits(BIT_GP_ChimneySwipe_Lifted, TRUE);
                                 //Start a 60 second challenge timer
-                                func_8000F64C(0x15, 60);
-                                func_8000F6CC();
+                                menu_func_8000F64C(0x15, 60);
+                                menu_func_8000F6CC();
                             }
                             objdata->timer = BONFIRE_DWINDLING_TIMER;
                         }

@@ -121,8 +121,8 @@ s32 dll_64_update1() {
                 }
                 name[sNumNameLetters] = '\0';
 
-                gDLL_29_Gplay->vtbl->init_save(get_save_game_idx(), name);
-                menu_set(MENU_GAME_SELECT);
+                gDLL_29_Gplay->vtbl->init_save(menuGetSaveGameIdx(), name);
+                menuSet(MENU_GAME_SELECT);
                 sNameLettersRedrawFrames = 2;
             }
         } else {
@@ -168,7 +168,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         fontWindowAddStringXY(1, 318, 403, sGameTextChunk->strings[0x1F], 2, ALIGN_TOP_CENTER);
     } else {
         // Always redraw background in case picmenu redraws
-        func_80010158(&ulx, &lrx, &uly, &lry);
+        menu_func_80010158(&ulx, &lrx, &uly, &lry);
         rcp_screen_scroll_write(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
     }
 

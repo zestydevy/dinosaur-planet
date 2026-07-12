@@ -167,10 +167,10 @@ void SC_levelcontrol_control(Object *self) {
 
     if (objdata->unk2 != 0) {
         if (objdata->unk2 == 5) {
-            if (func_8000FB1C() != 0) {
+            if (menu_func_8000FB1C() != 0) {
                 mainSetBits(BIT_7CF, 1);
             }
-        } else if ((mainGetBits(BIT_Dont_Repeat_Swapstone_Intro)) && (func_8000FB1C() != 0)) {
+        } else if ((mainGetBits(BIT_Dont_Repeat_Swapstone_Intro)) && (menu_func_8000FB1C() != 0)) {
             mainSetBits(BIT_SC_Pond_Platform_Raised, 0);
             if (objdata->isNighttime) {
                 gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
@@ -204,7 +204,7 @@ void SC_levelcontrol_free(Object *self, s32 arg1) {
         func_80000860(self, get_player(), 0x1C3, 0);
     }
     mainSetBits(BIT_SC_UNKNOWN_2BA, objdata->index1);
-    func_8000FA2C();
+    menu_func_8000FA2C();
     gDLL_5_AMSEQ2->vtbl->set(self, 0xBB, 0, 0, 0);
     gDLL_5_AMSEQ2->vtbl->set(self, 0xDA, 0, 0, 0);
     if (objdata->isNighttime) {
@@ -238,8 +238,8 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
         mainSetBits(BIT_SC_Pond_Platform_Raised, 1);
         mainSetBits(BIT_SC_Platform_Rises_Totem_Challenge_Begins, 1);
         gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
-        func_8000F64C(0x1D, 45);
-        func_8000F6CC();
+        menu_func_8000F64C(0x1D, 45);
+        menu_func_8000F6CC();
     } else if (objdata->unk2 == 3) {
         if (gDLL_7_Newday->vtbl->func8(&time)) {
             gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
@@ -251,8 +251,8 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
         objdata->unk2 = 0;
     } else if (objdata->unk2 == 5) {
         objdata->index2 = rand_next(0, 2);
-        func_8000F64C(0x1D, _data_158[objdata->index2][4]);
-        func_8000F6CC();
+        menu_func_8000F64C(0x1D, _data_158[objdata->index2][4]);
+        menu_func_8000F6CC();
     }
 }
 

@@ -334,11 +334,11 @@ void dll_63_ctor(void *self) {
         sSaveGameTextures[i] = tex_load_deferred(sSaveGameTextureIDs[i]);
     }
 
-    if (menu_get_previous() != MENU_ENTER_NAME) {
+    if (menuGetPrevious() != MENU_ENTER_NAME) {
         gDLL_28_ScreenFade->vtbl->fade_reversed(20, SCREEN_FADE_BLACK);
         dll_63_goto_game_select(1);
     } else {
-        sSelectedSaveIdx = get_save_game_idx();
+        sSelectedSaveIdx = menuGetSaveGameIdx();
         sSaveGameBoxX = 56;
         sSaveGameBoxY = 179;
         dll_63_load_save_game_info();
@@ -392,7 +392,7 @@ s32 dll_63_update1() {
                 // Exit to main menu
                 mainDemoReset();
                 mainStartGame(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
-                menu_set(MENU_TITLE_SCREEN);
+                menuSet(MENU_TITLE_SCREEN);
             }
         }
 
@@ -528,7 +528,7 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             fontWindowDraw(gdl, NULL, NULL, 2);
         } else {
             // Always redraw background in case picmenu redraws
-            func_80010158(&ulx, &lrx, &uly, &lry);
+            menu_func_80010158(&ulx, &lrx, &uly, &lry);
             rcp_screen_scroll_write(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
         }
 
@@ -896,8 +896,8 @@ static void dll_63_act_game_select(PicMenuAction action, s32 selected) {
                 if (sSaveGameInfo[selected].isEmpty) {
                     // Go to name entry menu
                     dll_63_clean_up(0);
-                    set_save_game_idx(selected);
-                    menu_set(MENU_ENTER_NAME);
+                    menuSetSaveGameIdx(selected);
+                    menuSet(MENU_ENTER_NAME);
                 } else {
                     sSelectedSaveIdx = selected;
                     sSaveGameBoxX = 56;
