@@ -1208,8 +1208,8 @@ amCreateAudioMgr = 0x80011720; // type:func
 init_global_map = 0x8004676c; // type:func
 init_maps = 0x80041e84; // type:func
 mainInitBits = 0x80014614; // type:func
-mpeg_init = 0x80012430; // type:func
-mpeg_play = 0x80012464; // type:func
+mpegInit = 0x80012430; // type:func
+mpegPlay = 0x80012464; // type:func
 
 track_func_80041C30 = 0x80041C30; // type:func
 track_func_80041D8C = 0x80041D8C; // type:func

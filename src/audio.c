@@ -50,11 +50,11 @@ OSMesg audDMAMessageBuf[NUM_DMA_MESSAGES];
 u32 D_800AB960;
 /* -------- .bss end 800ab970 -------- */
 
-// @bug: This file uses the wrong signature for mpeg_init
+// @bug: This file uses the wrong signature for mpegInit
 #ifdef AVOID_UB
 #include "sys/mpeg.h" 
 #else
-extern void mpeg_init(void);
+extern void mpegInit(void);
 #endif
 
 void __amMain(void *arg);
@@ -76,9 +76,9 @@ void amCreateAudioMgr(OSSched* sched, OSPri threadPriority) {
     audioTab = NULL;
     
 #ifdef AVOID_UB
-    mpeg_init(NULL);
+    mpegInit(NULL);
 #else
-    mpeg_init();
+    mpegInit();
 #endif
     
     c.maxVVoices = c.maxPVoices = 72;

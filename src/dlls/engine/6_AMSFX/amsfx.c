@@ -242,7 +242,7 @@ u32 amsfx_play(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *file
         sSndSlots[handle].sndpHandle = (sndstate* )-2;
         // @fake
         if (sSndSlots[handle].def.bankAndClipID) {}
-        mpeg_play((soundDef.bankAndClipID & 0x7FFF) - 1);
+        mpegPlay((soundDef.bankAndClipID & 0x7FFF) - 1);
         mp3_set_volume(volumeCalc << 8, 0);
         // @fake
         if (sSndSlots) {}
