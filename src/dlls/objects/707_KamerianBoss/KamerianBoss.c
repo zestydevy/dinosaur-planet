@@ -390,7 +390,7 @@ void KamerianBoss_do_pipe_texture_anim(Object *self, s32 updateRate) {
 
     objdata = self->data;
     for (i = 0; i < 5; i++) {
-        texAnimator = func_800348A0(self, i + 5, 0);
+        texAnimator = objExprGetTexAnimator(self, i + 5, 0);
         if (texAnimator != NULL) {
             temp_fv0 = 570.0f - (f32) objdata->rightPipeTimer;
             if (temp_fv0 < 0.0f) {
@@ -405,7 +405,7 @@ void KamerianBoss_do_pipe_texture_anim(Object *self, s32 updateRate) {
                 texAnimator->frame = frame;
             }
         }
-        texAnimator = func_800348A0(self, i, 0);
+        texAnimator = objExprGetTexAnimator(self, i, 0);
         if (texAnimator != NULL) {
             temp_fv0 = 570.0f - (f32) objdata->leftPipeTimer;
             if (temp_fv0 < 0.0f) {
@@ -534,13 +534,13 @@ void KamerianBoss_control(Object *self) {
             if (objdata->rightPipeYOffset < 15000) {
                 objdata->rightPipeYOffset += gUpdateRate * 50;
             }
-            func_80034804(self, 4)[7] = objdata->rightPipeYOffset;
+            objExpr_func_80034804(self, 4)[7] = objdata->rightPipeYOffset;
         }
         if (objdata->leftPipeYOffset != 0) {
             if (objdata->leftPipeYOffset < 15000) {
                 objdata->leftPipeYOffset += gUpdateRate * 50;
             }
-            func_80034804(self, 3)[7] = objdata->leftPipeYOffset;
+            objExpr_func_80034804(self, 3)[7] = objdata->leftPipeYOffset;
         }
         // Useless assignment of v1? required to match
         var_v1 = 0;

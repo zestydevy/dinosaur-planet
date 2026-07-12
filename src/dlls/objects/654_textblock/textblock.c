@@ -109,7 +109,7 @@ void Textblock_tick(Object* self) {
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
     //Glow effect: ping-pong blend between texture frames 0 and 1
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         objData->textureBlend += objData->textureBlendSpeed * (s16) gUpdateRateF;
 

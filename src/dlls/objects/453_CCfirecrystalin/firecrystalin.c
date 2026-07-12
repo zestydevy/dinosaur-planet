@@ -24,7 +24,7 @@ void CCfirecrystalin_control(Object* self) {
     f32 scaleFactor;
     
     objSetup = (CCfirecrystalin_Setup *) self->setup;
-    animator = func_800348A0(self, 0, 0);
+    animator = objExprGetTexAnimator(self, 0, 0);
 
     //Update model texture UV scroll, maybe?
     scroll = -animator->positionV;

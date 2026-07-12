@@ -318,7 +318,7 @@ void thorntail_control(Object* self) {
         gDLL_27->vtbl->func_5A8(self, &objdata->collider);
         gDLL_27->vtbl->func_624(self, &objdata->collider, gUpdateRateF);
         if (!(sStateFlagMap[objdata->state] & THORNTAILSTATEFLAG_Asleep)) {
-            func_80032A08(self, &objdata->headAnim);
+            objExprEyeIdle(self, &objdata->headAnim);
         }
     }
 }
@@ -795,8 +795,8 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
     // Update eyes
-    eyelidR = func_800348A0(self, HEAD_ANIMATION_TAG_Eyelid_R, 0);
-    eyelidL = func_800348A0(self, HEAD_ANIMATION_TAG_Eyelid_L, 0);
+    eyelidR = objExprGetTexAnimator(self, HEAD_ANIMATION_TAG_Eyelid_R, 0);
+    eyelidL = objExprGetTexAnimator(self, HEAD_ANIMATION_TAG_Eyelid_L, 0);
     if (sStateFlagMap[objdata->state] & THORNTAILSTATEFLAG_Asleep) {
         if (eyelidR != NULL) {
             eyelidR->frame = (2 << 8);

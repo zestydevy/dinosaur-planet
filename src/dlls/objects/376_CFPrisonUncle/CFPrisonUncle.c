@@ -105,7 +105,7 @@ void dll_376_control(Object* self) {
         if (objData->unk58) {
             objAnimSet(self, 0, 0.105f, 0);
             dll_376_func_A3C(self, player);
-            sp40 = func_80034804(self, 1);
+            sp40 = objExpr_func_80034804(self, 1);
             if (rand_next(0, 8) != 0) {
                 *sp40 = -0xAAA;
             } else {
@@ -119,16 +119,16 @@ void dll_376_control(Object* self) {
         } else {
             dll_376_func_9F8(self);
             if (rand_next(0, 0x1E) == 0) { 
-                func_80034B94(self, &objData->unk28, _data_0[rand_next(0, 3)]);
+                objExpr_func_80034B94(self, &objData->unk28, _data_0[rand_next(0, 3)]);
             }
         }
         
         if (self->unkAF & 1) {
             dll_376_func_A3C(self, player);
-            *func_80034804(self, 1) = -0xAAA;
+            *objExpr_func_80034804(self, 1) = -0xAAA;
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         } else {
-            func_80034BC0(self, &objData->unk28);
+            objExpr_func_80034BC0(self, &objData->unk28);
             if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
                 gDLL_6_AMSFX->vtbl->play(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
                 
@@ -267,7 +267,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
 // offset: 0x9F8 | func: 8
 void dll_376_func_9F8(Object* self) {
     s16* temp;
-    temp = func_80034804(self, 0);
+    temp = objExpr_func_80034804(self, 0);
     temp[0] = 0;
     temp[1] = 0;
 }
@@ -276,5 +276,5 @@ void dll_376_func_9F8(Object* self) {
 void dll_376_func_A3C(Object* self, Object* player) {
     DLL376_Data *objData = self->data;
     
-    func_80032CF8(self, player, &objData->unk4, 0x23);
+    objExpr_func_80032CF8(self, player, &objData->unk4, 0x23);
 }

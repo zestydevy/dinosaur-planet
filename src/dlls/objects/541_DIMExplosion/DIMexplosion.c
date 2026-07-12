@@ -29,7 +29,7 @@ void DIMExplosion_control(Object* self) {
     TextureAnimator* texAnim;
 
     //Scroll texture
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->positionV -= 0x80;
         if (texAnim->positionV < -0x3E0) {

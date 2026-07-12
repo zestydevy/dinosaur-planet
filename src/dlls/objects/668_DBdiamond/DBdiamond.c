@@ -68,7 +68,7 @@ void DBdiamond_control(Object *self) {
             objdata->unk0 = 1;
         }
     }
-    sequenceBone = func_80034804(self, 0);
+    sequenceBone = objExpr_func_80034804(self, 0);
     sequenceBone[1] += 0x650;
 }
 

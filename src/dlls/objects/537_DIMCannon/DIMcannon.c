@@ -342,7 +342,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
             s16* jointAngle;
             s32 angle;
             
-            jointAngle = func_80034804(self, 0);
+            jointAngle = objExpr_func_80034804(self, 0);
             angle = -*jointAngle;
             self->srt.yaw -= joyGetStickX(0) * 4;
 
@@ -432,7 +432,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
         return;
     }
 
-    sp78 = func_80034804(self, 0);
+    sp78 = objExpr_func_80034804(self, 0);
     
     temp_fs2 = 2500.0f;
     arg4 = sqrtf(arg4);
@@ -535,7 +535,7 @@ void dll_537_func_1150(Object* self) {
     objSetup = (DLL537_Setup*)self->setup;
     
     if (objData->unk25 && (objData->unk20 <= 0)) {
-        angle = func_80034804(self, 0);
+        angle = objExpr_func_80034804(self, 0);
         
         shotSetup = (DIMCannonBall_Setup*)objAllocSetup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
         shotSetup->base.loadFlags = objSetup->base.loadFlags;

@@ -54,7 +54,7 @@ void dll_780_setup(Object *self, WCBeacon_Setup *setup, s32 arg2) {
         }
     }
 
-    animatedTexture = func_800348A0(self, 0, 0);
+    animatedTexture = objExprGetTexAnimator(self, 0, 0);
     if ((animatedTexture != NULL) && (objdata->state == WCBEACON_STATE_3)) {
         animatedTexture->frame = MAX_FRAME;
     }
@@ -98,14 +98,14 @@ void dll_780_control(Object *self) {
         if (var_v1 > MAX_FRAME) {
             var_v1 = MAX_FRAME;
         }
-        temp_v0_2 = func_800348A0(self, 0, 0);
+        temp_v0_2 = objExprGetTexAnimator(self, 0, 0);
         if (temp_v0_2 != NULL) {
             temp_v0_2->frame = var_v1;
         }
     } else if (objdata->state == WCBEACON_STATE_3) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_73A, NULL, PARTFXFLAG_2, -1, NULL);
         mainSetBits(setup->unk1E, 1);
-        temp_v0_2 = func_800348A0(self, 0, 0);
+        temp_v0_2 = objExprGetTexAnimator(self, 0, 0);
         if (temp_v0_2 != NULL) {
             temp_v0_2->frame = MAX_FRAME;
         }

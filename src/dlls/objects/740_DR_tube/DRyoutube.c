@@ -77,7 +77,7 @@ void DR_Tube_setup(Object* self, DR_Tube_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
 
     for (i = 0; i < 3; i++) {
-        texAnim = func_800348A0(self, i, 0);
+        texAnim = objExprGetTexAnimator(self, i, 0);
         if (texAnim != NULL) {
             texAnim->frame = 0;
         }
@@ -182,7 +182,7 @@ void DR_Tube_section_anim_on(Object* self, s32 sectionIndex) {
     TextureAnimator* texAnim;
     s32 frameValue;
 
-    texAnim = func_800348A0(self, sectionIndex, 0);
+    texAnim = objExprGetTexAnimator(self, sectionIndex, 0);
     if (texAnim != NULL) {
         diPrintf(" Anim %i ", sectionIndex);
         frameValue = texAnim->frame + (gUpdateRate * TEX_ANIM_ON_SPEED);
@@ -200,7 +200,7 @@ void DR_Tube_section_anim_on(Object* self, s32 sectionIndex) {
 void DR_Tube_section_anim_off(Object* self, s32 sectionIndex) {
     TextureAnimator* texAnim;
 
-    texAnim = func_800348A0(self, sectionIndex, 0);
+    texAnim = objExprGetTexAnimator(self, sectionIndex, 0);
     if (texAnim != NULL) {
         texAnim->frame = 0;
     }

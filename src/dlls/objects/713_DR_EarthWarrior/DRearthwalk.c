@@ -271,8 +271,8 @@ void DRearthwalk_control(Object* self) {
         DRearthwalk_func_B54(self, gUpdateRate, -1);
     }
     func_80028D2C(self);
-    func_80032A08(self, &objdata->unk370);
-    func_80034BC0(self, &objdata->unk394);
+    objExprEyeIdle(self, &objdata->unk370);
+    objExpr_func_80034BC0(self, &objdata->unk394);
     if (!(objdata->unkA58 & 0x20) && (mainGetBits(BIT_5FE) != 0) && (objdata->energy > 0)) {
         mainSetBits(BIT_654, 1);
         objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
@@ -456,7 +456,7 @@ void DRearthwalk_update(Object* self) {
             if ((dmgType == Damage_Type_Flame_Command) || (objGetPlayer() == hitBy) || (hitBy->id == OBJ_sword)) {
                 return;
             }
-            func_80034B54(self, &objdata->unk394, _data_18[rand_next(0, 2)], 1);
+            objExpr_func_80034B54(self, &objdata->unk394, _data_18[rand_next(0, 2)], 1);
             angle = self->srt.yaw - (hitBy->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(angle);
             if ((angle > 0x4000) || (angle < -0x4000)) {
@@ -831,7 +831,7 @@ s32 DRearthwalk_func_21DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         return 5 + 1;
     }
     if (rand_next(0, 60) == 0) {
-        func_80034B54(self, &objdata->unk394, _data_8[rand_next(0, 2)], 0);
+        objExpr_func_80034B54(self, &objdata->unk394, _data_8[rand_next(0, 2)], 0);
     }
     return 0;
 }
@@ -892,7 +892,7 @@ s32 DRearthwalk_func_2454(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
 
     if (rand_next(0, 30) == 0) {
-        func_80034B54(self, &objdata->unk394, _data_8[rand_next(0, 4)], 0);
+        objExpr_func_80034B54(self, &objdata->unk394, _data_8[rand_next(0, 4)], 0);
     }
     return 0;
 }
@@ -995,7 +995,7 @@ s32 DRearthwalk_func_2860(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         var_v1_3 = 0;
     }
     if (rand_next(0, 0x46 - (s32) ((fsa->speed / 2.7f) * 50.0f)) == 0) {
-        func_80034B54(self, &sp2C->unk394, _data_8[rand_next(0, 3)], 0);
+        objExpr_func_80034B54(self, &sp2C->unk394, _data_8[rand_next(0, 3)], 0);
     }
 
     while (sp20) {
@@ -1129,7 +1129,7 @@ s32 DRearthwalk_func_31F8(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
 static void DRearthwalk_func_3210(Object* self, s16 arg1, s16 arg2) {
     s16* temp_v0;
 
-    temp_v0 = func_80034804(self, 9);
+    temp_v0 = objExpr_func_80034804(self, 9);
     if (temp_v0 != NULL) {
         temp_v0[1] += ((arg1 - temp_v0[1]) >> 5);
         temp_v0[0] += ((arg2 - temp_v0[0]) >> 5);
@@ -1173,6 +1173,6 @@ void DRearthwalk_func_3420(Object* self, s32 arg1, s32 arg2) {
     DRearthwalk_Data* objdata = self->data;
     if (arg1 == 1) {
         objdata->energy += 12;
-        func_80034B54(self, &objdata->unk394, _data_24[0], 1);
+        objExpr_func_80034B54(self, &objdata->unk394, _data_24[0], 1);
     }
 }

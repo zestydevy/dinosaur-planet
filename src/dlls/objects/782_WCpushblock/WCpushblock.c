@@ -74,7 +74,7 @@ void dll_782_control(Object* self) {
         return;
     }
     
-    temp_v0 = func_800348A0(self, 0, 0);
+    temp_v0 = objExprGetTexAnimator(self, 0, 0);
     if (temp_v0 != NULL) {
         temp_v0->frame = 0;
     }
@@ -290,7 +290,7 @@ void dll_782_control(Object* self) {
         self->opacity = 0xFF;
         /* fallthrough */
     case 4:
-        temp_v0 = func_800348A0(self, 0, 0);
+        temp_v0 = objExprGetTexAnimator(self, 0, 0);
         if (temp_v0 != NULL) {
             temp_v0->frame = 0x100;
         }

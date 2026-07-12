@@ -317,7 +317,7 @@ Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
 void DBDustGeezer_scroll_texture_uvs(Object* self) {
     TextureAnimator* texAnim;
 
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (!texAnim) {
         return;
     }

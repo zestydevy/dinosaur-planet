@@ -699,7 +699,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                     objAnimAdvance(actor, modAnimSpeed, 1.0f, &st->unkFC);
                     objAnim_func_80025780(actor, 1.0f, &st->unkFC, 0);
                     if ((st->unk30 != 0) && (actorModelInst->model->unk71 & 1)) {
-                        func_80032B44(actor, st->unk30);
+                        objExpr_func_80032B44(actor, st->unk30);
                     }
                     mod_func_8001B084(actorModelInst, 1.0f);
                     if (st->unk20 > 0.0f) {
@@ -1069,7 +1069,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             actor->srt.scale = actor->def->scale * var_fv1;
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_HEAD) {
-            temp_v0_3 = func_80034804(actor, 0);
+            temp_v0_3 = objExpr_func_80034804(actor, 0);
             if (temp_v0_3 != NULL) {
                 if (st->channelTotalKeys[CHANNEL_headRotateX] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateX, time);
@@ -1096,7 +1096,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             if (1){} // @fake
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_JAW) {
-            temp_v0_3 = func_80034804(actor, 1);
+            temp_v0_3 = objExpr_func_80034804(actor, 1);
             if (temp_v0_3 != NULL) {
                 if (st->channelTotalKeys[CHANNEL_jaw] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_jaw, time);
@@ -1111,8 +1111,8 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             TextureAnimator* temp_v0_6;
             TextureAnimator* var_v1;
             TextureAnimator* temp_s0;
-            temp_s0 = func_800348A0(actor, HEAD_ANIMATION_TAG_Pupil_R, 0);
-            var_v1 = func_800348A0(actor, HEAD_ANIMATION_TAG_Pupil_L, 0);
+            temp_s0 = objExprGetTexAnimator(actor, HEAD_ANIMATION_TAG_Pupil_R, 0);
+            var_v1 = objExprGetTexAnimator(actor, HEAD_ANIMATION_TAG_Pupil_L, 0);
             if ((temp_s0 != NULL) || (var_v1 != NULL)) {
                 if (st->channelTotalKeys[CHANNEL_eyeX] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_eyeX, time);
@@ -1137,8 +1137,8 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
                     var_v1->positionV = -(s16) var_fv1;
                 }
             }
-            temp_s0 = func_800348A0(actor, HEAD_ANIMATION_TAG_Eyelid_R, 0);
-            temp_v0_6 = func_800348A0(actor, HEAD_ANIMATION_TAG_Eyelid_L, 0);
+            temp_s0 = objExprGetTexAnimator(actor, HEAD_ANIMATION_TAG_Eyelid_R, 0);
+            temp_v0_6 = objExprGetTexAnimator(actor, HEAD_ANIMATION_TAG_Eyelid_L, 0);
             if (temp_s0 != NULL) {
                 temp_s0->frame = st->blinkFrameR << 8;
             }
@@ -3886,7 +3886,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
     arg2 *= 182.04f;
     if (st->unk62 == 4) {
         st->unk7A &= ~ANIM7AFLAG_OVERRIDE_ROT;
-        if (func_80034804(actor, 0) != NULL) {
+        if (objExpr_func_80034804(actor, 0) != NULL) {
             st->unk7A &= ~ANIM7AFLAG_OVERRIDE_HEAD;
         }
         st->unkF4 = anim_func_9B70;
@@ -3954,7 +3954,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
             st->unk58 = 1.0001f;
         }
         actor->srt.yaw += (s16) (st->unk24 * st->yawDiff);
-        sp50 = func_80034804(actor, 0);
+        sp50 = objExpr_func_80034804(actor, 0);
         if (sp50 != NULL) {
             st->unk7A &= ~ANIM7AFLAG_OVERRIDE_HEAD;
             var_fv0 = (func_80031DD8(actor, sp30, NULL) * st->unk58) + (sp50[1] * (1.0f - st->unk58)) ;
@@ -3988,7 +3988,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
         if (st->unk58 > 1.0f) {
             st->unk62 = 0;
             st->unk7A |= ANIM7AFLAG_OVERRIDE_HEAD;
-            sp50 = func_80034804(actor, 0);
+            sp50 = objExpr_func_80034804(actor, 0);
             st->unk120 = sp50[1];
             st->unk122 = sp50[0];
             if (st->unk58 > 1.0f) {
@@ -4005,7 +4005,7 @@ static void anim_func_9B70(Object* arg1, Object* animObj, AnimObj_Data* st) {
     s16* temp_v0;
 
     //NOTE: sequence bone should probably be a struct instead of s16*?
-    temp_v0 = func_80034804(arg1, 0);
+    temp_v0 = objExpr_func_80034804(arg1, 0);
     if (temp_v0 != NULL) {
         temp_v0[1] = 0;
         temp_v0[0] = 0;
@@ -4109,7 +4109,7 @@ static void anim_func_9EC8(Object* actor, s16* arg1, s32 arg2) {
     s32 i;
     s32 *var_s0;
     
-    var_s0 = func_800349B0();
+    var_s0 = objExpr_func_800349B0();
     temp_v1 = var_s0;
     if (arg2 == 0){
         arg2 = 9;
@@ -4120,7 +4120,7 @@ static void anim_func_9EC8(Object* actor, s16* arg1, s32 arg2) {
     }
     
     for (i = 1; i < arg2; i++){
-        temp_v0 = func_80034804(actor, var_s0[i]);
+        temp_v0 = objExpr_func_80034804(actor, var_s0[i]);
         if (temp_v0 != NULL){
             temp_v0[1] = arg1[1];
             temp_v0[0] = arg1[0];

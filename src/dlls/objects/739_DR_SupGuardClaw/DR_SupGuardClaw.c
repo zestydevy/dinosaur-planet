@@ -225,7 +225,7 @@ void DR_NPC_control(Object* self) {
     //Talk at random intervals
     if ((objData->talkTimer -= gUpdateRate) < 0) {
         objData->talkTimer = rand_next(50, 500);
-        func_80034B54(self, &objData->headAnimTalk, &objData->soundsTalk[rand_next(0, 1)].soundID, 0);
+        objExpr_func_80034B54(self, &objData->headAnimTalk, &objData->soundsTalk[rand_next(0, 1)].soundID, 0);
     }
 
     //Pick the next animation to play after the current one ends
@@ -255,8 +255,8 @@ void DR_NPC_control(Object* self) {
 
     DR_NPC_play_sounds(self, &objData->animData, objData->soundsAttack);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objData->movedata);
-    func_80032A08(self, &objData->headAnimLook);
-    func_80034BC0(self, &objData->headAnimTalk);
+    objExprEyeIdle(self, &objData->headAnimLook);
+    objExpr_func_80034BC0(self, &objData->headAnimTalk);
 
     //Show Distract command option
     sidekick = obj_get_nearest_type_to(OBJTYPE_Sidekick, self, &distance);

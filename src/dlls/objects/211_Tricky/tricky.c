@@ -477,9 +477,9 @@ void dll_211_control(Object* self) {
     } else {
         objData->unk33C.aimIsActive = 0;
     }
-    func_800328F0(self, &objData->unk33C, 0.0f);
-    func_80032A08(self, &objData->unk33C);
-    func_80034BC0(self, &objData->unk360);
+    objExpr_func_800328F0(self, &objData->unk33C, 0.0f);
+    objExprEyeIdle(self, &objData->unk33C);
+    objExpr_func_80034BC0(self, &objData->unk360);
     dll_211_func_81A8(self);
     dll_211_func_8BEC(self);
 }
@@ -3363,9 +3363,9 @@ static Object* dll_211_func_94BC(Object* self, f32 arg1) {
 // offset: 0x95E0 | func: 86
 static void dll_211_func_95E0(Object* self, DLL211_Data* objData, s16* arg2) {
     if (arg2[2] != 0) {
-        func_800349C0(self, &objData->unk360, arg2[0], arg2[1], arg2[2], 1);
+        objExpr_func_800349C0(self, &objData->unk360, arg2[0], arg2[1], arg2[2], 1);
     } else {
-        func_80034B54(self, &objData->unk360, arg2, 1);
+        objExpr_func_80034B54(self, &objData->unk360, arg2, 1);
     }
 }
 

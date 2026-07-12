@@ -97,7 +97,7 @@ void dll_220_control(Object* self) {
     }
 
     //Blink behaviour?
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (objdata->unk0 < 16.0f) {
         if ((s32)objdata->unk0 == 0xA) {
             objdata->unk4 |= 1;

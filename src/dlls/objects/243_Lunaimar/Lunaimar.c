@@ -305,7 +305,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
 
     objdata = (Lunaimar_ActualData*)baddie->objdata;
     sidekick = objGetSidekick();
-    animator = func_800348A0(self, 0, 0);
+    animator = objExprGetTexAnimator(self, 0, 0);
     objdata->unk12 += 0x1000;
     animator->frame = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
     VECTOR_SUBTRACT(sidekick->globalPosition, self->globalPosition, sp44);

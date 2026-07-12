@@ -314,9 +314,9 @@ void dll_496_control(Object* snowhorn) {
     
    if (objdata->unk424 & 0x40) {
         dll_496_func_CC4(snowhorn, objdata->unk424 & 4);
-        func_800328F0(snowhorn, &objdata->lookAtUnk, objdata->walkSpeed);
+        objExpr_func_800328F0(snowhorn, &objdata->lookAtUnk, objdata->walkSpeed);
     }
-    func_80032A08(snowhorn, &objdata->lookAtUnk);
+    objExprEyeIdle(snowhorn, &objdata->lookAtUnk);
 
     if (func_80026DF4(snowhorn, _data_0, 0x1C, (objdata->flags & 0x4000 ? 1 : 0), 
                       &objdata->unk54) != 0) {
@@ -461,8 +461,8 @@ static s32 dll_496_func_980(Object* snowhorn) {
         playSound = 0;
     }
     
-    temp1 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep, 0);
-    temp2 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0);
+    temp1 = objExprGetTexAnimator(snowhorn, MODANIM_SnowHorn_Sleep, 0);
+    temp2 = objExprGetTexAnimator(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0);
     snowhorn->unkAF |= 8;    
     
     switch (snowhorn->curModAnimId) {
@@ -769,7 +769,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             objdata->unk8 = (s16) (objdata->unk8 + gUpdateRate);
             if (objdata->unk6 < objdata->unk8) {
                 objdata->unk8 = 0;
-                temp_v0_2 = func_80034804(self, 0);
+                temp_v0_2 = objExpr_func_80034804(self, 0);
 
                 objdata->unkE = (u16) (0x8000 - temp_v0_2[1]);
                 player = objGetPlayer();

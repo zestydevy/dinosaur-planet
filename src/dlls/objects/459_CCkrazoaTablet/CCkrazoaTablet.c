@@ -150,7 +150,7 @@ void CCkrazoaTablet_func_48C(Object *self, CCkrazoaTablet_Data *objdata) {
         }
     }
 
-    animator = func_800348A0(self, 0, 0);
+    animator = objExprGetTexAnimator(self, 0, 0);
 
     if (objdata->unk4 >= 256.5f) {
         animator->frame = (512.0f - objdata->unk4);

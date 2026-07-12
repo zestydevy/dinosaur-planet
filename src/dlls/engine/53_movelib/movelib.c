@@ -43,7 +43,7 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
     s32* sp34;
     HeadAnimation* var_a3;
 
-    sp34 = func_800349B0();
+    sp34 = objExpr_func_800349B0();
     if (arg1->objhitInfo != NULL) {
         if (arg1->objhitInfo->unk5A & 2) {
             sp38 = arg1->objhitInfo->unk56 * 4.0f;
@@ -56,11 +56,11 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
         sp38 = 30.0f;
     }
     sp3E = func_80031DD8(arg0, arg1, NULL);
-    sp3C = func_800334A4(arg0, arg1, &arg3->headRefPoint, 
+    sp3C = objExpr_func_800334A4(arg0, arg1, &arg3->headRefPoint, 
                          (arg3->unk4A9 & 8) ? NULL : arg3->unk1C, 
                          arg3->unk454, sp38, 8, arg3->unk4A4);
     if (!(arg3->unk4A9 & 8)) {
-        arg3->unk490 = !func_800333C8(arg0, sp34, arg3->jointCount, arg3->unk1C);
+        arg3->unk490 = !objExpr_func_800333C8(arg0, sp34, arg3->jointCount, arg3->unk1C);
     }
     arg3->unk490 = 0;
     if ((arg3->unk4A9 & 2) && (sp3C != 0)) {
@@ -100,10 +100,10 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
 
 // offset: 0x3B4 | func: 1
 static void movelib_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* arg3) {
-    s32* temp_a1 = func_800349B0();
+    s32* temp_a1 = objExpr_func_800349B0();
     switch (arg2->unk498) {
     case 3:
-        func_80033224(arg0, temp_a1, arg2->jointCount, arg2->unk1C);
+        objExpr_func_80033224(arg0, temp_a1, arg2->jointCount, arg2->unk1C);
         arg2->unk490 = 0;
         arg2->unk498 = 2;
         /* fallthrough */
@@ -135,31 +135,31 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
     maxLookAtSearchDist = 1000.0f;
     lookatYOffset = 30.0f;
     sp5A = 0;
-    sp54 = func_800349B0();
+    sp54 = objExpr_func_800349B0();
     objGetPlayer();
     if (data->unk499 == 0) {
         if ((data->unk4A9 & 1) && (data->unk498 != 8)) {
             data->unk498 = 8;
             if (!(data->unk4A9 & 8)) {
-                func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                 data->unk490 = 0x50;
-                func_80033350(data->unk1C, data->jointCount, 0, 0);
+                objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
             } else {
-                func_800332A4(obj, func_800349B0(), data->jointCount);
+                objExpr_func_800332A4(obj, objExpr_func_800349B0(), data->jointCount);
             }
         } else if (!(data->unk4A9 & 1) && (data->unk498 == 8)) {
             data->unk498 = 0;
             if (!(data->unk4A9 & 8)) {
-                func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                 data->unk490 = 0x50;
             }
         }
         if (data->unk498 > 1) {
             if ((data->unk490 != 0) && !(data->unk4A9 & 8)) {
-                data->unk490 = !func_800333C8(obj, sp54, data->jointCount, data->unk1C);
+                data->unk490 = !objExpr_func_800333C8(obj, sp54, data->jointCount, data->unk1C);
                 return;
             }
-            func_800332A4(obj, func_800349B0(), data->jointCount);
+            objExpr_func_800332A4(obj, objExpr_func_800349B0(), data->jointCount);
             return;
         }
         if (data->lookat == NULL) {
@@ -187,14 +187,14 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
             }
             if ((data->unk4AC != -1) && (lookat == data->prevLookat)) {
                 if (((data->unk4B4 -= gUpdateRate) <= 0) && ((data->unk4B4 + gUpdateRate) > 0)) {
-                    func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                    objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                     data->unk490 = 0x50;
-                    func_80033350(data->unk1C, data->jointCount, 0, 0);
+                    objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
                     data->unk498 = 0;
                     return;
                 }
                 if (data->unk490 != 0) {
-                    data->unk490 = !func_800333C8(obj, sp54, data->jointCount, data->unk1C);
+                    data->unk490 = !objExpr_func_800333C8(obj, sp54, data->jointCount, data->unk1C);
                 }
                 if (data->unk4B4 < -data->unk4B0) {
                     data->unk4B4 = rand_next(data->unk4B0, data->unk4AC);
@@ -222,25 +222,25 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
                 sp5A = func_80031DD8(obj, lookat, NULL);
             }
             if (data->unk4A9 & 0x10) {
-                func_80034D94(0, 1);
+                objExpr_func_80034D94(0, 1);
                 sp5A -= 0x8000;
             }
             if ((((sp5A >= 0) ? sp5A : -sp5A) >= 0x5555) || (lookat == NULL)) {
                 if ((data->unk498 != 0) || ((lookat == NULL) && (data->prevLookat != NULL))) {
-                    func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                    objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                     data->unk490 = 0xA;
-                    func_80033350(data->unk1C, data->jointCount, 0, 0);
+                    objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
                     data->unk498 = 0;
                 }
             } else {
                 if ((lookat != data->prevLookat) || (data->unk498 == 0)) {
-                    func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                    objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                     data->unk490 = 1;
                 }
                 if (data->unk4A9 & 8) {
                     data->unk490 = 0;
                 }
-                func_800334A4(obj, lookat, &data->headRefPoint, 
+                objExpr_func_800334A4(obj, lookat, &data->headRefPoint, 
                               data->unk490 != 0 ? data->unk1C : NULL, 
                               data->unk454, lookatYOffset, 8, data->unk4A4);
                 data->unk498 = 1;
@@ -248,7 +248,7 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
             data->prevLookat = lookat;
             data->lookat = NULL;
             if (!(data->unk4A9 & 8) && (data->unk490 != 0)) {
-                data->unk490 = !func_800333C8(obj, sp54, data->jointCount, data->unk1C);
+                data->unk490 = !objExpr_func_800333C8(obj, sp54, data->jointCount, data->unk1C);
             }
         }
     }
@@ -282,9 +282,9 @@ void movelib_func_BA4(Object* obj, MoveLibData* data, s16 arg2, s16 arg3, s32 jo
     data->unk4.x = 0.0f;
     data->unk0 = 0/*.0f*/;
     data->unk4AC = -1;
-    func_800332A4(obj, func_800349B0(), jointCount);
-    func_80033224(obj, func_800349B0(), jointCount, data->unk1C);
-    func_80033350(data->unk1C, data->jointCount, 0, 0);
+    objExpr_func_800332A4(obj, objExpr_func_800349B0(), jointCount);
+    objExpr_func_80033224(obj, objExpr_func_800349B0(), jointCount, data->unk1C);
+    objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
     movelib_func_1E70(data, data_0, data_0, 8);
 }
 
@@ -295,7 +295,7 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
     s16 sp38[3];
 
     if (arg1->unk499 != 0) {
-        func_800332A4(arg0, func_800349B0(), arg1->jointCount);
+        objExpr_func_800332A4(arg0, objExpr_func_800349B0(), arg1->jointCount);
         func_80031F6C(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
         func_80031F6C(arg0, arg2 + 1, &sp4C.f[0], &sp4C.f[1], &sp4C.f[2], 0);
         arg1->unk4.x = ((sp4C.f[0] + (3.0f * sp3C.x)) * 0.25f);
@@ -342,7 +342,7 @@ s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 ar
             objAnimAdvance(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
             if (arg2->unk498 == 7) {
                 arg1->unk7A |= 8;
-                temp_v0_3 = func_80034804(arg0, 0);
+                temp_v0_3 = objExpr_func_80034804(arg0, 0);
                 arg1->unk120 = temp_v0_3[1];
                 arg1->unk122 = temp_v0_3[0];
                 arg2->unk498 = 0;
@@ -361,13 +361,13 @@ static void movelib_func_106C(Object* actor, Object* animObj, AnimObj_Data* anim
     MoveLibData* sp2C;
     s32* sp28;
 
-    sp28 = func_800349B0();
+    sp28 = objExpr_func_800349B0();
     sp2C = actor->data;
     gDLL_2_Camera->vtbl->set_target_object(NULL);
     sp2C->unk498 = 0;
-    func_80033224(actor, sp28, sp2C->jointCount, sp2C->unk1C);
+    objExpr_func_80033224(actor, sp28, sp2C->jointCount, sp2C->unk1C);
     sp2C->unk490 = 0x50;
-    func_80033350(sp2C->unk1C, sp2C->jointCount, 0, 0);
+    objExpr_func_80033350(sp2C->unk1C, sp2C->jointCount, 0, 0);
 }
 
 // offset: 0x1130 | func: 9 | export: 10

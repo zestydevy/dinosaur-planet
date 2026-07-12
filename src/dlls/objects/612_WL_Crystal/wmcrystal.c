@@ -184,7 +184,7 @@ void WL_Crystal_control(Object* self) {
         }
         
         //Scroll texture UVs
-        animTexture = func_800348A0(self, 1, 0);
+        animTexture = objExprGetTexAnimator(self, 1, 0);
         if (animTexture) {
             animTexture->positionV -= 0x10;
             if (animTexture->positionV < -0x3E0) {
@@ -257,7 +257,7 @@ void WL_Crystal_control(Object* self) {
             self->opacity = opacity;
 
             //Scroll texture UVs
-            animTexture = func_800348A0(self, 0, 0);
+            animTexture = objExprGetTexAnimator(self, 0, 0);
             if (animTexture != NULL) {
                 animTexture->positionU -= gUpdateRate * 8;
                 if (animTexture->positionU < -0x3E0) {

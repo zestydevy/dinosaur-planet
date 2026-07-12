@@ -1990,7 +1990,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             arg2->unk58 = 0.0f;
             arg2->unk24 = 0.083333336f;
             arg2->unk62 = 5;
-            objdata->unk354.headStartAngle = func_80034804(arg0, 0)[1];
+            objdata->unk354.headStartAngle = objExpr_func_80034804(arg0, 0)[1];
             objdata->unk378.headStartAngle = 0;
             objdata->unk354.headGoalAngle = arg2->yawDiff;
             objdata->unk378.headGoalAngle = arg2->pitchDiff;
@@ -2005,7 +2005,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         } else if (arg2->unk62 == 5) {
             arg2->unk7A &= ~0x4;
             func_8002674C(arg0);
-            temp_s0_2 = func_80034804(arg0, 0);
+            temp_s0_2 = objExpr_func_80034804(arg0, 0);
             if (_bss_0 == 3) {
                 if ((arg2->unk58 >= 1.0f) && (gDLL_2_Camera->vtbl->has_interpolation_finished() == FALSE)) {
                     if (arg3 == 0) {
@@ -2030,8 +2030,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 temp_s0_2[1] = _bss_2 - (arg0->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(temp_s0_2[1])
             } else {
-                _bss_0 |= func_800343B8(&objdata->unk354, temp_s0_2, 100.0f, 2000.0f);
-                _bss_0 |= func_80034518(&objdata->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
+                _bss_0 |= objExpr_func_800343B8(&objdata->unk354, temp_s0_2, 100.0f, 2000.0f);
+                _bss_0 |= objExpr_func_80034518(&objdata->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
             }
             return 1;
         } else if (arg2->unk62 == 6) {
@@ -2724,13 +2724,13 @@ void dll_210_func_7180(Object* player, Player_Data* arg1, f32 updateRate) {
     TextureAnimator* animator;
     TextureAnimator* animator2;
 
-    func_800328F0(player, &arg1->unk354, arg1->unk0.unk278);
+    objExpr_func_800328F0(player, &arg1->unk354, arg1->unk0.unk278);
     if (arg1->stats->health > 0) {
-        func_80032A08(player, &arg1->unk354);
+        objExprEyeIdle(player, &arg1->unk354);
         return;
     }
-    animator = func_800348A0(player, 5, 0);
-    animator2 = func_800348A0(player, 4, 0);
+    animator = objExprGetTexAnimator(player, 5, 0);
+    animator2 = objExprGetTexAnimator(player, 4, 0);
     if (animator != NULL) {
         animator->frame = 0x200;
     }
@@ -3454,7 +3454,7 @@ static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle
     s16* temp_v0;
 
     if (arg7) {
-        temp_v0 = func_80034804(player, 0);
+        temp_v0 = objExpr_func_80034804(player, 0);
         if (temp_v0 != NULL) {
             if (temp_v0[1] > 0) {
                 temp_v0[1] -= (s16) (gUpdateRateF * 200.0f);
@@ -3658,7 +3658,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 spE8.yaw = 0;
                 spE8.pitch = arctan2_f(temp_fs0, sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1)));
             } else {
-                spE8.yaw = func_80034804(player, 9)[1];
+                spE8.yaw = objExpr_func_80034804(player, 9)[1];
                 spE8.pitch = arg2 * -14336.0f;
             }
             spE8.transl.x = 0.0f;
@@ -3737,7 +3737,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         spF8.yaw = 0;
         spF8.pitch = arctan2_f(sp8C, sqrtf(SQ(sp90) + SQ(sp88)));
     } else {
-        spF8.yaw = func_80034804(player, 9)[1];
+        spF8.yaw = objExpr_func_80034804(player, 9)[1];
         spF8.pitch = arg2 * -14336.0f;
     }
     spF8.transl.x = 0.0f;
@@ -7113,14 +7113,14 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     sp60 = objdata->vehicle;
     if (((DLL_IVehicle*)sp60->dll)->vtbl->can_dismount(sp60, player) != 0) {
-        temp_v0 = func_80034804(player, 9);
+        temp_v0 = objExpr_func_80034804(player, 9);
         if (temp_v0 != NULL) {
             temp_v0[2] = 0;
             temp_v0[0] = 0;
         }
         return 0x27;
     }
-    temp_v0 = func_80034804(player, 9);
+    temp_v0 = objExpr_func_80034804(player, 9);
     if (temp_v0 != NULL) {
         var_a0 = sp60->srt.roll;
         if (sp60->srt.roll < -0x1555) {
@@ -7192,7 +7192,7 @@ static void dll_210_func_14B70(Object* player, ObjFSA_Data *fsa) {
     player->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
     player->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
     player->curModAnimIdLayered = -1;
-    temp_v0_2 = func_80034804(player, 9);
+    temp_v0_2 = objExpr_func_80034804(player, 9);
     if (temp_v0_2 != NULL) {
         temp_v0_2[0] = 0;
         temp_v0_2[1] = 0;
@@ -7273,7 +7273,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     temp_fv0 = (1.0f - player->animProgress);
     player->srt.transl.y = objdata->unk738.y + (objdata->unk744.y * temp_fv0);
     sp54.transl.x = temp_fv0;
-    sp4C = func_80034804(player, 5);
+    sp4C = objExpr_func_80034804(player, 5);
     temp_fv0 = sp54.transl.x;
     // @fake
     sp4C++;
@@ -8803,7 +8803,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         } else {
             objAnimSetBlend(player, 0x440, -temp_s1->unk830 * 1023.0f);
         }
-        func_80034804(player, 9)[1] = temp_s1->unk82C * -10240.0f;
+        objExpr_func_80034804(player, 9)[1] = temp_s1->unk82C * -10240.0f;
         temp_s1->flags &= ~0x400;
         if ((fsa->target == NULL) && (dll_210_func_1A9D4(player, &temp_s1->aimX, &temp_s1->aimY, &temp_s1->aimZ, temp_s1->unk82C, temp_s1->unk830) != 0)) {
             temp_s1->flags |= 0x400;
@@ -8974,7 +8974,7 @@ void dll_210_func_1AAD8(Object* player, ObjFSA_Data *fsa) {
             _bss_210[i] = 0;
         }
     }
-    temp_v0 = func_80034804(player, 9);
+    temp_v0 = objExpr_func_80034804(player, 9);
     temp_v0[1] = 0;
     temp_v0[0] = 0;
 }
@@ -10299,7 +10299,7 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
     var_s1 = NULL;
     if (arg1->unk8BF == 1) {
         for (i = 6; i < 0xF; i++) {
-            result = func_800348A0(player, i, 0);
+            result = objExprGetTexAnimator(player, i, 0);
             if (var_s1 == NULL || var_s1->frame >= _data_7C8[i - 6]) {
                 var_v1 = result->frame + (_data_7D4[i - 6] * arg2);
                 if (var_v1 > 0xFF) {
@@ -10314,7 +10314,7 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
 
     if (arg1->unk8BF == -1) {
         for (i = 6; i < 0xF; i++) {
-            result = func_800348A0(player, i, 0);
+            result = objExprGetTexAnimator(player, i, 0);
             if (var_s1 == NULL || _data_7C8[i - 6] >= var_s1->frame) {
                 var_v1 = result->frame - (_data_7D4[i - 6] * arg2);
                 if (var_v1 <= 0) {

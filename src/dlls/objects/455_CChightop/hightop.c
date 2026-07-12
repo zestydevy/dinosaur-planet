@@ -49,8 +49,8 @@ void dll_455_control(Object* self) {
     TextureAnimator* sp38;
 
     HighTopData = self->data;
-    sp3C = func_800348A0(self, 5, 0);
-    sp38 = func_800348A0(self, 4, 0);
+    sp3C = objExprGetTexAnimator(self, 5, 0);
+    sp38 = objExprGetTexAnimator(self, 4, 0);
     switch (HighTopData->unk24) {                             
     case 0:                                        
         switch (HighTopData->unk25) {                          
@@ -122,8 +122,8 @@ void dll_455_control(Object* self) {
                     HighTopData->unk0.headAimY = temp_v0->srt.transl.y;
                     HighTopData->unk0.headAimZ = temp_v0->srt.transl.z;
                 }
-                func_800328F0(self, &HighTopData->unk0, 0.0f);
-                func_80032A08(self, &HighTopData->unk0);
+                objExpr_func_800328F0(self, &HighTopData->unk0, 0.0f);
+                objExprEyeIdle(self, &HighTopData->unk0);
                 HighTopData->unk30 -= gUpdateRateF;
                 if (HighTopData->unk30 <= 0.0f) {
                     HighTopData->unk30 += 150.0f;
@@ -146,8 +146,8 @@ void dll_455_control(Object* self) {
                 HighTopData->unk26 = 0;
                 HighTopData->unk30 = 0.0f;
             }
-            func_800328F0(self, &HighTopData->unk0, 0.0f);
-            func_80032A08(self, &HighTopData->unk0);
+            objExpr_func_800328F0(self, &HighTopData->unk0, 0.0f);
+            objExprEyeIdle(self, &HighTopData->unk0);
             break;
         }
         if (self->unkAF & 1) {

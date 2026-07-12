@@ -88,7 +88,7 @@ void WCTrex_control(Object* self) {
         objdata->movedata.unk4A9 |= 1;
     }
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objdata->movedata);
-    func_80032A08(self, &objdata->headAnim);
+    objExprEyeIdle(self, &objdata->headAnim);
     WCTrex_func_4A8(self);
 }
 

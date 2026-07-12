@@ -467,8 +467,8 @@ static void GuardClaw_func_D80(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
             gDLL_5_AMSEQ2->vtbl->set(self, (u16) baddie->unk3A6, NULL, 0, NULL);
         }
     }
-    func_800328F0(self, &baddie->unk3BC, fsa->unk278);
-    func_80032A08(self, &baddie->unk3BC);
+    objExpr_func_800328F0(self, &baddie->unk3BC, fsa->unk278);
+    objExprEyeIdle(self, &baddie->unk3BC);
 }
 
 // offset: 0x1128 | func: 14

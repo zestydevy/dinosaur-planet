@@ -145,7 +145,7 @@ void WCpressureswitch_control(Object* self) {
     }
 
     //Change texture frame (sun/moon glowing)
-    animTexture = func_800348A0(self, 0, 0);
+    animTexture = objExprGetTexAnimator(self, 0, 0);
     if (animTexture != NULL) {
         if (objdata->state == 2) {
             animTexture->frame = 1;

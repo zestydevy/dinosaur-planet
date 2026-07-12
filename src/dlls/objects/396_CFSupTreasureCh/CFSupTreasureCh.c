@@ -299,7 +299,7 @@ void CFSupTreasureCh_func_9B8(Object *arg0, Object *arg1, s16 *arg2) {
             arg0->srt.scale = s1;
         }
     }
-    animator = func_800348A0(arg0, 0, 0);
+    animator = objExprGetTexAnimator(arg0, 0, 0);
     if (animator) {
         animator->positionV = ((animator->positionV + 0x40)           % 2048);
         animator->positionU = ((animator->positionV + 8)              % 2048);

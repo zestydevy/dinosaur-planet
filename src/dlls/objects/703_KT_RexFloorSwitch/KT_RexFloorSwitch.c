@@ -66,7 +66,7 @@ void dll_703_control(Object* self) {
     objdata = (KT_RexFloorSwitch_Data*)self->data;
     self->unkE0 = self->unkDC;
     self->unkDC = mainGetBits(objsetup->unk1C);
-    sp3C = func_800348A0(self, 0, 0);
+    sp3C = objExprGetTexAnimator(self, 0, 0);
     if (self->unkDC < 2) {
         sp3C->frame = 0;
         if ((self->unkDC == 0) && (self->unkE0 != 0)) {

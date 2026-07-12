@@ -187,7 +187,7 @@ void InfoPoint_tex_anim(Object* self, s32 animIndex, s32* animSpeed) {
     TextureAnimator* texAnim;
     s32 frameValue;
 
-    texAnim = func_800348A0(self, animIndex - 1, 0);
+    texAnim = objExprGetTexAnimator(self, animIndex - 1, 0);
     if (texAnim == NULL) {
         return;
     }

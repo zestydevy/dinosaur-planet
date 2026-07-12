@@ -91,7 +91,7 @@ void kyteCage_control(Object* self) {
 
     if (self->parent) {
         parentDC = self->parent->unkDC;
-        rotate = (BoneRotation*)func_80034804(self, 0);
+        rotate = (BoneRotation*)objExpr_func_80034804(self, 0);
         if ((parentDC < 9) && (self->curModAnimId != 5)) {
             rotate->z = self->parent->srt.roll;
             objAnimSet(self, 5, 0, 0);

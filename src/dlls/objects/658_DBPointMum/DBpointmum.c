@@ -546,7 +546,7 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_AC9_Impact_Crumbling, MAX_VOLUME, 0, 0, 0, 0);
             continue;
         case 10:
-            func_80034B54(self, 
+            objExpr_func_80034B54(self, 
                 &objData->unk4B8, 
                 &_data_10.unk0[rand_next(0, 2)].soundID, 
                 0);
@@ -577,7 +577,7 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
 void dll_658_func_23CC(Object* self, s16 seqBoneID, s16 arg2, s16 arg3) {
     s16 *seqBone;
     
-    seqBone = func_80034804(self, seqBoneID);
+    seqBone = objExpr_func_80034804(self, seqBoneID);
     
     if (!seqBone){
         return;

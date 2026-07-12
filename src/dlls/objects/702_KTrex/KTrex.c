@@ -422,7 +422,7 @@ void dll_702_control(Object* self) {
             vec[2] = baddie->fsa.target->globalPosition.z - self->globalPosition.z;
             baddie->fsa.targetDist = sqrtf(SQ(vec[0]) + SQ(vec[1]) + SQ(vec[2]));
         }
-        func_80032A08(self, &sBaddie->unk3BC);
+        objExprEyeIdle(self, &sBaddie->unk3BC);
         sKTData->playerSegmentBitfield = dll_702_get_player_segment_bitfield();
         sKTData->playerSegmentPos = dll_702_get_obj_segment_pos(baddie->fsa.target, sKTData);
         sKTData->selfSegmentBitfield = dll_702_get_self_segment_bitfield(sKTData->flags);

@@ -97,7 +97,7 @@ void SB_ShipGun_control(Object *self) {
     player = objGetPlayer();
     objdata = self->data;
     setup = (SB_ShipGun_Setup*)self->setup;
-    sp44 = func_80034804(self, 0);
+    sp44 = objExpr_func_80034804(self, 0);
     if (self->parent->id == OBJ_WL_Galleon) {
         self->objhitInfo->unk58 &= ~1;
         objdata->unkF = 0;

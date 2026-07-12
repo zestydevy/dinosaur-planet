@@ -62,8 +62,8 @@ void CClightfoot_control(Object *self) {
         objdata->unk4.headAimY = player->srt.transl.y;
         objdata->unk4.headAimZ = player->srt.transl.z;
         objdata->unk4.aimIsActive = 1;
-        func_800328F0(self, &objdata->unk4, 0.0f);
-        func_80032A08(self, &objdata->unk4);
+        objExpr_func_800328F0(self, &objdata->unk4, 0.0f);
+        objExprEyeIdle(self, &objdata->unk4);
         if (self->curModAnimId != 10) {
             objAnimSet(self, 10, 0.0f, 0);
         }

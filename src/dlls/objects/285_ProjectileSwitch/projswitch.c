@@ -163,7 +163,7 @@ void ProjectileSwitch_change_state(Object* self, int switchPressed, int playSoun
     }
     
     //Set texture frame
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->frame = switchPressed << 8;
     }

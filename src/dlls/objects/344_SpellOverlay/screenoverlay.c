@@ -212,7 +212,7 @@ void SpellOverlay_animate_texture(Object* self, s32 materialID, u8 animFlags) {
     TextureAnimator* texAnim;
     s32 new_frame;
 
-    texAnim = func_800348A0(self, materialID - 1, 0);
+    texAnim = objExprGetTexAnimator(self, materialID - 1, 0);
     if (!texAnim) {
         return;
     }

@@ -47,7 +47,7 @@ void SPitembeam_control(Object* self) {
     }
 
     //Scroll the light beam texture
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->positionU += 8;
         if (texAnim->positionU > 0x400) {
