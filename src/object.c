@@ -139,7 +139,7 @@ void objInit(void) {
 
     //allocate global object list and some other buffers
     gObjList = mmAlloc(sizeof(Object*) * MAX_OBJECTS, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
-    objhits_init();
+    objHitInit();
     objClearAll();
 }
 
@@ -154,7 +154,7 @@ void objTick(void) {
     func_80058FE8();
 
     objUpdateObjModels();
-    update_obj_hitboxes(gNumObjs);
+    objHitUpdateHitModels(gNumObjs);
 
     node = gObjUpdateList.head;
 
@@ -193,7 +193,7 @@ void objTick(void) {
         objControlObject(player->linkedObject);
     }
 
-    obj_do_hit_detection(gNumObjs);
+    objHitDoHitDetection(gNumObjs);
 
     node = gObjUpdateList.head;
     while (node != NULL) {

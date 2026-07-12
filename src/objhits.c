@@ -32,7 +32,7 @@ Unk800B20B8* D_800B23B8[64];
 Unk80030A24 D_800B24B8[21]; // TODO: unknown length
 // -------- .bss end 800b28b0 -------- //
 
-void objhits_init(void) {
+void objHitInit(void) {
     D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitmods"));
     D_800B199C = mmAlloc(0x708, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:lasthits"));
     D_800B20A0 = mmAlloc(0x1900, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitvols"));
@@ -588,7 +588,7 @@ u32 func_80026BD8(Object* obj, u32 addr) {
     return addr;
 }
 
-void update_obj_hitboxes(s32 arg0) {
+void objHitUpdateHitModels(s32 arg0) {
     Object* curObj;
     Object** objects;
     ObjectHitInfo* objhitInfo;
@@ -695,7 +695,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     return arg3;
 }
 
-void obj_do_hit_detection(s32 arg0) {
+void objHitDoHitDetection(s32 arg0) {
     u8 pad[0x9A0 - 0x984];
     Object* sp980;
     u8 pad2[0x980 - 0x590];
@@ -2297,7 +2297,6 @@ void func_8002B7CC(Unk800B20B8** arg0, s32 arg1) {
         i /= 3;
     }
 }
-
 
 s32 func_8002B910(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32* argA, f32* argB, s32* argC, f32* argD, Vec3f* argE) {
     s32 sp64;

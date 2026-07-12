@@ -56,4 +56,6 @@ void objSetInfoNum(Object *obj, u16 param2);
 void objLoadPlayer(void);
 void objLoadSidekick(Object* playerect, s32 objectId);
 
+void objControlObject(Object *obj);
+
 #endif
