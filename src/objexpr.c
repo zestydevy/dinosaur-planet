@@ -445,7 +445,7 @@ void func_800339E0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     }
     if (arg2 != 0) {
         sp28 = sp28;
-        func_8001AF04(sp2C, (s32) sp28->id, arg1, 0.0f, 0, 1);
+        mod_func_8001AF04(sp2C, (s32) sp28->id, arg1, 0.0f, 0, 1);
         sp28->unk8 = arg3;
         return;
     }
@@ -467,7 +467,7 @@ void func_80033AA0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
         if (arg2 != 0) {
             // @fake?
             if (arg1) {}
-            func_8001AF04(sp24, sp20->id, arg1 - 1, 0.0f, 2, 1);
+            mod_func_8001AF04(sp24, sp20->id, arg1 - 1, 0.0f, 2, 1);
             sp20->unk8 = arg3;
             return;
         }

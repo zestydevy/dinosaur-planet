@@ -1528,7 +1528,7 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     }
     sp10C = sp248->matrices[matrixIdx];
     sp248->matrices[matrixIdx] = D_800B20A0;
-    func_8001943C(obj, &sp194, 1.0f, 0.0f);
+    mod_func_8001943C(obj, &sp194, 1.0f, 0.0f);
     sp106 = 0x1000;
     if (obj3 != NULL) {
         sp244 = obj3->modelInsts[obj3->modelInstIdx];
@@ -1569,12 +1569,12 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
             sp194.m[3][2] = (objHitInfo->unk10.z - gWorldZ) + (temp_fv0 * sp280);
             func_8001B4F0(&sp248->matrices[matrixIdx], &sp194, &animState, model->joints, (s32) model->jointCount, &sp106, -1, 0);
             if (pad) {
-                func_8001AC44(sp248, model, obj, NULL, sp248->matrices[matrixIdx], pad, obj->srt.scale);
+                mod_func_8001AC44(sp248, model, obj, NULL, sp248->matrices[matrixIdx], pad, obj->srt.scale);
                 stopLoop = func_80029C04(obj, obj2, obj, 1, 0, pad, objHitInfo->unk44 >> 4);
             }
             if (stopLoop == 0 && objHitInfo2 != NULL && (pad2)) {
                 matrix_concat_4x3(&sp150, sp190, &sp110);
-                func_8001AC44(sp244, model3, obj3, &sp110, sp248->matrices[matrixIdx], pad2, obj->srt.scale);
+                mod_func_8001AC44(sp244, model3, obj3, &sp110, sp248->matrices[matrixIdx], pad2, obj->srt.scale);
                 stopLoop = func_80029C04(obj3, obj2, obj, 1, 0, pad2, objHitInfo->unk44 & 0xF);
             }
         }
@@ -1605,7 +1605,7 @@ void func_80029A14(Model* model, AnimState* animState, AnimState* arg2, f32 arg3
         arg2->curAnimationFrame[0] = animState->curAnimationFrame[0];
     }
     arg2->unk34[0] = animState->unk34[0];
-    func_8001A1D4(model, arg2, 1);
+    mod_func_8001A1D4(model, arg2, 1);
 }
 
 void func_80029AB4(ModelJoint* joints, s32 jointsCount, HitSphere* hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5) {

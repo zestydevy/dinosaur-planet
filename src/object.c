@@ -261,7 +261,7 @@ void update_obj_models(void) {
                         unk1 = object->animObj != NULL ? (AnimObj_Data*)object->animObj->data : NULL;
 
                         if (object->animObj == NULL || (unk1 != NULL && unk1->unk62 == 0)) {
-                            func_8001B084(modelInst, gUpdateRateF);
+                            mod_func_8001B084(modelInst, gUpdateRateF);
                         }
                     }
                 }
@@ -649,7 +649,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
             var = MODFLAGS_GET_MODEL_INDEX(modflags);
 
             if (var < modelCount) {
-                obj->modelInsts[var] = model_load_create_instance(-def->pModelList[var], modflags);
+                obj->modelInsts[var] = modLoadModelActual(-def->pModelList[var], modflags);
 
                 if (obj->modelInsts[var] == NULL) {
                     modelLoadFailed = TRUE;
@@ -661,7 +661,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
             }
         } else {
             for (; var < modelCount; var++) {
-                obj->modelInsts[var] = model_load_create_instance(-def->pModelList[var], modflags);
+                obj->modelInsts[var] = modLoadModelActual(-def->pModelList[var], modflags);
                 if (obj->modelInsts[var] == NULL) {
                     modelLoadFailed = TRUE;
                 } else {
@@ -972,7 +972,7 @@ void func_80022200(Object *obj, s32 param2, s32 param3) {
     for (i = 0; i < param2; i++) {
         if (obj->modelInsts[i] != NULL) {
             ModelInstance *modelInst = obj->modelInsts[i];
-            destroy_model_instance(modelInst);
+            modFreeModel(modelInst);
         }
     }
 }
@@ -1609,7 +1609,7 @@ void obj_free_object(Object *obj, s32 onlySelf) {
     for (k = 0; k < numModels; k++) {
         if (obj->modelInsts[k] != NULL) {
             modelInst = obj->modelInsts[k];
-            destroy_model_instance(modelInst);
+            modFreeModel(modelInst);
         }
     }
 

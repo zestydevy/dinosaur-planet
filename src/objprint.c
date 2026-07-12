@@ -43,9 +43,6 @@ void func_800357B4(Object*, ModelInstance*, Model*);
 ModelInstance *func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
 void func_80036890(Object*, s32);
 void func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
-// should be in model.h
-void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
-void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2);
 
 void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
     if (obj->stateFlags & OBJSTATE_DESTROYED) {
@@ -208,16 +205,16 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         if (!(modelInst->unk34 & 8)) {
             if ((model->animCount != 0) && !(model->unk71 & 2)) {
                 if (PTR_DAT_800b2e1c == 0) {
-                    func_8001943C(obj, &sp78, yPrescale, 0.0f);
-                    func_80019730(modelInst, model, obj, &sp78);
+                    mod_func_8001943C(obj, &sp78, yPrescale, 0.0f);
+                    mod_func_80019730(modelInst, model, obj, &sp78);
                 } else {
-                    func_80019730(modelInst, model, obj, PTR_DAT_800b2e1c);
+                    mod_func_80019730(modelInst, model, obj, PTR_DAT_800b2e1c);
                 }
             } else {
                 modelInst->unk34 ^= 1;
                 sp70 = modelInst->matrices[modelInst->unk34 & 1];
                 if (PTR_DAT_800b2e1c == 0) {
-                    func_8001943C(obj, sp70, yPrescale, 0.0f);
+                    mod_func_8001943C(obj, sp70, yPrescale, 0.0f);
                 } else {
                     bcopy((void* ) PTR_DAT_800b2e1c, sp70, 0x40);
                 }
@@ -226,7 +223,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             modelInst->unk34 ^= 2;
             if ((obj->def->flags & OBJDEF_FLAG10) || (model->blendshapes != NULL)) {
                 if (model->blendshapes != NULL) {
-                    func_8001B100(modelInst);
+                    mod_func_8001B100(modelInst);
                 }
                 if (obj->def->flags & OBJDEF_FLAG10) {
                     func_8001DF60(obj, modelInst);
@@ -242,7 +239,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
                 func_80036438(obj);
             }
             if (model->hitSphereCount != 0) {
-                func_8001A8EC(modelInst, model, obj, 0, obj);
+                mod_func_8001A8EC(modelInst, model, obj, 0, obj);
             } else if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20)) {
                 if (obj->objhitInfo->unk9F != 0) {
                     obj->objhitInfo->unk9F--;
@@ -258,12 +255,12 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             gSPSegment(tempGdl++, SEGMENT_5, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
             if (opacity == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
-                    load_model_display_list(model, modelInst);
+                    modLoadModelDisplayList(model, modelInst);
                     modelInst->unk34 ^= 0x10;
                 }
             } else {
                 if (!(modelInst->unk34 & 0x10)) {
-                    load_model_display_list2(model, modelInst);
+                    modLoadModelDisplayList2(model, modelInst);
                     modelInst->unk34 ^= 0x10;
                 }
             }
@@ -399,7 +396,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         }
         if (sp64->animCount != 0) {
             D_800B2E10 = arg6;
-            func_80019730(modelInst, sp64, arg8, arg6);
+            mod_func_80019730(modelInst, sp64, arg8, arg6);
             sp74 = modelInst->matrices[modelInst->unk34 & 1];
             func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
         } else {
@@ -415,7 +412,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         modelInst->unk34 ^= 2;
         if ((arg8->def->flags & OBJDEF_FLAG10) || (sp64->blendshapes != NULL)) {
             if (sp64->blendshapes != NULL) {
-                func_8001B100(modelInst);
+                mod_func_8001B100(modelInst);
             }
             func_8001DF60(arg8, modelInst);
         }
@@ -423,18 +420,18 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             func_8001F094(modelInst);
         }
         if (sp64->hitSphereCount != 0) {
-            func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
+            mod_func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
         }
         if (!(arg4->srt.flags & OBJFLAG_SKIP_MODEL_DL)) {
             gSPSegment((*arg0)++, SEGMENT_3, sp74);
             gSPSegment((*arg0)++, SEGMENT_5, modelInst->vertices[(modelInst->unk34 >> 1) & 1]);
             if ((u8) arg10 == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
-                    load_model_display_list(sp64, modelInst);
+                    modLoadModelDisplayList(sp64, modelInst);
                     modelInst->unk34 ^= 0x10;
                 }
             } else if (!(modelInst->unk34 & 0x10)) {
-                load_model_display_list2(sp64, modelInst);
+                modLoadModelDisplayList2(sp64, modelInst);
                 modelInst->unk34 ^= 0x10;
             }
             gSPDisplayList((*arg0)++, OS_PHYSICAL_TO_K0(modelInst->displayList));

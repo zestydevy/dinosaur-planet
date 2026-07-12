@@ -3401,11 +3401,11 @@ static s32 dll_210_func_8AE0(Object* player, s32 arg1, s32 arg2, Vec3f* arg3, Ve
     if (arg8 & 4) {
         func_80023D30(player, arg1, 0.0f, sp49);
         func_80024108(player, arg6, 0.0f, NULL);
-        func_8001A3FC(sp64, 0U, 0, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
+        mod_func_8001A3FC(sp64, 0U, 0, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
     } else {
         func_80024E50(player, arg1, 0.0f, sp49);
         func_80025140(player, arg6, 0.0f, 0);
-        func_8001A3FC(sp64, 1U, 0, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
+        mod_func_8001A3FC(sp64, 1U, 0, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
     }
     sp54 = sp58[arg7];
     if (sp54 < 0.0f) {
@@ -3413,10 +3413,10 @@ static s32 dll_210_func_8AE0(Object* player, s32 arg1, s32 arg2, Vec3f* arg3, Ve
     }
     if (arg8 & 4) {
         func_80025540(player, arg2, 0);
-        func_8001A3FC(sp64, 0U, 2, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
+        mod_func_8001A3FC(sp64, 0U, 2, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
     } else {
         func_8002559C(player, arg2, 0);
-        func_8001A3FC(sp64, 1U, 2, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
+        mod_func_8001A3FC(sp64, 1U, 2, arg5, player->srt.scale, (Vec3f*)sp58, &sp40);
     }
     var_fv0 = sp58[arg7];
     if (var_fv0 < 0.0f) {
@@ -3858,25 +3858,25 @@ void dll_210_func_A058(Object* player) {
 
     temp_s4 = player->modelInsts[player->modelInstIdx];
     func_80023D30(player, *data->modAnims, 0.0f, 0U);
-    func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
+    mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[0] = sp78.y;
     func_80023D30(player, *_data_5A0, 0.0f, 0U);
-    func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
+    mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[1] = sp78.y;
     func_80023D30(player, _data_564[3], 0.0f, 0U);
-    func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
+    mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[2] = sp78.y;
     *_bss_1F8 = sp78.z;
     func_80023D30(player, _data_564[9], 0.0f, 0U);
-    func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
+    mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[3] = sp78.y;
     i = 4;
     var_s2 = 14;
     while (i < 12) {
         func_80023D30(player, _data_564[var_s2], 0.0f, 0U);
-        func_8001A3FC(temp_s4, 0U, 0, 1.0f, player->srt.scale, &sp78, &sp70);
+        mod_func_8001A3FC(temp_s4, 0U, 0, 1.0f, player->srt.scale, &sp78, &sp70);
         _bss_1B0[i] = sp78.y;
-        func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
+        mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
         _bss_1B0[i] -= sp78.y;
         var_s2 += 2;
         i++;
@@ -3884,7 +3884,7 @@ void dll_210_func_A058(Object* player) {
     var_s2 = 17;
     while (i < 16) {
         func_80023D30(player, _data_5BC[var_s2], 0.0f, 0U);
-        func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
+        mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
         _bss_1B0[i] = sp78.y;
         var_s2 += 1;
         i += 1;
@@ -5208,7 +5208,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             func_80023D30(player, (s32) _data_564[2], 0.0f, 1U);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 2;
-            func_8001A3FC(sp58, 0U, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
+            mod_func_8001A3FC(sp58, 0U, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
             player->srt.transl.f[1] -= sp7C.f[1];
             temp_fa0 = _bss_1B0[2] + (objdata->unk490.unk4 - objdata->unk7EC.y);
             temp_fa0 = -temp_fa0 * -0.3f;
@@ -5393,7 +5393,7 @@ s32 dll_210_func_EB1C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             func_80023D30(player, _data_564[8], 0.0f, 1U);
             fsa->animTickDelta = 0.02f;
             _bss_202 = _bss_200 = 8;
-            func_8001A3FC(modelInstance, 0U, 0, 0.0f, player->srt.scale, &sp6C, &sp52[2]);
+            mod_func_8001A3FC(modelInstance, 0U, 0, 0.0f, player->srt.scale, &sp6C, &sp52[2]);
             player->srt.transl.f[1] -= sp6C.f[1];
             player->velocity.f[1] = -2.0f;
             objdata->unk490.unk18 = 1.0f;
@@ -5550,7 +5550,7 @@ s32 dll_210_func_F00C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         dll_210_func_8AE0(player, var_v0[var_t0 + 2], var_v0[var_t0 + 3], &objdata->unk3CC.unk54, &objdata->unk3CC.unk38, 0.0f, fsa->animTickDelta, 0U, 0x1AU);
         objdata->unk3CC.unk10 = (objdata->unk3CC.unk8 + (objdata->unk3CC.unkC * objdata->unk3CC.unk0));
         objdata->unk3CC.unk14 = player->srt.transl.y;
-        func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp84, &sp90);
+        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp84, &sp90);
         _bss_204 = sp84.f[1] + player->srt.transl.y;
         _bss_208 = _bss_1B0[1] + objdata->unk3CC.unk10;
         sp6C.x = objdata->unk3CC.unk4;
@@ -5670,8 +5670,8 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             player->srt.transl.y = temp_s0->unk3CC.unk4;
         } else {
-            func_8001A3FC(sp60, 0, 0, 0, player->srt.scale, &sp78, &sp54);
-            func_8001A3FC(sp60, 0, 0, 1, player->srt.scale, &sp6C, &sp54);
+            mod_func_8001A3FC(sp60, 0, 0, 0, player->srt.scale, &sp78, &sp54);
+            mod_func_8001A3FC(sp60, 0, 0, 1, player->srt.scale, &sp6C, &sp54);
             temp_fv1 = sp78.y + _bss_204;
             temp_fa0 = _bss_208 - (sp6C.y - sp78.y);
             player->srt.transl.y = ((temp_fa0 - temp_fv1) * player->animProgress) + _bss_204;
@@ -5810,8 +5810,8 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (_bss_202 != _bss_200) {
         func_80023D30(player, _data_5A0[_bss_200], sp98, 1U);
         if ((_bss_200 < 2) && (temp_s0->unk3CC.unk3 == 0)) {
-            func_8001A3FC(sp60, 0, 0, 0, player->srt.scale, &sp78, &sp54);
-            func_8001A3FC(sp60, 0, 0, 1, player->srt.scale, &sp6C, &sp54);
+            mod_func_8001A3FC(sp60, 0, 0, 0, player->srt.scale, &sp78, &sp54);
+            mod_func_8001A3FC(sp60, 0, 0, 1, player->srt.scale, &sp6C, &sp54);
             temp_s0->unk3CC.unk1C = sp6C.y - sp78.y;
             temp_s0->unk3CC.unk3 = 1;
         }
@@ -6055,7 +6055,7 @@ s32 dll_210_func_10A0C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             var_v1 = 0x65;
         }
         temp_s0->unk430.unk5C = dll_210_func_8AE0(player, var_v0[0], var_v0[1], &temp_s0->unk430.unk50, &temp_s0->unk430.unk24, 0.0f, 0.0f, 2U, var_v1);
-        func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp70, &sp7C);
+        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp70, &sp7C);
         temp_s0->unk430.unk18.y = 0.0f;
         temp_s0->unk430.unk18.x = sp70.y;
         temp_s0->unk430.unk18.z = 0.0f;
@@ -6277,7 +6277,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     }
                 }
                 func_80024E50(player, _data_5BC[_bss_200], 0.0f, 1U);
-                func_8001A3FC(spE0, 1U, 0, 1.0f, player->srt.scale, &sp118, &spE8);
+                mod_func_8001A3FC(spE0, 1U, 0, 1.0f, player->srt.scale, &sp118, &spE8);
                 player->curModAnimIdLayered = -1;
                 temp_s0->unk430.unk18.y = -sp118.x * temp_s0->unk430.unk34.x;
                 temp_s0->unk430.unk18.x = sp118.y;
@@ -6426,7 +6426,7 @@ s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80023D30(player, _data_5DC[1], 0.0f, 1U);
         func_80025540(player, _data_5E0[0], 0);
         fsa->animTickDelta = 0.012f;
-        func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp60, &sp48);
+        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp60, &sp48);
         temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
         temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
         player->srt.transl.y = temp_s1->unk430.unk4;
@@ -6485,7 +6485,7 @@ s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         func_80023D30(player, _data_5E0[1], 0.0f, 1U);
         func_80025540(player, _data_5E4[0], 0);
         fsa->animTickDelta = 0.015f;
-        func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp60, &sp48);
+        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp60, &sp48);
         temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
         temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
         player->srt.transl.y = temp_s1->unk430.unk8;
@@ -6960,8 +6960,8 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         player->srt.yaw = vehicle->srt.yaw;
         func_80023D30(player, objdata->unk76C[v0], 0.0f, 4U);
         sp44 = player->modelInsts[player->modelInstIdx];
-        func_8001A3FC(sp44, 0U, 0, 0.0f, player->srt.scale, &sp74, &sp48);
-        func_8001A3FC(sp44, 0U, 0, 1.0f, player->srt.scale, &sp68, &sp48);
+        mod_func_8001A3FC(sp44, 0U, 0, 0.0f, player->srt.scale, &sp74, &sp48);
+        mod_func_8001A3FC(sp44, 0U, 0, 1.0f, player->srt.scale, &sp68, &sp48);
         ((DLL_IVehicle*)vehicle->dll)->vtbl->get_rider_position(vehicle, &sp5C, &sp60, &sp64);
         sp5C -= player->srt.transl.f[0];
         sp60 -= player->srt.transl.f[1];
@@ -7241,8 +7241,8 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         player->srt.roll = 0;
         func_80023D30(player, objdata->unk76C[var_v0_2], 0.0f, 1U);
         sp50 = player->modelInsts[player->modelInstIdx];
-        func_8001A3FC(sp50, 0U, 0, 0.0f, player->srt.scale, &sp8C, &sp54.yaw);
-        func_8001A3FC(sp50, 0U, 0, 1.0f, player->srt.scale, &sp80, &sp54.yaw);
+        mod_func_8001A3FC(sp50, 0U, 0, 0.0f, player->srt.scale, &sp8C, &sp54.yaw);
+        mod_func_8001A3FC(sp50, 0U, 0, 1.0f, player->srt.scale, &sp80, &sp54.yaw);
         sp54.yaw = player->srt.yaw;
         sp54.pitch = 0;
         sp54.roll = 0;
@@ -7765,7 +7765,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             func_80023D30(player, _data_69C[1], 0.0f, 1U);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 1;
-            func_8001A3FC(sp5C, 0U, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
+            mod_func_8001A3FC(sp5C, 0U, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
             player->srt.transl.f[1] -= sp7C.f[1];
             temp_fa1 = (_bss_1B0[2] + (objdata->unk6B0.unk0.y - objdata->unk7EC.y));
             player->velocity.f[1] = sqrtf(-temp_fa1 * -5.6f);
@@ -8062,8 +8062,8 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (_bss_202 != _bss_200) {
         func_80023D30(player, _data_6B0[_bss_200], sp90, 1U);
         if ((_bss_200 < 2) && (temp_s0->unk6B0.unk46 == 0)) {
-            func_8001A3FC(sp70, 0U, 0, 0.0f, player->srt.scale, &sp80, &sp68);
-            func_8001A3FC(sp70, 0U, 0, 1.0f, player->srt.scale, &sp74, &sp68);
+            mod_func_8001A3FC(sp70, 0U, 0, 0.0f, player->srt.scale, &sp80, &sp68);
+            mod_func_8001A3FC(sp70, 0U, 0, 1.0f, player->srt.scale, &sp74, &sp68);
             temp_s0->unk6B0.unk28.x = sp74.f[0] - sp80.f[0];
             temp_s0->unk6B0.unk28.z = sp74.f[2] - sp80.f[2];
             temp_s0->unk6B0.unk50 = sqrtf(SQ(temp_s0->unk6B0.unk28.x) + SQ(temp_s0->unk6B0.unk28.z));

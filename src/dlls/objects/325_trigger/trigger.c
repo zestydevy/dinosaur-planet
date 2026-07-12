@@ -376,7 +376,7 @@ void trigger_free(Object *self, s32 param2) {
             if (sPointModel != NULL) {
                 sPointModelRefCount -= 1;
                 if (sPointModelRefCount == 0) {
-                    destroy_model_instance(sPointModel);
+                    modFreeModel(sPointModel);
                     sPointModel = NULL;
                 }
             }
@@ -385,7 +385,7 @@ void trigger_free(Object *self, s32 param2) {
             if (sPlaneModel != NULL) {
                 sPlaneModelRefCount -= 1;
                 if (sPlaneModelRefCount == 0) {
-                    destroy_model_instance(sPlaneModel);
+                    modFreeModel(sPlaneModel);
                     sPlaneModel = NULL;
                 }
             }
@@ -892,7 +892,7 @@ static void trigger_point_setup(Object *self, Trigger_Setup *setup) {
     f32 modelRadius;
 
     if (sPointModel == NULL) {
-        sPointModel = func_80017D2C(85, 0);
+        sPointModel = modLoadModel(85, 0);
         sPointModelRefCount = 1;
     } else {
         sPointModelRefCount += 1;
@@ -1052,7 +1052,7 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     f32 swapTemp;
     
     if (sPlaneModel == NULL) {
-        sPlaneModel = func_80017D2C(78, 0);
+        sPlaneModel = modLoadModel(78, 0);
         sPlaneModelRefCount = 1;
     } else {
         sPlaneModelRefCount += 1;

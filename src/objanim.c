@@ -49,8 +49,6 @@ u8 D_800916B0[33] = {
 };
 /* -------- .data start 800916E0 -------- */
 
-Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
-
 //sets new modAnimIndex on model
 s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     s32 temp_t0;
@@ -113,7 +111,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         if (changed) {
             animState->unk62[0] = (1 - animState->unk62[0]);
             animState->animIndexes[0] = animState->unk62[0] & 0xFFFF;
-            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, (u8*)animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
+            modLoadAnim(model->modAnim[modAnimIndex], modAnimIndex, (u8*)animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
         }
         anim = &animState->anims[animState->animIndexes[0]]->anim;
     } else {
@@ -622,7 +620,7 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
         if (curModanim_layered) {
             animState->unk62[0] = 1 - animState->unk62[0];
             animState->animIndexes[0] = animState->unk62[0];
-            func_80019118(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
+            modLoadAnim(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
         }
         anim = (Animation*)(&animState->anims[animState->animIndexes[0]]->anim);
     } else {
@@ -802,8 +800,6 @@ void func_8002559C(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
     }
 }
 
-Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
-
 void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3) {
     f32 var_fv0;
     s16 temp_v0;
@@ -825,7 +821,7 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
             temp_v0_2 = animState->unk62[0];
             animState->unk48[1] = 1 - temp_v0_2;
             animState->unk48[0] = temp_v0_2;
-            func_80019118(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims2[(u16)temp_v0_2], model);
+            modLoadAnim(model->modAnim[modanimIndex], modanimIndex, animState->anims2[(u16)temp_v0_2], model);
 
             animState->modAnimIdBlend = modanimIndex;
         }

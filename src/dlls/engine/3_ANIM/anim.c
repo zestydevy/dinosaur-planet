@@ -701,7 +701,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                     if ((st->unk30 != 0) && (actorModelInst->model->unk71 & 1)) {
                         func_80032B44(actor, st->unk30);
                     }
-                    func_8001B084(actorModelInst, 1.0f);
+                    mod_func_8001B084(actorModelInst, 1.0f);
                     if (st->unk20 > 0.0f) {
                         if (st->channelTotalKeys[CHANNEL_animBlendSpeed] != 0) {
                             var_fv1 = anim_channel_value(st, CHANNEL_animBlendSpeed, st->time - 1);
@@ -1617,10 +1617,10 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
                 if ((animObjModelInst->model->unk71 & 1) && ((evt->params & 0xFF) < 0xF)) {
                     blendShape = animObjModelInst->blendshapes;
                     blendShape += 2;
-                    func_8001AF04(animObjModelInst, blendShape->id, (evt->params & 0xFF) - 1, var_fv0, 2, 0);
+                    mod_func_8001AF04(animObjModelInst, blendShape->id, (evt->params & 0xFF) - 1, var_fv0, 2, 0);
                 } else {
                     blendShape = animObjModelInst->blendshapes;
-                    func_8001AF04(animObjModelInst, blendShape->id, (evt->params & 0xFF) - 1, var_fv0, 0, 0);
+                    mod_func_8001AF04(animObjModelInst, blendShape->id, (evt->params & 0xFF) - 1, var_fv0, 0, 0);
                 }
             }
         }

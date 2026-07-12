@@ -207,7 +207,7 @@ void mainInit(void) {
     tex_init();
     init_maps();
     func_8001CD00();
-    init_models();
+    modInit();
     dllInit();
     init_objects();
     diPrintfInit();

@@ -65,8 +65,8 @@ struct AssetLoadThreadMsg {
             /* 14 */ s32 unused14; //and these were params for other types?
             /* 18 */ s32 unused18;
             /* 1C */ s32 unused1C;
-            /* 20 */ s32 arg3;
-            /* 24 */ s32 arg4;
+            /* 20 */ AmapPlusAnimation* arg3;
+            /* 24 */ Model* arg4;
         } animation;
     } p; //give it a name just to shut the compiler up
     //actual size is 0x30 but that includes padding
@@ -114,7 +114,7 @@ void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 ma
 void queue_load_texture(Texture **dest, s32 id);
 void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount);
 void queue_load_model(void **dest, s32 id, s32 arg2);
-void queue_load_anim(void **dest, s16 animID, s16 modAnimID, s32 amap, s32 model);
+void queue_load_anim(void **dest, s16 animID, s16 modAnimID, AmapPlusAnimation* amap, Model* model);
 void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5);
 void func_800129E4();
 void func_80012B54(s32 param1, s32 param2);

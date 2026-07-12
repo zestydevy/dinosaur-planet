@@ -163,15 +163,15 @@ void queue_load_model(void **dest, s32 id, s32 arg2) {
 
 const char load_error[] = "UNKNOWN load request\n";
 
-void queue_load_anim(void **dest, s16 id, s16 arg2, s32 arg3, s32 arg4) {
+void queue_load_anim(void **dest, s16 id, s16 modAnimID, AmapPlusAnimation* amap, Model* model) {
     //XXX dest type
     assetLoadMsg.loadCategory     = 1;
     assetLoadMsg.loadType         = ASSET_TYPE_ANIMATION;
-    assetLoadMsg.p.animation.arg3 = arg3;
+    assetLoadMsg.p.animation.arg3 = amap;
     assetLoadMsg.p.animation.id   = id;
     assetLoadMsg.p.animation.dest = dest;
-    assetLoadMsg.p.animation.arg2 = arg2;
-    assetLoadMsg.p.animation.arg4 = arg4;
+    assetLoadMsg.p.animation.arg2 = modAnimID;
+    assetLoadMsg.p.animation.arg4 = model;
     osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
@@ -404,12 +404,12 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             *load->p.dll.dest = dllLoad(load->p.dll.idOrIdx, load->p.dll.exportCount, FALSE);
             break;
         case ASSET_TYPE_MODEL:
-            *load->p.model.dest = model_load_create_instance(load->p.model.id,
+            *load->p.model.dest = modLoadModelActual(load->p.model.id,
                 load->p.model.unkC);
             break;
         case ASSET_TYPE_ANIMATION:
-            *load->p.animation.dest = anim_load((s16)load->p.animation.id,
-                (s16)load->p.animation.arg2, (AmapPlusAnimation *) load->p.animation.arg3, (Model *) load->p.animation.arg4);
+            *load->p.animation.dest = modLoadAnimActual((s16)load->p.animation.id,
+                (s16)load->p.animation.arg2, load->p.animation.arg3, load->p.animation.arg4);
     }
     osSendMesg(&gAssetLoadThreadRecvQueue, NULL, 0);
 }

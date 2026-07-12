@@ -136,8 +136,6 @@ s32 func_80026724(Object*);
 void func_80028D90(void);
 void func_8002B410(Object *, s32);
 void update_object(Object *);
-void func_8001943C(Object *object, MtxF *mf, f32 yPrescale, f32 arg3);
-void func_8001A1D4(Model *model, AnimState *animState, s32 count);
 void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHitInfo *objHitInfo, s32 arg4, s32 arg5);
 void func_8002B5C0(Object *obj);
 s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
