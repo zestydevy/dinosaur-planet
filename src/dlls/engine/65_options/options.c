@@ -779,9 +779,9 @@ s32 options_update1(void) {
         for (i = 0; i < sCtrlCount; i++) {
             if (sCtrls[i] != NULL) {
                 if (i == selectedIdx) {
-                    gDLL_75->vtbl->set_selection_state(sCtrls[i], TRUE);
+                    gDLL_75->vtbl->set_highlight_state(sCtrls[i], TRUE);
                 } else {
-                    gDLL_75->vtbl->set_selection_state(sCtrls[i], FALSE);
+                    gDLL_75->vtbl->set_highlight_state(sCtrls[i], FALSE);
                 }
                 gDLL_75->vtbl->update(sCtrls[i]);
             }
@@ -1012,7 +1012,7 @@ static void options_goto_display_page(void) {
     sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_list(476, 278, 0, 1, sGameOptions->showInstruments, strings, 50);
     sCtrlCount++;
 
-    gDLL_75->vtbl->set_selection_state(sCtrls[0], 1);
+    gDLL_75->vtbl->set_highlight_state(sCtrls[0], TRUE);
     sRedrawFrames = 2;
 }
 
@@ -1046,7 +1046,7 @@ static void options_goto_control_page(s32 selectedItemIdx) {
     sCtrlCount++;
 
     if (sCtrls[selectedItemIdx]) {
-        gDLL_75->vtbl->set_selection_state(sCtrls[selectedItemIdx], 1);
+        gDLL_75->vtbl->set_highlight_state(sCtrls[selectedItemIdx], TRUE);
     }
 
     sRedrawFrames = 2;
@@ -1113,7 +1113,7 @@ static void options_goto_cheats_page(void) {
         0xFF, 0xD7, 0x3D
     );
 
-    gDLL_75->vtbl->set_selection_state(sCtrls[OPTIONS_CHEATS_1_CheatShown1], 1);
+    gDLL_75->vtbl->set_highlight_state(sCtrls[OPTIONS_CHEATS_1_CheatShown1], TRUE);
 
     sRedrawFrames = 2;
 }
@@ -1162,7 +1162,7 @@ static void options_goto_video_page(s32 selectedItemIdx) {
     sCtrlCount++;
 
     if (sCtrls[selectedItemIdx]) {
-        gDLL_75->vtbl->set_selection_state(sCtrls[selectedItemIdx], 1);
+        gDLL_75->vtbl->set_highlight_state(sCtrls[selectedItemIdx], TRUE);
     }
 
     sRedrawFrames = 2;
@@ -1200,7 +1200,7 @@ static void options_goto_audio_page(void) {
     sCtrls[sCtrlCount] = (FrontEndControl*)gDLL_75->vtbl->create_slider(318, 309, 0, MAX_VOLUME, sGameOptions->volumeAudio);
     sCtrlCount++;
 
-    gDLL_75->vtbl->set_selection_state(sCtrls[0], 1);
+    gDLL_75->vtbl->set_highlight_state(sCtrls[0], TRUE);
     sRedrawFrames = 2;
 }
 
@@ -1414,10 +1414,10 @@ void options_handle_action_cheats_page(s32 action, s32 selectedItemIdx) {
     gDLL_74_Picmenu->vtbl->update_flags(submenu->menuItems);
 
     if (sCheatsTopIdx == 0) {
-        gDLL_75->vtbl->set_selection_state(sCtrls[OPTIONS_CHEATS_1_CheatShown1], 1);
+        gDLL_75->vtbl->set_highlight_state(sCtrls[OPTIONS_CHEATS_1_CheatShown1], TRUE);
         gDLL_74_Picmenu->vtbl->set_selected_item(OPTIONS_CHEATS_1_CheatShown1);
     } else if (sCheatsTopIdx == CHEATS_FIRST_IDX_LAST_GROUP) {
-        gDLL_75->vtbl->set_selection_state(sCtrls[OPTIONS_CHEATS_4_CheatShown4], 1);
+        gDLL_75->vtbl->set_highlight_state(sCtrls[OPTIONS_CHEATS_4_CheatShown4], TRUE);
         gDLL_74_Picmenu->vtbl->set_selected_item(OPTIONS_CHEATS_4_CheatShown4);
     }
 

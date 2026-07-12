@@ -156,7 +156,7 @@ void frontend_update(FrontEndControl* ctrl) {
         func_800100D4(ulx, lrx, uly, lry);
     }
     
-    if (!(ctrl->flags & FRONTEND_FLAG_1_Selected)) {
+    if ((ctrl->flags & FRONTEND_FLAG_1_Highlighted) == FALSE) {
         return;
     }
 
@@ -234,16 +234,16 @@ void frontend_draw(FrontEndControl* ctrl, Gfx** gdl) {
 }
 
 // offset: 0x77C | func: 6 | export: 6
-s32 frontend_get_selection_state(FrontEndControl* ctrl) {
-    return ctrl->flags & FRONTEND_FLAG_1_Selected;
+s32 frontend_get_highlight_state(FrontEndControl* ctrl) {
+    return ctrl->flags & FRONTEND_FLAG_1_Highlighted;
 }
 
 // offset: 0x790 | func: 7 | export: 7
-void frontend_set_selection_state(FrontEndControl* slider, s32 select) {
-    if (select) {
-        slider->flags |= FRONTEND_FLAG_1_Selected;
+void frontend_set_highlight_state(FrontEndControl* slider, s32 enable) {
+    if (enable) {
+        slider->flags |= FRONTEND_FLAG_1_Highlighted;
     } else {
-        slider->flags &= ~FRONTEND_FLAG_1_Selected;
+        slider->flags &= ~FRONTEND_FLAG_1_Highlighted;
     }
 }
 
@@ -298,7 +298,7 @@ void frontend_checkbox_draw(FrontEndCheckbox* ctrl, Gfx** gdl) {
     s32 textureIdx;
     s32 opacity;
 
-    if (ctrl->flags & FRONTEND_FLAG_1_Selected) {
+    if (ctrl->flags & FRONTEND_FLAG_1_Highlighted) {
         if (ctrl->value) {
             textureIdx = FRONTEND_TEXTURE_3_Checkbox_Ticked_HL;
         } else {
@@ -332,7 +332,7 @@ void frontend_list_draw(FrontEndList* ctrl, Gfx** gdl) {
     //Print currently-displayed list item
     {
         //Different colour when selected
-        if (ctrl->flags & FRONTEND_FLAG_1_Selected) {
+        if (ctrl->flags & FRONTEND_FLAG_1_Highlighted) {
             font_window_set_text_colour(1, 0xFF, 0xD7, 0x3D, 0xFF, 0xFF);
         } else {
             font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);

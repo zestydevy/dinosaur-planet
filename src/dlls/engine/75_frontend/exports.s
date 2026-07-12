@@ -14,8 +14,8 @@ _exports:
 /*3*/ .dword frontend_free
 /*4*/ .dword frontend_update
 /*5*/ .dword frontend_draw
-/*6*/ .dword frontend_get_selection_state
-/*7*/ .dword frontend_set_selection_state
+/*6*/ .dword frontend_get_highlight_state
+/*7*/ .dword frontend_set_highlight_state
 /*8*/ .dword frontend_get_value
 /*9*/ .dword frontend_set_value
 /*10*/ .dword frontend_did_value_change

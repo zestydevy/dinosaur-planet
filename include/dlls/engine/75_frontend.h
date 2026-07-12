@@ -12,7 +12,7 @@ typedef enum {
 
 typedef enum {
     FRONTEND_FLAG_0_None = 0x0,
-    FRONTEND_FLAG_1_Selected = 0x1,         //Control is currently highlighted
+    FRONTEND_FLAG_1_Highlighted = 0x1,      //Control is currently highlighted
     FRONTEND_FLAG_2_Wrap_Value = 0x2,       //Sliders can wrap or clamp when moving past min/max values
     FRONTEND_FLAG_4_Moved_Left = 0x4,       //Lists highlight their left arrow when moving left
     FRONTEND_FLAG_8_Moved_Right = 0x8,      //Lists highlight their right arrow when moving right
@@ -76,8 +76,8 @@ DLL_INTERFACE(DLL_75) {
 /*3*/ void (*free)(FrontEndControl* ctrl);
 /*4*/ void (*update)(FrontEndControl* ctrl);
 /*5*/ void (*draw)(FrontEndControl* ctrl, Gfx** gdl);
-/*6*/ s32 (*get_selection_state)(FrontEndControl* ctrl);
-/*7*/ void (*set_selection_state)(FrontEndControl* slider, s32 select);
+/*6*/ s32 (*get_highlight_state)(FrontEndControl* ctrl);
+/*7*/ void (*set_highlight_state)(FrontEndControl* slider, s32 enable);
 /*8*/ s32 (*get_value)(FrontEndControl* ctrl);
 /*9*/ void (*set_value)(FrontEndControl* ctrl, s32 value);
 /*10*/ s32 (*did_value_change)(FrontEndControl* ctrl);
