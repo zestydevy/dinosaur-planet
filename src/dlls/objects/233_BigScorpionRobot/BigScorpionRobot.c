@@ -242,7 +242,7 @@ void BigScorpionRobot_free(Object* self, s32 onlySelf) {
     
     obj_free_object_type(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20);
@@ -297,7 +297,7 @@ static void BigScorpionRobot_ramp_down_spin_speed(BigScorpionRobot_Data* objdata
 static s32 BigScorpionRobot_state_0_idle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     BigScorpionRobot_Data* objdata = baddie->objdata;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     
     fsa->unk341 = 0;
     if (BigScorpionRobot_is_obj_in_range(self, player, (f32) baddie->unk3E2) != 0) {
@@ -490,7 +490,7 @@ static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 upd
         mainSetBits(baddie->unk39C, 1);
         dllFree(modgfx);
         if (self->setup == NULL) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
         camUseShake();

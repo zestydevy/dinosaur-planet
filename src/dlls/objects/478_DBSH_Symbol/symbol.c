@@ -212,7 +212,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
     s32 count;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     animData->unk7A = -1;
     animData->unk62 = 0;
@@ -241,7 +241,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
 
     //Find phantom Krystal
     if (objData->krystal == NULL) {
-        for (objects = get_world_objects(&index, &count); index < count; index++) {
+        for (objects = objGetObjects(&index, &count); index < count; index++) {
             objData->krystal = objects[index];
             if (objData->krystal->id == OBJ_DBSH_Krystal) {
                 break;

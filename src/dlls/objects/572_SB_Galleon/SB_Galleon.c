@@ -107,7 +107,7 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     obj_add_object_type(self, OBJTYPE_Baddie);
-    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+    objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = SB_Galleon_anim_callback;
     objdata->x2 = self->srt.transl.x;
     objdata->y2 = self->srt.transl.y;
@@ -327,7 +327,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
             break;
         case 3:
             objdata->dll = tempDll = dllLoadDeferred(DLL_ID_139, 1);
-            objects = get_world_objects(&objIndex, &objCount);
+            objects = objGetObjects(&objIndex, &objCount);
             for (i = objIndex; i < objCount; i++) {
                 if (objects[i]->id == OBJ_SB_ShipHead) {
                     objdata->shiphead = objects[i];
@@ -422,8 +422,8 @@ void SB_Galleon_func_B88(Object *self) {
     }
 
     if (objdata->unk8E != 0) {
-        player = get_player();
-        func_80000860(player, get_player(), 148, 0);
+        player = objGetPlayer();
+        func_80000860(player, objGetPlayer(), 148, 0);
         objdata->unk8E = 0;
     }
 
@@ -533,7 +533,7 @@ void SB_Galleon_func_EAC(Object *self) {
         objdata->cloudrunner = NULL;
     }
     if (objdata->cloudrunner == NULL) {
-        objects = get_world_objects(&objIndex, &objCount);
+        objects = objGetObjects(&objIndex, &objCount);
         for (i1 = objIndex; i1 < objCount; i1++) {
             if (objects[i1]->id == OBJ_SB_Cloudrunner) {
                 objdata->cloudrunner = objects[i1];

@@ -26,7 +26,7 @@ void EffectBox_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void EffectBox_setup(Object *self, EffectBox_Setup *setup, s32 reset) {
     if (self->unkDC == 0) {
-        obj_add_effect_box(self);
+        objAddEffectBox(self);
     }
     self->unkDC = 1;
     if (setup->gamebit >= 0) {
@@ -68,7 +68,7 @@ void EffectBox_control(Object *self) {
         var_fs3 = (f32) setup->unk1C;
         switch (setup->target) {
         case 0:
-            spB0 = get_player();
+            spB0 = objGetPlayer();
             if (spB0 != NULL) {
                 objList = &spB0;
                 numObjs = 1;
@@ -76,7 +76,7 @@ void EffectBox_control(Object *self) {
             }
             return;
         case 1:
-            spB0 = get_sidekick();
+            spB0 = objGetSidekick();
             if (spB0 != NULL) {
                 objList = &spB0;
                 numObjs = 1;
@@ -135,7 +135,7 @@ void EffectBox_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 
 // offset: 0x4BC | func: 4 | export: 4
 void EffectBox_free(Object *self, s32 onlySelf) {
-    obj_free_effect_box(self);
+    objFreeEffectBox(self);
 }
 
 // offset: 0x4F8 | func: 5 | export: 5

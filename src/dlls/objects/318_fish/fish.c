@@ -167,7 +167,7 @@ void fish_control(Object* self) {
     setup = (fish_Setup*)self->setup;
     objdata = self->data;
     
-    player = get_player();
+    player = objGetPlayer();
     if (objdata->unk7C == 0) {
         fish_func_84(self);
     }
@@ -640,7 +640,7 @@ static void fish_func_2150(Object *self) {
     if (self->id == OBJ_DF_Lantern) { // ????????
         mainSetBits(BIT_Gold_Nugget_LFV, 1);
     } else {
-        player = get_player();
+        player = objGetPlayer();
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
     }

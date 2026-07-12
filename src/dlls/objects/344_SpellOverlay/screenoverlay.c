@@ -98,7 +98,7 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     Camera *camera;
     
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     //Animate opacity
     if (objData->fadeSpeed != 0){
@@ -107,7 +107,7 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         
         if ((current_opacity == 0) && (objData->fadeSpeed < 0)){
             objData->fadeSpeed = 0;
-            obj_destroy_object(self); 
+            objFreeObject(self); 
         }
 
         if ((self->opacity == OBJECT_OPACITY_MAX) && (objData->fadeSpeed > 0)){

@@ -725,7 +725,7 @@ static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 updateRate) {
             obj->velocity.x = sp40;
             obj->velocity.z = sp3C;
         }
-        obj_move(obj, obj->velocity.x * updateRate, obj->velocity.y * updateRate, obj->velocity.z * updateRate);
+        objMove(obj, obj->velocity.x * updateRate, obj->velocity.y * updateRate, obj->velocity.z * updateRate);
     }
 }
 

@@ -46,7 +46,7 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
     pickup = obj->data;
     pickup->unk8 = 0;
     pickup->flags &= ~PICKUPFLAG_PickedUpThisTick;
-    player = get_player();
+    player = objGetPlayer();
     if (pickup->state == PICKUP_NotHeld) {
         // Not currently held
         pickup->state = pickup_should_pickup(obj, player, pickup);
@@ -206,7 +206,7 @@ void pickup_drop(Object* obj, Pickup* pickup) {
     Object* player;
     Object* heldObj;
 
-    player = get_player();
+    player = objGetPlayer();
     pickup->state = PICKUP_NotHeld;
 
     // Get held object

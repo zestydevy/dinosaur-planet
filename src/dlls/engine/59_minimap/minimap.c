@@ -354,8 +354,8 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
     index = 0;
     index2 = 0;
     mapID = 0;
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     if (player != NULL) {
         //Get mapID from player's coords, or from the mobile map Object they're parented to
         if (player->parent) {

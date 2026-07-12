@@ -33,8 +33,8 @@ void TrickyGuard_control(Object* self) {
         return;
     }
 
-    player = get_player();
-    tricky = get_sidekick();
+    player = objGetPlayer();
+    tricky = objGetSidekick();
     if (tricky == NULL) {
         return;
     }

@@ -37,7 +37,7 @@ void DFbarrelcreator_control(Object* self) {
     }
 
     //Create a barrel
-    barrel = (DFBarrel_Setup*)obj_alloc_setup(sizeof(DFBarrel_Setup), OBJ_DFbarrel);
+    barrel = (DFBarrel_Setup*)objAllocSetup(sizeof(DFBarrel_Setup), OBJ_DFbarrel);
     barrel->base.loadDistance = 100;
     barrel->base.fadeDistance = 80;
     barrel->base.loadFlags = 4;
@@ -45,7 +45,7 @@ void DFbarrelcreator_control(Object* self) {
     barrel->base.x = self->srt.transl.x;
     barrel->base.y = self->srt.transl.y - 30.0f;
     barrel->base.z = self->srt.transl.z;
-    obj_create((ObjSetup*)barrel, 5, self->mapID, -1, NULL);
+    objSetupObject((ObjSetup*)barrel, 5, self->mapID, -1, NULL);
 }
 
 // offset: 0x140 | func: 2 | export: 2

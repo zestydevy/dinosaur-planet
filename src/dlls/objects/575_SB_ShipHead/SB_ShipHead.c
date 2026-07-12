@@ -67,7 +67,7 @@ void SB_ShipHead_control(Object *self) {
     parentDC = parent->unkDC;
     if (parent->id == OBJ_WL_Galleon) {
         if (self->modelInstIdx != 1) {
-            obj_set_model(self, 1);
+            objSetModel(self, 1);
         }
         self->objhitInfo->unk58 &= ~1;
         if (parentDC != 10) {
@@ -79,7 +79,7 @@ void SB_ShipHead_control(Object *self) {
     }
     objdata = self->data;
     if (!objdata->cloudrunner) {
-        objects = get_world_objects(&objIndex, &objCount);
+        objects = objGetObjects(&objIndex, &objCount);
         for (i = objIndex; i < objCount; i++) {
             if (objects[i]->id == OBJ_SB_Cloudrunner) {
                 objdata->cloudrunner = objects[i];
@@ -114,7 +114,7 @@ void SB_ShipHead_control(Object *self) {
         self->unkE0 -= gUpdateRate;
     }
     if (parentDC >= 8) {
-        obj_set_model(self, 1);
+        objSetModel(self, 1);
     }
     if (parentDC == 8) {
         self->unkDC++;
@@ -130,7 +130,7 @@ void SB_ShipHead_control(Object *self) {
         camGetObjectChildPosition(self, &ox, &oy, &oz);
         self->srt.transl.y -= 50.0f;
         self->srt.transl.z += 300.0f;
-        fireballSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_FireBall);
+        fireballSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_FireBall);
         fireballSetup->loadDistance = 0xFF;
         fireballSetup->fadeDistance = 0xFF;
         fireballSetup->loadFlags = 2;
@@ -138,8 +138,8 @@ void SB_ShipHead_control(Object *self) {
         fireballSetup->x = ox;
         fireballSetup->y = oy;
         fireballSetup->z = oz;
-        fireballObj = obj_create(fireballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
-        player = get_player();
+        fireballObj = objSetupObject(fireballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        player = objGetPlayer();
         dx = player->globalPosition.x - fireballObj->srt.transl.x;
         dy = (player->globalPosition.y - 30.0f) - fireballObj->srt.transl.y;
         dz = player->globalPosition.z - fireballObj->srt.transl.z;
@@ -152,8 +152,8 @@ void SB_ShipHead_control(Object *self) {
     }
     if (sp3B == 1) {
         gDLL_6_AMSFX->vtbl->play(NULL, SOUND_17A_Galleon_Roar, 43, NULL, NULL, 0, NULL);
-        player = get_player();
-        minifireSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_MiniFire);
+        player = objGetPlayer();
+        minifireSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_MiniFire);
         minifireSetup->x = player->globalPosition.x + 100.0f;
         minifireSetup->y = rand_next(-6, 6) + player->globalPosition.y + 50.0f;
         minifireSetup->z = rand_next(-6, 6) + player->globalPosition.z + 45.0f;
@@ -161,7 +161,7 @@ void SB_ShipHead_control(Object *self) {
         minifireSetup->fadeFlags = 1;
         minifireSetup->loadDistance = 0xFF;
         minifireSetup->fadeDistance = 0xFF;
-        obj_create(minifireSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        objSetupObject(minifireSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     }
     objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     _data_0[0] = parentDC;

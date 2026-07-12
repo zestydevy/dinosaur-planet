@@ -96,7 +96,7 @@ void SHkillermushroom_control(Object* self) {
     SRT fxTransform;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objSetup = (SHkillermushroom_Setup*)self->setup;
 
     func_80026160(self);
@@ -267,7 +267,7 @@ void SHkillermushroom_control(Object* self) {
     case SHkillermushroom_STATE_9_Stunned:
         //Configure LockIcon, start stunned sound loop, and pick stun duration
         if (objData->timer <= 0.0f) {
-            func_80023BF8(self, 0x19, 0, 0, 0, 6);
+            obj_func_80023BF8(self, 0x19, 0, 0, 0, 6);
             gDLL_6_AMSFX->vtbl->play(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
             objData->timer = rand_next(240, 300);
         }
@@ -279,7 +279,7 @@ void SHkillermushroom_control(Object* self) {
         if (objData->timer <= 0.0f) {
             gDLL_13_Expgfx->vtbl->func4(self);
             objData->state = SHkillermushroom_STATE_0_Idle;
-            func_80023C6C(self);
+            obj_func_80023C6C(self);
 
             //Stop sound loop
             if (objData->soundHandle != 0) {
@@ -328,7 +328,7 @@ void SHkillermushroom_control(Object* self) {
         if (objData->timer > objData->regrowWaitDuration) {
             SHkillermushroom_reset(self, objData, TRUE);
             objData->state = SHkillermushroom_STATE_1_Regrow;
-            func_80023C6C(self);
+            obj_func_80023C6C(self);
         }
         break;
 

@@ -267,7 +267,7 @@ void dll_211_setup(Object* self, ObjSetup* setup, s32 arg2) {
     route_init(&objData->unk4DC[3]);
     route_init(&objData->unk59C);
     objData->unk4 = gDLL_29_Gplay->vtbl->get_sidekick_stats();
-    objData->unk8 = get_player();
+    objData->unk8 = objGetPlayer();
     temp_v1 = _data_EC[func_80045D58()];
     objData->unk18 = 0;
     objData->unk1B = 0;
@@ -426,13 +426,13 @@ void dll_211_control(Object* self) {
             break;
         case 5:
             objData->unk1D = 5;
-            temp_v0_2 = obj_alloc_setup(sizeof(SidekickToy_Setup), OBJ_SidekickBall);
+            temp_v0_2 = objAllocSetup(sizeof(SidekickToy_Setup), OBJ_SidekickBall);
             temp_v0_2->fadeDistance = 0x96;
             temp_v0_2->loadFlags = 2;
             temp_v0_2->x = self->globalPosition.x;
             temp_v0_2->y = self->globalPosition.y;
             temp_v0_2->z = self->globalPosition.z;
-            objData->unk28 = obj_create(temp_v0_2, 5, -1, -1, self->parent);
+            objData->unk28 = objSetupObject(temp_v0_2, 5, -1, -1, self->parent);
             dll_211_func_9024(objData, &objData->unk28->globalPosition);
             objData->unk1A = 0;
             objData->unk18 = 14;
@@ -3260,16 +3260,16 @@ static void dll_211_func_9050(Object* self, DLL211_Data* objData) {
     objData->unk4C |= 0x800;
     objData->unk0 = dllLoadDeferred(DLL_ID_178, 1);
     for (i = 0; i < 3; i++) {
-        temp_v0 = obj_alloc_setup(sizeof(FlameBlast_Setup), OBJ_flameblast);
+        temp_v0 = objAllocSetup(sizeof(FlameBlast_Setup), OBJ_flameblast);
         temp_v0->base.x = self->srt.transl.x;
         temp_v0->base.y = self->srt.transl.y;
         temp_v0->base.z = self->srt.transl.z;
         temp_v0->base.loadFlags = 2;
         temp_v0->base.byte5 = 1;
         temp_v0->timer = i * 10;
-        objData->unk5E4[i] = obj_create(&temp_v0->base, 5, self->mapID, -1, self->parent);
+        objData->unk5E4[i] = objSetupObject(&temp_v0->base, 5, self->mapID, -1, self->parent);
     }
-    temp_v0_2 = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    temp_v0_2 = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     temp_v0_2->base.loadFlags = 2;
     temp_v0_2->base.byte5 = 1;
     temp_v0_2->base.x = self->srt.transl.x;
@@ -3288,7 +3288,7 @@ static void dll_211_func_9050(Object* self, DLL211_Data* objData) {
     temp_v0_2->bank = 1;
     temp_v0_2->indexInBank = 0x4A;
     temp_v0_2->fxRate = -0x1E;
-    objData->unk5F0 = obj_create(&temp_v0_2->base, 5, self->mapID, -1, self->parent);
+    objData->unk5F0 = objSetupObject(&temp_v0_2->base, 5, self->mapID, -1, self->parent);
 }
 
 // offset: 0x9200 | func: 83
@@ -3333,8 +3333,8 @@ static void dll_211_func_940C(Object* self, DLL211_Data* objData) {
     objData->unk4C &= ~0x800;
     objData->unk4C |= 0x1000;
     dllFree(objData->unk0);
-    obj_destroy_object(objData->unk5F0);
-    for (i = 0; i < 3; i++) { obj_destroy_object(objData->unk5E4[i]); }
+    objFreeObject(objData->unk5F0);
+    for (i = 0; i < 3; i++) { objFreeObject(objData->unk5E4[i]); }
 }
 
 // offset: 0x94BC | func: 85

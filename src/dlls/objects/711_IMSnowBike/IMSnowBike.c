@@ -257,7 +257,7 @@ void dll_711_control(Object *self) {
         }
     }
 
-    player = get_player();
+    player = objGetPlayer();
     self->unkAF |= 8;
     objdata->unk39C = self->srt.transl.x;
     objdata->unk3A0 = self->srt.transl.y;
@@ -973,7 +973,7 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     }
     vec3_transform(&sp140, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
     VECTOR_SCALE(self->velocity, 1.0666667f);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (arg4 != 0) {
         spA4 = 1.0f / updateRate;
         dll_711_func_3780(self, objdata, dll27Data);
@@ -1145,7 +1145,7 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     }
     vec3_transform(&sp11C, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
     VECTOR_SCALE(self->velocity, 1.0666667f);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (arg4 != 0) {
         sp8C = (1.0f / updateRate);
         gDLL_27->vtbl->func_1E8(self, dll27Data, gUpdateRateF);

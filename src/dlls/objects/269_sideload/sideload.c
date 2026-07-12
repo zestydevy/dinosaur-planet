@@ -44,11 +44,11 @@ void sideload_control(Object* self) {
     s16 dSidekickObjIDs[] = {OBJ_Tricky, OBJ_Kyte};
     s16 gamebit;
     
-    if (get_player() && (get_sidekick() == FALSE) && (objData->loaded == FALSE) && 
+    if (objGetPlayer() && (objGetSidekick() == FALSE) && (objData->loaded == FALSE) && 
         ((gamebit = objSetup->gamebitUnlocked, gamebit == NO_GAMEBIT) || mainGetBits(gamebit))
     ) {
         objData->loaded = TRUE;
-        func_80023894(self, dSidekickObjIDs[objSetup->sidekickIndex]);
+        objLoadSidekick(self, dSidekickObjIDs[objSetup->sidekickIndex]);
     }
 }
 

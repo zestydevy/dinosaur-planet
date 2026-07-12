@@ -154,7 +154,7 @@ void dll_405_free(Object* self, s32 a1) {
     objdata = self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
     if (objdata->unk4 != NULL) {
-        obj_destroy_object(objdata->unk4);
+        objFreeObject(objdata->unk4);
     }
     objdata->unk4 = NULL;
     if (objdata->unk33 == 0) {

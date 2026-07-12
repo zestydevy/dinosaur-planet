@@ -105,7 +105,7 @@ void DRLavaControl_free(Object* self, s32 arg1) {
     DRLavaControl_Data* objData = self->data;
 
     if (objData->lfxEmitter && (arg1 == 0)) {
-        obj_destroy_object(objData->lfxEmitter);
+        objFreeObject(objData->lfxEmitter);
     }
     gDLL_13_Expgfx->vtbl->func4(self);
 }
@@ -176,7 +176,7 @@ void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objDa
     
     if (effectIndex != objData->effectIndex) {
         if (objData->lfxEmitter) {
-            obj_destroy_object(objData->lfxEmitter);
+            objFreeObject(objData->lfxEmitter);
         }
         if (effectIndex) {
             // diPrintf(" Creating LIGHT %i  x %f z %f \n", arg2, self->srt.transl.x, self->srt.transl.z);
@@ -190,7 +190,7 @@ void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objDa
 Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
     LFXEmitter_Setup* setup;
 
-    setup = (LFXEmitter_Setup*)obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    setup = (LFXEmitter_Setup*)objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     
     setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     setup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
@@ -210,7 +210,7 @@ Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
     setup->unk24 = 1;
     setup->unk25 = 50;
     
-    return obj_create((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }
 
 // offset: 0x720 | func: 10

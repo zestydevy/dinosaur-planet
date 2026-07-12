@@ -97,7 +97,7 @@ void scarab_control(Object* self) {
     Unk80027934 sp4C;
     
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     //Handle flags
     if (objData->flags & Scarab_FLAG_Wait_for_Message) {
@@ -118,7 +118,7 @@ void scarab_control(Object* self) {
         objData->destructDelayTimer -= gUpdateRate;
         if (objData->destructDelayTimer <= 0) {
             objData->destructDelayTimer = 0;
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         return;
     }    

@@ -256,7 +256,7 @@ static void WL_LevelControl_setup2_tick(Object* self) {
     Object* player;
     Object* foodbag;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Set up the visit (only runs once)
     if (dInitSpirit1Visit && (mainGetBits(BIT_Play_Seq_0180_Release_Spirit_1) == FALSE)) {
@@ -264,7 +264,7 @@ static void WL_LevelControl_setup2_tick(Object* self) {
         mainSetBits(BIT_Spell_Projectile, 1);
         mainSetBits(BIT_Spell_Forcefield, 1);
 
-        player = get_player(); //@bug: already assigned
+        player = objGetPlayer(); //@bug: already assigned
 
         mainSetBits(BIT_FC, 1);
 
@@ -320,7 +320,7 @@ static void WL_LevelControl_setup3_tick(Object* self) {
         mainSetBits(BIT_Spell_Forcefield, 1);
 
         //Restore some magic and make sure the player has the 2nd Spirit
-        player = get_player();
+        player = objGetPlayer();
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_2, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
@@ -358,7 +358,7 @@ static void WL_LevelControl_setup4_tick(Object* self) {
         mainSetBits(BIT_Set_During_Spirit_Release_1, 1);
 
         //Restore some magic and make sure the player has the 3rd Spirit
-        player = get_player();
+        player = objGetPlayer();
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_3, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
@@ -419,7 +419,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
     
     count = 0;
     distance = 10000.0f;
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
 
     //Set up the visit (only runs once)
@@ -451,7 +451,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
         guardClaw = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
         if (guardClaw != NULL) {
             //@bug: may potentially delete a Skeetla instead, since they're also objType4
-            obj_destroy_object(guardClaw);
+            objFreeObject(guardClaw);
         }
 
         objData->timer = 30;
@@ -465,7 +465,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
             if ((someObjsetup->uID == 0x296E) ||    //SharpClaw
                 (someObjsetup->uID == 0x296F)       //GuardClaw
             ) {
-                obj_destroy_object(objects[i]);
+                objFreeObject(objects[i]);
             }
         }
         mainSetBits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws, 0);
@@ -520,7 +520,7 @@ static void WL_LevelControl_setup6_tick(Object* self) {
     Object* player;
     Object* foodbag;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Set up the visit (only runs once)
     if (dInitSpirit6Visit && (mainGetBits(BIT_Play_Seq_020D) == FALSE)) {
@@ -563,7 +563,7 @@ static void WL_LevelControl_setup7_tick(Object* self) {
     WL_LevelControl_Data* objData;
     Object* player;
 
-    get_player();
+    objGetPlayer();
     objData = (WL_LevelControl_Data*)self->data;
 
     //Set up the visit (only runs once)
@@ -573,7 +573,7 @@ static void WL_LevelControl_setup7_tick(Object* self) {
         mainSetBits(BIT_Spell_Forcefield, 1);
 
         //Restore some magic and make sure the player has the 7th Spirit
-        player = get_player();
+        player = objGetPlayer();
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_7, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 

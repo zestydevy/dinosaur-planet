@@ -88,7 +88,7 @@ void CCSH_Shrine_control(Object* self) {
     f32 sp2C;
     s16 volume;
     
-    player = get_player();
+    player = objGetPlayer();
     dist = 1000.0f;
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
@@ -209,7 +209,7 @@ void CCSH_Shrine_control(Object* self) {
             dist = 10000.0f;
             obj = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &dist);
             if (obj != NULL) {
-                obj_destroy_object(obj);
+                objFreeObject(obj);
             }
             objdata->unkF = 0;
             objdata->unk2 = 0x190;
@@ -229,7 +229,7 @@ void CCSH_Shrine_control(Object* self) {
             dist = 10000.0f;
             obj = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &dist);
             if (obj != NULL) {
-                obj_destroy_object(obj);
+                objFreeObject(obj);
             }
             if (mainGetBits(BIT_1CE) != 0) {
                 objdata->unk8 = 1;

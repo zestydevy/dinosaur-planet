@@ -298,7 +298,7 @@ s32 BWlog_vehicle_get_mount_side(Object *self) {
     f32 temp2;
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     if (player != NULL) {
         //Transform a unit vector (along Z) into the log's local coordinate space
         srt.yaw = self->srt.yaw + M_90_DEGREES;
@@ -374,15 +374,15 @@ s32 BWlog_vehicle_get_mount_state(Object *self) {
 
 // offset: 0xD18 | func: 14 | export: 14
 void BWlog_vehicle_set_mount_state(Object *self, s32 state) {
-    Object *player = get_player();
+    Object *player = objGetPlayer();
     BWlog_Data *objdata = (BWlog_Data*)self->data;
 
     if (state != VEHICLE_NoRider) {
-        obj_clear_map_id(self);
+        objClearMapID(self);
         ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
         gDLL_2_Camera->vtbl->change_mode(0, 0x2B);
     } else {
-        obj_infer_map_id(self);
+        objInferMapID(self);
         ((DLL_210_Player*)player->dll)->vtbl->func29(player, 1);
         gDLL_2_Camera->vtbl->change_mode(0, 1);
     }

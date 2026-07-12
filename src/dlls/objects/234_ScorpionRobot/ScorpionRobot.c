@@ -133,7 +133,7 @@ void ScorpionRobot_control(Object* self) {
     Baddie* baddie = self->data;
     ScorpionRobot_Data* objdata = baddie->objdata;
     s32 var_v1;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     f32 sp70[3];
     SRT hitSRT;
     s32 sp54;
@@ -233,7 +233,7 @@ void ScorpionRobot_free(Object* self, s32 onlySelf) {
     
     obj_free_object_type(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20);
@@ -302,7 +302,7 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
     f32 temp;
     f32 temp_fs0;
     f32 temp_fa1;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     
     fsa->unk341 = 0;
     if (objdata->enteredState) {
@@ -357,7 +357,7 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (ScorpionRobot_is_obj_in_range(self, player, (f32) baddie->unk3E2) != 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_2_Unfold);
         objdata->enteredState = 1;
@@ -371,7 +371,7 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
 static s32 ScorpionRobot_state_1_wait_for_player(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     ScorpionRobot_Data* objdata = baddie->objdata;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     
     fsa->unk341 = 0;
     if (ScorpionRobot_is_obj_in_range(self, player, (f32) baddie->unk3E2) != 0) {
@@ -403,7 +403,7 @@ static s32 ScorpionRobot_state_2_unfold(Object* self, ObjFSA_Data* fsa, f32 upda
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_0_Unfold) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_3_Attacking);
         objdata->enteredState = 1;
@@ -432,7 +432,7 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (objdata->animFinished) {
         objAnimSet(self, SCORP_ROBO_MODANIM_0_Unfold, 1.0f, 0);
         objdata->animDelta = 0.0f;
@@ -499,7 +499,7 @@ static s32 ScorpionRobot_state_4_fold(Object* self, ObjFSA_Data* fsa, f32 update
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_2_Fold) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_0_Spinning);
         objdata->enteredState = 1;
@@ -547,7 +547,7 @@ static s32 ScorpionRobot_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updat
     self->velocity.z *= 0.97f;
     fsa->flags |= OBJSTATE_PRINT_DISABLED;
     self->srt.pitch -= (self->srt.pitch >> 2);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_5_Die) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_7_Dead);
         objdata->enteredState = 1;
@@ -570,7 +570,7 @@ static s32 ScorpionRobot_state_7_dead(Object* self, ObjFSA_Data* fsa, f32 update
         baddie->unk3B4 = 0;
         mainSetBits(baddie->unk39C, 1);
         if (self->setup == NULL) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         // Tell player to break z-lock
         obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);

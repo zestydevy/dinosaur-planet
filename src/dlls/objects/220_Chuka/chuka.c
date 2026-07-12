@@ -116,7 +116,7 @@ void dll_220_control(Object* self) {
         texAnim->frame = 0;
     }
     
-    player = get_player();
+    player = objGetPlayer();
     dx = player->srt.transl.f[0] - self->srt.transl.f[0];
     dz = player->srt.transl.f[2] - self->srt.transl.f[2];
     distance2D = sqrtf(SQ(dx) + SQ(dz));
@@ -200,17 +200,17 @@ static void dll_220_func_778(Object* self) {
     Object* player;
 
     objdata = self->data;
-    temp_v0 = obj_alloc_setup(0x24, OBJ_ChukaChuck);
+    temp_v0 = objAllocSetup(0x24, OBJ_ChukaChuck);
     temp_v0->x = self->srt.transl.f[0];
     temp_v0->y = self->srt.transl.f[1];
     temp_v0->z = self->srt.transl.f[2];
     temp_v0->loadFlags = 2;
     temp_v0->byte5 = 4;
     temp_v0->fadeDistance = 0xFF;
-    temp_v0_2 = obj_create(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);;
+    temp_v0_2 = objSetupObject(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);;
     if (temp_v0_2 != NULL) {
         sp2C = temp_v0_2;
-        player = get_player();
+        player = objGetPlayer();
         sp2C->velocity.f[0] = (player->srt.transl.f[0] - self->srt.transl.f[0]) / 42.0f;
         sp2C->velocity.f[1] = ((player->srt.transl.f[1] + objdata->unkE) - self->srt.transl.f[1]) / 42.0f;
         sp2C->velocity.f[2] = (player->srt.transl.f[2] - self->srt.transl.f[2]) / 42.0f;

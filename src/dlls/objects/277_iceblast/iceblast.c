@@ -37,7 +37,7 @@ void iceblast_control(Object* self) {
     Iceblast_Data* objdata;
     SRT transform;
 
-    player = get_player();
+    player = objGetPlayer();
     objdata = self->data;
     if (!player) {
         return;

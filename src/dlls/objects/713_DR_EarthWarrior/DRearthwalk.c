@@ -239,7 +239,7 @@ void DRearthwalk_control(Object* self) {
     objdata = self->data;
     fsa = self->data;
     sp4C = 1;
-    player = get_player();
+    player = objGetPlayer();
     objdata->unkA52 = 5;
     diPrintf(" EARTHWALK ENERGY : %i ", objdata->energy);
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
@@ -338,7 +338,7 @@ void DRearthwalk_control(Object* self) {
 
 // offset: 0xABC | func: 3
 static void DRearthwalk_func_ABC(Object* self) {
-    if (vec3_distance_xz(&get_player()->globalPosition, &self->globalPosition) > 600.0f) {
+    if (vec3_distance_xz(&objGetPlayer()->globalPosition, &self->globalPosition) > 600.0f) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_DRAGON_ROCK_BOTTOM, 2, 0);
     }
 }
@@ -361,7 +361,7 @@ static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
 
     sp4C = 1;
     sp30 = 12.0f;
-    temp_v1 = get_player();
+    temp_v1 = objGetPlayer();
     if (arg2 != -1) {
         sp50 = (arg2 + 1) == gUpdateRate;
     } else {
@@ -453,7 +453,7 @@ void DRearthwalk_update(Object* self) {
     if (fsa->animState != 6) {
         dmgType = func_80025F40(self, &hitBy, NULL, NULL);
         if (dmgType != 0) {
-            if ((dmgType == Damage_Type_Flame_Command) || (get_player() == hitBy) || (hitBy->id == OBJ_sword)) {
+            if ((dmgType == Damage_Type_Flame_Command) || (objGetPlayer() == hitBy) || (hitBy->id == OBJ_sword)) {
                 return;
             }
             func_80034B54(self, &objdata->unk394, _data_18[rand_next(0, 2)], 1);

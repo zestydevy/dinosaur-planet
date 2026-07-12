@@ -79,7 +79,7 @@ void WCTrex_setup(Object* self, ObjSetup* setup, s32 reset) {
 void WCTrex_control(Object* self) {
     WCTrex_Data* objdata = self->data;
 
-    objdata->playerDist = vec3_distance_xz(&self->globalPosition, &get_player()->globalPosition);
+    objdata->playerDist = vec3_distance_xz(&self->globalPosition, &objGetPlayer()->globalPosition);
     objdata->fsa.flags |= OBJFSA_FLAG_2000000;
     gDLL_18_objfsa->vtbl->tick(self, &objdata->fsa, gUpdateRateF, gUpdateRateF, bss_0, bss_10);
     if (objdata->flags & 1) {
@@ -173,7 +173,7 @@ static s32 WCTrex_func_608(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
 // offset: 0x728 | func: 12 | anim state 3
 static s32 WCTrex_func_728(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     s32 angle;
     f32 xDiff, zDiff;
 

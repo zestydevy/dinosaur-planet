@@ -87,7 +87,7 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1314(self, (DIMCannonBall_Setup*)objSetup);
     } else {
-        obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+        objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
         objData = self->data;
         self->unkAF |= 8;
         self->animCallback = dll_537_func_A94;
@@ -126,7 +126,7 @@ void dll_537_control(Object* self) {
     u32 var_v0;
 
     objSetup = (DLL537_Setup*)self->setup;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1430(self);
@@ -160,7 +160,7 @@ void dll_537_control(Object* self) {
     if ((var_v0 = objData->unk26)) {
         objData->unk0 = sidekick;
     } else {
-        player = get_player();
+        player = objGetPlayer();
         if (((DLL_Unknown*)player->dll)->vtbl->func[7].withOneArgS32(player)) {
             objData->unk0 = NULL;
         } else {
@@ -222,7 +222,7 @@ void dll_537_control(Object* self) {
                 
                 objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
                 if ((objData->unk10 < (f32) SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
-                    sidekick = get_sidekick();
+                    sidekick = objGetSidekick();
                     if (sidekick != NULL) {
                         ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
                     }
@@ -254,7 +254,7 @@ void dll_537_control(Object* self) {
         break;
     case 2:
         if ((objData->unk10 < SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
-            sidekick = get_sidekick();
+            sidekick = objGetSidekick();
             if (sidekick != NULL) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
             }
@@ -537,7 +537,7 @@ void dll_537_func_1150(Object* self) {
     if (objData->unk25 && (objData->unk20 <= 0)) {
         angle = func_80034804(self, 0);
         
-        shotSetup = (DIMCannonBall_Setup*)obj_alloc_setup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
+        shotSetup = (DIMCannonBall_Setup*)objAllocSetup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
         shotSetup->base.loadFlags = objSetup->base.loadFlags;
         shotSetup->base.byte6 = objSetup->base.byte6;
         shotSetup->base.byte5 = objSetup->base.byte5;
@@ -549,7 +549,7 @@ void dll_537_func_1150(Object* self) {
         shotSetup->unk1A = fsin16_precise(*angle) * 50.0f;
         shotSetup->unk1C = fcos16_precise(*angle) * 50.0f;
         
-        shot = obj_create((ObjSetup*)shotSetup, 5, self->mapID, -1, NULL);
+        shot = objSetupObject((ObjSetup*)shotSetup, 5, self->mapID, -1, NULL);
         shot->unkC4 = self;
         
         objData->unk25 = 0;
@@ -606,25 +606,25 @@ void dll_537_func_1430(Object* self) {
     Unk_Data* objData;
     
     self->velocity.y += -0.022f * gUpdateRateF;
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
 
     objHits = self->objhitInfo;
     if (objHits != NULL) {
         func_80026128(self, 5, 1, 0);
         if ((objHits->unk48 != NULL) && (objHits->unk48 != self->unkC4)) {
             dll_537_func_16AC(self);
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
     }
     
     if (self->objhitInfo->unk9D != 0) {
         dll_537_func_16AC(self);
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     self->unkDC += gUpdateRate;
     if (self->unkDC > 1200) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     objData = self->data;
@@ -650,7 +650,7 @@ void dll_537_func_16AC(Object* self) {
 
     objData = self->data;
     
-    explosion = (DIMExplosion_Setup*)obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+    explosion = (DIMExplosion_Setup*)objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
     explosion->base.loadFlags = objData->unk4; //Is objData storing an objSetup here? The offsets match as it's setting up the explosion's objSetup
     explosion->base.byte6 = objData->unk6;
     explosion->base.byte5 = objData->unk5;
@@ -658,5 +658,5 @@ void dll_537_func_16AC(Object* self) {
     explosion->base.x = self->srt.transl.x;
     explosion->base.y = self->srt.transl.y;
     explosion->base.z = self->srt.transl.z;
-    obj_create((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
+    objSetupObject((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
 }

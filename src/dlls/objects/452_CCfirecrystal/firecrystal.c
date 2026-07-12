@@ -112,7 +112,7 @@ void CCfirecrystal_control(Object* self) {
 
             //Have the player scoop up the item, and play a tutorial cutscene if needed
             obj_send_mesg(
-                get_player(), 
+                objGetPlayer(), 
                 0x7000A, 
                 self, 
                 (void*)BIT_Tutorial_Fire_Crystal
@@ -144,7 +144,7 @@ void CCfirecrystal_free(Object* self, s32 arg1) {
     if (arg1 == 0){
         for (index = 0; index < 4; index++){
             if (objData->flameObjects[index] != NULL) {
-                obj_destroy_object(objData->flameObjects[index]);
+                objFreeObject(objData->flameObjects[index]);
                 objData->flameObjects[index] = NULL;
             }
         }
@@ -179,7 +179,7 @@ Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scro
 
     objSetup = (CCfirecrystal_Setup*)self->setup;
 
-    flameSetup = obj_alloc_setup(sizeof(CCfirecrystalin_Setup), OBJ_CCfirecrystalin);
+    flameSetup = objAllocSetup(sizeof(CCfirecrystalin_Setup), OBJ_CCfirecrystalin);
     flameSetup->base.x = objSetup->base.x;
     flameSetup->base.y = objSetup->base.y;
     flameSetup->base.z = objSetup->base.z;
@@ -191,7 +191,7 @@ Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scro
     flameSetup->rotateSpeed = rotateSpeed; 
     flameSetup->yaw = yaw;
     flameSetup->scrollSpeed = scrollSpeed;
-    return obj_create((ObjSetup*)flameSetup, 5, -1, -1, self->parent);
+    return objSetupObject((ObjSetup*)flameSetup, 5, -1, -1, self->parent);
 }
 
 // offset: 0x614 | func: 8

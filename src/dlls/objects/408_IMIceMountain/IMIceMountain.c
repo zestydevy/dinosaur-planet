@@ -36,7 +36,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case IM_Act1_Rescuing_Tricky:
-        player = get_player();
+        player = objGetPlayer();
         if (player && (vec3_distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
             objdata->state = STATE_0;
             break;
@@ -234,7 +234,7 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
     if (mainGetBits(BIT_IM_Race_Ended)) {
         mainSetBits(BIT_IM_Race_Ended, 0);
         mainSetBits(BIT_IM_Race_Started, 0);
-        player = get_player();
+        player = objGetPlayer();
         snowbike = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
         if (snowbike) {
             racePosition = ((DLL_IVehicle*)snowbike->dll)->vtbl->get_race_position(snowbike);

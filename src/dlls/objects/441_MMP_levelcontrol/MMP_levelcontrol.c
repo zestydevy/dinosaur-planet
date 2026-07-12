@@ -26,7 +26,7 @@ void MMP_levelcontrol_control(Object *self) {
     Object *player;
 
     if (self->unkDC != 0) {
-        player = get_player();
+        player = objGetPlayer();
         gDLL_6_AMSFX->vtbl->water_falls_set_flags(0x10);
         func_80000860(self, player, 0x13A, 0);
         func_80000860(self, player, 0x138, 0);
@@ -69,7 +69,7 @@ int MMP_levelcontrol_anim_callback(Object *self, Object *animObj, AnimObj_Data *
     s32 i;
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     animObjData->unk62 = 0;
     for (i = 0; i < animObjData->messageCount; i++) {
         switch (animObjData->messages[i]) {

@@ -58,7 +58,7 @@ void GP_LevelControl_control(Object *self) {
     Object *player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     if (objdata->mapID != MAP_GOLDEN_PLAINS) {
         if (map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z) == MAP_GOLDEN_PLAINS) {
@@ -103,8 +103,8 @@ void GP_LevelControl_control(Object *self) {
 
     // trigger the jetbike cutscene?
     if (gDLL_29_Gplay->vtbl->get_act(MAP_GOLDEN_PLAINS) == 2) {
-        obj = func_800211B4(0x35138);
-        obj2 = func_800211B4(0x3043B);
+        obj = objGetObjectByUID(0x35138);
+        obj2 = objGetObjectByUID(0x3043B);
         if (obj && obj2 && vec3_distance_squared(&obj->globalPosition, &obj2->globalPosition) < 300.0f) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 3, 1);
             mainSetBits(BIT_GP_Sharpclaw_Jetbike_Cutscene1, 1);
@@ -152,7 +152,7 @@ void GP_LevelControl_func_4C8(Object *self) {
 void GP_LevelControl_func_58C(Object *self, s32 arg1) {
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     func_80000860(self, player, 0x155, 0);
     func_80000860(self, player, 0x1E5, 0);
     func_80000860(self, player, 0x1E4, 0);

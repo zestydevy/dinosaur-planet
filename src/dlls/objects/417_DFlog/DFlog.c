@@ -184,7 +184,7 @@ s32 dll_417_func_490(Object *self) {
     f32 temp2;
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     if (player != NULL) {
         srt.yaw = self->srt.yaw + M_90_DEGREES;
         srt.pitch = self->srt.pitch;
@@ -271,7 +271,7 @@ void dll_417_func_86C(Object *self, s32 a1) {
     DFlog_Data *objdata = (DFlog_Data*)self->data;
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     objdata->unk4EC = a1;
     if (a1 != 0) {
         ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
@@ -603,7 +603,7 @@ static void dll_417_func_E8C(Object* self) {
     }
     objdata->unk4EE = temp_s2;
     if ((objdata->unk4EC == 2) && (sp90[0] != 0) && (sp90[1] != 0)) {
-        temp_a0 = get_player()->linkedObject;
+        temp_a0 = objGetPlayer()->linkedObject;
         if (temp_a0 != NULL) {
             ((DLL_Unknown*)temp_a0->dll)->vtbl->func[17].withThreeArgs((s32)temp_a0, (s32)&spAC, (s32)&spA0);
             sp9C = (spAC.y - spD0) / (spAC.y - spA0.y);

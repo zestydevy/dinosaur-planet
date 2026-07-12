@@ -41,7 +41,7 @@ void SHtricky_control(Object *self) {
     Object *sidekick;
 
     objdata = (SHtricky_Data*)self->data;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
 
     switch (objdata->unk0) {
     case 0:

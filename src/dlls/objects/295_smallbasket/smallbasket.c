@@ -153,7 +153,7 @@ void smallbasket_control(Object* self) {
     ObjFSA_Data* playerFSA;
     f32 sp40;
 
-    player = get_player();
+    player = objGetPlayer();
     objSetup = (SmallBasket_Setup*)self->setup;
 
     sp40 = 1.0f;
@@ -585,22 +585,22 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
         
         switch (type) {
         case SmallBasket_ITEM_Scorpion:
-            scorpionSetup = (Scorpion_Setup*)obj_alloc_setup(sizeof(Scorpion_Setup), OBJ_Scorpion);
+            scorpionSetup = (Scorpion_Setup*)objAllocSetup(sizeof(Scorpion_Setup), OBJ_Scorpion);
             scorpionSetup->unk18 = rand_next(-0x7F, 0x7E);
             scorpionSetup->base.x = rand_next(-10, 10) + self->srt.transl.x;
             scorpionSetup->base.y = self->srt.transl.y;
             scorpionSetup->base.z = rand_next(-10, 10) + self->srt.transl.z;
             scorpionSetup->unk1A = 49;
             scorpionSetup->unk19 = 4;
-            obj_create((ObjSetup*)scorpionSetup, 5, self->mapID, -1, self->parent);
+            objSetupObject((ObjSetup*)scorpionSetup, 5, self->mapID, -1, self->parent);
             break;
         case SmallBasket_ITEM_Scarab_Green:
-            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Green_scarab);
+            scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Green_scarab);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
             scarabSetup->lifetime = 400;
-            obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
+            obj = objSetupObject((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
             
             if (onGround) {
                 obj->velocity.f[0] = sVec.x * 3;
@@ -636,13 +636,13 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Red:
-            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Red_scarab);
+            scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Red_scarab);
             scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
             scarabSetup->lifetime = 400;
-            obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
+            obj = objSetupObject((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
             if (onGround != 0) {
                 obj->velocity.f[0] = sVec.x * 3;
                 obj->velocity.f[1] = sVec.y * 4;
@@ -677,13 +677,13 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Gold:
-            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
+            scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
             scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
             scarabSetup->lifetime = 2000;
-            obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
+            obj = objSetupObject((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
 
             if (onGround != 0) {
                 obj->velocity.f[0] = sVec.x * 3;
@@ -719,13 +719,13 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Rainbow:
-            scarabSetup = (Scarab_Setup*)obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
+            scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
             scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
             scarabSetup->lifetime = 800;
-            obj = obj_create((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
+            obj = objSetupObject((ObjSetup*)scarabSetup, 5, self->mapID, -1, self->parent);
             
             if (onGround) {
                 obj->velocity.f[0] = sVec.x * 3;
@@ -763,9 +763,9 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
         case SmallBasket_ITEM_Energy_Egg:
         case SmallBasket_ITEM_Apple:
             if (objData->storedItemType == SmallBasket_ITEM_Energy_Egg) {
-                foodSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_meatPickup);
+                foodSetup = (Collectable_Setup*)objAllocSetup(sizeof(Collectable_Setup), OBJ_meatPickup);
             } else {
-                foodSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_applePickup);
+                foodSetup = (Collectable_Setup*)objAllocSetup(sizeof(Collectable_Setup), OBJ_applePickup);
             }
             foodSetup->objHitsValue = 20;
             foodSetup->gamebitCount = NO_GAMEBIT;
@@ -781,7 +781,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             }
             foodSetup->gamebitSecondary = NO_GAMEBIT;
             
-            obj = obj_create((ObjSetup*)foodSetup, 5, self->mapID, -1, self->parent);
+            obj = objSetupObject((ObjSetup*)foodSetup, 5, self->mapID, -1, self->parent);
             if (onGround != 0) {
                 obj->velocity.f[0] = sVec.x * 3;
                 obj->velocity.f[1] = sVec.y * 4;

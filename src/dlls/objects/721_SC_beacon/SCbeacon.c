@@ -68,7 +68,7 @@ void SCbeacon_control(Object* self) {
 
     objData = self->data;
     objSetup = (SCbeacon_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
     
     playerIsNearby = (vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition) <= SQ(objSetup->playerRange));
     
@@ -103,7 +103,7 @@ void SCbeacon_control(Object* self) {
         }
         /* fallthrough */
     case SCbeacon_STATE_Twigs_in_Bowl:
-        sidekick = get_sidekick();
+        sidekick = objGetSidekick();
         if (sidekick && (self->unkAF & ARROW_FLAG_4_Highlighted)) {
             //Show Flame command option
             ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
@@ -115,7 +115,7 @@ void SCbeacon_control(Object* self) {
         }
         break;
     case SCbeacon_STATE_Lighting:
-        sidekick = get_sidekick();
+        sidekick = objGetSidekick();
         if (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= 2500.0f) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, 2, -1, NULL); //create smoke
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, 2, -1, NULL); //create embers
@@ -281,7 +281,7 @@ int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animDat
     Object* sidekick;
     SCbeacon_Setup* objSetup;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     objSetup = (SCbeacon_Setup*)self->setup;
     
@@ -295,7 +295,7 @@ int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animDat
 
     switch (objData->state) {
     case SCbeacon_STATE_Lighting:
-        sidekick = get_sidekick();
+        sidekick = objGetSidekick();
         if (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= 2500.0f) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, 2, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, 2, -1, NULL);

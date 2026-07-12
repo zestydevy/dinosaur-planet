@@ -103,7 +103,7 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
 
     objdata = self->data;
     conditionGamebitValue = 1;
-    player = get_player();
+    player = objGetPlayer();
 
     if (player != NULL) {
         if (objdata->conditionGamebit != -1) {

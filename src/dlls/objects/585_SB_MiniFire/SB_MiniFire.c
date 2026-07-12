@@ -74,7 +74,7 @@ void SB_MiniFire_control(Object *self) {
     self->srt.pitch += gUpdateRate * 0x12C;
     self->unkDC -= gUpdateRate;
     if (self->unkDC < 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 

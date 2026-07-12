@@ -159,7 +159,7 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
 
         //Hide self and stop updating after Illusion Spell used
         if (objData->finished) {
-            obj_free_tick(self);
+            objDisable(self);
             self->srt.flags |= OBJFLAG_INVISIBLE;
         }
 
@@ -309,7 +309,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
     s32 i;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objSetup = (DR_NPC_Setup*)self->setup;
 
     func_8002674C(self);
@@ -318,7 +318,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
     //GuardClaw sequence subevents
     for (i = 0; i < animData->messageCount; i++) {
         if ((animData->messages[i] == 1) && (objSetup->characterType != DR_NPC_SharpClaw)) {
-            obj_free_tick(self);
+            objDisable(self);
             func_800267A4(self);
             self->srt.flags |= OBJFLAG_INVISIBLE;
         }
@@ -355,7 +355,7 @@ s32 DR_NPC_sharpclaw_behaviour(Object* self) {
     Object* player;
     s32 foodGamebit;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Talking to the SharpClaw
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
@@ -388,8 +388,8 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
     Object* sidekick;
     DR_NPC_Data* objData;
 
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     objData = self->data;
 
     //Return TRUE when Illusion Spell is used

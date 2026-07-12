@@ -41,7 +41,7 @@ void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         sDelayTimer--;
     } else {
         if (sAutoReverseTimer >= 180.0f) {
-            player = get_player();
+            player = objGetPlayer();
             if (player == NULL || (player->stateFlags & OBJSTATE_IN_SEQ) == 0) {
                 gDLL_28_ScreenFade->vtbl->fade_reversed(30, SCREEN_FADE_BLACK);
                 sAutoReverseTimer = 0.0f;

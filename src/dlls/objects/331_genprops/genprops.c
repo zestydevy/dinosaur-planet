@@ -274,7 +274,7 @@ void dll_331_control(Object* self) {
     GenProps_Data* objData2;
     Camera* camera;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     camera = camGet();
     objSetup = (GenProps_Setup*)self->setup;
@@ -293,10 +293,10 @@ void dll_331_control(Object* self) {
         if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
             obj_send_mesg(player, 0x60004, self, (void*)1);
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         if (self->unkE0 <= 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         return;
     case OBJ_VFP_PowerBolt: //0x549
@@ -308,10 +308,10 @@ void dll_331_control(Object* self) {
         if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
             obj_send_mesg(player, 0x60004, self, (void*)1);
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         if ((self->unkE0 <= 0) != 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         break;
     case OBJ_DFP_blockwall: //0x4bf
@@ -422,7 +422,7 @@ void dll_331_control(Object* self) {
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
             objData->vineHealth--;
             if (objData->vineHealth < 0) {
-                obj_destroy_object(self);
+                objFreeObject(self);
             }
         }
         //Print debug info about object's purpose
@@ -437,7 +437,7 @@ void dll_331_control(Object* self) {
             objData->vineHealth--;
             if (objData->vineHealth < 0) {
                 mainSetBits(objData->gamebitA, 1);
-                obj_destroy_object(self);
+                objFreeObject(self);
             }
         }
         //Print debug info about object's purpose
@@ -494,7 +494,7 @@ void dll_331_control(Object* self) {
             }
         }
         if (objData->speed <= 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         break;
     case OBJ_SB_Galleon: //0x322
@@ -508,7 +508,7 @@ void dll_331_control(Object* self) {
         objData->roll += objData->unk24 * 3.0f;
         break;
     case 133: //unknown deleted object (0x85)
-        player = get_player();
+        player = objGetPlayer();
         if (player != NULL) {
             dx = player->globalPosition.f[0] - self->globalPosition.f[0];
             dz = player->globalPosition.f[2] - self->globalPosition.f[2];
@@ -542,7 +542,7 @@ void dll_331_control(Object* self) {
         }
         break;
     case 134: //unknown deleted object (0x86)
-        player = get_player();
+        player = objGetPlayer();
         if (player != NULL) {
             dx = player->globalPosition.f[0] - self->globalPosition.f[0];
             dz = player->globalPosition.f[2] - self->globalPosition.f[2];
@@ -581,7 +581,7 @@ void dll_331_control(Object* self) {
         break;
     case OBJ_SB_Lamp: //0x125
         self->srt.roll = -camera->srt.roll * 1.5;
-        player = get_player();
+        player = objGetPlayer();
         dx = player->globalPosition.x - self->globalPosition.x;
         dz = player->globalPosition.z - self->globalPosition.z;
         dy = player->globalPosition.y - self->globalPosition.y;

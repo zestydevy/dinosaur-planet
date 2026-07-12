@@ -117,7 +117,7 @@ void dll_593_func_8E4(void) {
 static void dll_593_func_8EC(Object* arg0) {
     DeadDino_Setup* setup;
 
-    setup = obj_alloc_setup(sizeof(DeadDino_Setup), OBJ_MagicDustMid);
+    setup = objAllocSetup(sizeof(DeadDino_Setup), OBJ_MagicDustMid);
     setup->unk1A = 0x14;
     setup->unk2C = -1;
     setup->unk1C = -1;
@@ -130,5 +130,5 @@ static void dll_593_func_8EC(Object* arg0) {
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.objId = OBJ_MagicDustMid;
-    obj_create((ObjSetup*)setup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, (s32) arg0->mapID, -1, arg0->parent);
+    objSetupObject((ObjSetup*)setup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, (s32) arg0->mapID, -1, arg0->parent);
 }

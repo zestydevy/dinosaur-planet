@@ -166,7 +166,7 @@ void SCcollectables_control(Object* self) {
     }
     
     //Handle player pressing A when arrow over collectable
-    player = get_player();
+    player = objGetPlayer();
     if (player) {
         collectableDef = self->def->collectableDef;
         if (!collectableDef) {
@@ -295,7 +295,7 @@ void SCcollectables_handle_motion(Object* self, u8 alreadyOnGround) {
         }
     }
     
-    obj_move(self, 0.0f, self->velocity.y * gUpdateRateF, 0.0f);
+    objMove(self, 0.0f, self->velocity.y * gUpdateRateF, 0.0f);
 }
 
 // offset: 0xA2C | func: 8

@@ -72,7 +72,7 @@ void WMwallpower_control(Object* self) {
     s16 i;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (player == NULL) {
         return;
     }

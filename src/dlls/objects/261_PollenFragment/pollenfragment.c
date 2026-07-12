@@ -33,7 +33,7 @@ void PollenFragment_control(Object* self) {
             self->opacity -= gUpdateRate * 4;
         } else {
             self->opacity = 0;
-            obj_destroy_object(self);
+            objFreeObject(self);
             return;
         }
     }
@@ -44,7 +44,7 @@ void PollenFragment_control(Object* self) {
     self->velocity.y *= 0.95f;
     self->velocity.y += 0.001f * gUpdateRateF;
     gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle, self->opacity / 2);
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     
     //Objhits
     func_80026128(self, 21, 1, 0);

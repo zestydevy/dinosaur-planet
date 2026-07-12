@@ -214,7 +214,7 @@ void collectable_control(Object* self) {
     if (objdata->timerDestroy != 0.0f) {
         objdata->timerDestroy -= gUpdateRateF;
         if (objdata->timerDestroy <= 0.0f) {
-            obj_destroy_object(self);
+            objFreeObject(self);
             objdata->timerDestroy = 0.0f;
         }
         return;
@@ -235,7 +235,7 @@ void collectable_control(Object* self) {
     if (self->unkE0) {
         self->unkE0 -= (s16)(gUpdateRateF * 3.0f);
         if (self->unkE0 <= 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
             return;
         }
     }
@@ -296,7 +296,7 @@ void collectable_control(Object* self) {
     }
 
     //Return early if no player interaction can happen
-    player = get_player();
+    player = objGetPlayer();
     if (!player || 
         objdata->interactFlags & Collectable_FLAG_Interaction_Off || 
         !self->def->collectableDef
@@ -561,7 +561,7 @@ void collectable_handle_motion(Object* self) {
     }
 
     dt = (f32) gUpdateRate;
-    obj_move(self, self->velocity.x * dt, self->velocity.y * dt, self->velocity.z * dt);
+    objMove(self, self->velocity.x * dt, self->velocity.y * dt, self->velocity.z * dt);
 }
 
 // offset: 0x1304 | func: 10
@@ -579,8 +579,8 @@ void collectable_collect(Object* self) {
 
     objdata = self->data;
     objsetup = (Collectable_Setup*)self->setup;
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     collectableDef = (CollectableDef*)self->def->collectableDef;
 
     if (collectableDef == NULL) {
@@ -629,7 +629,7 @@ void collectable_collect(Object* self) {
         case OBJ_applePickup:
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
             obj_free_object_type(self, OBJTYPE_Collectable);
-            obj_destroy_object(self);
+            objFreeObject(self);
             return;
         case OBJ_beanPickup:
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Blue_Bean);

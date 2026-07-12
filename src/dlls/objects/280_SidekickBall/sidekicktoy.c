@@ -23,7 +23,7 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     u8 colliderArg = 5;
 
     bzero(objdata, sizeof(SidekickToy_Data));
-    player = get_player();
+    player = objGetPlayer();
 
     objdata->state = TOY_STATE_0_Carried;
     objdata->timer = 0.0f;
@@ -62,7 +62,7 @@ static s32 SidekickToy_tick_flight(Object* self) {
     objdata = self->data;
 
     self->velocity.y -= 0.05f * gUpdateRateF;
-    obj_move(self,
+    objMove(self,
         self->velocity.x * gUpdateRateF,
         self->velocity.y * gUpdateRateF,
         self->velocity.z * gUpdateRateF
@@ -175,7 +175,7 @@ void SidekickToy_control(Object* self) {
         }
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             ((DLL_Unknown*)gDLL_3_Animation)->vtbl->func[30].withThreeArgs(0x5BA, 0, 0);
-            obj_send_mesg(get_player(), 0x7000A, self, (void*)BIT_ALWAYS_1);
+            obj_send_mesg(objGetPlayer(), 0x7000A, self, (void*)BIT_ALWAYS_1);
             objdata->state = TOY_STATE_3_Collected;
         }
         break;
@@ -184,7 +184,7 @@ void SidekickToy_control(Object* self) {
     case TOY_STATE_4_Vanish:
         objdata->timer += gUpdateRateF;
         if (objdata->timer >= 60.0f) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         } else {
             self->opacity = 0xFF - (s32) ((objdata->timer * 255.0f) / 60.0f);
             break;
@@ -214,7 +214,7 @@ void SidekickToy_free(Object* self, s32 arg1) {
 
     STUBBED_PRINTF("the side kick toy is unloading\n");
     
-    player = get_player();
+    player = objGetPlayer();
     if (player) {
         ((DLL_210_Player*)player->dll)->vtbl->func8(player, &collectedObject);
         if (collectedObject == self) {

@@ -117,7 +117,7 @@ void dll_455_control(Object* self) {
                 /* fallthrough */
             } else {
                 if (HighTopData->unk0.aimIsActive != 0) {
-                    temp_v0 = get_player();
+                    temp_v0 = objGetPlayer();
                     HighTopData->unk0.headAimX = temp_v0->srt.transl.x;
                     HighTopData->unk0.headAimY = temp_v0->srt.transl.y;
                     HighTopData->unk0.headAimZ = temp_v0->srt.transl.z;

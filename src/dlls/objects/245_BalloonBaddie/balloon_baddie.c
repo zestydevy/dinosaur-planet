@@ -151,7 +151,7 @@ void BalloonBaddie_control(Object* self) {
                 objdata->particleTimer = rand_next(30, 120);
             }
         }
-        objdata->player = get_player();
+        objdata->player = objGetPlayer();
         if (objdata->player) {
             VECTOR_SUBTRACT(objdata->player->globalPosition, self->globalPosition, delta);
             objdata->distToPlayer = VECTOR_MAGNITUDE(delta);
@@ -293,7 +293,7 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->velocity.z = -BALLOONBADDIE_MAX_SPEED;
     }
 
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
 
     angle = arctan2_f(self->globalPosition.x - objdata->player->globalPosition.x, self->globalPosition.z - objdata->player->globalPosition.z) - ((u16)self->srt.yaw);

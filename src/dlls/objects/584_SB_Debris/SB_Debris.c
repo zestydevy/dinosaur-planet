@@ -74,7 +74,7 @@ void SB_Debris_control(Object *self) {
     self->velocity.y -= 0.05f;
     self->unkDC -= gUpdateRate;
     if (self->unkDC < 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 

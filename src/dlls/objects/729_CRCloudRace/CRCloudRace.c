@@ -94,7 +94,7 @@ void CRCloudRace_do(Object *self) {
     Object *player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     switch (objdata->state) {
     case STATE_Pre_Race:
         if (mainGetBits(BIT_4A0)) {
@@ -133,7 +133,7 @@ void CRCloudRace_do_race(Object *self, CRCloudRace_Data *objdata) {
     Object *player;
 
     distance = 5e7f;
-    player = get_player();
+    player = objGetPlayer();
     if (!mainGetBits(BIT_Play_Seq_02AA_CF_Lose_Race)) {
         if (mainGetBits(BIT_SpellStone_CRF)) {
             objdata->state = STATE_Race_Won;

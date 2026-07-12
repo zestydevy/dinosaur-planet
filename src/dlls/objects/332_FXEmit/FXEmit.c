@@ -112,7 +112,7 @@ void FXEmit_control(Object* self) {
         self->globalPosition.y = self->srt.transl.y;
         self->globalPosition.z = self->srt.transl.z;
 
-        player = get_player();
+        player = objGetPlayer();
         if (!player || !setup) {
             return;
         }

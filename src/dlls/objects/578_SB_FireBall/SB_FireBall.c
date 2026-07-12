@@ -53,7 +53,7 @@ void SB_FireBall_control(Object *self) {
         ((DLL_573_SB_Cloudrunner*)objdata->cloudrunner->dll)->vtbl->func10(objdata->cloudrunner, &a1, &a2);
         self->unkDC -= gUpdateRate;
         if (self->unkDC < 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         if (!objdata->velocitySaved) {
             objdata->velocity.x = self->velocity.x;

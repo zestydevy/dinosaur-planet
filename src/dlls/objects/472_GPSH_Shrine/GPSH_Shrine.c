@@ -118,7 +118,7 @@ void GPSH_Shrine_control(Object* self) {
     s32 sp34;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     sp34 = 0;
     sp40 = 1000.0f;
     sp3C = 0.0f;
@@ -262,7 +262,7 @@ void GPSH_Shrine_control(Object* self) {
                 objdata->unk15 = 7;
                 temp_v0_8 = obj_get_all_of_type(OBJTYPE_Pickup, &sp34);
                 while (sp34 != 0) {
-                    obj_destroy_object(temp_v0_8[sp34 - 1]);
+                    objFreeObject(temp_v0_8[sp34 - 1]);
                     sp34--;
                     if ((!objdata) && (!objdata)){} // @fake
                 }
@@ -357,7 +357,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
     u8 temp_v0_2;
 
     objdata = a0->data;
-    player = get_player();
+    player = objGetPlayer();
     a2->unk7A = -1;
     a2->unk62 = 0;
     if (objdata->unkA != 0) {

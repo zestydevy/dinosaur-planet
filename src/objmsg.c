@@ -59,7 +59,7 @@ void obj_send_mesg_many(s32 filter, u16 flags, Object *sender, u32 mesgID, void 
     s32 numObjs;
     Object* obj;
 
-    objects = get_world_objects(&i, &numObjs);
+    objects = objGetObjects(&i, &numObjs);
     if (flags & OBJMSG_SEND_FILTER_ID) {
         for (; i < numObjs; i++) {
             obj = objects[i];
@@ -85,7 +85,7 @@ void obj_send_mesg_many_nearby(s16 objId, f32 distance, u16 flags, Object *sende
     s32 i;
     s32 numObjs;
 
-    objects = get_world_objects(&i, &numObjs);
+    objects = objGetObjects(&i, &numObjs);
     for (; i < numObjs; i++) {
         obj = objects[i];
 

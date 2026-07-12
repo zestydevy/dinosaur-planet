@@ -103,7 +103,7 @@ void WL_seqpoint_setup(Object* self, WL_seqpoint_Setup* setup, s32 reset) {
 
 // offset: 0x8C | func: 1 | export: 1
 void WL_seqpoint_control(Object* self) {
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     WL_seqpoint_Data* objdata = self->data;
     
     if (objdata->triggeredBit != -1) {
@@ -195,7 +195,7 @@ u32 WL_seqpoint_get_data_size(Object* self, u32 offsetAddr) {
 // offset: 0x4B4 | func: 7
 static int WL_seqpoint_anim_callback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
     WL_seqpoint_Data* objdata = actor->data;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     s32 i;
     
     animObjData->unk7A = -1;

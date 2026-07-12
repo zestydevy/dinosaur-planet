@@ -81,7 +81,7 @@ void DFShrine_setup(Object* self, DFShrine_Setup* setup, s32 arg2) {
 void DFShrine_control(Object* self) {
     static u8 sFirstTick = TRUE;
     DFShrine_Data* objdata = self->data;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     DLL_IModgfx* modgfx;
     f32 playerDoorZDist;
     f32 playerDoorDist;
@@ -243,7 +243,7 @@ void DFShrine_control(Object* self) {
                 // Delete remaining SharpClaws
                 baddieList = obj_get_all_of_type(OBJTYPE_Baddie, &baddieCount);
                 for (i = 0; i < baddieCount; i++) {
-                    obj_destroy_object(baddieList[i]);
+                    objFreeObject(baddieList[i]);
                 }
                 objdata->stateCooldown = 0;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (u8) objdata->bgmVolume, 0);

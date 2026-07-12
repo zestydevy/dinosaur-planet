@@ -27,15 +27,15 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
     STUBBED_PRINTF("about to place object %d\n", foodDefs[foodIndex].objectID);
 
     if (foodDefs[foodIndex].objectID != NO_FOOD_OBJECT_ID) {
-        player = get_player();
+        player = objGetPlayer();
 
         placed->nextIndex = (placed->nextIndex + 1) % MAX_FOOD_PLACED;        
         food = placed->objects[placed->nextIndex];
         if (food) {
-            obj_destroy_object(food);
+            objFreeObject(food);
         }
         
-        foodSetup = obj_alloc_setup(sizeof(PlacedFood_Setup),
+        foodSetup = objAllocSetup(sizeof(PlacedFood_Setup),
                                            foodDefs[foodIndex].objectID);
         foodSetup->base.fadeDistance = 0xFF;
         foodSetup->base.loadFlags = 2;
@@ -46,7 +46,7 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
         foodSetup->unk19 = 0;
         foodSetup->unk18 = 0;
 
-        placed->objects[placed->nextIndex] = obj_create(
+        placed->objects[placed->nextIndex] = objSetupObject(
             &foodSetup->base,
             1, -1, -1, foodbag->parent);
         placed->foodType[placed->nextIndex] = foodType;
@@ -112,7 +112,7 @@ int putdown_destroy_placed_food(Object* foodObject, FoodbagPlaced* placedObjects
 
     for (index = 0; index < MAX_FOOD_PLACED; index++){
         if (foodObject == placedObjects->objects[index]) {
-            obj_destroy_object(foodObject);
+            objFreeObject(foodObject);
             placedObjects->objects[index] = NULL;
             placedObjects->foodType[index] = 0;
             return TRUE;

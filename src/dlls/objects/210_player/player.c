@@ -493,7 +493,7 @@ void dll_210_setup(Object* player, u32 arg1) {
     data = player->data;
     obj_add_object_type(player, OBJTYPE_Player);
     obj_add_object_type(player, OBJTYPE_39);
-    obj_set_update_priority(player, OBJPRIORITY_PLAYER);
+    objSetPriority(player, OBJPRIORITY_PLAYER);
     obj_init_mesg_queue(player, 20);
     player->setup = NULL;
     player->animCallback = dll_210_func_4910;
@@ -529,8 +529,8 @@ void dll_210_setup(Object* player, u32 arg1) {
         player->shadow->maxDistScale = player->shadow->scale * 0.5f;
     }
     gDLL_1_cmdmenu->vtbl->request_new_player_stats_snapshot();
-    data->foodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
-    data->sidekickFoodbag = obj_create(obj_alloc_setup(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
+    data->foodbag = objSetupObject(objAllocSetup(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
+    data->sidekickFoodbag = objSetupObject(objAllocSetup(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
     data->modAnims = _data_98;
     if (player->id == 0) {
         data->unk3B4 = _data_2F8;
@@ -545,7 +545,7 @@ void dll_210_setup(Object* player, u32 arg1) {
     }
     for (i = 0; i < data->unk8A0; i++) {
         data->unk3B4[i].unk34.data = mmAlloc(0x320, 0x1A, NULL);
-        obj_load_weapondata(player, player->id, &data->unk3B4[i].unk34, data->unk3B4[i].unk0, 0U);
+        objLoadWeapondata(player, player->id, &data->unk3B4[i].unk34, data->unk3B4[i].unk0, 0U);
     }
     data->spirits = mainGetBits(BIT_Spirit_Bits);
     for (i = 0; i < 7; i++) {
@@ -657,7 +657,7 @@ void dll_210_control(Object* player) {
     }
     tempObj = player->linkedObject;
     if (tempObj == NULL) {
-        player->linkedObject = obj_create(obj_alloc_setup(0x18, _data_24[data->unk8B4]), OBJINIT_FLAG4, -1, -1, player->parent);
+        player->linkedObject = objSetupObject(objAllocSetup(0x18, _data_24[data->unk8B4]), OBJINIT_FLAG4, -1, -1, player->parent);
     } else {
         tempObj->parent = player->parent;
     }
@@ -889,7 +889,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
         player->velocity.z = 3.0f;
     }
     temp_fv0 = player->srt.scale / player->def->scale;
-    obj_move(player, player->velocity.x * arg2 * temp_fv0, player->velocity.y * arg2 * temp_fv0, player->velocity.z * arg2 * temp_fv0);
+    objMove(player, player->velocity.x * arg2 * temp_fv0, player->velocity.y * arg2 * temp_fv0, player->velocity.z * arg2 * temp_fv0);
     dll_210_func_1BC0(player, arg1);
 }
 
@@ -913,9 +913,9 @@ void dll_210_func_1BC0(Object* player, Player_Data* arg1) {
     }
 
     if ((arg1->unk8A8 != 0) && (linkedObj->modelInstIdx != 0)) {
-        obj_set_model(linkedObj, 0);
+        objSetModel(linkedObj, 0);
     } else if ((arg1->unk8A8 == 0) && (linkedObj->modelInstIdx != 1)) {
-        obj_set_model(linkedObj, 1);
+        objSetModel(linkedObj, 1);
     }
 }
 
@@ -1589,7 +1589,7 @@ void dll_210_free(Object* player, UNK_TYPE_32 arg1) {
 
     data = player->data;
     if (player->linkedObject != NULL) {
-        obj_destroy_object(player->linkedObject);
+        objFreeObject(player->linkedObject);
     }
 
     player->linkedObject = NULL;
@@ -1618,7 +1618,7 @@ s32 dll_210_func_3F64(Object* player) {
     Player_Data *data = player->data;
 
     if (player->linkedObject == NULL) {
-        player->linkedObject = obj_create(obj_alloc_setup(sizeof(ObjSetup), _data_24[data->unk8B4]), OBJINIT_FLAG4, -1, -1, player->parent);
+        player->linkedObject = objSetupObject(objAllocSetup(sizeof(ObjSetup), _data_24[data->unk8B4]), OBJINIT_FLAG4, -1, -1, player->parent);
         player->stateFlags &= ~OBJSTATE_UNK_ATTACH_INDEX_MASK;
         player->stateFlags |= (3 & OBJSTATE_UNK_ATTACH_INDEX_MASK);
         objAnimSet(player->linkedObject, 0, 1.0f, 0U);
@@ -1637,7 +1637,7 @@ void dll_210_func_4038(Object* player, Object *arg1, s32 arg2) {
     };
 
     if (arg2 != 1) {
-        func_80023894(arg1, sp28[arg2]);
+        objLoadSidekick(arg1, sp28[arg2]);
         objdata->unk872 |= 1 << arg2;
         temp = mainGetBits(BIT_2DA);
         temp |= 1 << arg2;;
@@ -1940,7 +1940,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         return 1;
     }
     if (arg0->linkedObject == NULL) {
-        arg0->linkedObject = obj_create(obj_alloc_setup(0x18, _data_24[objdata->unk8B4]), OBJINIT_FLAG4, -1, -1, arg0->parent);
+        arg0->linkedObject = objSetupObject(objAllocSetup(0x18, _data_24[objdata->unk8B4]), OBJINIT_FLAG4, -1, -1, arg0->parent);
     } else {
         arg0->linkedObject->parent = arg0->parent;
     }
@@ -2326,7 +2326,7 @@ void dll_210_func_60A8(Object* player, s32 arg1, s32 arg2) {
     sp24->unk834 = 0.0f;
     gDLL_22_Subtitles->vtbl->func_2248(0U);
     if (player->modelInstIdx == 1) {
-        obj_set_model(player, 0);
+        objSetModel(player, 0);
     }
 }
 
@@ -2667,7 +2667,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
             } else {
                 objdata->unk8BF = 1;
                 dll_210_func_1DE50(player, _data_38, 1);
-                obj_set_model(player, 2);
+                objSetModel(player, 2);
                 *_data_0 = 0;
                 gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, PLAYER_ASTATE_Standing);
             }
@@ -3528,7 +3528,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     mainCam = camGetMain();
     gDLL_6_AMSFX->vtbl->play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
-        objsetup = obj_alloc_setup(0x24, OBJ_projball);
+        objsetup = objAllocSetup(0x24, OBJ_projball);
         objsetup->loadFlags = OBJSETUP_LOAD_MANUAL;
         objsetup->fadeFlags = OBJSETUP_FADE_MANUAL;
         objsetup->loadDistance = 0xFF;
@@ -3544,7 +3544,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         temp_a0 = player->linkedObject;
         ((s8*)objsetup)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
-        temp_v0_2 = obj_create(objsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        temp_v0_2 = objSetupObject(objsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
         if (temp_v0_2 != NULL) {
             temp_v0_2->srt.flags |= OBJFLAG_OWNS_SETUP;
             temp_v1 = fsa->target;
@@ -3633,7 +3633,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     var_s4 = 1;
     gDLL_6_AMSFX->vtbl->play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
-        temp_v0 = obj_alloc_setup(0x24, OBJ_grenade);
+        temp_v0 = objAllocSetup(0x24, OBJ_grenade);
         temp_v0->loadFlags = OBJSETUP_LOAD_MANUAL;
         temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
         temp_v0->loadDistance = 0xFF;
@@ -3643,7 +3643,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_v0->z = player->linkedObject->globalPosition.z;
         temp_a0 = player->linkedObject;
         temp_s5 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
-        temp_v0_2 = obj_create(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        temp_v0_2 = objSetupObject(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
         if (temp_v0_2 != NULL) {
             temp_v0_2->srt.flags |= OBJFLAG_OWNS_SETUP;
             if (fsa->target != NULL) {
@@ -3709,7 +3709,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     DLL_Unknown* dll;
 
     gDLL_6_AMSFX->vtbl->play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
-    temp_v0 = obj_alloc_setup(0x24, OBJ_icebeam);
+    temp_v0 = objAllocSetup(0x24, OBJ_icebeam);
     temp_v0->loadFlags = OBJSETUP_LOAD_MANUAL;
     temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
     temp_v0->loadDistance = 0xFF;
@@ -3719,7 +3719,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     temp_v0->z = player->linkedObject->globalPosition.z;
     temp_a0 = player->linkedObject;
     ((s8*)temp_v0)[0x19] = ((DLL_Unknown *)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
-    temp_v0_2 = obj_create(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    temp_v0_2 = objSetupObject(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (temp_v0_2 == NULL) {
         return;
     }
@@ -8859,7 +8859,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             for (i = 0; i < 4; i++) {
                 weapon = _bss_210[i];
                 if (weapon != NULL) {
-                    obj_destroy_object(weapon);
+                    objFreeObject(weapon);
                     _bss_210[i] = 0;
                 }
             }
@@ -8970,7 +8970,7 @@ void dll_210_func_1AAD8(Object* player, ObjFSA_Data *fsa) {
     for (i = 0; i < 4; i++) {
         temp_a0 = _bss_210[i];
         if (temp_a0 != 0) {
-            obj_destroy_object(temp_a0);
+            objFreeObject(temp_a0);
             _bss_210[i] = 0;
         }
     }
@@ -10329,7 +10329,7 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
         }
         if (counter == 0) {
             arg1->unk8BF = 0;
-            obj_set_model(player, 0);
+            objSetModel(player, 0);
         }
     }
 }
@@ -10338,7 +10338,7 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
 static void dll_210_func_1DAB0(Object* player) {
     ObjSetup* temp_v0;
 
-    temp_v0 = obj_alloc_setup(0x24, 0x43B);
+    temp_v0 = objAllocSetup(0x24, 0x43B);
     temp_v0->objId = 0x43B;
     temp_v0->quarterSize = 9;
     temp_v0->loadFlags = 2;
@@ -10348,7 +10348,7 @@ static void dll_210_func_1DAB0(Object* player) {
     temp_v0->x = player->srt.transl.f[0];
     temp_v0->y = player->srt.transl.f[1] + 15.0f;
     temp_v0->z = player->srt.transl.f[2];
-    obj_create(temp_v0, 5U, -1, -1, player->parent);
+    objSetupObject(temp_v0, 5U, -1, -1, player->parent);
 }
 
 // offset: 0x1DB6C | func: 217
@@ -10379,7 +10379,7 @@ void dll_210_func_1DC48(Object* player) {
             continue;
         }
 
-        objsetup = obj_alloc_setup(sizeof(Iceblast_Setup), OBJ_iceblast);
+        objsetup = objAllocSetup(sizeof(Iceblast_Setup), OBJ_iceblast);
         if (objsetup == NULL) {
             break;
         }
@@ -10397,7 +10397,7 @@ void dll_210_func_1DC48(Object* player) {
         } else {
             objsetup->unk1C = 0x8000;
         }
-        _bss_210[i] = obj_create(&objsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, player->mapID, -1, player->parent);
+        _bss_210[i] = objSetupObject(&objsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, player->mapID, -1, player->parent);
     }
 }
 
@@ -10405,7 +10405,7 @@ void dll_210_func_1DC48(Object* player) {
 Object *dll_210_func_1DD94(Object* player, s32 arg1) {
     LFXEmitter_Setup* objsetup;
 
-    objsetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    objsetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     objsetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     objsetup->base.loadDistance = 0xFF;
@@ -10416,7 +10416,7 @@ Object *dll_210_func_1DD94(Object* player, s32 arg1) {
     objsetup->unk20 = 0;
     objsetup->unk1E = arg1;
     objsetup->unk22 = -1;
-    return obj_create(&objsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, player->mapID, -1, player->parent);
+    return objSetupObject(&objsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, player->mapID, -1, player->parent);
 }
 
 // offset: 0x1DE50 | func: 220

@@ -151,8 +151,8 @@ dummy_label1: ;
 
             //Send an object message, then destroy both the attacking object and the cannon
             obj_send_mesg_many(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
-            obj_destroy_object(obj);
-            obj_destroy_object(self);
+            objFreeObject(obj);
+            objFreeObject(self);
             return;
 
         //Fire a cannonball once the timer runs down
@@ -165,11 +165,11 @@ dummy_label1: ;
     case Cannon_STATE_Firing:
         //Fire a cannonball
         camGetObjectChildPosition(self, &x, &y, &z);
-        cannonballSetup = obj_alloc_setup(sizeof(CannonBall_Setup), OBJ_CannonBall);
+        cannonballSetup = objAllocSetup(sizeof(CannonBall_Setup), OBJ_CannonBall);
         cannonballSetup->x = x;
         cannonballSetup->y = y + 30.0f;
         cannonballSetup->z = z;
-        obj = obj_create(cannonballSetup, 5, -1, -1, NULL);
+        obj = objSetupObject(cannonballSetup, 5, -1, -1, NULL);
 
         //Get the cannon's worldSpace yaw
         yaw = self->srt.yaw;
@@ -233,8 +233,8 @@ dummy_label3: ;
 
             //Send an object message, then destroy both the attacking object and the cannon
             obj_send_mesg_many(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
-            obj_destroy_object(obj);
-            obj_destroy_object(self);
+            objFreeObject(obj);
+            objFreeObject(self);
             return;
 
         //Go back down below deck once the timer runs down

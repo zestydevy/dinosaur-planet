@@ -68,7 +68,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     }
 
     if (!mainGetBits(BIT_4D4)) {
-        tricky = get_sidekick();
+        tricky = objGetSidekick();
         if (tricky) {
             ((DLL_ISidekick*)tricky->dll)->vtbl->func22(tricky, self);
             mainSetBits(BIT_4D4, 1);
@@ -87,7 +87,7 @@ void NWtricky_control(Object *self) {
     GroundAnimator_Setup *gaSetup;
 
     objdata = self->data;
-    tricky = get_sidekick();
+    tricky = objGetSidekick();
     if (tricky == NULL) {
         return;
     }
@@ -128,10 +128,10 @@ void NWtricky_control(Object *self) {
                 if (objdata->sidekickStats->blueFood < 4) {
                     mainSetBits(BIT_4E3, 1);
                 } else if (!mainGetBits(BIT_SW_Tricky_Toy_Unearthed) && mainGetBits(BIT_Tricky_Unlocked_Sidekick_Commands)) {
-                    player = get_player();
+                    player = objGetPlayer();
 
                     //Get GroundAnimator object for the hole containing Tricky's ball
-                    trickyballGroundAnimator = func_800211B4(0x1785); //search by uID
+                    trickyballGroundAnimator = objGetObjectByUID(0x1785); //search by uID
 
                     //@bug: missing null check
                     gaSetup = (GroundAnimator_Setup*)trickyballGroundAnimator->setup;
@@ -193,7 +193,7 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
     buttonMask = 0;
 
     if (!objdata->doneDemo) {
-        tricky = get_sidekick();
+        tricky = objGetSidekick();
         ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_1_Find);
         ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_2_Distract);
         ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_3_Guard);

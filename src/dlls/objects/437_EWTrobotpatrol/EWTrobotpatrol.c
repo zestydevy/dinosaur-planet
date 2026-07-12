@@ -230,7 +230,7 @@ void dll_437_control(Object* self) {
         temp_s1->unk8C = (s16) sp3C;
         self->velocity.x *= 1.0666667f;
         self->velocity.z *= 1.0666667f;
-        obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
+        objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
         dll_437_func_1C74(self, temp_s2, (u8*)temp_s2 + 0x120);
         dll_437_func_3454(self, temp_s2, (u8*)temp_s2 + 0x1A8);
         dll_437_func_208C(self, temp_s2, (u8*)temp_s2 + 0x154);
@@ -296,7 +296,7 @@ void dll_437_func_CC0(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Da
     Vec3s16 sp40;
 
     sp60 = arg0->data;
-    sp64 = get_player();
+    sp64 = objGetPlayer();
     sp50[0] = arg0->srt.transl.x - sp64->srt.transl.x;
     sp50[1] = arg0->srt.transl.y - sp64->srt.transl.y;
     sp50[2] = arg0->srt.transl.z - sp64->srt.transl.z;
@@ -524,14 +524,14 @@ void dll_437_func_31F4(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
     ObjectShadow* beamShadow;
     Object* beam;
 
-    beamSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_RobotBeam);
+    beamSetup = objAllocSetup(sizeof(ObjSetup), OBJ_RobotBeam);
     beamSetup->loadFlags = 8;
     beamSetup->byte5 = 4;
     beamSetup->byte6 = 0x78;
     beamSetup->fadeDistance = 0x78;
     beamSetup->quarterSize = 0x18;
     beamSetup->objId = OBJ_RobotBeam;
-    beam = obj_create(beamSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
+    beam = objSetupObject(beamSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
     beam->srt.transl.x = self->srt.transl.x;
     beam->srt.transl.y = self->srt.transl.y;
     beam->srt.transl.z = self->srt.transl.z;
@@ -596,7 +596,7 @@ static void dll_437_func_380C(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotp
     gDLL_11_Newlfx->vtbl->func0(arg0, arg0, &laction, 0, 0, 0);
     if (arg3 == 0) {
         if (arg2->unk4 != NULL) {
-            obj_destroy_object(arg2->unk4);
+            objFreeObject(arg2->unk4);
             arg2->unk4 = NULL;
         }
     }

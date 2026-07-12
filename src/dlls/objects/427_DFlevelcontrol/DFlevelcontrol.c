@@ -44,7 +44,7 @@ void DFlevelcontrol_control(Object *self) {
     Object *player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     gDLL_6_AMSFX->vtbl->water_falls_control();
     if (objdata->mapID != MAP_DISCOVERY_FALLS) {
         if (map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z) != MAP_DISCOVERY_FALLS) {
@@ -104,7 +104,7 @@ u32 DFlevelcontrol_get_data_size(Object *self, u32 a1) {
 void DFlevelcontrol_func_388(Object *self) {
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     DFlevelcontrol_func_420(self, 1);
     if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_1)) {
         mainSetBits(BIT_DF_Returned_From_Shrine_With_Spirit, 1);
@@ -115,7 +115,7 @@ void DFlevelcontrol_func_388(Object *self) {
 void DFlevelcontrol_func_420(Object *self, s32 arg1) {
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     func_80000860(self, player, 0x35, 0);
     func_80000860(self, player, 0x36, 0);
     func_80000860(self, player, 0x37, 0);

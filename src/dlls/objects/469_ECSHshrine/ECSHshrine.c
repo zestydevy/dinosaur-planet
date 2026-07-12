@@ -103,7 +103,7 @@ void ECSHshrine_setup(Object *self, ECSHshrine_Setup *setup, s32 arg2) {
 // offset: 0x208 | func: 1 | export: 1
 void ECSHshrine_control(Object* self) {
     ECSHshrine_Data* objdata = self->data;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     f32 dz;
     f32 tempCupZ;
     f32 tempCupX;

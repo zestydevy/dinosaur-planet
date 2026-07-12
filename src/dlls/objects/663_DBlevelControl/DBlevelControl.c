@@ -113,7 +113,7 @@ void DBlevelControl_control(Object *self) {
         gDLL_29_Gplay->vtbl->set_act(self->mapID, objdata->mapSetup);
     }
 
-    player = get_player();
+    player = objGetPlayer();
     if (((DLL_210_Player*)(player->dll))->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_2)) {
         mainSetBits(BIT_21F_Spirit_Collected, 1);
     }

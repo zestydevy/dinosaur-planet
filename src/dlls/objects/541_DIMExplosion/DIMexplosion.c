@@ -40,7 +40,7 @@ void DIMExplosion_control(Object* self) {
     //Scale up, destroying self after a while
     self->srt.scale += 0.008f * gUpdateRateF;
     if (self->srt.scale > 0.6f) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     //Spin

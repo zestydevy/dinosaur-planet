@@ -14,7 +14,7 @@ void SCAnimObj_dtor(void *dll) { }
 void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
     AnimObj_Data* objData;
 
-    obj_set_update_priority(self, OBJPRIORITY_ANIM);
+    objSetPriority(self, OBJPRIORITY_ANIM);
 
     objData = self->data;
     
@@ -67,7 +67,7 @@ void SCAnimObj_control(Object* self) {
         temp = objData->seqSlot;
         matchObj = NULL;
         
-        objects = get_world_objects(&index, &count);
+        objects = objGetObjects(&index, &count);
         matchCount = 0;
 
         for (index = 0; index < count; index++) {

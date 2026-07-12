@@ -19,7 +19,7 @@ void animobj_dtor(void *dll) { }
 void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
     AnimObj_Data *objdata;
 
-    obj_set_update_priority(self, OBJPRIORITY_ANIM);
+    objSetPriority(self, OBJPRIORITY_ANIM);
     objdata = self->data;
     if (!setup->sequenceIdBitfield){
     }
@@ -73,7 +73,7 @@ void animobj_control(Object *self) {
     objdata = self->data;
     new_var = objdata->seqSlot;
     matchObject = 0;
-    objects = get_world_objects(&index, &count);
+    objects = objGetObjects(&index, &count);
     matches = 0;
     for (index = 0; index < count; index++) {
         object = objects[index];

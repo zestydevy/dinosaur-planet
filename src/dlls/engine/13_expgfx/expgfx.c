@@ -322,7 +322,7 @@ s16 dll_13_func_228(ExpgfxStruct* arg0, s32 arg1) {
         var_a3->unk78 *= -1.0f;
     }
     if (var_a3->unk80 & 0x10) {
-        var_a2 = get_player();
+        var_a2 = objGetPlayer();
         var_a3->unk80 ^= 0x10;
         if (var_a3->unk7C & 1) {
             sp44[0] = var_a2->globalPosition.x - var_a3->unk64;

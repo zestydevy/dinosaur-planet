@@ -168,7 +168,7 @@ static void dll_698_func_6E4(Object *self, Vec3f *arg1) {
     SRT sp84;
     s32 i;
 
-    objList = get_world_objects(&objIdx, &objListLength);
+    objList = objGetObjects(&objIdx, &objListLength);
     while (objIdx < objListLength) {
         if (self != objList[objIdx]) {
             switch (objList[objIdx]->id) {

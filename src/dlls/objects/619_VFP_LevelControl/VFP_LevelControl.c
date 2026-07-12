@@ -65,7 +65,7 @@ void VFP_LevelControl_control(Object* self) {
     Object* player;
     u8 act;
 
-    player = get_player();
+    player = objGetPlayer();
     map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
     diPrintf("ACT %d \n", gDLL_29_Gplay->vtbl->get_act(self->mapID));
     act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
@@ -159,7 +159,7 @@ u32 VFP_LevelControl_get_data_size(Object *self, u32 a1) {
 static void VFP_LevelControl_func_8EC(Object *self) {
     /*0x4*/ static u8 _data_4 = 1;
 
-    Object *player = get_player();
+    Object *player = objGetPlayer();
 
     if (_data_4 != 0) {
         mainSetBits(BIT_Spell_Projectile, 1);
@@ -180,7 +180,7 @@ static void VFP_LevelControl_func_8EC(Object *self) {
 static void VFP_LevelControl_func_A08(Object *self) {
     /*0x8*/ static u8 _data_8 = 1;
 
-    Object *player = get_player();
+    Object *player = objGetPlayer();
 
     if (_data_8 != 0) {
         mainSetBits(BIT_Spell_Projectile, 1);
@@ -194,7 +194,7 @@ static void VFP_LevelControl_func_A08(Object *self) {
 static void VFP_LevelControl_func_AAC(Object *self) {
     /*0xC*/ static u8 _data_C = 1;
 
-    Object *player = get_player();
+    Object *player = objGetPlayer();
 
     if (_data_C != 0) {
         mainSetBits(BIT_Spell_Projectile, 1);

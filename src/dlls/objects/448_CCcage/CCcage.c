@@ -312,7 +312,7 @@ void CCcage_impact_sway(Object* self) {
     CCcage_Data *objData;
     Object *player;
     
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     
     positionDelta[0] = player->srt.transl.x - self->srt.transl.x;

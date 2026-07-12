@@ -112,7 +112,7 @@ void GPbonfire_control(Object* self) {
 
     objdata = self->data;
     setup = (GPBonfire_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
 
     playerIsNearby = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition) <= setup->interactionDistance * setup->interactionDistance;    
 
@@ -153,7 +153,7 @@ void GPbonfire_control(Object* self) {
             }
             break;
         case STATE_2_WAIT_FOR_KYTE:
-            sidekick = get_sidekick();
+            sidekick = objGetSidekick();
             if (sidekick && playerIsNearby) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
@@ -162,7 +162,7 @@ void GPbonfire_control(Object* self) {
             }
             break;
         case STATE_3_START_BURNING:
-            if (vec3_distance_xz_squared(&get_sidekick()->globalPosition, &self->globalPosition) <= 2500.0f) {
+            if (vec3_distance_xz_squared(&objGetSidekick()->globalPosition, &self->globalPosition) <= 2500.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, PARTFXFLAG_2, -1, NULL);
             }
@@ -186,7 +186,7 @@ void GPbonfire_control(Object* self) {
 
                     if (distanceToTumbleweed < 40.0f) {
                         if (tumbleweeds[weedIndex]) {} // @fake?
-                        obj_destroy_object(tumbleweeds[weedIndex]);
+                        objFreeObject(tumbleweeds[weedIndex]);
 
                         //Deposit tumbleweed into bonfire
                         if (objdata->weedsDeposited < 4) {

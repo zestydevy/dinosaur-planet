@@ -353,7 +353,7 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     SHrocketmushroom_Setup* objSetup;
 
     objSetup = (SHrocketmushroom_Setup*)self->setup;
-    sporeSetup = obj_alloc_setup(sizeof(SHSpore_Setup), OBJ_SHspore);
+    sporeSetup = objAllocSetup(sizeof(SHSpore_Setup), OBJ_SHspore);
 
     //Calculate initial coordinate
     srt.yaw = self->srt.yaw;
@@ -376,7 +376,7 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     sporeSetup->base.loadFlags = 2;
     sporeSetup->angularRange = objSetup->sporeAngularRange << 8;
     sporeSetup->windAngle = self->srt.yaw;
-    obj_create((ObjSetup*)sporeSetup, 5, -1, -1, NULL);
+    objSetupObject((ObjSetup*)sporeSetup, 5, -1, -1, NULL);
 }
 
 // offset: 0xCF8 | func: 14
@@ -406,7 +406,7 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
 
     //Create debris
     for (i = 0; i < 5; i++) {
-        debrisSetup = obj_alloc_setup(sizeof(Debris_Setup), OBJ_SHmushroombit);
+        debrisSetup = objAllocSetup(sizeof(Debris_Setup), OBJ_SHmushroombit);
         debrisSetup->base.byte5 = 1;
         debrisSetup->base.loadFlags = 2;
         debrisSetup->base.x = self->srt.transl.x + srt.transl.x;
@@ -428,7 +428,7 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
         debrisSetup->unk3C = 7;
         debrisSetup->unk3E = -1;
         debrisSetup->unk40 = -1;
-        obj_create((ObjSetup*)debrisSetup, 5, -1, -1, NULL);
+        objSetupObject((ObjSetup*)debrisSetup, 5, -1, -1, NULL);
     }
     
     self->objhitInfo->unk58 |= 0x40;
@@ -470,5 +470,5 @@ void SHrocketmushroom_reset(Object* self, SHrocketmushroom_Data* objData, int st
 // offset: 0x114C | func: 16
 /** Checks whether the player is more than 80 units away. */
 int SHrocketmushroom_is_player_far_away(Object* self) {
-    return (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) > SQ(80));
+    return (vec3_distance_squared(&self->globalPosition, &objGetPlayer()->globalPosition) > SQ(80));
 }

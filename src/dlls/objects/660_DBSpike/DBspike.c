@@ -77,7 +77,7 @@ void DBSpike_control(Object* self) {
         if (self->modelInstIdx != DBSpike_MODEL_Regular) {
             objData->motionBlurTimer -= gUpdateRate;
             if (objData->motionBlurTimer < 0) {
-                obj_set_model(self, DBSpike_MODEL_Regular);
+                objSetModel(self, DBSpike_MODEL_Regular);
             }
         }
         
@@ -89,7 +89,7 @@ void DBSpike_control(Object* self) {
 
             if (objData->state != DBSpike_STATE_Retracted) {
                 //Sprung
-                obj_set_model(self, DBSpike_MODEL_Motion_Smear);
+                objSetModel(self, DBSpike_MODEL_Motion_Smear);
                 objData->motionBlurTimer = -56;
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_A2A_Heavy_Swing, MAX_VOLUME, 0, 0, 0, 0);
             } else {

@@ -66,7 +66,7 @@ void dll_782_control(Object* self) {
     s32 var_a0;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     distance = 100000.0f;
     if (objdata->levelCtrl == NULL) {
         objdata->levelCtrl = obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &distance); //getting WCLevelControl
@@ -172,7 +172,7 @@ void dll_782_control(Object* self) {
         }
         
         gDLL_6_AMSFX->vtbl->set_vol(objdata->unk26C, var_fv1);
-        obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
+        objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
         var_a0 = 0;
         if (objdata->unk275 == 0) {
             if (self->velocity.x < 1.5f) {
@@ -261,7 +261,7 @@ void dll_782_control(Object* self) {
             var_v0 = 0;
         }
         self->opacity = (u8) var_v0;
-        if (self->opacity == 0 && (dll_782_func_FF0(self, objdata, get_player()) != 0)) {
+        if (self->opacity == 0 && (dll_782_func_FF0(self, objdata, objGetPlayer()) != 0)) {
             if (self->modelInstIdx == 1) {
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func11(objdata->unk276, &objdata->unk270, &objdata->unk272);
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func7(&self->srt, objdata->unk270, objdata->unk272, &self->srt.transl.x, &self->srt.transl.z);

@@ -651,7 +651,7 @@ void amsfx_water_falls_control(void) {
     u8 mapID;
     Vec3f* camera;
 
-    player = get_player();
+    player = objGetPlayer();
     mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
     if ((mapID != sWaterfallsLastMap) || (sWaterfallFlags & AMSFX_WATERFALLS_REFRESH)) {
         amsfx_water_falls_find_sprays();
@@ -744,7 +744,7 @@ static s32 amsfx_water_falls_find_sprays(void) {
     ObjSetup* setup;
     s32 setupListLength;
 
-    player = get_player();
+    player = objGetPlayer();
     if (player == NULL) {
         return TRUE;
     }

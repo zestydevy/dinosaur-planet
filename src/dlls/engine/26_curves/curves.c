@@ -963,7 +963,7 @@ s32 curves_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     f32 temp_fv0_2;
     f32 temp_fv1;
   
-    objs = get_world_objects(&sp90, &objCount);
+    objs = objGetObjects(&sp90, &objCount);
     var_fs1 = 0.0f;
     var_fs0 = -1.0f;
     for (i = 0; i < objCount; i++) {

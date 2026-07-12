@@ -53,7 +53,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
         return;
     }
 
-    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+    objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = WLgalleon_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     self->unkDC = 9;
@@ -88,7 +88,7 @@ void WLgalleon_control(Object* self) {
         return;
     }
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
 
     if (mainGetBits(BIT_429)) {

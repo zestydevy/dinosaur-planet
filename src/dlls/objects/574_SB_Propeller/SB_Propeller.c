@@ -97,7 +97,7 @@ void SB_Propeller_control(Object *self) {
             }
         }
         if ((damageType != 0) && (self->unkDC == 0) && sp48) {
-            player = get_player();
+            player = objGetPlayer();
             if (sp48 != player) {
                 self->unkDC = 20;
                 if ((self->parent) && ((sp54 == 2) || (sp54 == 5))) {

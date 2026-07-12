@@ -111,7 +111,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     TriggerCommand *cmd;
 
     obj_add_object_type(self, OBJTYPE_Trigger);
-    obj_set_update_priority(self, OBJPRIORITY_TRIGGER);
+    objSetPriority(self, OBJPRIORITY_TRIGGER);
 
     objdata = (Trigger_Data*)self->data;
 
@@ -193,7 +193,7 @@ void trigger_control(Object* self) {
     
     maxObjSearchDist = 200.0f;
    
-    player = get_player();
+    player = objGetPlayer();
     if (player != NULL) {
         vehicle = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
         if (vehicle != NULL) {
@@ -201,7 +201,7 @@ void trigger_control(Object* self) {
         }
     }
     
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if ((player != NULL) || (sidekick != NULL)) {
         if (objdata->flags & TRG_RESTORE_ENTERED_STATE) {
@@ -321,7 +321,7 @@ void trigger_control(Object* self) {
         case OBJ_TriggerSetup:
             trigger_process_commands(self, player, 1, 0);
             if (main_ret1_8001454c() != 0) {
-                obj_destroy_object(self);
+                objFreeObject(self);
             }
             break;
         case OBJ_TriggerBits:
@@ -493,7 +493,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             case 8: {
                     // "Trigger [%d], Death drop" (default.dol)
                     s8 pad;
-                    obj = get_player();
+                    obj = objGetPlayer();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 9, 0.0f);
                     }
@@ -502,7 +502,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             case 9: {
                     // "Trigger [%d], Dangerous Water" (default.dol)
                     s8 pad;
-                    obj = get_player();
+                    obj = objGetPlayer();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 10, 0.0f);
                     }
@@ -511,7 +511,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             case 10: {
                     // "Trigger [%d], Safe Water" (default.dol)
                     s8 pad;
-                    obj = get_player();
+                    obj = objGetPlayer();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 11, 0.0f);
                     }
@@ -660,7 +660,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_LOD_MODEL:
             // "Trigger [%d], LOD Model [%d]"
-            obj_set_model(get_player(), cmd->param1);
+            objSetModel(objGetPlayer(), cmd->param1);
             break;
         case TRG_CMD_SETUP_POINT:
             // "Trigger [%d], Setup Point,        Level      [%d], SetupPoint [%d]"
@@ -769,7 +769,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             }
             break;
         case TRG_CMD_SIDEKICK:
-            sidekick = get_sidekick();
+            sidekick = objGetSidekick();
             if (sidekick != NULL) {
                 switch (cmd->param1) {
                 case 0:
@@ -779,7 +779,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 case 1:
                     // "killing sidekick\n"
                     // "Trigger [%d], Unloading Sidekick\n" (default.dol)
-                    obj_destroy_object(get_sidekick());
+                    objFreeObject(objGetSidekick());
                     break;
                 case 2:
                     // "findobj %i \n"
@@ -854,7 +854,7 @@ static void trigger_tex_load(u16 param1) {
     s32 *ptr2;
     Texture *tex;
 
-    ptr = func_800213A0(param1 + 2);
+    ptr = objGetTable(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
             tex = tex_get_cached(*ptr2);
@@ -870,7 +870,7 @@ static void trigger_tex_free(u16 param1) {
     s32 *ptr2;
     Texture *tex;
 
-    ptr = func_800213A0(param1 + 2);
+    ptr = objGetTable(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
             tex = tex_get_cached(*ptr2);
@@ -1281,7 +1281,7 @@ static void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activa
     s32 i;
     s32 numObjs;
     
-    objects = get_world_objects(&i, &numObjs);
+    objects = objGetObjects(&i, &numObjs);
     while (i < numObjs) {
         obj = objects[i];
         objsetup = (Trigger_Setup*)obj->setup;

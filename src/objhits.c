@@ -65,7 +65,7 @@ void func_80025E58(void) {
     i = 0;
     for (i = 0; i < D_800B1998; i++) {
         if (!(D_800B1994[i]->def->flags & OBJDEF_IS_MOBILE_MAP) && (D_800B1994[i]->updatePriority != OBJPRIORITY_ANIM)) {
-            update_object(D_800B1994[i]);
+            objControlObject(D_800B1994[i]);
         }
     }
     for (i = 0; i < D_800B1998; i++) {
@@ -596,7 +596,7 @@ void update_obj_hitboxes(s32 arg0) {
     s32 numObjs;
     s32 i;
 
-    objects = get_world_objects(&i, &numObjs);
+    objects = objGetObjects(&i, &numObjs);
     D_800B1998 = 0;
 
     for (j = 0; j < arg0; j++) {
@@ -725,7 +725,7 @@ void obj_do_hit_detection(s32 arg0) {
     s32 var_s6;
     s32 sp74;
 
-    objects = get_world_objects(&sp7C, &sp80);
+    objects = objGetObjects(&sp7C, &sp80);
     D_800B20B8->unk4 = -36288576.0f;
     D_800B20B8->unk0 = D_800B20B8->unk4;
     D_800B23B8[0] = D_800B20B8;
@@ -3789,7 +3789,7 @@ void func_800307C4(f32 arg0, f32 arg1) {
     s32 sp38;
     s32 sp34;
 
-    objects = get_world_objects(&sp38, &sp34);
+    objects = objGetObjects(&sp38, &sp34);
     i = sp38;
     while (i < sp34) {
         modelInstance = objects[i]->modelInsts[objects[i]->modelInstIdx];
@@ -3807,7 +3807,7 @@ void func_80030880(void) {
     s32 sp28;
     s32 sp24;
 
-    objects = get_world_objects(&sp28, &sp24);
+    objects = objGetObjects(&sp28, &sp24);
     i = sp28;
     while (i < sp24) {
         temp_v1 = objects[i]->modelInsts[objects[i]->modelInstIdx];

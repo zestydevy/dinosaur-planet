@@ -86,7 +86,7 @@ void dll_251_ctor(void* dll) {
     Texture** tex;
     s32 i;
 
-    if (get_player()->id == 0) {
+    if (objGetPlayer()->id == 0) {
         bss_8 = data_4;
     } else {
         bss_8 = data_0;

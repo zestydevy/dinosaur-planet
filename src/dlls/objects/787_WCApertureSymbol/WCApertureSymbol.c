@@ -65,7 +65,7 @@ void dll_787_control(Object *self) {
 
     setup = (WCApertureSymbol_Setup*)self->setup;
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objdata->targetOpacity = 0;
     switch (objdata->state) {
     case 2:

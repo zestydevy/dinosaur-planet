@@ -74,7 +74,7 @@ void WarpPoint_control(Object *self) {
 
     setup = (WarpPoint_Setup*)self->setup;
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objdata->counter -= gUpdateRate;
     if (objdata->counter < 0) {
         objdata->counter = 0;

@@ -131,7 +131,7 @@ void medium_crate_control(Object *self) {
 
     gDLL_7_Newday->vtbl->func5(&sp70);
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID) == 0) {
         return;
     }
@@ -209,7 +209,7 @@ void medium_crate_control(Object *self) {
                 self->unkAF |= 8;
             }
         }
-        temp_fv0_2 = vec3_distance_squared(&get_player()->globalPosition, &self->globalPosition);
+        temp_fv0_2 = vec3_distance_squared(&objGetPlayer()->globalPosition, &self->globalPosition);
         objdata->unkE -= gUpdateRate;
         if (objdata->unkE <= 0) {
             objdata->unkE = rand_next(0, 100) + 300;
@@ -328,23 +328,23 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
 
         switch (objdata->unk15) {
             case 0: {
-                scorpionSetup = obj_alloc_setup(sizeof(Scorpion_Setup), OBJ_Scorpion);
+                scorpionSetup = objAllocSetup(sizeof(Scorpion_Setup), OBJ_Scorpion);
                 scorpionSetup->unk18 = rand_next(-127, 126);
                 scorpionSetup->base.x = rand_next(-10, 10) + self->srt.transl.x;
                 scorpionSetup->base.y = self->srt.transl.y;
                 scorpionSetup->base.z = rand_next(-10, 10) + self->srt.transl.z;
                 scorpionSetup->unk1A = 49;
                 scorpionSetup->unk19 = 7;
-                obj_create((ObjSetup*)scorpionSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                objSetupObject((ObjSetup*)scorpionSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 break;
             }
             case 1: {
-                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Green_scarab);
+                scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Green_scarab);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 400;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                obj = objSetupObject((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = self->srt.transl.x - player->srt.transl.x;
                 obj->velocity.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -371,13 +371,13 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 2: {
-                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Red_scarab);
+                scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Red_scarab);
                 scarabSetup->unk18 = rand_next(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 400;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                obj = objSetupObject((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = self->srt.transl.x - player->srt.transl.x;
                 obj->velocity.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -404,13 +404,13 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 3: {
-                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
+                scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
                 scarabSetup->unk18 = rand_next(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 2000;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                obj = objSetupObject((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = self->srt.transl.x - player->srt.transl.x;
                 obj->velocity.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -437,13 +437,13 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 4: {
-                scarabSetup = obj_alloc_setup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
+                scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
                 scarabSetup->unk18 = rand_next(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->lifetime = 2000;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                obj = objSetupObject((ObjSetup*)scarabSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->velocity.x = player->srt.transl.x - self->srt.transl.x;
                 obj->velocity.z = player->srt.transl.z - self->srt.transl.z;
                 magnitude = obj->velocity.x * obj->velocity.x + obj->velocity.z * obj->velocity.z;
@@ -472,9 +472,9 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             case 5:
             case 6: {
                 if (objdata->unk15 == 5) {
-                    foodPickupSetup = obj_alloc_setup(sizeof(Collectable_Setup), OBJ_meatPickup);
+                    foodPickupSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_meatPickup);
                 } else {
-                    foodPickupSetup = obj_alloc_setup(sizeof(Collectable_Setup), OBJ_applePickup);
+                    foodPickupSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_applePickup);
                 }
                 foodPickupSetup->objHitsValue = 20;
                 foodPickupSetup->gamebitCount = NO_GAMEBIT;
@@ -483,7 +483,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 foodPickupSetup->base.y = self->srt.transl.y + 5.0f;
                 foodPickupSetup->base.z = self->srt.transl.z;
                 foodPickupSetup->gamebitSecondary = NO_GAMEBIT;
-                obj = obj_create((ObjSetup*)foodPickupSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                obj = objSetupObject((ObjSetup*)foodPickupSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 obj->unkE0 = 21600;
                 break;
             }

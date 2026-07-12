@@ -203,7 +203,7 @@ void cam1stperson2_func_4BC(Cam* cam) {
         cam->unk118 = 1;
         break;
     }
-    temp_v0_4 = get_player();
+    temp_v0_4 = objGetPlayer();
     temp_v0_5 = ((DLL_210_Player*)temp_v0_4->dll)->vtbl->get_vehicle(temp_v0_4);
     if (temp_v0_5 != NULL) {
         var_v1 = (cam->srt.yaw & 0xFFFF) - ((-temp_v0_5->srt.yaw) & 0xFFFF);

@@ -138,7 +138,7 @@ void GroundAnimator_control(Object* self) {
         
         //Warp the player to the Magic Cave when they approach
         if ((objData->flags & GroundAnimator_FLAG_2_Dig_Finished) && 
-            (vec3_distance_xz(&self->globalPosition, &get_player()->globalPosition) < 10.0f)
+            (vec3_distance_xz(&self->globalPosition, &objGetPlayer()->globalPosition) < 10.0f)
         ) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
@@ -274,8 +274,8 @@ void GroundAnimator_control(Object* self) {
     
     //Show the Find command when the player is nearby
     if (!(objData->flags & GroundAnimator_FLAG_2_Dig_Finished)) {
-        player = get_player();
-        sidekick = get_sidekick();
+        player = objGetPlayer();
+        sidekick = objGetSidekick();
         if (sidekick != NULL) {
             distance = vec3_distance_squared(&self->globalPosition, &player->globalPosition);
             if (distance <= SQ(objSetup->findCommandRadius)) {

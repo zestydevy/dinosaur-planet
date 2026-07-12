@@ -36,7 +36,7 @@ void DFdockpoint_control(Object *self) {
        so a log will be rapidly created/deleted until the player comes into the log's load range */
     obj_get_all_of_type(OBJTYPE_Vehicle, &logCount);
     if (logCount == 0) {
-        logsetup = obj_alloc_setup(sizeof(BWLog_Setup), OBJ_BWLog);
+        logsetup = objAllocSetup(sizeof(BWLog_Setup), OBJ_BWLog);
         logsetup->base.quarterSize = sizeof(BWLog_Setup)/4;
         logsetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
         logsetup->base.loadDistance = 50;
@@ -46,7 +46,7 @@ void DFdockpoint_control(Object *self) {
         logsetup->base.y = self->srt.transl.y;
         logsetup->base.z = self->srt.transl.z;
         logsetup->yaw = setup->yaw;
-        obj_create((ObjSetup*)logsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+        objSetupObject((ObjSetup*)logsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
     }
 }
 

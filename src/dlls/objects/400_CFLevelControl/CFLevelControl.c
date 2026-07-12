@@ -389,7 +389,7 @@ void CFLevelControl_func_9EC(Data54 *data, s32 count) {
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
         if (mainGetBits(data->gamebit)) {
-            cloudbaby = func_800211B4(data->uID);
+            cloudbaby = objGetObjectByUID(data->uID);
             if (cloudbaby && (((DLL_373_CFCloudBaby*)cloudbaby->dll)->vtbl->func7(cloudbaby))) {
                 STUBBED_PRINTF(" Freeing Baby ");
                 gDLL_29_Gplay->vtbl->set_obj_group_status(cloudbaby->mapID, data->objgroup, 0);
@@ -425,7 +425,7 @@ void CFLevelControl_func_BB8(Data6C *data, s32 count) {
             if (objPos) {
                 distance = camDistance(objPos->x, objPos->y, objPos->z);
                 obj_get_nearest_type(OBJTYPE_CFTreasRobo, objPos, &distance);
-                chestOrGuardian = func_800211B4(data->uID);
+                chestOrGuardian = objGetObjectByUID(data->uID);
                 if (chestOrGuardian) {
                     if (data->distance < distance && ((data->gamebit1 == NO_GAMEBIT) || (!mainGetBits(data->gamebit1))) && (((DLL_CFGuardianCFSupTreasureCh*)chestOrGuardian->dll)->vtbl->func7(chestOrGuardian))) {
                         data->status = 0;

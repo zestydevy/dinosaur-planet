@@ -61,7 +61,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 
 	objData = self->data;
 	curveEndpoint = 25; //Matches unk18 on the initial curve node for SwapStone Hollow's lily pond mushroom (uID 0x3081c)
-	player = get_player();
+	player = objGetPlayer();
 	self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 
 	if (mainGetBits(setup->gamebitCollected)) {
@@ -140,7 +140,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 		objData->gamebitInventory = BIT_Inventory_White_Mushrooms;
 	}
 
-	func_80023D08(self, self->modelInstIdx);
+	objSetInfoNum(self, self->modelInstIdx);
 }
 
 // offset: 0x3A8 | func: 1 | export: 1
@@ -163,8 +163,8 @@ void SHmushroom_control(Object* self) {
 
 	objData = self->data;
 	objSetup = (SHmushroom_Setup*)self->setup;
-	player = get_player();
-	sidekick = get_sidekick();
+	player = objGetPlayer();
+	sidekick = objGetSidekick();
 
 	if (objData->state == SHmushroom_STATE_8_Hidden) {
 
@@ -404,7 +404,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	SRT fxTransform;
 	Object* player;
 
-	player = get_player();
+	player = objGetPlayer();
 
 	objData->flags &= ~SHmushroom_FLAG_Moving;
 
@@ -655,5 +655,5 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	//Move
 	self->velocity.x = fsin16_precise(objData->fleeAngle) * speed;
 	self->velocity.z = fcos16_precise(objData->fleeAngle) * speed;
-	obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
+	objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
 }

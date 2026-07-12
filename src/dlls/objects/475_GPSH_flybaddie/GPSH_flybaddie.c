@@ -131,13 +131,13 @@ void GPSH_flybaddie_control(Object* self) {
             objdata->unk52++;
             objdata->unk34 *= 1.2f;
             if (objdata->unk52 >= 3) {
-                obj_destroy_object(self);
+                objFreeObject(self);
                 _data_0++;
                 if (_data_0 >= 3) {
                     mainSetBits(BIT_5A9, 1);
                 }
             } else {
-                obj_set_model(self, self->modelInstIdx + 1);
+                objSetModel(self, self->modelInstIdx + 1);
             }
         }
     }
@@ -216,7 +216,7 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     f32 dirVec[3];
     f32 magnitude;
 
-    player = get_player();
+    player = objGetPlayer();
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
@@ -230,7 +230,7 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     objsetup->x = self->srt.transl.x;
     objsetup->y = self->srt.transl.y;
     objsetup->z = self->srt.transl.z;
-    obj = obj_create(objsetup, OBJINIT_STANDALONE, -1, -1, NULL);
+    obj = objSetupObject(objsetup, OBJINIT_STANDALONE, -1, -1, NULL);
     if (obj != NULL) {
         obj->srt.flags |= OBJFLAG_OWNS_SETUP;
         dirVec[0] = player->srt.transl.x - self->srt.transl.x;

@@ -52,7 +52,7 @@ void DBTrigger_control(Object* self) {
     seqIndex = 0;
     
     //Check if the sidekick is inside the object's bounds
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     if (sidekick != NULL) {
         if (self->srt.transl.x <= sidekick->srt.transl.x) {
             delta = sidekick->srt.transl.x - self->srt.transl.x;
@@ -74,7 +74,7 @@ void DBTrigger_control(Object* self) {
     }
     
     //Check if the player is inside the object's bounds
-    player = get_player();
+    player = objGetPlayer();
     if (player != NULL) {
         if (self->srt.transl.x <= player->srt.transl.x) {
             delta = player->srt.transl.x - self->srt.transl.x;

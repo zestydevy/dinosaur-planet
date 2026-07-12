@@ -108,7 +108,7 @@ void DIMLavaBallGenerator_control(Object *self) {
         }
     }
     if (objdata->lavaball == NULL) {
-        lavaballSetup = obj_alloc_setup(sizeof(DIMLavaBall_Setup), OBJ_DIMLavaBall);
+        lavaballSetup = objAllocSetup(sizeof(DIMLavaBall_Setup), OBJ_DIMLavaBall);
         lavaballSetup->base.quarterSize = 9;
         lavaballSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
         lavaballSetup->base.loadDistance = 0xFF;
@@ -122,7 +122,7 @@ void DIMLavaBallGenerator_control(Object *self) {
         lavaballSetup->unk1C = setup->unk1B;
         lavaballSetup->base.uID = setup->base.uID;
 
-        objdata->lavaball = obj_create((ObjSetup*)lavaballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
+        objdata->lavaball = objSetupObject((ObjSetup*)lavaballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
 
     lavaball = objdata->lavaball;
@@ -174,7 +174,7 @@ void DIMLavaBallGenerator_free(Object *self, s32 a1) {
     }
     if (a1 == 0) {
         if (objdata->lavaball) {
-            obj_destroy_object(objdata->lavaball);
+            objFreeObject(objdata->lavaball);
         }
     }
 }

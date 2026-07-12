@@ -86,7 +86,7 @@ void dll_602_control(Object* self) {
     if (objdata->unk10 == 2) {
         self->srt.yaw += 0x32;
     }
-    temp_fv0 = vec3_distance(&get_player()->globalPosition, &self->globalPosition);
+    temp_fv0 = vec3_distance(&objGetPlayer()->globalPosition, &self->globalPosition);
     if (objdata->unk8 == 0) {
         if (temp_fv0 < 90.0f) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_1D3, MAX_VOLUME, &objdata->unk8, NULL, 0, NULL);
@@ -143,7 +143,7 @@ void dll_602_free(Object* self, s32 a1) {
     if (a1 == 0) {
         temp_a0 = objdata->unk0;
         if (temp_a0 != NULL) {
-            obj_destroy_object(temp_a0);
+            objFreeObject(temp_a0);
         }
     }
     gDLL_14_Modgfx->vtbl->func5(self);

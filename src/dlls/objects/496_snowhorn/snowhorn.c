@@ -299,7 +299,7 @@ void dll_496_control(Object* snowhorn) {
 
     objdata = snowhorn->data;
     mapsObj = (SnowHorn_Setup*)snowhorn->setup;
-    player = get_player();
+    player = objGetPlayer();
 
     if (vec3_distance_xz_squared(&snowhorn->globalPosition, &player->globalPosition) 
             < 2.0f * (objdata->unkRadius * objdata->unkRadius)) {
@@ -524,7 +524,7 @@ static void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     Object *player;
       
     objdata = snowHorn->data;
-    player = get_player();
+    player = objGetPlayer();
       
     if (lookAt && player && objdata->distanceFromPlayer < 200.0f){
       objdata->lookAtUnk.aimIsActive = 1;
@@ -562,7 +562,7 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     }
 
     objAnimAdvance(snowhorn, objdata->unk50, gUpdateRate, NULL);
-    player = get_player();
+    player = objGetPlayer();
     if (!player) 
         return;
     
@@ -772,7 +772,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 temp_v0_2 = func_80034804(self, 0);
 
                 objdata->unkE = (u16) (0x8000 - temp_v0_2[1]);
-                player = get_player();
+                player = objGetPlayer();
                 
                 var_v1 = (arctan2_f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
                 CIRCLE_WRAP(var_v1)

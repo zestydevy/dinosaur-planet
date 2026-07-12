@@ -75,10 +75,10 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
         draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
     }
     if (obj->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH) {
-        obj_handle_model_switch(obj, obj->modelInsts[obj->modelInstIdx], obj->modelInsts[obj->modelInstIdx]->model);
+        objHandleModelSwitch(obj, obj->modelInsts[obj->modelInstIdx], obj->modelInsts[obj->modelInstIdx]->model);
     }
     if (obj->linkedObject != NULL && (obj->linkedObject->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH)) {
-        obj_handle_model_switch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
+        objHandleModelSwitch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
     }
     diRcpTrace(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
     update_pi_manager_array(2, -1);

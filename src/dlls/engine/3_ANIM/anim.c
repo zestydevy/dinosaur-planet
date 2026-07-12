@@ -1024,7 +1024,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             sp40 = _bss_5E8 * sp54;
             sp48 = sp40 * sp50;
             sp40 = sp40 * sp58;
-            player = get_player();
+            player = objGetPlayer();
             animObj->srt.transl.x = player->srt.transl.x + sp48;
             animObj->srt.transl.y = player->srt.transl.y + _bss_5E4 + sp44;
             animObj->srt.transl.z = player->srt.transl.z + sp40;
@@ -2747,7 +2747,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
                 return 1;
             }
             STUBBED_PRINTF(" MODEL NO %i \n", actor->modelInstIdx);
-            obj_set_model(actor, sp54);
+            objSetModel(actor, sp54);
         }
         break;
     case ANIM_CODE_EVT_6_24:
@@ -2778,7 +2778,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, map_get_layer());
         break;
     case ANIM_CODE_EVT_6_TOGGLE_PLAYER_CONTROL:
-        ((DLL_210_Player*)get_player()->dll)->vtbl->func69(get_player(), sp54);
+        ((DLL_210_Player*)objGetPlayer()->dll)->vtbl->func69(objGetPlayer(), sp54);
         break;
     default:
         break;
@@ -2797,7 +2797,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
     case ANIM_CODE_EVT_6_CAMERA_SHAKE: 
         if (arg4 == 0) {
             camUseShake();
-            player = get_player();
+            player = objGetPlayer();
             if (player != NULL) {
                 temp_fv0 = vec3_distance_xz(&player->globalPosition, &animObj->globalPosition);
                 var_fa0 = (2.0f * (sp54 - 7)) + 1.0f;
@@ -2828,7 +2828,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         break;
     case ANIM_CODE_EVT_6_SET_MODEL:
         if ((arg4 == 0) && (sp54 < actor->def->numModels)) {
-            obj_set_model(actor, sp54);
+            objSetModel(actor, sp54);
         }
         break;
     case ANIM_CODE_EVT_6_ENABLE_OBJ_GROUP:
@@ -3292,7 +3292,7 @@ void anim_tick(void) {
     s32 numObjs;
     s32 start;
 
-    objList = get_world_objects(&start, &numObjs);
+    objList = objGetObjects(&start, &numObjs);
     if (_data_0 != _data_4) {
         _data_4 = _data_0;
     }
@@ -3396,19 +3396,19 @@ static Object* anim_find_animobj_target_in_world(Object* animObj) {
     st = animObj->data;
     
     if (st->actorUID != 0) {
-        return func_800211B4(st->actorUID);
+        return objGetObjectByUID(st->actorUID);
     }
     
-    objList = get_world_objects(&start, &numObjs);
+    objList = objGetObjects(&start, &numObjs);
     
     objsetup = (AnimObj_Setup*)animObj->setup;
     targetObjID = objsetup->target - 4;
     
     if ((targetObjID == OBJ_Krystal) || (targetObjID == OBJ_Sabre)) {
-        return get_player();
+        return objGetPlayer();
     }
     if ((targetObjID == OBJ_Tricky) || (targetObjID == OBJ_Kyte)) {
-        return get_sidekick();
+        return objGetSidekick();
     }
     
     closestObj = NULL;
@@ -3449,7 +3449,7 @@ s16 anim_find_override_target(Object* animObj) {
     s32 numObjs;
     s32 start;
 
-    objList = get_world_objects(&start, &numObjs);
+    objList = objGetObjects(&start, &numObjs);
     st = animObj->data;
     setup = (AnimObj_Setup*)animObj->setup;
     if (animObj->controlNo == OBJCONTROL_Unk17) {
@@ -3461,10 +3461,10 @@ s16 anim_find_override_target(Object* animObj) {
         st->actor = NULL;
         break;
     case 1:
-        st->actor = get_player();
+        st->actor = objGetPlayer();
         break;
     case 2:
-        st->actor = get_sidekick();
+        st->actor = objGetSidekick();
         break;
     case 3:
         st->actor = NULL;
@@ -3477,9 +3477,9 @@ s16 anim_find_override_target(Object* animObj) {
         st->actor = NULL;
         targetObjID = setup->target - 4;
         if ((targetObjID == OBJ_Krystal) || (targetObjID == OBJ_Sabre)) {
-            st->actor = get_player();
+            st->actor = objGetPlayer();
         } else if (st->actorUID != 0) {
-            st->actor = func_800211B4(st->actorUID);
+            st->actor = objGetObjectByUID(st->actorUID);
         } else {
             closestDist = -1.0f;
             for (i = 0; i < numObjs; i++) {
@@ -3624,7 +3624,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
     sSlotObjID[object->seqSlot] = object->id;
     for (i = 0; i < numActors; i++) {
         if ((1 << i) & enabledActors) {
-            actorSetup = obj_alloc_setup(sizeof(AnimObj_Setup), OBJ_Override);
+            actorSetup = objAllocSetup(sizeof(AnimObj_Setup), OBJ_Override);
             actorObjID = actors[i].objID;
             if (actorObjID == 0xFFFF) {
                 actorSetup->base.objId = OBJ_Override;
@@ -3679,7 +3679,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
             if ((actorSetup->base.objId == OBJ_VariableObject) && (sVariableObjID != -1)) {
                 actorSetup->base.objId = sVariableObjID;
             }
-            actorObj = obj_create(&actorSetup->base, OBJINIT_FLAG4 | OBJINIT_STANDALONE, -1, -1, actorParent);
+            actorObj = objSetupObject(&actorSetup->base, OBJINIT_FLAG4 | OBJINIT_STANDALONE, -1, -1, actorParent);
             actorObj->seqSlot = SEQSLOT_ANIMOBJ;
             actorObjData = actorObj->data;
             actorObjData->seqYaw = yaw;
@@ -3760,7 +3760,7 @@ void anim_end_obj_sequence(s32 slot) {
     s32 freeListLen;
     Object** objList;
     
-    objList = get_world_objects(&sp40, &numObjs);
+    objList = objGetObjects(&sp40, &numObjs);
     freeListLen = 0;
 
     for (i = 0; i < numObjs; i++) {
@@ -3784,7 +3784,7 @@ void anim_end_obj_sequence(s32 slot) {
         }
     }
     for (i = 0; i < freeListLen; i++) {
-        obj_destroy_object(freeList[i]);
+        objFreeObject(freeList[i]);
     }
     anim_func_9DD4();
     _data_24 = NULL;
@@ -3880,7 +3880,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
     f32 sp34[3];
     Object* sp30;
 
-    sp30 = get_player();
+    sp30 = objGetPlayer();
     arg3 *= 182.04f;
     arg4 *= 182.04f;
     arg2 *= 182.04f;

@@ -255,7 +255,7 @@ void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objDat
     }
 
     //Get TABLES.bin subfile #14 ("scroll table")
-    scroll_table = func_800213A0(14);
+    scroll_table = objGetTable(14);
     if (scroll_table == NULL){
         STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
         return;

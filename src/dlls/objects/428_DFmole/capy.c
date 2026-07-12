@@ -163,7 +163,7 @@ void capy_free(Object *self, s32 a1) {
 
     obj_free_object_type(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 1);
@@ -203,7 +203,7 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
         fsa->targetDist = sqrtf(SQ(vec.f[0]) + SQ(vec.f[1]) + SQ(vec.f[2]));
     }
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
-    player = get_player();
+    player = objGetPlayer();
     if ((player == fsa->target) || ((fsa->target != NULL) && (fsa->target->id == OBJ_foodbagNewMeat))) {
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         if (foodbag != NULL) {
@@ -221,7 +221,7 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
 static void capy_func_644(Object *self, s32 arg1, Baddie *baddie, ObjFSA_Data *fsa) {
     Object* player;
 
-    player = get_player();
+    player = objGetPlayer();
     self->objhitInfo->unk58 |= 1;
     if (player == fsa->target) {
         if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2, 1) != 0) {
@@ -266,7 +266,7 @@ s32 capy_anim_state_0_standing(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         capydata->timer = 0;
     }
     capydata->timer += 1;
-    if ((get_player() == fsa->target) && (capydata->timer >= 61)) {
+    if ((objGetPlayer() == fsa->target) && (capydata->timer >= 61)) {
         if (capydata->ateMagicPlant != 0) {
             fsa->enteredAnimState = TRUE;
             fsa->unk33A = 0;
@@ -416,10 +416,10 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             }
             if (target->id == OBJ_MagicPlant) {
                 capydata->ateMagicPlant = TRUE;
-                obj_destroy_object(target);
+                objFreeObject(target);
             } else {
                 capydata->fed = TRUE;
-                player = get_player();
+                player = objGetPlayer();
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
                 if (foodbag != NULL) {
                     ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, target);
@@ -585,7 +585,7 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
 
 // offset: 0x1698 | func: 24
 s32 capy_logic_state_3_eating(Object *self, ObjFSA_Data* fsa, f32 updateRate) {
-    if ((fsa->animState != CAPY_ASTATE_6_DoneEating) && ((fsa->target == 0) || (get_player() == fsa->target))) {
+    if ((fsa->animState != CAPY_ASTATE_6_DoneEating) && ((fsa->target == 0) || (objGetPlayer() == fsa->target))) {
         fsa->animState = CAPY_ASTATE_3_Burrow;
         fsa->enteredAnimState = TRUE;
         fsa->unk33A = 0;
@@ -604,7 +604,7 @@ s32 capy_logic_state_4_idle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->target != NULL) {
-        isTargetPlayer = get_player() == fsa->target;
+        isTargetPlayer = objGetPlayer() == fsa->target;
         fsa->animState = CAPY_ASTATE_8_Walking;
         fsa->xAnalogInput = 0.0f;
         fsa->yAnalogInput = 0.0f;

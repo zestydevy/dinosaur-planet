@@ -60,7 +60,7 @@ void CCgasventControl_control(Object *self) {
     switch (objdata->state) {
     case STATE_Loading:
         obj_get_all_of_type(OBJTYPE_CCgasvent, &count);
-        objdata->player = get_player();
+        objdata->player = objGetPlayer();
         if (count == GASVENT_COUNT && objdata->player)
             objdata->state = STATE_Unstarted;
         break;

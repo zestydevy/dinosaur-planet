@@ -878,7 +878,7 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     Object *obj;
 
     lastBlockIdx = -1;
-    objList = get_world_objects(NULL, NULL);
+    objList = objGetObjects(NULL, NULL);
     gDLL_57->vtbl->func2(&spE0, &spDC, &spD8, &spD4, &spD0, &spCC);
     for (i = 1; i < gRenderListLength; i++) {
         idx = shapeIdx = (gRenderList[i] & 0x3F80) >> 7;
@@ -1307,15 +1307,15 @@ void track_add_visible_objects(s8* objVisibilities) {
     s32 var_v0;
     s8* vis;
 
-    objects = get_world_objects(NULL, NULL);
+    objects = objGetObjects(NULL, NULL);
     // Separate invisible objects from visible objects
-    visibleStartIdx = obj_visibility_sort_objects(&numObjs);
+    visibleStartIdx = objVisibilitySortObjects(&numObjs);
     if (numObjs > MAX_VISIBLE_OBJECTS) {
         STUBBED_PRINTF("depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n");
         numObjs = MAX_VISIBLE_OBJECTS;
     }
     // Depth sort just the visible objects
-    obj_depth_sort_objects(visibleStartIdx, numObjs - 1);
+    objDepthSortObjects(visibleStartIdx, numObjs - 1);
     for (i = 0; i < numObjs; i++) {
         object = objects[i];
         vis = &objVisibilities[i];
@@ -1918,7 +1918,7 @@ u8 track_obj_vis_check(Object* obj) {
             obj->opacityWithFade = 0;
             return FALSE;
         }
-        if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = get_player(), (playerObj != NULL))) {
+        if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = objGetPlayer(), (playerObj != NULL))) {
             dist = vec3_distance(&obj->globalPosition, &playerObj->globalPosition);
         } else {
             dist = camDistance(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
@@ -2825,7 +2825,7 @@ void map_func_8004773C(void) {
     map_func_80046B58(savedPlayerLocation->vec.x, savedPlayerLocation->vec.y, savedPlayerLocation->vec.z);
     gTrackFlags &= ~TRACKFLAG_UNK4;
     func_800591EC();
-    func_80023628();
+    objLoadPlayer();
     D_800B4A58 = 0;
 
     camera = camGetMain();
@@ -2833,7 +2833,7 @@ void map_func_8004773C(void) {
     camera->srt.transl.y = savedPlayerLocation->vec.y;
     camera->srt.transl.z = savedPlayerLocation->vec.z;
 
-    player = get_player();
+    player = objGetPlayer();
     if ((D_800B4A5E == -2) && (player != NULL) && ((playerno == PLAYER_SABRE) || (playerno == PLAYER_KRYSTAL))) {
         sp40 = gDLL_29_Gplay->vtbl->get_current_player_lactions();
         sp3C = gDLL_29_Gplay->vtbl->get_current_player_envactions();
@@ -3045,7 +3045,7 @@ void map_func_800484A8(void) {
         }
     }
     gLoadedBlockCount = 0;
-    obj_free_all();
+    objFreeAll();
     for (j = 0; j < 120; j++) {
         if (gLoadedMapsDataTable[j] != NULL) {
             mmFree(gLoadedMapsDataTable[j]);
@@ -4187,7 +4187,7 @@ void map_update_objects_streaming(s32 arg0) {
         }
     }
     
-    objList = get_world_objects(&i, &count);
+    objList = objGetObjects(&i, &count);
     while (i < count) {
         unloadObj = FALSE;
         obj = objList[i];
@@ -4219,7 +4219,7 @@ void map_update_objects_streaming(s32 arg0) {
             if (obj->id == OBJ_IMSnowBike) {
                 STUBBED_PRINTF(" Map not Loaded %i ", func_8004AEFC(obj->mapID, sp70, var_s4) == 0);
             }
-            obj_destroy_object(obj);
+            objFreeObject(obj);
             i -= 1;
             count -= 1;
         }
@@ -4256,11 +4256,11 @@ void map_update_objects_streaming(s32 arg0) {
                 if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[i]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[i]) != 0)) {
                     func_8004B710(var_s3, (u32) sp70[i], 1);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3E, 4, NULL, var_s1_2, sp70[i], var_s3, 0, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
                     }
                 }
                 var_s3++;
@@ -4301,11 +4301,11 @@ void map_update_objects_streaming(s32 arg0) {
                 if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object(var_s1_2, temp_s7, temp_s4) != 0)) {
                     func_8004B710(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
                     }
                 }
                 var_s3++;
@@ -4380,7 +4380,7 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
 
     scaledZOrFlag = 0;
     if ((arg0->loadFlags & OBJSETUP_LOAD_MAIN) && (arg1 == 0)) {
-        player = get_player();
+        player = objGetPlayer();
         if (player != NULL) {
             sp20 = player->globalPosition.x;
             sp1C = player->globalPosition.y;
@@ -4492,7 +4492,7 @@ s32 map_should_obj_unload(Object *obj) {
 
     //Use player/camera distance to check if the object should unload
     if ((objSetup->loadFlags & OBJSETUP_LOAD_MAIN) && 
-        (player = get_player(), (player != NULL)) && obj->parent == NULL
+        (player = objGetPlayer(), (player != NULL)) && obj->parent == NULL
     ) {
         refX = player->globalPosition.x;
         refY = player->globalPosition.y;
@@ -4611,7 +4611,7 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
             if (map_get_is_object_streaming_disabled() != 0) {
                 func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
             } else {
-                obj_create((ObjSetup* )s0, OBJINIT_STANDALONE, mapID, someVar, arg3);
+                objSetupObject((ObjSetup* )s0, OBJINIT_STANDALONE, mapID, someVar, arg3);
             }
         }
         someVar += 1;

@@ -95,7 +95,7 @@ void DIMBoulder_control(Object* self) {
     
     if (objData->state != DIMBoulder_STATE_2_Finished) {
         self->velocity.f[1] -= 0.09f * temp;
-        obj_move(self, 
+        objMove(self, 
             self->velocity.f[0] * temp, 
             self->velocity.f[1] * temp, 
             self->velocity.f[2] * temp

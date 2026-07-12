@@ -42,7 +42,7 @@ static void Pollen_create_fragments(Object* self) {
 
     i = 6;
     while (i--) {
-        setup = obj_alloc_setup(sizeof(PollenFragment_Setup), OBJ_PollenFragment);
+        setup = objAllocSetup(sizeof(PollenFragment_Setup), OBJ_PollenFragment);
         setup->base.x = self->srt.transl.x;
         setup->base.y = self->srt.transl.y;
         setup->base.z = self->srt.transl.z;
@@ -50,7 +50,7 @@ static void Pollen_create_fragments(Object* self) {
         setup->base.byte5 = 1;
         setup->base.byte6 = 0xFF;
         setup->base.fadeDistance = 0xFF;
-        fragment = obj_create(
+        fragment = objSetupObject(
             (ObjSetup*)setup, 
             OBJINIT_STANDALONE | OBJINIT_FLAG4, 
             -1, 
@@ -90,7 +90,7 @@ void Pollen_control(Object* self) {
     
     //Apply gravity and move
     self->velocity.y -= 0.045f * gUpdateRateF;
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     
     //Objhits
     func_80026128(self, 0x15, 1, 0);
@@ -99,7 +99,7 @@ void Pollen_control(Object* self) {
 
     //React to hitting the player or sidekick
     if (self->objhitInfo->unk48 && 
-        ((get_player() == self->objhitInfo->unk48) || (get_sidekick() == self->objhitInfo->unk48))
+        ((objGetPlayer() == self->objhitInfo->unk48) || (objGetSidekick() == self->objhitInfo->unk48))
     ) {
         camUseShake();
         camSetShakeOffset(1.0f);
@@ -127,7 +127,7 @@ void Pollen_control(Object* self) {
         
         Pollen_create_fragments(self);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 

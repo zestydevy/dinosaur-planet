@@ -180,7 +180,7 @@ void WL_Crystal_control(Object* self) {
     if (self->id == OBJ_WL_Crystal) {
         //Remove if gamebit 0x38F is set
         if (mainGetBits(BIT_WM_Quan_Ata_Lachu_Sun)) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         
         //Scroll texture UVs
@@ -239,7 +239,7 @@ void WL_Crystal_control(Object* self) {
 
         //Destroy once 6th spirit is deposited and transformation into sun complete
         if (!objData->showCrystal) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         return;
     }

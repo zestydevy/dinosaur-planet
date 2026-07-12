@@ -209,7 +209,7 @@ void mainInit(void) {
     func_8001CD00();
     modInit();
     dllInit();
-    init_objects();
+    objInit();
     diPrintfInit();
     func_80053300();
     shadowsInit();
@@ -339,7 +339,7 @@ void mainTick(void) {
     gSPEndDisplayList(gCurGfx++);
 
     gfxtask_wait();
-    obj_do_deferred_free();
+    objDoDeferredFree();
     mmFreeTick();
 
     if (gPauseState == 0) {
@@ -432,7 +432,7 @@ void main_func_80013D80(void) {
         }
 
         if (gPauseState == 0) {
-            update_objects();
+            objTick();
             track_tick(0);
 
             if ((camIsAlternateActive() == 0) 
@@ -447,7 +447,7 @@ void main_func_80013D80(void) {
 
             gDLL_29_Gplay->vtbl->tick();
         } else {
-            update_obj_models();
+            objUpdateObjModels();
         }
 
         if (gPauseState == 0) {
@@ -458,7 +458,7 @@ void main_func_80013D80(void) {
         func_800591EC();
         func_8004A67C();
         map_update_streaming();
-        func_800210DC();
+        objHandleAnimseqActors();
 
         gDLL_4_Race->vtbl->func14();
 
@@ -932,7 +932,7 @@ void mainUpdatePlayerPosBuffer(void) {
     Object *player;
     struct Vec3_Int *pos;
 
-    player = get_player();
+    player = objGetPlayer();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
     D_800AE674 += gUpdateRate;
 

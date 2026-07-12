@@ -78,7 +78,7 @@ void ECSHCup_control(Object* self) {
     f32 objectDistance = 500.0f;
     Object *player;
     
-    player = get_player();
+    player = objGetPlayer();
     
     if (dShrine == NULL){
         dShrine = obj_get_nearest_type_to(OBJTYPE_13, self, &objectDistance);

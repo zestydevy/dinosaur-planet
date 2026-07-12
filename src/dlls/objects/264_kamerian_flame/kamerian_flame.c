@@ -81,7 +81,7 @@ void kamerian_flame_control(Object* self) {
     if (dOpacity >= self->opacity) {
         //Destroy if faded out
         self->opacity = 0;
-        obj_destroy_object(self);
+        objFreeObject(self);
         return;
     }
 
@@ -94,14 +94,14 @@ void kamerian_flame_control(Object* self) {
     self->velocity.y += -0.046f * gUpdateRateF;
     self->srt.yaw = arctan2_f(self->velocity.x, self->velocity.z);
     self->srt.pitch = arctan2_f(sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z)), self->velocity.y) - 0x4000;
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     func_80026128(self, 0xA, 1, 0);
     func_80026940(self, 0x10);
     func_8002674C(self);
 
     //Handle object collisions
     if (self->objhitInfo->unk48 && 
-        ((get_player()) == self->objhitInfo->unk48 || (get_sidekick()) == self->objhitInfo->unk48)) {
+        ((objGetPlayer()) == self->objhitInfo->unk48 || (objGetSidekick()) == self->objhitInfo->unk48)) {
 
         camUseShake();
         camSetShakeOffset(1.0f);

@@ -62,7 +62,7 @@ void DFbarrel_control(Object* self) {
         objData->framesSinceDetonation++;
         /* fallthrough */
     case 20:
-        obj_destroy_object(self);
+        objFreeObject(self);
         break;
     }
 }
@@ -199,7 +199,7 @@ void DFbarrel_handle_movement(Object* self) {
     position.y = self->srt.transl.y;
     position.z = self->srt.transl.z;
 
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
     func_80059C40(&position, &self->srt.transl, 10.0f, 0, NULL, self, 8, -1, 0xFF, 0);
 }
@@ -235,11 +235,11 @@ void DFbarrel_handle_damage(Object* self) {
         func_80026940(self, 40);
         func_80026128(self, Damage_Type_Explosion, 4, 0);
         
-        explosion = obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+        explosion = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
         explosion->base.x = self->srt.transl.x;
         explosion->base.y = self->srt.transl.y;
         explosion->base.z = self->srt.transl.z;
-        obj_create((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
+        objSetupObject((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
         
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);

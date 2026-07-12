@@ -89,7 +89,7 @@ void dll_376_control(Object* self) {
     }
     
     if (objData->unk0 == NULL) {
-        objects = get_world_objects(&initialIndex, &objectsCount);
+        objects = objGetObjects(&initialIndex, &objectsCount);
         for (i = initialIndex; i < objectsCount; i++){
             if (objects[i]->controlNo == OBJCONTROL_CFPerch) {
                 objData->unk0 = objects[i];
@@ -100,7 +100,7 @@ void dll_376_control(Object* self) {
     
     objData->unk5F = mainGetBits(BIT_4D);
     if (objData->unk5F == 0) {
-        player = get_player();
+        player = objGetPlayer();
         
         if (objData->unk58) {
             objAnimSet(self, 0, 0.105f, 0);
@@ -246,7 +246,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         objData->unk60 = 1;
        
         
-        dustSetup = (BoneDust_Setup*)obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
+        dustSetup = (BoneDust_Setup*)objAllocSetup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
         dustSetup->unk1A = 2;
         dustSetup->unk2C = -1;
         dustSetup->unk1C = -1;
@@ -259,7 +259,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;
-        obj_create((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
+        objSetupObject((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
     return 0;
 }

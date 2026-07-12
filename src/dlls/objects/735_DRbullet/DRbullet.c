@@ -71,7 +71,7 @@ void DRbullet_control(Object* self) {
 
     switch (objData->state){
         case BULLET_STATE_FIRED:
-            obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+            objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
             objData->timer -= gUpdateRate;
             //Check if the bullet hit something or its timer expired
             if ((objData->timer < 0) || (self->objhitInfo->unk58 & 8)) {
@@ -103,7 +103,7 @@ void DRbullet_control(Object* self) {
 
     //Control whooshing sound volume as bullet passes player
     if (objData->whooshSoundHandle) {
-        gDLL_6_AMSFX->vtbl->update_doppler(objData->whooshSoundHandle, self, get_player(), 150.0f);
+        gDLL_6_AMSFX->vtbl->update_doppler(objData->whooshSoundHandle, self, objGetPlayer(), 150.0f);
     }
 }
 
@@ -125,7 +125,7 @@ void DRbullet_free(Object* self, s32 arg1) {
 
     lfxEmitter = objData->lfxEmitter;
     if (lfxEmitter) {
-        obj_destroy_object(lfxEmitter);
+        objFreeObject(lfxEmitter);
     }
 }
 
@@ -210,7 +210,7 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     //Create new lfxEmitter
     lfxEmitter = objData->lfxEmitter;
     if (lfxEmitter != NULL){
-        obj_destroy_object(lfxEmitter);
+        objFreeObject(lfxEmitter);
     }    
     lfxEmitter = DRbullet_create_lfxEmitter(self, 0x24B);
     objData->lfxEmitter = lfxEmitter;
@@ -231,7 +231,7 @@ void DRbullet_free_if_inactive(Object* self) {
 
     objData->flags |= 1;
     if (objData->state == BULLET_STATE_INACTIVE) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 
@@ -293,7 +293,7 @@ s32 DRbullet_tick_impact(Object* self) {
         }
     } else {
         if (objData->lfxEmitter != NULL) {
-            obj_destroy_object(objData->lfxEmitter);
+            objFreeObject(objData->lfxEmitter);
             objData->lfxEmitter = NULL;
         }
         self->opacity = 0;
@@ -306,12 +306,12 @@ s32 DRbullet_tick_impact(Object* self) {
 Object* DRbullet_create_lfxEmitter(Object* self, s32 arg1) {
     LFXEmitter_Setup* lfxSetup;
 
-    lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    lfxSetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     lfxSetup->base.loadFlags = 2;
     lfxSetup->base.x = self->srt.transl.x;
     lfxSetup->base.y = self->srt.transl.y;
     lfxSetup->base.z = self->srt.transl.z;
     lfxSetup->unk1E = arg1;
     lfxSetup->unk22 = -1;
-    return obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
 }

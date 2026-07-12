@@ -97,7 +97,7 @@ void Tumbleweed_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup*
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         
         if (objData->carryingGold & 1) {
-            for (objects = get_world_objects(&index, &count); index < count; index++) {
+            for (objects = objGetObjects(&index, &count); index < count; index++) {
                 if (objects[index]->id == OBJ_SC_golden_nugge) {
                     
                     objData->goldenNugget = objects[index];
@@ -229,7 +229,7 @@ void Tumbleweed_tick_chase_player(Object* self) {
         if (objData->player != NULL) {
             player = objData->player;
         } else {
-            player = get_player();
+            player = objGetPlayer();
         }
         
         dx = self->srt.transl.x - player->srt.transl.x;
@@ -247,7 +247,7 @@ void Tumbleweed_tick_chase_player(Object* self) {
         if (objData->player != NULL) {
             player = objData->player;
         } else {
-            player = get_player();
+            player = objGetPlayer();
         }
         
         dx = self->srt.transl.x - player->srt.transl.x;
@@ -310,7 +310,7 @@ void Tumbleweed_tick_chase_player(Object* self) {
     } else {
         //Destroy self when expiry timer runs out
         if (objData->timer <= 0.0f) {
-            obj_destroy_object(self);
+            objFreeObject(self);
             return;
         }
         objData->timer -= gUpdateRateF;
@@ -364,12 +364,12 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
 
     } else if (objData->state == Tumbleweed_STATE_Rolling) {
         //Get distance to player/sidekick (whoever's closest)
-        player = get_player();
+        player = objGetPlayer();
         dx = self->srt.transl.x - player->srt.transl.x;
         dz = self->srt.transl.z - player->srt.transl.z;
         distance = SQ(dx) + SQ(dz);
         
-        sidekick = get_sidekick();
+        sidekick = objGetSidekick();
         if (sidekick && sidekick->id == OBJ_Tricky) {
             //Enable "Find" sidekick command option when nearby
             if (distance < 30625.0f) {
@@ -462,7 +462,7 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
     } else if (objData->state == Tumbleweed_STATE_Gravitate) {
         //Gravitate towards a target point (e.g. when being eaten by Garunda Te)
         distance = vec3_distance_xz_squared(&self->srt.transl, objData->gravitateTarget);
-        obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+        objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
         
         //Advance state after gravitating beyond the destination point
         if (distance < vec3_distance_xz_squared(&self->srt.transl, objData->gravitateTarget)) {
@@ -480,7 +480,7 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
         
         //Destroy self at end of shrink animation
         if (self->srt.scale < 0.01f) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
     
         //Attach to destination point
@@ -491,7 +491,7 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
     } else {
         //Destroy self when expiry timer runs out
         if (objData->timer <= 0.0f) {
-            obj_destroy_object(self);
+            objFreeObject(self);
             return;
         }
         objData->timer -= gUpdateRateF;
@@ -535,7 +535,7 @@ void Tumbleweed_free(Object* self, s32 arg1) {
     }
     
     //Find parent tree object
-    for (objects = get_world_objects(&i, &count); i < count; i++) {
+    for (objects = objGetObjects(&i, &count); i < count; i++) {
         object = objects[i];
         if (id == object->id) {
             ((DLL_226_TumbleweedBush*)object->dll)->vtbl->remove_tumbleweed(object, self);
@@ -732,7 +732,7 @@ int Tumbleweed_handle_carry_behaviour(Object* self) {
     Tumbleweed_Data* objData;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     //Not being carried
     if (objData->carryFlags == Twig_FLAG_None) {
@@ -813,13 +813,13 @@ void Tumbleweed_create_twigs(Object* self) {
 
     switch (self->id) {
         case OBJ_Tumbleweed1:
-            setup = obj_alloc_setup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed1twig);
+            setup = objAllocSetup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed1twig);
             break;
         case OBJ_Tumbleweed2:
-            setup = obj_alloc_setup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed2twig);
+            setup = objAllocSetup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed2twig);
             break;
         case OBJ_Tumbleweed3:
-            setup = obj_alloc_setup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed3twig);
+            setup = objAllocSetup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed3twig);
             break;
     }
     
@@ -834,5 +834,5 @@ void Tumbleweed_create_twigs(Object* self) {
     setup->yaw = self->srt.yaw;
     setup->carryingGold = 0;
     setup->interactRadius = 64.0f;
-    obj_create((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+    objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

@@ -72,8 +72,8 @@ void SCTotemBond_control(Object* self) {
     Object* sidekick;
 
     objData = self->data;
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     
     if (objData->flags & SCTotemBond_FLAG_Init_Minigame) {
         SCTotemBond_init_minigame(self, objData);
@@ -183,7 +183,7 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         objSetup = (SCTotemBond_Setup*)self->setup;
         angle = i << 0xE; //degrees: 0, 90, 180, 270
         
-        setupLF = obj_alloc_setup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);
+        setupLF = objAllocSetup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);
         setupLF->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupLF->base.y = self->srt.transl.y;
         setupLF->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
@@ -198,7 +198,7 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupLF->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         setupLF->unk32 = 1;
         
-        setupFlame = obj_alloc_setup(sizeof(SCFlameGameFlame_Setup), OBJ_SC_flamegamefla);
+        setupFlame = objAllocSetup(sizeof(SCFlameGameFlame_Setup), OBJ_SC_flamegamefla);
         setupFlame->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupFlame->base.y = self->srt.transl.y;
         setupFlame->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
@@ -214,8 +214,8 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupFlame->unk1E = 7;
         setupFlame->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         
-        obj_create((ObjSetup*)setupLF, 5, -1, -1, 0);
-        obj_create((ObjSetup*)setupFlame, 5, -1, -1, 0);
+        objSetupObject((ObjSetup*)setupLF, 5, -1, -1, 0);
+        objSetupObject((ObjSetup*)setupFlame, 5, -1, -1, 0);
         
         lfIndex++;
         if (lfIndex >= 4) {
@@ -230,7 +230,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     Object* kyte;
 
     //Make sure Kyte has at least 1 unit of Flame energy
-    kyte = get_sidekick();
+    kyte = objGetSidekick();
     if (kyte != NULL) {
         objData->flameEnergyCount = ((DLL_ISidekick*)kyte->dll)->vtbl->get_red_food_count(kyte);
         if (objData->flameEnergyCount <= 0) {
@@ -258,7 +258,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     mainSetBits(BIT_Kyte_Flight_Curve, 0x83);
     
     //Create restart point
-    player = get_player();
+    player = objGetPlayer();
     gDLL_29_Gplay->vtbl->restart_set(&player->srt.transl, player->srt.yaw, map_get_layer());
 }
 
@@ -267,7 +267,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
 void SCTotemBond_finish_minigame(Object* self, SCTotemBond_Data* objData) {
     Object* player;
 
-    player = get_player();
+    player = objGetPlayer();
     
     gDLL_29_Gplay->vtbl->restart_clear();
     gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 3, 0, NULL, 0, Cam_Ease_None);
@@ -324,7 +324,7 @@ void SCTotemBond_set_level_state(Object* self, u8 value) {
     s32 index;
     s32 count;
 
-    for (objects = get_world_objects(&index, &count); index < count; index++) {
+    for (objects = objGetObjects(&index, &count); index < count; index++) {
         if ((self != objects[index]) && (objects[index]->id == OBJ_SC_levelcontrol)) {
             ((DLL_519_SC_Levelcontrol*)objects[index]->dll)->vtbl->func7(objects[index], value);
             return;

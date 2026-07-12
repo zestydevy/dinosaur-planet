@@ -65,9 +65,9 @@ void FindKyteObject_control(Object *self) {
             break;
         }
 
-        kyte = get_sidekick();
+        kyte = objGetSidekick();
         if (kyte) {
-            player = get_player();
+            player = objGetPlayer();
             if (setup->checkDistance2D) {
                 dist = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition);
             } else {

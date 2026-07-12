@@ -117,7 +117,7 @@ void SC_levelcontrol_control(Object *self) {
     u8 sp2F;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     sp2F = 0;
     if (mainGetBits(BIT_4BD)) {
         mainSetBits(BIT_4BD, 0);
@@ -201,7 +201,7 @@ void SC_levelcontrol_free(Object *self, s32 arg1) {
 
     objdata = self->data;
     if (arg1 == 0) {
-        func_80000860(self, get_player(), 0x1C3, 0);
+        func_80000860(self, objGetPlayer(), 0x1C3, 0);
     }
     mainSetBits(BIT_SC_UNKNOWN_2BA, objdata->index1);
     menu_func_8000FA2C();
@@ -271,7 +271,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
 
     objdata = self->data;
     mapSetup = gDLL_29_Gplay->vtbl->get_act(MAP_SWAPSTONE_CIRCLE);
-    player = get_player();
+    player = objGetPlayer();
 
     if (mapSetup < 3) {
         if (mainGetBits(BIT_CC_Rescued_Kyte)) {
@@ -328,7 +328,7 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
     Object *player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     isNighttime = gDLL_7_Newday->vtbl->func8(&time);
 
     if (arg1 != 0) {

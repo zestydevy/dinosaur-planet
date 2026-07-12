@@ -123,8 +123,8 @@ void DBDustGeezer_control(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, 0x3C3, &fxTrans, 0, -1, 0);
         } else {
             //Enable "Find" sidekick command when nearby
-            player = get_player();
-            sidekick = get_sidekick();
+            player = objGetPlayer();
+            sidekick = objGetSidekick();
             if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
             }
@@ -194,7 +194,7 @@ void DBDustGeezer_free(Object* self, int skipChildObjects) {
 
     if (skipChildObjects == FALSE) {
         for (i = 0; i < 8; i++){ 
-            obj_destroy_object(objData->boneDust[i]); 
+            objFreeObject(objData->boneDust[i]); 
         }
     }
     
@@ -299,7 +299,7 @@ int DBDustGeezer_launch_gem(Object* self) {
 Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
     DBBoneDust_Setup* dustSetup;
 
-    dustSetup = (DBBoneDust_Setup*)obj_alloc_setup(sizeof(DBBoneDust_Setup), objectID);
+    dustSetup = (DBBoneDust_Setup*)objAllocSetup(sizeof(DBBoneDust_Setup), objectID);
     dustSetup->unk1E = -1;
     dustSetup->base.x = self->srt.transl.x;
     dustSetup->base.y = self->srt.transl.y - 30.0f;
@@ -310,7 +310,7 @@ Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
     dustSetup->base.loadDistance = 0xFF;
     dustSetup->base.fadeDistance = 0xFF;
     
-    return obj_create((ObjSetup*)dustSetup, 5, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)dustSetup, 5, self->mapID, -1, self->parent);
 }
 
 // offset: 0xC40 | func: 12

@@ -94,7 +94,7 @@ void SB_ShipGun_control(Object *self) {
     SRT transform;
     s16 *sp44;
 
-    player = get_player();
+    player = objGetPlayer();
     objdata = self->data;
     setup = (SB_ShipGun_Setup*)self->setup;
     sp44 = func_80034804(self, 0);
@@ -104,7 +104,7 @@ void SB_ShipGun_control(Object *self) {
         return;
     }
     if (objdata->cloudrunner == NULL) {
-        objects = get_world_objects(&objIndex, &objCount);
+        objects = objGetObjects(&objIndex, &objCount);
         for (i = objIndex; i < objCount; i++) {
             if (objects[i]->id == OBJ_SB_Cloudrunner) {
                 objdata->cloudrunner = objects[i];
@@ -210,7 +210,7 @@ void SB_ShipGun_control(Object *self) {
             sp84.y = 135.f;
             sp84.z = 0.0f;
             rotate_vec3(&transform, (f32*)(&sp84));
-            cannonballSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_CannonBall);
+            cannonballSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_CannonBall);
             cannonballSetup->x = sp84.x + sp98;
             cannonballSetup->y = sp84.y + sp94;
             cannonballSetup->z = sp84.z + sp90;
@@ -218,7 +218,7 @@ void SB_ShipGun_control(Object *self) {
             cannonballSetup->fadeFlags = 1;
             cannonballSetup->loadDistance = 0xFF;
             cannonballSetup->fadeDistance = 0xFF;
-            cannonballObj = obj_create(cannonballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+            cannonballObj = objSetupObject(cannonballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
             if (0) { }
             dx = (dx1 = objdata->cloudrunner->globalPosition.x - self->globalPosition.x);
             dy = objdata->cloudrunner->globalPosition.y - (self->globalPosition.y + 100.0f);
@@ -254,7 +254,7 @@ void SB_ShipGun_control(Object *self) {
         if (self->curModAnimId != 1) {
             for (i = 0; i != 6; i++) {
                 if (objdata->unkE == 1) {
-                    debrisSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_Debris);
+                    debrisSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_Debris);
                     debrisSetup->x = sp98;
                     debrisSetup->y = sp94 + 135.0f;
                     debrisSetup->z = sp90;
@@ -262,7 +262,7 @@ void SB_ShipGun_control(Object *self) {
                     debrisSetup->fadeFlags = 2;
                     debrisSetup->loadDistance = 0xFF;
                     debrisSetup->fadeDistance = 0xFF;
-                    obj_create(debrisSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+                    objSetupObject(debrisSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
                 }
                 gDLL_17_partfx->vtbl->spawn(self, 0x9B, NULL, PARTFXFLAG_2, -1, NULL);
                 mainSetBits(setup->gunIndex + BIT_SB_Destroyed_Right_Gun, 1);
@@ -278,7 +278,7 @@ void SB_ShipGun_control(Object *self) {
         }
         break;
     case STATE_4:
-        obj_destroy_object(self);
+        objFreeObject(self);
         break;
     }
 }

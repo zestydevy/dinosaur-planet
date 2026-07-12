@@ -151,7 +151,7 @@ int WMWizard_anim_visit_1_first_meeting(Object* self, Object* overrideObj, AnimO
     s32 i;
     int new_var;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
@@ -265,7 +265,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
     //After meeting Randorn
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        player = get_player();
+        player = objGetPlayer();
 
         //Check if Krystal has magic
         if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) > 0) {
@@ -290,7 +290,7 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
 // offset: 0xA20 | func: 13
 void WMWizard_handle_visit_2_spirit_df(Object* self) {
     WMWizard_Data* objData = self->data;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     Object* foodbag;
     s32 foodGamebit;
     s32 dAcceptedFoodsVisit2[3] = {
@@ -461,7 +461,7 @@ void WMWizard_handle_visit_3_spirit_mmp(Object* self) {
 // offset: 0x11C8 | func: 15
 void WMWizard_handle_visit_4_spirit_cc(Object* self) {
     WMWizard_Data* objdata = self->data;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     s32 foodGamebit;
     Object* foodbag; 
     s32 dAcceptedFoodsVisit4[3] = {

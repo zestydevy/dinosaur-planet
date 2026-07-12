@@ -67,7 +67,7 @@ void WMvein_control(Object* self) {
 
     objdata = self->data;
     
-    player = get_player();
+    player = objGetPlayer();
     if (player == NULL) {
         return;
     }

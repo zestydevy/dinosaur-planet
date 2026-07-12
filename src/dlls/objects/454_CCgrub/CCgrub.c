@@ -93,7 +93,7 @@ void CCgrub_control(Object* self) {
 
     while (obj_recv_mesg(self, &sp5C, NULL, NULL) != 0) {
         if (sp5C == 0x7000B) {
-            temp_v0 = get_player();
+            temp_v0 = objGetPlayer();
             sp54 = ((DLL_210_Player*)temp_v0->dll)->vtbl->func66(temp_v0, 16);
             if (((DLL_IFoodbag*)sp54->dll)->vtbl->is_obtained(sp54) != 0) {
                 ((DLL_IFoodbag*)sp54->dll)->vtbl->collect_food(sp54, SIDEFOOD_Blue_Grubs);
@@ -171,7 +171,7 @@ void CCgrub_control(Object* self) {
                 }
             } else {
                 if (objdata->unk13E == objdata->unk13C) {
-                    temp_v0_4 = get_player();
+                    temp_v0_4 = objGetPlayer();
                     sp40[0] = temp_v0_4->srt.transl.x - self->srt.transl.x;
                     sp40[1] = temp_v0_4->srt.transl.z - self->srt.transl.z;
                     objdata->unk13E = arctan2_f(-sp40[0], -sp40[1]);
@@ -215,7 +215,7 @@ void CCgrub_control(Object* self) {
     }
     if (self->unkAF & 1) {
         // @bug: the gamebit used here is also used for disabling particles!
-        obj_send_mesg(get_player(), 0x7000A, self, (void* )BIT_5);
+        obj_send_mesg(objGetPlayer(), 0x7000A, self, (void* )BIT_5);
         if (self->curModAnimId != 0) {
             objAnimSet(self, 0, 0.0f, 0);
             objdata->unk110 = 0.005f;
@@ -318,7 +318,7 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
     self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
     objdata->unk11C += gUpdateRateF;
     if (objdata->unk11C >= 300.0f) {
-        temp_fv0 = vec3_distance_xz_squared(&self->globalPosition, &get_player()->globalPosition);
+        temp_fv0 = vec3_distance_xz_squared(&self->globalPosition, &objGetPlayer()->globalPosition);
         if ((f32) (objsetup->unk1B * objsetup->unk1B) <= temp_fv0) {
             if ((f32) (objsetup->unk1A * objsetup->unk1A) <= temp_fv0) {
                 objAnimSet(self, 3, 0.0f, 0);

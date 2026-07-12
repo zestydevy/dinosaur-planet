@@ -75,7 +75,7 @@ void kyteCage_control(Object* self) {
 
     objData = self->data;
     if (!objData->kyte) {
-        objects = get_world_objects(&index, &count);
+        objects = objGetObjects(&index, &count);
 
         for (index = 0; index < count; index++){
             if (objects[index]->id == OBJ_SB_CageKyte){

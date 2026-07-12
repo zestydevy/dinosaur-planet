@@ -106,7 +106,7 @@ void DFPfloorbar_control(Object* self) {
     
     //Find DFPLevelControl
     if (dLevelControl == NULL) { 
-        objects = get_world_objects(&start, &count);
+        objects = objGetObjects(&start, &count);
         for (index = start; index < count; index++) {
             if (objects[index]->id == OBJ_DFP_LevelContro) {             
                 dLevelControl = objects[index];
@@ -143,7 +143,7 @@ void DFPfloorbar_control(Object* self) {
             return;
         }
 
-        player = get_player();
+        player = objGetPlayer();
         if (player == NULL){
             return;
         }

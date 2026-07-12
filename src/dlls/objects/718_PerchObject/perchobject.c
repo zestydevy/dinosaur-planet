@@ -78,12 +78,12 @@ void perchobject_control(Object* self) {
             STUBBED_PRINTF(" Could Not Find node %i ");
             return;        
         case STATE_1_Wait_for_Player_to_Instruct_Kyte:
-            kyte = get_sidekick();
+            kyte = objGetSidekick();
             if (!kyte){
                 break;
             }
 
-            player = get_player();
+            player = objGetPlayer();
 
             //Check distance between player and perch (either lateral X/Z distance or full 3D distance check)
             if (objSetup->useDistance3D){
@@ -171,7 +171,7 @@ u32 perchobject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
     s16 flag;
     PerchObject_Data *objData;
 
-    kyte = get_sidekick();
+    kyte = objGetSidekick();
     objData = (PerchObject_Data*)self->data;
 
     switch (arg1){
@@ -202,13 +202,13 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
     PerchObject_Data* objData;
     PerchObject_Setup* objSetup;
 
-    get_sidekick(); //@bug: not stored to variable, called again later!
+    objGetSidekick(); //@bug: not stored to variable, called again later!
     objData = self->data;
     objSetup = (PerchObject_Setup*)self->setup;
 
-    kyte = get_sidekick();    
+    kyte = objGetSidekick();    
     if (kyte) {
-        if (vec3_distance_squared(&get_player()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
+        if (vec3_distance_squared(&objGetPlayer()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
             //Enable Find command option
             ((DLL_ISidekick*)kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
             

@@ -17,7 +17,7 @@ void dll_382_control(Object* self) {
     s32 var_v0; 
     Object* temp_v0;
 
-    temp_v0 = get_player();
+    temp_v0 = objGetPlayer();
     if (self->curModAnimId == 0) {
         objAnimAdvance(self, 0.01f, gUpdateRateF, NULL);
     }

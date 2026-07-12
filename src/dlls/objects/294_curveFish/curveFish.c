@@ -89,7 +89,7 @@ void dll_294_control(Object* self) {
 
     curvefishdata = self->data;
     sp40 = (curveFishSetup*)self->setup;
-    sp3C = get_player();
+    sp3C = objGetPlayer();
     if (curvefishdata->unk10D == 0) {
         dll_294_func_6C(self);
     } 
@@ -228,7 +228,7 @@ static void dll_294_func_968(Object* self) {
     if (self->id == OBJ_DF_Lantern) {
         mainSetBits(BIT_Gold_Nugget_LFV, 1);
     } else {
-        player = get_player();
+        player = objGetPlayer();
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
     }

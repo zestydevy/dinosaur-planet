@@ -296,7 +296,7 @@ void thorntail_control(Object* self) {
 
     objdata = self->data;
     setup = (SHthorntail_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     if (func_80026DF4(self, data_40, 15, objdata->unk874, &objdata->unk84C) == 0) {
         objdata->unk874 = 0;
@@ -737,7 +737,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
                 objdata->walkSpeed = 0.28f;
                 self->velocity.x = objdata->walkSpeed * vx;
                 self->velocity.z = objdata->walkSpeed * vz;
-                obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
+                objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
                 objGetAnimChange(self, objdata->walkSpeed, &objdata->modAnimDelta);
                 break;
             case THORNTAILSTATE_TurnLeft:
@@ -886,8 +886,8 @@ static void thorntail_trader_act1_control(Object *self, SHthorntail_Data *objdat
     Object *sidekick;
     Object *player;
 
-    sidekick = get_sidekick();
-    player = get_player();
+    sidekick = objGetSidekick();
+    player = objGetPlayer();
     thorntail_common_control(self, objdata, setup);
     if ((objdata->state == THORNTAILSTATE_BlockingProgression) && (sidekick != NULL)) {
         if (vec3_distance_squared(&player->globalPosition, &self->globalPosition) < SQ(70.0f)) {

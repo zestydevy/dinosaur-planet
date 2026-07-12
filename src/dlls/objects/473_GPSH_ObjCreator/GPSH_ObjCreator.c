@@ -109,7 +109,7 @@ void GPSH_ObjCreator_control(Object* self) {
         if (objdata->type != 6) {
             if (objdata->timer <= 0) {
                 // Spawn pickup
-                pickObjSetup = obj_alloc_setup(sizeof(GPSH_PickObj_Setup), objdata->type + OBJ_GPSHpickobjroot);
+                pickObjSetup = objAllocSetup(sizeof(GPSH_PickObj_Setup), objdata->type + OBJ_GPSHpickobjroot);
                 objdata->spawned = TRUE;
                 pickObjSetup->base.fadeDistance = 0xFF;
                 pickObjSetup->base.loadFlags = OBJSETUP_LOAD_FLAG20;
@@ -120,7 +120,7 @@ void GPSH_ObjCreator_control(Object* self) {
                 pickObjSetup->base.objId = objdata->type + OBJ_GPSHpickobjroot;
                 pickObjSetup->unk18 = (s8) (self->srt.yaw >> 8);
                 pickObjSetup->unk1A = data_0[objdata->type];
-                obj_create((ObjSetup*)pickObjSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent)
+                objSetupObject((ObjSetup*)pickObjSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent)
                     ->modelInstIdx = 0;
                 objdata->timer = 100;
                 objdata->timerRate = 0;
@@ -128,7 +128,7 @@ void GPSH_ObjCreator_control(Object* self) {
         } else {
             if (objdata->timer <= 0) {
                 // Spawn flybaddie
-                flybaddieSetup = obj_alloc_setup(sizeof(GPSH_flybaddie_Setup), OBJ_GPSH_flybaddie);
+                flybaddieSetup = objAllocSetup(sizeof(GPSH_flybaddie_Setup), OBJ_GPSH_flybaddie);
                 flybaddieSetup->base.x = setup->base.x;
                 flybaddieSetup->base.y = setup->base.y + 50.0f;
                 flybaddieSetup->base.z = setup->base.z;
@@ -139,7 +139,7 @@ void GPSH_ObjCreator_control(Object* self) {
                 flybaddieSetup->base.byte6 = setup->base.byte6;
                 flybaddieSetup->base.fadeDistance = setup->base.fadeDistance;
                 flybaddieSetup->unk1A = -0x3C;
-                obj_create((ObjSetup*)flybaddieSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+                objSetupObject((ObjSetup*)flybaddieSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
                 objdata->timer = 100;
                 objdata->timerRate = 0;
             }

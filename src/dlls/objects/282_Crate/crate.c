@@ -111,7 +111,7 @@ void crate_control(Object* self) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Change model index (increase index to look more and more damaged)
-            obj_set_model(self, CRATE_HIT_POINTS - objData->health);
+            objSetModel(self, CRATE_HIT_POINTS - objData->health);
 
             //Flash after being hit
             objData->flash = 1.0f;
@@ -150,7 +150,7 @@ void crate_control(Object* self) {
         
         //Create an Energy Egg
         if (objData->useNearbyCollectable == FALSE) {
-            foodSetup = (Collectable_Setup*)obj_alloc_setup(
+            foodSetup = (Collectable_Setup*)objAllocSetup(
                 sizeof(Collectable_Setup), 
                 OBJ_meatPickup
             );
@@ -161,7 +161,7 @@ void crate_control(Object* self) {
             foodSetup->objHitsValue = 3;
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitSecondary = NO_GAMEBIT;
-            obj_create(
+            objSetupObject(
                 (ObjSetup*)foodSetup, 
                 5, 
                 self->mapID, 

@@ -415,7 +415,7 @@ void dll_702_control(Object* self) {
         sBaddie = baddie;
         sKTData = sBaddie->objdata;
         func_80028D2C(self);
-        baddie->fsa.target = get_player();
+        baddie->fsa.target = objGetPlayer();
         if (baddie->fsa.target != NULL) {
             vec[0] = baddie->fsa.target->globalPosition.x - self->globalPosition.x;
             vec[1] = baddie->fsa.target->globalPosition.y - self->globalPosition.y;
@@ -1103,7 +1103,7 @@ static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate)
         self->unkAF |= 8;
         fsa->unk33D = 0;
         fsa->unk4.mode = 0;
-        obj_send_mesg(get_player(), 0xE0000, self, NULL);
+        obj_send_mesg(objGetPlayer(), 0xE0000, self, NULL);
     }
     return 0;
 }

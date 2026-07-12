@@ -135,11 +135,11 @@ static int dll_517_func_2FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 a
 static void dll_517_func_334(Object* arg0, Baddie* baddie, ObjFSA_Data* arg2) {
     DLL517_Data* sp2C = baddie->objdata;
 
-    gDLL_33_BaddieControl->vtbl->func4(arg0, get_player(), 0x10U, &sp2C->unk0, &sp2C->unk2, &sp2C->unk4);
+    gDLL_33_BaddieControl->vtbl->func4(arg0, objGetPlayer(), 0x10U, &sp2C->unk0, &sp2C->unk2, &sp2C->unk4);
 
     arg2->targetDist = sp2C->unk4;
     func_80032A08(arg0, &baddie -> unk3BC);
-    arg2->target = get_player();
+    arg2->target = objGetPlayer();
     gDLL_33_BaddieControl->vtbl->func10(arg0, arg2, 0.17f, 1);
     baddie->unk3AC = (Object* ) arg0->animObj;
     arg0->animObj = NULL;

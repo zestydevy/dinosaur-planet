@@ -139,7 +139,7 @@ void CFbarrel_control(Object* self) {
                         func_80026160(self);
                         func_8002683C(self, 8, -2, 0x19);
                     } else {
-                        obj_free_tick(self);
+                        objDisable(self);
                         func_800267A4(self);
                         self->srt.flags |= OBJSTATE_PRINT_DISABLED;
                     }
@@ -297,7 +297,7 @@ static void CFbarrel_func_AD4(Object* self) {
         self->velocity.x = objdata->unk18.x * gUpdateRateF;
         self->velocity.y = objdata->unk18.y * gUpdateRateF;
         self->velocity.z = objdata->unk18.z * gUpdateRateF;
-        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+        objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
         self->srt.roll += (objdata->unk18.y * 500.0f);
         return;
     }
@@ -374,7 +374,7 @@ static void CFbarrel_func_AD4(Object* self) {
     if ((objdata->unk3E_0) && (var_s4 == 4)) {
         CFbarrel_func_1948(self, 0);
     }
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 }
 
 // offset: 0x1214 | func: 8
@@ -402,11 +402,11 @@ static void CFbarrel_func_1214(Object* self) {
             self->visRadius = 100.0f;
             gDLL_6_AMSFX->vtbl->play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, NULL, NULL, 0, NULL);
             self->srt.transl.y += 10.0f;
-            explSetup = obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+            explSetup = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
             explSetup->base.x = self->srt.transl.x;
             explSetup->base.y = self->srt.transl.y;
             explSetup->base.z = self->srt.transl.z;
-            obj_create((ObjSetup*)explSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+            objSetupObject((ObjSetup*)explSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
             objdata->unk13 = 1;
             if (self->parent != NULL) {
                 objdata->unk2C = 3.5f;
@@ -434,7 +434,7 @@ static void CFbarrel_func_14A0(Object* self, s16 arg1, s16 arg2) {
     s32 pad[2];
 
     sp44 = 300.0f;
-    player = get_player();
+    player = objGetPlayer();
     sp5C = obj_get_nearest_type_to(OBJTYPE_32, self, &sp44);
     if (sp5C == NULL) {
         return;

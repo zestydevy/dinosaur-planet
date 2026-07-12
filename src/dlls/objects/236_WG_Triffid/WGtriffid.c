@@ -58,7 +58,7 @@ void dll_236_free(Object* self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_Baddie);
     temp_a0 = self->linkedObject;
     if (temp_a0 != NULL) {
-        obj_destroy_object(temp_a0);
+        objFreeObject(temp_a0);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, sp24, 0x20U);
@@ -130,7 +130,7 @@ s32 dll_236_func_D64(Object* self, ObjFSA_Data* arg1, s8 arg2) {
         self->opacity = 0;
     }
     if (self->opacity == 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     return 0;
 }

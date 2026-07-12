@@ -100,7 +100,7 @@ void MMshrine_control(Object *self) {
     f32 var_fv0;
 
     objdata = (MMShrine_Data*)self->data;
-    player = get_player();
+    player = objGetPlayer();
     sp3C = 1000.0f;
     if (_data_4 != 0) {
         self->globalPosition.x = self->srt.transl.x;
@@ -283,7 +283,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
     u8 temp;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     arg2->unk7A = -1;
     arg2->unk62 = 0;

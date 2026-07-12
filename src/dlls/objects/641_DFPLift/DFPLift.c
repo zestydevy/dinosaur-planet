@@ -84,7 +84,7 @@ void DFPLift_control(Object* self) {
     setup = (DFPLift_Setup*)self->setup;
     objdata = (DFPLift_Data*)self->data;
     
-    player = get_player();
+    player = objGetPlayer();
     if (player == NULL) {
         return;
     }

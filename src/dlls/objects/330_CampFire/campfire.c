@@ -96,7 +96,7 @@ void campfire_control(Object* self) {
     DLL_IModgfx* modGfxDLL;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objSetup = (CampFire_Setup*)self->setup;
 
     //Set up the fire so it hurts the player on contact
@@ -135,7 +135,7 @@ void campfire_control(Object* self) {
     if (objData->light != NULL) {
         //Unload the light if the player's too far away
         if ((objSetup->alwaysIlluminates == FALSE) && (distance > 110.0f)) {
-            obj_destroy_object(objData->light);
+            objFreeObject(objData->light);
             objData->light = NULL;
         }
     } else {
@@ -151,7 +151,7 @@ void campfire_control(Object* self) {
 
         //Create the LFXEmitter when needed
         if (createLight) {
-            lfxSetup = (LFXEmitter_Setup*)obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+            lfxSetup = (LFXEmitter_Setup*)objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
             campSetup = self->setup;
             lfxSetup->base.loadFlags = campSetup->loadFlags;
             lfxSetup->base.byte6 = campSetup->byte6;
@@ -166,7 +166,7 @@ void campfire_control(Object* self) {
             lfxSetup->unk18 = 2400;
             lfxSetup->unk1A = 2400;
             lfxSetup->unk1C = 200;
-            objData->light = obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+            objData->light = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
         }
     }
 }

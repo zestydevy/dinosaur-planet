@@ -81,7 +81,7 @@ void DFP_LevelControl_control(Object* self) {
     s32 mapID;
     s32 act;
     
-    player = get_player();
+    player = objGetPlayer();
     
     //Auto-refill player's magic every ~16 seconds
     dMagicRefillTimer++; //@bug: framerate dependent
@@ -169,7 +169,7 @@ static int DFP_LevelControl_anim_callback(Object* self, Object *override, AnimOb
     Object *player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     //Create electrocution effects over player model
     if (objdata->zappedTimer > 0){
@@ -188,7 +188,7 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
     Object* player;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     //Set up DFPT Act 1
     if (dInitialiseVisit1) {
@@ -268,7 +268,7 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
     Object* player;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     //Set up DFPT Act 2
     if (dInitialiseVisit2) {
@@ -336,7 +336,7 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
     Object* player;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     //Set up DFPT Act 3
     if (dInitialiseVisit3) {

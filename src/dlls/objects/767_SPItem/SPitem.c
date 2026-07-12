@@ -53,7 +53,7 @@ void SPItem_control(Object* self) {
     f32 distance;
 
     objSetup = (SPItem_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     distance = 10000.0f;
 

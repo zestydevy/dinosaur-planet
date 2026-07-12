@@ -477,7 +477,7 @@ void CamControl_lock_icon_tick(void) {
 
     arrow = sLockIcon;
     hlObject = sCam->highlight;
-    player = get_player();
+    player = objGetPlayer();
     
     if (menuGetCurrent() == MENU_TITLE_SCREEN) {
         return;
@@ -989,8 +989,8 @@ Object* CamControl_find_highlight_object(Cam* cam, Object* player) {
 // offset: 0x236C | func: 35
 /** Creates an `OBJ_LockIcon` and stores a reference to it in `sLockIcon` */
 void CamControl_create_LockIcon(void) {
-    sLockIcon = obj_create(
-        obj_alloc_setup(sizeof(ObjSetup), OBJ_LockIcon),
+    sLockIcon = objSetupObject(
+        objAllocSetup(sizeof(ObjSetup), OBJ_LockIcon),
         0,
         -1,
         -1,

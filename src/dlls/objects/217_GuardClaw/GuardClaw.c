@@ -260,7 +260,7 @@ void GuardClaw_free(Object* self, s32 onlySelf) {
     
     obj_free_object_type(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20);
@@ -422,7 +422,7 @@ static void GuardClaw_func_D80(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     Object* player;
     
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     if (sidekick != NULL) {
         sp4B = ((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick);
     } else {
@@ -435,16 +435,16 @@ static void GuardClaw_func_D80(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     }
     objdata->unkD = sp4B;
     baddie->unk3B0 &= ~0x40;
-    player = get_player();
+    player = objGetPlayer();
     if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == 8) {
         baddie->unk3B0 |= 0x40;
     } else if (baddie->unk3B0 & 0x80) {
-        fsa->target = get_sidekick();
+        fsa->target = objGetSidekick();
         if (fsa->target == NULL) {
-            fsa->target = get_player();
+            fsa->target = objGetPlayer();
         }
     } else {
-        fsa->target = get_player();
+        fsa->target = objGetPlayer();
     }
     if (baddie->unk3B0 & 1) {
         vec[0] = fsa->target->globalPosition.x - setup->x;
@@ -475,7 +475,7 @@ static void GuardClaw_func_D80(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 static void GuardClaw_func_1128(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     GuardClaw_Data* objdata = baddie->objdata;
     ObjSetup* setup = self->setup;
-    Object* sidekick = get_sidekick();
+    Object* sidekick = objGetSidekick();
     s32 _pad;
     f32 sp4C;
     f32 sp48;
@@ -505,7 +505,7 @@ static void GuardClaw_func_1128(Object* self, Baddie* baddie, ObjFSA_Data* fsa) 
             sp4C = self->srt.transl.x - (fsin16_precise(self->srt.yaw) * (f32) objdata->unkC);
             sp48 = self->srt.transl.z - (fcos16_precise(self->srt.yaw) * (f32) objdata->unkC);
         }
-        objdata->unk8 = gDLL_33_BaddieControl->vtbl->func2(self, sp4C, sp48, (f32) baddie->unk3E2, get_player());
+        objdata->unk8 = gDLL_33_BaddieControl->vtbl->func2(self, sp4C, sp48, (f32) baddie->unk3E2, objGetPlayer());
         baddie->unk3BC.aimIsActive = 1;
     }
     baddie->unk3BC.headAimX = fsa->target->globalPosition.x;
@@ -733,7 +733,7 @@ static s32 GuardClaw_func_21C8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     f32 var_fv1_2;
     Baddie* baddie = self->data;
     ObjSetup* setup = self->setup;
-    Object* sidekick = get_sidekick();
+    Object* sidekick = objGetSidekick();
     GuardClaw_Data* objdata = baddie->objdata;
     
     if (fsa->enteredAnimState != 0) {

@@ -66,7 +66,7 @@ void WGSH_ObjCreator_control(Object *self) {
     }
     if ((objdata->timer <= 0) && !setup->disableSpawner) {
         // @bug: Does not allocate enough bytes for flybaddie setup (should be 0x1C bytes)
-        flybaddieSetup = obj_alloc_setup(0x18, OBJ_WGSH_flybaddie);
+        flybaddieSetup = objAllocSetup(0x18, OBJ_WGSH_flybaddie);
         flybaddieSetup->x = setup->base.x;
         flybaddieSetup->y = setup->base.y + 50.0f;
         flybaddieSetup->z = setup->base.z;
@@ -76,7 +76,7 @@ void WGSH_ObjCreator_control(Object *self) {
         flybaddieSetup->byte5 = setup->base.byte5;
         flybaddieSetup->byte6 = setup->base.byte6;
         flybaddieSetup->fadeDistance = setup->base.fadeDistance;
-        obj_create(flybaddieSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+        objSetupObject(flybaddieSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         objdata->timer = 100;
         objdata->countdownRate = 0;
     }

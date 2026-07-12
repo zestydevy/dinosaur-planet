@@ -212,7 +212,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
     Object* player;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objData->flags |= SCTotemStrength_FLAG_Reset;
     mainSetBits(BIT_SCTotemStrength_Inactive, 0);
     
@@ -226,7 +226,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
             objData->state = SCTotemStrength_STATE_Initial;
             objData->flags |= SCTotemStrength_FLAG_Strength_Game_Active;
 
-            objects = get_world_objects(&index, &count);
+            objects = objGetObjects(&index, &count);
             while (index < count) {
                 objData->lightFoot = objects[index++];
                 if (objData->lightFoot->id == OBJ_SC_musclelightf) {
@@ -263,7 +263,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
     animData->unk62 = 0;
 
     //Find the Muscle LightFoot (@bug: doesn't check if already found, searches every frame)
-    objects = get_world_objects(&index, &count);
+    objects = objGetObjects(&index, &count);
     while (index < count) {
         objData->lightFoot = objects[index++];
         if (objData->lightFoot->id == OBJ_SC_musclelightf) {
@@ -414,7 +414,7 @@ void SCTotemStrength_set_level_state(Object* self, u8 value) {
     s32 index;
     s32 count;
 
-    for (objects = get_world_objects(&index, &count); index < count; index++) {
+    for (objects = objGetObjects(&index, &count); index < count; index++) {
         if ((self != objects[index]) && (objects[index]->id == OBJ_SC_levelcontrol)) {
             ((DLL_519_SC_Levelcontrol*)objects[index]->dll)->vtbl->func7(objects[index], value);
             return;

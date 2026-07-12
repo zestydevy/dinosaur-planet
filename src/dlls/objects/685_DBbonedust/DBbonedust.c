@@ -37,7 +37,7 @@ void DBBoneDust_control(Object* self) {
     f32 height;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     switch (objData->state) {
     case DBBoneDust_STATE_Hidden:
@@ -64,7 +64,7 @@ void DBBoneDust_control(Object* self) {
 
         //Decelerate
         self->velocity.y += -0.4f;
-        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+        objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
         fxTrans.roll = 0xFF;
         fxTrans.pitch = 0xFF - (objData->rotation.asWord % 1280);
@@ -74,7 +74,7 @@ void DBBoneDust_control(Object* self) {
     case DBBoneDust_STATE_Hovering:
         //Oscillating over ground, ready to be collected
         self->velocity.y = fsin16_precise(objData->rotation.asHalfwords[1]) * 0.3f;
-        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+        objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
         //Check if player is close by
         if (vec3_distance(&self->globalPosition, &player->globalPosition) < 100.0f) {
@@ -103,7 +103,7 @@ void DBBoneDust_control(Object* self) {
             self->velocity.x = uPlayer.z * absoluteSpeed;
             self->velocity.y = uPlayer.y * absoluteSpeed;
             self->velocity.z = uPlayer.x * absoluteSpeed;
-            obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+            objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
             //Motion trail effect
             fxTrans.roll = 0xFF;

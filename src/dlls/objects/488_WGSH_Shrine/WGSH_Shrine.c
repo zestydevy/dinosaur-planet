@@ -97,7 +97,7 @@ void dll_488_control(Object *self) {
     s16 var_v0;
 
     objdata = self->data;
-    sp48 = get_player();
+    sp48 = objGetPlayer();
     sp3C = 1000.0f;
     dll_488_func_FEC(self);
     mainSetBits(BIT_DB_Entered_Shrine_2, 1);

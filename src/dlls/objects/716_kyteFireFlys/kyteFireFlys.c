@@ -48,9 +48,9 @@ void dll_716_control(Object* self) {
             self->srt.transl.z = objdata->unk38->pos.z;
         }
     } else if (objdata->unk34 != 0) {
-        sidekick = get_sidekick();
+        sidekick = objGetSidekick();
         if (sidekick != NULL) {
-            if (vec3_distance_squared(&get_player()-> globalPosition, &objdata->unk38->pos) <= SQ(setup->unk18)) {
+            if (vec3_distance_squared(&objGetPlayer()-> globalPosition, &objdata->unk38->pos) <= SQ(setup->unk18)) {
                 //Show Find command option
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
 
@@ -106,7 +106,7 @@ void dll_716_func_4DC(Object* self, s32 arg1, s32 arg2) {
     DLL716_Setup* setup;
 
     objSetup = self->setup;
-    setup = obj_alloc_setup(0x24, 0x259);
+    setup = objAllocSetup(0x24, 0x259);
     setup->base.fadeDistance = objSetup->fadeDistance;
     setup->base.loadFlags = 2;
     setup->base.byte5 = objSetup->byte5;
@@ -117,7 +117,7 @@ void dll_716_func_4DC(Object* self, s32 arg1, s32 arg2) {
     setup->unk1A = arg1;
     setup->unk1C = arg2;
     setup->unk18 = arg2;
-    obj_create(&setup->base, 5U, -1, -1, NULL);
+    objSetupObject(&setup->base, 5U, -1, -1, NULL);
 }
 
 /*0x0*/ static const char str_0[] = "should activate the command\n";

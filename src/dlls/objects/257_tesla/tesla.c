@@ -82,7 +82,7 @@ void dll_257_control(Object* self) {
     }
 
     if (setup) {}
-    player = get_player();
+    player = objGetPlayer();
     sp68 = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
     switch (objdata->unk8) {
     case 0:

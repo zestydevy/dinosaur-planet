@@ -65,7 +65,7 @@ void DFSH_ObjCreator_control(Object* self) {
         objdata->timer -= (objdata->timerRate * (s16) gUpdateRateF);
     }
     if (objdata->timer <= 0) {
-        sharpClawSetup = obj_alloc_setup(sizeof(Baddie_Setup), OBJ_ClubSharpClaw);
+        sharpClawSetup = objAllocSetup(sizeof(Baddie_Setup), OBJ_ClubSharpClaw);
         sharpClawSetup->base.x = setup->base.x;
         sharpClawSetup->base.y = setup->base.y;
         sharpClawSetup->base.z = setup->base.z;
@@ -103,7 +103,7 @@ void DFSH_ObjCreator_control(Object* self) {
             sharpClawSetup->quarterHitpoints = 3;
             break;
         }
-        sharpClaw = obj_create((ObjSetup*)sharpClawSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+        sharpClaw = objSetupObject((ObjSetup*)sharpClawSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
         if (sharpClaw != NULL) {
             sharpClawBaddie = sharpClaw->data;
             if (sharpClawBaddie != NULL) {

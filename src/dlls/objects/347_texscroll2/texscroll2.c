@@ -112,7 +112,7 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     }
 
     //Get TABLES.bin subfile #14 ("scroll table")
-    scrollTable = func_800213A0(14);
+    scrollTable = objGetTable(14);
     if (scrollTable == NULL) {
         STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
         return;

@@ -248,7 +248,7 @@ s32 isObjectInWorld(Object *obj) {
     s32 i;
     s32 objectCount;
 
-    objects = get_world_objects(&i, &objectCount);
+    objects = objGetObjects(&i, &objectCount);
     for (i = 0; i < objectCount; i++) {
         if (obj == objects[i]) {
             return 1;
@@ -266,7 +266,7 @@ Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
     s32 sp44;
     s32 i;
 
-    objects = get_world_objects(&sp48, &sp44);
+    objects = objGetObjects(&sp48, &sp44);
     *outDistance = SQ(*outDistance);
     outObj = NULL;
     if (objID != -1) {
@@ -298,7 +298,7 @@ int func_80032538(Object* objInteracted) {
     if ((objInteracted->unkAF & ARROW_FLAG_1_Interacted) && 
         (gDLL_1_cmdmenu->vtbl->was_any_item_used() == FALSE)
     ) {
-        player = get_player();
+        player = objGetPlayer();
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
             joyDisableButtons(0, A_BUTTON);
             return TRUE;

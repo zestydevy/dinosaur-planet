@@ -101,7 +101,7 @@ void DBSHshrine_control(Object* self) {
     Object* door;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     distance = 1000.0f;
     
     if (player == NULL) {

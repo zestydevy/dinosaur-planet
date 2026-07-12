@@ -975,8 +975,8 @@ void cmdmenu_update2(void) {
     s8 autoShowInfoScroll;
     s8 newPageIndex;
 
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
 
     if (player == NULL) {
         return;
@@ -1153,7 +1153,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s32 screenX;
     s32 screenY;
 
-    player = get_player();
+    player = objGetPlayer();
     if (player == NULL) {
         return;
     }
@@ -1277,7 +1277,7 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
 
     camSetCameraSelector(0);
     camera = camGetMain();
-    objects = get_world_objects(&index, &count);
+    objects = objGetObjects(&index, &count);
 
     //Get the subset of Objects that can be targetted
     for (targetCount = 0, i = index; i < count; i++) {
@@ -1733,7 +1733,7 @@ static void cmdmenu_tick_inventory_page(void) {
     s32 usedGamebit;
     s8 isSidekickMenu;
 
-    player = get_player();
+    player = objGetPlayer();
 
     isSidekickMenu = FALSE;
 
@@ -1953,10 +1953,10 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s8 offsetY;
     Object* sidekick;
 
-    player = get_player();
+    player = objGetPlayer();
     offsetX = 0;
     offsetY = 0;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
 
     //Call the item info pop-up's draw
     cmdmenu_info_draw(gdl, &sInfoPopup);
@@ -2357,7 +2357,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
 
     //Sidekick Commands
     } else {
-        sidekick = get_sidekick();
+        sidekick = objGetSidekick();
 
         //Get a bitfield of the sidekick's available commands
         if (sidekick != NULL) {
@@ -2440,7 +2440,7 @@ static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekic
 
     //Sidekick Commands
     } else {
-        sidekick = get_sidekick();
+        sidekick = objGetSidekick();
         if (sidekick != NULL) {
             availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_available_commands(sidekick);
         } else {
@@ -2649,8 +2649,8 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
     u8 i;
     u8 iconIndex;
 
-    sidekick = get_sidekick();
-    player = get_player();
+    sidekick = objGetSidekick();
+    player = objGetPlayer();
     isKyte = FALSE;
     cIconFlags = CIcon_FLAG_None;
 
@@ -3300,8 +3300,8 @@ static void cmdmenu_update_stats(void) {
     u8 scarabFrameOffset;
     u8 i;
 
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     scarabFrameOffset = 0;
 
     stats.playerHealth = ((DLL_210_Player*)player->dll)->vtbl->get_health(player);
@@ -3425,7 +3425,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     s8 offsetY;
     s32 temp;
     Gfx* dl;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     u8 texIdx;
     char playerScarabCountText[4] = "   ";
 

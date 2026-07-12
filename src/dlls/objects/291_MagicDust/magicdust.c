@@ -51,7 +51,7 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
         //Set initial speed so gem moves towards the player (arriving in 2 seconds)
         attractDuration = 120.0f;
         if (attractDuration != 0.0f) {
-            player = get_player(); //@bug?: missing NULL check
+            player = objGetPlayer(); //@bug?: missing NULL check
             self->velocity.x = (player->srt.transl.x - self->srt.transl.x) / attractDuration;
             self->velocity.y = (player->srt.transl.y - self->srt.transl.y) / attractDuration;
             self->velocity.z = (player->srt.transl.z - self->srt.transl.z) / attractDuration;
@@ -147,7 +147,7 @@ void MagicDust_control(Object* self) {
     u8 fxParam;
     u32 outMesgID;
     
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     collision = &objData->collision;
     
@@ -248,7 +248,7 @@ void MagicDust_control(Object* self) {
             }
 
             //Move
-            obj_move(self, 
+            objMove(self, 
                 self->velocity.x * gUpdateRateF, 
                 self->velocity.y * gUpdateRateF, 
                 self->velocity.z * gUpdateRateF
@@ -257,9 +257,9 @@ void MagicDust_control(Object* self) {
             //Destroy self when vanish timer's up
             if (objData->timer <= 0.0f) {
                 if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
-                    obj_destroy_object(self);
+                    objFreeObject(self);
                 } else {
-                    obj_free_tick(self);
+                    objDisable(self);
                     self->srt.flags |= OBJFLAG_INVISIBLE;
                 }
             }

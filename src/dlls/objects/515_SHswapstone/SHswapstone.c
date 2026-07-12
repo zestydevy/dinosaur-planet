@@ -139,7 +139,7 @@ void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     
     //Draw the player when attached to SwapStone's hand
-    player = get_player();
+    player = objGetPlayer();
     if (!player){
         return;
     }
@@ -346,7 +346,7 @@ static s32 SHswapstone_get_held_spirit(void) {
     s32 spiritBits;
 
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
-    player = get_player();
+    player = objGetPlayer();
     
     spiritBits = ((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_ANY);
     if (playerno == PLAYER_SABRE) {

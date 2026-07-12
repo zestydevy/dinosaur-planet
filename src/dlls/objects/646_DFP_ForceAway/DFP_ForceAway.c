@@ -104,7 +104,7 @@ static void DFP_ForceAway_type0_control(Object* self) {
     SRT partSRT;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     xDist = player->srt.transl.x - self->srt.transl.x;
     yDist = player->srt.transl.y - self->srt.transl.y;
     zDist = player->srt.transl.z - self->srt.transl.z;
@@ -173,7 +173,7 @@ static void DFP_ForceAway_type1_control(Object* self) {
     f32 sp24;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     axisCounter = 0;
     xDist = player->srt.transl.x - self->srt.transl.x;
     yDist = player->srt.transl.y - self->srt.transl.y;
@@ -218,7 +218,7 @@ static void DFP_ForceAway_type2_control(Object* self) {
     s32 _pad;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     axisCounter = 0;
     xSide = 0;
     ySide = 0;
@@ -295,7 +295,7 @@ static void DFP_ForceAway_type3_control(Object* self) {
     f32 zDist;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     xDist = player->srt.transl.x - self->srt.transl.x;
     yDist = player->srt.transl.y - self->srt.transl.y;
     zDist = player->srt.transl.z - self->srt.transl.z;

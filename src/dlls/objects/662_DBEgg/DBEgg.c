@@ -79,7 +79,7 @@ void dll_662_func_1670(Object* self) {
     DBEgg_Data* objdata;
     DBEgg_Setup* setup;
 
-    sp2C = get_player();
+    sp2C = objGetPlayer();
     objdata = self->data;
     setup = (DBEgg_Setup*)self->setup;
     obj_free_object_type(self, OBJTYPE_38);

@@ -107,7 +107,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     FXEmit_Setup *setup;
     Object *fxEmit;
 
-    setup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    setup = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
@@ -129,7 +129,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup->indexInBank = (s16) arg4;
     setup->fxRate = 1;
     setup->interval = 0;
-    fxEmit = obj_create((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    fxEmit = objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (fxEmit != NULL) {
         fxEmit->unkC4 = self;
     }
@@ -141,7 +141,7 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     ObjSetup *setup;
     Object *projectile;
 
-    setup = obj_alloc_setup(0x24, objID); // KamerianFlame/KamerianAcid
+    setup = objAllocSetup(0x24, objID); // KamerianFlame/KamerianAcid
     setup->x = x;
     setup->y = y;
     setup->z = z;
@@ -149,7 +149,7 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     setup->fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->loadDistance = 0xFF;
     setup->fadeDistance = 0xFF;
-    projectile = obj_create(setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    projectile = objSetupObject(setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (projectile != NULL) {
         projectile->srt.pitch = arg5;
         projectile->srt.yaw = arg4;
@@ -483,7 +483,7 @@ void KamerianBoss_control(Object *self) {
 
     objdata = self->data;
     if (objdata->player == NULL) {
-        objdata->player = get_player();
+        objdata->player = objGetPlayer();
         objdata->playerStartY = objdata->player->srt.transl.y;
     }
     if (objdata->player != NULL) {
@@ -503,7 +503,7 @@ void KamerianBoss_control(Object *self) {
             } else {
                 objdata->rightPipeTimer = 0;
                 for (i = 0; i < 6; i += 2) {
-                    obj_destroy_object(objdata->unk10[i]);
+                    objFreeObject(objdata->unk10[i]);
                     objdata->unk10[i] = NULL;
                 }
             }
@@ -523,7 +523,7 @@ void KamerianBoss_control(Object *self) {
             } else {
                 objdata->leftPipeTimer = 0;
                 for (i = 1; i < 7; i += 2) {
-                    obj_destroy_object(objdata->unk10[i]);
+                    objFreeObject(objdata->unk10[i]);
                     objdata->unk10[i] = NULL;
                 }
             }
@@ -633,7 +633,7 @@ void KamerianBoss_control(Object *self) {
                         objdata->animTickDelta = 0.005f;
                         objdata->rightPipeYOffset = 1;
                         objdata->rightPipeDetached = TRUE;
-                        obj_destroy_object(objdata->unk8[0]);
+                        objFreeObject(objdata->unk8[0]);
                         gDLL_6_AMSFX->vtbl->play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                     break;
@@ -654,7 +654,7 @@ void KamerianBoss_control(Object *self) {
                         objdata->animTickDelta = 0.005f;
                         objdata->leftPipeYOffset = 1;
                         objdata->leftPipeDetached = TRUE;
-                        obj_destroy_object(objdata->unk8[1]);
+                        objFreeObject(objdata->unk8[1]);
                         gDLL_6_AMSFX->vtbl->play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                     break;
@@ -783,7 +783,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 void KamerianBoss_free(Object *self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
 }

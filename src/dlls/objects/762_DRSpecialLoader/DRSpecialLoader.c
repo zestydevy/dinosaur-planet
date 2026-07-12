@@ -19,7 +19,7 @@ void dll_762_control(Object *self) {
     Object *player;
     Object *obj;
 
-    player = get_player();
+    player = objGetPlayer();
     obj = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
     if ((obj) && (obj->id == OBJ_DR_CloudRunner)) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 9, 1);

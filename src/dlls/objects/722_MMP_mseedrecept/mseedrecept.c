@@ -143,7 +143,7 @@ void mmp_mseedrecept_control(Object* self) {
             break;
         
         case 2:
-            kyte = get_sidekick();
+            kyte = objGetSidekick();
             if (objData->unk1 & 2){
                 if (objData->unk1 & 4){
                     self->srt.transl.y = rand_next(-1, 1) + objSetup->base.y;
@@ -183,7 +183,7 @@ void mmp_mseedrecept_control(Object* self) {
             break;
         
         case 3:
-            kyte = get_sidekick();
+            kyte = objGetSidekick();
             self->srt.transl.y = objSetup->base.y;
             if (vec3_distance_xz_squared(&kyte->globalPosition, &self->globalPosition) <= 2500.0f){
                 

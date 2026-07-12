@@ -161,7 +161,7 @@ void DIMTent_control(Object* self) {
         //Drop the bridge cog if this tent's index matches the random one picked by DIMLevelControl
         if (mainGetBits(BIT_DIM_Gear_3_Random_Tent) == (u32)objSetup->tentIndex) {
             Collectable_Setup* cogSetup;
-            cogSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_DIMBridgeCogCol);
+            cogSetup = (Collectable_Setup*)objAllocSetup(sizeof(Collectable_Setup), OBJ_DIMBridgeCogCol);
             cogSetup->base.x = objSetup->base.x;
             cogSetup->base.y = objSetup->base.y + 8.0f;
             cogSetup->base.z = objSetup->base.z;
@@ -174,7 +174,7 @@ void DIMTent_control(Object* self) {
             cogSetup->gamebitCount = NO_GAMEBIT;
             cogSetup->objHitsValue = 5;
             cogSetup->yaw = self->srt.yaw >> 8;
-            obj_create((ObjSetup*)cogSetup, 5, self->mapID, -1, NULL);
+            objSetupObject((ObjSetup*)cogSetup, 5, self->mapID, -1, NULL);
         }
     }
 }

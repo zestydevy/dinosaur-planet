@@ -117,7 +117,7 @@ void dll_232_control(Object* self) {
     setup = (Baddie_Setup*)self->setup;
     sp84 = self->shadow;
     bat = baddie->objdata;
-    sp78 = get_player();
+    sp78 = objGetPlayer();
     if (self->unkDC == 0) {
         if (self->unkE0 == 0) {
             self->srt.transl.f[0] = setup->base.x;
@@ -214,7 +214,7 @@ void dll_232_free(Object* self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_Baddie);
     temp_a0 = self->linkedObject;
     if (temp_a0 != NULL) {
-        obj_destroy_object(temp_a0);
+        objFreeObject(temp_a0);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20U);
@@ -308,7 +308,7 @@ static void dll_232_func_AB8(Object* self, Bat_Data* bat) {
     self->srt.yaw = res;
     temp_t0 = self->srt.yaw - temp_t0;
     self->srt.roll += ((self->srt.roll - (temp_t0)) >> 2);
-    obj_move(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
+    objMove(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
 }
 
 // offset: 0xCF0 | func: 12
@@ -364,10 +364,10 @@ static s32 dll_232_func_EC8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     self->srt.yaw += bat->unk24;
     self->srt.pitch += bat->unk22;
     self->srt.roll += bat->unk26;
-    obj_move(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
+    objMove(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
     if (bat->unk1C <= 0.0f) {
         obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000U, self);
-        obj_destroy_object(self);
+        objFreeObject(self);
         return 5;
     }
     return 0;

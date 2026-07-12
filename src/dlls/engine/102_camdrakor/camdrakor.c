@@ -73,7 +73,7 @@ void camdrakor_func_138(Cam* cam) {
         return;
     }
     if (sState->unk4 == NULL) {
-        temp_v0 = get_world_objects(&sp78, &sp74);
+        temp_v0 = objGetObjects(&sp78, &sp74);
         while (sp78 < sp74) {
             if (temp_v0[sp78]->id == OBJ_BossDrakor) {
                 sState->unk4 = temp_v0[sp78];
@@ -84,7 +84,7 @@ void camdrakor_func_138(Cam* cam) {
         }
     }
     if (sState->unk8 == NULL) {
-        sState->unk8 = get_player();
+        sState->unk8 = objGetPlayer();
     }
     sp70 = sState->unk4->globalPosition.x - sState->unk0->globalPosition.x;
     sp6C = sState->unk4->globalPosition.y - sState->unk0->globalPosition.y;

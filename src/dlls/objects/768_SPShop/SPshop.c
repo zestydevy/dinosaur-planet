@@ -129,7 +129,7 @@ void SPShop_setup(Object* self, ObjSetup* setup, s32 arg2) {
 void SPShop_control(Object* self) {
     Object* player;
 
-    player = get_player();
+    player = objGetPlayer();
     if (self->unkDC == 0) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0, 1);
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 5, 1);
@@ -214,7 +214,7 @@ int SPShop_is_item_shown(Object* self, s32 itemIndex) {
 
     item = &shopItemData[itemIndex];
     
-    if (get_player()->id == OBJ_Sabre){
+    if (objGetPlayer()->id == OBJ_Sabre){
         gamebitID = item->sabre.show;
         return !(gamebitID + 1) || mainGetBits(gamebitID);
     } else {
@@ -237,7 +237,7 @@ int SPShop_is_item_hidden(Object* self, s32 itemIndex) {
 
     item = &shopItemData[itemIndex];
     
-    if (get_player()->id == OBJ_Sabre){
+    if (objGetPlayer()->id == OBJ_Sabre){
         gamebitID = item->sabre.hide;
         return (gamebitID + 1) && mainGetBits(gamebitID);
     } else {
@@ -296,7 +296,7 @@ u8 SPShop_get_current_item_index(Object* self) {
 
 // offset: 0x6D4 | func: 17 | export: 17
 void SPShop_buy_item(Object* self, s32 cost) {
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     SPShop_Data* objData;
     s32 itemIndex;
 

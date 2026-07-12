@@ -136,7 +136,7 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
     lookatYOffset = 30.0f;
     sp5A = 0;
     sp54 = func_800349B0();
-    get_player();
+    objGetPlayer();
     if (data->unk499 == 0) {
         if ((data->unk4A9 & 1) && (data->unk498 != 8)) {
             data->unk498 = 8;
@@ -322,7 +322,7 @@ s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 ar
     s16 sp38[2];
     s16* temp_v0_3;
 
-    temp_v0 = get_player();
+    temp_v0 = objGetPlayer();
     sp38[0] = arg3;
     sp38[1] = arg4;
     arg0->objhitInfo->unk58 |= 1;
@@ -405,7 +405,7 @@ s32 movelib_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8
         CIRCLE_WRAP(var_a0);
         arg0->srt.yaw = (s16) (s32) ((f32) arg0->srt.yaw + ((((f32) var_a0 + 0.5f) * (arg2 * gUpdateRateF)) / sp38));
     }
-    obj_move(arg0, arg0->velocity.x, arg0->velocity.f[1], arg0->velocity.f[2]);
+    objMove(arg0, arg0->velocity.x, arg0->velocity.f[1], arg0->velocity.f[2]);
     if (arg3 != -1) {
         if (arg3 != arg0->curModAnimId) {
             objAnimSet(arg0, arg3, 0.0f, 0U);

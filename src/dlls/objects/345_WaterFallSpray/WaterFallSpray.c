@@ -35,7 +35,7 @@ void WaterFallSpray_control(Object *self) {
     SRT srt;
 
     setup = (WaterFallSpray_Setup *)self->setup;
-    player = get_player();
+    player = objGetPlayer();
     if (!player)
         return;
 

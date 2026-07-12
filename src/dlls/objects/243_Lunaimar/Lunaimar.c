@@ -250,7 +250,7 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     u16 sp5E;
     s32 var_v1;
 
-    player = get_player();
+    player = objGetPlayer();
     if (fsa->target != NULL) {
         VECTOR_SUBTRACT(fsa->target->globalPosition, self->globalPosition, sp6C);
         fsa->targetDist = VECTOR_MAGNITUDE(sp6C);
@@ -304,7 +304,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     TextureAnimator *animator;
 
     objdata = (Lunaimar_ActualData*)baddie->objdata;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     animator = func_800348A0(self, 0, 0);
     objdata->unk12 += 0x1000;
     animator->frame = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
@@ -318,7 +318,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     if (baddie->unk3B2 & 4) {
         fsa->target = sidekick;
     } else {
-        fsa->target = get_player();
+        fsa->target = objGetPlayer();
     }
     dll_243_func_11C0(self, baddie, fsa);
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
@@ -406,7 +406,7 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     Object *spit;
     f32 temp_fv0;
 
-    spitSetup = obj_alloc_setup(0x24, OBJ_LunaimarSpit);
+    spitSetup = objAllocSetup(0x24, OBJ_LunaimarSpit);
     spitSetup->x = self->srt.transl.x;
     spitSetup->y = self->srt.transl.y + 20.0f;
     spitSetup->z = self->srt.transl.z;
@@ -414,7 +414,7 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     spitSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     spitSetup->loadDistance = 0xFF;
     spitSetup->fadeDistance = 0xFF;
-    spit = obj_create(spitSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    spit = objSetupObject(spitSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (spit != NULL) {
         temp_fv0 = (baddie->fsa.targetDist / (f32) baddie->unk3E2) * 60.0f;
         spit->velocity.x = (baddie->fsa.target->srt.transl.x - spitSetup->x) / temp_fv0;
@@ -438,7 +438,7 @@ static void dll_243_func_1614(Object *self, Lunaimar_ActualData *objdata) {
     }
     if (objdata->unk14 == NULL) {
         setup = self->setup;
-        shieldSetup = obj_alloc_setup(0x24, OBJ_LunaimarShield);
+        shieldSetup = objAllocSetup(0x24, OBJ_LunaimarShield);
         shieldSetup->x = self->srt.transl.x;
         shieldSetup->y = self->srt.transl.y + 10.0f;
         shieldSetup->z = self->srt.transl.z;
@@ -446,7 +446,7 @@ static void dll_243_func_1614(Object *self, Lunaimar_ActualData *objdata) {
         shieldSetup->byte5 = setup->byte5;
         shieldSetup->byte6 = setup->byte6;
         shieldSetup->fadeDistance = setup->fadeDistance;
-        shield = obj_create(shieldSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        shield = objSetupObject(shieldSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
         objdata->unk14 = shield;
         shield->unkC4 = self;
     }
@@ -633,7 +633,7 @@ static s32 dll_243_logic_state_2(Object *self, ObjFSA_Data *fsa, f32 updateRate)
         self->unkAF |= 8;
     } else if (fsa->unk33A != 0) {
         if (self->setup == NULL) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         return LUNAIMAR_LSTATE_3 + 1;
     }

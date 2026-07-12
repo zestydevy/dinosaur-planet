@@ -13,7 +13,7 @@ void DFbarrelanim_dtor(void *dll) { }
 void DFbarrelanim_setup(Object* self, AnimObj_Setup* objSetup, s32 reset) {
     AnimObj_Data* objData;
 
-    obj_set_update_priority(self, 100);
+    objSetPriority(self, 100);
     objData = self->data;
     objData->eventGamebit = objSetup->unk1A;
     objData->unk7A = -1;
@@ -64,7 +64,7 @@ void DFbarrelanim_control(Object* self) {
         matchObj = NULL;
         if (self->seqSlot == SEQSLOT_ANIMOBJ) {
             seqSlot = objData->seqSlot;
-            objects = get_world_objects(&index, &count);
+            objects = objGetObjects(&index, &count);
 
             for (matches = 0, index = 0; index < count; index++) {
                 obj = objects[index];
@@ -92,12 +92,12 @@ void DFbarrelanim_control(Object* self) {
     
     for (i = 0; i < objData->messageCount; i++) {        
         if (objData->messages[i] == 1) {
-            explosion = obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+            explosion = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
             self->srt.transl.y += 12.0f;
             explosion->x = self->srt.transl.x;
             explosion->y = self->srt.transl.y + 8.0f;
             explosion->z = self->srt.transl.z;
-            obj_create(explosion, 5, self->mapID, -1, self->parent);
+            objSetupObject(explosion, 5, self->mapID, -1, self->parent);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
             self->srt.transl.y -= 12.0f;

@@ -84,7 +84,7 @@ void SCTotemPole_control(Object* self) {
     }
     
     //Get lateral player distance
-    player = get_player();
+    player = objGetPlayer();
     dx = self->srt.transl.x - player->srt.transl.x;
     dz = self->srt.transl.z - player->srt.transl.z;
     objData->playerDistance = sqrtf(SQ(dx) + SQ(dz));
@@ -173,7 +173,7 @@ Object* SCTotemPole_find_level_control(Object* self) {
     s32 index;
     s32 count;
 
-    for (objects = get_world_objects(&index, &count); index < count; index++) {
+    for (objects = objGetObjects(&index, &count); index < count; index++) {
         if ((self != objects[index]) && (objects[index]->id == OBJ_SC_levelcontrol)) {
             return objects[index];
         }

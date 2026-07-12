@@ -56,7 +56,7 @@ void WLWorm_control(Object* self) {
     Vec3f vUnused;
     
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     if (!player){
         return;

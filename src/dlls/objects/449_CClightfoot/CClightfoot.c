@@ -56,7 +56,7 @@ void CClightfoot_control(Object *self) {
     Object *player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (!objdata->spokeToPlayer) {
         objdata->unk4.headAimX = player->srt.transl.x;
         objdata->unk4.headAimY = player->srt.transl.y;

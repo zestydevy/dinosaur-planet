@@ -788,7 +788,7 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
                 func_80000450(bss_0[i]->unk4, NULL, bss_0[i]->unk10E, 0, 0, 0);
             }
             if (bss_0[i]->unk0 != NULL) {
-                obj_destroy_object(bss_0[i]->unk0);
+                objFreeObject(bss_0[i]->unk0);
             }
             mmFree(bss_0[i]->unk12C);
             bss_0[i]->unk12C = 0;

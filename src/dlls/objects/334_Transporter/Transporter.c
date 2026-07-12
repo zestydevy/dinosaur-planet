@@ -93,7 +93,7 @@ void Transporter_control(Object *self) {
         return;
     }
     camUseShake();
-    player = get_player();
+    player = objGetPlayer();
     if (player) {
         distToPlayer = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
         if ((objdata->unk25 == 0) && (objdata->unk24 == 0) && (distToPlayer < 40.0f)) {

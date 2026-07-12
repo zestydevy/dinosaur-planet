@@ -49,7 +49,7 @@ void MAGICMaker_control(Object *self) {
 
     if (mainGetBits(BIT_26B)) {
         mainSetBits(BIT_26B, 0);
-        player = get_player();
+        player = objGetPlayer();
         if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) < 10) {
             objects = obj_get_all_of_type(OBJTYPE_Collectable, &count);
             foundObjs = 0;
@@ -60,7 +60,7 @@ void MAGICMaker_control(Object *self) {
                 }
             }
             if (foundObjs < 5) {
-                bonedustSetup = obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust);
+                bonedustSetup = objAllocSetup(sizeof(BoneDust_Setup), OBJ_BoneDust);
                 bonedustSetup->unk1A = 0x14;
                 bonedustSetup->unk2C = -1;
                 bonedustSetup->unk1C = -1;
@@ -68,7 +68,7 @@ void MAGICMaker_control(Object *self) {
                 bonedustSetup->base.y = self->srt.transl.y;
                 bonedustSetup->base.z = self->srt.transl.z + rand_next(-300, 300);
                 bonedustSetup->unk24 = -1;
-                bonedustObj = obj_create((ObjSetup*)bonedustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                bonedustObj = objSetupObject((ObjSetup*)bonedustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 if (bonedustObj) {
                     ((DLL_BoneDust*)bonedustObj->dll)->vtbl->func10(bonedustObj, 0, -0.75f, 0);
                 }

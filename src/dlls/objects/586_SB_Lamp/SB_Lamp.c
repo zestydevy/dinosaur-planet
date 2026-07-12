@@ -101,7 +101,7 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     animObjData->unk7A = -1;
     animObjData->unk62 = 0;
     animObjData->unk7A &= ~0x20;
-    player = get_player();
+    player = objGetPlayer();
     if (!player) {
         return 0;
     }
@@ -162,7 +162,7 @@ void SB_Lamp_free(Object *self, s32 a1) {
     objdata = self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
     if (objdata->obj) {
-        obj_destroy_object(objdata->obj);
+        objFreeObject(objdata->obj);
     }
     objdata->obj = NULL;
     dllFree(sDLL107);

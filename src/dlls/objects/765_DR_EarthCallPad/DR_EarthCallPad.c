@@ -48,7 +48,7 @@ void DR_EarthCallPad_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 void DR_EarthCallPad_free(Object* self, s32 onlySelf) {
     DR_EarthCallPad_Data* objdata = self->data;
     if (objdata->fxemit != NULL) {
-        obj_destroy_object(objdata->fxemit);
+        objFreeObject(objdata->fxemit);
     }
     obj_free_object_type(self, OBJTYPE_DinoCallSpot);
 }
@@ -88,7 +88,7 @@ static Object* DR_EarthCallPad_create_fx(Object* self, s32 partID) {
 
     STUBBED_PRINTF(" Creating Effect Emitter ");
 
-    fxSetup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    fxSetup = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     fxSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     fxSetup->base.x = self->srt.transl.x;
     fxSetup->base.y = self->srt.transl.y;
@@ -96,5 +96,5 @@ static Object* DR_EarthCallPad_create_fx(Object* self, s32 partID) {
     fxSetup->indexInBank = partID;
     fxSetup->fxRate = 0;
     fxSetup->toggleGamebit = -1;
-    return obj_create((ObjSetup*)fxSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)fxSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

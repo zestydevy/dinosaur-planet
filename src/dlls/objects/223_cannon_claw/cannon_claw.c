@@ -28,7 +28,7 @@ void cannon_claw_control(Object *self) {
     Object *sidekick;
     CannonClaw_Setup *setup;
 
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if (self->unkDC) {
         return;

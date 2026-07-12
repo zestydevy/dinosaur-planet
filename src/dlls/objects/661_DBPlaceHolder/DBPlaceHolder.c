@@ -74,7 +74,7 @@ void DBPlaceHolder_control(Object *self) {
         objdata->flags |= 1;
     }
     if (!(objdata->flags & 1) && (self->unkAF & 1) && mainGetBits(setup->gamebit2)) {
-        player = get_player();
+        player = objGetPlayer();
         x = player->srt.transl.x - self->srt.transl.x;
         z = player->srt.transl.z - self->srt.transl.z;
         self->srt.yaw = arctan2s(x, z);

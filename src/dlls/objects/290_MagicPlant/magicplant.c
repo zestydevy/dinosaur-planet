@@ -201,7 +201,7 @@ static void MagicPlant_create_magic_dust(Object* self, s32 objectID) {
     objSetup = (MagicPlant_Setup*)self->setup;
     objData = self->data;
 
-    dustSetup = obj_alloc_setup(sizeof(MagicDust_Setup), objectID);
+    dustSetup = objAllocSetup(sizeof(MagicDust_Setup), objectID);
     dustSetup->unk1A = 20;
     dustSetup->unk2C = -1;
     dustSetup->unk1C = -1;
@@ -214,7 +214,7 @@ static void MagicPlant_create_magic_dust(Object* self, s32 objectID) {
     dustSetup->base.byte6 = objSetup->base.byte6;
     dustSetup->base.fadeDistance = objSetup->base.fadeDistance - 15;
 
-    magicDust = obj_create(
+    magicDust = objSetupObject(
         &dustSetup->base,
         OBJINIT_STANDALONE | OBJINIT_FLAG4,
         self->mapID,
@@ -262,7 +262,7 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
     Object *hitBy;
     f32 playerDistance;
     s32 random;
-    Object *player = get_player();
+    Object *player = objGetPlayer();
     u32 dModGfxParams[4] = { 8, 0xff, 0xff, 0x78 };
     DLL_IModgfx* dll;
     SRT transform;
@@ -350,7 +350,7 @@ void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup *objSetup, M
     f32 dx;
     f32 dz;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Stop twinkling sound
     if (objData->soundHandle != 0) {

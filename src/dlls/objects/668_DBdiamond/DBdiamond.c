@@ -55,7 +55,7 @@ void DBdiamond_control(Object *self) {
     DBDiamond_Data *objdata;
     s16 *sequenceBone;
 
-    player = get_player();
+    player = objGetPlayer();
     setup = (DBDiamond_Setup *)self->setup;
     objdata = self->data;
 

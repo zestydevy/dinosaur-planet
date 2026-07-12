@@ -95,7 +95,7 @@ void TumbleweedBush_control(Object* self) {
     Object* weed;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     //Check for attack collisions
     if (func_80025F40(self, &hitBy, &hitSphere, &hitDamage)) {
@@ -229,7 +229,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
     }
     
     //Count existing tumbleweeds in world
-    for (objects = get_world_objects(&i, &objCount), existingTumbleweedCount = 0; i < objCount;) {
+    for (objects = objGetObjects(&i, &objCount), existingTumbleweedCount = 0; i < objCount;) {
         if (objID == objects[i++]->id) { 
             existingTumbleweedCount++;
         }
@@ -239,7 +239,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
     }    
 
     //Create a Tumbleweed
-    weedSetup = (Tumbleweed_Setup*)obj_alloc_setup(sizeof(Tumbleweed_Setup), objID);
+    weedSetup = (Tumbleweed_Setup*)objAllocSetup(sizeof(Tumbleweed_Setup), objID);
     weedSetup->base.x = objData->heldWeedCoords[weedIdx].x + self->srt.transl.x;
     weedSetup->base.y = objData->heldWeedCoords[weedIdx].y + self->srt.transl.y;
     weedSetup->base.z = objData->heldWeedCoords[weedIdx].z + self->srt.transl.z;
@@ -255,7 +255,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
         if ((objSetup->base.uID == 0x292C) && (objData->tumbleweedsGrown == 6)) {
             weedSetup->carryingGold = 1;
 
-            for (objects = get_world_objects(&i, &objCount); i < objCount; i++) {
+            for (objects = objGetObjects(&i, &objCount); i < objCount; i++) {
                 if (objects[i]->id == OBJ_SC_golden_nugge) {
                     weedSetup->base.x = objects[i]->srt.transl.x;
                     weedSetup->base.y = objects[i]->srt.transl.y;
@@ -268,7 +268,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
         }
     }
     
-    objData->heldWeeds[weedIdx] = obj_create((ObjSetup*)weedSetup, 5, self->mapID, -1, self->parent);
+    objData->heldWeeds[weedIdx] = objSetupObject((ObjSetup*)weedSetup, 5, self->mapID, -1, self->parent);
     ((DLL_227_Tumbleweed*)objData->heldWeeds[weedIdx]->dll)->vtbl->set_home(objData->heldWeeds[weedIdx], self->srt.transl.x, self->srt.transl.z);
     objData->tumbleweedsGrown++;
     return weedIdx;

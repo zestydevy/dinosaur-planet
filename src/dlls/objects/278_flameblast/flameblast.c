@@ -36,7 +36,7 @@ void flameblast_control(Object* self) {
     FlameBlast_Data* objdata;
     SRT sp30;
 
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     objdata = self->data;
     if (!sidekick)
         return;

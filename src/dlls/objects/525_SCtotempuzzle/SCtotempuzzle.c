@@ -65,7 +65,7 @@ void dll_525_control(Object* self) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             return;
         }
-        sp40 = get_player();
+        sp40 = objGetPlayer();
         if (((DLL_210_Player*)sp40->dll)->vtbl->get_vehicle(sp40) != 0) {
             mainSetBits(BIT_63B, 1U);
             return;
@@ -157,7 +157,7 @@ static s32 dll_525_func_684(Object* arg0, void* arg1) {
     DLL525_Data* dll525Data;
     
     var_s1 = 0;
-    temp_s6 = get_world_objects(&i, &sp58);
+    temp_s6 = objGetObjects(&i, &sp58);
     for ( ; i < sp58; i++) {
         temp_v1 = temp_s6[i];
         if (temp_v1->id == OBJ_SC_totempuzzle) {

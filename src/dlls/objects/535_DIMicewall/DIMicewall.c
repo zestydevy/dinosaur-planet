@@ -51,9 +51,9 @@ void dll_535_control(Object* self) {
                 DLL535data->unk3 = 1;
             }
         } else {
-            sp20 = get_sidekick();
+            sp20 = objGetSidekick();
             if (sp20 != NULL) {
-                if (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
+                if (vec3_distance_squared(&self->globalPosition, &objGetPlayer()->globalPosition) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
                     ((DLL_ISidekick*)sp20->dll)->vtbl->enable_command(sp20, Sidekick_Command_INDEX_4_Flame);
                 }
             }

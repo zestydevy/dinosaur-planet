@@ -74,7 +74,7 @@ void PortalSpellDoor_control(Object* self) {
     PortalSpellDoor_Data* objData;
     PortalSpellDoor_Setup* objSetup;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     objSetup = (PortalSpellDoor_Setup*)self->setup;
 
@@ -84,7 +84,7 @@ void PortalSpellDoor_control(Object* self) {
 
         //Destroy secondary door object
         if (objData->portalDoorAnim != NULL) {
-            obj_destroy_object(objData->portalDoorAnim);
+            objFreeObject(objData->portalDoorAnim);
             objData->portalDoorAnim = NULL;
         }
 
@@ -134,7 +134,7 @@ void PortalSpellDoor_free(Object* self, s32 arg1) {
 
     objData = self->data;
     if (objData->portalDoorAnim && (arg1 == 0)) {
-        obj_destroy_object(objData->portalDoorAnim);
+        objFreeObject(objData->portalDoorAnim);
     }
 }
 
@@ -153,13 +153,13 @@ Object* PortalSpellDoor_create_anim_obj(Object* self) {
     ObjSetup* animObjSetup;
     Object* portalDoorAnim;
 
-    animObjSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_PortalDoorAnim);
+    animObjSetup = objAllocSetup(sizeof(ObjSetup), OBJ_PortalDoorAnim);
     animObjSetup->loadFlags = 2;
     animObjSetup->byte5 = 1;
     animObjSetup->x = self->srt.transl.x;
     animObjSetup->y = self->srt.transl.y;
     animObjSetup->z = self->srt.transl.z;
-    portalDoorAnim = obj_create(animObjSetup, 5, -1, -1, self->parent);
+    portalDoorAnim = objSetupObject(animObjSetup, 5, -1, -1, self->parent);
     portalDoorAnim->def->scale = self->def->scale;
     portalDoorAnim->srt.scale = 1.0f;
     return portalDoorAnim;

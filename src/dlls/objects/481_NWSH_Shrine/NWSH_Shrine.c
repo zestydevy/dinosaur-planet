@@ -95,7 +95,7 @@ void dll_481_control(Object *self) {
     s16 var_v0;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     sp3C = 1000.0f;
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;

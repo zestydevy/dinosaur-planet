@@ -149,8 +149,8 @@ void pressureswitch_control(Object* self) {
 
     //Show Guard command option when player close to switch
     if (!mainGetBits(setup->gameBitPressed) && setup->distanceGuardCommand) {
-        player = get_player();
-        sidekick = get_sidekick();
+        player = objGetPlayer();
+        sidekick = objGetSidekick();
         if (sidekick) {
             if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(setup->distanceGuardCommand)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_3_Guard);

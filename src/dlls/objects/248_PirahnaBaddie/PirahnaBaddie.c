@@ -131,7 +131,7 @@ void dll_248_control(Object* self) {
                 objdata->unk1C = (f32) rand_next(0x1E, 0x78);
             }
         }
-        objdata->player = get_player();
+        objdata->player = objGetPlayer();
         if (objdata->player != NULL) {
             sp54.f[0] = objdata->player->globalPosition.f[0] - self->globalPosition.f[0];
             sp54.f[1] = objdata->player->globalPosition.f[1] - self->globalPosition.f[1];
@@ -266,7 +266,7 @@ static void dll_248_func_A5C(Object* self, PirahnaBaddie_Data* objdata) {
     if (self->velocity.f[2] < -0.5f) {
         self->velocity.f[2] = -0.5f;
     }
-    obj_move(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
+    objMove(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
     objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
     var_v1 = arctan2_f(
         self->globalPosition.f[0] - objdata->player->globalPosition.f[0], 

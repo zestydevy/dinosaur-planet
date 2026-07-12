@@ -92,7 +92,7 @@ void dll_246_control(Object* self) {
     gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk1C, (fsin16_precise((s16) (objdata->unk26 + objdata->unk28)) * 0.05f) + objdata->unk18);
     gDLL_6_AMSFX->vtbl->set_vol(objdata->unk1C, (u32) (objdata->unk18 * 63.0f) );
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_336, NULL, 2, -1, &objdata->unk18);
-    objdata->player = get_player();
+    objdata->player = objGetPlayer();
     if (objdata->player != NULL) {
         sp58.f[0] = objdata->player->globalPosition.x - self->globalPosition.x;
         sp58.f[1] = objdata->player->globalPosition.y - self->globalPosition.y;
@@ -201,7 +201,7 @@ static void dll_246_func_6C8(Object* self, DLL246_Data* objdata) {
     if (self->velocity.f[2] < -0.8f) {
         self->velocity.f[2] = -0.8f;
     }
-    obj_move(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
+    objMove(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
     objdata->unk26 += (s16) (32.0f * gUpdateRateF);
     objdata->unk28 += (s16) (23.0f * gUpdateRateF);
     self->srt.yaw += (s16) (fsin16_precise(objdata->unk26) * 182.0f * 4.0f);

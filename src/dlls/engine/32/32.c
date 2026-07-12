@@ -582,7 +582,7 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
 
     sp90 = 0x15;\
     sp8C = 8;
-    player = get_player();
+    player = objGetPlayer();
     if (a2->modelInstIdx != 0) {
         return;
     }

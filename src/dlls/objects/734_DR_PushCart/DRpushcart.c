@@ -110,7 +110,7 @@ void dll_734_free(Object* self, s32 arg1) {
     
     if (arg1 == 0) {
         if (objData->unk108 != NULL) {
-            obj_destroy_object(objData->unk108);
+            objFreeObject(objData->unk108);
             objData->unk108 = NULL;
         }
     }
@@ -157,14 +157,14 @@ f32 dll_734_func_C34(Object* self, s16* arg1, f32 arg2) {
 void dll_734_func_D30(Object* self, s32 arg1) {
     LFXEmitter_Setup* lfxSetup;
 
-    lfxSetup = (LFXEmitter_Setup*)obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    lfxSetup = (LFXEmitter_Setup*)objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     lfxSetup->base.loadFlags = 2;
     lfxSetup->base.x = self->srt.transl.x;
     lfxSetup->base.y = self->srt.transl.y;
     lfxSetup->base.z = self->srt.transl.z;
     lfxSetup->unk1E = arg1;
     lfxSetup->unk22 = -1;
-    obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+    objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
 }
 
 // offset: 0xDD8 | func: 9
@@ -174,7 +174,7 @@ s32 dll_734_func_DD8(Object* self, u8 arg1, u8 arg2, s32* arg3) {
     f32 temp;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     *arg3 = -1;
     
@@ -314,7 +314,7 @@ void dll_734_func_133C(Object* self, DRPushCart_Data* objData) {
     Object* player;
     f32 camShake;
 
-    player = get_player();
+    player = objGetPlayer();
     objData->unk10C = -objData->unk10C * 0.8f;
     objData->unk118 = 0.0f;
     
@@ -375,7 +375,7 @@ Object* dll_734_func_1624(Object* self, Vec3f* coord) {
     DRPushCart_Setup* objSetup;
 
     objSetup = (DRPushCart_Setup*)self->setup;
-    barrelSetup = (CFBarrel_Setup*)obj_alloc_setup(sizeof(CFBarrel_Setup), OBJ_CFbarrel);
+    barrelSetup = (CFBarrel_Setup*)objAllocSetup(sizeof(CFBarrel_Setup), OBJ_CFbarrel);
     barrelSetup->base.loadFlags = objSetup->base.loadFlags;
     barrelSetup->base.byte6 = objSetup->base.byte6;
     barrelSetup->base.byte5 = objSetup->base.byte5;
@@ -385,7 +385,7 @@ Object* dll_734_func_1624(Object* self, Vec3f* coord) {
     barrelSetup->base.z = coord->z;
     barrelSetup->unk18 = self->srt.yaw;
     barrelSetup->unk19 = 1;
-    return obj_create((ObjSetup*)barrelSetup, 5, self->mapID, -1, self);
+    return objSetupObject((ObjSetup*)barrelSetup, 5, self->mapID, -1, self);
 }
 
 // offset: 0x16EC | func: 14

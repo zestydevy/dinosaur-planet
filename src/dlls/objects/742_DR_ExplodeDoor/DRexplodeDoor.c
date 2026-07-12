@@ -38,7 +38,7 @@ void DRExplodeDoor_setup(Object* self, DRExplodeDoor_Setup* objSetup, s32 arg2) 
     if (mainGetBits(objSetup->gamebitExplode)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
         self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-        obj_free_tick(self);
+        objDisable(self);
     }
 
     //Set up objHits
@@ -65,7 +65,7 @@ void DRExplodeDoor_control(Object* self) {
         dllFree(dll);
         
         gDLL_6_AMSFX->vtbl->play(self, SOUND_8C7_Explosion_High, MAX_VOLUME, 0, 0, 0, 0);
-        obj_free_tick(self);
+        objDisable(self);
     }
 }
 

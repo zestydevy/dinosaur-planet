@@ -63,7 +63,7 @@ void WGSH_flybaddie_setup(Object* self, WGSH_flybaddie_Setup* setup, s32 arg2) {
     Object* player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (player != NULL) {
         objdata->unk38 = player->srt.transl.x;
         objdata->unk3C = player->srt.transl.y;
@@ -111,7 +111,7 @@ void WGSH_flybaddie_control(Object* self) {
 
     objdata = self->data;
     hitBy = NULL;
-    player = get_player();
+    player = objGetPlayer();
     if ((data_4 != 0) && (player != NULL)) {
         objdata->unk38 = player->srt.transl.x;
         objdata->unk3C = player->srt.transl.y;
@@ -119,7 +119,7 @@ void WGSH_flybaddie_control(Object* self) {
         data_4 = 0;
     }
     if (mainGetBits(BIT_1D4) != 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     } else {
         if (objdata->unk4E > 0) {
             objdata->unk4E -= (s16) gUpdateRateF;
@@ -155,13 +155,13 @@ void WGSH_flybaddie_control(Object* self) {
                 objdata->unk52++;
                 objdata->unk34 *= 1.2f;
                 if (objdata->unk52 >= 3) {
-                    obj_destroy_object(self);
+                    objFreeObject(self);
                     data_0++;
                     if (data_0 >= 3) {
                         mainSetBits(BIT_1D8, 1);
                     }
                 } else {
-                    obj_set_model(self, self->modelInstIdx + 1);
+                    objSetModel(self, self->modelInstIdx + 1);
                 }
             }
         }
@@ -236,11 +236,11 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
     f32 dirVec[3];
     f32 magnitude;
 
-    player = get_player();
+    player = objGetPlayer();
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
-    projballSetup = obj_alloc_setup(sizeof(WGSH_projball_Setup), OBJ_WGSH_projball);
+    projballSetup = objAllocSetup(sizeof(WGSH_projball_Setup), OBJ_WGSH_projball);
     projballSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
     projballSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     projballSetup->loadDistance = 0xFF;
@@ -248,7 +248,7 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
     projballSetup->x = self->srt.transl.x;
     projballSetup->y = self->srt.transl.y;
     projballSetup->z = self->srt.transl.z;
-    projball = obj_create(projballSetup, OBJINIT_STANDALONE, -1, -1, NULL);
+    projball = objSetupObject(projballSetup, OBJINIT_STANDALONE, -1, -1, NULL);
     if (projball != NULL) {
         projball->srt.flags |= OBJFLAG_OWNS_SETUP;
         dirVec[0] = player->srt.transl.x - self->srt.transl.x;

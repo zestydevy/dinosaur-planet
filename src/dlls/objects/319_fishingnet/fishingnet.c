@@ -117,7 +117,7 @@ u8 fishingnet_func_338(Object* self, s32 arg1, Object *arg2) {
     s32 temp_v0_2;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func32(player);
     switch (arg1) {
     case 0x1:

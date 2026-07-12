@@ -88,7 +88,7 @@ void Duster_control(Object *self) {
     PlayerStats *stats;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (!objdata->discovered || objdata->collected == TRUE) {
         if (!objdata->discovered) {
             objdata->discovered = mainGetBits(objdata->gamebitDiscovered);

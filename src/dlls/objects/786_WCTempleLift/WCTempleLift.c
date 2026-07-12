@@ -41,7 +41,7 @@ void dll_786_control(Object *self) {
             for (i = 0; i < self->polyhits->unk10F; i++) {
                 obj = self->polyhits->unk100[i];
                 if (obj->id == 0) {
-                    player = get_player();
+                    player = objGetPlayer();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {
                         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                         objdata->unk4 = 1;
@@ -55,7 +55,7 @@ void dll_786_control(Object *self) {
             for (i = 0; i < self->polyhits->unk10F; i++) {
                 obj = self->polyhits->unk100[i];
                 if (obj->id == 0) {
-                    player = get_player();
+                    player = objGetPlayer();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {
                         gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                         objdata->unk4 = 0;

@@ -51,7 +51,7 @@ void SCFlameGameFlame_control(Object* self) {
 
     objData = self->data;
     objSetup = (SCFlameGameFlame_Setup*)self->setup;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if (
         (objData->flags & SCFlameGameFlame_FLAG_Target_in_View) && 
@@ -82,7 +82,7 @@ void SCFlameGameFlame_control(Object* self) {
     ) {
         mainSetBits(objData->gamebitFinished, 1);
         objData->flags &= ~SCFlameGameFlame_FLAG_Finished;
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 
