@@ -1029,7 +1029,7 @@ int vsprintf(char* s, const char* format, va_list args) {
 }
 #endif
 
-void diPrintfInit() {
+void diPrintfInit(void) {
     u32 fbRes;
 
     fbRes = vi_get_current_size();
@@ -1121,7 +1121,7 @@ void diPrintfAll(Gfx **gdl) {
 }
 
 // guessed name
-void diPrintfClear() {
+void diPrintfClear(void) {
     gDebugPrintBufferEnd = gDebugPrintBufferStart;
     diPrintfOrigin();
 }
@@ -1401,7 +1401,7 @@ s32 diPrintfRenderChar(Gfx** gdl, s32 asciiVal) {
 
 
 // guessed name
-void diPrintfUpdateBounds() {
+void diPrintfUpdateBounds(void) {
     if (D_800BEB00 <= 320) {
         D_800BEAEC = 16;
         D_800BEAF0 = D_800BEB00 - 16;
@@ -1419,13 +1419,13 @@ void diPrintfUpdateBounds() {
 }
 
 // guessed name
-void diPrintfOrigin() {
+void diPrintfOrigin(void) {
     D_800BEADC = D_800BEAEC;
     D_800BEADE = D_800BEAF4;
 }
 
 // guessed name
-void diPrintfNewline() {
+void diPrintfNewline(void) {
     D_800BEADC = D_800BEAEC;
     D_800BEADE += 11;
 }
