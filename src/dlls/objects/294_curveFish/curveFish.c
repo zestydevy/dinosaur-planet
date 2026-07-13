@@ -164,7 +164,9 @@ void curveFish_control(Object* self) {
     {
         curves_func_800053B0(&objData->curves.unk0, objData->speed);
 
-        //Hide the fish when it reaches the end of its path
+        // Hide the fish when it reaches the end of its path
+        /* (@bug?: doesn't check if it's already in the hidden state and doesn't 
+            reset curve position, so it can't respawn through `objSetup->respawnDuration`) */
         if ((objData->curves.unk0.unk10) && (gDLL_26_Curves->vtbl->func_4704(&objData->curves))) {
             STUBBED_PRINTF("fish has reached the end of it life\n");
             objData->state = CurveFish_STATE_0_Hidden;
