@@ -191,6 +191,7 @@ enum DLL_ID {
     DLL_ID_193 = 0x2007,
     DLL_ID_194 = 0x2008,
     DLL_ID_202 = 0x2010,
+    DLL_ID_204 = 0x2012,
     DLL_ID_205 = 0x2013,
 
     // Objects

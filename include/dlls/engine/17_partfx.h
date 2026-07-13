@@ -19,6 +19,7 @@ enum ParticleID {
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
     PARTICLE_69 = 0x69, //nothing?
+    PARTICLE_6D = 0x6D,
     PARTICLE_75 = 0x75, //Transporter - horizontal blue magic explosion
     PARTICLE_77 = 0x77,
     PARTICLE_78 = 0x78, //Transporter - large ripple
@@ -59,6 +60,16 @@ enum ParticleID {
     PARTICLE_19E = 0x19E,
     PARTICLE_19F = 0x19F,
     PARTICLE_1A0 = 0x1A0,
+    PARTICLE_1A9 = 0x1A9,
+    PARTICLE_1AA = 0x1AA,
+    PARTICLE_1AB = 0x1AB,
+    PARTICLE_1AC = 0x1AC,
+    PARTICLE_1AD = 0x1AD,
+    PARTICLE_1AE = 0x1AE,
+    PARTICLE_1AF = 0x1AF,
+    PARTICLE_1B0 = 0x1B0,
+    PARTICLE_1B1 = 0x1B1,
+    PARTICLE_1B2 = 0x1B2,
     PARTICLE_1BB = 0x1BB,
     PARTICLE_1BC = 0x1BC,
     PARTICLE_1BD = 0x1BD,
