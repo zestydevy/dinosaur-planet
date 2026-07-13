@@ -27,7 +27,7 @@ typedef struct {
 /*23*/    u8 jumpAnticipateDuration;
 /*24*/    u8 jumpRecoveryDuration;
 /*26*/    u16 swimDurationAfterPeek;      //How long to stay in State 4, before transitioning into jump state
-/*28*/    u8 splashOffsetY;
+/*28*/    u8 surfaceOffsetY;
 } fish_Setup;
 
 typedef struct {
@@ -43,7 +43,7 @@ typedef struct {
 /*20*/    f32 maxLateralSpeed;
 /*24*/    f32 maxSpeedApproachingWall;
 /*28*/    f32 lateralSpeed;
-/*2C*/    f32 surfacedY;
+/*2C*/    f32 surfaceY;
 /*30*/    s16 objHitsConfig;
 /*34*/    f32 unk34;                      //related to lateral speed during jump anticipation
 /*38*/    f32 jumpAnticipationDistance;
@@ -78,7 +78,7 @@ typedef enum {
 } fish_States;
 
 typedef enum {
-    Fish_MODANIM_0_Swim_Loop,
+    Fish_MODANIM_0_Swim_LOOP,
     Fish_MODANIM_1_Jump,
     Fish_MODANIM_2_Tilted_Up,
     Fish_MODANIM_3_Tilted_Down
@@ -105,8 +105,8 @@ void fish_dtor(void *dll) { }
 void fish_setup(Object *self, fish_Setup *setup, s32 reset) {
     fish_Data *objdata = self->data;
 
-    if (setup->splashOffsetY == 0) {
-        setup->splashOffsetY = 1;
+    if (setup->surfaceOffsetY == 0) {
+        setup->surfaceOffsetY = 1;
     }
 
     objdata->initialised = FALSE;
@@ -118,11 +118,11 @@ void fish_setup(Object *self, fish_Setup *setup, s32 reset) {
 static void fish_initialise(Object* self) {
     fish_Data* objdata;
     fish_Setup* setup;
-    f32 temp_fa1;
-    Vec4f sp2C;
-    f32 temp_ft4;
-    f32 temp_ft5;
-    f32 temp_fv0_3;
+    f32 curveParam;
+    Vec4f curve;
+    f32 jumpHeightFactorSq;
+    f32 splashOffsetFraction;
+    f32 jumpCalcSq;
 
     objdata = self->data;
     setup = (fish_Setup*)self->setup;
@@ -138,40 +138,40 @@ static void fish_initialise(Object* self) {
     objdata->maxSpeedApproachingWall = setup->maxLateralSpeed / 1000.0f;
     objdata->lateralSpeed = 0.0f;
 
-    if (func_80058B1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objdata->surfacedY, 0)) {
-        objdata->surfacedY = (setup->base.y + objdata->surfacedY) - setup->splashOffsetY;
-        objdata->bubbleFXParams[0] = setup->splashOffsetY / 0.05f;
+    if (func_80058B1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objdata->surfaceY, 0)) {
+        objdata->surfaceY = (setup->base.y + objdata->surfaceY) - setup->surfaceOffsetY;
+        objdata->bubbleFXParams[0] = setup->surfaceOffsetY / 0.05f;
         objdata->bubbleFXParams[1] = (setup->scale / 100.0f) * 20.0f;
         objdata->jumpDistanceLateral = setup->jumpDistanceLateral;
         objdata->jumpDuration = setup->jumpDuration;
         objdata->jumpSpeedLateral = objdata->jumpDistanceLateral / objdata->jumpDuration;
         objdata->jumpHeightFactor = ((objdata->jumpDuration * -0.04f) * objdata->jumpDuration) / -objdata->jumpDuration; //? This just works out as (objdata->jumpDuration / 25)
 
-        temp_fa1 = objdata->jumpDuration * ((2.0f * objdata->jumpHeightFactor) + (objdata->jumpDuration * -0.04f)) * 0.25f;
-        sp2C.f[0] = temp_fa1 * 0.5f;
-        sp2C.f[1] = temp_fa1;
-        sp2C.f[2] = SQ(temp_fa1 * 0.5f);
-        sp2C.f[3] = SQ(temp_fa1);        
-        objdata->unk70 = M_90_DEGREES / ((2.0f * sp2C.f[2]) - sp2C.f[3]);
-        objdata->unk78 = ((M_45_DEGREES) - (objdata->unk70 * sp2C.f[2])) / sp2C.f[0];
+        curveParam = objdata->jumpDuration * ((2.0f * objdata->jumpHeightFactor) + (objdata->jumpDuration * -0.04f)) * 0.25f;
+        curve.f[0] = curveParam * 0.5f;
+        curve.f[1] = curveParam;
+        curve.f[2] = SQ(curveParam * 0.5f);
+        curve.f[3] = SQ(curveParam);        
+        objdata->unk70 = M_90_DEGREES / ((2.0f * curve.f[2]) - curve.f[3]);
+        objdata->unk78 = ((M_45_DEGREES) - (objdata->unk70 * curve.f[2])) / curve.f[0];
 
-        temp_ft4 = SQ(objdata->jumpHeightFactor);
-        temp_ft5 = -((f32) setup->splashOffsetY) * -0.16f;
-        if (!(temp_ft4 < temp_ft5)) {
-            temp_fv0_3 = sqrtf(temp_ft4 - temp_ft5);
-            objdata->jumpFlightDuration = (-objdata->jumpHeightFactor + temp_fv0_3) / -0.08f;
-            objdata->splashTime = (-objdata->jumpHeightFactor - temp_fv0_3) / -0.08f;
+        jumpHeightFactorSq = SQ(objdata->jumpHeightFactor);
+        splashOffsetFraction = -((f32) setup->surfaceOffsetY) * -0.16f;
+        if (!(jumpHeightFactorSq < splashOffsetFraction)) {
+            jumpCalcSq = sqrtf(jumpHeightFactorSq - splashOffsetFraction);
+            objdata->jumpFlightDuration = (-objdata->jumpHeightFactor + jumpCalcSq) / -0.08f;
+            objdata->splashTime = (-objdata->jumpHeightFactor - jumpCalcSq) / -0.08f;
             objdata->unk34 = (sqrtf(SQ(objdata->jumpSpeedLateral) + SQ(objdata->jumpHeightFactor)) - objdata->maxLateralSpeed) / setup->jumpAnticipateDuration;
             objdata->jumpAnticipationDistance = (objdata->unk34 * setup->jumpAnticipateDuration * setup->jumpAnticipateDuration) + (objdata->maxLateralSpeed * setup->jumpAnticipateDuration);
-            objdata->unk40 = -(setup->splashOffsetY * 4.0f);
+            objdata->unk40 = -(setup->surfaceOffsetY * 4.0f);
             objdata->unk40 /= SQ(objdata->jumpAnticipationDistance);
             objdata->unk3C = -objdata->unk40 * objdata->jumpAnticipationDistance;
-            sp2C.f[2] = SQ((f32) setup->splashOffsetY * 0.5f);
-            sp2C.f[0] = setup->splashOffsetY * 0.5f;
-            sp2C.f[3] = SQ((f32) setup->splashOffsetY);
-            sp2C.f[1] = setup->splashOffsetY;
-            objdata->unk6C = M_45_DEGREES / ((2.0f * sp2C.f[2]) - sp2C.f[3]);
-            objdata->unk74 = ((M_45_DEGREES/2) - (objdata->unk6C * sp2C.f[2])) / sp2C.f[0];
+            curve.f[2] = SQ((f32) setup->surfaceOffsetY * 0.5f);
+            curve.f[0] = setup->surfaceOffsetY * 0.5f;
+            curve.f[3] = SQ((f32) setup->surfaceOffsetY);
+            curve.f[1] = setup->surfaceOffsetY;
+            objdata->unk6C = M_45_DEGREES / ((2.0f * curve.f[2]) - curve.f[3]);
+            objdata->unk74 = ((M_45_DEGREES/2) - (objdata->unk6C * curve.f[2])) / curve.f[0];
             
             self->srt.yaw = setup->yaw << 8;
             self->srt.scale = self->def->scale * (setup->scale / 100.0f);
@@ -259,14 +259,14 @@ void fish_control(Object* self) {
         break;
     case Fish_STATE_3_Peek_Up:
         if (objdata->timer <= setup->peekDuration) {
-            self->srt.transl.y = setup->base.y + (((objdata->surfacedY - setup->base.y) * objdata->timer) / setup->peekDuration);
+            self->srt.transl.y = setup->base.y + (((objdata->surfaceY - setup->base.y) * objdata->timer) / setup->peekDuration);
             fish_random_turn_swim(self);
         } else {
-            self->srt.transl.y = objdata->surfacedY;
+            self->srt.transl.y = objdata->surfaceY;
             objdata->state = Fish_STATE_4_Swim_after_Peek;
             objdata->timer -= setup->peekDuration;
             fish_swim(self, 0, 0);
-            func_80023D30(self, Fish_MODANIM_0_Swim_Loop, 0.0f, 0);
+            func_80023D30(self, Fish_MODANIM_0_Swim_LOOP, 0.0f, 0);
             func_80024D74(self, 30);
         }
         break;
@@ -327,14 +327,14 @@ void fish_control(Object* self) {
     case Fish_STATE_7_Jump_Recovery:
         //Settling back into regular swimming, after the end of a jump
         if (objdata->timer <= setup->jumpRecoveryDuration) {
-            self->srt.transl.y = objdata->surfacedY - (((objdata->surfacedY - setup->base.y) * objdata->timer) /setup->jumpRecoveryDuration);
+            self->srt.transl.y = objdata->surfaceY - (((objdata->surfaceY - setup->base.y) * objdata->timer) /setup->jumpRecoveryDuration);
             fish_random_turn_swim(self);
         } else {
             self->srt.transl.y = setup->base.y;
             objdata->state = Fish_STATE_2_Swim_before_Peek;
             objdata->timer -= setup->jumpRecoveryDuration;
             fish_swim(self, 0, 0);
-            func_80023D30(self, Fish_MODANIM_0_Swim_Loop, 0.0f, 0);
+            func_80023D30(self, Fish_MODANIM_0_Swim_LOOP, 0.0f, 0);
             func_80024D74(self, 30);
         }
         break;
@@ -609,7 +609,7 @@ static s32 fish_jump_handle_flight(Object *self) {
             vSplash.f[2] = 0.0f;
             rotate_vec3((const SRT *)&eulerRotation, vSplash.f);
             vSplash.f[0] += objdata->jumpedFromX;
-            vSplash.f[1] = setup->splashOffsetY + objdata->surfacedY;
+            vSplash.f[1] = setup->surfaceOffsetY + objdata->surfaceY;
             vSplash.f[2] += objdata->jumpedFromZ;
             gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0],        vSplash.f[1], vSplash.f[2], 0.0f);
             gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0] + 5.0f, vSplash.f[1], vSplash.f[2], 0.0f);
@@ -625,7 +625,7 @@ static s32 fish_jump_handle_flight(Object *self) {
             vSplash.f[2] = 0.0f;
             rotate_vec3((const SRT*)&eulerRotation, vSplash.f);
             vSplash.f[0] += objdata->jumpedFromX;
-            vSplash.f[1] = setup->splashOffsetY + objdata->surfacedY;
+            vSplash.f[1] = setup->surfaceOffsetY + objdata->surfaceY;
             vSplash.f[2] += objdata->jumpedFromZ;
             gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0],        vSplash.f[1], vSplash.f[2], 0.0f);
             gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0] - 5.0f, vSplash.f[1], vSplash.f[2], 0.0f);
@@ -690,7 +690,7 @@ static s32 fish_jump_handle_anticipation(Object* self) {
         vAntic.f[1] = 0.0f;
         vAntic.f[2] = 0.0f;
         self->srt.roll = 0;
-        func_80023D30(self, Fish_MODANIM_0_Swim_Loop, 0.0f, 0);
+        func_80023D30(self, Fish_MODANIM_0_Swim_LOOP, 0.0f, 0);
         func_80024D74(self, 30);
         objdata->animSpeed = 0.0f;
         objdata->timer -= setup->jumpAnticipateDuration;
