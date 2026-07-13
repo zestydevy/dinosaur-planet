@@ -205,8 +205,8 @@ typedef struct {
 /*0018*/    Gfx *displayList;
 /*001C*/    void *unk1C[2];
 /*0024*/    Vec4f *unk24; // Could be a MtxF
-/*0028*/    AnimState *animState0;
-/*002C*/    AnimState *animState1;
+/*0028*/    AnimState *animState0; //base
+/*002C*/    AnimState *animState1; //layered (e.g. the weapon stowing animation, which can be applied over walk anims)
 /*0030*/    ModelInstanceBlendshape *blendshapes;
 /*0034*/    u16 unk34; // stores index for matrices / vertices, first bit = matrix index, second bit = vertex index, third bit = unk1C index
 } ModelInstance;
