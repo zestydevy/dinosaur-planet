@@ -111,7 +111,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
         if (!(animObjData->unk9D & 0x80)) {
             switch (mesgID) {
             case 0xF000B:
-                objects = obj_get_all_of_type(OBJTYPE_Baddie, &objCount);
+                objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
                     if (obj->id == OBJ_SB_ShipHead) {
@@ -124,7 +124,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                 }
                 break;
             case 0xF000C:
-                objects = obj_get_all_of_type(OBJTYPE_Baddie, &objCount);
+                objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
                     if (obj->id == OBJ_SB_ShipHead) {
@@ -137,7 +137,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                 }
                 break;
             case 0xF000D:
-                objects = obj_get_all_of_type(OBJTYPE_Baddie, &objCount);
+                objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
                     if (obj->id == OBJ_SB_ShipHead) {

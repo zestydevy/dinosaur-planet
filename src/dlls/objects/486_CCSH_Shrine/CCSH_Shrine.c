@@ -127,7 +127,7 @@ void CCSH_Shrine_control(Object* self) {
             }
         }
     } else {
-        obj = obj_get_nearest_type_to(OBJTYPE_Door, player, &dist);
+        obj = objGetNearestTypeTo(OBJTYPE_Door, player, &dist);
         if ((obj != NULL) && (dist < 300.0f) && (dist > 100.0f)) {
             doorDist = obj->srt.transl.z - player->srt.transl.z;
             if (doorDist <= 0.0f) {
@@ -207,7 +207,7 @@ void CCSH_Shrine_control(Object* self) {
             objdata->unkA = 1;
             gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
             dist = 10000.0f;
-            obj = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &dist);
+            obj = objGetNearestTypeTo(OBJTYPE_Baddie, self, &dist);
             if (obj != NULL) {
                 objFreeObject(obj);
             }
@@ -227,7 +227,7 @@ void CCSH_Shrine_control(Object* self) {
             return;
         case 3:
             dist = 10000.0f;
-            obj = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &dist);
+            obj = objGetNearestTypeTo(OBJTYPE_Baddie, self, &dist);
             if (obj != NULL) {
                 objFreeObject(obj);
             }

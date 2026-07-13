@@ -272,7 +272,7 @@ static Object* camstatic_func_C04(f32 x, f32 y, f32 z, s32 arg3, s32 controlNo) 
 
     closestStaticCam = NULL;
     closestDist = 100000.0f;
-    staticCams = obj_get_all_of_type(OBJTYPE_StaticCamera, &numObjs);
+    staticCams = objGetAllOfType(OBJTYPE_StaticCamera, &numObjs);
     for (i = 0; i < numObjs; i++) {
         staticCam = staticCams[i];
         if (controlNo == staticCam->controlNo) {

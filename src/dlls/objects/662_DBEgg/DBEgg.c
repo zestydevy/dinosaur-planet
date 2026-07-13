@@ -54,7 +54,7 @@ void dll_662_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0xF44 | func: 4 | export: 4
 void dll_662_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_38);
+    objFreeObjectType(self, OBJTYPE_38);
 }
 
 // offset: 0xF84 | func: 5 | export: 5
@@ -82,7 +82,7 @@ void dll_662_func_1670(Object* self) {
     sp2C = objGetPlayer();
     objdata = self->data;
     setup = (DBEgg_Setup*)self->setup;
-    obj_free_object_type(self, OBJTYPE_38);
+    objFreeObjectType(self, OBJTYPE_38);
     objdata->unk10C = 3;
     mainSetBits(BIT_DB_Picked_Up_Egg, 1U);
     self->unkAF |= 8;

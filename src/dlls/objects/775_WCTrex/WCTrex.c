@@ -72,7 +72,7 @@ void WCTrex_setup(Object* self, ObjSetup* setup, s32 reset) {
     objdata->movedata.unk4A9 |= 0x22;
     gDLL_26_Curves->vtbl->func_4288(&objdata->unk828, self, 1000.0f, &sp38, -1);
     gDLL_18_objfsa->vtbl->func0(self, &objdata->fsa, 4, 4);
-    obj_add_object_type(self, OBJTYPE_Baddie);
+    objAddObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0x270 | func: 2 | export: 1
@@ -107,7 +107,7 @@ void WCTrex_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
 // offset: 0x444 | func: 5 | export: 4
 void WCTrex_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0x484 | func: 6 | export: 5

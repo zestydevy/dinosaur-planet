@@ -194,7 +194,7 @@ void DRearthwalk_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
 
     self->srt.yaw = setup->rotation << 8;
     self->animCallback = DRearthwalk_func_1EBC;
-    obj_add_object_type(self, OBJTYPE_Vehicle);
+    objAddObjectType(self, OBJTYPE_Vehicle);
     objdata = self->data;
     objdata->unkA5C = setup->unk19;
     objdata->unkA52 = 5;
@@ -257,7 +257,7 @@ void DRearthwalk_control(Object* self) {
     } else {
         if (!(objdata->unkA58 & 0x20) && (mainGetBits(BIT_DR_SavedEarthWarriorFromSkeetlas) == 0)) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
-            obj_get_all_of_type(OBJTYPE_Baddie, &sp40);
+            objGetAllOfType(OBJTYPE_Baddie, &sp40);
             diPrintf(" num %i ", sp40);
             if ((sp40 == 0) && (mainGetBits(BIT_DR_Lava_Pools_Cooled_Count) == 3)) {
                 mainSetBits(BIT_DR_SavedEarthWarriorFromSkeetlas, 1);
@@ -511,7 +511,7 @@ void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
         objGetAttachPointBoneWorldPositions(self, 3, 4, objdata->unk978);
         ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->movedata, 0);
         if (objdata->unkA60_1) {
-            objs = obj_get_all_of_type(OBJTYPE_DR_Shackle, &numObjs);
+            objs = objGetAllOfType(OBJTYPE_DR_Shackle, &numObjs);
             for (i = 0; i < numObjs; i++) {
                 ((DLL_Unknown*)objs[i]->dll)->vtbl->func[7].objtype57Func7(objs[i], self, 
                     _data_94[((DLL_Unknown*)objs[i]->dll)->vtbl->func[8].withOneVoidArgS32(objs[i])], 
@@ -523,7 +523,7 @@ void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 
 // offset: 0x160C | func: 7 | export: 4
 void DRearthwalk_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_Vehicle);
+    objFreeObjectType(self, OBJTYPE_Vehicle);
     mainRemoveTempDLL(53);
 }
 
@@ -742,7 +742,7 @@ static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* a
         return 1;
     }
     if (objdata->unkA60_1 && !objdata->unkA60_2) {
-        objList = obj_get_all_of_type(OBJTYPE_RopeNode, &numObjs);
+        objList = objGetAllOfType(OBJTYPE_RopeNode, &numObjs);
         for (i = 0; i < numObjs; i++) {
             ((DLL_Unknown*)objList[i]->dll)->vtbl->func[15].withTwoArgsCustom2(objList[i], actor->srt.transl.y + 4.0f);
         }

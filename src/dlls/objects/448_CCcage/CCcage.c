@@ -86,7 +86,7 @@ void CCcage_control(Object* self) {
     
     //Look for nearby CClightfoot
     if (objData->children[0] == NULL) {
-        nearbyObject = obj_get_nearest_type_to(OBJTYPE_40, self, &searchDistance);
+        nearbyObject = objGetNearestTypeTo(OBJTYPE_40, self, &searchDistance);
         objData->children[0] = nearbyObject;
         if (!nearbyObject) {
             STUBBED_PRINTF("can't find lightfoot\n");
@@ -99,7 +99,7 @@ void CCcage_control(Object* self) {
 
     //Look for nearby CCspellpage
     if (objData->children[1] == NULL) {
-        nearbyObject = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &searchDistance);
+        nearbyObject = objGetNearestTypeTo(OBJTYPE_Collectable, self, &searchDistance);
         objData->children[1] = nearbyObject;
         if (!nearbyObject) {
             STUBBED_PRINTF("can't find lightfoot\n"); //might've meant to say "SpellPage"

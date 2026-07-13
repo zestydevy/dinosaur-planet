@@ -240,7 +240,7 @@ void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
 void BigScorpionRobot_free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
         objFreeObject(self->linkedObject);
         self->linkedObject = NULL;

@@ -69,7 +69,7 @@ void dll_782_control(Object* self) {
     player = objGetPlayer();
     distance = 100000.0f;
     if (objdata->levelCtrl == NULL) {
-        objdata->levelCtrl = obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &distance); //getting WCLevelControl
+        objdata->levelCtrl = objGetNearestTypeTo(OBJTYPE_LevelControl, self, &distance); //getting WCLevelControl
         self->opacity = 0;
         return;
     }

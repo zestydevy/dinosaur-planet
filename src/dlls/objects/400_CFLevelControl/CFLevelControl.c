@@ -424,7 +424,7 @@ void CFLevelControl_func_BB8(Data6C *data, s32 count) {
             objPos = CFLevelControl_get_position_of_saved_obj(data->uID);
             if (objPos) {
                 distance = camDistance(objPos->x, objPos->y, objPos->z);
-                obj_get_nearest_type(OBJTYPE_CFTreasRobo, objPos, &distance);
+                objGetNearestType(OBJTYPE_CFTreasRobo, objPos, &distance);
                 chestOrGuardian = objGetObjectByUID(data->uID);
                 if (chestOrGuardian) {
                     if (data->distance < distance && ((data->gamebit1 == NO_GAMEBIT) || (!mainGetBits(data->gamebit1))) && (((DLL_CFGuardianCFSupTreasureCh*)chestOrGuardian->dll)->vtbl->func7(chestOrGuardian))) {

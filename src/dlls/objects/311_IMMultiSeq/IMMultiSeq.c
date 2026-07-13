@@ -54,7 +54,7 @@ void IMMultiSeq_setup(Object *self, IMMultiSeq_Setup *setup, s32 arg2) {
         // diPrintf("SEQOBJ.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
         self->modelInstIdx = 0;
     }
-    obj_add_object_type(self, OBJTYPE_UseObj);
+    objAddObjectType(self, OBJTYPE_UseObj);
     // find index of first unset gamebit
     for (i = 0; i != IMMULTISEQ_GAMEBIT_COUNT; i++) {
         if (mainGetBits(setup->gamebits1[i]) == VALUE_GAMEBITS1(i)) {
@@ -123,7 +123,7 @@ void IMMultiSeq_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 
 // offset: 0x318 | func: 4 | export: 4
 void IMMultiSeq_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_UseObj);
+    objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
 

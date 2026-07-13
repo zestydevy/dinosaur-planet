@@ -55,7 +55,7 @@ void dll_236_free(Object* self, s32 a1) {
     Object* temp_a0;
 
     sp24 = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     temp_a0 = self->linkedObject;
     if (temp_a0 != NULL) {
         objFreeObject(temp_a0);

@@ -30,7 +30,7 @@ void SCFlameGameFlame_setup(Object* self, SCFlameGameFlame_Setup* objSetup, s32 
 
     objData = self->data;
     self->srt.yaw = objSetup->yaw << 8;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
 
     for (i = 0, objData->unk4 = 0; i < 4; i++) {
         if (objSetup->kyteFlightCurveID == dKyteFlightCurveIDs[i]) {
@@ -101,7 +101,7 @@ void SCFlameGameFlame_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
 
 // offset: 0x2F0 | func: 4 | export: 4
 void SCFlameGameFlame_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x330 | func: 5 | export: 5

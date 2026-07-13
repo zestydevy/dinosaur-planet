@@ -18,7 +18,7 @@ void CCgasvent_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void CCgasvent_setup(Object *self, ObjSetup *objsetup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_CCgasvent);
+    objAddObjectType(self, OBJTYPE_CCgasvent);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
@@ -27,7 +27,7 @@ void CCgasvent_control(Object *self) {
     CCgasvent_Data *objdata = self->data;
     f32 distance = F32_MAX;
 
-    obj_get_nearest_type_to(OBJTYPE_PushBlock, self, &distance);
+    objGetNearestTypeTo(OBJTYPE_PushBlock, self, &distance);
     if (distance < 10.0f) {
         if (objdata->soundHandle) {
             gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
@@ -52,7 +52,7 @@ void CCgasvent_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 void CCgasvent_free(Object *self, s32 arg1) {
     CCgasvent_Data *objdata = self->data;
 
-    obj_free_object_type(self, OBJTYPE_CCgasvent);
+    objFreeObjectType(self, OBJTYPE_CCgasvent);
     if (objdata->soundHandle) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }

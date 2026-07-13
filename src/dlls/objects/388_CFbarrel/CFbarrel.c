@@ -72,8 +72,8 @@ void CFbarrel_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     pickup = self->data;
     pickup->flags |= PICKUPFLAG_NoGravity;
     gDLL_54_pickup->vtbl->setup(self, pickup, 90);
-    obj_add_object_type(self, OBJTYPE_Barrel);
-    obj_add_object_type(self, OBJTYPE_24);
+    objAddObjectType(self, OBJTYPE_Barrel);
+    objAddObjectType(self, OBJTYPE_24);
     objInitMesgQueue(self, 4);
     self->srt.yaw = setup->unk18 << 8;
     self->unkE0 = 0;
@@ -147,7 +147,7 @@ void CFbarrel_control(Object* self) {
             } else {
                 if (gDLL_54_pickup->vtbl->control(self, &objdata->pickup) == 0) {
                     if (objdata->unk11 != 0) {
-                        obj_add_object_type(self, OBJTYPE_24);
+                        objAddObjectType(self, OBJTYPE_24);
                     }
                     objdata->unk11 = 0;
                     func_8002674C(self);
@@ -245,8 +245,8 @@ void CFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 void CFbarrel_free(Object* self, s32 onlySelf) {
     CFbarrel_Data* objdata = self->data;
     gDLL_54_pickup->vtbl->free(self);
-    obj_free_object_type(self, OBJTYPE_Barrel);
-    obj_free_object_type(self, OBJTYPE_24);
+    objFreeObjectType(self, OBJTYPE_Barrel);
+    objFreeObjectType(self, OBJTYPE_24);
     if (objdata->unk13 != 0) {
         gDLL_13_Expgfx->vtbl->func5(self);
     }
@@ -435,7 +435,7 @@ static void CFbarrel_func_14A0(Object* self, s16 arg1, s16 arg2) {
 
     sp44 = 300.0f;
     player = objGetPlayer();
-    sp5C = obj_get_nearest_type_to(OBJTYPE_32, self, &sp44);
+    sp5C = objGetNearestTypeTo(OBJTYPE_32, self, &sp44);
     if (sp5C == NULL) {
         return;
     }
@@ -549,7 +549,7 @@ static void CFbarrel_func_1948(Object* self, u8 a1) {
         // Disable push
         hit->unk5B = self->def->unk91;
         hit->unk5C = self->def->unk92;
-        obj_free_object_type(self, OBJTYPE_24);
+        objFreeObjectType(self, OBJTYPE_24);
         STUBBED_PRINTF("Out of ELEVATOR");
         objdata->unk3E_0 = 0;
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;

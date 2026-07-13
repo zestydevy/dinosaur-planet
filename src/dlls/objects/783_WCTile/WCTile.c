@@ -52,7 +52,7 @@ void dll_783_control(Object *self) {
     sp44 = 100000.0f;
     objdata = self->data;
     if (objdata->levelCtrl == NULL) {
-        objdata->levelCtrl = obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &sp44);
+        objdata->levelCtrl = objGetNearestTypeTo(OBJTYPE_LevelControl, self, &sp44);
         self->opacity = 0;
         return;
     }

@@ -120,7 +120,7 @@ void SPShop_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SPShop_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_LevelControl);
+    objAddObjectType(self, OBJTYPE_LevelControl);
     mainSetBits(BIT_SP_Exiting_Shop, 0);
     SPShop_set_random_prices();
 }
@@ -171,7 +171,7 @@ void SPShop_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
 // offset: 0x334 | func: 4 | export: 4
 void SPShop_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_LevelControl);
+    objFreeObjectType(self, OBJTYPE_LevelControl);
 }
 
 // offset: 0x374 | func: 5 | export: 5

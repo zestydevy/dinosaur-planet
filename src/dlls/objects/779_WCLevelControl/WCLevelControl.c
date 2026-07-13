@@ -126,7 +126,7 @@ void WCLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (mainGetBits(BIT_2A5)) {
         objdata->flags |= FLAG_40;
     }
-    obj_add_object_type(self, OBJTYPE_LevelControl);
+    objAddObjectType(self, OBJTYPE_LevelControl);
     mainSetBits(BIT_226, 1);
     mainSetBits(BIT_2A6, 1);
     mainSetBits(BIT_206, 1);
@@ -176,7 +176,7 @@ void WCLevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x400 | func: 4 | export: 4
 void WCLevelControl_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_LevelControl);
+    objFreeObjectType(self, OBJTYPE_LevelControl);
 }
 
 // offset: 0x440 | func: 5 | export: 5

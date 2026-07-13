@@ -64,7 +64,7 @@ void DBPlaceHolder_control(Object *self) {
     setup = (DBPlaceHolder_Setup*)self->setup;
     objdata = self->data;
     if ((setup->unk1F == 1) && !(objdata->flags & 4) && mainGetBits(setup->gamebit2)) {
-        obj_add_object_type(self, OBJTYPE_39);
+        objAddObjectType(self, OBJTYPE_39);
         objdata->flags |= 4;
     }
     if (objdata->flags & 2) {
@@ -114,7 +114,7 @@ void DBPlaceHolder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 
 // offset: 0x3CC | func: 4 | export: 4
 void DBPlaceHolder_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_39);
+    objFreeObjectType(self, OBJTYPE_39);
 }
 
 // offset: 0x40C | func: 5 | export: 5

@@ -32,7 +32,7 @@ void VFP_LevelControl_dtor(void *dll) { }
 void VFP_LevelControl_setup(Object* self, ObjSetup* setup, s32 a2) {
     u8 act;
 
-    obj_add_object_type(self, OBJTYPE_LevelControl);
+    objAddObjectType(self, OBJTYPE_LevelControl);
     gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
     act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     switch (act) {
@@ -142,7 +142,7 @@ void VFP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
 
 // offset: 0x888 | func: 4 | export: 4
 void VFP_LevelControl_free(Object *obj, s32 a1) {
-    obj_free_object_type(obj, OBJTYPE_LevelControl);
+    objFreeObjectType(obj, OBJTYPE_LevelControl);
 }
 
 // offset: 0x8C8 | func: 5 | export: 5

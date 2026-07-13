@@ -182,7 +182,7 @@ void GPSH_Shrine_control(Object* self) {
             objdata->unk19 = 1;
         }
     } else {
-        temp_v0_5 = obj_get_nearest_type_to(OBJTYPE_Door, player, &sp40);
+        temp_v0_5 = objGetNearestTypeTo(OBJTYPE_Door, player, &sp40);
         if ((temp_v0_5 != NULL) && (sp40 < 300.0f) && (sp40 > 100.0f)) {
             sp3C = temp_v0_5->srt.transl.z - player->srt.transl.z;
             if (sp3C <= 0.0f) {
@@ -260,7 +260,7 @@ void GPSH_Shrine_control(Object* self) {
             }
             if (objdata->unk10 <= 0) {
                 objdata->unk15 = 7;
-                temp_v0_8 = obj_get_all_of_type(OBJTYPE_Pickup, &sp34);
+                temp_v0_8 = objGetAllOfType(OBJTYPE_Pickup, &sp34);
                 while (sp34 != 0) {
                     objFreeObject(temp_v0_8[sp34 - 1]);
                     sp34--;

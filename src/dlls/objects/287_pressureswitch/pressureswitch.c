@@ -56,7 +56,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
         objdata->pressed = 30;
     }
 
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
@@ -176,7 +176,7 @@ void pressureswitch_free(Object* self, s32 arg1) {
     if (objdata->soundHandle) {
         gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
     }
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x604 | func: 5 | export: 5

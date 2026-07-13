@@ -253,7 +253,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     snowhorn->animCallback = dll_496_func_84C;
     
     if (arg2 == 0) {
-        obj_add_object_type(snowhorn, OBJTYPE_SnowHorn);
+        objAddObjectType(snowhorn, OBJTYPE_SnowHorn);
         objdata->unk50 = 0.005f;
         objdata->unkRadius = mapsObj->unkRadius;
         objdata->unk6 = mapsObj->unk1A * 0x3C;
@@ -968,7 +968,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             }
             
-            frostWeed = obj_get_nearest_type_to(OBJTYPE_Baddie, self, 0);
+            frostWeed = objGetNearestTypeTo(OBJTYPE_Baddie, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
             if (frostWeed && frostWeed->id == OBJ_Tumbleweed2 && vec3_distance_xz_squared(&self->globalPosition, &frostWeed->globalPosition) < SQ(setup->unkRadius)) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {

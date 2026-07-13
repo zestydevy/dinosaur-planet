@@ -311,7 +311,7 @@ void objClearAll(void) {
     linkedListInit(&gObjUpdateList, OFFSETOF(Object, next));
 
     sObjListVisibleStartIdx = 0;
-    obj_object_type_init();
+    objTypeInit();
     func_80025DF0();
 }
 
@@ -789,7 +789,7 @@ void objAddObject(Object *obj, u32 initFlags) {
     update_pi_manager_array(0, -1);
 
     if (obj->def->flags & OBJDEF_IS_MOBILE_MAP) {
-        obj_add_object_type(obj, OBJTYPE_MobileMap);
+        objAddObjectType(obj, OBJTYPE_MobileMap);
 
         if (obj->updatePriority != OBJPRIORITY_MOBILE_MAP) {
             objSetPriority(obj, OBJPRIORITY_MOBILE_MAP);
@@ -815,7 +815,7 @@ void objAddObject(Object *obj, u32 initFlags) {
     }
 
     if (obj->def->unk5e >= 1) {
-        obj_add_object_type(obj, OBJTYPE_LookAt);
+        objAddObjectType(obj, OBJTYPE_LookAt);
     }
 
     // Resorting by visibility isn't necessary if the object is visible since the object
@@ -825,7 +825,7 @@ void objAddObject(Object *obj, u32 initFlags) {
     }
 
     if (obj->def->flags & OBJDEF_FLAG10) {
-        obj_add_object_type(obj, OBJTYPE_56);
+        objAddObjectType(obj, OBJTYPE_56);
     }
 
     write_c_file_label_pointers("objects/objects.c", 1143);
@@ -1520,11 +1520,11 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
     gDLL_13_Expgfx->vtbl->func9(obj);
 
     if (obj->def != NULL && (obj->def->flags & OBJDEF_FLAG10)) {
-        obj_free_object_type(obj, OBJTYPE_56);
+        objFreeObjectType(obj, OBJTYPE_56);
     }
 
     if (obj->def->flags & OBJDEF_IS_MOBILE_MAP) {
-        obj_free_object_type(obj, OBJTYPE_MobileMap);
+        objFreeObjectType(obj, OBJTYPE_MobileMap);
 
         if (!onlySelf) {
             numStackObjs = 0;
@@ -1577,7 +1577,7 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
     
 
     if (obj->def->unk5e >= 1) {
-        obj_free_object_type(obj, OBJTYPE_LookAt);
+        objFreeObjectType(obj, OBJTYPE_LookAt);
     }
 
     if (obj->def->unk87 & 0x10) {
@@ -1770,7 +1770,7 @@ Object *objGetPlayer(void) {
     Object **objectList;
     s32 count;
 
-    objectList = obj_get_all_of_type(OBJTYPE_Player, &count);
+    objectList = objGetAllOfType(OBJTYPE_Player, &count);
 
     if (count > 1) {
         STUBBED_PRINTF(" ERROR : Error in Get Main More Players Loaded ");
@@ -1787,7 +1787,7 @@ Object *objGetSidekick(void) {
     Object **objectList;
     s32 count;
 
-    objectList = obj_get_all_of_type(OBJTYPE_Sidekick, &count);
+    objectList = objGetAllOfType(OBJTYPE_Sidekick, &count);
 
     if (count > 1) {
         STUBBED_PRINTF(" ERROR : ERROR : Error in Get Sidekicks Loaded  ");

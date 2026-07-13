@@ -110,7 +110,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     s32 i;
     TriggerCommand *cmd;
 
-    obj_add_object_type(self, OBJTYPE_Trigger);
+    objAddObjectType(self, OBJTYPE_Trigger);
     objSetPriority(self, OBJPRIORITY_TRIGGER);
 
     objdata = (Trigger_Data*)self->data;
@@ -213,7 +213,7 @@ void trigger_control(Object* self) {
         
         b_foundActivatorObj = TRUE;
         if (setup->activatorObjType >= 3) {
-            activatorObj = obj_get_nearest_type_to(setup->activatorObjType, self, &maxObjSearchDist);
+            activatorObj = objGetNearestTypeTo(setup->activatorObjType, self, &maxObjSearchDist);
             if (activatorObj == NULL) {
                 b_foundActivatorObj = FALSE;
             }
@@ -392,7 +392,7 @@ void trigger_free(Object *self, s32 param2) {
             break;
     }
 
-    obj_free_object_type(self, OBJTYPE_Trigger);
+    objFreeObjectType(self, OBJTYPE_Trigger);
 }
 
 u32 trigger_get_model_flags(Object *self) {
@@ -784,9 +784,9 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 case 2:
                     // "findobj %i \n"
                     // oh my god this is hacky...
-                    findTarget = obj_get_nearest_type_to(OBJTYPE_DBlevelcontrol, sidekick, NULL);
+                    findTarget = objGetNearestTypeTo(OBJTYPE_DBlevelcontrol, sidekick, NULL);
                     if (findTarget == NULL) {
-                        findTarget = obj_get_nearest_type_to(OBJTYPE_TrickyTarget, sidekick, NULL);
+                        findTarget = objGetNearestTypeTo(OBJTYPE_TrickyTarget, sidekick, NULL);
                     }
                     if (findTarget != NULL) {
                         // "Trigger [%d], Sidekick Find On Object %d\n"

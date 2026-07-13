@@ -1,6 +1,8 @@
 #include "game/objects/object.h"
 #include "sys/math.h"
+#include "sys/objtype.h"
 #include "constants.h"
+#include "macros.h"
 
 #define OBJECT_TYPE_LIST_LENGTH 256
 #define OBJECT_MAX_TYPES 65
@@ -11,19 +13,13 @@ s16 gObjectTypeListCount;
 Object *gObjectTypeList[OBJECT_TYPE_LIST_LENGTH];
 // -------- .bss end 800b2d40 -------- //
 
-static const char str_80099b00[] = "objAddObjectType: obj romdefno %d, type %d\n";
-static const char str_80099b2c[] = "objAddObjectType: Reached MAXTYPES!!\n";
-static const char str_80099b54[] = "objFreeObjectType: obj romdefno %d, type %d\n";
-static const char str_80099b84[] = "\nError Freeing Object\n";
-static const char str_80099b9c[] = "objGetNearestType: type %d, from obj romdefno %d, maxdist %f, object found %x\n";
-static const char str_80099bec[] = "objGetNearestType: type %d, from obj romdefno %d, maxdist %f, object found %x\n";
-
-void obj_object_type_init() {
+void objTypeInit(void) {
     bzero(gObjectTypeIndices, sizeof(gObjectTypeIndices));
     gObjectTypeListCount = 0;
 }
 
-void obj_add_object_type(Object *obj, s32 type) {
+// official name: objAddObjectType
+void objAddObjectType(Object *obj, s32 type) {
     s32 start;
     s32 end;
     s32 i;
@@ -32,7 +28,10 @@ void obj_add_object_type(Object *obj, s32 type) {
         return;
     }
 
+    STUBBED_PRINTF("objAddObjectType: obj romdefno %d, type %d\n", obj->id, type); // location unsure
+
     if (gObjectTypeListCount >= 256) {
+        STUBBED_PRINTF("objAddObjectType: Reached MAXTYPES!!\n"); // location via default.dol
         return;
     }
 
@@ -67,7 +66,7 @@ void obj_add_object_type(Object *obj, s32 type) {
     }
 }
 
-void obj_free_object_type(Object* obj, s32 type) {
+void objFreeObjectType(Object* obj, s32 type) {
     s32 end;
     s32 start;
     s32 i;
@@ -75,6 +74,8 @@ void obj_free_object_type(Object* obj, s32 type) {
     if (type < 0 || type >= 65) {
         return;
     }
+
+    STUBBED_PRINTF("objFreeObjectType: obj romdefno %d, type %d\n", obj->id, type);
 
     start = gObjectTypeIndices[type];
     end = gObjectTypeIndices[type+1];
@@ -98,7 +99,9 @@ void obj_free_object_type(Object* obj, s32 type) {
     }
 }
 
-Object **obj_get_all_of_type(s32 idx, s32 *count) {
+static const char str_80099b84[] = "\nError Freeing Object\n";
+
+Object **objGetAllOfType(s32 idx, s32 *count) {
     if (idx < 0 || idx >= OBJECT_MAX_TYPES) {
         *count = 0;
         return NULL;
@@ -108,7 +111,10 @@ Object **obj_get_all_of_type(s32 idx, s32 *count) {
     return &gObjectTypeList[gObjectTypeIndices[idx]];
 }
 
-Object *obj_get_nearest_type_to(s32 type, Object *object, float *distance) {
+static const char str_80099b9c[] = "objGetNearestType: type %d, from obj romdefno %d, maxdist %f, object found %x\n";
+static const char str_80099bec[] = "objGetNearestType: type %d, from obj romdefno %d, maxdist %f, object found %x\n";
+
+Object *objGetNearestTypeTo(s32 type, Object *object, float *distance) {
     f32 minDistSquared;
     Object *result;
     s32 i;
@@ -146,7 +152,7 @@ Object *obj_get_nearest_type_to(s32 type, Object *object, float *distance) {
     return result;
 }
 
-Object *obj_get_nearest_type_to_excluding_self(s32 type, Object *object, float *distance) {
+Object *objGetNearestTypeToExcludingSelf(s32 type, Object *object, float *distance) {
     f32 minDistSquared;
     s32 i;
     s32 iend;
@@ -187,7 +193,7 @@ Object *obj_get_nearest_type_to_excluding_self(s32 type, Object *object, float *
     return result;
 }
 
-Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
+Object* objGetNearestType(s32 type, Vec3f* location, f32* distance) {
     Object *result;
     f32 minDistSquared;
     f32 distSquared;
@@ -225,7 +231,7 @@ Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
     return result;
 }
 
-s32 obj_is_object_type(Object *obj, s32 type) {
+s32 objIsObjectType(Object *obj, s32 type) {
     s32 i;
     s32 iend;
     s32 ret;

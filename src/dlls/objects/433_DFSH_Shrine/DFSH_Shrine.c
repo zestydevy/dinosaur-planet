@@ -148,7 +148,7 @@ void DFShrine_control(Object* self) {
         }
     } else {
         // Modulate background music and whispers as player passes the shrine door
-        door = obj_get_nearest_type_to(OBJTYPE_Door, player, &playerDoorDist);
+        door = objGetNearestTypeTo(OBJTYPE_Door, player, &playerDoorDist);
         if ((door != NULL) && (playerDoorDist < 300.0f) && (playerDoorDist > 100.0f)) {
             playerDoorZDist = door->srt.transl.z - player->srt.transl.z;
             if (playerDoorZDist <= 0.0f) {
@@ -241,7 +241,7 @@ void DFShrine_control(Object* self) {
             if (objdata->sharpClawDefeated != 4) {
                 // Test failed
                 // Delete remaining SharpClaws
-                baddieList = obj_get_all_of_type(OBJTYPE_Baddie, &baddieCount);
+                baddieList = objGetAllOfType(OBJTYPE_Baddie, &baddieCount);
                 for (i = 0; i < baddieCount; i++) {
                     objFreeObject(baddieList[i]);
                 }

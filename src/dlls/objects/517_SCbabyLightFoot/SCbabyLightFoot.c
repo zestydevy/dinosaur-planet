@@ -105,7 +105,7 @@ void dll_517_free(Object* self, s32 arg1) {
     void* sp24;
 
     sp24 = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     gDLL_33_BaddieControl->vtbl->free(self, (Baddie* ) sp24, 0x20U);
 }
 

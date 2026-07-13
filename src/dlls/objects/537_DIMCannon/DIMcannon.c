@@ -102,7 +102,7 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
         }
     }
 
-    obj_add_object_type(self, OBJTYPE_Baddie);
+    objAddObjectType(self, OBJTYPE_Baddie);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
@@ -300,7 +300,7 @@ void dll_537_free(Object* self, s32 arg1) {
         dllFree(_data_0);
     }
     
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0xA48 | func: 5 | export: 5

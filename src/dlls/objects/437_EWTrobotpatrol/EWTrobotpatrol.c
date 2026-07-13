@@ -173,7 +173,7 @@ void dll_437_setup(Object* self, EWTrobotpatrol_Setup* setup, s32 reset) {
     if (bss_4 == NULL) {
         bss_4 = tex_load_deferred(0x16F);
     }
-    obj_add_object_type(self, OBJTYPE_Baddie);
+    objAddObjectType(self, OBJTYPE_Baddie);
     temp_s0 = self->data;
     self->animCallback = dll_437_func_3AC8;
     bzero(temp_s0, sizeof(EWTrobotpatrol_Data));
@@ -264,7 +264,7 @@ void dll_437_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 void dll_437_free(Object* self, s32 onlySelf) {
     EWTrobotpatrol_Data* objdata;
 
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     objdata = self->data;
     func_80008E08(&objdata->unk24);
     gDLL_13_Expgfx->vtbl->func5(self);

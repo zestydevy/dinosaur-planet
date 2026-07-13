@@ -476,7 +476,7 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 void dll_702_free(Object* self, s32 a1) {
     sBaddie = (Baddie* ) self->data;
     sKTData = sBaddie->objdata;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     gDLL_33_BaddieControl->vtbl->free(self, sBaddie, 0);
     genericStackFree(sKTData->stateStack);
     if (_data_E4 != NULL) {

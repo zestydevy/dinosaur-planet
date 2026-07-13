@@ -41,7 +41,7 @@ void WL_LevelControl_dtor(void *dll) { }
 void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     WL_LevelControl_Data* objData;
 
-    obj_add_object_type(self, OBJTYPE_LevelControl);
+    objAddObjectType(self, OBJTYPE_LevelControl);
     objData = self->data;
 
     objData->galleonIsLoaded = FALSE;
@@ -125,7 +125,7 @@ void WL_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0x3F4 | func: 4 | export: 4
 void WL_LevelControl_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_LevelControl);
+    objFreeObjectType(self, OBJTYPE_LevelControl);
     if (self){} // @fake
 }
 
@@ -152,7 +152,7 @@ static void WL_LevelControl_load_galleon_if_needed(Object* self, WL_LevelControl
     }
 
     //Try to find the Galleon
-    objs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
+    objs = objGetAllOfType(OBJTYPE_MobileMap, &count);
     for (galleonNotFound = TRUE, i = 0; i < count; i++) {
         if ((objs[i]->id == OBJ_WL_Galleon) || (objs[i]->id == OBJ_SB_Galleon)) {
             galleonNotFound = FALSE;
@@ -193,7 +193,7 @@ static void WL_LevelControl_unload_galleon_if_needed(Object* self, WL_LevelContr
 
     //Search for the Galleon once (@bug?: does nothing with this)
     if (((objData->flags & WL_LevelControl_FLAG_Galleon_Leaving_Search) == FALSE) && krystalIsLeaving) {
-        objs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
+        objs = objGetAllOfType(OBJTYPE_MobileMap, &count);
         for (i = 0; i < count; i++) {
             if (objs[i]->id == OBJ_WL_Galleon) {
                 i = count; //index break
@@ -448,7 +448,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
         mainSetBits(BIT_CFExplodeTunnel_Trigger_31B6F, 1);
         mainSetBits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
 
-        guardClaw = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
+        guardClaw = objGetNearestTypeTo(OBJTYPE_Baddie, self, &distance);
         if (guardClaw != NULL) {
             //@bug: may potentially delete a Skeetla instead, since they're also objType4
             objFreeObject(guardClaw);
@@ -459,7 +459,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
 
     //Search through the objects, and delete the hall's SharpClaw and GuardClaw
     if (mainGetBits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws)) {
-        objects = obj_get_all_of_type(OBJTYPE_Baddie, &count);
+        objects = objGetAllOfType(OBJTYPE_Baddie, &count);
         for (i = 0; i < count; i++) {
             someObjsetup = objects[i]->setup;
             if ((someObjsetup->uID == 0x296E) ||    //SharpClaw

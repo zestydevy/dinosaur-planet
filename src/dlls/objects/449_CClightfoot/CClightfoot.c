@@ -47,7 +47,7 @@ void CClightfoot_setup(Object *self, CClightfoot_Setup *setup, s32 arg2) {
 #endif
     objdata->spokeToPlayer = mainGetBits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage);
     self->srt.yaw = setup->yaw << 8;
-    obj_add_object_type(self, OBJTYPE_40);
+    objAddObjectType(self, OBJTYPE_40);
 }
 
 // offset: 0xAC | func: 1 | export: 1
@@ -90,7 +90,7 @@ void CClightfoot_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x254 | func: 4 | export: 4
 void CClightfoot_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_40);
+    objFreeObjectType(self, OBJTYPE_40);
 }
 
 // offset: 0x294 | func: 5 | export: 5

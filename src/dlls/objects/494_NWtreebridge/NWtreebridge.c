@@ -54,7 +54,7 @@ void NWtreebridge_control(Object* self) {
     objdata = self->data;
     distance = 100.0f;
     if (objdata->searchAttempts) {
-        objdata->unkObj = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &distance);
+        objdata->unkObj = objGetNearestTypeTo(OBJTYPE_Collectable, self, &distance);
         if (objdata->unkObj) {
             objdata->searchAttempts = 0;
             return;

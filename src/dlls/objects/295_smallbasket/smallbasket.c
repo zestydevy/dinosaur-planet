@@ -104,7 +104,7 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
     self->objhitInfo->unk44 = 0x10;
     self->objhitInfo->unk40 = 0x10;
     func_800267A4(self);
-    obj_add_object_type(self, OBJTYPE_Pickup);
+    objAddObjectType(self, OBJTYPE_Pickup);
 
     if (setup->unk1C == 0) {
         objData->unk4 = 0;

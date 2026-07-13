@@ -24,7 +24,7 @@ void pickup_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void pickup_setup(Object* obj, Pickup* pickup, s16 arg2) {
-    obj_add_object_type(obj, OBJTYPE_Pickup);
+    objAddObjectType(obj, OBJTYPE_Pickup);
     pickup->unk2 = arg2;
 }
 
@@ -147,7 +147,7 @@ s32 pickup_should_print(Object* obj, s32 visibility) {
 
 // offset: 0x664 | func: 3 | export: 3
 void pickup_free(Object* obj) {
-    obj_free_object_type(obj, OBJTYPE_Pickup);
+    objFreeObjectType(obj, OBJTYPE_Pickup);
 }
 
 // offset: 0x6A0 | func: 4 | export: 4

@@ -30,7 +30,7 @@ void SHvines_setup(Object* self, SHvines_Setup* objSetup, s32 arg2) {
     Model* model;
 
     objData = self->data;
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
 
     if (mainGetBits(objSetup->gamebitBurnt)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
@@ -118,7 +118,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0x470 | func: 4 | export: 4
 void SHvines_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
     mainRemoveTempDLL(DLL_ID_53_MOVELIB);
 }
 

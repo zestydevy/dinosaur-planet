@@ -34,7 +34,7 @@ void FindKyteObject_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     objdata->state = 0;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x64 | func: 1 | export: 1
@@ -127,7 +127,7 @@ s32 FindKyteObject_func_3E4(s32 arg0, s32 arg1, s32 arg2) {
 
 // offset: 0x3FC | func: 6 | export: 4
 void FindKyteObject_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x43C | func: 7 | export: 5

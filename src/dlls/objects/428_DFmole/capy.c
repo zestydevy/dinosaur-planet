@@ -161,7 +161,7 @@ void capy_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **p
 void capy_free(Object *self, s32 a1) {
     Baddie *baddie = self->data;
 
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
         objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
@@ -273,7 +273,7 @@ s32 capy_anim_state_0_standing(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             fsa->logicState = CAPY_LSTATE_5_Underground;
             return CAPY_ASTATE_3_Burrow + 1;
         }
-        objlist = obj_get_all_of_type(OBJTYPE_MagicPlant, &count);
+        objlist = objGetAllOfType(OBJTYPE_MagicPlant, &count);
         distflag = 0;
         for (i = 0; i < count; i++) {
             if (!distflag && vec3_distance(&self->globalPosition, &objlist[i]->globalPosition) < 300.0f) {

@@ -48,7 +48,7 @@ void NWMultiSeq_setup(Object* self, NWMultiSeq_Setup* setup, s32 reset) {
     self->animCallback = NWMultiSeq_anim_callback;
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     objdata = self->data;
-    obj_add_object_type(self, OBJTYPE_UseObj);
+    objAddObjectType(self, OBJTYPE_UseObj);
     for (i = 0; i < 8; i++) {
         if ((setup->playedBits[i] == -1) || (mainGetBits(setup->playedBits[i]) == 0)) {
             break;
@@ -123,7 +123,7 @@ void NWMultiSeq_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
 
 // offset: 0x398 | func: 4 | export: 4
 void NWMultiSeq_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_UseObj);
+    objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
 // offset: 0x3D8 | func: 5 | export: 5

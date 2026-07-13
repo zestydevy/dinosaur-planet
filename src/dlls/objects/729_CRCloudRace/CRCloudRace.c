@@ -153,7 +153,7 @@ void CRCloudRace_do_race(Object *self, CRCloudRace_Data *objdata) {
             // replay sharpclaw sequence
             mainSetBits(BIT_Played_Seq_02AC_CF_Sharpclaw_With_Spellstone, 0);
             mainSetBits(BIT_Play_Seq_02AC_CF_Sharpclaw_With_Spellstone, 1);
-            spellstone = obj_get_nearest_type_to(OBJTYPE_32, self, &distance);
+            spellstone = objGetNearestTypeTo(OBJTYPE_32, self, &distance);
             if (spellstone) {
                 ((DLL_730_CRSpellstone*)spellstone->dll)->vtbl->func7(spellstone, 1);
             }

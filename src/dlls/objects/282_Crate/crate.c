@@ -47,7 +47,7 @@ void crate_setup(Object* self, Crate_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
     
-    obj_add_object_type(self, OBJTYPE_63);
+    objAddObjectType(self, OBJTYPE_63);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     
@@ -172,7 +172,7 @@ void crate_control(Object* self) {
         //Or reposition a nearby Collectable
         } else {
             distance = 50.0f;
-            obj = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &distance);
+            obj = objGetNearestTypeTo(OBJTYPE_Collectable, self, &distance);
             if (obj != NULL) {
                 obj->srt.transl.x = obj->globalPosition.x = self->srt.transl.x;
                 obj->srt.transl.y = obj->globalPosition.y = self->srt.transl.y + 10.0f;
@@ -218,7 +218,7 @@ void crate_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     dllFree(dModGfxDLLDestroyed);
     dllFree(dModGfxDLLDamaged);
-    obj_free_object_type(self, OBJTYPE_63);
+    objFreeObjectType(self, OBJTYPE_63);
 }
 
 // offset: 0x7B8 | func: 5 | export: 5

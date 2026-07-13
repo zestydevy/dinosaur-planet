@@ -491,8 +491,8 @@ void dll_210_setup(Object* player, u32 arg1) {
     Player_Data* data;
 
     data = player->data;
-    obj_add_object_type(player, OBJTYPE_Player);
-    obj_add_object_type(player, OBJTYPE_39);
+    objAddObjectType(player, OBJTYPE_Player);
+    objAddObjectType(player, OBJTYPE_39);
     objSetPriority(player, OBJPRIORITY_PLAYER);
     objInitMesgQueue(player, 20);
     player->setup = NULL;
@@ -788,7 +788,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             break;
         case 29:
             spCC = 500.0f;
-            tempObj = obj_get_nearest_type_to(OBJTYPE_24, player, &spCC);
+            tempObj = objGetNearestTypeTo(OBJTYPE_24, player, &spCC);
             if (tempObj != NULL) {
                 ((DLL_Unknown *)tempObj->dll)->vtbl->func[7].withThreeArgsCustom(tempObj, player, 1.0f);
             }
@@ -933,7 +933,7 @@ void dll_210_func_1CA8(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             return;
         }
         sp28 = 500.0f;
-        fsa->target = obj_get_nearest_type_to(OBJTYPE_Baddie, player, &sp28);
+        fsa->target = objGetNearestTypeTo(OBJTYPE_Baddie, player, &sp28);
         return;
     }
     if (temp_v0 != NULL) {
@@ -1599,8 +1599,8 @@ void dll_210_free(Object* player, UNK_TYPE_32 arg1) {
         }
     }
 
-    obj_free_object_type(player, OBJTYPE_Player);
-    obj_free_object_type(player, OBJTYPE_39);
+    objFreeObjectType(player, OBJTYPE_Player);
+    objFreeObjectType(player, OBJTYPE_39);
 }
 
 // offset: 0x3F40 | func: 14 | export: 5
@@ -2121,7 +2121,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         for (var_s1 = 0; var_s1 < arg2->messageCount; var_s1++) {
             switch (arg2->messages[var_s1]) {
             case 3:
-                objects = obj_get_all_of_type(OBJTYPE_Vehicle, &spC0);
+                objects = objGetAllOfType(OBJTYPE_Vehicle, &spC0);
                 for (var_s1 = 0; var_s1 < spC0; var_s1++) {
                     // @fake
                     if (var_s1) {}
@@ -2259,7 +2259,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 16:
                 sp60 = 400.0f;
-                tempObj = obj_get_nearest_type_to(OBJTYPE_MobileMap, arg0, &sp60);
+                tempObj = objGetNearestTypeTo(OBJTYPE_MobileMap, arg0, &sp60);
                 if (tempObj != NULL) {
                     func_8005B5B8(arg0, tempObj, 1);
                 }
@@ -3275,7 +3275,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                 case 10:
                     if (spCC < 14.0f) {
                         sp6C = 50.0f;
-                        sp88 = obj_get_nearest_type_to(OBJTYPE_WallAnimator, player, &sp6C);
+                        sp88 = objGetNearestTypeTo(OBJTYPE_WallAnimator, player, &sp6C);
                         var_s0_2 = TRUE;
                         if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32((s32)sp88) == 0)) {
                             var_s0_2 = FALSE;
@@ -3298,7 +3298,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
     }
     if (fsa->unk310 & 0x8000) {
         if (arg5 & 0x800) {
-            objects = obj_get_all_of_type(OBJTYPE_Vehicle, &sp80);
+            objects = objGetAllOfType(OBJTYPE_Vehicle, &sp80);
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
                 if (((DLL_IVehicle*)sp88->dll)->vtbl->can_mount(sp88, player) != 0) {
@@ -3308,7 +3308,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
             }
         }
         if ((arg5 & 0x1000) && (mainGetBits(BIT_880) != 0)) {
-            objects = obj_get_all_of_type(OBJTYPE_RopeNode, &sp80);
+            objects = objGetAllOfType(OBJTYPE_RopeNode, &sp80);
             arg1->unk6B0.unk34 = NULL;
             arg1->unk6B0.unk3C = 200.0f;
             for (i = 0; i < sp80; i++) {
@@ -4491,7 +4491,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 mainSetBits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 mainSetBits(BIT_3D8, 1);
             } else {
-                dinoCaller = obj_get_nearest_type_to(OBJTYPE_DinoCallSpot, player, &callerMaxRange);
+                dinoCaller = objGetNearestTypeTo(OBJTYPE_DinoCallSpot, player, &callerMaxRange);
                 if (dinoCaller != NULL) {
                     ((DLL_IDinoCaller*)dinoCaller->dll)->vtbl->call(dinoCaller);
                 }
@@ -6599,7 +6599,7 @@ static void dll_210_func_128F4(f32* velocityX, f32* velocityZ, f32 deltaT, Objec
 
     objdata = player->data;
     pushX = pushZ = 0.0f;
-    objects = obj_get_all_of_type(OBJTYPE_Riverflow, &objCount);
+    objects = objGetAllOfType(OBJTYPE_Riverflow, &objCount);
     
     riverInfluences = 0;
     for (i = 0; i < objCount; i++) {
@@ -9028,7 +9028,7 @@ s32 dll_210_func_1ADA4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     normalAttack = 1;
     // change melee attack selection logic depending on certain nearby objects
     range = 100.0f;
-    obj = obj_get_nearest_type_to(OBJTYPE_63, player, &range);
+    obj = objGetNearestTypeTo(OBJTYPE_63, player, &range);
     if (obj != NULL) {
         vec.f[0] = obj->srt.transl.f[0] - player->srt.transl.f[0];
         vec.f[1] = obj->srt.transl.f[1] - player->srt.transl.f[1];

@@ -48,7 +48,7 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         menu_func_8000FB2C(gdl);
     }
     
-    object = obj_get_nearest_type_to(OBJTYPE_LevelControl, objGetPlayer(), &distance);
+    object = objGetNearestTypeTo(OBJTYPE_LevelControl, objGetPlayer(), &distance);
     if (object) {
         ((DLL_768_SPShop*)object->dll)->vtbl->func20(object, &sp40, &scarabCount, &sp38);
     }

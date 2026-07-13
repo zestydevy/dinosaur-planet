@@ -84,7 +84,7 @@ void EffectBox_control(Object *self) {
             }
             return;
         case 2:
-            objList = obj_get_all_of_type(OBJTYPE_PushBlock, &numObjs);
+            objList = objGetAllOfType(OBJTYPE_PushBlock, &numObjs);
             if (objList != NULL) {
                 break;
             }

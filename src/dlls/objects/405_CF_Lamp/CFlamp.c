@@ -109,7 +109,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     if (sp60 != 0) { 
         sp60 = sqrtf(sp60);
     }
-    obj_get_nearest_type_to(OBJTYPE_56, self, &sp70);
+    objGetNearestTypeTo(OBJTYPE_56, self, &sp70);
     if ((sp70 < setup->unk1A) && (objdata->unk33 == 1)) {
         objdata->unk33 = 0;
         func_80000450(self, self, 0x5C, 0, 0, 0);

@@ -4090,7 +4090,7 @@ void func_8004A67C(void) {
     Object* obj;
     Object** mobileMapObjs;
 
-    mobileMapObjs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
+    mobileMapObjs = objGetAllOfType(OBJTYPE_MobileMap, &count);
     camera = camGet();
     camUpdateCameraForObject(camera);
 
@@ -4274,7 +4274,7 @@ void map_update_objects_streaming(s32 arg0) {
             }
         }
     }
-    objList = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
+    objList = objGetAllOfType(OBJTYPE_MobileMap, &count);
     for (i = 0; i < count; i++) {
         temp_s5 = objList[i];
         var_s3 = 0;

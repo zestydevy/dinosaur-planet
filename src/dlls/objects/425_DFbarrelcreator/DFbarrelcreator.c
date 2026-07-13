@@ -32,7 +32,7 @@ void DFbarrelcreator_control(Object* self) {
 
     //Don't create a barrel if there's already one nearby
     distance = objSetup->searchDistance * 4;
-    if (obj_get_nearest_type_to(OBJTYPE_Barrel, self, &distance)) {
+    if (objGetNearestTypeTo(OBJTYPE_Barrel, self, &distance)) {
         return;
     }
 

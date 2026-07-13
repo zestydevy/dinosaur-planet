@@ -163,7 +163,7 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
             return;
         }
         if (data->lookat == NULL) {
-            lookat = obj_get_nearest_type_to(OBJTYPE_LookAt, obj, &maxLookAtSearchDist);
+            lookat = objGetNearestTypeTo(OBJTYPE_LookAt, obj, &maxLookAtSearchDist);
         } else {
             lookat = data->lookat;
         }
@@ -623,7 +623,7 @@ s32 movelib_func_1CC8(s32 arg0, SRT* arg1) {
         arg1->transl.x = sp30->pos.x;
         arg1->transl.y = sp30->pos.y;
         arg1->transl.z = sp30->pos.z;
-        temp_v0_3 = obj_get_nearest_type(OBJTYPE_LookAt, &arg1->transl, &sp2C);
+        temp_v0_3 = objGetNearestType(OBJTYPE_LookAt, &arg1->transl, &sp2C);
         if (temp_v0_3 != NULL) {
             xDist = temp_v0_3->srt.transl.x - arg1->transl.x;
             zDist = temp_v0_3->srt.transl.z - arg1->transl.z;

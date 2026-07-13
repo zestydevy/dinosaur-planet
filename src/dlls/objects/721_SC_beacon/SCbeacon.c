@@ -29,7 +29,7 @@ void SCbeacon_setup(Object* self, SCbeacon_Setup* objSetup, s32 arg2) {
     self->animCallback = SCbeacon_anim_callback;
     self->srt.yaw = objSetup->yaw << 8;
     objData->state = SCbeacon_STATE_Initial;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
 
     switch (objSetup->base.uID) {
     case SCbeacon_Near_Golden_Plains:
@@ -155,7 +155,7 @@ void SCbeacon_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 void SCbeacon_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x5D8 | func: 5 | export: 5

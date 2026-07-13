@@ -41,7 +41,7 @@ void DBdiamond_setup(Object *self, DBDiamond_Setup *setup, s32 arg2) {
 
     if (mainGetBits(setup->flag2)) {
         objdata->unk0 = 2;
-        obj_add_object_type(self, OBJTYPE_39);
+        objAddObjectType(self, OBJTYPE_39);
         return;
     }
     
@@ -61,7 +61,7 @@ void DBdiamond_control(Object *self) {
 
     if (objdata->unk0 != 1 && objdata->unk0 == 2 && (self->unkAF & ARROW_FLAG_1_Interacted)) {
         if (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < 60.0f) {
-            obj_free_object_type(self, OBJTYPE_39);
+            objFreeObjectType(self, OBJTYPE_39);
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
             mainSetBits(setup->flag1, 1);
             objSendMesg(player, 0x7000A, self, (void*)0x10000);
@@ -89,7 +89,7 @@ void DBdiamond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 
 // offset: 0x27C | func: 4 | export: 4
 void DBdiamond_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_39);
+    objFreeObjectType(self, OBJTYPE_39);
 }
 
 // offset: 0x2BC | func: 5 | export: 5

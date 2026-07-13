@@ -70,8 +70,8 @@ void DBDustGeezer_setup(Object* self, DBDustGeezer_Setup* objSetup, int skipChil
         }
     }
             
-    obj_add_object_type(self, OBJTYPE_DBDustGeezer);
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_DBDustGeezer);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
     objData->flags = 0;
     objData->soundHandle1 = 0;
     objData->range = objSetup->randomnessRange;
@@ -180,7 +180,7 @@ void DBDustGeezer_free(Object* self, int skipChildObjects) {
 
     objData = self->data;
     
-    obj_free_object_type(self, OBJTYPE_DBDustGeezer);
+    objFreeObjectType(self, OBJTYPE_DBDustGeezer);
     
     soundHandle1 = objData->soundHandle1;
     if (soundHandle1) {
@@ -198,7 +198,7 @@ void DBDustGeezer_free(Object* self, int skipChildObjects) {
         }
     }
     
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x750 | func: 5 | export: 5

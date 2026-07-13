@@ -191,7 +191,7 @@ void dll_248_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 void dll_248_free(Object *self, s32 a1) {
     PirahnaBaddie_Data *objdata = self->data;
 
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if (objdata->unk0 != NULL) {
         mmFree(objdata->unk0);
         objdata->unk0 = NULL;

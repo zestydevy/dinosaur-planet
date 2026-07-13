@@ -64,7 +64,7 @@ void ECSHCup_setup(Object* self, ECSHCup_Setup* objSetup, s32 arg2) {
     objData->fxTimer = 0;
     
     if (dShrine == NULL) {
-        dShrine = obj_get_nearest_type_to(OBJTYPE_13, self, &objectDistance);
+        dShrine = objGetNearestTypeTo(OBJTYPE_13, self, &objectDistance);
     }
 }
 
@@ -81,7 +81,7 @@ void ECSHCup_control(Object* self) {
     player = objGetPlayer();
     
     if (dShrine == NULL){
-        dShrine = obj_get_nearest_type_to(OBJTYPE_13, self, &objectDistance);
+        dShrine = objGetNearestTypeTo(OBJTYPE_13, self, &objectDistance);
     }
     if (dShrine == NULL){
         return;

@@ -51,7 +51,7 @@ void MAGICMaker_control(Object *self) {
         mainSetBits(BIT_26B, 0);
         player = objGetPlayer();
         if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) < 10) {
-            objects = obj_get_all_of_type(OBJTYPE_Collectable, &count);
+            objects = objGetAllOfType(OBJTYPE_Collectable, &count);
             foundObjs = 0;
             for (i = 0; i < count; i++) {
                 obj = objects[i];

@@ -339,7 +339,7 @@ s32 dll_734_func_1434(Object* self, u8* totalBarrelsAboard) {
     s32 i;
 
     barrelCount = 0;
-    barrels = obj_get_all_of_type(OBJTYPE_Barrel, &count);
+    barrels = objGetAllOfType(OBJTYPE_Barrel, &count);
     
     if (count == *totalBarrelsAboard) {
         return *totalBarrelsAboard;

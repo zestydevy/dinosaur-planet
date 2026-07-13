@@ -27,7 +27,7 @@ void CFMagicWall_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void CFMagicWall_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_32);
+    objAddObjectType(self, OBJTYPE_32);
 }
 
 // offset: 0x5C | func: 1 | export: 1
@@ -75,7 +75,7 @@ void CFMagicWall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x320 | func: 4 | export: 4
 void CFMagicWall_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_32);
+    objFreeObjectType(self, OBJTYPE_32);
 }
 
 // offset: 0x360 | func: 5 | export: 5

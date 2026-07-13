@@ -155,7 +155,7 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
         objData->behaviourFunction = DR_NPC_guardclaw_behaviour;
         objData->soundsAttack = dSoundsGuardClawAttack;
         objData->soundsTalk   = dSoundsGuardClaw;
-        obj_add_object_type(self, OBJTYPE_Baddie);
+        objAddObjectType(self, OBJTYPE_Baddie);
 
         //Hide self and stop updating after Illusion Spell used
         if (objData->finished) {
@@ -259,7 +259,7 @@ void DR_NPC_control(Object* self) {
     objExpr_func_80034BC0(self, &objData->headAnimTalk);
 
     //Show Distract command option
-    sidekick = obj_get_nearest_type_to(OBJTYPE_Sidekick, self, &distance);
+    sidekick = objGetNearestTypeTo(OBJTYPE_Sidekick, self, &distance);
     if (sidekick != NULL) {
         ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
     }
@@ -285,7 +285,7 @@ void DR_NPC_free(Object* self, s32 onlySelf) {
     mainRemoveTempDLL(DLL_ID_53_MOVELIB);
 
     if (objSetup->characterType != DR_NPC_SharpClaw) {
-        obj_free_object_type(self, OBJTYPE_Baddie);
+        objFreeObjectType(self, OBJTYPE_Baddie);
     }
 }
 

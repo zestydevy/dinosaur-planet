@@ -37,7 +37,7 @@ void CRSpellStone_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void CRSpellStone_setup(Object *self, CRSpellStone_Setup *objSetup, s32 arg2) {
     CRSpellStone_Data* objData = self->data;
-    obj_add_object_type(self, OBJTYPE_32);
+    objAddObjectType(self, OBJTYPE_32);
     objData->state = CRSpellStone_STATE_Visible;
     self->animCallback = CRSpellStone_anim_callback;
 }
@@ -91,7 +91,7 @@ void CRSpellStone_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 
 // offset: 0x288 | func: 4 | export: 4
 void CRSpellStone_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_32);
+    objFreeObjectType(self, OBJTYPE_32);
 }
 
 // offset: 0x2C8 | func: 5 | export: 5

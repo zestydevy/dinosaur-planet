@@ -58,7 +58,7 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
     }
     objdata = self->data;
     objdata->used = mainGetBits(setup->gamebitUsed);
-    obj_add_object_type(self, OBJTYPE_UseObj);
+    objAddObjectType(self, OBJTYPE_UseObj);
     if ((setup->flags & USEOBJ_HideIfAlreadyUsed) && objdata->used != 0) {
         self->opacity = 0;
     }
@@ -142,7 +142,7 @@ void UseObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
 
 // offset: 0x464 | func: 4 | export: 4
 void UseObj_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_UseObj);
+    objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
 // offset: 0x4A4 | func: 5 | export: 5

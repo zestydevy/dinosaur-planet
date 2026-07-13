@@ -285,7 +285,7 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -0x1FFF, 0x2AAA, 3);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->movedata, 0x190, 0x1E);
     objdata->movedata.unk4A9 &= ~0x8;
-    obj_add_object_type(self, OBJTYPE_40);
+    objAddObjectType(self, OBJTYPE_40);
 }
 
 // offset: 0x248 | func: 1 | export: 1
@@ -340,7 +340,7 @@ void thorntail_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 // offset: 0x504 | func: 4 | export: 4
 void thorntail_free(Object *self, s32 onlySelf) {
     mainRemoveTempDLL(DLL_ID_53_MOVELIB);
-    obj_free_object_type(self, OBJTYPE_40);
+    objFreeObjectType(self, OBJTYPE_40);
 }
 
 // offset: 0x560 | func: 5 | export: 5

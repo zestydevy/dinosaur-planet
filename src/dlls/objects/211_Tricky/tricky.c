@@ -260,7 +260,7 @@ void dll_211_setup(Object* self, ObjSetup* setup, s32 arg2) {
     }
 
     self->animCallback = (AnimationCallback ) dll_211_func_1624;
-    obj_add_object_type(self, 1);
+    objAddObjectType(self, 1);
     route_init(&objData->unk4DC[0]);
     route_init(&objData->unk4DC[1]);
     route_init(&objData->unk4DC[2]);
@@ -375,8 +375,8 @@ void dll_211_control(Object* self) {
         case 2:
             objData->unk1D = 2;
             sp84 = M_INFINITY_F;
-            sp4C = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &sp84);
-            temp_v0_3 = obj_get_nearest_type_to(OBJTYPE_40, self, &sp84);
+            sp4C = objGetNearestTypeTo(OBJTYPE_Baddie, self, &sp84);
+            temp_v0_3 = objGetNearestTypeTo(OBJTYPE_40, self, &sp84);
             if (temp_v0_3 != NULL) {
                 dll_211_func_1408(self, temp_v0_3);
             } else {
@@ -544,7 +544,7 @@ void dll_211_free(Object* self, s32 a1) {
     route_free(&temp_s0->unk4DC[2]);
     route_free(&temp_s0->unk4DC[3]);
     route_free(&temp_s0->unk59C);
-    obj_free_object_type(self, 1);
+    objFreeObjectType(self, 1);
     gDLL_13_Expgfx->vtbl->func4(self);
     gDLL_14_Modgfx->vtbl->func4(self);
     if (a1 == 0) {
@@ -1454,7 +1454,7 @@ static s32 dll_211_func_3A78(DLL211_Data* objData) {
     s16 i;
 
     var_s2 = NULL;
-    temp_s5 = obj_get_all_of_type(OBJTYPE_Baddie, &count);
+    temp_s5 = objGetAllOfType(OBJTYPE_Baddie, &count);
     for (i = 0; i < count; i++) {
         temp_fs0 = vec3_distance_xz_squared(&temp_s5[i]->globalPosition, &objData->unk5F4_vec);
         if (var_s2 == NULL) {
@@ -1483,7 +1483,7 @@ static s32 dll_211_func_3C1C(Object* self) {
     Object** objects;
     s16 i;
 
-    objects = obj_get_all_of_type(OBJTYPE_Baddie, &count);
+    objects = objGetAllOfType(OBJTYPE_Baddie, &count);
     for (i = 0; i < count; i++) {
         if (self == objects[i]) {
             return TRUE;
@@ -3222,7 +3222,7 @@ static void dll_211_func_8ED0(f32 arg0, f32 arg1, f32* arg2) {
 static void dll_211_func_8F18(DLL211_Data* objData) {
     Object* temp_v0;
 
-    temp_v0 = obj_get_nearest_type_to(OBJTYPE_TrickyTarget, objData->unk8, NULL);
+    temp_v0 = objGetNearestTypeTo(OBJTYPE_TrickyTarget, objData->unk8, NULL);
     objData->unk28 = temp_v0;
     dll_211_func_9024(objData, &temp_v0->globalPosition);
     objData->unk1A = 0;
@@ -3346,10 +3346,10 @@ static Object* dll_211_func_94BC(Object* self, f32 arg1) {
     s32 i;
 
     var_s3 = NULL;
-    temp_v0 = obj_get_all_of_type(OBJTYPE_Baddie, &sp48);
+    temp_v0 = objGetAllOfType(OBJTYPE_Baddie, &sp48);
     arg1 = SQ(arg1);
     for (i = 0; i < sp48; i++) {
-        if ((obj_is_object_type(temp_v0[i], OBJTYPE_TrickyTarget) == 0) && (gDLL_33_BaddieControl->vtbl->get_health_ratio(temp_v0[i]) > 0.0f)) {
+        if ((objIsObjectType(temp_v0[i], OBJTYPE_TrickyTarget) == 0) && (gDLL_33_BaddieControl->vtbl->get_health_ratio(temp_v0[i]) > 0.0f)) {
             temp_fv0 = vec3_distance_squared(&self->globalPosition, &temp_v0[i]->globalPosition);
             if (temp_fv0 < arg1) {
                 arg1 = temp_fv0;

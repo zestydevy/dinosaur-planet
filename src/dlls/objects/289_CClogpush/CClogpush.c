@@ -58,7 +58,7 @@ void CClogpush_control(Object *self) {
     setup = (CClogpush_Setup*)self->setup;
 
     if (!objdata->obj) {
-        objdata->obj = obj_get_nearest_type_to(setup->objType, self, &distance);
+        objdata->obj = objGetNearestTypeTo(setup->objType, self, &distance);
 
         if (!objdata->obj)
             return;

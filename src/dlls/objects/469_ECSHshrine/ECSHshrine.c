@@ -97,7 +97,7 @@ void ECSHshrine_setup(Object *self, ECSHshrine_Setup *setup, s32 arg2) {
     dllFree(modGfxDLL);
 
     dShrine = self;
-    obj_add_object_type(self, OBJTYPE_13);
+    objAddObjectType(self, OBJTYPE_13);
 }
 
 // offset: 0x208 | func: 1 | export: 1
@@ -159,7 +159,7 @@ void ECSHshrine_control(Object* self) {
     }
 
     //Crossfade music volumes as player approaches door
-    door = obj_get_nearest_type_to(OBJTYPE_Door, player, &objectDistance);
+    door = objGetNearestTypeTo(OBJTYPE_Door, player, &objectDistance);
     if ((door != NULL) && (objectDistance < 300.0f) && (objectDistance > 100.0f)) {
         dz = door->srt.transl.z - player->srt.transl.z;
 
@@ -476,7 +476,7 @@ void ECSHshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 
 // offset: 0x1380 | func: 4 | export: 4
 void ECSHshrine_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_13);
+    objFreeObjectType(self, OBJTYPE_13);
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);

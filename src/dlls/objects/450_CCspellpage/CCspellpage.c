@@ -29,7 +29,7 @@ void CCspellpage_setup(Object *self, CCspellpage_Setup *setup, s32 arg2) {
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
     self->animCallback = CCspellpage_anim_callback;
-    obj_add_object_type(self, OBJTYPE_Collectable);
+    objAddObjectType(self, OBJTYPE_Collectable);
 }
 
 // offset: 0x90 | func: 1 | export: 1
@@ -47,7 +47,7 @@ void CCspellpage_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0xFC | func: 4 | export: 4
 void CCspellpage_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_Collectable);
+    objFreeObjectType(self, OBJTYPE_Collectable);
 }
 
 // offset: 0x13C | func: 5 | export: 5

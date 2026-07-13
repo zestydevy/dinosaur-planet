@@ -35,8 +35,8 @@ void DR_CloudPerch_dtor(void *dll) { }
 void DR_CloudPerch_setup(Object* self, DR_CloudPerch_Setup* setup, s32 reset) {
     DR_CloudPerch_Data* objdata;
 
-    obj_add_object_type(self, OBJTYPE_DismountPoint);
-    obj_add_object_type(self, OBJTYPE_DinoCallSpot);
+    objAddObjectType(self, OBJTYPE_DismountPoint);
+    objAddObjectType(self, OBJTYPE_DinoCallSpot);
     objdata = self->data;
     self->srt.yaw = setup->rotation << 8;
     objdata->unk0 = fsin16_precise(self->srt.yaw);
@@ -60,8 +60,8 @@ void DR_CloudPerch_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
 
 // offset: 0x194 | func: 4 | export: 4
 void DR_CloudPerch_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_DismountPoint);
-    obj_free_object_type(self, OBJTYPE_DinoCallSpot);
+    objFreeObjectType(self, OBJTYPE_DismountPoint);
+    objFreeObjectType(self, OBJTYPE_DinoCallSpot);
 }
 
 // offset: 0x1F4 | func: 5 | export: 5
