@@ -750,7 +750,7 @@ typedef enum {
     BIT_2E7 = 0x2E7, // len:1 group:2
     BIT_SpellStone_CRF = 0x2E8, // len:1 group:1 (SpellStone #2, CloudRunner Fortress) [INVENTORY]
     BIT_WM_Setup5_Sabre_Dock_Rounded_Corner = 0x2E9, // len:1 group:0
-    BIT_2EA = 0x2EA, // len:1 group:1
+    BIT_2EA = 0x2EA, // len:1 group:1 (Krystal bought a fishing net?)
     BIT_2EB = 0x2EB, // len:1 group:1
     BIT_2EC = 0x2EC, // len:1 group:1
     BIT_WM_Setup5_Sabre_Entered_Hall_Antechamber = 0x2ED, // len:1 group:1
@@ -997,7 +997,7 @@ typedef enum {
     BIT_CC_Placed_Fire_Crystal_Courtyard_Beacon = 0x3DE, // len:1 group:2 The beacon beyond the Portal Door
     BIT_CC_Placed_Fire_Crystal_Island_Beacon = 0x3DF, // len:1 group:2    The beacon on the island at the back of Cape Claw
     BIT_Front_End_ObjGroup_Bits = 0x3E0, // len:32 group:3
-    BIT_3E1 = 0x3E1, // len:1 group:1
+    BIT_3E1 = 0x3E1, // len:1 group:1 (Sabre bought a fishing net?)
     BIT_3E2 = 0x3E2, // len:1 group:0
     BIT_3E3 = 0x3E3, // len:1 group:0
     BIT_Scarab_Count_Krystal = 0x3E4, // len:8 group:2

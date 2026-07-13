@@ -9,6 +9,7 @@ enum ParticleID {
     PARTICLE_2 = 0x2, //cannon blast
     PARTICLE_5 = 0x5,
     PARTICLE_9 = 0x9, //debris explosion
+    PARTICLE_26 = 0x26,
     PARTICLE_3C = 0x3C,
     PARTICLE_42 = 0x42,
     PARTICLE_47 = 0x47,
