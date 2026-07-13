@@ -200,15 +200,15 @@ void fish_control(Object* self) {
         fish_initialise(self);
     }
 
-    //Allow targetting based on player-specific gamebits (whether Krystal/Sabre own a fishing net?)
+    //Allow targetting based on player-specific gamebits (whether Krystal/Sabre own a fishing net)
     if (player->id == OBJ_Krystal) {
-        if (main_get_bits(BIT_2EA) == FALSE) {
+        if (main_get_bits(BIT_Krystal_Fishing_Net) == FALSE) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
         } else {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     } else {
-        if (main_get_bits(BIT_3E1) == FALSE) {
+        if (main_get_bits(BIT_Sabre_Fishing_Net) == FALSE) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
         } else {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
