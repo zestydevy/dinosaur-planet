@@ -106,7 +106,7 @@ void InfoPoint_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
         return;
     }
         
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     
     if (objData->textOpacity != 0) {
         InfoPoint_tex_anim(self, 1, &objData->texAnimSpeed);

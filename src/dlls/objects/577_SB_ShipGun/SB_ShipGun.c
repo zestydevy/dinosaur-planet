@@ -306,9 +306,9 @@ void SB_ShipGun_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
         return;
     if (visibility && objdata->unkE != 0 && objdata->unkF != 0) {
         if (objdata->unkA != 0) {
-            func_80036F6C(0xFF, 0xFF - objdata->unkA, 0xFF - objdata->unkA);
+            objprintSetMultiplierColor(0xFF, 0xFF - objdata->unkA, 0xFF - objdata->unkA);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

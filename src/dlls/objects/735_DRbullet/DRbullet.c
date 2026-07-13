@@ -114,7 +114,7 @@ void DRbullet_update(Object *self) { }
 void DRbullet_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DRbullet_Data* objData = self->data;
     if (visibility && (objData->state != BULLET_STATE_INACTIVE)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

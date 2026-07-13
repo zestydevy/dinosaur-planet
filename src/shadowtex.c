@@ -247,7 +247,7 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         dl_apply_other_mode(gdl);
         dl_set_prim_color(gdl, 0, 0, 0xFF, 0x7D);
     }
-    func_800359D0(obj, gdl, &sp84, vtxs, pols, arg6);
+    objprintDrawShadowModel(obj, gdl, &sp84, vtxs, pols, arg6);
     gSPTexture((*gdl)++, -1, -1, 3, G_TX_RENDERTILE, G_ON);
     gIsShadowTexActive = FALSE;
     temp_s0->srt.transl.f[0] = spC4;

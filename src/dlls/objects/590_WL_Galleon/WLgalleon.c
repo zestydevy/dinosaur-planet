@@ -153,7 +153,7 @@ void WLgalleon_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
     }
 
     if (self->id != OBJ_SB_ShipShadow || self->parent->unkDC < 7) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (dataShowKrystalsAdventureScreen[0]) {
             gDLL_20_Screens->vtbl->show_screen(1);
         }

@@ -180,7 +180,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         return;
     }
     
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objData->unk0, 0);
 
     fxBitfield = objData->unk51C;

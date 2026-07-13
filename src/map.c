@@ -1077,7 +1077,7 @@ void track_draw_object(Object* obj, s32 visibility) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
         }
     }
-    objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, visibility);
+    objprintDrawObject(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, visibility);
     if (sp37 != 0) {
         if ((obj->id != OBJ_IMSnowBike) && (obj->id != OBJ_CRSnowBike)) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);

@@ -27,7 +27,7 @@ void dll_566_update(Object *self) { }
 void dll_566_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
         objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

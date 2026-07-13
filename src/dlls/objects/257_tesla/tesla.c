@@ -222,7 +222,7 @@ void dll_257_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
     objdata = self->data;
     if ((visibility != 0) && (objdata->unk8 != 2)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

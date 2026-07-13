@@ -190,7 +190,7 @@ void BalloonBaddie_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 
     objdata = self->data;
     if (visibility && self->unkDC == BALLOONBADDIE_ALIVE) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         // dying particles
         if (objdata->flags & (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2)) {
             if (objdata->flags & BALLOONBADDIE_DEATHFX1) {

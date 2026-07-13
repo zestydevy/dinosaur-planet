@@ -125,9 +125,9 @@ void dll_320_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     if (visibility != 0) {
         objsetup = (DLL320_Setup*)self->setup; 
         if (objsetup->unk1F & 1) {
-            func_80036F6C((s16) objsetup->unk20, (s16) objsetup->unk21, (s16) objsetup->unk22);
+            objprintSetMultiplierColor((s16) objsetup->unk20, (s16) objsetup->unk21, (s16) objsetup->unk22);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

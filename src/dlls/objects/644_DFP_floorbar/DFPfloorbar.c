@@ -201,7 +201,7 @@ void DFPfloorbar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
         mainSetBits(BIT_DFPT_Puzzle_Pad_Pressed, 0);
     }
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

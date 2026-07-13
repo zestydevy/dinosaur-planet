@@ -191,9 +191,9 @@ void SB_ShipHead_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
         objdata = self->data;
         temp_v1 = objdata->counter;
         if (temp_v1 != 0) {
-            func_80036F6C(0xFF, 0xFF - temp_v1, 0xFF - temp_v1);
+            objprintSetMultiplierColor(0xFF, 0xFF - temp_v1, 0xFF - temp_v1);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if ((self->parent) && (self->parent->id == OBJ_SB_Galleon)) {
             temp_v0 = ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func10(self->parent);
             if ((temp_v0 != 0) && (temp_v0 != 2)) {

@@ -120,7 +120,7 @@ void SPItem_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_136, &trans, PARTFXFLAG_4, -1, NULL);
     }
 
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 

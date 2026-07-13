@@ -91,7 +91,7 @@ void iceblast_update(void){ }
 // offset: 0x274 | func: 3 | export: 3
 void iceblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
     //@recomp: may want to hide these debug cubes
-    draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+    objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
 }
 
 // offset: 0x2BC | func: 4 | export: 4

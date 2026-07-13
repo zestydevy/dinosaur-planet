@@ -140,8 +140,8 @@ void TumbleweedBush_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
     
     if (visibility) {
         //Tint the tree using a colour multiplier
-        func_80036F6C(objSetup->multiplyColourR, objSetup->multiplyColourG, objSetup->multiplyColourB);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintSetMultiplierColor(objSetup->multiplyColourR, objSetup->multiplyColourG, objSetup->multiplyColourB);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

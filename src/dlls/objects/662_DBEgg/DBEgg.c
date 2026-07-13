@@ -47,7 +47,7 @@ void dll_662_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         temp = objdata->unk10C;
 
         if ((temp != 0xC) && (temp != 4) && (temp != 0xB)) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }

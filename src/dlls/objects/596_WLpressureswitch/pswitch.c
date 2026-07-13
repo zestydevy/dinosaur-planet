@@ -184,7 +184,7 @@ void WLpressureswitch_update(Object* self){ }
 // offset: 0x5A4 | func: 3 | export: 3
 void WLpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 

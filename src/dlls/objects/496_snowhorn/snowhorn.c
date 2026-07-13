@@ -400,7 +400,7 @@ void dll_496_print(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **
 
     objdata = self->data;
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
         objGetAttachPointWorldSpace(self, 1, &objdata->playerPositionCopy.x, &objdata->playerPositionCopy.y, &objdata->playerPositionCopy.z, 0);
     }
 }

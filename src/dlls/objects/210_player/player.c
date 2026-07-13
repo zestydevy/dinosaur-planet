@@ -1385,13 +1385,13 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
             ((DLL_IVehicle*)data->vehicle->dll)->vtbl->handle_rider_scale(data->vehicle, player->def->scale);
         }
         if (data->unk818 > 0.0f) {
-            func_80036FBC(0xC8U, 0U, 0U, data->unk81C);
+            objprintSetBlendColor(0xC8U, 0U, 0U, data->unk81C);
         }
         player->srt.transl.y += data->unk83C;
-        draw_object(player, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(player, arg1, arg2, arg3, arg4, 1.0f);
         player->srt.transl.y -= data->unk83C;
         if (data->vehicle != NULL && ((player->stateFlags & OBJSTATE_IN_SEQ) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
-            func_80034FF0(NULL);
+            objprintSetModelMatrixOverride(NULL);
         }
         if (arg5 != 0) {
             dll_210_func_363C(player, data, arg1, arg2, arg3);
@@ -1407,7 +1407,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
                 if (pad > 0xFF) {
                     pad = 0xFF;
                 }
-                func_80035AF4(arg1, arg2, arg3, arg4, player, sp80, 0, 0, sp8C, 6, player->opacityWithFade > 0xFF ? 0xFF : player->opacityWithFade);
+                objprintDrawChildModel(arg1, arg2, arg3, arg4, player, sp80, 0, 0, sp8C, 6, player->opacityWithFade > 0xFF ? 0xFF : player->opacityWithFade);
                 sp8C->srt.scale = sp64;
             }
         }

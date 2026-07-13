@@ -284,11 +284,11 @@ void dll_537_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     if (self->id != OBJ_DIMCannonBall) {
         objData = self->data;
         if (visibility) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
             objGetAttachPointWorldSpace(self, 1, &objData->unk14.x, &objData->unk14.y, &objData->unk14.z, 0);
         }
     } else if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

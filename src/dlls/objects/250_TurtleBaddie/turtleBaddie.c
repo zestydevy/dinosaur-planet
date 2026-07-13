@@ -168,7 +168,7 @@ void dll_250_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
     objdata = self->data;
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (objdata->flags & 0x30) {
             if (objdata->flags & 0x10) {
                 gDLL_32->vtbl->func2(self, 0x330, &objdata->unk18);

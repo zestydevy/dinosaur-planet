@@ -120,7 +120,7 @@ void dll_525_update(Object *self) { }
 // offset: 0x5A4 | func: 3 | export: 3
 void dll_525_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

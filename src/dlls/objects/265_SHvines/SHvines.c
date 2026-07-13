@@ -102,7 +102,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     transl = &srt.transl;
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         
         if (self->opacity < OBJECT_OPACITY_MAX) {
             srt.scale = self->visRadius * 0.03f;

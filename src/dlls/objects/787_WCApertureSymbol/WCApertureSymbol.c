@@ -119,7 +119,7 @@ void dll_787_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         objdata->unk3 &= ~0x1;
     }
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

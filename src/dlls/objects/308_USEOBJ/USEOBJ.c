@@ -129,14 +129,14 @@ void UseObj_control(Object *self) {
 // offset: 0x3B8 | func: 2 | export: 2
 void UseObj_update(Object *self) {
     if ((self->def->flags & OBJDEF_INVISIBLE) && self->unk74) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 
 // offset: 0x410 | func: 3 | export: 3
 void UseObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

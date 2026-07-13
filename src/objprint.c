@@ -39,12 +39,12 @@ u8 BYTE_800b2e22;
 u8 BYTE_800b2e23;
 // -------- .bss end 800b2e30 -------- //
 
-void func_800357B4(Object*, ModelInstance*, Model*);
-ModelInstance *func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
-void func_80036890(Object*, s32);
-void func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
+void objprint_func_800357B4(Object*, ModelInstance*, Model*);
+ModelInstance *objprintDrawChildModel(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
+void objprint_func_80036890(Object*, s32);
+void objprint_func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
 
-void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
+void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
     if (obj->stateFlags & OBJSTATE_DESTROYED) {
         return;
     }
@@ -69,10 +69,10 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
         if (!(obj->stateFlags & OBJSTATE_PRINT_DISABLED)) {
             obj->dll->vtbl->print(obj, gdl, mtxs, vtxs, tris, visibility);
         } else if (visibility != 0) {
-            draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
+            objprintDrawModel(obj, gdl, mtxs, vtxs, tris, 1.0f);
         }
     } else if (visibility != 0) {
-        draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
+        objprintDrawModel(obj, gdl, mtxs, vtxs, tris, 1.0f);
     }
     if (obj->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH) {
         objHandleModelSwitch(obj, obj->modelInsts[obj->modelInstIdx], obj->modelInsts[obj->modelInstIdx]->model);
@@ -84,11 +84,11 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
     update_pi_manager_array(2, -1);
 }
 
-void func_80034FF0(MtxF* arg0) {
+void objprintSetModelMatrixOverride(MtxF* arg0) {
     PTR_DAT_800b2e1c = arg0;
 }
 
-void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, f32 yPrescale) {
+void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, f32 yPrescale) {
     s32 opacity;
     ModelInstance* modelInst;
     Model* model;
@@ -142,7 +142,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         blendB = blendG = blendR = 0xFF;
     }
     if (obj->def->numAnimatedFrames > 0) {
-        func_80036890(obj, 2);
+        objprint_func_80036890(obj, 2);
     }
     if (BYTE_80091754 != 0) {
         var_v0 = (blendR * SHORT_800b2e14) >> 8;
@@ -236,7 +236,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
                 func_8001F094(modelInst);
             }
             if (obj->unk74 != NULL) {
-                func_80036438(obj);
+                objprintUpdateLockIconCoords(obj);
             }
             if (model->hitSphereCount != 0) {
                 mod_func_8001A8EC(modelInst, model, obj, 0, obj);
@@ -269,12 +269,12 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             tex_render_reset();
         }
         if (obj->linkedObject != NULL) {
-            func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, 
+            objprintDrawChildModel(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, 
                 obj->linkedObject, obj->stateFlags & OBJSTATE_UNK_ATTACH_INDEX_MASK, (u8)opacity);
         }
     }
     if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20) && (modelInst->unk14 != NULL)) {
-        func_800357B4(obj, modelInst, modelInst->model);
+        objprint_func_800357B4(obj, modelInst, modelInst->model);
     }
     modelInst->unk34 |= 8;
     if (parentObj != NULL) {
@@ -290,7 +290,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
     *tris = tempTris;
 }
 
-void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
+void objprint_func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
     f32* temp_v0_2;
     Vec3f* var_s0;
     MtxF* var_v1;
@@ -328,8 +328,7 @@ void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
     }
 }
 
-void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, u32 param_6)
-{
+void objprintDrawShadowModel(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, u32 param_6) {
     Gfx *mygdl;
     Mtx *outRspMtxs;
     void *d;
@@ -363,7 +362,7 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangl
     *rspMtxs = outRspMtxs;
 }
 
-ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** arg3, Object* arg4, ModelInstance* arg5, MtxF* arg6, MtxF* arg7, Object* arg8, s32 arg9, s32 arg10) {
+ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** arg3, Object* arg4, ModelInstance* arg5, MtxF* arg6, MtxF* arg7, Object* arg8, s32 arg9, s32 arg10) {
     MtxF* sp74;
     s32 sp70;
     ModelInstance* modelInst;
@@ -375,7 +374,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
     D_800B2E10 = 0;
 
     if (arg8->def->numAnimatedFrames > 0) {
-        func_80036890(arg8, 2);
+        objprint_func_80036890(arg8, 2);
     }
     modelInst = arg8->modelInsts[arg8->modelInstIdx];
     if (modelInst != NULL && !(arg5->unk34 & 8)) {
@@ -398,14 +397,14 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             D_800B2E10 = arg6;
             mod_func_80019730(modelInst, sp64, arg8, arg6);
             sp74 = modelInst->matrices[modelInst->unk34 & 1];
-            func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
+            objprint_func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
         } else {
             modelInst->unk34 ^= 1;
             arg7 = modelInst->matrices[modelInst->unk34 & 1];
             for (i = 0; i < 16; i++) {
                 ((f32*)arg7->m)[i] = ((f32*)arg6->m)[i];
             }
-            func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
+            objprint_func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
             camAddMatrixToPool(arg7, 1);
             D_800B2E10 = sp74 = arg7;
         }
@@ -466,7 +465,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
     return modelInst;
 }
 
-void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     MtxF* tempMtx;
     s32 j;
     s32 boneId;
@@ -531,7 +530,7 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
     }
 }
 
-void func_80036438(Object* arg0) {
+void objprintUpdateLockIconCoords(Object* arg0) {
     ObjDefLockData* sp11C;
     ObjectStruct74* sp118;
     MtxF* temp_s4;
@@ -609,11 +608,11 @@ void func_80036438(Object* arg0) {
 }
 
 #ifndef NON_MATCHING
-void func_80036890(Object* arg0, s32 arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036890.s")
+void objprint_func_80036890(Object* arg0, s32 arg1);
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func_80036890.s")
 #else
 // https://decomp.me/scratch/cjUgO
-void func_80036890(Object* arg0, s32 arg1) {
+void objprint_func_80036890(Object* arg0, s32 arg1) {
     s32 sp6C; // a1
     Gfx* temp_a1_2;
     s32 sp64;
@@ -689,7 +688,7 @@ void func_80036890(Object* arg0, s32 arg1) {
                                 var_v1 = temp_a2;
                                 for (var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++, var_v1 = var_v1->next);
                                 temp_a1_2++;
-                                temp_a1_2->words.w1 = OS_PHYSICAL_TO_K0(var_v1 + 1);
+                                temp_a1_2->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(var_v1 + 1);
                                 temp_a1_2++;
                                 gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
                                 temp_a1_2++;
@@ -715,7 +714,7 @@ void func_80036890(Object* arg0, s32 arg1) {
 
 #endif
 
-void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
+void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     s32 sp6C;
     s32 sp68;
     s32 sp64;
@@ -793,7 +792,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     }
 }
 
-void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
+void objprint_func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;
 
     if (object->shadow->gdl) {
@@ -823,7 +822,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
 }
 
 /** Sets a multiplier colour (generally lowers model's brightness) */
-void func_80036F6C(s16 r, s16 g, s16 b) {
+void objprintSetMultiplierColor(s16 r, s16 g, s16 b) {
     SHORT_800b2e14 = r;
     SHORT_800b2e16 = g;
     SHORT_800b2e18 = b;
@@ -831,7 +830,7 @@ void func_80036F6C(s16 r, s16 g, s16 b) {
 }
 
 /** Sets a blend colour (can increase a model's brightness) */
-void func_80036FBC(s16 r, s16 g, s16 b, u8 a) {
+void objprintSetBlendColor(s16 r, s16 g, s16 b, u8 a) {
     BYTE_800b2e20 = r;
     BYTE_800b2e21 = g;
     BYTE_800b2e22 = b;
@@ -839,7 +838,7 @@ void func_80036FBC(s16 r, s16 g, s16 b, u8 a) {
     BYTE_800b2e23 = a & 0xFF;
 }
 
-void func_80037020(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ, f32* outX, f32* outY, f32* outZ) {
+void objprint_func_80037020(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ, f32* outX, f32* outY, f32* outZ) {
     f32 dotProduct;
 
     dotProduct = (aX * bX) + (aY * bY) + (aZ * bZ);

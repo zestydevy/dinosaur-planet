@@ -246,7 +246,7 @@ void GPbonfire_update(Object* self){ }
 // offset: 0x800 | func: 3 | export: 3
 void GPbonfire_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility && self->modelInstIdx == 1) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 

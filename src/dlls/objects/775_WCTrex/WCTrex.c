@@ -100,7 +100,7 @@ void WCTrex_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
     WCTrex_Data* objdata = self->data;
 
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->movedata, 0);
     }
 }

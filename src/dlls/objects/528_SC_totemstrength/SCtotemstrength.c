@@ -174,7 +174,7 @@ void SCTotemStrength_update(Object *self) { }
 // offset: 0x398 | func: 3 | export: 3
 void SCTotemStrength_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     //@bug?: doesn't check visibility argument
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // offset: 0x3E0 | func: 4 | export: 4

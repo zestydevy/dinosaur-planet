@@ -494,7 +494,7 @@ void dll_711_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
             if (!(objdata->flags & SNOWBIKEFLAG_IS_CPU)) {
                 dll_711_func_1870(self, objdata, gdl, mtxs, vtxs, pols);
             }
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
             objGetAttachPointWorldSpace(self, 0, &objdata->unk384, &objdata->unk388, &objdata->unk38C, 0);
             if (sp3B != 0) {
                 gDLL_13_Expgfx->vtbl->func6(self, gdl, mtxs, NULL, 0, 0, 0);
@@ -507,7 +507,7 @@ void dll_711_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
                 return;
             }
             if (visibility != 0) {
-                draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+                objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
                 objGetAttachPointWorldSpace(self, 0, &objdata->unk384, &objdata->unk388, &objdata->unk38C, 0);
             }
         }

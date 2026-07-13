@@ -69,7 +69,7 @@ void cannon_claw_update(Object *self) { }
 
 void cannon_claw_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility && self->unkDC == 0) {
-		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+		objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 

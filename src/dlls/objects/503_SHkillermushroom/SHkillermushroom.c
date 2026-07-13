@@ -394,7 +394,7 @@ void SHkillermushroom_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
     SHkillermushroom_Data* objData = self->data;
 
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
         //Store attach point coords (for particle effects)
         objGetAttachPointWorldSpace(self, 0,

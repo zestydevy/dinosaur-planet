@@ -97,7 +97,7 @@ void SB_Debris_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     self->opacity = opacity;
     if (visibility) {
         tex_disable_modes(RENDER_FOG_ACTIVE);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         tex_enable_modes(RENDER_FOG_ACTIVE);
     }
 }

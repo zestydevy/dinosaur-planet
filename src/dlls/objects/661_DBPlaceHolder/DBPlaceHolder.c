@@ -108,7 +108,7 @@ void DBPlaceHolder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
         } else {
             self->srt.scale = 0.00001f;
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -501,12 +501,12 @@ void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
     s32 i;
 
     if (visibility == -1) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         objGetAttachPointWorldSpace(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
         objGetAttachPointBoneWorldPositions(self, 3, 4, objdata->unk978);
     }
     if ((objdata->unkA5A != 2) && (visibility != 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         objGetAttachPointWorldSpace(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
         objGetAttachPointBoneWorldPositions(self, 3, 4, objdata->unk978);
         ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->movedata, 0);
@@ -724,7 +724,7 @@ void DRearthwalk_func_1DC8(Object* self, f32 scale) {
     srt.scale = scale / self->def->scale;
     matrix_from_srt(&_bss_28, &srt);
     matrix_concat_4x3(&_bss_28, sp4C, &_bss_28);
-    func_80034FF0(&_bss_28);
+    objprintSetModelMatrixOverride(&_bss_28);
 }
 
 // offset: 0x1EBC | func: 24

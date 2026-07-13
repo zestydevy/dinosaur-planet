@@ -182,7 +182,7 @@ void DBSH_Symbol_update(Object *self) { }
 
 // offset: 0x604 | func: 3 | export: 3
 void DBSH_Symbol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // offset: 0x64C | func: 4 | export: 4

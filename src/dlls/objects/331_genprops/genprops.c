@@ -657,7 +657,7 @@ void dll_331_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle
         return;
     }
     
-    draw_object(self, arg1, arg2, arg3, arg4, 1.0f);
+    objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
 }
 
 // offset: 0x1FB8 | func: 5 | export: 4

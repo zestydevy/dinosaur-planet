@@ -117,7 +117,7 @@ void NWMultiSeq_update(Object *self) { }
 // offset: 0x344 | func: 3 | export: 3
 void NWMultiSeq_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

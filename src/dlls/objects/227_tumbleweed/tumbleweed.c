@@ -504,7 +504,7 @@ void Tumbleweed_update(Object* self) { }
 // offset: 0x1524 | func: 6 | export: 3
 void Tumbleweed_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility > 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

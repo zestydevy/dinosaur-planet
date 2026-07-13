@@ -79,7 +79,7 @@ void WM_TransTop_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
             WM_TransTop_draw_mask(self, gdl, mtxs, (Vtx_t**)vtxs, triangles);
         }
         if (visibility) {
-            draw_object(self, gdl, mtxs, vtxs, triangles, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, triangles, 1.0f);
         }
     }
 }

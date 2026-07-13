@@ -46,7 +46,7 @@ void dll_506_control(Object* self) {
     if (mainGetBits(objSetup->unk1E) == 0) {
         self->unkAF &= ~0x8;
     }
-    func_80036438(self);
+    objprintUpdateLockIconCoords(self);
 }
 
 // offset: 0x184 | func: 2 | export: 2

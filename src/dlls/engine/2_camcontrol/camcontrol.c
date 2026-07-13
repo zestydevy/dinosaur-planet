@@ -1068,7 +1068,7 @@ void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, V
     lockIcon->srt.scale = 0.08f;
     lockIcon->opacityWithFade = lockIcon->opacity;
 
-    draw_object(lockIcon, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(lockIcon, gdl, mtxs, vtxs, pols, 1.0f);
     
     lockIcon->modelInsts[lockIcon->modelInstIdx]->unk34 &= ~8;
 }

@@ -328,7 +328,7 @@ void GPSH_Shrine_update(Object *self) { }
 // offset: 0xF1C | func: 3 | export: 3
 void GPSH_Shrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

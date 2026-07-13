@@ -41,7 +41,7 @@ void WGmutant_update(Object *self) { }
 // offset: 0x70 | func: 3 | export: 3
 void WGmutant_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

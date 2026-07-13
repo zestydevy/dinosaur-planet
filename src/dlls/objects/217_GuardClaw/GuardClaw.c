@@ -239,7 +239,7 @@ void GuardClaw_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
     
     if (visibility != 0) {
         objdata = baddie->objdata;
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (baddie->unk3B2 & 0x60) {
             if (baddie->unk3B2 & 0x20) {
                 gDLL_32->vtbl->func2(self, 0x330, &objdata->unk10);

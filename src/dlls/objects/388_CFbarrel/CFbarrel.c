@@ -236,7 +236,7 @@ void CFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
             self->srt.pitch = 0;
         }
         if (gDLL_54_pickup->vtbl->should_print(self, visibility) != 0) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }

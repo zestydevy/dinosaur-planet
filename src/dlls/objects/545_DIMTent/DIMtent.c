@@ -190,7 +190,7 @@ void DIMTent_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         if (objData->isBurning == TRUE) {
             DIMTent_draw_mask(self, gdl, mtxs, (Vtx_t**)vtxs, pols);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

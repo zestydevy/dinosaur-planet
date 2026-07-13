@@ -125,7 +125,7 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     s32 i;
 
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         
         if (self->unkE0 & 7) {
             objGetAttachPointWorldSpace(self, 0, &sTransform.transl.x, &sTransform.transl.y, &sTransform.transl.z, 0);

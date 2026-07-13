@@ -496,7 +496,7 @@ void dll_211_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     }
 
     objData = self->data;
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     dll_211_func_7188(self);
     if (objData->unk4C & 0x10) {
         switch (objData->unk18) {
@@ -526,7 +526,7 @@ void dll_211_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
                     objData->unk5E4[0]->srt.transl.y = objData->unk3B4.y;
                     objData->unk5E4[0]->srt.transl.z = objData->unk3B4.z;
                 }
-                draw_object(objData->unk5E4[0], gdl, mtxs, vtxs, pols, 1.0f);
+                objprintDrawModel(objData->unk5E4[0], gdl, mtxs, vtxs, pols, 1.0f);
             }
         }
     }

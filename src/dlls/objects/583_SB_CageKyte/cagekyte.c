@@ -83,7 +83,7 @@ void SBCageKyte_update(Object *self) { }
 // offset: 0x278 | func: 3 | export: 3
 void SBCageKyte_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility && !mainGetBits(BIT_WM_Played_Randorn_First_Meeting) && !self->unkDC) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

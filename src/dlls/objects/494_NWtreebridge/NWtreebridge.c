@@ -84,7 +84,7 @@ void NWtreebridge_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 
     objdata = self->data;
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
     if (objdata->unkObj) {
         objGetAttachPointWorldSpace(self, 0, &x, &y, &z, 0);

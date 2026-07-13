@@ -101,7 +101,7 @@ void DRExplodeDoor_update(Object* self) {
 // offset: 0x3EC | func: 3 | export: 3
 void DRExplodeDoor_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 // offset: 0x440 | func: 4 | export: 4

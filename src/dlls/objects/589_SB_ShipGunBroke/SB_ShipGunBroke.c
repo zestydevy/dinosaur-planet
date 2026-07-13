@@ -43,7 +43,7 @@ void SB_ShipGunBroke_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
     setup = (SB_ShipGunBroke_Setup*)self->setup;
     if (mainGetBits(setup->gunDestroyedGamebit)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

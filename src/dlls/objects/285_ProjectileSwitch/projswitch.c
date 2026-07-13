@@ -119,9 +119,9 @@ void ProjectileSwitch_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
     
     if (visibility) {
         if (objSetup->enableTint) {
-            func_80036F6C(objSetup->tintR, objSetup->tintG, objSetup->tintB);
+            objprintSetMultiplierColor(objSetup->tintR, objSetup->tintG, objSetup->tintB);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

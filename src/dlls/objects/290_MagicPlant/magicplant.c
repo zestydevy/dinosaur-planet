@@ -129,7 +129,7 @@ void MagicPlant_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         return;
     }
 
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     modelInstance = self->modelInsts[self->modelInstIdx];
 
     //Position the MagicDust gem at the centre of the plant's petals
@@ -158,9 +158,9 @@ void MagicPlant_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         objData->magic->srt.transl.y = mtx.m[3][1];
         objData->magic->srt.transl.z = mtx.m[3][2] + gWorldZ;
 
-        func_80034FF0(&mtx);
-        draw_object(objData->magic, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80034FF0(NULL);
+        objprintSetModelMatrixOverride(&mtx);
+        objprintDrawModel(objData->magic, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintSetModelMatrixOverride(NULL);
     }
 }
 

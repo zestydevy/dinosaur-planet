@@ -165,7 +165,7 @@ void pressureswitch_update(Object* dll){ }
 // offset: 0x530 | func: 3 | export: 3
 void pressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 

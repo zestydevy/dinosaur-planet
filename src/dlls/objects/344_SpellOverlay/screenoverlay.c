@@ -158,7 +158,7 @@ void SpellOverlay_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         self->globalPosition.z = gWorldZ;
 
         camSetupViewportAndMatrices(gdl, mtxs);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         camSetCameraSelector(0);
         camSetFOV(fov);
         camSetupViewportAndMatrices(gdl, mtxs);

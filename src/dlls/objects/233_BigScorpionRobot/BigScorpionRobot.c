@@ -206,7 +206,7 @@ void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
     DLL_IProjgfx* projgfx;
     
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if ((objdata->fire) && (baddie->fsa.target != NULL)) {
             SRT srcSRT;
             SRT dstSRT;

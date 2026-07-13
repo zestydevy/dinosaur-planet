@@ -40,7 +40,7 @@ void dll_670_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     objdata = self->data;
     
     if (visibility != 0 && ( setup->unk1C != 0 || objdata->unk0 != 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

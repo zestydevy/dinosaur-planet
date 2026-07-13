@@ -99,10 +99,10 @@ void WMWizard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
     if (visibility) {
         if (gDLL_29_Gplay->vtbl->get_act(self->mapID) == WM_Setup4_Spirit3_Krystal_MMP) {
             if (mainGetBits(BIT_WM_Setup4_Show_Randorn)) {
-                draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+                objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
             }
         } else {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }

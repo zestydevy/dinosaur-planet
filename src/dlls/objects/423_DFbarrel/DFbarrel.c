@@ -75,7 +75,7 @@ void DFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
     DFBarrel_Data* objData = self->data;
     
     if ((objData->framesSinceDetonation == 0) && gDLL_54_pickup->vtbl->should_print(self, visibility)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

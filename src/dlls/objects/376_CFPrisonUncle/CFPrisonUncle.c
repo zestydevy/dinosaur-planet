@@ -174,15 +174,15 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     
     if (mainGetBits(BIT_50)) {
         if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
-            draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
     }
     
     if (mainGetBits(BIT_4D) && visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
-            draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
     }
@@ -195,7 +195,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         if (!visibility) {
             return;
         }
-        draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         objDef = objData->unk0->def;
         modelInstance = objData->unk0->modelInsts[objData->unk0->modelInstIdx];
         if (objDef->numAttachPoints != 0) {
@@ -210,13 +210,13 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             self->srt.pitch = 0;
             self->srt.roll = 0;
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     } else {
         if (track_obj_vis_check(objData->unk0)) {
-            draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         if (visibility) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }

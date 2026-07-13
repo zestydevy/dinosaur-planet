@@ -85,7 +85,7 @@ void CRSpellStone_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     CRSpellStone_Data* objData = self->data;
     
     if (visibility && objData->state != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

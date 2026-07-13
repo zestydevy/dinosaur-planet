@@ -427,7 +427,7 @@ void scarab_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** p
         return;
     }
 
-    draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+    objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
 }
 
 // offset: 0x11F8 | func: 4 | export: 4

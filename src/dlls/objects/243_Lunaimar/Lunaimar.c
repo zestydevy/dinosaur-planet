@@ -194,9 +194,9 @@ void dll_243_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     baddie = self->data;
     if ((visibility != 0) && (self->unkDC == 0) && (baddie->unk3B6 != 0)) {
         if (baddie->unk3E8 != 0.0f) {
-            func_80036FBC(0xC8, 0, 0, (u8) baddie->unk3E8);
+            objprintSetBlendColor(0xC8, 0, 0, (u8) baddie->unk3E8);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (baddie->unk3B2 & 0x60) {
             if (baddie->unk3B2 & 0x20) {
                 gDLL_32->vtbl->func2(self, 0x330, &baddie->unk3E8);

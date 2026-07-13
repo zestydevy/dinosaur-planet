@@ -202,7 +202,7 @@ void dll_294_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     DLL294_Data* curvefishdata = self->data;
     
     if ((curvefishdata->unk10C != 0) && (visibility != 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 // offset: 0x934 | func: 5 | export: 4

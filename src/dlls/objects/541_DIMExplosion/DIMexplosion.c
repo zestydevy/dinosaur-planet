@@ -90,7 +90,7 @@ void DIMExplosion_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
             self->opacityWithFade = 0xFF;
         }
         
-        draw_object(self, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
     }
     
     //Draw model 0 (outer explosion)
@@ -104,7 +104,7 @@ void DIMExplosion_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
             modelInstance->displayList[dlInfo->idx] = mode;
         }
         
-        draw_object(self, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
     }
 }
 

@@ -119,7 +119,7 @@ void krazoatext_update(Object* self){ }
 void krazoatext_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         self->srt.scale = 0.001f;
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
         self->srt.scale = self->def->scale;
     }
 }

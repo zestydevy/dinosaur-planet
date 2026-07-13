@@ -224,8 +224,8 @@ void dll_703_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     KT_RexFloorSwitch_Setup* objsetup = (KT_RexFloorSwitch_Setup*)self->setup;
     
     if (visibility != 0) {
-        func_80036F6C(objsetup->unk20, objsetup->unk21, objsetup->unk22);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintSetMultiplierColor(objsetup->unk20, objsetup->unk21, objsetup->unk22);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

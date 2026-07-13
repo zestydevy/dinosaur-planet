@@ -273,7 +273,7 @@ void DR_NPC_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
     DR_NPC_Data* objData = self->data;
 
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func3(self, &objData->movedata, 0);
     }
 }

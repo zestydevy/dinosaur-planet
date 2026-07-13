@@ -253,7 +253,7 @@ void dll_481_update(Object *self) { }
 
 // offset: 0xB14 | func: 3 | export: 3
 void dll_481_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // offset: 0xB5C | func: 4 | export: 4

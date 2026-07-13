@@ -119,7 +119,7 @@ void sfxplayer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     Object** obj;
     if (visibility) {
         obj = &self;
-        draw_object(*obj, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(*obj, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -157,10 +157,10 @@ void SB_Propeller_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                     temp_fv1 = 255.0f;
                 }
                 if (((DLL_572_SB_Galleon*)parent->dll)->vtbl->func8(parent) == 2) {
-                    func_80036F6C(0xFF, (u8)temp_fv1, (u8)temp_fv1);
+                    objprintSetMultiplierColor(0xFF, (u8)temp_fv1, (u8)temp_fv1);
                 }
             }
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }

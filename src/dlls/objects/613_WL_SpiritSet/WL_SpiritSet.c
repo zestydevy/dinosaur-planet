@@ -49,7 +49,7 @@ void WL_SpiritSet_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
             return;
 
         if (visibility) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     } while (0);
 }

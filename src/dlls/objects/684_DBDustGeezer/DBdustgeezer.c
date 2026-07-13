@@ -167,7 +167,7 @@ void DBDustGeezer_update(Object *self) { }
 void DBDustGeezer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     DBDustGeezer_Data* objData = self->data;
     if (visibility && (objData->state != DBDustGeezer_STATE_Hidden)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

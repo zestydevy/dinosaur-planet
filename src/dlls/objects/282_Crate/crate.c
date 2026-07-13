@@ -207,9 +207,9 @@ void crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **
     if ((objData->isDestroyed == 0) && visibility) {
         //Flash red after being struck
         if (objData->flash) {
-            func_80036FBC(0xC8, 0, 0, objData->flash);
+            objprintSetBlendColor(0xC8, 0, 0, objData->flash);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

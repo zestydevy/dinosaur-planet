@@ -136,7 +136,7 @@ void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
         return;
     }
 
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     
     //Draw the player when attached to SwapStone's hand
     player = objGetPlayer();

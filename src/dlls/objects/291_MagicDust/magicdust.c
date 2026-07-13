@@ -377,7 +377,7 @@ void MagicDust_update(Object *self) { }
 void MagicDust_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     //When the MagicDust gem is attached to a MagicPlant, the plant handles drawing the gem instead
     if (visibility && (self->unkC4 == NULL)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

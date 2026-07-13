@@ -74,7 +74,7 @@ void dll_593_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
     objdata = self->data;
     if ((visibility != 0) && (objdata->unk11 == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (objdata->unk8 != 0.0f) {
             if (objdata->unk8 >= 1.8f) {
                 gDLL_32->vtbl->func2(self, 0x330, NULL);

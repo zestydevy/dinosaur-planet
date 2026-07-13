@@ -214,7 +214,7 @@ void Duster_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
     Duster_Data *objdata = self->data;
 
     if (visibility && objdata->discovered && !objdata->collected) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

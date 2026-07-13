@@ -182,7 +182,7 @@ void Spirit_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
     }
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (self->opacity) {
             id = self->id;
             if (id == OBJ_DFSH_SpiritPriz || id == OBJ_CCSH_SpiritPriz) {

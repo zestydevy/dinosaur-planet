@@ -146,7 +146,7 @@ void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 
     baddie = (Baddie*)self->data;
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         objdata = (BossDrakor_ActualData*)baddie->objdata;
         if (objdata->laser != NULL) {
             objGetAttachPointWorldSpace(self, 0, &sp4C, &sp48, &sp44, 0);

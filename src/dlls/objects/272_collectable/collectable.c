@@ -371,9 +371,9 @@ void collectable_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
         if (0) { }
 
         if ((self->def->flags & OBJDEF_SKY_LIT) && objdata->useColourMultiplier) {
-            func_80036F6C(objdata->multiplyR, objdata->multiplyG, objdata->multiplyB);
+            objprintSetMultiplierColor(objdata->multiplyR, objdata->multiplyG, objdata->multiplyB);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

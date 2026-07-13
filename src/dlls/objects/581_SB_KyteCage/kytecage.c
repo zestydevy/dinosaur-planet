@@ -17,8 +17,6 @@
 #include "sys/segment_1050.h"
 #include "types.h"
 
-void func_80034FF0(MtxF* arg0);
-
 // This is the cage object ("DLL 583 CageKyte" is the baby version of Kyte in the cage)
 
 typedef struct {
@@ -126,7 +124,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
         return;
     }
 
-    draw_object(self, gfx, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gfx, mtxs, vtxs, pols, 1.0f);
 
     objData = self->data;
     if (objData != NULL) {
@@ -154,9 +152,9 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.roll = 0;
                     matrix_from_srt(&resultMatrix, &boneTransform);
                     matrix_concat_4x3(&resultMatrix, boneMatrix, &resultMatrix);
-                    func_80034FF0(&resultMatrix);
-                    draw_object(kyte, gfx, mtxs, vtxs, pols, 1.0f);
-                    func_80034FF0(NULL);
+                    objprintSetModelMatrixOverride(&resultMatrix);
+                    objprintDrawModel(kyte, gfx, mtxs, vtxs, pols, 1.0f);
+                    objprintSetModelMatrixOverride(NULL);
                 }
                 kyte->unkDC = 2;
             }

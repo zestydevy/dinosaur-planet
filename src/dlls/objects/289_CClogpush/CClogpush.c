@@ -128,14 +128,14 @@ void CClogpush_control(Object *self) {
 // offset: 0x400 | func: 2 | export: 2
 void CClogpush_update(Object *self) {
     if ((self->def->flags & OBJDEF_INVISIBLE) && self->unk74) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 
 // offset: 0x458 | func: 3 | export: 3
 void CClogpush_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

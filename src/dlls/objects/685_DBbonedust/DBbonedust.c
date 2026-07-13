@@ -125,7 +125,7 @@ void DBBoneDust_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
     DBBoneDust_Data *objData = self->data;
     
     if (visibility && objData->state != DBBoneDust_STATE_Hidden) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

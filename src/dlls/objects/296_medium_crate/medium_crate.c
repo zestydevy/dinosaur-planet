@@ -279,10 +279,10 @@ void medium_crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     }
 
     if (objdata->unk20 != 0) {
-        func_80036FBC(200, 0, 0, objdata->unk20);
+        objprintSetBlendColor(200, 0, 0, objdata->unk20);
     }
 
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // export 4

@@ -54,7 +54,7 @@ void CCfirecrystalin_update(Object *self) { }
 // offset: 0x1A4 | func: 3 | export: 3
 void CCfirecrystalin_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

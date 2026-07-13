@@ -78,9 +78,9 @@ void DBFakeHorizon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
     mtx.m[3][0] = self->srt.transl.x - gWorldX;
     mtx.m[3][1] = self->srt.transl.y;
     mtx.m[3][2] = self->srt.transl.z - gWorldZ;
-    func_80034FF0(&mtx);
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-    func_80034FF0(NULL);
+    objprintSetModelMatrixOverride(&mtx);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintSetModelMatrixOverride(NULL);
 }
 
 // offset: 0x200 | func: 4 | export: 4

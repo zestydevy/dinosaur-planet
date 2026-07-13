@@ -735,7 +735,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     hpBarWidth = (objdata->health / 10) * 32;
     if ((visibility != 0) && (self->unkDC == 0)) {
         // Draw self
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         // Draw health bar
         if (sHealthBarAlpha != 0) {
             rcp_tile_write_x(gdl, _bss_8[0], 

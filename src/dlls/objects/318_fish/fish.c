@@ -308,7 +308,7 @@ void fish_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **p
     fish_Data* objdata = self->data;
     if ((objdata->unk18 != 0) && (visibility != 0)) {
         self->srt.yaw -= 0x8000;
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         self->srt.yaw -= 0x8000;
     }
 }

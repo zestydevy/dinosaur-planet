@@ -74,7 +74,7 @@ void VFP_PodiumPoint_control(Object* self) {
 // offset: 0x128 | func: 2 | export: 2
 void VFP_PodiumPoint_update(Object *self) {
     if (self->unk74 != NULL) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 

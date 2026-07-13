@@ -265,7 +265,7 @@ void Transporter_update(Object *self) {
         self->unkAF &= ~8;
     }
     if (self->unk74) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 

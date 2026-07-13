@@ -129,7 +129,7 @@ void CCfirecrystal_update(Object *self) { }
 void CCfirecrystal_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     CCfirecrystal_Data* objData = self->data;
     if (visibility && (objData->state != FireCrystal_State_1_Finished)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
