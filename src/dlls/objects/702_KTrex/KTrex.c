@@ -9,6 +9,7 @@
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
@@ -994,9 +995,9 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     matrix_from_srt(&tempMtx, &tempSRT);
     vec3_transform(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->velocity.x, &tempY, &self->velocity.z);
     if (reversed) {
-        self->srt.yaw = (f32) sKTData->turnStartYaw + (16384.0f * self->animProgress);
+        self->srt.yaw = sKTData->turnStartYaw + (M_90_DEGREES * self->animProgress);
     } else {
-        self->srt.yaw = (f32) sKTData->turnStartYaw - (16384.0f * self->animProgress);
+        self->srt.yaw = sKTData->turnStartYaw - (M_90_DEGREES * self->animProgress);
     }
     return 0;
 }
