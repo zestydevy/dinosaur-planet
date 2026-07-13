@@ -397,7 +397,7 @@ void SHkillermushroom_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 
         //Store attach point coords (for particle effects)
-        func_80031F6C(self, 0,
+        objGetAttachPointWorldSpace(self, 0,
             &objData->attachX,
             &objData->attachY,
             &objData->attachZ,

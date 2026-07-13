@@ -765,7 +765,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         // Get attachment positions
         i = 15;
         while(i--) {
-            func_80031F6C(self, 
+            objGetAttachPointWorldSpace(self, 
                 i, 
                 &objdata->attachmentPositions[i].x, 
                 &objdata->attachmentPositions[i].y, 

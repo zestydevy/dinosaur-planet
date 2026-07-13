@@ -501,7 +501,7 @@ typedef struct Object {
 /*00D6*/    u8 unkD6;
 /*00D5*/    u8 unkD7[0xd8 - 0xd7];
 /*00D8*/    u8 unkD8;
-/*00D9*/    u8 unkD9;
+/*00D9*/    u8 unkD9; // num touch callbacks
 /*00DA*/    u8 freeLock; // if set, object will not be freed even if attempted
 /*00DB*/    u8 unkDB[0xdc - 0xdb];
 /*00DC*/    s32 unkDC; // sometimes stores ID related to object's active sequence?

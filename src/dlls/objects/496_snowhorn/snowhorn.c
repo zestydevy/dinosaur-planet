@@ -401,7 +401,7 @@ void dll_496_print(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **
     objdata = self->data;
     if (visibility) {
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
-        func_80031F6C(self, 1, &objdata->playerPositionCopy.x, &objdata->playerPositionCopy.y, &objdata->playerPositionCopy.z, 0);
+        objGetAttachPointWorldSpace(self, 1, &objdata->playerPositionCopy.x, &objdata->playerPositionCopy.y, &objdata->playerPositionCopy.z, 0);
     }
 }
 
@@ -881,7 +881,7 @@ static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn
     }
     
     if (_data_274[0] != 0 && 
-        func_80031BBC(snowhorn->globalPosition.x, snowhorn->globalPosition.y, snowhorn->globalPosition.z) == 0xA){
+        objGetAreaValueAtPoint(snowhorn->globalPosition.x, snowhorn->globalPosition.y, snowhorn->globalPosition.z) == 0xA){
         gDLL_3_Animation->vtbl->start_obj_sequence(0x10, snowhorn, -1); //setAnimation?
         return;
     }
@@ -956,7 +956,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             }
             break;
         case 1:
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->flags = 2;
                 mainSetBits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
@@ -964,7 +964,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             break;
         case 2:
             //Eating FrostWeeds?
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             }
             
@@ -1008,7 +1008,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             }
             break;
         case 5:
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 if (objdata->unk425 % 2) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                 } else {
@@ -1019,7 +1019,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             break;
         case 6:
             //SpellStone activation
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             } else if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {
                 mainSetBits(BIT_SpellStone_DIM_Activated, 1);

@@ -202,14 +202,14 @@ void SB_ShipHead_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
                 transform.roll = 0;
                 transform.pitch = 0;
                 transform.scale = 1.0f;
-                if (func_80031F6C(self, 2, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) {
+                if (objGetAttachPointWorldSpace(self, 2, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) {
                     if (rand_next(0, 3) == 0) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A3, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
                     if (rand_next(0, 3) == 0) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A6, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
-                    if ((func_80031F6C(self, 8, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) && (rand_next(0, 6) == 0)) {
+                    if ((objGetAttachPointWorldSpace(self, 8, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) && (rand_next(0, 6) == 0)) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A4, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
                 }

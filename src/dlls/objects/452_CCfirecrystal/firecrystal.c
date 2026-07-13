@@ -103,7 +103,7 @@ void CCfirecrystal_control(Object* self) {
         break;
     case FireCrystal_State_0_Collectable:
         //Handle being collected via player interaction
-        if (func_80032538(self)) {
+        if (objCheckPlayerInteract(self)) {
             mainSetBits(objSetup->gamebitCollected, 1);
             mainIncrementBits(BIT_CC_Fire_Crystal);
             objData->state = FireCrystal_State_3_Collected;

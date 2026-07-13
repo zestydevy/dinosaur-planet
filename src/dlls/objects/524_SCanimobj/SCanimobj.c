@@ -128,7 +128,7 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         
         if (self->unkE0 & 7) {
-            func_80031F6C(self, 0, &sTransform.transl.x, &sTransform.transl.y, &sTransform.transl.z, 0);
+            objGetAttachPointWorldSpace(self, 0, &sTransform.transl.x, &sTransform.transl.y, &sTransform.transl.z, 0);
         }
         
         if (self->unkE0 & 1) {

@@ -1396,8 +1396,8 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
         if (arg5 != 0) {
             dll_210_func_363C(player, data, arg1, arg2, arg3);
         }
-        func_80032238(player, 4, 2, &data->unk39C);
-        func_80031F6C(player, 9, &data->unk7EC.x, &data->unk7EC.y, &data->unk7EC.z, 0);
+        objGetAttachPointBoneWorldPositions(player, 4, 2, &data->unk39C);
+        objGetAttachPointWorldSpace(player, 9, &data->unk7EC.x, &data->unk7EC.y, &data->unk7EC.z, 0);
         if (sp80->unk34 & 8) {
             sp8C = data->unk850;
             if (sp8C != NULL && (data->flags & 4)) {
@@ -1412,11 +1412,11 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
             }
         }
         if (data->unk0.animState == PLAYER_ASTATE_Block_Pushing) {
-            func_80031F6C(player, 7, &data->unk680.unk1C, &data->unk680.unk20, &data->unk680.unk24, 0);
+            objGetAttachPointWorldSpace(player, 7, &data->unk680.unk1C, &data->unk680.unk20, &data->unk680.unk24, 0);
         }
         if (data->unk868 != NULL && data->unk868->unkE0 == 1) {
-            func_80031F6C(player, 6, &sp7C, &sp78, &sp74, 0);
-            func_80031F6C(player, 7, &sp70, &sp6C, &sp68, 0);
+            objGetAttachPointWorldSpace(player, 6, &sp7C, &sp78, &sp74, 0);
+            objGetAttachPointWorldSpace(player, 7, &sp70, &sp6C, &sp68, 0);
             sp7C = (sp7C + sp70) * 0.5f;
             sp78 = (sp78 + sp6C) * 0.5f;
             sp74 = (sp74 + sp68) * 0.5f;
@@ -1693,7 +1693,7 @@ void dll_210_func_41F4(Object* player, Player_Data* arg1) {
     }
 
     if (arg1->unk8A6 & 1) {
-        temp_v0 = func_80032170(player, 2);
+        temp_v0 = objGetAttachPointBoneMatrix(player, 2);
         sp3C.x = temp_v0->m[3][0];
         sp3C.y = temp_v0->m[3][1];
         sp3C.z = temp_v0->m[3][2];
@@ -1713,7 +1713,7 @@ void dll_210_func_41F4(Object* player, Player_Data* arg1) {
         sp48.transl.x = 0.0f;
         sp48.transl.y = -3.0f;
         sp48.transl.z = -50.0f;
-        func_80031F6C(player, 8, &sp48.transl.x, &sp48.transl.y, &sp48.transl.z, 1);
+        objGetAttachPointWorldSpace(player, 8, &sp48.transl.x, &sp48.transl.y, &sp48.transl.z, 1);
         gDLL_17_partfx->vtbl->spawn(player, PARTICLE_C9, &sp48, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sp3C);
     }
     arg1->unk8A6--;
@@ -4309,7 +4309,7 @@ s32 dll_210_func_B4E0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             if (player->animProgress > 0.5f) {
                 temp_a1->unkE0 = 1;
             } else {
-                player->srt.yaw += (func_80031DD8(player, temp_a1, 0) * (s32) arg2) >> 4;
+                player->srt.yaw += (objAngleToObjectXZ(player, temp_a1, 0) * (s32) arg2) >> 4;
             }
         }
         if (player->animProgress > 0.8f) {
@@ -7691,7 +7691,7 @@ s32 dll_210_func_16220(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             }
         } else {
             objdata->unk710 = 1.0f;
-            self->srt.yaw += (s32) (func_80031DD8(self, objdata->unk708, 0) * (s32) updateRate) >> 4;
+            self->srt.yaw += (s32) (objAngleToObjectXZ(self, objdata->unk708, 0) * (s32) updateRate) >> 4;
         }
         temp_v0_2 = objdata->unk708;
         temp_v0_2->srt.scale = temp_v0_2->def->scale * (0.5f + (objdata->unk710 * 0.5f));

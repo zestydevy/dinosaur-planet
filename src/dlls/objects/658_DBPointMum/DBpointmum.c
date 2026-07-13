@@ -190,7 +190,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     
     for (i = 0; i < 4; i++){
         if ((1 << i) & fxBitfield) {
-            func_80031F6C(self, i + 2, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z, 0);
+            objGetAttachPointWorldSpace(self, i + 2, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_676, &fxTransform, 0x210001, -1, 0);
         }
     }

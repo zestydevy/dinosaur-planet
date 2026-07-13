@@ -87,7 +87,7 @@ void NWtreebridge_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
     if (objdata->unkObj) {
-        func_80031F6C(self, 0, &x, &y, &z, 0);
+        objGetAttachPointWorldSpace(self, 0, &x, &y, &z, 0);
         objdata->unkObj->srt.transl.x = x;
         objdata->unkObj->srt.transl.y = y;
         objdata->unkObj->srt.transl.z = z;

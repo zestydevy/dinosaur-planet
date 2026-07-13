@@ -456,11 +456,11 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             func_80036FBC(0xC8, 0, 0, sBaddie->unk3E8);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 1, &sKTData->unk124.transl.x, &sKTData->unk124.transl.y, &sKTData->unk124.transl.z, 0);
-        func_80031F6C(self, 2, &sKTData->unk13C.transl.x, &sKTData->unk13C.transl.y, &sKTData->unk13C.transl.z, 0);
-        func_80031F6C(self, 3, &sKTData->unk154.transl.x, &sKTData->unk154.transl.y, &sKTData->unk154.transl.z, 0);
-        func_80031F6C(self, 0, &sKTData->unk10C.transl.x, &sKTData->unk10C.transl.y, &sKTData->unk10C.transl.z, 0);
-        memcpy(&sp48, func_80032170(self, 4), sizeof(MtxF));
+        objGetAttachPointWorldSpace(self, 1, &sKTData->unk124.transl.x, &sKTData->unk124.transl.y, &sKTData->unk124.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 2, &sKTData->unk13C.transl.x, &sKTData->unk13C.transl.y, &sKTData->unk13C.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 3, &sKTData->unk154.transl.x, &sKTData->unk154.transl.y, &sKTData->unk154.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 0, &sKTData->unk10C.transl.x, &sKTData->unk10C.transl.y, &sKTData->unk10C.transl.z, 0);
+        memcpy(&sp48, objGetAttachPointBoneMatrix(self, 4), sizeof(MtxF));
         sp48.m[3][1] = 0.0f;
         sp48.m[3][0] = 0.0f;
         sp48.m[3][2] = 0.0f;

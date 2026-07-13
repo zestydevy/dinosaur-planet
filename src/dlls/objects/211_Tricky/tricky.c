@@ -2457,10 +2457,10 @@ static void dll_211_func_7188(Object* self) {
 
     objData = self->data;
     for (i = 0; i < 4; i++) {
-        func_80031F6C(self, i + 1, &objData->unk384[i].x, &objData->unk384[i].y, &objData->unk384[i].z, 0);
+        objGetAttachPointWorldSpace(self, i + 1, &objData->unk384[i].x, &objData->unk384[i].y, &objData->unk384[i].z, 0);
     }
 
-    func_80031F6C(self, 5, &objData->unk3B4.x, &objData->unk3B4.y, &objData->unk3B4.z, 0);
+    objGetAttachPointWorldSpace(self, 5, &objData->unk3B4.x, &objData->unk3B4.y, &objData->unk3B4.z, 0);
 }
 
 // offset: 0x726C | func: 56

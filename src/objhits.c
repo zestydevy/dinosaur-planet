@@ -1,6 +1,7 @@
 #include "sys/objhits.h"
 #include "sys/asset_thread.h"
 #include "sys/dll.h"
+#include "sys/objlib.h"
 #include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -1205,7 +1206,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
     f32 dz;
     s32 thetaA;
 
-    func_80032804(obj, otherObj);
+    objInvokeTouchCallbacks(obj, otherObj);
     objhitInfo = obj->objhitInfo;
     otherObjhitInfo = otherObj->objhitInfo;
     objhitInfo->unk58 |= 8;

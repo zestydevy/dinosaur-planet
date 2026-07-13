@@ -502,13 +502,13 @@ void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 
     if (visibility == -1) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
-        func_80032238(self, 3, 4, objdata->unk978);
+        objGetAttachPointWorldSpace(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
+        objGetAttachPointBoneWorldPositions(self, 3, 4, objdata->unk978);
     }
     if ((objdata->unkA5A != 2) && (visibility != 0)) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
-        func_80032238(self, 3, 4, objdata->unk978);
+        objGetAttachPointWorldSpace(self, 2, &objdata->unk9B4, &objdata->unk9B8, &objdata->unk9BC, 0);
+        objGetAttachPointBoneWorldPositions(self, 3, 4, objdata->unk978);
         ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->movedata, 0);
         if (objdata->unkA60_1) {
             objs = obj_get_all_of_type(OBJTYPE_DR_Shackle, &numObjs);
@@ -713,8 +713,8 @@ void DRearthwalk_func_1DC8(Object* self, f32 scale) {
     f32 atZ;
     SRT srt;
 
-    sp4C = func_80032170(self, 2);
-    func_800321E4(self, 2, &atX, &atY, &atZ);
+    sp4C = objGetAttachPointBoneMatrix(self, 2);
+    objGetAttachPointLocalSpace(self, 2, &atX, &atY, &atZ);
     srt.yaw = 0;
     srt.pitch = 0;
     srt.roll = 0;

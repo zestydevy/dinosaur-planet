@@ -86,7 +86,7 @@ void fishingnet_func_DC(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
         objhitInfo->unk60 = 0;
         if (objdata->unk10 != NULL) {
             temp_v1 = objdata->unk10;
-            func_80031F6C(self, 0, &temp_v1->srt.transl.x, &temp_v1->srt.transl.y, &temp_v1->srt.transl.z, 0);
+            objGetAttachPointWorldSpace(self, 0, &temp_v1->srt.transl.x, &temp_v1->srt.transl.y, &temp_v1->srt.transl.z, 0);
             temp_v1->globalPosition.f[0] = temp_v1->srt.transl.f[0];
             temp_v1->globalPosition.f[1] = temp_v1->srt.transl.f[1];
             temp_v1->globalPosition.f[2] = temp_v1->srt.transl.f[2];

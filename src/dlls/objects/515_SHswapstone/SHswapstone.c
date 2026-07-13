@@ -144,7 +144,7 @@ void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
         return;
     }
     if (((DLL_210_Player*)player->dll)->vtbl->func34(player)) {
-        func_80031F6C(self, objdata->attachIdx, &x, &y, &z, 0);
+        objGetAttachPointWorldSpace(self, objdata->attachIdx, &x, &y, &z, 0);
         ((DLL_210_Player*)player->dll)->vtbl->func65(player, x, y, z);
         ((DLL_210_Player*)player->dll)->vtbl->base.print(player, gdl, mtxs, vtxs, pols, -1);
     }

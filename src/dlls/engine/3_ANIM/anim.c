@@ -3893,7 +3893,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
         st->unk4C.f[0] = 0.0f;
         st->unk4C.f[1] = 0.0f;
         st->unk4C.f[2] = 0.0f;
-        temp_v0 = func_80031DD8(actor, sp30, NULL);
+        temp_v0 = objAngleToObjectXZ(actor, sp30, NULL);
         if (temp_v0 >= 0) {
             var_a0 = temp_v0;
         } else {
@@ -3957,7 +3957,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
         sp50 = objExpr_func_80034804(actor, 0);
         if (sp50 != NULL) {
             st->unk7A &= ~ANIM7AFLAG_OVERRIDE_HEAD;
-            var_fv0 = (func_80031DD8(actor, sp30, NULL) * st->unk58) + (sp50[1] * (1.0f - st->unk58)) ;
+            var_fv0 = (objAngleToObjectXZ(actor, sp30, NULL) * st->unk58) + (sp50[1] * (1.0f - st->unk58)) ;
             if (var_fv0 < -arg4) {
                 var_fv0 = -arg4;
             } else {

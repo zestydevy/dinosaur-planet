@@ -135,13 +135,13 @@ void MagicPlant_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     //Position the MagicDust gem at the centre of the plant's petals
     if ((objData->magic != NULL) && (modelInstance->unk34 & 8) && (objData->magic->unkC4 != NULL)) {
         //Get the matrix for the end joint of the main joint chain
-        jointMtx = func_80032170(self, ATTACH_JOINT_ID);
+        jointMtx = objGetAttachPointBoneMatrix(self, ATTACH_JOINT_ID);
         if (jointMtx == NULL) {
             return;
         }
 
         //Get coords for the end joint of the main joint chain
-        func_800321E4(self, ATTACH_JOINT_ID, &x, &y, &z);
+        objGetAttachPointLocalSpace(self, ATTACH_JOINT_ID, &x, &y, &z);
 
         dustIdx = objSetup->dustIdx;
         srt.transl.x = x;

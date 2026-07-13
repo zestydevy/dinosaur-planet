@@ -60,7 +60,7 @@ void CCkrazoaTablet_control(Object *self) {
             objdata->unk0 |= 2;
             self->unkAF |= 8;
         } else {
-            if (func_80032538(self) != 0) {
+            if (objCheckPlayerInteract(self) != 0) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex + 3, obj_get_nearest_type_to(OBJTYPE_UseObj, self, NULL), -1);
             }
         }

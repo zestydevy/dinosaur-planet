@@ -149,8 +149,8 @@ void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         objdata = (BossDrakor_ActualData*)baddie->objdata;
         if (objdata->laser != NULL) {
-            func_80031F6C(self, 0, &sp4C, &sp48, &sp44, 0);
-            func_80031F6C(self, 1, &sp40, &sp3C, &sp38, 0);
+            objGetAttachPointWorldSpace(self, 0, &sp4C, &sp48, &sp44, 0);
+            objGetAttachPointWorldSpace(self, 1, &sp40, &sp3C, &sp38, 0);
             sp34 = sp40 - sp4C;
             sp30 = sp3C - sp48;
             sp2C = sp38 - sp44;

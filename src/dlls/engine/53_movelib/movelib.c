@@ -55,7 +55,7 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
     } else {
         sp38 = 30.0f;
     }
-    sp3E = func_80031DD8(arg0, arg1, NULL);
+    sp3E = objAngleToObjectXZ(arg0, arg1, NULL);
     sp3C = objExpr_func_800334A4(arg0, arg1, &arg3->headRefPoint, 
                          (arg3->unk4A9 & 8) ? NULL : arg3->unk1C, 
                          arg3->unk454, sp38, 8, arg3->unk4A4);
@@ -219,7 +219,7 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
                 }
             }
             if (lookat != NULL) {
-                sp5A = func_80031DD8(obj, lookat, NULL);
+                sp5A = objAngleToObjectXZ(obj, lookat, NULL);
             }
             if (data->unk4A9 & 0x10) {
                 objExpr_func_80034D94(0, 1);
@@ -296,8 +296,8 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
 
     if (arg1->unk499 != 0) {
         objExpr_func_800332A4(arg0, objExpr_func_800349B0(), arg1->jointCount);
-        func_80031F6C(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
-        func_80031F6C(arg0, arg2 + 1, &sp4C.f[0], &sp4C.f[1], &sp4C.f[2], 0);
+        objGetAttachPointWorldSpace(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
+        objGetAttachPointWorldSpace(arg0, arg2 + 1, &sp4C.f[0], &sp4C.f[1], &sp4C.f[2], 0);
         arg1->unk4.x = ((sp4C.f[0] + (3.0f * sp3C.x)) * 0.25f);
         arg1->unk4.y = sp3C.y;
         arg1->unk4.z = ((sp4C.f[2] + (3.0f * sp3C.z)) * 0.25f);
@@ -310,7 +310,7 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
         rotate_vec3((const SRT*)sp38, arg1->unk4.f);
         arg1->unk499 = 0;
     }
-    func_80031F6C(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
+    objGetAttachPointWorldSpace(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
     arg1->headRefPoint.x = sp3C.x;
     arg1->headRefPoint.y = sp3C.y;
     arg1->headRefPoint.z = sp3C.z;

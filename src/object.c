@@ -1019,7 +1019,7 @@ void objFreeObject(Object *obj) {
 
     if (!(obj->stateFlags & OBJSTATE_DESTROYED)) {
         if (obj->unkD9 != 0) {
-            func_8003273C(obj);
+            objRemoveTouchCallbacksForObj(obj);
         }
 
         if (obj->stateFlags & OBJSTATE_STANDALONE) {

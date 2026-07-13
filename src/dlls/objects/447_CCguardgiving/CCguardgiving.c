@@ -96,7 +96,7 @@ void CCguardgiving_control(Object *self) {
 
     switch (objdata->state) {
     case STATE_Waiting_for_Bribe:
-        if (func_80032538(self)) {
+        if (objCheckPlayerInteract(self)) {
             //When talked to, play one of two different chat sequences
             gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
             if (objdata->objectSeqIndex == SeqIndex_Chat_Bribe_Wanted_1) {
@@ -127,7 +127,7 @@ void CCguardgiving_control(Object *self) {
         }
         break;
     case STATE_Waiting_to_Sell_Map:
-        if (func_80032538(self)) {
+        if (objCheckPlayerInteract(self)) {
             //Play map sale chat sequence when talked to
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Chat_Map, self, -1);
         } else if (gDLL_1_cmdmenu->vtbl->get_page_category() == CMDMENU_CATEGORY_3_Items) {
@@ -156,7 +156,7 @@ void CCguardgiving_control(Object *self) {
         break;
     case STATE_Finished:
         //Play "restating" sequence when talked to
-        if (func_80032538(self)) {
+        if (objCheckPlayerInteract(self)) {
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Chat_End, self, -1);
         }
         break;

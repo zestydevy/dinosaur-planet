@@ -684,7 +684,7 @@ s32 collectable_get_area_value(Object* self) {
 
     objdata = self->data;
     if (objdata->areaValue == -2) {
-        objdata->areaValue = func_80031BBC(
+        objdata->areaValue = objGetAreaValueAtPoint(
             self->globalPosition.x, 
             self->globalPosition.y, 
             self->globalPosition.z

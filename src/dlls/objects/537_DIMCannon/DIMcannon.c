@@ -285,7 +285,7 @@ void dll_537_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         objData = self->data;
         if (visibility) {
             draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-            func_80031F6C(self, 1, &objData->unk14.x, &objData->unk14.y, &objData->unk14.z, 0);
+            objGetAttachPointWorldSpace(self, 1, &objData->unk14.x, &objData->unk14.y, &objData->unk14.z, 0);
         }
     } else if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
