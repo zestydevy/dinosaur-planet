@@ -68,7 +68,7 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
         self->srt.transl.y = temp_v0_2->pos.y;
         self->srt.transl.z = temp_v0_2->pos.z;
         self->shadow->flags |= (OBJ_SHADOW_FLAG_20000 | OBJ_SHADOW_FLAG_USE_OBJ_YAW);
-        obj_init_mesg_queue(self, 1);
+        objInitMesgQueue(self, 1);
     }
 }
 
@@ -91,7 +91,7 @@ void CCgrub_control(Object* self) {
     objdata = (CCgrub_Data*)self->data;
     objsetup = (CCgrub_Setup*)self->setup;
 
-    while (obj_recv_mesg(self, &sp5C, NULL, NULL) != 0) {
+    while (objRecvMesg(self, &sp5C, NULL, NULL) != 0) {
         if (sp5C == 0x7000B) {
             temp_v0 = objGetPlayer();
             sp54 = ((DLL_210_Player*)temp_v0->dll)->vtbl->func66(temp_v0, 16);
@@ -215,7 +215,7 @@ void CCgrub_control(Object* self) {
     }
     if (self->unkAF & 1) {
         // @bug: the gamebit used here is also used for disabling particles!
-        obj_send_mesg(objGetPlayer(), 0x7000A, self, (void* )BIT_5);
+        objSendMesg(objGetPlayer(), 0x7000A, self, (void* )BIT_5);
         if (self->curModAnimId != 0) {
             objAnimSet(self, 0, 0.0f, 0);
             objdata->unk110 = 0.005f;

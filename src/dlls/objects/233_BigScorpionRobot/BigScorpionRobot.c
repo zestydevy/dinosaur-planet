@@ -495,7 +495,7 @@ static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 upd
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
         camUseShake();
         camSetShakeOffset(6.0f);
-        obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
+        objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
     }
     if (self->opacity >= (gUpdateRate * 3)) {
         self->opacity -= (gUpdateRate * 3);

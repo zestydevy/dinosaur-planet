@@ -573,7 +573,7 @@ static s32 ScorpionRobot_state_7_dead(Object* self, ObjFSA_Data* fsa, f32 update
             objFreeObject(self);
         }
         // Tell player to break z-lock
-        obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
+        objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
     }
 
     if (self->opacity >= (gUpdateRate * 3)) {

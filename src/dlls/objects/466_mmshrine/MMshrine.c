@@ -70,7 +70,7 @@ void MMshrine_setup(Object* self, Shrine_Setup* setup, s32 arg2) {
     objdata->unk10 = 0;
     objdata->unk2 = 0;
     self->animCallback = dll_466_func_C50;
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
     mainSetBits(BIT_DB_Entered_Shrine_3, 1);
     mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
     mainSetBits(BIT_DB_Entered_Shrine_1, 1);
@@ -389,7 +389,7 @@ static void MMshrine_func_1140(Object *self) {
     objdata = self->data;
     outMesgArg = 0;
 
-    while (obj_recv_mesg(self, &message, &sp54, &outMesgArg)){
+    while (objRecvMesg(self, &message, &sp54, &outMesgArg)){
         switch (message) {
             case 0x30005:
                 objdata->unk6 = -3;

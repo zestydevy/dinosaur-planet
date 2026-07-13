@@ -57,7 +57,7 @@ void krazoatext_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void krazoatext_setup(Object* self, s32 arg1, s32 arg2) {  
-    obj_init_mesg_queue(self, 2);
+    objInitMesgQueue(self, 2);
     krazoatext_unload_all_glyph_textures(self, self->data);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -86,7 +86,7 @@ void krazoatext_control(Object* self) {
         objdata->stringLoaded = TRUE;
     }
 
-    while (obj_recv_mesg(self, &message, 0, 0)) {
+    while (objRecvMesg(self, &message, 0, 0)) {
     }
 
     if (objdata->state != 0) {

@@ -57,7 +57,7 @@ void DBSHshrine_setup(Object* self, DBSHshrine_Setup* objSetup, s32 arg2) {
 
     self->animCallback = DBSHshrine_anim_callback;
 
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
 
     mainSetBits(BIT_DB_Entered_Shrine_3, 1);
     mainSetBits(BIT_15F, 0);
@@ -399,7 +399,7 @@ void DBSHshrine_handle_messages(Object* self) {
     objData = self->data;
     messageArg = 0;
     
-    while (obj_recv_mesg(self, &message, &sender, (void*)&messageArg) != 0) {
+    while (objRecvMesg(self, &message, &sender, (void*)&messageArg) != 0) {
         switch (message) {
         case 0x30005:
             if (vec3_distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {

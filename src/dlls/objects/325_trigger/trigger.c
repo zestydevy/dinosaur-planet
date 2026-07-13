@@ -486,8 +486,8 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                     } else {
                         mesgID = 0x81;
                     }
-                    obj_send_mesg_many_nearby(OBJ_Swoop,           6000.0f, 0, self, mesgID, 0);
-                    obj_send_mesg_many_nearby(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, mesgID, 0);
+                    objSendMesgManyNearby(OBJ_Swoop,           6000.0f, 0, self, mesgID, 0);
+                    objSendMesgManyNearby(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, mesgID, 0);
                 }
                 break;
             case 8: {

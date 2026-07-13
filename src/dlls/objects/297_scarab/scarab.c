@@ -71,7 +71,7 @@ void scarab_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
             break;
     }
 
-    obj_init_mesg_queue(self, 2);
+    objInitMesgQueue(self, 2);
 }
 
 // offset: 0x174 | func: 1 | export: 1
@@ -101,7 +101,7 @@ void scarab_control(Object* self) {
 
     //Handle flags
     if (objData->flags & Scarab_FLAG_Wait_for_Message) {
-        while (obj_recv_mesg(self, &messageID, 0, 0)){
+        while (objRecvMesg(self, &messageID, 0, 0)){
             if (messageID == 0x7000B) {
                 scarab_collect(self, player, objData);
                 objData->flags &= ~Scarab_FLAG_Wait_for_Message;
@@ -341,7 +341,7 @@ void scarab_control(Object* self) {
             if (!mainGetBits(BIT_Tutorial_Collected_Scarab)) {
                 gDLL_3_Animation->vtbl->set_variable_obj(dSequenceIDs[objData->scarabTypeIndex], 0, 0);
                 messageID = 0;
-                obj_send_mesg(player, 0x7000A, self, 0);
+                objSendMesg(player, 0x7000A, self, 0);
                 mainSetBits(BIT_Tutorial_Collected_Scarab, 1);
                 objData->flags |= 1;
             } else {
@@ -369,7 +369,7 @@ void scarab_control(Object* self) {
             if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 20.0f) {
                 //Hurt player (unless special Rainbow Scarab immunity gamebit is set!)
                 if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) == 0) {
-                    obj_send_mesg(player, 0x60004, self, (void*)1);
+                    objSendMesg(player, 0x60004, self, (void*)1);
                 }
 
                 //Jolt backwards slightly

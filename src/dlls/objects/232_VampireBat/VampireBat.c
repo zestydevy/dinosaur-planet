@@ -366,7 +366,7 @@ static s32 dll_232_func_EC8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     self->srt.roll += bat->unk26;
     objMove(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
     if (bat->unk1C <= 0.0f) {
-        obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000U, self);
+        objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000U, self);
         objFreeObject(self);
         return 5;
     }

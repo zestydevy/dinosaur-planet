@@ -30,7 +30,7 @@ void SB_ShipHead_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SB_ShipHead_setup(Object *self, ObjSetup *setup, s32 arg2) {
     obj_add_object_type(self, OBJTYPE_Baddie);
-    obj_init_mesg_queue(self, 10);
+    objInitMesgQueue(self, 10);
 }
 
 // offset: 0x7C | func: 1 | export: 1
@@ -87,7 +87,7 @@ void SB_ShipHead_control(Object *self) {
             }
         }
     }
-    if (obj_recv_mesg(self, &outMesgID, &outSender, &outMesgArg)) {
+    if (objRecvMesg(self, &outMesgID, &outSender, &outMesgArg)) {
         switch (outMesgID) {
         case 0x130001:
             dll = dllLoadDeferred(DLL_ID_194, 1);

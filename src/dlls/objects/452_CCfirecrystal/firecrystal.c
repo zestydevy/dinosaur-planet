@@ -73,7 +73,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         objData->flameObjects[3] = CCfirecrystal_create_flame(self, -56, 64, 24);
     }
     
-    obj_init_mesg_queue(self, 1);
+    objInitMesgQueue(self, 1);
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -91,7 +91,7 @@ void CCfirecrystal_control(Object* self) {
     
     switch (objData->state) {
     case FireCrystal_State_3_Collected:
-        while (obj_recv_mesg(self, &message, 0, 0)){
+        while (objRecvMesg(self, &message, 0, 0)){
             switch (message) {
             case 0x7000B:
                 objData->state = FireCrystal_State_1_Finished;
@@ -111,7 +111,7 @@ void CCfirecrystal_control(Object* self) {
             self->objhitInfo->unk58 = 0x100;
 
             //Have the player scoop up the item, and play a tutorial cutscene if needed
-            obj_send_mesg(
+            objSendMesg(
                 objGetPlayer(), 
                 0x7000A, 
                 self, 

@@ -43,7 +43,7 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
     objdata = self->data;
 
     obj_add_object_type(self, OBJTYPE_Collectable);
-    obj_init_mesg_queue(self, 2);
+    objInitMesgQueue(self, 2);
 
     self->srt.yaw = objsetup->yaw << 8;
     self->srt.pitch = objsetup->pitch << 8;
@@ -126,7 +126,7 @@ void SCcollectables_control(Object* self) {
     }
     
     //Check for collection message (set gamebits and hide self)
-    while (obj_recv_mesg(self, &outMessage, &messageSender, 0)){
+    while (objRecvMesg(self, &outMessage, &messageSender, 0)){
         if (outMessage == 0x7000B) {
             SCcollectables_collect(self);
         }
@@ -177,7 +177,7 @@ void SCcollectables_control(Object* self) {
         if ((distance < objdata->interactionRadius) && (objdata->delayInteractionTimer == 0)) {
             outMessage = collectableDef->collectMessage << 0x10;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
-                obj_send_mesg(player, 0x7000A, self, (void*)outMessage);
+                objSendMesg(player, 0x7000A, self, (void*)outMessage);
             }
         }
         objdata->distanceToPlayer = distance;

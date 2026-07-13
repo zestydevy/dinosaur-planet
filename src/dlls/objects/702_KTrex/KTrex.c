@@ -923,7 +923,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
         if (fsa->hitpoints <= 0) {
             fsa->hitpoints = 0;
         }
-        obj_send_mesg(hitBy, 0xE0001, self, NULL);
+        objSendMesg(hitBy, 0xE0001, self, NULL);
     }
 }
 
@@ -1103,7 +1103,7 @@ static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate)
         self->unkAF |= 8;
         fsa->unk33D = 0;
         fsa->unk4.mode = 0;
-        obj_send_mesg(objGetPlayer(), 0xE0000, self, NULL);
+        objSendMesg(objGetPlayer(), 0xE0000, self, NULL);
     }
     return 0;
 }

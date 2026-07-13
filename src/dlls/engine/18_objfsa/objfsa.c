@@ -161,7 +161,7 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
     }
     if (data->target != NULL && sp2F != data->unk341) {
         mesgArg = (void*)(s32)data->unk341;
-        obj_send_mesg(data->target, 11, obj, mesgArg);
+        objSendMesg(data->target, 11, obj, mesgArg);
     }
 }
 

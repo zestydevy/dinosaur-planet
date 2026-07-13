@@ -292,7 +292,7 @@ void dll_331_control(Object* self) {
         gDLL_17_partfx->vtbl->spawn(self, 0x5F3, NULL, 0x10001, -1, NULL);
         if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
-            obj_send_mesg(player, 0x60004, self, (void*)1);
+            objSendMesg(player, 0x60004, self, (void*)1);
             objFreeObject(self);
         }
         if (self->unkE0 <= 0) {
@@ -307,7 +307,7 @@ void dll_331_control(Object* self) {
         gDLL_17_partfx->vtbl->spawn(self, 0x39D, NULL, 0x10001, -1, NULL);
         if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
-            obj_send_mesg(player, 0x60004, self, (void*)1);
+            objSendMesg(player, 0x60004, self, (void*)1);
             objFreeObject(self);
         }
         if ((self->unkE0 <= 0) != 0) {

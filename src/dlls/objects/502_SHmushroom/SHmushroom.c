@@ -107,7 +107,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	objData->hopSpeed += 20.0f;
 
 	//Set up message queue
-	obj_init_mesg_queue(self, 1);
+	objInitMesgQueue(self, 1);
 
 	//Optionally set the mushroom to follow curves (only affects specific mushrooms)
 	if ((setup->index == 4) || //White Mushroom around lily pond in SwapStone Hollow well
@@ -173,7 +173,7 @@ void SHmushroom_control(Object* self) {
 		   If the mushroom unloads before the message is received, the mushroom will be missed permanently!
 		   This can cause a softlock while saving Queen EarthWalker in SwapStone Hollow.
 		*/
-		while (obj_recv_mesg(self, &outMesgID, NULL, NULL)) {
+		while (objRecvMesg(self, &outMesgID, NULL, NULL)) {
 			if (outMesgID == 0x7000B) {
 				if (self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) {
 					dinoFoodBag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 16);
@@ -609,7 +609,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 
 		   @bug: can appear when collecting White Mushrooms before Blue Mushrooms (with no anim object set)
 		*/
-		obj_send_mesg(player,
+		objSendMesg(player,
 			0x7000A,
 			self,
 			(void*)BIT_Tutorial_Collected_Blue_Mushroom

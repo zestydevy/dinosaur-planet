@@ -39,7 +39,7 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     gDLL_27->vtbl->setup_terrain_collider(&objdata->collision, 1, &data_collisionPoint, &objdata->collisionRadius, &colliderArg);
     func_800267A4(self);
     objdata->collision.mode = 0;
-    obj_init_mesg_queue(self, 1);
+    objInitMesgQueue(self, 1);
     mainSetBits(BIT_Tricky_Ball_Unlocked, 0);
 }
 
@@ -149,7 +149,7 @@ void SidekickToy_control(Object* self) {
     }
     
     //Check for message from player DLL, sent when ball collected
-    while (obj_recv_mesg(self, &receivedMessage, 0, 0)){
+    while (objRecvMesg(self, &receivedMessage, 0, 0)){
         if (receivedMessage == 0x7000B) {
             objdata->timer = 0.0f;
             objdata->state = TOY_STATE_4_Vanish;
@@ -175,7 +175,7 @@ void SidekickToy_control(Object* self) {
         }
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             ((DLL_Unknown*)gDLL_3_Animation)->vtbl->func[30].withThreeArgs(0x5BA, 0, 0);
-            obj_send_mesg(objGetPlayer(), 0x7000A, self, (void*)BIT_ALWAYS_1);
+            objSendMesg(objGetPlayer(), 0x7000A, self, (void*)BIT_ALWAYS_1);
             objdata->state = TOY_STATE_3_Collected;
         }
         break;

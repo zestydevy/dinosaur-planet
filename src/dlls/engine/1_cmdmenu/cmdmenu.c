@@ -1865,7 +1865,7 @@ static void cmdmenu_tick_inventory_page(void) {
             
             //Items/Spells
             if (isSidekickMenu == FALSE) {
-                obj_send_mesg(player, pageMsg, NULL, (void*)usedGamebit);
+                objSendMesg(player, pageMsg, NULL, (void*)usedGamebit);
                 
                 sUsedItemGamebitID = usedGamebit;
                 sUsedItemSoundType = sMenuItemUseSounds[sMenuSelectedItemIdx];

@@ -82,7 +82,7 @@ void dll_537_dtor(void *dll) { }
 void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
     DLL537_Data* objData;
 
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
 
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1314(self, (DIMCannonBall_Setup*)objSetup);

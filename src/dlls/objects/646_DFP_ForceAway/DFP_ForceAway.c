@@ -149,10 +149,10 @@ static void DFP_ForceAway_type0_control(Object* self) {
         }
         if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
             mainSetBits(BIT_468, 1);
-            obj_send_mesg(player, 0x60004, self, NULL);
+            objSendMesg(player, 0x60004, self, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5ED, &partSRT, PARTFXFLAG_2, -1, NULL);
         } else {
-            obj_send_mesg(player, 0x60004, self, (void* )1);
+            objSendMesg(player, 0x60004, self, (void* )1);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5ED, &partSRT, PARTFXFLAG_2, -1, NULL);
         }
         gDLL_6_AMSFX->vtbl->play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -271,7 +271,7 @@ static void DFP_ForceAway_type2_control(Object* self) {
             gDLL_17_partfx->vtbl->spawn(player, PARTICLE_397, NULL, PARTFXFLAG_2, -1, NULL);
         } else {
             mainSetBits(BIT_468, 1);
-            obj_send_mesg(player, 0x60004, self, (void* )2);
+            objSendMesg(player, 0x60004, self, (void* )2);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_399, &partSRT, PARTFXFLAG_2, -1, NULL);
             gDLL_6_AMSFX->vtbl->play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
 

@@ -26,7 +26,7 @@ void FEseqobject_dtor(void *dll) { }
 void FEseqobject_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->srt.yaw = 0;
     self->animCallback = FEseqobject_anim_callback;
-    obj_init_mesg_queue(self, 10);
+    objInitMesgQueue(self, 10);
 }
 
 // offset: 0x6C | func: 1 | export: 1
@@ -107,7 +107,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
             break;
         }
     }
-    while (obj_recv_mesg(self, &mesgID, &mesgSender, &mesg)) {
+    while (objRecvMesg(self, &mesgID, &mesgSender, &mesg)) {
         if (!(animObjData->unk9D & 0x80)) {
             switch (mesgID) {
             case 0xF000B:
@@ -120,7 +120,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    obj_send_mesg(receiver, 0x130001, self, NULL);
+                    objSendMesg(receiver, 0x130001, self, NULL);
                 }
                 break;
             case 0xF000C:
@@ -133,7 +133,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    obj_send_mesg(receiver, 0x130002, self, NULL);
+                    objSendMesg(receiver, 0x130002, self, NULL);
                 }
                 break;
             case 0xF000D:
@@ -146,7 +146,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    obj_send_mesg(receiver, 0x130003, self, NULL);
+                    objSendMesg(receiver, 0x130003, self, NULL);
                 }
                 break;
             }

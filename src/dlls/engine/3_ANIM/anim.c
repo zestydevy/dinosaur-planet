@@ -2529,13 +2529,13 @@ static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, 
             if (actor != animObj) {
                 switch (_data_AC[var_s0]) {
                 case 1:
-                    obj_send_mesg_many(0, OBJMSG_SEND_ALL, animObj, sObjMesgIDs[var_s0], animObj);
+                    objSendMesgMany(0, OBJMSG_SEND_ALL, animObj, sObjMesgIDs[var_s0], animObj);
                     break;
                 case 2:
-                    obj_send_mesg_many_nearby(0, 600.0f, OBJMSG_SEND_ALL, animObj, sObjMesgIDs[var_s0], animObj);
+                    objSendMesgManyNearby(0, 600.0f, OBJMSG_SEND_ALL, animObj, sObjMesgIDs[var_s0], animObj);
                     break;
                 default:
-                    obj_send_mesg(actor, sObjMesgIDs[var_s0], animObj, NULL);
+                    objSendMesg(actor, sObjMesgIDs[var_s0], animObj, NULL);
                     break;
                 }
             }

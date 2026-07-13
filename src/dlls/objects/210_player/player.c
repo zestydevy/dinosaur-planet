@@ -494,7 +494,7 @@ void dll_210_setup(Object* player, u32 arg1) {
     obj_add_object_type(player, OBJTYPE_Player);
     obj_add_object_type(player, OBJTYPE_39);
     objSetPriority(player, OBJPRIORITY_PLAYER);
-    obj_init_mesg_queue(player, 20);
+    objInitMesgQueue(player, 20);
     player->setup = NULL;
     player->animCallback = dll_210_func_4910;
     _bss_1A4 = 0;
@@ -948,7 +948,7 @@ void dll_210_func_1CA8(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
         return;
     }
     if (fsa->target != NULL) {
-        obj_send_mesg(fsa->target, 0xAU, player, NULL);
+        objSendMesg(fsa->target, 0xAU, player, NULL);
         arg1->unk8A9 = 0;
     }
     fsa->target = NULL;
@@ -970,7 +970,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
     s32 camDLLID;
 
     messageArgument = NULL;
-    while (obj_recv_mesg(player, &message, &sp8C, (void **)&messageArgument)) {
+    while (objRecvMesg(player, &message, &sp8C, (void **)&messageArgument)) {
         switch (message) {
         case 0x80002:
             if (messageArgument == BIT_Spell_Projectile) {
@@ -1055,7 +1055,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             if (messageArgument > 0) {
                 if (mainGetBits(messageArgument) != 0) {
                     // Not the first time this item was collected, skip sequence
-                    obj_send_mesg(sp8C, 0x7000BU, player, NULL);
+                    objSendMesg(sp8C, 0x7000BU, player, NULL);
                     if (fsa->animState != PLAYER_ASTATE_Collecting) {
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Collecting);
                     }
@@ -2298,7 +2298,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             }
             if (arg2->lastMessage == 1) {
                 gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 3, 0, 0);
-                obj_send_mesg(objdata->unk708, 0x7000B, arg0, NULL);
+                objSendMesg(objdata->unk708, 0x7000B, arg0, NULL);
                 objdata->unk708 = NULL;
             }
         }
@@ -2351,7 +2351,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
             } else {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             }
-            obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000U, player);
+            objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000U, player);
         }
     }
     player->objhitInfo->unk5F = 0;
@@ -3828,7 +3828,7 @@ static void dll_210_func_9F1C(Object* player, s32 arg1) {
     func_800267A4(player);
     menuSet(9);
     menu_func_80010038(1);
-    obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000, player);
+    objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000, player);
 }
 
 // offset: 0xA018 | func: 53

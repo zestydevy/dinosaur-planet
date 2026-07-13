@@ -243,7 +243,7 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
     //Zap player
     if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
-        obj_send_mesg(player, 0x60005, self, 0);
+        objSendMesg(player, 0x60005, self, 0);
     }
     
     //Enable object groups
@@ -317,7 +317,7 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
     //Zap player
     if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
-        obj_send_mesg(player, 0x60005, self, 0);
+        objSendMesg(player, 0x60005, self, 0);
     }
     
     //Enable object groups
@@ -386,7 +386,7 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
     //Zap player
     if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
-        obj_send_mesg(player, 0x60005, self, 0);
+        objSendMesg(player, 0x60005, self, 0);
     }
 
     //Enable object groups

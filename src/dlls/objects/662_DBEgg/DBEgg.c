@@ -87,7 +87,7 @@ void dll_662_func_1670(Object* self) {
     mainSetBits(BIT_DB_Picked_Up_Egg, 1U);
     self->unkAF |= 8;
     mainSetBits((s32) setup->unk1C, 1U);
-    obj_send_mesg(sp2C, 0x7000AU, self, (void* )0x10000);
+    objSendMesg(sp2C, 0x7000AU, self, (void* )0x10000);
 }
 
 // offset: 0x1744 | func: 10

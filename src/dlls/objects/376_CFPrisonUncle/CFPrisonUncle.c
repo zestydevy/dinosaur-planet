@@ -54,7 +54,7 @@ void dll_376_dtor(void *dll) { }
 void dll_376_setup(Object* self, ObjSetup* setup, s32 arg2) {
     DLL376_Data* objData;
 
-    obj_init_mesg_queue(self, 1);
+    objInitMesgQueue(self, 1);
     objData = self->data;
     self->animCallback = (void*)&dll_376_func_8F4;
     objData->unk4C[0] = 0x1D0;
@@ -84,7 +84,7 @@ void dll_376_control(Object* self) {
         return;
     }
     
-    if (obj_recv_mesg(self, &messageID, &messageSender, &messageArg)) {
+    if (objRecvMesg(self, &messageID, &messageSender, &messageArg)) {
         objData->unk0 = NULL;
     }
     

@@ -59,7 +59,7 @@ void DFShrine_setup(Object* self, DFShrine_Setup* setup, s32 arg2) {
     objdata->stateCooldown = 0;
     objdata->sharpClawDefeated = 0;
     self->animCallback = DFShrine_anim_callback;
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
     mainSetBits(BIT_DB_Entered_Shrine_3, 1);
     mainSetBits(BIT_125, 0);
     mainSetBits(BIT_DB_Entered_Shrine_1, 1);
@@ -425,7 +425,7 @@ static void DFShrine_process_obj_messages(Object* self) {
     DFShrine_Data* objdata = self->data;
     
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, &sender, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
         case 0x30005:
             objdata->whisperVolumeRate = -3;

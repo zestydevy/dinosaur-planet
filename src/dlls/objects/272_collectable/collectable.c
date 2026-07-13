@@ -76,7 +76,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
     obj_add_object_type(self, OBJTYPE_Collectable);
-    obj_init_mesg_queue(self, 2);
+    objInitMesgQueue(self, 2);
 
     self->srt.yaw = objSetup->yaw << 8;
     self->srt.pitch = objSetup->pitch << 8;
@@ -247,7 +247,7 @@ void collectable_control(Object* self) {
     }
 
     //Check for collection message
-    while (obj_recv_mesg(self, &outMessage, &messageSender, 0)) {
+    while (objRecvMesg(self, &outMessage, &messageSender, 0)) {
         if (outMessage == 0x7000B) {
             objdata->timerDestroy = 180.0f;
             collectable_collect(self);
@@ -320,7 +320,7 @@ void collectable_control(Object* self) {
             if (mainGetBits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
                 gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 outMessage = 0;
-                obj_send_mesg(
+                objSendMesg(
                     player, 
                     0x7000A, 
                     self, 
@@ -345,7 +345,7 @@ void collectable_control(Object* self) {
             messageArg = objsetup->animMessage;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
                 gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
-                obj_send_mesg(
+                objSendMesg(
                     player,
                     0x7000A,
                     self,
@@ -637,10 +637,10 @@ void collectable_collect(Object* self) {
         }
         break;
     case Collectable_Type_SidekickA:
-        obj_send_mesg(sidekick, 0x70004, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, 0x70004, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     case Collectable_Type_SidekickB:
-        obj_send_mesg(sidekick, 0x70005, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, 0x70005, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     case Collectable_Type_Magic:
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, collectableDef->amountRestored);
@@ -648,7 +648,7 @@ void collectable_collect(Object* self) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         break;
     case Collectable_Type_Upgrade:
-        obj_send_mesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     }
 

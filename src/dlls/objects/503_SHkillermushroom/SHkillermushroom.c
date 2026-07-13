@@ -301,7 +301,7 @@ void SHkillermushroom_control(Object* self) {
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
                 //Send message to player, displaying Red Mushroom's tutorial box
                 //@bug: should use unique Red Mushroom tutorial gamebit, not the Blue Mushroom gamebit?
-                obj_send_mesg(player,
+                objSendMesg(player,
                     0x7000A,
                     self,
                     (void*)BIT_Tutorial_Collected_Blue_Mushroom

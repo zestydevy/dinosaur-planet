@@ -74,7 +74,7 @@ void CFbarrel_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     gDLL_54_pickup->vtbl->setup(self, pickup, 90);
     obj_add_object_type(self, OBJTYPE_Barrel);
     obj_add_object_type(self, OBJTYPE_24);
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
     self->srt.yaw = setup->unk18 << 8;
     self->unkE0 = 0;
     objdata->unk38 = 0;
@@ -520,7 +520,7 @@ static void CFbarrel_func_1848(Object* self) {
 
     mesgID = 0;
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, NULL, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, NULL, &mesgArg) != 0) {
         switch (mesgID) {
         case 15:
             CFbarrel_func_1948(self, 1);

@@ -714,7 +714,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
             gDLL_6_AMSFX->vtbl->stop(*arg7);
             *arg7 = 0;
         }
-        obj_send_mesg(sp50, 0xE0001, obj, NULL);
+        objSendMesg(sp50, 0xE0001, obj, NULL);
     }
     return hitType;
 }
@@ -726,13 +726,13 @@ s32 BaddieControl_func_1D88(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s1
     u32 mesgArg;
 
     mesgArg = NULL;
-    while (obj_recv_mesg(obj, &mesgID, &sender, (void*)&mesgArg) != 0) {
+    while (objRecvMesg(obj, &mesgID, &sender, (void*)&mesgArg) != 0) {
         switch (mesgID) {
             case 0x140001:
                 gDLL_6_AMSFX->vtbl->play(obj, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
                 break;
             case 0x4:
-                obj_send_mesg(sender, 5, obj, NULL);
+                objSendMesg(sender, 5, obj, NULL);
                 break;
             case 0xE0000:
                 if (sender == fsa->target) {
@@ -793,7 +793,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     sp3C = (s32) arg6;
     if ((sp38 == 0) && !(arg6 & 0x20)) {
         obj_add_object_type(obj, OBJTYPE_Baddie);
-        obj_init_mesg_queue(obj, 4);
+        objInitMesgQueue(obj, 4);
     }
     gDLL_18_objfsa->vtbl->func0(obj, &baddie->fsa, arg3, arg4);
     baddie->fsa.flags = 0;

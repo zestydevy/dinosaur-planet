@@ -9,7 +9,7 @@ void FElevControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void FElevControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    obj_init_mesg_queue(self, 2);
+    objInitMesgQueue(self, 2);
 }
 
 // offset: 0x5C | func: 1 | export: 1

@@ -60,7 +60,7 @@ void dll_488_setup(Object *self, WGSH_Shrine_Setup *setup, s32 arg2) {
     objdata->unk2 = 0;
     objdata->unk12 = 0;
     self->animCallback = dll_488_func_C90;
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
     mainSetBits(BIT_DB_Entered_Shrine_3, 1);
     mainSetBits(BIT_1D2, 0);
     mainSetBits(BIT_DB_Entered_Shrine_1, 1);
@@ -362,7 +362,7 @@ static void dll_488_func_FEC(Object *self) {
 
     objdata = self->data;
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, &sender, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
         case 0x30005:
             objdata->unk6 = -3;

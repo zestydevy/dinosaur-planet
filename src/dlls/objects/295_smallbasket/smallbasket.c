@@ -246,7 +246,7 @@ void smallbasket_control(Object* self) {
                 if (objData->beingCarried) {
                     objData->unk10 = 0;
                     objData->unk0 = 0;
-                    obj_send_mesg(
+                    objSendMesg(
                         player, 
                         0x100010,
                         self, 

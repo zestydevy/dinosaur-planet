@@ -58,7 +58,7 @@ void CCSH_Shrine_setup(Object* self, CCSH_Shrine_Setup* setup, s32 reset) {
     objdata->unk2 = 0;
     objdata->unkE = 0;
     self->animCallback = CCSH_Shrine_anim_callback;
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
     mainSetBits(BIT_DB_Entered_Shrine_3, 1);
     mainSetBits(BIT_1CF, 0);
     mainSetBits(BIT_DB_Entered_Shrine_1, 1);
@@ -382,7 +382,7 @@ static void CCSH_Shrine_process_obj_messages(Object* self) {
     CCSH_Shrine_Data* objdata = self->data;
     
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, &sender, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
         case 0x30005:
             objdata->unk6 = -3;

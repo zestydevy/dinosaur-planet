@@ -118,7 +118,7 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
         }
         if (pickup->unk6 != 0) {
             // Send message to player to pickup this object
-            obj_send_mesg(player, 0x100008, obj, (void* ) ((pickup->unk2 << 0x10) | (pickup->unk0 & 0xFFFF)));
+            objSendMesg(player, 0x100008, obj, (void* ) ((pickup->unk2 << 0x10) | (pickup->unk0 & 0xFFFF)));
         }
     }
     return pickup->state;
