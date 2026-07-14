@@ -261,11 +261,11 @@ void dll_211_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
     self->animCallback = (AnimationCallback ) dll_211_func_1624;
     objAddObjectType(self, 1);
-    route_init(&objData->unk4DC[0]);
-    route_init(&objData->unk4DC[1]);
-    route_init(&objData->unk4DC[2]);
-    route_init(&objData->unk4DC[3]);
-    route_init(&objData->unk59C);
+    routeInit(&objData->unk4DC[0]);
+    routeInit(&objData->unk4DC[1]);
+    routeInit(&objData->unk4DC[2]);
+    routeInit(&objData->unk4DC[3]);
+    routeInit(&objData->unk59C);
     objData->unk4 = gDLL_29_Gplay->vtbl->get_sidekick_stats();
     objData->unk8 = objGetPlayer();
     temp_v1 = _data_EC[func_80045D58()];
@@ -539,11 +539,11 @@ void dll_211_free(Object* self, s32 a1) {
     DLL211_Data* temp_s0;
 
     temp_s0 = self->data;
-    route_free(&temp_s0->unk4DC[0]);
-    route_free(&temp_s0->unk4DC[1]);
-    route_free(&temp_s0->unk4DC[2]);
-    route_free(&temp_s0->unk4DC[3]);
-    route_free(&temp_s0->unk59C);
+    routeFree(&temp_s0->unk4DC[0]);
+    routeFree(&temp_s0->unk4DC[1]);
+    routeFree(&temp_s0->unk4DC[2]);
+    routeFree(&temp_s0->unk4DC[3]);
+    routeFree(&temp_s0->unk59C);
     objFreeObjectType(self, 1);
     gDLL_13_Expgfx->vtbl->func4(self);
     gDLL_14_Modgfx->vtbl->func4(self);
@@ -2238,11 +2238,11 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
                 objData->unk64 = spB8;
                 objData->unk68 = objData->unk2C;
                 objData->unk66 = objData->unk3C8.unk0.unk80;
-                route_setup(objData->unk4DC, objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80 ^ 1);
-                route_setup(&objData->unk4DC[1], objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80);
+                routeSetup(objData->unk4DC, objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80 ^ 1);
+                routeSetup(&objData->unk4DC[1], objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80);
             }
             if (!(objData->unk4C & 4)) {
-                temp_v1_4 = route_find(&objData->unk4DC[1], 10);
+                temp_v1_4 = routeFind(&objData->unk4DC[1], 10);
                 switch (temp_v1_4) {
                 case 1:
                     objData->unk4C &= ~2;
@@ -2251,7 +2251,7 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
                     objData->unk4C |= 4;
                     break;
                 default:
-                    temp_v1_4 = route_find(objData->unk4DC, 10);
+                    temp_v1_4 = routeFind(objData->unk4DC, 10);
                     if (temp_v1_4 != -1) {
                         if (temp_v1_4 == 1) {
                             objData->unk4C |= 4;
@@ -2773,7 +2773,7 @@ static s8 dll_211_func_7BAC(DLL211_Data* objData, CurveSetup** arg1, u8 *arg2, s
 
     for (sp5B = 0; sp5B < 4; sp5B++) {
         if (arg1[sp5B] != NULL) {
-            route_setup(&objData->unk4DC[sp5B], arg1[sp5B], objData->unk2C, arg3, arg2[sp5B]);
+            routeSetup(&objData->unk4DC[sp5B], arg1[sp5B], objData->unk2C, arg3, arg2[sp5B]);
         }
     }
 
@@ -2781,7 +2781,7 @@ static s8 dll_211_func_7BAC(DLL211_Data* objData, CurveSetup** arg1, u8 *arg2, s
         var_s2 = 0;
         for (var_s0 = 0; var_s0 < 4; var_s0++) {
             if (arg1[var_s0] != NULL) {
-                sp5C[var_s0] = route_find(&objData->unk4DC[var_s0], 5);
+                sp5C[var_s0] = routeFind(&objData->unk4DC[var_s0], 5);
             } else {
                 sp5C[var_s0] = -1;
             }
@@ -2799,7 +2799,7 @@ static s8 dll_211_func_7BAC(DLL211_Data* objData, CurveSetup** arg1, u8 *arg2, s
         switch (var_s2) {
             case 3:
                 if (*arg1 != NULL) {
-                    sp5C[0] = route_find(objData->unk4DC, 500);
+                    sp5C[0] = routeFind(objData->unk4DC, 500);
                 }
             
                 if (sp5C[0] == 1) {
@@ -2824,7 +2824,7 @@ static CurveSetup* dll_211_func_7DB8(DLL211_Data* objData, CurveSetup* arg1, voi
     }
 
     if (arg2 == objData->unk5D0 && arg1 == objData->unk5CC) {
-        objData->unk5CC = route_next(&objData->unk59C);
+        objData->unk5CC = routeNext(&objData->unk59C);
         if (objData->unk5CC == NULL) {
             return NULL;
         }
@@ -2835,13 +2835,13 @@ static CurveSetup* dll_211_func_7DB8(DLL211_Data* objData, CurveSetup* arg1, voi
         }
     }
 
-    route_setup(&objData->unk59C, arg1, objData->unk2C, arg2, objData->unk3C8.unk0.unk80);
-    if (route_find(&objData->unk59C, 500) != 1) {
+    routeSetup(&objData->unk59C, arg1, objData->unk2C, arg2, objData->unk3C8.unk0.unk80);
+    if (routeFind(&objData->unk59C, 500) != 1) {
         return NULL;
     }
 
-    route_reconstruct(&objData->unk59C);
-    objData->unk5CC = route_next(&objData->unk59C);
+    routeReconstruct(&objData->unk59C);
+    objData->unk5CC = routeNext(&objData->unk59C);
     objData->unk5D0 = arg2;
     return objData->unk5CC;
 }
