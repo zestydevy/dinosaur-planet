@@ -369,10 +369,10 @@ void assetThreadLoadNextFromQueue(void) {
                 block_load(sp2C.blockId, sp2C.unkC, sp2C.unk10, /*fromAssetThread=*/TRUE);
                 break;
             case 0:
-                assetQueueCompletedLoad(0, sp2C.unk4, voxmap_load_slot(sp2C.blockId, sp2C.unkC, sp2C.unk10, sp2C.unk14int), 0, 0);
+                assetQueueCompletedLoad(0, sp2C.unk4, voxLoadSlot(sp2C.blockId, sp2C.unkC, sp2C.unk10, sp2C.unk14int), 0, 0);
                 break;
             case 6:
-                assetQueueCompletedLoad(6, sp2C.unk4, func_80007620(sp2C.blockId, sp2C.unkC), 0, 0);
+                assetQueueCompletedLoad(6, sp2C.unk4, vox_func_80007620(sp2C.blockId, sp2C.unkC), 0, 0);
                 break;
             default:
                 break;

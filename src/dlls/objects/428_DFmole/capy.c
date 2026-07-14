@@ -611,7 +611,7 @@ s32 capy_logic_state_4_idle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         temp_s1 = &baddie->unk34C;
         bcopy(&self->srt.transl, &temp_s1->unk0, sizeof(Vec3f));
         bcopy(&fsa->target->srt.transl, &baddie->unk34C.unkC, sizeof(Vec3f));
-        func_80009024(temp_s1, &baddie->unk374);
+        vox_func_80009024(temp_s1, &baddie->unk374);
         if (isTargetPlayer != 0) {
             if ((fsa->targetDist < 50.0f) || !capydata->fed) {
                 fsa->animState = CAPY_ASTATE_0_Standing;

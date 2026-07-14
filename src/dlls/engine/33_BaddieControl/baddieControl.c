@@ -56,7 +56,7 @@ s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
     spD8.x = obj->srt.transl.x;
     spD8.y = obj->srt.transl.y + 10.0f;
     spD8.z = obj->srt.transl.z;
-    func_80007EE0(&spD8, &spE4);
+    vox_func_80007EE0(&spD8, &spE4);
     if (obj->parent != NULL) {
         spD0 = (u16)(obj->srt.yaw + obj->parent->srt.yaw);
     } else {
@@ -68,11 +68,11 @@ s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
         spD8.x = obj->srt.transl.x - (fsin16_precise(var_s0) * arg2);
         spD8.y = obj->srt.transl.y + 10.0f;
         spD8.z = obj->srt.transl.z - (fcos16_precise(var_s0) * arg2);
-        func_80007EE0(&spD8, &spEC);
+        vox_func_80007EE0(&spD8, &spEC);
         if (obj->parent != NULL) {
             var_s0 = 1;
         } else{
-            var_s0 = func_80008048(&spEC, &spE4, NULL, &spD3, 0) & 0xFF;
+            var_s0 = vox_func_80008048(&spEC, &spE4, NULL, &spD3, 0) & 0xFF;
             if (spD3 == 1) {
                 var_s0 = 1;
             }
@@ -450,12 +450,12 @@ Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 ar
                 spBC.x = arg0->srt.transl.x;
                 spBC.y = arg0->srt.transl.y + 10.0f;
                 spBC.z = arg0->srt.transl.z;
-                func_80007EE0(&spBC, &spC8);
+                vox_func_80007EE0(&spBC, &spC8);
                 spBC.x = curObj->srt.transl.x;
                 spBC.y = curObj->srt.transl.y + 10.0f;
                 spBC.z = curObj->srt.transl.z;
-                func_80007EE0(&spBC, &spD0);
-                temp_t3 = func_80008048(&spD0, &spC8, NULL, &sp66, 0);
+                vox_func_80007EE0(&spBC, &spD0);
+                temp_t3 = vox_func_80008048(&spD0, &spC8, NULL, &sp66, 0);
                 if ((sp66 == 1) || (temp_t3 != 0)) {
                     if (func_80059C40(&arg0->srt.transl, &spBC, 1.0f, 0, &sp68, arg0, 4, -1, 0, 0) != 0) {
                         stop = FALSE;
@@ -866,7 +866,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
         obj->unkE0 = 0;
     }
     if ((sp38 == 0) && !(sp3C & 0x20)) {
-        func_80008DC0(&baddie->unk374);
+        vox_func_80008DC0(&baddie->unk374);
         baddie->unk34C.unk26 = 4;
         baddie->unk34C.unk27 = 0x14;
     }
@@ -900,7 +900,7 @@ void BaddieControl_free(Object* obj, Baddie* baddie, u8 arg2) {
             gDLL_5_AMSEQ2->vtbl->free(obj, baddie->unk3A4, 0, 0, 0);
         }
     }
-    func_80008E08(&baddie->unk374);
+    vox_func_80008E08(&baddie->unk374);
     if (baddie->unk3F8 != NULL) {
         mmFree(baddie->unk3F8);
         baddie->unk3F8 = NULL;

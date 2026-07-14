@@ -326,7 +326,7 @@ void mainTick(void) {
     }
 
     rcpClearScreen(&gCurGfx, &gCurMtx, clearFlags);
-    voxmap_update_cache_timers();
+    voxUpdateCacheTimers();
     main_func_80013D80();
     am_func_800121DC();
     gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);

@@ -1506,7 +1506,7 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     spF0.x = arg0->srt.transl.f[0];
     spF0.y = arg0->srt.transl.f[1] + 10.0f;
     spF0.z = arg0->srt.transl.f[2];
-    func_80007EE0(&spF0, &spFC);
+    vox_func_80007EE0(&spF0, &spFC);
     for (spEC = 0; spEC < _bss_28A8; spEC++) {
         temp_s0 = _bss_8[spEC].setup;
         var_v0_2 = 0;
@@ -1520,8 +1520,8 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
                     spF0.x = temp_s0->pos.x;
                     spF0.y = temp_s0->pos.y + 10.0f;
                     spF0.z = temp_s0->pos.z;
-                    func_80007EE0(&spF0, &sp104);
-                    temp_t5 = func_80008048(&sp104, &spFC, NULL, &spE6, 0);
+                    vox_func_80007EE0(&spF0, &sp104);
+                    temp_t5 = vox_func_80008048(&sp104, &spFC, NULL, &spE6, 0);
     
                     if (((spE6 == 1) || (temp_t5 != 0)) && (func_80059C40(&arg0->srt.transl, &spF0, 1.0f, 0, &sp84, arg0, (s8) arg4, -1, 0U, 0) == 0)) {
                         var_fs2 = temp_fs0;
@@ -1532,8 +1532,8 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
                     spF0.x = temp_s0->pos.x;
                     spF0.y = temp_s0->pos.y + 10.0f;
                     spF0.z = temp_s0->pos.z;
-                    func_80007EE0(&spF0, &sp104);
-                    temp_t5 = func_80008048(&sp104, &spFC, NULL, &spE6, 0);
+                    vox_func_80007EE0(&spF0, &sp104);
+                    temp_t5 = vox_func_80008048(&sp104, &spFC, NULL, &spE6, 0);
     
                     if (((spE6 == 1) || (temp_t5 != 0)) && (func_80059C40(&arg0->srt.transl, &spF0, 1.0f, 0, &sp84, arg0, (s8) arg4, -1, 0U, 0) == 0)) {
                         var_fs3 = temp_fs0;

@@ -629,10 +629,10 @@ static void camnormal_func_1FFC(Cam* cam, Object* arg1) {
     s16 temp_ft2;
 
     gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp48, &sp44, &sp40, &sp3C, sState->unk8C);
-    func_80007EE0(&cam->srt.transl, &sp5C);
-    func_80007EE0(&arg1->srt.transl, &sp54);
+    vox_func_80007EE0(&cam->srt.transl, &sp5C);
+    vox_func_80007EE0(&arg1->srt.transl, &sp54);
     sp54.s[1] += 2;
-    temp = func_80008048(&sp5C, &sp54, &sp4C, &sp63, 0) == 0;
+    temp = vox_func_80008048(&sp5C, &sp54, &sp4C, &sp63, 0) == 0;
     sState->unkAC = temp;
     // @FAKE
     if (temp){}
@@ -684,7 +684,7 @@ static s32 camnormal_func_2388(Cam* cam, Vec3s16* arg1, Vec3s16* arg2, s32 arg3)
     Vec3s16 sp24;
 
     sp38 = 0;
-    temp_v0 = func_8000896C(arg2, arg1, &sp24);
+    temp_v0 = vox_func_8000896C(arg2, arg1, &sp24);
     if (temp_v0 != 0) {
         var_v1_2 = (-cam->srt.yaw - (arg3 & 0xFFFF)) + 0x8000;
         CIRCLE_WRAP(var_v1_2);
@@ -745,7 +745,7 @@ static s32 camnormal_func_250C(Cam* cam, Vec3s16* arg1, Vec3s16* arg2, f32 arg3)
     var_s0 = sp68.s[1] + var_s2;
     do {
         sp68.s[1] = var_s0;
-        if (func_80008048(&sp68, arg2, NULL, NULL, 1) == 0) {
+        if (vox_func_80008048(&sp68, arg2, NULL, NULL, 1) == 0) {
             var_s4 = var_s2;
             var_s1 = 1;
         } else {
@@ -757,12 +757,12 @@ static s32 camnormal_func_250C(Cam* cam, Vec3s16* arg1, Vec3s16* arg2, f32 arg3)
     } while (var_s1 == 0);
     if (var_s4 == 1) {
         sp68.s[1] = var_s0;
-        func_80007E2C(&sp48, &sp68);
+        vox_func_80007E2C(&sp48, &sp68);
         sState->unk24 = 100000.0f;
         sState->unk20 = sp48.f[1];
     } else if (var_s4 == -1) {
         sp68.s[1] = var_s0 + 1;
-        func_80007E2C(&sp48, &sp68);
+        vox_func_80007E2C(&sp48, &sp68);
         sState->unk24 = sp48.f[1];
         sState->unk20 = 100000.0f;
     } else {

@@ -177,7 +177,7 @@ void dll_437_setup(Object* self, EWTrobotpatrol_Setup* setup, s32 reset) {
     temp_s0 = self->data;
     self->animCallback = dll_437_func_3AC8;
     bzero(temp_s0, sizeof(EWTrobotpatrol_Data));
-    func_80008DC0(&temp_s0->unk24);
+    vox_func_80008DC0(&temp_s0->unk24);
     temp_s0->unk1CC = 1;
     temp_s0->unk1C8 = -0.02f;
     dll_437_func_139C(self, temp_s0, (u8*)temp_s0 + 0x90);
@@ -266,7 +266,7 @@ void dll_437_free(Object* self, s32 onlySelf) {
 
     objFreeObjectType(self, OBJTYPE_Baddie);
     objdata = self->data;
-    func_80008E08(&objdata->unk24);
+    vox_func_80008E08(&objdata->unk24);
     gDLL_13_Expgfx->vtbl->func5(self);
     dll_437_func_380C(self, objdata, (u8*)objdata + 0x1A8, onlySelf);
 }
@@ -301,10 +301,10 @@ void dll_437_func_CC0(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Da
     sp50[1] = arg0->srt.transl.y - sp64->srt.transl.y;
     sp50[2] = arg0->srt.transl.z - sp64->srt.transl.z;
     sp5C = sqrtf(SQ(sp50[0]) + SQ(sp50[1]) + SQ(sp50[2]));
-    func_80007EE0(&sp64->srt.transl, &sp48);
+    vox_func_80007EE0(&sp64->srt.transl, &sp48);
     sp48.s[1] += 2;
-    func_80007EE0(&arg0->srt.transl, &sp40);
-    arg1->unk21 = func_80008048(&sp48, &sp40, NULL, NULL, 0U);
+    vox_func_80007EE0(&arg0->srt.transl, &sp40);
+    arg1->unk21 = vox_func_80008048(&sp48, &sp40, NULL, NULL, 0U);
     if ((arg1->unk1F != 0) && (arg1->unk1F == 2)) {
         arg1->unk78(arg1->unk74, arg0, 1, 0);
         switch (arg1->unk20) {

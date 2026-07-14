@@ -108,9 +108,9 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     sp120.z = player->srt.transl.z + (sp12C * temp_fv0);
     if (data->unk3 != 0) {
         player->srt.transl.y += sState->unkC;
-        func_80007EE0(&player->srt.transl, &sp100);
-        func_80007EE0(&sp120, &spF8);
-        func_80007E2C(&sp108, &spF0); // @bug: spF0 is uninitialized, result is unused
+        vox_func_80007EE0(&player->srt.transl, &sp100);
+        vox_func_80007EE0(&sp120, &spF8);
+        vox_func_80007E2C(&sp108, &spF0); // @bug: spF0 is uninitialized, result is unused
         sp148 = sp120.x - player->srt.transl.x;
         sp144 = sp120.y - player->srt.transl.y;
         sp140 = sp120.z - player->srt.transl.z;

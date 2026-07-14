@@ -194,11 +194,11 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     futurePosition.x += self->srt.transl.x;
     futurePosition.y += self->srt.transl.y;
     futurePosition.z += self->srt.transl.z;
-    func_80007EE0(&self->srt.transl, &sCurrentPosition);
-    func_80007EE0(&futurePosition, &sFuturePosition);
+    vox_func_80007EE0(&self->srt.transl, &sCurrentPosition);
+    vox_func_80007EE0(&futurePosition, &sFuturePosition);
 
-    if (func_80008048(&sCurrentPosition, &sFuturePosition, &sp44, NULL, 0) == 0){
-        func_80007E2C(&futurePosition, &sp44);
+    if (vox_func_80008048(&sCurrentPosition, &sFuturePosition, &sp44, NULL, 0) == 0){
+        vox_func_80007E2C(&futurePosition, &sp44);
         displacement.f[0] = futurePosition.f[0] - self->srt.transl.f[0];
         displacement.f[1] = futurePosition.f[1] - self->srt.transl.f[1];
         displacement.f[2] = futurePosition.f[2] - self->srt.transl.f[2];

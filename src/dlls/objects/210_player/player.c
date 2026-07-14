@@ -3769,10 +3769,10 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp64.x += temp_v0_2->srt.transl.x;
     sp64.y += temp_v0_2->srt.transl.y;
     sp64.z += temp_v0_2->srt.transl.z;
-    func_80007EE0(&player->globalPosition, &sp5C);
-    func_80007EE0(&sp64, &sp54);
-    if (func_80008048(&sp5C, &sp54, &sp4C, 0, 0) == 0) {
-        func_80007E2C(&sp64, &sp4C);
+    vox_func_80007EE0(&player->globalPosition, &sp5C);
+    vox_func_80007EE0(&sp64, &sp54);
+    if (vox_func_80008048(&sp5C, &sp54, &sp4C, 0, 0) == 0) {
+        vox_func_80007E2C(&sp64, &sp4C);
         VECTOR_SUBTRACT(sp64, temp_v0_2->srt.transl, sp70);
         var_fv1 = VECTOR_MAGNITUDE(sp70);
     } else {

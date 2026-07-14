@@ -86,7 +86,7 @@ void CamControl_ctor(void* dll) {
     sCam = &sCamInternal;
     bzero(sCam, sizeof(Cam));
     
-    voxmap_init();
+    voxInit();
 
     sActiveID = DLL_NONE;
     sActiveLoadedIndex = DLL_NONE;
@@ -99,7 +99,7 @@ void CamControl_ctor(void* dll) {
 
 // offset: 0xA0 | dtor
 void CamControl_dtor(void* dll) {
-    voxmap_free();
+    voxFree();
     _bss_1C8 = -1;
 }
 
@@ -135,7 +135,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
         return;
     }
     
-    func_80008D90(player->parent);
+    vox_func_80008D90(player->parent);
     CamControl_store_player_coords(player);
     CamControl_average_player_speed(sCam, player);
     
@@ -959,10 +959,10 @@ Object* CamControl_find_highlight_object(Cam* cam, Object* player) {
                 if ((dYaw < angularRange) && (-angularRange < dYaw)) {
                     if (targetDef[lockIndex].flags & 0x20) {
                         //Use VoxMaps (check if player has line-of-sight to Object, maybe?)
-                        func_80007EE0(&targetCoords[lockIndex].drawPoint, &sp74);
-                        func_80007EE0(&player->srt.transl, &sp6C);
+                        vox_func_80007EE0(&targetCoords[lockIndex].drawPoint, &sp74);
+                        vox_func_80007EE0(&player->srt.transl, &sp6C);
                         sp6C.y += 2;
-                        if (func_80008048(&sp74, &sp6C, 0, 0, 0) != 0) {
+                        if (vox_func_80008048(&sp74, &sp6C, 0, 0, 0) != 0) {
                             objects[matchCount] = obj;
                             matchCount++;
                         }
