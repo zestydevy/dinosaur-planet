@@ -262,18 +262,18 @@ void MoonSeedReceptacle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs
                 objData->glowPhase += M_45_DEGREES/2;
                 colourR = (u8) ((fsin16_precise(objData->glowPhase) + 1) * 63.0f) + 0x7F;
 
-                func_80036F6C(colourR, 0xFF, 0xFF);
+                objprintSetMultiplierColor(colourR, 0xFF, 0xFF);
             }
         } else if (objData->state == MoonSeedReceptacle_STATE_3_Seed_Flamed) {
             if (objData->glowPhase < M_180_DEGREES - 0x300) {
                 objData->glowPhase += 0xFF;
             }
-            func_80036F6C((otherColourR >> 7), 0xFF, 0xFF); //@bug: otherColourR uninitialised
+            objprintSetMultiplierColor((otherColourR >> 7), 0xFF, 0xFF); //@bug: otherColourR uninitialised
         } else {
-            func_80036F6C(0xFF, 0xFF, 0xFF);
+            objprintSetMultiplierColor(0xFF, 0xFF, 0xFF);
         }
 
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

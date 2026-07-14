@@ -26,7 +26,7 @@ void PlacedFood_setup(Object* self, PlacedFood_Setup* objSetup, s32 reset) {
     objData = self->data;
 
     objData->sequenceWasPlayed = FALSE;
-    self->srt.yaw = get_player()->srt.yaw;
+    self->srt.yaw = objGetPlayer()->srt.yaw;
 
     self->srt.scale = 0.01f;
     self->stateFlags |= OBJSTATE_PRINT_DISABLED;
@@ -53,7 +53,7 @@ void PlacedFood_setup(Object* self, PlacedFood_Setup* objSetup, s32 reset) {
         break;
     }
     
-    obj_init_mesg_queue(self, 1); 
+    objInitMesgQueue(self, 1); 
 }
 
 // offset: 0xF8 | func: 1 | export: 1
@@ -63,7 +63,7 @@ void PlacedFood_control(Object* self) {
     Object* player;
     PlacedFood_Data* objData;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     
     if (objData->sequenceWasPlayed == FALSE) {
@@ -106,7 +106,7 @@ void PlacedFood_control(Object* self) {
     }
     
     //Handle storing the food back into the foodbag when re-collected
-    while (obj_recv_mesg(self, &outMessage, NULL, 0)) {
+    while (objRecvMesg(self, &outMessage, NULL, 0)) {
         if (outMessage == 0x7000B) {
             switch (self->id) {
             case OBJ_foodbagGreenApp:                         
@@ -211,13 +211,13 @@ void PlacedFood_control(Object* self) {
     case OBJ_foodbagBlueGrub:                                 
     case OBJ_foodbagRedGrub:                                 
     case OBJ_foodbagOldGrub:                                 
-        func_80024108(self, 0.01f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.01f, gUpdateRateF, NULL);
         break;
     }
     
     //Handle re-collecting the food
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        obj_send_mesg(get_player(), 0x7000A, self, (void*)BIT_ALWAYS_1);
+        objSendMesg(objGetPlayer(), 0x7000A, self, (void*)BIT_ALWAYS_1);
     }
 }
 

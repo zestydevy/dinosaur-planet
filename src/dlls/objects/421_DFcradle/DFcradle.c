@@ -52,25 +52,25 @@ void DFCradle_setup(Object* self, DFCradle_Setup* setup, s32 reset) {
         objData->curves.unk8C = objData->splineZ;
         objData->curves.unk80 = 0;
         
-        objData->curves.splineFunc = curves_hermite;
-        objData->curves.splineConverterFunc = curves_hermite_converter;
+        objData->curves.splineFunc = curvesHermite;
+        objData->curves.splineConverterFunc = curvesHermiteConverter;
         objData->curves.numControlPoints = gDLL_26_Curves->vtbl->func_E40(curveSetup, objData->curves.unk84, objData->curves.unk88, objData->curves.unk8C, NULL);
         
-        curves_move((CurvesStruct*)&objData->curves.unk0);
+        curvesMove((CurvesStruct*)&objData->curves.unk0);
     }
     
-    objData->enabled = main_get_bits(BIT_DF_Cradle_Powered);
+    objData->enabled = mainGetBits(BIT_DF_Cradle_Powered);
     objData->direction = 1;
     objData->unkB6 = 0;
     objData->soundTimer = 0;
     objData->unk9C = 0.0f;
     
     //Get lower middle pulley value (closer to SwapStone Circle)
-    pulley = func_800211B4(0x208E);
+    pulley = objGetObjectByUID(0x208E);
     objData->pulleyValLower = pulley->globalPosition.x + (pulley->globalPosition.z * 0.4f);
     
     //Get upper middle pulley value (closer to DF Shrine)
-    pulley = func_800211B4(0x208F);
+    pulley = objGetObjectByUID(0x208F);
     objData->pulleyValUpper = pulley->globalPosition.x + (pulley->globalPosition.z * 0.4f);
 }
 
@@ -106,7 +106,7 @@ void DFCradle_control(Object* self) {
             objData->unkB6--;
         }
         
-        player = get_player();
+        player = objGetPlayer();
         if (player != NULL) {
             playerVal = DFCradle_func_99C(self, player->globalPosition.f[0], player->globalPosition.f[2], TRUE);
             cradleVal = DFCradle_func_99C(self, self->globalPosition.f[0],   self->globalPosition.f[2],   FALSE);
@@ -130,19 +130,19 @@ void DFCradle_control(Object* self) {
             if ((objData->unkB6 == 10) && (self != player->parent) && doDirectionReverse) {
                 objData->direction = -objData->direction;
                 if (objData->direction > 0) {
-                    main_set_bits(BIT_1C, 0);
+                    mainSetBits(BIT_1C, 0);
                 } else {
-                    main_set_bits(BIT_1C, 1);
+                    mainSetBits(BIT_1C, 1);
                 }
             }
             
             if (objData->unkB6 <= 10) {
-                objects = obj_get_all_of_type(OBJTYPE_Pulley, &count);
+                objects = objGetAllOfType(OBJTYPE_Pulley, &count);
                 for (idx = 0; idx < count; idx++) {
                     objects[idx]->srt.yaw -= objData->unk9C * 500.0f * objData->direction * gUpdateRateF * (((objects[idx]->stateFlags & 1) * 2) - 1);
                 }                
 
-                cradleVal = main_get_bits(BIT_1C);
+                cradleVal = mainGetBits(BIT_1C);
                 if ((cradleVal == 0) && (objData->direction == 0)) {
                     cradleVal = 0;
                 }
@@ -191,9 +191,9 @@ void DFCradle_control(Object* self) {
                     }
                     
                     if (objData->direction > 0) {
-                        main_set_bits(BIT_1C, 0);
+                        mainSetBits(BIT_1C, 0);
                     } else {
-                        main_set_bits(BIT_1C, 1);
+                        mainSetBits(BIT_1C, 1);
                     }
                 } else {
                     if ((objData->curves.unk74.x != 0/*.0f*/) || (objData->curves.unk74.z != 0/*.0f*/)) {
@@ -210,7 +210,7 @@ void DFCradle_control(Object* self) {
 
             //Animate cradle ropes
             for (i = 0; i < 4; i++) {
-                texscroll = func_800211B4(dTexscrollUIDs[i]);
+                texscroll = objGetObjectByUID(dTexscrollUIDs[i]);
                 if (texscroll != NULL) {
                     ((DLL_347_texscroll2*)texscroll->dll)->vtbl->change_scroll_speed(texscroll, scrollSpeed);
                 }
@@ -220,7 +220,7 @@ void DFCradle_control(Object* self) {
     }
 
     //Check if the cradle has been powered
-    objData->enabled = main_get_bits(BIT_DF_Cradle_Powered);
+    objData->enabled = mainGetBits(BIT_DF_Cradle_Powered);
     
     if (objData->unk9C > 0.0f) {
         objData->unk9C -= 0.02f;
@@ -235,7 +235,7 @@ void DFCradle_update(Object* self) { }
 // offset: 0x914 | func: 3 | export: 3
 void DFCradle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

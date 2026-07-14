@@ -33,7 +33,7 @@ void Caictua_Thorn_control(Object* self) {
     self->unkDC -= gUpdateRateF;
     if ((self->unkDC < 0) || self->opacity < gUpdateRate) {
         self->opacity = 0;
-        obj_destroy_object(self);
+        objFreeObject(self);
         return;
     }
     
@@ -55,11 +55,11 @@ void Caictua_Thorn_control(Object* self) {
         self->srt.pitch = arctan2_f(sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), self->velocity.y) - M_90_DEGREES;
 
         //Move
-        obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+        objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     }
 
     if (self->unkE0 != 0) {
-        gDLL_6_AMSFX->vtbl->update_doppler(self->unkE0, self, get_player(), 150.0f);
+        gDLL_6_AMSFX->vtbl->update_doppler(self->unkE0, self, objGetPlayer(), 150.0f);
     }
     
     func_80026128(self, 0xA, 1, 0);
@@ -68,10 +68,10 @@ void Caictua_Thorn_control(Object* self) {
 
     //Check if the thorn hit the player or the sidekick
     if ((self->objhitInfo->unk48 != NULL) && 
-        ((get_player() == self->objhitInfo->unk48) || (get_sidekick() == self->objhitInfo->unk48))
+        ((objGetPlayer() == self->objhitInfo->unk48) || (objGetSidekick() == self->objhitInfo->unk48))
     ) {
-        camera_enable_y_offset();
-        camera_set_shake_offset(1.0f);
+        camUseShake();
+        camSetShakeOffset(1.0f);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_721, MAX_VOLUME, NULL, NULL, 0, NULL);
 
         i = 0x19;
@@ -118,7 +118,7 @@ void Caictua_Thorn_update(Object* self) {
 // offset: 0x530 | func: 3 | export: 3
 void Caictua_Thorn_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -129,7 +129,7 @@ void Caictua_Thorn_free(Object* self, s32 onlySelf) {
         self->unkE0 = 0;
     }
     
-    camera_disable_y_offset();
+    camIgnoreShake();
 }
 
 // offset: 0x600 | func: 5 | export: 5

@@ -193,7 +193,7 @@ void dll_225_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     }
     objData->unk0 = 0;
     
-    obj_add_object_type(self, OBJTYPE_Baddie);
+    objAddObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0x2A8 | func: 2 | export: 1
@@ -238,7 +238,7 @@ void dll_225_update(Object* self) {
 // offset: 0x4A0 | func: 4 | export: 3
 void dll_225_print(Object* arg0, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility && (arg0->unkDC == 0)) {
-        draw_object(arg0, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(arg0, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -246,10 +246,10 @@ void dll_225_print(Object* arg0, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 void dll_225_free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     
@@ -285,7 +285,7 @@ int dll_225_func_5C8(Object* self, Object* animObj, AnimObj_Data* animData, s8 p
         
         dll_225_func_864(self, baddie, &baddie->fsa);
         
-        if ((baddie->unk3A0 != NO_GAMEBIT) && main_get_bits(baddie->unk3A0)) {
+        if ((baddie->unk3A0 != NO_GAMEBIT) && mainGetBits(baddie->unk3A0)) {
             gDLL_3_Animation->vtbl->func21(animData, objSetup->unk2C);
             baddie->unk3A0 = -1;
         }
@@ -338,7 +338,7 @@ void dll_225_func_864(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         fsa->targetDist = sqrtf(SQ(d.f[0]) + SQ(d.f[1]) + SQ(d.f[2]));
     }
     
-    func_80032A08(self, &baddie->unk3BC);
+    objExprEyeIdle(self, &baddie->unk3BC);
     
     if (!(baddie->unk3B0 & 1)) {
         gDLL_33_BaddieControl->vtbl->func14(self, (Baddie*)fsa, &baddie->unk3B2, 4, 5, baddie->unk3A6, baddie->unk3A4);
@@ -349,7 +349,7 @@ void dll_225_func_864(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
     if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, _data_168, _data_1D0, 1, &baddie->unk3A8, NULL) >= 4) {
         baddie->unk3B4 = 2;
-        fsa->target = get_player();
+        fsa->target = objGetPlayer();
     }
 }
 
@@ -404,7 +404,7 @@ s32 dll_225_func_D08(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, updateRate, 5);
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x89, 0.0f, 0);
+        objAnimSet(self, 0x89, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -447,9 +447,9 @@ s32 dll_225_func_DB4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
 
     if (animChanged) {
-        func_80023D30(self, _data_1EC[idx], animProgress, 0);
+        objAnimSet(self, _data_1EC[idx], animProgress, 0);
     }
-    func_8002493C(self, fsa->unk278, &fsa->animTickDelta);
+    objGetAnimChange(self, fsa->unk278, &fsa->animTickDelta);
     
     return 0;
 }
@@ -459,7 +459,7 @@ s32 dll_225_func_F38(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Vec3f d;
 
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x8C, 0.0f, 0);
+        objAnimSet(self, 0x8C, 0.0f, 0);
         fsa->unk33A = 0;
     }
 
@@ -486,7 +486,7 @@ s32 dll_225_func_F38(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x10EC | func: 15
 s32 dll_225_func_10EC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x90, 0.0f, 0);
+        objAnimSet(self, 0x90, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -501,7 +501,7 @@ s32 dll_225_func_10EC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x11A4 | func: 16
 s32 dll_225_func_11A4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x91, 0.0f, 0);
+        objAnimSet(self, 0x91, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -517,7 +517,7 @@ s32 dll_225_func_11A4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1264 | func: 17
 s32 dll_225_func_1264(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x92, 0.0f, 0);
+        objAnimSet(self, 0x92, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -535,7 +535,7 @@ s32 dll_225_func_1264(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x134C | func: 18
 s32 dll_225_func_134C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x93, 0.0f, 0);
+        objAnimSet(self, 0x93, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -553,7 +553,7 @@ s32 dll_225_func_134C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1434 | func: 19
 s32 dll_225_func_1434(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x8F, 0.0f, 0);
+        objAnimSet(self, 0x8F, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -571,7 +571,7 @@ s32 dll_225_func_1434(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x151C | func: 20
 s32 dll_225_func_151C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x8E, 0.0f, 0);
+        objAnimSet(self, 0x8E, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -595,7 +595,7 @@ s32 dll_225_func_1604(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x9E, 0.0f, 0);
+        objAnimSet(self, 0x9E, 0.0f, 0);
         fsa->unk33A = 0;
     }
 
@@ -634,7 +634,7 @@ s32 dll_225_func_1878(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x9A, 0.0f, 0);
+        objAnimSet(self, 0x9A, 0.0f, 0);
         fsa->unk33A = 0;
     }
 
@@ -672,7 +672,7 @@ s32 dll_225_func_1AEC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0x9B, 0.0f, 0);
+        objAnimSet(self, 0x9B, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -705,7 +705,7 @@ s32 dll_225_func_1AEC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1D60 | func: 24
 s32 dll_225_func_1D60(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xA2, 0.0f, 0);
+        objAnimSet(self, 0xA2, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -732,12 +732,12 @@ s32 dll_225_func_1E60(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk27C = 0.0f;
     
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 0x8B, 0.0f, 0);
+        objAnimSet(self, 0x8B, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
-    main_set_bits(baddie->unk39E, 0);
-    main_set_bits(baddie->unk39C, 1);
+    mainSetBits(baddie->unk39E, 0);
+    mainSetBits(baddie->unk39C, 1);
     
     return 0;
 }
@@ -799,7 +799,7 @@ s32 dll_225_func_209C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         self->objhitInfo->unk58 &= ~1;
         self->unkAF |= 8;
     } else if ((gUpdateRate * 4) >= self->opacity) {
-        obj_send_mesg(get_player(), 0xE0000, self, NULL);
+        objSendMesg(objGetPlayer(), 0xE0000, self, NULL);
         return 6;
     }
 
@@ -831,7 +831,7 @@ s32 dll_225_func_21F8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->yAnalogInput = 0.0f;
         bcopy(&self->srt.transl, temp_s0, sizeof(Vec3f));
         bcopy(&fsa->target->srt.transl, &baddie->unk34C.unkC, sizeof(Vec3f));
-        func_80009024(temp_s0, &baddie->unk374);
+        vox_func_80009024(temp_s0, &baddie->unk374);
 
         if ((fsa->targetDist < baddie->unk3E2) && (baddie->unk3B4 == 2)) {
             return 8;
@@ -879,7 +879,7 @@ s32 dll_225_func_2404(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
 
         sp39 = gDLL_33_BaddieControl->vtbl->func5(self, fsa, 75.0f);
-        gDLL_33_BaddieControl->vtbl->func4(self, get_player(), 0x10, &sp3E, &sp3C, &sp3A);
+        gDLL_33_BaddieControl->vtbl->func4(self, objGetPlayer(), 0x10, &sp3E, &sp3C, &sp3A);
 
         if ((s32)sp3A >= (s32)(f32)baddie->unk3E2) { //?
             return 7;

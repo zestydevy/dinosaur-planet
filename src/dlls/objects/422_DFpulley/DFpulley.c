@@ -40,7 +40,7 @@ void DFPulley_setup(Object* self, DFPulley_Setup* objSetup, s32 reset) {
     DFPulley_Data* objData = self->data;
     
     if (self->id == OBJ_DFpulley) {
-        obj_add_object_type(self, OBJTYPE_Pulley);
+        objAddObjectType(self, OBJTYPE_Pulley);
     }
     
     self->srt.roll = objSetup->roll << 8;
@@ -50,7 +50,7 @@ void DFPulley_setup(Object* self, DFPulley_Setup* objSetup, s32 reset) {
     
     self->stateFlags = objSetup->stateFlags;
     
-    objData->state = main_get_bits(BIT_DF_Cradle_Powered);
+    objData->state = mainGetBits(BIT_DF_Cradle_Powered);
 
     if (objData->state != STATE_0_Unpowered) {
         objData->rotateSpeed = 350;
@@ -72,7 +72,7 @@ void DFPulley_control(Object* self) {
     
     switch (objData->state) {
     case STATE_0_Unpowered:
-        objData->state = main_get_bits(BIT_DF_Cradle_Powered);
+        objData->state = mainGetBits(BIT_DF_Cradle_Powered);
         break;
     case STATE_1_Powered:
         //Turbine behaviour
@@ -84,7 +84,7 @@ void DFPulley_control(Object* self) {
 
         //Pulley behaviour
         if (!(self->stateFlags & 2)) {
-            cradle = func_800211B4(0x2CA7);
+            cradle = objGetObjectByUID(0x2CA7);
             cradleData = cradle->data;
             distance = vec3_distance(&self->globalPosition, &cradle->globalPosition);
 
@@ -133,7 +133,7 @@ void DFPulley_update(Object* self) { }
 // offset: 0x4BC | func: 3 | export: 3
 void DFPulley_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -142,7 +142,7 @@ void DFPulley_free(Object* self, s32 onlySelf) {
     DFPulley_Data* objData = self->data;
 
     if (self->id == OBJ_DFpulley) {
-        obj_free_object_type(self, OBJTYPE_Pulley);
+        objFreeObjectType(self, OBJTYPE_Pulley);
     }
     
     if (objData->soundHandle != 0) {

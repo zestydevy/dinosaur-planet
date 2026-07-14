@@ -67,7 +67,7 @@ void WGboulder_update(Object *self) { }
 // offset: 0x1D0 | func: 3 | export: 3
 void WGboulder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -118,7 +118,7 @@ void WGboulder_handle_motion(Object* self) {
     self->velocity.x = (objData->curves.unk0.unk68.x - self->srt.transl.x) * magnitude;
     self->velocity.z = (objData->curves.unk0.unk68.z - self->srt.transl.z) * magnitude;
     self->srt.yaw += self->velocity.x * 1200.0f;
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     
     //Look for closest ground
     count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &samples, 0, 0);

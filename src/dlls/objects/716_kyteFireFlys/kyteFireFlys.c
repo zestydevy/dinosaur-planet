@@ -41,7 +41,7 @@ void KyteFireFlys_setup(Object* self, KyteFireFlys_Setup* objSetup, s32 reset) {
     
     objData->initialFireflyCount = objData->fireflyCount = objSetup->fireflyCount;
     objData->haveCurveSetup = FALSE;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0xE0 | func: 1 | export: 1
@@ -95,11 +95,11 @@ void KyteFireFlys_free(Object* self, s32 onlySelf) {
     
     if (onlySelf == FALSE) {
         for (i = 0; i < objData->fireflyCount; i++) {
-            obj_destroy_object(objData->fireflies[i]);
+            objFreeObject(objData->fireflies[i]);
         }
     }
 
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x330 | func: 5 | export: 5
@@ -133,7 +133,7 @@ s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
             gamebitID = objData->curve->type22.usedBit;
             if (gamebitID != NO_GAMEBIT) {
                 outValue = 0;
-                main_set_bits(gamebitID, TRUE);
+                mainSetBits(gamebitID, TRUE);
             }
             
             if (objData->fireflyCount != 0) {
@@ -150,7 +150,7 @@ s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
     }
     
     if (arg1 == 3) {
-        obj_destroy_object(objData->fireflies[objData->fireflyCount]);
+        objFreeObject(objData->fireflies[objData->fireflyCount]);
     }
     
     return outValue;

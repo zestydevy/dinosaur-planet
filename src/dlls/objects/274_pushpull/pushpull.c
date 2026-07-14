@@ -95,9 +95,9 @@ void dll_274_control(Object* self) {
         objData->unkD4 |= 2;
     }
     
-    if ((self->unkAF & 4) && (main_get_bits(BIT_913) == 0)) {
+    if ((self->unkAF & 4) && (mainGetBits(BIT_913) == 0)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-        main_set_bits(BIT_913, 1);
+        mainSetBits(BIT_913, 1);
         return;
     }
     
@@ -117,7 +117,7 @@ void dll_274_control(Object* self) {
         if (damageType && (hitBy != NULL) && (hitBy->id == OBJ_VFPDragBreath)) {
             objData->unk14 = 100.0f;
         } else if ((objData->unkD4 & 0x80) && damageType && (hitBy != NULL) && (hitBy->id == 0x14B)) {
-            main_set_bits(BIT_4FA, 1);
+            mainSetBits(BIT_4FA, 1);
         }
         
         dll_274_func_27C8(self, objData);
@@ -129,7 +129,7 @@ void dll_274_control(Object* self) {
         break;
     }
 
-    map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+    mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
 }
 #endif
 
@@ -151,12 +151,12 @@ void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     
     switch (self->id) {
     case OBJ_NWSH_colpush:
-        if (main_get_bits(objData->unk80)) {
+        if (mainGetBits(objData->unk80)) {
             return;
         }
         break;
     case OBJ_NWSH_colpushped:
-        if (main_get_bits(objData->unk80)) {
+        if (mainGetBits(objData->unk80)) {
             return;
         }
         break;
@@ -166,7 +166,7 @@ void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             if (objData->unk14 <= 0.0f) {
                 objData->unk14 = 0.0f;
             } else {
-                func_80036FBC(0xC8, 0, 0, 0xFF);
+                objprintSetBlendColor(0xC8, 0, 0, 0xFF);
             }
         }
         break;
@@ -177,7 +177,7 @@ void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     modelInst = self->modelInsts[self->modelInstIdx];
     model = modelInst->model;
     model->unk71 |= 2;
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // offset: 0x1058 | func: 4 | export: 4
@@ -190,14 +190,14 @@ void dll_274_free(Object* self, s32 onlySelf) {
     
     switch (self->id) {
     case OBJ_NWSH_colpush:
-        main_set_bits(objData->unk80, 0);
+        mainSetBits(objData->unk80, 0);
         break;
     case OBJ_NWSH_colpushped:
-        main_set_bits(objData->unk80, 0);
+        mainSetBits(objData->unk80, 0);
         break;
     default:
         if (objSetup->unk18 >= 0) {
-            map_save_object(&objSetup->base, self->mapID, objSetup->base.x, objSetup->base.y, objSetup->base.z);
+            mapSaveObject(&objSetup->base, self->mapID, objSetup->base.x, objSetup->base.y, objSetup->base.z);
         }
         break;
     }
@@ -207,7 +207,7 @@ void dll_274_free(Object* self, s32 onlySelf) {
         objData->unk78 = 0;
     }
     
-    obj_free_object_type(self, OBJTYPE_PushBlock);
+    objFreeObjectType(self, OBJTYPE_PushBlock);
 }
 
 // offset: 0x116C | func: 5 | export: 5
@@ -257,7 +257,7 @@ s32 dll_274_func_184C(Object* self, s32 arg1, f32 arg2, f32* arg3) {
     s32 temp_v1;
 
     sp24.unk12 = 0;
-    temp_v1 = func_80024108(self, arg2, 1.0f, &sp24);
+    temp_v1 = objAnimAdvance(self, arg2, 1.0f, &sp24);
     if (sp24.unk12 != 0) {
         *arg3 = sp24.unk0[2];
     } else {
@@ -276,14 +276,14 @@ static void dll_274_func_18C8(Object* self, s32 arg1) {
 
     objData = self->data;
     outMesgArg = NULL;
-    while (obj_recv_mesg(self, &outMessageID, &outSender, (void*)&outMesgArg)) {
+    while (objRecvMesg(self, &outMessageID, &outSender, (void*)&outMesgArg)) {
         switch (outMessageID) {
         case 0xF0003:
             objData->unk8C = outSender;
             break;
         case 0xE:
             if ((self->id != OBJ_NWSH_colpush) && (self->id != OBJ_NWSH_colpushped)) {
-                obj_destroy_object(self);
+                objFreeObject(self);
             }
             break;
         case 0x40001:
@@ -351,10 +351,10 @@ int dll_274_func_1A24(Object* self, Object* animObj, AnimObj_Data* animData, s8 
         if (self->polyhits->unk10F > 0){
             obj = self->polyhits->unk100[0];
 
-            if ((obj->controlNo == OBJCONTROL_Projectile) && (main_get_bits(BIT_103) == 0)) {
-                main_set_bits(BIT_103, 1);
+            if ((obj->controlNo == OBJCONTROL_Projectile) && (mainGetBits(BIT_103) == 0)) {
+                mainSetBits(BIT_103, 1);
                 self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-                player = get_player();
+                player = objGetPlayer();
                 
                 dx = self->srt.transl.f[0] - player->srt.transl.f[0];
                 dz = self->srt.transl.f[2] - player->srt.transl.f[2];
@@ -411,7 +411,7 @@ static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
                         objData->unkD4 |= 1;
                         if (objSetup->unk18 >= 0) {
                             if ((self->id != 0x21E) && (self->id != 0x411)) {
-                                main_set_bits(objSetup->unk18, 1);
+                                mainSetBits(objSetup->unk18, 1);
                                 gDLL_6_AMSFX->vtbl->play(self, 0xB01, MAX_VOLUME, NULL, NULL, 0, NULL);
                             }
                         }
@@ -462,8 +462,8 @@ void dll_274_func_20A0(Object* self, DLL274_Data* objData) {
     objData->unkC4 = 0.0f;
     objData->unk90 = NULL;
     
-    main_set_bits(objData->unk80, 0);
-    texAnim = func_800348A0(self, 0, 0);
+    mainSetBits(objData->unk80, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
 
     objData->unkAC.f[1] += objData->unkA4;
     if (objData->unkAC.f[1] > 255.0f) {
@@ -501,7 +501,7 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
     
     dll_274_func_18C8(self, 0);
 
-    if (main_get_bits(objData->unk80)) {
+    if (mainGetBits(objData->unk80)) {
         if (self->srt.scale > 0.001f) {
             self->srt.scale -= 0.02f * gUpdateRateF;
             if (self->srt.scale <= 0.001f) {
@@ -514,7 +514,7 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
     }
     
     if (objData->unk90 == NULL) {
-        objData->unk90 = obj_get_nearest_type_to(0x13, self, &distance);
+        objData->unk90 = objGetNearestTypeTo(0x13, self, &distance);
     }
     
     if (objData->unk90 == NULL) {
@@ -544,10 +544,10 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
     
     if ((dz + 10.0f <= objData->unkC4) && (objData->unkC4 <= (dz + 40.0f))) {
         sp57 = TRUE;
-        main_set_bits(BIT_1C9, 1);
+        mainSetBits(BIT_1C9, 1);
     }
     
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
 
     objData->unkC0 += objData->unkBC * gUpdateRateF;
     if (objData->unkB8 <= objData->unkC0) {
@@ -561,15 +561,15 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
     if (texAnim != NULL) {
         objData->unkAC.f[0] += objData->unkA0;
         if (objData->unkAC.f[0] >= 225.0f) {
-            main_set_bits(objData->unk80, 1);
+            mainSetBits(objData->unk80, 1);
             if (sp57 != 0) {
-                main_set_bits(BIT_1C9, 0);
+                mainSetBits(BIT_1C9, 0);
             }
             
-            sp58 = dll_load_deferred(0x1003, 1);
+            sp58 = dllLoad(0x1003, 1);
             sp58->vtbl->func0(self, 0x14, 0, 2, -1, 0);
             sp58->vtbl->func0(self, 0x14, 0, 2, -1, 0);
-            dll_unload(sp58);
+            dllFree(sp58);
             
             gDLL_6_AMSFX->vtbl->play(NULL, 0x778, 0x64, NULL, NULL, 0, NULL);
         } else {
@@ -606,7 +606,7 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
 s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
     SRT sp50;
 /*0x40*/ Vec3f _data_40 = VEC3F(0, 0, 0.1);
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     
     if (objData->unkD4 & 0x80) {
         if (objData->unk78) {
@@ -641,7 +641,7 @@ s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
     
     objData->unk94.x = _data_40.f[0] * gUpdateRateF;
     objData->unk94.z = _data_40.f[2] * gUpdateRateF;
-    obj_move(self, objData->unk94.x, objData->unk94.y, objData->unk94.z);
+    objMove(self, objData->unk94.x, objData->unk94.y, objData->unk94.z);
     
     dll_274_func_1D18(self, objData);
     
@@ -653,7 +653,7 @@ s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
         self->srt.pitch = 0;
         objData->unkD4 &= ~4;
         objData->unkD4 |= 0x80;
-        main_set_bits(objData->unk80, 1);
+        mainSetBits(objData->unk80, 1);
         gDLL_6_AMSFX->vtbl->play(self, 0xA88, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     

@@ -52,7 +52,7 @@ void LanternFireFly_setup(Object* self, LanternFireFly_Setup* objSetup, s32 rese
     LanternFireFly_Data* objData = self->data;
     Vec3f vZero;
 
-    obj_add_object_type(self, OBJTYPE_FireFly);
+    objAddObjectType(self, OBJTYPE_FireFly);
     
     //Initialise spline
     {
@@ -114,7 +114,7 @@ void LanternFireFly_control(Object* self) {
     int True = TRUE;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     self->prevLocalPosition.x = self->srt.transl.x;\
     self->prevLocalPosition.y = self->srt.transl.y;\
@@ -135,12 +135,12 @@ void LanternFireFly_control(Object* self) {
         LanternFireFly_append_spline_point(self);
     }
     
-    self->srt.transl.x = objData->home.x + curves_b_spline(objData->splineX, objData->tValueSpline, NULL);
-    self->srt.transl.y = objData->home.y + curves_b_spline(objData->splineY, objData->tValueSpline, NULL);
-    self->srt.transl.z = objData->home.z + curves_b_spline(objData->splineZ, objData->tValueSpline, NULL);
+    self->srt.transl.x = objData->home.x + curvesBSpline(objData->splineX, objData->tValueSpline, NULL);
+    self->srt.transl.y = objData->home.y + curvesBSpline(objData->splineY, objData->tValueSpline, NULL);
+    self->srt.transl.z = objData->home.z + curvesBSpline(objData->splineZ, objData->tValueSpline, NULL);
     
     if ((objData->flagLightPerFirefly) == True) {
-        objData->tValueSpeed = (vec3_distance(&self->globalPosition, &get_player()->globalPosition) * 0.0015f) + 0.0001f;
+        objData->tValueSpeed = (vec3_distance(&self->globalPosition, &objGetPlayer()->globalPosition) * 0.0015f) + 0.0001f;
     }
     objData->tValueSpline += (objData->tValueSpeed * gUpdateRateF);
 
@@ -157,14 +157,14 @@ void LanternFireFly_control(Object* self) {
 
             STUBBED_PRINTF(" Creating Light ");
 
-            lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+            lfxSetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
             lfxSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
             lfxSetup->base.x = self->srt.transl.x;
             lfxSetup->base.y = self->srt.transl.y;
             lfxSetup->base.z = self->srt.transl.z;
             lfxSetup->unk1E = rand_next(0, 1) + 0x1AA;
             lfxSetup->unk22 = -1;
-            objData->lfxEmitter = obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+            objData->lfxEmitter = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
             
             if ((objData->flagLightPerFirefly) != True) {
                 dLightCreated = TRUE;
@@ -221,8 +221,8 @@ void LanternFireFly_control(Object* self) {
         
         objData->lifetime -= gUpdateRate;
         if (objData->lifetime < 0) {
-            main_decrement_bits(BIT_698);
-            obj_destroy_object(self);
+            mainDecrementBits(BIT_698);
+            objFreeObject(self);
         }
         
         LanternFireFly_set_home(self, player->globalPosition.x, player->globalPosition.y + 34.0f, player->globalPosition.z);
@@ -243,7 +243,7 @@ void LanternFireFly_update(Object *self) { }
 // offset: 0x858 | func: 3 | export: 3
 void LanternFireFly_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -253,7 +253,7 @@ void LanternFireFly_free(Object* self, s32 onlySelf) {
     
     if (onlySelf == FALSE) {
         if (objData->lfxEmitter != NULL) {
-            obj_destroy_object(objData->lfxEmitter);
+            objFreeObject(objData->lfxEmitter);
             objData->lfxEmitter = NULL;
             
             if ((objData->flagLightPerFirefly) != TRUE) {
@@ -262,7 +262,7 @@ void LanternFireFly_free(Object* self, s32 onlySelf) {
         }
     }
     
-    obj_free_object_type(self, OBJTYPE_FireFly);
+    objFreeObjectType(self, OBJTYPE_FireFly);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
@@ -299,7 +299,7 @@ void LanternFireFly_append_spline_point(Object* self) {
     
     //Depending on flags, set either tValueSpeed based on either player distance or randomisation
     if (objData->flagLightPerFirefly == TRUE) {
-        objData->tValueSpeed = (vec3_distance(&self->globalPosition, &get_player()->globalPosition) * 0.0015f) + 0.0001f;
+        objData->tValueSpeed = (vec3_distance(&self->globalPosition, &objGetPlayer()->globalPosition) * 0.0015f) + 0.0001f;
     } else {
         objData->tValueSpeed = rand_next(60, 90) * 0.0015f;
     }
@@ -375,7 +375,7 @@ void LanternFireFly_send(Object* self) {
     objData->unk73 = 0;
     func_8005B5B8(self, NULL, 1);
     
-    player = get_player();
+    player = objGetPlayer();
     coordsPlayer.x = player->globalPosition.x;
     coordsPlayer.y = player->globalPosition.y;
     coordsPlayer.z = player->globalPosition.z;
@@ -400,7 +400,7 @@ void LanternFireFly_send(Object* self) {
 
     objData->lifetime = objSetup->lifetime;
     
-    main_increment_bits(BIT_698);
+    mainIncrementBits(BIT_698);
 }
 
 // offset: 0xE54 | func: 11 | export: 9

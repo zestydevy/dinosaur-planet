@@ -115,15 +115,15 @@ void gameover_ctor(void* dll) {
     PlayerStats* stats = gDLL_29_Gplay->vtbl->get_player_stats();
     
     //Load textures, font, and gametext
-    sTexDusterCounter = tex_load_deferred(TEXTABLE_310);
-    font_load(FONT_FUN_FONT);
+    sTexDusterCounter = texLoadTexture(TEXTABLE_310);
+    fontLoad(FONT_FUN_FONT);
     sGameOverText = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_200_Death_Screen);
     
     //@debug: set Duster count to 1 when player dies
     stats->dusters = 1;
 
     //Start off at the "Use Duster?" screen, if the player has any
-    if ((func_80010028() == TRUE) && (stats->dusters > 0)) {
+    if ((menu_func_80010028() == TRUE) && (stats->dusters > 0)) {
         sGameOverScreenState = STATE_0_Use_Duster;
         dPicmenuItems[0].flags |= PICMENU_INTANGIBLE;
 
@@ -152,8 +152,8 @@ void gameover_ctor(void* dll) {
 
 // offset: 0x198 | dtor
 void gameover_dtor(void *dll) {
-    tex_free(sTexDusterCounter);
-    font_unload(FONT_FUN_FONT);
+    texFreeTexture(sTexDusterCounter);
+    fontUnload(FONT_FUN_FONT);
     mmFree(sGameOverText);
 }
 
@@ -167,7 +167,7 @@ s32 gameover_update1(void) {
     s32 selectedIdx;
     u32 index;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Handle leaving the Game Over screen 
     {
@@ -195,9 +195,9 @@ s32 gameover_update1(void) {
         
         if (sDestination == EXIT_TO_BOOT_SCREEN) {
             if ((prevTimer >= 13) && (sTransitionTimer < 13)) {
-                func_80013FB4();
+                main_func_80013FB4();
             } else if (sTransitionTimer <= 0) {
-                menu_set(MENU_POST);
+                menuSet(MENU_POST);
             }
             
             if (sTransitionTimer < 13) {
@@ -352,64 +352,64 @@ void gameover_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
 
     opacity = ((f32)sOpacity / 140.0f) * 255.0f;
     
-    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
     gDPSetCombineMode(*gfx, G_CC_PRIMITIVE, G_CC_PRIMITIVE); 
-    dl_apply_combine(gfx);
+    dlApplyCombine(gfx);
     gDPSetOtherMode(*gfx, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | 
         G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | 
         G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2);
-    dl_apply_other_mode(gfx);
-    dl_set_prim_color(gfx, 0, 0, 0, sOpacity);
+    dlApplyOtherMode(gfx);
+    dlSetPrimColor(gfx, 0, 0, 0, sOpacity);
     gDPFillRectangle((*gfx)++, ulx, uly, lrx, lry);
     gDLBuilder->needsPipeSync = TRUE;
     
-    font_window_set_coords(1, 0, 0, 
-        GET_VIDEO_WIDTH(vi_get_current_size()), 
-        GET_VIDEO_HEIGHT(vi_get_current_size())
+    fontWindowSetCoords(1, 0, 0, 
+        GET_VIDEO_WIDTH(viGetCurrentSize()), 
+        GET_VIDEO_HEIGHT(viGetCurrentSize())
     );
-    font_window_flush_strings(1);
-    font_window_use_font(1, FONT_FUN_FONT);
-    font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, opacity);
+    fontWindowFlushStrings(1);
+    fontWindowUseFont(1, FONT_FUN_FONT);
+    fontWindowSetTextColour(1, 0xB7, 0x8B, 0x61, 0xFF, opacity);
     
     switch (sGameOverScreenState) {
     case STATE_1_Continue_Playing:
         //Print "CONTINUE PLAYING?" text, with drop-shadow
-        font_window_add_string_xy(1, CENTRE_X, TEXT1_Y, sGameOverText->strings[STRING_0_CONTINUE], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(1, CENTRE_X, TEXT2_Y, sGameOverText->strings[STRING_1_PLAYING], 1, ALIGN_TOP_CENTER);
-        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
-        font_window_add_string_xy(1, SHADOW(CENTRE_X), SHADOW(TEXT1_Y), sGameOverText->strings[STRING_0_CONTINUE], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(1, SHADOW(CENTRE_X), SHADOW(TEXT2_Y), sGameOverText->strings[STRING_1_PLAYING], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, CENTRE_X, TEXT1_Y, sGameOverText->strings[STRING_0_CONTINUE], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, CENTRE_X, TEXT2_Y, sGameOverText->strings[STRING_1_PLAYING], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        fontWindowAddStringXY(1, SHADOW(CENTRE_X), SHADOW(TEXT1_Y), sGameOverText->strings[STRING_0_CONTINUE], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, SHADOW(CENTRE_X), SHADOW(TEXT2_Y), sGameOverText->strings[STRING_1_PLAYING], 1, ALIGN_TOP_CENTER);
         break;
     case STATE_2_Do_You_Wish_to_Save:
         //Print "DO YOU WISH TO SAVE?" text, with drop-shadow
-        font_window_add_string_xy(1, CENTRE_X, TEXT1_Y, sGameOverText->strings[STRING_3_DO_YOU_WISH], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(1, CENTRE_X, TEXT2_Y, sGameOverText->strings[STRING_4_TO_SAVE], 1, ALIGN_TOP_CENTER);
-        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
-        font_window_add_string_xy(1, SHADOW(CENTRE_X), SHADOW(TEXT1_Y), sGameOverText->strings[STRING_3_DO_YOU_WISH], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(1, SHADOW(CENTRE_X), SHADOW(TEXT2_Y), sGameOverText->strings[STRING_4_TO_SAVE], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, CENTRE_X, TEXT1_Y, sGameOverText->strings[STRING_3_DO_YOU_WISH], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, CENTRE_X, TEXT2_Y, sGameOverText->strings[STRING_4_TO_SAVE], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        fontWindowAddStringXY(1, SHADOW(CENTRE_X), SHADOW(TEXT1_Y), sGameOverText->strings[STRING_3_DO_YOU_WISH], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, SHADOW(CENTRE_X), SHADOW(TEXT2_Y), sGameOverText->strings[STRING_4_TO_SAVE], 1, ALIGN_TOP_CENTER);
         break;
     case STATE_3_Game_Saved:
         //Print "GAME SAVED" text, with drop-shadow
-        font_window_add_string_xy(1, CENTRE_X, GAME_SAVED_Y, sGameOverText->strings[STRING_5_GAME_SAVED], 1, ALIGN_TOP_CENTER);
-        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
-        font_window_add_string_xy(1, SHADOW(CENTRE_X), SHADOW(GAME_SAVED_Y), sGameOverText->strings[STRING_5_GAME_SAVED], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, CENTRE_X, GAME_SAVED_Y, sGameOverText->strings[STRING_5_GAME_SAVED], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        fontWindowAddStringXY(1, SHADOW(CENTRE_X), SHADOW(GAME_SAVED_Y), sGameOverText->strings[STRING_5_GAME_SAVED], 1, ALIGN_TOP_CENTER);
         break;
     case STATE_0_Use_Duster:
         //Print "USE DUSTER?" text, with drop-shadow
-        font_window_add_string_xy(1, USE_DUSTER_TEXT_X, USE_DUSTER_TEXT_Y, sGameOverText->strings[STRING_6_USE_DUSTER], 1, ALIGN_TOP_LEFT);
-        font_window_set_text_colour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
-        font_window_add_string_xy(1, SHADOW(USE_DUSTER_TEXT_X), SHADOW(USE_DUSTER_TEXT_Y), sGameOverText->strings[STRING_6_USE_DUSTER], 1, ALIGN_TOP_LEFT);
+        fontWindowAddStringXY(1, USE_DUSTER_TEXT_X, USE_DUSTER_TEXT_Y, sGameOverText->strings[STRING_6_USE_DUSTER], 1, ALIGN_TOP_LEFT);
+        fontWindowSetTextColour(1, 0, 0, 0, 0xFF, SHADOW_OPACITY(opacity));
+        fontWindowAddStringXY(1, SHADOW(USE_DUSTER_TEXT_X), SHADOW(USE_DUSTER_TEXT_Y), sGameOverText->strings[STRING_6_USE_DUSTER], 1, ALIGN_TOP_LEFT);
         
         //Draw Duster counter
-        rcp_screen_full_write(gfx, sTexDusterCounter, USE_DUSTER_BOX_X, USE_DUSTER_BOX_Y, 0, 0, opacity, 0);
-        font_window_use_font(1, FONT_DINO_SUBTITLE_FONT_1);
+        rcpScreenFullWrite(gfx, sTexDusterCounter, USE_DUSTER_BOX_X, USE_DUSTER_BOX_Y, 0, 0, opacity, 0);
+        fontWindowUseFont(1, FONT_DINO_SUBTITLE_FONT_1);
         sprintf(sDusterCountStr, "%02d", stats->dusters);
-        font_window_add_string_xy(1, USE_DUSTER_COUNT_X, USE_DUSTER_COUNT_Y, sDusterCountStr, 1, ALIGN_TOP_RIGHT);
+        fontWindowAddStringXY(1, USE_DUSTER_COUNT_X, USE_DUSTER_COUNT_Y, sDusterCountStr, 1, ALIGN_TOP_RIGHT);
         break;
     }
     
     gDLL_74_Picmenu->vtbl->set_opacity(opacity);
     gDLL_74_Picmenu->vtbl->draw(gfx);
-    font_window_draw(gfx, NULL, NULL, 1);
+    fontWindowDraw(gfx, NULL, NULL, 1);
 }

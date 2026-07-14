@@ -80,13 +80,13 @@ void WL_DeadDino_setup(Object* self, DeadDino_Setup* objSetup, s32 reset) {
     DeadDino_Data* objData = self->data;
     ObjectHitInfo* objHits;
     
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
     
     self->animCallback = WL_DeadDino_anim_callback;
     self->srt.yaw = objSetup->yaw << 8;
     self->srt.pitch = objSetup->pitch;
     
-    if (main_get_bits(BIT_WM_EarthWalker_Died)) {
+    if (mainGetBits(BIT_WM_EarthWalker_Died)) {
         self->objhitInfo->unk58 &= ~1;
         objData->vanished = TRUE;
     }
@@ -114,9 +114,9 @@ void WL_DeadDino_control(Object* self) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     
     //Show LockIcon tutorial as Krystal approaches (when in LockIcon range)
-    if ((self->unkAF & ARROW_FLAG_4_Highlighted) && (main_get_bits(BIT_Tutorial_ZLock_Talk) == FALSE)) {
+    if ((self->unkAF & ARROW_FLAG_4_Highlighted) && (mainGetBits(BIT_Tutorial_ZLock_Talk) == FALSE)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
-        main_set_bits(BIT_Tutorial_ZLock_Talk, TRUE);
+        mainSetBits(BIT_Tutorial_ZLock_Talk, TRUE);
         return;
     }
     
@@ -133,13 +133,13 @@ void WL_DeadDino_control(Object* self) {
     }
     objData->hitFlags &= ~1;
     
-    while (obj_recv_mesg(self, &outMessageID, 0, 0)) {
+    while (objRecvMesg(self, &outMessageID, 0, 0)) {
     }
     
     //Handle changing/advancing animation
     {
         animate = TRUE;
-        if (main_get_bits(BIT_WM_EarthWalker_Died) == FALSE) {
+        if (mainGetBits(BIT_WM_EarthWalker_Died) == FALSE) {
             if (objSetup->survived == FALSE) {
                 //EarthWalker died during Scales' attack
                 newModanimIdx = objSetup->deadModAnimIdx | 0x100;
@@ -149,9 +149,9 @@ void WL_DeadDino_control(Object* self) {
                 self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
                 animSpeed = 0.005f;
                 
-                player = get_player();
+                player = objGetPlayer();
                 if (player != NULL) {
-                    func_80031DD8(self, player, &distanceToPlayer);
+                    objAngleToObjectXZ(self, player, &distanceToPlayer);
 
                     if (objData->state == STATE_1_Waiting_for_Help) {
                         //Call out to the player at intervals
@@ -164,7 +164,7 @@ void WL_DeadDino_control(Object* self) {
                         if (self->unkAF & ARROW_FLAG_1_Interacted) {
                             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                             objData->state = STATE_2_Talking;
-                            joy_disable_buttons(0, A_BUTTON);
+                            joyDisableButtons(0, A_BUTTON);
                         }
                     } else if (objData->state == STATE_0_Calling_for_Help) {
                         if (distanceToPlayer < 120.0f) {
@@ -179,7 +179,7 @@ void WL_DeadDino_control(Object* self) {
 
                 newModanimIdx = 0x102;
             }
-        } else if ((objData->vanishTimer == 0.0f) && main_get_bits(BIT_WM_EarthWalker_Died)) {
+        } else if ((objData->vanishTimer == 0.0f) && mainGetBits(BIT_WM_EarthWalker_Died)) {
             objData->vanishTimer = 1.0f;
             gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             animate = FALSE;
@@ -188,9 +188,9 @@ void WL_DeadDino_control(Object* self) {
         //Advance/change animation
         if (animate && (objData->vanished == FALSE)) {
             if (newModanimIdx != self->curModAnimId) {
-                func_80023D30(self, newModanimIdx, 0.0f, 0);
+                objAnimSet(self, newModanimIdx, 0.0f, 0);
             }
-            func_80024108(self, animSpeed, gUpdateRateF, NULL);
+            objAnimAdvance(self, animSpeed, gUpdateRateF, NULL);
         }
     }
     
@@ -213,8 +213,8 @@ void WL_DeadDino_control(Object* self) {
         }
         
         if (objData->blinkFrame != prevBlinkFrame) {
-            eyeL = func_800348A0(self, 5, 0);
-            eyeR = func_800348A0(self, 4, 0);
+            eyeL = objExprGetTexAnimator(self, 5, 0);
+            eyeR = objExprGetTexAnimator(self, 4, 0);
             if ((eyeL != NULL) && (eyeR != NULL)) {
                 eyeL->frame = objData->blinkFrame << 8;
                 eyeR->frame = objData->blinkFrame << 8;
@@ -283,7 +283,7 @@ int WL_DeadDino_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
     for (i = 0; i < animData->messageCount; i++) {
         if (animData->messages[i] == 1) {
             objData->state = STATE_3_Dead;
-            main_set_bits(BIT_WM_EarthWalker_Died, TRUE);
+            mainSetBits(BIT_WM_EarthWalker_Died, TRUE);
             animData->messages[i] = 0;
         }
     }

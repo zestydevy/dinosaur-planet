@@ -72,7 +72,7 @@ void NWsfx_control(Object* self) {
     objData->intervalTimer += rand_next(0, objData->interval);
 
     //Don't play sounds if a specified gamebit is set
-    if ((objData->gamebitDisable != NO_GAMEBIT) && main_get_bits(objData->gamebitDisable)) {
+    if ((objData->gamebitDisable != NO_GAMEBIT) && mainGetBits(objData->gamebitDisable)) {
         return;
     }
     
@@ -92,7 +92,7 @@ void NWsfx_update(Object* self) { }
 // offset: 0x1F4 | func: 3 | export: 3
 void NWsfx_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

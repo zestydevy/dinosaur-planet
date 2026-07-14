@@ -64,29 +64,29 @@ void DBbridgeanim_control(Object* self) {
     objSetup = (DBbridgeanim_Setup*)self->setup;
     objData = self->data;
     
-    if (joy_get_pressed(0) & B_BUTTON) {
-        main_set_bits(objSetup->gamebitStart, TRUE);
+    if (joyGetPressed(0) & B_BUTTON) {
+        mainSetBits(objSetup->gamebitStart, TRUE);
     }
     
     switch (objData->state) {
     case STATE_0_Bridge_Off:
-        if (main_get_bits(objSetup->gamebitStart)) {
+        if (mainGetBits(objSetup->gamebitStart)) {
             objData->state = STATE_1_Bridge_On;
             DBbridgeanim_create_step(1);
             objData->timer = 0;
             objData->stepNum = 1;
-            main_set_bits(objSetup->gamebitStart, FALSE);
+            mainSetBits(objSetup->gamebitStart, FALSE);
             return;
         }
         return;
     case STATE_1_Bridge_On:
         diPrintf(" On ");
         
-        gamebitValue = main_get_bits(BIT_82B);
+        gamebitValue = mainGetBits(BIT_82B);
         if (gamebitValue && (gamebitValue >= objData->stepNum)) {
             STUBBED_PRINTF(" Creating Step Number %i ", gamebitValue);
             DBbridgeanim_create_step(++gamebitValue);
-            main_set_bits(BIT_82B, 0);
+            mainSetBits(BIT_82B, 0);
 
             objData->timer = 0;
             
@@ -116,7 +116,7 @@ void DBbridgeanim_update(Object* self) { }
 // offset: 0x230 | func: 3 | export: 3
 void DBbridgeanim_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -139,7 +139,7 @@ void DBbridgeanim_create_step(s32 stepNum) {
     s32 i;
     s32 count;
 
-    objects = obj_get_all_of_type(OBJTYPE_DBlgtbeam, &count);
+    objects = objGetAllOfType(OBJTYPE_DBlgtbeam, &count);
     for (i = 0; i < count; i++){
         if (((DLL_677_DBlgtbeam*)objects[i]->dll)->vtbl->func9(objects[i], stepNum)) {
             ((DLL_677_DBlgtbeam*)objects[i]->dll)->vtbl->func7(objects[i], 5);
@@ -154,7 +154,7 @@ void DBbridgeanim_remove_step(s32 stepNum) {
     s32 i;
     s32 count;
 
-    objects = obj_get_all_of_type(OBJTYPE_DBlgtbeam, &count);
+    objects = objGetAllOfType(OBJTYPE_DBlgtbeam, &count);
     for (i = 0; i < count; i++){
         if (((DLL_677_DBlgtbeam*)objects[i]->dll)->vtbl->func9(objects[i], stepNum)) {
             ((DLL_677_DBlgtbeam*)objects[i]->dll)->vtbl->func7(objects[i], 6);

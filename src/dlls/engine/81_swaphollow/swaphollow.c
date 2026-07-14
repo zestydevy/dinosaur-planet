@@ -21,9 +21,9 @@ void dll_81_dtor(void* dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void dll_81_func_18(Object* objA, Object* objB, s8 arg2, s32 arg3) {
     if (arg2 == 1) {
-        main_set_bits(BIT_351, TRUE);
+        mainSetBits(BIT_351, TRUE);
     } else if (arg2 == -1) {
-        main_set_bits(BIT_351, FALSE);
+        mainSetBits(BIT_351, FALSE);
     }
 }
 
@@ -37,7 +37,7 @@ void dll_81_func_A4(Object* objA, Object* objB, s8 arg2, s32 arg3) {
     if (arg2 == 1) {
         func_80000860(objA, objB, 0x142, arg3);
         gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_TalkSwapstoneTune, 0, 0, 0);
-        main_set_bits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract, TRUE);
+        mainSetBits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract, TRUE);
     } else if (arg2 == -1) {
         func_80000860(objA, objB, 0x60, arg3);
         if (isNighttime) {
@@ -45,7 +45,7 @@ void dll_81_func_A4(Object* objA, Object* objB, s8 arg2, s32 arg3) {
         } else {
             gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_AboveGroundFullTune, 0, 0, 0);
         }
-        main_set_bits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract, FALSE);
+        mainSetBits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract, FALSE);
     }
 }
 
@@ -58,7 +58,7 @@ void dll_81_func_224(s32 arg0, Object* arg1, s8 arg2, s32 arg3) {
     
     if (arg2 == 1) {
         gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_InHollowTune, 0, 0, 0);
-        main_set_bits(BIT_177, TRUE);
+        mainSetBits(BIT_177, TRUE);
     } else if (arg2 == -1) {
         if (isNighttime) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_MushroomTune, 0, 0, 0);
@@ -67,7 +67,7 @@ void dll_81_func_224(s32 arg0, Object* arg1, s8 arg2, s32 arg3) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_AboveGroundFullTune, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_AmbienceDay, 0, 0, 0);
         }
-        main_set_bits(BIT_177, FALSE);
+        mainSetBits(BIT_177, FALSE);
     }
 }
 

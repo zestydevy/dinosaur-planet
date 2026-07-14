@@ -36,7 +36,7 @@ void DBPlatform_setup(Object* self, DBPlatform_Setup* objSetup, s32 reset) {
 
     objData = self->data;
     
-    if (main_get_bits(objSetup->gamebitStandingOn)) {
+    if (mainGetBits(objSetup->gamebitStandingOn)) {
         objData->state = DBPlatform_STATE_0;
     } else {
         objData->state = DBPlatform_STATE_3;
@@ -74,7 +74,7 @@ void DBPlatform_control(Object* self) {
     case DBPlatform_STATE_3:
         self->objhitInfo->unk5A |= 2;
 
-        if (main_get_bits(objSetup->gamebitStateTransition)) {
+        if (mainGetBits(objSetup->gamebitStateTransition)) {
             objData->state = DBPlatform_STATE_2;
             objData->timer = objSetup->transitionDuration;
             return;
@@ -97,12 +97,12 @@ void DBPlatform_control(Object* self) {
             return;
         }
 
-        player = get_player();
+        player = objGetPlayer();
         if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < objSetup->quarterVisRadius) {
             playerY = player->srt.transl.y;
             selfYOffset = self->srt.transl.y + objSetup->yOffset;
             if ((playerY < selfYOffset) && ((selfYOffset - 10.0f) < playerY)) {
-                main_set_bits(objSetup->gamebitStandingOn, 1);
+                mainSetBits(objSetup->gamebitStandingOn, 1);
                 objData->state = DBPlatform_STATE_1;
             }
         }
@@ -117,7 +117,7 @@ void DBPlatform_control(Object* self) {
         self->srt.transl.y -= gUpdateRate * -0.005f;
         if (objSetup->base.y <= self->srt.transl.y) {
             self->srt.transl.y = objSetup->base.y;
-            main_set_bits(objSetup->gamebitStandingOn, 0);
+            mainSetBits(objSetup->gamebitStandingOn, 0);
             objData->state = DBPlatform_STATE_3;
             self->objhitInfo->unk5A |= 2;
         }
@@ -131,7 +131,7 @@ void DBPlatform_update(Object* self) { }
 // offset: 0x414 | func: 3 | export: 3
 void DBPlatform_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

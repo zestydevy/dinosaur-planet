@@ -92,7 +92,7 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
     objData->changedState = TRUE;
     objData->animSpeed = 0.0f;
     
-    func_80023D30(self, 0, 0.5f, 0);
+    objAnimSet(self, 0, 0.5f, 0);
     
     baddie->fsa.flags |= OBJFSA_FLAG_1000000;
     baddie->fsa.animState = WGTriffid_ASTATE_0;
@@ -124,7 +124,7 @@ void WGTriffid_control(Object* self) {
     baddie = self->data;
     objSetup = (WGTriffid_Setup*)self->setup;
     objData = baddie->objdata;
-    player = get_player();
+    player = objGetPlayer();
     
     if (self->unkDC) {
         return;
@@ -143,7 +143,7 @@ void WGTriffid_control(Object* self) {
         return;
     }
     
-    func_80024108(self, objData->animSpeed, gUpdateRateF, NULL);
+    objAnimAdvance(self, objData->animSpeed, gUpdateRateF, NULL);
     baddie->fsa.target = NULL;
     baddie->fsa.targetDist = 0.0f;
     
@@ -246,7 +246,7 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
 
     i = 0;
     do {
-        pollenSetup = obj_alloc_setup(sizeof(Pollen_Setup), OBJ_Pollen);
+        pollenSetup = objAllocSetup(sizeof(Pollen_Setup), OBJ_Pollen);
         pollenSetup->x = (fsin16(self->srt.yaw) * 16.0f) + self->srt.transl.x;
         pollenSetup->y = self->srt.transl.y;
         pollenSetup->z = (fcos16(self->srt.yaw) * 16.0f) + self->srt.transl.z;
@@ -254,7 +254,7 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
         pollenSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
         pollenSetup->loadDistance = 0xFF;
         pollenSetup->fadeDistance = 0xFF;
-        pollen = obj_create(pollenSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
+        pollen = objSetupObject(pollenSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
         
         if (pollen != NULL) {
             thetaA = rand_next(-2000, 2000) + self->srt.yaw;
@@ -313,7 +313,7 @@ s32 WGTriffid_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->changedState = FALSE;
         objData->createdPollen = FALSE;
         objData->animSpeed = 0.02f;
-        func_80023D30(self, 0, 0.5f, 0);
+        objAnimSet(self, 0, 0.5f, 0);
         func_8002674C(self);
     }
     
@@ -344,7 +344,7 @@ s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (objData->changedState) {
         objData->changedState = FALSE;
         objData->animSpeed = 0.01f;
-        func_80023D30(self, 0, 0.5f, 0);
+        objAnimSet(self, 0, 0.5f, 0);
         func_800267A4(self);
     }
     

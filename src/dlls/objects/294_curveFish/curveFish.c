@@ -207,8 +207,8 @@ void curveFish_control(Object* self) {
         self->srt.transl.y = objData->curves.unk0.unk68.y + objSetup->curveOffsetY;
         if (objData->timer > objSetup->swimOnBedDuration) {
             objData->state = CurveFish_STATE_3_Swim_Ascending;
-            func_80023D30(self, CurveFish_MODANIM_2_Tilted_Up, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_2_Tilted_Up, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     case CurveFish_STATE_3_Swim_Ascending:
@@ -217,15 +217,15 @@ void curveFish_control(Object* self) {
             self->srt.transl.y = objData->surfaceY;
             objData->state = CurveFish_STATE_4_Swim_on_Surface;
             objData->timer = 0.0f;
-            func_80023D30(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     case CurveFish_STATE_4_Swim_on_Surface:
         if (objData->timer > objSetup->swimOnSurfaceDuration) {
             objData->state = CurveFish_STATE_5_Swim_Diving;
-            func_80023D30(self, CurveFish_MODANIM_3_Tilted_Down, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_3_Tilted_Down, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     case CurveFish_STATE_5_Swim_Diving:
@@ -234,13 +234,13 @@ void curveFish_control(Object* self) {
             self->srt.transl.y = objData->curves.unk0.unk68.y + objSetup->curveOffsetY;
             objData->state = CurveFish_STATE_2_Swim_on_Seabed;
             objData->timer = 0.0f;
-            func_80023D30(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     }
     
-    func_80024108(self, objData->animSpeed, gUpdateRateF, NULL);
+    objAnimAdvance(self, objData->animSpeed, gUpdateRateF, NULL);
 }
 
 

@@ -57,7 +57,7 @@ void dll_662_update(Object* self) {
     objData = self->data;
     
     if ((damageType == 0x11) && (objData->unk10C != 4)) {
-        player = get_player();
+        player = objGetPlayer();
         otherObj = (Object*) ((DLL_210_Player*)player->dll)->vtbl->func78(player);
         if (((DLL_Unknown*)otherObj->dll)->vtbl->func[10].withThreeArgsS32((s32)otherObj, 0x10, NULL) != 2) {
             self->objhitInfo->unk58 &= ~1;
@@ -122,7 +122,7 @@ void dll_662_func_FA8(Object* self, Vec3f* velocity) {
     accelerationX = 0.0f;
     accelerationZ = 0.0f;
 
-    for (objects = obj_get_all_of_type(OBJTYPE_Riverflow, &count), i = 0; i < count; i++) {
+    for (objects = objGetAllOfType(OBJTYPE_Riverflow, &count), i = 0; i < count; i++) {
         riverFlow = objects[i];
         dy = riverFlow->srt.transl.y - self->srt.transl.y;
         if ((dy <= 7.0f) && (dy >= -7.0f)) {
@@ -204,7 +204,7 @@ void dll_662_func_1744(Object* self, DBEgg_Data* objData) {
     self->srt.scale = objSetup->unk1A * 0.015625f;
     self->srt.scale *= self->def->scale;
 
-    if (main_get_bits(objSetup->unk1C)) {
+    if (mainGetBits(objSetup->unk1C)) {
         objData->unk10C = 3;
     } else {
         objData->unk10C = 1;
@@ -232,9 +232,9 @@ void dll_662_func_1744(Object* self, DBEgg_Data* objData) {
         }
     }
 
-    obj_add_object_type(self, 0x26);
+    objAddObjectType(self, 0x26);
     
-    if (main_get_bits(objSetup->unk24)) {
+    if (mainGetBits(objSetup->unk24)) {
         objData->unk10C = 5;
     } else {
         objData->unk10C = 0xC;
@@ -261,7 +261,7 @@ void dll_662_func_1954(Object* self) {
     outMesgArg = 0;
     objData = self->data;
     
-    while (obj_recv_mesg(self, &outMessageID, &sender, (void*)&outMesgArg)) {
+    while (objRecvMesg(self, &outMessageID, &sender, (void*)&outMesgArg)) {
         if (outMessageID == 0x11) {
             switch (outMesgArg) {
             case 0x12:  

@@ -36,7 +36,7 @@ void WallAnimator_setup(Object* self, WallAnimator_Setup* objSetup, s32 reset) {
     objData->unk28 = objSetup->unk26;
     
     //Check if the local Block has any vertices with the given animatorID
-    animatedVtxCount = block_get_animator_vertex_count(self, objData->animatorID);
+    animatedVtxCount = blockGetAnimatorVertexCount(self, objData->animatorID);
     if (animatedVtxCount == 0) {
         objData->animatorID = 0;
     }
@@ -58,13 +58,13 @@ void WallAnimator_setup(Object* self, WallAnimator_Setup* objSetup, s32 reset) {
     }
     
     //Check if the wall's already been dug through
-    if (main_get_bits(objSetup->gamebitDug)) {
+    if (mainGetBits(objSetup->gamebitDug)) {
         objData->digFinished = TRUE;
         objData->digDepth = DIG_DEPTH_MAX;
     }
     
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
-    obj_add_object_type(self, OBJTYPE_WallAnimator);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_WallAnimator);
 }
 
 // offset: 0x1E8 | func: 1 | export: 1
@@ -95,10 +95,10 @@ void WallAnimator_control(Object* self) {
     
     //Show the Find command when the player is nearby (provided there isn't a nearby Pushblock obstructing the dig spot)
     if (objData->digDepth != DIG_DEPTH_MAX) {
-        player = get_player();
-        sidekick = get_sidekick();
+        player = objGetPlayer();
+        sidekick = objGetSidekick();
         distance = M_INFINITY_F;
-        pushblock = obj_get_nearest_type_to(OBJTYPE_PushBlock, self, &distance);
+        pushblock = objGetNearestTypeTo(OBJTYPE_PushBlock, self, &distance);
 
         if (sidekick && ((pushblock == NULL) || (pushblock && (distance > 35.0f)))) {
             distance = vec3_distance_squared(&self->globalPosition, &player->globalPosition);
@@ -114,7 +114,7 @@ void WallAnimator_control(Object* self) {
     }
     
     //Get local Blocks model and make sure its vertices are animatable
-    block = map_get_block_by_index(map_world_coords_to_block_index(
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(
         self->srt.transl.x, self->srt.transl.y, self->srt.transl.z)
     );
     if ((block == NULL) || !(block->vtxFlags & 8)) {
@@ -136,7 +136,7 @@ void WallAnimator_control(Object* self) {
         objData->digFinished = TRUE;
         objData->digDepth = DIG_DEPTH_MAX;
 
-        main_set_bits(objData->gamebitDug, TRUE);
+        mainSetBits(objData->gamebitDug, TRUE);
 
         gDLL_6_AMSFX->vtbl->play(self, SOUND_B01_Success_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
@@ -182,7 +182,7 @@ void WallAnimator_update(Object *self) { }
 // offset: 0x6F4 | func: 3 | export: 3
 void WallAnimator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -194,8 +194,8 @@ void WallAnimator_free(Object* self, s32 onlySelf) {
         mmFree(objData->vtxWeights);
     }
     
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
-    obj_free_object_type(self, OBJTYPE_WallAnimator);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_WallAnimator);
 }
 
 // offset: 0x7D0 | func: 5 | export: 5
@@ -229,7 +229,7 @@ void WallAnimator_calculate_vertex_weights(Object* self, WallAnimator_Data* objD
     f32 radiusSq;
 
     //Get local Block and make sure its vertices are animatable
-    block = map_get_block_by_index(map_world_coords_to_block_index(
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(
         self->srt.transl.x, self->srt.transl.y, self->srt.transl.z)
     );
     if ((block == NULL) || !(block->vtxFlags & 8)) {

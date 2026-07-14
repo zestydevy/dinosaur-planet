@@ -24,13 +24,13 @@ void DBExpBit_setup(Object* self, DBExpBit_Setup* objSetup, s32 reset) {
     
     objData->reset = reset;
     
-    obj_set_model(self, objSetup->modelIdx);
+    objSetModel(self, objSetup->modelIdx);
     
     self->srt.transl.x = objSetup->base.x;
     self->srt.transl.y = objSetup->base.y;
     self->srt.transl.z = objSetup->base.z;
     
-    obj_add_object_type(self, OBJTYPE_DBExpbit);
+    objAddObjectType(self, OBJTYPE_DBExpbit);
 }
 
 // offset: 0x98 | func: 1 | export: 1

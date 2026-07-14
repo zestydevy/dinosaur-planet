@@ -44,7 +44,7 @@ void WMFireFly_setup(Object* self, WMFireFly_Setup* objSetup, s32 reset) {
     
     objData = self->data;
     
-    obj_add_object_type(self, OBJTYPE_FireFly);
+    objAddObjectType(self, OBJTYPE_FireFly);
 
     v.f[0] = self->srt.transl.x;
     v.f[1] = self->srt.transl.y;
@@ -96,8 +96,8 @@ void WMFireFly_control(Object* self) {
     LFXEmitter_Setup* lfxSetup;
 
     objData = self->data;
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     
     if (objData->tValueSpline > 1.0f) {
         objData->tValueSpline -= 1.0f;
@@ -110,9 +110,9 @@ void WMFireFly_control(Object* self) {
         WMFireFly_append_spline_point(self);
     }
     
-    self->srt.transl.x = curves_b_spline(objData->splineX, objData->tValueSpline, NULL);
-    self->srt.transl.y = curves_b_spline(objData->splineY, objData->tValueSpline, NULL);
-    self->srt.transl.z = curves_b_spline(objData->splineZ, objData->tValueSpline, NULL);
+    self->srt.transl.x = curvesBSpline(objData->splineX, objData->tValueSpline, NULL);
+    self->srt.transl.y = curvesBSpline(objData->splineY, objData->tValueSpline, NULL);
+    self->srt.transl.z = curvesBSpline(objData->splineZ, objData->tValueSpline, NULL);
     
     objData->tValueSpline += objData->tValueSpeed * gUpdateRateF;
     
@@ -127,14 +127,14 @@ void WMFireFly_control(Object* self) {
         if ((vec3_distance_xz(&player->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f) || ((sidekick != NULL) && (vec3_distance_xz(&sidekick->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f))) {
             if (objData->lightCreated == FALSE) {
                 objData->lightCreated = TRUE;
-                lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+                lfxSetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
                 lfxSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
                 lfxSetup->base.x = self->srt.transl.x;
                 lfxSetup->base.y = self->srt.transl.y;
                 lfxSetup->base.z = self->srt.transl.z;
                 lfxSetup->unk1E = rand_next(0, 1) + 0x1AA;
                 lfxSetup->unk22 = -1;
-                objData->lfxEmitter = obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+                objData->lfxEmitter = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
             }
 
             objData->lfxEmitter->srt.transl.x = self->srt.transl.x;
@@ -143,7 +143,7 @@ void WMFireFly_control(Object* self) {
         } else {
             if (((objData->effectType == 1) || (objData->effectType == 4)) && (objData->lightCreated == TRUE)) {
                 if (objData->lfxEmitter != NULL) {
-                    obj_destroy_object(objData->lfxEmitter);
+                    objFreeObject(objData->lfxEmitter);
                     objData->lightCreated = FALSE;
                     objData->lfxEmitter = NULL;
                 }
@@ -195,7 +195,7 @@ void WMFireFly_update(Object* self) { }
 // offset: 0x7C4 | func: 3 | export: 3
 void WMFireFly_print(Object* self, Gfx** gfl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gfl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -205,11 +205,11 @@ void WMFireFly_free(Object* self, s32 onlySelf) {
 
     if (onlySelf == FALSE) {
         if (objData->lfxEmitter != NULL) {
-            obj_destroy_object(objData->lfxEmitter);
+            objFreeObject(objData->lfxEmitter);
         }
     }
     
-    obj_free_object_type(self, OBJTYPE_FireFly);
+    objFreeObjectType(self, OBJTYPE_FireFly);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 

@@ -32,14 +32,14 @@ void FireFlyLantern_setup(Object* self, FireFlyLantern_Setup* objSetup, s32 rese
     self->animCallback = FireFlyLantern_anim_callback;
     
     //Store player's lantern gamebitID
-    if (get_player()->id != OBJ_Sabre) {
+    if (objGetPlayer()->id != OBJ_Sabre) {
         objData->gamebitFireflies = BIT_Krystal_Fireflies;
     } else {
         objData->gamebitFireflies = BIT_Sabre_Fireflies;
     }
     
     //Store player's firefly count
-    objData->fireflyCount = main_get_bits(objData->gamebitFireflies);
+    objData->fireflyCount = mainGetBits(objData->gamebitFireflies);
 
     //Create as many fireflies as the player's firefly count (to show inside the lantern)
     for (i = 0; i < objData->fireflyCount; i++) {
@@ -60,10 +60,10 @@ void FireFlyLantern_control(Object* self) {
     //Unload fireflies and self when finished
     if (objData->flagDone) {    
         for (i = 0; i < objData->fireflyCount; i++) {
-            obj_destroy_object(objData->fireflies[i]);
+            objFreeObject(objData->fireflies[i]);
         }
         
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 
@@ -75,7 +75,7 @@ void FireFlyLantern_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x1D4 | func: 4 | export: 4
 void FireFlyLantern_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_UseObj);
+    objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
 // offset: 0x214 | func: 5 | export: 5
@@ -105,7 +105,7 @@ int FireFlyLantern_anim_callback(Object* self, Object* overrideObj, AnimObj_Data
             }
                 
             objData->fireflyCount--;
-            main_set_bits(objData->gamebitFireflies, objData->fireflyCount);
+            mainSetBits(objData->gamebitFireflies, objData->fireflyCount);
         }
 
         if (0) { } //fake
@@ -125,7 +125,7 @@ int FireFlyLantern_anim_callback(Object* self, Object* overrideObj, AnimObj_Data
 Object* FireFlyLantern_create_firefly(Object* self) {
     LanternFireFly_Setup* firefly;
 
-    firefly = obj_alloc_setup(sizeof(LanternFireFly_Setup), OBJ_LanternFireFly);
+    firefly = objAllocSetup(sizeof(LanternFireFly_Setup), OBJ_LanternFireFly);
     firefly->base.objId = OBJ_LanternFireFly;
     firefly->base.quarterSize = sizeof(LanternFireFly_Setup)/4;
     firefly->base.loadFlags = OBJSETUP_LOAD_MANUAL;
@@ -139,5 +139,5 @@ Object* FireFlyLantern_create_firefly(Object* self) {
     firefly->lifetime = 2600;
     firefly->varianceZ = 40;
     firefly->varianceY = 30;
-    return obj_create((ObjSetup*)firefly, 5, -1, -1, self->parent);
+    return objSetupObject((ObjSetup*)firefly, 5, -1, -1, self->parent);
 }

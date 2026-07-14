@@ -31,7 +31,7 @@ void VFP_FlamePoint_setup(Object* self, VFP_FlamePoint_Setup* objSetup, s32 rese
     objData->health = objSetup->health;
     objData->flameCommandRange = objSetup->flameCommandRange;
     objData->gamebitFlamed = objSetup->gamebitFlamed;
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED;
 }
 
@@ -52,16 +52,16 @@ void VFP_FlamePoint_control(Object* self) {
     //Set gamebit after Flame used
     if ((objData->health <= 0) && (objData->flameWasUsed == FALSE)) {
         if (objData->gamebitFlamed != NO_GAMEBIT) {
-            main_set_bits(objData->gamebitFlamed, TRUE);
+            mainSetBits(objData->gamebitFlamed, TRUE);
             objData->flameWasUsed = TRUE;
         }
         return;
     }
 
     //Show Flame command in inventory when nearby
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     if (sidekick != NULL) {
-        if (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) <= SQ(objSetup->flameCommandRange)) {
+        if (vec3_distance_squared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objSetup->flameCommandRange)) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
         }
     }
@@ -73,13 +73,13 @@ void VFP_FlamePoint_update(Object* self) { }
 // offset: 0x1C8 | func: 3 | export: 3
 void VFP_FlamePoint_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x21C | func: 4 | export: 4
 void VFP_FlamePoint_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x25C | func: 5 | export: 5

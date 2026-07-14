@@ -260,7 +260,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     CRSnowBike_update_collision_points(self, objData);
     CRSnowBike_init_motion_data(self, &objData->motion);
 
-    func_80023D30(self, 0, 0.0f, 0);
+    objAnimSet(self, 0, 0.0f, 0);
 
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR;
@@ -280,15 +280,15 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     objData->srtCurves.transl.y = self->srt.transl.y;
     objData->srtCurves.transl.z = self->srt.transl.z;
     
-    obj_add_object_type(self, OBJTYPE_Vehicle);
+    objAddObjectType(self, OBJTYPE_Vehicle);
 
     //Load textures (not used by DLL itself, possibly just intended to cache the modgfx textures)
-    sTexVerticalWave = tex_load_deferred(TEXTABLE_186);     //(TEX0_486) 1 vertical wave? 
-    sTexThrusterFlames = tex_load_deferred(TEXTABLE_89);    //(TEX0_253) thruster flames 
-    sTexDriftWaves = tex_load_deferred(TEXTABLE_3C);        //(TEX0_136) 3 horizontal waves, for drift effect
+    sTexVerticalWave = texLoadTexture(TEXTABLE_186);     //(TEX0_486) 1 vertical wave? 
+    sTexThrusterFlames = texLoadTexture(TEXTABLE_89);    //(TEX0_253) thruster flames 
+    sTexDriftWaves = texLoadTexture(TEXTABLE_3C);        //(TEX0_136) 3 horizontal waves, for drift effect
 
     //Hide the bike if a gamebit is set
-    if (main_get_bits(objSetup->gamebitFinished)) {
+    if (mainGetBits(objSetup->gamebitFinished)) {
         STUBBED_PRINTF(" FInished Is SEt for Some Reason \n");
         flagsValue = CRSnowBike_FLAG_1_Finished;
     } else {
@@ -332,12 +332,12 @@ void CRSnowBike_control(Object* self) {
         return;
     }
         
-    if (main_get_bits(objSetup->gamebitFinished)) {
+    if (mainGetBits(objSetup->gamebitFinished)) {
         objData->flags |= CRSnowBike_FLAG_1_Finished;
         return;
     }
     
-    player = get_player();
+    player = objGetPlayer();
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
@@ -371,7 +371,7 @@ void CRSnowBike_control(Object* self) {
             objData->mountingFrom = PLAYER_NOT_NEARBY;
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
-            if ((objSetup->gamebitUnlocked == NO_GAMEBIT) || main_get_bits(objSetup->gamebitUnlocked)) {
+            if ((objSetup->gamebitUnlocked == NO_GAMEBIT) || mainGetBits(objSetup->gamebitUnlocked)) {
                 self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
             } else {
                 self->unkAF |= ARROW_FLAG_10_Greyed_Out;
@@ -424,12 +424,12 @@ void CRSnowBike_control(Object* self) {
         //Remove modGfx
         {
             if (objData->modGfxDLLFlames != NULL) {
-                dll_unload(objData->modGfxDLLFlames);
+                dllFree(objData->modGfxDLLFlames);
                 objData->modGfxDLLFlames = NULL;
             }
 
             if (objData->modGfxDLLWaves != NULL) {
-                dll_unload(objData->modGfxDLLWaves);
+                dllFree(objData->modGfxDLLWaves);
                 objData->modGfxDLLWaves = NULL;
             }
         }
@@ -444,7 +444,7 @@ void CRSnowBike_control(Object* self) {
             objData->raceData.unk1C = 0;
 
             //Check if the race has started
-            if (main_get_bits(objData->gamebitIDs->started)) {
+            if (mainGetBits(objData->gamebitIDs->started)) {
                 flagValue = CRSnowBike_FLAG_8_Race_Started;
             } else {
                 flagValue = CRSnowBike_FLAG_0_None;
@@ -459,7 +459,7 @@ void CRSnowBike_control(Object* self) {
                 }
                 gDLL_4_Race->vtbl->func9(&objData->raceData);
             }
-        } else if (main_get_bits(objData->gamebitIDs->ended)) {
+        } else if (mainGetBits(objData->gamebitIDs->ended)) {
             //Check if the race ended
             objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
         }
@@ -473,7 +473,7 @@ void CRSnowBike_control(Object* self) {
                 return;
             }
             
-            if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
+            if (mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
                 if (objData->flags & CRSnowBike_FLAG_2_Driving_In_Void) {
                     sp5C = CRSnowBike_sharpclaw_update_race_pathing(self, objData, 2.8f * gUpdateRateF);
                     gDLL_4_Race->vtbl->func4(self, &objData->raceData);
@@ -656,8 +656,8 @@ void CRSnowBike_update(Object* self) {
         switch (objID){
         case OBJ_CRSnowClaw:
         case OBJ_CRSnowClaw2:
-            camera_enable_y_offset();
-            camera_set_shake_offset(1.0f);
+            camUseShake();
+            camSetShakeOffset(1.0f);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_551, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_552, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_554, NULL, 4, -1, NULL);
@@ -722,9 +722,9 @@ void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
             CRSnowBike_handle_partfx_and_impact_sounds(self, objData, gdl, mtxs, vtxs, pols);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
-        func_80031F6C(self, 0, 
+        objGetAttachPointWorldSpace(self, 0, 
             &objData->attachPointCoords.x, 
             &objData->attachPointCoords.y, 
             &objData->attachPointCoords.z, 
@@ -744,8 +744,8 @@ void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     }
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 0, 
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objGetAttachPointWorldSpace(self, 0, 
             &objData->attachPointCoords.x,
             &objData->attachPointCoords.y,
             &objData->attachPointCoords.z, 
@@ -781,24 +781,24 @@ void CRSnowBike_free(Object* self, s32 onlySelf) {
     }
 
     if (objData->modGfxDLLFlames != NULL) {
-        dll_unload(objData->modGfxDLLFlames);
+        dllFree(objData->modGfxDLLFlames);
     }
     objData->modGfxDLLFlames = NULL;
     
     if (objData->modGfxDLLWaves != NULL) {
-        dll_unload(objData->modGfxDLLWaves);
+        dllFree(objData->modGfxDLLWaves);
     }
     objData->modGfxDLLWaves = NULL;
     
-    obj_free_object_type(self, OBJTYPE_Vehicle);
+    objFreeObjectType(self, OBJTYPE_Vehicle);
     
     if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver)) {
         gDLL_1_cmdmenu->vtbl->energy_bar_free();
     }
     
-    tex_free(sTexVerticalWave);
-    tex_free(sTexThrusterFlames);
-    tex_free(sTexDriftWaves);
+    texFreeTexture(sTexVerticalWave);
+    texFreeTexture(sTexThrusterFlames);
+    texFreeTexture(sTexDriftWaves);
 }
 
 // offset: 0x18D8 | func: 6 | export: 5
@@ -823,7 +823,7 @@ u8 CRSnowBike_can_bike_be_mounted(Object* self, s32 arg1) {
         return 0;
     }
 
-    if ((objSetup->gamebitUnlocked != NO_GAMEBIT) && (main_get_bits(objSetup->gamebitUnlocked) == FALSE)) {
+    if ((objSetup->gamebitUnlocked != NO_GAMEBIT) && (mainGetBits(objSetup->gamebitUnlocked) == FALSE)) {
         return 0;
     }
 
@@ -858,7 +858,7 @@ s32 CRSnowBike_can_bike_be_dismounted(Object* self, s32 arg1) {
         return PLAYER_NOT_ALLOWED_DISMOUNT;
     }
     
-    if ((joy_get_pressed(0) & B_BUTTON) == FALSE) {
+    if ((joyGetPressed(0) & B_BUTTON) == FALSE) {
         return PLAYER_NOT_ALLOWED_DISMOUNT;
     }
     
@@ -970,7 +970,7 @@ void CRSnowBike_sharpclaw_start_race(Object* self) {
         break;
     }
     
-    checkpointSetup = (checkpoint4_Setup*)map_find_obj_setup(checkpointUID, NULL, NULL, NULL, NULL);
+    checkpointSetup = (checkpoint4_Setup*)mapFindObjSetup(checkpointUID, NULL, NULL, NULL, NULL);
     if (checkpointSetup == NULL) {
         return;
     }
@@ -1032,7 +1032,7 @@ void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* o
     }
 
     //Set particle colour (just set to white, but maybe once intended to use dColourRGBA?)
-    dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
+    dlSetPrimColor(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
     
     //Create different smoke particles based on bike's forward speed
     {
@@ -1329,7 +1329,7 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
     vec3_transform(&mtx, motion->velocity.x, motion->velocity.y, motion->velocity.z, 
                    &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
     VECTOR_SCALE(self->velocity, 1.0666667f);
-    obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
+    objMove(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
 
     /* Run terrain calculations 
        (the bike iterates its motion logic for each skipped frame plus the current one, 
@@ -1539,7 +1539,7 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
         &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]
     );
     VECTOR_SCALE(self->velocity, 1.0666667f);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
     /* Run terrain calculations 
        (the bike iterates its motion logic for each skipped frame plus the current one, 
@@ -1632,8 +1632,8 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
   * Interesting to note arg2 being `controllerPort`! It may suggest Rare's were at least considering the idea of multiplayer bike races.
   */
 void CRSnowBike_read_joy_stick(Object* self, CRSnowBike_SteerData* steering, u8 controllerPort, s32 buffer) {
-    steering->xJoy = joy_get_stick_x_buffered(controllerPort, buffer);
-    steering->yJoy = joy_get_stick_y_buffered(controllerPort, buffer);
+    steering->xJoy = joyGetStickXBuffered(controllerPort, buffer);
+    steering->yJoy = joyGetStickYBuffered(controllerPort, buffer);
 }
 
 // offset: 0x3694 | func: 26
@@ -1707,7 +1707,7 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
     for (i = 0; i < animData->messageCount; i++) {
         switch (animData->messages[i]) {
         case CRSnowBike_ANIMCMD_2_Lose_Race:
-            main_set_bits(BIT_Play_Seq_02AA_CF_Lose_Race, TRUE);
+            mainSetBits(BIT_Play_Seq_02AA_CF_Lose_Race, TRUE);
             break;
         case CRSnowBike_ANIMCMD_3_Free_Fuel_Gauge:
             gDLL_1_cmdmenu->vtbl->energy_bar_free();
@@ -2009,11 +2009,11 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
     //Handle modGfx
     {
         if (objData->modGfxDLLFlames == NULL) {
-            objData->modGfxDLLFlames = dll_load_deferred(DLL_ID_141, 1);
+            objData->modGfxDLLFlames = dllLoad(DLL_ID_141, 1);
         }
         
         if (objData->modGfxDLLWaves == NULL) {
-            objData->modGfxDLLWaves = dll_load_deferred(DLL_ID_142, 1);
+            objData->modGfxDLLWaves = dllLoad(DLL_ID_142, 1);
         }
         
         if (objData->fxTimer <= 0) {

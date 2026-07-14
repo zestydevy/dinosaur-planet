@@ -36,17 +36,17 @@ void DBWaterPlant_setup(Object* self, DBWaterPlant_Setup* objSetup, s32 reset) {
 
     objData = self->data;
     
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->frame = 0;
     }
 
-    if (main_get_bits(objSetup->gamebitRestoreState)) {
+    if (mainGetBits(objSetup->gamebitRestoreState)) {
         objData->state = DBWaterPlant_STATE_3;
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
     } else {
         objData->state = DBWaterPlant_STATE_0;
-        func_80023D30(self, 0, 1.0f, 0);
+        objAnimSet(self, 0, 1.0f, 0);
     }
     
     objData->timer = 0;
@@ -63,7 +63,7 @@ void DBWaterPlant_control(Object* self) {
     objData = self->data;
     objSetup = (DBWaterPlant_Setup*)self->setup;
     
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->positionU += 0x20;
         if (texAnim->positionU > 0x3E0) {
@@ -103,7 +103,7 @@ void DBWaterPlant_control(Object* self) {
     
     objData->animSpeedPhase += gUpdateRate << 9;
     
-    func_80024108(self, animSpeed, gUpdateRate, NULL);
+    objAnimAdvance(self, animSpeed, gUpdateRate, NULL);
 }
 
 // offset: 0x310 | func: 2 | export: 2
@@ -118,8 +118,8 @@ void DBWaterPlant_update(Object* self) {
     damageType = func_80025F40(self, NULL, NULL, NULL);
     
     if (damageType && (objData->state < DBWaterPlant_STATE_2)) {
-        main_set_bits(objSetup->gamebitRestoreState, 1);
-        main_set_bits(objSetup->gamebitDamaged, 1);
+        mainSetBits(objSetup->gamebitRestoreState, 1);
+        mainSetBits(objSetup->gamebitDamaged, 1);
         objData->timer = 0;
         objData->state = DBWaterPlant_STATE_2;
     }
@@ -128,7 +128,7 @@ void DBWaterPlant_update(Object* self) {
 // offset: 0x3BC | func: 3 | export: 3
 void DBWaterPlant_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

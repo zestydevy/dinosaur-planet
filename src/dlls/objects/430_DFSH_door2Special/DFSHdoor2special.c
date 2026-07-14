@@ -43,13 +43,13 @@ void DFSH_Door2Special_setup(Object* self, DFSH_DoorSpecial_Setup* objSetup, s32
 
     //Restore texture glow state
     {
-        if (main_get_bits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitLit)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_2_Pulse;
         } else {
             objData->glowState = DFSH_DoorSpecial_GLOW_0_Unlit;
         }
         
-        texAnim = func_800348A0(self, 0, 0);
+        texAnim = objExprGetTexAnimator(self, 0, 0);
         if (texAnim != NULL) {
             if (objData->glowState == DFSH_DoorSpecial_GLOW_2_Pulse) {
                 texAnim->frame = 1;
@@ -71,7 +71,7 @@ void DFSH_Door2Special_update(Object *self) { }
 // offset: 0xEC | func: 3 | export: 3
 void DFSH_Door2Special_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -101,13 +101,13 @@ int DFSH_Door2Special_anim_callback(Object* self, Object* overrideObj, AnimObj_D
     //Texture glow State Machine
     switch (objData->glowState) {
     case DFSH_DoorSpecial_GLOW_0_Unlit:
-        if (main_get_bits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitLit)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_1_Fade_In;
         }
         break;
     case DFSH_DoorSpecial_GLOW_1_Fade_In:
         //Texture blends into glowing state
-        texAnim = func_800348A0(self, 0, 0);
+        texAnim = objExprGetTexAnimator(self, 0, 0);
         if (texAnim != NULL) {
             frame = texAnim->frame + (gUpdateRate * 0x10);
             if (frame > 0x100) {
@@ -120,7 +120,7 @@ int DFSH_Door2Special_anim_callback(Object* self, Object* overrideObj, AnimObj_D
     default:
     case DFSH_DoorSpecial_GLOW_2_Pulse:
         //Glow pulses slowly, via oscillating texture frame blending 
-        texAnim = func_800348A0(self, 0, 0);
+        texAnim = objExprGetTexAnimator(self, 0, 0);
         if (texAnim != NULL) {
             objData->phase += gUpdateRate * 800;
             texAnim->frame = 0x100 - ((1.0f - fcos16_precise(objData->phase)) * 50.0f);

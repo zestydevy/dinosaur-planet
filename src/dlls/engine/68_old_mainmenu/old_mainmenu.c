@@ -10,7 +10,7 @@
 
 extern DLL_20_screens *gDLL_20_Screens;
 extern DLL_21_gametext *gDLL_21_Gametext;
-extern DLL_73* dll_throw_fault; //NOTE: BROKEN! This is a function now, not DLL 73.
+extern DLL_73* dllThrowFault; //NOTE: BROKEN! This is a function now, not DLL 73.
 
 extern s8 D_8008C8B4;
 
@@ -58,7 +58,7 @@ void old_mainmenu_ctor(void* dll) {
     sTextTimer = 0;
     sButtonsEnabled = FALSE;
     sTimer = 0;
-    func_80010018(2);
+    menu_func_80010018(2);
 }
 
 // offset: 0x84 | dtor
@@ -89,22 +89,22 @@ void old_mainmenu_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     // Maybe this showed the static Rare logo from the One Hour Footage, or the old Dinosaur Planet logo?
     gDLL_20_Screens->vtbl->show_screen(2);
     
-    func_80014508(20);
+    main_func_80014508(20);
 
-    // NOTE: this section is very broken, since it's expecting DLL 73 to be at the address of `dll_throw_fault`!
-    dll_throw_fault->vtbl->enable_joy_buttons(sButtonsEnabled);
-    dll_throw_fault->vtbl->init_text_window(180);
-    dll_throw_fault->vtbl->add_string(0, sGametext->strings[0], 20, sIndexSelected);
+    // NOTE: this section is very broken, since it's expecting DLL 73 to be at the address of `dllThrowFault`!
+    dllThrowFault->vtbl->enable_joy_buttons(sButtonsEnabled);
+    dllThrowFault->vtbl->init_text_window(180);
+    dllThrowFault->vtbl->add_string(0, sGametext->strings[0], 20, sIndexSelected);
     
     // Advance to old Level Select
-    if (dll_throw_fault->vtbl->handle_joystick_and_buttons(&sIndexSelected) == FALSE) {
-        menu_set(MENU_OLD_LEVEL_SELECT);
+    if (dllThrowFault->vtbl->handle_joystick_and_buttons(&sIndexSelected) == FALSE) {
+        menuSet(MENU_OLD_LEVEL_SELECT);
     }
     
     // Blinking "PRESS START" text
     {
         if (sTextTimer > 20) {
-            font_window_draw(gdl, NULL, NULL, 1);
+            fontWindowDraw(gdl, NULL, NULL, 1);
         }
         sTextTimer = (gUpdateRate + sTextTimer) & 0x3F;
     }

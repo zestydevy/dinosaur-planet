@@ -40,5 +40,6 @@ s32 viFrameSync(s32);
 int viContainsPoint(s32 x, s32 y);
 s32 viObjDepth(s32 x, s32 y, Object *arg2);
 void viSomeVideoSetup(s32 param1);
+void viSetModifiers(u8 updateViMode, s8 hStartMod, s8 vScaleMod);
 
 #endif //_SYS_GFX_GX_H

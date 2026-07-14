@@ -27,21 +27,21 @@ void DIMGate_control(Object* self) {
     f32 distance;
     Object* player;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Open automatically if the player is riding a vehicle nearby (i.e. on a SnowHorn)
     if (((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player)) {
         //Switch to door-opening animation
         if (self->curModAnimId != 2) {
-            func_80023D30(self, 2, 0.0f, 0);
+            objAnimSet(self, 2, 0.0f, 0);
         }
 
         //Play animation forwards or in reverse, depending on player distance
         distance = vec3_distance(&self->globalPosition, &player->globalPosition);
         if (distance < 250.0f) {
-            func_80024108(self, 0.005f, gUpdateRateF, NULL);
+            objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
         } else if (distance > 250.0f) {
-            func_80024108(self, -0.005f, gUpdateRateF, NULL);
+            objAnimAdvance(self, -0.005f, gUpdateRateF, NULL);
         }
 
         //Update objHits based around the midpoint of the door-opening animation
@@ -63,7 +63,7 @@ void DIMGate_update(Object* self) { }
 // offset: 0x1F0 | func: 3 | export: 3
 void DIMGate_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
