@@ -183,7 +183,7 @@ void rcpClearScreen(Gfx **gdl, Mtx **mtx, s32 flags) {
 
     letterbox = camGetLetterbox();
 
-    viSize = vi_get_current_size();
+    viSize = viGetCurrentSize();
     viWidth = GET_VIDEO_WIDTH(viSize);
     viHeight = GET_VIDEO_HEIGHT(viSize);
 
@@ -245,7 +245,7 @@ void rcpInitDp(Gfx **gdl) {
     s32 resolution;
     s32 resWidth;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     resWidth = GET_VIDEO_WIDTH(resolution);
 
     if (gDLBuilder->needsPipeSync) {
@@ -651,7 +651,7 @@ void rcpDrawPauseScreenFreezeFrame(Gfx** gdl) {
     width = 320;
     height = 240;
     
-    fbPtr = vi_get_framebuffer_end();
+    fbPtr = viGetFramebufferEnd();
     
     chunkSize = 6;
     
@@ -726,7 +726,7 @@ void rcpTileWriteX(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 h
     Gfx* dl;
 
     dl = *gdl;
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     viHeight = ((u16)GET_VIDEO_HEIGHT(resolution)) * 4;
     viWidth = GET_VIDEO_WIDTH(resolution) * 4;
     temp_s0 = (flags & TILE_WRITE_TRANSLUCENT)

@@ -125,14 +125,14 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     sp4C = self->globalPosition.y;
     camProjectPoint(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
     camClipToScreen(sp44, sp40, sp3C, &sp38, &sp34, NULL);
-    sp2C = vi_obj_depth(sp38, sp34, self);
+    sp2C = viObjDepth(sp38, sp34, self);
     camGetVec3ToCameraNormalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp7C, &sp74, &sp78);
     sp50 += (sp7C * 20.0f);
     sp4C += (sp74 * 20.0f); 
     sp48 += (sp78 * 20.0f);
     camProjectPoint(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
     camClipToScreen(sp44, sp40, sp3C, NULL, NULL, &sp30);
-    if ((vi_contains_point(sp38, sp34) != 0) && (sp30 > 0) && (sp30 < sp2C)) {
+    if ((viContainsPoint(sp38, sp34) != 0) && (sp30 > 0) && (sp30 < sp2C)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }
     arg2->lastMessage = 0;

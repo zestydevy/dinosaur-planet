@@ -152,7 +152,7 @@ void selection_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     /*0x4*/ static s32 dFrameButtonB = 0;
     /*0x8*/ static s32 dFrameControlStick = 0;
 
-    fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
+    fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(viGetCurrentSize()), GET_VIDEO_HEIGHT(viGetCurrentSize()));
     fontWindowFlushStrings(1);
     fontWindowUseFont(1, 1);
     

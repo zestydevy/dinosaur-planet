@@ -135,14 +135,14 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     y = self->globalPosition.y;
     camProjectPoint(x, y, z, &ox1, &oy1, &oz1);
     camClipToScreen(ox1, oy1, oz1, &ox, &oy, NULL);
-    sp30 = vi_obj_depth(ox, oy, self);
+    sp30 = viObjDepth(ox, oy, self);
     camGetVec3ToCameraNormalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
     x += (pdx * 20.0f);
     y += (pdy * 20.0f);
     z += (pdz * 20.0f);
     camProjectPoint(x, y, z, &ox1, &oy1, &oz1);
     camClipToScreen(ox1, oy1, oz1, NULL, NULL, &oz);
-    if ((vi_contains_point(ox, oy)) && (oz > 0) && (oz < sp30)) {
+    if ((viContainsPoint(ox, oy)) && (oz > 0) && (oz < sp30)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }
     return 0;

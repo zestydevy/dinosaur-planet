@@ -282,7 +282,7 @@ void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
         gDLBuilder->needsPipeSync = 0;
         gDPPipeSync((*gdl)++);
     }
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, GET_VIDEO_WIDTH(vi_get_current_size()), 
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, GET_VIDEO_WIDTH(viGetCurrentSize()), 
         SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
     shadowtex_func_8005BC58(obj, arg6, slot);
     shadowtexSwapBuffer(slot);

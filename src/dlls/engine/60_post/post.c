@@ -126,8 +126,8 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 fontYSpacing;
 
     fontWindowSetCoords(2, 0, 0, 
-        (GET_VIDEO_WIDTH(vi_get_current_size())) - 50,
-        (GET_VIDEO_HEIGHT(vi_get_current_size())));
+        (GET_VIDEO_WIDTH(viGetCurrentSize())) - 50,
+        (GET_VIDEO_HEIGHT(viGetCurrentSize())));
     
     fontWindowFlushStrings(2);
     fontWindowUseFont(2, FONT_FUN_FONT);

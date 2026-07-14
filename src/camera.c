@@ -487,7 +487,7 @@ void camViewportSetScissorRect(s32 viewPortIndex, s32 x1, s32 y1, s32 x2, s32 y2
     s32 height;
     s32 temp;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(resolution) & 0xFFFF;
     width = GET_VIDEO_WIDTH(resolution);
 
@@ -592,7 +592,7 @@ void camViewportGetRect(s32 selector, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 }
 
 void camViewportGetFullRect(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry) {
-    u32 wh = vi_get_current_size();
+    u32 wh = viGetCurrentSize();
     u32 width = GET_VIDEO_WIDTH(wh);
     u32 height = GET_VIDEO_HEIGHT(wh);
 
@@ -619,7 +619,7 @@ void camSetupViewportAndMatrices(Gfx **gdl, Mtx **rspMtxs) {
 
     origCamSelector = gCameraSelector;
     savedCamSelector = gCameraSelector;
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(wh);
     width = GET_VIDEO_WIDTH(wh);
 
@@ -718,7 +718,7 @@ void camApplyScissor(Gfx **gdl) {
     s32 padY;
     s32 mode;
     
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(wh) & 0xFFFF;
     width = GET_VIDEO_WIDTH(wh);
     
@@ -881,7 +881,7 @@ void camSetup2DProjection(Gfx** gdl, Mtx** rspMtxs) {
     s32 width;
     s32 height;
 
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(wh);
     height = GET_VIDEO_HEIGHT(wh);
     gRSPViewports[gCameraSelector + 5].vp.vscale[0] = width * 2;
@@ -984,7 +984,7 @@ void camSetupFullscreenViewport(Gfx **gdl) {
 
     gCameraSelector = 4;
 
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(wh);
     width = GET_VIDEO_WIDTH(wh);
 

@@ -49,7 +49,7 @@ void fontsInit(void) {
     s32 fbWidth;
     s32 fbHeight;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     fbWidth = GET_VIDEO_WIDTH(resolution);
     fbHeight = GET_VIDEO_HEIGHT(resolution);
 
@@ -1142,7 +1142,7 @@ void fontNumberToString(char **outString, s32 number) {
 }
 
 void fontRenderFillRect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
-    u32 resolution = vi_get_current_size();
+    u32 resolution = viGetCurrentSize();
     u32 width = GET_VIDEO_WIDTH(resolution);
     u32 height = GET_VIDEO_HEIGHT(resolution);
 
@@ -1209,7 +1209,7 @@ void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
         i = 0;
         height = window->y2 - window->y1;
 
-        vidMode = vi_get_mode();
+        vidMode = viGetMode();
         if (vidMode == 3) {
             window->x1 += 96;
             window->x2 += 96;

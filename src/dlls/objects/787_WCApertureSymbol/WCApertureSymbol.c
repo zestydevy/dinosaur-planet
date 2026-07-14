@@ -183,13 +183,13 @@ static s16 dll_787_func_490(Object *self, WCApertureSymbol_Data *objdata, f32 ar
 
     camProjectPoint(var_fv0_2, self->srt.transl.y, temp_fa0_3, &sp6C, &sp68, &sp64);
     camClipToScreen(sp6C, sp68, sp64, &sp74, &sp70, NULL);
-    if (vi_contains_point(sp74, sp70) == 0) {
+    if (viContainsPoint(sp74, sp70) == 0) {
         return 0;
     }
     if ((arg4 < arg2) || (arg3 < arg4)) {
         return 0;
     }
-    temp_v0 = vi_get_current_size();
+    temp_v0 = viGetCurrentSize();
     temp_v1 = GET_VIDEO_HEIGHT(temp_v0);
     temp_a0 = GET_VIDEO_WIDTH(temp_v0);
     if ((temp_a0 < (u32) sp74) || (sp74 < 0)) {

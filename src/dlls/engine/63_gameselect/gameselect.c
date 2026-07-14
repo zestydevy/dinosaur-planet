@@ -377,7 +377,7 @@ s32 dll_63_update1() {
 
     if (sExitToGame || sExitToMainMenu) {
         if (prevExitTransitionTimer >= 13 && sExitTransitionTimer <= 12) {
-            vi_init(1, mainGetScheduler(), FALSE);
+            viInit(1, mainGetScheduler(), FALSE);
             if (sExitToGame) {
                 dll_63_clean_up(/*leavingMenus*/TRUE);
             } else {
@@ -456,13 +456,13 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 
     if ((!sExitToGame && !sExitToMainMenu) || sExitTransitionTimer > 10) {
         fontWindowSetCoords(1, 0, 0,
-            GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
-            GET_VIDEO_HEIGHT(vi_get_current_size()));
+            GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
+            GET_VIDEO_HEIGHT(viGetCurrentSize()));
         fontWindowFlushStrings(1);
 
         fontWindowSetCoords(3, 105, 0,
-            GET_VIDEO_WIDTH(vi_get_current_size()) - 200,
-            GET_VIDEO_HEIGHT(vi_get_current_size()));
+            GET_VIDEO_WIDTH(viGetCurrentSize()) - 200,
+            GET_VIDEO_HEIGHT(viGetCurrentSize()));
         fontWindowFlushStrings(3);
 
         if (sRedrawFrames != 0) {
@@ -514,8 +514,8 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             }
 
             fontWindowSetCoords(2, 0, 0,
-                GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
-                GET_VIDEO_HEIGHT(vi_get_current_size()));
+                GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
+                GET_VIDEO_HEIGHT(viGetCurrentSize()));
             fontWindowFlushStrings(2);
             fontWindowUseFont(2, FONT_DINO_MEDIUM_FONT_IN);
             fontWindowEnableWordwrap(2);

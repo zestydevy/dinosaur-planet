@@ -346,7 +346,7 @@ void mainTick(void) {
         camApplyAlternateTrigger();
     }
 
-    gUpdateRate = vi_frame_sync(0);
+    gUpdateRate = viFrameSync(0);
     
     if (0) {}
 
@@ -404,7 +404,7 @@ void mainTickNoExpansion(void) {
     rcpWaitDP();
     mmFreeTick();
 
-    gUpdateRate = vi_frame_sync(0);
+    gUpdateRate = viFrameSync(0);
     updateRate = (u8)gUpdateRate;
     if ((s32)updateRate > 6) {
         gUpdateRate = 6;
@@ -478,7 +478,7 @@ void main_func_80013D80(void) {
 }
 
 void main_func_80013FB4(void) {
-    vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
+    viInit(OS_VI_PAL_LPN1, NULL, FALSE);
     track_set_z_buffer_on(FALSE);
     track_set_sky_on(FALSE);
     gDLL_5_AMSEQ->vtbl->stop(3);

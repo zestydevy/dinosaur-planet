@@ -1175,7 +1175,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     cmdmenu_draw_player_stats(gdl, mtxs, vtxs);
 
-    viSize = vi_get_current_size();
+    viSize = viGetCurrentSize();
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 
         0, 
         0, 
@@ -2896,7 +2896,7 @@ static void cmdmenu_gfx_set_scroll_scissor(Gfx **gdl) {
 static void cmdmenu_gfx_set_screen_scissor(Gfx** gdl) {
     s32 resolution;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     gDPSetScissor((*gdl)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution));
 }
 
@@ -3430,7 +3430,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     char playerScarabCountText[4] = "   ";
 
     dl = *gdl;
-    temp = vi_get_current_size();
+    temp = viGetCurrentSize();
     gDPSetScissor(dl++, G_SC_NON_INTERLACE, 0, 0, (u16)GET_VIDEO_WIDTH(temp) - 1, SCREEN_HEIGHT - 1);
     
     //Draw player health

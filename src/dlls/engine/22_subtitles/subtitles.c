@@ -272,7 +272,7 @@ void dll_22_func_578(Gfx **gdl) {
         return;
     }
 
-    temp_v0 = vi_get_current_size();
+    temp_v0 = viGetCurrentSize();
     _bss_7A0 = GET_VIDEO_WIDTH(temp_v0);
     _bss_79C = _bss_7A0 - (_bss_7A2 * 2);
     _bss_798 = (_bss_7A0 - _bss_79C) / 2;
@@ -313,7 +313,7 @@ void dll_22_func_578(Gfx **gdl) {
 
 // offset: 0x8F4 | func: 7
 /* static */ void dll_22_func_8F4(void) {
-    _bss_794 = GET_VIDEO_HEIGHT(vi_get_current_size());
+    _bss_794 = GET_VIDEO_HEIGHT(viGetCurrentSize());
     _bss_794 = (_bss_794 - _bss_790) - 0x18;
 }
 

@@ -355,7 +355,7 @@ s32 menuGetSaveGameIdx(void) {
 void menu_func_80010088(void) {
     u32 res;
 
-    res = vi_get_current_size();
+    res = viGetCurrentSize();
     
     D_800A7D8C = GET_VIDEO_WIDTH(res);
     D_800A7D8E = 0;
@@ -391,7 +391,7 @@ void menu_func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4) {
         *param3 = D_800A7D90;
         *param4 = D_800A7D92;
     } else {
-        u32 res = vi_get_current_size();
+        u32 res = viGetCurrentSize();
 
         *param1 = 0;
         *param2 = GET_VIDEO_WIDTH(res);

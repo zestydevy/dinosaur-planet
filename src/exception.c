@@ -642,7 +642,7 @@ void check_video_mode_crash_and_clear_framebuffer() {
     gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
 
     // Set a video crash flag if video mode is between 4-6
-    if (vi_get_mode() > 3 && vi_get_mode() < 7) {
+    if (viGetMode() > 3 && viGetMode() < 7) {
         gSomeCrashVideoFlag = 1;
     } else {
         gSomeCrashVideoFlag = 0;
@@ -664,7 +664,7 @@ void crash_blit_glyph(s32 col, s32 row, u8* glyph) {
     u8 glyphPixelRow;
     u16 *palette;
 
-    width = vi_get_current_size() & 0xFFFF;
+    width = viGetCurrentSize() & 0xFFFF;
     fb = &gFrontFramebuffer[(row * width) + col]; // get a pixel index into the framebuffer
     palette = (u16*)&((u8*)gCrashPaletteTable)[gCrashPaletteSelector * 8];
     i = MAXCONTROLLERS + 1; // 5
@@ -780,7 +780,7 @@ static const char str_8009b660[] = "%s:%d\n";
  * Sets all values of gFrontFramebuffer to 0.
  */
 void clear_framebuffer_current() {
-    u32 resEncoded = vi_get_current_size();
+    u32 resEncoded = viGetCurrentSize();
     s32 valuesLeft = GET_VIDEO_WIDTH(resEncoded) * (GET_VIDEO_HEIGHT(resEncoded) & 0xffff);
     u16 *framebufferPtr = gFrontFramebuffer;
 

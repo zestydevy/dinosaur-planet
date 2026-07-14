@@ -101,14 +101,14 @@ void dll_602_control(Object* self) {
         sp50 = self->srt.transl.f[2] - gWorldZ;
         camProjectPoint(sp58, sp54, sp50, &sp64, &sp60, &sp5C);
         camClipToScreen(sp64, sp60, sp5C, &sp74, &sp70, NULL);
-        sp68 = vi_obj_depth(sp74, sp70, self);
+        sp68 = viObjDepth(sp74, sp70, self);
         camGetVec3ToCameraNormalized(self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp4C, &sp48, &sp44);
         camProjectPoint(sp58 += (sp4C * 20.0f), sp54 += (sp48 * 20.0f), sp50 += (sp44 * 20.0f), &sp64, &sp60, &sp5C);
         camClipToScreen(sp64, sp60, sp5C, NULL, NULL, &sp6C);
         if (objdata->unkC > 0) {
            objdata->unkC -= gUpdateRate;
         } else {
-            if ((vi_contains_point(sp74, sp70) != 0) && (sp6C > 0) && (sp6C < sp68)) {
+            if ((viContainsPoint(sp74, sp70) != 0) && (sp6C > 0) && (sp6C < sp68)) {
                 sp78.transl.f[0] = 0.0f;
                 sp78.transl.f[2] = 0.0f;
                 sp78.transl.f[1] = 13.0f;

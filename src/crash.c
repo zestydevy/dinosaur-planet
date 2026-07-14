@@ -29,7 +29,7 @@ void start_crash_thread(OSSched *scheduler) {
         videoMode = 1;
     }
 
-    vi_init(videoMode, scheduler, TRUE);
+    viInit(videoMode, scheduler, TRUE);
 
     osCreateThread(
         /*t*/       &gCrashThread,

@@ -82,7 +82,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
 void IMIceMountain_control(Object *self) {
     IMIceMountain_Data *objdata = self->data;
 
-    vi_set_update_rate_target(1); // 60 FPS
+    viSetUpdateRateTarget(1); // 60 FPS
 
     switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case IM_Act1_Rescuing_Tricky:
@@ -229,7 +229,7 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
 
     gDLL_1_cmdmenu->vtbl->disable_buttons(L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
 
-    vi_set_update_rate_target(3); // 20 FPS
+    viSetUpdateRateTarget(3); // 20 FPS
 
     if (mainGetBits(BIT_IM_Race_Ended)) {
         mainSetBits(BIT_IM_Race_Ended, 0);

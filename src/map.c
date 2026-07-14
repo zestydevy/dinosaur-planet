@@ -682,7 +682,7 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
             camSetAspect(1.3333334f);
         }
         camViewportDisable(camGetCameraSelector(), 0U);
-        vi_some_video_setup(0);
+        viSomeVideoSetup(0);
         gTrackFlags &= ~TRACKFLAG_UNK10000;
     }
     if (gTrackFlags & TRACKFLAG_SKY) {

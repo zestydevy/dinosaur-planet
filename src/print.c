@@ -1032,7 +1032,7 @@ int vsprintf(char* s, const char* format, va_list args) {
 void diPrintfInit(void) {
     u32 fbRes;
 
-    fbRes = vi_get_current_size();
+    fbRes = viGetCurrentSize();
     if (GET_VIDEO_WIDTH(fbRes) > 320) {
         D_800931AC = 1;
     }
@@ -1073,7 +1073,7 @@ void diPrintfAll(Gfx **gdl) {
     char *buffer;
     u32 fbRes;
 
-    fbRes = vi_get_current_size();
+    fbRes = viGetCurrentSize();
     D_800BEB02 = GET_VIDEO_HEIGHT(fbRes);
     D_800BEB00 = GET_VIDEO_WIDTH(fbRes);
 

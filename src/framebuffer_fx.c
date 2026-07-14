@@ -81,7 +81,7 @@ void fbfx_func_8003EBD4(s32 hOffset) {
     u16* nextFB;
     u16* currentFB;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     nextFB = gBackFramebuffer;
@@ -167,7 +167,7 @@ void fbfx_func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 ar
     s32 s1;
     s32 s2;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     currentFB = gFrontFramebuffer;
@@ -305,7 +305,7 @@ void fbfx_func_8003F4C0(s32 arg0) {
     u16* currentFB;
     s32 v0;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     if (arg0 == 0) {
@@ -351,7 +351,7 @@ void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     u16 var_r20;
     u16 var_r19;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);  
     height = GET_VIDEO_HEIGHT(resolution);
     if (arg3 != 0) {
@@ -574,7 +574,7 @@ void fbfxDoEffect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
     if (fadeOutDuration < 0) {
         fadeOutDuration = 0;
     }
-    viSize = vi_get_current_size();
+    viSize = viGetCurrentSize();
     viWidth = GET_VIDEO_WIDTH(viSize);
     viHeight = GET_VIDEO_HEIGHT(viSize);
     rcpWaitDP();
@@ -762,7 +762,7 @@ void fbfxSineWaves(s32 arg0, s32 arg1) {
     s32 var_s2;
     s32 i;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     nextFB = gBackFramebuffer;

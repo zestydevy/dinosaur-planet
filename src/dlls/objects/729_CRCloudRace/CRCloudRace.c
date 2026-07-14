@@ -51,7 +51,7 @@ void CRCloudRace_control(Object *self) {
     CRCloudRace_Data *objdata;
 
     objdata = self->data;
-    vi_set_update_rate_target(1);
+    viSetUpdateRateTarget(1);
     CRCloudRace_do(self);
     objdata->flags &= ~1;
 }

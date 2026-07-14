@@ -61,7 +61,7 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     }
     sprintf(scarabCountString, "%2d", (int)scarabCount);
     
-    fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
+    fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(viGetCurrentSize()), GET_VIDEO_HEIGHT(viGetCurrentSize()));
     fontWindowFlushStrings(1);
     fontWindowUseFont(1, FONT_DINO_SUBTITLE_FONT_1);
     fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
