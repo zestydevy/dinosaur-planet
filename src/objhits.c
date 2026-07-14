@@ -1,5 +1,5 @@
 #include "sys/objhits.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/dll.h"
 #include "sys/objlib.h"
 #include "sys/pi.h"
@@ -561,7 +561,7 @@ void func_80026AB8(Object* obj, ModelInstance* modelInstance, s32 arg2, ObjectHi
         }
 
         if (arg5 == 0) {
-            queue_load_file_region_to_ptr((void **)objHitInfo->unk8, OBJHITS_BIN, temp_a2_2, objHitInfo->unk4);
+            assetRomLoadSection((void **)objHitInfo->unk8, OBJHITS_BIN, temp_a2_2, objHitInfo->unk4);
         } else {
             piRomLoadSection(OBJHITS_BIN, (void *)objHitInfo->unk8, temp_a2_2, objHitInfo->unk4);
         }

@@ -3,7 +3,7 @@
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/dll.h"
 #include "sys/pi.h"
 #include "sys/joypad.h"
@@ -310,7 +310,7 @@ CameraAction* CamControl_get_camera_action(s32 actionIndex) {
     actionIndex--;
     
     camAction = mmAlloc(sizeof(CameraAction), ALLOC_TAG_CAM_COL, ALLOC_NAME("camcontrol2"));
-    queue_load_file_region_to_ptr(
+    assetRomLoadSection(
         camAction, 
         CAMACTIONS_BIN, 
         actionIndex * sizeof(CameraAction), 

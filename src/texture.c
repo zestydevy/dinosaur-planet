@@ -2,7 +2,7 @@
 #include "PR/gbi.h"
 #include "PR/mbi.h"
 #include "sys/gfx/texture.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/map.h"
@@ -770,9 +770,9 @@ void tex_init(void) {
 
     gTextureCache = mmAlloc(700 * 8, ALLOC_TAG_TEX_COL, ALLOC_NAME("tex:textab"));
     gNumCachedTextures = 0;
-    queue_alloc_load_file((void **) &gFile_TEX_TAB[0], TEX0_TAB);
-    queue_alloc_load_file((void **) &gFile_TEX_TAB[1], TEX1_TAB);
-    queue_alloc_load_file((void **) &gFile_TEXTABLE, TEXTABLE_BIN);
+    assetRomLoad((void **) &gFile_TEX_TAB[0], TEX0_TAB);
+    assetRomLoad((void **) &gFile_TEX_TAB[1], TEX1_TAB);
+    assetRomLoad((void **) &gFile_TEXTABLE, TEXTABLE_BIN);
     for (i = 0; i < 2; i++) {
         tab = gFile_TEX_TAB[i];
         for (texIdx = 0; tab[texIdx] != -1; texIdx++) {}
@@ -788,7 +788,7 @@ void tex_set_alloc_tag(s32 tag) {
 
 Texture *tex_load_deferred(s32 id) {
     Texture *texture = NULL;
-    queue_load_texture(&texture, id);
+    assetLoadTexture(&texture, id);
 
     return texture;
 }

@@ -1,5 +1,5 @@
 #include "sys/fonts.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/camera.h"
 #include "sys/pi.h"
 #include "sys/vi.h"
@@ -53,7 +53,7 @@ void fontsInit(void) {
     fbWidth = GET_VIDEO_WIDTH(resolution);
     fbHeight = GET_VIDEO_HEIGHT(resolution);
 
-    queue_alloc_load_file((void**)&gFile_FONTS_BIN, FONTS_BIN);
+    assetRomLoad((void**)&gFile_FONTS_BIN, FONTS_BIN);
 
     gNumFonts = ((u32*)gFile_FONTS_BIN)[0];
     gFile_FONTS_BIN = (FontData*)((u32*)gFile_FONTS_BIN + 1);

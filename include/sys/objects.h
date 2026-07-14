@@ -26,8 +26,8 @@ void objDisable(Object *obj);
 void objEnable(Object *obj);
 void objFreeObject(Object *obj);
 
-void objLoadEvent(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad);
-void objLoadWeapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 queueLoad);
+void objLoadEvent(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 fromAssetThread);
+void objLoadWeapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 yieldLoad);
 
 Object *objGetPlayer(void);
 Object *objGetSidekick(void);

@@ -9,7 +9,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/animseq.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/curves.h"
 #include "sys/dll.h"
 #include "sys/pi.h"
@@ -3182,13 +3182,13 @@ void anim_init_curve(AnimObj_Data* st, AnimObj_Setup* setup) {
     animCurvesIndex = setup->sequenceIdBitfield;
 
     if (animCurvesIndex & ANIMCURVES_IS_OBJSEQ2CURVE_INDEX) {
-        queue_load_file_region_to_ptr((void *) sTempBuffer, OBJSEQ2CURVE_TAB, (((s32) (animCurvesIndex & 0x7FF0)) >> 4) * 2, 8);
+        assetRomLoadSection((void *) sTempBuffer, OBJSEQ2CURVE_TAB, (((s32) (animCurvesIndex & 0x7FF0)) >> 4) * 2, 8);
         animCurvesIndex = ((s16 *) sTempBuffer)[0] + (animCurvesIndex & 0xF);
     } else {
         animCurvesIndex = animCurvesIndex + 1;
     }
 
-    queue_load_file_region_to_ptr((void *) sTempBuffer, ANIMCURVES_TAB, animCurvesIndex * 8, 0x10);
+    assetRomLoadSection((void *) sTempBuffer, ANIMCURVES_TAB, animCurvesIndex * 8, 0x10);
     animcurves_bin_offset = ((s32 *) sTempBuffer)[1];
     size = (((s32 *) sTempBuffer)[0] >> 0x10) & 0xFFFF;
     if (!size) {
@@ -3200,7 +3200,7 @@ void anim_init_curve(AnimObj_Data* st, AnimObj_Setup* setup) {
         return;
     }
 
-    queue_load_file_region_to_ptr((void *) st->animCurvesEvents, ANIMCURVES_BIN, animcurves_bin_offset, size);
+    assetRomLoadSection((void *) st->animCurvesEvents, ANIMCURVES_BIN, animcurves_bin_offset, size);
     st->animCurvesEventCount = ((s32 *) sTempBuffer)[0] & 0xFFFF;
     st->animCurvesKeyframeCount = ((size >> 2) - st->animCurvesEventCount) >> 1;
     st->animCurvesKeyframes = (AnimCurvesKeyframe *) (&st->animCurvesEvents[st->animCurvesEventCount]);
@@ -3597,9 +3597,9 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
     }
     actors = mmAlloc(sizeof(Actor) * MAX_ACTORS, ALLOC_TAG_ANIMSEQ_COL, ALLOC_NAME("anim:table"));
     tabEntry = (s16*)actors;
-    queue_load_file_region_to_ptr((void*)actors, OBJSEQ_TAB, seqno * sizeof(s16), 8);
+    assetRomLoadSection((void*)actors, OBJSEQ_TAB, seqno * sizeof(s16), 8);
     numActors = tabEntry[1] - tabEntry[0];
-    queue_load_file_region_to_ptr((void*)actors, OBJSEQ_BIN, ((s16*)tabEntry)[0] * sizeof(Actor), numActors * sizeof(Actor));
+    assetRomLoadSection((void*)actors, OBJSEQ_BIN, ((s16*)tabEntry)[0] * sizeof(Actor), numActors * sizeof(Actor));
     if (_data_24 != NULL) {
         object = _data_24;
     }

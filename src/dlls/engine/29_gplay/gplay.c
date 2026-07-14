@@ -5,7 +5,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/31_flash.h"
 #include "game/gamebits.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -341,7 +341,7 @@ s32 gplay_load_save(s8 idx, u8 startGame) {
                 sSavegame = copy1Ptr;
             }
         } else {
-            queue_load_file_region_to_ptr(
+            assetRomLoadSection(
                 (void**)&sSavegame->asFlash,
                 SAVEGAME_BIN,
                 idx * sizeof(FlashStruct) - (sizeof(FlashStruct) * 4),

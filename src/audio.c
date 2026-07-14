@@ -2,7 +2,7 @@
 #include "PR/os.h"
 #include "libnaudio/n_libaudio.h"
 #include "libnaudio/n_unkfuncs.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/audio/speaker.h"
 #include "sys/audio.h"
 #include "sys/pi.h"
@@ -88,22 +88,22 @@ void amCreateAudioMgr(OSSched* sched, OSPri threadPriority) {
     c.dmaproc = &__amDmaNew;
     c.heap = NULL;
     
-    queue_alloc_load_file((void**)&audioTab, AUDIO_TAB);
+    assetRomLoad((void**)&audioTab, AUDIO_TAB);
     
     offset = audioTab[24];
     size = audioTab[25] - offset;
-    queue_load_file_region_to_ptr((void** ) &D_800AB960, AUDIO_BIN, offset, size);
+    assetRomLoadSection((void** ) &D_800AB960, AUDIO_BIN, offset, size);
     
     offset = audioTab[D_800AB960 + 3];
     size = audioTab[D_800AB960 + 4] - offset;
     
     c.fxTypes[0] = AL_FX_CUSTOM;
     c.params[0] = mmAlloc(size, ALLOC_TAG_AUDIO_COL, NULL);
-    queue_load_file_region_to_ptr((void**)c.params[0], AUDIO_BIN, offset, size);
+    assetRomLoadSection((void**)c.params[0], AUDIO_BIN, offset, size);
     
     c.fxTypes[1] = AL_FX_CUSTOM;
     c.params[1] = mmAlloc(size, ALLOC_TAG_AUDIO_COL, NULL);
-    queue_load_file_region_to_ptr((void**)c.params[1], AUDIO_BIN, offset, size);
+    assetRomLoadSection((void**)c.params[1], AUDIO_BIN, offset, size);
     
     n_alInit(&__am_g, &c);
     

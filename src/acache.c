@@ -1,6 +1,6 @@
 #include "PR/os.h"
 #include "sys/acache.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/memory.h"
 
 static const char str_80098210[] = "acacheInit %d,%d,%d %dbytes\n";
@@ -117,7 +117,7 @@ void *acacheGet(ACache *cache, s32 recordIndex) {
                 }
             } else {
                 // Load from file
-                queue_load_file_region_to_ptr(
+                assetRomLoadSection(
                     /*dest*/   (void** ) cache->loadedRecords,
                     /*fileID*/ (s32) cache->fileID, 
                     /*offset*/ cache->recordSize * cacheIndex,

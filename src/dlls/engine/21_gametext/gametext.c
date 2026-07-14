@@ -2,7 +2,7 @@
 #include "PR/ultratypes.h"
 #include "sys/pi.h"
 #include "sys/memory.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "dlls/engine/21_gametext.h"
 #include "libc/string.h"
 
@@ -27,7 +27,7 @@ void gametext_ctor(void *self) {
     u16 *header;
 
     header = (u16*)mmAlloc(4, ALLOC_TAG_GAME_COL, ALLOC_NAME("gametext:info"));
-    queue_load_file_region_to_ptr((void**)header, GAMETEXT_TAB, 0, 4);
+    assetRomLoadSection((void**)header, GAMETEXT_TAB, 0, 4);
 
     sBankCount = header[0];
     sBankEntryCount = header[1];
@@ -72,7 +72,7 @@ void gametext_set_bank(s8 bank) {
 
     sCurrentBankIndex = bank;
 
-    queue_load_file_region_to_ptr(
+    assetRomLoadSection(
         (void**)sCurrentBank, 
         GAMETEXT_TAB, 
         offset, 
@@ -119,7 +119,7 @@ GameTextChunk *gametext_get_chunk(u16 chunk) {
     // Set up first string pointer
     chunkPtr->strings[0] = (char*)((u32)chunkPtr->commands + sCurrentBank_StrCounts[chunk] * 2);
 
-    queue_load_file_region_to_ptr(
+    assetRomLoadSection(
         (void**)chunkPtr->commands,
         GAMETEXT_BIN,
         sCurrentBank_Offsets[chunk] * 2 + sCurrentBank_GlobalOffset,
@@ -150,7 +150,7 @@ char *gametext_get_text(u16 chunk, u16 strIndex) {
 
     text = mmAlloc(sCurrentBank_Sizes[chunk], ALLOC_TAG_GAME_COL, ALLOC_NAME("gametext:textGroup"));
 
-    queue_load_file_region_to_ptr(
+    assetRomLoadSection(
         (void**)text, 
         GAMETEXT_BIN, 
         sCurrentBank_Offsets[chunk] * 2, 

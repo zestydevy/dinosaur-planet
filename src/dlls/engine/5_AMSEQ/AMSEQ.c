@@ -5,7 +5,7 @@
 #include "game/objects/object_id.h"
 #include "libnaudio/n_libaudio.h"
 #include "sys/audio/amAudio.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/audio.h"
 #include "sys/pi.h"
 #include "sys/main.h"
@@ -106,33 +106,33 @@ void amseq_ctor(void* dll) {
     bzero(sSeqPlayers, sizeof(AMSEQPlayer*) * 4);
     sBankFiles = mmAlloc(sizeof(ALBankFile*) * 2, ALLOC_TAG_SEQ_COL, NULL);
     bzero(sBankFiles, sizeof(ALBankFile*) * 2);
-    queue_alloc_load_file((void**)&tab, AMBIENT_TAB);
+    assetRomLoad((void**)&tab, AMBIENT_TAB);
     sp44 = tab[0];
     sp48 = tab[1] - sp44;
     if (sp48 != 0) {
         sBankFiles[0] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void**)sBankFiles[0], AMBIENT_BIN, sp44, sp48);
+        assetRomLoadSection((void**)sBankFiles[0], AMBIENT_BIN, sp44, sp48);
         alBnkfNew(sBankFiles[0], (u8*)piRomGetSectionPtr(AMBIENT_BIN, tab[1]));
     }
     mmFree(tab);
-    queue_alloc_load_file((void**)&tab, MUSIC_TAB);
+    assetRomLoad((void**)&tab, MUSIC_TAB);
     sp44 = tab[0];
     sp48 = tab[1] - sp44;
     if (sp48 != 0) {
         sBankFiles[1] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void**)sBankFiles[1], MUSIC_BIN, sp44, sp48);
+        assetRomLoadSection((void**)sBankFiles[1], MUSIC_BIN, sp44, sp48);
         alBnkfNew(sBankFiles[1], (u8*)piRomGetSectionPtr(MUSIC_BIN, tab[1]));
     }
     mmFree(tab);
-    queue_alloc_load_file((void**)&tab, AUDIO_TAB);
+    assetRomLoad((void**)&tab, AUDIO_TAB);
     sp44 = tab[2];
     if (tab[3] != sp44) {
         sSeqFiles[0] = mmAlloc(4, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void** ) sSeqFiles[0], AUDIO_BIN, sp44, 4);
+        assetRomLoadSection((void** ) sSeqFiles[0], AUDIO_BIN, sp44, 4);
         sp48 = (sSeqFiles[0]->seqCount * 8) + 4;
         mmFree(sSeqFiles[0]);
         sSeqFiles[0] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void** ) sSeqFiles[0], AUDIO_BIN, sp44, sp48);
+        assetRomLoadSection((void** ) sSeqFiles[0], AUDIO_BIN, sp44, sp48);
         alSeqFileNew(sSeqFiles[0], (u8*)piRomGetSectionPtr(AUDIO_BIN, sp44));
         for (sp40 = 0; sp40 < sSeqFiles[0]->seqCount; sp40++) {
             if (sSeqFiles[0]->seqArray[sp40].len & 1) {
@@ -143,11 +143,11 @@ void amseq_ctor(void* dll) {
     sp44 = tab[1];
     if (tab[2] != sp44) {
         sSeqFiles[1] = mmAlloc(4, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void** ) sSeqFiles[1], AUDIO_BIN, sp44, 4);
+        assetRomLoadSection((void** ) sSeqFiles[1], AUDIO_BIN, sp44, 4);
         sp48 = (sSeqFiles[1]->seqCount * 8) + 4;
         mmFree(sSeqFiles[1]);
         sSeqFiles[1] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void**)sSeqFiles[1], AUDIO_BIN, sp44, sp48);
+        assetRomLoadSection((void**)sSeqFiles[1], AUDIO_BIN, sp44, sp48);
         alSeqFileNew(sSeqFiles[1], (u8*)piRomGetSectionPtr(AUDIO_BIN, sp44));
         for (sp40 = 0; sp40 < sSeqFiles[1]->seqCount; sp40++) {
             if (sSeqFiles[1]->seqArray[sp40].len & 1) {
@@ -214,7 +214,7 @@ s32 amseq_set(Object *obj, u16 actionNo, const char *filename, s32 lineNo, const
         return -1;
     }
     // "music %08x,%d\n"
-    queue_load_file_region_to_ptr((void** ) sMusicAction, MUSICACTIONS_BIN, (actionNo - 1) * sizeof(MusicAction), sizeof(MusicAction));
+    assetRomLoadSection((void** ) sMusicAction, MUSICACTIONS_BIN, (actionNo - 1) * sizeof(MusicAction), sizeof(MusicAction));
     if (obj != NULL && (sMusicAction->unk18 & sMusicAction->unk1A) != 0) {
         // "object+fade\n"
         temp_v1 = sMusicAction->unk18 & sMusicAction->unk1A;
@@ -606,7 +606,7 @@ void amseq_start_next_sequence(u8 playerNo) {
     player->midiData = mmAlloc(sSeqFiles[seqFileIdx]->seqArray[idx].len, ALLOC_TAG_SEQ_COL, NULL);
     if (player->midiData != NULL) {
         // "download sequence %d:%d\n"
-        queue_load_file_region_to_ptr(player->midiData, AUDIO_BIN, offset, sSeqFiles[seqFileIdx]->seqArray[idx].len);
+        assetRomLoadSection(player->midiData, AUDIO_BIN, offset, sSeqFiles[seqFileIdx]->seqArray[idx].len);
         n_alCSeqNew(&player->seq, (u8* ) player->midiData);
         n_alCSPSetSeq(seqp, &player->seq);
         n_alCSPPlay(seqp);

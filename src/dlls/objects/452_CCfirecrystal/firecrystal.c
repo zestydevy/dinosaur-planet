@@ -64,7 +64,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
     } else {
         lightAction = mmAlloc(sizeof(LightAction), ALLOC_TAG_LFX_COL, NULL);
         objData->lightAction = lightAction;
-        queue_load_file_region_to_ptr(lightAction, LACTIONS_BIN, 0x26F*sizeof(LightAction), sizeof(LightAction));
+        assetRomLoadSection(lightAction, LACTIONS_BIN, 0x26F*sizeof(LightAction), sizeof(LightAction));
         objData->lightAction->unk10 = ~1;
         gDLL_11_Newlfx->vtbl->func0(self, self, objData->lightAction, 0, 0, 0);
         objData->flameObjects[0] = CCfirecrystal_create_flame(self, 64, 0, 24);

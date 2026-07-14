@@ -3,7 +3,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/camera.h"
 #include "sys/dll.h"
 #include "sys/objmsg.h"
@@ -859,7 +859,7 @@ static void trigger_tex_load(u16 param1) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
             tex = tex_get_cached(*ptr2);
             if (tex == NULL) {
-                func_80012584(50, 3, NULL, (ObjSetup*)*ptr2, 0, 0, 0, 0);
+                assetEnqueueLoad(50, 3, NULL, (ObjSetup*)*ptr2, 0, 0, 0, 0);
             }
         }
     }

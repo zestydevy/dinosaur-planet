@@ -1,5 +1,5 @@
 #include "game/objects/object.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/dll.h"
 #include "sys/pi.h"
 #include "sys/interrupt_util.h"
@@ -13,7 +13,7 @@ u64 gAssetThreadStack[STACKSIZE(0xFA0) + 1];
 OSThread gAssetThread;
 OSMesgQueue gAssetLoadThreadSendQueue; //send load requests to asset thread
 OSMesg D_800ACB60[1];
-OSMesgQueue D_800ACB68;
+OSMesgQueue D_800ACB68; // signals a completed async load
 OSMesg D_800ACB80[5];
 OSMesgQueue gAssetLoadThreadRecvQueue; //receive acknowledgement from asset thread
 OSMesg D_800ACBB0[1];
@@ -32,11 +32,14 @@ u8 D_800AE29D;
 u8 D_800AE29E;
 /* -------- .bss end 800ae2a0 -------- */
 
-void func_80012A4C(void);
-void asset_thread_load_single(void);
-void asset_thread_load_asset(struct AssetLoadThreadMsg *load);
+const char load_error[] = "UNKNOWN load request\n";
 
-void create_asset_thread(void) {
+void assetQueueProcessCompleted(void);
+void assetThreadMain(void *arg);
+void assetThreadLoadNextFromQueue(void);
+void assetThreadLoad(struct AssetLoadThreadMsg *load);
+
+void assetInit(void) {
     gDisableObjectStreamingFlag = 0;
 
     gAssetThreadQueue = genericQueueInit(
@@ -51,12 +54,12 @@ void create_asset_thread(void) {
         5, 
         sizeof(AssetThreadStackElement));
     
-    osCreateThread(&gAssetThread, ASSET_THREAD_ID, &asset_thread_main, 0,
+    osCreateThread(&gAssetThread, ASSET_THREAD_ID, &assetThreadMain, 0,
         &gAssetThreadStack[STACKSIZE(0xFA0)], ASSET_THREAD_PRIORITY);
     osStartThread(&gAssetThread);
 }
 
-void func_80012584(
+void assetEnqueueLoad(
         s32 param1, 
         u8 param2, 
         u32 *param3, 
@@ -86,7 +89,7 @@ void func_80012584(
     interrupts_enable(prevIE);
 }
 
-void queue_alloc_load_file(void **dest, s32 fileId) {
+void assetRomLoad(void **dest, s32 fileId) {
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_FILE;
     assetLoadMsg.p.file.id      = fileId;
@@ -95,7 +98,7 @@ void queue_alloc_load_file(void **dest, s32 fileId) {
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1); //wait for acknowledge
 }
 
-void queue_load_file_to_ptr(void **dest, s32 fileId) {
+void assetRomLoadToDest(void **dest, s32 fileId) {
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_ALLOCATED_FILE;
     assetLoadMsg.p.file.id      = fileId;
@@ -104,7 +107,7 @@ void queue_load_file_to_ptr(void **dest, s32 fileId) {
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length) {
+void assetRomLoadSection(void **dest, s32 fileId, s32 offset, s32 length) {
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_FILE_REGION;
     assetLoadMsg.p.file.length  = length;
@@ -115,7 +118,7 @@ void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 leng
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
+void assetLoadObject(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
     assetLoadMsg.loadCategory  = 1;
     assetLoadMsg.loadType      = ASSET_TYPE_OBJECT;
     assetLoadMsg.p.object.mapID = mapID;
@@ -129,7 +132,7 @@ void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 ma
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_texture(Texture **dest, s32 id) {
+void assetLoadTexture(Texture **dest, s32 id) {
     //XXX verify types
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_TEXTURE;
@@ -139,7 +142,7 @@ void queue_load_texture(Texture **dest, s32 id) {
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount) {
+void assetLoadDLL(void **dest, s32 idOrIdx, s32 exportCount) {
     //XXX verify types
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_DLL;
@@ -150,7 +153,7 @@ void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount) {
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_model(void **dest, s32 id, s32 arg2) {
+void assetLoadModel(void **dest, s32 id, s32 arg2) {
     //XXX verify types
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_MODEL;
@@ -161,9 +164,7 @@ void queue_load_model(void **dest, s32 id, s32 arg2) {
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
-const char load_error[] = "UNKNOWN load request\n";
-
-void queue_load_anim(void **dest, s16 id, s16 modAnimID, AmapPlusAnimation* amap, Model* model) {
+void assetLoadAnim(void **dest, s16 id, s16 modAnimID, AmapPlusAnimation* amap, Model* model) {
     //XXX dest type
     assetLoadMsg.loadCategory     = 1;
     assetLoadMsg.loadType         = ASSET_TYPE_ANIMATION;
@@ -176,24 +177,24 @@ void queue_load_anim(void **dest, s16 id, s16 modAnimID, AmapPlusAnimation* amap
     osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
-u8 map_get_is_object_streaming_disabled(void) {
+u8 assetIsObjQueueEnabled(void) {
     return gDisableObjectStreamingFlag;
 }
 
-void map_set_object_streaming_disabled(u32 arg0) {
-    gDisableObjectStreamingFlag = arg0;
+void assetToggleObjQueue(u32 enabled) {
+    gDisableObjectStreamingFlag = enabled;
 }
 
-void func_800129E4() {
+void assetQueueTick(void) {
     s32 temp;
     s32 prevIE;
 
     prevIE = interrupts_disable();
 
-    func_80012A4C();
+    assetQueueProcessCompleted();
 
     if (gAssetThreadQueue->count != 0 && gAssetLoadThreadSendQueue.validCount == 0) {
-        if (gAssetThreadQueue->count) {} // fake match
+        if (gAssetThreadQueue->count) {} // @fake match
 
         D_800AE240.loadCategory = 0;
         osSendMesg(&gAssetLoadThreadSendQueue, &D_800AE240, OS_MESG_NOBLOCK);
@@ -202,10 +203,11 @@ void func_800129E4() {
     interrupts_enable(prevIE);
 }
 
-void func_80012A4C(void) {
+void assetQueueProcessCompleted(void) {
     AssetThreadStackElement sp24;
 
-    while (osRecvMesg(&D_800ACB68, NULL, 0) != -1);
+    // Flush queue
+    while (osRecvMesg(&D_800ACB68, NULL, OS_MESG_NOBLOCK) != -1);
 
     while (gAssetThreadGenericStack->count != 0) {
         genericStackPop(gAssetThreadGenericStack, &sp24);
@@ -235,7 +237,9 @@ void func_80012A4C(void) {
     }
 }
 
-void func_80012B54(s32 param1, s32 param2) {
+// remove load messages of a given type (param1) from the async queue. 
+// param2 further filters for type 4 (objects).
+void assetQueueClearMesgType(s32 param1, s32 param2) {
     UnkStructAssetThreadSingle elementTemp;
     s32 prevIE;
     GenericQueue *qptr;
@@ -243,7 +247,7 @@ void func_80012B54(s32 param1, s32 param2) {
     
     prevIE = interrupts_disable();
 
-    func_80012A4C();
+    assetQueueProcessCompleted();
 
     // Note: does not allocate, effectively just resets the temp queue
     genericQueueInit(&D_800AD6C0, (void*)&D_800AD6D0, 100, sizeof(UnkStructAssetThreadSingle));
@@ -268,6 +272,8 @@ void func_80012B54(s32 param1, s32 param2) {
 
     bcopy(qptr->data, gAssetThreadQueue->data, qptr->capacity * sizeof(UnkStructAssetThreadSingle));
 
+    // If in the middle of an queued load for the message type we are clearing, wait for it to finish and complete it.
+    // TODO: If interrupts are disabled leading up to this, is this condition really even possible?
     if (D_800AE29D != 0 && param1 == D_800AE29E) {
         interrupts_enable(prevIE);
 
@@ -275,14 +281,13 @@ void func_80012B54(s32 param1, s32 param2) {
 
         prevIE = interrupts_disable();
 
-        func_80012A4C();
+        assetQueueProcessCompleted();
     }
 
     interrupts_enable(prevIE);
 }
 
-// FIXME: should be a different name?
-void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5) {
+void assetQueueCompletedLoad(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5) {
     s32 prevIE;
     AssetThreadStackElement element;
 
@@ -302,7 +307,7 @@ void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 pa
     interrupts_enable(prevIE);
 }
 
-void asset_thread_main(void *arg) {
+void assetThreadMain(void *arg) {
     OSMesg msg;
     s32 prevIE;
     struct AssetLoadThreadMsg *msg2;
@@ -321,11 +326,11 @@ void asset_thread_main(void *arg) {
 
         switch (msg2->loadCategory) {
             case 0:
-                asset_thread_load_single();
+                assetThreadLoadNextFromQueue();
                 break;
             case 1:
             default:
-                asset_thread_load_asset(msg2);
+                assetThreadLoad(msg2);
                 break;
         }
 
@@ -335,7 +340,7 @@ void asset_thread_main(void *arg) {
     }
 }
 
-void asset_thread_load_single(void) {
+void assetThreadLoadNextFromQueue(void) {
     UnkStructAssetThreadSingle sp2C;
     s32 prevIE;
     Texture *tmp;
@@ -352,35 +357,35 @@ void asset_thread_load_single(void) {
 
         switch (sp2C.unk0) {
             case 5:
-                queue_block_emplace(5, (u32*)objSetupObjectActual(sp2C.unk8ObjSetup, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), (u8*)1, 0, 0);
+                assetQueueCompletedLoad(5, (u32*)objSetupObjectActual(sp2C.unk8ObjSetup, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), (u8*)1, 0, 0);
                 break;
             case 3:
                 tmp = tex_load(sp2C.blockId, 0);
                 if (sp2C.unk4 != 0) {
-                    queue_block_emplace(3, sp2C.unk4, (u8*)tmp, 0, 0);
+                    assetQueueCompletedLoad(3, sp2C.unk4, (u8*)tmp, 0, 0);
                 }
                 break;
             case 1:
-                block_load(sp2C.blockId, sp2C.unkC, sp2C.unk10, 1);
+                block_load(sp2C.blockId, sp2C.unkC, sp2C.unk10, /*fromAssetThread=*/TRUE);
                 break;
             case 0:
-                queue_block_emplace(0, sp2C.unk4, voxmap_load_slot(sp2C.blockId, sp2C.unkC, sp2C.unk10, sp2C.unk14int), 0, 0);
+                assetQueueCompletedLoad(0, sp2C.unk4, voxmap_load_slot(sp2C.blockId, sp2C.unkC, sp2C.unk10, sp2C.unk14int), 0, 0);
                 break;
             case 6:
-                queue_block_emplace(6, sp2C.unk4, func_80007620(sp2C.blockId, sp2C.unkC), 0, 0);
+                assetQueueCompletedLoad(6, sp2C.unk4, func_80007620(sp2C.blockId, sp2C.unkC), 0, 0);
                 break;
             default:
                 break;
         }
 
-        osSendMesg(&D_800ACB68, NULL, 0);
+        osSendMesg(&D_800ACB68, NULL, OS_MESG_NOBLOCK); // signal async load complete
         return;
     }
 
     interrupts_enable(prevIE);
 }
 
-void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
+void assetThreadLoad(struct AssetLoadThreadMsg *load) {
     switch (load->loadType) {
         case ASSET_TYPE_FILE:
             *load->p.file.dest = piRomLoad(load->p.file.id, 0);

@@ -4,7 +4,7 @@
 #include "sys/camera.h"
 #include "sys/pi.h"
 #include "sys/gfx/model.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/dll.h"
 #include "sys/exception.h"
 #include "sys/linked_list.h"
@@ -116,12 +116,12 @@ void objInit(void) {
     D_800B18E4 = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
 
     //load OBJINDEX.BIN and count number of entries
-    queue_alloc_load_file((void **) (&gFile_OBJINDEX), OBJINDEX_BIN);
+    assetRomLoad((void **) (&gFile_OBJINDEX), OBJINDEX_BIN);
     gObjIndexCount = (piRomGetFileSize(OBJINDEX_BIN) >> 1) - 1;
     while(!gFile_OBJINDEX[gObjIndexCount]) gObjIndexCount--;
 
     //load OBJECTS.TAB and count number of entries
-    queue_alloc_load_file((void **)&gFile_OBJECTS_TAB, OBJECTS_TAB);
+    assetRomLoad((void **)&gFile_OBJECTS_TAB, OBJECTS_TAB);
     gNumObjectsTabEntries = 0;
     while(gFile_OBJECTS_TAB[gNumObjectsTabEntries] != -1) gNumObjectsTabEntries++;
     gNumObjectsTabEntries--;
@@ -132,8 +132,8 @@ void objInit(void) {
     for(i = 0; i < gNumObjectsTabEntries; i++) gObjDefRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
-    queue_alloc_load_file((void **) (&gFile_TABLES_BIN), TABLES_BIN);
-    queue_alloc_load_file((void **) (&gFile_TABLES_TAB), TABLES_TAB);
+    assetRomLoad((void **) (&gFile_TABLES_BIN), TABLES_BIN);
+    assetRomLoad((void **) (&gFile_TABLES_TAB), TABLES_TAB);
     gNumTablesTabEntries = 0;
     while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
@@ -516,7 +516,7 @@ Object *objSetupObject(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, Ob
     Object *obj;
 
     obj = NULL;
-    queue_load_map_object(&obj, setup, initFlags, mapID, param4, parent, 0);
+    assetLoadObject(&obj, setup, initFlags, mapID, param4, parent, 0);
     objAddObject(obj, initFlags);
 
     return obj;
@@ -1204,12 +1204,12 @@ u32 objInitEventData(s32 objId, Object *obj, u32 addr) {
 
     addr += 0x50;
 
-    objLoadEvent(obj, objId, obj->curEvent, 0, /*dontQueueLoad=*/TRUE);
+    objLoadEvent(obj, objId, obj->curEvent, 0, /*directLoad=*/TRUE);
 
     return addr;
 }
 
-void objLoadEvent(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad) {
+void objLoadEvent(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 directLoad) {
     ObjDefEvent *eventList;
     ObjDefEvent *event;
     
@@ -1236,8 +1236,8 @@ void objLoadEvent(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dont
 
             if (eventList) {}
 
-            if (!dontQueueLoad) {
-                queue_load_file_region_to_ptr((void**)outEvent->data, OBJEVENT_BIN, offset, outEvent->size);
+            if (!directLoad) {
+                assetRomLoadSection((void**)outEvent->data, OBJEVENT_BIN, offset, outEvent->size);
             } else {
                 piRomLoadSection(OBJEVENT_BIN, outEvent->data, offset, outEvent->size);
             }
@@ -1260,7 +1260,7 @@ u32 obj_func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     return addr + 0x400;
 }
 
-void objLoadWeapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 queueLoad) {
+void objLoadWeapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 yieldLoad) {
     ObjDefWeaponData *weaponDataList;
     ObjDefWeaponData *weaponData;
     
@@ -1287,8 +1287,8 @@ void objLoadWeapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, 
 
             if (weaponDataList) {}
 
-            if (queueLoad) {
-                queue_load_file_region_to_ptr((void**)outParam->data, WEAPONDATA_BIN, offset, outParam->size);
+            if (yieldLoad) {
+                assetRomLoadSection((void**)outParam->data, WEAPONDATA_BIN, offset, outParam->size);
             } else {
                 piRomLoadSection(WEAPONDATA_BIN, outParam->data, offset, outParam->size);
             }
@@ -1493,7 +1493,7 @@ s16 objGetControlNo(s32 id) {
         var_v1 += 1;        
     }
 
-    queue_load_file_region_to_ptr((void*)D_800B18E4, OBJECTS_BIN, (s32)(gFile_OBJECTS_TAB[id] + var_v0), 8);
+    assetRomLoadSection((void*)D_800B18E4, OBJECTS_BIN, (s32)(gFile_OBJECTS_TAB[id] + var_v0), 8);
     return D_800B18E4[var_v1];
 }
 

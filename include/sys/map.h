@@ -579,7 +579,7 @@ void map_func_800484A8(void);
 
 // Blocks (again)
 
-void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
+void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 fromAssetThread);
 void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
 s32 block_texscroll_add(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
 void block_texscroll_set(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);

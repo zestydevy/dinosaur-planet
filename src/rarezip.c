@@ -1,7 +1,7 @@
 #include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/rarezip.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 
 huft *gHuftTable = NULL;
 u8 *gPackedHeader = NULL;
@@ -36,7 +36,7 @@ s32 rarezip_uncompress_size_rom(s32 fileId, s32 offset, s32 readImmediate) {
     if (readImmediate) {
         piRomLoadSection(fileId, gPackedHeader, offset, 8);
     } else {
-        queue_load_file_region_to_ptr((void**)gPackedHeader, fileId, offset, 8);
+        assetRomLoadSection((void**)gPackedHeader, fileId, offset, 8);
     }
     
     return rarezip_uncompress_size(gPackedHeader);

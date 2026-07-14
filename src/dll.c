@@ -1,4 +1,4 @@
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/dll.h"
@@ -15,8 +15,8 @@ void dllRelocate(DLLFile *dll);
 DLLFile *dllLoadFromTab(u16 tabidx, s32 *sizeOut);
 
 void dllInit(void) {
-    queue_alloc_load_file((void**)&gFile_DLLS_TAB, DLLS_TAB);
-    queue_alloc_load_file((void**)&gFile_DLLSIMPORTTAB, DLLSIMPORTTAB_BIN);
+    assetRomLoad((void**)&gFile_DLLS_TAB, DLLS_TAB);
+    assetRomLoad((void**)&gFile_DLLSIMPORTTAB, DLLSIMPORTTAB_BIN);
 
     gDLLCount = 2; 
     while (((DLLTabEntry*)((u8*)gFile_DLLS_TAB + gDLLCount * 2 * 4u))->offset != -1) {
@@ -81,7 +81,7 @@ void *dllLoadDeferred(u16 idOrIdx, u16 exportCount) {
         return NULL;
     }
 
-    queue_load_dll(&dllInterfacePtr, idOrIdx, exportCount);
+    assetLoadDLL(&dllInterfacePtr, idOrIdx, exportCount);
 
     state = DLL_INTERFACE_TO_STATE(dllInterfacePtr);
 

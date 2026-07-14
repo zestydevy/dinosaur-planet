@@ -1,13 +1,13 @@
 #include "PR/ultratypes.h"
 #include "mp3/mp3.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/pi.h"
 #include "sys/mpeg.h"
 
 s32 *gFile_MPEG_TAB = NULL;
 
 void mpegInit(ALHeap *heap) {
-	queue_alloc_load_file((void**) (&gFile_MPEG_TAB), MPEG_TAB);
+	assetRomLoad((void**) (&gFile_MPEG_TAB), MPEG_TAB);
 	mp3_init(heap);
 }
 

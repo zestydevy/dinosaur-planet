@@ -1,5 +1,5 @@
 #include "sys/voxmap.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/camera.h"
 #include "sys/curves.h"
 #include "sys/pi.h"
@@ -43,8 +43,8 @@ s32 D_800A7D0C; // gVoxmapObjectCount?
 void voxmap_init(void) {
     s32 i;
 
-    queue_alloc_load_file((void**)&gVoxmapTextureIndices, TEXPRE_TAB);
-    queue_alloc_load_file((void**)&gVoxmapObjectIndices, VOXOBJ_TAB);
+    assetRomLoad((void**)&gVoxmapTextureIndices, TEXPRE_TAB);
+    assetRomLoad((void**)&gVoxmapObjectIndices, VOXOBJ_TAB);
     for (i = 0; gVoxmapObjectIndices[i] != -1; i++) {}
 
     D_800A7D0C = --i;
@@ -174,7 +174,7 @@ s32 func_800075B0(s32 arg0, s32 arg1) {
         // "VOXMAP: attempt to load invalid object voxmap '%d'\n"
         return 0;
     }
-    func_80012584(0x3C, 6U, (u32* ) &D_800A7C80[arg1], (ObjSetup* ) arg0, 0, 0, NULL, 0);
+    assetEnqueueLoad(0x3C, 6U, (u32* ) &D_800A7C80[arg1], (ObjSetup* ) arg0, 0, 0, NULL, 0);
     return 1;
 }
 

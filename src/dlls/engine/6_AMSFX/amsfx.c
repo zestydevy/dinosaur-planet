@@ -11,7 +11,7 @@
 #include "mp3/mp3.h"
 #include "macros.h"
 #include "sys/acache.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/camera.h"
 #include "sys/pi.h"
 #include "sys/map.h"
@@ -112,12 +112,12 @@ void amsfx_ctor(void *dll) {
     n_alSndpNew(&sp30);
 
     //SFX.bin
-    queue_alloc_load_file((void*)&tab, SFX_TAB);
+    assetRomLoad((void*)&tab, SFX_TAB);
     start = tab[0];
     length = tab[1] - start;
     if (length != 0) {
         _bss_0 = mmAlloc(length, ALLOC_TAG_SFX_COL, NULL);
-        queue_load_file_region_to_ptr((void*)_bss_0, SFX_BIN, start, length);
+        assetRomLoadSection((void*)_bss_0, SFX_BIN, start, length);
         alBnkfNew(_bss_0, (u8*)piRomGetSectionPtr(SFX_BIN, tab[1]));
     } else {
         STUBBED_PRINTF("AMSFX: Error sound effects bank missing!\n");
@@ -126,7 +126,7 @@ void amsfx_ctor(void *dll) {
 
     //AUDIO.bin
     sSoundDefCache = acacheInit(AUDIO_BIN, 0x40, sizeof(SoundDef), 0x40, 0);
-    queue_alloc_load_file((void*)&tab, AUDIO_TAB);
+    assetRomLoad((void*)&tab, AUDIO_TAB);
     _bss_C = tab[0];
     _bss_10 = tab[1] - _bss_C;
     _bss_10 = _bss_10 / sizeof(SoundDef);

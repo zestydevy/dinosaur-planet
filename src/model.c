@@ -57,7 +57,7 @@ void modInit(void) {
     gNumLoadedModels = 0;
     gNumFreeModelSlots = 0;
 
-    queue_alloc_load_file((void*)&gFile_MODELS_TAB, MODELS_TAB);
+    assetRomLoad((void*)&gFile_MODELS_TAB, MODELS_TAB);
     
     gNumModelsTabEntries = 0;
     while (gFile_MODELS_TAB[gNumModelsTabEntries] != -1){
@@ -76,7 +76,7 @@ void modInit(void) {
 ModelInstance* modLoadModel(s32 arg0, s32 arg1) {
     ModelInstance* model;
 
-    queue_load_model((void*)&model, arg0, arg1);
+    assetLoadModel((void*)&model, arg0, arg1);
     return model;
 }
 
@@ -727,7 +727,7 @@ Animation* modLoadAnim(s16 animID, s16 modAnimID, AmapPlusAnimation* amap, Model
     Animation* anim;
 
     anim = NULL;
-    queue_load_anim((void*)&anim, animID, modAnimID, amap, model);
+    assetLoadAnim((void*)&anim, animID, modAnimID, amap, model);
     return anim;
 }
 

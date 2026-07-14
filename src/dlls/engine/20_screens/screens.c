@@ -1,7 +1,7 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/pi.h"
 #include "sys/map.h"
 #include "sys/memory.h"
@@ -32,7 +32,7 @@ void screens_show_screen(s32 screenNo) {
     screensTab = NULL;
     
     if (screenNo != sLoadedScreenNo) {
-        queue_alloc_load_file((void**)&screensTab, SCREENS_TAB);
+        assetRomLoad((void**)&screensTab, SCREENS_TAB);
 
         numScreens = 0;
         while (screensTab[numScreens] != 0xFFFFFFFF) {
@@ -57,7 +57,7 @@ void screens_show_screen(s32 screenNo) {
         }
 
         sLoadedScreenByteLength = length;
-        queue_load_file_region_to_ptr((void*)sLoadedScreen, SCREENS_BIN, offset, length);
+        assetRomLoadSection((void*)sLoadedScreen, SCREENS_BIN, offset, length);
 
         mmFree(screensTab);
         sLoadedScreenNo = screenNo;

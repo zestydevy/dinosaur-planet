@@ -545,7 +545,7 @@ void dll_210_setup(Object* player, u32 arg1) {
     }
     for (i = 0; i < data->unk8A0; i++) {
         data->unk3B4[i].unk34.data = mmAlloc(0x320, 0x1A, NULL);
-        objLoadWeapondata(player, player->id, &data->unk3B4[i].unk34, data->unk3B4[i].unk0, 0U);
+        objLoadWeapondata(player, player->id, &data->unk3B4[i].unk34, data->unk3B4[i].unk0, /*yieldLoad=*/FALSE);
     }
     data->spirits = mainGetBits(BIT_Spirit_Bits);
     for (i = 0; i < 7; i++) {

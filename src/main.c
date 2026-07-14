@@ -5,7 +5,7 @@
 #include "game/gamebits.h"
 #include "libnaudio/n_unkfuncs.h"
 #include "sys/audio/amAudio.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/audio.h"
 #include "sys/joypad.h"
 #include "sys/crash.h"
@@ -182,7 +182,7 @@ void mainInit(void) {
 
     mmInit();
     rarezip_init();
-    create_asset_thread();
+    assetInit();
 
     if (0) {
     } else if (osTvType == OS_TV_PAL) {
@@ -332,7 +332,7 @@ void mainTick(void) {
     gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);
     gDLL_22_Subtitles->vtbl->func_578(gdl);
     camTick();
-    func_800129E4();
+    assetQueueTick();
     diPrintfAll(gdl);
 
     gDPFullSync(gCurGfx++);
@@ -395,7 +395,7 @@ void mainTickNoExpansion(void) {
     rsp_init(&gCurGfx);
     menuUpdate1(); // ignored return value
     menuDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
-    func_800129E4();
+    assetQueueTick();
     gDLL_28_ScreenFade->vtbl->draw(tmp_s0, &gCurMtx, &gCurVtx);
 
     gDPFullSync(gCurGfx++);
@@ -701,7 +701,7 @@ OSSched *mainGetScheduler(void) {
 }
 
 void mainInitBits(void) {
-    queue_alloc_load_file((void **)&gFile_BITTABLE, BITTABLE_BIN);
+    assetRomLoad((void **)&gFile_BITTABLE, BITTABLE_BIN);
     // @bug: This should be dividing by 4 (not 2) since each entry is 4 bytes long
     gSizeBittable = piRomGetFileSize(BITTABLE_BIN) >> 1;
     gGplayState = gDLL_29_Gplay->vtbl->get_state();

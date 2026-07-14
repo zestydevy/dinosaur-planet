@@ -6,7 +6,7 @@
 #include "sys/objprint.h"
 #include "sys/memory.h"
 #include "sys/pi.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 
 DLL_INTERFACE(DLL_529_DIMLavaBall) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
@@ -91,9 +91,9 @@ void DIMLavaBallGenerator_control(Object *self) {
 
     if (objdata->index != 0 && !objdata->loaded) {
         size = sizeof(LightAction);
-        queue_load_file_region_to_ptr((void**)objdata->lfxStructs[0], LACTIONS_BIN,
+        assetRomLoadSection((void**)objdata->lfxStructs[0], LACTIONS_BIN,
             (objdata->index * size), size);
-        queue_load_file_region_to_ptr((void**)objdata->lfxStructs[1], LACTIONS_BIN,
+        assetRomLoadSection((void**)objdata->lfxStructs[1], LACTIONS_BIN,
             ((objdata->index + 1) * size), size);
         objdata->loaded = TRUE;
     }

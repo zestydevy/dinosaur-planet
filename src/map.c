@@ -3,7 +3,7 @@
 #include "dlls/objects/common/vehicle.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/texture.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/bitstream.h"
 #include "sys/di_rcp.h"
 #include "sys/pi.h"
@@ -182,7 +182,7 @@ Unk80092BC0 D_80092BC0 = {0};
 
 void map_handle_transition(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
-HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
+HitsLine* block_load_hits(Block *block, s32 blockID, u8 fromAssetThread, HitsLine* hits_ptr);
 void track_sort_render_list(u32* arg0, s32 arg1);
 void block_color_table_add_block(Block *block);
 void block_color_table_free_block(Block *block);
@@ -603,16 +603,16 @@ void init_maps(void) {
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         D_800B9700[i] = D_800B9700[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
     }
-    queue_alloc_load_file((void **) &gFile_MAPS_TAB, MAPS_TAB);
-    queue_alloc_load_file((void** ) &gFile_HITS_TAB, HITS_TAB);
+    assetRomLoad((void **) &gFile_MAPS_TAB, MAPS_TAB);
+    assetRomLoad((void** ) &gFile_HITS_TAB, HITS_TAB);
     for (i = 0; i < 120; i++) { gLoadedMapsDataTable[i] = NULL; }
-    queue_alloc_load_file((void** ) &gFile_TRKBLK, TRKBLK_BIN);
+    assetRomLoad((void** ) &gFile_TRKBLK, TRKBLK_BIN);
     gNumTRKBLKEntries = 0;
     while (gFile_TRKBLK[gNumTRKBLKEntries] != 0xFFFF) {
         gNumTRKBLKEntries++;
     }
     gNumTRKBLKEntries--;
-    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, BLOCKS_TAB);
+    assetRomLoad((void **) &gFile_BLOCKS_TAB, BLOCKS_TAB);
     gNumTotalBlocks = 0;
     while (gFile_BLOCKS_TAB[gNumTotalBlocks] != -1) {
         gNumTotalBlocks++;
@@ -1976,7 +1976,7 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     
     map_start = READ_MAPS_TAB(mapID, 0);
     map_size = READ_MAPS_TAB(mapID, 7) - map_start;
-    queue_load_file_region_to_ptr((void *) gMapReadBuffer, MAPS_BIN, map_start, sizeof(MapHeader));
+    assetRomLoadSection((void *) gMapReadBuffer, MAPS_BIN, map_start, sizeof(MapHeader));
     gMapActiveStreamMap = (MapHeader*)gMapReadBuffer;
 
     size = gMapActiveStreamMap->gridB_sixteenthSize;
@@ -1984,7 +1984,7 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     gMapActiveStreamMap = mmAlloc(((size * 0x20) + map_size) + (instanceCount >> 3) + 1, 
         ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
 
-    queue_load_file_region_to_ptr((void*)gMapActiveStreamMap, MAPS_BIN, map_start, map_size);
+    assetRomLoadSection((void*)gMapActiveStreamMap, MAPS_BIN, map_start, map_size);
     
     //Setting up pointers to the 7 MAPS files (excluding the header) (and EOF)
     gMapActiveStreamMap->blockIDs_ptr = (u32*)(((u8*)gMapActiveStreamMap) + READ_MAPS_TAB(mapID, 1) - map_start);
@@ -2352,7 +2352,7 @@ void init_global_map(void) {
 
     size = piRomGetFileSize(GLOBALMAP_BIN);
 
-    queue_alloc_load_file((void**)&buf, GLOBALMAP_BIN);
+    assetRomLoad((void**)&buf, GLOBALMAP_BIN);
 
     size /= sizeof(StructBuf);
 
@@ -2413,7 +2413,7 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
     }
     */
     
-    queue_load_file_region_to_ptr((void**)mapbinstruct, MAPS_BIN, READ_MAPS_TAB(mapID, 0), size);
+    assetRomLoadSection((void**)mapbinstruct, MAPS_BIN, READ_MAPS_TAB(mapID, 0), size);
     
     mapbinstruct->unkC = (s32 *) 
         (((s8*)mapbinstruct) + READ_MAPS_TAB(mapID, 1) - READ_MAPS_TAB(mapID, 0));
@@ -2497,7 +2497,7 @@ void map_update_streaming(void) {
     gTrackFlags &= ~TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (gTrackFlags & TRACKFLAG_LAYER_CHANGED)) {
         shadows_func_8004D974(1);
-        func_80012B54(1, 0);
+        assetQueueClearMesgType(1, 0);
         var_fp = 0;
         for (var_s7 = 0; var_s7 < 5; var_s7++) {
             var_v1 = gDecodedGlobalMap[var_s7];
@@ -2952,7 +2952,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
         mapBinOffset = READ_MAPS_TAB(mapID, 0);
         mapBinSize = READ_MAPS_TAB(mapID, 7) - mapBinOffset;
         map = mmAlloc(mapBinSize, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
-        queue_load_file_region_to_ptr((void *)map, MAPS_BIN, mapBinOffset, mapBinSize);
+        assetRomLoadSection((void *)map, MAPS_BIN, mapBinOffset, mapBinSize);
         map->objectInstanceFile_ptr = (ObjSetup *) (READ_MAPS_TAB(mapID, 4) + (s8 *)map - mapBinOffset);
         map->originWorldX = (D_800B9768.unk4[mapID].xMin + map->originOffsetX) * BLOCKS_GRID_UNIT_F;
         map->originWorldZ = (D_800B9768.unk4[mapID].zMin + map->originOffsetZ) * BLOCKS_GRID_UNIT_F;
@@ -2984,7 +2984,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
         gMapType = MAPTYPE_REGULAR;
     } else {
         sp64 = (MapInfo*)gMapReadBuffer;
-        queue_load_file_region_to_ptr((void** ) sp64, MAPINFO_BIN, mapID * sizeof(MapInfo), sizeof(MapInfo));
+        assetRomLoadSection((void** ) sp64, MAPINFO_BIN, mapID * sizeof(MapInfo), sizeof(MapInfo));
         gMapType = sp64->type;
     }
     gMobileMapUnknown = 0;
@@ -3007,7 +3007,7 @@ void map_func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
         gMapType = MAPTYPE_REGULAR;
     } else {
         mapInfo = (MapInfo *)gMapReadBuffer;
-        queue_load_file_region_to_ptr((void *) mapInfo, MAPINFO_BIN, mapID * (sizeof(MapInfo)), sizeof(MapInfo));
+        assetRomLoadSection((void *) mapInfo, MAPINFO_BIN, mapID * (sizeof(MapInfo)), sizeof(MapInfo));
         gMapType = mapInfo->type;
     } 
     
@@ -3037,7 +3037,7 @@ void map_func_800484A8(void) {
     s8* var_s1;
 
     mmSetDelay(0);
-    func_80012B54(1, 0);
+    assetQueueClearMesgType(1, 0);
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
         var_s1 = gBlockIndices[i];
         for (j = 0; j < 256; j++) {
@@ -3090,12 +3090,12 @@ s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             return 1;
         }
     }
-    block_load(blockID, fieldIndex, arg4, 0);
+    block_load(blockID, fieldIndex, arg4, /*fromAssetThread=*/FALSE);
     return 1;
 }
 
 static const char str_8009a688[] = "Blocksize error(1): %d should be %d\n";
-void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
+void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 fromAssetThread) {
     s32 texIdx;
     s32 binOffset;
     s32 binSize;
@@ -3133,7 +3133,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     block->materials = (BlocksMaterial*)((u32)block->materials + (u32)block);
     tex_set_alloc_tag(ALLOC_TAG_TRACKTEX_COL);
     for (texIdx = 0; texIdx < block->materialCount; texIdx++) {
-        block->materials[texIdx].texture = tex_load(-((u32)block->materials[texIdx].texture | 0x8000), queue);
+        block->materials[texIdx].texture = tex_load(-((u32)block->materials[texIdx].texture | 0x8000), fromAssetThread);
     }
     tex_set_alloc_tag(ALLOC_TAG_TEX_COL);
     block_setup_vertices(block);
@@ -3195,10 +3195,10 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     addr += block->unk34 * 2;
     block_setup_xz_bitmap(block);
     addr = mmAlign8(addr);
-    addr = (u32)block_load_hits(block, id, queue, (HitsLine*)addr);
+    addr = (u32)block_load_hits(block, id, fromAssetThread, (HitsLine*)addr);
 
-    if (queue != 0) {
-        queue_block_emplace(1, (u32* ) block, (u8*) id, param_2, globalMapIdx);
+    if (fromAssetThread != 0) {
+        assetQueueCompletedLoad(1, (u32* ) block, (u8*) id, param_2, globalMapIdx);
     } else {
         block_emplace(block, id, param_2, globalMapIdx);
     }
@@ -3579,7 +3579,7 @@ u32 hits_get_size(s32 id) {
     return size;
 }
 
-HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
+HitsLine* block_load_hits(Block *block, s32 blockID, u8 fromAssetThread, HitsLine* hits_ptr) {
     s32 hits_start;
     s32 hits_size;
     s32 lineIndex;
@@ -4257,8 +4257,8 @@ void map_update_objects_streaming(s32 arg0) {
                     func_8004B710(var_s3, (u32) sp70[i], 1);
                     if (arg0 != 0) {
                         objSetupObject(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
-                    } else if (map_get_is_object_streaming_disabled() != 0) {
-                        func_80012584(0x3E, 4, NULL, var_s1_2, sp70[i], var_s3, 0, temp_s7);
+                    } else if (assetIsObjQueueEnabled() != 0) {
+                        assetEnqueueLoad(0x3E, 4, NULL, var_s1_2, sp70[i], var_s3, 0, temp_s7);
                     } else {
                         objSetupObject(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
                     }
@@ -4302,8 +4302,8 @@ void map_update_objects_streaming(s32 arg0) {
                     func_8004B710(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
                         objSetupObject(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
-                    } else if (map_get_is_object_streaming_disabled() != 0) {
-                        func_80012584(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
+                    } else if (assetIsObjQueueEnabled() != 0) {
+                        assetEnqueueLoad(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
                     } else {
                         objSetupObject(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
                     }
@@ -4608,8 +4608,8 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
         s3 = s0;
         if ((map_check_some_mapobj_flag(someVar, mapID) == 0) && (func_8004B4A0((ObjSetup *)s0, mapID) != 0)) {
             func_8004B710(someVar, mapID, 1U);
-            if (map_get_is_object_streaming_disabled() != 0) {
-                func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
+            if (assetIsObjQueueEnabled() != 0) {
+                assetEnqueueLoad(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
             } else {
                 objSetupObject((ObjSetup* )s0, OBJINIT_STANDALONE, mapID, someVar, arg3);
             }
@@ -5380,7 +5380,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Warp *mostRecentWarp;
 
     warp = (Warp*)gMapReadBuffer;
-    queue_load_file_region_to_ptr((void*)warp, WARPTAB_BIN, warpID << 4, sizeof(Warp));
+    assetRomLoadSection((void*)warp, WARPTAB_BIN, warpID << 4, sizeof(Warp));
     mostRecentWarp = (Warp*)&D_800B4A60;
   
     mostRecentWarp->coord.x = warp->coord.x;

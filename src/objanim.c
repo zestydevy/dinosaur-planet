@@ -97,7 +97,7 @@ s32 objAnimSet(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     }
     
     if (object->curEvent) {
-        objLoadEvent(object, object->id, object->curEvent, modAnimIndex, /*dontQueueLoad=*/FALSE);
+        objLoadEvent(object, object->id, object->curEvent, modAnimIndex, /*directLoad=*/FALSE);
     }
     
     changed = modAnimIndex != object->curModAnimId;

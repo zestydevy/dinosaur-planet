@@ -29,7 +29,7 @@
 #include "sys/gfx/model.h"
 #include "sys/exception.h"
 #include "sys/crash.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/generic_stack.h"
 #include "sys/generic_queue.h"
 #include "sys/rcp.h"

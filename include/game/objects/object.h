@@ -163,7 +163,7 @@ enum ObjectStateFlags {
     OBJSTATE_STANDALONE = 0x10,
     OBJSTATE_UNK20 = 0x20, // unused?
     // Object was destroyed (not necessarily freed just yet)
-    OBJSTATE_DESTROYED = 0x40,
+    OBJSTATE_DESTROYED = 0x40, // TODO: this needs a better name
     OBJSTATE_UNK80 = 0x80,
     // If set, bits 8-10 are the model index to switch to
     OBJSTATE_PENDING_MODEL_SWITCH = 0x800,
