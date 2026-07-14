@@ -8,7 +8,6 @@
 #define M_PI_F          3.141592741f
 #define M_INFINITY_F    3.4028235e38f   //largest positive number that can be represented by a float
 #define ONE_OVER_SIXTY_F 0.01666666f
-#define ONE_OVER_2048_F 0.00048828125f
 
 #define DEG_TO_RAD(deg) ((deg) * M_PI_F / 180.0f)
 #define SQ(a) ((a) * (a))

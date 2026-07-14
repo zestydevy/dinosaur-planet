@@ -1972,7 +1972,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
         }
         
         if (objData->soundHandleJets != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleJets, (objData->soundFactorJets * ONE_OVER_2048_F) + 0.5f);
+            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleJets, (objData->soundFactorJets * (1.0f / 2048.0f)) + 0.5f);
             if (yJoy >= 6) {
                 objData->soundFactorJets += gUpdateRateF;
             } else {
