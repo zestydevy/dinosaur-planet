@@ -50,7 +50,7 @@ void DBBigNest_setup(Object* self, DBBigNest_Setup* objSetup, s32 reset) {
         if (objSetup->scale == 0) {
             objSetup->scale = 64;
         }
-        self->srt.scale = objSetup->scale * ONE_SIXTY_FOURTH_F;
+        self->srt.scale = objSetup->scale * (1.0f / 64.0f);
         if (self->srt.scale == 0.0f) {
             self->srt.scale = 1.0f;
         }

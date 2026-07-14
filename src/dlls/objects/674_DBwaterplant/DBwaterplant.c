@@ -50,7 +50,7 @@ void DBWaterPlant_setup(Object* self, DBWaterPlant_Setup* objSetup, s32 reset) {
     }
     
     objData->timer = 0;
-    self->srt.scale = objSetup->scale * ONE_SIXTY_FOURTH_F * self->def->scale;
+    self->srt.scale = objSetup->scale * (1.0f / 64.0f) * self->def->scale;
 }
 
 // offset: 0x120 | func: 1 | export: 1

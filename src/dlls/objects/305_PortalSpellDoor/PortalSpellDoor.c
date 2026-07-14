@@ -43,12 +43,12 @@ void PortalSpellDoor_setup(Object* self, PortalSpellDoor_Setup* objSetup, s32 ar
     if (objSetup->scale) {
         if (arg2 == 0) {
             objDef = self->def;
-            self->srt.scale = objSetup->scale * objDef->scale * ONE_SIXTY_FOURTH_F; //@bug: unnecessary line?
-            self->srt.scale = objSetup->scale * 0.35f * ONE_SIXTY_FOURTH_F;
+            self->srt.scale = objSetup->scale * objDef->scale * (1.0f / 64.0f); //@bug: unnecessary line?
+            self->srt.scale = objSetup->scale * 0.35f * (1.0f / 64.0f);
             objDef->scale = self->srt.scale;
             self->visRadius = self->def->scale * 64.0f;
         } else {
-            self->srt.scale = objSetup->scale * 0.35f * ONE_SIXTY_FOURTH_F;
+            self->srt.scale = objSetup->scale * 0.35f * (1.0f / 64.0f);
         }
     }
     objData->scale = self->visRadius * 0.5f;

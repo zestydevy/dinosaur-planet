@@ -39,7 +39,7 @@ void dll_320_setup(Object* self, DLL320_Setup* setup, s32 arg2) {
     self->srt.roll = setup->unk1A << 8;
     self->modelInstIdx = (s8) setup->unk1B;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-    sp20 = setup->unk1E * ONE_SIXTY_FOURTH_F;
+    sp20 = setup->unk1E * (1.0f / 64.0f);
     if (sp20 < 0.05f) {
         sp20 = 0.05f;
     }

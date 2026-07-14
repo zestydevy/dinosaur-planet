@@ -76,7 +76,7 @@ void DFSH_Door1Special_setup(Object* self, DFSH_Door1Special_Setup* objSetup, s3
         if (objSetup->scale == 0) {
             objSetup->scale = 64;
         }
-        self->srt.scale = objSetup->scale * ONE_SIXTY_FOURTH_F;
+        self->srt.scale = objSetup->scale * (1.0f / 64.0f);
         if (self->srt.scale == 0.0f) {
             self->srt.scale = 1.0f;
         }

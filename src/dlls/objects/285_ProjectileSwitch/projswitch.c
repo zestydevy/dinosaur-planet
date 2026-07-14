@@ -44,7 +44,7 @@ void ProjectileSwitch_setup(Object* self, ProjectileSwitch_Setup* objSetup, s32 
     if (objSetup->scale == 0) {
         self->srt.scale = self->def->scale;
     } else {
-        self->srt.scale = (objSetup->scale * self->def->scale * ONE_SIXTY_FOURTH_F);
+        self->srt.scale = objSetup->scale * self->def->scale * (1.0f / 64.0f);
     }
     self->objhitInfo->unk52 = (objSetup->scale * self->def->hitbox_flagsB6) / 64;
     
