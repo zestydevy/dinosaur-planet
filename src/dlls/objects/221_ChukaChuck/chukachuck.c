@@ -136,7 +136,7 @@ void ChukaChuck_handle_player_or_sidekick_collision(Object* self) {
     }
     
     if (self->id == OBJ_IceBall) {
-        //Send a message to the parent ? object (TODO: find out what the parent DLL is)
+        //Send a message to the parent SnowWorm object
         if (self->unkC4 && ChukaChuck_does_parent_exist(self->unkC4)) {
             ((DLL_216_SnowWorm*)self->unkC4->dll)->vtbl->receive_message(self->unkC4, 0x80);
         }
