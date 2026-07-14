@@ -848,7 +848,7 @@ Texture* tex_load(s32 id, u8 param2) {
         piRomLoadSection(binFileID, gTexLoadBuffer, offset, (numFrames + 1) << 3);
     } else {
         gTexLoadBuffer[0] = 0;
-        gTexLoadBuffer[1] = rarezip_uncompress_size_rom(binFileID, offset, TRUE);
+        gTexLoadBuffer[1] = rarezipUncompressSizeROM(binFileID, offset, /*directLoad=*/TRUE);
         gTexLoadBuffer[2] = compressedSize;
     }
     
@@ -869,7 +869,7 @@ Texture* tex_load(s32 id, u8 param2) {
             temp = (s32)((((u8*)tex + uncompressedSize) - compressedSize) + 0xE4);
             temp_s3 = (u8*)(temp - (temp % 16));
             piRomLoadSection(binFileID, temp_s3, gTexLoadBuffer[frame << 1] + offset, compressedSize);
-            rarezip_uncompress(temp_s3, (u8*)tex, uncompressedSize);
+            rarezipUncompress(temp_s3, (u8*)tex, uncompressedSize);
             tex->next = NULL;
             if (prevTex != NULL) {
                 prevTex->next = tex;

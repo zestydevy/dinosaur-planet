@@ -150,7 +150,7 @@ u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, 
     if (size == 0) {
         return 0;
     }
-    fileSize = rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[blockID], TRUE);
+    fileSize = rarezipUncompressSizeROM(TEXPRE_BIN, gVoxmapTextureIndices[blockID], /*directLoad=*/TRUE);
     if (fileSize > 0x5000) {
         return 0;
     }
@@ -158,7 +158,7 @@ u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, 
     temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
     sp2C = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
     piRomLoadSection(TEXPRE_BIN, sp2C, offset, size);
-    rarezip_uncompress(sp2C, temp_v0, fileSize + 0x80);
+    rarezipUncompress(sp2C, temp_v0, fileSize + 0x80);
     temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
         ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
@@ -194,7 +194,7 @@ u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
     if (size == 0) {
         return 0;
     }
-    fileSize = rarezip_uncompress_size_rom(VOXOBJ_BIN, gVoxmapObjectIndices[blockID], TRUE);
+    fileSize = rarezipUncompressSizeROM(VOXOBJ_BIN, gVoxmapObjectIndices[blockID], /*directLoad=*/TRUE);
     if (fileSize > 0x5000) {
         return 0;
     }
@@ -202,7 +202,7 @@ u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
     temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
     sp24 = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
     piRomLoadSection(VOXOBJ_BIN, sp24, offset, size);
-    rarezip_uncompress(sp24, temp_v0, fileSize);
+    rarezipUncompress(sp24, temp_v0, fileSize);
     temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
         ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
@@ -339,7 +339,7 @@ VoxmapSlot* voxmap_get_last_found_slot(void) {
 }
 
 void func_80007CCC(s32 arg0) {
-    rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[arg0], TRUE);
+    rarezipUncompressSizeROM(TEXPRE_BIN, gVoxmapTextureIndices[arg0], /*directLoad=*/TRUE);
 }
 
 u8 *func_80007D08(u8 *arg0, u8 *arg1, u8 *arg2, s32 arg3, s32 arg4, s32 arg5) {

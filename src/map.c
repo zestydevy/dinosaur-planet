@@ -3125,7 +3125,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 fromAssetThread) {
     tempLoadAddr = (((u32)block + size) - binSize) - 0x10;
     tempLoadAddr -= tempLoadAddr % 16;
     piRomLoadSection(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
-    rarezip_uncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
+    rarezipUncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
     block->vertices = (BlockVertex*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);

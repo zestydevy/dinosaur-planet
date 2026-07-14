@@ -181,7 +181,7 @@ void mainInit(void) {
     s32 tvMode;
 
     mmInit();
-    rarezip_init();
+    rarezipInit();
     assetInit();
 
     if (0) {

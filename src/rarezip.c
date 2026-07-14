@@ -3,6 +3,19 @@
 #include "sys/rarezip.h"
 #include "sys/asset.h"
 
+typedef struct huft {
+    u8 e;                /* number of extra bits or operation */
+    u8 b;                /* number of bits in this code or subcode */
+    union {
+        u16 n;              /* literal, length base, or distance base */
+        struct huft *t;     /* pointer to next level of table */
+    } v;
+} huft;
+
+/* If BMAX needs to be larger than 16, then h and x[] should be ulg. */
+#define BMAX 16         /* maximum bit length of any code (16 for explode) */
+#define N_MAX 288       /* maximum number of codes in any set */
+
 huft *gHuftTable = NULL;
 u8 *gPackedHeader = NULL;
 u8 *rarezip_inflate_input = NULL;
@@ -16,15 +29,17 @@ s32 gHuftTablePos;
 u8 _bss_800b4940[0x40]; // TODO: this is probably unused rarezip_asm.s bss
 // -------- .bss end 800b4980 -------- //
 
-extern s32 rarezip_inflate_block();
+extern s32 rarezip_inflate_block(void);
 
-void rarezip_init() {
+// official name: rzipInit
+void rarezipInit(void) {
     D_800918C0 = (void*)mmAlloc(0x4000, COLOUR_TAG_GREY, NULL);
     gHuftTable = (void*)mmAlloc(sizeof(huft) * 1280, COLOUR_TAG_GREY, NULL);
     gPackedHeader = (void*)mmAlloc(0x20, COLOUR_TAG_BLACK, ALLOC_NAME("rzip:header"));
 }
 
-s32 rarezip_uncompress_size(u8 *b) {
+// official name: rzipUncompressSize
+s32 rarezipUncompressSize(u8 *b) {
     s32 result = *b++;
     result |= *b++ << 8;
     result |= *b++ << 16;
@@ -32,24 +47,26 @@ s32 rarezip_uncompress_size(u8 *b) {
     return result;
 }
 
-s32 rarezip_uncompress_size_rom(s32 fileId, s32 offset, s32 readImmediate) {
-    if (readImmediate) {
+// official name: rzipUncompressSizeROM
+s32 rarezipUncompressSizeROM(s32 fileId, s32 offset, s32 directLoad) {
+    if (directLoad) {
         piRomLoadSection(fileId, gPackedHeader, offset, 8);
     } else {
         assetRomLoadSection((void**)gPackedHeader, fileId, offset, 8);
     }
     
-    return rarezip_uncompress_size(gPackedHeader);
+    return rarezipUncompressSize(gPackedHeader);
 }
 
 static const char str_80099eb0[] = "WARNING: rzip buffer overflow (%d)\n";
 static const char str_80099ed4[] = "rzipUncompress:overflow i:%08x o:%08x %d\n";
 static const char str_80099f00[] = "rzipUncompress(%08x,%08x,...) overflow %d/%d\n";
 
+// official name: rzipUncompress
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/rarezip/rarezip_uncompress.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/rarezip/rarezipUncompress.s")
 #else
-u8 *rarezip_uncompress(u8 *compressedInput, u8 *decompressedOutput, s32 outputSize) {
+u8 *rarezipUncompress(u8 *compressedInput, u8 *decompressedOutput, s32 outputSize) {
     rarezip_inflate_input = compressedInput + 5;
     rarezip_inflate_output = decompressedOutput;
     rarezip_num_bits = 0;
@@ -70,6 +87,7 @@ u8 *rarezip_uncompress(u8 *compressedInput, u8 *decompressedOutput, s32 outputSi
 }
 #endif
 
+// official name: huft_build
 void rarezip_huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m) {
     u32 a;                   /* counter for codes of length k */
     u32 c[BMAX + 1];         /* bit length count table */

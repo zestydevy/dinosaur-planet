@@ -139,7 +139,7 @@ ModelInstance* modLoadModelActual(s32 id, u32 flags) {
     sp42 = gAuxBuffer[0];
     sp3E = gAuxBuffer[2];
     sp40 = ((u16)mmAlign8(gAuxBuffer[1]) & 0xFFFF) + 0x90;
-    uncompressedSize = rarezip_uncompress_size((u8*)gAuxBuffer + 8);
+    uncompressedSize = rarezipUncompressSize((u8*)gAuxBuffer + 8);
     sp28 = modLoadAnimRemapTable(id, sp3E, sp42);
     sp28 += uncompressedSize + 500;
     model = mmAlloc(sp28, 9, NULL);
@@ -155,7 +155,7 @@ ModelInstance* modLoadModelActual(s32 id, u32 flags) {
     temp = (((u32)model + sp28) - sp48) - 0x10;
     modelInst = (ModelInstance *) (temp - (temp % 16));
     piRomLoadSection(MODELS_BIN, (void*) modelInst, sp4C, sp48);
-    rarezip_uncompress((u8*)modelInst + 8, (u8*)model, sp28);
+    rarezipUncompress((u8*)modelInst + 8, (u8*)model, sp28);
     model->materials = (ModelTexture*) ((u32)model->materials + (u32)model);
     model->vertices = (Vtx*) ((u32)model->vertices + (u32)model);
     model->faces = (ModelFacebatch*) ((u32)model->faces + (u32)model);
