@@ -300,17 +300,17 @@ typedef struct {
 
 // offset: 0x0 | ctor
 void minimap_ctor(void *dll) {
-    sMarkerSidekick = tex_load_deferred(TEXTABLE_3E1_MINIMAP_Green_Dot);
-    sMarkerPlayer = tex_load_deferred(TEXTABLE_467_MINIMAP_Blue_Diamond);
+    sMarkerSidekick = texLoadTexture(TEXTABLE_3E1_MINIMAP_Green_Dot);
+    sMarkerPlayer = texLoadTexture(TEXTABLE_467_MINIMAP_Blue_Diamond);
 }
 
 // offset: 0x5C | dtor
 void minimap_dtor(void *dll) {
     if (sMapTile) {
-        tex_free(sMapTile);
+        texFreeTexture(sMapTile);
     }
-    tex_free(sMarkerSidekick);
-    tex_free(sMarkerPlayer);
+    texFreeTexture(sMarkerSidekick);
+    texFreeTexture(sMarkerPlayer);
     sMapTile = 0;
     sMarkerSidekick = NULL;
     sMarkerPlayer = NULL;
@@ -457,12 +457,12 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
             if (sOpacity < 0) {
                 sOpacity = 0;
                 if (sMapTile && (loadTextureID || sOpacity == 0)) {
-                    tex_free(sMapTile);
+                    texFreeTexture(sMapTile);
                     sMapTile = NULL;
                     sLoadedTexTableID = 0;
                 }
                 if (loadTextureID) {
-                    sMapTile = tex_load_deferred(loadTextureID);
+                    sMapTile = texLoadTexture(loadTextureID);
                     sLoadedTexTableID = loadTextureID;
                 }
             }

@@ -195,7 +195,7 @@ typedef enum {
 
 // offset: 0x0 | ctor
 void credits_ctor(void *dll) {
-    sDinosaurPlanetLogoTex = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
+    sDinosaurPlanetLogoTex = texLoadTexture(TEXTABLE_C5_DinosaurPlanetLogo);
     sText = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_1FD_Credits);
     sGroupIdx = 0;
     sTime = 0.0f;
@@ -203,7 +203,7 @@ void credits_ctor(void *dll) {
 
 // offset: 0x80 | dtor
 void credits_dtor(void *dll) {
-    tex_free(sDinosaurPlanetLogoTex);
+    texFreeTexture(sDinosaurPlanetLogoTex);
     mmFree(sText);
 }
 

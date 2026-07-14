@@ -52,17 +52,17 @@ void rareware_ctor(void *dll) {
     sFadeOutTimer = 0;
     sCutToNextScreen = FALSE;
 
-    sTexRareLogo     = tex_load_deferred(TEXTABLE_2D6_RareLogo);
-    sTexRareLogoGlow = tex_load_deferred(TEXTABLE_2D7_RareLogo_Shadow);
-    sTexRareware     = tex_load_deferred(TEXTABLE_2D4_RarewareTextLogo);
-    sTexRarewareGlow = tex_load_deferred(TEXTABLE_2D5_RarewareTextLogo_Shadow);
+    sTexRareLogo     = texLoadTexture(TEXTABLE_2D6_RareLogo);
+    sTexRareLogoGlow = texLoadTexture(TEXTABLE_2D7_RareLogo_Shadow);
+    sTexRareware     = texLoadTexture(TEXTABLE_2D4_RarewareTextLogo);
+    sTexRarewareGlow = texLoadTexture(TEXTABLE_2D5_RarewareTextLogo_Shadow);
 }
 
 void rareware_dtor(void *dll) {
-    tex_free(sTexRareLogo);
-    tex_free(sTexRareLogoGlow);
-    tex_free(sTexRareware);
-    tex_free(sTexRarewareGlow);
+    texFreeTexture(sTexRareLogo);
+    texFreeTexture(sTexRareLogoGlow);
+    texFreeTexture(sTexRareware);
+    texFreeTexture(sTexRarewareGlow);
 }
 
 s32 rareware_update1(void) {

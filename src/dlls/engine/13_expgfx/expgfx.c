@@ -177,7 +177,7 @@ void dll_13_func_158(void) {
 
     for (i = 0; i < 8; i++) {
         if (_bss_370[i].unk0 != NULL) {
-            tex_free(_bss_370[i].unk0);
+            texFreeTexture(_bss_370[i].unk0);
         }
 
         _bss_370[i].unk0 = NULL;
@@ -429,7 +429,7 @@ void dll_13_func_CEC(void) {
 
     for (i = 0; i < 8; i++) {
         if (_bss_370[i].unk0 != NULL) {
-            tex_free(_bss_370[i].unk0);
+            texFreeTexture(_bss_370[i].unk0);
         }
 
         _bss_370[i].unk0 = NULL;
@@ -679,7 +679,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
                     }
                     gSPGeometryMode(*gdl, 0xFFFFFF, G_SHADING_SMOOTH | G_SHADE | G_ZBUFFER);
                     dl_apply_geometry_mode(gdl);
-                    tex_gdl_set_textures(gdl, spD4, NULL, 0, 0, 0, 0);
+                    texDPTextures(gdl, spD4, NULL, 0, 0, 0, 0);
                     if (var_s0->unk80 & 0x40) {
                         if (var_s0->unk80 & 0x20) {
                             gDPSetCombineLERP(*gdl, 1, 0, SHADE, 0, 0, 0, 0, 1, COMBINED, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0);
@@ -983,10 +983,10 @@ s16 dll_13_func_5068(s32 textureID) {
             while (TRUE) {
                 if (_bss_370[i].unk0 == NULL) {
                     // Empty slot found
-                    _bss_370[i].unk0 = tex_load_deferred(textureID);
+                    _bss_370[i].unk0 = texLoadTexture(textureID);
                     if ((_bss_370[i].unk0 != NULL) && (_bss_370[i].unk0->refCount >= 254)) {
                         if (_bss_370[i].unk0 != NULL) {
-                            tex_free(_bss_370[i].unk0);
+                            texFreeTexture(_bss_370[i].unk0);
                         }
                         _bss_370[i].unk0 = NULL;
                         return -1;
@@ -1010,10 +1010,10 @@ s16 dll_13_func_5068(s32 textureID) {
                         }
                     }
                     if (_bss_370[var_a3].unk0 != NULL) {
-                        tex_free(_bss_370[var_a3].unk0);
+                        texFreeTexture(_bss_370[var_a3].unk0);
                     }
                     _bss_370[var_a3].unk0 = NULL;
-                    _bss_370[var_a3].unk0 = tex_load_deferred(textureID);
+                    _bss_370[var_a3].unk0 = texLoadTexture(textureID);
                     if (_bss_370[var_a3].unk0 != NULL) {
                         _bss_370[var_a3].unk4 = 1000;
                         _bss_370[var_a3].unk8 = textureID;
@@ -1040,7 +1040,7 @@ static void dll_13_func_52B4(Gfx **gdl) {
                 var_s0->unk8 = 0;
                 var_s0->unk4 = 0;
                 var_s0->unkC = 0;
-                tex_free(var_s0->unk0);
+                texFreeTexture(var_s0->unk0);
                 var_s0->unk0 = NULL;
             }
         }

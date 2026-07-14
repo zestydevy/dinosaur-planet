@@ -759,11 +759,11 @@ s32 D_800B49D8;
 s8 D_800B49DC;
 // -------- .bss end 800b49e0 -------- //
 
-Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl);
-void tex_make_display_list(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
+Gfx *texSetupDisplayLists(Texture *texture, Gfx *gdl);
+void texMakeDisplayList(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
 
-// official name: texInitTextures?
-void tex_init(void) {
+// official name: texInitTextures
+void texInitTextures(void) {
     s32 texIdx;
     s32 *tab;
     s32 i;
@@ -782,11 +782,11 @@ void tex_init(void) {
 }
 
 // official name: setTexMemColour
-void tex_set_alloc_tag(s32 tag) {
+void texSetMemColour(s32 tag) {
     gTexAllocTag = tag;
 }
 
-Texture *tex_load_deferred(s32 id) {
+Texture *texLoadTexture(s32 id) {
     Texture *texture = NULL;
     assetLoadTexture(&texture, id);
 
@@ -797,10 +797,10 @@ static const char str_8009a370[] = "Error: Texture no %d out of range on load ->
 static const char str_8009a3a8[] = "Multiple texture fail!!\n";
 // official name: texLoadTexture
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_load.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/texLoadTextureActual.s")
 #else
 // https://decomp.me/scratch/ht6r3
-Texture* tex_load(s32 id, u8 param2) {
+Texture* texLoadTextureActual(s32 id, u8 param2) {
     u32 binFileID; // sp74
     Texture* tex;
     s32 temp;
@@ -883,7 +883,7 @@ Texture* tex_load(s32 id, u8 param2) {
             }
             tex->unk10 = (u32) (uncompressedSize + 0xE4) >> 2;
             mmRealloc(tex, 
-                ((u8*)tex_setup_display_lists(tex, (Gfx*)mmAlign16((u32)tex + uncompressedSize)) - (u8*)tex) + 8, 
+                ((u8*)texSetupDisplayLists(tex, (Gfx*)mmAlign16((u32)tex + uncompressedSize)) - (u8*)tex) + 8, 
                 NULL);
         }
     }
@@ -909,7 +909,7 @@ Texture* tex_load(s32 id, u8 param2) {
 
 static const char str_8009a3c4[] = "TEX Error: TexTab overflow %d,%d!!\n";
 
-Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl) {
+Gfx *texSetupDisplayLists(Texture *texture, Gfx *gdl) {
     Gfx *mygdl;
     u32 tile;
     u32 tmem;
@@ -925,24 +925,24 @@ Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl) {
         tmem = 0;
     }
 
-    tex_make_display_list(&mygdl, texture, tile, tmem, 0);
+    texMakeDisplayList(&mygdl, texture, tile, tmem, 0);
     texture->gdl2Offset = mygdl - texture->gdl;
 
     if (!(texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) 
             && (texture->flags & RENDER_TEX_BLEND)) {
         if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32) {
-            tex_make_display_list(&mygdl, texture, 1, (0x1000 - texture->sizeBytes) >> 3, 0);
+            texMakeDisplayList(&mygdl, texture, 1, (0x1000 - texture->sizeBytes) >> 3, 0);
         } else if (TEX_FORMAT(texture->format) == TEX_FORMAT_CI4) {
-            tex_make_display_list(&mygdl, texture, 1, 0x80, 1);
+            texMakeDisplayList(&mygdl, texture, 1, 0x80, 1);
         } else {
-            tex_make_display_list(&mygdl, texture, 1, 0x100, 0);
+            texMakeDisplayList(&mygdl, texture, 1, 0x100, 0);
         }
     }
 
     return mygdl;
 }
 
-void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 palette) {
+void texMakeDisplayList(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 palette) {
     s32 siz;
     Gfx* dl;
     u32 texFormat;
@@ -1128,7 +1128,7 @@ void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
 }
 
 // official name: texFreeTexture
-void tex_free(Texture* texture) {
+void texFreeTexture(Texture* texture) {
     Texture* temp_s1;
     Texture* var_s0;
     s32 i;
@@ -1165,13 +1165,13 @@ void tex_free(Texture* texture) {
     STUBBED_PRINTF("TEX Error: Tryed to deallocate non-existent texture!!\n");
 }
 
-void tex_render_reset(void) {
+void texRenderReset(void) {
     gTexBlockedRenderFlags = 0;
     gCurrTex0 = 0;
     gCurrTex1 = 0;
 }
 
-void tex_render_save_state(void) {
+void texRenderSaveState(void) {
     gTexSavedBlockedRenderFlags = gTexBlockedRenderFlags;
     gTexSavedCurrTex0 = gCurrTex0;
     gTexSavedCurrTex1 = gCurrTex1;
@@ -1180,17 +1180,18 @@ void tex_render_save_state(void) {
     gCurrTex1 = 0;
 }
 
-void tex_render_restore_state(void) {
+void texRenderRestoreState(void) {
     gTexBlockedRenderFlags = gTexSavedBlockedRenderFlags;
     gCurrTex0 = gTexSavedCurrTex0;
     gCurrTex1 = gTexSavedCurrTex1;
 }
 
+// official name: texDPTextureX ?
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_gdl_set_texture_simple.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/texDPTextureSimple.s")
 #else
 // https://decomp.me/scratch/fpYm1
-s32 tex_gdl_set_texture_simple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options) {
+s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options) {
     s32 pad_sp84;
     Texture* basetex;
     s32 var_a2; // sp7c
@@ -1371,10 +1372,10 @@ s32 tex_gdl_set_texture_simple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 fra
 #endif
 
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_gdl_set_textures.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/texDPTextures.s")
 #else
 // https://decomp.me/scratch/0L3c5
-void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes) {
+void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes) {
     Gfx* temp_v0_2;
     Texture* blendtex;
     Texture* basetex;
@@ -1529,7 +1530,7 @@ void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFla
 #endif
 
 // official Name: texAnimateTexture
-void tex_animate(Texture *tex, s32 *renderFlags, s32 *progress) {
+void texAnimateTexture(Texture *tex, s32 *renderFlags, s32 *progress) {
     s32 temp_a1;
     s32 pingpong;
     s32 reverse;
@@ -1611,7 +1612,8 @@ void tex_animate(Texture *tex, s32 *renderFlags, s32 *progress) {
     }
 }
 
-void* tex_get_frame_img(Texture *tex, s32 arg1) {
+// official name: texFrame
+void* texGetFrameImg(Texture *tex, s32 arg1) {
     Texture *frame;
     void *texData;
     s32 i;
@@ -1631,7 +1633,7 @@ void* tex_get_frame_img(Texture *tex, s32 arg1) {
     return texData;
 }
 
-Texture* tex_get_cached(s32 id) {
+Texture* texGetCached(s32 id) {
     s32 i;
     
     for (i = 0; i < gNumCachedTextures; i++) {
@@ -1643,11 +1645,11 @@ Texture* tex_get_cached(s32 id) {
 }
 
 // official name: texDisableModes
-void tex_disable_modes(s32 modes) {
+void texDisableModes(s32 modes) {
     gTexBlockedRenderFlags |= modes;
 }
 
 // official name: texEnableModes
-void tex_enable_modes(s32 modes) {
+void texEnableModes(s32 modes) {
     gTexBlockedRenderFlags &= ~modes;
 }

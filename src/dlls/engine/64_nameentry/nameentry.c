@@ -70,7 +70,7 @@ void dll_64_ctor(void *dll) {
     s32 i;
     
     itemCount = ARRAYCOUNT(sMenuItems);
-    sBackgroundTexture = tex_load_deferred(0x2DE);
+    sBackgroundTexture = texLoadTexture(0x2DE);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0ED_Menu_Name_Entry);
@@ -81,7 +81,7 @@ void dll_64_ctor(void *dll) {
         sMenuItems[i].text = sGameTextChunk->strings[i];
     }
 
-    sLetterBgBoxTexture = tex_load_deferred(0x316);
+    sLetterBgBoxTexture = texLoadTexture(0x316);
     gDLL_74_Picmenu->vtbl->set_items(sMenuItems, itemCount, 
         /*defaultItem*/0, 
         /*sounds*/NULL, 
@@ -200,8 +200,8 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 static void dll_64_clean_up() {
     gDLL_74_Picmenu->vtbl->clear_items();
     mmFree(sGameTextChunk);
-    tex_free(sLetterBgBoxTexture);
-    tex_free(sBackgroundTexture);
+    texFreeTexture(sLetterBgBoxTexture);
+    texFreeTexture(sBackgroundTexture);
 }
 
 static void dll_64_draw_letters(Gfx **gdl, s32 x, s32 y) {

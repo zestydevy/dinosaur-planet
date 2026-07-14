@@ -1595,11 +1595,11 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
         }
 
         if (obj->shadow->texture != NULL) {
-            tex_free(obj->shadow->texture);
+            texFreeTexture(obj->shadow->texture);
         }
 
         if (obj->shadow->unk8 != NULL) {
-            tex_free(obj->shadow->unk8);
+            texFreeTexture(obj->shadow->unk8);
         }
     }
 

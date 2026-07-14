@@ -204,7 +204,7 @@ ModelInstance* modLoadModelActual(s32 id, u32 flags) {
     }
     sp33 = 0;
     for (i = 0; i < model->textureCount; i++) {
-        model->materials[i].texture = tex_load(-((u32)model->materials[i].texture | 0x8000), 0);
+        model->materials[i].texture = texLoadTextureActual(-((u32)model->materials[i].texture | 0x8000), 0);
         if (model->materials[i].texture == NULL) {
             sp33 = 1;
         }
@@ -537,7 +537,7 @@ void modFreeModel(ModelInstance* modelInst) {
     for (i = 0; i < model->textureCount; i++)
     {
         if ((&model->materials[i])->texture) {
-            tex_free((&model->materials[i])->texture);
+            texFreeTexture((&model->materials[i])->texture);
         }
     }
 

@@ -1043,9 +1043,9 @@ void diPrintfInit(void) {
     D_800931B4 = 0;
     D_800931B8 = 0;
 
-    gDiTextures[0] = tex_load_deferred(TEXTABLE_0_DiFontAtlas1);
-    gDiTextures[1] = tex_load_deferred(TEXTABLE_1_DiFontAtlas2);
-    gDiTextures[2] = tex_load_deferred(TEXTABLE_2_DiFontAtlas3);
+    gDiTextures[0] = texLoadTexture(TEXTABLE_0_DiFontAtlas1);
+    gDiTextures[1] = texLoadTexture(TEXTABLE_1_DiFontAtlas2);
+    gDiTextures[2] = texLoadTexture(TEXTABLE_2_DiFontAtlas3);
 
     gDebugPrintBufferEnd = &gDebugPrintBufferStart[0];
 }
@@ -1086,7 +1086,7 @@ void diPrintfAll(Gfx **gdl) {
 
     dl_set_all_dirty();
 
-    tex_render_reset();
+    texRenderReset();
 
     buffer = gDebugPrintBufferStart;
     diPrintfOrigin();
@@ -1117,7 +1117,7 @@ void diPrintfAll(Gfx **gdl) {
     gDebugPrintBufferEnd = gDebugPrintBufferStart;
 
     dl_set_all_dirty();
-    tex_render_reset();
+    texRenderReset();
 }
 
 // guessed name

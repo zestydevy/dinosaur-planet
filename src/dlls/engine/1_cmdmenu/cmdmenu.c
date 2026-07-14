@@ -878,21 +878,21 @@ void cmdmenu_ctor(void* dll) {
 
     //Initialise all the cmdmenu TextureTiles and load their Textures
     for (i = 0; i < ARRAYCOUNT(dTextableIDs); i++) {
-        sTextures[i] = tex_load_deferred(dTextableIDs[i]);
+        sTextures[i] = texLoadTexture(dTextableIDs[i]);
 
-        sTextureTiles[i][0].tex = tex_load_deferred(dTextableIDs[i]);
+        sTextureTiles[i][0].tex = texLoadTexture(dTextableIDs[i]);
         sTextureTiles[i][0].animProgress = 0;
         sTextureTiles[i][0].x = 0;
         sTextureTiles[i][0].y = 0;
         sTextureTiles[i][1].tex = NULL;
     }
 
-    sCrosshairTex = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
+    sCrosshairTex = texLoadTexture(TEXTABLE_500_SpellCrosshair);
     sCrosshairTex->animSpeed = 40;
     sCrosshairAnimRenderFlags = RENDER_TEXANIM_REVERSE;
     sCrosshairAnimProgress = 0;
-    sInventoryStackNumbersTex = tex_load_deferred(TEXTABLE_3A7_InventoryStackNumbers);
-    sAButtonAnimTex = tex_load_deferred(TEXTABLE_274_AButton_Anim);
+    sInventoryStackNumbersTex = texLoadTexture(TEXTABLE_3A7_InventoryStackNumbers);
+    sAButtonAnimTex = texLoadTexture(TEXTABLE_274_AButton_Anim);
     sAButtonAnimTex->animSpeed = 40;
     
     cmdmenu_info_hide(&sInfoPopup);
@@ -905,27 +905,27 @@ void cmdmenu_dtor(void* dll) {
     //Free all UI textures
     for (i = 0; i < ARRAYCOUNT(sTextures); i++) {
         if (sTextures[i] != NULL) {
-            tex_free(sTextures[i]);
+            texFreeTexture(sTextures[i]);
         }
     }
 
-    tex_free(sInventoryStackNumbersTex);
-    tex_free(sCrosshairTex);
+    texFreeTexture(sInventoryStackNumbersTex);
+    texFreeTexture(sCrosshairTex);
 
     if (sActiveSpellIcon != NULL) {
-        tex_free(sActiveSpellIcon);
+        texFreeTexture(sActiveSpellIcon);
     }
     if (sActiveSpellRing != NULL) {
-        tex_free(sActiveSpellRing);
+        texFreeTexture(sActiveSpellRing);
     }
     if (sActiveSidekickCommandIcon != NULL) {
-        tex_free(sActiveSidekickCommandIcon);
+        texFreeTexture(sActiveSidekickCommandIcon);
     }
     if (sActiveSidekickCommandRing != NULL) {
-        tex_free(sActiveSidekickCommandRing);
+        texFreeTexture(sActiveSidekickCommandRing);
     }
     if (sAButtonAnimTex != NULL) {
-        tex_free(sAButtonAnimTex);
+        texFreeTexture(sAButtonAnimTex);
     }
 }
 
@@ -1160,7 +1160,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
     //Draw Spell reticle when aiming (@bug: x coord not adjusted in widescreen)
     if (((DLL_210_Player*)player->dll)->vtbl->func77(player, &screenX, &screenY)) {
-        tex_animate(sCrosshairTex, &sCrosshairAnimRenderFlags, &sCrosshairAnimProgress);
+        texAnimateTexture(sCrosshairTex, &sCrosshairAnimRenderFlags, &sCrosshairAnimProgress);
         rcpScreenFullWrite(
             gdl, 
             sCrosshairTex, 
@@ -1432,7 +1432,7 @@ static void cmdmenu_tick_tutorial_textbox(void) {
     //Handle player interaction
     {
         //Animate the A button icon
-        tex_animate(sAButtonAnimTex, &sAButtonAnimRenderFlags, &sAButtonAnimProgress);
+        texAnimateTexture(sAButtonAnimTex, &sAButtonAnimRenderFlags, &sAButtonAnimProgress);
 
         //Advance to the next paragraph upon pressing A
         if (sJoyPressedButtons & A_BUTTON) {
@@ -1967,8 +1967,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
         //Clear the icon's data before any change
         if ((sActiveSpellIcon != NULL) && (activeSpellGamebit != sPrevActiveSpellGamebit)) {
-            tex_free(sActiveSpellRing);
-            tex_free(sActiveSpellIcon);
+            texFreeTexture(sActiveSpellRing);
+            texFreeTexture(sActiveSpellIcon);
             sPrevActiveSpellGamebit = NO_GAMEBIT;
             sActiveSpellIcon = NULL;
         }
@@ -1977,8 +1977,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         if ((sActiveSpellIcon == NULL) && (activeSpellGamebit != NO_GAMEBIT)) {
             spellTexTableID = cmdmenu_get_spell_textable(activeSpellGamebit);
             if (spellTexTableID != NO_TEXTURE) {
-                sActiveSpellIcon = tex_load_deferred(spellTexTableID);
-                sActiveSpellRing = tex_load_deferred(TEXTABLE_574_CMDMENU_Active_Spell_Ring);
+                sActiveSpellIcon = texLoadTexture(spellTexTableID);
+                sActiveSpellRing = texLoadTexture(TEXTABLE_574_CMDMENU_Active_Spell_Ring);
             }
         }
 
@@ -2002,8 +2002,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 #endif
         //Clear the icon's data before any change
         if ((sActiveSidekickCommandIcon != NULL) && (sideCommandIndex != sPrevSidekickCommandIndex)) {
-            tex_free(sActiveSidekickCommandRing);
-            tex_free(sActiveSidekickCommandIcon);
+            texFreeTexture(sActiveSidekickCommandRing);
+            texFreeTexture(sActiveSidekickCommandIcon);
             sPrevSidekickCommandIndex = NO_SIDEKICK_COMMAND;
             sActiveSidekickCommandIcon = NULL;
         }
@@ -2012,8 +2012,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         if (sActiveSidekickCommandIcon == NULL && sideCommandIndex > 0) {
             commandTexTableID = dCommandTextableIDs[sideCommandIndex];
             if (commandTexTableID != NO_TEXTURE) {
-                sActiveSidekickCommandIcon = tex_load_deferred(commandTexTableID);
-                sActiveSidekickCommandRing = tex_load_deferred(TEXTABLE_584_CMDMENU_Active_Sidekick_Command_Ring);
+                sActiveSidekickCommandIcon = texLoadTexture(commandTexTableID);
+                sActiveSidekickCommandRing = texLoadTexture(TEXTABLE_584_CMDMENU_Active_Sidekick_Command_Ring);
             }
         }
 
@@ -2242,7 +2242,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
         //Draw page icon
         if (iconOpacity) {
-            dInventoryPageIcon = tex_load_deferred(dTextableIDs[pageIcon]);
+            dInventoryPageIcon = texLoadTexture(dTextableIDs[pageIcon]);
             rcpScreenFullWrite(
                 gdl, 
                 dInventoryPageIcon, 
@@ -2253,7 +2253,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 iconOpacity, 
                 SCREEN_WRITE_TRANSLUCENT
             );
-            tex_free(dInventoryPageIcon);
+            texFreeTexture(dInventoryPageIcon);
         }
     }
 }
@@ -2300,7 +2300,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
             if (obtained) {
                 //Magic Spells
                 if (items == dPage6MagicSpells) {
-                    sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
+                    sMenuItemTextures[loadIdx] = texLoadTexture(items[i].textureID);
                     sMenuItemTextureIDs[loadIdx] = items[i].textureID;
                     sMenuItemGamebits[loadIdx] = items[i].gamebitObtained;
 
@@ -2334,7 +2334,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
                             sAutoSelectItemIdx = loadIdx;
                         }
 
-                        sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
+                        sMenuItemTextures[loadIdx] = texLoadTexture(items[i].textureID);
                         sMenuItemTextureIDs[loadIdx] = items[i].textureID;
                         sMenuItemGamebits[loadIdx] = items[i].gamebitObtained;
 
@@ -2370,7 +2370,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
             while (items[i].command.flag >= 0) {
                 //Only load a sidekick command item if it's currently available
                 if (items[i].command.flag & availableCommands) {
-                    sMenuItemTextures[loadIdx] = tex_load_deferred(items[i].textureID);
+                    sMenuItemTextures[loadIdx] = texLoadTexture(items[i].textureID);
                     sMenuItemQuantities[loadIdx] = 1;
 
                     /* Load secondary sidekick texture
@@ -2378,7 +2378,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
                        Maybe it's supposed to hold the alternate transparent texture for the active sidekick command bubble?
                     */
                     if (items[i].command.sidekickTextureID != NO_TEXTURE) {
-                        sMenuItemTexturesSidekick[loadIdx] = tex_load_deferred(items[i].command.sidekickTextureID);
+                        sMenuItemTexturesSidekick[loadIdx] = texLoadTexture(items[i].command.sidekickTextureID);
                     } else {
                         sMenuItemTexturesSidekick[loadIdx] = NULL;
                     }
@@ -2397,10 +2397,10 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
     //Free the previous menu's textures
     for (i = 0; i < MAX_LOADED_ITEMS; i++) {
         if (prevMenuItemTextures[i] != NULL) {
-            tex_free(prevMenuItemTextures[i]);
+            texFreeTexture(prevMenuItemTextures[i]);
         }
         if (prevMenuSidekickCommandTextures[i] != NULL) {
-            tex_free(prevMenuSidekickCommandTextures[i]);
+            texFreeTexture(prevMenuSidekickCommandTextures[i]);
         }
     }
 
@@ -2494,7 +2494,7 @@ static void cmdmenu_gfx_set_texture(Gfx** gdl, Texture* tex, s32 frame) {
 
     gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(tex->gdl + 1));
 
-    tex_render_reset();
+    texRenderReset();
 
     *gdl = dl;
 }
@@ -2691,7 +2691,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                 if (cIconFlags & CIcon_FLAG_Have_Items) {
                     //With inventory bag
                     texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
-                    dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
+                    dInventoryPageIcon = texLoadTexture(dTextableIDs[texIdx]);
                     rcpScreenFullWrite(gdl, 
                         dInventoryPageIcon, 
                         C_BUTTONS_RIGHT_BAG_X, 
@@ -2701,7 +2701,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                         sOpacityR, 
                         SCREEN_WRITE_TRANSLUCENT
                     );
-                    tex_free(dInventoryPageIcon);
+                    texFreeTexture(dInventoryPageIcon);
                 } else {
                     //Empty C-right button
                     texIdx = CMDMENU_TEX_41_C_Right;
@@ -2736,7 +2736,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                        (i.e. have commands but not spells and items, or have spells but not commands and items) 
                     */
 
-                    dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
+                    dInventoryPageIcon = texLoadTexture(dTextableIDs[texIdx]);
                     rcpScreenFullWrite(
                         gdl, 
                         dInventoryPageIcon, 
@@ -2747,7 +2747,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                         sOpacityR, 
                         SCREEN_WRITE_TRANSLUCENT
                     );
-                    tex_free(dInventoryPageIcon);
+                    texFreeTexture(dInventoryPageIcon);
                 } else {
                     //Draw empty C-down and C-left buttons
                     rcpTileWrite(
@@ -3585,7 +3585,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 texIdx = CMDMENU_TEX_40_Sabre;
             }
 
-            dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
+            dInventoryPageIcon = texLoadTexture(dTextableIDs[texIdx]);
 
             rcpScreenFullWrite(
                 &dl,
@@ -3598,7 +3598,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 SCREEN_WRITE_TRANSLUCENT
             );
 
-            tex_free(dInventoryPageIcon);
+            texFreeTexture(dInventoryPageIcon);
         }
     }
 
@@ -3726,7 +3726,7 @@ void cmdmenu_info_show(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
         items = inventoryPage->items;
         while (items->gamebitObtained != NO_GAMEBIT) {
             if (itemGamebit == items->gamebitObtained) {
-                sInfoPopup.texture = tex_load_deferred(items->textureID);
+                sInfoPopup.texture = texLoadTexture(items->textureID);
                 break;
             }
             items++;
@@ -3751,7 +3751,7 @@ void cmdmenu_info_show(s16 itemGamebit, s32 displayDuration, s32 itemCount) {
   */
 void cmdmenu_info_show_tex(s16 textureID, s32 displayDuration, s32 itemCount) {   
     STUBBED_PRINTF("qInfoShowTex\n");
-    if ((sInfoPopup.texture = tex_load_deferred(textureID))){
+    if ((sInfoPopup.texture = texLoadTexture(textureID))){
         sInfoPopup.timer = displayDuration;
         sInfoPopup.count = itemCount;
         sInfoPopup.opacity = 0.0f;
@@ -3773,7 +3773,7 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
     //Decrement box's timer
     box->timer -= gUpdateRate;
     if (box->timer < 0) {
-        tex_free(box->texture);
+        texFreeTexture(box->texture);
         box->texture = NULL;
         return;
     }
@@ -3882,14 +3882,14 @@ void cmdmenu_energy_bar_create(s32 minEnergy, s32 maxEnergy, s32 fullTexID, s32 
     enbar->max = maxEnergy;
     
     drawtex = &enbar->fullbarTex[0];
-    drawtex->tex = tex_load_deferred(fullTexID);
+    drawtex->tex = texLoadTexture(fullTexID);
     drawtex->animProgress = 0;
     drawtex->x = 0;
     drawtex->y = 0;
     enbar->fullbarTex[1].tex = NULL;
 
     drawtex = &enbar->emptybarTex[0];
-    drawtex->tex = tex_load_deferred(emptyTexID);
+    drawtex->tex = texLoadTexture(emptyTexID);
     drawtex->animProgress = 0;
     drawtex->x = 0;
     drawtex->y = 0;
@@ -3999,8 +3999,8 @@ void cmdmenu_energy_bar_free(void) {
     STUBBED_PRINTF(" Killing Bar ");
     enbar = sEnergyBar;
     enbar->alpha = 0;
-    tex_free(enbar->fullbarTex[0].tex);
-    tex_free(enbar->emptybarTex[0].tex);
+    texFreeTexture(enbar->fullbarTex[0].tex);
+    texFreeTexture(enbar->emptybarTex[0].tex);
     mmFree(sEnergyBar);
     sEnergyBar = NULL;
 }

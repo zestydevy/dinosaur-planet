@@ -172,7 +172,7 @@ void shadowsInit(void) {
     D_800B9840[22] = 0.0f;
     D_800B9840[23] = 55.0f;
     shadowtexInit();
-    D_800BB190 = tex_load_deferred(TEXTABLE_D8);
+    D_800BB190 = texLoadTexture(TEXTABLE_D8);
 }
 
 void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
@@ -246,7 +246,7 @@ u32 shadowsInitObjShadow(Object *obj, u32 addr, s32 arg2) {
     shadow = (ObjectShadow*)mmAlign4(addr);
     obj->shadow = shadow;
     addr = (u32)(shadow + 1);
-    shadow->texture = tex_load((s32) -obj->def->shadowTexture, 0);
+    shadow->texture = texLoadTextureActual((s32) -obj->def->shadowTexture, 0);
     shadow->scale = obj->def->shadowScale;
     shadow->maxDistScale = shadow->scale;
     shadow->dir.x = D_80092BD0;
@@ -860,7 +860,7 @@ s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4
     var_s2 = 0;
     sp1E4 = 0;
     dl_use_alt_builder();
-    tex_render_save_state();
+    texRenderSaveState();
     // @fake
     if ((s32)&dl) {}
     gSPGeometryMode(dl, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
@@ -883,7 +883,7 @@ s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4
             );
             dl_apply_other_mode(&dl);
         }
-        tex_gdl_set_textures(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
+        texDPTextures(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
     } else {
         gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
         dl_apply_combine(&dl);
@@ -932,7 +932,7 @@ s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4
     }
     gSPEndDisplayList(dl++);
     dl_use_main_builder();
-    tex_render_restore_state();
+    texRenderRestoreState();
     *arg5 = var_s4;
     return dl - sp1C8;
 }

@@ -94,7 +94,7 @@ void dll_251_ctor(void* dll) {
     
     if (bss_0 == NULL) {
         for (i = 0, tex = &bss_0; i < 2; ) {
-            tex[i] = tex_load(bss_8[i], 0);
+            tex[i] = texLoadTextureActual(bss_8[i], 0);
             i++;
         }
     }
@@ -115,7 +115,7 @@ void dll_251_dtor(void* dll) {
 
     if (bss_0 != NULL) {
         for (i = 0, tex = &bss_0; i < 2; ) {
-            tex_free(tex[i]);
+            texFreeTexture(tex[i]);
             i++;
         }
     }

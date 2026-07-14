@@ -318,20 +318,20 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
 void dll_63_ctor(void *self) {
     s32 i;
 
-    sBackgroundTexture = tex_load_deferred(TEXTABLE_2DD_Paper_BG_Scales);
-    sLogoTexture = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
-    sLogoShadowTexture = tex_load_deferred(TEXTABLE_2E1_DinosaurPlanetLogoShadow);
+    sBackgroundTexture = texLoadTexture(TEXTABLE_2DD_Paper_BG_Scales);
+    sLogoTexture = texLoadTexture(TEXTABLE_C5_DinosaurPlanetLogo);
+    sLogoShadowTexture = texLoadTexture(TEXTABLE_2E1_DinosaurPlanetLogoShadow);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EC_Menu_Managing_Saves);
     }
 
     for (i = 0; i < 18; i++) {
-        sSaveGameBgTextures[i] = tex_load_deferred(sSaveGameBgTextureIDs[i]);
+        sSaveGameBgTextures[i] = texLoadTexture(sSaveGameBgTextureIDs[i]);
     }
 
     for (i = 0; i < 4; i++) {
-        sSaveGameTextures[i] = tex_load_deferred(sSaveGameTextureIDs[i]);
+        sSaveGameTextures[i] = texLoadTexture(sSaveGameTextureIDs[i]);
     }
 
     if (menuGetPrevious() != MENU_ENTER_NAME) {
@@ -560,21 +560,21 @@ static void dll_63_clean_up(s32 leavingMenus) {
 
     for (i = 0; i < 18; i++) {
         if (sSaveGameBgTextures[i] != NULL) {
-            tex_free(sSaveGameBgTextures[i]);
+            texFreeTexture(sSaveGameBgTextures[i]);
             sSaveGameBgTextures[i] = NULL;
         }
     }
 
     for (i = 0; i < 4; i++) {
         if (sSaveGameTextures[i] != NULL) {
-            tex_free(sSaveGameTextures[i]);
+            texFreeTexture(sSaveGameTextures[i]);
             sSaveGameTextures[i] = NULL;
         }
     }
 
-    tex_free(sBackgroundTexture);
-    tex_free(sLogoTexture);
-    tex_free(sLogoShadowTexture);
+    texFreeTexture(sBackgroundTexture);
+    texFreeTexture(sLogoTexture);
+    texFreeTexture(sLogoShadowTexture);
 
     if (leavingMenus) {
         fontUnload(FONT_DINO_MEDIUM_FONT_IN);

@@ -130,9 +130,9 @@ void footstepsInit(void) {
     D_800BCC10[7].y = 0.0f;
     D_800BCC10[7].z = -3.0f;
 
-    D_800BCC68 = tex_load_deferred(TEXTABLE_18_Footprint1);
-    D_800BCC6C = tex_load_deferred(TEXTABLE_19_Footprint2);
-    D_800BCC70 = tex_load_deferred(TEXTABLE_1A_Footprint3);
+    D_800BCC68 = texLoadTexture(TEXTABLE_18_Footprint1);
+    D_800BCC6C = texLoadTexture(TEXTABLE_19_Footprint2);
+    D_800BCC70 = texLoadTexture(TEXTABLE_1A_Footprint3);
 
     D_800BCC78 = (u8)0;
 }
@@ -199,7 +199,7 @@ void footsteps_func_8005CB10(Gfx **gdl, Object *obj) {
             break;
     }
 
-    tex_gdl_set_textures(gdl, tex, NULL, 0x1a, 0, 0, 1);
+    texDPTextures(gdl, tex, NULL, 0x1a, 0, 0, 1);
 
     i = 0;
 

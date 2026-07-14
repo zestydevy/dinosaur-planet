@@ -185,7 +185,7 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     KamerianBoss_disable_hit_sphere(1);
 
     for (i = 0; i < 2; i++) {
-        texture = tex_load_deferred(sHealthBarTextureIDs[i]);
+        texture = texLoadTexture(sHealthBarTextureIDs[i]);
         sHealthBarTextures[i] = texture;
         _bss_8[i][0].tex = texture;
         _bss_8[i][0].animProgress = 0;

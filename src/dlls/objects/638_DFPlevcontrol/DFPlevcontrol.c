@@ -42,7 +42,7 @@ void DFP_LevelControl_setup(Object* self, DFPTLevelControl_Setup* objSetup, s32 
     u8 act;
 
     objAddObjectType(self, OBJTYPE_LevelControl);
-    dTexElectricity = tex_load_deferred(1132);
+    dTexElectricity = texLoadTexture(1132);
     self->animCallback = DFP_LevelControl_anim_callback;
     gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
     act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
@@ -139,7 +139,7 @@ void DFP_LevelControl_free(Object* self, s32 arg1) {
     objFreeObjectType(self, OBJTYPE_LevelControl);
     gDLL_29_Gplay->vtbl->set_obj_group_status(
         MAP_DESERT_FORCE_POINT_TEMPLE_TOP, DFPT_ObjGroup2_Bottom_BigDoor, 0);
-    tex_free(dTexElectricity);
+    texFreeTexture(dTexElectricity);
     dTexElectricity = NULL;
 }
 

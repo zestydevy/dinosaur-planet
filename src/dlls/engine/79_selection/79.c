@@ -94,17 +94,17 @@ typedef enum {
 
 // offset: 0x0 | ctor
 void selection_ctor(void* dll) {
-    sTexButtonA = tex_load_deferred(TEXTABLE_274_AButton_Anim);
+    sTexButtonA = texLoadTexture(TEXTABLE_274_AButton_Anim);
     sTexButtonA->animSpeed = 40;
     
     bss_10 = 0x40000;
     
-    sTexButtonB = tex_load_deferred(TEXTABLE_275_BButton_Anim);
+    sTexButtonB = texLoadTexture(TEXTABLE_275_BButton_Anim);
     sTexButtonB->animSpeed = 40;
     
     bss_14 = 0x40000;
     
-    sTexControlStick = tex_load_deferred(TEXTABLE_4FA_ControlStick_Anim);
+    sTexControlStick = texLoadTexture(TEXTABLE_4FA_ControlStick_Anim);
     sTexControlStick->animSpeed = 40;
     
     bss_18 = 0x40000;
@@ -116,9 +116,9 @@ void selection_ctor(void* dll) {
 
 // offset: 0xF8 | dtor
 void selection_dtor(void* dll) {
-    tex_free(sTexButtonA);
-    tex_free(sTexButtonB);
-    tex_free(sTexControlStick);
+    texFreeTexture(sTexButtonA);
+    texFreeTexture(sTexButtonB);
+    texFreeTexture(sTexControlStick);
     mmFree(sGametext);
 }
 

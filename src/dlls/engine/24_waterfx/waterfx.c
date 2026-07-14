@@ -156,10 +156,10 @@ void waterfx_ctor(void *dll) {
     sNumWaterSplashParticles = 0;
     sNumMovementRipples = 0;
     
-    sCircularWaterRippleTex = tex_load_deferred(TEXTABLE_56_CircularWaterRipple);
-    sWaterSplashTex = tex_load_deferred(TEXTABLE_59_WaterSplash);
-    sWaterSplashParticleTex = tex_load_deferred(TEXTABLE_22_WaterSplashParticle);
-    sMovementWaterRippleTex = tex_load_deferred(TEXTABLE_57_MovementWaterRipple);
+    sCircularWaterRippleTex = texLoadTexture(TEXTABLE_56_CircularWaterRipple);
+    sWaterSplashTex = texLoadTexture(TEXTABLE_59_WaterSplash);
+    sWaterSplashParticleTex = texLoadTexture(TEXTABLE_22_WaterSplashParticle);
+    sMovementWaterRippleTex = texLoadTexture(TEXTABLE_57_MovementWaterRipple);
     
     waterfx_init();
 }
@@ -170,19 +170,19 @@ void waterfx_dtor(void *dll) {
         mmFree(sCircularRippleTris);
     }
     if (sCircularWaterRippleTex != NULL) {
-        tex_free(sCircularWaterRippleTex);
+        texFreeTexture(sCircularWaterRippleTex);
         sCircularWaterRippleTex = NULL;
     }
     if (sWaterSplashTex != NULL) {
-        tex_free(sWaterSplashTex);
+        texFreeTexture(sWaterSplashTex);
         sWaterSplashTex = NULL;
     }
     if (sWaterSplashParticleTex != NULL) {
-        tex_free(sWaterSplashParticleTex);
+        texFreeTexture(sWaterSplashParticleTex);
         sWaterSplashParticleTex = NULL;
     }
     if (sMovementWaterRippleTex != NULL) {
-        tex_free(sMovementWaterRippleTex);
+        texFreeTexture(sMovementWaterRippleTex);
         sMovementWaterRippleTex = NULL;
     }
 }
@@ -531,7 +531,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 dl_triangles(gdl, &sMovementRippleTris[i << 1], 2);
             }
         }
-        tex_render_reset();
+        texRenderReset();
     }
 }
 

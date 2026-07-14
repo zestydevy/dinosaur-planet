@@ -360,7 +360,7 @@ void assetThreadLoadNextFromQueue(void) {
                 assetQueueCompletedLoad(5, (u32*)objSetupObjectActual(sp2C.unk8ObjSetup, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), (u8*)1, 0, 0);
                 break;
             case 3:
-                tmp = tex_load(sp2C.blockId, 0);
+                tmp = texLoadTextureActual(sp2C.blockId, 0);
                 if (sp2C.unk4 != 0) {
                     assetQueueCompletedLoad(3, sp2C.unk4, (u8*)tmp, 0, 0);
                 }
@@ -403,7 +403,7 @@ void assetThreadLoad(struct AssetLoadThreadMsg *load) {
                 load->p.object.parent, load->p.object.arg6);
             break;
         case ASSET_TYPE_TEXTURE:
-            *load->p.texture.dest = tex_load(load->p.texture.id, 0);
+            *load->p.texture.dest = texLoadTextureActual(load->p.texture.id, 0);
             break;
         case ASSET_TYPE_DLL:
             *load->p.dll.dest = dllLoad(load->p.dll.idOrIdx, load->p.dll.exportCount, FALSE);

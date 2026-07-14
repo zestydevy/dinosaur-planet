@@ -204,7 +204,7 @@ void mainInit(void) {
     gLastInsertedControllerIndex = joyInit();
     joyStartControllerThread(&osscheduler_);
     start_crash_thread(&osscheduler_);
-    tex_init();
+    texInitTextures();
     init_maps();
     func_8001CD00();
     modInit();
@@ -307,7 +307,7 @@ void mainTick(void) {
     segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     fbfxTick(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
-    tex_render_reset();
+    texRenderReset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0;
@@ -383,7 +383,7 @@ void mainTickNoExpansion(void) {
     segSetBase(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     dl_set_all_dirty();
-    tex_render_reset();
+    texRenderReset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0U;

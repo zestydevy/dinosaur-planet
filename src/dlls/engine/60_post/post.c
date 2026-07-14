@@ -41,7 +41,7 @@ void dll_60_ctor(void *dll) {
 
     if (osMemSize != 0x800000) {
         dExpansionPakMissing = TRUE;
-        dTexExpansionPak = tex_load_deferred(TEXTABLE_2DA_ExpansionPak);
+        dTexExpansionPak = texLoadTexture(TEXTABLE_2DA_ExpansionPak);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F3_Expansion_Pak_Needed);
     } else {
         bss_4 = 0;
@@ -54,10 +54,10 @@ void dll_60_ctor(void *dll) {
         gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
         mainSetBits(BIT_44F, 1);
         gDLL_2_Camera->vtbl->set_letterbox_goal(30, 1);
-        dTexN64Logo = tex_load_deferred(TEXTABLE_2D2_N64LogoFull);
-        dTexN64LogoShadow = tex_load_deferred(TEXTABLE_2D3_N64LogoFull_Shadow);
-        sTexDolbyBig = tex_load_deferred(TEXTABLE_2DB_DolbySurround);
-        sTexDolbySmall = tex_load_deferred(TEXTABLE_2DC_DolbySurround_SmallLogo);
+        dTexN64Logo = texLoadTexture(TEXTABLE_2D2_N64LogoFull);
+        dTexN64LogoShadow = texLoadTexture(TEXTABLE_2D3_N64LogoFull_Shadow);
+        sTexDolbyBig = texLoadTexture(TEXTABLE_2DB_DolbySurround);
+        sTexDolbySmall = texLoadTexture(TEXTABLE_2DC_DolbySurround_SmallLogo);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F2_Splash_Screen);
         gDLL_29_Gplay->vtbl->get_game_options(); // ignoring return value
     }
@@ -68,12 +68,12 @@ void dll_60_ctor(void *dll) {
 
 void dll_60_dtor(void *dll) {
     if (dExpansionPakMissing == TRUE) {
-        tex_free(dTexExpansionPak);
+        texFreeTexture(dTexExpansionPak);
     } else {
-        tex_free(dTexN64Logo);
-        tex_free(dTexN64LogoShadow);
-        tex_free(sTexDolbyBig);
-        tex_free(sTexDolbySmall);
+        texFreeTexture(dTexN64Logo);
+        texFreeTexture(dTexN64LogoShadow);
+        texFreeTexture(sTexDolbyBig);
+        texFreeTexture(sTexDolbySmall);
     }
 
     mmFree(splashGametext);

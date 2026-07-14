@@ -956,7 +956,7 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
             } else {
                 tex1 = NULL;
             }
-            tex_gdl_set_textures(&gMainDL, tex0, tex1, renderFlags, frameOptions, forceTexSet, FALSE);
+            texDPTextures(&gMainDL, tex0, tex1, renderFlags, frameOptions, forceTexSet, FALSE);
             if (shape->texScrollerID != 0xFF) {
                 texScroller = block_texscroll_get(shape->texScrollerID);
                 gDPSetTileSize(gMainDL++, 0, texScroller->uOffsetA, texScroller->vOffsetA, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
@@ -3131,11 +3131,11 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 fromAssetThread) {
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
     block->ptr_faceEdgeVectors = (s16*)((u32)block->ptr_faceEdgeVectors + (u32)block);
     block->materials = (BlocksMaterial*)((u32)block->materials + (u32)block);
-    tex_set_alloc_tag(ALLOC_TAG_TRACKTEX_COL);
+    texSetMemColour(ALLOC_TAG_TRACKTEX_COL);
     for (texIdx = 0; texIdx < block->materialCount; texIdx++) {
-        block->materials[texIdx].texture = tex_load(-((u32)block->materials[texIdx].texture | 0x8000), fromAssetThread);
+        block->materials[texIdx].texture = texLoadTextureActual(-((u32)block->materials[texIdx].texture | 0x8000), fromAssetThread);
     }
-    tex_set_alloc_tag(ALLOC_TAG_TEX_COL);
+    texSetMemColour(ALLOC_TAG_TEX_COL);
     block_setup_vertices(block);
     addr = (u32)block;
     addr += block->modelSize;
@@ -3407,19 +3407,19 @@ void block_setup_gdl_groups(Block *block) {
         if (flags & RENDER_DECAL_SIMPLE) {
             if (flags & RENDER_SUBSURFACE) {
                 flags &= ~RENDER_SUBSURFACE;
-                tex_disable_modes(RENDER_SEMI_TRANSPARENT);
+                texDisableModes(RENDER_SEMI_TRANSPARENT);
             } else {
                 if ((flags & RENDER_UNK2000) || (flags & RENDER_SEMI_TRANSPARENT) || (flags & RENDER_DECAL)) {
                     flags |= RENDER_SEMI_TRANSPARENT;
                 } else {
-                    tex_disable_modes(RENDER_SEMI_TRANSPARENT);
+                    texDisableModes(RENDER_SEMI_TRANSPARENT);
                 }
             }
         }
 
         mygdl = &block->gdlGroups[i * 3];
         // only set modes, don't set texture!
-        tex_gdl_set_texture_simple(&mygdl, texture, 
+        texDPTextureSimple(&mygdl, texture, 
             flags | RENDER_NO_CULL, 
             TEX_FRAME(0),
             TRUE, // force
@@ -3449,7 +3449,7 @@ void block_setup_gdl_groups(Block *block) {
         }
 
         if (flags & RENDER_DECAL_SIMPLE) {
-            tex_enable_modes(RENDER_SEMI_TRANSPARENT);
+            texEnableModes(RENDER_SEMI_TRANSPARENT);
         }
     }
 }
@@ -3562,7 +3562,7 @@ void block_free(s32 blockIndex) {
 
         //Loop over materials and free their textures
         for (i = 0; i < block->materialCount; i++){
-            tex_free(block->materials[i].texture);
+            texFreeTexture(block->materials[i].texture);
         }
         
         if ((u32*)block->unk1C != NULL) {
@@ -3802,7 +3802,7 @@ void block_texanim_tick(void) {
 
             if ((texture != NULL) && (texture->animDuration != 0x100)) {
                 if (texture->animSpeed != 0) {
-                    tex_animate(texture, (s32 *)&gBlockTexAnimTable[i].flags, (s32 *)&gBlockTexAnimTable[i].unk4);
+                    texAnimateTexture(texture, (s32 *)&gBlockTexAnimTable[i].flags, (s32 *)&gBlockTexAnimTable[i].unk4);
                 }
             }
         }

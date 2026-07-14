@@ -150,11 +150,11 @@ void dll_437_ctor(void *dll) { }
 // offset: 0xC | dtor
 void dll_437_dtor(void* dll) {
     if (bss_0 != NULL) {
-        tex_free(bss_0);
+        texFreeTexture(bss_0);
         bss_0 = NULL;
     }
     if (bss_4 != NULL) {
-        tex_free(bss_4);
+        texFreeTexture(bss_4);
         bss_4 = NULL;
     }
 }
@@ -168,10 +168,10 @@ void dll_437_setup(Object* self, EWTrobotpatrol_Setup* setup, s32 reset) {
     EWTrobotpatrol_Data* temp_s0;
 
     if (bss_0 == NULL) {
-        bss_0 = tex_load_deferred(0x127);
+        bss_0 = texLoadTexture(0x127);
     }
     if (bss_4 == NULL) {
-        bss_4 = tex_load_deferred(0x16F);
+        bss_4 = texLoadTexture(0x16F);
     }
     objAddObjectType(self, OBJTYPE_Baddie);
     temp_s0 = self->data;

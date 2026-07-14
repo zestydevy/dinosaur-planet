@@ -364,7 +364,7 @@ void rcpTileWrite(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b,
         j++;
         tex = tiles[j].tex;
     }
-    tex_render_reset();
+    texRenderReset();
     *gdl = dl;
 }
 
@@ -770,7 +770,7 @@ void rcpTileWriteX(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 h
                 }
                 temp_s0 = tile->gdl;
                 dl->words.w0 = temp_s0->words.w0;
-                dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tex_get_frame_img(tile, tiles[j].animProgress));
+                dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(texGetFrameImg(tile, tiles[j].animProgress));
                 dl++;
                 temp_s0++;
                 gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(temp_s0));
@@ -789,7 +789,7 @@ void rcpTileWriteX(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 h
             }
         }
     }
-    tex_render_reset();
+    texRenderReset();
     *gdl = dl;
 }
 

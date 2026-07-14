@@ -668,7 +668,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
                 );
                 break;
             default:
-                tex_gdl_set_textures(gdl, baseTex, NULL, 0, 0, 0, TRUE);
+                texDPTextures(gdl, baseTex, NULL, 0, 0, 0, TRUE);
                 var_s3 = 1;
                 break;
             }
@@ -725,7 +725,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
                 }
             }
         }
-        tex_render_reset();
+        texRenderReset();
         bss_0[idx]->unk130 = 1 - bss_0[idx]->unk130;
     }
     return 0;
@@ -794,7 +794,7 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
             bss_0[i]->unk12C = 0;
             if (bss_0[i]->unk13F == 0) {
                 if (bss_0[i]->unk98 != NULL) {
-                    tex_free(bss_0[i]->unk98);
+                    texFreeTexture(bss_0[i]->unk98);
                 }
             }
             if (bss_0[i]->unk13F == 0) {

@@ -70,9 +70,9 @@ static PicMenuSounds pauseMenuSounds = {
 void pausemenu_ctor(void *dll) {
     GameTextChunk* temp_v0;
 
-    textureSpellStone = tex_load_deferred(0x31E);
-    textureDuster = tex_load_deferred(0x310);
-    textureSpirit = tex_load_deferred(0x31F);
+    textureSpellStone = texLoadTexture(0x31E);
+    textureDuster = texLoadTexture(0x310);
+    textureSpirit = texLoadTexture(0x31F);
     gametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_000_Pause_Menu);
     pauseMenuItems[0].text = gametext->strings[0];
     pauseMenuItems[1].text = gametext->strings[1];
@@ -84,9 +84,9 @@ void pausemenu_ctor(void *dll) {
 
 // offset: 0x14C | dtor
 void pausemenu_dtor(void *dll) {
-    tex_free(textureSpellStone);
-    tex_free(textureDuster);
-    tex_free(textureSpirit);
+    texFreeTexture(textureSpellStone);
+    texFreeTexture(textureDuster);
+    texFreeTexture(textureSpirit);
     mmFree((void*)gametext);
     fontUnload(FONT_FUN_FONT);
     gDLL_74_Picmenu->vtbl->clear_items();

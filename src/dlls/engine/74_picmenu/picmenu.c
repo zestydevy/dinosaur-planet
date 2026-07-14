@@ -61,7 +61,7 @@ void picmenu_ctor(void *self) {
     s32 i;
 
     for (i = 0; i < ARRAYCOUNT_S(sTextures); i++) {
-        sTextures[i].texture = tex_load_deferred(sTextures[i].textureID);
+        sTextures[i].texture = texLoadTexture(sTextures[i].textureID);
     }
 
     sOpacity = 255;
@@ -71,7 +71,7 @@ void picmenu_dtor(void *self) {
     s32 i;
 
     for (i = 0; i < ARRAYCOUNT_S(sTextures); i++) {
-        tex_free(sTextures[i].texture);
+        texFreeTexture(sTextures[i].texture);
     }
 }
 
@@ -101,7 +101,7 @@ void picmenu_set_items(PicMenuItem *items, s32 count,
         item = &sItems[i];
 
         if (items[i].texture.asID != -1) {
-            item->texture.asPtr = tex_load_deferred(items[i].texture.asID);
+            item->texture.asPtr = texLoadTexture(items[i].texture.asID);
         } else {
             item->texture.asPtr = NULL;
         }
@@ -153,7 +153,7 @@ void picmenu_clear_items(void) {
 
     for (i = 0; i < sItemCount; i++) {
         if (sItems[i].texture.asPtr != NULL) {
-            tex_free(sItems[i].texture.asPtr);
+            texFreeTexture(sItems[i].texture.asPtr);
         }
     }
 

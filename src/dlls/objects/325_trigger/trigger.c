@@ -857,7 +857,7 @@ static void trigger_tex_load(u16 param1) {
     ptr = objGetTable(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
-            tex = tex_get_cached(*ptr2);
+            tex = texGetCached(*ptr2);
             if (tex == NULL) {
                 assetEnqueueLoad(50, 3, NULL, (ObjSetup*)*ptr2, 0, 0, 0, 0);
             }
@@ -873,9 +873,9 @@ static void trigger_tex_free(u16 param1) {
     ptr = objGetTable(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
-            tex = tex_get_cached(*ptr2);
+            tex = texGetCached(*ptr2);
             if (tex != NULL) {
-                tex_free(tex);
+                texFreeTexture(tex);
             }
         }
     }

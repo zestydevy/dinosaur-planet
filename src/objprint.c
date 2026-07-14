@@ -199,7 +199,7 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         camSetupObjectSRTMatrix(&tempGdl, &tempMtxs, &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
         dl_set_all_dirty();
-        tex_render_reset();
+        texRenderReset();
     }
     if (!(obj->srt.flags & OBJFLAG_SHADOW_ONLY)) {
         if (!(modelInst->unk34 & 8)) {
@@ -266,7 +266,7 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
             }
             gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(modelInst->displayList));
             dl_set_all_dirty();
-            tex_render_reset();
+            texRenderReset();
         }
         if (obj->linkedObject != NULL) {
             objprintDrawChildModel(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, 
@@ -356,7 +356,7 @@ void objprintDrawShadowModel(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtx
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
     dl_set_all_dirty();
-    tex_render_reset();
+    texRenderReset();
 
     *gdl = mygdl;
     *rspMtxs = outRspMtxs;
@@ -435,7 +435,7 @@ ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Tri
             }
             gSPDisplayList((*arg0)++, OS_PHYSICAL_TO_K0(modelInst->displayList));
             dl_set_all_dirty();
-            tex_render_reset();
+            texRenderReset();
             // @fake
             if (D_800B2E10) {}
         }
@@ -746,7 +746,7 @@ void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         camSetupObjectSRTMatrix(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
         gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
         dl_set_all_dirty();
-        tex_render_reset();
+        texRenderReset();
         sp64 = 1;
         if (sp68 == 0xFF) {
             sp64 = 2;
@@ -817,7 +817,7 @@ void objprint_func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
             camSetupRSPMatricesForObject(gdl, mtx, object->parent);
         }
         dl_set_all_dirty();
-        tex_render_reset();
+        texRenderReset();
     }
 }
 

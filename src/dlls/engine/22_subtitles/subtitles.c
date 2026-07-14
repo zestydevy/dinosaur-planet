@@ -141,8 +141,8 @@ void dll_22_ctor(s32 arg0) {
     }
 
     //Set up background strip (shown behind subtitles when played outside of sequences)
-    sBackground[0].tex = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
-    sBackground[1].tex = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
+    sBackground[0].tex = texLoadTexture(TEXTABLE_27B_SubtitleScaleyBackground1);
+    sBackground[1].tex = texLoadTexture(TEXTABLE_27C_SubtitleScaleyBackground2);
     sBackground[2].tex = NULL;
     sBackground[0].x = 0;
     sBackground[1].x = sBackground[0].tex->width;
@@ -167,17 +167,17 @@ void dll_22_dtor(s32 arg0) {
         for (i = 0; i < 8; i++) {
             temp_a0 = temp->unkC8[0][i].unk0;
             if (temp_a0 != 0) {
-                tex_free(temp_a0);
+                texFreeTexture(temp_a0);
             }
             temp_a0 = temp->unkC8[1][i].unk0;
             if (temp_a0 != 0) {
-                tex_free(temp_a0);
+                texFreeTexture(temp_a0);
             }
         }
     }
 
-    tex_free(sBackground[0].tex);
-    tex_free(sBackground[1].tex);
+    texFreeTexture(sBackground[0].tex);
+    texFreeTexture(sBackground[1].tex);
 }
 
 // offset: 0x2D0 | func: 0 | export: 0
@@ -546,12 +546,12 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
         arg0->unk80[1].unk0[var_s1] = 0;
         tex = arg0->unkC8[var_s1].unk0;
         if (tex != NULL) {
-            tex_free(tex);
+            texFreeTexture(tex);
             arg0->unkC8[var_s1].unk0 = NULL;
         }
         tex = arg0->unk188[var_s1].unk0;
         if (tex != NULL) {
-            tex_free(tex);
+            texFreeTexture(tex);
             arg0->unk188[var_s1].unk0 = NULL;
         }
     }
@@ -593,7 +593,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
             do {
                 temp_v0_2 = &_data_0[var_s1++];
             } while (temp_v0_2->unk0 != (_bss_7AC->unk4[*arg1]));
-            tex = tex_load_deferred(temp_v0_2->unk2);
+            tex = texLoadTexture(temp_v0_2->unk2);
             arg0->unkC8[var_s0][0].unk0 = tex;
             dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
         }

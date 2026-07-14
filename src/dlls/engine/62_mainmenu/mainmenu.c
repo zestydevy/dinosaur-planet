@@ -156,7 +156,7 @@ void mainmenu_ctor(void *dll) {
 
     total_strings = 8;
 
-    logoDinosaurPlanet = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
+    logoDinosaurPlanet = texLoadTexture(TEXTABLE_C5_DinosaurPlanetLogo);
     rcpSetBorderColour(0, 0, 0);
 
     //Set language and get text
@@ -295,7 +295,7 @@ void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
 
 // offset: 0x8AC | func: 3
 void mainmenu_clean_up(void) {
-    tex_free(logoDinosaurPlanet);
+    texFreeTexture(logoDinosaurPlanet);
     gDLL_74_Picmenu->vtbl->clear_items();
     mmFree(gametext);
 }
