@@ -1,11 +1,5 @@
 #include "common.h"
 
-/* Strings which seem to belong to this DLL 
-   (from `default.dol` and kiosk's `DLLS.bin`):
-
-   "in cave\n"
-   "out of cave\n"
-*/
 
 // offset: 0x0 | ctor
 void dll_82_ctor(void *dll) { }
