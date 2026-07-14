@@ -56,7 +56,7 @@ void DFCradle_setup(Object* self, DFCradle_Setup* setup, s32 reset) {
         objData->curves.splineConverterFunc = curves_hermite_converter;
         objData->curves.numControlPoints = gDLL_26_Curves->vtbl->func_E40(curveSetup, objData->curves.unk84, objData->curves.unk88, objData->curves.unk8C, NULL);
         
-        curves_move((UnkCurvesStruct*)&objData->curves);
+        curves_move((CurvesStruct*)&objData->curves.unk0);
     }
     
     objData->enabled = main_get_bits(BIT_DF_Cradle_Powered);
@@ -180,7 +180,7 @@ void DFCradle_control(Object* self) {
                 
                 scrollSpeed = (objData->unk9C * -53.0f) * objData->direction;
 
-                if (curves_func_800053B0((UnkCurvesStruct*)objData, -scrollSpeed / 53.0f)) {
+                if (curves_func_800053B0((CurvesStruct*)&objData->curves, -scrollSpeed / 53.0f)) {
                     objData->direction = -objData->direction;
                     objData->unk9C = 0/*0.0f*/;
                     
@@ -196,8 +196,8 @@ void DFCradle_control(Object* self) {
                         main_set_bits(BIT_1C, 1);
                     }
                 } else {
-                    if ((objData->curves.unk74 != 0/*.0f*/) || (objData->curves.unk7C != 0/*.0f*/)) {
-                        self->srt.yaw = arctan2_f(objData->curves.unk74, objData->curves.unk7C) + M_180_DEGREES;
+                    if ((objData->curves.unk74.x != 0/*.0f*/) || (objData->curves.unk74.z != 0/*.0f*/)) {
+                        self->srt.yaw = arctan2_f(objData->curves.unk74.x, objData->curves.unk74.z) + M_180_DEGREES;
                     }
                 }
 

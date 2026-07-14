@@ -12,9 +12,7 @@ typedef struct {
     /* 0014 */ f32 unk14[20];
     /* 0064 */ f32 unk64;
     /* 0068 */ Vec3f unk68; //curve point (at current tValue)
-    /* 0074 */ f32 unk74; //curve tangent x (at current tValue) (TODO: Vec3f)
-    /* 0078 */ f32 unk78; //curve tangent y
-    /* 007C */ f32 unk7C; //curve tangent z 
+    /* 0074 */ Vec3f unk74; //curve tangent (at current tValue)
     /* 0080 */ s32 unk80;
     /* 0084 */ f32* unk84;
     /* 0088 */ f32* unk88;
