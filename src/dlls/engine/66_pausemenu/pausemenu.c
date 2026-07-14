@@ -172,13 +172,13 @@ void pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
     //Draw background and dimming overlay
     camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
     gDPSetCombineMode(*gfx, G_CC_PRIMITIVE, G_CC_PRIMITIVE);    
-    dl_apply_combine(gfx);
+    dlApplyCombine(gfx);
     gDPSetOtherMode(*gfx, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | 
         G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | 
         G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2);
-    dl_apply_other_mode(gfx);
-    dl_set_prim_color(gfx, BG_OVERLAY_R, BG_OVERLAY_G, BG_OVERLAY_B, pauseMenuOpacity);
+    dlApplyOtherMode(gfx);
+    dlSetPrimColor(gfx, BG_OVERLAY_R, BG_OVERLAY_G, BG_OVERLAY_B, pauseMenuOpacity);
     gDPFillRectangle((*gfx)++, ulx, uly, lrx, lry);
     gDLBuilder->needsPipeSync = TRUE;
     

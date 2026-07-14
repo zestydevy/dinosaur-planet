@@ -403,7 +403,7 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
     }
     var_s5--;
     gSPVertex(dl++, OS_PHYSICAL_TO_K0(var_s0), 4, 0);
-    dl_triangles(&dl, var_s5, 2);
+    dlTriangles(&dl, var_s5, 2);
     gSPEndDisplayList(dl++);
     D_80093000 = D_80093000 + 1;
     if (D_80093000 == 39) {

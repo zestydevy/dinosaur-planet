@@ -238,8 +238,8 @@ VoxmapSlot* voxFindClosestSlot(Vec3s16 *position) {
     gVoxmapLastSearchedSlot.unk8 = gVoxmapLastSearchedSlot.unk0 / SOME_FACTOR;
     gVoxmapLastSearchedSlot.unkC = gVoxmapLastSearchedSlot.unk4 / SOME_FACTOR;
     var_s1 = -1;
-    if (map_get_block_from_grid(var_s0, sp40, 0) != 0) {
-        mapCell = func_80046698(var_s0, sp40);
+    if (mapGetBlockFromGrid(var_s0, sp40, 0) != 0) {
+        mapCell = map_func_80046698(var_s0, sp40);
         var_s1 = mapCell->blockID;
     }
     if (var_s1 != -1) {
@@ -1048,14 +1048,14 @@ void vox_func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics,
     tri = *tris;
     gfx = *gdl;
     texDPTextures(&gfx, NULL, NULL, 3, 0, 0, 1);
-    dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
+    dlSetPrimColor(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
     camSetupWorldMatrix(&gfx, matrics, 0, 0, 0, 1.0f);
     var_fp = 1;
     var_s4 = 0;
     temp_v0 = 0;
     while (temp_v0 < (arg4->unk20 - 1)) {
         gSPVertex(gfx++, OS_PHYSICAL_TO_K0(vtx), 4, 0);
-        dl_triangles(&gfx, tri, 2);
+        dlTriangles(&gfx, tri, 2);
         vtx[0].ob[0] = arg4->unk8[var_s4].x - D_80092A60;
         vtx[0].ob[1] = arg4->unk8[var_s4].y + 5.0f;
         vtx[0].ob[2] = arg4->unk8[var_s4].z - D_80092A64;
@@ -1684,7 +1684,7 @@ s32 vox_func_8000ACD4(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) 
     temp_fa1 = SQ(*arg2);
     sp30 = 0;
     if (temp < temp_fa1) {
-        if (track_obj_vis_check(arg1) != 0) {
+        if (trackObjVisCheck(arg1) != 0) {
             sp30 = 1;
             if (arg4 != 0) {
                 vox_func_80007EE0(&arg0->srt.transl, &sp50);

@@ -194,7 +194,7 @@ void WCLevelControl_sun_puzzle_set_coords_from_grid_position(SRT *arg0, s16 puzz
     f32 blockX;
     f32 blockZ;
 
-    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
+    mapWorldToBlockWorldCoords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
     *x = blockX + SUN_PUZZLE_ORIGIN_X + (puzzleGridX * PUZZLE_UNIT) + PUZZLE_UNIT/2;
     *z = blockZ + SUN_PUZZLE_ORIGIN_Z + (puzzleGridZ * PUZZLE_UNIT) + PUZZLE_UNIT/2;
 }
@@ -204,7 +204,7 @@ void WCLevelControl_sun_puzzle_set_grid_position_from_coords(SRT *arg0, f32 x, f
     f32 blockX;
     f32 blockZ;
 
-    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
+    mapWorldToBlockWorldCoords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
     *puzzleGridX = (s16) ((x - blockX) - SUN_PUZZLE_ORIGIN_X) / PUZZLE_UNIT;
     *puzzleGridZ = (s16) ((z - blockZ) - SUN_PUZZLE_ORIGIN_Z) / PUZZLE_UNIT;
 }
@@ -330,7 +330,7 @@ void WCLevelControl_moon_puzzle_set_coords_from_grid_position(SRT *arg0, s16 puz
     f32 blockX;
     f32 blockZ;
 
-    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
+    mapWorldToBlockWorldCoords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
     *x = blockX + MOON_PUZZLE_ORIGIN_X + (puzzleGridX * PUZZLE_UNIT) + PUZZLE_UNIT/2;
     *z = blockZ + MOON_PUZZLE_ORIGIN_Z + (puzzleGridZ * PUZZLE_UNIT) + PUZZLE_UNIT/2;
 }
@@ -340,7 +340,7 @@ void WCLevelControl_moon_puzzle_set_grid_position_from_coords(SRT *arg0, f32 x, 
     f32 blockX;
     f32 blockZ;
 
-    map_world_to_block_world_coords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
+    mapWorldToBlockWorldCoords(arg0->transl.x, arg0->transl.y, arg0->transl.z, &blockX, &blockZ);
     *puzzleGridX = (s16)((x - blockX) - MOON_PUZZLE_ORIGIN_X) / PUZZLE_UNIT;
     *puzzleGridZ = (s16)((z - blockZ) - MOON_PUZZLE_ORIGIN_Z) / PUZZLE_UNIT;
 }

@@ -724,7 +724,7 @@ void collectable_save_position(Object* self, f32 x, f32 y, f32 z) {
         objdata->savedPosition.y = y;
         self->srt.transl.z = z;
         objdata->savedPosition.z = z;
-        map_save_object(
+        mapSaveObject(
             self->setup, self->mapID, 
             self->srt.transl.x,
             self->srt.transl.y,

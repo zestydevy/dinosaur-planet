@@ -480,7 +480,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
             (lastUsedSpell != BIT_Spell_Forcefield) && 
             (mainGetBits(BIT_WM_Setup5_Sabre_Hall_Disable_GuardClaw_Warp) == FALSE)
         ) {
-            warpPlayer(WARP_WM_SABRE_KRAZOA_CORRIDOR, /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(WARP_WM_SABRE_KRAZOA_CORRIDOR, /*fadeToBlack=*/FALSE);
         }
 
         mainSetBits(BIT_WM_Setup5_Sabre_Entered_GuardClaw_Hall, 0);

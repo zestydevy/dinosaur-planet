@@ -240,7 +240,7 @@ void Transporter_control(Object *self) {
         if ((objdata->unk20 != 0) && (objdata->unk26 != 0)) {
             objdata->unk20 -= gUpdateRate;
             if (objdata->unk20 <= 0) {
-                warpPlayer(setup->warpID, FALSE);
+                mapWarpPlayer(setup->warpID, FALSE);
                 objdata->unk26 = 0;
                 objdata->unk20 = 0;
             }

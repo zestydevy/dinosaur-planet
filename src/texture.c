@@ -1268,7 +1268,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
                 if (tex->flags & RENDER_TEX_BLEND && renderFlags & RENDER_TEX_BLEND) {
                     temp_gdl = blendtex->gdl;
                     gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(temp_gdl));
-                    dl_set_env_color_no_sync(&dl, 
+                    dlSetEnvColorNoSync(&dl, 
                         (frameOptions & 0xFFFF) >> 8, (frameOptions & 0xFFFF) >> 8, (frameOptions & 0xFFFF) >> 8, 
                         0);
                 }
@@ -1341,13 +1341,13 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
             gSPGeometryMode(dl++, 0xFFFFFF, geomMode);
         } else {
             gSPGeometryMode(dl, 0xFFFFFF, geomMode);
-            dl_apply_geometry_mode(&dl);
+            dlApplyGeometryMode(&dl);
         }
         fogEnabled = (var_a2 >> 3);
         dl->words.w0 = (((Gfx*)var_a3_2[temp].prts[0])[fogEnabled]).words.w0;
         dl->words.w1 = (((Gfx*)var_a3_2[temp].prts[0])[fogEnabled]).words.w1;
         if (!(options & TEXOPT_SKIP_MODE_CACHE)) {
-            dl_apply_combine(&dl);
+            dlApplyCombine(&dl);
         } else {
             dl++;
         }
@@ -1357,7 +1357,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
             dl->words.w0 |= G_TT_RGBA16;
         }
         if (!(options & TEXOPT_SKIP_MODE_CACHE)) {
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         } else {
             dl++;
         }
@@ -1456,15 +1456,15 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
             temp_v0_2 = blendtex->gdl;
             if (tex1 != NULL) {
                 gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
-                dl_set_env_color(&sp4C, 0x7F, 0x7F, 0x7F, 0x7F);
+                dlSetEnvColor(&sp4C, 0x7F, 0x7F, 0x7F, 0x7F);
             } else {
                 if ((tex0->flags & RENDER_TEX_BLEND) && (renderFlags & RENDER_TEX_BLEND)) {
                     temp_v0_2 += basetex->gdl2Offset;
                     gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
                     frameOptions >>= 8;
-                    dl_set_env_color_no_sync(&sp4C, frameOptions, frameOptions, frameOptions, 0);
+                    dlSetEnvColorNoSync(&sp4C, frameOptions, frameOptions, frameOptions, 0);
                 } else if (renderFlags & RENDER_UNK2000) {
-                    dl_set_env_color(&sp4C, 0xA0, 0xA0, 0xA0, 0xA0);
+                    dlSetEnvColor(&sp4C, 0xA0, 0xA0, 0xA0, 0xA0);
                 }
             }
         }
@@ -1514,16 +1514,16 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
             var_v0 |= G_CULL_BACK;
         }
         gSPLoadGeometryMode(sp4C, var_v0);
-        dl_apply_geometry_mode(&sp4C);
+        dlApplyGeometryMode(&sp4C);
         sp4C->words.w0 = (((Gfx **)temp_v1->prts)[0][(temp_a2 >> 3)]).words.w0;
         sp4C->words.w1 = (((Gfx **)temp_v1->prts)[0][(temp_a2 >> 3)]).words.w1;
-        dl_apply_combine(&sp4C);
+        dlApplyCombine(&sp4C);
         sp4C->words.w0 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w0;
         sp4C->words.w1 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w1;
         if (hasPalette != 0) {
             sp4C->words.w0 |= G_TT_RGBA16;
         }
-        dl_apply_other_mode(&sp4C);
+        dlApplyOtherMode(&sp4C);
     }
     *gdl = sp4C;
 }

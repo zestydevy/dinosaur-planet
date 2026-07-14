@@ -68,7 +68,7 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
 
     // @bug: can't tell mapID correctly if local BLOCKS cell is unloaded upon
     // approaching SwapStone (happens if camera lags behind in SwapStone Circe)
-    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (mapWorldXZToMapID(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
         objdata->bitSwapStoneSpokenTo = BIT_883;
         objdata->bitIntroSeq = BIT_Play_Seq_0107_Rocky_Intro_Unused;
@@ -157,7 +157,7 @@ void SHswapstone_free(Object *self, s32 a1) { }
 u32 SHswapstone_get_model_flags(Object* self) {
     s32 modelno;
 
-    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (mapWorldXZToMapID(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
         modelno = 1;
     } else {
@@ -234,7 +234,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
                 gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 2);
                 mainSetBits(objdata->bitSwappedToSeq, 1);
             }
-            warpPlayer(sSwapStoneWarps[playerno], /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(sSwapStoneWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
         case 7:
             // Warp to Warlock Mountain
@@ -259,7 +259,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
                 gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 2);
                 break;
             }
-            warpPlayer(sWarlockMountainWarps[playerno], /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(sWarlockMountainWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
         case 10:
             objdata->bShowScreen ^= 1;
@@ -270,10 +270,10 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
             gDLL_29_Gplay->vtbl->set_act(MAP_ICE_MOUNTAIN_1, 1);
             gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 2);
             menuSet(MENU_GAMEPLAY);
-            warpPlayer(WARP_ICE_MOUNTAIN_CAMPSITE, /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(WARP_ICE_MOUNTAIN_CAMPSITE, /*fadeToBlack=*/FALSE);
             break;
         case 12:
-            warpPlayer(WARP_SWAPSTONE_SHOP_ENTRANCE, /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(WARP_SWAPSTONE_SHOP_ENTRANCE, /*fadeToBlack=*/FALSE);
             break;
         case (SELECT_SCREEN(SelectionMenu_STATE_0_Fade_Out)):
         case (SELECT_SCREEN(SelectionMenu_STATE_1_SwapStone_Choices)):

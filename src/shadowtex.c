@@ -217,7 +217,7 @@ void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
     gDPSetOtherMode(*gdl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     gSPClipRatio((*gdl)++, FRUSTRATIO_3);
     if (arg6 != 0) {
         if (gDLBuilder->needsPipeSync != 0) {
@@ -225,27 +225,27 @@ void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
             gDPPipeSync((*gdl)++);
         }
         gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gShadowTexWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
-        dl_set_fill_color(gdl, 0);
+        dlSetFillColor(gdl, 0);
     } else {
         if (gDLBuilder->needsPipeSync != 0) {
             gDLBuilder->needsPipeSync = 0;
             gDPPipeSync((*gdl)++);
         }
         gDPSetColorImage((*gdl)++, G_IM_FMT_I, G_IM_SIZ_8b, gShadowTexWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
-        dl_set_fill_color(gdl, -1);
+        dlSetFillColor(gdl, -1);
         gSPTexture((*gdl)++, 0, 0, 0, G_TX_RENDERTILE, G_OFF);
     }
     gDPFillRectangle((*gdl)++, 0, 0, gShadowTexWidth - 1, gShadowTexHeight - 1);
     gDLBuilder->needsPipeSync = 1;
     if (arg6 == 0) {
         gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl,
             G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-        dl_apply_other_mode(gdl);
-        dl_set_prim_color(gdl, 0, 0, 0xFF, 0x7D);
+        dlApplyOtherMode(gdl);
+        dlSetPrimColor(gdl, 0, 0, 0xFF, 0x7D);
     }
     objprintDrawShadowModel(obj, gdl, &sp84, vtxs, pols, arg6);
     gSPTexture((*gdl)++, -1, -1, 3, G_TX_RENDERTILE, G_ON);

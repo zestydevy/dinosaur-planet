@@ -205,7 +205,7 @@ void mainInit(void) {
     joyStartControllerThread(&osscheduler_);
     start_crash_thread(&osscheduler_);
     texInitTextures();
-    init_maps();
+    trackInit();
     func_8001CD00();
     modInit();
     dllInit();
@@ -217,7 +217,7 @@ void mainInit(void) {
     fontsInit();
     menuInit();
     amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
-    init_global_map();
+    mapInitGlobalMap();
     if (osMemSize != EXPANSION_RAM_SIZE) {
         gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoadDeferred(DLL_ID_AMSEQ, 36);
         gDLL_6_AMSFX = dllLoadDeferred(DLL_ID_AMSFX, 18);
@@ -278,8 +278,8 @@ void mainInit(void) {
     if (osMemSize == EXPANSION_RAM_SIZE) {
         mainHandleMapChange();
     }
-    track_set_z_buffer_on(FALSE);
-    track_set_sky_on(FALSE);
+    trackSetZBufferOn(FALSE);
+    trackSetSkyOn(FALSE);
 }
 
 void mainTick(void) {
@@ -306,7 +306,7 @@ void mainTick(void) {
     segSetBase(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     fbfxTick(&gCurGfx, gUpdateRate);
-    dl_set_all_dirty();
+    dlSetAllDirty();
     texRenderReset();
 
     if (gDLBuilder->needsPipeSync != 0) {
@@ -319,9 +319,9 @@ void mainTick(void) {
     rcpInitSp(&gCurGfx);
 
     clearFlags = CLEAR_ZBUFFER;
-    if (track_is_z_buffer_on() == FALSE) {
+    if (trackIsZBufferOn() == FALSE) {
         clearFlags = CLEAR_NONE;
-    } else if (track_is_sky_on() == FALSE) {
+    } else if (trackIsSkyOn() == FALSE) {
         clearFlags = CLEAR_COLOR | CLEAR_ZBUFFER;
     }
 
@@ -382,7 +382,7 @@ void mainTickNoExpansion(void) {
     segSetBase(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
     segSetBase(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
-    dl_set_all_dirty();
+    dlSetAllDirty();
     texRenderReset();
 
     if (gDLBuilder->needsPipeSync != 0) {
@@ -433,7 +433,7 @@ void main_func_80013D80(void) {
 
         if (gPauseState == 0) {
             objTick();
-            track_tick(0);
+            trackTick(0);
 
             if ((camIsAlternateActive() == 0) 
                     && (D_8008C94C == 0) 
@@ -456,14 +456,14 @@ void main_func_80013D80(void) {
 
         menuUpdate2();
         func_800591EC();
-        func_8004A67C();
-        map_update_streaming();
+        map_func_8004A67C();
+        mapUpdateStreaming();
         objHandleAnimseqActors();
 
         gDLL_4_Race->vtbl->func14();
 
         if (gPauseState == 0) {
-            track_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
+            trackDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
         gDLL_20_Screens->vtbl->draw(&gCurGfx);
@@ -479,8 +479,8 @@ void main_func_80013D80(void) {
 
 void main_func_80013FB4(void) {
     viInit(OS_VI_PAL_LPN1, NULL, FALSE);
-    track_set_z_buffer_on(FALSE);
-    track_set_sky_on(FALSE);
+    trackSetZBufferOn(FALSE);
+    trackSetSkyOn(FALSE);
     gDLL_5_AMSEQ->vtbl->stop(3);
     gDLL_5_AMSEQ->vtbl->stop(0);
     gDLL_5_AMSEQ->vtbl->stop(1);

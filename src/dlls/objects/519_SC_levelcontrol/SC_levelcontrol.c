@@ -126,7 +126,7 @@ void SC_levelcontrol_control(Object *self) {
     }
 
     if (objdata->mapID != MAP_SWAPSTONE_CIRCLE) {
-        if (map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+        if (mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
             SC_levelcontrol_func_8B4(self);
             sp2F = 0;
         } else {
@@ -134,7 +134,7 @@ void SC_levelcontrol_control(Object *self) {
         }
     }
 
-    objdata->mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
+    objdata->mapID = mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z);
 
     // trees must be hit in the correct order
     if (mainGetBits(BIT_SC_Hit_Village_Tree_One)) {
@@ -420,7 +420,7 @@ void SC_levelcontrol_handle_lightfoot_ambush(Object *self) {
         mainGetBits(BIT_SC_Encountered_Baby_Lightfoot)) {
         mainSetBits(BIT_SC_Ambushed, 1);
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 2, 1);
-        warpPlayer(WARP_SC_TOTEM_POLE, FALSE);
+        mapWarpPlayer(WARP_SC_TOTEM_POLE, FALSE);
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 1, 0);
     }
 }

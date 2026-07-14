@@ -47,12 +47,12 @@ void DFlevelcontrol_control(Object *self) {
     player = objGetPlayer();
     gDLL_6_AMSFX->vtbl->water_falls_control();
     if (objdata->mapID != MAP_DISCOVERY_FALLS) {
-        if (map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z) != MAP_DISCOVERY_FALLS) {
+        if (mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z) != MAP_DISCOVERY_FALLS) {
             return;
         }
         DFlevelcontrol_func_388(self);
     }
-    objdata->mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
+    objdata->mapID = mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z);
     if ((objdata->unk1 == 0) && (mainGetBits(BIT_342))) {
         mainSetBits(BIT_Kyte_Flight_Curve, 0x46);
         mainSetBits(BIT_8DE, 0);

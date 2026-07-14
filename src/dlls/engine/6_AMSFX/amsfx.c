@@ -652,7 +652,7 @@ void amsfx_water_falls_control(void) {
     Vec3f* camera;
 
     player = objGetPlayer();
-    mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
+    mapID = mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z);
     if ((mapID != sWaterfallsLastMap) || (sWaterfallFlags & AMSFX_WATERFALLS_REFRESH)) {
         amsfx_water_falls_find_sprays();
         sWaterfallsLastMap = mapID;
@@ -748,7 +748,7 @@ static s32 amsfx_water_falls_find_sprays(void) {
     if (player == NULL) {
         return TRUE;
     }
-    setup = map_world_xz_to_map_obj_setup_list(player->srt.transl.x, player->srt.transl.z, &setupListLength);
+    setup = mapWorldXZToMapObjSetupList(player->srt.transl.x, player->srt.transl.z, &setupListLength);
     if (setup == NULL) {
         return TRUE;
     }

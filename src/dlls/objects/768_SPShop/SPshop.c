@@ -152,9 +152,9 @@ void SPShop_control(Object* self) {
 
     if (mainGetBits(BIT_SP_Exiting_Shop)) {
         if (player->id == OBJ_Sabre) {
-            warpPlayer(WARP_SH_ROCKY_PODIUM, FALSE);
+            mapWarpPlayer(WARP_SH_ROCKY_PODIUM, FALSE);
         } else {
-            warpPlayer(WARP_SC_RUBBLE_PODIUM, FALSE);
+            mapWarpPlayer(WARP_SC_RUBBLE_PODIUM, FALSE);
         }
     }
 }

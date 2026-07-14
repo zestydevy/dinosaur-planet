@@ -204,7 +204,7 @@ int SCbeacon_handle_kyte_flame_seqs(Object* self, s32 finishLighting) {
             ) {
                 mainSetBits(BIT_SC_All_Beacons_Lit, 1);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup0_Main_SwapStone_Area, TRUE);
-                warpPlayer(WARP_SC_DISCOVERY_FALLS_ENTRANCE_POND, TRUE); //SC_warppoint auto-plays seq 0x77
+                mapWarpPlayer(WARP_SC_DISCOVERY_FALLS_ENTRANCE_POND, TRUE); //SC_warppoint auto-plays seq 0x77
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, SC_ObjGroup3_Golden_Plains_Approach, FALSE);
             }
         } else {

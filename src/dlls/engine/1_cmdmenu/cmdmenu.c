@@ -1472,14 +1472,14 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     dl = *gdl;
 
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     gDPSetOtherMode(dl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
-    dl_apply_other_mode(&dl);
+    dlApplyOtherMode(&dl);
     gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(&dl);
-    dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
+    dlApplyGeometryMode(&dl);
+    dlSetPrimColor(&dl, 255, 255, 255, dTutorialBoxOpacity);
 
     //Get dimensions (note: coords multiplied by 4 for gSPTextureRectangle)
     x = dTutorialBoxX;
@@ -1535,7 +1535,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     //Draw the top/bottom rolls' page shadows
     {
         cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
-        dl_set_prim_color(&dl, 255, 128, 128, 128);
+        dlSetPrimColor(&dl, 255, 128, 128, 128);
         
         //Top shadow
         tempY = y;
@@ -1564,7 +1564,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
         gDLBuilder->needsPipeSync = TRUE;
         
         //Restore prim colour
-        dl_set_prim_color(&dl, 255, 255, 255, dTutorialBoxOpacity);
+        dlSetPrimColor(&dl, 255, 255, 255, dTutorialBoxOpacity);
     }
 
     //Draw the top/bottom rolls
@@ -1670,7 +1670,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     }
     
     //Restore prim colour
-    dl_set_prim_color(&dl, 255, 255, 255, 255);
+    dlSetPrimColor(&dl, 255, 255, 255, 255);
 
     //Draw A button icon (animated) at bottom-centre of box
     rcpScreenFullWrite(
@@ -2862,7 +2862,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
         }
     }
 
-    dl_set_prim_color(&dl, 255, 255, 255, 255);
+    dlSetPrimColor(&dl, 255, 255, 255, 255);
 
     *gdl = dl;
 }
@@ -3031,14 +3031,14 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     dl = *gdl;
 
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     gDPSetOtherMode(dl,
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
-    dl_apply_other_mode(&dl);
+    dlApplyOtherMode(&dl);
     gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(&dl);
-    dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
+    dlApplyGeometryMode(&dl);
+    dlSetPrimColor(&dl, 255, 255, 255, dInfoScrollOpacity);
 
     //Get dimensions (note: coords multiplied by 4 for gSPTextureRectangle)
     x = dInfoScrollX << 2;
@@ -3093,7 +3093,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     //Draw the top/bottom rolls' page shadows
     if (sInfoScrollUnrollY > INFO_SCROLL_PAGE_SHADOW_HEIGHT) {
         cmdmenu_gfx_set_texture(&dl, sTextures[CMDMENU_TEX_07_InfoScroll_SelfShadow], 0);
-        dl_set_prim_color(&dl, 255, 128, 128, 128);
+        dlSetPrimColor(&dl, 255, 128, 128, 128);
         
         //Top shadow
         tempY = y;
@@ -3122,7 +3122,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         gDLBuilder->needsPipeSync = TRUE;
 
         //Restore prim colour
-        dl_set_prim_color(&dl, 255, 255, 255, dInfoScrollOpacity);
+        dlSetPrimColor(&dl, 255, 255, 255, dInfoScrollOpacity);
     }
 
     //Draw the top/bottom rolls
@@ -3224,7 +3224,7 @@ static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     }
 
     //Restore prim colour
-    dl_set_prim_color(&dl, 255, 255, 255, 255);
+    dlSetPrimColor(&dl, 255, 255, 255, 255);
 
     //Return early if there's no gametext
     if (dInfoScrollTextID <= NO_GAMETEXT) {

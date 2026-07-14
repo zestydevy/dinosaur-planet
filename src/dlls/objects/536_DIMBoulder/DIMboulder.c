@@ -191,7 +191,7 @@ void DIMBoulder_control(Object* self) {
         self->srt.scale = self->def->scale * objData->scale;
         
         //Save position
-        map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+        mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
 }
 

@@ -101,7 +101,7 @@ void task_mark_task_completed(u8 task) {
 
     // hmm
     if (!task) {
-        gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, map_get_layer());
+        gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, mapGetLayer());
     }
 }
 

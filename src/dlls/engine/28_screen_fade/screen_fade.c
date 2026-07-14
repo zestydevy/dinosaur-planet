@@ -135,15 +135,15 @@ static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) 
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
 
     gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     gDPSetOtherMode(*gdl,
                     G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP |
                         G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 
-    dl_set_prim_color(gdl, 0, 0, 0, (u8)sFadeAlpha);
+    dlSetPrimColor(gdl, 0, 0, 0, (u8)sFadeAlpha);
 
     gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
 
@@ -163,15 +163,15 @@ static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 re
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
 
     gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     gDPSetOtherMode(*gdl,
                     G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP |
                         G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 
-    dl_set_prim_color(gdl, red, green, blue, (u8)sFadeAlpha);
+    dlSetPrimColor(gdl, red, green, blue, (u8)sFadeAlpha);
     gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
 
     gDLBuilder->needsPipeSync = TRUE;
@@ -220,14 +220,14 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
     temp_s4 = temp_s5 - temp_t7 - 1;
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
     gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
     gDPSetOtherMode(*gdl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | 
             G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF,  spA4);
+    dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF,  spA4);
     // fill centered rect expanding out horz
     gDPFillRectangle((*gdl)++, temp_s4 + ulx + 1, uly, spAE + ulx, lry);
     gDLBuilder->needsPipeSync = 1;
@@ -237,7 +237,7 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
         var_a1 = 1;
     }
     for (spB0 = 0; spB0 < (spA8 - var_a1); spB0 += var_a1, spAE += var_a1, temp_s4 -= var_a1) {
-        dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+        dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
 
         gDPFillRectangle((*gdl)++, spAE + ulx, uly, spAE + ulx + var_a1, lry);
         gDLBuilder->needsPipeSync = 1;
@@ -245,7 +245,7 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
         gDPFillRectangle((*gdl)++, ((temp_s4 + ulx) - var_a1) + 1, uly, temp_s4 + ulx + 1, lry);
         gDLBuilder->needsPipeSync = 1;
     }
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+    dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
 
     gDPFillRectangle((*gdl)++, spAE + ulx, uly, lrx, lry);
     gDLBuilder->needsPipeSync = 1;
@@ -259,7 +259,7 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
     spAE = temp_s5 + temp_t7; // going up from center
     temp_s4 = temp_s5 - temp_t7 - 1;
 
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, spA4);
+    dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, spA4);
 
     gDPFillRectangle((*gdl)++, ulx, uly + temp_s4 + 1, lrx, uly + spAE);
     gDLBuilder->needsPipeSync = 1;
@@ -269,7 +269,7 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
         var_a1 = 1;
     }
     for (spB0 = 0; spB0 < (spA8 - var_a1); spB0 += var_a1, spAE += var_a1, temp_s4 -= var_a1) {
-        dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+        dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
 
         gDPFillRectangle((*gdl)++, ulx, uly + spAE, lrx, uly + spAE + var_a1);
         gDLBuilder->needsPipeSync = 1;
@@ -278,7 +278,7 @@ static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red
         gDLBuilder->needsPipeSync = 1;
     }
 
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+    dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
 
     gDPFillRectangle((*gdl)++, ulx, uly + spAE, lrx, lry);
     gDLBuilder->needsPipeSync = 1;

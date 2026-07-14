@@ -62,7 +62,7 @@ u16 objGetAreaValueAtPoint(f32 x, f32 y, f32 z) {
     MapHeader *current;
 
     out = -1U;
-    maps = map_get_loaded_maps_table();
+    maps = mapGetLoadedMapsTable();
     for (i = 0; i < MAP_ID_MAX; i++) {
         if (maps[i] == NULL) {
             continue;

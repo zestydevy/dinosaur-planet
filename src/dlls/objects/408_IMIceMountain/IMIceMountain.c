@@ -212,7 +212,7 @@ void IMIceMountain_do_act1(Object *self) {
             objdata->warpCounter--;
             if (objdata->warpCounter == 0) {
                 // race will restart after warp
-                warpPlayer(WARP_IM_RACE_START, FALSE);
+                mapWarpPlayer(WARP_IM_RACE_START, FALSE);
             }
         }
         break;

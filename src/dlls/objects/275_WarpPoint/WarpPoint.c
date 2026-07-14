@@ -93,7 +93,7 @@ void WarpPoint_control(Object *self) {
             }
         }
         if ((setup->warpID >= 0) && (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->dist)) {
-            warpPlayer(setup->warpID, TRUE);
+            mapWarpPlayer(setup->warpID, TRUE);
         }
         break;
     case UNK1D_1:
@@ -126,7 +126,7 @@ void WarpPoint_control(Object *self) {
         } else if (objdata->unkC == 1) {
             if ((mainGetBits(objdata->gamebit)) && (objdata->counter == 0) && (dist <= objdata->dist) && (setup->warpID >= 0)) {
                 mainSetBits(objdata->gamebit, 0);
-                warpPlayer(setup->warpID, FALSE);
+                mapWarpPlayer(setup->warpID, FALSE);
             }
         }
         break;
@@ -157,7 +157,7 @@ void WarpPoint_control(Object *self) {
         }
         if ((mainGetBits(objdata->gamebit)) && (objdata->counter == 0) && (dist <= objdata->dist) && (setup->warpID >= 0)) {
             mainSetBits(objdata->gamebit, 0);
-            warpPlayer(setup->warpID, TRUE);
+            mapWarpPlayer(setup->warpID, TRUE);
         }
         break;
     }
@@ -193,7 +193,7 @@ int WarpPoint_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObj
     setup = (WarpPoint_Setup*)self->setup;
     if ((setup->unk1D != UNK1D_2) && (animObjData->lastMessage == 1)) {
         if (setup->warpID >= 0) {
-            warpPlayer(setup->warpID, 1);
+            mapWarpPlayer(setup->warpID, 1);
             animObjData->lastMessage = 0;
         }
     }

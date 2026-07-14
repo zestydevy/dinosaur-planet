@@ -21,7 +21,7 @@ void SHswaplift_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SHswaplift_setup(Object *self, SHswaplift_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
-    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (mapWorldXZToMapID(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         self->unkDC = MAP_SWAPSTONE_CIRCLE;
     }
 }

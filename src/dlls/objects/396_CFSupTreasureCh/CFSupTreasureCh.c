@@ -110,7 +110,7 @@ void CFSupTreasureCh_control(Object *self) {
             objdata->flags &= ~CFSUPTREASURECH_16;
         }
         if (mainGetBits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left)) {
-            map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+            mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
         }
     }
 }
@@ -214,7 +214,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
     // @fake
     if (objdata) {}
     if (objdata->flags & (CFSUPTREASURECH_16 | CFSUPTREASURECH_8)) {
-        map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+        mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
     return 0;
 }

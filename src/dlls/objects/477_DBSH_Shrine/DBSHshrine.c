@@ -364,7 +364,7 @@ int DBSHshrine_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
             case 10:
                 mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (data_0 == NULL) {
-                    data_0 = block_texanim_get_tex(1);
+                    data_0 = blockTexanimGetTex(1);
                 }
                 break;
             case 9:

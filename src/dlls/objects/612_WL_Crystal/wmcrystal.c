@@ -462,9 +462,9 @@ void WL_Crystal_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
     WL_Crystal_Data* objData = self->data;
     
     if (visibility && objData->showCrystal) {
-        dl_clear_geometry_mode(gdl, G_FOG);
+        dlClearGeometryMode(gdl, G_FOG);
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
-        dl_set_geometry_mode(gdl, G_FOG);
+        dlSetGeometryMode(gdl, G_FOG);
     }
 }
 

@@ -791,5 +791,5 @@ void func_8001F81C(u8 *arg0, u8 *arg1, u8 *arg2) {
 }
 
 void func_8001F848(Gfx **gdl) {
-    dl_set_prim_color(gdl, D_800B1830, D_800B1831, D_800B1832, 0xFF);
+    dlSetPrimColor(gdl, D_800B1830, D_800B1831, D_800B1832, 0xFF);
 }

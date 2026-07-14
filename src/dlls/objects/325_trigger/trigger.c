@@ -549,7 +549,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if (cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                track_set_sky_on(cmd->param2);
+                trackSetSkyOn(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track Sky On"
                 } else {
@@ -560,7 +560,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if (cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                track_set_anti_alias_on(cmd->param2);
+                trackSetAntiAliasOn(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track AntiAlias On"
                 } else {
@@ -571,7 +571,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if (cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                track_set_sky_objects_on(cmd->param2);
+                trackSetSkyObjectsOn(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track SkyObjects On"
                 } else {
@@ -612,10 +612,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 7:
                 if (cmd->param2 > 0) {
-                    track_set_sun_glare_on(1);
+                    trackSetSunGlareOn(1);
                     // "Trigger [%d], trackSetSunGlareOn(1)" (default.dol)
                 } else {
-                    track_set_sun_glare_on(0);
+                    trackSetSunGlareOn(0);
                     // "Trigger [%d], trackSetSunGlareOn(0)" (default.dol)
                 }
                 break;
@@ -734,22 +734,22 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_SAVE_POINT:
             // "Trigger [%d], Save Point\n" (default.dol)
-            gDLL_29_Gplay->vtbl->savepoint(&self->srt.transl, (self->srt.yaw >> 8), cmd->param2, map_get_layer());
+            gDLL_29_Gplay->vtbl->savepoint(&self->srt.transl, (self->srt.yaw >> 8), cmd->param2, mapGetLayer());
             break;
         case TRG_CMD_MAP_LAYER:
             if (cmd->param1 == 0) {
                 // "Trigger [%d],trackIncMapLayer\n" (default.dol)
-                map_increment_layer();
+                mapIncrementLayer();
             } else {
                 // "Trigger [%d],trackIncMapLayer\n" (default.dol)
-                map_decrement_layer();
+                mapDecrementLayer();
             }
             break;
         case TRG_CMD_RESTART:
             switch (cmd->param1) {
             case 0:
                 // "Restart Set [%d]\n"
-                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, map_get_layer());
+                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, mapGetLayer());
                 break;
             case 1:
                 // "Restart Clear [%d]\n"
@@ -763,7 +763,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             // default.dol
             case 3:
                 // "Trigger [%d],Restart Set Dazed [%d]\n"
-                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, map_get_layer(), 1);
+                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, mapGetLayer(), 1);
                 break;
             */
             }

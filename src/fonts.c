@@ -250,12 +250,12 @@ void fontRenderText(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags al
     fontData = &gFile_FONTS_BIN[window->font];
    
     gSPLoadGeometryMode(*gdl, G_SHADE | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     
     gDPSetOtherMode(*gdl,
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     
     if (window != &gFontWindows[0]) {
         scisOffset = ((f32)((window->y2 - window->y1) + 1) / 2) * scisScale;
@@ -274,7 +274,7 @@ void fontRenderText(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags al
     }
 
     if (window->textBGColourA != 0) {
-        dl_set_env_color(gdl, window->textBGColourR, window->textBGColourG, window->textBGColourB, window->textBGColourA);
+        dlSetEnvColor(gdl, window->textBGColourR, window->textBGColourG, window->textBGColourB, window->textBGColourA);
         
         if (xAlignmentDiff == -1) {
             xAlignmentDiff = fontGetTextWidthInternal(window, text, xpos, window->font);
@@ -284,28 +284,28 @@ void fontRenderText(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags al
         textureLry = (ypos + fontData->y) - 1;
         
         gDPSetCombineLERP((*gdl), 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
 
         gDPSetOtherMode((*gdl),
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
 
         gDPFillRectangle((*gdl)++, xpos + window->x1, ypos + window->y1, textureLrx + window->x1, textureLry + window->y1);
         
         gDLBuilder->needsPipeSync = 1;
     }
     
-    dl_set_prim_color(gdl, 255, 255, 255, window->opacity);
-    dl_set_env_color(gdl, window->textColourR, window->textColourG, window->textColourB, window->textColourA);
+    dlSetPrimColor(gdl, 255, 255, 255, window->opacity);
+    dlSetEnvColor(gdl, window->textColourR, window->textColourG, window->textColourB, window->textColourA);
     
     gDPSetCombineLERP(*gdl, ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     gDPSetOtherMode(*gdl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     
     charIndex = 0;
     xpos += window->textOffsetX;
@@ -688,7 +688,7 @@ void fontRenderTextWordwrap(Gfx** gdl, FontWindow* window, char* text, f32 scisS
     fontData = &gFile_FONTS_BIN[window->font];
     
     gSPLoadGeometryMode(*gdl, G_SHADE | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     
     // @fake
     if (window) {}
@@ -698,20 +698,20 @@ void fontRenderTextWordwrap(Gfx** gdl, FontWindow* window, char* text, f32 scisS
         gDPSetScissor((*gdl)++, 0, window->x1,  scisPos - scisOffset, window->x2,  scisPos + scisOffset);
     }
     
-    dl_set_prim_color(gdl, 255, 255, 255, window->opacity);
-    dl_set_env_color(gdl, window->textColourR, window->textColourG, window->textColourB, window->textColourA);
+    dlSetPrimColor(gdl, 255, 255, 255, window->opacity);
+    dlSetEnvColor(gdl, window->textColourR, window->textColourG, window->textColourB, window->textColourA);
     
     gDPSetCombineLERP(*gdl, 
         ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, 
         TEXEL0, 0, PRIMITIVE, 0, 
         ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, 
         TEXEL0, 0, PRIMITIVE, 0);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
     
     gDPSetOtherMode(*gdl,
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     
     loopCond = 0;
     
@@ -1179,21 +1179,21 @@ void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
     window = &gFontWindows[windowID];
     if (window->backgroundColourA != 0) {
         gSPLoadGeometryMode(*gdl, G_SHADE | G_SHADING_SMOOTH);
-        dl_apply_geometry_mode(gdl);
+        dlApplyGeometryMode(gdl);
 
         gDPSetCombineLERP(*gdl, 
             0, 0, 0, ENVIRONMENT, 
             0, 0, 0, ENVIRONMENT, 
             0, 0, 0, ENVIRONMENT, 
             0, 0, 0, ENVIRONMENT);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
 
         gDPSetOtherMode(*gdl,
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
 
-        dl_set_env_color(gdl, 0, 0, 0, 0);
+        dlSetEnvColor(gdl, 0, 0, 0, 0);
 
         if (window->x2 - window->x1 < 10 || window->y2 - window->y1 < 10) {
             fontRenderFillRect(gdl, window->x1 - 2, window->y1 - 2, window->x2 + 2, window->y2 + 2);
@@ -1204,7 +1204,7 @@ void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
             fontRenderFillRect(gdl, window->x1 - 2, window->y2 - 2, window->x2 + 2, window->y2 + 2);
         }
 
-        dl_set_env_color(gdl, window->backgroundColourR, window->backgroundColourG, window->backgroundColourB, window->backgroundColourA);
+        dlSetEnvColor(gdl, window->backgroundColourR, window->backgroundColourG, window->backgroundColourB, window->backgroundColourA);
 
         i = 0;
         height = window->y2 - window->y1;

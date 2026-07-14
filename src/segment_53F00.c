@@ -52,7 +52,7 @@ s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5);
 Object **func_80025DD4(s32 *arg0);
 
 // Move to map.h
-s8* map_get_block_grid_layer(s32 arg0);
+s8* mapGetBlockGridLayer(s32 arg0);
 
 // .bss 800bb200-800bb540
 Vec3s32 D_800BB200[8];
@@ -345,14 +345,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     temp_s3 = floor_f(arg6 / BLOCKS_GRID_UNIT_F);
     sp108 = 0;
     for (sp118 = 0; sp118 < 5; sp118++) {
-        if ((temp_v0 = map_get_block_from_grid(temp_s4, temp_s7, sp118)) != NULL) {
+        if ((temp_v0 = mapGetBlockFromGrid(temp_s4, temp_s7, sp118)) != NULL) {
             sp138[sp108] = temp_v0;
             D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
             D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
             sp108++;
         }
         if (temp_s5 != temp_s4) {
-            if ((temp_v0 = map_get_block_from_grid(temp_s5, temp_s7, sp118)) != NULL) {
+            if ((temp_v0 = mapGetBlockFromGrid(temp_s5, temp_s7, sp118)) != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
                 D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
@@ -360,14 +360,14 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
             }
         }
         if (temp_s3 != temp_s7) {
-            if ((temp_v0 = map_get_block_from_grid(temp_s4, temp_s3, sp118)) != NULL) {
+            if ((temp_v0 = mapGetBlockFromGrid(temp_s4, temp_s3, sp118)) != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
                 D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
                 sp108++;
             }
             if (temp_s5 != temp_s4) {
-                if ((temp_v0 = map_get_block_from_grid(temp_s5, temp_s3, sp118)) != NULL) {
+                if ((temp_v0 = mapGetBlockFromGrid(temp_s5, temp_s3, sp118)) != NULL) {
                     sp138[sp108] = temp_v0;
                     D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
                     D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
@@ -1855,12 +1855,12 @@ void func_800591EC(void) {
     D_800BB4D6 = 0;
     D_800BB4D8 = 0;
     for (sp6F8 = 0; sp6F8 < 5; sp6F8++) {
-        sp6D0 = map_get_block_grid_layer(sp6F8);
+        sp6D0 = mapGetBlockGridLayer(sp6F8);
         for (sp6FC = 0; sp6FC < BLOCKS_GRID_SPAN; sp6FC++) {
             for (sp700 = 0; sp700 < BLOCKS_GRID_SPAN; sp700++) {
                 gridIndex = (sp6FC << 4)  + sp700; // can't use the GRID_INDEX macro here, bitshift required
                 if (sp6D0[gridIndex] >= 0) {
-                    temp_v0_2 = (Block *)map_get_block_by_index(sp6D0[gridIndex]);
+                    temp_v0_2 = (Block *)mapGetBlockByIndex(sp6D0[gridIndex]);
                     for (var_s6 = 0; var_s6 < temp_v0_2->hits_line_count; var_s6++) {
                         var_s0 = &temp_v0_2->ptr_hits_lines[var_s6];
                         var_s2 = &D_80092E74[D_800BB4D6];

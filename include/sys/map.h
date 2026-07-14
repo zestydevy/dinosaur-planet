@@ -216,7 +216,7 @@ typedef struct Unk80092BC0 {
 // MARK: Map
 
 enum TrackFlags {
-      // Set during track_draw when the map is not a mobile map or type 3
+      // Set during trackDraw when the map is not a mobile map or type 3
 /*0*/ TRACKFLAG_UNK1 = 0x1,
       // Determines whether streaming is enabled.
       // Automatically unset on the next streaming update.
@@ -493,85 +493,85 @@ extern s32 D_80092A84[2];
 
 // DL Builder
 
-void dl_set_all_dirty(void);
-void dl_use_alt_builder(void);
-void dl_use_main_builder(void);
-void dl_apply_combine(Gfx **gdl);
-void dl_apply_other_mode(Gfx **gdl);
-void dl_apply_geometry_mode(Gfx **gdl);
-void dl_set_geometry_mode(Gfx **gdl, u32 mode);
-void dl_clear_geometry_mode(Gfx **gdl, u32 mode);
-void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_fill_color(Gfx **gdl, u32 color);
-void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+void dlSetAllDirty(void);
+void dlUseAltBuilder(void);
+void dlUseMainBuilder(void);
+void dlApplyCombine(Gfx **gdl);
+void dlApplyOtherMode(Gfx **gdl);
+void dlApplyGeometryMode(Gfx **gdl);
+void dlSetGeometryMode(Gfx **gdl, u32 mode);
+void dlClearGeometryMode(Gfx **gdl, u32 mode);
+void dlSetPrimColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dlSetPrimColorNoSync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dlSetEnvColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dlSetEnvColorNoSync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dlSetBlendColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dlSetFillColor(Gfx **gdl, u32 color);
+void dlSetFogColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dlTriangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
 // Render Settings
 
 void track_func_80041C30(s32 on);
-void track_set_sky_on(s32 on);
-void track_set_anti_alias_on(s32 on);
-void track_set_sky_objects_on(s32 on);
-void track_set_z_buffer_on(s32 on);
-s32 track_is_z_buffer_on(void);
-u32 track_is_sky_on(void);
+void trackSetSkyOn(s32 on);
+void trackSetAntiAliasOn(s32 on);
+void trackSetSkyObjectsOn(s32 on);
+void trackSetZBufferOn(s32 on);
+s32 trackIsZBufferOn(void);
+u32 trackIsSkyOn(void);
 u32 track_func_80041D8C(void);
-u32 track_get_shadows_on(void);
+u32 trackGetShadowsOn(void);
 s32 track_func_80041DBC(void);
 s32 track_func_80041DD4(void);
 void track_func_80041DEC(void);
 s32 track_func_80041E08(void);
-void track_set_sun_glare_on(s32 on);
-s32 track_get_sun_glare_on(void);
+void trackSetSunGlareOn(s32 on);
+s32 trackGetSunGlareOn(void);
 
 // Map/Track
 
-void init_maps(void);
-void track_tick(s32);
-void track_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
-ObjSetup* map_find_obj_setup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap);
-s32 map_world_coords_to_block_index(f32 x, f32 y, f32 z);
+void trackInit(void);
+void trackTick(s32);
+void trackDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
+ObjSetup* mapFindObjSetup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap);
+s32 mapWorldCoordsToBlockIndex(f32 x, f32 y, f32 z);
 /** Floor world coords to interval of block world coords. */
-void map_world_to_block_world_coords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldX, f32* blockWorldZ);
-s16 map_world_xz_to_map_id(f32 worldX, f32 worldZ);
-MapHeader** map_get_loaded_maps_table(void);
-ObjSetup *map_world_xz_to_map_obj_setup_list(f32 worldX, f32 worldZ, s32* objectsFileLength);
+void mapWorldToBlockWorldCoords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldX, f32* blockWorldZ);
+s16 mapWorldXZToMapID(f32 worldX, f32 worldZ);
+MapHeader** mapGetLoadedMapsTable(void);
+ObjSetup *mapWorldXZToMapObjSetupList(f32 worldX, f32 worldZ, s32* objectsFileLength);
 
 // Blocks (map)
 
-Block* map_get_block_from_grid(s32 visGridX, s32 visGridZ, s32 mapLayer);
-s8* map_get_block_grid_layer(s32 layer);
-Block* map_get_block_by_index(s32 blockIndex);
+Block* mapGetBlockFromGrid(s32 visGridX, s32 visGridZ, s32 mapLayer);
+s8* mapGetBlockGridLayer(s32 layer);
+Block* mapGetBlockByIndex(s32 blockIndex);
 
 // Map/Track (again)
 
-u8 track_obj_vis_check(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
-u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
+u8 trackObjVisCheck(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
+u8 trackIsSphereInFrustum(Vec3f *v, f32 radius);
 
 // streaming stuff starts here
 
-s32 func_80045D58(void);
-void map_free(s32);
-void map_load_mobile_map(s32 id, Object *obj);
-GlobalMapCell* func_80046698(s32 gridX, s32 gridZ);
+s32 map_func_80045D58(void);
+void mapFree(s32);
+void mapLoadMobileMap(s32 id, Object *obj);
+GlobalMapCell* map_func_80046698(s32 gridX, s32 gridZ);
 
 // Global Map
 
-void init_global_map(void);
+void mapInitGlobalMap(void);
 void map_func_80046B58(f32 x, f32 y, f32 z);
-void map_update_streaming(void);
-void map_increment_layer(void);
-void map_decrement_layer(void);
+void mapUpdateStreaming(void);
+void mapIncrementLayer(void);
+void mapDecrementLayer(void);
 void map_func_8004773C(void);
-s32 map_get_type(void);
+s32 mapGetType(void);
 void map_func_80048034(void);
 void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
 void map_func_800483BC(f32, f32, f32);
-s32 map_get_layer(void);
+s32 mapGetLayer(void);
 
 // something else
 
@@ -579,24 +579,24 @@ void map_func_800484A8(void);
 
 // Blocks (again)
 
-void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 fromAssetThread);
-void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
-s32 block_texscroll_add(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-void block_texscroll_set(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
-Texture* block_texanim_get_tex(s32 animatorID);
-BlockTextureAnimInstance *block_texanim_get_instance(Block *block, s32 animatorID);
-BlockTextureAnim *block_texanim_get(s32 idx);
-s32 block_get_animator_vertex_count(Object* obj, u8 animatorID);
-s32 block_get_animator_shape_count(Object* obj, u8 animatorID);
+void blockLoad(s32 id, s32 param_2, s32 globalMapIdx, u8 fromAssetThread);
+void blockEmplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
+s32 blockTexscrollAdd(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+void blockTexscrollSet(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB);
+Texture* blockTexanimGetTex(s32 animatorID);
+BlockTextureAnimInstance *blockTexanimGetInstance(Block *block, s32 animatorID);
+BlockTextureAnim *blockTexanimGet(s32 idx);
+s32 blockGetAnimatorVertexCount(Object* obj, u8 animatorID);
+s32 blockGetAnimatorShapeCount(Object* obj, u8 animatorID);
 
 // something else
 
-void func_8004A67C(void);
+void map_func_8004A67C(void);
 void track_func_8004B948(s32 arg0);
-void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
+void mapSaveObject(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
 
 // Warp
 
-void warpPlayer(s32 warpID, s8 fadeToBlack);
+void mapWarpPlayer(s32 warpID, s8 fadeToBlack);
 
 #endif

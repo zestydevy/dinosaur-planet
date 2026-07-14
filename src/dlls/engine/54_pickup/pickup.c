@@ -113,7 +113,7 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
             pickup->state = PICKUP_NotHeld;
             pickup->unk6 = 0;
             if (!(pickup->flags & PICKUPFLAG_DontSave)) {
-                map_save_object(obj->setup, obj->mapID, obj->srt.transl.x, obj->srt.transl.y + 10.0f, obj->srt.transl.z);
+                mapSaveObject(obj->setup, obj->mapID, obj->srt.transl.x, obj->srt.transl.y + 10.0f, obj->srt.transl.z);
             }
         }
         if (pickup->unk6 != 0) {

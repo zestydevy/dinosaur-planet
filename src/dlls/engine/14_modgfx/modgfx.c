@@ -344,13 +344,13 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
             texFormat = TEX_FORMAT(bss_0[idx]->unk98->format);
         }
         gSPLoadGeometryMode(*gdl, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH);
-        dl_apply_geometry_mode(gdl);
+        dlApplyGeometryMode(gdl);
         if (bss_0[idx]->unkA4 & 0x10000000) {
-            dl_set_prim_color(gdl, sp233, sp232, sp231, 0xFF);
+            dlSetPrimColor(gdl, sp233, sp232, sp231, 0xFF);
         } else if ((bss_0[idx]->unk4 != NULL) && (bss_0[idx]->unkA4 & 0x4000)) {
-            dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, bss_0[idx]->unk4->opacityWithFade);
+            dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, bss_0[idx]->unk4->opacityWithFade);
         } else {
-            dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0xFF);
+            dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, 0xFF);
         }
         if (bss_0[idx]->unk98 != NULL) {
             tmem = bss_0[idx]->unk98->sizeBytes >> 3;
@@ -408,11 +408,11 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
             for (frameIdx = 0; frameIdx < mixFrameNo; frameIdx++) {
                 mixTex = mixTex->next;
             }
-            dl_set_env_color(gdl, 0xFF, 0xFF, 0xFF, 0xFF - (bss_0[idx]->unk133 * bss_0[idx]->unk134));
+            dlSetEnvColor(gdl, 0xFF, 0xFF, 0xFF, 0xFF - (bss_0[idx]->unk133 * bss_0[idx]->unk134));
             gDPSetCombineLERP(*gdl,
                 TEXEL1, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, 
                 COMBINED, 0, SHADE, 0, COMBINED, 0, SHADE, 0);
-            dl_apply_combine(gdl);
+            dlApplyCombine(gdl);
             switch (texFormat) {
             case TEX_FORMAT_RGBA32:
                 gDPLoadMultiBlockS((*gdl)++,
@@ -543,10 +543,10 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
             }
         } else if (bss_0[idx]->unkA4 & 0x02000000) {
             gDPSetCombineLERP(*gdl, 1, 0, SHADE, 0, 1, 0, SHADE, 0, COMBINED, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0);
-            dl_apply_combine(gdl);
+            dlApplyCombine(gdl);
         } else if (bss_0[idx]->unkA4 & 0x04000000) {
             gDPSetCombineMode(*gdl, G_CC_MODULATEIA, G_CC_MODULATEIA_PRIM2);
-            dl_apply_combine(gdl);
+            dlApplyCombine(gdl);
         }
         var_s3 = 0;
         if ((bss_0[idx]->unkA4 & 0x05000000) && ((bss_0[idx]->unk13E != 0) || (bss_0[idx]->unkA4 & 0x400))) {
@@ -680,44 +680,44 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
                     G_AD_PATTERN | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_AA_ZB_XLU_INTER2
                 );
-                dl_apply_other_mode(gdl);
+                dlApplyOtherMode(gdl);
             } else if ((bss_0[idx]->unkA4 & 0x10) && (bss_0[idx]->unkA4 & 0x80)) {
                 gDPSetOtherMode(
                     *gdl,
                     G_AD_PATTERN | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_AA_XLU_SURF2
                 );
-                dl_apply_other_mode(gdl);
+                dlApplyOtherMode(gdl);
             } else if (bss_0[idx]->unkA4 & 0x80) {
                 gDPSetOtherMode(
                     *gdl,
                     G_AD_PATTERN | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_AA_ZB_XLU_SURF2
                 );
-                dl_apply_other_mode(gdl);
+                dlApplyOtherMode(gdl);
             } else if (bss_0[idx]->unkA4 & 0x10) {
                 gDPSetOtherMode(
                     *gdl,
                     G_AD_PATTERN | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_CLD_SURF2
                 );
-                dl_apply_other_mode(gdl);
+                dlApplyOtherMode(gdl);
             } else {
                 gDPSetOtherMode(
                     *gdl,
                     G_AD_PATTERN | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_ZB_CLD_SURF2
                 );
-                dl_apply_other_mode(gdl);
+                dlApplyOtherMode(gdl);
             }
         }
         if ((bss_0[idx]->unk13E != 0) || (bss_0[idx]->unkA4 & 0x400)) {
             for (var_s0 = 0; var_s0 < bss_0[idx]->unk136; var_s0++) {
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(var_s7), bss_0[idx]->unk138, 0);
                 if (bss_0[idx]->unkA4 & 0x08000000) {
-                    dl_triangles(gdl, var_s6, bss_0[idx]->unkEC / bss_0[idx]->unk136);
+                    dlTriangles(gdl, var_s6, bss_0[idx]->unkEC / bss_0[idx]->unk136);
                 } else {
-                    dl_triangles(gdl, var_s6, bss_0[idx]->unkEC);
+                    dlTriangles(gdl, var_s6, bss_0[idx]->unkEC);
                 }
                 var_s7 += bss_0[idx]->unk137;
                 if (bss_0[idx]->unkA4 & 0x08000000) {

@@ -336,7 +336,7 @@ s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
 
     // @fake
     if (1) {}
-    if (track_get_shadows_on() == 0) {
+    if (trackGetShadowsOn() == 0) {
         obj->shadow->gdl = NULL;
         return 0;
     }
@@ -574,7 +574,7 @@ void shadowsUpdateObjBox(Object* arg0) {
     AABBs32 sp70;
     f32 sp50[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // D_80092C74
 
-    if (track_get_shadows_on() == 0) {
+    if (trackGetShadowsOn() == 0) {
         arg0->shadow->gdl = NULL;
         return;
     }
@@ -692,22 +692,22 @@ s32 shadowsDraw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4
 
     sp1C0 = dl;
     gSPLoadGeometryMode(dl, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     gDPSetCombineLERP(dl, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL1, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0);
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
         gDPSetOtherMode(dl, 
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2);
-        dl_apply_other_mode(&dl);
+        dlApplyOtherMode(&dl);
     } else {
         gDPSetOtherMode(dl,
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2);
-        dl_apply_other_mode(&dl);
+        dlApplyOtherMode(&dl);
     }
     shadow->gdl2 = dl;
-    dl_set_prim_color_no_sync(&dl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
+    dlSetPrimColorNoSync(&dl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
     shadowtexGetTextures(shadow->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     var_s5 = 0;
     var_s6 = 0;
@@ -787,7 +787,7 @@ s32 shadowsDraw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4
                     var_a0++;
                 }
                 
-                dl_triangles(&dl, spA8, (D_800B98B8[var_s1] - 2));
+                dlTriangles(&dl, spA8, (D_800B98B8[var_s1] - 2));
                 var_s5 += D_800B98B8[var_s1];
             }
             var_s2 += D_800B98B8[var_s1];
@@ -859,48 +859,48 @@ s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4
     }
     var_s2 = 0;
     sp1E4 = 0;
-    dl_use_alt_builder();
+    dlUseAltBuilder();
     texRenderSaveState();
     // @fake
     if ((s32)&dl) {}
     gSPGeometryMode(dl, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     if (sp1D4 != 0) {
         gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
-        dl_apply_combine(&dl);
+        dlApplyCombine(&dl);
         if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2
             )
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         } else {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2
             );
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         }
         texDPTextures(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
     } else {
         gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
-        dl_apply_combine(&dl);
+        dlApplyCombine(&dl);
         if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2
             )
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         } else {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2
             )
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         }
         gDPLoadTextureBlock_4b(dl++, OS_PHYSICAL_TO_K0(spB4), G_IM_FMT_I, 64, 64, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
         gDPLoadMultiBlock_4bS(dl++, OS_PHYSICAL_TO_K0(D_800BB190 + 1), 0x100, 1, G_IM_FMT_I, 64, 64, 0x100, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
@@ -910,9 +910,9 @@ s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4
     if (shadow2) {}
     shadow2->gdl2 = dl;
     if (shadow2->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
-        dl_set_prim_color_no_sync(&dl, shadow2->r, shadow2->g, shadow2->b, (s16)(sp1C0 * 255.0f));
+        dlSetPrimColorNoSync(&dl, shadow2->r, shadow2->g, shadow2->b, (s16)(sp1C0 * 255.0f));
     } else {
-        dl_set_prim_color_no_sync(&dl, 0, 0, 0, sp1D0);
+        dlSetPrimColorNoSync(&dl, 0, 0, 0, sp1D0);
     }
     for (; sp1E4 < arg4; sp1E4++) {
         gSPVertex(dl++, OS_PHYSICAL_TO_K0(arg0), D_800B98B8[sp1E4], 0);
@@ -924,14 +924,14 @@ s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4
             var_v1++;
             var_a0++;
         }
-        dl_triangles(&dl, spB8, D_800B98B8[sp1E4] - 2);
+        dlTriangles(&dl, spB8, D_800B98B8[sp1E4] - 2);
 
         arg0 += D_800B98B8[sp1E4];
         var_s4 += D_800B98B8[sp1E4];
         var_s2 += D_800B98B8[sp1E4];
     }
     gSPEndDisplayList(dl++);
-    dl_use_main_builder();
+    dlUseMainBuilder();
     texRenderRestoreState();
     *arg5 = var_s4;
     return dl - sp1C8;

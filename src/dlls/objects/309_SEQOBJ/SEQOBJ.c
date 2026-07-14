@@ -199,7 +199,7 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
                 break;
             case 2:
                 if (objSetup->warpID) {
-                    warpPlayer(objSetup->warpID, 0);
+                    mapWarpPlayer(objSetup->warpID, 0);
                 }
                 break;
         }

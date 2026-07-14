@@ -102,12 +102,12 @@ void screens_draw(Gfx **gdl) {
         ptr += 8;
 
         gDPSetCombineLERP((*gdl), TEXEL0, 0, SCALE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, SCALE, 0, 0, 0, 0, TEXEL0);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
 
         gDPSetOtherMode((*gdl), 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
 
         yPos = 0;
         do {

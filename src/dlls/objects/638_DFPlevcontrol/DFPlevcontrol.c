@@ -90,7 +90,7 @@ void DFP_LevelControl_control(Object* self) {
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
     }
     
-    map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z); //@bug: unused
+    mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z); //@bug: unused
     act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     
     switch (act) {

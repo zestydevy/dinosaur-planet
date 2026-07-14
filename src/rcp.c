@@ -190,12 +190,12 @@ void rcpClearScreen(Gfx **gdl, Mtx **mtx, s32 flags) {
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, viWidth - 1, viHeight - 1);
 
     gDPSetCombineMode((*gdl), G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     gDPSetOtherMode((*gdl), 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_FILL |  G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 
     if (gDLBuilder->needsPipeSync) {
         gDLBuilder->needsPipeSync = FALSE;
@@ -205,7 +205,7 @@ void rcpClearScreen(Gfx **gdl, Mtx **mtx, s32 flags) {
     gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, viWidth, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     if ((flags & CLEAR_ZBUFFER) != 0) {
-        dl_set_fill_color(gdl, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
+        dlSetFillColor(gdl, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
 
         gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
 
@@ -220,7 +220,7 @@ void rcpClearScreen(Gfx **gdl, Mtx **mtx, s32 flags) {
     gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, viWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
 
     if ((flags & CLEAR_COLOR) != 0 || letterbox != 0) {
-        dl_set_fill_color(gdl, 
+        dlSetFillColor(gdl, 
             (GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1) << 16) 
                 | GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1));
 
@@ -263,19 +263,19 @@ void rcpInitDp(Gfx **gdl) {
     gDPSetDepthImage((*gdl)++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     gDPSetCombineMode((*gdl), G_CC_DECALRGB, G_CC_DECALRGB);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     gDPSetOtherMode((*gdl), 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_1PRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 }
 
 // official name: rcpInitSp
 void rcpInitSp(Gfx **gdl) {
     // Clear all
     gSPClearGeometryMode((*gdl), 0xFFFFFF);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
 
     gSPDisplayList((*gdl)++, OS_K0_TO_PHYSICAL(D_800917D0));
 }
@@ -311,15 +311,15 @@ void rcpTileWrite(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b,
     j = 0;
     dl = *gdl;
     gSPLoadGeometryMode(dl, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     gDPSetOtherMode(
         dl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
     );
-    dl_apply_other_mode(&dl);
+    dlApplyOtherMode(&dl);
     x *= 4;
     y *= 4;
     tex = tiles->tex;
@@ -347,7 +347,7 @@ void rcpTileWrite(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b,
             dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tile + 1);
             dl++;
             gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(tile->gdl + 1));
-            dl_set_prim_color(&dl, r, g, b, a);
+            dlSetPrimColor(&dl, r, g, b, a);
             gSPTextureRectangle(dl++, 
             /*ulx*/ ulx,
             /*uly*/ uly,
@@ -421,7 +421,7 @@ void rcpScreenWrite(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s32
         }
     }
     gSPGeometryMode(*gdl, 0xFFFFFF, 0);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     width = tex->width | ((tex->widthHeightHi & 0xF0) << 4);
     if (sp12C != 0) {
         sp148 = (s32) ((f32)tex->width * 1) | ((tex->widthHeightHi & 0xF0) << 4);
@@ -446,33 +446,33 @@ void rcpScreenWrite(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s32
     img = (u8*)frameTex + (width * srcTop * bytesPerPx) + sizeof(Texture);
     if (flags & SCREEN_WRITE_CYC_COPY) {
         gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl, 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2
         );
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
     } else if ((alpha == 255) && (flags & SCREEN_WRITE_OPAQUE)) {
         gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl, 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2
         );
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
     } else {
         gDPSetCombineLERP(*gdl, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl, 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
         );
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
     }
-    dl_set_prim_color(gdl, 255, 255, 255, alpha);
+    dlSetPrimColor(gdl, 255, 255, 255, alpha);
     srcY = srcTop;
     do {
         temp_v0_9 = srcBottom - srcY;
@@ -656,16 +656,16 @@ void rcpDrawPauseScreenFreezeFrame(Gfx** gdl) {
     chunkSize = 6;
     
     gSPClearGeometryMode(*gdl, 0xFFFFFF);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     
     gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
    
     gDPSetOtherMode(*gdl, 
         G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | 
             G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     
     yPos = 0;
 
@@ -733,12 +733,12 @@ void rcpTileWriteX(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 h
         ? &D_80091868[(flags & 0xFF) * 3]
         : &D_80091828[(flags & 0xFF) * 3];
     gSPGeometryMode(dl, 0xFFFFFF, G_SHADING_SMOOTH | G_SHADE);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     bcopy(temp_s0, dl, sizeof(Gfx));
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     bcopy(temp_s0 + 1, dl, sizeof(Gfx));
-    dl_apply_other_mode(&dl);
-    dl_set_prim_color(&dl, (color >> 0x18) & 0xFF, (color >> 0x10) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+    dlApplyOtherMode(&dl);
+    dlSetPrimColor(&dl, (color >> 0x18) & 0xFF, (color >> 0x10) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
     scaleX *= 4.0f;
     scaleY *= 4.0f;
     for (j = 0, tile = tiles[j].tex; tile != NULL; j++, tile = tiles[j].tex) {

@@ -116,7 +116,7 @@ void CFbarrel_control(Object* self) {
         } else {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
-        if (map_world_coords_to_block_index(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z) != -1) {
+        if (mapWorldCoordsToBlockIndex(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z) != -1) {
             if (objdata->unk13 != 0) {
                 objdata->unk13 = objdata->unk13 + gUpdateRate;
                 objdata->unk24 = (objdata->unk2C * (f32) objdata->unk13) + 1.0f;
@@ -134,7 +134,7 @@ void CFbarrel_control(Object* self) {
                     bzero(&objdata->unk18, sizeof(Vec3f));
                     bzero(&self->velocity, sizeof(Vec3f));
                     if (objdata->unk3C_0) {
-                        map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+                        mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
                         objdata->unk14 = 0x258;
                         func_80026160(self);
                         func_8002683C(self, 8, -2, 0x19);
@@ -172,7 +172,7 @@ void CFbarrel_control(Object* self) {
                     }
                 }
                 if (objdata->unk3C_0) {
-                    map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+                    mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
                 }
             }
         }

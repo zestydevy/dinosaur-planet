@@ -42,7 +42,7 @@ void DFbarrel_control(Object* self) {
     DFBarrel_Data* objData = self->data;
     
     //Do nothing if not on a map?
-    if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) == -1) {
+    if (mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) == -1) {
         return;
     }
     

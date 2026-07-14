@@ -222,7 +222,7 @@ void assetQueueProcessCompleted(void) {
                 }
                 break;
             case 1:
-                block_emplace(sp24.unk4Ptr, sp24.unk8, sp24.unkC, sp24.unk10);
+                blockEmplace(sp24.unk4Ptr, sp24.unk8, sp24.unkC, sp24.unk10);
                 break;
             case 6:
                 if (1) {};
@@ -366,7 +366,7 @@ void assetThreadLoadNextFromQueue(void) {
                 }
                 break;
             case 1:
-                block_load(sp2C.blockId, sp2C.unkC, sp2C.unk10, /*fromAssetThread=*/TRUE);
+                blockLoad(sp2C.blockId, sp2C.unkC, sp2C.unk10, /*fromAssetThread=*/TRUE);
                 break;
             case 0:
                 assetQueueCompletedLoad(0, sp2C.unk4, voxLoadSlot(sp2C.blockId, sp2C.unkC, sp2C.unk10, sp2C.unk14int), 0, 0);

@@ -235,11 +235,11 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     maskProgress /= MASK_MAX; //tValue for the mask animation (0 at top, 1 at bottom)
 
     //Set up mesh masking draw configs
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0x80);
+    dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, 0x80);
     gSPLoadGeometryMode(*gdl, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     gDPSetCombineLERP(*gdl, TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     //Position the cube's vertices (forming a section of a pyramid)
     for (i = 0; i < ARRAYCOUNT(sMaskVertCoords); i++) {
@@ -271,7 +271,7 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP |
         G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | Z_CMP | Z_UPD | IM_RD | CVG_DST_SAVE |
         ZMODE_XLU | FORCE_BL | G_RM_FOG_SHADE_A | GBL_c2(G_BL_CLR_IN, G_BL_0, G_BL_CLR_MEM, G_BL_1MA));
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 
     srt.transl.x = self->srt.transl.x;
     srt.transl.y = self->srt.transl.y;
@@ -283,7 +283,7 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1, 0, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dl_triangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
+    dlTriangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
 
     //Set transform for particles
     srt.transl.x = (30.0f * maskProgress) + 2.0f;

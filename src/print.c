@@ -1084,7 +1084,7 @@ void diPrintfAll(Gfx **gdl) {
     bcopy(D_800931C0, *gdl, sizeof(D_800931C0));
     *gdl += ARRAYCOUNT(D_800931C0);
 
-    dl_set_all_dirty();
+    dlSetAllDirty();
 
     texRenderReset();
 
@@ -1116,7 +1116,7 @@ void diPrintfAll(Gfx **gdl) {
 
     gDebugPrintBufferEnd = gDebugPrintBufferStart;
 
-    dl_set_all_dirty();
+    dlSetAllDirty();
     texRenderReset();
 }
 
@@ -1217,7 +1217,7 @@ s32 diPrintf_func_80061210(Gfx** gdl, char* buffer) {
             alpha = buffer[3];
             buffer += 4;
             if (D_800BEAE8) {
-                dl_set_env_color(gdl, red, green, blue, alpha);
+                dlSetEnvColor(gdl, red, green, blue, alpha);
             }
             break;
         case 0x87:
@@ -1230,14 +1230,14 @@ s32 diPrintf_func_80061210(Gfx** gdl, char* buffer) {
                     G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE | 0x1,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
                 );
-                dl_apply_other_mode(gdl);
+                dlApplyOtherMode(gdl);
             } else {
                 gDPSetOtherMode(
                     *gdl,
                     G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
                     G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
                 );
-                dl_apply_other_mode(gdl);
+                dlApplyOtherMode(gdl);
             }
             break;
         case 0x85: // Set the background color from the next 4 bytes
@@ -1251,7 +1251,7 @@ s32 diPrintf_func_80061210(Gfx** gdl, char* buffer) {
                 D_800BEB05 = green;
                 D_800BEB06 = blue;
                 D_800BEB07 = alpha;
-                dl_set_prim_color(gdl, red, green, blue, alpha);
+                dlSetPrimColor(gdl, red, green, blue, alpha);
             }
             break;
         case 0x82: // Set debug text position from the next 4 bytes
@@ -1328,12 +1328,12 @@ void diPrintfRenderBackground(Gfx** gdl, u32 ulx, u32 uly, u32 lrx, u32 lry) {
         uly <<= temp_v1;
         lry <<= temp_v1;
         gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         if ((D_800931B4 != 0) || (D_800931B8 != 0)) {
-            dl_set_prim_color(gdl, 0U, 0U, 0U, 0xFFU);
+            dlSetPrimColor(gdl, 0U, 0U, 0U, 0xFFU);
             gDPFillRectangle((*gdl)++, ulx - 4, uly - 4, lrx + 4, lry + 4);
             gDLBuilder->needsPipeSync = 1;
-            dl_set_prim_color(gdl, D_800BEB04, D_800BEB05, D_800BEB06, D_800BEB07);
+            dlSetPrimColor(gdl, D_800BEB04, D_800BEB05, D_800BEB06, D_800BEB07);
         }
         gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
         gDLBuilder->needsPipeSync = 1;
@@ -1383,7 +1383,7 @@ s32 diPrintfRenderChar(Gfx** gdl, s32 asciiVal) {
         sp28 = D_800BEADC << (D_800931AC + D_800931B4);
         sp24 = D_800BEADE << (D_800931B0 + D_800931B8);
         gDPSetCombineLERP(*gdl, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gSPTextureRectangle((*gdl)++,
             /*xl*/(sp28 << 2),
             /*yl*/(sp24 << 2),

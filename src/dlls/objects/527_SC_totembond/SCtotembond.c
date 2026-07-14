@@ -259,7 +259,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     
     //Create restart point
     player = objGetPlayer();
-    gDLL_29_Gplay->vtbl->restart_set(&player->srt.transl, player->srt.yaw, map_get_layer());
+    gDLL_29_Gplay->vtbl->restart_set(&player->srt.transl, player->srt.yaw, mapGetLayer());
 }
 
 

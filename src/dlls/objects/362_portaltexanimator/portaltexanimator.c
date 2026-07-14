@@ -68,7 +68,7 @@ void portaltexanimator_control(Object* self) {
     objdata = self->data;
 
     //Get the object's local BLOCKS model
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objdata->blockFound = FALSE;
         return;
@@ -82,7 +82,7 @@ void portaltexanimator_control(Object* self) {
     //Animate tagged shapes' vertex opacity based on player distance
     if (objdata->animatedVertexCount == 0) {
         objdata->animatorID = setup->animatorID;
-        objdata->animatedVertexCount = block_get_animator_vertex_count(self, objdata->animatorID);
+        objdata->animatedVertexCount = blockGetAnimatorVertexCount(self, objdata->animatorID);
 
         if (objdata->animatedVertexCount == 0) {
             objdata->animatorID = 0;

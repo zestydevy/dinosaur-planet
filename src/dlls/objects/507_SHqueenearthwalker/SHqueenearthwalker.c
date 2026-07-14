@@ -150,13 +150,13 @@ static int SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2,
             objdata->questProgress = 5;
             gDLL_29_Gplay->vtbl->set_act(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
             mainSetBits(BIT_Play_Seq_0298_Queen_Shows_VFPT, 1);
-            warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         case 4:
             objdata->questProgress = 6;
             gDLL_29_Gplay->vtbl->set_act(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
             mainSetBits(BIT_Play_Seq_0299_Queen_Shows_SpellStones, 1);
-            warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         }
     }

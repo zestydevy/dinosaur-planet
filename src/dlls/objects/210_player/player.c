@@ -602,7 +602,7 @@ void dll_210_control(Object* player) {
     if (sp80 >= 5) {
         sp80 = 4;
     }
-    if ((player->parent == NULL) && (map_world_coords_to_block_index(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z) < 0)) {
+    if ((player->parent == NULL) && (mapWorldCoordsToBlockIndex(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z) < 0)) {
         data->unk0.target = NULL;
         data->unk854 = 0;
         gDLL_2_Camera->vtbl->set_target_object(NULL);
@@ -839,7 +839,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
                 if (arg1->stats->health <= 0) {
                     gDLL_18_objfsa->vtbl->set_anim_state(player, &arg1->unk0, PLAYER_ASTATE_Dead);
                 } else {
-                    gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, map_get_layer());
+                    gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, mapGetLayer());
                     gDLL_29_Gplay->vtbl->start_loaded_game();
                 }
             }
@@ -1524,11 +1524,11 @@ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tr
     } else {
         curVtx = sp74;
     }
-    dl_set_prim_color(arg1, 0xFFU, 0xFFU, 0xFFU, 0x80U);
+    dlSetPrimColor(arg1, 0xFFU, 0xFFU, 0xFFU, 0x80U);
     gSPGeometryMode(*arg1, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_SHADING_SMOOTH | G_ZBUFFER);
-    dl_apply_geometry_mode(arg1);
+    dlApplyGeometryMode(arg1);
     gDPSetCombineLERP(*arg1, TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED);
-    dl_apply_combine(arg1);
+    dlApplyCombine(arg1);
 
     for (i = 0; i < 8; i++) {
         if (i < 4) {
@@ -1560,7 +1560,7 @@ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tr
             G_BL_1MA
         )
     )
-    dl_apply_other_mode(arg1);
+    dlApplyOtherMode(arg1);
     sp48.transl.x = player->srt.transl.x;
     sp48.transl.y = player->srt.transl.y;
     sp48.transl.z = player->srt.transl.z;
@@ -1570,7 +1570,7 @@ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tr
     sp48.roll = 0;
     camSetupObjectSRTMatrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp74), 8, 0);
-    dl_triangles(arg1, (DLTri* ) _rodata_0, 0xC);
+    dlTriangles(arg1, (DLTri* ) _rodata_0, 0xC);
     if (sp44->unk844 >= 68.0f) {
         var_v0_2 = player->opacity - (gUpdateRate * 4);
         if (var_v0_2 < 0) {

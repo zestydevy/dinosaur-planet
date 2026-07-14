@@ -151,7 +151,7 @@ void GroundAnimator_control(Object* self) {
         
     //Get the GroundAnimator's local Block index, and queue vertex animation updates when Block is found
     {
-        blockIndex = map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+        blockIndex = mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
 
         previousState = objData->flags & GroundAnimator_FLAG_1_Block_Found;    
         if (blockIndex >= 0) {
@@ -172,7 +172,7 @@ void GroundAnimator_control(Object* self) {
         
     //Set up animation: get shapeIDs and calculate vertex influence weights
     if ((objData->flags & GroundAnimator_FLAG_1_Block_Found) && (objData->vtxWeights == NULL)) {
-        objData->animatedVtxCount = block_get_animator_vertex_count(self, objSetup->animatorID);
+        objData->animatedVtxCount = blockGetAnimatorVertexCount(self, objSetup->animatorID);
         if (objData->animatedVtxCount > 0) {
             objData->vtxWeights = mmAlloc(objData->animatedVtxCount * sizeof(f32), ALLOC_TAG_TRACK_COL, NULL);
             GroundAnimator_store_shapeIDs_and_vertex_weights(self, objData, objSetup);
@@ -202,7 +202,7 @@ void GroundAnimator_control(Object* self) {
     }
     
     //Get Block by index
-    block = map_get_block_by_index(blockIndex);
+    block = mapGetBlockByIndex(blockIndex);
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return;
     }
@@ -330,7 +330,7 @@ void GroundAnimator_store_shapeIDs_and_vertex_weights(Object* self, GroundAnimat
     f32 dz;
     s32 vtxID;
     
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return;

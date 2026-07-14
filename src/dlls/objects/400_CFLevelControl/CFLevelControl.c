@@ -205,7 +205,7 @@ void CFLevelControl_control(Object *self) {
     }
     CFLevelControl_func_10BC(self);
     CFLevelControl_func_1000();
-    diPrintf(" Layer NO %i : ", map_get_layer());
+    diPrintf(" Layer NO %i : ", mapGetLayer());
 }
 
 // offset: 0x2B4 | func: 2 | export: 2
@@ -449,7 +449,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
 
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
-        setup = map_find_obj_setup(data->uID, NULL, NULL, NULL, NULL);
+        setup = mapFindObjSetup(data->uID, NULL, NULL, NULL, NULL);
         if (setup) {
             if (data->unk12) {
                 ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
@@ -457,7 +457,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
                 setup->y = transform.transl.y;
                 setup->z = transform.transl.z;
             }
-            map_save_object(setup, data->mapID, setup->x, setup->y, setup->z);
+            mapSaveObject(setup, data->mapID, setup->x, setup->y, setup->z);
         }
         data++;
     }

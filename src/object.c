@@ -783,7 +783,7 @@ void objAddObject(Object *obj, u32 initFlags) {
     }
 
     if (obj->def->mobileMapID > -1) {
-        map_load_mobile_map(obj->def->mobileMapID, obj);
+        mapLoadMobileMap(obj->def->mobileMapID, obj);
     }
 
     update_pi_manager_array(0, -1);
@@ -1551,7 +1551,7 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
                 objFreeObject(stackObjs[i]);
             }
 
-            map_free(obj->mobileMapID);
+            mapFree(obj->mobileMapID);
         }
     }
 
@@ -1706,7 +1706,7 @@ void objLoadPlayer(void) {
     f32 x, y, z;
     s32 playerno;
 
-    mapType = map_get_type();
+    mapType = mapGetType();
     if (mapType == MAPTYPE_2 || mapType == MAPTYPE_3) {
         objFreeAll();
         return;
@@ -1749,7 +1749,7 @@ void objLoadPlayer(void) {
     gDLL_5_AMSEQ->vtbl->set_focus_obj(player);
 
     D_800B1988 = 0;
-    func_8004A67C();
+    map_func_8004A67C();
 }
 
 void objLoadSidekick(Object* object, s32 objectId) {
@@ -1805,7 +1805,7 @@ void objClearMapID(Object *obj) {
 }
 
 void objInferMapID(Object *obj) {
-    obj->mapID = map_world_xz_to_map_id(obj->srt.transl.x, obj->srt.transl.z);
+    obj->mapID = mapWorldXZToMapID(obj->srt.transl.x, obj->srt.transl.z);
 }
 
 s32 objMove(Object *obj, f32 dx, f32 dy, f32 dz) {

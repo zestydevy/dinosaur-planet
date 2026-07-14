@@ -214,8 +214,8 @@ s32 mainmenu_update1(void) {
             //Change resolution for game select
             viInit(14, mainGetScheduler(), FALSE);
             mainmenu_clean_up();
-            track_set_z_buffer_on(FALSE);
-            track_set_sky_on(FALSE);
+            trackSetZBufferOn(FALSE);
+            trackSetSkyOn(FALSE);
             if (nextMenuID == MENU_GAME_SELECT) {
                 gDLL_29_Gplay->vtbl->save_game_options();
             }

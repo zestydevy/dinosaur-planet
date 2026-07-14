@@ -540,7 +540,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
                 _bss_4F0[st->seqSlot] += gUpdateRateF;
                 if (_bss_4F0[st->seqSlot] > 60.0f) {
                     if (sPendingWarpID != -1) {
-                        warpPlayer(sPendingWarpID, FALSE);
+                        mapWarpPlayer(sPendingWarpID, FALSE);
                     } else {
                         gDLL_28_ScreenFade->vtbl->fade_reversed(30, SCREEN_FADE_BLACK);
                     }
@@ -1654,7 +1654,7 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
                 func_80000860(actor, actor, evt->params & 0xFFF, 0);
                 break;
             case ANIM_EVT_ENVFX_WARP:
-                warpPlayer(evt->params & 0xFFF, 0);
+                mapWarpPlayer(evt->params & 0xFFF, 0);
                 break;
             }
         }
@@ -1700,7 +1700,7 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
             break;
         case ANIM_EVT_ENVFX_WARP:
             if (arg3_8) { break; }
-            warpPlayer(evt->params & 0xFFF, 0);
+            mapWarpPlayer(evt->params & 0xFFF, 0);
             break;
         case ANIM_EVT_ENVFX_SFX:
             if (arg3_8) { break; }
@@ -2772,10 +2772,10 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         st->unk142_4 = 0;
         break;
     case ANIM_CODE_EVT_6_SAVEPOINT:
-        gDLL_29_Gplay->vtbl->savepoint(&actor->srt.transl, actor->srt.yaw, 0, map_get_layer());
+        gDLL_29_Gplay->vtbl->savepoint(&actor->srt.transl, actor->srt.yaw, 0, mapGetLayer());
         break;
     case ANIM_CODE_EVT_6_SAVEPOINT_NO_LOCATION:
-        gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, map_get_layer());
+        gDLL_29_Gplay->vtbl->savepoint(NULL, 0, GPLAY_SAVEPOINT_SkipMapSave, mapGetLayer());
         break;
     case ANIM_CODE_EVT_6_TOGGLE_PLAYER_CONTROL:
         ((DLL_210_Player*)objGetPlayer()->dll)->vtbl->func69(objGetPlayer(), sp54);

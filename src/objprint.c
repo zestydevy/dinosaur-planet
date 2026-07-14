@@ -198,7 +198,7 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         }
         camSetupObjectSRTMatrix(&tempGdl, &tempMtxs, &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
-        dl_set_all_dirty();
+        dlSetAllDirty();
         texRenderReset();
     }
     if (!(obj->srt.flags & OBJFLAG_SHADOW_ONLY)) {
@@ -247,9 +247,9 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
             }
         }
         if (model->unk71 & 4) {
-            dl_set_env_color(&tempGdl, blendR, blendG, blendB, BYTE_800b2e23);
+            dlSetEnvColor(&tempGdl, blendR, blendG, blendB, BYTE_800b2e23);
         }
-        dl_set_prim_color(&tempGdl, blendR, blendG, blendB, opacity);
+        dlSetPrimColor(&tempGdl, blendR, blendG, blendB, opacity);
         if (!(obj->srt.flags & OBJFLAG_SKIP_MODEL_DL)) {
             gSPSegment(tempGdl++, SEGMENT_3, modelInst->matrices[modelInst->unk34 & 1]);
             gSPSegment(tempGdl++, SEGMENT_5, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
@@ -265,7 +265,7 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
                 }
             }
             gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(modelInst->displayList));
-            dl_set_all_dirty();
+            dlSetAllDirty();
             texRenderReset();
         }
         if (obj->linkedObject != NULL) {
@@ -355,7 +355,7 @@ void objprintDrawShadowModel(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtx
     gSPSegment(mygdl++, SEGMENT_5, modelInst2->vertices[(modelInst2->unk34 >> 1) & 0x1]);
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
-    dl_set_all_dirty();
+    dlSetAllDirty();
     texRenderReset();
 
     *gdl = mygdl;
@@ -434,7 +434,7 @@ ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Tri
                 modelInst->unk34 ^= 0x10;
             }
             gSPDisplayList((*arg0)++, OS_PHYSICAL_TO_K0(modelInst->displayList));
-            dl_set_all_dirty();
+            dlSetAllDirty();
             texRenderReset();
             // @fake
             if (D_800B2E10) {}
@@ -745,7 +745,7 @@ void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         sp44.scale = 1.0f;
         camSetupObjectSRTMatrix(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
         gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
-        dl_set_all_dirty();
+        dlSetAllDirty();
         texRenderReset();
         sp64 = 1;
         if (sp68 == 0xFF) {
@@ -758,7 +758,7 @@ void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         }
     } else {
         if (arg0->def->flags & OBJDEF_FLAG20) {
-            dl_set_prim_color(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
+            dlSetPrimColor(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
         } else if (sp64 != 0) {
             func_8001F848(arg1);
         }
@@ -816,7 +816,7 @@ void objprint_func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         if (object->parent) {
             camSetupRSPMatricesForObject(gdl, mtx, object->parent);
         }
-        dl_set_all_dirty();
+        dlSetAllDirty();
         texRenderReset();
     }
 }

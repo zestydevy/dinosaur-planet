@@ -173,7 +173,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     objData = self->data;  
     
     if (mainGetBits(BIT_50)) {
-        if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
+        if (objData->unk0 && trackObjVisCheck(objData->unk0)) {
             objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
@@ -181,7 +181,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     
     if (mainGetBits(BIT_4D) && visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
-        if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
+        if (objData->unk0 && trackObjVisCheck(objData->unk0)) {
             objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
@@ -212,7 +212,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         }
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     } else {
-        if (track_obj_vis_check(objData->unk0)) {
+        if (trackObjVisCheck(objData->unk0)) {
             objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         if (visibility) {

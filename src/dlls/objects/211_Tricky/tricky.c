@@ -268,7 +268,7 @@ void dll_211_setup(Object* self, ObjSetup* setup, s32 arg2) {
     routeInit(&objData->unk59C);
     objData->unk4 = gDLL_29_Gplay->vtbl->get_sidekick_stats();
     objData->unk8 = objGetPlayer();
-    temp_v1 = _data_EC[func_80045D58()];
+    temp_v1 = _data_EC[map_func_80045D58()];
     objData->unk18 = 0;
     objData->unk1B = 0;
     objData->unk5D4 = 0;
@@ -302,8 +302,8 @@ void dll_211_control(Object* self) {
 
     // FAKE
     if ((s32)self);
-    sp90 = _data_EC[func_80045D58()];
-    objData->unk14 = _data_EC[map_world_xz_to_map_id(objData->unk8->globalPosition.x, objData->unk8->globalPosition.z)];
+    sp90 = _data_EC[map_func_80045D58()];
+    objData->unk14 = _data_EC[mapWorldXZToMapID(objData->unk8->globalPosition.x, objData->unk8->globalPosition.z)];
     if ((sp90 != objData->unkC) && (sp90 != objData->unk10)) {
         if (objData->unkC == objData->unk14) {
             objData->unk10 = sp90;
@@ -1331,11 +1331,11 @@ static void dll_211_func_3188(Object* self, DLL211_Data* objData) {
         dll_211_func_83BC(self, objData);
         if (objData->unk1A == 0) {
             if (vec3_distance_xz_squared(&self->globalPosition, &objData->unk28->globalPosition) > 400.0f) {
-                sp38 = map_find_obj_setup(((s32*)sp38)[7 /* unk1C */], NULL, NULL, NULL, NULL);
+                sp38 = mapFindObjSetup(((s32*)sp38)[7 /* unk1C */], NULL, NULL, NULL, NULL);
                 dll_211_func_9024(objData, &sp38->x);
                 objData->unk1A = 1;
             } else {
-                objData->unk5E4[1] = map_find_obj_setup(((s32*)sp38)[7 /* unk1C */], NULL, NULL, NULL, NULL);
+                objData->unk5E4[1] = mapFindObjSetup(((s32*)sp38)[7 /* unk1C */], NULL, NULL, NULL, NULL);
                 objData->unk4C |= 0x10;
                 objData->unk1A = 3;
                 objData->unk5F4_amsFxID = gDLL_6_AMSFX->vtbl->play(self, SOUND_4B9, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -2633,11 +2633,11 @@ static void dll_211_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, 
     sp48.transl.z = self->srt.transl.z;
     sp48.scale = 0.001f;
     gDLL_17_partfx->vtbl->spawn(self, 0x1B6, &sp48, 0x200001, -1, NULL);
-    dl_set_prim_color(arg1, 0xFF, 0xFF, 0xFF, 0x80);
+    dlSetPrimColor(arg1, 0xFF, 0xFF, 0xFF, 0x80);
     gSPGeometryMode(*arg1, 0xFFFFFF, 0x210405);
-    dl_apply_geometry_mode(arg1);
+    dlApplyGeometryMode(arg1);
     gDPSetCombineLERP((*arg1), TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED);
-    dl_apply_combine(arg1);
+    dlApplyCombine(arg1);
     for (i = 0; i < 8; i++) {
         var_s0->v.ob[0] = _rodata_838[i].x * 20.0f;
         if (i < 4) {
@@ -2657,7 +2657,7 @@ static void dll_211_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
         G_AC_NONE | G_ZS_PIXEL | Z_CMP | Z_UPD | IM_RD | CVG_DST_SAVE | ZMODE_XLU | FORCE_BL | G_RM_FOG_SHADE_A | GBL_c2(G_BL_CLR_IN, G_BL_0, G_BL_CLR_MEM, G_BL_1MA)
     );
-    dl_apply_other_mode(arg1);
+    dlApplyOtherMode(arg1);
     sp48.transl.x = self->srt.transl.x;
     sp48.transl.y = self->srt.transl.y;
     sp48.transl.z = self->srt.transl.z;
@@ -2667,7 +2667,7 @@ static void dll_211_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, 
     sp48.scale = 0.05f;
     camSetupObjectSRTMatrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp6C), 8, 0);
-    dl_triangles(arg1, _rodata_778, 12);
+    dlTriangles(arg1, _rodata_778, 12);
     *arg3 = var_s0;
 }
 
@@ -3159,7 +3159,7 @@ static void dll_211_func_8BEC(Object* self) {
     Object* sp34;
 
     objData = self->data;
-    if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) == -1) {
+    if (mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) == -1) {
         objData->unkCC.mode = 0;
         if (objData->unk28 != NULL) {
             self->srt.transl.y = objData->unk28->srt.transl.y;

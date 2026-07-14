@@ -78,19 +78,19 @@ void TexFrameAnimator_control(Object* self) {
     }
 
     //Get object's local Blocks model
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (!block || !(block->vtxFlags & 8)) {
         return;
     }
 
     //Get local Block's relevant Material
-    texAnimInst = block_texanim_get_instance(block, objData->materialID);
+    texAnimInst = blockTexanimGetInstance(block, objData->materialID);
     if (!texAnimInst) {
         return;
     }
 
     //Get Block Material's Texture
-    blockTexture = block_texanim_get(texAnimInst->texanimID);
+    blockTexture = blockTexanimGet(texAnimInst->texanimID);
 
     //Advance texture animation frame
     objData->frame += objData->speed * gUpdateRate;
