@@ -1,0 +1,13 @@
+.text = 0x0:
+PlacedFood_ctor = 0x0;
+PlacedFood_dtor = 0xC;
+PlacedFood_setup = 0x18;
+PlacedFood_control = 0xF8;
+PlacedFood_update = 0x82C;
+PlacedFood_print = 0x838;
+PlacedFood_free = 0x850;
+PlacedFood_get_model_flags = 0x860;
+PlacedFood_get_data_size = 0x870;
+PlacedFood_get_unload_timer_value = 0x884;
+
+.rodata = 0x8E0:

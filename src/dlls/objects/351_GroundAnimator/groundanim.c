@@ -4,48 +4,7 @@
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/272_collectable.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitDug;         //Gamebit to set when Tricky digs up the spot
-    s16 unused1A;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    s16 unused1C;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    s16 magicCaveID;        //Values 3 onwards cause the dig spot to become be a Magic Cave entrance
-    u8 digDepthMax;         //Dig distance (stored at 100x scale)
-    u8 soundIndex;          //Index of the sound to play when digging has finished (0: small secret, 1: big secret)
-    u8 unused22;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    u8 findCommandRadius;   //Range for Find command to show up in inventory
-    u8 unused24;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    u8 animatorID;          //Block shapes with this tag will be animated
-    u8 falloffRadius;       //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
-    u8 collectableDepth;    //How far down the collectable is buried beneath the dig spot
-} GroundAnimator_Setup;
-
-typedef struct {
-    f32* vtxWeights;        //Displacement strengths (from 0 to 1) for each vertex being animated (influence falls off from centre)
-    Object* collectable;
-    s32 digDepth;           //Current dig progress (starts at 0, increases while digging)
-    f32 falloffRadius;      //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
-    f32 collectableDepth;   //Affects how far down the collectable is buried
-    s16 animatedShapeIDs[5];
-    s16 misconfiguredShapeID;
-    s16 animatedVtxCount;   //The total number of vertices being animated
-    u8 animatedShapesCount; //Total shapes animated (i.e. number of items in `animatedShapeIDs`)
-    s8 previousDigDepth;    //Previous dig progress value (vertex updates are queued when this differs from current dig value)
-    u8 magicCaveID;         //Seems intended as an index for a specific Magic Cave instance (can be queried with `get_magic_cave_index` export)
-    u8 animUpdates;         //Used to queue vertex animation updates
-    u8 flags;               //Various state flags: Block search, dig finished, Magic Cave entrance/glow
-} GroundAnimator_Data;
-
-typedef enum {
-    GroundAnimator_FLAG_0_None = 0,
-    GroundAnimator_FLAG_1_Block_Found = 1,
-    GroundAnimator_FLAG_2_Dig_Finished = 2,
-    GroundAnimator_FLAG_4_Unused = 4,
-    GroundAnimator_FLAG_8_Magic_Cave_Entrance = 8,
-    GroundAnimator_FLAG_10_Glow_Created = 0x10,
-    GroundAnimator_FLAG_20_Glow_Required = 0x20
-} GroundAnimator_Flags;
+#include "dlls/objects/351_GroundAnimator.h"
 
 /* Sounds that can play when Tricky finishes digging */
 /*0x0*/ static u16 dDigJingles[2] = {
@@ -219,7 +178,7 @@ void GroundAnimator_control(Object* self) {
         if (objData->animUpdates) {
             objData->animUpdates--;
             
-            //Finish digging
+            //Handle when digging is finished
             if (objData->digDepth > (objSetup->digDepthMax * 100)) {
                 objData->digDepth = objSetup->digDepthMax * 100;
                 
@@ -330,18 +289,18 @@ void GroundAnimator_store_shapeIDs_and_vertex_weights(Object* self, GroundAnimat
     f32 dz;
     s32 vtxID;
     
+    //Get local Block and make sure its vertices are animatable
     block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
-    
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return;
     }
         
     //Get the GroundAnimator's position relative to the Blocks model's local origin
-    blockWorldGridX = floor_f((self->srt.transl.x - gWorldX) / 640.0f);
-    blockWorldGridZ = floor_f((self->srt.transl.z - gWorldZ) / 640.0f);
+    blockWorldGridX = floor_f((self->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+    blockWorldGridZ = floor_f((self->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
 
-    digBlockX = self->srt.transl.x - (blockWorldGridX * 640.0f + gWorldX);
-    digBlockZ = self->srt.transl.z - (blockWorldGridZ * 640.0f + gWorldZ);
+    digBlockX = self->srt.transl.x - (blockWorldGridX * BLOCKS_GRID_UNIT_F + gWorldX);
+    digBlockZ = self->srt.transl.z - (blockWorldGridZ * BLOCKS_GRID_UNIT_F + gWorldZ);
     
     //Search through the Block's shapes, looking for any tagged with the animatorID
     objData->animatedShapesCount = 0;

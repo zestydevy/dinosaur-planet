@@ -3,12 +3,12 @@
 #include "sys/curves.h"
 #include "dll.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/rand.h"
 #include "macros.h"
 
 // expr.c (default.dol)
 
-#define TWENTY_DEGREES 0xE38
 #define HEAD_TURN_LIMIT 0x1FFF //~45 degrees (giving a 90 degree turn range)
 
 // -------- .bss start 800b2e00 -------- //
@@ -539,8 +539,8 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
             currentAngle = arg1->headGoalAngle;
             arg1->headGoalAngle = rand_next(0, HEAD_TURN_LIMIT);
             if (currentAngle > 0) {
-                if ((currentAngle - arg1->headGoalAngle) < TWENTY_DEGREES) {
-                    arg1->headGoalAngle += TWENTY_DEGREES;
+                if ((currentAngle - arg1->headGoalAngle) < M_20_DEGREES) {
+                    arg1->headGoalAngle += M_20_DEGREES;
                 }
                 //Left turn limit
                 if (arg1->headGoalAngle > HEAD_TURN_LIMIT) {
@@ -548,8 +548,8 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
                 }
                 arg1->headGoalAngle = -arg1->headGoalAngle;
             } else {
-                if ((arg1->headGoalAngle - currentAngle) < TWENTY_DEGREES) {
-                    arg1->headGoalAngle += TWENTY_DEGREES;
+                if ((arg1->headGoalAngle - currentAngle) < M_20_DEGREES) {
+                    arg1->headGoalAngle += M_20_DEGREES;
                 }
                 if (arg1->headGoalAngle > HEAD_TURN_LIMIT) {
                     arg1->headGoalAngle = HEAD_TURN_LIMIT;
@@ -828,28 +828,31 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
     pupilR->positionV = 0;
 }
 
-/** object_find_seq_bone_data_by_bone_id? */
-s16* func_80034804(Object* obj, s32 sequenceBoneID) {
+/** objexpr_get_seq_joint? */
+s16* func_80034804(Object* obj, s32 sequenceJointID) {
     ObjDef* romdef;
     u8* seqBones;
     s32 index;
     s32 listPosition;
     u32 jointID;
-    s16* sequenceBoneData;
+    s16* seqJoint;
 
     romdef = obj->def;
-    sequenceBoneData = NULL;
+    seqJoint = NULL;
+
     if (romdef) {
         listPosition = 0;
         for (index = 0; index < romdef->numSequenceBones; index++){
             jointID = romdef->pSequenceBones[(listPosition + 1) + obj->modelInstIdx];
-            if (jointID != 0xFF && sequenceBoneID == romdef->pSequenceBones[listPosition])
-                sequenceBoneData = obj->unk6C[index];
+            if ((jointID != 0xFF) && (sequenceJointID == romdef->pSequenceBones[listPosition])) {
+                seqJoint = obj->unk6C[index];
+            }
 
             listPosition += 1 + romdef->numModels;
         }
     }
-    return sequenceBoneData;
+    
+    return seqJoint;
 }
 
 TextureAnimator* func_800348A0(Object* obj, s32 texTag, s32 arg2) {

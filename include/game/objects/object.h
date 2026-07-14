@@ -468,15 +468,15 @@ typedef struct Object {
 /*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectShadow* shadow;
 /*0068*/    DLL_IObject *dll;
-/*006C*/    s16 (*unk6C)[9];
+/*006C*/    s16 (*unk6C)[9]; //Sequence joints
 /*0070*/    Vtx* unk70;
 /*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts; // called "frames" in default.dol
 /*0080*/    Vec3f prevLocalPosition; // srt position from previous tick
 /*008C*/    Vec3f prevGlobalPosition; // global position from previous tick
-/*0098*/    f32 animProgress;
-/*009C*/    f32 animProgressLayered;
+/*0098*/    f32 animProgress;        //tValue for main model animation
+/*009C*/    f32 animProgressLayered; //tValue for additive model animation (e.g. the weapon-stowing animation that can be layered on top of the main idle/walk/run anims)
 /*00A0*/    s16 curModAnimId;
 /*00A2*/    s16 curModAnimIdLayered;
 /*00A4*/    f32 depthSortVal; //angle between camera and Object?

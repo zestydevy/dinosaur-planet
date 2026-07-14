@@ -1,0 +1,13 @@
+.text = 0x0:
+PickObj_ctor = 0x0;
+PickObj_dtor = 0xC;
+PickObj_setup = 0x18;
+PickObj_control = 0xB0;
+PickObj_update = 0xF8;
+PickObj_print = 0x104;
+PickObj_free = 0x194;
+PickObj_get_model_flags = 0x1DC;
+PickObj_get_data_size = 0x1EC;
+
+.rodata = 0x234:
+str_0 = 0x0; // absolute:0x234

@@ -1,0 +1,6 @@
+.text = 0x0:
+dll_69_ctor = 0x0;
+dll_69_dtor = 0xC;
+dll_69_update1 = 0x18;
+dll_69_update2 = 0x24;
+dll_69_draw = 0x2C;

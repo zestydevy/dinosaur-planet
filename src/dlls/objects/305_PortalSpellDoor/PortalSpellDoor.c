@@ -5,8 +5,6 @@
 
 int func_80058F50(void);
 
-#define ONE_OVER_SIXTY_FOUR 0.015625f
-
 typedef struct {
     ObjSetup base;
     s8 yaw;
@@ -45,12 +43,12 @@ void PortalSpellDoor_setup(Object* self, PortalSpellDoor_Setup* objSetup, s32 ar
     if (objSetup->scale) {
         if (arg2 == 0) {
             objDef = self->def;
-            self->srt.scale = objSetup->scale * objDef->scale * ONE_OVER_SIXTY_FOUR; //@bug: unnecessary line?
-            self->srt.scale = objSetup->scale * 0.35f * ONE_OVER_SIXTY_FOUR;
+            self->srt.scale = objSetup->scale * objDef->scale * (1.0f / 64.0f); //@bug: unnecessary line?
+            self->srt.scale = objSetup->scale * 0.35f * (1.0f / 64.0f);
             objDef->scale = self->srt.scale;
             self->visRadius = self->def->scale * 64.0f;
         } else {
-            self->srt.scale = objSetup->scale * 0.35f * ONE_OVER_SIXTY_FOUR;
+            self->srt.scale = objSetup->scale * 0.35f * (1.0f / 64.0f);
         }
     }
     objData->scale = self->visRadius * 0.5f;

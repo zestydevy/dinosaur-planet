@@ -6,11 +6,13 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/21_gametext.h"
 #include "game/gametexts.h"
+#include "macros.h"
 #include "sys/camera.h"
 #include "sys/joypad.h"
 #include "sys/fonts.h"
 #include "sys/vi.h"
 #include "sys/gfx/texture.h"
+#include "sys/gfx/textable.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
@@ -55,29 +57,36 @@ static PicMenuSounds pauseMenuSounds = {
 /*0x4*/ static Texture* textureSpellStone;
 /*0x8*/ static Texture* textureDuster;
 /*0xC*/ static Texture* textureSpirit;
-/*0x10*/ static char gameplayTime[0xa];
-/*0x1A*/ static char spiritCount[0x2];
-/*0x1C*/ static char spellStoneCount[0x2];
-/*0x1E*/ static char dusterCount[0x2];
-/*0x20*/ static char _bss_20[0x4];
+/*0x10*/ static char gameplayTime[10];
+/*0x1A*/ static char spiritCount[2];
+/*0x1C*/ static char spellStoneCount[2];
+/*0x1E*/ static char dusterCount[2];
+/*0x20*/ static char _bss_20[4];
 /*0x24*/ static char completionPercentage[4];
-/*0x28*/ static char _bss_28[0x2];
+/*0x28*/ static char _bss_28[2];
 /*0x2A*/ static u8 pauseScreenState;
 /*0x2B*/ static s8 gameSavedMessageTimer;
 /*0x2C*/ static s16 pauseMenuOpacity;
 
 // offset: 0x0 | ctor
 void pausemenu_ctor(void *dll) {
-    GameTextChunk* temp_v0;
+    textureSpellStone = tex_load_deferred(TEXTABLE_31E_GameSelect_SpellStones);
+    textureDuster = tex_load_deferred(TEXTABLE_310);
+    textureSpirit = tex_load_deferred(TEXTABLE_31F_GameSelect_Spirits);
 
-    textureSpellStone = tex_load_deferred(0x31E);
-    textureDuster = tex_load_deferred(0x310);
-    textureSpirit = tex_load_deferred(0x31F);
     gametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_000_Pause_Menu);
     pauseMenuItems[0].text = gametext->strings[0];
     pauseMenuItems[1].text = gametext->strings[1];
     font_load(FONT_FUN_FONT);
-    gDLL_74_Picmenu->vtbl->set_items(pauseMenuItems, 2, 0, &pauseMenuSounds, 0, 0, 0x5B, 0x45, 0x30, 0xFF, 0xD7, 0x3D);
+
+    gDLL_74_Picmenu->vtbl->set_items(pauseMenuItems, 
+        ARRAYCOUNT(pauseMenuItems), 0, 
+        &pauseMenuSounds, 
+        0, 0, 
+        0x5B, 0x45, 0x30, 
+        0xFF, 0xD7, 0x3D
+    );
+
     pauseMenuOpacity = 0;
     pauseScreenState = 0;
 }
@@ -87,8 +96,11 @@ void pausemenu_dtor(void *dll) {
     tex_free(textureSpellStone);
     tex_free(textureDuster);
     tex_free(textureSpirit);
-    mmFree((void*)gametext);
+
+    mmFree(gametext);
+
     font_unload(FONT_FUN_FONT);
+
     gDLL_74_Picmenu->vtbl->clear_items();
 }
 
@@ -99,7 +111,6 @@ s32 pausemenu_update1(void) {
     s32 selectedItem;
     
     if (pauseScreenState == PAUSE_MENU_MAIN) {
-
         action = gDLL_74_Picmenu->vtbl->update();
         selectedItem = gDLL_74_Picmenu->vtbl->get_selected_item();
         
@@ -112,10 +123,10 @@ s32 pausemenu_update1(void) {
             } else {
                 gDLL_6_AMSFX->vtbl->play(0, SOUND_B72_Game_Saved, MAX_VOLUME, 0, 0, 0, 0);
                 gameSavedMessageTimer = 0;
-                pauseScreenState = 1;
+                pauseScreenState = PAUSE_MENU_GAME_SAVED;
                 
                 for (index = 0; index < 2; index++){
-                    pauseMenuItems[index].flags |= 0x1000;
+                    pauseMenuItems[index].flags |= PICMENU_INTANGIBLE;
                 }
                 
                 gDLL_74_Picmenu->vtbl->update_flags(pauseMenuItems);
@@ -137,7 +148,7 @@ s32 pausemenu_update1(void) {
             pauseScreenState = 0;
 
             for (index = 0; index < 2; index++){
-                pauseMenuItems[index].flags &= ~0x1000;
+                pauseMenuItems[index].flags &= ~PICMENU_INTANGIBLE;
             }
             
             gDLL_74_Picmenu->vtbl->update_flags(pauseMenuItems);

@@ -1,0 +1,16 @@
+.text = 0x0:
+WallAnimator_ctor = 0x0;
+WallAnimator_dtor = 0xC;
+WallAnimator_setup = 0x18;
+WallAnimator_control = 0x1E8;
+WallAnimator_update = 0x6E8;
+WallAnimator_print = 0x6F4;
+WallAnimator_free = 0x748;
+WallAnimator_get_model_flags = 0x7D0;
+WallAnimator_get_data_size = 0x7E0;
+WallAnimator_calculate_vertex_weights = 0x7F4;
+WallAnimator_tick_dig = 0xB54;
+WallAnimator_is_dig_finished = 0xC20;
+WallAnimator_get_energy_cost = 0xC3C;
+
+.rodata = 0xCD4:

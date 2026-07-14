@@ -13,7 +13,7 @@ DLL_INTERFACE(DLL_11_newlfx) {
 /*3*/ void *(*func3)(s32, u8*);
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;
-/*6*/ void (*func6)(u16, s32, s16, Object*);
+/*6*/ void (*func6)(u16, s32, s16);
 /*7*/ UnknownDLLFunc func7;
 };
 

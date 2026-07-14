@@ -1,5 +1,6 @@
 #include "dlls/engine/4_race.h"
 #include "sys/curves.h"
+#include "sys/math.h"
 #include "sys/rand.h"
 #include "unktypes.h"
 
@@ -428,121 +429,135 @@ RaceStruct* dll_4_func_1028(s32 arg0) {
 }
 
 // offset: 0x1100 | func: 10 | export: 12
-s32 dll_4_func_1100(RaceStruct* arg0) {
-    s32 var_a0;
-    s32 var_v1;
-    RaceStruct* temp_v0;
+/**
+  * Get race ordinal position, relative to other racers.
+  */
+s32 dll_4_func_1100(RaceStruct* racer) {
+    s32 i;
+    s32 position;
+    RaceStruct* otherRacer;
 
-    var_v1 = 1;
-    for (var_a0 = 0; var_a0 < _bss_5A; var_a0++) {
-        temp_v0 = _bss_54[var_a0];
-        if (temp_v0 != arg0) {
-            if (arg0->unk1C < temp_v0->unk1C) {
-                var_v1 += 1;
-            } else if ((temp_v0->unk1C == arg0->unk1C) && (arg0->unkC < temp_v0->unkC)) {
-                var_v1 += 1;
+    position = 1;
+    for (i = 0; i < _bss_5A; i++) {
+        otherRacer = _bss_54[i];
+        if (otherRacer != racer) {
+            if (racer->unk1C < otherRacer->unk1C) {
+                //Increase position if the other racer is at a higher-indexed checkpoint
+                position++;
+            } else if ((otherRacer->unk1C == racer->unk1C) && (racer->unkC < otherRacer->unkC)) {
+                //Or increase position if the other racer is closer to the next checkpoint
+                position++;
             }
         }
     }
-    return var_v1;
+    return position;
 }
 
 // offset: 0x119C | func: 11 | export: 5
-s32 dll_4_func_119C(SRT* arg0, RaceStruct* arg1, f32 arg2, s32 arg3, u8 arg4, u8 arg5) {
-    f32 temp;
-    s32 var_s5;
+s32 dll_4_func_119C(SRT* racerSRT, RaceStruct* racer, f32 arg2, s32 arg3, u8 usePitchAndY, u8 arg5) {
+    f32 tValueDelta;
+    s32 iterations;
     Vec4f spF0;
     Vec4f spE0;
     Vec4f spD0;
-    RaceCheckpointSetup* temp_v0;
-    f32 temp_fs2;
-    f32 temp_fs3;
-    f32 temp_fs5;
-    f32 var_fs0;
-    f32 spB8;
-    f32 spB4;
-    f32 spB0;
-    f32 var_fv1;
+    RaceCheckpointSetup* checkpointSetup;
+    f32 hermiteX;
+    f32 hermiteZ;
+    f32 hermiteY;
+    f32 tValue;
+    f32 velocityX;
+    f32 velocityY;
+    f32 velocityZ;
+    f32 lateralSpeed;
     s8 var_s1;
-    s8 var_s2;
+    s8 direction;
     s32 pad[3];
-    s32 sp98;
-    s32 sp94;
-    s32 sp90;
+    s32 curvesYaw;
+    s32 curvesPitch;
+    s32 idx;
 
-    var_s5 = 0;
-    while (var_s5 < 3) {
-        if (arg1->unk10 < 0) {
+    iterations = 0;
+    while (iterations < 3) {
+        if (racer->unk10 < 0) {
             return 1;
         }
-        temp_v0 = dll_4_func_1F60(arg1->unk10, &sp90);
-        if (temp_v0 == NULL) {
+        checkpointSetup = dll_4_func_1F60(racer->unk10, &idx);
+        if (checkpointSetup == NULL) {
             return 1;
         }
-        if (temp_v0->unk20[0] < 0) {
-            arg1->unk10 = -1;
+        if (checkpointSetup->unk20[0] < 0) {
+            racer->unk10 = -1;
             return 1;
         }
+
         var_s1 = 0;
-        if ((temp_v0->unk20[1] >= 0) && (arg5 != 0)) {
+        if ((checkpointSetup->unk20[1] >= 0) && arg5) {
             var_s1 = 1;
         }
-        if (dll_4_func_1758(temp_v0, var_s1, &spF0, &spE0, &spD0, arg3 + 2, 0, 0) == 0) {
+        
+        if (dll_4_func_1758(checkpointSetup, var_s1, &spF0, &spE0, &spD0, arg3 + 2, 0, 0) == 0) {
             return 1;
         }
-        var_s2 = 0;
-        temp = (arg2 / sqrtf(SQ(spF0.f[0] - spF0.f[1]) + SQ(spE0.f[0] - spE0.f[1]) + SQ(spD0.f[0] - spD0.f[1])));
-        var_fs0 = temp + arg1->unk8;
-        if (var_fs0 < 0.0f) {
-            var_fs0 = 0.0f;
-            var_s2 = -1;
+        tValueDelta = (arg2 / sqrtf(SQ(spF0.f[0] - spF0.f[1]) + SQ(spE0.f[0] - spE0.f[1]) + SQ(spD0.f[0] - spD0.f[1])));
+        
+        direction = 0;
+        tValue = tValueDelta + racer->unk8;
+        if (tValue < 0.0f) {
+            tValue = 0.0f;
+            direction = -1;
         }
-        if (var_fs0 > 1.0f) {
-            var_fs0 = 1.0f;
-            var_s2 = 1;
+        if (tValue > 1.0f) {
+            tValue = 1.0f;
+            direction = 1;
         }
-        temp_fs2 = curves_hermite(spF0.f, var_fs0, &spB8);
-        temp_fs5 = curves_hermite(spE0.f, var_fs0, &spB4);
-        temp_fs3 = curves_hermite(spD0.f, var_fs0, &spB0);
-        sp98 = arctan2_f(spB8, spB0) + 0x8000;
-        if (arg4) {
-            sp94 = arctan2_f(sqrtf((spB8 * spB8) + (spB0 * spB0)), spB4) - 0x4000;
-            var_fv1 = sqrtf(SQ(temp_fs2 - arg0->transl.x) + SQ(temp_fs3 - arg0->transl.z));
+
+        hermiteX = curves_hermite(spF0.f, tValue, &velocityX);
+        hermiteY = curves_hermite(spE0.f, tValue, &velocityY);
+        hermiteZ = curves_hermite(spD0.f, tValue, &velocityZ);
+        curvesYaw = arctan2_f(velocityX, velocityZ) + M_180_DEGREES;
+
+        if (usePitchAndY) {
+            curvesPitch = arctan2_f(sqrtf(SQ(velocityX) + SQ(velocityZ)), velocityY) - M_90_DEGREES;
+            lateralSpeed = sqrtf(SQ(hermiteX - racerSRT->transl.x) + SQ(hermiteZ - racerSRT->transl.z));
         } else {
-            var_fv1 = sqrtf(SQ(temp_fs2 - arg0->transl.x) + SQ(temp_fs3 - arg0->transl.z));
+            lateralSpeed = sqrtf(SQ(hermiteX - racerSRT->transl.x) + SQ(hermiteZ - racerSRT->transl.z));
         }
         if (arg2 < 0.0f) {
-            var_fv1 = -var_fv1;
+            lateralSpeed = -lateralSpeed;
         }
         
-        if ((var_s2 == -1) && (var_fv1 < arg2)) {
-            arg1->unk10 = temp_v0->unk18[var_s1];
-            arg1->unk8 = 0.9999f;
-            if ((var_s1 != 0) && (arg1->unk10 < 0)) {
-                arg1->unk10 = temp_v0->unk18[0];
+        if ((direction == -1) && (lateralSpeed < arg2)) {
+            racer->unk10 = checkpointSetup->unk18[var_s1];
+            racer->unk8 = 0.9999f;
+            if ((var_s1 != 0) && (racer->unk10 < 0)) {
+                racer->unk10 = checkpointSetup->unk18[0];
             }
-        } else if ((var_s2 == 1) && (var_fv1 < arg2)) {
-            arg1->unk10 = temp_v0->unk20[var_s1];
-            arg1->unk8 = 0.0f;
-            if ((var_s1 != 0) && (arg1->unk10 < 0)) {
-                arg1->unk10 = temp_v0->unk20[0];
+        } else if ((direction == 1) && (lateralSpeed < arg2)) {
+            racer->unk10 = checkpointSetup->unk20[var_s1];
+            racer->unk8 = 0.0f;
+            if ((var_s1 != 0) && (racer->unk10 < 0)) {
+                racer->unk10 = checkpointSetup->unk20[0];
             }
         } else {
-            arg1->unk8 = var_fs0;
+            racer->unk8 = tValue;
         }
-        arg2 -= var_fv1;
-        arg0->transl.x = temp_fs2;
-        if (arg4) {
-            arg0->transl.y = temp_fs5;
+
+        arg2 -= lateralSpeed;
+
+        racerSRT->transl.x = hermiteX;
+        if (usePitchAndY) {
+            racerSRT->transl.y = hermiteY;
         }
-        arg0->transl.z = temp_fs3;
-        var_s5++;
+        racerSRT->transl.z = hermiteZ;
+
+        iterations++;
     }
 
-    arg0->yaw = (s16) sp98;
-    if (arg4 != 0) {
-        arg0->pitch = (s16) sp94;
+    racerSRT->yaw = curvesYaw;
+    if (usePitchAndY) {
+        racerSRT->pitch = curvesPitch;
     }
+
     return 0;
 }
 
@@ -688,12 +703,12 @@ static s32 dll_4_func_1758(RaceCheckpointSetup* arg0, s32 arg1, Vec4f* arg2, Vec
 }
 
 // offset: 0x1F60 | func: 15 | export: 8
-RaceCheckpointSetup *dll_4_func_1F60(s32 checkpointUID, s32 *arg1) {
-    s32 temp_t7;
+RaceCheckpointSetup *dll_4_func_1F60(s32 checkpointUID, s32 *oIdx) {
+    s32 currentIdx;
     s32 max;
     s32 min;
 
-    *arg1 = -1;
+    *oIdx = -1;
     
     if (checkpointUID < 0) {
         return NULL;
@@ -702,16 +717,17 @@ RaceCheckpointSetup *dll_4_func_1F60(s32 checkpointUID, s32 *arg1) {
     max = _bss_6A0 - 1;
     min = 0;
 
+    //Binary search for the checkpoint, based on sorted UIDs
     while (min <= max) {
-        temp_t7 = (max + min) >> 1;
+        currentIdx = (max + min) >> 1;
 
-        if (_bss_60[temp_t7].uID < (u32)checkpointUID) {
-            min = temp_t7 + 1;
-        } else if (_bss_60[temp_t7].uID > (u32)checkpointUID) {
-            max = temp_t7 - 1;
+        if (_bss_60[currentIdx].uID < (u32)checkpointUID) {
+            min = currentIdx + 1;
+        } else if (_bss_60[currentIdx].uID > (u32)checkpointUID) {
+            max = currentIdx - 1;
         } else {
-            *arg1 = temp_t7;
-            return _bss_60[temp_t7].setup;
+            *oIdx = currentIdx;
+            return _bss_60[currentIdx].setup;
         }
     }
 

@@ -10,9 +10,12 @@
 #include "sys/main.h"
 #include "sys/fonts.h"
 #include "sys/gfx/texture.h"
+#include "sys/gfx/textable.h"
 #include "game/gamebits.h"
 #include "macros.h"
 #include "sys/rcp.h"
+
+#include "prevent_bss_reordering.h"
 
 static const char str_1[] = "PICMENU: maxitems exceeded\n";
 static const char str_2[] = "UPLINK overflow=%d\n";
@@ -29,12 +32,12 @@ static const char str_6[] = "PICMENU: tex overflow\n";
 
 /*C*/ static PicMenuTexture sTextures[] = {
     //     ptr   ID     width
-    /*0*/{ NULL, 0x314, 40 },
-    /*1*/{ NULL, 0x315, 40 },
-    /*2*/{ NULL, 0x317, 80 },
-    /*3*/{ NULL, 0x319, 80 },
-    /*4*/{ NULL, 0x318, 40 },
-    /*5*/{ NULL, 0x31A, 20 }
+    /*0*/{ NULL, TEXTABLE_314_PicmenuBox_End_Left,       40 },
+    /*1*/{ NULL, TEXTABLE_315_PicmenuBox_End_Right,      40 },
+    /*2*/{ NULL, TEXTABLE_317_PicmenuBox_Middle_1,       80 },
+    /*3*/{ NULL, TEXTABLE_319_PicmenuBox_Middle_2,       80 },
+    /*4*/{ NULL, TEXTABLE_318_PicmenuBox_Middle_Half,    40 },
+    /*5*/{ NULL, TEXTABLE_31A_PicmenuBox_Middle_Quarter, 20 }
 };
 
 /*0*/ static PicMenuItem sItems[40];
@@ -247,7 +250,7 @@ PicMenuAction picmenu_update() {
     if (sAllowButtons) {
         buttons = joy_get_pressed(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
-            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && main_get_bits(BIT_44F) == 0) {
+            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && (main_get_bits(BIT_Menus_Selection_Blocked) == FALSE)) {
                 joy_disable_buttons(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {

@@ -90,54 +90,65 @@ CurveNode *curves_func_1BC(s32 *count) {
 }
 
 // offset: 0x1E4 | func: 4 | export: 4
-s32 curves_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
+/**
+  * Finds the closest curveSetup node to a given coordinate 
+  * (prioritising any with a matching tag) and returns its uID.
+  */
+s32 curves_func_1E4(f32 x, f32 y, f32 z, s32 *curveTypes, s32 curveTypeCount, s32 curveTag) {
     CurveSetup* curveSetup;
-    CurveSetup* var_s4;
-    CurveSetup* var_s5;
+    CurveSetup* closestCurveSetup;
+    CurveSetup* closestCurveSetupTagged;
     f32 zDiff;
     f32 xDiff;
     f32 dist;
     f32 yDiff;
-    f32 var_fs0;
-    f32 var_fs1;
+    f32 minDistance;
+    f32 minDistanceTagged;
     s32 i;
     s32 k;
 
-    var_fs0 = 5000000.0f;
-    var_s4 = NULL;
-    var_fs1 = 5000000.0f;
-    var_s5 = NULL;
+    minDistance = 5000000.0f;
+    closestCurveSetup = NULL;
+
+    minDistanceTagged = 5000000.0f;
+    closestCurveSetupTagged = NULL;
     
     for (i = 0; i < _bss_28A8; i++)  {
         curveSetup =_bss_8[i].setup;
         k = 0;
 
         do {
-            if ((arg4 <= 0) || (curveSetup->curveType == arg3[k])) {
+            if ((curveTypeCount <= 0) || (curveSetup->curveType == curveTypes[k])) {
                 xDiff = curveSetup->pos.x - x;
                 yDiff = curveSetup->pos.y - y;
                 zDiff = curveSetup->pos.z - z;
                 dist = sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
-                if (dist < var_fs0) {
-                    var_fs0 = dist;
-                    var_s4 = curveSetup;
+
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    closestCurveSetup = curveSetup;
                 }
-                if ((arg5 == curveSetup->unk18) && (dist < var_fs1)) {
-                    var_fs1 = dist;
-                    var_s5 = curveSetup;
+
+                if ((curveTag == curveSetup->unk18) && (dist < minDistanceTagged)) {
+                    minDistanceTagged = dist;
+                    closestCurveSetupTagged = curveSetup;
                 }
-                k = arg4;
+
+                k = curveTypeCount;
             }
 
             k++;
-        } while (k < arg4);
+        } while (k < curveTypeCount);
     }
-    if (var_s5 != NULL) {
-        var_s4 = var_s5;
+
+    if (closestCurveSetupTagged != NULL) {
+        closestCurveSetup = closestCurveSetupTagged;
     }
-    if (var_s4 != NULL) {
-        return var_s4->uID;
+
+    if (closestCurveSetup != NULL) {
+        return closestCurveSetup->uID;
     }
+
     return -1;
 }
 
@@ -405,17 +416,17 @@ s32 curves_func_B8C(s32* arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
 }
 
 // offset: 0xD8C | func: 13 | export: 28
-s32 curves_func_D8C(CurveSetup* arg0) {
-    s32 var_s1;
+s32 curves_func_D8C(CurveSetup* setup) {
+    s32 nodeCount;
 
-    var_s1 = 1;
-    while ((arg0 != NULL) && (curves_func_1924(arg0) == 0)) {
-        arg0 = curves_func_39C(curves_func_438(arg0, 0));
-        if (arg0 != NULL) {
-            var_s1 += 1;
+    nodeCount = 1;
+    while ((setup != NULL) && (curves_func_1924(setup) == 0)) {
+        setup = curves_func_39C(curves_func_438(setup, 0));
+        if (setup != NULL) {
+            nodeCount++;
         }
     }
-    return var_s1;
+    return nodeCount;
 }
 
 // offset: 0xE40 | func: 14 | export: 29
@@ -440,19 +451,19 @@ s32 curves_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4)
                 arg1[var_s5] = arg0->pos.x;
                 arg2[var_s5] = arg0->pos.y;
                 arg3[var_s5] = arg0->pos.z;
-                var_s5 = var_s5 + 1;
+                var_s5++;
                 arg1[var_s5] = temp_v0->pos.x;
                 arg2[var_s5] = temp_v0->pos.y;
                 arg3[var_s5] = temp_v0->pos.z;
-                var_s5 = var_s5 + 1;
+                var_s5++;
                 arg1[var_s5] = 2.0f * (fsin16_precise((s16) (arg0->unk2C << 8)) * (f32) arg0->unk2E);
                 arg2[var_s5] = 2.0f * (fsin16_precise((s16) (arg0->unk2D << 8)) * (f32) arg0->unk2E);
                 arg3[var_s5] = 2.0f * (fcos16_precise((s16) (arg0->unk2C << 8)) * (f32) arg0->unk2E);
-                var_s5 = var_s5 + 1;
+                var_s5++;
                 arg1[var_s5] = 2.0f * (fsin16_precise((s16) (temp_v0->unk2C << 8)) * (f32) temp_v0->unk2E);
                 arg2[var_s5] = 2.0f * (fsin16_precise((s16) (temp_v0->unk2D << 8)) * (f32) temp_v0->unk2E);
                 arg3[var_s5] = 2.0f * (fcos16_precise((s16) (temp_v0->unk2C << 8)) * (f32) temp_v0->unk2E);
-                var_s5 = var_s5 + 1;
+                var_s5++;
             }
             arg0 = temp_v0;
         }
@@ -625,11 +636,11 @@ s32 curves_func_1880(CurveSetup* arg0) {
 }
 
 // offset: 0x1924 | func: 21 | export: 12
-s32 curves_func_1924(CurveSetup* arg0) {
+s32 curves_func_1924(CurveSetup* setup) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-        if ((arg0->links[i] != -1) && !(arg0->unk1B & (1 << i))) {
+        if ((setup->links[i] != -1) && !(setup->unk1B & (1 << i))) {
             return 0;
         }
     }

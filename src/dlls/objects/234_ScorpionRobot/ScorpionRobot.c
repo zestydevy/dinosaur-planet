@@ -565,7 +565,7 @@ static s32 ScorpionRobot_state_7_dead(Object* self, ObjFSA_Data* fsa, f32 update
     fsa->unk341 = 3;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0);
+        gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0);
         gDLL_18_objfsa->vtbl->func21(self, fsa, 0x3C, 0xA, 0);
         baddie->unk3B4 = 0;
         main_set_bits(baddie->unk39C, 1);

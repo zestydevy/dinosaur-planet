@@ -284,7 +284,7 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
         }
         
         func_80024108(self, 0.004f, gUpdateRate, 0);
-        if (main_get_bits(BIT_424) && main_get_bits(BIT_425)) {
+        if (main_get_bits(BIT_DB_Nest_Egg_Added) && main_get_bits(BIT_DB_Nest_Added_All_Eggs)) {
             objData = self->data;
             objData->unk524++;
             return 1;
@@ -321,7 +321,7 @@ s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
         
     } else if (main_get_bits(BIT_42A)) {
         main_set_bits(BIT_41F, 0);
-        main_set_bits(BIT_425, 0);
+        main_set_bits(BIT_DB_Nest_Added_All_Eggs, 0);
         main_set_bits(BIT_428, 0);
         main_set_bits(BIT_420, 0);
         main_set_bits(BIT_422, 0);

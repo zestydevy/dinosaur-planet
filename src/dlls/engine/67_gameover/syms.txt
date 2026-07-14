@@ -1,0 +1,22 @@
+.text = 0x0:
+gameover_ctor = 0x0;
+gameover_dtor = 0x198;
+gameover_update1 = 0x200;
+gameover_update2 = 0x868;
+gameover_draw = 0x870;
+
+.rodata = 0x1320:
+
+.data = 0x1330:
+dPicmenuItems = 0x0; // absolute:0x1330
+
+.bss = 0x1420:
+sGameOverText = 0x0; // absolute:0x1420
+sTexDusterCounter = 0x4; // absolute:0x1424
+sOpacity = 0x8; // absolute:0x1428
+sFadeInDelayTimer = 0xC; // absolute:0x142C
+sGameSavedTimer = 0x10; // absolute:0x1430
+sGameOverScreenState = 0x14; // absolute:0x1434
+sDestination = 0x15; // absolute:0x1435
+sTransitionTimer = 0x16; // absolute:0x1436
+sDusterCountStr = 0x18; // absolute:0x1438

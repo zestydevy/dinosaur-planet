@@ -14,6 +14,7 @@
 #include "sys/dll.h"
 #include "sys/fs.h"
 #include "sys/joypad.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
 #include "sys/objlib.h"
@@ -929,6 +930,7 @@ static void anim_update_actor_transform(Object* animObj, Object* actor, AnimObj_
         var_fv1 = _bss_28;
         var_fa0 = _bss_2C;
     }
+    
     temp_a1 = animObj->srt.pitch;
     temp_a3 = animObj->srt.roll;
     if (actor != animObj) {
@@ -945,9 +947,9 @@ static void anim_update_actor_transform(Object* animObj, Object* actor, AnimObj_
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_ROT) {
             if (st->unk62 == 2) {
-                actor->srt.yaw = var_v1 + (s16) ((f32) st->yawDiff * st->unk58);
-                actor->srt.pitch = temp_a1 + (s16) ((f32) st->pitchDiff * st->unk58);
-                actor->srt.roll = temp_a3 + (s16) ((f32) st->rollDiff * st->unk58);
+                actor->srt.yaw = var_v1 + (s16) (st->yawDiff * st->unk58);
+                actor->srt.pitch = temp_a1 + (s16) (st->pitchDiff * st->unk58);
+                actor->srt.roll = temp_a3 + (s16) (st->rollDiff * st->unk58);
             } else {
                 actor->srt.yaw = var_v1;
                 actor->srt.pitch = temp_a1;
@@ -974,7 +976,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
     ObjSetup* setup;
     Object* player;
     s32 _pad2;
-    s16* temp_v0_3;
+    s16* headSeqJoint;
 
     setup = animObj->setup;
     animObj->srt.transl.x = setup->x;
@@ -1069,41 +1071,44 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             actor->srt.scale = actor->def->scale * var_fv1;
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_HEAD) {
-            temp_v0_3 = func_80034804(actor, 0);
-            if (temp_v0_3 != NULL) {
+            headSeqJoint = func_80034804(actor, 0);
+            if (headSeqJoint != NULL) {
                 if (st->channelTotalKeys[CHANNEL_headRotateX] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateX, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[0] = st->unk122 + (s16) (var_fv1 * 182.044f);
+                headSeqJoint[0] = st->unk122 + (s16) (var_fv1 * 182.044f);
+                
                 if (st->channelTotalKeys[CHANNEL_headRotateY] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateY, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[1] = st->unk120 + (s16) (var_fv1 * 182.044f);
+                headSeqJoint[1] = st->unk120 + (s16) (var_fv1 * 182.044f);
+
                 if (st->channelTotalKeys[CHANNEL_headRotateZ] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateZ, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[2] = (s16) (var_fv1 * 182.044f);
+                headSeqJoint[2] = (s16) (var_fv1 * 182.044f);
+
                 if (st->unk7A & ANIM7AFLAG_UNK400) {
-                    anim_func_9EC8(actor, temp_v0_3, st->unk142_4);
+                    anim_func_9EC8(actor, headSeqJoint, st->unk142_4);
                 }
             }
             if (1){} // @fake
         }
         if (st->unk7A & ANIM7AFLAG_OVERRIDE_JAW) {
-            temp_v0_3 = func_80034804(actor, 1);
-            if (temp_v0_3 != NULL) {
+            headSeqJoint = func_80034804(actor, 1);
+            if (headSeqJoint != NULL) {
                 if (st->channelTotalKeys[CHANNEL_jaw] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_jaw, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                temp_v0_3[0] = (s16) (var_fv1 * 182.044f);
+                headSeqJoint[0] = (s16) (var_fv1 * 182.044f);
             }
             if (1){} // @fake
         }
@@ -3069,7 +3074,7 @@ void anim_update_camera(void) {
                 camseqData.srt.transl.x = sp184;
                 camseqData.srt.transl.y = sp180;
                 camseqData.srt.transl.z = sp17C;
-                camseqData.srt.yaw = 0x8000 - sp17A;
+                camseqData.srt.yaw = M_180_DEGREES - sp17A;
                 camseqData.srt.pitch = -sp178;
                 camseqData.srt.roll = sp176;
                 if (_data_30 != 0) {
@@ -3085,7 +3090,7 @@ void anim_update_camera(void) {
                 cam->srt.transl.x = sp184;
                 cam->srt.transl.y = sp180;
                 cam->srt.transl.z = sp17C;
-                cam->srt.yaw = 0x8000 - sp17A;
+                cam->srt.yaw = M_180_DEGREES - sp17A;
                 cam->srt.pitch = -sp178;
                 cam->srt.roll = sp176;
                 if (_data_30 != 0) {
@@ -3097,9 +3102,9 @@ void anim_update_camera(void) {
                 _bss_5A4 = cam->srt.transl.x;
                 _bss_5A8 = cam->srt.transl.y;
                 _bss_5B0 = cam->srt.transl.z;
-                _bss_5C8 = (s32) cam->srt.yaw;
-                _bss_5D0 = (s32) cam->srt.pitch;
-                _bss_5D4 = (s32) cam->srt.roll;
+                _bss_5C8 = cam->srt.yaw;
+                _bss_5D0 = cam->srt.pitch;
+                _bss_5D4 = cam->srt.roll;
                 _bss_5C4 = cam->fov;
             }
         }
@@ -3125,10 +3130,10 @@ void anim_update_camera(void) {
         case DLL_ID_CAMSEQ:
             camseqData.srt.transl.x = _bss_5A4;
             camseqData.srt.transl.y = _bss_5A8;
-            camseqData.srt.yaw = (s16) _bss_5C8;
-            camseqData.srt.pitch = (s16) _bss_5D0;
+            camseqData.srt.yaw = _bss_5C8;
+            camseqData.srt.pitch = _bss_5D0;
             camseqData.srt.transl.z = _bss_5B0;
-            camseqData.srt.roll = (s16) _bss_5D4;
+            camseqData.srt.roll = _bss_5D4;
             camseqData.fov = _bss_5C4;
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSEQ, TRUE, 0, sizeof(camseqData), &camseqData, 0, Cam_Ease_All);
             break;

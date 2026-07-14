@@ -2,6 +2,8 @@
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/260_Pollen.h"
+#include "dlls/objects/common/collectable.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/animseq.h"
@@ -356,14 +358,16 @@ void BaddieControl_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
 }
 
 // offset: 0xED0 | func: 10 | export: 11
-s32 BaddieControl_func_ED0(Object* arg0, Baddie* arg1, u8 arg2) {
-    if (arg2 && (arg1->fsa.hitpoints <= 0) && (arg0->opacity == 0)) {
-        return 0;
+s32 BaddieControl_func_ED0(Object* baddieObj, Baddie* baddieData, u8 checkIfDead) {
+    if (checkIfDead && (baddieData->fsa.hitpoints <= 0) && (baddieObj->opacity == 0)) {
+        return FALSE;
     }
-    if ((arg0->parent == NULL) && (map_world_coords_to_block_index(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
-        return 0;
+
+    if ((baddieObj->parent == NULL) && (map_world_coords_to_block_index(baddieObj->srt.transl.x, baddieObj->srt.transl.y, baddieObj->srt.transl.z) < 0)) {
+        return FALSE;
     }
-    return 1;
+
+    return TRUE;
 }
 
 // offset: 0xF60 | func: 11 | export: 16
@@ -403,61 +407,70 @@ s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
 }
 
 // offset: 0x10F4 | func: 12 | export: 17
-Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
+Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanceThreshold, s32 angleThreshold) {
     Object* curObj;
     s32 pad5;
-    Object* spF8[2];
-    s32 var_v1;
+    Object* targetObjs[2];
+    s32 angle;
     s32 stop;
     s32 i;
-    Vec3f spE0;
+    Vec3f delta;
     s32 pad;
     s32 pad2;
-    Vec3s16 spD0;
-    Vec3s16 spC8;
-    Vec3f spBC;
+    Vec3s16 pPlayerS;
+    Vec3s16 pBaddieS;
+    Vec3f pTemp;
     Func_80059C40_Struct sp68;
     u8 temp_t3;
     u8 sp66;
     
     stop = FALSE;
-    spF8[0] = get_player();
-    spF8[1] = 0;
+
+    targetObjs[0] = get_player();
+    targetObjs[1] = NULL;
+    
     i = 0;
-    while (stop == FALSE && (curObj = spF8[i]) != NULL) {
-        VECTOR_SUBTRACT(curObj->globalPosition, arg0->globalPosition, spE0);
-        if ((VECTOR_MAGNITUDE(spE0) < arg2) && (fsa->hitpoints != 0)) {
+    while (stop == FALSE && (curObj = targetObjs[i]) != NULL) {
+        VECTOR_SUBTRACT(curObj->globalPosition, baddieObj->globalPosition, delta);
+        if ((VECTOR_MAGNITUDE(delta) < distanceThreshold) && (fsa->hitpoints != 0)) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func56(curObj) > 0.5f) {
                 stop = TRUE;
             }
-            var_v1 = arctan2_f(-spE0.f[0], -spE0.f[2]);
-            if (arg0->parent != NULL) {
-                var_v1 -= ((arg0->srt.yaw + arg0->parent->srt.yaw) & 0xFFFF);
-                CIRCLE_WRAP(var_v1)
+
+            angle = arctan2_f(-delta.f[0], -delta.f[2]);
+            if (baddieObj->parent != NULL) {
+                angle -= ((baddieObj->srt.yaw + baddieObj->parent->srt.yaw) & 0xFFFF);
+                CIRCLE_WRAP(angle)
             } else {
-                var_v1 -= (arg0->srt.yaw & 0xFFFF);
-                CIRCLE_WRAP(var_v1)
+                angle -= (baddieObj->srt.yaw & 0xFFFF);
+                CIRCLE_WRAP(angle)
             }
-            if ((var_v1 < arg3) && (-arg3 < var_v1)) { // FOV check?
+
+            if ((angleThreshold > angle) && (angle > -angleThreshold)) { // FOV check?
                 stop = TRUE;
             }
+
             if (((DLL_210_Player*)curObj->dll)->vtbl->func66(curObj, 1) == 0) {
                 stop = FALSE;
             }
+            
             if (((DLL_210_Player*)curObj->dll)->vtbl->get_health(curObj) <= 0) {
                 stop = FALSE;
             } else {
-                spBC.x = arg0->srt.transl.x;
-                spBC.y = arg0->srt.transl.y + 10.0f;
-                spBC.z = arg0->srt.transl.z;
-                func_80007EE0(&spBC, &spC8);
-                spBC.x = curObj->srt.transl.x;
-                spBC.y = curObj->srt.transl.y + 10.0f;
-                spBC.z = curObj->srt.transl.z;
-                func_80007EE0(&spBC, &spD0);
-                temp_t3 = func_80008048(&spD0, &spC8, NULL, &sp66, 0);
+                //Checking line-of-sight between baddie and player?
+                pTemp.x = baddieObj->srt.transl.x;
+                pTemp.y = baddieObj->srt.transl.y + 10.0f;
+                pTemp.z = baddieObj->srt.transl.z;
+                func_80007EE0(&pTemp, &pBaddieS);
+
+                pTemp.x = curObj->srt.transl.x;
+                pTemp.y = curObj->srt.transl.y + 10.0f;
+                pTemp.z = curObj->srt.transl.z;
+                func_80007EE0(&pTemp, &pPlayerS);
+
+                temp_t3 = func_80008048(&pPlayerS, &pBaddieS, NULL, &sp66, 0);
                 if ((sp66 == 1) || (temp_t3 != 0)) {
-                    if (func_80059C40(&arg0->srt.transl, &spBC, 1.0f, 0, &sp68, arg0, 4, -1, 0, 0) != 0) {
+                    if (func_80059C40(&baddieObj->srt.transl, &pTemp, 1.0f, 0, &sp68, baddieObj, 4, -1, 0, 0) != 0) {
                         stop = FALSE;
                     }
                 } else {
@@ -503,104 +516,99 @@ void BaddieControl_func_148C(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2,
 }
 
 // offset: 0x15CC | func: 14 | export: 18
-Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
-    Baddie_Setup* sp4C;
-    BaddieDrop_ObjSetup* var_v0;
-    Object* temp_v0;
-    f32 sp40;
-    f32 sp3C;
-    f32 sp38;
-    f32 sp34;
-    f32 temp_fv0;
-    Baddie_Setup* setup2;
+Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemIdx, s32 gamebitID, u8 arg3) {
+    Baddie_Setup* baddieSetup;
+    Collectable_Setup* dropSetup;
+    Object* drop;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 distance;
+    Baddie_Setup* objSetup;
 
-    sp4C = (Baddie_Setup*)arg0->setup;
+    baddieSetup = (Baddie_Setup*)obj->setup;
     
-    if (arg1 == 0) {
+    if (droppedItemIdx == 0) {
         return NULL;
     }
-    switch (arg1) {
-    case 1:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+
+    switch (droppedItemIdx) {
+    case BaddieDrop_1_MagicDust_Mid:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         break;
-    case 2:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_EnergyGem1);
+    case BaddieDrop_2_Energy_Gem:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_EnergyGem1);
         break;
-    case 3:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_meatPickup);
+    case BaddieDrop_3_Energy_Egg:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_meatPickup);
         break;
-    case 4:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
-        if (arg2 != -1) {
-            var_v0->unk1C = arg2;
+    case BaddieDrop_4_MagicDust_Mid:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        if (gamebitID != NO_GAMEBIT) {
+            dropSetup->gamebitCollected = gamebitID;
         }
         break;
-    case 5:
-        setup2 = (Baddie_Setup*)arg0->setup;
-        sp40 = arg0->globalPosition.x;
-        sp3C = arg0->globalPosition.y;
-        sp38 = arg0->globalPosition.z;
-        if (setup2 != NULL) {
-            arg0->globalPosition.x = setup2->base.x;
-            arg0->globalPosition.y = setup2->base.y;
-            arg0->globalPosition.z = setup2->base.z;
+    case BaddieDrop_5_Nearby_Collectable:
+        objSetup = (Baddie_Setup*)obj->setup;
+        x = obj->globalPosition.x;
+        y = obj->globalPosition.y;
+        z = obj->globalPosition.z;
+
+        //Move the Baddie back to their objSetup's base position
+        if (objSetup != NULL) {
+            obj->globalPosition.x = objSetup->base.x;
+            obj->globalPosition.y = objSetup->base.y;
+            obj->globalPosition.z = objSetup->base.z;
         }
         
-        sp34 = 750.0f;
-        temp_v0 = obj_get_nearest_type_to(OBJTYPE_Collectable, arg0, &sp34);
-        arg0->globalPosition.x = sp40;
-        arg0->globalPosition.y = sp3C;
-        arg0->globalPosition.z = sp38;
-        if (temp_v0 != NULL) {
-            temp_fv0 = arg0->srt.transl.x;
-            temp_v0->globalPosition.x = temp_fv0;
-            temp_v0->srt.transl.x = temp_fv0;
-            
-            temp_fv0 = arg0->srt.transl.y + 15.0f;
-            temp_v0->globalPosition.y = temp_fv0;
-            temp_v0->srt.transl.y = temp_fv0;
-            
-            temp_fv0 = arg0->srt.transl.z;
-            temp_v0->globalPosition.z = temp_fv0;
-            temp_v0->srt.transl.z = temp_fv0;
+        //Search for any nearby Collectables
+        distance = 750.0f;
+        drop = obj_get_nearest_type_to(OBJTYPE_Collectable, obj, &distance);
+        obj->globalPosition.x = x;
+        obj->globalPosition.y = y;
+        obj->globalPosition.z = z;
+        if (drop != NULL) {
+            drop->srt.transl.x = drop->globalPosition.x = obj->srt.transl.x;
+            drop->srt.transl.y = drop->globalPosition.y = obj->srt.transl.y + 15.0f;
+            drop->srt.transl.z = drop->globalPosition.z = obj->srt.transl.z;
         }
-        _bss_0 = temp_v0;
-        return temp_v0;
-    case 6:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustSmall);
+        _bss_0 = drop;
+        return drop;
+    case BaddieDrop_6_MagicDust_Small:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustSmall);
         break;
-    case 7:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+    case BaddieDrop_7_MagicDust_Mid:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         break;
-    case 8:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustLarge);
+    case BaddieDrop_8_MagicDust_Large:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustLarge);
         break;
-    case 9:
-        var_v0 = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustHuge);
+    case BaddieDrop_9_MagicDust_Huge:
+        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustHuge);
         break;
     default:
         return NULL;
     }
     
-    var_v0->unk1A = 0x14;
-    var_v0->unk2C = -1;
-    var_v0->unk1C = -1;
-    var_v0->unk24 = -1;
-    var_v0->base.x = arg0->srt.transl.x;
-    var_v0->base.y = arg0->srt.transl.y + 30.0f;
-    var_v0->base.z = arg0->srt.transl.z;
+    dropSetup->objHitsValue = 20;
+    dropSetup->gamebitCount = NO_GAMEBIT;
+    dropSetup->gamebitCollected = NO_GAMEBIT;
+    dropSetup->gamebitSecondary = NO_GAMEBIT;
+    dropSetup->base.x = obj->srt.transl.x;
+    dropSetup->base.y = obj->srt.transl.y + 30.0f;
+    dropSetup->base.z = obj->srt.transl.z;
     if (arg3 != 0) {
-        var_v0->unk2E = 2;
+        dropSetup->unk2E = 2;
     } else {
-        var_v0->unk2E = 1;
+        dropSetup->unk2E = 1;
     }
-    var_v0->base.loadFlags = sp4C->base.loadFlags;
-    var_v0->base.byte6 = sp4C->base.byte6;
-    var_v0->base.byte5 = sp4C->base.byte5;
-    var_v0->base.fadeDistance = sp4C->base.fadeDistance;
-    temp_v0 = obj_create(&var_v0->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, (s32) arg0->mapID, -1, arg0->parent);
-    _bss_0 = temp_v0;
-    return temp_v0;
+    dropSetup->base.loadFlags = baddieSetup->base.loadFlags;
+    dropSetup->base.loadDistance = baddieSetup->base.loadDistance;
+    dropSetup->base.fadeFlags = baddieSetup->base.fadeFlags;
+    dropSetup->base.fadeDistance = baddieSetup->base.fadeDistance;
+    drop = obj_create(&dropSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, obj->mapID, -1, obj->parent);
+    _bss_0 = drop;
+    return drop;
 }
 
 // offset: 0x18E4 | func: 15 | export: 19

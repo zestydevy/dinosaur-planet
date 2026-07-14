@@ -1,0 +1,28 @@
+.text = 0x0:
+frontend_ctor = 0x0;
+frontend_dtor = 0x7C;
+frontend_create_slider = 0xE0;
+frontend_create_checkbox = 0x1C4;
+frontend_create_list = 0x284;
+frontend_free = 0x354;
+frontend_update = 0x38C;
+frontend_draw = 0x6A0;
+frontend_get_highlight_state = 0x77C;
+frontend_set_highlight_state = 0x790;
+frontend_get_value = 0x7C0;
+frontend_set_value = 0x7CC;
+frontend_did_value_change = 0x7E0;
+frontend_set_unlock_state = 0x7F4;
+frontend_slider_draw = 0x820;
+frontend_checkbox_draw = 0x938;
+frontend_list_draw = 0xA00;
+
+.rodata = 0xE28:
+
+.data = 0xE28:
+dTextureIDs = 0x0; // absolute:0xE28
+dLeftArrowChar = 0x10; // absolute:0xE38
+dRightArrowChar = 0x14; // absolute:0xE3C
+
+.bss = 0xE48:
+sTextures = 0x0; // absolute:0xE48

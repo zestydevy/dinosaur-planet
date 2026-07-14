@@ -1,9 +1,11 @@
 #include "common.h"
-#include "sys/objexpr.h"
-#include "sys/segment_1D900.h"
-#include "sys/memory.h"
-#include "sys/segment_1460.h"
+#include "sys/gfx/modgfx.h"
+#include "sys/gfx/projgfx.h"
 #include "sys/map.h"
+#include "sys/memory.h"
+#include "sys/objexpr.h"
+#include "sys/segment_1460.h"
+#include "sys/segment_1D900.h"
 
 #include "prevent_bss_reordering.h"
 
@@ -17,13 +19,13 @@ typedef struct {
 
 typedef struct {
 /*00*/    s16 unused0;
-/*02*/    s16 yawSpeed;       //rotation speed for crystal and sun
-/*04*/    s16 rollSpeed;      //roll speed for sun
+/*02*/    s16 yawSpeed;        //rotation speed for crystal and sun
+/*04*/    s16 rollSpeed;       //roll speed for sun
 /*06*/    s16 pad6;
-/*08*/    s16* inroomBuffer;  //unused aside from setup, seems to store a value for each vertex
-/*0C*/    DLL_Unknown *sunFX; //projgfx DLL (2, 18) used by Quan Ata Lachu sun
+/*08*/    s16* inroomBuffer;   //unused aside from setup, seems to store a value for each vertex
+/*0C*/    DLL_IProjgfx *sunFX; //projgfx DLL (2, 18) used by Quan Ata Lachu sun
 /*10*/    s8 unused10;
-/*11*/    u8 showCrystal;     //unloads crystal once transformation into sun complete
+/*11*/    u8 showCrystal;      //unloads crystal once transformation into sun complete
 } WL_Crystal_Data;
 
 typedef enum {
@@ -38,7 +40,7 @@ typedef enum {
 #define WMSun_Max_Opacity_Middle 85
 #define WMSun_Max_Opacity_Outer  25
 
-/*0x0*/ static DLL_Unknown* data_sun_modGFX = NULL;
+/*0x0*/ static DLL_IModgfx* data_sun_modGFX = NULL;
 
 /*0x0*/ static s16 fxTimer1;
 /*0x2*/ static s16 fxTimer2;
@@ -100,16 +102,16 @@ void WL_Crystal_setup(Object* self, WL_Crystal_Setup* objSetup, s32 arg2) {
 
         self->modelInstIdx = objSetup->modelIdx;        
         if (self->modelInstIdx == WMSun_Core) {
-            objData->sunFX = dll_load_deferred(0x2012, 1);
+            objData->sunFX = dll_load_deferred(DLL_ID_204, 1);
             objData->yawSpeed = rand_next(300, 600);
             objData->rollSpeed = rand_next(300, 600);
-            data_sun_modGFX = dll_load_deferred(0x1036, 1);
+            data_sun_modGFX = dll_load_deferred(DLL_ID_158, 1);
         } else {
             if (self->modelInstIdx == WMSun_Middle_Shell) {
                 objData->yawSpeed = rand_next(500, 800);
                 objData->rollSpeed = rand_next(500, 800);
             } else if (self->modelInstIdx == WMSun_Outer_Shell) {
-                objData->sunFX = dll_load_deferred(0x2012, 1);
+                objData->sunFX = dll_load_deferred(DLL_ID_204, 1);
                 objData->yawSpeed = rand_next(700, 1000);
                 objData->rollSpeed = rand_next(700, 1000);
             }
@@ -299,13 +301,12 @@ void WL_Crystal_control(Object* self) {
 
         //Create particles and effects
         if (self->modelInstIdx == WMSun_Core) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x1A9, NULL, 0x10000, -1, NULL);
-            gDLL_17_partfx->vtbl->spawn(self, 0x1A9, NULL, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1A9, NULL, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1A9, NULL, 0x10000, -1, NULL);
 
             //25% chance of 3D mesh light ray effect
             if (!rand_next(0, 4)) {
-                //TODO: use exact DLL interface
-                data_sun_modGFX->vtbl->func[0].withSixArgs((s32)self, 0, 0, 1, -1, 0);
+                data_sun_modGFX->vtbl->func0(self, 0, 0, 1, -1, 0);
             }
 
             //~0.6% chance of creating particles and playing sound effect
@@ -321,7 +322,7 @@ void WL_Crystal_control(Object* self) {
                 gDLL_6_AMSFX->vtbl->play(NULL, SOUND_WM_Sun_Whoosh, 0x43, NULL, NULL, 0, NULL);
                 while (goal) {
                     goal--;
-                    gDLL_17_partfx->vtbl->spawn(self, 0x1AA, &transform, 0x10000, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AA, &transform, 0x10000, -1, NULL);
                 }
             }
             WL_Crystal_handle_sun_flare_effects(self);
@@ -342,13 +343,13 @@ void WL_Crystal_control(Object* self) {
                 camera_set_shake_offset(2.8f);
             }
             if ((fxTimer5 < 700) && !rand_next(0, 5)) {
-                objData->sunFX->vtbl->func[0].withSevenArgs((s32)self, 0, 0, 0x10000, -1, 0x12, 0);
+                objData->sunFX->vtbl->func0(self, 0, 0, 0x10000, -1, 0x12, 0);
             }
             if (fxTimer5 > 0) {
                 fxTimer5 -= gUpdateRate;
                 if ((fxTimer5 < 200) && !rand_next(0, 1)) {
                     transform.transl.x = (fxTimer5 / 200.0f) + 0.1f;
-                    gDLL_17_partfx->vtbl->spawn(self, 0x1B1, &transform, 0x10000, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1B1, &transform, 0x10000, -1, NULL);
                 }
 
                 goal = 200;
@@ -356,7 +357,7 @@ void WL_Crystal_control(Object* self) {
                     fxTimer5 = 0;
                     while (goal) {
                         goal--;
-                        gDLL_17_partfx->vtbl->spawn(self, 0x1B2, NULL, 0x10000, -1, NULL);
+                        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1B2, NULL, 0x10000, -1, NULL);
                     }
                     main_set_bits(BIT_38D, 0);
                     main_set_bits(BIT_WM_Quan_Ata_Lachu_Sun, 1);
@@ -368,22 +369,22 @@ void WL_Crystal_control(Object* self) {
 
         if (fxTimer1 == 0) {
             if (!rand_next(0, (fxTimer2 + 2) / 200)) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x1AE, &transform, 0x10000, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AE, &transform, 0x10000, -1, NULL);
             }
             if (!rand_next(0, fxTimer2 / 70)) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x1AB, &transform, 0x10000, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AB, &transform, 0x10000, -1, NULL);
             }
             if (!rand_next(0, fxTimer2 / 70)) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x1AB, &transform, 0x10000, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AB, &transform, 0x10000, -1, NULL);
             }
             if (!rand_next(0, fxTimer2 / 70)) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x1AB, &transform, 0x10000, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AB, &transform, 0x10000, -1, NULL);
             }
             if (!rand_next(0, fxTimer2 / 70)) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x1AB, &transform, 0x10000, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AB, &transform, 0x10000, -1, NULL);
             }
             if (!rand_next(0, fxTimer2 / 70)) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x1AB, &transform, 0x10000, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AB, &transform, 0x10000, -1, NULL);
             }
             if (fxTimer2 > 0) {
                 fxTimer2 -= gUpdateRate;
@@ -393,17 +394,17 @@ void WL_Crystal_control(Object* self) {
             }
         } else {
             transform.transl.x = 0.1f;
-            gDLL_17_partfx->vtbl->spawn(self, 0x1B0, &transform, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1B0, &transform, 0x10000, -1, NULL);
             if ((fxTimer1 > 50) && !rand_next(0, 1)) {
                 transform.transl.x = ((fxTimer1 - 50) / 750.0f) + 0.1f;
-                gDLL_17_partfx->vtbl->spawn(self, 0x1B0, &transform, 0x10000, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1B0, &transform, 0x10000, -1, NULL);
             }
             if (fxTimer1 < 700) {
                 goal = fxTimer1 / 60;
                 while (goal) {
                     goal--;
                     transform.transl.x = fxTimer1 / 300.0f;
-                    gDLL_17_partfx->vtbl->spawn(self, 0x1AF, &transform, 0x10000, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AF, &transform, 0x10000, -1, NULL);
                 }
             }
             if (fxTimer1 > 0) {
@@ -422,13 +423,13 @@ void WL_Crystal_control(Object* self) {
 
     if ((self->modelInstIdx == WMSun_Middle_Shell) && (fxTimer2 == 0)) {
         if (rand_next(0, fxTimer3 / 60) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x1AC, NULL, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AC, NULL, 0x10000, -1, NULL);
         }
         if (rand_next(0, fxTimer3 / 60) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x1AC, NULL, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AC, NULL, 0x10000, -1, NULL);
         }
         if (rand_next(0, fxTimer3 / 60) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x1AC, NULL, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AC, NULL, 0x10000, -1, NULL);
         }
         if (fxTimer3 > 0) {
             fxTimer3 -= gUpdateRate;
@@ -440,10 +441,10 @@ void WL_Crystal_control(Object* self) {
     
     if ((self->modelInstIdx == WMSun_Outer_Shell) && (fxTimer2 <= 0) && (fxTimer3 <= 0)) {
         if (rand_next(0, fxTimer4 / 60) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x1AD, NULL, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AD, NULL, 0x10000, -1, NULL);
         }
         if (rand_next(0, fxTimer4 / 60) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x1AD, NULL, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AD, NULL, 0x10000, -1, NULL);
         }
         if (fxTimer4 > 0) {
             fxTimer4 -= gUpdateRate;
@@ -577,7 +578,7 @@ void WL_Crystal_handle_sun_flare_effects(Object* self) {
             sqMagnitudeB = sqrtf(sqMagnitudeA);
         }
 
-        //If camera facing within 45 degrees of sun, tint room darker and create flare effects
+        //If camera facing within 60 degrees of sun, tint room darker and create flare effects
         if (dotProductResult > 0.5f) {
             transform.transl.x = vSunToCamera.f[0] * 20.0f;
             transform.transl.y = 0/*.0f*/;
@@ -614,12 +615,12 @@ void WL_Crystal_handle_sun_flare_effects(Object* self) {
                 func_8001EAA4(0xFF, 0xFF, 0x9B, transform.scale);
             }
 
-            gDLL_17_partfx->vtbl->spawn(self, 0x6D, &transform, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_6D, &transform, 0x10000, -1, NULL);
 
             transform.roll = 1;
             transform.scale = 0.08f;
             transform.scale += 0.0005f * rand_next(0, 10);
-            gDLL_17_partfx->vtbl->spawn(self, 0x6D, &transform, 0x10000, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_6D, &transform, 0x10000, -1, NULL);
             return;
         }
 

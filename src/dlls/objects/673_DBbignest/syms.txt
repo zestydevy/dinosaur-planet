@@ -1,0 +1,15 @@
+.text = 0x0:
+DBBigNest_ctor = 0x0;
+DBBigNest_dtor = 0xC;
+DBBigNest_setup = 0x18;
+DBBigNest_control = 0x128;
+DBBigNest_update = 0x238;
+DBBigNest_print = 0x244;
+DBBigNest_free = 0x298;
+DBBigNest_get_model_flags = 0x2A8;
+DBBigNest_get_data_size = 0x2B8;
+DBBigNest_anim_callback = 0x2CC;
+DBBigNest_handle_eggs = 0x49C;
+
+.rodata = 0x6B8:
+str_0 = 0x0; // absolute:0x6B8

@@ -1,0 +1,13 @@
+.text = 0x0:
+Barrel_ctor = 0x0;
+Barrel_dtor = 0xC;
+Barrel_setup = 0x18;
+Barrel_control = 0xBC;
+Barrel_update = 0x3A8;
+Barrel_print = 0x3B4;
+Barrel_free = 0x450;
+Barrel_get_model_flags = 0x498;
+Barrel_get_data_size = 0x4A8;
+
+.rodata = 0x524:
+_oob_rodata_0 = 0x0; // absolute:0x524

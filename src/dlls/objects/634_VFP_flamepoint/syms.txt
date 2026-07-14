@@ -1,0 +1,13 @@
+.text = 0x0:
+VFP_FlamePoint_ctor = 0x0;
+VFP_FlamePoint_dtor = 0xC;
+VFP_FlamePoint_setup = 0x18;
+VFP_FlamePoint_control = 0x8C;
+VFP_FlamePoint_update = 0x1BC;
+VFP_FlamePoint_print = 0x1C8;
+VFP_FlamePoint_free = 0x21C;
+VFP_FlamePoint_get_model_flags = 0x25C;
+VFP_FlamePoint_get_data_size = 0x26C;
+VFP_FlamePoint_func_280 = 0x280;
+
+.rodata = 0x2F8:

@@ -1,0 +1,14 @@
+.text = 0x0:
+FireFlyLantern_ctor = 0x0;
+FireFlyLantern_dtor = 0xC;
+FireFlyLantern_setup = 0x18;
+FireFlyLantern_control = 0x10C;
+FireFlyLantern_update = 0x1B0;
+FireFlyLantern_print = 0x1BC;
+FireFlyLantern_free = 0x1D4;
+FireFlyLantern_get_model_flags = 0x214;
+FireFlyLantern_get_data_size = 0x224;
+FireFlyLantern_anim_callback = 0x238;
+FireFlyLantern_create_firefly = 0x39C;
+
+.rodata = 0x4CC:

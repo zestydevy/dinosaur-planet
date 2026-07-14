@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_294_ctor
-.dword dll_294_dtor
+.dword curveFish_ctor
+.dword curveFish_dtor
 
 # export table
-/*0*/ .dword dll_294_setup
-/*1*/ .dword dll_294_control
-/*2*/ .dword dll_294_update
-/*3*/ .dword dll_294_print
-/*4*/ .dword dll_294_free
-/*5*/ .dword dll_294_get_model_flags
-/*6*/ .dword dll_294_get_data_size
+/*0*/ .dword curveFish_setup
+/*1*/ .dword curveFish_control
+/*2*/ .dword curveFish_update
+/*3*/ .dword curveFish_print
+/*4*/ .dword curveFish_free
+/*5*/ .dword curveFish_get_model_flags
+/*6*/ .dword curveFish_get_data_size

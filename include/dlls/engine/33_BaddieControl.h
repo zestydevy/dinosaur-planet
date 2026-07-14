@@ -25,15 +25,15 @@ typedef struct {
 /*000*/ ObjFSA_Data fsa;
 /*34C*/ Unk80009024 unk34C;
 /*374*/ Unk80008E40 unk374;
-/*39C*/ s16 unk39C;
-/*39E*/ s16 unk39E;
+/*39C*/ s16 unk39C; // gamebitID
+/*39E*/ s16 unk39E; // gamebitID
 /*3A0*/ s16 unk3A0;
 /*3A2*/ s16 unk3A2;
 /*3A4*/ s16 unk3A4;
 /*3A6*/ s16 unk3A6;
 /*3A8*/ u32 unk3A8;
 /*3AC*/ Object *unk3AC;
-/*3B0*/ u8 unk3B0;
+/*3B0*/ u8 unk3B0; //flags
 /*3B1*/ u8 _unk3B1;
 /*3B2*/ u16 unk3B2;
 /*3B4*/ u8 unk3B4;
@@ -44,8 +44,8 @@ typedef struct {
 /*3BA*/ s8 unk3BA;
 /*3BB*/ s8 weaponID; // BaddieWeapon
 /*3BC*/ HeadAnimation unk3BC;
-/*3E0*/ s16 unk3E0;
-/*3E2*/ u16 unk3E2;
+/*3E0*/ s16 unk3E0; //droppedItemIdx
+/*3E2*/ u16 unk3E2; //max vision distance?
 /*3E4*/ f32 unk3E4;
 /*3E8*/ f32 unk3E8;
 /*3EC*/ f32 unk3EC;
@@ -64,20 +64,34 @@ typedef struct {
 /*1E*/ s16 unk1E;
 /*20*/ s16 unk20;
 /*22*/ s16 unk22;
-/*24*/ u8 _unk24[0x27 - 0x24];
+/*24*/ s16 unk24; //objSeqID
+/*26*/ u8 _unk26[0x27 - 0x26];
 /*27*/ s8 initialWeaponID;
 /*28*/ s8 unk28;
 /*29*/ u8 unk29;
-/*2A*/ s8 unk2A;
-/*2B*/ u8 unk2B;
-/*2C*/ s16 unk2C;
-/*2E*/ s8 unk2E;
+/*2A*/ s8 unk2A; //yaw (when respawned)?
+/*2B*/ u8 unk2B; //flags?
+/*2C*/ s16 unk2C; //respawn time (in seconds)?
+/*2E*/ s8 unk2E; //objSeqID, played when lifetime expires?
 /*2F*/ u8 unk2F;
 /*30*/ s16 unk30;
 /*32*/ u8 quarterHitpoints; // HP / 4
 /*33*/ u8 pad33;
 /*34*/ u16 unk34;
 } Baddie_Setup;
+
+typedef enum {
+    BaddieDrop_0,
+    BaddieDrop_1_MagicDust_Mid,
+    BaddieDrop_2_Energy_Gem,
+    BaddieDrop_3_Energy_Egg,
+    BaddieDrop_4_MagicDust_Mid, //objSetup->gamebitCollected assigned
+    BaddieDrop_5_Nearby_Collectable,
+    BaddieDrop_6_MagicDust_Small,
+    BaddieDrop_7_MagicDust_Mid,
+    BaddieDrop_8_MagicDust_Large,
+    BaddieDrop_9_MagicDust_Huge
+} BaddieDrop_IDs;
 
 // Note: Not all baddies implement this?
 DLL_INTERFACE(DLL_IBaddie) {
@@ -105,8 +119,8 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*14*/ Object* (*func14)(Object* arg0, Baddie* baddie, u16 *arg2, s32 arg3, s32 arg4, s16 arg5, s16 arg6);
 /*15*/ void (*free)(Object* arg0, Baddie* baddie, u8 arg2);
 /*16*/ s32 (*func16)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
-/*17*/ Object *(*func17)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
-/*18*/ Object *(*func18)(Object* arg0, s32 arg1, s32 arg2, u8 arg3);
+/*17*/ Object *(*func17)(Object* baddieObj, ObjFSA_Data* fsa, f32 distanceThreshold, s32 angleThreshold);
+/*18*/ Object *(*drop_collectable)(Object* obj, BaddieDrop_IDs droppedItemIdx, s32 gamebitID, u8 arg3);
 /*19*/ s32 (*check_hit)(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT); // Returns hit type
 /*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7);
 /*21*/ void (*setup)(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7);

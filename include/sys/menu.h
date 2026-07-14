@@ -40,14 +40,14 @@ enum MenuID {
     MENU_OPTIONS = 7,
     MENU_PAUSE = 8,
     MENU_GAME_OVER = 9,
-    MENU_10 = 10,
-    MENU_11 = 11,
-    MENU_12 = 12,
-    MENU_13 = 13,
-    MENU_14 = 14,
-    MENU_CREDITS = 15, // credits
-    MENU_SELECTION = 16, // used by SwapStone and ShopKeeper
-    MENU_17 = 17
+    MENU_OLD_SELECTION = 10,    // SwapStone choices
+    MENU_OLD_TITLE_SCREEN = 11,
+    MENU_12 = 12,               // empty
+    MENU_OLD_LEVEL_SELECT = 13,
+    MENU_SCARAB = 14,           // shop minigame counter
+    MENU_CREDITS = 15,
+    MENU_SELECTION = 16,        // used by SwapStone and ShopKeeper
+    MENU_17 = 17                // empty
 };
 
 extern s8 D_800A7D94;

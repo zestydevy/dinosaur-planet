@@ -1,84 +1,113 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
-
-typedef struct {
-    f32 unk0;
-    u8 unk4;
-    u8 _unk5;
-    u16 unk6;
-    u16 unk8;
-    s16 unkA;
-    u8 unkC;
-    u8 unkD;
-    u8 unkE;
-    u8 _unkF;
-    s16 unk10;
-    u16 unk12;
-} DLL220_Data;
+#include "dlls/objects/220_Chuka.h"
+#include "dlls/objects/221_ChukaChuck.h"
+#include "game/gamebits.h"
+#include "game/objects/interaction_arrow.h"
+#include "macros.h"
+#include "sys/math.h"
 
 typedef struct {
     ObjSetup base;
-    s16 unk18;
+    s16 gamebitDead;
     s16 unk1A;
     s16 _unk1C;
     s16 _unk1E;
     s16 _unk20;
-    s16 unk22;
+    s16 droppedItemIdx;
     s16 _unk24; 
     s8 _unk26;
-    s8 unk27;
-    s8 unk28;
-    u8 unk29;
-    s8 unk2A;
+    s8 playerAimOffsetY;
+    s8 angularRange; //(Degrees) When the Chuka's yaw is within this angular range of facing towards the player (and the player is in lateral range), a ChukaChuck can be thrown
+    u8 range2D;
+    s8 yaw;
     u8 _unk2B;
     u8 _unk2C;
     u8 _unk2D;
     u8 _unk2E;
-    u8 unk2F;
+    u8 chuckProbability;
     s16 _unk30;
-    u8 unk32;
-}DLL220_Setup;
+    u8 health;
+} Chuka_Setup;
 
-static u8 _data_0[16] = {
-    0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0
+typedef struct {
+    f32 blinkTimer;
+    u8 flags;
+    u16 range2D;            //When the player is inside this lateral range of the Chuka, a ChukaChuck can be thrown
+    u16 angularRange;       //(Angle16) When the Chuka's yaw is within this angular range of facing towards the player (and the player is in lateral range), a ChukaChuck can be thrown
+    s16 droppedItemIdx;     //The type of collectable dropped when defeated (Magic Gems, Energy Eggs, etc.)
+    u8 health;
+    u8 chuckProbability;    //Percentage likelihood of throwing a ChukaChuck at the player when in firing range
+    u8 playerAimOffsetY;    //Vertical offset the Chuka aims at, relative to the player's feet
+    s16 gamebitDead;
+    u16 prevPlayerDistance2D;
+} Chuka_Data;
+
+typedef enum {
+    Chuka_FLAG_0_None = 0,
+    Chuka_FLAG_1_Player_In_Range = 1,
+    Chuka_FLAG_2_Dead = 2,
+    Chuka_FLAG_4_Do_Chuck = 4
+} Chuka_Flags;
+
+//Texture frame index flipbook animation used while blinking
+static u8 dBlinkFrames[16] = {
+    0, 1, 1, 2, 
+    2, 2, 2, 2, 
+    2, 2, 2, 2, 
+    2, 1, 1, 0
 }; 
-static u32 _data_10[4] = {SOUND_491, SOUND_492, SOUND_493, SOUND_4B1}; 
 
-static void dll_220_func_8A4(Object* self, DLL220_Data* arg1);
-static void dll_220_func_778(Object* self);
+typedef struct {
+    u32 idle;
+    u32 attackLanded;
+    u32 attack;
+    u32 die;
+} ChukaSoundIDs;
+
+static ChukaSoundIDs dSoundIDs = {
+    SOUND_491, 
+    SOUND_492, //not referenced, but the same soundID is used by `Chuka_receive_message` 
+    SOUND_493, 
+    SOUND_4B1
+}; 
+
+static void Chuka_die(Object* self, Chuka_Data* objData);
+static void Chuka_chuck(Object* self);
+
+#define CHUCK_DURATION 42 //frames
 
 // offset: 0x0 | ctor
-void dll_220_ctor(void *dll) { }
+void Chuka_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_220_dtor(void *dll) { }
+void Chuka_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_220_setup(Object* self, DLL220_Setup* setup, s32 arg2) {
-    DLL220_Data* objdata;
+void Chuka_setup(Object* self, Chuka_Setup* setup, s32 reset) {
+    Chuka_Data* objData = self->data;
 
-    objdata = self->data; 
-    self->unkAF |= 8;
-    objdata->unk10 =  setup->unk18;
-    if (objdata->unk10 != -1) {
-        if (main_get_bits( objdata->unk10) != 0) {
-            dll_220_func_8A4(self, objdata);
-            return;
-        }
+    self->unkAF |= ARROW_FLAG_8_No_Targetting;
+
+    objData->gamebitDead = setup->gamebitDead;
+    if ((objData->gamebitDead != NO_GAMEBIT) && main_get_bits( objData->gamebitDead)) {
+        Chuka_die(self, objData);
+        return;
     }
-    objdata->unk6 = (setup->unk29 * 8);
-    objdata->unkA = setup->unk22;
-    objdata->unkC = setup->unk32;
-    objdata->unk8 = ((setup->unk28 & 0xFFFF) * 0xB6);
-    objdata->unkD = setup->unk2F;
-    objdata->unkE = setup->unk27;
-    self->srt.yaw = setup->unk2A << 8;
+
+    objData->range2D = setup->range2D * 8;
+    objData->droppedItemIdx = setup->droppedItemIdx;
+    objData->health = setup->health;
+    objData->angularRange = ((u16)setup->angularRange) * 182;
+    objData->chuckProbability = setup->chuckProbability;
+    objData->playerAimOffsetY = setup->playerAimOffsetY;
+    self->srt.yaw = setup->yaw << 8;
 }
 
 
 // offset: 0x118 | func: 1 | export: 1
-void dll_220_control(Object* self) {
-    DLL220_Data* objdata;
+void Chuka_control(Object* self) {
+    Chuka_Data* objData;
     TextureAnimator* texAnim;
     f32 dx;
     f32 dz;
@@ -91,142 +120,155 @@ void dll_220_control(Object* self) {
     s32 angle;
     Vec3f vPlayer;
 
-    objdata = self->data;
-    if (objdata->unk4 & 2) {
+    objData = self->data;
+
+    if (objData->flags & Chuka_FLAG_2_Dead) {
         return;
     }
 
-    //Blink behaviour?
+    //Handle blinking
     texAnim = func_800348A0(self, 0, 0);
-    if (objdata->unk0 < 16.0f) {
-        if ((s32)objdata->unk0 == 0xA) {
-            objdata->unk4 |= 1;
+    if (objData->blinkTimer < 16) {
+        if ((s32)objData->blinkTimer == 10) {
+            objData->flags |= Chuka_FLAG_1_Player_In_Range;
         }
-        texAnim->frame = _data_0[(s32)objdata->unk0] << 8;
-        objdata->unk0 += 1.0f;
-        if (objdata->unk0 == 16.0f) {
-            objdata->unk0 = (f32) rand_next(0x10, 0xF5);
+
+        texAnim->frame = dBlinkFrames[(s32)objData->blinkTimer] << 8;
+
+        objData->blinkTimer++; //@framerate-dependent
+        if (objData->blinkTimer == 16) {
+            objData->blinkTimer = rand_next(16, 245);
         }
     } else {
-        if (gUpdateRateF <= (255.0f - objdata->unk0)) {
-            objdata->unk0 += gUpdateRateF;
+        if (gUpdateRateF <= (255.0f - objData->blinkTimer)) {
+            objData->blinkTimer += gUpdateRateF;
         } else {
-            objdata->unk0 = 0.0f;
+            objData->blinkTimer = 0.0f;
         }
         texAnim->frame = 0;
     }
     
-    player = get_player();
-    dx = player->srt.transl.f[0] - self->srt.transl.f[0];
-    dz = player->srt.transl.f[2] - self->srt.transl.f[2];
-    distance2D = sqrtf(SQ(dx) + SQ(dz));
-    if (distance2D < objdata->unk6) {
-        if (objdata->unk12 >= objdata->unk6) {
-            objdata->unk4 = 5;
-            objdata->unk0 = 0.0f;
-        }
-        if (objdata->unk4 & 5) {
-            //Get vector to player, and angle to player
-            VECTOR_SUBTRACT(player->globalPosition, self->globalPosition, vPlayer); 
-            angle = arctan2_f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
-            CIRCLE_WRAP(angle);
-            if (((u16)angle < objdata->unk8) || (((0xFFFF - objdata->unk8) & 0xFFFF) < (u16)angle)) {
-                if ((rand_next(0, 0x63) < objdata->unkD) || (objdata->unk4 & 4)) {
-                    gDLL_6_AMSFX->vtbl->play(self, _data_10[2], MAX_VOLUME, NULL, NULL, 0, NULL);
-                    dll_220_func_778(self);
-                } else {
-                    gDLL_6_AMSFX->vtbl->play(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
-                }
-            } else {
-                gDLL_6_AMSFX->vtbl->play(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+    //Handle attacking/playing sounds when the player is in range
+    {
+        player = get_player();
+        dx = player->srt.transl.x - self->srt.transl.x;
+        dz = player->srt.transl.z - self->srt.transl.z;
+        distance2D = sqrtf(SQ(dx) + SQ(dz));
+
+        if (distance2D < objData->range2D) {
+            if (objData->prevPlayerDistance2D >= objData->range2D) {
+                objData->flags = Chuka_FLAG_1_Player_In_Range | Chuka_FLAG_4_Do_Chuck;
+                objData->blinkTimer = 0.0f;
             }
+
+            if (objData->flags & (Chuka_FLAG_1_Player_In_Range | Chuka_FLAG_4_Do_Chuck)) {
+                //Get vector to player, and angle to player
+                VECTOR_SUBTRACT(player->globalPosition, self->globalPosition, vPlayer); 
+                angle = arctan2_f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
+                CIRCLE_WRAP(angle);
+                if (((u16)angle < objData->angularRange) || (((M_360_DEGREES - 1 - objData->angularRange) & 0xFFFF) < (u16)angle)) {
+                    if ((rand_next(0, 99) < objData->chuckProbability) || (objData->flags & Chuka_FLAG_4_Do_Chuck)) {
+                        gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.attack, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        Chuka_chuck(self);
+                    } else {
+                        gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    }
+                } else {
+                    gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+                }
+            }
+        } else if (objData->flags & Chuka_FLAG_1_Player_In_Range) {
+            gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-    } else if (objdata->unk4 & 1) {
-        gDLL_6_AMSFX->vtbl->play(self, _data_10[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+        
+        objData->prevPlayerDistance2D = distance2D;
     }
-    objdata->unk12 = distance2D;
 
     //Check for Projectile Spell attacks
     if (func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) == Damage_Type_Projectile) {
-        objdata->unkC--; //Lose health
-        if (objdata->unkC <= 0) {
-            dll_220_func_8A4(self, objdata); //Suggests arg1 of dll_220_func_8A4 might be a DLL220_Data*
-            gDLL_33_BaddieControl->vtbl->func18(self, objdata->unkA, -1, 1);
-            gDLL_6_AMSFX->vtbl->play(self, _data_10[3], MAX_VOLUME, NULL, NULL, 0, NULL);
-            main_set_bits(objdata->unk10, 1);
+        objData->health--; //Lose health
+        if (objData->health <= 0) {
+            Chuka_die(self, objData);
+            gDLL_33_BaddieControl->vtbl->drop_collectable(self, objData->droppedItemIdx, NO_GAMEBIT, TRUE);
+            gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.die, MAX_VOLUME, NULL, NULL, 0, NULL);
+            main_set_bits(objData->gamebitDead, TRUE);
         }
     }
-    objdata->unk4 &= ~5;
+
+    objData->flags &= ~(Chuka_FLAG_1_Player_In_Range | Chuka_FLAG_4_Do_Chuck);
 }
 
 
 // offset: 0x670 | func: 2 | export: 2
-void dll_220_update(Object *self) { }
+void Chuka_update(Object *self) { }
 
 // offset: 0x67C | func: 3 | export: 3
-void dll_220_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    if (visibility != 0) {
+void Chuka_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x6D0 | func: 4 | export: 4
-void dll_220_free(Object *self, s32 a1) { }
+void Chuka_free(Object *self, s32 a1) { }
 
 // offset: 0x6E0 | func: 5 | export: 5
-u32 dll_220_get_model_flags(Object *self) {
+u32 Chuka_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x6F0 | func: 6 | export: 6
-u32 dll_220_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL220_Data);
+u32 Chuka_get_data_size(Object *self, u32 offsetAddr) {
+    return sizeof(Chuka_Data);
 }
 
 // offset: 0x704 | func: 7 | export: 7
-void dll_220_func_704(Object* self, u8 arg1) {
-    
-    if (arg1 == 0x80) {
+/**
+  * Called when the Chuka's projectile (ChukaChuck) successfully hits the player or the sidekick.
+  */
+void Chuka_receive_message(Object* self, u8 message) {
+    switch (message) {
+    case 0x80:
         gDLL_6_AMSFX->vtbl->play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
+        break;
+    default:
+        STUBBED_PRINTF("BADDIE:Chuka Unknown message [%d]\n", message);
+        break;
     }
 }
 
 // offset: 0x778 | func: 8
-static void dll_220_func_778(Object* self) {
-    DLL220_Data* objdata;
-    Object* sp2C;
-    Object* temp_v0_2;
-    ObjSetup* temp_v0;
+/**
+  * Creates a `ChukaChuck` Object, thrown at the player.
+  */
+static void Chuka_chuck(Object* self) {
+    Chuka_Data* objData;
+    ChukaChuck_Setup* chuckSetup;
+    Object* chuck;
     Object* player;
 
-    objdata = self->data;
-    temp_v0 = obj_alloc_setup(0x24, OBJ_ChukaChuck);
-    temp_v0->x = self->srt.transl.f[0];
-    temp_v0->y = self->srt.transl.f[1];
-    temp_v0->z = self->srt.transl.f[2];
-    temp_v0->loadFlags = 2;
-    temp_v0->byte5 = 4;
-    temp_v0->fadeDistance = 0xFF;
-    temp_v0_2 = obj_create(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);;
-    if (temp_v0_2 != NULL) {
-        sp2C = temp_v0_2;
+    objData = self->data;
+    chuckSetup = obj_alloc_setup(sizeof(ChukaChuck_Setup), OBJ_ChukaChuck);
+    chuckSetup->base.x = self->srt.transl.x;
+    chuckSetup->base.y = self->srt.transl.y;
+    chuckSetup->base.z = self->srt.transl.z;
+    chuckSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    chuckSetup->base.fadeFlags = OBJSETUP_FADE_CAMERA;
+    chuckSetup->base.fadeDistance = 0xFF;
+    chuck = obj_create(&chuckSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);;
+    
+    if (chuck != NULL) {
         player = get_player();
-        sp2C->velocity.f[0] = (player->srt.transl.f[0] - self->srt.transl.f[0]) / 42.0f;
-        sp2C->velocity.f[1] = ((player->srt.transl.f[1] + objdata->unkE) - self->srt.transl.f[1]) / 42.0f;
-        sp2C->velocity.f[2] = (player->srt.transl.f[2] - self->srt.transl.f[2]) / 42.0f;
-        sp2C->unkC4 = self;
+        chuck->velocity.x = (player->srt.transl.x - self->srt.transl.x) / CHUCK_DURATION;
+        chuck->velocity.y = ((player->srt.transl.y + objData->playerAimOffsetY) - self->srt.transl.y) / CHUCK_DURATION;
+        chuck->velocity.z = (player->srt.transl.z - self->srt.transl.z) / CHUCK_DURATION;
+        chuck->unkC4 = self;
     }
 }
 
 // offset: 0x8A4 | func: 9
-static void dll_220_func_8A4(Object* self, DLL220_Data* arg1) {
+static void Chuka_die(Object* self, Chuka_Data* objData) {
     func_800267A4(self);
     self->srt.flags |= OBJFLAG_INVISIBLE;
-    arg1->unk4 |= 2;
+    objData->flags |= Chuka_FLAG_2_Dead;
 }
-
-
-/*0x0*/ static const char str_0[] = "BADDIE:Chuka Unknown message [%d]\n";
-/*0x24*/ static const char str_24[] = "";
-/*0x28*/ static const char str_28[] = "";
-/*0x2C*/ static const char str_2C[] = "";

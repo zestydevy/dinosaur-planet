@@ -1,0 +1,16 @@
+.text = 0x0:
+DoorOpen_ctor = 0x0;
+DoorOpen_dtor = 0xC;
+DoorOpen_setup = 0x18;
+DoorOpen_control = 0xE0;
+DoorOpen_update = 0x204;
+DoorOpen_print = 0x210;
+DoorOpen_free = 0x228;
+DoorOpen_get_model_flags = 0x2AC;
+DoorOpen_get_data_size = 0x2BC;
+DoorOpen_func_2D0 = 0x2D0;
+
+.rodata = 0x340:
+
+.data = 0x350:
+dModGfxDLL = 0x0; // absolute:0x350

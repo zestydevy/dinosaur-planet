@@ -4,6 +4,7 @@
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/segment_1050.h"
+#include "dlls/objects/251_weapons.h"
 
 typedef struct {
     s8 unk0[0x8 - 0];

@@ -5,11 +5,14 @@
 
 #include "PR/gbi.h"
 
-#define M_PI_F    3.141592741f
-#define DEG_TO_RAD(deg)  ((deg) * M_PI_F / 180.0f)
-#define SQ(a) ((a) * (a))
-#define M_INFINITY_F 3.4028235e38f   //largest positive number that can be represented by a float
+#define M_PI_F          3.141592741f
+#define M_INFINITY_F    3.4028235e38f   //largest positive number that can be represented by a float
+#define ONE_OVER_SIXTY_F 0.01666666f
 
+#define DEG_TO_RAD(deg) ((deg) * M_PI_F / 180.0f)
+#define SQ(a) ((a) * (a))
+
+#define M_5_DEGREES   0x38E     // 5 degrees in the game's angle system
 #define M_20_DEGREES  0xE38     // 20 degrees in the game's angle system
 #define M_45_DEGREES  0x2000    // 45 degrees in the game's angle system
 #define M_90_DEGREES  0x4000    // 90 degrees in the game's angle system

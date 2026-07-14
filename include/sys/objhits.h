@@ -104,7 +104,7 @@ typedef enum {
     Damage_Type_7 = 0x7,
     Damage_Type_8 = 0x8,
     Damage_Type_9 = 0x9,
-    Damage_Type_Sword_Staff_Strike1 = 0xA,     //Sabre: anticlockwise/jump-attack  Krystal: anticlockwise        (possibly meant for anticlockwise attacks?)
+    Damage_Type_Sword_Staff_Strike1 = 0xA,     //Sabre: anticlockwise/jump-attack  Krystal: anticlockwise        (possibly meant for anticlockwise attacks?) (seems to be used for a wide variety of attacks, so maybe DamageType_Physical_1?)
     Damage_Type_Sword_Staff_Strike2 = 0xB,     //Sabre: overhead                   Krystal: clockwise/overhead   (possibly meant for overhead/jump-attack?)
     Damage_Type_Sword_Strike_Clockwise = 0xC,  //Sabre: clockwise                  Krystal: N/A                  (possibly meant for clockwise attacks?)
     Damage_Type_D = 0xD,                 //Speeder bike checks this type
@@ -114,7 +114,7 @@ typedef enum {
     Damage_Type_Fishing_Net = 0x11,
     Damage_Type_Bullet = 0x12,
     Damage_Type_13 = 0x13,
-    Damage_Type_14 = 0x14, //vehicle-related?
+    Damage_Type_Speeding_Vehicle = 0x14, //CRsnowbike
     Damage_Type_Toxic = 0x15, //stuns player (SHkillermushroom spores)
     Damage_Type_16 = 0x16,
     Damage_Type_17 = 0x17,
@@ -123,6 +123,7 @@ typedef enum {
     Damage_Type_Flame_Command = 0x1A,
     Damage_Type_1B = 0x1B, //player-related, causes falling?
     Damage_Type_Icy_Water = 0x1C,
+    Damage_Type_Bike_Fuel = 0x1D,
     Damage_Type_None = 0x7F
 } DamageTypes;
 

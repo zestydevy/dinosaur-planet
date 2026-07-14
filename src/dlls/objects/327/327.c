@@ -8,7 +8,7 @@ typedef struct {
     u8 modelIndex;          //Which model to use
     u8 modAnimIndex;        //Which model animation to use
     u8 animProgress;        //Initial tValue for the animation (expressed from 0-256 instead of 0-1)
-    u8 unk1B;               //Related to animation, maybe playback speed? (TO-DO: investigate!)
+    u8 animSpeed;           //Animation playback speed (stored at 10000x actual value)
     u8 scaleMultiplier;     //Multiplies the size of the object and its shadow (64 = 1x, 128 = 2x, 32 = 0.5x, etc.)
     u8 yaw;
     s16 unused1E;
@@ -63,16 +63,16 @@ void dll_327_setup(Object* self, DLL327_Setup* objSetup, s32 arg2) {
 // offset: 0x170 | func: 1 | export: 1
 void dll_327_control(Object* self) {
     DLL327_Setup *objSetup;
-    f32 new_var;
-    f32 temp;
+    f32 animSpeed;
+    f32 animSpeedTemp;
     
     objSetup = (DLL327_Setup*)self->setup;
     
     //Advance animation
-    temp = objSetup->unk1B;
-    temp = temp / 10000.0f;
-    new_var = temp;
-    func_80024108(self, new_var, gUpdateRateF, 0);
+    animSpeedTemp = objSetup->animSpeed;
+    animSpeedTemp /= 10000.0f;
+    animSpeed = animSpeedTemp;
+    func_80024108(self, animSpeed, gUpdateRateF, 0);
 
     //Set visibility based on a gamebit
     if (objSetup->gamebitVisible != NO_GAMEBIT) {
