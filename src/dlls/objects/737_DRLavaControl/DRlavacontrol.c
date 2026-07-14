@@ -2,6 +2,7 @@
 #include "PR/gbi.h"
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/338_LFXEmitter.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -29,19 +30,6 @@ typedef struct {
 /*1C*/    s16 unused1C;
 /*1E*/    s16 gameBitFrozen;    //gamebit to set when fully cooled with Ice Blast
 } DRLavaControl_Setup;
-
-typedef struct {
-/*00*/    ObjSetup base;
-/*18*/    s16 unk18;
-/*1A*/    s16 unk1A;
-/*1C*/    s16 unk1C;
-/*1E*/    s16 unk1E;
-/*20*/    s16 unk20;
-/*22*/    s16 unk22;
-/*24*/    s8 unk24;
-/*25*/    s8 unk25;
-/*26*/    s16 unk26;
-} LFXEmitter_Setup;
 
 /*0x0*/ static s16 lfxEmitterUnk1E[] = {
     547, 550, 553

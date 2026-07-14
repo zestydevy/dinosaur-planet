@@ -81,7 +81,7 @@ s32 rareware_update1(void) {
 
     //End of shot
     if (sCutToNextScreen) {
-        mainSetBits(BIT_44F, 0);
+        mainSetBits(BIT_Menus_Selection_Blocked, FALSE);
         //@bug? Skips directly to Game Select screen, likely for developer convenience
         menuSet(MENU_GAME_SELECT);
     }

@@ -1,0 +1,13 @@
+.text = 0x0:
+LightPole_ctor = 0x0;
+LightPole_dtor = 0xC;
+LightPole_setup = 0x18;
+LightPole_control = 0xE4;
+LightPole_update = 0x240;
+LightPole_print = 0x24C;
+LightPole_free = 0x264;
+LightPole_get_model_flags = 0x274;
+LightPole_get_data_size = 0x284;
+
+.rodata = 0x2D0:
+str_0 = 0x0; // absolute:0x2D0

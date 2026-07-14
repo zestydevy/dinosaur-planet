@@ -1,0 +1,14 @@
+.text = 0x0:
+CFAttractor_ctor = 0x0;
+CFAttractor_dtor = 0xC;
+CFAttractor_setup = 0x18;
+CFAttractor_control = 0x74;
+CFAttractor_update = 0xCC;
+CFAttractor_print = 0xD8;
+CFAttractor_free = 0x12C;
+CFAttractor_get_model_flags = 0x16C;
+CFAttractor_get_data_size = 0x17C;
+CFAttractor_func_190 = 0x190;
+CFAttractor_func_1B4 = 0x1B4;
+
+.rodata = 0x2C8:

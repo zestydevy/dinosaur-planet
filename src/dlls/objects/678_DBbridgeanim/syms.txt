@@ -1,0 +1,17 @@
+.text = 0x0:
+DBbridgeanim_ctor = 0x0;
+DBbridgeanim_dtor = 0xC;
+DBbridgeanim_setup = 0x18;
+DBbridgeanim_control = 0x38;
+DBbridgeanim_update = 0x224;
+DBbridgeanim_print = 0x230;
+DBbridgeanim_free = 0x284;
+DBbridgeanim_get_model_flags = 0x294;
+DBbridgeanim_get_data_size = 0x2A4;
+DBbridgeanim_create_step = 0x2B8;
+DBbridgeanim_remove_step = 0x38C;
+
+.rodata = 0x4A8:
+
+.data = 0x4E8:
+dStepDurations = 0x0; // absolute:0x4E8

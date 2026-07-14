@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "game/objects/object.h"
 #include "macros.h"
 #include "sys/gfx/model.h"
 
@@ -282,14 +283,13 @@ s32 DRbullet_tick_impact(Object* self) {
     }
 
     //Handle opacity fade-out and expiry
-    opacity = 0xFF - (s32) (((f32) objData->timer / 64) * 255.0f);
+    opacity = OBJECT_OPACITY_MAX - (s32) (((f32) objData->timer / 64) * OBJECT_OPACITY_MAX);
     if (opacity >= 0) {
         self->opacity = opacity;
 
         lfxEmitter = objData->lfxEmitter;
         if (lfxEmitter != NULL) {
-            //TO-DO: use proper lfxEmitter DLL interface
-            ((DLL_Unknown*)lfxEmitter->dll)->vtbl->func[8].withOneS32OneF32((s32)lfxEmitter, opacity);
+            ((DLL_338_LFXEmitter*)lfxEmitter->dll)->vtbl->func8(lfxEmitter, opacity);
         }
     } else {
         if (objData->lfxEmitter != NULL) {

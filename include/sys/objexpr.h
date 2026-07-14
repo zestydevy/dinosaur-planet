@@ -51,6 +51,18 @@ typedef struct HeadAnimation {
 } HeadAnimation;
 
 typedef struct {
+    s16 pitch;
+    s16 yaw;
+    s16 roll;
+    s16 scaleX; //0x400 (or 0) is 1.0x scale
+    s16 scaleY;
+    s16 scaleZ;
+    s16 translateX;
+    s16 translateY;
+    s16 translateZ;
+} SeqJoint;
+
+typedef struct {
     s32 frame; //second-lowest byte used as frame offset for animated/multi-frame textures,
               //lowest byte opacity-blends next frame in (on some multi-frame textures)
     u32 unk4;

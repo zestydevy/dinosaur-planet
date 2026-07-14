@@ -1,6 +1,7 @@
 #include "game/objects/object.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
+#include "dlls/objects/267_checkpoint4.h"
 
 #define SOME_COUNT 4
 
@@ -15,14 +16,6 @@ typedef struct {
     s16 unk34[SOME_COUNT];
     u8 _unk3C[0x40 - 0x3C];
 } checkpoint4_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18[0x28 - 0x18];
-    s8 unk28;
-    u8 yaw;
-    u8 scale;
-} checkpoint4_Setup;
 
 // offset: 0x0 | ctor
 void checkpoint4_ctor(void *dll) { }

@@ -284,7 +284,7 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
         }
         
         objAnimAdvance(self, 0.004f, gUpdateRate, 0);
-        if (mainGetBits(BIT_424) && mainGetBits(BIT_425)) {
+        if (mainGetBits(BIT_DB_Nest_Egg_Added) && mainGetBits(BIT_DB_Nest_Added_All_Eggs)) {
             objData = self->data;
             objData->unk524++;
             return 1;
@@ -321,7 +321,7 @@ s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
         
     } else if (mainGetBits(BIT_42A)) {
         mainSetBits(BIT_41F, 0);
-        mainSetBits(BIT_425, 0);
+        mainSetBits(BIT_DB_Nest_Added_All_Eggs, 0);
         mainSetBits(BIT_428, 0);
         mainSetBits(BIT_420, 0);
         mainSetBits(BIT_422, 0);

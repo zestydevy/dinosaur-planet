@@ -117,7 +117,7 @@ void dll_250_control(Object* self) {
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_331, NULL, 2, -1, NULL);
-                gDLL_33_BaddieControl->vtbl->func18(self, (s32) setup->unk18, -1, 0U);
+                gDLL_33_BaddieControl->vtbl->drop_collectable(self, (s32) setup->unk18, -1, 0U);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, (f32) (setup->unk1C * 0x3C));
             }
             func_80026128(self, 0xA, 1, 0);

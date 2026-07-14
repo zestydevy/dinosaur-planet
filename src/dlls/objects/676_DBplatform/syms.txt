@@ -1,0 +1,13 @@
+.text = 0x0:
+DBPlatform_ctor = 0x0;
+DBPlatform_dtor = 0xC;
+DBPlatform_setup = 0x18;
+DBPlatform_control = 0x104;
+DBPlatform_update = 0x408;
+DBPlatform_print = 0x414;
+DBPlatform_free = 0x468;
+DBPlatform_get_model_flags = 0x478;
+DBPlatform_get_data_size = 0x488;
+
+.rodata = 0x4E0:
+str_0 = 0x0; // absolute:0x4E0

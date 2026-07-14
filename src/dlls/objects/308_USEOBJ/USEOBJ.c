@@ -1,5 +1,7 @@
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
+#include "macros.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
@@ -44,7 +46,7 @@ void UseObj_ctor(void *dll) { }
 void UseObj_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
+void UseObj_setup(Object *self, UseObj_Setup *setup, s32 reset) {
     UseObj_Data *objdata;
 
     self->srt.yaw = setup->yaw << 8;
@@ -53,13 +55,15 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
     self->animCallback = UseObj_anim_callback;
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
-        // diPrintf("USEOBJ.c: modelno out of range romdefno=%d\n"), self->modelInstIdx);
+        STUBBED_PRINTF("USEOBJ.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
         self->modelInstIdx = 0;
     }
+
     objdata = self->data;
     objdata->used = mainGetBits(setup->gamebitUsed);
     objAddObjectType(self, OBJTYPE_UseObj);
-    if ((setup->flags & USEOBJ_HideIfAlreadyUsed) && objdata->used != 0) {
+
+    if ((setup->flags & USEOBJ_HideIfAlreadyUsed) && objdata->used) {
         self->opacity = 0;
     }
 }
@@ -73,9 +77,10 @@ void UseObj_control(Object *self) {
     objdata = self->data;
     setup = (UseObj_Setup*)self->setup;
     objdata->used = mainGetBits(setup->gamebitUsed);
-    if (objdata->used == 0) {
+
+    if (objdata->used == FALSE) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-        if (setup->gamebitEnabled != -1) {
+        if (setup->gamebitEnabled != NO_GAMEBIT) {
             if (mainGetBits(setup->gamebitEnabled)) {
                 self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
             } else {
@@ -87,17 +92,21 @@ void UseObj_control(Object *self) {
         } else {
             self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
         }
-        if ((self->unkAF & ARROW_FLAG_1_Interacted) && (setup->gamebitRequiredItem == -1 || gDLL_1_cmdmenu->vtbl->was_this_item_used(setup->gamebitRequiredItem))) {
+
+        if ((self->unkAF & ARROW_FLAG_1_Interacted) && 
+            (setup->gamebitRequiredItem == NO_GAMEBIT || 
+            gDLL_1_cmdmenu->vtbl->was_this_item_used(setup->gamebitRequiredItem))
+        ) {
             if (setup->objectSeqIndex != -1) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
             }
             if (!(setup->flags & USEOBJ_SeqControlsUsedBit)) {
-                mainSetBits(setup->gamebitUsed, 1);
+                mainSetBits(setup->gamebitUsed, TRUE);
             }
             if (setup->flags & USEOBJ_DisableAfterUse) {
-                mainSetBits(setup->gamebitEnabled, 0);
+                mainSetBits(setup->gamebitEnabled, FALSE);
             } else {
-                objdata->used = 1;
+                objdata->used = TRUE;
                 self->unkDC = 1;
             }
             joyDisableButtons(0, A_BUTTON);
@@ -141,7 +150,7 @@ void UseObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
 }
 
 // offset: 0x464 | func: 4 | export: 4
-void UseObj_free(Object *self, s32 a1) {
+void UseObj_free(Object *self, s32 onlySelf) {
     objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
@@ -151,7 +160,7 @@ u32 UseObj_get_model_flags(Object *self) {
 }
 
 // offset: 0x4B4 | func: 6 | export: 6
-u32 UseObj_get_data_size(Object *self, u32 a1) {
+u32 UseObj_get_data_size(Object *self, u32 offsetAddr) {
     return sizeof(UseObj_Data);
 }
 
@@ -163,7 +172,7 @@ static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     if (animObjData->lastMessage != 0) {
         if ((setup->flags & USEOBJ_SeqControlsUsedBit) && animObjData->lastMessage == 1) {
-            mainSetBits(setup->gamebitUsed, 1);
+            mainSetBits(setup->gamebitUsed, TRUE);
         }
         if (animObjData->lastMessage == 2) {
             if (setup->replayStartTime != 0) {
@@ -175,5 +184,4 @@ static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     return 0;
 }
 
-/*0x0*/ static const char str_0[] = "USEOBJ.c: modelno out of range romdefno=%d\n";
 /*0x2C*/ static const char str_2C[] = "";

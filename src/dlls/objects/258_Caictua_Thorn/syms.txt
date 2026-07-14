@@ -1,0 +1,12 @@
+.text = 0x0:
+Caictua_Thorn_ctor = 0x0;
+Caictua_Thorn_dtor = 0xC;
+Caictua_Thorn_setup = 0x18;
+Caictua_Thorn_control = 0xDC;
+Caictua_Thorn_update = 0x438;
+Caictua_Thorn_print = 0x530;
+Caictua_Thorn_free = 0x584;
+Caictua_Thorn_get_model_flags = 0x600;
+Caictua_Thorn_get_data_size = 0x610;
+
+.rodata = 0x6A8:

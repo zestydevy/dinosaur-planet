@@ -229,7 +229,7 @@ s32 SCbeacon_func_7EC(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
 /** 
   * Called by Kyte's DLL after issuing Flame command, as she approaches the beacon.
   *
-  * TODO: what does the 2 signify? 
+  * TODO: what does the 2 signify, Red Energy cost? 
   */
 s32 SCbeacon_func_804(Object* self) {
     return 2;

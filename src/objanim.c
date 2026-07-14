@@ -312,10 +312,10 @@ s32 objAnimAdvance(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg
     } else {
         var_t5_2 = temp_t2->model->anims[temp_t0->animIndexes[0]];
     }
-    if (var_t5_2->offset_rootMotion != 0) {
+    if (var_t5_2->offsetRootMotion != 0) {
         arg3->unk12 = 1;
         var_s0 = NULL;
-        var_v0 = (u8*)var_t5_2 + var_t5_2->offset_rootMotion;
+        var_v0 = (u8*)var_t5_2 + var_t5_2->offsetRootMotion;
         sp5C = ((f32*)var_v0)[0] * arg0->srt.scale;
         temp_a1 = var_v0[2] - 1;
         var_v0 += 3;
@@ -333,7 +333,7 @@ s32 objAnimAdvance(Object* arg0, f32 arg1, f32 arg2, UnkFunc_80024108Struct* arg
             } else {
                 var_t5_2 = temp_t2->model->anims[temp_t0->unk48[0]];
             }
-            var_s0 = (u8*)var_t5_2 + var_t5_2->offset_rootMotion + 6;
+            var_s0 = (u8*)var_t5_2 + var_t5_2->offsetRootMotion + 6;
         } else {
             var_fs0 = 0.0f;
             var_fs1 = 1.0f;
@@ -455,8 +455,8 @@ s32 objGetAnimChange(Object* obj, f32 dist, f32* change) {
         } else {
             var_v0 = temp_v1->anims[temp_a1->unk48[0]];
         }
-        if (var_v0->offset_rootMotion != 0) {
-            temp_a2 = (u8*)var_v0 + var_v0->offset_rootMotion;
+        if (var_v0->offsetRootMotion != 0) {
+            temp_a2 = (u8*)var_v0 + var_v0->offsetRootMotion;
             sp34 = ((f32*)temp_a2)[0] * var_fv1;
             temp_a2 += 3;
             if (temp_a2[0] == 0) {
@@ -478,8 +478,8 @@ s32 objGetAnimChange(Object* obj, f32 dist, f32* change) {
     } else {
         var_v0 = temp_v1->anims[temp_a1->animIndexes[0]];
     }
-    if (var_v0->offset_rootMotion) {
-        var_v1 = (u8*)var_v0 + var_v0->offset_rootMotion;
+    if (var_v0->offsetRootMotion) {
+        var_v1 = (u8*)var_v0 + var_v0->offsetRootMotion;
         temp_a1_2 = var_v1[2] - 1;
         // FAKE var_v1[0] * 0
         var_ft4 = ((f32*)var_v1)[var_v1[0] * 0] * var_fv1;
@@ -561,11 +561,11 @@ void objAnim_func_80024D74(Object* object, s32 arg1) {
     }
 }
 
-void objAnim_func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3) {
+void objAnim_func_80024DD0(Object* obj, s32 animStateLayer, s16 arg2, s16 arg3) {
     AnimState *animState;
     ModelInstance* model;
 
-    model = arg0->modelInsts[arg0->modelInstIdx];
+    model = obj->modelInsts[obj->modelInstIdx];
     if (!model)
         return;
         

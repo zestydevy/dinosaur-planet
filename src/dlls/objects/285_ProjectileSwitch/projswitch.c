@@ -25,8 +25,6 @@ typedef enum {
     Switch_FLAG_Resets_After_Delay = 2          //Switch resets resets to its unpressed state after a number of seconds (specified by `objData->resetDelay`)
 } ProjectileSwitch_Flags;
 
-#define ONE_SIXTY_FOURTH_F 0.015625f
-
 static void ProjectileSwitch_change_state(Object* self, int switchPressed, int playSound);
 
 // offset: 0x0 | ctor
@@ -46,7 +44,7 @@ void ProjectileSwitch_setup(Object* self, ProjectileSwitch_Setup* objSetup, s32 
     if (objSetup->scale == 0) {
         self->srt.scale = self->def->scale;
     } else {
-        self->srt.scale = (objSetup->scale * self->def->scale * ONE_SIXTY_FOURTH_F);
+        self->srt.scale = objSetup->scale * self->def->scale * (1.0f / 64.0f);
     }
     self->objhitInfo->unk52 = (objSetup->scale * self->def->hitbox_flagsB6) / 64;
     

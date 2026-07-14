@@ -87,8 +87,8 @@ enum SoundID {
     SOUND_57 = 0x57,
     SOUND_58_Water_Splash = 0x58,          //Water Splash
     SOUND_59_Rattling = 0x59,              //sounds like 0x08 but higher pitch kinda
-    SOUND_5A = 0X5A,                       //some worm roar
-    SOUND_5B = 0X5B,                       //some worm roar
+    SOUND_5A_SandWorm_Roar = 0X5A,         //CCsandwormBoss
+    SOUND_5B_SandWorm_Roar = 0X5B,         //CCsandwormBoss
     SOUND_5C = 0X5C,                       //
     SOUND_5D = 0x5D,                       //
     SOUND_5E_Bubbling = 0x5E,              //does not loop
@@ -196,6 +196,12 @@ enum SoundID {
 
     SOUND_140_Galleon_Propeller_Loop = 0x140,
 
+    SOUND_157_Bird_Call_Warbling = 0x157, //NWsfx
+    SOUND_158_Bird_Call_Whistle_Descending = 0x158, //NWsfx
+
+    SOUND_15A_Bird_Call_Whistle_Ascending = 0x15A, //NWsfx
+    SOUND_15B_Bird_Call_Squawk = 0x15B, //NWsfx
+
     SOUND_161_Toy_Squeak = 0x161,
 
     SOUND_174_Machinery_Move_A = 0x174, //SB_ShipGun
@@ -223,6 +229,8 @@ enum SoundID {
     SOUND_1E3_SharpClaw_Ah_Shuddup = 0x1E3, // used in DLL 33
 
     SOUND_1EB_Wooden_Partition_Sliding = 0x1EB, // used when WM transporter room door moves
+
+    SOUND_1FB_EarthWalker_Help = 0x1FB,
 
     SOUND_222_NW_Tricky_Sharpclaw_Help = 0x222,
 
@@ -263,15 +271,14 @@ enum SoundID {
     SOUND_289_Engine_Loop = 0x289,
     
     SOUND_28A_Cmdmenu_MoveSelection = 0x28A,
-
     SOUND_28B_Cmdmenu_Use = 0x28B,
     SOUND_28C_Cmdmenu_Close = 0x28C,
     SOUND_28D_Cmdmenu_OpenBag_HighPitch = 0x28D, // cmdmenu
     SOUND_28E = 0x28E,
-    SOUND_28F = 0x28F,
+    SOUND_28F_Hiss_Loop = 0x28F,
     SOUND_290_Propeller_Loop = 0x290,
 
-    SOUND_292 = 0x292, // used by IMSnowBike
+    SOUND_292_Impact = 0x292, // used by IMSnowBike
 
     SOUND_2B8_Spell_Fired = 0x2B8, //used by Projectile Spell and Grenade Spell (and by Ice Beam?)
 
@@ -281,8 +288,17 @@ enum SoundID {
     SOUND_303 = 0x303,
     SOUND_304_Burning_Loop = 0x304, // flame blast
 
-    SOUND_336 = 0x336,
+    SOUND_32B_SandWorm_Snarl = 0x32B, //CCsandwormBoss
 
+    SOUND_335_SandWorm_Snarl = 0x335, //CCsandwormBoss
+    SOUND_336_Worm_Wounded = 0x336,
+    SOUND_337_Worm_Wounded = 0x337,
+    SOUND_338_Blast = 0x338,
+    SOUND_339_Worm_Emerge = 0x339,
+    SOUND_33A_Worm_Roar = 0x33A, //SnowWormSmall
+    SOUND_33B_Worm_Dying = 0x33B,
+    SOUND_33C_Hiss = 0x33C, //SnowWormSmall
+    SOUND_33D_Hiss_Long = 0x33D, //SnowWormSmall
     SOUND_33E_Reverse_Magic_Hiss = 0x33E, //ECSHshrine (when cups rise)
     SOUND_33F_Cup_Slide_Loop = 0x33F, //ECSH_Cup
 
@@ -319,6 +335,7 @@ enum SoundID {
     SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat, SmallBasket
     SOUND_372_Crate_Struck = 0x372, // used by MediumMetalCrat
 
+    SOUND_374_Whack = 0x374,
     SOUND_375_Smack1 = 0x375,
     SOUND_376_Smack2 = 0x376,
     SOUND_377_Metal_Smack = 0x377,
@@ -402,6 +419,15 @@ enum SoundID {
     SOUND_5F6_Tumbleweed_Roll = 0x5F6, // used in DLL 227
     SOUND_5F7_Tumbleweed_Disintegrate = 0x5F7, // used in DLL 227
 
+    SOUND_5FB_Chirp = 0x5FB, //SnowWormSmall
+    SOUND_5FC_Triple_Chirp = 0x5FC, //SnowWormSmall
+    SOUND_5FD_Trill = 0x5FD, //SnowWormSmall
+    SOUND_5FE_Squeak = 0x5FE, //SnowWormSmall
+    SOUND_5FF_Cry_Hurt = 0x5FF, //SnowWormSmall
+    SOUND_600_Cry_Hurt = 0x600, //SnowWormSmall
+    SOUND_601_Worm_Croak = 0x601, //SnowWormSmall
+    SOUND_602_Emerge_Snowy = 0x602, //SnowWormSmall
+    
     SOUND_613_Gold_Bounce = 0x613,  // used in SCcollectables
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
@@ -409,7 +435,7 @@ enum SoundID {
     SOUND_618_Slice_Impact = 0x618, //magicplant
     SOUND_619_Twinkle_Loop = 0x619, //magicplant
     SOUND_61A_Crystal_Ringing = 0x61A, //magicplant
-
+    SOUND_61B = 0x61B, //DBStealerWorm
 
     SOUND_633 = 0x633, // empty? used by player DLL
     SOUND_634 = 0x634, // empty? used by SmallBasket
@@ -469,6 +495,8 @@ enum SoundID {
     SOUND_6E6_Interaction_Refused = 0x6E6, // camera DLL
     SOUND_6E7_ScorpionRobot_Damaged = 0x6E7,
 
+    SOUND_6E9_Wooden_Ratcheting = 0x6E9,
+
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
 
     SOUND_6F8_ScorpionRobot_Destroyed = 0x6F8,
@@ -486,6 +514,7 @@ enum SoundID {
     SOUND_711_Sabre_Test_of_Strength_2 = 0x711, //DBSH_Symbol
     SOUND_712_Sabre_Test_of_Strength_3 = 0x712, //DBSH_Symbol
 
+    SOUND_721 = 0x721,
     SOUND_722_Impact_Wobble = 0x722, //Pollen
 
     SOUND_72D_Lock_On = 0x72D,          //Z-targetting
@@ -504,6 +533,8 @@ enum SoundID {
 
     SOUND_76D_Log_Bump = 0x76D, // used by DFlog, BWlog
 
+    SOUND_76F = 0x76F, //DFturbine
+
     SOUND_775_Timer_Countdown = 0x775,
     SOUND_776_Wooden_Creaking_Loop = 0x776, //used by SCtotemstrength
     
@@ -513,6 +544,10 @@ enum SoundID {
     SOUND_77C_Capy_Sniff = 0x77C,
     SOUND_77D_Capy_Eat = 0x77D,
 
+    SOUND_782 = 0x782, //DFpulley
+    SOUND_783_Rope_Strain = 0x783, //DFcradle
+    SOUND_784_Rope_Strain = 0x784, //DFcradle
+    SOUND_785_Rope_Strain = 0x785, //DFcradle
     SOUND_786_Wooden_Ratcheting_Loop = 0x786, //SC_totempole (when approaching spinning pole)
 
     SOUND_78C = 0x78C, //DFPLevelControl (empty?)
@@ -530,6 +565,8 @@ enum SoundID {
     SOUND_7B0 = 0x7B0,
     SOUND_7B1 = 0x7B1,
 
+    SOUND_7F6_Firefly_Twinkle_Loop = 0x7F6,
+
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
@@ -541,7 +578,9 @@ enum SoundID {
     
     SOUND_840 = 0x840, 
     SOUND_841 = 0x841,
-    SOUND_842 = 0x842, 
+    SOUND_842 = 0x842,
+
+    SOUND_849 = 0x849, 
     
     SOUND_851_Laser_Blast = 0x851, // DRbullet
 
@@ -630,6 +669,9 @@ enum SoundID {
     SOUND_A29_Wooden_Ratcheting_Loop = 0xA29, //DBSpike
     SOUND_A2A_Heavy_Swing = 0xA2A, //DBSpike
 
+    SOUND_A3E_Vines_Rustle = 0xA3E, //WGbouncyVine
+    SOUND_A3F_Boing = 0xA3F, //WGbouncyVine
+
     SOUND_A4E_Dinosaur_Grunt = 0xA4E, // used by PointBack
     SOUND_A4F_Dinosaur_Grunt = 0xA4F, // used by PointBack
     SOUND_A50_Dinosaur_Grunt = 0xA50, // used by PointBack
@@ -674,6 +716,8 @@ enum SoundID {
     SOUND_B2B_Magic_Chime = 0xB2B, //MagicDust (when vanishing)
 
     SOUND_B31_Item_Collection_Chime = 0xB31,
+
+    SOUND_B38 = 0xB38,
 
     SOUND_B47 = 0xB47,
 

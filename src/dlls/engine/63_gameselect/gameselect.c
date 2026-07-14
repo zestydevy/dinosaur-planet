@@ -454,93 +454,95 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 
     submenu = &sSubmenus[sSubmenuIdx];
 
-    if ((!sExitToGame && !sExitToMainMenu) || sExitTransitionTimer > 10) {
-        fontWindowSetCoords(1, 0, 0,
-            GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
-            GET_VIDEO_HEIGHT(viGetCurrentSize()));
-        fontWindowFlushStrings(1);
+    if ((sExitToGame || sExitToMainMenu) && (sExitTransitionTimer <= 10)) {
+        return;
+    }
+        
+    fontWindowSetCoords(1, 0, 0,
+        GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
+        GET_VIDEO_HEIGHT(viGetCurrentSize()));
+    fontWindowFlushStrings(1);
 
-        fontWindowSetCoords(3, 105, 0,
-            GET_VIDEO_WIDTH(viGetCurrentSize()) - 200,
-            GET_VIDEO_HEIGHT(viGetCurrentSize()));
-        fontWindowFlushStrings(3);
+    fontWindowSetCoords(3, 105, 0,
+        GET_VIDEO_WIDTH(viGetCurrentSize()) - 200,
+        GET_VIDEO_HEIGHT(viGetCurrentSize()));
+    fontWindowFlushStrings(3);
 
-        if (sRedrawFrames != 0) {
-            rcpScreenFullWrite(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
+    if (sRedrawFrames != 0) {
+        rcpScreenFullWrite(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
 
-            if (sSubmenuIdx == SUBMENU_GAME_RECAP) {
-                rcpScreenFullWrite(gdl, sLogoShadowTexture, 119, 92, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-                rcpScreenFullWrite(gdl, sLogoTexture, 129, 100, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+        if (sSubmenuIdx == SUBMENU_GAME_RECAP) {
+            rcpScreenFullWrite(gdl, sLogoShadowTexture, 119, 92, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sLogoTexture, 129, 100, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
 
-                numRecentTasks = gDLL_30_Task->vtbl->get_num_recently_completed();
-                if (numRecentTasks > 3) {
-                    numRecentTasks = 3;
-                }
-
-                fontWindowEnableWordwrap(3);
-                fontWindowUseFont(1, FONT_FUN_FONT);
-                fontWindowUseFont(3, FONT_FUN_FONT);
-                fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
-                fontWindowSetTextColour(3, 183, 139, 97, 255, 255);
-
-                y = 232;
-                for (i = 0; i < numRecentTasks; i++) {
-                    sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
-                    fontWindowAddStringXY(1, 75, y, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                    fontWindowAddStringXY(3, 2, y, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
-                    y += 40;
-                }
-
-                y = 232;
-                fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
-                fontWindowSetTextColour(3, 0, 0, 0, 255, 255);
-                for (i = 0; i < numRecentTasks; i++) {
-                    sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
-                    fontWindowAddStringXY(1, 73, y - 2, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                    fontWindowAddStringXY(3, 0, y - 2, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
-                    y += 40;
-                }
-            } else {
-                if (sSelectedSaveIdx != -1) {
-                    dll_63_draw_save_game_box(gdl, sSaveGameBoxX, sSaveGameBoxY, &sSaveGameInfo[sSelectedSaveIdx]);
-                }
-
-                fontWindowUseFont(1, FONT_FUN_FONT);
-                fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
-
-                fontWindowAddStringXY(1, 320, 405, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 1, ALIGN_TOP_CENTER);
-                fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
-                fontWindowAddStringXY(1, 318, 403, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 2, ALIGN_TOP_CENTER);
+            numRecentTasks = gDLL_30_Task->vtbl->get_num_recently_completed();
+            if (numRecentTasks > 3) {
+                numRecentTasks = 3;
             }
 
-            fontWindowSetCoords(2, 0, 0,
-                GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
-                GET_VIDEO_HEIGHT(viGetCurrentSize()));
-            fontWindowFlushStrings(2);
-            fontWindowUseFont(2, FONT_DINO_MEDIUM_FONT_IN);
-            fontWindowEnableWordwrap(2);
-            fontWindowSetTextColour(2, 255, 255, 255, 0, 255);
+            fontWindowEnableWordwrap(3);
+            fontWindowUseFont(1, FONT_FUN_FONT);
+            fontWindowUseFont(3, FONT_FUN_FONT);
+            fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
+            fontWindowSetTextColour(3, 183, 139, 97, 255, 255);
 
-            fontWindowAddStringXY(2, 69, 61, sGameTextChunk->strings[submenu->titleTextIdx], 1, ALIGN_TOP_LEFT);
-            fontWindowSetTextColour(2, 0, 0, 0, 255, 255);
-            fontWindowAddStringXY(2, 64, 56, sGameTextChunk->strings[submenu->titleTextIdx], 2, ALIGN_TOP_LEFT);
+            y = 232;
+            for (i = 0; i < numRecentTasks; i++) {
+                sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
+                fontWindowAddStringXY(1, 75, y, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
+                fontWindowAddStringXY(3, 2, y, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                y += 40;
+            }
 
-            fontWindowDraw(gdl, NULL, NULL, 2);
+            y = 232;
+            fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+            fontWindowSetTextColour(3, 0, 0, 0, 255, 255);
+            for (i = 0; i < numRecentTasks; i++) {
+                sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
+                fontWindowAddStringXY(1, 73, y - 2, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
+                fontWindowAddStringXY(3, 0, y - 2, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                y += 40;
+            }
         } else {
-            // Always redraw background in case picmenu redraws
-            menu_func_80010158(&ulx, &lrx, &uly, &lry);
-            rcpScreenScrollWrite(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
+            if (sSelectedSaveIdx != -1) {
+                dll_63_draw_save_game_box(gdl, sSaveGameBoxX, sSaveGameBoxY, &sSaveGameInfo[sSelectedSaveIdx]);
+            }
+
+            fontWindowUseFont(1, FONT_FUN_FONT);
+            fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
+
+            fontWindowAddStringXY(1, 320, 405, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 1, ALIGN_TOP_CENTER);
+            fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+            fontWindowAddStringXY(1, 318, 403, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 2, ALIGN_TOP_CENTER);
         }
 
-        gDLL_74_Picmenu->vtbl->draw(gdl);
+        fontWindowSetCoords(2, 0, 0,
+            GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
+            GET_VIDEO_HEIGHT(viGetCurrentSize()));
+        fontWindowFlushStrings(2);
+        fontWindowUseFont(2, FONT_DINO_MEDIUM_FONT_IN);
+        fontWindowEnableWordwrap(2);
+        fontWindowSetTextColour(2, 255, 255, 255, 0, 255);
 
-        fontWindowDraw(gdl, NULL, NULL, 1);
-        fontWindowDraw(gdl, NULL, NULL, 3);
+        fontWindowAddStringXY(2, 69, 61, sGameTextChunk->strings[submenu->titleTextIdx], 1, ALIGN_TOP_LEFT);
+        fontWindowSetTextColour(2, 0, 0, 0, 255, 255);
+        fontWindowAddStringXY(2, 64, 56, sGameTextChunk->strings[submenu->titleTextIdx], 2, ALIGN_TOP_LEFT);
 
-        sRedrawFrames -= 1;
-        if (sRedrawFrames < 0) {
-            sRedrawFrames = 0;
-        }
+        fontWindowDraw(gdl, NULL, NULL, 2);
+    } else {
+        // Always redraw background in case picmenu redraws
+        menu_func_80010158(&ulx, &lrx, &uly, &lry);
+        rcpScreenScrollWrite(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
+    }
+
+    gDLL_74_Picmenu->vtbl->draw(gdl);
+
+    fontWindowDraw(gdl, NULL, NULL, 1);
+    fontWindowDraw(gdl, NULL, NULL, 3);
+
+    sRedrawFrames -= 1;
+    if (sRedrawFrames < 0) {
+        sRedrawFrames = 0;
     }
 }
 

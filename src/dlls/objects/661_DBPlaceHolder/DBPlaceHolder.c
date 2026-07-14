@@ -1,4 +1,5 @@
 #include "PR/ultratypes.h"
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
@@ -20,10 +21,19 @@ typedef struct {
 /*1C*/ u8 yaw;
 /*1D*/ u8 flags;
 /*1E*/ s8 objectSeqIndex;
-/*1F*/ s8 unk1F;
-/*20*/ s16 unk20;
-/*22*/ u16 unk22;
+/*1F*/ s8 stealable;
+/*20*/ s16 preemptTime;
+/*22*/ u16 preemptEnabledActorsConfig;
 } DBPlaceHolder_Setup;
+
+typedef enum {
+    DBPlaceHolder_FLAG_0_None = 0,
+    DBPlaceHolder_FLAG_1 = 1,
+    DBPlaceHolder_FLAG_2_Interacted = 2,
+    DBPlaceHolder_FLAG_4_StealerWormTarget = 4,
+    DBPlaceHolder_FLAG_8_Tiny_Scale = 8,
+    DBPlaceHolder_FLAG_10_Preempt = 0x10
+} DBPlaceHolder_Flags;
 
 static int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
@@ -34,22 +44,24 @@ void DBPlaceHolder_ctor(void *dll) { }
 void DBPlaceHolder_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 arg2) {
-    DBPlaceHolder_Data *objdata;
+void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 reset) {
+    DBPlaceHolder_Data *objdata = self->data;
 
-    objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
     self->animCallback = DBPlaceHolder_anim_callback;
-    objdata->flags = 0;
+    objdata->flags = DBPlaceHolder_FLAG_0_None;
+
     if (mainGetBits(setup->gamebit1)) {
-        self->unkAF |= 8;
-        objdata->flags |= 1;
-        if (setup->unk20 != 0) {
-            objdata->flags |= 0x10;
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        objdata->flags |= DBPlaceHolder_FLAG_1;
+
+        if (setup->preemptTime != 0) {
+            objdata->flags |= DBPlaceHolder_FLAG_10_Preempt;
         }
     }
-    if (arg2 != 0) {
-        objdata->flags |= 8;
+
+    if (reset) {
+        objdata->flags |= DBPlaceHolder_FLAG_8_Tiny_Scale;
     }
 }
 
@@ -63,35 +75,42 @@ void DBPlaceHolder_control(Object *self) {
 
     setup = (DBPlaceHolder_Setup*)self->setup;
     objdata = self->data;
-    if ((setup->unk1F == 1) && !(objdata->flags & 4) && mainGetBits(setup->gamebit2)) {
+
+    if ((setup->stealable == TRUE) && !(objdata->flags & DBPlaceHolder_FLAG_4_StealerWormTarget) && mainGetBits(setup->gamebit2)) {
         objAddObjectType(self, OBJTYPE_39);
-        objdata->flags |= 4;
+        objdata->flags |= DBPlaceHolder_FLAG_4_StealerWormTarget;
     }
-    if (objdata->flags & 2) {
+
+    if (objdata->flags & DBPlaceHolder_FLAG_2_Interacted) {
         mainSetBits(setup->gamebit1, 1);
-        self->unkAF |= 8;
-        objdata->flags &= ~2;
-        objdata->flags |= 1;
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        objdata->flags &= ~DBPlaceHolder_FLAG_2_Interacted;
+        objdata->flags |= DBPlaceHolder_FLAG_1;
     }
-    if (!(objdata->flags & 1) && (self->unkAF & 1) && mainGetBits(setup->gamebit2)) {
+
+    if (!(objdata->flags & DBPlaceHolder_FLAG_1) && (self->unkAF & ARROW_FLAG_1_Interacted) && mainGetBits(setup->gamebit2)) {
         player = objGetPlayer();
         x = player->srt.transl.x - self->srt.transl.x;
         z = player->srt.transl.z - self->srt.transl.z;
         self->srt.yaw = arctan2s(x, z);
-        self->unkAF |= 8;
-        objdata->flags |= 2;
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        objdata->flags |= DBPlaceHolder_FLAG_2_Interacted;
         gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
     }
-    if (objdata->flags & 0x10) {
-        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk20);
+
+    if (objdata->flags & DBPlaceHolder_FLAG_10_Preempt) {
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->preemptTime);
+
         if (setup->flags & 0x10) {
-            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, setup->unk22);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, setup->preemptEnabledActorsConfig);
         } else {
             gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, 1);
         }
-        objdata->flags &= ~0x10;
+
+        objdata->flags &= ~DBPlaceHolder_FLAG_10_Preempt;
     }
-    objdata->flags &= ~8;
+
+    objdata->flags &= ~DBPlaceHolder_FLAG_8_Tiny_Scale;
 }
 
 // offset: 0x338 | func: 2 | export: 2
@@ -99,15 +118,15 @@ void DBPlaceHolder_update(Object *self) { }
 
 // offset: 0x344 | func: 3 | export: 3
 void DBPlaceHolder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    DBPlaceHolder_Data *objdata;
+    DBPlaceHolder_Data *objdata = self->data;
 
-    objdata = self->data;
     if (visibility) {
-        if (objdata->flags & 8) {
+        if (objdata->flags & DBPlaceHolder_FLAG_8_Tiny_Scale) {
             self->srt.scale = 1.0f;
         } else {
             self->srt.scale = 0.00001f;
         }
+
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
@@ -129,11 +148,11 @@ u32 DBPlaceHolder_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x430 | func: 7
 int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
-    DBPlaceHolder_Setup *setup;
+    DBPlaceHolder_Setup *setup = (DBPlaceHolder_Setup*)self->setup;
 
-    setup = (DBPlaceHolder_Setup*)self->setup;
     if (animObjData->lastMessage == 2) {
         mainSetBits(setup->gamebit1, 1);
     }
+
     return 0;
 }

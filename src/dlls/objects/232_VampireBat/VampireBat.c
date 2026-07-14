@@ -379,7 +379,7 @@ static s32 dll_232_func_100C(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
     baddie = self->data;
     if (fsa->enteredLogicState != 0) {
-        gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0U);
+        gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0U);
         gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0U);
         baddie->unk3B4 = 0;
     }

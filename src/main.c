@@ -439,7 +439,7 @@ void main_func_80013D80(void) {
                     && (D_8008C94C == 0) 
                     && (main_func_800143FC() == 0) 
                     && ((button & START_BUTTON) != 0) 
-                    && (mainGetBits(BIT_44F) == 0)) {
+                    && (mainGetBits(BIT_Menus_Selection_Blocked) == 0)) {
                 gPauseState = 1;
                 joyDisableButtons(0, START_BUTTON);
                 menuSet(MENU_PAUSE);

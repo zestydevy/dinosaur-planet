@@ -107,9 +107,9 @@ typedef struct {
 /*14*/ f32 unk14[20];
 /*64*/ f32 unk64;
 /*68*/ Vec3f unk68; //lerp_result_x?
-/*74*/ f32 unk74; //some x component
-/*78*/ f32 unk78; //some y component
-/*7C*/ f32 unk7C; //some z component
+/*74*/ f32 unk74; //curve tangent x
+/*78*/ f32 unk78; //curve tangent y
+/*7C*/ f32 unk7C; //curve tangent z
 /*80*/ s32 unk80;
 /*84*/ f32* unk84;
 /*88*/ f32* unk88;

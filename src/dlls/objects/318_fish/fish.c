@@ -1,6 +1,9 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
+#include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/interaction_arrow.h"
+#include "sys/math.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -11,66 +14,86 @@
 #include "dll.h"
 
 typedef struct {
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC[2];
-    f32 unk14;
-    u8 unk18;
-    u8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    f32 unk20;
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    s16 unk30;
-    f32 unk34;
-    f32 unk38;
-    f32 unk3C;
-    f32 unk40;
-    f32 unk44;
-    f32 unk48;
-    f32 unk4C;
-    f32 unk50;
-    f32 unk54;
-    f32 unk58;
-    f32 unk5C;
-    f32 unk60;
-    f32 unk64;
-    f32 unk68;
-    f32 unk6C;
-    f32 unk70;
-    f32 unk74;
-    f32 unk78;
-    u8 unk7C;
-} fish_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-    u8 unk1B;
-    u16 unk1C;
-    u16 unk1E;
-    u8 unk20;
-    u8 unk21;
-    u8 unk22;
-    u8 unk23;
-    u8 unk24;
-    u16 unk26;
-    u8 unk28;
+/*00*/    ObjSetup base;
+/*18*/    u8 yaw;
+/*19*/    u8 scale;
+/*1A*/    u8 peekDuration;
+/*1B*/    u8 bubbleRate;
+/*1C*/    u16 swimDurationBeforePeek;     //How long to stay in State 2, before transitioning into peek state (#3)
+/*1E*/    u16 respawnDuration;
+/*20*/    u8 maxLateralSpeed;             //Stored at 100x actual value
+/*21*/    u8 jumpDistanceLateral;
+/*22*/    u8 jumpDuration;
+/*23*/    u8 jumpAnticipateDuration;
+/*24*/    u8 jumpRecoveryDuration;
+/*26*/    u16 swimDurationAfterPeek;      //How long to stay in State 4, before transitioning into jump state
+/*28*/    u8 surfaceOffsetY;
 } fish_Setup;
 
-static void fish_func_10BC(Object* self);
-static void fish_func_11C8(Object *self, s16 a1, u8 a2);
-static s32 fish_func_1978(Object* self);
-static s32 fish_func_1EF4(Object* self);
-static void fish_func_2150(Object* self);
-static void fish_func_84(Object* self);
-static s32 fish_func_F74(Object* self);
-static s32 fish_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2);
+typedef struct {
+/*00*/    f32 animSpeed;
+/*04*/    f32 timer;
+/*08*/    f32 bubbleTimer;
+/*0C*/    f32 bubbleFXParams[2];
+/*14*/    f32 bubbleRate;
+/*18*/    u8 state;
+/*19*/    u8 randomTurnsPaused;
+/*1A*/    s16 turn;
+/*1C*/    s16 yawSpeed;
+/*20*/    f32 maxLateralSpeed;
+/*24*/    f32 maxSpeedApproachingWall;
+/*28*/    f32 lateralSpeed;
+/*2C*/    f32 surfaceY;
+/*30*/    s16 objHitsConfig;
+/*34*/    f32 unk34;                      //related to lateral speed during jump anticipation
+/*38*/    f32 jumpAnticipationDistance;
+/*3C*/    f32 unk3C;                      //related to height during jump anticipation
+/*40*/    f32 unk40;                      //related to height during jump anticipation
+/*44*/    f32 jumpDistanceLateral;
+/*48*/    f32 jumpDuration;
+/*4C*/    f32 jumpHeightFactor;
+/*50*/    f32 jumpSpeedLateral;
+/*54*/    f32 timerPrevJump;
+/*58*/    f32 jumpedFromX;
+/*5C*/    f32 jumpedFromY;
+/*60*/    f32 jumpedFromZ;
+/*64*/    f32 jumpFlightDuration;
+/*68*/    f32 splashTime;
+/*6C*/    f32 unk6C;                      //related to roll while anticipating jump
+/*70*/    f32 unk70;                      //related to roll while following jump arc
+/*74*/    f32 unk74;                      //related to roll while anticipating jump
+/*78*/    f32 unk78;                      //related to roll while following jump arc
+/*7C*/    u8 initialised;
+} fish_Data;
+
+typedef enum {
+    Fish_STATE_0_Hidden,
+    Fish_STATE_1_Fade_In,
+    Fish_STATE_2_Swim_before_Peek,
+    Fish_STATE_3_Peek_Up,
+    Fish_STATE_4_Swim_after_Peek,
+    Fish_STATE_5_Jump,
+    Fish_STATE_6_Jump_Flight,
+    Fish_STATE_7_Jump_Recovery
+} fish_States;
+
+typedef enum {
+    Fish_MODANIM_0_Swim_LOOP,
+    Fish_MODANIM_1_Jump,
+    Fish_MODANIM_2_Tilted_Up,
+    Fish_MODANIM_3_Tilted_Down
+} fish_ModAnim;
+
+#define FADE_IN_DURATION 60.0f
+
+static void fish_initialise(Object* self);
+static s32 fish_is_jump_possible(Object* self);
+static void fish_random_turn_swim(Object* self);
+static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount);
+static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* eulerRotation);
+static s32 fish_jump_handle_flight(Object* self);
+static s32 fish_jump_handle_anticipation(Object* self);
+static void fish_caught_by_net(Object* self);
 
 // offset: 0x0 | ctor
 void fish_ctor(void *dll) { }
@@ -79,225 +102,245 @@ void fish_ctor(void *dll) { }
 void fish_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void fish_setup(Object *self, fish_Setup *setup, s32 arg2) {
+void fish_setup(Object *self, fish_Setup *setup, s32 reset) {
     fish_Data *objdata = self->data;
-    if (setup->unk28 == 0) {
-        setup->unk28 = 1U;
+
+    if (setup->surfaceOffsetY == 0) {
+        setup->surfaceOffsetY = 1;
     }
-    objdata->unk7C = 0;
-    fish_func_84(self);
+
+    objdata->initialised = FALSE;
+    fish_initialise(self);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x84 | func: 1
-static void fish_func_84(Object* self) {
+static void fish_initialise(Object* self) {
     fish_Data* objdata;
     fish_Setup* setup;
-    f32 temp_fa1;
-    Vec4f sp2C;
-    f32 temp_ft4;
-    f32 temp_ft5;
-    f32 temp_fv0_2;
-    f32 temp_fv0_3;
+    f32 curveParam;
+    Vec4f curve;
+    f32 jumpHeightFactorSq;
+    f32 splashOffsetFraction;
+    f32 jumpCalcSq;
 
     objdata = self->data;
     setup = (fish_Setup*)self->setup;
-    objdata->unk4 = 0.0f;
-    objdata->unk8 = 0.0f;
-    objdata->unk14 = ((f32) setup->unk1B / SQ(SQ(SQ((f32) setup->unk26))));
-    objdata->unk18 = 1;
-    objdata->unk1A = 0;
-    objdata->unk19 = 0;
-    objdata->unk1C = 0;
-    objdata->unk20 = ((f32) setup->unk20 / 100.0f);
-    objdata->unk24 = ((f32) setup->unk20 / 1000.0f);
-    objdata->unk28 = 0.0f;
-    if (func_80058B1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &objdata->unk2C, 0U) != 0) {
-        objdata->unk2C = ((setup->base.y + objdata->unk2C) - (f32) setup->unk28);
-        objdata->unkC[0] = ((f32) setup->unk28 / 0.05f);
-        objdata->unkC[1] = (((f32) setup->unk19 / 100.0f) * 20.0f);
-        objdata->unk44 = (f32) setup->unk21;
-        objdata->unk48 = (f32) setup->unk22;
-        objdata->unk50 = (f32) (objdata->unk44 / objdata->unk48);
-        objdata->unk4C = ((objdata->unk48 * -0.04f) * objdata->unk48) / -objdata->unk48;
-        temp_fa1 = objdata->unk48 * ((2.0f * objdata->unk4C) + (objdata->unk48 * -0.04f)) * 0.25f;
-        temp_fv0_2 = temp_fa1 * 0.5f;
-        sp2C.f[0] = temp_fv0_2;
-        sp2C.f[1] = temp_fa1;
-        sp2C.f[2] = temp_fv0_2 * temp_fv0_2;
-        sp2C.f[3] = temp_fa1 * temp_fa1;
-        objdata->unk70 = (f32) (16384.0f / ((2.0f * sp2C.f[2]) - sp2C.f[3]));
-        objdata->unk78 = (f32) ((8192.0f - (objdata->unk70 * sp2C.f[2])) / sp2C.f[0]);
-        temp_ft4 = SQ(objdata->unk4C);
-        temp_ft5 = -((f32) setup->unk28) * -0.16f;
-        if (!(temp_ft4 < temp_ft5)) {
-            temp_fv0_3 = sqrtf(temp_ft4 - temp_ft5);
-            objdata->unk64 = ((-objdata->unk4C + temp_fv0_3) / -0.08f);
-            objdata->unk68 = ((-objdata->unk4C - temp_fv0_3) / -0.08f);
-            objdata->unk34 = ((sqrtf(SQ(objdata->unk50) + SQ(objdata->unk4C)) - objdata->unk20) / (f32) setup->unk23);
-            objdata->unk38 = ((objdata->unk34 * (f32) setup->unk23 * (f32) setup->unk23) + (objdata->unk20 * (f32) setup->unk23));
-            objdata->unk40 = -((f32) setup->unk28 * 4.0f);
-            objdata->unk40 = (objdata->unk40 / (objdata->unk38 * objdata->unk38));
-            objdata->unk3C = (-objdata->unk40 * objdata->unk38);
-            sp2C.f[2] = SQ((f32) setup->unk28 * 0.5f);
-            sp2C.f[0] = (f32) setup->unk28 * 0.5f;
-            sp2C.f[3] = (f32) setup->unk28 * (f32) setup->unk28;
-            sp2C.f[1] = (f32) setup->unk28;
-            objdata->unk6C = 8192.0f / ((2.0f * sp2C.f[2]) - sp2C.f[3]);
-            objdata->unk74 = (4096.0f - (objdata->unk6C * sp2C.f[2])) / sp2C.f[0];
-            self->srt.yaw = setup->unk18 << 8;
-            self->srt.scale = self->def->scale * ((f32) setup->unk19 / 100.0f);
-            objdata->unk30 = self->objhitInfo->unk58;
-            objdata->unk7C = 1;
+
+    objdata->timer = 0.0f;
+    objdata->bubbleTimer = 0.0f;
+    objdata->bubbleRate = (setup->bubbleRate / SQ(SQ(SQ((f32) setup->swimDurationAfterPeek))));
+    objdata->state = Fish_STATE_1_Fade_In;
+    objdata->turn = 0;
+    objdata->randomTurnsPaused = FALSE;
+    objdata->yawSpeed = 0;
+    objdata->maxLateralSpeed = setup->maxLateralSpeed / 100.0f;
+    objdata->maxSpeedApproachingWall = setup->maxLateralSpeed / 1000.0f;
+    objdata->lateralSpeed = 0.0f;
+
+    if (func_80058B1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objdata->surfaceY, 0)) {
+        objdata->surfaceY = (setup->base.y + objdata->surfaceY) - setup->surfaceOffsetY;
+        objdata->bubbleFXParams[0] = setup->surfaceOffsetY / 0.05f;
+        objdata->bubbleFXParams[1] = (setup->scale / 100.0f) * 20.0f;
+        objdata->jumpDistanceLateral = setup->jumpDistanceLateral;
+        objdata->jumpDuration = setup->jumpDuration;
+        objdata->jumpSpeedLateral = objdata->jumpDistanceLateral / objdata->jumpDuration;
+        objdata->jumpHeightFactor = ((objdata->jumpDuration * -0.04f) * objdata->jumpDuration) / -objdata->jumpDuration; //? This just works out as (objdata->jumpDuration / 25)
+
+        curveParam = objdata->jumpDuration * ((2.0f * objdata->jumpHeightFactor) + (objdata->jumpDuration * -0.04f)) * 0.25f;
+        curve.f[0] = curveParam * 0.5f;
+        curve.f[1] = curveParam;
+        curve.f[2] = SQ(curveParam * 0.5f);
+        curve.f[3] = SQ(curveParam);        
+        objdata->unk70 = M_90_DEGREES / ((2.0f * curve.f[2]) - curve.f[3]);
+        objdata->unk78 = ((M_45_DEGREES) - (objdata->unk70 * curve.f[2])) / curve.f[0];
+
+        jumpHeightFactorSq = SQ(objdata->jumpHeightFactor);
+        splashOffsetFraction = -((f32) setup->surfaceOffsetY) * -0.16f;
+        if (!(jumpHeightFactorSq < splashOffsetFraction)) {
+            jumpCalcSq = sqrtf(jumpHeightFactorSq - splashOffsetFraction);
+            objdata->jumpFlightDuration = (-objdata->jumpHeightFactor + jumpCalcSq) / -0.08f;
+            objdata->splashTime = (-objdata->jumpHeightFactor - jumpCalcSq) / -0.08f;
+            objdata->unk34 = (sqrtf(SQ(objdata->jumpSpeedLateral) + SQ(objdata->jumpHeightFactor)) - objdata->maxLateralSpeed) / setup->jumpAnticipateDuration;
+            objdata->jumpAnticipationDistance = (objdata->unk34 * setup->jumpAnticipateDuration * setup->jumpAnticipateDuration) + (objdata->maxLateralSpeed * setup->jumpAnticipateDuration);
+            objdata->unk40 = -(setup->surfaceOffsetY * 4.0f);
+            objdata->unk40 /= SQ(objdata->jumpAnticipationDistance);
+            objdata->unk3C = -objdata->unk40 * objdata->jumpAnticipationDistance;
+            curve.f[2] = SQ((f32) setup->surfaceOffsetY * 0.5f);
+            curve.f[0] = setup->surfaceOffsetY * 0.5f;
+            curve.f[3] = SQ((f32) setup->surfaceOffsetY);
+            curve.f[1] = setup->surfaceOffsetY;
+            objdata->unk6C = M_45_DEGREES / ((2.0f * curve.f[2]) - curve.f[3]);
+            objdata->unk74 = ((M_45_DEGREES/2) - (objdata->unk6C * curve.f[2])) / curve.f[0];
+            
+            self->srt.yaw = setup->yaw << 8;
+            self->srt.scale = self->def->scale * (setup->scale / 100.0f);
+            objdata->objHitsConfig = self->objhitInfo->unk58;
+            objdata->initialised = TRUE;
         }
     }
 }
 
 // offset: 0x630 | func: 2 | export: 1
 void fish_control(Object* self) {
-    s32 temp_v0;
+    s32 damageType;
     fish_Setup* setup;
-    f32 var_fa1;
+    f32 bubblesPerSecond;
     fish_Data* objdata;
     Object* player;
-    f32 temp_fa0;
-    f32 temp_fv1_2;
-    f32 temp_fv1_3;
+    f32 timerPow4;
+    f32 timerSq;
 
     setup = (fish_Setup*)self->setup;
     objdata = self->data;
     
     player = objGetPlayer();
-    if (objdata->unk7C == 0) {
-        fish_func_84(self);
+
+    if (objdata->initialised == FALSE) {
+        fish_initialise(self);
     }
-    if (player->id == 0x1F) {
-        if (mainGetBits(BIT_2EA) == 0) {
-            self->unkAF |= 8;
+
+    //Allow targetting based on player-specific gamebits (whether Krystal/Sabre own a fishing net)
+    if (player->id == OBJ_Krystal) {
+        if (mainGetBits(BIT_Krystal_Fishing_Net) == FALSE) {
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
         } else {
-            self->unkAF &= ~0x8;
+            self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     } else {
-        if (mainGetBits(BIT_3E1) == 0) {
-            self->unkAF |= 8;
+        if (mainGetBits(BIT_Sabre_Fishing_Net) == FALSE) {
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
         } else {
-            self->unkAF &= ~0x8;
+            self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     }
-    temp_v0 = func_80025F40(self, NULL, NULL, NULL);
-    if ((temp_v0 != 0) && (temp_v0 == Damage_Type_Fishing_Net)) {
-        fish_func_2150(self);
+
+    //Handle fishing net collision
+    damageType = func_80025F40(self, NULL, NULL, NULL);
+    if (damageType && (damageType == Damage_Type_Fishing_Net)) {
+        fish_caught_by_net(self);
         return;
     }
-    objdata->unk4 += gUpdateRateF;
-    switch (objdata->unk18) {
-    case 0:
-        self->unkAF |= 8;
-        if ((f32) setup->unk1E <= objdata->unk4) {
-            objdata->unk18 = 1U;
-            objdata->unk4 -= (f32) setup->unk1E;
+
+    objdata->timer += gUpdateRateF;
+
+    switch (objdata->state) {
+    case Fish_STATE_0_Hidden:
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        if (objdata->timer >= setup->respawnDuration) {
+            objdata->state = Fish_STATE_1_Fade_In;
+            objdata->timer -= setup->respawnDuration;
         }
         break;
-    case 1:
-        if (objdata->unk4 <= 60.0f) {
-            self->unkAF |= 8;
-            self->opacity = (u8) (s32) ((objdata->unk4 / 60.0f) * 255.0f);
-            fish_func_11C8(self, NULL, 0);
+    case Fish_STATE_1_Fade_In:
+        if (objdata->timer <= FADE_IN_DURATION) {
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
+            self->opacity = (s32) ((objdata->timer / FADE_IN_DURATION) * OBJECT_OPACITY_MAX);
+            fish_swim(self, 0, 0);
         } else {
-            self->opacity = 0xFF;
-            self->objhitInfo->unk58 = objdata->unk30;
-            objdata->unk18 = 2U;
-            objdata->unk4 -= 60.0f;
-            fish_func_11C8(self, NULL, 0);
+            self->opacity = OBJECT_OPACITY_MAX;
+            self->objhitInfo->unk58 = objdata->objHitsConfig;
+            objdata->state = Fish_STATE_2_Swim_before_Peek;
+            objdata->timer -= FADE_IN_DURATION;
+            fish_swim(self, 0, 0);
         }
         break;
-    case 2:
-        if (objdata->unk4 <= (f32) setup->unk1C) {
-            fish_func_10BC(self);
+    case Fish_STATE_2_Swim_before_Peek:
+        if (objdata->timer <= setup->swimDurationBeforePeek) {
+            fish_random_turn_swim(self);
         } else {
-            self->srt.transl.f[1] = setup->base.y;
-            objdata->unk18 = 3U;
-            objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk1C);
-            fish_func_11C8(self, NULL, 0);
-            objAnimSet(self, 2, 0.0f, 0U);
-            objAnim_func_80024D74(self, 0x1E);
+            self->srt.transl.y = setup->base.y;
+            objdata->state = Fish_STATE_3_Peek_Up;
+            objdata->timer -= setup->swimDurationBeforePeek;
+            fish_swim(self, 0, 0);
+            objAnimSet(self, Fish_MODANIM_2_Tilted_Up, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
-    case 3:
-        if (objdata->unk4 <=  (f32) setup->unk1A) {
-            self->srt.transl.f[1] = setup->base.y + (((objdata->unk2C - setup->base.y) * objdata->unk4) /  (f32) setup->unk1A);
-            fish_func_10BC(self);
+    case Fish_STATE_3_Peek_Up:
+        if (objdata->timer <= setup->peekDuration) {
+            self->srt.transl.y = setup->base.y + (((objdata->surfaceY - setup->base.y) * objdata->timer) / setup->peekDuration);
+            fish_random_turn_swim(self);
         } else {
-            self->srt.transl.f[1] = objdata->unk2C;
-            objdata->unk18 = 4U;
-            objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk1A);
-            fish_func_11C8(self, NULL, 0);
-            objAnimSet(self, 0, 0.0f, 0U);
-            objAnim_func_80024D74(self, 0x1E);
+            self->srt.transl.y = objdata->surfaceY;
+            objdata->state = Fish_STATE_4_Swim_after_Peek;
+            objdata->timer -= setup->peekDuration;
+            fish_swim(self, 0, 0);
+            objAnimSet(self, Fish_MODANIM_0_Swim_LOOP, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
-    case 4:
-        if ((f32) setup->unk26 <= objdata->unk4) {
-            if (fish_func_F74(self) != 0) {
-                objdata->unk4 = (f32) gUpdateRateF;
-                objdata->unk18 = 5U;
-                objdata->unk58 = (f32) self->srt.transl.f[0];
-                objdata->unk5C = (f32) self->srt.transl.f[1];
-                objdata->unk60 = (f32) self->srt.transl.f[2];
-                objdata->unk54 = 0.0f;
+    case Fish_STATE_4_Swim_after_Peek:
+        if (objdata->timer >= setup->swimDurationAfterPeek) {
+            if (fish_is_jump_possible(self)) {
+                objdata->timer = gUpdateRateF;
+                objdata->state = Fish_STATE_5_Jump;
+                objdata->jumpedFromX = self->srt.transl.x;
+                objdata->jumpedFromY = self->srt.transl.y;
+                objdata->jumpedFromZ = self->srt.transl.z;
+                objdata->timerPrevJump = 0.0f;
                 
-                objAnimSet(self, 1, 0.0f, 0U);
-                objAnim_func_80024D74(self, 0x1E);
-                fish_func_1EF4(self);
+                objAnimSet(self, Fish_MODANIM_1_Jump, 0.0f, 0);
+                objAnim_func_80024D74(self, 30);
+                fish_jump_handle_anticipation(self);
             } else {
-                fish_func_11C8(self, NULL, 0);
+                fish_swim(self, 0, 0);
             }
         } else {
-            fish_func_10BC(self);
+            fish_random_turn_swim(self);
         }
-        temp_fv1_2 = objdata->unk4 * objdata->unk4;
-        temp_fa0 = temp_fv1_2 * temp_fv1_2;
-        objdata->unk8 += gUpdateRateF;
-        var_fa1 = temp_fa0 * temp_fa0 * objdata->unk14;
-        if ((f32) setup->unk1B < var_fa1) {
-            var_fa1 = (f32) setup->unk1B;
-        }
-        temp_fv1_3 = 60.0f / var_fa1;
-        if (temp_fv1_3 <= objdata->unk8) {
-            objdata->unk8 = (f32) (objdata->unk8 - temp_fv1_3);
-            if ((player != NULL) && (vec3_distance_squared(&self->globalPosition, &player->globalPosition) < 10000.0f)) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x26, NULL, 0, -1, objdata->unkC);
+
+        //Create bubble particles when the player's nearby
+        {
+            timerSq = SQ(objdata->timer);
+            timerPow4 = SQ(SQ(objdata->timer));
+            objdata->bubbleTimer += gUpdateRateF;
+
+            bubblesPerSecond = SQ(timerPow4) * objdata->bubbleRate;
+            if (bubblesPerSecond > setup->bubbleRate) {
+                bubblesPerSecond = setup->bubbleRate;
+            }
+
+            if (objdata->bubbleTimer >= 60.0f / bubblesPerSecond) {
+                objdata->bubbleTimer -= 60.0f / bubblesPerSecond;
+                if ((player != NULL) && (vec3_distance_squared(&self->globalPosition, &player->globalPosition) < SQ(100))) {
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_26, NULL, 0, -1, objdata->bubbleFXParams);
+                }
             }
         }
         break;
-    case 5:
-        if (fish_func_1EF4(self) == 0) {
-            objdata->unk58 = (f32) self->srt.transl.f[0];
-            objdata->unk5C = (f32) self->srt.transl.f[1];
-            objdata->unk60 = (f32) self->srt.transl.f[2];
-            fish_func_1978(self);
+    case Fish_STATE_5_Jump:
+        //Anticipate downwards before bursting up through the water
+        if (fish_jump_handle_anticipation(self) == FALSE) {
+            //Store position and advance state when leaving the water
+            objdata->jumpedFromX = self->srt.transl.x;
+            objdata->jumpedFromY = self->srt.transl.y;
+            objdata->jumpedFromZ = self->srt.transl.z;
+            fish_jump_handle_flight(self);
         }
         break;
-    case 6:
-        if (fish_func_1978(self) == 0) {
-            fish_func_11C8(self, NULL, 0);
+    case Fish_STATE_6_Jump_Flight:
+        if (fish_jump_handle_flight(self) == FALSE) {
+            fish_swim(self, 0, 0);
         }
         break;
-    case 7:
-        if (objdata->unk4 <= (f32) setup->unk24) {
-            self->srt.transl.f[1] = objdata->unk2C - (((objdata->unk2C - setup->base.y) * objdata->unk4) / (f32) setup->unk24);
-            fish_func_10BC(self);
+    case Fish_STATE_7_Jump_Recovery:
+        //Settling back into regular swimming, after the end of a jump
+        if (objdata->timer <= setup->jumpRecoveryDuration) {
+            self->srt.transl.y = objdata->surfaceY - (((objdata->surfaceY - setup->base.y) * objdata->timer) /setup->jumpRecoveryDuration);
+            fish_random_turn_swim(self);
         } else {
-            self->srt.transl.f[1] = setup->base.y;
-            objdata->unk18 = 2U;
-            objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk24);
-            fish_func_11C8(self, NULL, 0);
-            objAnimSet(self, 0, 0.0f, 0U);
-            objAnim_func_80024D74(self, 0x1E);
+            self->srt.transl.y = setup->base.y;
+            objdata->state = Fish_STATE_2_Swim_before_Peek;
+            objdata->timer -= setup->jumpRecoveryDuration;
+            fish_swim(self, 0, 0);
+            objAnimSet(self, Fish_MODANIM_0_Swim_LOOP, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     }
-    objAnimAdvance(self, objdata->unk0, gUpdateRateF, NULL);
+
+    objAnimAdvance(self, objdata->animSpeed, gUpdateRateF, NULL);
 }
 
 // offset: 0xEA8 | func: 3 | export: 2
@@ -306,15 +349,16 @@ void fish_update(Object *self) { }
 // offset: 0xEB4 | func: 4 | export: 3
 void fish_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     fish_Data* objdata = self->data;
-    if ((objdata->unk18 != 0) && (visibility != 0)) {
-        self->srt.yaw -= 0x8000;
+
+    if ((objdata->state != Fish_STATE_0_Hidden) && visibility) {
+        self->srt.yaw -= M_180_DEGREES;
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
-        self->srt.yaw -= 0x8000;
+        self->srt.yaw -= M_180_DEGREES;
     }
 }
 
 // offset: 0xF40 | func: 5 | export: 4
-void fish_free(Object *self, s32 a1) { }
+void fish_free(Object *self, s32 onlySelf) { }
 
 // offset: 0xF50 | func: 6 | export: 5
 u32 fish_get_model_flags(Object *self) {
@@ -322,313 +366,362 @@ u32 fish_get_model_flags(Object *self) {
 }
 
 // offset: 0xF60 | func: 7 | export: 6
-u32 fish_get_data_size(Object *self, u32 a1) {
+u32 fish_get_data_size(Object *self, u32 offsetAddr) {
     return sizeof(fish_Data);
 }
 
 // offset: 0xF74 | func: 8
-static s32 fish_func_F74(Object *self) {
+static s32 fish_is_jump_possible(Object *self) {
     fish_Data* objdata;
-    Vec3s16 sp64;
+    Vec3s16 eulerRotation;
     s32 _pad[3];
-    Vec3f sp4C;
-    Vec3f sp40;
+    Vec3f vFuture;
+    Vec3f vNow;
     s32 _pad2;
     
     objdata = self->data;
-    if (objdata->unk28 != objdata->unk20) {
+    
+    if (objdata->lateralSpeed != objdata->maxLateralSpeed) {
         return 0;
     }
-    sp64.x = self->srt.yaw;
-    sp64.y = 0;
-    sp64.z = 0;
-    sp4C.x = objdata->unk38;
-    sp4C.x = objdata->unk38 + objdata->unk44 + 10.0f;
-    sp4C.y = 0.0f;
-    sp4C.z = 0.0f;
-    rotate_vec3((const SRT *)&sp64, sp4C.f);
-    sp4C.x += self->srt.transl.f[0];
-    sp4C.y += self->srt.transl.f[1];
-    sp4C.z += self->srt.transl.f[2];
-    sp40.x = self->srt.transl.f[0];
-    sp40.y = self->srt.transl.f[1];
-    sp40.z = self->srt.transl.f[2];
-    if (func_80059C40(&sp40, &sp4C, 0.1f, 1, NULL, self, 4, -1, 0xFFU, 0) != 0) {
-        return 0;
+
+    eulerRotation.x = self->srt.yaw;
+    eulerRotation.y = 0;
+    eulerRotation.z = 0;
+
+    //Check where the fish will be at the end of the jump
+    vFuture.x = objdata->jumpAnticipationDistance;
+    vFuture.x = objdata->jumpAnticipationDistance + objdata->jumpDistanceLateral + 10.0f;
+    vFuture.y = 0.0f;
+    vFuture.z = 0.0f;
+    rotate_vec3((const SRT *)&eulerRotation, vFuture.f);
+    vFuture.x += self->srt.transl.x;
+    vFuture.y += self->srt.transl.y;
+    vFuture.z += self->srt.transl.z;
+
+    vNow.x = self->srt.transl.x;
+    vNow.y = self->srt.transl.y;
+    vNow.z = self->srt.transl.z;
+
+    if (func_80059C40(&vNow, &vFuture, 0.1f, 1, NULL, self, 4, -1, 0xFF, 0)) {
+        return FALSE;
+    } else {
+        return TRUE;
     }
-    return 1;
 }
 
 // offset: 0x10BC | func: 9
-static void fish_func_10BC(Object *self) {
+static void fish_random_turn_swim(Object *self) {
     fish_Data *objdata = self->data;
 
-    if (objdata->unk19 == 0) {
-        if (rand_next(0, 0x63) == 0) {
-            fish_func_11C8(self, rand_next(-0x100, 0x100), rand_next(1, 0x64));
+    if (objdata->randomTurnsPaused == FALSE) {
+        if (rand_next(0, 99) == 0) {
+            fish_swim(self, rand_next(-0x100, 0x100), rand_next(1, 100));
         } else {
-            fish_func_11C8(self, rand_next(-0x100, 0x100), 0U);
+            fish_swim(self, rand_next(-0x100, 0x100), 0);
         }
     } else {
-        fish_func_11C8(self, 0, 0U);
+        fish_swim(self, 0, 0);
     }
 }
 
 // offset: 0x11C8 | func: 10
-static void fish_func_11C8(Object *self, s16 a1, u8 a2) {
+static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
     fish_Data *objdata;
-    Vec3s16 sp5C;
-    Vec3f sp50;
-    Vec3f sp44;
+    Vec3s16 eulerRotation;
+    Vec3f delta;
+    Vec3f vFuture;
 
     objdata = self->data;
-    objdata->unk1A += ((f32) a1 * gUpdateRateF);
-    if (a2 != 0) {
-        objdata->unk28 -= ((objdata->unk20 * (f32) a2) / 100.0f);
-        if (objdata->unk28 < 0.0f) {
-            objdata->unk28 = 0.0f;
+    objdata->turn += turnImpulse * gUpdateRateF;
+
+    if (delerateAmount) {
+        objdata->lateralSpeed -= (objdata->maxLateralSpeed * delerateAmount) / 100.0f;
+        if (objdata->lateralSpeed < 0.0f) {
+            objdata->lateralSpeed = 0.0f;
         }
     }
-    if (objdata->unk1A > 0) {
-        if (objdata->unk28 == 0.0f) {
-            objdata->unk1C += gUpdateRateF;
+
+    if (objdata->turn > 0) {
+        if (objdata->lateralSpeed == 0.0f) {
+            objdata->yawSpeed += gUpdateRateF;
         } else {
-            objdata->unk1C += (5.0f * gUpdateRateF);
+            objdata->yawSpeed += 5.0f * gUpdateRateF;
         }
-        if (objdata->unk1C > 0x100) {
-            objdata->unk1C = 0x100;
+
+        if (objdata->yawSpeed > 0x100) {
+            objdata->yawSpeed = 0x100;
         }
-        self->srt.yaw += ((f32) objdata->unk1C * gUpdateRateF);
-        objdata->unk1A -= ((f32) objdata->unk1C * gUpdateRateF);
-        if (objdata->unk1A <= 0) {
-            objdata->unk1A = 0;
-            objdata->unk1C = 0;
+
+        self->srt.yaw += objdata->yawSpeed * gUpdateRateF;
+        objdata->turn -= objdata->yawSpeed * gUpdateRateF;
+        if (objdata->turn <= 0) {
+            objdata->turn = 0;
+            objdata->yawSpeed = 0;
         }
-    } else if (objdata->unk1A < 0) {
-        if (objdata->unk28 == 0.0f) {
-            objdata->unk1C -= gUpdateRateF;
+    } else if (objdata->turn < 0) {
+        if (objdata->lateralSpeed == 0.0f) {
+            objdata->yawSpeed -= gUpdateRateF;
         } else {
-            objdata->unk1C -= (5.0f * gUpdateRateF);
+            objdata->yawSpeed -= 5.0f * gUpdateRateF;
         }
-        if (objdata->unk1C < -0x100) {
-            objdata->unk1C = -0x100;
+
+        if (objdata->yawSpeed < -0x100) {
+            objdata->yawSpeed = -0x100;
         }
-        self->srt.yaw += ((f32) objdata->unk1C * gUpdateRateF);
-        objdata->unk1A -= ((f32) objdata->unk1C * gUpdateRateF);
-        if (objdata->unk1A >= 0) {
-            objdata->unk1A = 0;
-            objdata->unk1C = 0;
+
+        self->srt.yaw += objdata->yawSpeed * gUpdateRateF;
+        objdata->turn -= objdata->yawSpeed * gUpdateRateF;
+        if (objdata->turn >= 0) {
+            objdata->turn = 0;
+            objdata->yawSpeed = 0;
         }
     }
-    sp5C.x = self->srt.yaw;
-    sp5C.y = 0;
-    sp5C.z = 0;
-    sp50.x = gUpdateRateF * 10.0f;
-    sp50.y = 0.0f;
-    sp50.z = 0.0f;
-    rotate_vec3((const SRT *)&sp5C, sp50.f);
-    sp50.x += self->srt.transl.f[0];
-    sp50.y += self->srt.transl.f[1];
-    sp50.z += self->srt.transl.f[2];
-    if (func_80059C40(&self->srt.transl, &sp50, 1.0f, 0, NULL, self, 4, -1, 0xFFU, 0) != 0) {
-        objdata->unk0 = 0.06f;
-        if (objdata->unk1C > 0) {
-            self->srt.yaw += (gUpdateRateF * 512.0f);
-            objdata->unk1A = 0x500;
-        } else {
-            self->srt.yaw -= (gUpdateRateF * 512.0f);
-            objdata->unk1A = -0x500;
-        }
-        objdata->unk28 = 0.0f;
-        return;
-    }
-    if (objdata->unk28 == objdata->unk20) {
-        objAnimSetProgress(self, 0.0f);
-        objdata->unk0 = 0.0f;
-    } else {
-        objdata->unk0 = (f32) ((objdata->unk28 / objdata->unk20) * 0.06f);
-    }
-    sp44.x = gUpdateRateF * 30.0f * 5.0f;
-    sp44.y = 0.0f;
-    sp44.z = 0.0f;
-    rotate_vec3((const SRT *)&sp5C, sp44.f);
-    sp44.x += self->srt.transl.f[0];
-    sp44.y += self->srt.transl.f[1];
-    sp44.z += self->srt.transl.f[2];
-    sp50.x = objdata->unk28 * gUpdateRateF;
-    sp50.y = 0.0f;
-    sp50.z = 0.0f;
-    rotate_vec3((const SRT *)&sp5C, sp50.f);
-    self->srt.transl.f[0] += sp50.x;
-    self->srt.transl.f[1] += sp50.y;
-    self->srt.transl.f[2] += sp50.z;
-    if (func_80059C40(&self->srt.transl, &sp44, 1.0f, 0, NULL, self, 4, -1, 0xFFU, 0) != 0) {
-        fish_func_1880(self, &sp44, &sp5C);
-        if (objdata->unk28 < objdata->unk24) {
-            objdata->unk28 += ((objdata->unk20 / 100.0f) * gUpdateRateF);
+
+    eulerRotation.x = self->srt.yaw;
+    eulerRotation.y = 0;
+    eulerRotation.z = 0;
+
+    //Turn away from imminent wall, without changing coords
+    {
+        delta.x = gUpdateRateF * 10.0f;
+        delta.y = 0.0f;
+        delta.z = 0.0f;
+        rotate_vec3((const SRT *)&eulerRotation, delta.f);
+        delta.x += self->srt.transl.x;
+        delta.y += self->srt.transl.y;
+        delta.z += self->srt.transl.z;
+
+        if (func_80059C40(&self->srt.transl, &delta, 1.0f, 0, NULL, self, 4, -1, 0xFF, 0)) {
+            objdata->animSpeed = 0.06f;
+
+            if (objdata->yawSpeed > 0) {
+                self->srt.yaw += gUpdateRateF * 0x200;
+                objdata->turn = 0x500;
+            } else {
+                self->srt.yaw -= gUpdateRateF * 0x200;
+                objdata->turn = -0x500;
+            }
+
+            objdata->lateralSpeed = 0.0f;
             return;
         }
-        objdata->unk28 -= ((objdata->unk20 / 50.0f) * gUpdateRateF);
-        if (objdata->unk28 < 0.0f) {
-            objdata->unk28 = 0.0f;
-        }
+    }
+    
+    //Correlate animSpeed with lateral speed
+    if (objdata->lateralSpeed == objdata->maxLateralSpeed) {
+        objAnimSetProgress(self, 0.0f);
+        objdata->animSpeed = 0.0f;
     } else {
-        objdata->unk19 = 0;
-        objdata->unk28 += ((objdata->unk20 / 100.0f) * gUpdateRateF);
-        if (objdata->unk20 < objdata->unk28) {
-            objdata->unk28 = objdata->unk20;
+        objdata->animSpeed = (objdata->lateralSpeed / objdata->maxLateralSpeed) * 0.06f;
+    }
+
+    //Update position, and adjust speed/turn away from more distant walls
+    {
+        //Calculate a future position
+        vFuture.x = gUpdateRateF * 30.0f * 5.0f;
+        vFuture.y = 0.0f;
+        vFuture.z = 0.0f;
+        rotate_vec3((const SRT *)&eulerRotation, vFuture.f);
+        vFuture.x += self->srt.transl.x;
+        vFuture.y += self->srt.transl.y;
+        vFuture.z += self->srt.transl.z;
+
+        //Move
+        delta.x = objdata->lateralSpeed * gUpdateRateF;
+        delta.y = 0.0f;
+        delta.z = 0.0f;
+        rotate_vec3((const SRT *)&eulerRotation, delta.f);
+        self->srt.transl.x += delta.x;
+        self->srt.transl.y += delta.y;
+        self->srt.transl.z += delta.z;
+
+        if (func_80059C40(&self->srt.transl, &vFuture, 1.0f, 0, NULL, self, 4, -1, 0xFF, 0)) {
+            fish_handle_approaching_wall(self, &vFuture, &eulerRotation);
+
+            if (objdata->lateralSpeed < objdata->maxSpeedApproachingWall) {
+                objdata->lateralSpeed += ((objdata->maxLateralSpeed / 100.0f) * gUpdateRateF);
+            } else {
+                objdata->lateralSpeed -= ((objdata->maxLateralSpeed / 50.0f) * gUpdateRateF);
+                if (objdata->lateralSpeed < 0.0f) {
+                    objdata->lateralSpeed = 0.0f;
+                }
+            }
+        } else {
+            objdata->randomTurnsPaused = FALSE;
+            objdata->lateralSpeed += ((objdata->maxLateralSpeed / 100.0f) * gUpdateRateF);
+            if (objdata->lateralSpeed > objdata->maxLateralSpeed) {
+                objdata->lateralSpeed = objdata->maxLateralSpeed;
+            }
         }
     }
 }
 
 // offset: 0x1880 | func: 11
-static s32 fish_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2) {
+static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* eulerRotation) {
     fish_Data* objdata;
 
     objdata = self->data;
-    if (objdata->unk19 == 0) {
-        arg1->f[0] -= self->srt.transl.f[0];
-        arg1->f[1] -= self->srt.transl.f[1];
-        arg1->f[2] -= self->srt.transl.f[2];
-        arg2->x = -self->srt.yaw;
-        rotate_vec3((const SRT *)arg2, arg1->f);
-        objdata->unk19 = 1U;
-        if (arg1->f[2] > 0.0f) {
-            objdata->unk1A = -0x100;
+
+    if (objdata->randomTurnsPaused == FALSE) {
+        vFuture->x -= self->srt.transl.x;
+        vFuture->y -= self->srt.transl.y;
+        vFuture->z -= self->srt.transl.z;
+        eulerRotation->x = -self->srt.yaw;
+        rotate_vec3((const SRT *)eulerRotation, vFuture->f);
+        objdata->randomTurnsPaused = TRUE;
+        if (vFuture->z > 0.0f) {
+            objdata->turn = -0x100;
         } else {
-            objdata->unk1A = 0x100;
+            objdata->turn = 0x100;
         }
-    } else if (objdata->unk1A > 0) {
-        objdata->unk1A = 0x100;
+    } else if (objdata->turn > 0) {
+        objdata->turn = 0x100;
     } else {
-        objdata->unk1A = -0x100;
+        objdata->turn = -0x100;
     }
+
     return 1;
 }
 
 // offset: 0x1978 | func: 12
-static s32 fish_func_1978(Object *self) {
+static s32 fish_jump_handle_flight(Object *self) {
     fish_Data* objdata;
     fish_Setup* setup;
-    Vec3f sp6C;
-    Vec3s16 sp64;
-    s32 sp60;
+    Vec3f vJump;
+    Vec3s16 eulerRotation;
+    s32 flightStillOngoing;
 
     objdata = self->data;
     setup = (fish_Setup*)self->setup;
-    sp60 = 1;
-    sp64.x = self->srt.yaw;
-    sp64.y = 0;
-    sp64.z = 0;
 
-    if (objdata->unk54 < objdata->unk64) {
-        if (objdata->unk64 < objdata->unk4) {
-            Vec3f sp54;
-            sp54.f[0] = objdata->unk64 * objdata->unk50;
-            sp54.f[1] = 0.0f;
-            sp54.f[2] = 0.0f;
-            rotate_vec3((const SRT *)&sp64, sp54.f);
-            sp54.f[0] = sp54.f[0] + objdata->unk58;
-            sp54.f[1] = (f32) setup->unk28 + objdata->unk2C;
-            sp54.f[2] = sp54.f[2] + objdata->unk60;
-            gDLL_24_Waterfx->vtbl->spawn_splash(sp54.f[0],        sp54.f[1], sp54.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->spawn_splash(sp54.f[0] + 5.0f, sp54.f[1], sp54.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
-            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2],        self->srt.yaw, 0.0f, 3);
-            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp54.f[0] - 5.0f, sp54.f[1], sp54.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
+    flightStillOngoing = TRUE;
+
+    eulerRotation.x = self->srt.yaw;
+    eulerRotation.y = 0;
+    eulerRotation.z = 0;
+
+    if (objdata->timerPrevJump < objdata->jumpFlightDuration) {
+        if (objdata->timer > objdata->jumpFlightDuration) {
+            Vec3f vSplash;
+            vSplash.f[0] = objdata->jumpFlightDuration * objdata->jumpSpeedLateral;
+            vSplash.f[1] = 0.0f;
+            vSplash.f[2] = 0.0f;
+            rotate_vec3((const SRT *)&eulerRotation, vSplash.f);
+            vSplash.f[0] += objdata->jumpedFromX;
+            vSplash.f[1] = setup->surfaceOffsetY + objdata->surfaceY;
+            vSplash.f[2] += objdata->jumpedFromZ;
+            gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0],        vSplash.f[1], vSplash.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0] + 5.0f, vSplash.f[1], vSplash.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(vSplash.f[0] - 5.0f, vSplash.f[1], vSplash.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(vSplash.f[0] - 5.0f, vSplash.f[1], vSplash.f[2],        self->srt.yaw, 0.0f, 3);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(vSplash.f[0] - 5.0f, vSplash.f[1], vSplash.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
         }
     } else {
-        if ((objdata->unk54 < objdata->unk68) && (objdata->unk68 < objdata->unk4)) {
-            Vec3f sp48;
-            sp48.f[0] = objdata->unk68 * objdata->unk50;
-            sp48.f[1] = 0.0f;
-            sp48.f[2] = 0.0f;
-            rotate_vec3((const SRT*)&sp64, sp48.f);
-            sp48.f[0] = sp48.f[0] + objdata->unk58;
-            sp48.f[1] = (f32) setup->unk28 + objdata->unk2C;
-            sp48.f[2] = sp48.f[2] + objdata->unk60;
-            gDLL_24_Waterfx->vtbl->spawn_splash(sp48.f[0],        sp48.f[1], sp48.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->spawn_splash(sp48.f[0] - 5.0f, sp48.f[1], sp48.f[2], 0.0f);
-            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
-            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2], self->srt.yaw, 0.0f, 3);
-            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp48.f[0] + 5.0f, sp48.f[1], sp48.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
+        if ((objdata->timerPrevJump < objdata->splashTime) && (objdata->timer > objdata->splashTime)) {
+            Vec3f vSplash;
+            vSplash.f[0] = objdata->splashTime * objdata->jumpSpeedLateral;
+            vSplash.f[1] = 0.0f;
+            vSplash.f[2] = 0.0f;
+            rotate_vec3((const SRT*)&eulerRotation, vSplash.f);
+            vSplash.f[0] += objdata->jumpedFromX;
+            vSplash.f[1] = setup->surfaceOffsetY + objdata->surfaceY;
+            vSplash.f[2] += objdata->jumpedFromZ;
+            gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0],        vSplash.f[1], vSplash.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_splash(vSplash.f[0] - 5.0f, vSplash.f[1], vSplash.f[2], 0.0f);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(vSplash.f[0] + 5.0f, vSplash.f[1], vSplash.f[2] - 5.0f, self->srt.yaw, 0.0f, 4);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(vSplash.f[0] + 5.0f, vSplash.f[1], vSplash.f[2], self->srt.yaw, 0.0f, 3);
+            gDLL_24_Waterfx->vtbl->spawn_circular_ripple(vSplash.f[0] + 5.0f, vSplash.f[1], vSplash.f[2] + 5.0f, self->srt.yaw, 0.0f, 4);
         }
     }
-    if (objdata->unk48 < objdata->unk4) {
-        sp6C.f[0] = objdata->unk44;
-        sp6C.f[1] = 0.0f;
-        sp6C.f[2] = 0.0f;
+
+    if (objdata->timer > objdata->jumpDuration) {
+        vJump.f[0] = objdata->jumpDistanceLateral;
+        vJump.f[1] = 0.0f;
+        vJump.f[2] = 0.0f;
         self->srt.roll = 0;
-        objdata->unk18 = 7;
-        objdata->unk4 = (f32) (objdata->unk4 - objdata->unk48);
-        objAnimSet(self, 3, 0.0f, 0U);
-        objAnim_func_80024D74(self, 0x1E);
-        sp60 = 0;
+        objdata->state = Fish_STATE_7_Jump_Recovery;
+        objdata->timer -= objdata->jumpDuration;
+        objAnimSet(self, Fish_MODANIM_3_Tilted_Down, 0.0f, 0);
+        objAnim_func_80024D74(self, 30);
+        flightStillOngoing = FALSE;
     } else {
-        sp6C.f[0] = objdata->unk4 * objdata->unk50;
-        sp6C.f[1] = (objdata->unk4C * objdata->unk4) + (-0.04f * objdata->unk4 * objdata->unk4);
-        sp6C.f[2] = 0.0f;
-        if (objdata->unk4 < (objdata->unk48 * 0.5f)) {
-            self->srt.roll = (s16) (s32) -((sp6C.f[1] * objdata->unk78) + (objdata->unk70 * sp6C.y * sp6C.y));
+        //Quadratic jump arc
+        vJump.f[0] = objdata->timer * objdata->jumpSpeedLateral;
+        vJump.f[1] = (objdata->jumpHeightFactor * objdata->timer) + (-0.04f * objdata->timer * objdata->timer);
+        vJump.f[2] = 0.0f;
+
+        if (objdata->timer < (objdata->jumpDuration * 0.5f)) {
+            self->srt.roll = -((vJump.f[1] * objdata->unk78) + (objdata->unk70 * vJump.y * vJump.y));
         } else {
-            self->srt.roll = (s16) (s32) ((sp6C.f[1] * objdata->unk78) + (objdata->unk70 * sp6C.y * sp6C.y));
+            self->srt.roll =  ((vJump.f[1] * objdata->unk78) + (objdata->unk70 * vJump.y * vJump.y));
         }
-        objdata->unk54 = (f32) objdata->unk4;
+
+        objdata->timerPrevJump = objdata->timer;
     }
-    rotate_vec3((const SRT*)&sp64, sp6C.f);
-    self->srt.transl.f[0] = objdata->unk58 + sp6C.f[0];
-    self->srt.transl.f[1] = objdata->unk5C + sp6C.f[1];
-    self->srt.transl.f[2] = objdata->unk60 + sp6C.f[2];
-    return sp60;
+
+    rotate_vec3((const SRT*)&eulerRotation, vJump.f);
+    self->srt.transl.x = objdata->jumpedFromX + vJump.f[0];
+    self->srt.transl.y = objdata->jumpedFromY + vJump.f[1];
+    self->srt.transl.z = objdata->jumpedFromZ + vJump.f[2];
+
+    return flightStillOngoing;
 }
 
 // offset: 0x1EF4 | func: 13
-static s32 fish_func_1EF4(Object* self) {
+static s32 fish_jump_handle_anticipation(Object* self) {
     fish_Data* objdata;
     fish_Setup* setup;
-    Vec3f sp34;
-    Vec3s16 sp2C;
-    s32 var_a2;
+    Vec3f vAntic;
+    Vec3s16 eulerRotation;
+    s32 anticipationStillOngoing;
 
     setup = (fish_Setup*)self->setup;
     objdata = self->data;
-    sp2C.x = self->srt.yaw;
-    sp2C.y = 0;
-    sp2C.z = 0;
-    var_a2 = 1;
-    if ((f32) setup->unk23 < objdata->unk4) {
-        sp34.f[0] = objdata->unk38;
-        sp34.f[1] = 0.0f;
-        sp34.f[2] = 0.0f;
+
+    eulerRotation.x = self->srt.yaw;
+    eulerRotation.y = 0;
+    eulerRotation.z = 0;
+
+    anticipationStillOngoing = TRUE;
+
+    if (objdata->timer > setup->jumpAnticipateDuration) {
+        vAntic.f[0] = objdata->jumpAnticipationDistance;
+        vAntic.f[1] = 0.0f;
+        vAntic.f[2] = 0.0f;
         self->srt.roll = 0;
-        objAnimSet(self, 0, 0.0f, 0U);
-        objAnim_func_80024D74(self, 0x1E);
-        objdata->unk0 = 0.0f;
-        objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk23);
-        objdata->unk18 = 6;
-        objdata->unk54 = 0.0f;
-        var_a2 = 0;
+        objAnimSet(self, Fish_MODANIM_0_Swim_LOOP, 0.0f, 0);
+        objAnim_func_80024D74(self, 30);
+        objdata->animSpeed = 0.0f;
+        objdata->timer -= setup->jumpAnticipateDuration;
+        objdata->state = Fish_STATE_6_Jump_Flight;
+        objdata->timerPrevJump = 0.0f;
+        anticipationStillOngoing = FALSE;
     } else {
-        sp34.f[0] = (objdata->unk34 * objdata->unk4 * objdata->unk4) + (objdata->unk20 * objdata->unk4);
-        sp34.f[1] = ((objdata->unk40 * sp34.f[0]) * sp34.f[0]) + (objdata->unk3C * sp34.x);
-        sp34.f[2] = 0.0f;
-        if (sp34.f[0] < (objdata->unk38 * 0.5f)) {
-            self->srt.roll = (s16) (s32) ((sp34.f[1] * objdata->unk74) + (objdata->unk6C * sp34.y * sp34.y));
+        vAntic.f[0] = (objdata->unk34 * objdata->timer * objdata->timer) + (objdata->maxLateralSpeed * objdata->timer);
+        vAntic.f[1] = (objdata->unk40 * vAntic.f[0] * vAntic.f[0]) + (objdata->unk3C * vAntic.x);
+        vAntic.f[2] = 0.0f;
+
+        if (vAntic.f[0] < (objdata->jumpAnticipationDistance * 0.5f)) {
+            self->srt.roll = ((vAntic.f[1] * objdata->unk74) + (objdata->unk6C * vAntic.y * vAntic.y));
         } else {
-            self->srt.roll = (s16) (s32) -((sp34.f[1] * objdata->unk74) + ((objdata->unk6C * sp34.y) * sp34.y));
+            self->srt.roll = -((vAntic.f[1] * objdata->unk74) + (objdata->unk6C * vAntic.y * vAntic.y));
         }
-        objdata->unk54 = (f32) objdata->unk4;
-        objdata->unk0 = 0.12f;
+
+        objdata->timerPrevJump = objdata->timer;
+        objdata->animSpeed = 0.12f;
     }
-    rotate_vec3((const SRT *)&sp2C, sp34.f);
-    self->srt.transl.f[0] = objdata->unk58 + sp34.f[0];
-    self->srt.transl.f[1] = objdata->unk5C - sp34.f[1];
-    self->srt.transl.f[2] = objdata->unk60 + sp34.f[2];
-    return var_a2;
+
+    rotate_vec3((const SRT *)&eulerRotation, vAntic.f);
+    self->srt.transl.x = objdata->jumpedFromX + vAntic.f[0];
+    self->srt.transl.y = objdata->jumpedFromY - vAntic.f[1];
+    self->srt.transl.z = objdata->jumpedFromZ + vAntic.f[2];
+
+    return anticipationStillOngoing;
 }
 
 // offset: 0x2150 | func: 14
-static void fish_func_2150(Object *self) {
+static void fish_caught_by_net(Object *self) {
     fish_Data *objdata;
     s32 _pad;
     Object* player;
@@ -637,15 +730,19 @@ static void fish_func_2150(Object *self) {
 
     objdata = self->data;
     setup = self->setup;
+
     if (self->id == OBJ_DF_Lantern) { // ????????
+        /* OBJ_SC_golden_nugge is indexed just before OBJ_DF_Lantern: maybe a nugget was 
+           once going to be fished out of the water, and it would've shared this DLL? */
         mainSetBits(BIT_Gold_Nugget_LFV, 1);
     } else {
         player = objGetPlayer();
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
     }
-    objdata->unk18 = 0;
-    objdata->unk4 = 0.0f;
+
+    objdata->state = Fish_STATE_0_Hidden;
+    objdata->timer = 0.0f;
     self->srt.transl.x = setup->x;
     self->srt.transl.y = setup->y;
     self->srt.transl.z = setup->z;
