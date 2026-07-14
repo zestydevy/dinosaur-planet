@@ -1242,7 +1242,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
         sp48.transl.x -= self->globalPosition.x;
         sp48.transl.y -= self->globalPosition.y;
         sp48.transl.z -= self->globalPosition.z;
-        sp70 = dllLoadDeferred(0x1002U, 1U);
+        sp70 = dllLoad(0x1002U, 1U);
         sp60[1] += rand_next(0, 0x9B);
         sp60[2] += rand_next(0, 0x9B);
         sp48.yaw = 0;
@@ -3782,10 +3782,10 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     spE0.transl.y = var_fv1;
     spE0.transl.x = 0.0f;
     spE0.scale = 1.0f;
-    dll = dllLoadDeferred(0x1043U, 1U);
+    dll = dllLoad(0x1043U, 1U);
     dll->vtbl->func[0].withSixArgsCustom(player->linkedObject, 1, &spE0, 0x10401, -1, 0);
     dllFree(dll);
-    dll = dllLoadDeferred(0x1044U, 1U);
+    dll = dllLoad(0x1044U, 1U);
     dll->vtbl->func[0].withSixArgsCustom(player->linkedObject, 1, &spE0, 0x10401, -1, 0);
     dllFree(dll);
 }
@@ -8763,7 +8763,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     _bss_24 -= arg2;
                     if (_bss_24 <= 0.0f) {
                         if (_data_7C0 == 0) {
-                            _data_7C0 = dllLoadDeferred(0x1048U, 1U);
+                            _data_7C0 = dllLoad(0x1048U, 1U);
                         }
                         if (_data_7C0 != 0) {
                             ((DLL_IModgfx*)_data_7C0)->vtbl->func0(player->linkedObject, player->id == 0, 0, 0x10404, -1, 0);

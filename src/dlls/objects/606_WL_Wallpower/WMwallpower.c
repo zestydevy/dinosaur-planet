@@ -53,8 +53,8 @@ void WMwallpower_setup(Object* self, WMwallpower_Setup* objsetup, s32 arg2) {
     objdata->timer = 0;
     self->srt.scale = 1.0f;
 
-    dataDLLProjGfx = dllLoadDeferred(DLL_ID_202, 1);
-    dataDLLModGfx =  dllLoadDeferred(DLL_ID_133, 1);
+    dataDLLProjGfx = dllLoad(DLL_ID_202, 1);
+    dataDLLModGfx =  dllLoad(DLL_ID_133, 1);
 
     if (objdata->timerAndFXCount <= 0) {
         self->unkDC = objdata->timerAndFXCount;
@@ -104,7 +104,7 @@ void WMwallpower_control(Object* self) {
                 dataDLLProjGfx->vtbl->func0(self, 0, NULL, 4, -1, 0x10, 0);
 
                 //Load and call modgfx (@bug?: DLL should already be loaded?)
-                dataDLLModGfx = dllLoadDeferred(DLL_ID_133, 1);
+                dataDLLModGfx = dllLoad(DLL_ID_133, 1);
                 dataDLLModGfx->vtbl->func0(self, 7, NULL, 1, -1, 0);
 
                 objdata->timer = 30;

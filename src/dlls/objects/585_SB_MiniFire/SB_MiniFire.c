@@ -29,7 +29,7 @@ void SB_MiniFire_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->velocity.y = 0.0f;
     self->velocity.z = -0.3f;
     self->srt.scale *= 0.8f;
-    dll133 = dllLoadDeferred(DLL_ID_133, 1);
+    dll133 = dllLoad(DLL_ID_133, 1);
     ((DLL_IModgfx*)dll133)->vtbl->func0(self, _data_0[0], NULL, 0x10000 | 0x2, -1, NULL);
     _data_0[0]++;
     if (_data_0[0] > 3) {

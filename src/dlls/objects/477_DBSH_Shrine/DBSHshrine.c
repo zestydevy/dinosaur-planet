@@ -77,7 +77,7 @@ void DBSHshrine_setup(Object* self, DBSHshrine_Setup* objSetup, s32 arg2) {
     objData->unk12 = 0;
     
     //Create glowing ring around test's startpoint
-    modGfxDLL = dllLoadDeferred(DLL_ID_122, 1);
+    modGfxDLL = dllLoad(DLL_ID_122, 1);
     objData->unkC = modGfxDLL->vtbl->func0(self, 3, NULL, 0x402, -1, 0);
     dllFree(modGfxDLL);
     
@@ -192,11 +192,11 @@ void DBSHshrine_control(Object* self) {
             mainSetBits(BIT_DB_Entered_Shrine_3, 0);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
-            modGfxDLL = dllLoadDeferred(DLL_ID_147, 1);
+            modGfxDLL = dllLoad(DLL_ID_147, 1);
             modGfxDLL->vtbl->func0(self, 3, 0, 1, -1, 0);
             dllFree(modGfxDLL);
 
-            modGfxDLL = dllLoadDeferred(DLL_ID_148, 1);
+            modGfxDLL = dllLoad(DLL_ID_148, 1);
             modGfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
             dllFree(modGfxDLL);
             
@@ -272,7 +272,7 @@ void DBSHshrine_control(Object* self) {
         mainSetBits(BIT_DB_Shrine_Test_of_Strength_Win, 0);
         mainSetBits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
         
-        modGfxDLL = dllLoadDeferred(DLL_ID_122, 1);
+        modGfxDLL = dllLoad(DLL_ID_122, 1);
         objData->unkC = modGfxDLL->vtbl->func0(self, 3, 0, 0x402, -1, 0);
         dllFree(modGfxDLL);
         break;

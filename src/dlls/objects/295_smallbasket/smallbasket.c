@@ -112,7 +112,7 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
         objData->unk4 = setup->unk1C * 60;
     }
 
-    dModGfxDLL = dllLoadDeferred(DLL_ID_107, 1);
+    dModGfxDLL = dllLoad(DLL_ID_107, 1);
 
     objData->shakeSoundTimer = rand_next(0, 100) + 300;
     objData->storedItemCount = setup->storedItemQuantity;

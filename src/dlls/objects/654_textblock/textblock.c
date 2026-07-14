@@ -50,7 +50,7 @@ void Textblock_setup(Object* self, Textblock_Setup* objSetup, s32 arg2) {
     objData->gamebitInteractable = objSetup->gamebitInteractable;
     objData->textureBlend = 0;
     objData->textureBlendSpeed = 4;
-    modGfxDLL = dllLoadDeferred(DLL_ID_107, 1);
+    modGfxDLL = dllLoad(DLL_ID_107, 1);
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 

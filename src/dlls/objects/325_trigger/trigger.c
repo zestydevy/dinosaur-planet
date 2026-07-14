@@ -163,7 +163,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
             // Is it the responsibility of the script to handle the previous state?
             s0 = cmd->param1 + 81; // scripts are DLLs 81-83
             if (s0 < 84 && param3 == 0) {
-                objdata->scripts[i] = dllLoadDeferred(s0, 0);
+                objdata->scripts[i] = dllLoad(s0, 0);
             }
             // "TRIGGER: warning Script overflow\n"
         }

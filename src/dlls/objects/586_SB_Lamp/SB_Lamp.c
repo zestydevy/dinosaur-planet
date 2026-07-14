@@ -48,7 +48,7 @@ void SB_Lamp_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->unk24 = 600.0f;
     objdata->unk1C = 0.5f;
     self->animCallback = SB_Lamp_anim_callback;
-    sDLL107 = dllLoad(DLL_ID_107, 1, FALSE);
+    sDLL107 = dllLoadActual(DLL_ID_107, 1, FALSE);
 }
 
 // offset: 0xB8 | func: 1 | export: 1

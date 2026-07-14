@@ -219,51 +219,51 @@ void mainInit(void) {
     amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
     mapInitGlobalMap();
     if (osMemSize != EXPANSION_RAM_SIZE) {
-        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoadDeferred(DLL_ID_AMSEQ, 36);
-        gDLL_6_AMSFX = dllLoadDeferred(DLL_ID_AMSFX, 18);
-        gDLL_21_Gametext = dllLoadDeferred(DLL_ID_TEXT, 5);
-        gDLL_29_Gplay = dllLoadDeferred(DLL_ID_GPLAY, 47);
-        gDLL_31_Flash = dllLoadDeferred(DLL_ID_FLASH, 2);
-        gDLL_28_ScreenFade = dllLoadDeferred(DLL_ID_SCREEN_FADE, 4);
+        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoad(DLL_ID_AMSEQ, 36);
+        gDLL_6_AMSFX = dllLoad(DLL_ID_AMSFX, 18);
+        gDLL_21_Gametext = dllLoad(DLL_ID_TEXT, 5);
+        gDLL_29_Gplay = dllLoad(DLL_ID_GPLAY, 47);
+        gDLL_31_Flash = dllLoad(DLL_ID_FLASH, 2);
+        gDLL_28_ScreenFade = dllLoad(DLL_ID_SCREEN_FADE, 4);
     } else {
-        gDLL_1_cmdmenu = dllLoadDeferred(DLL_ID_CMDMENU, 15);
-        gDLL_2_Camera = dllLoadDeferred(DLL_ID_CAMERA, 23);
-        gDLL_23 = dllLoadDeferred(DLL_ID_23, 8);  // 0x12 in SFA
-        gDLL_18_objfsa = dllLoadDeferred(DLL_ID_18, 22); // 0x0F in SFA
-        gDLL_3_Animation = dllLoadDeferred(DLL_ID_ANIM, 29);
-        gDLL_28_ScreenFade = dllLoadDeferred(DLL_ID_SCREEN_FADE, 4); // 0x16 in SFA
-        gDLL_25 = dllLoadDeferred(DLL_ID_25, 14);                    // not present in SFA
-        gDLL_7_Newday = dllLoadDeferred(DLL_ID_NEWDAY, 15);
-        gDLL_8 = dllLoadDeferred(DLL_ID_8, 12); // 0x06 in SFA
-        gDLL_9_Newclouds = dllLoadDeferred(DLL_ID_NEWCLOUDS, 8);
-        gDLL_10_Newstars = dllLoadDeferred(DLL_ID_NEWSTARS, 3);
-        gDLL_12_Minic = dllLoadDeferred(DLL_ID_MINIC, 10);
-        gDLL_4_Race = dllLoadDeferred(DLL_ID_RACE, 13);
-        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoadDeferred(DLL_ID_AMSEQ, 36);
-        gDLL_6_AMSFX = dllLoadDeferred(DLL_ID_AMSFX, 18);
-        gDLL_11_Newlfx = dllLoadDeferred(DLL_ID_NEWLFX, 7);
-        gDLL_13_Expgfx = dllLoadDeferred(DLL_ID_EXPGFX, 10);
-        gDLL_14_Modgfx = dllLoadDeferred(DLL_ID_MODGFX, 12);
-        gDLL_15_Projgfx = dllLoadDeferred(DLL_ID_PROJGFX, 8);
-        gDLL_16 = dllLoadDeferred(DLL_ID_16, 3);
-        gDLL_17_partfx = dllLoadDeferred(DLL_ID_PARTFX, 2); // probably particle FX
-        gDLL_20_Screens = dllLoadDeferred(DLL_ID_SCREENS, 3);
-        gDLL_21_Gametext = dllLoadDeferred(DLL_ID_TEXT, 5);
-        gDLL_22_Subtitles = dllLoadDeferred(DLL_ID_SUBTITLES, 7);
-        gDLL_24_Waterfx = dllLoadDeferred(DLL_ID_WATERFX, 7);
-        gDLL_26_Curves = dllLoadDeferred(DLL_ID_CURVES, 38);
-        gDLL_74_Picmenu = dllLoadDeferred(DLL_ID_PICMENU, 7);
-        gDLL_27 = dllLoadDeferred(DLL_ID_27, 9); // 0x15 in SFA
-        gDLL_29_Gplay = dllLoadDeferred(DLL_ID_GPLAY, 36);
-        gDLL_56 = dllLoadDeferred(DLL_ID_56, 10); // not present in SFA
-        gDLL_30_Task = dllLoadDeferred(DLL_ID_TASK, 6);
-        gDLL_31_Flash = dllLoadDeferred(DLL_ID_FLASH, 2); // param is 0x24 in SFA
-        gDLL_32 = dllLoadDeferred(DLL_ID_32, 6);          // 0x18 in SFA
-        gDLL_33_BaddieControl = dllLoadDeferred(DLL_ID_33, 22);         // 0x19 in SFA
-        gDLL_59_Minimap = dllLoadDeferred(DLL_ID_MINIMAP, 2);
-        gDLL_54_pickup = dllLoadDeferred(DLL_ID_54, 12); // 0x2F in SFA
-        gDLL_57 = dllLoadDeferred(DLL_ID_57, 4);
-        gDLL_58 = dllLoadDeferred(DLL_ID_58, 2);
+        gDLL_1_cmdmenu = dllLoad(DLL_ID_CMDMENU, 15);
+        gDLL_2_Camera = dllLoad(DLL_ID_CAMERA, 23);
+        gDLL_23 = dllLoad(DLL_ID_23, 8);  // 0x12 in SFA
+        gDLL_18_objfsa = dllLoad(DLL_ID_18, 22); // 0x0F in SFA
+        gDLL_3_Animation = dllLoad(DLL_ID_ANIM, 29);
+        gDLL_28_ScreenFade = dllLoad(DLL_ID_SCREEN_FADE, 4); // 0x16 in SFA
+        gDLL_25 = dllLoad(DLL_ID_25, 14);                    // not present in SFA
+        gDLL_7_Newday = dllLoad(DLL_ID_NEWDAY, 15);
+        gDLL_8 = dllLoad(DLL_ID_8, 12); // 0x06 in SFA
+        gDLL_9_Newclouds = dllLoad(DLL_ID_NEWCLOUDS, 8);
+        gDLL_10_Newstars = dllLoad(DLL_ID_NEWSTARS, 3);
+        gDLL_12_Minic = dllLoad(DLL_ID_MINIC, 10);
+        gDLL_4_Race = dllLoad(DLL_ID_RACE, 13);
+        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoad(DLL_ID_AMSEQ, 36);
+        gDLL_6_AMSFX = dllLoad(DLL_ID_AMSFX, 18);
+        gDLL_11_Newlfx = dllLoad(DLL_ID_NEWLFX, 7);
+        gDLL_13_Expgfx = dllLoad(DLL_ID_EXPGFX, 10);
+        gDLL_14_Modgfx = dllLoad(DLL_ID_MODGFX, 12);
+        gDLL_15_Projgfx = dllLoad(DLL_ID_PROJGFX, 8);
+        gDLL_16 = dllLoad(DLL_ID_16, 3);
+        gDLL_17_partfx = dllLoad(DLL_ID_PARTFX, 2); // probably particle FX
+        gDLL_20_Screens = dllLoad(DLL_ID_SCREENS, 3);
+        gDLL_21_Gametext = dllLoad(DLL_ID_TEXT, 5);
+        gDLL_22_Subtitles = dllLoad(DLL_ID_SUBTITLES, 7);
+        gDLL_24_Waterfx = dllLoad(DLL_ID_WATERFX, 7);
+        gDLL_26_Curves = dllLoad(DLL_ID_CURVES, 38);
+        gDLL_74_Picmenu = dllLoad(DLL_ID_PICMENU, 7);
+        gDLL_27 = dllLoad(DLL_ID_27, 9); // 0x15 in SFA
+        gDLL_29_Gplay = dllLoad(DLL_ID_GPLAY, 36);
+        gDLL_56 = dllLoad(DLL_ID_56, 10); // not present in SFA
+        gDLL_30_Task = dllLoad(DLL_ID_TASK, 6);
+        gDLL_31_Flash = dllLoad(DLL_ID_FLASH, 2); // param is 0x24 in SFA
+        gDLL_32 = dllLoad(DLL_ID_32, 6);          // 0x18 in SFA
+        gDLL_33_BaddieControl = dllLoad(DLL_ID_33, 22);         // 0x19 in SFA
+        gDLL_59_Minimap = dllLoad(DLL_ID_MINIMAP, 2);
+        gDLL_54_pickup = dllLoad(DLL_ID_54, 12); // 0x2F in SFA
+        gDLL_57 = dllLoad(DLL_ID_57, 4);
+        gDLL_58 = dllLoad(DLL_ID_58, 2);
         gDLL_30_Task->vtbl->load_recently_completed();
     }
     mainInitBits();
@@ -846,7 +846,7 @@ s32 mainCreateTempDLL(s32 id) {
         STUBBED_PRINTF(" WARNING : temp dll no %i is alreadly created \n");
     }
 
-    gTempDLLInsts[idx] = dllLoadDeferred(id, 1);
+    gTempDLLInsts[idx] = dllLoad(id, 1);
 
     return 1;
 }
@@ -878,8 +878,8 @@ s32 mainRemoveTempDLL(s32 id) {
 
 void mainLoadFrontend(void) {
     if (gDLL_76 == 0) {
-        gDLL_75 = dllLoadDeferred(DLL_ID_75, 10);
-        gDLL_76 = dllLoadDeferred(DLL_ID_76, 3);
+        gDLL_75 = dllLoad(DLL_ID_75, 10);
+        gDLL_76 = dllLoad(DLL_ID_76, 3);
     }
 }
 

@@ -96,7 +96,7 @@ void GPSH_Shrine_setup(Object* self, GPSH_Shrine_Setup* setup, s32 arg2) {
     objdata->unkA = 0;
     objdata->unk18 = 0;
     objdata->unk19 = 0;
-    modgfxDLL = dllLoadDeferred(DLL_ID_122, 1);
+    modgfxDLL = dllLoad(DLL_ID_122, 1);
     objdata->unkC = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
     dllFree(modgfxDLL);
     _bss_8 = 0.00001f;
@@ -210,10 +210,10 @@ void GPSH_Shrine_control(Object* self) {
                 objdata->unk15 = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                modgfxDLL = dllLoadDeferred(DLL_ID_147, 1);
+                modgfxDLL = dllLoad(DLL_ID_147, 1);
                 modgfxDLL->vtbl->func0(self, 2, 0, 1, -1, 0);
                 dllFree(modgfxDLL);
-                modgfxDLL = dllLoadDeferred(DLL_ID_148, 1);
+                modgfxDLL = dllLoad(DLL_ID_148, 1);
                 modgfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(modgfxDLL);
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
@@ -305,7 +305,7 @@ void GPSH_Shrine_control(Object* self) {
             mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             mainSetBits(BIT_DB_Entered_Shrine_1, 1);
             mainSetBits(BIT_DB_Entered_Shrine_2, 1);
-            modgfxDLL = dllLoadDeferred(DLL_ID_122, 1);
+            modgfxDLL = dllLoad(DLL_ID_122, 1);
             objdata->unkC = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
             dllFree(modgfxDLL);
             mainSetBits(BIT_149, 0);

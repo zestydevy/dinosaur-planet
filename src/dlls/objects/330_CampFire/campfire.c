@@ -106,7 +106,7 @@ void campfire_control(Object* self) {
     if (self->unkE0 == FALSE) {
         gDLL_14_Modgfx->vtbl->func10(self);
         
-        modGfxDLL = dllLoadDeferred(DLL_ID_116, 1);
+        modGfxDLL = dllLoad(DLL_ID_116, 1);
         
         if (objSetup->modGfxArg) {
             modGfxArg = 1;
@@ -117,11 +117,11 @@ void campfire_control(Object* self) {
         modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
-        modGfxDLL = dllLoadDeferred(DLL_ID_115, 1);
+        modGfxDLL = dllLoad(DLL_ID_115, 1);
         modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
-        modGfxDLL = dllLoadDeferred(DLL_ID_114, 1);
+        modGfxDLL = dllLoad(DLL_ID_114, 1);
         modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         

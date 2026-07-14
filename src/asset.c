@@ -406,7 +406,7 @@ void assetThreadLoad(struct AssetLoadThreadMsg *load) {
             *load->p.texture.dest = texLoadTextureActual(load->p.texture.id, 0);
             break;
         case ASSET_TYPE_DLL:
-            *load->p.dll.dest = dllLoad(load->p.dll.idOrIdx, load->p.dll.exportCount, FALSE);
+            *load->p.dll.dest = dllLoadActual(load->p.dll.idOrIdx, load->p.dll.exportCount, FALSE);
             break;
         case ASSET_TYPE_MODEL:
             *load->p.model.dest = modLoadModelActual(load->p.model.id,

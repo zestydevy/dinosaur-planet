@@ -3258,7 +3258,7 @@ static void dll_211_func_9050(Object* self, DLL211_Data* objData) {
     s32 i;
 
     objData->unk4C |= 0x800;
-    objData->unk0 = dllLoadDeferred(DLL_ID_178, 1);
+    objData->unk0 = dllLoad(DLL_ID_178, 1);
     for (i = 0; i < 3; i++) {
         temp_v0 = objAllocSetup(sizeof(FlameBlast_Setup), OBJ_flameblast);
         temp_v0->base.x = self->srt.transl.x;

@@ -125,7 +125,7 @@ void menuDoMenuSwap(void) {
         }
 
         if (gMenuDLLIDs[gNextMenuID] != -1) {
-            gActiveMenuDLL = (DLL_IMenu*)dllLoadDeferred(gMenuDLLIDs[gNextMenuID], 1);
+            gActiveMenuDLL = (DLL_IMenu*)dllLoad(gMenuDLLIDs[gNextMenuID], 1);
         } else {
             gActiveMenuDLL = NULL;
             gNextMenuID = 0;

@@ -98,7 +98,7 @@ void Transporter_control(Object *self) {
         distToPlayer = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
         if ((objdata->unk25 == 0) && (objdata->unk24 == 0) && (distToPlayer < 40.0f)) {
             if (!objdata->dll140) {
-                objdata->dll140 = dllLoadDeferred(DLL_ID_140, 1);
+                objdata->dll140 = dllLoad(DLL_ID_140, 1);
             }
             if (D_800B4A5E >= 0) {
                 objdata->unk25 = 0;
@@ -106,10 +106,10 @@ void Transporter_control(Object *self) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 self->unkDC = objdata->unk1C;
                 if (!objdata->dll129) {
-                    objdata->dll129 = dllLoadDeferred(DLL_ID_129, 1);
+                    objdata->dll129 = dllLoad(DLL_ID_129, 1);
                 }
                 if (!objdata->dll130) {
-                    objdata->dll130 = dllLoadDeferred(DLL_ID_130, 1);
+                    objdata->dll130 = dllLoad(DLL_ID_130, 1);
                 }
                 objdata->unk24 = 1;
                 D_80092A78 = 2;
@@ -122,10 +122,10 @@ void Transporter_control(Object *self) {
                     objdata->unk25 = 1;
                     self->unkDC = objdata->unk1C;
                     if (!objdata->dll129) {
-                        objdata->dll129 = dllLoadDeferred(DLL_ID_129, 1);
+                        objdata->dll129 = dllLoad(DLL_ID_129, 1);
                     }
                     if (!objdata->dll130) {
-                        objdata->dll130 = dllLoadDeferred(DLL_ID_130, 1);
+                        objdata->dll130 = dllLoad(DLL_ID_130, 1);
                     }
                     objdata->unk24 = 1;
                     objdata->unk26 = 1;

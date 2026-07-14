@@ -41,7 +41,7 @@ void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
     objdata->speed = rand_next(5, 20) * 0.1f;
     self->srt.transl.y = setup->unk1A + setup->base.y;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-    sDLL_182 = dllLoadDeferred(DLL_ID_182, 1);
+    sDLL_182 = dllLoad(DLL_ID_182, 1);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3A3, NULL, PARTFXFLAG_800 | PARTFXFLAG_2, -1, NULL);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3A4, NULL, PARTFXFLAG_800 | PARTFXFLAG_2, -1, NULL);
 }

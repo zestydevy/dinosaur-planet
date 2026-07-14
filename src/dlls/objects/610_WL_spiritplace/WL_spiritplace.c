@@ -61,10 +61,10 @@ void WL_spiritplace_setup(Object *self, WL_spiritplace_Setup *objsetup, s32 arg2
     objdata->bit2 = objsetup->bit2;
     objdata->mode = objsetup->mode;
     if (objdata->mode == 0) {
-        _data_0 = dllLoadDeferred(DLL_ID_155, 1);
-        _data_4 = dllLoadDeferred(DLL_ID_149, 1);
+        _data_0 = dllLoad(DLL_ID_155, 1);
+        _data_4 = dllLoad(DLL_ID_149, 1);
     } else if (objdata->mode == 2) {
-        _data_0 = dllLoadDeferred(DLL_ID_155, 1);
+        _data_0 = dllLoad(DLL_ID_155, 1);
     }
 }
 

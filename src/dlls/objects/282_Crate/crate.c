@@ -51,8 +51,8 @@ void crate_setup(Object* self, Crate_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     
-    dModGfxDLLDestroyed = dllLoad(DLL_ID_107, 1, 0);
-    dModGfxDLLDamaged = dllLoad(DLL_ID_106, 1, 0);
+    dModGfxDLLDestroyed = dllLoadActual(DLL_ID_107, 1, 0);
+    dModGfxDLLDamaged = dllLoadActual(DLL_ID_106, 1, 0);
     
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;

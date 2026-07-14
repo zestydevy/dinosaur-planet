@@ -128,7 +128,7 @@ void GroundAnimator_control(Object* self) {
     if (objData->flags & GroundAnimator_FLAG_8_Magic_Cave_Entrance) {
         //Create a modGfx glow around the dig spot
         if ((objData->flags & GroundAnimator_FLAG_20_Glow_Required) && !(objData->flags & GroundAnimator_FLAG_10_Glow_Created)) {
-            modGfxDLL = dllLoadDeferred(DLL_ID_184, 1);
+            modGfxDLL = dllLoad(DLL_ID_184, 1);
             modGfxDLL->vtbl->func0(self, 0, 0, 0, -1, 0);
             modGfxDLL->vtbl->func0(self, 0, 0, 0, -1, &shapeID);
             dllFree(modGfxDLL);

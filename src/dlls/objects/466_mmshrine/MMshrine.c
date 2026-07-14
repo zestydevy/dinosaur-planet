@@ -83,7 +83,7 @@ void MMshrine_setup(Object* self, Shrine_Setup* setup, s32 arg2) {
     objdata->unkA = 0;
     objdata->unk12 = 0;
     objdata->unk13 = 0;
-    temp_v0_2 = dllLoadDeferred(DLL_ID_122, 1);
+    temp_v0_2 = dllLoad(DLL_ID_122, 1);
     objdata->unkC = temp_v0_2->vtbl->func0(self, 1, 0, 0x402, -1, 0);
     dllFree(temp_v0_2);
     mainSetBits(BIT_Spell_Illusion, 1);
@@ -175,10 +175,10 @@ void MMshrine_control(Object *self) {
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMSEQ, 0, 0, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                temp_v0_5 = dllLoadDeferred(DLL_ID_147, 1);
+                temp_v0_5 = dllLoad(DLL_ID_147, 1);
                 temp_v0_5->vtbl->func0(self, 1, 0, 1, -1, 0);
                 dllFree(temp_v0_5);
-                temp_v0_5 = dllLoadDeferred(DLL_ID_148, 1);
+                temp_v0_5 = dllLoad(DLL_ID_148, 1);
                 temp_v0_5->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(temp_v0_5);
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
@@ -240,7 +240,7 @@ void MMshrine_control(Object *self) {
             mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
             mainSetBits(BIT_DB_Entered_Shrine_1, 1);
             mainSetBits(BIT_DB_Entered_Shrine_2, 1);
-            temp_v0_5 = dllLoadDeferred(DLL_ID_122, 1);
+            temp_v0_5 = dllLoad(DLL_ID_122, 1);
             objdata->unkC = temp_v0_5->vtbl->func0(self, 0, 0, 0x402, -1, 0);
             dllFree(temp_v0_5);
             break;

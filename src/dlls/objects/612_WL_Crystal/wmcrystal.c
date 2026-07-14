@@ -100,16 +100,16 @@ void WL_Crystal_setup(Object* self, WL_Crystal_Setup* objSetup, s32 arg2) {
 
         self->modelInstIdx = objSetup->modelIdx;        
         if (self->modelInstIdx == WMSun_Core) {
-            objData->sunFX = dllLoadDeferred(0x2012, 1);
+            objData->sunFX = dllLoad(0x2012, 1);
             objData->yawSpeed = rand_next(300, 600);
             objData->rollSpeed = rand_next(300, 600);
-            data_sun_modGFX = dllLoadDeferred(0x1036, 1);
+            data_sun_modGFX = dllLoad(0x1036, 1);
         } else {
             if (self->modelInstIdx == WMSun_Middle_Shell) {
                 objData->yawSpeed = rand_next(500, 800);
                 objData->rollSpeed = rand_next(500, 800);
             } else if (self->modelInstIdx == WMSun_Outer_Shell) {
-                objData->sunFX = dllLoadDeferred(0x2012, 1);
+                objData->sunFX = dllLoad(0x2012, 1);
                 objData->yawSpeed = rand_next(700, 1000);
                 objData->rollSpeed = rand_next(700, 1000);
             }

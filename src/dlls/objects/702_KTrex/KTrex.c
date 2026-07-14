@@ -401,7 +401,7 @@ void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     ktdata->segB_Y = ktdata->segEndCW_Y;
     ktdata->segB_Z = ktdata->segEndCW_Z;
     ktdata->health = 4;
-    _data_E4 = (DLL_IModgfx*)dllLoadDeferred(DLL_ID_106, 1);
+    _data_E4 = (DLL_IModgfx*)dllLoad(DLL_ID_106, 1);
 }
 #endif
 

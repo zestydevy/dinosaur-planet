@@ -331,7 +331,7 @@ static void FXEmit_emit(Object *self) {
                 gDLL_17_partfx->vtbl->spawn(self, objdata->indexInBank, NULL, flags, -1, NULL);
             }
         } else if (objdata->bank == BANK_ModelFX) {
-            modfxDLL = dllLoadDeferred((objdata->indexInBank + 0x1000), 1);
+            modfxDLL = dllLoad((objdata->indexInBank + 0x1000), 1);
             if (objdata->fxRate > 0) {
                 for (i = 0; i < objdata->fxRate; i++) {
                     modfxDLL->vtbl->func0(self, 0, 0, flags, -1, 0);
@@ -341,7 +341,7 @@ static void FXEmit_emit(Object *self) {
             }
             dllFree(modfxDLL);
         } else if (objdata->bank == BANK_ProjectileFX) {
-            projfxDLL = dllLoadDeferred((objdata->indexInBank + 0x2000), 1);
+            projfxDLL = dllLoad((objdata->indexInBank + 0x2000), 1);
             if (objdata->fxRate > 0) {
                 for (i = 0; i < objdata->fxRate; i++) {
                     projfxDLL->vtbl->func0(self, 0, 0, flags, -1, objdata->indexInBank, 0);

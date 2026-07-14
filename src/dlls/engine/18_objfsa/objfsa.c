@@ -624,7 +624,7 @@ void objfsa_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
 void objfsa_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg5, u32 arg6) {
     DLL_18_UnknownDLL* temp_s3;
 
-    temp_s3 = dllLoadDeferred((arg2 + 0x1000), 1);
+    temp_s3 = dllLoad((arg2 + 0x1000), 1);
     while (arg3 != 0) {
         if (arg6 == 0) {
             temp_s3->vtbl->func0(obj, 0, 0, 1, -1, 0);

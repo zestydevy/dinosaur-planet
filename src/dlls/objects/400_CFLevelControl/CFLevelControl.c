@@ -178,7 +178,7 @@ void CFLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->flags = CFLEVELCONTROL_FLAG_1;
     sTriggerPassed = mainGetBits(BIT_CF_Entrance_Trigger_Passed);
     CFLevelControl_func_67C(self, _data_D0, _data_110);
-    sDLL190 = dllLoadDeferred(DLL_ID_190, 1);
+    sDLL190 = dllLoad(DLL_ID_190, 1);
     mainCreateTempDLL(DLL_ID_53_MOVELIB);
 }
 

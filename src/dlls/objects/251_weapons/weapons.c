@@ -100,11 +100,11 @@ void dll_251_ctor(void* dll) {
     }
     
     if (data_78 == NULL) {
-        data_78 = dllLoad(DLL_ID_106, 1, FALSE);
+        data_78 = dllLoadActual(DLL_ID_106, 1, FALSE);
     }
     
     if (data_7C == NULL) {
-        data_7C = dllLoad(DLL_ID_168, 1, FALSE);
+        data_7C = dllLoadActual(DLL_ID_168, 1, FALSE);
     }
 }
 

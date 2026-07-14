@@ -86,8 +86,8 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
 
     objdata->unk15 = setup->unk19;
 
-    _data_0 = dllLoad(DLL_ID_107, 1, /*bRunConstructor=*/FALSE);
-    _data_4 = dllLoad(DLL_ID_106, 1, /*bRunConstructor=*/FALSE);
+    _data_0 = dllLoadActual(DLL_ID_107, 1, /*bRunConstructor=*/FALSE);
+    _data_4 = dllLoadActual(DLL_ID_106, 1, /*bRunConstructor=*/FALSE);
 
     objdata->unk8 = 0;
     objdata->unkE = rand_next(0, 100) + 300;

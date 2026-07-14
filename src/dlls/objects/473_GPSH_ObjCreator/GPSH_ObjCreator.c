@@ -86,7 +86,7 @@ void GPSH_ObjCreator_control(Object* self) {
     if (!objdata->spawned) {
         if ((objdata->type == 6) && (self->unkE0 == 0) && (mainGetBits(BIT_5AC) != 0)) {
             // Start flybaddie spawn
-            modgfx = dllLoadDeferred(DLL_ID_146, 1);
+            modgfx = dllLoad(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);
             modgfx->vtbl->func0(self, 4, 0, 1, -1, 0);
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -95,7 +95,7 @@ void GPSH_ObjCreator_control(Object* self) {
             self->unkE0 = 1;
         } else if ((self->unkE0 == 0) && (mainGetBits(BIT_148) != 0)) {
             // Start pickup spawn
-            modgfx = dllLoadDeferred(DLL_ID_146, 1);
+            modgfx = dllLoad(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);
             modgfx->vtbl->func0(self, 4, 0, 1, -1, 0);
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);

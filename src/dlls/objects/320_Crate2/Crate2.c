@@ -43,7 +43,7 @@ void dll_320_setup(Object* self, DLL320_Setup* setup, s32 arg2) {
     if (sp20 < 0.05f) {
         sp20 = 0.05f;
     }
-    _data_0 = dllLoadDeferred(0x1003U, 1U);
+    _data_0 = dllLoad(0x1003U, 1U);
     if (self->shadow != NULL) {
         self->shadow->flags |= 0x810;
         self->shadow->scale = self->def->shadowScale * sp20; 

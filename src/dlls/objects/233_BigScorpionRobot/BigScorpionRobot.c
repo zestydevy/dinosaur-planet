@@ -213,7 +213,7 @@ void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
             modelInst = self->modelInsts[self->modelInstIdx];
             bone = self->def->pAttachPoints->bones[self->modelInstIdx]; // model index as a bone index?
             mtx = (MtxF *)&((f32 **)modelInst->matrices[modelInst->unk34 & 1])[bone << 4];
-            projgfx = dllLoadDeferred(DLL_ID_193, 1);
+            projgfx = dllLoad(DLL_ID_193, 1);
             gDLL_6_AMSFX->vtbl->play(self, SOUND_115_ScorpionRobot_LaserFire, MAX_VOLUME, NULL, NULL, 0, NULL);
             srcSRT.transl.x = mtx->m[3][0] + gWorldX;
             srcSRT.transl.y = mtx->m[3][1];
@@ -480,7 +480,7 @@ static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 upd
         while (partCount--) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_555, NULL, PARTFXFLAG_2, -1, NULL);
         }
-        modgfx = dllLoadDeferred(DLL_ID_107, 1);
+        modgfx = dllLoad(DLL_ID_107, 1);
         objdata->enteredState = 0;
         gDLL_33_BaddieControl->vtbl->func18(self, baddie->unk3E0, -1, 0);
         modgfx->vtbl->func0(self, 0x11, 0, 2, -1, 0);

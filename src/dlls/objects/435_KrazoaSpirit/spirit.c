@@ -56,7 +56,7 @@ void Spirit_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
         id == OBJ_CCSH_SpiritPriz || 
         id == OBJ_WGSH_SpiritPriz || 
         id == OBJ_NWSH_SpiritPriz) {   
-        data_modGfx = dllLoadDeferred(0x102D, 1);
+        data_modGfx = dllLoad(0x102D, 1);
     }
 }
 

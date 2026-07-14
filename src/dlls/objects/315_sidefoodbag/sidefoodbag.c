@@ -45,7 +45,7 @@ void SideFoodbag_setup(Object* self, Foodbag_ObjSetup *objSetup, s32 arg2) {
 
     objData = self->data;
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
-    objData->dllPutdown = dllLoadDeferred(DLL_ID_56, 10);
+    objData->dllPutdown = dllLoad(DLL_ID_56, 10);
     objData->placedObjects.nextIndex = 0;
     
     for (index = 0; index < 20; index++){

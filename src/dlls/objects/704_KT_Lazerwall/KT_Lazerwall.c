@@ -36,7 +36,7 @@ void dll_704_dtor(void *dll) { }
 void dll_704_setup(Object* self, KT_Lazerwall_Setup* setup, s32 arg2) {
     KT_Lazerwall_Data* objdata = (KT_Lazerwall_Data*)self->data;
 
-    _data_0 = (DLL_IModgfx*)dllLoadDeferred(DLL_ID_170, 1);
+    _data_0 = (DLL_IModgfx*)dllLoad(DLL_ID_170, 1);
     self->srt.yaw = setup->unk18 << 8;
     objdata->unk10 = 0.0f;
 }

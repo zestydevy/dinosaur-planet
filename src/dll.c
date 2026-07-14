@@ -70,7 +70,7 @@ DLLState *dllGetLoadedDLLs(s32 *outLoadedDLLCount) {
     return gLoadedDLLList;
 }
 
-void *dllLoadDeferred(u16 idOrIdx, u16 exportCount) {
+void *dllLoad(u16 idOrIdx, u16 exportCount) {
     DLLFile *dll;
     DLLState *state;
     void *dllInterfacePtr;
@@ -96,7 +96,7 @@ void *dllLoadDeferred(u16 idOrIdx, u16 exportCount) {
     return dllInterfacePtr;
 }
 
-void *dllLoad(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
+void *dllLoadActual(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
     DLLFile *dll;
     u32 i;
     s32 totalSize;

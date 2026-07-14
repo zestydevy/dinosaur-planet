@@ -60,7 +60,7 @@ void DRExplodeDoor_control(Object* self) {
     
     //Explode when gamebit set (only allowed when objSetup->mode is 2)
     if ((objSetup->mode == DRExplodeDoor_MODE_Enable_Control_Function) && mainGetBits(objSetup->gamebitExplode)) {
-        dll = dllLoadDeferred(DLL_ID_107, 1);
+        dll = dllLoad(DLL_ID_107, 1);
         dll->vtbl->func0(self, 16, NULL, 2, -1, &modGfxArg);
         dllFree(dll);
         
@@ -85,7 +85,7 @@ void DRExplodeDoor_update(Object* self) {
         bzero(&modGfxTrans, sizeof(SRT));
         modGfxTrans.scale = objSetup->explosionScale * 0.03125f;
         
-        modGfxDLL = dllLoadDeferred(DLL_ID_180, 1);
+        modGfxDLL = dllLoad(DLL_ID_180, 1);
         modGfxDLL->vtbl->func0(self, objSetup->modGfxArg1, &modGfxTrans, 2, -1, &modGfxArg);
         dllFree(modGfxDLL);
         

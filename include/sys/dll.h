@@ -66,11 +66,11 @@ void dllInit(void);
 s32 dllFindExecutingDLL(u32 pc, void **start, void **end);
 void dllReplaceLoadedDLLs(DLLState list[], s32 count);
 DLLState *dllGetLoadedDLLs(s32 *outLoadedDLLCount);
-void *dllLoadDeferred(u16 idOrIdx, u16 exportCount);
+void *dllLoad(u16 idOrIdx, u16 exportCount);
 /**
  * Loads a DLL by ID or tab index and returns a pointer to its loaded interface.
  */
-void *dllLoad(u16 idOrIdx, u16 exportCount, s32 bRunConstructor);
+void *dllLoadActual(u16 idOrIdx, u16 exportCount, s32 bRunConstructor);
 void dllLoadFromBytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSize);
 s32 dllFree(void *dllInterfacePtr);
 s32 dllThrowFault(void);

@@ -92,7 +92,7 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
         self->unkAF |= 8;
         self->animCallback = dll_537_func_A94;
         self->srt.yaw = objSetup->unk28 << 8;
-        _data_0 = dllLoadDeferred(DLL_ID_137, 1);
+        _data_0 = dllLoad(DLL_ID_137, 1);
         
         if (mainGetBits(objSetup->unk1A)) {
             objData->unk27 = 60;

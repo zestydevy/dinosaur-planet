@@ -601,7 +601,7 @@ Object *objSetupObjectActual(ObjSetup *setup, u32 initFlags, s32 mapID, s32 para
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {
-        objHeader.dll = (DLL_IObject*)dllLoad(def->dllID, 6, 1);
+        objHeader.dll = (DLL_IObject*)dllLoadActual(def->dllID, 6, 1);
         // "OBJECTS: warning DLL load failed\n" (default.dol)
     }
 

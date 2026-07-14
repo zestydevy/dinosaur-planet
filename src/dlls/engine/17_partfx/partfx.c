@@ -405,7 +405,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[0] = 2000;
         if (_data_4 == NULL) {
             sLoadedDLLCount += 1;
-            _data_4 = dllLoadDeferred(DLL_ID_34, 2);
+            _data_4 = dllLoad(DLL_ID_34, 2);
         }
         return _data_4->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -413,7 +413,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[1] = 2000;
         if (_data_8 == NULL) {
             sLoadedDLLCount += 1;
-            _data_8 = dllLoadDeferred(DLL_ID_35, 2);
+            _data_8 = dllLoad(DLL_ID_35, 2);
         }
         return _data_8->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -421,7 +421,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[2] = 2000;
         if (_data_C == NULL) {
             sLoadedDLLCount += 1;
-            _data_C = dllLoadDeferred(DLL_ID_36, 2);
+            _data_C = dllLoad(DLL_ID_36, 2);
         }
         return _data_C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[2] | void
     }
@@ -429,7 +429,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[3] = 2000;
         if (_data_10 == NULL) {
             sLoadedDLLCount += 1;
-            _data_10 = dllLoadDeferred(DLL_ID_37, 2);
+            _data_10 = dllLoad(DLL_ID_37, 2);
         }
         return _data_10->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -437,7 +437,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[4] = 2000;
         if (_data_14 == NULL) {
             sLoadedDLLCount += 1;
-            _data_14 = dllLoadDeferred(DLL_ID_38, 2);
+            _data_14 = dllLoad(DLL_ID_38, 2);
         }
         return _data_14->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[3] | void
     }
@@ -445,7 +445,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[5] = 2000;
         if (_data_18 == NULL) {
             sLoadedDLLCount += 1;
-            _data_18 = dllLoadDeferred(DLL_ID_39, 2);
+            _data_18 = dllLoad(DLL_ID_39, 2);
         }
         return _data_18->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = u8[1] | void
     }
@@ -453,7 +453,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[0x10] = 2000;
         if (_data_1C == NULL) {
             sLoadedDLLCount += 1;
-            _data_1C = dllLoadDeferred(DLL_ID_50, 2);
+            _data_1C = dllLoad(DLL_ID_50, 2);
         }
         return _data_1C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -461,7 +461,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[6] = 2000;
         if (_data_20 == NULL) {
             sLoadedDLLCount += 1;
-            _data_20 = dllLoadDeferred(DLL_ID_40, 2);
+            _data_20 = dllLoad(DLL_ID_40, 2);
         }
         return _data_20->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = s32 | void
     }
@@ -469,7 +469,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[8] = 2000;
         if (_data_28 == NULL) {
             sLoadedDLLCount += 1;
-            _data_28 = dllLoadDeferred(DLL_ID_42, 2);
+            _data_28 = dllLoad(DLL_ID_42, 2);
         }
         return _data_28->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -477,7 +477,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[7] = 2000;
         if (_data_24 == NULL) {
             sLoadedDLLCount += 1;
-            _data_24 = dllLoadDeferred(DLL_ID_41, 2);
+            _data_24 = dllLoad(DLL_ID_41, 2);
         }
         return _data_24->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -485,7 +485,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[9] = 2000;
         if (_data_2C == NULL) {
             sLoadedDLLCount += 1;
-            _data_2C = dllLoadDeferred(DLL_ID_43, 2);
+            _data_2C = dllLoad(DLL_ID_43, 2);
         }
         return _data_2C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | void
     }
@@ -493,7 +493,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[10] = 2000;
         if (_data_30 == NULL) {
             sLoadedDLLCount += 1;
-            _data_30 = dllLoadDeferred(DLL_ID_44, 2);
+            _data_30 = dllLoad(DLL_ID_44, 2);
         }
         return _data_30->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -501,7 +501,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[11] = 2000;
         if (_data_34 == NULL) {
             sLoadedDLLCount += 1;
-            _data_34 = dllLoadDeferred(DLL_ID_45, 2);
+            _data_34 = dllLoad(DLL_ID_45, 2);
         }
         return _data_34->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | void
     }
@@ -509,7 +509,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[12] = 2000;
         if (_data_38 == NULL) {
             sLoadedDLLCount += 1;
-            _data_38 = dllLoadDeferred(DLL_ID_47, 2);
+            _data_38 = dllLoad(DLL_ID_47, 2);
         }
         return _data_38->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | f32[3] | void
     }
@@ -517,7 +517,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[13] = 2000;
         if (_data_3C == NULL) {
             sLoadedDLLCount += 1;
-            _data_3C = dllLoadDeferred(DLL_ID_48, 2);
+            _data_3C = dllLoad(DLL_ID_48, 2);
         }
         return _data_3C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[2] | void
     }
@@ -525,7 +525,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[14] = 2000;
         if (_data_40 == NULL) {
             sLoadedDLLCount += 1;
-            _data_40 = dllLoadDeferred(DLL_ID_46, 2);
+            _data_40 = dllLoad(DLL_ID_46, 2);
         }
         return _data_40->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
@@ -533,7 +533,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[15] = 2000;
         if (_data_44 == NULL) {
             sLoadedDLLCount += 1;
-            _data_44 = dllLoadDeferred(DLL_ID_49, 2);
+            _data_44 = dllLoad(DLL_ID_49, 2);
         }
         return _data_44->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = s32 | void
     }
@@ -541,7 +541,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[17] = 2000;
         if (_data_48 == NULL) {
             sLoadedDLLCount += 1;
-            _data_48 = dllLoadDeferred(DLL_ID_51, 2);
+            _data_48 = dllLoad(DLL_ID_51, 2);
         }
         return _data_48->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | s32[1] | u8[1] | void
     }
@@ -549,7 +549,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         sDLLTimers[18] = 2000;
         if (_data_4C == NULL) {
             sLoadedDLLCount += 1;
-            _data_4C = dllLoadDeferred(DLL_ID_52, 2);
+            _data_4C = dllLoad(DLL_ID_52, 2);
         }
         return _data_4C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[3] | void
     }

@@ -706,7 +706,7 @@ s32 CamControl_load_module(u16 dllID, s32 doDeferredFree) {
     camModule = module;
     camModule->id = dllID;
     camModule->doDeferredFree = doDeferredFree;
-    camModule->dll = dllLoadDeferred(dllID, 4);
+    camModule->dll = dllLoad(dllID, 4);
     return sCamModuleCount - 1;
 }
 

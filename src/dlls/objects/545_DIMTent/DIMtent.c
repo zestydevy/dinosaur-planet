@@ -92,7 +92,7 @@ void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
     }
 
     objData->maskSpeed = sMaskSpeeds[0];
-    dModGfxDLL = dllLoadDeferred(DLL_ID_165, 1);
+    dModGfxDLL = dllLoad(DLL_ID_165, 1);
 }
 
 // offset: 0xD4 | func: 1 | export: 1

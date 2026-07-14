@@ -1476,8 +1476,8 @@ menu_func_800100D4 = 0x800100D4; // type:func
 menu_func_80010158 = 0x80010158; // type:func
 
 dllFindExecutingDLL = 0x8000BD1C; // type:func
-dllLoadDeferred = 0x8000be04; // type:func
-dllLoad = 0x8000be78; // type:func
+dllLoad = 0x8000be04; // type:func
+dllLoadActual = 0x8000be78; // type:func
 dllFree = 0x8000C258; // type:func
 dllLoadFromTab = 0x8000c3cc; // type:func
 dllRelocate = 0x8000c4a8; // type:func
