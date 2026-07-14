@@ -725,8 +725,6 @@ s32 options_update1(void) {
         }
         break;
     case OPTIONS_PAGE_8_Screen_Position:
-        //TODO: crashes in recomp currently!
-
         joy_get_stick_menu_xy_sign(0, &joyX, &joyY);
         if (joyX > 0) {
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
