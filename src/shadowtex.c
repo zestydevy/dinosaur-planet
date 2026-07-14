@@ -212,8 +212,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         camUseShake();
     }
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, gShadowTexWidth, gShadowTexHeight);
-    rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gShadowTexCurrFb[slot]);
-    rsp_segment(gdl, SEGMENT_4, (u8*)gShadowTexCurrFb[slot] - 0x280);
+    segSetBase(gdl, SEGMENT_FRAMEBUFFER, gShadowTexCurrFb[slot]);
+    segSetBase(gdl, SEGMENT_4, (u8*)gShadowTexCurrFb[slot] - 0x280);
     gDPSetOtherMode(*gdl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
@@ -276,8 +276,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         camSetAspect(gAspectRatio);
         camSetupViewportAndMatrices(gdl, &sp84);
     }
-    rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
-    rsp_segment(gdl, SEGMENT_4, gFrontFramebuffer - (0x500 / sizeof(u16)));
+    segSetBase(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    segSetBase(gdl, SEGMENT_4, gFrontFramebuffer - (0x500 / sizeof(u16)));
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0;
         gDPPipeSync((*gdl)++);

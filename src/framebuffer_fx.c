@@ -624,7 +624,7 @@ void fbfxDoEffect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
         }
         // This segment command is unnecessary and can cause a display list buffer overflow if the
         // framebuffer effect has too many iterations!
-        rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+        segSetBase(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
         switch (effectID) {
         case FBFX_SINE_WAVES: // 2 vertical sine waves moving from the center outward
             fbfxSineWaves((viWidth >> 1) - ((s32) ((s32) (viWidth * (i + 1)) / duration) >> 1), viWidth >> 4);

@@ -302,9 +302,9 @@ void mainTick(void) {
     gCurPol = gMainPol[gFrameBufIdx];
 
     diRcpTrace(gCurGfx, 0, "main/main.c", 0x28E);
-    rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
-    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
-    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
+    segSetBase(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
+    segSetBase(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     fbfxTick(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
     tex_render_reset();
@@ -379,9 +379,9 @@ void mainTickNoExpansion(void) {
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
 
-    rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
-    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
-    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
+    segSetBase(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
+    segSetBase(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     dl_set_all_dirty();
     tex_render_reset();
 

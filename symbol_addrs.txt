@@ -1651,7 +1651,7 @@ gMobileMapID = 0x800B4A70; // size:0x2
 gMobileMapUnknown = 0x800B4A72; // size:0x2
 gFrustumPlanes = 0x800b4a78; // size:0x64
 
-rsp_segment = 0x8003cc50; // type:func
+segSetBase = 0x8003cc50; // type:func
 dl_set_all_dirty = 0x80040fd0; // type:func
 dl_use_alt_builder = 0x80040FF8; // type:func
 dl_use_main_builder = 0x80041028; // type:func
