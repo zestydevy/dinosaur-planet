@@ -72,9 +72,9 @@ u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
 /**
  * Prepare the gfx task for the F3DEX2 XBus microcode.
  * Sends a message to the scheduler to start processing an RSP task once set up.
- * Official Name: rcpFast3d
+ * Official Name: rcpFast3d (likely the old name)
  */
-s32 gfxtask_run_xbus(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
+s32 rcpF3DEX_2_XBUS(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     OSScTask *task;
     
     gGfxTaskIsRunning = TRUE;
@@ -122,19 +122,20 @@ s32 gfxtask_run_xbus(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     return 0;
 }
 
-void func_800378E8(s32 a0, s32 a1, s32 a2) {
+void rcp_func_800378E8(s32 a0, s32 a1, s32 a2) {
 
 }
 
-void func_800378FC(s32 a0, s32 a1, s32 a2) {
+void rcp_func_800378FC(s32 a0, s32 a1, s32 a2) {
 
 }
 
-void func_80037910(s32 a0, s32 a1, s32 a2) {
+void rcp_func_80037910(s32 a0, s32 a1, s32 a2) {
 
 }
 
-s32 gfxtask_wait(void) {
+// official name: rcpWaitDP
+s32 rcpWaitDP(void) {
     GfxTaskMesg *mesg = NULL;
 
     if (!gGfxTaskIsRunning) {
@@ -147,7 +148,7 @@ s32 gfxtask_wait(void) {
     return mesg->unk4;
 }
 
-void func_80037978(s32 a0, s32 a1, s32 a2) {
+void rcp_func_80037978(s32 a0, s32 a1, s32 a2) {
 
 }
 
@@ -155,7 +156,7 @@ void func_80037978(s32 a0, s32 a1, s32 a2) {
  * Sets the primitive colour for the cyclemode fillrect background.
  * Official name: rcpSetScreenColour
  */
-void rcp_set_screen_color(u8 red, u8 green, u8 blue) {
+void rcpSetScreenColour(u8 red, u8 green, u8 blue) {
     sBGPrimColourR = red;
     sBGPrimColourG = green;
     sBGPrimColourB = blue;
@@ -166,13 +167,13 @@ void rcp_set_screen_color(u8 red, u8 green, u8 blue) {
  * Uses RGBA5551
  * Official name: rcpSetBorderColour
  */
-void rcp_set_border_color(u32 red, u32 green, s32 blue) {
+void rcpSetBorderColour(u32 red, u32 green, s32 blue) {
     sBackgroundFillColour = GPACK_RGBA5551(red, green, blue, 1);
     sBackgroundFillColour |= (sBackgroundFillColour << 16);
 }
 
 // official name: rcpClearScreen
-void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
+void rcpClearScreen(Gfx **gdl, Mtx **mtx, s32 flags) {
     s32 viSize;
     s32 viWidth, viHeight;
     s32 ulx, uly, lrx, lry;
@@ -239,7 +240,8 @@ void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
 }
 
 // unused
-void rdp_init(Gfx **gdl) {
+// official name: rcpInitDp
+void rcpInitDp(Gfx **gdl) {
     s32 resolution;
     s32 resWidth;
 
@@ -269,7 +271,8 @@ void rdp_init(Gfx **gdl) {
     dl_apply_other_mode(gdl);
 }
 
-void rsp_init(Gfx **gdl) {
+// official name: rcpInitSp
+void rcpInitSp(Gfx **gdl) {
     // Clear all
     gSPClearGeometryMode((*gdl), 0xFFFFFF);
     dl_apply_geometry_mode(gdl);
@@ -277,7 +280,8 @@ void rsp_init(Gfx **gdl) {
     gSPDisplayList((*gdl)++, OS_K0_TO_PHYSICAL(D_800917D0));
 }
 
-void gfxtask_init(OSSched *sched) {
+// official name: rcpInit
+void rcpInit(OSSched *sched) {
     gScInterruptQ = osScGetInterruptQ(sched);
 
     osCreateMesgQueue(&gRCPUnusedMesgQueue1, gRCPUnusedMesgBuf1, ARRAYCOUNT(gRCPUnusedMesgBuf1));
@@ -285,12 +289,12 @@ void gfxtask_init(OSSched *sched) {
     osCreateMesgQueue(&gGfxTaskMesgQueue, gGfxTaskMesgBuf, ARRAYCOUNT(gGfxTaskMesgBuf));
 }
 
-void func_80037F8C(s32 param1) {
+void rcp_func_80037F8C(s32 param1) {
     D_800917BC = param1;
 }
 
 // official name: rcpTileWrite ?
-void rcp_tile_write(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b, u8 a) {
+void rcpTileWrite(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b, u8 a) {
     Texture* tile;
     Texture* tex;
     s32 lrx;
@@ -364,12 +368,12 @@ void rcp_tile_write(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 
     *gdl = dl;
 }
 
-void rcp_screen_full_write(Gfx** gdl, Texture* tex, s32 x, s32 y, s32 arg4, s32 frameno, s32 alpha, s32 flags) {
+void rcpScreenFullWrite(Gfx** gdl, Texture* tex, s32 x, s32 y, s32 arg4, s32 frameno, s32 alpha, s32 flags) {
     s32 texHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
-    rcp_screen_write(gdl, tex, x, y, 0, texHeight, frameno, alpha, flags);
+    rcpScreenWrite(gdl, tex, x, y, 0, texHeight, frameno, alpha, flags);
 }
 
-void rcp_screen_scroll_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 top, s32 bottom, s32 alpha, s32 flags) {
+void rcpScreenScrollWrite(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 top, s32 bottom, s32 alpha, s32 flags) {
     s32 texHeight;
 
     top -= dstY;
@@ -382,12 +386,12 @@ void rcp_screen_scroll_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 to
         bottom = texHeight;
     }
     if (top < texHeight && bottom >= 0) {
-        rcp_screen_write(gdl, tex, dstX, dstY, top, bottom, 0, alpha, flags);
+        rcpScreenWrite(gdl, tex, dstX, dstY, top, bottom, 0, alpha, flags);
     }
 }
 
 // official name: rcpScreenWrite (default.dol)
-void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s32 srcBottom, s32 frameno, s32 alpha, s32 flags) {
+void rcpScreenWrite(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s32 srcBottom, s32 frameno, s32 alpha, s32 flags) {
     s32 width;
     s32 sp148;
     s32 temp_v0_9;
@@ -636,7 +640,7 @@ void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s
     } while (srcY < srcBottom);
 }
 
-void draw_pause_screen_freeze_frame(Gfx** gdl) {
+void rcpDrawPauseScreenFreezeFrame(Gfx** gdl) {
     u16* fbPtr;
     s32 remainingY;
     s32 yPos;
@@ -705,7 +709,7 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
 }
 
 // official name: rcpTileWriteX ?
-void rcp_tile_write_x(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 height, s32 s, s32 t, f32 scaleX, f32 scaleY, u32 color, s32 flags) {
+void rcpTileWriteX(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 height, s32 s, s32 t, f32 scaleX, f32 scaleY, u32 color, s32 flags) {
     s32 _pad;
     s32 resolution;
     Texture* tile;
@@ -789,10 +793,10 @@ void rcp_tile_write_x(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f3
     *gdl = dl;
 }
 
-void func_80039560(s32 a0, s32 a1, s32 a2, s32 a3) {
+void rcp_func_80039560(s32 a0, s32 a1, s32 a2, s32 a3) {
 
 }
 
-void func_80039578(s32 a0, s32 a1, s32 a2, s32 a3) {
+void rcp_func_80039578(s32 a0, s32 a1, s32 a2, s32 a3) {
 
 }

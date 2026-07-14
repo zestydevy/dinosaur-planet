@@ -309,7 +309,7 @@ void credits_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     if (sGroupIdx == 0) {
         //Draw the Dinosaur Planet logo
         line = &dCredits[sGroupIdx].lines[0];
-        rcp_screen_full_write(gdl, sDinosaurPlanetLogoTex, 45, 76, 0, 0, line->opacity, 0);
+        rcpScreenFullWrite(gdl, sDinosaurPlanetLogoTex, 45, 76, 0, 0, line->opacity, 0);
     } else {
         //Draw the developer credits
         for (i = 0; i < dCredits[sGroupIdx].lineCount; i++) {

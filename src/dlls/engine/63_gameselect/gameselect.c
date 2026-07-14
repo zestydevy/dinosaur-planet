@@ -466,11 +466,11 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         fontWindowFlushStrings(3);
 
         if (sRedrawFrames != 0) {
-            rcp_screen_full_write(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
+            rcpScreenFullWrite(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
 
             if (sSubmenuIdx == SUBMENU_GAME_RECAP) {
-                rcp_screen_full_write(gdl, sLogoShadowTexture, 119, 92, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-                rcp_screen_full_write(gdl, sLogoTexture, 129, 100, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+                rcpScreenFullWrite(gdl, sLogoShadowTexture, 119, 92, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+                rcpScreenFullWrite(gdl, sLogoTexture, 129, 100, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
 
                 numRecentTasks = gDLL_30_Task->vtbl->get_num_recently_completed();
                 if (numRecentTasks > 3) {
@@ -529,7 +529,7 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         } else {
             // Always redraw background in case picmenu redraws
             menu_func_80010158(&ulx, &lrx, &uly, &lry);
-            rcp_screen_scroll_write(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
+            rcpScreenScrollWrite(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
         }
 
         gDLL_74_Picmenu->vtbl->draw(gdl);
@@ -1021,17 +1021,17 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
             x2 = x;
             y2 += 32;
         } else {
-            rcp_screen_full_write(gdl, sSaveGameBgTextures[sSaveGameBgIndices[i]], x2, y2, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sSaveGameBgTextures[sSaveGameBgIndices[i]], x2, y2, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
             x2 += 64;
         }
     }
 
     // Draw player icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[saveInfo->playerno], x + 14, y + 8, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcpScreenFullWrite(gdl, sSaveGameTextures[saveInfo->playerno], x + 14, y + 8, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     // Draw spirit icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[IconTexture_2_Spirits], x + 241, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcpScreenFullWrite(gdl, sSaveGameTextures[IconTexture_2_Spirits], x + 241, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     // Draw spell stone icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[IconTexture_3_SpellStones], x2 + 14, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcpScreenFullWrite(gdl, sSaveGameTextures[IconTexture_3_SpellStones], x2 + 14, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
 
     // Draw text
     fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);

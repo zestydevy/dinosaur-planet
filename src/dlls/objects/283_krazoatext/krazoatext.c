@@ -172,7 +172,7 @@ void krazoatext_print_text(Object* self, Gfx** gfx) {
                 currentGlyph.tile.x = 0;
                 currentGlyph.tile.y = 0;
                 currentGlyph.tile.animProgress = 0;
-                rcp_tile_write(gfx, &currentGlyph.tile, xCoord, KRAZOA_PRINT_BASE_Y, 0xFF, 0xFF, 0xFF, 0xFF);
+                rcpTileWrite(gfx, &currentGlyph.tile, xCoord, KRAZOA_PRINT_BASE_Y, 0xFF, 0xFF, 0xFF, 0xFF);
             }
         }
 

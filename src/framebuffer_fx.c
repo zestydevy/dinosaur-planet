@@ -577,7 +577,7 @@ void fbfxDoEffect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
     viSize = vi_get_current_size();
     viWidth = GET_VIDEO_WIDTH(viSize);
     viHeight = GET_VIDEO_HEIGHT(viSize);
-    gfxtask_wait();
+    rcpWaitDP();
     switch (effectID) {
     case FBFX_NOOP: // nop
         break;
@@ -610,7 +610,7 @@ void fbfxDoEffect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
         var_fp = 1;
         break;
     case FBFX_MOTION_BLUR: // accumulation motion blur
-        // - at this point, gfxtask_wait ensured that the rcp is done writing to gBackFramebuffer.
+        // - at this point, rcpWaitDP ensured that the rcp is done writing to gBackFramebuffer.
         // - gBackFramebuffer is the next frame to be displayed, gFrontFramebuffer is the current.
         // - average the pixels of both and write back to gBackFramebuffer (to be displayed next).
         fbfxMotionBlur(gBackFramebuffer, gFrontFramebuffer, viWidth, viHeight);

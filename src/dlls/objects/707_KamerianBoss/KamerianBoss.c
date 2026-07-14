@@ -738,7 +738,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         // Draw health bar
         if (sHealthBarAlpha != 0) {
-            rcp_tile_write_x(gdl, _bss_8[0], 
+            rcpTileWriteX(gdl, _bss_8[0], 
                 /*x*/96.0f, 
                 /*y*/24.0f, 
                 /*width*/(f32) hpBarWidth, 
@@ -750,7 +750,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                 /*color*/sHealthBarAlpha - 256, 
                 /*flags*/TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
             
-            rcp_tile_write_x(gdl, _bss_8[1], 
+            rcpTileWriteX(gdl, _bss_8[1], 
                 /*x*/(f32) ((hpBarWidth * 4) + 96), 
                 /*y*/24.0f, 
                 /*width*/(f32) (32 - hpBarWidth), 

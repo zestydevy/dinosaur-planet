@@ -43,7 +43,7 @@ static Texture *sTexRarewareGlow;
 void rareware_ctor(void *dll) {
     u8 dColourUnused[4] = {0xe4, 0x9c, 0x44, 0xff};
 
-    rcp_set_border_color(0, 0, 0);
+    rcpSetBorderColour(0, 0, 0);
     menu_func_80010018(0);
 
     dFrame = 0;
@@ -121,7 +121,7 @@ void rareware_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         return;
     }
 
-    rcp_clear_screen(gdl, mtxs, 1);
+    rcpClearScreen(gdl, mtxs, 1);
     gDLL_76->vtbl->func2(gdl, mtxs);
 
     //Handle key frames
@@ -157,8 +157,8 @@ void rareware_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             A = 1.0f;
         }
 
-        rcp_screen_full_write(gdl, sTexRareLogoGlow, 165, 148, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
-        rcp_screen_full_write(gdl, sTexRarewareGlow, 102, 250, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRareLogoGlow, 165, 148, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRarewareGlow, 102, 250, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
     }
 
     //Draw Rare logo and Rareware text (fade in, hold for a while, then fade out)
@@ -177,7 +177,7 @@ void rareware_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             A = 1.0f;
         }
 
-        rcp_screen_full_write(gdl, sTexRareLogo, 165, 148, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
-        rcp_screen_full_write(gdl, sTexRareware, 102, 250, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRareLogo, 165, 148, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRareware, 102, 250, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
     }
 }

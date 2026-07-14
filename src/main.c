@@ -196,7 +196,7 @@ void mainInit(void) {
     osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 0xD, tvMode, 1);
     start_pi_manager_thread();
     piInit();
-    gfxtask_init(&osscheduler_);
+    rcpInit(&osscheduler_);
     mainAllocFrameBuffers();
     if (0) {};
     gFrameBufIdx = 0;
@@ -293,7 +293,7 @@ void mainTick(void) {
     gdl = &gCurGfx;
 
     // unused return type
-    gfxtask_run_xbus(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    rcpF3DEX_2_XBUS(gMainGfx[gFrameBufIdx], gCurGfx, 0);
 
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -316,7 +316,7 @@ void mainTick(void) {
 
     gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0));
 
-    rsp_init(&gCurGfx);
+    rcpInitSp(&gCurGfx);
 
     clearFlags = CLEAR_ZBUFFER;
     if (track_is_z_buffer_on() == FALSE) {
@@ -325,7 +325,7 @@ void mainTick(void) {
         clearFlags = CLEAR_COLOR | CLEAR_ZBUFFER;
     }
 
-    rcp_clear_screen(&gCurGfx, &gCurMtx, clearFlags);
+    rcpClearScreen(&gCurGfx, &gCurMtx, clearFlags);
     voxmap_update_cache_timers();
     main_func_80013D80();
     am_func_800121DC();
@@ -338,7 +338,7 @@ void mainTick(void) {
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
 
-    gfxtask_wait();
+    rcpWaitDP();
     objDoDeferredFree();
     mmFreeTick();
 
@@ -371,7 +371,7 @@ void mainTickNoExpansion(void) {
 
     tmp_s0 = &gCurGfx;
 
-    gfxtask_run_xbus(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    rcpF3DEX_2_XBUS(gMainGfx[gFrameBufIdx], gCurGfx, 0);
 
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -392,7 +392,7 @@ void mainTickNoExpansion(void) {
 
     gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
-    rsp_init(&gCurGfx);
+    rcpInitSp(&gCurGfx);
     menuUpdate1(); // ignored return value
     menuDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
     assetQueueTick();
@@ -401,7 +401,7 @@ void mainTickNoExpansion(void) {
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
 
-    gfxtask_wait();
+    rcpWaitDP();
     mmFreeTick();
 
     gUpdateRate = vi_frame_sync(0);
@@ -428,7 +428,7 @@ void main_func_80013D80(void) {
         button = joyGetPressed(0);
 
         if (gPauseState != 0) {
-            draw_pause_screen_freeze_frame(&gCurGfx);
+            rcpDrawPauseScreenFreezeFrame(&gCurGfx);
         }
 
         if (gPauseState == 0) {
@@ -494,7 +494,7 @@ void mainHandleMapChange(void) {
         // "$$$$$  CHANGEMAP \n" (default.dol)
         mmSetDelay(0);
         if (D_8008CA30 != 0) {
-            rcp_set_screen_color(0, 0, 0);
+            rcpSetScreenColour(0, 0, 0);
             func_800668A4();
             map_func_800484A8();
 

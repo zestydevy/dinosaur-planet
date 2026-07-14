@@ -236,7 +236,7 @@ void __amHandleFrameMsg(void) {
     gAudioTask.list.t.type = 2;
     gAudioTask.list.t.flags = 2;
     gAudioTask.list.t.ucode_boot = (u64* ) rspbootTextStart;
-    gAudioTask.list.t.ucode_boot_size = (s32)gspF3DEX2_xbusTextStart - (s32)rspbootTextStart;
+    gAudioTask.list.t.ucode_boot_size = (s32)rspbootTextEnd - (s32)rspbootTextStart;
     gAudioTask.list.t.ucode = (u64* ) aspMainTextStart;
     gAudioTask.list.t.ucode_data = (u64* ) aspMainDataStart;
     gAudioTask.list.t.ucode_data_size = 0x800;

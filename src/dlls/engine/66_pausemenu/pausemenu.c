@@ -204,9 +204,9 @@ void pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
             break;
         default:   
             //Draw icons
-            rcp_screen_full_write(gfx, textureSpellStone, SPELLSTONE_X, SPELLSTONE_Y, 0, 0, opacity_main, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gfx, textureDuster, DUSTER_X, DUSTER_Y, 0, 0, opacity_main, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gfx, textureSpirit, SPIRIT_X, SPIRIT_Y, 0, 0, opacity_main, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gfx, textureSpellStone, SPELLSTONE_X, SPELLSTONE_Y, 0, 0, opacity_main, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gfx, textureDuster, DUSTER_X, DUSTER_Y, 0, 0, opacity_main, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gfx, textureSpirit, SPIRIT_X, SPIRIT_Y, 0, 0, opacity_main, SCREEN_WRITE_TRANSLUCENT);
             
             //Draw completion percentage
             sprintf(completionPercentage, formatCompletionPercentage, gDLL_30_Task->vtbl->get_completion_percentage());

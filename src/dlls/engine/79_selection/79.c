@@ -159,8 +159,8 @@ void selection_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     switch (sMenuState) {
     case SelectionMenu_STATE_3_Confirm_Left:
         //Draw B button & A button
-        rcp_screen_full_write(gdl, sTexButtonB, CONFIRM_LEFT_B_X, CONFIRM_LEFT_B_Y, 0, dFrameButtonB >> 8, (u8)sOpacity, 0);
-        rcp_screen_full_write(gdl, sTexButtonA, CONFIRM_LEFT_A_X, CONFIRM_LEFT_A_Y, 0, dFrameButtonA >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexButtonB, CONFIRM_LEFT_B_X, CONFIRM_LEFT_B_Y, 0, dFrameButtonB >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexButtonA, CONFIRM_LEFT_A_X, CONFIRM_LEFT_A_Y, 0, dFrameButtonA >> 8, (u8)sOpacity, 0);
         
         //"Confirm" / "Cancel" text (drop-shadow)
         fontWindowSetTextColour(1, 0xFF, 0xD7, 0x3D, 0xFF, (u8)sOpacity);
@@ -175,8 +175,8 @@ void selection_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
 
     case SelectionMenu_STATE_2_Confirm_Right:
         //Draw B button & A button
-        rcp_screen_full_write(gdl, sTexButtonB, CONFIRM_RIGHT_B_X, CONFIRM_RIGHT_B_Y, 0, dFrameButtonB >> 8, (u8)sOpacity, 0);
-        rcp_screen_full_write(gdl, sTexButtonA, CONFIRM_RIGHT_A_X, CONFIRM_RIGHT_A_Y, 0, dFrameButtonA >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexButtonB, CONFIRM_RIGHT_B_X, CONFIRM_RIGHT_B_Y, 0, dFrameButtonB >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexButtonA, CONFIRM_RIGHT_A_X, CONFIRM_RIGHT_A_Y, 0, dFrameButtonA >> 8, (u8)sOpacity, 0);
         
         //"Confirm" / "Cancel" text (drop-shadow)
         fontWindowSetTextColour(1, 0xFF, 0xD7, 0x3D, 0xFF, (u8)sOpacity);
@@ -191,7 +191,7 @@ void selection_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
 
     case SelectionMenu_STATE_1_SwapStone_Choices:
         //Draw control stick
-        rcp_screen_full_write(gdl, sTexControlStick, SWAPSTONE_STICK_X, SWAPSTONE_STICK_Y, 0, dFrameControlStick >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexControlStick, SWAPSTONE_STICK_X, SWAPSTONE_STICK_Y, 0, dFrameControlStick >> 8, (u8)sOpacity, 0);
         
         //"Warp" / "Swap" / "Shop" text (drop-shadow)
         fontWindowSetTextColour(1, 0xFF, 0xD7, 0x3D, 0xFF, (u8)sOpacity);
@@ -208,9 +208,9 @@ void selection_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
 
     case SelectionMenu_STATE_4_Confirm_ShopKeeper:
         //Draw control stick, B button, & A button
-        rcp_screen_full_write(gdl, sTexControlStick, HAGGLE_STICK_X, HAGGLE_STICK_Y, 0, dFrameControlStick >> 8, (u8)sOpacity, 0);
-        rcp_screen_full_write(gdl, sTexButtonB,      HAGGLE_B_X,     HAGGLE_B_Y,     0, dFrameButtonB >> 8, (u8)sOpacity, 0);
-        rcp_screen_full_write(gdl, sTexButtonA,      HAGGLE_A_X,     HAGGLE_A_Y,     0, dFrameButtonA >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexControlStick, HAGGLE_STICK_X, HAGGLE_STICK_Y, 0, dFrameControlStick >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexButtonB,      HAGGLE_B_X,     HAGGLE_B_Y,     0, dFrameButtonB >> 8, (u8)sOpacity, 0);
+        rcpScreenFullWrite(gdl, sTexButtonA,      HAGGLE_A_X,     HAGGLE_A_Y,     0, dFrameButtonA >> 8, (u8)sOpacity, 0);
         
         //"Change" / "Cancel" / "Confirm" text (drop-shadow)
         fontWindowSetTextColour(1, 0xFF, 0xD7, 0x3D, 0xFF, (u8)sOpacity);

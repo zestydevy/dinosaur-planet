@@ -1161,7 +1161,7 @@ void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     //Draw Spell reticle when aiming (@bug: x coord not adjusted in widescreen)
     if (((DLL_210_Player*)player->dll)->vtbl->func77(player, &screenX, &screenY)) {
         tex_animate(sCrosshairTex, &sCrosshairAnimRenderFlags, &sCrosshairAnimProgress);
-        rcp_screen_full_write(
+        rcpScreenFullWrite(
             gdl, 
             sCrosshairTex, 
             screenX - (AIMING_RETICLE_WIDTH/2), 
@@ -1673,7 +1673,7 @@ static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) 
     dl_set_prim_color(&dl, 255, 255, 255, 255);
 
     //Draw A button icon (animated) at bottom-centre of box
-    rcp_screen_full_write(
+    rcpScreenFullWrite(
         &dl, 
         sAButtonAnimTex, 
         dTutorialBoxX - (TUTORIAL_BOX_A_BUTTON_WIDTH/2) + 4, 
@@ -1985,8 +1985,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sPrevActiveSpellGamebit = activeSpellGamebit;
 
         if (sActiveSpellIcon != NULL) {
-            rcp_screen_full_write(gdl, sActiveSpellRing, ACTIVE_SPELL_X,      ACTIVE_SPELL_Y,      0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, sActiveSpellIcon, ACTIVE_SPELL_ICON_X, ACTIVE_SPELL_ICON_Y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sActiveSpellRing, ACTIVE_SPELL_X,      ACTIVE_SPELL_Y,      0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sActiveSpellIcon, ACTIVE_SPELL_ICON_X, ACTIVE_SPELL_ICON_Y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
 
@@ -2020,8 +2020,8 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         sPrevSidekickCommandIndex = sideCommandIndex;
 
         if (sActiveSidekickCommandIcon != NULL) {
-            rcp_screen_full_write(gdl, sActiveSidekickCommandRing, ACTIVE_SIDECOMMAND_X,      ACTIVE_SIDECOMMAND_Y,      0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, sActiveSidekickCommandIcon, ACTIVE_SIDECOMMAND_ICON_X, ACTIVE_SIDECOMMAND_ICON_Y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sActiveSidekickCommandRing, ACTIVE_SIDECOMMAND_X,      ACTIVE_SIDECOMMAND_Y,      0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sActiveSidekickCommandIcon, ACTIVE_SIDECOMMAND_ICON_X, ACTIVE_SIDECOMMAND_ICON_Y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
 
@@ -2117,7 +2117,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         //Draw icon
                         if (track_func_80041E08()) {
                             //Widescreen aspect
-                            rcp_tile_write(
+                            rcpTileWrite(
                                 gdl, 
                                 sTempIcon, 
                                 MENU_ITEM_X - 1, 
@@ -2126,7 +2126,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                             );
                         } else {
                             //Standard aspect
-                            rcp_tile_write(
+                            rcpTileWrite(
                                 gdl, 
                                 sTempIcon, 
                                 MENU_ITEM_X, 
@@ -2139,7 +2139,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         if (sMenuItemQuantities[itemIdx] > 1) {
                             sTempIcon->tex = sInventoryStackNumbersTex;
                             sTempIcon->animProgress = (sMenuItemQuantities[itemIdx] - 2) << 8; //Numbers only shown from 2 onwards (up to 10)
-                            rcp_tile_write(
+                            rcpTileWrite(
                                 gdl, 
                                 sTempIcon, 
                                 MENU_ITEM_QUANTITY_X, 
@@ -2152,7 +2152,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     //Draw empty tile
                     if (track_func_80041E08()) {
                         //Widescreen aspect
-                        rcp_tile_write(
+                        rcpTileWrite(
                             gdl, 
                             sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 
                             MENU_ITEM_X - 1, 
@@ -2161,7 +2161,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                         );
                     } else {
                         //Standard aspect
-                        rcp_tile_write(
+                        rcpTileWrite(
                             gdl, 
                             sTextureTiles[CMDMENU_TEX_00_Scroll_BG], 
                             MENU_ITEM_X, 
@@ -2179,10 +2179,10 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
             }
 
             //Draw a selection square around the currently highlighted item
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1, 255, 255, 255, dInventoryOpacity);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1, 255, 255, 255, dInventoryOpacity);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
-            rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
+            rcpTileWrite(gdl, sTextureTiles[CMDMENU_TEX_31_Highlight_Corner_Top_Left],     ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1, 255, 255, 255, dInventoryOpacity);
+            rcpTileWrite(gdl, sTextureTiles[CMDMENU_TEX_32_Highlight_Corner_Top_Right],    ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y1, 255, 255, 255, dInventoryOpacity);
+            rcpTileWrite(gdl, sTextureTiles[CMDMENU_TEX_33_Highlight_Corner_Bottom_Left],  ITEM_HL_X1, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
+            rcpTileWrite(gdl, sTextureTiles[CMDMENU_TEX_34_Highlight_Corner_Bottom_Right], ITEM_HL_X2, (sInventoryUnrollY - dInventoryUnrollMax) + ITEM_HL_Y2, 255, 255, 255, dInventoryOpacity);
             
             //Restore full-screen scissor
             cmdmenu_gfx_set_screen_scissor(gdl);
@@ -2243,7 +2243,7 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
         //Draw page icon
         if (iconOpacity) {
             dInventoryPageIcon = tex_load_deferred(dTextableIDs[pageIcon]);
-            rcp_screen_full_write(
+            rcpScreenFullWrite(
                 gdl, 
                 dInventoryPageIcon, 
                 PAGE_ICON_X + offsetX,
@@ -2692,7 +2692,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                     //With inventory bag
                     texIdx = CMDMENU_TEX_47_RightButton_With_Bag;
                     dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
-                    rcp_screen_full_write(gdl, 
+                    rcpScreenFullWrite(gdl, 
                         dInventoryPageIcon, 
                         C_BUTTONS_RIGHT_BAG_X, 
                         C_BUTTONS_RIGHT_BAG_Y, 
@@ -2705,7 +2705,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                 } else {
                     //Empty C-right button
                     texIdx = CMDMENU_TEX_41_C_Right;
-                    rcp_tile_write(
+                    rcpTileWrite(
                         gdl,
                         sTextureTiles[texIdx], 
                         C_BUTTONS_RIGHT_EMPTY_X, 
@@ -2737,7 +2737,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                     */
 
                     dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
-                    rcp_screen_full_write(
+                    rcpScreenFullWrite(
                         gdl, 
                         dInventoryPageIcon, 
                         C_BUTTONS_LEFT_DOWN_BOOK_SIDEKICK_X, 
@@ -2750,14 +2750,14 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                     tex_free(dInventoryPageIcon);
                 } else {
                     //Draw empty C-down and C-left buttons
-                    rcp_tile_write(
+                    rcpTileWrite(
                         gdl,
                         sTextureTiles[CMDMENU_TEX_37_C_Down], 
                         C_BUTTONS_DOWN_EMPTY_X, 
                         C_BUTTONS_DOWN_EMPTY_Y, 
                         255, 255, 255, sOpacityR
                     );
-                    rcp_tile_write(
+                    rcpTileWrite(
                         gdl, 
                         sTextureTiles[CMDMENU_TEX_39_C_Left], 
                         C_BUTTONS_LEFT_EMPTY_X, 
@@ -2778,8 +2778,8 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
              Should likely be in `cmdmenu_draw_main` instead, and maybe ended up here by mistake!
      */
     if (dInventoryOpacity != 0) {
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top],    MENU_SCROLL_X, MENU_SCROLL_TOP_Y,                        255, 255, 255, dInventoryOpacity);
-        rcp_tile_write(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], MENU_SCROLL_X, MENU_SCROLL_BOTTOM_Y + sInventoryUnrollY, 255, 255, 255, dInventoryOpacity);
+        rcpTileWrite(&dl, sTextureTiles[CMDMENU_TEX_02_Scroll_Top],    MENU_SCROLL_X, MENU_SCROLL_TOP_Y,                        255, 255, 255, dInventoryOpacity);
+        rcpTileWrite(&dl, sTextureTiles[CMDMENU_TEX_01_Scroll_Bottom], MENU_SCROLL_X, MENU_SCROLL_BOTTOM_Y + sInventoryUnrollY, 255, 255, 255, dInventoryOpacity);
     }
 
     //Draw the sidekick food meter
@@ -2853,7 +2853,7 @@ static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Ver
                 }
                 
                 //Draw icons (in 2x4 grid: starting top-right to bottom-right, then top-left to bottom-left)
-                rcp_tile_write(&dl, sTextureTiles[iconIndex], 
+                rcpTileWrite(&dl, sTextureTiles[iconIndex], 
                     SIDEKICK_METER_X - ((i / SIDEKICK_METER_ICONS_PER_COLUMN) * SIDEKICK_METER_SPACING_X), 
                     SIDEKICK_METER_Y + ((i % SIDEKICK_METER_ICONS_PER_COLUMN) * SIDEKICK_METER_SPACING_Y), 
                     255, 255, 255, dOpacitySidekickMeter
@@ -3489,7 +3489,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                     texIdx = CMDMENU_TEX_08_Apple_0_Pct + (sStats.playerHealth & 3);
                 }
                 
-                rcp_tile_write(
+                rcpTileWrite(
                     &dl,
                     sTextureTiles[texIdx], 
                     HEALTH_ICONS_X + offsetX, 
@@ -3542,7 +3542,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 }
 
                 //Draw the filled part of the bar
-                rcp_tile_write_x(
+                rcpTileWriteX(
                     &dl,
                     sTextureTiles[CMDMENU_TEX_36_MagicBar_Full],
                     MAGIC_BARS_X,
@@ -3556,7 +3556,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 );
 
                 //Draw the empty part of the bar
-                rcp_tile_write_x(
+                rcpTileWriteX(
                     &dl, sTextureTiles[CMDMENU_TEX_35_MagicBar_Empty],
                     MAGIC_BARS_X + temp,
                     MAGIC_BARS_Y + (i * MAGIC_BARS_SPACING_Y),
@@ -3587,7 +3587,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
 
             dInventoryPageIcon = tex_load_deferred(dTextableIDs[texIdx]);
 
-            rcp_screen_full_write(
+            rcpScreenFullWrite(
                 &dl,
                 dInventoryPageIcon,
                 CHARACTER_ICON_X + offsetX,
@@ -3648,7 +3648,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                 }
             }
 
-            rcp_tile_write_x(
+            rcpTileWriteX(
                 &dl, 
                 sTextureTiles[CMDMENU_TEX_18_Scarab + sAnimFrameScarab], 
                 SCARABS_ICON_X, 
@@ -3793,7 +3793,7 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
     }
 
     //Draw the box's shadow
-    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_52_Page_Torn_Shadow], 
+    rcpTileWrite(gdl, sTextureTiles[CMDMENU_TEX_52_Page_Torn_Shadow], 
         INFO_POPUP_SHADOW_X, 
         INFO_POPUP_SHADOW_Y, 
         0xFF, 
@@ -3806,7 +3806,7 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
     bzero(sTempIcon, sizeof(TextureTile));
     sTempIcon->tex = box->texture;
     sTempIcon[1].tex = NULL;
-    rcp_tile_write(gdl, sTempIcon, 
+    rcpTileWrite(gdl, sTempIcon, 
         INFO_POPUP_M_X, 
         INFO_POPUP_Y, 
         0xFF, 
@@ -3816,7 +3816,7 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
     );
 
     //Draw tattered left edge of box (@unfinished: outdated page design, mismatched with icons' newer BG)
-    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_29_Page_Torn_Left], 
+    rcpTileWrite(gdl, sTextureTiles[CMDMENU_TEX_29_Page_Torn_Left], 
         INFO_POPUP_L_X, 
         INFO_POPUP_Y, 
         0xFF, 
@@ -3826,7 +3826,7 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
     );
 
     //Draw tattered right edge of box (@unfinished: outdated page design, mismatched with icons' newer BG)
-    rcp_tile_write(gdl, sTextureTiles[CMDMENU_TEX_30_Page_Torn_Right], 
+    rcpTileWrite(gdl, sTextureTiles[CMDMENU_TEX_30_Page_Torn_Right], 
         INFO_POPUP_R_X,
         INFO_POPUP_Y, 
         0xFF, 
@@ -3841,7 +3841,7 @@ static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box) {
 
         //@bug: crashes if count is above 10, since there's no texture frame
         sTempIcon->animProgress = (box->count - 2) << 8;
-        rcp_tile_write(gdl, sTempIcon, 
+        rcpTileWrite(gdl, sTempIcon, 
             INFO_POPUP_QUANTITY_X, 
             INFO_POPUP_QUANTITY_Y, 
             0xFF, 
@@ -3959,7 +3959,7 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
         }
     }
     
-    rcp_tile_write_x(gdl, enbar->fullbarTex, 
+    rcpTileWriteX(gdl, enbar->fullbarTex, 
         (ENERGY_BAR_X - (enbar->width >> 1)), 
         (ENERGY_BAR_Y - enbar->height), 
         enbar->filledWidth, 
@@ -3970,7 +3970,7 @@ static void cmdmenu_draw_energy_bar(Gfx** gdl) {
         1.0f, 
         enbar->alpha | ~0xFF, 
         TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
-    rcp_tile_write_x(gdl, enbar->emptybarTex, 
+    rcpTileWriteX(gdl, enbar->emptybarTex, 
         (ENERGY_BAR_X - (enbar->width >> 1)) + enbar->filledWidth, 
         (ENERGY_BAR_Y - enbar->height), 
         enbar->width - enbar->filledWidth, 

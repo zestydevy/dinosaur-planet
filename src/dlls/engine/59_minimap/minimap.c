@@ -470,13 +470,13 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
 
         if (sMapTile && sOpacity) {
             //Draw minimap tile
-            rcp_screen_full_write(gdl, sMapTile, 
+            rcpScreenFullWrite(gdl, sMapTile, 
                     (MINIMAP_SCREEN_X + sOffsetX - sGridX),
                     (MINIMAP_SCREEN_Y + sOffsetY - sGridZ),
                     0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);
 
             //Draw player marker
-            rcp_screen_full_write(gdl, sMarkerPlayer, 
+            rcpScreenFullWrite(gdl, sMarkerPlayer, 
                     (MINIMAP_SCREEN_X - sGridX - (player->globalPosition.x - sLevelMaxX) * 0.025f) - 4.0f,
                     (MINIMAP_SCREEN_Y - sGridZ - (player->globalPosition.z - sLevelMaxZ) * 0.025f) - 4.0f,
                     0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);
@@ -487,7 +487,7 @@ s32 minimap_print(Gfx **gdl, s32 arg1) {
                     (sLevelMinX - BLOCKS_GRID_UNIT_HALF < sidekick->globalPosition.x) && (sidekick->globalPosition.x < sLevelMaxX + BLOCKS_GRID_UNIT_HALF) &&
                     (sLevelMinZ - BLOCKS_GRID_UNIT_HALF < sidekick->globalPosition.z) && (sidekick->globalPosition.z < sLevelMaxZ + BLOCKS_GRID_UNIT_HALF)
                 ) {
-                    rcp_screen_full_write(gdl, sMarkerSidekick, 
+                    rcpScreenFullWrite(gdl, sMarkerSidekick, 
                         (MINIMAP_SCREEN_X - sGridX - (sidekick->globalPosition.x - sLevelMaxX) * 0.025f) - 4.0f,
                         (MINIMAP_SCREEN_Y - sGridZ - (sidekick->globalPosition.z - sLevelMaxZ) * 0.025f) - 4.0f,
                         0, 0, sOpacity, SCREEN_WRITE_TRANSLUCENT);

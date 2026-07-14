@@ -131,7 +131,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     
     fontWindowFlushStrings(2);
     fontWindowUseFont(2, FONT_FUN_FONT);
-    rcp_clear_screen(gdl, mtxs, CLEAR_COLOR);
+    rcpClearScreen(gdl, mtxs, CLEAR_COLOR);
 
     if (dExpansionPakMissing == TRUE) {
         fontYSpacing = fontGetYSpacing(FONT_FUN_FONT);
@@ -142,7 +142,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         fontWindowAddStringXY(2, 320, fontYSpacing + 272, splashGametext->strings[2], 1, ALIGN_TOP_CENTER);
         fontWindowAddStringXY(2, 320, 356,                splashGametext->strings[3], 1, ALIGN_TOP_CENTER);
         fontWindowAddStringXY(2, 320, fontYSpacing + 356, splashGametext->strings[4], 1, ALIGN_TOP_CENTER);
-        rcp_screen_full_write(gdl, dTexExpansionPak, 0xfd, 0x42, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, dTexExpansionPak, 0xfd, 0x42, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
     } else {
         gDLL_76->vtbl->func2(gdl, mtxs);
 
@@ -154,8 +154,8 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             fontWindowAddStringXY(2, 57, 172, splashGametext->strings[2], 1, ALIGN_TOP_LEFT);
             fontWindowAddStringXY(2, 57, 222, splashGametext->strings[3], 1, ALIGN_TOP_LEFT);
             fontWindowAddStringXY(2, 57, 381, splashGametext->strings[4], 1, ALIGN_TOP_LEFT);
-            rcp_screen_full_write(gdl, sTexDolbyBig, 0x3a, 0x65, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, sTexDolbySmall, 0x16d, 0x68, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sTexDolbyBig, 0x3a, 0x65, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sTexDolbySmall, 0x16d, 0x68, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
         }
 
         if (bss_0 > 240.0f && data_0 == 0) {
@@ -186,7 +186,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 var5 = 1.0f;
             }
             
-            rcp_screen_full_write(gdl, dTexN64LogoShadow, 0x5d, 0xc6, 0, 0, (s16)(255.0f * var5), SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, dTexN64LogoShadow, 0x5d, 0xc6, 0, 0, (s16)(255.0f * var5), SCREEN_WRITE_TRANSLUCENT);
         }
 
         if (data_0 >= 2) {
@@ -202,7 +202,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 var5 = 1.0f;
             }
 
-            rcp_screen_full_write(gdl, dTexN64Logo, 0x5f, 200, 0, 0, (u32)(255.0f * var5) & 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, dTexN64Logo, 0x5f, 200, 0, 0, (u32)(255.0f * var5) & 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
 

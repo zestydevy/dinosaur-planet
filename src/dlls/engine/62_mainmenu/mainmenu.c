@@ -157,7 +157,7 @@ void mainmenu_ctor(void *dll) {
     total_strings = 8;
 
     logoDinosaurPlanet = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
-    rcp_set_border_color(0, 0, 0);
+    rcpSetBorderColour(0, 0, 0);
 
     //Set language and get text
     options = gDLL_29_Gplay->vtbl->get_game_options();
@@ -287,7 +287,7 @@ void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
         fontWindowFlushStrings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
         if (mainDemoFinished()) {
-            rcp_screen_full_write(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
         fontWindowDraw(gfx, NULL, NULL, 1);
     }
