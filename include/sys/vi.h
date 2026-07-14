@@ -30,7 +30,7 @@ s32 vi_get_mode();
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
  *
- * If the result of shadowtex_get_status is 0, then it will be the current framebuffer's resolution.
+ * If the result of shadowtexGetStatus is 0, then it will be the current framebuffer's resolution.
  * Otherwise, it will be the active shadow framebuffer texture's resolution.
  */
 u32 vi_get_current_size(void);

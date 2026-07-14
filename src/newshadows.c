@@ -171,7 +171,7 @@ void shadowsInit(void) {
     D_800B9840[21] = 6.0f;
     D_800B9840[22] = 0.0f;
     D_800B9840[23] = 55.0f;
-    shadowtex_init();
+    shadowtexInit();
     D_800BB190 = tex_load_deferred(TEXTABLE_D8);
 }
 
@@ -543,7 +543,7 @@ void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
         }
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_DYNAMIC_TEX) {
-        shadowtex_draw(obj, D_80092C18, gdl, mtxs, vtxs, pols, (s32) D_800BB170, D_800BB18C, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
+        shadowtexDraw(obj, D_80092C18, gdl, mtxs, vtxs, pols, (s32) D_800BB170, D_800BB18C, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&sp44, &obj->srt.transl, sizeof(Vec3f));
@@ -708,7 +708,7 @@ s32 shadowsDraw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4
     }
     shadow->gdl2 = dl;
     dl_set_prim_color_no_sync(&dl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
-    shadowtex_get_textures(shadow->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
+    shadowtexGetTextures(shadow->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     var_s5 = 0;
     var_s6 = 0;
     while (var_s6 < 4) {
@@ -833,7 +833,7 @@ s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4
         sp1C0 = D_80092BE4 * sp1C0;
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_DYNAMIC_TEX) {
-        shadowtex_get_textures(shadow->bufferIdx ^ 1, &spB4, &spB0, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
+        shadowtexGetTextures(shadow->bufferIdx ^ 1, &spB4, &spB0, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
         sp1D4 = 0;
     } else {
         sp1C4 = shadow->texture;

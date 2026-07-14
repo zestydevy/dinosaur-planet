@@ -33,9 +33,9 @@ s32 D_80092EA8 = 0; // unused
 // function statics start here
 // -------- .data start 80092EC0 -------- //
 
-void shadowtex_swap_buffer(s32 slot);
+void shadowtexSwapBuffer(s32 slot);
 
-void shadowtex_init(void) {
+void shadowtexInit(void) {
     gShadowTexFramebuffers[0] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
     gShadowTexFramebuffers[0] = (void*)(((u32)(gShadowTexFramebuffers[0]) + 0x3f) & ~0x3f); //Makes sure framebuffer addresses are 64-byte-aligned
     gShadowTexFramebuffers[1] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
@@ -65,16 +65,16 @@ void shadowtex_init(void) {
     bzero(D_800BB578[2], gShadowTexWidth * gShadowTexHeight >> 1);
     bzero(D_800BB578[3], gShadowTexWidth * gShadowTexHeight >> 1);
 
-    shadowtex_swap_buffer(0);
-    shadowtex_swap_buffer(1);
+    shadowtexSwapBuffer(0);
+    shadowtexSwapBuffer(1);
 }
 
-void shadowtex_swap_buffer(s32 slot) {
+void shadowtexSwapBuffer(s32 slot) {
     gShadowTexCurrFbIdx[slot] ^= 1;
     gShadowTexCurrFb[slot] = gShadowTexFramebuffers[SHADOWTEX_NUM_SLOTS*slot + gShadowTexCurrFbIdx[slot]];
 }
 
-s32 shadowtex_get_status(s32 *outTexWidth) {
+s32 shadowtexGetStatus(s32 *outTexWidth) {
     if (outTexWidth != NULL) {
         *outTexWidth = gShadowTexWidth;
     }
@@ -92,7 +92,7 @@ void shadowtex_func_8005BC58(Object *obj, s32 arg1, s32 slot) {
     obj->shadow->bufferIdx ^= 1;
 }
 
-void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s32 arg6, f32 arg7, s32 slot) {
+void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s32 arg6, f32 arg7, s32 slot) {
     Camera* temp_v0_2;
     s32 _pad;
     f32 spC4;
@@ -285,11 +285,11 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, GET_VIDEO_WIDTH(vi_get_current_size()), 
         SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
     shadowtex_func_8005BC58(obj, arg6, slot);
-    shadowtex_swap_buffer(slot);
+    shadowtexSwapBuffer(slot);
     *mtxs = sp84;
 }
 
-void shadowtex_get_textures(s32 bufferIdx, void **arg1, void **arg2, s32 slot) {
+void shadowtexGetTextures(s32 bufferIdx, void **arg1, void **arg2, s32 slot) {
     *arg1 = D_800BB560[bufferIdx + (slot * SHADOWTEX_NUM_SLOTS)];
     *arg2 = D_800BB578[bufferIdx + (slot * SHADOWTEX_NUM_SLOTS)];
 }

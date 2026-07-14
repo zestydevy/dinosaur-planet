@@ -239,7 +239,7 @@ u32 vi_get_current_size(void) {
     s32 shadowTexWidth;
     s32 shadowTexActive;
 
-    shadowTexActive = shadowtex_get_status(&shadowTexWidth);
+    shadowTexActive = shadowtexGetStatus(&shadowTexWidth);
 
     if (shadowTexActive == FALSE) {
         return (gCurrentResolutionV[gCurrFramebufferIdx] << 0x10) |

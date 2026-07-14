@@ -2167,12 +2167,12 @@ shadows_func_80052300 = 0x80052300; // type:func
 shadows_func_80052644 = 0x80052644; // type:func
 shadows_func_800528AC = 0x800528AC; // type:func
 
-shadowtex_init = 0x8005B870; // type:func
-shadowtex_swap_buffer = 0x8005BBF0; // type:func
-shadowtex_get_status = 0x8005BC38; // type:func
+shadowtexInit = 0x8005B870; // type:func
+shadowtexSwapBuffer = 0x8005BBF0; // type:func
+shadowtexGetStatus = 0x8005BC38; // type:func
 shadowtex_func_8005BC58 = 0x8005BC58; // type:func
-shadowtex_draw = 0x8005BCE0; // type:func
-shadowtex_get_textures = 0x8005C740; // type:func
+shadowtexDraw = 0x8005BCE0; // type:func
+shadowtexGetTextures = 0x8005C740; // type:func
 gShadowTexFramebuffers = 0x800BB540; // size:0x10
 gShadowTexCurrFb = 0x800BB550; // size:0x8
 gShadowTexCurrFbIdx = 0x80092E90; // size:0x8
