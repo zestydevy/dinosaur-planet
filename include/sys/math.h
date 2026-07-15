@@ -275,6 +275,7 @@ f32 Sinf(s32 theta);
 
 // official name: mathDiffAngle
 s16 mathDiffAngle(s32, s32);
+// official name: splinePos
 f32 splinePos(f32, f32, f32, f32, f32);
 
 // Returning s16 causes good compilers to optimise out parts of the resultant, causing bugs. They most likely intended u16.
