@@ -212,6 +212,8 @@ enum ParticleID {
     PARTICLE_553 = 0x553,
     PARTICLE_554 = 0x554,
     PARTICLE_555 = 0x555,
+    PARTICLE_556 = 0x556,
+    PARTICLE_55E = 0x55E,
     /* --- DLL 34 START --- */
     PARTICLE_5DD = 0x5DD,
     PARTICLE_5ED = 0x5ED,

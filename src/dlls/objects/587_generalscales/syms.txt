@@ -1,0 +1,21 @@
+.text = 0x0:
+dll_587_ctor = 0x0;
+dll_587_dtor = 0xC;
+dll_587_setup = 0x18;
+dll_587_control = 0x194;
+dll_587_update = 0x340;
+dll_587_print = 0x34C;
+dll_587_free = 0x418;
+dll_587_get_model_flags = 0x524;
+dll_587_get_data_size = 0x534;
+dll_587_func_548 = 0x548;
+dll_587_func_75C = 0x75C;
+
+.rodata = 0xD04:
+rodata_0 = 0x0; // absolute:0xD04 type:u32
+rodata_C0 = 0xC0; // absolute:0xDC4 type:f32 force_migration:True function_owner:dll_587_func_75C
+rodata_F0 = 0xF0; // absolute:0xDF4 type:f32 force_migration:True function_owner:dll_587_func_75C
+jtbl_120 = 0x120; // absolute:0xE24 force_migration:True function_owner:dll_587_func_548
+
+.bss = 0xE54:
+sVanishMask = 0x0; // absolute:0xE54
