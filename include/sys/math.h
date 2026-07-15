@@ -175,9 +175,15 @@ typedef struct {
 /*000C*/	Vec3f transl;
 } SRT;
 
-// official name: mathMtxXFMF
+/**
+ * Transforms a vector by a floating-point matrix.
+ * Official name: mathMtxXFMF
+ */
 void mathMtxXFMF(const MtxF *mtx, float x, float y, float z, float *ox, float *oy, float *oz);
-// official name: mathMtxFastXFMF
+/**
+ * Transforms a vector by a floating-point matrix, only considering the rotation part (3x3).
+ * Official name: mathMtxFastXFMF
+ */
 void mathMtxFastXFMF(const MtxF *mf, const Vec3f *v, Vec3f *ov);
 // official name: mathMtxCatF
 void mathMtxCatF(const MtxF *m1, const MtxF *m2, MtxF *output);
