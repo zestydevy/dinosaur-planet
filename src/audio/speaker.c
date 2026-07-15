@@ -11,7 +11,7 @@ u8 D_800BFE86[2];
 u8 D_800BFE88[2];
 /* -------- .bss end 800bfe90 -------- */
 
-void speaker_set_mode(u8 mode) {
+void speakerSetMode(u8 mode) {
 	s32 i;
 
 	D_800BFE82.surround = 0;
@@ -31,11 +31,11 @@ void speaker_set_mode(u8 mode) {
 	}
 
 	for (i = 0; i < 2; i++) {
-		speaker_func_80063bb4(i, 0);
+		speakerFunc80063bb4(i, 0);
 	}
 }
 
-void speaker_func_80063bb4(s32 index, s32 arg1) {
+void speakerFunc80063bb4(s32 index, s32 arg1) {
 	if (arg1 == 0) {
 		arg1 = D_800BFE80[index];
 	}

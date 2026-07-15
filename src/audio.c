@@ -150,9 +150,9 @@ void amCreateAudioMgr(OSSched* sched, OSPri threadPriority) {
     osCreateThread(&gAudioThread, 4, __amMain, NULL, 
         &gAudioThreadStack[STACKSIZE(AUDIO_THREAD_STACK_SIZE)], threadPriority);
     
-    speaker_set_mode(4);
-    speaker_func_80063bb4(0, 4);
-    speaker_func_80063bb4(1, 4);
+    speakerSetMode(4);
+    speakerFunc80063bb4(0, 4);
+    speakerFunc80063bb4(1, 4);
 }
 
 void __amMain(void *arg) {

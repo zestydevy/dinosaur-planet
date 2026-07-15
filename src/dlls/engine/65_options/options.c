@@ -1440,7 +1440,7 @@ void options_handle_action_audio_page(s32 action, s32 selectedItemIdx) {
 
     switch (selectedItemIdx) {
     case OPTIONS_AUDIO_0_Setup:
-        speaker_set_mode(dSpeakerModes[gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx])]);
+        speakerSetMode(dSpeakerModes[gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx])]);
         break;
     case OPTIONS_AUDIO_2_SFX:
         gDLL_6_AMSFX->vtbl->func_7E4(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
