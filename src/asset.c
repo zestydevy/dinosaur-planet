@@ -72,7 +72,7 @@ void assetEnqueueLoad(
     UnkStructAssetThreadSingle element;
     s32 prevIE;
 
-    prevIE = interrupts_disable();
+    prevIE = disableInterrupts();
 
     if (!genericQueueIsFull(gAssetThreadQueue)) {
         element.unk0 = param2;
@@ -86,7 +86,7 @@ void assetEnqueueLoad(
         genericQueueEnqueue(gAssetThreadQueue, &element);
     }
 
-    interrupts_enable(prevIE);
+    enableInterrupts(prevIE);
 }
 
 void assetRomLoad(void **dest, s32 fileId) {
@@ -189,7 +189,7 @@ void assetQueueTick(void) {
     s32 temp;
     s32 prevIE;
 
-    prevIE = interrupts_disable();
+    prevIE = disableInterrupts();
 
     assetQueueProcessCompleted();
 
@@ -200,7 +200,7 @@ void assetQueueTick(void) {
         osSendMesg(&gAssetLoadThreadSendQueue, &D_800AE240, OS_MESG_NOBLOCK);
     }
 
-    interrupts_enable(prevIE);
+    enableInterrupts(prevIE);
 }
 
 void assetQueueProcessCompleted(void) {
@@ -245,7 +245,7 @@ void assetQueueClearMesgType(s32 param1, s32 param2) {
     GenericQueue *qptr;
     ObjSetup *new_var;
     
-    prevIE = interrupts_disable();
+    prevIE = disableInterrupts();
 
     assetQueueProcessCompleted();
 
@@ -275,23 +275,23 @@ void assetQueueClearMesgType(s32 param1, s32 param2) {
     // If in the middle of an queued load for the message type we are clearing, wait for it to finish and complete it.
     // TODO: If interrupts are disabled leading up to this, is this condition really even possible?
     if (D_800AE29D != 0 && param1 == D_800AE29E) {
-        interrupts_enable(prevIE);
+        enableInterrupts(prevIE);
 
         osRecvMesg(&D_800ACB68, NULL, OS_MESG_BLOCK);
 
-        prevIE = interrupts_disable();
+        prevIE = disableInterrupts();
 
         assetQueueProcessCompleted();
     }
 
-    interrupts_enable(prevIE);
+    enableInterrupts(prevIE);
 }
 
 void assetQueueCompletedLoad(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5) {
     s32 prevIE;
     AssetThreadStackElement element;
 
-    prevIE = interrupts_disable();
+    prevIE = disableInterrupts();
 
     if ((gAssetThreadGenericStack->count + 1) != gAssetThreadGenericStack->capacity) { // !is_stack_empty
         element.unk0 = (u8)param1;
@@ -304,7 +304,7 @@ void assetQueueCompletedLoad(s32 param1, u32 *param2, u8 *param3, s32 param4, s3
         genericStackPush(gAssetThreadGenericStack, &element);
     }
 
-    interrupts_enable(prevIE);
+    enableInterrupts(prevIE);
 }
 
 void assetThreadMain(void *arg) {
@@ -334,9 +334,9 @@ void assetThreadMain(void *arg) {
                 break;
         }
 
-        prevIE = interrupts_disable();
+        prevIE = disableInterrupts();
         D_800AE29D = 0;
-        interrupts_enable(prevIE);
+        enableInterrupts(prevIE);
     }
 }
 
@@ -345,7 +345,7 @@ void assetThreadLoadNextFromQueue(void) {
     s32 prevIE;
     Texture *tmp;
 
-    prevIE = interrupts_disable();
+    prevIE = disableInterrupts();
 
     if (!genericQueueIsEmpty(gAssetThreadQueue)) {
         genericQueueDequeue(gAssetThreadQueue, &sp2C);
@@ -353,7 +353,7 @@ void assetThreadLoadNextFromQueue(void) {
         D_800AE29D = 1;
         D_800AE29E = sp2C.unk0;
 
-        interrupts_enable(prevIE);
+        enableInterrupts(prevIE);
 
         switch (sp2C.unk0) {
             case 5:
@@ -382,7 +382,7 @@ void assetThreadLoadNextFromQueue(void) {
         return;
     }
 
-    interrupts_enable(prevIE);
+    enableInterrupts(prevIE);
 }
 
 void assetThreadLoad(struct AssetLoadThreadMsg *load) {

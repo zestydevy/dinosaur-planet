@@ -4,7 +4,7 @@
 #include "PR/ultratypes.h"
 
 /**
- * Whether interrupts_disable/interrupts_enable should have any effect.
+ * Whether disableInterrupts/enableInterrupts should have any effect.
  */
 extern s8 gIntDisFlag;
 
@@ -13,15 +13,15 @@ extern s8 gIntDisFlag;
  * Returns the previous value of the SR_IE bit.
  * Official name: disableInterrupts
  */
-s32 interrupts_disable(void);
+s32 disableInterrupts(void);
 
 /**
  * Restores the SR_IE flag to the given value if gIntDisFlag is set.
  * Official name: enableInterrupts
  */
-void interrupts_enable(s32 ie);
+void enableInterrupts(s32 ie);
 
 /** Official name: setIntDisFlag */
-void set_gIntDisFlag(s32 value);
+void setIntDisFlag(s32 value);
 
 #endif

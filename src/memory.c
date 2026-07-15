@@ -251,12 +251,12 @@ void *mmAllocR(s32 poolIndex, s32 size, s32 tag, const char *name) {
     u32* canary;
 
     var_t0 = 0;
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
     currIndex = MEMSLOT_NONE;
     pool = &gMemoryPools[poolIndex];
     pool->memUsed += size;
     if (pool->maxSlots == (pool->numSlots + 1)) {
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
         return 0;
     }
     size = (s32)ALIGN16(size);
@@ -283,7 +283,7 @@ void *mmAllocR(s32 poolIndex, s32 size, s32 tag, const char *name) {
     }
     if (currIndex != MEMSLOT_NONE) {
         mmAllocSlot2(poolIndex, currIndex, size, SLOT_USED, SLOT_FREE, tag, name);
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
         
         canary = (u32*)((slots + currIndex)->data);
         canary += ((s32) (size - SLOT_CANARY_SIZE) >> 2);
@@ -306,12 +306,12 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
     s32 intFlags;
     u32 *canary;
 
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
 
     if (size == 0) {}
     
     if ((gMemoryPools[0].numSlots + 1) == gMemoryPools[0].maxSlots) {
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
     } else {
         size = (s32)ALIGN16(size);
         size = size + SLOT_CANARY_SIZE;
@@ -324,12 +324,12 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
                     (u32) address + size <= (u32) currSlot->data + currSlot->size) {
                     if (address == currSlot->data) {
                         mmAllocSlot2(0, idx, size, SLOT_USED, SLOT_FREE, tag, name);
-                        interrupts_enable(intFlags);
+                        enableInterrupts(intFlags);
                         return currSlot->data;
                     } else {
                         idx = mmAllocSlot2(0, idx, (u32)address - (u32)currSlot->data, SLOT_FREE, SLOT_USED, tag, name);
                         mmAllocSlot2(0, idx, size, SLOT_USED, SLOT_FREE, tag, name);
-                        interrupts_enable(intFlags);
+                        enableInterrupts(intFlags);
 
                         canary = (u32*)(slots + idx)->data;
                         canary += ((s32) (size - SLOT_CANARY_SIZE) >> 2);
@@ -342,7 +342,7 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
             }
         }
         
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
     }
 
     return NULL;
@@ -351,24 +351,24 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
 void mmSetDelay(s32 delay) {
     s32 intFlags;
 
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
     gMemoryFreeDelay = delay;
     if (delay == 0) {
         while (gMemoryFreeQueueLength > 0) {
             mmFreeNow(gMemoryFreeQueue[--gMemoryFreeQueueLength].address);
         }
     }
-    interrupts_enable(intFlags);
+    enableInterrupts(intFlags);
 }
 
 void mmFree(void *address) {
-    s32 prevIE = interrupts_disable();
+    s32 prevIE = disableInterrupts();
     if (gMemoryFreeDelay == 0) {
         mmFreeNow(address);
     } else {
         mmFreeEnqueue(address);
     }
-    interrupts_enable(prevIE);
+    enableInterrupts(prevIE);
 }
 
 void mmFreeTick(void) {
@@ -379,7 +379,7 @@ void mmFreeTick(void) {
     MemoryPoolSlot* slot;
     s32 nextIndex;
 
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
     
     for (i = 0; i < gMemoryFreeQueueLength;) {
         gMemoryFreeQueue[i].ticksLeft--;
@@ -394,7 +394,7 @@ void mmFreeTick(void) {
         }
     }
     
-    interrupts_enable(intFlags);
+    enableInterrupts(intFlags);
     
     // Update memory monitors
     memMonVal0 = 0;
