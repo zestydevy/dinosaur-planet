@@ -33,18 +33,18 @@ extern s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
 struct mp3vars g_Mp3Vars;
 /* -------- .bss end 800bff70 -------- */
 
-void mp3_update_vars(struct mp3vars*);
-s32 mp3_handle_dma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset);
-void mp3_set_dma_func(mp3_dmafunc fn);
-void mp3_dma(void);
+void mp3UpdateVars(struct mp3vars*);
+s32 mp3HandleDma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset);
+void mp3SetDmaFunc(mp3_dmafunc fn);
+void mp3Dma(void);
 
-void mp3_init(ALHeap *heap) {
+void mp3Init(ALHeap *heap) {
     bzero(&g_Mp3Vars, sizeof(g_Mp3Vars));
     
     D_800C01C0 = alHeapDBAlloc(NULL, 0, heap, 0xA410, 1);
     D_800C01C4 = alHeapDBAlloc(NULL, 0, heap, 0x8000, 1);
     
-    mp3_main_init();
+    mp3MainInit();
     
     g_Mp3Vars.em_state = alHeapDBAlloc(NULL, 0, heap, 1, ALIGN(sizeof(ENVMIX_STATE), 16));
     g_Mp3Vars.var8009c3d4[0] = alHeapDBAlloc(NULL, 0, heap, 1, 0x440);
@@ -59,10 +59,10 @@ void mp3_init(ALHeap *heap) {
     g_Mp3Vars.em_dryamt = 0x7FFC;
     g_Mp3Vars.em_wetamt = 0;
     
-    mp3_set_dma_func(mp3_handle_dma);
+    mp3SetDmaFunc(mp3HandleDma);
 }
 
-void mp3_play_file(s32 romAddr, s32 size) {
+void mp3PlayFile(s32 romAddr, s32 size) {
     if (g_Mp3Vars.dmafunc == NULL) {
         return;
     }
@@ -73,25 +73,25 @@ void mp3_play_file(s32 romAddr, s32 size) {
     g_Mp3Vars.currentvol = AL_VOL_FULL;
     g_Mp3Vars.statetimer = 5;
     
-    mp3_dma();
+    mp3Dma();
     
     g_Mp3Vars.state = MP3STATE_LOADING;
 }
 
-void mp3_stop(void) {
+void mp3Stop(void) {
     g_Mp3Vars.state = MP3STATE_STOPPED;
 }
 
-void mp3_pause(void) {
+void mp3Pause(void) {
     g_Mp3Vars.state = MP3STATE_PAUSED;
 }
 
-void mp3_unpause(void) {
+void mp3Unpause(void) {
     g_Mp3Vars.statetimer = 5;
     g_Mp3Vars.state = MP3STATE_UNPAUSING;
 }
 
-s32 mp3_is_busy(void) {
+s32 mp3IsBusy(void) {
     if (g_Mp3Vars.state == MP3STATE_PLAYING || 
         g_Mp3Vars.state == MP3STATE_LOADING || 
         g_Mp3Vars.state == MP3STATE_UNPAUSING || 
@@ -102,7 +102,7 @@ s32 mp3_is_busy(void) {
     }
 }
 
-void mp3_set_volume(s32 vol, s32 arg1) {
+void mp3SetVolume(s32 vol, s32 arg1) {
     if (vol < 0) {
         g_Mp3Vars.currentvol = 0;
     } else if (vol > AL_VOL_FULL) {
@@ -113,7 +113,7 @@ void mp3_set_volume(s32 vol, s32 arg1) {
     g_Mp3Vars.var8009c3e8 = (u32) arg1;
 }
 
-void mp3_set_pan(s32 pan, s32 immediate) {
+void mp3SetPan(s32 pan, s32 immediate) {
     if (pan > 127) {
         pan = 127;
     }
@@ -126,7 +126,7 @@ void mp3_set_pan(s32 pan, s32 immediate) {
     }
 }
 
-s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
+s32 mp3MakeSamples(s32 arg0, Acmd** cmd) {
     s32 i;
     s32 diff;
     s32 numchannels;
@@ -151,9 +151,9 @@ s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
         }
     }
     if (g_Mp3Vars.state == MP3STATE_LOADING) {
-        mp3_dma();
+        mp3Dma();
         if (g_Mp3Vars.statetimer == 0) {
-            g_Mp3Vars.stream = mp3_main_func_80072380(0, g_Mp3Vars.dmafunc, g_Mp3Vars.filesize);
+            g_Mp3Vars.stream = mp3MainFunc80072380(0, g_Mp3Vars.dmafunc, g_Mp3Vars.filesize);
             if (g_Mp3Vars.stream == NULL) {
                 g_Mp3Vars.state = MP3STATE_IDLE;
                 return FALSE;
@@ -171,7 +171,7 @@ s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
         }
     }
     if (g_Mp3Vars.state == MP3STATE_UNPAUSING) {
-        mp3_dma();
+        mp3Dma();
         if (g_Mp3Vars.statetimer == 0) {
             g_Mp3Vars.state = MP3STATE_PLAYING;
         } else {
@@ -187,7 +187,7 @@ s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
             }
             g_Mp3Vars.var8009c3d0 = 0;
             g_Mp3Vars.var8009c3cc = 0;
-            if (mp3_main_func_8007245c(g_Mp3Vars.stream, &sp58, &numchannels) != 0) {
+            if (mp3MainFunc8007245c(g_Mp3Vars.stream, &sp58, &numchannels) != 0) {
                 g_Mp3Vars.var8009c3c8 = sp58;
                 
                 for (i = 0; i < numchannels; i++) {
@@ -203,7 +203,7 @@ s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
                 
             }
         }
-        mp3_dma();
+        mp3Dma();
         if (g_Mp3Vars.dualchannel == 0) {
             sp4C = 0;
         }
@@ -227,7 +227,7 @@ s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
             }
             g_Mp3Vars.var8009c3d0 += arg0;
         }
-        mp3_update_vars(&g_Mp3Vars);
+        mp3UpdateVars(&g_Mp3Vars);
         if (g_Mp3Vars.dualchannel == 0) {
             aClearBuffer((*cmd)++, N_AL_MAIN_L_OUT, N_AL_TEMP_2);
             
@@ -259,7 +259,7 @@ s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
     return TRUE;
 }
 
-void mp3_update_vars(struct mp3vars* vars) {
+void mp3UpdateVars(struct mp3vars* vars) {
     if ((vars->em_volume != vars->currentvol) || (vars->em_pan != vars->currentpan)) {
         if (vars->em_delta >= vars->em_segEnd) {
             vars->em_ltgt = (n_eqpower[vars->em_pan] * vars->em_volume >> 15);
@@ -293,11 +293,11 @@ void mp3_update_vars(struct mp3vars* vars) {
     }
 }
 
-void mp3_set_dma_func(mp3_dmafunc fn) {
+void mp3SetDmaFunc(mp3_dmafunc fn) {
     g_Mp3Vars.dmafunc = fn;
 }
 
-s32 mp3_handle_dma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset) {
+s32 mp3HandleDma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset) {
     u8 *bufptr;
     ALDMAproc proc;
 
@@ -314,7 +314,7 @@ s32 mp3_handle_dma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset) {
     return len;
 }
 
-void mp3_dma(void) {
+void mp3Dma(void) {
     u8 *bufptr;
     ALDMAproc proc;
 

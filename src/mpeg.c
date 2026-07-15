@@ -8,7 +8,7 @@ s32 *gFile_MPEG_TAB = NULL;
 
 void mpegInit(ALHeap *heap) {
 	assetRomLoad((void**) (&gFile_MPEG_TAB), MPEG_TAB);
-	mp3_init(heap);
+	mp3Init(heap);
 }
 
 void mpegPlay(s32 id) {
@@ -18,6 +18,6 @@ void mpegPlay(s32 id) {
     address = piRomGetSectionPtr(MPEG_BIN, gFile_MPEG_TAB[id]);
     size = gFile_MPEG_TAB[id + 1] - gFile_MPEG_TAB[id];
     if ((address != 0) && (size != 0)) {
-        mp3_play_file(address, size);
+        mp3PlayFile(address, size);
     }
 }
