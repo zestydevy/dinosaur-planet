@@ -1,3 +1,5 @@
+//NOTE: this is an unused object, distinct from WM_Platform
+
 #include "common.h"
 
 typedef struct {
@@ -67,14 +69,14 @@ void WM_MovePlatform_control(Object* self) {
     player->srt.transl.y = self->srt.transl.y;
     player->srt.transl.z = self->srt.transl.z;
 
-    //Control platform using joystick(!)
+    //Control platform using joystick(!) (not transformed with respect to camera, though)
     self->velocity.y += -0.04f;
     self->velocity.x += joy_get_stick_y(0) * 0.001f;
     self->velocity.z += joy_get_stick_x(0) * 0.001f;
     
-    //Use D-pad left to create particles and affect Y speed?
+    //Use D-pad left to boost upwards, creating a flurry of flame particles!
     if (joy_get_buttons(0) & L_JPAD) {
-        objData->accelerationY += 0.0015f;
+        objData->accelerationY += 0.0015f; //@framerate-dependent
         fxTransform.scale = objData->accelerationY * 4.0f;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1A5, &fxTransform, 2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1A5, &fxTransform, 2, -1, NULL);
@@ -87,8 +89,9 @@ void WM_MovePlatform_control(Object* self) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1A5, &fxTransform, 2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1A5, &fxTransform, 2, -1, NULL);
     } else {
+        //Fall
         if (objData->accelerationY >= 0.0f) {
-            objData->accelerationY -= 0.005f;
+            objData->accelerationY -= 0.005f; //@framerate-dependent
         }
     }
     self->velocity.y += objData->accelerationY; //@framerate-dependent
