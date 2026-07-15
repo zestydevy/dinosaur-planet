@@ -1,0 +1,13 @@
+.text = 0x0:
+WL_Column_ctor = 0x0;
+WL_Column_dtor = 0xC;
+WL_Column_setup = 0x18;
+WL_Column_control = 0x38;
+WL_Column_update = 0x314;
+WL_Column_print = 0x320;
+WL_Column_free = 0x3E0;
+WL_Column_get_model_flags = 0x3F0;
+WL_Column_get_data_size = 0x414;
+WL_Column_handle_player_interaction = 0x428;
+
+.rodata = 0x4F0:
