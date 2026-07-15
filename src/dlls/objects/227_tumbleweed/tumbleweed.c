@@ -71,7 +71,7 @@ void Tumbleweed_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup*
     objData->carryingGold = setup->carryingGold;
     objData->flags = Tumbleweed_FLAG_None;
     objData->baseScale = self->srt.scale;
-    objData->timer = objData->baseScale / rand_next(200, 500);
+    objData->timer = objData->baseScale / mathRnd(200, 500);
     objData->player = 0;
     
     self->velocity.x = 0.0f;
@@ -461,11 +461,11 @@ void Tumbleweed_tick_flee_from_player(Object* self) {
 
     } else if (objData->state == Tumbleweed_STATE_Gravitate) {
         //Gravitate towards a target point (e.g. when being eaten by Garunda Te)
-        distance = vec3_distance_xz_squared(&self->srt.transl, objData->gravitateTarget);
+        distance = vec3DistanceXZSquared(&self->srt.transl, objData->gravitateTarget);
         objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
         
         //Advance state after gravitating beyond the destination point
-        if (distance < vec3_distance_xz_squared(&self->srt.transl, objData->gravitateTarget)) {
+        if (distance < vec3DistanceXZSquared(&self->srt.transl, objData->gravitateTarget)) {
             self->srt.transl.x += (objData->gravitateTarget->x - self->srt.transl.x) * 0.5f;
             self->srt.transl.y += (objData->gravitateTarget->y - self->srt.transl.y) * 0.5f;
             self->srt.transl.z += (objData->gravitateTarget->z - self->srt.transl.z) * 0.5f;
@@ -698,9 +698,9 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
         //Bounce when hitting ground
         self->srt.transl.y = groundY;
         if (self->id == OBJ_Tumbleweed2 || self->id == OBJ_Tumbleweed2twig) {
-            self->velocity.y = 0.0f - (((f32)objData->characterDistance / rand_next(140, 180)) * (self->velocity.y * 0.8f));
+            self->velocity.y = 0.0f - (((f32)objData->characterDistance / mathRnd(140, 180)) * (self->velocity.y * 0.8f));
         } else {
-            self->velocity.y = 0.0f - (((f32) objData->characterDistance / rand_next(20, 40)) * (self->velocity.y * 0.8f));
+            self->velocity.y = 0.0f - (((f32) objData->characterDistance / mathRnd(20, 40)) * (self->velocity.y * 0.8f));
         }
         
         //Squeak when bouncing
@@ -710,8 +710,8 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
         }
         if (volume > 0x10) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_5F6_Tumbleweed_Roll, volume, 0, 0, 0, 0);
-            if (rand_next(0, 5) == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, rand_next(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2), volume, 0, 0, 0, 0);
+            if (mathRnd(0, 5) == 0) {
+                gDLL_6_AMSFX->vtbl->play(self, mathRnd(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2), volume, 0, 0, 0, 0);
             }
         }
     }
@@ -749,9 +749,9 @@ int Tumbleweed_handle_carry_behaviour(Object* self) {
         //Handle squeaking and growing in size temporarily
         objData->twigSqueakTimer -= gUpdateRateF;
         if (objData->twigSqueakTimer < 0.0f) {
-            objData->twigSqueakTimer = rand_next(120, 240);
-            soundID = rand_next(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2);
-            soundVol = rand_next(90, 100);
+            objData->twigSqueakTimer = mathRnd(120, 240);
+            soundID = mathRnd(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2);
+            soundVol = mathRnd(90, 100);
             gDLL_6_AMSFX->vtbl->play(self, soundID, soundVol, 0, 0, 0, 0);
             self->srt.scale = 0.2f;
         } else {
@@ -796,7 +796,7 @@ int Tumbleweed_did_player_lift_twig(Object* self) {
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && self->unkE0 == 0) {
         objData->carryMessageArgLo = 0;
         joyDisableButtons(0, A_BUTTON);
-        objData->twigSqueakTimer = rand_next(120, 240);
+        objData->twigSqueakTimer = mathRnd(120, 240);
         returnVal = TRUE;
     }
     return returnVal;

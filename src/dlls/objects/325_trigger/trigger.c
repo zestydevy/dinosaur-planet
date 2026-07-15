@@ -1072,9 +1072,9 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
+    mathYprXyzMtx(&mtx, &srt);
 
-    vec3_transform(&mtx, 0.0f, 0.0f, 1.0f, &ox, &oy, &oz);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &ox, &oy, &oz);
     objdata->lookVector.x = ox;
     objdata->lookVector.y = oy;
     objdata->lookVector.z = oz;
@@ -1110,8 +1110,8 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
         }
     }
 
-    vec3_transform(&mtx, minX, minY, minZ, &minX, &minY, &minZ);
-    vec3_transform(&mtx, maxX, maxY, maxZ, &maxX, &maxY, &maxZ);
+    mathMtxXFMF(&mtx, minX, minY, minZ, &minX, &minY, &minZ);
+    mathMtxXFMF(&mtx, maxX, maxY, maxZ, &maxX, &maxY, &maxZ);
 
     if (maxX < minX) {
         swapTemp = minX;
@@ -1259,10 +1259,10 @@ static void trigger_func_2884(Object *self, f32 *ox, f32 *oy, f32 *oz) {
     f32 temp_f16;
     f32 temp_f2;
     
-    sp2C = fsin16_precise(-self->srt.yaw);
-    sp28 = fcos16_precise(-self->srt.yaw);
-    sp24 = fsin16_precise(-self->srt.pitch);
-    temp_f0 = fcos16_precise(-self->srt.pitch);
+    sp2C = mathSinfInterp(-self->srt.yaw);
+    sp28 = mathCosfInterp(-self->srt.yaw);
+    sp24 = mathSinfInterp(-self->srt.pitch);
+    temp_f0 = mathCosfInterp(-self->srt.pitch);
     
     temp_f2 = (*ox) - self->globalPosition.x;
     temp_f16 = (*oy) - self->globalPosition.y;

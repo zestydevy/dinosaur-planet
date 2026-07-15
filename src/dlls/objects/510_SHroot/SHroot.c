@@ -56,7 +56,7 @@ void dll_510_control(Object* self) {
     switch (objData->unk12) {
     case 0:
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
-            objData->unk10 = rand_next(800, 1200);
+            objData->unk10 = mathRnd(800, 1200);
             objData->unk12 = 3;
             gDLL_6_AMSFX->vtbl->play(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
             return;

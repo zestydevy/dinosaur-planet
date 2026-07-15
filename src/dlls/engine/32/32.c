@@ -606,7 +606,7 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
         spD8.transl.x = 0.0f;
         spD8.transl.y = 0.0f;
         spD8.transl.z = 0.0f;
-        rotate_vec3(&spD8, sp9C.f);
+        mathRotateRPY(&spD8, sp9C.f);
         spD8.yaw = 0;
     }
     temp_v0_3 = dll_32_func_1D3C(spA8.f, sp9C.f, &spB4);
@@ -638,7 +638,7 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
                     spD8.transl.z /= temp_t0;
                     pad = temp_s0->jointID_A;
                     temp = (MtxF *) ((f32**)(temp_s3->matrices)[(temp_s3->unk34 & 1)] + (temp_s0->jointID_A << 4));
-                    vec3_transform(temp,
+                    mathMtxXFMF(temp,
                                    spD8.transl.x, spD8.transl.y, spD8.transl.z, 
                                    &spD8.transl.x, &spD8.transl.y, &spD8.transl.z);
                     spD8.transl.x += gWorldX;
@@ -665,13 +665,13 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
         spD8.transl.x = temp_a3[4].n.ob[0];
         spD8.transl.y = temp_a3[4].n.ob[1] + 2.0f;
         spD8.transl.z = temp_a3[4].n.ob[2] + 10.0f;
-        spD8.transl.x += rand_next(-5, 5);
-        spD8.transl.y += rand_next(-5, 5);
-        spD8.transl.z += rand_next(-5, 5);
+        spD8.transl.x += mathRnd(-5, 5);
+        spD8.transl.y += mathRnd(-5, 5);
+        spD8.transl.z += mathRnd(-5, 5);
         spD8.scale = 1.0f;
         pad = temp_s0->jointID_A;
         temp = (MtxF *) &(((f32 **)temp_s3->matrices)[(temp_s3->unk34 & 1)][temp_s0->jointID_A << 4]);
-        vec3_transform(temp, 
+        mathMtxXFMF(temp, 
                        spD8.transl.x, spD8.transl.y, spD8.transl.z, 
                        &spD8.transl.x, &spD8.transl.y, &spD8.transl.z);
         spD8.transl.x += gWorldX;

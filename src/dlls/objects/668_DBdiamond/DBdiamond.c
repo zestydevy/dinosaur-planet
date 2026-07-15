@@ -60,7 +60,7 @@ void DBdiamond_control(Object *self) {
     objdata = self->data;
 
     if (objdata->unk0 != 1 && objdata->unk0 == 2 && (self->unkAF & ARROW_FLAG_1_Interacted)) {
-        if (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < 60.0f) {
+        if (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < 60.0f) {
             objFreeObjectType(self, OBJTYPE_39);
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
             mainSetBits(setup->flag1, 1);

@@ -580,7 +580,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
                         sp110.roll = var_s0->unk40.roll * gUpdateRateF;
                         sp110.pitch = var_s0->unk40.pitch * gUpdateRateF;
                         sp110.yaw = var_s0->unk40.yaw * gUpdateRateF;
-                        rotate_vec3(&sp110, var_s0->unk58.f);
+                        mathRotateRPY(&sp110, var_s0->unk58.f);
                     }
                     sp110.roll = 0;
                     sp110.pitch = 0;
@@ -606,7 +606,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
                     spFC.f[0] = var_s0->unk58.f[0];
                     spFC.f[1] = var_s0->unk58.f[1];
                     spFC.f[2] = var_s0->unk58.f[2];
-                    rotate_vec3(&sp110, spFC.f);
+                    mathRotateRPY(&sp110, spFC.f);
                     spEC.f[0] = 0.0f;
                     spEC.f[1] = 0.0f;
                     spEC.f[2] = 0.0f;
@@ -641,7 +641,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
                         // FAKE
                         if (i){}
                         var_fv0 = temp_fs0 * 0.5f;
-                        sp110.scale = (var_fv0 / rand_next(1, 10)) + var_fv0;
+                        sp110.scale = (var_fv0 / mathRnd(1, 10)) + var_fv0;
                     } else {
                         sp110.scale = temp_fs0;
                     }

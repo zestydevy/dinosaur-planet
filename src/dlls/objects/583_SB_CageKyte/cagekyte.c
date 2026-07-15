@@ -52,14 +52,14 @@ void SBCageKyte_control(Object* self) {
     if (self->parent->unkDC == 7) {
         //Randomly call out to Krystal
         objData->randomSoundDelay -= gUpdateRate;
-        if ((vec3_distance(&self->globalPosition, &objGetPlayer()->globalPosition) < 280.0f) && (objData->randomSoundDelay <= 0)) {
-            if (rand_next(0, 10) < 8) {
+        if ((vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition) < 280.0f) && (objData->randomSoundDelay <= 0)) {
+            if (mathRnd(0, 10) < 8) {
                 randomSoundIndex = 0;
             } else {
                 randomSoundIndex = 1;
             }
             gDLL_6_AMSFX->vtbl->play(self, soundIDs[randomSoundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
-            objData->randomSoundDelay = rand_next(400, 600);
+            objData->randomSoundDelay = mathRnd(400, 600);
         }
     } else if (self->parent->unkDC >= 9) {
         //Play empty sound? (May have been removed)

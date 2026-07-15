@@ -56,8 +56,8 @@ void dll_307_setup(Object* self, DLL307_Setup* setup, s32 arg2) {
     } else {
         objdata->unkC = 0;
     }
-    objdata->unk0 = fsin16_precise(self->srt.yaw);
-    objdata->unk4 = fcos16_precise(self->srt.yaw);
+    objdata->unk0 = mathSinfInterp(self->srt.yaw);
+    objdata->unk4 = mathCosfInterp(self->srt.yaw);
     objdata->unk8 = (f32) -((objdata->unk0 * self->srt.transl.x) + (objdata->unk4 * self->srt.transl.z));
     objdata->unkE = 0;
     if (mainGetBits(setup->unk18) != 0) {

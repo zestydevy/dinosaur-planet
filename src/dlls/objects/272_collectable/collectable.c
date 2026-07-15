@@ -306,7 +306,7 @@ void collectable_control(Object* self) {
 
     //Handle collection when close enough 
     //(either automatically or via target arrow, depending on objectID)
-    distance = vec3_distance_xz(&self->globalPosition, &player->globalPosition);
+    distance = vec3DistanceXZ(&self->globalPosition, &player->globalPosition);
     if ((distance < objdata->interactionRadius) && (objdata->delayCollect == 0)) {
         switch (self->id) {
         case OBJ_meatPickup:
@@ -404,8 +404,8 @@ int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animO
 
     animObjData->unk62 = 0;
     if (animObjData->lastMessage == 1) {
-        sin = fsin16_precise(0x6900);
-        cos = fcos16_precise(0x6900);
+        sin = mathSinfInterp(0x6900);
+        cos = mathCosfInterp(0x6900);
         collectable_set_speed(self, sin * 8.0f, 2, cos * 8.0f);
         collectable_set_speed(self, 4.0f, 2, 0.0f);
         animObjData->lastMessage = 0;
@@ -464,7 +464,7 @@ void collectable_handle_animation_and_fx(Object* self) {
         }
 
         //Sparkles
-        if (rand_next(0, 80) == 0) {
+        if (mathRnd(0, 80) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_47, 0, 4, -1, 0);
         }
     }
@@ -475,8 +475,8 @@ void collectable_handle_animation_and_fx(Object* self) {
         //Play rattle sound when random timer runs out
         objdata->soundTimer -= gUpdateRate;
         if (objdata->soundTimer <= 0) {
-            objdata->pitchAnimate = rand_next(600, 800);
-            objdata->soundTimer = rand_next(180, 240);
+            objdata->pitchAnimate = mathRnd(600, 800);
+            objdata->soundTimer = mathRnd(180, 240);
             gDLL_6_AMSFX->vtbl->play(self, SOUND_8FC_Egg_Rattle, MAX_VOLUME, 0, 0, 0, 0);
         }
 
@@ -497,7 +497,7 @@ void collectable_handle_animation_and_fx(Object* self) {
         return;
     case OBJ_SC_golden_nugge:
         if (objdata->distanceToPlayer < 200.0f) {
-            if (rand_next(0, 10) == 0) {
+            if (mathRnd(0, 10) == 0) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_423, 0, 2, -1, 0);
             }
             self->srt.yaw += (s16) (182.0f * gUpdateRateF);
@@ -506,7 +506,7 @@ void collectable_handle_animation_and_fx(Object* self) {
         break;
     case OBJ_WCTrexTooth:
         if (objdata->distanceToPlayer < 200.0f) {
-            if (rand_next(0, 10) == 0) {
+            if (mathRnd(0, 10) == 0) {
                 if (self->modelInstIdx == 0) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_73D, 0, 2, -1, 0);
                 } else {

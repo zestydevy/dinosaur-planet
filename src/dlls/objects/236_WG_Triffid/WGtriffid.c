@@ -247,9 +247,9 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
     i = 0;
     do {
         pollenSetup = objAllocSetup(sizeof(Pollen_Setup), OBJ_Pollen);
-        pollenSetup->x = (fsin16(self->srt.yaw) * 16.0f) + self->srt.transl.x;
+        pollenSetup->x = (Sinf(self->srt.yaw) * 16.0f) + self->srt.transl.x;
         pollenSetup->y = self->srt.transl.y;
-        pollenSetup->z = (fcos16(self->srt.yaw) * 16.0f) + self->srt.transl.z;
+        pollenSetup->z = (Cosf(self->srt.yaw) * 16.0f) + self->srt.transl.z;
         pollenSetup->loadFlags = OBJSETUP_LOAD_LEVEL;
         pollenSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
         pollenSetup->loadDistance = 0xFF;
@@ -257,11 +257,11 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
         pollen = objSetupObject(pollenSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
         
         if (pollen != NULL) {
-            thetaA = rand_next(-2000, 2000) + self->srt.yaw;
-            thetaB = rand_next(-2000, 2000);
-            pollen->velocity.x = fcos16(thetaB) * fsin16(thetaA) * 4.0f;
-            pollen->velocity.y = fsin16(thetaB) * 4.0f;
-            pollen->velocity.z = fcos16(thetaB) * fcos16(thetaA) * 4.0f;
+            thetaA = mathRnd(-2000, 2000) + self->srt.yaw;
+            thetaB = mathRnd(-2000, 2000);
+            pollen->velocity.x = Cosf(thetaB) * Sinf(thetaA) * 4.0f;
+            pollen->velocity.y = Sinf(thetaB) * 4.0f;
+            pollen->velocity.z = Cosf(thetaB) * Cosf(thetaA) * 4.0f;
             pollen->unkC4 = self;
         }
         

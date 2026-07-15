@@ -43,11 +43,11 @@ void CFMagicWall_control(Object* self) {
     setup = (CFMagicWall_Setup*)self->setup;
     player = objGetPlayer();
     var_ft1 = (f32)setup->unk1A;
-    temp = vec3_distance(&self->globalPosition, &player->globalPosition);
-    if (temp < vec3_distance(&self->globalPosition, &objGetSidekick()->globalPosition)) {
-        var_fv0 = vec3_distance(&self->globalPosition, &player->globalPosition);
+    temp = vec3Distance(&self->globalPosition, &player->globalPosition);
+    if (temp < vec3Distance(&self->globalPosition, &objGetSidekick()->globalPosition)) {
+        var_fv0 = vec3Distance(&self->globalPosition, &player->globalPosition);
     } else {
-        var_fv0 = vec3_distance(&self->globalPosition, &objGetSidekick()->globalPosition);
+        var_fv0 = vec3Distance(&self->globalPosition, &objGetSidekick()->globalPosition);
     }
     if (camDistance(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) < var_fv0) {
         var_fv0 = camDistance(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);

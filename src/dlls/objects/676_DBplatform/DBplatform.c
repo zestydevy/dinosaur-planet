@@ -98,7 +98,7 @@ void DBPlatform_control(Object* self) {
         }
 
         player = objGetPlayer();
-        if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < objSetup->quarterVisRadius) {
+        if (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < objSetup->quarterVisRadius) {
             playerY = player->srt.transl.y;
             selfYOffset = self->srt.transl.y + objSetup->yOffset;
             if ((playerY < selfYOffset) && ((selfYOffset - 10.0f) < playerY)) {

@@ -209,7 +209,7 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
         if (foodbag != NULL) {
             dinoEgg = ((DLL_IFoodbag*)foodbag->dll)->vtbl->get_nearest_placed_food_of_type(foodbag, self, FOOD_Dino_Egg);
         }
-        if ((dinoEgg != NULL) && (vec3_distance(&self->globalPosition, &dinoEgg->globalPosition) < 150.0f)) {
+        if ((dinoEgg != NULL) && (vec3Distance(&self->globalPosition, &dinoEgg->globalPosition) < 150.0f)) {
             fsa->target = dinoEgg;
             return;
         }
@@ -276,7 +276,7 @@ s32 capy_anim_state_0_standing(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objlist = objGetAllOfType(OBJTYPE_MagicPlant, &count);
         distflag = 0;
         for (i = 0; i < count; i++) {
-            if (!distflag && vec3_distance(&self->globalPosition, &objlist[i]->globalPosition) < 300.0f) {
+            if (!distflag && vec3Distance(&self->globalPosition, &objlist[i]->globalPosition) < 300.0f) {
                 distflag = 1;
                 fsa->target = objlist[i];
             }
@@ -370,7 +370,7 @@ s32 capy_anim_state_4_sniff(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
         capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77C_Capy_Sniff, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) rand_next(-0xA, 0xA) / 100.0f) + 1.0f);
+        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk33A != 0) {
         return CAPY_ASTATE_5_Eat + 1;
@@ -407,7 +407,7 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
         capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) rand_next(-0xA, 0xA) / 100.0f) + 1.0f);
+        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk33A != 0) {
         if (target != NULL) {
@@ -474,7 +474,7 @@ s32 capy_anim_state_7_dig_wall(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
         capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) rand_next(-0xA, 0xA) / 100.0f) + 1.0f);
+        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk308 & 0x200) {
         mainSetBits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18], 1);
@@ -558,7 +558,7 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
         if (self){} // @fake
         return 0;
     } else {
-        temp4 = (arctan2_f(baddieCurves->unk0.unk74, baddieCurves->unk0.unk7C) & 0xFFFF);
+        temp4 = (mathAtan2f(baddieCurves->unk0.unk74, baddieCurves->unk0.unk7C) & 0xFFFF);
         var_fv0 = (f32) (((temp4 - ((u16)self->srt.yaw & 0xFFFF))) + 0x8000);
         if (var_fv0 > 32768.0f) {
             var_fv0 = -65535.0f + var_fv0;

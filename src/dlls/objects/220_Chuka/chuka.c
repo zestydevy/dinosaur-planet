@@ -137,7 +137,7 @@ void Chuka_control(Object* self) {
 
         objData->blinkTimer++; //@framerate-dependent
         if (objData->blinkTimer == 16) {
-            objData->blinkTimer = rand_next(16, 245);
+            objData->blinkTimer = mathRnd(16, 245);
         }
     } else {
         if (gUpdateRateF <= (255.0f - objData->blinkTimer)) {
@@ -164,10 +164,10 @@ void Chuka_control(Object* self) {
             if (objData->flags & (Chuka_FLAG_1_Player_In_Range | Chuka_FLAG_4_Do_Chuck)) {
                 //Get vector to player, and angle to player
                 VECTOR_SUBTRACT(player->globalPosition, self->globalPosition, vPlayer); 
-                angle = arctan2_f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
+                angle = mathAtan2f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(angle);
                 if (((u16)angle < objData->angularRange) || (((M_360_DEGREES - 1 - objData->angularRange) & 0xFFFF) < (u16)angle)) {
-                    if ((rand_next(0, 99) < objData->chuckProbability) || (objData->flags & Chuka_FLAG_4_Do_Chuck)) {
+                    if ((mathRnd(0, 99) < objData->chuckProbability) || (objData->flags & Chuka_FLAG_4_Do_Chuck)) {
                         gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.attack, MAX_VOLUME, NULL, NULL, 0, NULL);
                         Chuka_chuck(self);
                     } else {

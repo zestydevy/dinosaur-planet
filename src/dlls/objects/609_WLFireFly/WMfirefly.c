@@ -74,8 +74,8 @@ void WMFireFly_setup(Object* self, WMFireFly_Setup* objSetup, s32 reset) {
     objData->tValueSpline = 1.0f;
     objData->splinePointNum = 0;
     objData->unk67 = 0;
-    objData->unk62 = rand_next(500, 1500);
-    objData->randomYaw = rand_next(0, 65000);
+    objData->unk62 = mathRnd(500, 1500);
+    objData->randomYaw = mathRnd(0, 65000);
     objData->varianceY = objSetup->varianceY;
     objData->effectType = objSetup->effectType;
     objData->fxRange = objSetup->fxRange;
@@ -116,7 +116,7 @@ void WMFireFly_control(Object* self) {
     
     objData->tValueSpline += objData->tValueSpeed * gUpdateRateF;
     
-    self->srt.yaw = arctan2_f(self->srt.transl.x - self->prevLocalPosition.x, self->srt.transl.f[2] - self->prevLocalPosition.f[2]);
+    self->srt.yaw = mathAtan2f(self->srt.transl.x - self->prevLocalPosition.x, self->srt.transl.f[2] - self->prevLocalPosition.f[2]);
 
     if (objData->lfxEmitter && (objData->lfxEmitter->stateFlags & OBJSTATE_DESTROYED)) {
         objData->lightCreated = FALSE;
@@ -124,7 +124,7 @@ void WMFireFly_control(Object* self) {
     }
 
     if ((objData->effectType == 1) || (objData->effectType == 4)) {
-        if ((vec3_distance_xz(&player->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f) || ((sidekick != NULL) && (vec3_distance_xz(&sidekick->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f))) {
+        if ((vec3DistanceXZ(&player->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f) || ((sidekick != NULL) && (vec3DistanceXZ(&sidekick->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f))) {
             if (objData->lightCreated == FALSE) {
                 objData->lightCreated = TRUE;
                 lfxSetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
@@ -132,7 +132,7 @@ void WMFireFly_control(Object* self) {
                 lfxSetup->base.x = self->srt.transl.x;
                 lfxSetup->base.y = self->srt.transl.y;
                 lfxSetup->base.z = self->srt.transl.z;
-                lfxSetup->unk1E = rand_next(0, 1) + 0x1AA;
+                lfxSetup->unk1E = mathRnd(0, 1) + 0x1AA;
                 lfxSetup->unk22 = -1;
                 objData->lfxEmitter = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
             }
@@ -160,8 +160,8 @@ void WMFireFly_control(Object* self) {
     }
     
     //Create more particles when the player or sidekick are nearby
-    if ((vec3_distance_xz(&player->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange) || 
-        (sidekick && (vec3_distance_xz(&sidekick->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange))
+    if ((vec3DistanceXZ(&player->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange) || 
+        (sidekick && (vec3DistanceXZ(&sidekick->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange))
     ) {
         if (objData->effectType == 4) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_19F, NULL, 1, -1, NULL);
@@ -239,7 +239,7 @@ void WMFireFly_append_spline_point(Object* self) {
     objData->splineY[2] = objData->splineY[3];
     objData->splineZ[2] = objData->splineZ[3];
     
-    objData->tValueSpeed = rand_next(60, 90) * 0.00015f;
+    objData->tValueSpeed = mathRnd(60, 90) * 0.00015f;
     
     objData->splineX[3] = objData->nextSplineCoord.x;
     objData->splineY[3] = objData->nextSplineCoord.y;
@@ -255,15 +255,15 @@ void WMFireFly_set_next_spline_coord_randomised(Object* self) {
 
     //Randomise Y and Z components
     objData->nextSplineCoord.x = 0;
-    objData->nextSplineCoord.y = rand_next(-objData->varianceY, objData->varianceY);
+    objData->nextSplineCoord.y = mathRnd(-objData->varianceY, objData->varianceY);
     if (objData->varianceZ < 21.0f) {
         objData->nextSplineCoord.z = 0.0f;
     } else {
-        objData->nextSplineCoord.z = objData->varianceZ - rand_next(20, (s16)objData->varianceZ);
+        objData->nextSplineCoord.z = objData->varianceZ - mathRnd(20, (s16)objData->varianceZ);
     }
 
     //Pick random yaw
-    objData->randomYaw += (s16)rand_next(3000, 5000);
+    objData->randomYaw += (s16)mathRnd(3000, 5000);
     
     //Rotate nextSplineCoord around random yaw
     transform.transl.x = 0.0f;
@@ -273,7 +273,7 @@ void WMFireFly_set_next_spline_coord_randomised(Object* self) {
     transform.roll = 0;
     transform.pitch = 0;
     transform.yaw = objData->randomYaw;
-    rotate_vec3(&transform, objData->nextSplineCoord.f);
+    mathRotateRPY(&transform, objData->nextSplineCoord.f);
     
     //Transform to worldSpace
     objData->nextSplineCoord.x = (objData->home.x + objData->nextSplineCoord.x);

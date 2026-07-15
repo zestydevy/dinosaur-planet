@@ -89,7 +89,7 @@ void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     bzero(objData, sizeof(DLL228_DataActual));
     
     objData->unk4 = objSetup->unk2C * 60.0f;
-    objData->unk8 = rand_next(0xA, 0x12C);
+    objData->unk8 = mathRnd(0xA, 0x12C);
     objData->unk10 = 0;
     objData->unk12 = 0;
     
@@ -373,7 +373,7 @@ s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 tar
                 if (dx < 0.0f) {
                     var_fa1 = -var_fa1;
                 }
-                sp7C[idx] = arctan2_f(((dy / dx) * var_fa1) - ((arg7 * dx) / (2.0f * var_fa1)), var_fa1);
+                sp7C[idx] = mathAtan2f(((dy / dx) * var_fa1) - ((arg7 * dx) / (2.0f * var_fa1)), var_fa1);
                 idx++;
             }
         }
@@ -416,7 +416,7 @@ void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     player = objGetPlayer();
     objData = baddie->objdata;
 
-    angle = (u16)arctan2_f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.z - player->srt.transl.z);
+    angle = (u16)mathAtan2f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.z - player->srt.transl.z);
     yawDiff = angle - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(yawDiff);
     
@@ -516,7 +516,7 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         player = objGetPlayer();
         
         //Get yaw diff
-        angle = (u16)arctan2_f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.f[2] - player->srt.transl.f[2]);
+        angle = (u16)mathAtan2f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.f[2] - player->srt.transl.f[2]);
         yawDiff = angle - (self->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(yawDiff);
         
@@ -533,7 +533,7 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             vox_func_80007EE0(&v, &vPlayer16);
 
             if (vox_func_80008048(&vPlayer16, &vCactus16, NULL, &sp37, 0) || (sp37 == 1)) {
-                objData->unk12 = rand_next(120, 240);
+                objData->unk12 = mathRnd(120, 240);
                 return 2;
             }
         }

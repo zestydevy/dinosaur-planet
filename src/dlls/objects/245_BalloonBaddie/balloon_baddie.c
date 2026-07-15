@@ -148,7 +148,7 @@ void BalloonBaddie_control(Object* self) {
             objdata->particleTimer -= gUpdateRateF;
             if (objdata->particleTimer < 0.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Green_Slime_Drop, NULL, PARTFXFLAG_2, -1, NULL);
-                objdata->particleTimer = rand_next(30, 120);
+                objdata->particleTimer = mathRnd(30, 120);
             }
         }
         objdata->player = objGetPlayer();
@@ -255,8 +255,8 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     objdata->theta[1] += (u16)(256.0f * gUpdateRateF);
     objdata->theta[2] += (u16)(512.0f * gUpdateRateF);
 
-    self->srt.roll = (fsin16_precise(objdata->theta[0]) + fsin16_precise(objdata->theta[1])) * 1000.0f;
-    self->srt.pitch = (fsin16_precise(objdata->theta[0]) + fsin16_precise(objdata->theta[2])) * 1000.0f;
+    self->srt.roll = (mathSinfInterp(objdata->theta[0]) + mathSinfInterp(objdata->theta[1])) * 1000.0f;
+    self->srt.pitch = (mathSinfInterp(objdata->theta[0]) + mathSinfInterp(objdata->theta[2])) * 1000.0f;
 
     if (objdata->flags & BALLOONBADDIE_CHASE) {
         self->velocity.x += (objdata->player->srt.transl.x - self->srt.transl.x) * 0.001f;
@@ -268,7 +268,7 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->velocity.z += (curveStruct->unk0.unk68.z - self->srt.transl.z) * 0.001f;
     } else {
         self->velocity.x += (curveStruct->unk0.unk68.x - self->srt.transl.x) * 0.001f;
-        self->velocity.y += (curveStruct->unk0.unk68.y + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
+        self->velocity.y += (curveStruct->unk0.unk68.y + ((mathSinfInterp((s16) objdata->theta[0]) + mathSinfInterp((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
         self->velocity.z += (curveStruct->unk0.unk68.z - self->srt.transl.z) * 0.001f;
     }
 
@@ -296,7 +296,7 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
 
-    angle = arctan2_f(self->globalPosition.x - objdata->player->globalPosition.x, self->globalPosition.z - objdata->player->globalPosition.z) - ((u16)self->srt.yaw);
+    angle = mathAtan2f(self->globalPosition.x - objdata->player->globalPosition.x, self->globalPosition.z - objdata->player->globalPosition.z) - ((u16)self->srt.yaw);
     CIRCLE_WRAP(angle)
     self->srt.yaw += (s32)((angle * gUpdateRateF) / 12.0f);
 }

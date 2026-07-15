@@ -169,7 +169,7 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
 
     //Start playing one of two idle animations, picked at random
     objData->animSpeed = 0.01f;
-    objAnimSet(self, objData->modAnims[rand_next(0, 1)], 0.0f, 0);
+    objAnimSet(self, objData->modAnims[mathRnd(0, 1)], 0.0f, 0);
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
@@ -217,24 +217,24 @@ void DR_NPC_control(Object* self) {
         //Return to idle animation when rotation finished
         if (((temp >= 0) ? temp : -temp) < 0x400) {
             self->srt.yaw = objSetup->yaw << 8;
-            objAnimSet(self, objData->modAnims[rand_next(0, 1)], 0, 0);
+            objAnimSet(self, objData->modAnims[mathRnd(0, 1)], 0, 0);
             objData->animSpeed = 0.01f;
         }
     }
 
     //Talk at random intervals
     if ((objData->talkTimer -= gUpdateRate) < 0) {
-        objData->talkTimer = rand_next(50, 500);
-        objExpr_func_80034B54(self, &objData->headAnimTalk, &objData->soundsTalk[rand_next(0, 1)].soundID, 0);
+        objData->talkTimer = mathRnd(50, 500);
+        objExpr_func_80034B54(self, &objData->headAnimTalk, &objData->soundsTalk[mathRnd(0, 1)].soundID, 0);
     }
 
     //Pick the next animation to play after the current one ends
     if (objAnimAdvance(self, objData->animSpeed, gUpdateRateF, &objData->animData)) {
         //87.5% chance of continuing idle
-        if (rand_next(0, 7)) {
+        if (mathRnd(0, 7)) {
             temp = 0;
         } else {
-            if (rand_next(0, 1)) {
+            if (mathRnd(0, 1)) {
                 //6.25% chance of looking around (or in SharpClaw's case: huddling)
                 animIndex = 1;
             } else {
@@ -402,12 +402,12 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
         joyDisableButtons(0, A_BUTTON);
         self->objhitInfo->unk5F = 11;
         self->objhitInfo->unk60 = 4;
-        gDLL_3_Animation->vtbl->start_obj_sequence(rand_next(0, 1), self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(mathRnd(0, 1), self, -1);
     }
 
     //Attack when sidekick or player nearby
-    if (((sidekick && (vec3_distance_xz(&self->globalPosition, &sidekick->globalPosition) < 40.0f)) ||
-         (player && (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < 40.0f)))
+    if (((sidekick && (vec3DistanceXZ(&self->globalPosition, &sidekick->globalPosition) < 40.0f)) ||
+         (player && (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < 40.0f)))
         && (self->curModAnimId != GuardClaw_MODANIM_9_Staff_Swing_Left)
     ) {
         objAnimSet(self, GuardClaw_MODANIM_9_Staff_Swing_Left, 0.0f, 0);

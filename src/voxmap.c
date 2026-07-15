@@ -231,8 +231,8 @@ VoxmapSlot* voxFindClosestSlot(Vec3s16 *position) {
 
     var_v0 = ((position->s[0] * SOME_FACTOR) - D_80092A60) + 5;
     var_s1 = ((position->s[2] * SOME_FACTOR) - D_80092A64) + 5;
-    var_s0 = floor_f(var_v0 / BLOCKS_GRID_UNIT_F);
-    sp40 = floor_f(var_s1 / BLOCKS_GRID_UNIT_F);
+    var_s0 = floorf(var_v0 / BLOCKS_GRID_UNIT_F);
+    sp40 = floorf(var_s1 / BLOCKS_GRID_UNIT_F);
     gVoxmapLastSearchedSlot.unk0 = (var_s0 * BLOCKS_GRID_UNIT) + D_80092A60;
     gVoxmapLastSearchedSlot.unk4 = (sp40 * BLOCKS_GRID_UNIT) + D_80092A64;
     gVoxmapLastSearchedSlot.unk8 = gVoxmapLastSearchedSlot.unk0 / SOME_FACTOR;
@@ -1649,7 +1649,7 @@ s32 vox_func_8000AB84(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) 
     sp38 = arg1->srt.transl.y - arg0->srt.transl.y;
     sp34 = arg1->srt.transl.z - arg0->srt.transl.z;
     sp28 = 0;
-    var_v1 = arg0->srt.yaw - (arctan2_f(-sp3C, -sp34) & 0xFFFF);
+    var_v1 = arg0->srt.yaw - (mathAtan2f(-sp3C, -sp34) & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     if ((-arg3 < var_v1) && (var_v1 < arg3)) {
         sp28 = 1;

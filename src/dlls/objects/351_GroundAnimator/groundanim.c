@@ -97,7 +97,7 @@ void GroundAnimator_control(Object* self) {
         
         //Warp the player to the Magic Cave when they approach
         if ((objData->flags & GroundAnimator_FLAG_2_Dig_Finished) && 
-            (vec3_distance_xz(&self->globalPosition, &objGetPlayer()->globalPosition) < 10.0f)
+            (vec3DistanceXZ(&self->globalPosition, &objGetPlayer()->globalPosition) < 10.0f)
         ) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
@@ -236,7 +236,7 @@ void GroundAnimator_control(Object* self) {
         player = objGetPlayer();
         sidekick = objGetSidekick();
         if (sidekick != NULL) {
-            distance = vec3_distance_squared(&self->globalPosition, &player->globalPosition);
+            distance = vec3DistanceSquared(&self->globalPosition, &player->globalPosition);
             if (distance <= SQ(objSetup->findCommandRadius)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
             }
@@ -296,8 +296,8 @@ void GroundAnimator_store_shapeIDs_and_vertex_weights(Object* self, GroundAnimat
     }
         
     //Get the GroundAnimator's position relative to the Blocks model's local origin
-    blockWorldGridX = floor_f((self->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-    blockWorldGridZ = floor_f((self->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+    blockWorldGridX = floorf((self->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+    blockWorldGridZ = floorf((self->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
 
     digBlockX = self->srt.transl.x - (blockWorldGridX * BLOCKS_GRID_UNIT_F + gWorldX);
     digBlockZ = self->srt.transl.z - (blockWorldGridZ * BLOCKS_GRID_UNIT_F + gWorldZ);

@@ -607,9 +607,9 @@ static void picmenu_generate_item_background(PicMenuItem *item) {
     pxRemaining = (pxRemaining - sTextures[0].width) - sTextures[1].width;
     while (pxRemaining != 0) {
         if (pxRemaining >= 80) {
-            item->bgTextureIndices[i] = rand_next(2, 5);
+            item->bgTextureIndices[i] = mathRnd(2, 5);
         } else if (pxRemaining >= 40) {
-            item->bgTextureIndices[i] = rand_next(4, 5);
+            item->bgTextureIndices[i] = mathRnd(4, 5);
         } else {
             item->bgTextureIndices[i] = 5;
         }

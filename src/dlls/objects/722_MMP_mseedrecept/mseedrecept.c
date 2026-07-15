@@ -178,30 +178,30 @@ void MoonSeedReceptacle_control(Object* self) {
             if (objData->flags & MoonSeedReceptacle_FLAG_2_Glowing){
                 //While rattling: shake vertically and emit a particle
                 if (objData->flags & MoonSeedReceptacle_FLAG_4_Rattling){
-                    self->srt.transl.y = rand_next(-1, 1) + objSetup->base.y;
+                    self->srt.transl.y = mathRnd(-1, 1) + objSetup->base.y;
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70F, NULL, PARTFXFLAG_2, -1, NULL);
                 }
                 
                 //Play a rattle sound randomly
                 objData->rattleTimer -= gUpdateRateF;
                 if (objData->rattleTimer <= 0.0f){
-                    if (rand_next(0, 1)){
+                    if (mathRnd(0, 1)){
                         objData->rattleTimer = 45.0f;
-                        gDLL_6_AMSFX->vtbl->play(self, rand_next(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
+                        gDLL_6_AMSFX->vtbl->play(self, mathRnd(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
                         objData->flags |= MoonSeedReceptacle_FLAG_4_Rattling;
                     } else {
-                        objData->rattleTimer = rand_next(50, 200);
+                        objData->rattleTimer = mathRnd(50, 200);
                         objData->flags &= ~MoonSeedReceptacle_FLAG_4_Rattling;
                     }
                 }
                 
                 //Create glow particles
                 {
-                    particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                    particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
-                    particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
+                    particleTrans.transl.x = mathRnd(-7, 7) + objSetup->base.x;
+                    particleTrans.transl.y = mathRnd(0, 10) + objSetup->base.y;
+                    particleTrans.transl.z = mathRnd(-7, 7) + objSetup->base.z;
                     
-                    sPartFXParams[bssIndex] = (fsin16_precise(objData->glowPhase) + 1.0f) * 24.0f;
+                    sPartFXParams[bssIndex] = (mathSinfInterp(objData->glowPhase) + 1.0f) * 24.0f;
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, PARTFXFLAG_2, -1, &sPartFXParams[bssIndex]);
                 }
@@ -222,20 +222,20 @@ void MoonSeedReceptacle_control(Object* self) {
         case MoonSeedReceptacle_STATE_3_Seed_Flamed:
             kyte = objGetSidekick();
             self->srt.transl.y = objSetup->base.y;
-            if (vec3_distance_xz_squared(&kyte->globalPosition, &self->globalPosition) <= SQ(50)){
+            if (vec3DistanceXZSquared(&kyte->globalPosition, &self->globalPosition) <= SQ(50)){
                 for (count = -1; count < (objData->glowPhase >> 0xD); count++){
-                    particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                    particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
-                    particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
+                    particleTrans.transl.x = mathRnd(-7, 7) + objSetup->base.x;
+                    particleTrans.transl.y = mathRnd(0, 10) + objSetup->base.y;
+                    particleTrans.transl.z = mathRnd(-7, 7) + objSetup->base.z;
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 }
                 
                 sPartFXParams[bssIndex] = objData->glowPhase >> 7;
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, 2, -1, &sPartFXParams[bssIndex]);
             } else {
-                particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
-                particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
+                particleTrans.transl.x = mathRnd(-7, 7) + objSetup->base.x;
+                particleTrans.transl.y = mathRnd(0, 10) + objSetup->base.y;
+                particleTrans.transl.z = mathRnd(-7, 7) + objSetup->base.z;
                 sPartFXParams[bssIndex] = 0x50;
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, PARTFXFLAG_2, -1, &sPartFXParams[bssIndex]);
@@ -260,7 +260,7 @@ void MoonSeedReceptacle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs
         if (objData->state == MoonSeedReceptacle_STATE_2_Seed_Planted) {
             if (objData->flags & MoonSeedReceptacle_FLAG_2_Glowing) {
                 objData->glowPhase += M_45_DEGREES/2;
-                colourR = (u8) ((fsin16_precise(objData->glowPhase) + 1) * 63.0f) + 0x7F;
+                colourR = (u8) ((mathSinfInterp(objData->glowPhase) + 1) * 63.0f) + 0x7F;
 
                 objprintSetMultiplierColor(colourR, 0xFF, 0xFF);
             }

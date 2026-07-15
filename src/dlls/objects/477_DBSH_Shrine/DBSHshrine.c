@@ -183,7 +183,7 @@ void DBSHshrine_control(Object* self) {
     //STATE MACHINE
     switch (objData->state) {
     case 0:
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->testStartRadius) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objData->testStartRadius) {
             if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) != 0) {
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
             }
@@ -402,12 +402,12 @@ void DBSHshrine_handle_messages(Object* self) {
     while (objRecvMesg(self, &message, &sender, (void*)&messageArg) != 0) {
         switch (message) {
         case 0x30005:
-            if (vec3_distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
+            if (vec3Distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
                 objData->unk6 = -3;
             }
             break;
         case 0x30006:
-            if (vec3_distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
+            if (vec3Distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
                 objData->unk6 = 0x10;
             }
             break;

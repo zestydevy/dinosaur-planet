@@ -376,6 +376,6 @@ void SPShop_set_random_prices(void) {
     shopItem = shopItemData;
 
     for (index = 0; index < TOTAL_ITEMS; index++){
-        shopItem[index].price.initial = shopItem[index].price.possibilities[rand_next(0, 2)];
+        shopItem[index].price.initial = shopItem[index].price.possibilities[mathRnd(0, 2)];
     }
 }

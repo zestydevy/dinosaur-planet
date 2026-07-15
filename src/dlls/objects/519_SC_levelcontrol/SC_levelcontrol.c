@@ -250,7 +250,7 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
         }
         objdata->unk2 = 0;
     } else if (objdata->unk2 == 5) {
-        objdata->index2 = rand_next(0, 2);
+        objdata->index2 = mathRnd(0, 2);
         menu_func_8000F64C(0x1D, _data_158[objdata->index2][4]);
         menu_func_8000F6CC();
     }

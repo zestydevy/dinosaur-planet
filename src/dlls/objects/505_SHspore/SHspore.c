@@ -39,8 +39,8 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     self->velocity.y = 3.0f;
 
     func_800267A4(self);
-    objData->angleGoal = rand_next(0, 0xFFFF);
-    objData->lateralSpeedGoal = rand_next(0, 1000) / 1000.0f;
+    objData->angleGoal = mathRnd(0, 0xFFFF);
+    objData->lateralSpeedGoal = mathRnd(0, 1000) / 1000.0f;
 
     gDLL_27->vtbl->init(&objData->terrainCollider, DLL27FLAG_NONE, DLL27FLAG_2 | DLL27FLAG_40000, DLL27MODE_1);
     gDLL_27->vtbl->setup_terrain_collider(&objData->terrainCollider, 1, &data_collision_test_point, &data_collision_radius, &sp37);
@@ -88,7 +88,7 @@ void SHspore_control(Object* self) {
         }
 
         SHspore_change_flight_direction(self, objData);
-        if ((rand_next(0, 100) < 5) && (objData->angularJitterTimer <= 0.0f)) {
+        if ((mathRnd(0, 100) < 5) && (objData->angularJitterTimer <= 0.0f)) {
             SHspore_jitter_flight_direction(self, objData);
         }
 
@@ -165,10 +165,10 @@ static void SHspore_change_flight_direction(Object* self, SHSpore_Data* objData)
     windAngle = setup->windAngle;
 
     //10% chance of shifting away from current angle (approximately 11 to 22 degree shift)
-    if (rand_next(0, 100) < 10 && objData->angleChangeTimer <= 0.0f) {
-        objData->angleGoal = rand_next(2000, 4000);
+    if (mathRnd(0, 100) < 10 && objData->angleChangeTimer <= 0.0f) {
+        objData->angleGoal = mathRnd(2000, 4000);
         //Either clockwise or anticlockwise shift
-        if (rand_next(0, 1)) {
+        if (mathRnd(0, 1)) {
             objData->angleGoal = -objData->angleGoal;
         }
         objData->angleGoal += objData->angle;
@@ -187,8 +187,8 @@ static void SHspore_change_flight_direction(Object* self, SHSpore_Data* objData)
     }
 
     //Randomise lateral speed
-    if (rand_next(0, 100) < 10 && objData->angleChangeTimer <= 0.0f) {
-        objData->lateralSpeedGoal = (rand_next(-200, 200) / 1000.0f) + objData->lateralSpeed;
+    if (mathRnd(0, 100) < 10 && objData->angleChangeTimer <= 0.0f) {
+        objData->lateralSpeedGoal = (mathRnd(-200, 200) / 1000.0f) + objData->lateralSpeed;
         if (objData->lateralSpeedGoal < 0.5f) {
             objData->lateralSpeedGoal = 0.5f;
         } else if (objData->lateralSpeedGoal > 1.0f) {
@@ -203,8 +203,8 @@ static void SHspore_change_flight_direction(Object* self, SHSpore_Data* objData)
 
     lateralAcceleration = objData->lateralSpeedGoal - objData->lateralSpeed;
     objData->lateralSpeed += lateralAcceleration * 0.006f * gUpdateRateF;
-    objData->velocityX = fsin16_precise(objData->angle) * objData->lateralSpeed;
-    objData->velocityZ = fcos16_precise(objData->angle) * objData->lateralSpeed;
+    objData->velocityX = mathSinfInterp(objData->angle) * objData->lateralSpeed;
+    objData->velocityZ = mathCosfInterp(objData->angle) * objData->lateralSpeed;
 }
 
 // offset: 0xA00 | func: 3
@@ -216,9 +216,9 @@ static void SHspore_jitter_flight_direction(Object* self, SHSpore_Data* objData)
     setup = (SHSpore_Setup*)self->setup;
 
     windAngle = setup->windAngle;
-    objData->lateralDecelerationTimer = rand_next(30, 45);
-    objData->angularJitterTimer = rand_next(120, 180) + objData->lateralDecelerationTimer;
-    objData->angleJitter = rand_next(-2000, 2000) + objData->angle; //up to ~11 degrees away from current angle
+    objData->lateralDecelerationTimer = mathRnd(30, 45);
+    objData->angularJitterTimer = mathRnd(120, 180) + objData->lateralDecelerationTimer;
+    objData->angleJitter = mathRnd(-2000, 2000) + objData->angle; //up to ~11 degrees away from current angle
 
     deltaTheta = objData->angleJitter - (windAngle & 0xFFFF);
     CIRCLE_WRAP(deltaTheta)
@@ -231,10 +231,10 @@ static void SHspore_jitter_flight_direction(Object* self, SHSpore_Data* objData)
         objData->angleJitter = windAngle - setup->angularRange;
     }
 
-    objData->lateralAccelerationGoal = rand_next(900, 1300) / 1000.0f;
+    objData->lateralAccelerationGoal = mathRnd(900, 1300) / 1000.0f;
     objData->lateralAcceleration = 0.0f;
-    objData->coefficientX = fsin16_precise(objData->angleJitter);
-    objData->coefficientZ = fcos16_precise(objData->angleJitter);
+    objData->coefficientX = mathSinfInterp(objData->angleJitter);
+    objData->coefficientZ = mathCosfInterp(objData->angleJitter);
 }
 
 // offset: 0xB88 | func: 4 | export: 2

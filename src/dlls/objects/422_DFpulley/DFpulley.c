@@ -86,7 +86,7 @@ void DFPulley_control(Object* self) {
         if (!(self->stateFlags & 2)) {
             cradle = objGetObjectByUID(0x2CA7);
             cradleData = cradle->data;
-            distance = vec3_distance(&self->globalPosition, &cradle->globalPosition);
+            distance = vec3Distance(&self->globalPosition, &cradle->globalPosition);
 
             //Play sound loop when nearby
             if (distance < SOUND_RANGE) {

@@ -194,7 +194,7 @@ void dll_537_control(Object* self) {
         dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
         if (mainGetBits(objSetup->unk1A)) {
             objData->unk24 = 5;
-        } else if ((objData->unk0 != NULL) && (mainGetBits(objSetup->unk1E) == 0) && (vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
+        } else if ((objData->unk0 != NULL) && (mainGetBits(objSetup->unk1E) == 0) && (vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
             objData->unk24 = 1;
         }
         objData->unk25 = 0;
@@ -220,7 +220,7 @@ void dll_537_control(Object* self) {
                     objData->unk22 -= gUpdateRate;
                 }
                 
-                objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
+                objData->unk10 = vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition);
                 if ((objData->unk10 < (f32) SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
                     sidekick = objGetSidekick();
                     if (sidekick != NULL) {
@@ -245,7 +245,7 @@ void dll_537_control(Object* self) {
             objData->unk4.x = objData->unk0->srt.transl.x;
             objData->unk4.y = objData->unk0->srt.transl.y;
             objData->unk4.z = objData->unk0->srt.transl.z;
-            objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
+            objData->unk10 = vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition);
             if (((objSetup->unk26 * 90000.0f) / 100.0f) < objData->unk10) {
                 mainSetBits(objSetup->unk22, 1);
                 objData->unk24 = 1;
@@ -442,7 +442,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     
     var_s2 = 0;
     if (temp_fs2 >= 0) {
-        var_s1 = arctan2_f(temp_fs1, sqrtf(temp_fs2)) >> 1;
+        var_s1 = mathAtan2f(temp_fs1, sqrtf(temp_fs2)) >> 1;
     } else {
         var_s1 = 0x2000;
         var_s2 = 1;
@@ -459,7 +459,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
         f32 temp = 4.0f;
         temp_fs0 = (temp * 1.1f) * temp_fv0_2;
 
-        sp70 = fsin16_precise(var_s1) * 50.0f;
+        sp70 = mathSinfInterp(var_s1) * 50.0f;
         temp_fv1 = SQ(sp70) - temp_fs0;
         
         
@@ -476,7 +476,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
                 sp70--;
         }
 
-        temp_fs1 = fcos16_precise(var_s1) * 50.0f;
+        temp_fs1 = mathCosfInterp(var_s1) * 50.0f;
         temp_fs0 = temp_fs1 * temp_fv1;
         
         var_s1 += var_s3;
@@ -504,7 +504,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 
     arg1 -= self->srt.transl.x;
     arg3 -= self->srt.transl.z;
-    dYaw = arctan2_f(arg1, arg3) - (self->srt.yaw & 0xFFFF);
+    dYaw = mathAtan2f(arg1, arg3) - (self->srt.yaw & 0xFFFF);
 
     CIRCLE_WRAP(dYaw);
     if (dYaw > 0x1000) {
@@ -546,8 +546,8 @@ void dll_537_func_1150(Object* self) {
         shotSetup->base.y = objData->unk14.y;
         shotSetup->base.z = objData->unk14.z;
         shotSetup->unk18 = self->srt.yaw >> 8;
-        shotSetup->unk1A = fsin16_precise(*angle) * 50.0f;
-        shotSetup->unk1C = fcos16_precise(*angle) * 50.0f;
+        shotSetup->unk1A = mathSinfInterp(*angle) * 50.0f;
+        shotSetup->unk1C = mathCosfInterp(*angle) * 50.0f;
         
         shot = objSetupObject((ObjSetup*)shotSetup, 5, self->mapID, -1, NULL);
         shot->unkC4 = self;
@@ -558,7 +558,7 @@ void dll_537_func_1150(Object* self) {
         if (objData->unk24 == 3) {
             objData->unk20 = 100;
         } else {
-            objData->unk20 = rand_next(objSetup->unk29, objSetup->unk2A);
+            objData->unk20 = mathRnd(objSetup->unk29, objSetup->unk2A);
         }
         
         objAnimSet(self, 1, 0, 0);
@@ -576,9 +576,9 @@ void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup) {
     self->srt.yaw = objSetup->unk18 << 8;
     verticalSpeed = objSetup->unk1A * 0.1f;
     lateralSpeed = objSetup->unk1C * 0.1f;
-    self->velocity.x = fsin16_precise(self->srt.yaw) * lateralSpeed;
+    self->velocity.x = mathSinfInterp(self->srt.yaw) * lateralSpeed;
     self->velocity.y = -verticalSpeed;
-    self->velocity.z = fcos16_precise(self->srt.yaw) * lateralSpeed;
+    self->velocity.z = mathCosfInterp(self->srt.yaw) * lateralSpeed;
     
     self->unkDC = 0;
 
@@ -629,7 +629,7 @@ void dll_537_func_1430(Object* self) {
     
     objData = self->data;
     
-    self->srt.pitch = arctan2_f(self->velocity.y, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)));
+    self->srt.pitch = mathAtan2f(self->velocity.y, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)));
     
     if (objData->unk0 != 0) {
         _data_0->vtbl->func0(self, 2, 0, 0x10002, -1, 0);

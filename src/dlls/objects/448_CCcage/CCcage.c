@@ -270,7 +270,7 @@ void CCcage_transform_child(Object* self, s32 index) {
     position[1] = objData->childPositions[index].y;
     position[2] = objData->childPositions[index].z;
     
-    rotate_vec_inv((SRT*)&transform, (Vec3f*)&position);
+    mathRotateYPR((SRT*)&transform, (Vec3f*)&position);
     
     objData->children[index]->srt.transl.x = position[0] + self->srt.transl.x;
     objData->children[index]->srt.transl.y = position[1] + self->srt.transl.y;

@@ -46,10 +46,10 @@ void camcloudrunner_func_18(Cam* cam, s32 arg1, CamCloudRunner_Params* data) {
     sState->unkC = var_fv0;
     v1 = cam->srt.transl.x - sState->unk0;
     v2 = cam->srt.transl.z - sState->unk8;
-    sp2C = arctan2_f(v1, v2);
+    sp2C = mathAtan2f(v1, v2);
     v1 = cam->player->srt.transl.x - sState->unk0;
     v2 = cam->player->srt.transl.z - sState->unk8;
-    var_v1 = arctan2_f(v1, v2) - (sp2C & 0xFFFF);
+    var_v1 = mathAtan2f(v1, v2) - (sp2C & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     if (var_v1){}
 }
@@ -64,16 +64,16 @@ void camcloudrunner_func_17C(Cam* cam) {
 
     sp28 = cam->player;
     if (sp28 != NULL) {
-        temp_fs0 = fsin16_precise(sp28->srt.yaw);
-        temp_fv0 = fcos16_precise(sp28->srt.yaw);
+        temp_fs0 = mathSinfInterp(sp28->srt.yaw);
+        temp_fv0 = mathCosfInterp(sp28->srt.yaw);
         cam->srt.transl.x = sp28->srt.transl.x + (temp_fs0 * sState->unkC);
         cam->srt.transl.y = sp28->srt.transl.y + 25.0f;
         cam->srt.transl.z = sp28->srt.transl.z + (temp_fv0 * sState->unkC);
         temp_fs0 = cam->srt.transl.x - sp28->srt.transl.x;
         sp2C = cam->srt.transl.y - sp28->srt.transl.y;
         sp30 = cam->srt.transl.z - sp28->srt.transl.z;
-        cam->srt.yaw = 0x8000 - arctan2_f(temp_fs0, sp30);
-        cam->srt.pitch = arctan2_f(sp2C, sqrtf(SQ(temp_fs0) + SQ(sp30)));
+        cam->srt.yaw = 0x8000 - mathAtan2f(temp_fs0, sp30);
+        cam->srt.pitch = mathAtan2f(sp2C, sqrtf(SQ(temp_fs0) + SQ(sp30)));
     }
 }
 

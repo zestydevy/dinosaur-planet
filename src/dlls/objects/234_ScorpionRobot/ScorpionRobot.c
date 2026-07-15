@@ -189,7 +189,7 @@ void ScorpionRobot_control(Object* self) {
                     while (sp54--) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, &hitSRT, PARTFXFLAG_2, -1, NULL);
                     }
-                    gDLL_6_AMSFX->vtbl->play(self, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             } else {
@@ -351,7 +351,7 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
     fsa->flags |= 0x4000;
     temp_fs0 = self->velocity.x - sp50;
     temp_fa1 = self->velocity.z - sp4C;
-    self->srt.yaw = atan2f_to_s(temp_fs0, temp_fa1);
+    self->srt.yaw = Arctanf(temp_fs0, temp_fa1);
     self->srt.pitch = (s16) (sqrtf((temp_fs0 * temp_fs0) + (temp_fa1 * temp_fa1)) * 10000.0f);
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
@@ -442,10 +442,10 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
     }
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_0_Unfold) && (self->animProgress == 1.0f)) {
         if (fsa->target != NULL) {
-            temp = (u16)arctan2_f(
+            temp = (u16)mathAtan2f(
                     self->srt.transl.x - fsa->target->srt.transl.x, 
                     self->srt.transl.z - fsa->target->srt.transl.z);
-            temp_v0_4 = (u16)rotation16_sub_wrap(
+            temp_v0_4 = (u16)mathDiffAngle(
                 temp, 
                 self->srt.yaw + objdata->spin);
             if (temp_v0_4 > 0x2000) {
@@ -463,7 +463,7 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
                 objAnimSet(self, modanimIdx, 0.0f, 0);
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else if (objdata->fireCooldown == 0) {
-                objdata->fireCooldown = rand_next(0x5A, 0xD2);
+                objdata->fireCooldown = mathRnd(0x5A, 0xD2);
                 objdata->fire = 1;
                 objdata->animDelta = 0.04f;
                 objAnimSet(self, SCORP_ROBO_MODANIM_3_Firing, 0.0f, 0);

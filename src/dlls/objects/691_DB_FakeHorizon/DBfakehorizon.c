@@ -74,7 +74,7 @@ void DBFakeHorizon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
     }
 
     scaleY = dy / objSetup->divisor;
-    matrix_scaling(&mtx, self->srt.scale, self->srt.scale * scaleY, self->srt.scale);
+    mathScaleMtx(&mtx, self->srt.scale, self->srt.scale * scaleY, self->srt.scale);
     mtx.m[3][0] = self->srt.transl.x - gWorldX;
     mtx.m[3][1] = self->srt.transl.y;
     mtx.m[3][2] = self->srt.transl.z - gWorldZ;

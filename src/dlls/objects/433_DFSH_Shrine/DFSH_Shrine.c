@@ -172,7 +172,7 @@ void DFShrine_control(Object* self) {
         }
         switch (objdata->state) {
         case 0:
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->testStartRange) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->testStartRange) {
                 mainSetBits(BIT_589, 0);
                 objdata->state = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);

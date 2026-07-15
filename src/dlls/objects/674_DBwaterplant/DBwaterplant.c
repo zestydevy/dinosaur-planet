@@ -85,7 +85,7 @@ void DBWaterPlant_control(Object* self) {
             /* fallthrough */
         case DBWaterPlant_STATE_0:
             //Vary animSpeed sinusoidally
-            animSpeed = fsin16_precise(objData->animSpeedPhase) * 0.005f;
+            animSpeed = mathSinfInterp(objData->animSpeedPhase) * 0.005f;
             break;
         case DBWaterPlant_STATE_2:
             animSpeed = -(self->animProgress * 0.01f);

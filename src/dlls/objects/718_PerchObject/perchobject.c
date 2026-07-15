@@ -87,10 +87,10 @@ void perchobject_control(Object* self) {
 
             //Check distance between player and perch (either lateral X/Z distance or full 3D distance check)
             if (objSetup->useDistance3D){
-                playerToCurveDistance = vec3_distance_squared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
+                playerToCurveDistance = vec3DistanceSquared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
                 playerIsNearby = (u8)(playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange));
             } else {
-                playerToCurveDistance = vec3_distance_xz_squared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
+                playerToCurveDistance = vec3DistanceXZSquared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
                 playerIsNearby = FALSE;
                 if (playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange)) {
                     playerIsNearby = TRUE;
@@ -208,7 +208,7 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
 
     kyte = objGetSidekick();    
     if (kyte) {
-        if (vec3_distance_squared(&objGetPlayer()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
+        if (vec3DistanceSquared(&objGetPlayer()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
             //Enable Find command option
             ((DLL_ISidekick*)kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
             

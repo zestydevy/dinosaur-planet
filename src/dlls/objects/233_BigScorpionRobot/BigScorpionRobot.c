@@ -163,8 +163,8 @@ void BigScorpionRobot_control(Object* self) {
                 if ((func_80025F40(self, &hitBy, &sp44, NULL) != 0) && (hitBy != NULL) && (hitBy->id == OBJ_projball)) {
                     if (sp44 == 1) {
                         objdata->hitCount++;
-                        gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
                         camUseShake();
                         camSetShakeOffset(1.0f);
@@ -358,10 +358,10 @@ static s32 BigScorpionRobot_state_2_attacking(Object* self, ObjFSA_Data* fsa, f3
     }
     if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_0_Unfold) && (self->animProgress == 1.0f)) {
         if (fsa->target != NULL) {
-            temp = (u16)arctan2_f(
+            temp = (u16)mathAtan2f(
                 self->srt.transl.x - fsa->target->srt.transl.x, 
                 self->srt.transl.z - fsa->target->srt.transl.z);
-            temp_v0_4 = (u16)rotation16_sub_wrap(
+            temp_v0_4 = (u16)mathDiffAngle(
                 temp, 
                 self->srt.yaw + objdata->spin);
             if (temp_v0_4 > 0x2000) {
@@ -379,7 +379,7 @@ static s32 BigScorpionRobot_state_2_attacking(Object* self, ObjFSA_Data* fsa, f3
                 objAnimSet(self, modanimIdx, 0.0f, 0);
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else if (objdata->fireCooldown == 0) {
-                objdata->fireCooldown = rand_next(0x96, 0x138);
+                objdata->fireCooldown = mathRnd(0x96, 0x138);
                 objdata->fire = 1;
                 objdata->animDelta = 0.04f;
                 objAnimSet(self, BIGSCORP_ROBO_MODANIM_3_Firing, 0.0f, 0);

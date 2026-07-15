@@ -90,7 +90,7 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
     _data_4 = dllLoadActual(DLL_ID_106, 1, /*bRunConstructor=*/FALSE);
 
     objdata->unk8 = 0;
-    objdata->unkE = rand_next(0, 100) + 300;
+    objdata->unkE = mathRnd(0, 100) + 300;
     objdata->unk10 = 400;
     objdata->unk16 = setup->unk1A;
 
@@ -185,7 +185,7 @@ void medium_crate_control(Object *self) {
                 objdata->unk20 = 1.0f;
                 objdata->unk24 = 12.0f;
                 if (self->id == OBJ_MediumBasket) {
-                    objdata->unk1C = rand_next(600, 800);
+                    objdata->unk1C = mathRnd(600, 800);
                 }
                 if (temp_v0_4 != 0xF) {
                     sp48.transl.x += gWorldX;
@@ -209,10 +209,10 @@ void medium_crate_control(Object *self) {
                 self->unkAF |= 8;
             }
         }
-        temp_fv0_2 = vec3_distance_squared(&objGetPlayer()->globalPosition, &self->globalPosition);
+        temp_fv0_2 = vec3DistanceSquared(&objGetPlayer()->globalPosition, &self->globalPosition);
         objdata->unkE -= gUpdateRate;
         if (objdata->unkE <= 0) {
-            objdata->unkE = rand_next(0, 100) + 300;
+            objdata->unkE = mathRnd(0, 100) + 300;
             if (temp_fv0_2 < 8100.0f) {
                 if ((objdata->unk15 == 5) || (objdata->unk15 == 6) || (objdata->unk15 == 7) || (objdata->unk15 == 8)) {
                     gDLL_6_AMSFX->vtbl->play(NULL, SOUND_64D_Wooden_Rattle, 0x39, NULL, NULL, 0, NULL);
@@ -329,10 +329,10 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
         switch (objdata->unk15) {
             case 0: {
                 scorpionSetup = objAllocSetup(sizeof(Scorpion_Setup), OBJ_Scorpion);
-                scorpionSetup->unk18 = rand_next(-127, 126);
-                scorpionSetup->base.x = rand_next(-10, 10) + self->srt.transl.x;
+                scorpionSetup->unk18 = mathRnd(-127, 126);
+                scorpionSetup->base.x = mathRnd(-10, 10) + self->srt.transl.x;
                 scorpionSetup->base.y = self->srt.transl.y;
-                scorpionSetup->base.z = rand_next(-10, 10) + self->srt.transl.z;
+                scorpionSetup->base.z = mathRnd(-10, 10) + self->srt.transl.z;
                 scorpionSetup->unk1A = 49;
                 scorpionSetup->unk19 = 7;
                 objSetupObject((ObjSetup*)scorpionSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
@@ -353,8 +353,8 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                     obj->velocity.x /= magnitude;
                     obj->velocity.z /= magnitude;
                 }
-                obj->velocity.x *= (1.0f - 0.0099999998f * rand_next(0, 25));
-                obj->velocity.z *= (1.0f - 0.0099999998f * rand_next(0, 25));
+                obj->velocity.x *= (1.0f - 0.0099999998f * mathRnd(0, 25));
+                obj->velocity.z *= (1.0f - 0.0099999998f * mathRnd(0, 25));
                 obj->velocity.y = 2.2f;
                 srt.transl.x = 0.0f;
                 srt.transl.y = 0.0f;
@@ -362,9 +362,9 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.scale = 1.0f;
                 srt.roll = 0;
                 srt.pitch = 0;
-                srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, obj->velocity.f);
-                temp = arctan2_f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
+                srt.yaw = mathRnd(-10000, 10000);
+                mathRotateRPY(&srt, obj->velocity.f);
+                temp = mathAtan2f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;
@@ -372,7 +372,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 2: {
                 scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Red_scarab);
-                scarabSetup->unk18 = rand_next(-127, 126);
+                scarabSetup->unk18 = mathRnd(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
@@ -386,8 +386,8 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                     obj->velocity.x /= magnitude;
                     obj->velocity.z /= magnitude;
                 }
-                obj->velocity.x *= (1.0f - 0.0099999998f * rand_next(0, 25));
-                obj->velocity.z *= (1.0f - 0.0099999998f * rand_next(0, 25));
+                obj->velocity.x *= (1.0f - 0.0099999998f * mathRnd(0, 25));
+                obj->velocity.z *= (1.0f - 0.0099999998f * mathRnd(0, 25));
                 obj->velocity.y = 2.2f;
                 srt.transl.x = 0.0f;
                 srt.transl.y = 0.0f;
@@ -395,9 +395,9 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.scale = 1.0f;
                 srt.roll = 0;
                 srt.pitch = 0;
-                srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, obj->velocity.f);
-                temp = arctan2_f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
+                srt.yaw = mathRnd(-10000, 10000);
+                mathRotateRPY(&srt, obj->velocity.f);
+                temp = mathAtan2f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;
@@ -405,7 +405,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 3: {
                 scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
-                scarabSetup->unk18 = rand_next(-127, 126);
+                scarabSetup->unk18 = mathRnd(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
@@ -419,8 +419,8 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                     obj->velocity.x /= magnitude;
                     obj->velocity.z /= magnitude;
                 }
-                obj->velocity.x *= (1.0f - 0.0099999998f * rand_next(0, 25));
-                obj->velocity.z *= (1.0f - 0.0099999998f * rand_next(0, 25));
+                obj->velocity.x *= (1.0f - 0.0099999998f * mathRnd(0, 25));
+                obj->velocity.z *= (1.0f - 0.0099999998f * mathRnd(0, 25));
                 obj->velocity.y = 2.2f;
                 srt.transl.x = 0.0f;
                 srt.transl.y = 0.0f;
@@ -428,9 +428,9 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.scale = 1.0f;
                 srt.roll = 0;
                 srt.pitch = 0;
-                srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, obj->velocity.f);
-                temp = arctan2_f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
+                srt.yaw = mathRnd(-10000, 10000);
+                mathRotateRPY(&srt, obj->velocity.f);
+                temp = mathAtan2f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;
@@ -438,7 +438,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 4: {
                 scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
-                scarabSetup->unk18 = rand_next(-127, 126);
+                scarabSetup->unk18 = mathRnd(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
@@ -452,8 +452,8 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                     obj->velocity.x /= magnitude;
                     obj->velocity.z /= magnitude;
                 }
-                obj->velocity.x *= (1.0f - 0.0099999998f * rand_next(0, 25));
-                obj->velocity.z *= (1.0f - 0.0099999998f * rand_next(0, 25));
+                obj->velocity.x *= (1.0f - 0.0099999998f * mathRnd(0, 25));
+                obj->velocity.z *= (1.0f - 0.0099999998f * mathRnd(0, 25));
                 obj->velocity.y = 2.2f;
                 srt.transl.x = 0.0f;
                 srt.transl.y = 0.0f;
@@ -461,9 +461,9 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.scale = 1.0f;
                 srt.roll = 0;
                 srt.pitch = 0;
-                srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, obj->velocity.f);
-                temp = arctan2_f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
+                srt.yaw = mathRnd(-10000, 10000);
+                mathRotateRPY(&srt, obj->velocity.f);
+                temp = mathAtan2f(obj->velocity.x, -obj->velocity.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;

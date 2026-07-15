@@ -155,8 +155,8 @@ void SB_ShipHead_control(Object *self) {
         player = objGetPlayer();
         minifireSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_MiniFire);
         minifireSetup->x = player->globalPosition.x + 100.0f;
-        minifireSetup->y = rand_next(-6, 6) + player->globalPosition.y + 50.0f;
-        minifireSetup->z = rand_next(-6, 6) + player->globalPosition.z + 45.0f;
+        minifireSetup->y = mathRnd(-6, 6) + player->globalPosition.y + 50.0f;
+        minifireSetup->z = mathRnd(-6, 6) + player->globalPosition.z + 45.0f;
         minifireSetup->loadFlags = 2;
         minifireSetup->fadeFlags = 1;
         minifireSetup->loadDistance = 0xFF;
@@ -203,13 +203,13 @@ void SB_ShipHead_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
                 transform.pitch = 0;
                 transform.scale = 1.0f;
                 if (objGetAttachPointWorldSpace(self, 2, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) {
-                    if (rand_next(0, 3) == 0) {
+                    if (mathRnd(0, 3) == 0) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A3, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
-                    if (rand_next(0, 3) == 0) {
+                    if (mathRnd(0, 3) == 0) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A6, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
-                    if ((objGetAttachPointWorldSpace(self, 8, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) && (rand_next(0, 6) == 0)) {
+                    if ((objGetAttachPointWorldSpace(self, 8, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) && (mathRnd(0, 6) == 0)) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A4, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
                 }

@@ -953,7 +953,7 @@ Object* CamControl_find_highlight_object(Cam* cam, Object* player) {
                     angularRange = (s16)(targetDef[lockIndex].hlAngularRange * 182.04f);
                 }
 
-                dYaw = player->srt.yaw - (arctan2s(dx, dz) & 0xFFFF);
+                dYaw = player->srt.yaw - (mathAtan2(dx, dz) & 0xFFFF);
                 CIRCLE_WRAP(dYaw)
                 
                 if ((dYaw < angularRange) && (-angularRange < dYaw)) {

@@ -258,7 +258,7 @@ s32 dll_658_func_ACC(Object* self, PointBack_funcACC_UnkArg1* arg1, s32 arg2) {
         result = 0;
         for (i = 0; i < 3; i++) {
             if (objects[i] != NULL) {
-                result |= vec3_distance(&self->globalPosition, &objects[i]->globalPosition) < 200.0f;
+                result |= vec3Distance(&self->globalPosition, &objects[i]->globalPosition) < 200.0f;
             }
         }
         
@@ -423,12 +423,12 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
         arg2->unk24.z = 0.0f;
         arg2->unk18.x = -150.0f;
         arg2->unk24.x = -150.0f;
-        rotate_vec_inv(&self->srt, &arg2->unk18);
+        mathRotateYPR(&self->srt, &arg2->unk18);
         
         rot[2] = 0;
         rot[1] = arg1->unk2D;
         rot[0] = arg1->unk2C;
-        rotate_vec_inv((SRT*)&rot, &arg2->unk24);
+        mathRotateYPR((SRT*)&rot, &arg2->unk24);
         
         *arg3 = 0.0f;
         arg2->unk34 = dll_658_func_1C24(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
@@ -548,7 +548,7 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
         case 10:
             objExpr_func_80034B54(self, 
                 &objData->unk4B8, 
-                &_data_10.unk0[rand_next(0, 2)].soundID, 
+                &_data_10.unk0[mathRnd(0, 2)].soundID, 
                 0);
             continue;
         case 1:

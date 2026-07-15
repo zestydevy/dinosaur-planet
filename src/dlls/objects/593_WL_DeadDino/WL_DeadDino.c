@@ -170,7 +170,7 @@ void WL_DeadDino_control(Object* self) {
                         if (distanceToPlayer < 120.0f) {
                             gDLL_6_AMSFX->vtbl->play(self, SOUND_1FB_EarthWalker_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
                             objData->state = STATE_1_Waiting_for_Help;
-                            objData->cryHelpTimer = rand_next(400, 600);
+                            objData->cryHelpTimer = mathRnd(400, 600);
                         }
                     } else {
                         animSpeed = 0.0f;
@@ -204,7 +204,7 @@ void WL_DeadDino_control(Object* self) {
             if (objData->blinkTimer < 0) {
                 if (objData->blinkFrame != 0) {
                     objData->blinkFrame = 0;
-                    objData->blinkTimer = rand_next(60, 300);
+                    objData->blinkTimer = mathRnd(60, 300);
                 } else {
                     objData->blinkFrame = 1;
                     objData->blinkTimer = 10;

@@ -220,12 +220,12 @@ void dll_437_control(Object* self) {
         sp40.transl.y = 0.0f;
         sp40.transl.z = 0.0f;
         sp40.scale = 1.0f;
-        matrix_from_srt(&sp5C, &sp40);
-        vec3_transform(&sp5C, temp_s1->unk3C, 0.0f, temp_s1->unk44, &self->velocity.x, &sp58, &self->velocity.z);
-        self->srt.transl.y = (fsin16_precise(temp_s1->unk8C) * temp_s1->unk88) + temp_s1->unk84;
+        mathYprXyzMtx(&sp5C, &sp40);
+        mathMtxXFMF(&sp5C, temp_s1->unk3C, 0.0f, temp_s1->unk44, &self->velocity.x, &sp58, &self->velocity.z);
+        self->srt.transl.y = (mathSinfInterp(temp_s1->unk8C) * temp_s1->unk88) + temp_s1->unk84;
         sp3C = (u16) temp_s1->unk8C + (gUpdateRate << 8);
         if (sp3C >= 0x10000) {
-            temp_s1->unk88 = (f32) ((f32) rand_next(0xF, 0x23) * 0.1f);
+            temp_s1->unk88 = (f32) ((f32) mathRnd(0xF, 0x23) * 0.1f);
         }
         temp_s1->unk8C = (s16) sp3C;
         self->velocity.x *= 1.0666667f;
@@ -545,7 +545,7 @@ void dll_437_func_31F4(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
     a2->unk8.x = 0.0f;
     a2->unk8.y = 1.0f;
     a2->unk8.z = 0.0f;
-    rotate_vec3(&sp64, a2->unk8.f);
+    mathRotateRPY(&sp64, a2->unk8.f);
     beamShadow = beam->shadow;
     if (beamShadow != NULL) {
         beamShadow->flags |= 0x170;
@@ -645,7 +645,7 @@ static void dll_437_func_3B70(Object* arg0, EWTrobotpatrol_Data_1D0* arg1, f32 a
     if ((arg2 != 0.0f) || (arg3 != 0.0f) || (arg4 != 0.0f)) {
         guNormalize(&arg2, &arg3, &arg4);
     }
-    arg1->unk36 = rand_next(8, 12);
+    arg1->unk36 = mathRnd(8, 12);
     dll_437_func_4004(arg2, arg3, arg4, &arg1->unk6[0], &arg1->unk1E[0]);
     var_v1 = 1;
     while (var_v1 < arg1->unk36) {
@@ -690,10 +690,10 @@ void dll_437_func_3D04(Object* arg0, EWTrobotpatrol_Data_1D0* arg1) {
                 dll_437_func_40A0(arg1->unk6[var_s1], arg1->unk1E[var_s1], &sp80.transl, arg1->unk0);
                 gDLL_17_partfx->vtbl->spawn(arg0, (var_s1 % 2) + 0x35C, &sp80, 0, -1, NULL);
                 temp_s2 = ((0xFFFF / (s16) arg1->unk36) * var_s1) + arg1->unk38;
-                temp_fs0 = fsin16_precise(temp_s2);
-                temp_s3 = (s16) (s32) (((f32) rand_next(0, 0x600) + (temp_fs0 * 1792.0f)) - 768.0f);
-                temp_fs0 = fcos16_precise(temp_s2);
-                temp_ft0 = rand_next(0, 0x600);
+                temp_fs0 = mathSinfInterp(temp_s2);
+                temp_s3 = (s16) (s32) (((f32) mathRnd(0, 0x600) + (temp_fs0 * 1792.0f)) - 768.0f);
+                temp_fs0 = mathCosfInterp(temp_s2);
+                temp_ft0 = mathRnd(0, 0x600);
                 arg1->unk6[var_s1] += temp_s3;
                 temp_s3 = (s32) (((f32) temp_ft0 + (temp_fs0 * 1792.0f)) - 768.0f);
                 arg1->unk1E[var_s1] += temp_s3;
@@ -709,13 +709,13 @@ void dll_437_func_3D04(Object* arg0, EWTrobotpatrol_Data_1D0* arg1) {
 // offset: 0x4004 | func: 34
 static void dll_437_func_4004(f32 arg0, f32 arg1, f32 arg2, s16* arg3, s16* arg4) {
     f32 sp24 = sqrtf(SQ(arg0) + SQ(arg2));
-    *arg3 = arctan2_f(arg2, arg0);
-    *arg4 = arctan2_f(sp24, arg1);
+    *arg3 = mathAtan2f(arg2, arg0);
+    *arg4 = mathAtan2f(sp24, arg1);
 }
 
 // offset: 0x40A0 | func: 35
 static void dll_437_func_40A0(s16 arg0, s16 arg1, Vec3f* arg2, f32 arg3) {
-    arg2->x = (fsin16_precise(arg1) * fcos16_precise(arg0) * arg3);
-    arg2->y = (fcos16_precise(arg1) * arg3) + 3.0f;
-    arg2->z = (fsin16_precise(arg1) * fsin16_precise(arg0) * arg3);
+    arg2->x = (mathSinfInterp(arg1) * mathCosfInterp(arg0) * arg3);
+    arg2->y = (mathCosfInterp(arg1) * arg3) + 3.0f;
+    arg2->z = (mathSinfInterp(arg1) * mathSinfInterp(arg0) * arg3);
 }

@@ -289,16 +289,16 @@ void dll_711_control(Object *self) {
             } else {
                 self->unkAF |= 0x10;
             }
-            if ((player != NULL) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 50.0f)) {
+            if ((player != NULL) && (vec3Distance(&player->globalPosition, &self->globalPosition) < 50.0f)) {
                 dll_711_func_3430(self, objdata, &sp78, 0, 1, 1);
-                vec3_transform(&sp78, _data_90[0].x, _data_90[0].y, _data_90[0].z, &sp74, &sp70, &sp6C);
+                mathMtxXFMF(&sp78, _data_90[0].x, _data_90[0].y, _data_90[0].z, &sp74, &sp70, &sp6C);
                 temp_fv0 = player->srt.transl.x - sp74;
                 temp_fv1 = player->srt.transl.z - sp6C;
                 if ((SQ(temp_fv0) + SQ(temp_fv1)) < 100.0f) {
                     self->unkAF &= ~0x8;
                     objdata->unk3DB = 2;
                 } else {
-                    vec3_transform(&sp78, _data_90[1].x, _data_90[1].y, _data_90[1].z, &sp74, &sp70, &sp6C);
+                    mathMtxXFMF(&sp78, _data_90[1].x, _data_90[1].y, _data_90[1].z, &sp74, &sp70, &sp6C);
                     temp_fv0 = player->srt.transl.x - sp74;
                     temp_fv1 = player->srt.transl.z - sp6C;
                     if ((SQ(temp_fv0) + SQ(temp_fv1)) < 100.0f) {
@@ -363,7 +363,7 @@ void dll_711_control(Object *self) {
                         gDLL_4_Race->vtbl->func4(self, &objdata->unk18);
                         gDLL_4_Race->vtbl->func10(&objdata->unk18);
                         if (sp54 == 0) {
-                            self->srt.yaw = arctan2_f(self->srt.transl.x - objdata->unk0.transl.x, self->srt.transl.z - objdata->unk0.transl.z);
+                            self->srt.yaw = mathAtan2f(self->srt.transl.x - objdata->unk0.transl.x, self->srt.transl.z - objdata->unk0.transl.z);
                             self->srt.transl.x = objdata->unk0.transl.x;
                             self->srt.transl.y = objdata->unk0.transl.y;
                             self->srt.transl.z = objdata->unk0.transl.z;
@@ -391,7 +391,7 @@ void dll_711_control(Object *self) {
                     gDLL_4_Race->vtbl->func4(self, &objdata->unk18);
                     gDLL_4_Race->vtbl->func10(&objdata->unk18);
                     if (sp54 == 0) {
-                        self->srt.yaw = arctan2_f(self->srt.transl.x - objdata->unk0.transl.x, self->srt.transl.z - objdata->unk0.transl.z);
+                        self->srt.yaw = mathAtan2f(self->srt.transl.x - objdata->unk0.transl.x, self->srt.transl.z - objdata->unk0.transl.z);
                         self->srt.transl.x = objdata->unk0.transl.x;
                         self->srt.transl.y = objdata->unk0.transl.y;
                         self->srt.transl.z = objdata->unk0.transl.z;
@@ -470,16 +470,16 @@ void dll_711_update(Object *self) {
         _bss_8.yaw = -objdata->unk3CC;
         _bss_8.pitch = -objdata->unk3CE;
         _bss_8.roll = -objdata->unk3D0;
-        matrix_from_srt_reversed(&sp7C, &_bss_8);
+        mathRpyXyzMtx(&sp7C, &_bss_8);
         self->velocity.x = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
         self->velocity.y = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
         self->velocity.z = (self->srt.transl.z - self->prevLocalPosition.z) * gUpdateRateInverseF;
         spBC.f[0] = self->velocity.x * 0.93749994f;
         spBC.f[1] = self->velocity.y * 0.93749994f;
         spBC.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&sp7C, spBC.f[0], spBC.f[1], spBC.f[2], &temp_v0->unkC.x, &temp_v0->unkC.y, &temp_v0->unkC.z);
+        mathMtxXFMF(&sp7C, spBC.f[0], spBC.f[1], spBC.f[2], &temp_v0->unkC.x, &temp_v0->unkC.y, &temp_v0->unkC.z);
         dll_711_func_3430(self, objdata, &sp3C, 0, 0, 0);
-        vec3_transform(&sp3C, 0.0f, 0.0f, -10.0f, &objdata->unk3A8, &objdata->unk3AC, &objdata->unk3B0);
+        mathMtxXFMF(&sp3C, 0.0f, 0.0f, -10.0f, &objdata->unk3A8, &objdata->unk3AC, &objdata->unk3B0);
     }
 }
 
@@ -741,8 +741,8 @@ static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl,
     sp6C.scale = 1.0f;
     objdata->unk3D8 -= gUpdateRate;
     if (objdata->unk398 < -1.2f) {
-        sp48[1] += rand_next(0, 155);
-        sp48[2] += rand_next(0, 155);
+        sp48[1] += mathRnd(0, 155);
+        sp48[2] += mathRnd(0, 155);
         volume = (0.0f - objdata->unk398) * 21.0f;
         if ((objdata->unk3E1 & 0xF) && (objdata->unk3D8 <= 0)) {
             sp6C.transl.x = objdata->unk32C[0].x - self->globalPosition.x;
@@ -853,11 +853,11 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     _bss_8.yaw = objdata->unk3CC;
     _bss_8.pitch = objdata->unk3CE;
     _bss_8.roll = objdata->unk3D0;
-    matrix_from_srt(&sp140, &_bss_8);
+    mathYprXyzMtx(&sp140, &_bss_8);
     _bss_8.yaw = -objdata->unk3CC;
     _bss_8.pitch = -objdata->unk3CE;
     _bss_8.roll = -objdata->unk3D0;
-    matrix_from_srt_reversed(&sp100, &_bss_8);
+    mathRpyXyzMtx(&sp100, &_bss_8);
     if (!(objdata->flags & SNOWBIKEFLAG_GROUNDED)) {
         var_fv0 = (f32) -objdata->unk2E0.thrustInput / 60.0f;
         if (var_fv0 > 1.0f) {
@@ -873,7 +873,7 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         }
     }
     // make down/gravity vec? relative to bike orientation
-    vec3_transform(&sp100, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp94.x, &sp94.y, &sp94.z);
+    mathMtxXFMF(&sp100, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp94.x, &sp94.y, &sp94.z);
     if (objdata->unk2E0.thrustInput < 0) {
         // joystick held back
         var_fv1 = -(f32) objdata->unk2E0.thrustInput * 4.0f;
@@ -971,7 +971,7 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     } else {
         arg2->unkC.z = var_fa0;
     }
-    vec3_transform(&sp140, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
+    mathMtxXFMF(&sp140, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
     VECTOR_SCALE(self->velocity, 1.0666667f);
     objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (arg4 != 0) {
@@ -986,7 +986,7 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         sp70.f[0] = self->velocity.x * 0.93749994f;
         sp70.f[1] = self->velocity.y * 0.93749994f;
         sp70.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&sp100, sp70.f[0], sp70.f[1], sp70.f[2], &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
+        mathMtxXFMF(&sp100, sp70.f[0], sp70.f[1], sp70.f[2], &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
         sp7C.f[0] = 0.0f;
         sp7C.f[1] = 1.0f;
         sp7C.f[2] = 0.0f;
@@ -1017,10 +1017,10 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         _bss_8.yaw = -objdata->unk3CC;
         _bss_8.pitch = 0;
         _bss_8.roll = 0;
-        matrix_from_srt_reversed(&spC0, &_bss_8);
-        vec3_transform(&spC0, sp7C.x, sp7C.y, sp7C.z, &sp7C.x, &sp7C.y, &sp7C.z);
-        sp64 = 0x4000 - arctan2_f(sp7C.y, sp7C.z);
-        var_v0 = -(0x4000 - arctan2_f(sp7C.y, sp7C.x));
+        mathRpyXyzMtx(&spC0, &_bss_8);
+        mathMtxXFMF(&spC0, sp7C.x, sp7C.y, sp7C.z, &sp7C.x, &sp7C.y, &sp7C.z);
+        sp64 = 0x4000 - mathAtan2f(sp7C.y, sp7C.z);
+        var_v0 = -(0x4000 - mathAtan2f(sp7C.y, sp7C.x));
         sp64 -= (objdata->unk3CE & 0xFFFF);
         CIRCLE_WRAP(sp64);
         objdata->unk3CE += (((sp64 >> 2) / 3) * (s32) updateRate);
@@ -1031,19 +1031,19 @@ static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     }
     objdata->unk3CC -= (s16) (objdata->unk2E0.turnInput * (70.0f - ((f32) objdata->unk2E0.thrustInput * 0.05f)) * 0.0666f);
     if (objdata->flags & SNOWBIKEFLAG_8) {
-        sp4C = fsin16_precise(objdata->unk3C4);
-        sp48 = fcos16_precise(objdata->unk3C4);
-        sp54 = fsin16_precise(objdata->unk3CC);
-        sp50 = fcos16_precise(objdata->unk3CC);
+        sp4C = mathSinfInterp(objdata->unk3C4);
+        sp48 = mathCosfInterp(objdata->unk3C4);
+        sp54 = mathSinfInterp(objdata->unk3CC);
+        sp50 = mathCosfInterp(objdata->unk3CC);
         if (((sp4C * sp54) + (sp48 * sp50)) > 0.0f) {
             temp1 = -sp48 * sp54;
             temp2 = sp4C * sp50;
             temp3 = sp48 * sp54;
             temp4 = -sp4C * sp50;
             if ((temp3 + temp4) < (temp1 + temp2)) {
-                var_v0 = arctan2_f(-sp48, sp4C);
+                var_v0 = mathAtan2f(-sp48, sp4C);
             } else {
-                var_v0 = arctan2_f(sp48, -sp4C);
+                var_v0 = mathAtan2f(sp48, -sp4C);
             }
             var_v0 -= objdata->unk3CC & 0xFFFF;
             CIRCLE_WRAP(var_v0);
@@ -1101,12 +1101,12 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     _bss_8.yaw = objdata->unk3CC;
     _bss_8.pitch = objdata->unk3CE;
     _bss_8.roll = objdata->unk3D0;
-    matrix_from_srt(&sp11C, &_bss_8);
+    mathYprXyzMtx(&sp11C, &_bss_8);
     _bss_8.yaw = -objdata->unk3CC;
     _bss_8.pitch = -objdata->unk3CE;
     _bss_8.roll = -objdata->unk3D0;
-    matrix_from_srt_reversed(&spDC, &_bss_8);
-    vec3_transform(&spDC, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp7C.x, &sp7C.y, &sp7C.z);
+    mathRpyXyzMtx(&spDC, &_bss_8);
+    mathMtxXFMF(&spDC, 0.0f, arg2->unk28 * arg2->unk1C, 0.0f, &sp7C.x, &sp7C.y, &sp7C.z);
     temp_fv0 = 2.0f * -(f32) objdata->unk2E0.thrustInput;
     temp_fv0 *= arg2->unk18;
     arg2->unkC.z += temp_fv0;
@@ -1143,7 +1143,7 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
     } else {
         arg2->unkC.z = temp_fv0;
     }
-    vec3_transform(&sp11C, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
+    mathMtxXFMF(&sp11C, arg2->unkC.x, arg2->unkC.y, arg2->unkC.z, self->velocity.f, &self->velocity.y, &self->velocity.z);
     VECTOR_SCALE(self->velocity, 1.0666667f);
     objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (arg4 != 0) {
@@ -1157,7 +1157,7 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         sp64.f[0] = self->velocity.x * 0.93749994f;
         sp64.f[1] = self->velocity.y * 0.93749994f;
         sp64.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&spDC, sp64.f[0], sp64.y, sp64.f[2], &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
+        mathMtxXFMF(&spDC, sp64.f[0], sp64.y, sp64.f[2], &arg2->unkC.x, &arg2->unkC.y, &arg2->unkC.z);
         sp70.f[0] = 0.0f;
         sp70.f[1] = 1.0f;
         sp70.f[2] = 0.0f;
@@ -1186,10 +1186,10 @@ static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike
         _bss_8.yaw = -objdata->unk3CC;
         _bss_8.pitch = 0;
         _bss_8.roll = 0;
-        matrix_from_srt_reversed(&sp9C, &_bss_8);
-        vec3_transform(&sp9C, sp70.x, sp70.y, sp70.z, &sp70.x, &sp70.y, &sp70.z);
-        var_s0 = 0x4000 - arctan2_f(sp70.y, sp70.z);
-        temp_a1 = -(0x4000 - arctan2_f(sp70.y, sp70.x));
+        mathRpyXyzMtx(&sp9C, &_bss_8);
+        mathMtxXFMF(&sp9C, sp70.x, sp70.y, sp70.z, &sp70.x, &sp70.y, &sp70.z);
+        var_s0 = 0x4000 - mathAtan2f(sp70.y, sp70.z);
+        temp_a1 = -(0x4000 - mathAtan2f(sp70.y, sp70.x));
         var_s0 -= (objdata->unk3CE & 0xFFFF);
         CIRCLE_WRAP(var_s0);
         objdata->unk3CE += (((var_s0 >> 2) / 3) * (s32) updateRate);
@@ -1229,7 +1229,7 @@ static void dll_711_func_3430(Object *self, IMSnowBike_Data *objdata, MtxF *a2, 
     if (a3 != 0) {
         sp20.yaw += objdata->unk3C8;
     }
-    matrix_from_srt(a2, &sp20);
+    mathYprXyzMtx(a2, &sp20);
 }
 
 // offset: 0x34E4 | func: 26
@@ -1281,8 +1281,8 @@ static int dll_711_func_3598(Object *a0, Object *a1, AnimObj_Data *a2, s8 a3) {
         sp88.yaw = -a0->srt.yaw;
         sp88.pitch = -a0->srt.pitch;
         sp88.roll = -a0->srt.roll;
-        matrix_from_srt_reversed(&sp48, &sp88);
-        vec3_transform(&sp48, spA0[0], spA0[1], spA0[2], &sp44->unkC.x, &sp44->unkC.y, &sp44->unkC.z);
+        mathRpyXyzMtx(&sp48, &sp88);
+        mathMtxXFMF(&sp48, spA0[0], spA0[1], spA0[2], &sp44->unkC.x, &sp44->unkC.y, &sp44->unkC.z);
         temp_v0->thrustInput += (gUpdateRate * 8);
         if (temp_v0->thrustInput > 0x46) {
             temp_v0->thrustInput = 0x46;
@@ -1315,7 +1315,7 @@ static void dll_711_func_3780(Object *self, IMSnowBike_Data *objdata, DLL27_Data
             sp87 = sp86;
             for (var_s2 = 0; var_s2 < objdata->unk3DC; var_s2++) {
                 dll_711_func_3430(self, objdata, &spDC, 1, 1, 1);
-                vec3_transform(&spDC, 
+                mathMtxXFMF(&spDC, 
                                _data_40[var_s2].x, _data_40[var_s2].y, _data_40[var_s2].z, 
                                &sp88[var_s2].x, &sp88[var_s2].y, &sp88[var_s2].z);
                 if (func_80059C40(&objdata->unk32C[var_s2], &sp88[var_s2], _data_7C[var_s2], 
@@ -1326,7 +1326,7 @@ static void dll_711_func_3780(Object *self, IMSnowBike_Data *objdata, DLL27_Data
                     spDC.m[3][0] = sp88[var_s2].x;
                     spDC.m[3][1] = sp88[var_s2].y;
                     spDC.m[3][2] = sp88[var_s2].z;
-                    vec3_transform(&spDC, 
+                    mathMtxXFMF(&spDC, 
                                    -_data_40[var_s2].x, -_data_40[var_s2].y, -_data_40[var_s2].z, 
                                    self->srt.transl.f, &self->srt.transl.y, &self->srt.transl.z);
                 }
@@ -1365,7 +1365,7 @@ static s32 dll_711_func_3A34(Object *self, void *arg1, IMSnowBike_Data *objdata,
     }
     xDiff = self->srt.transl.x - objdata->unk0.transl.x;
     zDiff = self->srt.transl.z - objdata->unk0.transl.z;
-    var_v1 = arctan2_f(xDiff, zDiff) - (self->srt.yaw & 0xFFFF);
+    var_v1 = mathAtan2f(xDiff, zDiff) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(var_v1)
     var_a0 = var_v1 >> 5;
     if (var_a0 > 0x41) {
@@ -1389,7 +1389,7 @@ static void dll_711_func_3C30(Object *self, IMSnowBike_Data *objdata) {
     gDLL_27->vtbl->reset(self, &objdata->unk4C);
     dll_711_func_3430(self, objdata, &sp60, 0, 0, 0);
     for (i = 0; i < objdata->unk3DC; i++) {
-        vec3_transform(&sp60, 
+        mathMtxXFMF(&sp60, 
                        _data_40[i].x, _data_40[i].y, _data_40[i].z, 
                        &objdata->unk32C[i].x, &objdata->unk32C[i].y, &objdata->unk32C[i].z);
     }

@@ -39,9 +39,9 @@ void DR_CloudPerch_setup(Object* self, DR_CloudPerch_Setup* setup, s32 reset) {
     objAddObjectType(self, OBJTYPE_DinoCallSpot);
     objdata = self->data;
     self->srt.yaw = setup->rotation << 8;
-    objdata->unk0 = fsin16_precise(self->srt.yaw);
+    objdata->unk0 = mathSinfInterp(self->srt.yaw);
     objdata->unk4 = 0.0f;
-    objdata->unk8 = fcos16_precise(self->srt.yaw);
+    objdata->unk8 = mathCosfInterp(self->srt.yaw);
     objdata->unkC = (f32) -((self->srt.transl.z * objdata->unk8) + ((objdata->unk0 * self->srt.transl.x) + (objdata->unk4 * self->srt.transl.y)));
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
     if ((s32)mainGetBits(BIT_7A9) == setup->unk19) {

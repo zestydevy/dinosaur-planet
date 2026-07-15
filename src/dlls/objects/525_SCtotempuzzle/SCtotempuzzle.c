@@ -39,10 +39,10 @@ void dll_525_setup(Object* self, DLL525_Setup* setup, s32 arg2) {
     }
     self->srt.yaw = -0x7FFF;
     DLL515Data->unk8 = ((u16)self->srt.yaw) / 8192; // TODO: that cast is sus
-    temp_v1 = rand_next(7, 0xA) * 0xA;
+    temp_v1 = mathRnd(7, 0xA) * 0xA;
     DLL515Data->unk0 = temp_v1;
     DLL515Data->unk4 = temp_v1;
-    if (rand_next(0, 1) != 0) {
+    if (mathRnd(0, 1) != 0) {
         DLL515Data->unkA = 1;
     }
     self->animCallback = dll_525_func_81C;
@@ -90,8 +90,8 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 >= 8) {
                         dll525Data->unk8 = 0;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
+                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, mathRnd(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) mathRnd(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
                     self->srt.yaw = (s16) (s32) ((f32) self->srt.yaw + (512.0f * gUpdateRateF));
@@ -103,8 +103,8 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 < 0) {
                         dll525Data->unk8 = 7;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
+                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, mathRnd(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) mathRnd(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
                     self->srt.yaw = (s16) (s32) ((f32) self->srt.yaw - (512.0f * gUpdateRateF));

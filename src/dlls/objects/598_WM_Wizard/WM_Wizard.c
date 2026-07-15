@@ -247,11 +247,11 @@ void WMWizard_handle_visit_1_first_meeting(Object* self) {
         //Call out to Krystal randomly
         objData->talkTimer -= (s16)gUpdateRateF;
         if ((objData->talkTimer <= 0) && (objData->hasMetKrystal == 0)) {
-            objData->talkTimer = rand_next(0, 600) + 800;
+            objData->talkTimer = mathRnd(0, 600) + 800;
             gDLL_6_AMSFX->vtbl->play(
                 NULL,
-                SOUND_BA8_Randorn_Calling_Krystal_1 + rand_next(0, 2), 
-                0x57 + rand_next(0, 0x28),
+                SOUND_BA8_Randorn_Calling_Krystal_1 + mathRnd(0, 2), 
+                0x57 + mathRnd(0, 0x28),
                 NULL,
                 NULL,
                 0,
@@ -335,7 +335,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
 
     //Pick next walk destination
     if (objData->walkWaitTimer <= 0) {
-        switch (rand_next(1, 4)) {
+        switch (mathRnd(1, 4)) {
         case 1:
             objData->prevWalkIndex = objData->walkIndexFlags;
             objData->walkIndexFlags = 1;
@@ -369,7 +369,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
     if (objData->walkIndexFlags == WALK_STOPPING) {
         //Stopping: Rotate until facing away from centre of mural
         walkData = (RandomWalkData*)&dRandomWalkData[objData->prevWalkIndex * 5];
-        dYaw = ((u16)arctan2_f(walkData->x, walkData->z) & 0xFFFF) - self->srt.yaw;
+        dYaw = ((u16)mathAtan2f(walkData->x, walkData->z) & 0xFFFF) - self->srt.yaw;
         diPrintf("diff %d\n", dYaw);
 
         if ((dYaw < -1000) || (dYaw > 1000)) {
@@ -406,7 +406,7 @@ void WMWizard_handle_visit_2_spirit_df(Object* self) {
         dx = walkData->x - (self->srt.transl.x - objData->home.x);
         dz = walkData->z - (self->srt.transl.z - objData->home.z);
         distance = sqrtf(SQ(dx) + SQ(dz));
-        dYaw = ((u16)arctan2_f(dx, dz) & 0xFFFF) - (self->srt.yaw);
+        dYaw = ((u16)mathAtan2f(dx, dz) & 0xFFFF) - (self->srt.yaw);
         
         if ((dYaw >= -1000) && (dYaw <= 1000)) {
             //Walk towards destination

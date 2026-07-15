@@ -37,7 +37,7 @@ void DIMGate_control(Object* self) {
         }
 
         //Play animation forwards or in reverse, depending on player distance
-        distance = vec3_distance(&self->globalPosition, &player->globalPosition);
+        distance = vec3Distance(&self->globalPosition, &player->globalPosition);
         if (distance < 250.0f) {
             objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
         } else if (distance > 250.0f) {

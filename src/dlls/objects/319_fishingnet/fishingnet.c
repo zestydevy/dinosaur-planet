@@ -89,8 +89,8 @@ void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
         objAnimAdvance(self, 0.006f, gUpdateRateF, NULL);
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
-        self->srt.yaw = arctan2_f(heldPosition->x - endPosition->x, heldPosition->z - endPosition->z) - M_90_DEGREES;
-        self->srt.roll = arctan2_f(heldPosition->y - endPosition->y, sqrtf(SQ(heldPosition->z - endPosition->z) + SQ(heldPosition->x - endPosition->x)));
+        self->srt.yaw = mathAtan2f(heldPosition->x - endPosition->x, heldPosition->z - endPosition->z) - M_90_DEGREES;
+        self->srt.roll = mathAtan2f(heldPosition->y - endPosition->y, sqrtf(SQ(heldPosition->z - endPosition->z) + SQ(heldPosition->x - endPosition->x)));
         
         objhitInfo->unk40 = 16;
         objhitInfo->unk44 = 16;

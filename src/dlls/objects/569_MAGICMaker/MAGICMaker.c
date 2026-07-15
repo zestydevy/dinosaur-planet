@@ -64,9 +64,9 @@ void MAGICMaker_control(Object *self) {
                 bonedustSetup->unk1A = 0x14;
                 bonedustSetup->unk2C = -1;
                 bonedustSetup->unk1C = -1;
-                bonedustSetup->base.x = self->srt.transl.x + rand_next(-300, 300);
+                bonedustSetup->base.x = self->srt.transl.x + mathRnd(-300, 300);
                 bonedustSetup->base.y = self->srt.transl.y;
-                bonedustSetup->base.z = self->srt.transl.z + rand_next(-300, 300);
+                bonedustSetup->base.z = self->srt.transl.z + mathRnd(-300, 300);
                 bonedustSetup->unk24 = -1;
                 bonedustObj = objSetupObject((ObjSetup*)bonedustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 if (bonedustObj) {

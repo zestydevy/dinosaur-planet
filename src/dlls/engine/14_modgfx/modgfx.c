@@ -261,7 +261,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
                 srt.yaw = bss_0[idx]->unk4->srt.yaw;
                 srt.pitch = bss_0[idx]->unk4->srt.pitch;
                 srt.roll = bss_0[idx]->unk4->srt.roll;
-                rotate_vec3(&srt, sp284);
+                mathRotateRPY(&srt, sp284);
             }
         }
         sp25C.x = 0.0f;
@@ -294,7 +294,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
         srt.transl.y = sp284[1] + sp25C.y;
         srt.transl.z = sp284[2] + sp25C.z;
         if (bss_0[idx]->unkA4 & 0x400000) {
-            srt.scale = (bss_0[idx]->unkD4 * 0.5f) + ((bss_0[idx]->unkD4 * 0.5f) / (f32) rand_next(1, 10));
+            srt.scale = (bss_0[idx]->unkD4 * 0.5f) + ((bss_0[idx]->unkD4 * 0.5f) / (f32) mathRnd(1, 10));
         } else {
             srt.scale = bss_0[idx]->unkD4 * 0.01f;
         }
@@ -327,7 +327,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
                 sp26C[0] /= magnitude;
                 sp26C[2] /= magnitude;
             }
-            srt.yaw += (s16) (f32) arctan2_f(sp26C[0], sp26C[2]);
+            srt.yaw += (s16) (f32) mathAtan2f(sp26C[0], sp26C[2]);
         }
         camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0/*.0f*/, NULL);
         if (bss_0[idx]->unk98 != NULL && bss_0[idx]->unk98->next != NULL && bss_0[idx]->unk132 != 0) {
@@ -840,7 +840,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
     }
     var_s0 = 0;
     while (var_s0 < arg0->unkEA) {
-        s16_vec3_apply_srt_rotation(&sp38, var_s1->v.ob);
+        mathYprCat(&sp38, var_s1->v.ob);
         var_s1++;
         var_s0++;
     }

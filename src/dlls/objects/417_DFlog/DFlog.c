@@ -168,7 +168,7 @@ static int dll_417_func_3B8(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
 s32 dll_417_func_400(Object *self, Object *a1) {
     DFlog_Data *objdata = (DFlog_Data*)self->data;
     if ((objdata->unk4EC == 0) && (objdata->dockpoint != NULL)) {
-        return vec3_distance(&a1->globalPosition, &self->globalPosition) < 50.0f;
+        return vec3Distance(&a1->globalPosition, &self->globalPosition) < 50.0f;
     }
     return 0;
 }
@@ -193,8 +193,8 @@ s32 dll_417_func_490(Object *self) {
         srt.transl.y = 0.0f;
         srt.transl.z = 0.0f;
         srt.scale = 1.0f;
-        matrix_from_srt(&mtx, &srt);
-        vec3_transform(&mtx, 0.0f, 0.0f, 1.0f, &sp44, &sp40, &sp3C);
+        mathYprXyzMtx(&mtx, &srt);
+        mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &sp44, &sp40, &sp3C);
         temp2 = -((self->srt.transl.x * sp44) + (sp40 * self->srt.transl.y) + (sp3C * self->srt.transl.z));
         temp = (player->srt.transl.x * sp44) + (sp40 * player->srt.transl.y) + (sp3C * player->srt.transl.z) + temp2;
         if (temp < 0) {
@@ -253,8 +253,8 @@ void dll_417_func_76C(Object *self, f32 *ox, f32 *oy, f32 *oz) {
     srt.pitch = self->srt.pitch;
     srt.roll = self->srt.roll;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 1.5f, -1.0f, ox, oy, oz);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 1.5f, -1.0f, ox, oy, oz);
     *ox = self->srt.transl.x;
     *oy = self->srt.transl.y + 30.0f;
     *oz = self->srt.transl.z;
@@ -286,7 +286,7 @@ void dll_417_func_86C(Object *self, s32 a1) {
 void dll_417_func_944(Object *self, f32 *a1, u32 *a2) {
     f32 temp_fv0;
 
-    temp_fv0 = fsin16_precise(self->srt.pitch);
+    temp_fv0 = mathSinfInterp(self->srt.pitch);
     if (self->srt.pitch > 0) {
         *a2 = 0;
     } else {
@@ -351,12 +351,12 @@ static void dll_417_func_A90(Object *self) {
     srt.transl.x = self->srt.transl.x;
     srt.transl.y = self->srt.transl.y;
     srt.transl.z = self->srt.transl.z;
-    matrix_from_srt(&mtx, &srt);
+    mathYprXyzMtx(&mtx, &srt);
 
     d27data = &objdata->unk28C;
 
     for (i = 0, j = 0; i < (d27data->numTestPoints & 0xF); i++, j++) {
-        vec3_transform(&mtx, 
+        mathMtxXFMF(&mtx, 
             _data_EC[j].x, _data_EC[j].y, _data_EC[j].z, 
             &objdata->unk240[i].x, &objdata->unk240[i].y, &objdata->unk240[i].z);
     }
@@ -399,8 +399,8 @@ static void dll_417_func_BC8(Object* self) {
                     if (dx < temp_fv1) {
                         dx = ((temp_fv1 - dx) / temp_fv1);
                         dx *= (obj->srt.scale * 10.0f);
-                        objdata->unk270[k] += (fsin16_precise(obj->srt.yaw) * dx);
-                        objdata->unk278[k] += (fcos16_precise(obj->srt.yaw) * dx);
+                        objdata->unk270[k] += (mathSinfInterp(obj->srt.yaw) * dx);
+                        objdata->unk278[k] += (mathCosfInterp(obj->srt.yaw) * dx);
                         sp9C[k] += 1;
                     }
                 }
@@ -448,7 +448,7 @@ static void dll_417_func_E8C(Object* self) {
     objdata->dockpoint = objGetNearestTypeTo(OBJTYPE_Dockpoint, self, &distance);
     if (objdata->dockpoint != NULL) {
         dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
-        distance = vec3_distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
+        distance = vec3Distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
         if (objdata->unk4EC == 2) {
             var_fv1 = 0.95f;
         } else {
@@ -504,14 +504,14 @@ static void dll_417_func_E8C(Object* self) {
             objdata->unk284 = var_fa0;
         }
     }
-    spC4 = fsin16_precise(self->srt.yaw) * objdata->unk284;
-    var_fv1 = fcos16_precise(self->srt.yaw) * objdata->unk284;
+    spC4 = mathSinfInterp(self->srt.yaw) * objdata->unk284;
+    var_fv1 = mathCosfInterp(self->srt.yaw) * objdata->unk284;
     objdata->unk258[0].x = (f32) (objdata->unk258[0].x + spC4);
     objdata->unk258[0].z = (f32) (objdata->unk258[0].z + var_fv1);
     objdata->unk258[1].x = (f32) (objdata->unk258[1].x + spC4);
     objdata->unk258[1].z = (f32) (objdata->unk258[1].z + var_fv1);
-    spC4 = fsin16_precise((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
-    var_fv1 = fcos16_precise((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
+    spC4 = mathSinfInterp((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
+    var_fv1 = mathCosfInterp((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
     objdata->unk258[0].x = (f32) (objdata->unk258[0].x + (spC4 * 0.05f));
     objdata->unk258[0].z = (f32) (objdata->unk258[0].z + (var_fv1 * 0.05f));
     objdata->unk258[1].x = (f32) (objdata->unk258[1].x - (spC4 * 0.025f));
@@ -580,8 +580,8 @@ static void dll_417_func_E8C(Object* self) {
     spD8 = objdata->unk240[1].y - objdata->unk240[0].y;
     spDC = objdata->unk240[1].z - objdata->unk240[0].z;
     distance = sqrtf((spD4 * spD4) + (spDC * spDC));
-    self->srt.pitch = -arctan2_f(spD8, distance);
-    self->srt.yaw = arctan2_f(spD4, spDC);
+    self->srt.pitch = -mathAtan2f(spD8, distance);
+    self->srt.yaw = mathAtan2f(spD4, spDC);
     gDLL_27->vtbl->func_1E8(self, &objdata->unk28C, gUpdateRateF);
     gDLL_27->vtbl->func_5A8(self, &objdata->unk28C);
     gDLL_27->vtbl->func_624(self, &objdata->unk28C, gUpdateRateF);
@@ -626,7 +626,7 @@ static void dll_417_func_E8C(Object* self) {
                     }
                     spE0.scale = var_fa0;
                 }
-                spE0.yaw = (arctan2_f(objdata->unk240[0].x - objdata->unk240[1].x, objdata->unk240[0].z - objdata->unk240[1].z) + 0x8000) & 0xFFFF & 0xFFFF;
+                spE0.yaw = (mathAtan2f(objdata->unk240[0].x - objdata->unk240[1].x, objdata->unk240[0].z - objdata->unk240[1].z) + 0x8000) & 0xFFFF & 0xFFFF;
                 spE0.transl.x -= self->srt.transl.x;
                 spE0.transl.y -= self->srt.transl.y;
                 spE0.transl.z -= self->srt.transl.z;
@@ -655,13 +655,13 @@ static void dll_417_func_E8C(Object* self) {
                     sp9C = 1.0f;
                 }
             }
-            if (rand_next(0, 5) == 0) {
+            if (mathRnd(0, 5) == 0) {
                 spE0.transl.x = objdata->unk240[i].x;
                 spE0.scale = sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
                 if (spE0.scale > 0.1f) {
                     spE0.transl.y = self->srt.transl.y;
                     spE0.transl.z = objdata->unk240[i].z;
-                    spE0.yaw = (arctan2_f(objdata->unk258[i].x, objdata->unk258[i].z) + 0x8000) & 0xFFFF & 0xFFFF;
+                    spE0.yaw = (mathAtan2f(objdata->unk258[i].x, objdata->unk258[i].z) + 0x8000) & 0xFFFF & 0xFFFF;
                     spE0.transl.x -= self->srt.transl.x;
                     spE0.transl.y -= self->srt.transl.y;
                     spE0.transl.z -= self->srt.transl.z;

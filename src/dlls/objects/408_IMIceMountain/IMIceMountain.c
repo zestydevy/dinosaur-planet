@@ -37,7 +37,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
     switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case IM_Act1_Rescuing_Tricky:
         player = objGetPlayer();
-        if (player && (vec3_distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
+        if (player && (vec3Distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
             objdata->state = STATE_0;
             break;
         }

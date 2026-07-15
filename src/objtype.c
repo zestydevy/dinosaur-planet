@@ -136,7 +136,7 @@ Object *objGetNearestTypeTo(s32 type, Object *object, float *distance) {
     iend = gObjectTypeIndices[type + 1];
     while (i < iend)
     {
-        f32 distSquared = vec3_distance_squared(&object->globalPosition, &gObjectTypeList[i]->globalPosition);
+        f32 distSquared = vec3DistanceSquared(&object->globalPosition, &gObjectTypeList[i]->globalPosition);
         if (distSquared < minDistSquared) {
             minDistSquared = distSquared;
             result = gObjectTypeList[i];
@@ -176,7 +176,7 @@ Object *objGetNearestTypeToExcludingSelf(s32 type, Object *object, float *distan
     {
         if (object != gObjectTypeList[i])
         {
-            f32 distSquared = vec3_distance_squared(&object->globalPosition, &gObjectTypeList[i]->globalPosition);
+            f32 distSquared = vec3DistanceSquared(&object->globalPosition, &gObjectTypeList[i]->globalPosition);
             if (distSquared < minDistSquared) {
                 minDistSquared = distSquared;
                 result = gObjectTypeList[i];

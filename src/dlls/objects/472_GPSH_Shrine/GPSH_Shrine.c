@@ -206,7 +206,7 @@ void GPSH_Shrine_control(Object* self) {
         }
         switch (objdata->unk15) {
         case 0:
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unk15 = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
@@ -428,7 +428,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
         }
         a2->messages[i] = 0;
     }
-    if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3_distance(&a0->globalPosition, &player->globalPosition))) {
+    if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3Distance(&a0->globalPosition, &player->globalPosition))) {
         gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
     }
     return 0;

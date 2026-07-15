@@ -156,7 +156,7 @@ void CCSH_Shrine_control(Object* self) {
                 mainSetBits(BIT_5B5, 1);
             }
             mainSetBits(BIT_5B9, 0);
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unkF = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);

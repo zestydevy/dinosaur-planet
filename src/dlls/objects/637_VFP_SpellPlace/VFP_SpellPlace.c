@@ -55,7 +55,7 @@ void VFP_SpellPlace_control(Object* self) {
 
     player = objGetPlayer();
     
-    if ((player != NULL) && !(vec3_distance(&self->globalPosition, &player->globalPosition) > 100.0f)) {
+    if ((player != NULL) && !(vec3Distance(&self->globalPosition, &player->globalPosition) > 100.0f)) {
         act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
         switch (act) {
         case 1:

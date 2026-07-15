@@ -59,14 +59,14 @@ void DBTrigger_control(Object* self) {
         } else {
             delta = -(sidekick->srt.transl.x - self->srt.transl.x);
         }
-        dx = fsin16_precise(self->srt.yaw) * delta;
+        dx = mathSinfInterp(self->srt.yaw) * delta;
         
         if (self->srt.transl.z <= sidekick->srt.transl.z) {
             delta = sidekick->srt.transl.z - self->srt.transl.z;
         } else {
             delta = -(sidekick->srt.transl.z - self->srt.transl.z);
         }
-        dz = fcos16_precise(self->srt.yaw) * delta;
+        dz = mathCosfInterp(self->srt.yaw) * delta;
         
         if (dx < objData->boundsMin.x && dz < objData->boundsMin.z) {
             seqIndex = 1;
@@ -81,14 +81,14 @@ void DBTrigger_control(Object* self) {
         } else {
             delta = -(player->srt.transl.x - self->srt.transl.x);
         }
-        dx = fsin16_precise(self->srt.yaw) * delta;
+        dx = mathSinfInterp(self->srt.yaw) * delta;
         
         if (self->srt.transl.z <= player->srt.transl.z) {
             delta = player->srt.transl.z - self->srt.transl.z;
         } else {
             delta = -(player->srt.transl.z - self->srt.transl.z);
         }
-        dz = fcos16_precise(self->srt.yaw) * delta;
+        dz = mathCosfInterp(self->srt.yaw) * delta;
         
         if (dx < objData->boundsMin.x && dz < objData->boundsMin.z) {
             seqIndex = 1;
@@ -138,9 +138,9 @@ int DBTrigger_anim_callback(Object* self, Object* arg1, AnimObj_Data* arg2, s8 a
 
     objData = self->data;
     if (objData->pressed) {
-        if (rand_next(0, 2)) {
-            fxTrans.transl.x = rand_next(-objData->boundsMin.x, objData->boundsMin.x);
-            fxTrans.transl.z = rand_next(-objData->boundsMin.z, objData->boundsMin.z);
+        if (mathRnd(0, 2)) {
+            fxTrans.transl.x = mathRnd(-objData->boundsMin.x, objData->boundsMin.x);
+            fxTrans.transl.z = mathRnd(-objData->boundsMin.z, objData->boundsMin.z);
             if (fxTrans.transl.x >= 0.0f) {
                 absX = fxTrans.transl.x;
             } else {

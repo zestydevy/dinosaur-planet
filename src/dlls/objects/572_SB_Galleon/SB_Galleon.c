@@ -436,7 +436,7 @@ void SB_Galleon_func_B88(Object *self) {
     
     gDLL_12_Minic->vtbl->func9(-25.0f, 0.0f);
     gDLL_12_Minic->vtbl->func7(0);
-    roll = fsin16_precise(objdata->unk74);
+    roll = mathSinfInterp(objdata->unk74);
     if (objdata->unk8B == 0) {
         if (roll < -0.9f) {
             gDLL_6_AMSFX->vtbl->play(NULL, SOUND_27A_Wood_Creak_A, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -578,8 +578,8 @@ void SB_Galleon_func_EAC(Object *self) {
             self->unkDC = 1;
             dx4 = objdata->x3 - 1600.0f;
 
-            dz4 = (fcos16_precise(objdata->unk20) * 150.0f) + objdata->z3;
-            temp_ft1 = fsin16_precise(objdata->unk20) * 60.0f;
+            dz4 = (mathCosfInterp(objdata->unk20) * 150.0f) + objdata->z3;
+            temp_ft1 = mathSinfInterp(objdata->unk20) * 60.0f;
 
             objdata->unk20 = (s16) (objdata->unk20 + (gUpdateRate * 0xB6));
             var_fa1 = (dx4 - self->srt.transl.x) * 0.03125f;
@@ -816,7 +816,7 @@ void SB_Galleon_func_EAC(Object *self) {
                             objdata->unk84 = 4;
                         } else {
                             // spA8 = objdata;
-                            objdata->unk84 = (s8) (rand_next(/*temp_fa0_4, temp_fa1_6,*/ 1, 2) * 2);
+                            objdata->unk84 = (s8) (mathRnd(/*temp_fa0_4, temp_fa1_6,*/ 1, 2) * 2);
                         }
                     }
                 }
@@ -985,9 +985,9 @@ void SB_Galleon_func_EAC(Object *self) {
                 objdata->unk29 = (s8) spB0;
             }
             // spA8 = objdata;
-            temp_v1_2 = arctan2_f(spF4, spEC) + M_180_DEGREES;
+            temp_v1_2 = mathAtan2f(spF4, spEC) + M_180_DEGREES;
             // spB8 = temp_v1_2;
-            temp_v0_14 = arctan2_f(spF0, spE8);
+            temp_v0_14 = mathAtan2f(spF0, spE8);
             var_a0_3 = temp_v1_2 - (self->srt.yaw & 0xFFFF);
             if (var_a0_3 > M_180_DEGREES) {
                 var_a0_3 += -0xFFFF;
@@ -1036,8 +1036,8 @@ void SB_Galleon_func_EAC(Object *self) {
             transform.pitch = self->srt.pitch;
             // spA8 = objdata;
             transform.roll = self->srt.roll;
-            matrix_from_srt(&mtx, &transform);
-            vec3_transform(&mtx, 0.0f, 0.0f, -objdata->unk1C * gUpdateRateF, &objdata->x1, &objdata->y1, &objdata->z1);
+            mathYprXyzMtx(&mtx, &transform);
+            mathMtxXFMF(&mtx, 0.0f, 0.0f, -objdata->unk1C * gUpdateRateF, &objdata->x1, &objdata->y1, &objdata->z1);
             // objdata = spA8;
             if (objdata->unk29 == 7) {
                 objdata->x2 = dx4;

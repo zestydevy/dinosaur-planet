@@ -611,7 +611,7 @@ s32 dll_225_func_1604(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
         
         if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
-            gDLL_6_AMSFX->vtbl->play(self, _data_20C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
             fsa->unk34A |= 2;
         }
     }
@@ -649,7 +649,7 @@ s32 dll_225_func_1878(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             }
         }
         if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
-            gDLL_6_AMSFX->vtbl->play(self, _data_20C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
             fsa->unk34A |= 2;
         }
     }
@@ -688,7 +688,7 @@ s32 dll_225_func_1AEC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
         
         if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
-            gDLL_6_AMSFX->vtbl->play(self, _data_20C[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
             fsa->unk34A |= 2;
         }
     }
@@ -762,7 +762,7 @@ s32 dll_225_func_1F38(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->unk33A != 0) {
-        if (fsa->hitpoints < rand_next(2, 4)) {
+        if (fsa->hitpoints < mathRnd(2, 4)) {
             return 4;
         } else {
             baddie->unk3B6 = 300;
@@ -907,9 +907,9 @@ s32 dll_225_func_2404(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
                     }
                 } else {
                     if ((sp3E == 1) || (sp3E == 0xE)) {
-                        var_v0 = rand_next(0, 1);
+                        var_v0 = mathRnd(0, 1);
                     } else {
-                        var_v0 = rand_next(0, 2);
+                        var_v0 = mathRnd(0, 2);
                     }
                     
                     switch (var_v0) {
@@ -928,7 +928,7 @@ s32 dll_225_func_2404(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
                     baddie->unk3B6 = 0x190;
                 }
             } else {
-                if (rand_next(0, 1) != 0) {
+                if (mathRnd(0, 1) != 0) {
                     if ((sp3E >= 0xE) && (sp39 & 8)) {
                         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 5);
                     } else if (sp39 & 2) {
@@ -939,7 +939,7 @@ s32 dll_225_func_2404(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
                         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xA);
                     }
                 } else {
-                    switch (rand_next(0, 2)) {
+                    switch (mathRnd(0, 2)) {
                     case 0:
                         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 9);
                         break;

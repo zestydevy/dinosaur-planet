@@ -373,12 +373,12 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
     if (objData->soundTimerKrystal < 0.0f) {
         if (pushProgress < 0.0f) {
             //More frequent when Krystal is losing
-            objData->soundTimerKrystal = rand_next(40, 100);
+            objData->soundTimerKrystal = mathRnd(40, 100);
         } else {
             //Less frequent when Krystal is winning
-            objData->soundTimerKrystal = rand_next(120, 240);
+            objData->soundTimerKrystal = mathRnd(120, 240);
         }
-        gDLL_6_AMSFX->vtbl->play(self, dSoundsKrystal[rand_next(0, 2)], MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, dSoundsKrystal[mathRnd(0, 2)], MAX_VOLUME, 0, 0, 0, 0);
     }
     
     //Play random LightFoot sounds
@@ -386,12 +386,12 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
     if (objData->soundTimerLF < 0.0f) {
         if (pushProgress > 0.0f) {
             //More frequent when LightFoot is losing
-            objData->soundTimerLF = rand_next(40, 100);
+            objData->soundTimerLF = mathRnd(40, 100);
         } else {
             //Less frequent when LightFoot is winning
-            objData->soundTimerLF = rand_next(120, 240);
+            objData->soundTimerLF = mathRnd(120, 240);
         }
-        gDLL_6_AMSFX->vtbl->play(self, dSoundsLightFoot[rand_next(0, 2)], MAX_VOLUME, &objData->soundHandleLightFoot, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play(self, dSoundsLightFoot[mathRnd(0, 2)], MAX_VOLUME, &objData->soundHandleLightFoot, 0, 0, 0);
     }
     
     //Adjust the pitch/volume of the wood creaking sound loop wrt. push progress magnitude

@@ -173,8 +173,8 @@ void objfsa_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *callb
     f32 temp_fv1;
 
     if (data->unk340 & 1) {
-        sp24 = fsin16_precise(obj->srt.yaw);
-        temp_fv0 = fcos16_precise(obj->srt.yaw);
+        sp24 = mathSinfInterp(obj->srt.yaw);
+        temp_fv0 = mathCosfInterp(obj->srt.yaw);
         if (data->unk340 & 8) {
             data->unk278 = (-obj->velocity.z * temp_fv0) - (obj->velocity.x * sp24);
             data->speed = data->unk278;
@@ -474,7 +474,7 @@ void objfsa_turn_to_target(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 t
             var_fv0 = obj->globalPosition.x - data->target->globalPosition.x;
             var_fv1 = obj->globalPosition.z - data->target->globalPosition.z;
         }
-        var_v1 = arctan2_f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
+        var_v1 = mathAtan2f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(var_v1)
         obj->srt.yaw += (s32) (((f32) var_v1 * gUpdateRateF) / ((f32) turnDuration * 3.0f));
     }
@@ -544,8 +544,8 @@ void objfsa_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     
     data->unk340 |= 1;
     if (_bss_1C == 0) {
-        var_fa0 = -fsin16_precise(_bss_4) * data->analogInputPower * arg3;
-        var_fa1 = -fcos16_precise(_bss_4) * data->analogInputPower * arg3;
+        var_fa0 = -mathSinfInterp(_bss_4) * data->analogInputPower * arg3;
+        var_fa1 = -mathCosfInterp(_bss_4) * data->analogInputPower * arg3;
         if (data->analogInputPower < 0.02f) {
             var_fa0 = 0.0f;
             var_fa1 = 0.0f;
@@ -561,8 +561,8 @@ void objfsa_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
         obj->velocity.x = 0.0f;
         obj->velocity.z = 0.0f;
     }
-    sp2C = fsin16_precise(obj->srt.yaw);
-    temp_fv0_4 = fcos16_precise(obj->srt.yaw);
+    sp2C = mathSinfInterp(obj->srt.yaw);
+    temp_fv0_4 = mathCosfInterp(obj->srt.yaw);
     data->unk27C = (obj->velocity.x * temp_fv0_4) - (obj->velocity.z * sp2C);
     data->unk278 = (-obj->velocity.z * temp_fv0_4) - (obj->velocity.x * sp2C);
 }
@@ -667,7 +667,7 @@ static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
         data->analogInputPower = 65.0f;
     }
     data->analogInputPower /= 65.0f;
-    _bss_4 = arctan2_f(data->xAnalogInput, -data->yAnalogInput);
+    _bss_4 = mathAtan2f(data->xAnalogInput, -data->yAnalogInput);
     _bss_4 -= data->unk324;
     var_v1 = _bss_4;
     var_v1 -= (obj->srt.yaw & 0xFFFF);
@@ -716,11 +716,11 @@ static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 updateRate) {
             sp88.transl.y = 0;
             sp88.transl.z = 0;
             sp88.scale = 1.0f;
-            matrix_from_srt(&sp48, &sp88);
+            mathYprXyzMtx(&sp48, &sp88);
             if (data->flags & 0x10000) {
-                vec3_transform(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->velocity.y, &sp3C);
+                mathMtxXFMF(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->velocity.y, &sp3C);
             } else {
-                vec3_transform(&sp48, data->unk27C, 0.0f, -data->unk278, &sp40, &sp44, &sp3C);
+                mathMtxXFMF(&sp48, data->unk27C, 0.0f, -data->unk278, &sp40, &sp44, &sp3C);
             }
             obj->velocity.x = sp40;
             obj->velocity.z = sp3C;
@@ -741,11 +741,11 @@ static void objfsa_func_1E30(Object *obj, ObjFSA_Data *data) {
     sp38.transl.y = 0;
     sp38.transl.z = 0;
     sp38.scale = 1.0f;
-    matrix_from_srt(&sp50, &sp38);
+    mathYprXyzMtx(&sp50, &sp38);
     
-    vec3_transform(&sp50, 0.0f, 0.0f, 1.0f, &data->unk274[0].x, &data->unk274[0].y, &data->unk274[0].z);
-    vec3_transform(&sp50, 0.0f, 1.0f, 0.0f, &data->unk274[1].x, &data->unk274[1].y, &data->unk274[1].z);
-    vec3_transform(&sp50, 1.0f, 0.0f, 0.0f, &data->unk274[2].x, &data->unk274[2].y, &data->unk274[2].z);
+    mathMtxXFMF(&sp50, 0.0f, 0.0f, 1.0f, &data->unk274[0].x, &data->unk274[0].y, &data->unk274[0].z);
+    mathMtxXFMF(&sp50, 0.0f, 1.0f, 0.0f, &data->unk274[1].x, &data->unk274[1].y, &data->unk274[1].z);
+    mathMtxXFMF(&sp50, 1.0f, 0.0f, 0.0f, &data->unk274[2].x, &data->unk274[2].y, &data->unk274[2].z);
 }
 
 // offset: 0x1F64 | func: 26 | export: 5

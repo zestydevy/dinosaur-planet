@@ -57,7 +57,7 @@ void SHvines_control(Object* self) {
     
     //Allow the Flame command when nearby
     if (sidekick != NULL) {
-        if (vec3_distance_squared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objSetup->flameDistance)) {
+        if (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objSetup->flameDistance)) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
         }
     }
@@ -107,7 +107,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         if (self->opacity < OBJECT_OPACITY_MAX) {
             srt.scale = self->visRadius * 0.03f;
             for (i = 0; i < gUpdateRate; i++) {
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->get_vtx_world_pos(self, rand_next(0, objData->vertexCount - 1), transl);
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->get_vtx_world_pos(self, mathRnd(0, objData->vertexCount - 1), transl);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_672, &srt, 0x200001, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_673, &srt, 0x200001, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_674, &srt, 0x200001, -1, NULL);

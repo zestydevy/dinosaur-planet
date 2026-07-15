@@ -403,7 +403,7 @@ static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
             var_s1 = objData->unk18;
             for (i = 0; i < objData->unk88; i++) {
                 dll_274_func_2020(self, &mtx);
-                vec3_transform(&mtx, var_s1[i].x, var_s1[i].y, var_s1[i].z, &spEC[i].x, &spEC[i].y, &spEC[i].z);
+                mathMtxXFMF(&mtx, var_s1[i].x, var_s1[i].y, var_s1[i].z, &spEC[i].x, &spEC[i].y, &spEC[i].z);
                 if (func_80059C40(&objData->unk48[i], &spEC[i], 0.5f, 1, &sp90, self, 8, 0xD, 3 + i, 0xA) == 0) {
                     spEB &= ~(1 << i);
                 } else {
@@ -421,7 +421,7 @@ static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
                     mtx.m[3][0] = spEC[i].f[0];
                     mtx.m[3][1] = spEC[i].f[1];
                     mtx.m[3][2] = spEC[i].f[2];
-                    vec3_transform(&mtx, -var_s1[i].f[0], -var_s1[i].f[1], -var_s1[i].f[2], &self->srt.transl.x, &self->srt.transl.f[1], &self->srt.transl.f[2]);
+                    mathMtxXFMF(&mtx, -var_s1[i].f[0], -var_s1[i].f[1], -var_s1[i].f[2], &self->srt.transl.x, &self->srt.transl.f[1], &self->srt.transl.f[2]);
                 }
             }
         } while (spEB);
@@ -442,7 +442,7 @@ void dll_274_func_2020(Object* self, MtxF* oMtx) {
     srt.transl.y = self->srt.transl.y;
     srt.transl.z = self->srt.transl.z;
     
-    matrix_from_srt(oMtx, &srt);
+    mathYprXyzMtx(oMtx, &srt);
 }
 
 // offset: 0x20A0 | func: 16
@@ -454,8 +454,8 @@ void dll_274_func_20A0(Object* self, DLL274_Data* objData) {
     objData->unkA0 = 1.2f;
     objData->unkA4 = 0.6f;
     objData->unkA8 = 0.6f;
-    objData->unkB8 = rand_next(25, 75) * 0.01f;
-    objData->unkBC = objData->unkB8 / rand_next(40, 70);
+    objData->unkB8 = mathRnd(25, 75) * 0.01f;
+    objData->unkBC = objData->unkB8 / mathRnd(40, 70);
     objData->unkC0 = 0.0f;
     objData->unk80 = objSetup->unk18;
     objData->unk82 = objSetup->unk1A;
@@ -553,8 +553,8 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
     if (objData->unkB8 <= objData->unkC0) {
         objData->unkBC *= -1.0f;
     } else if (objData->unkC0 < 0.0f) {
-        objData->unkB8 = rand_next(25, 75) * 0.01f;
-        objData->unkBC = objData->unkB8 / rand_next(40, 70);
+        objData->unkB8 = mathRnd(25, 75) * 0.01f;
+        objData->unkBC = objData->unkB8 / mathRnd(40, 70);
         objData->unkC0 = 0.0f;
     }
     
@@ -637,7 +637,7 @@ s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
     sp50.transl.y = 0.0f;
     sp50.transl.z = 0.0f;
     sp50.scale = 1.0f;
-    rotate_vec3(&sp50, _data_40.f);
+    mathRotateRPY(&sp50, _data_40.f);
     
     objData->unk94.x = _data_40.f[0] * gUpdateRateF;
     objData->unk94.z = _data_40.f[2] * gUpdateRateF;

@@ -104,7 +104,7 @@ void WGboulder_handle_motion(Object* self) {
     self->velocity.y *= 0.97f;
     dx = self->srt.transl.x - objData->curves.unk0.unk68.x;
     dz = self->srt.transl.z - objData->curves.unk0.unk68.z;
-    self->srt.yaw = arctan2_f(objData->curves.unk0.unk74, objData->curves.unk0.unk7C) + M_180_DEGREES;
+    self->srt.yaw = mathAtan2f(objData->curves.unk0.unk74, objData->curves.unk0.unk7C) + M_180_DEGREES;
     
     magnitude = sqrtf(SQ(dx) + SQ(dz));
     magnitude -= 60.0f;

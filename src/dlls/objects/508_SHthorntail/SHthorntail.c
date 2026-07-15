@@ -301,7 +301,7 @@ void thorntail_control(Object* self) {
     if (func_80026DF4(self, data_40, 15, objdata->unk874, &objdata->unk84C) == 0) {
         objdata->unk874 = 0;
         objdata->mapAct = gDLL_29_Gplay->vtbl->get_act(self->mapID);
-        objdata->playerDist = vec3_distance(&self->globalPosition, &player->globalPosition);
+        objdata->playerDist = vec3Distance(&self->globalPosition, &player->globalPosition);
         switch (setup->thorntail) {
         case THORNTAIL_1_Sleepy:
             thorntail_sleepy_control(self, objdata, setup);
@@ -357,8 +357,8 @@ u32 thorntail_get_data_size(Object *self, u32 offsetAddr) {
 static void thorntail_update_shadow(Object *self) {
     MtxF mtx;
 
-    matrix_from_srt(&mtx, &self->srt);
-    vec3_transform(&mtx, 0.0f, 0.0f, 0.0f, &self->shadow->tr.x, &self->shadow->tr.y, &self->shadow->tr.z);
+    mathYprXyzMtx(&mtx, &self->srt);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, 0.0f, &self->shadow->tr.x, &self->shadow->tr.y, &self->shadow->tr.z);
 }
 
 // offset: 0x608 | func: 8
@@ -435,9 +435,9 @@ static void thorntail_sleepy_init(Object *self, SHthorntail_Data *objdata, SHtho
     self->srt.transl.y = objdata->currentCurve->pos.y;
     self->srt.transl.z = objdata->currentCurve->pos.z;
     self->srt.yaw = objdata->currentCurve->unk2C << 8;
-    objdata->eatingTimer = rand_next(500, 800);
-    objdata->grazingTimer = rand_next(2000, 3000);
-    objdata->grazingAltAnimSelector = rand_next(1, 2);
+    objdata->eatingTimer = mathRnd(500, 800);
+    objdata->grazingTimer = mathRnd(2000, 3000);
+    objdata->grazingAltAnimSelector = mathRnd(1, 2);
     objdata->talkSeqs = sSleepyTalkSeqs;
     objdata->talkSeqsCount = ARRAYCOUNT(sSleepyTalkSeqs);
 }
@@ -529,7 +529,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
         }
         if (numNodeOptions != 0) {
             // Choose random eligible branch
-            objdata->targetCurve = nodeOptions[rand_next(0, numNodeOptions - 1)];
+            objdata->targetCurve = nodeOptions[mathRnd(0, numNodeOptions - 1)];
             objdata->prevCurve = objdata->currentCurve;
             objdata->flags &= ~THORNTAILFLAG_AtTarget;
         } else {
@@ -592,20 +592,20 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
             if (objdata->flags & THORNTAILFLAG_ModAnimDone) {
                 objdata->state = THORNTAILSTATE_Grazing;
                 objdata->grazingAltAnimSelector = objdata->grazingAltAnimSelector - 1;
-                objdata->eatingTimer = rand_next(500, 800);
+                objdata->eatingTimer = mathRnd(500, 800);
             }
             break;
         case THORNTAILSTATE_Grazing_Swallowing:
             if (objdata->flags & THORNTAILFLAG_ModAnimDone) {
                 objdata->state = THORNTAILSTATE_Grazing;
-                objdata->grazingAltAnimSelector = rand_next(1, 2);
-                objdata->eatingTimer = rand_next(500, 800);
+                objdata->grazingAltAnimSelector = mathRnd(1, 2);
+                objdata->eatingTimer = mathRnd(500, 800);
             }
             break;
         case THORNTAILSTATE_StartDrinking:
             if (objdata->flags & THORNTAILFLAG_ModAnimDone) {
                 objdata->state = THORNTAILSTATE_Drinking;
-                objdata->drinkTimer = rand_next(1000, 2000);
+                objdata->drinkTimer = mathRnd(1000, 2000);
             }
             break;
         case THORNTAILSTATE_Drinking:
@@ -665,14 +665,14 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
             } else {
                 // Eat that lovely SwapStone Hollow grass
                 objdata->state = THORNTAILSTATE_Grazing;
-                objdata->eatingTimer = rand_next(500, 800);
-                objdata->grazingTimer = rand_next(2000, 3000);
+                objdata->eatingTimer = mathRnd(500, 800);
+                objdata->grazingTimer = mathRnd(2000, 3000);
             }
             break;
         }
     } else {
         // Moving toward next curve node
-        objdata->distToTargetCurve = vec3_distance_xz(&self->globalPosition, &objdata->targetCurve->pos);
+        objdata->distToTargetCurve = vec3DistanceXZ(&self->globalPosition, &objdata->targetCurve->pos);
         if ((objdata->distToTargetCurve < 30.0f) && ((objdata->flags & THORNTAILFLAG_ModAnimDone) != 0)) {
             // Reached target curve
             objdata->flags |= THORNTAILFLAG_AtTarget;
@@ -689,7 +689,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
             default:
                 vx = objdata->targetCurve->pos.x - objdata->prevCurve->pos.x;
                 vz = objdata->targetCurve->pos.z - objdata->prevCurve->pos.z;
-                objdata->targetAngle = arctan2_f(-vx, -vz);
+                objdata->targetAngle = mathAtan2f(-vx, -vz);
                 objdata->startAngle = self->srt.yaw;
                 objdata->angleToTarget = self->srt.yaw - (objdata->targetAngle & 0xFFFF);
                 CIRCLE_WRAP(objdata->angleToTarget);
@@ -855,9 +855,9 @@ static void thorntail_trader_init(Object *self, SHthorntail_Data *objdata, SHtho
     self->srt.transl.y = objdata->currentCurve->pos.y;
     self->srt.transl.z = objdata->currentCurve->pos.z;
     self->srt.yaw = objdata->currentCurve->unk2C << 8;
-    objdata->eatingTimer = rand_next(500, 800);
-    objdata->grazingTimer = rand_next(2000, 3000);
-    objdata->grazingAltAnimSelector = rand_next(1, 2);
+    objdata->eatingTimer = mathRnd(500, 800);
+    objdata->grazingTimer = mathRnd(2000, 3000);
+    objdata->grazingAltAnimSelector = mathRnd(1, 2);
     objdata->talkSeqs = sTraderTalkSeqs;
     objdata->talkSeqsCount = ARRAYCOUNT(sTraderTalkSeqs);
 }
@@ -890,7 +890,7 @@ static void thorntail_trader_act1_control(Object *self, SHthorntail_Data *objdat
     player = objGetPlayer();
     thorntail_common_control(self, objdata, setup);
     if ((objdata->state == THORNTAILSTATE_BlockingProgression) && (sidekick != NULL)) {
-        if (vec3_distance_squared(&player->globalPosition, &self->globalPosition) < SQ(70.0f)) {
+        if (vec3DistanceSquared(&player->globalPosition, &self->globalPosition) < SQ(70.0f)) {
             // Allow distract command
             ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
         }

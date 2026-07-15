@@ -151,8 +151,8 @@ void SHrocketmushroom_control(Object* self) {
         srt.transl.y = 0.0f;
         srt.transl.z = 0.0f;
         srt.scale = 1.0f;
-        matrix_from_srt(&mtx, &srt);
-        vec3_transform(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
+        mathYprXyzMtx(&mtx, &srt);
+        mathMtxXFMF(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
         srt.transl.x = self->srt.transl.x + (offset.x * 23.0f);
         srt.transl.y = self->srt.transl.y + (offset.y * 23.0f);
         srt.transl.z = self->srt.transl.z + (offset.z * 23.0f);
@@ -309,7 +309,7 @@ void SHrocketmushroom_handle_state_0_idle(Object* self, SHrocketmushroom_AnimDat
     //Set up countdown to launching a spore
     if (objData->flags & FLAG_State_Entered) {
         objData->flags &= ~FLAG_State_Entered;
-        objData->timer = rand_next(-50, 50) + objSetup->sporeLaunchInterval;
+        objData->timer = mathRnd(-50, 50) + objSetup->sporeLaunchInterval;
     }
     
     //When timer runs out, change to spore launching state
@@ -363,8 +363,8 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 1.0f, 0.0f, &offset.f[0], &offset.f[1], &offset.f[2]);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 1.0f, 0.0f, &offset.f[0], &offset.f[1], &offset.f[2]);
     srt.transl.x = offset.f[0] * 26.0f;
     srt.transl.y = offset.f[1] * 26.0f;
     srt.transl.z = offset.f[2] * 26.0f;
@@ -397,8 +397,8 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
     srt.transl.x = offset.x * 23.0f;
     srt.transl.y = offset.y * 23.0f;
     srt.transl.z = offset.z * 23.0f;
@@ -419,10 +419,10 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
         debrisSetup->unk1A = self->srt.yaw;
         debrisSetup->unk1C = self->srt.pitch;
         debrisSetup->unk1E = self->srt.roll;
-        debrisSetup->unk20 = rand_next(200, 300);
+        debrisSetup->unk20 = mathRnd(200, 300);
         debrisSetup->unk28 = -50;
-        debrisSetup->unk2E = rand_next(1200, 2000);
-        debrisSetup->unk30 = rand_next(1200, 2000);
+        debrisSetup->unk2E = mathRnd(1200, 2000);
+        debrisSetup->unk30 = mathRnd(1200, 2000);
         debrisSetup->unk38 = 200;
         debrisSetup->unk3A = 150;
         debrisSetup->unk3C = 7;
@@ -448,8 +448,8 @@ void SHrocketmushroom_reset(Object* self, SHrocketmushroom_Data* objData, int st
     SHrocketmushroom_Setup* objSetup;
 
     objSetup = (SHrocketmushroom_Setup*)self->setup;
-    self->srt.roll = rand_next(-1500, 1500);
-    self->srt.pitch = rand_next(-1500, 1500);
+    self->srt.roll = mathRnd(-1500, 1500);
+    self->srt.pitch = mathRnd(-1500, 1500);
     self->opacity = OBJECT_OPACITY_MAX;
     self->srt.flags &= ~OBJFLAG_INVISIBLE;
     self->srt.transl.x = objSetup->base.x;
@@ -470,5 +470,5 @@ void SHrocketmushroom_reset(Object* self, SHrocketmushroom_Data* objData, int st
 // offset: 0x114C | func: 16
 /** Checks whether the player is more than 80 units away. */
 int SHrocketmushroom_is_player_far_away(Object* self) {
-    return (vec3_distance_squared(&self->globalPosition, &objGetPlayer()->globalPosition) > SQ(80));
+    return (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) > SQ(80));
 }

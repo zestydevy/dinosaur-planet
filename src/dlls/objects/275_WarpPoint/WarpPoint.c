@@ -92,7 +92,7 @@ void WarpPoint_control(Object *self) {
                 objdata->unkC = 1;
             }
         }
-        if ((setup->warpID >= 0) && (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->dist)) {
+        if ((setup->warpID >= 0) && (vec3Distance(&self->globalPosition, &player->globalPosition) < objdata->dist)) {
             mapWarpPlayer(setup->warpID, TRUE);
         }
         break;

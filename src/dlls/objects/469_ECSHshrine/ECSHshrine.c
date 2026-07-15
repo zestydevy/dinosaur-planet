@@ -192,7 +192,7 @@ void ECSHshrine_control(Object* self) {
     //STATE MACHINE
     switch (objdata->state) {
     case ECShrine_STATE_Waiting:
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->testStartRadius) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objdata->testStartRadius) {
             objdata->state = ECShrine_STATE_Test_Start;
             mainSetBits(BIT_DB_Entered_Shrine_3, 0);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
@@ -225,7 +225,7 @@ void ECSHshrine_control(Object* self) {
         objdata->substate = Cup_STATE_Round_Start;
         objdata->delayTimer = 40;
         objdata->shuffles = 16;
-        objdata->spiritCup = rand_next(0, 5);
+        objdata->spiritCup = mathRnd(0, 5);
         gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         break;
     case ECShrine_STATE_Cups_Round_1:
@@ -265,11 +265,11 @@ void ECSHshrine_control(Object* self) {
 
                     //Pick one of 8 different ways of shuffling cups (some options only used in later rounds)
                     if (objdata->state == ECShrine_STATE_Cups_Round_1) {
-                        i = rand_next(0, 1);
+                        i = mathRnd(0, 1);
                     } else if (objdata->state == ECShrine_STATE_Cups_Round_2) {
-                        i = rand_next(0, 5);
+                        i = mathRnd(0, 5);
                     } else {
-                        i = rand_next(0, 7);
+                        i = mathRnd(0, 7);
                     }
 
                     //Perform the chosen shuffle
@@ -364,7 +364,7 @@ void ECSHshrine_control(Object* self) {
                 } else if (objdata->choiceWasCorrect == TRUE) {
                     if (objdata->state == ECShrine_STATE_Cups_Round_1) {
                         //Go to round 2
-                        objdata->spiritCup = rand_next(0, 5);
+                        objdata->spiritCup = mathRnd(0, 5);
                         objdata->state = ECShrine_STATE_Cups_Round_2;
                         objdata->substate = Cup_STATE_Round_End;
                         objdata->musicPlayTimer = 150;
@@ -375,7 +375,7 @@ void ECSHshrine_control(Object* self) {
                         gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                     } else if (objdata->state == ECShrine_STATE_Cups_Round_2) {
                         //Go to round 3
-                        objdata->spiritCup = rand_next(0, 5);
+                        objdata->spiritCup = mathRnd(0, 5);
                         objdata->state = ECShrine_STATE_Cups_Round_3;
                         objdata->substate = Cup_STATE_Round_End;
                         objdata->musicPlayTimer = 150;

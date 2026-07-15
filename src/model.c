@@ -858,12 +858,12 @@ void mod_func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
             object->srt.transl.f[2] += gWorldZ;
         }
     } else {
-        matrix_from_srt(mf, &object->srt);
+        mathYprXyzMtx(mf, &object->srt);
         if (object->id == OBJ_ScorpionRobot) {
-            matrix_from_yaw(((DLL_234_ScorpionRobot*)object->dll)->vtbl->get_spin(object), mf);
+            mathMtxApplyYaw(((DLL_234_ScorpionRobot*)object->dll)->vtbl->get_spin(object), mf);
         }
         if (yPrescale != 1.0f) {
-            matrix_prescale_y(mf, yPrescale);
+            mathSquashY(mf, yPrescale);
         }
         if (object->parent == NULL) {
             object->srt.transl.f[0] += gWorldX;
@@ -1362,7 +1362,7 @@ void mod_func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF
             var_s0 = arg3;
         }
         if (i == 0 && obj2 != obj) {
-            vec3_transform(var_s0, 0.0f, 0.0f, 0.0f, &sp70[2], &sp70[1], &sp70[0]);
+            mathMtxXFMF(var_s0, 0.0f, 0.0f, 0.0f, &sp70[2], &sp70[1], &sp70[0]);
             obj->srt.transl.f[0] = sp70[2] + gWorldX;
             obj->srt.transl.f[1] = sp70[1];
             obj->srt.transl.f[2] = sp70[0] + gWorldZ;
@@ -1372,7 +1372,7 @@ void mod_func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF
         sp70[0] = model->hitSpheres[i].z;
         f0 = model->hitSpheres[i].unk2;
         modelInst->unk24[i].f[0] = obj2->srt.scale * f0;
-        vec3_transform(var_s0, sp70[2], sp70[1], sp70[0], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
+        mathMtxXFMF(var_s0, sp70[2], sp70[1], sp70[0], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
         if (obj2->parent != NULL) {
             camTransformPointByObject(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj2->parent);
             modelInst->unk24[i].f[1] -= gWorldX;
@@ -1407,7 +1407,7 @@ void mod_func_8001AC44(ModelInstance* modelInst, Model* model, Object* obj, MtxF
             pos.z = model->hitSpheres[i].z;
             f0 = model->hitSpheres[i].unk2;
             modelInst->unk24[i].f[0] = f0 * arg6;
-            vec3_transform(var_s6, pos.x, pos.y, pos.z, &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
+            mathMtxXFMF(var_s6, pos.x, pos.y, pos.z, &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
             if (obj->parent != NULL) {
                 camTransformPointByObject(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj->parent);
                 modelInst->unk24[i].f[1] -= gWorldX;

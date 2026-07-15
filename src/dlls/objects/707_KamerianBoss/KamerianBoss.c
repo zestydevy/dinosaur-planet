@@ -153,9 +153,9 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     if (projectile != NULL) {
         projectile->srt.pitch = arg5;
         projectile->srt.yaw = arg4;
-        projectile->velocity.x = fcos16(arg5) * fsin16(arg4) * arg6;
-        projectile->velocity.y = fsin16(arg5) * arg6;
-        projectile->velocity.z = fcos16(arg5) * fcos16(arg4) * arg6;
+        projectile->velocity.x = Cosf(arg5) * Sinf(arg4) * arg6;
+        projectile->velocity.y = Sinf(arg5) * arg6;
+        projectile->velocity.z = Cosf(arg5) * Cosf(arg4) * arg6;
         projectile->unkC4 = self;
     }
 }
@@ -247,7 +247,7 @@ s16 KamerianBoss_func_558(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 
                 if (temp_fv0 < 0.0f) {
                     var_fa1 = -var_fa1;
                 }
-                sp7C[var_s2] = arctan2_f(((temp_fs5 / temp_fv0) * var_fa1) - ((arg7 * temp_fv0) / (2.0f * var_fa1)), var_fa1);
+                sp7C[var_s2] = mathAtan2f(((temp_fs5 / temp_fv0) * var_fa1) - ((arg7 * temp_fv0) / (2.0f * var_fa1)), var_fa1);
                 var_s2 += 1;
             }
         }
@@ -293,7 +293,7 @@ void KamerianBoss_do_flame_attack(Object *self, KamerianBoss_Data *objdata) {
     if (!(objdata->player->srt.transl.y < (objdata->playerStartY - 20.0f))) {
         mainGetBufferedPlayerPos(0.5f, &playerX, &playerY, &playerZ);
         playerY += 20.0f;
-        sp42 = atan2f_to_s(playerX - headX, playerZ - headZ);
+        sp42 = Arctanf(playerX - headX, playerZ - headZ);
         temp_t7 = KamerianBoss_func_558(headX, headY, headZ, playerX, playerY, playerZ, 7.8f, -0.046f, 0);
         if ((self->curModAnimId == KD_MODANIM_ATTACK) && (self->animProgress >= 0.18f) && !(objdata->flameDebounce)) {
             KamerianBoss_create_projectile(self, headX, headY, headZ, sp42, temp_t7, 7.8f, OBJ_KamerianFlame);
@@ -304,7 +304,7 @@ void KamerianBoss_do_flame_attack(Object *self, KamerianBoss_Data *objdata) {
             objdata->flameAttackTimer -= gUpdateRate;
             return;
         }
-        objdata->flameAttackTimer = rand_next(270, 372);
+        objdata->flameAttackTimer = mathRnd(270, 372);
         if ((self->curModAnimId != KD_MODANIM_ATTACK) || (objdata->animTickDelta == 0.0f)) {
             objAnimSet(self, KD_MODANIM_ATTACK, 0.0f, 0);
             objdata->animTickDelta = 0.0097f;
@@ -356,7 +356,7 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
         return;
     }
     
-    *timer = rand_next(90, 270);
+    *timer = mathRnd(90, 270);
     if (1){} // @fake
     
     temp_fv0_2 = player->globalPosition.x - sp80;
@@ -370,11 +370,11 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
         } else {
             sp52 = -10000;
         }
-        sp6C = (fsin16(sp52) * 400.0f) + sp80;
+        sp6C = (Sinf(sp52) * 400.0f) + sp80;
         sp68 = player->globalPosition.y;
-        sp64 = (fcos16(sp52) * 400.0f) + sp7C;
+        sp64 = (Cosf(sp52) * 400.0f) + sp7C;
     }
-    sp52 = atan2f_to_s(sp6C - sp78, sp64 - sp70);
+    sp52 = Arctanf(sp6C - sp78, sp64 - sp70);
     temp2 = KamerianBoss_func_558(sp78, sp74, sp70, sp6C, sp68, sp64, 8.5f, -0.22f, 1);
     KamerianBoss_create_projectile(self, sp78, sp74, sp70, sp52, temp2, 8.5f, OBJ_KamerianAcid);
 }
@@ -446,10 +446,10 @@ void KamerianBoss_func_E94(Object *self, s32 arg1) {
     } else {
         var_a2 = 6;
     }
-    temp_v1 = rand_next(0, 4) + var_a2;
+    temp_v1 = mathRnd(0, 4) + var_a2;
     sp40 = temp_v1 + 1;
     sp44 = temp_v1;
-    temp_fv0 = (f32) rand_next(0, 1000) * 0.001f;
+    temp_fv0 = (f32) mathRnd(0, 1000) * 0.001f;
     f2 = objdata->attachmentPositions[sp44].x;
     f12 = objdata->attachmentPositions[sp44].y;
     f18 = objdata->attachmentPositions[sp44].z;

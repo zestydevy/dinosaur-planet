@@ -34,10 +34,10 @@ ObjectPairCallback sObjectPairCallbacks[16];
     f32 dy;
     f32 dz;
 
-    sinYaw = fsin16_precise(-(area->yaw << 0x8));
-    cosYaw = fcos16_precise(-(area->yaw << 0x8));
-    sinPitch = fsin16_precise(-(area->pitch << 0x8));
-    cosPitch = fcos16_precise(-(area->pitch << 0x8));
+    sinYaw = mathSinfInterp(-(area->yaw << 0x8));
+    cosYaw = mathCosfInterp(-(area->yaw << 0x8));
+    sinPitch = mathSinfInterp(-(area->pitch << 0x8));
+    cosPitch = mathCosfInterp(-(area->pitch << 0x8));
 
     dx = *x - area->base.x;
     dy = *y - area->base.y;
@@ -117,7 +117,7 @@ s16 objAngleToObjectXZ(Object* objA, Object* objB, f32* distance) {
     dx = objA->srt.transl.x - objB->srt.transl.x;
     dz = objA->srt.transl.z - objB->srt.transl.z;
 
-    angle = arctan2_f(dx, dz);
+    angle = mathAtan2f(dx, dz);
 
     //(Optional) Store distance
     if (distance != NULL) {
@@ -172,10 +172,10 @@ s32 objGetAttachPointWorldSpace(Object* obj, s32 attachIdx, f32* ox, f32* oy, f3
         srt.pitch = obj->def->pAttachPoints[attachIdx].rot.y;
         srt.roll = obj->def->pAttachPoints[attachIdx].rot.z;
     }
-    matrix_from_srt_reversed(&attachPointMtx, &srt);
+    mathRpyXyzMtx(&attachPointMtx, &srt);
 
     //Transform attach point by its bone's matrix
-    matrix_concat_4x3(&attachPointMtx, boneMtx, &attachPointMtx);
+    mathMtxCat4x3F(&attachPointMtx, boneMtx, &attachPointMtx);
 
     //Store the transformed coords
     *ox = attachPointMtx.m[3][0];
@@ -274,7 +274,7 @@ Object* objFindClosestObject(Object* obj, s32 objID, f32* distance) {
     if (objID != -1) {
         for (i = start; i < numObjs; i++) {
             if (objID == objects[i]->id && obj != objects[i]) {
-                distTemp = vec3_distance_squared(&obj->globalPosition, &objects[i]->globalPosition);
+                distTemp = vec3DistanceSquared(&obj->globalPosition, &objects[i]->globalPosition);
                 if (distTemp < *distance) {
                     *distance = distTemp;
                     outObj = objects[i];
@@ -283,7 +283,7 @@ Object* objFindClosestObject(Object* obj, s32 objID, f32* distance) {
         }
     } else {
         for (i = start; i < numObjs; i++) {
-            distTemp = vec3_distance_squared(&obj->globalPosition, &(objects[i])->globalPosition);
+            distTemp = vec3DistanceSquared(&obj->globalPosition, &(objects[i])->globalPosition);
             // @bug? why exclude a dist of 0 here?
             if (distTemp != 0.0f && distTemp < *distance) {
                 *distance = distTemp;

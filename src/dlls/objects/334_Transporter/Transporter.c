@@ -105,7 +105,7 @@ void Transporter_control(Object *self) {
     }
 
     //Handle the player being nearby, while the warp has yet to begin
-    distToPlayer = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
+    distToPlayer = vec3DistanceXZ(&player->globalPosition, &self->globalPosition);
     if ((objdata->isOutbound == FALSE) && (objdata->isPoweringUp == FALSE) && (distToPlayer < 40.0f)) {
         if (!objdata->mGfxKrazoaPoints) {
             objdata->mGfxKrazoaPoints = dllLoad(DLL_ID_140, 1);
@@ -149,8 +149,8 @@ void Transporter_control(Object *self) {
 
         //Emanate a beam of light from a randomly-selected point on the Krazoa symbol (2.5% chance) 
         if (((setup->gamebitEnabled == NO_GAMEBIT) || mainGetBits(setup->gamebitEnabled)) && 
-            (rand_next(0, 40) == 0)) {
-            objdata->mGfxKrazoaPoints->vtbl->func0(self, rand_next(0, 5), NULL, 1, -1, NULL);
+            (mathRnd(0, 40) == 0)) {
+            objdata->mGfxKrazoaPoints->vtbl->func0(self, mathRnd(0, 5), NULL, 1, -1, NULL);
         }
     }
 
@@ -203,9 +203,9 @@ void Transporter_control(Object *self) {
                     for (i = 0; i < objdata->particleCount; i++) {
                         gDLL_17_partfx->vtbl->spawn(player, PARTICLE_79, NULL, PARTFXFLAG_4, -1, NULL);
                     }
-                    camSetShakeOffset(rand_next(0, 10) * 0.1f);
+                    camSetShakeOffset(mathRnd(0, 10) * 0.1f);
                 } else if ((objdata->isOutbound == FALSE) && (self->unkDC < 200)) {
-                    camSetShakeOffset(rand_next(0, 10) * 0.05f);
+                    camSetShakeOffset(mathRnd(0, 10) * 0.05f);
                 }
 
                 //Create wide ripples periodically, with a randomised vertical offset

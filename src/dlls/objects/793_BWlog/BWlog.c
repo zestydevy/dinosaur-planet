@@ -136,7 +136,7 @@ void BWlog_control(Object* self) {
     objdata->dockpoint = objGetNearestTypeTo(OBJTYPE_Dockpoint, self, &distance);
     if (objdata->dockpoint != NULL) {
         dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
-        distance = vec3_distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
+        distance = vec3Distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
         // Reduce velocity while near a dockpoint
         if (objdata->mountState == VEHICLE_Mounted) {
             damp = 0.95f;
@@ -183,26 +183,26 @@ void BWlog_control(Object* self) {
     srt.transl.x = self->srt.transl.x;
     srt.transl.y = self->srt.transl.y;
     srt.transl.z = self->srt.transl.z;
-    matrix_from_srt(&logMtx, &srt);
+    mathYprXyzMtx(&logMtx, &srt);
     srt.roll = 0;
     srt.transl.x = 0;
     srt.transl.y = 0;
     srt.transl.z = 0;
-    matrix_from_srt(&pitchYawMtx, &srt);
+    mathYprXyzMtx(&pitchYawMtx, &srt);
     srt.yaw = -srt.yaw;
     srt.pitch = -srt.pitch;
-    matrix_from_srt_reversed(&invPitchYawMtx, &srt);
+    mathRpyXyzMtx(&invPitchYawMtx, &srt);
 
     //Update the log's two endpoints
     for (i = 0; i < 2; i++) {
         // Recalculate log end points from current matrix
-        vec3_transform(&logMtx, 
+        mathMtxXFMF(&logMtx, 
                        dLocalEndpointCoords[i].x, dLocalEndpointCoords[i].y, dLocalEndpointCoords[i].z, 
                        &objdata->endPoints[i].x, &objdata->endPoints[i].y, &objdata->endPoints[i].z);
         // Do water physics for this side of the log
         BWlog_handle_water(self, objdata, i);
         // Factor in riverflow influence
-        vec3_transform(&invPitchYawMtx, 
+        mathMtxXFMF(&invPitchYawMtx, 
                        objdata->flowX[i], 0.0f, objdata->flowZ[i], 
                        &vel[0], &vel[1], &vel[2]);
         vel[0] *= -0.5f;
@@ -216,7 +216,7 @@ void BWlog_control(Object* self) {
             objdata->powerX[i] += ((vel[0] - objdata->powerX[i]) * gUpdateRateF * 0.1f);
         }
         // Convert powers to velocity in world space
-        vec3_transform(&pitchYawMtx, 
+        mathMtxXFMF(&pitchYawMtx, 
                        objdata->powerX[i], 0.0f, -objdata->powerZ[i], 
                        &objdata->velocity[i].x, &sp9C, &objdata->velocity[i].z);
         // Apply velocity
@@ -235,7 +235,7 @@ void BWlog_control(Object* self) {
     self->srt.transl.z = vec.f[2] * 0.5f;
     // Align object pitch with pitch of end points line
     VECTOR_SUBTRACT(objdata->endPoints[1], objdata->endPoints[0], vec);
-    self->srt.pitch = -arctan2_f(vec.f[1], sqrtf(SQ(vec.f[2]) + SQ(vec.f[0])));
+    self->srt.pitch = -mathAtan2f(vec.f[1], sqrtf(SQ(vec.f[2]) + SQ(vec.f[0])));
     // Collider updates
     gDLL_27->vtbl->func_1E8(self, &objdata->collider, gUpdateRateF);
     gDLL_27->vtbl->func_5A8(self, &objdata->collider);
@@ -282,7 +282,7 @@ u32 BWlog_get_data_size(Object *self, u32 a1) {
 s32 BWlog_vehicle_can_mount(Object *self, Object *rider) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     if ((objdata->mountState == VEHICLE_NoRider) && (objdata->dockpoint != NULL)) {
-        return vec3_distance(&rider->globalPosition, &self->globalPosition) < 50.0f;
+        return vec3Distance(&rider->globalPosition, &self->globalPosition) < 50.0f;
     }
     return FALSE;
 }
@@ -308,8 +308,8 @@ s32 BWlog_vehicle_get_mount_side(Object *self) {
         srt.transl.y = 0.0f;
         srt.transl.z = 0.0f;
         srt.scale = 1.0f;
-        matrix_from_srt(&mtx, &srt);
-        vec3_transform(&mtx, 0.0f, 0.0f, 1.0f, &sp44, &sp40, &sp3C);
+        mathYprXyzMtx(&mtx, &srt);
+        mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &sp44, &sp40, &sp3C);
 
         //Get dot products for self and player
         temp2 = -((self->srt.transl.x * sp44) + (sp40 * self->srt.transl.y) + (sp3C * self->srt.transl.z));
@@ -362,8 +362,8 @@ void BWlog_vehicle_get_camera_position(Object *self, f32 *x, f32 *y, f32 *z) {
     srt.transl.x = self->srt.transl.x;
     srt.transl.y = self->srt.transl.y;
     srt.transl.z = self->srt.transl.z;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 0.0f, -10.0f, x, y, z);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, -10.0f, x, y, z);
 }
 
 // offset: 0xD08 | func: 13 | export: 13
@@ -436,7 +436,7 @@ static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 side) {
     }
 
     // Pitch log slightly to simulate small waves
-    targetY += (fsin16_precise(objdata->wiggleYOffsets[side]) * 1.5f);
+    targetY += (mathSinfInterp(objdata->wiggleYOffsets[side]) * 1.5f);
     objdata->wiggleYOffsets[side] += (gUpdateRateF * 512.0f);
 
     sp60 = targetY - objdata->endPoints[side].y;
@@ -723,8 +723,8 @@ static void BWlog_find_riverflows(Object* self, BWlog_Data* objdata) {
                 if (dx < pushRadius) {
                     dx = ((pushRadius - dx) / pushRadius);
                     dx *= (obj->srt.scale * 10.0f);
-                    objdata->flowX[k] += fsin16_precise(obj->srt.yaw) * dx;
-                    objdata->flowZ[k] += fcos16_precise(obj->srt.yaw) * dx;
+                    objdata->flowX[k] += mathSinfInterp(obj->srt.yaw) * dx;
+                    objdata->flowZ[k] += mathCosfInterp(obj->srt.yaw) * dx;
                     flowInfluences[k]++;
                 }
             }
@@ -739,22 +739,22 @@ static void BWlog_find_riverflows(Object* self, BWlog_Data* objdata) {
     }
     
     for (i = 0; i < 2; i++) {
-        srt.yaw = arctan2_f(objdata->flowX[i], objdata->flowZ[i]);
+        srt.yaw = mathAtan2f(objdata->flowX[i], objdata->flowZ[i]);
         srt.pitch = 0;
         srt.roll = 0;
         srt.scale = 1.0f;
         srt.transl.x = 0;
         srt.transl.y = 0;
         srt.transl.z = 0;
-        matrix_from_srt_reversed(&spA0, &srt);
-        vec3_transform(&spA0, 
+        mathRpyXyzMtx(&spA0, &srt);
+        mathMtxXFMF(&spA0, 
             objdata->collider.waterNormalXList[i], objdata->collider.waterNormalYList[i], objdata->collider.waterNormalZList[i], 
             &sp100, &spFC, &spF8);
         srt.yaw = 0;
-        srt.pitch = M_90_DEGREES - arctan2_f(spFC, spF8);
-        srt.roll = -(M_90_DEGREES - arctan2_f(spFC, sp100));
-        matrix_from_srt_reversed(&spA0, &srt);
-        vec3_transform(&spA0, 
+        srt.pitch = M_90_DEGREES - mathAtan2f(spFC, spF8);
+        srt.roll = -(M_90_DEGREES - mathAtan2f(spFC, sp100));
+        mathRpyXyzMtx(&spA0, &srt);
+        mathMtxXFMF(&spA0, 
             objdata->flowX[i], 0.0f, objdata->flowZ[i], 
             &objdata->flowX[i], &objdata->flowY[i], &objdata->flowZ[i]);
     }
@@ -771,7 +771,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
     } else {
         //Adjust sound volume sinusoidally
         objdata->soundVolume = objdata->riverflowMagnitude * 127.0f;
-        objdata->soundVolume += fsin16_precise(objdata->soundVolumePhase) * 30.0f;
+        objdata->soundVolume += mathSinfInterp(objdata->soundVolumePhase) * 30.0f;
         if (objdata->soundVolume < 30.0f) {
             objdata->soundVolume = 30.0f;
         } else if (objdata->soundVolume > 127.0f) {
@@ -786,7 +786,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         }
         objdata->soundPitch = 1.0f - objdata->soundPitch;
         objdata->soundPitch = (objdata->soundPitch * 0.2f) + 0.2f;
-        objdata->soundPitch += fsin16_precise(objdata->soundPitchPhase) * 0.1f;
+        objdata->soundPitch += mathSinfInterp(objdata->soundPitchPhase) * 0.1f;
         gDLL_6_AMSFX->vtbl->set_pitch(objdata->soundHandle, objdata->soundPitch);
 
         objdata->soundPitchPhase += gUpdateRate << 8;
@@ -841,13 +841,13 @@ static void BWlog_handle_fx(Object* self, BWlog_Data* objdata) {
         z /= magnitude;
     }
 
-    sin = fsin16_precise(self->srt.yaw);
-    cos = -fcos16_precise(self->srt.yaw);
+    sin = mathSinfInterp(self->srt.yaw);
+    cos = -mathCosfInterp(self->srt.yaw);
     spE0.y = cos;
     spE0.x = sin;
     particleConfig.x = -400.0f;
     particleConfig.y = 400.0f;
-    srt.yaw = arctan2_f(x, z);
+    srt.yaw = mathAtan2f(x, z);
     srt.pitch = 0;
     srt.roll = 0;
     srt.scale = 1.0f;
@@ -856,8 +856,8 @@ static void BWlog_handle_fx(Object* self, BWlog_Data* objdata) {
     srt.transl.z = 0.0f;
     spC8.y = (objdata->velocity[0].x + objdata->velocity[1].x) * 0.5f;
     spC8.x = (objdata->velocity[0].z + objdata->velocity[1].z) * 0.5f;
-    matrix_from_srt_reversed(&mtx, &srt);
-    vec3_transform(&mtx, spC8.y, 0, spC8.x, &sin, &spC8.z, &spE0.z);
+    mathRpyXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, spC8.y, 0, spC8.x, &sin, &spC8.z, &spE0.z);
     magnitude *= 1.5f;
     magnitude -= spE0.z;
     if (magnitude < 0.0f) {

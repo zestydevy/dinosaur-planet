@@ -1295,7 +1295,7 @@ s32 cmdmenu_get_target_objects(Object **targetObjects, s32 maxObjects, u8 lockFl
             dy = objY - camera->srt.transl.y;
             dz = objZ - camera->srt.transl.z;
             if ((SQ(dx) + SQ(dy) + SQ(dz)) < SQ(range)) {
-                yaw = camera->srt.yaw - (u16)(M_90_DEGREES - arctan2_f(dx, dz));
+                yaw = camera->srt.yaw - (u16)(M_90_DEGREES - mathAtan2f(dx, dz));
                 CIRCLE_WRAP(yaw);
                 if (yaw < -10000 && yaw > -22000) {
                     targetObjects[targetCount++] = obj;
@@ -3643,7 +3643,7 @@ static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
                             sAnimFrameScarab = 3 - (sAnimScarabFlutterTimer >> 1);
                         }
                     } else {
-                        sAnimScarabFlutterTimer = rand_next(20, 255);
+                        sAnimScarabFlutterTimer = mathRnd(20, 255);
                     }
                 }
             }

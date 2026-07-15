@@ -1018,10 +1018,10 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
             _bss_5E8 = anim_channel_value(st, CHANNEL_translateZ, time);
             animObj->srt.yaw = (s16) (anim_channel_value(st, CHANNEL_rotateY, time) * 182.044f);
             animObj->srt.pitch = (s16) (anim_channel_value(st, CHANNEL_rotateX, time) * 182.044f);
-            sp58 = fsin16_precise(animObj->srt.yaw - 0x4000);
-            sp50 = fcos16_precise(animObj->srt.yaw - 0x4000);
-            sp54 = fcos16_precise(animObj->srt.pitch);
-            sp44 = fsin16_precise(animObj->srt.pitch);
+            sp58 = mathSinfInterp(animObj->srt.yaw - 0x4000);
+            sp50 = mathCosfInterp(animObj->srt.yaw - 0x4000);
+            sp54 = mathCosfInterp(animObj->srt.pitch);
+            sp44 = mathSinfInterp(animObj->srt.pitch);
             sp44 = _bss_5E8 * sp44;
             sp40 = _bss_5E8 * sp54;
             sp48 = sp40 * sp50;
@@ -2102,8 +2102,8 @@ static void anim_func_4FC4(Object* animObj, AnimObj_Data* st) {
     if (st->unk28 < 0) {
         dx = animObj->srt.transl.x - setup->base.x;
         dz = animObj->srt.transl.z - setup->base.z;
-        sin = fsin16_precise(st->seqYaw);
-        cos = fcos16_precise(st->seqYaw);
+        sin = mathSinfInterp(st->seqYaw);
+        cos = mathCosfInterp(st->seqYaw);
         animObj->srt.transl.x = setup->base.x + (cos * dx) + (sin * dz);
         animObj->srt.transl.z = setup->base.z + (cos * dz) - (sin * dx);
         return;
@@ -2139,8 +2139,8 @@ static void anim_func_4FC4(Object* animObj, AnimObj_Data* st) {
         return;
     }
     
-    sin = fsin16_precise(st->seqYaw);
-    cos = fcos16_precise(st->seqYaw);
+    sin = mathSinfInterp(st->seqYaw);
+    cos = mathCosfInterp(st->seqYaw);
     animObj->srt.transl.x = setup->base.x + (cos * dx) + (sin * dz);
     animObj->srt.transl.z = setup->base.z + (cos * dz) - (sin * dx);
 }
@@ -2177,17 +2177,17 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
             sp3C = 2.0f * var_s1->unk2E;
             sp38 = 2.0f * sp84->unk2E;
             sp6C[0] = var_s1->pos.f[0];
-            sp6C[2] = fsin16_precise(var_s1->unk2C << 8) * sp3C;
+            sp6C[2] = mathSinfInterp(var_s1->unk2C << 8) * sp3C;
             sp6C[1] = sp84->pos.f[0];
-            sp6C[3] = fsin16_precise(sp84->unk2C << 8) * sp38;
+            sp6C[3] = mathSinfInterp(sp84->unk2C << 8) * sp38;
             sp5C[0] = var_s1->pos.f[1];
-            sp5C[2] = fsin16_precise(var_s1->unk2D << 8) * sp3C;
+            sp5C[2] = mathSinfInterp(var_s1->unk2D << 8) * sp3C;
             sp5C[1] = sp84->pos.f[1];
-            sp5C[3] = fsin16_precise(sp84->unk2D << 8) * sp38;
+            sp5C[3] = mathSinfInterp(sp84->unk2D << 8) * sp38;
             sp4C[0] = var_s1->pos.f[2];
-            sp4C[2] = fcos16_precise(var_s1->unk2C << 8) * sp3C;
+            sp4C[2] = mathCosfInterp(var_s1->unk2C << 8) * sp3C;
             sp4C[1] = sp84->pos.f[2];
-            sp4C[3] = fcos16_precise(sp84->unk2C << 8) * sp38;
+            sp4C[3] = mathCosfInterp(sp84->unk2C << 8) * sp38;
             arg2->f[0] = curvesHermite(sp6C, sp7C, &sp48);
             if (arg4 == 0) {
                 arg2->f[1] = curvesHermite(sp5C, sp7C, &sp44);
@@ -2198,7 +2198,7 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
                 sp3C = arg1->f[0] / temp_fv0_2;
                 // @fake
                 if (sp3C) {}
-                *arg3 = arctan2_f(sp48, sp40) + 0x8000;
+                *arg3 = mathAtan2f(sp48, sp40) + 0x8000;
                 sp48 *= sp3C;
                 sp40 *= sp3C;
                 arg2->f[0] += sp40;
@@ -2220,8 +2220,8 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
             arg2->f[1] = arg1->y + var_s1->pos.y;
         }
         arg2->f[2] = var_s1->pos.f[2];
-        arg2->f[0] += arg1->f[0] * fcos16_precise((s16) (var_s1->unk2C << 8));
-        arg2->f[2] += arg1->f[0] * fsin16_precise((s16) (var_s1->unk2C << 8));
+        arg2->f[0] += arg1->f[0] * mathCosfInterp((s16) (var_s1->unk2C << 8));
+        arg2->f[2] += arg1->f[0] * mathSinfInterp((s16) (var_s1->unk2C << 8));
         *arg3 = (var_s1->unk2C << 8) + 0x8000;
     } else {
         return 0;
@@ -2340,17 +2340,17 @@ void anim_func_5A48(UnkAnimStruct* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4,
     sp104 = 2.0f * (f32) a2->unk2E;
     sp100 = 2.0f * (f32) a3->unk2E;
     spF0[0] = a2->pos.x;
-    spF0[2] = fsin16_precise((s16) (a2->unk2C << 8)) * sp104;
+    spF0[2] = mathSinfInterp((s16) (a2->unk2C << 8)) * sp104;
     spF0[1] = a3->pos.x;
-    spF0[3] = fsin16_precise((s16) (a3->unk2C << 8)) * sp100;
+    spF0[3] = mathSinfInterp((s16) (a3->unk2C << 8)) * sp100;
     spE0[0] = a2->pos.y;
-    spE0[2] = fsin16_precise((s16) (a2->unk2D << 8)) * sp104;
+    spE0[2] = mathSinfInterp((s16) (a2->unk2D << 8)) * sp104;
     spE0[1] = a3->pos.y;
-    spE0[3] = fsin16_precise((s16) (a3->unk2D << 8)) * sp100;
+    spE0[3] = mathSinfInterp((s16) (a3->unk2D << 8)) * sp100;
     spD0[0] = a2->pos.z;
-    spD0[2] = fcos16_precise((s16) (a2->unk2C << 8)) * sp104;
+    spD0[2] = mathCosfInterp((s16) (a2->unk2C << 8)) * sp104;
     spD0[1] = a3->pos.z;
-    spD0[3] = fcos16_precise((s16) (a3->unk2C << 8)) * sp100;
+    spD0[3] = mathCosfInterp((s16) (a3->unk2C << 8)) * sp100;
     curves_func_8000598C(spF0, spE0, spD0, spAC, sp88, sp64, 8, curvesHermiteConverter);
     arg0->unk8[0] = 0.0f;
     for (i = 0; i < 8; i++) {
@@ -2804,7 +2804,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
             camUseShake();
             player = objGetPlayer();
             if (player != NULL) {
-                temp_fv0 = vec3_distance_xz(&player->globalPosition, &animObj->globalPosition);
+                temp_fv0 = vec3DistanceXZ(&player->globalPosition, &animObj->globalPosition);
                 var_fa0 = (2.0f * (sp54 - 7)) + 1.0f;
                 if (temp_fv0 < 200.0f) {
                     if (temp_fv0 > 50.0f) {
@@ -3621,8 +3621,8 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
     }
     yaw = object->srt.yaw;
     if (_data_1C != 0) {
-        sp5C -= (fsin16_precise(object->srt.yaw) * object->visRadius);
-        sp54 -= (fcos16_precise(object->srt.yaw) * object->visRadius);
+        sp5C -= (mathSinfInterp(object->srt.yaw) * object->visRadius);
+        sp54 -= (mathCosfInterp(object->srt.yaw) * object->visRadius);
     }
     _bss_3A8[object->seqSlot] = 0;
     _bss_4C0[object->seqSlot] = 0;
@@ -3916,7 +3916,7 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
         sp34[1] = sp30->srt.transl.f[1] - actor->unk74->drawPoint.f[1];
         sp34[2] = sp30->srt.transl.f[2] - actor->unk74->drawPoint.f[2];
         sp34[1] += 30.0f;
-        st->pitchDiff = arctan2_f(sp34[1], sqrtf(SQ(sp34[2]) + SQ(sp34[0])));
+        st->pitchDiff = mathAtan2f(sp34[1], sqrtf(SQ(sp34[2]) + SQ(sp34[0])));
         st->rollDiff = 0;
         st->unk62 = 5;
         st->unk58 = 0.0f;

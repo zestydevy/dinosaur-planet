@@ -43,8 +43,8 @@ void camunk_func_74(Cam* cam) {
     sp4C = cam->player;
     sp26 = (0x8000 - sp4C->srt.yaw);
     sp26 += (s32) (14560.0f * sp38);
-    sp48 = fcos16_precise(sp26);
-    var_fv0 = fsin16_precise(sp26);
+    sp48 = mathCosfInterp(sp26);
+    var_fv0 = mathSinfInterp(sp26);
     cam->srt.transl.x = sp4C->srt.transl.x + ((20.0f * sp48) - (-10.0f * var_fv0));
     cam->srt.transl.z = sp4C->srt.transl.z + ((20.0f * var_fv0) + (-10.0f * sp48));
     cam->srt.transl.y = (sp4C->srt.transl.y + 35.0f) - (sp38 * 15.0f);

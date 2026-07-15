@@ -51,8 +51,8 @@ void Caictua_Thorn_control(Object* self) {
         self->srt.roll += M_5_DEGREES;
 
         //Set orientation from velocity vector
-        self->srt.yaw = arctan2_f(self->velocity.f[0], self->velocity.f[2]); //doesn't change, so may not need to be updated every tick?
-        self->srt.pitch = arctan2_f(sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), self->velocity.y) - M_90_DEGREES;
+        self->srt.yaw = mathAtan2f(self->velocity.f[0], self->velocity.f[2]); //doesn't change, so may not need to be updated every tick?
+        self->srt.pitch = mathAtan2f(sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), self->velocity.y) - M_90_DEGREES;
 
         //Move
         objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);

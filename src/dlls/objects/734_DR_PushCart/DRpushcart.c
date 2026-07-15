@@ -143,7 +143,7 @@ f32 dll_734_func_C34(Object* self, s16* arg1, f32 arg2) {
     angle = self->srt.yaw - (*arg1 & 0xFFFF);
     CIRCLE_WRAP(angle);
 
-    if (-fcos16_precise(angle) < 0.0f) {
+    if (-mathCosfInterp(angle) < 0.0f) {
         sign = -1.0f;
     } else {
         sign = 1.0f;
@@ -417,7 +417,7 @@ s32 dll_734_func_20BC-8(CurveSetup* curveSetup, s32 arg1, s32 arg2) {
     if (linkIdx != 0) {
         arg2 = MIN(linkIdx - 1, arg2);
         if (arg2 == -1) {
-            arg2 = rand_next(0, linkIdx - 1);
+            arg2 = mathRnd(0, linkIdx - 1);
         }
         linkIdx = curveLinks[arg2];
         return linkIdx;

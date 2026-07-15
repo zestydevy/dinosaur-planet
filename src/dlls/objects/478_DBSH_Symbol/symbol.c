@@ -271,10 +271,10 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
             objData->yawSpeed += 18.8f;
 
             //5% chance of playing random Sabre effort sound
-            if (rand_next(0, 20) == 0) {
+            if (mathRnd(0, 20) == 0) {
                 gDLL_6_AMSFX->vtbl->play(
                     NULL, 
-                    SOUND_710_Sabre_Test_of_Strength_1 + rand_next(0, 2), 
+                    SOUND_710_Sabre_Test_of_Strength_1 + mathRnd(0, 2), 
                     0x1E, 
                     NULL, 
                     NULL, 

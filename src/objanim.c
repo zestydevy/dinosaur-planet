@@ -949,10 +949,10 @@ void objAnim_func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct*
     }
     if (sp80 != 0) {
         if (var_s0 & 5) {
-            gDLL_6_AMSFX->vtbl->play(arg0, sp80[rand_next(0, 1) * 2 + var_s5 * 4], sp7E, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(arg0, sp80[mathRnd(0, 1) * 2 + var_s5 * 4], sp7E, NULL, NULL, 0, NULL);
         }
         if (var_s0 & 0xA) {
-            gDLL_6_AMSFX->vtbl->play(arg0, sp80[rand_next(0, 1) * 2 + var_s5 * 4 + 1], sp7E, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(arg0, sp80[mathRnd(0, 1) * 2 + var_s5 * 4 + 1], sp7E, NULL, NULL, 0, NULL);
         }
     }
 
@@ -971,7 +971,7 @@ void objAnim_func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct*
                     sp60.transl.x = sp88.f[0];
                     sp60.transl.y = 0.0f;
                     sp60.transl.z = sp88.f[2];
-                    for (var_s0_3 = rand_next(2, 4); var_s0_3 != 0; var_s0_3--) {
+                    for (var_s0_3 = mathRnd(2, 4); var_s0_3 != 0; var_s0_3--) {
                         gDLL_17_partfx->vtbl->spawn(arg0, 0x259, &sp60, 0x10001, -1, NULL);
                     }
                 } else if (sp78->unk68.unk50[0] == 3) {
@@ -979,8 +979,8 @@ void objAnim_func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct*
                     sp60.transl.y = 0.0f;
                     sp60.transl.z = sp88.f[2];
                     sp60.scale = 0.00045f;
-                    for (var_s0_3 = rand_next(2, 4); var_s0_3 != 0; var_s0_3--) {
-                        gDLL_17_partfx->vtbl->spawn(arg0, rand_next(0, 1) + 0x1F9, &sp60, 0x10001, -1, NULL);
+                    for (var_s0_3 = mathRnd(2, 4); var_s0_3 != 0; var_s0_3--) {
+                        gDLL_17_partfx->vtbl->spawn(arg0, mathRnd(0, 1) + 0x1F9, &sp60, 0x10001, -1, NULL);
                     }
                 }
             }

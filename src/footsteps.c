@@ -330,10 +330,10 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
 
     if (sp68.y != 0.0f) {
         if (sp68.x != 0.0f) {
-            var_s2 = arctan2_f(sp68.x, sp68.y);
+            var_s2 = mathAtan2f(sp68.x, sp68.y);
         }
         if (sp68.z != 0.0f) {
-            var_s3 = arctan2_f(sp68.z, sp68.y);
+            var_s3 = mathAtan2f(sp68.z, sp68.y);
         }
     }
 
@@ -365,8 +365,8 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
         spAC.x = D_800BCC10[var_s1].x;
         spAC.y = D_800BCC10[var_s1].y;
         spAC.z = D_800BCC10[var_s1].z;
-        rotate_vec3(&sp7C, spAC.f);
-        rotate_vec3(&sp94, spAC.f);
+        mathRotateRPY(&sp7C, spAC.f);
+        mathRotateRPY(&sp94, spAC.f);
         var_s0->ob[0] = arg1->unk0.f[0] + spAC.f[0] - gWorldX;
         var_s0->ob[1] = arg1->unk0.f[1] + spAC.f[1] + 1;
         var_s0->ob[2] = arg1->unk0.f[2] + spAC.f[2] - gWorldZ;

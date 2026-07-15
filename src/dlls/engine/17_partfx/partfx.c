@@ -161,12 +161,12 @@ void partfx_func_3A0(s32 arg0) {
     if (_data_A0 >= 0x8000) {
         _data_A0 = 0;
     }
-    _data_AC = fsin16_precise(_data_A0);
+    _data_AC = mathSinfInterp(_data_A0);
     _data_A4 += (gUpdateRate * 50);
     if (_data_A4 >= 0x8000) {
         _data_A4 = 0;
     }
-    _data_A8 = fsin16_precise(_data_A4);
+    _data_A8 = mathSinfInterp(_data_A4);
     if (sDLLTimers[0] != 0) {
         sDLLTimers[0] -= gUpdateRate;
         if (sDLLTimers[0] <= 0) {
@@ -610,9 +610,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
 
     switch (id) {
         case 0x555:
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.04f;
-            sp6C.unk24.y = rand_next(6, 0x16) * 0.12f;
-            sp6C.unk24.z = rand_next(-0x1E, 0x1E) * 0.04f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.04f;
+            sp6C.unk24.y = mathRnd(6, 0x16) * 0.12f;
+            sp6C.unk24.z = mathRnd(-0x1E, 0x1E) * 0.04f;
             sp6C.unk8 = 0x91;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x03000030;
@@ -715,9 +715,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk30.y = rand_next(-6, 6) + transform->transl.y;
-            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.01f;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.01f;
+            sp6C.unk30.y = mathRnd(-6, 6) + transform->transl.y;
+            sp6C.unk24.x = mathRnd(-0x64, 0x64) * 0.01f;
+            sp6C.unk24.z = mathRnd(-0x64, 0x64) * 0.01f;
             sp6C.unk8 = 0x12;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x400010;
@@ -766,9 +766,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.02f;
-            sp6C.unk24.y = rand_next(0x14, 0x1E) * 0.06f;
-            sp6C.unk24.z = rand_next(-0x1E, 0x1E) * 0.02f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.02f;
+            sp6C.unk24.y = mathRnd(0x14, 0x1E) * 0.06f;
+            sp6C.unk24.z = mathRnd(-0x1E, 0x1E) * 0.02f;
             sp3C.roll = 0;
             sp3C.pitch = 0;
             sp6C.unk30.z = -26.0f;
@@ -777,7 +777,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.transl.z = 0.0f;
             sp3C.scale = 1.0f;
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk30.f);
+            mathRotateRPY(&sp3C, sp6C.unk30.f);
             sp6C.unk8 = 0x91;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x03000010;
@@ -786,11 +786,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.0032f;
             break;
         case 0x549:
-            sp6C.unk30.x = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.y = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.z = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
-            sp6C.unk8 = rand_next(0x64, 0x96);
+            sp6C.unk30.x = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.y = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.z = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
+            sp6C.unk8 = mathRnd(0x64, 0x96);
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x80480110;
             if (data != NULL) {
@@ -799,11 +799,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk42 = 0x85;
             break;
         case 0x54A:
-            sp6C.unk30.x = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.y = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.z = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
-            sp6C.unk8 = rand_next(0x64, 0x96);
+            sp6C.unk30.x = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.y = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.z = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
+            sp6C.unk8 = mathRnd(0x64, 0x96);
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x80480110;
             if (data != NULL) {
@@ -812,11 +812,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk42 = 0x84;
             break;
         case 0x54B:
-            sp6C.unk30.x = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.y = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.z = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
-            sp6C.unk8 = rand_next(0x64, 0x96);
+            sp6C.unk30.x = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.y = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.z = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
+            sp6C.unk8 = mathRnd(0x64, 0x96);
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x80480110;
             if (data != NULL) {
@@ -825,11 +825,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk42 = 0x32;
             break;
         case 0x54C:
-            sp6C.unk30.x = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.y = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk30.z = rand_next(-0xA, 0xA) * 0.2f;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
-            sp6C.unk8 = rand_next(0x64, 0x96);
+            sp6C.unk30.x = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.y = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk30.z = mathRnd(-0xA, 0xA) * 0.2f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
+            sp6C.unk8 = mathRnd(0x64, 0x96);
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x80480110;
             if (data != NULL) {
@@ -844,15 +844,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp64 = 0;
             }
             if (sp64 == 1) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x202;
             } else if (sp64 == 2) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.00015f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.00015f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x102;
             } else {
-                sp6C.unk3C = rand_next(0x12, 0x14) * 0.0006f;
+                sp6C.unk3C = mathRnd(0x12, 0x14) * 0.0006f;
                 sp6C.unk44 = 0xC0800;
                 sp6C.unk48 = 2;
             }
@@ -867,15 +867,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp64 = 0;
             }
             if (sp64 == 1) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x202;
             } else if (sp64 == 2) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.00015f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.00015f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x102;
             } else {
-                sp6C.unk3C = rand_next(0x12, 0x14) * 0.0006f;
+                sp6C.unk3C = mathRnd(0x12, 0x14) * 0.0006f;
                 sp6C.unk44 = 0xC0800;
                 sp6C.unk48 = 2;
             }
@@ -890,15 +890,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp64 = 0;
             }
             if (sp64 == 1) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x202;
             } else if (sp64 == 2) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.00015f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.00015f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x102;
             } else {
-                sp6C.unk3C = rand_next(0x12, 0x14) * 0.0006f;
+                sp6C.unk3C = mathRnd(0x12, 0x14) * 0.0006f;
                 sp6C.unk44 = 0xC0800;
                 sp6C.unk48 = 2;
             }
@@ -913,15 +913,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp64 = 0;
             }
             if (sp64 == 1) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x202;
             } else if (sp64 == 2) {
-                sp6C.unk3C = rand_next(0xA, 0x14) * 0.00015f;
+                sp6C.unk3C = mathRnd(0xA, 0x14) * 0.00015f;
                 sp6C.unk44 = 0x4C0800;
                 sp6C.unk48 = 0x102;
             } else {
-                sp6C.unk3C = rand_next(0x12, 0x14) * 0.0006f;
+                sp6C.unk3C = mathRnd(0x12, 0x14) * 0.0006f;
                 sp6C.unk44 = 0xC0800;
                 sp6C.unk48 = 2;
             }
@@ -955,8 +955,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             break;
         case 0x547:
             sp6C.unk30.x = 60.0f;
-            sp6C.unk30.y = rand_next(-0x50, 0x50);
-            sp6C.unk24.y = rand_next(-0x64, 0x64) * 0.01f;
+            sp6C.unk30.y = mathRnd(-0x50, 0x50);
+            sp6C.unk24.y = mathRnd(-0x64, 0x64) * 0.01f;
             if (transform == NULL) {
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
@@ -975,7 +975,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.transform.transl.y = 0.0f;
             sp6C.transform.transl.z = 0.0f;
             sp6C.transform.scale = 1.0f;
-            sp6C.unk8 = rand_next(0, 0x14) + 0x28;
+            sp6C.unk8 = mathRnd(0, 0x14) + 0x28;
             sp6C.unk61 = 0x10;
             sp6C.unk44 |= 0x20000;
             break;
@@ -1006,7 +1006,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp6C.unk30.y -= sp6C.unk0->globalPosition.y;
                 sp6C.unk30.z -= sp6C.unk0->globalPosition.z;
             }
-            if (rand_next(0, 0x28) == 0) {
+            if (mathRnd(0, 0x28) == 0) {
                 sp6C.unk3C = 0.0003f;
             } else {
                 sp6C.unk3C = 0.0015f;
@@ -1116,9 +1116,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
             sp6C.unk30.z = transform->transl.z;
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.002f;
-            sp6C.unk24.y = rand_next(-0x1E, 0x1E) * 0.002f;
-            sp6C.unk24.z = rand_next(0x14, 0x1E) * -0.026f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.002f;
+            sp6C.unk24.y = mathRnd(-0x1E, 0x1E) * 0.002f;
+            sp6C.unk24.z = mathRnd(0x14, 0x1E) * -0.026f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
             sp3C.transl.z = 0.0f;
@@ -1126,10 +1126,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.roll = obj->srt.roll;
             sp3C.pitch = obj->srt.pitch;
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk60 = 0xCD;
             sp6C.unk44 = 0x100110;
-            sp6C.unk3C = rand_next(0x96, 0xC8) * 0.00003f;
+            sp6C.unk3C = mathRnd(0x96, 0xC8) * 0.00003f;
             sp6C.unk8 = 0x28;
             sp6C.unk42 = 0x89;
             break;
@@ -1144,9 +1144,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
             sp6C.unk30.z = transform->transl.z;
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.002f;
-            sp6C.unk24.y = rand_next(8, 0xA) * 0.01f;
-            sp6C.unk24.z = rand_next(0xA, 0x1E) * -0.005f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.002f;
+            sp6C.unk24.y = mathRnd(8, 0xA) * 0.01f;
+            sp6C.unk24.z = mathRnd(0xA, 0x1E) * -0.005f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
             sp3C.transl.z = 0.0f;
@@ -1154,9 +1154,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.roll = obj->srt.roll;
             sp3C.pitch = obj->srt.pitch;
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
-            sp6C.unk3C = rand_next(8, 0x14) * 0.0003f;
-            sp6C.unk8 = rand_next(0x3C, 0x78);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
+            sp6C.unk3C = mathRnd(8, 0x14) * 0.0003f;
+            sp6C.unk8 = mathRnd(0x3C, 0x78);
             sp6C.unk44 = 0x80180000;
             sp6C.unk48 = 0x01400020;
             sp6C.unk42 = 0x162;
@@ -1179,9 +1179,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
             sp6C.unk30.z = transform->transl.z;
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
-            sp6C.unk24.y = rand_next(-0x1E, 0x1E) * 0.01f;
-            sp6C.unk24.z = rand_next(0x14, 0x1E) * -0.02f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.01f;
+            sp6C.unk24.y = mathRnd(-0x1E, 0x1E) * 0.01f;
+            sp6C.unk24.z = mathRnd(0x14, 0x1E) * -0.02f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
             sp3C.transl.z = 0.0f;
@@ -1189,9 +1189,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.roll = obj->srt.roll;
             sp3C.pitch = obj->srt.pitch;
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk60 = 0xFF;
-            sp6C.unk3C = rand_next(0x96, 0xC8) * 0.000006f;
+            sp6C.unk3C = mathRnd(0x96, 0xC8) * 0.000006f;
             sp6C.unk44 = 0x02000110;
             sp6C.unk48 = 0x02200000;
             sp6C.unk8 = 0x19;
@@ -1199,8 +1199,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             break;
         case 0x534:
             sp6C.unk30.y = 10.0f;
-            sp6C.unk24.x = rand_next(-0xF, 0xF) * 0.02f;
-            sp6C.unk24.y = rand_next(-0xF, 0xF) * 0.02f;
+            sp6C.unk24.x = mathRnd(-0xF, 0xF) * 0.02f;
+            sp6C.unk24.y = mathRnd(-0xF, 0xF) * 0.02f;
             sp6C.unk24.z = -1.0f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
@@ -1209,9 +1209,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.roll = obj->srt.roll;
             sp3C.pitch = obj->srt.pitch;
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk60 = 0xFF;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.00004f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.00004f;
             sp6C.unk44 = 0x02000110;
             sp6C.unk48 = 0x200000;
             sp6C.unk8 = 0x19;
@@ -1245,11 +1245,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.015f;
             break;
         case 0x87:
-            sp6C.unk30.x = rand_next(-0x28, 0x28) * 0.1f;
-            sp6C.unk30.y = rand_next(-0x28, 0x28) * 0.1f;
-            sp6C.unk30.z = rand_next(-0x28, 0x28) * 0.1f;
-            sp6C.unk3C = rand_next(1, 3) * 0.005f;
-            sp6C.unk8 = rand_next(0, 0x28) + 0x28;
+            sp6C.unk30.x = mathRnd(-0x28, 0x28) * 0.1f;
+            sp6C.unk30.y = mathRnd(-0x28, 0x28) * 0.1f;
+            sp6C.unk30.z = mathRnd(-0x28, 0x28) * 0.1f;
+            sp6C.unk3C = mathRnd(1, 3) * 0.005f;
+            sp6C.unk8 = mathRnd(0, 0x28) + 0x28;
             sp6C.unk44 = 0x100111;
             sp6C.unk42 = 0x16E;
             sp6C.unk60 = 0xFF;
@@ -1284,7 +1284,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         case 0x527:
             sp6C.unk60 = 0xFF;
             sp6C.unk3C = 0.015f;
-            sp6C.unk8 = rand_next(0, 0xA) + 0x14;
+            sp6C.unk8 = mathRnd(0, 0xA) + 0x14;
             sp6C.unk44 = 0x180200;
             sp6C.unk42 = 0x73;
             break;
@@ -1293,9 +1293,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
-            sp6C.unk24.y = rand_next(0x14, 0x1E) * -0.2f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.01f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.01f;
+            sp6C.unk24.y = mathRnd(0x14, 0x1E) * -0.2f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
             sp3C.transl.z = 0.0f;
@@ -1307,10 +1307,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp3C.pitch = obj->srt.pitch;
             }
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk60 = 0x9B;
             sp6C.unk44 = 0x100;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.0011f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0011f;
             sp6C.unk8 = 0x1E;
             sp6C.unk42 = 0x60;
             break;
@@ -1319,9 +1319,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
-            sp6C.unk24.y = rand_next(0x14, 0x1E) * -0.2f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.01f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.01f;
+            sp6C.unk24.y = mathRnd(0x14, 0x1E) * -0.2f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
             sp3C.transl.z = 0.0f;
@@ -1333,16 +1333,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp3C.pitch = obj->srt.pitch;
             }
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk60 = 0x9B;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.0011f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0011f;
             sp6C.unk44 = 0x100;
             sp6C.unk8 = 0x1E;
             sp6C.unk42 = 0x158;
             break;
         case 0x525:
-            sp6C.unk24.x = rand_next(-0xF, 0xF) * 0.1f;
-            sp6C.unk24.z = rand_next(-0xF, 0xF) * 0.1f;
+            sp6C.unk24.x = mathRnd(-0xF, 0xF) * 0.1f;
+            sp6C.unk24.z = mathRnd(-0xF, 0xF) * 0.1f;
             sp6C.unk24.y = -5.0f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
@@ -1351,9 +1351,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.roll = obj->srt.roll;
             sp3C.pitch = obj->srt.pitch;
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk60 = 0xFF;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.000288f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.000288f;
             sp6C.unk44 = 0x02000100;
             sp6C.unk48 = 0x200000;
             sp6C.unk8 = 0x19;
@@ -1364,23 +1364,23 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.3f;
-            sp6C.unk24.z = rand_next(-0x1E, 0x1E) * 0.3f;
-            sp6C.unk24.z = rand_next(-0x1E, 0x1E) * 0.3f;
+            sp6C.unk24.x = mathRnd(-0x1E, 0x1E) * 0.3f;
+            sp6C.unk24.z = mathRnd(-0x1E, 0x1E) * 0.3f;
+            sp6C.unk24.z = mathRnd(-0x1E, 0x1E) * 0.3f;
             sp6C.unk60 = 0xFF;
             if (transform != NULL) {
                 sp6C.unk30.x += transform->transl.x;
                 sp6C.unk30.y += transform->transl.y;
                 sp6C.unk30.z += transform->transl.z;
             }
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.00088f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.00088f;
             sp6C.unk8 = 0xFF;
             sp6C.unk58[0] = 0xFFFF;
-            sp6C.unk58[1] = (u16) (rand_next(0, 0x2710) + 0xB1DF);
-            sp6C.unk58[2] = (u16) (rand_next(0, 0x2710) + 0x63BF);
+            sp6C.unk58[1] = (u16) (mathRnd(0, 0x2710) + 0xB1DF);
+            sp6C.unk58[2] = (u16) (mathRnd(0, 0x2710) + 0x63BF);
             sp6C.unk4C[0] = 0xC350;
-            sp6C.unk4C[1] = rand_next(0, 0x7530);
-            sp6C.unk4C[2] = rand_next(0, 0x7530);
+            sp6C.unk4C[1] = mathRnd(0, 0x7530);
+            sp6C.unk4C[2] = mathRnd(0, 0x7530);
             sp6C.unk48 = 0x200020;
             sp6C.unk42 = 0x60;
             break;
@@ -1394,9 +1394,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp6C.unk30.y += transform->transl.y;
                 sp6C.unk30.z += transform->transl.z;
             }
-            sp6C.unk24.x = rand_next(-0xA, 0xA) * 0.03f;
-            sp6C.unk24.z = rand_next(-0xA, 0xA) * 0.03f;
-            sp6C.unk24.y = rand_next(-0xA, 0xA) * 0.03f;
+            sp6C.unk24.x = mathRnd(-0xA, 0xA) * 0.03f;
+            sp6C.unk24.z = mathRnd(-0xA, 0xA) * 0.03f;
+            sp6C.unk24.y = mathRnd(-0xA, 0xA) * 0.03f;
             sp6C.unk8 = 0x14;
             sp6C.unk44 = 0x480000;
             sp6C.unk42 = 0x167;
@@ -1408,25 +1408,25 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk30.x = rand_next(-0xA, -0xA) * 0.1f;
-            sp6C.unk30.y = rand_next(-0x14, -0xA) * 0.1f;
-            sp6C.unk30.z = rand_next(-0xA, 0xA) * 0.1f;
-            sp6C.unk24.x = rand_next(-0xA, 0xA) * 0.003f;
-            sp6C.unk24.z = rand_next(-0xA, 0xA) * 0.003f;
+            sp6C.unk30.x = mathRnd(-0xA, -0xA) * 0.1f;
+            sp6C.unk30.y = mathRnd(-0x14, -0xA) * 0.1f;
+            sp6C.unk30.z = mathRnd(-0xA, 0xA) * 0.1f;
+            sp6C.unk24.x = mathRnd(-0xA, 0xA) * 0.003f;
+            sp6C.unk24.z = mathRnd(-0xA, 0xA) * 0.003f;
             sp6C.unk60 = 0xFF;
             if (transform != NULL) {
                 sp6C.unk30.x += transform->transl.x;
                 sp6C.unk30.y += transform->transl.y;
                 sp6C.unk30.z += transform->transl.z;
             }
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.00088f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.00088f;
             sp6C.unk8 = 0x55;
             sp6C.unk44 = 0x100200;
             sp6C.unk42 = 0x60;
             sp6C.unk58[0] = 0x7FFF;
             sp6C.unk58[1] = 0x7FFF;
             sp6C.unk58[2] = 0x7FFF;
-            sp6C.unk4C[0] = rand_next(0, 0xA) * 0xACF;
+            sp6C.unk4C[0] = mathRnd(0, 0xA) * 0xACF;
             sp6C.unk4C[1] = sp6C.unk4C[0];
             sp6C.unk4C[2] = sp6C.unk4C[0];
             sp6C.unk48 = 0xA0;
@@ -1444,12 +1444,12 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.0028f;
             break;
         case 0x520:
-            sp6C.unk30.x = rand_next(-0x1E, 0x1E) * 0.1f;
-            sp6C.unk30.z = rand_next(-0x1E, 0x1E) * 0.1f;
-            sp6C.unk24.y = rand_next(0x19, 0x23) * 0.005f;
-            sp6C.unk3C = rand_next(0x64, 0x96) * 0.00005f;
+            sp6C.unk30.x = mathRnd(-0x1E, 0x1E) * 0.1f;
+            sp6C.unk30.z = mathRnd(-0x1E, 0x1E) * 0.1f;
+            sp6C.unk24.y = mathRnd(0x19, 0x23) * 0.005f;
+            sp6C.unk3C = mathRnd(0x64, 0x96) * 0.00005f;
             sp6C.unk60 = 0x55;
-            sp6C.unk8 = rand_next(0x28, 0x50);
+            sp6C.unk8 = mathRnd(0x28, 0x50);
             sp6C.unk44 = 0x80100100;
             sp6C.unk42 = 0x62;
             break;
@@ -1485,10 +1485,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk8 = rand_next(0xA, 0x3C);
-            sp6C.unk24.x = rand_next(-0x14, 0x14) * 0.03f;
+            sp6C.unk8 = mathRnd(0xA, 0x3C);
+            sp6C.unk24.x = mathRnd(-0x14, 0x14) * 0.03f;
             sp6C.unk24.y = sp6C.unk8 * 0.02f;
-            sp6C.unk24.z = rand_next(-0x14, 0x14) * 0.03f;
+            sp6C.unk24.z = mathRnd(-0x14, 0x14) * 0.03f;
             sp6C.unk3C = 0.0015f;
             if (transform != NULL) {
                 sp6C.unk3C = transform->scale * 0.002f;
@@ -1501,40 +1501,40 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk58[1] = 0xFFFF;
             sp6C.unk58[2] = 0xFFFF;
             sp6C.unk4C[0] = 0xFFFF;
-            sp6C.unk4C[1] = sp6C.unk4C[2] = rand_next(0, 0x8000);
+            sp6C.unk4C[1] = sp6C.unk4C[2] = mathRnd(0, 0x8000);
             break;
         case 0x51C:
-            sp6C.unk30.x = rand_next(-0x1E, 0x1E) * 0.1f;
+            sp6C.unk30.x = mathRnd(-0x1E, 0x1E) * 0.1f;
             sp6C.unk30.y = 7.0f;
-            sp6C.unk30.z = rand_next(-0x1E, 0x1E) * 0.1f;
-            sp6C.unk24.y = rand_next(0x19, 0x23) * 0.005f;
-            sp6C.unk3C = rand_next(0x64, 0x96) * 0.00005f;
-            sp6C.unk8 = rand_next(0x5A, 0x78);
+            sp6C.unk30.z = mathRnd(-0x1E, 0x1E) * 0.1f;
+            sp6C.unk24.y = mathRnd(0x19, 0x23) * 0.005f;
+            sp6C.unk3C = mathRnd(0x64, 0x96) * 0.00005f;
+            sp6C.unk8 = mathRnd(0x5A, 0x78);
             sp6C.unk44 = 0x80100100;
             sp6C.unk42 = 0x60;
             sp6C.unk58[0] = 0x7FFF;
             sp6C.unk58[1] = 0x7FFF;
             sp6C.unk58[2] = 0x7FFF;
-            sp6C.unk4C[0] = rand_next(0, 0xA) * 0xACF;
+            sp6C.unk4C[0] = mathRnd(0, 0xA) * 0xACF;
             sp6C.unk4C[1] = sp6C.unk4C[0];
             sp6C.unk4C[2] = sp6C.unk4C[0];
             sp6C.unk48 = 0x20;
             break;
         case 0x51B:
-            sp6C.unk3C = (rand_next(0, 0xF) * 0.002f) + 0.03f;
-            sp6C.unk30.x = rand_next(-0x32, 0x32) * 0.1f;
-            sp6C.unk30.y = (rand_next(-0x32, 0x32) * 0.1f) + 10.0f;
-            sp6C.unk30.z = rand_next(-0x32, 0x32) * 0.1f;
+            sp6C.unk3C = (mathRnd(0, 0xF) * 0.002f) + 0.03f;
+            sp6C.unk30.x = mathRnd(-0x32, 0x32) * 0.1f;
+            sp6C.unk30.y = (mathRnd(-0x32, 0x32) * 0.1f) + 10.0f;
+            sp6C.unk30.z = mathRnd(-0x32, 0x32) * 0.1f;
             sp6C.unk24.x = sp6C.unk30.x / 25.0f;
             sp6C.unk24.y = sp6C.unk30.y / 25.0f;
             sp6C.unk24.z = sp6C.unk30.z / 25.0f;
-            sp6C.unk8 = rand_next(0, 0x14) + 0x14;
+            sp6C.unk8 = mathRnd(0, 0x14) + 0x14;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x100110;
             sp6C.unk42 = 0xE4;
             break;
         case 0x51A:
-            sp6C.unk3C = (rand_next(0, 0xF) * 0.001f) + 0.005f;
+            sp6C.unk3C = (mathRnd(0, 0xF) * 0.001f) + 0.005f;
             sp6C.unk8 = 0x3C;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x08100110;
@@ -1545,8 +1545,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             }
             break;
         case 0x519:
-            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.0025f;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.0025f;
+            sp6C.unk24.x = mathRnd(-0x64, 0x64) * 0.0025f;
+            sp6C.unk24.z = mathRnd(-0x64, 0x64) * 0.0025f;
             sp6C.unk8 = 0x3C;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x80480110;
@@ -1572,19 +1572,19 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk8 = 6;
             sp6C.unk60 = 0xE1;
             sp6C.unk44 = 0x4A0010;
-            if (rand_next(0, 1) != 0) {
+            if (mathRnd(0, 1) != 0) {
                 sp6C.unk48 = 0x202;
             } else {
                 sp6C.unk48 = 0x102;
             }
             if ((transform != NULL) && (transform->scale == 0.0f)) {
-                sp6C.unk3C = (rand_next(0, 3) * 0.001f) + 0.003f;
+                sp6C.unk3C = (mathRnd(0, 3) * 0.001f) + 0.003f;
                 sp6C.unk42 = 0x33;
             } else if ((transform != NULL) && (transform->scale == 2.0f)) {
-                sp6C.unk3C = (rand_next(0, 3) * 0.001f) + 0.003f;
+                sp6C.unk3C = (mathRnd(0, 3) * 0.001f) + 0.003f;
                 sp6C.unk42 = 0x4F9;
             } else {
-                sp6C.unk3C = (rand_next(0, 3) * 0.001f) + 0.004f;
+                sp6C.unk3C = (mathRnd(0, 3) * 0.001f) + 0.004f;
                 sp6C.unk42 = 0x3F4;
             }
             break;
@@ -1642,10 +1642,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk60 = 0x37;
             sp6C.unk44 = 0x180010;
             if ((transform != NULL) && (transform->scale == 0.0f)) {
-                sp6C.unk3C = rand_next(0x14, 0x32) * 0.0004f;
+                sp6C.unk3C = mathRnd(0x14, 0x32) * 0.0004f;
                 sp6C.unk42 = 0x73;
             } else {
-                sp6C.unk3C = rand_next(0x14, 0x32) * 0.00053f;
+                sp6C.unk3C = mathRnd(0x14, 0x32) * 0.00053f;
                 sp6C.unk42 = 0x72;
             }
             break;
@@ -1660,13 +1660,13 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk44 = 0x480010;
             sp6C.unk48 = 2;
             if (transform->scale == 0.0f) {
-                sp6C.unk3C = rand_next(0x46, 0x50) * 0.0003f;
+                sp6C.unk3C = mathRnd(0x46, 0x50) * 0.0003f;
                 sp6C.unk42 = 0x73;
             } else if (transform->scale == 2.0f) {
-                sp6C.unk3C = rand_next(0x46, 0x50) * 0.0003f;
+                sp6C.unk3C = mathRnd(0x46, 0x50) * 0.0003f;
                 sp6C.unk42 = 0x77;
             } else {
-                sp6C.unk3C = rand_next(0x46, 0x50) * 0.0004f;
+                sp6C.unk3C = mathRnd(0x46, 0x50) * 0.0004f;
                 sp6C.unk42 = 0x72;
             }
             break;
@@ -1704,36 +1704,36 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             break;
         case 0x3C:
             sp6C.unk30.y = 22.0f;
-            sp6C.unk3C = (rand_next(1, 0xA) * 0.003f) + 0.03f;
+            sp6C.unk3C = (mathRnd(1, 0xA) * 0.003f) + 0.03f;
             sp6C.unk60 = 0xFF;
-            sp6C.transform.yaw = rand_next(0, 0xFFFF);
-            sp6C.transform.pitch = rand_next(0, 0xFFFF);
-            sp6C.transform.yaw = rand_next(0, 0xFFFF);
+            sp6C.transform.yaw = mathRnd(0, 0xFFFF);
+            sp6C.transform.pitch = mathRnd(0, 0xFFFF);
+            sp6C.transform.yaw = mathRnd(0, 0xFFFF);
             sp6C.transform.transl.x = 0.0f;
             sp6C.transform.transl.y = 0.0f;
             sp6C.transform.transl.z = 0.0f;
-            sp6C.unk8 = rand_next(0, 0x14) + 0x28;
+            sp6C.unk8 = mathRnd(0, 0x14) + 0x28;
             sp6C.unk61 = 0x10;
             sp6C.unk44 = 0x06100214;
             sp6C.unk42 = 0x206;
             break;
         case 0x329:
-            sp6C.unk30.x = rand_next(-0x64, 0x64) * 0.1f;
+            sp6C.unk30.x = mathRnd(-0x64, 0x64) * 0.1f;
             sp6C.unk30.y = 50.0f;
-            sp6C.unk30.z = rand_next(-0x64, 0x64) * 0.1f;
-            sp6C.unk24.x = rand_next(0x64, 0xC8) * 0.001f;
-            sp6C.unk24.y = rand_next(0x64, 0xC8) * 0.001f;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.001f;
+            sp6C.unk30.z = mathRnd(-0x64, 0x64) * 0.1f;
+            sp6C.unk24.x = mathRnd(0x64, 0xC8) * 0.001f;
+            sp6C.unk24.y = mathRnd(0x64, 0xC8) * 0.001f;
+            sp6C.unk24.z = mathRnd(-0x64, 0x64) * 0.001f;
             sp6C.unk44 = 0x01081010;
-            if (rand_next(0, 3) == 0) {
-                sp6C.unk3C = rand_next(0x28, 0x50) * 0.000065f;
+            if (mathRnd(0, 3) == 0) {
+                sp6C.unk3C = mathRnd(0x28, 0x50) * 0.000065f;
                 sp6C.unk60 = 0x8C;
             } else {
-                sp6C.unk3C = rand_next(0x28, 0x50) * 0.00135f;
+                sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00135f;
                 sp6C.unk60 = 0xA;
                 sp6C.unk44 |= 0x100000;
             }
-            if (rand_next(0, 0xA) == 0) {
+            if (mathRnd(0, 0xA) == 0) {
                 flags ^= PARTFXFLAG_4;
                 flags |= PARTFXFLAG_1;
             }
@@ -1749,11 +1749,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk42 = 0x60;
             break;
         case 0x3B9:
-            sp6C.unk24.x = rand_next(-0x14, 0x14) * 0.01f;
-            sp6C.unk24.z = rand_next(-0x14, 0x14) * 0.01f;
-            sp6C.unk30.x = rand_next(-0x32, 0x32);
-            sp6C.unk30.z = rand_next(-0x32, 0x32);
-            sp6C.unk30.y = rand_next(0x1E, 0x64);
+            sp6C.unk24.x = mathRnd(-0x14, 0x14) * 0.01f;
+            sp6C.unk24.z = mathRnd(-0x14, 0x14) * 0.01f;
+            sp6C.unk30.x = mathRnd(-0x32, 0x32);
+            sp6C.unk30.z = mathRnd(-0x32, 0x32);
+            sp6C.unk30.y = mathRnd(0x1E, 0x64);
             sp6C.unk8 = 0x4B0;
             sp6C.unk60 = 0xC8;
             sp6C.unk44 = 0x180100;
@@ -1761,13 +1761,13 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.1f;
             break;
         case 0x3B8:
-            sp6C.unk30.x = (0x3C - rand_next(0, 0x78)) * 0.25f;
+            sp6C.unk30.x = (0x3C - mathRnd(0, 0x78)) * 0.25f;
             sp6C.unk30.y = 10.0f;
-            sp6C.unk30.z = (0x3C - rand_next(0, 0x78)) * 0.25f;
-            sp6C.unk24.x = (0x28 - rand_next(0, 0x50)) * 0.005f;
-            sp6C.unk24.z = (0x28 - rand_next(0, 0x50)) * 0.005f;
-            sp6C.unk24.y = rand_next(0x28, 0x50) * 0.005f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00005f;
+            sp6C.unk30.z = (0x3C - mathRnd(0, 0x78)) * 0.25f;
+            sp6C.unk24.x = (0x28 - mathRnd(0, 0x50)) * 0.005f;
+            sp6C.unk24.z = (0x28 - mathRnd(0, 0x50)) * 0.005f;
+            sp6C.unk24.y = mathRnd(0x28, 0x50) * 0.005f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00005f;
             sp6C.unk8 = 0xB4;
             sp6C.unk61 = 0;
             sp6C.unk44 = 0x80400201;
@@ -1775,10 +1775,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             break;
         case 0x1:
             sp6C.unk30.y = 80.0f;
-            sp6C.unk24.x = rand_next(-0xF, 0xF) * (_data_98 * 0.002f);
-            sp6C.unk24.y = rand_next(5, 0x14) * 0.003f;
-            sp6C.unk24.z = rand_next(-0xF, 0xF) * (_data_98 * 0.002f);
-            sp6C.unk3C = (rand_next(0, 0xA) * 0.0001f) + 0.003f;
+            sp6C.unk24.x = mathRnd(-0xF, 0xF) * (_data_98 * 0.002f);
+            sp6C.unk24.y = mathRnd(5, 0x14) * 0.003f;
+            sp6C.unk24.z = mathRnd(-0xF, 0xF) * (_data_98 * 0.002f);
+            sp6C.unk3C = (mathRnd(0, 0xA) * 0.0001f) + 0.003f;
             sp6C.unk60 = 0xFF;
             sp6C.unk61 = 0xF;
             sp6C.unk44 = 0x588008;
@@ -1787,8 +1787,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk4 = 4;
             break;
         case 0x4:
-            sp6C.unk24.y = rand_next(0xA, 0x14) * 0.004f;
-            sp6C.unk3C = (rand_next(0, 0xA) * 0.0001f) + 0.006f;
+            sp6C.unk24.y = mathRnd(0xA, 0x14) * 0.004f;
+            sp6C.unk3C = (mathRnd(0, 0xA) * 0.0001f) + 0.006f;
             sp6C.unk8 = 0x3C;
             sp6C.unk60 = 0xCD;
             sp6C.unk61 = 6;
@@ -1799,7 +1799,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.y = rand_next(0x14, 0x3C) * 0.3f;
+            sp6C.unk30.y = mathRnd(0x14, 0x3C) * 0.3f;
             sp6C.unk8 = 0x23;
             sp6C.unk60 = 0x96;
             sp6C.unk61 = 0x14;
@@ -1811,13 +1811,13 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = rand_next(-0x1E, 0x1E) * 0.18f;
-            sp6C.unk30.y = rand_next(-0x1E, 0x1E) * 0.18f;
-            sp6C.unk30.z = rand_next(-0x1E, 0x1E) * 0.18f;
-            sp6C.unk24.y = rand_next(0xF, 0x23) * 0.025f;
-            sp6C.unk3C = rand_next(0x64, 0x96) * 0.00035f;
-            sp6C.unk8 = rand_next(0x32, 0x50);
-            sp6C.unk61 = rand_next(0xA, 0x1E);
+            sp6C.unk30.x = mathRnd(-0x1E, 0x1E) * 0.18f;
+            sp6C.unk30.y = mathRnd(-0x1E, 0x1E) * 0.18f;
+            sp6C.unk30.z = mathRnd(-0x1E, 0x1E) * 0.18f;
+            sp6C.unk24.y = mathRnd(0xF, 0x23) * 0.025f;
+            sp6C.unk3C = mathRnd(0x64, 0x96) * 0.00035f;
+            sp6C.unk8 = mathRnd(0x32, 0x50);
+            sp6C.unk61 = mathRnd(0xA, 0x1E);
             sp6C.unk44 = 0x100218;
             sp6C.unk42 = transform->roll;
             if (transform->roll == 0x4C) {
@@ -1834,20 +1834,20 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = rand_next(-0x1E, 0x1E) * 0.18f;
-            sp6C.unk30.y = rand_next(-0x1E, 0x1E) * 0.18f;
-            sp6C.unk30.z = rand_next(-0x1E, 0x1E) * 0.18f;
-            sp6C.unk24.x = rand_next(-0x28, 0x28) * 0.035f;
-            sp6C.unk24.y = rand_next(0xA, 0x28) * 0.035f;
-            sp6C.unk24.z = rand_next(-0x28, 0x28) * 0.035f;
+            sp6C.unk30.x = mathRnd(-0x1E, 0x1E) * 0.18f;
+            sp6C.unk30.y = mathRnd(-0x1E, 0x1E) * 0.18f;
+            sp6C.unk30.z = mathRnd(-0x1E, 0x1E) * 0.18f;
+            sp6C.unk24.x = mathRnd(-0x28, 0x28) * 0.035f;
+            sp6C.unk24.y = mathRnd(0xA, 0x28) * 0.035f;
+            sp6C.unk24.z = mathRnd(-0x28, 0x28) * 0.035f;
             sp6C.unk3C = 0.002f;
-            sp6C.unk8 = rand_next(0x14, 0x32);
+            sp6C.unk8 = mathRnd(0x14, 0x32);
             sp6C.unk61 = 0x1E;
             sp6C.unk44 = 0x511;
             sp6C.unk42 = transform->roll;
             break;
         case 0x7B:
-            sp6C.unk30.y = rand_next(0, 0xA) + 120.0f;
+            sp6C.unk30.y = mathRnd(0, 0xA) + 120.0f;
             sp6C.unk8 = 0x50;
             sp6C.unk61 = 0;
             sp6C.unk44 = 0x08100208;
@@ -1877,8 +1877,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.transform.roll = 0;
             break;
         case 0x7C:
-            sp6C.unk24.x = (f32)rand_next(-0x1E, 0x1E) * 0.03;
-            sp6C.unk24.z = (f32)rand_next(-0x1E, 0x1E) * 0.03;
+            sp6C.unk24.x = (f32)mathRnd(-0x1E, 0x1E) * 0.03;
+            sp6C.unk24.z = (f32)mathRnd(-0x1E, 0x1E) * 0.03;
             sp6C.unk3C = 0.0016f;
             sp6C.unk8 = 0x12C;
             sp6C.unk61 = 0;
@@ -1898,10 +1898,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         case 0x7E:
             sp6C.unk8 = 0x32;
             sp6C.unk44 = 0x400100;
-            sp6C.unk24.x = rand_next(-4, 4) * 0.06f;
-            sp6C.unk24.z = rand_next(-4, 4) * 0.06f;
-            sp6C.unk24.y = rand_next(0x28, 0x50) * 0.006f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00013f;
+            sp6C.unk24.x = mathRnd(-4, 4) * 0.06f;
+            sp6C.unk24.z = mathRnd(-4, 4) * 0.06f;
+            sp6C.unk24.y = mathRnd(0x28, 0x50) * 0.006f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00013f;
             switch (sp6C.transform.roll) {
             case 0:
                 sp6C.unk42 = 0xDD;
@@ -1921,10 +1921,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         case 0x3E7:
             sp6C.unk8 = 0x12C;
             sp6C.unk44 = 0x80400500;
-            sp6C.unk24.x = rand_next(-4, 4) * 0.02f;
-            sp6C.unk24.z = rand_next(-4, 4) * 0.03f;
-            sp6C.unk24.y = rand_next(0x28, 0x50) * 0.002f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00013f;
+            sp6C.unk24.x = mathRnd(-4, 4) * 0.02f;
+            sp6C.unk24.z = mathRnd(-4, 4) * 0.03f;
+            sp6C.unk24.y = mathRnd(0x28, 0x50) * 0.002f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00013f;
             switch (sp6C.transform.roll) {
             case 0:
                 sp6C.unk42 = 0xDD;
@@ -1950,9 +1950,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.004f;
             break;
         case 0x81:
-            sp6C.unk30.x = rand_next(-0xA0, 0xA0);
-            sp6C.unk30.y = rand_next(-0x32, 0xFA);
-            sp6C.unk30.x = rand_next(-0xA0, 0xA0);
+            sp6C.unk30.x = mathRnd(-0xA0, 0xA0);
+            sp6C.unk30.y = mathRnd(-0x32, 0xFA);
+            sp6C.unk30.x = mathRnd(-0xA0, 0xA0);
             sp6C.unk8 = 0xC8;
             sp6C.unk61 = 0x10;
             sp6C.unk44 = 0x80000108;
@@ -1961,9 +1961,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.0025f;
             break;
         case 0x82:
-            sp6C.unk30.x = rand_next(-0xA0, 0xA0);
-            sp6C.unk30.y = rand_next(-0x32, 0xFA);
-            sp6C.unk30.x = rand_next(-0xA0, 0xA0);
+            sp6C.unk30.x = mathRnd(-0xA0, 0xA0);
+            sp6C.unk30.y = mathRnd(-0x32, 0xFA);
+            sp6C.unk30.x = mathRnd(-0xA0, 0xA0);
             sp6C.unk8 = 0xC8;
             sp6C.unk61 = 0x10;
             sp6C.unk44 = 0x80000108;
@@ -1972,9 +1972,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.0025f;
             break;
         case 0x83:
-            sp6C.unk30.x = rand_next(-0xA0, 0xA0);
-            sp6C.unk30.y = rand_next(-0x32, 0xFA);
-            sp6C.unk30.x = rand_next(-0xA0, 0xA0);
+            sp6C.unk30.x = mathRnd(-0xA0, 0xA0);
+            sp6C.unk30.y = mathRnd(-0x32, 0xFA);
+            sp6C.unk30.x = mathRnd(-0xA0, 0xA0);
             sp6C.unk8 = 0xC8;
             sp6C.unk61 = 0x10;
             sp6C.unk44 = 0x80000108;
@@ -1983,11 +1983,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.0025f;
             break;
         case 0x71:
-            sp6C.unk30.x = rand_next(-2, 2);
+            sp6C.unk30.x = mathRnd(-2, 2);
             sp6C.unk30.y = 20.0f;
-            sp6C.unk30.z = rand_next(-0x10, 0x10);
-            sp6C.unk24.y = rand_next(-3, -1) * 0.05f;
-            sp6C.unk3C = rand_next(1, 3) * 0.00025f;
+            sp6C.unk30.z = mathRnd(-0x10, 0x10);
+            sp6C.unk24.y = mathRnd(-3, -1) * 0.05f;
+            sp6C.unk3C = mathRnd(1, 3) * 0.00025f;
             sp6C.unk8 = 0x64;
             sp6C.unk60 = 0x7D;
             sp6C.unk61 = 0x10;
@@ -2016,11 +2016,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk42 = 0x77;
             break;
         case 0x6A:
-            sp6C.unk30.x = rand_next(-0xA, 0xA) * sp38;
+            sp6C.unk30.x = mathRnd(-0xA, 0xA) * sp38;
             sp6C.unk30.y = 0.0f;
-            sp6C.unk30.z = rand_next(-0xA, 0xA) * sp38;
+            sp6C.unk30.z = mathRnd(-0xA, 0xA) * sp38;
             sp6C.unk24.x = 0.0f;
-            sp6C.unk24.y = rand_next(1, 3) * 0.15f;
+            sp6C.unk24.y = mathRnd(1, 3) * 0.15f;
             sp6C.unk8 = 0x78;
             sp6C.unk60 = 0xFF;
             sp6C.unk61 = 0x10;
@@ -2042,12 +2042,12 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x200;
             sp6C.unk3C = 0.016f;
-            sp6C.unk42 = rand_next(0, 2) + 0x156;
+            sp6C.unk42 = mathRnd(0, 2) + 0x156;
             break;
         case 0x68:
-            sp6C.unk24.x = rand_next(-0xA, 0xA) * 0.032f;
-            sp6C.unk24.y = rand_next(-0xA, 0xA) * 0.032f;
-            sp6C.unk24.z = rand_next(-0xA, 0xA) * 0.032f;
+            sp6C.unk24.x = mathRnd(-0xA, 0xA) * 0.032f;
+            sp6C.unk24.y = mathRnd(-0xA, 0xA) * 0.032f;
+            sp6C.unk24.z = mathRnd(-0xA, 0xA) * 0.032f;
             sp6C.unk8 = 0x69;
             sp6C.unk44 = 0x480200;
             sp6C.unk42 = 0x156;
@@ -2077,17 +2077,17 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.005565f;
             break;
         case 0x72:
-            sp6C.unk3C = rand_next(1, 5) * 0.00037f;
-            sp6C.unk8 = rand_next(0x1E, 0x28);
+            sp6C.unk3C = mathRnd(1, 5) * 0.00037f;
+            sp6C.unk8 = mathRnd(0x1E, 0x28);
             sp6C.unk44 = 0;
             sp6C.unk48 = 2;
             sp6C.unk61 = 0;
             sp6C.unk42 = 0xDE;
             break;
         case 0x73:
-            sp6C.unk3C = rand_next(4, 5) * 0.00097f;
+            sp6C.unk3C = mathRnd(4, 5) * 0.00097f;
             sp6C.unk3C *= 0.5f;
-            sp6C.unk8 = rand_next(0x1E, 0x28);
+            sp6C.unk8 = mathRnd(0x1E, 0x28);
             sp6C.unk44 = 0;
             sp6C.unk48 = 2;
             sp6C.unk61 = 0x10;
@@ -2102,10 +2102,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.01f;
             break;
         case 0x59:
-            sp6C.unk24.x = 2.0f - rand_next(0, 4);
-            sp6C.unk24.y = 2.0f - rand_next(0, 4);
-            sp6C.unk24.z = 2.0f - rand_next(0, 4);
-            sp6C.unk3C = rand_next(1, 0x28) * 0.0001f;
+            sp6C.unk24.x = 2.0f - mathRnd(0, 4);
+            sp6C.unk24.y = 2.0f - mathRnd(0, 4);
+            sp6C.unk24.z = 2.0f - mathRnd(0, 4);
+            sp6C.unk3C = mathRnd(1, 0x28) * 0.0001f;
             sp6C.unk8 = 0x28;
             sp6C.unk44 = 0x200;
             sp6C.unk42 = 0x2B;
@@ -2134,13 +2134,13 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.transform.transl.y = 0.0f;
             sp6C.transform.transl.z = 0.0f;
             sp6C.transform.scale = 1.0f;
-            sp6C.transform.roll = 0x64 - rand_next(0, 0xC8);
-            sp6C.transform.pitch = 0x64 - rand_next(0, 0xC8);
-            sp6C.transform.yaw = 0x64 - rand_next(0, 0xC8);
+            sp6C.transform.roll = 0x64 - mathRnd(0, 0xC8);
+            sp6C.transform.pitch = 0x64 - mathRnd(0, 0xC8);
+            sp6C.transform.yaw = 0x64 - mathRnd(0, 0xC8);
             break;
         case 0x4E:
-            sp6C.unk24.x = (1 - rand_next(0, 2)) * 0.6f;
-            sp6C.unk24.z = (1 - rand_next(0, 2)) * 0.6f;
+            sp6C.unk24.x = (1 - mathRnd(0, 2)) * 0.6f;
+            sp6C.unk24.z = (1 - mathRnd(0, 2)) * 0.6f;
             sp6C.unk8 = 0x4B;
             sp6C.unk61 = 0;
             sp6C.unk44 = 0x200;
@@ -2154,15 +2154,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk44 = 0x70000;
             sp6C.unk30.y = 40.0f;
             sp6C.unk3C = 0.012f;
-            sp64 = rand_next(0, 3);
+            sp64 = mathRnd(0, 3);
             sp6C.unk42 = sp64 + 0xDD;
             sp6C.transform.roll = 0;
             sp6C.transform.transl.x = 0.0f;
             sp6C.transform.transl.y = 30.0f;
             sp6C.transform.transl.z = 0.0f;
             sp6C.transform.scale = 1.0f;
-            sp6C.transform.pitch = 0x1F4 - rand_next(0, 0x3E8);
-            sp6C.transform.yaw = 0x1F4 - rand_next(0, 0x3E8);
+            sp6C.transform.pitch = 0x1F4 - mathRnd(0, 0x3E8);
+            sp6C.transform.yaw = 0x1F4 - mathRnd(0, 0x3E8);
             break;
         case 0x49:
             sp6C.unk8 = 0xE;
@@ -2173,35 +2173,35 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.5f;
             break;
         case 0x47:
-            sp6C.unk30.x = 2.0f - rand_next(0, 4);
-            sp6C.unk30.y = 2.0f - rand_next(0, 4);
-            sp6C.unk30.z = 2.0f - rand_next(0, 4);
+            sp6C.unk30.x = 2.0f - mathRnd(0, 4);
+            sp6C.unk30.y = 2.0f - mathRnd(0, 4);
+            sp6C.unk30.z = 2.0f - mathRnd(0, 4);
             sp6C.unk3C = 0.015f;
-            sp6C.unk8 = rand_next(4, 0xE);
+            sp6C.unk8 = mathRnd(4, 0xE);
             sp6C.unk44 = 0x110100;
             sp6C.unk42 = 0xDC;
             break;
         case 0x42:
-            sp6C.unk30.x = 2.0f - rand_next(0, 4);
-            sp6C.unk30.y = 2.0f - rand_next(0, 4);
-            sp6C.unk30.z = 2.0f - rand_next(0, 4);
+            sp6C.unk30.x = 2.0f - mathRnd(0, 4);
+            sp6C.unk30.y = 2.0f - mathRnd(0, 4);
+            sp6C.unk30.z = 2.0f - mathRnd(0, 4);
             sp6C.unk3C = 0.002f;
             sp6C.unk8 = 1;
             sp6C.unk44 = 0x70800;
-            sp6C.unk42 = rand_next(0, 1) + 0xDD;
+            sp6C.unk42 = mathRnd(0, 1) + 0xDD;
             sp6C.transform.transl.x = 0.0f;
             sp6C.transform.transl.y = 0.0f;
             sp6C.transform.transl.z = 0.0f;
             sp6C.transform.scale = 1.0f;
-            sp6C.transform.roll = 0x1F4 - rand_next(0, 0x3E8);
-            sp6C.transform.pitch = 0x1F4 - rand_next(0, 0x3E8);
-            sp6C.transform.yaw = 0x1F4 - rand_next(0, 0x3E8);
+            sp6C.transform.roll = 0x1F4 - mathRnd(0, 0x3E8);
+            sp6C.transform.pitch = 0x1F4 - mathRnd(0, 0x3E8);
+            sp6C.transform.yaw = 0x1F4 - mathRnd(0, 0x3E8);
             break;
         case 0x40:
-            sp6C.unk30.y = rand_next(0, 0x28);
-            sp6C.unk24.x = (1 - rand_next(0, 2)) * 0.4f;
-            sp6C.unk24.y = rand_next(1, 3) * 0.4f;
-            sp6C.unk24.z = (1 - rand_next(0, 2)) * 0.4f;
+            sp6C.unk30.y = mathRnd(0, 0x28);
+            sp6C.unk24.x = (1 - mathRnd(0, 2)) * 0.4f;
+            sp6C.unk24.y = mathRnd(1, 3) * 0.4f;
+            sp6C.unk24.z = (1 - mathRnd(0, 2)) * 0.4f;
             sp6C.unk8 = 0x96;
             sp6C.unk44 = 0x108;
             sp6C.unk42 = 0x5C;
@@ -2210,9 +2210,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         case 0x41:
             for (sp60 = 0; sp60 < 30; sp60++) {
                 sp6C.unk30.y = -10.0f;
-                sp6C.unk24.x = (2 - rand_next(0, 4)) * 1.6f;
-                sp6C.unk24.y = rand_next(1, 2) * 0.4f;
-                sp6C.unk24.z = (2 - rand_next(0, 4)) * 1.6f;
+                sp6C.unk24.x = (2 - mathRnd(0, 4)) * 1.6f;
+                sp6C.unk24.y = mathRnd(1, 2) * 0.4f;
+                sp6C.unk24.z = (2 - mathRnd(0, 4)) * 1.6f;
                 sp6C.unk8 = 0x3C;
                 sp6C.unk44 = 0x108;
                 sp6C.unk42 = 0x5C;
@@ -2229,33 +2229,33 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk44 = 0x100100;
             sp6C.unk8 = 0x190;
             if (id == 0x3D) {
-                sp6C.unk30.x = 10.0f - rand_next(0, 0x14);
+                sp6C.unk30.x = 10.0f - mathRnd(0, 0x14);
                 sp6C.unk30.y = 35.0f;
-                sp6C.unk30.z = 10.0f - rand_next(0, 0x14);
-                sp6C.unk3C = rand_next(1, 3) * 0.06f;
+                sp6C.unk30.z = 10.0f - mathRnd(0, 0x14);
+                sp6C.unk3C = mathRnd(1, 3) * 0.06f;
             } else if (id == 0x3E) {
-                sp6C.unk30.x = 10.0f - rand_next(0, 0x14);
+                sp6C.unk30.x = 10.0f - mathRnd(0, 0x14);
                 sp6C.unk30.y = 220.0f;
-                sp6C.unk30.z = 10.0f - rand_next(0, 0x14);
-                sp6C.unk3C = rand_next(1, 3) * 0.04f;
+                sp6C.unk30.z = 10.0f - mathRnd(0, 0x14);
+                sp6C.unk3C = mathRnd(1, 3) * 0.04f;
             } else if (id == 0x3F) {
                 sp6C.unk8 = 0x64;
                 sp6C.unk30.x = 0.0f;
                 sp6C.unk30.y = -18.0f;
                 sp6C.unk30.z = 0.0f;
-                sp6C.unk3C = rand_next(1, 3) * 0.04f;
+                sp6C.unk3C = mathRnd(1, 3) * 0.04f;
             } else if (id == 0x43) {
                 sp6C.unk30.x = 110.0f;
                 sp6C.unk30.y = 60.0f;
-                sp6C.unk30.z = rand_next(0, 0x78) + -20.0f;
-                sp6C.unk3C = rand_next(1, 8) * 0.01f;
+                sp6C.unk30.z = mathRnd(0, 0x78) + -20.0f;
+                sp6C.unk3C = mathRnd(1, 8) * 0.01f;
                 sp6C.unk44 |= 8;
             } else if (id == 0x44) {
                 sp6C.unk30.x = 110.0f;
                 sp6C.unk30.y = 85.0f;
-                sp6C.unk30.z = rand_next(0, 0x78);
+                sp6C.unk30.z = mathRnd(0, 0x78);
                 sp6C.unk24.y = -0.26f;
-                sp6C.unk3C = rand_next(1, 8) * 0.01f;
+                sp6C.unk3C = mathRnd(1, 8) * 0.01f;
             }
             sp6C.unk61 = 0x20;
             sp6C.unk42 = 0x5F;
@@ -2281,15 +2281,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 transform = &_bss_0;
             }
             sp6C.unk30.y = 0.0f;
-            sp6C.unk24.y = rand_next(1, 0xA) * 0.2f;
+            sp6C.unk24.y = mathRnd(1, 0xA) * 0.2f;
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
             sp3C.transl.z = 0.0f;
             sp3C.scale = 0.5f;
-            sp3C.roll = 0x7D0 - rand_next(0, 0xFA0);
-            sp3C.pitch = 0x7D0 - rand_next(0, 0xFA0);
-            sp3C.yaw = 0x7D0 - rand_next(0, 0xFA0);
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            sp3C.roll = 0x7D0 - mathRnd(0, 0xFA0);
+            sp3C.pitch = 0x7D0 - mathRnd(0, 0xFA0);
+            sp3C.yaw = 0x7D0 - mathRnd(0, 0xFA0);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk8 = 0x50;
             sp6C.unk61 = 8;
             sp6C.unk44 = 0x100;
@@ -2297,13 +2297,13 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.0036f;
             break;
         case 0x38:
-            rand_set_seed(0x4233D);
+            mathSeed(0x4233D);
             for (sp60 = 0; sp60 < 40; sp60++) {
                 sp6C.unk30.y = 35.0f;
-                sp6C.unk24.x = (0x50 - rand_next(0, 0xA0)) * 0.01f;
-                sp6C.unk24.z = (0x50 - rand_next(0, 0xA0)) * 0.01f;
+                sp6C.unk24.x = (0x50 - mathRnd(0, 0xA0)) * 0.01f;
+                sp6C.unk24.z = (0x50 - mathRnd(0, 0xA0)) * 0.01f;
                 sp6C.unk3C = 0.0025f;
-                sp6C.unk8 = rand_next(1, 4) * 33.0f;
+                sp6C.unk8 = mathRnd(1, 4) * 33.0f;
                 sp6C.unk44 = 0x100011;
                 sp6C.unk42 = 0x30;
                 if (sp6C.unk0 != NULL) {
@@ -2319,46 +2319,46 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             }
             break;
         case 0x35:
-            sp6C.unk30.x = (0x1E - rand_next(0, 0x3C)) * 0.14f;
+            sp6C.unk30.x = (0x1E - mathRnd(0, 0x3C)) * 0.14f;
             sp6C.unk30.y = 44.0f;
-            sp6C.unk30.z = (0x1E - rand_next(0, 0x3C)) * 0.14f;
-            sp6C.unk24.y = rand_next(0x28, 0x50) * 0.0045f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00002f;
-            sp6C.unk8 = rand_next(0x28, 0x50);
+            sp6C.unk30.z = (0x1E - mathRnd(0, 0x3C)) * 0.14f;
+            sp6C.unk24.y = mathRnd(0x28, 0x50) * 0.0045f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00002f;
+            sp6C.unk8 = mathRnd(0x28, 0x50);
             sp6C.unk61 = 0;
             sp6C.unk44 = 0x80400001;
             sp6C.unk42 = 0x47;
             break;
         case 0x3A:
-            sp6C.unk30.x = (0x1E - rand_next(0, 0x3C)) * 0.14f;
+            sp6C.unk30.x = (0x1E - mathRnd(0, 0x3C)) * 0.14f;
             sp6C.unk30.y = 10.0f;
-            sp6C.unk30.z = (0x1E - rand_next(0, 0x3C)) * 0.14f;
-            sp6C.unk24.y = rand_next(0x28, 0x50) * 0.0045f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00002f;
+            sp6C.unk30.z = (0x1E - mathRnd(0, 0x3C)) * 0.14f;
+            sp6C.unk24.y = mathRnd(0x28, 0x50) * 0.0045f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00002f;
             sp6C.unk8 = 0xB4;
             sp6C.unk61 = 0;
             sp6C.unk44 = 0x80400200;
             sp6C.unk42 = 0x47;
             break;
         case 0x3B:
-            sp6C.unk30.x = (0x1E - rand_next(0, 0x3C)) * 0.04f;
+            sp6C.unk30.x = (0x1E - mathRnd(0, 0x3C)) * 0.04f;
             sp6C.unk30.y = 20.0f;
-            sp6C.unk30.z = (0x1E - rand_next(0, 0x3C)) * 0.04f;
-            sp6C.unk24.y = rand_next(0x28, 0x50) * 0.0045f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00002f;
+            sp6C.unk30.z = (0x1E - mathRnd(0, 0x3C)) * 0.04f;
+            sp6C.unk24.y = mathRnd(0x28, 0x50) * 0.0045f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00002f;
             sp6C.unk8 = 0x78;
             sp6C.unk61 = 0;
             sp6C.unk44 = 0x80400201;
             sp6C.unk42 = 0x47;
             break;
         case 0x53:
-            sp6C.unk30.x = (0x1E - rand_next(0, 0x3C)) * 0.14f;
-            sp6C.unk30.z = (0x1E - rand_next(0, 0x3C)) * 0.14f;
-            sp6C.unk24.y = rand_next(0x28, 0x50) * 0.0015f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00002f;
+            sp6C.unk30.x = (0x1E - mathRnd(0, 0x3C)) * 0.14f;
+            sp6C.unk30.z = (0x1E - mathRnd(0, 0x3C)) * 0.14f;
+            sp6C.unk24.y = mathRnd(0x28, 0x50) * 0.0015f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00002f;
             sp6C.unk8 = 0xD2;
             sp6C.unk44 = 0x80000201;
-            sp6C.unk42 = rand_next(0, 3) + 0xDD;
+            sp6C.unk42 = mathRnd(0, 3) + 0xDD;
             break;
         case 0x2E:
             sp6C.unk8 = 0x30;
@@ -2368,7 +2368,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.1f;
             break;
         case 0x78:
-            sp6C.unk30.y = rand_next(0, 0x64);
+            sp6C.unk30.y = mathRnd(0, 0x64);
             sp6C.unk8 = 0x30;
             sp6C.unk61 = 0;
             sp6C.unk44 = 0x08100210;
@@ -2376,10 +2376,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.1f;
             break;
         case 0x3E6:
-            sp6C.unk30.x = rand_next(-4, 4);
-            sp6C.unk30.z = rand_next(-4, 4);
-            sp6C.unk24.y = rand_next(4, 0xA) * 0.07f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00005f;
+            sp6C.unk30.x = mathRnd(-4, 4);
+            sp6C.unk30.z = mathRnd(-4, 4);
+            sp6C.unk24.y = mathRnd(4, 0xA) * 0.07f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00005f;
             sp6C.unk8 = 0x15E;
             sp6C.unk4 = 0x85;
             sp6C.unk60 = 0xFF;
@@ -2387,34 +2387,34 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk42 = 0xDF;
             break;
         case 0x77:
-            sp6C.unk30.x = rand_next(-4, 4);
-            sp6C.unk30.y = rand_next(0, 0x28);
-            sp6C.unk30.z = rand_next(-4, 4);
-            sp6C.unk24.x = rand_next(-0x28, 0x28) * 0.0025f;
-            sp6C.unk24.y = rand_next(0, 0x50) * 0.0045f;
-            sp6C.unk24.z = rand_next(-0x28, 0x28) * 0.0025f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00005f;
-            sp6C.unk8 = rand_next(0, 0x118) + 0x96;
+            sp6C.unk30.x = mathRnd(-4, 4);
+            sp6C.unk30.y = mathRnd(0, 0x28);
+            sp6C.unk30.z = mathRnd(-4, 4);
+            sp6C.unk24.x = mathRnd(-0x28, 0x28) * 0.0025f;
+            sp6C.unk24.y = mathRnd(0, 0x50) * 0.0045f;
+            sp6C.unk24.z = mathRnd(-0x28, 0x28) * 0.0025f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00005f;
+            sp6C.unk8 = mathRnd(0, 0x118) + 0x96;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x400101;
             sp6C.unk42 = 0xDF;
             break;
         case 0x7A:
-            sp6C.unk30.x = rand_next(-4, 4);
-            sp6C.unk30.y = rand_next(0, 0x23);
-            sp6C.unk30.z = rand_next(-4, 4);
-            sp6C.unk24.x = rand_next(-0x28, 0x28) * 0.0025f;
-            sp6C.unk24.z = rand_next(-0x28, 0x28) * 0.0025f;
-            sp6C.unk24.y = rand_next(0, 0x50) * 0.0025f;
-            sp6C.unk3C = rand_next(0x28, 0x50) * 0.00005f;
-            sp6C.unk8 = rand_next(0, 0x118) + 0xB4;
+            sp6C.unk30.x = mathRnd(-4, 4);
+            sp6C.unk30.y = mathRnd(0, 0x23);
+            sp6C.unk30.z = mathRnd(-4, 4);
+            sp6C.unk24.x = mathRnd(-0x28, 0x28) * 0.0025f;
+            sp6C.unk24.z = mathRnd(-0x28, 0x28) * 0.0025f;
+            sp6C.unk24.y = mathRnd(0, 0x50) * 0.0025f;
+            sp6C.unk3C = mathRnd(0x28, 0x50) * 0.00005f;
+            sp6C.unk8 = mathRnd(0, 0x118) + 0xB4;
             sp6C.unk60 = 0;
             sp6C.unk44 = 0xC80404;
             sp6C.unk42 = 0xDF;
             break;
         case 0x76:
-            sp6C.unk3C = rand_next(1, 8) * 0.0125f;
-            sp6C.unk8 = rand_next(0, 0x32) + 0x26;
+            sp6C.unk3C = mathRnd(1, 8) * 0.0125f;
+            sp6C.unk8 = mathRnd(0, 0x32) + 0x26;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x06100110;
             sp6C.unk42 = 0x159;
@@ -2443,28 +2443,28 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 1.0f;
             break;
         case 0x39:
-            if (rand_next(0, 1) != 0) {
+            if (mathRnd(0, 1) != 0) {
                 sp6C.unk30.z = -400.0f;
             } else {
                 sp6C.unk30.z = 200.0f;
             }
-            sp6C.unk3C = rand_next(1, 4) * 0.55f;
-            sp6C.unk8 = rand_next(0, 0x18) + 0x18;
+            sp6C.unk3C = mathRnd(1, 4) * 0.55f;
+            sp6C.unk8 = mathRnd(0, 0x18) + 0x18;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x100;
             sp6C.unk42 = 0x33;
             break;
         case 0x79:
-            if (rand_next(0, 1) != 0) {
+            if (mathRnd(0, 1) != 0) {
                 sp6C.unk30.x = -18.0f;
             } else {
                 sp6C.unk30.x = 18.0f;
             }
-            sp6C.unk30.y = rand_next(0xA, 0x3C);
-            sp6C.unk30.z = rand_next(-3, 3);
-            sp6C.unk24.y = rand_next(1, 0x14) * 0.01f;
-            sp6C.unk3C = rand_next(1, 7) * 0.006f;
-            sp6C.unk8 = rand_next(0, 0xF) + 0xF;
+            sp6C.unk30.y = mathRnd(0xA, 0x3C);
+            sp6C.unk30.z = mathRnd(-3, 3);
+            sp6C.unk24.y = mathRnd(1, 0x14) * 0.01f;
+            sp6C.unk3C = mathRnd(1, 7) * 0.006f;
+            sp6C.unk8 = mathRnd(0, 0xF) + 0xF;
             sp6C.unk60 = 0x9B;
             sp6C.unk44 = 0x100100;
             sp6C.unk42 = 0x156;
@@ -2498,21 +2498,21 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.12f;
             break;
         case 0x2:
-            sp6C.unk30.x = rand_next(-0x14, 0x14) * 0.4f;
-            sp6C.unk30.y = rand_next(-0x14, 0x14) * 0.4f;
-            sp6C.unk30.z = rand_next(-0x14, 0x14) * 0.4f;
-            sp6C.unk3C = (rand_next(0, 0x1E) * 0.001f) + 0.08f;
-            sp6C.unk8 = rand_next(0, 8) + 8;
+            sp6C.unk30.x = mathRnd(-0x14, 0x14) * 0.4f;
+            sp6C.unk30.y = mathRnd(-0x14, 0x14) * 0.4f;
+            sp6C.unk30.z = mathRnd(-0x14, 0x14) * 0.4f;
+            sp6C.unk3C = (mathRnd(0, 0x1E) * 0.001f) + 0.08f;
+            sp6C.unk8 = mathRnd(0, 8) + 8;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x100100;
             sp6C.unk42 = 0x33;
             break;
         case 0x2A:
-            sp6C.unk30.x = rand_next(-0x1E, 0x1E) * 0.1f;
-            sp6C.unk30.y = rand_next(-0x1E, 0x1E) * 0.1f;
-            sp6C.unk30.z = rand_next(-0x1E, 0x1E) * 0.1f;
-            sp6C.unk3C = (rand_next(0, 0xA) * 0.0003f) + 0.008f;
-            sp6C.unk8 = rand_next(0x14, 0x32);
+            sp6C.unk30.x = mathRnd(-0x1E, 0x1E) * 0.1f;
+            sp6C.unk30.y = mathRnd(-0x1E, 0x1E) * 0.1f;
+            sp6C.unk30.z = mathRnd(-0x1E, 0x1E) * 0.1f;
+            sp6C.unk3C = (mathRnd(0, 0xA) * 0.0003f) + 0.008f;
+            sp6C.unk8 = mathRnd(0x14, 0x32);
             sp6C.unk60 = 0x9B;
             sp6C.unk61 = 0xE;
             sp6C.unk44 = 0x100110;
@@ -2545,9 +2545,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 transform = &_bss_0;
             }
             sp6C.unk24.x = 0.05f;
-            sp54.z = rand_next(0, 0xFFFE);
-            sp54.y = rand_next(0, 0xFFFE);
-            sp54.x = rand_next(0, 0xFFFE);
+            sp54.z = mathRnd(0, 0xFFFE);
+            sp54.y = mathRnd(0, 0xFFFE);
+            sp54.x = mathRnd(0, 0xFFFE);
             sp3C.transl.x = 0.0f;
             sp3C.transl.y = 0.0f;
             sp3C.transl.z = 0.0f;
@@ -2555,7 +2555,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.roll = sp54.x;
             sp3C.pitch = sp54.y;
             sp3C.yaw = sp54.z;
-            rotate_vec3(&sp3C, sp6C.unk24.f);
+            mathRotateRPY(&sp3C, sp6C.unk24.f);
             sp6C.unk8 = 0x32;
             sp6C.unk40 = 0;
             sp6C.unk44 = 0x100;
@@ -2584,10 +2584,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             break;
         case 0x2D:
             sp6C.unk30.y = 35.0f;
-            sp6C.unk24.x = (0x50 - rand_next(0, 0xA0)) * 0.01f;
-            sp6C.unk24.z = (0x50 - rand_next(0, 0xA0)) * 0.01f;
+            sp6C.unk24.x = (0x50 - mathRnd(0, 0xA0)) * 0.01f;
+            sp6C.unk24.z = (0x50 - mathRnd(0, 0xA0)) * 0.01f;
             sp6C.unk3C = 0.0025f;
-            sp6C.unk8 = rand_next(1, 4) * 33.0f;
+            sp6C.unk8 = mathRnd(1, 4) * 33.0f;
             sp6C.unk44 = 0x100000;
             sp6C.unk42 = 0x30;
             break;
@@ -2599,11 +2599,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = rand_next(0, 6) + transform->transl.x;
+            sp6C.unk30.x = mathRnd(0, 6) + transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
-            sp6C.unk30.z = rand_next(0, 6) + transform->transl.z;
-            sp6C.unk24.y = rand_next(0, 0xA) * 0.012f;
-            sp6C.unk3C = rand_next(4, 8) * 0.003f;
+            sp6C.unk30.z = mathRnd(0, 6) + transform->transl.z;
+            sp6C.unk24.y = mathRnd(0, 0xA) * 0.012f;
+            sp6C.unk3C = mathRnd(4, 8) * 0.003f;
             sp6C.unk8 = 0x24;
             sp6C.unk60 = 0x41;
             sp6C.unk44 = 0x100112;
@@ -2623,12 +2623,12 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.002f;
             break;
         case 0x26:
-            sp6C.unk30.x = rand_next(-1, 1);
+            sp6C.unk30.x = mathRnd(-1, 1);
             if (data != NULL) {
                 sp6C.unk30.x += ((f32*)data)[1];
             }
             sp6C.unk30.y = 0.0f;
-            sp6C.unk30.z = rand_next(-1, 1);
+            sp6C.unk30.z = mathRnd(-1, 1);
             sp6C.unk24.y = 0.05f;
             sp6C.unk3C = 0.005f;
             if (data != NULL) {
@@ -2647,7 +2647,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp3C.transl.z = 0.0f;
             sp3C.scale = 1.0f;
             sp3C.yaw = obj->srt.yaw;
-            rotate_vec3(&sp3C, sp6C.unk30.f);
+            mathRotateRPY(&sp3C, sp6C.unk30.f);
             break;
         case 0xC:
             sp6C.unk8 = 0x8A;
@@ -2679,44 +2679,44 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk30.x = 8.0f;
             sp6C.unk30.y = 40.0f;
             sp6C.unk30.z = 5.0f;
-            sp6C.unk24.x = (0x50 - rand_next(0, 0xA0)) * 0.025f;
-            sp6C.unk24.z = (0x50 - rand_next(0, 0xA0)) * 0.025f;
+            sp6C.unk24.x = (0x50 - mathRnd(0, 0xA0)) * 0.025f;
+            sp6C.unk24.z = (0x50 - mathRnd(0, 0xA0)) * 0.025f;
             sp6C.unk3C = 0.005f;
-            sp6C.unk8 = (rand_next(0, 3) + 1) * 33.0f;
+            sp6C.unk8 = (mathRnd(0, 3) + 1) * 33.0f;
             sp6C.unk44 = 0x110214;
             sp6C.unk42 = 0x30;
             break;
         case 0x11:
-            sp6C.unk24.x = (0x50 - rand_next(0, 0xA0)) * 0.025f;
-            sp6C.unk24.y = rand_next(0, 0x50) * 0.05f;
-            sp6C.unk24.z = (0x50 - rand_next(0, 0xA0)) * 0.025f;
+            sp6C.unk24.x = (0x50 - mathRnd(0, 0xA0)) * 0.025f;
+            sp6C.unk24.y = mathRnd(0, 0x50) * 0.05f;
+            sp6C.unk24.z = (0x50 - mathRnd(0, 0xA0)) * 0.025f;
             sp6C.unk3C = 0.005f;
-            sp6C.unk8 = (rand_next(0, 3) + 1) * 33.0f;
+            sp6C.unk8 = (mathRnd(0, 3) + 1) * 33.0f;
             sp6C.unk44 = 0x01110214;
             sp6C.unk42 = 0x33;
             break;
         case 0x19:
-            sp6C.unk24.x = rand_next(-0xA, 0xA) * 0.01f;
-            sp6C.unk24.y = rand_next(-0xA, 0xA) * 0.01f;
-            sp6C.unk24.z = rand_next(-0xA, 0xA) * 0.01f;
+            sp6C.unk24.x = mathRnd(-0xA, 0xA) * 0.01f;
+            sp6C.unk24.y = mathRnd(-0xA, 0xA) * 0.01f;
+            sp6C.unk24.z = mathRnd(-0xA, 0xA) * 0.01f;
             sp6C.unk3C = 0.001f;
             sp6C.unk8 = 0x32;
             sp6C.unk44 = 0x211;
             sp6C.unk42 = 0x30;
             break;
         case 0x1A:
-            sp6C.unk24.x = (0xA - rand_next(0, 0x14)) * 0.02f;
-            sp6C.unk24.y = rand_next(0, 0x3C) * 0.02f;
-            sp6C.unk24.z = (0xA - rand_next(0, 0x14)) * 0.02f;
-            sp6C.unk3C = rand_next(0, 4) * 0.0005f;
-            sp6C.unk8 = (rand_next(0, 3) + 1) * 14.0f;
+            sp6C.unk24.x = (0xA - mathRnd(0, 0x14)) * 0.02f;
+            sp6C.unk24.y = mathRnd(0, 0x3C) * 0.02f;
+            sp6C.unk24.z = (0xA - mathRnd(0, 0x14)) * 0.02f;
+            sp6C.unk3C = mathRnd(0, 4) * 0.0005f;
+            sp6C.unk8 = (mathRnd(0, 3) + 1) * 14.0f;
             sp6C.unk44 = 0x01000211;
             sp6C.unk42 = 0x30;
             break;
         case 0x1B:
-            sp6C.unk24.y = rand_next(0, 0x3C) * 0.02f;
-            sp6C.unk3C = rand_next(0, 4) * 0.0005f;
-            sp6C.unk8 =  (rand_next(0, 3) + 1) * 78.0f;
+            sp6C.unk24.y = mathRnd(0, 0x3C) * 0.02f;
+            sp6C.unk3C = mathRnd(0, 4) * 0.0005f;
+            sp6C.unk8 =  (mathRnd(0, 3) + 1) * 78.0f;
             sp6C.unk61 = 5;
             sp6C.unk44 = 0x01000211;
             sp6C.unk42 = 0x30;
@@ -2730,8 +2730,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.008f;
             break;
         case 0x21:
-            sp6C.unk30.x = (0xA - rand_next(0, 0x14));
-            sp6C.unk30.z = (0xA - rand_next(0, 0x14));
+            sp6C.unk30.x = (0xA - mathRnd(0, 0x14));
+            sp6C.unk30.z = (0xA - mathRnd(0, 0x14));
             sp6C.unk8 = 0x32;
             sp6C.unk44 = 0x201;
             sp6C.unk42 = 0x321;
@@ -2763,12 +2763,12 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.019f;
             break;
         case 0x1C:
-            sp6C.unk30.x = rand_next(-0xC8, 0xC8);
+            sp6C.unk30.x = mathRnd(-0xC8, 0xC8);
             sp6C.unk30.y = 300.0f;
-            sp6C.unk30.z = rand_next(-0xC8, 0xC8);
-            sp6C.unk24.x = (0xA - rand_next(0, 0x14)) * 0.06f;
-            sp6C.unk24.z = (0xA - rand_next(0, 0x14)) * 0.06f;
-            sp6C.unk24.y = (0xA - rand_next(0, 0x14)) * 0.08f;
+            sp6C.unk30.z = mathRnd(-0xC8, 0xC8);
+            sp6C.unk24.x = (0xA - mathRnd(0, 0x14)) * 0.06f;
+            sp6C.unk24.z = (0xA - mathRnd(0, 0x14)) * 0.06f;
+            sp6C.unk24.y = (0xA - mathRnd(0, 0x14)) * 0.08f;
             sp6C.unk3C = 0.0011f;
             sp6C.unk30.x = 0.0f;
             sp6C.unk30.y = 100.0f;
@@ -2776,7 +2776,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk8 = 0x104;
             sp6C.unk44 = 0x01000202;
             sp6C.unk4 = 0x1E;
-            sp6C.unk24.z = (0xA - rand_next(0, 0x14)) * 0.06f;
+            sp6C.unk24.z = (0xA - mathRnd(0, 0x14)) * 0.06f;
             sp6C.unk8 = 0xA0;
             sp6C.unk44 = 0x01000204;
             sp6C.unk44 = 0x11000204;
@@ -2784,10 +2784,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.0025f;
             break;
         case 0x74:
-            sp6C.unk30.x = rand_next(-0x50, 0x50);
+            sp6C.unk30.x = mathRnd(-0x50, 0x50);
             sp6C.unk30.y = 0.0f;
-            sp6C.unk30.z = rand_next(-0x50, 0x50);
-            sp6C.unk24.y = rand_next(1, 4) * 0.1f;
+            sp6C.unk30.z = mathRnd(-0x50, 0x50);
+            sp6C.unk24.y = mathRnd(1, 4) * 0.1f;
             sp6C.unk3C = 0.0022f;
             sp6C.unk8 = 0x140;
             sp6C.unk60 = 0xFF;
@@ -2797,15 +2797,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         case 0x1D:
             sp6C.unk30.y = 48.0f;
             sp6C.unk30.z = -110.0f;
-            sp6C.unk24.x = (0xA - rand_next(0, 0x14)) * 0.08f;
-            sp6C.unk24.y = (0xA - rand_next(0, 0x14)) * 0.08f;
+            sp6C.unk24.x = (0xA - mathRnd(0, 0x14)) * 0.08f;
+            sp6C.unk24.y = (0xA - mathRnd(0, 0x14)) * 0.08f;
             sp6C.unk8 = 0x78;
             sp6C.unk44 = 0x204;
             sp6C.unk42 = 0x1F0;
             sp6C.unk3C = 0.0088f;
             break;
         case 0x1E:
-            sp6C.unk3C = rand_next(1, 4) * 0.003f;
+            sp6C.unk3C = mathRnd(1, 4) * 0.003f;
             sp6C.unk8 = 0x5A;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x0A100100;
@@ -2813,22 +2813,22 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk61 = 0;
             break;
         case 0x1F:
-            sp6C.unk3C = rand_next(2, 4) * 0.02f;
+            sp6C.unk3C = mathRnd(2, 4) * 0.02f;
             sp6C.unk8 = 0xC8;
             sp6C.unk44 = 0x0A100201;
             sp6C.unk42 = 0x56;
             break;
         case 0x54:
-            sp6C.unk30.x = (5 - rand_next(0, 0xA));
-            sp6C.unk30.z = (5 - rand_next(0, 0xA));
-            sp6C.unk3C = rand_next(2, 0xC) * 0.004f;
+            sp6C.unk30.x = (5 - mathRnd(0, 0xA));
+            sp6C.unk30.z = (5 - mathRnd(0, 0xA));
+            sp6C.unk3C = mathRnd(2, 0xC) * 0.004f;
             sp6C.unk8 = 0x78;
             sp6C.unk44 = 0x0A100201;
             sp6C.unk42 = 0x56;
             break;
         case 0x27:
             sp6C.unk30.y = 10.0f;
-            sp6C.unk3C = rand_next(1, 2) * 0.04f;
+            sp6C.unk3C = mathRnd(1, 2) * 0.04f;
             sp6C.unk8 = 0xC8;
             sp6C.unk44 = 0x0A100201;
             sp6C.unk42 = 0x6B;
@@ -2854,11 +2854,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk3C = 0.005f;
             break;
         case 0x10:
-            sp6C.unk30.y = (0x14 - rand_next(0, 0x28));
-            sp6C.unk24.x = (0x50 - rand_next(0, 0xA0)) * 0.025f;
-            sp6C.unk24.z = (0x50 - rand_next(0, 0xA0)) * 0.025f;
+            sp6C.unk30.y = (0x14 - mathRnd(0, 0x28));
+            sp6C.unk24.x = (0x50 - mathRnd(0, 0xA0)) * 0.025f;
+            sp6C.unk24.z = (0x50 - mathRnd(0, 0xA0)) * 0.025f;
             sp6C.unk3C = 0.005f;
-            sp6C.unk8 = (rand_next(0, 3) + 1) * 6.0f;
+            sp6C.unk8 = (mathRnd(0, 3) + 1) * 6.0f;
             sp6C.unk44 = 0x110204;
             sp6C.unk42 = 0x30;
             break;
@@ -2933,11 +2933,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk30.x = rand_next(-6, 6);
-            sp6C.unk30.z = rand_next(-6, 6);
-            sp6C.unk24.x = rand_next(-2, 2) * 0.2f * transform->scale;
-            sp6C.unk24.y = rand_next(0, 4) * 0.1f * transform->scale;
-            sp6C.unk24.z = rand_next(-2, 2) * 0.2f * transform->scale;
+            sp6C.unk30.x = mathRnd(-6, 6);
+            sp6C.unk30.z = mathRnd(-6, 6);
+            sp6C.unk24.x = mathRnd(-2, 2) * 0.2f * transform->scale;
+            sp6C.unk24.y = mathRnd(0, 4) * 0.1f * transform->scale;
+            sp6C.unk24.z = mathRnd(-2, 2) * 0.2f * transform->scale;
             sp6C.unk3C = transform->scale * 0.012f;
             sp6C.unk8 = 0x18;
             sp6C.unk44 = 0x01080000;
@@ -2956,11 +2956,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk30.y = rand_next(0, 0xA);
-            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.003f * transform->scale;
-            sp6C.unk24.y = rand_next(0xC8, 0x190) * 0.003f * transform->scale;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.003f * transform->scale;
-            sp6C.unk3C = rand_next(8, 0xB) * 0.0001f * transform->scale;
+            sp6C.unk30.y = mathRnd(0, 0xA);
+            sp6C.unk24.x = mathRnd(-0x64, 0x64) * 0.003f * transform->scale;
+            sp6C.unk24.y = mathRnd(0xC8, 0x190) * 0.003f * transform->scale;
+            sp6C.unk24.z = mathRnd(-0x64, 0x64) * 0.003f * transform->scale;
+            sp6C.unk3C = mathRnd(8, 0xB) * 0.0001f * transform->scale;
             sp6C.unk60 = 0xBE;
             sp6C.unk8 = transform->scale * 75.0f;
             sp6C.unk44 = 0x01200000;
@@ -2978,10 +2978,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.02f * transform->scale;
-            sp6C.unk24.y = rand_next(0xA, 0xC8) * 0.02f * transform->scale;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.02f * transform->scale;
-            sp6C.unk3C = (rand_next(8, 0xB) * 0.0001f) * transform->scale;
+            sp6C.unk24.x = mathRnd(-0x64, 0x64) * 0.02f * transform->scale;
+            sp6C.unk24.y = mathRnd(0xA, 0xC8) * 0.02f * transform->scale;
+            sp6C.unk24.z = mathRnd(-0x64, 0x64) * 0.02f * transform->scale;
+            sp6C.unk3C = (mathRnd(8, 0xB) * 0.0001f) * transform->scale;
             sp6C.unk8 = 0x4B;
             sp6C.unk44 = 0x01080000;
             sp6C.unk48 = 0x01000000;
@@ -3019,10 +3019,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
             sp6C.unk30.z = transform->transl.z;
-            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.0035f;
-            sp6C.unk24.y = rand_next(0, 0x64) * 0.0075f;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.0035f;
-            sp6C.unk3C = rand_next(0x1F4, 0x320) * 0.000002f;
+            sp6C.unk24.x = mathRnd(-0x64, 0x64) * 0.0035f;
+            sp6C.unk24.y = mathRnd(0, 0x64) * 0.0075f;
+            sp6C.unk24.z = mathRnd(-0x64, 0x64) * 0.0035f;
+            sp6C.unk3C = mathRnd(0x1F4, 0x320) * 0.000002f;
             sp6C.unk8 = 0x50;
             sp6C.unk44 = 0x01088200;
             sp6C.unk48 = 0x100000;
@@ -3040,7 +3040,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
         case 0x328:
             sp6C.unk8 = 0x28;
             sp6C.unk44 = 0x180210;
-            sp6C.unk3C = rand_next(8, 0xC) * 0.002f;
+            sp6C.unk3C = mathRnd(8, 0xC) * 0.002f;
             sp6C.unk42 = 0x5C;
             break;
         case 0x3DE:
@@ -3053,9 +3053,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 sp6C.unk30.y = transform->transl.y;
                 sp6C.unk30.z = transform->transl.z;
             } else {
-                sp6C.unk30.x = rand_next(-0xA, 0xA) * 0.1f;
-                sp6C.unk30.y = rand_next(-0xA, 0xA) * 0.1f;
-                sp6C.unk30.z = rand_next(-0xA, 0xA) * 0.1f;
+                sp6C.unk30.x = mathRnd(-0xA, 0xA) * 0.1f;
+                sp6C.unk30.y = mathRnd(-0xA, 0xA) * 0.1f;
+                sp6C.unk30.z = mathRnd(-0xA, 0xA) * 0.1f;
             }
             sp6C.unk8 = 0x96;
             sp6C.unk61 = 0x1E;
@@ -3075,15 +3075,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk4C[2] = 0xC000;
             break;
         case 0x3DF:
-            sp6C.unk30.x = rand_next(-0x64, 0x64) * 0.1f;
-            sp6C.unk30.y = rand_next(-0x64, 0x64) * 0.1f;
-            sp6C.unk30.z = rand_next(-0x64, 0x64) * 0.1f;
-            sp6C.unk24.y = rand_next(8, 0xA) * 0.05f;
-            if (rand_next(0, 0x28) != 0) {
-                sp6C.unk3C = rand_next(8, 0x14) * 0.001f;
-                sp6C.unk8 = rand_next(0x5A, 0x78);
+            sp6C.unk30.x = mathRnd(-0x64, 0x64) * 0.1f;
+            sp6C.unk30.y = mathRnd(-0x64, 0x64) * 0.1f;
+            sp6C.unk30.z = mathRnd(-0x64, 0x64) * 0.1f;
+            sp6C.unk24.y = mathRnd(8, 0xA) * 0.05f;
+            if (mathRnd(0, 0x28) != 0) {
+                sp6C.unk3C = mathRnd(8, 0x14) * 0.001f;
+                sp6C.unk8 = mathRnd(0x5A, 0x78);
             } else {
-                sp6C.unk3C = rand_next(0x15, 0x29) * 0.001f;
+                sp6C.unk3C = mathRnd(0x15, 0x29) * 0.001f;
                 sp6C.unk8 = 0x1CC;
             }
             sp6C.unk44 = 0x80380201;
@@ -3102,9 +3102,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-2, 2) * 0.05f;
-            sp6C.unk24.y = rand_next(2, 5) * 0.07f;
-            sp6C.unk24.z = rand_next(1, 3) * -0.1f;
+            sp6C.unk24.x = mathRnd(-2, 2) * 0.05f;
+            sp6C.unk24.y = mathRnd(2, 5) * 0.07f;
+            sp6C.unk24.z = mathRnd(1, 3) * -0.1f;
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
             sp6C.unk30.z = transform->transl.z;
@@ -3119,8 +3119,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.y = rand_next(0, 4) * 0.1f;
-            sp6C.unk24.z = rand_next(2, 4) * -0.15f;
+            sp6C.unk24.y = mathRnd(0, 4) * 0.1f;
+            sp6C.unk24.z = mathRnd(2, 4) * -0.15f;
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
             sp6C.unk30.z = transform->transl.z;
@@ -3154,8 +3154,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
             sp6C.unk30.z = transform->transl.z;
-            sp6C.unk3C = rand_next(0x32, 0x64) * 0.0002f;
-            sp6C.unk8 = rand_next(0x28, 0x50);
+            sp6C.unk3C = mathRnd(0x32, 0x64) * 0.0002f;
+            sp6C.unk8 = mathRnd(0x28, 0x50);
             sp6C.unk44 = 0x08140200;
             sp6C.unk48 = 0x01000000;
             sp6C.unk42 = 0x5F;
@@ -3169,7 +3169,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sp6C.unk42 = 0x462;
             sp6C.unk30.x = transform->transl.x;
             sp6C.unk30.y = transform->transl.y;
-            sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
+            sp6C.unk3C = mathRnd(0xA, 0x14) * 0.0001f;
             sp6C.unk8 = 0xAA;
             sp6C.unk44 = 0xA0104;
             sp6C.transform.pitch = 0;
@@ -3184,21 +3184,21 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
                 RESET_SRT(_bss_0)
                 transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-0x28, 0x28) * 0.004f;
-            sp6C.unk24.y = rand_next(0xA, 0x50) * 0.002f;
-            sp6C.unk24.z = rand_next(-0x28, 0x28) * 0.004f;
-            sp6C.unk3C = rand_next(5, 0x19) * 0.00015f;
-            sp6C.unk8 = rand_next(0x122, 0x15E);
+            sp6C.unk24.x = mathRnd(-0x28, 0x28) * 0.004f;
+            sp6C.unk24.y = mathRnd(0xA, 0x50) * 0.002f;
+            sp6C.unk24.z = mathRnd(-0x28, 0x28) * 0.004f;
+            sp6C.unk3C = mathRnd(5, 0x19) * 0.00015f;
+            sp6C.unk8 = mathRnd(0x122, 0x15E);
             sp6C.unk60 = 0xFF;
-            sp6C.transform.yaw = rand_next(0, 0xFFFF);
-            sp6C.transform.pitch = rand_next(0, 0xFFFF);
-            sp6C.transform.yaw = rand_next(0, 0xFFFF);
-            sp6C.transform.transl.x = rand_next(0xE6, 0x320);
-            sp6C.transform.transl.y = rand_next(0xE6, 0x320);
-            sp6C.transform.transl.z = rand_next(0xE6, 0x320);
+            sp6C.transform.yaw = mathRnd(0, 0xFFFF);
+            sp6C.transform.pitch = mathRnd(0, 0xFFFF);
+            sp6C.transform.yaw = mathRnd(0, 0xFFFF);
+            sp6C.transform.transl.x = mathRnd(0xE6, 0x320);
+            sp6C.transform.transl.y = mathRnd(0xE6, 0x320);
+            sp6C.transform.transl.z = mathRnd(0xE6, 0x320);
             sp6C.unk48 = 0x01000020;
             sp6C.unk44 = 0x86000008;
-            sp6C.unk58[0] = sp6C.unk4C[0] = rand_next(0, 0xFFF) + 0xF000;
+            sp6C.unk58[0] = sp6C.unk4C[0] = mathRnd(0, 0xFFF) + 0xF000;
             sp6C.unk58[1] = sp6C.unk4C[1] = 0xE000;
             sp6C.unk58[2] = sp6C.unk4C[2] = 0xE000;
             sp6C.unk42 = 0x567;

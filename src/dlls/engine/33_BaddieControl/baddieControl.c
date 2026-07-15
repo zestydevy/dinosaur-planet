@@ -67,9 +67,9 @@ s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
 
     for (i = 0; i < 4; i++) {
         var_s0 = spD0 + (i << 0xE);
-        spD8.x = obj->srt.transl.x - (fsin16_precise(var_s0) * arg2);
+        spD8.x = obj->srt.transl.x - (mathSinfInterp(var_s0) * arg2);
         spD8.y = obj->srt.transl.y + 10.0f;
-        spD8.z = obj->srt.transl.z - (fcos16_precise(var_s0) * arg2);
+        spD8.z = obj->srt.transl.z - (mathCosfInterp(var_s0) * arg2);
         vox_func_80007EE0(&spD8, &spEC);
         if (obj->parent != NULL) {
             var_s0 = 1;
@@ -115,7 +115,7 @@ void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, u16* arg3, s16*
     sp20.x = arg1->globalPosition.f[0] - arg0->globalPosition.f[0];
     sp20.y = arg1->globalPosition.f[1] - arg0->globalPosition.f[1];
     sp20.z = arg1->globalPosition.f[2] - arg0->globalPosition.f[2];
-    temp_v0 = arctan2_f(-sp20.x, -sp20.z);
+    temp_v0 = mathAtan2f(-sp20.x, -sp20.z);
     if (arg0->parent != NULL) {
         var_a1 = arg0->srt.yaw + arg0->parent->srt.yaw;
     } else {
@@ -149,8 +149,8 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
     sp44 = arg4->globalPosition.z - arg2;
     sp40 = sqrtf(SQ(sp48) + SQ(sp44));
     if (sp40 < arg3) {
-        sp5C = fsin16_precise(arg0->srt.yaw);
-        sp58 = fcos16_precise(arg0->srt.yaw);
+        sp5C = mathSinfInterp(arg0->srt.yaw);
+        sp58 = mathCosfInterp(arg0->srt.yaw);
         temp_fa0 = -(((arg1 - sp5C) * sp5C) + ((arg2 - sp58) * sp58));
         sp44 = (arg4->globalPosition.x * sp5C) + (sp58 * arg4->globalPosition.z) + temp_fa0;
         sp48 = (arg4->prevGlobalPosition.x * sp5C) + (sp58 * arg4->prevGlobalPosition.z) + temp_fa0;
@@ -172,8 +172,8 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
         sp44 = arg2;
     }
 
-    sp5C = fsin16_precise(arg0->srt.yaw + 0x4000);
-    sp58 = fcos16_precise(arg0->srt.yaw + 0x4000);
+    sp5C = mathSinfInterp(arg0->srt.yaw + 0x4000);
+    sp58 = mathCosfInterp(arg0->srt.yaw + 0x4000);
     temp_fa0 = -((arg0->srt.transl.x * sp5C) + (arg0->srt.transl.z * sp58));
     return -((sp5C * sp48) + (sp58 * sp44) + temp_fa0);
 }
@@ -437,7 +437,7 @@ Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanc
                 stop = TRUE;
             }
 
-            angle = arctan2_f(-delta.f[0], -delta.f[2]);
+            angle = mathAtan2f(-delta.f[0], -delta.f[2]);
             if (baddieObj->parent != NULL) {
                 angle -= ((baddieObj->srt.yaw + baddieObj->parent->srt.yaw) & 0xFFFF);
                 CIRCLE_WRAP(angle)

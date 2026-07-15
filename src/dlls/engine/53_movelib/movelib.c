@@ -197,7 +197,7 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
                     data->unk490 = !objExpr_func_800333C8(obj, sp54, data->jointCount, data->unk1C);
                 }
                 if (data->unk4B4 < -data->unk4B0) {
-                    data->unk4B4 = rand_next(data->unk4B0, data->unk4AC);
+                    data->unk4B4 = mathRnd(data->unk4B0, data->unk4AC);
                 }
                 if (data->unk4B4 < 0) {
                     return;
@@ -307,7 +307,7 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
         sp38[0] = -arg0->srt.roll;
         sp38[1] = -arg0->srt.pitch;
         sp38[2] = -arg0->srt.yaw;
-        rotate_vec3((const SRT*)sp38, arg1->unk4.f);
+        mathRotateRPY((const SRT*)sp38, arg1->unk4.f);
         arg1->unk499 = 0;
     }
     objGetAttachPointWorldSpace(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
@@ -410,10 +410,10 @@ s32 movelib_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8
         if (arg3 != arg0->curModAnimId) {
             objAnimSet(arg0, arg3, 0.0f, 0U);
         }
-        var_a0 = (u16)arctan2_f(sp3C.f[0], sp3C.f[2]);
+        var_a0 = (u16)mathAtan2f(sp3C.f[0], sp3C.f[2]);
         var_a0 = arg0->srt.yaw - (var_a0 & 0xFFFF);
         CIRCLE_WRAP(var_a0);
-        arg2 *= -fcos16_precise(var_a0);
+        arg2 *= -mathCosfInterp(var_a0);
         objGetAnimChange(arg0, arg2, arg4);
     }
     
@@ -450,7 +450,7 @@ s32 movelib_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* ar
     if (*arg6 & 2) {
         xDiff = arg0->srt.transl.x - arg0->prevLocalPosition.x;
         zDiff = arg0->srt.transl.z - arg0->prevLocalPosition.z;
-        arg0->srt.yaw += ((s16)(arctan2_f(xDiff, zDiff) + 0x8000) - arg0->srt.yaw) >> 3;
+        arg0->srt.yaw += ((s16)(mathAtan2f(xDiff, zDiff) + 0x8000) - arg0->srt.yaw) >> 3;
     }
     return sp3C;
 }
@@ -498,12 +498,12 @@ static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F
         arg2->unk24.z = 0.0f;
         arg2->unk18.x = -150.0f;
         arg2->unk24.x = -150.0f;
-        rotate_vec_inv(&arg0->srt, &arg2->unk18);
+        mathRotateYPR(&arg0->srt, &arg2->unk18);
         STUBBED_PRINTF(" Tangent 1 %f %f %f \n", &arg2->unk18.x, &arg2->unk18.y, &arg2->unk18.z);
         sp40[2] = 0;
         sp40[1] = (s16) arg1->unk2D;
         sp40[0] = (s16) arg1->unk2C;
-        rotate_vec_inv((const SRT*)&sp40, &arg2->unk24);
+        mathRotateYPR((const SRT*)&sp40, &arg2->unk24);
         STUBBED_PRINTF(" Tangent 2 %f %f %f \n", &arg2->unk24.x, &arg2->unk24.y, &arg2->unk24.z);
         *tValue = 0.0f;
         arg2->unk34 = movelib_func_1A1C(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
@@ -627,7 +627,7 @@ s32 movelib_func_1CC8(s32 arg0, SRT* arg1) {
         if (temp_v0_3 != NULL) {
             xDist = temp_v0_3->srt.transl.x - arg1->transl.x;
             zDist = temp_v0_3->srt.transl.z - arg1->transl.z;
-            arg1->yaw = (s16) (arctan2s(xDist, zDist) + 0x8000);
+            arg1->yaw = (s16) (mathAtan2(xDist, zDist) + 0x8000);
         } else {
             arg1->yaw = (s16) (sp30->unk2C << 8);
         }
@@ -696,7 +696,7 @@ s32 movelib_get_vtx_world_pos(Object* obj, s32 vtx, Vec3f* outPos) {
     outPos->x = (f32) verts[vtx].v.ob[0];
     outPos->y = (f32) verts[vtx].v.ob[1];
     outPos->z = (f32) verts[vtx].v.ob[2];
-    vec3_transform((MtxF*)(((f32*)modelInst->matrices[modelInst->unk34 & 1]) + (*joint << 4)),
+    mathMtxXFMF((MtxF*)(((f32*)modelInst->matrices[modelInst->unk34 & 1]) + (*joint << 4)),
         outPos->x, 
         outPos->y, 
         outPos->z, 

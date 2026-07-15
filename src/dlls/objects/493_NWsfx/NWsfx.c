@@ -69,7 +69,7 @@ void NWsfx_control(Object* self) {
 
     //Set up the next interval between sounds (randomised: somewhere between 1x and 2x the objSetup interval value)
     objData->intervalTimer = objData->interval; 
-    objData->intervalTimer += rand_next(0, objData->interval);
+    objData->intervalTimer += mathRnd(0, objData->interval);
 
     //Don't play sounds if a specified gamebit is set
     if ((objData->gamebitDisable != NO_GAMEBIT) && mainGetBits(objData->gamebitDisable)) {
@@ -82,7 +82,7 @@ void NWsfx_control(Object* self) {
         gDLL_6_AMSFX->vtbl->play(self, objData->sounds[0], MAX_VOLUME, NULL, NULL, 0, NULL);
     } else {
         //Pick a random sound to play
-        gDLL_6_AMSFX->vtbl->play(self, objData->sounds[rand_next(0, objData->totalSounds - 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, objData->sounds[mathRnd(0, objData->totalSounds - 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 

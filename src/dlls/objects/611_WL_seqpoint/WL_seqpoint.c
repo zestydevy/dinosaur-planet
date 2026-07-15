@@ -124,7 +124,7 @@ void WL_seqpoint_control(Object* self) {
     if (!objdata->triggered) {
         switch (objdata->triggerCondition) {
         case 0: // range
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);
                 objdata->triggered = TRUE;
             }
@@ -136,7 +136,7 @@ void WL_seqpoint_control(Object* self) {
             }
             break;
         case 2: // range and cond bit set
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
                 if ((objdata->conditionBit != -1) && (mainGetBits(objdata->conditionBit) != 0)) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);
                     objdata->triggered = TRUE;
@@ -144,7 +144,7 @@ void WL_seqpoint_control(Object* self) {
             }
             break;
         case 3: // range and cond bit unset
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < objdata->triggerRange) {
                 if ((objdata->conditionBit != -1) && (mainGetBits(objdata->conditionBit) == 0)) {
                     STUBBED_PRINTF("starting seq %d\n", objdata->seqno); // printf location found via default.dol
                     gDLL_3_Animation->vtbl->start_obj_sequence(objdata->seqno, self, -1);

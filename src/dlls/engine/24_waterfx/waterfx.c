@@ -552,7 +552,7 @@ static s32 waterfx_make_splash_particles(WaterSplash *splash, s32 splashIdx) {
     s16 angle;
     s16 angleDeviation;
 
-    count = rand_next(2, 4);
+    count = mathRnd(2, 4);
     if ((count + sNumWaterSplashParticles) > MAX_SPLASH_PARTICLES) {
         count = MAX_SPLASH_PARTICLES - sNumWaterSplashParticles;
     }
@@ -564,9 +564,9 @@ static s32 waterfx_make_splash_particles(WaterSplash *splash, s32 splashIdx) {
             if (idx < MAX_SPLASH_PARTICLES) {
                 part = &sWaterSplashParticles[idx];
                 sectorSize[0] = (s16)(0xFFFF / count);
-                angleDeviation = rand_next(-0x7D0, 0x7D0);
-                temp_fs0 = fsin16_precise(angle + angleDeviation);
-                temp_fv0 = fcos16_precise(angle + angleDeviation);
+                angleDeviation = mathRnd(-0x7D0, 0x7D0);
+                temp_fs0 = mathSinfInterp(angle + angleDeviation);
+                temp_fv0 = mathCosfInterp(angle + angleDeviation);
                 part->xVel = 4.0f * temp_fv0;
                 part->zVel = 4.0f * temp_fs0;
                 lateralMag = SQ(part->xVel) + SQ(part->zVel);
@@ -575,8 +575,8 @@ static s32 waterfx_make_splash_particles(WaterSplash *splash, s32 splashIdx) {
                     part->xVel *= lateralMag;
                     part->zVel *= lateralMag;
                 }
-                part->speed = rand_next(600, 800) * 0.001f;
-                part->yVel = rand_next(500, 600) * 0.001f;
+                part->speed = mathRnd(600, 800) * 0.001f;
+                part->yVel = mathRnd(500, 600) * 0.001f;
                 part->unk10 = 0;
                 part->splashIdx = splashIdx;
 
@@ -677,8 +677,8 @@ void waterfx_spawn_splash(f32 x, f32 y, f32 z, f32 size) {
     s = qu105(0);
     i = 1;
     do {
-        temp_fv0 = fcos16_precise(angle);
-        temp_fv0_2 = fsin16_precise(angle);
+        temp_fv0 = mathCosfInterp(angle);
+        temp_fv0_2 = mathSinfInterp(angle);
         splash->unkC[i] = 4.0f * temp_fv0;
         splash->unk24[i] = 4.0f;
         splash->unk3C[i] = 4.0f * temp_fv0_2;

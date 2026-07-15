@@ -13,7 +13,7 @@ void PollenFragment_setup(Object* self, PollenFragment_Setup* objSetup, s32 arg2
     PollenFragment_Data* objData = self->data;
     
     func_800267A4(self);
-    objData->lifetime = rand_next(180, 300);
+    objData->lifetime = mathRnd(180, 300);
     gDLL_6_AMSFX->vtbl->play(self, SOUND_B02_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
     gDLL_6_AMSFX->vtbl->play(self, SOUND_B03_Acid_Hiss_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
 }

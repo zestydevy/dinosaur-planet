@@ -216,7 +216,7 @@ static s32 CRSnowBike_sharpclaw_update_race_pathing(Object* self, CRSnowBike_Dat
 
     checkpointSetup = gDLL_4_Race->vtbl->func8(data->raceData.unk10, &sp30);
     if (checkpointSetup->unk20[1] == -1) {
-        objData->branchFlagCPU = rand_next(0, 1);
+        objData->branchFlagCPU = mathRnd(0, 1);
     }
     
     return gDLL_4_Race->vtbl->func5(&data->srtCurves, &data->raceData, arg2, 1, 0, objData->branchFlagCPU);
@@ -378,13 +378,13 @@ void CRSnowBike_control(Object* self) {
             }
             
             //Check if the player is near the bike, and which side of the bike they're on
-            if ((player != NULL) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
+            if ((player != NULL) && (vec3Distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
                 objData->mountingFrom = SIDE_LEFT;
 
                 CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 1, 1);
                 
                 //Show LockIcon if the player is close to the left side of the bike
-                vec3_transform(&bikeMtx, dBikeMountSidePoints[0].x, dBikeMountSidePoints[0].y, dBikeMountSidePoints[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                mathMtxXFMF(&bikeMtx, dBikeMountSidePoints[0].x, dBikeMountSidePoints[0].y, dBikeMountSidePoints[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                 dx = player->srt.transl.x - wsPoint.z;
                 dz = player->srt.transl.z - wsPoint.x;
                 if ((SQ(dx) + SQ(dz)) < SQ(10)) {
@@ -392,7 +392,7 @@ void CRSnowBike_control(Object* self) {
                     objData->mountingFrom = SIDE_RIGHT;
                 } else {
                     //Show LockIcon if the player is close to the right side of the bike
-                    vec3_transform(&bikeMtx, dBikeMountSidePoints[1].x, dBikeMountSidePoints[1].y, dBikeMountSidePoints[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                    mathMtxXFMF(&bikeMtx, dBikeMountSidePoints[1].x, dBikeMountSidePoints[1].y, dBikeMountSidePoints[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                     dx = player->srt.transl.x - wsPoint.z;
                     dz = player->srt.transl.z - wsPoint.x;
                     if ((SQ(dx) + SQ(dz)) < SQ(10)) {
@@ -481,7 +481,7 @@ void CRSnowBike_control(Object* self) {
                     
                     if (sp5C == 0) {
                         motion = &objData->motion;
-                        self->srt.yaw = arctan2_f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
+                        self->srt.yaw = mathAtan2f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
                         self->srt.transl.x = objData->srtCurves.transl.x;
                         self->srt.transl.y = objData->srtCurves.transl.y;
                         self->srt.transl.z = objData->srtCurves.transl.z;
@@ -509,7 +509,7 @@ void CRSnowBike_control(Object* self) {
                 gDLL_4_Race->vtbl->func4(self, &objData->raceData);
                 gDLL_4_Race->vtbl->func10(&objData->raceData);
                 if (sp5C == 0) {
-                    self->srt.yaw = arctan2_f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
+                    self->srt.yaw = mathAtan2f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
                     self->srt.transl.x = objData->srtCurves.transl.x;
                     self->srt.transl.y = objData->srtCurves.transl.y;
                     self->srt.transl.z = objData->srtCurves.transl.z;
@@ -554,7 +554,7 @@ void CRSnowBike_control(Object* self) {
                 diPrintf(" \tRAN OUT OF FUEL \t");
                 
                 //Play bump sound randomly while out of fuel
-                if (rand_next(0, 10) == 0) {
+                if (mathRnd(0, 10) == 0) {
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
 
@@ -680,7 +680,7 @@ void CRSnowBike_update(Object* self) {
             sRotationTransform.yaw = -objData->yaw;
             sRotationTransform.pitch = -objData->pitch;
             sRotationTransform.roll = -objData->roll;
-            matrix_from_srt_reversed(&invRotMtx, &sRotationTransform);
+            mathRpyXyzMtx(&invRotMtx, &sRotationTransform);
 
             self->velocity.f[0] = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
             self->velocity.f[1] = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
@@ -691,7 +691,7 @@ void CRSnowBike_update(Object* self) {
             wsVelocity.y = self->velocity.f[1] * 0.93749994f;
             wsVelocity.z = self->velocity.f[2] * 0.93749994f;
             
-            vec3_transform(&invRotMtx, 
+            mathMtxXFMF(&invRotMtx, 
                 wsVelocity.f[0], wsVelocity.f[1], wsVelocity.f[2], 
                 &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z
             );
@@ -699,7 +699,7 @@ void CRSnowBike_update(Object* self) {
         
         //Store the worldSpace coordinates of a point on the bike
         CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, FALSE, FALSE, FALSE);
-        vec3_transform(&bikeMtx, 
+        mathMtxXFMF(&bikeMtx, 
             0.0f, 0.0f, -10.0f, 
             &objData->wsFrontOfBike.x, &objData->wsFrontOfBike.y, &objData->wsFrontOfBike.z
         );
@@ -1072,8 +1072,8 @@ void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* o
 
     //Play impact sound effects while colliding (not debounced)
     if (objData->forwardSpeed < -1.2f) {
-        dColourRGBA[1] += rand_next(0, 155);
-        dColourRGBA[2] += rand_next(0, 155);
+        dColourRGBA[1] += mathRnd(0, 155);
+        dColourRGBA[2] += mathRnd(0, 155);
         volume = ((0.0f - objData->forwardSpeed) * 21.0f);
         if (objData->collisionFlags & 1) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
@@ -1163,12 +1163,12 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
     sRotationTransform.yaw = objData->yaw;
     sRotationTransform.pitch = objData->pitch;
     sRotationTransform.roll = objData->roll;
-    matrix_from_srt(&mtx, &sRotationTransform);
+    mathYprXyzMtx(&mtx, &sRotationTransform);
 
     sRotationTransform.yaw = -objData->yaw;
     sRotationTransform.pitch = -objData->pitch;
     sRotationTransform.roll = -objData->roll;
-    matrix_from_srt_reversed(&invMtx, &sRotationTransform);
+    mathRpyXyzMtx(&invMtx, &sRotationTransform);
     
     //Calculate pitch while airborne
     if ((objData->flags & CRSnowBike_FLAG_4_Grounded) == FALSE) {
@@ -1185,7 +1185,7 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
     }
     
     //Transform gravity vector into bike's objectSpace
-    vec3_transform(&invMtx, 
+    mathMtxXFMF(&invMtx, 
         0.0f, motion->gravity * motion->gravityFactor, 0.0f, 
         &osGravity.f[0], &osGravity.f[1], &osGravity.f[2]);
 
@@ -1326,7 +1326,7 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
         }
     }
 
-    vec3_transform(&mtx, motion->velocity.x, motion->velocity.y, motion->velocity.z, 
+    mathMtxXFMF(&mtx, motion->velocity.x, motion->velocity.y, motion->velocity.z, 
                    &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
     VECTOR_SCALE(self->velocity, 1.0666667f);
     objMove(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
@@ -1352,7 +1352,7 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
         velocityReduced.f[2] = self->velocity.z * 0.93749994f;
 
         //Transform velocity into bike's local objectSpace
-        vec3_transform(&invMtx, 
+        mathMtxXFMF(&invMtx, 
             velocityReduced.f[0], velocityReduced.f[1], velocityReduced.f[2], 
             &motion->velocity.x, &motion->velocity.y, &motion->velocity.z
         );
@@ -1393,15 +1393,15 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
         sRotationTransform.yaw = -objData->yaw;
         sRotationTransform.pitch = 0;
         sRotationTransform.roll = 0;
-        matrix_from_srt_reversed(&invMtxYaw, &sRotationTransform);
-        vec3_transform(&invMtxYaw, 
+        mathRpyXyzMtx(&invMtxYaw, &sRotationTransform);
+        mathMtxXFMF(&invMtxYaw, 
             vNormal.f[0], vNormal.f[1], vNormal.f[2], 
             &vNormal.f[0], &vNormal.f[1], &vNormal.f[2]
         );
         
         //Get the bike's goal pitch and roll, based on the surface normal
-        anglePitch = M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[2]);
-        angleRoll = -(M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[0]));
+        anglePitch = M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[2]);
+        angleRoll = -(M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[0]));
 
         //Blend towards goal pitch
         anglePitch -= (objData->pitch & 0xFFFF);
@@ -1468,15 +1468,15 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
     sRotationTransform.yaw = objData->yaw;
     sRotationTransform.pitch = objData->pitch;
     sRotationTransform.roll = objData->roll;
-    matrix_from_srt(&rotMtx, &sRotationTransform);
+    mathYprXyzMtx(&rotMtx, &sRotationTransform);
     
     sRotationTransform.yaw = -objData->yaw;
     sRotationTransform.pitch = -objData->pitch;
     sRotationTransform.roll = -objData->roll;
-    matrix_from_srt_reversed(&invRotMtx, &sRotationTransform);
+    mathRpyXyzMtx(&invRotMtx, &sRotationTransform);
     
     //Transform gravity vector into bike's objectSpace
-    vec3_transform(&invRotMtx, 
+    mathMtxXFMF(&invRotMtx, 
         0.0f, motion->gravity * motion->gravityFactor, 0.0f, 
         &osGravity.f[0], &osGravity.f[1], &osGravity.f[2]
     );
@@ -1534,7 +1534,7 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
         }
     }
     
-    vec3_transform(&rotMtx, 
+    mathMtxXFMF(&rotMtx, 
         motion->velocity.f[0], motion->velocity.f[1], motion->velocity.f[2], 
         &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]
     );
@@ -1560,7 +1560,7 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
         velocityReduced.f[0] = self->velocity.x * 0.93749994f;
         velocityReduced.f[1] = self->velocity.y * 0.93749994f;
         velocityReduced.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&invRotMtx, 
+        mathMtxXFMF(&invRotMtx, 
             velocityReduced.f[0], velocityReduced.f[1], velocityReduced.f[2], 
             &motion->velocity.f[0], &motion->velocity.f[1], &motion->velocity.f[2]
         );
@@ -1599,15 +1599,15 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
         sRotationTransform.yaw = -objData->yaw;
         sRotationTransform.pitch = 0;
         sRotationTransform.roll = 0;
-        matrix_from_srt_reversed(&invMtxYaw, &sRotationTransform);
-        vec3_transform(&invMtxYaw, 
+        mathRpyXyzMtx(&invMtxYaw, &sRotationTransform);
+        mathMtxXFMF(&invMtxYaw, 
             vNormal.f[0], vNormal.f[1], vNormal.f[2], 
             &vNormal.f[0], &vNormal.f[1], &vNormal.f[2]
         );
         
         //Get the bike's goal pitch and roll, based on the surface normal
-        anglePitch = M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[2]);
-        angleRoll = -(M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[0]));
+        anglePitch = M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[2]);
+        angleRoll = -(M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[0]));
 
         //Blend towards goal pitch
         anglePitch -= (objData->pitch & 0xFFFF);
@@ -1655,7 +1655,7 @@ void CRSnowBike_get_bike_matrix(Object* self, CRSnowBike_Data* objData, MtxF* oM
         transform.yaw += objData->yawOffset;
     }
     
-    matrix_from_srt(oMtx, &transform);
+    mathYprXyzMtx(oMtx, &transform);
 }
 
 // offset: 0x3748 | func: 27
@@ -1737,10 +1737,10 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
             transform.pitch = -self->srt.pitch;
             transform.roll = -self->srt.roll;
             bikeMotion = &objData->motion;
-            matrix_from_srt_reversed(&mtx, &transform);
+            mathRpyXyzMtx(&mtx, &transform);
             
             //Transform velocity from worldSpace to the bike's own objectSpace
-            vec3_transform(&mtx, 
+            mathMtxXFMF(&mtx, 
                 wsVelocity.x, wsVelocity.y, wsVelocity.z, 
                 &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z
             );
@@ -1789,7 +1789,7 @@ void CRSnowBike_handle_collisions(Object* self, CRSnowBike_Data* objData, DLL27_
                 CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, TRUE, TRUE, TRUE);
                 
                 //Transform the bike's objectSpace collision point into worldSpace
-                vec3_transform(&bikeMtx, 
+                mathMtxXFMF(&bikeMtx, 
                         dCollisionPoints[i].x, dCollisionPoints[i].y, dCollisionPoints[i].z, 
                         &wsPoint[i].x, &wsPoint[i].y, &wsPoint[i].z);
 
@@ -1805,7 +1805,7 @@ void CRSnowBike_handle_collisions(Object* self, CRSnowBike_Data* objData, DLL27_
                     bikeMtx.m[3][0] = wsPoint[i].x;
                     bikeMtx.m[3][1] = wsPoint[i].y;
                     bikeMtx.m[3][2] = wsPoint[i].z;
-                    vec3_transform(&bikeMtx, 
+                    mathMtxXFMF(&bikeMtx, 
                         -dCollisionPoints[i].x, -dCollisionPoints[i].y, -dCollisionPoints[i].z, 
                         &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z
                     );
@@ -1855,7 +1855,7 @@ s32 CRSnowBike_sharpclaw_handle_steering(Object* self, CRSnowBike_Data* arg1, CR
 
     dx = self->srt.transl.x - objData->srtCurves.transl.x;
     dz = self->srt.transl.z - objData->srtCurves.transl.z;
-    dYaw = arctan2_f(dx, dz) - (self->srt.yaw & 0xFFFF);
+    dYaw = mathAtan2f(dx, dz) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(dYaw);
     
     value = dYaw >> 5;
@@ -1884,7 +1884,7 @@ void CRSnowBike_update_collision_points(Object* self, CRSnowBike_Data* objData) 
     CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 0, 0);
     
     for (i = 0; i < objData->numCollisionPoints; i++) {
-        vec3_transform(&bikeMtx, 
+        mathMtxXFMF(&bikeMtx, 
             dCollisionPoints[i].x, dCollisionPoints[i].y, dCollisionPoints[i].z, 
             &objData->wsCollisionCoords[i].x, &objData->wsCollisionCoords[i].y, &objData->wsCollisionCoords[i].z
         );

@@ -99,8 +99,8 @@ void camdrakor_func_138(Cam* cam) {
     cam->srt.transl.x = sState->unk0->srt.transl.x - (sp64 * (-30.0f + (temp_fv1_3 * 350.0f)));
     cam->srt.transl.y = sState->unk0->srt.transl.y + 20.0f + (temp_fv1_3 * 60.0f);
     cam->srt.transl.z = sState->unk0->srt.transl.z - (sp60 * (-30.0f + (temp_fv1_3 * 350.0f)));
-    cam->srt.yaw = -arctan2_f(sp70, sp68);
-    cam->srt.pitch = -arctan2_f(sp6C - ((sp5C / 400.0f) * 100.0f), sqrtf(SQ(sp70) + SQ(sp68)));
+    cam->srt.yaw = -mathAtan2f(sp70, sp68);
+    cam->srt.pitch = -mathAtan2f(sp6C - ((sp5C / 400.0f) * 100.0f), sqrtf(SQ(sp70) + SQ(sp68)));
     if (sState->unkC == 0) {
         temp_fa1_3 = sState->unk10 / 60.0f;
         cam->srt.transl.x += ((sState->unk14 - cam->srt.transl.x) * temp_fa1_3);

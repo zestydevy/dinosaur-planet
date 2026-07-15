@@ -612,10 +612,10 @@ static void WL_LevelControl_setup7_tick(Object* self) {
 
     //Open/close the door to Randorn's hall erratically
     //NOTE: Randorn's door isn't set up to appear in setup 7, so this behaviour can't be seen
-    if (rand_next(0, 30) == 0) {
+    if (mathRnd(0, 30) == 0) {
         mainSetBits(BIT_WM_Randorn_Door_OpenClose, 1);
     }
-    if (rand_next(0, 10) == 0) {
+    if (mathRnd(0, 10) == 0) {
         mainSetBits(BIT_WM_Randorn_Door_OpenClose, 0);
     }
 }

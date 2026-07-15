@@ -45,9 +45,9 @@ void WallAnimator_setup(Object* self, WallAnimator_Setup* objSetup, s32 reset) {
     }
 
     //Calculate the dig vector
-    objData->digVector.x = fsin16_precise(self->srt.yaw);
+    objData->digVector.x = mathSinfInterp(self->srt.yaw);
     objData->digVector.y = 0.0f;
-    objData->digVector.z = fcos16_precise(self->srt.yaw);
+    objData->digVector.z = mathCosfInterp(self->srt.yaw);
     
     objData->zero = 0.0f;
     
@@ -101,7 +101,7 @@ void WallAnimator_control(Object* self) {
         pushblock = objGetNearestTypeTo(OBJTYPE_PushBlock, self, &distance);
 
         if (sidekick && ((pushblock == NULL) || (pushblock && (distance > 35.0f)))) {
-            distance = vec3_distance_squared(&self->globalPosition, &player->globalPosition);
+            distance = vec3DistanceSquared(&self->globalPosition, &player->globalPosition);
             if (distance <= SQ(objSetup->findCommandRadius)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
             }
@@ -237,8 +237,8 @@ void WallAnimator_calculate_vertex_weights(Object* self, WallAnimator_Data* objD
     }
     
     //Get the WallAnimator's position relative to the Blocks model's local origin
-    blockWorldGridX = floor_f((self->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-    blockWorldGridZ = floor_f((self->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+    blockWorldGridX = floorf((self->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+    blockWorldGridZ = floorf((self->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
     
     objBlockX = self->srt.transl.x - (blockWorldGridX * BLOCKS_GRID_UNIT_F + gWorldX);
     objBlockZ = self->srt.transl.z - (blockWorldGridZ * BLOCKS_GRID_UNIT_F + gWorldZ);

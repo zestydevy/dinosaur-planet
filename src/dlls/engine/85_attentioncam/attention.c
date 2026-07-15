@@ -85,11 +85,11 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     ((DLL_84_camnormal*)camnormal->dll)->vtbl->func7(
         &sState->unk0, &sState->unk4, &sState->unk8, 0, &sState->unkC);
     sState->unk1B8 = 0;
-    sp130 = fsin16_precise(player->srt.yaw);
-    sp12C = fcos16_precise(player->srt.yaw);
+    sp130 = mathSinfInterp(player->srt.yaw);
+    sp12C = mathCosfInterp(player->srt.yaw);
     var_fa0 = cam->srt.transl.x - player->srt.transl.x;
     var_fa1 = cam->srt.transl.z - player->srt.transl.z;
-    var_a0 = player->srt.yaw - (u16)arctan2_f(var_fa0, var_fa1);
+    var_a0 = player->srt.yaw - (u16)mathAtan2f(var_fa0, var_fa1);
     CIRCLE_WRAP(var_a0);
     if (var_a0 < 0) {
         var_a0 = -var_a0;
@@ -143,8 +143,8 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     sp148 = cam->srt.transl.x - sp120.x;
     sp140 = cam->srt.transl.z - sp120.z;
     sp13C = 0.5f * sqrtf(SQ(sp148) + SQ(sp140));
-    temp_s0 = arctan2_f(-sp130, -sp12C);
-    var_a0 = temp_s0 - (u16)arctan2_f(sp148, sp140);\
+    temp_s0 = mathAtan2f(-sp130, -sp12C);
+    var_a0 = temp_s0 - (u16)mathAtan2f(sp148, sp140);\
     CIRCLE_WRAP(var_a0);
     sp14C = var_a0;
     if (var_a0 < 0) {
@@ -161,7 +161,7 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
         sp14C = var_a0 * 2;
     }
     if (var_a0 != 0) {
-        sp13C = sp13C / fsin16_precise(var_a0);
+        sp13C = sp13C / mathSinfInterp(var_a0);
     } else {
         sp13C = 0.0f;
     }
@@ -308,7 +308,7 @@ static void attentioncam_func_D70(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 ar
         spB8[0] = arg6 < 0 ? spC0[var_s3] : -spC0[var_s3];
         spB8[1] = 0;
         spB8[2] = 0;
-        rotate_vec3((SRT*)&spB8, sp94);
+        mathRotateRPY((SRT*)&spB8, sp94);
         sState->unk18[var_s4] = arg0 + sp94[0];
         sState->unk68[var_s4] = arg3 + (temp_fs0 * ((f32) spC0[var_s3] / (f32) var_s2));
         sState->unkB8[var_s4] = arg1 +  sp94[2];
@@ -330,7 +330,7 @@ static void attentioncam_func_F84(s16* arg0, u16* arg1, s16 arg2, s16 arg3, s16 
 
 // offset: 0x109C | func: 7
 static void attentioncam_func_109C(Cam* cam, f32 arg1, f32 arg2) {
-    s32 var_v1 = (-arctan2_f(arg1, arg2) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
+    s32 var_v1 = (-mathAtan2f(arg1, arg2) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
     CIRCLE_WRAP(var_v1);
     cam->srt.yaw += var_v1;
 }
@@ -390,8 +390,8 @@ static void attentioncam_func_1374(Cam* cam, Object* arg1) {
     AABBs32 sp9C;
     Unk80027934 sp30;
 
-    spD0 = fsin16_precise(arg1->srt.yaw);
-    spCC = fcos16_precise(arg1->srt.yaw);
+    spD0 = mathSinfInterp(arg1->srt.yaw);
+    spCC = mathCosfInterp(arg1->srt.yaw);
     temp_fv0 = sqrtf(SQ(sState->unk4) - SQ(sState->unk8));
     spB4.x = arg1->globalPosition.x + (spD0 * temp_fv0);
     spB4.y = arg1->globalPosition.y + sState->unkC + sState->unk8;

@@ -71,7 +71,7 @@ void dll_517_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     baddie->fsa.animState = 0;
     baddie->fsa.logicState = 0;
     sp38 = baddie->objdata;
-    sp38->unk8 = rand_next(0, 1);
+    sp38->unk8 = mathRnd(0, 1);
     if (self->shadow != NULL) {
         self->shadow->distFadeMaxOpacity = 0x64;
         self->shadow->distFadeMinOpacity = 0x96;
@@ -160,7 +160,7 @@ static s32 dll_517_func_4AC(Object* self, ObjFSA_Data* arg1, f32 arg2) {
     }
     sp28 = baddie->objdata;
     if ((arg1->enteredAnimState != 0) || (arg1->unk33A != 0)) {
-        sp28->unk6 = rand_next(0, 6);
+        sp28->unk6 = mathRnd(0, 6);
         objAnimSet(self, _data_8[sp28->unk6], 0.0f, 0U);
     }
     if (((s32) sp28->unk4 < (s32) baddie->unk3E2) && (arg1->logicState != 0)) {

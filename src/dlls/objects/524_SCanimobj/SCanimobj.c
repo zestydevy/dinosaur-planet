@@ -151,8 +151,8 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
             }
             
             for (i = 0; i < 7; i++) {
-                sTransform.transl.x += rand_next(-50, 50) / 10.0f;
-                sTransform.transl.z += rand_next(-50, 50) / 10.0f;
+                sTransform.transl.x += mathRnd(-50, 50) / 10.0f;
+                sTransform.transl.z += mathRnd(-50, 50) / 10.0f;
                 
                 gDLL_24_Waterfx->vtbl->spawn_splash(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 4.0f);
                 gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 0, 0.0f, 3);

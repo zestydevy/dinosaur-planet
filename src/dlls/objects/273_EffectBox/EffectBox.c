@@ -59,10 +59,10 @@ void EffectBox_control(Object *self) {
 
     setup = (EffectBox_Setup*)self->setup;
     if ((self->unkE0 < 0) || (mainGetBits(self->unkE0) != setup->gamebitDisableValue)) {
-        temp_fs4 = fcos16_precise(-(setup->unk18 * 256));
-        temp_fs0 = fsin16_precise(-(setup->unk18 * 256));
-        temp_fs1 = fcos16_precise(-(setup->unk19 * 256));
-        temp_fs2 = fsin16_precise(-(setup->unk19 * 256));
+        temp_fs4 = mathCosfInterp(-(setup->unk18 * 256));
+        temp_fs0 = mathSinfInterp(-(setup->unk18 * 256));
+        temp_fs1 = mathCosfInterp(-(setup->unk19 * 256));
+        temp_fs2 = mathSinfInterp(-(setup->unk19 * 256));
         var_fs5 = (f32) setup->unk1A;
         sp90 = (f32) (setup->unk1B * 2);
         var_fs3 = (f32) setup->unk1C;

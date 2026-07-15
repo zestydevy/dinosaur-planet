@@ -166,7 +166,7 @@ void camlockon_func_1B8(Cam* cam) {
         sp90 = sp3C->globalPosition.x + (sp58 * 0.35f);
         sp8C = sp5C + 5.0f;
         sp88 = sp3C->globalPosition.z + (sp54 * 0.35f);
-        var_v1 = cam->srt.yaw - (-arctan2_f(sp58, sp54) & 0xFFFF);
+        var_v1 = cam->srt.yaw - (-mathAtan2f(sp58, sp54) & 0xFFFF);
         CIRCLE_WRAP(var_v1);
         if (var_v1 >= 0x2329) {
             cam->srt.yaw -= ((s32) ((var_v1 - 0x2328) * gUpdateRate) / 12);
@@ -196,8 +196,8 @@ void camlockon_func_1B8(Cam* cam) {
         sState->unk4 += ((30.0f - sState->unk4) * gUpdateRateF * 0.04f);
         var_v1 = 0x2328 - var_v1;
         sState->unk8 += (((((1.0f - (var_v1 / 9000.0f)) + 0.8f) / 1.8f) - sState->unk8) * gUpdateRateF * 0.1f);
-        sp6C = fsin16_precise(cam->srt.yaw);
-        var_fv0 = fcos16_precise(cam->srt.yaw);
+        sp6C = mathSinfInterp(cam->srt.yaw);
+        var_fv0 = mathCosfInterp(cam->srt.yaw);
         temp_fa1 = sState->unk0 * sp6C;
         temp_ft4 = sState->unk0 * var_fv0;
         cam->srt.transl.x = sp90 + temp_fa1;
@@ -213,7 +213,7 @@ void camlockon_func_1B8(Cam* cam) {
         sp80 = cam->srt.transl.y - sp8C;
         temp_ft4 = cam->srt.transl.z - sp88;
         var_fv0 = sqrtf(SQ(temp_fa1) + SQ(temp_ft4));
-        var_v1 = arctan2_f(sp80, var_fv0) - (cam->srt.pitch & 0xFFFF);
+        var_v1 = mathAtan2f(sp80, var_fv0) - (cam->srt.pitch & 0xFFFF);
         CIRCLE_WRAP(var_v1);
         cam->srt.pitch += (var_v1 * gUpdateRate) >> 3;
         var_fv0 = sp78 + 10.0f;

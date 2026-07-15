@@ -32,11 +32,11 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
 
     colliderArg = 3;
 
-    angle = rand_next(0, 0xFFFF);
-    speed = (rand_next(39, 44) / 100.0f);
-    self->velocity.x = fsin16_precise(angle) * speed;
-    self->velocity.z = fcos16_precise(angle) * speed;
-    self->velocity.y = rand_next(40, 50) / 50.0f;
+    angle = mathRnd(0, 0xFFFF);
+    speed = (mathRnd(39, 44) / 100.0f);
+    self->velocity.x = mathSinfInterp(angle) * speed;
+    self->velocity.z = mathCosfInterp(angle) * speed;
+    self->velocity.y = mathRnd(40, 50) / 50.0f;
 
     //Set up special modes
     if (objSetup->mode == MagicDust_MODE_Delay_Fall) {
@@ -185,7 +185,7 @@ void MagicDust_control(Object* self) {
         objData->soundTimer -= gUpdateRate;
         if (objData->soundTimer < 0) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_BA1_MagicDust_Twinkle, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objData->soundTimer = rand_next(240, 300);
+            objData->soundTimer = mathRnd(240, 300);
         }
     }
     
@@ -345,7 +345,7 @@ void MagicDust_control(Object* self) {
         distance = -distance;
     } 
     if (distance < 20.0f) {
-        playerDistance = vec3_distance_xz_squared(&self->globalPosition, &player->globalPosition);
+        playerDistance = vec3DistanceXZSquared(&self->globalPosition, &player->globalPosition);
         distance = objData->collisionRadius + 8.0f;
         if (playerDistance < SQ(distance)) {
             //Display a tutorial box when the player first collects a Magic Crystal

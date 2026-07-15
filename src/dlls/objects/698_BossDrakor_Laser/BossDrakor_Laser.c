@@ -48,11 +48,11 @@ void dll_698_control(Object *self) {
 
     objdata = self->data;
     if ((objdata->unk2 != 0) || (objdata->unk4 != 0)) {
-        matrix_from_srt(&sp4C, &self->srt);
+        mathYprXyzMtx(&sp4C, &self->srt);
         sp40.f[0] = 0.0f;
         sp40.f[1] = 0.0f;
         sp40.f[2] = 1000.0f;
-        vec3_transform(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
+        mathMtxXFMF(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
         dll_698_func_6E4(self, &sp40);
         if (objdata->unk4 != 0) {
             objdata->unk4 -= (s16) gUpdateRateF;
@@ -78,10 +78,10 @@ void dll_698_control(Object *self) {
             camera = camGet();
             sp40.f[0] = 0.0f;
             sp40.f[1] = 0.0f;
-            sp34 = vec3_distance(&self->srt.transl, (Vec3f* ) &camera->tx);
+            sp34 = vec3Distance(&self->srt.transl, (Vec3f* ) &camera->tx);
             sp40.f[2] = sp34;
-            vec3_transform(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
-            sp38 = vec3_distance_xz(&sp40, &camera->srt.transl);
+            mathMtxXFMF(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
+            sp38 = vec3DistanceXZ(&sp40, &camera->srt.transl);
             if (objdata->unk8 != 0) {
                 objdata->unk10 = (s16) (s32) ((2.0f - ((2.0f * sp38) / sp34)) * 127.0f);
                 if (objdata->unk10 < 0) {
@@ -181,7 +181,7 @@ static void dll_698_func_6E4(Object *self, Vec3f *arg1) {
                     if (self->srt.transl.y < objList[objIdx]->srt.transl.y) {
                         var_fv1 = -var_fv1;
                     }
-                    if (var_fv1 >= 0.0f && vec3_distance(&objList[objIdx]->srt.transl, &sp9C) < 100.0f) {
+                    if (var_fv1 >= 0.0f && vec3Distance(&objList[objIdx]->srt.transl, &sp9C) < 100.0f) {
                         sp84.transl.x = sp9C.x;
                         sp84.transl.y = sp9C.y;
                         sp84.transl.z = sp9C.z;

@@ -21,7 +21,7 @@ void DBBoneDust_setup(Object* self, DBBoneDust_Setup* objSetup, s32 arg2) {
     self->velocity.x = 0.0f;
     self->velocity.z = 0.0f;
     self->velocity.y = -4.0f;
-    objData->rotation.asWord = rand_next(0, 0xFFFF);
+    objData->rotation.asWord = mathRnd(0, 0xFFFF);
 }
 
 // offset: 0xB0 | func: 1 | export: 1
@@ -73,16 +73,16 @@ void DBBoneDust_control(Object* self) {
         break;
     case DBBoneDust_STATE_Hovering:
         //Oscillating over ground, ready to be collected
-        self->velocity.y = fsin16_precise(objData->rotation.asHalfwords[1]) * 0.3f;
+        self->velocity.y = mathSinfInterp(objData->rotation.asHalfwords[1]) * 0.3f;
         objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
         //Check if player is close by
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < 100.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < 100.0f) {
             objData->state = DBBoneDust_STATE_Fly_Towards_Player;
         }
         break;
     case DBBoneDust_STATE_Fly_Towards_Player:
-        distance = vec3_distance_xz(&self->globalPosition, &player->globalPosition);
+        distance = vec3DistanceXZ(&self->globalPosition, &player->globalPosition);
         if (distance < 6.0f) {
             //Collected
             ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 3);

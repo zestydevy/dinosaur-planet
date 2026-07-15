@@ -150,8 +150,8 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.yaw = kyte->srt.yaw - self->srt.yaw;
                     boneTransform.pitch = 0;
                     boneTransform.roll = 0;
-                    matrix_from_srt(&resultMatrix, &boneTransform);
-                    matrix_concat_4x3(&resultMatrix, boneMatrix, &resultMatrix);
+                    mathYprXyzMtx(&resultMatrix, &boneTransform);
+                    mathMtxCat4x3F(&resultMatrix, boneMatrix, &resultMatrix);
                     objprintSetModelMatrixOverride(&resultMatrix);
                     objprintDrawModel(kyte, gfx, mtxs, vtxs, pols, 1.0f);
                     objprintSetModelMatrixOverride(NULL);
@@ -178,10 +178,10 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 boneTransform.transl.x = self->def->pAttachPoints->pos.x;
                 boneTransform.transl.y = self->def->pAttachPoints->pos.y;
                 boneTransform.transl.z = self->def->pAttachPoints->pos.z;
-                vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
+                mathMtxXFMF(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
+                    mathRotateRPY(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;
@@ -214,10 +214,10 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 boneTransform.transl.y = self->def->pAttachPoints->pos.y;
                 boneTransform.transl.z = self->def->pAttachPoints->pos.z;
 
-                vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
+                mathMtxXFMF(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
+                    mathRotateRPY(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;

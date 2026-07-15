@@ -133,7 +133,7 @@ void CCgrub_control(Object* self) {
         break;
     case 2:
         if (self->animProgress >= 0.9f) {
-            objdata->unk10C = ((f32) rand_next(objsetup->unk18, objsetup->unk19) / 100.0f);
+            objdata->unk10C = ((f32) mathRnd(objsetup->unk18, objsetup->unk19) / 100.0f);
             objdata->unk110 = 0.02f;
             objAnimSet(self, 5, 0.0f, 0);
             objdata->unk109 = 4;
@@ -174,7 +174,7 @@ void CCgrub_control(Object* self) {
                     temp_v0_4 = objGetPlayer();
                     sp40[0] = temp_v0_4->srt.transl.x - self->srt.transl.x;
                     sp40[1] = temp_v0_4->srt.transl.z - self->srt.transl.z;
-                    objdata->unk13E = arctan2_f(-sp40[0], -sp40[1]);
+                    objdata->unk13E = mathAtan2f(-sp40[0], -sp40[1]);
                 }
                 var_v1 = objdata->unk13C - (objdata->unk13E & 0xFFFF);
                 CIRCLE_WRAP(var_v1);
@@ -315,10 +315,10 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
     }
     objGetAnimChange(self, objdata->unk10C, &objdata->unk110);
     self->srt.transl.y = objdata->unk0.unk0.unk68.y;
-    self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
+    self->srt.yaw = mathAtan2f(-objdata->unk114, -objdata->unk118);
     objdata->unk11C += gUpdateRateF;
     if (objdata->unk11C >= 300.0f) {
-        temp_fv0 = vec3_distance_xz_squared(&self->globalPosition, &objGetPlayer()->globalPosition);
+        temp_fv0 = vec3DistanceXZSquared(&self->globalPosition, &objGetPlayer()->globalPosition);
         if ((f32) (objsetup->unk1B * objsetup->unk1B) <= temp_fv0) {
             if ((f32) (objsetup->unk1A * objsetup->unk1A) <= temp_fv0) {
                 objAnimSet(self, 3, 0.0f, 0);
@@ -352,14 +352,14 @@ void CCgrub_func_104C(Object* self, CCgrub_Data* objdata) {
     objdata->unk11C += gUpdateRateF;
     if (objdata->unk11C >= 300.0f) {
         self->unkAF &= ~0x8;
-        CCgrub_func_AB0(self, objdata, (f32) rand_next(setup->unk18, setup->unk19) / 100.0f);
+        CCgrub_func_AB0(self, objdata, (f32) mathRnd(setup->unk18, setup->unk19) / 100.0f);
         CCgrub_func_DC4(self, objdata);
         return;
     }
     CCgrub_func_BE8(self, objdata, objdata->unk10C, 1.0f);
     CCgrub_func_CEC(self, &objdata->unk0.unk0.unk68, objdata->unk10C, &objdata->unk114);
     self->srt.transl.y = objdata->unk0.unk0.unk68.y;
-    self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
+    self->srt.yaw = mathAtan2f(-objdata->unk114, -objdata->unk118);
 }
 
 /*0x0*/ static const char str_0[] = "msg %d\n";

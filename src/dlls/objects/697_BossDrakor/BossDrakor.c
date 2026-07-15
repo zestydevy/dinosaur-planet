@@ -157,8 +157,8 @@ void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
             objdata->laser->srt.transl.x = sp40;
             objdata->laser->srt.transl.y = sp3C;
             objdata->laser->srt.transl.z = sp38;
-            objdata->laser->srt.yaw = arctan2_f(sp34, sp2C);
-            objdata->laser->srt.pitch = (s16) (arctan2_f(sqrtf(SQ(sp34) + SQ(sp2C)), sp30) - 0x4000);
+            objdata->laser->srt.yaw = mathAtan2f(sp34, sp2C);
+            objdata->laser->srt.pitch = (s16) (mathAtan2f(sqrtf(SQ(sp34) + SQ(sp2C)), sp30) - 0x4000);
             objdata->laser->srt.roll += 0x1000;
         }
     }

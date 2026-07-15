@@ -186,19 +186,19 @@ void Spirit_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
         if (self->opacity) {
             id = self->id;
             if (id == OBJ_DFSH_SpiritPriz || id == OBJ_CCSH_SpiritPriz) {
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 0, 0, 4, -1, 0);
                 }
             } else if (id == OBJ_MMSH_SpiritPriz || id == OBJ_WGSH_SpiritPriz) {
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 1, 0, 4, -1, 0);
                 }
             } else if (id == OBJ_ECSH_SpiritPriz || id == OBJ_GPSH_SpiritPriz) {
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 2, 0, 4, -1, 0);
                 }
             } else if (id == OBJ_DBSH_SpiritPriz || id == OBJ_NWSH_SpiritPriz){
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 3, 0, 4, -1, 0);
                 }
             }

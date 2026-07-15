@@ -129,7 +129,7 @@ void campfire_control(Object* self) {
     }
     
     //Get player distance
-    distance = vec3_distance(&player->globalPosition, &self->globalPosition);
+    distance = vec3Distance(&player->globalPosition, &self->globalPosition);
 
     //Handle creating/unloading the fire's LFXEmitter when needed
     if (objData->light != NULL) {
@@ -156,7 +156,7 @@ void campfire_control(Object* self) {
             lfxSetup->base.loadFlags = campSetup->loadFlags;
             lfxSetup->base.byte6 = campSetup->byte6;
             lfxSetup->base.x = self->srt.transl.x;
-            lfxSetup->base.y = self->srt.transl.y + rand_next(0, 30);
+            lfxSetup->base.y = self->srt.transl.y + mathRnd(0, 30);
             lfxSetup->base.z = self->srt.transl.z;
             lfxSetup->unk1E = objSetup->lfxUnk1E;
             if (lfxSetup->unk1E == 0) {

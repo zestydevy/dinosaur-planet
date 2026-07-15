@@ -114,7 +114,7 @@ void smallbasket_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
 
     dModGfxDLL = dllLoad(DLL_ID_107, 1);
 
-    objData->shakeSoundTimer = rand_next(0, 100) + 300;
+    objData->shakeSoundTimer = mathRnd(0, 100) + 300;
     objData->storedItemCount = setup->storedItemQuantity;
     self->srt.yaw = setup->yaw << 8;
     objData->gamebit = setup->gamebit;
@@ -271,7 +271,7 @@ void smallbasket_control(Object* self) {
                     srt.transl.z = 0.0f;
                     srt.scale = 1.0f;
                     srt.yaw = player->srt.yaw;
-                    rotate_vec3((SRT*)&srt, self->velocity.f);
+                    mathRotateRPY((SRT*)&srt, self->velocity.f);
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_637_Heavy_Whoosh, 0x43, NULL, NULL, 0, NULL);
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_634, 0x61, NULL, NULL, 0, NULL);
                 } else if ((objData->carryFlags == Basket_STOP_CARRYING) && (self->unkE0 == 0)) {
@@ -327,7 +327,7 @@ void smallbasket_control(Object* self) {
 
         if (objData->carryFlags) {
             //Automatically throw the basket when far from its origin
-            if (SQ(objData->autoThrowRadius) <= vec3_distance_xz_squared(&self->globalPosition, (Vec3f*) &objSetup->base.x)) {
+            if (SQ(objData->autoThrowRadius) <= vec3DistanceXZSquared(&self->globalPosition, (Vec3f*) &objSetup->base.x)) {
                 self->velocity.x = 0.0f;
                 self->velocity.z = 0.0f;
                 objData->unk10 = 500;
@@ -347,7 +347,7 @@ void smallbasket_control(Object* self) {
                 objData->storedItemType == SmallBasket_ITEM_Apple
             ){
                 gDLL_6_AMSFX->vtbl->play(NULL, SOUND_64D_Wooden_Rattle, 0x39, NULL, NULL, 0, NULL);
-                objData->shakeSoundTimer = rand_next(0, 100) + 300;
+                objData->shakeSoundTimer = mathRnd(0, 100) + 300;
 
             //Play Scarab rattling sounds
             } else if (objData->storedItemType == SmallBasket_ITEM_Scarab_Green   || 
@@ -356,13 +356,13 @@ void smallbasket_control(Object* self) {
                        objData->storedItemType == SmallBasket_ITEM_Scarab_Rainbow
             ) {
                 gDLL_6_AMSFX->vtbl->play(NULL, SOUND_64C_Wicker_Rattle, 0x39, NULL, NULL, 0, NULL);
-                objData->shakeSoundTimer = rand_next(0, 100) + 300;
+                objData->shakeSoundTimer = mathRnd(0, 100) + 300;
             }
             
             //Play Scorpion hiss sounds (neighbouring soundIDs picked at random)
             if (objData->storedItemType == SmallBasket_ITEM_Scorpion) {
-                gDLL_6_AMSFX->vtbl->play(NULL, rand_next(0, 2) + SOUND_6B7_Crate_Hiss, 0x39, NULL, NULL, 0, NULL);
-                objData->shakeSoundTimer = rand_next(0, 100) + 300;
+                gDLL_6_AMSFX->vtbl->play(NULL, mathRnd(0, 2) + SOUND_6B7_Crate_Hiss, 0x39, NULL, NULL, 0, NULL);
+                objData->shakeSoundTimer = mathRnd(0, 100) + 300;
             }
         }
     }
@@ -551,24 +551,24 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             if (count < 1) {
                 count = 1;
             }
-            count = rand_next(1, count);
+            count = mathRnd(1, count);
 
         //If player health is under 75%, create either apples or green Scarabs
         } else if (magnitude <= 75.0f) {
             //Chance of creating apples: 28% when at 75% health, or up to 100% chance approaching 56% health?
-            if (rand_next(0, (s16) (magnitude - 50.0f)) < 7) { 
+            if (mathRnd(0, (s16) (magnitude - 50.0f)) < 7) { 
                 type = SmallBasket_ITEM_Apple;
 
                 count = (s16) (healthMax * 0.25f); //NOTE: could create tons of apples at high max health
                 if (count < 1){
                     count = 1;
                 }
-                count = rand_next(1, count);
+                count = mathRnd(1, count);
 
             //Create Scarabs instead of apples (more likely as health approaches 75%)
             } else {
                 type = SmallBasket_ITEM_Scarab_Green;
-                count = rand_next(1, 4);
+                count = mathRnd(1, 4);
             }
 
         //Don't create anything if player's health is above 75%
@@ -586,10 +586,10 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
         switch (type) {
         case SmallBasket_ITEM_Scorpion:
             scorpionSetup = (Scorpion_Setup*)objAllocSetup(sizeof(Scorpion_Setup), OBJ_Scorpion);
-            scorpionSetup->unk18 = rand_next(-0x7F, 0x7E);
-            scorpionSetup->base.x = rand_next(-10, 10) + self->srt.transl.x;
+            scorpionSetup->unk18 = mathRnd(-0x7F, 0x7E);
+            scorpionSetup->base.x = mathRnd(-10, 10) + self->srt.transl.x;
             scorpionSetup->base.y = self->srt.transl.y;
-            scorpionSetup->base.z = rand_next(-10, 10) + self->srt.transl.z;
+            scorpionSetup->base.z = mathRnd(-10, 10) + self->srt.transl.z;
             scorpionSetup->unk1A = 49;
             scorpionSetup->unk19 = 4;
             objSetupObject((ObjSetup*)scorpionSetup, 5, self->mapID, -1, self->parent);
@@ -618,8 +618,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
                 obj->velocity.f[2] /= magnitude;
             }
             
-            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[0] *= 1.0f - (0.01f * mathRnd(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * mathRnd(0, 25));
             obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
@@ -628,16 +628,16 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->velocity.f);
-            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
+            srt.yaw = mathRnd(-0x2710, 0x2710);
+            mathRotateRPY((SRT* ) &srt, obj->velocity.f);
+            yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Red:
             scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Red_scarab);
-            scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
+            scarabSetup->unk18 = mathRnd(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
@@ -659,8 +659,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
                 obj->velocity.f[2] /= magnitude;
             }
             
-            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[0] *= 1.0f - (0.01f * mathRnd(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * mathRnd(0, 25));
             obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
@@ -669,16 +669,16 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->velocity.f);
-            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
+            srt.yaw = mathRnd(-0x2710, 0x2710);
+            mathRotateRPY((SRT* ) &srt, obj->velocity.f);
+            yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Gold:
             scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
-            scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
+            scarabSetup->unk18 = mathRnd(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
@@ -701,8 +701,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
                 obj->velocity.f[2] /= magnitude;
             }
             
-            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[0] *= 1.0f - (0.01f * mathRnd(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * mathRnd(0, 25));
             obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
@@ -711,16 +711,16 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->velocity.f);
-            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
+            srt.yaw = mathRnd(-0x2710, 0x2710);
+            mathRotateRPY((SRT* ) &srt, obj->velocity.f);
+            yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
             break;
         case SmallBasket_ITEM_Scarab_Rainbow:
             scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
-            scarabSetup->unk18 = rand_next(-0x7F, 0x7E);
+            scarabSetup->unk18 = mathRnd(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
@@ -743,8 +743,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
                 obj->velocity.f[2] /= magnitude;
             }
             
-            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[0] *= 1.0f - (0.01f * mathRnd(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * mathRnd(0, 25));
             obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
@@ -753,9 +753,9 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT* ) &srt, obj->velocity.f);
-            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
+            srt.yaw = mathRnd(-0x2710, 0x2710);
+            mathRotateRPY((SRT* ) &srt, obj->velocity.f);
+            yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
@@ -771,9 +771,9 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitCollected = NO_GAMEBIT;
             if (objData->throwFlags != 0) {
-                foodSetup->base.x = rand_next(-15, 15) + self->srt.transl.x;
+                foodSetup->base.x = mathRnd(-15, 15) + self->srt.transl.x;
                 foodSetup->base.y = self->srt.transl.y + 15.0f;
-                foodSetup->base.z = rand_next(-15, 15) + self->srt.transl.z;
+                foodSetup->base.z = mathRnd(-15, 15) + self->srt.transl.z;
             } else {
                 foodSetup->base.x = self->srt.transl.x;
                 foodSetup->base.y = self->srt.transl.y + 5.0f;
@@ -795,8 +795,8 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
                 obj->velocity.f[2] /= magnitude;
             }
             
-            obj->velocity.f[0] *= 1.0f - (0.01f * rand_next(0, 25));
-            obj->velocity.f[2] *= 1.0f - (0.01f * rand_next(0, 25));
+            obj->velocity.f[0] *= 1.0f - (0.01f * mathRnd(0, 25));
+            obj->velocity.f[2] *= 1.0f - (0.01f * mathRnd(0, 25));
             obj->velocity.f[1] = 2.2f;
             
             srt.transl.x = 0;
@@ -805,10 +805,10 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = rand_next(-0x2710, 0x2710);
-            rotate_vec3((SRT*) &srt, obj->velocity.f);
+            srt.yaw = mathRnd(-0x2710, 0x2710);
+            mathRotateRPY((SRT*) &srt, obj->velocity.f);
 
-            yaw = arctan2_f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
+            yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;

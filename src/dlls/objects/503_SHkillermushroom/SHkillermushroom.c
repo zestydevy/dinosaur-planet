@@ -123,7 +123,7 @@ void SHkillermushroom_control(Object* self) {
 
         //Harm the player if they're in range
         if (!(objData->flags & SHkillermushroom_FLAG_Disable_Spore_Damage) &&
-            (vec3_distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
+            (vec3Distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
         ) {
@@ -192,7 +192,7 @@ void SHkillermushroom_control(Object* self) {
 
         //Harm the player if they're in range
         if (!(objData->flags & SHkillermushroom_FLAG_Disable_Spore_Damage) &&
-            (vec3_distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
+            (vec3Distance(&self->globalPosition, &player->globalPosition) <= objData->sporeInhaleRange) &&
             (((DLL_210_Player*)player->dll)->vtbl->func42(player) == 0) &&
             (((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0)
         ) {
@@ -269,7 +269,7 @@ void SHkillermushroom_control(Object* self) {
         if (objData->timer <= 0.0f) {
             obj_func_80023BF8(self, 0x19, 0, 0, 0, 6);
             gDLL_6_AMSFX->vtbl->play(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
-            objData->timer = rand_next(240, 300);
+            objData->timer = mathRnd(240, 300);
         }
 
         //Run down stun timer
@@ -426,9 +426,9 @@ u32 SHkillermushroom_get_data_size(Object *self, u32 a1) {
 static void SHkillermushroom_reset(Object* self, SHkillermushroom_Data* objData, int startAtZeroScale) {
     SHkillermushroom_Setup* objSetup = (SHkillermushroom_Setup*)self->setup;
 
-    self->srt.roll = rand_next(-1500, 1500);
-    self->srt.pitch = rand_next(-1500, 1500);
-    self->srt.yaw = rand_next(-1500, 1500);
+    self->srt.roll = mathRnd(-1500, 1500);
+    self->srt.pitch = mathRnd(-1500, 1500);
+    self->srt.yaw = mathRnd(-1500, 1500);
     self->opacity = OBJECT_OPACITY_MAX;
     self->srt.flags &= ~OBJFLAG_INVISIBLE;
     self->srt.transl.x = objSetup->base.x;
@@ -438,8 +438,8 @@ static void SHkillermushroom_reset(Object* self, SHkillermushroom_Data* objData,
     if (startAtZeroScale) {
         self->srt.scale = 0.00001f;
         objData->timer = 0.0f;
-        objData->growDuration = rand_next(0, 100) + 200.0f;
-        objData->scaleMax = (rand_next(-100, 100) * 0.001f) + objData->baseScale;
+        objData->growDuration = mathRnd(0, 100) + 200.0f;
+        objData->scaleMax = (mathRnd(-100, 100) * 0.001f) + objData->baseScale;
         objData->scaleSpeed = objData->scaleMax / objData->growDuration;
     }
 

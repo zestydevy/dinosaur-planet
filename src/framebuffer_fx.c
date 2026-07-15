@@ -177,8 +177,8 @@ void fbfx_func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 ar
         s1 = arg0;\
         s2 = arg3;\
         do {
-            temp_s0 = (sin16(s1) * arg1) / 32768;
-            temp_s0 -= (sin16(s2) * arg4) / 32768;
+            temp_s0 = (mathSin(s1) * arg1) / 32768;
+            temp_s0 -= (mathSin(s2) * arg4) / 32768;
             arg6(currentFB, width, temp_s0, nextFB);
             s1 += arg2;
             s2 += arg5 ^ (arg5 * 0);
@@ -768,7 +768,7 @@ void fbfxSineWaves(s32 arg0, s32 arg1) {
     nextFB = gBackFramebuffer;
     currentFB = gFrontFramebuffer;
     for (i = 0; i < height; i++) {
-        var_s1 = arg0 - (cos16(((((arg0 >> 1) + i) << 0xF) / (u32)(height >> 2))) >> 0xC);
+        var_s1 = arg0 - (mathCos(((((arg0 >> 1) + i) << 0xF) / (u32)(height >> 2))) >> 0xC);
         if ((width >> 1) < var_s1) {
             var_s1 = (width >> 1);
         }
@@ -833,8 +833,8 @@ void fbfxBurnPaperRandomSetup(u16* fb, s32 fbWidth, s32 fbHeight, s32 count) {
     u16* pixelPtr;
 
     for (i = 0; i < count; i++) {
-        x = rand_next(0, fbWidth);
-        pixelPtr = (u16 *)((rand_next(0, fbHeight) * fbWidth * 2) + (s32)fb + (x * 2));
+        x = mathRnd(0, fbWidth);
+        pixelPtr = (u16 *)((mathRnd(0, fbHeight) * fbWidth * 2) + (s32)fb + (x * 2));
         *pixelPtr &= ~1;
     }
 }
@@ -849,7 +849,7 @@ void fbfxBurnPaperRightSetup(u16* fb, s32 width, s32 height, s32 count) {
     u16* temp_v1;
 
     for (i = 0; i < count; i++) {
-        temp_v1 = (u16 *)((rand_next(0, height) * width * 2) + (s32)fb);
+        temp_v1 = (u16 *)((mathRnd(0, height) * width * 2) + (s32)fb);
         temp_v1[0] &= ~1;
     }
 }
@@ -859,7 +859,7 @@ void fbfx_func_80040A94(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     u16* temp_v1;
 
     for (i = 0; i < arg3; i++) {
-        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + arg0 + (arg1 * 2));
+        temp_v1 = (u16 *)((mathRnd(0, arg2) * arg1 * 2) + arg0 + (arg1 * 2));
         temp_v1[0] &= ~1;
     }
 }
@@ -896,11 +896,11 @@ void fbfxBurnPaper(u16* frontFb, u16* backFb, s32 height, s32 width) {
     s32 var_s7;
 
     var_fp = 0;
-    var_s7 = rand_next(0, 3) - 1;
+    var_s7 = mathRnd(0, 3) - 1;
     if (!var_s7) {
         var_s7 = 1;
     }
-    var_s5 = (rand_next(0, 3) - 1) * width;
+    var_s5 = (mathRnd(0, 3) - 1) * width;
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
             if ((~*(frontFb + var_s7) & 1) + (~*(frontFb + var_s5) & 1) + (~*((frontFb - var_s5) + var_s7) & 1)) {
@@ -918,12 +918,12 @@ void fbfxBurnPaper(u16* frontFb, u16* backFb, s32 height, s32 width) {
             backFb++;
         }
 
-        var_s7 = rand_next(0, 3) - 1;
+        var_s7 = mathRnd(0, 3) - 1;
         if (!var_s7) {
             var_s7 = 1;
         }
         temp_a2_2 = width << 1;
-        var_s5 = (rand_next(0, 3) - 1) * width;
+        var_s5 = (mathRnd(0, 3) - 1) * width;
         var_fp ^= 1;
         if (i != 0) {
             bcopy(&sp5C[var_fp], frontFb - temp_a2_2, temp_a2_2);

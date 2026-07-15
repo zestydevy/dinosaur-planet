@@ -47,9 +47,9 @@ void WaterFallSpray_control(Object *self) {
         if (sqrtf(SQ(dx) + SQ(dy) + SQ(dz)) <= setup->distance * 0x10 || setup->distance == 0) {
 
             for (i = 0; i < setup->iterations; i++){
-                srt.transl.x = rand_next(-setup->amplitudeX, setup->amplitudeX);
-                srt.transl.y = rand_next(-setup->amplitudeY, setup->amplitudeY);
-                srt.transl.z = rand_next(-setup->amplitudeZ, setup->amplitudeZ);
+                srt.transl.x = mathRnd(-setup->amplitudeX, setup->amplitudeX);
+                srt.transl.y = mathRnd(-setup->amplitudeY, setup->amplitudeY);
+                srt.transl.z = mathRnd(-setup->amplitudeZ, setup->amplitudeZ);
 
                 if (setup->flags & WaterFallSpray_FLAG_Big_Mist_Cloud) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_320, &srt, PARTFXFLAG_4, -1, NULL);

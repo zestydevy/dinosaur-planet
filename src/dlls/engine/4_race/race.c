@@ -166,11 +166,11 @@ void dll_4_func_200(Object* arg0, RaceStruct* arg1, s32 arg2) {
                 continue;
             }
 
-            temp_fs3 = fsin16_precise(temp_s0->unk29 << 8);
-            sp284 = fcos16_precise(temp_s0->unk29 << 8);
+            temp_fs3 = mathSinfInterp(temp_s0->unk29 << 8);
+            sp284 = mathCosfInterp(temp_s0->unk29 << 8);
             temp_fs0 = -((temp_s0->pos.x * temp_fs3) + (temp_s0->pos.z * sp284));
-            temp_fs4 = fsin16_precise(temp_v0_3->unk29 << 8);
-            sp278 = fcos16_precise(temp_v0_3->unk29 << 8);
+            temp_fs4 = mathSinfInterp(temp_v0_3->unk29 << 8);
+            sp278 = mathCosfInterp(temp_v0_3->unk29 << 8);
             temp_fa1 = -((temp_v0_3->pos.x * temp_fs4) + (temp_v0_3->pos.z * sp278));
             sp2CC = (arg0->srt.transl.x * temp_fs3) + (sp284 * arg0->srt.transl.z) + temp_fs0;
             sp2C8 = (arg0->srt.transl.x * temp_fs4) + (sp278 * arg0->srt.transl.z) + temp_fa1;
@@ -286,8 +286,8 @@ s32 dll_4_func_9B0(Object* arg0, RaceStruct* arg1) {
         arg1->unk18 = -1;
         return 0;
     }
-    sp4C = fsin16_precise((s16) (sp5C->unk29 << 8));
-    sp48 = fcos16_precise((s16) (sp5C->unk29 << 8));
+    sp4C = mathSinfInterp((s16) (sp5C->unk29 << 8));
+    sp48 = mathCosfInterp((s16) (sp5C->unk29 << 8));
     sp44 = -((sp5C->pos.x * sp4C) + (sp5C->pos.z * sp48));
     sp84 = (arg0->srt.transl.x * sp4C) + (sp48 * arg0->srt.transl.z) + sp44;
     if ((sp5C->unk18[0] >= 0) && (sp84 >= 0.0f)) {
@@ -303,9 +303,9 @@ s32 dll_4_func_9B0(Object* arg0, RaceStruct* arg1) {
     var_fa0 = sp58->pos.x - sp5C->pos.x;
     sp40 = sp58->pos.z - sp5C->pos.z;
     temp_fa1 = sp40;
-    sp36 = arctan2_f(var_fa0, temp_fa1);
-    sp40 = fsin16_precise((s16) (sp58->unk29 << 8));
-    sp3C = fcos16_precise((s16) (sp58->unk29 << 8));
+    sp36 = mathAtan2f(var_fa0, temp_fa1);
+    sp40 = mathSinfInterp((s16) (sp58->unk29 << 8));
+    sp3C = mathCosfInterp((s16) (sp58->unk29 << 8));
     temp_fa1 = -((sp58->pos.x * sp40) + (sp58->pos.z * sp3C));
     sp80 = (arg0->srt.transl.x * sp40) + (sp3C * arg0->srt.transl.z) + temp_fa1;
     if (sp80 < 0.0f) {
@@ -514,10 +514,10 @@ s32 dll_4_func_119C(SRT* racerSRT, RaceStruct* racer, f32 arg2, s32 arg3, u8 use
         hermiteX = curvesHermite(spF0.f, tValue, &velocityX);
         hermiteY = curvesHermite(spE0.f, tValue, &velocityY);
         hermiteZ = curvesHermite(spD0.f, tValue, &velocityZ);
-        curvesYaw = arctan2_f(velocityX, velocityZ) + M_180_DEGREES;
+        curvesYaw = mathAtan2f(velocityX, velocityZ) + M_180_DEGREES;
 
         if (usePitchAndY) {
-            curvesPitch = arctan2_f(sqrtf(SQ(velocityX) + SQ(velocityZ)), velocityY) - M_90_DEGREES;
+            curvesPitch = mathAtan2f(sqrtf(SQ(velocityX) + SQ(velocityZ)), velocityY) - M_90_DEGREES;
             lateralSpeed = sqrtf(SQ(hermiteX - racerSRT->transl.x) + SQ(hermiteZ - racerSRT->transl.z));
         } else {
             lateralSpeed = sqrtf(SQ(hermiteX - racerSRT->transl.x) + SQ(hermiteZ - racerSRT->transl.z));
@@ -574,9 +574,9 @@ void dll_4_func_15D0(s32 arg0, RaceStruct* arg1, s8* arg2) {
 
     temp_v0 = dll_4_func_1F60(arg0, &sp30);
     if (temp_v0 != NULL) {
-        arg1->unk0 = (f32) rand_next(-99, 99) / 100.0f;
-        arg1->unk4 = (f32) rand_next(-99, 99) / 100.0f;
-        arg1->unk8 = (f32) rand_next(0, 99) / 100.0f;
+        arg1->unk0 = (f32) mathRnd(-99, 99) / 100.0f;
+        arg1->unk4 = (f32) mathRnd(-99, 99) / 100.0f;
+        arg1->unk8 = (f32) mathRnd(0, 99) / 100.0f;
         var_v1 = 0;
         if (temp_v0->unk20[0] != 0) {
             var_v1 = 0;
@@ -639,10 +639,10 @@ static s32 dll_4_func_1758(RaceCheckpointSetup* arg0, s32 arg1, Vec4f* arg2, Vec
     }
     cur = spAC[0];
     cur2 = spAC[1];
-    spA8 = -fsin16_precise(cur->unk29 << 8);
-    temp_fs0 = -fcos16_precise(cur->unk29 << 8);
-    spA0 = -fsin16_precise(cur2->unk29 << 8);
-    temp_fv1 = -fcos16_precise(cur2->unk29 << 8);
+    spA8 = -mathSinfInterp(cur->unk29 << 8);
+    temp_fs0 = -mathCosfInterp(cur->unk29 << 8);
+    spA0 = -mathSinfInterp(cur2->unk29 << 8);
+    temp_fv1 = -mathCosfInterp(cur2->unk29 << 8);
     
     temp_fs1 = cur->unk2A * 0.011111111f;
     temp_fs2 = cur2->unk2A * 0.011111111f;
@@ -652,8 +652,8 @@ static s32 dll_4_func_1758(RaceCheckpointSetup* arg0, s32 arg1, Vec4f* arg2, Vec
             
             arg2[var_s7].x = (cur->unk2D[temp_v0] * (temp_fs1 * temp_fs0)) + cur->pos.x;
             arg2[var_s7].y = (cur2->unk2D[temp_v0] * (temp_fs2 * temp_fv1)) + cur2->pos.x;
-            arg2[var_s7].z = 2.0f * (fsin16_precise(cur->unk3E << 8) * cur->unk3D);
-            arg2[var_s7].w = 2.0f * (fsin16_precise(cur2->unk3E << 8) * cur2->unk3D);
+            arg2[var_s7].z = 2.0f * (mathSinfInterp(cur->unk3E << 8) * cur->unk3D);
+            arg2[var_s7].w = 2.0f * (mathSinfInterp(cur2->unk3E << 8) * cur2->unk3D);
             
             arg3[var_s7].x = (cur->unk31[temp_v0] * temp_fs1) + cur->pos.y;
             arg3[var_s7].y = (cur2->unk31[temp_v0] * temp_fs2) + cur2->pos.y;
@@ -662,14 +662,14 @@ static s32 dll_4_func_1758(RaceCheckpointSetup* arg0, s32 arg1, Vec4f* arg2, Vec
             
             arg4[var_s7].x = (cur->unk2D[temp_v0] * (temp_fs1 * -spA8)) + cur->pos.z;
             arg4[var_s7].y = (cur2->unk2D[temp_v0] * (temp_fs2 * -spA0)) + cur2->pos.z;
-            arg4[var_s7].z = 2.0f * (fcos16_precise(cur->unk3E << 8) * cur->unk3D);
-            arg4[var_s7].w = 2.0f * (fcos16_precise(cur2->unk3E << 8) * cur2->unk3D);
+            arg4[var_s7].z = 2.0f * (mathCosfInterp(cur->unk3E << 8) * cur->unk3D);
+            arg4[var_s7].w = 2.0f * (mathCosfInterp(cur2->unk3E << 8) * cur2->unk3D);
         }
     } else if (!arg5) {
         arg2->x = cur->pos.x + (temp_fs1 * temp_fs0 * arg6);
         arg2->y = cur2->pos.x + (temp_fs2 * temp_fv1 * arg6);
-        arg2->z = 2.0f * (fsin16_precise(cur->unk3E << 8) * cur->unk3D);
-        arg2->w = 2.0f * (fsin16_precise(cur2->unk3E << 8) * cur2->unk3D);
+        arg2->z = 2.0f * (mathSinfInterp(cur->unk3E << 8) * cur->unk3D);
+        arg2->w = 2.0f * (mathSinfInterp(cur2->unk3E << 8) * cur2->unk3D);
        
         arg3->x = cur->pos.y + (temp_fs1 * arg7);
         arg3->y = cur2->pos.y + (temp_fs2 * arg7);
@@ -678,13 +678,13 @@ static s32 dll_4_func_1758(RaceCheckpointSetup* arg0, s32 arg1, Vec4f* arg2, Vec
         
         arg4->x = cur->pos.z + (temp_fs1 * -spA8 * arg6);
         arg4->y = cur2->pos.z + (temp_fs2 * -spA0 * arg6);
-        arg4->z = 2.0f * (fcos16_precise(cur->unk3E << 8) * cur->unk3D);
-        arg4->w = 2.0f * (fcos16_precise(cur2->unk3E << 8) * cur2->unk3D);
+        arg4->z = 2.0f * (mathCosfInterp(cur->unk3E << 8) * cur->unk3D);
+        arg4->w = 2.0f * (mathCosfInterp(cur2->unk3E << 8) * cur2->unk3D);
     } else {
         arg2->x = (cur->unk2D[arg5 - 2] * (temp_fs1 * temp_fs0)) + cur->pos.x;
         arg2->y = (cur2->unk2D[arg5 - 2] * (temp_fs2 * temp_fv1)) + cur2->pos.x;
-        arg2->z = 2.0f * (fsin16_precise(cur->unk3E << 8) * cur->unk3D);
-        arg2->w = 2.0f * (fsin16_precise(cur2->unk3E << 8) * cur2->unk3D);
+        arg2->z = 2.0f * (mathSinfInterp(cur->unk3E << 8) * cur->unk3D);
+        arg2->w = 2.0f * (mathSinfInterp(cur2->unk3E << 8) * cur2->unk3D);
 
         temp_v0 = arg5 - 2;
         arg5 -= 2;
@@ -696,8 +696,8 @@ static s32 dll_4_func_1758(RaceCheckpointSetup* arg0, s32 arg1, Vec4f* arg2, Vec
         
         arg4->x = (cur->unk2D[temp_v0] * (temp_fs1 * -spA8)) + cur->pos.z;
         arg4->y = (cur2->unk2D[temp_v0] * (temp_fs2 * -spA0)) + cur2->pos.z;
-        arg4->z = 2.0f * (fcos16_precise(cur->unk3E << 8) * cur->unk3D);
-        arg4->w = 2.0f * (fcos16_precise(cur2->unk3E << 8) * cur2->unk3D);
+        arg4->z = 2.0f * (mathCosfInterp(cur->unk3E << 8) * cur->unk3D);
+        arg4->w = 2.0f * (mathCosfInterp(cur2->unk3E << 8) * cur2->unk3D);
     }
     return spD0;
 }

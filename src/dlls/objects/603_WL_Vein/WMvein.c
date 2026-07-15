@@ -51,9 +51,9 @@ void WMvein_setup(Object* self, WMvein_Setup* objsetup, s32 arg2) {
     objdata->unk8 = 0.0f;
     objdata->unkC = 0.0f;
     objdata->unk10 = 0.0f;
-    objdata->rollSpeed = rand_next(400, 600);
+    objdata->rollSpeed = mathRnd(400, 600);
     objdata->unk1E = 0;
-    objdata->unk20 = rand_next(100, 200);
+    objdata->unk20 = mathRnd(100, 200);
     objdata->modgfxReturnVal = -1;
 }
 

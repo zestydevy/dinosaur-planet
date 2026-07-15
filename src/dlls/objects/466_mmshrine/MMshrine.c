@@ -170,7 +170,7 @@ void MMshrine_control(Object *self) {
         }
         switch (objdata->unkF) {
         case 0:
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unkF = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMSEQ, 0, 0, 0);
@@ -367,7 +367,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
     }
     
     if (objdata->unkF == 8) {
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) > 10.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) > 10.0f) {
             gDLL_3_Animation->vtbl->end_obj_sequence(arg2->seqSlot);
             objdata->unkF = 7;
         } else if (joyGetButtons(0)) {

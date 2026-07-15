@@ -204,7 +204,7 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
 
         //Set safe tile indices for first 3 rows
         for (i = 0; i < 3; i++){ 
-            dFloorTiles[i] = rand_next(1, 4); 
+            dFloorTiles[i] = mathRnd(1, 4); 
         }
         
         mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
@@ -230,7 +230,7 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
         
         for (i = 0; i < 3; i++){ 
-            dFloorTiles[i] = rand_next(1, 4); 
+            dFloorTiles[i] = mathRnd(1, 4); 
         }
         
         mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
@@ -284,7 +284,7 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
 
         //Set safe tile indices for first 6 rows
         for (i = 0; i < 6; i++){ 
-            dFloorTiles[i] = rand_next(1, 4); 
+            dFloorTiles[i] = mathRnd(1, 4); 
         }
         
         mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
@@ -304,7 +304,7 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
         
         for (i = 0; i < 6; i++){ 
-            dFloorTiles[i] = rand_next(1, 4); 
+            dFloorTiles[i] = mathRnd(1, 4); 
         }
         
         mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);
@@ -348,7 +348,7 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
 
         //Set safe tile indices for all 9 rows
         for (i = 0; i < 9; i++){ 
-            dFloorTiles[i] = rand_next(1, 4); 
+            dFloorTiles[i] = mathRnd(1, 4); 
         }
         
         mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
@@ -373,7 +373,7 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
 
         for (i = 0; i < 9; i++){ 
-            dFloorTiles[i] = rand_next(1, 4); 
+            dFloorTiles[i] = mathRnd(1, 4); 
         }
         
         mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 1);

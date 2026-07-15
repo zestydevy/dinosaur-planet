@@ -1235,7 +1235,7 @@ ALMicroTime amseq_updateOscMain(void *oscState_, f32* updateVal) {
         break;
     case 8:
     case 9:
-        sp28 = (fsin16_precise(sp28 * 65536.0f) * var_fa0) + oscState->unk10;
+        sp28 = (mathSinfInterp(sp28 * 65536.0f) * var_fa0) + oscState->unk10;
         break;
     case 10:
     case 11:
@@ -1257,7 +1257,7 @@ ALMicroTime amseq_updateOscMain(void *oscState_, f32* updateVal) {
         }
         sp24 = oscState->unk10 + sp28;
         sp28 = (f32)oscState->unk14 / (f32)oscState->unk16;
-        sp28 = fsin16_precise(sp28 * 65536.0f) * var_fa0 + oscState->unk10;
+        sp28 = mathSinfInterp(sp28 * 65536.0f) * var_fa0 + oscState->unk10;
         sp28 += sp24;
         sp28 /= 2.0f;
         break;

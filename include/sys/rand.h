@@ -3,10 +3,12 @@
 
 #include "PR/ultratypes.h"
 
-void rand_set_seed(s32 seed);
-void rand_save_seed();
-void rand_load_seed();
-s32 rand_get_seed();
-s32 rand_next(s32 min, s32 max);
+// official name: mathSeed
+void mathSeed(s32 seed);
+void mathSaveSeed(void);
+void mathLoadSeed(void);
+s32 mathGetSeed(void);
+// official name: mathRnd
+s32 mathRnd(s32 min, s32 max);
 
 #endif

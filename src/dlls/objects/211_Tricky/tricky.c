@@ -341,7 +341,7 @@ void dll_211_control(Object* self) {
         case 1:
             objData->unk1D = 1;
             dll_211_func_8F18(objData);
-            gDLL_6_AMSFX->vtbl->play(self, rand_next(50, 51), 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, mathRnd(50, 51), 0x7F, NULL, NULL, 0, NULL);
             switch (objData->unk28->id) {
             case 0x1CA:
                 objData->unk18 = 2;
@@ -883,7 +883,7 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
             dll_211_func_83BC(self, objData);
             if ((objData->unk334 != 0) && (objData->unk338->id == 0x23)) {
                 objData->unk5F4_vec.y = 300.0f;
-                dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
+                dll_211_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
                 objData->unk1A = 1;
                 objData->unk4C |= 0x10;
                 objAnimSet(self, 0x106, 0.0f, 0);
@@ -893,7 +893,7 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
             if (objData->unk4->blueFood == 0) {
                 objData->unk600 -= gUpdateRateF;
                 if (objData->unk600 < 0.0f) {
-                    dll_211_func_95E0(self, objData, _data_0[rand_next(13, 17)]);
+                    dll_211_func_95E0(self, objData, _data_0[mathRnd(13, 17)]);
                     objData->unk600 = 600.0f;
                 }
             }
@@ -941,8 +941,8 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
             dll_211_func_83BC(self, objData);
         } else {
             dll_211_func_885C(self);
-            if (rand_next(0, 10) == 0) {
-                dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
+            if (mathRnd(0, 10) == 0) {
+                dll_211_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
             }
             if (objData->unk334 != 0 && objData->unk338->id == OBJ_sword) {
                 objData->unk5F4_vec.y = 300.0f;
@@ -961,7 +961,7 @@ static void dll_211_func_18C4(Object* self, DLL211_Data* objData) {
             dll_211_func_940C(self, objData);
             objData->unk5F4_vec.y = 300.0f;
             objData->unk5F4_vec.z = 0.0f;
-            dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
+            dll_211_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
             objData->unk1A = 1;
             objData->unk4C |= 0x10;
             objAnimSet(self, 0x106, 0.0f, 0);
@@ -982,7 +982,7 @@ static void dll_211_func_1F3C(Object* self, DLL211_Data* objData) {
     case 0:
         objData->unk5F4 = gDLL_25->vtbl->func_1864(&objData->unk28->srt.transl, -1, 2);
         objData->unk600 = 1.0f;
-        if ((objData->unk5F4 != NULL) && (vec3_distance_xz_squared(&objData->unk28->globalPosition, &objData->unk5F4->pos) > 10000.0f)) {
+        if ((objData->unk5F4 != NULL) && (vec3DistanceXZSquared(&objData->unk28->globalPosition, &objData->unk5F4->pos) > 10000.0f)) {
             objData->unk5F4 = NULL;
             objData->unk600 = 2.0f;
         }
@@ -1082,7 +1082,7 @@ static void dll_211_func_23B8(Object* self, DLL211_Data* objData) {
         return;
     case 2:
         if (dll_211_func_4F3C(self, 2.5f, objData, (Vec3f* ) &objData->unk5E4[0]->srt.scale) == 0) {
-            objData->unk20 = vec3_distance_xz(&self->globalPosition, (Vec3f* ) &objData->unk5E4[0]->srt.scale) / gUpdateRateF;
+            objData->unk20 = vec3DistanceXZ(&self->globalPosition, (Vec3f* ) &objData->unk5E4[0]->srt.scale) / gUpdateRateF;
             dll_211_func_8470(self, (Vec3f* ) &objData->unk5E4[0]->srt.scale);
             objData->unk4C |= 0x10;
             objData->unk1A = 3;
@@ -1251,8 +1251,8 @@ static void dll_211_func_2C64(Object* self, DLL211_Data* objData) {
         }
         ((f32*)&objData->unk5F0)[0] -= gUpdateRateF;
         if (((f32*)&objData->unk5F0)[0] < 0.0f) {
-            ((f32*)&objData->unk5F0)[0] = rand_next(200, 600);
-            dll_211_func_95E0(self, objData, _data_0[rand_next(3, 5)]);
+            ((f32*)&objData->unk5F0)[0] = mathRnd(200, 600);
+            dll_211_func_95E0(self, objData, _data_0[mathRnd(3, 5)]);
         }
     } else {
         dll_211_func_53E4(self, 5.0f, objData);
@@ -1261,7 +1261,7 @@ static void dll_211_func_2C64(Object* self, DLL211_Data* objData) {
             objData->unk4C |= 0x10;
             sp38 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp44, 0));
             sp34 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_590(sp44, 0));
-            if (vec3_distance_xz_squared(&self->globalPosition, &sp38->pos) > vec3_distance_xz_squared(&self->globalPosition, &sp34->pos)) {
+            if (vec3DistanceXZSquared(&self->globalPosition, &sp38->pos) > vec3DistanceXZSquared(&self->globalPosition, &sp34->pos)) {
                 sp40 = sp38;
                 var_a3 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp38, 0));
                 objData->unk3C8.unk0.unk80 = 0;
@@ -1330,7 +1330,7 @@ static void dll_211_func_3188(Object* self, DLL211_Data* objData) {
         ((f32*)objData->unk5E4)[2] = 0.0001f;
         dll_211_func_83BC(self, objData);
         if (objData->unk1A == 0) {
-            if (vec3_distance_xz_squared(&self->globalPosition, &objData->unk28->globalPosition) > 400.0f) {
+            if (vec3DistanceXZSquared(&self->globalPosition, &objData->unk28->globalPosition) > 400.0f) {
                 sp38 = mapFindObjSetup(((s32*)sp38)[7 /* unk1C */], NULL, NULL, NULL, NULL);
                 dll_211_func_9024(objData, &sp38->x);
                 objData->unk1A = 1;
@@ -1456,7 +1456,7 @@ static s32 dll_211_func_3A78(DLL211_Data* objData) {
     var_s2 = NULL;
     temp_s5 = objGetAllOfType(OBJTYPE_Baddie, &count);
     for (i = 0; i < count; i++) {
-        temp_fs0 = vec3_distance_xz_squared(&temp_s5[i]->globalPosition, &objData->unk5F4_vec);
+        temp_fs0 = vec3DistanceXZSquared(&temp_s5[i]->globalPosition, &objData->unk5F4_vec);
         if (var_s2 == NULL) {
             if (gDLL_25->vtbl->func_1158(&temp_s5[i]->globalPosition, NULL) == objData->unk608) {
                 sp58 = temp_fs0;
@@ -1500,9 +1500,9 @@ static void dll_211_func_3CAC(Object* self, DLL211_Data* objData) {
     switch (objData->unk1A) {
     case 0:
         objData->unk608 = gDLL_25->vtbl->func_1158(objData->unk2C, NULL);
-        objData->unk5F4_vec.x = objData->unk28->globalPosition.x - (fsin16_precise(objData->unk28->srt.yaw) * 15.0f);
+        objData->unk5F4_vec.x = objData->unk28->globalPosition.x - (mathSinfInterp(objData->unk28->srt.yaw) * 15.0f);
         objData->unk5F4_vec.y = objData->unk28->globalPosition.y;
-        temp_ft0 = fcos16_precise(objData->unk28->srt.yaw) * 15.0f;
+        temp_ft0 = mathCosfInterp(objData->unk28->srt.yaw) * 15.0f;
         objData->unk5F4_vec.z = objData->unk28->globalPosition.z - temp_ft0;
         objData->unk60C = 0;
         objData->unk1A = 1;
@@ -1570,18 +1570,18 @@ static void dll_211_func_3CAC(Object* self, DLL211_Data* objData) {
             objAnimSet(self, 0x106, 0.0f, 0);
             objData->unk38 = 0.005f;
             objData->unk600 = 0.0f;
-            dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
+            dll_211_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
             objData->unk1A = 7;
         } else if (dll_211_func_3C1C(objData->unk604) != 0) {
             dll_211_func_885C(self);
         }
         return;
     case 7:
-        if (rand_next(0, 10) == 0) {
-            dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
+        if (mathRnd(0, 10) == 0) {
+            dll_211_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
         }
         objData->unk600 += gUpdateRateF;
-        if (((objData->unk600 >= 150.0f) && (vec3_distance_xz_squared(objData->unk2C, &self->srt.transl) >= 2500.0f)) || (dll_211_func_3C1C(objData->unk604) == 0)) {
+        if (((objData->unk600 >= 150.0f) && (vec3DistanceXZSquared(objData->unk2C, &self->srt.transl) >= 2500.0f)) || (dll_211_func_3C1C(objData->unk604) == 0)) {
             objAnimSet(self, 0x105, 1.0f, 0);
             objData->unk38 = -0.01f;
             objData->unk1A = 8;
@@ -1660,8 +1660,8 @@ static void dll_211_func_4418(Object* self, DLL211_Data* objData) {
     case 6:
         if (self->animProgress >= 0.65f) {
             objData->unk5E4[0]->srt.transl.y += 5.0f;
-            sp30 = fsin16_precise(self->srt.yaw);
-            ((DLL_Unknown*)objData->unk5E4[0]->dll)->vtbl->func[7].withFiveArgsCustom4(objData->unk5E4[0], self, -sp30, 1.0f, -fcos16_precise(self->srt.yaw));
+            sp30 = mathSinfInterp(self->srt.yaw);
+            ((DLL_Unknown*)objData->unk5E4[0]->dll)->vtbl->func[7].withFiveArgsCustom4(objData->unk5E4[0], self, -sp30, 1.0f, -mathCosfInterp(self->srt.yaw));
             objData->unk1A = 2;
         }
         return;
@@ -1700,9 +1700,9 @@ static void dll_211_func_47E8(Object* self, DLL211_Data* objData) {
     s32 var_v0;
     s32 var_v1_2;
 
-    sp24 = atan2f_to_s(objData->unk28->srt.transl.x - self->srt.transl.x, objData->unk28->srt.transl.z - self->srt.transl.z);
+    sp24 = Arctanf(objData->unk28->srt.transl.x - self->srt.transl.x, objData->unk28->srt.transl.z - self->srt.transl.z);
     if (objData->unk1A == 0) {
-        ((s32*)objData->unk5E4)[0] = rand_next(0, 1);
+        ((s32*)objData->unk5E4)[0] = mathRnd(0, 1);
         if (((s32*)objData->unk5E4)[0] == 0) {
             ((s32*)objData->unk5E4)[0] = -1;
         }
@@ -1719,9 +1719,9 @@ static void dll_211_func_47E8(Object* self, DLL211_Data* objData) {
     if (var_v1_2 < 0x2000) {
         ((s32*)objData->unk5E4)[1] += (((s32*)objData->unk5E4)[0] << 0xB);
     }
-    ((f32*)objData->unk5E4)[2] = objData->unk28->srt.transl.x - (fsin16(((s32*)objData->unk5E4)[1]) * 50.0f);
+    ((f32*)objData->unk5E4)[2] = objData->unk28->srt.transl.x - (Sinf(((s32*)objData->unk5E4)[1]) * 50.0f);
     ((f32*)objData->unk5E4)[3] = objData->unk28->srt.transl.y;
-    objData->unk5F4_vec.x = objData->unk28->srt.transl.z - (fcos16(((s32*)objData->unk5E4)[1]) * 50.0f);
+    objData->unk5F4_vec.x = objData->unk28->srt.transl.z - (Cosf(((s32*)objData->unk5E4)[1]) * 50.0f);
     dll_211_func_53E4(self, 5.0f, objData);
 }
 
@@ -1745,7 +1745,7 @@ static void dll_211_func_4974(Object* self, DLL211_Data* objData) {
         return;
     case 1:
         dll_211_func_885C(self);
-        if (vec3_distance_xz_squared(&self->srt.transl, objData->unk2C) > 5625.0f) {
+        if (vec3DistanceXZSquared(&self->srt.transl, objData->unk2C) > 5625.0f) {
             objData->unk1A = 0;
             return;
         }
@@ -1755,7 +1755,7 @@ static void dll_211_func_4974(Object* self, DLL211_Data* objData) {
         }
         objData->unk5F4_vec.x -= gUpdateRateF;
         if (objData->unk5F4_vec.x < 0.0f) {
-            objData->unk5F4_vec.x = rand_next(200, 600) * 0.5f;
+            objData->unk5F4_vec.x = mathRnd(200, 600) * 0.5f;
             dll_211_func_95E0(self, objData, _data_0[6]);
         }
         break;
@@ -1790,7 +1790,7 @@ static void dll_211_func_4C94(Object* self, DLL211_Data* objData) {
     switch (objData->unk1A) {
     case 0:
         if (dll_211_func_53E4(self, 50.0f, objData) == 0) {
-            dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
+            dll_211_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
             objData->unk1A = 1;
             objAnimSet(self, 0x106, 0.0f, 0);
             objData->unk5F8 = 0;
@@ -1803,8 +1803,8 @@ static void dll_211_func_4C94(Object* self, DLL211_Data* objData) {
             return;
         }
         dll_211_func_885C(self);
-        if (rand_next(0, 10) == 0) {
-            dll_211_func_95E0(self, objData, _data_0[rand_next(10, 12)]);
+        if (mathRnd(0, 10) == 0) {
+            dll_211_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
         }
         break;
     case 2:
@@ -1864,7 +1864,7 @@ static void dll_211_func_507C(Object* self, DLL211_Data* objData) {
     objData->unk20 = 1.5f;
     objAnimSet(self, 0x15, 0.0f, 0);
     objData->unk19 = 9;
-    dll_211_func_95E0(self, objData, _data_0[rand_next(7, 9)]);
+    dll_211_func_95E0(self, objData, _data_0[mathRnd(7, 9)]);
 }
 
 
@@ -1883,7 +1883,7 @@ static void dll_211_func_514C(Object* self, DLL211_Data* objData) {
     }
     objData->unk19 = 12;
     dll_211_func_8A94(self, &objData->unk3C8);
-    dll_211_func_95E0(self, objData, _data_0[rand_next(7, 9)]);
+    dll_211_func_95E0(self, objData, _data_0[mathRnd(7, 9)]);
 }
 
 // offset: 0x52B8 | func: 53
@@ -1896,7 +1896,7 @@ static void dll_211_func_52B8(Object* self, DLL211_Data* objData) {
     objData->unk38 = 0.0125f;
     objData->unk19 = 14;
     dll_211_func_8A94(self, &objData->unk3C8);
-    dll_211_func_95E0(self, objData, _data_0[rand_next(7, 9)]);
+    dll_211_func_95E0(self, objData, _data_0[mathRnd(7, 9)]);
 }
 
 // offset: 0x53E4 | func: 54
@@ -1955,7 +1955,7 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
     if (objData->unk20 < 0.0f) {
         objData->unk20 = 0.0f;
     }
-    temp_fv0 = vec3_distance_xz_squared(temp_s1, &self->srt.transl);
+    temp_fv0 = vec3DistanceXZSquared(temp_s1, &self->srt.transl);
     var_a0 = objData->unk20 * 10.0f;
     if (var_a0 >= 0x12) {
         var_fv1 = 100.0f;
@@ -2134,7 +2134,7 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         if (dll_211_func_9668(&objData->unkCC) == 0) {
             sp68[0] = objData->unk2C->x - self->srt.transl.x;
             sp68[1] = objData->unk2C->z - self->srt.transl.z;
-            var_s1 = (u16)arctan2_f(-sp68[0], -sp68[1]);
+            var_s1 = (u16)mathAtan2f(-sp68[0], -sp68[1]);
             var_s1 = self->srt.yaw - (var_s1 & 0xFFFF);
             CIRCLE_WRAP(var_s1);
             var_v1 = (var_s1 >= 0 ? var_s1 : -var_s1);
@@ -2174,8 +2174,8 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         }
         break;
     case 6:
-        vec3_distance_xz_squared(&objData->unk3C0->pos, &self->srt.transl);
-        if (vec3_distance_xz_squared(&objData->unk3C0->pos, &self->srt.transl) < 60.0f) {
+        vec3DistanceXZSquared(&objData->unk3C0->pos, &self->srt.transl);
+        if (vec3DistanceXZSquared(&objData->unk3C0->pos, &self->srt.transl) < 60.0f) {
             setup = objData->unk3C0;
             objData->unk3C8.unk0.unk80 = objData->unk3C4;
             spA0 = dll_211_func_7A7C(objData, setup, spB8, objData->unk3C4);
@@ -2230,7 +2230,7 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
         sp60[0] = -self->srt.yaw;
         sp60[1] = 0;
         sp60[2] = 0;
-        rotate_vec3(&sp60, sp74.f);
+        mathRotateRPY(&sp60, sp74.f);
         if (sp74.z > 0.0f && objData->unk20 != 0.0f) {
             if (!(objData->unk4C & 2) || (objData->unk64 != spB8) || (objData->unk68 != objData->unk2C) || (objData->unk66 != objData->unk3C8.unk0.unk80)) {
                 objData->unk4C |= 2;
@@ -2482,20 +2482,20 @@ static void dll_211_func_726C(Object* self) {
     } else {
         sp30.roll = 0;
     }
-    if (rand_next(0, 4) == 0) {
+    if (mathRnd(0, 4) == 0) {
         gDLL_17_partfx->vtbl->spawn(self, 0xCA, &sp30, 1, -1, NULL);
     }
-    if (rand_next(0, 4) == 0) {
+    if (mathRnd(0, 4) == 0) {
         gDLL_17_partfx->vtbl->spawn(self, 0xCB, &sp30, 1, -1, NULL);
     }
     sp30.transl.x = objData->unk384[1].x;
     sp30.transl.y = objData->unk384[1].y;
     sp30.transl.z = objData->unk384[1].z;
     sp30.yaw = self->srt.yaw;
-    if (rand_next(0, 4) == 0) {
+    if (mathRnd(0, 4) == 0) {
         gDLL_17_partfx->vtbl->spawn(self, 0xCA, &sp30, 1, -1, NULL);
     }
-    if (rand_next(0, 4) == 0) {
+    if (mathRnd(0, 4) == 0) {
         gDLL_17_partfx->vtbl->spawn(self, 0xCB, &sp30, 1, -1, NULL);
     }
 }
@@ -2876,10 +2876,10 @@ static CurveSetup* dll_211_func_7EFC(DLL211_Data* objData, CurveSetup* arg1, s32
 
     if (var_s2) {
         var_s0 = 0;
-        var_fs0 = vec3_distance_xz_squared(&objData->unk8->globalPosition, &sp68[var_s0]->pos);
+        var_fs0 = vec3DistanceXZSquared(&objData->unk8->globalPosition, &sp68[var_s0]->pos);
         var_s1 = var_s0;
         for (var_s0 = 1; var_s0 < var_s2; var_s0++) {
-            temp_fv0 = vec3_distance_xz_squared(&objData->unk8->globalPosition, &sp68[var_s0]->pos);
+            temp_fv0 = vec3DistanceXZSquared(&objData->unk8->globalPosition, &sp68[var_s0]->pos);
             if (temp_fv0 < var_fs0) {
                 var_fs0 = temp_fv0;
                 var_s1 = var_s0;
@@ -3062,7 +3062,7 @@ static void dll_211_func_87E4(Object* self) {
     objData += 12;
     z = -objData[1];
     x = -objData[0];
-    dll_211_func_88F4(self, arctan2_f(x, z));
+    dll_211_func_88F4(self, mathAtan2f(x, z));
 }
 
 // offset: 0x885C | func: 72
@@ -3073,7 +3073,7 @@ static void dll_211_func_885C(Object* self) {
     objData = self->data;
     sp24[0] = objData->unk2C->x - self->srt.transl.x;
     sp24[1] = objData->unk2C->z - self->srt.transl.z;
-    dll_211_func_88F4(self, arctan2_f(-sp24[0], -sp24[1]));
+    dll_211_func_88F4(self, mathAtan2f(-sp24[0], -sp24[1]));
 }
 
 // offset: 0x88F4 | func: 73
@@ -3111,7 +3111,7 @@ static void dll_211_func_8974(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
     
     distanceSquared = (arg2 * gUpdateRateF) * 1.5f;
     square = distanceSquared * distanceSquared;
-    distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk0.unk68), &self->srt.transl);
+    distanceSquared = vec3DistanceXZSquared((Vec3f *) (&arg1->unk0.unk68), &self->srt.transl);
     
     if (arg1->unk0.unk80 != 0){
         var_fs0 = -2.0f;
@@ -3124,7 +3124,7 @@ static void dll_211_func_8974(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
             break;
         }
         curves_func_800053B0(&arg1->unk0, var_fs0);
-        distanceSquared = vec3_distance_xz_squared((Vec3f *) (&arg1->unk0.unk68), &self->srt.transl);
+        distanceSquared = vec3DistanceXZSquared((Vec3f *) (&arg1->unk0.unk68), &self->srt.transl);
     }
 }
 
@@ -3350,7 +3350,7 @@ static Object* dll_211_func_94BC(Object* self, f32 arg1) {
     arg1 = SQ(arg1);
     for (i = 0; i < sp48; i++) {
         if ((objIsObjectType(temp_v0[i], OBJTYPE_TrickyTarget) == 0) && (gDLL_33_BaddieControl->vtbl->get_health_ratio(temp_v0[i]) > 0.0f)) {
-            temp_fv0 = vec3_distance_squared(&self->globalPosition, &temp_v0[i]->globalPosition);
+            temp_fv0 = vec3DistanceSquared(&self->globalPosition, &temp_v0[i]->globalPosition);
             if (temp_fv0 < arg1) {
                 arg1 = temp_fv0;
                 var_s3 = temp_v0[i];

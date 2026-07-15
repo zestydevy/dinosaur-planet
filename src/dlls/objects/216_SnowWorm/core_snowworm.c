@@ -456,10 +456,10 @@ void SnowWorm_func_CE8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     objData->unk46 += gUpdateRate;
     
     if ((objData->unk46 >= 300)) {
-        objData->unk46 = rand_next(0, 200);
+        objData->unk46 = mathRnd(0, 200);
         
         if (fsa->animState == SnowWorm_ASTATE_7 || fsa->animState == SnowWorm_ASTATE_8) {
-            gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[rand_next(3, 4)], 0x46, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[mathRnd(3, 4)], 0x46, NULL, NULL, 0, NULL);
         }
     } 
     
@@ -535,8 +535,8 @@ void SnowWorm_func_10D8(Object* self, Baddie* baddie) {
     }
     
     objData->fxTransform.transl.f[1] = self->srt.transl.y + 8.0f;
-    objData->fxTransform.transl.f[0] -= fsin16_precise(self->srt.yaw) * 10.0f * sp64;
-    objData->fxTransform.transl.f[2] -= fcos16_precise(self->srt.yaw) * 10.0f * sp64;
+    objData->fxTransform.transl.f[0] -= mathSinfInterp(self->srt.yaw) * 10.0f * sp64;
+    objData->fxTransform.transl.f[2] -= mathCosfInterp(self->srt.yaw) * 10.0f * sp64;
     
     transform.transl.f[0] = 0.0f;
     transform.transl.f[1] = -15.0f;
@@ -548,7 +548,7 @@ void SnowWorm_func_10D8(Object* self, Baddie* baddie) {
         v.f[0] = -8.0f;
         v.f[1] = 40.0f;
         v.f[2] = -20.0f;
-        vec3_transform(&mtx, v.f[0], v.f[1], v.f[2], &v.x, &v.y, &v.z);
+        mathMtxXFMF(&mtx, v.f[0], v.f[1], v.f[2], &v.x, &v.y, &v.z);
         memcpy(&objData->throwVelocity, &v, sizeof(Vec3f));
         memcpy(&objData->throwOrigin, &transform, sizeof(SRT));
         objData->flags |= SnowWorm_FLAG_1;
@@ -696,7 +696,7 @@ s32 SnowWorm_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->flags |= SnowWorm_FLAG_8;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dRoarSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dRoarSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
     
@@ -742,7 +742,7 @@ s32 SnowWorm_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->flags |= SnowWorm_FLAG_8;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dRoarSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dRoarSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
     
@@ -780,7 +780,7 @@ s32 SnowWorm_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(3, 4), dBattleSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(3, 4), dBattleSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -816,7 +816,7 @@ s32 SnowWorm_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     objData->flags |= (SnowWorm_FLAG_4 | SnowWorm_FLAG_8);
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dHurtSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dHurtSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -868,8 +868,8 @@ s32 SnowWorm_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     func_80028D2C(self);
     if (fsa->enteredAnimState) {
-        if (rand_next(0, 1)) {
-            dRoarSoundIdxA = rand_next(0, 2);
+        if (mathRnd(0, 1)) {
+            dRoarSoundIdxA = mathRnd(0, 2);
             if (fsa->enteredAnimState) {
                 objAnimSet(self, 6, 0.0f, 0);
                 fsa->unk33A = 0;
@@ -920,8 +920,8 @@ s32 SnowWorm_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        dRoarSoundIdxB = rand_next(0, 2);
-        if (rand_next(0, 1)) {
+        dRoarSoundIdxB = mathRnd(0, 2);
+        if (mathRnd(0, 1)) {
             if (fsa->enteredAnimState) {
                 objAnimSet(self, 7, 0.0f, 0);
                 fsa->unk33A = 0;
@@ -1055,11 +1055,11 @@ s32 SnowWorm_anim_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         weapon = objGetPlayer()->linkedObject;
         if (((DLL_Unknown*)weapon->dll)->vtbl->func[16].withOneArgS32(weapon)) {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     fsa->unk341 = 3;
@@ -1140,7 +1140,7 @@ s32 SnowWorm_anim_state_12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk278 = self->animProgress + -1.0f;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dHurtSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dHurtSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -1161,7 +1161,7 @@ s32 SnowWorm_anim_state_13(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if ((fsa->unk34A & 1) == FALSE) {
-        gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[2], MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 1;

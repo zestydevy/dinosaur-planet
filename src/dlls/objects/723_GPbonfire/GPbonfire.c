@@ -114,7 +114,7 @@ void GPbonfire_control(Object* self) {
     setup = (GPBonfire_Setup*)self->setup;
     player = objGetPlayer();
 
-    playerIsNearby = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition) <= setup->interactionDistance * setup->interactionDistance;    
+    playerIsNearby = vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= setup->interactionDistance * setup->interactionDistance;    
 
     objdata->currentState &= ~2;
     if (objdata->currentState & 1) {
@@ -162,7 +162,7 @@ void GPbonfire_control(Object* self) {
             }
             break;
         case STATE_3_START_BURNING:
-            if (vec3_distance_xz_squared(&objGetSidekick()->globalPosition, &self->globalPosition) <= 2500.0f) {
+            if (vec3DistanceXZSquared(&objGetSidekick()->globalPosition, &self->globalPosition) <= 2500.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, PARTFXFLAG_2, -1, NULL);
             }
@@ -182,7 +182,7 @@ void GPbonfire_control(Object* self) {
             tumbleweeds = objGetAllOfType(OBJTYPE_Baddie, &count);
             for (weedIndex = 0; weedIndex < count; weedIndex++){
                 if (tumbleweeds[weedIndex]->id == OBJ_Tumbleweed3) {
-                    distanceToTumbleweed = vec3_distance(&self->globalPosition, &tumbleweeds[weedIndex]->globalPosition);
+                    distanceToTumbleweed = vec3Distance(&self->globalPosition, &tumbleweeds[weedIndex]->globalPosition);
 
                     if (distanceToTumbleweed < 40.0f) {
                         if (tumbleweeds[weedIndex]) {} // @fake?

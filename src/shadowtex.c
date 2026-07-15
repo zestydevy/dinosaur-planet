@@ -145,8 +145,8 @@ void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
             someY *= 15.0f / var_fv0;
             someZ *= 15.0f / var_fv0;
         }
-        temp_s0->srt.yaw = 0x8000 - arctan2_f(someX, someZ);
-        temp_s0->srt.pitch = arctan2_f(someY, sqrtf(SQ(someX) + SQ(someZ)));
+        temp_s0->srt.yaw = 0x8000 - mathAtan2f(someX, someZ);
+        temp_s0->srt.pitch = mathAtan2f(someY, sqrtf(SQ(someX) + SQ(someZ)));
         var_fv0 = temp_s0->srt.pitch / 200.0f;
         if (var_fv0 < 35.0f) {
             var_fv0 = 35.0f;
@@ -167,11 +167,11 @@ void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
         sp8C = -obj->shadow->dir.f[0];
         sp90 = -obj->shadow->dir.f[1];
         sp94 = -obj->shadow->dir.f[2];
-        D_80092EAC = arctan2_f(-sp8C, sp94);
+        D_80092EAC = mathAtan2f(-sp8C, sp94);
         sp8C *= sp8C;
         sp94 *= sp94;
         D_80092EB0 = sqrtf(sp8C + sp94);
-        D_80092EB0 = arctan2_f(D_80092EB0, sp90) - 0x3FC8;
+        D_80092EB0 = mathAtan2f(D_80092EB0, sp90) - 0x3FC8;
         temp_s0->srt.pitch = D_80092EB0;
         if (obj->shadow->flags & OBJ_SHADOW_FLAG_USE_OBJ_YAW) {
             temp_s0->srt.yaw = 0x10000 - obj->srt.yaw;

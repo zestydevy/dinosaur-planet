@@ -306,7 +306,7 @@ void CFSupTreasureCh_func_9B8(Object *arg0, Object *arg1, s16 *arg2) {
         animator->frame     = ((animator->frame + (gUpdateRate << 6)) % 2048);
     }
     x1 = arg1->srt.transl.x;
-    y1 = (fsin16_precise(*arg2) * 5.0f) + (arg1->srt.transl.y - 30.0f);
+    y1 = (mathSinfInterp(*arg2) * 5.0f) + (arg1->srt.transl.y - 30.0f);
     z1 = arg1->srt.transl.z;
     arg0->srt.transl.x += (x1 - arg0->srt.transl.x) * 0.5f;
     arg0->srt.transl.y += (y1 - arg0->srt.transl.y) * 0.125f;

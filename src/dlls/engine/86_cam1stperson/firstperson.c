@@ -86,8 +86,8 @@ void cam1stperson_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
         sp54 /= temp_fv0;
         sp50 /= temp_fv0;
     }
-    sp48 = -fsin16_precise(player->srt.yaw);
-    temp_fv0_2 = fcos16_precise(player->srt.yaw);
+    sp48 = -mathSinfInterp(player->srt.yaw);
+    temp_fv0_2 = mathCosfInterp(player->srt.yaw);
     temp_fv1 = (f32) sp38 / 90.0f;
     sState->unk10[0] = cam->srt.transl.x;
     sState->unk10[1] = player->srt.transl.x;
@@ -110,7 +110,7 @@ void cam1stperson_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
     sState->unk10[1] = sState->unk10[1];
     sState->unk30[1] = sState->unk30[1];
     curvesMove(&sState->unk78);
-    var_v1 = 0x8000 - arctan2_f(cam->srt.transl.x - sState->unk10[1], cam->srt.transl.z - sState->unk30[1]);\
+    var_v1 = 0x8000 - mathAtan2f(cam->srt.transl.x - sState->unk10[1], cam->srt.transl.z - sState->unk30[1]);\
     var_v1 = cam->srt.yaw - (u16)var_v1;\
     CIRCLE_WRAP(var_v1);
     sState->unk40[0] = (f32) var_v1;
@@ -288,7 +288,7 @@ s32 cam1stperson_func_A74(Cam* cam, Object* arg1) {
         cam->player->srt.flags |= OBJFLAG_SKIP_MODEL_DL;
         return 1;
     }
-    cam->srt.yaw = (sp2A - arctan2_f(cam->srt.transl.x - sState->unk10[1], cam->srt.transl.z - sState->unk30[1])) + 0x8000;
+    cam->srt.yaw = (sp2A - mathAtan2f(cam->srt.transl.x - sState->unk10[1], cam->srt.transl.z - sState->unk30[1])) + 0x8000;
     return 0;
 }
 
@@ -352,8 +352,8 @@ void cam1stperson_func_1008(Cam* cam) {
     sState->unk30[0] = cam->srt.transl.z;
     sState->unk30[2] = 0.0f;
     sState->unk30[3] = 0.0f;
-    spEC = fsin16_precise(player->srt.yaw);
-    spE8 = fcos16_precise(player->srt.yaw);
+    spEC = mathSinfInterp(player->srt.yaw);
+    spE8 = mathCosfInterp(player->srt.yaw);
     temp_fv0 = sqrtf(SQ(sState->unk0) - SQ(sState->unk4));
     sState->unk10[1] = player->globalPosition.x + (spEC * temp_fv0);
     sState->unk20[1] = player->globalPosition.y + sState->unk114 + sState->unk4;
@@ -392,7 +392,7 @@ void cam1stperson_func_1008(Cam* cam) {
     sState->unk78.splineFunc = curvesHermite;
     sState->unk78.splineConverterFunc = curvesHermiteConverter;
     sState->unk40[0] = (f32) cam->srt.yaw;
-    sState->unk40[1] = (f32) (s16) (0x8000 - arctan2_f(
+    sState->unk40[1] = (f32) (s16) (0x8000 - mathAtan2f(
         sState->unk10[1] - player->globalPosition.x, 
         sState->unk30[1] - player->globalPosition.z));
     sState->unk40[2] = 0.0f;

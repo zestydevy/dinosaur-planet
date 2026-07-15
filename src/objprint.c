@@ -318,10 +318,10 @@ void objprint_func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
         return;
     }
 
-    matrix_from_srt(&sp54, &arg0->parent->srt);
+    mathYprXyzMtx(&sp54, &arg0->parent->srt);
     var_s0 = arg1->unk14->unk0;
     for (i = 0; i < arg2->jointCount; i++) {
-        vec3_transform(&sp54, var_s0->f[0], var_s0->f[1], var_s0->f[2], &var_s0->f[0], &var_s0->f[1], &var_s0->f[2]);
+        mathMtxXFMF(&sp54, var_s0->f[0], var_s0->f[1], var_s0->f[2], &var_s0->f[0], &var_s0->f[1], &var_s0->f[2]);
         var_s0->f[0] -= gWorldX;
         var_s0->f[2] -= gWorldZ;
         var_s0 += 1;
@@ -388,8 +388,8 @@ ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Tri
             sp4C.yaw = arg4->def->pAttachPoints[arg9].rot.s[0];
             sp4C.pitch = arg4->def->pAttachPoints[arg9].rot.s[1];
             sp4C.roll = arg4->def->pAttachPoints[arg9].rot.s[2];
-            matrix_from_srt(arg6, &sp4C);
-            matrix_concat_4x3(arg6, (MtxF*)&((f32*)arg5->matrices[arg5->unk34 & 1])[sp70 << 4], arg6);
+            mathYprXyzMtx(arg6, &sp4C);
+            mathMtxCat4x3F(arg6, (MtxF*)&((f32*)arg5->matrices[arg5->unk34 & 1])[sp70 << 4], arg6);
         } else {
             // required to match
         }
@@ -487,7 +487,7 @@ void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelI
             sp7C.f[0] = obj->def->pAttachPoints[j + 1].pos.f[0];
             sp7C.f[1] = obj->def->pAttachPoints[j + 1].pos.f[1];
             sp7C.f[2] = obj->def->pAttachPoints[j + 1].pos.f[2];
-            vec3_transform(tempMtx, sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2]);
+            mathMtxXFMF(tempMtx, sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2]);
             if (otherObj->parent != NULL) {
                 camTransformPointByObject(sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2], otherObj->parent);
             } else {
@@ -504,7 +504,7 @@ void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelI
             sp70.f[0] = obj->def->pAttachPoints[j].pos.f[0];
             sp70.f[1] = obj->def->pAttachPoints[j].pos.f[1];
             sp70.f[2] = obj->def->pAttachPoints[j].pos.f[2];
-            vec3_transform(tempMtx, sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2]);
+            mathMtxXFMF(tempMtx, sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2]);
             if (otherObj->parent != NULL) {
                 camTransformPointByObject(sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2], otherObj->parent);
             } else {
@@ -524,8 +524,8 @@ void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelI
         sp7C.f[0] -= sp70.f[0];
         sp7C.f[1] -= sp70.f[1];
         sp7C.f[2] -= sp70.f[2];
-        obj->srt.yaw = arctan2_f(sp7C.x, sp7C.z);
-        obj->srt.pitch = 0x4000 - arctan2_f(sp7C.y, sqrtf(SQ(sp7C.z) + SQ(sp7C.x)));
+        obj->srt.yaw = mathAtan2f(sp7C.x, sp7C.z);
+        obj->srt.pitch = 0x4000 - mathAtan2f(sp7C.y, sqrtf(SQ(sp7C.z) + SQ(sp7C.x)));
         obj->srt.roll = 0;
     }
 }
@@ -557,12 +557,12 @@ void objprintUpdateLockIconCoords(Object* arg0) {
             temp_fs1 = sp11C[i].unk02 * 2;
             temp_fs2 = sp11C[i].unk04 * 2;
             if (sp11C->flags & 0x10) {
-                vec3_transform(temp_s4, 0.0f, 0.0f, 0.0f, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
+                mathMtxXFMF(temp_s4, 0.0f, 0.0f, 0.0f, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
                 sp118[i].refPoint.f[0] += temp_fs0;
                 sp118[i].refPoint.f[1] += temp_fs1;
                 sp118[i].refPoint.f[2] += temp_fs2;
             } else {
-                vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
+                mathMtxXFMF(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
             }
             if (arg0->parent == NULL) {
                 sp118[i].drawPoint.f[0] += gWorldX;
@@ -573,7 +573,7 @@ void objprintUpdateLockIconCoords(Object* arg0) {
             temp_fs0 = sp11C[i].unk06 * 2;
             temp_fs1 = sp11C[i].unk08 * 2;
             temp_fs2 = sp11C[i].unk0a * 2;
-            vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
+            mathMtxXFMF(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
             if (arg0->parent == NULL) {
                 sp118[i].refPoint.f[0] += gWorldX;
                 sp118[i].refPoint.f[2] += gWorldZ;
@@ -594,15 +594,15 @@ void objprintUpdateLockIconCoords(Object* arg0) {
                 spA8.roll = arg0->srt.roll;
             }
             spA8.scale = 1.0f;
-            matrix_from_srt(&spC0, &spA8);
+            mathYprXyzMtx(&spC0, &spA8);
             temp_fs0 = sp11C[i].unk00 * 2;
             temp_fs1 = sp11C[i].unk02 * 2;
             temp_fs2 = sp11C[i].unk04 * 2;
-            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
+            mathMtxXFMF(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
             temp_fs0 = sp11C[i].unk06 * 2;
             temp_fs1 = sp11C[i].unk08 * 2;
             temp_fs2 = sp11C[i].unk0a * 2;
-            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
+            mathMtxXFMF(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
         }
     }
 }

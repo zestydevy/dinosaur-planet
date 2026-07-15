@@ -24,7 +24,7 @@ void SB_MiniFire_setup(Object *self, ObjSetup *setup, s32 arg2) {
     DLL_IModgfx* dll133;
 
     self->unkDC = 180;
-    rand = rand_next(20, 40);
+    rand = mathRnd(20, 40);
     self->velocity.x = -((rand * 0.01f) + 0.8f);
     self->velocity.y = 0.0f;
     self->velocity.z = -0.3f;

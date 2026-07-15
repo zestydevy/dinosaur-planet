@@ -21,7 +21,7 @@ void DIM_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     //Pick which tent holds the bridge cog
     //@bug: doesn't check if the chosen tent has already been burnt, so you could potentially miss the gear
-    tentIndex = rand_next(0, 11);
+    tentIndex = mathRnd(0, 11);
 
     objdata = self->data;
     objdata->unk0 = 0;

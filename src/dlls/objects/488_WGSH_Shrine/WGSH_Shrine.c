@@ -157,7 +157,7 @@ void dll_488_control(Object *self) {
         }
         switch (objdata->unk13) {
         case 0:
-            if (vec3_distance(&self->globalPosition, &sp48->globalPosition) < (f32) objdata->unk0) {
+            if (vec3Distance(&self->globalPosition, &sp48->globalPosition) < (f32) objdata->unk0) {
                 objdata->unk13 = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);

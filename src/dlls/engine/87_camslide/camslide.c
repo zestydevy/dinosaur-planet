@@ -143,14 +143,14 @@ static void camslide_func_4E4(Cam* cam, Object* arg1) {
 
 // offset: 0x558 | func: 6
 static void camslide_func_558(Cam* cam, f32 arg1, f32 arg2) {
-    s32 var_v1 = (-arctan2_f(arg1, arg2) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
+    s32 var_v1 = (-mathAtan2f(arg1, arg2) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
     CIRCLE_WRAP(var_v1);
     cam->srt.yaw += var_v1;
 }
 
 // offset: 0x5E8 | func: 7
 static void camslide_func_5E8(Cam* cam, f32 arg1, f32 arg2) {
-    s32 var_v1 = (arctan2_f(arg1, 100.0f) - sState->unk1C) - (cam->srt.pitch & 0xFFFF);
+    s32 var_v1 = (mathAtan2f(arg1, 100.0f) - sState->unk1C) - (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     cam->srt.pitch += ((s32) (var_v1 * gUpdateRate) >> 3);
 }

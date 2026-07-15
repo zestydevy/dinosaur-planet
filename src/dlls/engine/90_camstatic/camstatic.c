@@ -74,12 +74,12 @@ void camstatic_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
     sp40 = sp4C->globalPosition.y - temp_s0->globalPosition.y;
     sp3C = sp4C->globalPosition.z - temp_s0->globalPosition.z;
     if (sp48->unk1B & 1) {
-        sp36 = 0x8000 - arctan2_f(sp44, sp3C);
+        sp36 = 0x8000 - mathAtan2f(sp44, sp3C);
     } else {
         sp36 = sp48->unk1C + 0x8000;
     }
     if (sp48->unk1B & 2) {
-        var_a3 = (arctan2_f(sp40, sqrtf(SQ(sp44) + SQ(sp3C))) & 0xFFFF & 0xFFFF) - sp48->unk1E;
+        var_a3 = (mathAtan2f(sp40, sqrtf(SQ(sp44) + SQ(sp3C))) & 0xFFFF & 0xFFFF) - sp48->unk1E;
     } else {
         var_a3 = sp48->unk1E;
     }
@@ -142,10 +142,10 @@ void camstatic_func_278(Cam* cam) {
     sp3C = cam->srt.transl.y - sp34->globalPosition.y;
     sp38 = cam->srt.transl.z - sp34->globalPosition.z;
     if (sp4C->unk1B & 1) {
-        cam->srt.yaw = 0x8000 - arctan2_f(sp40, sp38);
+        cam->srt.yaw = 0x8000 - mathAtan2f(sp40, sp38);
     }
     if (sp4C->unk1B & 2) {
-        var_v1 = (arctan2_f(sp3C, sqrtf(SQ(sp40) + SQ(sp38))) - sp4C->unk1E) - (cam->srt.pitch & 0xFFFF);
+        var_v1 = (mathAtan2f(sp3C, sqrtf(SQ(sp40) + SQ(sp38))) - sp4C->unk1E) - (cam->srt.pitch & 0xFFFF);
         CIRCLE_WRAP(var_v1);
         cam->srt.pitch += ((s32) (var_v1 * gUpdateRate) >> 3);
     }

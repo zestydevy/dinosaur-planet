@@ -191,10 +191,10 @@ Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
     setup->unk1E = lfxSetupUnk1E;
     setup->unk22 = -1;
     setup->unk18 = 0;
-    rand_next(-500, 500);
+    mathRnd(-500, 500);
     setup->unk1A = 0;
     setup->unk1C = 0;
-    rand_next(-500, 500);
+    mathRnd(-500, 500);
     setup->unk24 = 1;
     setup->unk25 = 50;
     
@@ -209,10 +209,10 @@ void DRLavaControl_create_particles(Object* self, u32 effectIndex) {
     
     if (effectIndex){
         effectIndex--;        
-        if (!rand_next(0, particleChanceA[effectIndex])){
+        if (!mathRnd(0, particleChanceA[effectIndex])){
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_684, NULL, PARTFXFLAG_2, -1, NULL);
         }
-        if (!rand_next(0, particleChanceB[effectIndex])){
+        if (!mathRnd(0, particleChanceB[effectIndex])){
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_683, NULL, PARTFXFLAG_2, -1, NULL);
         }
     }

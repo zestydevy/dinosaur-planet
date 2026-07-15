@@ -16,11 +16,11 @@ void Pollen_dtor(void *dll) { }
 void Pollen_setup(Object* self, ObjSetup* setup, s32 arg2) {
     Pollen_Data* objdata = self->data;
 
-    objdata->unk0 = rand_next(-M_180_DEGREES, M_180_DEGREES - 1);
-    objdata->unkC = rand_next(4000, 5000) * 0.01f;
-    objdata->unk4 = rand_next(-M_180_DEGREES, M_180_DEGREES - 1);
+    objdata->unk0 = mathRnd(-M_180_DEGREES, M_180_DEGREES - 1);
+    objdata->unkC = mathRnd(4000, 5000) * 0.01f;
+    objdata->unk4 = mathRnd(-M_180_DEGREES, M_180_DEGREES - 1);
     objdata->unk8 = 0.0f;
-    objdata->unk6 = rand_next(230, 500);
+    objdata->unk6 = mathRnd(230, 500);
     objdata->unk10 = 0;
     objdata->unk12 = 10;
 
@@ -61,9 +61,9 @@ static void Pollen_create_fragments(Object* self) {
         if (fragment != NULL) {
             fragment->srt.pitch = 0;
             fragment->srt.yaw = 0;
-            fragment->velocity.x = 0.01f * rand_next(-50, 50);
-            fragment->velocity.y = 0.01f * rand_next(0, 30);
-            fragment->velocity.z = 0.01f * rand_next(-50, 50);
+            fragment->velocity.x = 0.01f * mathRnd(-50, 50);
+            fragment->velocity.y = 0.01f * mathRnd(0, 30);
+            fragment->velocity.z = 0.01f * mathRnd(-50, 50);
             fragment->unkC4 = self;
         }
     }

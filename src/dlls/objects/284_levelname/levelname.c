@@ -107,7 +107,7 @@ void levelname_control(Object* self) {
 
     switch (objdata->state) {
         case LEVELNAME_STATE_0_WAITING:
-            distance = vec3_distance(&self->globalPosition, &objGetPlayer()->globalPosition);
+            distance = vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition);
             if (distance < objdata->activationRadius) {
                 if (objdata->flagID != NO_GAMEBIT) {
                     mainSetBits(objdata->flagID, 1);
@@ -127,7 +127,7 @@ void levelname_control(Object* self) {
             if ((u32)objdata->timer > objdata->displayDuration) {
                 objdata->state = LEVELNAME_STATE_3_FADING_OUT;
             }    
-            objdata->opacity = (s32) (fsin16_precise(objdata->timer * 0x500) * 30.0f) + 0xDC;
+            objdata->opacity = (s32) (mathSinfInterp(objdata->timer * 0x500) * 30.0f) + 0xDC;
             break;
         case LEVELNAME_STATE_3_FADING_OUT:
             objdata->opacity -= gUpdateRate * 4;

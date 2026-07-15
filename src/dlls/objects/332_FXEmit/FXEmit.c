@@ -84,7 +84,7 @@ void FXEmit_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
     self->srt.roll = setup->roll << 8;
     objdata->intervalTimer = setup->interval * 100;
     objdata->translateX = self->srt.transl.x;
-    objdata->randomDelay = rand_next(0, 10);
+    objdata->randomDelay = mathRnd(0, 10);
     objdata->defaultFXIndex = 0;
 }
 

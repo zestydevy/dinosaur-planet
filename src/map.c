@@ -660,7 +660,7 @@ void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** v
         gTrackFlags &= ~TRACKFLAG_UNK1;
     }
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
-    mtx = get_some_model_view_mtx();
+    mtx = mathIdentityMtxL();
     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
     camSetupViewportAndMatrices(&gMainDL, 0);
     trackUpdateFrustum();
@@ -1283,16 +1283,16 @@ void blockAddToRenderList(Block *block, f32 x, f32 z) {
         gBlocksToDraw[gBlocksToDrawIdx] = block;
         gBlocksToDrawIdx++;
 
-        matrix_translation(&mf, x, 0.0f, z);
-        matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+        mathTranslateMtx(&mf, x, 0.0f, z);
+        mathMtx4x3F2L(&mf, gWorldRSPMatrices);
 
         gWorldRSPMatrices++;
 
         mf.m[3][1] = block->minY;
 
-        matrix_scaling(&mf2, 1.0f, 0.05f, 1.0f);
-        matrix_concat(&mf2, &mf, &mf);
-        matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+        mathScaleMtx(&mf2, 1.0f, 0.05f, 1.0f);
+        mathMtxCatF(&mf2, &mf, &mf);
+        mathMtx4x3F2L(&mf, gWorldRSPMatrices);
 
         gWorldRSPMatrices++;
     }
@@ -1392,10 +1392,10 @@ s32 mapAreWorldCoordsInMap(f32 worldX, f32 worldZ) {
     s32 localGridZ;
     s32 temp;
 
-    temp = floor_f((worldX - gWorldX) / BLOCKS_GRID_UNIT);
-    localGridX = temp + gMapCurrentStreamCoordsX + gMapActiveStreamMap->originOffsetX - floor_f(gMapActiveStreamMap->originWorldX / BLOCKS_GRID_UNIT);
-    temp = floor_f((worldZ - gWorldZ) / BLOCKS_GRID_UNIT);
-    localGridZ = temp + gMapCurrentStreamCoordsZ + gMapActiveStreamMap->originOffsetZ - floor_f(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
+    temp = floorf((worldX - gWorldX) / BLOCKS_GRID_UNIT);
+    localGridX = temp + gMapCurrentStreamCoordsX + gMapActiveStreamMap->originOffsetX - floorf(gMapActiveStreamMap->originWorldX / BLOCKS_GRID_UNIT);
+    temp = floorf((worldZ - gWorldZ) / BLOCKS_GRID_UNIT);
+    localGridZ = temp + gMapCurrentStreamCoordsZ + gMapActiveStreamMap->originOffsetZ - floorf(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
     
     if (localGridX < 0 || localGridZ < 0 || localGridX >= gMapActiveStreamMap->gridSizeX || localGridZ >= gMapActiveStreamMap->gridSizeZ) {
         return 0;
@@ -1462,8 +1462,8 @@ s32 mapWorldCoordsToBlockIndex(f32 x, f32 y, f32 z) {
     s32 i;
     s8 *temp;
     
-    gridX = floor_f(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
-    gridZ = floor_f(z / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
+    gridX = floorf(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
+    gridZ = floorf(z / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
     if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN) {
         return -1;
@@ -1491,8 +1491,8 @@ void mapWorldToBlockWorldCoords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWo
     s32 gridX;
     s32 gridZ;
 
-    gridX = floor_f(worldX / BLOCKS_GRID_UNIT);
-    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT);
+    gridX = floorf(worldX / BLOCKS_GRID_UNIT);
+    gridZ = floorf(worldZ / BLOCKS_GRID_UNIT);
     
     *blockWorldX = (f32) gridX * BLOCKS_GRID_UNIT;
     *blockWorldZ = (f32) gridZ * BLOCKS_GRID_UNIT;
@@ -1503,8 +1503,8 @@ s16 mapWorldXZToMapID(f32 worldX, f32 worldZ) {
     s32 gridZ;
     GlobalMapCell *layer;
 
-    gridX = floor_f(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
-    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
+    gridX = floorf(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
+    gridZ = floorf(worldZ / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
     if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN) {
         return -1;
@@ -1595,8 +1595,8 @@ s32 mapWorldXZToBlockIndex(s32 worldX, s32 worldZ, s32* blockIndex) {
       
     blocksLayer = gBlockIndices[0];
       
-    worldX = floor_f((f32) worldX / BLOCKS_GRID_UNIT);
-    worldZ = floor_f((f32) worldZ / BLOCKS_GRID_UNIT);
+    worldX = floorf((f32) worldX / BLOCKS_GRID_UNIT);
+    worldZ = floorf((f32) worldZ / BLOCKS_GRID_UNIT);
   
     tempX = &gMapCurrentStreamCoordsX;
       
@@ -1672,40 +1672,40 @@ void trackUpdateFrustum(void) {
     srt.pitch = -camera->pitch;
     srt.roll = camera->roll;
     var_s0 = 0;
-    matrix_from_srt(&sp84, &srt);
-    vec3_transform(&sp84, 0.0f, 0.0f, -1.0f, &spDC, &spD8, &spD4);
+    mathYprXyzMtx(&sp84, &srt);
+    mathMtxXFMF(&sp84, 0.0f, 0.0f, -1.0f, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    sp78 = fcos16_precise(sp80 * 182.0f);
-    sp6E = arctan2_f(160.0f, 120.0f / (fsin16_precise(sp80 * 182.0f) / sp78));
-    sp7C = fsin16_precise(sp6E);
-    sp78 = fcos16_precise(sp6E);
-    vec3_transform(&sp84, -(-sp78), 0.0f, -sp7C, &spDC, &spD8, &spD4);
+    sp78 = mathCosfInterp(sp80 * 182.0f);
+    sp6E = mathAtan2f(160.0f, 120.0f / (mathSinfInterp(sp80 * 182.0f) / sp78));
+    sp7C = mathSinfInterp(sp6E);
+    sp78 = mathCosfInterp(sp6E);
+    mathMtxXFMF(&sp84, -(-sp78), 0.0f, -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    vec3_transform(&sp84, -sp78, 0.0f, -sp7C, &spDC, &spD8, &spD4);
+    mathMtxXFMF(&sp84, -sp78, 0.0f, -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    vec3_transform(&sp84, 0.0f, -sp78, -sp7C, &spDC, &spD8, &spD4);
+    mathMtxXFMF(&sp84, 0.0f, -sp78, -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    vec3_transform(&sp84, 0.0f, -(-sp78), -sp7C, &spDC, &spD8, &spD4);
+    mathMtxXFMF(&sp84, 0.0f, -(-sp78), -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
@@ -1839,11 +1839,11 @@ void trackSomeCellFunc(BitStream* stream) {
         return;
     }
 
-    sp3C = floor_f((D_800B51E4->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-    sp28 = mapGetBlockFromGrid(sp3C, floor_f((D_800B51E4->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F), 0);
+    sp3C = floorf((D_800B51E4->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+    sp28 = mapGetBlockFromGrid(sp3C, floorf((D_800B51E4->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F), 0);
 
-    sp3C = floor_f(D_800B51E4->srt.transl.x / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT;
-    temp = (floor_f(D_800B51E4->srt.transl.z / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT);
+    sp3C = floorf(D_800B51E4->srt.transl.x / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT;
+    temp = (floorf(D_800B51E4->srt.transl.z / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT);
     temp_t2 = (D_800B51E4->srt.transl.x - sp3C);
     temp_t3 = (D_800B51E4->srt.transl.z - temp);
     if (sp28 == NULL) {
@@ -1919,7 +1919,7 @@ u8 trackObjVisCheck(Object* obj) {
             return FALSE;
         }
         if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = objGetPlayer(), (playerObj != NULL))) {
-            dist = vec3_distance(&obj->globalPosition, &playerObj->globalPosition);
+            dist = vec3Distance(&obj->globalPosition, &playerObj->globalPosition);
         } else {
             dist = camDistance(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
         }
@@ -2492,8 +2492,8 @@ void mapUpdateStreaming(void) {
     f2 = D_800B97B4;
     f14 = f0 - gWorldX;
     sp308 = f2 - gWorldZ;
-    sp2F4 = floor_f(f14 / BLOCKS_GRID_UNIT_F);
-    sp2F0 = floor_f(sp308 / BLOCKS_GRID_UNIT_F);
+    sp2F4 = floorf(f14 / BLOCKS_GRID_UNIT_F);
+    sp2F0 = floorf(sp308 / BLOCKS_GRID_UNIT_F);
     sp294 = gTrackFlags & TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
     gTrackFlags &= ~TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (gTrackFlags & TRACKFLAG_LAYER_CHANGED)) {
@@ -2790,8 +2790,8 @@ void map_func_8004773C(void) {
     gBlockColorTableLength = 0;
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
     savedPlayerLocation = gDLL_29_Gplay->vtbl->get_player_saved_location();
-    gMapCurrentStreamCoordsX = floor_f(savedPlayerLocation->vec.x / BLOCKS_GRID_UNIT_F);
-    gMapCurrentStreamCoordsZ = floor_f(savedPlayerLocation->vec.z / BLOCKS_GRID_UNIT_F);
+    gMapCurrentStreamCoordsX = floorf(savedPlayerLocation->vec.x / BLOCKS_GRID_UNIT_F);
+    gMapCurrentStreamCoordsZ = floorf(savedPlayerLocation->vec.z / BLOCKS_GRID_UNIT_F);
     Vec3_Int_array->f.x = savedPlayerLocation->vec.x;
     Vec3_Int_array->f.y = savedPlayerLocation->vec.y;
     Vec3_Int_array->f.z = savedPlayerLocation->vec.z;
@@ -4357,8 +4357,8 @@ s32 mapShouldStreamLoadObject(ObjSetup* arg0, s8 arg1, s32 arg2) {
     }
 
     if (arg1 == 0) {
-        scaledX = floor_f((arg0->x - gWorldX) / BLOCKS_GRID_UNIT_F);
-        scaledZOrFlag = floor_f((arg0->z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+        scaledX = floorf((arg0->x - gWorldX) / BLOCKS_GRID_UNIT_F);
+        scaledZOrFlag = floorf((arg0->z - gWorldZ) / BLOCKS_GRID_UNIT_F);
         if (scaledX < 0 || scaledZOrFlag < 0 || scaledX >= BLOCKS_GRID_SPAN || scaledZOrFlag >= BLOCKS_GRID_SPAN) {
             return 0;
         }
@@ -4466,8 +4466,8 @@ s32 mapShouldObjUnload(Object *obj) {
 
     //If the object's not parented to a mobile map, check if its local block is loaded
     if (obj->parent == NULL) {
-        gridX = floor_f((obj->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-        gridZ = floor_f((obj->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+        gridX = floorf((obj->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+        gridZ = floorf((obj->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
 
         //Check if the grid cell is out of the loaded range
         if ((gridX < 0) || (gridZ < 0) || (gridX >= BLOCKS_GRID_SPAN) || (gridZ >= BLOCKS_GRID_SPAN)) {

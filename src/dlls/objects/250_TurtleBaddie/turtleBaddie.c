@@ -125,7 +125,7 @@ void dll_250_control(Object* self) {
             objdata->unk1C = (f32) (objdata->unk1C - gUpdateRateF);
             if (objdata->unk1C < 0.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Green_Slime_Drop, NULL, 2, -1, NULL);
-                objdata->unk1C = (f32) rand_next(0x1E, 0x78);
+                objdata->unk1C = (f32) mathRnd(0x1E, 0x78);
             }
         }
         objdata->player = objGetPlayer();
@@ -232,8 +232,8 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
     objdata->unk28 += (u16)(128.0f * gUpdateRateF);
     objdata->unk2A += (u16) (256.0f * gUpdateRateF);
     objdata->unk2C += (u16) (512.0f * gUpdateRateF);
-    self->srt.roll = (s16) (s32) ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2A)) * 1000.0f);
-    self->srt.pitch = (s16) (s32) ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2C)) * 1000.0f);
+    self->srt.roll = (s16) (s32) ((mathSinfInterp((s16) objdata->unk28) + mathSinfInterp((s16) objdata->unk2A)) * 1000.0f);
+    self->srt.pitch = (s16) (s32) ((mathSinfInterp((s16) objdata->unk28) + mathSinfInterp((s16) objdata->unk2C)) * 1000.0f);
     if (objdata->flags & 2) {
         self->velocity.f[0] += (objdata->player->srt.transl.f[0] - self->srt.transl.f[0]) * 0.001f;
         self->velocity.f[1] += ((objdata->player->srt.transl.f[1] + 60.0f) - self->srt.transl.f[1]) * 0.001f;
@@ -244,7 +244,7 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
         self->velocity.f[2] += (temp_s2->unk0.unk68.f[2] - self->srt.transl.f[2]) * 0.001f;
     } else {
         self->velocity.f[0] += (temp_s2->unk0.unk68.f[0] - self->srt.transl.f[0]) * 0.001f;
-        self->velocity.f[1] += ((temp_s2->unk0.unk68.f[1] + ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2A)) * 10.0f)) - self->srt.transl.f[1]) * 0.001f;
+        self->velocity.f[1] += ((temp_s2->unk0.unk68.f[1] + ((mathSinfInterp((s16) objdata->unk28) + mathSinfInterp((s16) objdata->unk2A)) * 10.0f)) - self->srt.transl.f[1]) * 0.001f;
         self->velocity.f[2] += (temp_s2->unk0.unk68.f[2] - self->srt.transl.f[2]) * 0.001f;
     }
     self->velocity.f[0] *= 0.9f;
@@ -270,7 +270,7 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
     }
     objMove(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
     objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
-    var_v1 = arctan2_f(self->globalPosition.f[0] - objdata->player->globalPosition.f[0], self->globalPosition.f[2] - objdata->player->globalPosition.f[2]) - (self->srt.yaw & 0xFFFF);
+    var_v1 = mathAtan2f(self->globalPosition.f[0] - objdata->player->globalPosition.f[0], self->globalPosition.f[2] - objdata->player->globalPosition.f[2]) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     self->srt.yaw = self->srt.yaw + (s32) (((f32) var_v1 * gUpdateRateF) / 12.0f);
 }

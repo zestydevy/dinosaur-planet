@@ -59,7 +59,7 @@ void SCFlameGameFlame_control(Object* self) {
     ) {
         //Check if Kyte is nearby
         if (sidekick != NULL) {
-            if (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= SQ(objSetup->flameRange)) {
+            if (vec3DistanceXZSquared(&sidekick->globalPosition, &self->globalPosition) <= SQ(objSetup->flameRange)) {
                 objData->flags |= SCFlameGameFlame_FLAG_Kyte_is_Nearby;
 
                 //Show Flame command option
@@ -78,7 +78,7 @@ void SCFlameGameFlame_control(Object* self) {
 
     //When Flame is finished, set a gamebit and destroy self
     if ((objData->flags & SCFlameGameFlame_FLAG_Finished) && 
-        (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= 400.0f)
+        (vec3DistanceXZSquared(&sidekick->globalPosition, &self->globalPosition) <= 400.0f)
     ) {
         mainSetBits(objData->gamebitFinished, 1);
         objData->flags &= ~SCFlameGameFlame_FLAG_Finished;

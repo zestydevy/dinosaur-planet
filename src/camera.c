@@ -156,7 +156,7 @@ void camInit(void) {
     gFovY = 60.0f;
 
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
 
     gProjectionScaleX = gProjectionMtx.m[0][0];
     gLetterboxSize = 0;
@@ -192,7 +192,7 @@ void camSetFOV(f32 fovY) {
     gFovY = fovY;
 
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
     gProjectionScaleX = gProjectionMtx.m[0][0];
 }
 
@@ -203,7 +203,7 @@ void camSetOrthoProjectionMatrix(f32 l, f32 r, f32 b, f32 t) {
 void camSetAspect(f32 aspect) {
     gAspect = aspect;
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
     gProjectionScaleX = gProjectionMtx.m[0][0];
     gProjectionMtx.m[0][3] *= 0.5f;
 }
@@ -211,7 +211,7 @@ void camSetAspect(f32 aspect) {
 void camSetNearPlane(f32 near) {
     gNearPlane = near;
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
     gProjectionScaleX = gProjectionMtx.m[0][0];
     gProjectionMtx.m[0][3] *= 0.5f;
 }
@@ -241,7 +241,7 @@ void camResetFarPlane(void) {
 
 void camResetProjection(void) {
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, 60.0f, 4.0f / 3.0f, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
 }
 
 MtxF *camGetAuxMtx(void) {
@@ -841,9 +841,9 @@ void camSetupRSPMatrices(Gfx **gdl, Mtx **rspMtxs) {
     }
     gCameraSRT.transl.z = -z;
 
-    matrix_from_srt_reversed(&gViewMtx, &gCameraSRT);
-    matrix_concat(&gViewMtx, &gProjectionMtx, &gViewProjMtx);
-    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    mathRpyXyzMtx(&gViewMtx, &gCameraSRT);
+    mathMtxCatF(&gViewMtx, &gProjectionMtx, &gViewProjMtx);
+    mathMtxF2L(&gViewProjMtx, *rspMtxs);
 
     gRSPMtxList = *rspMtxs;
 
@@ -860,8 +860,8 @@ void camSetupRSPMatrices(Gfx **gdl, Mtx **rspMtxs) {
     }
     gCameraSRT.transl.z = z;
     
-    matrix_from_srt(&gViewMtx2, &gCameraSRT);
-    matrix_f2l(&gViewMtx2, &gRSPViewMtx2);
+    mathYprXyzMtx(&gViewMtx2, &gCameraSRT);
+    mathMtxF2L(&gViewMtx2, &gRSPViewMtx2);
 
     gCameraSelector = prevCameraSel;
 
@@ -890,7 +890,7 @@ void camSetup2DProjection(Gfx** gdl, Mtx** rspMtxs) {
     gRSPViewports[gCameraSelector + 5].vp.vtrans[1] = height * 2;
     gSPViewport((*gdl)++, OS_PHYSICAL_TO_K0(&gRSPViewports[gCameraSelector] + 5));
     for (i = 0; i < 16; i++) { ((f32*)&gViewProjMtx)[i] = ((f32*)&g2DProjectionMtx)[i]; }
-    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    mathMtxF2L(&gViewProjMtx, *rspMtxs);
     gRSPMtxList = *rspMtxs;
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
     for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
@@ -899,9 +899,9 @@ void camSetup2DProjection(Gfx** gdl, Mtx** rspMtxs) {
 void camSetupStaticProjection(Gfx** gdl, Mtx** rspMtxs) {
     s32 i;
 
-    matrix_from_srt_reversed(&gAuxMtx, gStaticCameraSRT);
-    matrix_concat(&gAuxMtx, &gProjectionMtx, &gViewProjMtx);
-    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    mathRpyXyzMtx(&gAuxMtx, gStaticCameraSRT);
+    mathMtxCatF(&gAuxMtx, &gProjectionMtx, &gViewProjMtx);
+    mathMtxF2L(&gViewProjMtx, *rspMtxs);
     gRSPMtxList = *rspMtxs;
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
     for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
@@ -926,7 +926,7 @@ void camApplyRSPViewport(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 tran
 
 void camProjectPoint(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
     f32 nrm = x * gViewProjMtx.m[0][3] + y * gViewProjMtx.m[1][3] + z * gViewProjMtx.m[2][3] + gViewProjMtx.m[3][3];
-    vec3_transform(&gViewProjMtx, x, y, z, ox, oy, oz);
+    mathMtxXFMF(&gViewProjMtx, x, y, z, ox, oy, oz);
     if (nrm != 0.0f)
     {
         nrm = 1.0f / nrm;
@@ -944,7 +944,7 @@ void camUnprojectPoint(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
         y *= dot;
         z *= dot;
     }
-    vec3_transform(&gViewMtx2, x, y, z, ox, oy, oz);
+    mathMtxXFMF(&gViewMtx2, x, y, z, ox, oy, oz);
 }
 
 void camClipToScreen(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz) {
@@ -1005,12 +1005,12 @@ void camSetupFullscreenViewport(Gfx **gdl) {
 void camSetupWorldMatrix(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale) {
     MtxF mf;
 
-    matrix_translation(&MtxF_800a6a60, x * 640.0f, y, z * 640.0f);
+    mathTranslateMtx(&MtxF_800a6a60, x * 640.0f, y, z * 640.0f);
     if (scale != 1.0f) {
-        matrix_scaling(&mf, scale, scale, scale);
-        matrix_concat(&mf, &MtxF_800a6a60, &MtxF_800a6a60);
+        mathScaleMtx(&mf, scale, scale, scale);
+        mathMtxCatF(&mf, &MtxF_800a6a60, &MtxF_800a6a60);
     }
-    matrix_f2l_4x3(&MtxF_800a6a60, *rspMtxs);
+    mathMtx4x3F2L(&MtxF_800a6a60, *rspMtxs);
 
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_MODELVIEW | G_MTX_LOAD);
 }
@@ -1034,19 +1034,19 @@ void camSetupObjectSRTMatrix(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 yScale, f32
     srt->transl.z -= gWorldZ;
 
     if (srt->transl.x > 32767.0f || -32767.0f > srt->transl.x || srt->transl.z > 32767.0f || -32767.0f > srt->transl.z) {
-        fallbackMtx = get_some_model_view_mtx();
+        fallbackMtx = mathIdentityMtxL();
         gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(fallbackMtx), G_MTX_LOAD | G_MTX_MODELVIEW);
 
         srt->transl.x += gWorldX;
         srt->transl.z += gWorldZ;
     } else {
-        matrix_from_srt(mtx, srt);
+        mathYprXyzMtx(mtx, srt);
         if (yScale != 1.0f) {
-            matrix_prescale_y(mtx, yScale);
+            mathSquashY(mtx, yScale);
         }
 
         if (outMtx == NULL) {
-            matrix_f2l_4x3(mtx, *rspMtxs);
+            mathMtx4x3F2L(mtx, *rspMtxs);
             gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_LOAD | G_MTX_MODELVIEW);
         } else {
             // Output matrix was given, so don't add matrix to the global rsp matrix list but add to
@@ -1072,10 +1072,10 @@ void camTranslate(f32 x, f32 y, f32 z) {
 }
 
 void camTranslateRelative(f32 forward, f32 b, f32 strafe) {
-    gCameras[gCameraSelector].srt.transl.x -= forward * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.z -= forward * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.x -= strafe * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.z += strafe * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.x -= forward * mathCosfInterp(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.z -= forward * mathSinfInterp(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.x -= strafe * mathSinfInterp(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.z += strafe * mathCosfInterp(gCameras[gCameraSelector].srt.yaw);
     gCameras[gCameraSelector].blockIndex = mapWorldCoordsToBlockIndex(
         gCameras[gCameraSelector].srt.transl.x, 
         gCameras[gCameraSelector].srt.transl.y, 
@@ -1160,7 +1160,7 @@ u32 camWorldToScreen(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 useViewMtx) {
     ret = 0;
 
     if (useViewMtx) {
-        vec3_transform(&gViewMtx, x, y, z, &x, &y, &z);
+        mathMtxXFMF(&gViewMtx, x, y, z, &x, &y, &z);
     }
 
     vx = gProjectionMtx.m[0][0] * x;
@@ -1301,7 +1301,7 @@ void camTick(void) {
         }
     } else if (camera->shakeMode == 1) {
         dampFactor = cam_fexp(-camera->shakeDamping * camera->shakeTime, 20);
-        lerpFactor = fcos16_precise(camera->shakeFrequency * 65535.0f * camera->shakeTime);
+        lerpFactor = mathCosfInterp(camera->shakeFrequency * 65535.0f * camera->shakeTime);
         lerpFactor *= camera->shakeAmplitude * dampFactor;
 
         camera->dty = lerpFactor;
@@ -1356,10 +1356,10 @@ void camSetupRSPMatricesForObject(Gfx **gdl, Mtx **rspMtxs, Object *object) {
             }
 
             if (!ancestor) {
-                matrix_from_srt(&MtxF_800a6a60, &object->srt);
+                mathYprXyzMtx(&MtxF_800a6a60, &object->srt);
             } else {
-                matrix_from_srt(&mtxf, &object->srt);
-                matrix_concat_4x3(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
+                mathYprXyzMtx(&mtxf, &object->srt);
+                mathMtxCat4x3F(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
             }
 
             object->srt.scale = oldScale;
@@ -1373,8 +1373,8 @@ void camSetupRSPMatricesForObject(Gfx **gdl, Mtx **rspMtxs, Object *object) {
             ancestor = TRUE;
         }
 
-        matrix_concat(&MtxF_800a6a60, &gViewProjMtx, &gAuxMtx2);
-        matrix_f2l(&gAuxMtx2, *rspMtxs);
+        mathMtxCatF(&MtxF_800a6a60, &gViewProjMtx, &gAuxMtx2);
+        mathMtxF2L(&gAuxMtx2, *rspMtxs);
         gRSPMatrices[origObject->matrixIdx] = *rspMtxs;
         (*rspMtxs)++;
     }
@@ -1423,10 +1423,10 @@ void camBuildObjectMatrix(Object *object, int matrixIdx) {
         object->srt.scale = 1.0f;
 
         if (!ancestor) {
-            matrix_from_srt((MtxF *) (((f32 *) gObjectMatrices) + (matrixIdx << 4)), &object->srt);
+            mathYprXyzMtx((MtxF *) (((f32 *) gObjectMatrices) + (matrixIdx << 4)), &object->srt);
         } else {
-            matrix_from_srt(&gAuxMtx, &object->srt);
-            matrix_concat((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), &gAuxMtx, (MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)));
+            mathYprXyzMtx(&gAuxMtx, &object->srt);
+            mathMtxCatF((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), &gAuxMtx, (MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)));
         }
 
         object->srt.scale = oldScale;
@@ -1451,7 +1451,7 @@ void camBuildObjectMatrix(Object *object, int matrixIdx) {
         invsrt.yaw = -object->srt.yaw;
         invsrt.pitch = -object->srt.pitch;
         invsrt.roll = -object->srt.roll;
-        matrix_from_srt_reversed((MtxF *) ((f32*)gInverseObjectMatrices + (matrixIdx << 4)), &invsrt);
+        mathRpyXyzMtx((MtxF *) ((f32*)gInverseObjectMatrices + (matrixIdx << 4)), &invsrt);
     }
 }
 
@@ -1466,13 +1466,13 @@ void camGetObjectChildPosition(Object *object, f32 *ox, f32 *oy, f32 *oz) {
         return;
     }
 
-    vec3_transform((MtxF *)((f32 *)gObjectMatrices + (object->parent->matrixIdx << 4)), object->srt.transl.x, object->srt.transl.y, object->srt.transl.z, ox, oy, oz);
+    mathMtxXFMF((MtxF *)((f32 *)gObjectMatrices + (object->parent->matrixIdx << 4)), object->srt.transl.x, object->srt.transl.y, object->srt.transl.z, ox, oy, oz);
 }
 
 void camTransformPointByObject(float x, float y, float z, float *ox, float *oy, float *oz, Object *object) {
     if (object != NULL)
     {
-        vec3_transform((MtxF *) ((f32*)gObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
+        mathMtxXFMF((MtxF *) ((f32*)gObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1485,7 +1485,7 @@ void camTransformPointByObject(float x, float y, float z, float *ox, float *oy, 
 void camInverseTransformPointByObject(float x, float y, float z, float *ox, float *oy, float *oz, Object *object) {
     if (object != NULL)
     {
-        vec3_transform((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
+        mathMtxXFMF((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1501,7 +1501,7 @@ void camInverseRotatePointByObject(f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* o
     v.x = x;
     v.y = y;
     v.z = z;
-    vec3_transform_no_translate((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), &v, &v);
+    mathMtxFastXFMF((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), &v, &v);
     *ox = v.x;
     *oy = v.y;
     *oz = v.z;
@@ -1514,7 +1514,7 @@ void camRotatePointByObject(f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, Obje
     point.x = x;
     point.y = y;
     point.z = z;
-    vec3_transform_no_translate((MtxF *)((f32 *)gObjectMatrices + (object->matrixIdx << 4)), &point, &point);
+    mathMtxFastXFMF((MtxF *)((f32 *)gObjectMatrices + (object->matrixIdx << 4)), &point, &point);
     *ox = point.x;
     *oy = point.y;
     *oz = point.z;
@@ -1530,7 +1530,7 @@ void camTransformSRTByObject(SRT* srt, SRT* out, Object* object) {
         out->roll = srt->roll;
         return;
     }
-    vec3_transform((MtxF *) ((f32 *)gObjectMatrices + (object->matrixIdx << 4)), srt->transl.x, srt->transl.y, srt->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
+    mathMtxXFMF((MtxF *) ((f32 *)gObjectMatrices + (object->matrixIdx << 4)), srt->transl.x, srt->transl.y, srt->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
     out->yaw = object->srt.yaw + srt->yaw;
     out->pitch = srt->pitch;
     out->roll = srt->roll;
@@ -1549,9 +1549,9 @@ void camTransformSRTRelative(SRT *a, SRT *b, SRT *out) {
     tempsrt.pitch = -b->pitch;
     tempsrt.roll = -b->roll;
 
-    matrix_from_srt_reversed(&mf, &tempsrt);
+    mathRpyXyzMtx(&mf, &tempsrt);
 
-    vec3_transform(&mf, 
+    mathMtxXFMF(&mf, 
         a->transl.x, a->transl.y, a->transl.z, 
         &out->transl.x, &out->transl.y, &out->transl.z);
 
@@ -1583,7 +1583,7 @@ void camUpdateCameraForObject(Camera *camera) {
         z = camera->srt.transl.z;
 
         obj = camera->object;
-        vec3_transform((MtxF*) ((f32 *)gObjectMatrices + (obj->matrixIdx << 4)), x,y,z, &camera->tx, &camera->ty, &camera->tz);
+        mathMtxXFMF((MtxF*) ((f32 *)gObjectMatrices + (obj->matrixIdx << 4)), x,y,z, &camera->tx, &camera->ty, &camera->tz);
         
         camera->yaw = camera->srt.yaw - obj->srt.yaw;
         camera->pitch = camera->srt.pitch;
@@ -1603,7 +1603,7 @@ void camTransformPointByObjectMatrix(Vec3f *v, Vec3f *ov, s8 matrixIdx){
         return; 
     } 
 
-    vec3_transform(&gObjectMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
+    mathMtxXFMF(&gObjectMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
 }
 
 void camSetLetterbox(s16 size) {

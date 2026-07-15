@@ -304,7 +304,7 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
 
     //Randomly create snow evaporation particles approaching the end of the burning
     if (objData->maskY > THRESHOLD_SNOW_EVAPORATE) {
-        if (rand_next(0, 2) == 0) {
+        if (mathRnd(0, 2) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_206, &srt, 4, -1, NULL);
         }
     //Otherwise create fire/smoke/ember particles

@@ -92,7 +92,7 @@ void DBPlaceHolder_control(Object *self) {
         player = objGetPlayer();
         x = player->srt.transl.x - self->srt.transl.x;
         z = player->srt.transl.z - self->srt.transl.z;
-        self->srt.yaw = arctan2s(x, z);
+        self->srt.yaw = mathAtan2(x, z);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->flags |= DBPlaceHolder_FLAG_2_Interacted;
         gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);

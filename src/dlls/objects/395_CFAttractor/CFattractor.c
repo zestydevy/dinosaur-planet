@@ -76,7 +76,7 @@ void CFAttractor_func_1B4(Object* self, Object** outObj) {
         player = objGetPlayer();
         dx = player->srt.transl.x - self->srt.transl.x;
         dz = player->srt.transl.z - self->srt.transl.z;
-        self->srt.yaw = arctan2s(dx, dz) + M_180_DEGREES;
+        self->srt.yaw = mathAtan2(dx, dz) + M_180_DEGREES;
         obj = self;
         break;
     }

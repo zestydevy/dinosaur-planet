@@ -177,7 +177,7 @@ void DBBigNest_handle_eggs(Object* self, u8* eggsPlaced, u8 maxEggs) {
     objects = objGetAllOfType(OBJTYPE_38, &count);
     
     for (i = 0; i < count; i++) {
-        distance = vec3_distance_xz(&self->globalPosition, &objects[i]->globalPosition);
+        distance = vec3DistanceXZ(&self->globalPosition, &objects[i]->globalPosition);
         if (distance < 45.0f) {
             if (objects[i]->srt.transl.y < self->srt.transl.y) {
                 matches++;

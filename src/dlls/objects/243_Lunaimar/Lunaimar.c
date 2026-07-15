@@ -145,8 +145,8 @@ void dll_243_setup(Object *self, Baddie_Setup *setup, s32 arg2) {
     baddie->fsa.logicState = LUNAIMAR_LSTATE_0;
     baddie->fsa.unk4.mode = 0;
     func_800267A4(self);
-    temp_s2->unk0 = rand_next(0xA0, 0x12C);
-    temp_s2->unk4 = rand_next(0, 0x1F4);
+    temp_s2->unk0 = mathRnd(0xA0, 0x12C);
+    temp_s2->unk4 = mathRnd(0, 0x1F4);
     temp_s2->unk14 = NULL;
     temp_s2->unk8 = 0.0f;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
@@ -289,7 +289,7 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
             objdata->unkC = 0.0f;
             return;
         }
-        objdata->unk14->opacity = rand_next(0, (u8) objdata->unkC);
+        objdata->unk14->opacity = mathRnd(0, (u8) objdata->unkC);
         objdata->unk14->srt.roll = self->srt.roll;
         objdata->unk14->srt.pitch = self->srt.pitch;
         objdata->unk14->srt.yaw = self->srt.yaw;
@@ -309,7 +309,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     sidekick = objGetSidekick();
     animator = objExprGetTexAnimator(self, 0, 0);
     objdata->unk12 += 0x1000;
-    animator->frame = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
+    animator->frame = (s32) ((mathSinfInterp(objdata->unk12) + 1.0f) * 127.0f);
     VECTOR_SUBTRACT(sidekick->globalPosition, self->globalPosition, sp44);
     sp40 = VECTOR_MAGNITUDE(sp44);
     if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < baddie->unk3E2)) {
@@ -338,14 +338,14 @@ static void dll_243_func_EEC(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     objdata = baddie->objdata;
     objdata->unk0 -= gUpdateRateF;
     if (objdata->unk0 <= 0.0f) {
-        gDLL_6_AMSFX->vtbl->play(self, _data_0[rand_next(2, 3)], 0x30, &baddie->unk3A8, NULL, 0, NULL);
-        objdata->unk0 = (f32) rand_next(0xA0, 0x12C);
+        gDLL_6_AMSFX->vtbl->play(self, _data_0[mathRnd(2, 3)], 0x30, &baddie->unk3A8, NULL, 0, NULL);
+        objdata->unk0 = (f32) mathRnd(0xA0, 0x12C);
     }
     objdata->unk4 -= gUpdateRateF;
     if (objdata->unk4 <= 0.0f) {
-        gDLL_6_AMSFX->vtbl->play(self, _data_8[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        objdata->unk4 = (f32) rand_next(0xFA, 0x1F4);
-        objdata->unk8 = (f32) rand_next(0x1E, 0x46);
+        gDLL_6_AMSFX->vtbl->play(self, _data_8[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->unk4 = (f32) mathRnd(0xFA, 0x1F4);
+        objdata->unk8 = (f32) mathRnd(0x1E, 0x46);
     }
     if (objdata->unk8 > 0.0f) {
         objdata->unk8 -= gUpdateRateF;
@@ -370,7 +370,7 @@ static void dll_243_func_11C0(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
         gDLL_6_AMSFX->vtbl->play(self, _data_0[3], MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
     }
     if (fsa->unk308 & 0x80) {
-        objdata->unk10 = rand_next(0, 2);
+        objdata->unk10 = mathRnd(0, 2);
         fsa->unk308 &= ~0x80;
         gDLL_6_AMSFX->vtbl->play(self, _data_0[objdata->unk10], MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
         i = ((s32) -objdata->unk10 * 10) + 20;
@@ -420,7 +420,7 @@ void dll_243_func_1484(Object *self, Baddie *baddie) {
     if (spit != NULL) {
         temp_fv0 = (baddie->fsa.targetDist / (f32) baddie->unk3E2) * 60.0f;
         spit->velocity.x = (baddie->fsa.target->srt.transl.x - spitSetup->x) / temp_fv0;
-        spit->velocity.y = (((f32) rand_next(-0xA, 0xA) + (baddie->fsa.target->srt.transl.y + 20.0f)) - spitSetup->y) / temp_fv0;
+        spit->velocity.y = (((f32) mathRnd(-0xA, 0xA) + (baddie->fsa.target->srt.transl.y + 20.0f)) - spitSetup->y) / temp_fv0;
         spit->velocity.z = (baddie->fsa.target->srt.transl.z - spitSetup->z) / temp_fv0;
         spit->unkC4 = self;
     }
@@ -517,7 +517,7 @@ static s32 dll_243_anim_state_2(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     objdata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
         if (fsa->enteredAnimState != 0) {
-            objAnimSet(self, (s32) _data_C[rand_next(0, 4)], 0.0f, 0);
+            objAnimSet(self, (s32) _data_C[mathRnd(0, 4)], 0.0f, 0);
             fsa->unk33A = 0;
         }
         func_8002674C(self);
@@ -537,7 +537,7 @@ static s32 dll_243_anim_state_3(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
     if (fsa->enteredAnimState != 0) {
         func_8002674C(self);
         if (fsa->enteredAnimState != 0) {
-            objAnimSet(self, rand_next(6, 7), 0.0f, 0);
+            objAnimSet(self, mathRnd(6, 7), 0.0f, 0);
             fsa->unk33A = 0;
         }
     }
@@ -689,10 +689,10 @@ static s32 dll_243_logic_state_5(Object *self, ObjFSA_Data *fsa, f32 updateRate)
             }
         }
         setup = (Lunaimar_Setup*)self->setup;
-        if (rand_next(0, 0x63) < (s32) setup->base.unk2F) {
+        if (mathRnd(0, 0x63) < (s32) setup->base.unk2F) {
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, LUNAIMAR_ASTATE_3);
         } else {
-            objdata->unk0 = (f32) rand_next(0xA0, 0x12C);
+            objdata->unk0 = (f32) mathRnd(0xA0, 0x12C);
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, LUNAIMAR_ASTATE_2);
         }
     }

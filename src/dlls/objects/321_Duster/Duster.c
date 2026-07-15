@@ -52,7 +52,7 @@ void Duster_dtor(void *dll) { }
 void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
     Duster_Data *objdata = self->data;
 
-    objdata->timer1 = rand_next(0, 50);
+    objdata->timer1 = mathRnd(0, 50);
     objdata->unk0 = 0.02f;
 
     objdata->gamebitDiscovered = setup->gamebit;
@@ -116,7 +116,7 @@ void Duster_control(Object *self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
 
-            objdata->rand = rand_next(0, DUSTER_RANDOM_MAX);
+            objdata->rand = mathRnd(0, DUSTER_RANDOM_MAX);
             if (objdata->rand == DUSTER_RANDOM_MAX) {
                 gDLL_6_AMSFX->vtbl->play(self, SOUND_87E_Duster_Cry, 0x25, NULL, NULL, 0, NULL);
             }
@@ -131,7 +131,7 @@ void Duster_control(Object *self) {
                 srt.transl.z = 0.0f;
                 srt.scale = 1.0f;
                 srt.yaw = self->srt.yaw;
-                rotate_vec3(&srt, self->velocity.f);
+                mathRotateRPY(&srt, self->velocity.f);
             } else {
                 self->velocity.x = 0.0f;
                 self->velocity.z = 0.0f;
@@ -169,7 +169,7 @@ void Duster_control(Object *self) {
         }
         self->srt.yaw += 0xBB8 * (s16)gUpdateRateF;
     }
-    if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 20.0f) {
+    if (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 20.0f) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_6CA_Chime, 0x7F, 0, 0, 0, 0);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);

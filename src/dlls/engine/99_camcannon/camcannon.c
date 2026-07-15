@@ -30,9 +30,9 @@ void camcannon_func_94(Cam* cam) {
     if (sState->unk0 != NULL) {
         s16 temp_v0 = -sState->unk0->srt.yaw - cam->srt.yaw;
         cam->srt.yaw += ((f32) temp_v0 / 5.0f);
-        cam->srt.transl.x = sState->unk0->srt.transl.x - (fsin16_precise(sState->unk0->srt.yaw) * 60.0f);
+        cam->srt.transl.x = sState->unk0->srt.transl.x - (mathSinfInterp(sState->unk0->srt.yaw) * 60.0f);
         cam->srt.transl.y = sState->unk0->srt.transl.y + 80.0f;
-        cam->srt.transl.z = sState->unk0->srt.transl.z - (fcos16_precise(sState->unk0->srt.yaw) * 60.0f);
+        cam->srt.transl.z = sState->unk0->srt.transl.z - (mathCosfInterp(sState->unk0->srt.yaw) * 60.0f);
     }
 }
 

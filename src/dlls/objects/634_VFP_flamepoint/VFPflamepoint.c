@@ -61,7 +61,7 @@ void VFP_FlamePoint_control(Object* self) {
     //Show Flame command in inventory when nearby
     sidekick = objGetSidekick();
     if (sidekick != NULL) {
-        if (vec3_distance_squared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objSetup->flameCommandRange)) {
+        if (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objSetup->flameCommandRange)) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
         }
     }

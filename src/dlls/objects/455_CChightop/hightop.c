@@ -84,7 +84,7 @@ void dll_455_control(Object* self) {
                         HighTopData->unk26 = 0U;
                         gDLL_6_AMSFX->vtbl->play(self, SOUND_840, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
-                    HighTopData->unk30 += rand_next(0x12C, 0x190);
+                    HighTopData->unk30 += mathRnd(0x12C, 0x190);
                 }
                 break;
             }

@@ -176,7 +176,7 @@ void SnowWormSmall_setup(Object* self, SnowWormSmall_Setup* objSetup, s32 reset)
     self->animCallback = NULL;
     
     objData = baddie->objdata;
-    objData->soundTimer = rand_next(10, 300);
+    objData->soundTimer = mathRnd(10, 300);
 
     objAnimSet(self, 8, 0.0f, 0);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -415,7 +415,7 @@ void SnowWormSmall_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     //Play sound when nearby
     if ((objData->soundTimer > objData->soundTimerThreshold) && (distance < 400.0f)) {
         gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[1], 0x1E, NULL, NULL, 0, NULL);
-        objData->soundTimerThreshold += rand_next(50, 250);
+        objData->soundTimerThreshold += mathRnd(50, 250);
     }
     objData->soundTimer += gUpdateRateF;
 }
@@ -568,7 +568,7 @@ s32 SnowWormSmall_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->flags |= SnowWormSmall_FLAG_2;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dChirpSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -633,7 +633,7 @@ s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         SnowWormSmall_worm_to_worm_communication(self);
         
-        if (rand_next(0, 1)) {
+        if (mathRnd(0, 1)) {
             if (fsa->enteredAnimState) {
                 objAnimSet(self, 6, 0.0f, 0);
                 fsa->unk33A = 0;
@@ -651,8 +651,8 @@ s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     fsa->unk278 = 0.0f;
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 2), dChirpSounds);
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, rand_next(0, 2), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 2), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, mathRnd(0, 2), dChirpSounds);
     
     return 0;
 }
@@ -731,11 +731,11 @@ s32 SnowWormSmall_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
         weapon = objGetPlayer()->linkedObject;
         if (((DLL_Unknown*)weapon->dll)->vtbl->func[16].withOneArgS32(weapon)) {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     fsa->unk341 = 3;
@@ -762,7 +762,7 @@ s32 SnowWormSmall_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if ((fsa->unk34A & 1) == FALSE) {
-        gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[2], MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 1;
@@ -891,7 +891,7 @@ s32 SnowWormSmall_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
         SnowWormSmall_get_ally_info(self, &alliesLowestAnimState, &numAllies, &numAlliesInAnimState4);
         
-        random = rand_next(0, baddie->unk3B8);
+        random = mathRnd(0, baddie->unk3B8);
         
         if ((alliesLowestAnimState >= SnowWormSmall_ASTATE_5) || (objData->unk9 & 1)) {
             if (baddie->unk3B0 & 2) {

@@ -135,8 +135,8 @@ void dll_662_func_FA8(Object* self, Vec3f* velocity) {
                 delta = (range - delta) / range;
                 delta *= riverFlow->srt.scale * 10.0f;
                 
-                accelerationX += fsin16_precise(riverFlow->srt.yaw) * delta;
-                accelerationZ += fcos16_precise(riverFlow->srt.yaw) * delta;
+                accelerationX += mathSinfInterp(riverFlow->srt.yaw) * delta;
+                accelerationZ += mathCosfInterp(riverFlow->srt.yaw) * delta;
             }
         }
     }
@@ -268,11 +268,11 @@ void dll_662_func_1954(Object* self) {
                 objData->unk10C = 0xB;
                 break;
             case 0x11:   
-                temp = fsin16_precise(sender->srt.yaw);
-                self->velocity.f[0] = rand_next(0x11, 0x1B) * -temp * 0.3f;
-                temp = fcos16_precise(sender->srt.yaw);
-                self->velocity.f[2] = rand_next(0x11, 0x1B) * -temp * 0.3f;
-                self->velocity.f[1] = rand_next(0x11, 0x1B) * 0.3f;
+                temp = mathSinfInterp(sender->srt.yaw);
+                self->velocity.f[0] = mathRnd(0x11, 0x1B) * -temp * 0.3f;
+                temp = mathCosfInterp(sender->srt.yaw);
+                self->velocity.f[2] = mathRnd(0x11, 0x1B) * -temp * 0.3f;
+                self->velocity.f[1] = mathRnd(0x11, 0x1B) * 0.3f;
                 /* fallthrough */
             case 0x10: 
                 objData->unk10C = 5;

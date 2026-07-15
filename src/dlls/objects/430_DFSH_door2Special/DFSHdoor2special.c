@@ -123,7 +123,7 @@ int DFSH_Door2Special_anim_callback(Object* self, Object* overrideObj, AnimObj_D
         texAnim = objExprGetTexAnimator(self, 0, 0);
         if (texAnim != NULL) {
             objData->phase += gUpdateRate * 800;
-            texAnim->frame = 0x100 - ((1.0f - fcos16_precise(objData->phase)) * 50.0f);
+            texAnim->frame = 0x100 - ((1.0f - mathCosfInterp(objData->phase)) * 50.0f);
         }
         break;
     }

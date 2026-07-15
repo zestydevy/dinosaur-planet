@@ -150,7 +150,7 @@ void SB_Propeller_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         if (!self->parent || self->parent->unkDC != 10) {
             parent = self->parent;
             if (parent && parent->id == OBJ_SB_Galleon && parent) {
-                temp_fv1 = (1.0f - fsin16_precise(objdata->theta)) * 255.0f;
+                temp_fv1 = (1.0f - mathSinfInterp(objdata->theta)) * 255.0f;
                 if (temp_fv1 < 0.0f) {
                     temp_fv1 = 0.0f;
                 } else if (temp_fv1 > 255.0f) {

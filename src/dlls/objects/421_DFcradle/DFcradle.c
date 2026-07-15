@@ -98,8 +98,8 @@ void DFCradle_control(Object* self) {
     if (objData->enabled) {
         //Play rope straining noise at random intervals
         if (objData->soundTimer-- < 0) {
-            gDLL_6_AMSFX->vtbl->play(self, sSoundIDs[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
-            objData->soundTimer = rand_next(40, 60);
+            gDLL_6_AMSFX->vtbl->play(self, sSoundIDs[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            objData->soundTimer = mathRnd(40, 60);
         }
         
         if (objData->unkB6) {
@@ -160,7 +160,7 @@ void DFCradle_control(Object* self) {
                     s32 distance; 
                     
                     for (idx = 0; idx < count; idx++) {
-                        distance = vec3_distance(&self->globalPosition, &objects[idx]->globalPosition);
+                        distance = vec3Distance(&self->globalPosition, &objects[idx]->globalPosition);
                         if (distance < minDistance) {
                             minDistance = distance;
                         }
@@ -197,7 +197,7 @@ void DFCradle_control(Object* self) {
                     }
                 } else {
                     if ((objData->curves.unk74.x != 0/*.0f*/) || (objData->curves.unk74.z != 0/*.0f*/)) {
-                        self->srt.yaw = arctan2_f(objData->curves.unk74.x, objData->curves.unk74.z) + M_180_DEGREES;
+                        self->srt.yaw = mathAtan2f(objData->curves.unk74.x, objData->curves.unk74.z) + M_180_DEGREES;
                     }
                 }
 

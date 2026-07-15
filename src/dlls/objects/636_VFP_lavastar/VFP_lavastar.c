@@ -38,7 +38,7 @@ void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
 
     objdata = self->data;
     objdata->unk4 = setup->unk1E;
-    objdata->speed = rand_next(5, 20) * 0.1f;
+    objdata->speed = mathRnd(5, 20) * 0.1f;
     self->srt.transl.y = setup->unk1A + setup->base.y;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     sDLL_182 = dllLoad(DLL_ID_182, 1);
@@ -55,10 +55,10 @@ void VFP_lavastar_control(Object* self) {
     setup = (VFP_lavastar_Setup*)self->setup;
     self->srt.transl.y += gUpdateRateF * objdata->speed;
     if ((setup->base.y + 1200.0f) < self->srt.transl.y) {
-        objdata->speed = rand_next(5, 20) * 0.1f;
+        objdata->speed = mathRnd(5, 20) * 0.1f;
         self->srt.transl.y = setup->base.y;
     }
-    if (rand_next(0, 3) == 0) {
+    if (mathRnd(0, 3) == 0) {
         sDLL_182->vtbl->func0(self, 0, NULL, 4, -1, NULL);
     }
     if (objdata->soundHandle == 0) {

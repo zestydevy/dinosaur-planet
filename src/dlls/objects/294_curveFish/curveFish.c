@@ -145,7 +145,7 @@ void curveFish_control(Object* self) {
 
     //Handle speed and animation speed
     {
-        objData->speed += ((objData->maxSpeed * (s8)rand_next(-50, 100)) / 1000.0f) * gUpdateRateF;
+        objData->speed += ((objData->maxSpeed * (s8)mathRnd(-50, 100)) / 1000.0f) * gUpdateRateF;
         if (objData->speed < 0) {
             objData->speed = 0.0f;
         } else if (objData->speed > objData->maxSpeed) {
@@ -180,7 +180,7 @@ void curveFish_control(Object* self) {
         self->srt.transl.z = objData->curves.unk0.unk68.z;
 
         //Set yaw via tangent vector at curve point
-        self->srt.yaw = arctan2_f(objData->curves.unk0.unk74, objData->curves.unk0.unk7C) + M_90_DEGREES;
+        self->srt.yaw = mathAtan2f(objData->curves.unk0.unk74, objData->curves.unk0.unk7C) + M_90_DEGREES;
     }
 
     switch (objData->state) {

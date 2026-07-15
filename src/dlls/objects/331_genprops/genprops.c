@@ -134,15 +134,15 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
         return;
     case OBJ_NWSH_rock:
     case OBJ_WMrock:
-        objData->roll = rand_next(100, 400);
-        objData->pitch = rand_next(100, 400);
-        self->velocity.x = rand_next(0, 100) * 0.04f;
-        self->velocity.z = rand_next(0, 100) * 0.04f;
-        self->srt.scale *= 0.3f + (0.01f * rand_next(0, 10));
+        objData->roll = mathRnd(100, 400);
+        objData->pitch = mathRnd(100, 400);
+        self->velocity.x = mathRnd(0, 100) * 0.04f;
+        self->velocity.z = mathRnd(0, 100) * 0.04f;
+        self->srt.scale *= 0.3f + (0.01f * mathRnd(0, 10));
         objData->speed = 200;
         objData->debugPrintDistance = 0;
         objData->unk3E = 2;
-        self->modelInstIdx = rand_next(0, 1);
+        self->modelInstIdx = mathRnd(0, 1);
         return;
     case OBJ_DFP_blockwall:
         self->srt.yaw = objSetup->yaw << 8;
@@ -226,7 +226,7 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
         objData->lampZero = 0;
         objData->unk1C = 0.5f;
         objData->unk24 = 600.0f;
-        objData->lampRandom = rand_next(1000, 5000);
+        objData->lampRandom = mathRnd(1000, 5000);
         objData->lampBool = TRUE;
         self->animCallback = (void*)&dll_331_func_1D34;
         return;
@@ -290,7 +290,7 @@ void dll_331_control(Object* self) {
         self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF; 
         self->srt.transl.f[2] += self->velocity.f[2] * gUpdateRateF;
         gDLL_17_partfx->vtbl->spawn(self, 0x5F3, NULL, 0x10001, -1, NULL);
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
             objSendMesg(player, 0x60004, self, (void*)1);
             objFreeObject(self);
@@ -305,7 +305,7 @@ void dll_331_control(Object* self) {
         self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF;
         self->srt.transl.f[2] += self->velocity.f[2] * gUpdateRateF;
         gDLL_17_partfx->vtbl->spawn(self, 0x39D, NULL, 0x10001, -1, NULL);
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
             objSendMesg(player, 0x60004, self, (void*)1);
             objFreeObject(self);
@@ -345,7 +345,7 @@ void dll_331_control(Object* self) {
         }
         break;
     case OBJ_WM_MoonSeedMoun: //0x271
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
             diPrintf("\tMoonSeed Mound\n");
             diPrintf("\tThe Player Guesses that a Seed goes here!\n");
         }
@@ -426,7 +426,7 @@ void dll_331_control(Object* self) {
             }
         }
         //Print debug info about object's purpose
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
             diPrintf("\tNoPass Vine\n");
             diPrintf("\tThe Player Burns it away!\n");
         }
@@ -441,7 +441,7 @@ void dll_331_control(Object* self) {
             }
         }
         //Print debug info about object's purpose
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
             diPrintf("\tNoPass Vine\n");
             diPrintf("\tThe Player Burns it away!\n");
         }
@@ -489,7 +489,7 @@ void dll_331_control(Object* self) {
         self->globalPosition.z = self->srt.transl.z;
         objData->speed -= gUpdateRate;
         if (player->srt.transl.f[1] < self->srt.transl.f[1]) {
-            if (rand_next(0, 2) == 0) {
+            if (mathRnd(0, 2) == 0) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x27F, NULL, 0x10001, -1, NULL);
             }
         }
@@ -524,7 +524,7 @@ void dll_331_control(Object* self) {
                 }
                 
                 dllFree(tempDLL2);
-                self->unkDC = rand_next(100, 200);
+                self->unkDC = mathRnd(100, 200);
             } else if (distance < 200.0f) {
                 self->unkDC -= 1;
             }
@@ -574,9 +574,9 @@ void dll_331_control(Object* self) {
     case OBJ_DIM2IceFloe2: //10d
         objData->timer -= gUpdateRate;
         if (objData->timer < 0) {
-            gDLL_6_AMSFX->vtbl->play(self, objData->soundIDs[rand_next(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, objData->soundIDs[mathRnd(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
             objData->timer = objData->minCooldown;
-            objData->timer += rand_next(0, objData->minCooldown);
+            objData->timer += mathRnd(0, objData->minCooldown);
         }
         break;
     case OBJ_SB_Lamp: //0x125

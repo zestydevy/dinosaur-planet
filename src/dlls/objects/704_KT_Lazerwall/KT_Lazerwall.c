@@ -91,7 +91,7 @@ void dll_704_control(Object* self) {
             sp44 = 2;
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         }
-        objdata->unk10 = (f32) rand_next(1, 0x3C);
+        objdata->unk10 = (f32) mathRnd(1, 0x3C);
     }
     if (objdata->unk0 & 4) {
         sp44 = 0;

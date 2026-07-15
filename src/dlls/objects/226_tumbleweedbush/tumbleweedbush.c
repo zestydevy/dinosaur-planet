@@ -76,7 +76,7 @@ void TumbleweedBush_setup(Object* self, TumbleweedBush_Setup* objSetup, s32 arg2
             objData->heldWeedCoords[i].x *= self->srt.scale;
             objData->heldWeedCoords[i].y *= self->srt.scale;
             objData->heldWeedCoords[i].z *= self->srt.scale;
-            rotate_vec3(&self->srt, (f32*)&objData->heldWeedCoords[i]);
+            mathRotateRPY(&self->srt, (f32*)&objData->heldWeedCoords[i]);
         }
     }
 }

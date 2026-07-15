@@ -173,7 +173,7 @@ void SCcollectables_control(Object* self) {
             return;
         }
         
-        distance = vec3_distance(&self->globalPosition, &player->globalPosition);
+        distance = vec3Distance(&self->globalPosition, &player->globalPosition);
         if ((distance < objdata->interactionRadius) && (objdata->delayInteractionTimer == 0)) {
             outMessage = collectableDef->collectMessage << 0x10;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
@@ -208,7 +208,7 @@ void SCcollectables_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
     //Handle Gold Nugget's sparkles and gradual rotation
     if (self->def->collectableDef && (self->id == OBJ_SC_golden_nugge) && (objdata->distanceToPlayer < 250.0f)) {
-        if (rand_next(0, 10) == 0) {
+        if (mathRnd(0, 10) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, 0x423, 0, 2, -1, 0);
         }
         self->srt.yaw += (s16)(182.0f * gUpdateRateF);

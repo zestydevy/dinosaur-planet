@@ -764,11 +764,11 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
         sp9C.transl.y = 0;
         sp9C.transl.z = 0;
         sp9C.scale = 1.0f;
-        matrix_from_srt(&sp5C, &sp9C);
-        vec3_transform(&sp5C, arg1->unk0.unk27C, 0, -arg1->unk0.unk278, &player->velocity.x, &spC8, &player->velocity.z);
+        mathYprXyzMtx(&sp5C, &sp9C);
+        mathMtxXFMF(&sp5C, arg1->unk0.unk27C, 0, -arg1->unk0.unk278, &player->velocity.x, &spC8, &player->velocity.z);
     } else {
-        spC4 = fsin16_precise(player->srt.yaw);
-        temp_fv0 = fcos16_precise(player->srt.yaw);
+        spC4 = mathSinfInterp(player->srt.yaw);
+        temp_fv0 = mathCosfInterp(player->srt.yaw);
         arg1->unk0.unk27C = (player->velocity.x * temp_fv0) - (player->velocity.z * spC4);
         arg1->unk0.unk278 = (-player->velocity.z * temp_fv0) - (player->velocity.x * spC4);
     }
@@ -825,8 +825,8 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
                 if (_data_1C > 0.0f) {
                     _data_1C -= arg2;
                 } else {
-                    gDLL_6_AMSFX->vtbl->play(player, (rand_next(0, 1) + SOUND_883_Footstep_Mud_1), MAX_VOLUME, NULL, NULL, 0, NULL);
-                    _data_1C = rand_next(40, 60);
+                    gDLL_6_AMSFX->vtbl->play(player, (mathRnd(0, 1) + SOUND_883_Footstep_Mud_1), MAX_VOLUME, NULL, NULL, 0, NULL);
+                    _data_1C = mathRnd(40, 60);
                 }
             }
             temp_v0_6 = func_80057F1C(player, player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, &sp54, 0, 0x20);
@@ -1193,8 +1193,8 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
         aState = fsa->unk270;
         if (aState == PLAYER_ASTATE_Falling) {
             dll_210_func_A024(self, fsa);
-            self->srt.transl.x += fsin16_precise(self->srt.yaw) * 10.0f;
-            self->srt.transl.z += fcos16_precise(self->srt.yaw) * 10.0f;
+            self->srt.transl.x += mathSinfInterp(self->srt.yaw) * 10.0f;
+            self->srt.transl.z += mathCosfInterp(self->srt.yaw) * 10.0f;
             dll_210_func_7260(self, objData);
         }
         break;
@@ -1206,7 +1206,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
                 dll_210_add_health(self, 1);
                 break;
             case 0:
-                if (rand_next(0, 1) != 0) {
+                if (mathRnd(0, 1) != 0) {
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_Sabre_Freezing_A, MAX_VOLUME, NULL, NULL, 0, NULL);
                 } else {
                     gDLL_6_AMSFX->vtbl->play(self, SOUND_Sabre_Freezing_B, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -1243,8 +1243,8 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
         sp48.transl.y -= self->globalPosition.y;
         sp48.transl.z -= self->globalPosition.z;
         sp70 = dllLoad(0x1002U, 1U);
-        sp60[1] += rand_next(0, 0x9B);
-        sp60[2] += rand_next(0, 0x9B);
+        sp60[1] += mathRnd(0, 0x9B);
+        sp60[2] += mathRnd(0, 0x9B);
         sp48.yaw = 0;
         sp48.pitch = 0;
         sp48.roll = 0;
@@ -1255,7 +1255,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
             dllFree(sp70);
         }
     } else if (hitDamage != 0) {
-        gDLL_6_AMSFX->vtbl->play(self, objData->unk3B8[rand_next(19, 21)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, objData->unk3B8[mathRnd(19, 21)], MAX_VOLUME, NULL, NULL, 0, NULL);
         objData->unk818 = 90.0f;
         objData->unk81C = 0.0f;
         objData->unk8B9 = 0xC;
@@ -1325,8 +1325,8 @@ void dll_210_update(Object* player) {
                 player->velocity.z = (player->globalPosition.z - player->prevGlobalPosition.z) / updateRate;
             }
             if (((objdata->unk0.unk4.unk25C & 6) && !(objdata->unk0.unk4.unk25C & 0x60)) || (objdata->unk0.unk4.hitsTouchBits != 0)) {
-                sp4C = fsin16_precise(player->srt.yaw);
-                temp_fv0 = fcos16_precise(player->srt.yaw);
+                sp4C = mathSinfInterp(player->srt.yaw);
+                temp_fv0 = mathCosfInterp(player->srt.yaw);
                 objdata->unk0.unk278 = (temp_fv0 * -player->velocity.z) - (player->velocity.x * sp4C);
                 if (objdata->unk0.unk278 > 1.65f) {
                     objdata->unk0.unk278 = 1.65f;
@@ -1420,8 +1420,8 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
             sp7C = (sp7C + sp70) * 0.5f;
             sp78 = (sp78 + sp6C) * 0.5f;
             sp74 = (sp74 + sp68) * 0.5f;
-            sp7C -= fsin16_precise(player->srt.yaw) * data->unk86C;
-            sp74 -= fcos16_precise(player->srt.yaw) * data->unk86C;
+            sp7C -= mathSinfInterp(player->srt.yaw) * data->unk86C;
+            sp74 -= mathCosfInterp(player->srt.yaw) * data->unk86C;
             data->unk868->srt.transl.x = sp7C;
             data->unk868->srt.transl.y = sp78;
             data->unk868->srt.transl.z = sp74;
@@ -1488,8 +1488,8 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
                 gDLL_17_partfx->vtbl->spawn(player, PARTICLE_427, &_bss_40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             }
             for (i = 0; i < 7; i++) {
-                _bss_40.transl.x += rand_next(-0x32, 0x32) / 10.0f;
-                _bss_40.transl.z += rand_next(-0x32, 0x32) / 10.0f;
+                _bss_40.transl.x += mathRnd(-0x32, 0x32) / 10.0f;
+                _bss_40.transl.z += mathRnd(-0x32, 0x32) / 10.0f;
                 gDLL_24_Waterfx->vtbl->spawn_splash(_bss_40.transl.x, player->srt.transl.y, _bss_40.transl.z, 4.0f);
                 gDLL_24_Waterfx->vtbl->spawn_circular_ripple(_bss_40.transl.x, player->srt.transl.y, _bss_40.transl.z, 0, 0.0f, 3);
             }
@@ -1701,9 +1701,9 @@ void dll_210_func_41F4(Object* player, Player_Data* arg1) {
         temp_v0->m[3][1] = 0.0f;
         temp_v0->m[3][2] = 0.0f;
         sp48.transl.x = 0.0f;
-        sp48.transl.y = rand_next(4, 10) * -0.05f;
-        sp48.transl.z = rand_next(4, 8) * -0.25f;
-        vec3_transform(temp_v0, sp48.transl.x, sp48.transl.y, sp48.transl.z, &sp48.transl.x, &sp48.transl.y, &sp48.transl.z);
+        sp48.transl.y = mathRnd(4, 10) * -0.05f;
+        sp48.transl.z = mathRnd(4, 8) * -0.25f;
+        mathMtxXFMF(temp_v0, sp48.transl.x, sp48.transl.y, sp48.transl.z, &sp48.transl.x, &sp48.transl.y, &sp48.transl.z);
         temp_v0->m[3][0] = sp3C.x;
         temp_v0->m[3][1] = sp3C.y;
         temp_v0->m[3][2] = sp3C.z;
@@ -1861,9 +1861,9 @@ void dll_210_func_47B8(Object* player, Player_Data* arg1) {
     sp2C.unk40[0] = 0.0f;
     sp2C.unk50[0] = -1;
     sp2C.unk54[0] = 3;
-    sp98.x = player->srt.transl.x - (fsin16_precise(player->srt.yaw) * 15.0f);
+    sp98.x = player->srt.transl.x - (mathSinfInterp(player->srt.yaw) * 15.0f);
     sp98.y = player->srt.transl.y + 5.0f;
-    sp98.z = player->srt.transl.z - (fcos16_precise(player->srt.yaw) * 15.0f);
+    sp98.z = player->srt.transl.z - (mathCosfInterp(player->srt.yaw) * 15.0f);
     fit_aabb_around_cubes(&spB0, &player->srt.transl, &sp98, &spA4, 1);
     func_80053750(player, &spB0, 8);
     if (func_8005509C(player, &player->srt.transl.x, (f32*)&sp98, 1, &sp2C, 0U) != 0) {
@@ -1981,11 +1981,11 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             spB4 = arg0->srt.transl.x - temp_s0->x;
             spB0 = arg0->srt.transl.z - temp_s0->z;
             spA4 = (arg0->srt.transl.y + 30.0f) - temp_s0->y;
-            _bss_2 = arctan2_f(spB4, spB0);
+            _bss_2 = mathAtan2f(spB4, spB0);
             temp_fv0_4 = sqrtf(SQ(spB4) + SQ(spB0));
             arg2->yawDiff = _bss_2 - (arg0->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(arg2->yawDiff)
-            arg2->pitchDiff = -arctan2_f(spA4, temp_fv0_4);
+            arg2->pitchDiff = -mathAtan2f(spA4, temp_fv0_4);
             arg2->rollDiff = 0;
             arg2->unk58 = 0.0f;
             arg2->unk24 = 0.083333336f;
@@ -2698,7 +2698,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(3, player, -1);
                 temp_v1 = sp3C->unk74;
                 if (temp_v1 != NULL) {
-                    temp = arctan2_f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
+                    temp = mathAtan2f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
                     gDLL_3_Animation->vtbl->func28(player->seqSlot, temp);
                 }
                 player->unkC4 = sp3C;
@@ -2710,7 +2710,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(5, player, -1);
                 arg2 = BIT_Spell_Portal;
                 temp_v1 = sp3C->unk74;
-                temp = arctan2_f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
+                temp = mathAtan2f(temp_v1->f[0] - player->srt.transl.f[0], temp_v1->z - player->srt.transl.z) + 0x8000;
                 gDLL_3_Animation->vtbl->func28(player->seqSlot, temp);
             }
             break;
@@ -2999,10 +2999,10 @@ static s32 dll_210_func_7BC4(Object* player, Player_Data* arg1, UNUSED Player_Da
 static void dll_210_func_7CF8(ObjFSA_Data* fsa, Vec3f* arg1) {
     s32 sp20;
 
-    sp20 = arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) - fsa->unk324;
-    arg1->x = -fsin16_precise(sp20);
+    sp20 = mathAtan2f(fsa->xAnalogInput, -fsa->yAnalogInput) - fsa->unk324;
+    arg1->x = -mathSinfInterp(sp20);
     arg1->y = 0.0f;
-    arg1->z = -fcos16_precise(sp20);
+    arg1->z = -mathCosfInterp(sp20);
 }
 
 // offset: 0x7DA0 | func: 44
@@ -3561,13 +3561,13 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 if (var_s3) {}
                 sp90.yaw = player->srt.yaw;
                 var_s3 = temp_v1;
-                sp90.pitch = arctan2_f(temp_fs0, sqrtf(SQ(temp2) + SQ(temp_fv1)));
+                sp90.pitch = mathAtan2f(temp_fs0, sqrtf(SQ(temp2) + SQ(temp_fv1)));
                 sp90.roll = 0;
                 if (player->parent != NULL) {
                     sp90.yaw += player->parent->srt.yaw;
                 }
-                matrix_from_srt(&spC0, &sp90);
-                vec3_transform(&spC0, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
+                mathYprXyzMtx(&spC0, &sp90);
+                mathMtxXFMF(&spC0, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
                 temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
                 temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
                 temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
@@ -3576,8 +3576,8 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             } else {
                 temp_v0_2->srt.yaw = mainCam->srt.yaw;
                 temp_fs1 = camGetFOV() * 91.022f;
-                temp_fv0 = fsin16_precise(temp_fs1);
-                temp_fv0 /= fcos16_precise(temp_fs1);
+                temp_fv0 = mathSinfInterp(temp_fs1);
+                temp_fv0 /= mathCosfInterp(temp_fs1);
                 temp_fs1 = (100.0f * temp_fv0);
                 temp3 = -(((temp_fp->aimX - 0xA0) / 160.0f) * 1.333333f);
                 temp_fs1 *= temp3;
@@ -3588,7 +3588,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 sp104.x = temp_fs1 / temp_fv0;
                 sp104.y = temp_fs2 / temp_fv0;
                 sp104.z = temp / temp_fv0;
-                vec3_transform_no_translate(camGetViewMtx2(), &sp104, &sp104);
+                mathMtxFastXFMF(camGetViewMtx2(), &sp104, &sp104);
                 temp_v0_2->velocity.x = sp104.x * -5.0f;
                 temp_v0_2->velocity.y = sp104.y * -5.0f;
                 temp_v0_2->velocity.z = sp104.z * -5.0f;
@@ -3656,7 +3656,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 temp_fs0 = var_s2->srt.transl.y - player->srt.transl.y;
                 temp_fv1 = var_s2->srt.transl.z - player->srt.transl.z;
                 spE8.yaw = 0;
-                spE8.pitch = arctan2_f(temp_fs0, sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1)));
+                spE8.pitch = mathAtan2f(temp_fs0, sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1)));
             } else {
                 spE8.yaw = objExpr_func_80034804(player, 9)[1];
                 spE8.pitch = arg2 * -14336.0f;
@@ -3671,8 +3671,8 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 if (spE8.yaw) {}
                 spE8.yaw += player->parent->srt.yaw;
             }
-            matrix_from_srt(&sp9C, &spE8);
-            vec3_transform(&sp9C, 0.0f, 0.0f, temp_s5 * -0.15f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
+            mathYprXyzMtx(&sp9C, &spE8);
+            mathMtxXFMF(&sp9C, 0.0f, 0.0f, temp_s5 * -0.15f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
             temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
             temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
             temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
@@ -3735,7 +3735,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp8C = spD4->globalPosition.y - player->globalPosition.y;
         sp88 = spD4->globalPosition.z - player->globalPosition.z;
         spF8.yaw = 0;
-        spF8.pitch = arctan2_f(sp8C, sqrtf(SQ(sp90) + SQ(sp88)));
+        spF8.pitch = mathAtan2f(sp8C, sqrtf(SQ(sp90) + SQ(sp88)));
     } else {
         spF8.yaw = objExpr_func_80034804(player, 9)[1];
         spF8.pitch = arg2 * -14336.0f;
@@ -3751,8 +3751,8 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     spF8.yaw = spF8.yaw + player->srt.yaw + var_v1;
     spF8.roll = 0;
-    matrix_from_srt(&sp94, &spF8);
-    vec3_transform(&sp94, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
+    mathYprXyzMtx(&sp94, &spF8);
+    mathMtxXFMF(&sp94, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
     temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
     temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
     temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
@@ -3760,8 +3760,8 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     temp_v0_2->unkDC = 0xBE;
     temp_v0_2->unkE0 = (s32) spD4;
     sp84 = sqrtf(SQ(temp_v0_2->velocity.x) + SQ(temp_v0_2->velocity.z));
-    spE0.yaw = -0x4000 - arctan2_f(temp_v0_2->velocity.z, temp_v0_2->velocity.x);
-    spE0.pitch = arctan2_f(temp_v0_2->velocity.y, sp84) - 0x4000;
+    spE0.yaw = -0x4000 - mathAtan2f(temp_v0_2->velocity.z, temp_v0_2->velocity.x);
+    spE0.pitch = mathAtan2f(temp_v0_2->velocity.y, sp84) - 0x4000;
     spE0.roll = 0;
     sp64.x = temp_v0_2->velocity.x * 300.0f;
     sp64.y = temp_v0_2->velocity.y * 300.0f;
@@ -3933,7 +3933,7 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     if (fsa->enteredAnimState != 0) {
         fsa->speed = 0.0f;
-        sp4C->unk880 = rand_next(0x1F4, 0x2BC);
+        sp4C->unk880 = mathRnd(0x1F4, 0x2BC);
         sp4C->unk8A5 = 0;
         sp4C->unk89C = sp4C->unk890;
         fsa->unk2B0 = 8.0f;
@@ -4020,7 +4020,7 @@ s32 dll_210_func_A8CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0x21;
     }
     if (fsa->enteredAnimState) {
-        sp24 = rand_next(0, 0);
+        sp24 = mathRnd(0, 0);
         objAnimSet(player, _data_90[sp24], 0.0f, 0U);
         fsa->animTickDelta = _data_94[sp24];
     } else {
@@ -4190,10 +4190,10 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     
     fsa->speed += ((var_fa0 - fsa->speed) / fsa->unk2B0) * arg2;
     if (fsa->unk4.relativeFloorPitchSmooth > 0){
-        var_fa0 -= fsin16_precise(fsa->unk4.relativeFloorPitchSmooth) * 0.65f;
+        var_fa0 -= mathSinfInterp(fsa->unk4.relativeFloorPitchSmooth) * 0.65f;
     }
     else {
-        var_fa0 -= fsin16_precise(fsa->unk4.relativeFloorPitchSmooth) * 0.35f;
+        var_fa0 -= mathSinfInterp(fsa->unk4.relativeFloorPitchSmooth) * 0.35f;
     }
     if (objdata->unk3C8 < fsa->speed){
         fsa->speed = objdata->unk3C8;
@@ -4696,11 +4696,11 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     return 0x20;
                 }
             }
-            spA4 = fsin16_precise(player->srt.yaw);
-            spA0 = fcos16_precise(player->srt.yaw);
-            temp_v1 = arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) - fsa->unk324;
-            sp9C = fsin16_precise(temp_v1);
-            var_fv0 = fcos16_precise(temp_v1);
+            spA4 = mathSinfInterp(player->srt.yaw);
+            spA0 = mathCosfInterp(player->srt.yaw);
+            temp_v1 = mathAtan2f(fsa->xAnalogInput, -fsa->yAnalogInput) - fsa->unk324;
+            sp9C = mathSinfInterp(temp_v1);
+            var_fv0 = mathCosfInterp(temp_v1);
             temp_fv0 = (spA4 * sp9C) + (spA0 * var_fv0);
             var_fa0 = temp_fv0;
             if (temp_fv0 < 0.0f) {
@@ -4974,7 +4974,7 @@ s32 dll_210_func_D5F0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
     } else {
         objAnimSet(player, 0x419, 0, 1U);
-        player->srt.yaw = arctan2_f(sp2C->unk490.unk1C.x, sp2C->unk490.unk1C.z); 
+        player->srt.yaw = mathAtan2f(sp2C->unk490.unk1C.x, sp2C->unk490.unk1C.z); 
         player->srt.transl.f[0] = sp2C->unk490.unk2C.x;
         player->srt.transl.f[1] = sp2C->unk490.unk4;
         player->srt.transl.f[2] = sp2C->unk490.unk2C.z;
@@ -5051,7 +5051,7 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         break;
     default:
-        temp_v0 = arctan2_f(temp_s0->unk490.unk1C.x, temp_s0->unk490.unk1C.z) - player->srt.yaw;
+        temp_v0 = mathAtan2f(temp_s0->unk490.unk1C.x, temp_s0->unk490.unk1C.z) - player->srt.yaw;
         CIRCLE_WRAP(temp_v0)
         if (temp_s0->unk490.unk47 == 1) {
             var_v0 = 0xA;
@@ -5106,7 +5106,7 @@ s32 dll_210_func_DC10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         case 0x16:
         case 0x1A:
             if (fsa->unk308 & 1) {
-                gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[rand_next(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[mathRnd(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             if (fsa->unk33A != 0) {
                 player->globalPosition.f[0] = temp_s1->unk7EC.x;
@@ -5154,7 +5154,7 @@ s32 dll_210_func_DC10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             dll_210_func_8AE0(player, _data_564[_bss_200 + 0], _data_564[_bss_200 + 2], &temp_s1->unk490.unk38, &temp_s1->unk490.unk1C, 0.0f, fsa->animTickDelta, 2U, 9U);
             dll_210_func_8AE0(player, _data_564[_bss_200 + 0], _data_564[_bss_200 + 1], &temp_s1->unk490.unk38, &temp_s1->unk490.unk1C, 0.0f, fsa->animTickDelta, 2U, 0x34U);
             dll_210_func_8AE0(player, _data_564[_bss_200 + 2], _data_564[_bss_200 + 3], &temp_s1->unk490.unk38, &temp_s1->unk490.unk1C, 0.0f, fsa->animTickDelta, 2U, 0x1AU);
-            player->srt.yaw = arctan2_f(temp_s1->unk490.unk1C.x, temp_s1->unk490.unk1C.z);
+            player->srt.yaw = mathAtan2f(temp_s1->unk490.unk1C.x, temp_s1->unk490.unk1C.z);
             player->srt.transl.f[0] = temp_s1->unk490.unk2C.x;
             player->srt.transl.f[2] = temp_s1->unk490.unk2C.z;
             dll_210_func_7260(player, temp_s1);
@@ -5273,7 +5273,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             if (temp_fv0 > 5.0f) {
                 _bss_200 = 5;
                 sp6C = 0.014f;
-                gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[rand_next(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[mathRnd(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
             } else {
                 if ((temp_fv0 < -5.0f) && (objdata->unk490.unk46 != 0x11)) {
                     return 0x15;
@@ -5289,7 +5289,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->yAnalogInput > 5.0f) {
             _bss_200 = 5;
             sp6C = 0.014f;
-            gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[rand_next(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[mathRnd(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else if ((fsa->yAnalogInput < -5.0f) && (objdata->unk490.unk46 != 0x11)) {
             return 0x15;
         }
@@ -5317,7 +5317,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp5E = temp_fv0 * 1023.0f;
         _bss_200 = 0;
         sp6C = 0.029f;
-        fsa->unk2F8 = arctan2_f(objdata->unk490.unk1C.x, objdata->unk490.unk1C.z) - player->srt.yaw;
+        fsa->unk2F8 = mathAtan2f(objdata->unk490.unk1C.x, objdata->unk490.unk1C.z) - player->srt.yaw;
         if (fsa->unk2F8 > 32768.0f) {
             fsa->unk2F8 += -65535.0f;
         }
@@ -5513,7 +5513,7 @@ s32 dll_210_func_F00C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->animTickDelta = 0.014f;
     }
     if (fsa->unk308 & 0x80) {
-        gDLL_6_AMSFX->vtbl->play(player, (u16) objdata->unk3B8[rand_next(10, 14)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(player, (u16) objdata->unk3B8[mathRnd(10, 14)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (fsa->unk308 & 1) {
         gDLL_6_AMSFX->vtbl->play(player, SOUND_B1C_Ladder_Climb_A, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -5534,7 +5534,7 @@ s32 dll_210_func_F00C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp5C.z = objdata->unk3CC.unk28.z;
             sp5C.w = objdata->unk3CC.unk28.w;
         }
-        var_v1 = arctan2_f(sp5C.x, sp5C.z) - player->srt.yaw;
+        var_v1 = mathAtan2f(sp5C.x, sp5C.z) - player->srt.yaw;
         CIRCLE_WRAP(var_v1)
         player->srt.yaw += var_v1;
         objdata->unk3CC.unk20 = player->srt.transl.x;
@@ -5675,7 +5675,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 6:
     case 7:
         if (fsa->unk308 & 0x80) {
-            gDLL_6_AMSFX->vtbl->play(player, temp_s0->unk3B8[rand_next(10, 14)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(player, temp_s0->unk3B8[mathRnd(10, 14)], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         if (fsa->unk33A != 0) {
             player->srt.transl.y = temp_s0->unk3CC.unk4;
@@ -5995,7 +5995,7 @@ s32 dll_210_func_10898(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp3C[1] = temp_s1->unk430.unk8;
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCLIMB, TRUE, 1, 8, &sp3C, 0, Cam_Ease_All);
         objAnimSet(player, 0x41A, 0.0f, 1U);
-        player->srt.yaw = arctan2_f(temp_s1->unk430.unk24.x, temp_s1->unk430.unk24.z);
+        player->srt.yaw = mathAtan2f(temp_s1->unk430.unk24.x, temp_s1->unk430.unk24.z);
         player->srt.transl.f[0] = temp_s1->unk430.unk44.x;
         player->srt.transl.f[1] = temp_s1->unk7EC.f[1];
         player->srt.transl.f[2] = temp_s1->unk430.unk44.z;
@@ -6043,16 +6043,16 @@ s32 dll_210_func_10A0C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0x21;
     }
     if (fsa->unk308 & 1) {
-        gDLL_6_AMSFX->vtbl->play(player, temp_s0->unk3B8[rand_next(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(player, temp_s0->unk3B8[mathRnd(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (fsa->unk308 & 0x80) {
-        sp5C = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s0->unk430.unk2], rand_next(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(sp5C, ((f32) rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
+        sp5C = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s0->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->set_pitch(sp5C, ((f32) mathRnd(-0x64, 0x64) * 0.001f) + 1.0f);
     }
     if (fsa->enteredAnimState != 0) {
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
-        player->srt.yaw = arctan2_f(temp_s0->unk430.unk24.x, temp_s0->unk430.unk24.z);
+        player->srt.yaw = mathAtan2f(temp_s0->unk430.unk24.x, temp_s0->unk430.unk24.z);
         player->srt.transl.x = temp_s0->unk430.unk44.x;
         player->srt.transl.z = temp_s0->unk430.unk44.z;
         if (sp8C != 0) {
@@ -6182,7 +6182,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 temp_s0->unk430.unk34.z = sp50.unk1C.x;
                 temp_s0->unk430.unk34.w = -((temp_s0->unk430.unk34.z * spB0.z) + ((spB0.x * temp_s0->unk430.unk34.x) + (spB0.y * temp_s0->unk430.unk34.y)));
 
-                player->srt.yaw = arctan2_f(temp_s0->unk430.unk24.x, temp_s0->unk430.unk24.z);
+                player->srt.yaw = mathAtan2f(temp_s0->unk430.unk24.x, temp_s0->unk430.unk24.z);
                 if (sp50.unk52 & 4) {
                     spC0 = 0;
                 } else if (sp50.unk52 & 8) {
@@ -6201,7 +6201,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 player->srt.transl.f[1] = temp_s0->unk7EC.y;
             }
             if (fsa->analogInputPower > 0.1f) {
-                _bss_200 = ((arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) + 0x1000) >> 0xD) & 7;
+                _bss_200 = ((mathAtan2f(fsa->xAnalogInput, -fsa->yAnalogInput) + 0x1000) >> 0xD) & 7;
                 _bss_202 = -1;
                 if ((_bss_200 == 4) || (_bss_200 == 0)) {
                     temp_s0->unk430.unk5E ^= 1;
@@ -6393,8 +6393,8 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
         if (fsa->unk308 & 0x80) {
-            spBC = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s0->unk430.unk2], rand_next(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(spBC, (rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
+            spBC = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s0->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(spBC, (mathRnd(-0x64, 0x64) * 0.001f) + 1.0f);
         }
         break;
     }
@@ -6427,12 +6427,12 @@ s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     temp_s1 = player->data;
     if (fsa->unk308 & 0x80) {
-        sp44 = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s1->unk430.unk2], rand_next(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(sp44, ((f32) rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
+        sp44 = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s1->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->set_pitch(sp44, ((f32) mathRnd(-0x64, 0x64) * 0.001f) + 1.0f);
     }
     if (fsa->enteredAnimState != 0) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 60, Cam_Ease_All);
-        gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[rand_next(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[mathRnd(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
         objAnimSet(player, _data_5DC[1], 0.0f, 1U);
         objAnimSetBlend(player, _data_5E0[0], 0);
         fsa->animTickDelta = 0.012f;
@@ -6484,11 +6484,11 @@ s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0x20;
     }
     if (fsa->unk308 & 1) {
-        gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[rand_next(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(player, temp_s1->unk3B8[mathRnd(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (fsa->unk308 & 0x80) {
-        sp44 = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s1->unk430.unk2], rand_next(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(sp44, ((f32) rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
+        sp44 = gDLL_6_AMSFX->vtbl->play(player, _data_4D8[temp_s1->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->set_pitch(sp44, ((f32) mathRnd(-0x64, 0x64) * 0.001f) + 1.0f);
     }
     if (fsa->enteredAnimState != 0) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 60, Cam_Ease_All);
@@ -6551,8 +6551,8 @@ s32 dll_210_func_125BC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState != 0) {
         gDLL_6_AMSFX->vtbl->play(player, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
         for (i = 0; i < 3; i++) {
-            temp_fs0 = ((f32) rand_next(-0x32, 0x32) / 10.0f) + player->srt.transl.x;
-            temp_fs1 = ((f32) rand_next(-0x32, 0x32) / 10.0f) + player->srt.transl.z;
+            temp_fs0 = ((f32) mathRnd(-0x32, 0x32) / 10.0f) + player->srt.transl.x;
+            temp_fs1 = ((f32) mathRnd(-0x32, 0x32) / 10.0f) + player->srt.transl.z;
             gDLL_24_Waterfx->vtbl->spawn_splash(temp_fs0, temp_s3->waterY, temp_fs1, 4.0f);
             gDLL_24_Waterfx->vtbl->spawn_circular_ripple(temp_fs0, temp_s3->waterY, temp_fs1, 0, 0.0f, 3);
         }
@@ -6615,8 +6615,8 @@ static void dll_210_func_128F4(f32* velocityX, f32* velocityZ, f32 deltaT, Objec
                 if (dx < range) {
                     dx = ((range - dx) / range);
                     dx *= (flowObj->srt.scale * 10.0f);
-                    pushX += fsin16_precise(flowObj->srt.yaw) * dx;
-                    pushZ += fcos16_precise(flowObj->srt.yaw) * dx;
+                    pushX += mathSinfInterp(flowObj->srt.yaw) * dx;
+                    pushZ += mathCosfInterp(flowObj->srt.yaw) * dx;
                 }
             }
         }
@@ -6665,7 +6665,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->flags |= 0x200000;
     fsa->unk340 |= 2;
     if (fsa->enteredAnimState != 0) {
-        temp_s1->unk880 = rand_next(300, 600);
+        temp_s1->unk880 = mathRnd(300, 600);
         temp_s1->unk88A = 0;
         objAnimSet(player, 0x412, 0.0f, 0U);
         fsa->animTickDelta = 0.015f;
@@ -6692,7 +6692,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             return -1;
         }
         spC4 = temp_s0->waterY - 6.0f;
-        spC4 += fsin16_precise(temp_s1->unk88A);
+        spC4 += mathSinfInterp(temp_s1->unk88A);
         temp_s1->unk88A += gUpdateRateF * 128.0f;
         var_fa0 = spC4 - player->srt.transl.f[1];
         if (var_fa0 > 25.0f) {
@@ -6716,25 +6716,25 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 sp50.scale = 1.0f;
                 sp50.pitch = 0;
                 sp50.roll = 0;
-                matrix_from_srt(&sp7C, &sp50);
-                sp78 = (rand_next(-0x14, 0x14) / 10.0f) + 5.0f;
-                sp70 = (rand_next(-0x14, 0x14) / 10.0f) + 2.0f;
-                vec3_transform(&sp7C, sp78, 0.0f, sp70, &sp78, &sp74, &sp70);
+                mathYprXyzMtx(&sp7C, &sp50);
+                sp78 = (mathRnd(-0x14, 0x14) / 10.0f) + 5.0f;
+                sp70 = (mathRnd(-0x14, 0x14) / 10.0f) + 2.0f;
+                mathMtxXFMF(&sp7C, sp78, 0.0f, sp70, &sp78, &sp74, &sp70);
                 gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp78, temp_s0->waterY, sp70, 0, 0.0f, 3);
-                sp78 = (rand_next(-0x14, 0x14) / 10.0f) + -5.0f;
-                sp70 = (rand_next(-0x14, 0x14) / 10.0f) + 2.0f;
-                vec3_transform(&sp7C, sp78, 0.0f, sp70, &sp78, &sp74, &sp70);
+                sp78 = (mathRnd(-0x14, 0x14) / 10.0f) + -5.0f;
+                sp70 = (mathRnd(-0x14, 0x14) / 10.0f) + 2.0f;
+                mathMtxXFMF(&sp7C, sp78, 0.0f, sp70, &sp78, &sp74, &sp70);
                 gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp78, temp_s0->waterY, sp70, 0, 0.0f, 3);
             }
             if ((player->velocity.f[1] > -0.1f) && (player->velocity.f[1] < 0.1f)) {
                 temp_s1->unk880 -= gUpdateRate;
                 if (temp_s1->unk880 <= 0) {
-                    if (rand_next(0, 1)) {
+                    if (mathRnd(0, 1)) {
                         gDLL_6_AMSFX->vtbl->play(player, SOUND_3EC_Water_Wade_Slow_A, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else {
                         gDLL_6_AMSFX->vtbl->play(player, SOUND_3ED_Water_Wade_Slow_B, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
-                    temp_s1->unk880 = rand_next(0x12C, 0x258);
+                    temp_s1->unk880 = mathRnd(0x12C, 0x258);
                 }
             }
         }
@@ -6819,7 +6819,7 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0xB, player, -1);
     } else {
         temp_fs0 = dll27data->waterY - 6.0f;
-        temp_fs0 += fsin16_precise(objdata->unk88A);
+        temp_fs0 += mathSinfInterp(objdata->unk88A);
         objdata->unk88A += gUpdateRateF * 128.0f;
         sp120 = temp_fs0 - player->srt.transl.f[1];
         if (sp120 > 25.0f) {
@@ -6852,8 +6852,8 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         sp120 = sp120;
         dll_210_func_128F4(player->velocity.f, &player->velocity.f[2], arg2, player);
-        temp_fs0 = fsin16_precise(player->srt.yaw);
-        temp_fv0 = fcos16_precise(player->srt.yaw);
+        temp_fs0 = mathSinfInterp(player->srt.yaw);
+        temp_fv0 = mathCosfInterp(player->srt.yaw);
         fsa->unk27C = (player->velocity.f[0] * temp_fv0) - (player->velocity.f[2] * temp_fs0);
         fsa->unk278 = (-player->velocity.f[2] * temp_fv0) - (player->velocity.f[0] * temp_fs0);
         fsa->speed += ((var_fs1 - fsa->speed) / 25.0f) * arg2;
@@ -6875,20 +6875,20 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             spB0.scale = 1.0f;
             spB0.pitch = 0;
             spB0.roll = 0;
-            matrix_from_srt(&spCC, &spB0);
+            mathYprXyzMtx(&spCC, &spB0);
             if (fsa->unk308 & 0x200) {
                 for (i = 0; i < 2; i++) {
-                    sp114 = (rand_next(-0x14, 0x14) / 10.0f) + 10.0f;
-                    sp10C = (rand_next(-0x14, 0x14) / 10.0f) + -17.0f;
-                    vec3_transform(&spCC, sp114, 0.0f, sp10C, &sp114, &sp110, &sp10C);
+                    sp114 = (mathRnd(-0x14, 0x14) / 10.0f) + 10.0f;
+                    sp10C = (mathRnd(-0x14, 0x14) / 10.0f) + -17.0f;
+                    mathMtxXFMF(&spCC, sp114, 0.0f, sp10C, &sp114, &sp110, &sp10C);
                     gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp114, dll27data->waterY, sp10C, 0, 0.0f, 3);
                 }
             }
             if (fsa->unk308 & 0x400) {
                 for (i = 0; i < 2; i++) {
-                    sp114 = (rand_next(-0x14, 0x14) / 10.0f) + -10.0f;
-                    sp10C = (rand_next(-0x14, 0x14) / 10.0f) + -17.0f;
-                    vec3_transform(&spCC, sp114, 0.0f, sp10C, &sp114, &sp110, &sp10C);
+                    sp114 = (mathRnd(-0x14, 0x14) / 10.0f) + -10.0f;
+                    sp10C = (mathRnd(-0x14, 0x14) / 10.0f) + -17.0f;
+                    mathMtxXFMF(&spCC, sp114, 0.0f, sp10C, &sp114, &sp110, &sp10C);
                     gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sp114, dll27data->waterY, sp10C, 0, 0.0f, 3);
                 }
             }
@@ -7165,12 +7165,12 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         break;
     default:
         if (fsa->unk308 & 1) {
-            sp40 = gDLL_6_AMSFX->vtbl->play(player, SOUND_A78_Water_Paddle, rand_next(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sp40, (rand_next(-0xF, 0xF) / 100.0f) + 1.0f);
+            sp40 = gDLL_6_AMSFX->vtbl->play(player, SOUND_A78_Water_Paddle, mathRnd(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(sp40, (mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
         }
-        if ((fsa->unk308 & 0x80) && (rand_next(0, 0x64) >= 0x47)) {
-            sp40 = gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[rand_next(0xA, 0xE)], rand_next(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sp40, (rand_next(-0xF, 0xF) / 100.0f) + 1.0f);
+        if ((fsa->unk308 & 0x80) && (mathRnd(0, 0x64) >= 0x47)) {
+            sp40 = gDLL_6_AMSFX->vtbl->play(player, objdata->unk3B8[mathRnd(0xA, 0xE)], mathRnd(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(sp40, (mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
         }
         fsa->animTickDelta = 0.01f;
         if (fsa->unk33A != 0) {
@@ -7256,7 +7256,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp54.yaw = player->srt.yaw;
         sp54.pitch = 0;
         sp54.roll = 0;
-        rotate_vec3(&sp54, sp80.f);
+        mathRotateRPY(&sp54, sp80.f);
         sp80.f[0] += player->srt.transl.f[0];
         sp80.f[2] += player->srt.transl.f[2];
         player->srt.transl.f[1] -= sp8C.f[1];
@@ -7357,8 +7357,8 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->srt.transl.f[0] = temp_s0->unk4E8.unk68.f[0];
             player->srt.transl.f[1] = temp_s0->unk4E8.unk68.f[1];
             player->srt.transl.f[2] = temp_s0->unk4E8.unk68.f[2];
-            player->srt.yaw = arctan2_f(-temp_s0->unk4E8.unk74, -temp_s0->unk4E8.unk7C);
-            player->srt.pitch = arctan2_f(temp_s0->unk4E8.unk78, sqrtf(SQ(temp_s0->unk4E8.unk74) + SQ(temp_s0->unk4E8.unk7C)));
+            player->srt.yaw = mathAtan2f(-temp_s0->unk4E8.unk74, -temp_s0->unk4E8.unk7C);
+            player->srt.pitch = mathAtan2f(temp_s0->unk4E8.unk78, sqrtf(SQ(temp_s0->unk4E8.unk74) + SQ(temp_s0->unk4E8.unk7C)));
         }
         break;
     case 0x40F:
@@ -7376,8 +7376,8 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         player->srt.transl.f[0] = temp_s0->unk4E8.unk68.f[0];
         player->srt.transl.f[1] = temp_s0->unk4E8.unk68.f[1];
         player->srt.transl.f[2] = temp_s0->unk4E8.unk68.f[2];
-        player->srt.yaw = arctan2_f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
-        player->srt.pitch = arctan2_f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
+        player->srt.yaw = mathAtan2f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
+        player->srt.pitch = mathAtan2f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
         if (fsa->unk33A != 0) {
             objAnimSet(player, 0x40D, 0.0f, 0U);
         }
@@ -7390,8 +7390,8 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->srt.transl.f[0] = sp64->pos.x;
             player->srt.transl.f[1] = sp64->pos.y;
             player->srt.transl.f[2] = sp64->pos.z;
-            player->srt.yaw = arctan2_f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
-            player->srt.pitch = arctan2_f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
+            player->srt.yaw = mathAtan2f(temp_s0->unk4D8.x, temp_s0->unk4D8.z);
+            player->srt.pitch = mathAtan2f(temp_s0->unk4D8.y, sqrtf(SQ(temp_s0->unk4D8.x) + SQ(temp_s0->unk4D8.z)));
             temp_s0->unk4E8.numControlPoints = gDLL_26_Curves->vtbl->func_E40(sp64, &temp_s0->unk584, &temp_s0->unk5D4, &temp_s0->unk624, NULL);
             temp_s0->unk4E8.unk80 = 0;
             temp_s0->unk4E8.unk84 = &temp_s0->unk584;
@@ -7450,7 +7450,7 @@ s32 dll_210_func_15744(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
         objAnimSet(player, 0x57, 0.0f, 0U);
         fsa->animTickDelta = 0.016f;
-        gDLL_6_AMSFX->vtbl->play(player, sp34->unk3B8[rand_next(0, 3) + 15], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(player, sp34->unk3B8[mathRnd(0, 3) + 15], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (fsa->unk33A != 0) {
         return -1;
@@ -7546,7 +7546,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         objdata->flags |= 0x200;
         arg1->animTickDelta = 0.02f;
         if (sp58 != NULL) {
-            arg1->animTickDelta += fsin16_precise(-player->srt.pitch) * 0.02f;
+            arg1->animTickDelta += mathSinfInterp(-player->srt.pitch) * 0.02f;
             var_a3 = 1;
         } else {
             arg1->unk278 = 0.0f;
@@ -7584,7 +7584,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     case 0x64:
         arg1->animTickDelta = 0.015f;
         if (sp58 != NULL) {
-            arg1->animTickDelta += fsin16_precise(player->srt.pitch) * 0.015f;
+            arg1->animTickDelta += mathSinfInterp(player->srt.pitch) * 0.015f;
             var_a3 = 1;
         } else {
             arg1->unk278 = 0.0f;
@@ -7625,7 +7625,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
         break;
     default:
         objdata->unk680.unk2C = 0;
-        player->srt.yaw = arctan2_f(objdata->unk680.unk0.x, objdata->unk680.unk0.z);
+        player->srt.yaw = mathAtan2f(objdata->unk680.unk0.x, objdata->unk680.unk0.z);
         if (sp58 != NULL) {
             camTransformPointByObject(objdata->unk680.unk10.x, objdata->unk680.unk10.y, objdata->unk680.unk10.z, player->srt.transl.f, &sp64, &player->srt.transl.f[2], sp58);
             player->srt.transl.f[0] += objdata->unk680.unk0.x * 11.45f;
@@ -7810,7 +7810,7 @@ s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if ((temp_fa1 - 1.0f) <= objdata->unk7EC.y) {
             if (objdata->unk848 == 0) {
                 objdata->unk848 = gDLL_6_AMSFX->vtbl->play(player, SOUND_768_Rope_Climb, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk848, ((f32) rand_next(-0xF, 0xF) / 100.0f) + 1.0f);
+                gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk848, ((f32) mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
             }
             _bss_200 = 7;
             sp4B = 1;
@@ -8047,8 +8047,8 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
         }
         if (fsa->unk308 & 1) {
-            temp_s0->unk848 = gDLL_6_AMSFX->vtbl->play(player, SOUND_768_Rope_Climb, rand_next(0x32, MAX_VOLUME), NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(temp_s0->unk848, (rand_next(-0xF, 0xF) / 100.0f) + 1.0f);
+            temp_s0->unk848 = gDLL_6_AMSFX->vtbl->play(player, SOUND_768_Rope_Climb, mathRnd(0x32, MAX_VOLUME), NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->set_pitch(temp_s0->unk848, (mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
         }
         if (sp8C < 0.0f) {
             sp8C = -((sp94 * 0.013000001f) + 0.015f);
@@ -8111,9 +8111,9 @@ s32 dll_210_func_178EC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         ((DLL_Unknown *)temp_s2->unk708->dll)->vtbl->func[7].withFiveArgsCustom2(
             temp_s2->unk708,
             player,
-            2.0f * -fsin16_precise(player->srt.yaw),
+            2.0f * -mathSinfInterp(player->srt.yaw),
             0x40400000,
-            2.0f * -fcos16_precise(player->srt.yaw)
+            2.0f * -mathCosfInterp(player->srt.yaw)
         );
         temp_s2->unk708->srt.flags &= ~OBJFLAG_INVISIBLE;
         func_8002674C(temp_s2->unk708);
@@ -8167,7 +8167,7 @@ s32 dll_210_func_17C14(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->unk341 = 3;
     if (fsa->enteredAnimState != 0) {
         func_80025F40(player, &sp34, NULL, NULL);
-        player->srt.yaw = arctan2_f(-sp34->velocity.f[0], -sp34->velocity.f[2]);
+        player->srt.yaw = mathAtan2f(-sp34->velocity.f[0], -sp34->velocity.f[2]);
         objAnimSet(player, 0x407, 0.0f, 0U);
         fsa->animTickDelta = 0.015f;
     }
@@ -8281,9 +8281,9 @@ s32 dll_210_func_180D4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (sp56 & 1) {
         sp56--;
     }
-    sp3A = arctan2_f(fsa->xAnalogInput, -fsa->yAnalogInput) - (fsa->unk324 & 0xFFFF & 0xFFFF);
-    sp50 = -fsin16_precise(sp3A) * fsa->analogInputPower * 1.65f;
-    var_ft4 = -fcos16_precise(sp3A) * fsa->analogInputPower * 1.65f;
+    sp3A = mathAtan2f(fsa->xAnalogInput, -fsa->yAnalogInput) - (fsa->unk324 & 0xFFFF & 0xFFFF);
+    sp50 = -mathSinfInterp(sp3A) * fsa->analogInputPower * 1.65f;
+    var_ft4 = -mathCosfInterp(sp3A) * fsa->analogInputPower * 1.65f;
     if (fsa->analogInputPower < 0.02f) {
         sp50 = 0.0f;
         var_ft4 = 0.0f;
@@ -8296,8 +8296,8 @@ s32 dll_210_func_180D4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         player->velocity.x = 0.0f;
         player->velocity.z = 0.0f;
     }
-    sp48 = fsin16_precise(player->srt.yaw);
-    temp_fv0 = fcos16_precise(player->srt.yaw);
+    sp48 = mathSinfInterp(player->srt.yaw);
+    temp_fv0 = mathCosfInterp(player->srt.yaw);
     fsa->unk27C = (player->velocity.x * temp_fv0) - (player->velocity.z * sp48);
     fsa->unk278 = (-player->velocity.z * temp_fv0) - (player->velocity.x * sp48);
     gDLL_18_objfsa->vtbl->turn_to_target(player, fsa, arg2, 4);
@@ -8370,7 +8370,7 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 }
             }
             if (!(fsa->unk34A & 2) && ((&sp3C->unk3B4[sp3C->unk8A1])->unk28 < player->animProgress)) {
-                gDLL_6_AMSFX->vtbl->play(player, sp3C->unk3B8[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(player, sp3C->unk3B8[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
                 fsa->unk34A |= 2;
             }
         }
@@ -8607,7 +8607,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 sp8C = fsa->target->srt.transl.y - player->srt.transl.y;
                 var_fv1 = fsa->target->srt.transl.z - player->srt.transl.z;
             }
-            var_fv0 = (s16) (arctan2_f(sp8C, sqrtf(SQ(var_fv0) + SQ(var_fv1))) - 0x800) / 5461.0f;
+            var_fv0 = (s16) (mathAtan2f(sp8C, sqrtf(SQ(var_fv0) + SQ(var_fv1))) - 0x800) / 5461.0f;
             var_fv0 = var_fv0; // required to match?
             if (var_fv0 < -1.0f) {
                 var_fv0 = -1.0f;
@@ -8693,8 +8693,8 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 if (_bss_2C >= 420.0f) {
                     _bss_30 -= arg2;
                     if (_bss_30 <= 0.0f) {
-                        gDLL_6_AMSFX->vtbl->play(player, SOUND_6AD_Electric_Crackle, rand_next(0x20, 0x60), NULL, NULL, 0, NULL);
-                        _bss_30 = rand_next(0x4B0, 0x708);
+                        gDLL_6_AMSFX->vtbl->play(player, SOUND_6AD_Electric_Crackle, mathRnd(0x20, 0x60), NULL, NULL, 0, NULL);
+                        _bss_30 = mathRnd(0x4B0, 0x708);
                     }
                 } else if (_bss_2C < 0.0f) {
                     _bss_2C = 0.0f;
@@ -8786,13 +8786,13 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     if (player->id == 0) {
                         fxTransform.pitch = -0x8000;
                     }
-                    if (rand_next(0, 2) == 0) {
+                    if (mathRnd(0, 2) == 0) {
                         gDLL_17_partfx->vtbl->spawn(player->linkedObject, PARTICLE_525, &fxTransform, PARTFXFLAG_1, -1, NULL);
                     }
-                    if (rand_next(0, 2) == 0) {
+                    if (mathRnd(0, 2) == 0) {
                         gDLL_17_partfx->vtbl->spawn(player->linkedObject, PARTICLE_526, &fxTransform, PARTFXFLAG_1, -1, NULL);
                     }
-                    if (rand_next(0, 2) == 0) {
+                    if (mathRnd(0, 2) == 0) {
                         gDLL_17_partfx->vtbl->spawn(player->linkedObject, PARTICLE_529, &fxTransform, PARTFXFLAG_1, -1, NULL);
                     }
                 }
@@ -9034,9 +9034,9 @@ s32 dll_210_func_1ADA4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         vec.f[1] = obj->srt.transl.f[1] - player->srt.transl.f[1];
         vec.f[2] = obj->srt.transl.f[2] - player->srt.transl.f[2];
         vec.f[1] = 0.0f;
-        vec3_normalize(&vec);
-        sp4C = fsin16_precise(player->srt.yaw);
-        temp_fv0 = fcos16_precise(player->srt.yaw);
+        vec3Normalize(&vec);
+        sp4C = mathSinfInterp(player->srt.yaw);
+        temp_fv0 = mathCosfInterp(player->srt.yaw);
         switch (obj->def->playerAttackConfig) {
             case 3: // magic plant
                 if ((vec.f[0] * temp_fv0) < (vec.f[2] * sp4C)) {
@@ -9506,7 +9506,7 @@ s32 dll_210_func_1C620(Object* player, ObjFSA_Data* arg1, f32 arg2) {
             }
             f0 = SQ(player->velocity.x) + SQ(player->velocity.z);
             if (f0 > 1.0f) {
-                var_v1 = arctan2_f(player->velocity.x, player->velocity.z) - (player->srt.yaw & 0xFFFF);
+                var_v1 = mathAtan2f(player->velocity.x, player->velocity.z) - (player->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(var_v1)
                 player->srt.yaw += (var_v1 * (s32) arg2) >> 3;
             }
@@ -9519,7 +9519,7 @@ s32 dll_210_func_1C620(Object* player, ObjFSA_Data* arg1, f32 arg2) {
             }
             f0 = SQ(player->velocity.x) + SQ(player->velocity.z);
             if (f0 > 1.0f) {
-                var_v1 = arctan2_f(player->velocity.x, player->velocity.z) - (player->srt.yaw & 0xFFFF);
+                var_v1 = mathAtan2f(player->velocity.x, player->velocity.z) - (player->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(var_v1)
                 player->srt.yaw += (var_v1 * (s32) arg2) >> 3;
             }
@@ -10365,8 +10365,8 @@ void dll_210_func_1DB6C(Object* player, f32 arg1) {
         sp28 = player->visRadius;
     }
     sp2C = (player->unk74->drawPoint.y - player->srt.transl.y) - arg1;
-    sp20 = fsin16_precise(player->srt.yaw);
-    gDLL_3_Animation->vtbl->func31(-sp20 * sp28, sp2C, -fcos16_precise(player->srt.yaw) * sp28);
+    sp20 = mathSinfInterp(player->srt.yaw);
+    gDLL_3_Animation->vtbl->func31(-sp20 * sp28, sp2C, -mathCosfInterp(player->srt.yaw) * sp28);
 }
 
 // offset: 0x1DC48 | func: 218

@@ -72,7 +72,7 @@ void objExprEyeIdle(Object* obj, HeadAnimation* arg1) {
         if (arg1->blinkDelayTimer > 0) {
             //Wait for timer to run out
             arg1->blinkDelayTimer -= gUpdateRate;
-        } else if (rand_next(0, 1000) > 985) {
+        } else if (mathRnd(0, 1000) > 985) {
             //1.5% chance of going into a blink
             arg1->blinkState = BLINK_Animate;
             arg1->blinkDelayTimer = 0;
@@ -131,7 +131,7 @@ void objExpr_func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s
         return;
     }
 
-    arg2->headGoalAngle = ((arctan2_f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) & 0xFFFFu) & 0xFFFFu) - obj->srt.yaw;
+    arg2->headGoalAngle = ((mathAtan2f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) & 0xFFFFu) & 0xFFFFu) - obj->srt.yaw;
     arg3 = (s16)(arg3 * 182.04f);
     if (arg3 < arg2->headGoalAngle) {
         arg2->headGoalAngle = arg3;
@@ -167,10 +167,10 @@ void objExpr_func_80032CF8(Object* obj, Object* otherObj, HeadAnimation* arg2, s
     sp40 = obj->srt.transl.z - otherObj->srt.transl.z;
     sp3C = obj->srt.transl.y - otherObj->srt.transl.y;
     sp38 = sqrtf(SQ(sp44) + SQ(sp40));
-    temp = arctan2_f(sp44, sp40);
+    temp = mathAtan2f(sp44, sp40);
     sp2C[0] = ((s16)temp - (obj->srt.yaw & 0xFFFF));
     CIRCLE_WRAP(sp2C[0])
-    sp2C[1] = (arctan2_f(sp38, sp3C) - 0x3FFF) & 0xFFFF & 0xFFFF;
+    sp2C[1] = (mathAtan2f(sp38, sp3C) - 0x3FFF) & 0xFFFF & 0xFFFF;
     arg3 = (s16) (arg3 * 182.04f);
     for (i = 0; i < 2; i++) {
         arg2[i].headGoalAngle = sp2C[i];
@@ -192,7 +192,7 @@ s16 objExpr_func_80032EBC(Object* obj, Object* otherObj, HeadAnimation* arg2, s1
     s16 temp_ft1;
     s32 i;
 
-    var_s0 = arctan2_f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) - (obj->srt.yaw & 0xFFFF & 0xFFFF);
+    var_s0 = mathAtan2f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) - (obj->srt.yaw & 0xFFFF & 0xFFFF);
     for (i = 0; i < 10 && var_s0 != 0; i++) {
         temp_v0 = objExpr_func_80034804(obj, D_80091720[i]);
         temp_ft1 = arg3[0] * 182.04f;
@@ -243,7 +243,7 @@ s16 objExpr_func_80033044(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimat
             var_s3 += arg3[i].headGoalAngle;
         }
     }
-    var_s0 = (arctan2_f(temp_fs0, sp40) & 0xFFFF & 0xFFFF) - var_s3;
+    var_s0 = (mathAtan2f(temp_fs0, sp40) & 0xFFFF & 0xFFFF) - var_s3;
     for (i = 0; i < 10; i++) {
         temp_v0 = objExpr_func_80034804(obj, D_80091720[i]);
         if (temp_v0 == NULL) {
@@ -351,9 +351,9 @@ s32 objExpr_func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnim
     dz = refPoint->z - lookat->srt.transl.z;
     dy = (refPoint->y + yOffset) - lookat->srt.transl.y;
     xzDist = sqrtf(SQ(dx) + SQ(dz));
-    sp84[0] = (s16)(u16)arctan2_f(dx, dz) - (obj->srt.yaw & 0xFFFF);
+    sp84[0] = (s16)(u16)mathAtan2f(dx, dz) - (obj->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(sp84[0]);
-    sp84[1] = arg7 - (-arctan2_f(xzDist, dy) & 0xFFFF);
+    sp84[1] = arg7 - (-mathAtan2f(xzDist, dy) & 0xFFFF);
     CIRCLE_WRAP(sp84[1]);
     if (D_800B2E00.unk0_0) {
         sp84[0] -= 0x8000;
@@ -528,7 +528,7 @@ void objExpr_func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neck
             arg1->headAimUnk = 1.0f;
         } else {
             arg1->headTurnState = (sp28 << 8) | 1;
-            arg1->headTurnDelay = rand_next(100, 400);
+            arg1->headTurnDelay = mathRnd(100, 400);
             arg1->headGoalAngle = neckJoint[1];
         }
         break;
@@ -537,7 +537,7 @@ void objExpr_func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neck
         //Set up next head turn
         if (arg1->headTurnDelay < 0) {
             currentAngle = arg1->headGoalAngle;
-            arg1->headGoalAngle = rand_next(0, HEAD_TURN_LIMIT);
+            arg1->headGoalAngle = mathRnd(0, HEAD_TURN_LIMIT);
             if (currentAngle > 0) {
                 if ((currentAngle - arg1->headGoalAngle) < M_20_DEGREES) {
                     arg1->headGoalAngle += M_20_DEGREES;
@@ -569,7 +569,7 @@ void objExpr_func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neck
         if (arg1->aimIsActive == 0) {
             arg1->headTurnState = sp28 << 8;
         } else {
-            arg1->headGoalAngle = arctan2_f(obj->srt.transl.x - arg1->headAimX, obj->srt.transl.z - arg1->headAimZ) - (obj->srt.yaw & 0xFFFF);
+            arg1->headGoalAngle = mathAtan2f(obj->srt.transl.x - arg1->headAimX, obj->srt.transl.z - arg1->headAimZ) - (obj->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(arg1->headGoalAngle)
             if ((arg1->headGoalAngle > HEAD_TURN_LIMIT) || (arg1->headGoalAngle < -HEAD_TURN_LIMIT)) {
                 arg1->headTurnState = sp28 << 8;
@@ -611,23 +611,23 @@ void objExpr_func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3
     switch (arg1->headTurnState & 0xFF) {
     case 0:
         arg1->headTurnState = sp20 << 8;
-        arg1->headTurnDelay = rand_next(0x32, 0xC8);
+        arg1->headTurnDelay = mathRnd(0x32, 0xC8);
         return;
     case 1:
         arg1->headTurnDelay -= gUpdateRate;
-        if (arg1->headTurnDelay < 0 && !(rand_next(0, 100) < 91)) {
+        if (arg1->headTurnDelay < 0 && !(mathRnd(0, 100) < 91)) {
             arg1->headTurnState = (sp20 << 8) | 5;
             if (arg1->aimIsActive != 0) {
-                if (rand_next(0, 0x64) > 0) {
+                if (mathRnd(0, 0x64) > 0) {
                     arg1->headGoalAngle = HEAD_TURN_LIMIT;
-                    if (rand_next(0, 1) == 0) {
+                    if (mathRnd(0, 1) == 0) {
                         arg1->headGoalAngle = -arg1->headGoalAngle;
                         return;
                     }
                 }
             } else {
                 arg1->headGoalAngle = HEAD_TURN_LIMIT;
-                if (rand_next(0, 1) == 0) {
+                if (mathRnd(0, 1) == 0) {
                     arg1->headGoalAngle = -arg1->headGoalAngle;
                     return;
                 }
@@ -642,7 +642,7 @@ void objExpr_func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3
         if (objExpr_func_80034250(arg1, arg3) != 0) {
             arg1->headTurnState = (sp20 << 8) | 6;
             arg1->headGoalAngle = -arg1->headGoalAngle;
-            arg1->headTurnDelay = rand_next(20, 100);
+            arg1->headTurnDelay = mathRnd(20, 100);
             return;
         }
         break;
@@ -654,7 +654,7 @@ void objExpr_func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3
         if (objExpr_func_80034250(arg1, arg3) != 0) {
             arg1->headTurnState = (sp20 << 8) | 4;
             arg1->headGoalAngle = 0;
-            arg1->headTurnDelay = rand_next(20, 100);
+            arg1->headTurnDelay = mathRnd(20, 100);
             return;
         }
         break;
@@ -806,13 +806,13 @@ s32 objExpr_func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
 
     //Set up the next eye dart animation
     if (animationFinished) {
-        arg1->eyeGoal = rand_next(-100, 10);
+        arg1->eyeGoal = mathRnd(-100, 10);
         if (arg1->eyeGoal < pupilL->positionU) {
             arg1->eyeSpeed = -5;
         } else {
             arg1->eyeSpeed = 5;
         }
-        arg1->eyeDelayTimer = rand_next(30, 100);
+        arg1->eyeDelayTimer = mathRnd(30, 100);
     }
 
     //Wait a random amount of time between darts

@@ -164,7 +164,7 @@ void dll_481_control(Object *self) {
             if (objdata->unkE <= 0) {
                 mainSetBits(BIT_176, 1);
                 camSetShakeOffset(1.0f);
-                objdata->unkE = rand_next(0x64, 0x96);
+                objdata->unkE = mathRnd(0x64, 0x96);
                 objdata->unk10 = 0x91;
             } else {
                 if (objdata->unk10 != -0x3E7) {
@@ -178,7 +178,7 @@ void dll_481_control(Object *self) {
                 mainSetBits(BIT_176, 0);
                 objdata->unkE -= gUpdateRate;
             }
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 mainSetBits(BIT_5C6, 1);
                 objdata->unk12 = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
@@ -355,7 +355,7 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
             mainSetBits(BIT_176, 1);
             mainSetBits(BIT_1CA, 1);
             camSetShakeOffset(1.0f);
-            objdata->unkE = rand_next(0xC8, 0xFA);
+            objdata->unkE = mathRnd(0xC8, 0xFA);
         } else {
             mainSetBits(BIT_176, 0);
             mainSetBits(BIT_1CA, 0);

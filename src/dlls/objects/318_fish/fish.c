@@ -303,7 +303,7 @@ void fish_control(Object* self) {
 
             if (objdata->bubbleTimer >= 60.0f / bubblesPerSecond) {
                 objdata->bubbleTimer -= 60.0f / bubblesPerSecond;
-                if ((player != NULL) && (vec3_distance_squared(&self->globalPosition, &player->globalPosition) < SQ(100))) {
+                if ((player != NULL) && (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) < SQ(100))) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_26, NULL, 0, -1, objdata->bubbleFXParams);
                 }
             }
@@ -394,7 +394,7 @@ static s32 fish_is_jump_possible(Object *self) {
     vFuture.x = objdata->jumpAnticipationDistance + objdata->jumpDistanceLateral + 10.0f;
     vFuture.y = 0.0f;
     vFuture.z = 0.0f;
-    rotate_vec3((const SRT *)&eulerRotation, vFuture.f);
+    mathRotateRPY((const SRT *)&eulerRotation, vFuture.f);
     vFuture.x += self->srt.transl.x;
     vFuture.y += self->srt.transl.y;
     vFuture.z += self->srt.transl.z;
@@ -415,10 +415,10 @@ static void fish_random_turn_swim(Object *self) {
     fish_Data *objdata = self->data;
 
     if (objdata->randomTurnsPaused == FALSE) {
-        if (rand_next(0, 99) == 0) {
-            fish_swim(self, rand_next(-0x100, 0x100), rand_next(1, 100));
+        if (mathRnd(0, 99) == 0) {
+            fish_swim(self, mathRnd(-0x100, 0x100), mathRnd(1, 100));
         } else {
-            fish_swim(self, rand_next(-0x100, 0x100), 0);
+            fish_swim(self, mathRnd(-0x100, 0x100), 0);
         }
     } else {
         fish_swim(self, 0, 0);
@@ -487,7 +487,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         delta.x = gUpdateRateF * 10.0f;
         delta.y = 0.0f;
         delta.z = 0.0f;
-        rotate_vec3((const SRT *)&eulerRotation, delta.f);
+        mathRotateRPY((const SRT *)&eulerRotation, delta.f);
         delta.x += self->srt.transl.x;
         delta.y += self->srt.transl.y;
         delta.z += self->srt.transl.z;
@@ -522,7 +522,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         vFuture.x = gUpdateRateF * 30.0f * 5.0f;
         vFuture.y = 0.0f;
         vFuture.z = 0.0f;
-        rotate_vec3((const SRT *)&eulerRotation, vFuture.f);
+        mathRotateRPY((const SRT *)&eulerRotation, vFuture.f);
         vFuture.x += self->srt.transl.x;
         vFuture.y += self->srt.transl.y;
         vFuture.z += self->srt.transl.z;
@@ -531,7 +531,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         delta.x = objdata->lateralSpeed * gUpdateRateF;
         delta.y = 0.0f;
         delta.z = 0.0f;
-        rotate_vec3((const SRT *)&eulerRotation, delta.f);
+        mathRotateRPY((const SRT *)&eulerRotation, delta.f);
         self->srt.transl.x += delta.x;
         self->srt.transl.y += delta.y;
         self->srt.transl.z += delta.z;
@@ -568,7 +568,7 @@ static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* e
         vFuture->y -= self->srt.transl.y;
         vFuture->z -= self->srt.transl.z;
         eulerRotation->x = -self->srt.yaw;
-        rotate_vec3((const SRT *)eulerRotation, vFuture->f);
+        mathRotateRPY((const SRT *)eulerRotation, vFuture->f);
         objdata->randomTurnsPaused = TRUE;
         if (vFuture->z > 0.0f) {
             objdata->turn = -0x100;
@@ -607,7 +607,7 @@ static s32 fish_jump_handle_flight(Object *self) {
             vSplash.f[0] = objdata->jumpFlightDuration * objdata->jumpSpeedLateral;
             vSplash.f[1] = 0.0f;
             vSplash.f[2] = 0.0f;
-            rotate_vec3((const SRT *)&eulerRotation, vSplash.f);
+            mathRotateRPY((const SRT *)&eulerRotation, vSplash.f);
             vSplash.f[0] += objdata->jumpedFromX;
             vSplash.f[1] = setup->surfaceOffsetY + objdata->surfaceY;
             vSplash.f[2] += objdata->jumpedFromZ;
@@ -623,7 +623,7 @@ static s32 fish_jump_handle_flight(Object *self) {
             vSplash.f[0] = objdata->splashTime * objdata->jumpSpeedLateral;
             vSplash.f[1] = 0.0f;
             vSplash.f[2] = 0.0f;
-            rotate_vec3((const SRT*)&eulerRotation, vSplash.f);
+            mathRotateRPY((const SRT*)&eulerRotation, vSplash.f);
             vSplash.f[0] += objdata->jumpedFromX;
             vSplash.f[1] = setup->surfaceOffsetY + objdata->surfaceY;
             vSplash.f[2] += objdata->jumpedFromZ;
@@ -660,7 +660,7 @@ static s32 fish_jump_handle_flight(Object *self) {
         objdata->timerPrevJump = objdata->timer;
     }
 
-    rotate_vec3((const SRT*)&eulerRotation, vJump.f);
+    mathRotateRPY((const SRT*)&eulerRotation, vJump.f);
     self->srt.transl.x = objdata->jumpedFromX + vJump.f[0];
     self->srt.transl.y = objdata->jumpedFromY + vJump.f[1];
     self->srt.transl.z = objdata->jumpedFromZ + vJump.f[2];
@@ -712,7 +712,7 @@ static s32 fish_jump_handle_anticipation(Object* self) {
         objdata->animSpeed = 0.12f;
     }
 
-    rotate_vec3((const SRT *)&eulerRotation, vAntic.f);
+    mathRotateRPY((const SRT *)&eulerRotation, vAntic.f);
     self->srt.transl.x = objdata->jumpedFromX + vAntic.f[0];
     self->srt.transl.y = objdata->jumpedFromY - vAntic.f[1];
     self->srt.transl.z = objdata->jumpedFromZ + vAntic.f[2];

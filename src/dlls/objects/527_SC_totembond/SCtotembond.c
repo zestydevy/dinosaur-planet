@@ -184,9 +184,9 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         angle = i << 0xE; //degrees: 0, 90, 180, 270
         
         setupLF = objAllocSetup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);
-        setupLF->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
+        setupLF->base.x = (mathSinfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupLF->base.y = self->srt.transl.y;
-        setupLF->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
+        setupLF->base.z = (mathCosfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
         setupLF->base.loadFlags = objSetup->base.loadFlags;
         setupLF->base.byte5 = objSetup->base.byte5;
         setupLF->base.byte6 = objSetup->base.byte6;
@@ -199,9 +199,9 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupLF->unk32 = 1;
         
         setupFlame = objAllocSetup(sizeof(SCFlameGameFlame_Setup), OBJ_SC_flamegamefla);
-        setupFlame->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
+        setupFlame->base.x = (mathSinfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupFlame->base.y = self->srt.transl.y;
-        setupFlame->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
+        setupFlame->base.z = (mathCosfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
         setupFlame->base.loadFlags = objSetup->base.loadFlags;
         setupFlame->base.byte5 = objSetup->base.byte5;
         setupFlame->base.byte6 = objSetup->base.byte6;
@@ -305,7 +305,7 @@ s32 SCTotemBond_pick_new_direction(Object* self, SCTotemBond_Data* objData) {
         return 1;
     }
     
-    random = directionsAvailable[rand_next(0, directions - 1)];
+    random = directionsAvailable[mathRnd(0, directions - 1)];
     if (objData->directionIndex == random) {
         mainSetBits(dActivateGamebits[objData->directionIndex], 1);
     }

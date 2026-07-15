@@ -131,8 +131,8 @@ void DFbarrel_handle_movement(Object* self) {
                     delta = (range - delta) / range;
                     delta *= riverFlow->srt.scale * 10.0f;
                     
-                    objData->accelerationX += fsin16_precise(riverFlow->srt.yaw) * delta;
-                    objData->accelerationZ += fcos16_precise(riverFlow->srt.yaw) * delta;
+                    objData->accelerationX += mathSinfInterp(riverFlow->srt.yaw) * delta;
+                    objData->accelerationZ += mathCosfInterp(riverFlow->srt.yaw) * delta;
                 }
             }
         }

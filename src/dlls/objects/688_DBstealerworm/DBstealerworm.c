@@ -226,7 +226,7 @@ void DBStealerWorm_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     objData = baddie->objdata;
     bzero(objData, sizeof(DBStealerWorm_DataActual));
     objData->resetTimeThreshold = (f32) (objSetup->unk2C * 60.0f);
-    objData->roarSoundTimer = rand_next(10, 300);
+    objData->roarSoundTimer = mathRnd(10, 300);
     
     objAnimSet(self, 8, 0.0f, 0);
     
@@ -495,7 +495,7 @@ void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
             value catches up with and overtakes roarSoundTimer's value. */
         if ((objData->roarSoundTimer > objData->roarSoundInterval) && (playerDistance < 400.0f)) {
             gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[1], 0x1E, NULL, NULL, 0, NULL);
-            objData->roarSoundInterval += rand_next(50, 250);
+            objData->roarSoundInterval += mathRnd(50, 250);
         }
         
         objData->roarSoundTimer += gUpdateRateF;
@@ -669,8 +669,8 @@ static s32 DBStealerWorm_avoid_objects(Object* self, s32* objTypes, f32* avoidSc
         } 
     }
 
-    sin = fsin16_precise(self->srt.yaw);
-    cos = fcos16_precise(self->srt.yaw);
+    sin = mathSinfInterp(self->srt.yaw);
+    cos = mathCosfInterp(self->srt.yaw);
 
     baddie->fsa.unk27C += ((rotateFactor1 * cos) - (rotateFactor2 * sin));
     baddie->fsa.unk278 += ((-rotateFactor2 * cos) - (rotateFactor1 * sin));
@@ -766,7 +766,7 @@ s32 DBStealerWorm_anim_state_0_pop_out_of_ground(Object* self, ObjFSA_Data* fsa,
         objData->flags |= 2;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dChirpSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -842,7 +842,7 @@ s32 DBStealerWorm_anim_state_2_bite_attack(Object* self, ObjFSA_Data* fsa, f32 u
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        if (rand_next(0, 1)) {
+        if (mathRnd(0, 1)) {
             if (fsa->enteredAnimState) {
                 objAnimSet(self, 6, 0.0f, 0);
                 fsa->unk33A = 0;
@@ -863,8 +863,8 @@ s32 DBStealerWorm_anim_state_2_bite_attack(Object* self, ObjFSA_Data* fsa, f32 u
     }
     
     objData->flags |= 2;
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 2), dChirpSounds);
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, rand_next(0, 2), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 2), dChirpSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 7, mathRnd(0, 2), dChirpSounds);
     
     return 0;
 }
@@ -966,11 +966,11 @@ s32 DBStealerWorm_anim_state_5_hit(Object* self, ObjFSA_Data* fsa, f32 updateRat
         
         weapon = objGetPlayer()->linkedObject;
         if (((DLL_251_Weapons*)weapon->dll)->vtbl->func16(weapon)) {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     fsa->unk341 = 0x10;

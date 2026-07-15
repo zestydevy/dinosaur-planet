@@ -124,7 +124,7 @@ void campath_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
     sp130 = sp13C - temp_s0->srt.transl.y;
     sp12C = sp138 - temp_s0->srt.transl.z;
     if (sp118->campath.unk3B & 1) {
-        sp126 = 0x8000 - arctan2_f(sp134, sp12C);
+        sp126 = 0x8000 - mathAtan2f(sp134, sp12C);
     } else {
         sp126 = (s16) curvesCatmullRom(spD0, var_fs0, NULL) + 0x8000;
     }
@@ -134,7 +134,7 @@ void campath_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
         sp122 = (s16) curvesCatmullRom(spB0, var_fs0, NULL);
     }
     if (sp118->campath.unk3B & 2) {
-        var_s0 = arctan2_f(sp130, sqrtf(SQ(sp134) + SQ(sp12C)));
+        var_s0 = mathAtan2f(sp130, sqrtf(SQ(sp134) + SQ(sp12C)));
         var_s0 = (s16) ((f32) var_s0 - curvesCatmullRom(spC0, var_fs0, NULL));
     } else {
         var_s0 = (s16) curvesCatmullRom(spC0, var_fs0, NULL);
@@ -247,11 +247,11 @@ void campath_func_588(Cam* cam) {
     spFC = cam->srt.transl.y - player->srt.transl.y;
     spF8 = cam->srt.transl.z - player->srt.transl.z;
     if ((spCB & 1) != 0) {
-        cam->srt.yaw = 0x8000 - arctan2_f(sp100, spF8);
+        cam->srt.yaw = 0x8000 - mathAtan2f(sp100, spF8);
     }
     if ((spCB & 2) != 0) {
         temp = sqrtf(SQ(sp100) + SQ(spF8));
-        var_v1 = arctan2_f(spFC, temp);
+        var_v1 = mathAtan2f(spFC, temp);
         var_v1 = ((var_v1 - curvesCatmullRom(sp78, sp104, NULL)) - (cam->srt.pitch & 0xFFFF));
         CIRCLE_WRAP(var_v1);
         cam->srt.pitch += (var_v1 * gUpdateRate) >> 3;

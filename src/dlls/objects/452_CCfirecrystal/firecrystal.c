@@ -87,7 +87,7 @@ void CCfirecrystal_control(Object* self) {
     objSetup = (CCfirecrystal_Setup*)self->setup;
     objData = self->data;
     
-    self->opacity = rand_next(0, 56) + 100;
+    self->opacity = mathRnd(0, 56) + 100;
     
     switch (objData->state) {
     case FireCrystal_State_3_Collected:
@@ -197,7 +197,7 @@ Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scro
 // offset: 0x614 | func: 8
 /** Randomises opacity */
 s32 CCfirecrystal_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
-    self->opacity = rand_next(0, 56) + 100;
+    self->opacity = mathRnd(0, 56) + 100;
     return 0;
 }
 

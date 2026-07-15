@@ -79,7 +79,7 @@ void WCTrex_setup(Object* self, ObjSetup* setup, s32 reset) {
 void WCTrex_control(Object* self) {
     WCTrex_Data* objdata = self->data;
 
-    objdata->playerDist = vec3_distance_xz(&self->globalPosition, &objGetPlayer()->globalPosition);
+    objdata->playerDist = vec3DistanceXZ(&self->globalPosition, &objGetPlayer()->globalPosition);
     objdata->fsa.flags |= OBJFSA_FLAG_2000000;
     gDLL_18_objfsa->vtbl->tick(self, &objdata->fsa, gUpdateRateF, gUpdateRateF, bss_0, bss_10);
     if (objdata->flags & 1) {
@@ -135,8 +135,8 @@ static void WCTrex_func_4A8(Object* self) {
     srt.pitch = self->srt.pitch;
     srt.roll = self->srt.roll;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 0.0f, 0.0f, &x, &y, &z);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, 0.0f, &x, &y, &z);
     shadowsSetCustomObjPos(self, x, y, z);
 }
 
@@ -166,7 +166,7 @@ static s32 WCTrex_func_608(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     self->velocity.z = (curveStruct->unk0.unk68.z - self->srt.transl.z) * gUpdateRateInverseF;
     self->srt.transl.x = curveStruct->unk0.unk68.x;
     self->srt.transl.z = curveStruct->unk0.unk68.z;
-    self->srt.yaw = arctan2_f(-curveStruct->unk0.unk74, -curveStruct->unk0.unk7C);
+    self->srt.yaw = mathAtan2f(-curveStruct->unk0.unk74, -curveStruct->unk0.unk7C);
     objGetAnimChange(self, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), &fsa->animTickDelta);
     return 0;
 }
@@ -181,7 +181,7 @@ static s32 WCTrex_func_728(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->animTickDelta = 0.012f;
         xDiff = self->srt.transl.x - player->srt.transl.x;
         zDiff = self->srt.transl.z - player->srt.transl.z;
-        angle = arctan2_f(xDiff, zDiff) - (self->srt.yaw & 0xFFFF);
+        angle = mathAtan2f(xDiff, zDiff) - (self->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(angle);
         if (angle > 0x4000) {} // required to match, from default.dol
     }
@@ -226,7 +226,7 @@ static s32 WCTrex_func_8DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         return 1 + 1;
     }
     if ((objdata->playerDist < 100.0f) && (objdata->attackCooldown <= 0.0f)) {
-        objdata->attackCooldown = (f32) rand_next(120, 250);
+        objdata->attackCooldown = (f32) mathRnd(120, 250);
         return 3 + 1;
     }
     return 0;

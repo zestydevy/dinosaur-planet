@@ -73,11 +73,11 @@ void ExplodeAnimator_create_partfx(Object* self, ExplodeAnimator_Setup* objSetup
     f32 params[2];
 
     for (i = 0; i < objSetup->particleCount; i++){
-        params[0] = rand_next(objSetup->param0Min, objSetup->param0Max) * 0.01f;
-        params[1] = rand_next(objSetup->param1Min, objSetup->param1Max) * 0.01f;
-        transform.transl.x = rand_next(objSetup->xMin, objSetup->xMax);
-        transform.transl.y = rand_next(objSetup->yMin, objSetup->yMax);
-        transform.transl.z = rand_next(objSetup->zMin, objSetup->zMax);
+        params[0] = mathRnd(objSetup->param0Min, objSetup->param0Max) * 0.01f;
+        params[1] = mathRnd(objSetup->param1Min, objSetup->param1Max) * 0.01f;
+        transform.transl.x = mathRnd(objSetup->xMin, objSetup->xMax);
+        transform.transl.y = mathRnd(objSetup->yMin, objSetup->yMax);
+        transform.transl.z = mathRnd(objSetup->zMin, objSetup->zMax);
         gDLL_17_partfx->vtbl->spawn(self, objSetup->particleID, &transform, 2, -1, &params);
     }
 }

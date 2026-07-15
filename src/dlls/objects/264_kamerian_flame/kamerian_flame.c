@@ -92,8 +92,8 @@ void kamerian_flame_control(Object* self) {
     }
 
     self->velocity.y += -0.046f * gUpdateRateF;
-    self->srt.yaw = arctan2_f(self->velocity.x, self->velocity.z);
-    self->srt.pitch = arctan2_f(sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z)), self->velocity.y) - 0x4000;
+    self->srt.yaw = mathAtan2f(self->velocity.x, self->velocity.z);
+    self->srt.pitch = mathAtan2f(sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z)), self->velocity.y) - 0x4000;
     objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     func_80026128(self, 0xA, 1, 0);
     func_80026940(self, 0x10);

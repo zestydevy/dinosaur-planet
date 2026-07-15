@@ -41,8 +41,8 @@ void scarab_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
 
     objData->state = Scarab_STATE_Tumbling_Through_Air;
     objData->lifetime = setup->lifetime;
-    objData->rollSpeed = rand_next(1000, 4000);
-    objData->goldClimbDuration = rand_next(50, 100);
+    objData->rollSpeed = mathRnd(1000, 4000);
+    objData->goldClimbDuration = mathRnd(50, 100);
     objData->initialY = setup->base.y;
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
@@ -168,7 +168,7 @@ void scarab_control(Object* self) {
         }
 
         //Create particles while tumbling through air
-        if (rand_next(0, 2) == 0) {
+        if (mathRnd(0, 2) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, 0x519, NULL, 1, -1, 0);
         }
 
@@ -209,9 +209,9 @@ void scarab_control(Object* self) {
             transform.transl.x = 0;
             transform.transl.y = 0;
             transform.transl.z = 0;
-            transform.yaw = rand_next(-10000, 10000);
-            rotate_vec3(&transform, self->velocity.f);
-            yaw = self->srt.yaw - (u16)arctan2_f(self->velocity.x, -self->velocity.z);
+            transform.yaw = mathRnd(-10000, 10000);
+            mathRotateRPY(&transform, self->velocity.f);
+            yaw = self->srt.yaw - (u16)mathAtan2f(self->velocity.x, -self->velocity.z);
             CIRCLE_WRAP(yaw)
             self->srt.yaw = yaw;
             objData->state = Scarab_STATE_Tumbling_Through_Air;
@@ -250,12 +250,12 @@ void scarab_control(Object* self) {
             
             //Random yaw/roll jitter (in Rainbow Scarab's case, go towards player as well)
             if (self->id == OBJ_Rain_scarab) {
-                self->srt.yaw = arctan2_f(player->srt.transl.x - self->srt.transl.x, player->srt.transl.z - self->srt.transl.z) + 0x7FFF;
-                self->srt.yaw += rand_next(-1460, 1460);
+                self->srt.yaw = mathAtan2f(player->srt.transl.x - self->srt.transl.x, player->srt.transl.z - self->srt.transl.z) + 0x7FFF;
+                self->srt.yaw += mathRnd(-1460, 1460);
             } else {
-                self->srt.yaw += rand_next(-1460, 1460);
+                self->srt.yaw += mathRnd(-1460, 1460);
             }
-            self->srt.roll += rand_next(-1000, 1000);
+            self->srt.roll += mathRnd(-1000, 1000);
             
             self->velocity.x = objData->speedX;
             self->velocity.y = 0/*.0f*/;
@@ -268,7 +268,7 @@ void scarab_control(Object* self) {
             transform.roll = 0;
             transform.pitch = 0;
             transform.yaw = self->srt.yaw - objData->scurryInitialYaw;
-            rotate_vec3(&transform, (f32*)&self->velocity);
+            mathRotateRPY(&transform, (f32*)&self->velocity);
             
             //Handle lifetime timer
             objData->lifetime -= gUpdateRate;
@@ -336,7 +336,7 @@ void scarab_control(Object* self) {
         }
 
         //Collect scurrying Scarab when player is nearby (Rainbow Scarabs must also be stunned)
-        if ((objData->stunTimer || (self->id != OBJ_Rain_scarab)) && (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 25.0f)) {
+        if ((objData->stunTimer || (self->id != OBJ_Rain_scarab)) && (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 25.0f)) {
             //Play an item collection sequence the first time a Scarab is collected
             if (!mainGetBits(BIT_Tutorial_Collected_Scarab)) {
                 gDLL_3_Animation->vtbl->set_variable_obj(dSequenceIDs[objData->scarabTypeIndex], 0, 0);
@@ -366,7 +366,7 @@ void scarab_control(Object* self) {
         //Rainbow Scarab: attack behaviour (when not stunned)
         if ((objData->stunTimer == 0) && (self->id == OBJ_Rain_scarab)) {
             //Colliding with player
-            if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 20.0f) {
+            if (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 20.0f) {
                 //Hurt player (unless special Rainbow Scarab immunity gamebit is set!)
                 if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) == 0) {
                     objSendMesg(player, 0x60004, self, (void*)1);
@@ -499,7 +499,7 @@ void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg
         self->velocity.z /= doubleSpeed;
         objData->speedX = self->velocity.x;
         objData->speedZ = self->velocity.z;
-        self->srt.yaw = arctan2_f(-arg3->unk0->x, -arg3->unk0->z);
+        self->srt.yaw = mathAtan2f(-arg3->unk0->x, -arg3->unk0->z);
         return;
     }
 
@@ -510,21 +510,21 @@ void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg
     transform.roll = 0;
     transform.pitch = 0;
     transform.yaw = self->srt.yaw;
-    rotate_vec3(&transform, v.f);
+    mathRotateRPY(&transform, v.f);
 
     if (arg1){
-        angle = arctan2_f(v.x, v.y);
-        self->srt.pitch = arctan2_f(v.z, v.y);
+        angle = mathAtan2f(v.x, v.y);
+        self->srt.pitch = mathAtan2f(v.z, v.y);
         self->srt.roll = angle;
         return;
     }
 
     self->srt.roll = 0;
-    self->srt.pitch = arctan2_f(arg3->unk0->z + arg3->unk0->x, arg3->unk0->y);
+    self->srt.pitch = mathAtan2f(arg3->unk0->z + arg3->unk0->x, arg3->unk0->y);
     if (self->srt.pitch < 0){
         self->srt.pitch = -self->srt.pitch;
     }
-    self->srt.yaw = arctan2_f(arg3->unk0->x, arg3->unk0->z);
+    self->srt.yaw = mathAtan2f(arg3->unk0->x, arg3->unk0->z);
     return;
 }
 

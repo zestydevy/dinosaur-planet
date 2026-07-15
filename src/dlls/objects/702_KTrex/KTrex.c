@@ -465,10 +465,10 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         sp48.m[3][1] = 0.0f;
         sp48.m[3][0] = 0.0f;
         sp48.m[3][2] = 0.0f;
-        sKTData->unk16C.x = (f32) ((f32) rand_next(-0x32, 0x32) * 0.1f);
-        sKTData->unk16C.y = (f32) ((f32) rand_next(0x3C, 0x78) * 0.1f);
-        sKTData->unk16C.z = (f32) ((f32) rand_next(0x64, 0x96) * -0.25f);
-        vec3_transform(&sp48, sKTData->unk16C.x, sKTData->unk16C.y, sKTData->unk16C.z, &sKTData->unk16C.x, &sKTData->unk16C.y, &sKTData->unk16C.z);
+        sKTData->unk16C.x = (f32) ((f32) mathRnd(-0x32, 0x32) * 0.1f);
+        sKTData->unk16C.y = (f32) ((f32) mathRnd(0x3C, 0x78) * 0.1f);
+        sKTData->unk16C.z = (f32) ((f32) mathRnd(0x64, 0x96) * -0.25f);
+        mathMtxXFMF(&sp48, sKTData->unk16C.x, sKTData->unk16C.y, sKTData->unk16C.z, &sKTData->unk16C.x, &sKTData->unk16C.y, &sKTData->unk16C.z);
         sKTData->fxFlags |= KTFX_EnablePartFx;
     }
 }
@@ -738,7 +738,7 @@ static void dll_702_fx_tick(Object *self) {
     }
     if (sKTData->fxFlags & KTFX_Sound_GroundScrape) {
         // scraping ground, while knocked over
-        gDLL_6_AMSFX->vtbl->play(self, sSndScrapeGround[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, sSndScrapeGround[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_PainRoar) {
         // roar from getting zapped
@@ -746,7 +746,7 @@ static void dll_702_fx_tick(Object *self) {
     }
     if (sKTData->fxFlags & KTFX_Sound_FlailRoar) {
         // roar, flailing on ground
-        gDLL_6_AMSFX->vtbl->play(self, sSndRoars[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, sSndRoars[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Spit_Partfx_Disable) {
         sKTData->fxFlags = sKTData->fxFlags & ~(KTFX_Spit_Partfx_Disable | KTFX_Spit_Partfx);
@@ -903,7 +903,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             fsa->lastHitType = (s8) damageType;
             fsa->hitpoints -= 1;
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, sSndDeflectAttack[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(self, sSndDeflectAttack[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
             temp_v1 = modelInst->unk24;
             _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
@@ -917,8 +917,8 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.yaw = 0;
             _bss_60.pitch = 0;
             _bss_60.roll = 0;
-            sp3C[1] += rand_next(0, 0x9B);
-            sp3C[2] += rand_next(0, 0x9B);
+            sp3C[1] += mathRnd(0, 0x9B);
+            sp3C[2] += mathRnd(0, 0x9B);
             _data_E4->vtbl->func0(self, 0, &_bss_60, 1, -1, &sp3C);
         }
         if (fsa->hitpoints <= 0) {
@@ -992,8 +992,8 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     tempSRT.transl.y = 0.0f;
     tempSRT.transl.z = 0.0f;
     tempSRT.scale = 1.0f;
-    matrix_from_srt(&tempMtx, &tempSRT);
-    vec3_transform(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->velocity.x, &tempY, &self->velocity.z);
+    mathYprXyzMtx(&tempMtx, &tempSRT);
+    mathMtxXFMF(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->velocity.x, &tempY, &self->velocity.z);
     if (reversed) {
         self->srt.yaw = sKTData->turnStartYaw + (M_90_DEGREES * self->animProgress);
     } else {
@@ -1133,13 +1133,13 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate)
         if ((sKTData->fightProgress >= 2) && !(sKTData->flags & KTFLAG_ROLLED_CHANCE) && 
                 ((!reversed && sKTData->segmentPos >= 0.7f) || (reversed && sKTData->segmentPos <= 0.3f))) {
             chanceIdx = sKTData->fightProgress >> 1;
-            if (rand_next(0, 100) <= objsetup->chargeChance[chanceIdx]) {
+            if (mathRnd(0, 100) <= objsetup->chargeChance[chanceIdx]) {
                 sKTData->chargeCounter = 2;
                 dll_702_push_state(KT_LSTATE_5_CHARGE);
                 sKTData->roarType = 1;
                 return KT_LSTATE_4_ROAR + 1;
             }
-            if (rand_next(0, 100) <= objsetup->reverseChance[chanceIdx]) {
+            if (mathRnd(0, 100) <= objsetup->reverseChance[chanceIdx]) {
                 sKTData->roarType = 0;
                 dll_702_push_state(KT_LSTATE_11_REVERSE);
                 return KT_LSTATE_4_ROAR + 1;

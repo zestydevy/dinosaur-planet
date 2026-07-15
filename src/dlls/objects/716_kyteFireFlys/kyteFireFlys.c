@@ -67,7 +67,7 @@ void KyteFireFlys_control(Object* self) {
     if (objData->fireflyCount != 0) {
         sidekick = objGetSidekick();
         if (sidekick != NULL) {
-            if (vec3_distance_squared(&objGetPlayer()->globalPosition, &objData->curve->pos) <= SQ(objSetup->variance)) {
+            if (vec3DistanceSquared(&objGetPlayer()->globalPosition, &objData->curve->pos) <= SQ(objSetup->variance)) {
                 //Show Find command option
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
 
@@ -182,9 +182,9 @@ Object* KyteFireFlys_create_firefly(Object* self, s32 variance, s32 quarterVaria
     setup->base.fadeDistance = objSetup->fadeDistance;
     setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     setup->base.fadeFlags = objSetup->byte5;
-    setup->base.x = rand_next(-quarterVariance, quarterVariance) + self->srt.transl.x;
+    setup->base.x = mathRnd(-quarterVariance, quarterVariance) + self->srt.transl.x;
     setup->base.y = self->srt.transl.y;
-    setup->base.z = rand_next(-quarterVariance, quarterVariance) + self->srt.transl.z;
+    setup->base.z = mathRnd(-quarterVariance, quarterVariance) + self->srt.transl.z;
     setup->effectType = 3;
     setup->fxRange = variance;
     setup->varianceZ = quarterVariance;

@@ -88,11 +88,11 @@ void WGSH_flybaddie_setup(Object* self, WGSH_flybaddie_Setup* setup, s32 arg2) {
     objdata->curveT = 1.0f;
     objdata->unk51 = 0;
     objdata->unk50 = 0;
-    objdata->unk48 = rand_next(0, 65000);
+    objdata->unk48 = mathRnd(0, 65000);
     objdata->unk4A = 10000;
     objdata->unk53 = 1;
-    objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
-    objdata->unk4E = rand_next(0, 1000);
+    objdata->unk4C = (s16) (mathRnd(0, 1000) + 1000);
+    objdata->unk4E = mathRnd(0, 1000);
     if (setup->unk1A == 0) {
         objdata->unk44 = -130.0f;
     } else {
@@ -135,7 +135,7 @@ void WGSH_flybaddie_control(Object* self) {
         }
         if (objdata->unk4C <= 0) {
             WGSH_flybaddie_func_8A4(self);
-            objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
+            objdata->unk4C = (s16) (mathRnd(0, 1000) + 1000);
         }
         if (objdata->curveT > 1.0f) {
             objdata->curveT -= 1.0f;
@@ -210,11 +210,11 @@ static void WGSH_flybaddie_func_700(Object* self) {
     sp48[0] = 0.0f;
     sp48[1] = 0.0f;
     sp48[2] = objdata->unk44;
-    objdata->unk48 += (s16)rand_next(1000, 2000);
+    objdata->unk48 += (s16)mathRnd(1000, 2000);
     if (((objdata->unk4A < 0xFA1) && (objdata->unk53 == -1)) || ((objdata->unk4A >= 28000) && (objdata->unk53 == 1))) {
         objdata->unk53 = -objdata->unk53;
     }
-    objdata->unk4A += ((s16)rand_next(2000, 3000) * objdata->unk53);
+    objdata->unk4A += ((s16)mathRnd(2000, 3000) * objdata->unk53);
     sp30.roll = 0;
     sp30.transl.x = 0.0f;
     sp30.transl.y = 0.0f;
@@ -222,7 +222,7 @@ static void WGSH_flybaddie_func_700(Object* self) {
     sp30.scale = 1.0f;
     sp30.pitch = objdata->unk4A;
     sp30.yaw = objdata->unk48;
-    rotate_vec3(&sp30, sp48);
+    mathRotateRPY(&sp30, sp48);
     objdata->xCurve[3] = (sp48[0] + objdata->unk38);
     objdata->yCurve[3] = (sp48[1] + (objdata->unk3C + 20.0f));
     objdata->zCurve[3] = (sp48[2] + objdata->unk40);

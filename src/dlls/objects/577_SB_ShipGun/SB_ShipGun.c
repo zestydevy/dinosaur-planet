@@ -186,10 +186,10 @@ void SB_ShipGun_control(Object *self) {
         }
         dx1 = player->globalPosition.f[0] - self->globalPosition.f[0];
         dz1 = player->globalPosition.f[2] - self->globalPosition.f[2];
-        self->srt.yaw = arctan2_f(-dz1, dx1) * 2;
+        self->srt.yaw = mathAtan2f(-dz1, dx1) * 2;
         new_var = self->globalPosition.f[1];
         dy1 = player->globalPosition.f[1] - new_var;
-        objdata->unk6 = arctan2_f(-dy1, sqrtf((dx1 * dx1) + (dz1 * dz1)));
+        objdata->unk6 = mathAtan2f(-dy1, sqrtf((dx1 * dx1) + (dz1 * dz1)));
         if (objdata->unk6 >= 0x1F41) {
             objdata->unk6 = 0x1F40;
         } else if (objdata->unk6 < (-0x1F40)) {
@@ -209,7 +209,7 @@ void SB_ShipGun_control(Object *self) {
             sp84.x = 100.0f;
             sp84.y = 135.f;
             sp84.z = 0.0f;
-            rotate_vec3(&transform, (f32*)(&sp84));
+            mathRotateRPY(&transform, (f32*)(&sp84));
             cannonballSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_CannonBall);
             cannonballSetup->x = sp84.x + sp98;
             cannonballSetup->y = sp84.y + sp94;
@@ -233,7 +233,7 @@ void SB_ShipGun_control(Object *self) {
             cannonballObj->srt.transl.x += dy * 8.0f;
             cannonballObj->srt.transl.y += cannonballObj->velocity.y * 8.0f;
             cannonballObj->srt.transl.z += cannonballObj->velocity.z * 8.0f;
-            cannonballObj->srt.yaw = arctan2_f(cannonballObj->velocity.x, cannonballObj->velocity.z);
+            cannonballObj->srt.yaw = mathAtan2f(cannonballObj->velocity.x, cannonballObj->velocity.z);
             cannonballObj->unkDC = 0xB4;
             cannonballObj->unkE0 = (s32) objdata->cloudrunner;
             camUseShake();

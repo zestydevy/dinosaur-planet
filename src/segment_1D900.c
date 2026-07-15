@@ -279,7 +279,7 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
                 sp68.pitch = 0;
                 sp68.scale = 1.0f;
                 sp68.yaw = -D_800B1860[i]->yaw;
-                rotate_vec3(&sp68, &sp8C);
+                mathRotateRPY(&sp68, &sp8C);
                 sp80.x = sp8C;
                 sp80.y = sp90;
                 sp80.z = sp94;
@@ -673,7 +673,7 @@ void func_8001F094(ModelInstance* arg0) {
                     temp_ft4 = D_800BB198.f[2] - spBC->m[3][2];
                     temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(temp_fa1) + SQ(temp_ft4));
                 }
-                vec3_transform_no_translate(spBC, &spD8, &spD8);
+                mathMtxFastXFMF(spBC, &spD8, &spD8);
                 temp_fv0 = VECTOR_MAGNITUDE(spD8);
                 if (temp_fv0 != 0.0f) {
                     var_fv1 = 1.0f / temp_fv0;

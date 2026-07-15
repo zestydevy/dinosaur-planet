@@ -137,10 +137,10 @@ void NWtricky_control(Object *self) {
                     gaSetup = (GroundAnimator_Setup*)trickyballGroundAnimator->setup;
 
                     //Offer a hint if Tricky and the player stay at the toy's dig spot for a while
-                    if ((vec3_distance_squared(
+                    if ((vec3DistanceSquared(
                             &trickyballGroundAnimator->globalPosition,
                             &player->globalPosition) <= SQ(gaSetup->unk23)) && 
-                        (vec3_distance_squared(
+                        (vec3DistanceSquared(
                             &player->globalPosition, 
                             &tricky->globalPosition) <= 10000.0f)
                     ) {

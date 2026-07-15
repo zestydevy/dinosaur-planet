@@ -1543,7 +1543,7 @@ void texAnimateTexture(Texture *tex, s32 *renderFlags, s32 *progress) {
 
     if (random) {
         if (pingpong == 0) {
-            if (rand_next(0, 1000) >= 986) { // 1.4% chance
+            if (mathRnd(0, 1000) >= 986) { // 1.4% chance
                 *renderFlags &= ~RENDER_TEXANIM_REVERSE;
                 *renderFlags |= RENDER_TEXANIM_PINGPONG;
             }

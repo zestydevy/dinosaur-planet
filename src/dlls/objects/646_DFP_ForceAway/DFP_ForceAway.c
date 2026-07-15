@@ -197,8 +197,8 @@ static void DFP_ForceAway_type1_control(Object* self) {
         axisCounter++;
     }
     if (axisCounter == 3) {
-        sp24 = (f32) rand_next(-0x17, 0x17) * 0.01f;
-        ((DLL_210_Player*)player->dll)->vtbl->func73(player, sp24, (f32) rand_next(-0x17, 0x17) * 0.01f);
+        sp24 = (f32) mathRnd(-0x17, 0x17) * 0.01f;
+        ((DLL_210_Player*)player->dll)->vtbl->func73(player, sp24, (f32) mathRnd(-0x17, 0x17) * 0.01f);
     }
 }
 

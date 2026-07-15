@@ -85,8 +85,8 @@ void LanternFireFly_setup(Object* self, LanternFireFly_Setup* objSetup, s32 rese
     objData->tValueSpline = 1.0f;
     objData->splinePointNum = 0;
     objData->unk6F = 0;
-    objData->unk6A = rand_next(500, 1500);
-    objData->randomYaw = rand_next(0, 65000);
+    objData->unk6A = mathRnd(500, 1500);
+    objData->randomYaw = mathRnd(0, 65000);
     objData->varianceY = 4;
     objData->effectType = objSetup->effectType;
     objData->fxRange = 0.0f;
@@ -140,7 +140,7 @@ void LanternFireFly_control(Object* self) {
     self->srt.transl.z = objData->home.z + curvesBSpline(objData->splineZ, objData->tValueSpline, NULL);
     
     if ((objData->flagLightPerFirefly) == True) {
-        objData->tValueSpeed = (vec3_distance(&self->globalPosition, &objGetPlayer()->globalPosition) * 0.0015f) + 0.0001f;
+        objData->tValueSpeed = (vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition) * 0.0015f) + 0.0001f;
     }
     objData->tValueSpline += (objData->tValueSpeed * gUpdateRateF);
 
@@ -162,7 +162,7 @@ void LanternFireFly_control(Object* self) {
             lfxSetup->base.x = self->srt.transl.x;
             lfxSetup->base.y = self->srt.transl.y;
             lfxSetup->base.z = self->srt.transl.z;
-            lfxSetup->unk1E = rand_next(0, 1) + 0x1AA;
+            lfxSetup->unk1E = mathRnd(0, 1) + 0x1AA;
             lfxSetup->unk22 = -1;
             objData->lfxEmitter = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
             
@@ -230,7 +230,7 @@ void LanternFireFly_control(Object* self) {
         if (objData->lfxEmitter != NULL) {
             if (objData->lifetime < 180) {
                 lfxData = objData->lfxEmitter->data;
-                gDLL_11_Newlfx->vtbl->func6(lfxData->unk108->unk10, 0, fsin16_precise((objData->lifetime << 11)) * objData->lifetime);
+                gDLL_11_Newlfx->vtbl->func6(lfxData->unk108->unk10, 0, mathSinfInterp((objData->lifetime << 11)) * objData->lifetime);
             }
         }
     }
@@ -299,9 +299,9 @@ void LanternFireFly_append_spline_point(Object* self) {
     
     //Depending on flags, set either tValueSpeed based on either player distance or randomisation
     if (objData->flagLightPerFirefly == TRUE) {
-        objData->tValueSpeed = (vec3_distance(&self->globalPosition, &objGetPlayer()->globalPosition) * 0.0015f) + 0.0001f;
+        objData->tValueSpeed = (vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition) * 0.0015f) + 0.0001f;
     } else {
-        objData->tValueSpeed = rand_next(60, 90) * 0.0015f;
+        objData->tValueSpeed = mathRnd(60, 90) * 0.0015f;
     }
     
     //Append a new spline point
@@ -319,15 +319,15 @@ void LanternFireFly_set_next_spline_coord_randomised(Object* self) {
     
     //Randomise Y and Z components
     objData->nextSplineCoord.x = 0.0f;
-    objData->nextSplineCoord.y = rand_next(-objData->varianceY, objData->varianceY);
+    objData->nextSplineCoord.y = mathRnd(-objData->varianceY, objData->varianceY);
     if (objData->varianceZ < 21.0f) {
         objData->nextSplineCoord.z = 0.0f;
     } else {
-        objData->nextSplineCoord.z = objData->varianceZ - rand_next(20, (s16)objData->varianceZ);
+        objData->nextSplineCoord.z = objData->varianceZ - mathRnd(20, (s16)objData->varianceZ);
     }
     
     //Pick random yaw
-    objData->randomYaw += (s16)rand_next(3000, 5000);
+    objData->randomYaw += (s16)mathRnd(3000, 5000);
     
     //Rotate nextSplineCoord around random yaw
     transform.transl.x = 0;
@@ -337,7 +337,7 @@ void LanternFireFly_set_next_spline_coord_randomised(Object* self) {
     transform.roll = 0;
     transform.pitch = 0;
     transform.yaw = objData->randomYaw;
-    rotate_vec3(&transform, objData->nextSplineCoord.f);
+    mathRotateRPY(&transform, objData->nextSplineCoord.f);
 }
 
 // offset: 0xBE0 | func: 9 | export: 7

@@ -98,7 +98,7 @@ void DBDustGeezer_control(Object* self) {
     case DBDustGeezer_STATE_Main:
         if (objData->flags & DBDustGeezer_FLAG_Dug_Up) {
             //Firing a gem into the air
-            if (rand_next(0, 5) == 0) {
+            if (mathRnd(0, 5) == 0) {
                 STUBBED_PRINTF(" Firing %i ");
                 if (DBDustGeezer_launch_gem(self) == FALSE){
                     STUBBED_PRINTF("WARNING: BoneDust Buffer Full ");
@@ -117,15 +117,15 @@ void DBDustGeezer_control(Object* self) {
                     objData->cooldownTimer = objSetup->cooldownDuration;
                 }
             }
-            fxTrans.transl.x = rand_next(-20, 20) * 0.001f;
-            fxTrans.transl.z = rand_next( 20, 80) * 0.01f;
-            fxTrans.transl.y = rand_next(-20, 20) * 0.001f;
+            fxTrans.transl.x = mathRnd(-20, 20) * 0.001f;
+            fxTrans.transl.z = mathRnd( 20, 80) * 0.01f;
+            fxTrans.transl.y = mathRnd(-20, 20) * 0.001f;
             gDLL_17_partfx->vtbl->spawn(self, 0x3C3, &fxTrans, 0, -1, 0);
         } else {
             //Enable "Find" sidekick command when nearby
             player = objGetPlayer();
             sidekick = objGetSidekick();
-            if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
+            if (sidekick && vec3DistanceSquared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
             }
         }
@@ -152,7 +152,7 @@ void DBDustGeezer_control(Object* self) {
         gDLL_6_AMSFX->vtbl->play(self, SOUND_A20_Electric_Surge_Quieter, MAX_VOLUME, 0, 0, 0, 0);
     }
     
-    if (rand_next(0, 10) == 0) {
+    if (mathRnd(0, 10) == 0) {
         STUBBED_PRINTF(" Called Part effect ");
         gDLL_17_partfx->vtbl->spawn(self, 0x3BE, 0, 0, -1, 0);
     }
@@ -270,12 +270,12 @@ int DBDustGeezer_launch_gem(Object* self) {
    
     //Launch the gem
     dust = objData->boneDust[dustIndex];
-    position.x = rand_next(-objData->range, objData->range) + self->srt.transl.x;
+    position.x = mathRnd(-objData->range, objData->range) + self->srt.transl.x;
     position.y = self->srt.transl.y + 20.0f;
-    position.z = rand_next(-objData->range, objData->range) + self->srt.transl.z;
-    speed.x = rand_next(-objData->range, objData->range) * 0.01f;
-    speed.z = rand_next(-objData->range, objData->range) * 0.01f;
-    speed.y = rand_next(50, 100) * 0.025f;
+    position.z = mathRnd(-objData->range, objData->range) + self->srt.transl.z;
+    speed.x = mathRnd(-objData->range, objData->range) * 0.01f;
+    speed.z = mathRnd(-objData->range, objData->range) * 0.01f;
+    speed.y = mathRnd(50, 100) * 0.025f;
     ((DLL_685_DBBoneDust*)dust->dll)->vtbl->launch(dust, &position, &speed, self->srt.transl.y + 15.0f);
     
     //Create effects

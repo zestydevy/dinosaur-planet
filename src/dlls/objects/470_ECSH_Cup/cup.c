@@ -57,8 +57,8 @@ void ECSHCup_setup(Object* self, ECSHCup_Setup* objSetup, s32 arg2) {
     objData->speedZ = 0;
 
     objData->cupIndex = objSetup->cupIndex;
-    objData->bobTimer = rand_next(0, 600);
-    objData->rotateSpeed = rand_next(-800, 800);
+    objData->bobTimer = mathRnd(0, 600);
+    objData->rotateSpeed = mathRnd(-800, 800);
     objData->bobSpeed = 1;
     self->opacityWithFade = 0;
     objData->fxTimer = 0;
@@ -202,7 +202,7 @@ void ECSHCup_control(Object* self) {
         self->srt.transl.x = goal.x;
         self->srt.transl.z = goal.z;
         objData->prevState = state;
-    } else if ((state == Cup_STATE_Await_Choice) && player && vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
+    } else if ((state == Cup_STATE_Await_Choice) && player && vec3Distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
         ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->choose_cup(objData->cupIndex);
         if (objData->cupIndex == cupWithSpirit) {
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);

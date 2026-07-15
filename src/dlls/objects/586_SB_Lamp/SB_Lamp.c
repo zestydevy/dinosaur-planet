@@ -93,7 +93,7 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     pdy = 0.0f;
     objdata = self->data;
     camera = camGet();
-    if (rand_next(0, 1) != 0) {
+    if (mathRnd(0, 1) != 0) {
         animObjData->unk9D = 4;
     } else {
         animObjData->unk9D = 8;

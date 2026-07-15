@@ -111,9 +111,9 @@ void camnormal_func_A8(Cam* cam, s32 arg1, CamNormal_Params* data) {
     player = cam->player;
     switch (arg1) {
     case 0:
-        cam->srt.transl.x = player->srt.transl.x + (fsin16_precise(player->srt.yaw) * (f32) data->unk1A);
+        cam->srt.transl.x = player->srt.transl.x + (mathSinfInterp(player->srt.yaw) * (f32) data->unk1A);
         cam->srt.transl.y = player->srt.transl.y + (f32) data->unk1F;
-        cam->srt.transl.z = player->srt.transl.z + (fcos16_precise(player->srt.yaw) * (f32) data->unk1A);
+        cam->srt.transl.z = player->srt.transl.z + (mathCosfInterp(player->srt.yaw) * (f32) data->unk1A);
         cam->srt.yaw = 0;
         cam->srt.pitch = 0;
         cam->srt.roll = 0;
@@ -137,7 +137,7 @@ void camnormal_func_A8(Cam* cam, s32 arg1, CamNormal_Params* data) {
         camnormal_func_2A5C(cam, player);
         gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp48, &sp44, &sp40, &sp3C, sState->unk8C);
         sp44 = cam->srt.transl.y - (player->srt.transl.y + sState->unk8C);
-        cam->srt.pitch = arctan2_f(sp44, sp3C);
+        cam->srt.pitch = mathAtan2f(sp44, sp3C);
         cam->srt.roll = 0;
         cam->positionMirror.x = cam->srt.transl.x;
         cam->positionMirror.y = cam->srt.transl.y;
@@ -373,7 +373,7 @@ void camnormal_func_ED4(Cam* cam, Object* arg1) {
 
 // offset: 0x11F0 | func: 5 | export: 5
 void camnormal_func_11F0(Cam* cam, f32 arg1, f32 arg2) {
-    s32 var_v1 = arctan2_f(cam->srt.transl.y - (arg1 + sState->unk8C), arg2) - (cam->srt.pitch & 0xFFFF);
+    s32 var_v1 = mathAtan2f(cam->srt.transl.y - (arg1 + sState->unk8C), arg2) - (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     cam->srt.pitch += ((s32) ((f32) var_v1 * bss_4) / sState->unkAE);
 }
@@ -413,25 +413,25 @@ void camnormal_func_12E8(Cam* cam, Object* arg1, f32 arg2, f32 arg3) {
     if (arg1->controlNo == OBJCONTROL_Player) {
         sp40 = arg1->data;
         collider = &sp40->unk0.unk4;
-        sp44.yaw = 0x8000 - arctan2_f(spD4, spCC);
+        sp44.yaw = 0x8000 - mathAtan2f(spD4, spCC);
         sp44.pitch = 0;
         sp44.roll = 0;
         sp44.scale = 1.0f;
         sp44.transl.x = 0.0f;
         sp44.transl.y = 0.0f;
         sp44.transl.z = 0.0f;
-        matrix_from_srt_reversed(&sp6C, &sp44);
-        vec3_transform(&sp6C, 
+        mathRpyXyzMtx(&sp6C, &sp44);
+        mathMtxXFMF(&sp6C, 
             collider->floorNormalX, collider->floorNormalY, collider->floorNormalZ, 
             &sp68, &sp64, &sp60);
-        sState->unkA8 += ((s32) (((-arctan2_f(sp64, sp60) - sState->unkA8) + 0x4000) * gUpdateRate) >> 5);
+        sState->unkA8 += ((s32) (((-mathAtan2f(sp64, sp60) - sState->unkA8) + 0x4000) * gUpdateRate) >> 5);
     } else {
         sState->unkA8 -= ((s32) (sState->unkA8 * gUpdateRate) >> 5);
     }
     if (sState->unkA8 < 0) {
-        var_fv1 = fsin16_precise((s16) sState->unkA8) * sState->unk1C;
+        var_fv1 = mathSinfInterp((s16) sState->unkA8) * sState->unk1C;
     } else if (sState->unkA8 > 0) {
-        var_fv1 = fsin16_precise((s16) sState->unkA8) * sState->unk18;
+        var_fv1 = mathSinfInterp((s16) sState->unkA8) * sState->unk18;
     } else {
         var_fv1 = 0.0f;
     }
@@ -667,7 +667,7 @@ static void camnormal_func_22D0(Cam* cam, f32 arg1, f32 arg2) {
     s32 temp_a0;
     s32 temp;
 
-    temp_a0 = 0x8000 - arctan2_f(arg1, arg2);
+    temp_a0 = 0x8000 - mathAtan2f(arg1, arg2);
     temp = temp_a0 - (cam->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(temp);
     sState->unk80 -= ((s32) ((f32) sState->unk80 * bss_4) >> 3);
@@ -806,8 +806,8 @@ static void camnormal_func_29B4(Cam* cam, Object* arg1, f32 arg2, f32 arg3, s16 
     f32 sp24;
     f32 temp_fv0;
 
-    sp24 = fsin16_precise((s16) arg4);
-    temp_fv0 = fcos16_precise((s16) arg4);
+    sp24 = mathSinfInterp((s16) arg4);
+    temp_fv0 = mathCosfInterp((s16) arg4);
     arg2 = (arg2 * temp_fv0) - (arg3 * sp24);
     arg3 = ((arg2 * sp24) + (arg3 * temp_fv0));
     cam->srt.transl.x = arg1->srt.transl.x + arg2;
@@ -824,8 +824,8 @@ static void camnormal_func_2A5C(Cam* cam, Object* obj) {
     AABBs32 aabb;
     Unk80027934 sp30;
 
-    spD0 = fsin16_precise(obj->srt.yaw);
-    spCC = fcos16_precise(obj->srt.yaw);
+    spD0 = mathSinfInterp(obj->srt.yaw);
+    spCC = mathCosfInterp(obj->srt.yaw);
     temp_fv0 = sqrtf(SQ(sState->unk4) - SQ(sState->unk8));
     p2[0].x = obj->globalPosition.x + (spD0 * temp_fv0);
     p2[0].y = obj->globalPosition.y + sState->unk8C + sState->unk8;

@@ -129,8 +129,8 @@ void CFbarrel_control(Object* self) {
                     // Move to "create point" node
                     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0x1A, &self->srt);
                     STUBBED_PRINTF(" Should has Set position  %i %f %f \n", 0x1A, &self->srt.transl.x, &self->srt.transl.z);
-                    self->srt.transl.x += (f32) rand_next(-30, 30) * 0.1f;
-                    self->srt.transl.z += (f32) rand_next(-30, 30) * 0.1f;
+                    self->srt.transl.x += (f32) mathRnd(-30, 30) * 0.1f;
+                    self->srt.transl.z += (f32) mathRnd(-30, 30) * 0.1f;
                     bzero(&objdata->unk18, sizeof(Vec3f));
                     bzero(&self->velocity, sizeof(Vec3f));
                     if (objdata->unk3C_0) {
@@ -303,9 +303,9 @@ static void CFbarrel_func_AD4(Object* self) {
     }
     spAC = 0.0f;
     for (var_s3 = 0; var_s3 < 4; var_s3++) {
-        spB8 =  (10.0f * fsin16_precise(var_s2)) * fcos16_precise(self->srt.roll);
-        spB0 = (10.0f * fcos16_precise(var_s2)) * fcos16_precise(self->srt.pitch);
-        temp = ((10.0f * fsin16_precise(self->srt.roll)) * fsin16_precise(var_s2)) + (10.0f * fsin16_precise(self->srt.pitch) * fcos16_precise(var_s2));
+        spB8 =  (10.0f * mathSinfInterp(var_s2)) * mathCosfInterp(self->srt.roll);
+        spB0 = (10.0f * mathCosfInterp(var_s2)) * mathCosfInterp(self->srt.pitch);
+        temp = ((10.0f * mathSinfInterp(self->srt.roll)) * mathSinfInterp(var_s2)) + (10.0f * mathSinfInterp(self->srt.pitch) * mathCosfInterp(var_s2));
 
         var_s2 += 0x3FD2;
 

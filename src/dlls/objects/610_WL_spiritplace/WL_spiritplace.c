@@ -92,14 +92,14 @@ void WL_spiritplace_control(Object *self) {
     } else if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
         if (objdata->effectTimer <= 0) {
             _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
-            objdata->effectTimer = 195 + rand_next(0, 35);
+            objdata->effectTimer = 195 + mathRnd(0, 35);
         }
         objdata->effectTimer -= gUpdateRate;
     } else if (
         mainGetBits(objdata->bit1) &&
         objdata->mode == 0 &&
-        rand_next(1, 2) == 2 &&
-        vec3_distance(&objGetPlayer()->globalPosition, &self->globalPosition) < 90.0f) {
+        mathRnd(1, 2) == 2 &&
+        vec3Distance(&objGetPlayer()->globalPosition, &self->globalPosition) < 90.0f) {
             _data_4->vtbl->base.func0(self, 4, NULL, 1, -1, NULL);
     }
     if (mainGetBits(objdata->bit2) && objdata->unk0 == 0) {

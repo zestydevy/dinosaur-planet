@@ -998,7 +998,7 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     spD8.f[2] -= arg0->srt.transl.z;
     temp_fv0 = sqrtf(SQ(spD8.x) + SQ(spD8.y) + SQ(spD8.z));
     var_fs2 = temp_fv0 * 0.1f;
-    var_a0 = (s16)((u16)arctan2_f(spD8.y, sqrtf(SQ(spD8.x) + SQ(spD8.z))));
+    var_a0 = (s16)((u16)mathAtan2f(spD8.y, sqrtf(SQ(spD8.x) + SQ(spD8.z))));
     CLAMP(var_a0, 0, 0x2000);
     var_fv0 = (f32)var_a0 / 8192;
     if (var_fv0 > 1.0f) {
@@ -1480,9 +1480,9 @@ void shadows_func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
 
     camSetCameraSelector(0);
     camera = camGet();
-    sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) & 0xFFFF;
-    sp30 = fsin16_precise(-sp2A);
-    temp_fv0 = fcos16_precise(-sp2A);
+    sp2A = mathAtan2f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) & 0xFFFF;
+    sp30 = mathSinfInterp(-sp2A);
+    temp_fv0 = mathCosfInterp(-sp2A);
     temp_fa1 = obj->shadow->maxDistScale * 0.3333f;
     for (i = 0; i < 8; i++) {
         sp40[0] = D_800B9840[i * 3 + 0] * arg2;
@@ -1541,14 +1541,14 @@ void shadows_func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 ar
         arg4 = -5;
     }
     if (var_fa0 < var_fv1) {
-        var_v0 = arctan2s(var_fv1, temp_fa1);
+        var_v0 = mathAtan2(var_fv1, temp_fa1);
     } else {
-        var_v0 = arctan2_f(var_fa0, temp_fa1);
+        var_v0 = mathAtan2f(var_fa0, temp_fa1);
     }
     if (arg1->shadow->flags & OBJ_SHADOW_FLAG_USE_OBJ_YAW) {
         srt.yaw = arg1->srt.yaw;
     } else {
-        srt.yaw = arctan2_f(-temp_fs1, -temp_fs2);
+        srt.yaw = mathAtan2f(-temp_fs1, -temp_fs2);
     }
     // This needs to be u16???
     srt.pitch = (0x4000 - var_v0);
@@ -1568,7 +1568,7 @@ void shadows_func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 ar
             pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
             pos.z = (D_800B97E0[i * 3 + 2] * (arg1->shadow->maxDistScale * temp_fs4)) - temp_fv0;
         }
-        rotate_vec3(&srt, pos.f);
+        mathRotateRPY(&srt, pos.f);
         arg2->x = pos.x;
         arg2->y = pos.y - arg4;
         arg2->z = pos.z;

@@ -196,7 +196,7 @@ void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
                 case 0x22: // Kyte
                     if (routeIsAllowedKyteCurve(neighbor, (UnkVoxmap2Struct*)route->goal) != 0) {
                         routeAddNeighbor(route, basePoint, baseCurveIdx, 
-                            (u32) (vec3_distance_squared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
+                            (u32) (vec3DistanceSquared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
                             neighbor);
                     }
                     break;
@@ -205,7 +205,7 @@ void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
                     if ((neighbor->type22.unk30 == -1 || mainGetBits(neighbor->type22.unk30) != 0) &&
                            (neighbor->type22.usedBit == -1 || mainGetBits(neighbor->type22.usedBit) == 0)) {
                         routeAddNeighbor(route, basePoint, baseCurveIdx, 
-                            (u32) (vec3_distance_squared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
+                            (u32) (vec3DistanceSquared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
                             neighbor);
                     }
                     break;
@@ -374,7 +374,7 @@ RoutePoint* routeAddPoint(Route* route, CurveSetup *curve, u32 dist, u16 prevPoi
     point->curve = curve;
     point->netDist = dist;
     point->prevPointIdx = (u8) prevPointIdx;
-    point->goalDist = (u32) vec3_distance_squared(&curve->pos, route->goalPos);
+    point->goalDist = (u32) vec3DistanceSquared(&curve->pos, route->goalPos);
     return point;
 }
 

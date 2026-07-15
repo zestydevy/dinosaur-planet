@@ -47,13 +47,13 @@ void checkpoint4_setup(Object *self, checkpoint4_Setup *setup, s32 arg2) {
     transform.transl.z = 0.0f;
     transform.scale = 1.0f;
 
-    matrix_from_srt(&mtx, &transform);
-    vec3_transform(&mtx, 0.0f, 0.0f, 1.0f, &objdata->x, &objdata->y, &objdata->z);
+    mathYprXyzMtx(&mtx, &transform);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &objdata->x, &objdata->y, &objdata->z);
 
     objdata->unk1C = -((self->srt.transl.x * objdata->x) + (self->srt.transl.y * objdata->y) + (self->srt.transl.z * objdata->z));
     objdata->scale = self->srt.scale * 2;
 
-    for (i = 0; i != SOME_COUNT; i++) objdata->unk34[i] = rand_next(0, 240);
+    for (i = 0; i != SOME_COUNT; i++) objdata->unk34[i] = mathRnd(0, 240);
 
     self->unkDC = setup->unk28;
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_UPDATE_DISABLED);

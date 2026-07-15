@@ -123,7 +123,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 
 	//Set initial pursuer distance
 	if (player != NULL) {
-		distanceToPlayer = vec3_distance(&player->globalPosition, &self->globalPosition);
+		distanceToPlayer = vec3Distance(&player->globalPosition, &self->globalPosition);
 		objData->prevPursuerDistance = distanceToPlayer;
 		objData->pursuerDistance = distanceToPlayer;
 	} else {
@@ -198,11 +198,11 @@ void SHmushroom_control(Object* self) {
 	//Handle being chased by player/sidekick (get distance to whoever's nearest)
 	objData->prevPursuerDistance = objData->pursuerDistance;
 
-	playerDistanceSquared = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
+	playerDistanceSquared = vec3DistanceSquared(&player->globalPosition, &self->globalPosition);
 	if (sidekick == NULL) {
 		objData->pursuerDistance = sqrtf(playerDistanceSquared);
 	} else {
-		sidekickDistanceSquared = vec3_distance_squared(&sidekick->globalPosition, &self->globalPosition);
+		sidekickDistanceSquared = vec3DistanceSquared(&sidekick->globalPosition, &self->globalPosition);
 		if (playerDistanceSquared < sidekickDistanceSquared) {
 			objData->pursuerDistance = sqrtf(playerDistanceSquared);
 		} else {
@@ -318,9 +318,9 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 	dx = self->srt.transl.x - fleeingFrom->srt.transl.x;
 	dz = self->srt.transl.z - fleeingFrom->srt.transl.z;
 
-	angle = arctan2_f(-dx, -dz);
-	dz = fsin16_precise(angle);
-	dx = fcos16_precise(angle);
+	angle = mathAtan2f(-dx, -dz);
+	dz = mathSinfInterp(angle);
+	dx = mathCosfInterp(angle);
 
 	v.x = self->srt.transl.x - (distance * dz);
 	v.y = self->srt.transl.y;
@@ -331,11 +331,11 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 		angle2 = angle;
 
 		sp90[2] = sp90[3] = dz;
-		sp80[2] = fsin16_precise( M_20_DEGREES);
-		sp80[3] = fsin16_precise(-M_20_DEGREES);
+		sp80[2] = mathSinfInterp( M_20_DEGREES);
+		sp80[3] = mathSinfInterp(-M_20_DEGREES);
 		sp90[0] = sp90[1] = dx;
-		sp80[0] = fcos16_precise( M_20_DEGREES);
-		sp80[1] = fcos16_precise(-M_20_DEGREES);
+		sp80[0] = mathCosfInterp( M_20_DEGREES);
+		sp80[1] = mathCosfInterp(-M_20_DEGREES);
 
 		for (i = 0; i < 8; i++) {
 			dummy:
@@ -392,7 +392,7 @@ s16 SHmushroom_flee_along_curve(Object* self, Object* fleeingFrom, SHmushroom_Da
 		}
 	}
 
-	return (s32)arctan2_f(-dx, -dz);
+	return (s32)mathAtan2f(-dx, -dz);
 }
 
 // offset: 0xD74 | func: 9
@@ -476,7 +476,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 			//Alert state: staying still in poised pose, facing towards threat
 			dx = self->srt.transl.x - player->srt.transl.x;
 			dz = self->srt.transl.z - player->srt.transl.z;
-			self->srt.yaw = arctan2_f(-dx,-dz);
+			self->srt.yaw = mathAtan2f(-dx,-dz);
 
 			//If pursuer backs off, play a little "phew!" animation
 			if ((objSetup->alertRange + 10.0f) < objData->pursuerDistance) {
@@ -552,7 +552,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 		//Start stunned sound loop
 		if (objData->stunnedTimer <= 0) {
 			gDLL_6_AMSFX->vtbl->play(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandleStun, NULL, 0, NULL);
-			objData->stunnedTimer = rand_next(240, 300);
+			objData->stunnedTimer = mathRnd(240, 300);
 		}
 
 		//Run down stun timer
@@ -653,7 +653,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	}
 
 	//Move
-	self->velocity.x = fsin16_precise(objData->fleeAngle) * speed;
-	self->velocity.z = fcos16_precise(objData->fleeAngle) * speed;
+	self->velocity.x = mathSinfInterp(objData->fleeAngle) * speed;
+	self->velocity.z = mathCosfInterp(objData->fleeAngle) * speed;
 	objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
 }

@@ -107,7 +107,7 @@ void PortalSpellDoor_control(Object* self) {
             self->unkAF |= 8;
             self->def->scale *= 0.5f;
             objData->portalDoorAnim = PortalSpellDoor_create_anim_obj(self);
-            gDLL_3_Animation->vtbl->func31(fsin16_precise(self->srt.yaw) * objData->scale, 0.0f, fcos16_precise(self->srt.yaw) * objData->scale);
+            gDLL_3_Animation->vtbl->func31(mathSinfInterp(self->srt.yaw) * objData->scale, 0.0f, mathCosfInterp(self->srt.yaw) * objData->scale);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objData->sequencePlayed = TRUE;
             objData->timer = -1;

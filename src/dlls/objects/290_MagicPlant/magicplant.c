@@ -151,8 +151,8 @@ void MagicPlant_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         srt.pitch = 0;
         srt.roll = 0;
         srt.scale = objData->magic->srt.scale / self->srt.scale;
-        matrix_from_srt(&mtx, &srt);
-        matrix_concat_4x3(&mtx, jointMtx, &mtx);
+        mathYprXyzMtx(&mtx, &srt);
+        mathMtxCat4x3F(&mtx, jointMtx, &mtx);
 
         objData->magic->srt.transl.x = mtx.m[3][0] + gWorldX;
         objData->magic->srt.transl.y = mtx.m[3][1];
@@ -235,7 +235,7 @@ void MagicPlant_handle_state_growing(Object* self, MagicPlant_Setup* objSetup, M
     if (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->base.uID)) {
         MagicPlant_create_magic_dust(self, dMagicDustObjIDs[objSetup->dustIdx & 3]);
         objData->state = MagicPlant_STATE_Idle;
-        objData->idleAnimDelay = rand_next(300, 600);
+        objData->idleAnimDelay = mathRnd(300, 600);
     } else {
         objData->growProgress = MagicPlant_get_growth_tvalue(objSetup);
     }
@@ -317,17 +317,17 @@ void MagicPlant_handle_state_idle(Object *self, MagicPlant_Setup* objSetup, Magi
             //Start idle loop after a random delay
             objData->idleAnimDelay -= gUpdateRate;
             if (objData->idleAnimDelay <= 0) {
-                objData->idleAnimDelay = rand_next(300, 600);
+                objData->idleAnimDelay = mathRnd(300, 600);
             } else if (self->curModAnimId != MagicPlant_MODANIM_Sway_Loop) {
                 objData->animProgress = 0.005f;
-                random = rand_next(0, 99); //Start at random point in animation (likely to desync nearby idling plants)
+                random = mathRnd(0, 99); //Start at random point in animation (likely to desync nearby idling plants)
                 objAnimSet(self, MagicPlant_MODANIM_Sway_Loop, random * 0.01f, 0);
             }
         }
     }
 
     //Start/stop twinkling sound loop as player approaches/leaves
-    playerDistance = vec3_distance(&self->globalPosition, &player->globalPosition);
+    playerDistance = vec3Distance(&self->globalPosition, &player->globalPosition);
     if (objData->soundHandle == 0) {
         if (playerDistance < TWINKLE_START_DISTANCE) {
             gDLL_6_AMSFX->vtbl->play(self, SOUND_619_Twinkle_Loop, 96, &objData->soundHandle, NULL, 0, NULL);
@@ -367,13 +367,13 @@ void MagicPlant_handle_state_damaged(Object* self, MagicPlant_Setup *objSetup, M
             magicDust->unkC4 = NULL;
 
             //Set gem's speed so it flies in direction plant was facing (with slight variance)
-            speed = rand_next(39, 44) / 100.0f;
+            speed = mathRnd(39, 44) / 100.0f;
             dx = self->srt.transl.x - player->srt.transl.x;
             dz = self->srt.transl.z - player->srt.transl.z;
-            angle = arctan2_f(dx, dz);
-            rand_next(angle - 0x1000, angle + 0x1000); //@bug? result not used
-            magicDust->velocity.x = fsin16_precise(self->srt.yaw) * speed;
-            magicDust->velocity.z = fcos16_precise(self->srt.yaw) * speed;
+            angle = mathAtan2f(dx, dz);
+            mathRnd(angle - 0x1000, angle + 0x1000); //@bug? result not used
+            magicDust->velocity.x = mathSinfInterp(self->srt.yaw) * speed;
+            magicDust->velocity.z = mathCosfInterp(self->srt.yaw) * speed;
 
             //Play ringing sound
             gDLL_6_AMSFX->vtbl->play(self, SOUND_61A_Crystal_Ringing, MAX_VOLUME, NULL, NULL, 0, NULL);

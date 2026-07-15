@@ -93,7 +93,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     objdata = self->data;
     camera = camGet();
     setup = (CFLamp_Setup*)self->setup;
-    if (rand_next(0, 1) != 0) {
+    if (mathRnd(0, 1) != 0) {
         arg2->unk9D = 4;
     } else {
         arg2->unk9D = 8;

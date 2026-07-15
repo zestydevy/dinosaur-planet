@@ -40,7 +40,7 @@ void TrickyGuard_control(Object* self) {
     }
 
     if (((DLL_ISidekick*)tricky->dll)->vtbl->func25(tricky) == 0) {
-        if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(objSetup->range)) {
+        if (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) <= SQ(objSetup->range)) {
             ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_3_Guard);
         }
     }

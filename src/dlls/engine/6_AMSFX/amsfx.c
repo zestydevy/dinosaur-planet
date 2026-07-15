@@ -666,7 +666,7 @@ void amsfx_water_falls_control(void) {
     highVolume = 0;
     lowVolume = 0;
     for (i = 0; i < sWaterFallSprayCount; i++) {
-        distance = vec3_distance(camera + 1, &sWaterFallSprays[i].pos);
+        distance = vec3Distance(camera + 1, &sWaterFallSprays[i].pos);
         if (distance < sWaterFallSprays[i].unkC) {
             lowVolume += MAX_VOLUME - (u8)((u32)((distance / sWaterFallSprays[i].unkC) * MAX_VOLUME_F));
         }
@@ -940,15 +940,15 @@ static void amsfx_func_2438(f32 x, f32 z, s32 arg2, s8* outPan, s8* outFx) {
     s8 sp2A;
 
     magnitude = sqrtf(SQ(x) + SQ(z));
-    theta = -arctan2_f(x, z);
+    theta = -mathAtan2f(x, z);
     theta = (arg2 - theta) - M_180_DEGREES;
     CIRCLE_WRAP(theta)
     if (magnitude <= 100.0f) {
-        panOffset = -((sin16_precise(theta) / 1024) * (magnitude * 0.01f));
-        sp2A = (s8) -((cos16_precise(theta) / 1024) * (magnitude * 0.01f));
+        panOffset = -((mathSinInterp(theta) / 1024) * (magnitude * 0.01f));
+        sp2A = (s8) -((mathCosInterp(theta) / 1024) * (magnitude * 0.01f));
     } else {
-        panOffset = -sin16(theta) / 1024;
-        sp2A = (s8)  (-cos16(theta) / 1024) ;
+        panOffset = -mathSin(theta) / 1024;
+        sp2A = (s8)  (-mathCos(theta) / 1024) ;
     }
     sp2A = -sp2A;
     *outPan = PAN_CENTRE + panOffset;

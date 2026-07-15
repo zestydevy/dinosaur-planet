@@ -250,9 +250,9 @@ static s32 dll_232_func_978(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         self->velocity.f[0] = -self->velocity.f[0];
         self->velocity.f[1] += 5.0f;
         self->velocity.f[2] = -self->velocity.f[2];
-        bat->unk24 = rand_next(-0xFA0, 0xFA0);
-        bat->unk22 = rand_next(-0xFA0, 0xFA0);
-        bat->unk26 = rand_next(-0xFA0, 0xFA0);
+        bat->unk24 = mathRnd(-0xFA0, 0xFA0);
+        bat->unk22 = mathRnd(-0xFA0, 0xFA0);
+        bat->unk26 = mathRnd(-0xFA0, 0xFA0);
         fsa->logicState = 3;
     }
     self->objhitInfo->unk5E = 0;
@@ -304,7 +304,7 @@ static void dll_232_func_AB8(Object* self, Bat_Data* bat) {
         self->velocity.f[2] = -6.0f;
     }
     temp_t0 = self->srt.yaw;
-    res = atan2f_to_s(self->velocity.f[0], self->velocity.f[2]);
+    res = Arctanf(self->velocity.f[0], self->velocity.f[2]);
     self->srt.yaw = res;
     temp_t0 = self->srt.yaw - temp_t0;
     self->srt.roll += ((self->srt.roll - (temp_t0)) >> 2);
@@ -320,11 +320,11 @@ static s32 dll_232_func_CF0(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
     baddie = self->data;
     bat = baddie->objdata;
-    sp26 = rand_next(-0x8000, 0x7FFF);
+    sp26 = mathRnd(-0x8000, 0x7FFF);
     sp20 = baddie->unk3E2 * 0.75f;
-    bat->unkC = (fsin16(sp26) * sp20) + bat->unk0;
-    bat->unk10 = rand_next(0x1E, 0x64) + bat->unk4;
-    bat->unk14 = (fcos16(sp26) * sp20) + bat->unk8;
+    bat->unkC = (Sinf(sp26) * sp20) + bat->unk0;
+    bat->unk10 = mathRnd(0x1E, 0x64) + bat->unk4;
+    bat->unk14 = (Cosf(sp26) * sp20) + bat->unk8;
     dll_232_func_AB8(self, bat);
 
     if (baddie->unk3B6 == 1) {

@@ -301,7 +301,7 @@ void dll_496_control(Object* snowhorn) {
     mapsObj = (SnowHorn_Setup*)snowhorn->setup;
     player = objGetPlayer();
 
-    if (vec3_distance_xz_squared(&snowhorn->globalPosition, &player->globalPosition) 
+    if (vec3DistanceXZSquared(&snowhorn->globalPosition, &player->globalPosition) 
             < 2.0f * (objdata->unkRadius * objdata->unkRadius)) {
         if (!(objdata->unk424 & 0x80)) {
             objdata->unk424 |= 0x80;
@@ -332,7 +332,7 @@ void dll_496_control(Object* snowhorn) {
         return;
     }
 
-    objdata->distanceFromPlayer = vec3_distance(&snowhorn->globalPosition, &player->globalPosition);
+    objdata->distanceFromPlayer = vec3Distance(&snowhorn->globalPosition, &player->globalPosition);
     switch (mapsObj->unk1D) {
         case 0:
             dll_496_func_D80(snowhorn, objdata, mapsObj);
@@ -378,7 +378,7 @@ void dll_496_control(Object* snowhorn) {
 
     if ((objdata->chatSequenceList != 0) && (snowhorn->unkAF & 1)) {
         if (objdata->unk424 & 0x20) {
-            seqIndex = rand_next(0, objdata->unk426 - 1);
+            seqIndex = mathRnd(0, objdata->unk426 - 1);
         } else {
             seqIndex = objdata->unk425;
         }
@@ -478,7 +478,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
                 if (temp2 != NULL) {
                     temp2->frame = 0x200;
                 }
-                objdata->sleepTimer = rand_next(0, 300);
+                objdata->sleepTimer = mathRnd(0, 300);
             }
             break;
         case MODANIM_SnowHorn_Sleep:
@@ -548,7 +548,7 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     Object* player;
 
     if (_data_270 != 0) {
-        objdata->sleepTimer = rand_next(0, 300);
+        objdata->sleepTimer = mathRnd(0, 300);
         objdata->flags |= 0x8000;
 
         snowhorn->unkAF |= 8;
@@ -566,11 +566,11 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     if (!player) 
         return;
     
-    if ((f32)objdata->unkRadius*objdata->unkRadius < vec3_distance_squared(&snowhorn->globalPosition, &player->globalPosition)) {
+    if ((f32)objdata->unkRadius*objdata->unkRadius < vec3DistanceSquared(&snowhorn->globalPosition, &player->globalPosition)) {
         objdata->sleepTimer += gUpdateRate;
         if (objdata->sleepTimer > 900) {
             gDLL_3_Animation->vtbl->start_obj_sequence(7, snowhorn, -1); //play seq 7?
-            objdata->sleepTimer = (s16) -rand_next(0, 50);
+            objdata->sleepTimer = (s16) -mathRnd(0, 50);
         }
         return;
     } 
@@ -670,7 +670,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             srt.pitch = 0;
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
-            rotate_vec3(&srt, v.f);
+            mathRotateRPY(&srt, v.f);
             srt.transl.f[0] = objdata->playerPositionCopy.f[0] + v.f[0];
             srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
             srt.transl.f[2] = objdata->playerPositionCopy.f[2] + v.f[2];
@@ -689,7 +689,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 srt.pitch = 0;
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
-                rotate_vec3(&srt, v.f);
+                mathRotateRPY(&srt, v.f);
                 srt.transl.f[0] = objdata->playerPositionCopy.f[0] + v.f[0];
                 srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
                 srt.transl.f[2] = objdata->playerPositionCopy.f[2] + v.f[2];
@@ -709,7 +709,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 srt.pitch = 0;
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
-                rotate_vec3(&srt, v.f);
+                mathRotateRPY(&srt, v.f);
                 f2 = self->globalPosition.x;
                 f12 = self->globalPosition.y;
                 f14 = self->globalPosition.z;
@@ -736,7 +736,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             srt.pitch = 0;
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
-            rotate_vec3(&srt, v.f);
+            mathRotateRPY(&srt, v.f);
 
             f2 = self->globalPosition.x;
             f12 = self->globalPosition.y;
@@ -774,7 +774,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 objdata->unkE = (u16) (0x8000 - temp_v0_2[1]);
                 player = objGetPlayer();
                 
-                var_v1 = (arctan2_f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
+                var_v1 = (mathAtan2f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
                 CIRCLE_WRAP(var_v1)
                 
                 objAnimSet(self, 1, 0.0f, 0);
@@ -786,9 +786,9 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 } else {
                     temp = &self->srt.yaw;
                     seqBoneAngle = temp_v0_2[1] + *temp;
-                    objdata->unk38 = self->srt.transl.x - (fsin16_precise(seqBoneAngle) * 250.0f);
+                    objdata->unk38 = self->srt.transl.x - (mathSinfInterp(seqBoneAngle) * 250.0f);
                     objdata->unk3C = self->srt.transl.y;
-                    objdata->unk40 = self->srt.transl.z - (fcos16_precise(seqBoneAngle) * 250.0f);
+                    objdata->unk40 = self->srt.transl.z - (mathCosfInterp(seqBoneAngle) * 250.0f);
                     objdata->unk2C = 0;
                 }
                 objdata->flags = 0;
@@ -865,7 +865,7 @@ static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn
         } else {
             objdata->flags |= 0x8000;
             objdata->walkSpeed = 0.0f;
-            objdata->sleepTimer = rand_next(0, 300);
+            objdata->sleepTimer = mathRnd(0, 300);
             return;
         }
     } else if (snowhorn->unkAF & 4 || objdata->distanceFromPlayer < 80.0f) {
@@ -902,7 +902,7 @@ static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn
         //a1 for objGetAnimChange seems to be speed (obtained by dividing magnitude of dPos by dt)!
         speed = sqrtf(SQ(dx) + SQ(dz)) * gUpdateRateInverseF;
         objGetAnimChange(snowhorn, speed, &objdata->unk50);
-        snowhorn->srt.yaw = arctan2_f(curveStruct->unk0.unk74, curveStruct->unk0.unk7C) + 0x8000;
+        snowhorn->srt.yaw = mathAtan2f(curveStruct->unk0.unk74, curveStruct->unk0.unk7C) + 0x8000;
         snowhorn->srt.transl.x = curveStruct->unk0.unk68.x;
         snowhorn->srt.transl.z = curveStruct->unk0.unk68.z;
         objdata->unk424 &= ~0x4;
@@ -970,7 +970,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             
             frostWeed = objGetNearestTypeTo(OBJTYPE_Baddie, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
-            if (frostWeed && frostWeed->id == OBJ_Tumbleweed2 && vec3_distance_xz_squared(&self->globalPosition, &frostWeed->globalPosition) < SQ(setup->unkRadius)) {
+            if (frostWeed && frostWeed->id == OBJ_Tumbleweed2 && vec3DistanceXZSquared(&self->globalPosition, &frostWeed->globalPosition) < SQ(setup->unkRadius)) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {
                     ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->gravitate_towards_point(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
@@ -987,7 +987,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             }
             break;
         case 3:
-            if (vec3_distance_xz_squared(&objdata->playerPositionCopy, &objdata->frostWeed->globalPosition) < 6.25f) {
+            if (vec3DistanceXZSquared(&objdata->playerPositionCopy, &objdata->frostWeed->globalPosition) < 6.25f) {
                 objdata->flags = 4;
             }
             break;

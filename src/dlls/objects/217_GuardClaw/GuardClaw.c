@@ -499,11 +499,11 @@ static void GuardClaw_func_1128(Object* self, Baddie* baddie, ObjFSA_Data* fsa) 
             GuardClaw_func_C34(self, baddie, fsa, 1);
         }
         if (baddie->unk3B0 & 1) {
-            sp4C = setup->x - (fsin16_precise(self->srt.yaw) * (f32) objdata->unkC);
-            sp48 = setup->z - (fcos16_precise(self->srt.yaw) * (f32) objdata->unkC);
+            sp4C = setup->x - (mathSinfInterp(self->srt.yaw) * (f32) objdata->unkC);
+            sp48 = setup->z - (mathCosfInterp(self->srt.yaw) * (f32) objdata->unkC);
         } else {
-            sp4C = self->srt.transl.x - (fsin16_precise(self->srt.yaw) * (f32) objdata->unkC);
-            sp48 = self->srt.transl.z - (fcos16_precise(self->srt.yaw) * (f32) objdata->unkC);
+            sp4C = self->srt.transl.x - (mathSinfInterp(self->srt.yaw) * (f32) objdata->unkC);
+            sp48 = self->srt.transl.z - (mathCosfInterp(self->srt.yaw) * (f32) objdata->unkC);
         }
         objdata->unk8 = gDLL_33_BaddieControl->vtbl->func2(self, sp4C, sp48, (f32) baddie->unk3E2, objGetPlayer());
         baddie->unk3BC.aimIsActive = 1;
@@ -536,8 +536,8 @@ static void GuardClaw_func_1520(Object* self, Baddie* baddie, ObjFSA_Data* fsa) 
     if ((fsa->unk33A != 0) && (fsa->logicState != 0)) {
         GuardClaw_func_C34(self, baddie, fsa, 0);
     }
-    sp50 = fsin16_precise(self->srt.yaw + 0x4000);
-    temp_fv0 = fcos16_precise(self->srt.yaw + 0x4000);
+    sp50 = mathSinfInterp(self->srt.yaw + 0x4000);
+    temp_fv0 = mathCosfInterp(self->srt.yaw + 0x4000);
     temp = -((self->srt.transl.x * sp50) + (self->srt.transl.z * temp_fv0));
     sp5C->unk8 = -((sp58->x * sp50) + (temp_fv0 * sp58->z) + temp);
     baddie->unk3BC.aimIsActive = 0;
@@ -686,7 +686,7 @@ static s32 GuardClaw_func_1F24(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objAnimSet(self, 7, 0.0f, 0);
         fsa->unk33A = 0;
     }
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(1, 3), data_C);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(1, 3), data_C);
     fsa->animTickDelta = 0.01f;
     fsa->unk278 = 0.0f;
     fsa->unk27C = 0.0f;
@@ -738,17 +738,17 @@ static s32 GuardClaw_func_21C8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (fsa->enteredAnimState != 0) {
         if (baddie->unk3B0 & 1) {
-            sp48 = setup->x - (fsin16_precise(self->srt.yaw) * (f32) objdata->unkC);
-            sp44 = setup->z - (fcos16_precise(self->srt.yaw) * (f32) objdata->unkC);
+            sp48 = setup->x - (mathSinfInterp(self->srt.yaw) * (f32) objdata->unkC);
+            sp44 = setup->z - (mathCosfInterp(self->srt.yaw) * (f32) objdata->unkC);
         } else {
-            sp48 = self->globalPosition.x - (fsin16_precise(self->srt.yaw) * (f32) objdata->unkC);
-            sp44 = self->globalPosition.z - (fcos16_precise(self->srt.yaw) * (f32) objdata->unkC);
+            sp48 = self->globalPosition.x - (mathSinfInterp(self->srt.yaw) * (f32) objdata->unkC);
+            sp44 = self->globalPosition.z - (mathCosfInterp(self->srt.yaw) * (f32) objdata->unkC);
         }
         sp4C = gDLL_33_BaddieControl->vtbl->func5(self, fsa, 40.0f);
         if (sidekick != NULL) {
             var_fv1_2 = gDLL_33_BaddieControl->vtbl->func2(self, sp48, sp44, (f32) baddie->unk3E2, sidekick);
         } else {
-            var_fv1_2 = rand_next(-1, 1);
+            var_fv1_2 = mathRnd(-1, 1);
         }
         if ((var_fv1_2 < 0.0f) && (sp4C & 8)) {
             if (fsa->enteredAnimState != 0) {
@@ -826,7 +826,7 @@ static s32 GuardClaw_func_26E0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         } else if (objdata->unk8 > 10.0f) {
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 4);
         } else {
-            u8 temp_v1_2 = rand_next(0, 6);
+            u8 temp_v1_2 = mathRnd(0, 6);
             switch (temp_v1_2) {
             case 0:
                 gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);

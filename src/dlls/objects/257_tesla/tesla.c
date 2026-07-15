@@ -83,7 +83,7 @@ void dll_257_control(Object* self) {
 
     if (setup) {}
     player = objGetPlayer();
-    sp68 = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
+    sp68 = vec3DistanceXZ(&player->globalPosition, &self->globalPosition);
     switch (objdata->unk8) {
     case 0:
         objdata->unk10 += setup->unk1F * gUpdateRateF * 0.01f;
@@ -181,7 +181,7 @@ void dll_257_control(Object* self) {
             objects = objGetAllOfType(OBJTYPE_Tesla, &sp54);
             for (i = 0; i != 2; i++) {
                 start:
-                temp_v0_5 = rand_next(0, sp54 - 1);\
+                temp_v0_5 = mathRnd(0, sp54 - 1);\
                 if (self->tabIdx != objects[temp_v0_5]->tabIdx) {\
                     curObj = objects[temp_v0_5];
                     if (((DLL_Unknown*)curObj->dll)->vtbl->func[7].withOneArgS32((s32)curObj) == 0) {

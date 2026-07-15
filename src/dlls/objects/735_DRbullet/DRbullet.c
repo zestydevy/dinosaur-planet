@@ -179,8 +179,8 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     self->velocity.y = velocity.f[1];
     self->velocity.z = velocity.f[2];    
     lateralSpeed = sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z));
-    self->srt.yaw = arctan2_f(self->velocity.x, self->velocity.z);
-    self->srt.pitch = -arctan2_f(self->velocity.y, lateralSpeed);
+    self->srt.yaw = mathAtan2f(self->velocity.x, self->velocity.z);
+    self->srt.pitch = -mathAtan2f(self->velocity.y, lateralSpeed);
     self->srt.roll = 0;
     func_8002674C(self);
 

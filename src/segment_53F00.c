@@ -339,10 +339,10 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
         arg6 ^= arg3;
         arg3 ^= arg6;
     }
-    temp_s4 = floor_f(arg1 / BLOCKS_GRID_UNIT_F);
-    temp_s7 = floor_f(arg3 / BLOCKS_GRID_UNIT_F);
-    temp_s5 = floor_f(arg4 / BLOCKS_GRID_UNIT_F);
-    temp_s3 = floor_f(arg6 / BLOCKS_GRID_UNIT_F);
+    temp_s4 = floorf(arg1 / BLOCKS_GRID_UNIT_F);
+    temp_s7 = floorf(arg3 / BLOCKS_GRID_UNIT_F);
+    temp_s5 = floorf(arg4 / BLOCKS_GRID_UNIT_F);
+    temp_s3 = floorf(arg6 / BLOCKS_GRID_UNIT_F);
     sp108 = 0;
     for (sp118 = 0; sp118 < 5; sp118++) {
         if ((temp_v0 = mapGetBlockFromGrid(temp_s4, temp_s7, sp118)) != NULL) {
@@ -570,10 +570,10 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
 
     sp7C = arg2->model;
 
-    vec3_transform(arg1->unk8, upperX, upperY, upperZ, &xBounds[0], &sp84, &zBounds[0]);
-    vec3_transform(arg1->unk8, upperX, upperY, lowerZ, &xBounds[1], &upperY, &zBounds[1]);
-    vec3_transform(arg1->unk8, lowerX, lowerY, upperZ, &xBounds[2], &sp84, &zBounds[2]);
-    vec3_transform(arg1->unk8, lowerX, lowerY, lowerZ, &xBounds[3], &lowerY, &zBounds[3]);
+    mathMtxXFMF(arg1->unk8, upperX, upperY, upperZ, &xBounds[0], &sp84, &zBounds[0]);
+    mathMtxXFMF(arg1->unk8, upperX, upperY, lowerZ, &xBounds[1], &upperY, &zBounds[1]);
+    mathMtxXFMF(arg1->unk8, lowerX, lowerY, upperZ, &xBounds[2], &sp84, &zBounds[2]);
+    mathMtxXFMF(arg1->unk8, lowerX, lowerY, lowerZ, &xBounds[3], &lowerY, &zBounds[3]);
 
     upperX = lowerX = xBounds[0];
     upperZ = lowerZ = zBounds[0];
@@ -735,12 +735,12 @@ s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg
             sp64 = var_s3->unk0;
             if (sp64 != NULL) {
                 for (var_s1 = 0, var_s2 = 0; var_s2 < arg3;) {
-                    vec3_transform(
+                    mathMtxXFMF(
                         var_s3->unk8,
                         arg1[var_s1 + 0], arg1[var_s1 + 1], arg1[var_s1 + 2],
                         &sp70[var_s1 + 0], &sp70[var_s1 + 1], &sp70[var_s1 + 2]
                     );
-                    vec3_transform(
+                    mathMtxXFMF(
                         var_s3->unk8,
                         arg2[var_s1 + 0], arg2[var_s1 + 1], arg2[var_s1 + 2],
                         &spA0[var_s1 + 0], &spA0[var_s1 + 1], &spA0[var_s1 + 2]
@@ -759,7 +759,7 @@ s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg
                 }
                 for (var_s1 = 0, var_s2 = 0, var_s5 = 1; var_s2 < arg3; var_s2++) {
                     if (sp6F & var_s5) {
-                        vec3_transform(
+                        mathMtxXFMF(
                             var_s3->unkC,
                             spA0[var_s1 + 0], spA0[var_s1 + 1], spA0[var_s1 + 2],
                             &arg2[var_s1 + 0], &arg2[var_s1 + 1], &arg2[var_s1 + 2]
@@ -935,7 +935,7 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                                 }
                             }
                             if (var_s3) {
-                                temp_fs0 = vec3_normalize(&sp190);
+                                temp_fs0 = vec3Normalize(&sp190);
                                 for (var_s0 = 0; var_s0 < 3; var_s0++) {
                                     // @fake
                                     dummy_label_911687: ;
@@ -951,7 +951,7 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                                         spF4.f[1] = var_s2->unk10[var_a1];
                                         spF4.f[2] = var_s2->unk16[var_a1];
                                         VECTOR_SUBTRACT(spF4, spE8, sp100);
-                                        sp10C.f[2] = vec3_normalize(&sp100);
+                                        sp10C.f[2] = vec3Normalize(&sp100);
                                         var_s4 = func_800567F4(&spE8, &sp1A8, &sp190, temp_fs0, &sp184, &sp168);
                                     }
                                 }
@@ -986,7 +986,7 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                                     sp190.f[0] = sp19C.f[0] - sp1A8.f[0];
                                     sp190.f[1] = sp19C.f[1] - sp1A8.f[1];
                                     sp190.f[2] = sp19C.f[2] - sp1A8.f[2];
-                                    temp_fs0 = vec3_normalize(&sp190);
+                                    temp_fs0 = vec3Normalize(&sp190);
                                     for (var_s0 = 0; var_s0 < 3; var_s0++) {
                                         if (var_s3 & (1 << var_s0)) {
                                             var_a1 = var_s0 + 1;
@@ -1000,7 +1000,7 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                                             spF4.f[1] = var_s2->unk10[var_a1];
                                             spF4.f[2] = var_s2->unk16[var_a1];
                                             VECTOR_SUBTRACT(spF4, spE8, sp100);
-                                            sp10C.f[2] = vec3_normalize(&sp100);
+                                            sp10C.f[2] = vec3Normalize(&sp100);
                                             var_s4 = func_800567F4(&spE8, &sp1A8, &sp190, temp_fs0, &sp184, &sp168);
                                         }
                                     }
@@ -1194,8 +1194,8 @@ s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, 
     f32 sp44;
     f32 sp40;
 
-    vec3_cross_product(arg2, &arg0[2], &sp64);
-    sp44 = vec3_normalize(&sp64);
+    vec3CrossProduct(arg2, &arg0[2], &sp64);
+    sp44 = vec3Normalize(&sp64);
     if (sp44 == 0.0f) {
         return 0;
     }
@@ -1203,10 +1203,10 @@ s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, 
     sp48 = DOT_PRODUCT(sp64, sp58);
     sp48 = SQ(sp48);
     if (sp48 <= arg0[3].f[1]) {
-        vec3_cross_product(&sp58, &arg0[2], &sp4C);
+        vec3CrossProduct(&sp58, &arg0[2], &sp4C);
         sp40 = -DOT_PRODUCT(sp4C, sp64) / sp44;
-        vec3_cross_product(&sp64, &arg0[2], &sp4C);
-        vec3_normalize(&sp4C);
+        vec3CrossProduct(&sp64, &arg0[2], &sp4C);
+        vec3Normalize(&sp4C);
         sp48 = sqrtf(arg0[3].f[1] - sp48) / DOT_PRODUCT((*arg2), sp4C);
         if (sp48 < 0.0f) {
             sp48 = -sp48;
@@ -1228,7 +1228,7 @@ s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, 
                 sp4C.f[1] += arg0->y;
                 sp4C.f[2] += arg0->z;
                 VECTOR_SUBTRACT(*arg4, sp4C, (*arg5));
-                vec3_normalize((Vec3f*)arg5);
+                vec3Normalize((Vec3f*)arg5);
                 arg5->f[3] = -DOT_PRODUCT((*arg4), (*arg5));
                 return 3;
             }
@@ -1273,7 +1273,7 @@ s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg
             arg2->f[1] += arg0->f[1];
             arg2->f[2] += arg0->f[2];
             VECTOR_SUBTRACT((*arg2), (*arg4), (*arg3));
-            vec3_normalize((Vec3f* ) arg3);
+            vec3Normalize((Vec3f* ) arg3);
             arg3->f[3] = -DOT_PRODUCT((*arg2), (*arg3));
             return 1;
         }
@@ -1294,7 +1294,7 @@ s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
         arg2->f[1] = arg3->f[1];
         arg2->f[2] = arg3->f[2];
         VECTOR_SUBTRACT((*arg2), (*arg1), sp58);
-        vec3_normalize(&sp58);
+        vec3Normalize(&sp58);
         // @fake
         if (arg4) {}
         for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
@@ -1336,7 +1336,7 @@ s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
             sp64.f[1] += arg0->f[1];
             sp64.f[2] += arg0->f[2];
             VECTOR_SUBTRACT((*arg2), sp64, sp58);
-            vec3_normalize(&sp58);
+            vec3Normalize(&sp58);
             VECTOR_SCALE(sp58, arg5);
             VECTOR_ADD(sp64, sp58, (*arg2));
         }
@@ -1344,7 +1344,7 @@ s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
         arg2->f[1] = arg3->f[1];
         sp54 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
         if (sp54 > 0/*.0f*/) {
-            sp54 = sp54 / fsin16_precise(arctan2_f(arg4->f[1], sqrtf(SQ(arg4->f[2]) + SQ(arg4->f[0]))));
+            sp54 = sp54 / mathSinfInterp(mathAtan2f(arg4->f[1], sqrtf(SQ(arg4->f[2]) + SQ(arg4->f[0]))));
             arg2->f[1] += sp54 * arg4->f[1];
         }
     }
@@ -1362,7 +1362,7 @@ s32 func_800573D8(f32 arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, 
         arg2->f[1] = arg3->f[1];
         arg2->f[2] = arg3->f[2];
         VECTOR_SUBTRACT((*arg2), (*arg1), sp3C);
-        vec3_normalize(&sp3C);
+        vec3Normalize(&sp3C);
         // @fake
         if (arg4) {}
         for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
@@ -1398,8 +1398,8 @@ s32 func_800573D8(f32 arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, 
                 arg2->f[2] -= arg0 * arg4->f[2];
                 sp34 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
                 if (sp34 > 0.0f) {
-                    i = arctan2_f(arg4->f[1], sqrtf(SQ(arg4->x) + SQ(arg4->z)));
-                    temp_fv0 = fcos16_precise(i);
+                    i = mathAtan2f(arg4->f[1], sqrtf(SQ(arg4->x) + SQ(arg4->z)));
+                    temp_fv0 = mathCosfInterp(i);
                     if (temp_fv0 > 0/*.0f*/) {
                         sp34 /= temp_fv0;
                     }
@@ -1430,8 +1430,8 @@ s32 func_800573D8(f32 arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, 
             arg2->f[1] = arg3->f[1];
             sp34 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
             if (sp34 > 0.0f) {
-                i = arctan2_f(arg4->f[1], sqrtf(SQ(arg4->x) + SQ(arg4->z)));
-                sp34 = sp34 / fsin16_precise(i);
+                i = mathAtan2f(arg4->f[1], sqrtf(SQ(arg4->x) + SQ(arg4->z)));
+                sp34 = sp34 / mathSinfInterp(i);
                 arg2->f[1] += sp34 * arg4->f[1];
             }
         }
@@ -1449,7 +1449,7 @@ s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg
         arg3->f[1] = arg4->f[1];
         arg3->f[2] = arg4->f[2];
         VECTOR_SUBTRACT((*arg3), (*arg2), sp3C);
-        vec3_normalize(&sp3C);
+        vec3Normalize(&sp3C);
         // @fake
         if (arg5) {}
         for (i = 0; i < 0x65 && (arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5))) < arg6; i++) {
@@ -1485,7 +1485,7 @@ s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg
             arg3->f[1] -= (sp38 * arg5->f[1]);
             arg3->f[2] -= (sp38 * arg5->f[2]);
             VECTOR_SUBTRACT((*arg3), (*arg0), sp3C);
-            vec3_normalize(&sp3C);
+            vec3Normalize(&sp3C);
             VECTOR_SCALE(sp3C, arg6);
             VECTOR_ADD((*arg0), sp3C, (*arg3));
         }
@@ -1493,8 +1493,8 @@ s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg
         arg3->f[1] = arg4->f[1];
         sp38 = arg6 - (arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5)));
         if (sp38 > 0.0f) {
-            i = arctan2_f(arg5->f[1], sqrtf(SQ(arg5->x) + SQ(arg5->z)));
-            sp38 = sp38 / fsin16_precise(i);
+            i = mathAtan2f(arg5->f[1], sqrtf(SQ(arg5->x) + SQ(arg5->z)));
+            sp38 = sp38 / mathSinfInterp(i);
             arg3->f[1] += sp38 * arg5->f[1];
         }
     }
@@ -1527,7 +1527,7 @@ s32 func_80057F1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Func_80057F1C_Stru
     temp_s4 = &D_800BB268[D_800BB3A8];
     while (var_s0 < temp_s4) {
         if (var_s0->unk0 != NULL) {
-            vec3_transform(var_s0->unk8, arg1, 0.0f, arg3, &sp74, &sp70, &sp6C);
+            mathMtxXFMF(var_s0->unk8, arg1, 0.0f, arg3, &sp74, &sp70, &sp6C);
             func_80058144(&D_80092E70[var_s0->unk4], &D_80092E70[var_s0[1].unk4], var_s0, sp74, sp6C, arg5);
         } else {
             func_80058144(&D_80092E70[var_s0->unk4], &D_80092E70[var_s0[1].unk4], var_s0, arg1, arg3, arg5);
@@ -1596,8 +1596,8 @@ void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005
             }
             if (sp134 != 0) {
                 if (arg2->unk0 != NULL) {
-                    vec3_transform(arg2->unkC, arg3, spC8, arg4, &spCC, &spC8, &spC4);
-                    vec3_transform_no_translate(arg2->unkC, &spB4, &spB4);
+                    mathMtxXFMF(arg2->unkC, arg3, spC8, arg4, &spCC, &spC8, &spC4);
+                    mathMtxFastXFMF(arg2->unkC, &spB4, &spB4);
                 }
                 D_800BB4A0->unk0[0] = spC8;
                 D_800BB4A0->unk14 = var_s4->unk2E;
