@@ -52,7 +52,7 @@ void CannonBall_control(Object* self) {
     //Become destroyed upon colliding
     if ((self->unkE0 == 1) && (self->objhitInfo->unk9D != 0)) {
         gDLL_17_partfx->vtbl->spawn(self, 6, NULL, 1, -1, NULL);
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_95_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(NULL, SOUND_95_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
         objFreeObject(self);
         
         if (

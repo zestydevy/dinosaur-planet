@@ -63,7 +63,7 @@ void KT_RexLevel_control(Object *self) {
         } else {
             // KTrex is back to his normal state, raise floor switches again
             mainSetBits(BIT_55C, 1);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_699_KT_RaisingFloorSwitches, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_699_KT_RaisingFloorSwitches, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
     if (mainGetBits(BIT_55C)) {

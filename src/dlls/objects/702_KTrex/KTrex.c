@@ -718,58 +718,58 @@ static void dll_702_fx_tick(Object *self) {
     }
     if (sKTData->fxFlags & KTFX_Sound_68E) {
         // the little sound he makes turning a corner
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68E_KT_Rex_Noise, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68E_KT_Rex_Noise, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_BigRoar) {
         // the big roar
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68F_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68F_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_IntroRoar) {
         // intro cutscene roar
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_690_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_690_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_ChargeEndRoar) {
         // unused roar on "charge end" anim
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68D_KT_Rex_Roar_Kinda, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68D_KT_Rex_Roar_Kinda, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_WallSlam) {
         // wall slam on charge turn
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6FC_KT_Rex_Slam, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6FC_KT_Rex_Slam, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_GroundScrape) {
         // scraping ground, while knocked over
-        gDLL_6_AMSFX->vtbl->play(self, sSndScrapeGround[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, sSndScrapeGround[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_PainRoar) {
         // roar from getting zapped
-        gDLL_6_AMSFX->vtbl->play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_FlailRoar) {
         // roar, flailing on ground
-        gDLL_6_AMSFX->vtbl->play(self, sSndRoars[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, sSndRoars[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Spit_Partfx_Disable) {
         sKTData->fxFlags = sKTData->fxFlags & ~(KTFX_Spit_Partfx_Disable | KTFX_Spit_Partfx);
     }
     if (sKTData->fxFlags & KTFX_Sound_Explosion) {
         // explosion sound, when he falls on the ground. also during intro
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
         camUseShake();
         camSetShakeOffset(2.0f * sp48);
     }
     if (sKTData->fxFlags & KTFX_Sound_Breathing1) {
         // breathing
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68B_KT_Rex_Breathing1, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68B_KT_Rex_Breathing1, MAX_VOLUME, NULL, NULL, 0, NULL);
         sKTData->breathingSfxIndex ^= 1;
     }
     if (sKTData->fxFlags & KTFX_Sound_Breathing2) {
         // more breathing
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68C_KT_Rex_Breathing2, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68C_KT_Rex_Breathing2, MAX_VOLUME, NULL, NULL, 0, NULL);
         sKTData->breathingSfxIndex ^= 1;
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right1 | KTFX_Footfall_Left1)) {
         // footfall
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             camUseShake();
             camSetShakeOffset(sp48);
@@ -778,7 +778,7 @@ static void dll_702_fx_tick(Object *self) {
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right2 | KTFX_Footfall_Left2)) {
         // footfall
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             camUseShake();
             camSetShakeOffset(2.0f * sp48);
@@ -787,7 +787,7 @@ static void dll_702_fx_tick(Object *self) {
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right3 | KTFX_Footfall_Left3)) {
         // footfall
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             camUseShake();
             camSetShakeOffset(3.0f * sp48);
@@ -893,8 +893,8 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[hitSphereID][2];
             _bss_60.transl.z = temp_v1->m[hitSphereID][3] + gWorldZ;
-            gDLL_6_AMSFX->vtbl->play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_2_Camera->vtbl->change_mode(2, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B2, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B3, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
@@ -903,7 +903,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             fsa->lastHitType = (s8) damageType;
             fsa->hitpoints -= 1;
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, sSndDeflectAttack[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, sSndDeflectAttack[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
             temp_v1 = modelInst->unk24;
             _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;

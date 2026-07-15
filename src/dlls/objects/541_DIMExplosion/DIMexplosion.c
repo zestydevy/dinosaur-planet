@@ -20,7 +20,7 @@ void DIMExplosion_setup(Object* self, DIMExplosion_Setup* objSetup, s32 arg2) {
     
     objData->initialScale = 0.01f;
     self->srt.scale = 0.01f;
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_389_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_389_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 

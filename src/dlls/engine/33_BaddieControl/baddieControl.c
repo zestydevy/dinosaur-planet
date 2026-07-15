@@ -719,7 +719,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
             fsa->lastHitType = (s8) hitType;
         }
         if (*arg7 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(*arg7);
+            dll_amSfx->Stop(*arg7);
             *arg7 = 0;
         }
         objSendMesg(sp50, 0xE0001, obj, NULL);
@@ -737,7 +737,7 @@ s32 BaddieControl_func_1D88(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s1
     while (objRecvMesg(obj, &mesgID, &sender, (void*)&mesgArg) != 0) {
         switch (mesgID) {
             case 0x140001:
-                gDLL_6_AMSFX->vtbl->play(obj, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(obj, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
                 break;
             case 0x4:
                 objSendMesg(sender, 5, obj, NULL);
@@ -896,7 +896,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
 // offset: 0x24FC | func: 19 | export: 15
 void BaddieControl_free(Object* obj, Baddie* baddie, u8 arg2) {
     if (baddie->unk3A8 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(baddie->unk3A8);
+        dll_amSfx->Stop(baddie->unk3A8);
     }
     if (!(baddie->unk3B0 & arg2)) {
         if (baddie->unk3A6 != 0) {

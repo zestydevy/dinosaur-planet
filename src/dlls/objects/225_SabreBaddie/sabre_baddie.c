@@ -605,13 +605,13 @@ s32 dll_225_func_1604(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState == FALSE) {
         if (!(fsa->unk34A & 1)) {
             if (_data_0[idx].unk24 < self->animProgress) {
-                gDLL_6_AMSFX->vtbl->play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
                 fsa->unk34A |= 1;
             }
         }
         
         if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
-            gDLL_6_AMSFX->vtbl->play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
             fsa->unk34A |= 2;
         }
     }
@@ -644,12 +644,12 @@ s32 dll_225_func_1878(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState == FALSE) {
         if (!(fsa->unk34A & 1)) {
             if (_data_0[idx].unk24 < self->animProgress) {
-                gDLL_6_AMSFX->vtbl->play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
                 fsa->unk34A |= 1;
             }
         }
         if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
-            gDLL_6_AMSFX->vtbl->play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
             fsa->unk34A |= 2;
         }
     }
@@ -682,13 +682,13 @@ s32 dll_225_func_1AEC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState == FALSE) {
         if (!(fsa->unk34A & 1)) {
             if (_data_0[idx].unk24 < self->animProgress) {
-                gDLL_6_AMSFX->vtbl->play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, _data_0[idx].unk2C, MAX_VOLUME, NULL, NULL, 0, NULL);
                 fsa->unk34A |= 1;
             }
         }
         
         if (!(fsa->unk34A & 2) && (_data_0[idx].unk28 < self->animProgress)) {
-            gDLL_6_AMSFX->vtbl->play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, _data_20C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
             fsa->unk34A |= 2;
         }
     }
@@ -710,7 +710,7 @@ s32 dll_225_func_1D60(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->enteredAnimState) {
-        gDLL_6_AMSFX->vtbl->play(self, 0x66B, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0x66B, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     fsa->unk341 = 3;

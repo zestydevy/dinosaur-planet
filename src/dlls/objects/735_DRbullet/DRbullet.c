@@ -80,7 +80,7 @@ void DRbullet_control(Object* self) {
                 objData->timer = 0;
                 if (self->objhitInfo->unk58 & 8) {
                     STUBBED_PRINTF(" hit sometime ");
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_851_Laser_Blast, 0x7F, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_851_Laser_Blast, 0x7F, NULL, NULL, 0, NULL);
                 }
                 if (0 && objData->timer == 0){
                     STUBBED_PRINTF(" long time ");
@@ -104,7 +104,7 @@ void DRbullet_control(Object* self) {
 
     //Control whooshing sound volume as bullet passes player
     if (objData->whooshSoundHandle) {
-        gDLL_6_AMSFX->vtbl->update_doppler(objData->whooshSoundHandle, self, objGetPlayer(), 150.0f);
+        dll_amSfx->UpdateDoppler(objData->whooshSoundHandle, self, objGetPlayer(), 150.0f);
     }
 }
 
@@ -186,7 +186,7 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
 
     //Set bullet to "fired" state and play sound
     objData->state = BULLET_STATE_FIRED;
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_927_Harsh_Electric_Loop, 0x7F, &objData->whooshSoundHandle, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_927_Harsh_Electric_Loop, 0x7F, &objData->whooshSoundHandle, NULL, 0, NULL);
 
     //Set bullet's expiry timer based on 10 second trajectory after being fired
     futurePosition.x = self->velocity.x * 600.0f;
@@ -267,13 +267,13 @@ s32 DRbullet_tick_impact(Object* self) {
 
         //Stop whoosh sound
         if (objData->whooshSoundHandle) {
-            gDLL_6_AMSFX->vtbl->stop(objData->whooshSoundHandle);
+            dll_amSfx->Stop(objData->whooshSoundHandle);
             objData->whooshSoundHandle = 0;
         }
 
         func_800267A4(self);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_380_Scorching_Impact, 0x7F, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_386_Squelched_Impact, 0x7F, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_380_Scorching_Impact, 0x7F, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_386_Squelched_Impact, 0x7F, NULL, NULL, 0, NULL);
     }
 
     //Increment timer, and return True if bullet has been in impact state for a while

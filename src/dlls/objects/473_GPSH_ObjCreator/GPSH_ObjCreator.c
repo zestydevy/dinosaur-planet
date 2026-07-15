@@ -89,7 +89,7 @@ void GPSH_ObjCreator_control(Object* self) {
             modgfx = dllLoad(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);
             modgfx->vtbl->func0(self, 4, 0, 1, -1, 0);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
             dllFree(modgfx);
             objdata->timerRate = 1;
             self->unkE0 = 1;
@@ -98,7 +98,7 @@ void GPSH_ObjCreator_control(Object* self) {
             modgfx = dllLoad(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);
             modgfx->vtbl->func0(self, 4, 0, 1, -1, 0);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
             dllFree(modgfx);
             objdata->timerRate = 1;
             self->unkE0 = 1;

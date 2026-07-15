@@ -482,7 +482,7 @@ static void GuardClaw_func_1128(Object* self, Baddie* baddie, ObjFSA_Data* fsa) 
 
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
     if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, NULL, baddie->unk39E, data_28, data_98, 1, &baddie->unk3A8, NULL) >= 2) {
-        gDLL_6_AMSFX->vtbl->play(self, data_C[4], MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
+        dll_amSfx->Play(self, data_C[4], MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
     }
     if (baddie->unk3B0 & 0x50) {
         if (fsa->logicState != 3) {
@@ -531,7 +531,7 @@ static void GuardClaw_func_1520(Object* self, Baddie* baddie, ObjFSA_Data* fsa) 
     
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
     if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, NULL, baddie->unk39E, data_28, data_98, 1, &baddie->unk3A8, NULL) >= 2) {
-        gDLL_6_AMSFX->vtbl->play(self, data_C[4], MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
+        dll_amSfx->Play(self, data_C[4], MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
     }
     if ((fsa->unk33A != 0) && (fsa->logicState != 0)) {
         GuardClaw_func_C34(self, baddie, fsa, 0);

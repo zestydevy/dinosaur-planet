@@ -27,7 +27,7 @@ void MMP_levelcontrol_control(Object *self) {
 
     if (self->unkDC != 0) {
         player = objGetPlayer();
-        gDLL_6_AMSFX->vtbl->water_falls_set_flags(0x10);
+        dll_amSfx->WaterFallsSetFlags(0x10);
         func_80000860(self, player, 0x13A, 0);
         func_80000860(self, player, 0x138, 0);
         func_80000860(self, player, 0x139, 0);
@@ -35,7 +35,7 @@ void MMP_levelcontrol_control(Object *self) {
         gDLL_5_AMSEQ2->vtbl->set(self, 0xF, 0, 0, 0);
         self->unkDC = 0;
     }
-    gDLL_6_AMSFX->vtbl->water_falls_control();
+    dll_amSfx->WaterFallsControl();
 }
 
 // offset: 0x1A0 | func: 2 | export: 2

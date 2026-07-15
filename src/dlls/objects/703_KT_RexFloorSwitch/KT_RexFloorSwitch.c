@@ -165,11 +165,11 @@ void dll_703_control(Object* self) {
     }
     if (sp4B != 0) {
         if (objdata->unk0 == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_6E2, MAX_VOLUME, &objdata->unk0, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_6E2, MAX_VOLUME, &objdata->unk0, NULL, 0, NULL);
         }
     } else {
         if (objdata->unk0 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk0);
+            dll_amSfx->Stop(objdata->unk0);
             objdata->unk0 = 0;
         }
     }
@@ -234,7 +234,7 @@ void dll_703_free(Object* self, s32 a1) {
     KT_RexFloorSwitch_Data *objdata = (KT_RexFloorSwitch_Data*)self->data;
     
     if (objdata->unk0 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk0);
+        dll_amSfx->Stop(objdata->unk0);
     }
 }
 

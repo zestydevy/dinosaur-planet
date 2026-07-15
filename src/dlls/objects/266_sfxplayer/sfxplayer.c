@@ -74,9 +74,9 @@ void sfxplayer_control(Object* self) {
         if (setup->flagPlay != -1){
             if ((flagValue != objdata->hasPlayed) && (mode & 6)){
                 if ((flagValue != ((mode & 4) == 4)) != 0){
-                    objdata->sound = gDLL_6_AMSFX->vtbl->play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
+                    objdata->sound = dll_amSfx->Play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
                 } else if (objdata->sound){
-                    gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+                    dll_amSfx->Stop(objdata->sound);
                     objdata->sound = NULL;
                 }
             }
@@ -84,9 +84,9 @@ void sfxplayer_control(Object* self) {
             //Start sound when inside inner radius, stop sound when leaving outer radius
             playerDistanceSquared = vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition);
             if (!objdata->sound && (playerDistanceSquared < objdata->distanceSqInner)){
-                gDLL_6_AMSFX->vtbl->play(self, setup->soundID, MAX_VOLUME, (u32*)&objdata->sound, 0, 0, 0);
+                dll_amSfx->Play(self, setup->soundID, MAX_VOLUME, (u32*)&objdata->sound, 0, 0, 0);
             } else if ((objdata->distanceSqOuter < playerDistanceSquared) && objdata->sound){
-                gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+                dll_amSfx->Stop(objdata->sound);
                 objdata->sound = NULL;
             }
         }
@@ -95,15 +95,15 @@ void sfxplayer_control(Object* self) {
             //Random chance of playing sound if player is inside inner radius
             playerDistanceSquared = vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition);
             if (!mathRnd(0, 0x12C) && (playerDistanceSquared < objdata->distanceSqInner)){
-                gDLL_6_AMSFX->vtbl->play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
+                dll_amSfx->Play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
             }
         } else if (flagValue != objdata->hasPlayed){
             if ((flagValue == 1) && (mode & 2)){
                 //Play sound if flag is set
-                gDLL_6_AMSFX->vtbl->play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
+                dll_amSfx->Play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
             } else if ((flagValue == 0) && (mode & 4)){
                 //Play sound if flag isn't set
-                gDLL_6_AMSFX->vtbl->play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
+                dll_amSfx->Play(self, setup->soundID, MAX_VOLUME, NULL, 0, 0, 0);
             }
         }
     }
@@ -127,7 +127,7 @@ void sfxplayer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 void sfxplayer_free(Object* arg0, s32 arg1) {
     SfxPlayer_Data* objdata = arg0->data;
     if (objdata->sound) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+        dll_amSfx->Stop(objdata->sound);
     }
 }
 

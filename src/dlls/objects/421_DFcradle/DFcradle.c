@@ -98,7 +98,7 @@ void DFCradle_control(Object* self) {
     if (objData->enabled) {
         //Play rope straining noise at random intervals
         if (objData->soundTimer-- < 0) {
-            gDLL_6_AMSFX->vtbl->play(self, sSoundIDs[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, sSoundIDs[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->soundTimer = mathRnd(40, 60);
         }
         

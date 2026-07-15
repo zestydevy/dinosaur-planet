@@ -328,7 +328,7 @@ void dll_734_func_133C(Object* self, DRPushCart_Data* objData) {
         camSetShakeOffset(camShake);
     }
     
-    gDLL_6_AMSFX->vtbl->play(self, 0x856, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, 0x856, MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 
 // offset: 0x1434 | func: 11

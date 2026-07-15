@@ -519,7 +519,7 @@ void CamControl_lock_icon_tick(void) {
                 hlObject->unkAF |= ARROW_FLAG_1_Interacted;
                 }
             } else if (joyGetPressed(0) & A_BUTTON) {
-                gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_6E6_Interaction_Refused, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(hlObject, SOUND_6E6_Interaction_Refused, MAX_VOLUME, 0, 0, 0, 0);
             }
         }
     }
@@ -540,18 +540,18 @@ void CamControl_lock_icon_tick(void) {
         sIconRotateSpeed = 0;
         arrow->opacity = OBJECT_OPACITY_MAX;
         sIconState = LockIcon_STATE_Highlighted;
-        gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_43C_Target_Highlighted, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(hlObject, SOUND_43C_Target_Highlighted, MAX_VOLUME, 0, 0, 0, 0);
         break;
 
     case LockIcon_STATE_Highlighted:
         //While the LockIcon is highlighting a nearby Object (but it's not targeted yet)
         if ((hlObject == NULL) || (sActiveID == DLL_ID_CAM1STPERSON) || (hlObject->unkAF & (ARROW_FLAG_20_Removed | ARROW_FLAG_8_No_Targetting))) {
-            gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
             sIconState = LockIcon_STATE_Vanish;
         } else {
             //Automatically lock-on
             if (sActiveID == DLL_ID_CAMLOCKON) {
-                gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72D_Lock_On, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(hlObject, SOUND_72D_Lock_On, MAX_VOLUME, 0, 0, 0, 0);
                 sIconState = LockIcon_STATE_Lock_On;
                 sIconRapidTimer = 60; //icon spins extra quickly for 1st second
             }
@@ -566,7 +566,7 @@ void CamControl_lock_icon_tick(void) {
     case LockIcon_STATE_Lock_On:
         //Disengage lock when needed
         if ((hlObject == NULL) || (hlObject->unkAF & (ARROW_FLAG_20_Removed | ARROW_FLAG_8_No_Targetting))) {
-            gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
             sIconState = LockIcon_STATE_Vanish;
             break;
         }

@@ -237,7 +237,7 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
         player = objGetPlayer();
         snowbike = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
         if (snowbike) {
-            racePosition = ((DLL_IVehicle*)snowbike->dll)->vtbl->get_race_position(snowbike);
+            racePosition = dll_vehicle(snowbike)->GetRacePosition(snowbike);
         } else {
             racePosition = 0;
         }

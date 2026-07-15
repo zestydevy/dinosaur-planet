@@ -14,7 +14,7 @@ void AnimTest_setup(Object *self, ObjSetup *setup, s32 arg2) { }
 
 // offset: 0x2C | func: 1 | export: 1
 void AnimTest_control(Object *self) {
-    gDLL_6_AMSFX->vtbl->water_falls_control();
+    dll_amSfx->WaterFallsControl();
     if (!objGetSidekick()) {
         objSendMesgMany(OBJCONTROL_SideSetup, 0, self, 0x11, 0);
     }

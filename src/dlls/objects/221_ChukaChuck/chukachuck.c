@@ -120,7 +120,7 @@ void ChukaChuck_handle_player_or_sidekick_collision(Object* self) {
     camSetShakeOffset(1.0f);
 
     //Play impact sound
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_4B1, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_4B1, MAX_VOLUME, NULL, NULL, 0, NULL);
     
     if (self->id == OBJ_ChukaChuck) {
         //Send a message to the parent ChukaChuck object
@@ -178,7 +178,7 @@ void ChukaChuck_handle_terrain_collision(Object* self) {
     }
     
     //Play impact sound
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_4B1, 0x40, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_4B1, 0x40, NULL, NULL, 0, NULL);
 
     //Shake camera
     camUseShake();

@@ -62,7 +62,7 @@ void VFP_lavastar_control(Object* self) {
         sDLL_182->vtbl->func0(self, 0, NULL, 4, -1, NULL);
     }
     if (objdata->soundHandle == 0) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_AAE, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_AAE, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
     }
 }
 
@@ -80,7 +80,7 @@ void VFP_lavastar_free(Object* self, s32 arg1) {
     gDLL_13_Expgfx->vtbl->func5(self);
     gDLL_14_Modgfx->vtbl->func4(self);
     dllFree(sDLL_182);
-    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+    dll_amSfx->Stop(objdata->soundHandle);
     objdata->soundHandle = 0;
 }
 

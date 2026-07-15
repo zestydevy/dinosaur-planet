@@ -115,13 +115,13 @@ void animobj_free(Object *self, s32 arg1) {
     gDLL_3_Animation->vtbl->free_curve(objdata);
     for (i = 0; i < 4; i++){
         if (objdata->sfxHandles[i]){
-            gDLL_6_AMSFX->vtbl->stop(objdata->sfxHandles[i]);
+            dll_amSfx->Stop(objdata->sfxHandles[i]);
         }
     }
 
     gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
     if (objdata->unk30 != 0){
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk30);
+        dll_amSfx->Stop(objdata->unk30);
     }
 }
 

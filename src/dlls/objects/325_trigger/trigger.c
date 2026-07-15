@@ -360,7 +360,7 @@ void trigger_free(Object *self, s32 param2) {
 
     for (i = 0; i < 8; i++) {
         if (objdata->soundHandles[i] != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[i]);
+            dll_amSfx->Stop(objdata->soundHandles[i]);
         }
         if (objdata->scripts[i] != NULL) {
             dllFree(objdata->scripts[i]);
@@ -531,10 +531,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_SOUND: 
             // "Trigger [%d], Sound FX,           Action Num [%d],Handle Num [%d]"
             if (dir >= 0) {
-                gDLL_6_AMSFX->vtbl->play2(self, (cmd->param2 | (cmd->param1 << 8)), &objdata->soundHandles[i]);
+                dll_amSfx->Play2(self, (cmd->param2 | (cmd->param1 << 8)), &objdata->soundHandles[i]);
             } else {
                 if (objdata->soundHandles[i] != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[i]);
+                    dll_amSfx->Stop(objdata->soundHandles[i]);
                     objdata->soundHandles[i] = 0;
                 }
             }
@@ -799,7 +799,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_WATER_FALLS_FLAGS:
         case TRG_CMD_WATER_FALLS_FLAGS2:
             // "Trigger [%d], amSfxWaterFallsSetFlags,   Action [%d], PassDir [%d]"
-            gDLL_6_AMSFX->vtbl->water_falls_set_flags(cmd->param1);
+            dll_amSfx->WaterFallsSetFlags(cmd->param1);
             break;
         }
     }

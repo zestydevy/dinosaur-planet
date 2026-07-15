@@ -905,7 +905,7 @@ void objAnim_func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct*
         switch (arg2->unk13[var_s5]) {
         case 0:
             if (arg3 != 0) {
-                gDLL_6_AMSFX->vtbl->play(arg0, arg3, 0x7FU, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(arg0, arg3, 0x7FU, NULL, NULL, 0, NULL);
             }
             break;
         case 1:
@@ -949,10 +949,10 @@ void objAnim_func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct*
     }
     if (sp80 != 0) {
         if (var_s0 & 5) {
-            gDLL_6_AMSFX->vtbl->play(arg0, sp80[mathRnd(0, 1) * 2 + var_s5 * 4], sp7E, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(arg0, sp80[mathRnd(0, 1) * 2 + var_s5 * 4], sp7E, NULL, NULL, 0, NULL);
         }
         if (var_s0 & 0xA) {
-            gDLL_6_AMSFX->vtbl->play(arg0, sp80[mathRnd(0, 1) * 2 + var_s5 * 4 + 1], sp7E, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(arg0, sp80[mathRnd(0, 1) * 2 + var_s5 * 4 + 1], sp7E, NULL, NULL, 0, NULL);
         }
     }
 

@@ -228,7 +228,7 @@ void Transporter_control(Object *self) {
                     transform.roll = 0;
                     transform.pitch = 0;
                     camSetShakeOffset(8.0f);
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                     
                     //Create horizontal blast particle spreading out from base of Transporter
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
@@ -251,7 +251,7 @@ void Transporter_control(Object *self) {
         if (objdata->isOutbound) {
             //Fire the transporter
             camSetShakeOffset(8.0f);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Create horizontal blast particle spreading out from base of Transporter
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
@@ -261,7 +261,7 @@ void Transporter_control(Object *self) {
                 gDLL_17_partfx->vtbl->spawn(player, PARTICLE_77, NULL, PARTFXFLAG_NONE, -1, NULL);
             }
         } else {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_9B_Transporter_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_9B_Transporter_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Create lots of tiny sparkles that wander outwards before gravitating back inwards
             for (i = 0; i < 100; i++) {

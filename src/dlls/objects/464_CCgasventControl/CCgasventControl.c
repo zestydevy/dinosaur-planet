@@ -82,7 +82,7 @@ void CCgasventControl_control(Object *self) {
             }
         }
         if (count == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->state = STATE_Puzzle_Complete;
             break;

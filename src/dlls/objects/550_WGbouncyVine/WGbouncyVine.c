@@ -95,7 +95,7 @@ void WGBouncyVine_control(Object* self) {
         //Remove the vine when both gamebits' values are set
         if ((gamebitValueA * gamebitValueB) && ((gamebitValueA + gamebitValueB) >= 0)) {
             self->objhitInfo->unk58 &= ~1;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_A3E_Vines_Rustle, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_A3E_Vines_Rustle, MAX_VOLUME, NULL, NULL, 0, NULL);
             objAnimSet(self, WGBouncyVine_MODANIM_1_Collapsing, 0.0f, 0);
             objData->state = WGBouncyVine_STATE_2_Collapsing;
         }
@@ -105,7 +105,7 @@ void WGBouncyVine_control(Object* self) {
     case WGBouncyVine_STATE_1_Bounce:
         //Play a sound partway through animation
         if ((objData->soundPlayed == FALSE) && (self->animProgress > 0.3f)) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_A3F_Boing, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_A3F_Boing, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->soundPlayed = TRUE;
         }
         

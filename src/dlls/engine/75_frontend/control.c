@@ -168,11 +168,11 @@ void frontend_update(FrontEndControl* ctrl) {
     case FRONTEND_CONTROL_List:
         joyGetStickMenuXYSign(0, &joyX, &joyY);
         if (joyX < 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             ctrl->value--;
             ctrl->flags |= FRONTEND_FLAG_4_Moved_Left;
         } else if (joyX > 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             ctrl->value++;
             ctrl->flags |= FRONTEND_FLAG_8_Moved_Right;
         }
@@ -184,7 +184,7 @@ void frontend_update(FrontEndControl* ctrl) {
     default:
     case FRONTEND_CONTROL_Checkbox:
         if (!(ctrl->flags & FRONTEND_FLAG_20_Locked) && (joyGetPressed(0) & A_BUTTON)) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             ctrl->value ^= 1;
         }
         break;

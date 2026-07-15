@@ -45,7 +45,7 @@ void DFlevelcontrol_control(Object *self) {
 
     objdata = self->data;
     player = objGetPlayer();
-    gDLL_6_AMSFX->vtbl->water_falls_control();
+    dll_amSfx->WaterFallsControl();
     if (objdata->mapID != MAP_DISCOVERY_FALLS) {
         if (mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z) != MAP_DISCOVERY_FALLS) {
             return;

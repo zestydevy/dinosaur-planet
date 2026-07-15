@@ -995,7 +995,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
         var_fv1 = anim_channel_value(st, CHANNEL_soundVolume, time);
         if (var_fv1 > 0.0f) {
             if (st->sfxHandles[3] != 0) {
-                gDLL_6_AMSFX->vtbl->set_vol(st->sfxHandles[3], var_fv1);
+                dll_amSfx->SetVol(st->sfxHandles[3], var_fv1);
             }
         }
         if (!(st->unk8C & 2)) {
@@ -1456,16 +1456,16 @@ static void anim_tick_seq_sfx(AnimObj_Data* st, s32 updateRate) {
 
     for (i = 0; i < 4; i++){
         if (st->sfxHandles[i]) {
-            if (gDLL_6_AMSFX->vtbl->is_playing(st->sfxHandles[i]) == FALSE) {
-                gDLL_6_AMSFX->vtbl->stop(st->sfxHandles[i]);
+            if (dll_amSfx->IsPlaying(st->sfxHandles[i]) == FALSE) {
+                dll_amSfx->Stop(st->sfxHandles[i]);
                 st->sfxHandles[i] = 0;
                 st->sfxTimer[i] = 0;
                 if (i != 3) {
                     st->sfxNextSlot = i;
                 }
             }
-            if (gDLL_6_AMSFX->vtbl->is_playing(st->sfxHandles[i]) && (st->sfxTimer[i] <= 0)) {
-                gDLL_6_AMSFX->vtbl->stop(st->sfxHandles[i]);
+            if (dll_amSfx->IsPlaying(st->sfxHandles[i]) && (st->sfxTimer[i] <= 0)) {
+                dll_amSfx->Stop(st->sfxHandles[i]);
                 st->sfxHandles[i] = 0;
                 st->sfxTimer[i] = 0;
                 if (i != 3) {
@@ -1677,17 +1677,17 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
     case ANIM_EVT_SFX:
         if (arg3_8) { break; }
         if (((evt->params >> 0xC) & 0xF) != 0xF) {
-            gDLL_6_AMSFX->vtbl->play(animObj, 
+            dll_amSfx->Play(animObj, 
                                      ((evt->params & 0xFFF) + 1), 
                                      ((((evt->params >> 0xC) & 0xF) * 7) + 0x16), 
                                      NULL, 
                                      NULL, 0, NULL);
         } else {
-            if (gDLL_6_AMSFX->vtbl->is_playing(st->sfxHandles[3]) != 0) {
-                gDLL_6_AMSFX->vtbl->stop(st->sfxHandles[3]);
+            if (dll_amSfx->IsPlaying(st->sfxHandles[3]) != 0) {
+                dll_amSfx->Stop(st->sfxHandles[3]);
             }
             st->sfxTimer[3] = 32000;
-            gDLL_6_AMSFX->vtbl->play(animObj, 
+            dll_amSfx->Play(animObj, 
                                      ((evt->params & 0xFFF) + 1), 
                                      (s32) anim_channel_value(st, CHANNEL_soundVolume, st->time), 
                                      &st->sfxHandles[3], 
@@ -1710,10 +1710,10 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
         case ANIM_EVT_ENVFX_SFX:
             if (arg3_8) { break; }
             if (st->unk30 != 0) {
-                gDLL_6_AMSFX->vtbl->stop(st->unk30);
+                dll_amSfx->Stop(st->unk30);
             }
             st->unk30 = 0;
-            gDLL_6_AMSFX->vtbl->play(animObj, 
+            dll_amSfx->Play(animObj, 
                                      ((evt->params & 0xFFF) + 1), 
                                      ((((evt->params >> 0xC) & 0xF) * 7) + 0x16), 
                                      &st->unk30, NULL, 0, NULL);
@@ -1737,7 +1737,7 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
         if (arg3_8) { break; }
         anim_get_free_sfx_slot(st);
         if (((evt->params >> 0xC) & 0xF) != 0xF) {
-            gDLL_6_AMSFX->vtbl->play(animObj, 
+            dll_amSfx->Play(animObj, 
                                      ((evt->params & 0xFFF) + 1), 
                                      ((((evt->params >> 0xC) & 0xF) * 7) + 0x16), 
                                      &st->sfxHandles[st->sfxNextSlot], 
@@ -1748,10 +1748,10 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
                 st->sfxNextSlot = 0;
             }
         } else {
-            if (gDLL_6_AMSFX->vtbl->is_playing(st->sfxHandles[3]) != 0) {
-                gDLL_6_AMSFX->vtbl->stop(st->sfxHandles[3]);
+            if (dll_amSfx->IsPlaying(st->sfxHandles[3]) != 0) {
+                dll_amSfx->Stop(st->sfxHandles[3]);
             }
-            gDLL_6_AMSFX->vtbl->play(animObj, 
+            dll_amSfx->Play(animObj, 
                                      ((evt->params & 0xFFF) + 1), 
                                      (s32) anim_channel_value(st, CHANNEL_soundVolume, st->time), 
                                      &st->sfxHandles[3], NULL, 0, NULL);
@@ -1776,7 +1776,7 @@ static s8 anim_get_free_sfx_slot(AnimObj_Data* st) {
         }
         
         if (index == 4) {
-            gDLL_6_AMSFX->vtbl->stop(st->sfxHandles[st->sfxNextSlot]);
+            dll_amSfx->Stop(st->sfxHandles[st->sfxNextSlot]);
             st->sfxHandles[st->sfxNextSlot] = 0;
         } else {
             st->sfxNextSlot = index - 1;
@@ -2794,10 +2794,10 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         sSeqEnded = TRUE;
         return 0;
     case ANIM_CODE_EVT_6_5: 
-        gDLL_6_AMSFX->vtbl->func_480(actor);
+        dll_amSfx->Func480(actor);
         break;
     case ANIM_CODE_EVT_6_6: 
-        gDLL_6_AMSFX->vtbl->func_480(NULL);
+        dll_amSfx->Func480(NULL);
         break;
     case ANIM_CODE_EVT_6_CAMERA_SHAKE: 
         if (arg4 == 0) {
@@ -2826,7 +2826,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
         menu_func_8000F6CC();
         break;
     case ANIM_CODE_EVT_6_SFX_STOP:
-        gDLL_6_AMSFX->vtbl->stop_object(actor);
+        dll_amSfx->StopObject(actor);
         break;
     case ANIM_CODE_EVT_6_16:
         st->unk89 = sp54;
@@ -3017,8 +3017,8 @@ static void anim_handle_seq_end(Object* animObj, Object* actor, AnimObj_Data* st
 
     for (i = 0; i < 4; i++){
         soundHandle = st->sfxHandles[i];
-        if (soundHandle && (gDLL_6_AMSFX->vtbl->is_playing(soundHandle) == 0)) {
-            gDLL_6_AMSFX->vtbl->stop(st->sfxHandles[i]);
+        if (soundHandle && (dll_amSfx->IsPlaying(soundHandle) == 0)) {
+            dll_amSfx->Stop(st->sfxHandles[i]);
         }
     }
     

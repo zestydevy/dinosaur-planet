@@ -421,18 +421,18 @@ typedef struct {
 DLL_INTERFACE(DLL_IObject) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
           // reset: true if this is not the first setup call and the object should only reset state and not perform init allocations
-    /*0*/ void (*setup)(struct Object *obj, ObjSetup *setup, s32 reset);
-    /*1*/ void (*control)(struct Object *obj);
-    /*2*/ void (*update)(struct Object *obj);
+    /*0*/ void (*Setup)(struct Object *obj, ObjSetup *setup, s32 reset);
+    /*1*/ void (*Control)(struct Object *obj);
+    /*2*/ void (*Update)(struct Object *obj);
           // visibility: true if the object passed distance fade and frustum culling checks
-    /*3*/ void (*print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+    /*3*/ void (*Print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
           // onlySelf: true if the object should only free itself and not child/associated objects (not including linked objects)
-    /*4*/ void (*free)(struct Object *obj, s32 onlySelf);
-    /*5*/ u32 (*get_model_flags)(struct Object *obj);
+    /*4*/ void (*Free)(struct Object *obj, s32 onlySelf);
+    /*5*/ u32 (*GetModelFlags)(struct Object *obj);
           // offset: 
           // - 1st call: byte offset from the start of the object's memory to the allocated data.
           // - 2nd call: address of the object's allocated data.
-    /*6*/ u32 (*get_data_size)(struct Object *obj, u32 offsetAddr);
+    /*6*/ u32 (*GetDataSize)(struct Object *obj, u32 offsetAddr);
 };
 
 // always called by DLL 3 "ANIM" during cutscenes?

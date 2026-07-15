@@ -366,7 +366,7 @@ void dll_437_func_CC0(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Da
         }
         dll_437_func_1164(arg0, arg1);
         if (arg1->unk1E == 2) {
-            gDLL_6_AMSFX->vtbl->play(arg0, 0x112, 0x7F, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(arg0, 0x112, 0x7F, NULL, NULL, 0, NULL);
             if (sp60){} // @fake
             sp60->unk198 = 0.02f;
             sp60->unk1C4 = 0;

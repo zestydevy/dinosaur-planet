@@ -839,7 +839,7 @@ u32 objCalcMemSize(Object *obj, ObjDef *def, u32 modflags) {
     size += def->numModels * sizeof(u32);
 
     if (obj->dll != NULL) {
-        size += obj->dll->vtbl->get_data_size(obj, size);
+        size += obj->dll->vtbl->GetDataSize(obj, size);
     }
 
     if (modflags & MODFLAGS_EVENTS) {
@@ -1086,9 +1086,9 @@ void objInitObject(Object *obj, ObjSetup *setup, s32 reset) {
     DLL_IObject *dll;
     obj->controlNo = obj->def->controlNo;
     dll = obj->dll;
-    if(1) {
-        if(dll != NULL) {
-            obj->dll->vtbl->setup(obj, setup, reset);
+    if (1) {
+        if (dll != NULL) {
+            obj->dll->vtbl->Setup(obj, setup, reset);
         }
     }
 
@@ -1129,7 +1129,7 @@ void objControlObject(Object *obj) {
         }
 
         if (obj->dll != NULL && !(obj->stateFlags & OBJSTATE_CONTROL_DISABLED)) {
-            obj->dll->vtbl->control(obj);
+            obj->dll->vtbl->Control(obj);
 
             camGetObjectChildPosition(obj,
                 &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
@@ -1160,7 +1160,7 @@ void objUpdateObject(Object *obj) {
     update_pi_manager_array(3, obj->id);
 
     if (obj->dll != NULL && !(obj->stateFlags & OBJSTATE_UPDATE_DISABLED)) {
-        obj->dll->vtbl->update(obj);
+        obj->dll->vtbl->Update(obj);
 
         camGetObjectChildPosition(obj,
             &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
@@ -1175,7 +1175,7 @@ u32 objAllocDLLData(Object *obj, u32 addr) {
     addr = mmAlign4(addr);
 
     if (obj->dll != NULL) {
-        dataSize = obj->dll->vtbl->get_data_size(obj, addr);
+        dataSize = obj->dll->vtbl->GetDataSize(obj, addr);
     }
 
     if (dataSize != 0) {
@@ -1190,7 +1190,7 @@ u32 objAllocDLLData(Object *obj, u32 addr) {
 
 u32 objGetModelFlags(Object *obj) {
     if (obj->dll != NULL) {
-        return obj->dll->vtbl->get_model_flags(obj);
+        return obj->dll->vtbl->GetModelFlags(obj);
     } else {
         return MODFLAGS_NONE;
     }
@@ -1510,12 +1510,12 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
 
     if (obj->dll != NULL) {
         update_pi_manager_array(4, obj->id);
-        obj->dll->vtbl->free(obj, onlySelf);
+        obj->dll->vtbl->Free(obj, onlySelf);
         update_pi_manager_array(4, -1);
         dllFree(obj->dll);
     }
 
-    gDLL_6_AMSFX->vtbl->free_object(obj);
+    dll_amSfx->FreeObject(obj);
     gDLL_5_AMSEQ->vtbl->func17(obj);
     gDLL_13_Expgfx->vtbl->func9(obj);
 
@@ -1693,7 +1693,7 @@ void objReplacePlayer(s32 playerno) {
         }
 
         gDLL_2_Camera->vtbl->init_data(newPlayer, x - 50.0f, y, z - 50.0f);
-        gDLL_6_AMSFX->vtbl->func_480(newPlayer);
+        dll_amSfx->Func480(newPlayer);
         gDLL_5_AMSEQ->vtbl->set_focus_obj(newPlayer);
     }
 }
@@ -1745,7 +1745,7 @@ void objLoadPlayer(void) {
     gDLL_2_Camera->vtbl->init_data(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
     gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 0, sizeof(D_80091668), &D_80091668, 0, Cam_Ease_All);
     gDLL_2_Camera->vtbl->tick(1);
-    gDLL_6_AMSFX->vtbl->func_480(player);
+    dll_amSfx->Func480(player);
     gDLL_5_AMSEQ->vtbl->set_focus_obj(player);
 
     D_800B1988 = 0;

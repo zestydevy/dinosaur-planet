@@ -70,15 +70,15 @@ typedef struct {
 /*0x20*/ static u8 dColliderParams[] = {1, 1};
 /*0x24*/ static f32 _data_24[] = {500.0f, 500.0f, 0.0f, 0.0f};
 
-static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 arg2);
-static void BWlog_handle_controls_a_button(Object* self, BWlog_Data* objdata);
-static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft);
-static void BWlog_handle_roll(Object* self, BWlog_Data* objdata);
-static void BWlog_handle_unknown_state(Object* self, BWlog_Data* objdata);
-static void BWlog_handle_paddle_motion(Object* self, BWlog_Data* objdata);
-static void BWlog_find_riverflows(Object* self, BWlog_Data* objdata);
-static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata);
-static void BWlog_handle_fx(Object* self, BWlog_Data* objdata);
+static void handleWater(Object* self, BWlog_Data* objdata, s32 arg2);
+static void handleControlsAButton(Object* self, BWlog_Data* objdata);
+static void startRoll(Object* self, BWlog_Data* objdata, s32 rollLeft);
+static void handleRoll(Object* self, BWlog_Data* objdata);
+static void handleUnknownState(Object* self, BWlog_Data* objdata);
+static void handlePaddleMotion(Object* self, BWlog_Data* objdata);
+static void findRiverflows(Object* self, BWlog_Data* objdata);
+static void handleSounds(Object* self, BWlog_Data* objdata);
+static void handleFx(Object* self, BWlog_Data* objdata);
 
 // offset: 0x0 | ctor
 void BWlog_ctor(void *dll) { }
@@ -87,7 +87,7 @@ void BWlog_ctor(void *dll) { }
 void BWlog_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void BWlog_setup(Object *self, ObjSetup *setup, s32 arg2) {
+void BWlog_obj_Setup(Object *self, ObjSetup *setup, s32 arg2) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     s32 i;
 
@@ -116,7 +116,7 @@ void BWlog_setup(Object *self, ObjSetup *setup, s32 arg2) {
 }
 
 // offset: 0x170 | func: 1 | export: 1
-void BWlog_control(Object* self) {
+void BWlog_obj_Control(Object* self) {
     BWlog_Data* objdata;
     f32 damp;
     f32 vel[3];
@@ -153,22 +153,22 @@ void BWlog_control(Object* self) {
         }
     }
 
-    BWlog_find_riverflows(self, objdata);
+    findRiverflows(self, objdata);
 
     if (objdata->mountState == VEHICLE_Mounted) {
-        BWlog_handle_controls_a_button(self, objdata);
+        handleControlsAButton(self, objdata);
 
         switch (objdata->state) {
         case BWLog_STATE_1_Roll_Left:
         case BWLog_STATE_2_Roll_Right:
-            BWlog_handle_roll(self, objdata);
+            handleRoll(self, objdata);
             break;
         case BWLog_STATE_3_Placeholder1:
         case BWLog_STATE_4_Placeholder2:
-            BWlog_handle_unknown_state(self, objdata); //Placeholder for other left/right state? Maybe getting hurt?
+            handleUnknownState(self, objdata); //Placeholder for other left/right state? Maybe getting hurt?
             break;
         default:
-            BWlog_handle_paddle_motion(self, objdata);
+            handlePaddleMotion(self, objdata);
             break;
         }
 
@@ -200,7 +200,7 @@ void BWlog_control(Object* self) {
                        dLocalEndpointCoords[i].x, dLocalEndpointCoords[i].y, dLocalEndpointCoords[i].z, 
                        &objdata->endPoints[i].x, &objdata->endPoints[i].y, &objdata->endPoints[i].z);
         // Do water physics for this side of the log
-        BWlog_handle_water(self, objdata, i);
+        handleWater(self, objdata, i);
         // Factor in riverflow influence
         mathMtxXFMF(&invPitchYawMtx, 
                        objdata->flowX[i], 0.0f, objdata->flowZ[i], 
@@ -241,45 +241,45 @@ void BWlog_control(Object* self) {
     gDLL_27->vtbl->func_5A8(self, &objdata->collider);
     gDLL_27->vtbl->func_624(self, &objdata->collider, gUpdateRateF);
 
-    BWlog_handle_sounds(self, objdata);
-    BWlog_handle_fx(self, objdata);
+    handleSounds(self, objdata);
+    handleFx(self, objdata);
 }
 
 // offset: 0x85C | func: 2 | export: 2
-void BWlog_update(Object *self) { }
+void BWlog_obj_Update(Object *self) { }
 
 // offset: 0x868 | func: 3 | export: 3
-void BWlog_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void BWlog_obj_Print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x8BC | func: 4 | export: 4
-void BWlog_free(Object *self, s32 a1) {
+void BWlog_obj_Free(Object *self, s32 a1) {
     BWlog_Data *objdata;
 
     objdata = self->data;
     objFreeObjectType(self, OBJTYPE_Vehicle);
     //Stop sound loop
     if (objdata->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+        dll_amSfx->Stop(objdata->soundHandle);
     }
 }
 
 
 // offset: 0x92C | func: 5 | export: 5
-u32 BWlog_get_model_flags(Object *self) {
+u32 BWlog_obj_GetModelFlags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x93C | func: 6 | export: 6
-u32 BWlog_get_data_size(Object *self, u32 a1) {
+u32 BWlog_obj_GetDataSize(Object *self, u32 a1) {
     return sizeof(BWlog_Data);
 }
 
 // offset: 0x950 | func: 7 | export: 7
-s32 BWlog_vehicle_can_mount(Object *self, Object *rider) {
+s32 BWlog_vehicle_CanMount(Object *self, Object *rider) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     if ((objdata->mountState == VEHICLE_NoRider) && (objdata->dockpoint != NULL)) {
         return vec3Distance(&rider->globalPosition, &self->globalPosition) < 50.0f;
@@ -288,7 +288,7 @@ s32 BWlog_vehicle_can_mount(Object *self, Object *rider) {
 }
 
 // offset: 0x9E0 | func: 8 | export: 8
-s32 BWlog_vehicle_get_mount_side(Object *self) {
+s32 BWlog_vehicle_GetMountSide(Object *self) {
     SRT srt;
     MtxF mtx;
     f32 sp44;
@@ -322,14 +322,14 @@ s32 BWlog_vehicle_get_mount_side(Object *self) {
 }
 
 // offset: 0xB28 | func: 9 | export: 9
-void BWlog_vehicle_get_rider_position(Object *self, f32 *ox, f32 *oy, f32 *oz) {
+void BWlog_vehicle_GetRiderPosition(Object *self, f32 *ox, f32 *oy, f32 *oz) {
     *ox = self->srt.transl.x;
     *oy = self->srt.transl.y;
     *oz = self->srt.transl.z;
 }
 
 // offset: 0xB48 | func: 10 | export: 10
-s32 BWlog_vehicle_can_dismount(Object *self, Object *rider) {
+s32 BWlog_vehicle_CanDismount(Object *self, Object *rider) {
     BWlog_Data *objdata;
     f32 speed;
     s32 i;
@@ -346,12 +346,12 @@ s32 BWlog_vehicle_can_dismount(Object *self, Object *rider) {
 }
 
 // offset: 0xC3C | func: 11 | export: 11
-s32 BWlog_vehicle_get_dismount_side(Object *self) {
+s32 BWlog_vehicle_GetDismountSide(Object *self) {
     return 0;
 }
 
 // offset: 0xC4C | func: 12 | export: 12
-void BWlog_vehicle_get_camera_position(Object *self, f32 *x, f32 *y, f32 *z) {
+void BWlog_vehicle_GetCameraPosition(Object *self, f32 *x, f32 *y, f32 *z) {
     MtxF mtx;
     SRT srt;
 
@@ -367,13 +367,13 @@ void BWlog_vehicle_get_camera_position(Object *self, f32 *x, f32 *y, f32 *z) {
 }
 
 // offset: 0xD08 | func: 13 | export: 13
-s32 BWlog_vehicle_get_mount_state(Object *self) {
+s32 BWlog_vehicle_GetMountState(Object *self) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     return objdata->mountState;
 }
 
 // offset: 0xD18 | func: 14 | export: 14
-void BWlog_vehicle_set_mount_state(Object *self, s32 state) {
+void BWlog_vehicle_SetMountState(Object *self, s32 state) {
     Object *player = objGetPlayer();
     BWlog_Data *objdata = (BWlog_Data*)self->data;
 
@@ -391,34 +391,34 @@ void BWlog_vehicle_set_mount_state(Object *self, s32 state) {
 }
 
 // offset: 0xE2C | func: 15 | export: 15
-void BWlog_vehicle_get_player_anim(Object *self, f32 *tValue, s32 *animIndex) {
+void BWlog_vehicle_GetPlayerAnim(Object *self, f32 *tValue, s32 *animIndex) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     *tValue = objdata->tValueRoll;
     *animIndex = objdata->playerVehicleAnim;
 }
 
 // offset: 0xE48 | func: 16 | export: 16
-f32 BWlog_func_E48(Object *self, f32 *a1) {
+f32 BWlog_vehicle_Func16(Object *self, f32 *a1) {
     *a1 = -0.006f;
     return 0.0f;
 }
 
 // offset: 0xE70 | func: 17 | export: 17
-s32 BWlog_vehicle_get_race_position(Object *self) {
+s32 BWlog_vehicle_GetRacePosition(Object *self) {
     return 0;
 }
 
 // offset: 0xE80 | func: 18 | export: 18
-void BWlog_func_E80(Object *self) { }
+void BWlog_vehicle_Func18(Object *self) { }
 
 // offset: 0xE8C | func: 19 | export: 19
-void BWlog_vehicle_handle_rider_scale(Object *self, f32 scale) { }
+void BWlog_vehicle_HandleRiderScale(Object *self, f32 scale) { }
 
 // offset: 0xE9C | func: 20 | export: 20
-void BWlog_func_E9C(s32 a0, s32 a1, s32 a2) { }
+void BWlog_vehicle_Func20(s32 a0, s32 a1, s32 a2) { }
 
 // offset: 0xEB0 | func: 21
-static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 side) {
+static void handleWater(Object* self, BWlog_Data* objdata, s32 side) {
     f32 temp_fa1;
     f32 temp_ft5;
     f32 temp_fv0;
@@ -449,7 +449,7 @@ static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 side) {
             volume = 127.0f;
         }
         if (volume > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_A75, (u8)volume, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_A75, (u8)volume, NULL, NULL, 0, NULL);
         }
     } else if ((sp60 < 0.0f) && (objdata->unk300[side] > 0.0f)) {
         volume = objdata->velocity[side].y * 127.0f;
@@ -460,7 +460,7 @@ static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 side) {
             volume = 127.0f;
         }
         if (volume > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_A74, (u8)volume, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_A74, (u8)volume, NULL, NULL, 0, NULL);
         }
     }
 
@@ -528,7 +528,7 @@ static void BWlog_handle_water(Object* self, BWlog_Data* objdata, s32 side) {
 }
 
 // offset: 0x1600 | func: 22
-static void BWlog_handle_controls_a_button(Object* self, BWlog_Data* objdata) {
+static void handleControlsAButton(Object* self, BWlog_Data* objdata) {
     s32 doubleTappedA;
 
     objdata->joyPressed = joyGetPressed(0);
@@ -560,12 +560,12 @@ static void BWlog_handle_controls_a_button(Object* self, BWlog_Data* objdata) {
     if (doubleTappedA) {
         //Roll when double-tapping A
         if (objdata->joyStickX > 20) {
-            BWlog_start_roll(self, objdata, FALSE);
+            startRoll(self, objdata, FALSE);
             objdata->state = BWLog_STATE_2_Roll_Right;
             return;
         }
         if (objdata->joyStickX < -20) {
-            BWlog_start_roll(self, objdata, TRUE);
+            startRoll(self, objdata, TRUE);
             objdata->state = BWLog_STATE_1_Roll_Left;
         }
     } else if (objdata->joyPressed & A_BUTTON) {
@@ -575,7 +575,7 @@ static void BWlog_handle_controls_a_button(Object* self, BWlog_Data* objdata) {
 }
 
 // offset: 0x178C | func: 23
-static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft) {
+static void startRoll(Object* self, BWlog_Data* objdata, s32 rollLeft) {
     if (rollLeft) {
         objdata->rollCurve[0] = 1500.0f;
         objdata->rollCurve[1] = 500.0f;
@@ -602,7 +602,7 @@ static void BWlog_start_roll(Object* self, BWlog_Data* objdata, s32 rollLeft) {
 }
 
 // offset: 0x1858 | func: 24
-static void BWlog_handle_roll(Object* self, BWlog_Data* objdata) {
+static void handleRoll(Object* self, BWlog_Data* objdata) {
     s32 i;
 
     objdata->rollCurveProgress = objdata->rollTimer / 100.0f;
@@ -649,10 +649,10 @@ static void BWlog_handle_roll(Object* self, BWlog_Data* objdata) {
 }
 
 // offset: 0x1A4C | func: 25
-static void BWlog_handle_unknown_state(Object* self, BWlog_Data* objdata) { }
+static void handleUnknownState(Object* self, BWlog_Data* objdata) { }
 
 // offset: 0x1A5C | func: 26
-static void BWlog_handle_paddle_motion(Object* self, BWlog_Data* objdata) {
+static void handlePaddleMotion(Object* self, BWlog_Data* objdata) {
     s32 i;
 
     objdata->targetWaterYOffset = 15.0f;
@@ -685,7 +685,7 @@ static void BWlog_handle_paddle_motion(Object* self, BWlog_Data* objdata) {
 }
 
 // offset: 0x1C18 | func: 27
-static void BWlog_find_riverflows(Object* self, BWlog_Data* objdata) {
+static void findRiverflows(Object* self, BWlog_Data* objdata) {
     s32 i;
     s32 k;
     s32 flowInfluences[2];
@@ -761,13 +761,13 @@ static void BWlog_find_riverflows(Object* self, BWlog_Data* objdata) {
 }
 
 // offset: 0x2020 | func: 28
-static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
+static void handleSounds(Object* self, BWlog_Data* objdata) {
     u8 bumpSide;
     u8 colliderFlags;
     s32 volume;
 
     if (objdata->soundHandle == 0) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_A77, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_A77, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
     } else {
         //Adjust sound volume sinusoidally
         objdata->soundVolume = objdata->riverflowMagnitude * 127.0f;
@@ -777,7 +777,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         } else if (objdata->soundVolume > 127.0f) {
             objdata->soundVolume = 127.0f;
         }
-        gDLL_6_AMSFX->vtbl->set_vol(objdata->soundHandle, objdata->soundVolume);
+        dll_amSfx->SetVol(objdata->soundHandle, objdata->soundVolume);
 
         //Adjust sound pitch sinusoidally
         objdata->soundPitch = ((objdata->unk300[0] + objdata->unk300[1]) * 0.5f) / 25.0f;
@@ -787,7 +787,7 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         objdata->soundPitch = 1.0f - objdata->soundPitch;
         objdata->soundPitch = (objdata->soundPitch * 0.2f) + 0.2f;
         objdata->soundPitch += mathSinfInterp(objdata->soundPitchPhase) * 0.1f;
-        gDLL_6_AMSFX->vtbl->set_pitch(objdata->soundHandle, objdata->soundPitch);
+        dll_amSfx->SetPitch(objdata->soundHandle, objdata->soundPitch);
 
         objdata->soundPitchPhase += gUpdateRate << 8;
         objdata->soundVolumePhase += gUpdateRate << 9;
@@ -811,14 +811,14 @@ static void BWlog_handle_sounds(Object* self, BWlog_Data* objdata) {
         if (volume > MAX_VOLUME) {
             volume = MAX_VOLUME;
         }
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_76D_Log_Bump, volume, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_76D_Log_Bump, volume, NULL, NULL, 0, NULL);
     }
 
     objdata->unk32D = colliderFlags;
 }
 
 // offset: 0x2444 | func: 29
-static void BWlog_handle_fx(Object* self, BWlog_Data* objdata) {
+static void handleFx(Object* self, BWlog_Data* objdata) {
     f32 x;
     f32 z;
     f32 sin;

@@ -494,7 +494,7 @@ void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
             This causes the roar sound to play every tick when the player approaches, until roarSoundInterval's 
             value catches up with and overtakes roarSoundTimer's value. */
         if ((objData->roarSoundTimer > objData->roarSoundInterval) && (playerDistance < 400.0f)) {
-            gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[1], 0x1E, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dBattleSounds[1], 0x1E, NULL, NULL, 0, NULL);
             objData->roarSoundInterval += mathRnd(50, 250);
         }
         
@@ -928,7 +928,7 @@ s32 DBStealerWorm_anim_state_4_stand_and_spit(Object* self, ObjFSA_Data* fsa, f3
     if (fsa->unk308 & 1) {
         fsa->unk308 &= ~1;
         objData->flags |= 1;
-        gDLL_6_AMSFX->vtbl->play(self, dChirpSounds[3], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dChirpSounds[3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     if (fsa->unk33A != 0) {
@@ -966,11 +966,11 @@ s32 DBStealerWorm_anim_state_5_hit(Object* self, ObjFSA_Data* fsa, f32 updateRat
         
         weapon = objGetPlayer()->linkedObject;
         if (((DLL_251_Weapons*)weapon->dll)->vtbl->func16(weapon)) {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dWeaponHitSounds[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dHurtSounds[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     fsa->unk341 = 0x10;
@@ -1006,7 +1006,7 @@ s32 DBStealerWorm_anim_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updateR
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
         gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800267A4(self);
 
         objData = baddie->objdata;

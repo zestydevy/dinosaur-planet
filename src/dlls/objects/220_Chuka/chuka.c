@@ -168,17 +168,17 @@ void Chuka_control(Object* self) {
                 CIRCLE_WRAP(angle);
                 if (((u16)angle < objData->angularRange) || (((M_360_DEGREES - 1 - objData->angularRange) & 0xFFFF) < (u16)angle)) {
                     if ((mathRnd(0, 99) < objData->chuckProbability) || (objData->flags & Chuka_FLAG_4_Do_Chuck)) {
-                        gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.attack, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, dSoundIDs.attack, MAX_VOLUME, NULL, NULL, 0, NULL);
                         Chuka_chuck(self);
                     } else {
-                        gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 } else {
-                    gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             }
         } else if (objData->flags & Chuka_FLAG_1_Player_In_Range) {
-            gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         
         objData->prevPlayerDistance2D = distance2D;
@@ -190,7 +190,7 @@ void Chuka_control(Object* self) {
         if (objData->health <= 0) {
             Chuka_die(self, objData);
             gDLL_33_BaddieControl->vtbl->drop_collectable(self, objData->droppedItemIdx, NO_GAMEBIT, TRUE);
-            gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.die, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dSoundIDs.die, MAX_VOLUME, NULL, NULL, 0, NULL);
             mainSetBits(objData->gamebitDead, TRUE);
         }
     }
@@ -229,7 +229,7 @@ u32 Chuka_get_data_size(Object *self, u32 offsetAddr) {
 void Chuka_receive_message(Object* self, u8 message) {
     switch (message) {
     case 0x80:
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
         break;
     default:
         STUBBED_PRINTF("BADDIE:Chuka Unknown message [%d]\n", message);

@@ -99,7 +99,7 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
         if (joyGetPressed(0) & A_BUTTON) {
             joyDisableButtons(0, A_BUTTON);
             if ((pickup->flags & PICKUPFLAG_DropDisabled) || (((DLL_210_Player*)player->dll)->vtbl->func49(player) == 0)) {
-                gDLL_6_AMSFX->vtbl->play(player, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(player, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else {
                 pickup->unk6 = 0;
             }

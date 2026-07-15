@@ -98,7 +98,7 @@ void SCTotemPole_control(Object* self) {
             
             //Start a wooden creaking loop when near the spinning pole
             if (objSetup->base.uID == SCTotemPole_Square) {
-                objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_786_Wooden_Ratcheting_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objData->soundHandle = dll_amSfx->Play(self, SOUND_786_Wooden_Ratcheting_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
     } else if (objData->prevPlayerDistance < objData->vocalsDistance) {
@@ -114,7 +114,7 @@ void SCTotemPole_control(Object* self) {
         
         //Stop the spinning pole's creaking wood loop
         if (objData->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            dll_amSfx->Stop(objData->soundHandle);
             objData->soundHandle = 0;
         }
     }
@@ -149,7 +149,7 @@ void SCTotemPole_free(Object* self, s32 arg1) {
     u32 soundHandle = objData->soundHandle;
 
     if (soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle);
+        dll_amSfx->Stop(soundHandle);
         objData->soundHandle = 0;
     }
 }

@@ -468,7 +468,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
     switch (snowhorn->curModAnimId) {
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(snowhorn, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 objAnimSet(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
@@ -483,7 +483,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Sleep:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(snowhorn, SOUND_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
             }
             objdata->sleepTimer-= gUpdateRate;
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
@@ -498,7 +498,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Wake_Up:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(snowhorn, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 objAnimSet(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
@@ -947,7 +947,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             //Calling out to the player periodically
             objdata->unk8 += gUpdateRate;
             if (objdata->unk8 > 1000) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here, MAX_VOLUME, 0, 0, 0, 0);
                 gDLL_22_Subtitles->vtbl->func_368(0xA);
                 objdata->unk8 = 0;
             }
@@ -1001,7 +1001,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
                     break;
                 }
                 if (weeds % 3 == 0) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy, MAX_VOLUME, 0, 0, 0, 0);
+                    dll_amSfx->Play(self, SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy, MAX_VOLUME, 0, 0, 0, 0);
                     gDLL_22_Subtitles->vtbl->func_368(2);
                 }
                 objdata->flags = 2;

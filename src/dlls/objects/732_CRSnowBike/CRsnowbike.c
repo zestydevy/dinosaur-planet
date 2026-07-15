@@ -406,17 +406,17 @@ void CRSnowBike_control(Object* self) {
         //Stop sound loops
         {
             if (objData->soundHandleJets) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+                dll_amSfx->Stop(objData->soundHandleJets);
                 objData->soundHandleJets = 0;
             }
 
             if (objData->soundHandleHiss) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                dll_amSfx->Stop(objData->soundHandleHiss);
                 objData->soundHandleHiss = 0;
             }
 
             if (objData->soundHandleRumble) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+                dll_amSfx->Stop(objData->soundHandleRumble);
                 objData->soundHandleRumble = 0;
             }
         }
@@ -555,7 +555,7 @@ void CRSnowBike_control(Object* self) {
                 
                 //Play bump sound randomly while out of fuel
                 if (mathRnd(0, 10) == 0) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
 
                 //Max velocity dwindles
@@ -591,19 +591,19 @@ void CRSnowBike_control(Object* self) {
             );
         } else {
             if (objData->soundHandleEngine) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleEngine);
+                dll_amSfx->Stop(objData->soundHandleEngine);
                 objData->soundHandleEngine = 0;
             }
             if (objData->soundHandleJets) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+                dll_amSfx->Stop(objData->soundHandleJets);
                 objData->soundHandleJets = 0;
             }
             if (objData->soundHandleHiss) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                dll_amSfx->Stop(objData->soundHandleHiss);
                 objData->soundHandleHiss = 0;
             }
             if (objData->soundHandleRumble) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+                dll_amSfx->Stop(objData->soundHandleRumble);
                 objData->soundHandleRumble = 0;
             }
         }
@@ -761,22 +761,22 @@ void CRSnowBike_free(Object* self, s32 onlySelf) {
     objData = self->data;
 
     if (objData->soundHandleEngine) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleEngine);
+        dll_amSfx->Stop(objData->soundHandleEngine);
         objData->soundHandleEngine = 0;
     }
 
     if (objData->soundHandleJets) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+        dll_amSfx->Stop(objData->soundHandleJets);
         objData->soundHandleJets = 0;
     }
 
     if (objData->soundHandleHiss) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+        dll_amSfx->Stop(objData->soundHandleHiss);
         objData->soundHandleHiss = 0;
     }
 
     if (objData->soundHandleRumble) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+        dll_amSfx->Stop(objData->soundHandleRumble);
         objData->soundHandleRumble = 0;
     }
 
@@ -1076,14 +1076,14 @@ void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* o
         dColourRGBA[2] += mathRnd(0, 155);
         volume = ((0.0f - objData->forwardSpeed) * 21.0f);
         if (objData->collisionFlags & 1) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
+            dll_amSfx->Play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            dll_amSfx->SetPitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         } else if (objData->collisionFlags & 2) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
+            dll_amSfx->Play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            dll_amSfx->SetPitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         } else if (objData->collisionFlags & 4) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
+            dll_amSfx->Play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            dll_amSfx->SetPitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         }
     }
     
@@ -1900,7 +1900,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
     
     if (soundFlags & CRSnowBike_SOUNDFLAG_Engine) {
         if (objData->soundHandleEngine == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objData->soundHandleEngine, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objData->soundHandleEngine, NULL, 0, NULL);
         }
 
         if (objData->soundHandleEngine != 0) {
@@ -1914,7 +1914,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if (sEngineAudioTweak > 200.0f) {
                 sEngineAudioTweak = 200.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleEngine, (sEngineAudioTweak / 70.0f) + 0.1f);
+            dll_amSfx->SetPitch(objData->soundHandleEngine, (sEngineAudioTweak / 70.0f) + 0.1f);
 
             if (objData->framesInAir < 18) {
                 volume = forwardSpeed * 30.0f;
@@ -1924,16 +1924,16 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
                 if (volume > MAX_VOLUME) {
                     volume = MAX_VOLUME;
                 }
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleEngine, volume);
+                dll_amSfx->SetVol(objData->soundHandleEngine, volume);
             } else {
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleEngine, 0);
+                dll_amSfx->SetVol(objData->soundHandleEngine, 0);
             }
         }
     }
     
     if (soundFlags & CRSnowBike_SOUNDFLAG_Hiss) {
         if (objData->soundHandleHiss == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F_Hiss_Loop, MAX_VOLUME, &objData->soundHandleHiss, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_28F_Hiss_Loop, MAX_VOLUME, &objData->soundHandleHiss, NULL, 0, NULL);
         }
         if (objData->soundHandleHiss != 0) {
             sEngineAudioTweak = forwardSpeed ? ((self->srt.roll * forwardSpeed) / 30000.0f) : 0;
@@ -1942,7 +1942,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             } else if (sEngineAudioTweak > 1.0f) {
                 sEngineAudioTweak = 1.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleHiss, 0.1f + sEngineAudioTweak);
+            dll_amSfx->SetPitch(objData->soundHandleHiss, 0.1f + sEngineAudioTweak);
 
             if (objData->framesInAir < 18) {
                 sEngineAudioTweak *= MAX_VOLUME_F;
@@ -1952,9 +1952,9 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
                     sEngineAudioTweak = 0.0f;
                 }
 
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleHiss, sEngineAudioTweak);
+                dll_amSfx->SetVol(objData->soundHandleHiss, sEngineAudioTweak);
             } else {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                dll_amSfx->Stop(objData->soundHandleHiss);
                 objData->soundHandleHiss = 0;
             }
         }
@@ -1963,16 +1963,16 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
     if (soundFlags & CRSnowBike_SOUNDFLAG_Jets) {
         if (objData->fxTimer <= 0) {
             if (objData->soundHandleJets == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objData->soundHandleJets, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objData->soundHandleJets, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             if (objData->soundHandleRumble == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objData->soundHandleRumble, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objData->soundHandleRumble, NULL, 0, NULL);
             }
         }
         
         if (objData->soundHandleJets != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleJets, (objData->soundFactorJets * (1.0f / 2048.0f)) + 0.5f);
+            dll_amSfx->SetPitch(objData->soundHandleJets, (objData->soundFactorJets * (1.0f / 2048.0f)) + 0.5f);
             if (yJoy >= 6) {
                 objData->soundFactorJets += gUpdateRateF;
             } else {
@@ -1985,11 +1985,11 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if (objData->soundFactorJets > 90.0f) {
                 objData->soundFactorJets = 90.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleJets, objData->soundFactorJets);
+            dll_amSfx->SetVol(objData->soundHandleJets, objData->soundFactorJets);
         }
 
         if (objData->soundHandleRumble != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleRumble, (objData->soundFactorRumble / 75.0f) + 0.2f);
+            dll_amSfx->SetPitch(objData->soundHandleRumble, (objData->soundFactorRumble / 75.0f) + 0.2f);
             if (yJoy >= 6) {
                 objData->soundFactorRumble = (yJoy * 0.6f) + 15.0f;
             } else {
@@ -2002,7 +2002,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if (objData->soundFactorRumble > MAX_VOLUME_F) {
                 objData->soundFactorRumble = MAX_VOLUME_F;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleRumble, objData->soundFactorRumble);
+            dll_amSfx->SetVol(objData->soundHandleRumble, objData->soundFactorRumble);
         }
     }
     

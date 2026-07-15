@@ -67,7 +67,7 @@ void SCMeterBlock_control(Object* self) {
         
         //Open the way to Golden Plains when the meter is fully raised
         if (objData->weedsOffered >= objSetup->weedsNeeded) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, 0, 0, 0, 0);
             mainSetBits(BIT_SC_MeterBlock_Completed, TRUE);
         } else {
             mainSetBits(BIT_SC_MeterBlock_Completed, FALSE);
@@ -98,7 +98,7 @@ void SCMeterBlock_free(Object* self, s32 arg1) {
 
     //Stop looping sound (may suggest the meter was intended to play a sound while moving up)
     if (objData->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+        dll_amSfx->Stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }

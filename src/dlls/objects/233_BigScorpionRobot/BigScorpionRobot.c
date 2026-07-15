@@ -163,19 +163,19 @@ void BigScorpionRobot_control(Object* self) {
                 if ((func_80025F40(self, &hitBy, &sp44, NULL) != 0) && (hitBy != NULL) && (hitBy->id == OBJ_projball)) {
                     if (sp44 == 1) {
                         objdata->hitCount++;
-                        gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_6_AMSFX->vtbl->play(hitBy, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(hitBy, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(hitBy, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
                         camUseShake();
                         camSetShakeOffset(1.0f);
                         gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, BIGSCORP_ROBO_STATE_4_DamageRecoil);
                         objdata->enteredState = 1;
                     } else {
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
                 if (objdata->hitCount >= 6) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
                     camUseShake();
                     camSetShakeOffset(6.0f);
                     gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, BIGSCORP_ROBO_STATE_5_Dying);
@@ -214,7 +214,7 @@ void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
             bone = self->def->pAttachPoints->bones[self->modelInstIdx]; // model index as a bone index?
             mtx = (MtxF *)&((f32 **)modelInst->matrices[modelInst->unk34 & 1])[bone << 4];
             projgfx = dllLoad(DLL_ID_193, 1);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_115_ScorpionRobot_LaserFire, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_115_ScorpionRobot_LaserFire, MAX_VOLUME, NULL, NULL, 0, NULL);
             srcSRT.transl.x = mtx->m[3][0] + gWorldX;
             srcSRT.transl.y = mtx->m[3][1];
             srcSRT.transl.z = mtx->m[3][2] + gWorldZ;
@@ -319,7 +319,7 @@ static s32 BigScorpionRobot_state_1_unfold(Object* self, ObjFSA_Data* fsa, f32 u
         objdata->enteredState = 0;
         objAnimSet(self, BIGSCORP_ROBO_MODANIM_0_Unfold, 0.0f, 0);
         objdata->animDelta = 0.024f;
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
@@ -377,7 +377,7 @@ static s32 BigScorpionRobot_state_2_attacking(Object* self, ObjFSA_Data* fsa, f3
                 objdata->animDelta = 0.04f;
                 objdata->turnStart = self->srt.yaw;
                 objAnimSet(self, modanimIdx, 0.0f, 0);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else if (objdata->fireCooldown == 0) {
                 objdata->fireCooldown = mathRnd(0x96, 0x138);
                 objdata->fire = 1;
@@ -405,7 +405,7 @@ static s32 BigScorpionRobot_state_3_fold(Object* self, ObjFSA_Data* fsa, f32 upd
         objdata->enteredState = 0;
         objAnimSet(self, BIGSCORP_ROBO_MODANIM_2_Fold, 0.0f, 0);
         objdata->animDelta = 0.024f;
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
@@ -456,7 +456,7 @@ static s32 BigScorpionRobot_state_5_dying(Object* self, ObjFSA_Data* fsa, f32 up
         objdata->animDelta = 0.012f;
     }
     if ((self->animProgress > 0.186f) && !objdata->playedDestroyedSound) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
         objdata->playedDestroyedSound = 1;
     }
     if ((self->curModAnimId == BIGSCORP_ROBO_MODANIM_5_Die) && (self->animProgress == 1.0f)) {
@@ -492,7 +492,7 @@ static s32 BigScorpionRobot_state_6_dead(Object* self, ObjFSA_Data* fsa, f32 upd
         if (self->setup == NULL) {
             objFreeObject(self);
         }
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
         camUseShake();
         camSetShakeOffset(6.0f);
         objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);

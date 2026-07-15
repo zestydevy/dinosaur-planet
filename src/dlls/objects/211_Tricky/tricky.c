@@ -341,7 +341,7 @@ void dll_211_control(Object* self) {
         case 1:
             objData->unk1D = 1;
             dll_211_func_8F18(objData);
-            gDLL_6_AMSFX->vtbl->play(self, mathRnd(50, 51), 0x7F, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, mathRnd(50, 51), 0x7F, NULL, NULL, 0, NULL);
             switch (objData->unk28->id) {
             case 0x1CA:
                 objData->unk18 = 2;
@@ -997,7 +997,7 @@ static void dll_211_func_1F3C(Object* self, DLL211_Data* objData) {
             objData->unk4C |= 0x10;
             objData->unk1A = 2;
             ((f32*)objData->unk5E4)[0] = 0.0f;
-            ((u32*)objData->unk5E4)[1] = gDLL_6_AMSFX->vtbl->play(self, SOUND_48_Dig_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            ((u32*)objData->unk5E4)[1] = dll_amSfx->Play(self, SOUND_48_Dig_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             objAnimSet(self, 14, 0.0f, 0);
             temp_v1_2 = objData->unk5F4;
             objData->unk38 = 0.033f;
@@ -1011,12 +1011,12 @@ static void dll_211_func_1F3C(Object* self, DLL211_Data* objData) {
         dll_211_func_87E4(self);
         if (((f32*)objData->unk5E4)[0] >= 60.0f) {
             if (objData->unk4->_unk2[0] < ((s32)objData->unk5F8)) {
-                gDLL_6_AMSFX->vtbl->stop((u32) objData->unk5E4[1]);
+                dll_amSfx->Stop((u32) objData->unk5E4[1]);
                 dll_211_func_95E0(self, objData, _data_0[1]);
                 gDLL_22_Subtitles->vtbl->func_368(0xBD);
                 dll_211_func_82B8(objData);
             } else if (objData->unk4->blueFood < ((s32)objData->unk5FC)) {
-                gDLL_6_AMSFX->vtbl->stop((u32) objData->unk5E4[1]);
+                dll_amSfx->Stop((u32) objData->unk5E4[1]);
                 dll_211_func_95E0(self, objData, _data_0[0]);
                 gDLL_22_Subtitles->vtbl->func_368(0xBC);
                 dll_211_func_82B8(objData);
@@ -1040,7 +1040,7 @@ static void dll_211_func_1F3C(Object* self, DLL211_Data* objData) {
         if (((DLL_Unknown*)sp34->dll)->vtbl->func[8].withOneArgS32((s32)sp34) != 0) {
             objData->unk4->blueFood -= (s32)objData->unk5FC;
             objData->unk4->_unk2[0]++;
-            gDLL_6_AMSFX->vtbl->stop((u32)objData->unk5E4[1]);
+            dll_amSfx->Stop((u32)objData->unk5E4[1]);
             dll_211_func_82B8(objData);
         }
         break;
@@ -1096,7 +1096,7 @@ static void dll_211_func_23B8(Object* self, DLL211_Data* objData) {
         objData->unk38 = 0.033f;
         objData->unk30[0] = temp_t0->pos.x - objData->unk5E4[0]->srt.scale;
         objData->unk30[1] = temp_t0->pos.z - objData->unk5E4[0]->srt.transl.y;
-        objData->unk5F0 = (Object* ) gDLL_6_AMSFX->vtbl->play(self, SOUND_48_Dig_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objData->unk5F0 = (Object* ) dll_amSfx->Play(self, SOUND_48_Dig_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         objData->unk1A = 4;
         /* fallthrough */
     case 4:
@@ -1115,7 +1115,7 @@ static void dll_211_func_23B8(Object* self, DLL211_Data* objData) {
                     break;
                 }
             }
-            gDLL_6_AMSFX->vtbl->stop((u32)objData->unk5F0);
+            dll_amSfx->Stop((u32)objData->unk5F0);
             objData->unk1A = 5;
         }
         return;
@@ -1296,7 +1296,7 @@ static void dll_211_func_3188(Object* self, DLL211_Data* objData) {
                 ((f32*)objData->unk5E4)[0] = 20.0f;
                 objData->unk1A = 4;
                 ((f32*)&objData->unk5F0)[0] = 30.0f;
-                gDLL_6_AMSFX->vtbl->stop(objData->unk5F4_amsFxID);
+                dll_amSfx->Stop(objData->unk5F4_amsFxID);
                 temp_v0_3 = objData->unk5E4[1];
                 self->srt.transl.x = temp_v0_3->srt.scale;
                 self->srt.transl.y = temp_v0_3->srt.transl.x;
@@ -1308,7 +1308,7 @@ static void dll_211_func_3188(Object* self, DLL211_Data* objData) {
             ((f32*)objData->unk5E4)[0] -= 0.1f * gUpdateRateF;
             if (((f32*)objData->unk5E4)[0] < -5.0f) {
                 dll_211_func_82B8(objData);
-                gDLL_6_AMSFX->vtbl->stop(objData->unk5F4_amsFxID);
+                dll_amSfx->Stop(objData->unk5F4_amsFxID);
                 self->shadow->flags &= ~0x1000;
             }
             break;
@@ -1316,7 +1316,7 @@ static void dll_211_func_3188(Object* self, DLL211_Data* objData) {
             ((f32*)&objData->unk5F0)[0] -= gUpdateRateF;
             if (((f32*)&objData->unk5F0)[0] <= 0.0f) {
                 objData->unk1A = 2;
-                objData->unk5F4_amsFxID = gDLL_6_AMSFX->vtbl->play(self, SOUND_4BB, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objData->unk5F4_amsFxID = dll_amSfx->Play(self, SOUND_4BB, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             break;
         }
@@ -1338,13 +1338,13 @@ static void dll_211_func_3188(Object* self, DLL211_Data* objData) {
                 objData->unk5E4[1] = mapFindObjSetup(((s32*)sp38)[7 /* unk1C */], NULL, NULL, NULL, NULL);
                 objData->unk4C |= 0x10;
                 objData->unk1A = 3;
-                objData->unk5F4_amsFxID = gDLL_6_AMSFX->vtbl->play(self, SOUND_4B9, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objData->unk5F4_amsFxID = dll_amSfx->Play(self, SOUND_4B9, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         } else {
             objData->unk5E4[1] = (Object* ) sp38;
             objData->unk4C |= 0x10;
             objData->unk1A = 3;
-            objData->unk5F4_amsFxID = gDLL_6_AMSFX->vtbl->play(self, SOUND_4B9, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objData->unk5F4_amsFxID = dll_amSfx->Play(self, SOUND_4B9, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         return;

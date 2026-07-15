@@ -103,10 +103,10 @@ void DBDustGeezer_control(Object* self) {
                 if (DBDustGeezer_launch_gem(self) == FALSE){
                     STUBBED_PRINTF("WARNING: BoneDust Buffer Full ");
                 }
-                if (gDLL_6_AMSFX->vtbl->is_playing(objData->soundHandle1)) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle1);
+                if (dll_amSfx->IsPlaying(objData->soundHandle1)) {
+                    dll_amSfx->Stop(objData->soundHandle1);
                 }
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_A21_Whoosh_Echoey, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_A21_Whoosh_Echoey, MAX_VOLUME, 0, 0, 0, 0);
 
                 //Advance state when all gems launched
                 objData->gemsToLaunch--;
@@ -149,7 +149,7 @@ void DBDustGeezer_control(Object* self) {
     if (objAnimAdvance(self, 0.012f, gUpdateRateF, 0)) {
         self->srt.scale = self->def->scale * 0.5f;
         objAnimSet(self, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_A20_Electric_Surge_Quieter, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_A20_Electric_Surge_Quieter, MAX_VOLUME, 0, 0, 0, 0);
     }
     
     if (mathRnd(0, 10) == 0) {
@@ -184,12 +184,12 @@ void DBDustGeezer_free(Object* self, int skipChildObjects) {
     
     soundHandle1 = objData->soundHandle1;
     if (soundHandle1) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle1);
+        dll_amSfx->Stop(soundHandle1);
     }
     
     soundHandle2 = objData->soundHandle2;
     if (soundHandle2) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle2);
+        dll_amSfx->Stop(soundHandle2);
     }
 
     if (skipChildObjects == FALSE) {
@@ -223,7 +223,7 @@ f32 DBDustGeezer_dug_up(Object* self, s32 arg1) {
     if ((objData->gemsToLaunch == 0) && (objData->state != DBDustGeezer_STATE_Cooldown)) {
         objData->flags |= DBDustGeezer_FLAG_Dug_Up;
         objAnimSet(self, 1, 0.0f, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_A22_Electric_Surge, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_A22_Electric_Surge, MAX_VOLUME, 0, 0, 0, 0);
         self->srt.scale *= 1.5f;
         objData->gemsToLaunch = objSetup->launchedGemCount;
     }

@@ -389,7 +389,7 @@ void __clearAudioDMA(void) {
 
 void am_func_800121DC(void) {
     gDLL_5_AMSEQ2->vtbl->tick();
-    gDLL_6_AMSFX->vtbl->func_338();
+    dll_amSfx->Func338();
 }
 
 void am_func_80012224(s32 a0) { }

@@ -221,42 +221,42 @@ enum ThorntailCurveSubtype {
     0xffff0000
 };
 
-static void thorntail_update_shadow(Object* self);
-static int thorntail_anim_callback(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3);
-static void thorntail_sleepy_setup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_sleepy_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_sleepy_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_sleepy_act2_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_sleepy_act3_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_sleepy_act4_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_trader_setup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_trader_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_trader_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_trader_act1_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_trader_act2_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_trader_act3_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_trader_act4_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_elder_setup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_elder_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void thorntail_elder_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_elder_act1_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_elder_act2_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_elder_act3_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void thorntail_elder_act4_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void updateShadow(Object* self);
+static int animCallback(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3);
+static void sleepySetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void sleepyInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void sleepyControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void commonControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void sleepyAct2Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void sleepyAct3Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void sleepyAct4Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void traderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void traderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void traderControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void traderAct1Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void traderAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void traderAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void traderAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void elderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void elderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
+static void elderControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void elderAct1Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void elderAct2Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void elderAct3Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void elderAct4Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
 
 // offset: 0x0 | ctor
-void thorntail_ctor(void *dll) { }
+void SHthorntail_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void thorntail_dtor(void *dll) { }
+void SHthorntail_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 // @bug: Missing 3rd param
 #ifndef AVOID_UB
-void thorntail_setup(Object *self, SHthorntail_Setup *setup/*, s32 reset*/) {
+void SHthorntail_obj_Setup(Object *self, SHthorntail_Setup *setup/*, s32 reset*/) {
 #else
-void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
+void SHthorntail_obj_Setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
 #endif
     SHthorntail_Data *objdata = self->data;
     s32 _pad;
@@ -264,13 +264,13 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
 
     switch (setup->thorntail) {
     case THORNTAIL_1_Sleepy:
-        thorntail_sleepy_setup(self, objdata, setup);
+        sleepySetup(self, objdata, setup);
         break;
     case THORNTAIL_2_Log_Trader:
-        thorntail_trader_setup(self, objdata, setup);
+        traderSetup(self, objdata, setup);
         break;
     case THORNTAIL_3_Elder:
-        thorntail_elder_setup(self, objdata, setup);
+        elderSetup(self, objdata, setup);
         break;
     }
     gDLL_27->vtbl->init(&objdata->collider, DLL27FLAG_4000000 | DLL27FLAG_2000000, DLL27FLAG_400, DLL27MODE_1);
@@ -279,7 +279,7 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
     self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     self->shadow->distFadeMaxOpacity = 128;
     self->shadow->distFadeMinOpacity = 90;
-    self->animCallback = thorntail_anim_callback;
+    self->animCallback = animCallback;
     objdata->state = -1;
     mainCreateTempDLL(DLL_ID_53_MOVELIB);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -0x1FFF, 0x2AAA, 3);
@@ -289,7 +289,7 @@ void thorntail_setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
 }
 
 // offset: 0x248 | func: 1 | export: 1
-void thorntail_control(Object* self) {
+void SHthorntail_obj_Control(Object* self) {
     SHthorntail_Data* objdata;
     SHthorntail_Setup* setup;
     Object* player;
@@ -304,16 +304,16 @@ void thorntail_control(Object* self) {
         objdata->playerDist = vec3Distance(&self->globalPosition, &player->globalPosition);
         switch (setup->thorntail) {
         case THORNTAIL_1_Sleepy:
-            thorntail_sleepy_control(self, objdata, setup);
+            sleepyControl(self, objdata, setup);
             break;
         case THORNTAIL_2_Log_Trader:
-            thorntail_trader_control(self, objdata, setup);
+            traderControl(self, objdata, setup);
             break;
         case THORNTAIL_3_Elder:
-            thorntail_elder_control(self, objdata, setup);
+            elderControl(self, objdata, setup);
             break;
         }
-        thorntail_update_shadow(self);
+        updateShadow(self);
         gDLL_27->vtbl->func_1E8(self, &objdata->collider, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, &objdata->collider);
         gDLL_27->vtbl->func_624(self, &objdata->collider, gUpdateRateF);
@@ -324,10 +324,10 @@ void thorntail_control(Object* self) {
 }
 
 // offset: 0x474 | func: 2 | export: 2
-void thorntail_update(Object *self) { }
+void SHthorntail_obj_Update(Object *self) { }
 
 // offset: 0x480 | func: 3 | export: 3
-void thorntail_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SHthorntail_obj_Print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     SHthorntail_Data *objdata;
 
     objdata = self->data;
@@ -338,23 +338,23 @@ void thorntail_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 }
 
 // offset: 0x504 | func: 4 | export: 4
-void thorntail_free(Object *self, s32 onlySelf) {
+void SHthorntail_obj_Free(Object *self, s32 onlySelf) {
     mainRemoveTempDLL(DLL_ID_53_MOVELIB);
     objFreeObjectType(self, OBJTYPE_40);
 }
 
 // offset: 0x560 | func: 5 | export: 5
-u32 thorntail_get_model_flags(Object *self) {
+u32 SHthorntail_obj_GetModelFlags(Object *self) {
     return MODFLAGS_EVENTS | MODFLAGS_8 | MODFLAGS_SHADOW | MODFLAGS_1;
 }
 
 // offset: 0x570 | func: 6 | export: 6
-u32 thorntail_get_data_size(Object *self, u32 offsetAddr) {
+u32 SHthorntail_obj_GetDataSize(Object *self, u32 offsetAddr) {
     return sizeof(SHthorntail_Data);
 }
 
 // offset: 0x584 | func: 7
-static void thorntail_update_shadow(Object *self) {
+static void updateShadow(Object *self) {
     MtxF mtx;
 
     mathYprXyzMtx(&mtx, &self->srt);
@@ -362,7 +362,7 @@ static void thorntail_update_shadow(Object *self) {
 }
 
 // offset: 0x608 | func: 8
-static CurveSetup* thorntail_find_closest_curve(f32 x, f32 y, f32 z, s32 curveSubtype) {
+static CurveSetup* findClosestCurve(f32 x, f32 y, f32 z, s32 curveSubtype) {
     CurveNode* nodes;
     CurveSetup* curve;
     CurveSetup* closestCurve;
@@ -393,7 +393,7 @@ static CurveSetup* thorntail_find_closest_curve(f32 x, f32 y, f32 z, s32 curveSu
 }
 
 // offset: 0x8CC | func: 9
-static int thorntail_anim_callback(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3) {
+static int animCallback(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3) {
     SHthorntail_Data *objdata = actor->data;
 
     if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->movedata, 1, 1) != 0) {
@@ -409,14 +409,14 @@ static int thorntail_anim_callback(Object *actor, Object *animObj, AnimObj_Data 
 }
 
 // offset: 0x9B8 | func: 10
-static void thorntail_sleepy_setup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void sleepySetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     objdata->flags |= THORNTAILFLAG_RotateTalkSeqs;
     objdata->progressionBlockerGamebit = BIT_SH_Move_Thorntail_Blocking_Hollow_Log;
-    thorntail_sleepy_init(self, objdata, setup);
+    sleepyInit(self, objdata, setup);
 }
 
 // offset: 0xA04 | func: 11
-static void thorntail_sleepy_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void sleepyInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     s32 curveSubtype;
 
     if (mainGetBits(objdata->progressionBlockerGamebit) == 0) {
@@ -426,7 +426,7 @@ static void thorntail_sleepy_init(Object *self, SHthorntail_Data *objdata, SHtho
         objdata->progressionBlockerGamebit = -1;
         curveSubtype = THORNTAILCURVE_8;
     }
-    objdata->currentCurve = thorntail_find_closest_curve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, curveSubtype);
+    objdata->currentCurve = findClosestCurve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, curveSubtype);
     if (objdata->currentCurve == NULL) {
         STUBBED_PRINTF("THORNTAIL: cannot find a node\n");
     }
@@ -443,26 +443,26 @@ static void thorntail_sleepy_init(Object *self, SHthorntail_Data *objdata, SHtho
 }
 
 // offset: 0xB40 | func: 12
-static void thorntail_sleepy_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+static void sleepyControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
     switch (objdata->mapAct) {
     default:
     case 1:
-        thorntail_common_control(self, objdata, setup);
+        commonControl(self, objdata, setup);
         break;
     case 2:
-        thorntail_sleepy_act2_control(self, objdata, setup);
+        sleepyAct2Control(self, objdata, setup);
         break;
     case 3:
-        thorntail_sleepy_act3_control(self, objdata, setup);
+        sleepyAct3Control(self, objdata, setup);
         break;
     case 4:
-        thorntail_sleepy_act4_control(self, objdata, setup);
+        sleepyAct4Control(self, objdata, setup);
         break;
     }
 }
 
 // offset: 0xBEC | func: 13
-static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+static void commonControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
     s32 ignoreUID;
     s32 allowBranch;
     s32 numBranches;
@@ -538,7 +538,7 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
             //       sometimes. Subtype 0 nodes are only found on the log trader's curve network.
             STUBBED_PRINTF("THORNTAIL: help cannot find a node\n");
             // STUBBED_PRINTF("Thorntail %d, is on a network with a deadend\n", setup->base.uID); // default.dol
-            objdata->targetCurve = thorntail_find_closest_curve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, THORNTAILCURVE_0);
+            objdata->targetCurve = findClosestCurve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, THORNTAILCURVE_0);
             if (objdata->targetCurve != NULL) {
                 objdata->prevCurve = objdata->currentCurve;
                 objdata->flags &= ~THORNTAILFLAG_AtTarget;
@@ -821,21 +821,21 @@ static void thorntail_common_control(Object* self, SHthorntail_Data* objdata, SH
 }
 
 // offset: 0x19E0 | func: 14
-static void thorntail_sleepy_act2_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void sleepyAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x19F4 | func: 15
-static void thorntail_sleepy_act3_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void sleepyAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1A08 | func: 16
-static void thorntail_sleepy_act4_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void sleepyAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1A1C | func: 17
-static void thorntail_trader_setup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
-    thorntail_trader_init(self, objdata, setup);
+static void traderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+    traderInit(self, objdata, setup);
 }
 
 // offset: 0x1A58 | func: 18
-static void thorntail_trader_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void traderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     s32 curveSubtype;
 
     if (mainGetBits(BIT_14) == 0) {
@@ -846,7 +846,7 @@ static void thorntail_trader_init(Object *self, SHthorntail_Data *objdata, SHtho
         objdata->progressionBlockerGamebit = -1;
         curveSubtype = THORNTAILCURVE_8;
     }
-    objdata->currentCurve = thorntail_find_closest_curve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, curveSubtype);
+    objdata->currentCurve = findClosestCurve(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, curveSubtype);
     if (objdata->currentCurve == NULL) {
         STUBBED_PRINTF("THORNTAIL: cannot find a node\n");
     }
@@ -863,32 +863,32 @@ static void thorntail_trader_init(Object *self, SHthorntail_Data *objdata, SHtho
 }
 
 // offset: 0x1B9C | func: 19
-static void thorntail_trader_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void traderControl(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     switch (objdata->mapAct) {
     default:
     case 1:
-        thorntail_trader_act1_control(self, objdata, setup);
+        traderAct1Control(self, objdata, setup);
         break;
     case 2:
-        thorntail_trader_act2_control(self, objdata, setup);
+        traderAct2Control(self, objdata, setup);
         break;
     case 3:
-        thorntail_trader_act3_control(self, objdata, setup);
+        traderAct3Control(self, objdata, setup);
         break;
     case 4:
-        thorntail_trader_act4_control(self, objdata, setup);
+        traderAct4Control(self, objdata, setup);
         break;
     }
 }
 
 // offset: 0x1C48 | func: 20
-static void thorntail_trader_act1_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void traderAct1Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     Object *sidekick;
     Object *player;
 
     sidekick = objGetSidekick();
     player = objGetPlayer();
-    thorntail_common_control(self, objdata, setup);
+    commonControl(self, objdata, setup);
     if ((objdata->state == THORNTAILSTATE_BlockingProgression) && (sidekick != NULL)) {
         if (vec3DistanceSquared(&player->globalPosition, &self->globalPosition) < SQ(70.0f)) {
             // Allow distract command
@@ -902,55 +902,55 @@ static void thorntail_trader_act1_control(Object *self, SHthorntail_Data *objdat
 }
 
 // offset: 0x1D70 | func: 21
-static void thorntail_trader_act2_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void traderAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1D84 | func: 22
-static void thorntail_trader_act3_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void traderAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1D98 | func: 23
-static void thorntail_trader_act4_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void traderAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1DAC | func: 24
-static void thorntail_elder_setup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void elderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
     objdata->flags |= THORNTAILFLAG_RotateTalkSeqs;
     objdata->progressionBlockerGamebit = BIT_SH_Move_Thorntail_Blocking_Swapstone;
-    thorntail_elder_init(self, objdata, setup);
+    elderInit(self, objdata, setup);
 }
 
 // offset: 0x1DF8 | func: 25
-static void thorntail_elder_init(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
-    thorntail_sleepy_init(self, objdata, setup);
+static void elderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+    sleepyInit(self, objdata, setup);
     objdata->talkSeqs = sElderTalkSeqs;
     objdata->talkSeqsCount = ARRAYCOUNT(sElderTalkSeqs);
 }
 
 // offset: 0x1E4C | func: 26
-static void thorntail_elder_control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
-    thorntail_sleepy_control(self, objdata, setup);
+static void elderControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+    sleepyControl(self, objdata, setup);
     switch (objdata->mapAct) {
     case 1:
-        thorntail_elder_act1_control(self, objdata, setup);
+        elderAct1Control(self, objdata, setup);
         return;
     case 2:
-        thorntail_elder_act2_control(self, objdata, setup);
+        elderAct2Control(self, objdata, setup);
         break;
     case 3:
-        thorntail_elder_act3_control(self, objdata, setup);
+        elderAct3Control(self, objdata, setup);
         break;
     case 4:
-        thorntail_elder_act4_control(self, objdata, setup);
+        elderAct4Control(self, objdata, setup);
         break;
     }
 }
 
 // offset: 0x1F28 | func: 27
-static void thorntail_elder_act1_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void elderAct1Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1F3C | func: 28
-static void thorntail_elder_act2_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void elderAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1F50 | func: 29
-static void thorntail_elder_act3_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void elderAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
 
 // offset: 0x1F64 | func: 30
-static void thorntail_elder_act4_control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void elderAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }

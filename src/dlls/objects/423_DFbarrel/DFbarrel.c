@@ -222,7 +222,7 @@ void DFbarrel_handle_damage(Object* self) {
     }
 
     //When damaged, play an impact sound and increase damage counter
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
     objData->damage += hitDamage;
 
     //Return early if the barrel hasn't reached the damage threshold

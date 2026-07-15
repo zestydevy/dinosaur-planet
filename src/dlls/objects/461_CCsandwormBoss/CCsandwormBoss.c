@@ -371,7 +371,7 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
                 objData->state = CCsandwormBoss_STATE_12_Underground_Attacking_Krystal;
                 objData->animSpeed = 0.005f;
                 objAnimSet(self, CCsandwormBoss_MODANIM_A_8_Emerge_and_Snap_Attack, 0, 0);
-                gDLL_6_AMSFX->vtbl->play(self, dAttackSoundIDs[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, dAttackSoundIDs[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
                 objData->isUnderHome = FALSE;
                 objData->particleTickCount = 3;
             
@@ -468,13 +468,13 @@ void CCsandwormBoss_attack(Object* self, Object* obj, CCsandwormBoss_Data* objDa
         objData->state = nextState;
         objData->animSpeed = 0.02f;
         objAnimSet(self, CCsandwormBoss_MODANIM_B_0_Claw_Swipe_Attack, 0.0f, 0);
-        gDLL_6_AMSFX->vtbl->play(self, dAttackSoundIDs[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dAttackSoundIDs[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
     } else {
         //Bite attack when further away
         objData->state = nextState;
         objData->animSpeed = 0.009f;
         objAnimSet(self, dAttackModanimIDs[mathRnd(0, 2)], 0.0f, 0);
-        gDLL_6_AMSFX->vtbl->play(self, dAttackSoundIDs[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dAttackSoundIDs[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 

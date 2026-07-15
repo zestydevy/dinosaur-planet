@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword thorntail_ctor
-.dword thorntail_dtor
+.dword SHthorntail_ctor
+.dword SHthorntail_dtor
 
 # export table
-/*0*/ .dword thorntail_setup
-/*1*/ .dword thorntail_control
-/*2*/ .dword thorntail_update
-/*3*/ .dword thorntail_print
-/*4*/ .dword thorntail_free
-/*5*/ .dword thorntail_get_model_flags
-/*6*/ .dword thorntail_get_data_size
+/*0*/ .dword SHthorntail_obj_Setup
+/*1*/ .dword SHthorntail_obj_Control
+/*2*/ .dword SHthorntail_obj_Update
+/*3*/ .dword SHthorntail_obj_Print
+/*4*/ .dword SHthorntail_obj_Free
+/*5*/ .dword SHthorntail_obj_GetModelFlags
+/*6*/ .dword SHthorntail_obj_GetDataSize

@@ -111,8 +111,8 @@ void dll_376_control(Object* self) {
             } else {
                 *sp40 = 0;
             }
-            if (gDLL_6_AMSFX->vtbl->is_playing(objData->unk58) == 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->unk58);
+            if (dll_amSfx->IsPlaying(objData->unk58) == 0) {
+                dll_amSfx->Stop(objData->unk58);
                 objData->unk58 = 0;
                 *sp40 = 0;
             }
@@ -130,7 +130,7 @@ void dll_376_control(Object* self) {
         } else {
             objExpr_func_80034BC0(self, &objData->unk28);
             if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3Distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
-                gDLL_6_AMSFX->vtbl->play(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
+                dll_amSfx->Play(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
                 
                 if (mathRnd(0, 100) < 50) {
                     objData->unk5E++;

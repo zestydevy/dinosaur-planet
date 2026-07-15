@@ -369,8 +369,8 @@ s32 capy_anim_state_4_sniff(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk27C = 0.0f;
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
-        capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77C_Capy_Sniff, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
+        capydata->soundHandle = dll_amSfx->Play(self, SOUND_77C_Capy_Sniff, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk33A != 0) {
         return CAPY_ASTATE_5_Eat + 1;
@@ -406,8 +406,8 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
-        capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
+        capydata->soundHandle = dll_amSfx->Play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk33A != 0) {
         if (target != NULL) {
@@ -473,8 +473,8 @@ s32 capy_anim_state_7_dig_wall(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk27C = 0.0f;
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
-        capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
+        capydata->soundHandle = dll_amSfx->Play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk308 & 0x200) {
         mainSetBits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18], 1);

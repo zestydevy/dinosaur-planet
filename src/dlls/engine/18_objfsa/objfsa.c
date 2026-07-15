@@ -487,7 +487,7 @@ void objfsa_func_1120(Object *obj, ObjFSA_Data *data, s32 bitIdx, s32 soundIdx, 
     bitMask = 1 << bitIdx;
     if (data->unk308 & bitMask) {
         data->unk308 = data->unk308 & ~bitMask;
-        gDLL_6_AMSFX->vtbl->play(obj, soundIDs[soundIdx], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(obj, soundIDs[soundIdx], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 
@@ -499,9 +499,9 @@ void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 bitIdx, s32 soundIdx, 
     bitMask = 1 << bitIdx;
     if (data->unk308 & bitMask) {
         data->unk308 = data->unk308 & ~bitMask;
-        soundHandle = gDLL_6_AMSFX->vtbl->play(obj, soundIDs[soundIdx], volume, NULL, NULL, 0, NULL);
+        soundHandle = dll_amSfx->Play(obj, soundIDs[soundIdx], volume, NULL, NULL, 0, NULL);
         if (soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(soundHandle, pitch);
+            dll_amSfx->SetPitch(soundHandle, pitch);
         }
     }
 }

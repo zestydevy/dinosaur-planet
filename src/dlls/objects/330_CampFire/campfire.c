@@ -79,8 +79,8 @@ void campfire_setup(Object* self, CampFire_Setup* objSetup, s32 arg2) {
     }
     
     //Start fire sound loops
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_50a_Fire_Burning_Low_Loop,  MAX_VOLUME, NULL, NULL, 0, NULL);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_50a_Fire_Burning_Low_Loop,  MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 
 // offset: 0x210 | func: 1 | export: 1

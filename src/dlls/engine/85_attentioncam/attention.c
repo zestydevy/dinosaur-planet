@@ -198,7 +198,7 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
         var_a0 = sp14C;
     }
     if ((var_a0 >= 0x2000) && (data->unk2 != 0)) {
-        gDLL_6_AMSFX->vtbl->play(player, SOUND_1E, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(player, SOUND_1E, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     gDLL_2_Camera->vtbl->func12(sState->unk11C.unkC, &sState->unk108, 20.0f, 0.5f, 1.0f, -10.0f);
     sState->unk10 = -100000.0f;

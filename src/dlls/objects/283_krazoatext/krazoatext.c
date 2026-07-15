@@ -96,7 +96,7 @@ void krazoatext_control(Object* self) {
     } else if (self->unkAF & 1) {
         objdata->state = 1;
         if (objdata->sound == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
         }
     }
 
@@ -106,8 +106,8 @@ void krazoatext_control(Object* self) {
         krazoatext_unload_all_glyph_textures(self, objdata);
     }
 
-    if (objdata->sound && !gDLL_6_AMSFX->vtbl->is_playing(objdata->sound)) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+    if (objdata->sound && !dll_amSfx->IsPlaying(objdata->sound)) {
+        dll_amSfx->Stop(objdata->sound);
         objdata->sound = NULL;
     }
 }
@@ -130,7 +130,7 @@ void krazoatext_free(Object* self, s32 arg1) {
 
     krazoatext_unload_all_glyph_textures(self, objdata);
     if (objdata->sound) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+        dll_amSfx->Stop(objdata->sound);
     }
 }
 

@@ -168,7 +168,7 @@ void WL_DeadDino_control(Object* self) {
                         }
                     } else if (objData->state == STATE_0_Calling_for_Help) {
                         if (distanceToPlayer < 120.0f) {
-                            gDLL_6_AMSFX->vtbl->play(self, SOUND_1FB_EarthWalker_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            dll_amSfx->Play(self, SOUND_1FB_EarthWalker_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
                             objData->state = STATE_1_Waiting_for_Help;
                             objData->cryHelpTimer = mathRnd(400, 600);
                         }
@@ -181,7 +181,7 @@ void WL_DeadDino_control(Object* self) {
             }
         } else if ((objData->vanishTimer == 0.0f) && mainGetBits(BIT_WM_EarthWalker_Died)) {
             objData->vanishTimer = 1.0f;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             animate = FALSE;
         }
         
@@ -250,7 +250,7 @@ void WL_DeadDino_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 
     objdata->vanishTimer += (gUpdateRateF * 0.01f);
     if (objdata->vanishTimer >= 2.0f) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
         objdata->vanished = TRUE;
         objdata->vanishTimer = 0.0f;
         WL_DeadDino_create_magic_dust(self);

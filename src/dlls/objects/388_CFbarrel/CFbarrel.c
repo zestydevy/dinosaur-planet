@@ -400,7 +400,7 @@ static void CFbarrel_func_1214(Object* self) {
             self->objhitInfo->unk58 |= 1;
             self->objhitInfo->unk52 = 0x14;
             self->visRadius = 100.0f;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, NULL, NULL, 0, NULL);
             self->srt.transl.y += 10.0f;
             explSetup = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
             explSetup->base.x = self->srt.transl.x;
@@ -416,7 +416,7 @@ static void CFbarrel_func_1214(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
 }
@@ -462,7 +462,7 @@ static void CFbarrel_func_14A0(Object* self, s16 arg1, s16 arg2) {
     }
     if (var_fv1 >= 1.0f) {
         STUBBED_PRINTF(" landed ");
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8E2, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8E2, MAX_VOLUME, NULL, NULL, 0, NULL);
         arg1 = 0;
         arg2 = 0;
         var_fv1 = 1.0f;

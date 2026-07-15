@@ -83,7 +83,7 @@ static s32 SidekickToy_tick_flight(Object* self) {
             if (volume > 2.0f) {
                 volume = 2.0f;
             }
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_161_Toy_Squeak, volume * 32.0f, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_161_Toy_Squeak, volume * 32.0f, 0, 0, 0, 0);
         }
 
         //Get velocity unit vector

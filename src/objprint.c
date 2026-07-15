@@ -67,7 +67,7 @@ void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, O
     diRcpTrace(*gdl, obj->id, "objects/objprint.c", 426);
     if (obj->dll != NULL) {
         if (!(obj->stateFlags & OBJSTATE_PRINT_DISABLED)) {
-            obj->dll->vtbl->print(obj, gdl, mtxs, vtxs, tris, visibility);
+            obj->dll->vtbl->Print(obj, gdl, mtxs, vtxs, tris, visibility);
         } else if (visibility != 0) {
             objprintDrawModel(obj, gdl, mtxs, vtxs, tris, 1.0f);
         }

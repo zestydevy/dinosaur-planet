@@ -138,7 +138,7 @@ void WallAnimator_control(Object* self) {
 
         mainSetBits(objData->gamebitDug, TRUE);
 
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_B01_Success_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_B01_Success_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 
     //Animate vertices

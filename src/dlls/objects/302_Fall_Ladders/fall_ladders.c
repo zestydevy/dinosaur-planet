@@ -73,7 +73,7 @@ void Fall_Ladders_control(Object* self) {
         objData->dropTimer -= (s16)gUpdateRateF;
         if (objData->dropTimer <= 0) {
             objData->state = Fall_Ladders_STATE_1_Falling;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_6E9_Wooden_Ratcheting, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_6E9_Wooden_Ratcheting, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->dropTimer = 0;
         }
         return;

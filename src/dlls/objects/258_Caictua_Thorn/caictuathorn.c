@@ -23,7 +23,7 @@ void Caictua_Thorn_setup(Object* self, Caictua_Thorn_Setup* objSetup, s32 reset)
         self->shadow->maxDistScale = self->shadow->scale * 2.5f;
     }
 
-    self->unkE0 = gDLL_6_AMSFX->vtbl->play(self, SOUND_849, MAX_VOLUME, NULL, NULL, 0, NULL);
+    self->unkE0 = dll_amSfx->Play(self, SOUND_849, MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 
 // offset: 0xDC | func: 1 | export: 1
@@ -59,7 +59,7 @@ void Caictua_Thorn_control(Object* self) {
     }
 
     if (self->unkE0 != 0) {
-        gDLL_6_AMSFX->vtbl->update_doppler(self->unkE0, self, objGetPlayer(), 150.0f);
+        dll_amSfx->UpdateDoppler(self->unkE0, self, objGetPlayer(), 150.0f);
     }
     
     func_80026128(self, 0xA, 1, 0);
@@ -72,7 +72,7 @@ void Caictua_Thorn_control(Object* self) {
     ) {
         camUseShake();
         camSetShakeOffset(1.0f);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_721, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_721, MAX_VOLUME, NULL, NULL, 0, NULL);
 
         i = 0x19;
         while (i--) {
@@ -84,7 +84,7 @@ void Caictua_Thorn_control(Object* self) {
         func_800267A4(self);
 
         if (self->unkE0) {
-            gDLL_6_AMSFX->vtbl->stop(self->unkE0);
+            dll_amSfx->Stop(self->unkE0);
             self->unkE0 = 0;
         }
     }
@@ -106,11 +106,11 @@ void Caictua_Thorn_update(Object* self) {
     self->velocity.y = 0.0f;
     self->velocity.z = 0.0f;
     func_800267A4(self);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
 
     //Stop sound loop
     if (self->unkE0 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(self->unkE0);
+        dll_amSfx->Stop(self->unkE0);
         self->unkE0 = 0;
     }
 }
@@ -125,7 +125,7 @@ void Caictua_Thorn_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 // offset: 0x584 | func: 4 | export: 4
 void Caictua_Thorn_free(Object* self, s32 onlySelf) {
     if (self->unkE0 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(self->unkE0);
+        dll_amSfx->Stop(self->unkE0);
         self->unkE0 = 0;
     }
     

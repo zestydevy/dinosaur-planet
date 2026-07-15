@@ -79,10 +79,10 @@ void NWsfx_control(Object* self) {
     //Play a sound
     if (objData->totalSounds == 0) {
         //Play the first sound (NOTE: unreachable, since `objData->sounds` will be NULL when `objData->totalSounds` is 0?)
-        gDLL_6_AMSFX->vtbl->play(self, objData->sounds[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, objData->sounds[0], MAX_VOLUME, NULL, NULL, 0, NULL);
     } else {
         //Pick a random sound to play
-        gDLL_6_AMSFX->vtbl->play(self, objData->sounds[mathRnd(0, objData->totalSounds - 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, objData->sounds[mathRnd(0, objData->totalSounds - 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 

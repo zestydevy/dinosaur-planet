@@ -14,8 +14,8 @@ void PollenFragment_setup(Object* self, PollenFragment_Setup* objSetup, s32 arg2
     
     func_800267A4(self);
     objData->lifetime = mathRnd(180, 300);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_B02_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_B03_Acid_Hiss_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_B02_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_B03_Acid_Hiss_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
 }
 
 // offset: 0xF4 | func: 1 | export: 1
@@ -43,7 +43,7 @@ void PollenFragment_control(Object* self) {
     self->velocity.z *= 0.95f;
     self->velocity.y *= 0.95f;
     self->velocity.y += 0.001f * gUpdateRateF;
-    gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle, self->opacity / 2);
+    dll_amSfx->SetVol(objData->soundHandle, self->opacity / 2);
     objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     
     //Objhits

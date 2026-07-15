@@ -125,13 +125,13 @@ void DFbarrelanim_free(Object* self, s32 arg1) {
 
     for (i = 0; i < 4; i++) {
         if (objData->sfxHandles[i]) {
-            gDLL_6_AMSFX->vtbl->stop(objData->sfxHandles[i]);
+            dll_amSfx->Stop(objData->sfxHandles[i]);
         }
     }
     
     gDLL_5_AMSEQ2->vtbl->free(self, -1, 0, 0, 0);
     if (objData->unk30 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk30);
+        dll_amSfx->Stop(objData->unk30);
     }
 }
 

@@ -319,7 +319,7 @@ void WL_Crystal_control(Object* self) {
                 transform.roll = mathRnd(0, 0xFFFF);
                 transform.pitch = mathRnd(0, 0xFFFF);
                 transform.yaw = mathRnd(0, 0xFFFF);
-                gDLL_6_AMSFX->vtbl->play(NULL, SOUND_WM_Sun_Whoosh, 0x43, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(NULL, SOUND_WM_Sun_Whoosh, 0x43, NULL, NULL, 0, NULL);
                 while (goal) {
                     goal--;
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1AA, &transform, 0x10000, -1, NULL);

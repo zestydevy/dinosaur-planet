@@ -197,20 +197,20 @@ void menu_func_8000F6CC(void) {
 
     if ((D_800A7D79 & 4)) {
         if (D_800A7D7C != 0) {
-            gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+            dll_amSfx->Stop(D_800A7D7C);
         }
 
-        D_800A7D7C = gDLL_6_AMSFX->vtbl->play(0, SOUND_775_Timer_Countdown, MAX_VOLUME, 0, 0, 0, 0);
+        D_800A7D7C = dll_amSfx->Play(0, SOUND_775_Timer_Countdown, MAX_VOLUME, 0, 0, 0, 0);
     } else {
         D_800A7D7C = 0;
     }
 
     if ((D_800A7D79 & 1)) {
-        gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
-        gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
+        dll_amSfx->SetPitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
+        dll_amSfx->SetVol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
     } else {
-        gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
-        gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
+        dll_amSfx->SetPitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
+        dll_amSfx->SetVol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
     }
 }
 
@@ -218,7 +218,7 @@ void menu_func_8000F9DC(void) {
     D_800A7D6C = 1;
 
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+        dll_amSfx->Stop(D_800A7D7C);
         D_800A7D7C = 0;
     }
 }
@@ -227,11 +227,11 @@ void menu_func_8000FA2C(void) {
     D_800A7D94 = 0;
 
     if (D_800A7D79 & 8) {
-        gDLL_6_AMSFX->vtbl->play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
     }
 
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+        dll_amSfx->Stop(D_800A7D7C);
         D_800A7D7C = 0;
     }
 
@@ -242,7 +242,7 @@ void menu_func_8000FAC8(void) {
     D_800A7D94 = 0;
     
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+        dll_amSfx->Stop(D_800A7D7C);
         D_800A7D7C = 0;
     }
 
@@ -284,11 +284,11 @@ void menu_func_8000FB2C(Gfx **gdl) {
 
     if (bvar) {
         if (D_800A7D79 & 8) {
-            gDLL_6_AMSFX->vtbl->play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         if (D_800A7D7C != 0) {
-            gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+            dll_amSfx->Stop(D_800A7D7C);
             D_800A7D7C = 0;
         }
 
@@ -299,11 +299,11 @@ void menu_func_8000FB2C(Gfx **gdl) {
 
     if (D_800A7D7C != 0) {
         if ((D_800A7D79 & 1)) {
-            gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
-            gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
+            dll_amSfx->SetPitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
+            dll_amSfx->SetVol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
         } else {
-            gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
-            gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
+            dll_amSfx->SetPitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
+            dll_amSfx->SetVol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
         }
     }
 

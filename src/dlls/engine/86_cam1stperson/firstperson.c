@@ -133,7 +133,7 @@ void cam1stperson_func_18(Cam* cam, s32 arg1, Cam1stPerson_Params* data) {
         sState->unk120 = 5;
     } else {
         sState->unk120 = 0;
-        gDLL_6_AMSFX->vtbl->play(player, SOUND_1F, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(player, SOUND_1F, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     cam->unk118 = 1;
 }

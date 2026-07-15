@@ -140,7 +140,7 @@ void SHrocketmushroom_control(Object* self) {
         func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) && 
         (hitDamage != 0)
     ) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
         SHrocketmushroom_set_state(objData, STATE_4_Damaged);
 
         //Create big explosion effect
@@ -247,7 +247,7 @@ void SHrocketmushroom_handle_state_1_hidden(Object* self, SHrocketmushroom_AnimD
 void SHrocketmushroom_handle_state_2_growing(Object* self, SHrocketmushroom_AnimData* animData, SHrocketmushroom_Data* objData) {
     //When entering state, play growing sound and initialise transform-related values
     if (objData->flags & FLAG_State_Entered) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8A3_Rocket_Mushroom_Grow, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8A3_Rocket_Mushroom_Grow, MAX_VOLUME, NULL, NULL, 0, NULL);
         objData->flags &= ~FLAG_State_Entered;
         SHrocketmushroom_reset(self, objData, TRUE);
     }
@@ -278,7 +278,7 @@ void SHrocketmushroom_handle_state_3_launch_spore(Object* self, SHrocketmushroom
     
     //Launch a spore
     if ((self->animProgress > 0.5f) && !(objData->flags & FLAG_Spore_Launched)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8A1_Spore_Launched, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8A1_Spore_Launched, MAX_VOLUME, NULL, NULL, 0, NULL);
         SHrocketmushroom_create_spore(self, objData);
         objData->flags |= FLAG_Spore_Launched;
     }
@@ -292,7 +292,7 @@ void SHrocketmushroom_handle_state_3_launch_spore(Object* self, SHrocketmushroom
 void SHrocketmushroom_handle_state_4_damaged(Object* self, SHrocketmushroom_AnimData* animData, SHrocketmushroom_Data* objData) {
     SHrocketmushroom_Setup* objSetup = (SHrocketmushroom_Setup*)self->setup;
     
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_8A0_Deflate_Honk, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_8A0_Deflate_Honk, MAX_VOLUME, NULL, NULL, 0, NULL);
     SHrocketmushroom_explode(self, objData);
     SHrocketmushroom_set_state(objData, STATE_1_Hidden);
 

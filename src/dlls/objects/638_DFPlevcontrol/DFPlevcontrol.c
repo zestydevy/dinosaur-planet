@@ -113,8 +113,8 @@ void DFP_LevelControl_control(Object* self) {
                 dTimerControl = 0;
                 func_80000860(self, self, 0x19F, 0);
                 func_80000450(self, self, 0x166, 0, 0, 0);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
                 ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
                 mainSetBits(BIT_Spell_Forcefield, 1);
             }
@@ -212,8 +212,8 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
         //Apply lighting/envFX, and play sounds
         func_80000860(self, self, 0x19F, 0);
         func_80000450(self, self, 0x166, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
 
         objData->zappedTimer = 0;
         dInitialiseVisit1 = FALSE;
@@ -227,7 +227,7 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
     
     //Reroll safe floor tiles when player steps on switch
     if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
         
         for (i = 0; i < 3; i++){ 
             dFloorTiles[i] = mathRnd(1, 4); 
@@ -293,15 +293,15 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
         //Apply lighting/envFX, and play sounds
         func_80000860(self, self, 0x19F, 0);
         func_80000450(self, self, 0x166, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
         
         dInitialiseVisit2 = FALSE;
     }
     
     //Reroll safe floor tiles when player steps on switch
     if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
         
         for (i = 0; i < 6; i++){ 
             dFloorTiles[i] = mathRnd(1, 4); 
@@ -361,8 +361,8 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
         func_80000860(self, self, 0x19F, 0);
         func_80000860(self, self, 0x1A0, 0);
         func_80000450(self, self, 0x166, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
 
         objData->zappedTimer = 0;
         dInitialiseVisit3 = FALSE;
@@ -370,7 +370,7 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
 
     //Reroll safe floor tiles when player steps on switch
     if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed) && (objData->previousPadState == FALSE)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_96B_Magic_Whir, MAX_VOLUME, 0, 0, 0, 0);
 
         for (i = 0; i < 9; i++){ 
             dFloorTiles[i] = mathRnd(1, 4); 

@@ -78,7 +78,7 @@ void DFPulley_control(Object* self) {
         //Turbine behaviour
         if (self->id == OBJ_DFturbine) {
             objData->state = STATE_2_Spin_Turbine;
-            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_76F, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objData->soundHandle = dll_amSfx->Play(self, SOUND_76F, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
         }
 
@@ -91,7 +91,7 @@ void DFPulley_control(Object* self) {
             //Play sound loop when nearby
             if (distance < SOUND_RANGE) {
                 if (objData->soundHandle == 0) {
-                    objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_782, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    objData->soundHandle = dll_amSfx->Play(self, SOUND_782, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 
                 //Adjust pitch and volume
@@ -103,17 +103,17 @@ void DFPulley_control(Object* self) {
                     } else {
                         audioValue = pitch;
                     }
-                    gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle, audioValue);
+                    dll_amSfx->SetPitch(objData->soundHandle, audioValue);
                     
                     if (cradleData->unkB6 != 0) {
                         audioValue = 0.0f;
                     }
-                    gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle, (((SOUND_RANGE - distance) / SOUND_RANGE) * MAX_VOLUME * audioValue));
+                    dll_amSfx->SetVol(objData->soundHandle, (((SOUND_RANGE - distance) / SOUND_RANGE) * MAX_VOLUME * audioValue));
                 }
 
             //Otherwise, stop sound
             } else if (objData->soundHandle) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                dll_amSfx->Stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -146,7 +146,7 @@ void DFPulley_free(Object* self, s32 onlySelf) {
     }
     
     if (objData->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+        dll_amSfx->Stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }

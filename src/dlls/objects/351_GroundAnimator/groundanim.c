@@ -191,7 +191,7 @@ void GroundAnimator_control(Object* self) {
                 objData->flags |= (GroundAnimator_FLAG_20_Glow_Required | GroundAnimator_FLAG_2_Dig_Finished);
 
                 //Play success sound
-                gDLL_6_AMSFX->vtbl->play(self, dDigJingles[objSetup->soundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, dDigJingles[objSetup->soundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
 
             vertices = (BlockVertex*)block->vertices2[block->vtxFlags & 1];            

@@ -558,7 +558,7 @@ s32 dll_228_func_17B4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (fsa->enteredAnimState) {
         dll_228_func_1394(self);
-        gDLL_6_AMSFX->vtbl->play(self, 0x720, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0x720, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     return 0;
@@ -580,7 +580,7 @@ s32 dll_228_func_1888(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk33D = 0;
         self->unkAF |= 8;
         gDLL_18_objfsa->vtbl->func21(self, fsa, 0x3C, 0xA, 0);
-        gDLL_6_AMSFX->vtbl->play(self, 0x723, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0x723, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800267A4(self);
     }
     

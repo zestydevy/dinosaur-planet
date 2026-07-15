@@ -54,7 +54,7 @@ void Barrel_control(Object* self) {
         //Explode when damaged
         if (func_80025F40(self, NULL, NULL, &hitDamage) != 0) {
             gDLL_54_pickup->vtbl->drop(self, pickup);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
             func_80026940(self, 40);
             func_80026128(self, Damage_Type_Explosion, 4, 0);
             

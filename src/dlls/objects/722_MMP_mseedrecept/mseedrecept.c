@@ -123,7 +123,7 @@ void MoonSeedReceptacle_control(Object* self) {
     
     if (objData->flags & MoonSeedReceptacle_FLAG_1_Sequence_Played){
         objData->state = MoonSeedReceptacle_STATE_2_Seed_Planted;
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         mainSetBits(objData->gamebitPlanted, TRUE);
         objData->flags &= ~MoonSeedReceptacle_FLAG_1_Sequence_Played;
         self->opacity = OBJECT_OPACITY_MAX;
@@ -187,7 +187,7 @@ void MoonSeedReceptacle_control(Object* self) {
                 if (objData->rattleTimer <= 0.0f){
                     if (mathRnd(0, 1)){
                         objData->rattleTimer = 45.0f;
-                        gDLL_6_AMSFX->vtbl->play(self, mathRnd(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
+                        dll_amSfx->Play(self, mathRnd(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
                         objData->flags |= MoonSeedReceptacle_FLAG_4_Rattling;
                     } else {
                         objData->rattleTimer = mathRnd(50, 200);
@@ -311,7 +311,7 @@ s32 MoonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
                 MoonSeedReceptacle_func_D40(self);
             }
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
 
@@ -347,7 +347,7 @@ void MoonSeedReceptacle_func_D40(Object* self) {
     }
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
     mainSetBits(objData->gamebitGrown, TRUE);
     objData->state = MoonSeedReceptacle_STATE_4_Grown;
     self->srt.transl.y = objSetup->base.y;

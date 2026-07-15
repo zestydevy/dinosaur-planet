@@ -200,7 +200,7 @@ void LanternFireFly_control(Object* self) {
         volume = (volume < 20) ? 20 : 
                 ((volume > MAX_VOLUME) ? MAX_VOLUME : volume);
         
-        gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle, volume);
+        dll_amSfx->SetVol(objData->soundHandle, volume);
     }
     
     diPrintf(" Num Part %i ", numPart);   
@@ -395,7 +395,7 @@ void LanternFireFly_send(Object* self) {
     objData->flagLightPerFirefly = TRUE;
 
     if (objData->soundHandle == 0) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_7F6_Firefly_Twinkle_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_7F6_Firefly_Twinkle_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
     }
 
     objData->lifetime = objSetup->lifetime;

@@ -164,7 +164,7 @@ void Tumbleweed_tick_handle_flags(Object* self) {
             }
             break;
         }
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_5F7_Tumbleweed_Disintegrate, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_5F7_Tumbleweed_Disintegrate, MAX_VOLUME, 0, 0, 0, 0);
     }
     
     if (objData->flags & Tumbleweed_FLAG_Create_Dust) {
@@ -709,9 +709,9 @@ void Tumbleweed_bounce_and_roll(Object* self, Tumbleweed_Data* objData) {
             volume = MAX_VOLUME;
         }
         if (volume > 0x10) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_5F6_Tumbleweed_Roll, volume, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_5F6_Tumbleweed_Roll, volume, 0, 0, 0, 0);
             if (mathRnd(0, 5) == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, mathRnd(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2), volume, 0, 0, 0, 0);
+                dll_amSfx->Play(self, mathRnd(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2), volume, 0, 0, 0, 0);
             }
         }
     }
@@ -752,7 +752,7 @@ int Tumbleweed_handle_carry_behaviour(Object* self) {
             objData->twigSqueakTimer = mathRnd(120, 240);
             soundID = mathRnd(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2);
             soundVol = mathRnd(90, 100);
-            gDLL_6_AMSFX->vtbl->play(self, soundID, soundVol, 0, 0, 0, 0);
+            dll_amSfx->Play(self, soundID, soundVol, 0, 0, 0, 0);
             self->srt.scale = 0.2f;
         } else {
             self->srt.scale = 0.15f;

@@ -484,7 +484,7 @@ void DRearthwalk_update(Object* self) {
         if (temp_v1->unk140.unk0 != NULL) {
             hitBy = temp_v1->unk140.unk0;
             if ((hitBy->id == OBJ_DR_PushCart) && (objdata->unkA60_5) && (self->curModAnimId == 0x14)) {
-                gDLL_6_AMSFX->vtbl->play(self, _data_28[1], MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, _data_28[1], MAX_VOLUME, NULL, NULL, 0, NULL);
                 ((DLL_Unknown*)hitBy->dll)->vtbl->func[7].withThreeArgsCustom(hitBy, self, 190.f);
                 objdata->unkA60_5 = 0;
             }
@@ -564,7 +564,7 @@ static void DRearthwalk_func_1684(Object* self, DRearthwalk_Data* objdata, ObjFS
         if (fsa->unk308 & 0x80) {
             var_s7 = 1;
         }
-        gDLL_6_AMSFX->vtbl->play(self, _data_0[var_s7], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, _data_0[var_s7], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     var_s5 = 0;
     while (var_s0) {
@@ -572,7 +572,7 @@ static void DRearthwalk_func_1684(Object* self, DRearthwalk_Data* objdata, ObjFS
             if (fsa->speed > 1.0f) {
                 var_s7 = 1;
             }
-            gDLL_6_AMSFX->vtbl->play(self, _data_4[var_s7], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, _data_4[var_s7], MAX_VOLUME, NULL, NULL, 0, NULL);
             sp7C.transl.x = objdata->unk978[var_s5].x;
             sp7C.transl.y = objdata->unk978[var_s5].y;
             sp7C.transl.z = objdata->unk978[var_s5].z;
@@ -753,8 +753,8 @@ static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* a
         case 10:
             break;
         case 14:
-            gDLL_6_AMSFX->vtbl->play(actor, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->play(actor, SOUND_9E, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(actor, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(actor, SOUND_9E, MAX_VOLUME, NULL, NULL, 0, NULL);
             for (partIdx = 0; partIdx != 10; partIdx++) {
                 gDLL_17_partfx->vtbl->spawn(actor, PARTICLE_3C, NULL, 2, -1, NULL);
             }

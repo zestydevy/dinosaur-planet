@@ -203,7 +203,7 @@ void dll_274_free(Object* self, s32 onlySelf) {
     }
 
     if (objData->unk78) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk78);
+        dll_amSfx->Stop(objData->unk78);
         objData->unk78 = 0;
     }
     
@@ -412,7 +412,7 @@ static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
                         if (objSetup->unk18 >= 0) {
                             if ((self->id != 0x21E) && (self->id != 0x411)) {
                                 mainSetBits(objSetup->unk18, 1);
-                                gDLL_6_AMSFX->vtbl->play(self, 0xB01, MAX_VOLUME, NULL, NULL, 0, NULL);
+                                dll_amSfx->Play(self, 0xB01, MAX_VOLUME, NULL, NULL, 0, NULL);
                             }
                         }
                     }
@@ -571,7 +571,7 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
             sp58->vtbl->func0(self, 0x14, 0, 2, -1, 0);
             dllFree(sp58);
             
-            gDLL_6_AMSFX->vtbl->play(NULL, 0x778, 0x64, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, 0x778, 0x64, NULL, NULL, 0, NULL);
         } else {
             objData->unkAC.f[1] += objData->unkA4;
 
@@ -610,7 +610,7 @@ s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
     
     if (objData->unkD4 & 0x80) {
         if (objData->unk78) {
-            gDLL_6_AMSFX->vtbl->stop(objData->unk78);
+            dll_amSfx->Stop(objData->unk78);
             objData->unk78 = 0;
         }
         return 0;
@@ -618,14 +618,14 @@ s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
     
     if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xA)) {
         if (objData->unk78) {
-            gDLL_6_AMSFX->vtbl->stop(objData->unk78);
+            dll_amSfx->Stop(objData->unk78);
             objData->unk78 = 0;
         }
         return 0;
     }
     
     if (objData->unk78 == 0) {
-        gDLL_6_AMSFX->vtbl->play(self, 0xA87, MAX_VOLUME, &objData->unk78, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0xA87, MAX_VOLUME, &objData->unk78, NULL, 0, NULL);
     }
     
     objData->unkD4 |= 2;
@@ -654,7 +654,7 @@ s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
         objData->unkD4 &= ~4;
         objData->unkD4 |= 0x80;
         mainSetBits(objData->unk80, 1);
-        gDLL_6_AMSFX->vtbl->play(self, 0xA88, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0xA88, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     return 0;
@@ -663,7 +663,7 @@ s32 dll_274_func_27C8(Object* self, DLL274_Data* objData) {
 // offset: 0x2A74 | func: 19
 s32 dll_274_func_2A74(Object* self, DLL274_Data* objData) {
     if ((objData->unkCC == 0.0f) && (objData->unkC8 > 0.0f)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
         mainSetBits(BIT_DIM_Pushed_Ice_Block_Into_Lake, TRUE);
     }
     return 0;

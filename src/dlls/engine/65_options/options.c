@@ -726,14 +726,14 @@ s32 options_update1(void) {
     case OPTIONS_PAGE_8_Screen_Position:
         joyGetStickMenuXYSign(0, &joyX, &joyY);
         if (joyX > 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             sGameOptions->screenOffsetX += 1;
             if (sGameOptions->screenOffsetX > 7) {
                 sGameOptions->screenOffsetX = 7;
                 joyX = 0;
             }
         } else if (joyX < 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             sGameOptions->screenOffsetX -= 1;
             if (sGameOptions->screenOffsetX < -7) {
                 sGameOptions->screenOffsetX = -7;
@@ -742,14 +742,14 @@ s32 options_update1(void) {
         }
 
         if (joyY > 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             sGameOptions->screenOffsetY -= 1;
             if (sGameOptions->screenOffsetY < -7) {
                 sGameOptions->screenOffsetY = -7;
                 joyY = 0;
             }
         } else if (joyY < 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             sGameOptions->screenOffsetY += 1;
             if (sGameOptions->screenOffsetY > 7) {
                 sGameOptions->screenOffsetY = 7;
@@ -1443,7 +1443,7 @@ void options_handle_action_audio_page(s32 action, s32 selectedItemIdx) {
         speakerSetMode(dSpeakerModes[gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx])]);
         break;
     case OPTIONS_AUDIO_2_SFX:
-        gDLL_6_AMSFX->vtbl->func_7E4(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
+        dll_amSfx->Func7E4(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
         break;
     case OPTIONS_AUDIO_1_Music:
         gDLL_5_AMSEQ->vtbl->set_volume_option(gDLL_75->vtbl->get_value(sCtrls[selectedItemIdx]));
