@@ -1426,7 +1426,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
             data->unk868->srt.transl.y = sp78;
             data->unk868->srt.transl.z = sp74;
             data->unk868->srt.yaw = player->srt.yaw;
-            data->unk868->dll->vtbl->print(data->unk868, arg1, arg2, arg3, arg4, -1);
+            data->unk868->dll->vtbl->Print(data->unk868, arg1, arg2, arg3, arg4, -1);
         }
         shadowsUpdateDynamicTex(player, arg1, arg2, arg3, arg4);
     }
