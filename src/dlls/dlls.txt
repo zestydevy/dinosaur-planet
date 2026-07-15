@@ -339,6 +339,7 @@
 613 = objects/613_WL_SpiritSet
 614 = objects/614_WM_Planets
 615 = objects/615_crawler
+616 = objects/616_WM_MovePlatform
 617 = objects/617_WL_VConsole
 618 = objects/618_WM_TransTop
 619 = objects/619_VFP_LevelControl
